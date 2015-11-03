@@ -75,7 +75,10 @@ CLASS TEdiExporarFacturas
    METHOD writeDatosGenerales()
    METHOD writeDatosProveedor()
    METHOD writeDatosCliente()
-   METHOD writeDatosEstablecimiento()
+   
+   METHOD getDatosEstablecimiento()   
+      METHOD writeDatosEstablecimiento()
+      METHOD writeClienteEstablecimiento()
 
    METHOD writeLineas()
       METHOD writeDetallesLinea()
@@ -131,7 +134,8 @@ METHOD Run()
       ::writeDatosGenerales()
       ::writeDatosProveedor()
       ::writeDatosCliente()
-      ::writeDatosEstablecimiento()
+
+      ::getDatosEstablecimiento()
       
       ::writeLineas()  
 
@@ -246,18 +250,52 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD getDatosEstablecimiento()
+
+   if empty( ( D():FacturasClientes( ::nView ) )->cCodObr ) .and. ( D():ClientesDirecciones( nView ) )->( dbseek( ::cCodigoCliente + ( D():FacturasClientes( ::nView ) )->cCodObr ) )
+      msgAlert( "El cliente tiene establecimiento" )
+      ::writeDatosEstablecimiento()
+   else
+      msgAlert( "El cliente no tiene establecimiento" )
+      ::writeClienteEstablecimiento()
+   end if 
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
 METHOD writeDatosEstablecimiento()
 
-   local cLine    := "Estab"                                               + __separator__
-   cLine          += "IDEstab"                                             + __separator__
-   cLine          += "IDCliProv"                                           + __separator__ 
-   cLine          += "IDCentroCli"                                         + __separator__
-   cLine          += "Estab"                                               + __separator__
-   cLine          += "Domicilio"                                           + __separator__
-   cLine          += "Población"                                           + __separator__
-   cLine          += "CodigoPostal"                                        + __separator__
-   cLine          += "Provincia"                                           + __separator__
-   cLine          += "Pais"                                                + __separator__
+   local cLine    := "Estab" + __separator__
+   cLine          += alltrim( ( D():ClientesDirecciones( nView ) )->cCodEdi ) + __separator__   // Código del establecimiento del cliente donde se entrega de la mercancía (interno del cliente)
+   cLine          += alltrim( ::cCodigoCliente ) + __separator__                                // Código del cliente (interno del proveedor)
+   cLine          += "" + __separator__                                                         // Código secundario del establecimiento del cliente según el proveedor (interno del proveedor). Algunos proveedores solo utilizan el campo IDCliProv
+   cLine          += alltrim( ( D():ClientesDirecciones( nView ) )->cNomObr ) + __separator__   // Nombre del establecimiento
+   cLine          += alltrim( ( D():ClientesDirecciones( nView ) )->cDirObr ) + __separator__   // Dirección del establecimiento
+   cLine          += alltrim( ( D():ClientesDirecciones( nView ) )->cPobObr ) + __separator__   // Población del establecimiento
+   cLine          += alltrim( ( D():ClientesDirecciones( nView ) )->cPosObr ) + __separator__   // Código postal del establecimiento
+   cLine          += alltrim( ( D():ClientesDirecciones( nView ) )->cPrvObr ) + _separator__    // Provincia del establecimiento
+   cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "cCodPai" ) )
+   cLine          += ""                                               
+
+   ::oFileEDI:add( cLine )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD writeClienteEstablecimiento()
+
+   local cLine    := "Estab" + __separator__
+   cLine          += "" + __separator__                                    // Código del establecimiento del cliente donde se entrega de la mercancía (interno del cliente)
+   cLine          += alltrim( ::cCodigoCliente ) + __separator__           // Código del cliente (interno del proveedor)
+   cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "cCodEdi" ) ) + __separator__  // Código secundario del establecimiento del cliente según el proveedor (interno del proveedor). Algunos proveedores solo utilizan el campo IDCliProv
+   cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "Titulo" ) ) + __separator__ 
+   cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "Domicilio" ) ) + __separator__
+   cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "Poblacion" ) ) + __separator__  // Población del cliente
+   cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "CodPostal" ) ) + __separator__  // Codigo postal del cliente
+   cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "Provincia" ) ) + __separator__  // Provincia del cliente
+   cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "cCodPai" ) )                    // País del cliente (España: ESP)
    cLine          += "Email"                                               
 
    ::oFileEDI:add( cLine )

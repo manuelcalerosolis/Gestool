@@ -5667,39 +5667,38 @@ CLASS D
       METHOD getLastKeyClientes( nView )              INLINE ( nextkey( space(12), ::Clientes( nView ), "0", retNumCodCliEmp() ) )
       METHOD setFocusClientes( cTag, nView )          INLINE ( ::cTag   := ( ::Clientes( nView )  )->( ordSetFocus( cTag ) ) )
 
-
-
-      
    METHOD ClientesDirecciones( nView )                   INLINE ( ::Get( "ObrasT", nView ) )
       METHOD ClientesDireccionesId( nView )              INLINE ( ( ::Get( "ObrasT", nView ) )->cCodCli )
       METHOD getStatusClientesDirecciones( nView )       INLINE ( ::aStatus := aGetStatus( ::ClientesDirecciones( nView ) ) )
       METHOD setStatusClientesDirecciones( nView )       INLINE ( SetStatus( ::Get( "ObrasT", nView ), ::aStatus ) ) 
       METHOD setFocusClientesDirecciones( cTag, nView )  INLINE ( ::cTag   := ( ::ClientesDirecciones( nView )  )->( ordSetFocus( cTag ) ) )
+      METHOD gotoIdClientesDirecciones( id, nView );
+                                                         INLINE ( ::seek( ::ClientesDirecciones( nView ), id ) ) 
 
-   METHOD TiposIncidencias( nView )                   INLINE ( ::Get( "TipInci", nView ) )
-      METHOD TiposIncidenciasId( nView )              INLINE ( ( ::Get( "TipInci", nView ) )->cCodInci )
-      METHOD TiposIncidenciasNombre( nView )          INLINE ( ( ::Get( "TipInci", nView ) )->cNomInci )
+   METHOD TiposIncidencias( nView )                      INLINE ( ::Get( "TipInci", nView ) )
+      METHOD TiposIncidenciasId( nView )                 INLINE ( ( ::Get( "TipInci", nView ) )->cCodInci )
+      METHOD TiposIncidenciasNombre( nView )             INLINE ( ( ::Get( "TipInci", nView ) )->cNomInci )
       METHOD getHashTiposIncidencias( nView )
       METHOD getTiposIncicencias( nView )      
       METHOD getCodigoTipoIncicencias( cNombreIncidencia, nView )
       METHOD getNombreTipoIncicencias( cCodigoIncidencia, nView )
 
 
-   METHOD ClientesIncidencias( nView )                INLINE ( ::Get( "CliInc", nView ) )
-      METHOD ClientesIncidenciasId( nView )           INLINE ( ( ::Get( "CliInc", nView ) )->cCodCli )
-      METHOD ClientesIncidenciasNombre( nView )       INLINE ( ( ::Get( "CliInc", nView ) )->mDesInc )
-      METHOD gotoIdClientesIncidencias( id, nView )   INLINE ( ::SeekInOrd( ::ClientesIncidencias( nView ), id, "cCodCli" ) ) 
-      METHOD eofClientesIncidecias( nView )           INLINE ( ( ::ClientesIncidencias( nView ) )->( eof() ) )
-      METHOD getStatusClientesIncidencias( nView )    INLINE ( ::aStatus := aGetStatus( ::ClientesIncidencias( nView ) ) )
-      METHOD setStatusClientesIncidencias( nView )    INLINE ( SetStatus( ::ClientesIncidencias( nView ), ::aStatus ) ) 
-      METHOD setScopeClientesIncidencias( id, nView ) INLINE ( if( empty( id ), id := ::ClientesId( nView ), ),;
-                                                               ::getStatusClientesIncidencias( nView ),;
-                                                               ( ::ClientesIncidencias( nView ) )->( ordScope( 0, id ) ),;
-                                                               ( ::ClientesIncidencias( nView ) )->( ordScope( 1, id ) ),;
-                                                               ( ::ClientesIncidencias( nView ) )->( dbgotop() ) )  
-      METHOD quitScopeClientesIncidencias( nView )    INLINE ( ( ::ClientesIncidencias( nView ) )->( ordScope( 0, nil ) ),;
-                                                               ( ::ClientesIncidencias( nView ) )->( ordScope( 1, nil ) ),;
-                                                               ::setStatusClientesIncidencias( nView ) )  
+   METHOD ClientesIncidencias( nView )                   INLINE ( ::Get( "CliInc", nView ) )
+      METHOD ClientesIncidenciasId( nView )              INLINE ( ( ::Get( "CliInc", nView ) )->cCodCli )
+      METHOD ClientesIncidenciasNombre( nView )          INLINE ( ( ::Get( "CliInc", nView ) )->mDesInc )
+      METHOD gotoIdClientesIncidencias( id, nView )      INLINE ( ::SeekInOrd( ::ClientesIncidencias( nView ), id, "cCodCli" ) ) 
+      METHOD eofClientesIncidecias( nView )              INLINE ( ( ::ClientesIncidencias( nView ) )->( eof() ) )
+      METHOD getStatusClientesIncidencias( nView )       INLINE ( ::aStatus := aGetStatus( ::ClientesIncidencias( nView ) ) )
+      METHOD setStatusClientesIncidencias( nView )       INLINE ( SetStatus( ::ClientesIncidencias( nView ), ::aStatus ) ) 
+      METHOD setScopeClientesIncidencias( id, nView )    INLINE ( if( empty( id ), id := ::ClientesId( nView ), ),;
+                                                                  ::getStatusClientesIncidencias( nView ),;
+                                                                  ( ::ClientesIncidencias( nView ) )->( ordScope( 0, id ) ),;
+                                                                  ( ::ClientesIncidencias( nView ) )->( ordScope( 1, id ) ),;
+                                                                  ( ::ClientesIncidencias( nView ) )->( dbgotop() ) )  
+      METHOD quitScopeClientesIncidencias( nView )       INLINE ( ( ::ClientesIncidencias( nView ) )->( ordScope( 0, nil ) ),;
+                                                                  ( ::ClientesIncidencias( nView ) )->( ordScope( 1, nil ) ),;
+                                                                  ::setStatusClientesIncidencias( nView ) )  
 
    METHOD ClientesBancos( nView )                     INLINE ( ::Get( "CliBnc", nView ) )
       METHOD getStatusClientesBancos( nView )         INLINE ( ::aStatus := aGetStatus( ::ClientesBancos( nView ) ) )

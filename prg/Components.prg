@@ -2206,6 +2206,7 @@ CLASS TLabelGenerator
    METHOD lCreateTempReport()            
    METHOD loadTempReport()   
    METHOD PrepareTempReport( oFr )    
+      METHOD buildReportLabels()
    METHOD DestroyTempReport()     
 
    METHOD End()
@@ -2665,76 +2666,88 @@ Return ( Self )
 
 METHOD lPrintLabels() CLASS TLabelGenerator
 
-   local oFr
 
-   local nCopies      := 1
-   local nDevice      := IS_SCREEN
-   local cPrinter     := PrnGetName()
+   ::oDlg:Disable()
 
    if ::lCreateTempReport()
 
       ::loadTempReport()
 
-      SysRefresh()
+      msgRun( "Construyendo el informe", "Espere por favor...", {|| ::buildReportLabels() } )
 
-      oFr             := frReportManager():New()
-
-      oFr:LoadLangRes(     "Spanish.Xml" )
-
-      oFr:SetIcon( 1 )
-
-      oFr:SetTitle(        "Diseñador de documentos" )
-
-      // Manejador de eventos--------------------------------------------------------
-
-      oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( ::dbfDocumento )->( Select() ), "mReport" ) } )
-      
-      // Zona de datos---------------------------------------------------------------
-
-      ::DataLabel( oFr, .t. )
-
-      ::VariableLabel( oFr )
-
-      //Cargar el informe-----------------------------------------------------------
-      
-      if !Empty( ( ::dbfDocumento )->mReport )
-
-         oFr:LoadFromBlob( ( ::dbfDocumento )->( Select() ), "mReport")
-         
-         //Zona de variables--------------------------------------------------------
-
-         ::PrepareTempReport( oFr )
-         
-         //Preparar el report-------------------------------------------------------
-
-         oFr:PrepareReport()
-         
-         //Imprimir el informe------------------------------------------------------
-
-         do case
-            case nDevice == IS_SCREEN
-               oFr:ShowPreparedReport()
-
-            case nDevice == IS_PRINTER
-               oFr:PrintOptions:SetPrinter( cPrinter )
-               oFr:PrintOptions:SetCopies( nCopies )
-               oFr:PrintOptions:SetShowDialog( .f. )
-               oFr:Print()
-
-            case nDevice == IS_PDF
-               oFr:DoExport( "PDFExport" )
-
-         end case
-
-      end if
-      
-      //Destruye el diseñador-------------------------------------------------------
-      
-      oFr:DestroyFr()
-
-      ::DestroyTempReport()
+      ::destroyTempReport()
 
    end if
+
+   ::oDlg:Enable()
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildReportLabels() CLASS TLabelGenerator
+
+   local oFr
+   local nCopies      := 1
+   local nDevice      := IS_SCREEN
+   local cPrinter     := PrnGetName()
+
+   sysRefresh()
+
+   oFr               := frReportManager():New()
+
+   oFr:LoadLangRes(     "Spanish.Xml" )
+
+   oFr:SetIcon( 1 )
+
+   oFr:SetTitle(        "Diseñador de documentos" )
+
+   // Manejador de eventos--------------------------------------------------------
+
+   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( ::dbfDocumento )->( Select() ), "mReport" ) } )
+   
+   // Zona de datos---------------------------------------------------------------
+
+   ::DataLabel( oFr, .t. )
+
+   ::VariableLabel( oFr )
+
+   //Cargar el informe-----------------------------------------------------------
+   
+   if !Empty( ( ::dbfDocumento )->mReport )
+
+      oFr:LoadFromBlob( ( ::dbfDocumento )->( Select() ), "mReport")
+      
+      //Zona de variables--------------------------------------------------------
+
+      ::PrepareTempReport( oFr )
+      
+      //Preparar el report-------------------------------------------------------
+
+      oFr:PrepareReport()
+      
+      //Imprimir el informe------------------------------------------------------
+
+      do case
+         case nDevice == IS_SCREEN
+            oFr:ShowPreparedReport()
+
+         case nDevice == IS_PRINTER
+            oFr:PrintOptions:SetPrinter( cPrinter )
+            oFr:PrintOptions:SetCopies( nCopies )
+            oFr:PrintOptions:SetShowDialog( .f. )
+            oFr:Print()
+
+         case nDevice == IS_PDF
+            oFr:DoExport( "PDFExport" )
+
+      end case
+
+   end if
+   
+   //Destruye el diseñador-------------------------------------------------------
+   
+   oFr:DestroyFr()
 
 Return ( .t. )
 
@@ -2775,6 +2788,8 @@ METHOD loadTempReport()
    local n
    local nRec           := ( ::tmpLabelEdition )->( Recno() )
 
+   ::oMtrLabel:setTotal( ( ::tmpLabelEdition )->( lastRec() ) )
+
    ( ::tmpLabelEdition )->( dbGoTop() )
    while !( ::tmpLabelEdition )->( eof() )
 
@@ -2785,6 +2800,8 @@ METHOD loadTempReport()
       end if
 
       ( ::tmpLabelEdition )->( dbSkip() )
+
+      ::oMtrLabel:autoInc()
 
    end while
 

@@ -17926,7 +17926,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Ordenado por", -1, "Button", BS_GROUPBOX, 279, 0, 109, 27
   CONTROL "Buscar por", -1, "Button", BS_GROUPBOX, 1, 0, 277, 27
   CONTROL "Propiedades", 220, "Button", WS_TABSTOP, 154, 33, 50, 14
-  CONTROL "", 190, "msctls_progress32", 0x00000000, 4, 244, 380, 7
+  CONTROL "", 190, "msctls_progress32", 0x00000000, 4, 244, 380, 4
 }
 
 SELECTLABELS_3 DIALOG DISCARDABLE 113, 78, 390, 194

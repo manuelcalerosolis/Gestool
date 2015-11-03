@@ -231,7 +231,6 @@ static dbfDoc
 static cFpago
 static dbfFamilia
 static oBandera
-static dbfObrasT
 static dbfContactos
 static dbfBanco
 static dbfAlmT
@@ -378,12 +377,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Empresa( nView )
 
-      /*
-      Apertura de fichero de Obras------------------------------------------------
-      */
-
-      USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
-      SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
+      D():ClientesDirecciones( nView )
 
       /*
       Apertura de fichero de Contactos--------------------------------------------
@@ -537,7 +531,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
    CLOSE ( dbfArtKit    )
    CLOSE ( cFPago       )
    CLOSE ( cAgente      )
-   CLOSE ( dbfObrasT    )
    CLOSE ( dbfContactos )
    CLOSE ( dbfFPago     )
    CLOSE ( dbfAlmT      )
@@ -593,7 +586,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
    dbfArtKit         := nil
    cFPago            := nil
    cAgente           := nil
-   dbfObrasT         := nil
    dbfContactos      := nil
    dbfFPago          := nil
    dbfAlmT           := nil
@@ -9775,10 +9767,10 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       A¤adimos desde el fichero de Obras
       */
 
-      if ( dbfObrasT )->( dbSeek( cCodCli ) )
-         while ( ( dbfObrasT )->cCodCli == cCodCli ) .AND. ( dbfObrasT )->( !eof() )
-            dbPass( dbfObrasT, dbfTmpObr, .t. )
-            ( dbfObrasT )->( dbSkip() )
+      if D():gotoIdClientesDirecciones( cCodCli, nView )
+         while ( D():ClientesDireccionesId( nView ) == cCodCli ) .and. ( D():ClientesDirecciones( nView ) )->( !eof() )
+            dbPass( D():ClientesDirecciones( nView ), dbfTmpObr, .t. )
+            ( D():ClientesDirecciones( nView ) )->( dbSkip() )
          end while
       end if
 
@@ -10155,52 +10147,52 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
    Limpiamos la tabla de atipicas----------------------------------------------
    */
 
-if !Empty( dbfTmpAtp )
+   if !Empty( dbfTmpAtp )
 
-   oMsgText( "Eliminando tarifas anteriores cliente" )
-   oMsgProgress():SetRange( 0, ( dbfTmpAtp )->( LastRec() ) )
+      oMsgText( "Eliminando tarifas anteriores cliente" )
+      oMsgProgress():SetRange( 0, ( dbfTmpAtp )->( LastRec() ) )
 
-   while ( D():Get( "CliAtp", nView ) )->( dbSeek( aTmp[ _COD ] ) ) .and. !( D():Get( "CliAtp", nView ) )->( eof() )
-      dbDel( D():Get( "CliAtp", nView ) )
-   end while
+      while ( D():Get( "CliAtp", nView ) )->( dbSeek( aTmp[ _COD ] ) ) .and. !( D():Get( "CliAtp", nView ) )->( eof() )
+         dbDel( D():Get( "CliAtp", nView ) )
+      end while
 
-   oMsgText( "Archivando tarifas cliente" )
-   oMsgProgress():SetRange( 0, ( dbfTmpAtp )->( LastRec() ) )
+      oMsgText( "Archivando tarifas cliente" )
+      oMsgProgress():SetRange( 0, ( dbfTmpAtp )->( LastRec() ) )
 
-   ( dbfTmpAtp )->( dbGoTop() )
-   while ( dbfTmpAtp )->( !eof() )
-      dbPass( dbfTmpAtp, ( D():Get( "CliAtp", nView ) ), .t., aTmp[ _COD ] )
-      ( dbfTmpAtp )->( dbSkip() )
-      oMsgProgress():DeltaPos( 1 )
-   end while
+      ( dbfTmpAtp )->( dbGoTop() )
+      while ( dbfTmpAtp )->( !eof() )
+         dbPass( dbfTmpAtp, ( D():Get( "CliAtp", nView ) ), .t., aTmp[ _COD ] )
+         ( dbfTmpAtp )->( dbSkip() )
+         oMsgProgress():DeltaPos( 1 )
+      end while
 
-end if
+   end if
 
    /*
    Limpiamos la tabla de documentos--------------------------------------------
    */
 
-if !Empty( dbfTmpDoc )
+   if !Empty( dbfTmpDoc )
 
-   oMsgText( "Eliminando documentos anteriores cliente" )
-   oMsgProgress():SetRange( 0, ( dbfTmpDoc )->( LastRec() ) )
+      oMsgText( "Eliminando documentos anteriores cliente" )
+      oMsgProgress():SetRange( 0, ( dbfTmpDoc )->( LastRec() ) )
 
-   while ( D():Get( "ClientD", nView ) )->( dbSeek( aTmp[ _COD ] ) )
-      dbDel( D():Get( "ClientD", nView ) )
-      oMsgProgress():DeltaPos( 1 )
-   end while
+      while ( D():Get( "ClientD", nView ) )->( dbSeek( aTmp[ _COD ] ) )
+         dbDel( D():Get( "ClientD", nView ) )
+         oMsgProgress():DeltaPos( 1 )
+      end while
 
-   oMsgText( "Archivando documentos cliente" )
-   oMsgProgress():SetRange( 0, ( dbfTmpDoc )->( LastRec() ) )
+      oMsgText( "Archivando documentos cliente" )
+      oMsgProgress():SetRange( 0, ( dbfTmpDoc )->( LastRec() ) )
 
-   ( dbfTmpDoc )->( dbGoTop() )
-   while ( dbfTmpDoc )->( !eof() )
-      dbPass( dbfTmpDoc, ( D():Get( "ClientD", nView ) ), .t., aTmp[ _COD ] )
-      ( dbfTmpDoc )->( dbSkip() )
-      oMsgProgress():DeltaPos( 1 )
-   end while
+      ( dbfTmpDoc )->( dbGoTop() )
+      while ( dbfTmpDoc )->( !eof() )
+         dbPass( dbfTmpDoc, ( D():Get( "ClientD", nView ) ), .t., aTmp[ _COD ] )
+         ( dbfTmpDoc )->( dbSkip() )
+         oMsgProgress():DeltaPos( 1 )
+      end while
 
-end if
+   end if
 
    /*
    Limpiamos la tabla de documentos--------------------------------------------
@@ -10232,108 +10224,108 @@ end if
    Limpiamos la tabla de obras-------------------------------------------------
    */
 
-if !Empty( dbfTmpObr )
+   if !Empty( dbfTmpObr )
 
-   oMsgText( "Eliminando direcciones anteriores cliente" )
-   oMsgProgress():SetRange( 0, ( dbfTmpObr )->( LastRec() ) )
+      oMsgText( "Eliminando direcciones anteriores cliente" )
+      oMsgProgress():SetRange( 0, ( dbfTmpObr )->( LastRec() ) )
 
-   while ( dbfObrasT )->( dbSeek( aTmp[ _COD ] ) )
-      dbDel( dbfObrasT )
-      oMsgProgress():DeltaPos( 1 )
-   end while
+      while ( D():ClientesDirecciones( nView ) )->( dbSeek( aTmp[ _COD ] ) )
+         dbDel( D():ClientesDirecciones( nView ) )
+         oMsgProgress():DeltaPos( 1 )
+      end while
 
-   oMsgText( "Archivando direcciones cliente" )
-   oMsgProgress():SetRange( 0, ( dbfTmpObr )->( LastRec() ) )
+      oMsgText( "Archivando direcciones cliente" )
+      oMsgProgress():SetRange( 0, ( dbfTmpObr )->( LastRec() ) )
 
-   ( dbfTmpObr )->( dbGoTop() )
-   while ( dbfTmpObr )->( !eof() )
-      dbPass( dbfTmpObr, dbfObrasT, .t., aTmp[ _COD ] )
-      ( dbfTmpObr )->( dbSkip() )
-      oMsgProgress():DeltaPos( 1 )
-   end while
+      ( dbfTmpObr )->( dbGoTop() )
+      while ( dbfTmpObr )->( !eof() )
+         dbPass( dbfTmpObr, D():ClientesDirecciones( nView ), .t., aTmp[ _COD ] )
+         ( dbfTmpObr )->( dbSkip() )
+         oMsgProgress():DeltaPos( 1 )
+      end while
 
-end if
+   end if
 
    /*
    Limpiamos la tabla de contactos---------------------------------------------
    */
 
-if !Empty( dbfTmpCon )
+   if !Empty( dbfTmpCon )
 
-   oMsgText( "Eliminando contactos anteriores cliente" )
-   oMsgProgress():SetRange( 0, ( dbfTmpCon )->( LastRec() ) )
+      oMsgText( "Eliminando contactos anteriores cliente" )
+      oMsgProgress():SetRange( 0, ( dbfTmpCon )->( LastRec() ) )
 
-   while ( dbfContactos )->( dbSeek( aTmp[ _COD ] ) )
-      dbDel( dbfContactos )
-      oMsgProgress():DeltaPos( 1 )
-   end while
+      while ( dbfContactos )->( dbSeek( aTmp[ _COD ] ) )
+         dbDel( dbfContactos )
+         oMsgProgress():DeltaPos( 1 )
+      end while
 
-   oMsgText( "Archivando contactos cliente" )
-   oMsgProgress():SetRange( 0, ( dbfTmpCon )->( LastRec() ) )
+      oMsgText( "Archivando contactos cliente" )
+      oMsgProgress():SetRange( 0, ( dbfTmpCon )->( LastRec() ) )
 
-   ( dbfTmpCon )->( dbGoTop() )
-   while ( dbfTmpCon )->( !eof() )
-      dbPass( dbfTmpCon, dbfContactos, .t., aTmp[ _COD ] )
-      ( dbfTmpCon )->( dbSkip() )
-      oMsgProgress():DeltaPos( 1 )
-   end while
+      ( dbfTmpCon )->( dbGoTop() )
+      while ( dbfTmpCon )->( !eof() )
+         dbPass( dbfTmpCon, dbfContactos, .t., aTmp[ _COD ] )
+         ( dbfTmpCon )->( dbSkip() )
+         oMsgProgress():DeltaPos( 1 )
+      end while
 
-end if
+   end if
 
    /*
    Limpiamos la tabla de bancos------------------------------------------------
    */
 
-if !Empty( dbfTmpBnc )
+   if !Empty( dbfTmpBnc )
 
-   oMsgText( "Eliminanado bancos anteriores cliente" )
-   oMsgProgress():SetRange( 0, ( dbfTmpBnc )->( LastRec() ) )
+      oMsgText( "Eliminanado bancos anteriores cliente" )
+      oMsgProgress():SetRange( 0, ( dbfTmpBnc )->( LastRec() ) )
 
-   while ( dbfBanco )->( dbSeek( aTmp[ _COD ] ) ) .and. !( dbfBanco )->( eof() )
-      dbDel( dbfBanco )
-      oMsgProgress():DeltaPos( 1 )
-   end while
+      while ( dbfBanco )->( dbSeek( aTmp[ _COD ] ) ) .and. !( dbfBanco )->( eof() )
+         dbDel( dbfBanco )
+         oMsgProgress():DeltaPos( 1 )
+      end while
 
-   oMsgText( "Archivando bancos cliente" )
-   oMsgProgress():SetRange( 0, ( dbfTmpBnc )->( LastRec() ) )
+      oMsgText( "Archivando bancos cliente" )
+      oMsgProgress():SetRange( 0, ( dbfTmpBnc )->( LastRec() ) )
 
-   ( dbfTmpBnc )->( dbGoTop() )
-   while !( dbfTmpBnc )->( eof() )
-      dbPass( dbfTmpBnc, dbfBanco, .t., aTmp[ _COD ] )
-      ( dbfTmpBnc )->( dbSkip() )
-      oMsgProgress():DeltaPos( 1 )
-   end while
+      ( dbfTmpBnc )->( dbGoTop() )
+      while !( dbfTmpBnc )->( eof() )
+         dbPass( dbfTmpBnc, dbfBanco, .t., aTmp[ _COD ] )
+         ( dbfTmpBnc )->( dbSkip() )
+         oMsgProgress():DeltaPos( 1 )
+      end while
 
-end if
+   end if
 
    /*
    Limpiamos la tabla de incidencias-------------------------------------------
    */
 
-if !Empty( dbfTmpInc )
+   if !Empty( dbfTmpInc )
 
-   oMsgText( "Eliminando incidencias cliente" )
-   oMsgProgress():SetRange( 0, ( dbfTmpInc )->( LastRec() ) )
+      oMsgText( "Eliminando incidencias cliente" )
+      oMsgProgress():SetRange( 0, ( dbfTmpInc )->( LastRec() ) )
 
-   while ( D():Get( "CliInc", nView ) )->( dbSeek( aTmp[ _COD ] ) )
-      dbDel( D():Get( "CliInc", nView ) )
-      oMsgProgress():DeltaPos( 1 )
-   end while
+      while ( D():Get( "CliInc", nView ) )->( dbSeek( aTmp[ _COD ] ) )
+         dbDel( D():Get( "CliInc", nView ) )
+         oMsgProgress():DeltaPos( 1 )
+      end while
 
-   ( dbfTmpInc )->( OrdScope( 0, nil ) )
-   ( dbfTmpInc )->( OrdScope( 1, nil ) )
+      ( dbfTmpInc )->( OrdScope( 0, nil ) )
+      ( dbfTmpInc )->( OrdScope( 1, nil ) )
 
-   oMsgText( "Archivando incidencias cliente" )
-   oMsgProgress():SetRange( 0, ( dbfTmpInc )->( LastRec() ) )
+      oMsgText( "Archivando incidencias cliente" )
+      oMsgProgress():SetRange( 0, ( dbfTmpInc )->( LastRec() ) )
 
-   ( dbfTmpInc )->( dbGoTop() )
-   while !( dbfTmpInc )->( eof() )
-      dbPass( dbfTmpInc, D():Get( "CliInc", nView ), .t., aTmp[ _COD ] )
-      ( dbfTmpInc )->( dbSkip() )
-      oMsgProgress():DeltaPos( 1 )
-   end while
+      ( dbfTmpInc )->( dbGoTop() )
+      while !( dbfTmpInc )->( eof() )
+         dbPass( dbfTmpInc, D():Get( "CliInc", nView ), .t., aTmp[ _COD ] )
+         ( dbfTmpInc )->( dbSkip() )
+         oMsgProgress():DeltaPos( 1 )
+      end while
 
-end if
+   end if
 
    //-----------------------------------------------------------------------------
 
@@ -11518,7 +11510,7 @@ Static Function DataReport( oFr, lTemporal )
    oFr:SetWorkArea(     "Tarifas clientes",  ( D():Get( "CliAtp", nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Tarifas clientes",  cItemsToReport( aItmAtp() ) )
 
-   oFr:SetWorkArea(     "Direcciones",       ( dbfObrasT )->( Select() ) )
+   oFr:SetWorkArea(     "Direcciones",       ( D():ClientesDirecciones( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Direcciones",       cItemsToReport( aItmObr() ) )
 
    oFr:SetWorkArea(     "Contactos",         ( dbfContactos )->( Select() ) )
