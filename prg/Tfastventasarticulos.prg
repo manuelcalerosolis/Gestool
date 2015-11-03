@@ -1383,10 +1383,6 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
                   ::oDbf:nTotArt    := nImpLPedCli( aliasPedidosClientes, aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
                   ::oDbf:nTotArt    += nIvaLPedCli( aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv )
-<<<<<<< HEAD
-=======
-                  
->>>>>>> 371df35aab8857f85cedf751bf1568643da3f0a0
                   ::oDbf:nPeso      := nPesLPedCli( aliasPedidosClientesLineas ) 
 
                   ::oDbf:nCosArt    := nTotCPedCli( aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv )
