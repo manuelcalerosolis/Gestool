@@ -107,6 +107,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    METHOD getNumeroAlbaranProveedor()
    METHOD getFechaAlbaranProveedor()
+   METHOD getEstadoAlbaranProveedor()
 
 END CLASS
 
@@ -3075,6 +3076,37 @@ METHOD getFechaAlbaranProveedor() CLASS TFastVentasArticulos
    ::oAlbPrvL:GoTo( nRec )
 
 Return ( dFecha )
+
+//---------------------------------------------------------------------------//
+
+METHOD getEstadoAlbaranProveedor() CLASS TFastVentasArticulos
+
+   local nRec
+   local nOrdAnt
+   local cClave
+   local cEstado  := "No"
+
+   cClave         := ::oDbf:cSerDoc
+   cClave         += Padr( ::oDbf:cNumDoc, 9 )
+   cClave         += ::oDbf:cSufDoc
+   cClave         += ::oDbf:cCodArt 
+   cClave         += ::oDbf:cValPr1
+   cClave         += ::oDbf:cValPr2
+   cClave         += ::oDbf:cLote
+
+   nRec           := ::oAlbPrvL:Recno()
+   nOrdAnt        := ::oAlbPrvL:OrdSetFocus( "cPedPrvRef" )
+
+   if ::oAlbPrvL:Seek( cClave )
+      if ::oAlbPrvL:lFacturado
+         cEstado  := "Si"
+      end if
+   end if
+
+   ::oAlbPrvL:OrdSetFocus( nOrdAnt )
+   ::oAlbPrvL:GoTo( nRec )
+
+Return ( cEstado )
 
 //---------------------------------------------------------------------------//
 
