@@ -1038,6 +1038,7 @@ STATIC FUNCTION OpenFiles( lExt )
          lOpenFiles     := .f.
       end if
 
+      CodigosPostales():GetInstance():OpenFiles()
 
       /*
       Cargamos la clase bandera------------------------------------------------
@@ -1110,6 +1111,8 @@ STATIC FUNCTION CloseFiles()
    end if
 
    D():DeleteView( nView )
+
+   CodigosPostales():GetInstance():CloseFiles()
 
    oBandera    := nil
    oStock      := nil
@@ -1342,7 +1345,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
       REDEFINE GET aGet[ _CPOSPRV ] VAR aTmp[ _CPOSPRV ] ;
          ID       102 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
+         VALID    ( CodigosPostales():GetInstance():validCodigoPostal() );
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CPOBPRV ] VAR aTmp[ _CPOBPRV ] ;
@@ -2235,6 +2238,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
          CANCEL ;
          ACTION   ( If( ExitNoSave( nMode, dbfTmp ), oDlg:end(), ) )
 
+   CodigosPostales():GetInstance():setBinding( { "CodigoPostal" => aGet[ _CPOSPRV ], "Poblacion" => aGet[ _CPOBPRV ], "Provincia" => aGet[ _CPROPRV ] } )
+
    if nMode != ZOOM_MODE
       oFld:aDialogs[1]:AddFastKey( VK_F2, {|| AppDeta( oBrwLin, bEdtDet, aTmp ) } )
       oFld:aDialogs[1]:AddFastKey( VK_F3, {|| EdtDeta( oBrwLin, bEdtDet, aTmp ) } )
@@ -2330,7 +2335,6 @@ Static Function initEdtRec( cCodPed, aTmp, oDlg, oBrwLin, aGet )
    oBrwLin:MakeTotals()
 
    oBrwLin:Load()
-
 
 return( .t. )
 
@@ -3039,7 +3043,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( lCalcDeta( aTmp, aTmpAlb, aGet, oTotal ) );
          ON CHANGE( lCalcDeta( aTmp, aTmpAlb, aGet, oTotal ) );
-			COLOR 	CLR_GET ;
 			PICTURE 	cPinDiv ;
 			OF 		oFld:aDialogs[1]
 
@@ -3152,20 +3155,21 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
       */
 
       REDEFINE CHECKBOX aGet[ _LBNFLIN1 ] ;
-            VAR      aTmp[ _LBNFLIN1 ] ;
-            ID       500 ;
-            WHEN     ( nMode != ZOOM_MODE ) ;
-            OF       oFld:aDialogs[ 2 ]
+         VAR      aTmp[ _LBNFLIN1 ] ;
+         ID       500 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[ 2 ]
 
       REDEFINE GET   aGet[ _NBNFLIN1 ] ;
             VAR      aTmp[ _NBNFLIN1 ] ;
             ID       510 ;
             SPINNER ;
-            ON CHANGE( ::lValid() ) ;
             WHEN     ( aTmp[ _LBNFLIN1 ] .AND. nMode != ZOOM_MODE ) ;
-            VALID    ( lCalPre( oBeneficioSobre[ 1 ]:nAt <= 1, aTmp[ _NPRECOM ], aTmp[ _LBNFLIN1 ], aTmp[ _NBNFLIN1 ], aTmp[ _NIVA ], aGet[ _NPVPLIN1 ], aGet[ _NIVALIN1 ], nDinDiv ) ) ;
             PICTURE  "@E 999.99" ;
             OF       oFld:aDialogs[ 2 ]
+
+      aGet[ _NBNFLIN1 ]:bValid   := {|| lCalPre( oBeneficioSobre[ 1 ]:nAt <= 1, aTmp[ _NPRECOM ], aTmp[ _LBNFLIN1 ], aTmp[ _NBNFLIN1 ], aTmp[ _NIVA ], aGet[ _NPVPLIN1 ], aGet[ _NIVALIN1 ], nDinDiv ) }
+      aGet[ _NBNFLIN1 ]:bChange  := {|| lCalPre( oBeneficioSobre[ 1 ]:nAt <= 1, aTmp[ _NPRECOM ], aTmp[ _LBNFLIN1 ], aTmp[ _NBNFLIN1 ], aTmp[ _NIVA ], aGet[ _NPVPLIN1 ], aGet[ _NIVALIN1 ], nDinDiv ) }
 
       REDEFINE COMBOBOX oBeneficioSobre[ 1 ] VAR cBeneficioSobre[ 1 ] ;
             ITEMS    aBeneficioSobre ;
@@ -3203,12 +3207,14 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
             ID       560 ;
             SPINNER ;
             ON CHANGE( ::lValid() ) ;
-            WHEN     ( aTmp[ _LBNFLIN2 ] .AND. nMode != ZOOM_MODE ) ;
-            VALID    ( lCalPre( oBeneficioSobre[ 2 ]:nAt <= 1, aTmp[ _NPRECOM ], aTmp[ _LBNFLIN2 ], aTmp[ _NBNFLIN2 ], aTmp[ _NIVA ], aGet[ _NPVPLIN2 ], aGet[ _NIVALIN2 ], nDinDiv ) ) ;
+            WHEN     ( aTmp[ _LBNFLIN2 ] .and. nMode != ZOOM_MODE ) ;
             PICTURE  "@E 999.99" ;
             OF       oFld:aDialogs[ 2 ]
+            
+            // VALID    ( lCalPre( oBeneficioSobre[ 2 ]:nAt <= 1, aTmp[ _NPRECOM ], aTmp[ _LBNFLIN2 ], aTmp[ _NBNFLIN2 ], aTmp[ _NIVA ], aGet[ _NPVPLIN2 ], aGet[ _NIVALIN2 ], nDinDiv ) ) ;
 
-      REDEFINE COMBOBOX oBeneficioSobre[ 2 ] VAR cBeneficioSobre[ 2 ] ;
+      REDEFINE COMBOBOX oBeneficioSobre[ 2 ] ;
+            VAR      cBeneficioSobre[ 2 ] ;
             ITEMS    aBeneficioSobre ;
             ID       570 ;
             WHEN     ( nMode != ZOOM_MODE ) ;
@@ -5227,20 +5233,16 @@ Static Function lCalcDeta( aTmp, aTmpAlb, aGet, oTotal )
    */
 
    aGet[ _NPRECOM ]:cText( nNetUAlbPrv( aTmp, aTmpAlb, nDinDiv, nDirDiv ) )
-
-   /*
+  
    if aTmp[ _LBNFLIN1 ]
       aGet[ _NBNFLIN1 ]:lValid()
    else
-      if aTmp[ _LIVALIN ]
-         aGet[ _NIVALIN1 ]:lValid()
-      else
-         aGet[ _NPVPLIN1 ]:lValid()
-      end if
+      aGet[ _NIVALIN1 ]:lValid()
+      aGet[ _NPVPLIN1 ]:lValid()
    end if
 
    if aTmp[ _LBNFLIN2 ]
-         aGet[ _NBNFLIN2 ]:lValid()
+      aGet[ _NBNFLIN2 ]:lValid()
    else
       if aTmp[ _LIVALIN ]
          aGet[ _NIVALIN2 ]:lValid()
@@ -5288,7 +5290,6 @@ Static Function lCalcDeta( aTmp, aTmpAlb, aGet, oTotal )
          aGet[ _NPVPLIN6 ]:lValid()
       end if
    end if
-   */
 
    if lActCos()
       aGet[ _LCHGLIN ]:Click( aTmp[ _NPREDIV ] != 0 )
