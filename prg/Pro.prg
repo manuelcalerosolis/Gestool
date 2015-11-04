@@ -58,13 +58,13 @@ FUNCTION Prop( oMenuItem, oWnd )
       Anotamos el movimiento para el navegador
       */
 
-      AddMnuNext( "Propiedades de art韈ulos", ProcName() )
+      AddMnuNext( "Propiedades de art铆culos", ProcName() )
 
    DEFINE SHELL oWndBrw FROM 2, 10 TO 18, 70 ;
       XBROWSE ;
-      TITLE    "Propiedades de art韈ulos" ;
+      TITLE    "Propiedades de art铆culos" ;
       MRU      "Die_Gold_16";
-      PROMPT   "C骴igo",;
+      PROMPT   "C贸digo",;
                "Nombre" ;
       BITMAP   clrTopArchivos ;
       ALIAS    ( dbfProT ) ;
@@ -97,7 +97,7 @@ FUNCTION Prop( oMenuItem, oWnd )
 
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "C骴igo"
+         :cHeader          := "C贸digo"
          :cSortOrder       := "cCodPro"
          :bEditValue       := {|| ( dbfProT )->cCodPro }
          :nWidth           := 80
@@ -126,7 +126,7 @@ FUNCTION Prop( oMenuItem, oWnd )
          NOBORDER ;
          ACTION   ( oWndBrw:RecAdd() );
          ON DROP  ( oWndBrw:RecDup() );
-         TOOLTIP  "(A)馻dir";
+         TOOLTIP  "(A)帽adir";
          BEGIN GROUP;
          HOTKEY   "A";
          LEVEL    ACC_APPD
@@ -242,7 +242,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProT, oWndBrw, bWhen, bValid, nMode )
          oBrw:nMarqueeStyle   := 5
 
          with object ( oBrw:AddCol() )
-            :cHeader          := "C骴igo"
+            :cHeader          := "C贸digo"
             :cSortOrder       := "cCodTbl"
             :bEditValue       := {|| ( dbfTmpProL )->cCodTbl }
             :nWidth           := 160
@@ -505,25 +505,25 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oDlg, lActualizaWeb )
 
    DEFAULT lActualizaWeb   := .f.
 
-   //Controla que no metan una propiedad con el c骴igo o el nombre en blanco
+   //Controla que no metan una propiedad con el c贸digo o el nombre en blanco
 
    if nMode == APPD_MODE
 
       if Empty( aTmp[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ] )
-         MsgStop( "C骴igo no puede estar vac韔" )
+         MsgStop( "C贸digo no puede estar vac铆o" )
          aGet[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ]:SetFocus()
          return nil
       end if
 
       if dbSeekInOrd( aTmp[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ], "CCODPRO", dbfProT )
-         MsgStop( "C骴igo ya existe " + Rtrim( aTmp[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ] ) )
+         MsgStop( "C贸digo ya existe " + Rtrim( aTmp[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ] ) )
          return nil
       end if
 
    end if
 
    if Empty( aTmp[ ( dbfProT )->( FieldPos( "cDesPro" ) ) ] )
-      msgStop( "Nombre no puede estar vac韔" )
+      msgStop( "Nombre no puede estar vac铆o" )
       aGet[ ( dbfProT )->( FieldPos( "cDesPro" ) ) ]:SetFocus()
       return nil
    end if
@@ -568,7 +568,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oDlg, lActualizaWeb )
       Actualizaweb( cCodPrp, lActualizaweb )
 
       /*
-      Termina la transaci髇----------------------------------------------------
+      Termina la transaci贸n----------------------------------------------------
       */
 
       CommitTransaction()
@@ -576,7 +576,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oDlg, lActualizaWeb )
    RECOVER USING oError
 
       RollBackTransaction()
-      msgStop( "Imposible completar la transacci髇" + CRLF + ErrorMessage( oError ) )
+      msgStop( "Imposible completar la transacci贸n" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
    ErrorBlock( oBlock )
@@ -691,12 +691,12 @@ Static Function SaveEdtDet( aTmp, aGet, oBrw, oDlg, nMode, dbfTmpProL )
    if nMode == APPD_MODE
 
       if Empty( aTmp[ ( dbfTmpProL )->( FieldPos( "cCodTbl" ) ) ] )
-         MsgStop( "C骴igo de la propiedad no puede estar vacio" )
+         MsgStop( "C贸digo de la propiedad no puede estar vacio" )
          lErr     := .t.
       end if
 
       if dbSeekInOrd( aTmp[ ( dbfTmpProL )->( FieldPos( "cCodTbl" ) ) ], "cCodTbl", dbfTmpProL )
-         MsgStop( "C骴igo de la propiedad ya existe" )
+         MsgStop( "C贸digo de la propiedad ya existe" )
          lErr     := .t.
       end if
 
@@ -705,7 +705,7 @@ Static Function SaveEdtDet( aTmp, aGet, oBrw, oDlg, nMode, dbfTmpProL )
    if ( nMode == APPD_MODE .or. ( dbfTmpProL )->nBarTbl != aTmp[ ( dbfTmpProL )->( FieldPos( "nBarTbl" ) ) ] ) .and.;
       !Empty( aTmp[ ( dbfTmpProL )->( FieldPos( "nBarTbl" ) ) ] )                                              .and.;
       dbSeekInOrd( aTmp[ ( dbfTmpProL )->( FieldPos( "nBarTbl" ) ) ], "nBarTbl", dbfTmpProL )
-         MsgStop( "N鷐ero para c骴igo de barras ya existe" )
+         MsgStop( "N煤mero para c贸digo de barras ya existe" )
          lErr     := .t.
    end if
 
@@ -775,7 +775,7 @@ FUNCTION brwProp( oGet, oSay )
    local oBrw
    local nOrd     := GetBrwOpt( "BrwProp" )
    local oCbxOrd
-   local aCbxOrd  := { "C骴igo", "Nombre" }
+   local aCbxOrd  := { "C贸digo", "Nombre" }
    local cCbxOrd
    local nLevel   := nLevelUsr( "01015" )
 
@@ -811,7 +811,7 @@ FUNCTION brwProp( oGet, oSay )
       oBrw:cName           := "Browse.Propiedades"
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "C骴igo"
+         :cHeader          := "C贸digo"
          :cSortOrder       := "cCodPro"
          :bEditValue       := {|| ( dbfProT )->cCodPro }
          :nWidth           := 60
@@ -1683,8 +1683,8 @@ FUNCTION brwPrpAct( oGet, oSay, cPrp )
    local oGetNbr
    local cGetNbr
    local oCbxOrd
-   local cCbxOrd     := "C骴igo"
-   local aCbxOrd     := { "C骴igo", "Nombre" }
+   local cCbxOrd     := "C贸digo"
+   local aCbxOrd     := { "C贸digo", "Nombre" }
    local cTmpBrw
    local nOrdTmp
    local oSayText
@@ -1692,7 +1692,7 @@ FUNCTION brwPrpAct( oGet, oSay, cPrp )
    local dbfTmpBrw
 
    if Empty( cPrp )
-      MsgStop( "No hay propiedades seleccionadas para este art韈ulo." )
+      MsgStop( "No hay propiedades seleccionadas para este art铆culo." )
       Return .f.
    end if
 
@@ -1777,7 +1777,7 @@ FUNCTION brwPrpAct( oGet, oSay, cPrp )
       oBrw:lHScroll        := .t.
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "C骴igo"
+         :cHeader          := "C贸digo"
          :cSortOrder       := "cCodTbl"
          :bEditValue       := {|| ( dbfTmpBrw )->cCodTbl }
          :nWidth           := 80
@@ -1867,11 +1867,11 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
    local oGetNbr
    local cGetNbr
    local oCbxOrd
-   local cCbxOrd     := "C骴igo"
-   local aCbxOrd     := { "C骴igo", "Nombre" }
+   local cCbxOrd     := "C贸digo"
+   local aCbxOrd     := { "C贸digo", "Nombre" }
 
    if Empty( cPrp )
-      MsgStop( "No hay propiedades seleccionadas para este art韈ulo." )
+      MsgStop( "No hay propiedades seleccionadas para este art铆culo." )
       Return .f.
    end if
 
@@ -1929,7 +1929,7 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
       oBrw:lHScroll        := .t.
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "C骴igo"
+         :cHeader          := "C贸digo"
          :cSortOrder       := "cCodTbl"
          :bEditValue       := {|| ( dbfProL )->cCodTbl }
          :nWidth           := 80
@@ -2052,8 +2052,8 @@ Static Function aItmTmpBrw()
 
    local aBase := {}
 
-   aAdd( aBase, { "CCODTBL",  "C", 40, 0, "C骴igo de l韓ea de propiedadades"   } )
-   aAdd( aBase, { "CDESTBL",  "C", 30, 0, "Nombre de l韓ea de propiedadades"   } )
+   aAdd( aBase, { "CCODTBL",  "C", 40, 0, "C贸digo de l铆nea de propiedadades"   } )
+   aAdd( aBase, { "CDESTBL",  "C", 30, 0, "Nombre de l铆nea de propiedadades"   } )
 
 return ( aBase )
 
@@ -2237,13 +2237,13 @@ Static Function aPro()
 
    local aBase := {}
 
-   aAdd( aBase, { "cCodPro",   "C", 20, 0, "C骴igo de la propiedad"                 } )
+   aAdd( aBase, { "cCodPro",   "C", 20, 0, "C贸digo de la propiedad"                 } )
    aAdd( aBase, { "cDesPro",   "C", 30, 0, "Nombre de la propiedad"                 } )
-   aAdd( aBase, { "cCodWeb",   "N", 11, 0, "C骴igo de la propiedad en la web"       } )
-   aAdd( aBase, { "lPubInt",   "L",  1, 0, "L骻ico de propiedad en la web"          } )
-   aAdd( aBase, { "lSndDoc",   "L",  1, 0, "L骻ico de propiedad para envio"         } )
+   aAdd( aBase, { "cCodWeb",   "N", 11, 0, "C贸digo de la propiedad en la web"       } )
+   aAdd( aBase, { "lPubInt",   "L",  1, 0, "L贸gico de propiedad en la web"          } )
+   aAdd( aBase, { "lSndDoc",   "L",  1, 0, "L贸gico de propiedad para envio"         } )
    aAdd( aBase, { "cNomInt",   "C", 50, 0, "Nombre de la propiedad en la web"       } )
-   aAdd( aBase, { "lColor",    "L",  1, 0, "L骻ico tipo color"                      } )
+   aAdd( aBase, { "lColor",    "L",  1, 0, "L贸gico tipo color"                      } )
 
 return ( aBase )
 
@@ -2253,13 +2253,13 @@ Function aItmPro()
 
    local aBase := {}
 
-   aAdd( aBase, { "cCodPro",   "C", 20, 0, "C骴igo propiedad"                       } )
-   aAdd( aBase, { "cCodTbl",   "C", 40, 0, "C骴igo de l韓ea de propiedad"           } )
-   aAdd( aBase, { "cDesTbl",   "C", 30, 0, "Nombre de l韓ea de propiedad"           } )
-   aAdd( aBase, { "nOrdTbl",   "N",  4, 0, "N鷐ero de orden para codigos de barras" } )
-   aAdd( aBase, { "nBarTbl",   "C",  4, 0, "C骴igo para codigos de barras"          } )
-   aAdd( aBase, { "cCodWeb",   "N", 11, 0, "C骴igo del producto en la web"          } )
-   aAdd( aBase, { "nColor",    "N", 10, 0, "C骴igo de color"                        } )
+   aAdd( aBase, { "cCodPro",   "C", 20, 0, "C贸digo propiedad"                       } )
+   aAdd( aBase, { "cCodTbl",   "C", 40, 0, "C贸digo de l铆nea de propiedad"           } )
+   aAdd( aBase, { "cDesTbl",   "C", 30, 0, "Nombre de l铆nea de propiedad"           } )
+   aAdd( aBase, { "nOrdTbl",   "N",  4, 0, "N煤mero de orden para codigos de barras" } )
+   aAdd( aBase, { "nBarTbl",   "C",  4, 0, "C贸digo para codigos de barras"          } )
+   aAdd( aBase, { "cCodWeb",   "N", 11, 0, "C贸digo del producto en la web"          } )
+   aAdd( aBase, { "nColor",    "N", 10, 0, "C贸digo de color"                        } )
 
 return ( aBase )
 
@@ -2509,7 +2509,7 @@ FUNCTION brwSelectPropiedad( cPrp, cVal )
    local oError
 
    if Empty( cPrp )
-      MsgStop( "No hay propiedades seleccionadas para este art韈ulo." )
+      MsgStop( "No hay propiedades seleccionadas para este art铆culo." )
       Return .f.
    end if
 
@@ -2579,7 +2579,7 @@ FUNCTION brwSelectPropiedad( cPrp, cVal )
       end with
 
       with object ( oBrw:aCols[ 2 ] )
-         :cHeader       := "C骴igo"
+         :cHeader       := "C贸digo"
          :bEditValue    := {|| aData[ oBrw:nArrayAt, 2 ] }
          :nWidth        := 80
       end with
@@ -2745,7 +2745,11 @@ Function setPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPr
 
    // Montamos los array con las propiedades-----------------------------------
 
-   nTotalCol                     := len( aPropiedadesArticulo2 ) + 1
+   if len( aPropiedadesArticulo2 ) == 0
+      nTotalCol                  := 2
+   else
+      nTotalCol                  := len( aPropiedadesArticulo2 ) + 1
+   end if
 
    aPropertiesTable              := array( nTotalRow, nTotalCol )
 
@@ -2808,10 +2812,10 @@ Function setPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPr
          aPropertiesTable[ n, nCol ]:cCodigo                := cCodArt
          aPropertiesTable[ n, nCol ]:cCodigoPropiedad1      := aPropertiesTable[ n, 1 ]:cCodigoPropiedad1
          aPropertiesTable[ n, nCol ]:cValorPropiedad1       := aPropertiesTable[ n, 1 ]:cValorPropiedad1
-         aPropertiesTable[ n, nCol ]:cCodigoPropiedad2      := hValorPropiedad[ "CodigoPropiedad" ]
-         aPropertiesTable[ n, nCol ]:cValorPropiedad2       := hValorPropiedad[ "RgbPropiedad" ]
-         aPropertiesTable[ n, nCol ]:lColor                 := hValorPropiedad[ "ColorPropiedad" ]
-         aPropertiesTable[ n, nCol ]:nRgb                   := hValorPropiedad[ "RgbPropiedad" ]
+         aPropertiesTable[ n, nCol ]:cCodigoPropiedad2      := Space( 20 )
+         aPropertiesTable[ n, nCol ]:cValorPropiedad2       := Space( 40 )
+         aPropertiesTable[ n, nCol ]:lColor                 := aPropertiesTable[ n, 1 ]:lColor
+         aPropertiesTable[ n, nCol ]:nRgb                   := aPropertiesTable[ n, 1 ]:nRgb
       next
 
    end if
