@@ -335,7 +335,7 @@ METHOD ResourceDetail( nMode ) CLASS LinesDocumentsSales
 
    if !Empty( ::oViewEditDetail )
 
-      ::oViewEditDetail:setTitle( lblTitle( ::oSender:nModeDetail ) + ::oSender:getTextTitle() )
+      ::oViewEditDetail:setTitleDocumento( lblTitle( ::oSender:nModeDetail ) + ::oSender:getTextTitle() )
 
       lResult           := ::oViewEditDetail:Resource( nMode )
 

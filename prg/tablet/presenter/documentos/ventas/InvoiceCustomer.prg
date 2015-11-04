@@ -40,11 +40,11 @@ METHOD New() CLASS InvoiceCustomer
 
    // Vistas--------------------------------------------------------------------
 
-   ::oViewSearchNavigator:setTitle( "Facturas de clientes" )  
+   ::oViewSearchNavigator:setTitleDocumento( "Facturas de clientes" )  
 
-   ::oViewEdit:setTitle( "Factura cliente" )  
+   ::oViewEdit:setTitleDocumento( "Factura cliente" )  
 
-   ::oViewEditResumen:setTitle( "Resumen factura" )
+   ::oViewEditResumen:setTitleDocumento( "Resumen factura" )
 
    // Tipos--------------------------------------------------------------------
 

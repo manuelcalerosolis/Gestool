@@ -34,7 +34,7 @@ METHOD Init( oSender ) CLASS Product
 
    ::oGridProduct                        := ProductViewSearchNavigator():New( self )
    ::oGridProduct:setSelectorMode()
-   ::oGridProduct:setTitle( "Seleccione artículo" )
+   ::oGridProduct:setTitleDocumento( "Seleccione artículo" )
    ::oGridProduct:setDblClickBrowseGeneral( {|| ::oGridProduct:endView() } )
 
    ::setEnviroment()

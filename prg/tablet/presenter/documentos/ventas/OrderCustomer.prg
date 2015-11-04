@@ -35,11 +35,11 @@ METHOD New() CLASS OrderCustomer
 
    // Vistas--------------------------------------------------------------------
 
-   ::oViewSearchNavigator:setTitle( "Pedidos de clientes" )
+   ::oViewSearchNavigator:setTitleDocumento( "Pedidos de clientes" )
 
-   ::oViewEdit:setTitle( "Pedido" )  
+   ::oViewEdit:setTitleDocumento( "Pedido" )  
 
-   ::oViewEditResumen:setTitle( "Resumen pedidos" )
+   ::oViewEditResumen:setTitleDocumento( "Resumen pedidos" )
 
    // Tipos--------------------------------------------------------------------
    

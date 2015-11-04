@@ -23,6 +23,8 @@ CLASS CustomerIncidence FROM Editable
    METHOD onPostGetDocumento()
    METHOD onPreSaveDocumento()   
 
+   METHOD startDialog()          INLINE ( msgAlert( ::oViewEdit:getTitleDocumento() ) )
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -33,9 +35,11 @@ METHOD New( oSender ) CLASS CustomerIncidence
 
    ::nView                 := oSender:nView
 
-   ::oViewEdit             := CustomerIncidenceView():New( self )   
+   ::oViewEdit             := CustomerIncidenceView():New( self ) 
+   ::oViewEdit:setTitleDocumento( "incidencias" )  
 
    ::oViewNavigator        := CustomerIncidenceViewNavigator():New( self )
+   ::oViewNavigator:setTitleDocumento( "Incidencias clientes" )  
 
    ::setEnviroment()
 

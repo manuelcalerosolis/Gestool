@@ -696,7 +696,7 @@ METHOD isResumenVenta() CLASS DocumentsSales
       Return .f.
    end if 
 
-   ::oViewEditResumen:setTitle( ::getTextSummaryDocument() )
+   ::oViewEditResumen:setTitleDocumento( ::getTextSummaryDocument() )
 
 Return ( ::oViewEditResumen:Resource() )
 
