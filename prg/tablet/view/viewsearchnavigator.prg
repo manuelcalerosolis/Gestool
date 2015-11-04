@@ -48,8 +48,6 @@ METHOD New( oSender ) CLASS ViewSearchNavigator
 
    ::setDblClickBrowseGeneral( {|| if( ::oSender:lAlowEdit, ::oSender:Edit(), ::oSender:Zoom() ), ::refreshBrowse() } )
 
-   ::setTitle()
-
    ::setItemsBusqueda()
 
 Return ( self )

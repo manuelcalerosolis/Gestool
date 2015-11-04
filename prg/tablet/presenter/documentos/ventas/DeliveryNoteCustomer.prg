@@ -36,11 +36,11 @@ METHOD New() CLASS DeliveryNoteCustomer
 
   // Vistas--------------------------------------------------------------------
 
-   ::oViewSearchNavigator:setTitle( "Albaranes de clientes" )  
+   ::oViewSearchNavigator:setTitleDocumento( "Albaranes de clientes" )  
 
-   ::oViewEdit:setTitle( "Albarán" )  
+   ::oViewEdit:setTitleDocumento( "Albarán" )  
 
-   ::oViewEditResumen:setTitle( "Resumen albarán" )
+   ::oViewEditResumen:setTitleDocumento( "Resumen albarán" )
 
    // Tipos--------------------------------------------------------------------
 

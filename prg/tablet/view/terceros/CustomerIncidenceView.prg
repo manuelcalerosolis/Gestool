@@ -18,7 +18,7 @@ CLASS CustomerIncidenceView FROM ViewBase
 
    METHOD defineCombo()
 
-   METHOD getTextoTipoDocumento()      INLINE ( lblTitle( ::getMode() ) + "incidencia" )    
+   // METHOD getTextoTipoDocumento()      INLINE ( lblTitle( ::getMode() ) + "incidencia" )    
 
 END CLASS
 
