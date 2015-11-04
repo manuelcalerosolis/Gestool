@@ -7194,6 +7194,9 @@ FUNCTION rxPedPrv( cPath, cDriver )
       ( cPedPrvT )->( ordCondSet( "!Deleted() .and. nEstado != 3", {|| !Deleted() .and. Field->nEstado != 3 } ) )
       ( cPedPrvT )->( ordCreate( cPath + "PedProvL.Cdx", "cStkFast", "cRef + cAlmLin", {|| Field->cRef + Field->cAlmLin }, ) )
 
+      ( cPedPrvT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT )->( ordCreate( cPath + "PedProvL.Cdx", "cPedRef", "cRef + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote", {|| Field->cRef + Field->cCodPr1 + Field->cCodPr2 + Field->cValPr1 + Field->cValPr2 + Field->cLote } ) )
+
       ( cPedPrvT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de proveedores" )

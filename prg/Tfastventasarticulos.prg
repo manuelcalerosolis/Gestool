@@ -108,6 +108,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD getNumeroAlbaranProveedor()
    METHOD getFechaAlbaranProveedor()
    METHOD getEstadoAlbaranProveedor()
+   METHOD geFechaPedidoProveedor()
 
 END CLASS
 
@@ -2216,7 +2217,7 @@ METHOD appendStockArticulo( aStockArticulo )
          ::oDbf:cCodPr1    := sStock:cCodigoPropiedad1     
          ::oDbf:cCodPr2    := sStock:cCodigoPropiedad2     
          ::oDbf:cValPr1    := sStock:cValorPropiedad1      
-         ::oDbf:cValPr2    := sStock:cValorPropiedad1      
+         ::oDbf:cValPr2    := sStock:cValorPropiedad2      
          ::oDbf:cLote      := sStock:cLote                 
          ::oDbf:dFecCad    := sStock:dFechaCaducidad       
          ::oDbf:cNumSer    := sStock:cNumeroSerie  
@@ -3107,6 +3108,34 @@ METHOD getEstadoAlbaranProveedor() CLASS TFastVentasArticulos
    ::oAlbPrvL:GoTo( nRec )
 
 Return ( cEstado )
+
+//---------------------------------------------------------------------------//
+
+METHOD geFechaPedidoProveedor() CLASS TFastVentasArticulos
+
+   local nRec
+   local nOrdAnt
+   local cClave   := ""
+   local dFecha   := ctod( "" )
+
+   cClave         += ::oDbf:cCodArt
+   cClave         += ::oDbf:cCodPr1
+   cClave         += ::oDbf:cCodPr2
+   cClave         += ::oDbf:cValPr1
+   cClave         += ::oDbf:cValPr2
+   cClave         += ::oDbf:cLote
+
+   nRec           := ::oPedPrvL:Recno()
+   nOrdAnt        := ::oPedPrvL:OrdSetFocus( "cPedRef" )
+
+   if ::oPedPrvL:Seek( cClave )
+      dFecha     := dFecPedPrv( ::oPedPrvL:cSerPed + Str( ::oPedPrvL:nNumPed ) + ::oPedPrvL:cSufPed, ::oPedPrvT:cAlias )
+   end if
+
+   ::oPedPrvL:OrdSetFocus( nOrdAnt )
+   ::oPedPrvL:GoTo( nRec )
+
+Return ( dFecha )
 
 //---------------------------------------------------------------------------//
 
