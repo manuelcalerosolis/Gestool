@@ -228,20 +228,20 @@ METHOD defineCliente( nRow ) CLASS ViewEdit
                                                 "nHeight"   => 23,;
                                                 "bWhen"     => {|| ::oSender:lNotZoomMode() } } )
 
-   TGridImage():Build(  {  "nTop"      => ( nRow - 5 ),;
+   TGridImage():Build(  {  "nTop"      => nRow,;
                            "nLeft"     => {|| GridWidth( 10, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "user1_64",;
+                           "cResName"  => "edit_56",;
                            "bLClicked" => {|| ::oSender:onClickRotor() },;
                            "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
                            "oWnd"      => ::oDlg } )
 
-   TGridImage():Build(  {  "nTop"      => ( nRow - 5 ),;
+   TGridImage():Build(  {  "nTop"      => nRow,;
                            "nLeft"     => {|| GridWidth( 11, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_about_64",;
+                           "cResName"  => "view_56",;
                            "bLClicked" => {|| msgInfo( "here!" ) },;
                            "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
                            "oWnd"      => ::oDlg } )
