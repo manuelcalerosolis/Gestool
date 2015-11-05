@@ -519,6 +519,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       oBandera          := TBandera():New()
 
+      CodigosPostales():GetInstance():OpenFiles()
+
       /*
       Numeros de serie---------------------------------------------------------
       */
@@ -586,6 +588,8 @@ Static Function CloseFiles()
    end if
 
    D():DeleteView( nView )
+
+   CodigosPostales():GetInstance():CloseFiles()
 
    oBandera    := nil
    oStock      := nil
@@ -1414,7 +1418,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
       REDEFINE GET aGet[ _CPOSPRV ] VAR aTmp[ _CPOSPRV ] ;
          ID       104 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         COLOR    CLR_GET ;
+         VALID    ( CodigosPostales():GetInstance():validCodigoPostal() );
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CCODALM ] VAR aTmp[ _CCODALM ] ;
@@ -2601,6 +2605,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
          OF       oDlg ;
          CANCEL ;
          ACTION   ( If( ExitNoSave( nMode, dbfTmp ), ( oDlg:end() ), ) )
+
+   CodigosPostales():GetInstance():setBinding( { "CodigoPostal" => aGet[ _CPOSPRV ], "Poblacion" => aGet[ _CPOBPRV ], "Provincia" => aGet[ _CPROVPROV ] } )
 
    if nMode != ZOOM_MODE
       oFld:aDialogs[1]:AddFastKey( VK_F2, {|| AppDeta( oBrwLin, bEdtDet, aTmp) } )
@@ -4815,8 +4821,8 @@ STATIC FUNCTION loaPrv( aGet, aTmp, dbf, nMode, oSay, oTlfPrv )
          aGet[_CPOBPRV]:cText( (D():Proveedores( nView ))->POBLACION )
       endif
 
-      if Empty( aGet[_CPROVPROV]:varGet() ) .or. lChgCodCli
-         aGet[_CPROVPROV]:cText( (D():Proveedores( nView ))->PROVINCIA )
+      if Empty( aGet[ _CPROVPROV ]:varGet() ) .or. lChgCodCli
+         aGet[ _CPROVPROV ]:cText( (D():Proveedores( nView ))->PROVINCIA )
       endif
 
       if Empty( aGet[_CPOSPRV]:varGet() ) .or. lChgCodCli
