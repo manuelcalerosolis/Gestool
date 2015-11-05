@@ -3160,45 +3160,49 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 2 ]
 
-      REDEFINE GET   aGet[ _NBNFLIN1 ] ;
-            VAR      aTmp[ _NBNFLIN1 ] ;
-            ID       510 ;
-            SPINNER ;
-            WHEN     ( aTmp[ _LBNFLIN1 ] .AND. nMode != ZOOM_MODE ) ;
-            PICTURE  "@E 999.99" ;
-            OF       oFld:aDialogs[ 2 ]
+      REDEFINE GET aGet[ _NBNFLIN1 ] ;
+         VAR      aTmp[ _NBNFLIN1 ] ;
+         ID       510 ;
+         SPINNER ;
+         WHEN     ( aTmp[ _LBNFLIN1 ] .and. nMode != ZOOM_MODE ) ;
+         PICTURE  "@E 999.99" ;
+         OF       oFld:aDialogs[ 2 ]
 
-      aGet[ _NBNFLIN1 ]:bValid   := {|| lCalPre( oBeneficioSobre[ 1 ]:nAt <= 1, aTmp[ _NPRECOM ], aTmp[ _LBNFLIN1 ], aTmp[ _NBNFLIN1 ], aTmp[ _NIVA ], aGet[ _NPVPLIN1 ], aGet[ _NIVALIN1 ], nDinDiv ) }
-      aGet[ _NBNFLIN1 ]:bChange  := {|| lCalPre( oBeneficioSobre[ 1 ]:nAt <= 1, aTmp[ _NPRECOM ], aTmp[ _LBNFLIN1 ], aTmp[ _NBNFLIN1 ], aTmp[ _NIVA ], aGet[ _NPVPLIN1 ], aGet[ _NIVALIN1 ], nDinDiv ) }
+      aGet[ _NBNFLIN1 ]:bChange     := {|| aGet[ _NBNFLIN1 ]:lValid() }
+      aGet[ _NBNFLIN1 ]:bValid      := {|| lCalPre( oBeneficioSobre[ 1 ]:nAt <= 1, aTmp[ _NPRECOM ], aTmp[ _LBNFLIN1 ], aTmp[ _NBNFLIN1 ], aTmp[ _NIVA ], aGet[ _NPVPLIN1 ], aGet[ _NIVALIN1 ], nDinDiv ) }
 
-      REDEFINE COMBOBOX oBeneficioSobre[ 1 ] VAR cBeneficioSobre[ 1 ] ;
-            ITEMS    aBeneficioSobre ;
-            ID       520 ;
-            WHEN     ( nMode != ZOOM_MODE ) ;
-            ON CHANGE( if( aTmp[ _LBNFLIN1 ], aGet[ _NBNFLIN1 ]:lValid(), aGet[ _NPVPLIN1 ]:lValid() ) );
-            OF       oFld:aDialogs[ 2 ]
+      REDEFINE COMBOBOX oBeneficioSobre[ 1 ] ;
+         VAR      cBeneficioSobre[ 1 ] ;
+         ITEMS    aBeneficioSobre ;
+         ID       520 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[ 2 ]
+
+      oBeneficioSobre[ 1 ]:bChange  := {|| if( aTmp[ _LBNFLIN1 ], aGet[ _NBNFLIN1 ]:lValid(), aGet[ _NPVPLIN1 ]:lValid() ) }
 
       REDEFINE GET   aGet[ _NPVPLIN1 ] ;
-            VAR      aTmp[ _NPVPLIN1 ] ;
-            ID       530 ;
-            ON CHANGE( ::lValid() ) ;
-            WHEN     ( !aTmp[ _LIVALIN ] .and. nMode != ZOOM_MODE ) ;
-            VALID    ( CalBnfPts( oBeneficioSobre[ 1 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NPVPLIN1 ], aGet[ _NBNFLIN1 ], aTmp[ _NIVA ], aGet[ _NIVALIN1 ], nDinDiv ) );
-            PICTURE  cPinDiv ;
-            OF       oFld:aDialogs[ 2 ]
+         VAR         aTmp[ _NPVPLIN1 ] ;
+         ID          530 ;
+         WHEN        ( !aTmp[ _LIVALIN ] .and. nMode != ZOOM_MODE ) ;
+         PICTURE     cPinDiv ;
+         OF          oFld:aDialogs[ 2 ]
+
+      aGet[ _NPVPLIN1 ]:bChange  := {|| aGet[ _NPVPLIN1 ]:lValid() }
+      aGet[ _NPVPLIN1 ]:bValid   := {|| CalBnfPts( oBeneficioSobre[ 1 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NPVPLIN1 ], aGet[ _NBNFLIN1 ], aTmp[ _NIVA ], aGet[ _NIVALIN1 ], nDinDiv ) }
 
       REDEFINE GET   aGet[ _NIVALIN1 ] ;
-            VAR      aTmp[ _NIVALIN1 ] ;
-            ID       540 ;
-            ON CHANGE( ::lValid() ) ;
-            WHEN     ( aTmp[ _LIVALIN ] .and. nMode != ZOOM_MODE ) ;
-            VALID    ( CalBnfIva( oBeneficioSobre[ 1 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NIVALIN1 ], aGet[ _NBNFLIN1 ], aTmp[ _NIVA ], aGet[ _NPVPLIN1 ], nDinDiv ) );
-            PICTURE  cPinDiv ;
-            OF       oFld:aDialogs[ 2 ]
+         VAR         aTmp[ _NIVALIN1 ] ;
+         ID          540 ;
+         WHEN        ( aTmp[ _LIVALIN ] .and. nMode != ZOOM_MODE ) ;
+         PICTURE     cPinDiv ;
+         OF          oFld:aDialogs[ 2 ]
+
+      aGet[ _NIVALIN1 ]:bChange  := {|| aGet[ _NIVALIN1 ]:lValid() }
+      aGet[ _NIVALIN1 ]:bValid   := {|| CalBnfIva( oBeneficioSobre[ 1 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NIVALIN1 ], aGet[ _NBNFLIN1 ], aTmp[ _NIVA ], aGet[ _NPVPLIN1 ], nDinDiv ) }
 
       REDEFINE CHECKBOX aGet[ _LBNFLIN2 ] ;
             VAR      aTmp[ _LBNFLIN2 ] ;
-            ID       IDOK ;
+            ID       550 ;
             WHEN     ( nMode != ZOOM_MODE ) ;
             OF       oFld:aDialogs[ 2 ]
 
@@ -3206,38 +3210,42 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
             VAR      aTmp[ _NBNFLIN2 ] ;
             ID       560 ;
             SPINNER ;
-            ON CHANGE( ::lValid() ) ;
             WHEN     ( aTmp[ _LBNFLIN2 ] .and. nMode != ZOOM_MODE ) ;
             PICTURE  "@E 999.99" ;
             OF       oFld:aDialogs[ 2 ]
             
-            // VALID    ( lCalPre( oBeneficioSobre[ 2 ]:nAt <= 1, aTmp[ _NPRECOM ], aTmp[ _LBNFLIN2 ], aTmp[ _NBNFLIN2 ], aTmp[ _NIVA ], aGet[ _NPVPLIN2 ], aGet[ _NIVALIN2 ], nDinDiv ) ) ;
+      aGet[ _NBNFLIN2 ]:bChange  := {|| aGet[ _NBNFLIN2 ]:lValid() }
+      aGet[ _NBNFLIN2 ]:bValid   := {|| lCalPre( oBeneficioSobre[ 2 ]:nAt <= 1, aTmp[ _NPRECOM ], aTmp[ _LBNFLIN2 ], aTmp[ _NBNFLIN2 ], aTmp[ _NIVA ], aGet[ _NPVPLIN2 ], aGet[ _NIVALIN2 ], nDinDiv ) }
 
       REDEFINE COMBOBOX oBeneficioSobre[ 2 ] ;
             VAR      cBeneficioSobre[ 2 ] ;
             ITEMS    aBeneficioSobre ;
             ID       570 ;
             WHEN     ( nMode != ZOOM_MODE ) ;
-            ON CHANGE( if( aTmp[ _LBNFLIN2 ], aGet[ _NBNFLIN2 ]:lValid(), aGet[ _NPVPLIN2 ]:lValid() ) );
             OF       oFld:aDialogs[ 2 ]
+
+      oBeneficioSobre[ 2 ]:bChange  := {|| if( aTmp[ _LBNFLIN2 ], aGet[ _NBNFLIN2 ]:lValid(), aGet[ _NPVPLIN2 ]:lValid() ) }
 
       REDEFINE GET   aGet[ _NPVPLIN2 ] ;
             VAR      aTmp[ _NPVPLIN2 ] ;
             ID       580 ;
-            ON CHANGE( ::lValid() ) ;
             WHEN     ( !aTmp[ _LIVALIN ] .and. nMode != ZOOM_MODE ) ;
-            VALID    ( CalBnfPts( oBeneficioSobre[ 2 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NPVPLIN2 ], aGet[ _NBNFLIN2 ], aTmp[ _NIVA ], aGet[ _NIVALIN2 ], nDinDiv ) );
             PICTURE  cPinDiv ;
             OF       oFld:aDialogs[ 2 ]
+
+      aGet[ _NPVPLIN2 ]:bChange  := {|| aGet[ _NPVPLIN2 ]:lValid() }
+      aGet[ _NPVPLIN2 ]:bValid   := {|| CalBnfPts( oBeneficioSobre[ 2 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NPVPLIN2 ], aGet[ _NBNFLIN2 ], aTmp[ _NIVA ], aGet[ _NIVALIN2 ], nDinDiv ) }
 
       REDEFINE GET   aGet[ _NIVALIN2 ] ;
             VAR      aTmp[ _NIVALIN2 ] ;
             ID       590 ;
             ON CHANGE( ::lValid() ) ;
             WHEN     ( aTmp[ _LIVALIN ] .and. nMode != ZOOM_MODE ) ;
-            VALID    ( CalBnfIva( oBeneficioSobre[ 2 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NIVALIN2 ], aGet[ _NBNFLIN2 ], aTmp[ _NIVA ], aGet[ _NPVPLIN2 ], nDinDiv ) );
             PICTURE  cPinDiv ;
             OF       oFld:aDialogs[ 2 ]
+
+      aGet[ _NIVALIN2 ]:bChange     := {|| aGet[ _NIVALIN2 ]:lValid() }
+      aGet[ _NIVALIN2 ]:bValid      := {|| CalBnfIva( oBeneficioSobre[ 2 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NIVALIN2 ], aGet[ _NBNFLIN2 ], aTmp[ _NIVA ], aGet[ _NPVPLIN2 ], nDinDiv ) }
 
       REDEFINE CHECKBOX aGet[ _LBNFLIN3 ] ;
             VAR      aTmp[ _LBNFLIN3 ] ;
@@ -3249,11 +3257,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
             VAR      aTmp[ _NBNFLIN3 ] ;
             ID       610 ;
             SPINNER ;
-            ON CHANGE( ::lValid() ) ;
             WHEN     ( aTmp[ _LBNFLIN3 ] .AND. nMode != ZOOM_MODE ) ;
-            VALID    ( lCalPre( oBeneficioSobre[ 3 ]:nAt <= 1, aTmp[ _NPRECOM ], aTmp[ _LBNFLIN3 ], aTmp[ _NBNFLIN3 ], aTmp[ _NIVA ], aGet[ _NPVPLIN3 ], aGet[ _NIVALIN3 ], nDinDiv ) ) ;
             PICTURE  "@E 999.99" ;
             OF       oFld:aDialogs[ 2 ]
+
+      aGet[ _NBNFLIN3 ]:bChange  := {|| aGet[ _NBNFLIN3 ]:lValid() }
+      aGet[ _NBNFLIN3 ]:bValid   := {|| lCalPre( oBeneficioSobre[ 3 ]:nAt <= 1, aTmp[ _NPRECOM ], aTmp[ _LBNFLIN3 ], aTmp[ _NBNFLIN3 ], aTmp[ _NIVA ], aGet[ _NPVPLIN3 ], aGet[ _NIVALIN3 ], nDinDiv ) }
 
       REDEFINE COMBOBOX oBeneficioSobre[ 3 ] VAR cBeneficioSobre[ 3 ] ;
             ITEMS    aBeneficioSobre ;
@@ -3265,20 +3274,22 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
       REDEFINE GET   aGet[ _NPVPLIN3 ] ;
             VAR      aTmp[ _NPVPLIN3 ] ;
             ID       630 ;
-            ON CHANGE( ::lValid() ) ;
             WHEN     ( !aTmp[ _LIVALIN ] .and. nMode != ZOOM_MODE ) ;
-            VALID    ( CalBnfPts( oBeneficioSobre[ 3 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NPVPLIN3 ], aGet[ _NBNFLIN3 ], aTmp[ _NIVA ], aGet[ _NIVALIN3 ], nDinDiv ) );
             PICTURE  cPinDiv ;
             OF       oFld:aDialogs[ 2 ]
+
+      aGet[ _NPVPLIN3 ]:bChange  := {|| aGet[ _NPVPLIN3 ]:lValid() }
+      aGet[ _NPVPLIN3 ]:bValid   := {|| CalBnfPts( oBeneficioSobre[ 3 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NPVPLIN3 ], aGet[ _NBNFLIN3 ], aTmp[ _NIVA ], aGet[ _NIVALIN3 ], nDinDiv ) }
 
       REDEFINE GET   aGet[ _NIVALIN3 ] ;
             VAR      aTmp[ _NIVALIN3 ] ;
             ID       640 ;
-            ON CHANGE( ::lValid() ) ;
             WHEN     ( aTmp[ _LIVALIN ] .and. nMode != ZOOM_MODE ) ;
-            VALID    ( CalBnfIva( oBeneficioSobre[ 3 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NIVALIN3 ], aGet[ _NBNFLIN3 ], aTmp[ _NIVA ], aGet[ _NPVPLIN3 ], nDinDiv ) );
             PICTURE  cPinDiv ;
             OF       oFld:aDialogs[ 2 ]
+
+      aGet[ _NIVALIN3 ]:bChange  := {|| aGet[ _NIVALIN3 ]:lValid()  }
+      aGet[ _NIVALIN3 ]:bValid   := {|| CalBnfIva( oBeneficioSobre[ 3 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NIVALIN3 ], aGet[ _NBNFLIN3 ], aTmp[ _NIVA ], aGet[ _NPVPLIN3 ], nDinDiv ) }
 
       REDEFINE CHECKBOX aGet[ _LBNFLIN4 ] ;
             VAR      aTmp[ _LBNFLIN4 ] ;
@@ -3290,36 +3301,41 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
             VAR      aTmp[ _NBNFLIN4 ] ;
             ID       660 ;
             SPINNER ;
-            ON CHANGE( ::lValid() ) ;
             WHEN     ( aTmp[ _LBNFLIN4 ] .AND. nMode != ZOOM_MODE ) ;
-            VALID    ( lCalPre( oBeneficioSobre[ 4 ]:nAt <= 1, aTmp[ _NPRECOM ], aTmp[ _LBNFLIN4 ], aTmp[ _NBNFLIN4 ], aTmp[ _NIVA ], aGet[ _NPVPLIN4 ], aGet[ _NIVALIN4 ], nDinDiv ) ) ;
             PICTURE  "@E 999.99" ;
             OF       oFld:aDialogs[ 2 ]
 
-      REDEFINE COMBOBOX oBeneficioSobre[ 4 ] VAR cBeneficioSobre[ 4 ] ;
+      aGet[ _NBNFLIN4 ]:bChange  := {|| aGet[ _NBNFLIN4 ]:lValid() }
+      aGet[ _NBNFLIN4 ]:bValid   := {|| lCalPre( oBeneficioSobre[ 4 ]:nAt <= 1, aTmp[ _NPRECOM ], aTmp[ _LBNFLIN4 ], aTmp[ _NBNFLIN4 ], aTmp[ _NIVA ], aGet[ _NPVPLIN4 ], aGet[ _NIVALIN4 ], nDinDiv ) }
+
+      REDEFINE COMBOBOX oBeneficioSobre[ 4 ] ;
+            VAR      cBeneficioSobre[ 4 ] ;
             ITEMS    aBeneficioSobre ;
             ID       670 ;
             WHEN     ( nMode != ZOOM_MODE ) ;
-            ON CHANGE( if( aTmp[ _LBNFLIN4 ], aGet[ _NBNFLIN4 ]:lValid(), aGet[ _NPVPLIN4 ]:lValid() ) );
             OF       oFld:aDialogs[ 2 ]
+
+      oBeneficioSobre[ 4 ]:bChange  := {|| if( aTmp[ _LBNFLIN4 ], aGet[ _NBNFLIN4 ]:lValid(), aGet[ _NPVPLIN4 ]:lValid() ) }
 
       REDEFINE GET   aGet[ _NPVPLIN4 ] ;
             VAR      aTmp[ _NPVPLIN4 ] ;
             ID       680 ;
-            ON CHANGE( ::lValid() ) ;
             WHEN     ( !aTmp[ _LIVALIN ] .and. nMode != ZOOM_MODE ) ;
-            VALID    ( CalBnfPts( oBeneficioSobre[ 4 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NPVPLIN4 ], aGet[ _NBNFLIN4 ], aTmp[ _NIVA ], aGet[ _NIVALIN4 ], nDinDiv ) );
             PICTURE  cPinDiv ;
             OF       oFld:aDialogs[ 2 ]
+
+      aGet[ _NPVPLIN4 ]:bChange  := {|| aGet[ _NPVPLIN4 ]:lValid()  }
+      aGet[ _NPVPLIN4 ]:bValid   := {|| CalBnfPts( oBeneficioSobre[ 4 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NPVPLIN4 ], aGet[ _NBNFLIN4 ], aTmp[ _NIVA ], aGet[ _NIVALIN4 ], nDinDiv ) }
 
       REDEFINE GET   aGet[ _NIVALIN4 ] ;
             VAR      aTmp[ _NIVALIN4 ] ;
             ID       690 ;
-            ON CHANGE( ::lValid() ) ;
             WHEN     ( aTmp[ _LIVALIN ] .and. nMode != ZOOM_MODE ) ;
-            VALID    ( CalBnfIva( oBeneficioSobre[ 4 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NIVALIN4 ], aGet[ _NBNFLIN4 ], aTmp[ _NIVA ], aGet[ _NPVPLIN4 ], nDinDiv ) );
             PICTURE  cPinDiv ;
             OF       oFld:aDialogs[ 2 ]
+
+      aGet[ _NIVALIN4 ]:bChange  := {|| aGet[ _NIVALIN4 ]:lValid() }
+      aGet[ _NIVALIN4 ]:bValid   := {|| CalBnfIva( oBeneficioSobre[ 4 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NIVALIN4 ], aGet[ _NBNFLIN4 ], aTmp[ _NIVA ], aGet[ _NPVPLIN4 ], nDinDiv ) }
 
       REDEFINE CHECKBOX aGet[ _LBNFLIN5 ] ;
             VAR      aTmp[ _LBNFLIN5 ] ;
@@ -3331,36 +3347,41 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
             VAR      aTmp[ _NBNFLIN5 ] ;
             ID       710 ;
             SPINNER ;
-            ON CHANGE( ::lValid() ) ;
             WHEN     ( aTmp[ _LBNFLIN5 ] .AND. nMode != ZOOM_MODE ) ;
-            VALID    ( lCalPre( oBeneficioSobre[ 5 ]:nAt <= 1, aTmp[ _NPRECOM ], aTmp[ _LBNFLIN5 ], aTmp[ _NBNFLIN5 ], aTmp[ _NIVA ], aGet[ _NPVPLIN5 ], aGet[ _NIVALIN5 ], nDinDiv ) ) ;
             PICTURE  "@E 999.99" ;
             OF       oFld:aDialogs[ 2 ]
 
-      REDEFINE COMBOBOX oBeneficioSobre[ 5 ] VAR cBeneficioSobre[ 5 ] ;
+      aGet[ _NBNFLIN5 ]:bChange  := {|| aGet[ _NBNFLIN5 ]:lValid() }
+      aGet[ _NBNFLIN5 ]:bValid   := {|| lCalPre( oBeneficioSobre[ 5 ]:nAt <= 1, aTmp[ _NPRECOM ], aTmp[ _LBNFLIN5 ], aTmp[ _NBNFLIN5 ], aTmp[ _NIVA ], aGet[ _NPVPLIN5 ], aGet[ _NIVALIN5 ], nDinDiv ) }
+
+      REDEFINE COMBOBOX oBeneficioSobre[ 5 ] ;
+            VAR      cBeneficioSobre[ 5 ] ;
             ITEMS    aBeneficioSobre ;
             ID       720 ;
             WHEN     ( nMode != ZOOM_MODE ) ;
-            ON CHANGE( if( aTmp[ _LBNFLIN5 ], aGet[ _NBNFLIN5 ]:lValid(), aGet[ _NPVPLIN5 ]:lValid() ) );
             OF       oFld:aDialogs[ 2 ]
+
+      oBeneficioSobre[ 5 ]:bChange  := {|| if( aTmp[ _LBNFLIN5 ], aGet[ _NBNFLIN5 ]:lValid(), aGet[ _NPVPLIN5 ]:lValid() ) }
 
       REDEFINE GET   aGet[ _NPVPLIN5 ] ;
             VAR      aTmp[ _NPVPLIN5 ] ;
             ID       730 ;
-            ON CHANGE( ::lValid() ) ;
             WHEN     ( !aTmp[ _LIVALIN ] .and. nMode != ZOOM_MODE ) ;
-            VALID    ( CalBnfPts( oBeneficioSobre[ 5 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NPVPLIN5 ], aGet[ _NBNFLIN5 ], aTmp[ _NIVA ], aGet[ _NIVALIN5 ], nDinDiv ) );
             PICTURE  cPinDiv ;
             OF       oFld:aDialogs[ 2 ]
+
+      aGet[ _NPVPLIN5 ]:bChange  := {|| aGet[ _NPVPLIN5 ]:lValid() }
+      aGet[ _NPVPLIN5 ]:bValid   := {|| CalBnfPts( oBeneficioSobre[ 5 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NPVPLIN5 ], aGet[ _NBNFLIN5 ], aTmp[ _NIVA ], aGet[ _NIVALIN5 ], nDinDiv ) }
 
       REDEFINE GET   aGet[ _NIVALIN5 ] ;
             VAR      aTmp[ _NIVALIN5 ] ;
             ID       740 ;
-            ON CHANGE( ::lValid() ) ;
             WHEN     ( aTmp[ _LIVALIN ] .and. nMode != ZOOM_MODE ) ;
-            VALID    ( CalBnfIva( oBeneficioSobre[ 5 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NIVALIN5 ], aGet[ _NBNFLIN5 ], aTmp[ _NIVA ], aGet[ _NPVPLIN5 ], nDinDiv ) );
             PICTURE  cPinDiv ;
             OF       oFld:aDialogs[ 2 ]
+
+      aGet[ _NIVALIN5 ]:bChange  := {|| aGet[ _NIVALIN5 ]:lValid() }
+      aGet[ _NIVALIN5 ]:bValid   := {|| CalBnfIva( oBeneficioSobre[ 5 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NIVALIN5 ], aGet[ _NBNFLIN5 ], aTmp[ _NIVA ], aGet[ _NPVPLIN5 ], nDinDiv ) }
 
       REDEFINE CHECKBOX aGet[ _LBNFLIN6 ] ;
             VAR      aTmp[ _LBNFLIN6 ] ;
@@ -3374,34 +3395,40 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
             SPINNER ;
             ON CHANGE( ::lValid() ) ;
             WHEN     ( aTmp[ _LBNFLIN6 ] .AND. nMode != ZOOM_MODE ) ;
-            VALID    ( lCalPre( oBeneficioSobre[ 6 ]:nAt <= 1, aTmp[ _NPRECOM ], aTmp[ _LBNFLIN6 ], aTmp[ _NBNFLIN6 ], aTmp[ _NIVA ], aGet[ _NPVPLIN6 ], aGet[ _NIVALIN6 ], nDinDiv ) ) ;
             PICTURE  "@E 999.99" ;
             OF       oFld:aDialogs[ 2 ]
 
-      REDEFINE COMBOBOX oBeneficioSobre[ 6 ] VAR cBeneficioSobre[ 6 ] ;
+      aGet[ _NBNFLIN6 ]:bWhen    := {|| aGet[ _NBNFLIN6 ]:lValid() }
+      aGet[ _NBNFLIN6 ]:bValid   := {|| lCalPre( oBeneficioSobre[ 6 ]:nAt <= 1, aTmp[ _NPRECOM ], aTmp[ _LBNFLIN6 ], aTmp[ _NBNFLIN6 ], aTmp[ _NIVA ], aGet[ _NPVPLIN6 ], aGet[ _NIVALIN6 ], nDinDiv ) }
+
+      REDEFINE COMBOBOX oBeneficioSobre[ 6 ] ;
+            VAR      cBeneficioSobre[ 6 ] ;
             ITEMS    aBeneficioSobre ;
             ID       770 ;
             WHEN     ( nMode != ZOOM_MODE ) ;
-            ON CHANGE( if( aTmp[ _LBNFLIN6 ], aGet[ _NBNFLIN6 ]:lValid(), aGet[ _NPVPLIN6 ]:lValid() ) );
             OF       oFld:aDialogs[ 2 ]
+
+      oBeneficioSobre[ 6 ]:bChange  := {|| if( aTmp[ _LBNFLIN6 ], aGet[ _NBNFLIN6 ]:lValid(), aGet[ _NPVPLIN6 ]:lValid() ) }
 
       REDEFINE GET   aGet[ _NPVPLIN6 ] ;
             VAR      aTmp[ _NPVPLIN6 ] ;
             ID       780 ;
-            ON CHANGE( ::lValid() ) ;
             WHEN     ( !aTmp[ _LIVALIN ] .and. nMode != ZOOM_MODE ) ;
-            VALID    ( CalBnfPts( oBeneficioSobre[ 6 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NPVPLIN6 ], aGet[ _NBNFLIN6 ], aTmp[ _NIVA ], aGet[ _NIVALIN6 ], nDinDiv ) );
             PICTURE  cPinDiv ;
             OF       oFld:aDialogs[ 2 ]
+
+      aGet[ _NPVPLIN6 ]:bChange  := {|| aGet[ _NPVPLIN6 ]:lValid() }
+      aGet[ _NPVPLIN6 ]:bValid   := {|| CalBnfPts( oBeneficioSobre[ 6 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NPVPLIN6 ], aGet[ _NBNFLIN6 ], aTmp[ _NIVA ], aGet[ _NIVALIN6 ], nDinDiv ) }
 
       REDEFINE GET   aGet[ _NIVALIN6 ] ;
             VAR      aTmp[ _NIVALIN6 ] ;
             ID       790 ;
-            ON CHANGE( ::lValid() ) ;
             WHEN     ( aTmp[ _LIVALIN ] .and. nMode != ZOOM_MODE ) ;
-            VALID    ( CalBnfIva( oBeneficioSobre[ 6 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NIVALIN6 ], aGet[ _NBNFLIN6 ], aTmp[ _NIVA ], aGet[ _NPVPLIN6 ], nDinDiv ) );
             PICTURE  cPinDiv ;
             OF       oFld:aDialogs[ 2 ]
+
+      aGet[ _NIVALIN6 ]:bChange  := {|| aGet[ _NIVALIN6 ]:lValid() }
+      aGet[ _NIVALIN6 ]:bValid   := {|| CalBnfIva( oBeneficioSobre[ 6 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NIVALIN6 ], aGet[ _NBNFLIN6 ], aTmp[ _NIVA ], aGet[ _NPVPLIN6 ], nDinDiv ) }
 
       /*
       Control de stock
@@ -3409,22 +3436,22 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
       */
 
       REDEFINE RADIO aGet[ _NCTLSTK ] ;
-         VAR      aTmp[ _NCTLSTK ] ;
-         ID       350, 351, 352 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[ 2 ]
+            VAR      aTmp[ _NCTLSTK ] ;
+            ID       350, 351, 352 ;
+            WHEN     ( nMode != ZOOM_MODE ) ;
+            OF       oFld:aDialogs[ 2 ]
 
       REDEFINE CHECKBOX aGet[ _LCHGLIN ] ;
-         VAR      aTmp[ _LCHGLIN ];
-         ID       420 ;
-         WHEN     ( nMode != ZOOM_MODE .and. lActCos() );
-         OF       oFld:aDialogs[2]
+            VAR      aTmp[ _LCHGLIN ];
+            ID       420 ;
+            WHEN     ( nMode != ZOOM_MODE .and. lActCos() );
+            OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aGet[ __LFACTURADO ] ;
-         VAR            aTmp[ __LFACTURADO ] ;
-         WHEN           ( nMode != ZOOM_MODE ) ;
-         ID             360 ;
-         OF             oFld:aDialogs[2]
+            VAR         aTmp[ __LFACTURADO ] ;
+            WHEN        ( nMode != ZOOM_MODE ) ;
+            ID          360 ;
+            OF          oFld:aDialogs[2]
 
       REDEFINE GET   aGet[ __CNUMFAC ] ;
          VAR         aTmp[ __CNUMFAC ] ;
@@ -3443,9 +3470,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          ID       371 ;
          PICTURE  "@R 99:99:99" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( iif(   !validTime( aTmp[ __TFECALB ] ),;
-                           ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
-                           .t. ) );
+         VALID    ( if( !validTime( aTmp[ __TFECALB ] ), ( msgStop( "El formato de la hora no es correcto" ), .f. ), .t. ) );
          OF       oFld:aDialogs[2]
 
       // Terced dialogo--------------------------------------------------------
@@ -5244,51 +5269,36 @@ Static Function lCalcDeta( aTmp, aTmpAlb, aGet, oTotal )
    if aTmp[ _LBNFLIN2 ]
       aGet[ _NBNFLIN2 ]:lValid()
    else
-      if aTmp[ _LIVALIN ]
-         aGet[ _NIVALIN2 ]:lValid()
-      else
-         aGet[ _NPVPLIN2 ]:lValid()
-      end if
+      aGet[ _NIVALIN2 ]:lValid()
+      aGet[ _NPVPLIN2 ]:lValid()
    end if
 
    if aTmp[ _LBNFLIN3 ]
-         aGet[ _NBNFLIN3 ]:lValid()
+      aGet[ _NBNFLIN3 ]:lValid()
    else
-      if aTmp[ _LIVALIN ]
-         aGet[ _NIVALIN3 ]:lValid()
-      else
-         aGet[ _NPVPLIN3 ]:lValid()
-      end if
+      aGet[ _NIVALIN3 ]:lValid()
+      aGet[ _NPVPLIN3 ]:lValid()
    end if
 
    if aTmp[ _LBNFLIN4 ]
-         aGet[ _NBNFLIN4 ]:lValid()
+      aGet[ _NBNFLIN4 ]:lValid()
    else
-      if aTmp[ _LIVALIN ]
-         aGet[ _NIVALIN4 ]:lValid()
-      else
-         aGet[ _NPVPLIN4 ]:lValid()
-      end if
+      aGet[ _NIVALIN4 ]:lValid()
+      aGet[ _NPVPLIN4 ]:lValid()
    end if
 
    if aTmp[ _LBNFLIN5 ]
-         aGet[ _NBNFLIN5 ]:lValid()
+      aGet[ _NBNFLIN5 ]:lValid()
    else
-      if aTmp[ _LIVALIN ]
-         aGet[ _NIVALIN5 ]:lValid()
-      else
-         aGet[ _NPVPLIN5 ]:lValid()
-      end if
+      aGet[ _NIVALIN5 ]:lValid()
+      aGet[ _NPVPLIN5 ]:lValid()
    end if
 
    if aTmp[ _LBNFLIN6 ]
-         aGet[ _NBNFLIN6 ]:lValid()
+      aGet[ _NBNFLIN6 ]:lValid()
    else
-      if aTmp[ _LIVALIN ]
-         aGet[ _NIVALIN6 ]:lValid()
-      else
-         aGet[ _NPVPLIN6 ]:lValid()
-      end if
+      aGet[ _NIVALIN6 ]:lValid()
+      aGet[ _NPVPLIN6 ]:lValid()
    end if
 
    if lActCos()
