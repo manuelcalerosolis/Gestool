@@ -2,6 +2,8 @@
 
 #define CRLF chr( 13 ) + chr( 10 )
 
+#define __separator__            ";"
+
 //---------------------------------------------------------------------------//
 
 Function Inicio()
@@ -28,8 +30,8 @@ CREATE CLASS ExportacionFacturas
    DATA aProducts             INIT {}
    DATA aProductsSales        INIT {}
 
-   DATA oExcel
-   DATA oBook
+   DATA oFileCsv
+   DATA cFileCsv              INIT "c:\ads\test.csv"
 
    METHOD New()               CONSTRUCTOR
 
@@ -37,7 +39,7 @@ CREATE CLASS ExportacionFacturas
    METHOD OpenFiles()
    METHOD CloseFiles()        INLINE ( D():DeleteView( ::nView ) )
 
-   METHOD Run()               INLINE ( ::processInformation(), ::writeInExcel(), ::closeFiles() )
+   METHOD Run()               
 
    METHOD processInformation()
 
@@ -46,7 +48,7 @@ CREATE CLASS ExportacionFacturas
    METHOD openExcel()
       METHOD writeInExcel()
       METHOD writeDetail()
-   METHOD closeExcel()     
+   METHOD closeExcel()        INLINE ( ::oFileCsv:Close() )
 
 ENDCLASS
 
@@ -67,6 +69,14 @@ METHOD New() CLASS ExportacionFacturas
    ::Run()
 
    msgInfo( "Porceso finalizado" )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Run()
+
+   msgRun( "Procesando...", "Espere por favor", {|| ::processInformation(), ::writeInExcel(), ::closeFiles() } ) 
 
 Return ( Self )
 
@@ -141,8 +151,6 @@ METHOD processInformation() CLASS ExportacionFacturas
 
       if ( D():FacturasClientes( ::nView ) )->dFecFac <= ::dFin 
       
-         msgWait( "procesando factura " + D():FacturasClientesIdText( ::nView ), "Espere", 0.0001 )
-
          if ( D():AlbaranesClientes( ::nView ) )->( dbSeek( D():FacturasClientesId( ::nView ) ) )
 
             while ( ( D():AlbaranesClientes( ::nView ) )->cNumFac == D():FacturasClientesId( ::nView ) ) .and. !( D():AlbaranesClientes( ::nView ) )->( eof() ) 
@@ -152,7 +160,11 @@ METHOD processInformation() CLASS ExportacionFacturas
                ( D():AlbaranesClientes( ::nView ) )->( dbSkip() ) 
          
             end while
-      
+
+         else 
+
+            ::buildFacturaInformation()
+
          end if 
 
       end if 
@@ -175,7 +187,7 @@ METHOD buildFacturaInformation()
                            "SufijoFactura" =>         ( D():FacturasClientes( ::nView ) )->cSufFac,;
                            "FechaFactura" =>          dtos( ( D():FacturasClientes( ::nView ) )->dFecFac ),;
                            "ClienteFactura" =>        ( D():FacturasClientes( ::nView ) )->cCodCli,;
-                           "BaseFactura" =>          ( D():FacturasClientes( ::nView ) )->nTotNet,;
+                           "BaseFactura" =>           ( D():FacturasClientes( ::nView ) )->nTotNet,;
                            "PorcentajeIvaFactura" =>  21,;
                            "ImporteIvaFactura" =>     ( D():FacturasClientes( ::nView ) )->nTotIva,;
                            "TotalFactura" =>          ( D():FacturasClientes( ::nView ) )->nTotFac,;
@@ -192,9 +204,7 @@ Return ( Self )
 
 METHOD writeInExcel()
 
-   if !::openExcel()
-      Return ( Self )
-   end if 
+   ::openExcel()
 
    ::writeDetail()
 
@@ -206,83 +216,42 @@ Return ( Self )
 
 METHOD openExcel()
 
-   local oError
-   local oBlock
-   local lError      := .f.
+   ferase( ::cFileCsv )
 
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   ::oFileCsv := TTxtFile():New( ::cFileCsv )
 
-      ::oExcel                         := TOleExcel():New( "Importando hoja de excel", "Conectando...", .F. )
-
-      ::oExcel:oExcel:Visible          := .f.
-      ::oExcel:oExcel:DisplayAlerts    := .f.
-
-      ::oBook                          := ::oExcel:oExcel:WorkBooks:Add()
-      ::oExcel:oExcel:WorkSheets( 1 ):Activate()
-
-   RECOVER USING oError
-
-      lError        := .t.
-
-      msgStop( "Error al abrir hoja de calculo " + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-Return ( !lError )      
-
-//---------------------------------------------------------------------------//
-
-METHOD closeExcel()
-
-   ::oBook:SaveAs( "c:\ads\test.csv", 6 )
-
-   ::oExcel:oExcel:Visible          := .t.
-
-Return ( Self ) 
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD writeDetail()
 
-   local hProduct
-
-   local oError
-   local oBlock
-
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   // ::oExcel:oExcel:WorkSheets( 1 ):Cells( 1, 1 ):Value   := "Factura"
-   // ::oExcel:oExcel:WorkSheets( 1 ):Cells( 1, 2 ):Value   := "Albaran"
+   local cLine   
+   local hProduct 
 
    for each hProduct in ::aProducts
 
-      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex(), 1 ):Value := hProduct["SerieFactura"]
-      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex(), 2 ):Value := hProduct["NumeroFactura"]
-      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex(), 3 ):Value := hProduct["SufijoFactura"]
-      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex(), 4 ):Value := hProduct["FechaFactura"]
-      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex(), 5 ):Value := hProduct["ClienteFactura"]
-      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex(), 6 ):Value := hProduct["BaseFactura"]
-      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex(), 7 ):Value := hProduct["PorcentajeIvaFactura"]
-      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex(), 8 ):Value := hProduct["ImporteIvaFactura"]
-      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex(), 9 ):Value := hProduct["TotalFactura"]
-      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex(), 10 ):Value := hProduct["SerieAlbaran"]
-      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex(), 11 ):Value := hProduct["NumeroAlbaran"]
-      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex(), 12 ):Value := hProduct["SufijoAlbaran"]
+      cLine    := trimmer( hProduct["SerieFactura"] ) 
+      cLine    += trimmer( hProduct["NumeroFactura"] ) 
+      cLine    += trimmer( hProduct["SufijoFactura"] ) 
+      cLine    += trimmer( hProduct["FechaFactura"] ) 
+      cLine    += trimmer( hProduct["ClienteFactura"] ) 
+      cLine    += trimmer( hProduct["BaseFactura"] ) 
+      cLine    += trimmer( hProduct["PorcentajeIvaFactura"] ) 
+      cLine    += trimmer( hProduct["ImporteIvaFactura"] ) 
+      cLine    += trimmer( hProduct["TotalFactura"] ) 
+      cLine    += trimmer( hProduct["SerieAlbaran"] ) 
+      cLine    += trimmer( hProduct["NumeroAlbaran"] ) 
+      cLine    += trimmer( hProduct["SufijoAlbaran"] ) 
+
+      ::oFileCsv:add( cLine )
 
    next
-
-   RECOVER USING oError
-
-      msgStop( "Error al escribir en la hoja de calculo " + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
 
 Return ( Self ) 
 
 //---------------------------------------------------------------------------//
+
+static Function trimmer( uValue )
+
+return ( alltrim(cvaltochar( uValue ) ) + __separator__ )

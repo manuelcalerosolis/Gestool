@@ -8,11 +8,12 @@ CLASS DocumentSalesViewEdit FROM ViewEdit
 
    METHOD insertControls()
 
-   METHOD onClickRotor()         INLINE ( ::oSender:onClickRotor() )
+   METHOD onclickClientEdit()          INLINE ( ::oSender:onclickClientEdit() )
+   METHOD onclickClientSales()         INLINE ( ::oSender:onclickClientSales() )
 
    METHOD columnsBrowseLineas()
 
-   METHOD getDocumentLine()      INLINE ( ::oSender:oDocumentLines:aLines[ ::oBrowse:nArrayAt ] )
+   METHOD getDocumentLine()            INLINE ( ::oSender:oDocumentLines:aLines[ ::oBrowse:nArrayAt ] )
 
 END CLASS
 

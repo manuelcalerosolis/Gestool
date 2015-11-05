@@ -138,7 +138,8 @@ CLASS DocumentsSales FROM Documents
 
    METHOD cComboRecargoValue()
 
-   METHOD onClickRotor()                                    INLINE ( ::oCliente:EditCustomer( hGet( ::hDictionaryMaster, "Cliente" ) ) )
+   METHOD onclickClientEdit()                               INLINE ( ::oCliente:EditCustomer( hGet( ::hDictionaryMaster, "Cliente" ) ) )
+   METHOD onclickClientSales()                              INLINE ( ::oCliente:SalesCustomer( hGet( ::hDictionaryMaster, "Cliente" ) ) )
 
    METHOD getEditDetail() 
    

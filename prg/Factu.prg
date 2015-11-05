@@ -6025,7 +6025,7 @@ Function MainTablet()
                      		"nWidth"    => 64,;
                      		"nHeight"   => 64,;
                      		"cResName"  => "flat_document_64",;
-                     		"bLClicked" => {|| InvoiceCustomer():New():play() },;     //FacCliTablet()
+                     		"bLClicked" => {|| InvoiceCustomer():New():play() },;     // FacCliTablet()
                      		"oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 12 ) },;

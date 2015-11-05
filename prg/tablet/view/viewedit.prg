@@ -20,7 +20,7 @@ CLASS ViewEdit FROM ViewBase
 
    METHOD New()
 
-   METHOD StartDialog()
+   METHOD startDialog()
 
    METHOD defineAceptarCancelar()
 
@@ -44,9 +44,10 @@ CLASS ViewEdit FROM ViewBase
 
    METHOD refreshBrowse()           INLINE ( ::oBrowse:MakeTotals(), ::oBrowse:Refresh() )
 
-   METHOD onClickRotor()            VIRTUAL
-
    METHOD getTitleTipoDocumento()   INLINE ( lblTitle( ::getMode() ) + ::getTextoTipoDocumento() )
+
+   METHOD onclickClientEdit()       VIRTUAL
+   METHOD onclickClientSales()      VIRTUAL
 
 END CLASS
 
@@ -75,16 +76,6 @@ Return Self
 //---------------------------------------------------------------------------//
 
 METHOD defineAceptarCancelar() CLASS ViewEdit
-
-/*
-   TGridImage():Build(  {  "nTop"      => 5,;
-                           "nLeft"     => {|| GridWidth( 7.5, ::oDlg ) },;
-                           "nWidth"    => 64,;
-                           "nHeight"   => 64,;
-                           "cResName"  => "flat_atom_64",;
-                           "bLClicked" => {|| ::oSender:onClickRotor() },;
-                           "oWnd"      => ::oDlg } )
-*/
 
    TGridImage():Build(  {  "nTop"      => 5,;
                            "nLeft"     => {|| GridWidth( 9.0, ::oDlg ) },;
@@ -233,7 +224,7 @@ METHOD defineCliente( nRow ) CLASS ViewEdit
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "edit_56",;
-                           "bLClicked" => {|| ::oSender:onClickRotor() },;
+                           "bLClicked" => {|| ::oSender:onClickClientEdit() },;
                            "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
                            "oWnd"      => ::oDlg } )
 
@@ -242,7 +233,7 @@ METHOD defineCliente( nRow ) CLASS ViewEdit
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "view_56",;
-                           "bLClicked" => {|| msgInfo( "here!" ) },;
+                           "bLClicked" => {|| ::oSender:onClickClientSales() },;
                            "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
                            "oWnd"      => ::oDlg } )
 

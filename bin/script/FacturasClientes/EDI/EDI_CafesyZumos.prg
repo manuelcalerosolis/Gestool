@@ -252,11 +252,9 @@ Return ( self )
 
 METHOD getDatosEstablecimiento()
 
-   if empty( ( D():FacturasClientes( ::nView ) )->cCodObr ) .and. ( D():ClientesDirecciones( ::nView ) )->( dbseek( ::cCodigoCliente + ( D():FacturasClientes( ::nView ) )->cCodObr ) )
-      msgAlert( "El cliente tiene establecimiento" )
+   if !empty( ( D():FacturasClientes( ::nView ) )->cCodObr ) .and. ( D():ClientesDirecciones( ::nView ) )->( dbseek( ::cCodigoCliente + ( D():FacturasClientes( ::nView ) )->cCodObr ) )
       ::writeDatosEstablecimiento()
    else
-      msgAlert( "El cliente no tiene establecimiento" )
       ::writeClienteEstablecimiento()
    end if 
 
@@ -267,14 +265,14 @@ Return ( self )
 METHOD writeDatosEstablecimiento()
 
    local cLine    := "Estab" + __separator__
-   cLine          += alltrim( ( D():ClientesDirecciones( ::nView ) )->cCodEdi ) + __separator__   // Código del establecimiento del cliente donde se entrega de la mercancía (interno del cliente)
-   cLine          += alltrim( ::cCodigoCliente ) + __separator__                                // Código del cliente (interno del proveedor)
-   cLine          += "" + __separator__                                                         // Código secundario del establecimiento del cliente según el proveedor (interno del proveedor). Algunos proveedores solo utilizan el campo IDCliProv
-   cLine          += alltrim( ( D():ClientesDirecciones( ::nView ) )->cNomObr ) + __separator__   // Nombre del establecimiento
-   cLine          += alltrim( ( D():ClientesDirecciones( ::nView ) )->cDirObr ) + __separator__   // Dirección del establecimiento
-   cLine          += alltrim( ( D():ClientesDirecciones( ::nView ) )->cPobObr ) + __separator__   // Población del establecimiento
-   cLine          += alltrim( ( D():ClientesDirecciones( ::nView ) )->cPosObr ) + __separator__   // Código postal del establecimiento
-   cLine          += alltrim( ( D():ClientesDirecciones( ::nView ) )->cPrvObr ) + _separator__    // Provincia del establecimiento
+   cLine          += alltrim( ( D():ClientesDirecciones( ::nView ) )->cCodEdi ) + __separator__    // Código del establecimiento del cliente donde se entrega de la mercancía (interno del cliente)
+   cLine          += alltrim( ::cCodigoCliente ) + __separator__                                   // Código del cliente (interno del proveedor)
+   cLine          += "" + __separator__                                                            // Código secundario del establecimiento del cliente según el proveedor (interno del proveedor). Algunos proveedores solo utilizan el campo IDCliProv
+   cLine          += alltrim( ( D():ClientesDirecciones( ::nView ) )->cNomObr ) + __separator__    // Nombre del establecimiento
+   cLine          += alltrim( ( D():ClientesDirecciones( ::nView ) )->cDirObr ) + __separator__    // Dirección del establecimiento
+   cLine          += alltrim( ( D():ClientesDirecciones( ::nView ) )->cPobObr ) + __separator__    // Población del establecimiento
+   cLine          += alltrim( ( D():ClientesDirecciones( ::nView ) )->cPosObr ) + __separator__    // Código postal del establecimiento
+   cLine          += alltrim( ( D():ClientesDirecciones( ::nView ) )->cPrvObr ) + __separator__    // Provincia del establecimiento
    cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "cCodPai" ) )
    cLine          += ""                                               
 

@@ -9,11 +9,14 @@ CLASS Customer FROM Editable
 
    DATA oGridCustomer
 
+   DATA oViewSales
+
    DATA cTipoCliente                   INIT ""
    DATA hTipoCliente                   INIT { "1" => "Clientes", "2" => "Potenciales", "3" => "Web" }
 
    METHOD New()
    METHOD Init( nView )
+   METHOD Create()
 
    METHOD runNavigatorCustomer()
 
@@ -35,6 +38,7 @@ CLASS Customer FROM Editable
    METHOD onPreSaveDocumento()
 
    METHOD editCustomer( Codigo ) 
+   METHOD salesCustomer( Codigo )
 
 ENDCLASS
 
@@ -46,19 +50,7 @@ METHOD New() CLASS Customer
 
       ::setFilterAgentes()
 
-      ::oViewNavigator                       := CustomerViewSearchNavigator():New( self )
-      ::oViewNavigator:setTitleDocumento( "Clientes" )
-
-      ::oGridCustomer                        := CustomerViewSearchNavigator():New( self )
-      ::oGridCustomer:setSelectorMode()
-      ::oGridCustomer:setTitleDocumento( "Seleccione cliente" )
-      ::oGridCustomer:setDblClickBrowseGeneral( {|| ::oGridCustomer:endView() } )
-
-      ::oViewEdit                            := CustomerView():New( self )
-
-      ::oClienteIncidencia                   := CustomerIncidence():New( self )
-
-      ::setEnviroment()
+      ::Create()
 
    end if   
 
@@ -70,6 +62,14 @@ METHOD Init( oSender ) CLASS Customer
 
    ::nView                                := oSender:nView
 
+   ::Create()
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Create() CLASS Customer
+
    ::oViewNavigator                       := CustomerViewSearchNavigator():New( self )
    ::oViewNavigator:setTitleDocumento( "Clientes" )
 
@@ -79,6 +79,8 @@ METHOD Init( oSender ) CLASS Customer
    ::oGridCustomer:setDblClickBrowseGeneral( {|| ::oGridCustomer:endView() } )
 
    ::oViewEdit                            := CustomerView():New( self )
+
+   ::oViewSales                           := CustomerSalesViewSearchNavigator():New( self )
 
    ::oClienteIncidencia                   := CustomerIncidence():New( self )
 
@@ -116,6 +118,12 @@ METHOD OpenFiles() CLASS Customer
       D():ClientesDirecciones( ::nView )
 
       D():TiposIncidencias( ::nView )
+
+      D():FacturasClientes( ::nView )
+
+      D():FacturasClientesLineas( ::nView )
+
+      D():FacturasClientesCobros( ::nView )
 
    RECOVER USING oError
 
@@ -182,21 +190,44 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD EditCustomer( Codigo ) CLASS Customer
+METHOD EditCustomer( idCliente ) CLASS Customer
 
-   if empty( Codigo )
+   if empty( idCliente )
       Return .f.
    end if 
 
    D():getStatusClientes( ::nView )
 
-   ( D():Clientes( ::nView ) )->( ordSetFocus( 1 ) )
+   ( D():Clientes( ::nView ) )->( ordsetfocus( 1 ) )
 
-   if ( D():Clientes( ::nView ) )->( dbseek( Codigo ) )
+   if ( D():Clientes( ::nView ) )->( dbseek( idCliente ) )
       ::edit()
    end if 
 
    D():setStatusClientes( ::nView )
+
+Return( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD salesCustomer( idCliente ) CLASS Customer
+
+   if empty( idCliente )
+      Return .f.
+   end if 
+
+   D():getStatusFacturasClientes( ::nView )
+
+   ( D():FacturasClientes( ::nView ) )->( ordsetfocus( "cCliFec" ) )
+
+   ( D():FacturasClientes( ::nView ) )->( dbsetfilter( {|| Field->cCodCli == idCliente }, "cCodCli" ) )
+   ( D():FacturasClientes( ::nView ) )->( dbgotop() )
+
+   ::oViewSales:Resource()
+
+   ( D():FacturasClientes( ::nView ) )->( dbsetfilter() )
+
+   D():getStatusFacturasClientes( ::nView )
 
 Return( .t. )
 
