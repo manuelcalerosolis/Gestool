@@ -3995,6 +3995,11 @@ FUNCTION IsRecCli( cPath )
       dbCreate( cPath + "FacCliP.Dbf", aSqlStruct( aItmRecCli() ), cDriver() )
    end if
 
+   if !lExistTable( cPath + "FacCliG.Dbf" )
+      dbCreate( cPath + "FacCliG.Dbf", aSqlStruct( aItmRecCli() ), cDriver() )
+   end if
+
+
    if !lExistTable( cPath + "FacCliP.Cdx" )
       rxRecCli( cPath )
    end if

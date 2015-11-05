@@ -18,10 +18,12 @@ CLASS CodigosPostales FROM TMant
    
    DATA oldCodigo
 
-   DATA oProvincias
+   CLASSDATA oProvincias
 
    METHOD New( cPath, oWndParent, oMenuItem ) CONSTRUCTOR
    METHOD Create( cPath ) CONSTRUCTOR
+
+   METHOD GetInstance()                               INLINE ( if( empty( ::oInstance ), ::oInstance := ::New(), ), ::oInstance ) 
 
    METHOD OpenFiles( lExclusive, cPath )
    METHOD OpenService( lExclusive, cPath )
@@ -55,7 +57,6 @@ METHOD Create( cPath, cDriver ) CLASS CodigosPostales
 
    ::cPath              := cPath
    ::cDriver            := cDriver
-   ::oDbf               := nil
 
    ::oProvincias        := Provincias():Create( cPath, cDriver )  
 
@@ -153,13 +154,13 @@ METHOD CloseFiles() CLASS CodigosPostales
 
    if !empty( ::oDbf ) .and. ( ::oDbf:Used() )
       ::oDbf:End()
-      ::oDbf         := nil
    end if
 
    if !empty( ::oProvincias )
       ::oProvincias:End()
-      ::oProvincias  := nil
    end if
+
+   ::oDbf               := nil
 
 RETURN .t.
 
