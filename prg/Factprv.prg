@@ -3699,6 +3699,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 2 ]
 
+      REDEFINE CHECKBOX aGet[ _LCHGLIN ] ;
+         VAR      aTmp[ _LCHGLIN ];
+         ID       420 ;
+         WHEN     ( nMode != ZOOM_MODE .and. lActCos() );
+         OF       oFld:aDialogs[2]
+
       REDEFINE GET aGet[ __DFECFAC ] VAR aTmp[ __DFECFAC ] ;
          ID       370 ;
          SPINNER ;
