@@ -7,8 +7,6 @@
 
 CLASS TAcceso
 
-   DATA  oFont
-
    DATA  cDbf
    DATA  lOpenFiles        INIT  .f.
 
@@ -189,7 +187,6 @@ METHOD New() CLASS TAcceso
    local nSize
 
    ::aAccesos        := {}
-   ::oFont           := TFont():New( "Ms Sans Serif", 6, 12, .f. )
    ::cGet            := Space( 200 )
    ::cYearComboBox   := "[Todos]"
 
@@ -599,7 +596,7 @@ Method CreateSearchBar( oWnd )
    @ 124, 4 GET      ::oGet ;
             VAR      ::cGet ;
             OF       ::oRebar ;
-            FONT     ::oFont ;
+            FONT     oFontLittelTitle() ;
             PIXEL    SIZE 210, 21
 
    ::oGet:cBmp       := "Lupa"
@@ -610,7 +607,7 @@ Method CreateSearchBar( oWnd )
             ITEMS    ::aComboBox ;
             STYLE    2 ;
             OF       ::oRebar ;
-            FONT     ::oFont ;
+            FONT     oFontLittelTitle() ;
             PIXEL    SIZE 200, 30
 
    @ 124, 426 COMBOBOX ::oComboFilter ;
@@ -618,7 +615,7 @@ Method CreateSearchBar( oWnd )
             ITEMS    ::aComboFilter ;
             STYLE    2 ;
             OF       ::oRebar ;
-            FONT     ::oFont ;
+            FONT     oFontLittelTitle() ;
             PIXEL    SIZE 200, 30
 
    ::oComboFilter:Disable()
@@ -658,7 +655,7 @@ Method CreateSearchBar( oWnd )
             ITEMS    ::aYearComboBox ;
             STYLE    3 ;
             OF       ::oRebar ;
-            FONT     ::oFont ;
+            FONT     oFontLittelTitle() ;
             PIXEL    SIZE 60, 30
 
 Return ( Self )
@@ -1072,10 +1069,6 @@ Method End()
       ::oGet:End()
    end if 
 
-   if !Empty( ::oFont )
-      ::oFont:End( .t. )
-   end if 
-
    if !Empty( ::oBmpLogo )
       ::oBmpLogo:End()
    end if 
@@ -1102,7 +1095,6 @@ Method End()
 
    ::oRebar             := nil
    ::oGet               := nil
-   ::oFont              := nil 
    ::oBmpLogo           := nil
    ::oButtonAddFilter   := nil 
    ::oButtonEditFilter  := nil 

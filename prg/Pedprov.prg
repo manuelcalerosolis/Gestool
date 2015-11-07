@@ -1314,10 +1314,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
          end with
 
          with object ( oBrwLin:AddCol() )
-            :cHeader             := "Valor prop. 1"
-            :bEditValue          := {|| retValProp( ( dbfTmpLin )->cCodPr1 + ( dbfTmpLin )->cValPr1 )}
-            :nWidth              := 40
-            :lHide               := .t.
+            :cHeader          := "Valor prop. 1"
+            :bEditValue       := {|| nombrePropiedad( ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cValPr1, nView ) }
+            :nWidth           := 40
+            :lHide            := .t.
          end with
 
          with object ( oBrwLin:AddCol() )
@@ -1328,10 +1328,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
          end with
 
          with object ( oBrwLin:AddCol() )
-            :cHeader             := "Valor prop. 2"
-            :bEditValue          := {|| retValProp( ( dbfTmpLin )->cCodPr2 + ( dbfTmpLin )->cValPr2 )}
-            :nWidth              := 40
-            :lHide               := .t.
+            :cHeader          := "Valor prop. 2"
+            :bEditValue       := {|| nombrePropiedad( ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr2, nView ) }
+            :nWidth           := 40
+            :lHide            := .t.
          end with
 
          with object ( oBrwLin:AddCol() )
@@ -9342,11 +9342,7 @@ Function nombrePrimeraPropiedad( view )
 
    DEFAULT view   := nView
 
-   if .t.
-      Return ( D():PedidosProveedoresLineas( view ) )->cCodPr1 + ( D():PedidosProveedoresLineas( view ) )->cValPr1
-   end if 
-
-Return ( retValProp( ( D():PedidosProveedoresLineas( view ) )->cCodPr1 + ( D():PedidosProveedoresLineas( view ) )->cValPr1, D():PropiedadesLineas( view ) ) )
+Return ( nombrePropiedad( ( D():PedidosProveedoresLineas( view ) )->cCodPr1, ( D():PedidosProveedoresLineas( view ) )->cValPr1, view ) )
 
 //--------------------------------------------------------------------------//
 
@@ -9354,7 +9350,7 @@ Function nombreSegundaPropiedad( view )
 
    DEFAULT view   := nView
 
-Return ( retValProp( ( D():PedidosProveedoresLineas( view ) )->cCodPr2 + ( D():PedidosProveedoresLineas( view ) )->cValPr2, D():PropiedadesLineas( view ) ) )
+Return ( nombrePropiedad( ( D():PedidosProveedoresLineas( view ) )->cCodPr2, ( D():PedidosProveedoresLineas( view ) )->cValPr2, view ) )
 
 //--------------------------------------------------------------------------//
 

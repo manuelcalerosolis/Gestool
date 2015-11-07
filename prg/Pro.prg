@@ -2398,7 +2398,7 @@ FUNCTION retValProp( cCodPrp, dbfPro )
       CLOSE ( dbfPro )
    end if
 
-RETURN ( cPrp )
+RETURN ( cCodPrp ) // cPrp )
 
 //---------------------------------------------------------------------------//
 
@@ -2428,6 +2428,23 @@ FUNCTION cNombrePropiedad( cCodigoPropiedad, cValorPropiedad, dbfPro )
    END SEQUENCE
 
    ErrorBlock( oBlock )
+
+RETURN ( cNombrePropiedad )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nombrePropiedad( cCodigoPropiedad, cValorPropiedad, nView )
+
+   local cNombrePropiedad  := ""
+
+   // msgAlert( len( ( D():PropiedadesLineas( nView ) )->( ordkeyval() ) ), "len ordkeyval" ) 
+   // msgAlert( len( cCodigoPropiedad + cValorPropiedad ), "len parametros" ) 
+   // msgAlert( len( cCodigoPropiedad ), "len cCodigoPropiedad" ) 
+   // msgAlert( len( cValorPropiedad ), "len cValorPropiedad" ) 
+
+   if D():gotoIdPropiedadesLineas( cCodigoPropiedad + cValorPropiedad, nView ) 
+      cNombrePropiedad     := ( D():PropiedadesLineas( nView ) )->cDesTbl
+   end if
 
 RETURN ( cNombrePropiedad )
 

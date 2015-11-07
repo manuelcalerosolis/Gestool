@@ -5613,7 +5613,6 @@ CLASS D
 
       METHOD getStatusPedidosClientes( nView )        INLINE ( ::aStatus := aGetStatus( ::PedidosClientes( nView ) ) )
       METHOD setStatusPedidosClientes( nView )        INLINE ( SetStatus( ::PedidosClientes( nView ), ::aStatus ) ) 
-
       METHOD setFocusPedidosClientes( cTag, nView )   INLINE ( ::cTag   := ( ::PedidosClientes( nView )  )->( ordSetFocus( cTag ) ) )
 
    METHOD PedidosClientesReservas( nView )            INLINE ( ::Get( "PedCliR", nView ) )
@@ -5719,13 +5718,15 @@ CLASS D
       METHOD PedidosProveedoresId( nView )            INLINE ( ( ::Get( "PedProvT", nView ) )->cSerPed + str( ( ::Get( "PedProvT", nView ) )->nNumPed, 9 ) + ( ::Get( "PedProvT", nView ) )->cSufPed )
       METHOD gotoIdPedidosProveedores( id, nView )    INLINE ( ::seekInOrd( ::PedidosProveedores( nView ), id, "nNumPed" ) ) 
 
-      METHOD PedidosProveedoresLineas( nView )        INLINE ( ::Get( "PedProvL", nView ) )
-      METHOD PedidosProveedoresLineasId( nView )      INLINE ( ( ::Get( "PedProvL", nView ) )->cSerPed + str( ( ::Get( "PedProvL", nView ) )->nNumPed, 9 ) + ( ::Get( "PedProvL", nView ) )->cSufPed )
+   METHOD PedidosProveedoresLineas( nView )                 INLINE ( ::Get( "PedProvL", nView ) )
+      METHOD PedidosProveedoresLineasId( nView )               INLINE ( ( ::Get( "PedProvL", nView ) )->cSerPed + str( ( ::Get( "PedProvL", nView ) )->nNumPed, 9 ) + ( ::Get( "PedProvL", nView ) )->cSufPed )
+      METHOD getStatusPedidosProveedoresLineas( nView )        INLINE ( ::aStatus := aGetStatus( ::PedidosProveedoresLineas( nView ) ) )
+      METHOD setStatusPedidosProveedoresLineas( nView )        INLINE ( SetStatus( ::PedidosProveedoresLineas( nView ), ::aStatus ) ) 
+      METHOD setFocusPedidosProveedoresLineas( cTag, nView )   INLINE ( ::cTag   := ( ::PedidosProveedoresLineas( nView )  )->( ordSetFocus( cTag ) ) )
 
-      METHOD PedidosProveedoresIncidencias( nView )   INLINE ( ::Get( "PedPrvI", nView ) )
+   METHOD PedidosProveedoresIncidencias( nView )            INLINE ( ::Get( "PedPrvI", nView ) )
 
-      METHOD PedidosProveedoresDocumentos( nView )    INLINE ( ::Get( "PedPrvD", nView ) )
-
+   METHOD PedidosProveedoresDocumentos( nView )             INLINE ( ::Get( "PedPrvD", nView ) )
 
    // Albaranes de proveedores-------------------------------------------------
 
@@ -5869,10 +5870,9 @@ CLASS D
 
    METHOD Cajas( nView )                     INLINE ( ::Get( "Cajas", nView ) )
 
-   METHOD Propiedades( nView )               INLINE ( ::Get( "Pro", nView ) )
-      METHOD PropiedadesLineas( nView )      INLINE ( ::Get( "TblPro", nView ) )
-      METHOD PropiedadesLineas1( nView )     INLINE ( ::Get( "TblPro1", nView ) )
-      METHOD PropiedadesLineas2( nView )     INLINE ( ::Get( "TblPro2", nView ) )
+   METHOD Propiedades( nView )                        INLINE ( ::Get( "Pro", nView ) )
+      METHOD PropiedadesLineas( nView )               INLINE ( ::Get( "TblPro", nView ) )
+      METHOD gotoIdPropiedadesLineas( id, nView )     INLINE ( ::seekInOrd( ::PropiedadesLineas( nView ), id, "cCodPro" ) ) 
 
    METHOD Almacen( nView )                   INLINE ( ::Get( "Almacen", nView ) )
 
