@@ -1667,10 +1667,6 @@ STATIC FUNCTION CloseFiles()
 
    DestroyFastFilter( D():Get( "AlbCliT", nView ), .t., .t. )
 
-   if !Empty( oFont )
-      oFont:end()
-   end if
-
    if !Empty( dbfTikT )
       ( dbfTikT      )->( dbCloseArea() )
    end if

@@ -72,9 +72,10 @@ METHOD New( nTop, nLeft, nWidth, nHeight, nCtlHeight, cBitmap,;
             nClrBack    := GetSysColor( COLOR_BTNFACE ), ;
             nStyle      := nOr( WS_CHILD, WS_VISIBLE, WS_CLIPSIBLINGS, WS_CLIPCHILDREN ) ,;
             nCtlHeight  := 30 ,;
-            oFont       := TFont():New( "Segoe UI Light", 0, -48, .f., .f. ),; //TFont():New( "Verdana", 0, -22, .f., .t. ),;
             lPixel      := .t.,;
             oBrush      := TBrush():New( , Rgb( 255,255,255 ) )
+
+            // oFont       := TFont():New( "Segoe UI Light", 0, -48, .f., .f. ),; //TFont():New( "Verdana", 0, -22, .f., .t. ),;
 
    ::nStyle       = nStyle
    ::nId          = ::GetNewId()
@@ -92,10 +93,13 @@ METHOD New( nTop, nLeft, nWidth, nHeight, nCtlHeight, cBitmap,;
    ::nClrText     = nClrFore
    ::bRClicked    = bRClick
    ::nHelpID      = nHelpID
-   ::oFont        = oFont
    ::nClrLine     = Rgb( 51, 51, 255 )
    ::oBrush       = oBrush
    ::nOption      = 1
+   
+   //::oFont        = oFont
+
+   ::setFont( oFontBigTitle() )
 
    if ValType( cResBmp ) == "C" .or. ValType( cBitmap ) == "C"
       ::LoadImage( cResBmp, cBitmap )
@@ -125,10 +129,10 @@ METHOD Redefine(  nId, nCtlHeight, cBitmap, cResBmp, nClrFore, nClrBack, nStyle,
             nClrBack    := GetSysColor( COLOR_BTNFACE ), ;
             nStyle      := nOr( WS_CHILD, WS_VISIBLE, WS_CLIPSIBLINGS, WS_CLIPCHILDREN ) ,;
             nCtlHeight  := 30 ,;
-            oFont       := TFont():New( "Verdana", 0, -22, .f., .t. ),;
             lPixel      := .t.,;
             oWnd        := GetWndDefault(),;
             oBrush      := TBrush():New( , nClrBack )
+            // oFont       := TFont():New( "Verdana", 0, -22, .f., .t. ),;
 
    ::nStyle       = nStyle
    ::nId          = nId
@@ -142,9 +146,11 @@ METHOD Redefine(  nId, nCtlHeight, cBitmap, cResBmp, nClrFore, nClrBack, nStyle,
    ::nClrText     = nClrFore
    ::bRClicked    = bRClick
    ::nHelpID      = nHelpID
-   ::oFont        = oFont
    ::nClrLine     = Rgb( 255, 154, 49 )
    ::oBrush       = oBrush
+   // ::oFont        = oFont
+
+   ::setFont( oFontBigTitle() )
 
    ::LoadImage( cResBmp, cBitmap )
 
@@ -209,9 +215,9 @@ METHOD Destroy() CLASS TWebBar
       ::oBrush:End()
    end if
 
-   if ::oFont != nil
-      ::oFont:End()
-   end if
+   // if ::oFont != nil
+   //    ::oFont:End()
+   // end if
 
    PalBmpFree( ::hBitmap, ::hPalette )
 
@@ -220,7 +226,6 @@ METHOD Destroy() CLASS TWebBar
    endif
 
    ::oBrush    := nil
-   ::oFont     := nil
    ::hBitmap   := nil
    ::hPalette  := nil
 

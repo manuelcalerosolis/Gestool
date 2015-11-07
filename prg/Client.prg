@@ -8362,7 +8362,7 @@ RETURN ( cIniCli )
 Crea las BD clientes
 */
 
-FUNCTION AssertClient( cPath )
+FUNCTION assertClient( cPath )
 
    IF !lExistTable( cPath + "Client.Dbf", cLocalDriver() )
       dbCreate( cPath + "Client.Dbf", aSqlStruct( aItmCli() ), cLocalDriver() )
@@ -8430,6 +8430,8 @@ FUNCTION rxClient( cPath, cDriver )
 
    DEFAULT cPath     := cPatCli()
    DEFAULT cDriver   := cDriver()
+
+   assertClient( cPath )
 
    fEraseIndex( cPath + "CLIENT.CDX" )
 

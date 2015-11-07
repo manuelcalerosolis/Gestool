@@ -33,6 +33,7 @@
 #endif
 
 static oFontLittelTitle
+static oFontBigTitle
 
 #ifndef __PDA__
 
@@ -2875,52 +2876,18 @@ Function oFontLittelTitle()
 
    if Empty( oFontLittelTitle )
       oFontLittelTitle  := TFont():New( "Ms Sans Serif", 6, 12, .f. )
-      // oFontLittelTitle  := TFont():New( "Segoe UI Light", 0, -12, .f., .f. )
    end if
 
 Return ( oFontLittelTitle )
 
 //----------------------------------------------------------------------------//
 
-/*
-#ifndef __PDA__
+Function oFontBigTitle()
 
-#pragma BEGINDUMP
+   if Empty( oFontBigTitle )
+      oFontBigTitle     := TFont():New( "Segoe UI Light", 0, -48, .f., .f. )
+   end if
 
-#include "Windows.h"
-#include "hbapi.h"
-
-//----------------------------------------------------------------------------//
-
-HB_FUNC ( CREATEROUNDRECTRGN )
-{
-
-   HWND hWnd = ( HWND ) hb_parnl( 1 ) ;
-   HRGN hRgn;
-   RECT rct;
-
-   GetClientRect( hWnd, &rct ) ;
-
-   hRgn = CreateRoundRectRgn( rct.left, rct.top,
-   rct.right - rct.left + 1,
-   rct.bottom - rct.top + 1, hb_parnl( 2 ), hb_parnl( 3 ) ) ;
-
-hb_retnl ( (long) hRgn);
-
-}
+Return ( oFontBigTitle )
 
 //----------------------------------------------------------------------------//
-
-HB_FUNC( SETWINDOWRGN )
-{
-   hb_retni( SetWindowRgn( ( HWND ) hb_parnl( 1 ), ( HRGN ) hb_parnl( 2 ), hb_parl( 3 ) ) );
-}
-
-//----------------------------------------------------------------------------//
-
-#pragma ENDDUMP
-
-//----------------------------------------------------------------------------//
-
-#endif
-*/

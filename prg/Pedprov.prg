@@ -9342,6 +9342,10 @@ Function nombrePrimeraPropiedad( view )
 
    DEFAULT view   := nView
 
+   if .t.
+      Return ( D():PedidosProveedoresLineas( view ) )->cCodPr1 + ( D():PedidosProveedoresLineas( view ) )->cValPr1
+   end if 
+
 Return ( retValProp( ( D():PedidosProveedoresLineas( view ) )->cCodPr1 + ( D():PedidosProveedoresLineas( view ) )->cValPr1, D():PropiedadesLineas( view ) ) )
 
 //--------------------------------------------------------------------------//

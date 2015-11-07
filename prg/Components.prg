@@ -2673,7 +2673,7 @@ METHOD lPrintLabels() CLASS TLabelGenerator
 
       ::loadTempReport()
 
-      msgRun( "Construyendo el informe", "Espere por favor...", {|| ::buildReportLabels() } )
+      ::buildReportLabels()
 
       ::destroyTempReport()
 
@@ -2720,32 +2720,30 @@ METHOD buildReportLabels() CLASS TLabelGenerator
       
       //Zona de variables--------------------------------------------------------
 
-      ::PrepareTempReport( oFr )
-      
-      //Preparar el report-------------------------------------------------------
-
-      oFr:PrepareReport()
+      ::prepareTempReport( oFr )
       
       //Imprimir el informe------------------------------------------------------
 
       do case
          case nDevice == IS_SCREEN
-            oFr:ShowPreparedReport()
+            oFr:ShowReport()
 
          case nDevice == IS_PRINTER
+            oFr:PrepareReport()
             oFr:PrintOptions:SetPrinter( cPrinter )
             oFr:PrintOptions:SetCopies( nCopies )
             oFr:PrintOptions:SetShowDialog( .f. )
             oFr:Print()
 
          case nDevice == IS_PDF
+            oFr:PrepareReport()
             oFr:DoExport( "PDFExport" )
 
       end case
 
    end if
    
-   //Destruye el diseñador-------------------------------------------------------
+   // Destruye el diseñador-------------------------------------------------------
    
    oFr:DestroyFr()
 
@@ -2829,7 +2827,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD PrepareTempReport( oFr ) CLASS TLabelGenerator
+METHOD prepareTempReport( oFr ) CLASS TLabelGenerator
 
    local n
    local nBlancos       := 0
@@ -2852,6 +2850,7 @@ METHOD PrepareTempReport( oFr ) CLASS TLabelGenerator
    end if 
 
    ( ::tmpLabelReport )->( dbGoTop() )
+
 
 Return ( .t. )
 
