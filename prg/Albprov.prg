@@ -1064,13 +1064,13 @@ STATIC FUNCTION OpenFiles( lExt )
       Campos extras------------------------------------------------------------------------
       */
 
-      oDetCamposExtra      := TDetCamposExtra():New()
+      oDetCamposExtra         := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Albaranes a proveedores" )
 
    RECOVER
 
-      lOpenFiles           := .f.
+      lOpenFiles              := .f.
 
       EnableAcceso()
 

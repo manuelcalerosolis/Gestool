@@ -245,43 +245,43 @@ METHOD StartResource() CLASS PrintSeries
 
    //Si usamos clientes----------------------------------------------------
 
-   if !Empty( ::oClienteInicio ) 
+   if !empty( ::oClienteInicio ) 
       ::oClienteInicio:Valid()
    end if
 
-   if !Empty( ::oClienteFin )
+   if !empty( ::oClienteFin )
       ::oClienteFin:Valid()
    end if
 
-   if !Empty( ::oGrupoClienteInicio )
+   if !empty( ::oGrupoClienteInicio )
       ::oGrupoClienteInicio:Valid()
    end if   
 
-   if !Empty( ::oGrupoClienteFin )
+   if !empty( ::oGrupoClienteFin )
       ::oGrupoClienteFin:Valid()
    end if
 
    //Si usamos proveedores---------------------------------------------------
 
-   if !Empty( ::oProveedorInicio ) 
+   if !empty( ::oProveedorInicio ) 
       ::oProveedorInicio:Valid()
    end if
 
-   if !Empty( ::oProveedorFin )
+   if !empty( ::oProveedorFin )
       ::oProveedorFin:Valid()
    end if
 
-   if !Empty( ::oGrupoProveedorInicio )
+   if !empty( ::oGrupoProveedorInicio )
       ::oGrupoProveedorInicio:Valid()
    end if   
 
-   if !Empty( ::oGrupoProveedorFin )
+   if !empty( ::oGrupoProveedorFin )
       ::oGrupoProveedorFin:Valid()
    end if
 
    ::oFormatoDocumento:Valid()
 
-   if !Empty( ::bStart )
+   if !empty( ::bStart )
       Eval( ::bStart )
    end if   
 
@@ -702,7 +702,7 @@ METHOD Resource( oDlg ) CLASS ComponentGetSay
       WHEN        ( .f. ) ;
       OF          oDlg
 
-   if !Empty( ::idText )
+   if !empty( ::idText )
 
    REDEFINE SAY   ::oTextControl ;
       PROMPT      ::cTextValue ;
@@ -835,7 +835,7 @@ METHOD getTarifa()
    for n := 1 to NUMERO_TARIFAS
 
       if uFieldEmpresa( "lShwTar" + alltrim( str( n ) ) )
-         if !Empty( alltrim( uFieldEmpresa( "cTxtTar" + alltrim( str( n ) ) ) ))
+         if !empty( alltrim( uFieldEmpresa( "cTxtTar" + alltrim( str( n ) ) ) ))
             if alltrim( uFieldEmpresa( "cTxtTar" + alltrim( str( n ) ) ) ) == ::VarGet()
                Return ( n )
             end if 
@@ -1435,9 +1435,9 @@ CLASS GetRangoSeries FROM Component
 
    METHOD Resource( oDialog )
 
-   METHOD SelectAll()         INLINE ( if( !Empty( ::hObjectSerie ), hEval( ::hObjectSerie, {| h, o, i | o:uCheckValue := .t., o:oCheckControl:Refresh() } ), ) )
+   METHOD SelectAll()         INLINE ( if( !empty( ::hObjectSerie ), hEval( ::hObjectSerie, {| h, o, i | o:uCheckValue := .t., o:oCheckControl:Refresh() } ), ) )
 
-   METHOD UnselectAll()       INLINE ( if( !Empty( ::hObjectSerie ), hEval( ::hObjectSerie, {| h, o, i | o:uCheckValue := .f., o:oCheckControl:Refresh() } ), ) )
+   METHOD UnselectAll()       INLINE ( if( !empty( ::hObjectSerie ), hEval( ::hObjectSerie, {| h, o, i | o:uCheckValue := .f., o:oCheckControl:Refresh() } ), ) )
 
    METHOD InRange( uValue )
 
@@ -1495,7 +1495,7 @@ METHOD Resource( oDialog ) CLASS GetRangoSeries
    ::oTodas:Resource( oDialog )
    ::oNinguna:Resource( oDialog )
 
-   if !Empty( ::hObjectSerie )
+   if !empty( ::hObjectSerie )
 
       hEval( ::hObjectSerie, {| h, o, i | o:Resource( oDialog ) } )
 
@@ -1505,7 +1505,7 @@ Return ( Self )
 
 METHOD InRange( uValue ) CLASS GetRangoSeries
 
-   if Empty( uValue )
+   if empty( uValue )
       Return .f.
    end if
 
@@ -1929,7 +1929,7 @@ END CLASS
 
       REDEFINE BTNBMP ::oBtnCut ;
          ID       ( id + 3 ) ;
-         WHEN     ( ! Empty( ::oRTF:GetSel() ) .and. ! ::oRTF:lReadOnly ) ;
+         WHEN     ( ! empty( ::oRTF:GetSel() ) .and. ! ::oRTF:lReadOnly ) ;
          OF       oDlg ;
          RESOURCE "Cut_16" ;
          NOBORDER ;
@@ -1939,7 +1939,7 @@ END CLASS
 
       REDEFINE BTNBMP ::oBtnCopy ;
          ID       ( id + 4 ) ;
-         WHEN     ( ! Empty( ::oRTF:GetSel() ) ) ;
+         WHEN     ( ! empty( ::oRTF:GetSel() ) ) ;
          OF       oDlg ;
          RESOURCE "Copy16" ;
          NOBORDER ;
@@ -1949,7 +1949,7 @@ END CLASS
 
       REDEFINE BTNBMP ::oBtnPaste ;
          ID       ( id + 5 ) ;
-         WHEN     ( ! Empty( ::oClp:GetText() ) .and. ! ::oRTF:lReadOnly ) ;
+         WHEN     ( ! empty( ::oClp:GetText() ) .and. ! ::oRTF:lReadOnly ) ;
          OF       oDlg ;
          RESOURCE "Paste_16" ;
          NOBORDER ;
@@ -2196,12 +2196,14 @@ CLASS TLabelGenerator
 
    Data nView
 
+   Data lTemporalData                     INIT .f.
+
    METHOD New()
 
    METHOD Dialog()
    METHOD lCreateTempLabelEdition()      
    METHOD DestroyTempLabelEdition()
-   METHOD LoadTempLabelEdition()         VIRTUAL
+   METHOD LoadTempLabelEdition()          VIRTUAL
 
    METHOD lCreateTempReport()            
    METHOD loadTempReport()   
@@ -2225,9 +2227,14 @@ CLASS TLabelGenerator
    METHOD lPrintLabels()
    METHOD InitLabel( oLabel )
 
-   METHOD closeFiles()                 INLINE ( D():DeleteView( ::nView ) )
-   METHOD dataLabel( oFr, lTemporal )  VIRTUAL
-   METHOD VariableLabel( oFr )         VIRTUAL 
+   METHOD closeFiles()                    INLINE ( D():DeleteView( ::nView ) )
+   METHOD dataLabel( oFr )                VIRTUAL
+   METHOD variableLabel( oFr )            VIRTUAL 
+
+   METHOD setTemporalData( lTemporal )    INLINE ( ::lTemporalData := lTemporal )
+   METHOD getTemporalData()               INLINE ( ::lTemporalData )
+
+   METHOD getDataLabelReport()            INLINE ( if( ::getTemporalData(), ::tmpLabelReport, ::dbfLineas ) )
 
 END CLASS
 
@@ -2607,7 +2614,7 @@ Return ( lCreateTempLabelEdition )
 
 METHOD DestroyTempLabelEdition() CLASS TLabelGenerator
 
-   if !Empty( ::tmpLabelEdition ) .and. ( ::tmpLabelEdition )->( Used() )
+   if !empty( ::tmpLabelEdition ) .and. ( ::tmpLabelEdition )->( Used() )
       ( ::tmpLabelEdition )->( dbCloseArea() )
    end if
 
@@ -2636,7 +2643,7 @@ METHOD BotonSiguiente() CLASS TLabelGenerator
    do case
       case ::oFld:nOption == 1
 
-         if Empty( ::cFormatoLabel )
+         if empty( ::cFormatoLabel )
 
             MsgStop( "Debe cumplimentar un formato de etiquetas" )
 
@@ -2695,11 +2702,8 @@ METHOD buildReportLabels() CLASS TLabelGenerator
    sysRefresh()
 
    oFr               := frReportManager():New()
-
    oFr:LoadLangRes(     "Spanish.Xml" )
-
    oFr:SetIcon( 1 )
-
    oFr:SetTitle(        "Diseñador de documentos" )
 
    // Manejador de eventos--------------------------------------------------------
@@ -2708,13 +2712,15 @@ METHOD buildReportLabels() CLASS TLabelGenerator
    
    // Zona de datos---------------------------------------------------------------
 
-   ::DataLabel( oFr, .t. )
+   ::setTemporalData( .t. )
+
+   ::DataLabel( oFr )
 
    ::VariableLabel( oFr )
 
    //Cargar el informe-----------------------------------------------------------
    
-   if !Empty( ( ::dbfDocumento )->mReport )
+   if !empty( ( ::dbfDocumento )->mReport )
 
       oFr:LoadFromBlob( ( ::dbfDocumento )->( Select() ), "mReport")
       
@@ -2781,7 +2787,7 @@ Return ( lCreateTempReport )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadTempReport()
+METHOD loadTempReport() CLASS TLabelGenerator
 
    local n
    local nRec           := ( ::tmpLabelEdition )->( Recno() )
@@ -2836,7 +2842,7 @@ METHOD prepareTempReport( oFr ) CLASS TLabelGenerator
    local nColumns       := oFr:GetProperty( "MainPage", "Columns" )
    local nItemsInColumn := 0
 
-   if !Empty( nPaperHeight ) .and. !Empty( nHeight ) .and. !Empty( nColumns )
+   if !empty( nPaperHeight ) .and. !empty( nHeight ) .and. !empty( nColumns )
 
       nItemsInColumn       := int( nPaperHeight / nHeight )
 
@@ -2851,14 +2857,13 @@ METHOD prepareTempReport( oFr ) CLASS TLabelGenerator
 
    ( ::tmpLabelReport )->( dbGoTop() )
 
-
 Return ( .t. )
 
 //--------------------------------------------------------------------------//
 
 METHOD End() CLASS TLabelGenerator
 
-   if !Empty( ::nRecno )
+   if !empty( ::nRecno )
       ( ::dbfCabecera )->( dbGoTo( ::nRecno ) )
    end if
 
@@ -3010,12 +3015,12 @@ Return ( Self )
 CLASS TLabelGeneratorPedidoProveedores FROM TLabelGenerator
 
    METHOD New( nView )
-   METHOD loadTempLabelEdition() 
-   METHOD dataLabel( oFr, lTemporal )
-   METHOD variableLabel( oFr )
 
-   METHOD nombrePrimeraPropiedad()  INLINE ( nombrePropiedad( ( ::tmpLabelReport )->cCodPr1, ( ::tmpLabelReport )->cValPr1, ::nView ) )
-   METHOD nombreSegundaPropiedad()  INLINE ( nombrePropiedad( ( ::tmpLabelReport )->cCodPr2, ( ::tmpLabelReport )->cValPr2, ::nView ) )
+   METHOD loadTempLabelEdition() 
+   METHOD dataLabel( oFr )
+
+   METHOD nombrePrimeraPropiedad()  INLINE ( if( !empty( ::getDataLabelReport() ), nombrePropiedad( ( ::getDataLabelReport() )->cCodPr1, ( ::getDataLabelReport() )->cValPr1, ::nView ), "" ) )
+   METHOD nombreSegundaPropiedad()  INLINE ( if( !empty( ::getDataLabelReport() ), nombrePropiedad( ( ::getDataLabelReport() )->cCodPr2, ( ::getDataLabelReport() )->cValPr2, ::nView ), "" ) )
 
 ENDCLASS
 
@@ -3079,7 +3084,7 @@ METHOD loadTempLabelEdition() CLASS TLabelGeneratorPedidoProveedores
 
             while ( ::dbfLineas )->cSerPed + Str( ( ::dbfLineas )->nNumPed ) + ( ::dbfLineas )->cSufPed == ( ::dbfCabecera )->cSerPed + Str( ( ::dbfCabecera )->nNumPed ) + ( ::dbfCabecera )->cSufPed  .and. ( ::dbfLineas )->( !eof() )
 
-               if !Empty( ( ::dbfLineas )->cRef )
+               if !empty( ( ::dbfLineas )->cRef )
 
                   dbPass( ::dbfLineas, ::tmpLabelEdition, .t. )
 
@@ -3121,16 +3126,11 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorPedidoProveedores
+METHOD dataLabel( oFr ) CLASS TLabelGeneratorPedidoProveedores
 
    oFr:ClearDataSets()
 
-   if lTemporal
-      oFr:SetWorkArea(  "Lineas de pedidos", ( ::tmpLabelReport )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
-   else
-      oFr:SetWorkArea(  "Lineas de pedidos", ( ::dbfLineas )->( Select() ), .f., { FR_RB_FIRST, FR_RE_COUNT, 20 } )
-   end if
-
+   oFr:SetWorkArea(  "Lineas de pedidos", ( ::getDataLabelReport() )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
    oFr:SetFieldAliases( "Lineas de pedidos", cItemsToReport( aColPedPrv() ) )
 
    oFr:SetWorkArea(     "Pedidos", ( ::dbfCabecera )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
@@ -3169,52 +3169,36 @@ METHOD dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorPedidoProveedores
    oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( ::nView ):Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( ::nView ):oDbf) )
    
-   if lTemporal
-      oFr:SetMasterDetail( "Lineas de pedidos", "Pedidos",                    {|| ( ::tmpLabelReport )->cSerPed + Str( ( ::tmpLabelReport )->nNumPed ) + ( ::tmpLabelReport )->cSufPed } )
-      oFr:SetMasterDetail( "Lineas de pedidos", "Artículos",                  {|| ( ::tmpLabelReport )->cRef } )
-      oFr:SetMasterDetail( "Lineas de pedidos", "Precios por propiedades",    {|| ( ::tmpLabelReport )->cDetalle + ( ::tmpLabelReport )->cCodPr1 + ( ::tmpLabelReport )->cCodPr2 + ( ::tmpLabelReport )->cValPr1 + ( ::tmpLabelReport )->cValPr2 } )
-      oFr:SetMasterDetail( "Lineas de pedidos", "Incidencias de pedidos",     {|| ( ::tmpLabelReport )->cSerPed + Str( ( ::tmpLabelReport )->nNumPed ) + ( ::tmpLabelReport )->cSufPed } )
-      oFr:SetMasterDetail( "Lineas de pedidos", "Documentos de pedidos",      {|| ( ::tmpLabelReport )->cSerPed + Str( ( ::tmpLabelReport )->nNumPed ) + ( ::tmpLabelReport )->cSufPed } )
-      oFr:SetMasterDetail( "Lineas de pedidos", "Impuestos especiales",       {|| ( ::tmpLabelReport )->cCodImp } )
-   else
-      oFr:SetMasterDetail( "Lineas de pedidos", "Pedidos",                    {|| ( ::dbfLineas )->cSerPed + Str( ( ::dbfLineas )->nNumPed ) + ( ::dbfLineas )->cSufPed } )
-      oFr:SetMasterDetail( "Lineas de pedidos", "Artículos",                  {|| ( ::dbfLineas )->cRef } )
-      oFr:SetMasterDetail( "Lineas de pedidos", "Precios por propiedades",    {|| ( ::dbfLineas )->cRef + ( ::dbfLineas )->cCodPr1 + ( ::dbfLineas )->cCodPr2 + ( ::dbfLineas )->cValPr1 + ( ::dbfLineas )->cValPr2 } )
-      oFr:SetMasterDetail( "Lineas de pedidos", "Incidencias de pedidos",     {|| ( ::dbfLineas )->cSerPed + Str( ( ::dbfLineas )->nNumPed ) + ( ::dbfLineas )->cSufPed } )
-      oFr:SetMasterDetail( "Lineas de pedidos", "Documentos de pedidos",      {|| ( ::dbfLineas )->cSerPed + Str( ( ::dbfLineas )->nNumPed ) + ( ::dbfLineas )->cSufPed } )
-      oFr:SetMasterDetail( "Lineas de pedidos", "Impuestos especiales",       {|| ( ::dbfLineas )->cCodImp } )
-   end if
+   oFr:SetMasterDetail( "Lineas de pedidos", "Pedidos",                    {|| ( ::getDataLabelReport() )->cSerPed + Str( ( ::getDataLabelReport() )->nNumPed ) + ( ::getDataLabelReport() )->cSufPed } )
+   oFr:SetMasterDetail( "Lineas de pedidos", "Artículos",                  {|| ( ::getDataLabelReport() )->cRef } )
+   oFr:SetMasterDetail( "Lineas de pedidos", "Precios por propiedades",    {|| ( ::getDataLabelReport() )->cDetalle + ( ::getDataLabelReport() )->cCodPr1 + ( ::getDataLabelReport() )->cCodPr2 + ( ::getDataLabelReport() )->cValPr1 + ( ::getDataLabelReport() )->cValPr2 } )
+   oFr:SetMasterDetail( "Lineas de pedidos", "Incidencias de pedidos",     {|| ( ::getDataLabelReport() )->cSerPed + Str( ( ::getDataLabelReport() )->nNumPed ) + ( ::getDataLabelReport() )->cSufPed } )
+   oFr:SetMasterDetail( "Lineas de pedidos", "Documentos de pedidos",      {|| ( ::getDataLabelReport() )->cSerPed + Str( ( ::getDataLabelReport() )->nNumPed ) + ( ::getDataLabelReport() )->cSufPed } )
+   oFr:SetMasterDetail( "Lineas de pedidos", "Impuestos especiales",       {|| ( ::getDataLabelReport() )->cCodImp } )
 
-   oFr:SetMasterDetail(    "Pedidos", "Proveedores",                          {|| ( ::dbfCabecera )->cCodPrv } )
-   oFr:SetMasterDetail(    "Pedidos", "Almacenes",                            {|| ( ::dbfCabecera )->cCodAlm } )
-   oFr:SetMasterDetail(    "Pedidos", "Formas de pago",                       {|| ( ::dbfCabecera )->cCodPgo} )
-   oFr:SetMasterDetail(    "Pedidos", "Bancos",                               {|| ( ::dbfCabecera )->cCodPrv } )
-   oFr:SetMasterDetail(    "Pedidos", "Empresa",                              {|| cCodigoEmpresaEnUso() } )
+   oFr:SetMasterDetail( "Pedidos", "Proveedores",                          {|| ( ::dbfCabecera )->cCodPrv } )
+   oFr:SetMasterDetail( "Pedidos", "Almacenes",                            {|| ( ::dbfCabecera )->cCodAlm } )
+   oFr:SetMasterDetail( "Pedidos", "Formas de pago",                       {|| ( ::dbfCabecera )->cCodPgo} )
+   oFr:SetMasterDetail( "Pedidos", "Bancos",                               {|| ( ::dbfCabecera )->cCodPrv } )
+   oFr:SetMasterDetail( "Pedidos", "Empresa",                              {|| cCodigoEmpresaEnUso() } )
 
-   oFr:SetResyncPair(      "Lineas de pedidos", "Pedidos" )
-   oFr:SetResyncPair(      "Lineas de pedidos", "Artículos" )
-   oFr:SetResyncPair(      "Lineas de pedidos", "Precios por propiedades" )
-   oFr:SetResyncPair(      "Lineas de pedidos", "Incidencias de pedidos" )
-   oFr:SetResyncPair(      "Lineas de pedidos", "Documentos de pedidos" )
-   oFr:SetResyncPair(      "Lineas de pedidos", "Impuestos especiales" )   
+   oFr:SetResyncPair(   "Lineas de pedidos", "Pedidos" )
+   oFr:SetResyncPair(   "Lineas de pedidos", "Artículos" )
+   oFr:SetResyncPair(   "Lineas de pedidos", "Precios por propiedades" )
+   oFr:SetResyncPair(   "Lineas de pedidos", "Incidencias de pedidos" )
+   oFr:SetResyncPair(   "Lineas de pedidos", "Documentos de pedidos" )
+   oFr:SetResyncPair(   "Lineas de pedidos", "Impuestos especiales" )   
 
-   oFr:SetResyncPair(      "Pedidos", "Proveedores" )
-   oFr:SetResyncPair(      "Pedidos", "Almacenes" )
-   oFr:SetResyncPair(      "Pedidos", "Formas de pago" )
-   oFr:SetResyncPair(      "Pedidos", "Bancos" )
-   oFr:SetResyncPair(      "Pedidos", "Empresa" )
+   oFr:SetResyncPair(   "Pedidos", "Proveedores" )
+   oFr:SetResyncPair(   "Pedidos", "Almacenes" )
+   oFr:SetResyncPair(   "Pedidos", "Formas de pago" )
+   oFr:SetResyncPair(   "Pedidos", "Bancos" )
+   oFr:SetResyncPair(   "Pedidos", "Empresa" )
 
 Return nil
 
 //---------------------------------------------------------------------------//
-
-METHOD variableLabel( oFr ) CLASS TLabelGeneratorPedidoProveedores
-
-   oFr:AddVariable(     "Lineas de pedidos",   "Nombre primera propiedad",            "CallHbFunc( 'oTInfGen', ['nombrePrimeraPropiedad()'] )" )
-   oFr:AddVariable(     "Lineas de pedidos",   "Nombre segunda propiedad",            "CallHbFunc( 'oTInfGen', ['nombreSegundaPropiedad()'] )" )
-
-Return nil
-
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -3228,7 +3212,7 @@ CLASS TLabelGeneratorAlbaranClientes FROM TLabelGenerator
 
    METHOD New( nView )
    METHOD LoadTempLabelEdition() 
-   METHOD dataLabel( oFr, lTemporal )
+   METHOD dataLabel( oFr)
 
 ENDCLASS
 
@@ -3291,7 +3275,7 @@ METHOD LoadTempLabelEdition() CLASS TLabelGeneratorAlbaranClientes
 
             while ( ::dbfLineas )->cSerAlb + Str( ( ::dbfLineas )->nNumAlb ) + ( ::dbfLineas )->cSufAlb == ( ::dbfCabecera )->cSerAlb + Str( ( ::dbfCabecera )->nNumAlb ) + ( ::dbfCabecera )->cSufAlb  .and. ( ::dbfLineas )->( !eof() )
 
-               if !Empty( ( ::dbfLineas )->cRef )
+               if !empty( ( ::dbfLineas )->cRef )
 
                   dbPass( ::dbfLineas, ::tmpLabelEdition, .t. )
 
@@ -3333,11 +3317,11 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorAlbaranClientes
+METHOD dataLabel( oFr ) CLASS TLabelGeneratorAlbaranClientes
 
    oFr:ClearDataSets()
 
-   if lTemporal
+   if ::getTemporalData()
       oFr:SetWorkArea(  "Lineas de albaranes", ( ::tmpLabelReport )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
    else
       oFr:SetWorkArea(  "Lineas de albaranes", ( ::dbfLineas )->( Select() ), .f., { FR_RB_FIRST, FR_RE_COUNT, 20 } )
@@ -3381,7 +3365,7 @@ METHOD dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorAlbaranClientes
    oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( ::nView ):Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( ::nView ):oDbf) )
    
-   if lTemporal
+   if ::getTemporalData()
       oFr:SetMasterDetail( "Lineas de albaranes", "Albaranes",                  {|| ( ::tmpLabelReport )->cSerAlb + Str( ( ::tmpLabelReport )->nNumAlb ) + ( ::tmpLabelReport )->cSufAlb } )
       oFr:SetMasterDetail( "Lineas de albaranes", "Artículos",                  {|| ( ::tmpLabelReport )->cRef } )
       oFr:SetMasterDetail( "Lineas de albaranes", "Precios por propiedades",    {|| ( ::tmpLabelReport )->cDetalle + ( ::tmpLabelReport )->cCodPr1 + ( ::tmpLabelReport )->cCodPr2 + ( ::tmpLabelReport )->cValPr1 + ( ::tmpLabelReport )->cValPr2 } )
@@ -3418,7 +3402,6 @@ METHOD dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorAlbaranClientes
 
 Return ( nil )
 
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -3432,7 +3415,7 @@ CLASS TLabelGeneratorPedidoClientes FROM TLabelGenerator
 
    METHOD New( nView )
    METHOD LoadTempLabelEdition() 
-   METHOD dataLabel( oFr, lTemporal )
+   METHOD dataLabel( oFr )
 
 ENDCLASS
 
@@ -3495,7 +3478,7 @@ METHOD LoadTempLabelEdition() CLASS TLabelGeneratorPedidoClientes
 
             while ( ::dbfLineas )->cSerPed + Str( ( ::dbfLineas )->nNumPed ) + ( ::dbfLineas )->cSufPed == ( ::dbfCabecera )->cSerPed + Str( ( ::dbfCabecera )->nNumPed ) + ( ::dbfCabecera )->cSufPed  .and. ( ::dbfLineas )->( !eof() )
 
-               if !Empty( ( ::dbfLineas )->cRef )
+               if !empty( ( ::dbfLineas )->cRef )
 
                   dbPass( ::dbfLineas, ::tmpLabelEdition, .t. )
 
@@ -3537,11 +3520,11 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorPedidoClientes
+METHOD dataLabel( oFr ) CLASS TLabelGeneratorPedidoClientes
 
    oFr:ClearDataSets()
 
-   if lTemporal
+   if ::getTemporalData()
       oFr:SetWorkArea(  "Lineas de pedidos", ( ::tmpLabelReport )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
    else
       oFr:SetWorkArea(  "Lineas de pedidos", ( ::dbfLineas )->( Select() ), .f., { FR_RB_FIRST, FR_RE_COUNT, 20 } )
@@ -3585,7 +3568,7 @@ METHOD dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorPedidoClientes
    oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( ::nView ):Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( ::nView ):oDbf) )
    
-   if lTemporal
+   if ::getTemporalData()
       oFr:SetMasterDetail( "Lineas de pedidos", "Pedidos",                    {|| ( ::tmpLabelReport )->cSerPed + Str( ( ::tmpLabelReport )->nNumPed ) + ( ::tmpLabelReport )->cSufPed } )
       oFr:SetMasterDetail( "Lineas de pedidos", "Artículos",                  {|| ( ::tmpLabelReport )->cRef } )
       oFr:SetMasterDetail( "Lineas de pedidos", "Precios por propiedades",    {|| ( ::tmpLabelReport )->cDetalle + ( ::tmpLabelReport )->cCodPr1 + ( ::tmpLabelReport )->cCodPr2 + ( ::tmpLabelReport )->cValPr1 + ( ::tmpLabelReport )->cValPr2 } )
@@ -3633,7 +3616,7 @@ CLASS TLabelGeneratorPresupuestoClientes FROM TLabelGenerator
 
    METHOD New( nView )
    METHOD LoadTempLabelEdition() 
-   METHOD dataLabel( oFr, lTemporal )
+   METHOD dataLabel( oFr )
 
 ENDCLASS
 
@@ -3696,7 +3679,7 @@ METHOD LoadTempLabelEdition() CLASS TLabelGeneratorPresupuestoClientes
 
             while ( ::dbfLineas )->cSerPre + Str( ( ::dbfLineas )->nNumPre ) + ( ::dbfLineas )->cSufPre == ( ::dbfCabecera )->cSerPre + Str( ( ::dbfCabecera )->nNumPre ) + ( ::dbfCabecera )->cSufPre  .and. ( ::dbfLineas )->( !eof() )
 
-               if !Empty( ( ::dbfLineas )->cRef )
+               if !empty( ( ::dbfLineas )->cRef )
 
                   dbPass( ::dbfLineas, ::tmpLabelEdition, .t. )
 
@@ -3738,11 +3721,11 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorPresupuestoClientes
+METHOD dataLabel( oFr ) CLASS TLabelGeneratorPresupuestoClientes
 
    oFr:ClearDataSets()
 
-   if lTemporal
+   if ::getTemporalData()
       oFr:SetWorkArea(  "Lineas de presupuestos", ( ::tmpLabelReport )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
    else
       oFr:SetWorkArea(  "Lineas de presupuestos", ( ::dbfLineas )->( Select() ), .f., { FR_RB_FIRST, FR_RE_COUNT, 20 } )
@@ -3786,7 +3769,7 @@ METHOD dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorPresupuestoClientes
    oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( ::nView ):Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( ::nView ):oDbf) )
    
-   if lTemporal
+   if ::getTemporalData()
       oFr:SetMasterDetail( "Lineas de presupuestos", "Presupuestos",                   {|| ( ::tmpLabelReport )->cSerPre + Str( ( ::tmpLabelReport )->nNumPre ) + ( ::tmpLabelReport )->cSufPre } )
       oFr:SetMasterDetail( "Lineas de presupuestos", "Artículos",                      {|| ( ::tmpLabelReport )->cRef } )
       oFr:SetMasterDetail( "Lineas de presupuestos", "Precios por propiedades",        {|| ( ::tmpLabelReport )->cDetalle + ( ::tmpLabelReport )->cCodPr1 + ( ::tmpLabelReport )->cCodPr2 + ( ::tmpLabelReport )->cValPr1 + ( ::tmpLabelReport )->cValPr2 } )
@@ -3834,7 +3817,7 @@ CLASS TLabelGeneratorFacturasClientes FROM TLabelGenerator
 
    METHOD New( nView )
    METHOD LoadTempLabelEdition() 
-   METHOD dataLabel( oFr, lTemporal )
+   METHOD dataLabel( oFr )
 
 ENDCLASS
 
@@ -3897,7 +3880,7 @@ METHOD LoadTempLabelEdition() CLASS TLabelGeneratorFacturasClientes
 
             while ( ::dbfLineas )->cSerie + Str( ( ::dbfLineas )->nNumFac ) + ( ::dbfLineas )->cSufFac == ( ::dbfCabecera )->cSerie + Str( ( ::dbfCabecera )->nNumFac ) + ( ::dbfCabecera )->cSufFac  .and. ( ::dbfLineas )->( !eof() )
 
-               if !Empty( ( ::dbfLineas )->cRef )
+               if !empty( ( ::dbfLineas )->cRef )
 
                   dbPass( ::dbfLineas, ::tmpLabelEdition, .t. )
 
@@ -3939,11 +3922,11 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorFacturasClientes
+METHOD dataLabel( oFr ) CLASS TLabelGeneratorFacturasClientes
 
    oFr:ClearDataSets()
 
-   if lTemporal
+   if ::getTemporalData()
       oFr:SetWorkArea(  "Lineas de facturas", ( ::tmpLabelReport )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
    else
       oFr:SetWorkArea(  "Lineas de facturas", ( ::dbfLineas )->( Select() ), .f., { FR_RB_FIRST, FR_RE_COUNT, 20 } )
@@ -3987,7 +3970,7 @@ METHOD dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorFacturasClientes
    oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( ::nView ):Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( ::nView ):oDbf) )
    
-   if lTemporal
+   if ::getTemporalData()
       oFr:SetMasterDetail( "Lineas de facturas", "Facturas",                    {|| ( ::tmpLabelReport )->cSerie + Str( ( ::tmpLabelReport )->nNumFac ) + ( ::tmpLabelReport )->cSufFac } )
       oFr:SetMasterDetail( "Lineas de facturas", "Artículos",                   {|| ( ::tmpLabelReport )->cRef } )
       oFr:SetMasterDetail( "Lineas de facturas", "Precios por propiedades",     {|| ( ::tmpLabelReport )->cDetalle + ( ::tmpLabelReport )->cCodPr1 + ( ::tmpLabelReport )->cCodPr2 + ( ::tmpLabelReport )->cValPr1 + ( ::tmpLabelReport )->cValPr2 } )
@@ -4035,7 +4018,7 @@ CLASS TLabelGeneratorFacturasRectificativaClientes FROM TLabelGenerator
 
    METHOD New( nView )
    METHOD LoadTempLabelEdition() 
-   METHOD dataLabel( oFr, lTemporal )
+   METHOD dataLabel( oFr )
 
 ENDCLASS
 
@@ -4098,7 +4081,7 @@ METHOD LoadTempLabelEdition() CLASS TLabelGeneratorFacturasRectificativaClientes
 
             while ( ::dbfLineas )->cSerie + Str( ( ::dbfLineas )->nNumFac ) + ( ::dbfLineas )->cSufFac == ( ::dbfCabecera )->cSerie + Str( ( ::dbfCabecera )->nNumFac ) + ( ::dbfCabecera )->cSufFac  .and. ( ::dbfLineas )->( !eof() )
 
-               if !Empty( ( ::dbfLineas )->cRef )
+               if !empty( ( ::dbfLineas )->cRef )
 
                   dbPass( ::dbfLineas, ::tmpLabelEdition, .t. )
 
@@ -4140,11 +4123,11 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorFacturasRectificativaClientes
+METHOD dataLabel( oFr ) CLASS TLabelGeneratorFacturasRectificativaClientes
 
    oFr:ClearDataSets()
 
-   if lTemporal
+   if ::getTemporalData()
       oFr:SetWorkArea(  "Lineas de facturas", ( ::tmpLabelReport )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
    else
       oFr:SetWorkArea(  "Lineas de facturas", ( ::dbfLineas )->( Select() ), .f., { FR_RB_FIRST, FR_RE_COUNT, 20 } )
@@ -4188,7 +4171,7 @@ METHOD dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorFacturasRectificativaCli
    oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( ::nView ):Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( ::nView ):oDbf) )
    
-   if lTemporal
+   if ::getTemporalData()
       oFr:SetMasterDetail( "Lineas de facturas", "Facturas",                    {|| ( ::tmpLabelReport )->cSerie + Str( ( ::tmpLabelReport )->nNumFac ) + ( ::tmpLabelReport )->cSufFac } )
       oFr:SetMasterDetail( "Lineas de facturas", "Artículos",                   {|| ( ::tmpLabelReport )->cRef } )
       oFr:SetMasterDetail( "Lineas de facturas", "Precios por propiedades",     {|| ( ::tmpLabelReport )->cDetalle + ( ::tmpLabelReport )->cCodPr1 + ( ::tmpLabelReport )->cCodPr2 + ( ::tmpLabelReport )->cValPr1 + ( ::tmpLabelReport )->cValPr2 } )
@@ -4236,7 +4219,7 @@ CLASS TLabelGeneratorSATClientes FROM TLabelGenerator
 
    METHOD New( nView )
    METHOD LoadTempLabelEdition() 
-   METHOD dataLabel( oFr, lTemporal )
+   METHOD dataLabel( oFr )
 
 ENDCLASS
 
@@ -4299,7 +4282,7 @@ METHOD LoadTempLabelEdition() CLASS TLabelGeneratorSATClientes
 
             while ( ::dbfLineas )->cSerSat + Str( ( ::dbfLineas )->nNumSat ) + ( ::dbfLineas )->cSufSat == ( ::dbfCabecera )->cSerSat + Str( ( ::dbfCabecera )->nNumSat ) + ( ::dbfCabecera )->cSufSat  .and. ( ::dbfLineas )->( !eof() )
 
-               if !Empty( ( ::dbfLineas )->cRef )
+               if !empty( ( ::dbfLineas )->cRef )
 
                   dbPass( ::dbfLineas, ::tmpLabelEdition, .t. )
 
@@ -4341,11 +4324,11 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorSATClientes
+METHOD dataLabel( oFr ) CLASS TLabelGeneratorSATClientes
 
    oFr:ClearDataSets()
 
-   if lTemporal
+   if ::getTemporalData()
       oFr:SetWorkArea(  "Lineas de SAT", ( ::tmpLabelReport )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
    else
       oFr:SetWorkArea(  "Lineas de SAT", ( ::dbfLineas )->( Select() ), .f., { FR_RB_FIRST, FR_RE_COUNT, 20 } )
@@ -4389,7 +4372,7 @@ METHOD dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorSATClientes
    oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( ::nView ):Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( ::nView ):oDbf) )
    
-   if lTemporal
+   if ::getTemporalData()
       oFr:SetMasterDetail( "Lineas de SAT", "SAT",                      {|| ( ::tmpLabelReport )->cSerSat + Str( ( ::tmpLabelReport )->nNumSat ) + ( ::tmpLabelReport )->cSufSat } )
       oFr:SetMasterDetail( "Lineas de SAT", "Artículos",                {|| ( ::tmpLabelReport )->cRef } )
       oFr:SetMasterDetail( "Lineas de SAT", "Precios por propiedades",  {|| ( ::tmpLabelReport )->cDetalle + ( ::tmpLabelReport )->cCodPr1 + ( ::tmpLabelReport )->cCodPr2 + ( ::tmpLabelReport )->cValPr1 + ( ::tmpLabelReport )->cValPr2 } )
