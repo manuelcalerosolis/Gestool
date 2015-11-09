@@ -14,7 +14,7 @@
 
 #define HKEY_LOCAL_MACHINE    2147483650
 
-#define FONT_NAME                "Segoe UI" // "Arial" //  
+#define FONT_NAME             "Segoe UI" // "Arial" //  
 
 ANNOUNCE RDDSYS
 
@@ -1438,7 +1438,7 @@ Static Function FinishAplication() //  Static Function
 
    checkRes()
 
-   winExec( "notepad checkres.txt" )
+   // winExec( "notepad checkres.txt" )
 
 Return nil
 
