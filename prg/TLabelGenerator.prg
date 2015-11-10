@@ -78,6 +78,7 @@ CLASS TLabelGenerator
 
    METHOD lCreateTempLabelEdition()      
    METHOD loadTempLabelEdition()          VIRTUAL
+   METHOD loadTempLabelReport()           INLINE ( ::loadTempLabelEdition( ::tmpLabelReport ) )
    METHOD destroyTempLabelEdition()
 
    METHOD lCreateTempReport()            
@@ -887,7 +888,6 @@ CLASS TLabelGeneratorPedidoProveedores FROM TLabelGenerator
    METHOD New( nView )
 
    METHOD loadTempLabelEdition() 
-   METHOD loadTempLabelReport()     INLINE ( ::loadTempLabelEdition( ::tmpLabelReport ) )
    
    METHOD dataLabel( oFr )
 
