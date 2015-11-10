@@ -385,45 +385,47 @@ Return ( .t. )
 
 METHOD EjecutarFicheroScript( uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) CLASS TScripts
 
+   local uReturn
+
    // Desactivamos todos los Scripts-------------------------------------------
 
    ::DeActivateAllTimer()
 
    // Ejecutamos el script compilado----------------------------------------
 
-   ::RunScript( ::cFicheroHbr, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
+   uReturn  := ::RunScript( ::cFicheroHbr, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
 
    // Activamos todos los scripts----------------------------------------------
 
    ::ActivateAllTimer()
 
-Return .t.
+Return uReturn
 
 //---------------------------------------------------------------------------//
 
 METHOD RunScript( cFichero, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) CLASS TScripts
 
-   local u
+   local uReturn
    local pHrb
    local oError
    local oBlock
 
-   // oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   // BEGIN SEQUENCE
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
       if file( cFichero )
          pHrb        := hb_hrbLoad( cFichero )
-         u           := hb_hrbDo( pHrb, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
+         uReturn     := hb_hrbDo( pHrb, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
          hb_hrbUnload( pHrb )   
       end if
 
-   // RECOVER USING oError
-   //    msgStop( "Error de ejecución script." + CRLF + ErrorMessage( oError ) )
-   // END SEQUENCE
+   RECOVER USING oError
+      msgStop( "Error de ejecución script." + CRLF + ErrorMessage( oError ) )
+   END SEQUENCE
 
-   // ErrorBlock( oBlock )
+   ErrorBlock( oBlock )
 
-RETURN ( nil )
+RETURN ( uReturn )
 
 //---------------------------------------------------------------------------//
 
@@ -480,6 +482,8 @@ Return .t.
 
 METHOD CompilarEjecutarFicheroScript( cFicheroPrg, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
 
+   local uReturn
+
    if !empty( cFicheroPrg )
       ::cFicheroPrg  := cFicheroPrg
       ::cFicheroHbr  := strtran( cFicheroPrg, ".prg", ".hbr" )
@@ -487,9 +491,9 @@ METHOD CompilarEjecutarFicheroScript( cFicheroPrg, uParam1, uParam2, uParam3, uP
 
    ::CompilarFicheroScript()
 
-   ::EjecutarFicheroScript( uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
+   uReturn           := ::EjecutarFicheroScript( uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
 
-Return ( Self )
+Return ( uReturn )
 
 //---------------------------------------------------------------------------//
 
@@ -515,19 +519,19 @@ RETURN ( nil )
 Function runEventScript( cDirectory, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
 
    local aFile
-   local aDirectory  
+   local aDirectory
+   local uReturn   
    
-   aDirectory  := Directory( cPatScript() + cDirectory + "\*.prg" )
+   aDirectory     := Directory( cPatScript() + cDirectory + "\*.prg" )
 
    if !empty( aDirectory )
 
       for each aFile in aDirectory
-         TScripts():CompilarEjecutarFicheroScript( cPatScript() + cDirectory + '\' + aFile[ 1 ], uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
+         uReturn  := TScripts():CompilarEjecutarFicheroScript( cPatScript() + cDirectory + '\' + aFile[ 1 ], uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
       next 
 
    end if 
 
-RETURN ( nil )
+RETURN ( uReturn )
 
 //---------------------------------------------------------------------------//
-

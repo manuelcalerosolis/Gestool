@@ -190,7 +190,7 @@ METHOD Search( oDlg )
    Sinconizacion de tablas de artículos----------------------------------------
    */
 
-   pdaArticuloSenderReciver():CreateData( , ::oMessage, cPatServidor )
+   //pdaArticuloSenderReciver():CreateData( , ::oMessage, cPatServidor )
    //pdaPCArtSenderReciver():CreateData( , ::oMessage, cPatServidor )
 
    /*
