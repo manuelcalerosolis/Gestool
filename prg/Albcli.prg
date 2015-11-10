@@ -4532,7 +4532,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          ID       140 ;
          IDSAY    141 ;
          SPINNER ;
-         WHEN     ( !aTmp[ _LCONTROL ] .and. nMode != ZOOM_MODE .and. accessCode():lUnitsModify ) ;
+         WHEN     ( !aTmp[ _LCONTROL ] .and. nMode != ZOOM_MODE .and. oUser():lModificaUnidades() ) ;
          ON CHANGE( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ), LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ) );
          PICTURE  cPicUnd ;
          OF       oFld:aDialogs[1] ;

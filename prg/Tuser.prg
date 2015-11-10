@@ -148,6 +148,10 @@ CLASS TUser
    Data     _Operario                  INIT Space( 3 )
    Method   cOperario( cNewVal )       INLINE if( !Empty( cNewVal ), ( ::_Operario := cNewVal ), ::_Operario )
 
+   Data     _lNotUnidades              INIT .f.
+   Method   lNotUnidades( lNewVal )    INLINE if( lNewVal != nil, ::_lNotUnidades := lNewVal, ::_lNotUnidades )
+   Method   lModificaUnidades()        INLINE ( ::lMaster() .or. !::lNotUnidades() )
+
    /*
    Puede cambiar empresa si el codigo de empresa esta vacio--------------------
    */
@@ -288,6 +292,7 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
          ::SalaVenta(         ( ::oDbf )->cCodSala )
          ::DelegacionUsuario( ( ::oDbf )->cCodDlg )
          ::SerieDefecto(      ( ::oDbf )->cSerDef )
+         ::lNotUnidades(      ( ::oDbf )->lNotUni )
 
          /*
          Si el usuario tiene una empresa fija la colocamos caso contrario la ultima en usarse
