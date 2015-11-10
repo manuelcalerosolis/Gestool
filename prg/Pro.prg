@@ -2437,18 +2437,11 @@ FUNCTION nombrePropiedad( cCodigoPropiedad, cValorPropiedad, nView )
 
    local cNombrePropiedad  := ""
 
-   // msgAlert( len( ( D():PropiedadesLineas( nView ) )->( ordkeyval() ) ), "len ordkeyval" ) 
-   // msgAlert( len( cCodigoPropiedad + cValorPropiedad ), "len parametros" ) 
-   // msgAlert( len( cCodigoPropiedad ), "len cCodigoPropiedad" ) 
-   // msgAlert( len( cValorPropiedad ), "len cValorPropiedad" ) 
-
    if D():gotoIdPropiedadesLineas( cCodigoPropiedad + cValorPropiedad, nView ) 
       cNombrePropiedad     := ( D():PropiedadesLineas( nView ) )->cDesTbl
    end if
 
-Return ( cCodigoPropiedad + cValorPropiedad  )
-
-// RETURN ( cNombrePropiedad )
+RETURN ( cNombrePropiedad )
 
 //---------------------------------------------------------------------------//
 

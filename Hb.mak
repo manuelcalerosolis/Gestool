@@ -388,6 +388,7 @@ TScripts.prg            	\
 Cuaderno.prg 					\
 FacturarLineasAlbaranes.prg \
 Components.prg 				            \
+TLabelGenerator.prg                    \
 TTreevie.prg            	            \
 ApoloMeter.prg 				            \
 TGridSay.prg 					            \
@@ -817,6 +818,7 @@ TScripts.obj            \
 Cuaderno.obj 				\
 FacturarLineasAlbaranes.obj            \
 Components.obj                         \
+TLabelGenerator.obj                    \
 TTreevie.obj                           \
 ApoloMeter.obj                         \
 TGridSay.obj                           \
@@ -1234,6 +1236,7 @@ $(OBJ)\TScripts.obj             	+
 $(OBJ)\Cuaderno.obj 		  			+
 $(OBJ)\FacturarLineasAlbaranes.obj 	         +
 $(OBJ)\Components.obj 					         +
+$(OBJ)\TLabelGenerator.obj                   +
 $(OBJ)\TTreevie.obj                          +
 $(OBJ)\ApoloMeter.obj 					         +
 $(OBJ)\FacturarLineasAlbaranesProveedor.obj  +
