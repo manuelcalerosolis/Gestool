@@ -9294,41 +9294,30 @@ Function designLabelPedidoProveedores( oFr, cDoc )
 
    // Zona de datos---------------------------------------------------------
 
-   oLabel:setTemporalData( .f. )
+   oLabel:loadTempLabelReport()
 
-   oLabel:DataLabel( oFr )
+   oLabel:dataLabel( oFr )
 
    // Paginas y bandas------------------------------------------------------
 
    if !empty( ( cDoc )->mReport )
-
       oFr:LoadFromBlob( ( cDoc )->( Select() ), "mReport")
-
    else
-
       oFr:AddPage(         "MainPage" )
-
       oFr:AddBand(         "CabeceraColumnas",  "MainPage",       frxMasterData )
       oFr:SetProperty(     "CabeceraColumnas",  "Top",            200 )
       oFr:SetProperty(     "CabeceraColumnas",  "Height",         100 )
       oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Lineas de pedidos" )
-
    end if
 
    // Diseño de report------------------------------------------------------
 
    oFr:DesignReport()
-
-   // Destruye el diseñador-------------------------------------------------
-
    oFr:DestroyFr()
 
    // Destruye el fichero temporal------------------------------------------------
 
    oLabel:DestroyTempReport()
-
-   // Cierra ficheros-------------------------------------------------------
-
    oLabel:End()
 
    if lOpenFiles

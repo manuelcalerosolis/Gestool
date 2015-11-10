@@ -757,7 +757,7 @@ STATIC FUNCTION OpenFiles( lExt )
          lOpenFiles     := .f.
       end if   
 
-      oDetCamposExtra      := TDetCamposExtra():New()
+      oDetCamposExtra   := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "S.A.T" )
 
@@ -766,6 +766,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       oMailingOperario  := TGenmailingDatabaseSATClientes():New( nView )
       oMailingOperario:setBlockRecipients( {|| alltrim( oRetFld( ( D():SatClientes( nView ) )->cCodOpe, oOperario:oDbf, "cMeiTra" ) ) } )
+
+      CodigosPostales():GetInstance():OpenFiles()
 
       /*
       Recursos y fuente--------------------------------------------------------
@@ -1093,6 +1095,8 @@ STATIC FUNCTION CloseFiles()
    end if
 
    D():DeleteView( nView )
+
+   CodigosPostales():GetInstance():CloseFiles()
 
    dbfSatCliL     := nil
    dbfSatCliI     := nil
@@ -1970,6 +1974,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
       REDEFINE GET aGet[ _CPOSCLI ] VAR aTmp[ _CPOSCLI ] ;
          ID       107 ;
          WHEN     ( nMode != ZOOM_MODE .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
+         VALID    ( CodigosPostales():GetInstance():validCodigoPostal() );
          OF       oFld:aDialogs[1]
 
      /* REDEFINE GET aGet[ _NTARIFA ] VAR aTmp[ _NTARIFA ];
@@ -3091,13 +3096,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 
       oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg ) } )
       oDlg:AddFastKey( VK_F6, {|| if( EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg ), GenSatCli( IS_PRINTER ), ) } )
-      oDlg:AddFastKey( VK_F9,             {|| oDetCamposExtra:Play( aTmp[ _CSERSAT ] + str( aTmp[ _NNUMSAT ] ) + aTmp[ _CSUFSAT ] ) } )
+      oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( aTmp[ _CSERSAT ] + str( aTmp[ _NNUMSAT ] ) + aTmp[ _CSUFSAT ] ) } )
 
       oDlg:AddFastKey( 65,    {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
 
    end if
 
-   oDlg:AddFastKey( VK_F1, {|| ChmHelp( "Satsupuesto" ) } )
+   CodigosPostales():GetInstance():setBinding( { "CodigoPostal" => aGet[ _CPOSCLI ], "Poblacion" => aGet[ _CPOBCLI ], "Provincia" => aGet[ _CPRVCLI ] } )
 
    do case
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. Empty( cCodArt )
@@ -3115,8 +3120,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
    end case
 
    ACTIVATE DIALOG oDlg;
-         ON INIT  (  EdtRecMenu( aTmp, oDlg ) ,;
-                     SetDialog( aGet, oSayGetRnt, oGetRnt ) ,;
+         ON INIT  (  edtRecMenu( aTmp, oDlg ) ,;
+                     setDialog( aGet, oSayGetRnt, oGetRnt ) ,;
                      oBrwLin:Load() ,;
                      oBrwInc:Load() );
          ON PAINT (  RecalculaTotal( aTmp ) );

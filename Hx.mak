@@ -97,7 +97,7 @@ Facant.prg              	\
 Facrec.prg              	\
 Cfaccli.prg             	\
 Factprv.prg             	\
-Rectprv.prg             	\
+RectificativaProveedores.prg	 \
 Albprov.prg             	\
 Albcli.prg              	\
 Familia.prg             	\
@@ -497,7 +497,7 @@ Facant.obj              \
 Facrec.obj              \
 Cfaccli.obj             \
 Factprv.obj             \
-Rectprv.obj             \
+RectificativaProveedores.obj  \ 
 Albprov.obj             \
 Albcli.obj              \
 Familia.obj             \
@@ -923,7 +923,7 @@ $(OBJ)\Facant.obj                +
 $(OBJ)\Facrec.obj                +
 $(OBJ)\Cfaccli.obj               +
 $(OBJ)\Factprv.obj               +
-$(OBJ)\Rectprv.obj               +
+$(OBJ)\RectificativaProveedores.obj    +
 $(OBJ)\Albprov.obj               +
 $(OBJ)\Albcli.obj                +
 $(OBJ)\Familia.obj               +

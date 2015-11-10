@@ -853,6 +853,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       oMailing          := TGenmailingDatabasePresupuestosClientes():New( nView )
 
+      CodigosPostales():GetInstance():OpenFiles()
+
       // Recursos y fuente--------------------------------------------------------
 
       oFont             := TFont():New( "Arial", 8, 26, .f., .t. )
@@ -1184,6 +1186,8 @@ STATIC FUNCTION CloseFiles()
    end if
 
    D():DeleteView( nView )
+
+   CodigosPostales():GetInstance():CloseFiles()
 
    dbfPreCliI     := nil
    dbfPreCliD     := nil
@@ -2057,9 +2061,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          WHEN     ( nMode != ZOOM_MODE .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
 
-		REDEFINE GET aGet[_CPOSCLI] VAR aTmp[_CPOSCLI] ;
+		REDEFINE GET aGet[ _CPOSCLI ] VAR aTmp[ _CPOSCLI ] ;
          ID       107 ;
          WHEN     ( nMode != ZOOM_MODE .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
+         VALID    ( CodigosPostales():GetInstance():validCodigoPostal() );         
          OF       oFld:aDialogs[1]
 
       // Tarifas-----------------------------------
@@ -3178,7 +3183,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 
    end if
 
-   oDlg:AddFastKey( VK_F1, {|| ChmHelp( "Presupuesto" ) } )
+   CodigosPostales():GetInstance():setBinding( { "CodigoPostal" => aGet[ _CPOSCLI ], "Poblacion" => aGet[ _CPOBCLI ], "Provincia" => aGet[ _CPRVCLI ] } )
 
    do case
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. Empty( cCodArt )
@@ -3214,7 +3219,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
    KillTrans( oBrwLin )
 
    /*
-    Guardamos los datos del browse
+   Guardamos los datos del browse
    */
 
    oBrwInc:CloseData()

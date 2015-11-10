@@ -2446,7 +2446,9 @@ FUNCTION nombrePropiedad( cCodigoPropiedad, cValorPropiedad, nView )
       cNombrePropiedad     := ( D():PropiedadesLineas( nView ) )->cDesTbl
    end if
 
-RETURN ( cNombrePropiedad )
+Return ( cCodigoPropiedad + cValorPropiedad  )
+
+// RETURN ( cNombrePropiedad )
 
 //---------------------------------------------------------------------------//
 

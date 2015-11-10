@@ -4049,23 +4049,15 @@ Static Function VisualEdtDocs( dbfDoc )
 
    cTipo                := ( dbfDoc )->cTipo
 
+   // Objeto fastreport--------------------------------------------------------
+
    oFr                  := frReportManager():New()
-
    oFr:ClearDataSets()
-
    oFr:LoadLangRes(     "Spanish.Xml" )
-
    oFr:SetProperty(     "Designer.DefaultFont", "Name", "Verdana")
    oFr:SetProperty(     "Designer.DefaultFont", "Size", 10)
-
    oFr:SetIcon( 1 )
-
    oFr:SetTitle(        "Diseñador de documentos" )
-
-   /*
-   Manejador de eventos--------------------------------------------------------
-   */
-
    oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
 
    do case

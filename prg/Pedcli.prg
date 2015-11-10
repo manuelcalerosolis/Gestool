@@ -947,6 +947,8 @@ STATIC FUNCTION OpenFiles( lExt )
          lOpenFiles     := .f.
       end if
 
+      CodigosPostales():GetInstance():OpenFiles()
+
       oMailing          := TGenmailingDatabasePedidosClientes():New( nView )
 
       /*
@@ -2069,14 +2071,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          WHEN     ( lWhen .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
 
-		REDEFINE GET aGet[_CPRVCLI] VAR aTmp[_CPRVCLI] ;
+		REDEFINE GET aGet[ _CPRVCLI ] VAR aTmp[ _CPRVCLI ] ;
          ID       104 ;
          WHEN     ( lWhen .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
 
-		REDEFINE GET aGet[_CPOSCLI] VAR aTmp[_CPOSCLI] ;
+		REDEFINE GET aGet[ _CPOSCLI ] VAR aTmp[ _CPOSCLI ] ;
          ID       107 ;
          WHEN     ( lWhen .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
+         VALID    ( CodigosPostales():GetInstance():validCodigoPostal() );
          OF       oFld:aDialogs[1]
 
          // tarifa
@@ -3515,6 +3518,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       REDEFINE SAY   oSayLabels[ 6 ] ID 708 OF oFld:aDialogs[ 1 ]
       REDEFINE SAY   oSayLabels[ 7 ] ID 710 OF oFld:aDialogs[ 1 ]
       REDEFINE SAY   oSayLabels[ 9 ] ID 712 OF oFld:aDialogs[ 1 ]
+
+   CodigosPostales():GetInstance():setBinding( { "CodigoPostal" => aGet[ _CPOSCLI ], "Poblacion" => aGet[ _CPOBCLI ], "Provincia" => aGet[ _CPRVCLI ] } )
 
    if nMode != ZOOM_MODE
 
@@ -8682,6 +8687,8 @@ STATIC FUNCTION CloseFiles()
    end if
 
    D():DeleteView( nView )
+
+   CodigosPostales():GetInstance():CloseFiles()
 
    dbfPedCliI     := nil
    dbfPedCliD     := nil

@@ -140,8 +140,6 @@ STATIC FUNCTION OpenFiles( cPatEmp )
 
       oBandera          := TBandera():New()
 
-      CodigosPostales():GetInstance():OpenFiles()
-
       /*
       Limitaciones de cajero y cajas--------------------------------------------------------
       */

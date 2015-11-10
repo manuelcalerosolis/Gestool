@@ -2201,15 +2201,17 @@ CLASS TLabelGenerator
    METHOD New()
 
    METHOD Dialog()
+
    METHOD lCreateTempLabelEdition()      
-   METHOD DestroyTempLabelEdition()
-   METHOD LoadTempLabelEdition()          VIRTUAL
+   METHOD loadTempLabelEdition()          VIRTUAL
+   METHOD destroyTempLabelEdition()
 
    METHOD lCreateTempReport()            
    METHOD loadTempReport()   
+   METHOD destroyTempReport()     
+
    METHOD PrepareTempReport( oFr )    
       METHOD buildReportLabels()
-   METHOD DestroyTempReport()     
 
    METHOD End()
 
@@ -2234,7 +2236,7 @@ CLASS TLabelGenerator
    METHOD setTemporalData( lTemporal )    INLINE ( ::lTemporalData := lTemporal )
    METHOD getTemporalData()               INLINE ( ::lTemporalData )
 
-   METHOD getDataLabelReport()            INLINE ( if( ::getTemporalData(), ::tmpLabelReport, ::dbfLineas ) )
+   METHOD getDataLabelReport()            INLINE ( ::tmpLabelReport ) // if( ::getTemporalData(), ::tmpLabelReport, ::dbfLineas ) )
 
 END CLASS
 
@@ -2248,7 +2250,7 @@ METHOD New( nView ) CLASS TLabelGenerator
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::dbfDocumento      := ( D():Documentos( ::nView ) )
+      ::dbfDocumento       := ( D():Documentos( ::nView ) )
 
       ::nRecno             := ( ::dbfCabecera )->( Recno() )
 
@@ -2609,7 +2611,6 @@ METHOD lCreateTempLabelEdition() CLASS TLabelGenerator
 
 Return ( lCreateTempLabelEdition )
 
-
 //---------------------------------------------------------------------------//
 
 METHOD DestroyTempLabelEdition() CLASS TLabelGenerator
@@ -2649,7 +2650,7 @@ METHOD BotonSiguiente() CLASS TLabelGenerator
 
          else
 
-            ::LoadTempLabelEdition()
+            ::loadTempLabelEdition()
 
             ::oFld:GoNext()
             ::oBtnAnterior:Show()
@@ -2673,17 +2674,12 @@ Return ( Self )
 
 METHOD lPrintLabels() CLASS TLabelGenerator
 
-
    ::oDlg:Disable()
 
    if ::lCreateTempReport()
-
       ::loadTempReport()
-
       ::buildReportLabels()
-
       ::destroyTempReport()
-
    end if
 
    ::oDlg:Enable()
@@ -2712,11 +2708,9 @@ METHOD buildReportLabels() CLASS TLabelGenerator
    
    // Zona de datos---------------------------------------------------------------
 
-   ::setTemporalData( .t. )
+   ::dataLabel( oFr )
 
-   ::DataLabel( oFr )
-
-   ::VariableLabel( oFr )
+   ::variableLabel( oFr )
 
    //Cargar el informe-----------------------------------------------------------
    
@@ -2767,7 +2761,6 @@ METHOD lCreateTempReport() CLASS TLabelGenerator
    BEGIN SEQUENCE
 
       ::tmpLabelReport     := "LblRpt" + cCurUsr()
-
       ::fileLabelReport    := cGetNewFileName( cPatTmp() + "LblRpt" )
 
       dbCreate( ::fileLabelReport, ::aStructureField, cLocalDriver() )
@@ -2775,7 +2768,7 @@ METHOD lCreateTempReport() CLASS TLabelGenerator
 
    RECOVER USING oError
 
-      lCreateTempReport      := .f.
+      lCreateTempReport    := .f.
 
       MsgStop( 'Imposible crear un fichero temporal de lineas del documento' + CRLF + ErrorMessage( oError ) )
 
@@ -2790,11 +2783,17 @@ Return ( lCreateTempReport )
 METHOD loadTempReport() CLASS TLabelGenerator
 
    local n
-   local nRec           := ( ::tmpLabelEdition )->( Recno() )
+   local nRec           
 
-   ::oMtrLabel:setTotal( ( ::tmpLabelEdition )->( lastRec() ) )
+   ( ::tmpLabelReport )->( __dbzap() )
 
-   ( ::tmpLabelEdition )->( dbGoTop() )
+   nRec                 := ( ::tmpLabelEdition )->( recno() )
+
+   if !empty(::oMtrLabel)
+      ::oMtrLabel:setTotal( ( ::tmpLabelEdition )->( lastRec() ) )
+   end if 
+
+   ( ::tmpLabelEdition )->( dbgotop() )
    while !( ::tmpLabelEdition )->( eof() )
 
       if ( ::tmpLabelEdition )->lLabel
@@ -2803,15 +2802,17 @@ METHOD loadTempReport() CLASS TLabelGenerator
          next
       end if
 
-      ( ::tmpLabelEdition )->( dbSkip() )
+      ( ::tmpLabelEdition )->( dbskip() )
 
-      ::oMtrLabel:autoInc()
+      if !empty(::oMtrLabel)
+         ::oMtrLabel:autoInc()
+      end if 
 
    end while
 
-   ( ::tmpLabelReport )->( dbGoTop() )
+   ( ::tmpLabelReport )->( dbgotop() )
 
-   ( ::tmpLabelEdition )->( dbGoTo( nRec ) )
+   ( ::tmpLabelEdition )->( dbgoto( nRec ) )
 
 Return ( Self )
 
@@ -2844,10 +2845,10 @@ METHOD prepareTempReport( oFr ) CLASS TLabelGenerator
 
    if !empty( nPaperHeight ) .and. !empty( nHeight ) .and. !empty( nColumns )
 
-      nItemsInColumn       := int( nPaperHeight / nHeight )
+      nItemsInColumn    := int( nPaperHeight / nHeight )
 
-      nBlancos             := ( ::nColumnaInicio - 1 ) * nItemsInColumn
-      nBlancos             += ( ::nFilaInicio - 1 )
+      nBlancos          := ( ::nColumnaInicio - 1 ) * nItemsInColumn
+      nBlancos          += ( ::nFilaInicio - 1 )
 
       for n := 1 to nBlancos
          dbPass( dbBlankRec( ::tmpLabelEdition ), ::tmpLabelReport, .t. )
@@ -2873,7 +2874,7 @@ METHOD End() CLASS TLabelGenerator
 
    // Destruye el fichero temporal------------------------------------------------
 
-   // ::DestroyTempLabelEdition()
+   ::DestroyTempLabelEdition()
 
    WritePProString( "Etiquetas", ::cNombreDocumento, ::cFormatoLabel, cPatEmp() + "Empresa.Ini" )
 
@@ -3017,6 +3018,8 @@ CLASS TLabelGeneratorPedidoProveedores FROM TLabelGenerator
    METHOD New( nView )
 
    METHOD loadTempLabelEdition() 
+   METHOD loadTempLabelReport()     INLINE ( ::loadTempLabelEdition( ::tmpLabelReport ) )
+   
    METHOD dataLabel( oFr )
 
    METHOD nombrePrimeraPropiedad()  INLINE ( if( !empty( ::getDataLabelReport() ), nombrePropiedad( ( ::getDataLabelReport() )->cCodPr1, ( ::getDataLabelReport() )->cValPr1, ::nView ), "" ) )
@@ -3058,15 +3061,17 @@ Return( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadTempLabelEdition() CLASS TLabelGeneratorPedidoProveedores
+METHOD loadTempLabelEdition( tmpLabel ) CLASS TLabelGeneratorPedidoProveedores
 
    local nRec
    local nOrd
 
+   DEFAULT tmpLabel     := ::tmpLabelEdition
+
    //Limpiamos la base de datos temporal-----------------------------------------
 
-   if ( ::tmpLabelEdition )->( Used() )
-      ( ::tmpLabelEdition )->( __dbZap() )
+   if ( tmpLabel )->( Used() )
+      ( tmpLabel )->( __dbZap() )
    end if 
 
    //Llenamos la tabla temporal--------------------------------------------------
@@ -3078,28 +3083,29 @@ METHOD loadTempLabelEdition() CLASS TLabelGeneratorPedidoProveedores
 
       while ( ::dbfCabecera )->cSerPed + Str( ( ::dbfCabecera )->nNumPed ) + ( ::dbfCabecera )->cSufPed >= ::cSerieInicio + Str( ::nDocumentoInicio, 9 ) + ::cSufijoInicio  .and.;
             ( ::dbfCabecera )->cSerPed + Str( ( ::dbfCabecera )->nNumPed ) + ( ::dbfCabecera )->cSufPed <= ::cSerieFin + Str( ::nDocumentoFin, 9 ) + ::cSufijoFin           .and.;
-            !( ::dbfCabecera )->( eof() )
+            ( ::dbfCabecera )->( !eof() )
 
          if ( ::dbfLineas )->( dbSeek( ( ::dbfCabecera )->cSerPed + Str( ( ::dbfCabecera )->nNumPed ) + ( ::dbfCabecera )->cSufPed ) )
 
-            while ( ::dbfLineas )->cSerPed + Str( ( ::dbfLineas )->nNumPed ) + ( ::dbfLineas )->cSufPed == ( ::dbfCabecera )->cSerPed + Str( ( ::dbfCabecera )->nNumPed ) + ( ::dbfCabecera )->cSufPed  .and. ( ::dbfLineas )->( !eof() )
+            while ( ::dbfLineas )->cSerPed + Str( ( ::dbfLineas )->nNumPed ) + ( ::dbfLineas )->cSufPed == ( ::dbfCabecera )->cSerPed + Str( ( ::dbfCabecera )->nNumPed ) + ( ::dbfCabecera )->cSufPed  .and.;
+                  ( ::dbfLineas )->( !eof() )
 
                if !empty( ( ::dbfLineas )->cRef )
 
-                  dbPass( ::dbfLineas, ::tmpLabelEdition, .t. )
+                  dbPass( ::dbfLineas, tmpLabel, .t. )
 
-                  dblock( ::tmpLabelEdition )
+                  dblock( tmpLabel )
 
-                  ( ::tmpLabelEdition )->nNumLin  := nTotNPedPrv( ::dbfLineas )
-                  ( ::tmpLabelEdition )->lLabel   := .t.
+                  ( tmpLabel )->nNumLin   := nTotNPedPrv( ::dbfLineas )
+                  ( tmpLabel )->lLabel    := .t.
 
                   if ::nCantidadLabels == 1
-                     ( ::tmpLabelEdition )->nLabel   := nTotNPedPrv( ::dbfLineas )
+                     ( tmpLabel )->nLabel := nTotNPedPrv( ::dbfLineas )
                   else
-                     ( ::tmpLabelEdition )->nLabel   := ::nUnidadesLabels
+                     ( tmpLabel )->nLabel := ::nUnidadesLabels
                   end if
 
-                  ( ::tmpLabelEdition )->( dbUnlock() )
+                  ( tmpLabel )->( dbUnlock() )
 
                end if
 
@@ -3118,9 +3124,11 @@ METHOD loadTempLabelEdition() CLASS TLabelGeneratorPedidoProveedores
    ( ::dbfCabecera )->( OrdSetFocus( nOrd ) )
    ( ::dbfCabecera )->( dbGoTo( nRec ) )
 
-   ( ::tmpLabelEdition )->( dbGoTop() )
+   ( tmpLabel )->( dbGoTop() )
 
-   ::oBrwLabel:Refresh()
+   if !empty(::oBrwLabel)
+      ::oBrwLabel:Refresh()
+   end if 
 
 Return ( Self )
 
@@ -3130,7 +3138,7 @@ METHOD dataLabel( oFr ) CLASS TLabelGeneratorPedidoProveedores
 
    oFr:ClearDataSets()
 
-   oFr:SetWorkArea(  "Lineas de pedidos", ( ::getDataLabelReport() )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
+   oFr:SetWorkArea(     "Lineas de pedidos", ( ::getDataLabelReport() )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
    oFr:SetFieldAliases( "Lineas de pedidos", cItemsToReport( aColPedPrv() ) )
 
    oFr:SetWorkArea(     "Pedidos", ( ::dbfCabecera )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
@@ -3232,8 +3240,8 @@ METHOD New( nView ) CLASS TLabelGeneratorAlbaranClientes
 
    ::inicialDoc         := "AB"
 
-   ::DbfCabecera              := ( D():AlbaranesClientes( nView ) )
-   ::dbfLineas         := ( D():AlbaranesClientesLineas( nView ) )
+   ::DbfCabecera        := ( D():AlbaranesClientes( nView ) )
+   ::dbfLineas          := ( D():AlbaranesClientesLineas( nView ) )
 
    ::idDocument         := D():AlbaranesClientesId( nView ) 
 
