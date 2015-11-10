@@ -17058,11 +17058,7 @@ Function cSeekCodebar( cCodBar, dbfCodebar, dbfArt )
       dbfArt                  := dbfArt:cAlias
    end if
 
-<<<<<<< HEAD
-   cSeekCodebar               := cSeekInternalCodebar( cCodBar, dbfCodebar, dbfArt )
-=======
-   cSeekCodebar               := cSeekInternalCodebar( cCodBar, dbfArticulo )
->>>>>>> origin/master
+   cSeekCodebar               := cSeekInternalCodebar( cCodBar, dbfArt )
 
    if empty( cSeekCodebar )
       cSeekCodebar            := cSeekExternalCodebar( cCodBar, dbfCodebar, dbfArt )
@@ -17072,11 +17068,7 @@ Return ( cSeekCodebar )
 
 //---------------------------------------------------------------------------//
 
-<<<<<<< HEAD
-Function cSeekInternalCodebar( cCodBar, dbfCodebar, dbfArt )
-=======
-Function cSeekInternalCodebar( cCodigoBarra, dbfArticulo )
->>>>>>> origin/master
+Function cSeekInternalCodebar( cCodigoBarra, dbfArt )
 
    local cCodigo
    local cPropiedad1
@@ -17084,9 +17076,9 @@ Function cSeekInternalCodebar( cCodigoBarra, dbfArticulo )
 
    cCodigo                    := left( cCodigoBarra, 6 )
 
-   if dbSeekInOrd( cCodigo, "Matriz", dbfArticulo ) .or. dbSeekInOrd( Upper( cCodigo ), "Matriz", dbfArticulo )
+   if dbSeekInOrd( cCodigo, "Matriz", dbfArt ) .or. dbSeekInOrd( Upper( cCodigo ), "Matriz", dbfArt )
 
-      cCodigo                 := alltrim( ( dbfArticulo )->Codigo )
+      cCodigo                 := alltrim( ( dbfArt )->Codigo )
       cPropiedad1             := substr( cCodigoBarra, 6, 3 )
       cPropiedad2             := substr( cCodigoBarra, 9, 3 )
 
