@@ -13,7 +13,7 @@ Function EnvioMail( aTmp, nView )
 
    // Envío de  mail al usuario----------------------------------------------
 
-   hSet( hMail, "mail", __mail__ )
+   /*hSet( hMail, "mail", __mail__ )
    hSet( hMail, "subject", "Nuevo producto " + alltrim( aTmp[ 1 ] ) + "" )
    hSet( hMail, "message", "Nuevo producto agregado " + alltrim( aTmp[ 1 ] ) + ", " + alltrim( aTmp[ 2 ] ) )
 
@@ -23,7 +23,7 @@ Function EnvioMail( aTmp, nView )
       end if 
    end with
 
-   msgAlert( "Mail enviado" )
+   msgAlert( "Mail enviado" )*/
 
 Return ( nil )
 
