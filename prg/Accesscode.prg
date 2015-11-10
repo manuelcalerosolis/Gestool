@@ -16,6 +16,7 @@ CLASS AccessCode
    CLASSDATA   lFilterByAgent    INIT .f.
    CLASSDATA   lInvoiceModify    INIT .t.
    CLASSDATA   lUnitsModify      INIT .t.
+   CLASSDATA   lSalesView        INIT .t.
    
    DATA  oDlg
    DATA  oDlgConnect
@@ -30,23 +31,23 @@ CLASS AccessCode
    DATA  oSayDatabase
 
    DATA  oGetUser
-   DATA  cGetUser       INIT  Space( 100 )
+   DATA  cGetUser                INIT  Space( 100 )
    DATA  oSayUser
 
    DATA  oGetPassword
-   DATA  cGetPassword   INIT  Space( 10 )
+   DATA  cGetPassword            INIT  Space( 10 )
    DATA  oSayPassword
 
    DATA  oMessage
-   DATA  cPcnUsr        INIT  Rtrim( NetName() )
+   DATA  cPcnUsr                 INIT  Rtrim( NetName() )
    DATA  oGetServer
    DATA  cGetServer
 
-   DATA  cGetBuscar     INIT ""
+   DATA  cGetBuscar              INIT ""
    DATA  oGetBuscar
 
    DATA  oCbxOrden
-   DATA  cCbxOrden      INIT  "Código"
+   DATA  cCbxOrden               INIT  "Código"
 
    DATA  oGetPasswordSql
    DATA  cGetPasswordSql
@@ -54,15 +55,15 @@ CLASS AccessCode
    DATA  oBtnConectCancel
 
    DATA  oBmpEngine
-   DATA  cBmpEngine     INIT  "Data_Green_Alpha_48"
+   DATA  cBmpEngine              INIT  "Data_Green_Alpha_48"
 
    DATA  oProgress
-   DATA  nProgress      INIT  0
+   DATA  nProgress               INIT  0
 
-   DATA  nConnection    INIT  0
-   DATA  lConnected     INIT  .t.
+   DATA  nConnection             INIT  0
+   DATA  lConnected              INIT  .t.
 
-   DATA  cIniFile       INIT  FullCurDir() + "GstApolo.Ini"
+   DATA  cIniFile                INIT  FullCurDir() + "GstApolo.Ini"
 
    METHOD Resource()
    METHOD InitResource()
@@ -87,6 +88,9 @@ CLASS AccessCode
 
    METHOD LoadUsuarios()
    METHOD lCheckUsuario()
+
+   METHOD getLogicValueFromIni( cTag, cField, lDefaultValue );
+                                 INLINE ( lower( getPvProfString( cTag, cField, lDefaultValue, ::cIniFile ) ) == ".t." ) 
 
 END CLASS
 
@@ -272,14 +276,10 @@ METHOD loadTableConfiguration() CLASS AccessCode
    ::cAgente         := getPvProfString( cTag, "Agente",             "",      ::cIniFile )
    ::cRuta           := getPvProfString( cTag, "Ruta",               "",      ::cIniFile )
 
-   ::lInvoiceModify  := getPvProfString( cTag, "ModificarFactura",   ".t.",   ::cIniFile )
-   ::lInvoiceModify  := lower( ::lInvoiceModify ) == ".t."
-
-   ::lUnitsModify    := getPvProfString( cTag, "ModificarUnidades",  ".t.",   ::cIniFile )
-   ::lUnitsModify    := lower( ::lUnitsModify ) == ".t."
-
-   ::lFilterByAgent  := getPvProfString( cTag, "FiltrarAgente",      ".f.",   ::cIniFile )
-   ::lFilterByAgent  := lower( ::lFilterByAgent ) == ".t."
+   ::lInvoiceModify  := ::getLogicValueFromIni( cTag, "ModificarFactura",   ".t." )
+   ::lUnitsModify    := ::getLogicValueFromIni( cTag, "ModificarUnidades",  ".t." )
+   ::lFilterByAgent  := ::getLogicValueFromIni( cTag, "FiltrarAgente",      ".f." )
+   ::lSalesView      := ::getLogicValueFromIni( cTag, "VisualizarVentas",   ".t." )
 
    if empty( ::cGetUser ) 
       apoloMsgStop( "Código de usuario esta vacio")

@@ -5989,6 +5989,8 @@ Function MainTablet()
 
    //----------------Resumen diario
 
+   if AccessCode():lSalesView
+
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 6 ) },;
                            "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
                            "nWidth"    => 64,;
@@ -5996,6 +5998,8 @@ Function MainTablet()
                            "cResName"  => "flat_about_64",;
                            "bLClicked" => {|| DailySummarySales():New():Play() },;
                            "oWnd"      => oDlg } )
+
+   end if 
 
    //----------------Albaranes de clientes
    

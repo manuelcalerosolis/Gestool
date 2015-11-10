@@ -138,7 +138,9 @@ STATIC FUNCTION OpenFiles( cPatEmp )
 
       D():Cajas( nView )
 
-      oBandera          := TBandera():New
+      oBandera          := TBandera():New()
+
+      CodigosPostales():GetInstance():OpenFiles()
 
       /*
       Limitaciones de cajero y cajas--------------------------------------------------------
@@ -180,6 +182,8 @@ STATIC FUNCTION CloseFiles()
    if !Empty( oCentroCoste )
       oCentroCoste:CloseFiles()
    end if
+
+   CodigosPostales():GetInstance():CloseFiles()
 
    oBandera    := nil
    oWndBrw     := nil
