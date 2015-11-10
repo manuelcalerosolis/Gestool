@@ -3399,18 +3399,23 @@ Return ( Val( StrTran( cMoney, ",", "." ) ) )
 
 Function LineDown( cAlias, oBrw )
 
-Return ( LineT( cAlias, oBrw, .f. ) )
+Return ( lineReposition( cAlias, oBrw, .f. ) )
+
+//--------------------------------------------------------------------------//
 
 Function LineUp( cAlias, oBrw )
 
-Return ( LineT( cAlias, oBrw, .t. ) )
+Return ( lineReposition( cAlias, oBrw, .t. ) )
 
-Function LineT( cAlias, oBrw, lUp )
+//--------------------------------------------------------------------------//
+
+Function lineReposition( cAlias, oBrw, lUp )
 
    local nOrdNum  
    local nRecNum  
    local nOldNum
    local nNewNum
+   local currentAlias
    
    DEFAULT lUp    := .t.
 
@@ -3443,9 +3448,11 @@ Function LineT( cAlias, oBrw, lUp )
 
    nNewNum        := ( cAlias )->nNumLin
 
-   LineMove( nOldNum, -1, cAlias )
-   LineMove( nNewNum, nOldNum, cAlias )
-   LineMove( -1, nNewNum, cAlias )
+   // cambio de lineas
+
+   swapLines( nOldNum, nNewNum, cAlias )
+
+   // orden anterior
 
    ( cAlias )->( OrdSetFocus( nOrdNum ) )
    ( cAlias )->( dbGoTo( nRecNum ) )
@@ -3463,9 +3470,21 @@ Return ( nil )
 
 //--------------------------------------------------------------------------//
 
+Static Function swapLines( nOldNum, nNewNum, cAlias ) 
+
+   lineMove( nOldNum, -1, cAlias )
+   lineMove( nNewNum, nOldNum, cAlias )
+   lineMove( -1, nNewNum, cAlias )
+
+Return ( nil )
+
+//--------------------------------------------------------------------------//
+
 Static Function LineMove( nOldNum, nNewNum, cAlias )
 
-   ( cAlias )->( dbGoTop() )
+   local ordenAnterior  := ( cAlias )->( ordsetfocus( 0 ) )
+
+   ( cAlias )->( dbgotop() )
    while !( cAlias )->( eof() )
 
       if ( cAlias )->nNumLin == nOldNum
@@ -3476,14 +3495,16 @@ Static Function LineMove( nOldNum, nNewNum, cAlias )
 
    end while
 
+   ( cAlias )->( ordsetfocus( ordenAnterior ) )
+
 Return nil
 
 //--------------------------------------------------------------------------//
 
 Function DeleteFilesToDirectory( cPath )
 
-   local aDirectory     := Directory( cPath + "/*.*" )
    local cDirectory
+   local aDirectory     := Directory( cPath + "/*.*" )
 
    for each cDirectory in aDirectory
       ERASE ( cPath + "/" + cDirectory[ 1 ] )

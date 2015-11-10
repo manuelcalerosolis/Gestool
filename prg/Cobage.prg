@@ -13,7 +13,7 @@ Function StartTCobAge()
 
    local oTCobAge
 
-   oTCobAge := TCobAge():New( cPatEmp(), oWnd(), "01061" )
+   oTCobAge := TCobAge():New( cPatEmp(), cDriver(), oWnd(), "01061" )
 
    if !Empty( oTCobAge )
       oTCobAge:Activate()
@@ -88,8 +88,8 @@ CLASS TCobAge FROM TMasDet
 
    DATA  cOldAge                 INIT ""
 
-   METHOD New( cPath, oWndParent, oMenuItem )
-   METHOD Create( cPath, oWndParent )
+   METHOD New( cPath, cDriver, oWndParent, oMenuItem )
+   METHOD Create( cPath, cDriver, oWndParent )
 
    METHOD OpenFiles()
    METHOD CloseFiles()
@@ -174,10 +174,11 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( cPath, oWndParent, oMenuItem ) CLASS TCobAge
+METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS TCobAge
 
    DEFAULT cPath           := cPatEmp()
    DEFAULT oWndParent      := GetWndFrame()
+   DEFAULT cDriver         := cDriver()
 
    if oMenuItem != nil
       ::nLevel             := nLevelUsr( oMenuItem )
@@ -193,6 +194,7 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TCobAge
    ::cPath                 := cPath
    ::oWndParent            := oWndParent
    ::oDbf                  := nil
+   ::cDriver               := cDriver
 
    ::cCodAge               := Space( 5 )
 
@@ -215,7 +217,7 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TCobAge
 
    ::bFirstKey             := {|| Str( ::oDbf:nNumCob, 9 ) + ::oDbf:cSufCob }
 
-   ::oDetCobAge            := TDetCobAge():New( cPath, Self )
+   ::oDetCobAge            := TDetCobAge():New( cPath, ::cDriver, Self )
    ::AddDetail( ::oDetCobAge )
 
    oThis                   := Self
@@ -224,15 +226,17 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Create( cPath, oWndParent ) CLASS TCobAge
+METHOD Create( cPath, cDriver, oWndParent ) CLASS TCobAge
 
    DEFAULT cPath           := cPatEmp()
    DEFAULT oWndParent      := GetWndFrame()
+   DEFAULT cDriver         := cDriver()
 
    ::cPath                 := cPath
    ::oWndParent            := oWndParent
+   ::cDriver               := cDriver
 
-   ::oDetCobAge            := TDetCobAge():New( cPath, Self )
+   ::oDetCobAge            := TDetCobAge():New( cPath, ::cDriver, Self )
    ::AddDetail( ::oDetCobAge )
 
 RETURN ( Self )
@@ -670,7 +674,7 @@ METHOD Resource( nMode ) CLASS TCobAge
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      oFactura:bHelp       := {|| BrwFacPrv( oFactura, ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::oIva:cAlias, ::oDivisas:cAlias ) }
+      oFactura:bHelp       := {|| BrwFacPrvLiq( oFactura, ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::oIva:cAlias, ::oDivisas:cAlias ) }
       oFactura:bValid      := {|| ::lValidFacturaProveedor( oFactura, nMode ) }
 
       REDEFINE BTNBMP oBtnFac ;

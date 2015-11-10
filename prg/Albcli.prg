@@ -3307,13 +3307,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       524 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( LineUp( dbfTmpLin, oBrwLin ) )
+         ACTION   ( lineUp( dbfTmpLin, oBrwLin ) )
 
       REDEFINE BUTTON ;
          ID       525 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( LineDown( dbfTmpLin, oBrwLin ) )
+         ACTION   ( lineDown( dbfTmpLin, oBrwLin ) )
 
       REDEFINE BUTTON oBtnKit;
          ID       526 ;
@@ -8968,9 +8968,8 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
       end if
 
-      /*
-      A¤adimos desde el fichero de situaiones
-   */
+      // A¤adimos desde el fichero de situaiones
+
       dbCreate( cTmpEst, aSqlStruct( aAlbCliEst() ), cLocalDriver() )
       dbUseArea( .t., cLocalDriver(), cTmpEst, cCheckArea( cDbfEst, @dbfTmpEst ), .f. )
       if !NetErr()

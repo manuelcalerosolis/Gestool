@@ -9082,13 +9082,17 @@ FUNCTION nTotFacPrv( cFactura, cFacPrvT, cFacPrvL, cIva, cDiv, cFacPrvP, aTmp, c
    local aPReGas     := { 0, 0, 0 }
    local nImpuestoEspecial
 
-   DEFAULT cFacPrvT  := D():FacturasProveedores( nView )
-   DEFAULT cFacPrvL  := D():FacturasProveedoresLineas( nView )
-   DEFAULT cIva      := D():TiposIva( nView )
-   DEFAULT cDiv      := D():Divisas( nView )
-   DEFAULT cFacPrvP  := D():FacturasProveedoresPagos( nView )
-   DEFAULT lPic      := .f.
-   DEFAULT cFactura  := ( cFacPrvT )->cSerFac + Str( ( cFacPrvT )->nNumFac ) + ( cFacPrvT )->cSufFac
+   if !Empty( nView )
+
+      DEFAULT cFacPrvT  := D():FacturasProveedores( nView )
+      DEFAULT cFacPrvL  := D():FacturasProveedoresLineas( nView )
+      DEFAULT cIva      := D():TiposIva( nView )
+      DEFAULT cDiv      := D():Divisas( nView )
+      DEFAULT cFacPrvP  := D():FacturasProveedoresPagos( nView )
+      DEFAULT lPic      := .f.
+      DEFAULT cFactura  := ( cFacPrvT )->cSerFac + Str( ( cFacPrvT )->nNumFac ) + ( cFacPrvT )->cSufFac
+
+   end if
 
    initPublics()
 
@@ -13654,6 +13658,139 @@ Function BrwFacPrv( oGet, nView )
    SetBrwOpt( "BrwFacPrv", ( D():FacturasProveedores( nView ) )->( OrdNumber() ) )
 
    ( D():FacturasProveedores( nView ) )->( OrdSetFocus( cPriorFocus ) )
+
+   /*
+   Guardamos los datos del browse-------------------------------------------
+   */
+
+   oBrw:CloseData()
+
+RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+Function BrwFacPrvLiq( oGet, oFacPrvT, oFacPrvL, oIva, oDivisas )
+
+   local oDlg
+   local oBrw
+   local cPriorFocus
+   local nOrd
+   local oGet1
+   local cGet1
+   local oCbxOrd
+   local cCbxOrd
+   local aCbxOrd
+
+   aCbxOrd           := { "Número", "Fecha", "Proveedor", "Nombre" }
+   nOrd              := GetBrwOpt( "BrwFacPrv" )
+   nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd           := aCbxOrd[ nOrd ]
+   cPriorFocus       := ( oFacPrvT )->( OrdSetFocus( nOrd ) )
+
+   DEFINE DIALOG oDlg RESOURCE "HelpEntry" TITLE "Facturas rectificativas de clientes"
+
+      REDEFINE GET   oGet1 ;
+         VAR         cGet1 ;
+         ID          104 ;
+         ON CHANGE   ( AutoSeek( nKey, nFlags, Self, oBrw, oFacPrvT, nil, nil, .f. ) );
+         VALID       ( OrdClearScope( oBrw, oFacPrvT ) );
+         BITMAP      "Find" ;
+         OF          oDlg
+
+      REDEFINE COMBOBOX oCbxOrd ;
+         VAR         cCbxOrd ;
+         ID          102 ;
+         ITEMS       aCbxOrd ;
+         ON CHANGE   ( ( oFacPrvT )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
+         OF          oDlg
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrw:cAlias          := oFacPrvT
+      oBrw:nMarqueeStyle   := 5
+      oBrw:cName           := "Factura de proveedores.Browse"
+
+      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
+
+      oBrw:CreateFromResource( 105 )
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Número"
+         :cSortOrder       := "nNumFac"
+         :bEditValue       := {|| ( oFacPrvT )->cSerFac + "/" + RTrim( Str( ( oFacPrvT )->nNumFac ) ) + "/" + ( oFacPrvT )->cSufFac }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Fecha"
+         :cSortOrder       := "dFecFac"
+         :bEditValue       := {|| Dtoc( ( oFacPrvT )->dFecFac ) }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Proveedor"
+         :cSortOrder       := "cCodPrv"
+         :bEditValue       := {|| Rtrim( ( oFacPrvT )->cCodPrv ) }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cNomPrv"
+         :bEditValue       := {|| Rtrim( ( oFacPrvT )->cNomPrv ) }
+         :nWidth           := 180
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Importe"
+         :bEditValue       := {|| nTotFacPrv( ( oFacPrvT )->cSerFac + Str( ( oFacPrvT )->nNumFac ) + ( oFacPrvT )->cSufFac, oFacPrvT, oFacPrvL, oIva, oDivisas, , nil, cDivEmp(), .t. ) }
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end with
+
+      REDEFINE BUTTON ;
+         ID       500 ;
+         OF       oDlg ;
+         WHEN     ( .f. ) ;
+         ACTION   ( nil )
+
+      REDEFINE BUTTON ;
+         ID       501 ;
+         OF       oDlg ;
+         WHEN     ( .f. ) ;
+         ACTION   ( nil )
+
+      REDEFINE BUTTON ;
+         ID       IDOK ;
+         OF       oDlg ;
+         ACTION   ( oDlg:end( IDOK ) )
+
+      REDEFINE BUTTON ;
+         ID       IDCANCEL ;
+         OF       oDlg ;
+         ACTION   ( oDlg:end() )
+
+   oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
+
+   ACTIVATE DIALOG oDlg ON INIT ( oBrw:Load() ) CENTER
+
+   if oDlg:nResult == IDOK
+      oGet:cText( ( oFacPrvT )->cSerFac + Str( ( oFacPrvT )->nNumFac ) + ( oFacPrvT )->cSufFac )
+      oGet:bWhen   := {|| .f. }
+   end if
+
+   SetBrwOpt( "BrwFacPrv", ( oFacPrvT )->( OrdNumber() ) )
+
+   ( oFacPrvT )->( OrdSetFocus( cPriorFocus ) )
 
    /*
    Guardamos los datos del browse-------------------------------------------

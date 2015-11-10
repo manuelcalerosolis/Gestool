@@ -9908,6 +9908,9 @@ FUNCTION rxSatCli( cPath, cDriver )
       ( cSatCliT )->( ordCondSet("!Deleted() .and. NCTLSTK == 2", {||!Deleted() .and. Field->NCTLSTK == 2 }  ) )
       ( cSatCliT )->( ordCreate( cPath + "SatCliL.Cdx", "cCodCli", "cCodCli", {|| Field->cCodCli }, ) )
 
+      ( cSatCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cSatCliT )->( ordCreate( cPath + "SatCliL.Cdx", "nPosPrint", "cSerSat + Str( nNumSat ) + cSufSat + Str( nPosPrint )", {|| Field->cSerSat + Str( Field->nNumSat ) + Field->cSufSat + Str( Field->nPosPrint ) } ) )
+
       ( cSatCliT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de S.A.T. de clientes" )
@@ -10488,6 +10491,7 @@ function aColSatCli()
    aAdd( aColSatCli, { "cObrLin"  ,"C",  10,  0, "Dirección de la linea",                             "Direccion",               "", "( cDbfCol )", nil } )
    aAdd( aColSatCli, { "cRefAux"  ,"C",  18,  0, "Referencia auxiliar",                               "",                        "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "cRefAux2" ,"C",  18,  0, "Segunda referencia auxiliar",                       "",                        "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "nPosPrint","N",   4,  0, "Posición de impresión",                             "",                        "", "( cDbfCol )", nil } )
   
 return ( aColSatCli )
 
@@ -10675,6 +10679,10 @@ Function SynSatCli( cPath )
          if Empty( ( dbfSatCliL )->nReq )
             ( dbfSatCliL )->nReq    := nPReq( dbfIva, ( dbfSatCliL )->nIva )
          end if
+
+         if Empty( ( dbfSatCliL )->nPosPrint )
+            ( dbfSatCliL )->nPosPrint  := ( dbfSatCliL )->nNumLin
+         end if 
 
          ( dbfSatCliL )->( dbSkip() )
 
