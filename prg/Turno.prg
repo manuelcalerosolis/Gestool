@@ -1643,7 +1643,7 @@ Cierra el turno
 
 METHOD lCloseCajaSeleccionada()
 
-   local cCurrentTruno  
+   local cCurrentTurno  
    local cTurno
 
    // Que nadie toque-------------------------------------------------------------
@@ -1655,25 +1655,25 @@ METHOD lCloseCajaSeleccionada()
    // Cajas deseincronizadas---------------------------------------------------
 
    cTurno               := ::cCurTurno
-   cCurrentTruno        := ::GetFullTurno() 
+   cCurrentTurno        := ::GetFullTurno() 
 
    // Guardamos los comentarios---------------------------------------------------
 
    if !::lArqueoParcial 
 
-      if ::oDbf:Seek( cCurrentTruno )
+      if ::oDbf:Seek( cCurrentTurno )
          ::oDbf:FieldPutByName( "mComTur", ::cComentario )
       end if
 
       // Cerramos las cajas una a una------------------------------------------------
 
-      if ::oDbfCaj:Seek( cCurrentTruno ) 
+      if ::oDbfCaj:Seek( cCurrentTurno ) 
          ::lCloseCaja( .t., ::oDbfCaj:cCodCaj )
       end if
    
       // Si hemos cerrado todas las cajas, cerramos el turno-------------------------
 
-      ::lAllCloseTurno( cCurrentTruno )
+      ::lAllCloseTurno( cCurrentTurno )
 
    end if 
 
@@ -1684,7 +1684,10 @@ METHOD lCloseCajaSeleccionada()
          ::oTxt:SetText( "Enviando mail..." )
       end if
 
-      ::MailArqueo( cCurrentTruno )      
+      //::MailArqueo( cCurrentTurno ) 
+      
+      ::MailArqueo( cTurno ) 
+
    end if 
 
    // Envío de l mail--------------------------------------------------------------
@@ -1907,14 +1910,14 @@ RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 
-Method lOneCloseTurno( cCurrentTruno )
+Method lOneCloseTurno( cCurrentTurno )
 
-   DEFAULT cCurrentTruno   := ::cCurTurno
+   DEFAULT cCurrentTurno   := ::cCurTurno
 
    ::oDbf:GetStatus()
    ::oDbf:OrdSetFocus( "cNumTur" )
 
-   if ::oDbf:Seek( cCurrentTruno )
+   if ::oDbf:Seek( cCurrentTurno )
       ::oDbf:Load()
          ::oDbf:nStaTur    := cajParcialmente 
          ::oDbf:dCloTur    := GetSysDate() 
@@ -1928,14 +1931,14 @@ RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 
-Method lAllCloseTurno( cCurrentTruno )
+Method lAllCloseTurno( cCurrentTurno )
 
-   DEFAULT cCurrentTruno   := ::cCurTurno
+   DEFAULT cCurrentTurno   := ::cCurTurno
    
    ::oDbf:GetStatus()
    ::oDbf:OrdSetFocus( "cNumTur" )
 
-   if ::oDbf:Seek( cCurrentTruno )
+   if ::oDbf:Seek( cCurrentTurno )
 
       ::oDbf:Load()
          ::oDbf:cCajTur    := ::cCajTur
@@ -1956,7 +1959,7 @@ Method lAllCloseTurno( cCurrentTruno )
 
    else
 
-      MsgStop( "La sesión " + Trans( cCurrentTruno, "@R ######/##" ) + " no existe", "Imposible cerrar" )
+      MsgStop( "La sesión " + Trans( cCurrentTurno, "@R ######/##" ) + " no existe", "Imposible cerrar" )
 
    end if
 
@@ -11102,18 +11105,18 @@ RETURN ( ::oDbf:SeekInOrd( ::cCurTurno, "cNumTur" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD MailArqueo( cCurrentTruno )
+METHOD MailArqueo( cCurrentTurno )
 
    local cMensajeMail   := ""
    local hMail          := {=>}
 
-   ::cPdfFileName       := "Arqueo" + Alltrim( cCurrentTruno ) + "Caja" + Alltrim( ::oDbfCaj:cCodCaj ) + ".pdf"
-   ::cHtmlFileName      := "Arqueo" + Alltrim( cCurrentTruno ) + "Caja" + Alltrim( ::oDbfCaj:cCodCaj ) + ".html"
+   ::cPdfFileName       := "Arqueo" + Alltrim( cCurrentTurno ) + "Caja" + Alltrim( ::oDbfCaj:cCodCaj ) + ".pdf"
+   ::cHtmlFileName      := "Arqueo" + Alltrim( cCurrentTurno ) + "Caja" + Alltrim( ::oDbfCaj:cCodCaj ) + ".html"
    ::cPdfDefaultPath    := cPatEmpTmp()
 
    ::lPdfShowDialog     := .f.
 
-   ::PrintArqueo( cCurrentTruno, ::oDbfCaj:cCodCaj, IS_HTML )
+   ::PrintArqueo( cCurrentTurno, ::oDbfCaj:cCodCaj, IS_PDF )
 
    cMensajeMail         := "Caja [" + ::oDbfCaj:cCodCaj + Space( 1 ) + Rtrim( oRetFld( ::oDbfCaj:cCodCaj, ::oCaja ) ) + "], "
    cMensajeMail         += "cerrada a las " + Left( Time(), 5 ) + Space( 1 )
@@ -11145,11 +11148,11 @@ METHOD MailArqueo( cCurrentTruno )
    // Envío de  mail al usuario----------------------------------------------
 
    hSet( hMail, "mail", rtrim( ::cEnviarMail ) )
-   hSet( hMail, "subject", "Arqueo de caja " + alltrim( ::oDbfCaj:cCodCaj ) + " sesión " + alltrim( cCurrentTruno ) )
+   hSet( hMail, "subject", "Arqueo de caja " + alltrim( ::oDbfCaj:cCodCaj ) + " sesión " + alltrim( cCurrentTurno ) )
    hSet( hMail, "message", rtrim( cMensajeMail ) )
 
-   if file( ::cPdfDefaultPath + ::cHtmlFileName )
-      hSet( hMail, "attachments", ::cPdfDefaultPath + ::cHtmlFileName )
+   if file( ::cPdfDefaultPath + ::cPdfFileName ) // ::cHtmlFileName )
+      hSet( hMail, "attachments", ::cPdfDefaultPath + ::cPdfFileName ) //::cHtmlFileName )
    end if 
 
    with object TSendMail():New()

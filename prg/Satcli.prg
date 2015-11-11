@@ -3510,7 +3510,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
          WHEN     .f. ;
          OF       oFld:aDialogs[1]
 
-
       /*
       fin de propiedades
       -------------------------------------------------------------------------

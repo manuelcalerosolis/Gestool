@@ -249,7 +249,9 @@ CLASS TTotalTurno
    Method nTotDevCliVentas( cCaja, cSerie )                    INLINE   nImporte( cCaja, cSerie, ::aTotDevCliVentas, .t. )
 
    Method nTotValCliContadores( cCaja, cSerie )                INLINE   nImporte( cCaja, cSerie, ::aTotValCliContadores, .t. )
+   
    Method nTotValCliVentas( cCaja, cSerie )                    INLINE   nImporte( cCaja, cSerie, ::aTotValCliVentas, .t. )
+
    Method nTotValCliLiquidados( cCaja, cSerie )                INLINE   nImporte( cCaja, cSerie, ::aTotValCliLiquidados, .t. )
 
    Method nTotChkCliContadores( cCaja, cSerie )                INLINE   nImporte( cCaja, cSerie, ::aTotChkCliContadores, .t. )
