@@ -47,87 +47,89 @@ CLASS TProduccion FROM TMasDet
 
    CLASSDATA hDefinition
 
-   DATA  cMru                 INIT "Worker2_Form_Red_16"
+   DATA cMru                 INIT "Worker2_Form_Red_16"
 
-   DATA  oArt
-   DATA  oAlm
-   DATA  oAlbPrvT
-   DATA  oAlbPrvL
-   DATA  oAlbPrvS
-   DATA  oFacPrvT
-   DATA  oFacPrvL
-   DATA  oFacPrvS
-   DATA  oRctPrvL
-   DATA  oRctPrvS
-   DATA  oAlbCliT
-   DATA  oAlbCliL
-   DATA  oAlbCliS
-   DATA  oFacCliT
-   DATA  oFacCliL
-   DATA  oFacCliS
-   DATA  oFacRecT
-   DATA  oFacRecL
-   DATA  oFacRecS
-   DATA  oTikCliT
-   DATA  oTikCliL
-   DATA  oTikCliS
+   DATA oArt
+   DATA oAlm
+   DATA oAlbPrvT
+   DATA oAlbPrvL
+   DATA oAlbPrvS
+   DATA oFacPrvT
+   DATA oFacPrvL
+   DATA oFacPrvS
+   DATA oRctPrvL
+   DATA oRctPrvS
+   DATA oAlbCliT
+   DATA oAlbCliL
+   DATA oAlbCliS
+   DATA oFacCliT
+   DATA oFacCliL
+   DATA oFacCliS
+   DATA oFacRecT
+   DATA oFacRecL
+   DATA oFacRecS
+   DATA oTikCliT
+   DATA oTikCliL
+   DATA oTikCliS
 
-   DATA  oHisMov
+   DATA oHisMov
 
-   DATA  oGrupoFamilia
-   DATA  oTipoArticulo
+   DATA oGrupoFamilia
+   DATA oTipoArticulo
 
-   DATA  oStock
-   DATA  oPro
-   DATA  oTblPro
-   DATA  oFam
-   DATA  oKitArt
-   DATA  oDbfDoc
-   DATA  oDbfCount
-   DATA  oDbfEmp
-   DATA  oTemporada 
-   DATA  oFabricante
-   DATA  oCategoria
+   DATA oStock
+   DATA oPro
+   DATA oTblPro
+   DATA oFam
+   DATA oKitArt
+   DATA oDbfDoc
+   DATA oDbfCount
+   DATA oDbfEmp
+   DATA oTemporada 
+   DATA oFabricante
+   DATA oCategoria
 
-   DATA  oDetProduccion
-   DATA  oDetSeriesProduccion
-   DATA  oDetMaterial
-   DATA  oDetSeriesMaterial
-   DATA  oDetHoras
-   DATA  oDetHorasPersonal
-   DATA  oDetPersonal
-   DATA  oDetMaquina
+   DATA oDetProduccion
+   DATA oDetSeriesProduccion
+   DATA oDetMaterial
+   DATA oDetSeriesMaterial
+   DATA oDetHoras
+   DATA oDetHorasPersonal
+   DATA oDetPersonal
+   DATA oDetMaquina
 
-   DATA  oOperario
-   DATA  oSeccion
-   DATA  oOperacion
-   DATA  oMaquina
-   DATA  oHoras
+   DATA oOperario
+   DATA oSeccion
+   DATA oOperacion
+   DATA oMaquina
+   DATA oHoras
 
-   DATA  oGetTotalUnidades
-   DATA  nGetTotalUnidades    INIT  0
+   DATA oGetTotalUnidades
+   DATA nGetTotalUnidades    INIT  0
 
-   DATA  cTmpEmp
-   DATA  cTiempoEmpleado      INIT  0
+   DATA cTmpEmp
+   DATA cTiempoEmpleado      INIT  0
 
-   DATA  oTotProducido
-   DATA  oTotMaterias
-   DATA  oTotPersonal
-   DATA  oTotMaquinaria
+   DATA oTotProducido
+   DATA oTotMaterias
+   DATA oTotPersonal
+   DATA oTotMaquinaria
 
-   DATA  oTotParte
+   DATA oTotParte
 
-   DATA  cOldCodSec           INIT ""
-   DATA  cOldCodOpe           INIT ""
-   DATA  dOldFecIni           INIT Ctod( "" )
-   DATA  dOldFecFin           INIT Ctod( "" )
-   DATA  cOldHorIni           INIT ""
-   DATA  cOldHorFin           INIT ""
+   DATA cOldCodSec           INIT ""
+   DATA cOldCodOpe           INIT ""
+   DATA dOldFecIni           INIT Ctod( "" )
+   DATA dOldFecFin           INIT Ctod( "" )
+   DATA cOldHorIni           INIT ""
+   DATA cOldHorFin           INIT ""
 
-   DATA  aCal
-   DATA  cTime
+   DATA aCal
+   DATA cTime
 
-   DATA  cFileName
+   DATA cFileName
+
+   DATA bModeAppend
 
    /*
    Datas para el asistente de etiquetas----------------------------------------
@@ -231,6 +233,16 @@ CLASS TProduccion FROM TMasDet
    METHOD StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden )
 
    METHOD RecSiguente( oBrw )
+   
+   METHOD getDocumentToday()
+   METHOD isgetDocumentToday()            INLINE ( !Empty( ::getDocumentToday() ) )
+
+   METHOD AppendDocumentToday()           INLINE ( if( !::isgetDocumentToday(), ::Append(), ::EditDocumentToday() ) )
+   METHOD EditDocumentToday()
+
+   METHOD AppendMateriaPrima()
+   METHOD AppendElaborado()
+   METHOD runModeAppend()
 
    METHOD CargaPersonalAnterior( aDatosAnterior )
 
@@ -485,6 +497,20 @@ METHOD Activate( cDriver )
       ACTION   ( ::RecSiguente( ::oWndBrw ) );
       TOOLTIP  "Si(g)uente";
       HOTKEY   "G";
+      LEVEL    ACC_APPD
+
+   DEFINE BTNSHELL RESOURCE "NEW" OF ::oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ::AppendElaborado() );
+      TOOLTIP  "Añadir elaborado";
+      HOTKEY   "1" ;
+      LEVEL    ACC_APPD
+
+   DEFINE BTNSHELL RESOURCE "NEW" OF ::oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ::AppendMateriaPrima() );
+      TOOLTIP  "Añadir materia prima";
+      HOTKEY   "2" ;
       LEVEL    ACC_APPD
 
    DEFINE BTNSHELL RESOURCE "EDIT" OF ::oWndBrw ;
@@ -1803,9 +1829,23 @@ METHOD StarResource( oFecIni )
 
    oFecIni:SetFocus()
 
+   ::runModeAppend()
+
 RETURN ( nil )
 
-//--------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+METHOD runModeAppend() CLASS TProduccion
+
+   if !Empty( ::bModeAppend )
+      eval( ::bModeAppend )
+   end if
+
+   ::bModeAppend     := nil
+
+Return .t.
+
+//---------------------------------------------------------------------------//
 
 METHOD Save( oGetAlm, oGetSec, oGetOpe, oHorFin, nMode, oDlg, oFld )
 
@@ -2672,6 +2712,60 @@ METHOD RecSiguente( oBrw )
    oBrw:Refresh()
 
 RETURN ( lAppend )
+
+//---------------------------------------------------------------------------//
+
+METHOD EditDocumentToday( oBrw ) CLASS TProduccion
+
+   ::oDbf:GetStatus()
+   ::oDbf:OrdSetFocus( "cNumOrd" )
+
+   if ::oDbf:Seek( ::getDocumentToday() )
+      ::Edit()
+   else
+      MsgStop( "No se ha podido editar el documento" )
+   end if
+
+   ::oDbf:SetStatus()
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD getDocumentToday() CLASS TProduccion
+
+   local documentToday     := ""
+   
+   ::oDbf:GetStatus()
+   ::oDbf:OrdSetFocus( "dFecOrd" )
+
+   if ::oDbf:Seek( dtos( GetSysDate() ) )
+      documentToday        := ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd
+   end if
+
+   ::oDbf:SetStatus()
+
+Return ( documentToday )
+
+//---------------------------------------------------------------------------//
+
+METHOD AppendMateriaPrima() CLASS TProduccion
+
+   ::bModeAppend   := {|| MsgInfo( "AppendMateriaPrima" ) }
+
+   ::AppendDocumentToday()
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD AppendElaborado() CLASS TProduccion
+
+   ::bModeAppend   := {|| MsgInfo( "AppendElaborado" ) }
+
+   ::AppendDocumentToday()
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
