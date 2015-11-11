@@ -14309,6 +14309,9 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
 
+   oFr:SetWorkArea(     "Pagos de facturas", ( dbfFacCliP )->( Select() ) )
+   oFr:SetFieldAliases( "Pagos de facturas", cItemsToReport( aItmRecCli() ) )
+
 Return nil 
 
 //------------------------------------------------------------------------//
@@ -14330,6 +14333,7 @@ Static Function BuildRelationReport( oFr )
    oFr:SetMasterDetail( "Tickets", "Agentes",                        {|| ( dbfTikT )->cCodAge } )
    oFr:SetMasterDetail( "Tickets", "Usuarios",                       {|| ( dbfTikT )->cCcjTik } )
    oFr:SetMasterDetail( "Tickets", "SalaVenta",                      {|| ( dbfTikT )->cCodSala } )
+   oFr:SetMasterDetail( "Tickets", "Pagos de facturas",              {|| ( dbfTikT )->cNumDoc } )
 
    oFr:SetMasterDetail( "Lineas de tickets", "Artículos",            {|| ( dbfTikL )->cCbaTil } )
    oFr:SetMasterDetail( "Lineas de tickets", "Familia",              {|| ( dbfTikL )->cFamTil } )
@@ -14359,6 +14363,7 @@ Static Function BuildRelationReport( oFr )
    oFr:SetResyncPair(   "Tickets", "Formas de pago" )
    oFr:SetResyncPair(   "Tickets", "Usuarios" )
    oFr:SetResyncPair(   "Tickets", "SalaVenta" )
+   oFr:SetResyncPair(   "Tickets", "Pagos de facturas" )
 
    oFr:SetResyncPair(   "Lineas de tickets", "Artículos" )
    oFr:SetResyncPair(   "Lineas de tickets", "Familias" )
@@ -14392,6 +14397,7 @@ Static Function ClearRelationReport( oFr )
    oFr:ClearMasterDetail( "Agentes" )
    oFr:ClearMasterDetail( "Usuarios" )
    oFr:ClearMasterDetail( "SalaVenta" )
+   oFr:ClearMasterDetail( "Pagos de facturas" )
 
    oFr:ClearMasterDetail( "Artículos" )
    oFr:ClearMasterDetail( "Familia" )
@@ -14421,6 +14427,7 @@ Static Function ClearRelationReport( oFr )
    oFr:ClearResyncPair(   "Tickets", "Formas de pago" )
    oFr:ClearResyncPair(   "Tickets", "Usuarios" )
    oFr:ClearResyncPair(   "Tickets", "SalaVenta" )
+   oFr:ClearResyncPair(   "Tickets", "Pagos de facturas" )
 
    oFr:ClearResyncPair(   "Lineas de tickets", "Artículos" )
    oFr:ClearResyncPair(   "Lineas de tickets", "Familias" )
