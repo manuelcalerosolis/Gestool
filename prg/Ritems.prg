@@ -4074,7 +4074,7 @@ Static Function VisualEdtDocs( dbfDoc )
          DesignReportProvee( oFr, dbfDoc )
 
       case cTipo == "AL"
-         DesignLabelAlbPrv( oFr, dbfDoc )
+         DesignLabelAlbaranProveedor( oFr, dbfDoc )
  
       case cTipo == "FL"
          DesignLabelFacPrv( oFr, dbfDoc )

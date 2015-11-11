@@ -189,16 +189,16 @@ Static Function ShowErrorMessage( cMessage, aStack )
    Local oDlg
    Local oIco
 
-   oDlg := TDialog():New( ,,,, 'GST Rotor Error',,, .f.,,,,,, .f.,,,,480, 316 )
+   oDlg := TDialog():New( ,,,, 'GST Rotor Error',,, .f.,,,,,, .f.,,,,880, 616 )
    oIco := LoadIcon( 0, IDI_HAND )
 
-   TButton():New( 140, 70, '&Enviar error', oDlg, {|| SendErrorMessage( cMessage, aStack ), oDlg:End() }, 50, 12,,, .t., .t., .f.,, .f.,,, .f. )
+   TButton():New( 290, 170, '&Enviar error', oDlg, {|| SendErrorMessage( cMessage, aStack ), oDlg:End() }, 50, 12,,, .t., .t., .f.,, .f.,,, .f. )
 
-   TButton():New( 140, 130, '&Salir', oDlg, {|| oDlg:End() }, 50, 12,,, .t., .t., .f.,, .f.,,, .f. )
+   TButton():New( 290, 230, '&Salir', oDlg, {|| oDlg:End() }, 50, 12,,, .t., .t., .f.,, .f.,,, .f. )
 
    TSay():New( 9, 26, {|| OemToAnsi( cMessage ) }, oDlg,,, .f., .f., .f., .t.,,, 149, 20, .f., .f., .f., .f., .f. )
 
-   TListBox():New( 23, 3, { || nil }, aStack, 234, 114,, oDlg,,,, .t., .f.,,,, .f.,,,, .f., .f. )
+   TListBox():New( 30, 3, { || nil }, aStack, 434, 264,, oDlg,,,, .t., .f.,,,, .f.,,,, .f., .f. ) // 434, 264
 
    oDlg:Activate( ,, {| hDC | DrawIcon( hDC, 6, 6, oIco ) }, .t. )
 

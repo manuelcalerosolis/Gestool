@@ -823,7 +823,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
       ACTION   ( oScript:Expand() ) ;
       TOOLTIP  "Scripts" ;
 
-      ImportScript( oWndBrw, oScript, "AlbaranesProveedores" )  
+      ImportScript( oWndBrw, oScript, "AlbaranesProveedores", nView )  
 
    DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
       NOBORDER ;
@@ -10444,66 +10444,67 @@ RETURN ( DescripLeng( cAlbPrvL, cAlbPrvS, cArtLeng ) )
 
 //---------------------------------------------------------------------------//
 
-Function DesignLabelAlbPrv( oFr, cDbfDoc )
+Function DesignLabelAlbaranProveedor( oFr, cDbfDoc )
 
-   local oLabel   := TAlbaranProveedoresLabelGenerator():Init()
+   local oLabel   
+   local lOpenFiles  := empty( nView ) 
 
-   if !oLabel:lErrorOnCreate
-
-      /*
-      Zona de datos---------------------------------------------------------
-      */
-
-      DataLabel( oFr, .f. )
-
-      /*
-      Paginas y bandas------------------------------------------------------
-      */
-
-      if !Empty( ( cDbfDoc )->mReport )
-
-         oFr:LoadFromBlob( ( cDbfDoc )->( Select() ), "mReport")
-
-      else
-
-         oFr:AddPage(         "MainPage" )
-
-         oFr:AddBand(         "CabeceraColumnas",  "MainPage",       frxMasterData )
-         oFr:SetProperty(     "CabeceraColumnas",  "Top",            200 )
-         oFr:SetProperty(     "CabeceraColumnas",  "Height",         100 )
-         oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Lineas de albaranes" )
-
-      end if
-
-      /*
-      Zona de variables--------------------------------------------------------
-      */
-
-      VariableReport( oFr )
-
-      /*
-      Diseño de report------------------------------------------------------
-      */
-
-      oFr:DesignReport()
-
-      /*
-      Destruye el diseñador-------------------------------------------------
-      */
-
-      oFr:DestroyFr()
-
-      /*
-      Cierra ficheros-------------------------------------------------------
-      */
-
-      oLabel:End()
-
-   else
-
+   if lOpenFiles .and. !Openfiles()
       Return .f.
+   endif
 
+   oLabel            := TAlbaranProveedoresLabelGenerator():New( nView )
+
+msgAlert( oLabel:lErrorOnCreate, "oLabel:lErrorOnCreate")
+/*
+   if !oLabel:lErrorOnCreate
+      Return .f.
+   end if 
+*/
+msgStop( "lCreateTempReport()", "lCreateTempReport()" )
+
+   if !oLabel:lCreateTempReport()
+      Return .f.
+   end if 
+? 5
+   // Zona de datos---------------------------------------------------------
+   
+   ? "creamos la temporal"
+
+   oLabel:loadTempLabelReport()      
+
+   dataLabel( oFr, .f. )
+
+   // Paginas y bandas------------------------------------------------------
+
+   if !empty( ( cDbfDoc )->mReport )
+      oFr:LoadFromBlob( ( cDbfDoc )->( Select() ), "mReport")
+   else
+      oFr:AddPage(         "MainPage" )
+      oFr:AddBand(         "CabeceraColumnas",  "MainPage",       frxMasterData )
+      oFr:SetProperty(     "CabeceraColumnas",  "Top",            200 )
+      oFr:SetProperty(     "CabeceraColumnas",  "Height",         100 )
+      oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Lineas de albaranes" )
    end if
+
+   // Zona de variables--------------------------------------------------------
+
+   VariableReport( oFr )
+
+   // Diseño de report------------------------------------------------------
+
+   oFr:DesignReport()
+
+   // Destruye el diseñador-------------------------------------------------
+
+   oFr:DestroyFr()
+
+   oLabel:DestroyTempReport()
+   oLabel:End()
+
+   if lOpenFiles
+      closeFiles()
+   end if 
 
 Return .t.
 

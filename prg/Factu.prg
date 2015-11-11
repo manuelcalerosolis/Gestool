@@ -6103,6 +6103,8 @@ Function Test()
 
    // TFastVentasArticulos():sqlPedidoClientes()
 
+   // msgAlert( "test" / 0 )
+
    /*
    Envío de  mail al usuario----------------------------------------------
    
