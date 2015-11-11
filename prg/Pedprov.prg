@@ -9284,16 +9284,9 @@ Function designLabelPedidoProveedores( oFr, cDoc )
 
    oLabel            := TLabelGeneratorPedidoProveedores():New( nView )
 
-   if oLabel:lErrorOnCreate
-      Return .f.
-   end if 
-
-   if !oLabel:lCreateTempReport()
-      Return .f.
-   end if 
-
    // Zona de datos---------------------------------------------------------
 
+   oLabel:lCreateTempReport()
    oLabel:loadTempLabelReport()
 
    oLabel:dataLabel( oFr )

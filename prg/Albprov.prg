@@ -6707,93 +6707,6 @@ RETURN .t.
 
 //-------------------------------------------------------------------------//
 
-Static Function DataLabel( oFr, lTemporal )
-
-   /*
-   Zona de datos------------------------------------------------------------
-   */
-
-   oFr:ClearDataSets()
-
-   if lTemporal
-      oFr:SetWorkArea(  "Lineas de albaranes", ( tmpAlbPrvL )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
-   else
-      oFr:SetWorkArea(  "Lineas de albaranes", ( D():AlbaranesProveedoresLineas( nView ) )->( Select() ), .f., { FR_RB_FIRST, FR_RE_COUNT, 20 } )
-   end if
-
-   oFr:SetFieldAliases( "Lineas de albaranes", cItemsToReport( aColAlbPrv() ) )
-
-   oFr:SetWorkArea(     "Albaranes", ( D():AlbaranesProveedores( nView ) )->( Select() ) )
-   oFr:SetFieldAliases( "Albaranes", cItemsToReport( aItmAlbPrv() ) )
-
-   oFr:SetWorkArea(     "Artículos", ( D():Articulos( nView ) )->( Select() ) )
-   oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
-
-   oFr:SetWorkArea(     "Precios por propiedades", ( D():ArticuloPrecioPropiedades( nView ) )->( Select() ) )
-   oFr:SetFieldAliases( "Precios por propiedades", cItemsToReport( aItmVta() ) )
-
-   oFr:SetWorkArea(     "Incidencias de albaranes", ( D():AlbaranesProveedoresIncidencias( nView ) )->( Select() ) )
-   oFr:SetFieldAliases( "Incidencias de albaranes", cItemsToReport( aIncAlbPrv() ) )
-
-   oFr:SetWorkArea(     "Documentos de albaranes", ( D():AlbaranesProveedoresDocumentos( nView ) )->( Select() ) )
-   oFr:SetFieldAliases( "Documentos de albaranes", cItemsToReport( aAlbPrvDoc() ) )
-
-   oFr:SetWorkArea(     "Empresa", ( D():Empresa( nView ) )->( Select() ) )
-   oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
-
-   oFr:SetWorkArea(     "Proveedores", ( D():Proveedores( nView ) )->( Select() ) )
-   oFr:SetFieldAliases( "Proveedores", cItemsToReport( aItmPrv() ) )
-
-   oFr:SetWorkArea(     "Almacenes", ( D():Almacen( nView ) )->( Select() ) )
-   oFr:SetFieldAliases( "Almacenes", cItemsToReport( aItmAlm() ) )
-
-   oFr:SetWorkArea(     "Formas de pago", ( D():FormasPago( nView ) )->( Select() ) )
-   oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
-
-   oFr:SetWorkArea(     "Código de proveedores", ( D():ProveedorArticulo( nView ) )->( Select() ) )
-   oFr:SetFieldAliases( "Código de proveedores", cItemsToReport( aItmArtPrv() ) )
-
-   oFr:SetWorkArea(     "Unidades de medición",  D():GetObject( "UnidadMedicion", nView ):Select() )
-   oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( D():GetObject( "UnidadMedicion", nView ):oDbf ) )
-
-   oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( nView ):Select() )
-   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( nView ):oDbf ) )
-
-   if lTemporal
-      oFr:SetMasterDetail( "Lineas de albaranes", "Albaranes",                {|| ( tmpAlbPrvL )->cSerAlb + Str( ( tmpAlbPrvL )->nNumAlb ) + ( tmpAlbPrvL )->cSufAlb } )
-      oFr:SetMasterDetail( "Lineas de albaranes", "Artículos",                {|| ( tmpAlbPrvL )->cRef } )
-      oFr:SetMasterDetail( "Lineas de albaranes", "Precios por propiedades",  {|| ( tmpAlbPrvL )->cRef + ( tmpAlbPrvL )->cCodPr1 + ( tmpAlbPrvL )->cCodPr2 + ( tmpAlbPrvL )->cValPr1 + ( tmpAlbPrvL )->cValPr2 } )
-      oFr:SetMasterDetail( "Lineas de albaranes", "Incidencias de albaranes", {|| ( tmpAlbPrvL )->cSerAlb + Str( ( tmpAlbPrvL )->nNumAlb ) + ( tmpAlbPrvL )->cSufAlb } )
-      oFr:SetMasterDetail( "Lineas de albaranes", "Documentos de albaranes",  {|| ( tmpAlbPrvL )->cSerAlb + Str( ( tmpAlbPrvL )->nNumAlb ) + ( tmpAlbPrvL )->cSufAlb } )
-      oFr:SetMasterDetail( "Lineas de albaranes", "Impuestos especiales",     {|| ( tmpAlbPrvL )->cCodImp } )
-   else
-      oFr:SetMasterDetail( "Lineas de albaranes", "Albaranes",                {|| ( D():AlbaranesProveedoresLineas( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedoresLineas( nView ) )->nNumAlb ) + ( D():AlbaranesProveedoresLineas( nView ) )->cSufAlb } )
-      oFr:SetMasterDetail( "Lineas de albaranes", "Artículos",                {|| ( D():AlbaranesProveedoresLineas( nView ) )->cRef } )
-      oFr:SetMasterDetail( "Lineas de albaranes", "Precios por propiedades",  {|| ( D():AlbaranesProveedoresLineas( nView ) )->cRef + ( D():AlbaranesProveedoresLineas( nView ) )->cCodPr1 + ( D():AlbaranesProveedoresLineas( nView ) )->cCodPr2 + ( D():AlbaranesProveedoresLineas( nView ) )->cValPr1 + ( D():AlbaranesProveedoresLineas( nView ) )->cValPr2 } )
-      oFr:SetMasterDetail( "Lineas de albaranes", "Incidencias de albaranes", {|| ( D():AlbaranesProveedoresLineas( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedoresLineas( nView ) )->nNumAlb ) + ( D():AlbaranesProveedoresLineas( nView ) )->cSufAlb } )
-      oFr:SetMasterDetail( "Lineas de albaranes", "Documentos de albaranes",  {|| ( D():AlbaranesProveedoresLineas( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedoresLineas( nView ) )->nNumAlb ) + ( D():AlbaranesProveedoresLineas( nView ) )->cSufAlb } )
-      oFr:SetMasterDetail( "Lineas de albaranes", "Impuestos especiales",     {|| ( D():AlbaranesProveedoresLineas( nView ) )->cCodImp } )
-   end if
-
-   oFr:SetMasterDetail(    "Albaranes", "Proveedores",                        {|| ( D():AlbaranesProveedores( nView ) )->cCodPrv } )
-   oFr:SetMasterDetail(    "Albaranes", "Almacenes",                          {|| ( D():AlbaranesProveedores( nView ) )->cCodAlm } )
-   oFr:SetMasterDetail(    "Albaranes", "Empresa",                            {|| cCodigoEmpresaEnUso() } )
-
-   oFr:SetResyncPair(      "Lineas de albaranes", "Albaranes" )
-   oFr:SetResyncPair(      "Lineas de albaranes", "Artículos" )
-   oFr:SetResyncPair(      "Lineas de albaranes", "Precios por propiedades" )
-   oFr:SetResyncPair(      "Lineas de albaranes", "Incidencias de albaranes" )
-   oFr:SetResyncPair(      "Lineas de albaranes", "Documentos de albaranes" )
-   oFr:SetResyncPair(      "Lineas de albaranes", "Impuestos especiales" )   
-
-   oFr:SetResyncPair(      "Albaranes", "Proveedores" )
-   oFr:SetResyncPair(      "Albaranes", "Almacenes" )
-   oFr:SetResyncPair(      "Albaranes", "Empresa" )
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
 Static Function DataReport( oFr )
 
    /*
@@ -10455,25 +10368,12 @@ Function DesignLabelAlbaranProveedor( oFr, cDbfDoc )
 
    oLabel            := TLabelGeneratorAlbaranProveedores():New( nView )
 
-   msgAlert( oLabel:lErrorOnCreate, "oLabel:lErrorOnCreate")
-
-   if !oLabel:lErrorOnCreate
-      Return .f.
-   end if 
-
-   msgStop( "lCreateTempReport()", "lCreateTempReport()" )
-
-   if !oLabel:lCreateTempReport()
-      Return .f.
-   end if 
-   
    // Zona de datos---------------------------------------------------------
    
-   ? "creamos la temporal"
-
+   oLabel:lCreateTempReport()
    oLabel:loadTempLabelReport()      
 
-   dataLabel( oFr, .f. )
+   oLabel:dataLabel( oFr )
 
    // Paginas y bandas------------------------------------------------------
 

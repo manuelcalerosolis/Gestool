@@ -74,6 +74,8 @@ CLASS TLabelGenerator
 
    METHOD New()
 
+   METHOD isErrorOnCreate()               INLINE ( ::lErrorOnCreate )
+
    METHOD Dialog()
 
    METHOD lCreateTempLabelEdition()      
@@ -900,23 +902,22 @@ ENDCLASS
 
 METHOD New( nView ) CLASS TLabelGeneratorPedidoProveedores
 
-   ::cSerieInicio       := ( D():AlbaranesProveedores( nView ) )->cSerPed
-   ::cSerieFin          := ( D():AlbaranesProveedores( nView ) )->cSerPed
+   ::dbfCabecera        := ( D():PedidosProveedores( nView ) )
+   ::dbfLineas          := ( D():PedidosProveedoresLineas( nView ) )
+   ::idDocument         := D():PedidosProveedoresId( nView ) 
 
-   ::nDocumentoInicio   := ( D():AlbaranesProveedores( nView ) )->nNumPed
-   ::nDocumentoFin      := ( D():AlbaranesProveedores( nView ) )->nNumPed
+   ::cSerieInicio       := ( ::dbfCabecera )->cSerPed
+   ::cSerieFin          := ( ::dbfCabecera )->cSerPed
 
-   ::cSufijoInicio      := ( D():AlbaranesProveedores( nView ) )->cSufPed
-   ::cSufijoFin         := ( D():AlbaranesProveedores( nView ) )->cSufPed
+   ::nDocumentoInicio   := ( ::dbfCabecera )->nNumPed
+   ::nDocumentoFin      := ( ::dbfCabecera )->nNumPed
+
+   ::cSufijoInicio      := ( ::dbfCabecera )->cSufPed
+   ::cSufijoFin         := ( ::dbfCabecera )->cSufPed
 
    ::cNombreDocumento   := "Pedido proveedores"
 
    ::inicialDoc         := "PE"
-
-   ::dbfCabecera        := ( D():AlbaranesProveedores( nView ) )
-   ::dbfLineas          := ( D():PedidosProveedoresLineas( nView ) )
-
-   ::idDocument         := D():PedidosProveedoresId( nView ) 
 
    ::tmpLabelReport     := "LblRpt"
 
@@ -1053,7 +1054,7 @@ METHOD dataLabel( oFr ) CLASS TLabelGeneratorPedidoProveedores
    oFr:SetMasterDetail( "Lineas de pedidos", "Documentos de pedidos",      {|| ( ::tmpLabelReport )->cSerPed + Str( ( ::tmpLabelReport )->nNumPed ) + ( ::tmpLabelReport )->cSufPed } )
    oFr:SetMasterDetail( "Lineas de pedidos", "Impuestos especiales",       {|| ( ::tmpLabelReport )->cCodImp } )
 
-   oFr:SetMasterDetail( "Pedidos", "Proveedores",                          {|| ( ::dbfCabecera )->cCodPrv } )
+   oFr:SetMasterDetail( "Pedidos", "Proveedor",                            {|| ( ::dbfCabecera )->cCodPrv } )
    oFr:SetMasterDetail( "Pedidos", "Almacenes",                            {|| ( ::dbfCabecera )->cCodAlm } )
    oFr:SetMasterDetail( "Pedidos", "Formas de pago",                       {|| ( ::dbfCabecera )->cCodPgo} )
    oFr:SetMasterDetail( "Pedidos", "Bancos",                               {|| ( ::dbfCabecera )->cCodPrv } )
@@ -1066,7 +1067,7 @@ METHOD dataLabel( oFr ) CLASS TLabelGeneratorPedidoProveedores
    oFr:SetResyncPair(   "Lineas de pedidos", "Documentos de pedidos" )
    oFr:SetResyncPair(   "Lineas de pedidos", "Impuestos especiales" )   
 
-   oFr:SetResyncPair(   "Pedidos", "Proveedores" )
+   oFr:SetResyncPair(   "Pedidos", "Proveedor" )
    oFr:SetResyncPair(   "Pedidos", "Almacenes" )
    oFr:SetResyncPair(   "Pedidos", "Formas de pago" )
    oFr:SetResyncPair(   "Pedidos", "Bancos" )
@@ -1297,6 +1298,7 @@ METHOD New( nView ) CLASS TLabelGeneratorPedidoClientes
 
    ::nDocumentoInicio   := ( D():PedidosClientes( nView ) )->nNumPed
    ::nDocumentoFin      := ( D():PedidosClientes( nView ) )->nNumPed
+
    ::cSufijoInicio      := ( D():PedidosClientes( nView ) )->cSufPed
    ::cSufijoFin         := ( D():PedidosClientes( nView ) )->cSufPed
 
@@ -2453,7 +2455,7 @@ METHOD dataLabel( oFr ) CLASS TLabelGeneratorAlbaranProveedores
    oFr:SetMasterDetail( "Lineas de albaranes", "Documentos de albaranes",    {|| ( ::tmpLabelReport )->cSerAlb + Str( ( ::tmpLabelReport )->nNumAlb ) + ( ::tmpLabelReport )->cSufAlb } )
    oFr:SetMasterDetail( "Lineas de albaranes", "Impuestos especiales",       {|| ( ::tmpLabelReport )->cCodImp } )
 
-   oFr:SetMasterDetail( "Albaranes", "Proveedores",                          {|| ( ::dbfCabecera )->cCodPrv } )
+   oFr:SetMasterDetail( "Albaranes", "Proveedor",                            {|| ( ::dbfCabecera )->cCodPrv } )
    oFr:SetMasterDetail( "Albaranes", "Almacenes",                            {|| ( ::dbfCabecera )->cCodAlm } )
    oFr:SetMasterDetail( "Albaranes", "Formas de pago",                       {|| ( ::dbfCabecera )->cCodPgo} )
    oFr:SetMasterDetail( "Albaranes", "Bancos",                               {|| ( ::dbfCabecera )->cCodPrv } )
@@ -2466,7 +2468,7 @@ METHOD dataLabel( oFr ) CLASS TLabelGeneratorAlbaranProveedores
    oFr:SetResyncPair(   "Lineas de albaranes", "Documentos de albaranes" )
    oFr:SetResyncPair(   "Lineas de albaranes", "Impuestos especiales" )   
 
-   oFr:SetResyncPair(   "Albaranes", "Proveedores" )
+   oFr:SetResyncPair(   "Albaranes", "Proveedor" )
    oFr:SetResyncPair(   "Albaranes", "Almacenes" )
    oFr:SetResyncPair(   "Albaranes", "Formas de pago" )
    oFr:SetResyncPair(   "Albaranes", "Bancos" )
