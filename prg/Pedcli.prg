@@ -10428,10 +10428,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
    cOldCodArt                          := ""
    cOldUndMed                          := ""
 
-   if !empty( aGet[ _CUNIDAD ] )
-      aGet[ _CUNIDAD ]:lValid()
-   end if
-
    // Liberacion del bitmap-------------------------------------------------------
 
    if !empty( bmpImage )

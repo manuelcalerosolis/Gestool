@@ -8293,7 +8293,15 @@ Return .t.
 
 STATIC FUNCTION ValidaMedicion( aTmp, aGet )
 
-   local cNewUndMed  := aGet[ _CUNIDAD ]:VarGet
+  // local cNewUndMed  := aGet[ _CUNIDAD ]:VarGet
+
+  local cNewUndMed
+
+   if !Empty( aGet[ _CUNIDAD ] )
+      cNewUndMed  := aGet[ _CUNIDAD ]:VarGet
+   else
+      cNewUndMed  := aTmp[ _CUNIDAD ]
+   end if
 
    /*
    Cargamos el codigo de las unidades---------------------------------
@@ -10671,6 +10679,8 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
             end if
 
+            SysRefresh()
+
             ValidaMedicion( aTmp, aGet )
 
          end if
@@ -10976,18 +10986,11 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
 
    if !empty( bmpImage )
        bmpImage:Hide()
-   end if
-
-   if !empty( bmpImage )
-      PalBmpFree( bmpImage:hBitmap, bmpImage:hPalette )
+       PalBmpFree( bmpImage:hBitmap, bmpImage:hPalette )
    end if
 
    cOldCodArt     := ""
    cOldUndMed     := ""
-
-   if !Empty( aGet[ _CUNIDAD ] )
-      aGet[ _CUNIDAD ]:lValid()
-   end if
 
    if nMode == APPD_MODE .and. lEntCon()
 
