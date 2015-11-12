@@ -1360,12 +1360,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
 			COLOR 	CLR_GET ;
          OF       oFld:aDialogs[1]
 
-		REDEFINE GET aGet[_CCODPGO] VAR aTmp[_CCODPGO];
+		REDEFINE GET aGet[ _CCODPGO ] VAR aTmp[ _CCODPGO ];
 			ID 		160 ;
 			PICTURE 	"@!" ;
 			COLOR 	CLR_GET ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    cFPago( aGet[_CCODPGO], D():FormasPago( nView ), oSay[ 3 ] ) ;
+         VALID    cFPago( aGet[ _CCODPGO ], D():FormasPago( nView ), oSay[ 3 ] ) ;
          BITMAP   "LUPA" ;
          ON HELP  BrwFPago( aGet[_CCODPGO ], oSay[ 3 ] ) ;
 			OF 		oFld:aDialogs[1]

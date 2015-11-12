@@ -57,6 +57,10 @@ static cNameVersion
 static cBmpVersion
 static cTypeVersion     := ""
 
+STATIC dbfClient
+STATIC dbfObras 
+
+
 //---------------------------------------------------------------------------//
 /*
 -------------------------------------------------------------------------------
@@ -101,10 +105,9 @@ function Main( ParamsMain, ParamsSecond )
    SET AUTORDER TO 1
 
    SetHandleCount( 240 )
+   SetResDebug( .t. )
 
    FwNumFormat( 'E', .t. )
-
-   SetResDebug( .t. )
 
    DialogExtend() 
 
@@ -136,11 +139,12 @@ function Main( ParamsMain, ParamsSecond )
       rddRegister( 'ADS', 1 )
       rddSetDefault( 'ADSCDX' )
 
-      AdsSetServerType( nAdsServer() )    // TODOS
-      AdsSetFileType( 2 )                 // ADS_CDX
-      AdsRightsCheck( .f. )
-      AdsSetDeleted( .t. )
-      AdsCacheOpenTables( 250 )
+      adsSetServerType( nAdsServer() )    // TODOS
+      adsSetFileType( 2 )                 // ADS_CDX
+      // adsLocking( .t. )   
+      adsRightsCheck( .f. )
+      adsSetDeleted( .t. )
+      adsCacheOpenTables( 250 )
 
       with object ( TDataCenter() )
 
@@ -6101,36 +6105,126 @@ Return ( by( nRow ) )
 
 Function Test() 
 
-   // TFastVentasArticulos():sqlPedidoClientes()
+   if !msgyesno("run test")
+      return nil 
+   end if 
 
-   // msgAlert( "test" / 0 )
+   setIndexToCDX()
 
-   /*
-   Envío de  mail al usuario----------------------------------------------
-   
-   local hashDatabaseList  := {=>}
+   msgAlert( cDriver() )
+   testAll()
 
-   hSet( hashDatabaseList, "mail", "mcalero@gestool.es" )
-   hSet( hashDatabaseList, "subject", "Indicencias en albaranes de proveedor" )
-   hSet( hashDatabaseList, "message", "message" )
+   setIndexToAIS()
+   msgAlert( cDriver() )
 
-   with object TSendMail():New()
-      
-      if :buildMailerObject()
-
-         :sendMail( hashDatabaseList )
-
-      else 
-
-         msgStop( "No he podido crear el buildMailerObject")
-   
-      end if 
-
-   end with
-   */
+   testAll()
 
 Return ( nil )
 
+Static Function testAll()
+
+   msgStop( cPatCli() + "CLIENT.DBF" )
+
+   dbUseArea( .t., ( cDriver() ), ( cPatCli() + "CLIENT.DBF" ), ( cCheckArea( "CLIENT", @dbfClient ) ), .t., .f. )
+   msgAlert( ( dbfClient )->( used() ), "used" )
+
+   if !lAIS() 
+      ( dbfClient )->( ordListAdd( ( cPatCli() + "CLIENT.CDX" ) ) ) 
+   else 
+      ( dbfClient )->( ordSetFocus( 1 ) )
+   end
+
+   USE ( cPatCli() + "OBRAST.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObras ) )
+   if !lAIS()
+      ( dbfObras )->( ordListAdd( ( cPatCli() + "OBRAST.CDX" ) ) ) 
+   else 
+      ( dbfObras )->( ordSetFocus( 1 ) )
+   end if 
+
+   deleteAll()
+
+   fillAll()
+
+   seekAll()
+
+   CLOSE ( dbfClient )
+   CLOSE ( dbfObras )   
+
+RETURN NIL 
+
 //---------------------------------------------------------------------------//
+
+STATIC FUNCTION deleteAll()
+
+   ( dbfClient )->( dbGoTop() )
+
+   WHILE !( dbfClient )->( eof() ) 
+      ( dbfClient )->( dbdelete() )
+      ( dbfClient )->( dbSkip() )
+   END 
+
+   ( dbfObras )->( dbGoTop() )
+
+   WHILE !( dbfObras )->( eof() ) 
+      ( dbfObras )->( dbdelete() )
+      ( dbfObras )->( dbSkip() )
+   END 
+
+RETURN NIL 
+
+//---------------------------------------------------------------------------//
+
+STATIC FUNCTION fillAll()
+
+   local n
+
+   for n := 1 to 10000
+
+      ( dbfClient )->( dbappend() )
+      if ( dbfClient )->( !neterr() )
+         ( dbfClient )->cod      := strzero( n, 8 )
+         ( dbfClient )->titulo   := strzero( n, 8 )
+         ( dbfClient )->( dbcommit() )
+         ( dbfClient )->( dbunlock() )
+      endif
+
+      ( dbfObras )->( dbappend() )
+      if ( dbfObras )->( !neterr() )
+         ( dbfObras )->cCodCli   := strzero( n, 8 )
+         ( dbfObras )->cCodObr   := strzero( n, 8 )
+         ( dbfObras )->cNomObr   := strzero( n, 8 )
+
+         ( dbfObras )->( dbcommit() )
+         ( dbfObras )->( dbunlock() )
+      endif
+
+   next
+
+RETURN NIL 
+
+//---------------------------------------------------------------------------//
+
+static Function seekAll()
+
+   local seconds := seconds()
+
+   ( dbfClient )->( dbGoTop() )
+
+   while ( dbfClient )->( !eof() ) 
+      retfld( ( dbfClient )->cod, dbfObras, "cCodCli" )
+      retfld( ( dbfClient )->cod, dbfObras, "cCodObr" )
+      retfld( ( dbfClient )->cod, dbfObras, "cNomObr" )
+      ( dbfClient )->( dbskip() )
+   end while
+
+   msgStop( seconds() - seconds )
+
+RETURN NIL 
+
+//---------------------------------------------------------------------------//
+
+
+
+
 
 
