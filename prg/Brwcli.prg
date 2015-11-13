@@ -761,6 +761,7 @@ static function StartDialog( cCodCli, cCmbAnio, lSatCli, oFld, oDlg, oBrwVta, oB
 
    oGraph:Refresh()
 
+/*
    if lSatCli   
       oBtnAceptar:Show()
       oFld:SetOption( 4 )
@@ -768,6 +769,7 @@ static function StartDialog( cCodCli, cCmbAnio, lSatCli, oFld, oDlg, oBrwVta, oB
       oBtnAceptar:Hide()
       oFld:SetOption( 1 )   
    end if
+*/
 
 Return .t.
 

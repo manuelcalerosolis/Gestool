@@ -6024,11 +6024,13 @@ Return ( by( nRow ) )
 
 Function Test() 
 
+/*
    if !msgyesno("run test " + cDriver() )
       return nil 
    end if 
 
    testAll()
+*/
 
 Return ( nil )
 

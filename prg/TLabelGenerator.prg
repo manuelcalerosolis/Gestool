@@ -566,16 +566,16 @@ Return ( .t. )
 METHOD buildReportLabels() CLASS TLabelGenerator
 
    local oFr
-   local nCopies      := 1
-   local nDevice      := IS_SCREEN
-   local cPrinter     := PrnGetName()
+   local nCopies     := 1
+   local nDevice     := IS_SCREEN
+   local cPrinter    := PrnGetName()
 
    sysRefresh()
 
    oFr               := frReportManager():New()
-   oFr:LoadLangRes(     "Spanish.Xml" )
+   oFr:LoadLangRes( "Spanish.Xml" )
    oFr:SetIcon( 1 )
-   oFr:SetTitle(        "Diseñador de documentos" )
+   oFr:SetTitle( "Diseñador de documentos" )
 
    // Manejador de eventos--------------------------------------------------------
 
@@ -615,6 +615,10 @@ METHOD buildReportLabels() CLASS TLabelGenerator
             oFr:DoExport( "PDFExport" )
 
       end case
+
+   else 
+
+      msgStop( "Imposible cargar el documento de la etiquetas.")
 
    end if
    
@@ -919,8 +923,6 @@ METHOD New( nView ) CLASS TLabelGeneratorPedidoProveedores
 
    ::inicialDoc         := "PE"
 
-   ::tmpLabelReport     := "LblRpt"
-
    ::aStructureField    := aSqlStruct( aColPedPrv() )
 
    ::nView              := nView 
@@ -1117,8 +1119,6 @@ METHOD New( nView ) CLASS TLabelGeneratorAlbaranClientes
 
    ::idDocument         := D():AlbaranesClientesId( nView ) 
 
-   ::tmpLabelReport     := "LblRpt"
-
    ::aStructureField    := aSqlStruct( aColAlbCli() )
 
    ::nView              := nView 
@@ -1311,8 +1311,6 @@ METHOD New( nView ) CLASS TLabelGeneratorPedidoClientes
 
    ::idDocument         := D():PedidosClientesId( nView ) 
 
-   ::tmpLabelReport     := "LblRpt"
-
    ::aStructureField    := aSqlStruct( aColPedCli() )
 
    ::nView              := nView 
@@ -1395,12 +1393,7 @@ METHOD dataLabel( oFr ) CLASS TLabelGeneratorPedidoClientes
 
    oFr:ClearDataSets()
 
-   if ::getTemporalData()
-      oFr:SetWorkArea(  "Lineas de pedidos", ( ::tmpLabelReport )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
-   else
-      oFr:SetWorkArea(  "Lineas de pedidos", ( ::dbfLineas )->( Select() ), .f., { FR_RB_FIRST, FR_RE_COUNT, 20 } )
-   end if
-
+   oFr:SetWorkArea(     "Lineas de pedidos", ( ::tmpLabelReport )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
    oFr:SetFieldAliases( "Lineas de pedidos", cItemsToReport( aColPedCli() ) )
 
    oFr:SetWorkArea(     "Pedidos", ( ::dbfCabecera )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
@@ -1439,21 +1432,12 @@ METHOD dataLabel( oFr ) CLASS TLabelGeneratorPedidoClientes
    oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( ::nView ):Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( ::nView ):oDbf) )
    
-   if ::getTemporalData()
-      oFr:SetMasterDetail( "Lineas de pedidos", "Pedidos",                    {|| ( ::tmpLabelReport )->cSerPed + Str( ( ::tmpLabelReport )->nNumPed ) + ( ::tmpLabelReport )->cSufPed } )
-      oFr:SetMasterDetail( "Lineas de pedidos", "Artículos",                  {|| ( ::tmpLabelReport )->cRef } )
-      oFr:SetMasterDetail( "Lineas de pedidos", "Precios por propiedades",    {|| ( ::tmpLabelReport )->cDetalle + ( ::tmpLabelReport )->cCodPr1 + ( ::tmpLabelReport )->cCodPr2 + ( ::tmpLabelReport )->cValPr1 + ( ::tmpLabelReport )->cValPr2 } )
-      oFr:SetMasterDetail( "Lineas de pedidos", "Incidencias de pedidos",     {|| ( ::tmpLabelReport )->cSerPed + Str( ( ::tmpLabelReport )->nNumPed ) + ( ::tmpLabelReport )->cSufPed } )
-      oFr:SetMasterDetail( "Lineas de pedidos", "Documentos de pedidos",      {|| ( ::tmpLabelReport )->cSerPed + Str( ( ::tmpLabelReport )->nNumPed ) + ( ::tmpLabelReport )->cSufPed } )
-      oFr:SetMasterDetail( "Lineas de pedidos", "Impuestos especiales",       {|| ( ::tmpLabelReport )->cCodImp } )
-   else
-      oFr:SetMasterDetail( "Lineas de pedidos", "Pedidos",                    {|| ( ::dbfLineas )->cSerPed + Str( ( ::dbfLineas )->nNumPed ) + ( ::dbfLineas )->cSufPed } )
-      oFr:SetMasterDetail( "Lineas de pedidos", "Artículos",                  {|| ( ::dbfLineas )->cRef } )
-      oFr:SetMasterDetail( "Lineas de pedidos", "Precios por propiedades",    {|| ( ::dbfLineas )->cRef + ( ::dbfLineas )->cCodPr1 + ( ::dbfLineas )->cCodPr2 + ( ::dbfLineas )->cValPr1 + ( ::dbfLineas )->cValPr2 } )
-      oFr:SetMasterDetail( "Lineas de pedidos", "Incidencias de pedidos",     {|| ( ::dbfLineas )->cSerPed + Str( ( ::dbfLineas )->nNumPed ) + ( ::dbfLineas )->cSufPed } )
-      oFr:SetMasterDetail( "Lineas de pedidos", "Documentos de pedidos",      {|| ( ::dbfLineas )->cSerPed + Str( ( ::dbfLineas )->nNumPed ) + ( ::dbfLineas )->cSufPed } )
-      oFr:SetMasterDetail( "Lineas de pedidos", "Impuestos especiales",       {|| ( ::dbfLineas )->cCodImp } )
-   end if
+   oFr:SetMasterDetail( "Lineas de pedidos", "Pedidos",                    {|| ( ::tmpLabelReport )->cSerPed + Str( ( ::tmpLabelReport )->nNumPed ) + ( ::tmpLabelReport )->cSufPed } )
+   oFr:SetMasterDetail( "Lineas de pedidos", "Artículos",                  {|| ( ::tmpLabelReport )->cRef } )
+   oFr:SetMasterDetail( "Lineas de pedidos", "Precios por propiedades",    {|| ( ::tmpLabelReport )->cDetalle + ( ::tmpLabelReport )->cCodPr1 + ( ::tmpLabelReport )->cCodPr2 + ( ::tmpLabelReport )->cValPr1 + ( ::tmpLabelReport )->cValPr2 } )
+   oFr:SetMasterDetail( "Lineas de pedidos", "Incidencias de pedidos",     {|| ( ::tmpLabelReport )->cSerPed + Str( ( ::tmpLabelReport )->nNumPed ) + ( ::tmpLabelReport )->cSufPed } )
+   oFr:SetMasterDetail( "Lineas de pedidos", "Documentos de pedidos",      {|| ( ::tmpLabelReport )->cSerPed + Str( ( ::tmpLabelReport )->nNumPed ) + ( ::tmpLabelReport )->cSufPed } )
+   oFr:SetMasterDetail( "Lineas de pedidos", "Impuestos especiales",       {|| ( ::tmpLabelReport )->cCodImp } )
 
    oFr:SetMasterDetail(    "Pedidos", "Clientes",                             {|| ( ::dbfCabecera )->cCodCli } )
    oFr:SetMasterDetail(    "Pedidos", "Almacenes",                            {|| ( ::dbfCabecera )->cCodAlm } )
@@ -1504,15 +1488,12 @@ METHOD New( nView ) CLASS TLabelGeneratorPresupuestoClientes
    ::cSufijoFin         := ( D():PresupuestosClientes( nView ) )->cSufPre
 
    ::cNombreDocumento   := "Presupuesto clientes"
-
    ::inicialDoc         := "PR"
 
    ::dbfCabecera        := ( D():PresupuestosClientes( nView ) )
    ::dbfLineas          := ( D():PresupuestosClientesLineas( nView ) )
 
    ::idDocument         := D():PresupuestosClientesId( nView ) 
-
-   ::tmpLabelReport     := "LblRpt"
 
    ::aStructureField    := aSqlStruct( aColPreCli() )
 
@@ -1596,12 +1577,7 @@ METHOD dataLabel( oFr ) CLASS TLabelGeneratorPresupuestoClientes
 
    oFr:ClearDataSets()
 
-   if ::getTemporalData()
-      oFr:SetWorkArea(  "Lineas de presupuestos", ( ::tmpLabelReport )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
-   else
-      oFr:SetWorkArea(  "Lineas de presupuestos", ( ::dbfLineas )->( Select() ), .f., { FR_RB_FIRST, FR_RE_COUNT, 20 } )
-   end if
-
+   oFr:SetWorkArea(     "Lineas de presupuestos", ( ::tmpLabelReport )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
    oFr:SetFieldAliases( "Lineas de presupuestos", cItemsToReport( aColPreCli() ) )
 
    oFr:SetWorkArea(     "Presupuestos", ( ::dbfCabecera )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
@@ -1640,21 +1616,12 @@ METHOD dataLabel( oFr ) CLASS TLabelGeneratorPresupuestoClientes
    oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( ::nView ):Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( ::nView ):oDbf) )
    
-   if ::getTemporalData()
-      oFr:SetMasterDetail( "Lineas de presupuestos", "Presupuestos",                   {|| ( ::tmpLabelReport )->cSerPre + Str( ( ::tmpLabelReport )->nNumPre ) + ( ::tmpLabelReport )->cSufPre } )
-      oFr:SetMasterDetail( "Lineas de presupuestos", "Artículos",                      {|| ( ::tmpLabelReport )->cRef } )
-      oFr:SetMasterDetail( "Lineas de presupuestos", "Precios por propiedades",        {|| ( ::tmpLabelReport )->cDetalle + ( ::tmpLabelReport )->cCodPr1 + ( ::tmpLabelReport )->cCodPr2 + ( ::tmpLabelReport )->cValPr1 + ( ::tmpLabelReport )->cValPr2 } )
-      oFr:SetMasterDetail( "Lineas de presupuestos", "Incidencias de presupuestos",    {|| ( ::tmpLabelReport )->cSerPre + Str( ( ::tmpLabelReport )->nNumPre ) + ( ::tmpLabelReport )->cSufPre } )
-      oFr:SetMasterDetail( "Lineas de presupuestos", "Documentos de presupuestos",     {|| ( ::tmpLabelReport )->cSerPre + Str( ( ::tmpLabelReport )->nNumPre ) + ( ::tmpLabelReport )->cSufPre } )
-      oFr:SetMasterDetail( "Lineas de presupuestos", "Impuestos especiales",           {|| ( ::tmpLabelReport )->cCodImp } )
-   else
-      oFr:SetMasterDetail( "Lineas de presupuestos", "Presupuestos",                  {|| ( ::dbfLineas )->cSerPre + Str( ( ::dbfLineas )->nNumPre ) + ( ::dbfLineas )->cSufPre } )
-      oFr:SetMasterDetail( "Lineas de presupuestos", "Artículos",                     {|| ( ::dbfLineas )->cRef } )
-      oFr:SetMasterDetail( "Lineas de presupuestos", "Precios por propiedades",       {|| ( ::dbfLineas )->cRef + ( ::dbfLineas )->cCodPr1 + ( ::dbfLineas )->cCodPr2 + ( ::dbfLineas )->cValPr1 + ( ::dbfLineas )->cValPr2 } )
-      oFr:SetMasterDetail( "Lineas de presupuestos", "Incidencias de presupuestos",   {|| ( ::dbfLineas )->cSerPre + Str( ( ::dbfLineas )->nNumPre ) + ( ::dbfLineas )->cSufPre } )
-      oFr:SetMasterDetail( "Lineas de presupuestos", "Documentos de presupuestos",    {|| ( ::dbfLineas )->cSerPre + Str( ( ::dbfLineas )->nNumPre ) + ( ::dbfLineas )->cSufPre } )
-      oFr:SetMasterDetail( "Lineas de presupuestos", "Impuestos especiales",          {|| ( ::dbfLineas )->cCodImp } )
-   end if
+   oFr:SetMasterDetail( "Lineas de presupuestos", "Presupuestos",                  {|| ( ::tmpLabelReport )->cSerPre + Str( ( ::tmpLabelReport )->nNumPre ) + ( ::tmpLabelReport )->cSufPre } )
+   oFr:SetMasterDetail( "Lineas de presupuestos", "Artículos",                     {|| ( ::tmpLabelReport )->cRef } )
+   oFr:SetMasterDetail( "Lineas de presupuestos", "Precios por propiedades",       {|| ( ::tmpLabelReport )->cDetalle + ( ::tmpLabelReport )->cCodPr1 + ( ::tmpLabelReport )->cCodPr2 + ( ::tmpLabelReport )->cValPr1 + ( ::tmpLabelReport )->cValPr2 } )
+   oFr:SetMasterDetail( "Lineas de presupuestos", "Incidencias de presupuestos",   {|| ( ::tmpLabelReport )->cSerPre + Str( ( ::tmpLabelReport )->nNumPre ) + ( ::tmpLabelReport )->cSufPre } )
+   oFr:SetMasterDetail( "Lineas de presupuestos", "Documentos de presupuestos",    {|| ( ::tmpLabelReport )->cSerPre + Str( ( ::tmpLabelReport )->nNumPre ) + ( ::tmpLabelReport )->cSufPre } )
+   oFr:SetMasterDetail( "Lineas de presupuestos", "Impuestos especiales",          {|| ( ::tmpLabelReport )->cCodImp } )
 
    oFr:SetMasterDetail(    "Presupuestos", "Clientes",                             {|| ( ::dbfCabecera )->cCodCli } )
    oFr:SetMasterDetail(    "Presupuestos", "Almacenes",                            {|| ( ::dbfCabecera )->cCodAlm } )
@@ -1705,15 +1672,12 @@ METHOD New( nView ) CLASS TLabelGeneratorFacturasClientes
    ::cSufijoFin         := ( D():FacturasClientes( nView ) )->cSufFac
 
    ::cNombreDocumento   := "Facturas clientes"
-
    ::inicialDoc         := "FB"
 
    ::dbfCabecera        := ( D():FacturasClientes( nView ) )
    ::dbfLineas          := ( D():FacturasClientesLineas( nView ) )
 
    ::idDocument         := D():FacturasClientesId( nView ) 
-
-   ::tmpLabelReport     := "LblRpt"
 
    ::aStructureField    := aSqlStruct( aColFacCli() )
 
@@ -1797,12 +1761,7 @@ METHOD dataLabel( oFr ) CLASS TLabelGeneratorFacturasClientes
 
    oFr:ClearDataSets()
 
-   if ::getTemporalData()
-      oFr:SetWorkArea(  "Lineas de facturas", ( ::tmpLabelReport )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
-   else
-      oFr:SetWorkArea(  "Lineas de facturas", ( ::dbfLineas )->( Select() ), .f., { FR_RB_FIRST, FR_RE_COUNT, 20 } )
-   end if
-
+   oFr:SetWorkArea(     "Lineas de facturas", ( ::tmpLabelReport )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
    oFr:SetFieldAliases( "Lineas de facturas", cItemsToReport( aColFacCli() ) )
 
    oFr:SetWorkArea(     "Facturas", ( ::dbfCabecera )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
@@ -1841,21 +1800,12 @@ METHOD dataLabel( oFr ) CLASS TLabelGeneratorFacturasClientes
    oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( ::nView ):Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( ::nView ):oDbf) )
    
-   if ::getTemporalData()
-      oFr:SetMasterDetail( "Lineas de facturas", "Facturas",                    {|| ( ::tmpLabelReport )->cSerie + Str( ( ::tmpLabelReport )->nNumFac ) + ( ::tmpLabelReport )->cSufFac } )
-      oFr:SetMasterDetail( "Lineas de facturas", "Artículos",                   {|| ( ::tmpLabelReport )->cRef } )
-      oFr:SetMasterDetail( "Lineas de facturas", "Precios por propiedades",     {|| ( ::tmpLabelReport )->cDetalle + ( ::tmpLabelReport )->cCodPr1 + ( ::tmpLabelReport )->cCodPr2 + ( ::tmpLabelReport )->cValPr1 + ( ::tmpLabelReport )->cValPr2 } )
-      oFr:SetMasterDetail( "Lineas de facturas", "Incidencias de facturas",     {|| ( ::tmpLabelReport )->cSerie + Str( ( ::tmpLabelReport )->nNumFac ) + ( ::tmpLabelReport )->cSufFac } )
-      oFr:SetMasterDetail( "Lineas de facturas", "Documentos de facturas",      {|| ( ::tmpLabelReport )->cSerie + Str( ( ::tmpLabelReport )->nNumFac ) + ( ::tmpLabelReport )->cSufFac } )
-      oFr:SetMasterDetail( "Lineas de facturas", "Impuestos especiales",        {|| ( ::tmpLabelReport )->cCodImp } )
-   else
-      oFr:SetMasterDetail( "Lineas de facturas", "Facturas",                   {|| ( ::dbfLineas )->cSerie + Str( ( ::dbfLineas )->nNumFac ) + ( ::dbfLineas )->cSufFac } )
-      oFr:SetMasterDetail( "Lineas de facturas", "Artículos",                  {|| ( ::dbfLineas )->cRef } )
-      oFr:SetMasterDetail( "Lineas de facturas", "Precios por propiedades",    {|| ( ::dbfLineas )->cRef + ( ::dbfLineas )->cCodPr1 + ( ::dbfLineas )->cCodPr2 + ( ::dbfLineas )->cValPr1 + ( ::dbfLineas )->cValPr2 } )
-      oFr:SetMasterDetail( "Lineas de facturas", "Incidencias de facturas",    {|| ( ::dbfLineas )->cSerie + Str( ( ::dbfLineas )->nNumFac ) + ( ::dbfLineas )->cSufFac } )
-      oFr:SetMasterDetail( "Lineas de facturas", "Documentos de facturas",     {|| ( ::dbfLineas )->cSerie + Str( ( ::dbfLineas )->nNumFac ) + ( ::dbfLineas )->cSufFac } )
-      oFr:SetMasterDetail( "Lineas de facturas", "Impuestos especiales",       {|| ( ::dbfLineas )->cCodImp } )
-   end if
+   oFr:SetMasterDetail( "Lineas de facturas", "Facturas",                    {|| ( ::tmpLabelReport )->cSerie + Str( ( ::tmpLabelReport )->nNumFac ) + ( ::tmpLabelReport )->cSufFac } )
+   oFr:SetMasterDetail( "Lineas de facturas", "Artículos",                   {|| ( ::tmpLabelReport )->cRef } )
+   oFr:SetMasterDetail( "Lineas de facturas", "Precios por propiedades",     {|| ( ::tmpLabelReport )->cDetalle + ( ::tmpLabelReport )->cCodPr1 + ( ::tmpLabelReport )->cCodPr2 + ( ::tmpLabelReport )->cValPr1 + ( ::tmpLabelReport )->cValPr2 } )
+   oFr:SetMasterDetail( "Lineas de facturas", "Incidencias de facturas",     {|| ( ::tmpLabelReport )->cSerie + Str( ( ::tmpLabelReport )->nNumFac ) + ( ::tmpLabelReport )->cSufFac } )
+   oFr:SetMasterDetail( "Lineas de facturas", "Documentos de facturas",      {|| ( ::tmpLabelReport )->cSerie + Str( ( ::tmpLabelReport )->nNumFac ) + ( ::tmpLabelReport )->cSufFac } )
+   oFr:SetMasterDetail( "Lineas de facturas", "Impuestos especiales",        {|| ( ::tmpLabelReport )->cCodImp } )
 
    oFr:SetMasterDetail(    "Facturas", "Clientes",                             {|| ( ::dbfCabecera )->cCodCli } )
    oFr:SetMasterDetail(    "Facturas", "Almacenes",                            {|| ( ::dbfCabecera )->cCodAlm } )
@@ -1913,8 +1863,6 @@ METHOD New( nView ) CLASS TLabelGeneratorFacturasRectificativaClientes
    ::dbfLineas          := ( D():FacturasRectificativasLineas( nView ) )
 
    ::idDocument         := D():FacturasRectificativasId( nView ) 
-
-   ::tmpLabelReport     := "LblRpt"
 
    ::aStructureField    := aSqlStruct( aColFacCli() )
 
@@ -1998,12 +1946,7 @@ METHOD dataLabel( oFr ) CLASS TLabelGeneratorFacturasRectificativaClientes
 
    oFr:ClearDataSets()
 
-   if ::getTemporalData()
-      oFr:SetWorkArea(  "Lineas de facturas", ( ::tmpLabelReport )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
-   else
-      oFr:SetWorkArea(  "Lineas de facturas", ( ::dbfLineas )->( Select() ), .f., { FR_RB_FIRST, FR_RE_COUNT, 20 } )
-   end if
-
+   oFr:SetWorkArea(     "Lineas de facturas", ( ::tmpLabelReport )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
    oFr:SetFieldAliases( "Lineas de facturas", cItemsToReport( aColFacRec() ) )
 
    oFr:SetWorkArea(     "Facturas", ( ::dbfCabecera )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
@@ -2042,21 +1985,12 @@ METHOD dataLabel( oFr ) CLASS TLabelGeneratorFacturasRectificativaClientes
    oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( ::nView ):Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( ::nView ):oDbf) )
    
-   if ::getTemporalData()
-      oFr:SetMasterDetail( "Lineas de facturas", "Facturas",                    {|| ( ::tmpLabelReport )->cSerie + Str( ( ::tmpLabelReport )->nNumFac ) + ( ::tmpLabelReport )->cSufFac } )
-      oFr:SetMasterDetail( "Lineas de facturas", "Artículos",                   {|| ( ::tmpLabelReport )->cRef } )
-      oFr:SetMasterDetail( "Lineas de facturas", "Precios por propiedades",     {|| ( ::tmpLabelReport )->cDetalle + ( ::tmpLabelReport )->cCodPr1 + ( ::tmpLabelReport )->cCodPr2 + ( ::tmpLabelReport )->cValPr1 + ( ::tmpLabelReport )->cValPr2 } )
-      oFr:SetMasterDetail( "Lineas de facturas", "Incidencias de facturas",     {|| ( ::tmpLabelReport )->cSerie + Str( ( ::tmpLabelReport )->nNumFac ) + ( ::tmpLabelReport )->cSufFac } )
-      oFr:SetMasterDetail( "Lineas de facturas", "Documentos de facturas",      {|| ( ::tmpLabelReport )->cSerie + Str( ( ::tmpLabelReport )->nNumFac ) + ( ::tmpLabelReport )->cSufFac } )
-      oFr:SetMasterDetail( "Lineas de facturas", "Impuestos especiales",        {|| ( ::tmpLabelReport )->cCodImp } )
-   else
-      oFr:SetMasterDetail( "Lineas de facturas", "Facturas",                   {|| ( ::dbfLineas )->cSerie + Str( ( ::dbfLineas )->nNumFac ) + ( ::dbfLineas )->cSufFac } )
-      oFr:SetMasterDetail( "Lineas de facturas", "Artículos",                  {|| ( ::dbfLineas )->cRef } )
-      oFr:SetMasterDetail( "Lineas de facturas", "Precios por propiedades",    {|| ( ::dbfLineas )->cRef + ( ::dbfLineas )->cCodPr1 + ( ::dbfLineas )->cCodPr2 + ( ::dbfLineas )->cValPr1 + ( ::dbfLineas )->cValPr2 } )
-      oFr:SetMasterDetail( "Lineas de facturas", "Incidencias de facturas",    {|| ( ::dbfLineas )->cSerie + Str( ( ::dbfLineas )->nNumFac ) + ( ::dbfLineas )->cSufFac } )
-      oFr:SetMasterDetail( "Lineas de facturas", "Documentos de facturas",     {|| ( ::dbfLineas )->cSerie + Str( ( ::dbfLineas )->nNumFac ) + ( ::dbfLineas )->cSufFac } )
-      oFr:SetMasterDetail( "Lineas de facturas", "Impuestos especiales",       {|| ( ::dbfLineas )->cCodImp } )
-   end if
+   oFr:SetMasterDetail( "Lineas de facturas", "Facturas",                    {|| ( ::tmpLabelReport )->cSerie + Str( ( ::tmpLabelReport )->nNumFac ) + ( ::tmpLabelReport )->cSufFac } )
+   oFr:SetMasterDetail( "Lineas de facturas", "Artículos",                   {|| ( ::tmpLabelReport )->cRef } )
+   oFr:SetMasterDetail( "Lineas de facturas", "Precios por propiedades",     {|| ( ::tmpLabelReport )->cDetalle + ( ::tmpLabelReport )->cCodPr1 + ( ::tmpLabelReport )->cCodPr2 + ( ::tmpLabelReport )->cValPr1 + ( ::tmpLabelReport )->cValPr2 } )
+   oFr:SetMasterDetail( "Lineas de facturas", "Incidencias de facturas",     {|| ( ::tmpLabelReport )->cSerie + Str( ( ::tmpLabelReport )->nNumFac ) + ( ::tmpLabelReport )->cSufFac } )
+   oFr:SetMasterDetail( "Lineas de facturas", "Documentos de facturas",      {|| ( ::tmpLabelReport )->cSerie + Str( ( ::tmpLabelReport )->nNumFac ) + ( ::tmpLabelReport )->cSufFac } )
+   oFr:SetMasterDetail( "Lineas de facturas", "Impuestos especiales",        {|| ( ::tmpLabelReport )->cCodImp } )
 
    oFr:SetMasterDetail(    "Facturas", "Clientes",                             {|| ( ::dbfCabecera )->cCodCli } )
    oFr:SetMasterDetail(    "Facturas", "Almacenes",                            {|| ( ::dbfCabecera )->cCodAlm } )
@@ -2107,15 +2041,12 @@ METHOD New( nView ) CLASS TLabelGeneratorSATClientes
    ::cSufijoFin         := ( D():SatClientes( nView ) )->cSufSat
 
    ::cNombreDocumento   := "SAT clientes"
-
    ::inicialDoc         := "SA"
 
    ::dbfCabecera        := ( D():SatClientes( nView ) )
    ::dbfLineas          := ( D():SatClientesLineas( nView ) )
 
    ::idDocument         := D():SatClientesId( nView ) 
-
-   ::tmpLabelReport     := "LblRpt"
 
    ::aStructureField    := aSqlStruct( aColSatCli() )
 
@@ -2199,12 +2130,7 @@ METHOD dataLabel( oFr ) CLASS TLabelGeneratorSATClientes
 
    oFr:ClearDataSets()
 
-   if ::getTemporalData()
-      oFr:SetWorkArea(  "Lineas de SAT", ( ::tmpLabelReport )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
-   else
-      oFr:SetWorkArea(  "Lineas de SAT", ( ::dbfLineas )->( Select() ), .f., { FR_RB_FIRST, FR_RE_COUNT, 20 } )
-   end if
-
+   oFr:SetWorkArea(     "Lineas de SAT", ( ::tmpLabelReport )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
    oFr:SetFieldAliases( "Lineas de SAT", cItemsToReport( aColSatCli() ) )
 
    oFr:SetWorkArea(     "SAT", ( ::dbfCabecera )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
@@ -2243,21 +2169,12 @@ METHOD dataLabel( oFr ) CLASS TLabelGeneratorSATClientes
    oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( ::nView ):Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( ::nView ):oDbf) )
    
-   if ::getTemporalData()
-      oFr:SetMasterDetail( "Lineas de SAT", "SAT",                      {|| ( ::tmpLabelReport )->cSerSat + Str( ( ::tmpLabelReport )->nNumSat ) + ( ::tmpLabelReport )->cSufSat } )
-      oFr:SetMasterDetail( "Lineas de SAT", "Artículos",                {|| ( ::tmpLabelReport )->cRef } )
-      oFr:SetMasterDetail( "Lineas de SAT", "Precios por propiedades",  {|| ( ::tmpLabelReport )->cDetalle + ( ::tmpLabelReport )->cCodPr1 + ( ::tmpLabelReport )->cCodPr2 + ( ::tmpLabelReport )->cValPr1 + ( ::tmpLabelReport )->cValPr2 } )
-      oFr:SetMasterDetail( "Lineas de SAT", "Incidencias de SAT",       {|| ( ::tmpLabelReport )->cSerSat + Str( ( ::tmpLabelReport )->nNumSat ) + ( ::tmpLabelReport )->cSufSat } )
-      oFr:SetMasterDetail( "Lineas de SAT", "Documentos de SAT",        {|| ( ::tmpLabelReport )->cSerSat + Str( ( ::tmpLabelReport )->nNumSat ) + ( ::tmpLabelReport )->cSufSat } )
-      oFr:SetMasterDetail( "Lineas de SAT", "Impuestos especiales",     {|| ( ::tmpLabelReport )->cCodImp } )
-   else
-      oFr:SetMasterDetail( "Lineas de SAT", "SAT",                      {|| ( ::dbfLineas )->cSerSat + Str( ( ::dbfLineas )->nNumSat ) + ( ::dbfLineas )->cSufSat } )
-      oFr:SetMasterDetail( "Lineas de SAT", "Artículos",                {|| ( ::dbfLineas )->cRef } )
-      oFr:SetMasterDetail( "Lineas de SAT", "Precios por propiedades",  {|| ( ::dbfLineas )->cRef + ( ::dbfLineas )->cCodPr1 + ( ::dbfLineas )->cCodPr2 + ( ::dbfLineas )->cValPr1 + ( ::dbfLineas )->cValPr2 } )
-      oFr:SetMasterDetail( "Lineas de SAT", "Incidencias de SAT",       {|| ( ::dbfLineas )->cSerSat + Str( ( ::dbfLineas )->nNumSat ) + ( ::dbfLineas )->cSufSat } )
-      oFr:SetMasterDetail( "Lineas de SAT", "Documentos de SAT",        {|| ( ::dbfLineas )->cSerSat + Str( ( ::dbfLineas )->nNumSat ) + ( ::dbfLineas )->cSufSat } )
-      oFr:SetMasterDetail( "Lineas de SAT", "Impuestos especiales",     {|| ( ::dbfLineas )->cCodImp } )
-   end if
+   oFr:SetMasterDetail( "Lineas de SAT", "SAT",                      {|| ( ::tmpLabelReport )->cSerSat + Str( ( ::tmpLabelReport )->nNumSat ) + ( ::tmpLabelReport )->cSufSat } )
+   oFr:SetMasterDetail( "Lineas de SAT", "Artículos",                {|| ( ::tmpLabelReport )->cRef } )
+   oFr:SetMasterDetail( "Lineas de SAT", "Precios por propiedades",  {|| ( ::tmpLabelReport )->cDetalle + ( ::tmpLabelReport )->cCodPr1 + ( ::tmpLabelReport )->cCodPr2 + ( ::tmpLabelReport )->cValPr1 + ( ::tmpLabelReport )->cValPr2 } )
+   oFr:SetMasterDetail( "Lineas de SAT", "Incidencias de SAT",       {|| ( ::tmpLabelReport )->cSerSat + Str( ( ::tmpLabelReport )->nNumSat ) + ( ::tmpLabelReport )->cSufSat } )
+   oFr:SetMasterDetail( "Lineas de SAT", "Documentos de SAT",        {|| ( ::tmpLabelReport )->cSerSat + Str( ( ::tmpLabelReport )->nNumSat ) + ( ::tmpLabelReport )->cSufSat } )
+   oFr:SetMasterDetail( "Lineas de SAT", "Impuestos especiales",     {|| ( ::tmpLabelReport )->cCodImp } )
 
    oFr:SetMasterDetail(    "SAT", "Clientes",             {|| ( ::dbfCabecera )->cCodCli } )
    oFr:SetMasterDetail(    "SAT", "Almacenes",            {|| ( ::dbfCabecera )->cCodAlm } )
@@ -2319,8 +2236,6 @@ METHOD New( nView ) CLASS TLabelGeneratorAlbaranProveedores
    ::dbfLineas          := ( D():AlbaranesProveedoresLineas( nView ) )
 
    ::idDocument         := D():AlbaranesProveedoresId( nView ) 
-
-   ::tmpLabelReport     := "LblRpt"
 
    ::aStructureField    := aSqlStruct( aColAlbPrv() )
 
@@ -2519,8 +2434,6 @@ METHOD New( nView ) CLASS TLabelGeneratorFacturaProveedores
 
    ::idDocument         := D():FacturasProveedoresId( nView ) 
 
-   ::tmpLabelReport     := "LblRpt"
-
    ::aStructureField    := aSqlStruct( aColFacPrv() )
 
    ::nView              := nView 
@@ -2714,8 +2627,6 @@ METHOD New( nView ) CLASS TLabelGeneratorFacturaRectificativaProveedores
    ::dbfLineas          := ( D():FacturasRectificativasProveedoresLineas( nView ) )
 
    ::idDocument         := D():FacturasRectificativasProveedoresId( nView ) 
-
-   ::tmpLabelReport     := "LblRpt"
 
    ::aStructureField    := aSqlStruct( aColFacPrv() )
 

@@ -2424,7 +2424,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Valor prop. 1"
-         :bEditValue          := {|| retValProp( ( dbfTmpLin )->cCodPr1 + ( dbfTmpLin )->cValPr1, D():PropiedadesLineas( nView ) ) }
+         :bEditValue          := {|| nombrePropiedad( ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cValPr1, nView ) }
          :nWidth              := 40
          :lHide               := .t.
       end with
@@ -2438,7 +2438,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Valor prop. 2"
-         :bEditValue          := {|| retValProp( ( dbfTmpLin )->cCodPr2 + ( dbfTmpLin )->cValPr2, D():PropiedadesLineas( nView ) ) }
+         :bEditValue          := {|| nombrePropiedad( ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr2, nView ) }
          :nWidth              := 40
          :lHide               := .t.
       end with
@@ -8441,8 +8441,9 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Lineas de Pedidos",   "Total línea de pedido",                      "CallHbFunc('nTotLPedCli')" )
    oFr:AddVariable(     "Lineas de Pedidos",   "Total peso por línea",                       "CallHbFunc('nPesLPedCli')" )
    oFr:AddVariable(     "Lineas de Pedidos",   "Total final línea del pedido",               "CallHbFunc('nTotFPedCli')" )
-   oFr:AddVariable(     "Lineas de Pedidos",   "Nombre primera propiedad línea del pedido",  "CallHbFunc('nombrePrimeraPropiedad')" )
-   oFr:AddVariable(     "Lineas de Pedidos",   "Nombre segunda propiedad línea del pedido",  "CallHbFunc('nombreSegundaPropiedad')" )
+
+   oFr:AddVariable(     "Lineas de Pedidos",   "Nombre primera propiedad línea del pedido",  "CallHbFunc('nombrePrimeraPropiedadPedidosClientesLineas')" )
+   oFr:AddVariable(     "Lineas de Pedidos",   "Nombre segunda propiedad línea del pedido",  "CallHbFunc('nombreSegundaPropiedadPedidosClientesLineas')" )
    
 Return nil
 
@@ -15855,16 +15856,17 @@ return ( aPedCliPgo )
 
 //---------------------------------------------------------------------------//
 
-Function nombrePrimeraPropiedad( uDbf )
+Function nombrePrimeraPropiedadPedidosClientesLineas()
 
-Return ( nombrePropiedad( ( D():PedidosClientesLineas( nView ) )->cCodPr1 + ( D():PedidosClientesLineas( nView ) )->cValPr1, D():PropiedadesLineas( nView ) ) )
+Return ( nombrePropiedad( ( D():PedidosClientesLineas( nView ) )->cCodPr1, ( D():PedidosClientesLineas( nView ) )->cValPr1, nView ) )
 
 //---------------------------------------------------------------------------//
 
-Function nombreSegundaPropiedad( uDbf )
+Function nombreSegundaPropiedadPedidosClientesLineas()
 
-Return ( nombrePropiedad( ( D():PedidosClientesLineas( nView ) )->cCodPr2 + ( D():PedidosClientesLineas( nView ) )->cValPr2, D():PropiedadesLineas( nView ) ) )
+Return ( nombrePropiedad( ( D():PedidosClientesLineas( nView ) )->cCodPr2, ( D():PedidosClientesLineas( nView ) )->cValPr2, nView ) )
 
+//---------------------------------------------------------------------------//
 //
 // Numero de unidades por linea------------------------------------------------
 //
@@ -18240,65 +18242,53 @@ Return ( cFormato )
 
 //---------------------------------------------------------------------------//   
 
-Function DesignLabelPedidoClientes( oFr, cDoc )
+Function DesignLabelPedidoClientes( oFr, dbfDoc )
 
-   local oLabel   := TLabelGeneratorPedidoClientes():New( nView )
+   local oLabel   
+   local lOpenFiles  := empty( nView ) 
 
-   if oLabel:lErrorOnCreate
+   if lOpenFiles .and. !Openfiles()
       Return .f.
-   end if 
+   endif
 
-   if !oLabel:lCreateTempReport()
-      Return .f.
-   end if 
+   oLabel            := TLabelGeneratorPedidoClientes():New( nView )
 
-   /*
-   Zona de datos---------------------------------------------------------
-   */
-   oLabel:DataLabel( oFr, .f. )
+   // Zona de datos---------------------------------------------------------
+   
+   oLabel:lCreateTempReport()
+   oLabel:loadTempLabelReport()      
+   oLabel:dataLabel( oFr )
 
-   /*
-   Paginas y bandas------------------------------------------------------
-   */
+   // Paginas y bandas------------------------------------------------------
 
-   if !Empty( ( cDoc )->mReport )
-
-      oFr:LoadFromBlob( ( cDoc )->( Select() ), "mReport")
-
+   if !empty( ( dbfDoc )->mReport )
+      oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
    else
-
       oFr:AddPage(         "MainPage" )
-
       oFr:AddBand(         "CabeceraColumnas",  "MainPage",       frxMasterData )
       oFr:SetProperty(     "CabeceraColumnas",  "Top",            200 )
       oFr:SetProperty(     "CabeceraColumnas",  "Height",         100 )
       oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Lineas de pedidos" )
-
    end if
 
-   /*
-   Diseño de report------------------------------------------------------
-   */
+   // Zona de variables--------------------------------------------------------
+
+   variableReport( oFr )
+
+   // Diseño de report------------------------------------------------------
 
    oFr:DesignReport()
 
-   /*
-   Destruye el diseñador-------------------------------------------------
-   */
+   // Destruye el diseñador-------------------------------------------------
 
    oFr:DestroyFr()
 
-   /*
-   Destruye el fichero temporal------------------------------------------------
-   */
-
    oLabel:DestroyTempReport()
-
-   /*
-   Cierra ficheros-------------------------------------------------------
-   */
-
    oLabel:End()
+
+   if lOpenFiles
+      closeFiles()
+   end if 
 
 Return .t.
 

@@ -10786,7 +10786,6 @@ Function DesignLabelFacturaProveedor( oFr, cDbfDoc )
    
    oLabel:lCreateTempReport()
    oLabel:loadTempLabelReport()      
-
    oLabel:dataLabel( oFr )
 
    // Paginas y bandas------------------------------------------------------
