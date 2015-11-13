@@ -16,6 +16,12 @@ CLASS TDet
    DATA  cPath
    DATA  cDriver                                      INIT cDriver()
 
+   DATA  cPathBeforeAppend                            INIT ""
+   DATA  aHbrBeforeAppend                             AS ARRAY INIT {}
+
+   DATA  cPathAfterAppend                             INIT ""
+   DATA  aHbrAfterAppend                              AS ARRAY INIT {}
+
    DATA  cFirstKey
    DATA  bWhile
 
@@ -97,6 +103,14 @@ CLASS TDet
    METHOD NewInstance( cPath, cDriver, oParent )      INLINE ( ::EndInstance(), ::oInstance := ::New( cPath, cDriver, oParent ), ::oInstance ) 
    METHOD GetInstance( cPath, cDriver, oParent )      INLINE ( if( empty( ::oInstance ), ::oInstance := ::New( cPath, cDriver, oParent ), ::oInstance ) ) 
    METHOD EndInstance()                               INLINE ( if( !empty( ::oInstance ), ::oInstance := nil, ), nil ) 
+
+   METHOD setPathBeforeAppend()
+   METHOD setPathAfterAppend()
+
+   METHOD getCompileHbrDirectory( cDirectory )        INLINE ( TScripts():getCompileHbr( cPatScript() + cDirectory + "\" ) )
+
+   METHOD runScriptBeforeAppend( uParam1 )            INLINE ( TScripts():runArrayScripts( ::aHbrBeforeAppend, uParam1 ) )
+   METHOD runScriptAfterAppend( uParam1 )             INLINE ( TScripts():runArrayScripts( ::aHbrAfterAppend, uParam1 ) )
 
 END CLASS
 
@@ -740,5 +754,25 @@ METHOD NotExiste( uValue, oGetTxt, uField, lMessage, lFill, cFillChar )
    ::oDbf:GoTo( nRecno )
 
 RETURN lValid
+
+//---------------------------------------------------------------------------//
+
+METHOD setPathBeforeAppend( cDirectorio ) CLASS TDet
+
+   ::cPathBeforeAppend  := cDirectorio
+   
+   ::aHbrBeforeAppend   := ::getCompileHbrDirectory( cDirectorio )
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD setPathAfterAppend( cDirectorio ) CLASS TDet
+
+   ::cPathAfterAppend  := cDirectorio
+   
+   ::aHbrAfterAppend   := ::getCompileHbrDirectory( cDirectorio )
+
+Return .t.
 
 //---------------------------------------------------------------------------//

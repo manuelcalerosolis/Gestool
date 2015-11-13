@@ -806,18 +806,24 @@ RETURN ( oMeter )
 
 //---------------------------------------------------------------------------//
 
-Function AutoTextDialog( oDialog )
+Function AutoTextDialog( oDialog, textColor, backgroundColor )
 
-   oText   := TSay():New( 6, 0, {||cText}, oDialog, , , .t., .f., .f., .t., rgb(0,0,0), rgb(239,228,176), oDialog:nWidth, 18, .f., .t., .f., .f., .f. )
+   DEFAULT textColor        := rgb(0,0,0)
+   DEFAULT backgroundColor  := rgb(239,228,176)
+
+   oText   := TSay():New( 2, 0, {||cText}, oDialog, , , .t., .f., .f., .t., textColor, backgroundColor, oDialog:nWidth, 16, .f., .t., .f., .f., .f. )
 
 RETURN ( oText )
 
 //---------------------------------------------------------------------------//
 
-Function SetAutoTextDialog( cText, oDialog )
+Function SetAutoTextDialog( cText, oDialog, textColor, backgroundColor ) 
+
+   DEFAULT textColor        := rgb(0,0,0)
+   DEFAULT backgroundColor  := rgb(239,228,176)
 
    if empty(oText) .and. !empty(oDialog)
-      AutoTextDialog( oDialog )
+      AutoTextDialog( oDialog, textColor, backgroundColor )
    end if 
 
    if !empty(oText)
@@ -827,6 +833,12 @@ Function SetAutoTextDialog( cText, oDialog )
    sysRefresh()
 
 RETURN ( oText )
+
+//---------------------------------------------------------------------------//
+
+Function setAlertTextDialog( cText, oDialog )
+
+Return ( setAutoTextDialog( cText, oDialog, rgb(255,255,255), rgb(234,67,53) ) )
 
 //---------------------------------------------------------------------------//
 

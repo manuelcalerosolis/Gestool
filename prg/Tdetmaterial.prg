@@ -9,6 +9,9 @@
 
 CLASS TDetMaterial FROM TDetalleArticulos
 
+   DATA  oDlg
+   DATA  oFld
+
    DATA  oGetCaja
    DATA  oGetUnidades
    DATA  oGetBultos
@@ -92,6 +95,9 @@ METHOD New( cPath, oParent )
 
    ::bOnPreSaveDetail   := {|| ::SaveDetails() }
    ::bOnPreDelete       := {|| ::DeleteDetails() }
+
+   ::setPathBeforeAppend( "Produccion\MateriaPrima\beforeAppend" )
+   ::setPathAfterAppend( "Produccion\MateriaPrima\AfterAppend" )
 
 RETURN ( Self )
 
@@ -199,8 +205,6 @@ RETURN ( lOpen )
 
 METHOD Resource( nMode )
 
-   local oDlg
-   local oFld 
    local oGetArt
    local oGetNom
    local oGetAlm
@@ -239,13 +243,13 @@ METHOD Resource( nMode )
 
    cSayAlm              := RetAlmacen( ::oDbfVir:cAlmOrd, ::oParent:oAlm )
 
-   DEFINE DIALOG     oDlg ;
+   DEFINE DIALOG     ::oDlg ;
       RESOURCE       "LProducido" ;
       TITLE          LblTitle( nMode ) + "materia prima"
       
-      REDEFINE FOLDER oFld ;
+      REDEFINE FOLDER ::oFld ;
          ID          400 ;
-         OF          oDlg ;
+         OF          ::oDlg ;
          PROMPT      "&Artículo",;
                      "Da&tos" ;
          DIALOGS     "LProducido_1",;
@@ -260,7 +264,7 @@ METHOD Resource( nMode )
          ID          110 ;
          WHEN        ( nMode != ZOOM_MODE );
          BITMAP      "LUPA" ;
-         OF          oFld:aDialogs[1]
+         OF          ::oFld:aDialogs[1]
 
       oGetArt:bValid := {|| ::LoaArticulo( oGetArt, oGetNom ) }
       oGetArt:bHelp  := {|| BrwArticulo( oGetArt, oGetNom, .f., .t., , ::oLote, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oValPr1, ::oValPr2, ::oFecCad  ) }
@@ -269,7 +273,7 @@ METHOD Resource( nMode )
          VAR         ::oDbfVir:cNomArt ;
          ID          111 ;
          WHEN        ( lModDes() .and. nMode != ZOOM_MODE ) ;
-         OF          oFld:aDialogs[1]
+         OF          ::oFld:aDialogs[1]
 
       /*
       Lotes-------------------------------------------------------------------
@@ -280,7 +284,7 @@ METHOD Resource( nMode )
          ID          210 ;
          IDSAY       211 ;
          WHEN        ( nMode != ZOOM_MODE ) ;
-         OF          oFld:aDialogs[1]
+         OF          ::oFld:aDialogs[1]
 
       ::oLote:bValid := {|| ::LoaArticulo( oGetArt, oGetNom ) }
 
@@ -291,7 +295,7 @@ METHOD Resource( nMode )
          IDSAY       321 ;
          SPINNER ;
          WHEN        ( nMode != ZOOM_MODE ) ;
-         OF          oFld:aDialogs[1]
+         OF          ::oFld:aDialogs[1]
 
 
        /*
@@ -300,14 +304,14 @@ METHOD Resource( nMode )
 
       REDEFINE SAY ::oSayPr1 VAR cSayPr1;
          ID       221 ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFld:aDialogs[1]
 
       REDEFINE GET ::oValPr1 VAR ::oDbfVir:cValPr1;
          ID       220 ;
 			COLOR 	CLR_GET ;
          BITMAP   "LUPA" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFld:aDialogs[1]
 
          ::oValPr1:bValid := {|| lPrpAct( ::oDbfVir:cValPr1, ::oSayVp1, ::oDbfVir:cCodPr1, ::oParent:oTblPro:cAlias ) }
          ::oValPr1:bHelp  := {|| brwPropiedadActual( ::oValPr1, ::oSayVp1, ::oDbfVir:cCodPr1 ) }
@@ -316,18 +320,18 @@ METHOD Resource( nMode )
          ID       222 ;
          WHEN     .f. ;
          COLOR    CLR_GET ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFld:aDialogs[1]
 
       REDEFINE SAY ::oSayPr2 VAR cSayPr2;
          ID       231 ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFld:aDialogs[1]
 
       REDEFINE GET ::oValPr2 VAR ::oDbfVir:cValPr2;
          ID       230 ;
 			COLOR 	CLR_GET ;
          BITMAP   "LUPA" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFld:aDialogs[1]
 
          ::oValPr2:bValid := {|| lPrpAct( ::oDbfVir:cValPr2, ::oSayVp2, ::oDbfVir:cCodPr2, ::oParent:oTblPro:cAlias ) }
          ::oValPr2:bHelp  := {|| brwPropiedadActual( ::oValPr2, ::oSayVp2, ::oDbfVir:cCodPr2 ) }
@@ -335,7 +339,7 @@ METHOD Resource( nMode )
       REDEFINE GET ::oSayVp2 VAR cSayVp2;
          ID       232 ;
          WHEN     .f. ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFld:aDialogs[1]
 
       /*
       Bultos, cajas y unidades---------------------------------------------------------
@@ -347,7 +351,7 @@ METHOD Resource( nMode )
          SPINNER ;
          WHEN     ( uFieldEmpresa( "lUseBultos" ) .AND. nMode != ZOOM_MODE ) ;
          PICTURE  ::oParent:cPicUnd ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFld:aDialogs[1]
 
       REDEFINE GET ::oGetCaja VAR ::oDbfVir:nCajOrd ;
          ID       120;
@@ -355,7 +359,7 @@ METHOD Resource( nMode )
 			SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  ::oParent:cPicUnd ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFld:aDialogs[1]
 
       ::oGetCaja:bChange   := {|| ::lUnidades( ::oDbfVir ), ::lPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
       ::oGetCaja:bValid    := {|| ::lUnidades( ::oDbfVir ), ::lPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
@@ -365,7 +369,7 @@ METHOD Resource( nMode )
 			SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  ::oParent:cPicUnd ;
-         OF       oFld:aDialogs[1]      
+         OF       ::oFld:aDialogs[1]      
 
       ::oGetUnidades:bChange  := {|| ::lUnidades( ::oDbfVir ), ::lPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
       ::oGetUnidades:bValid   := {|| ::lUnidades( ::oDbfVir ), ::lPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
@@ -374,14 +378,14 @@ METHOD Resource( nMode )
          ID       140;
          WHEN     ( .f. ) ;
          PICTURE  ::oParent:cPicUnd ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFld:aDialogs[1]
 
       REDEFINE GET ::oGetPrecio VAR ::oDbfVir:nImpOrd ;
          ID       150;
 			SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  ::oParent:cPouDiv ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFld:aDialogs[1]
 
       ::oGetPrecio:bChange := {|| ::lPrecio( ::oDbfVir ) }
       ::oGetPrecio:bChange := {|| ::lPrecio( ::oDbfVir ) }
@@ -390,7 +394,7 @@ METHOD Resource( nMode )
          ID       160;
          WHEN     ( .f. ) ;
          PICTURE  ::oParent:cPorDiv ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFld:aDialogs[1]
 
       /*
       Pesos--------------------------------------------------------------------
@@ -401,7 +405,7 @@ METHOD Resource( nMode )
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  MasUnd() ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFld:aDialogs[1]
 
       ::oGetPes:bChange   := {|| ::lTotPeso( ::oDbfVir ) }
       ::oGetPes:bValid    := {|| ::lTotPeso( ::oDbfVir ) }
@@ -409,13 +413,13 @@ METHOD Resource( nMode )
       REDEFINE GET ::oGetUndPes VAR ::oDbfVir:cUndPes ;
          ID       171;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFld:aDialogs[1]
 
       REDEFINE GET ::oGetTotPes VAR ::nGetTotPes ;
          ID       172;
          WHEN     ( .f. ) ;
          PICTURE  MasUnd() ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFld:aDialogs[1]
 
       /*
       Volumen------------------------------------------------------------------
@@ -426,7 +430,7 @@ METHOD Resource( nMode )
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  MasUnd() ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFld:aDialogs[1]
 
       ::oGetVol:bChange   := {|| ::lTotVolumen( ::oDbfVir ) }
       ::oGetVol:bValid    := {|| ::lTotVolumen( ::oDbfVir ) }
@@ -434,13 +438,13 @@ METHOD Resource( nMode )
       REDEFINE GET ::oGetUndVol VAR ::oDbfVir:cUndVol ;
          ID       181;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFld:aDialogs[1]
 
       REDEFINE GET ::oGetTotVol VAR ::nGetTotVol ;
          ID       182;
          WHEN     ( .f. ) ;
          PICTURE  MasUnd() ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFld:aDialogs[1]
 
       /*
       Código de almacen--------------------------------------------------------
@@ -451,7 +455,7 @@ METHOD Resource( nMode )
          WHEN     ( nMode != ZOOM_MODE );
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( oGetAlm, oSayAlm ) ) ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFld:aDialogs[1]
 
       oGetAlm:bChange   := {|| ::lStkAct() }
       oGetAlm:bValid    := {|| cAlmacen( oGetAlm, ::oParent:oAlm, oSayAlm ), ::lStkAct() }
@@ -459,12 +463,12 @@ METHOD Resource( nMode )
       REDEFINE GET oSayAlm VAR cSayAlm ;
          ID       191 ;
          WHEN     ( .f. ) ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFld:aDialogs[1]
 
       REDEFINE GET ::oGetFormato VAR ::oDbfVir:cFormato;
          ID       340;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFld:aDialogs[1]
 
       /*
       Stock Actual-------------------------------------------------------------
@@ -474,13 +478,13 @@ METHOD Resource( nMode )
          ID       200 ;
          WHEN     .f. ;
          PICTURE  MasUnd() ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFld:aDialogs[1]
 
       /*
       Pestaña de datos---------------------------------------------------------
       */
 
-      ::LoadPropiedadesArticulos( oFld:aDialogs[ 2 ], nMode )
+      ::LoadPropiedadesArticulos( ::oFld:aDialogs[ 2 ], nMode )
 
       /*
       Botones globales a toda la caja de dailogo-------------------------------
@@ -488,46 +492,46 @@ METHOD Resource( nMode )
 
       REDEFINE BUTTON oBtnSer ;
          ID       3 ;
-         OF       oDlg ;
+         OF       ::oDlg ;
          ACTION   ( nil )
 
       oBtnSer:bAction   := {|| ::oParent:oDetSeriesMaterial:Resource( nMode ) }
 
       REDEFINE BUTTON oBtnAtras ;
          ID       4 ;
-         OF       oDlg ;
-         ACTION   ( if( oFld:nOption > 1, oFld:SetOption( oFld:nOption - 1 ), ) )
+         OF       ::oDlg ;
+         ACTION   ( if( ::oFld:nOption > 1, ::oFld:SetOption( ::oFld:nOption - 1 ), ) )
 
       REDEFINE BUTTON oBtnAdelante ;
          ID       5 ;
-         OF       oDlg ;
-         ACTION   ( if( oFld:nOption < Len( oFld:aDialogs ), oFld:SetOption( oFld:nOption + 1 ), ) )
+         OF       ::oDlg ;
+         ACTION   ( if( ::oFld:nOption < Len( ::oFld:aDialogs ), ::oFld:SetOption( ::oFld:nOption + 1 ), ) )
 
       REDEFINE BUTTON ;
          ID       IDOK ;
-			OF 		oDlg ;
+			OF 		::oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::SaveResource( oGetArt, oDlg ) )
+         ACTION   ( ::SaveResource( oGetArt ) )
 
 		REDEFINE BUTTON ;
          ID       IDCANCEL ;
-         OF       oDlg ;
-			ACTION 	( oDlg:end() )
+         OF       ::oDlg ;
+			ACTION 	( ::oDlg:end() )
 
       if nMode != ZOOM_MODE
-         oDlg:AddFastKey( VK_F6, {|| oBtnSer:Click() } )
-         oDlg:AddFastKey( VK_F5, {|| ::SaveResource( oGetArt, oDlg ) } )
-         oDlg:AddFastKey( VK_F7, {|| oBtnAtras:Click() } )
-         oDlg:AddFastKey( VK_F8, {|| oBtnAdelante:Click() } )
+         ::oDlg:AddFastKey( VK_F6, {|| oBtnSer:Click() } )
+         ::oDlg:AddFastKey( VK_F5, {|| ::SaveResource( oGetArt ) } )
+         ::oDlg:AddFastKey( VK_F7, {|| oBtnAtras:Click() } )
+         ::oDlg:AddFastKey( VK_F8, {|| oBtnAdelante:Click() } )
       end if
 
-      oDlg:bStart := {|| ::EdtRotor( oDlg ), ::SetResource( nMode ) }
+      ::oDlg:bStart := {|| ::EdtRotor(), ::SetResource( nMode ) }
 
-   ACTIVATE DIALOG oDlg CENTER
+   ACTIVATE DIALOG ::oDlg CENTER
 
    ::oMenu:End()
 
-RETURN ( oDlg:nResult == IDOK )
+RETURN ( ::oDlg:nResult == IDOK )
 
 //----------------------------------------------------------------------------//
 
@@ -862,7 +866,7 @@ RETURN ( if( !uFieldEmpresa( "lNStkAct" ), ::oStkAct:cText( ::oParent:oStock:nSt
 
 //---------------------------------------------------------------------------//
 
-METHOD EdtRotor( oDlg )
+METHOD EdtRotor()
 
    MENU ::oMenu
 
@@ -884,17 +888,21 @@ METHOD EdtRotor( oDlg )
 
    ENDMENU
 
-   oDlg:SetMenu( ::oMenu )
+   ::oDlg:SetMenu( ::oMenu )
 
 RETURN ( ::oMenu )
 
 //---------------------------------------------------------------------------//
 
-METHOD SaveResource( oGetArt, oDlg )
+METHOD SaveResource( oGetArt )
 
    if Empty( ::oDbfVir:cCodArt )
       MsgStop( "Tiene que seleccionar un artículo." )
       oGetArt:SetFocus()
+      Return .f.
+   end if
+
+   if !::runScriptBeforeAppend( self )
       Return .f.
    end if
 
@@ -904,7 +912,7 @@ METHOD SaveResource( oGetArt, oDlg )
    ::oParent:oTotMaterias:Refresh()
    ::oParent:oTotPersonal:Refresh()
 
-RETURN oDlg:end( IDOK )
+RETURN ::oDlg:end( IDOK )
 
 //---------------------------------------------------------------------------//
 

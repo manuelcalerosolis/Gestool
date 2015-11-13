@@ -56,6 +56,10 @@ CLASS TScripts FROM TMant
    METHOD   ActivateAllTimer()                  INLINE ( aEval( ::aTimer, {|o| o:Activate() } ) )
    METHOD   DeActivateAllTimer()                INLINE ( aEval( ::aTimer, {|o| o:DeActivate() } ) )
 
+   METHOD   getCompileHbr( cDirectorio )
+
+   METHOD   runArrayScripts( aScripts, uParam1 )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -351,7 +355,9 @@ Ejecuta un fichero .hrb creado a partir de un .prg
 c:\xharbour\bin>harbour c:\test.prg /gh /n
 */
 
-METHOD CompilarFicheroScript() CLASS TScripts
+METHOD CompilarFicheroScript( lMessage ) CLASS TScripts
+
+   DEFAULT lMessage := .t.
 
    if !File( FullCurDir() + "harbour\harbour.exe" )
       msgStop( "No existe compilador" )
@@ -369,8 +375,12 @@ METHOD CompilarFicheroScript() CLASS TScripts
 
       ferase( ::cFicheroHbr )
 
-      msginfo( FullCurDir() + "harbour\harbour.exe " + ::cFicheroPrg + " /i" + FullCurDir() + "include /gh /n /p /o" + ::cFicheroHbr + " > " + FullCurDir() + "compile.log" ) 
+      if lMessage
+         msginfo( FullCurDir() + "harbour\harbour.exe " + ::cFicheroPrg + " /i" + FullCurDir() + "include /gh /n /p /o" + ::cFicheroHbr + " > " + FullCurDir() + "compile.log" ) 
+      end if
+
       logwrite( FullCurDir() + "harbour\harbour.exe " + valtoprg( ::cFicheroPrg ) + " /i" + FullCurDir() + "include /gh /n /p /o" + valtoprg( ::cFicheroHbr ) + " | " + FullCurDir() + "compile.log" )     
+
       waitRun( FullCurDir() + "harbour\harbour.exe " + ::cFicheroPrg + " /i" + FullCurDir() + "include /gh /n /p /o" + ::cFicheroHbr + " | " + FullCurDir() + "compile.log", 6 )
 
       if !file( ::cFicheroHbr )
@@ -533,5 +543,55 @@ Function runEventScript( cDirectory, uParam1, uParam2, uParam3, uParam4, uParam5
    end if 
 
 RETURN ( uReturn )
+
+//---------------------------------------------------------------------------//
+
+METHOD getCompileHbr( cDirectorio ) CLASS TScripts
+
+   local aFile
+   local aDirectory  := {}
+   local aFilesHbr   := {}
+
+   aDirectory        := Directory( cDirectorio + "*.prg" )
+
+   if !empty( aDirectory )
+
+      for each aFile in aDirectory
+
+         if !empty( cDirectorio + aFile[1] )
+            ::cFicheroPrg  := cDirectorio + aFile[1]
+            ::cFicheroHbr  := strtran( cDirectorio + aFile[1], ".prg", ".hbr" )
+         end if 
+
+         ::CompilarFicheroScript( .f. )
+
+         if file( ::cFicheroHbr )
+            aAdd( aFilesHbr, ::cFicheroHbr )
+         end if
+
+      next 
+
+   end if 
+
+Return ( aFilesHbr )
+
+//---------------------------------------------------------------------------//
+
+METHOD runArrayScripts( aScripts, uParam1 ) CLASS TScripts
+
+   local cScript
+   local uReturn
+
+   if !Empty( aScripts )
+
+      for each cScript in aScripts
+
+         uReturn     := ::RunScript( cScript, uParam1 )
+
+      next
+
+   end if
+
+Return uReturn
 
 //---------------------------------------------------------------------------//

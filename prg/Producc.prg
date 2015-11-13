@@ -4991,6 +4991,7 @@ CLASS TDetalleArticulos FROM TDet
    DATA  oGetFabricante
    DATA  oGetTemporada
    DATA  oGetCatalogo
+   DATA  oGetOperacion
 
    DATA oClasificacionArticulo
 
@@ -5012,6 +5013,7 @@ METHOD CommunFields( oDbf ) CLASS TDetalleArticulos
    FIELD NAME "cCodCat"    TYPE "C" LEN 10  DEC 0 COMMENT "Código de categoría"           HIDE        OF oDbf       
    FIELD NAME "cCodTmp"    TYPE "C" LEN 10  DEC 0 COMMENT "Código de la temporada"        HIDE        OF oDbf       
    FIELD NAME "cCodFab"    TYPE "C" LEN  3  DEC 0 COMMENT "Código del fabricante"         HIDE        OF oDbf       
+   FIELD NAME "cCodOpe"    TYPE "C" LEN  3  DEC 0 COMMENT "Código de operación"           HIDE        OF oDbf       
 
 RETURN ( Self )
 
@@ -5052,6 +5054,11 @@ METHOD LoadPropiedadesArticulos( oDlg, nMode ) CLASS TDetalleArticulos
       ::oGetTipo:bHelp  := {|| ::oParent:oTipoArticulo:Buscar( ::oGetTipo ) }
       ::oGetTipo:lValid()
 
+      REDEFINE SAY ;
+         PROMPT   getTraslation( "Categoría" );
+         ID       504 ;
+         OF       oDlg
+
       REDEFINE GET ::oGetCatalogo VAR ::oDbfVir:cCodCat ;
          ID       ( 130 ) ;
          IDTEXT   ( 131 ) ;
@@ -5062,6 +5069,11 @@ METHOD LoadPropiedadesArticulos( oDlg, nMode ) CLASS TDetalleArticulos
       ::oGetCatalogo:bValid := {|| ::oGetCatalogo:oHelpText:cText( oRetFld( ::oDbfVir:cCodCat, ::oParent:oCategoria ) ) }
       ::oGetCatalogo:bHelp  := {|| BrwCategoria( ::oGetCatalogo, ::oGetCatalogo:oHelpText ) }
       ::oGetCatalogo:lValid()
+
+      REDEFINE SAY ;
+         PROMPT   getTraslation( "Temporada" );
+         ID       505 ;
+         OF       oDlg
 
       REDEFINE GET ::oGetTemporada VAR ::oDbfVir:cCodTmp ;
          ID       ( 140 ) ;
@@ -5084,6 +5096,17 @@ METHOD LoadPropiedadesArticulos( oDlg, nMode ) CLASS TDetalleArticulos
       ::oGetFabricante:bValid := {|| ::oParent:oFabricante:Existe( ::oGetFabricante, ::oGetFabricante:oHelpText ) }
       ::oGetFabricante:bHelp  := {|| ::oParent:oFabricante:Buscar( ::oGetFabricante ) }
       ::oGetFabricante:lValid()
+
+      REDEFINE GET ::oGetOperacion VAR ::oDbfVir:cCodOpe ;
+         ID       ( 160 ) ;
+         IDTEXT   ( 161 ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         BITMAP   "LUPA" ;
+         OF       oDlg
+
+      ::oGetOperacion:bValid := {|| ::oParent:oOperacion:Existe( ::oGetOperacion, ::oGetOperacion:oHelpText, "cDesOpe", .t., .t., "0" ) }
+      ::oGetOperacion:bHelp  := {|| ::oParent:oOperacion:Buscar( ::oGetOperacion ) }
+      ::oGetOperacion:lValid()
 
       /*
       Clasificación -----------------------------------------------------------
@@ -5115,7 +5138,7 @@ METHOD LoadCommunFields() CLASS TDetalleArticulos
 
    ::oGetFabricante:cText( ::oParent:oArt:cCodFab )
    ::oGetFabricante:lValid()
-     
+
    ::oClasificacionArticulo:SetNumber( ::oParent:oTipoArticulo:nTipo( ::oParent:oArt:cCodTip ) )
 
 RETURN ( Self )
