@@ -141,7 +141,7 @@ function Main( ParamsMain, ParamsSecond )
 
       adsSetServerType( nAdsServer() )    // TODOS
       adsSetFileType( 2 )                 // ADS_CDX
-      // adsLocking( .t. )   
+      adsLocking( .t. )   
       adsRightsCheck( .f. )
       adsSetDeleted( .t. )
       adsCacheOpenTables( 250 )
@@ -972,10 +972,6 @@ FUNCTION lInitCheck( oMessage, oProgress )
 
    SetEmpresa( , , , , , oWnd )
 
-   // Test---------------------------------------------------------------------
-
-   Test()
-
    // Eventos del inicio---------------------------------
 
    // runEventScript( "IniciarAplicacion" )
@@ -1049,6 +1045,16 @@ Function lStartCheck()
    oMsgText( 'Comprobando scripts de inicio' )
    
    runEventScript( "IniciarAplicacion" )
+ 
+   // Colocamos los avisos pa las notas----------------------------------------
+
+   oMsgText( 'Servicios de timers' )
+   
+   initServices()
+
+   // Test---------------------------------------------------------------------
+
+   Test()
 
    // Navegación---------------------------------------------------------------
 
@@ -1057,12 +1063,6 @@ Function lStartCheck()
    if !Empty( oWnd ) .and. !( Os_IsWTSClient() )
       OpenWebBrowser( oWnd )
    end if
-
-   // Colocamos los avisos pa las notas----------------------------------------
-
-   oMsgText( 'Servicios de timers' )
-   
-   InitServices()
 
    // Texto limpio y a trabajar------------------------------------------------
 
@@ -5379,74 +5379,8 @@ Function BuildTpvMenu()
 RETURN oMenu
 
 //--------------------------------------------------------------------------//
-/*
-SHOWTASKBAR() // Habilita
-HIDETASKBAR() // Desabilita
-TIRA_X()      // Desabilita o X da Janela
-PISCA_EXE()   // Vai Piscar o Seu EXE na Barra do Windows
-*/
-
-#pragma BEGINDUMP
-
-#include "windows.h"
-#include "shlobj.h"
-#include "hbapi.h"
-#include "math.h"
-#include "hbvm.h"
-#include "hbstack.h"
-#include "hbapiitm.h"
-#include "hbapigt.h"
-
-HB_FUNC ( SHOWTASKBAR ) //Habilita o botao INICIAR
-{
-HWND hWnd = FindWindow("Shell_TrayWnd", "");
-
-ShowWindow( hWnd, 1 );
-}
-
-HB_FUNC ( HIDETASKBAR ) //Desabilita o botao Iniciar
-{
-HWND hWnd = FindWindow("Shell_TrayWnd", "");
-
-ShowWindow( hWnd, 0 );
-}
-
-HB_FUNC ( FLASHWINDOW ) // VAI PISCAR O SEU EXE NA BARRA
-{
-HWND Handle = GetForegroundWindow();
-
-FlashWindow(Handle,TRUE); // VAI PISCAR O SEU EXE NA BARRA
-
-Sleep(300); // TEMPO DE ESPERA
-}
-
-
-HB_FUNC ( DISABLECLOSEWINDOWS ) // DESABILITA O X da janela
-
-{
-HMENU MenuH = GetSystemMenu(GetForegroundWindow(),FALSE);
-
-EnableMenuItem(MenuH,SC_CLOSE,MF_GRAYED);
-}
-
-HB_FUNC ( ENABLECLOSEWINDOWS ) // HABILITA O X da janela
-
-{
-HMENU MenuH = GetSystemMenu(GetForegroundWindow(),TRUE);
-
-EnableMenuItem(MenuH,SC_CLOSE,MF_GRAYED);
-}
-
-#pragma ENDDUMP
-
-//--------------------------------------------------------------------------//
 
 Function InitServices()
-
-   if lAds()
-      // ? "AdsOpenTables()"
-      // AdsCacheOpenTables( 250 )
-   end if
 
    // Colocamos los avisos pa las notas----------------------------------------
 
@@ -5456,12 +5390,6 @@ Function InitServices()
 
    TScripts():New( cPatEmp() ):StartTimer()
    
-   // Auto recepción de pedidos por internet-----------------------------------
-
-   // SetAutoRecive()
-
-   // SetAutoImp()
-
 Return ( nil )
 
 //---------------------------------------------------------------------------//
@@ -5476,15 +5404,6 @@ Function StopServices()
 
    if oUser():lAlerta()
       CloseNotas()
-   end if
-
-   // Auto recepción de pedidos por internet-----------------------------------
-
-   if lAds()
-
-      // ? "AdsCloseCachedTables()"
-
-      // AdsCloseCachedTables()
    end if
 
    TScripts():EndTimer()
@@ -6105,17 +6024,9 @@ Return ( by( nRow ) )
 
 Function Test() 
 
-   if !msgyesno("run test")
+   if !msgyesno("run test " + cDriver() )
       return nil 
    end if 
-
-   setIndexToCDX()
-
-   msgAlert( cDriver() )
-   testAll()
-
-   setIndexToAIS()
-   msgAlert( cDriver() )
 
    testAll()
 
@@ -6123,27 +6034,15 @@ Return ( nil )
 
 Static Function testAll()
 
-   msgStop( cPatCli() + "CLIENT.DBF" )
+   USE ( cPatCli() + "Client.Dbf" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "Client", @dbfClient ) )
+   SET ADSINDEX TO ( cPatCli() + "Client.Cdx" ) ADDITIVE
 
-   dbUseArea( .t., ( cDriver() ), ( cPatCli() + "CLIENT.DBF" ), ( cCheckArea( "CLIENT", @dbfClient ) ), .t., .f. )
-   msgAlert( ( dbfClient )->( used() ), "used" )
+   USE ( cPatCli() + "Obrast.Dbf" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "Obrast", @dbfObras ) )
+   SET ADSINDEX TO ( cPatCli() + "Obrast.Cdx" ) ADDITIVE
 
-   if !lAIS() 
-      ( dbfClient )->( ordListAdd( ( cPatCli() + "CLIENT.CDX" ) ) ) 
-   else 
-      ( dbfClient )->( ordSetFocus( 1 ) )
-   end
+   // deleteAll()
 
-   USE ( cPatCli() + "OBRAST.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObras ) )
-   if !lAIS()
-      ( dbfObras )->( ordListAdd( ( cPatCli() + "OBRAST.CDX" ) ) ) 
-   else 
-      ( dbfObras )->( ordSetFocus( 1 ) )
-   end if 
-
-   deleteAll()
-
-   fillAll()
+   // fillAll()
 
    seekAll()
 
@@ -6156,19 +6055,8 @@ RETURN NIL
 
 STATIC FUNCTION deleteAll()
 
-   ( dbfClient )->( dbGoTop() )
-
-   WHILE !( dbfClient )->( eof() ) 
-      ( dbfClient )->( dbdelete() )
-      ( dbfClient )->( dbSkip() )
-   END 
-
-   ( dbfObras )->( dbGoTop() )
-
-   WHILE !( dbfObras )->( eof() ) 
-      ( dbfObras )->( dbdelete() )
-      ( dbfObras )->( dbSkip() )
-   END 
+   ( dbfClient )->( __dbzap() )
+   ( dbfObras  )->( __dbzap() )
 
 RETURN NIL 
 
@@ -6177,8 +6065,13 @@ RETURN NIL
 STATIC FUNCTION fillAll()
 
    local n
+   local seconds := seconds()
 
-   for n := 1 to 10000
+   for n := 1 to 100000
+
+      if ( n % 100 ) == 0
+         msgwait( "Recno " + str(n), , 0.0001 )
+      end if 
 
       ( dbfClient )->( dbappend() )
       if ( dbfClient )->( !neterr() )
@@ -6193,12 +6086,13 @@ STATIC FUNCTION fillAll()
          ( dbfObras )->cCodCli   := strzero( n, 8 )
          ( dbfObras )->cCodObr   := strzero( n, 8 )
          ( dbfObras )->cNomObr   := strzero( n, 8 )
-
          ( dbfObras )->( dbcommit() )
          ( dbfObras )->( dbunlock() )
       endif
 
    next
+
+   msgStop( seconds() - seconds, "fill" )
 
 RETURN NIL 
 
@@ -6217,7 +6111,7 @@ static Function seekAll()
       ( dbfClient )->( dbskip() )
    end while
 
-   msgStop( seconds() - seconds )
+   msgStop( seconds() - seconds, "seek" )
 
 RETURN NIL 
 

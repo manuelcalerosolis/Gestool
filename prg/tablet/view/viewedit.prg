@@ -366,7 +366,7 @@ METHOD defineBrowseLineas() CLASS ViewEdit
 
    ::oBrowse:nHeaderHeight    := 48
    ::oBrowse:nFooterHeight    := 48
-   ::oBrowse:nRowHeight       := 96
+   ::oBrowse:nRowHeight       := 48
    ::oBrowse:nDataLines       := 2
 
    ::oBrowse:SetArray( ::oSender:getLines(), , , .f. )

@@ -4210,7 +4210,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          :BuildEmpresa()     
       end with
 
-      setIndexToAIS()
+      SetIndexToADSCDX()
 
       msgStop( "Proceso finalizado")
 

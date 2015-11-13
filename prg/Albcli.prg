@@ -8474,6 +8474,9 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Artículos", ( D():Articulos( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
 
+   oFr:SetWorkArea(     "Tipo artículo",  oTipArt:Select() )
+   oFr:SetFieldAliases( "Tipo artículo",  cObjectsToReport( oTipArt:oDbf ) )
+
    oFr:SetWorkArea(     "Tipo de venta", ( dbfTVta )->( Select() ) )
    oFr:SetFieldAliases( "Tipo de venta", cItemsToReport( aItmTVta() ) )
 
@@ -8508,6 +8511,7 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Albaranes", "País",                                        {|| RetFld( ( D():Get( "AlbCliT", nView ) )->cCodCli, D():Clientes( nView ), "cCodPai" ) } )
 
    oFr:SetMasterDetail( "Lineas de albaranes", "Artículos",                         {|| ( D():Get( "AlbCliL", nView ) )->cRef } )
+   oFr:SetMasterDetail( "Lineas de albaranes", "Tipo artículo",                     {|| ( D():Get( "AlbCliL", nView ) )->cCodTip } )
    oFr:SetMasterDetail( "Lineas de albaranes", "Tipo de venta",                     {|| ( D():Get( "AlbCliL", nView ) )->cTipMov } )
    oFr:SetMasterDetail( "Lineas de albaranes", "Ofertas",                           {|| ( D():Get( "AlbCliL", nView ) )->cRef } )
    oFr:SetMasterDetail( "Lineas de albaranes", "Unidades de medición",              {|| ( D():Get( "AlbCliL", nView ) )->cUnidad } )
@@ -8532,6 +8536,7 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Albaranes", "Pais" )
 
    oFr:SetResyncPair(   "Lineas de albaranes", "Artículos" )
+   oFr:SetResyncPair(   "Lineas de albaranes", "Tipo artículo" )
    oFr:SetResyncPair(   "Lineas de albaranes", "Tipo de venta" )
    oFr:SetResyncPair(   "Lineas de albaranes", "Ofertas" )
    oFr:SetResyncPair(   "Lineas de albaranes", "Unidades de medición" )

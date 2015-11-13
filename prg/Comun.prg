@@ -314,7 +314,7 @@ Return ( "PDA" $ cParamsMain() )
 
 //---------------------------------------------------------------------------//
 
-Function SetIndexToAIS()
+Function SetIndexToADSCDX()
 
    lCdx( .f. )
    lAIS( .t. )
@@ -334,7 +334,7 @@ Function SetIndexToCDX()
 
 Return nil 
 
-#ifndef __PDA__
+//---------------------------------------------------------------------------//
 
 Function cDriver()
 
@@ -2139,8 +2139,6 @@ Return ( if( lFull, FullCurDir(), "" ) + cPatArt + "\" )
 
 //---------------------------------------------------------------------------//
 
-#ifndef __PDA__
-
 FUNCTION cPatPrv( cPath, lFull, lEmpresa )
 
    DEFAULT lFull     := .f.
@@ -3286,3 +3284,65 @@ function nNumeroTarifa( cNombreTarifa )
 return ( 1 )
 
 //---------------------------------------------------------------------------//
+
+/*
+SHOWTASKBAR() // Habilita
+HIDETASKBAR() // Desabilita
+TIRA_X()      // Desabilita o X da Janela
+PISCA_EXE()   // Vai Piscar o Seu EXE na Barra do Windows
+*/
+
+#pragma BEGINDUMP
+
+#include "windows.h"
+#include "shlobj.h"
+#include "hbapi.h"
+#include "math.h"
+#include "hbvm.h"
+#include "hbstack.h"
+#include "hbapiitm.h"
+#include "hbapigt.h"
+
+HB_FUNC ( SHOWTASKBAR ) //Habilita o botao INICIAR
+{
+HWND hWnd = FindWindow("Shell_TrayWnd", "");
+
+ShowWindow( hWnd, 1 );
+}
+
+HB_FUNC ( HIDETASKBAR ) //Desabilita o botao Iniciar
+{
+HWND hWnd = FindWindow("Shell_TrayWnd", "");
+
+ShowWindow( hWnd, 0 );
+}
+
+HB_FUNC ( FLASHWINDOW ) // VAI PISCAR O SEU EXE NA BARRA
+{
+HWND Handle = GetForegroundWindow();
+
+FlashWindow(Handle,TRUE); // VAI PISCAR O SEU EXE NA BARRA
+
+Sleep(300); // TEMPO DE ESPERA
+}
+
+
+HB_FUNC ( DISABLECLOSEWINDOWS ) // DESABILITA O X da janela
+
+{
+HMENU MenuH = GetSystemMenu(GetForegroundWindow(),FALSE);
+
+EnableMenuItem(MenuH,SC_CLOSE,MF_GRAYED);
+}
+
+HB_FUNC ( ENABLECLOSEWINDOWS ) // HABILITA O X da janela
+
+{
+HMENU MenuH = GetSystemMenu(GetForegroundWindow(),TRUE);
+
+EnableMenuItem(MenuH,SC_CLOSE,MF_GRAYED);
+}
+
+#pragma ENDDUMP
+
+//--------------------------------------------------------------------------//

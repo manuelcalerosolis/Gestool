@@ -9072,33 +9072,33 @@ FUNCTION nTotFacPrv( cFactura, cFacPrvT, cFacPrvL, cIva, cDiv, cFacPrvP, aTmp, c
    local cCodDiv
    local cCodPgo
    local nRegIva
-   local lFacGas     := .f.
-   local aTotalUno   := { 0, 0, 0 }
-   local aTotalDos   := { 0, 0, 0 }
-   local aTotalDto   := { 0, 0, 0 }
-   local aTotalDPP   := { 0, 0, 0 }
-   local aNetGas     := { 0, 0, 0 }
-   local aPIvGas     := { 0, 0, 0 }
-   local aPReGas     := { 0, 0, 0 }
+   local lFacGas        := .f.
+   local aTotalUno      := { 0, 0, 0 }
+   local aTotalDos      := { 0, 0, 0 }
+   local aTotalDto      := { 0, 0, 0 }
+   local aTotalDPP      := { 0, 0, 0 }
+   local aNetGas        := { 0, 0, 0 }
+   local aPIvGas        := { 0, 0, 0 }
+   local aPReGas        := { 0, 0, 0 }
    local nImpuestoEspecial
 
    if !Empty( nView )
-
       DEFAULT cFacPrvT  := D():FacturasProveedores( nView )
       DEFAULT cFacPrvL  := D():FacturasProveedoresLineas( nView )
       DEFAULT cIva      := D():TiposIva( nView )
       DEFAULT cDiv      := D():Divisas( nView )
       DEFAULT cFacPrvP  := D():FacturasProveedoresPagos( nView )
-      DEFAULT lPic      := .f.
       DEFAULT cFactura  := ( cFacPrvT )->cSerFac + Str( ( cFacPrvT )->nNumFac ) + ( cFacPrvT )->cSufFac
-
    end if
+
+   DEFAULT lPic         := .f.
 
    initPublics()
 
-   nRecno            := ( cFacPrvL )->( recno() )
+   nRecno               := ( cFacPrvL )->( recno() )
 
    if aTmp != nil
+
       dFecFac        := aTmp[ _DFECFAC ]
       lRecargo       := aTmp[ _LRECARGO]
       nDtoEsp        := aTmp[ _NDTOESP ]
@@ -9118,7 +9118,9 @@ FUNCTION nTotFacPrv( cFactura, cFacPrvT, cFacPrvL, cIva, cDiv, cFacPrvP, aTmp, c
       bCondition     := {|| ( cFacPrvL )->( !eof() ) }
 
       ( cFacPrvL )->( dbGoTop() )
+
    else
+
       dFecFac        := ( cFacPrvT )->dFecFac
       lRecargo       := ( cFacPrvT )->lRecargo
       nDtoEsp        := ( cFacPrvT )->nDtoEsp
@@ -9136,7 +9138,9 @@ FUNCTION nTotFacPrv( cFactura, cFacPrvT, cFacPrvL, cIva, cDiv, cFacPrvP, aTmp, c
       aPIvGas        := { ( cFacPrvT )->nIvaGas1, ( cFacPrvT )->nIvaGas2, ( cFacPrvT )->nIvaGas3 }
       aPReGas        := { ( cFacPrvT )->nReGas1,  ( cFacPrvT )->nReGas2,  ( cFacPrvT )->nReGas3  }
       bCondition     := {|| ( cFacPrvL )->cSerFac + Str( ( cFacPrvL )->nNumFac ) + ( cFacPrvL )->cSufFac == cFactura .and. ( cFacPrvL )->( !eof() ) }
+
       ( cFacPrvL )->( dbSeek( cFactura ) )
+
    end if
 
    /*
@@ -10648,9 +10652,7 @@ Function SynFacPrv( cPath )
 
    ( dbfFacPrvT )->( OrdSetFocus( 1 ) )
 
-   /*
-   lineas de facturas de proveedores-------------------------------------------
-   */
+   // Lineas de facturas de proveedores-------------------------------------------
 
    ( dbfFacPrvL )->( OrdSetFocus( 0 ) )
    ( dbfFacPrvL )->( dbGoTop() )
@@ -10700,9 +10702,7 @@ Function SynFacPrv( cPath )
          ( dbfFacPrvL )->mNumSer       := ""
       end if
 
-      /*
-      Precios por propiedades de articulos-------------------------------------
-      */
+      // Precios por propiedades de articulos-------------------------------------
 
       if !( cArtDiv )->( dbSeek( ( dbfFacPrvL )->CREF +  ( dbfFacPrvL )->CCODPR1 + ( dbfFacPrvL )->CCODPR2 + ( dbfFacPrvL )->CVALPR1 + ( dbfFacPrvL )->CVALPR2 ) )
       
@@ -10718,24 +10718,10 @@ Function SynFacPrv( cPath )
 
       end if
 
-      /*
-      Almacen de origen en facturas
-      */
+      // Almacen de origen en facturas
 
       if !Empty( ( dbfFacPrvL )->iNumAlb )
          ( dbfFacPrvL )->cAlmOrigen := RetFld( ( dbfFacPrvL )->iNumAlb, dbfAlbPrvL, "cAlmOrigen", "nNumLin" )
-
-         //para distribumar, corregir numero de factura para líneas sueltas facturadas
-         /*
-         if dbSeekInOrd( ( dbfFacPrvL )->iNumAlb, "nNumLin", dbfAlbPrvL )
-            if dbLock( dbfAlbPrvL )
-               ( dbfAlbPrvL )->cNumFac := ( dbfFacPrvL )->cSerFac + str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac
-               ( dbfAlbPrvL )->( dbUnLock() )
-            end if
-         end if 
-         
-         */
-
       end if
 
       ( dbfFacPrvL )->( dbSkip() )
@@ -10861,11 +10847,8 @@ Function SynFacPrv( cPath )
    end while 
 
    RECOVER USING oError
-
       msgStop( "Imposible sincronizar factura de proveedores" + CRLF + ErrorMessage( oError ) )
-
    END SEQUENCE
-
    ErrorBlock( oBlock )
 
    if !Empty( dbfFacPrvT ) .and. ( dbfFacPrvT )->( Used() )

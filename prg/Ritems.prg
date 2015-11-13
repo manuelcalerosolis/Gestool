@@ -4080,7 +4080,7 @@ Static Function VisualEdtDocs( dbfDoc )
          DesignLabelFacturaProveedor( oFr, dbfDoc )
 
       case cTipo == "RL"
-         DesignLabelRctPrv( oFr, dbfDoc )
+         DesignLabelFacturaProveedor( oFr, dbfDoc )
 
       case cTipo == "PE"
          DesignLabelPedidoProveedores( oFr, dbfDoc )

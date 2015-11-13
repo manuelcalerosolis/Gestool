@@ -7987,6 +7987,8 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "SAT", ( D():SatClientes( nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    oFr:SetFieldAliases( "SAT", cItemsToReport( aItmSatCli() ) )
 
+   ? ( dbfSatCliL )->( ordsetfocus() )   
+
    oFr:SetWorkArea(     "Lineas de SAT", ( dbfSatCliL )->( Select() ) )
    oFr:SetFieldAliases( "Lineas de SAT", cItemsToReport( aColSatCli() ) )
 
@@ -11601,9 +11603,7 @@ Function PrintReportSatCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
    oFr                        := frReportManager():New()
 
    oFr:LoadLangRes( "Spanish.Xml" )
-
    oFr:SetIcon( 1 )
-
    oFr:SetTitle( "Diseñador de documentos" )
 
    /*

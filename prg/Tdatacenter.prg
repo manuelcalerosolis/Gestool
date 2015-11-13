@@ -4693,7 +4693,7 @@ METHOD ReindexTable( oTable )
          ( "Table" )->( OrdSetFocus( 1 ) )
          ( "Table" )->( OrdListRebuild() )
          ( "Table" )->( dbCloseArea() )
-      
+         
       end if 
 
    RECOVER USING oError
@@ -4737,12 +4737,12 @@ METHOD ActualizaTable( oTable, cPath )
 
    if lExistTable( cOld + ".Dbf" )
 
-      oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+      oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
       BEGIN SEQUENCE
 
       USE ( cOld + ".Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OLD", @dbfOld ) )
       if NetErr()
-         msgStop(  cOld + ".Dbf", "Error de apertura " )
+         msgStop( cOld + ".Dbf", "Error de apertura " )
       end if
       
       USE ( cTmp + ".Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TMP", @dbfTmp ) )
@@ -4856,7 +4856,7 @@ METHOD ActualizaEmpresa( oMsg )
 
    // Creamos las nuesvas estructuras------------------------------------------
 
-   SetIndexToAIS()
+   SetIndexToADSCDX()
 
    ::BuildData()
 

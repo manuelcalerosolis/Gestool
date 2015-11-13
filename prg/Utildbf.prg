@@ -1661,9 +1661,7 @@ FUNCTION WinDupRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
       ( cAlias )->( dbClearFilter() )
    end if
 
-   /*
-	Bloqueamos el registro durante la edici¢n
-	*/
+	// Bloqueamos el registro durante la edici¢n
 
    if !( cAlias )->( eof() )
 

@@ -2728,30 +2728,30 @@ FUNCTION rxUsuario( cPath, oMeter )
 
    DEFAULT cPath     := cPatDat()
 
-   if lExistIndex( cPath + "USERS.CDX" )
-      fEraseIndex( cPath + "USERS.CDX" )
+   if lExistIndex( cPath + "Users.Cdx" )
+      fEraseIndex( cPath + "Users.Cdx" )
    end if
 
-   if lExistIndex( cPath + "MAPAS.CDX" )
-      fEraseIndex( cPath + "MAPAS.CDX" )
+   if lExistIndex( cPath + "Mapas.CDX" )
+      fEraseIndex( cPath + "Mapas.CDX" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "USERS.DBF", cCheckArea( "USERS", @dbfUser ), .f. )
+   dbUseArea( .t., cDriver(), cPatDat() + "Users.Dbf", cCheckArea( "Users", @dbfUser ), .f. )
 
    if !( dbfUser )->( neterr() )
       ( dbfUser )->( __dbPack() )
 
       ( dbfUser )->( ordCondSet( "!Deleted()", {|| !Deleted()}  ) )
-      ( dbfUser )->( ordCreate( cPath + "USERS.CDX", "CCODUSE", "Field->cCodUse", {|| Field->cCodUse } ) )
+      ( dbfUser )->( ordCreate( cPath + "Users.Cdx", "CCODUSE", "Field->cCodUse", {|| Field->cCodUse } ) )
 
       ( dbfUser )->( ordCondSet( "!Deleted()", {|| !Deleted()}  ) )
-      ( dbfUser )->( ordCreate( cPath + "USERS.CDX", "CNBRUSE", "Upper( Field->cNbrUse )", {|| Upper( Field->cNbrUse ) } ) )
+      ( dbfUser )->( ordCreate( cPath + "Users.Cdx", "CNBRUSE", "Upper( Field->cNbrUse )", {|| Upper( Field->cNbrUse ) } ) )
 
       ( dbfUser )->( ordCondSet( "!Deleted()", {|| !Deleted()}  ) )
-      ( dbfUser )->( ordCreate( cPath + "USERS.CDX", "CPCNUSE", "Field->cPcnUse + Field->cCodUse", {|| Field->cPcnUse + Field->cCodUse } ) )
+      ( dbfUser )->( ordCreate( cPath + "Users.Cdx", "CPCNUSE", "Field->cPcnUse + Field->cCodUse", {|| Field->cPcnUse + Field->cCodUse } ) )
 
       ( dbfUser )->( ordCondSet( "!Deleted()", {|| !Deleted()}  ) )
-      ( dbfUser )->( ordCreate( cPath + "USERS.CDX", "CCODGRP", "Field->cCodGrp", {|| Field->cCodGrp } ) )
+      ( dbfUser )->( ordCreate( cPath + "Users.Cdx", "CCODGRP", "Field->cCodGrp", {|| Field->cCodGrp } ) )
 
       ( dbfUser )->( dbCloseArea() )
    else
@@ -2762,13 +2762,13 @@ FUNCTION rxUsuario( cPath, oMeter )
    Mapas de usuarios-----------------------------------------------------------
    */
 
-   dbUseArea( .t., cDriver(), cPath + "MAPAS.DBF", cCheckArea( "MAPAS", @dbfUser ), .f. )
+   dbUseArea( .t., cDriver(), cPath + "Mapas.DBF", cCheckArea( "Mapas", @dbfUser ), .f. )
 
    if !( dbfUser )->( neterr() )
       ( dbfUser )->( __dbPack() )
 
       ( dbfUser )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfUser )->( ordCreate( cPath + "MAPAS.CDX", "CCODUSE", "Field->CCODUSE + Field->CNOMOPC", {|| Field->CCODUSE + Field->CNOMOPC } ) )
+      ( dbfUser )->( ordCreate( cPath + "Mapas.CDX", "CCODUSE", "Field->CCODUSE + Field->CNOMOPC", {|| Field->CCODUSE + Field->CNOMOPC } ) )
 
       ( dbfUser )->( dbCloseArea() )
    else
