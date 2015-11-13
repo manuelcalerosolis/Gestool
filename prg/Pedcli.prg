@@ -8441,8 +8441,8 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Lineas de Pedidos",   "Total línea de pedido",                      "CallHbFunc('nTotLPedCli')" )
    oFr:AddVariable(     "Lineas de Pedidos",   "Total peso por línea",                       "CallHbFunc('nPesLPedCli')" )
    oFr:AddVariable(     "Lineas de Pedidos",   "Total final línea del pedido",               "CallHbFunc('nTotFPedCli')" )
-   oFr:AddVariable(     "Lineas de Pedidos",   "Valor primera propiedad línea del pedido",   "CallHbFunc('cValPrp1PedCli')" )
-   oFr:AddVariable(     "Lineas de Pedidos",   "Valor segunda propiedad línea del pedido",   "CallHbFunc('cValPrp2PedCli')" )
+   oFr:AddVariable(     "Lineas de Pedidos",   "Nombre primera propiedad línea del pedido",  "CallHbFunc('nombrePrimeraPropiedad')" )
+   oFr:AddVariable(     "Lineas de Pedidos",   "Nombre segunda propiedad línea del pedido",  "CallHbFunc('nombreSegundaPropiedad')" )
    
 Return nil
 
@@ -15855,15 +15855,15 @@ return ( aPedCliPgo )
 
 //---------------------------------------------------------------------------//
 
-Function cValPrp1PedCli( uDbf )
+Function nombrePrimeraPropiedad( uDbf )
 
-Return ( retValProp( ( D():PedidosClientesLineas( nView ) )->cCodPr1 + ( D():PedidosClientesLineas( nView ) )->cValPr1, D():PropiedadesLineas( nView ) ) )
+Return ( nombrePropiedad( ( D():PedidosClientesLineas( nView ) )->cCodPr1 + ( D():PedidosClientesLineas( nView ) )->cValPr1, D():PropiedadesLineas( nView ) ) )
 
 //---------------------------------------------------------------------------//
 
-Function cValPrp2PedCli( uDbf )
+Function nombreSegundaPropiedad( uDbf )
 
-Return ( retValProp( ( D():PedidosClientesLineas( nView ) )->cCodPr2 + ( D():PedidosClientesLineas( nView ) )->cValPr2, D():PropiedadesLineas( nView ) ) )
+Return ( nombrePropiedad( ( D():PedidosClientesLineas( nView ) )->cCodPr2 + ( D():PedidosClientesLineas( nView ) )->cValPr2, D():PropiedadesLineas( nView ) ) )
 
 //
 // Numero de unidades por linea------------------------------------------------
