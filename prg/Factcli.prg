@@ -1650,7 +1650,7 @@ STATIC FUNCTION OpenFiles( lExt )
    local oError
 
    if lOpenFiles
-      MsgStop( 'Imposible abrir ficheros de facturas de clientes' )
+      MsgStop( 'Imposible abrir ficheros de facturas de clientes', 'Ficheros actualmente en uso' )
       Return ( .f. )
    end if
 
@@ -2081,7 +2081,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       lOpenFiles        := .f.
 
-      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
+      msgStop(  ErrorMessage( oError ), "Imposible abrir todas las bases de datos facturas de clientes.", )
 
       EnableAcceso()
 
@@ -2437,18 +2437,14 @@ STATIC FUNCTION CloseFiles()
       oEntidades:End()
    end if 
 
-
    if empty( oCentroCoste )
       oCentroCoste:End()
    end if
-
-
 
    TProyecto():GetInstance():CloseFiles()
    if !empty( TProyecto():GetInstance() )
       TProyecto():GetInstance():CloseFiles()
    end if 
-
 
    dbfIva      := nil
    dbfFPago    := nil
@@ -23513,63 +23509,42 @@ Return ( cFormato )
 
 Function DesignLabelFacturaClientes( oFr, cDoc )
 
-   local oLabel   := TLabelGeneratorFacturasClientes():New( nView )
+   local oLabel
+   local lOpenFiles  := empty( nView ) 
 
-   if oLabel:lErrorOnCreate
+   if lOpenFiles .and. !Openfiles()
       Return .f.
-   end if 
+   endif
 
-   if !oLabel:lCreateTempReport()
-      Return .f.
-   end if 
+   oLabel            := TLabelGeneratorFacturasClientes():New( nView )
 
-   /*
-   Zona de datos---------------------------------------------------------
-   */
-   oLabel:DataLabel( oFr, .f. )
+   // Zona de datos---------------------------------------------------------
+   
+   oLabel:createTempLabelReport()
+   oLabel:loadTempLabelReport()      
+   oLabel:dataLabel( oFr )
 
-   /*
-   Paginas y bandas------------------------------------------------------
-   */
+   // Paginas y bandas------------------------------------------------------
 
    if !Empty( ( cDoc )->mReport )
-
       oFr:LoadFromBlob( ( cDoc )->( Select() ), "mReport")
-
    else
-
       oFr:AddPage(         "MainPage" )
-
       oFr:AddBand(         "CabeceraColumnas",  "MainPage",       frxMasterData )
       oFr:SetProperty(     "CabeceraColumnas",  "Top",            200 )
       oFr:SetProperty(     "CabeceraColumnas",  "Height",         100 )
       oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Lineas de facturas" )
-
    end if
 
-   /*
-   Diseño de report------------------------------------------------------
-   */
-
    oFr:DesignReport()
-
-   /*
-   Destruye el diseñador-------------------------------------------------
-   */
-
    oFr:DestroyFr()
 
-   /*
-   Destruye el fichero temporal------------------------------------------------
-   */
-
    oLabel:DestroyTempReport()
-
-   /*
-   Cierra ficheros-------------------------------------------------------
-   */
-
    oLabel:End()
+
+   if lOpenFiles
+      closeFiles()
+   end if 
 
 Return .t.   
 

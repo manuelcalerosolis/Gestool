@@ -56,8 +56,9 @@ CLASS TLabelGenerator
    Data cFileTmpLabel
    Data tmpLabelEdition
 
-   Data DbfCabecera
+   Data dbfCabecera
    Data dbfLineas 
+
    Data idDocument
    Data dbfDocumento
 
@@ -83,7 +84,7 @@ CLASS TLabelGenerator
    METHOD loadTempLabelReport()           INLINE ( ::loadTempLabelEdition( ::tmpLabelReport ) )
    METHOD destroyTempLabelEdition()
 
-   METHOD lCreateTempReport()            
+   METHOD createTempLabelReport()            
    METHOD loadTempReport()   
    METHOD destroyTempReport()     
 
@@ -112,6 +113,8 @@ CLASS TLabelGenerator
 
    METHOD nombrePrimeraPropiedad()        INLINE ( if( !empty( ::tmpLabelReport ), nombrePropiedad( ( ::tmpLabelReport )->cCodPr1, ( ::tmpLabelReport )->cValPr1, ::nView ), "" ) )
    METHOD nombreSegundaPropiedad()        INLINE ( if( !empty( ::tmpLabelReport ), nombrePropiedad( ( ::tmpLabelReport )->cCodPr2, ( ::tmpLabelReport )->cValPr2, ::nView ), "" ) )
+
+   METHOD refreshBrowseLabel()            INLINE ( if( !empty( ::oBrwLabel ), ::oBrwLabel:Refresh(), ) )
 
 END CLASS
 
@@ -282,7 +285,7 @@ METHOD Dialog() CLASS TLabelGenerator
          OF       ::oFld:aDialogs[ 2 ]
 
       oGetOrd:bChange   := {| nKey, nFlags, oGet | AutoSeek( nKey, nFlags, oGet, ::oBrwLabel, ::tmpLabelEdition ) }
-      oGetOrd:bValid    := {|| ( ::tmpLabelEdition )->( OrdScope( 0, nil ) ), ( ::tmpLabelEdition )->( OrdScope( 1, nil ) ), ::oBrwLabel:Refresh(), .t. }
+      oGetOrd:bValid    := {|| ( ::tmpLabelEdition )->( OrdScope( 0, nil ) ), ( ::tmpLabelEdition )->( OrdScope( 1, nil ) ), ::refreshBrowseLabel(), .t. }
 
       REDEFINE COMBOBOX oCbxOrd ;
          VAR      cCbxOrd ;
@@ -551,7 +554,7 @@ METHOD lPrintLabels() CLASS TLabelGenerator
 
    ::oDlg:Disable()
 
-   if ::lCreateTempReport()
+   if ::createTempLabelReport()
       ::loadTempReport()
       ::buildReportLabels()
       ::destroyTempReport()
@@ -630,11 +633,11 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD lCreateTempReport() CLASS TLabelGenerator
+METHOD createTempLabelReport() CLASS TLabelGenerator
 
    local oBlock
    local oError
-   local lCreateTempReport := .t.
+   local createTempLabelReport := .t.
 
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -647,7 +650,7 @@ METHOD lCreateTempReport() CLASS TLabelGenerator
 
    RECOVER USING oError
 
-      lCreateTempReport    := .f.
+      createTempLabelReport    := .f.
 
       MsgStop( 'Imposible crear un fichero temporal de lineas del documento' + CRLF + ErrorMessage( oError ) )
 
@@ -655,7 +658,7 @@ METHOD lCreateTempReport() CLASS TLabelGenerator
 
    ErrorBlock( oBlock )
 
-Return ( lCreateTempReport )
+Return ( createTempLabelReport )
 
 //---------------------------------------------------------------------------//
 
@@ -765,7 +768,7 @@ METHOD PutLabel() CLASS TLabelGenerator
 
    ( ::tmpLabelEdition )->lLabel   := !( ::tmpLabelEdition )->lLabel
 
-   ::oBrwLabel:Refresh()
+   ::refreshBrowseLabel()
    ::oBrwLabel:Select()
 
 Return ( Self )
@@ -792,10 +795,9 @@ METHOD SelectAllLabels( lLabel ) CLASS TLabelGenerator
 
    ( ::tmpLabelEdition )->( dbGoTo( nRecno ) )
 
-   ::oBrwLabel:Refresh()
+   ::oMtrLabel:set( 0 )
 
-   ::oMtrLabel:Set( 0 )
-   ::oMtrLabel:Refresh()
+   ::refreshBrowseLabel()
 
    CursorArrow()
 
@@ -807,7 +809,7 @@ METHOD AddLabel() CLASS TLabelGenerator
 
    ( ::tmpLabelEdition )->nLabel++
 
-   ::oBrwLabel:Refresh()
+   ::refreshBrowseLabel()
    ::oBrwLabel:SetFocus()
 
 Return ( Self )
@@ -820,7 +822,7 @@ METHOD DelLabel() CLASS TLabelGenerator
       ( ::tmpLabelEdition )->nLabel--
    end if
 
-   ::oBrwLabel:Refresh()
+   ::refreshBrowseLabel()
    ::oBrwLabel:SetFocus()
 
 Return ( Self )
@@ -878,7 +880,7 @@ METHOD SelectColumn( oCombo ) CLASS TLabelGenerator
 
       end with
 
-      ::oBrwLabel:Refresh()
+      ::refreshBrowseLabel()
 
    end if
 
@@ -998,9 +1000,7 @@ METHOD loadTempLabelEdition( tmpLabel ) CLASS TLabelGeneratorPedidoProveedores
 
    ( tmpLabel )->( dbGoTop() )
 
-   if !empty(::oBrwLabel)
-      ::oBrwLabel:Refresh()
-   end if 
+   ::refreshBrowseLabel()
 
 Return ( Self )
 
@@ -1193,9 +1193,7 @@ METHOD LoadTempLabelEdition( tmpLabel ) CLASS TLabelGeneratorAlbaranClientes
 
    ( tmpLabel )->( dbGoTop() )
 
-   if !empty(::oBrwLabel)
-      ::oBrwLabel:Refresh()
-   end if 
+   ::refreshBrowseLabel()
 
 Return ( Self )
 
@@ -1321,15 +1319,17 @@ Return( Self )
  
 //---------------------------------------------------------------------------//
 
-METHOD LoadTempLabelEdition() CLASS TLabelGeneratorPedidoClientes
+METHOD LoadTempLabelEdition( tmpLabel ) CLASS TLabelGeneratorPedidoClientes
 
    local nRec
    local nOrd
 
+   DEFAULT tmpLabel     := ::tmpLabelEdition
+
    //Limpiamos la base de datos temporal-----------------------------------------
 
-   if ( ::tmpLabelEdition )->( Used() )
-      ( ::tmpLabelEdition )->( __dbZap() )
+   if ( tmpLabel )->( Used() )
+      ( tmpLabel )->( __dbZap() )
    end if 
 
    //Llenamos la tabla temporal--------------------------------------------------
@@ -1349,20 +1349,20 @@ METHOD LoadTempLabelEdition() CLASS TLabelGeneratorPedidoClientes
 
                if !empty( ( ::dbfLineas )->cRef )
 
-                  dbPass( ::dbfLineas, ::tmpLabelEdition, .t. )
+                  dbPass( ::dbfLineas, tmpLabel, .t. )
 
-                  dblock( ::tmpLabelEdition )
+                  dblock( tmpLabel )
 
-                  ( ::tmpLabelEdition )->nNumLin  := nTotNPedCli( ::dbfLineas )
-                  ( ::tmpLabelEdition )->lLabel   := .t.
+                  ( tmpLabel )->nNumLin  := nTotNPedCli( ::dbfLineas )
+                  ( tmpLabel )->lLabel   := .t.
 
                   if ::nCantidadLabels == 1
-                     ( ::tmpLabelEdition )->nLabel   := nTotNPedCli( ::dbfLineas )
+                     ( tmpLabel )->nLabel   := nTotNPedCli( ::dbfLineas )
                   else
-                     ( ::tmpLabelEdition )->nLabel   := ::nUnidadesLabels
+                     ( tmpLabel )->nLabel   := ::nUnidadesLabels
                   end if
 
-                  ( ::tmpLabelEdition )->( dbUnlock() )
+                  ( tmpLabel )->( dbUnlock() )
 
                end if
 
@@ -1381,9 +1381,9 @@ METHOD LoadTempLabelEdition() CLASS TLabelGeneratorPedidoClientes
    ( ::dbfCabecera )->( OrdSetFocus( nOrd ) )
    ( ::dbfCabecera )->( dbGoTo( nRec ) )
 
-   ( ::tmpLabelEdition )->( dbGoTop() )
+   ( tmpLabel )->( dbGoTop() )
 
-   ::oBrwLabel:Refresh()
+   ::refreshBrowseLabel()
 
 Return ( Self )
 
@@ -1505,15 +1505,17 @@ Return( Self )
  
 //---------------------------------------------------------------------------//
 
-METHOD LoadTempLabelEdition() CLASS TLabelGeneratorPresupuestoClientes
+METHOD LoadTempLabelEdition( tmpLabelEdition ) CLASS TLabelGeneratorPresupuestoClientes
 
    local nRec
    local nOrd
 
+   DEFAULT tmpLabelEdition    := ::tmpLabelEdition
+
    //Limpiamos la base de datos temporal-----------------------------------------
 
-   if ( ::tmpLabelEdition )->( Used() )
-      ( ::tmpLabelEdition )->( __dbZap() )
+   if ( tmpLabelEdition )->( Used() )
+      ( tmpLabelEdition )->( __dbZap() )
    end if 
 
    //Llenamos la tabla temporal--------------------------------------------------
@@ -1533,20 +1535,20 @@ METHOD LoadTempLabelEdition() CLASS TLabelGeneratorPresupuestoClientes
 
                if !empty( ( ::dbfLineas )->cRef )
 
-                  dbPass( ::dbfLineas, ::tmpLabelEdition, .t. )
+                  dbPass( ::dbfLineas, tmpLabelEdition, .t. )
 
-                  dblock( ::tmpLabelEdition )
+                  dblock( tmpLabelEdition )
 
-                  ( ::tmpLabelEdition )->nNumLin  := nTotNPreCli( ::dbfLineas )
-                  ( ::tmpLabelEdition )->lLabel   := .t.
+                  ( tmpLabelEdition )->nNumLin  := nTotNPreCli( ::dbfLineas )
+                  ( tmpLabelEdition )->lLabel   := .t.
 
                   if ::nCantidadLabels == 1
-                     ( ::tmpLabelEdition )->nLabel   := nTotNPreCli( ::dbfLineas )
+                     ( tmpLabelEdition )->nLabel   := nTotNPreCli( ::dbfLineas )
                   else
-                     ( ::tmpLabelEdition )->nLabel   := ::nUnidadesLabels
+                     ( tmpLabelEdition )->nLabel   := ::nUnidadesLabels
                   end if
 
-                  ( ::tmpLabelEdition )->( dbUnlock() )
+                  ( tmpLabelEdition )->( dbUnlock() )
 
                end if
 
@@ -1565,9 +1567,11 @@ METHOD LoadTempLabelEdition() CLASS TLabelGeneratorPresupuestoClientes
    ( ::dbfCabecera )->( OrdSetFocus( nOrd ) )
    ( ::dbfCabecera )->( dbGoTo( nRec ) )
 
-   ( ::tmpLabelEdition )->( dbGoTop() )
+   ( tmpLabelEdition )->( dbGoTop() )
 
-   ::oBrwLabel:Refresh()
+   if !empty( ::oBrwLabel )
+      ::refreshBrowseLabel()
+   end if 
 
 Return ( Self )
 
@@ -1689,15 +1693,17 @@ Return( Self )
  
 //---------------------------------------------------------------------------//
 
-METHOD LoadTempLabelEdition() CLASS TLabelGeneratorFacturasClientes
+METHOD LoadTempLabelEdition( tmpLabelEdition ) CLASS TLabelGeneratorFacturasClientes
 
    local nRec
    local nOrd
 
+   DEFAULT tmpLabelEdition    := ::tmpLabelEdition
+
    //Limpiamos la base de datos temporal-----------------------------------------
 
-   if ( ::tmpLabelEdition )->( Used() )
-      ( ::tmpLabelEdition )->( __dbZap() )
+   if ( tmpLabelEdition )->( Used() )
+      ( tmpLabelEdition )->( __dbZap() )
    end if 
 
    //Llenamos la tabla temporal--------------------------------------------------
@@ -1717,20 +1723,20 @@ METHOD LoadTempLabelEdition() CLASS TLabelGeneratorFacturasClientes
 
                if !empty( ( ::dbfLineas )->cRef )
 
-                  dbPass( ::dbfLineas, ::tmpLabelEdition, .t. )
+                  dbPass( ::dbfLineas, tmpLabelEdition, .t. )
 
-                  dblock( ::tmpLabelEdition )
+                  dblock( tmpLabelEdition )
 
-                  ( ::tmpLabelEdition )->nNumLin  := nTotNFacCli( ::dbfLineas )
-                  ( ::tmpLabelEdition )->lLabel   := .t.
+                  ( tmpLabelEdition )->nNumLin     := nTotNFacCli( ::dbfLineas )
+                  ( tmpLabelEdition )->lLabel      := .t.
 
                   if ::nCantidadLabels == 1
-                     ( ::tmpLabelEdition )->nLabel   := nTotNFacCli( ::dbfLineas )
+                     ( tmpLabelEdition )->nLabel   := nTotNFacCli( ::dbfLineas )
                   else
-                     ( ::tmpLabelEdition )->nLabel   := ::nUnidadesLabels
+                     ( tmpLabelEdition )->nLabel   := ::nUnidadesLabels
                   end if
 
-                  ( ::tmpLabelEdition )->( dbUnlock() )
+                  ( tmpLabelEdition )->( dbUnlock() )
 
                end if
 
@@ -1749,9 +1755,9 @@ METHOD LoadTempLabelEdition() CLASS TLabelGeneratorFacturasClientes
    ( ::dbfCabecera )->( OrdSetFocus( nOrd ) )
    ( ::dbfCabecera )->( dbGoTo( nRec ) )
 
-   ( ::tmpLabelEdition )->( dbGoTop() )
+   ( tmpLabelEdition )->( dbGoTop() )
 
-   ::oBrwLabel:Refresh()
+   ::refreshBrowseLabel()
 
 Return ( Self )
 
@@ -1874,15 +1880,17 @@ Return( Self )
  
 //---------------------------------------------------------------------------//
 
-METHOD LoadTempLabelEdition() CLASS TLabelGeneratorFacturasRectificativaClientes
+METHOD LoadTempLabelEdition( tmpLabelEdition ) CLASS TLabelGeneratorFacturasRectificativaClientes
 
    local nRec
    local nOrd
 
+   DEFAULT tmpLabelEdition    := ::tmpLabelEdition
+
    //Limpiamos la base de datos temporal-----------------------------------------
 
-   if ( ::tmpLabelEdition )->( Used() )
-      ( ::tmpLabelEdition )->( __dbZap() )
+   if ( tmpLabelEdition )->( Used() )
+      ( tmpLabelEdition )->( __dbZap() )
    end if 
 
    //Llenamos la tabla temporal--------------------------------------------------
@@ -1902,20 +1910,20 @@ METHOD LoadTempLabelEdition() CLASS TLabelGeneratorFacturasRectificativaClientes
 
                if !empty( ( ::dbfLineas )->cRef )
 
-                  dbPass( ::dbfLineas, ::tmpLabelEdition, .t. )
+                  dbPass( ::dbfLineas, tmpLabelEdition, .t. )
 
-                  dblock( ::tmpLabelEdition )
+                  dblock( tmpLabelEdition )
 
-                  ( ::tmpLabelEdition )->nNumLin  := nTotNFacRec( ::dbfLineas )
-                  ( ::tmpLabelEdition )->lLabel   := .t.
+                  ( tmpLabelEdition )->nNumLin  := nTotNFacRec( ::dbfLineas )
+                  ( tmpLabelEdition )->lLabel   := .t.
 
                   if ::nCantidadLabels == 1
-                     ( ::tmpLabelEdition )->nLabel   := nTotNFacRec( ::dbfLineas )
+                     ( tmpLabelEdition )->nLabel   := nTotNFacRec( ::dbfLineas )
                   else
-                     ( ::tmpLabelEdition )->nLabel   := ::nUnidadesLabels
+                     ( tmpLabelEdition )->nLabel   := ::nUnidadesLabels
                   end if
 
-                  ( ::tmpLabelEdition )->( dbUnlock() )
+                  ( tmpLabelEdition )->( dbUnlock() )
 
                end if
 
@@ -1934,9 +1942,9 @@ METHOD LoadTempLabelEdition() CLASS TLabelGeneratorFacturasRectificativaClientes
    ( ::dbfCabecera )->( OrdSetFocus( nOrd ) )
    ( ::dbfCabecera )->( dbGoTo( nRec ) )
 
-   ( ::tmpLabelEdition )->( dbGoTop() )
+   ( tmpLabelEdition )->( dbGoTop() )
 
-   ::oBrwLabel:Refresh()
+   ::refreshBrowseLabel()
 
 Return ( Self )
 
@@ -2058,15 +2066,17 @@ Return( Self )
  
 //---------------------------------------------------------------------------//
 
-METHOD LoadTempLabelEdition() CLASS TLabelGeneratorSATClientes
+METHOD LoadTempLabelEdition( tmpLabelEdition ) CLASS TLabelGeneratorSATClientes
 
    local nRec
    local nOrd
 
+   DEFAULT tmpLabelEdition    := ::tmpLabelEdition
+
    //Limpiamos la base de datos temporal-----------------------------------------
 
-   if ( ::tmpLabelEdition )->( Used() )
-      ( ::tmpLabelEdition )->( __dbZap() )
+   if ( tmpLabelEdition )->( Used() )
+      ( tmpLabelEdition )->( __dbZap() )
    end if 
 
    //Llenamos la tabla temporal--------------------------------------------------
@@ -2086,20 +2096,20 @@ METHOD LoadTempLabelEdition() CLASS TLabelGeneratorSATClientes
 
                if !empty( ( ::dbfLineas )->cRef )
 
-                  dbPass( ::dbfLineas, ::tmpLabelEdition, .t. )
+                  dbPass( ::dbfLineas, tmpLabelEdition, .t. )
 
-                  dblock( ::tmpLabelEdition )
+                  dblock( tmpLabelEdition )
 
-                  ( ::tmpLabelEdition )->nNumLin  := nTotNSatCli( ::dbfLineas )
-                  ( ::tmpLabelEdition )->lLabel   := .t.
+                  ( tmpLabelEdition )->nNumLin  := nTotNSatCli( ::dbfLineas )
+                  ( tmpLabelEdition )->lLabel   := .t.
 
                   if ::nCantidadLabels == 1
-                     ( ::tmpLabelEdition )->nLabel   := nTotNSatCli( ::dbfLineas )
+                     ( tmpLabelEdition )->nLabel   := nTotNSatCli( ::dbfLineas )
                   else
-                     ( ::tmpLabelEdition )->nLabel   := ::nUnidadesLabels
+                     ( tmpLabelEdition )->nLabel   := ::nUnidadesLabels
                   end if
 
-                  ( ::tmpLabelEdition )->( dbUnlock() )
+                  ( tmpLabelEdition )->( dbUnlock() )
 
                end if
 
@@ -2118,9 +2128,9 @@ METHOD LoadTempLabelEdition() CLASS TLabelGeneratorSATClientes
    ( ::dbfCabecera )->( OrdSetFocus( nOrd ) )
    ( ::dbfCabecera )->( dbGoTo( nRec ) )
 
-   ( ::tmpLabelEdition )->( dbGoTop() )
+   ( tmpLabelEdition )->( dbGoTop() )
 
-   ::oBrwLabel:Refresh()
+   ::refreshBrowseLabel()
 
 Return ( Self )
 
@@ -2312,9 +2322,7 @@ METHOD loadTempLabelEdition( tmpLabel ) CLASS TLabelGeneratorAlbaranProveedores
 
    ( tmpLabel )->( dbGoTop() )
 
-   if !empty(::oBrwLabel)
-      ::oBrwLabel:Refresh()
-   end if 
+   ::refreshBrowseLabel()
 
 Return ( Self )
 
@@ -2509,9 +2517,7 @@ METHOD loadTempLabelEdition( tmpLabel ) CLASS TLabelGeneratorFacturaProveedores
 
    ( tmpLabel )->( dbGoTop() )
 
-   if !empty(::oBrwLabel)
-      ::oBrwLabel:Refresh()
-   end if 
+   ::refreshBrowseLabel()
 
 Return ( Self )
 
@@ -2703,9 +2709,7 @@ METHOD loadTempLabelEdition( tmpLabel ) CLASS TLabelGeneratorFacturaRectificativ
 
    ( tmpLabel )->( dbGoTop() )
 
-   if !empty(::oBrwLabel)
-      ::oBrwLabel:Refresh()
-   end if 
+   ::refreshBrowseLabel()
 
 Return ( Self )
 

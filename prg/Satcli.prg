@@ -11807,7 +11807,7 @@ Function DesignLabelSATClientes( oFr, cDoc )
 
    // Zona de datos---------------------------------------------------------
    
-   oLabel:lCreateTempReport()
+   oLabel:createTempLabelReport()
    oLabel:loadTempLabelReport()      
    oLabel:dataLabel( oFr )
 
@@ -11824,7 +11824,6 @@ Function DesignLabelSATClientes( oFr, cDoc )
    end if
 
    oFr:DesignReport()
-
    oFr:DestroyFr()
 
    oLabel:DestroyTempReport()

@@ -18255,7 +18255,7 @@ Function DesignLabelPedidoClientes( oFr, dbfDoc )
 
    // Zona de datos---------------------------------------------------------
    
-   oLabel:lCreateTempReport()
+   oLabel:createTempLabelReport()
    oLabel:loadTempLabelReport()      
    oLabel:dataLabel( oFr )
 
@@ -18278,9 +18278,6 @@ Function DesignLabelPedidoClientes( oFr, dbfDoc )
    // Diseño de report------------------------------------------------------
 
    oFr:DesignReport()
-
-   // Destruye el diseñador-------------------------------------------------
-
    oFr:DestroyFr()
 
    oLabel:DestroyTempReport()

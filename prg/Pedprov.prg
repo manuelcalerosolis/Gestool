@@ -9286,7 +9286,7 @@ Function designLabelPedidoProveedores( oFr, cDoc )
 
    // Zona de datos---------------------------------------------------------
 
-   oLabel:lCreateTempReport()
+   oLabel:createTempLabelReport()
    oLabel:loadTempLabelReport()
 
    oLabel:dataLabel( oFr )

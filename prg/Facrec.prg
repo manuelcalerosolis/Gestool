@@ -15041,62 +15041,37 @@ RETURN ( oDlg:nResult == IDOK )
 
 Function DesignLabelFacturaRectificativaClientes( oFr, cDoc )
 
-   local oLabel   := TLabelGeneratorFacturasRectificativaClientes():New( nView )
+   local oLabel
+   local lOpenFiles  := empty( nView ) 
 
-   if oLabel:lErrorOnCreate
+   if lOpenFiles .and. !Openfiles()
       Return .f.
-   end if 
+   endif
 
-   if !oLabel:lCreateTempReport()
-      Return .f.
-   end if 
+   oLabel            := TLabelGeneratorFacturasRectificativaClientes():New( nView )
 
-   /*
-   Zona de datos---------------------------------------------------------
-   */
-   oLabel:DataLabel( oFr, .f. )
+   // Zona de datos---------------------------------------------------------
+   
+   oLabel:createTempLabelReport()
+   oLabel:loadTempLabelReport()      
+   oLabel:dataLabel( oFr )
 
-   /*
-   Paginas y bandas------------------------------------------------------
-   */
+   // Paginas y bandas------------------------------------------------------
 
    if !Empty( ( cDoc )->mReport )
-
       oFr:LoadFromBlob( ( cDoc )->( Select() ), "mReport")
-
    else
-
       oFr:AddPage(         "MainPage" )
-
       oFr:AddBand(         "CabeceraColumnas",  "MainPage",       frxMasterData )
       oFr:SetProperty(     "CabeceraColumnas",  "Top",            200 )
       oFr:SetProperty(     "CabeceraColumnas",  "Height",         100 )
       oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Lineas de facturas" )
-
    end if
 
-   /*
-   Diseño de report------------------------------------------------------
-   */
-
    oFr:DesignReport()
-
-   /*
-   Destruye el diseñador-------------------------------------------------
-   */
-
    oFr:DestroyFr()
 
-   /*
-   Destruye el fichero temporal------------------------------------------------
-   */
-
    oLabel:DestroyTempReport()
-
-   /*
-   Cierra ficheros-------------------------------------------------------
-   */
-
    oLabel:End()
 
 Return .t.

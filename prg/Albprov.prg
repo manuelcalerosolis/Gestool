@@ -10370,7 +10370,7 @@ Function DesignLabelAlbaranProveedor( oFr, cDbfDoc )
 
    // Zona de datos---------------------------------------------------------
    
-   oLabel:lCreateTempReport()
+   oLabel:createTempLabelReport()
    oLabel:loadTempLabelReport()      
 
    oLabel:dataLabel( oFr )
