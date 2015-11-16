@@ -1655,7 +1655,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       ACTION   ( oScript:Expand() ) ;
       TOOLTIP  "Scripts" ;
 
-      ImportScript( oWndBrw, oScript, "SATClientes" )  
+      ImportScript( oWndBrw, oScript, "SATClientes", nView )  
 
    DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
          NOBORDER ;

@@ -11,7 +11,7 @@
 
 static nView
 static lOpenFiles       := .f.
-static nLineaComienzo   := 30235
+static nLineaComienzo   := 2
 static defSituacion     := "Finalizado"
 
 //---------------------------------------------------------------------------//

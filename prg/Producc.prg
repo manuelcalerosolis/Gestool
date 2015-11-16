@@ -395,6 +395,7 @@ METHOD Activate( cDriver )
    local oImp
    local oPrv
    local oPdf
+   local oScript
 
    DEFAULT cDriver   := cDriver()
 
@@ -590,6 +591,13 @@ METHOD Activate( cDriver )
       TOOLTIP  "Eti(q)uetas" ;
       HOTKEY   "Q";
       LEVEL    ACC_IMPR   
+
+   DEFINE BTNSHELL oScript RESOURCE "Folder_document_" GROUP OF ::oWndBrw ;
+      NOBORDER ;
+      ACTION   ( oScript:Expand() ) ;
+      TOOLTIP  "Scripts" ;
+
+      ImportScript( ::oWndBrw, oScript, "Produccion" ) 
 
    DEFINE BTNSHELL RESOURCE "END" GROUP OF ::oWndBrw ;
       NOBORDER ;
