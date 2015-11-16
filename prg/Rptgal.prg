@@ -103,7 +103,7 @@ Function Main( cCodEmp, cCodUsr, cIp )
    if ( "ADSINTERNET" $ cAdsType )
 
       lAIS( .t. )
-      cIp( cAdsIp )
+      cAdsIp( cAdsIp )
       cData( cAdsData )
       cAdsFile( cAdsFile )
 

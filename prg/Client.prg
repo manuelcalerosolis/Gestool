@@ -281,11 +281,11 @@ static dFecIniCli
 static dFecFinCli
 
 static oEstadoCli
-static aEstadoCli    := { "Pendientes", "Pagados", "Todos" }
+static aEstadoCli       := { "Pendientes", "Pagados", "Todos" }
 static cEstadoCli
 
 static oPeriodoCli
-static aPeriodoCli   := {}
+static aPeriodoCli      := {}
 static cPeriodoCli
 
 static aDescuentosAtipicos
@@ -1050,7 +1050,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
             DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
                NOBORDER ;
-               ACTION   ( ReplaceCreator( oWndBrw, ( D():Get( "CliAtp", nView ) ), aItmAtp() ) ) ;
+               ACTION   ( ReplaceCreator( oWndBrw, D():Atipicas( nView ), aItmAtp() ) ) ;
                TOOLTIP  "Tarifa" ;
                FROM     oRpl ;
                CLOSED ;
@@ -8796,6 +8796,7 @@ FUNCTION aItmAtp()
    aAdd( aBase,  { "nDto4",     "N",  6, 2, "Descuento de tarifa de venta 4" }         )
    aAdd( aBase,  { "nDto5",     "N",  6, 2, "Descuento de tarifa de venta 5" }         )
    aAdd( aBase,  { "nDto6",     "N",  6, 2, "Descuento de tarifa de venta 6" }         ) 
+   aAdd( aBase,  { "cCodAge",   "C",  3, 0, "Código del agente" }                      )
 
 RETURN ( aBase )
 

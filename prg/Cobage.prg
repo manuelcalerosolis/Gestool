@@ -1251,7 +1251,7 @@ METHOD ValidAgente( oSay ) CLASS TCobAge
 
          ::oDbf:cCodPrv          := RetFld( cCodAge, ::oAgentes:cAlias, "cCodPrv" )
 
-         ::aAgentesRelacionados  := aAgentesRelacionados( ::oCodAge, ::oAgeRel:cAlias )
+         // ::aAgentesRelacionados  := aAgentesRelacionados( ::oCodAge, ::oAgeRel:cAlias )
 
          ::AsistenteImportarFacturas()
 

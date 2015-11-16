@@ -117,25 +117,31 @@ function Main( ParamsMain, ParamsSecond )
       fRename( FullCurDir() + "Gestion.Ini", FullCurDir() + "GstApolo.Ini" )
    end if
 
-   cAdsIp            := GetPvProfString(  "ADS",      "Ip",       "",   FullCurDir() + "GstApolo.Ini" )
    cAdsType          := GetPvProfString(  "ADS",      "Type",     "",   FullCurDir() + "GstApolo.Ini" )
+   cAdsIp            := GetPvProfString(  "ADS",      "Ip",       "",   FullCurDir() + "GstApolo.Ini" )
    cAdsData          := GetPvProfString(  "ADS",      "Data",     "",   FullCurDir() + "GstApolo.Ini" )
    nAdsServer        := GetPvProfInt(     "ADS",      "Server",   7,    FullCurDir() + "GstApolo.Ini" )
    cAdsLocal         := GetPvProfString(  "ADS",      "Local",    "",   FullCurDir() + "GstApolo.Ini" )
    cAdsFile          := GetPvProfString(  "ADS",      "File",     "",   FullCurDir() + "GstApolo.Ini" )
+
+   cAdsIp( cAdsIp )
+   cAdsData( cAdsData )
+   nAdsServer( nAdsServer )
+   cAdsFile( cAdsFile )
+   cAdsLocal( cAdsLocal )
+
+   // Motor de bases de datos--------------------------------------------------
+
+   if ( "ADMINISTRADOR" $ cParamsMain )
+      TDataCenter():lAdministratorTask()
+      Return nil
+   end if 
 
    // Motor de bases de datos--------------------------------------------------
 
    if ( "ADSINTERNET" $ cAdsType )
 
       lAIS( .t. )
-      cIp( cAdsIp )
-      cData( cAdsData )
-      cAdsFile( cAdsFile )
-
-      nAdsServer( nAdsServer )
-      cAdsLocal( cAdsLocal )
-
       rddRegister( 'ADS', 1 )
       rddSetDefault( 'ADSCDX' )
 
@@ -146,28 +152,15 @@ function Main( ParamsMain, ParamsSecond )
       adsSetDeleted( .t. )
       adsCacheOpenTables( 250 )
 
+      // Conexion con el motor de base de datos--------------------------------
+
       with object ( TDataCenter() )
+         :ConnectDataDictionary()
 
-         if ( "ADMINISTRADOR" $ cParamsMain )
-
-            :lAdministratorTask()
-
+         if !:lAdsConnection
+            msgStop( "Imposible conectar con GstApolo ADS data dictionary" )
             Return nil
-
-         else
-
-            :ConnectDataDictionary()
-
-            if !:lAdsConnection
-
-               msgStop( "Imposible conectar con GstApolo ADS data dictionary" )
-
-               Return nil
-
-            end if
-
          end if
-
       end with
 
    else 

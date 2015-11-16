@@ -1,16 +1,8 @@
-#ifndef __PDA__
-   #include "FiveWin.Ch"
-   #include "Font.ch"
-   #include "Report.ch"
-   #include "Xbrowse.ch"
-#else
-   #include "FWCE.ch"
-   REQUEST DBFCDX
-#endif
-
+#include "FiveWin.Ch"
+#include "Font.ch"
+#include "Report.ch"
+#include "Xbrowse.ch"
 #include "Factu.ch" 
-
-#ifndef __PDA__
 
 #define _CCODAGE                  1      //   C      3     0
 #define _CAPEAGE                  2      //   C     30     0
@@ -41,28 +33,34 @@
 #define _NCOMTAR5                27      //   N      5     2
 #define _NCOMTAR6                28      //   N      5     2
 
-static cTmpCom
-static cTmpRel
-static oWndBrw
-static lOpenFiles := .f.
-static bEdit      := { |aTmp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode ) }
-static bEdtDet    := { |aTmp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode | EdtDet( aTmp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode ) }
-static bEdtRel    := { |aTmp, aoGet, dbfAge, oBrw, cCodAge, bValid, nMode | EdtRel( aTmp, aoGet, dbfAge, oBrw, cCodAge, bValid, nMode ) }
+#define fldGeneral               oFld:aDialogs[1]
+#define fldComisiones            oFld:aDialogs[2]
+#define fldTarifas               oFld:aDialogs[3]
+#define fldRelaciones            oFld:aDialogs[4]
 
-#endif
+static oWndBrw
+
+static cAgentesComisiones
+static cAgentesRelaciones
+static cAgentesAtipicas
+
+static lOpenFiles                := .f.
+
+static bEdit                     := { |aTmp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode ) }
+static bEdtDet                   := { |aTmp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode | EdtDet( aTmp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode ) }
+static bEdtRel                   := { |aTmp, aoGet, dbfAge, oBrw, cCodAge, bValid, nMode | EdtRel( aTmp, aoGet, dbfAge, oBrw, cCodAge, bValid, nMode ) }
+static bEdicionTarifa            := { |aTmp, aoGet, dbfAge, oBrw, cCodAge, bValid, nMode | EdtRel( aTmp, aoGet, dbfAge, oBrw, cCodAge, bValid, nMode ) }
 
 static dbfAge
-static dbfAgeCom
-static dbfAgeRel
-static dbfProvee
-static dbfArticulo
+static dbfAgentesAtipicas
 
 static oDetCamposExtra
 
-static dbfTmpCom
-static dbfTmpRel
+static tmpAgentesComisiones
+static tmpAgentesRelaciones
+static tmpAgentesTarifas
 
-#ifndef __PDA__
+static nView
 
 //----------------------------------------------------------------------------//
 //Funciones del programa
@@ -194,15 +192,11 @@ FUNCTION Agentes( oMenuItem, oWnd )
 
       end if
 
-#ifndef __TACTIL__
-
       DEFINE BTNSHELL RESOURCE "IMP" OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( InfAge():New( "Listado de agentes" ):Play() ) ;
          TOOLTIP  "(L)istado" ;
 			HOTKEY 	"L"
-
-#endif
 
       DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw ;
 			NOBORDER ;
@@ -224,8 +218,10 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
    local oFld
    local oBrwLin
    local oBrwRel
+   local oBrwAtipicas
    local oBmpGeneral
    local oBmpComisiones
+   local oBmpTarifa
 
    /*
    Comienza la transaccion-----------------------------------------------------
@@ -240,11 +236,13 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
 		REDEFINE FOLDER oFld ;
 			ID 		500 ;
 			OF 		oDlg ;
-         PROMPT   "General"      ,;
-                  "Comisiones"   ,;
-                  "Relaciones"    ;
-         DIALOGS  "AGENTES_1"    ,;
-                  "AGENTES_2"    ,;
+         PROMPT   "General"         ,;
+                  "Comisiones"      ,;
+                  "Tarifas"         ,;
+                  "Relaciones"       ;
+         DIALOGS  "AGENTES_1"       ,;
+                  "AGENTES_2"       ,;
+                  "AGENTES_TARIFAS" ,;
                   "AGENTES_3"
 
       /*
@@ -255,97 +253,97 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          ID       500 ;
          RESOURCE "Security_Agent_48_Alpha" ;
          TRANSPARENT ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE GET aoGet[ _CCODAGE ] VAR aTemp[ _CCODAGE ];
          ID       100 ;
          WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
          PICTURE  "@!" ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE GET aoGet[ _CAPEAGE ] VAR aTemp[ _CAPEAGE ];
          ID       101 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  "@!" ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE GET aoGet[ _CNBRAGE ] VAR aTemp[ _CNBRAGE ];
          ID       102 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  "@!" ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
 		REDEFINE GET aTemp[ _CDNINIF ];
          ID       103 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
 		REDEFINE GET aTemp[ _CDIRAGE ];
          ID       104 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
 		REDEFINE GET aTemp[ _CPOBAGE ];
          ID       105 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
 		REDEFINE GET aTemp[ _CPROV ];
          ID       106 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
 		REDEFINE GET aTemp[ _CPTLAGE ];
          ID       107 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
 		REDEFINE GET aTemp[ _CTFOAGE ];
          ID       108 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  "############" ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE GET aTemp[ _CMOVAGE ];
          ID       113 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  "############" ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
 		REDEFINE GET aTemp[ _CFAXAGE ];
          ID       109 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  "############" ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE GET aTemp[ _CMAILAGE ];
          ID       114 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE GET aTemp[ _MCOMENT ];
          ID       112 ;
 			MEMO ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE GET aoGet[ _CCODPRV ] VAR aTemp[ _CCODPRV ] ;
          ID       320 ;
          IDTEXT   330 ;
          BITMAP   "LUPA" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cProvee( aoGet[ _CCODPRV ], dbfProvee, aoGet[ _CCODPRV ]:oHelpText ) );
+         VALID    ( cProvee( aoGet[ _CCODPRV ], D():Proveedores( nView ), aoGet[ _CCODPRV ]:oHelpText ) );
          ON HELP  ( BrwProvee( aoGet[ _CCODPRV ], aoGet[ _CCODPRV ]:oHelpText ) ) ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE GET aoGet[ _CCODART ] VAR aTemp[ _CCODART ] ;
          ID       340 ;
          IDTEXT   350 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    cArticulo( aoGet[ _CCODART ], dbfArticulo, aoGet[ _CCODART ]:oHelpText );
+         VALID    cArticulo( aoGet[ _CCODART ], D():Articulos( nView ), aoGet[ _CCODART ]:oHelpText );
          BITMAP   "LUPA" ;
          ON HELP  BrwArticulo( aoGet[ _CCODART ], aoGet[ _CCODART ]:oHelpText );
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       /*
       Segunda pestaña----------------------------------------------------------
@@ -355,7 +353,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          ID       500 ;
          RESOURCE "Symbol_Percent_48_Alpha" ;
          TRANSPARENT ;
-         OF       oFld:aDialogs[2]
+         OF       fldComisiones
 
       // Comisiones genereales
 
@@ -364,7 +362,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          PICTURE  "@E 999.99" ;
          SPINNER;
          ID       120 ;
-         OF       oFld:aDialogs[2]
+         OF       fldComisiones
 
       // Comisiones por tarifa 1
 
@@ -373,7 +371,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          PICTURE  "@E 999.99" ;
          SPINNER;
          ID       100 ;
-         OF       oFld:aDialogs[2]
+         OF       fldComisiones
 
       // Comisiones por tarifa 2
 
@@ -382,7 +380,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          PICTURE  "@E 999.99" ;
          SPINNER;
          ID       101 ;
-         OF       oFld:aDialogs[2]
+         OF       fldComisiones
 
       // Comisiones por tarifa 3
 
@@ -391,7 +389,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          PICTURE  "@E 999.99" ;
          SPINNER;
          ID       102 ;
-         OF       oFld:aDialogs[2]
+         OF       fldComisiones
 
       // Comisiones por tarifa 4
 
@@ -400,7 +398,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          PICTURE  "@E 999.99" ;
          SPINNER;
          ID       103 ;
-         OF       oFld:aDialogs[2]
+         OF       fldComisiones
 
       // Comisiones por tarifa 5
 
@@ -409,7 +407,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          PICTURE  "@E 999.99" ;
          SPINNER;
          ID       104 ;
-         OF       oFld:aDialogs[2]
+         OF       fldComisiones
 
       // Comisiones por tarifa 6
 
@@ -418,21 +416,21 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          PICTURE  "@E 999.99" ;
          SPINNER;
          ID       105 ;
-         OF       oFld:aDialogs[2]
+         OF       fldComisiones
 
 		// Detalle________________________________________________________________
 
-      oBrwLin                 := IXBrowse():New( oFld:aDialogs[2] )
+      oBrwLin                 := IXBrowse():New( fldComisiones )
 
       oBrwLin:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwLin:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrwLin:cAlias          := dbfTmpCom
+      oBrwLin:cAlias          := tmpAgentesComisiones
       oBrwLin:nMarqueeStyle   := 5
 
       with object ( oBrwLin:AddCol() )
          :cHeader          := "Hasta"
-         :bEditValue       := {|| ( dbfTmpCom )->nImpVta }
+         :bEditValue       := {|| ( tmpAgentesComisiones )->nImpVta }
          :cEditPicture     := PicOut()
          :nWidth           := 120
          :nDataStrAlign    := AL_RIGHT
@@ -441,7 +439,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
 
       with object ( oBrwLin:AddCol() )
          :cHeader          := "% Comisión"
-         :bEditValue       := {|| ( dbfTmpCom )->nPctCom }
+         :bEditValue       := {|| ( tmpAgentesComisiones )->nPctCom }
          :cEditPicture     := "@E 999.99"
          :nWidth           := 60
          :nDataStrAlign    := AL_RIGHT
@@ -449,28 +447,28 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
       end with
 
       if nMode != ZOOM_MODE
-         oBrwLin:bLDblClick   := {|| WinEdtRec( oBrwLin, bEdtDet, dbfTmpCom ) }
+         oBrwLin:bLDblClick   := {|| WinEdtRec( oBrwLin, bEdtDet, tmpAgentesComisiones ) }
       end if
 
       oBrwLin:CreateFromResource( 310 )
 
       REDEFINE BUTTON ;
 			ID 		501 ;
-         OF       oFld:aDialogs[2] ;
+         OF       fldComisiones ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( WinAppRec( oBrwLin, bEdtDet, dbfTmpCom ) )
+         ACTION   ( WinAppRec( oBrwLin, bEdtDet, tmpAgentesComisiones ) )
 
       REDEFINE BUTTON ;
          ID       502 ;
-         OF       oFld:aDialogs[2] ;
+         OF       fldComisiones ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( WinEdtRec( oBrwLin, bEdtDet, dbfTmpCom ) )
+         ACTION   ( WinEdtRec( oBrwLin, bEdtDet, tmpAgentesComisiones ) )
 
       REDEFINE BUTTON ;
          ID       503 ;
-         OF       oFld:aDialogs[2] ;
+         OF       fldComisiones ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( dbDelRec( oBrwLin, dbfTmpCom ) )
+         ACTION   ( dbDelRec( oBrwLin, tmpAgentesComisiones ) )
 
       REDEFINE GET aoGet[ _CTAAGE ] VAR aTemp[ _CTAAGE ] ;
          ID       350 ;
@@ -491,7 +489,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
                                  aTemp[ _CFAXAGE   ],;
                                  aTemp[ _CMAILAGE  ] },;
                               aoGet[ _CTAAGE ]:oHelpText ) );
-         OF       oFld:aDialogs[2]
+         OF       fldComisiones
 
       REDEFINE GET aoGet[ _CTAGAS ] VAR aTemp[ _CTAGAS ] ;
          ID       360 ;
@@ -501,35 +499,202 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          BITMAP   "LUPA" ;
          ON HELP  ( BrwChkSubcuenta( aoGet[ _CTAGAS ], aoGet[ _CTAGAS ]:oHelpText ) ) ;
          VALID    ( MkSubcuenta( aoGet[ _CTAGAS ], nil, aoGet[ _CTAGAS ]:oHelpText ) );
-         OF       oFld:aDialogs[2]
+         OF       fldComisiones
+
+      // Tarifas particulares de agentes---------------------------------------
+
+      REDEFINE BITMAP oBmpTarifa ;
+         ID       500 ;
+         RESOURCE "Symbol_euro_48" ;
+         TRANSPARENT ;
+         OF       fldTarifas
+
+      REDEFINE BUTTON  ;
+         ID       501 ;
+         OF       fldTarifas ;
+         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE );
+         ACTION   ( msgAlert("APPEND") )
+
+      REDEFINE BUTTON  ;
+         ID       502 ;
+         OF       fldTarifas ;
+         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE );
+         ACTION   ( msgAlert("EDIT") )
+
+      REDEFINE BUTTON  ;
+         ID       503 ;
+         OF       fldTarifas ;
+         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE );
+         ACTION   ( msgAlert("DELETE") )
+
+      oBrwAtipicas                 := IXBrowse():New( fldTarifas )
+
+      oBrwAtipicas:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwAtipicas:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrwAtipicas:cAlias          := tmpAgentesTarifas
+      oBrwAtipicas:nMarqueeStyle   := 6
+      oBrwAtipicas:cName           := "Agentes.Atipicas"
+
+      with object ( oBrwAtipicas:AddCol() )
+         :cHeader          := "Tipo"
+         :bEditValue       := {|| if( ( tmpAgentesTarifas )->nTipAtp <= 1, "Artículo", "Familia" ) }
+         :nWidth           := 60
+      end with
+
+      with object ( oBrwAtipicas:AddCol() )
+         :cHeader          := "Código"
+         :bEditValue       := {|| if( ( tmpAgentesTarifas )->nTipAtp <= 1, ( tmpAgentesTarifas )->cCodArt, ( tmpAgentesTarifas )->cCodFam ) }
+         :nWidth           := 80
+      end with
+
+      with object ( oBrwAtipicas:AddCol() )
+         :cHeader          := "Nombre"
+         :bEditValue       := {|| if( ( tmpAgentesTarifas )->nTipAtp <= 1, retArticulo( ( tmpAgentesTarifas )->cCodArt, D():Get( "Articulo", nView ) ), retFamilia( ( tmpAgentesTarifas )->cCodFam, D():Familias( nView ) ) ) }
+         :nWidth           := 160
+      end with
+
+      with object ( oBrwAtipicas:AddCol() )
+         :cHeader          := "Prop.1"
+         :bEditValue       := {|| ( tmpAgentesTarifas )->cValPr1 }
+         :nWidth           := 40
+         :lHide            := .t.
+      end with
+
+      with object ( oBrwAtipicas:AddCol() )
+         :cHeader          := "Prop.2"
+         :bEditValue       := {|| ( tmpAgentesTarifas )->cValPr2 }
+         :nWidth           := 40
+         :lHide            := .t.
+      end with
+
+      with object ( oBrwAtipicas:AddCol() )
+         :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" )
+         :bEditValue       := {|| ( tmpAgentesTarifas )->nPrcArt }
+         :cEditPicture     := cPorDiv()
+         :nWidth           := 80
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+      end with
+
+      with object ( oBrwAtipicas:AddCol() )
+         :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" )
+         :bEditValue       := {|| ( tmpAgentesTarifas )->nPrcArt2 }
+         :cEditPicture     := cPorDiv()
+         :nWidth           := 80
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+      end with
+
+      with object ( oBrwAtipicas:AddCol() )
+         :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" )
+         :bEditValue       := {|| ( tmpAgentesTarifas )->nPrcArt3 }
+         :cEditPicture     := cPorDiv()
+         :nWidth           := 80
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+      end with
+
+      with object ( oBrwAtipicas:AddCol() )
+         :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" )
+         :bEditValue       := {|| ( tmpAgentesTarifas )->nPrcArt4 }
+         :cEditPicture     := cPorDiv()
+         :nWidth           := 80
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+      end with
+
+      with object ( oBrwAtipicas:AddCol() )
+         :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" )
+         :bEditValue       := {|| ( tmpAgentesTarifas )->nPrcArt5 }
+         :cEditPicture     := cPorDiv()
+         :nWidth           := 80
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+      end with
+
+      with object ( oBrwAtipicas:AddCol() )
+         :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" )
+         :bEditValue       := {|| ( tmpAgentesTarifas )->nPrcArt6 }
+         :cEditPicture     := cPorDiv()
+         :nWidth           := 80
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+      end with
+
+      with object ( oBrwAtipicas:AddCol() )
+         :cHeader          := "% Descuento"
+         :bEditValue       := {|| ( tmpAgentesTarifas )->nDtoArt }
+         :cEditPicture     := "@E 999.99"
+         :nWidth           := 80
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+      end with
+
+      with object ( oBrwAtipicas:AddCol() )
+         :cHeader          := "Descuento lineal"
+         :bEditValue       := {|| ( tmpAgentesTarifas )->nDtoDiv }
+         :cEditPicture     := cPorDiv()
+         :nWidth           := 80
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+      end with
+
+      with object ( oBrwAtipicas:AddCol() )
+         :cHeader          := "% Agente"
+         :bEditValue       := {|| ( tmpAgentesTarifas )->nComAge }
+         :cEditPicture     := "@E 999.99"
+         :nWidth           := 80
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+      end with
+
+      with object ( oBrwAtipicas:AddCol() )
+         :cHeader          := "Inicio"
+         :bEditValue       := {|| ( tmpAgentesTarifas )->dFecIni }
+         :nWidth           := 80
+      end with
+
+      with object ( oBrwAtipicas:AddCol() )
+         :cHeader          := "Fin"
+         :bEditValue       := {|| ( tmpAgentesTarifas )->dFecFin }
+         :nWidth           := 80
+      end with
+
+      if oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE
+         oBrwAtipicas:bLDblClick   := {|| WinEdtRec( oBrwAtipicas, bEdicionTarifa, tmpAgentesTarifas, aTemp, aoGet ) }
+      end if
+      oBrwAtipicas:bRClicked       := {| nRow, nCol, nFlags | oBrwAtipicas:RButtonDown( nRow, nCol, nFlags ) }
+
+      oBrwAtipicas:CreateFromResource( 400 )
 
       /*
       Tercera pestaña----------------------------------------------------------
       */
 
-      oBrwRel                 := IXBrowse():New( oFld:aDialogs[3] )
+      oBrwRel                 := IXBrowse():New( fldRelaciones )
 
       oBrwRel:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwRel:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrwRel:cAlias          := dbfTmpRel
+      oBrwRel:cAlias          := tmpAgentesRelaciones
       oBrwRel:nMarqueeStyle   := 5
 
       with object ( oBrwRel:AddCol() )
          :cHeader          := "Código"
-         :bEditValue       := {|| ( dbfTmpRel )->cCodRel }
+         :bEditValue       := {|| ( tmpAgentesRelaciones )->cCodRel }
          :nWidth           := 60
       end with
 
       with object ( oBrwRel:AddCol() )
          :cHeader          := "Agente"
-         :bEditValue       := {|| cNbrAgent( ( dbfTmpRel )->cCodRel, dbfAge ) }
+         :bEditValue       := {|| cNbrAgent( ( tmpAgentesRelaciones )->cCodRel, dbfAge ) }
          :nWidth           := 240
       end with
 
       with object ( oBrwRel:AddCol() )
          :cHeader          := "% Comisión"
-         :bEditValue       := {|| ( dbfTmpRel )->nComRel }
+         :bEditValue       := {|| ( tmpAgentesRelaciones )->nComRel }
          :cEditPicture     := "@E 999.99"
          :nWidth           := 60
          :nDataStrAlign    := AL_RIGHT
@@ -537,28 +702,28 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
       end with
 
       if nMode != ZOOM_MODE
-         oBrwRel:bLDblClick   := {|| WinEdtRec( oBrwRel, bEdtRel, dbfTmpRel, aTemp[ _CCODAGE ] ) }
+         oBrwRel:bLDblClick   := {|| WinEdtRec( oBrwRel, bEdtRel, tmpAgentesRelaciones, aTemp[ _CCODAGE ] ) }
       end if
 
       oBrwRel:CreateFromResource( 310 )
 
       REDEFINE BUTTON ;
 			ID 		501 ;
-         OF       oFld:aDialogs[3] ;
+         OF       fldRelaciones ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( WinAppRec( oBrwRel, bEdtRel, dbfTmpRel, aTemp[ _CCODAGE ] ) )
+         ACTION   ( WinAppRec( oBrwRel, bEdtRel, tmpAgentesRelaciones, aTemp[ _CCODAGE ] ) )
 
       REDEFINE BUTTON ;
          ID       502 ;
-         OF       oFld:aDialogs[3] ;
+         OF       fldRelaciones ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( WinEdtRec( oBrwRel, bEdtRel, dbfTmpRel, aTemp[ _CCODAGE ] ) )
+         ACTION   ( WinEdtRec( oBrwRel, bEdtRel, tmpAgentesRelaciones, aTemp[ _CCODAGE ] ) )
 
       REDEFINE BUTTON ;
          ID       503 ;
-         OF       oFld:aDialogs[3] ;
+         OF       fldRelaciones ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( dbDelRec( oBrwRel, dbfTmpRel ) )
+         ACTION   ( dbDelRec( oBrwRel, tmpAgentesRelaciones ) )
 
       /*
       Botones------------------------------------------------------------------
@@ -590,6 +755,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
 
    oBmpGeneral:End()
    oBmpComisiones:End()
+   oBmpTarifa:End()
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -622,63 +788,71 @@ Return ( oMenu )
 
 Static Function lPreEdit( aTmp, nMode )
 
-   local lErrors  := .f.
-   local cDbfCom  := "AgeCom"
-   local cDbfRel  := "AgeRel"
-   local cCodAge  := aTmp[ _CCODAGE ]
+   local lErrors              := .f.
+   local cCodAge              := aTmp[ _CCODAGE ]
    local oError
    local oBlock
+   local tmpCom
 
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      cTmpCom     := cGetNewFileName( cPatTmp() + cDbfCom )
+      // Primero Crear la base de datos local----------------------------------
 
-      /*
-      Primero Crear la base de datos local
-      */
+      cAgentesComisiones      := cGetNewFileName( cPatTmp() + "ComAge" )
 
-      dbCreate( cTmpCom, aSqlStruct( aItmCom() ), cLocalDriver() )
-      dbUseArea( .t., cLocalDriver(), cTmpCom, cCheckArea( cDbfCom, @dbfTmpCom ), .f. )
-      ( dbfTmpCom )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfTmpCom )->( OrdCreate( cTmpCom, "nImpVta", "Str( nImpVta )", {|| Str( Field->nImpVta ) } ) )
+      dbCreate( cAgentesComisiones, aSqlStruct( aItmCom() ), cLocalDriver() )
+      dbUseArea( .t., cLocalDriver(), cAgentesComisiones, cCheckArea( "ComAge", @tmpAgentesComisiones ), .f. )
 
-      /*
-      A¤adimos desde el fichero de lineas
-      */
+      ( tmpAgentesComisiones )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( tmpAgentesComisiones )->( OrdCreate( cAgentesComisiones, "nImpVta", "Str( nImpVta )", {|| Str( Field->nImpVta ) } ) )
 
-      if ( dbfAgeCom )->( dbSeek( cCodAge ) )
-         while ( ( dbfAgeCom )->cCodAge == cCodAge .and. !( dbfAgeCom )->( eof() ) )
-            dbPass( dbfAgeCom, dbfTmpCom, .t. )
-            ( dbfAgeCom )->( dbSkip() )
+      if ( D():AgentesComisiones( nView ) )->( dbSeek( cCodAge ) )
+         while ( ( D():AgentesComisiones( nView ) )->cCodAge == cCodAge .and. !( D():AgentesComisiones( nView ) )->( eof() ) )
+            dbPass( D():AgentesComisiones( nView ), tmpAgentesComisiones, .t. )
+            ( D():AgentesComisiones( nView ) )->( dbSkip() )
          end while
       end if
 
-      ( dbfTmpCom )->( dbGoTop() )
+      ( tmpAgentesComisiones )->( dbGoTop() )
 
-      cTmpRel     := cGetNewFileName( cPatTmp() + cDbfRel )
+      // Relaciones entre agentes----------------------------------------------
 
-      /*
-      Primero Crear la base de datos local
-      */
+      cAgentesRelaciones     := cGetNewFileName( cPatTmp() + "RelAge" )
 
-      dbCreate( cTmpRel, aSqlStruct( aItmRel() ), cLocalDriver() )
-      dbUseArea( .t., cLocalDriver(), cTmpRel, cCheckArea( cDbfRel, @dbfTmpRel ), .f. )
-      ( dbfTmpRel )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfTmpRel )->( OrdCreate( cTmpRel, "cCodRel", "cCodRel", {|| Field->cCodRel } ) )
+      dbCreate( cAgentesRelaciones, aSqlStruct( aItmRel() ), cLocalDriver() )
+      dbUseArea( .t., cLocalDriver(), cAgentesRelaciones, cCheckArea( "RelAge", @tmpAgentesRelaciones ), .f. )
 
-      /*
-      A¤adimos desde el fichero de lineas
-      */
+      ( tmpAgentesRelaciones )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( tmpAgentesRelaciones )->( OrdCreate( cAgentesRelaciones, "cCodAge", "cCodAge", {|| Field->cCodAge } ) )
 
-      if ( dbfAgeRel )->( dbSeek( cCodAge ) )
-         while ( ( dbfAgeRel )->cCodAge == cCodAge .and. !( dbfAgeRel )->( eof() ) )
-            dbPass( dbfAgeRel, dbfTmpRel, .t. )
-            ( dbfAgeRel )->( dbSkip() )
+      if ( D():AgentesRelaciones( nView ) )->( dbSeek( cCodAge ) )
+         while ( ( D():AgentesRelaciones( nView ) )->cCodAge == cCodAge .and. !( D():AgentesRelaciones( nView ) )->( eof() ) )
+            dbPass( D():AgentesRelaciones( nView ), tmpAgentesRelaciones, .t. )
+            ( D():AgentesRelaciones( nView ) )->( dbSkip() )
          end while
       end if
 
-      ( dbfTmpRel )->( dbGoTop() )
+      ( tmpAgentesRelaciones )->( dbGoTop() )
+
+      // Tarifas atipicas------------------------------------------------------
+
+      cAgentesAtipicas        := cGetNewFileName( cPatTmp() + "AtpAge" )
+
+      dbCreate( cAgentesAtipicas, aSqlStruct( aItmAtp() ), cLocalDriver() )
+      dbUseArea( .t., cLocalDriver(), cAgentesAtipicas, cCheckArea( "AtpAge", @tmpAgentesTarifas ), .f. )
+
+      ( tmpAgentesTarifas )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( tmpAgentesTarifas )->( OrdCreate( cAgentesAtipicas, "cCliArt", "CCODART + CCODPR1 + CCODPR2 + CVALPR1 + CVALPR2", {|| Field->CCODART + Field->CCODPR1 + Field->CCODPR2 + Field->CVALPR1 + Field->CVALPR2 } ) )
+
+      ( tmpAgentesTarifas )->( OrdSetFocus( "cCliArt" ) )
+
+      if ( D():Atipicas( nView ) )->( dbSeek( cCodAge ) )
+         while ( ( D():Atipicas( nView ) )->cCodAge == cCodAge .and. !( D():Atipicas( nView ) )->( eof() ) )
+            dbPass( D():Atipicas( nView ), tmpAgentesTarifas, .t. )
+            ( D():Atipicas( nView ) )->( dbSkip() )
+         end while
+      end if
 
    RECOVER USING oError
 
@@ -698,25 +872,28 @@ RETURN ( lErrors )
 
 Static Function lPosEdit( oBrwLin )
 
-   if !Empty( oBrwLin )
+   if !empty( oBrwLin )
       oBrwLin:CloseData()
    end if
 
-   if !Empty( dbfTmpCom ) .and. ( dbfTmpCom )->( Used() )
-      ( dbfTmpCom )->( dbCloseArea() )
+   if !Empty( tmpAgentesComisiones ) .and. ( tmpAgentesComisiones )->( Used() )
+      ( tmpAgentesComisiones )->( dbCloseArea() )
    end if
+   dbfErase( cAgentesComisiones )
 
-   dbfTmpCom            := nil
-
-   dbfErase( cTmpCom )
-
-   if !Empty( dbfTmpRel ) .and. ( dbfTmpRel )->( Used() )
-      ( dbfTmpRel )->( dbCloseArea() )
+   if !Empty( tmpAgentesRelaciones ) .and. ( tmpAgentesRelaciones )->( Used() )
+      ( tmpAgentesRelaciones )->( dbCloseArea() )
    end if
+   dbfErase( cAgentesRelaciones )
 
-   dbfTmpRel            := nil
+   if !Empty( tmpAgentesTarifas ) .and. ( tmpAgentesTarifas )->( Used() )
+      ( tmpAgentesTarifas )->( dbCloseArea() )
+   end if
+   dbfErase( cAgentesAtipicas )
 
-   dbfErase( cTmpRel )
+   tmpAgentesRelaciones          := nil
+   tmpAgentesComisiones          := nil
+   tmpAgentesTarifas             := nil
 
 Return .t.
 
@@ -751,58 +928,28 @@ STATIC FUNCTION lPreSave( aTemp, aoGet, dbfAge, oBrw, oBrwLin, nMode, oDlg )
 
    oMsgText( "Archivando" )
 
-   /*
-   RollBack en edici¢n de registros--------------------------------------------
-	*/
+   // RollBack en edici¢n de registros--------------------------------------------
 
    if nMode == EDIT_MODE
-
-      while ( ( dbfAgeCom )->( dbSeek( aTemp[ _CCODAGE ] ) ) .and. !( dbfAgeCom )->( eof() ) )
-         if dbLock( dbfAgeCom )
-            ( dbfAgeCom )->( dbDelete() )
-            ( dbfAgeCom )->( dbUnLock() )
-         end if
-      end while
-
-      while ( ( dbfAgeRel )->( dbSeek( aTemp[ _CCODAGE ] ) ) .and. !( dbfAgeRel )->( eof() ) )
-         if dbLock( dbfAgeRel )
-            ( dbfAgeRel )->( dbDelete() )
-            ( dbfAgeRel )->( dbUnLock() )
-         end if
-      end while
-
+      deleteRelations( aTemp[ _CCODAGE ], D():AgentesComisiones( nView ) )
+      deleteRelations( aTemp[ _CCODAGE ], D():AgentesRelaciones( nView ) )
+      deleteRelations( aTemp[ _CCODAGE ], dbfAgentesAtipicas )
    end if
 
-   /*
-   Quitamos los filtros--------------------------------------------------------
-   */
+   // Quitamos los filtros--------------------------------------------------------
 
    oMsgProgress()
-   oMsgProgress():SetRange( 0, ( dbfTmpCom )->( LastRec() ) )
+   oMsgProgress():SetRange( 0, ( tmpAgentesComisiones )->( LastRec() ) )
 
-	/*
-   Tablas relacionadas---------------------------------------------------------
-	*/
+   // Tablas relacionadas---------------------------------------------------------
 
-   ( dbfTmpCom )->( dbGoTop() )
-   while ( dbfTmpCom )->( !eof() )
-      dbPass( dbfTmpCom, dbfAgeCom, .t., aTemp[ _CCODAGE ] )
-      ( dbfTmpCom )->( dbSkip() )
-      oMsgProgress():Deltapos( 1 )
-   end while
+   buildRelation( aTemp[ _CCODAGE ], tmpAgentesComisiones, D():AgentesComisiones( nView ) )
+   buildRelation( aTemp[ _CCODAGE ], tmpAgentesRelaciones, D():AgentesRelaciones( nView ) )
+   buildRelation( aTemp[ _CCODAGE ], tmpAgentesTarifas, dbfAgentesAtipicas )
 
-   ( dbfTmpRel )->( dbGoTop() )
-   while ( dbfTmpRel )->( !eof() )
-      dbPass( dbfTmpRel, dbfAgeRel, .t., aTemp[ _CCODAGE ] )
-      ( dbfTmpRel )->( dbSkip() )
-      oMsgProgress():Deltapos( 1 )
-   end while
+   // Ahora escribimos en el fichero definitivo-----------------------------------
 
-   /*
-   Ahora escribimos en el fichero definitivo-----------------------------------
-	*/
-
-   WinGather( aTemp, aoGet, dbfAge, oBrw, nMode )
+   winGather( aTemp, aoGet, dbfAge, oBrw, nMode )
 
    dbCommitAll()
 
@@ -810,7 +957,7 @@ STATIC FUNCTION lPreSave( aTemp, aoGet, dbfAge, oBrw, oBrwLin, nMode, oDlg )
 
    lPosEdit( oBrwLin )
 
-   EndProgress()
+   endProgress()
 
    oDlg:Enable()
    oDlg:End( IDOK )
@@ -821,7 +968,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Static Function EdtDet( aTmp, aGet, dbfTmpCom, oBrw, bWhen, bValid, nMode )
+Static Function EdtDet( aTmp, aGet, tmpAgentesComisiones, oBrw, bWhen, bValid, nMode )
 
 	local oDlg
 
@@ -831,16 +978,16 @@ Static Function EdtDet( aTmp, aGet, dbfTmpCom, oBrw, bWhen, bValid, nMode )
 
    DEFINE DIALOG oDlg RESOURCE "AgeDet"
 
-      REDEFINE GET aGet[ ( dbfTmpCom )->( FieldPos( "nImpVta" ) ) ] ;
-         VAR      aTmp[ ( dbfTmpCom )->( FieldPos( "nImpVta" ) ) ] ;
+      REDEFINE GET aGet[ ( tmpAgentesComisiones )->( FieldPos( "nImpVta" ) ) ] ;
+         VAR      aTmp[ ( tmpAgentesComisiones )->( FieldPos( "nImpVta" ) ) ] ;
 			ID 		100 ;
          PICTURE  PicOut() ;
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      REDEFINE GET aGet[ ( dbfTmpCom )->( FieldPos( "nPctCom" ) ) ] ;
-         VAR      aTmp[ ( dbfTmpCom )->( FieldPos( "nPctCom" ) ) ] ;
+      REDEFINE GET aGet[ ( tmpAgentesComisiones )->( FieldPos( "nPctCom" ) ) ] ;
+         VAR      aTmp[ ( tmpAgentesComisiones )->( FieldPos( "nPctCom" ) ) ] ;
          ID       110 ;
          PICTURE  "@E 999.99" ;
          SPINNER ;
@@ -851,7 +998,7 @@ Static Function EdtDet( aTmp, aGet, dbfTmpCom, oBrw, bWhen, bValid, nMode )
          ID       IDOK ;
 			OF 		oDlg ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         ACTION   ( WinGather( aTmp, nil, dbfTmpCom, oBrw, nMode ), oDlg:end( IDOK ) )
+         ACTION   ( WinGather( aTmp, nil, tmpAgentesComisiones, oBrw, nMode ), oDlg:end( IDOK ) )
 
 		REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -865,7 +1012,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-Static Function EdtRel( aTmp, aGet, dbfTmpRel, oBrw, cCodAge, bValid, nMode )
+Static Function EdtRel( aTmp, aGet, tmpAgentesRelaciones, oBrw, cCodAge, bValid, nMode )
 
 	local oDlg
 
@@ -875,19 +1022,19 @@ Static Function EdtRel( aTmp, aGet, dbfTmpRel, oBrw, cCodAge, bValid, nMode )
 
    DEFINE DIALOG oDlg RESOURCE "AgeRel"
 
-      REDEFINE GET aGet[ ( dbfTmpRel )->( FieldPos( "cCodRel" ) ) ] ;
-         VAR      aTmp[ ( dbfTmpRel )->( FieldPos( "cCodRel" ) ) ] ;
+      REDEFINE GET aGet[ ( tmpAgentesRelaciones )->( FieldPos( "cCodRel" ) ) ] ;
+         VAR      aTmp[ ( tmpAgentesRelaciones )->( FieldPos( "cCodRel" ) ) ] ;
 			ID 		100 ;
          IDTEXT   101 ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwAgentes( aGet[ ( dbfTmpRel )->( FieldPos( "cCodRel" ) ) ], aGet[ ( dbfTmpRel )->( FieldPos( "cCodRel" ) ) ]:oHelpText, .t., aTmp[ ( dbfTmpRel )->( FieldPos( "cCodRel" ) ) ] ) );
+         ON HELP  ( BrwAgentes( aGet[ ( tmpAgentesRelaciones )->( FieldPos( "cCodRel" ) ) ], aGet[ ( tmpAgentesRelaciones )->( FieldPos( "cCodRel" ) ) ]:oHelpText, .t., aTmp[ ( tmpAgentesRelaciones )->( FieldPos( "cCodRel" ) ) ] ) );
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( lValidEdtRel( cCodAge, aTmp, aGet, dbfAge ) );
          PICTURE  "@!" ;
          OF       oDlg
 
-      REDEFINE GET aGet[ ( dbfTmpRel )->( FieldPos( "nComRel" ) ) ] ;
-         VAR      aTmp[ ( dbfTmpRel )->( FieldPos( "nComRel" ) ) ] ;
+      REDEFINE GET aGet[ ( tmpAgentesRelaciones )->( FieldPos( "nComRel" ) ) ] ;
+         VAR      aTmp[ ( tmpAgentesRelaciones )->( FieldPos( "nComRel" ) ) ] ;
          ID       110 ;
          PICTURE  "@E 999.99" ;
          SPINNER ;
@@ -898,7 +1045,7 @@ Static Function EdtRel( aTmp, aGet, dbfTmpRel, oBrw, cCodAge, bValid, nMode )
          ID       IDOK ;
 			OF 		oDlg ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         ACTION   ( WinGather( aTmp, nil, dbfTmpRel, oBrw, nMode ), oDlg:end( IDOK ) )
+         ACTION   ( WinGather( aTmp, nil, tmpAgentesRelaciones, oBrw, nMode ), oDlg:end( IDOK ) )
 
 		REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -906,7 +1053,7 @@ Static Function EdtRel( aTmp, aGet, dbfTmpRel, oBrw, cCodAge, bValid, nMode )
          CANCEL ;
 			ACTION 	( oDlg:end() )
 
-      oDlg:bStart := {|| aGet[ ( dbfTmpRel )->( FieldPos( "cCodRel" ) ) ]:lValid() }
+      oDlg:bStart := {|| aGet[ ( tmpAgentesRelaciones )->( FieldPos( "cCodRel" ) ) ]:lValid() }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -920,11 +1067,11 @@ Static Function lValidEdtRel( cCodAge, aTmp, aGet, dbfAge )
    local nOrd
    local lVal  := .f.
 
-   if Empty( aTmp[ ( dbfTmpRel )->( FieldPos( "cCodRel" ) ) ] )
+   if Empty( aTmp[ ( tmpAgentesRelaciones )->( FieldPos( "cCodRel" ) ) ] )
       return .t.
    end if
 
-   if ( cCodAge == aTmp[ ( dbfTmpRel )->( FieldPos( "cCodRel" ) ) ] )
+   if ( cCodAge == aTmp[ ( tmpAgentesRelaciones )->( FieldPos( "cCodRel" ) ) ] )
       MsgStop( "No se puede relacionar un agente con el mismo" )
       return .f.
    end if
@@ -932,8 +1079,8 @@ Static Function lValidEdtRel( cCodAge, aTmp, aGet, dbfAge )
    nRec        := ( dbfAge )->( RecNo() )
    nOrd        := ( dbfAge )->( OrdSetFocus( "cCodAge" ) )
 
-   if ( dbfAge )->( dbSeek( aTmp[ ( dbfTmpRel )->( FieldPos( "cCodRel" ) ) ] ) )
-      aGet[ ( dbfTmpRel )->( FieldPos( "cCodRel" ) ) ]:oHelpText:cText( cNombreAgente( dbfAge ) )
+   if ( dbfAge )->( dbSeek( aTmp[ ( tmpAgentesRelaciones )->( FieldPos( "cCodRel" ) ) ] ) )
+      aGet[ ( tmpAgentesRelaciones )->( FieldPos( "cCodRel" ) ) ]:oHelpText:cText( cNombreAgente( dbfAge ) )
       lVal     := .t.
    end if
 
@@ -994,11 +1141,7 @@ FUNCTION BrwAgentes( oGet, oGet2, lRelacionado, cCodigoAgente )
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if ( "PDA" $ cParamsMain() )
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY_PDA"  TITLE "Seleccionar agentes"
-   else
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY"      TITLE "Seleccionar agentes"
-   end if
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Seleccionar agentes"
 
 		REDEFINE GET oGet1 VAR cGet1;
 			ID 		104 ;
@@ -1184,7 +1327,7 @@ RETURN ( cNombre )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION aAgentesRelacionados( cCodAge, dbfAgeRel )
+FUNCTION aAgentesRelacionados( cCodAge, nView )
 
    local nOrd
    local oBlock
@@ -1198,16 +1341,16 @@ FUNCTION aAgentesRelacionados( cCodAge, dbfAgeRel )
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   nOrd              := ( dbfAgeRel )->( ordSetFocus( "cCodRel" ) )
+   nOrd              := ( D():AgentesRelaciones( nView ) )->( ordSetFocus( "cCodRel" ) )
 
-   if ( dbfAgeRel )->( dbSeek( cCodAge ) )
-      while ( ( dbfAgeRel )->cCodRel == cCodAge ) .and. !( dbfAgeRel )->( eof() )
-         aAdd( aAgentes, { ( dbfAgeRel )->cCodAge, ( dbfAgeRel )->nComRel } )
-         ( dbfAgeRel )->( dbSkip() )
+   if ( D():AgentesRelaciones( nView ) )->( dbSeek( cCodAge ) )
+      while ( ( D():AgentesRelaciones( nView ) )->cCodRel == cCodAge ) .and. !( D():AgentesRelaciones( nView ) )->( eof() )
+         aAdd( aAgentes, { ( D():AgentesRelaciones( nView ) )->cCodAge, ( D():AgentesRelaciones( nView ) )->nComRel } )
+         ( D():AgentesRelaciones( nView ) )->( dbSkip() )
       end while
    end if
 
-   ( dbfAgeRel )->( ordSetFocus( nOrd ) )
+   ( D():AgentesRelaciones( nView ) )->( ordSetFocus( nOrd ) )
 
    RECOVER USING oError
 
@@ -1262,206 +1405,6 @@ RETURN ( uAgentes )
 
 //----------------------------------------------------------------------------//
 
-#else
-
-//----------------------------------------------------------------------------//
-//Funciones para PDA
-//----------------------------------------------------------------------------//ç
-
-FUNCTION pdaBrwAgentes( oGet, oGet2 )
-
-   local oDlg
-   local oSayTit
-   local oBtn
-   local oFont
-	local oBrw
-   local oBlock
-   local oError
-	local oGet1
-	local cGet1
-   local nOrdAnt
-   local oCbxOrd
-   local aCbxOrd
-   local cCbxOrd
-   local nLevelUsr
-   local dbfAgente
-
-   aCbxOrd           := { "Código", "Agente" }
-   nOrdAnt           := GetBrwOpt( "BrwAgentes" )
-   nLevelUsr         := nLevelUsr( "01033" )
-   nOrdAnt           := Min( Max( nOrdAnt, 1 ), len( aCbxOrd ) )
-   cCbxOrd           := aCbxOrd[ nOrdAnt ]
-
-   USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgente ) )
-   SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
-
-   USE ( cPatCli() + "AGECOM.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGECOM", @dbfAgeCom ) )
-   SET ADSINDEX TO ( cPatCli() + "AGECOM.CDX" ) ADDITIVE
-
-   USE ( cPatCli() + "AgeRel.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AgeRel", @dbfAgeRel ) )
-   SET ADSINDEX TO ( cPatCli() + "AgeRel.CDX" ) ADDITIVE
-
-   DEFINE FONT oFont NAME "Verdana" SIZE 0, -14
-
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY_PDA"  TITLE "Seleccionar agentes"
-
-      REDEFINE SAY oSayTit ;
-         VAR      "Buscando agentes" ;
-         ID       110 ;
-         COLOR    "N/W*" ;
-         FONT     oFont ;
-         OF       oDlg
-
-      REDEFINE BTNBMP oBtn ;
-         ID       100 ;
-         OF       oDlg ;
-         FILE     ( cPatBmp() + "security_agent.bmp" ) ;
-         NOBORDER ;
-         ACTION      ( nil )
-
-      oBtn:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-		REDEFINE GET oGet1 VAR cGet1;
-			ID 		104 ;
-         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfAgente ) );
-         VALID    ( OrdClearScope( oBrw, dbfAgente ) );
-			COLOR 	CLR_GET ;
-			OF 		oDlg
-
-		REDEFINE COMBOBOX oCbxOrd ;
-			VAR 		cCbxOrd ;
-			ID 		102 ;
-         ITEMS    aCbxOrd ;
-         ON CHANGE( ( dbfAgente )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrwLin:refresh(), oGet1:SetFocus(), oCbxOrd:refresh() ) ;
-			OF oDlg
-
-       REDEFINE IBROWSE oBrw ;
-         FIELDS ;
-                  ( dbfAgente )->CCODAGE + CRLF + RTrim( ( dbfAgente )->CAPEAGE ) + ", " + ( dbfAgente )->CNBRAGE ;
-         HEAD ;
-                  "Código" + CRLF + "Agente" ;
-         FIELDSIZES ;
-                  180;
-         JUSTIFY  .f.;
-         ID       105 ;
-         ALIAS    ( dbfAgente ) ;
-         OF       oDlg
-
-   ACTIVATE DIALOG oDlg ;
-      ON INIT ( oDlg:SetMenu( pdaMenuEdtRec( oDlg , dbfAgente , oGet , oGet2 ) ) )
-
-   if oDlg:nResult == IDOK
-
-      oGet:cText( ( dbfAgente )->CCODAGE )
-
-      if ValType( oGet2 ) == "O"
-         oGet2:cText( RTrim( ( dbfAgente )->CAPEAGE ) + ", " + ( dbfAgente )->CNBRAGE )
-      end if
-
-   end if
-
-   //SetKey( VK_RETURN, {|| oDlg:End( IDOK ) } )
-
-   DestroyFastFilter( dbfAgente )
-
-   SetBrwOpt( "BrwAgentes", ( dbfAgente )->( OrdNumber() ) )
-
-   CLOSE( dbfAgente )
-   CLOSE( dbfAgeCom )
-   CLOSE( dbfAgeRel )
-
-   oGet:setFocus()
-
-Return ( oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-
-static function pdaMenuEdtRec( oDlg , dbfAgente , oGet , oGet2 )
-
-   local oMenu
-
-   DEFINE MENU oMenu ;
-      RESOURCE 100 ;
-      BITMAPS  10 ; // bitmaps resoruces ID
-      IMAGES   3     // number of images in the bitmap
-
-      REDEFINE MENUITEM ID 110 OF oMenu ACTION ( oDlg:End( IDOK ) )
-
-      REDEFINE MENUITEM ID 120 OF oMenu ACTION ( oDlg:End( IDCANCEL ) )
-
-Return oMenu
-
-//---------------------------------------------------------------------------//
-
-#endif
-
-CLASS pdaAgentesSenderReciver
-
-   Method CreateData()
-
-END CLASS
-
-//----------------------------------------------------------------------------//
-
-Method CreateData( oPgrActual, oSayStatus, cPatPreVenta ) CLASS pdaAgentesSenderReciver
-
-   local dbfAge
-   local tmpAge
-   local lExist      := .f.
-   local cFileName
-   local cPatPc      := if( Empty( cPatPreVenta ), cPatPc(), cPatPreVenta )
-
-   USE ( cPatCli() + "Agentes.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Agentes", @dbfAge ) )
-   SET ADSINDEX TO ( cPatCli() + "AGENTES.Cdx" ) ADDITIVE
-
-   dbUseArea( .t., cDriver(), cPatPc + "Agentes.Dbf", cCheckArea( "Agentes", @tmpAge ), .t. )
-   ( tmpAge )->( ordListAdd( cPatPc + "AGENTES.Cdx" ) )
-
-   if !Empty( oPgrActual )
-      oPgrActual:SetRange( 0, ( tmpAge )->( OrdKeyCount() ) )
-   end if
-
-   ( tmpAge )->( dbGoTop() )
-
-   while !( tmpAge )->( eof() )
-
-      if ( dbfAge )->( dbSeek( ( tmpAge )->cCodAge ) )
-         dbPass( tmpAge, dbfAge, .f. )
-      else
-         dbPass( tmpAge, dbfAge, .t. )
-      end if
-
-      if dbLock( tmpAge )
-         ( tmpAge )->lSelAge  := .f.
-         ( tmpAge )->( dbUnLock() )
-      end if
-
-      ( tmpAge )->( dbSkip() )
-
-      if !Empty( oSayStatus )
-         oSayStatus:SetText( "Sincronizando Agentes " + Alltrim( Str( ( tmpAge )->( OrdKeyNo() ) ) ) + " de " + Alltrim( Str( ( tmpAge )->( OrdKeyCount() ) ) ) )
-      end if
-
-      SysRefresh()
-
-      if !Empty( oPgrActual )
-         oPgrActual:SetPos( ( tmpAge )->( OrdKeyNo() ) )
-      end if
-
-      SysRefresh()
-
-   end while
-
-   CLOSE ( tmpAge )
-   CLOSE ( dbfAge )
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-//Funciones comunes del programa y del pda
-//----------------------------------------------------------------------------//
-
 Function IsAgentes()
 
    local oError
@@ -1484,7 +1427,7 @@ Function IsAgentes()
 
    RECOVER USING oError
 
-      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
 
    END SEQUENCE
 
@@ -1863,25 +1806,28 @@ Static Function OpenFiles()
    local oError
    local oBlock
 
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
+
+      nView             := D():CreateView()
 
       USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAge ) )
       SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
 
-      USE ( cPatCli() + "AgeCom.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AgeCom", @dbfAgeCom ) )
-      SET ADSINDEX TO ( cPatCli() + "AgeCom.Cdx" ) ADDITIVE
+      D():AgentesComisiones( nView )
 
-      USE ( cPatCli() + "AgeRel.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AgeRel", @dbfAgeRel ) )
-      SET ADSINDEX TO ( cPatCli() + "AgeRel.CDX" ) ADDITIVE
+      D():AgentesRelaciones( nView )
 
-      USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
-      SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
+      D():Proveedores( nView )
 
-      USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
-      SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
+      D():Familias( nView )
 
-      oDetCamposExtra      := TDetCamposExtra():New()
+      D():Articulos( nView )   
+
+      D():Atipicas( nView )
+      ( D():Atipicas( nView ) )->( ordSetFocus( "cCodAge" ) )
+
+      oDetCamposExtra   := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Agentes" )
 
@@ -1907,33 +1853,15 @@ Static Function CloseFiles()
       ( dbfAge )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfAgeCom )
-      ( dbfAgeCom )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfAgeRel )
-      ( dbfAgeRel )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfProvee )
-      ( dbfProvee )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfArticulo )
-      ( dbfArticulo )->( dbCloseArea() )
-   end if
-
    if !Empty( oDetCamposExtra )
       oDetCamposExtra:CloseFiles()
    end if
 
-   dbfAge      := nil
-   dbfAgeCom   := nil
-   dbfAgeRel   := nil
-   dbfProvee   := nil
-   dbfArticulo := nil
+   D():DeleteView( nView )
 
-   oWndBrw     := nil
+   dbfAge                  := nil
+
+   oWndBrw                 := nil
 
 Return ( .t. )
 
@@ -2030,5 +1958,31 @@ Function SetAgentes( oCodigoAgente, oSay, oDlg, dbfAgente )
    end if
 
 Return ( lSetAgente )
+
+//---------------------------------------------------------------------------//
+
+Static Function deleteRelations( cCodigoAgente, dbfRelation )
+
+   while ( ( dbfRelation )->( dbSeek( cCodigoAgente ) ) .and. !( dbfRelation )->( eof() ) )
+      if dbLock( dbfRelation )
+         ( dbfRelation )->( dbDelete() )
+         ( dbfRelation )->( dbUnLock() )
+      end if
+   end while
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+Static Function buildRelation( cCodigoAgente, dbfTemporal, dbfRelation )
+
+   ( dbfTemporal )->( dbGoTop() )
+   while ( dbfTemporal )->( !eof() )
+      dbPass( dbfTemporal, dbfRelation, .t., cCodigoAgente )
+      ( dbfTemporal )->( dbSkip() )
+      oMsgProgress():Deltapos( 1 )
+   end while
+
+Return ( nil )
 
 //---------------------------------------------------------------------------//

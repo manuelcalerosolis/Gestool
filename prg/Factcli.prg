@@ -569,7 +569,6 @@ static cOldLotArt          := ""
 static dOldFecCad          := cToD("")
 static cOldUndMed          := ""
 static lOpenFiles          := .f.
-static lExternal           := .f.
 
 static oClienteRutaNavigator
 static oMailingFacturasClientes
@@ -1411,7 +1410,7 @@ FUNCTION imprimeFacturaCliente( cNumeroFactura, cFormatoDocumento )
       return .t.
    end if
 
-   if OpenFiles( .t. )
+   if OpenFiles()
 
       if dbSeekInOrd( cNumeroFactura, "nNumFac", D():FacturasClientes( nView ) )
 
@@ -1425,15 +1424,13 @@ FUNCTION imprimeFacturaCliente( cNumeroFactura, cFormatoDocumento )
 
       end if
 
+      sysrefresh()
+
       CloseFiles()
 
    end if
 
 Return .t.
-
-//---------------------------------------------------------------------------//
-
-
 
 //---------------------------------------------------------------------------//
 
@@ -1644,7 +1641,7 @@ RETURN NIL
 
 //----------------------------------------------------------------------------//
 
-STATIC FUNCTION OpenFiles( lExt )
+STATIC FUNCTION OpenFiles()
 
    local oBlock
    local oError
@@ -1653,10 +1650,6 @@ STATIC FUNCTION OpenFiles( lExt )
       MsgStop( 'Imposible abrir ficheros de facturas de clientes', 'Ficheros actualmente en uso' )
       Return ( .f. )
    end if
-
-   DEFAULT lExt         := .f.
-
-   lExternal            := lExt
 
    oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -9431,8 +9424,6 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
          MENU
 
-            if !lExternal
-
             MENUITEM    "&1. Campos extra [F9]";
                MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
                RESOURCE "form_green_add_16" ;
@@ -9485,8 +9476,6 @@ Static Function EdtRecMenu( aTmp, oDlg )
                ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );
 
             SEPARATOR
-
-            end if
 
             MENUITEM    "&10. Informe del documento";
                MESSAGE  "Informe del documento" ;

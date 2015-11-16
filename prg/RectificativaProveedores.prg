@@ -10771,7 +10771,7 @@ RETURN ( if( cPorDiv != NIL, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 //----------------------------------------------------------------------------//
 
-Function DesignLabelFacturaProveedor( oFr, cDbfDoc )
+Function DesignLabelFacturaRectificativaProveedor( oFr, cDbfDoc )
 
    local oLabel   
    local lOpenFiles  := empty( nView ) 

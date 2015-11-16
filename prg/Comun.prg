@@ -228,7 +228,7 @@ Return ( if( lAdsRdd(), "Timestamp", "T" ) )
 
 //----------------------------------------------------------------------------//
 
-Function cIp( cSetIp )
+Function cAdsIp( cSetIp )
 
    if IsChar( cSetIp )
       cIp      := cSetIp
@@ -238,7 +238,7 @@ Return ( cPath( cIp ) )
 
 //----------------------------------------------------------------------------//
 
-Function cData( cSetData )
+Function cAdsData( cSetData )
 
    if IsChar( cSetData )
       cData    := cSetData
@@ -270,11 +270,11 @@ Return ( cAdsLocal )
 
 Function cAdsUNC()
 
-   if ( "localhost" $ cIp() )
-      Return( cData() )
+   if ( "localhost" $ cAdsIp() )
+      Return( cAdsData() )
    end if
 
-Return ( cIp() + cData() )
+Return ( cAdsIp() + cAdsData() )
 
 //----------------------------------------------------------------------------//
 
@@ -331,6 +331,17 @@ Function SetIndexToCDX()
    lAIS( .f. )
    
    RddSetDefault( "DBFCDX" )
+
+Return nil 
+
+//---------------------------------------------------------------------------//
+
+Function SetIndexToADS()
+
+   lCdx( .f. )
+   lAIS( .t. )
+
+   RddSetDefault( "ADS" )
 
 Return nil 
 

@@ -20808,3 +20808,18 @@ FONT 8, "MS Sans Serif"
   CONTROL "Provincia", -1, "Static", WS_GROUP, 3, 33, 35, 8
 }
 
+LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US
+
+AGENTES_TARIFAS DIALOG DISCARDABLE 35, -50, 388, 270
+STYLE WS_CHILD|DS_3DLOOK
+FONT 8, "MS Sans Serif"
+{
+  CONTROL "Artículos ", -1, "Button", BS_GROUPBOX, 44, 29, 337, 239
+  CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
+  CONTROL "Tarifas particulares", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 337, 8
+  CONTROL "&Añadir [F2]", 501, "Button", WS_TABSTOP, 50, 40, 50, 14
+  CONTROL "&Modificar [F3]", 502, "Button", WS_TABSTOP, 103, 40, 50, 14
+  CONTROL "&Eliminar [F4]", 503, "Button", WS_TABSTOP, 157, 40, 50, 14
+  CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00300000, 51, 56, 326, 208
+}
+

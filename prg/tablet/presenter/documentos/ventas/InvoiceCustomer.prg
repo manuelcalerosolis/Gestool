@@ -19,7 +19,7 @@ CLASS InvoiceCustomer FROM DocumentsSales
    METHOD getAppendDetail()
    METHOD deleteLinesDocument()
 
-   METHOD printDocument()
+   METHOD printDocument()                 INLINE ( imprimeFacturaCliente( ::getID(), ::cFormatToPrint ), .t. )
 
    METHOD onPostSaveAppend()              INLINE ( generatePagosFacturaCliente( ::getId(), ::nView ),;
                                                    checkPagosFacturaCliente( ::getId(), ::nView ) )
@@ -156,10 +156,3 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD printDocument() CLASS InvoiceCustomer
-
-   imprimeFacturaCliente( ::getID(), ::cFormatToPrint )
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//

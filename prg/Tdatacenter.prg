@@ -136,6 +136,11 @@ CLASS TDataCenter
    METHOD GetAllLocksTablesUsers()
    METHOD CloseAllLocksTablesUsers()      INLINE ( ::CloseArea( "AllLocks" ) )
 
+   METHOD configDatabaseADSLocal()
+   METHOD configDatabaseCDXLocal()
+   METHOD dialogEmpresas()
+   METHOD loadEmpresas()
+
    METHOD lAdministratorTask() 
    METHOD StartAdministratorTask()
 
@@ -655,13 +660,43 @@ METHOD lAdministratorTask()
 
    local dbfEmp
 
-   SetIndexToCdx()
+   ::configDatabaseCDXLocal()
+
+   ::loadEmpresas()
+
+   ::dialogEmpresas()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD configDatabaseADSLocal()
+
+   rddRegister( "ADS", 1 )
+   rddSetDefault( "ADS" )
+
+   adsSetServerType( ADS_LOCAL_SERVER )
+   adsSetFileType( ADS_CDX )   
+
+   setIndexToADS()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD configDatabaseCDXLocal()
+
+   setIndexToCdx()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadEmpresas()
+
+   local dbfEmp
 
    ::aEmpresas       := {}
-
-   /*
-   Cargamos el array de las empresas----------------------------------------
-   */
 
    USE ( cAdsUNC() + "Datos\Empresa.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
    SET ADSINDEX TO ( cAdsUNC() + "Datos\Empresa.Cdx" ) ADDITIVE
@@ -675,104 +710,103 @@ METHOD lAdministratorTask()
 
    ( dbfEmp )->( dbCloseArea() )
 
-   /*
-   Si tenemos empresas q procesar----------------------------------------------
-   */
+RETURN ( Self )   
 
-   if !Empty( ::aEmpresas )
+//---------------------------------------------------------------------------//
 
-      DEFINE DIALOG ::oDlg RESOURCE "AdsAdmin" TITLE "Creación de diccionario de datos para " + ::cDataDictionaryFile
+METHOD dialogEmpresas()
 
-      ::oBrwEmpresas                         := TXBrowse():New( ::oDlg )
-
-      ::oBrwEmpresas:lRecordSelector         := .t.
-      ::oBrwEmpresas:lTransparent            := .f.
-      ::oBrwEmpresas:nDataLines              := 1
-
-      ::oBrwEmpresas:nMarqueeStyle           := MARQSTYLE_HIGHLROW
-
-      ::oBrwEmpresas:bClrSel                 := {|| { CLR_WHITE, RGB( 53, 142, 182 ) } }
-      ::oBrwEmpresas:bClrSelFocus            := {|| { CLR_WHITE, RGB( 53, 142, 182 ) } }
-
-      ::oBrwEmpresas:CreateFromResource( 100 )
-
-      ::oBrwEmpresas:SetArray( ::aEmpresas, , , .f. )
-
-      ::oBrwEmpresas:bLDblClick              := {|| ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 6 ] := !::aEmpresas[ ::oBrwEmpresas:nArrayAt, 6 ], ::oBrwEmpresas:Refresh() }
-
-      with object ( ::oBrwEmpresas:AddCol() )
-         :cHeader          := "Sl. Seleccionada"
-         :bStrData         := {|| "" }
-         :nWidth           := 20
-         :bEditValue       := {|| ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 6 ] }
-         :bLClickHeader    := {|| aeval( ::aEmpresas, {|a| a[6] := !a[6] } ), ::oBrwEmpresas:Refresh() }
-         :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
-      end with 
-
-      with object ( ::oBrwEmpresas:AddCol() )
-         :cHeader          := "Ac. Actualizada"
-         :bStrData         := {|| "" }
-         :nWidth           := 20
-         :bEditValue       := {|| ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 4 ] }
-         :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
-      end with 
-
-      with object ( ::oBrwEmpresas:AddCol() )
-         :cHeader          := "Pr. Procesada"
-         :bStrData         := {|| "" }
-         :nWidth           := 20
-         :bEditValue       := {|| ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 5 ] }
-         :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
-      end with
-
-      with object ( ::oBrwEmpresas:AddCol() )
-         :cHeader          := "Código" 
-         :nWidth           := 40
-         :bEditValue       := {|| if( ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 3 ], "<" + Rtrim( ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 1 ] ) + ">", ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 1 ] ) }
-      end with
- 
-      with object ( ::oBrwEmpresas:AddCol() )
-         :cHeader          := "Empresa"
-         :nWidth           := 340
-         :bEditValue       := {|| if( ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 3 ], "<" + Rtrim( ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 2 ] ) + ">", ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 2 ] ) }
-      end with
-
-      REDEFINE SAY         ::oMsg ;
-         PROMPT            ::cMsg ;
-         ID                400 ;
-         OF                ::oDlg
-
-      ::oMtrActualiza      := TApoloMeter():ReDefine( 500, { | u | if( pCount() == 0, ::nMtrActualiza, ::nMtrActualiza := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
-
-      ::oMtrDiccionario    := TApoloMeter():ReDefine( 510, { | u | if( pCount() == 0, ::nMtrDiccionario, ::nMtrDiccionario := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
-
-      REDEFINE CHECKBOX    ::lActualizaBaseDatos ;
-         ID                600 ;
-         OF                ::oDlg
-
-      REDEFINE CHECKBOX    ::lTriggerAuxiliares ;
-         ID                610 ;
-         OF                ::oDlg
-
-      REDEFINE BUTTON ::oBtnOk ;
-         ID                IDOK ;
-         OF                ::oDlg ;
-         ACTION            ( ::StartAdministratorTask() )
-
-      REDEFINE BUTTON ::oBntCancel ;
-         ID                IDCANCEL ;
-         OF                ::oDlg ;
-         ACTION            ( ::oDlg:end() )
-
-      ::oDlg:AddFastKey( VK_F5, {|| ::StartAdministratorTask() } )
-
-      ::oDlg:Activate( , , , .t., {|| ::lValidDlg } )
-
-   else
-
-      MsgStop( "No hay empresas que procesar" )
-
+   if Empty( ::aEmpresas )
+      msgStop( "No hay empresas que procesar" )
+      Return ( self )
    end if
+
+   DEFINE DIALOG ::oDlg RESOURCE "AdsAdmin" TITLE "Creación de diccionario de datos para " + ::cDataDictionaryFile
+
+   ::oBrwEmpresas                         := TXBrowse():New( ::oDlg )
+
+   ::oBrwEmpresas:lRecordSelector         := .t.
+   ::oBrwEmpresas:lTransparent            := .f.
+   ::oBrwEmpresas:nDataLines              := 1
+
+   ::oBrwEmpresas:nMarqueeStyle           := MARQSTYLE_HIGHLROW
+
+   ::oBrwEmpresas:bClrSel                 := {|| { CLR_WHITE, RGB( 53, 142, 182 ) } }
+   ::oBrwEmpresas:bClrSelFocus            := {|| { CLR_WHITE, RGB( 53, 142, 182 ) } }
+
+   ::oBrwEmpresas:CreateFromResource( 100 )
+
+   ::oBrwEmpresas:SetArray( ::aEmpresas, , , .f. )
+
+   ::oBrwEmpresas:bLDblClick              := {|| ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 6 ] := !::aEmpresas[ ::oBrwEmpresas:nArrayAt, 6 ], ::oBrwEmpresas:Refresh() }
+
+   with object ( ::oBrwEmpresas:AddCol() )
+      :cHeader          := "Sl. Seleccionada"
+      :bStrData         := {|| "" }
+      :nWidth           := 20
+      :bEditValue       := {|| ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 6 ] }
+      :bLClickHeader    := {|| aeval( ::aEmpresas, {|a| a[6] := !a[6] } ), ::oBrwEmpresas:Refresh() }
+      :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
+   end with 
+
+   with object ( ::oBrwEmpresas:AddCol() )
+      :cHeader          := "Ac. Actualizada"
+      :bStrData         := {|| "" }
+      :nWidth           := 20
+      :bEditValue       := {|| ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 4 ] }
+      :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
+   end with 
+
+   with object ( ::oBrwEmpresas:AddCol() )
+      :cHeader          := "Pr. Procesada"
+      :bStrData         := {|| "" }
+      :nWidth           := 20
+      :bEditValue       := {|| ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 5 ] }
+      :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
+   end with
+
+   with object ( ::oBrwEmpresas:AddCol() )
+      :cHeader          := "Código" 
+      :nWidth           := 40
+      :bEditValue       := {|| if( ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 3 ], "<" + Rtrim( ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 1 ] ) + ">", ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 1 ] ) }
+   end with
+
+   with object ( ::oBrwEmpresas:AddCol() )
+      :cHeader          := "Empresa"
+      :nWidth           := 340
+      :bEditValue       := {|| if( ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 3 ], "<" + Rtrim( ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 2 ] ) + ">", ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 2 ] ) }
+   end with
+
+   REDEFINE SAY         ::oMsg ;
+      PROMPT            ::cMsg ;
+      ID                400 ;
+      OF                ::oDlg
+
+   ::oMtrActualiza      := TApoloMeter():ReDefine( 500, { | u | if( pCount() == 0, ::nMtrActualiza, ::nMtrActualiza := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+
+   ::oMtrDiccionario    := TApoloMeter():ReDefine( 510, { | u | if( pCount() == 0, ::nMtrDiccionario, ::nMtrDiccionario := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+
+   REDEFINE CHECKBOX    ::lActualizaBaseDatos ;
+      ID                600 ;
+      OF                ::oDlg
+
+   REDEFINE CHECKBOX    ::lTriggerAuxiliares ;
+      ID                610 ;
+      OF                ::oDlg
+
+   REDEFINE BUTTON ::oBtnOk ;
+      ID                IDOK ;
+      OF                ::oDlg ;
+      ACTION            ( ::StartAdministratorTask() )
+
+   REDEFINE BUTTON ::oBntCancel ;
+      ID                IDCANCEL ;
+      OF                ::oDlg ;
+      ACTION            ( ::oDlg:end() )
+
+   ::oDlg:AddFastKey( VK_F5, {|| ::StartAdministratorTask() } )
+
+   ::oDlg:Activate( , , , .t., {|| ::lValidDlg } )
 
 RETURN ( Self )
 
@@ -2550,6 +2584,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "AgeCom"
    oDataTable:cName        := cPatEmp() + "AgeCom"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "AgeCom.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AgeCom.Cdx"
@@ -2558,6 +2593,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "AgeRel"
    oDataTable:cName        := cPatEmp() + "AgeRel"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "AgeRel.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AgeRel.Cdx"
@@ -5856,23 +5892,23 @@ CLASS D
 
    METHOD TipoArticulos( nView )                                  INLINE ( ::Get( "TipArt", nView ) )
 
-   METHOD Familias( nView )                  INLINE ( ::Get( "Familias", nView ) )
+   METHOD Familias( nView )                                       INLINE ( ::Get( "Familias", nView ) )
+   
+   METHOD Temporadas( nView )                                     INLINE ( ::Get( "Temporadas", nView ) )
 
-   METHOD Temporadas( nView )                INLINE ( ::Get( "Temporadas", nView ) )
+   METHOD Categorias( nView )                                     INLINE ( ::Get( "Categorias", nView ) )
 
-   METHOD Categorias( nView )                INLINE ( ::Get( "Categorias", nView ) )
+   METHOD Kit( nView )                                            INLINE ( ::Get( "ArtKit", nView ) )
 
-   METHOD Kit( nView )                       INLINE ( ::Get( "ArtKit", nView ) )
+   METHOD FormasPago( nView )                                     INLINE ( ::Get( "FPago", nView ) )
 
-   METHOD FormasPago( nView )                INLINE ( ::Get( "FPago", nView ) )
+   METHOD Divisas( nView )                                        INLINE ( ::Get( "Divisas", nView ) )
 
-   METHOD Divisas( nView )                   INLINE ( ::Get( "Divisas", nView ) )
+   METHOD Cajas( nView )                                          INLINE ( ::Get( "Cajas", nView ) )
 
-   METHOD Cajas( nView )                     INLINE ( ::Get( "Cajas", nView ) )
-
-   METHOD Propiedades( nView )                        INLINE ( ::Get( "Pro", nView ) )
-      METHOD PropiedadesLineas( nView )               INLINE ( ::Get( "TblPro", nView ) )
-      METHOD gotoIdPropiedadesLineas( id, nView )     INLINE ( ::seekInOrd( ::PropiedadesLineas( nView ), id, "cCodPro" ) ) 
+   METHOD Propiedades( nView )                                    INLINE ( ::Get( "Pro", nView ) )
+      METHOD PropiedadesLineas( nView )                           INLINE ( ::Get( "TblPro", nView ) )
+      METHOD gotoIdPropiedadesLineas( id, nView )                 INLINE ( ::seekInOrd( ::PropiedadesLineas( nView ), id, "cCodPro" ) ) 
 
    METHOD Almacen( nView )                   INLINE ( ::Get( "Almacen", nView ) )
 
@@ -5893,6 +5929,8 @@ CLASS D
    METHOD ImpuestosEspeciales( nView )       INLINE ( ::GetObject( "ImpuestosEspeciales", nView ) )
 
    METHOD Agentes( nView )                   INLINE ( ::Get( "Agentes", nView ) )
+      METHOD AgentesComisiones( nView )      INLINE ( ::Get( "AgeCom", nView ) )
+      METHOD AgentesRelaciones( nView )      INLINE ( ::Get( "AgeRel", nView ) )
 
    METHOD Lenguajes( nView )                 INLINE ( ::Get( "Lenguaje", nView ) )
 

@@ -257,13 +257,16 @@ METHOD DefineFiles( cPath, cDriver, lUniqueName, cFileName ) CLASS TAtipicas
       FIELD NAME "nDto4"      TYPE "N" LEN  6  DEC 2 COMMENT "Descuento de tarifa de venta 4"               OF oDbf
       FIELD NAME "nDto5"      TYPE "N" LEN  6  DEC 2 COMMENT "Descuento de tarifa de venta 5"               OF oDbf
       FIELD NAME "nDto6"      TYPE "N" LEN  6  DEC 2 COMMENT "Descuento de tarifa de venta 6"               OF oDbf
+      FIELD NAME "cCodAge"    TYPE "C" LEN  3  DEC 0 COMMENT "Código del agente"                            OF oDbf
 
       INDEX TO ( cFileName ) TAG "cCodCli" ON "cCodCli"                                                     NODELETED   OF oDbf
       INDEX TO ( cFileName ) TAG "cCodGrp" ON "cCodGrp"                                                     NODELETED   OF oDbf
       INDEX TO ( cFileName ) TAG "cCliArt" ON "cCodCli + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2"   NODELETED   OF oDbf
-      INDEX TO ( cFileName ) TAG "cGrpArt" ON "cCodGrp + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2"   NODELETED   OF oDbf
       INDEX TO ( cFileName ) TAG "cCodFam" ON "cCodCli + cCodFam"                                           NODELETED   OF oDbf
+      INDEX TO ( cFileName ) TAG "cGrpArt" ON "cCodGrp + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2"   NODELETED   OF oDbf
       INDEX TO ( cFileName ) TAG "cGrpFam" ON "cCodGrp + cCodFam"                                           NODELETED   OF oDbf
+      INDEX TO ( cFileName ) TAG "cCodAge" ON "cCodAge"                                                     NODELETED   OF oDbf
+      INDEX TO ( cFileName ) TAG "cAgeArt" ON "cCodAge + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2"   NODELETED   OF oDbf
 
    END DATABASE oDbf
 

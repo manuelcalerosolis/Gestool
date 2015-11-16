@@ -184,15 +184,6 @@ METHOD Search( oDlg )
    Sinconizacion de tablas de agentes------------------------------------------
    */
 
-   pdaAgentesSenderReciver():CreateData( , ::oMessage, cPatServidor )
-
-   /*
-   Sinconizacion de tablas de artículos----------------------------------------
-   */
-
-   //pdaArticuloSenderReciver():CreateData( , ::oMessage, cPatServidor )
-   //pdaPCArtSenderReciver():CreateData( , ::oMessage, cPatServidor )
-
    /*
    Sinconizacion de tablas de rutas--------------------------------------------
    */
