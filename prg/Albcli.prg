@@ -3307,13 +3307,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       524 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( lineUp( dbfTmpLin, oBrwLin ) )
+         ACTION   ( lineUpOld( dbfTmpLin, oBrwLin ) )
 
       REDEFINE BUTTON ;
          ID       525 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( lineDown( dbfTmpLin, oBrwLin ) )
+         ACTION   ( lineDownOld( dbfTmpLin, oBrwLin ) )
 
       REDEFINE BUTTON oBtnKit;
          ID       526 ;

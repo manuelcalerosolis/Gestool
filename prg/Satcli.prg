@@ -193,6 +193,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _COBRLIN                  88
 #define _CREFAUX                  89
 #define _CREFAUX2                 90
+#define _NPOSPRINT                91
 
 /*
 Array para impuestos
@@ -2213,7 +2214,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          :nWidth              := 60
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
+         :lHide               := .t.
       end with
+
+      with object ( oBrwLin:AddCol() )
+         :cHeader             := "Posición"
+         :cSortOrder          := "nPosPrint"
+         :bEditValue          := {|| ( dbfTmpLin )->nPosPrint }
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
+         :cEditPicture        := "9999"
+         :nWidth              := 60
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+      end with       
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Código"
@@ -2671,13 +2684,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          ID       524 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( DbSwapUp( dbfTmpLin, oBrwLin ) )
+         ACTION   ( LineUp( dbfTmpLin, oBrwLin ) )
 
       REDEFINE BUTTON ;
          ID       525 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( DbSwapDown( dbfTmpLin, oBrwLin ) )
+         ACTION   ( LineDown( dbfTmpLin, oBrwLin ) )
 
       REDEFINE BUTTON oBtnKit;
          ID       526 ;
@@ -3831,7 +3844,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
       Segunda caja de dialogo--------------------------------------------------
       */
 
-      REDEFINE GET aGet[_NNUMLIN] VAR aTmp[_NNUMLIN] ;
+      REDEFINE GET aGet[ _NPOSPRINT ] VAR aTmp[ _NPOSPRINT ] ;
          ID       100 ;
          SPINNER ;
          COLOR    CLR_GET ;
@@ -4098,9 +4111,10 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
 
       aTmp[ _CREF    ]  := Space( 32 )
       aTmp[ _LIVALIN ]  := aTmpSat[ _LIVAINC ]
+      aTmp[ _NNUMLIN ]  := nLastNum( dbfTmpLin )
 
-      if aGet[ _NNUMLIN ] != nil
-         aGet[ _NNUMLIN ]:cText( nLastNum( dbfTmpLin ) )
+      if aGet[ _NPOSPRINT ] != nil
+         aGet[ _NPOSPRINT ]:cText( nLastNum( dbfTmpLin, "nPosPrint" ) )
       end if
 
       aGet[ _NCANSAT  ]:cText( 1 )
@@ -4469,6 +4483,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
                if isNum( oBrwProperties:Cargo[ n, i ]:Value ) .and. oBrwProperties:Cargo[ n, i ]:Value != 0
 
                   aTmp[ _NNUMLIN ]     := nLastNum( dbfTmpLin )
+                  aTmp[ _NPOSPRINT ]   := nLastNum( dbfTmpLin, "nPosPrint" )
                   aTmp[ _NUNICAJA]     := oBrwProperties:Cargo[ n, i ]:Value
                   aTmp[ _CCODPR1 ]     := oBrwProperties:Cargo[ n, i ]:cCodigoPropiedad1
                   aTmp[ _CVALPR1 ]     := oBrwProperties:Cargo[ n, i ]:cValorPropiedad1
@@ -6177,6 +6192,9 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex )
          ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
          ( dbfTmpLin )->( OrdCreate( cTmpLin, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
 
+         ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+         ( dbfTmpLin )->( OrdCreate( cTmpLin, "nPosPrint", "Str( nPosPrint, 4 )", {|| Str( Field->nPosPrint ) } ) )
+
       else
          lErrors     := .t.
       end if
@@ -7290,6 +7308,7 @@ Static Function AppendKit( uTmpLin, aTmpSat )
    local nDtoPrm
    local nDtoDiv
    local nNumLin
+   local nPosPrint
    local nTarLin
    local nRecAct                       := ( dbfKit )->( Recno() )
    local nUnidades                     := 0
@@ -7313,6 +7332,7 @@ Static Function AppendKit( uTmpLin, aTmpSat )
       nDtoPrm                          := uTmpLin[ _NDTOPRM ]
       nDtoDiv                          := uTmpLin[ _NDTODIV ]
       nNumLin                          := uTmpLin[ _NNUMLIN ]
+      nPosPrint                        := uTmpLin[ _NPOSPRINT ]
       nTarLin                          := uTmpLin[ _NTARLIN ]
    else
       cCodArt                          := ( uTmpLin )->cRef
@@ -7331,6 +7351,7 @@ Static Function AppendKit( uTmpLin, aTmpSat )
       nDtoPrm                          := ( uTmpLin )->nDtoPrm
       nDtoDiv                          := ( uTmpLin )->nDtoDiv
       nNumLin                          := ( uTmpLin )->nNumLin
+      nPosPrint                        := ( uTmpLin )->nPosPrint
       nTarLin                          := ( uTmpLin )->nTarLin
    end if
 
@@ -7343,11 +7364,13 @@ Static Function AppendKit( uTmpLin, aTmpSat )
             ( dbfTmpLin )->( dbAppend() )
 
             if lKitAsociado( cCodArt, D():Articulos( nView ) )
-               ( dbfTmpLin )->nNumLin  := nLastNum( dbfTmpLin )
-               ( dbfTmpLin )->lKitChl  := .f.
+               ( dbfTmpLin )->nNumLin     := nLastNum( dbfTmpLin )
+               ( dbfTmpLin )->nPosPrint   := nLastNum( dbfTmpLin , "nPosPrint" )
+               ( dbfTmpLin )->lKitChl     := .f.
             else
-               ( dbfTmpLin )->nNumLin  := nNumLin
-               ( dbfTmpLin )->lKitChl  := .t.
+               ( dbfTmpLin )->nNumLin     := nNumLin
+               ( dbfTmpLin )->nPosPrint   := nPosPrint
+               ( dbfTmpLin )->lKitChl     := .t.
             end if
 
             ( dbfTmpLin )->cRef        := ( dbfkit      )->cRefKit
@@ -7984,6 +8007,8 @@ Static Function DataReport( oFr )
 
    oFr:ClearDataSets()
 
+   msgalert( ( dbfSatCliL )->( ordSetFocus( ) ), "orden al entrar" )
+
    oFr:SetWorkArea(     "SAT", ( D():SatClientes( nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    oFr:SetFieldAliases( "SAT", cItemsToReport( aItmSatCli() ) )
 
@@ -7991,6 +8016,8 @@ Static Function DataReport( oFr )
 
    oFr:SetWorkArea(     "Lineas de SAT", ( dbfSatCliL )->( Select() ) )
    oFr:SetFieldAliases( "Lineas de SAT", cItemsToReport( aColSatCli() ) )
+
+   msgalert( ( dbfSatCliL )->( ordSetFocus( ) ), "orden despues de select" )
 
    oFr:SetWorkArea(     "Incidencias de SAT", ( dbfSatCliI )->( Select() ) )
    oFr:SetFieldAliases( "Incidencias de SAT", cItemsToReport( aIncSatCli() ) )
@@ -8054,6 +8081,8 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "SAT", "Transportistas",                  {|| ( D():SatClientes( nView ) )->cCodTrn } )
    oFr:SetMasterDetail( "SAT", "Usuarios",                        {|| ( D():SatClientes( nView ) )->cCodUsr } )
 
+   msgalert( ( dbfSatCliL )->( ordSetFocus() ), "orden despues de relacionar las tablas" )
+
    oFr:SetMasterDetail( "Lineas de SAT", "Artículos",             {|| ( dbfSatCliL )->cRef } )
    oFr:SetMasterDetail( "Lineas de SAT", "Ofertas",               {|| ( dbfSatCliL )->cRef } )
    oFr:SetMasterDetail( "Lineas de SAT", "Unidades de medición",  {|| ( dbfSatCliL )->cUnidad } )
@@ -8077,6 +8106,8 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Lineas de SAT", "Ofertas" )
    oFr:SetResyncPair(   "Lineas de SAT", "Unidades de medición" )
    oFr:SetResyncPair(   "Lineas de SAT", "Impuestos especiales" )
+
+   msgalert( ( dbfSatCliL )->( ordSetFocus( 1 ) ), "orden despues de sync las tablas" )
 
 Return nil
 
@@ -10667,23 +10698,23 @@ Function SynSatCli( cPath )
          end if
 
          if Empty( ( dbfSatCliL )->cLote ) .and. !Empty( ( dbfSatCliL )->nLote )
-            ( dbfSatCliL )->cLote   := AllTrim( Str( ( dbfSatCliL )->nLote ) )
+            ( dbfSatCliL )->cLote      := AllTrim( Str( ( dbfSatCliL )->nLote ) )
          end if
 
-         if ( dbfSatCliL )->lIvaLin != RetFld( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat, dbfSatCliT, "lIvaInc" )
-            ( dbfSatCliL )->lIvaLin := RetFld( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat, dbfSatCliT, "lIvaInc" )
+         if ( dbfSatCliL )->lIvaLin    != RetFld( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat, dbfSatCliT, "lIvaInc" )
+            ( dbfSatCliL )->lIvaLin    := RetFld( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat, dbfSatCliT, "lIvaInc" )
          end if
 
          if !Empty( ( dbfSatCliL )->cRef ) .and. Empty( ( dbfSatCliL )->cCodFam )
-            ( dbfSatCliL )->cCodFam := RetFamArt( ( dbfSatCliL )->cRef, dbfArticulo )
+            ( dbfSatCliL )->cCodFam    := RetFamArt( ( dbfSatCliL )->cRef, dbfArticulo )
          end if
 
          if !Empty( ( dbfSatCliL )->cRef ) .and. !Empty( ( dbfSatCliL )->cCodFam )
-            ( dbfSatCliL )->cGrpFam := cGruFam( ( dbfSatCliL )->cCodFam, dbfFamilia )
+            ( dbfSatCliL )->cGrpFam    := cGruFam( ( dbfSatCliL )->cCodFam, dbfFamilia )
          end if
 
          if Empty( ( dbfSatCliL )->nReq )
-            ( dbfSatCliL )->nReq    := nPReq( dbfIva, ( dbfSatCliL )->nIva )
+            ( dbfSatCliL )->nReq       := nPReq( dbfIva, ( dbfSatCliL )->nIva )
          end if
 
          if Empty( ( dbfSatCliL )->nPosPrint )
@@ -11582,6 +11613,7 @@ Function PrintReportSatCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
 
    local oFr
    local cFilePdf              := cPatTmp() + "SATCliente" + StrTran( ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat, " ", "" ) + ".Pdf"
+   local nOrd
 
    DEFAULT nDevice            := IS_SCREEN
    DEFAULT nCopies            := 1
@@ -11599,6 +11631,8 @@ Function PrintReportSatCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
    end if 
 
    SysRefresh()
+
+   nOrd                       :=  ( dbfSatCliL )->( ordSetFocus( "nPosPrint" ) )
 
    oFr                        := frReportManager():New()
 
@@ -11685,6 +11719,8 @@ Function PrintReportSatCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
    */
 
    oFr:DestroyFr()
+
+   ( dbfSatCliL )->( ordSetFocus( nOrd ) )
 
 Return cFilePdf
 

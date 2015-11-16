@@ -11867,7 +11867,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "No controlar stock", 352, "Button", BS_AUTORADIOBUTTON|WS_GROUP, 5, 188, 71, 10
   CONTROL "", 360, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 100, 197, 60, 11
   CONTROL "", 361, "Edit", ES_MULTILINE|WS_BORDER, 162, 197, 40, 11
-  CONTROL "Nº Línea", -1, "Static", WS_GROUP, 5, 4, 30, 8
+  CONTROL "Posición", -1, "Static", WS_GROUP, 5, 4, 30, 8
   CONTROL "Precio vta. recomendado", -1, "Static", WS_GROUP, 5, 51, 80, 8
   CONTROL "Fecha de entrega", -1, "Static", WS_GROUP, 5, 27, 66, 8
   CONTROL "Imágen ", -1, "Static", WS_GROUP, 5, 63, 73, 8
@@ -19948,7 +19948,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 100, 117, 60, 12
   CONTROL "", 201, "Edit", WS_BORDER, 161, 117, 194, 12
   CONTROL "", 300, "Edit", ES_RIGHT|WS_BORDER, 100, 130, 100, 12
-  CONTROL "Nº Línea", -1, "Static", WS_GROUP, 5, 4, 30, 8
+  CONTROL "Posición", -1, "Static", WS_GROUP, 5, 4, 30, 8
   CONTROL "Precio vta. recomendado", -1, "Static", WS_GROUP, 5, 55, 80, 8
   CONTROL "Fecha de entrega", -1, "Static", WS_GROUP, 5, 29, 66, 8
   CONTROL "Imágen ", -1, "Static", WS_GROUP, 5, 81, 73, 8

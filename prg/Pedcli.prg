@@ -2883,14 +2883,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 			ID 		524 ;
 			OF 		oFld:aDialogs[1] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( LineUp( dbfTmpLin, oBrwLin ) )
+         ACTION   ( LineUpOld( dbfTmpLin, oBrwLin ) )
       //   ACTION   ( DbSwapUp( dbfTmpLin, oBrwLin ) )
 
 		REDEFINE BUTTON ;
 			ID 		525 ;
 			OF 		oFld:aDialogs[1] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( LineDown( dbfTmpLin, oBrwLin ) )
+         ACTION   ( LineDownOld( dbfTmpLin, oBrwLin ) )
       //   ACTION   ( DbSwapDown( dbfTmpLin, oBrwLin ) )
 
       REDEFINE BUTTON oBtnKit;

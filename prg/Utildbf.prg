@@ -3401,13 +3401,88 @@ Return ( lineReposition( cAlias, oBrw, .f. ) )
 
 //--------------------------------------------------------------------------//
 
+Function LineDownOld( cAlias, oBrw )
+
+Return ( lineRepositionOld( cAlias, oBrw, .f. ) )
+
+//--------------------------------------------------------------------------//
+
 Function LineUp( cAlias, oBrw )
 
 Return ( lineReposition( cAlias, oBrw, .t. ) )
 
 //--------------------------------------------------------------------------//
 
+Function LineUpOld( cAlias, oBrw )
+
+Return ( lineRepositionOld( cAlias, oBrw, .t. ) )
+
+//--------------------------------------------------------------------------//
+
 Function lineReposition( cAlias, oBrw, lUp )
+
+   local nOrdNum  
+   local nRecNum  
+   local nOldNum
+   local nNewNum
+   local currentAlias
+
+   msgalert( "entro en la funcion")
+   
+   DEFAULT lUp    := .t.
+
+   if ( cAlias )->( fieldpos( "nPosPrint" ) ) == 0
+      Return .f.
+   end if
+
+   nOrdNum        := ( cAlias )->( OrdSetFocus( "nPosPrint" ) )
+
+   if ( lUp .and. ( cAlias )->( OrdKeyNo() ) == 1 )
+      ( cAlias )->( OrdSetFocus( nOrdNum ) )   
+      Return .f.
+   end if 
+
+   if ( !lUp .and. ( cAlias )->( OrdKeyNo() ) == ( cAlias )->( OrdKeyCount() ) )
+      ( cAlias )->( OrdSetFocus( nOrdNum ) )   
+      Return .f.
+   end if
+
+   CursorWait()
+
+   nRecNum        := ( cAlias )->( RecNo() )
+   nOldNum        := ( cAlias )->nPosPrint
+
+   if lUp
+      ( cAlias )->( dbSkip(-1) )
+   else 
+      ( cAlias )->( dbSkip() )
+   end if 
+
+   nNewNum        := ( cAlias )->nPosPrint
+
+   // cambio de lineas
+
+   swapLines( nOldNum, nNewNum, cAlias )
+
+   // orden anterior
+
+   ( cAlias )->( OrdSetFocus( nOrdNum ) )
+   ( cAlias )->( dbGoTo( nRecNum ) )
+
+   CursorWE()
+
+   if !Empty( oBrw )
+      oBrw:Refresh()
+      oBrw:Select( 0 )
+      oBrw:Select( 1 )
+      oBrw:SetFocus()
+   end if
+
+Return ( nil )
+
+//--------------------------------------------------------------------------//
+
+Function lineRepositionOld( cAlias, oBrw, lUp )
 
    local nOrdNum  
    local nRecNum  
@@ -3478,7 +3553,38 @@ Return ( nil )
 
 //--------------------------------------------------------------------------//
 
+Static Function swapLinesOld( nOldNum, nNewNum, cAlias ) 
+
+   lineMoveOld( nOldNum, -1, cAlias )
+   lineMoveOld( nNewNum, nOldNum, cAlias )
+   lineMoveOld( -1, nNewNum, cAlias )
+
+Return ( nil )
+
+//--------------------------------------------------------------------------//
+
 Static Function LineMove( nOldNum, nNewNum, cAlias )
+
+   local ordenAnterior  := ( cAlias )->( ordsetfocus( 0 ) )
+
+   ( cAlias )->( dbgotop() )
+   while !( cAlias )->( eof() )
+
+      if ( cAlias )->nPosPrint == nOldNum
+         ( cAlias )->nPosPrint := nNewNum
+      end if
+
+      ( cAlias )->( dbSkip() )
+
+   end while
+
+   ( cAlias )->( ordsetfocus( ordenAnterior ) )
+
+Return nil
+
+//--------------------------------------------------------------------------//
+
+Static Function LineMoveOld( nOldNum, nNewNum, cAlias )
 
    local ordenAnterior  := ( cAlias )->( ordsetfocus( 0 ) )
 

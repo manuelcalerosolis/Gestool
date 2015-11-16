@@ -1567,13 +1567,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
    	   ID 	524 ;
    	   OF 	oFld:aDialogs[1] ;
    	   WHEN 	( nMode != ZOOM_MODE ) ;
-         ACTION   ( LineUp( dbfTmpLin, oBrwLin ) )
+         ACTION   ( LineUpOld( dbfTmpLin, oBrwLin ) )
 
       REDEFINE BUTTON ;
          ID 	525 ;
          OF 	oFld:aDialogs[1] ;
          WHEN 	( nMode != ZOOM_MODE ) ;
-         ACTION   ( LineDown( dbfTmpLin, oBrwLin ) )
+         ACTION   ( LineDownOld( dbfTmpLin, oBrwLin ) )
 
       REDEFINE BUTTON oBtnAtp;
          ID       526 ;
