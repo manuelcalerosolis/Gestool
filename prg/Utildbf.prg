@@ -3427,8 +3427,6 @@ Function lineReposition( cAlias, oBrw, lUp )
    local nNewNum
    local currentAlias
 
-   msgalert( "entro en la funcion")
-   
    DEFAULT lUp    := .t.
 
    if ( cAlias )->( fieldpos( "nPosPrint" ) ) == 0

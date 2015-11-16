@@ -216,6 +216,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _COBRLIN                  98  
 #define _CREFAUX                  99
 #define _CREFAUX2                100
+#define _NPOSPRINT                88
 
 /*
 Array para impuestos
@@ -2376,7 +2377,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          :nWidth              := 54
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
+         :lHide 					:= .t.
       end with
+
+      with object ( oBrwLin:AddCol() )
+         :cHeader             := "Posición"
+         :cSortOrder          := "nPosPrint"
+         :bEditValue          := {|| ( dbfTmpLin )->nPosPrint }
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
+         :cEditPicture        := "9999"
+         :nWidth              := 60
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+      end with 
      
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Código"
@@ -2883,14 +2896,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 			ID 		524 ;
 			OF 		oFld:aDialogs[1] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( LineUpOld( dbfTmpLin, oBrwLin ) )
+         ACTION   ( LineUp( dbfTmpLin, oBrwLin ) )
       //   ACTION   ( DbSwapUp( dbfTmpLin, oBrwLin ) )
 
 		REDEFINE BUTTON ;
 			ID 		525 ;
 			OF 		oFld:aDialogs[1] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( LineDownOld( dbfTmpLin, oBrwLin ) )
+         ACTION   ( LineDown( dbfTmpLin, oBrwLin ) )
       //   ACTION   ( DbSwapDown( dbfTmpLin, oBrwLin ) )
 
       REDEFINE BUTTON oBtnKit;
@@ -4805,7 +4818,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
       Segunda caja de dialogo--------------------------------------------------
       */
 
-      REDEFINE GET aGet[ _NNUMLIN ] VAR aTmp[ _NNUMLIN ] ;
+      REDEFINE GET aGet[ _NPOSPRINT ] VAR aTmp[ _NPOSPRINT ] ;
          ID       100 ;
          SPINNER ;
          WHEN     ( nMode == APPD_MODE ) ;
@@ -9600,6 +9613,9 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpLin )->( OrdCreate( cTmpLin, "nNumLin", "Str( nNumLin, 4 )", {|| Str( Field->nNumLin ) } ) )
 
+      ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpLin )->( OrdCreate( cTmpLin, "nPosPrint", "Str( nPosPrint, 4 )", {|| Str( Field->nPosPrint ) } ) )
+
    else
 
       lErrors     := .t.
@@ -10025,11 +10041,12 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
 
       aGet[ _NCANPED  ]:cText( 1 )
       aGet[ _NUNICAJA ]:cText( 1 )
+      aTmp[ _NNUMLIN  ] := nLastNum( dbfTmpLin )
 
-      if !Empty( aGet[ _NNUMLIN  ] )
-         aGet[ _NNUMLIN  ]:cText( nLastNum( dbfTmpLin ) )
+      if !Empty( aGet[ _NPOSPRINT  ] )
+         aGet[ _NPOSPRINT  ]:cText( nLastNum( dbfTmpLin, ( "nPosPrint" ) ) )
       else
-         aTmp[ _NNUMLIN  ] := nLastNum( dbfTmpLin )
+         aTmp[ _NPOSPRINT  ] := nLastNum( dbfTmpLin, ( "nPosPrint" ) )
       end if
 
       aGet[ _CALMLIN  ]:cText( aTmpPed[ _CCODALM ])
@@ -10387,6 +10404,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
                if isNum( oBrwProperties:Cargo[ n, i ]:Value ) .and. oBrwProperties:Cargo[ n, i ]:Value != 0
 
                   aTmp[ _NNUMLIN ]     := nLastNum( dbfTmpLin )
+                  aTmp[ _NPOSPRINT ]   := nLastNum( dbfTmpLin, "nPosPrint" )
                   aTmp[ _NUNICAJA]     := oBrwProperties:Cargo[ n, i ]:Value
                   aTmp[ _CCODPR1 ]     := oBrwProperties:Cargo[ n, i ]:cCodigoPropiedad1
                   aTmp[ _CVALPR1 ]     := oBrwProperties:Cargo[ n, i ]:cValorPropiedad1
@@ -10561,6 +10579,7 @@ Static Function AppendKit( uTmpLin, aTmpPed )
    local nDtoPrm
    local nDtoDiv
    local nNumLin
+   local nPosPrint
    local nTarLin
    local nUnidades                     := 0
    local nStkActual                    := 0
@@ -10585,6 +10604,7 @@ Static Function AppendKit( uTmpLin, aTmpPed )
       nDtoPrm                          := uTmpLin[ _NDTOPRM ]
       nDtoDiv                          := uTmpLin[ _NDTODIV ]
       nNumLin                          := uTmpLin[ _NNUMLIN ]
+      nPosPrint                        := uTmpLin[ _NPOSPRINT ]
       nTarLin                          := uTmpLin[ _NTARLIN ]
    else
       cCodArt                          := ( uTmpLin )->cRef
@@ -10603,6 +10623,7 @@ Static Function AppendKit( uTmpLin, aTmpPed )
       nDtoPrm                          := ( uTmpLin )->nDtoPrm
       nDtoDiv                          := ( uTmpLin )->nDtoDiv
       nNumLin                          := ( uTmpLin )->nNumLin
+      nPosPrint                        := ( uTmpLin )->nPosPrint
       nTarLin                          := ( uTmpLin )->nTarLin
    end if
 
@@ -10615,11 +10636,13 @@ Static Function AppendKit( uTmpLin, aTmpPed )
             ( dbfTmpLin )->( dbAppend() )
 
             if lKitAsociado( cCodArt, D():Articulos( nView ) )
-               ( dbfTmpLin )->nNumLin  := nLastNum( dbfTmpLin )
-               ( dbfTmpLin )->lKitChl  := .f.
+               ( dbfTmpLin )->nNumLin  	:= nLastNum( dbfTmpLin )
+               ( dbfTmpLin )->nPosPrint   := nLastNum( dbfTmpLin , "nPosPrint" )
+               ( dbfTmpLin )->lKitChl  	:= .f.
             else
-               ( dbfTmpLin )->nNumLin  := nNumLin
-               ( dbfTmpLin )->lKitChl  := .t.
+               ( dbfTmpLin )->nNumLin  	:= nNumLin
+               ( dbfTmpLin )->nPosPrint   := nPosPrint
+               ( dbfTmpLin )->lKitChl  	:= .t.
             end if
 
             ( dbfTmpLin )->cRef        := ( dbfkit      )->cRefKit
@@ -13633,6 +13656,10 @@ Function SynPedCli( cPath )
               ( dbfPedCliL )->nReq    := nPReq( cdbfIva, ( dbfPedCliL )->nIva )
         end if
 
+        if Empty( ( dbfPedCliL )->nPosPrint )
+              ( dbfPedCliL )->nPosPrint    := ( dbfPedCliL )->nNumLin
+        end if
+
         ( dbfPedCliL )->( dbSkip() )
 
         SysRefresh()
@@ -14857,6 +14884,7 @@ Static Function printReportPedCli( nDevice, nCopies, cPrinter, cCodigoDocumento 
 
    local oFr
    local cFilePdf             := cPatTmp() + "PedidoCliente" + StrTran( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, " ", "" ) + ".Pdf"
+   local nOrd
 
    DEFAULT nDevice            := IS_SCREEN
    DEFAULT nCopies            := 1
@@ -14869,6 +14897,8 @@ Static Function printReportPedCli( nDevice, nCopies, cPrinter, cCodigoDocumento 
    end if 
 
    SysRefresh()
+
+   nOrd 								:= ( D():PedidosClientesLineas( nView ) )->( ordSetFocus( "nPosPrint" ) )
 
    oFr                        := frReportManager():New()
 
@@ -14955,6 +14985,8 @@ Static Function printReportPedCli( nDevice, nCopies, cPrinter, cCodigoDocumento 
    */
 
    oFr:DestroyFr()
+
+   ( D():PedidosClientesLineas( nView ) )->( ordSetFocus( nOrd ) )
 
 Return ( cFilePdf )
 
@@ -15429,6 +15461,9 @@ FUNCTION rxPedCli( cPath, cDriver )
       ( cPedCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cPedCliT )->( ordCreate( cPath + "PedCliL.Cdx", "iNumPed", "'09' + cSerPed + Str( nNumPed ) + Space( 1 ) + cSufPed", {|| '09' + Field->cSerPed + Str( Field->nNumPed ) + Space( 1 ) + Field->cSufPed } ) )
 
+      ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliL.Cdx", "nPosPrint", "cSerPed + Str( nNumPed ) + cSufPed + Str( nPosPrint )", {|| Field->cSerPed + Str( Field->nNumPed ) + Field->cSufPed + Str( Field->nPosPrint )}, ) )
+
       ( cPedCliT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de clientes" )
@@ -15761,6 +15796,7 @@ function aColPedCli()
    aAdd( aColPedCli, { "cObrLin",   "C",   10,  0, "Dirección de la linea",                           "Direccion",                  "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "cRefAux",   "C",   18,  0, "Referencia auxiliar",                             "ReferenciaAuxiliar",         "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "cRefAux2",  "C",   18,  0, "Segunda referencia auxiliar",                     "ReferenciaAuxiliar2",        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nPosPrint", "N",    4,  0, "Posición de impresión",                           "Posición de impresión",      "", "( cDbfCol )", nil } )
 
 return ( aColPedCli )
 
