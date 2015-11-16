@@ -8007,17 +8007,11 @@ Static Function DataReport( oFr )
 
    oFr:ClearDataSets()
 
-   msgalert( ( dbfSatCliL )->( ordSetFocus( ) ), "orden al entrar" )
-
    oFr:SetWorkArea(     "SAT", ( D():SatClientes( nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    oFr:SetFieldAliases( "SAT", cItemsToReport( aItmSatCli() ) )
 
-   ? ( dbfSatCliL )->( ordsetfocus() )   
-
    oFr:SetWorkArea(     "Lineas de SAT", ( dbfSatCliL )->( Select() ) )
    oFr:SetFieldAliases( "Lineas de SAT", cItemsToReport( aColSatCli() ) )
-
-   msgalert( ( dbfSatCliL )->( ordSetFocus( ) ), "orden despues de select" )
 
    oFr:SetWorkArea(     "Incidencias de SAT", ( dbfSatCliI )->( Select() ) )
    oFr:SetFieldAliases( "Incidencias de SAT", cItemsToReport( aIncSatCli() ) )
@@ -8081,8 +8075,6 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "SAT", "Transportistas",                  {|| ( D():SatClientes( nView ) )->cCodTrn } )
    oFr:SetMasterDetail( "SAT", "Usuarios",                        {|| ( D():SatClientes( nView ) )->cCodUsr } )
 
-   msgalert( ( dbfSatCliL )->( ordSetFocus() ), "orden despues de relacionar las tablas" )
-
    oFr:SetMasterDetail( "Lineas de SAT", "Artículos",             {|| ( dbfSatCliL )->cRef } )
    oFr:SetMasterDetail( "Lineas de SAT", "Ofertas",               {|| ( dbfSatCliL )->cRef } )
    oFr:SetMasterDetail( "Lineas de SAT", "Unidades de medición",  {|| ( dbfSatCliL )->cUnidad } )
@@ -8106,8 +8098,6 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Lineas de SAT", "Ofertas" )
    oFr:SetResyncPair(   "Lineas de SAT", "Unidades de medición" )
    oFr:SetResyncPair(   "Lineas de SAT", "Impuestos especiales" )
-
-   msgalert( ( dbfSatCliL )->( ordSetFocus( 1 ) ), "orden despues de sync las tablas" )
 
 Return nil
 

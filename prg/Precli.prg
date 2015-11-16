@@ -10639,7 +10639,7 @@ function aColPreCli()
    aAdd( aColPreCli, { "cObrLin"  ,"C",  10,  0, "Dirección de la linea",                    "Direccion",                     "", "( cDbfCol )", nil } )
    aAdd( aColPreCli, { "cRefAux"  ,"C",  18,  0, "Referencia auxiliar",                      "",                              "", "( cDbfCol )", nil } )
    aAdd( aColPreCli, { "cRefAux2" ,"C",  18,  0, "Segunda referencia auxiliar",              "",                              "", "( cDbfCol )", nil } )
-   aAdd( aColPreCli, { "nPosPrint","C",  18,  0, "Posición de impresión",                    "",                              "", "( cDbfCol )", nil } )
+   aAdd( aColPreCli, { "nPosPrint","N",   4,  0, "Posición de impresión",                    "",                              "", "( cDbfCol )", nil } )
 
 return ( aColPreCli )
 
