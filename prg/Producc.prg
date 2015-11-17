@@ -597,7 +597,7 @@ METHOD Activate( cDriver )
       ACTION   ( oScript:Expand() ) ;
       TOOLTIP  "Scripts" ;
 
-      ImportScript( ::oWndBrw, oScript, "Produccion" ) 
+      ImportScript( ::oWndBrw, oScript, "Produccion", Self ) 
 
    DEFINE BTNSHELL RESOURCE "END" GROUP OF ::oWndBrw ;
       NOBORDER ;
