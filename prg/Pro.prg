@@ -1056,226 +1056,9 @@ return .t.
 
 //---------------------------------------------------------------------------//
 
-Function LoadPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPre, oBrw, nView )
+Function LoadPropertiesTable( cCodArt, nPrecioCosto, cCodPr1, cCodPr2, oGetUnidades, oGetPre, oBrw, nView )
 
-   local n
-   local a
-   local o
-   local nOrd
-   local nRow              := 1
-   local nCol              := 1
-   local nTotalRow         := 0
-   local nTotalCol         := 0
-   local aPropertiesTable  := {}
-   local aHeadersTable     := {}
-   local aSizesTable       := {}
-   local aJustifyTable     := {}
-
-   nOrd                    := ( D():PropiedadesLineas( nView ) )->( OrdSetFocus( "nOrdPro" ) )
-
-   if !Empty( cCodPr1 ) .and. ( D():PropiedadesLineas( nView ) )->( dbSeek( cCodPr1 ) )
-      while ( D():PropiedadesLineas( nView ) )->cCodPro == cCodPr1 .and. !( D():PropiedadesLineas( nView ) )->( eof() )
-         nTotalRow++
-         ( D():PropiedadesLineas( nView ) )->( dbSkip() )
-      end while
-      nTotalCol++
-   end if
-
-   if nTotalRow == 0
-      Return nil
-   end if
-
-   if !Empty( cCodPr2 ) .and. ( D():PropiedadesLineas( nView ) )->( dbSeek( cCodPr2 ) )
-      while ( D():PropiedadesLineas( nView ) )->cCodPro == cCodPr2 .and. !( D():PropiedadesLineas( nView ) )->( eof() )
-         nTotalCol++
-         ( D():PropiedadesLineas( nView ) )->( dbSkip() )
-      end while
-   else
-      nTotalCol++
-   end if
-
-   aPropertiesTable        := Array( nTotalRow, nTotalCol )
-
-   if ( D():Propiedades( nView ) )->( dbSeek( cCodPr1 ) )
-      aAdd( aHeadersTable, ( D():Propiedades( nView ) )->cDesPro )
-      aAdd( aSizesTable,   60 )
-      aAdd( aJustifyTable, .f. )
-   end if
-
-   if ( D():PropiedadesLineas( nView ) )->( dbSeek( cCodPr1 ) )
-      while ( D():PropiedadesLineas( nView ) )->cCodPro == cCodPr1 .and. !( D():PropiedadesLineas( nView ) )->( eof() )
-         aPropertiesTable[ nRow, nCol ]                     := TPropertiesItems():New()
-         aPropertiesTable[ nRow, nCol ]:cCodigo             := cCodArt
-         aPropertiesTable[ nRow, nCol ]:cHead               := Rtrim( ( D():Propiedades( nView ) )->cDesPro )
-         aPropertiesTable[ nRow, nCol ]:cText               := ( D():PropiedadesLineas( nView ) )->cDesTbl
-         aPropertiesTable[ nRow, nCol ]:cCodigoPropiedad1   := ( D():PropiedadesLineas( nView ) )->cCodPro
-         aPropertiesTable[ nRow, nCol ]:cValorPropiedad1    := ( D():PropiedadesLineas( nView ) )->cCodTbl
-         nRow++
-         ( D():PropiedadesLineas( nView ) )->( dbSkip() )
-      end while
-   end if
-
-   if !Empty( cCodPr2 ) .and. ( D():PropiedadesLineas( nView ) )->( dbSeek( cCodPr2 ) )
-
-      while ( D():PropiedadesLineas( nView ) )->cCodPro == cCodPr2 .and. !( D():PropiedadesLineas( nView ) )->( eof() )
-
-         nCol++
-
-         aAdd( aHeadersTable, Rtrim( ( D():PropiedadesLineas( nView ) )->cDesTbl ) )
-         aAdd( aSizesTable,   60 )
-         aAdd( aJustifyTable, .t. )
-
-         for n := 1 to nTotalRow
-            aPropertiesTable[ n, nCol ]                     := TPropertiesItems():New()
-            aPropertiesTable[ n, nCol ]:Value               := 0
-            aPropertiesTable[ n, nCol ]:cHead               := Rtrim( ( D():PropiedadesLineas( nView ) )->cDesTbl )
-            aPropertiesTable[ n, nCol ]:cCodigo             := cCodArt
-            aPropertiesTable[ n, nCol ]:cCodigoPropiedad1   := aPropertiesTable[ n, 1 ]:cCodigoPropiedad1
-            aPropertiesTable[ n, nCol ]:cValorPropiedad1    := aPropertiesTable[ n, 1 ]:cValorPropiedad1
-            aPropertiesTable[ n, nCol ]:cCodigoPropiedad2   := ( D():PropiedadesLineas( nView ) )->cCodPro
-            aPropertiesTable[ n, nCol ]:cValorPropiedad2    := ( D():PropiedadesLineas( nView ) )->cCodTbl
-         next
-
-         ( D():PropiedadesLineas( nView ) )->( dbSkip() )
-
-      end while
-
-   else
-
-      nCol++
-
-      aAdd( aHeadersTable, "Unidades" )
-      aAdd( aSizesTable,   60 )
-      aAdd( aJustifyTable, .t. )
-
-      for n := 1 to nTotalRow
-         aPropertiesTable[ n, nCol ]                        := TPropertiesItems():New()
-         aPropertiesTable[ n, nCol ]:Value                  := 0
-         aPropertiesTable[ n, nCol ]:cHead                  := "Unidades"
-         aPropertiesTable[ n, nCol ]:cCodigo                := cCodArt
-         aPropertiesTable[ n, nCol ]:cCodigoPropiedad1      := aPropertiesTable[ n, 1 ]:cCodigoPropiedad1
-         aPropertiesTable[ n, nCol ]:cValorPropiedad1       := aPropertiesTable[ n, 1 ]:cValorPropiedad1
-      next
-
-   end if
-
-   /*
-   Calculo de precios----------------------------------------------------------
-   */
-
-   for each a in aPropertiesTable
-      for each o in a
-         if IsObject( o )
-            o:PrecioCompra( nPreCos, D():ArticuloPrecioPropiedades( nView ) )
-         end if
-      next
-   next
-
-   /*
-   Reposicionamiento-----------------------------------------------------------
-   */
-
-   ( D():PropiedadesLineas( nView ) )->( OrdSetFocus( nOrd ) )
-
-   // Asignamos la informacion al browse---------------------------------------
-
-   if !Empty( oBrw ) 
-
-      if oBrw:ClassName() == "TWBROWSE"
-   
-         /*
-         Cambio de valor en precio de costo---------------------------------------
-         */
-   
-         if !Empty( oGetPre )
-            oGetPre:bValid := {|| validPropertiesTable( oBrw, oGetPre ) }
-         end if
-   
-         /*
-         Reposicionamiento--------------------------------------------------------
-         */
-   
-         // oBrw:bTextColor   := {| nRow, nCol, nStyleLine | if( nCol == 1, CLR_RED, 0 ) }
-         oBrw:bLine        := {|| aPropertiesTable( oBrw, nTotalCol ) }
-         oBrw:aFooters     := {|| aPropertiesFooter( oBrw, nTotalRow, nTotalCol, oGetUnd ) }
-         oBrw:aHeaders     := aHeadersTable
-         oBrw:aColSizes    := aSizesTable
-         oBrw:aJustify     := aJustifyTable
-         oBrw:bKeyChar     := {| nKey | KeyPropertiesTable( nKey, oBrw ) }
-         oBrw:bEdit        := {|| EditPropertiesTable( oBrw ) }
-         oBrw:bLDblClick   := {|| EditPropertiesTable( oBrw ) }
-         oBrw:bMod         := {|| EditPropertiesTable( oBrw ) }
-         oBrw:bWhen        := {|| PutPropertiesTable( oBrw, oGetPre ) }
-         oBrw:bChange      := {|| PutPropertiesTable( oBrw, oGetPre ) }
-         oBrw:nColAct      := 2
-         oBrw:nFreeze      := 1
-         oBrw:lDrawFooters := .t.
-         oBrw:lAdjLastCol  := .f.
-         oBrw:lAdjBrowse   := .t.
-         oBrw:lCellStyle   := .t.
-         oBrw:Cargo        := aPropertiesTable
-         oBrw:SetArray( aPropertiesTable )
-   
-         oBrw:Show()
-         oBrw:Refresh()
-   
-      end if
-   
-      /*
-      Esto es para xBrowse--------------------------------------------------------
-      */
-   
-      if ( oBrw:ClassName() == "TXBROWSE" .or. oBrw:ClassName() == "IXBROWSE" )
-
-         oBrw:aCols                 := {}
-         oBrw:Cargo                 := aPropertiesTable   
-         
-         oBrw:SetArray( aPropertiesTable, .f., 0, .f. )
-
-         for n := 1 to len( aPropertiesTable[ 1 ] )
-
-            if IsNil( aPropertiesTable[ oBrw:nArrayAt, n ]:Value )
-   
-               with object ( oBrw:AddCol() )
-                  :Adjust()
-                  :cHeader          := aPropertiesTable[ oBrw:nArrayAt, n ]:cHead
-                  :bEditValue       := bGenEditText( aPropertiesTable, oBrw, n )
-                  :nWidth           := 100
-                  :bFooter          := {|| "Total" }
-               end with
-   
-            else
-   
-               with object ( oBrw:AddCol() )
-                  :Adjust()
-                  :cHeader          := aPropertiesTable[ oBrw:nArrayAt, n ]:cHead
-                  :bEditValue       := bGenEditValue( aPropertiesTable, oBrw, n )
-                  :nWidth           := 60
-                  :cEditPicture     := MasUnd()
-                  :nTotal           := 0
-                  :nDataStrAlign    := 1
-                  :nHeadStrAlign    := 1
-                  :nFootStrAlign    := 1
-                  :nEditType        := 1 // EDIT_GET
-                  :bOnPostEdit      := {| oCol, xVal, nKey | bPostEditProperties( oCol, xVal, nKey, oBrw, oGetUnd ) }
-               end with
-   
-            end if
-   
-         next
-         
-#ifndef __XHARBOUR__         
-         oBrw:aCols[ 1 ]:Hide()
-#endif
-
-         oBrw:Adjust()
-         oBrw:Show()
-      
-      end if
-   
-   end if
-
-Return ( aPropertiesTable )
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -1561,12 +1344,12 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method PrecioCompra( nPreCos, dbfArtCom ) CLASS TPropertiesItems
+Method PrecioCompra( nPrecioCosto, dbfArtCom ) CLASS TPropertiesItems
 
    ::nPrecioCompra      := nComPro( ::cCodigo, ::cCodigoPropiedad1, ::cValorPropiedad1, ::cCodigoPropiedad2, ::cValorPropiedad2, dbfArtCom )
 
    if ::nPrecioCompra == 0
-      ::nPrecioCompra   := nPreCos
+      ::nPrecioCompra   := nPrecioCosto
    end if
 
 Return ( ::nPrecioCompra )
@@ -2267,13 +2050,13 @@ return ( aBase )
 
 Function nCosPro( cCodArt, cCodPr1, cValPr1, cCodPr2, cValPr2, dbfArtDiv )
 
-   local nPreCos        := 0
+   local nPrecioCosto        := 0
 
    if ( dbfArtDiv )->( dbSeek( cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) )
-      nPreCos           := ( dbfArtDiv )->nPreCom
+      nPrecioCosto           := ( dbfArtDiv )->nPreCom
    end if
 
-Return ( nPreCos )
+Return ( nPrecioCosto )
 
 //---------------------------------------------------------------------------//
 
@@ -2428,18 +2211,6 @@ FUNCTION cNombrePropiedad( cCodigoPropiedad, cValorPropiedad, dbfPro )
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
-RETURN ( cNombrePropiedad )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION nombrePropiedad( cCodigoPropiedad, cValorPropiedad, nView )
-
-   local cNombrePropiedad  := ""
-
-   if D():gotoIdPropiedadesLineas( cCodigoPropiedad + cValorPropiedad, nView ) 
-      cNombrePropiedad     := ( D():PropiedadesLineas( nView ) )->cDesTbl
-   end if
 
 RETURN ( cNombrePropiedad )
 
@@ -2724,7 +2495,7 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-Function setPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPre, oBrw, nView )
+Function setPropertiesTable( cCodArt, cCodPr1, cCodPr2, nPrecioCosto, oGetUnidades, oBrw, nView )
 
    local n
    local a
@@ -2832,14 +2603,12 @@ Function setPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPr
 
    end if
 
-   /*
-   Calculo de precios----------------------------------------------------------
-   */
+   // Calculo de precios----------------------------------------------------------
 
    for each a in aPropertiesTable
       for each o in a
          if IsObject( o )
-            o:PrecioCompra( nPreCos, D():ArticuloPrecioPropiedades( nView ) )
+            o:PrecioCompra( nPrecioCosto, D():ArticuloPrecioPropiedades( nView ) )
          end if
       next
    next
@@ -2901,7 +2670,7 @@ Function setPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPr
                :nFooterType      := AGGR_SUM
                :nEditType        := EDIT_GET
                :nHeadStrAlign    := AL_RIGHT
-               :bOnPostEdit      := {| oCol, xVal, nKey | bPostEditProperties( oCol, xVal, nKey, oBrw, oGetUnd ) }
+               :bOnPostEdit      := {| oCol, xVal, nKey | bPostEditProperties( oCol, xVal, nKey, oBrw, oGetUnidades ) }
                :nFootStyle       := :defStyle( AL_RIGHT, .t. )               
                :Cargo            := n
             end with
@@ -3032,3 +2801,16 @@ Static Function addPropiedades( aPropiedades, nView, cCodigoPropiedad )
 Return ( aadd( aPropiedades, hPropiedad ) )
 
 //---------------------------------------------------------------------------//
+
+FUNCTION nombrePropiedad( cCodigoPropiedad, cValorPropiedad, nView )
+
+   local cNombrePropiedad  := "no encontrado : " + cCodigoPropiedad + " : " + cValorPropiedad
+
+   if D():gotoIdPropiedadesLineas( cCodigoPropiedad + cValorPropiedad, nView ) 
+      cNombrePropiedad     := ( D():PropiedadesLineas( nView ) )->cDesTbl
+   end if
+
+RETURN ( cNombrePropiedad )
+
+//---------------------------------------------------------------------------//
+

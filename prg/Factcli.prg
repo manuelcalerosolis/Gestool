@@ -611,8 +611,6 @@ static bEdtTablet          := { |aTmp, aGet, cFacCliT, oBrw, bWhen, bValid, nMod
 static bEdtDetTablet       := { |aTmp, aGet, cFacCliL, oBrw, bWhen, bValid, nMode, aTmpFac| EdtDetTablet( aTmp, aGet, cFacCliL, oBrw, bWhen, bValid, nMode, aTmpFac ) }
 static bEdtEst 		      := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpFac | EdtEst( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpFac ) }
 
-static oBrwProperties
-
 //---------------------------------------------------------------------------//
 //Funciones del programa
 //---------------------------------------------------------------------------//
@@ -5006,27 +5004,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
 
       // Propiedades-------------------------------------------------
 
-      oBrwProperties                       := IXBrowse():New( oFld:aDialogs[1] )
-
-      oBrwProperties:nDataType             := DATATYPE_ARRAY
-
-      oBrwProperties:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwProperties:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      oBrwProperties:lHScroll              := .t.
-      oBrwProperties:lVScroll              := .t.
-
-      oBrwProperties:nMarqueeStyle         := 3
-      oBrwProperties:lRecordSelector       := .f.
-      oBrwProperties:lFastEdit             := .t.
-      oBrwProperties:nFreeze               := 1
-      oBrwProperties:lFooter               := .t.
-
-      oBrwProperties:SetArray( {}, .f., 0, .f. )
-
-      oBrwProperties:MakeTotals()
-
-      oBrwProperties:CreateFromResource( 500 )
+      BrowseProperties():newInstance( 500, oFld:aDialogs[1], nView )
 
       REDEFINE GET aGet[ _CVALPR1 ] VAR aTmp[ _CVALPR1 ];
          ID       270 ;
@@ -5120,7 +5098,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
          OF       oFld:aDialogs[1] ;
          IDSAY    131
 
-      REDEFINE GET aGet[_NUNICAJA] VAR aTmp[_NUNICAJA] ;
+      REDEFINE GET aGet[ _NUNICAJA ] ;
+         VAR      aTmp[ _NUNICAJA ] ;
          ID       140 ;
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin .AND. nMode != MULT_MODE .and. oUser():lModificaUnidades() ) ; // .AND. !aTmpFac[ _LIMPALB ]
@@ -5129,6 +5108,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
          PICTURE  cPicUnd ;
          OF       oFld:aDialogs[1] ;
          IDSAY    141
+
+      BrowseProperties():getInstance():setBindingUnidades( aGet[ _NUNICAJA ] )
 
       REDEFINE GET aGet[ _CUNIDAD ] VAR aTmp[ _CUNIDAD ] ;
          ID       170 ;
@@ -5564,11 +5545,13 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
       ON INIT     ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
       CENTER
 
-   EndDetMenu()
+   endDetMenu()
 
    if !Empty( bmpImage )
       bmpImage:End()
    end if
+
+   BrowseProperties():endInstance()
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -12272,9 +12255,8 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
 
    // Propiedades--------------------------------------------------------------
 
-   if !empty( oBrwProperties )
-      oBrwProperties:Hide()
-      oBrwProperties:Cargo    := nil
+   if !empty( BrowseProperties():getInstance() )
+      BrowseProperties():getInstance():Hide()
    end if 
 
    // Focus al codigo-------------------------------------------------------------
@@ -12365,8 +12347,8 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          oSayVp1:Hide()
       end if
 
-      if !empty( oBrwProperties )
-         oBrwProperties:Hide()
+      if !empty( BrowseProperties():getInstance() )
+         BrowseProperties():getInstance():Hide()
       end if
 
       Return .t.
@@ -12723,11 +12705,11 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
             aGet[ _NCANENT  ]:cText( 0 )
             aGet[ _NUNICAJA ]:cText( 0 )
 
-            setPropertiesTable( cCodArt, 0, aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _NUNICAJA ], aGet[ _NPREUNIT ], oBrwProperties, nView )
+            BrowseProperties():getInstance():buildPropertiesTable( cCodArt, aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ] )
 
          else 
 
-            hidePropertiesTable( oBrwProperties )
+            BrowseProperties():getInstance():hide()
 
             if !Empty( aTmp[ _CCODPR1 ] )
 
@@ -13287,6 +13269,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
    local nTotUnd                 := 0
    local hAtipica
    local nPrecioPropiedades      := 0
+   local oBrwProperties          := BrowseProperties():getInstance()
 
    if !Empty( oBtn )
       oBtn:SetFocus()
@@ -13463,7 +13446,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
             else
 
                saveDetail( aTmp, aClo, aGet, aTmpFac, dbfTmpLin, oBrw, nMode )
-               //WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
 
             end if
 
@@ -13472,7 +13454,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
       else
 
          saveDetail( aTmp, aClo, aGet, aTmpFac, dbfTmpLin, oBrw, nMode )
-         //WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
 
       end if
 

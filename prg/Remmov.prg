@@ -4399,10 +4399,8 @@ METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
                ::oSayLote:Hide()
                ::oGetLote:Hide()
 
-               setPropertiesTable( ::oParent:oArt:Codigo, 0, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oUndMov, ::oPreDiv, ::oBrwPrp, ::oParent:nView )
+               setPropertiesTable( ::oParent:oArt:Codigo, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, 0, ::oUndMov, ::oBrwPrp, ::oParent:nView )
                
-               // setPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPre, oBrw, nView )
-
             else
 
                hidePropertiesTable( ::oBrwPrp )

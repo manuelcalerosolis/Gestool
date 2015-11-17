@@ -100,7 +100,7 @@ CLASS TDet
 
    METHOD BuildFiles( cPath )                         INLINE ( ::DefineFiles( cPath ):Create() )
 
-   METHOD NewInstance( cPath, cDriver, oParent )      INLINE ( ::EndInstance(), ::oInstance := ::New( cPath, cDriver, oParent ), ::oInstance ) 
+   METHOD NewInstance( cPath, cDriver, oParent )      INLINE ( ::EndInstance(), ::GetInstance( cPath, cDriver, oParent ), ::oInstance ) 
    METHOD GetInstance( cPath, cDriver, oParent )      INLINE ( if( empty( ::oInstance ), ::oInstance := ::New( cPath, cDriver, oParent ), ::oInstance ) ) 
    METHOD EndInstance()                               INLINE ( if( !empty( ::oInstance ), ::oInstance := nil, ), nil ) 
 

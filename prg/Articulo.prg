@@ -13700,6 +13700,8 @@ CLASS TArticuloLabelGenerator
 
    Method SelectPropertiesLabels()
 
+   Method StartSelectPropertiesLabels()
+
    Method SavePropertiesLabels()
 
    Method LoadPropertiesLabels()
@@ -13796,9 +13798,7 @@ Method Create() CLASS TArticuloLabelGenerator
             DIALOGS  "SelectLabels_3",;
                      "SelectLabels_2"
 
-         /*
-         Bitmap-------------------------------------------------------------------
-         */
+         // Bitmap-------------------------------------------------------------------
 
          REDEFINE BITMAP ;
             RESOURCE "EnvioEtiquetas" ;
@@ -13884,9 +13884,7 @@ Method Create() CLASS TArticuloLabelGenerator
             WHEN     ( ::nCantidadLabels == 1 ) ;
             OF       ::fldGeneral
 
-         /*
-         Segunda caja de dialogo--------------------------------------------------
-         */
+         // Segunda caja de dialogo--------------------------------------------------
 
          REDEFINE GET oGetOrd ;
             VAR      cGetOrd;
@@ -14281,66 +14279,20 @@ Method SelectPropertiesLabels() CLASS TArticuloLabelGenerator
 
    local n
    local oDlg
-   local aTblPrp
-   local oBrwPrp
 
-   if !Empty( ( D():Articulos( nView ) )->cCodPrp1 ) .or. !Empty( ( D():Articulos( nView ) )->cCodPrp2 )
+   if empty( ( D():Articulos( nView ) )->cCodPrp1 ) .and. empty( ( D():Articulos( nView ) )->cCodPrp2 )
+      msgStop( "Este artículo no tiene propiedades." )
+      Return .f. 
+   end if
 
-      aTblPrp                       := LoadPropertiesTable( ( D():Articulos( nView ) )->Codigo, nCosto( ( D():Articulos( nView ) )->Codigo, D():Articulos( nView ), dbfArtKit ), ( D():Articulos( nView ) )->cCodPrp1, ( D():Articulos( nView ) )->cCodPrp2, dbfPro, dbfTblPro, dbfArtVta )
+   DEFINE DIALOG oDlg RESOURCE "Propiedades"
 
-      ::LoadPropertiesLabels( aTblPrp )
-
-      DEFINE DIALOG oDlg RESOURCE "Propiedades"
-
-      oBrwPrp                       := IXBrowse():New( oDlg )
-
-      oBrwPrp:nDataType             := DATATYPE_ARRAY
-
-      oBrwPrp:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwPrp:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      oBrwPrp:lHScroll              := .t.
-      oBrwPrp:lVScroll              := .t.
-
-      oBrwPrp:nMarqueeStyle         := 3
-      oBrwPrp:lRecordSelector       := .f.
-      oBrwPrp:lFastEdit             := .t.
-      oBrwPrp:nFreeze               := 1
-      oBrwPrp:lFooter               := .t.
-
-      oBrwPrp:SetArray( aTblPrp )
-
-      for n := 1 to len( aTblPrp[ 1 ] )
-
-         with object ( oBrwPrp:aCols[ n ] )
-
-            :cHeader          := aTblPrp[ oBrwPrp:nArrayAt, n ]:cHead
-
-            if IsNil( aTblPrp[ oBrwPrp:nArrayAt, n ]:Value )
-               :bEditValue    := bGenEditText( aTblPrp, oBrwPrp, n )
-               :nWidth        := 80
-               :bFooter       := {|| "Total" }
-            else
-               :bEditValue    := bGenEditValue( aTblPrp, oBrwPrp, n )
-               :cEditPicture  := MasUnd()
-               :nWidth        := 60
-               :nEditType     := 1 // EDIT_GET
-               :nTotal        := 0
-               :bOnPostEdit   := {| oCol, xVal, nKey | aTblPrp[ oBrwPrp:nArrayAt, oBrwPrp:nColSel + oBrwPrp:nColOffset - 1 ]:Value := xVal } // , oBrwPrp:MakeTotals()
-            end if
-
-         end with
-
-      next
-
-      oBrwPrp:MakeTotals()
-
-      oBrwPrp:CreateFromResource( 100 )
+      BrowseProperties():newInstance( 100, oDlg, nView )
 
       REDEFINE BUTTON;
          ID       IDOK ;
          OF       oDlg ;
-         ACTION   ( ::SavePropertiesLabels( aTblPrp, oDlg ) )
+         ACTION   ( ::SavePropertiesLabels( oDlg ) )
 
       REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -14348,26 +14300,31 @@ Method SelectPropertiesLabels() CLASS TArticuloLabelGenerator
          CANCEL ;
          ACTION   ( oDlg:end() )
 
-      oDlg:AddFastKey( VK_F5, {|| ::SavePropertiesLabels( aTblPrp, oDlg ) } )
+      oDlg:bStart := {|| ::StartSelectPropertiesLabels() }
 
-      ACTIVATE DIALOG oDlg CENTER
+      oDlg:AddFastKey( VK_F5, {|| ::SavePropertiesLabels( oDlg ) } )
 
-   else
-
-      MsgStop( "Este artículo no tiene propiedades." )
-
-   end if
+   ACTIVATE DIALOG oDlg CENTER
 
 Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method SavePropertiesLabels( aTblPrp, oDlg ) CLASS TArticuloLabelGenerator
+Method StartSelectPropertiesLabels()
+
+   BrowseProperties():getInstance():buildPropertiesTable( ( D():Articulos( nView ) )->Codigo, ( D():Articulos( nView ) )->cCodPrp1, ( D():Articulos( nView ) )->cCodPrp2 )
+
+   ::LoadPropertiesLabels()   
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+Method SavePropertiesLabels( oDlg ) CLASS TArticuloLabelGenerator
 
    local o
    local a
    local n  := 0
-   local c  := ""
 
    while ( dbfArtLbl )->( dbSeek( ( D():Articulos( nView ) )->Codigo ) ) .and. !( dbfArtLbl )->( eof() )
       if dbLock( dbfArtLbl )
@@ -14376,7 +14333,7 @@ Method SavePropertiesLabels( aTblPrp, oDlg ) CLASS TArticuloLabelGenerator
       end if
    end while
 
-   for each a in ( aTblPrp )
+   for each a in ( BrowseProperties():getInstance():aPropertiesTable )
 
       for each o in ( a )
 
@@ -14414,32 +14371,13 @@ Return ( .t. )
 
 //--------------------------------------------------------------------------//
 
-Method LoadPropertiesLabels( aTblPrp ) CLASS TArticuloLabelGenerator
-
-   local o
-   local a
+Method LoadPropertiesLabels() CLASS TArticuloLabelGenerator
 
    if ( dbfArtLbl )->( dbSeek( ( D():Articulos( nView ) )->Codigo ) )
 
       while ( dbfArtLbl )->cCodArt == ( D():Articulos( nView ) )->Codigo .and. !( dbfArtLbl )->( eof() )
 
-         for each a in ( aTblPrp )
-
-            for each o in ( a )
-
-               if Rtrim( o:cCodigo )            == Rtrim( ( dbfArtLbl )->cCodArt )  .and. ;
-                  Rtrim( o:cCodigoPropiedad1 )  == Rtrim( ( dbfArtLbl )->cCodPr1 )  .and. ;
-                  Rtrim( o:cCodigoPropiedad2 )  == Rtrim( ( dbfArtLbl )->cCodPr2 )  .and. ;
-                  Rtrim( o:cValorPropiedad1 )   == Rtrim( ( dbfArtLbl )->cValPr1 )  .and. ;
-                  Rtrim( o:cValorPropiedad2 )   == Rtrim( ( dbfArtLbl )->cValPr2 )
-
-                  o:Value  := ( dbfArtLbl )->nUndLbl
-
-               end if
-
-            next
-
-         next
+         BrowseProperties():getInstance():setPropertiesUnits( ( dbfArtLbl )->cCodArt, ( dbfArtLbl )->cCodPr1, ( dbfArtLbl )->cCodPr2, ( dbfArtLbl )->cValPr1, ( dbfArtLbl )->cValPr2, ( dbfArtLbl )->nUndLbl )
 
          ( dbfArtLbl )->( dbSkip() )
 
@@ -14447,7 +14385,7 @@ Method LoadPropertiesLabels( aTblPrp ) CLASS TArticuloLabelGenerator
 
    end if
 
-Return ( aTblPrp )
+Return ( nil )
 
 //--------------------------------------------------------------------------//
 
@@ -19170,14 +19108,14 @@ Return ( lValid )
 Static Function generateMatrizCodigoBarras( getCodigoMatriz ) 
 
    local nValue
-   local aStatus   := aGetStatus( D():Articulos( nView ), .t. )
+   local aStatus  := aGetStatus( D():Articulos( nView ), .t. )
 
    ( D():Articulos( nView ) )->( ordsetfocus( "Matriz" ) )
 
    ( D():Articulos( nView ) )->( dbgobottom() )
 
-   nValue            := val( ( D():Articulos( nView ) )->( ordkeyval() ) ) + 1
-   nValue            := strzero( nValue, __lenCodigoMatriz__ )
+   nValue         := val( ( D():Articulos( nView ) )->( ordkeyval() ) ) + 1
+   nValue         := strzero( nValue, __lenCodigoMatriz__ )
 
    getCodigoMatriz:cText( nValue )
 
@@ -19202,3 +19140,19 @@ Function getExtraFieldArticulo( cFieldName )
 Return ( getExtraField( cFieldName, oDetCamposExtra, ( D():Articulos( nView ) )->Codigo ) )
 
 //---------------------------------------------------------------------------//
+
+Function nombrePrimeraPropiedadArticulo( view )
+
+   DEFAULT view   := nView
+
+Return ( nombrePropiedad( ( tmpArticulo )->cCodPrp1, ( tmpArticulo )->cValPrp1, view ) )
+
+//--------------------------------------------------------------------------//
+
+Function nombreSegundaPropiedadArticulo( view )
+
+   DEFAULT view   := nView
+
+Return ( nombrePropiedad( ( tmpArticulo )->cCodPrp2, ( tmpArticulo )->cValPrp2, view ) )
+
+//--------------------------------------------------------------------------//
