@@ -10941,8 +10941,6 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    Primero crear la base de datos local----------------------------------------
    */
 
-   msgalert( ( D():FacturasClientesLineas( nView ) )->( ordSetFocus() ), "orden facturas")
-
    dbCreate( cTmpLin, aSqlStruct( aColFacCli() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), cTmpLin, cCheckArea( cDbfLin, @dbfTmpLin ), .f. )
 
