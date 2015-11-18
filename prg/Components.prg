@@ -2329,11 +2329,9 @@ METHOD Resource() CLASS BrowseProperties
    ::oBrwProperties:lRecordSelector := .f.
    ::oBrwProperties:lFastEdit       := .t.
    ::oBrwProperties:nFreeze         := 1
-   ::oBrwProperties:lFooter         := .t.
+   ::oBrwProperties:lFooter         := .f.
 
    ::oBrwProperties:SetArray( {}, .f., 0, .f. )
-
-   ::oBrwProperties:MakeTotals()
 
    ::oBrwProperties:CreateFromResource( ::idBrowse )
 
@@ -2489,7 +2487,6 @@ METHOD setPropertiesTableToBrowse() CLASS BrowseProperties
             :cHeader          := ::aPropertiesTable[ ::oBrwProperties:nArrayAt, n ]:cHead
             :bEditValue       := ::bGenerateEditText( n )
             :nWidth           := 100
-            :bFooter          := {|| "Total" }
          end with
 
          // Columna del color de la propiedad
@@ -2500,7 +2497,6 @@ METHOD setPropertiesTableToBrowse() CLASS BrowseProperties
                :Adjust()
                :cHeader       := "Color"
                :nWidth        := 40
-               :bFooter       := {|| "" }
                :bStrData      := {|| "" }
                :nWidth        := 16
                :bClrStd       := ::bGenerateRGBValue( n )
@@ -2522,7 +2518,6 @@ METHOD setPropertiesTableToBrowse() CLASS BrowseProperties
             :cEditPicture     := MasUnd()
             :nWidth           := 50
             :setAlign( AL_RIGHT )
-            :nFooterType      := AGGR_SUM
             :nEditType        := EDIT_GET
             :nHeadStrAlign    := AL_RIGHT
             :bOnPostEdit      := {| oCol, xVal, nKey | ::bPostEditProperties( oCol, xVal, nKey ) }
@@ -2541,10 +2536,9 @@ METHOD setPropertiesTableToBrowse() CLASS BrowseProperties
 
    ::oBrwProperties:nRowHeight      := 20
    ::oBrwProperties:nHeaderHeight   := 20
-   ::oBrwProperties:nFooterHeight   := 20
 
    ::oBrwProperties:Show()
-   
+
 Return ( self )
 
 //---------------------------------------------------------------------------//

@@ -116,17 +116,23 @@ CREATE CLASS FacturasClientesRisi
                                     { "Codigo" => "V800404", "Nombre" => "Exp.ruedas familiar Plastico",      "Codigo unidades" => "8411859559960",  "Codigo cajas" => "18411859559967", "Codigo interno" => "" },;
                                     { "Codigo" => "V800501", "Nombre" => "Exp. Extrusión",                    "Codigo unidades" => "8411859559977",  "Codigo cajas" => "18411859559974", "Codigo interno" => "" } }
 
-   METHOD New()         CONSTRUCTOR
+   METHOD New()                                 CONSTRUCTOR
 
    METHOD Dialog()
 
    METHOD OpenFiles()
-   METHOD CloseFiles()  INLINE ( D():DeleteView( ::nView ) )
+   METHOD CloseFiles()                          INLINE ( D():DeleteView( ::nView ) )
 
    METHOD SendFile()
    METHOD ProcessFile()
 
-   METHOD findCodeBarInHash( cCodigoBarra )
+   METHOD findMainCodeInHash( cCodigoBarra )
+   METHOD findCodigoInternoInHash( cCodigoInterno )
+
+   METHOD validateSerialInvoice( cSerie )       INLINE ( cSerie == "A" .or. cSerie == "B" )
+
+   METHOD getCantidad()
+   METHOD getPrecioBase()
 
 ENDCLASS
 
@@ -139,10 +145,12 @@ ENDCLASS
    	end if 
    
       if !::OpenFiles()
-   		Return ( Self )
+            Return ( Self )
    	end if 
 
-      MsgRun( "Porcesando facturas", "Espere por favor...", {|| ::ProcessFile() } )
+      ::ProcessFile()
+
+      //      MsgRun( "Porcesando facturas", "Espere por favor...", {|| ::ProcessFile() } )
 
       ::CloseFiles()
 
@@ -178,7 +186,7 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-   METHOD OpenFiles() CLASS FacturasClientesRisi
+METHOD OpenFiles() CLASS FacturasClientesRisi
 
    local oError
    local oBlock
@@ -216,17 +224,18 @@ ENDCLASS
 
    ErrorBlock( oBlock )
 
-   Return ( lOpenFiles )
+Return ( lOpenFiles )
 
 //---------------------------------------------------------------------------//
 
-   METHOD ProcessFile() CLASS FacturasClientesRisi
+METHOD ProcessFile() CLASS FacturasClientesRisi
 
    local cCodigoRuta    := ""
    local cCodigoGrupo   := ""
    local cNombreGrupo   := ""
    local cCodigoBarra   := ""
    local cCodigoInterno := ""
+   local cUbicacion     := ""
 
    CursorWait()
 
@@ -236,7 +245,10 @@ ENDCLASS
    
    while ( D():FacturasClientes( ::nView ) )->dFecFac <= ::dFin .and. ( D():FacturasClientes( ::nView ) )->( !eof() )
 
-      if ( ( D():FacturasClientes( ::nView ) )->cSerie == "A" .or. ( D():FacturasClientes( ::nView ) )->cSerie == "B" ) .and. ( D():FacturasClientesLineas( ::nView ) )->( dbSeek( D():FacturasClientesId( ::nView ) ) )
+      msgWait(    "Factura actual : " + ( D():FacturasClientesIdTextShort( ::nView ) ),;
+                  "Progreso : " + alltrim( str( ( D():FacturasClientes( ::nView ) )->( ordkeyno() ) ) ) + " de " + alltrim( str( ( D():FacturasClientes( ::nView ) )->( ordkeycount() ) ) ), 0.0001 )
+
+      if ( ::validateSerialInvoice( ( D():FacturasClientes( ::nView ) )->cSerie ) ) .and. ( D():FacturasClientesLineas( ::nView ) )->( dbSeek( D():FacturasClientesId( ::nView ) ) )
 
          while ( D():FacturasClientesId( ::nView ) == D():FacturasClientesLineasId( ::nView ) ) .and. ( D():FacturasClientesLineas( ::nView ) )->( !eof() ) 
 
@@ -244,12 +256,12 @@ ENDCLASS
 
                // Codigo de la familia-----------------------------------------
 
-               cCodigoInterno            := ( D():Articulos( ::nView ) )->Codigo
-               cCodigoBarra              := ( D():Articulos( ::nView ) )->CodeBar
+               cCodigoInterno             := ( D():Articulos( ::nView ) )->Codigo
+               cCodigoBarra               := ( D():Articulos( ::nView ) )->CodeBar
+               cUbicacion                 := ( D():Articulos( ::nView ) )->cDesUbi 
 
-               if ::findCodigoInternoInHash( cCodigoBarra )
 
-                  // msgAlert( hb_valToExp( ::hProducto ) )  // !empty( cCodigoBarra ) .and. ( alltrim( cCodigoBarra ) == "00010" ) 
+               if ::findMainCodeInHash( cUbicacion )
 
                   // Codigo del grupo-------------------------------------------
 
@@ -274,9 +286,11 @@ ENDCLASS
                   ::oUve:Fabricante(      'RISI' )
                   ::oUve:CodigoProdFab(   ::hProducto[ "Codigo unidades" ] ) // RetFld( ( D():FacturasClientesLineas( ::nView ) )->cRef, D():Get( "ArtCodebar", ::nView ), "cCodBar", "cDefArt" )
                   ::oUve:EAN13(           ::hProducto[ "Codigo unidades" ] ) // RetFld( ( D():FacturasClientesLineas( ::nView ) )->cRef, D():Get( "ArtCodebar", ::nView ), "cCodBar", "cDefArt" )
-                  ::oUve:Cantidad(        nTotNFacCli( D():FacturasClientesLineas( ::nView ) ) )
+
+                  ::oUve:Cantidad(        ::getCantidad() )
+                  ::oUve:PrecioBase(      ::getPrecioBase() )
+
                   ::oUve:UM(              'UN' )
-                  ::oUve:PrecioBase(      nTotUFacCli( D():FacturasClientesLineas( ::nView ) ) )
                   ::oUve:Descuentos(      nTotDtoLFacCli( D():FacturasClientesLineas( ::nView ) ) )
                   ::oUve:PrecioBrutoTotal(nTotlFacCli( D():FacturasClientesLineas( ::nView ) ) )
                   ::oUve:FechaFra(        ( D():FacturasClientes( ::nView ) )->dFecFac )
@@ -300,8 +314,6 @@ ENDCLASS
 
                   ::oUve:SerializeASCII()
 
-                  // msgWait( "procesando registro " + str( ( D():FacturasClientes( ::nView ) )->( ordkeyno() ) ), "", 0.1 ) 
-
                end if 
 
             end if 
@@ -322,11 +334,11 @@ ENDCLASS
 
    msgInfo( "Fichero generado " + ::oUve:cFile, "Proceso finalizado" )
 
-   Return ( Self )
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-   METHOD SendFile() CLASS FacturasClientesRisi
+METHOD SendFile() CLASS FacturasClientesRisi
 
       local oInt
       local oFtp
@@ -363,19 +375,25 @@ ENDCLASS
          oText:setText( "Fichero subido" )
       end if
 
-   RETURN ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-   METHOD findCodeBarInHash( cCodigoBarra ) CLASS FacturasClientesRisi
+   METHOD findMainCodeInHash( cMainCode ) CLASS FacturasClientesRisi
 
       local hProducto
 
       ::hProducto             := nil
 
+      cMainCode               := alltrim( cMainCode )
+
+      if empty( cMainCode )
+            RETURN .f.
+      end if 
+
       for each hProducto in ::aProductos
 
-         if hProducto[ "Codigo" ] == alltrim( cCodigoBarra )
+         if hProducto[ "Codigo" ] == cMainCode
             ::hProducto       := hProducto
          end if 
 
@@ -391,9 +409,11 @@ ENDCLASS
 
       ::hProducto             := nil
 
+      cCodigoInterno          := alltrim( cCodigoInterno )
+
       for each hProducto in ::aProductos
 
-         if hProducto[ "Codigo interno" ] == alltrim( cCodigoInterno )
+         if hProducto[ "Codigo interno" ] == cCodigoInterno
             ::hProducto       := hProducto
          end if 
 
@@ -403,6 +423,31 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
+METHOD getCantidad()
+
+      local nUnidades   := ( D():Articulos( ::nView ) )->nUniCaja 
+      local nCantidad   := ::oUve:Cantidad(  nTotNFacCli( D():FacturasClientesLineas( ::nView ) )
+
+      if nUnidades != 0
+            nCantidad   := nCantidad / nUnidades
+      end if 
+
+RETURN ( nCantidad )
+
+//---------------------------------------------------------------------------//
+
+METHOD getPrecioBase()
+
+      local nUnidades   := ( D():Articulos( ::nView ) )->nUniCaja 
+      local nPrecioBase := ::oUve:Cantidad(  nTotNFacCli( D():FacturasClientesLineas( ::nView ) )
+
+      if nUnidades != 0
+            nPrecioBase := nCantidad * nUnidades
+      end if 
+
+RETURN ( nPrecioBase )
+
+//---------------------------------------------------------------------------//
 
 CLASS Uve FROM Cuaderno
 

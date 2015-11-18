@@ -14279,6 +14279,8 @@ Method SelectPropertiesLabels() CLASS TArticuloLabelGenerator
 
    local n
    local oDlg
+   local oGetUnidades
+   local nGetUnidades   := 0
 
    if empty( ( D():Articulos( nView ) )->cCodPrp1 ) .and. empty( ( D():Articulos( nView ) )->cCodPrp2 )
       msgStop( "Este artículo no tiene propiedades." )
@@ -14288,6 +14290,15 @@ Method SelectPropertiesLabels() CLASS TArticuloLabelGenerator
    DEFINE DIALOG oDlg RESOURCE "Propiedades"
 
       BrowseProperties():newInstance( 100, oDlg, nView )
+
+      REDEFINE GET oGetUnidades ;
+         VAR      nGetUnidades ;
+         ID       110 ;
+         WHEN     ( .f. ) ;
+         PICTURE  masUnd() ;
+         OF       oDlg 
+
+      BrowseProperties():getInstance():setBindingUnidades( oGetUnidades )
 
       REDEFINE BUTTON;
          ID       IDOK ;
@@ -14315,6 +14326,8 @@ Method StartSelectPropertiesLabels()
    BrowseProperties():getInstance():buildPropertiesTable( ( D():Articulos( nView ) )->Codigo, ( D():Articulos( nView ) )->cCodPrp1, ( D():Articulos( nView ) )->cCodPrp2 )
 
    ::LoadPropertiesLabels()   
+
+   BrowseProperties():getInstance():nTotalProperties()
 
 Return ( Self )
 

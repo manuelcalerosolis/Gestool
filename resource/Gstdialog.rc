@@ -348,10 +348,10 @@ FONT 8, "MS Sans Serif"
   CONTROL "Agentes relacionados", -1, "Button", BS_GROUPBOX, 44, 29, 337, 239
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Relación con otros agentes", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 337, 8
-  CONTROL "&Añadir [F2]", 501, "Button", WS_TABSTOP, 50, 41, 50, 14
-  CONTROL "&Modificar [F3]", 502, "Button", WS_TABSTOP, 50, 56, 50, 14
-  CONTROL "&Eliminar [F4]", 503, "Button", WS_TABSTOP, 50, 71, 50, 14
-  CONTROL "", 310, "TXBrowse", WS_TABSTOP|0x00300000, 106, 41, 272, 223
+  CONTROL "&Añadir [F2]", 501, "Button", WS_TABSTOP, 50, 40, 50, 14
+  CONTROL "&Modificar [F3]", 502, "Button", WS_TABSTOP, 104, 40, 50, 14
+  CONTROL "&Eliminar [F4]", 503, "Button", WS_TABSTOP, 158, 40, 50, 14
+  CONTROL "", 310, "TXBrowse", WS_TABSTOP|0x00300000, 51, 56, 326, 208
 }
 
 AGEREL DIALOG DISCARDABLE 30, 84, 292, 58
@@ -16306,6 +16306,8 @@ FONT 8, "Helv"
   CONTROL "", 100, "TXBrowse", WS_TABSTOP|0x00300000, 4, 4, 380, 164
   CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 279, 173, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 334, 173, 50, 14
+  CONTROL "Total unidades", -1, "Static", WS_GROUP, 5, 179, 52, 8
+  CONTROL "", 110, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 60, 175, 71, 12
 }
 
 PROVEE_9 DIALOG DISCARDABLE 49, 37, 650, 329

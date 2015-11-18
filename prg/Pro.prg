@@ -2804,7 +2804,7 @@ Return ( aadd( aPropiedades, hPropiedad ) )
 
 FUNCTION nombrePropiedad( cCodigoPropiedad, cValorPropiedad, nView )
 
-   local cNombrePropiedad  := "no encontrado : " + cCodigoPropiedad + " : " + cValorPropiedad
+   local cNombrePropiedad  := ""
 
    if D():gotoIdPropiedadesLineas( cCodigoPropiedad + cValorPropiedad, nView ) 
       cNombrePropiedad     := ( D():PropiedadesLineas( nView ) )->cDesTbl
