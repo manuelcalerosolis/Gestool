@@ -1,33 +1,113 @@
-
-static fechaProceso
-static grupoParte
-static objetoParte
+#include "FiveWin.Ch"
+#include "Factu.ch"
 
 //---------------------------------------------------------------------------//
 
 function InicioHRB( oParte )
-   
-   fechaProceso         := GetSysDate()
-   grupoParte           := Padr( "Todos", 20 )
-   objetoParte          := oParte
 
+   local oCreateParte   := createParte():new( oParte )
 
-   getFechaProceso()
-   getGrupoParte()
+   if !Empty( oCreateParte )
+      oCreateParte:runTest()
+      //oCreateParte:run()
+   end if
 
-
-   //MsgInfo( fechaProceso, "fechaProceso" )
-   //MsgInfo( grupoParte, "grupoParte" )
-
-return .t.
+return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-function getFechaProceso()
+CLASS createParte
+
+   DATA fechaProceso
+   DATA grupoParte
+   DATA arrayGrupos
+   DATA oParteProduccion
+   DATA cDocumento
+   DATA newNumero
+
+   METHOD new()
+
+   METHOD run()
+
+   METHOD runTest()
+
+   METHOD getFechaProceso()
+   METHOD compruebaFechaProceso()
+
+   METHOD getGrupoParte()
+   METHOD compruebaGrupoParte()
+   METHOD compruebaArrayGrupoParte()
+
+   METHOD getArrayGruposOfParte()
+
+   METHOD isOnlyOneGrupoOfParte()            INLINE ( Len( ::getArrayGruposOfParte() ) <= 1 )
+   
+   METHOD isOnlyOneGrupoToProcess()          INLINE ( Len( ::arrayGrupos ) <= 0 )
+
+   METHOD procesaGrupo()
+
+   METHOD procesaParte( cGrupo )
+
+   METHOD createCabecera()
+   
+   METHOD updateElaborado()
+
+   METHOD updateMateriaPrima()
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD new( oParte ) CLASS createParte
+
+   ::fechaProceso         := GetSysDate()
+   ::grupoParte           := Padr( "Todos", 20 )
+   ::oParteProduccion     := oParte
+   
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD run() CLASS createParte
+
+   ::getFechaProceso()
+   ::getGrupoParte()
+   
+   if ::isOnlyOneGrupoOfParte()
+      MsgStop( "Existe un solo grupo de parte" )
+      Return .t.
+   end if
+
+   ::procesaGrupo()
+
+Return .t.
+
+//---------------------------------------------------------------------------// 
+
+METHOD runTest() CLASS createParte
+
+   ::arrayGrupos  := { "F1" }
+   ::cDocumento   := "P        7  "
+   
+   if ::isOnlyOneGrupoOfParte()
+      MsgStop( "Existe un solo grupo de parte" )
+      Return .t.
+   end if
+
+   ::procesaGrupo()
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD getFechaProceso() CLASS createParte
    
    while .t.
-      MsgGet( "Seleccione una fecha", "Fecha: ", @fechaProceso )
-      if compruebaFechaProceso()
+      if MsgGet( "Seleccione una fecha", "Fecha: ", @::fechaProceso )
+         if ::compruebaFechaProceso()
+            exit
+         end if
+      else
          exit
       end if
    end while
@@ -36,59 +116,280 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-function compruebaFechaProceso()
+METHOD compruebaFechaProceso() CLASS createParte
 
    local lResult  := .f.
 
-   objetoParte:oDbf:getStatus()
+   ::oParteProduccion:oDbf:getStatus()
 
-   objetoParte:oDbf:OrdSetFocus( "dFecOrd" )
+   ::oParteProduccion:oDbf:OrdSetFocus( "dFecOrd" )
       
-   if objetoParte:oDbf:Seek( dTos( fechaProceso ) )
-      lResult     := .t.
+   if ::oParteProduccion:oDbf:Seek( dTos( ::fechaProceso ) )
+      ::cDocumento   := ::oParteProduccion:oDbf:cSerOrd + Str( ::oParteProduccion:oDbf:nNumOrd ) + ::oParteProduccion:oDbf:cSufOrd
+      lResult        := .t.
    else
       MsgStop( "No existen partes para la fecha seleccionada" )
    end if
 
-   objetoParte:oDbf:setStatus()
+   ::oParteProduccion:oDbf:setStatus()
 
 Return lResult
 
 //---------------------------------------------------------------------------//
 
-function getGrupoParte()
+METHOD getGrupoParte() CLASS CreateParte
 
    while .t.
-      MsgGet( "Seleccione un grupo", "Grupo: ", @grupoParte )
-      if compruebaGrupoParte()
+      if !msgGet( "Seleccione un grupo", "Grupo: ", @::grupoParte )
          exit
       end if
+
+      if ::compruebaGrupoParte()
+         exit
+      end if 
+
    end while
 
 Return .t.
 
 //---------------------------------------------------------------------------//
 
-function compruebaGrupoParte()
+METHOD compruebaGrupoParte() CLASS CreateParte
 
-   local lReturn  := .f.
+   local lResult  := .f.
 
-   if AllTrim( grupoParte ) == "Todos"
+   if AllTrim( ::grupoParte ) == "Todos"
       Return .t.
    end if
 
-   objetoParte:oTemporada:getStatus()
+   ::arrayGrupos    := hb_aTokens( ::grupoParte, "," )
 
-   objetoParte:oTemporada:OrdSetFocus( "Codigo" )
-      
-   if objetoParte:oTemporada:Seek( AllTrim( grupoParte ) )
-      lResult     := .t.
-   else
-      MsgStop( "No existen partes para la fecha seleccionada" )
-   end if
-
-   objetoParte:oTemporada:setStatus()
-
-return lReturn
+return ::compruebaArrayGrupoParte()
 
 //---------------------------------------------------------------------------//
+
+METHOD compruebaArrayGrupoParte() CLASS CreateParte
+
+   local lReturn     := .t.
+   local aGrupoParte
+
+   if len( ::arrayGrupos ) == 0
+      Return .f.
+   end if
+
+   ::oParteProduccion:oTemporada:getStatus()
+
+   ::oParteProduccion:oTemporada:OrdSetFocus( "Codigo" )
+
+   for each aGrupoParte in ::arrayGrupos
+      
+      if !::oParteProduccion:oTemporada:Seek( Padr( aGrupoParte, 10 ) )
+         lReturn     := .f.
+      end if
+
+   next
+
+   ::oParteProduccion:oTemporada:setStatus()
+
+   if !lReturn
+      msgInfo( "Algunos de los valores introducidos no son válidos" )
+   end if
+
+Return lReturn
+
+//---------------------------------------------------------------------------//
+
+METHOD getArrayGruposOfParte() CLASS CreateParte
+
+   local arrayGruposOfParte   := {}
+
+   if Empty( ::cDocumento )
+      Return .f.
+   end if
+
+   //Estudiamos los materiales elaborados--------------------------------------
+
+   ::oParteProduccion:oDetProduccion:oDbf:getStatus()
+
+   ::oParteProduccion:oDetProduccion:oDbf:OrdSetFocus( "cNumOrd" )
+   
+   ::oParteProduccion:oDetProduccion:oDbf:GoTop()
+
+   if ::oParteProduccion:oDetProduccion:oDbf:Seek( ::cDocumento )
+
+      while ::oParteProduccion:oDetProduccion:oDbf:cSerOrd + Str( ::oParteProduccion:oDetProduccion:oDbf:nNumOrd ) + ::oParteProduccion:oDetProduccion:oDbf:cSufOrd == ::cDocumento .and.;
+            !::oParteProduccion:oDetProduccion:oDbf:Eof()
+
+         if aScan( arrayGruposOfParte, ::oParteProduccion:oDetProduccion:oDbf:cCodTmp ) == 0
+            aAdd( arrayGruposOfParte, AllTrim( ::oParteProduccion:oDetProduccion:oDbf:cCodTmp ) )
+         end if
+
+         ::oParteProduccion:oDetProduccion:oDbf:Skip()
+
+      end while
+
+   end if
+
+   ::oParteProduccion:oDetProduccion:oDbf:setStatus()
+
+   //Estudiamos las materias primas--------------------------------------------
+
+   ::oParteProduccion:oDetMaterial:oDbf:getStatus()
+
+   ::oParteProduccion:oDetMaterial:oDbf:OrdSetFocus( "cNumOrd" )
+   
+   ::oParteProduccion:oDetMaterial:oDbf:GoTop()
+
+   if ::oParteProduccion:oDetMaterial:oDbf:Seek( ::cDocumento )
+
+      while ::oParteProduccion:oDetMaterial:oDbf:cSerOrd + Str( ::oParteProduccion:oDetMaterial:oDbf:nNumOrd ) + ::oParteProduccion:oDetMaterial:oDbf:cSufOrd == ::cDocumento .and.;
+            !::oParteProduccion:oDetMaterial:oDbf:Eof()
+
+         if aScan( arrayGruposOfParte, ::oParteProduccion:oDetMaterial:oDbf:cCodTmp ) == 0
+            aAdd( arrayGruposOfParte, AllTrim( ::oParteProduccion:oDetMaterial:oDbf:cCodTmp ) )
+         end if            
+
+         ::oParteProduccion:oDetMaterial:oDbf:Skip()
+
+      end while
+
+   end if
+
+   ::oParteProduccion:oDetMaterial:oDbf:setStatus()
+
+Return arrayGruposOfParte
+
+//---------------------------------------------------------------------------//
+
+METHOD ProcesaGrupo() CLASS CreateParte
+
+   local cGrupo
+
+   if ::isOnlyOneGrupoToProcess()
+      Return .f.
+   end if
+
+   for each cGrupo in ::arrayGrupos
+
+      if !::isOnlyOneGrupoOfParte()
+
+         if aScan( ::getArrayGruposOfParte(), AllTrim( cGrupo ) ) != 0
+            ::procesaParte( cGrupo )
+         else
+            MsgStop( "El grupo que intenta crear no existe en el parte: " + ::cDocumento )
+         end if
+
+      end if
+
+   next
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD procesaParte( cGrupo ) CLASS CreateParte
+
+   ::createCabecera()
+
+   //::updateElaborado( cGrupo )
+
+   ::updateMateriaPrima( cGrupo )
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD createCabecera() CLASS CreateParte
+
+   local aCabecera
+
+   ::oParteProduccion:oDbf:getStatus()
+
+   ::oParteProduccion:oDbf:OrdSetFocus( "cNumOrd" )
+      
+   if ::oParteProduccion:oDbf:Seek( ::cDocumento )
+
+      ::newNumero    := nNewDoc( ::oParteProduccion:oDbf:cSerOrd, ::oParteProduccion:oDbf:nArea, "nParPrd" )
+
+      aCabecera      := dbScatter( ::oParteProduccion:oDbf:cAlias )
+
+      aCabecera[2]   := ::newNumero
+
+      dbGather( aCabecera, ::oParteProduccion:oDbf:cAlias, .t. )
+
+   end if
+
+   ::oParteProduccion:oDbf:setStatus()
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+   
+METHOD updateElaborado( cGrupo ) CLASS CreateParte
+
+   ::oParteProduccion:oDetProduccion:oDbf:getStatus()
+
+   ::oParteProduccion:oDetProduccion:oDbf:OrdSetFocus( "cCodTmp" )
+   
+   if ::oParteProduccion:oDetProduccion:oDbf:Seek( ::cDocumento + Padr( cGrupo, 10 ) )
+
+      while ::oParteProduccion:oDetProduccion:oDbf:cSerOrd + Str( ::oParteProduccion:oDetProduccion:oDbf:nNumOrd ) + ::oParteProduccion:oDetProduccion:oDbf:cSufOrd + ::oParteProduccion:oDetProduccion:oDbf:cCodTmp == ::cDocumento + Padr( cGrupo, 10 ) .and.;
+            !::oParteProduccion:oDetProduccion:oDbf:Eof()
+
+         ::oParteProduccion:oDetProduccion:oDbf:Load()
+         ::oParteProduccion:oDetProduccion:oDbf:nNumOrd    := ::newNumero
+         ::oParteProduccion:oDetProduccion:oDbf:Save()
+
+         ::oParteProduccion:oDetProduccion:oDbf:Skip()
+
+      end while
+
+   end if
+
+   ::oParteProduccion:oDetProduccion:oDbf:setStatus()
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD updateMateriaPrima( cGrupo ) CLASS CreateParte
+
+   ::oParteProduccion:oDetMaterial:oDbf:getStatus()
+
+   ::oParteProduccion:oDetMaterial:oDbf:OrdSetFocus( "cCodTmp" )
+   
+   MsgInfo( ::cDocumento + Padr( cGrupo, 10 ), "lo que busco" )
+
+   if ::oParteProduccion:oDetMaterial:oDbf:Seek( ::cDocumento + Padr( cGrupo, 10 ) )
+
+      MsgInfo( "1" )
+
+      //while ::oParteProduccion:oDetMaterial:oDbf:cSerOrd + Str( ::oParteProduccion:oDetMaterial:oDbf:nNumOrd ) + ::oParteProduccion:oDetMaterial:oDbf:cSufOrd + ::oParteProduccion:oDetMaterial:oDbf:cCodTmp == ::cDocumento + Padr( cGrupo, 10 ) .and.;
+      while !::oParteProduccion:oDetMaterial:oDbf:Eof()
+
+         MsgInfo( ::oParteProduccion:oDetMaterial:oDbf:cSerOrd + Str( ::oParteProduccion:oDetMaterial:oDbf:nNumOrd ) + ::oParteProduccion:oDetMaterial:oDbf:cSufOrd + ::oParteProduccion:oDetMaterial:oDbf:cCodTmp, len( ::oParteProduccion:oDetMaterial:oDbf:cSerOrd + Str( ::oParteProduccion:oDetMaterial:oDbf:nNumOrd ) + ::oParteProduccion:oDetMaterial:oDbf:cSufOrd + ::oParteProduccion:oDetMaterial:oDbf:cCodTmp ) )
+         MsgInfo( ::cDocumento + Padr( cGrupo, 10 ), len( ::cDocumento + Padr( cGrupo, 10 ) ) )
+
+         if ::oParteProduccion:oDetMaterial:oDbf:cSerOrd + Str( ::oParteProduccion:oDetMaterial:oDbf:nNumOrd ) + ::oParteProduccion:oDetMaterial:oDbf:cSufOrd + ::oParteProduccion:oDetMaterial:oDbf:cCodTmp == ::cDocumento + Padr( cGrupo, 10 )
+
+            MsgInfo( "Cambio" )
+
+            ::oParteProduccion:oDetMaterial:oDbf:Load()
+            ::oParteProduccion:oDetMaterial:oDbf:nNumOrd    := ::newNumero
+            ::oParteProduccion:oDetMaterial:oDbf:Save()
+
+         end if
+
+         ::oParteProduccion:oDetMaterial:oDbf:Skip()
+
+      end while
+
+      MsgInfo( "3" )
+
+   end if
+
+   ::oParteProduccion:oDetMaterial:oDbf:setStatus()
+
+Return .t.
+
+//----------------------------------------------------------------------------//
