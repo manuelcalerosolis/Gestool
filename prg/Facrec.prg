@@ -201,6 +201,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _COBRLIN                 82
 #define _CREFAUX                 83
 #define _CREFAUX2                84
+#define _NPOSPRINT         		85
 
 /*
 Definici¢n de Array para impuestos
@@ -2629,13 +2630,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
 			ID 		524 ;
 			OF 		oFld:aDialogs[1] ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         	ACTION   ( DbSwapUp( dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) )
+         	ACTION   ( LineUp( dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) )
 
 		REDEFINE BUTTON ;
 			ID 		525 ;
 			OF 		oFld:aDialogs[1] ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         	ACTION   ( DbSwapDown( dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) )
+         	ACTION   ( LineDown( dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) )
 
       	REDEFINE BUTTON oBtnKit;
          	ID       526 ;
@@ -2675,7 +2676,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
          :nWidth              := 52
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
+         :lHide 					:= .t.
       end with
+
+      with object ( oBrwLin:AddCol() )
+         :cHeader             := "Posición"
+         :cSortOrder          := "nPosPrint"
+         :bEditValue          := {|| ( dbfTmpLin )->nPosPrint }
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
+         :cEditPicture        := "9999"
+         :nWidth              := 60
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+      end with 
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Código"
@@ -4349,7 +4362,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
       Segunda caja de dilogo---------------------------------------------------
       */
 
-      REDEFINE GET aGet[_NNUMLIN] VAR aTmp[_NNUMLIN] ;
+      REDEFINE GET aGet[_NPOSPRINT] VAR aTmp[_NPOSPRINT] ;
          ID       100 ;
          SPINNER ;
 			COLOR 	CLR_GET ;
@@ -4606,6 +4619,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
       aGet[ _NUNICAJA]:cText( 1 )
       aGet[ _CTIPMOV ]:cText( cDefVta() )
       aGet[ _NNUMLIN ]:cText( nLastNum( dbfTmpLin ) )
+      aGet[ _NPOSPRINT]:cText( nLastNum( dbfTmpLin, "nPosPrint" ) )
       aGet[ _CALMLIN ]:cText( aTmpFac[ _CCODALM ])
 
       aGet[ _CDETALLE]:Show()
@@ -4995,6 +5009,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oFld, oBrw, oDlg, oSayPr1, oSayPr
                if isNum( oBrwProperties:Cargo[ n, i ]:Value ) .and. oBrwProperties:Cargo[ n, i ]:Value != 0
 
                   aTmp[ _NNUMLIN ]     := nLastNum( dbfTmpLin )
+                  aTmp[ _NPOSPRINT ]   := nLastNum( dbfTmpLin, "nPosPrint" )
                   aTmp[ _NUNICAJA]     := oBrwProperties:Cargo[ n, i ]:Value
                   aTmp[ _CCODPR1 ]     := oBrwProperties:Cargo[ n, i ]:cCodigoPropiedad1
                   aTmp[ _CVALPR1 ]     := oBrwProperties:Cargo[ n, i ]:cValorPropiedad1
@@ -5098,6 +5113,7 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
    local cNumPed
    local nTarLin
    local nNumLin                       := ( dbfTmpLin )->nNumLin
+   local nPosPrint
    local nRecAct                       := ( dbfKit    )->( RecNo() )
    local nRecLin                       := ( dbfTmpLin )->( RecNo() )
    local nUnidades                     := 0
@@ -5121,6 +5137,7 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
       nDtoPrm                          := uTmpLin[ _NDTOPRM ]
       nDtoDiv                          := uTmpLin[ _NDTODIV ]
       nNumLin                          := uTmpLin[ _NNUMLIN ]
+      nPosPrint                        := uTmpLin[ _NPOSPRINT ]
       nTarLin                          := uTmpLin[ _NTARLIN ]
    else
       cCodArt                          := ( uTmpLin )->cRef
@@ -5139,6 +5156,7 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
       nDtoPrm                          := ( uTmpLin )->nDtoPrm
       nDtoDiv                          := ( uTmpLin )->nDtoDiv
       nNumLin                          := ( uTmpLin )->nNumLin
+      nPosPrint                        := ( uTmpLin )->nPosPrint
       nTarLin                          := ( uTmpLin )->nTarLin
    end if
 
@@ -5155,11 +5173,13 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
             ( dbfTmpLin )->( dbAppend() )
 
             if lKitAsociado( cCodArt, D():Articulos( nView ) )
-               ( dbfTmpLin )->nNumLin  := nLastNum( dbfTmpLin )
-               ( dbfTmpLin )->lKitChl  := .f.
+               ( dbfTmpLin )->nNumLin  	:= nLastNum( dbfTmpLin )
+               ( dbfTmpLin )->nPosPrint   := nLastNum( dbfTmpLin , "nPosPrint" )
+               ( dbfTmpLin )->lKitChl  	:= .f.
             else
-               ( dbfTmpLin )->nNumLin  := nNumLin
-               ( dbfTmpLin )->lKitChl  := .t.
+               ( dbfTmpLin )->nNumLin  	:= nNumLin
+               ( dbfTmpLin )->nPosPrint   := nPosPrint
+               ( dbfTmpLin )->lKitChl  	:= .t.
             end if
 
             ( dbfTmpLin )->cRef        := ( dbfKit )->cRefKit
@@ -7292,6 +7312,9 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
       ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpLin )->( OrdCreate( cTmpLin, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
+
+      ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpLin )->( OrdCreate( cTmpLin, "nPosPrint", "Str( nPosPrint, 4 )", {|| Str( Field->nPosPrint ) } ) )
 
       if ( dbfFacRecL )->( dbSeek( cFac ) )
          while ( ( dbfFacRecL )->CSERIE + Str( ( dbfFacRecL )->NNUMFAC ) + ( dbfFacRecL )->CSUFFAC ) == cFac .AND. !( dbfFacRecL )->( eof() )
@@ -9512,6 +9535,7 @@ STATIC FUNCTION cFacCli( aGet, aTmp, oBrw, oBrwiva, nMode )
                   ( dbfTmpLin )->cSerie     := " "
                   ( dbfTmpLin )->nNumFac    := 0
                   ( dbfTmpLin )->nNumLin    := ( dbfFacCliL )->nNumLin
+                  ( dbfTmpLin )->nPosPrint  := ( dbfFacCliL )->nPosPrint
                   ( dbfTmpLin )->cRef       := ( dbfFacCliL )->cRef
                   ( dbfTmpLin )->cDetalle   := ( dbfFacCliL )->cDetalle
                   ( dbfTmpLin )->mLngDes    := ( dbfFacCliL )->mLngDes
@@ -10580,7 +10604,6 @@ Static Function DataReport( oFr )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
 
    oFr:SetMasterDetail( "Facturas rectificativas", "Lineas de facturas rectificativas",            {|| ( D():FacturasRectificativas( nView ) )->cSerie + Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) + ( D():FacturasRectificativas( nView ) )->cSufFac } )
-   oFr:SetMasterDetail( "Facturas rectificativas", "Series de lineas de facturas rectificativas",  {|| ( D():FacturasRectificativas( nView ) )->cSerie + Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) + ( D():FacturasRectificativas( nView ) )->cSufFac } )
    oFr:SetMasterDetail( "Facturas rectificativas", "Incidencias de facturas rectificativas",       {|| ( D():FacturasRectificativas( nView ) )->cSerie + Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) + ( D():FacturasRectificativas( nView ) )->cSufFac } )
    oFr:SetMasterDetail( "Facturas rectificativas", "Documentos de facturas rectificativas",        {|| ( D():FacturasRectificativas( nView ) )->cSerie + Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) + ( D():FacturasRectificativas( nView ) )->cSufFac } )
    oFr:SetMasterDetail( "Facturas rectificativas", "Empresa",                                      {|| cCodigoEmpresaEnUso() } )
@@ -10593,14 +10616,14 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Facturas rectificativas", "Transportistas",                               {|| ( D():FacturasRectificativas( nView ) )->cCodTrn } )
    oFr:SetMasterDetail( "Facturas rectificativas", "Bancos",                                       {|| ( D():FacturasRectificativas( nView ) )->cCodCli } )
 
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Artículos",                          {|| ( dbfFacRecL )->cRef } )
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Tipo de artículo",                   {|| ( dbfFacRecL )->cCodTip } )
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Ofertas",                            {|| ( dbfFacRecL )->cRef } )
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Unidades de medición",               {|| ( dbfFacRecL )->cUnidad } )
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Impuestos especiales",               {|| ( dbfFacRecL )->cCodImp } )
-
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Artículos",                          				{|| ( dbfFacRecL )->cRef } )
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Tipo de artículo",                   				{|| ( dbfFacRecL )->cCodTip } )
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Ofertas",                            				{|| ( dbfFacRecL )->cRef } )
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Unidades de medición",               				{|| ( dbfFacRecL )->cUnidad } )
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Impuestos especiales",               				{|| ( dbfFacRecL )->cCodImp } )
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Series de lineas de facturas rectificativas",  	{|| ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac + Str( ( dbfFacRecL )->nNumLin ) } )
+																																																
    oFr:SetResyncPair(   "Facturas rectificativas", "Lineas de facturas rectificativas" )
-   oFr:SetResyncPair(   "Facturas rectificativas", "Series de lineas de facturas rectificativas" )
    oFr:SetResyncPair(   "Facturas rectificativas", "Incidencias de facturas rectificativas" )
    oFr:SetResyncPair(   "Facturas rectificativas", "Documentos de facturas rectificativas" )
    oFr:SetResyncPair(   "Facturas rectificativas", "Empresa" )
@@ -10618,6 +10641,7 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Ofertas" )
    oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Unidades de medición" )
    oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Impuestos especiales" )
+   oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Series de lineas de facturas rectificativas" )
 
 Return nil
 
@@ -12407,6 +12431,9 @@ FUNCTION rxFacRec( cPath, oMeter )
       ( dbfFacRecL)->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( dbfFacRecL )->( ordCreate( cPath + "FacRecL.Cdx", "iNumFac", "'14' + cSerie + Str( nNumFac ) + Space( 1 ) + cSufFac", {|| '14' + Field->cSerie + Str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
 
+      ( dbfFacRecL )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( dbfFacRecL )->( ordCreate( cPath + "FacRecL.CDX", "nPosPrint", "cSerie + Str(nNumFac) + cSufFac + str( nPosPrint )", {|| Field->cSerie + Str( Field->nNumFac ) + Field->cSufFac + Str( Field->nPosPrint ) }, ) )
+
       ( dbfFacRecL )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas rectificativas de clientes" )
@@ -13504,6 +13531,7 @@ function aColFacRec()
    aAdd( aColFacRec, { "cObrLin"     ,"C", 10, 0, "Dirección de la linea"                 , "Direccion",                   "", "( cDbfCol )", nil } )
    aAdd( aColFacRec, { "cRefAux"     ,"C", 18, 0, "Referencia auxiliar"                   , "ReferenciaAuxiliar",          "", "( cDbfCol )", nil } )
    aAdd( aColFacRec, { "cRefAux2"    ,"C", 18, 0, "Segunda referencia auxiliar"           , "ReferenciaAuxiliar2",         "", "( cDbfCol )", nil } )
+   aAdd( aColFacRec, { "nPosPrint"   ,"N",  4, 0, "Posición de impresión"                 , "PosicionImpresion",           "", "( cDbfCol )", nil } )
 
 return ( aColFacRec )
 
@@ -13982,6 +14010,10 @@ function SynFacRec( cPath )
 
             ( dbfFacRecL )->mNumSer       := ""
 
+         end if
+
+         if Empty( ( dbfFacRecL )->nPosPrint )
+            ( dbfFacRecL )->nPosPrint    	:= ( dbfFacRecL )->nPosPrint
          end if
 
          ( dbfFacRecL )->( dbSkip() )
@@ -14496,12 +14528,15 @@ Function PrintReportFacRec( nDevice, nCopies, cPrinter )
 
    local oFr
    local cFilePdf       := cPatTmp() + "FacturasRectificativasCliente" + StrTran( ( D():FacturasRectificativas( nView ) )->cSerie + Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) + ( D():FacturasRectificativas( nView ) )->cSufFac, " ", "" ) + ".Pdf"
+   local nOrd
 
    DEFAULT nDevice      := IS_SCREEN
    DEFAULT nCopies      := 1
    DEFAULT cPrinter     := PrnGetName()
 
    SysRefresh()
+
+   nOrd 						:= ( dbfFacRecL )->( ordSetFocus( "nPosPrint" ) )
 
    oFr                  := frReportManager():New()
 
@@ -14590,6 +14625,8 @@ Function PrintReportFacRec( nDevice, nCopies, cPrinter )
    */
 
    oFr:DestroyFr()
+
+   ( dbfFacRecL )->( ordSetFocus( nOrd ) )
 
 Return cFilePdf
 

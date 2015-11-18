@@ -216,7 +216,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _COBRLIN                  98  
 #define _CREFAUX                  99
 #define _CREFAUX2                100
-#define _NPOSPRINT                88
+#define _NPOSPRINT               101
 
 /*
 Array para impuestos
@@ -2370,9 +2370,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Número"
-         :cSortOrder          := "nNumLin"
          :bEditValue          := {|| ( dbfTmpLin )->nNumLin }
-         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
          :cEditPicture        := "9999"
          :nWidth              := 54
          :nDataStrAlign       := 1
@@ -2386,7 +2384,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          :bEditValue          := {|| ( dbfTmpLin )->nPosPrint }
          :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
          :cEditPicture        := "9999"
-         :nWidth              := 60
+         :nWidth              := 54
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
       end with 
@@ -9584,8 +9582,8 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       cPedido     := aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ]
    end if
 
-   /*oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
    cTmpLin        := cGetNewFileName( cPatTmp() + cDbfLin )
    cTmpRes        := cGetNewFileName( cPatTmp() + cDbfRes )
@@ -9688,7 +9686,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
   	end if
 
 	/*
-	A¤adimos desde el fichero de lineas
+	Añadimos desde el fichero de lineas
 	*/
 
    if ( D():PedidosClientesLineas( nView ) )->( dbSeek( cPedido ) )
@@ -9708,11 +9706,10 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    end if
 
-	( dbfTmpLin )->( OrdSetFocus( "Recno" ) )
    ( dbfTmpLin )->( dbGoTop() )
 
    /*
-   A¤adimos desde el fichero de incidencias
+   Añadimos desde el fichero de incidencias
 	*/
 
    if ( dbfPedCliI )->( dbSeek( cPedido ) )
@@ -9728,9 +9725,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    ( dbfTmpInc )->( dbGoTop() )
 
-   /*
-   A¤adimos desde el fichero de situaiones
-*/
+  // Añadimos desde el fichero de situaiones
 	
 	if ( D():PedidosClientesSituaciones( nView ) )->( dbSeek( cPedido ) )
 
@@ -9746,7 +9741,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
   	( dbfTmpEst )->( dbGoTop() )
 
    /*
-   A¤adimos desde el fichero de documentos
+   Añadimos desde el fichero de documentos
 	*/
 
    if ( dbfPedCliD )->( dbSeek( cPedido ) )
@@ -9763,7 +9758,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    ( dbfTmpDoc )->( dbGoTop() )
 
    /*
-   A¤adimos desde el fichero de entregas a cuenta
+   Añadimos desde el fichero de entregas a cuenta
 	*/
 
    if ( D():PedidosClientesPagos( nView ) )->( dbSeek( cPedido ) )
@@ -9780,7 +9775,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    ( dbfTmpPgo )->( dbGoTop() )
 
 	/*
-	A¤adimos desde el fichero de lineas
+	Añadimos desde el fichero de lineas
 	*/
 
    if ( dbfPedCliR )->( DbSeek( cPedido ) )
@@ -9796,7 +9791,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    ( dbfTmpRes )->( dbGoTop() )
 
-   /*RECOVER USING oError
+   RECOVER USING oError
 
       msgStop( "Imposible crear tablas temporales." + CRLF + ErrorMessage( oError ) )
 
@@ -9806,7 +9801,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )/*/
+   ErrorBlock( oBlock )
 
 RETURN lErrors
 
@@ -12873,6 +12868,7 @@ STATIC FUNCTION cPreCli( aTmp, aGet, oBrw, nMode )
 
                (dbfTmpLin)->nNumPed    := 0
                (dbfTmpLin)->nNumLin    := (dbfPreCLiL)->nNumLin
+               (dbfTmpLin)->nPosPrint  := (dbfPreCLiL)->nPosPrint
                (dbfTmpLin)->cRef       := (dbfPreCliL)->cRef
                (dbfTmpLin)->cDetalle   := (dbfPreCLiL)->cDetalle
                (dbfTmpLin)->mLngDes    := (dbfPreCLiL)->mLngDes
@@ -14165,6 +14161,7 @@ Method Process() CLASS TPedidosClientesSenderReciver
                               ( dbfPedCliL )->MLNGDES   	:= ( tmpPedCliL )->mLngDes
                               ( dbfPedCliL )->NFACCNV   	:= ( tmpPedCliL )->nFacCnv
                               ( dbfPedCliL )->NNUMLIN   	:= ( tmpPedCliL )->nNumLin
+                              ( dbfPedCliL )->NPOSPRINT  := ( tmpPedCliL )->nPosPrint
                               ( dbfPedCliL )->NCTLSTK   	:= ( tmpPedCliL )->nCtlStk
                               ( dbfPedCliL )->NCOSDIV   	:= ( tmpPedCliL )->nPreDiv
                               ( dbfPedCliL )->CALMLIN   	:= oUser():cAlmacen()
@@ -15796,7 +15793,7 @@ function aColPedCli()
    aAdd( aColPedCli, { "cObrLin",   "C",   10,  0, "Dirección de la linea",                           "Direccion",                  "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "cRefAux",   "C",   18,  0, "Referencia auxiliar",                             "ReferenciaAuxiliar",         "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "cRefAux2",  "C",   18,  0, "Segunda referencia auxiliar",                     "ReferenciaAuxiliar2",        "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "nPosPrint", "N",    4,  0, "Posición de impresión",                           "Posición de impresión",      "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nPosPrint", "N",    4,  0, "Posición de impresión",                           "PosicionImpresion",      "", "( cDbfCol )", nil } )
 
 return ( aColPedCli )
 

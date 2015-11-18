@@ -254,6 +254,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define __CCODOBR           99
 #define _CREFAUX           100
 #define _CREFAUX2          101
+#define _NPOSPRINT         102
 
 /*
 Definici¢n de Array para impuestos
@@ -3107,13 +3108,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       524 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( DbSwapUp( dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) )
+         ACTION   ( LineUp( dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) )
 
       REDEFINE BUTTON ;
          ID       525 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( DbSwapDown( dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) )
+         ACTION   ( LineDown( dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) )
 
       REDEFINE BUTTON oBtnKit;
          ID       526 ;
@@ -3148,7 +3149,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :bStrData            := {|| "" }
          :bEditValue          := {|| ( dbfTmpLin )->lLinOfe }
          :nWidth              := 60
-         :lHide 			  := .t.	
+         :lHide 			  		:= .t.	
          :SetCheck( { "Star_Red_16", "Nil16" } )
       end with
 
@@ -3160,7 +3161,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :nWidth              := 55
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
+         :lHide 					:= .t.
       end with
+
+      with object ( oBrwLin:AddCol() )
+         :cHeader             := "Posición"
+         :cSortOrder          := "nPosPrint"
+         :bEditValue          := {|| ( dbfTmpLin )->nPosPrint }
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
+         :cEditPicture        := "9999"
+         :nWidth              := 60
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+      end with 
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Código"
@@ -5339,7 +5352,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
       Segunda caja de dilogo---------------------------------------------------
       */
 
-      REDEFINE GET aGet[_NNUMLIN] VAR aTmp[_NNUMLIN] ;
+      REDEFINE GET aGet[_NPOSPRINT] VAR aTmp[_NPOSPRINT] ;
          ID       100 ;
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -10749,7 +10762,8 @@ Return ( printReportFacCli( IS_MAIL, 1, prnGetName(), cCodigoDocumento ) )
 Function printReportFacCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
 
    local oFr
-   local nOrdAnt              
+   local nOrdAnt  
+   local nOrdFacL            
    local cFilePdf             
 
    DEFAULT nDevice            := IS_SCREEN
@@ -10765,6 +10779,7 @@ Function printReportFacCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
    SysRefresh()
 
    nOrdAnt                    := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
+   nOrdFacL 						:= ( D():FacturasClientesLineas( nView ) )->( ordSetFocus( "nPosPrint" ) )
    cFilePdf                   := cPatTmp() + "FacturasCliente" + StrTran( D():FacturasClientesId( nView ), " ", "" ) + ".Pdf"
 
    oFr                        := frReportManager():New()
@@ -10841,6 +10856,7 @@ Function printReportFacCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
    oFr:DestroyFr()
 
    ( dbfAntCliT )->( OrdSetFocus( nOrdAnt ) )
+  	( D():FacturasClientesLineas( nView ) )->( ordSetFocus( nOrdFacL ) )
 
 Return ( cFilePdf )
 
@@ -10925,6 +10941,8 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    Primero crear la base de datos local----------------------------------------
    */
 
+   msgalert( ( D():FacturasClientesLineas( nView ) )->( ordSetFocus() ), "orden facturas")
+
    dbCreate( cTmpLin, aSqlStruct( aColFacCli() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), cTmpLin, cCheckArea( cDbfLin, @dbfTmpLin ), .f. )
 
@@ -10939,6 +10957,9 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpLin )->( OrdCreate( cTmpLin, "cRef", "cRef", {|| Field->cRef } ) )
 
+      ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpLin )->( OrdCreate( cTmpLin, "nPosPrint", "Str( nPosPrint, 4 )", {|| Str( Field->nPosPrint ) } ) )
+
       if ( D():FacturasClientesLineas( nView ) )->( dbSeek( cFac ) )
          while ( ( D():FacturasClientesLineas( nView ) )->cSerie + str( ( D():FacturasClientesLineas( nView ) )->nNumFac ) + ( D():FacturasClientesLineas( nView ) )->cSufFac ) == cFac .and. !( D():FacturasClientesLineas( nView ) )->( eof() )
             dbPass( D():FacturasClientesLineas( nView ), dbfTmpLin, .t. )
@@ -10946,7 +10967,6 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
          end while
       endif
 
-      ( dbfTmpLin )->( OrdSetFocus( "Recno" ) )
       ( dbfTmpLin )->( dbGoTop() )
 
       oStock:SetTmpFacCliL( dbfTmpLin )
@@ -11940,10 +11960,12 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
 		aGet[ _NCANENT ]:cText( 1 )
 		aGet[ _NUNICAJA]:cText( 1 )
 
-		if !Empty( aGet[ _NNUMLIN  ] )
-			aGet[ _NNUMLIN  ]:cText( nLastNum( dbfTmpLin ) )
+		aTmp[ _NNUMLIN ]  := nLastNum( dbfTmpLin )
+
+		if !Empty( aGet[ _NPOSPRINT  ] )
+			aGet[ _NPOSPRINT  ]:cText( nLastNum( dbfTmpLin, "nPosPrint" ) )
 		else
-			aTmp[ _NNUMLIN  ] := nLastNum( dbfTmpLin )
+			aTmp[ _NPOSPRINT  ] := nLastNum( dbfTmpLin, "nPosPrint" )
 		end if
 
 		if !Empty( aGet[ _CALMLIN ] )
@@ -13416,6 +13438,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
                      if isNum( oBrwProperties:Cargo[ n, i ]:Value ) .and. oBrwProperties:Cargo[ n, i ]:Value != 0
 
                         aTmp[ _NNUMLIN ]     := nLastNum( dbfTmpLin )
+                        aTmp[ _NPOSPRINT ]   := nLastNum( dbfTmpLin, "nPosPrint" )
                         aTmp[ _NUNICAJA]     := oBrwProperties:Cargo[ n, i ]:Value
                         aTmp[ _CCODPR1 ]     := oBrwProperties:Cargo[ n, i ]:cCodigoPropiedad1
                         aTmp[ _CVALPR1 ]     := oBrwProperties:Cargo[ n, i ]:cValorPropiedad1
@@ -13603,6 +13626,7 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpFac )
    local nRecAct                       := ( dbfKit    )->( RecNo() )
    local nRecLin                       := ( dbfTmpLin )->( RecNo() )
    local nNumLin                       := ( dbfTmpLin )->nNumLin
+   local nPosPrint
    local nUnidades                     := 0
    local nStkActual                    := 0
    local nStockMinimo                  := 0
@@ -13624,6 +13648,7 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpFac )
       nDtoPrm                          := uTmpLin[ _NDTOPRM ]
       nDtoDiv                          := uTmpLin[ _NDTODIV ]
       nNumLin                          := uTmpLin[ _NNUMLIN ]
+      nPosPrint                        := uTmpLin[ _NPOSPRINT ]
       nTarLin                          := uTmpLin[ _NTARLIN ]
    else
       cCodArt                          := ( uTmpLin )->cRef
@@ -13642,6 +13667,7 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpFac )
       nDtoPrm                          := ( uTmpLin )->nDtoPrm
       nDtoDiv                          := ( uTmpLin )->nDtoDiv
       nNumLin                          := ( uTmpLin )->nNumLin
+      nPosPrint                        := ( uTmpLin )->nPosPrint
       nTarLin                          := ( uTmpLin )->nTarLin
    end if
 
@@ -13658,11 +13684,13 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpFac )
             ( dbfTmpLin )->( dbAppend() )
 
             if lKitAsociado( cCodArt, D():Articulos( nView ) )
-               ( dbfTmpLin )->nNumLin  := nLastNum( dbfTmpLin )
-               ( dbfTmpLin )->lKitChl  := .f.
+               ( dbfTmpLin )->nNumLin  	:= nLastNum( dbfTmpLin )
+               ( dbfTmpLin )->nPosPrint  	:= nLastNum( dbfTmpLin, "nPosPrint" )
+               ( dbfTmpLin )->lKitChl  	:= .f.
             else
-               ( dbfTmpLin )->nNumLin  := nNumLin
-               ( dbfTmpLin )->lKitChl  := .t.
+               ( dbfTmpLin )->nNumLin  	:= nNumLin
+               ( dbfTmpLin )->nPosPrint  	:= nPosPrint
+               ( dbfTmpLin )->lKitChl  	:= .t.
             end if
 
             ( dbfTmpLin )->cRef        := ( dbfKit )->cRefKit
@@ -18581,6 +18609,13 @@ function SynFacCli( cPath )
          end if 
          */
 
+			if Empty( ( D():FacturasClientesLineas( nView ) )->nPosPrint )
+            if ( D():FacturasClientesLineas( nView ) )->( dbRLock() )
+               ( D():FacturasClientesLineas( nView ) )->nPosPrint    := ( D():FacturasClientesLineas( nView ) )->nNumLin
+               ( D():FacturasClientesLineas( nView ) )->( dbUnLock() )
+         	end if
+         end if         
+
          ( D():FacturasClientesLineas( nView ) )->( dbSkip() )
 
          SysRefresh()
@@ -19241,6 +19276,9 @@ FUNCTION rxFacCli( cPath, cDriver )
       ( cFacCliL )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( cFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "REFAUX", "cSerie + str( nNumFac ) + cSufFac + cRefAux", {|| Field->cSerie + str( Field->nNumFac ) + Field->cSufFac + Field->cRefAux } ) )
 
+      ( cFacCliL )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( cFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "nPosPrint", "cSerie + str( nNumFac ) + cSufFac + Str( nPosPrint )", {|| Field->cSerie + str( Field->nNumFac ) + Field->cSufFac + str( Field->nPosPrint ) } ) )
+
       ( cFacCliL )->( dbCloseArea() )
 
    else
@@ -19564,6 +19602,7 @@ function aColFacCli()
    aAdd( aColFacCli, { "cCodObr"  , "C",  10, 0, "Código de la dirección"                 , "Direccion",                   "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "cRefAux",   "C",  18, 0, "Referencia auxiliar"                    , "ReferenciaAuxiliar",          "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "cRefAux2",  "C",  18, 0, "Segunda referencia auxiliar"            , "ReferenciaAuxiliar2",         "", "( cDbfCol )", nil } )
+   aAdd( aColFacCli, { "nPosPrint", "N",   4, 0, "Posición de impresión"                  , "PosicionImpresion",                 "", "( cDbfCol )", nil } )
 
 return ( aColFacCli )
 

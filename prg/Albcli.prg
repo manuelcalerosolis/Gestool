@@ -238,6 +238,8 @@ Definici¢n de la base de datos de lineas de detalle
 #define _COBRLIN                 105
 #define _CREFAUX                 106
 #define _CREFAUX2                107
+#define _NPOSPRINT               108
+
 
 /*
 Definici¢n de Array para impuestos
@@ -2759,10 +2761,22 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :bEditValue          := {|| ( dbfTmpLin )->nNumLin }
          :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
          :cEditPicture        := "9999"
-         :nWidth              := 65
+         :nWidth              := 60
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
+         :lhide               := .t.
       end with
+
+      with object ( oBrwLin:AddCol() )
+         :cHeader             := "Posición"
+         :cSortOrder          := "nPosPrint"
+         :bEditValue          := {|| ( dbfTmpLin )->nPosPrint }
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
+         :cEditPicture        := "9999"
+         :nWidth              := 60
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+      end with       
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Código"
@@ -3307,13 +3321,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       524 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( lineUpOld( dbfTmpLin, oBrwLin ) )
+         ACTION   ( lineUp( dbfTmpLin, oBrwLin ) )
 
       REDEFINE BUTTON ;
          ID       525 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( lineDownOld( dbfTmpLin, oBrwLin ) )
+         ACTION   ( lineDown( dbfTmpLin, oBrwLin ) )
 
       REDEFINE BUTTON oBtnKit;
          ID       526 ;
@@ -4800,10 +4814,10 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
       Segunda caja de dialogo -------------------------------------------------
       */
 
-      REDEFINE GET aGet[ _NNUMLIN ] VAR aTmp[ _NNUMLIN ] ;
+      REDEFINE GET aGet[ _NPOSPRINT ] VAR aTmp[ _NPOSPRINT ] ;
          ID       100 ;
          SPINNER ;
-         WHEN     ( .f. ) ; // !aTmp[ _LCONTROL ] .and. nMode == APPD_MODE ) ;
+         WHEN     ( nMode == APPD_MODE ) ;
          PICTURE  "9999" ;
          OF       oFld:aDialogs[2]
 
@@ -8909,6 +8923,9 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
          ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
          ( dbfTmpLin )->( OrdCreate( cTmpLin, "nUniUltCom", "nUniUltCom", {|| Field->nUniUltCom } ) )
 
+         ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+         ( dbfTmpLin )->( OrdCreate( cTmpLin, "nPosPrint", "Str( nPosPrint, 4 )", {|| Str( Field->nPosPrint ) } ) )
+
          if ( D():Get( "AlbCliL", nView ) )->( dbSeek( cAlbaran ) )
             while ( ( D():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliL", nView ) )->nNumAlb ) + ( D():Get( "AlbCliL", nView ) )->cSufAlb ) == cAlbaran .and. !( D():Get( "AlbCliL", nView ) )->( eof() )
                dbPass( D():Get( "AlbCliL", nView ), dbfTmpLin, .t. )
@@ -8916,7 +8933,6 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
             end while
          end if
 
-         ( dbfTmpLin )->( ordSetFocus( "nNumLin" ) )
          ( dbfTmpLin )->( dbGoTop() )
 
          oStock:SetTmpAlbCliL( dbfTmpLin )
@@ -9581,8 +9597,10 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, 
       aGet[ _NCANENT  ]:cText( 1 )
       aGet[ _NUNICAJA ]:cText( 1 )
 
-      if !Empty( aGet[ _NNUMLIN ] )
-         aGet[ _NNUMLIN ]:cText( nLastNum( dbfTmpLin )  )
+      aTmp[ _NNUMLIN ] := nLastNum( dbfTmpLin )
+
+      if !Empty( aGet[ _NPOSPRINT ] )
+         aGet[ _NPOSPRINT ]:cText( nLastNum( dbfTmpLin, "nPosPrint" )  )
       end if
 
       aGet[ _CALMLIN ]:cText( aTmpAlb[ _CCODALM ] )
@@ -10942,6 +10960,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
                if isNum( oBrwProperties:Cargo[ n, i ]:Value ) .and. oBrwProperties:Cargo[ n, i ]:Value != 0
 
                   aTmp[ _NNUMLIN ]     := nLastNum( dbfTmpLin )
+                  aTmp[ _NPOSPRINT ]   := nLastNum( dbfTmpLin, "nPosPrint" )                  
                   aTmp[ _NUNICAJA]     := oBrwProperties:Cargo[ n, i ]:Value
                   aTmp[ _CCODPR1 ]     := oBrwProperties:Cargo[ n, i ]:cCodigoPropiedad1
                   aTmp[ _CVALPR1 ]     := oBrwProperties:Cargo[ n, i ]:cValorPropiedad1
@@ -11120,6 +11139,7 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
    local cNumPed
    local nTarLin
    local nNumLin                       := ( dbfTmpLin )->nNumLin
+   local nPosPrint
    local nRecAct                       := ( dbfKit    )->( RecNo() )
    local nRecLin                       := ( dbfTmpLin )->( RecNo() )
    local nUnidades                     := 0
@@ -11143,6 +11163,7 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
       nDtoPrm                          := uTmpLin[ _NDTOPRM ]
       nDtoDiv                          := uTmpLin[ _NDTODIV ]
       nNumLin                          := uTmpLin[ _NNUMLIN ]
+      nPosPrint                        := uTmpLin[ _NPOSPRINT ]
       cNumPed                          := uTmpLin[ _dCNUMPED]
       nTarLin                          := uTmpLin[ _NTARLIN ]
    else
@@ -11162,6 +11183,7 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
       nDtoPrm                          := ( uTmpLin )->nDtoPrm
       nDtoDiv                          := ( uTmpLin )->nDtoDiv
       nNumLin                          := ( uTmpLin )->nNumLin
+      nPosPrint                        := ( uTmpLin )->nPosPrint
       cNumPed                          := ( uTmpLin )->cNumPed
       nTarLin                          := ( uTmpLin )->nTarLin
    end if
@@ -11179,11 +11201,13 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
             ( dbfTmpLin )->( dbAppend() )
 
             if lKitAsociado( cCodArt, D():Articulos( nView ) )
-               ( dbfTmpLin )->nNumLin  := nLastNum( dbfTmpLin )
-               ( dbfTmpLin )->lKitChl  := .f.
+               ( dbfTmpLin )->nNumLin     := nLastNum( dbfTmpLin )   
+               ( dbfTmpLin )->nPosPrint   := nLastNum( dbfTmpLin, "nPosPrint" )
+               ( dbfTmpLin )->lKitChl     := .f.
             else
-               ( dbfTmpLin )->nNumLin  := nNumLin
-               ( dbfTmpLin )->lKitChl  := .t.
+               ( dbfTmpLin )->nNumLin     := nNumLin               
+               ( dbfTmpLin )->nPosPrint   := nPosPrint               
+               ( dbfTmpLin )->lKitChl     := .t.
             end if
 
             ( dbfTmpLin )->cRef        := ( dbfKit )->cRefKit
@@ -12765,6 +12789,7 @@ Static Function PrintReportAlbCli( nDevice, nCopies, cPrinter, cCodigoDocumento 
 
    local oFr
    local cFilePdf             := cPatTmp() + "AlbaranesCliente" + StrTran( ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb, " ", "" ) + ".Pdf"
+   local nOrd 
 
    DEFAULT nDevice            := IS_SCREEN
    DEFAULT nCopies            := 1
@@ -12782,6 +12807,8 @@ Static Function PrintReportAlbCli( nDevice, nCopies, cPrinter, cCodigoDocumento 
    end if 
 
    SysRefresh()
+
+   nOrd                       :=  ( D():Get( "AlbCliL", nView ) )->( ordSetFocus( "nPosPrint" ) )
 
    oFr                        := frReportManager():New()
 
@@ -12847,6 +12874,8 @@ Static Function PrintReportAlbCli( nDevice, nCopies, cPrinter, cCodigoDocumento 
    // Destruye el diseñador-------------------------------------------------------
 
    oFr:DestroyFr()
+
+   ( D():Get( "AlbCliT", nView ) )->( ordSetFocus( nOrd ) )
 
 Return ( cFilePdf )
 
@@ -14822,6 +14851,14 @@ function SynAlbCli( cPath )
             end if   
          end if
 
+         if Empty( ( D():Get( "AlbCliL", nView ) )->nPosPrint )
+            if dbLock( D():Get( "AlbCliL", nView ) )
+               ( D():Get( "AlbCliL", nView ) )->nPosPrint    := ( D():Get( "AlbCliL", nView ) )->nNumLin
+               ( D():Get( "AlbCliL", nView ) )->( dbUnLock() )
+            end if   
+         end if
+
+
          /*
          Cargamos los costos para Marbaroso------------------------------------
          */
@@ -16046,6 +16083,9 @@ FUNCTION rxAlbCli( cPath, cDriver )
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
 
+      ( cAlbCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "nPosPrint", "cSerAlb + Str( nNumAlb ) + cSufAlb + Str( nPosPrint )", {|| Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb + Str( Field->nPosPrint ) } ) )
+
       // Albaranes no facturados-----------------------------------------------
 
       ( cAlbCliT )->( ordCondSet( "!lFacturado .and. nCtlStk < 2 .and. !Deleted()", {|| !Field->lFacturado .and. Field->nCtlStk < 2 .and. !Deleted() }, , , , , , , , , .t. ) )
@@ -16373,6 +16413,7 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "cObrLin",   "C", 10, 0, "Dirección de la linea",                           "Direccion",                     "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cRefAux",   "C",  18, 0, "Referencia auxiliar",                            "ReferenciaAuxiliar",            "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cRefAux2",  "C",  18, 0, "Segunda referencia auxiliar",                    "ReferenciaAuxiliar2",           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbCli, { "nPosPrint", "N",   4, 0, "Posición de impresión",                          "PosicionImpresion",             "", "( cDbfCol )", nil } )
 
 Return ( aColAlbCli )
 
