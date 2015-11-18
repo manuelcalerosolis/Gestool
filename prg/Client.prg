@@ -4220,7 +4220,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
    local cNaturaleza    := "Artículo"
    local aNaturaleza    := { "Artículo", "Familia" }
    local oBrwRen
-   local cPouEmp        := cPouDiv( cDivEmp() )
+   local cPouDiv        := cPouDiv( cDivEmp() )
    local cPouChg        := cPouDiv( cDivChg() )
    local oBtnRen
    local oSayLabels     := Array( 16 )
@@ -4228,7 +4228,6 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
    if nMode == APPD_MODE
 
       cCosto            := 0
-      aTmp[ _aCCODCLI ] := aTmpCli[ _COD ]
       aTmp[ _aDFECINI ] := Ctod( "" )
       aTmp[ _aDFECFIN ] := Ctod( "" )
       aTmp[ _aLAPLPRE ] := .t.
@@ -4240,14 +4239,20 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
       aTmp[ _aNUNVOFE ] := 1
       aTmp[ _aNUNCOFE ] := 1
 
-      if !Empty( aTmpCli[ _CAGENTE ] )
-         if ( cAgente )->( dbSeek( aTmpCli[ _CAGENTE ] ) )
+      // Datos del cliente-----------------------------------------------------
+
+      if !empty(aTmpCli)
+
+         aTmp[ _aCCODCLI ]       := aTmpCli[ _COD ]
+
+         if !empty( aTmpCli[ _CAGENTE ] ) .and. ( cAgente )->( dbSeek( aTmpCli[ _CAGENTE ] ) )
             aTmp[ _aNCOMAGE ]    := ( cAgente )->nCom1
             if ( cAgente )->nCom1 != 0
                aTmp[ _aLCOMAGE ] := .t.
             end if
          end if
-      end if
+
+      end if 
 
    else
 
@@ -4679,7 +4684,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
                   if( aRentabilidad[ oBrwRen:nAt, 5 ], LoadBitmap( GetResources(), "BALERT" ), "" ) ,;
                   aRentabilidad[ oBrwRen:nAt, 1 ],;
                   aRentabilidad[ oBrwRen:nAt, 2 ],;
-                  if( !aRentabilidad[ oBrwRen:nAt, 4 ], Trans( aRentabilidad[ oBrwRen:nAt, 3 ], cPouEmp ), Trans( aRentabilidad[ oBrwRen:nAt, 3 ], "999.99" ) + " %" ),;
+                  if( !aRentabilidad[ oBrwRen:nAt, 4 ], Trans( aRentabilidad[ oBrwRen:nAt, 3 ], cPouDiv ), Trans( aRentabilidad[ oBrwRen:nAt, 3 ], "999.99" ) + " %" ),;
                   if( !aRentabilidad[ oBrwRen:nAt, 4 ], Trans( nCnv2Div( aRentabilidad[ oBrwRen:nAt, 3 ], cDivEmp(), cDivChg() ), cPouChg ), "" ),;
                   "";
          HEAD ;
@@ -4732,9 +4737,25 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
       oDlg:bStart := {|| StartEdtAtp( aTmp, aGet, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGetArticulo, oGetFamilia, oSayLabels, oCosto, oBtnRen ) }
 
    ACTIVATE DIALOG oDlg CENTER ;
-         ON INIT  ( lExpandir( oDlg, oBtnRen, .f. ), if( nMode != APPD_MODE, aGet[ _aCCODART ]:lValid(), ), EdtDetMenu( aGet[ _aCCODART ], oDlg, lArticuloEnOferta( aTmp[ _aCCODART ], aTmpCli[ _COD ], aTmpCli[ _CCODGRP ] ) ) )
+         ON INIT ( initEdtAtp( aTmp, aGet, nMode, oBtnRen, oDlg, aTmpCli ) )
 
 RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+Static Function initEdtAtp( aTmp, aGet, nMode, oBtnRen, oDlg, aTmpCli )
+
+   lExpandir( oDlg, oBtnRen, .f. )
+
+   if nMode != APPD_MODE
+      aGet[ _aCCODART ]:lValid()
+   end if 
+
+   if !empty( aTmpCli )
+      edtDetMenu( aGet[ _aCCODART ], oDlg, lArticuloEnOferta( aTmp[ _aCCODART ], aTmpCli[ _COD ], aTmpCli[ _CCODGRP ] ) )
+   end if 
+
+Return nil 
 
 //---------------------------------------------------------------------------//
 
@@ -10712,13 +10733,16 @@ Static Function lArrayRen( nTipPre, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto )
    local nResultado
    local nCosto
    local nDtoAtpico
-   local nSbrAtipico := aGetCli[ _NSBRATP ]:nAt
+   local nSbrAtipico 
 
+   if empty( aGetCli )
+      Return .t.      
+   end if 
+
+   nSbrAtipico       := aGetCli[ _NSBRATP ]:nAt
    aRentabilidad     := {}
 
-   /*
-   Seleccionamos el precio que nos elijan--------------------------------------
-   */
+   // Seleccionamos el precio que nos elijan--------------------------------------
 
    do case
       case nTipPre == 1
@@ -10735,9 +10759,7 @@ Static Function lArrayRen( nTipPre, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto )
          nNetoBase   := aTmp[ _aNPRCART6 ]
    end case
 
-   /*
-   Seleccionamos el precio de costo--------------------------------------------
-   */
+   // Seleccionamos el precio de costo--------------------------------------------
 
    if aTmp[ _aLPRCCOM ]
       nCosto         := aTmp[ _aNPRCCOM ]
@@ -10745,17 +10767,15 @@ Static Function lArrayRen( nTipPre, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto )
       nCosto         := cCosto
    end if
 
-   /*
-   Costo-----------------------------------------------------------------------
-   */
+   // Costo--------------------------------------------------------------------
 
    aAdd( aRentabilidad, { "Costo", "", nCosto, .f., .f. } )
 
-   /*Neto Base*/
+   // Neto Base----------------------------------------------------------------
 
    aAdd( aRentabilidad, { "Neto base", "", nNetoBase, .f., .f. } )
 
-   /*Dto X*Y*/
+   // Dto X*Y*-----------------------------------------------------------------
 
    if aTmp[ _aNUNCOFE ] != 0 .and. aTmp[ _aNUNVOFE ] != 0
 
@@ -13706,6 +13726,22 @@ Return( .t. )
 Function getExtraFieldCliente( cFieldName )
 
 Return ( getExtraField( cFieldName, oDetCamposExtra, D():ClientesId( nView ) ) )
+
+//---------------------------------------------------------------------------//
+
+function externalAppendAtipica( oBrwAgentesTarifas, tmpAgentesTarifas, nExternalView ) 
+
+   nView    := nExternalView
+
+Return ( WinAppRec( oBrwAgentesTarifas, bEdtAtp, tmpAgentesTarifas ) )
+
+//---------------------------------------------------------------------------//
+
+function externalEditAtipica( oBrwAgentesTarifas, tmpAgentesTarifas, nExternalView ) 
+
+   nView    := nExternalView
+
+Return ( WinEdtRec( oBrwAgentesTarifas, bEdtAtp, tmpAgentesTarifas ) )
 
 //---------------------------------------------------------------------------//
 

@@ -22,10 +22,10 @@
 #define _CMAILAGE                16      //   C     120    0
 #define _CAGEREL                 17      //   C      3     0
 #define _NCOMREL                 18      //   N      5     2
-#define _CTAAGE                  19      //   C     12,  0, "Código subcuenta agente",   "",            "", "( cDbfAge )" },;
-#define _CTAGAS                  20      //   C     12,  0, "Código subcuenta gasto",    "",            "", "( cDbfAge )" } }
-#define _CCODPRV                 21      //   C     12,  0
-#define _CCODART                 22      //   C     12,  0
+#define _CTAAGE                  19      //   C     12,    0, "Código subcuenta agente",   "",            "", "( cDbfAge )" },;
+#define _CTAGAS                  20      //   C     12,    0, "Código subcuenta gasto",    "",            "", "( cDbfAge )" } }
+#define _CCODPRV                 21      //   C     12,    0
+#define _CCODART                 22      //   C     12,    0
 #define _NCOMTAR1                23      //   N      5     2
 #define _NCOMTAR2                24      //   N      5     2
 #define _NCOMTAR3                25      //   N      5     2
@@ -52,7 +52,6 @@ static bEdtRel                   := { |aTmp, aoGet, dbfAge, oBrw, cCodAge, bVali
 static bEdicionTarifa            := { |aTmp, aoGet, dbfAge, oBrw, cCodAge, bValid, nMode | EdtRel( aTmp, aoGet, dbfAge, oBrw, cCodAge, bValid, nMode ) }
 
 static dbfAge
-static dbfAgentesAtipicas
 
 static oDetCamposExtra
 
@@ -218,7 +217,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
    local oFld
    local oBrwLin
    local oBrwRel
-   local oBrwAtipicas
+   local oBrwAgentesTarifas
    local oBmpGeneral
    local oBmpComisiones
    local oBmpTarifa
@@ -513,62 +512,62 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          ID       501 ;
          OF       fldTarifas ;
          WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE );
-         ACTION   ( msgAlert("APPEND") )
+         ACTION   ( externalAppendAtipica( oBrwAgentesTarifas, tmpAgentesTarifas, nView ) )
 
       REDEFINE BUTTON  ;
          ID       502 ;
          OF       fldTarifas ;
          WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE );
-         ACTION   ( msgAlert("EDIT") )
+         ACTION   ( externalEditAtipica( oBrwAgentesTarifas, tmpAgentesTarifas, nView ) )
 
       REDEFINE BUTTON  ;
          ID       503 ;
          OF       fldTarifas ;
          WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE );
-         ACTION   ( msgAlert("DELETE") )
+         ACTION   ( winDelRec( oBrwAgentesTarifas, tmpAgentesTarifas ) )
 
-      oBrwAtipicas                 := IXBrowse():New( fldTarifas )
+      oBrwAgentesTarifas                 := IXBrowse():New( fldTarifas )
 
-      oBrwAtipicas:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwAtipicas:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      oBrwAgentesTarifas:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwAgentesTarifas:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrwAtipicas:cAlias          := tmpAgentesTarifas
-      oBrwAtipicas:nMarqueeStyle   := 6
-      oBrwAtipicas:cName           := "Agentes.Atipicas"
+      oBrwAgentesTarifas:cAlias          := tmpAgentesTarifas
+      oBrwAgentesTarifas:nMarqueeStyle   := 6
+      oBrwAgentesTarifas:cName           := "Agentes.Atipicas"
 
-      with object ( oBrwAtipicas:AddCol() )
+      with object ( oBrwAgentesTarifas:AddCol() )
          :cHeader          := "Tipo"
          :bEditValue       := {|| if( ( tmpAgentesTarifas )->nTipAtp <= 1, "Artículo", "Familia" ) }
          :nWidth           := 60
       end with
 
-      with object ( oBrwAtipicas:AddCol() )
+      with object ( oBrwAgentesTarifas:AddCol() )
          :cHeader          := "Código"
          :bEditValue       := {|| if( ( tmpAgentesTarifas )->nTipAtp <= 1, ( tmpAgentesTarifas )->cCodArt, ( tmpAgentesTarifas )->cCodFam ) }
          :nWidth           := 80
       end with
 
-      with object ( oBrwAtipicas:AddCol() )
+      with object ( oBrwAgentesTarifas:AddCol() )
          :cHeader          := "Nombre"
          :bEditValue       := {|| if( ( tmpAgentesTarifas )->nTipAtp <= 1, retArticulo( ( tmpAgentesTarifas )->cCodArt, D():Get( "Articulo", nView ) ), retFamilia( ( tmpAgentesTarifas )->cCodFam, D():Familias( nView ) ) ) }
          :nWidth           := 160
       end with
 
-      with object ( oBrwAtipicas:AddCol() )
+      with object ( oBrwAgentesTarifas:AddCol() )
          :cHeader          := "Prop.1"
          :bEditValue       := {|| ( tmpAgentesTarifas )->cValPr1 }
          :nWidth           := 40
          :lHide            := .t.
       end with
 
-      with object ( oBrwAtipicas:AddCol() )
+      with object ( oBrwAgentesTarifas:AddCol() )
          :cHeader          := "Prop.2"
          :bEditValue       := {|| ( tmpAgentesTarifas )->cValPr2 }
          :nWidth           := 40
          :lHide            := .t.
       end with
 
-      with object ( oBrwAtipicas:AddCol() )
+      with object ( oBrwAgentesTarifas:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" )
          :bEditValue       := {|| ( tmpAgentesTarifas )->nPrcArt }
          :cEditPicture     := cPorDiv()
@@ -577,7 +576,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          :nHeadStrAlign    := AL_RIGHT
       end with
 
-      with object ( oBrwAtipicas:AddCol() )
+      with object ( oBrwAgentesTarifas:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" )
          :bEditValue       := {|| ( tmpAgentesTarifas )->nPrcArt2 }
          :cEditPicture     := cPorDiv()
@@ -586,7 +585,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          :nHeadStrAlign    := AL_RIGHT
       end with
 
-      with object ( oBrwAtipicas:AddCol() )
+      with object ( oBrwAgentesTarifas:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" )
          :bEditValue       := {|| ( tmpAgentesTarifas )->nPrcArt3 }
          :cEditPicture     := cPorDiv()
@@ -595,7 +594,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          :nHeadStrAlign    := AL_RIGHT
       end with
 
-      with object ( oBrwAtipicas:AddCol() )
+      with object ( oBrwAgentesTarifas:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" )
          :bEditValue       := {|| ( tmpAgentesTarifas )->nPrcArt4 }
          :cEditPicture     := cPorDiv()
@@ -604,7 +603,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          :nHeadStrAlign    := AL_RIGHT
       end with
 
-      with object ( oBrwAtipicas:AddCol() )
+      with object ( oBrwAgentesTarifas:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" )
          :bEditValue       := {|| ( tmpAgentesTarifas )->nPrcArt5 }
          :cEditPicture     := cPorDiv()
@@ -613,7 +612,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          :nHeadStrAlign    := AL_RIGHT
       end with
 
-      with object ( oBrwAtipicas:AddCol() )
+      with object ( oBrwAgentesTarifas:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" )
          :bEditValue       := {|| ( tmpAgentesTarifas )->nPrcArt6 }
          :cEditPicture     := cPorDiv()
@@ -622,7 +621,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          :nHeadStrAlign    := AL_RIGHT
       end with
 
-      with object ( oBrwAtipicas:AddCol() )
+      with object ( oBrwAgentesTarifas:AddCol() )
          :cHeader          := "% Descuento"
          :bEditValue       := {|| ( tmpAgentesTarifas )->nDtoArt }
          :cEditPicture     := "@E 999.99"
@@ -631,7 +630,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          :nHeadStrAlign    := AL_RIGHT
       end with
 
-      with object ( oBrwAtipicas:AddCol() )
+      with object ( oBrwAgentesTarifas:AddCol() )
          :cHeader          := "Descuento lineal"
          :bEditValue       := {|| ( tmpAgentesTarifas )->nDtoDiv }
          :cEditPicture     := cPorDiv()
@@ -640,7 +639,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          :nHeadStrAlign    := AL_RIGHT
       end with
 
-      with object ( oBrwAtipicas:AddCol() )
+      with object ( oBrwAgentesTarifas:AddCol() )
          :cHeader          := "% Agente"
          :bEditValue       := {|| ( tmpAgentesTarifas )->nComAge }
          :cEditPicture     := "@E 999.99"
@@ -649,24 +648,24 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          :nHeadStrAlign    := AL_RIGHT
       end with
 
-      with object ( oBrwAtipicas:AddCol() )
+      with object ( oBrwAgentesTarifas:AddCol() )
          :cHeader          := "Inicio"
          :bEditValue       := {|| ( tmpAgentesTarifas )->dFecIni }
          :nWidth           := 80
       end with
 
-      with object ( oBrwAtipicas:AddCol() )
+      with object ( oBrwAgentesTarifas:AddCol() )
          :cHeader          := "Fin"
          :bEditValue       := {|| ( tmpAgentesTarifas )->dFecFin }
          :nWidth           := 80
       end with
 
       if oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE
-         oBrwAtipicas:bLDblClick   := {|| WinEdtRec( oBrwAtipicas, bEdicionTarifa, tmpAgentesTarifas, aTemp, aoGet ) }
+         oBrwAgentesTarifas:bLDblClick   := {|| externalEditAtipica( oBrwAgentesTarifas, tmpAgentesTarifas, nView ) }
       end if
-      oBrwAtipicas:bRClicked       := {| nRow, nCol, nFlags | oBrwAtipicas:RButtonDown( nRow, nCol, nFlags ) }
+      oBrwAgentesTarifas:bRClicked       := {| nRow, nCol, nFlags | oBrwAgentesTarifas:RButtonDown( nRow, nCol, nFlags ) }
 
-      oBrwAtipicas:CreateFromResource( 400 )
+      oBrwAgentesTarifas:CreateFromResource( 400 )
 
       /*
       Tercera pestaña----------------------------------------------------------
@@ -843,7 +842,10 @@ Static Function lPreEdit( aTmp, nMode )
       dbUseArea( .t., cLocalDriver(), cAgentesAtipicas, cCheckArea( "AtpAge", @tmpAgentesTarifas ), .f. )
 
       ( tmpAgentesTarifas )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( tmpAgentesTarifas )->( OrdCreate( cAgentesAtipicas, "cCliArt", "CCODART + CCODPR1 + CCODPR2 + CVALPR1 + CVALPR2", {|| Field->CCODART + Field->CCODPR1 + Field->CCODPR2 + Field->CVALPR1 + Field->CVALPR2 } ) )
+      ( tmpAgentesTarifas )->( OrdCreate( cAgentesAtipicas, "cCliArt", "cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2", {|| Field->cCodArt + Field->cCodPr1 + Field->cCodPr2 + Field->cValPr1 + Field->cValPr2 } ) )
+
+      ( tmpAgentesTarifas )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( tmpAgentesTarifas )->( OrdCreate( cAgentesAtipicas, "cCodFam", "cCodFam", {|| Field->cCodFam } ) )
 
       ( tmpAgentesTarifas )->( OrdSetFocus( "cCliArt" ) )
 
@@ -933,7 +935,7 @@ STATIC FUNCTION lPreSave( aTemp, aoGet, dbfAge, oBrw, oBrwLin, nMode, oDlg )
    if nMode == EDIT_MODE
       deleteRelations( aTemp[ _CCODAGE ], D():AgentesComisiones( nView ) )
       deleteRelations( aTemp[ _CCODAGE ], D():AgentesRelaciones( nView ) )
-      deleteRelations( aTemp[ _CCODAGE ], dbfAgentesAtipicas )
+      deleteRelations( aTemp[ _CCODAGE ], D():Atipicas( nView ) )
    end if
 
    // Quitamos los filtros--------------------------------------------------------
@@ -945,7 +947,7 @@ STATIC FUNCTION lPreSave( aTemp, aoGet, dbfAge, oBrw, oBrwLin, nMode, oDlg )
 
    buildRelation( aTemp[ _CCODAGE ], tmpAgentesComisiones, D():AgentesComisiones( nView ) )
    buildRelation( aTemp[ _CCODAGE ], tmpAgentesRelaciones, D():AgentesRelaciones( nView ) )
-   buildRelation( aTemp[ _CCODAGE ], tmpAgentesTarifas, dbfAgentesAtipicas )
+   buildRelation( aTemp[ _CCODAGE ], tmpAgentesTarifas, D():Atipicas( nView ) )
 
    // Ahora escribimos en el fichero definitivo-----------------------------------
 
@@ -972,9 +974,7 @@ Static Function EdtDet( aTmp, aGet, tmpAgentesComisiones, oBrw, bWhen, bValid, n
 
 	local oDlg
 
-   /*
-   Caja de dialogo-------------------------------------------------------------
-   */
+   // Caja de dialogo----------------------------------------------------------
 
    DEFINE DIALOG oDlg RESOURCE "AgeDet"
 
@@ -1016,9 +1016,7 @@ Static Function EdtRel( aTmp, aGet, tmpAgentesRelaciones, oBrw, cCodAge, bValid,
 
 	local oDlg
 
-   /*
-   Caja de dialogo-------------------------------------------------------------
-   */
+   // Caja de dialogo----------------------------------------------------------
 
    DEFINE DIALOG oDlg RESOURCE "AgeRel"
 
