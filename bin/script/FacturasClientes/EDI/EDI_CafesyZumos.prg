@@ -66,6 +66,7 @@ CLASS TEdiExporarFacturas
 
    METHOD isFacturaProcesada()
    METHOD infoFacturaEnProceso() INLINE   ( ::oTree:Select( ::oTree:Add( "Factura : " + D():FacturasClientesIdText( ::nView ) + " en proceso.", 1 ) ) )
+   METHOD infoFacturaGenerada()  INLINE   ( ::oTree:Select( ::oTree:Add( "Factura : " + D():FacturasClientesIdText( ::nView ) + " generada en el fichero " + ::cFileEDI, 1 ) ) )
 
    METHOD getSerlizeFileName()
    METHOD createFile()
@@ -131,6 +132,7 @@ METHOD Run()
    ::createFile()
    
    if ::isFile()
+
       ::writeDatosGenerales()
       ::writeDatosProveedor()
       ::writeDatosCliente()
@@ -149,6 +151,9 @@ METHOD Run()
       ::closeFile()
 
       ::setFacturaClienteGeneradaEDI()
+
+      ::infoFacturaGenerada()
+   
    end if
 
 Return ( self )

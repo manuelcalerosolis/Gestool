@@ -23,6 +23,8 @@ CREATE CLASS FacturasClientesRisi
    DATA dInicio            INIT  ( BoM( Date() ) ) 
    DATA dFin               INIT  ( EoM( Date() ) ) 
 
+   DATA cDelegacion
+
    CLASSDATA aProductos    INIT  {  { "Codigo" => "V001004", "Nombre" => "GUSANITOS 35 g x 30 u",             "Codigo unidades" => "8411859550103",  "Codigo cajas" => "18411859550100", "Codigo interno" => "" },;
                                     { "Codigo" => "V001005", "Nombre" => "GUSANITOS  KETCHUP 35 g x 30 u",    "Codigo unidades" => "8411859550110",  "Codigo cajas" => "18411859550117", "Codigo interno" => "" },;
                                     { "Codigo" => "V001007", "Nombre" => "GUSANITOS 18 g x 40 u",             "Codigo unidades" => "8411859550134",  "Codigo cajas" => "18411859550131", "Codigo interno" => "" },;
@@ -134,6 +136,8 @@ CREATE CLASS FacturasClientesRisi
    METHOD getCantidad()
    METHOD getPrecioBase()
 
+   METHOD getDelegacion()                       INLINE ( oUser():cDelegacion() )
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -147,6 +151,13 @@ ENDCLASS
       if !::OpenFiles()
             Return ( Self )
    	end if 
+
+      if empty( ::getDelegacion() )
+            msgStop( "Cóodigo delegación esta vacio" )
+            Return ( Self )
+      end if 
+
+      msgAlert( )
 
       ::ProcessFile()
 
@@ -166,7 +177,7 @@ ENDCLASS
       local oBtn
       local getFechaFin
 
-      oDlg 						:= TDialog():New( 5, 5, 15, 40, "Exportacion Risi" )
+      oDlg 			:= TDialog():New( 5, 5, 15, 40, "Exportacion Risi" )
 
       TSay():New( 1, 1, {|| "Desde" }, oDlg )      
 
@@ -426,7 +437,7 @@ RETURN ( Self )
 METHOD getCantidad()
 
       local nUnidades   := ( D():Articulos( ::nView ) )->nUniCaja 
-      local nCantidad   := ::oUve:Cantidad(  nTotNFacCli( D():FacturasClientesLineas( ::nView ) )
+      local nCantidad   := nTotNFacCli( D():FacturasClientesLineas( ::nView ) )
 
       if nUnidades != 0
             nCantidad   := nCantidad / nUnidades
@@ -439,10 +450,10 @@ RETURN ( nCantidad )
 METHOD getPrecioBase()
 
       local nUnidades   := ( D():Articulos( ::nView ) )->nUniCaja 
-      local nPrecioBase := ::oUve:Cantidad(  nTotNFacCli( D():FacturasClientesLineas( ::nView ) )
+      local nPrecioBase := nTotUFacCli( D():FacturasClientesLineas( ::nView ) )
 
       if nUnidades != 0
-            nPrecioBase := nCantidad * nUnidades
+            nPrecioBase := nPrecioBase * nUnidades
       end if 
 
 RETURN ( nPrecioBase )
