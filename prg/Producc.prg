@@ -1458,6 +1458,55 @@ METHOD Resource( nMode, aDatosAnterior )
       end with
 
       with object ( ::oBrwMaterialProducido:AddCol() )
+         :cHeader          := getTraslation( "Grupo familia" )
+         :bStrData         := {|| AllTrim( ::oDetProduccion:oDbfVir:FieldGetByName( "cGrpFam" ) ) + Space( 1 ) + oRetFld( ::oDetProduccion:oDbfVir:FieldGetByName( "cGrpFam" ), ::oGrupoFamilia:oDbf )  }
+         :nWidth           := 55
+         :lHide            := .t.
+      end with
+
+      with object ( ::oBrwMaterialProducido:AddCol() )
+         :cHeader          := getTraslation( "Familia" )
+         :bStrData         := {|| AllTrim( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodFam" ) ) + Space( 1 ) + oRetFld( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodFam" ), ::oFam ) }
+         :nWidth           := 55
+         :lHide            := .t.
+      end with
+
+      with object ( ::oBrwMaterialProducido:AddCol() )
+         :cHeader          := getTraslation( "Tipo" )
+         :bStrData         := {|| AllTrim( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodTip" ) ) + Space( 1 ) + oRetFld( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodTip" ), ::oTipoArticulo:oDbf ) }
+         :nWidth           := 55
+         :lHide            := .t.
+      end with
+
+      with object ( ::oBrwMaterialProducido:AddCol() )
+         :cHeader          := getTraslation( "Categoría" )
+         :bStrData         := {|| AllTrim( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodCat" ) ) + Space( 1 ) + oRetFld( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodCat" ), ::oCategoria ) }
+         :nWidth           := 55
+         :lHide            := .t.
+      end with
+
+      with object ( ::oBrwMaterialProducido:AddCol() )
+         :cHeader          := getTraslation( "Temporada" )
+         :bStrData         := {|| AllTrim( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodTmp" ) ) + Space( 1 ) + oRetFld( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodTmp" ), ::oTemporada ) }
+         :nWidth           := 55
+         :lHide            := .t.
+      end with
+
+      with object ( ::oBrwMaterialProducido:AddCol() )
+         :cHeader          := getTraslation( "Fabricante" )
+         :bStrData         := {|| AllTrim( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodFab" ) ) + Space( 1 ) + oRetFld( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodFab" ), ::oFabricante:oDbf ) }
+         :nWidth           := 55
+         :lHide            := .t.
+      end with
+
+      with object ( ::oBrwMaterialProducido:AddCol() )
+         :cHeader          := getTraslation( "Operación" )
+         :bStrData         := {|| AllTrim( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodOpe" ) ) + Space( 1 ) + oRetFld( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodOpe" ), ::oOperacion:oDbf ) } 
+         :nWidth           := 55
+         :lHide            := .t.
+      end with
+
+      with object ( ::oBrwMaterialProducido:AddCol() )
          :cHeader          := "Total unidades"
          :bEditValue       := {|| ::oDetProduccion:nUnidades( ::oDetProduccion:oDbfVir ) }
          :cEditPicture     := ::cPicUnd 
@@ -1560,6 +1609,55 @@ METHOD Resource( nMode, aDatosAnterior )
          :cHeader          := "Almacén"
          :bStrData         := {|| ::oDetMaterial:oDbfVir:FieldGetByName( "cAlmOrd" ) }
          :nWidth           := 60
+      end with
+
+      with object ( ::oBrwMateriaPrima:AddCol() )
+         :cHeader          := getTraslation( "Grupo familia" )
+         :bStrData         := {|| AllTrim( ::oDetMaterial:oDbfVir:FieldGetByName( "cGrpFam" ) ) + Space( 1 ) + oRetFld( ::oDetMaterial:oDbfVir:FieldGetByName( "cGrpFam" ), ::oGrupoFamilia:oDbf ) }
+         :nWidth           := 55
+         :lHide            := .t.
+      end with
+
+      with object ( ::oBrwMateriaPrima:AddCol() )
+         :cHeader          := getTraslation( "Familia" )
+         :bStrData         := {|| AllTrim( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodFam" ) ) + Space( 1 ) + oRetFld( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodFam" ), ::oFam ) }
+         :nWidth           := 55
+         :lHide            := .t.
+      end with
+
+      with object ( ::oBrwMateriaPrima:AddCol() )
+         :cHeader          := getTraslation( "Tipo" )
+         :bStrData         := {|| AllTrim( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodTip" ) ) + Space( 1 ) + oRetFld( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodTip" ), ::oTipoArticulo:oDbf ) }
+         :nWidth           := 55
+         :lHide            := .t.
+      end with
+
+      with object ( ::oBrwMateriaPrima:AddCol() )
+         :cHeader          := getTraslation( "Categoría" )
+         :bStrData         := {|| AllTrim( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodCat" ) ) + Space( 1 ) + oRetFld( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodCat" ), ::oCategoria ) }
+         :nWidth           := 55
+         :lHide            := .t.
+      end with
+
+      with object ( ::oBrwMateriaPrima:AddCol() )
+         :cHeader          := getTraslation( "Temporada" )
+         :bStrData         := {|| AllTrim( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodTmp" ) ) + Space( 1 ) + oRetFld( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodTmp" ), ::oTemporada ) }
+         :nWidth           := 55
+         :lHide            := .t.
+      end with
+
+      with object ( ::oBrwMateriaPrima:AddCol() )
+         :cHeader          := getTraslation( "Fabricante" )
+         :bStrData         := {|| AllTrim( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodFab" ) ) + Space( 1 ) + oRetFld( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodFab" ), ::oFabricante:oDbf ) }
+         :nWidth           := 55
+         :lHide            := .t.
+      end with
+
+      with object ( ::oBrwMateriaPrima:AddCol() )
+         :cHeader          := getTraslation( "Operación" )
+         :bStrData         := {|| AllTrim( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodOpe" ) ) + Space( 1 ) + oRetFld( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodOpe" ), ::oOperacion:oDbf ) }
+         :nWidth           := 55
+         :lHide            := .t.
       end with
 
       with object ( ::oBrwMateriaPrima:AddCol() )

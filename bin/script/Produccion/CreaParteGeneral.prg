@@ -8,8 +8,8 @@ function InicioHRB( oParte )
    local oCreateParte   := createParte():new( oParte )
 
    if !Empty( oCreateParte )
-      oCreateParte:runTest()
-      //oCreateParte:run()
+      //oCreateParte:runTest()
+      oCreateParte:run()
    end if
 
 return ( .t. )
@@ -86,7 +86,7 @@ Return .t.
 
 METHOD runTest() CLASS createParte
 
-   ::arrayGrupos  := { "F1" }
+   ::arrayGrupos  := { "Todos" }
    ::cDocumento   := "P        7  "
    
    if ::isOnlyOneGrupoOfParte()
@@ -158,10 +158,6 @@ METHOD compruebaGrupoParte() CLASS CreateParte
 
    local lResult  := .f.
 
-   if AllTrim( ::grupoParte ) == "Todos"
-      Return .t.
-   end if
-
    ::arrayGrupos    := hb_aTokens( ::grupoParte, "," )
 
 return ::compruebaArrayGrupoParte()
@@ -175,6 +171,10 @@ METHOD compruebaArrayGrupoParte() CLASS CreateParte
 
    if len( ::arrayGrupos ) == 0
       Return .f.
+   end if
+
+   if len( ::arrayGrupos ) == 1 .and. AllTrim( ::arrayGrupos[1] ) == "Todos"
+      Return .t.
    end if
 
    ::oParteProduccion:oTemporada:getStatus()
@@ -264,10 +264,29 @@ Return arrayGruposOfParte
 METHOD ProcesaGrupo() CLASS CreateParte
 
    local cGrupo
+   local arrayTodos  := {}
 
    if ::isOnlyOneGrupoToProcess()
       Return .f.
    end if
+
+   //Todos---------------------------------------------------------------------
+
+   if len( ::arrayGrupos ) == 1 .and. AllTrim( ::arrayGrupos[1] ) == "Todos"
+
+      arrayTodos  := ::getArrayGruposOfParte()
+
+      for each cGrupo in arrayTodos
+
+         if !::isOnlyOneGrupoOfParte()
+            ::procesaParte( cGrupo )
+         end if
+
+      next
+
+   end if
+
+   //Otros valores-------------------------------------------------------------
 
    for each cGrupo in ::arrayGrupos
 
@@ -291,7 +310,7 @@ METHOD procesaParte( cGrupo ) CLASS CreateParte
 
    ::createCabecera()
 
-   //::updateElaborado( cGrupo )
+   ::updateElaborado( cGrupo )
 
    ::updateMateriaPrima( cGrupo )
 
@@ -331,20 +350,13 @@ METHOD updateElaborado( cGrupo ) CLASS CreateParte
 
    ::oParteProduccion:oDetProduccion:oDbf:OrdSetFocus( "cCodTmp" )
    
-   if ::oParteProduccion:oDetProduccion:oDbf:Seek( ::cDocumento + Padr( cGrupo, 10 ) )
+   while ::oParteProduccion:oDetProduccion:oDbf:Seek( ::cDocumento + Padr( cGrupo, 10 ) )
+ 
+      ::oParteProduccion:oDetProduccion:oDbf:Load()
+      ::oParteProduccion:oDetProduccion:oDbf:nNumOrd    := ::newNumero
+      ::oParteProduccion:oDetProduccion:oDbf:Save()
 
-      while ::oParteProduccion:oDetProduccion:oDbf:cSerOrd + Str( ::oParteProduccion:oDetProduccion:oDbf:nNumOrd ) + ::oParteProduccion:oDetProduccion:oDbf:cSufOrd + ::oParteProduccion:oDetProduccion:oDbf:cCodTmp == ::cDocumento + Padr( cGrupo, 10 ) .and.;
-            !::oParteProduccion:oDetProduccion:oDbf:Eof()
-
-         ::oParteProduccion:oDetProduccion:oDbf:Load()
-         ::oParteProduccion:oDetProduccion:oDbf:nNumOrd    := ::newNumero
-         ::oParteProduccion:oDetProduccion:oDbf:Save()
-
-         ::oParteProduccion:oDetProduccion:oDbf:Skip()
-
-      end while
-
-   end if
+   end while
 
    ::oParteProduccion:oDetProduccion:oDbf:setStatus()
 
@@ -358,35 +370,13 @@ METHOD updateMateriaPrima( cGrupo ) CLASS CreateParte
 
    ::oParteProduccion:oDetMaterial:oDbf:OrdSetFocus( "cCodTmp" )
    
-   MsgInfo( ::cDocumento + Padr( cGrupo, 10 ), "lo que busco" )
+   while ::oParteProduccion:oDetMaterial:oDbf:Seek( ::cDocumento + Padr( cGrupo, 10 ) )
 
-   if ::oParteProduccion:oDetMaterial:oDbf:Seek( ::cDocumento + Padr( cGrupo, 10 ) )
+      ::oParteProduccion:oDetMaterial:oDbf:Load()
+      ::oParteProduccion:oDetMaterial:oDbf:nNumOrd    := ::newNumero
+      ::oParteProduccion:oDetMaterial:oDbf:Save()
 
-      MsgInfo( "1" )
-
-      //while ::oParteProduccion:oDetMaterial:oDbf:cSerOrd + Str( ::oParteProduccion:oDetMaterial:oDbf:nNumOrd ) + ::oParteProduccion:oDetMaterial:oDbf:cSufOrd + ::oParteProduccion:oDetMaterial:oDbf:cCodTmp == ::cDocumento + Padr( cGrupo, 10 ) .and.;
-      while !::oParteProduccion:oDetMaterial:oDbf:Eof()
-
-         MsgInfo( ::oParteProduccion:oDetMaterial:oDbf:cSerOrd + Str( ::oParteProduccion:oDetMaterial:oDbf:nNumOrd ) + ::oParteProduccion:oDetMaterial:oDbf:cSufOrd + ::oParteProduccion:oDetMaterial:oDbf:cCodTmp, len( ::oParteProduccion:oDetMaterial:oDbf:cSerOrd + Str( ::oParteProduccion:oDetMaterial:oDbf:nNumOrd ) + ::oParteProduccion:oDetMaterial:oDbf:cSufOrd + ::oParteProduccion:oDetMaterial:oDbf:cCodTmp ) )
-         MsgInfo( ::cDocumento + Padr( cGrupo, 10 ), len( ::cDocumento + Padr( cGrupo, 10 ) ) )
-
-         if ::oParteProduccion:oDetMaterial:oDbf:cSerOrd + Str( ::oParteProduccion:oDetMaterial:oDbf:nNumOrd ) + ::oParteProduccion:oDetMaterial:oDbf:cSufOrd + ::oParteProduccion:oDetMaterial:oDbf:cCodTmp == ::cDocumento + Padr( cGrupo, 10 )
-
-            MsgInfo( "Cambio" )
-
-            ::oParteProduccion:oDetMaterial:oDbf:Load()
-            ::oParteProduccion:oDetMaterial:oDbf:nNumOrd    := ::newNumero
-            ::oParteProduccion:oDetMaterial:oDbf:Save()
-
-         end if
-
-         ::oParteProduccion:oDetMaterial:oDbf:Skip()
-
-      end while
-
-      MsgInfo( "3" )
-
-   end if
+   end while
 
    ::oParteProduccion:oDetMaterial:oDbf:setStatus()
 
