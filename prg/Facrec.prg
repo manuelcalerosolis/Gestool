@@ -2450,6 +2450,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       	ID       191;
          OF 		oFld:aDialogs[1]
 
+      REDEFINE GET aGet[ _NVDVFAC ] VAR aTmp[ _NVDVFAC ];
+         WHEN     ( .f. ) ;
+         ID       192 ;
+         PICTURE  "@E 999,999.9999" ;
+         OF       oFld:aDialogs[1]
+
    	REDEFINE GET aGet[ _CCODUSR ] VAR aTmp[ _CCODUSR ];
       	ID       125 ;
       	WHEN     ( .f. ) ;

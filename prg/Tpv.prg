@@ -183,6 +183,7 @@ Ficheros-----------------------------------------------------------------------
 #define _LPESO                    82
 #define _LSAVE                    83
 #define _LMNUACO                  84
+#define _NPOSPRINT                85
 
 #define _NNUMREC                   4
 #define _CCODCAJ                   5
@@ -3103,6 +3104,7 @@ Static Function cAlbCli( aTmp, aGet, cNumAlb, oBrwLin )
             ( dbfTmpL )->dFecCad    := ( dbfAlbCliL )->dFecCad
             ( dbfTmpL )->cCodUsr    := ( dbfAlbCliT )->cCodUsr
             ( dbfTmpL )->nNumLin    := nLastNum( dbfTmpL )
+            ( dbfTmpL )->nPosPrint  := nLastNum( dbfTmpL, "nPosPrint" )
 
             ( dbfTmpL )->( dbUnLock() )
 
@@ -3229,6 +3231,7 @@ static function cPedCli( aTmp, aGet, cNumPed, oBrwLin )
             ( dbfTmpL )->dFecCad    := ( dbfPedCliL )->dFecCad
             ( dbfTmpL )->cCodUsr    := ( dbfPedCliT )->cCodUsr
             ( dbfTmpL )->nNumLin    := nLastNum( dbfTmpL )
+            ( dbfTmpL )->nPosPrint  := nLastNum( dbfTmpL, "nPosPrint" )
 
             ( dbfTmpL )->( dbUnLock() )
 
@@ -3385,6 +3388,7 @@ static function cPreCli( aTmp, aGet, cNumPre, oBrwLin )
             ( dbfTmpL )->dFecCad    := ( dbfPreCliL )->dFecCad
             ( dbfTmpL )->cCodUsr    := ( dbfPreCliT )->cCodUsr
             ( dbfTmpL )->nNumLin    := nLastNum( dbfTmpL )
+            ( dbfTmpL )->nPosPrint  := nLastNum( dbfTmpL, "nPosPrint" )
 
             ( dbfTmpL )->( dbUnLock() )
 
@@ -7296,6 +7300,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
       aTmp[ _CNUMTIL ]     := aTik[ _CNUMTIK ]
       aTmp[ _CALMLIN ]     := aTik[ _CALMTIK ]
       aTmp[ _NNUMLIN ]     := nLastNum( dbfTmpL )
+      aTmp[ _NPOSPRINT ]   := nLastNum( dbfTmpL, "nPosPrint" )
       aTmp[ _NIVATIL ]     := nIva( dbfIva, cDefIva() )
 
       if ( dbfTmpL )->( eof() )
@@ -11704,6 +11709,8 @@ Function SavTik2Alb( aTik, aGet, nMode, nSave )
       ( dbfAlbCliL )->tFecAlb    := ( dbfAlbCliT )->tFecAlb
       ( dbfAlbCliL )->cAlmLin    := aTik[ _CALMTIK ]
       ( dbfAlbCliL )->lIvaLin    := .t.
+      ( dbfAlbCliL )->nNumLin    := ( dbfTmpL    )->nNumLin
+      ( dbfAlbCliL )->nPosPrint  := ( dbfTmpL    )->nPosPrint
       ( dbfAlbCliL )->( dbUnLock() )
 
       AddArticuloComercio( ( dbfTmpL )->cCbaTil )
@@ -12176,6 +12183,8 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
       cCodFam                    := RetFamArt( ( dbfTmpL )->cCbaTil, dbfArticulo )
       ( dbfFacCliL )->cCodFam    := cCodFam
       ( dbfFacCliL )->cGrpFam    := cGruFam( cCodFam, dbfFamilia )
+      ( dbfFacCliL )->nNumLin    := ( dbfTmpL )->nNumLin
+      ( dbfFacCliL )->nPosPrint  := ( dbfTmpL )->nPosPrint
 
       ( dbfFacCliL )->( dbUnLock() )
 
@@ -13550,6 +13559,7 @@ Static Function AppendKit( uTmpLin, aTik )
    local nUntTil
    local nIvaTil
    local nNumLin
+   local nPosPrint
 
    if ValType( uTmpLin ) == "A"
       cCodArt                       := uTmpLin[ _CCBATIL ]
@@ -13557,6 +13567,7 @@ Static Function AppendKit( uTmpLin, aTik )
       cNumTil                       := uTmpLin[ _CNUMTIL ]
       cSufTil                       := uTmpLin[ _CSUFTIL ]
       nNumLin                       := uTmpLin[ _NNUMLIN ]
+      nPosPrint                     := uTmpLin[ _NPOSPRINT ]
       cAlmLin                       := uTmpLin[ _CALMLIN ]
       nUntTil                       := uTmpLin[ _NUNTTIL ]
       nIvaTil                       := uTmpLin[ _NIVATIL ]
@@ -13566,6 +13577,7 @@ Static Function AppendKit( uTmpLin, aTik )
       cNumTil                       := ( uTmpLin )->cNumTil
       cSufTil                       := ( uTmpLin )->cSufTil
       nNumLin                       := ( uTmpLin )->nNumLin
+      nPosPrint                     := ( uTmpLin )->nPosPrint
       cAlmLin                       := ( uTmpLin )->cAlmLin
       nUntTil                       := ( uTmpLin )->nUntTil
       nIvaTil                       := ( uTmpLin )->nIvaTil
@@ -13585,6 +13597,7 @@ Static Function AppendKit( uTmpLin, aTik )
             ( dbfTmpL )->cNumTil    := cNumTil
             ( dbfTmpL )->cSufTil    := cSufTil
             ( dbfTmpL )->nNumLin    := nNumLin
+            ( dbfTmpL )->nPosPrint  := nPosPrint
             ( dbfTmpL )->cAlmLin    := cAlmLin
             ( dbfTmpL )->nUntTil    := nUntTil * ( dbfKit )->nUndKit
 
@@ -15585,6 +15598,10 @@ Function SynTikCli( cPath )
          ( dbfTikL )->dFecTik := RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT, "dFecTik" )
       end if
 
+      if empty( ( dbfTikL )->nPosPrint ) 
+         ( dbfTikL )->nPosPrint := ( dbfTikL )->nNumLin 
+      end if
+
       ( dbfTikL )->( dbSkip() )
 
       SysRefresh()
@@ -15843,6 +15860,7 @@ Function ProcesaPedidosWeb( aTmp )
             ( dbfTmpL )->nValImp    := ( dbfPedCliL )->nValImp
             ( dbfTmpL )->cCodImp    := ( dbfPedCliL )->cCodImp
             ( dbfTmpL )->nNumLin    := ( dbfPedCliL )->nNumLin
+            ( dbfTmpL )->nPosPrint  := ( dbfPedCliL )->nPosPrint
             ( dbfTmpL )->lKitArt    := ( dbfPedCliL )->lKitArt
             ( dbfTmpL )->lKitChl    := ( dbfPedCliL )->lKitChl
             ( dbfTmpL )->cCodFam    := ( dbfPedCliL )->cCodFam
@@ -17366,6 +17384,7 @@ function aColTik()
    aAdd( aColTik, { "lPeso",    "L",      1,     0, "Lógico articulo con peso",           "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "lSave",    "L",      1,     0, "",                                   "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "lMnuAco",  "L",      1,     0, "Lógico menu acompañamiento",         "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "nPosPrint","N",      4,     0, "Posición de impresión",              "",                  "", "( cDbfCol )" } )
 
 Return ( aColTik )
 

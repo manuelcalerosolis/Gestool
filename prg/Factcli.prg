@@ -7910,6 +7910,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                (dbfTmpLin)->( dbAppend() )
 
                (dbfTmpLin)->nNumLin    := (dbfPedCliL)->nNumLin
+               (dbfTmpLin)->nPosPrint  := (dbfPedCliL)->nPosPrint
                (dbfTmpLin)->cRef       := (dbfPedCliL)->cRef
                (dbfTmpLin)->cDetalle   := (dbfPedCliL)->cDetalle
                (dbfTmpLin)->mLngDes    := (dbfPedCliL)->mLngDes
@@ -8294,6 +8295,7 @@ STATIC FUNCTION cPreCli( aGet, aTmp, oBrw, nMode )
                (dbfTmpLin)->( dbAppend() )
 
                (dbfTmpLin)->nNumLin    := (dbfPreCliL)->nNumLin
+               (dbfTmpLin)->nPosPrint  := (dbfPreCliL)->nPosPrint
                (dbfTmpLin)->cRef       := (dbfPreCliL)->cRef
                (dbfTmpLin)->cDetalle   := (dbfPreCliL)->cDetAlle
                (dbfTmpLin)->mLngDes    := (dbfPreCliL)->mLngDes
@@ -8866,6 +8868,7 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
    local oBrwDet
    local nOrd
    local nNumLin
+   local nPosPrint
    local nItem       := 1
    local nTotDoc     := 0
    local nDtoEsp     := 0
@@ -9154,29 +9157,31 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
 
          if ( dbfAlbCliL )->( dbSeek( aAlbaranes[ nItem, 2 ] ) ) .and. aAlbaranes[ nItem, 1 ]
 
-            nNumLin                    := nil
+            nNumLin                    	:= nil
+            nPosPrint 							:= nil
 
             if lNumAlb() .or. lNumObr() .or. lSuAlb()
 
                ( dbfTmpLin )->( dbAppend() )
 
-               cDesAlb                 := ""
+               cDesAlb                 	:= ""
                if lNumObr()
-                  cDesAlb              += Alltrim( cNumObr() ) + " " + StrTran( aAlbaranes[ nItem, 8 ], " ", "" ) + Space( 1 )
-                  cDesAlb              += if( !Empty( aAlbaranes[ nItem, 8 ] ), AllTrim( RetFld( aAlbaranes[ nItem, 5 ] + aAlbaranes[ nItem, 8 ], dbfObrasT, "cNomObr" ) ), "" )
+                  cDesAlb              	+= Alltrim( cNumObr() ) + " " + StrTran( aAlbaranes[ nItem, 8 ], " ", "" ) + Space( 1 )
+                  cDesAlb              	+= if( !Empty( aAlbaranes[ nItem, 8 ] ), AllTrim( RetFld( aAlbaranes[ nItem, 5 ] + aAlbaranes[ nItem, 8 ], dbfObrasT, "cNomObr" ) ), "" )
                end if
                if lNumAlb()
-                  cDesAlb              += Alltrim( cNumAlb() ) + " " + Left( aAlbaranes[ nItem, 2 ], 1 ) + "/" + AllTrim( Substr( aAlbaranes[ nItem, 2 ], 2, 9 ) ) + "/" + Right( aAlbaranes[ nItem, 2 ], 2 ) + Space( 1 )
+                  cDesAlb              	+= Alltrim( cNumAlb() ) + " " + Left( aAlbaranes[ nItem, 2 ], 1 ) + "/" + AllTrim( Substr( aAlbaranes[ nItem, 2 ], 2, 9 ) ) + "/" + Right( aAlbaranes[ nItem, 2 ], 2 ) + Space( 1 )
                end if
                if lSuAlb()
-                  cDesAlb              += Alltrim( cSuAlb()  ) + " " + StrTran( aAlbaranes[ nItem, 3 ], " ", "" ) + Space( 1 )
+                  cDesAlb              	+= Alltrim( cSuAlb()  ) + " " + StrTran( aAlbaranes[ nItem, 3 ], " ", "" ) + Space( 1 )
                end if
-               cDesAlb                 += " - Fecha " + Dtoc( aAlbaranes[ nItem, 4] )
+               cDesAlb                 	+= " - Fecha " + Dtoc( aAlbaranes[ nItem, 4] )
 
-               ( dbfTmpLin )->cDetalle := cDesAlb
-               ( dbfTmpLin )->mLngDes  := cDesAlb
-               ( dbfTmpLin )->lControl := .t.
-               ( dbfTmpLin )->nNumLin  := ++nOffSet
+               ( dbfTmpLin )->cDetalle 	:= cDesAlb
+               ( dbfTmpLin )->mLngDes  	:= cDesAlb
+               ( dbfTmpLin )->lControl 	:= .t.
+               ( dbfTmpLin )->nNumLin  	:= ++nOffSet
+               ( dbfTmpLin )->nPosPrint	:= nOffSet
 
             end if
 
@@ -9187,12 +9192,13 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
                   nNumLin              := ( dbfAlbCliL )->nNumLin
                end if
 
-               appendRegisterByHash( dbfAlbCliL, dbfTmpLin, {  "nNumLin" => nOffSet,;
-                                                               "cCodAlb" => ( dbfAlbCliT )->cSerAlb + str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb,;
-                                                               "dFecFac" => ( dbfAlbCliT )->dFecAlb,;
-                                                               "tFecFac" => ( dbfAlbCliT )->tFecAlb,;
-                                                               "cSuPed"  => cSuPed,;
-                                                               "cCodObr" => aAlbaranes[ nItem, 8 ] } )
+               appendRegisterByHash( dbfAlbCliL, dbfTmpLin, {  "nNumLin" 	=> nOffSet,;
+               																"nPosPrint"	=> nOffSet,;
+                                                               "cCodAlb" 	=> ( dbfAlbCliT )->cSerAlb + str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb,;
+                                                               "dFecFac" 	=> ( dbfAlbCliT )->dFecAlb,;
+                                                               "tFecFac" 	=> ( dbfAlbCliT )->tFecAlb,;
+                                                               "cSuPed"  	=> cSuPed,;
+                                                               "cCodObr" 	=> aAlbaranes[ nItem, 8 ] } )
 
                /*
                Pasamos series de albaranes-------------------------------------
@@ -9224,11 +9230,11 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
             Lineas de descuento------------------------------------------------
             */
 
-            nTotDoc                    += aAlbaranes[ nItem, 9 ]:nTotalBruto
-            nDtoEsp                    += aAlbaranes[ nItem, 9 ]:nTotalDescuentoGeneral
-            nDtoDpp                    += aAlbaranes[ nItem, 9 ]:nTotalDescuentoProntoPago
-            nDtoUno                    += aAlbaranes[ nItem, 9 ]:nTotalDescuentoUno
-            nDtoDos                    += aAlbaranes[ nItem, 9 ]:nTotalDescuentoDos
+            nTotDoc                    	+= aAlbaranes[ nItem, 9 ]:nTotalBruto
+            nDtoEsp                    	+= aAlbaranes[ nItem, 9 ]:nTotalDescuentoGeneral
+            nDtoDpp                    	+= aAlbaranes[ nItem, 9 ]:nTotalDescuentoProntoPago
+            nDtoUno                    	+= aAlbaranes[ nItem, 9 ]:nTotalDescuentoUno
+            nDtoDos                    	+= aAlbaranes[ nItem, 9 ]:nTotalDescuentoDos
 
             /*
             Total albaran------------------------------------------------------
@@ -9236,9 +9242,10 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
 
             if RetFld( cCodCli, D():Clientes( nView ), "lTotAlb" )
                ( dbfTmpLin )->( dbAppend() )
-               ( dbfTmpLin )->nNumLin  := ++nOffSet
-               ( dbfTmpLin )->mLngDes  := "Total albarán..."
-               ( dbfTmpLin )->lTotLin  := .t.
+               ( dbfTmpLin )->nNumLin  	:= ++nOffSet
+               ( dbfTmpLin )->nPosPrint	:= nOffSet
+               ( dbfTmpLin )->mLngDes  	:= "Total albarán..."
+               ( dbfTmpLin )->lTotLin  	:= .t.
             end if
 
             ( dbfTmpLin )->( dbGoTop() )
@@ -16246,6 +16253,7 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
                (dbfTmpLin)->( dbAppend() )
 
                (dbfTmpLin)->nNumLin    := (dbfSatCliL)->nNumLin
+               (dbfTmpLin)->nPosPrint  := (dbfSatCliL)->nPosPrint
                (dbfTmpLin)->cRef       := (dbfSatCliL)->cRef
                (dbfTmpLin)->cDetalle   := (dbfSatCliL)->cDetAlle
                (dbfTmpLin)->mLngDes    := (dbfSatCliL)->mLngDes

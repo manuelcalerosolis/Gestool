@@ -40,6 +40,7 @@ CLASS DocumentLine
 
    METHOD getNumeroLinea()                                     INLINE ( hGet( ::hDictionary, "NumeroLinea" ) )
    METHOD setNumeroLinea( NumeroLinea )                        INLINE ( hSet( ::hDictionary, "NumeroLinea", NumeroLinea ) )
+   METHOD setPosicionImpresion( PosicionImpresion)             INLINE ( hSet( ::hDictionary, "PosicionImpresion", PosicionImpresion ) )
 
    METHOD getArticulo()                                        INLINE ( hGet( ::hDictionary, "Articulo" ) )
    METHOD getDescripcionArticulo()                             INLINE ( hGet( ::hDictionary, "DescripcionArticulo" ) )

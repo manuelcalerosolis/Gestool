@@ -5525,6 +5525,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
 
                   (dbfTmpLin)->nNumAlb    := 0
                   (dbfTmpLin)->nNumLin    := (dbfPedCliL)->nNumLin
+                  (dbfTmpLin)->nPosPrint  := (dbfPedCliL)->nPosPrint
                   (dbfTmpLin)->cRef       := (dbfPedCliL)->cRef
                   (dbfTmpLin)->cDetalle   := (dbfPedCliL)->cDetalle
                   (dbfTmpLin)->mLngDes    := (dbfPedCliL)->mLngDes
@@ -5820,6 +5821,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
    local oBrwLin
    local nOrdAnt
    local nNumLin
+   local nPosPrint
    local lCodAge     := .f.
    local nOffSet     := 0
    local cDesAlb     := ""
@@ -6087,6 +6089,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
             */
 
             nNumLin                    := nil
+            nPosPrint                  := nil
 
             if lNumPed()
                (dbfTmpLin)->( dbAppend() )
@@ -6096,6 +6099,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                (dbfTmpLin)->mLngDes    := cDesAlb
                (dbfTmpLin)->lControl   := .t.
                (dbfTmpLin)->nNumLin    := ++nOffSet
+               (dbfTmpLin)->nPosPrint  := nOffSet
             end if
 
             /*
@@ -6123,6 +6127,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
 
                      (dbfTmpLin)->nNumAlb    := 0
                      (dbfTmpLin)->nNumLin    := nOffSet
+                     (dbfTmpLin)->nPosPrint  := nOffSet
                      (dbfTmpLin)->cRef       := (dbfPedCliL)->cRef
                      (dbfTmpLin)->cDetalle   := (dbfPedCliL)->cDetalle
                      (dbfTmpLin)->mLngDes    := (dbfPedCliL)->mLngDes
@@ -6210,6 +6215,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                   ( dbfTmpLin )->cNumPed     := aPedidos[ nItem, 3]
                   ( dbfTmpLin )->nNumAlb     := 0 
                   ( dbfTmpLin )->nNumLin     := nOffSet
+                  ( dbfTmpLin )->nPosPrint   := nOffSet
                   ( dbfTmpLin )->cRef        := ( dbfPedCliL )->cRef
                   ( dbfTmpLin )->cDetalle    := ( dbfPedCliL )->cDetalle
                   ( dbfTmpLin )->mLngDes     := ( dbfPedCliL )->mLngDes
@@ -12261,6 +12267,7 @@ STATIC FUNCTION cPreCli( aGet, aTmp, oBrw, nMode )
                (dbfTmpLin)->( dbAppend() )
 
                (dbfTmpLin)->nNumLin    := (dbfPreCliL)->nNumLin
+               (dbfTmpLin)->nPosPrint  := (dbfPreCliL)->nPosPrint
                (dbfTmpLin)->cRef       := (dbfPreCliL)->cRef
                (dbfTmpLin)->cDetalle   := (dbfPreCliL)->cDetAlle
                (dbfTmpLin)->mLngDes    := (dbfPreCliL)->mLngDes

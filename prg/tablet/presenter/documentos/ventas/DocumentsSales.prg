@@ -748,11 +748,12 @@ return ( .t. )
 METHOD assignLinesDocument() CLASS DocumentsSales
 
    local oDocumentLine
-   Local nNumeroLinea   := 0
+   local nNumeroLinea   := 0
 
    for each oDocumentLine in ::oDocumentLines:aLines
    
       oDocumentLine:setNumeroLinea( ++nNumeroLinea )
+      oDocumentLine:setPosicionImpresion( nNumeroLinea )
       oDocumentLine:setSerieMaster()
       oDocumentLine:setNumeroMaster()
       oDocumentLine:setSufijoMaster()

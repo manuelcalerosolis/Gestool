@@ -370,6 +370,7 @@ CLASS TpvTactil
    DATA nDialogHeight
 
    DATA nNumeroLinea
+   DATA nPosPrint
 
    DATA nUnidades
    METHOD setUnidades( nUnidades )  INLINE ( ::nUnidades := nUnidades )
@@ -4393,11 +4394,13 @@ METHOD AgregarPrincipal( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
    SysRefresh()
 
    ::nNumeroLinea                := nLastNum( ::oTemporalLinea )
+   ::nPosPrint                   := nLastNum( ::oTemporalLinea, "nPosPrint" )
 
    ::oTemporalLinea:Append()
    ::oTemporalLinea:Blank()
        
    ::oTemporalLinea:nNumLin      := ::nNumeroLinea
+   ::oTemporalLinea:nPosPrint    := ::nPosPrint
    ::oTemporalLinea:nLinMnu      := bottomNumber
 
    ::oTemporalLinea:nUntTil      := ::nUnidades
@@ -7048,6 +7051,7 @@ METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
       ::oAlbaranClienteLinea:cAlmLin      := oUser():cAlmacen()
       ::oAlbaranClienteLinea:lIvaLin      := .t.
       ::oAlbaranClienteLinea:nNumLin      := ::oTemporalLinea:nNumLin
+      ::oAlbaranClienteLinea:nPosPrint    := ::oTemporalLinea:nPosPrint
       ::oAlbaranClienteLinea:Save()
 
       ::oTemporalLinea:Skip()
