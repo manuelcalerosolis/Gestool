@@ -203,6 +203,7 @@ Lineas de Detalle
 #define __CALMORIGEN             104
 #define _CREFAUX                 105
 #define _CREFAUX2                106
+#define _NPOSPRINT               107
 
 /*
 Definici¢n de Array para impuestos--------------------------------------------------
@@ -1618,13 +1619,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
          ID       524 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( nMode != ZOOM_MODE .AND. !lRecibosPagadosTmp( dbfTmpPgo ) ) ;
-         ACTION   ( DbSwapUp( dbfTmp, oBrwLin ) )
+         ACTION   ( LineUp( dbfTmp, oBrwLin ) )
 
       REDEFINE BUTTON aControl[6] ;
          ID       525 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( nMode != ZOOM_MODE .AND. !lRecibosPagadosTmp( dbfTmpPgo ) ) ;
-         ACTION   ( DbSwapDown( dbfTmp, oBrwLin ) )
+         ACTION   ( LineDown( dbfTmp, oBrwLin ) )
 
       /*
       Detalle________________________________________________________________
@@ -1656,7 +1657,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
             :nWidth           := 65
             :nDataStrAlign    := 1
             :nHeadStrAlign    := 1
+            :lHide            := .t.
          end with
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader             := "Posición"
+            :cSortOrder          := "nPosPrint"
+            :bEditValue          := {|| ( dbfTmp )->nPosPrint }
+            :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
+            :cEditPicture        := "9999"
+            :nWidth              := 60
+            :nDataStrAlign       := 1
+            :nHeadStrAlign       := 1
+         end with 
 
          with object ( oBrwLin:AddCol() )
             :cHeader          := "Código"
@@ -3033,6 +3046,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
       aTmp[ __CALMORIGEN ] := aTmpFac[ _CALMORIGEN ]
       aTmp[ _CALMLIN  ]    := aTmpFac[ _CCODALM ]
       aTmp[ _NNUMLIN  ]    := nLastNum( dbfTmp )
+      aTmp[ _NPOSPRINT ]   := nLastNum( dbfTmp, "nPosPrint" )
       aTmp[ _LCHGLIN  ]    := lActCos()
       aTmp[ _DFECCAD  ]    := Ctod( "" )
 
@@ -3887,6 +3901,7 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, 
 
       aTmp[ _NREQ    ]  := nReq( D():TiposIva( nView ), cDefIva() )
       aTmp[ _NNUMLIN ]  := nLastNum( dbfTmp )
+      aTmp[ _NPOSPRINT ]:= nLastNum( dbfTmp, "nPosPrint" )
 
       oSayLote:Hide()
 
@@ -4074,6 +4089,7 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrw, oDlg2, nMode, oTotal, oFld, aTmpFac,
                if IsNum( oBrwPrp:Cargo[ n, i ]:Value ) .and. oBrwPrp:Cargo[ n, i ]:Value != 0 //  .and.
 
                   aTmp[ _NNUMLIN ]     := nLastNum( dbfTmp )
+                  aTmp[ _NPOSPRINT ]   := nLastNum( dbfTmp, "nPosPrint" )
                   aTmp[ _NUNICAJA]     := oBrwPrp:Cargo[ n, i ]:Value
                   aTmp[ _CCODPR1 ]     := oBrwPrp:Cargo[ n, i ]:cCodigoPropiedad1
                   aTmp[ _CVALPR1 ]     := oBrwPrp:Cargo[ n, i ]:cValorPropiedad1
@@ -6886,6 +6902,10 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
          ( dbfTmp )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
          ( dbfTmp )->( OrdCreate( cNewFile, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
+      
+         ( dbfTmp )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+         ( dbfTmp )->( OrdCreate( cNewFile, "nPosPrint", "Str( nPosPrint, 4 )", {|| Str( Field->nPosPrint ) } ) )
+
       end if
 
       /*
@@ -8477,10 +8497,12 @@ Function AddLineasAlbaranProveedor( cAlbaran, lNewLin )
             ( dbfTmp )->( dbAppend() )
 
             if lNewLin
-               nNewLin              := nLastNum( dbfTmp )
-               ( dbfTmp )->nNumLin  := nNewLin
+               nNewLin                 := nLastNum( dbfTmp )
+               ( dbfTmp )->nNumLin     := nNewLin
+               ( dbfTmp )->nPosPrint   := nLastNum( dbfTmp, "nPosPrint" )
             else
-               ( dbfTmp )->nNumLin  := nNumLin
+               ( dbfTmp )->nNumLin     := nNumLin
+               ( dbfTmp )->nPosPrint   := nNumLin
             end if
 
             ( dbfTmp )->cRef        := ( D():AlbaranesProveedoresLineas( nView ) )->cRef
@@ -9547,7 +9569,7 @@ FUNCTION rxFacPrv( cPath, cDriver )
 
       ( cFacPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cFacPrvT )->( ordCreate( cPath + "FACPRVT.CDX", "cCtrCoste", "cCtrCoste", {|| Field->cCtrCoste } ) )
-
+      
       ( cFacPrvT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas de proveedores" )
@@ -9590,6 +9612,9 @@ FUNCTION rxFacPrv( cPath, cDriver )
 
       ( cFacPrvL )->( ordCondSet( "nCtlStk < 2 .and. !Deleted()", {|| Field->nCtlStk < 2 .and. !Deleted()}, , , , , , , , , .t. ) )
       ( cFacPrvL )->( ordCreate( cPath + "FacPrvL.Cdx", "cStkFastOu", "cRef + cAlmOrigen + dtos( dFecFac ) + tFecFac", {|| Field->cRef + Field->cAlmOrigen + dtos( Field->dFecFac ) + Field->tFecFac } ) )
+
+      ( cFacPrvL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cFacPrvL )->( ordCreate( cPath + "FacPrvL.CDX", "nPosPrint", "cSerFac + Str( nNumFac ) + cSufFac + Str( nPosPrint )", {|| Field->cSerFac + Str( Field->nNumFac ) + Field->cSufFac + str( Field->nPosPrint ) } ) )
 
       ( cFacPrvL )->( dbCloseArea() )
    else
@@ -10535,6 +10560,7 @@ function aColFacPrv()
    aAdd( aColFacPrv, { "cAlmOrigen" ,"C", 16, 0, "Almacén de origen de la mercancía", "",              "", "( cDbfCol )", nil } )
    aAdd( aColFacPrv, { "cRefAux"    ,"C", 18, 0, "Referencia auxiliar",          "",                   "", "( cDbfCol )" } )
    aAdd( aColFacPrv, { "cRefAux2"   ,"C", 18, 0, "Segunda referencia auxiliar",  "",                   "", "( cDbfCol )" } )
+   aAdd( aColFacPrv, { "nPosPrint"  ,"N",  4, 0, "Posición de impresión",        "9999",               "", "( cDbfCol )", nil } )
 
 return ( aColFacPrv )
 
@@ -10722,6 +10748,10 @@ Function SynFacPrv( cPath )
 
       if !Empty( ( dbfFacPrvL )->iNumAlb )
          ( dbfFacPrvL )->cAlmOrigen := RetFld( ( dbfFacPrvL )->iNumAlb, dbfAlbPrvL, "cAlmOrigen", "nNumLin" )
+      end if
+
+      if !Empty( ( dbfFacPrvL )->nPosPrint )
+         ( dbfFacPrvL )->nPosPrint := ( dbfFacPrvL )->nNumLin
       end if
 
       ( dbfFacPrvL )->( dbSkip() )
@@ -12339,12 +12369,15 @@ Function PrintReportFacPrv( nDevice, nCopies, cPrinter, cDoc )
 
    local oFr
    local cFilePdf       := cPatTmp() + "FacturaProveedor" + StrTran( ( D():FacturasProveedores( nView ) )->cSerFac + Str( ( D():FacturasProveedores( nView ) )->nNumFac ) + ( D():FacturasProveedores( nView ) )->cSufFac, " ", "" ) + ".Pdf"
+   local nOrd
 
    DEFAULT nDevice      := IS_SCREEN
    DEFAULT nCopies      := 1
    DEFAULT cPrinter     := PrnGetName()
 
    SysRefresh()
+
+   nOrd                 := ( D():FacturasProveedoresLineas( nView ) )->( ordSetFocus( "nPosPrint" ) )
 
    oFr                  := frReportManager():New()
 
@@ -12434,6 +12467,8 @@ Function PrintReportFacPrv( nDevice, nCopies, cPrinter, cDoc )
    */
 
    oFr:DestroyFr()
+
+   ( D():FacturasProveedoresLineas( nView ) )->( ordSetFocus( nOrd ) )
 
 Return cFilePdf
 

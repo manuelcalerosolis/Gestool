@@ -128,6 +128,7 @@ Definici¢n de la base de datos de pedidos a proveedores
 #define _NLABEL                   63
 #define _CREFAUX                  64
 #define _CREFAUX2                 65
+#define _NPOSPRINT                66
 
 /*
 Definici¢n de Array para impuestos
@@ -1262,7 +1263,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
             :nWidth           := 65
             :nDataStrAlign    := 1
             :nHeadStrAlign    := 1
+            :lHide            := .t.
          end with
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader             := "Posición"
+            :cSortOrder          := "nPosPrint"
+            :bEditValue          := {|| ( dbfTmpLin )->nPosPrint }
+            :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
+            :cEditPicture        := "9999"
+            :nWidth              := 60
+            :nDataStrAlign       := 1
+            :nHeadStrAlign       := 1
+         end with 
 
          with object ( oBrwLin:AddCol() )
             :cHeader          := "Es. Estado"
@@ -1567,13 +1580,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
    	   ID 	524 ;
    	   OF 	oFld:aDialogs[1] ;
    	   WHEN 	( nMode != ZOOM_MODE ) ;
-         ACTION   ( LineUpOld( dbfTmpLin, oBrwLin ) )
+         ACTION   ( LineUp( dbfTmpLin, oBrwLin ) )
 
       REDEFINE BUTTON ;
          ID 	525 ;
          OF 	oFld:aDialogs[1] ;
          WHEN 	( nMode != ZOOM_MODE ) ;
-         ACTION   ( LineDownOld( dbfTmpLin, oBrwLin ) )
+         ACTION   ( LineDown( dbfTmpLin, oBrwLin ) )
 
       REDEFINE BUTTON oBtnAtp;
          ID       526 ;
@@ -3008,9 +3021,10 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, aTmpPed, nMode, oSayPr1, oSayPr2, oSayVp
       aGet[ _LANULADO]:Click( .f. )
       aGet[ _NIVA    ]:cText( nIva( D():TiposIva( nView ), cDefIva() ) )
 
-      aTmp[ _NREQ    ]  := nReq( D():TiposIva( nView ), cDefIva() )
+      aTmp[ _NREQ    ]     := nReq( D():TiposIva( nView ), cDefIva() )
 
-      aTmp[ _NNUMLIN ]  := nLastNum( dbfTmpLin )
+      aTmp[ _NNUMLIN ]     := nLastNum( dbfTmpLin )
+      aTmp[ _NPOSPRINT ]   := nLastNum( dbfTmpLin, "nPosPrint" )
 
       oSayLote:hide()
 
@@ -3501,6 +3515,7 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrwPrp, oFld, oDlg, oBrw, nMode, oTotal, 
                if oBrwPrp:Cargo[ n, i ]:Value != nil .and. oBrwPrp:Cargo[ n, i ]:Value != 0
 
                   aTmp[ _NNUMLIN ]     := nLastNum( dbfTmpLin )
+                  aTmp[ _NPOSPRINT ]   := nLastNum( dbfTmpLin, "nPosPrint" )
                   aTmp[ _NUNICAJA]     := oBrwPrp:Cargo[ n, i ]:Value
                   aTmp[ _CCODPR1 ]     := oBrwPrp:Cargo[ n, i ]:cCodigoPropiedad1
                   aTmp[ _CVALPR1 ]     := oBrwPrp:Cargo[ n, i ]:cValorPropiedad1
@@ -4252,6 +4267,9 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
          ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
          ( dbfTmpLin )->( OrdCreate( cNewFile, "cRefPrv", "cRefPrv", {|| Field->cRefPrv } ) )
+
+         ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+         ( dbfTmpLin )->( OrdCreate( cNewFile, "nPosPrint", "Str( nPosPrint, 4 )", {|| Str( Field->nPosPrint ) } ) )
 
       end if
 
@@ -7197,6 +7215,9 @@ FUNCTION rxPedPrv( cPath, cDriver )
       ( cPedPrvT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( cPedPrvT )->( ordCreate( cPath + "PedProvL.Cdx", "cPedRef", "cRef + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote", {|| Field->cRef + Field->cCodPr1 + Field->cCodPr2 + Field->cValPr1 + Field->cValPr2 + Field->cLote } ) )
 
+      ( cPedPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT )->( ordCreate( cPath + "PedProvL.Cdx", "nPosPrint", "cSerPed + Str( nNumPed ) + cSufPed + Str( nPosPrint )", {|| Field->cSerPed + Str( Field->nNumPed ) + Field->cSufPed + Str( Field->nPosPrint ) } ) )
+
       ( cPedPrvT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de proveedores" )
@@ -7749,71 +7770,72 @@ function aColPedPrv()
 
    local aColPedPrv  := {}
 
-   aAdd( aColPedPrv,  { "cSerPed", "C",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nNumPed", "N",  9,   0, "",                                 "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "cSufPed", "C",  2,   0, "",                                 "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "cRef",    "C", 18,   0, "Referencia del artículo",          "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "cRefPrv", "C", 18,   0, "Referencia del proveedor",         "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "cDetalle","C",250,   0, "Nombre del artículo",              "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nIva",    "N",  6,   2, "Porcentaje de " + cImp(),          "'@E 99.9'",         "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nCanPed", "N", 16,   6, "Cantidad pedida",                  "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nUniCaja","N", 16,   6, "Unidades por caja",                "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nPreDiv", "N", 16,   6, "Precio",                           "cPirDivPed",        "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nCanEnt", "N", 16,   6, "Cajas recibidas",                  "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nUniEnt", "N", 16,   6, "Unidades recibidas",               "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "cUniDad", "C",  2,   0, cNombreUnidades(),                  "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "mLngDes", "M", 10,   0, "Descripción larga",                "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nDtoLin", "N",  6,   2, "Descuento en lineas",              "'@E 999.99'",       "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nDtoPrm", "N",  6,   2, "Descuento pormociones",            "'@E 999.99'",       "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nDtoRap", "N",  6,   2, "Descuento por rappels",            "'@E 999.99'",       "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "cCodPr1", "C", 20,   0, "Código de la primera propiedad",   "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "cCodPr2", "C", 20,   0, "Código de la segunda propiedad",   "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "cValPr1", "C", 40,   0, "Valor de la primera propiedad",    "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "cValPr2", "C", 40,   0, "Valor de la segunda propiedad",    "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nFacCnv", "N", 13,   4, "",                                 "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nCtlStk", "N",  1,   0, "Control de stock (1,2,3)",         "'9'",               "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "cAlmLin" ,"C", 16,   0, "Código de almacén" ,               "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "lLote",   "L",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nLote",   "N",  9,   0, "",                                 "'999999999'",       "", "(cDbfCol)" } ) 
-   aAdd( aColPedPrv,  { "cLote",   "C", 14,   0, "Número de lote",                   "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nNumLin", "N",  4,   0, "Número de la línea",               "'9999'",            "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nUndKit", "N", 16,   6, "Unidades del producto kit",        "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "lKitArt", "L",  1,   0, "Línea con escandallo",             "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "lKitChl", "L",  1,   0, "Línea pertenciente a escandallo",  "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "lKitPrc", "L",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "lImpLin", "L",  1,   0, "Imprimir linea",                   "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "lControl","L",  1,   0, "" ,                                "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "mNumSer", "M", 10,   0, "" ,                                "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "lAnulado","L",  1,   0, "Anular linea",                     "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "dAnulado","D",  8,   0, "Fecha de anulacion",               "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "mAnulado","M",100,   0, "Motivo anulacion",                 "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "cCodFam", "C", 16,   0, "Código de familia",                "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "cGrpFam", "C",  3,   0, "Código del grupo de familia",      "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nReq",    "N", 16,   6, "Recargo de equivalencia",          "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "mObsLin", "M", 10,   6, "Observaciones de la linea",        "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "cPedCli", "C", 12,   0, "Número del pedido del cliente del que viene",  "",      "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nPvpRec", "N", 16,   6, "Precio de venta recomendado",      "cPirDivPed",        "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nNumMed", "N",  1,   0, "Número de mediciones",             "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nMedUno", "N", 16,   6, "Primera unidad de medición",       "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nMedDos", "N", 16,   6, "Segunda unidad de medición",       "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nMedTre", "N", 16,   6, "Tercera unidad de medición",       "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nStkAct", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nStkMin", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nPdtRec", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nConRea", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nConSem", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nConQui", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nConMes", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nEstado", "N",  1,   0, "Estado del pedido",                "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "lFromImp","L",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nBultos", "N", 16,   6, "Numero de bultos en líneas",       "",                  "", "(cDbfCol )"} )
-   aAdd( aColPedPrv,  { "cFormato","C",100,   0, "Formato de compra",                "",                  "", "( cDbfCol )" } )
-   aAdd( aColPedPrv,  { "cCodImp", "C",  3,   0, "Código de impuesto especial",      "",                  "", "( cDbfCol )" } )
-   aAdd( aColPedPrv,  { "nValImp", "N", 16,   6, "Importe de impuesto especial",     "",                  "", "( cDbfCol )" } )
-   aAdd( aColPedPrv,  { "lLabel",  "L",  1,   0, "Lógico para marca de etiqueta",    "",                 "", "( cDbfCol )" } )
-   aAdd( aColPedPrv,  { "nLabel",  "N",  6,   0, "Unidades de etiquetas a imprimir", "",                 "", "( cDbfCol )" } )
-   aAdd( aColPedPrv,  { "cRefAux", "C", 18,   0, "Referencia auxiliar",              "",                 "", "( cDbfCol )" } )
-   aAdd( aColPedPrv,  { "cRefAux2","C", 18,   0, "Segunda referencia auxiliar",      "",                 "", "( cDbfCol )" } )
+   aAdd( aColPedPrv,  { "cSerPed",   "C",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nNumPed",   "N",  9,   0, "",                                 "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "cSufPed",   "C",  2,   0, "",                                 "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "cRef",      "C", 18,   0, "Referencia del artículo",          "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "cRefPrv",   "C", 18,   0, "Referencia del proveedor",         "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "cDetalle",  "C",250,   0, "Nombre del artículo",              "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nIva",      "N",  6,   2, "Porcentaje de " + cImp(),          "'@E 99.9'",         "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nCanPed",   "N", 16,   6, "Cantidad pedida",                  "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nUniCaja",  "N", 16,   6, "Unidades por caja",                "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nPreDiv",   "N", 16,   6, "Precio",                           "cPirDivPed",        "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nCanEnt",   "N", 16,   6, "Cajas recibidas",                  "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nUniEnt",   "N", 16,   6, "Unidades recibidas",               "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "cUniDad",   "C",  2,   0, cNombreUnidades(),                  "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "mLngDes",   "M", 10,   0, "Descripción larga",                "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nDtoLin",   "N",  6,   2, "Descuento en lineas",              "'@E 999.99'",       "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nDtoPrm",   "N",  6,   2, "Descuento pormociones",            "'@E 999.99'",       "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nDtoRap",   "N",  6,   2, "Descuento por rappels",            "'@E 999.99'",       "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "cCodPr1",   "C", 20,   0, "Código de la primera propiedad",   "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "cCodPr2",   "C", 20,   0, "Código de la segunda propiedad",   "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "cValPr1",   "C", 40,   0, "Valor de la primera propiedad",    "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "cValPr2",   "C", 40,   0, "Valor de la segunda propiedad",    "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nFacCnv",   "N", 13,   4, "",                                 "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nCtlStk",   "N",  1,   0, "Control de stock (1,2,3)",         "'9'",               "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "cAlmLin" ,  "C", 16,   0, "Código de almacén" ,               "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "lLote",     "L",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nLote",     "N",  9,   0, "",                                 "'999999999'",       "", "(cDbfCol)" } ) 
+   aAdd( aColPedPrv,  { "cLote",     "C", 14,   0, "Número de lote",                   "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nNumLin",   "N",  4,   0, "Número de la línea",               "'9999'",            "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nUndKit",   "N", 16,   6, "Unidades del producto kit",        "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "lKitArt",   "L",  1,   0, "Línea con escandallo",             "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "lKitChl",   "L",  1,   0, "Línea pertenciente a escandallo",  "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "lKitPrc",   "L",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "lImpLin",   "L",  1,   0, "Imprimir linea",                   "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "lControl",  "L",  1,   0, "" ,                                "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "mNumSer",   "M", 10,   0, "" ,                                "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "lAnulado",  "L",  1,   0, "Anular linea",                     "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "dAnulado",  "D",  8,   0, "Fecha de anulacion",               "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "mAnulado",  "M",100,   0, "Motivo anulacion",                 "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "cCodFam",   "C", 16,   0, "Código de familia",                "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "cGrpFam",   "C",  3,   0, "Código del grupo de familia",      "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nReq",      "N", 16,   6, "Recargo de equivalencia",          "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "mObsLin",   "M", 10,   6, "Observaciones de la linea",        "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "cPedCli",   "C", 12,   0, "Número del pedido del cliente del que viene",  "",      "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nPvpRec",   "N", 16,   6, "Precio de venta recomendado",      "cPirDivPed",        "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nNumMed",   "N",  1,   0, "Número de mediciones",             "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nMedUno",   "N", 16,   6, "Primera unidad de medición",       "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nMedDos",   "N", 16,   6, "Segunda unidad de medición",       "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nMedTre",   "N", 16,   6, "Tercera unidad de medición",       "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nStkAct",   "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nStkMin",   "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nPdtRec",   "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nConRea",   "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nConSem",   "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nConQui",   "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nConMes",   "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nEstado",   "N",  1,   0, "Estado del pedido",                "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "lFromImp",  "L",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nBultos",   "N", 16,   6, "Numero de bultos en líneas",       "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "cFormato",  "C",100,   0, "Formato de compra",                "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "cCodImp",   "C",  3,   0, "Código de impuesto especial",      "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nValImp",   "N", 16,   6, "Importe de impuesto especial",     "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "lLabel",    "L",  1,   0, "Lógico para marca de etiqueta",    "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nLabel",    "N",  6,   0, "Unidades de etiquetas a imprimir", "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "cRefAux",   "C", 18,   0, "Referencia auxiliar",              "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "cRefAux2",  "C", 18,   0, "Segunda referencia auxiliar",      "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nPosPrint", "N", 4,   0, "Posición de impresión",            "'9999'",            "", "(cDbfCol)" } )
 
 Return ( aColPedPrv )
 
@@ -8130,6 +8152,10 @@ Function SynPedPrv( cPath )
 
       if nEstado == 3
          ( dbfPedPrvL )->nEstado := nEstado
+      end if
+
+      if empty( ( dbfPedPrvL )->nPosPrint )
+         ( dbfPedPrvL )->nPosPrint    := ( dbfPedPrvL )->nNumLin
       end if
 
       ( dbfPedPrvL )->( dbSkip() )
@@ -9130,12 +9156,15 @@ Function PrintReportPedPrv( nDevice, nCopies, cPrinter, cDoc )
 
    local oFr
    local cFilePdf       := cPatTmp() + "PedidoProveedor" + StrTran( ( D():PedidosProveedores( nView ) )->cSerPed + Str( ( D():PedidosProveedores( nView ) )->nNumPed ) + ( D():PedidosProveedores( nView ) )->cSufPed, " ", "" ) + ".Pdf"
+   local nOrd 
 
    DEFAULT nDevice      := IS_SCREEN
    DEFAULT nCopies      := 1
    DEFAULT cPrinter     := PrnGetName()
 
    SysRefresh()
+
+   nOrd                 := ( D():PedidosProveedoresLineas( nView ) )->( ordSetFocus( "nPosPrint" ) )
 
    oFr                  := frReportManager():New()
 
@@ -9225,6 +9254,8 @@ Function PrintReportPedPrv( nDevice, nCopies, cPrinter, cDoc )
    */
 
    oFr:DestroyFr()
+
+   ( D():PedidosProveedoresLineas( nView ) )->( ordSetFocus( nOrd ) )
 
 Return cFilePdf
 
