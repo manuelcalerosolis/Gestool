@@ -9325,7 +9325,7 @@ Function nombrePrimeraPropiedad( view )
 
    DEFAULT view   := nView
 
-Return ( nombrePropiedad( ( D():PedidosProveedoresLineas( view ) )->cCodPr1, ( D():PedidosProveedoresLineas( view ) )->cValPr1, view ) )
+Return ( nombrePrimeraPropiedadPedidosProveedoresLineas( view ) )
 
 //--------------------------------------------------------------------------//
 
@@ -9333,7 +9333,7 @@ Function nombreSegundaPropiedad( view )
 
    DEFAULT view   := nView
 
-Return ( nombrePropiedad( ( D():PedidosProveedoresLineas( view ) )->cCodPr2, ( D():PedidosProveedoresLineas( view ) )->cValPr2, view ) )
+Return ( nombreSegundaPropiedadPedidosProveedoresLineas( view ) )
 
 //--------------------------------------------------------------------------//
 
@@ -9342,3 +9342,20 @@ Function getExtraFieldPedidoProveedor( cFieldName )
 Return ( getExtraField( cFieldName, oDetCamposExtra, D():PedidosProveedoresId( nView ) ) )
 
 //---------------------------------------------------------------------------//   
+
+Function nombrePrimeraPropiedadPedidosProveedoresLineas( view )
+
+   DEFAULT view   := nView
+
+Return ( nombrePropiedad( ( D():PedidosProveedoresLineas( view ) )->cCodPr1, ( D():PedidosProveedoresLineas( view ) )->cValPr1, view ) )
+
+//---------------------------------------------------------------------------//
+
+Function nombreSegundaPropiedadPedidosProveedoresLineas( view )
+
+   DEFAULT view   := nView
+
+Return ( nombrePropiedad( ( D():PedidosProveedoresLineas( view ) )->cCodPr2, ( D():PedidosProveedoresLineas( view ) )->cValPr2, view ) )
+
+//---------------------------------------------------------------------------//
+
