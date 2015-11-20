@@ -23,6 +23,13 @@ CREATE CLASS FacturasClientesRisi
    DATA dInicio            INIT  ( BoM( Date() ) ) 
    DATA dFin               INIT  ( EoM( Date() ) ) 
 
+   DATA oDlg
+   DATA oSayDesde
+   DATA oGetDesde
+   DATA oSayHasta
+   DATA oGetHasta
+   DATA oSayMessage
+
    DATA cDelegacion
 
    CLASSDATA aProductos    INIT  {  { "Codigo" => "V001004", "Nombre" => "GUSANITOS 35 g x 30 u",             "Codigo unidades" => "8411859550103",  "Codigo cajas" => "18411859550100", "Codigo interno" => "" },;
@@ -121,6 +128,7 @@ CREATE CLASS FacturasClientesRisi
    METHOD New()                                 CONSTRUCTOR
 
    METHOD Dialog()
+   METHOD Run()
 
    METHOD OpenFiles()
    METHOD CloseFiles()                          INLINE ( D():DeleteView( ::nView ) )
@@ -144,24 +152,16 @@ ENDCLASS
 
    METHOD New() CLASS FacturasClientesRisi
 
-   	if !::Dialog() 
-            Return ( Self )
-   	end if 
-   
-      if !::OpenFiles()
-            Return ( Self )
-   	end if 
-
       if empty( ::getDelegacion() )
-            msgStop( "Cóodigo delegación esta vacio" )
-            Return ( Self )
+         msgStop( "Cóodigo delegación esta vacio" )
+         Return ( Self )
       end if 
 
-      msgAlert( )
+      if !::OpenFiles()
+         Return ( Self )
+      end if 
 
-      ::ProcessFile()
-
-      //      MsgRun( "Porcesando facturas", "Espere por favor...", {|| ::ProcessFile() } )
+   	::Dialog() 
 
       ::CloseFiles()
 
@@ -171,29 +171,45 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
+   METHOD Run()
+
+      ::oDlg:Disable()
+
+      ::ProcessFile()
+
+      ::SendFile()
+
+      ::oDlg:Enable()
+      ::oDlg:End()
+
+   RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
    METHOD Dialog() CLASS FacturasClientesRisi
 
-      local oDlg
       local oBtn
       local getFechaFin
 
-      oDlg 			:= TDialog():New( 5, 5, 15, 40, "Exportacion Risi" )
+      ::oDlg 		:= TDialog():New( 5, 5, 18, 60, "Exportacion Risi" )
 
-      TSay():New( 1, 1, {|| "Desde" }, oDlg )      
+      ::oSayDesde       := TSay():New( 1, 1, {|| "Desde" }, ::oDlg )      
 
-      TGetHlp():New( 1, 4, { | u | if( pcount() == 0, ::dInicio, ::dInicio := u ) }, , 40, 10 )
+      ::oGetDesde       := TGetHlp():New( 1, 4, { | u | if( pcount() == 0, ::dInicio, ::dInicio := u ) }, , 40, 10 )
 
-      TSay():New( 2, 1, {|| "Hasta" }, oDlg )      
+      ::oSayHasta       := TSay():New( 2, 1, {|| "Hasta" }, ::oDlg )      
 
-      TGetHlp():New( 2, 4, { | u | if( pcount() == 0, ::dFin, ::dFin := u ) }, , 40, 10 )
+      ::oGetHasta       := TGetHlp():New( 2, 4, { | u | if( pcount() == 0, ::dFin, ::dFin := u ) }, , 40, 10 )
 
-      TButton():New( 3, 4, "&Aceptar", oDlg, {|| ( oDlg:End(1) ) }, 40, 12 )
+      ::oSayMessage     := TSay():New( 3, 1, {|| "Proceso" }, ::oDlg, , , , , , , , , 150, 12 )      
 
-      TButton():New( 3, 12, "&Cancel", oDlg, {|| oDlg:End() }, 40, 12 )
+      TButton():New( 4, 4, "&Aceptar", ::oDlg, {|| ( ::Run() ) }, 40, 12 )
 
-      oDlg:Activate( , , , .t. )
+      TButton():New( 4, 12, "&Cancel", ::oDlg, {|| ::oDlg:End() }, 40, 12 )
 
-   Return ( oDlg:nResult == 1 )
+      ::oDlg:Activate( , , , .t. )
+
+   Return ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -256,8 +272,7 @@ METHOD ProcessFile() CLASS FacturasClientesRisi
    
    while ( D():FacturasClientes( ::nView ) )->dFecFac <= ::dFin .and. ( D():FacturasClientes( ::nView ) )->( !eof() )
 
-      msgWait(    "Factura actual : " + ( D():FacturasClientesIdTextShort( ::nView ) ),;
-                  "Progreso : " + alltrim( str( ( D():FacturasClientes( ::nView ) )->( ordkeyno() ) ) ) + " de " + alltrim( str( ( D():FacturasClientes( ::nView ) )->( ordkeycount() ) ) ), 0.0001 )
+      ::oSayMessage:setText( "Progreso : " + alltrim( str( ( D():FacturasClientes( ::nView ) )->( ordkeyno() ) ) ) + " de " + alltrim( str( ( D():FacturasClientes( ::nView ) )->( ordkeycount() ) ) ) )
 
       if ( ::validateSerialInvoice( ( D():FacturasClientes( ::nView ) )->cSerie ) ) .and. ( D():FacturasClientesLineas( ::nView ) )->( dbSeek( D():FacturasClientesId( ::nView ) ) )
 
@@ -270,7 +285,6 @@ METHOD ProcessFile() CLASS FacturasClientesRisi
                cCodigoInterno             := ( D():Articulos( ::nView ) )->Codigo
                cCodigoBarra               := ( D():Articulos( ::nView ) )->CodeBar
                cUbicacion                 := ( D():Articulos( ::nView ) )->cDesUbi 
-
 
                if ::findMainCodeInHash( cUbicacion )
 
@@ -343,7 +357,7 @@ METHOD ProcessFile() CLASS FacturasClientesRisi
 
    CursorWE()
 
-   msgInfo( "Fichero generado " + ::oUve:cFile, "Proceso finalizado" )
+   ::oSayMessage:setText( "Fichero generado " + ::oUve:cFile )
 
 Return ( Self )
 
@@ -356,35 +370,46 @@ METHOD SendFile() CLASS FacturasClientesRisi
       local cUrl
       local oFile
       local lOpen
+      local cDelegacion 
+      local cFile      
       local cUserFtp    := "manolo"
       local cPasswdFtp  := "123Ab456"
       local cHostFtp    := "ftp.gestool.es"
 
       cUrl              := "ftp://" + cUserFtp + ":" + cPasswdFtp + "@" + cHostFtp
+      cDelegacion       := ::getDelegacion()
+      cFile             := ::oUve:cFile
+
+      if !file( cFile )
+         Return ( Self )
+      end if
+
+      ::oSayMessage:setText( "Subiendo fichero " + cFile )
 
       oInt              := TUrl():New( cUrl )
-      oFTP              := TIPClientFTP():New( oInt, .t. )
-      oFTP:nConnTimeout := 20000
-      oFTP:bUsePasv     := .f.
+      oFtp              := TIPClientFTP():New( oInt, .t. )
+      oFtp:nConnTimeout := 20000
+      oFtp:bUsePasv     := .f.
 
       lOpen             := oFTP:Open( oInt )
 
-      if !oFTP:Open( oInt )
-         msgWait( "Imposible crear la conexión", "Error", 1 )
-         return .f.
+      if empty( oFtp ) .or. !( oFtp:Open( oInt ) )
+         msgStop( "Imposible crear la conexión con servidor ftp.", "Error" )
+         return ( Self )
       end if   
 
-      if File( cFile )
-         oFtp:UploadFile( cFile )
-      end if
+      oFtp:Cwd( "httpdocs" )
+      oFtp:Cwd( "uve" )
 
-      if !empty( oFTP )
-         oFTP:Close()
-      end if
+      if !empty( cDelegacion )
+         oFtp:MKD( cDelegacion )
+         oFtp:Cwd( cDelegacion )
+      end if 
 
-      if !empty( oText )
-         oText:setText( "Fichero subido" )
-      end if
+      oFtp:UploadFile( cFile ) 
+      oFtp:Close()
+
+      ::oSayMessage:setText( "Fichero " + cFile + " subido." )
 
 RETURN ( Self )
 

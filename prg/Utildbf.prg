@@ -2966,19 +2966,19 @@ Return ( .t. )
 FUNCTION PassField( cAliOrigen, cAliDestino )
 
    local i
-   local cNom
-   local xVal
-   local nPos
-   local nField   := ( cAliDestino )->( fCount() )
+   local uValue
+   local cFieldName
+   local nFieldPosition
+   local nFieldTotal    := ( cAliDestino )->( fcount() )
 
-   for i = 1 to nField
+   for i := 1 to nFieldTotal
 
-      cNom        := ( cAliDestino )->( FieldName( i ) )
-      nPos        := ( cAliOrigen  )->( FieldPos( cNom ) )
+      cFieldName        := ( cAliDestino )->( fieldname( i ) )
+      nFieldPosition    := ( cAliOrigen  )->( fieldpos( cFieldName ) )
 
-      if nPos != 0
-         xVal     := ( cAliOrigen )->( FieldGet( nPos ) )
-         ( cAliDestino )->( FieldPut( i, xVal ) )
+      if nFieldPosition != 0
+         uValue         := ( cAliOrigen )->( fieldget( nFieldPosition ) )
+         ( cAliDestino )->( fieldput( i, uValue ) )
       end if
 
    next
@@ -2992,10 +2992,14 @@ FUNCTION PassHash( cAliDestino, hHash )
    local h
    local nPos
 
+   if empty(hHash)
+      Return ( .t. )
+   end if 
+
    for each h in hHash
-      nPos     := ( cAliDestino )->( FieldPos( h:__enumKey() ) )
+      nPos     := ( cAliDestino )->( fieldpos( h:__enumKey() ) )
       if nPos != 0
-         ( cAliDestino )->( FieldPut( nPos, h:__enumValue() ) )
+         ( cAliDestino )->( fieldput( nPos, h:__enumValue() ) )
       end if
    next
 
