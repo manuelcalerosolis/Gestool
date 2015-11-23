@@ -16,25 +16,64 @@ CLASS TConversionDocumentos
    DATA oBtnSalir
 
    DATA nView
+   DATA lOpenFiles
 
-   METHOD Create()
+   DATA cDocument   
+   DATA aDocuments   
+
+   METHOD New()
+
+   METHOD Dialog()
       METHOD OpenFiles()
       METHOD CloseFiles()
 
    METHOD BotonSiguiente()
    METHOD BotonAnterior()
 
+   METHOD opcionInvalida()    INLINE ( msgStop( "Opción invalida, por favor elija una opción valida.") )
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD Create() 
+METHOD New()
+
+   ::cDocument    := ""
+   ::aDocuments   := {  "Compras" =>                                    {|| ::opcionInvalida() },;                                    
+                              "Pedido proveedores" =>                         {|| msgAlert( "" ) },;
+                              "Albarán proveedores" =>                        {|| msgAlert( "" ) },;
+                              "Factura proveedores" =>                        {|| msgAlert( "" ) },;
+                              "Factura rectificativas proveedores" =>         {|| msgAlert( "" ) },;
+                              "Recibos facturas proveedor" =>                 {|| msgAlert( "" ) },;
+                              "S.A.T. clientes" =>                            {|| msgAlert( "" ) },;
+                              "Presupuesto clientes" =>                       {|| msgAlert( "" ) },;
+                              "Pedido clientes" =>                            {|| msgAlert( "" ) },;
+                              "Albarán clientes" =>                           {|| msgAlert( "" ) },;
+                              "Factura clientes" =>                           {|| msgAlert( "" ) },;
+                              "Factura de anticipos" =>                       {|| msgAlert( "" ) },;
+                              "Factura rectificativa" =>                      {|| msgAlert( "" ) },;
+                              "Recibos facturas clientes" =>                  {|| msgAlert( "" ) },;
+                              "Tickets clientes" =>                           {|| msgAlert( "" ) },;
+                              "Depositos almacén" =>                          {|| msgAlert( "" ) },;
+                              "Existencias almacén" =>                        {|| msgAlert( "" ) },;
+                              "Remesas de movimientos de almacén" =>          {|| msgAlert( "" ) },;
+                              "Entregas a cuenta en pedidos de clientes" =>   {|| msgAlert( "" ) },;
+                              "Entregas a cuenta en albaranes de clientes" => {|| msgAlert( "" ) },;
+                              "Parte de producción" =>                        {|| msgAlert( "" ) },;
+                              "Expedientes" =>                                {|| msgAlert( "" ) },;
+                              "Arqueo de sesiones" =>                         {|| msgAlert( "" ) },;
+                              "Pagos de clientes" =>                          {|| msgAlert( "" ) },;
+                              "Liquidación de agentes" =>                     {|| msgAlert( "" ) } }
+
+   ::OpenFiles()
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+   
+METHOD Dialog() 
 
    local oBmp
-
-   if !::OpenFiles()
-      Return nil
-   end if
 
    DEFINE DIALOG ::oDlg RESOURCE "ASS_CONVERSION_DOCUMENTO"
 
@@ -50,12 +89,10 @@ METHOD Create()
       DIALOGS  "ASS_CONVERSION_DOCUMENTO_1",;
                "ASS_CONVERSION_DOCUMENTO_2"
 
-   REDEFINE COMBOBOX aGet[ ( D():Articulos( nView ) )->( fieldpos( "nTipDur" ) ) ];
-      VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nTipDur" ) ) ];
+   REDEFINE COMBOBOX ::cDocument ;
       ITEMS    { "Compras" };
       ID       251 ;
       OF       ::oFld:aDialogs[1]
-
 
    REDEFINE BUTTON ::oBtnAnterior;
       ID       3 ;
@@ -102,34 +139,38 @@ return ( Self )
 
 METHOD OpenFiles()
 
-   local lOpen          := .t.
    local oError
    local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
 
    BEGIN SEQUENCE
 
+      ::lOpenFiles      := .t.
+
       ::nView           := D():CreateView()
 
    RECOVER USING oError
 
-      lOpen             := .f.
+      ::lOpenFiles      := .f.
+
       msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
    ErrorBlock( oBlock )
 
-   if !lOpen
+   if !::lOpenFiles
       ::CloseFiles()
    end if
 
-RETURN ( lOpen )
+RETURN ( ::lOpenFiles )
 
 //---------------------------------------------------------------------------//
 
 METHOD CloseFiles()
 
    D():CloseView( ::nView )
+
+   ::lCloseFiles        := .f.
 
 Return ( Self )
 
