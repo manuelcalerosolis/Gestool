@@ -48,11 +48,11 @@ CLASS TSpecialSearchArticulo
    DATA aEstadoMaquina        INIT { "Disponibles", "No disponibles", "Todas" }
    DATA cEstadoMaquina        INIT "No disponibles"
 
-   DATA hOrders               INIT {   "Código artículo" => "articulos.Codigo",;
+   DATA hOrders               INIT {   "CÃ³digo artÃ­culo" => "articulos.Codigo",;
                                        "Contador"        => "lineasSat.nCntAct",;
                                        "S.A.T."          => "lineasSat.cSerSat, lineasSat.nNumSat, lineasSat.cSufSat",;
                                        "Fecha"           => "lineasSat.dFecSat",;
-                                       "Código cliente"  => "cabecerasat.cCodCli",;
+                                       "CÃ³digo cliente"  => "cabecerasat.cCodCli",;
                                        "Nombre cliente"  => "cabecerasat.cNomCli",;
                                        "Operario"        => "operario.cNomTra",;
                                        "Rtua"            => "ruta.cDesRut" }
@@ -167,7 +167,7 @@ METHOD OpenFiles() CLASS TSPECIALSEARCHARTICULO
 
    RECOVER USING oError
 
-      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de números de serie" )
+      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de nÃºmeros de serie" )
 
       ::CloseFiles()
 
@@ -272,7 +272,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
       ::oBrwArticulo:CreateFromResource( 300 )
 
       with object ( ::oBrwArticulo:AddCol() )
-         :cHeader             := "Añadir artículo"
+         :cHeader             := "AÃ±adir artÃ­culo"
          :bStrData            := {|| "" }
          :bOnPostEdit         := {|| .t. }
          :bEditBlock          := {|| AppArticulo(), ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() }
@@ -285,7 +285,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
       end with
 
       with object ( ::oBrwArticulo:AddCol() )
-         :cHeader             := "Modificar artículo"
+         :cHeader             := "Modificar artÃ­culo"
          :bStrData            := {|| "" }
          :bOnPostEdit         := {|| .t. }
          :bEditBlock          := {|| EdtArticulo( SelectArticulo->Codigo ), ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() }
@@ -298,7 +298,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
       end with
 
       with object ( ::oBrwArticulo:AddCol() )
-         :cHeader             := "Info artículo"
+         :cHeader             := "Info artÃ­culo"
          :bStrData            := {|| "" }
          :bOnPostEdit         := {|| .t. }
          :bEditBlock          := {|| TSpecialInfoArticulo():Run( SelectArticulo->Codigo, SelectArticulo->Nombre ) }
@@ -311,7 +311,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
       end with
 
       with object ( ::oBrwArticulo:AddCol() ) 
-         :cHeader             := "Código artículo"
+         :cHeader             := "CÃ³digo artÃ­culo"
          :bEditValue          := {|| SelectArticulo->Codigo }
          :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::refreshSearchArticulo( oCol ) }         
          :nWidth              := 120
@@ -328,7 +328,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
       end with
 
       with object ( ::oBrwArticulo:AddCol() )
-         :cHeader             := "Tipo artículo"
+         :cHeader             := "Tipo artÃ­culo"
          :bEditValue          := {|| SelectArticulo->cNomTip }
          :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::refreshSearchArticulo( oCol ) }         
          :nWidth              := 220
@@ -348,7 +348,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
       end with
 
       with object ( ::oBrwArticulo:AddCol() )
-         :cHeader             := "Ubicación"
+         :cHeader             := "UbicaciÃ³n"
          :bEditValue          := {|| SelectArticulo->cDesUbi }
          :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::refreshSearchArticulo( oCol ) }         
          :nWidth              := 150
@@ -356,7 +356,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
       end with
 
       with object ( ::oBrwArticulo:AddCol() )
-         :cHeader             := "Añadir S.A.T."
+         :cHeader             := "AÃ±adir S.A.T."
          :bStrData            := {|| "" }
          :bOnPostEdit         := {|| .t. }
          :bEditBlock          := {|| AppSatCli( SelectArticulo->cCodCli, SelectArticulo->Codigo ), ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() }
@@ -400,7 +400,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
       end with
 
       with object ( ::oBrwArticulo:AddCol() )
-         :cHeader             := "Código cliente"
+         :cHeader             := "CÃ³digo cliente"
          :bEditValue          := {|| SelectArticulo->cCodCli }
          :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::refreshSearchArticulo( oCol ) }         
          :nWidth              := 150
@@ -558,7 +558,7 @@ METHOD SearchArticulos() CLASS TSPECIALSEARCHARTICULO
    cSentencia        +=        "articulos.Nombre, "
    cSentencia        +=        "articulos.cDesUbi, "
    cSentencia        +=        "estadoSat.cNombre, "
-   cSentencia        +=        "estadoSat.nDisp, "  
+   cSentencia        +=        "estadoSat.nDisp, "
    cSentencia        +=        "tipoArticulo.cCodTip, "
    cSentencia        +=        "tipoArticulo.cNomTip, "
    cSentencia        +=        "lineasSat.dFecSat, "
@@ -579,7 +579,7 @@ METHOD SearchArticulos() CLASS TSPECIALSEARCHARTICULO
    cSentencia        += "LEFT JOIN " + cPatEmp() + "SatCliT cabecerasat on lineasSat.cSerSat = cabecerasat.cSerSat AND lineasSat.nNumSat = cabecerasat.nNumSat AND lineasSat.cSufSat = cabecerasat.cSufSat "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "OpeT operario on cabecerasat.cCodOpe = operario.cCodTra "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "Ruta ruta on cabecerasat.cCodRut = ruta.cCodRut "
-   cSentencia        += ::cGetWhereSentencia() 
+   cSentencia        += ::cGetWhereSentencia()
    cSentencia        += ::cGetOrderBy()
 
    if TDataCenter():ExecuteSqlStatement( cSentencia, "SelectArticulo" )
@@ -727,11 +727,11 @@ METHOD aCreaArrayPeriodos() CLASS TSPECIALSEARCHARTICULO
 
    end case
 
-   aAdd( aPeriodo, "Doce últimos meses" )
+   aAdd( aPeriodo, "Doce Ãºltimos meses" )
 
-   aAdd( aPeriodo, "Año en curso" )
+   aAdd( aPeriodo, "AÃ±o en curso" )
 
-   aAdd( aPeriodo, "Año anterior" )
+   aAdd( aPeriodo, "AÃ±o anterior" )
 
    aAdd( aPeriodo, "Todos" )
 
@@ -782,17 +782,17 @@ METHOD lRecargaFecha() CLASS TSPECIALSEARCHARTICULO
          ::oFecIni:cText( CtoD( "01/10/" + Str( Year( GetSysDate() ) ) ) )
          ::oFecFin:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) ) ) )
 
-      case ::cPeriodo == "Doce últimos meses"
+      case ::cPeriodo == "Doce Ãºltimos meses"
 
          ::oFecIni:cText( CtoD( Str( Day( GetSysDate() ) ) + "/" + Str( Month( GetSysDate() ) ) + "/" + Str( Year( GetSysDate() ) -1 ) ) )
          ::oFecFin:cText( GetSysDate() )
 
-      case ::cPeriodo == "Año en curso"
+      case ::cPeriodo == "AÃ±o en curso"
 
          ::oFecIni:cText( CtoD( "01/01/" + Str( Year( GetSysDate() ) ) ) )
          ::oFecFin:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) ) ) )
 
-      case ::cPeriodo == "Año anterior"
+      case ::cPeriodo == "AÃ±o anterior"
 
          ::oFecIni:cText( CtoD( "01/01/" + Str( Year( GetSysDate() ) - 1 ) ) )
          ::oFecFin:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) - 1 ) ) )
