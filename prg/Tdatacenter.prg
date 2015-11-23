@@ -191,11 +191,13 @@ CLASS TDataCenter
    //---------------------------------------------------------------------------//
 
    METHOD ScanDataTable()
+   METHOD ScanDataArea( cArea )
    METHOD ScanDataTmp( cDataTable )
    METHOD ScanObject()
 
    METHOD getIdBlock( cDataTable )
    METHOD getDictionary( cDataTable )
+   METHOD getDictionaryFromArea( cArea )
    METHOD getDeFaultValue( cDataTable )  
 
    METHOD DataName( cDatabase )              INLINE   ( if( lAIS(), upper( cPatDat() + cDatabase ), upper( cDatabase ) ) )
@@ -1060,6 +1062,26 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD ScanDataArea( cArea ) CLASS TDataCenter
+
+   local nScan
+
+   nScan    := aScan( ::aDataTables, {|o| o:cArea == cArea } )   
+   if nScan != 0
+      Return ( ::aDataTables[ nScan ] )
+   end if 
+
+   if nScan == 0
+      nScan    := aScan( ::aEmpresaTables, {|o| o:cArea == cArea } )   
+      if nScan != 0
+         Return ( ::aEmpresaTables[ nScan ] )
+      end if 
+   end if
+ 
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
 METHOD ScanDataTmp( cDataTable ) CLASS TDataCenter
 
    local nScan
@@ -1093,6 +1115,20 @@ METHOD getDictionary( cDataTable )
    local oTable
 
    oTable            := ::ScanDataTable( cDataTable )
+   if !empty( oTable )
+      aDictionary    := oTable:aDictionary 
+   end if 
+
+Return ( aDictionary )
+
+//---------------------------------------------------------------------------//
+
+METHOD getDictionaryFromArea( cArea )
+
+   local aDictionary
+   local oTable
+
+   oTable            := ::ScanDataArea( cArea )
    if !empty( oTable )
       aDictionary    := oTable:aDictionary 
    end if 
@@ -5444,6 +5480,8 @@ CLASS D
 
    METHOD getHashRecord( cDatabase, nView )
    METHOD getFieldDictionary( cField, cDataTable, nView )
+   METHOD getFieldFromAliasDictionary( cField, cAlias, aDictionary )   
+
    METHOD getHashArray( aRecord, cDatabase, nView )
    METHOD getHashTable( cAlias, cDatabase, nView )
    METHOD getHashRecordById( id, cDatabase, nView )
@@ -5746,6 +5784,7 @@ CLASS D
 
    // Pedidos de proveedores---------------------------------------------------
 
+   METHOD PedidosProveedoresTableName()               INLINE ( "PedProvT" )
    METHOD PedidosProveedores( nView )                 INLINE ( ::Get( "PedProvT", nView ) )
       METHOD PedidosProveedoresId( nView )            INLINE ( ( ::Get( "PedProvT", nView ) )->cSerPed + str( ( ::Get( "PedProvT", nView ) )->nNumPed, 9 ) + ( ::Get( "PedProvT", nView ) )->cSufPed )
       METHOD gotoIdPedidosProveedores( id, nView )    INLINE ( ::seekInOrd( ::PedidosProveedores( nView ), id, "nNumPed" ) ) 
@@ -6372,6 +6411,23 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD getFieldFromAliasDictionary( cField, cAlias, aDictionary ) CLASS D
+
+   local value
+
+msgAlert( cField )
+msgAlert( cAlias )
+msgAlert( aDictionary ) 
+
+   value            := hGet( aDictionary, cField )
+
+   if !empty( value )
+     Return( ( cField )->( fieldget( ( cField )->( fieldPos( value ) ) ) ) )
+   endif
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
 
 METHOD getHashArray( aRecord, cDataTable, nView ) CLASS D
 

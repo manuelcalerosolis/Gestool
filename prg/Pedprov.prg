@@ -7673,58 +7673,58 @@ return ( nTotVta )
 
 function aItmPedPrv()
 
-   local aBase := {  { "cSerPed",   "C",  1,   0, "Serie del pedido",            "",                   "", "( cDbf )"},;
-                     { "nNumPed",   "N",  9,   0, "Número del pedido",           "'999999999'",        "", "( cDbf )"},;
-                     { "cSufPed",   "C",  2,   0, "Sufijo del pedido",           "",                   "", "( cDbf )"},;
-                     { "cTurPed",   "C",  6,   0, "Sesión del pedido",           "",                   "", "( cDbf )"},;
-                     { "dFecPed",   "D",  8,   0, "Fecha del pedido",            "",                   "", "( cDbf )"},;
-                     { "cCodPrv",   "C", 12,   0, "Codigo del proveedor",        "",                   "", "( cDbf )"},;
-                     { "cCodAlm",   "C", 16,   0, "Código de almacen",           "",                   "", "( cDbf )"},;
-                     { "cCodCaj",   "C",  3,   0, "Código de caja",              "",                   "", "( cDbf )"},;
-                     { "cNomPrv",   "C", 30,   0, "Nombre del proveedor",        "'@!'",               "", "( cDbf )"},;
-                     { "cDirPrv",   "C",200,   0, "Domicilio del proveedor",     "'@!'",               "", "( cDbf )"},;
-                     { "cPobPrv",   "C",200,   0, "Población del proveedor",     "'@!'",               "", "( cDbf )"},;
-                     { "cProPrv",   "C",100,   0, "Provincia del proveedor",     "'@!'",               "", "( cDbf )"},;
-                     { "cPosPrv",   "C",  5,   0, "Código postal del proveedor", "",                   "", "( cDbf )"},;
-                     { "cDniPrv",   "C", 30,   0, "D.N.I. del proveedor",        "",                   "", "( cDbf )"},;
-                     { "dFecEnt",   "D",  8,   0, "Fecha de entrada",            "",                   "", "( cDbf )"},;
-                     { "nEstado",   "N",  1,   0, "Estado del pedido",           "",                   "", "( cDbf )"},;
-                     { "cSuped",    "C", 10,   0, "Comentario su pedido",        "",                   "", "( cDbf )"},;
-                     { "cCodPgo",   "C",  2,   0, "Codigo de la forma de pago",  "",                   "", "( cDbf )"},;
-                     { "nBulTos",   "N",  3,   0, "Número de bultos",            "'999'",              "", "( cDbf )"},;
-                     { "nPorTes",   "N",  6,   0, "Precio de los portes",        "cPirDivPed",         "", "( cDbf )"},;
-                     { "cDtoEsp",   "C", 50,   0, "Descripción descuento especial","",                 "", "( cDbf )"},;
-                     { "nDtoEsp",   "N",  5,   2, "Descuento factura",           "'@EZ 99.99'",        "", "( cDbf )"},;
-                     { "cDpp",      "C", 50,   0, "Descripción descuento pronto pago","",              "", "( cDbf )"},;
-                     { "nDpp",      "N",  5,   2, "Descuento pronto pago",       "'@EZ 99.99'",        "", "( cDbf )"},;
-                     { "lRecargo",  "L",  1,   0, "Recargo de equivalencia",     "",                   "", "( cDbf )"},;
-                     { "cCondEnt",  "C", 20,   0, "Comentarios del pedido",      "",                   "", "( cDbf )"},;
-                     { "cExped",    "C", 20,   0, "Expedición",                  "",                   "", "( cDbf )"},;
-                     { "cObserv",   "M", 10,   0, "Observaciones",               "",                   "", "( cDbf )"},;
-                     { "cDivPed",   "C",  3,   0, "Codigo de divisa",            "",                   "", "( cDbf )"},;
-                     { "nVdvPed",   "N", 10,   4, "Valor de la divisa",          "'@EZ 999,999.9999'", "", "( cDbf )"},;
-                     { "lSndDoc",   "L",  1,   0, "Enviar documento",            "",                   "", "( cDbf )"},;
-                     { "cDtoUno",   "C", 25,   0, "Descripción de primer descuento personalizado", "", "", "( cDbf )"},;          //   26
-                     { "nDtoUno",   "N",  5,   2, "Porcentaje de primer descuento personalizado", "",  "", "( cDbf )"},;           //   27
-                     { "cDtoDos",   "C", 25,   0, "Descripción de segundo descuento personalizado","", "", "( cDbf )"},;          //   28
-                     { "nDtoDos",   "N",  5,   2, "Porcentaje de segundo descuento personalizado", "", "", "( cDbf )"},;
-                     { "lCloPed",   "L",  1,   0, "",                                              "", "", "( cDbf )"},;
-                     { "cCodUsr",   "C",  3,   0, "Código de usuario",                             "", "", "( cDbf )"},;
-                     { "cNumPedCli","C", 12,   0, "Número del pedido del cliente del que viene",   "", "", "( cDbf )"},;
-                     { "lImprimido","L",  1,   0, "Lógico de imprimido del documento",             "", "", "( cDbf )"},;
-                     { "dFecImp",   "D",  8,   0, "Última fecha de impresión del documento",       "", "", "( cDbf )"},;
-                     { "cHorImp",   "C",  5,   0, "Hora de la última impresión del documento",     "", "", "( cDbf )"},;
-                     { "dFecChg",   "D",  8,   0, "Fecha de modificación del documento",           "", "", "( cDbf )"},;
-                     { "cTimChg",   "C",  5,   0, "Hora de modificación del documento",            "", "", "( cDbf )"},;
-                     { "cCodDlg",   "C",  2,   0, "Código delegación",                             "", "", "( cDbf )"},;
-                     { "cSituac",   "C", 20,   0, "Situación del documento",                       "", "", "( cDbf )"},;
-                     { "nRegIva",   "N",  1,   0, "Regimen de " + cImp(),                          "", "", "( cDbf )"},;
-                     { "nTotNet",   "N", 16,   6, "Total neto",                                    "", "", "( cDbf )"},;
-                     { "nTotIva",   "N", 16,   6, "Total " + cImp(),                               "", "", "( cDbf )"},;
-                     { "nTotReq",   "N", 16,   6, "Total recargo equivalencia",                    "", "", "( cDbf )"},;
-                     { "nTotPed",   "N", 16,   6, "Total pedido",                                  "", "", "( cDbf )"},;
-                     { "cNumAlb",   "C", 12,   0, "Númeo del albarán en el se ha agrupado",        "", "", "( cDbf )"},;
-                     { "lRECC",     "L",  1,   0, "Lógico régimen especial del criterio de caja",  "", "", "( cDbf )"} }
+   local aBase := {  { "cSerPed",   "C",  1,   0, "Serie del pedido",                                            "Serie",                      "", "( cDbf )"},;
+                     { "nNumPed",   "N",  9,   0, "Número del pedido",                                           "Numero",                     "", "( cDbf )"},;
+                     { "cSufPed",   "C",  2,   0, "Sufijo del pedido",                                           "Sufijo",                     "", "( cDbf )"},;
+                     { "cTurPed",   "C",  6,   0, "Sesión del pedido",                                           "Turno",                      "", "( cDbf )"},;
+                     { "dFecPed",   "D",  8,   0, "Fecha del pedido",                                            "Fecha",                      "", "( cDbf )"},;
+                     { "cCodPrv",   "C", 12,   0, "Codigo del proveedor",                                        "Cliente",                    "", "( cDbf )"},;
+                     { "cCodAlm",   "C", 16,   0, "Código de almacen",                                           "Almacen",                    "", "( cDbf )"},;
+                     { "cCodCaj",   "C",  3,   0, "Código de caja",                                              "Caja",                       "", "( cDbf )"},;
+                     { "cNomPrv",   "C", 30,   0, "Nombre del proveedor",                                        "NombreCliente",              "", "( cDbf )"},;
+                     { "cDirPrv",   "C",200,   0, "Domicilio del proveedor",                                     "DomicilioCliente",           "", "( cDbf )"},;
+                     { "cPobPrv",   "C",200,   0, "Población del proveedor",                                     "PoblacionCliente",           "", "( cDbf )"},;
+                     { "cProPrv",   "C",100,   0, "Provincia del proveedor",                                     "ProvinciaCliente",           "", "( cDbf )"},;
+                     { "cPosPrv",   "C",  5,   0, "Código postal del proveedor",                                 "CodigoPostalCliente",        "", "( cDbf )"},;
+                     { "cDniPrv",   "C", 30,   0, "D.N.I. del proveedor",                                        "DniCliente",                 "", "( cDbf )"},;
+                     { "dFecEnt",   "D",  8,   0, "Fecha de entrada",                                            "",                           "", "( cDbf )"},;
+                     { "nEstado",   "N",  1,   0, "Estado del pedido",                                           "",                           "", "( cDbf )"},;
+                     { "cSuped",    "C", 10,   0, "Comentario su pedido",                                        "",                           "", "( cDbf )"},;
+                     { "cCodPgo",   "C",  2,   0, "Codigo de la forma de pago",                                  "",                           "", "( cDbf )"},;
+                     { "nBulTos",   "N",  3,   0, "Número de bultos",                                            "",                           "", "( cDbf )"},;
+                     { "nPorTes",   "N",  6,   0, "Precio de los portes",                                        "",                           "", "( cDbf )"},;
+                     { "cDtoEsp",   "C", 50,   0, "Descripción descuento especial",                              "",                           "", "( cDbf )"},;
+                     { "nDtoEsp",   "N",  5,   2, "Descuento factura",                                           "",                           "", "( cDbf )"},;
+                     { "cDpp",      "C", 50,   0, "Descripción descuento pronto pago",                           "",                           "", "( cDbf )"},;
+                     { "nDpp",      "N",  5,   2, "Descuento pronto pago",                                       "",                           "", "( cDbf )"},;
+                     { "lRecargo",  "L",  1,   0, "Recargo de equivalencia",                                     "",                           "", "( cDbf )"},;
+                     { "cCondEnt",  "C", 20,   0, "Comentarios del pedido",                                      "",                           "", "( cDbf )"},;
+                     { "cExped",    "C", 20,   0, "Expedición",                                                  "",                           "", "( cDbf )"},;
+                     { "cObserv",   "M", 10,   0, "Observaciones",                                               "",                           "", "( cDbf )"},;
+                     { "cDivPed",   "C",  3,   0, "Codigo de divisa",                                            "",                           "", "( cDbf )"},;
+                     { "nVdvPed",   "N", 10,   4, "Valor de la divisa",                                          "",                           "", "( cDbf )"},;
+                     { "lSndDoc",   "L",  1,   0, "Enviar documento",                                            "",                           "", "( cDbf )"},;
+                     { "cDtoUno",   "C", 25,   0, "Descripción de primer descuento personalizado",               "",                           "", "( cDbf )"},;          //   26
+                     { "nDtoUno",   "N",  5,   2, "Porcentaje de primer descuento personalizado",                "",                           "", "( cDbf )"},;           //   27
+                     { "cDtoDos",   "C", 25,   0, "Descripción de segundo descuento personalizado",              "",                           "", "( cDbf )"},;          //   28
+                     { "nDtoDos",   "N",  5,   2, "Porcentaje de segundo descuento personalizado",               "",                           "", "( cDbf )"},;
+                     { "lCloPed",   "L",  1,   0, "",                                                            "",                           "", "( cDbf )"},;
+                     { "cCodUsr",   "C",  3,   0, "Código de usuario",                                           "",                           "", "( cDbf )"},;
+                     { "cNumPedCli","C", 12,   0, "Número del pedido del cliente del que viene",                 "",                           "", "( cDbf )"},;
+                     { "lImprimido","L",  1,   0, "Lógico de imprimido del documento",                           "",                           "", "( cDbf )"},;
+                     { "dFecImp",   "D",  8,   0, "Última fecha de impresión del documento",                     "",                           "", "( cDbf )"},;
+                     { "cHorImp",   "C",  5,   0, "Hora de la última impresión del documento",                   "",                           "", "( cDbf )"},;
+                     { "dFecChg",   "D",  8,   0, "Fecha de modificación del documento",                         "",                           "", "( cDbf )"},;
+                     { "cTimChg",   "C",  5,   0, "Hora de modificación del documento",                          "",                           "", "( cDbf )"},;
+                     { "cCodDlg",   "C",  2,   0, "Código delegación",                                           "",                           "", "( cDbf )"},;
+                     { "cSituac",   "C", 20,   0, "Situación del documento",                                     "",                           "", "( cDbf )"},;
+                     { "nRegIva",   "N",  1,   0, "Regimen de " + cImp(),                                        "",                           "", "( cDbf )"},;
+                     { "nTotNet",   "N", 16,   6, "Total neto",                                                  "TotalNeto",                  "", "( cDbf )"},;
+                     { "nTotIva",   "N", 16,   6, "Total " + cImp(),                                             "TotalImpuesto",              "", "( cDbf )"},;
+                     { "nTotReq",   "N", 16,   6, "Total recargo equivalencia",                                  "TotalRecargo",               "", "( cDbf )"},;
+                     { "nTotPed",   "N", 16,   6, "Total pedido",                                                "TotalDocumento",             "", "( cDbf )"},;
+                     { "cNumAlb",   "C", 12,   0, "Número del albarán en el se ha agrupado",                     "",                           "", "( cDbf )"},;
+                     { "lRECC",     "L",  1,   0, "Lógico régimen especial del criterio de caja",                "",                           "", "( cDbf )"} }
 
 return ( aBase )
 

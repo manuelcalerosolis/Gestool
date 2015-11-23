@@ -3188,7 +3188,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Conversión de documentos"
    oItem:cMessage       := "Conversión de documentos"
-   oItem:bAction        := {|| TConversionDocumentos():Create() }
+   oItem:bAction        := {|| TConversionDocumentos():New():Dialog() }
    oItem:cId            := "01038"
    oItem:cBmp           := "Currency_Euro_16"
    oItem:cBmpBig        := "Currency_Euro_32"
