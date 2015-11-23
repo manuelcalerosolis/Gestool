@@ -393,25 +393,12 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-/*
-Funciones para gst rotor
-*/
-//---------------------------------------------------------------------------//
-
 Function cPatDat( lFull )
 
    DEFAULT lFull  := .f.
 
-   if lAds()
-      Return ( cAdsUNC() + "Datos\" )
-   end if
-
-   if lAIS() .and. lFull
-      Return ( cAdsUNC() + "Datos\" )
-   end if
-
-   if lAIS() .and. !lFull
-      Return ( "Datos" )
+   if lAIS() 
+      Return ( if( lFull, cAdsUNC() + "Datos\", "Datos" ) )
    end if
 
    if lCdx()
@@ -426,16 +413,8 @@ Function cPatDatLocal( lFull )
 
    DEFAULT lFull  := .f.
 
-   if lAds()
-      Return ( cAdsLocal() + "Datos\" )
-   end if
-
-   if lAIS() .and. lFull
-      Return ( cAdsLocal() + "Datos\" )
-   end if
-
-   if lAIS() .and. !lFull
-      Return ( "Datos" )
+   if lAIS()
+      Return ( if( lFull, cAdsLocal() + "Datos\", "Datos" ) )
    end if
 
    if lCdx()
@@ -450,16 +429,8 @@ Function cPatADS( lFull )
 
    DEFAULT lFull  := .f.
 
-   if lAds()
-      Return ( cAdsUNC() + "ADS\" )
-   end if
-
-   if lAIS() .and. lFull
-      Return ( cAdsUNC() + "ADS\" )
-   end if
-
-   if lAIS() .and. !lFull
-      Return ( "ADS" )
+   if lAIS()
+      Return ( if( lFull, cAdsUNC() + "ADS\", "ADS" ) )
    end if
 
    if lCdx()

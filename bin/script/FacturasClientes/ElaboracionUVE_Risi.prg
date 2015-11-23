@@ -177,7 +177,7 @@ ENDCLASS
 
       ::ProcessFile()
 
-      ::SendFile()
+      // ::SendFile()
 
       ::oDlg:Enable()
       ::oDlg:End()

@@ -80,6 +80,8 @@ CLASS TDataCenter
    DATA        cMsg                       INIT ""
    DATA        oMsg
 
+   METHOD getDataDictionaryFile()         INLINE ( cPatADS(.t.) + cAdsFile() )
+
    METHOD CreateDataDictionary()
    METHOD ConnectDataDictionary()
 
@@ -698,8 +700,8 @@ METHOD loadEmpresas()
 
    ::aEmpresas       := {}
 
-   USE ( cAdsUNC() + "Datos\Empresa.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
-   SET ADSINDEX TO ( cAdsUNC() + "Datos\Empresa.Cdx" ) ADDITIVE
+   USE ( cPatDat() + "Empresa.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
+   SET ADSINDEX TO ( cPatDat() + "Empresa.Cdx" ) ADDITIVE
 
    while !( dbfEmp )->( eof() )
       if !( dbfEmp )->lGrupo
@@ -721,7 +723,7 @@ METHOD dialogEmpresas()
       Return ( self )
    end if
 
-   DEFINE DIALOG ::oDlg RESOURCE "AdsAdmin" TITLE "Creación de diccionario de datos para " + ::cDataDictionaryFile
+   DEFINE DIALOG ::oDlg RESOURCE "AdsAdmin" TITLE "Creación de diccionario de datos para " + ::getDataDictionaryFile()
 
    ::oBrwEmpresas                         := TXBrowse():New( ::oDlg )
 
@@ -906,10 +908,10 @@ METHOD StartAdministratorTask()
             ::oMsg:SetText( "Creando diccionario de empresa " + Rtrim( cEmp[ 1 ] ) + " - " + Rtrim( cEmp[ 2 ] ) )
 
             if !empty( ::oMtrActualiza )
-            	::oMtrActualiza:Set( hb_EnumIndex() )
+            	::oMtrActualiza:set( hb_EnumIndex() )
             end if 
 
-            SetEmpresa( cEmp[ 1 ], , , , , , .t. )
+            setEmpresa( cEmp[ 1 ], , , , , , .t. )
 
             ::BuildEmpresa()  
                
@@ -946,9 +948,7 @@ METHOD StartAdministratorTask()
 	      ::oMtrDiccionario:Set( 3 )
 	   end if
 
-      /*
-      Creamos los triggers de los datos----------------------------------------
-      */
+      // Creamos los triggers de los datos----------------------------------------
 
       ::oMsg:SetText( "Creando triggers de datos" )
 
@@ -958,9 +958,7 @@ METHOD StartAdministratorTask()
 	      ::oMtrDiccionario:Set( 4 )
 	   end if
 
-      /*
-      Creamos los triggers de las empresas-------------------------------------
-      */
+      // Creamos los triggers de las empresas-------------------------------------
 
       ::oMsg:SetText( "Creando triggers de empresa" )
 
@@ -972,9 +970,7 @@ METHOD StartAdministratorTask()
 
    end if
 
-   /*
-   Saliendo--------------------------------------------------------------------
-   */
+   // Saliendo--------------------------------------------------------------------
 
    ::lValidDlg       := .t.
 
@@ -988,9 +984,9 @@ RETURN ( Self )
 
 METHOD CreateDataDictionary()
 
-   if !File( ::cDataDictionaryFile )
+   if !file( ::getDataDictionaryFile() )
 
-      AdsDDCreate( ::cDataDictionaryFile, , ::cDataDictionaryComment )
+      AdsDDCreate( ::getDataDictionaryFile(), , ::cDataDictionaryComment )
 
       AdsDDSetDatabaseProperty( ADS_DD_ENABLE_INTERNET, .t. )
 
@@ -1006,13 +1002,13 @@ METHOD ConnectDataDictionary()
 
    ::CreateDataDictionary()
 
-   ::lAdsConnection     := AdsConnect60( ::cDataDictionaryFile, nAdsServer(), "ADSSYS", "", , @::hAdsConnection )
+   ::lAdsConnection     := AdsConnect60( ::getDataDictionaryFile(), nAdsServer(), "ADSSYS", "", , @::hAdsConnection )
    
    if !::lAdsConnection
 
       adsGetLastError( @cError )
 
-      msgInfo( cError, "Error connect data dictionary " + ::cDataDictionaryFile )
+      msgInfo( cError, "Error connect data dictionary " + ::getDataDictionaryFile() )
 
    end if
 
@@ -1888,7 +1884,7 @@ METHOD BuildData()
    oDataTable:cName        := cPatDat() + "CodPostal"
    oDataTable:cDataFile    := cPatDat( .t. ) + "CodPostal.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "CodPostal.Cdx"
-   oDataTable:cDescription := "CodPostal"
+   oDataTable:cDescription := "Código postal"
    oDataTable:bCreateFile  := {| cPath | CodigosPostales():BuildFiles( cPath ) }
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddDataTable( oDataTable )
@@ -5020,7 +5016,7 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
 
    RECOVER USING oError
 
-      msgStop( ErrorMessage( oError ), "ExecuteSqlStatement : " + cSqlStatement )
+      msgStop( ErrorMessage( oError ), "Error en sentencia SQL" )
    
    END SEQUENCE
 
