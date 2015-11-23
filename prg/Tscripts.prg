@@ -60,6 +60,8 @@ CLASS TScripts FROM TMant
 
    METHOD   runArrayScripts( aScripts, uParam1 )
 
+   METHOD   getCompileFiles( aDirectory )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -420,8 +422,8 @@ METHOD RunScript( cFichero, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6
    local oError
    local oBlock
 
-   /*oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
       if file( cFichero )
          pHrb        := hb_hrbLoad( cFichero )
@@ -429,11 +431,11 @@ METHOD RunScript( cFichero, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6
          hb_hrbUnload( pHrb )   
       end if
 
-   /*RECOVER USING oError
+   RECOVER USING oError
       msgStop( "Error de ejecución script." + CRLF + ErrorMessage( oError ) )
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
 RETURN ( uReturn )
 
@@ -526,18 +528,37 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+Static Function aDirectoryEventScript( cDirectory )
+
+   local aDirectory
+
+   aDirectory     := Directory( cPatScriptEmp() + cDirectory + "\*.prg" )
+   if !empty( aDirectory )
+      aEval( aDirectory, {|a| a[1] := cPatScriptEmp() + cDirectory + "\" + a[1]} )
+      Return ( aDirectory )
+   end if 
+
+   aDirectory     := Directory( cPatScript() + cDirectory + "\*.prg" )
+   if !empty( aDirectory )
+      aEval( aDirectory, {|a| a[1] := cPatScript() + cDirectory + "\" + a[1]} )
+   end if 
+
+Return ( aDirectory )
+
+//---------------------------------------------------------------------------//
+
 Function runEventScript( cDirectory, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
 
    local aFile
    local aDirectory
    local uReturn   
    
-   aDirectory     := Directory( cPatScript() + cDirectory + "\*.prg" )
+   aDirectory  := aDirectoryEventScript( cDirectory ) 
 
    if !empty( aDirectory )
 
       for each aFile in aDirectory
-         uReturn  := TScripts():CompilarEjecutarFicheroScript( cPatScript() + cDirectory + '\' + aFile[ 1 ], uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
+         uReturn  := TScripts():CompilarEjecutarFicheroScript( aFile[ 1 ], uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
       next 
 
    end if 
@@ -546,21 +567,30 @@ RETURN ( uReturn )
 
 //---------------------------------------------------------------------------//
 
-METHOD getCompileHbr( cDirectorio ) CLASS TScripts
+METHOD getCompileHbr( cDirectory ) CLASS TScripts
 
-   local aFile
    local aDirectory  := {}
-   local aFilesHbr   := {}
 
-   aDirectory        := Directory( cDirectorio + "*.prg" )
+   aDirectory        := aDirectoryEventScript( cDirectory ) 
 
    if !empty( aDirectory )
+      Return ( ::getCompileFiles( aDirectory ) )
+   end if
+
+Return ( {} )
+
+//---------------------------------------------------------------------------//
+
+METHOD getCompileFiles( aDirectory ) CLASS TScripts
+
+   local aFile
+   local aFilesHbr   := {}
 
       for each aFile in aDirectory
 
-         if !empty( cDirectorio + aFile[1] )
-            ::cFicheroPrg  := cDirectorio + aFile[1]
-            ::cFicheroHbr  := strtran( cDirectorio + aFile[1], ".prg", ".hbr" )
+         if !empty( aFile[1] )
+            ::cFicheroPrg  := aFile[1]
+            ::cFicheroHbr  := strtran( aFile[1], ".prg", ".hbr" )
          end if 
 
          ::CompilarFicheroScript( .f. )
@@ -570,8 +600,6 @@ METHOD getCompileHbr( cDirectorio ) CLASS TScripts
          end if
 
       next 
-
-   end if 
 
 Return ( aFilesHbr )
 

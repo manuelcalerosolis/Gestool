@@ -48,6 +48,7 @@ static cPatArt
 static cPatPrv
 static cPatAlm
 static cPatEmp
+static cPatScriptEmp
 static cPatTmp
 static cPathPC
 static cNombrePc        := ""
@@ -525,7 +526,20 @@ Function cPatScript( lShort )
 
 Return ( if( !lShort, FullCurDir(), "" ) + "Script\" )
 
-//----------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+FUNCTION cPatScriptEmp( cPath, lShort )
+
+   DEFAULT cPath    := ""
+   DEFAULT lShort   := .f.
+
+   if !Empty( cPath )
+      cPatScriptEmp := "Script" + cPath
+   end if
+
+Return ( if( !lShort, FullCurDir(), "" ) + cPatScriptEmp + "\" )
+
+//---------------------------------------------------------------------------//
 
 Function cPatOut( lShort )
 
