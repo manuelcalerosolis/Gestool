@@ -422,8 +422,8 @@ METHOD RunScript( cFichero, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6
    local oError
    local oBlock
 
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   /*oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE*/
 
       if file( cFichero )
          pHrb        := hb_hrbLoad( cFichero )
@@ -431,11 +431,11 @@ METHOD RunScript( cFichero, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6
          hb_hrbUnload( pHrb )   
       end if
 
-   RECOVER USING oError
+   /*RECOVER USING oError
       msgStop( "Error de ejecución script." + CRLF + ErrorMessage( oError ) )
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
 
 RETURN ( uReturn )
 
@@ -514,7 +514,7 @@ Function ImportScript( oMainWindow, oBoton, cDirectory, uParam1, uParam2, uParam
    local aFile
    local aDirectory  
    
-   aDirectory  := Directory( cPatScript() + cDirectory + "\*.prg" )
+   /*aDirectory  := Directory( cPatScript() + cDirectory + "\*.prg" )
 
    if !Empty( aDirectory )
 
@@ -522,7 +522,19 @@ Function ImportScript( oMainWindow, oBoton, cDirectory, uParam1, uParam2, uParam
          oMainWindow:NewAt( "Document", , , {|| TScripts():CompilarEjecutarFicheroScript( cPatScript() + cDirectory + '\' + aFile[ 1 ], uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) }, GetFileNoExt( Rtrim( aFile[ 1 ] ) ), , , , , oBoton )
       next 
 
-   end if 
+   end if */
+
+   aDirectory  := aDirectoryEventScript( cDirectory )
+
+   if !Empty( aDirectory )
+
+      for each aFile in aDirectory
+
+         oMainWindow:NewAt( "Document", , , {|| TScripts():CompilarEjecutarFicheroScript( aFile[ 1 ], uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) }, GetFileNoExt( Rtrim( aFile[ 1 ] ) ), , , , , oBoton )
+
+      next 
+
+   end if
 
 RETURN ( nil )
 

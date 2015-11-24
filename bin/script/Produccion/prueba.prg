@@ -5,12 +5,7 @@
 
 function InicioHRB( oParte )
 
-   local oCreateParte   := createParte():new( oParte )
-
-   if !Empty( oCreateParte )
-      //oCreateParte:runTest()
-      oCreateParte:run()
-   end if
+   MsgInfo( "Ruta normal" )
 
 return ( .t. )
 
