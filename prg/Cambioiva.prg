@@ -51,7 +51,7 @@ CLASS TConversionDocumentos
    METHOD setDictionary( cDictionary )    INLINE ( ::cDictionary := cDictionary )
    METHOD getDictionary( cDictionary )    INLINE ( ::cDictionary )
 
-      METHOD getId()
+      METHOD getId()                      INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getAlias(), ::getDictionary() ) + "/" + alltrim( str( D():getFieldFromAliasDictionary( "Numero", ::getAlias(), ::getDictionary() ) ) ) )
       METHOD getDate()                    INLINE ( D():getFieldFromAliasDictionary( "Fecha", ::getAlias(), ::getDictionary() ) )
       METHOD getName()                    INLINE ( D():getFieldFromAliasDictionary( "NombreCliente", ::getAlias(), ::getDictionary() ) )
       METHOD getTotalNeto()               INLINE ( D():getFieldFromAliasDictionary( "TotalNeto", ::getAlias(), ::getDictionary() ) )
@@ -90,9 +90,7 @@ METHOD New()
 
    ::setDocumentPedidosProveedores()
 
-   msgAlert( ::getAlias(), "getAlias" )
-   msgAlert( ::getId() )
-   msgAlert( ::getName() )
+   msgAlert( ::getName(), "getName" )
 
 RETURN ( Self )
 
@@ -148,7 +146,7 @@ METHOD Dialog()
    ::oBrwDocuments:cName            := "Browse.Conversion documentos"
 
    with object ( ::oBrwDocuments:AddCol() )
-      :cHeader                      := "Código"
+      :cHeader                      := "Número"
       :bEditValue                   := {|| ::getId() }
       :nWidth                       := 80
    end with
@@ -308,22 +306,8 @@ METHOD setDocumentType( cTableName )
 
    ::setAlias(       D():Get( cTableName, ::nView ) )
    ::setDictionary(  D():getDictionaryFromArea( cTableName ) )
-   msgAlert( hb_valtoexp( ::getDictionary() ) ) 
 
 Return ( Self )
 
 //---------------------------------------------------------------------------//
-
-METHOD getId()
-
-   local id    := ""
-
-   id          += D():getFieldFromAliasDictionary( "Serie", ::getAlias(), ::getDictionary() )
-   id          += "/"
-   id          += D():getFieldFromAliasDictionary( "Numero", ::getAlias(), ::getDictionary() )
-
-RETURN ( id )
-
-//---------------------------------------------------------------------------//
-
 
