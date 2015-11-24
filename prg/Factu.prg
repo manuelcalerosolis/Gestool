@@ -3186,9 +3186,9 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := "Cambio de I.V.A."
-   oItem:cMessage       := "Cambio de I.V.A."
-   oItem:bAction        := {|| TCambioDeIva():Create() }
+   oItem:cPrompt        := "Conversión de documentos"
+   oItem:cMessage       := "Conversión de documentos"
+   oItem:bAction        := {|| TConversionDocumentos():New():Dialog() }
    oItem:cId            := "01038"
    oItem:cBmp           := "Currency_Euro_16"
    oItem:cBmpBig        := "Currency_Euro_32"

@@ -92,6 +92,9 @@ FUNCTION Agentes( oMenuItem, oWnd )
       return .f.
    end if
 
+   // msgAlert( nPrecioAgenteArticuloTarifa( '035', '02052644', 1, nView ), "found" )
+   // msgAlert( nPrecioAgenteArticuloTarifa( '035', '00000000', 1, nView ), "not found" )
+
    /*
    Anotamos el movimiento para el navegador
    */
@@ -207,7 +210,73 @@ FUNCTION Agentes( oMenuItem, oWnd )
 
    end if
 
-RETURN NIL
+Return nil
+
+//----------------------------------------------------------------------------//
+
+Static Function OpenFiles()
+
+   local oError
+   local oBlock
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      nView             := D():CreateView()
+
+      USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAge ) )
+      SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
+
+      D():AgentesComisiones( nView )
+
+      D():AgentesRelaciones( nView )
+
+      D():Proveedores( nView )
+
+      D():Familias( nView )
+
+      D():Articulos( nView )   
+
+      D():Atipicas( nView )
+      ( D():Atipicas( nView ) )->( ordSetFocus( "cCodAge" ) )
+
+      oDetCamposExtra   := TDetCamposExtra():New()
+      oDetCamposExtra:OpenFiles()
+      oDetCamposExtra:SetTipoDocumento( "Agentes" )
+
+      lOpenFiles        := .t.
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de agentes" )
+
+      CloseFiles()
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+Return ( lOpenFiles )
+
+//----------------------------------------------------------------------------//
+
+Static Function CloseFiles()
+
+   if !Empty( dbfAge )
+      ( dbfAge )->( dbCloseArea() )
+   end if
+
+   if !Empty( oDetCamposExtra )
+      oDetCamposExtra:CloseFiles()
+   end if
+
+   D():DeleteView( nView )
+
+   dbfAge                  := nil
+
+   oWndBrw                 := nil
+
+Return ( .t. )
 
 //----------------------------------------------------------------------------//
 
@@ -244,9 +313,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
                   "AGENTES_TARIFAS" ,;
                   "AGENTES_3"
 
-      /*
-      Primera pestaña----------------------------------------------------------
-      */
+      // Primera pestaña----------------------------------------------------------
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       500 ;
@@ -344,9 +411,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          ON HELP  BrwArticulo( aoGet[ _CCODART ], aoGet[ _CCODART ]:oHelpText );
          OF       fldGeneral
 
-      /*
-      Segunda pestaña----------------------------------------------------------
-      */
+      // Segunda pestaña----------------------------------------------------------
 
       REDEFINE BITMAP oBmpComisiones ;
          ID       500 ;
@@ -945,9 +1010,9 @@ STATIC FUNCTION lPreSave( aTemp, aoGet, dbfAge, oBrw, oBrwLin, nMode, oDlg )
 
    // Tablas relacionadas---------------------------------------------------------
 
-   buildRelation( aTemp[ _CCODAGE ], tmpAgentesComisiones, D():AgentesComisiones( nView ) )
-   buildRelation( aTemp[ _CCODAGE ], tmpAgentesRelaciones, D():AgentesRelaciones( nView ) )
-   buildRelation( aTemp[ _CCODAGE ], tmpAgentesTarifas, D():Atipicas( nView ) )
+   buildRelation( tmpAgentesComisiones, D():AgentesComisiones( nView ), { "cCodAge" => aTemp[ _CCODAGE ] } )
+   buildRelation( tmpAgentesRelaciones, D():AgentesRelaciones( nView ), { "cCodAge" => aTemp[ _CCODAGE ] } )
+   buildRelation( tmpAgentesTarifas, D():Atipicas( nView ), { "cCodAge" => aTemp[ _CCODAGE ] } )
 
    // Ahora escribimos en el fichero definitivo-----------------------------------
 
@@ -1799,71 +1864,6 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function OpenFiles()
-
-   local oError
-   local oBlock
-
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      nView             := D():CreateView()
-
-      USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAge ) )
-      SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
-
-      D():AgentesComisiones( nView )
-
-      D():AgentesRelaciones( nView )
-
-      D():Proveedores( nView )
-
-      D():Familias( nView )
-
-      D():Articulos( nView )   
-
-      D():Atipicas( nView )
-      ( D():Atipicas( nView ) )->( ordSetFocus( "cCodAge" ) )
-
-      oDetCamposExtra   := TDetCamposExtra():New()
-      oDetCamposExtra:OpenFiles()
-      oDetCamposExtra:SetTipoDocumento( "Agentes" )
-
-      lOpenFiles        := .t.
-
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de agentes" )
-
-      CloseFiles()
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-Return ( lOpenFiles )
-
-//----------------------------------------------------------------------------//
-
-Static Function CloseFiles()
-
-   if !Empty( dbfAge )
-      ( dbfAge )->( dbCloseArea() )
-   end if
-
-   if !Empty( oDetCamposExtra )
-      oDetCamposExtra:CloseFiles()
-   end if
-
-   D():DeleteView( nView )
-
-   dbfAge                  := nil
-
-   oWndBrw                 := nil
-
-Return ( .t. )
-
-//----------------------------------------------------------------------------//
 
 Function lGetAgente( oGetAgente, dbfAgente )
 
@@ -1972,11 +1972,11 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-Static Function buildRelation( cCodigoAgente, dbfTemporal, dbfRelation )
+Static Function buildRelation( dbfTemporal, dbfRelation, hHash )
 
    ( dbfTemporal )->( dbGoTop() )
    while ( dbfTemporal )->( !eof() )
-      dbPass( dbfTemporal, dbfRelation, .t., cCodigoAgente )
+      appendRegisterByHash( dbfTemporal, dbfRelation, hHash )
       ( dbfTemporal )->( dbSkip() )
       oMsgProgress():Deltapos( 1 )
    end while
@@ -1984,3 +1984,28 @@ Static Function buildRelation( cCodigoAgente, dbfTemporal, dbfRelation )
 Return ( nil )
 
 //---------------------------------------------------------------------------//
+
+FUNCTION nPrecioAgenteArticuloTarifa( cCodigoAgente, cCodigoArticulo, nTarifaPrecio, nView )
+
+   local cNombreCampo
+   local nPrecioAgenteArticuloTarifa   := 0
+
+   if empty( cCodigoAgente )
+      Return ( nPrecioAgenteArticuloTarifa )
+   end if
+
+   if nTarifaPrecio == 1
+      cNombreCampo   := "nPrcArt"
+   else 
+      cNombreCampo   := "nPrcArt" + str( nTarifaPrecio, 1 )
+   end if 
+
+   if D():gotoIdAtipicasAgentes( cCodigoAgente, cCodigoArticulo, nView )
+      nPrecioAgenteArticuloTarifa      := ( D():Atipicas( nView ) )->( fieldGet( fieldpos( cNombreCampo ) ) )
+   end if
+
+RETURN ( nPrecioAgenteArticuloTarifa )
+
+//---------------------------------------------------------------------------//
+
+

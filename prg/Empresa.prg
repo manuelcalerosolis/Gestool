@@ -3240,6 +3240,7 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
    */
 
    cPatEmp( cCodEmp )
+   cPatScriptEmp( cCodEmp )
 
    /*
    Directorios si no tiene grupo-----------------------------------------------

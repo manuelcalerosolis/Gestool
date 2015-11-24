@@ -60,6 +60,8 @@ CLASS TScripts FROM TMant
 
    METHOD   runArrayScripts( aScripts, uParam1 )
 
+   METHOD   getCompileFiles( aDirectory )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -512,7 +514,7 @@ Function ImportScript( oMainWindow, oBoton, cDirectory, uParam1, uParam2, uParam
    local aFile
    local aDirectory  
    
-   aDirectory  := Directory( cPatScript() + cDirectory + "\*.prg" )
+   /*aDirectory  := Directory( cPatScript() + cDirectory + "\*.prg" )
 
    if !Empty( aDirectory )
 
@@ -520,9 +522,40 @@ Function ImportScript( oMainWindow, oBoton, cDirectory, uParam1, uParam2, uParam
          oMainWindow:NewAt( "Document", , , {|| TScripts():CompilarEjecutarFicheroScript( cPatScript() + cDirectory + '\' + aFile[ 1 ], uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) }, GetFileNoExt( Rtrim( aFile[ 1 ] ) ), , , , , oBoton )
       next 
 
-   end if 
+   end if */
+
+   aDirectory  := aDirectoryEventScript( cDirectory )
+
+   if !Empty( aDirectory )
+
+      for each aFile in aDirectory
+
+         oMainWindow:NewAt( "Document", , , {|| TScripts():CompilarEjecutarFicheroScript( aFile[ 1 ], uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) }, GetFileNoExt( Rtrim( aFile[ 1 ] ) ), , , , , oBoton )
+
+      next 
+
+   end if
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+Static Function aDirectoryEventScript( cDirectory )
+
+   local aDirectory
+
+   aDirectory     := Directory( cPatScriptEmp() + cDirectory + "\*.prg" )
+   if !empty( aDirectory )
+      aEval( aDirectory, {|a| a[1] := cPatScriptEmp() + cDirectory + "\" + a[1]} )
+      Return ( aDirectory )
+   end if 
+
+   aDirectory     := Directory( cPatScript() + cDirectory + "\*.prg" )
+   if !empty( aDirectory )
+      aEval( aDirectory, {|a| a[1] := cPatScript() + cDirectory + "\" + a[1]} )
+   end if 
+
+Return ( aDirectory )
 
 //---------------------------------------------------------------------------//
 
@@ -532,12 +565,12 @@ Function runEventScript( cDirectory, uParam1, uParam2, uParam3, uParam4, uParam5
    local aDirectory
    local uReturn   
    
-   aDirectory     := Directory( cPatScript() + cDirectory + "\*.prg" )
+   aDirectory  := aDirectoryEventScript( cDirectory ) 
 
    if !empty( aDirectory )
 
       for each aFile in aDirectory
-         uReturn  := TScripts():CompilarEjecutarFicheroScript( cPatScript() + cDirectory + '\' + aFile[ 1 ], uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
+         uReturn  := TScripts():CompilarEjecutarFicheroScript( aFile[ 1 ], uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
       next 
 
    end if 
@@ -546,21 +579,30 @@ RETURN ( uReturn )
 
 //---------------------------------------------------------------------------//
 
-METHOD getCompileHbr( cDirectorio ) CLASS TScripts
+METHOD getCompileHbr( cDirectory ) CLASS TScripts
 
-   local aFile
    local aDirectory  := {}
-   local aFilesHbr   := {}
 
-   aDirectory        := Directory( cDirectorio + "*.prg" )
+   aDirectory        := aDirectoryEventScript( cDirectory ) 
 
    if !empty( aDirectory )
+      Return ( ::getCompileFiles( aDirectory ) )
+   end if
+
+Return ( {} )
+
+//---------------------------------------------------------------------------//
+
+METHOD getCompileFiles( aDirectory ) CLASS TScripts
+
+   local aFile
+   local aFilesHbr   := {}
 
       for each aFile in aDirectory
 
-         if !empty( cDirectorio + aFile[1] )
-            ::cFicheroPrg  := cDirectorio + aFile[1]
-            ::cFicheroHbr  := strtran( cDirectorio + aFile[1], ".prg", ".hbr" )
+         if !empty( aFile[1] )
+            ::cFicheroPrg  := aFile[1]
+            ::cFicheroHbr  := strtran( aFile[1], ".prg", ".hbr" )
          end if 
 
          ::CompilarFicheroScript( .f. )
@@ -570,8 +612,6 @@ METHOD getCompileHbr( cDirectorio ) CLASS TScripts
          end if
 
       next 
-
-   end if 
 
 Return ( aFilesHbr )
 

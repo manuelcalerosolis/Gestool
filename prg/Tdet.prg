@@ -107,7 +107,7 @@ CLASS TDet
    METHOD setPathBeforeAppend()
    METHOD setPathAfterAppend()
 
-   METHOD getCompileHbrDirectory( cDirectory )        INLINE ( TScripts():getCompileHbr( cPatScript() + cDirectory + "\" ) )
+   METHOD getCompileHbrDirectory( cDirectory )        INLINE ( TScripts():getCompileHbr( cDirectory + "\" ) )
 
    METHOD runScriptBeforeAppend( uParam1 )            INLINE ( TScripts():runArrayScripts( ::aHbrBeforeAppend, uParam1 ) )
    METHOD runScriptAfterAppend( uParam1 )             INLINE ( TScripts():runArrayScripts( ::aHbrAfterAppend, uParam1 ) )
