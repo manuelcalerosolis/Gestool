@@ -7835,7 +7835,7 @@ function aColPedPrv()
    aAdd( aColPedPrv,  { "nLabel",    "N",  6,   0, "Unidades de etiquetas a imprimir", "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "cRefAux",   "C", 18,   0, "Referencia auxiliar",              "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "cRefAux2",  "C", 18,   0, "Segunda referencia auxiliar",      "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nPosPrint", "N", 4,   0, "Posición de impresión",            "'9999'",            "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nPosPrint", "N", 4,    0, "Posición de impresión",            "'9999'",            "", "(cDbfCol)" } )
 
 Return ( aColPedPrv )
 

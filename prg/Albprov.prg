@@ -1977,7 +1977,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
          ID       558 ;
 			OF 		oFld:aDialogs[1] ;
          WHEN     ( nMode == APPD_MODE .and. Empty( aTmp[_CNUMPED] ) ) ;
-         ACTION   ( GrpPed( aGet, aTmp, oBrwLin ) )
+         ACTION   ( GrpPed( aGet, aTmp, oBrwLin, nMode ) )
 
       REDEFINE GET aGet[ _CNUMPED ] VAR aTmp[ _CNUMPED ];
 			ID 		120 ;
@@ -5222,6 +5222,25 @@ Static Function cPedPrv( aGet, aTmp, oBrw, nMode )
                      ( dbfTmp )->nIvaLin5 := ( D():Articulos( nView ) )->pVtaIva5
                      ( dbfTmp )->nIvaLin6 := ( D():Articulos( nView ) )->pVtaIva6
 
+                     ( dbfTmp )->lNumSer  := ( D():Articulos( nView ) )->lNumSer
+                     ( dbfTmp )->lAutSer  := ( D():Articulos( nView ) )->lAutSer
+
+                     if ( ( dbfTmp )->lNumSer )
+
+                        if ( ( dbfTmp )->lAutSer )
+
+                              AutoNumerosSerie( dbfTmp, nMode )
+
+                        elseif !( dbfTmpSer )->( dbSeek( Str( ( dbfTmp )->nNumLin, 4 ) + ( dbfTmp )->cRef ) )
+
+                           msgStop( "Tiene que introducir números de serie para el artículo: " + (dbfTmp)->cDetalle )
+
+                           EditarNumerosSerie( dbfTmp, nMode )
+
+                        end if
+
+                     end if
+
                   end if
 
                   if lActCos()
@@ -6109,7 +6128,7 @@ Return cClr
 
 //----------------------------------------------------------------------------//
 
-STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
+STATIC FUNCTION GrpPed( aGet, aTmp, oBrw, nMode )
 
    local a
    local oDlg
@@ -6435,8 +6454,26 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                         ( dbfTmp )->nIvaLin5 := ( D():Articulos( nView ) )->pVtaIva5
                         ( dbfTmp )->nIvaLin6 := ( D():Articulos( nView ) )->pVtaIva6
 
-                     end if
+                        ( dbfTmp )->lNumSer  := ( D():Articulos( nView ) )->lNumSer
+                        ( dbfTmp )->lAutSer  := ( D():Articulos( nView ) )->lAutSer
 
+                        if ( ( dbfTmp )->lNumSer )
+
+                           if ( ( dbfTmp )->lAutSer )
+   
+                              AutoNumerosSerie( dbfTmp, nMode )
+   
+                           elseif !( dbfTmpSer )->( dbSeek( Str( ( dbfTmp )->nNumLin, 4 ) + ( dbfTmp )->cRef ) )
+   
+                              msgStop( "Tiene que introducir números de serie para el artículo: " + (dbfTmp)->cDetalle )
+   
+                              EditarNumerosSerie( dbfTmp, nMode )
+   
+                           end if
+   
+                        end if 
+
+                     end if
 
                      if lCalCaj()
 
@@ -6559,6 +6596,25 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                      ( dbfTmp )->nIvaLin4 := ( D():Articulos( nView ) )->pVtaIva4
                      ( dbfTmp )->nIvaLin5 := ( D():Articulos( nView ) )->pVtaIva5
                      ( dbfTmp )->nIvaLin6 := ( D():Articulos( nView ) )->pVtaIva6
+
+                     ( dbfTmp )->lNumSer  := ( D():Articulos( nView ) )->lNumSer
+                     ( dbfTmp )->lAutSer  := ( D():Articulos( nView ) )->lAutSer
+
+                     if ( ( dbfTmp )->lNumSer )
+
+                        if ( ( dbfTmp )->lAutSer )
+   
+                           AutoNumerosSerie( dbfTmp, nMode )
+   
+                        elseif !( dbfTmpSer )->( dbSeek( Str( ( dbfTmp )->nNumLin, 4 ) + ( dbfTmp )->cRef ) )
+   
+                           msgStop( "Tiene que introducir números de serie para el artículo: " + (dbfTmp)->cDetalle )
+   
+                           EditarNumerosSerie( dbfTmp, nMode )
+   
+                        end if
+   
+                     end if 
 
                   end if
 
@@ -7040,10 +7096,21 @@ Static Function EditarNumerosSerie( aTmp, nMode )
 
    oNumerosSerie:nMode              := nMode
 
-   oNumerosSerie:cCodArt            := aTmp[ _CREF    ]
-   oNumerosSerie:cCodAlm            := aTmp[ _CALMLIN ]
-   oNumerosSerie:nNumLin            := aTmp[ _NNUMLIN ]
-   oNumerosSerie:lAutoSerializacion := aTmp[ _LAUTSER ]
+   if IsArray( aTmp )
+
+      oNumerosSerie:cCodArt            := aTmp[ _CREF    ]
+      oNumerosSerie:cCodAlm            := aTmp[ _CALMLIN ]
+      oNumerosSerie:nNumLin            := aTmp[ _NNUMLIN ]
+      oNumerosSerie:lAutoSerializacion := aTmp[ _LAUTSER ]
+      
+   else 
+
+      oNumerosSerie:cCodArt            := ( aTmp )->cRef   
+      oNumerosSerie:cCodAlm            := ( aTmp )->cAlmLin
+      oNumerosSerie:nNumLin            := ( aTmp )->nNumLin
+      oNumerosSerie:lAutoSerializacion := ( aTmp )->lAutSer
+
+   end if 
 
    oNumerosSerie:nTotalUnidades     := nTotNAlbPrv( aTmp )
 
