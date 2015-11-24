@@ -3045,6 +3045,22 @@ return ( hash )
 
 //---------------------------------------------------------------------------//
 
+function hashIndex( aItems )
+
+   local aItem
+   local hash        := {=>}
+
+   for each aItem in aItems
+      if !empty( aItem[1] )
+         hSet( hash, aItem[1], aItem[2] )      
+      end if
+   next
+
+return ( hash )
+
+//---------------------------------------------------------------------------//
+
+
 function getFieldNameFromDictionary( cName, hashDictionary )
 
   local cFieldName  := ""

@@ -229,7 +229,19 @@ Return ( lRet )
 
 //---------------------------------------------------------------------------//
 
+Function lSeekKeySimple( xCadena, xAlias )
+
+Return ( lSeekKey( xCadena, xAlias, .f. ) )
+
+//---------------------------------------------------------------------------//
+
 Function lSeekKeyType( xCadena, xAlias )
+
+Return ( lSeekKey( xCadena, xAlias, .t. ) )
+
+//---------------------------------------------------------------------------//
+
+Function lSeekKey( xCadena, xAlias, lScope )
 
    local nRec
    local lRet              := .f.
@@ -243,26 +255,34 @@ Function lSeekKeyType( xCadena, xAlias )
       return .f.
    end if
 
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   DEFAULT lScope          := .t.
+
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   nRec           := ( xAlias )->( Recno() )
+   nRec                    := ( xAlias )->( Recno() )
 
    if !empty( xCadena )
 
-      ( xAlias )->( OrdScope( 0, nil ) )
-      ( xAlias )->( OrdScope( 1, nil ) )
+      if lScope
+         ( xAlias )->( OrdScope( 0, nil ) )
+         ( xAlias )->( OrdScope( 1, nil ) )
+      end if 
 
       do case
       case cType == "D"
 
          if len( Rtrim( xCadena ) ) == 10
             if ( xAlias )->( dbSeek( Ctod( xCadena ), .t. ) )
-               ( xAlias )->( OrdScope( 0, Ctod( xCadena ) ) )
-               ( xAlias )->( OrdScope( 1, Ctod( xCadena ) ) )
+               if lScope
+                  ( xAlias )->( OrdScope( 0, Ctod( xCadena ) ) )
+                  ( xAlias )->( OrdScope( 1, Ctod( xCadena ) ) )
+               end if 
             else
-               ( xAlias )->( OrdScope( 0, nil ) )
-               ( xAlias )->( OrdScope( 1, nil ) )
+               if lScope
+                  ( xAlias )->( OrdScope( 0, nil ) )
+                  ( xAlias )->( OrdScope( 1, nil ) )
+               end if 
             end if
          end if
 
@@ -280,8 +300,10 @@ Function lSeekKeyType( xCadena, xAlias )
 
          if ( xAlias )->( dbSeek( xCadena, .t. ) )
 
-            ( xAlias )->( OrdScope( 0, xCadena ) )
-            ( xAlias )->( OrdScope( 1, xCadena ) )
+            if lScope
+               ( xAlias )->( OrdScope( 0, xCadena ) )
+               ( xAlias )->( OrdScope( 1, xCadena ) )
+            end if 
 
             lRet     := .t.
 
@@ -331,13 +353,22 @@ return ( lRet )
 
 //---------------------------------------------------------------------------//
 
-Function seekDocumento( xCadena, xAlias, nLen )
+Function seekDocumentoSimple( xCadena, xAlias, nLen )
+
+Return seekDocumento( xCadena, xAlias, nLen, .f. )
+
+//---------------------------------------------------------------------------//
+
+Function seekDocumento( xCadena, xAlias, nLen, lScope )
    
    local n
    local nRec
    local cPre
    local cPos
    local lRet        := .f.
+
+   DEFAULT nLen      := 12
+   DEFAULT lScope    := .t.
 
    nRec              := ( xAlias )->( Recno() )
 
@@ -348,8 +379,10 @@ Function seekDocumento( xCadena, xAlias, nLen )
 
       if ( xAlias )->( dbSeek( cPre + cPos, .f. ) )
 
-         ( xAlias )->( OrdScope( 0, cPre + cPos ) )
-         ( xAlias )->( OrdScope( 1, cPre + cPos ) )
+         if lScope
+            ( xAlias )->( OrdScope( 0, cPre + cPos ) )
+            ( xAlias )->( OrdScope( 1, cPre + cPos ) )
+         end if 
 
          lRet  := .t.
          

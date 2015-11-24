@@ -1436,6 +1436,30 @@ Return ( fErase( cTable ) )
 
 //----------------------------------------------------------------------------//
 
+Function buildIndex( cDataBase, cDriver, aIndex )
+
+   local cAlias
+   local aCurrent
+
+   dbUseArea( .t., cDriver, databaseFileName( cDataBase ), cCheckArea( "Alias", @cAlias ), .f. )
+
+   if !( cAlias )->( neterr() )
+      ( cAlias)->( __dbPack() )
+
+      for each aCurrent in aIndex
+         ( cAlias )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+         ( cAlias )->( ordCreate( databaseFileIndex( cDataBase ), aCurrent[ 2 ], aCurrent[ 3 ], aCurrent[ 4 ] ) )
+      next 
+
+      ( cAlias )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla : " + cDataBase )
+   end if
+
+Return ( nil )
+
+//----------------------------------------------------------------------------//
+   
 FUNCTION bCheck2Block( cChar, lMessage )
 
    local cType
@@ -2504,6 +2528,24 @@ Return .f.
 
 //--------------------------------------------------------------------------//
 
+Function databaseFileName( cFile )
+
+Return ( cFile + ".Dbf" )
+
+//--------------------------------------------------------------------------//
+
+Function databaseFileIndex( cFile )
+
+Return ( cFile + ".Cdx" )
+
+//--------------------------------------------------------------------------//
+
+Function databaseFileMemo( cFile )
+
+Return ( cFile + ".Fpt" )
+
+//--------------------------------------------------------------------------//
+
 Function dbfErase( cFileName )
 
    if Empty( cFileName )
@@ -2514,35 +2556,23 @@ Function dbfErase( cFileName )
       dbDrop( cFileName )
    end if
 
-   if file( cFileName + ".Dbf" )
-      if fErase( cFileName + ".Dbf" ) == -1
+   if file( databaseFileName( cFileName ) )
+      if ferase( databaseFileName( cFileName ) ) == -1
          Return .f.
       end if
    end if
 
-   if file( cFileName + ".Cdx" )
-      if fErase( cFileName + ".Cdx" ) == -1
+   if file( databaseFileIndex( cFileName ) )
+      if fErase( databaseFileIndex( cFileName ) ) == -1
          Return .f.
       end if
    end if
 
-   if file( cFileName + ".Fpt" )
-      if fErase( cFileName + ".Fpt" ) == -1
+   if file( databaseFileMemo( cFileName ) )
+      if fErase( databaseFileMemo( cFileName ) ) == -1
          Return .f.
       end if
    end if
-
-#ifdef __SQLLIB__
-
-   if lExistTable( cFileName )
-      sr_DropTable( cFileName )
-   end if
-
-   if lExistTable( cFileName + ".Dbf" )
-      sr_DropTable( cFileName + ".Dbf" )
-   end if
-
-#endif
 
 Return .t.
 

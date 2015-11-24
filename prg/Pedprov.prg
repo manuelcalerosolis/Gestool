@@ -7116,7 +7116,7 @@ FUNCTION rxPedPrv( cPath, cDriver )
    if !lExistTable( cPath + "PedProvT.Dbf", cDriver ) .or. ;
       !lExistTable( cPath + "PedProvL.Dbf", cDriver ) .or. ;
       !lExistTable( cPath + "PedPrvI.Dbf", cDriver )  .or. ;
-      !lExistTable( cPath + "PEDPRVD.DBF", cDriver )
+      !lExistTable( cPath + "PedPrvD.Dbf", cDriver )
       createFiles( cPath, cDriver )
    end if
 
@@ -7125,64 +7125,9 @@ FUNCTION rxPedPrv( cPath, cDriver )
    fEraseIndex( cPath + "PedProvT.Cdx", cDriver )
    fEraseIndex( cPath + "PedProvL.Cdx", cDriver )
    fEraseIndex( cPath + "PedPrvI.Cdx", cDriver )
-   fEraseIndex( cPath + "PEDPRVD.CDX", cDriver )
+   fEraseIndex( cPath + "PedPrvD.Cdx", cDriver )
 
-   dbUseArea( .t., cDriver, cPath + "PedProvT.Dbf", cCheckArea( "PEDPROVT", @cPedPrvT ), .f. )
-   if !( cPedPrvT )->( neterr() )
-      ( cPedPrvT)->( __dbPack() )
-
-      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedPrvT)->( ordCreate( cPath + "PedProvT.Cdx", "NNUMPED", "CSERPED + STR( NNUMPED ) + CSUFPED", {|| Field->CSERPED + STR( Field->nNumPed ) + Field->cSufPed } ) )
-
-      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedPrvT)->( ordCreate( cPath + "PedProvT.Cdx", "DFECPED", "DFECPED", {|| Field->DFECPED } ) )
-
-      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedPrvT)->( ordCreate( cPath + "PedProvT.Cdx", "DFECENT", "DFECENT", {|| Field->DFECENT } ) )
-
-      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedPrvT)->( ordCreate( cPath + "PedProvT.Cdx", "CCODPRV", "CCODPRV", {|| Field->CCODPRV } ) )
-
-      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedPrvT)->( ordCreate( cPath + "PedProvT.Cdx", "CNOMPRV", "Upper( CNOMPRV )", {|| Upper( Field->CNOMPRV ) } ) )
-
-      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedPrvT)->( ordCreate( cPath + "PedProvT.Cdx", "nNumPedYea", "Str( Year( dFecPed ) ) + CSERPED + STR( NNUMPED ) + CSUFPED", {|| Str( Year( Field->dFecPed ) ) + Field->CSERPED + STR( Field->nNumPed ) + Field->cSufPed } ) )
-
-      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedPrvT)->( ordCreate( cPath + "PedProvT.Cdx", "dFecPedYea", "Str( Year( dFecPed ) ) + Dtoc( DFECPED )", {|| Str( Year( Field->dFecPed ) ) + Dtoc( Field->DFECPED ) } ) )
-
-      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedPrvT)->( ordCreate( cPath + "PedProvT.Cdx", "dFecEntYea", "Str( Year( dFecPed ) ) + Dtoc( DFECENT )", {|| Str( Year( Field->dFecPed ) ) + Dtoc( Field->DFECENT ) } ) )
-
-      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedPrvT)->( ordCreate( cPath + "PedProvT.Cdx", "cCodPrvYea", "Str( Year( dFecPed ) ) + CCODPRV", {|| Str( Year( Field->dFecPed ) ) + Field->CCODPRV } ) )
-
-      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedPrvT)->( ordCreate( cPath + "PedProvT.Cdx", "cNomPrvYea", "Str( Year( dFecPed ) ) + Upper( CNOMPRV )", {|| Str( Year( Field->dFecPed ) ) + Upper( Field->CNOMPRV ) } ) )
-
-      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedPrvT)->( ordCreate( cPath + "PedProvT.Cdx", "NESTADO", "NESTADO", {|| Field->NESTADO } ) )
-
-      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedPrvT)->( ordCreate( cPath + "PedProvT.Cdx", "cTurPed", "cTurPed + cSufPed + cCodCaj", {|| Field->cTurPed + Field->cSufPed + Field->cCodCaj } ) )
-
-      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedPrvT)->( ordCreate( cPath + "PedProvT.Cdx", "cPedCli", "cNumPedCli", {|| Field->cNumPedCli } ) )
-
-      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedPrvT)->( ordCreate( cPath + "PedProvT.Cdx", "cCodUsr", "cCodUsr + Dtos( dFecChg ) + cTimChg", {|| Field->cCodUsr + Dtos( Field->dFecChg ) + Field->cTimChg } ) )
-
-      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedPrvT)->( ordCreate( cPath + "PedProvT.Cdx", "cNumAlb", "cNumAlb", {|| Field->cNumAlb } ) )
-
-      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedPrvT)->( ordCreate( cPath + "PedProvT.Cdx", "iNumPed", "'01' + CSERPED + STR( NNUMPED ) + CSUFPED", {|| '01' + Field->CSERPED + STR( Field->nNumPed ) + Field->cSufPed } ) )
-
-      ( cPedPrvT )->( dbCloseArea() )
-   else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de proveedores" )
-   end if
+   buildIndex( cPath + "PedProvT", cDriver, aIndexPedidoProveedor() )
 
    dbUseArea( .t., cDriver, cPath + "PedProvL.Dbf", cCheckArea( "PEDPROVL", @cPedPrvT ), .f. )
    if !( cPedPrvT )->( neterr() )
@@ -7209,7 +7154,7 @@ FUNCTION rxPedPrv( cPath, cDriver )
       ( cPedPrvT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cPedPrvT )->( ordCreate( cPath + "PedProvL.Cdx", "iNumPed", "'01' + cSerPed + Str( nNumPed ) + cSufPed", {|| '01' + Field->cSerPed + Str( Field->nNumPed ) + Field->cSufPed } ) )
 
-      ( cPedPrvT )->( ordCondSet( "!Deleted() .and. nEstado != 3", {|| !Deleted() .and. Field->nEstado != 3 } ) )
+      ( cPedPrvT )->( ordCondSet( "!Deleted() .and. Field->nEstado != 3", {|| !Deleted() .and. Field->nEstado != 3 } ) )
       ( cPedPrvT )->( ordCreate( cPath + "PedProvL.Cdx", "cStkFast", "cRef + cAlmLin", {|| Field->cRef + Field->cAlmLin }, ) )
 
       ( cPedPrvT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
@@ -7730,7 +7675,32 @@ return ( aBase )
 
 //---------------------------------------------------------------------------//
 
-function aCalPedPrv()
+Function aIndexPedidoProveedor()
+
+   local aIndex   := {}
+
+   aAdd( aIndex, { "Id",                  "nNumPed",     "cSerPed + str( nNumPed ) + cSufPed",                          {|| Field->cSerPed + str( Field->nNumPed ) + Field->cSufPed } } )
+   aAdd( aIndex, { "Fecha",               "dFecPed",     "dFecPed",                                                     {|| Field->dFecPed } } )
+   aAdd( aIndex, { "FechaEntrada",        "dFecEnt",     "dFecEnt",                                                     {|| Field->dFecEnt } } )
+   aAdd( aIndex, { "CodigoEntidad",       "cCodPrv",     "cCodPrv",                                                     {|| Field->cCodPrv } } )
+   aAdd( aIndex, { "NombreEntidad",       "cNomPrv",     "Upper( cNomPrv )",                                            {|| Upper( Field->cNomPrv ) } } )
+   aAdd( aIndex, { "AnnoId",              "nNumPedYea",  "str( Year( dFecPed ) ) + cSerPed + str( nNumPed ) + cSufPed", {|| str( Year( Field->dFecPed ) ) + Field->cSerPed + str( Field->nNumPed ) + Field->cSufPed } } )
+   aAdd( aIndex, { "AnnoFecha",           "dFecPedYea",  "str( Year( dFecPed ) ) + Dtoc( dFecPed )",                    {|| str( Year( Field->dFecPed ) ) + Dtoc( Field->dFecPed ) } } )
+   aAdd( aIndex, { "AnnoFechaEntrada",    "dFecEntYea",  "str( Year( dFecPed ) ) + Dtoc( dFecEnt )",                    {|| str( Year( Field->dFecPed ) ) + Dtoc( Field->dFecEnt ) } } )
+   aAdd( aIndex, { "AnnoEntidad",         "cCodPrvYea",  "str( Year( dFecPed ) ) + cCodPrv",                            {|| str( Year( Field->dFecPed ) ) + Field->cCodPrv } } )
+   aAdd( aIndex, { "AnnoNombreEntidad",   "cNomPrvYea",  "str( Year( dFecPed ) ) + Upper( cNomPrv )",                   {|| str( Year( Field->dFecPed ) ) + Upper( Field->cNomPrv ) } } )
+   aAdd( aIndex, { "Estado",              "nEstado",     "nEstado",                                                     {|| Field->nEstado } } )
+   aAdd( aIndex, { "Turno",               "cTurPed",     "cTurPed + cSufPed + cCodCaj",                                 {|| Field->cTurPed + Field->cSufPed + Field->cCodCaj } } )
+   aAdd( aIndex, { "IdPedidoCliente",     "cPedCli",     "cNumPedCli",                                                  {|| Field->cNumPedCli } } )
+   aAdd( aIndex, { "IdUsuario",           "cCodUsr",     "cCodUsr + Dtos( dFecChg ) + cTimChg",                         {|| Field->cCodUsr + Dtos( Field->dFecChg ) + Field->cTimChg } } )
+   aAdd( aIndex, { "IdAlbaranProveedor",  "cNumAlb",     "cNumAlb",                                                     {|| Field->cNumAlb } } )
+   aAdd( aIndex, { "IdInforme",           "iNumPed",     "'01' + cSerPed + str( nNumPed ) + cSufPed",                   {|| '01' + Field->cSerPed + str( Field->nNumPed ) + Field->cSufPed } } )
+
+Return ( aIndex )
+
+//---------------------------------------------------------------------------//
+
+Function aCalPedPrv()
 
    local aCalPedPrv  := {  { "aTotIva[1,1]",                                              "N", 16,  6, "Bruto primer tipo de " + cImp(),    "cPirDivPed",  "!empty( aTotIva[1,1] ) .and. lEnd" },;
                            { "aTotIva[2,1]",                                              "N", 16,  6, "Bruto segundo tipo de " + cImp(),   "cPirDivPed",  "!empty( aTotIva[2,1] ) .and. lEnd" },;

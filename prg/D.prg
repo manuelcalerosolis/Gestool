@@ -44,6 +44,7 @@ CLASS D
    METHOD getHashRecord( cDatabase, nView )
    METHOD getFieldDictionary( cField, cDataTable, nView )
    METHOD getFieldFromAliasDictionary( cField, cAlias, aDictionary )   
+   METHOD getIndexFromAliasDictionary( cIndex, aIndex )     INLINE ( hGet( aIndex, cIndex ) )
 
    METHOD getHashArray( aRecord, cDatabase, nView )
    METHOD getHashTable( cAlias, cDatabase, nView )
@@ -65,6 +66,7 @@ CLASS D
    METHOD getId( cDatabase, nView )                         INLINE ( ( ::Get( cDatabase, nView ) )->( eval( TDataCenter():getIdBlock( cDatabase ) ) ) )
    METHOD getDictionary( cDatabase )                        INLINE ( TDataCenter():getDictionary( cDatabase ) )  
    METHOD getDictionaryFromArea( cArea )                    INLINE ( TDataCenter():getDictionaryFromArea( cArea ) )   
+   METHOD getIndexFromArea( cArea )                         INLINE ( TDataCenter():getIndexFromArea( cArea ) )   
 
    // Presupuestos de clientes-------------------------------------------------
 
@@ -979,6 +981,9 @@ METHOD getFieldFromAliasDictionary( cField, cAlias, aDictionary ) CLASS D
    endif
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 
 //---------------------------------------------------------------------------//
 

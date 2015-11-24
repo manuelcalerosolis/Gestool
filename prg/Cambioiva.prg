@@ -18,23 +18,30 @@ CLASS TConversionDocumentos
    DATA nView
    DATA lOpenFiles
    DATA cAlias                            INIT ""
-   DATA cDictionary
+   DATA aDictionary
+   DATA aIndex
 
    DATA cDocument   
    DATA aDocuments   
 
    DATA oSearch
    DATA cSearch
-   DATA oSort
-   DATA cSort
-   DATA aSort                             INIT { "Número documento" }
+   DATA oSortDocument
+   DATA cSortDocument                     INIT "Número"
+   DATA aSortDocument                     INIT { "Número", "Fecha", "Nombre" }
    DATA oBrwDocuments
 
    METHOD New()
 
    METHOD Dialog()
-      METHOD OpenFiles()
-      METHOD CloseFiles()
+      METHOD clickOnHeader( oColumn )
+      METHOD changeSortDocument()
+      METHOD changeSearch()
+      METHOD setOrderInColumn( oColumn )  INLINE ( aeval( ::oBrwDocuments:aCols, {|o| o:cOrder := '' } ),;
+                                                   oColumn:cOrder := 'A' )
+      
+   METHOD OpenFiles()
+   METHOD CloseFiles()
 
    METHOD BotonSiguiente()
    METHOD BotonAnterior()
@@ -48,8 +55,10 @@ CLASS TConversionDocumentos
 
    METHOD setAlias( cAlias )              INLINE ( ::cAlias := cAlias )
    METHOD getAlias()                      INLINE ( ::cAlias )
-   METHOD setDictionary( cDictionary )    INLINE ( ::cDictionary := cDictionary )
-   METHOD getDictionary( cDictionary )    INLINE ( ::cDictionary )
+   METHOD setDictionary( aDictionary )    INLINE ( ::aDictionary := aDictionary )
+   METHOD getDictionary()                 INLINE ( ::aDictionary )
+   METHOD setIndex( aIndex )              INLINE ( ::aIndex := aIndex )
+   METHOD getIndex()                      INLINE ( ::aIndex )
 
       METHOD getId()                      INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getAlias(), ::getDictionary() ) + "/" + alltrim( str( D():getFieldFromAliasDictionary( "Numero", ::getAlias(), ::getDictionary() ) ) ) )
       METHOD getDate()                    INLINE ( D():getFieldFromAliasDictionary( "Fecha", ::getAlias(), ::getDictionary() ) )
@@ -90,8 +99,6 @@ METHOD New()
 
    ::setDocumentPedidosProveedores()
 
-   msgAlert( ::getName(), "getName" )
-
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
@@ -125,19 +132,25 @@ METHOD Dialog()
       VAR      ::cSearch ;
       ID       100 ;
       PICTURE  "@!" ;
-      ON CHANGE( msgAlert( "changeSearch" ) );
       BITMAP   "Find" ;
       OF       ::oFld:aDialogs[2]
 
-   REDEFINE COMBOBOX ::oSort ;
-      VAR      ::cSort ;
-      ITEMS    ::aSort ;
+   ::oSearch:bChange                := {|| ::changeSearch() }
+
+   REDEFINE COMBOBOX ::oSortDocument ;
+      VAR      ::cSortDocument ;
+      ITEMS    ::aSortDocument ;
       ID       110 ;
-      ON CHANGE( ::oBrwDocuments:Refresh() );
+      ON CHANGE( ::changeSortDocument() );
       OF       ::oFld:aDialogs[2]
+
+   ::oSortDocument:bChange          := {|| ::changeSortDocument() }
+
+   // browse de documentos-----------------------------------------------------
 
    ::oBrwDocuments                  := IXBrowse():New( ::oFld:aDialogs[2] )
 
+   ::oBrwDocuments:lAutoSort        := .f.
    ::oBrwDocuments:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrwDocuments:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
@@ -149,36 +162,51 @@ METHOD Dialog()
       :cHeader                      := "Número"
       :bEditValue                   := {|| ::getId() }
       :nWidth                       := 80
+      :cSortOrder                   := "Id"
+      :bLClickHeader                := {| nMRow, nMCol, nFlags, oColumn | ::clickOnHeader( oColumn ) }
    end with
 
    with object ( ::oBrwDocuments:AddCol() )
       :cHeader                      := "Fecha"
       :bEditValue                   := {|| ::getDate() }
       :nWidth                       := 80
+      :cSortOrder                   := "Fecha"
+      :bLClickHeader                := {| nMRow, nMCol, nFlags, oColumn | ::clickOnHeader( oColumn ) }
    end with
 
    with object ( ::oBrwDocuments:AddCol() )
       :cHeader                      := "Nombre"
       :bEditValue                   := {|| ::getName() }
-      :nWidth                       := 300
+      :nWidth                       := 400
+      :cSortOrder                   := "Fecha"
+      :bLClickHeader                := {| nMRow, nMCol, nFlags, oColumn | ::clickOnHeader( oColumn ) }
    end with
 
    with object ( ::oBrwDocuments:AddCol() )
       :cHeader                      := "Base"
       :bEditValue                   := {|| ::getTotalNeto() }
+      :cEditPicture                 := cPirDiv()
       :nWidth                       := 80
+      :nDataStrAlign                := 1
+      :nHeadStrAlign                := 1
    end with
 
    with object ( ::oBrwDocuments:AddCol() )
       :cHeader                      := cImp()
       :bEditValue                   := {|| ::getTotalImpuesto() }
+      :cEditPicture                 := cPirDiv()
       :nWidth                       := 80
+      :nDataStrAlign                := 1
+      :nHeadStrAlign                := 1
    end with
 
    with object ( ::oBrwDocuments:AddCol() )
       :cHeader                      := "Total"
       :bEditValue                   := {|| ::getTotalDocumento() }
+      :cEditPicture                 := cPirDiv()
       :nWidth                       := 80
+      :nDataStrAlign                := 1
+      :nHeadStrAlign                := 1
    end with
 
    ::oBrwDocuments:CreateFromResource( 120 )
@@ -306,8 +334,72 @@ METHOD setDocumentType( cTableName )
 
    ::setAlias(       D():Get( cTableName, ::nView ) )
    ::setDictionary(  D():getDictionaryFromArea( cTableName ) )
+   ::setIndex(       D():getIndexFromArea( cTableName ) )
+
+   ::setOrderInColumn( ::oBrwDocuments:aCols[ 1 ] )   
 
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD clickOnHeader( oColumn )
+   
+   local cTag
+
+   if !empty( oColumn ) .and. !empty( oColumn:cSortOrder )
+      cTag           := D():getIndexFromAliasDictionary( oColumn:cSortOrder, ::getIndex() ) 
+   end if 
+
+   if empty( cTag )
+      Return ( Self )
+   end if 
+
+   ( ::getAlias() )->( ordsetfocus( cTag ) )
+
+   ::setOrderInColumn( oColumn )
+
+   ::oSortDocument:Set( oColumn:cHeader )
+
+   ::oBrwDocuments:Refresh()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD changeSortDocument()
+
+   local nScan
+   local cSort    := ::oSortDocument:varGet()
+
+   nScan          := ascan( ::oBrwDocuments:aCols, {| oColumn | oColumn:cHeader == cSort } )
+   if nScan != 0
+      ::clickOnHeader( ::oBrwDocuments:aCols[ nScan ] )
+   end if 
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD changeSearch()
+
+   local lSeek
+   local cSearch  := ::oSearch:varGet()
+
+   lSeek          := lSeekKeySimple( cSearch, ::getAlias() ) // lMiniSeek( xCadena, cAlias, ::cSearchType, ::nLenSearchType )
+
+   if ( !lSeek .and. ( ( ::getAlias )->( ordnumber() ) == 1 ) )
+      lSeek       := seekDocumentoSimple( cSearch, ::getAlias() )          
+   end if 
+
+   if lSeek 
+      ::oBrwDocuments:Refresh()
+   end if 
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+
+
+
 

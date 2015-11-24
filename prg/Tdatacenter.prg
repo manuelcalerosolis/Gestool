@@ -199,6 +199,7 @@ CLASS TDataCenter
    METHOD getDictionary( cDataTable )
    METHOD getDictionaryFromArea( cArea )
    METHOD getDeFaultValue( cDataTable )  
+   METHOD getIndexFromArea( cArea )
 
    METHOD DataName( cDatabase )              INLINE   ( if( lAIS(), upper( cPatDat() + cDatabase ), upper( cDatabase ) ) )
    METHOD EmpresaName( cDatabase )           INLINE   ( if( lAIS(), upper( cPatEmp() + cDatabase ), upper( cDatabase ) ) )
@@ -1134,6 +1135,20 @@ METHOD getDictionaryFromArea( cArea )
    end if 
 
 Return ( aDictionary )
+
+//---------------------------------------------------------------------------//
+
+METHOD getIndexFromArea( cArea )
+
+   local oTable
+   local hIndex
+
+   oTable            := ::ScanDataArea( cArea )
+   if !empty( oTable )
+      hIndex         := oTable:hIndex 
+   end if 
+
+Return ( hIndex )
 
 //---------------------------------------------------------------------------//
 
@@ -2830,6 +2845,7 @@ METHOD BuildEmpresa()
    oDataTable:bSyncFile    := {|| SynPedPrv( cPatEmp() ) }
    oDatatable:aDictionary  := hashDictionary( aItmPedPrv() )
    oDatatable:aDefaultValue:= hashDefaultValue( aItmPedPrv() )
+   oDatatable:hIndex       := hashIndex( aIndexPedidoProveedor() )
    oDataTable:cDescription := "Pedidos de proveedor"
    oDataTable:bCreateFile  := {| cPath | mkPedPrv( cPath ) }
    oDataTable:bCreateIndex := {| cPath | rxPedPrv( cPath ) }
@@ -5224,6 +5240,7 @@ CLASS TDataTable
    DATA  bCreateFile
    DATA  bCreateIndex   
    DATA  aDictionary
+   DATA  hIndex         
    DATA  aDefaultValue
    DATA  bId
 
