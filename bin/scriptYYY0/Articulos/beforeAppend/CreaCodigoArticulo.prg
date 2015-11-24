@@ -3,19 +3,20 @@ function InicioHRB( aGet, aTmp, nView )
    local cCodigo  := ""
 
    if Empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Familia" ) ) ] )
-      MsgInfo( "La familia no puede estar vacía." )
+      MsgInfo( "La especie no puede estar vacía." )
       aGet[ ( D():Articulos( nView ) )->( fieldpos( "Familia" ) ) ]:SetFocus()
       Return .f.
    end if
 
-   if Empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodCate" ) ) ] )
-      MsgInfo( "La especie no puede estar vacía." )
-      aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodCate" ) ) ]:SetFocus()
-      Return .f.
+   if Len( AllTrim( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Familia" ) ) ] ) ) != 4
+      if !MsgYesNo( "La especie seleccionada no tiene el formato requerido", "¿Desea continuar?" )
+         aGet[ ( D():Articulos( nView ) )->( fieldpos( "Familia" ) ) ]:SetFocus()
+         Return .f.
+      end if
    end if
 
+   cCodigo        += AllTrim( RetFld( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Familia" ) ) ], D():Familias( nView ), "cFamCmb", "cCodFam" ) )
    cCodigo        += AllTrim( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Familia" ) ) ] )
-   cCodigo        += AllTrim( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodCate" ) ) ] )
    cCodigo        += getContador( cCodigo, nView )
 
    aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ]   := cCodigo

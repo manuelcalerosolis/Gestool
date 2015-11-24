@@ -972,7 +972,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 291, "Edit", WS_BORDER|WS_TABSTOP, 291, 270, 86, 11
   CONTROL "Código", -1, "Static", WS_GROUP, 49, 42, 33, 8
   CONTROL "Descripción", -1, "Static", WS_GROUP, 49, 54, 39, 8
-  CONTROL "Familia", -1, "Static", WS_GROUP, 49, 79, 33, 8
+  CONTROL "Familia", 900, "Static", WS_GROUP, 49, 79, 33, 8
   CONTROL "Tipo artículo", 888, "Static", WS_GROUP, 49, 91, 47, 8
   CONTROL "Categoría", 700, "Static", WS_GROUP, 49, 103, 35, 8
   CONTROL "Fabricante", -1, "Static", WS_GROUP, 49, 127, 47, 8
