@@ -76,7 +76,7 @@ Facant.prg              \
 Facrec.prg              \
 Factcli.prg             \
 TFacturaElectronica.prg \
-Rectprv.prg             \
+RectificativaProveedores.prg \
 Factprv.prg             \
 Familia.prg             \
 Fpago.prg               \
@@ -1108,7 +1108,7 @@ Facant.obj              \
 Facrec.obj              \
 Factcli.obj             \
 TFacturaElectronica.obj \
-Rectprv.obj             \
+RectificativaProveedores.obj \
 Factprv.obj             \
 Familia.obj             \
 Fpago.obj               \
@@ -2153,7 +2153,7 @@ $(OBJ)\Facant.obj               +
 $(OBJ)\Facrec.obj               +
 $(OBJ)\Factcli.obj              +
 $(OBJ)\TFacturaElectronica.obj  +
-$(OBJ)\Rectprv.obj              +
+$(OBJ)\RectificativaProveedores.obj +
 $(OBJ)\Factprv.obj              +
 $(OBJ)\Familia.obj              +
 $(OBJ)\Fpago.obj                +

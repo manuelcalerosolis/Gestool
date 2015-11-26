@@ -230,7 +230,7 @@ METHOD lGenerate() CLASS TDiaCAlb
          ::oDbf:cCodCli := ::oAlbCliT:cCodCli
          ::oDbf:cNomCli := ::oAlbCliT:cNomCli
          ::oDbf:dFecMov := ::oAlbCliT:dFecAlb
-         ::oDbf:dFecEnt := ::oAlbCliT:dFecEnv
+         ::oDbf:dFecEnt := if( ::oAlbCliT:dFecEnv == nil, cTos( "" ), ::oAlbCliT:dFecEnv )
 
          aTotTmp        := aTotAlbCli( ::oAlbCliT:CSERALB + Str( ::oAlbCliT:NNUMALB ) + ::oAlbCliT:CSUFALB, ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::cDivInf  )
 
