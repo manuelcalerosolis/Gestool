@@ -533,10 +533,10 @@ METHOD DefaultSelect() CLASS TSPECIALSEARCHARTICULO
    cSentencia        +=        "operario.cNomTra, "
    cSentencia        +=        "ruta.cDesRut "
    cSentencia        += "FROM " + cPatEmp() + "Articulo articulos "
-   cSentencia        += "LEFT JOIN " + cPatEmp() + "EstadoSat estadoSat on articulos.cCodEst = estadoSat.cCodigo "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "TipArt tipoArticulo on articulos.cCodTip = tipoArticulo.cCodTip "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "SatCliL lineasSat on dFecSat=(SELECT MAX(dFecSat) FROM " + cPatEmp() + "SatCliL WHERE cRef=articulos.Codigo ) AND cRef = articulos.Codigo "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "SatCliT cabecerasat on lineasSat.cSerSat = cabecerasat.cSerSat AND lineasSat.nNumSat = cabecerasat.nNumSat AND lineasSat.cSufSat = cabecerasat.cSufSat "
+   cSentencia        += "LEFT JOIN " + cPatEmp() + "EstadoSat estadoSat on cabeceraSat.cCodEst = estadoSat.cCodigo "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "OpeT operario on cabecerasat.cCodOpe = operario.cCodTra "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "Ruta ruta on cabecerasat.cCodRut = ruta.cCodRut "
    cSentencia        += "WHERE EstadoSat.nDisp=2 "
@@ -582,7 +582,7 @@ METHOD SearchArticulos() CLASS TSPECIALSEARCHARTICULO
    cSentencia        += ::cGetWhereSentencia()
    cSentencia        += ::cGetOrderBy()*/
 
-   cSentencia        += "SELECT articulos.Codigo, "
+/*   cSentencia        += "SELECT articulos.Codigo, "
    cSentencia        +=        "articulos.Nombre, "
    cSentencia        +=        "articulos.cDesUbi, "
    cSentencia        +=        "estadoSat.cNombre, "
@@ -608,7 +608,37 @@ METHOD SearchArticulos() CLASS TSPECIALSEARCHARTICULO
    cSentencia        += "LEFT JOIN " + cPatEmp() + "OpeT operario on cabecerasat.cCodOpe = operario.cCodTra "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "Ruta ruta on cabecerasat.cCodRut = ruta.cCodRut "
    cSentencia        += ::cGetWhereSentencia()
+   cSentencia        += ::cGetOrderBy()*/
+
+   cSentencia        += "SELECT articulos.Codigo, "
+   cSentencia        +=        "articulos.Nombre, "
+   cSentencia        +=        "articulos.cDesUbi, "
+   cSentencia        +=        "estadoSat.cNombre, "
+   cSentencia        +=        "estadoSat.nDisp, "
+   cSentencia        +=        "tipoArticulo.cCodTip, "
+   cSentencia        +=        "tipoArticulo.cNomTip, "
+   cSentencia        +=        "lineasSat.dFecSat, "
+   cSentencia        +=        "lineasSat.cSerSat, "
+   cSentencia        +=        "lineasSat.nNumSat, "
+   cSentencia        +=        "lineasSat.cSufSat, "
+   cSentencia        +=        "lineasSat.nCntAct, "
+   cSentencia        +=        "cabecerasat.cCodOpe, "
+   cSentencia        +=        "cabecerasat.cCodCli, "
+   cSentencia        +=        "cabecerasat.cNomCli, "
+   cSentencia        +=        "cabecerasat.cCodRut, "
+   cSentencia        +=        "operario.cNomTra, "
+   cSentencia        +=        "ruta.cDesRut "
+   cSentencia        += "FROM " + cPatEmp() + "Articulo articulos "
+   cSentencia        += "LEFT JOIN " + cPatEmp() + "TipArt tipoArticulo on articulos.cCodTip = tipoArticulo.cCodTip "
+   cSentencia        += "LEFT JOIN " + cPatEmp() + "SatCliL lineasSat on dFecSat=(SELECT MAX(dFecSat) FROM " + cPatEmp() + "SatCliL WHERE cRef=articulos.Codigo ) AND cRef = articulos.Codigo "
+   cSentencia        += "LEFT JOIN " + cPatEmp() + "SatCliT cabecerasat on lineasSat.cSerSat = cabecerasat.cSerSat AND lineasSat.nNumSat = cabecerasat.nNumSat AND lineasSat.cSufSat = cabecerasat.cSufSat "
+   cSentencia        += "LEFT JOIN " + cPatEmp() + "EstadoSat estadoSat on cabeceraSat.cCodEst = estadoSat.cCodigo "
+   cSentencia        += "LEFT JOIN " + cPatEmp() + "OpeT operario on cabecerasat.cCodOpe = operario.cCodTra "
+   cSentencia        += "LEFT JOIN " + cPatEmp() + "Ruta ruta on cabecerasat.cCodRut = ruta.cCodRut "
+   cSentencia        += ::cGetWhereSentencia()
    cSentencia        += ::cGetOrderBy()
+
+   LogWrite( cSentencia )
 
    if TDataCenter():ExecuteSqlStatement( cSentencia, "SelectArticulo" )
       ::oBrwArticulo:Refresh()
