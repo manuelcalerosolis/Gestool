@@ -104,7 +104,7 @@ Function Main( cCodEmp, cCodUsr, cIp )
 
       lAIS( .t. )
       cAdsIp( cAdsIp )
-      cData( cAdsData )
+      cAdsData( cAdsData )
       cAdsFile( cAdsFile )
 
       RddRegister(   'ADS', 1 )

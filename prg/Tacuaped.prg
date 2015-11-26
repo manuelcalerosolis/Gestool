@@ -194,7 +194,7 @@ METHOD lGenerate() CLASS TAcuAPed
       cExpLine       += ' .and. cRef >= "' + ::cArtOrg + '" .and. cRef <= "' + ::cArtDes + '"'
    end if
 
-   ::oPedCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliL:cFile ), ::oPedCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+   ::oPedCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliL:cFile ), ::oPedCliL:OrdKey(), ( cExpLine ), , , , , , , , .t. )
 
    /*Recorremos las cabeceras y líneas*/
 

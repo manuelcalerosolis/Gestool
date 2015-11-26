@@ -620,7 +620,7 @@ Return ( aFilesHbr )
 METHOD runArrayScripts( aScripts, uParam1 ) CLASS TScripts
 
    local cScript
-   local uReturn
+   local uReturn     := .t.
 
    if !Empty( aScripts )
 
