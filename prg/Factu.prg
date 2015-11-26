@@ -155,12 +155,14 @@ function Main( ParamsMain, ParamsSecond )
       // Conexion con el motor de base de datos--------------------------------
 
       with object ( TDataCenter() )
+
          :ConnectDataDictionary()
 
          if !:lAdsConnection
             msgStop( "Imposible conectar con GstApolo ADS data dictionary" )
             Return nil
          end if
+      
       end with
 
    else 
