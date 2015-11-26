@@ -41,39 +41,39 @@ static cCodigoAgente    := ""
 
 static dSysDate
 
-static cEmpUsr
-static cPatGrp
-static cPatCli
-static cPatArt
-static cPatPrv
-static cPatAlm
-static cPatEmp
-static cPatScriptEmp
-static cPatTmp
-static cPathPC
+static cEmpUsr          := ""
+static cPatGrp          := ""
+static cPatCli          := ""
+static cPatArt          := ""
+static cPatPrv          := ""
+static cPatAlm          := ""
+static cPatEmp          := ""
+static cPatScriptEmp    := ""
+static cPatTmp          := ""
+static cPathPC          := ""
 static cNombrePc        := ""
 
 static cUsrTik
 
 static oFastReport
 
-static hMapaAjuste   := {  "#,#0"   => { "Round" => 1,  "Incrementa" => 0.00,    "Decrementa" => 0.00,  "Ceros" => .t. } ,;
-                           "#,#5"   => { "Round" => 1,  "Incrementa" => 0.05,    "Decrementa" => -0.05,  "Ceros" => .f. } ,;
-                           "#,#9"   => { "Round" => 1,  "Incrementa" => 0.09,    "Decrementa" => -0.01,  "Ceros" => .f. } ,;
-                           "#,10"   => { "Round" => 0,  "Incrementa" => 0.10,    "Decrementa" => -0.90,  "Ceros" => .f. } ,;
-                           "#,20"   => { "Round" => 0,  "Incrementa" => 0.20,    "Decrementa" => -0.80,  "Ceros" => .f. } ,;
-                           "#,50"   => { "Round" => 0,  "Incrementa" => 0.50,    "Decrementa" => -0.50,  "Ceros" => .f. } ,;
-                           "#,90"   => { "Round" => 0,  "Incrementa" => 0.90,    "Decrementa" => -0.10,  "Ceros" => .f. } ,;
-                           "#,95"   => { "Round" => 0,  "Incrementa" => 0.95,    "Decrementa" => -0.05,  "Ceros" => .f. } ,;
-                           "#,99"   => { "Round" => 0,  "Incrementa" => 0.99,    "Decrementa" => -0.01,  "Ceros" => .f. } ,;
-                           "#,00"   => { "Round" => 0,  "Incrementa" => 1.00,    "Decrementa" => -9.00,  "Ceros" => .t. } ,;
-                           "1,00"   => { "Round" => -1, "Incrementa" => 11.00,   "Decrementa" => -19.00, "Ceros" => .f. } ,;
-                           "5,00"   => { "Round" => -1, "Incrementa" => 15.00,   "Decrementa" => -15.00, "Ceros" => .f. } ,;
-                           "9,00"   => { "Round" => -1, "Incrementa" => 19.00,   "Decrementa" => -19.00, "Ceros" => .f. } ,;
-                           "10,00"  => { "Round" => -2, "Incrementa" => 110.00,  "Decrementa" => 110.00,"Ceros" => .f. } ,;
-                           "20,00"  => { "Round" => -2, "Incrementa" => 120.00,  "Decrementa" => 120.00,"Ceros" => .f. } ,;
-                           "50,00"  => { "Round" => -2, "Incrementa" => 150.00,  "Decrementa" => 150.00,"Ceros" => .f. } ,;
-                           "100,00" => { "Round" => -3, "Incrementa" => 200.00,  "Decrementa" => 200.00,"Ceros" => .f. } }
+static hMapaAjuste      :=  { "#,#0"   => { "Round" => 1,  "Incrementa" => 0.00,    "Decrementa" => 0.00,   "Ceros" => .t. } ,;
+                              "#,#5"   => { "Round" => 1,  "Incrementa" => 0.05,    "Decrementa" => -0.05,  "Ceros" => .f. } ,;
+                              "#,#9"   => { "Round" => 1,  "Incrementa" => 0.09,    "Decrementa" => -0.01,  "Ceros" => .f. } ,;
+                              "#,10"   => { "Round" => 0,  "Incrementa" => 0.10,    "Decrementa" => -0.90,  "Ceros" => .f. } ,;
+                              "#,20"   => { "Round" => 0,  "Incrementa" => 0.20,    "Decrementa" => -0.80,  "Ceros" => .f. } ,;
+                              "#,50"   => { "Round" => 0,  "Incrementa" => 0.50,    "Decrementa" => -0.50,  "Ceros" => .f. } ,;
+                              "#,90"   => { "Round" => 0,  "Incrementa" => 0.90,    "Decrementa" => -0.10,  "Ceros" => .f. } ,;
+                              "#,95"   => { "Round" => 0,  "Incrementa" => 0.95,    "Decrementa" => -0.05,  "Ceros" => .f. } ,;
+                              "#,99"   => { "Round" => 0,  "Incrementa" => 0.99,    "Decrementa" => -0.01,  "Ceros" => .f. } ,;
+                              "#,00"   => { "Round" => 0,  "Incrementa" => 1.00,    "Decrementa" => -9.00,  "Ceros" => .t. } ,;
+                              "1,00"   => { "Round" => -1, "Incrementa" => 11.00,   "Decrementa" => -19.00, "Ceros" => .f. } ,;
+                              "5,00"   => { "Round" => -1, "Incrementa" => 15.00,   "Decrementa" => -15.00, "Ceros" => .f. } ,;
+                              "9,00"   => { "Round" => -1, "Incrementa" => 19.00,   "Decrementa" => -19.00, "Ceros" => .f. } ,;
+                              "10,00"  => { "Round" => -2, "Incrementa" => 110.00,  "Decrementa" => 110.00, "Ceros" => .f. } ,;
+                              "20,00"  => { "Round" => -2, "Incrementa" => 120.00,  "Decrementa" => 120.00, "Ceros" => .f. } ,;
+                              "50,00"  => { "Round" => -2, "Incrementa" => 150.00,  "Decrementa" => 150.00, "Ceros" => .f. } ,;
+                              "100,00" => { "Round" => -3, "Incrementa" => 200.00,  "Decrementa" => 200.00, "Ceros" => .f. } }
 
 //----------------------------------------------------------------------------//
 

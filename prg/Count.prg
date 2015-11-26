@@ -232,9 +232,7 @@ FUNCTION rxCount( cPath, oMeter )
       CreateFiles( cPath, oMeter )
    end if
 
-   /*
-   Comprobamos que los campos que tenemos son lo mismos q debemos tener--------
-   */
+   // Comprobamos que los campos que tenemos son lo mismos q debemos tener--------
 
    dbUseArea( .t., cDriver(), cPath + "nCount.Dbf", cCheckArea( "nCount", @dbf ), .f. )
 

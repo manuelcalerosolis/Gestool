@@ -243,17 +243,17 @@ Return ( self )
 
 METHOD defineDireccion() CLASS ViewEdit
 
-   TGridUrllink():Build(   {  "nTop"      => 120,;
-                              "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
-                              "cURL"      => "Dirección",;
-                              "oWnd"      => ::oDlg,;
-                              "oFont"     => oGridFont(),;
-                              "lPixel"    => .t.,;
-                              "nClrInit"  => nGridColor(),;
-                              "nClrOver"  => nGridColor(),;
-                              "nClrVisit" => nGridColor(),;
-                              "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
-                              "bAction"   => {|| ::oSender:runGridDirections() } } )
+   TGridUrllink():Build(                     {  "nTop"      => 120,;
+                                                "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
+                                                "cURL"      => "Dirección",;
+                                                "oWnd"      => ::oDlg,;
+                                                "oFont"     => oGridFont(),;
+                                                "lPixel"    => .t.,;
+                                                "nClrInit"  => nGridColor(),;
+                                                "nClrOver"  => nGridColor(),;
+                                                "nClrVisit" => nGridColor(),;
+                                                "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
+                                                "bAction"   => {|| ::oSender:runGridDirections() } } )
 
    ::getCodigoDireccion := TGridGet():Build( {  "nRow"      => 120,;
                                                 "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;

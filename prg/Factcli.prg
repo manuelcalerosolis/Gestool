@@ -19608,7 +19608,7 @@ function aColFacCli()
    aAdd( aColFacCli, { "cCodObr"  , "C",  10, 0, "Código de la dirección"                 , "Direccion",                   "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "cRefAux",   "C",  18, 0, "Referencia auxiliar"                    , "ReferenciaAuxiliar",          "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "cRefAux2",  "C",  18, 0, "Segunda referencia auxiliar"            , "ReferenciaAuxiliar2",         "", "( cDbfCol )", nil } )
-   aAdd( aColFacCli, { "nPosPrint", "N",   4, 0, "Posición de impresión"                  , "PosicionImpresion",                 "", "( cDbfCol )", nil } )
+   aAdd( aColFacCli, { "nPosPrint", "N",   4, 0, "Posición de impresión"                  , "PosicionImpresion",           "", "( cDbfCol )", nil } )
 
 return ( aColFacCli )
 

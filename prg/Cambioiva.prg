@@ -38,7 +38,7 @@ CLASS TConversionDocumentos
       METHOD changeSortDocument()
       METHOD changeSearch()
       METHOD setOrderInColumn( oColumn )  INLINE ( aeval( ::oBrwDocuments:aCols, {|o| o:cOrder := '' } ),;
-                                                   oColumn:cOrder := 'A' )
+                                                   if( empty( oColumn ), ::oBrwDocuments:aCols[ 1 ]:cOrder := 'A', oColumn:cOrder := 'A' ) )
       
    METHOD OpenFiles()
    METHOD CloseFiles()
@@ -336,7 +336,7 @@ METHOD setDocumentType( cTableName )
    ::setDictionary(  D():getDictionaryFromArea( cTableName ) )
    ::setIndex(       D():getIndexFromArea( cTableName ) )
 
-   ::setOrderInColumn( ::oBrwDocuments:aCols[ 1 ] )   
+   ::setOrderInColumn()   
 
 Return ( Self )
 

@@ -704,7 +704,7 @@ METHOD loadEmpresas()
    ::aEmpresas       := {}
 
    USE ( cPatDat() + "Empresa.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
-   SET ADSINDEX TO ( cPatDat() + "Empresa.Cdx" ) ADDITIVE
+//   SET ADSINDEX TO ( cPatDat() + "Empresa.Cdx" ) ADDITIVE
 
    while !( dbfEmp )->( eof() )
       if !( dbfEmp )->lGrupo
@@ -819,12 +819,14 @@ RETURN ( Self )
 
 METHOD StartAdministratorTask()
 
-   local cEmp
+   local aEmpresa
 
    ::lValidDlg       := .f.
 
    ::oBtnOk:Disable()
    ::oBntCancel:Disable()
+
+   ::oMsg:SetText( "Iniciando proceso..." )
 
    if !empty( ::oMtrActualiza )
    	::oMtrActualiza:SetTotal( len( ::aEmpresas ) )
@@ -833,30 +835,28 @@ METHOD StartAdministratorTask()
    if !empty( ::oMtrDiccionario )
 	   ::oMtrDiccionario:SetTotal( 5 )
 	end if 
-
-   /*
-   Recorremos el array de las empresas par actualizarlas--------------------
-   */
+   
+   // Recorremos el array de las empresas par actualizarlas--------------------
 
    if ::lActualizaBaseDatos
 
       ::oBrwEmpresas:GoTop()
 
-      for each cEmp in ::aEmpresas
+      for each aEmpresa in ::aEmpresas
 
-         if cEmp[ 6 ]
+         if aEmpresa[ 6 ]
 
-            ::oMsg:SetText( "Actualizando empresa " + Rtrim( cEmp[ 1 ] ) + " - " + Rtrim( cEmp[ 2 ] ) )
+            ::oMsg:SetText( "Actualizando empresa " + Rtrim( aEmpresa[ 1 ] ) + " - " + Rtrim( aEmpresa[ 2 ] ) )
 
             if !empty( ::oMtrActualiza )
             	::oMtrActualiza:Set( hb_EnumIndex() )
             end if
 
-            SetEmpresa( cEmp[ 1 ], , , , , , .t. )
+            SetEmpresa( aEmpresa[ 1 ], , , , , , .t. )
 
-            lActualiza( cEmp[ 1 ], , .t., cEmp[ 2 ], .f. )
+            lActualiza( aEmpresa[ 1 ], , .t., aEmpresa[ 2 ], .f. )
 
-            cEmp[ 4 ]      := .t.
+            aEmpresa[ 4 ]      := .t.
 
          end if 
 
@@ -871,50 +871,42 @@ METHOD StartAdministratorTask()
    	::oMtrDiccionario:Set( 1 )
    end if
 
-   /*
-   Conectamos de nuevo con ADS------------------------------------------------
-   */
+   // Conectamos de nuevo con ADS------------------------------------------------
 
    lCdx( .f. )
    lAIS( .t. )
 
-   if ::ConnectDataDictionary()
+   ::oMsg:SetText( "Intentando conectar con la base de datos" )
 
-      /*
-      Eliminamos todas las tablas del diccionario de datos------------------
-      */
+   if ::ConnectDataDictionary()
+      
+      // Eliminamos todas las tablas del diccionario de datos------------------
 
       ::oMsg:SetText( "Eliminando tablas anteriores de diccionario de datos" )
-
       ::DeleteAllTable()
-
-      /*
-      Construimos la base de datos de estructura----------------------------
-      */
+      
+      // Construimos la base de datos de estructura----------------------------
 
       ::oMsg:SetText( "Creando arbol de tablas datos generales aplicación" )
-
       ::BuildData()
 
       ::CreateDataTable()
 
-      /*
-      Recorremos el array de las empresas par actualizarlas--------------------
-      */
+      // Recorremos el array de las empresas par actualizarlas--------------------
 
       ::oBrwEmpresas:GoTop()
 
-      for each cEmp in ::aEmpresas
+      for each aEmpresa in ::aEmpresas
 
-         if cEmp[ 6 ]
+         if aEmpresa[ 6 ]
 
-            ::oMsg:SetText( "Creando diccionario de empresa " + Rtrim( cEmp[ 1 ] ) + " - " + Rtrim( cEmp[ 2 ] ) )
+            ::oMsg:SetText( "Creando diccionario de empresa " + Rtrim( aEmpresa[ 1 ] ) + " - " + Rtrim( aEmpresa[ 2 ] ) )
 
             if !empty( ::oMtrActualiza )
             	::oMtrActualiza:set( hb_EnumIndex() )
             end if 
 
-            setEmpresa( cEmp[ 1 ], , , , , , .t. )
+            setEmpresa( aEmpresa[ 1 ], , , , , , .t. )
 
             ::BuildEmpresa()  
                
@@ -922,7 +914,7 @@ METHOD StartAdministratorTask()
 
             ::Reindex()
 
-            cEmp[ 5 ]   := .t.
+            aEmpresa[ 5 ]   := .t.
 
          end if
 
@@ -935,9 +927,7 @@ METHOD StartAdministratorTask()
      		::oMtrDiccionario:Set( 2 )
      	end if 
 
-      /*
-      Creamos las tablas de operacioens----------------------------------------
-      */
+      // Creamos las tablas de operacioens-------------------------------------
 
       ::oMsg:SetText( "Creando tablas de operaciones" )
 
@@ -4665,9 +4655,7 @@ METHOD Reindex()
 
    ::DisableTriggers()
 
-   /*
-   Bases de datos de directorio datos------------------------------------------
-   */
+   // Bases de datos de directorio datos------------------------------------------
 
    if ::aLgcIndices[ 1 ]
       
@@ -4691,9 +4679,7 @@ METHOD Reindex()
 
    end if   
 
-   /*
-   Bases de datos de empresa---------------------------------------------------
-   */
+   // Bases de datos de empresa---------------------------------------------------
 
    if ::aLgcIndices[ 2 ]
 
@@ -4769,18 +4755,33 @@ METHOD ReindexTable( oTable )
    local oError
    local oBlock
 
-   oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+    oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+    BEGIN SEQUENCE
 
-      dbUseArea( .t., cDriver(), ( oTable:cName + ".Dbf" ), "Table", .f. )
-      
-      if !NetErr() .and. ( "Table" )->( Used() )
-      
-         ( "Table" )->( OrdSetFocus( 1 ) )
-         ( "Table" )->( OrdListRebuild() )
-         ( "Table" )->( dbCloseArea() )
-         
-      end if 
+/*
+      if !empty( oTable:bCreateIndex )
+         eval( oTable:bCreateIndex )
+
+         msgAlert( hb_valtoexp( oTable ) )
+         dbusearea( .t., cDriver(), ( oTable:cName + ".Dbf" ), "Table", .f. )
+         if !neterr() .and. ( "Table" )->( used() )
+            msgAlert( adsDDRemoveIndexFile( oTable:cName, oTable:cIndexFile, 1 ), "intento de borrado" )
+            ( "Table" )->( dbclosearea() )
+            eval( oTable:bCreateIndex )
+            msgAlert( adsDDAddIndexFile( oTable:cName, oTable:cIndexFile ), "intento de añadirlo" )
+         end if 
+
+      else
+*/
+
+         dbusearea( .t., cDriver(), ( oTable:cName + ".Dbf" ), "Table", .f. )
+         if !neterr() .and. ( "Table" )->( used() )
+            ( "Table" )->( ordsetfocus( 1 ) )
+            ( "Table" )->( adsReindex() )
+            ( "Table" )->( dbclosearea() )
+         end if 
+
+/*      end if */
 
    RECOVER USING oError
 

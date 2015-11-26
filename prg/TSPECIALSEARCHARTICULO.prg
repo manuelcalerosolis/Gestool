@@ -512,6 +512,7 @@ Return aNombres
 
 METHOD DefaultSelect() CLASS TSPECIALSEARCHARTICULO
 
+   local nSec        := seconds()
    local cSentencia  := ""
 
    cSentencia        += "SELECT articulos.Codigo, "
@@ -545,6 +546,8 @@ METHOD DefaultSelect() CLASS TSPECIALSEARCHARTICULO
    if TDataCenter():ExecuteSqlStatement( cSentencia, "SelectArticulo" )
       SelectArticulo->( dbGoTop() )
    end if
+
+   msgAlert( seconds() - nSec )
 
 Return ( self )
 

@@ -1139,6 +1139,16 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
+Function cSeekStoreView( cCodigoAlmacen, nView )
+
+   if dbSeekInOrd( cCodigoAlmacen, "cCodAlm", D():Almacen( nView ) )
+      return .t.
+   end if 
+
+Return ( .f. )
+
+//--------------------------------------------------------------------------//
+
 FUNCTION cAlmacen( oGet, dbfAlmT, oGet2 )
 
    local oBlock

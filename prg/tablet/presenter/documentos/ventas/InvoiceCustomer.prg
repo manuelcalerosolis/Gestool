@@ -132,7 +132,8 @@ Return ( DocumentLine():New( hLine, self ) )
 
 METHOD getAppendDetail() CLASS InvoiceCustomer
 
-   local hLine             := D():GetFacturaClienteLineaBlank( ::nView )
+   // local hLine             := D():GetFacturaClienteLineaBlank( ::nView )
+   local hLine             := D():GetFacturaClienteLineaDefaultValues( ::nView )
 
    ::oDocumentLineTemporal := DocumentLine():New( hLine, self )
 

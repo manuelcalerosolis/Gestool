@@ -2772,7 +2772,7 @@ FUNCTION rxUsuario( cPath, oMeter )
 
       ( dbfUser )->( dbCloseArea() )
    else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de usuarios" )
+      msgStop( "Imposible abrir en modo exclusivo la tabla de mapas de usuarios" )
    end if
 
 RETURN NIL

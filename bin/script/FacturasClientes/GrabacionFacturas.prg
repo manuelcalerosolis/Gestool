@@ -10,7 +10,7 @@
 #define _CDIRCLI            10      //,"C", 60, 0, "dirección del cliente" },;
 #define _CPOBCLI            11      //,"C", 25, 0, "Población del cliente" },;
 #define _CPRVCLI            12      //,"C", 20, 0, "Provincia del cliente" },;
-#define _NCODPROV           13      //,"N",  2, 0, "Número de provincia cliente" },;
+#define _NCODPROV           13      //,"N",  2, 0, "Número de provincia cliente" },; 
 #define _CPOSCLI            14      //,"C",  5, 0, "Codigos postal del cliente" },;
 #define _CDNICLI            15      //,"C", 15, 0, "DNI/CIF del cliente" },;
 #define _LMODCLI            16

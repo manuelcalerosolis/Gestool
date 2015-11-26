@@ -14905,8 +14905,13 @@ RETURN .t.
 
 FUNCTION rxArticulo( cPath, cDriver )
 
-   local dbfCodebar
+   local oError
+   local oBlock
    local dbfArt
+   local dbfCodebar
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
    DEFAULT cPath     := cPatArt()
    DEFAULT cDriver   := cDriver()
@@ -15223,6 +15228,16 @@ FUNCTION rxArticulo( cPath, cDriver )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de artículos" )
    end if
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de artículos" )
+
+      CloseFiles()
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
 RETURN NIL
 

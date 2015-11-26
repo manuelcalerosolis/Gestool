@@ -6,6 +6,7 @@ CLASS DocumentsSales FROM Documents
    DATA oSender
 
    DATA oProduct
+   DATA oStore
    DATA oPayment
    DATA oDirections
 
@@ -75,7 +76,7 @@ CLASS DocumentsSales FROM Documents
    METHOD isPuntoVerde()                                    INLINE ( ::hGetMaster( "OperarPuntoVerde" ) )
    METHOD isRecargoEquivalencia()                           INLINE ( ::hGetMaster( "lRecargo" ) )
 
-   METHOD resourceDetail( nMode )                           INLINE ( ::oLinesDocumentsSales:ResourceDetail( nMode ) )
+   METHOD resourceDetail( nMode )                           INLINE ( ::oLinesDocumentsSales:resourceDetail( nMode ) )
 
    METHOD onViewCancel()
    METHOD onViewSave()
@@ -168,6 +169,8 @@ METHOD New( oSender ) CLASS DocumentsSales
    ::oCliente              := Customer():init( oSender )  
 
    ::oProduct              := Product():init( oSender )
+
+   ::oStore                := Store():init( oSender )
 
    ::oPayment              := Payment():init( oSender )
 
@@ -327,6 +330,9 @@ METHOD ChangeSerieTablet( getSerie ) CLASS DocumentsSales
          getSerie:cText( "B" )
 
       case cSerie == "B"
+         getSerie:cText( "C" )
+
+      case cSerie == "C"
          getSerie:cText( "A" )
 
       otherwise

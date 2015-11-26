@@ -8448,11 +8448,16 @@ RETURN NIL
 FUNCTION rxClient( cPath, cDriver )
 
    local dbfCli
+   local oError
+   local oBlock
 
    DEFAULT cPath     := cPatCli()
    DEFAULT cDriver   := cDriver()
 
    assertClient( cPath )
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
    fEraseIndex( cPath + "CLIENT.CDX" )
 
@@ -8696,6 +8701,15 @@ FUNCTION rxClient( cPath, cDriver )
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturae de clientes." )
    end if
 
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de clientes" )
+
+      CloseFiles()
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
 RETURN NIL
 

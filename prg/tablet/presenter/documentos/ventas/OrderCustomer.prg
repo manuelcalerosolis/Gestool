@@ -52,7 +52,7 @@ METHOD New() CLASS OrderCustomer
    ::setDataTable( "PedCliT" )
    ::setDataTableLine( "PedCliL" )
    
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -60,7 +60,7 @@ METHOD GetAppendDocumento() CLASS OrderCustomer
 
    ::hDictionaryMaster      := D():getDefaultHashPedidoCliente( ::nView )
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -69,13 +69,13 @@ METHOD GetEditDocumento() CLASS OrderCustomer
    local id                := D():PedidosClientesId( ::nView )
 
    if Empty( id )
-      Return .f.
+      RETURN .f.
    end if
 
    ::hDictionaryMaster     := D():GetPedidoCliente( ::nView )
 
    if empty( ::hDictionaryMaster )
-      Return .f.
+      RETURN .f.
    end if 
 
    ::getLinesDocument( id )
@@ -118,19 +118,21 @@ METHOD getDocumentLine() CLASS OrderCustomer
    local hLine    := D():GetPedidoClienteLineasHash( ::nView )
 
    if empty( hLine )
-      Return ( nil )
+      RETURN ( nil )
    end if 
 
-Return ( DocumentLine():New( hLine, self ) )
+RETURN ( DocumentLine():New( hLine, self ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD getAppendDetail() CLASS OrderCustomer
 
-   local hLine             := D():GetPedidoClienteLineaBlank( ::nView )
+   // local hLine             := D():GetPedidoClienteLineaBlank( ::nView )
+   local hLine             := D():GetPedidoClienteLineasDefaultValue( ::nView )
+
    ::oDocumentLineTemporal := DocumentLine():New( hLine, self )
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -146,7 +148,7 @@ METHOD deleteLinesDocument() CLASS OrderCustomer
 
    D():setStatusPedidosClientesLineas( ::nView ) 
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -154,6 +156,6 @@ METHOD printDocument() CLASS OrderCustomer
 
    imprimePedidoCliente( ::getID(), ::cFormatToPrint )
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//

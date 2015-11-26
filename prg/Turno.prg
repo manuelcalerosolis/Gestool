@@ -680,16 +680,16 @@ END CLASS
 
 METHOD New( cPath, cDriver, oWndParent, oMenuItem )
 
-   DEFAULT cPath        := cPatEmp()
-   DEFAULT cDriver      := cDriver()
-   DEFAULT oWndParent   := GetWndFrame()
+   DEFAULT cPath              := cPatEmp()
+   DEFAULT cDriver            := cDriver()
+   DEFAULT oWndParent         := GetWndFrame()
 
    if oMenuItem != nil
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel                := nLevelUsr( oMenuItem )
    end if
 
    if IsNum( ::nLevel ) .and. nAnd( ::nLevel, 1 ) != 0
-      ::lAccess         := .f.
+      ::lAccess               := .f.
       msgStop( "Acceso no permitido." )
       Return ( nil )
    end if
@@ -715,16 +715,17 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem )
 
    ::cMru                     := "Stopwatch_16"
 
-   ::cIniFile                 := cPatEmp() + "Empresa.Ini"
-   ::oIniArqueo               := TIni():New( cPatEmp() + "Empresa.Ini" )
+   if !empty( cPatEmp() )
+      ::cIniFile              := cPatEmp() + "Empresa.Ini"
+      ::oIniArqueo            := TIni():New( cPatEmp() + "Empresa.Ini" )
+   end if 
+
    ::oTotales                 := TTotalTurno():New( Self )
 
    ::nScreenHorzRes           := GetSysMetrics( 0 )
    ::nScreenVertRes           := GetSysMetrics( 1 )
 
-   /*
-   Chequa la concordancia entre estructuras------------------------------------
-   */
+   // Chequa la concordancia entre estructuras------------------------------------
 
    ::cNumDocKey               := "cNumTur"
    ::cSufDocKey               := "cSufTur"

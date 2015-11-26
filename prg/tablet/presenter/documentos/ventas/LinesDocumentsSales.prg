@@ -5,7 +5,7 @@ CLASS LinesDocumentsSales FROM Editable
 
    DATA oSender
 
-   DATA cOldCodigoArticulo             INIT ""
+   DATA cOldCodigoArticulo                                  INIT ""
 
    DATA hAtipicaClienteValues
 
@@ -13,69 +13,74 @@ CLASS LinesDocumentsSales FROM Editable
 
    METHOD New( oSender )
 
-   METHOD getSender()                  INLINE ( ::oSender )
-   METHOD getView()                    INLINE ( ::getSender():nView )
+   METHOD getSender()                                       INLINE ( ::oSender )
+   METHOD getView()                                         INLINE ( ::getSender():nView )
 
-   METHOD hSetMaster( cField, uValue ) INLINE ( hSet( ::oSender:hDictionaryMaster, cField, uValue ) )
-   METHOD hGetMaster( cField )         INLINE ( hGet( ::oSender:hDictionaryMaster, cField ) )
+   METHOD hSetMaster( cField, uValue )                      INLINE ( hSet( ::oSender:hDictionaryMaster, cField, uValue ) )
+   METHOD hGetMaster( cField )                              INLINE ( hGet( ::oSender:hDictionaryMaster, cField ) )
 
-   METHOD hSetDetail( cField, uValue ) INLINE ( hSet( ::oSender:oDocumentLineTemporal:hDictionary, cField, uValue ) )
-   METHOD hGetDetail( cField )         INLINE ( hGet( ::oSender:oDocumentLineTemporal:hDictionary, cField ) )
+   METHOD hSetDetail( cField, uValue )                      INLINE ( hSet( ::oSender:oDocumentLineTemporal:hDictionary, cField, uValue ) )
+   METHOD hGetDetail( cField )                              INLINE ( hGet( ::oSender:oDocumentLineTemporal:hDictionary, cField ) )
 
    METHOD lSeekArticulo()
+   METHOD lSeekAlmacen()
    METHOD lArticuloObsoleto()
 
-   METHOD setCodigo( cCodigo )                           INLINE ( ::hSetDetail( "Articulo", cCodigo ) )
-   METHOD setDetalle( cDetalle )                         INLINE ( ::hSetDetail( "DescripcionArticulo", cDetalle ) )
-   METHOD setDescripcionAmpliada( cDescripcion )         INLINE ( ::hSetDetail( "DescripcionAmpliada", cDescripcion ) )
-   METHOD setCodigoProveedor( cCodigo )                  INLINE ( ::hSetDetail( "Proveedor", cCodigo ) )
-   METHOD setNombreProveedor( cNombreProveedor )         INLINE ( ::hSetDetail( "NombreProveedor", cNombreProveedor ) )
-   METHOD setReferenciaProveedor( cRefProveedor )        INLINE ( ::hSetDetail( "ReferenciaProveedor", cRefProveedor ) )
-   METHOD setAlmacen( cCodigoAlmacen )                   INLINE ( ::hSetDetail( "Almacen", cCodigoAlmacen ) )
-   METHOD setLogicoLote( lLote )                         INLINE ( ::hSetDetail( "LogicoLote", lLote ) )
-   METHOD setLote( cLote )                               INLINE ( ::hSetDetail( "Lote", cLote ) )
-   METHOD setTipoVenta( lTipoVenta )                     INLINE ( ::hSetDetail( "AvisarSinStock", lTipoVenta ) )
-   METHOD setNoPermitirVentaSinStock( lVentaSinStock )   INLINE ( ::hSetDetail( "NoPermitirSinStock", lVentaSinStock ) )
-   METHOD setFamilia( cCodigoFamilia )                   INLINE ( ::hSetDetail( "Familia", cCodigoFamilia ) )
-   METHOD setGrupoFamilia( cGrupoFamilia )               INLINE ( ::hSetDetail( "GrupoFamilia", cGrupoFamilia ) )
-   METHOD setPeso( nPeso )                               INLINE ( ::hSetDetail( "Peso", nPeso ) )
-   METHOD setUnidadMedicionPeso( cUnidadMedicion )       INLINE ( ::hSetDetail( "UnidadMedicionPeso", cUnidadMedicion ) )
-   METHOD setVolumen( nVolumen )                         INLINE ( ::hSetDetail( "Volumen", nVolumen ) )
-   METHOD setUnidadMedicionVolumen( cVolumen )           INLINE ( ::hSetDetail( "UnidadMedicionVolumen", cVolumen ) )
-   METHOD setUnidadMedicion( cUnidadMedicion )           INLINE ( ::hSetDetail( "UnidadMedicion", cUnidadMedicion ) )
-   METHOD setTipoArticulo( cTipoArticulo )               INLINE ( ::hSetDetail( "TipoArticulo", cTipoArticulo ) )
-   METHOD setCajas( nCajas )                             INLINE ( ::hSetDetail( "Cajas", if( empty( nCajas ), 1, nCajas ) ) )
-   METHOD setUnidades( nUnidades )                       INLINE ( ::hSetDetail( "Unidades", if( empty( nUnidades ), 1, nUnidades ) ) )
-   METHOD setImpuestoEspecial( cCodigoImpuesto )         INLINE ( ::hSetDetail( "ImpuestoEspecial", cCodigoImpuesto ) )
-   METHOD setImporteImpuestoEspecial( nImporte )         INLINE ( ::hSetDetail( "ImporteImpuestoEspecial", nImporte ) )
-   METHOD setVolumenImpuestosEspeciales( lImpuesto )     INLINE ( ::hSetDetail( "VolumenImpuestosEspeciales", lImpuesto ) )
-   METHOD setPorcentajeImpuesto( nPorcentaje )           INLINE ( ::hSetDetail( "PorcentajeImpuesto", nPorcentaje ) )
-   METHOD setRecargoEquivalencia( nPorcentaje )          INLINE ( ::hSetDetail( "RecargoEquivalencia", nPorcentaje ) )
-   METHOD setFactorConversion( nFactor )                 INLINE ( ::hSetDetail( "FactorConversion", nFactor ) )
-   METHOD setImagen( cImagen )                           INLINE ( ::hSetDetail( "Imagen", cImagen ) )
-   METHOD setControlStock( nControlStock )               INLINE ( ::hSetDetail( "TipoStock", nControlStock ) )
-   METHOD setPrecioRecomendado( nPrecio )                INLINE ( ::hSetDetail( "PrecioVentaRecomendado", nPrecio ) )
-   METHOD setPuntoVerde( nPuntoVerde )                   INLINE ( ::hSetDetail( "PuntoVerde", nPuntoVerde ) )
-   METHOD setUnidadMedicion( cUnidad )                   INLINE ( ::hSetDetail( "UnidadMedicion", cUnidad ) )
+   METHOD setCodigo( cCodigo )                              INLINE ( ::hSetDetail( "Articulo", cCodigo ) )
+   METHOD setDetalle( cDetalle )                            INLINE ( ::hSetDetail( "DescripcionArticulo", cDetalle ) )
+   METHOD setDescripcionAmpliada( cDescripcion )            INLINE ( ::hSetDetail( "DescripcionAmpliada", cDescripcion ) )
+   METHOD setCodigoProveedor( cCodigo )                     INLINE ( ::hSetDetail( "Proveedor", cCodigo ) )
+   METHOD setNombreProveedor( cNombreProveedor )            INLINE ( ::hSetDetail( "NombreProveedor", cNombreProveedor ) )
+   METHOD setReferenciaProveedor( cRefProveedor )           INLINE ( ::hSetDetail( "ReferenciaProveedor", cRefProveedor ) )
+   
+   METHOD setAlmacen( cCodigoAlmacen )                      INLINE ( ::oViewEditDetail:oGetAlmacen:cText( cCodigoAlmacen ), ::cargaAlmacen() )
+   METHOD setNombreAlmacen( cNombreAlmacen )                INLINE ( ::oViewEditDetail:oGetNombreAlmacen:cText( cNombreAlmacen ) )
 
-   METHOD setTarifa()                                    INLINE ( ::hSetDetail( "NumeroTarifa", ::hGetMaster( "NumeroTarifa" ) ) ) 
-   METHOD setPrecioCosto( nCosto )                       INLINE ( ::hSetDetail( "PrecioCosto", nCosto ) )
-      METHOD setPrecioCostoMedio()                       VIRTUAL         
-   METHOD setPrecioVenta( nPrecioVenta )                 INLINE ( ::hSetDetail( "PrecioVenta", nPrecioVenta  ) )
+   METHOD setLogicoLote( lLote )                            INLINE ( ::hSetDetail( "LogicoLote", lLote ) )
+   METHOD setLote( cLote )                                  INLINE ( ::hSetDetail( "Lote", cLote ) )
+   METHOD setTipoVenta( lTipoVenta )                        INLINE ( ::hSetDetail( "AvisarSinStock", lTipoVenta ) )
+   METHOD setNoPermitirVentaSinStock( lVentaSinStock )      INLINE ( ::hSetDetail( "NoPermitirSinStock", lVentaSinStock ) )
+   METHOD setFamilia( cCodigoFamilia )                      INLINE ( ::hSetDetail( "Familia", cCodigoFamilia ) )
+   METHOD setGrupoFamilia( cGrupoFamilia )                  INLINE ( ::hSetDetail( "GrupoFamilia", cGrupoFamilia ) )
+   METHOD setPeso( nPeso )                                  INLINE ( ::hSetDetail( "Peso", nPeso ) )
+   METHOD setUnidadMedicionPeso( cUnidadMedicion )          INLINE ( ::hSetDetail( "UnidadMedicionPeso", cUnidadMedicion ) )
+   METHOD setVolumen( nVolumen )                            INLINE ( ::hSetDetail( "Volumen", nVolumen ) )
+   METHOD setUnidadMedicionVolumen( cVolumen )              INLINE ( ::hSetDetail( "UnidadMedicionVolumen", cVolumen ) )
+   METHOD setUnidadMedicion( cUnidadMedicion )              INLINE ( ::hSetDetail( "UnidadMedicion", cUnidadMedicion ) )
+   METHOD setTipoArticulo( cTipoArticulo )                  INLINE ( ::hSetDetail( "TipoArticulo", cTipoArticulo ) )
+   METHOD setCajas( nCajas )                                INLINE ( ::hSetDetail( "Cajas", if( empty( nCajas ), 1, nCajas ) ) )
+   METHOD setUnidades( nUnidades )                          INLINE ( ::hSetDetail( "Unidades", if( empty( nUnidades ), 1, nUnidades ) ) )
+   METHOD setImpuestoEspecial( cCodigoImpuesto )            INLINE ( ::hSetDetail( "ImpuestoEspecial", cCodigoImpuesto ) )
+   METHOD setImporteImpuestoEspecial( nImporte )            INLINE ( ::hSetDetail( "ImporteImpuestoEspecial", nImporte ) )
+   METHOD setVolumenImpuestosEspeciales( lImpuesto )        INLINE ( ::hSetDetail( "VolumenImpuestosEspeciales", lImpuesto ) )
+   METHOD setPorcentajeImpuesto( nPorcentaje )              INLINE ( ::hSetDetail( "PorcentajeImpuesto", nPorcentaje ) )
+   METHOD setRecargoEquivalencia( nPorcentaje )             INLINE ( ::hSetDetail( "RecargoEquivalencia", nPorcentaje ) )
+   METHOD setFactorConversion( nFactor )                    INLINE ( ::hSetDetail( "FactorConversion", nFactor ) )
+   METHOD setImagen( cImagen )                              INLINE ( ::hSetDetail( "Imagen", cImagen ) )
+   METHOD setControlStock( nControlStock )                  INLINE ( ::hSetDetail( "TipoStock", nControlStock ) )
+   METHOD setPrecioRecomendado( nPrecio )                   INLINE ( ::hSetDetail( "PrecioVentaRecomendado", nPrecio ) )
+   METHOD setPuntoVerde( nPuntoVerde )                      INLINE ( ::hSetDetail( "PuntoVerde", nPuntoVerde ) )
+   METHOD setUnidadMedicion( cUnidad )                      INLINE ( ::hSetDetail( "UnidadMedicion", cUnidad ) )
 
-   METHOD setOldCodigoArticulo()                         INLINE ( ::cOldCodigoArticulo    := ::hGetDetail( "Articulo" ) )
+   METHOD setTarifa()                                       INLINE ( ::hSetDetail( "NumeroTarifa", ::hGetMaster( "NumeroTarifa" ) ) ) 
+   METHOD setPrecioCosto( nCosto )                          INLINE ( ::hSetDetail( "PrecioCosto", nCosto ) )
+      METHOD setPrecioCostoMedio()                          VIRTUAL         
+   METHOD setPrecioVenta( nPrecioVenta )                    INLINE ( ::hSetDetail( "PrecioVenta", nPrecioVenta  ) )
+
+   METHOD setOldCodigoArticulo()                            INLINE ( ::cOldCodigoArticulo := ::hGetDetail( "Articulo" ) )
+   METHOD resetOldCodigoArticulo()                          INLINE ( ::cOldCodigoArticulo := "" )
 
    METHOD getValorImpuestoEspecial();
       INLINE ( D():ImpuestosEspeciales( ::getView() ):nValImp( ( D():Articulos( ::getView() ) )->cCodImp, ::hGetMaster( "ImpuestosIncluidos" ), ::hGetMaster( "TipoImpuesto" ) ) )
 
-   METHOD setPrecioTarifaCliente()                       VIRTUAL      
+   METHOD setPrecioTarifaCliente()                          VIRTUAL      
    
    METHOD setAtipicasCliente()    
       METHOD buildAtipicaClienteValues()                  
 
-      METHOD setPrecioOfertaArticulo()                   VIRTUAL      
+      METHOD setPrecioOfertaArticulo()                      VIRTUAL      
 
-   METHOD setComisionFromMaster()                        INLINE ( ::hSetDetail( "ComisionAgente", ::hGetMaster( "ComisionAgente" ) ) )
+   METHOD setComisionFromMaster()                           INLINE ( ::hSetDetail( "ComisionAgente", ::hGetMaster( "ComisionAgente" ) ) )
 
       METHOD setComisionTarifaCliente()                     VIRTUAL   
       METHOD setComisionAtipicaCliente()                    VIRTUAL
@@ -98,10 +103,11 @@ CLASS LinesDocumentsSales FROM Editable
       METHOD setDescuentoLinealOfertaArticulo()             VIRTUAL
 
    METHOD runGridProduct()
+   METHOD runGridStore()
 
-   METHOD resetCodigoArticulo()                             INLINE ( ::cOldCodigoArticulo := "" )
    
    METHOD cargaArticulo()
+   METHOD cargaAlmacen()
 
    METHOD setLineFromArticulo() 
 
@@ -137,6 +143,18 @@ METHOD lSeekArticulo() CLASS LinesDocumentsSales
    cCodigoArticulo           := cSeekCodebarView( cCodigoArticulo, ::getView() )
 
 Return ( dbSeekArticuloUpperLower( cCodigoArticulo, ::getView() ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD lSeekAlmacen() CLASS LinesDocumentsSales
+
+   local cCodigoAlmacen     := ::oViewEditDetail:oGetAlmacen:varGet()   //::hGetDetail( "Articulo" )
+
+   if empty( cCodigoAlmacen )
+      Return .f.
+   end if
+
+Return ( cSeekStoreView( cCodigoAlmacen, ::getView() ) )
 
 //---------------------------------------------------------------------------//
 
@@ -254,8 +272,6 @@ METHOD setLineFromArticulo() CLASS LinesDocumentsSales
       ::setRecargoEquivalencia( nReq( D():TiposIva( ::getView() ), ( D():Articulos( ::getView() ) )->TipoIva ) )
    end if 
 
-   ::setAlmacen( ::hGetMaster( "Almacen" ) )
-
    if ( D():Articulos( ::getView() ) )->lFacCnv
       ::setFactorConversion( ( D():Articulos( ::getView() ) )->nFacCnv )
    end if
@@ -297,7 +313,7 @@ METHOD CargaArticulo() CLASS LinesDocumentsSales
    end if
 
    if ( cCodArt == ::cOldCodigoArticulo )
-      Return .f.
+      Return .t.
    end if
 
    if !::lSeekArticulo()
@@ -327,6 +343,19 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD CargaAlmacen() CLASS LinesDocumentsSales
+
+   if !::lSeekAlmacen()
+      apoloMsgStop( "Almacén no encontrado" )
+      Return .f.
+   end if
+
+   ::setNombreAlmacen( ( D():Almacen( ::getView() ) )->cNomAlm )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
 METHOD ResourceDetail( nMode ) CLASS LinesDocumentsSales
 
    local lResult        := .f.
@@ -349,6 +378,8 @@ METHOD StartResourceDetail() CLASS LinesDocumentsSales
 
    ::cargaArticulo()
 
+   ::cargaAlmacen()
+
    ::recalcularTotal()
 
 Return ( self )
@@ -367,21 +398,21 @@ RETURN ( .t. )
 
 METHOD runGridProduct() CLASS LinesDocumentsSales
 
+   if empty( ::oSender:oProduct:oGridProduct )
+      Return ( Self )
+   end if
+
    ::oViewEditDetail:oGetArticulo:Disable()
 
-   if !empty( ::oSender:oProduct:oGridProduct )
+   ::oSender:oProduct:oGridProduct:showView()
 
-      ::oSender:oProduct:oGridProduct:showView()
-
-      if ::oSender:oProduct:oGridProduct:isEndOk()
-         ::oViewEditDetail:SetGetValue( ( D():Articulos( ::oSender:nView ) )->Codigo, "Articulo" )
-      end if
-
-      ::cargaArticulo()
-
-      ::recalcularTotal()
-
+   if ::oSender:oProduct:oGridProduct:isEndOk()
+      ::oViewEditDetail:SetGetValue( ( D():Articulos( ::oSender:nView ) )->Codigo, "Articulo" )
    end if
+
+   ::cargaArticulo()
+
+   ::recalcularTotal()
 
    ::oViewEditDetail:oGetArticulo:Enable()
    ::oViewEditDetail:oGetArticulo:setFocus()
@@ -389,3 +420,27 @@ METHOD runGridProduct() CLASS LinesDocumentsSales
 Return ( self )
 
 //---------------------------------------------------------------------------//
+
+METHOD runGridStore() CLASS LinesDocumentsSales
+
+   if empty( ::oSender:oStore:oGrid )
+      Return ( Self )
+   end if 
+
+   ::oViewEditDetail:oGetAlmacen:Disable()
+
+   ::oSender:oStore:oGrid:showView()
+
+   if ::oSender:oStore:oGrid:isEndOk()
+      ::setAlmacen( ( D():Almacen( ::oSender:nView ) )->cCodAlm )
+   end if
+
+   ::cargaAlmacen()
+
+   ::oViewEditDetail:oGetAlmacen:Enable()
+   ::oViewEditDetail:oGetAlmacen:setFocus()
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+

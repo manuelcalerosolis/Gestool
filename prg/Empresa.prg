@@ -7121,7 +7121,7 @@ return ( lCopy )
 Function SetTituloEmpresa()
 
    if oWnd() != nil
-      oWnd():cTitle( __GSTROTOR__ + Space( 1 ) + __GSTVERSION__ + Space( 1 ) + cTypeVersion() + " : " + uFieldEmpresa( "CodEmp" ) + " - " + Rtrim( uFieldEmpresa( "cNombre" ) ) )
+      oWnd():cTitle( __GSTROTOR__ + Space( 1 ) + __GSTVERSION__ + Space( 1 ) + cTypeVersion() + " : " + uFieldEmpresa( "CodEmp", "" ) + " - " + Rtrim( uFieldEmpresa( "cNombre", "" ) ) )
    end if
 
 Return ( nil )

@@ -147,7 +147,7 @@ function Main( ParamsMain, ParamsSecond )
 
       adsSetServerType( nAdsServer() )    // TODOS
       adsSetFileType( 2 )                 // ADS_CDX
-      adsLocking( .t. )   
+      // adsLocking( .t. )   
       adsRightsCheck( .f. )
       adsSetDeleted( .t. )
       adsCacheOpenTables( 250 )
@@ -166,16 +166,13 @@ function Main( ParamsMain, ParamsSecond )
    else 
 
       lCdx( .t. )
-
-      RddSetDefault( 'DBFCDX' )
+      rddSetDefault( 'DBFCDX' )
 
    end if
 
    TDataCenter():BuildData()
 
-   /*
-   Opciones especiales de arranque hace la operacion y salir-------------------
-   */
+   // Opciones especiales de arranque hace la operacion y salir-------------------
 
    do case
       case ( "ENVIO" $ cParamsMain )
@@ -6016,7 +6013,6 @@ Return ( by( nRow ) )
 //---------------------------------------------------------------------------//
 
 Function Test() 
-
 /*
    if !msgyesno("run test " + cDriver() )
       return nil 
@@ -6024,7 +6020,6 @@ Function Test()
 
    testAll()
 */
-
 Return ( nil )
 
 Static Function testAll()

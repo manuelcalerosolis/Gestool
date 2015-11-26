@@ -2601,37 +2601,52 @@ RETURN NIL
 
 FUNCTION rxOferta( cPath, cDriver )
 
+   local oError
+   local oBlock
    local dbfOferta
 
    DEFAULT cPath     := cPatArt()
    DEFAULT cDriver   := cDriver()
 
-   if !lExistTable( cPath + "Oferta.Dbf", cDriver )
-      dbCreate( cPath + "Oferta.Dbf", aSqlStruct( aItmOfe() ), cDriver )
-   end if 
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
-   fEraseIndex( cPath + "OFERTA.CDX" )
+      if !lExistTable( cPath + "Oferta.Dbf", cDriver )
+         dbCreate( cPath + "Oferta.Dbf", aSqlStruct( aItmOfe() ), cDriver )
+      end if 
 
-   dbUseArea( .t., cLocalDriver(), cPath + "OFERTA.DBF", cCheckArea( "OFERTA", @dbfOferta ), .f. )
-   if !( dbfOferta )->( neterr() )
-      ( dbfOferta )->( __dbPack() )
+      fEraseIndex( cPath + "Oferta.CDX" )
 
-      ( dbfOferta )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfOferta )->( ordCreate( cPath + "OFERTA.CDX", "CARTOFE", "CARTOFE + CCODPR1 + CCODPR2 + CVALPR1 + CVALPR2", {|| Field->CARTOFE + Field->CCODPR1 + Field->CCODPR2 + Field->CVALPR1 + Field->CVALPR2 } ) )
+      dbUseArea( .t., cLocalDriver(), cPath + "Oferta.Dbf", cCheckArea( "OFERTA", @dbfOferta ), .f. )
+      if !( dbfOferta )->( neterr() )
+         ( dbfOferta )->( __dbPack() )
 
-      ( dbfOferta )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfOferta )->( ordCreate( cPath + "OFERTA.CDX", "CDESOFE", "CDESOFE", {|| Field->CDESOFE } ) )
+         ( dbfOferta )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+         ( dbfOferta )->( ordCreate( cPath + "OFERTA.CDX", "CARTOFE", "CARTOFE + CCODPR1 + CCODPR2 + CVALPR1 + CVALPR2", {|| Field->CARTOFE + Field->CCODPR1 + Field->CCODPR2 + Field->CVALPR1 + Field->CVALPR2 } ) )
 
-      ( dbfOferta )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfOferta )->( ordCreate( cPath + "OFERTA.CDX", "DINIOFE", "DTOC( DINIOFE )", {|| DTOC( Field->DINIOFE ) } ) )
+         ( dbfOferta )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+         ( dbfOferta )->( ordCreate( cPath + "OFERTA.CDX", "CDESOFE", "CDESOFE", {|| Field->CDESOFE } ) )
 
-      ( dbfOferta )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfOferta )->( ordCreate( cPath + "OFERTA.CDX", "DFINOFE", "DTOC( DFINOFE )", {|| DTOC( Field->DFINOFE ) } ) )
+         ( dbfOferta )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+         ( dbfOferta )->( ordCreate( cPath + "OFERTA.CDX", "DINIOFE", "DTOC( DINIOFE )", {|| DTOC( Field->DINIOFE ) } ) )
 
-      ( dbfOferta )->( dbCloseArea() )
-   else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de ofertas" )
-   end if
+         ( dbfOferta )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+         ( dbfOferta )->( ordCreate( cPath + "OFERTA.CDX", "DFINOFE", "DTOC( DFINOFE )", {|| DTOC( Field->DFINOFE ) } ) )
+
+         ( dbfOferta )->( dbCloseArea() )
+      else
+         msgStop( "Imposible abrir en modo exclusivo la tabla de ofertas" )
+      end if
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de ofertas" )
+
+      CloseFiles()
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
 RETURN NIL
 
