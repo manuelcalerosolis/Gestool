@@ -972,7 +972,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 291, "Edit", WS_BORDER|WS_TABSTOP, 291, 270, 86, 11
   CONTROL "Código", -1, "Static", WS_GROUP, 49, 42, 33, 8
   CONTROL "Descripción", -1, "Static", WS_GROUP, 49, 54, 39, 8
-  CONTROL "Familia", -1, "Static", WS_GROUP, 49, 79, 33, 8
+  CONTROL "Familia", 900, "Static", WS_GROUP, 49, 79, 33, 8
   CONTROL "Tipo artículo", 888, "Static", WS_GROUP, 49, 91, 47, 8
   CONTROL "Categoría", 700, "Static", WS_GROUP, 49, 103, 35, 8
   CONTROL "Fabricante", -1, "Static", WS_GROUP, 49, 127, 47, 8
@@ -7445,7 +7445,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Efectivo", 111, "Button", BS_RADIOBUTTON, 6, 41, 40, 10
   CONTROL "No efectivo", 112, "Button", BS_RADIOBUTTON, 6, 54, 73, 10
   CONTROL "Tarjeta de credito", 113, "Button", BS_RADIOBUTTON, 6, 66, 73, 10
-  CONTROL "Domiciliaciaón bancaria", 125, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 6, 79, 88, 10
+  CONTROL "Domiciliación bancaria", 125, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 6, 79, 88, 10
   CONTROL "", 500, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 221, 40, 42, 11
   CONTROL "", 510, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 221, 53, 42, 11
   CONTROL "", 120, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 221, 65, 42, 11

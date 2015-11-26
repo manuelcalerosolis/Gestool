@@ -21385,6 +21385,7 @@ FUNCTION nChkPagFacCli( cFacCli, cFacCliT, dbfFacCliP )
    end if
 
    nOrd 						:= ( dbfFacCliP )->( ordsetfocus( "nNumFac" ) )
+   
    if ( dbfFacCliP )->( dbSeek( cFacCli ) )
 
       while ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == cFacCli .and. !( dbfFacCliP )->( eof() )

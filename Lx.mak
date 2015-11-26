@@ -76,7 +76,7 @@ Facant.prg              \
 Facrec.prg              \
 Factcli.prg             \
 TFacturaElectronica.prg \
-Rectprv.prg             \
+RectificativaProveedores.prg \
 Factprv.prg             \
 Familia.prg             \
 Fpago.prg               \
@@ -1034,6 +1034,7 @@ TFastVentasArticulos.prg\
 TFastVentasClientes.prg \
 TipoImpresora.prg       \
 TDataCenter.prg         \
+d.prg                   \
 Valtostr.prg            \
 OrdenComanda.prg 			\
 Atipicas.prg 				\
@@ -1046,6 +1047,9 @@ TGridSay.prg 				\
 Bitmap.prg              \
 EstadoSat.prg           \
 Lenguajes.prg           \
+TLabelGenerator.prg     \
+CodigosPostales.prg     \
+Provincias.prg          \
 CamposExtra.prg         \
 DetCamposExtra.prg      \
 
@@ -1108,7 +1112,7 @@ Facant.obj              \
 Facrec.obj              \
 Factcli.obj             \
 TFacturaElectronica.obj \
-Rectprv.obj             \
+RectificativaProveedores.obj \
 Factprv.obj             \
 Familia.obj             \
 Fpago.obj               \
@@ -2072,6 +2076,7 @@ TFastVentasArticulos.obj\
 TFastVentasClientes.obj \
 TipoImpresora.obj       \
 TDataCenter.obj         \
+d.obj                   \
 Valtostr.obj            \
 OrdenComanda.obj 			\
 Atipicas.obj 				\
@@ -2084,6 +2089,9 @@ TGridSay.obj 				\
 Bitmap.obj              \
 EstadoSat.obj           \
 Lenguajes.obj           \
+TLabelGenerator.obj     \
+CodigosPostales.obj     \
+Provincias.obj          \
 CamposExtra.obj         \
 DetCamposExtra.obj      \
 
@@ -2153,7 +2161,7 @@ $(OBJ)\Facant.obj               +
 $(OBJ)\Facrec.obj               +
 $(OBJ)\Factcli.obj              +
 $(OBJ)\TFacturaElectronica.obj  +
-$(OBJ)\Rectprv.obj              +
+$(OBJ)\RectificativaProveedores.obj +
 $(OBJ)\Factprv.obj              +
 $(OBJ)\Familia.obj              +
 $(OBJ)\Fpago.obj                +
@@ -3117,6 +3125,7 @@ $(OBJ)\TFastVentasArticulos.obj 	+
 $(OBJ)\TFastVentasClientes.obj  	+
 $(OBJ)\TipoImpresora.obj        	+
 $(OBJ)\TDataCenter.obj          	+
+$(OBJ)\d.obj                     +
 $(OBJ)\Valtostr.obj             	+
 $(OBJ)\OrdenComanda.obj 			+
 $(OBJ)\Atipicas.obj 					+
@@ -3128,6 +3137,9 @@ $(OBJ)\Components.obj 				+
 $(OBJ)\TGridSay.obj 				   +	
 $(OBJ)\Bitmap.obj                +
 $(OBJ)\Lenguajes.obj             +
+$(OBJ)\TLabelGenerator.obj       +
+$(OBJ)\CodigosPostales.obj       +
+$(OBJ)\Provincias.obj            +
 $(OBJ)\CamposExtra.obj           +
 $(OBJ)\DetCamposExtra.obj        +
 $(OBJ)\EstadoSat.obj             

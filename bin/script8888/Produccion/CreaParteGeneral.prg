@@ -73,6 +73,11 @@ METHOD run() CLASS createParte
    ::getFechaProceso()
    ::getGrupoParte()
    
+   if Empty( ::cDocumento )
+      MsgStop( "No existe ningun documento con las condiciones seleccionadas" )
+      Return .t.
+   end if
+
    if ::isOnlyOneGrupoOfParte()
       MsgStop( "Existe un solo grupo de parte" )
       Return .t.

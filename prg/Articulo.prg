@@ -39,7 +39,7 @@
 #define fldContabilidad             oFld:aDialogs[9]
 #define fldOfertas                  oFld:aDialogs[10]
 #define fldEscandallos              oFld:aDialogs[11]
-#define fldWeb                      oFld:aDialogs[12] 
+#define fldWeb                      oFld:aDialogs[12]
 
 memvar cDbfArt
 memvar cDbfDiv
@@ -139,9 +139,6 @@ static oCbxPrecio
 
 static nView
 
-//static dbfArticulo
-static dbfFam
-
 static filArticulo
 static tmpArticulo
 
@@ -240,8 +237,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       D():Articulos( nView )
 
-      /*USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
-      SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE*/
+      D():Familias( nView )
 
       CacheRecords( D():Articulos( nView ) )
 
@@ -265,9 +261,6 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
       SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFam ) )
-      SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
 
       USE ( cPatArt() + "FamPrv.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMPRV", @dbfFamPrv ) )
       SET ADSINDEX TO ( cPatArt() + "FamPrv.Cdx" ) ADDITIVE
@@ -519,10 +512,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
 
    D():DeleteView( nView )
 
-   /*if dbfArticulo != nil
-      ( dbfArticulo )->( dbCloseArea() )
-   end if*/
-
    if dbfProv != nil
       ( dbfProv )->( dbCloseArea() )
    end if
@@ -541,10 +530,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
 
    if dbfIva != nil
       ( dbfIva )->( dbCloseArea() )
-   end if
-
-   if dbfFam != nil
-      ( dbfFam )->( dbCloseArea() )
    end if
 
    if dbfFamPrv != nil
@@ -739,11 +724,9 @@ STATIC FUNCTION CloseFiles( lDestroy )
       oLenguajes:End()
    end if
 
-   //dbfArticulo       := nil
    dbfProv           := nil
    dbfCatalogo       := nil
    dbfIva            := nil
-   dbfFam            := nil
    dbfFamPrv         := nil
    dbfArtPrv         := nil
    oStock            := nil
@@ -856,7 +839,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       TITLE    "Artículos" ;
       PROMPT   "Código",;
 					"Nombre",;
-               "Familia",;
+               getTraslation( "Familia" ),;
                "Proveedor" ,;
                "No obsoletos + Código",;
                "No obsoletos + Nombre",;
@@ -959,7 +942,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    end with
 
    with object ( oWndBrw:AddXCol() )
-      :cHeader          := "Familia"
+      :cHeader          := getTraslation( "Familia" )
       :cSortOrder       := "cFamCod"
       :bEditValue       := {|| ( D():Articulos( nView ) )->Familia }
       :nWidth           := 80
@@ -968,7 +951,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
    with object ( oWndBrw:AddXCol() )
       :cHeader          := "Nombre familia"
-      :bEditValue       := {|| RetFamilia( ( D():Articulos( nView ) )->Familia, dbfFam ) }
+      :bEditValue       := {|| RetFamilia( ( D():Articulos( nView ) )->Familia, D():Familias( nView ) ) }
       :nWidth           := 140
       :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
    end with
@@ -1318,7 +1301,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
    DEFINE BTNSHELL RESOURCE "IMP" GROUP OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( TInfArtFam():New( "Listado de artículos" ):Play( .f., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva, dbfFam, oStock, oWndBrw ) );
+      ACTION   ( TInfArtFam():New( "Listado de artículos" ):Play( .f., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva, D():Familias( nView ), oStock, oWndBrw ) );
       TOOLTIP  "Lis(t)ado";
       HOTKEY   "T" ;
       LEVEL    ACC_IMPR
@@ -1382,7 +1365,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
       DEFINE BTNSHELL RESOURCE "Lbl" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, D():Articulos( nView ), dbfFam ) );
+         ACTION   ( lSelectAll( oWndBrw ) );
          TOOLTIP  "Todos" ;
          FROM     oSnd ;
          CLOSED ;
@@ -1390,7 +1373,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
       DEFINE BTNSHELL RESOURCE "Lbl" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, D():Articulos( nView ), dbfFam, .f. ) );
+         ACTION   ( lSelectAll( oWndBrw, .f. ) );
          TOOLTIP  "Ninguno" ;
          FROM     oSnd ;
          CLOSED ;
@@ -1941,6 +1924,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          TRANSPARENT ;
          OF       fldGeneral
    
+   REDEFINE SAY ;
+         PROMPT   getTraslation( "Familia" );
+         ID       900 ;
+         OF       fldGeneral
+
    REDEFINE SAY ;
          PROMPT   getTraslation( "Categoría" );
          ID       700 ;
@@ -5084,7 +5072,7 @@ STATIC FUNCTION EdtRec2( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    REDEFINE GET aGet[( D():Articulos( nView ) )->( fieldpos( "Familia" ) ) ] ;
       VAR      aTmp[( D():Articulos( nView ) )->( fieldpos( "Familia" ) ) ] ;
       ID       120 ;
-      VALID    ( cFamilia( aGet[( D():Articulos( nView ) )->( fieldpos( "Familia" ) ) ], dbfFam, oSay[1] ) );
+      VALID    ( cFamilia( aGet[( D():Articulos( nView ) )->( fieldpos( "Familia" ) ) ], D():Familias( nView ), oSay[1] ) );
       BITMAP   "LUPA" ;
       ON HELP  ( BrwFamilia( aGet[( D():Articulos( nView ) )->( fieldpos( "Familia" ) ) ], oSay[1] ) );
       OF       oDlg
@@ -9058,7 +9046,7 @@ FUNCTION BrwFamiliaArticulo( oGet, oGet2, lCodeBar, lAppend )
       return nil
    end if
 
-   ( dbfFam      )->( OrdSetFocus( "cNomFam" ) )
+   ( D():Familias( nView )  )->( OrdSetFocus( "cNomFam" ) )
    ( D():Articulos( nView ) )->( OrdSetFocus( "cFamCod" ) )
 
    cPouDiv           := cPouDiv( cDivEmp(), dbfDiv )
@@ -9068,7 +9056,7 @@ FUNCTION BrwFamiliaArticulo( oGet, oGet2, lCodeBar, lAppend )
       REDEFINE GET oGetFamilia VAR cGetFamilia;
          ID       106 ;
          PICTURE  "@!" ;
-         ON CHANGE( if( AutoSeek( nKey, nFlags, Self, oBrwFam, dbfFam, .t. ), SeekFamilia( dbfFam, oCbxOrd, oBrw ), ) );
+         ON CHANGE( if( AutoSeek( nKey, nFlags, Self, oBrwFam, D():Familias( nView ), .t. ), SeekFamilia( oCbxOrd, oBrw ), ) );
          BITMAP   "FIND" ;
          OF       oDlg
 
@@ -9076,7 +9064,7 @@ FUNCTION BrwFamiliaArticulo( oGet, oGet2, lCodeBar, lAppend )
          VAR      cCbxFamilia ;
          ID       107 ;
          ITEMS    aCbxFamilia ;
-         ON CHANGE( ( dbfFam )->( ordSetFocus( oCbxFamilia:nAt ) ), ( dbfFam )->( dbGoTop() ), oBrwFam:Refresh() );
+         ON CHANGE( ( D():Familias( nView ) )->( ordSetFocus( oCbxFamilia:nAt ) ), ( D():Familias( nView ) )->( dbGoTop() ), oBrwFam:Refresh() );
          OF       oDlg
 
       oBrwFam                 := IXBrowse():New( oDlg )
@@ -9084,14 +9072,14 @@ FUNCTION BrwFamiliaArticulo( oGet, oGet2, lCodeBar, lAppend )
       oBrwFam:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwFam:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrwFam:cAlias          := dbfFam
+      oBrwFam:cAlias          := D():Familias( nView )
       oBrwFam:nMarqueeStyle   := 5
       oBrwFam:cName           := "Browse.Familias en artículos"
 
       with object ( oBrwFam:AddCol() )
          :cHeader          := "Código"
          :cSortOrder       := "cCodFam"
-         :bEditValue       := {|| ( dbfFam )->cCodFam }
+         :bEditValue       := {|| ( D():Familias( nView ) )->cCodFam }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxFamilia:Set( oCol:cHeader ) }
       end with
@@ -9099,18 +9087,18 @@ FUNCTION BrwFamiliaArticulo( oGet, oGet2, lCodeBar, lAppend )
       with object ( oBrwFam:AddCol() )
          :cHeader          := "Nombre"
          :cSortOrder       := "cNomFam"
-         :bEditValue       := {|| ( dbfFam )->cNomFam }
+         :bEditValue       := {|| ( D():Familias( nView ) )->cNomFam }
          :nWidth           := 120
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxFamilia:Set( oCol:cHeader ) }
       end with
 
-      oBrwFam:bChange      := {|| SeekFamilia( dbfFam, oCbxOrd, oBrw ) }
+      oBrwFam:bChange      := {|| SeekFamilia( oCbxOrd, oBrw ) }
 
       oBrwFam:CreateFromResource( 103 )
 
       REDEFINE GET oGetArticulo VAR cGetArticulo;
          ID       104 ;
-         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, D():Articulos( nView ), .t., if( ( D():Articulos( nView ) )->( OrdSetFocus() ) $ "CFAMCOD CFAMNOM", ( dbfFam )->cCodFam, ) ) );
+         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, D():Articulos( nView ), .t., if( ( D():Articulos( nView ) )->( OrdSetFocus() ) $ "CFAMCOD CFAMNOM", ( D():Familias( nView ) )->cCodFam, ) ) );
          PICTURE  "@!" ;
          BITMAP   "FIND" ;
          OF       oDlg
@@ -9337,15 +9325,15 @@ RETURN oDlg:nResult == IDOK
 
 //---------------------------------------------------------------------------//
 
-Static Function SeekFamilia( dbfFam, oCbxOrd, oBrw )
+Static Function SeekFamilia( oCbxOrd, oBrw )
 
    ( D():Articulos( nView ) )->( OrdScope( 0, nil ) )
    ( D():Articulos( nView ) )->( OrdScope( 1, nil ) )
 
-   if !Empty( ( dbfFam )->cCodFam ) .and. ( D():Articulos( nView ) )->( dbSeek( ( dbfFam )->cCodFam ) )
+   if !Empty( ( D():Familia( nView ) )->cCodFam ) .and. ( D():Articulos( nView ) )->( dbSeek( ( D():Familia( nView ) )->cCodFam ) )
 
-      ( D():Articulos( nView ) )->( OrdScope( 0, ( dbfFam )->cCodFam ) )
-      ( D():Articulos( nView ) )->( OrdScope( 1, ( dbfFam )->cCodFam ) )
+      ( D():Articulos( nView ) )->( OrdScope( 0, ( D():Familia( nView ) )->cCodFam ) )
+      ( D():Articulos( nView ) )->( OrdScope( 1, ( D():Familia( nView ) )->cCodFam ) )
 
    end if
 
@@ -10975,19 +10963,19 @@ RETURN ( cRet )
 
 //--------------------------------------------------------------------------//
 
-STATIC FUNCTION lSelArt( lSel, oBrw, dbf, dbfFam )
+STATIC FUNCTION lSelArt( lSel, oBrw )
 
-   DEFAULT lSel         := !( dbf )->lSndDoc
+   DEFAULT lSel         := !( D():Articulos( nView ) )->lSndDoc
 
-   if dbLock( dbf )
-      ( dbf )->lSndDoc  := lSel
-      ( dbf )->( dbUnlock() )
+   if dbLock( D():Articulos( nView ) )
+      ( D():Articulos( nView ) )->lSndDoc  := lSel
+      ( D():Articulos( nView ) )->( dbUnlock() )
    end if
 
-   if lSel .and. ( dbfFam )->( dbSeek( ( dbf )->Familia ) )
-      if dbLock( dbfFam )
-         ( dbfFam )->lSelDoc := lSel
-         ( dbf )->( dbUnlock() )
+   if lSel .and. ( D():Familias( nView ) )->( dbSeek( ( D():Articulos( nView ) )->Familia ) )
+      if dbLock( D():Familias( nView ) )
+         ( D():Familias( nView ) )->lSelDoc := lSel
+         ( D():Articulos( nView ) )->( dbUnlock() )
       end if
    end if
 
@@ -11004,26 +10992,26 @@ RETURN NIL
 Selecciona todos los registros
 */
 
-STATIC FUNCTION lSelectAll( oBrw, dbf, dbfFam, lSel, lTop )
+STATIC FUNCTION lSelectAll( oBrw, lSel, lTop )
 
-   local nRecAct  := ( dbf )->( Recno() )
+   local nRecAct  := ( D():Articulos( nView ) )->( Recno() )
 
    DEFAULT lSel   := .t.
    DEFAULT lTop   := .t.
 
-   createWaitMeter( nil, nil, ( dbf )->( OrdKeyCount() ) )
+   createWaitMeter( nil, nil, ( D():Articulos( nView ) )->( OrdKeyCount() ) )
 
    if lTop
-      ( dbf )->( dbGoTop() )
+      ( D():Articulos( nView ) )->( dbGoTop() )
    end if
 
-   while !( dbf )->( eof() )
-      lSelArt( lSel, nil, dbf, dbfFam )
+   while !( D():Articulos( nView ) )->( eof() )
+      lSelArt( lSel )
       incWaitMeter()
-      ( dbf )->( dbSkip() )
+      ( D():Articulos( nView ) )->( dbSkip() )
    end do
 
-   ( dbf )->( dbGoTo( nRecAct ) )
+   ( D():Articulos( nView ) )->( dbGoTo( nRecAct ) )
 
    endWaitMeter()
 
@@ -11679,20 +11667,20 @@ Return aCodigos
 
 Static Function aNombresFamilias()
 
-   local nRec        := ( dbfFam )->( Recno() )
+   local nRec        := ( D():Familias( nView ) )->( Recno() )
    local aCodigos    := {}
 
-   ( dbfFam )->( dbGoTop() )
+   ( D():Familias( nView ) )->( dbGoTop() )
 
-   while !( dbfFam )->( Eof() )
+   while !( D():Familias( nView ) )->( Eof() )
 
-      aAdd( aCodigos, { ( dbfFam )->cNomFam, ( dbfFam )->cCodFam } )
+      aAdd( aCodigos, { ( D():Familias( nView ) )->cNomFam, ( D():Familias( nView ) )->cCodFam } )
 
-      ( dbfFam )->( dbSkip() )
+      ( D():Familias( nView ) )->( dbSkip() )
 
    end while
 
-   ( dbfFam )->( dbGoTo( nRec ) )
+   ( D():Familias( nView ) )->( dbGoTo( nRec ) )
 
 Return aCodigos
 
@@ -12164,6 +12152,7 @@ function SynArt( cPath )
    local nCosto   := 0
    local nOrdAnt
    local dbfArt
+   local dbfFamilia
 
    DEFAULT cPath  := cPatArt()
 
@@ -12176,7 +12165,7 @@ function SynArt( cPath )
    USE ( cPatArt() + "PROVART.DBF" ) NEW VIA ( cDriver() )     EXCLUSIVE ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) )
    SET ADSINDEX TO ( cPatArt() + "PROVART.CDX" ) ADDITIVE
 
-   USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() )    EXCLUSIVE ALIAS ( cCheckArea( "FAMILIAS", @dbfFam ) )
+   USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() )    EXCLUSIVE ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
    SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
 
    USE ( cPatArt() + "ArtCodebar.Dbf" ) NEW VIA ( cDriver() )  EXCLUSIVE ALIAS ( cCheckArea( "CODEBAR", @dbfCodebar ) )
@@ -12330,14 +12319,14 @@ function SynArt( cPath )
 
          if !( dbfArt )->lCodPrp
 
-            if ( dbfFam )->( dbSeek( ( dbfArt )->Familia ) )
+            if ( dbfFamilia )->( dbSeek( ( dbfArt )->Familia ) )
 
-               if Empty( ( dbfArt )->cCodPrp1 ) .and. !Empty( ( dbfFam )->cCodPrp1 )
-                  ( dbfArt )->cCodPrp1  := ( dbfFam )->cCodPrp1
+               if Empty( ( dbfArt )->cCodPrp1 ) .and. !Empty( ( dbfFamilia )->cCodPrp1 )
+                  ( dbfArt )->cCodPrp1  := ( dbfFamilia )->cCodPrp1
                end if
 
-               if Empty( ( dbfArt )->cCodPrp2 ) .and. !Empty( ( dbfFam )->cCodPrp2 )
-                  ( dbfArt )->cCodPrp2  := ( dbfFam )->cCodPrp2
+               if Empty( ( dbfArt )->cCodPrp2 ) .and. !Empty( ( dbfFamilia )->cCodPrp2 )
+                  ( dbfArt )->cCodPrp2  := ( dbfFamilia )->cCodPrp2
                end if
 
             end if
@@ -12505,7 +12494,7 @@ function SynArt( cPath )
    CLOSE ( dbfArt )
    CLOSE ( dbfArtKit   )
    CLOSE ( dbfArtPrv   )
-   CLOSE ( dbfFam      )
+   CLOSE ( dbfFamilia  )
    CLOSE ( dbfCodebar  )
    CLOSE ( dbfImg      )
    CLOSE ( dbfOfe      )
@@ -13582,31 +13571,31 @@ Return ( lCarga )
 
 //---------------------------------------------------------------------------//
 
-Function ExpFamilia( cCodFam, oSayFamilia, aGet )
+Static Function ExpFamilia( cCodFam, oSayFamilia, aGet )
 
    if Empty( cCodFam )
       Return .t.
    end if
 
-   if dbSeekInOrd( cCodFam, "cCodFam", dbfFam )
+   if dbSeekInOrd( cCodFam, "cCodFam", D():Familias( nView ) )
 
-      oSayFamilia:cText( ( dbfFam )->cNomFam )
+      oSayFamilia:cText( ( D():Familias( nView ) )->cNomFam )
 
       if cCodFam != cCodigoFamilia
 
-         if ( !Empty( ( dbfFam )->cCodPrp1 ) .and. aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ]:VarGet() != ( dbfFam )->cCodPrp1 ) .or.;
-            ( !Empty( ( dbfFam )->cCodPrp2 ) .and. aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ]:VarGet() != ( dbfFam )->cCodPrp2 ) .or.;
-            ( !Empty( ( dbfFam )->cCodFra  ) .and. aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodFra"  ) ) ]:VarGet() != ( dbfFam )->cCodFra  )
+         if ( !Empty( ( D():Familias( nView ) )->cCodPrp1 ) .and. aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ]:VarGet() != ( D():Familias( nView ) )->cCodPrp1 ) .or.;
+            ( !Empty( ( D():Familias( nView ) )->cCodPrp2 ) .and. aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ]:VarGet() != ( D():Familias( nView ) )->cCodPrp2 ) .or.;
+            ( !Empty( ( D():Familias( nView ) )->cCodFra  ) .and. aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodFra"  ) ) ]:VarGet() != ( D():Familias( nView ) )->cCodFra  )
 
             if ApoloMsgNoYes( "¿ Desea importar las propiedades y frases publicitarias de la familia ?" )
 
-               aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ]:cText( ( dbfFam )->cCodPrp1 )
+               aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ]:cText( ( D():Familias( nView ) )->cCodPrp1 )
                aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ]:lValid()
 
-               aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ]:cText( ( dbfFam )->cCodPrp2 )
+               aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ]:cText( ( D():Familias( nView ) )->cCodPrp2 )
                aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ]:lValid()
 
-               aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodFra" ) ) ]:cText( ( dbfFam )->cCodFra )
+               aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodFra" ) ) ]:cText( ( D():Familias( nView ) )->cCodFra )
                aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodFra" ) ) ]:lValid()
 
             end if
@@ -13818,7 +13807,7 @@ Method Create() CLASS TArticuloLabelGenerator
             BITMAP   "LUPA" ;
             OF       ::fldGeneral
 
-         ::oFamiliaInicio:bValid    := {|| cFamilia( ::oFamiliaInicio, dbfFam, ::oFamiliaInicio:oHelpText ), .t. }
+         ::oFamiliaInicio:bValid    := {|| cFamilia( ::oFamiliaInicio, D():Familias( nView ), ::oFamiliaInicio:oHelpText ), .t. }
          ::oFamiliaInicio:bHelp     := {|| BrwFamilia( ::oFamiliaInicio, ::oFamiliaInicio:oHelpText ) }
 
          REDEFINE SAY ::oInicio ;
@@ -13831,7 +13820,7 @@ Method Create() CLASS TArticuloLabelGenerator
             BITMAP   "LUPA" ;
             OF       ::fldGeneral
 
-         ::oFamiliaFin:bValid       := {|| cFamilia( ::oFamiliaFin, dbfFam, ::oFamiliaFin:oHelpText ), .t. }
+         ::oFamiliaFin:bValid       := {|| cFamilia( ::oFamiliaFin, D():Familias( nView ), ::oFamiliaFin:oHelpText ), .t. }
          ::oFamiliaFin:bHelp        := {|| BrwFamilia( ::oFamiliaFin, ::oFamiliaFin:oHelpText ) }
 
          REDEFINE SAY ::oFin ;
@@ -14014,7 +14003,7 @@ Method Create() CLASS TArticuloLabelGenerator
          REDEFINE BUTTON ::oBtnListado ;          // Boton listado
             ID       40 ;
             OF       ::oDlg ;
-            ACTION   ( TInfArtFam():New( "Listado de artículos seleccionados para etiquetas" ):Play( .t., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva, dbfFam, oStock, oWndBrw ) )
+            ACTION   ( TInfArtFam():New( "Listado de artículos seleccionados para etiquetas" ):Play( .t., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva, D():Familias( nView ), oStock, oWndBrw ) )
 
          REDEFINE BUTTON ::oBtnAnterior ;          // Boton anterior
             ID       20 ;
@@ -17199,7 +17188,7 @@ Static Function DataReport( oFr, lTemporal )
    end if
    oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
 
-   oFr:SetWorkArea(     "Familias", ( dbfFam )->( Select() ) )
+   oFr:SetWorkArea(     "Familias", ( D():Familias( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Familias", cItemsToReport( aItmFam() ) )
 
    oFr:SetWorkArea(     "Categoria", ( dbfCategoria )->( Select() ) )
@@ -17822,24 +17811,24 @@ static function ChangeFamiliaInt( cCodFam )
 
    if !Empty( cCodFam )
 
-      nRec  := ( dbfFam )->( Recno() )
+      nRec  := ( D():Familias( nView ) )->( Recno() )
 
-      if dbSeekInOrd( cCodFam, "CCODFAM", dbfFam )
+      if dbSeekInOrd( cCodFam, "CCODFAM", D():Familias( nView ) )
 
-         if ( dbfFam )->( dbRLock() )
-            ( dbfFam )->lPubInt   := .t.
-            ( dbfFam )->lSelDoc   := .t.
-            ( dbfFam )->( dbCommit() )
-            ( dbfFam )->( dbUnLock() )
+         if ( D():Familias( nView ) )->( dbRLock() )
+            ( D():Familias( nView ) )->lPubInt   := .t.
+            ( D():Familias( nView ) )->lSelDoc   := .t.
+            ( D():Familias( nView ) )->( dbCommit() )
+            ( D():Familias( nView ) )->( dbUnLock() )
          end if
 
-         if !Empty( ( dbfFam )->cCodGrp )
-            ChangeGrpFamInt( ( dbfFam )->cCodGrp )
+         if !Empty( ( D():Familias( nView ) )->cCodGrp )
+            ChangeGrpFamInt( ( D():Familias( nView ) )->cCodGrp )
          end if
 
       end if
 
-      ( dbfFam )->( dbGoto( nRec ) )
+      ( D():Familias( nView ) )->( dbGoto( nRec ) )
 
    end if
 

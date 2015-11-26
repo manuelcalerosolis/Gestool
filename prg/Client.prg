@@ -4792,10 +4792,10 @@ Static Function lExpandir( oDlg, oBtn, lSet )
    end if
 
    if lExpandida
-      SetWindowText( oBtn:hWnd, "Retabilidad <" )
+      SetWindowText( oBtn:hWnd, "Rentabilidad <" )
       oDlg:Move( oRect:nTop, oRect:nLeft, 800, 522, .t. )
    else
-      SetWindowText( oBtn:hWnd, "Retabilidad >" )
+      SetWindowText( oBtn:hWnd, "Rentabilidad >" )
       oDlg:Move( oRect:nTop, oRect:nLeft, 463, 522, .t. )
    end if
 
