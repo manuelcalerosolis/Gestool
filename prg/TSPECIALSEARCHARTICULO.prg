@@ -610,7 +610,7 @@ METHOD SearchArticulos() CLASS TSPECIALSEARCHARTICULO
    cSentencia        += ::cGetWhereSentencia()
    cSentencia        += ::cGetOrderBy()
 
-   if TDataCenter():ExecuteSqlStatement( cSentencia, "SelectArticulo" )
+   if TDataCenter():ExecuteSqlStatement( cSentencia, "SelectArticulo" ) 
       ::oBrwArticulo:Refresh()
    end if
 
