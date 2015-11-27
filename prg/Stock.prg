@@ -2337,6 +2337,7 @@ RETURN ( lDup )
          :cValorPropiedad2    := ( ::cProducL )->cValPr2
          :cLote               := ( ::cProducL )->cLote
          :dFechaCaducidad     := ( ::cProducL )->dFecCad
+         :nCajas              := ( ::cProducL )->nCajOrd
          :nBultos             := ( ::cProducL )->nBultos
 
           if IsTrue( lNumeroSerie )
@@ -2374,6 +2375,7 @@ RETURN ( lDup )
          :cValorPropiedad1    := ( ::cProducM )->cValPr1
          :cValorPropiedad2    := ( ::cProducM )->cValPr2
          :cLote               := ( ::cProducM )->cLote
+         :nCajas              := -( ::cProducM )->nCajOrd
          :nBultos             := -( ::cProducM )->nBultos
 
          if IsTrue( lNumeroSerie )

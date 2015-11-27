@@ -1583,7 +1583,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
          
          with object ( oBrwLin:AddCol() )
             :cHeader          := cNombreCajas()
-            :bEditValue       := {|| ( dbfTmp )->nCanPed }
+            :bEditValue       := {|| ( dbfTmp )->nCanEnt }
             :cEditPicture     := cPicUnd
             :nWidth           := 60
             :nDataStrAlign    := 1
