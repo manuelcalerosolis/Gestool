@@ -128,7 +128,7 @@ METHOD lResource( cFld ) CLASS TFastProduccion
    ::oFilter      := TFilterCreator():Init()
    if !Empty( ::oFilter )
       ::oFilter:SetDatabase( ::oDbf )
-      ::oFilter:SetFilterType( FST_PRO )
+      //::oFilter:SetFilterType( FST_PRO )
    end if 
 
 RETURN .t.
