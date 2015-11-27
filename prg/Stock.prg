@@ -4458,11 +4458,11 @@ Return ( nBultosArticulo )
 
 //---------------------------------------------------------------------------//
 
-METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
+METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecIni, dFecFin ) CLASS TStock
 
    local nStockArticulo := 0
 
-   ::aStockArticulo( cCodArt, cCodAlm )
+   ::aStockArticulo( cCodArt, cCodAlm, , , , dFecIni, dFecFin )
 
    aEval( ::aStocks, {|o| if( ( Empty( cCodAlm ) .or. cCodAlm == o:cCodigoAlmacen )  .and.;
                               ( Empty( cValPr1 ) .or. cValPr1 == o:cValorPropiedad1 ).and.;
