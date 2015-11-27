@@ -54,8 +54,8 @@ CLASS TSpecialSearchArticulo
                                        "Fecha"           => "lineasSat.dFecSat",;
                                        "Código cliente"  => "cabecerasat.cCodCli",;
                                        "Nombre cliente"  => "cabecerasat.cNomCli",;
-                                       "Operario"        => "operario.cNomTra",;
                                        "Rtua"            => "ruta.cDesRut" }
+                                       //"Operario"        => "operario.cNomTra",;
    DATA cOrderBy              INIT "articulos.Codigo"
 
    DATA oBrwArticulo
@@ -73,9 +73,9 @@ CLASS TSpecialSearchArticulo
    METHOD GetArraySelectNombreClienteSAT()
    METHOD GetArraySelectArticulo()
 
-   METHOD SearchArticulos()
-
-   METHOD DefaultSelect()
+   METHOD SelectArticulo()   
+   METHOD SelectOldArticulo()   
+   METHOD SelectDefault()     INLINE ( ::SelectArticulo( .t. ) )
 
    METHOD cGetWhereSentencia()
    METHOD cGetOrderBy()
@@ -204,16 +204,19 @@ Return ( "Buscar_Avanzada" )
 METHOD Resource() CLASS TSPECIALSEARCHARTICULO
 
    local oBmp
+   local seconds     
 
-   ::DefaultSelect()
+   ::SelectDefault()
+
+   seconds           := seconds()
 
    DEFINE DIALOG ::oDlg RESOURCE ::cSelectResource() OF oWnd()
 
       REDEFINE BITMAP oBmp;
-         RESOURCE "zoom_in_48" ;
-         ID       500 ;
+         RESOURCE    "zoom_in_48" ;
+         ID          500 ;
          TRANSPARENT ;
-         OF       ::oDlg 
+         OF          ::oDlg 
 
       REDEFINE COMBOBOX ::oEstadoMaquina ;
          VAR         ::cEstadoMaquina ;
@@ -246,17 +249,21 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
       ::oGetOperario := TAutoGet():ReDefine( 140, { | u | iif( pcount() == 0, ::cGetOperario, ::cGetOperario := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetOperario",, ::aOperario,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
       ::oGetRuta     := TAutoGet():ReDefine( 190, { | u | iif( pcount() == 0, ::cGetRuta, ::cGetRuta := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetRuta",, ::aRuta,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
 
+      msgAlert( seconds() - seconds, "despues autoget" )
+
       REDEFINE BUTTON ::oBotonBuscar ;
          ID          200 ;
          OF          ::oDlg ;
          CANCEL ;
-         ACTION      ( ::SearchArticulos() ) 
+         ACTION      ( ::SelectArticulo() ) 
 
       REDEFINE BUTTON ::oBotonLimpiar ;
          ID          210 ;
          OF          ::oDlg ;
          CANCEL ;
-         ACTION      ( ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() )
+         ACTION      ( ::ReiniciaValores(), ::SelectDefault(), ::oBrwArticulo:Refresh() )
+
+      msgAlert( seconds() - seconds, "oBotonLimpiar" )
 
       ::oBrwArticulo                 := IXBrowse():New( ::oDlg )
 
@@ -277,7 +284,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
          :cHeader             := "Añadir artículo"
          :bStrData            := {|| "" }
          :bOnPostEdit         := {|| .t. }
-         :bEditBlock          := {|| AppArticulo(), ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() }
+         :bEditBlock          := {|| AppArticulo(), ::ReiniciaValores(), ::SelectDefault(), ::oBrwArticulo:Refresh() }
          :nEditType           := 5
          :nWidth              := 20
          :nHeadBmpNo          := 1
@@ -290,7 +297,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
          :cHeader             := "Modificar artículo"
          :bStrData            := {|| "" }
          :bOnPostEdit         := {|| .t. }
-         :bEditBlock          := {|| EdtArticulo( SelectArticulo->Codigo ), ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() }
+         :bEditBlock          := {|| EdtArticulo( SelectArticulo->Codigo ), ::ReiniciaValores(), ::SelectDefault(), ::oBrwArticulo:Refresh() }
          :nEditType           := 5
          :nWidth              := 20
          :nHeadBmpNo          := 1
@@ -361,7 +368,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
          :cHeader             := "Añadir S.A.T."
          :bStrData            := {|| "" }
          :bOnPostEdit         := {|| .t. }
-         :bEditBlock          := {|| AppSatCli( SelectArticulo->cCodCli, SelectArticulo->Codigo ), ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() }
+         :bEditBlock          := {|| AppSatCli( SelectArticulo->cCodCli, SelectArticulo->Codigo ), ::ReiniciaValores(), ::SelectDefault(), ::oBrwArticulo:Refresh() }
          :nEditType           := 5
          :nWidth              := 20
          :nHeadBmpNo          := 1
@@ -374,7 +381,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
          :cHeader             := "Modificar S.A.T."
          :bStrData            := {|| "" }
          :bOnPostEdit         := {|| .t. }
-         :bEditBlock          := {|| EdtSatCli( SelectArticulo->cSerSat + str( SelectArticulo->nNumSat, 9 ) + SelectArticulo->cSufSat ), ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() }
+         :bEditBlock          := {|| EdtSatCli( SelectArticulo->cSerSat + str( SelectArticulo->nNumSat, 9 ) + SelectArticulo->cSufSat ), ::ReiniciaValores(), ::SelectDefault(), ::oBrwArticulo:Refresh() }
          :nEditType           := 5
          :nWidth              := 20
          :nHeadBmpNo          := 1
@@ -443,7 +450,9 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
          :nWidth              := 150
       end with
 
-      ::oBrwArticulo:bLDblClick      := {|| EdtArticulo( SelectArticulo->Codigo ), ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() }
+      ::oBrwArticulo:bLDblClick      := {|| EdtArticulo( SelectArticulo->Codigo ), ::ReiniciaValores(), ::SelectDefault(), ::oBrwArticulo:Refresh() }
+
+      msgAlert( seconds() - seconds, "oBrwArticulo" )
 
       REDEFINE BUTTON ::oBotonSalir;
          ID          IDCANCEL ;
@@ -451,12 +460,14 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
          CANCEL ;
          ACTION      ( ::oDlg:end() )
 
-      ::oDlg:AddFastKey( VK_F2, {|| AppArticulo(), ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() } )   
-      ::oDlg:AddFastKey( VK_F3, {|| EdtArticulo( SelectArticulo->Codigo ), ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() } )   
-      ::oDlg:AddFastKey( VK_F4, {|| ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() } )   
-      ::oDlg:AddFastKey( VK_F5, {|| ::SearchArticulos() } )   
+      ::oDlg:AddFastKey( VK_F2, {|| AppArticulo(), ::ReiniciaValores(), ::SelectDefault(), ::oBrwArticulo:Refresh() } )   
+      ::oDlg:AddFastKey( VK_F3, {|| EdtArticulo( SelectArticulo->Codigo ), ::ReiniciaValores(), ::SelectDefault(), ::oBrwArticulo:Refresh() } )   
+      ::oDlg:AddFastKey( VK_F4, {|| ::ReiniciaValores(), ::SelectDefault(), ::oBrwArticulo:Refresh() } )   
+      ::oDlg:AddFastKey( VK_F5, {|| ::SelectArticulo() } )   
 
-      ::oDlg:bStart     := {|| ::oBrwArticulo:Load(), ::lRecargaFecha() }
+      // ::oDlg:bStart  := {|| ::oBrwArticulo:Load(), ::lRecargaFecha() }
+
+   msgAlert( seconds() - seconds, "dialogo" )
 
    ACTIVATE DIALOG ::oDlg CENTER
 
@@ -513,18 +524,21 @@ Return ( ::aArticulo )
 
 //---------------------------------------------------------------------------//
 
-METHOD DefaultSelect() CLASS TSPECIALSEARCHARTICULO
+METHOD SelectArticulo( lDefault ) CLASS TSPECIALSEARCHARTICULO
 
    local nSec        := seconds()
    local cSentencia  := ""
 
+   DEFAULT lDefault  := .f.
+
    cSentencia        += "SELECT articulos.Codigo, "
    cSentencia        +=        "articulos.Nombre, "
    cSentencia        +=        "articulos.cDesUbi, "
+   cSentencia        +=        "articulos.cCodTip, "
    cSentencia        +=        "estadoSat.cNombre, "
    cSentencia        +=        "estadoSat.nDisp, "  
-   cSentencia        +=        "tipoArticulo.cCodTip, "
-   cSentencia        +=        "tipoArticulo.cNomTip, "
+   // cSentencia        +=        "tipoArticulo.cCodTip, "
+   // cSentencia        +=        "tipoArticulo.cNomTip, "
    cSentencia        +=        "lineasSat.dFecSat, "
    cSentencia        +=        "lineasSat.cSerSat, "
    cSentencia        +=        "lineasSat.nNumSat, "
@@ -533,18 +547,18 @@ METHOD DefaultSelect() CLASS TSPECIALSEARCHARTICULO
    cSentencia        +=        "cabeceraSat.cCodOpe, "
    cSentencia        +=        "cabeceraSat.cCodCli, "
    cSentencia        +=        "cabeceraSat.cNomCli, "
-   cSentencia        +=        "cabeceraSat.cCodRut, "
-   cSentencia        +=        "operario.cNomTra, "
-   cSentencia        +=        "ruta.cDesRut "
+   cSentencia        +=        "cabeceraSat.cCodRut "
+   //cSentencia        +=        "operario.cNomTra, "
+   //cSentencia        +=        "ruta.cDesRut "
    cSentencia        += "FROM " + cPatEmp() + "Articulo articulos "
-   cSentencia        += "LEFT JOIN " + cPatEmp() + "TipArt tipoArticulo on articulos.cCodTip = tipoArticulo.cCodTip "
+   //cSentencia        += "LEFT JOIN " + cPatEmp() + "TipArt tipoArticulo on articulos.cCodTip = tipoArticulo.cCodTip "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "SatCliL lineasSat on dFecSat=(SELECT MAX(dFecSat) FROM " + cPatEmp() + "SatCliL WHERE cRef=articulos.Codigo ) AND cRef = articulos.Codigo "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "SatCliT cabeceraSat on lineasSat.cSerSat = cabeceraSat.cSerSat AND lineasSat.nNumSat = cabeceraSat.nNumSat AND lineasSat.cSufSat = cabeceraSat.cSufSat "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "EstadoSat estadoSat on cabeceraSat.cCodEst = estadoSat.cCodigo "
-   cSentencia        += "LEFT JOIN " + cPatEmp() + "OpeT operario on cabeceraSat.cCodOpe = operario.cCodTra "
-   cSentencia        += "LEFT JOIN " + cPatEmp() + "Ruta ruta on cabeceraSat.cCodRut = ruta.cCodRut "
-   cSentencia        += "WHERE EstadoSat.nDisp=2 "
-   cSentencia        += ::cGetOrderBy()
+   // cSentencia        += "LEFT JOIN " + cPatEmp() + "OpeT operario on cabeceraSat.cCodOpe = operario.cCodTra "
+   //cSentencia        += "LEFT JOIN " + cPatEmp() + "Ruta ruta on cabeceraSat.cCodRut = ruta.cCodRut "
+   cSentencia        += ::cGetWhereSentencia( lDefault )
+   // cSentencia        += ::cGetOrderBy()
 
    logWrite( cSentencia )
 
@@ -552,23 +566,28 @@ METHOD DefaultSelect() CLASS TSPECIALSEARCHARTICULO
       SelectArticulo->( dbGoTop() )
    end if
 
-   msgAlert( seconds() - nSec )
+   msgAlert( seconds() - nSec, "SelectDefault" )
 
 Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD SearchArticulos() CLASS TSPECIALSEARCHARTICULO
 
+METHOD SelectOldArticulo( lDefault ) CLASS TSPECIALSEARCHARTICULO
+
+   local nSec        := seconds()
    local cSentencia  := ""
+
+   DEFAULT lDefault  := .f.
 
    cSentencia        += "SELECT articulos.Codigo, "
    cSentencia        +=        "articulos.Nombre, "
    cSentencia        +=        "articulos.cDesUbi, "
+   cSentencia        +=        "articulos.cCodTip, "
    cSentencia        +=        "estadoSat.cNombre, "
-   cSentencia        +=        "estadoSat.nDisp, "
-   cSentencia        +=        "tipoArticulo.cCodTip, "
-   cSentencia        +=        "tipoArticulo.cNomTip, "
+   cSentencia        +=        "estadoSat.nDisp, "  
+   // cSentencia        +=        "tipoArticulo.cCodTip, "
+   // cSentencia        +=        "tipoArticulo.cNomTip, "
    cSentencia        +=        "lineasSat.dFecSat, "
    cSentencia        +=        "lineasSat.cSerSat, "
    cSentencia        +=        "lineasSat.nNumSat, "
@@ -577,24 +596,26 @@ METHOD SearchArticulos() CLASS TSPECIALSEARCHARTICULO
    cSentencia        +=        "cabeceraSat.cCodOpe, "
    cSentencia        +=        "cabeceraSat.cCodCli, "
    cSentencia        +=        "cabeceraSat.cNomCli, "
-   cSentencia        +=        "cabeceraSat.cCodRut, "
-   cSentencia        +=        "operario.cNomTra, "
-   cSentencia        +=        "ruta.cDesRut "
+   cSentencia        +=        "cabeceraSat.cCodRut "
+   //cSentencia        +=        "operario.cNomTra, "
+   //cSentencia        +=        "ruta.cDesRut "
    cSentencia        += "FROM " + cPatEmp() + "Articulo articulos "
-   cSentencia        += "LEFT JOIN " + cPatEmp() + "TipArt tipoArticulo on articulos.cCodTip = tipoArticulo.cCodTip "
-   cSentencia        += "LEFT JOIN " + cPatEmp() + "SatCliL lineasSat on dFecSat = ( SELECT MAX( dFecSat ) FROM " + cPatEmp() + "SatCliL WHERE cRef = articulos.Codigo ) AND cRef = articulos.Codigo "
+   //cSentencia        += "LEFT JOIN " + cPatEmp() + "TipArt tipoArticulo on articulos.cCodTip = tipoArticulo.cCodTip "
+   cSentencia        += "LEFT JOIN " + cPatEmp() + "SatCliL lineasSat on dFecSat=(SELECT MAX(dFecSat) FROM " + cPatEmp() + "SatCliL WHERE cRef=articulos.Codigo ) AND cRef = articulos.Codigo "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "SatCliT cabeceraSat on lineasSat.cSerSat = cabeceraSat.cSerSat AND lineasSat.nNumSat = cabeceraSat.nNumSat AND lineasSat.cSufSat = cabeceraSat.cSufSat "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "EstadoSat estadoSat on cabeceraSat.cCodEst = estadoSat.cCodigo "
-   cSentencia        += "LEFT JOIN " + cPatEmp() + "OpeT operario on cabeceraSat.cCodOpe = operario.cCodTra "
-   cSentencia        += "LEFT JOIN " + cPatEmp() + "Ruta ruta on cabeceraSat.cCodRut = ruta.cCodRut "
-   cSentencia        += ::cGetWhereSentencia()
-   cSentencia        += ::cGetOrderBy()
+   // cSentencia        += "LEFT JOIN " + cPatEmp() + "OpeT operario on cabeceraSat.cCodOpe = operario.cCodTra "
+   //cSentencia        += "LEFT JOIN " + cPatEmp() + "Ruta ruta on cabeceraSat.cCodRut = ruta.cCodRut "
+   cSentencia        += ::cGetWhereSentencia( lDefault )
+   // cSentencia        += ::cGetOrderBy()
 
    logWrite( cSentencia )
 
-   if TDataCenter():ExecuteSqlStatement( cSentencia, "SelectArticulo" ) 
-      ::oBrwArticulo:Refresh()
+   if TDataCenter():ExecuteSqlStatement( cSentencia, "SelectArticulo" )
+      SelectArticulo->( dbGoTop() )
    end if
+
+   msgAlert( seconds() - nSec, "SelectDefault" )
 
 Return ( self )
 
@@ -609,7 +630,7 @@ METHOD refreshSearchArticulo( oCol ) CLASS TSPECIALSEARCHARTICULO
       ::oBrwArticulo:cOrders  := ' '
       oCol:cOrder             := 'A'
 
-      ::searchArticulos()
+      ::SelectArticulo()
 
    end if 
 
@@ -617,9 +638,16 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD cGetWhereSentencia() CLASS TSPECIALSEARCHARTICULO
+METHOD cGetWhereSentencia( lDefault ) CLASS TSPECIALSEARCHARTICULO
 
    local cSentencia  := ""
+
+   DEFAULT lDefault  := .f.
+
+   if lDefault
+      cSentencia     := "WHERE EstadoSat.nDisp = 2"
+      RETURN ( cSentencia )
+   END IF 
 
    if !Empty( ::cGetArticulo )
       cSentencia     += "articulos.Codigo='" + Padr( ::cGetArticulo, 18 ) + "'"
@@ -646,9 +674,9 @@ METHOD cGetWhereSentencia() CLASS TSPECIALSEARCHARTICULO
       cSentencia     += if( !Empty( cSentencia ), " AND ", "" ) + "EstadoSat.nDisp=" + AllTrim( Str( ::oEstadoMaquina:nAt ) )
    end if
 
-   if !Empty( ::cGetOperario )
-      cSentencia     += if( !Empty( cSentencia ), " AND ", "" ) + "operario.cNomTra='" + Padr( ::cGetOperario, 35 ) + "'" 
-   end if
+//   if !Empty( ::cGetOperario )
+//      cSentencia     += if( !Empty( cSentencia ), " AND ", "" ) + "operario.cNomTra='" + Padr( ::cGetOperario, 35 ) + "'" 
+//   end if
 
    if !Empty( ::cGetRuta )
       cSentencia     += if( !Empty( cSentencia ), " AND ", "" ) + "ruta.cDesRut='" + Padr( ::cGetRuta, 30 ) + "'" 
