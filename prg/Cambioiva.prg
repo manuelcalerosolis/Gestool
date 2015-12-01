@@ -37,9 +37,8 @@ CLASS TConversionDocumentos
       METHOD clickOnHeader( oColumn )
       METHOD changeSortDocument()
       METHOD changeSearch()
-      METHOD setOrderInColumn( oColumn )  INLINE ( aeval( ::oBrwDocuments:aCols, {|o| o:cOrder := '' } ),;
-                                                   if( empty( oColumn ), ::oBrwDocuments:aCols[ 1 ]:cOrder := 'A', oColumn:cOrder := 'A' ) )
-      
+      METHOD setOrderInColumn( oColumn )  
+
    METHOD OpenFiles()
    METHOD CloseFiles()
 
@@ -172,13 +171,15 @@ METHOD Dialog()
       :nWidth                       := 80
       :cSortOrder                   := "Fecha"
       :bLClickHeader                := {| nMRow, nMCol, nFlags, oColumn | ::clickOnHeader( oColumn ) }
+      :nDataStrAlign                := 3
+      :nHeadStrAlign                := 3
    end with
 
    with object ( ::oBrwDocuments:AddCol() )
       :cHeader                      := "Nombre"
       :bEditValue                   := {|| ::getName() }
       :nWidth                       := 400
-      :cSortOrder                   := "Fecha"
+      :cSortOrder                   := "NombreEntidad"
       :bLClickHeader                := {| nMRow, nMCol, nFlags, oColumn | ::clickOnHeader( oColumn ) }
    end with
 
@@ -383,7 +384,7 @@ Return ( .t. )
 METHOD changeSearch()
 
    local lSeek
-   local cSearch  := ::oSearch:varGet()
+   local cSearch  := alltrim( ::oSearch:varGet() )
 
    lSeek          := lSeekKeySimple( cSearch, ::getAlias() ) // lMiniSeek( xCadena, cAlias, ::cSearchType, ::nLenSearchType )
 
@@ -396,6 +397,24 @@ METHOD changeSearch()
    end if 
 
 Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD setOrderInColumn( oColumn )
+
+   if empty(::oBrwDocuments)
+      Return ( Self )
+   end if 
+
+   aeval( ::oBrwDocuments:aCols, {|o| o:cOrder := '' } )
+
+   if empty( oColumn )
+      ::oBrwDocuments:aCols[ 1 ]:cOrder := 'A'
+   else
+      oColumn:cOrder := 'A' 
+   end if 
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 
