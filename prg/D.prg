@@ -350,7 +350,8 @@ CLASS D
       METHOD PedidosProveedoresId( nView )            INLINE ( ( ::Get( "PedProvT", nView ) )->cSerPed + str( ( ::Get( "PedProvT", nView ) )->nNumPed, 9 ) + ( ::Get( "PedProvT", nView ) )->cSufPed )
       METHOD gotoIdPedidosProveedores( id, nView )    INLINE ( ::seekInOrd( ::PedidosProveedores( nView ), id, "nNumPed" ) ) 
 
-   METHOD PedidosProveedoresLineas( nView )                 INLINE ( ::Get( "PedProvL", nView ) )
+   METHOD PedidosProveedoresLineasTableName( nView )           INLINE ( "PedProvL" )
+   METHOD PedidosProveedoresLineas( nView )                    INLINE ( ::Get( "PedProvL", nView ) )
       METHOD PedidosProveedoresLineasId( nView )               INLINE ( ( ::Get( "PedProvL", nView ) )->cSerPed + str( ( ::Get( "PedProvL", nView ) )->nNumPed, 9 ) + ( ::Get( "PedProvL", nView ) )->cSufPed )
       METHOD getStatusPedidosProveedoresLineas( nView )        INLINE ( ::aStatus := aGetStatus( ::PedidosProveedoresLineas( nView ) ) )
       METHOD setStatusPedidosProveedoresLineas( nView )        INLINE ( SetStatus( ::PedidosProveedoresLineas( nView ), ::aStatus ) ) 

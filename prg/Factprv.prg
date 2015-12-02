@@ -6723,6 +6723,8 @@ STATIC FUNCTION GrpAlb( oGet, aTmp, oBrw )
 
                ( dbfTmp )->cDetalle    := cDetalle
                ( dbfTmp )->lControl    := .t.
+               ( dbfTmp )->nNumLin     := nLastNum(  dbfTmp )
+               ( dbfTmp )->nPosPrint   := nLastNum(  dbfTmp, "nPosPrint" )
 
                AddLineasAlbaranProveedor( aAlbaranes[ nItem, 2 ], .t. )
 
@@ -8497,12 +8499,13 @@ Function AddLineasAlbaranProveedor( cAlbaran, lNewLin )
             ( dbfTmp )->( dbAppend() )
 
             if lNewLin
+
                nNewLin                 := nLastNum( dbfTmp )
                ( dbfTmp )->nNumLin     := nNewLin
-               ( dbfTmp )->nPosPrint   := nLastNum( dbfTmp, "nPosPrint" )
+               ( dbfTmp )->nPosPrint   := nNewLin
             else
                ( dbfTmp )->nNumLin     := nNumLin
-               ( dbfTmp )->nPosPrint   := nNumLin
+               ( dbfTmp )->nPosPrint   := ( D():AlbaranesProveedoresLineas( nView ) )->nPosPrint
             end if
 
             ( dbfTmp )->cRef        := ( D():AlbaranesProveedoresLineas( nView ) )->cRef

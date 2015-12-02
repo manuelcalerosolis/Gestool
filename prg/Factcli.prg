@@ -8867,6 +8867,7 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
    local oTitle3
    local oBrwDet
    local nOrd
+   local nOrdLineasAlbaranes
    local nNumLin
    local nPosPrint
    local nItem       := 1
@@ -8890,6 +8891,7 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
    end if
 
    nOrd              := ( dbfAlbCliT )->( ordSetFocus( "CCODCLI" ) )   // Orden a Codigo de Cliente
+   nOrdLineasAlbaranes := ( dbfAlbCliL )->( ordSetFocus( "nPosPrint" ) )
 
    if !Empty( oTipFac ) .and. oTipFac:nAt == 2
       lAlquiler      := .t.
@@ -8931,6 +8933,8 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
       msgStop( "No existen albaranes de este cliente." )
 
       ( dbfAlbCliT )->( ordSetFocus( nOrd ) )
+      ( dbfAlbCliS )->( ordSetFocus( nOrdLineasAlbaranes ) )
+      
       return .t.
 
    end if

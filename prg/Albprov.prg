@@ -9686,10 +9686,12 @@ Function SynAlbPrv( cPath )
          ( cAlbPrvL )->cAlmLin    := RetFld( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb, cAlbPrvT, "cCodAlm" )
       end if
 
+/*  Esto da problemas en Distribumar en el caso de albaranes facturados parcialmente, quita la marca de facturado de la linea
+
       if ( cAlbPrvL )->lFacturado != RetFld( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb, cAlbPrvT, "lFacturado" ) 
          ( cAlbPrvL )->lFacturado := RetFld( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb, cAlbPrvT, "lFacturado" )
       end if
-
+*/
       if ( cAlbPrvL )->dFecAlb != RetFld( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb, cAlbPrvT, "dFecAlb" )
          ( cAlbPrvL )->dFecAlb   := RetFld( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb, cAlbPrvT, "dFecAlb" )
       end if

@@ -2075,7 +2075,7 @@ FONT 8, "MS Sans Serif"
 {
   CONTROL "Seleccionar documento", -1, "Button", BS_GROUPBOX, 1, 2, 622, 380
   CONTROL "", 120, "TXBrowse", 0x00200000, 6, 28, 613, 351
-  CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 7, 13, 481, 12
+  CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 6, 13, 482, 12
   CONTROL "", 110, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 490, 13, 129, 138
 }
 
@@ -20820,5 +20820,19 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Modificar [F3]", 502, "Button", WS_TABSTOP, 103, 40, 50, 14
   CONTROL "&Eliminar [F4]", 503, "Button", WS_TABSTOP, 157, 40, 50, 14
   CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00300000, 51, 56, 326, 208
+}
+
+LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN
+
+ASS_CONVERSION_DOCUMENTO_3 DIALOG DISCARDABLE 99, 64, 626, 384
+STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
+FONT 8, "MS Sans Serif"
+{
+  CONTROL "Seleccionar líneas documento", -1, "Button", BS_GROUPBOX, 1, 2, 622, 380
+  CONTROL "", 100, "TXBrowse", 0x00200000, 6, 28, 613, 351
+  CONTROL "&Seleccionar", 500, "Button", WS_TABSTOP, 6, 13, 50, 14
+  CONTROL "&Deseleccionar", 510, "Button", WS_TABSTOP, 59, 13, 50, 14
+  CONTROL "&Todos", 520, "Button", WS_TABSTOP, 112, 13, 50, 14
+  CONTROL "&Ninguno", 530, "Button", WS_TABSTOP, 165, 13, 50, 14
 }
 

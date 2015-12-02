@@ -20,8 +20,8 @@ CREATE CLASS FacturasClientesRisi
 
    DATA hProducto
 
-   DATA dInicio            INIT  ( BoM( Date() ) ) 
-   DATA dFin               INIT  ( EoM( Date() ) ) 
+   DATA dInicio             INIT    ( BoM( Date() ) ) 
+   DATA dFin                INIT    ( EoM( Date() ) ) 
 
    DATA oDlg
    DATA oSayDesde
@@ -32,7 +32,7 @@ CREATE CLASS FacturasClientesRisi
 
    DATA cDelegacion
 
-   CLASSDATA aProductos    INIT  {  { "Codigo" => "V001004", "Nombre" => "GUSANITOS 35 g x 30 u",             "Codigo unidades" => "8411859550103",  "Codigo cajas" => "18411859550100", "Codigo interno" => "" },;
+   CLASSDATA aProductos     INIT  { { "Codigo" => "V001004", "Nombre" => "GUSANITOS 35 g x 30 u",             "Codigo unidades" => "8411859550103",  "Codigo cajas" => "18411859550100", "Codigo interno" => "" },;
                                     { "Codigo" => "V001005", "Nombre" => "GUSANITOS  KETCHUP 35 g x 30 u",    "Codigo unidades" => "8411859550110",  "Codigo cajas" => "18411859550117", "Codigo interno" => "" },;
                                     { "Codigo" => "V001007", "Nombre" => "GUSANITOS 18 g x 40 u",             "Codigo unidades" => "8411859550134",  "Codigo cajas" => "18411859550131", "Codigo interno" => "" },;
                                     { "Codigo" => "V001009", "Nombre" => "GUSANITOS KETCHUP 85 g x 8 u",      "Codigo unidades" => "8411859553258",  "Codigo cajas" => "18411859553255", "Codigo interno" => "" },;
@@ -153,7 +153,7 @@ ENDCLASS
    METHOD New() CLASS FacturasClientesRisi
 
       if empty( ::getDelegacion() )
-         msgStop( "Cóodigo delegación esta vacio" )
+         msgStop( "Código delegación esta vacio" )
          Return ( Self )
       end if 
 
@@ -191,7 +191,7 @@ ENDCLASS
       local oBtn
       local getFechaFin
 
-      ::oDlg 		:= TDialog():New( 5, 5, 18, 60, "Exportacion Risi" )
+      ::oDlg 		    := TDialog():New( 5, 5, 18, 60, "Exportacion Risi" )
 
       ::oSayDesde       := TSay():New( 1, 1, {|| "Desde" }, ::oDlg )      
 
@@ -317,7 +317,7 @@ METHOD ProcessFile() CLASS FacturasClientesRisi
 
                   ::oUve:UM(              'UN' )
                   ::oUve:Descuentos(      nTotDtoLFacCli( D():FacturasClientesLineas( ::nView ) ) )
-                  ::oUve:PrecioBrutoTotal(nTotlFacCli( D():FacturasClientesLineas( ::nView ) ) )
+                  ::oUve:PrecioBrutoTotal(nTotLFacCli( D():FacturasClientesLineas( ::nView ) ) )
                   ::oUve:FechaFra(        ( D():FacturasClientes( ::nView ) )->dFecFac )
                   ::oUve:Ejercicio(       Year( ( D():FacturasClientes( ::nView ) )->dFecFac ) )
                   ::oUve:CodigoCliente(   ( D():FacturasClientes( ::nView ) )->cCodCli )
@@ -328,9 +328,9 @@ METHOD ProcessFile() CLASS FacturasClientesRisi
                   ::oUve:Poblacion(       ( D():FacturasClientes( ::nView ) )->cPobCli )
                   ::oUve:CodigoPostal(    ( D():FacturasClientes( ::nView ) )->cPosCli )
                   ::oUve:Ruta(            cCodigoRuta )
-                  ::oUve:NombreRuta(      RetFld( cCodigoRuta, D():Get( "Ruta", ::nView ), "cDesRut" ) )
+                  ::oUve:NombreRuta(      retFld( cCodigoRuta, D():Get( "Ruta", ::nView ), "cDesRut" ) )
                   ::oUve:CodigoComercial( cCodigoRuta )
-                  ::oUve:NombreComercial( RetFld( cCodigoRuta, D():Get( "Ruta", ::nView ), "cDesRut" ) )
+                  ::oUve:NombreComercial( retFld( cCodigoRuta, D():Get( "Ruta", ::nView ), "cDesRut" ) )
                   ::oUve:Peso()
                   ::oUve:UMPeso()
                   ::oUve:TipoCliente(     cCodigoGrupo )
@@ -350,6 +350,8 @@ METHOD ProcessFile() CLASS FacturasClientesRisi
       end if 
 
       ( D():FacturasClientes( ::nView ) )->( dbskip() )
+
+      sysrefresh()
 
    end while
 
@@ -488,7 +490,7 @@ RETURN ( nPrecioBase )
 CLASS Uve FROM Cuaderno
 
    DATA cFile                       INIT FullCurDir() + 'VentasDistribuidor' + dtos( date() ) + timeToString() + '.csv'
-   DATA cBuffer                     INIT ''
+   DATA aLineas                     INIT {}
 
    METHOD New()                     INLINE ( Self )
    METHOD Separator()               INLINE ( ';' )
@@ -563,52 +565,60 @@ ENDCLASS
 
    METHOD SerializeASCII() CLASS Uve 
 
-      ::cBuffer         += ::NumFactura()       + ::Separator()
-      ::cBuffer         += ::NumLinea()         + ::Separator()
-      ::cBuffer         += ::CodigoProducto()   + ::Separator()
-      ::cBuffer         += ::DescProducto()     + ::Separator()
-      ::cBuffer         += ::Fabricante()       + ::Separator()
-      ::cBuffer         += ::CodigoProdFab()    + ::Separator()
-      ::cBuffer         += ::EAN13()            + ::Separator()
-      ::cBuffer         += ::Cantidad()         + ::Separator()
-      ::cBuffer         += ::UM()               + ::Separator()
-      ::cBuffer         += ::PrecioBase()       + ::Separator()
-      ::cBuffer         += ::Descuentos()       + ::Separator()
-      ::cBuffer         += ::PrecioBrutoTotal() + ::Separator()
-      ::cBuffer         += ::FechaFra()         + ::Separator()
-      ::cBuffer         += ::Ejercicio()        + ::Separator()
-      ::cBuffer         += ::CodigoCliente()    + ::Separator()
-      ::cBuffer         += ::Nombre()           + ::Separator()
-      ::cBuffer         += ::RazonSocial()      + ::Separator()
-      ::cBuffer         += ::CIF()              + ::Separator()
-      ::cBuffer         += ::Direccion()        + ::Separator()
-      ::cBuffer         += ::Poblacion()        + ::Separator()
-      ::cBuffer         += ::CodigoPostal()     + ::Separator()
-      ::cBuffer         += ::Ruta()             + ::Separator()
-      ::cBuffer         += ::NombreRuta()       + ::Separator()
-      ::cBuffer         += ::CodigoComercial()  + ::Separator()
-      ::cBuffer         += ::NombreComercial()  + ::Separator()
-      ::cBuffer         += ::Peso()             + ::Separator()
-      ::cBuffer         += ::UMPeso()           + ::Separator()
-      ::cBuffer         += ::TipoCliente()      + ::Separator()
-      ::cBuffer         += ::Telefono()         + ::Separator()
-      ::cBuffer         += ::DescTipoCliente()  + ::Separator()
-      ::cBuffer         += CRLF
+      local cBuffer
 
-   Return ( ::cBuffer )
+      cBuffer         := ::NumFactura()       + ::Separator()
+      cBuffer         += ::NumLinea()         + ::Separator()
+      cBuffer         += ::CodigoProducto()   + ::Separator()
+      cBuffer         += ::DescProducto()     + ::Separator()
+      cBuffer         += ::Fabricante()       + ::Separator()
+      cBuffer         += ::CodigoProdFab()    + ::Separator()
+      cBuffer         += ::EAN13()            + ::Separator()
+      cBuffer         += ::Cantidad()         + ::Separator()
+      cBuffer         += ::UM()               + ::Separator()
+      cBuffer         += ::PrecioBase()       + ::Separator()
+      cBuffer         += ::Descuentos()       + ::Separator()
+      cBuffer         += ::PrecioBrutoTotal() + ::Separator()
+      cBuffer         += ::FechaFra()         + ::Separator()
+      cBuffer         += ::Ejercicio()        + ::Separator()
+      cBuffer         += ::CodigoCliente()    + ::Separator()
+      cBuffer         += ::Nombre()           + ::Separator()
+      cBuffer         += ::RazonSocial()      + ::Separator()
+      cBuffer         += ::CIF()              + ::Separator()
+      cBuffer         += ::Direccion()        + ::Separator()
+      cBuffer         += ::Poblacion()        + ::Separator()
+      cBuffer         += ::CodigoPostal()     + ::Separator()
+      cBuffer         += ::Ruta()             + ::Separator()
+      cBuffer         += ::NombreRuta()       + ::Separator()
+      cBuffer         += ::CodigoComercial()  + ::Separator()
+      cBuffer         += ::NombreComercial()  + ::Separator()
+      cBuffer         += ::Peso()             + ::Separator()
+      cBuffer         += ::UMPeso()           + ::Separator()
+      cBuffer         += ::TipoCliente()      + ::Separator()
+      cBuffer         += ::Telefono()         + ::Separator()
+      cBuffer         += ::DescTipoCliente()  + ::Separator()
+      cBuffer         += CRLF
+
+      aadd( ::aLineas, cBuffer)
+
+   Return ( ::aLineas )
 
 //---------------------------------------------------------------------------//
 
-   METHOD WriteASCII() CLASS Uve
+   METHOD WriteASCII( bWriteLine ) CLASS Uve
 
-      if empty( ::cBuffer )
+      local cLinea
+
+      if empty( ::aLineas )
          Return ( .f. )
       end if
 
       ::hFile  := fCreate( ::cFile )
 
-      if !Empty( ::hFile )
-         fWrite( ::hFile, ::cBuffer )
+      if !empty( ::hFile )
+         for each cLinea in ::aLineas
+            fWrite( ::hFile, cLinea )
+         next
          fClose( ::hFile )
       end if
 
