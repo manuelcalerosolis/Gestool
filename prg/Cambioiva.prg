@@ -34,10 +34,14 @@ CLASS TConversionDocumentos
    DATA oSortDocument
    DATA cSortDocument                              INIT "Número"
    DATA aSortDocument                              INIT { "Número", "Fecha", "Nombre" }
+   
    DATA oBrwDocuments
 
    DATA oBrwLines
    DATA aSelectedLines                             INIT {}
+
+   DATA cPictureRound
+   DATA nDecimalPrices
 
    METHOD New()
 
@@ -62,10 +66,20 @@ CLASS TConversionDocumentos
 
    METHOD opcionInvalida()                         INLINE ( msgStop( "Opción invalida, por favor elija una opción valida." ), .f. )
 
-   // get the documents data
+   METHOD setSalesPictures()                       INLINE ( ::cPictureRound := cPorDiv(),;
+                                                            ::nDecimalPrices := nDinDiv() )
+
+   METHOD setShoppingPictures()                    INLINE ( ::cPictureRound := cPirDiv(),;
+                                                            ::nDecimalPrices := nDouDiv() )
+
+   // get the documents data---------------------------------------------------
 
    METHOD setDocumentType( cDataTable )
-   METHOD setDocumentPedidosProveedores()          INLINE ( ::setDocumentType( D():PedidosProveedoresTableName(), D():PedidosProveedoresLineasTableName() ) )
+   METHOD setSalesDocumentType( cHeaderTable, cLineTable ) ;
+                                                   INLINE ( ::setSalesPictures(), ::setDocumentType( cHeaderTable, cLineTable ) )
+   METHOD setShoppingDocumentType( cHeaderTable, cLineTable ) ;
+                                                   INLINE ( ::setShoppingPictures(), ::setDocumentType( cHeaderTable, cLineTable ) )
+   METHOD setDocumentPedidosProveedores()          INLINE ( ::setShoppingDocumentType( D():PedidosProveedoresTableName(), D():PedidosProveedoresLineasTableName() ) )
 
    METHOD setHeaderAlias( cHeaderAlias )           INLINE ( ::cHeaderAlias := cHeaderAlias )
    METHOD getHeaderAlias()                         INLINE ( ::cHeaderAlias )
@@ -111,6 +125,11 @@ CLASS TConversionDocumentos
       METHOD getTotalUnitsArticle()                INLINE ( notCaja( ::getBoxesArticle() ) * notCero( ::getUnitsArticle() ) )
       METHOD getMeasurementUnit()                  INLINE ( D():getFieldFromAliasDictionary( "UnidadMedicion", ::getLinesAlias(), ::getLinesDictionary() ) )
       METHOD getStoreArticle()                     INLINE ( D():getFieldFromAliasDictionary( "Almacen", ::getLinesAlias(), ::getLinesDictionary() ) )
+      METHOD getPriceArticle()                     INLINE ( round( D():getFieldFromAliasDictionary( "PrecioVenta", ::getLinesAlias(), ::getLinesDictionary() ), ::nDecimalPrices ) )
+      METHOD getPercentageDiscount()               INLINE ( D():getFieldFromAliasDictionary( "DescuentoPorcentual", ::getLinesAlias(), ::getLinesDictionary() ) )
+      METHOD getPercentagePromotion()              INLINE ( D():getFieldFromAliasDictionary( "DescuentoPromocion", ::getLinesAlias(), ::getLinesDictionary() ) )
+      METHOD getPercentageTax()                    INLINE ( D():getFieldFromAliasDictionary( "PorcentajeImpuesto", ::getLinesAlias(), ::getLinesDictionary() ) )
+      METHOD getTotalArticle()
 
    METHOD showDocuments() 
    METHOD showDocumentsLines()
@@ -234,7 +253,7 @@ METHOD Dialog()
    with object ( ::oBrwDocuments:AddCol() )
       :cHeader                      := "Base"
       :bEditValue                   := {|| ::getTotalNeto() }
-      :cEditPicture                 := cPirDiv()
+      :cEditPicture                 := ::cPictureRound
       :nWidth                       := 80
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
@@ -243,7 +262,7 @@ METHOD Dialog()
    with object ( ::oBrwDocuments:AddCol() )
       :cHeader                      := cImp()
       :bEditValue                   := {|| ::getTotalImpuesto() }
-      :cEditPicture                 := cPirDiv()
+      :cEditPicture                 := ::cPictureRound
       :nWidth                       := 80
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
@@ -252,7 +271,7 @@ METHOD Dialog()
    with object ( ::oBrwDocuments:AddCol() )
       :cHeader                      := "Total"
       :bEditValue                   := {|| ::getTotalDocumento() }
-      :cEditPicture                 := cPirDiv()
+      :cEditPicture                 := ::cPictureRound
       :nWidth                       := 80
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
@@ -405,106 +424,54 @@ METHOD Dialog()
       :nWidth                       := 60
    end with
 
+   with object ( ::oBrwLines:AddCol() )
+      :cHeader                      := "Importe"
+      :bEditValue                   := {|| ::getPriceArticle() }
+      :cEditPicture                 := ::cPictureRound
+      :nWidth                       := 90
+      :nDataStrAlign                := 1
+      :nHeadStrAlign                := 1
+   end with
+
+   with object ( ::oBrwLines:AddCol() )
+      :cHeader                      := "% Dto."
+      :bEditValue                   := {|| ::getPercentageDiscount() }
+      :cEditPicture                 := "@E 999.99"
+      :nWidth                       := 50
+      :nDataStrAlign                := 1
+      :nHeadStrAlign                := 1
+   end with
+
+   with object ( ::oBrwLines:AddCol() )
+      :cHeader                      := "% Dto."
+      :bEditValue                   := {|| ::getPercentagePromotion() }
+      :cEditPicture                 := "@E 999.99"
+      :nWidth                       := 50
+      :nDataStrAlign                := 1
+      :nHeadStrAlign                := 1
+   end with
+
+   with object ( ::oBrwLines:AddCol() )
+      :cHeader                      := "% " + cImp()
+      :bEditValue                   := {|| ::getPercentageTax() }
+      :cEditPicture                 := "@E 999.99"
+      :nWidth                       := 50
+      :nDataStrAlign                := 1
+      :nHeadStrAlign                := 1
+   end with
+
+   with object ( oBrwLin:AddCol() )
+      :cHeader                      := "Total"
+      :bEditValue                   := {|| ::getTotalArticle() }
+      :cEditPicture                 := ::cPictureRound
+      :nWidth                       := 80
+      :nDataStrAlign                := 1
+      :nHeadStrAlign                := 1
+      :nFooterType                  := AGGR_SUM
+   end with
+
+
 /*
-
-         with object ( oBrwLin:AddCol() )
-            :cHeader          := "Importe"
-            :bEditValue       := {|| nTotUPedPrv( dbfTmpLin, nDinDiv ) }
-            :cEditPicture     := cPinDiv
-            :nWidth           := 90
-            :nDataStrAlign    := 1
-            :nHeadStrAlign    := 1
-         end with
-
-         with object ( oBrwLin:AddCol() )
-            :cHeader          := "% Dto."
-            :bEditValue       := {|| ( dbfTmpLin )->nDtoLin }
-            :cEditPicture     := "@E 999.99"
-            :nWidth           := 50
-            :nDataStrAlign    := 1
-            :nHeadStrAlign    := 1
-         end with
-
-         with object ( oBrwLin:AddCol() )
-            :cHeader          := "% Prm."
-            :bEditValue       := {|| ( dbfTmpLin )->nDtoPrm }
-            :cEditPicture     := "@E 999.99"
-            :nWidth           := 40
-            :lHide            := .t.
-            :nDataStrAlign    := 1
-            :nHeadStrAlign    := 1
-         end with
-
-         with object ( oBrwLin:AddCol() )
-            :cHeader          := "Stock actual"
-            :bEditValue       := {|| ( dbfTmpLin )->nStkAct }
-            :cEditPicture     := cPicUnd
-            :nWidth           := 60
-            :lHide            := .t.
-            :nDataStrAlign    := 1
-            :nHeadStrAlign    := 1
-         end with
-
-         with object ( oBrwLin:AddCol() )
-            :cHeader          := "Pendiente recibir"
-            :bEditValue       := {|| ( dbfTmpLin )->nPdtRec }
-            :cEditPicture     := cPicUnd
-            :nWidth           := 60
-            :lHide            := .t.
-            :nDataStrAlign    := 1
-            :nHeadStrAlign    := 1
-         end with
-
-         with object ( oBrwLin:AddCol() )
-            :cHeader          := "Stock mínimo"
-            :bEditValue       := {|| ( dbfTmpLin )->nStkMin }
-            :cEditPicture     := cPicUnd
-            :nWidth           := 60
-            :lHide            := .t.
-            :nDataStrAlign    := 1
-            :nHeadStrAlign    := 1
-         end with
-
-         with object ( oBrwLin:AddCol() )
-            :cHeader          := "Consumo"
-            :bEditValue       := {|| ( dbfTmpLin )->nConRea }
-            :cEditPicture     := cPicUnd
-            :nWidth           := 60
-            :lHide            := .t.
-            :nDataStrAlign    := 1
-            :nHeadStrAlign    := 1
-         end with
-
-         with object ( oBrwLin:AddCol() )
-            :cHeader          := "7 dias"
-            :bEditValue       := {|| ( dbfTmpLin )->nConSem }
-            :cEditPicture     := cPicUnd
-            :nWidth           := 60
-            :lHide            := .t.
-            :nDataStrAlign    := 1
-            :nHeadStrAlign    := 1
-         end with
-
-         with object ( oBrwLin:AddCol() )
-            :cHeader          := "15 dias"
-            :bEditValue       := {|| ( dbfTmpLin )->nConQui }
-            :cEditPicture     := cPicUnd
-            :nWidth           := 60
-            :lHide            := .t.
-            :nDataStrAlign    := 1
-            :nHeadStrAlign    := 1
-         end with
-
-         with object ( oBrwLin:AddCol() )
-            :cHeader          := "30 dias"
-            :bEditValue       := {|| ( dbfTmpLin )->nConMes }
-            :cEditPicture     := cPicUnd
-            :nWidth           := 60
-            :lHide            := .t.
-            :nDataStrAlign    := 1
-            :nHeadStrAlign    := 1
-         end with
-
 
          with object ( oBrwLin:AddCol() )
             :cHeader          := "% " + cImp()
@@ -837,4 +804,50 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD getTotalArticle()                     
 
+   local nTotalArticle  := ::getPriceArticle()
+/*
+   nTotalArticle        -= 
+
+   DEFAULT nDec   := nDinDiv()
+   DEFAULT nRec   := nRinDiv()
+   DEFAULT nVdv   := 1
+
+
+   do case
+      case ValType( uTmp ) == "C"
+
+         if ( uTmp )->nDtoLin != 0
+            nCalculo    -= nCalculo * ( uTmp )->nDtoLin / 100
+         end if
+
+         if ( uTmp )->nDtoPrm != 0
+            nCalculo    -= nCalculo * ( uTmp )->nDtoPrm / 100
+         end if
+
+      case ValType( uTmp ) == "O"
+
+         if uTmp:nDtoLin != 0
+            nCalculo    -= nCalculo * uTmp:nDtoLin / 100
+         end if
+
+         if uTmp:nDtoPrm != 0
+            nCalculo    -= nCalculo * uTmp:nDtoPrm / 100
+         end if
+
+   end case
+
+   // Unidades
+
+   nCalculo       *= nTotNPedPrv( uTmp )
+
+   if nRec != nil
+      nCalculo    := Round( nCalculo, nRec )
+   end if
+*/
+
+RETURN ( nTotalArticle )
+
+
+INLINE ( D():getFieldFromAliasDictionary( "PorcentajeImpuesto", ::getLinesAlias(), ::getLinesDictionary() ) )
