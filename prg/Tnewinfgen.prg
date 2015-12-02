@@ -2423,8 +2423,8 @@ METHOD lGrupoCentroCoste( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoCentroCoste:Cargo:HelpHasta    := {|| ::oDbfCentroCoste:Buscar( ::oHasta ) }
    ::oGrupoCentroCoste:Cargo:TextDesde    := {|| oRetFld( ::oGrupoCentroCoste:Cargo:Desde, ::oDbfCentroCoste:oDbf, "cNombre", "cCodigo" ) }
    ::oGrupoCentroCoste:Cargo:TextHasta    := {|| oRetFld( ::oGrupoCentroCoste:Cargo:Hasta, ::oDbfCentroCoste:oDbf, "cNombre", "cCodigo" ) }
-   ::oGrupoCentroCoste:Cargo:ValidDesde   := {|oGet| if( ::oDbfCentroCoste:Existe( if( !Empty( oGet ), oGet, ::oDesde ), ::oSayDesde, "cNombre", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. )  }
-   ::oGrupoCentroCoste:Cargo:ValidHasta   := {|oGet| if( ::oDbfCentroCoste:Existe( if( !Empty( oGet ), oGet, ::oHasta ), ::oSayHasta, "cNombre", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
+   ::oGrupoCentroCoste:Cargo:ValidDesde   := {|oGet| if( ::oDbfCentroCoste:Existe( if( !Empty( oGet ), oGet, ::oDesde ), ::oSayDesde, "cNombre" ), ( ::ChangeValor(), .t. ), .f. )  }
+   ::oGrupoCentroCoste:Cargo:ValidHasta   := {|oGet| if( ::oDbfCentroCoste:Existe( if( !Empty( oGet ), oGet, ::oHasta ), ::oSayHasta, "cNombre" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoCentroCoste:Cargo:lImprimir    := lImp
    ::oGrupoCentroCoste:Cargo:cBitmap      := "centro_coste_16"
 
