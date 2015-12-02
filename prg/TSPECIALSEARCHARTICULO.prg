@@ -532,38 +532,7 @@ METHOD GetArraySelectOperarios() CLASS TSPECIALSEARCHARTICULO
       SelectArticulo->( dbeval( {|| aAdd( ::aOperario, { SelectArticulo->cNomTra, SelectArticulo->cCodTra } ) } ) )
    end if
 
-<<<<<<< HEAD
 Return ( ::aOperario )
-=======
-   cSentencia        += "SELECT articulos.Codigo, "
-   cSentencia        +=        "articulos.Nombre, "
-   cSentencia        +=        "articulos.cDesUbi, "
-   cSentencia        +=        "articulos.cCodTip, "
-   cSentencia        +=        "estadoSat.cNombre, "
-   cSentencia        +=        "estadoSat.nDisp, "  
-   // cSentencia        +=        "tipoArticulo.cCodTip, "
-   // cSentencia        +=        "tipoArticulo.cNomTip, "
-   cSentencia        +=        "lineasSat.dFecSat, "
-   cSentencia        +=        "lineasSat.cSerSat, "
-   cSentencia        +=        "lineasSat.nNumSat, "
-   cSentencia        +=        "lineasSat.cSufSat, "
-   cSentencia        +=        "lineasSat.nCntAct, "
-   cSentencia        +=        "cabeceraSat.cCodOpe, "
-   cSentencia        +=        "cabeceraSat.cCodCli, "
-   cSentencia        +=        "cabeceraSat.cNomCli, "
-   cSentencia        +=        "cabeceraSat.cCodRut "
-   // cSentencia        +=        "operario.cNomTra, "
-   // cSentencia        +=        "ruta.cDesRut "
-   cSentencia        += "FROM " + cPatEmp() + "Articulo articulos "
-   // cSentencia        += "LEFT JOIN " + cPatEmp() + "TipArt tipoArticulo on articulos.cCodTip = tipoArticulo.cCodTip "
-   cSentencia        += "LEFT JOIN " + cPatEmp() + "SatCliL lineasSat on dFecSat = ( SELECT MAX(dFecSat) FROM " + cPatEmp() + "SatCliL WHERE cRef = articulos.Codigo ) AND cRef = articulos.Codigo "
-   cSentencia        += "LEFT JOIN " + cPatEmp() + "SatCliT cabeceraSat on lineasSat.cSerSat = cabeceraSat.cSerSat AND lineasSat.nNumSat = cabeceraSat.nNumSat AND lineasSat.cSufSat = cabeceraSat.cSufSat "
-   cSentencia        += "LEFT JOIN " + cPatEmp() + "EstadoSat estadoSat on cabeceraSat.cCodEst = estadoSat.cCodigo "
-   // cSentencia        += "LEFT JOIN " + cPatEmp() + "OpeT operario on cabeceraSat.cCodOpe = operario.cCodTra "
-   // cSentencia        += "LEFT JOIN " + cPatEmp() + "Ruta ruta on cabeceraSat.cCodRut = ruta.cCodRut "
-   cSentencia        += ::cGetWhereSentencia( lDefault )
-   // cSentencia        += ::cGetOrderBy()
->>>>>>> origin/master
 
 //---------------------------------------------------------------------------//
 
