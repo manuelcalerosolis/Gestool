@@ -723,7 +723,8 @@ METHOD Buscar( oGet, cField, oGetField ) CLASS TMant
       oDlg:AddFastKey( VK_F3, {|| ::Edit( oBrw ) } )
    end if
 
-   oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
+   oDlg:AddFastKey( VK_F5,    {|| oDlg:end( IDOK ) } )
+   oDlg:AddFastKey( VK_RETURN,{|| oDlg:end( IDOK ) } )
 
    oDlg:Activate( , , , .t. )
 

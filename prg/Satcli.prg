@@ -8494,10 +8494,10 @@ FUNCTION nTotSatCli( cSatsupuesto, cSatCliT, cSatCliL, cIva, cDiv, cFPago, aTmp,
             Esto es para evitar escirbir en el fichero muchas veces
             */
 
-            if ( cSatCliL )->nSatDiv != nTotalLin .OR. ( cSatCliL )->nUniCaja != nTotalUnd
+            if ( cSatCliL )->nPreDiv != nTotalLin .OR. ( cSatCliL )->nUniCaja != nTotalUnd
 
                if ( cSatCliL )->( dbRLock() )
-                  ( cSatCliL )->nSatDiv    := nTotalLin
+                  ( cSatCliL )->nPreDiv    := nTotalLin
                   ( cSatCliL )->nUniCaja   := nTotalUnd
                   ( cSatCliL )->( dbUnLock() )
                end if
@@ -10653,8 +10653,13 @@ Function SynSatCli( cPath )
             ( dbfSatCliT )->cCodGrp := RetGrpCli( ( dbfSatCliT )->cCodCli, dbfClient )
          end if
 
+         if Empty( ( dbfSatCliT )->cCodRut )
+            ( dbfSatCliT )->cCodRut := RetFld( ( dbfSatCliT )->cCodCli, dbfClient, "cCodRut" )
+         end if
+
          /*
          Rellenamos los campos de totales
+         */
 
          if ( dbfSatCliT )->nTotSat == 0 .and. dbLock( dbfSatCliT )
 
@@ -10668,7 +10673,6 @@ Function SynSatCli( cPath )
             ( dbfSatCliT )->( dbUnLock() )
 
          end if
-         */
 
          ( dbfSatCliT )->( dbSkip() )
 
@@ -10701,6 +10705,10 @@ Function SynSatCli( cPath )
 
          if !Empty( ( dbfSatCliL )->cRef ) .and. !Empty( ( dbfSatCliL )->cCodFam )
             ( dbfSatCliL )->cGrpFam    := cGruFam( ( dbfSatCliL )->cCodFam, dbfFamilia )
+         end if
+
+         if !Empty( ( dbfSatCliL )->cRef ) .and. Empty( ( dbfSatCliL )->cCodTip )
+            ( dbfSatCliL )->cCodTip    := RetFld( ( dbfSatCliL )->cRef, dbfArticulo, "cCodTip" )
          end if
 
          if Empty( ( dbfSatCliL )->nReq )
