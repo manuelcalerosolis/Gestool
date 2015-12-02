@@ -37,6 +37,7 @@ CLASS TConversionDocumentos
    DATA oBrwDocuments
 
    DATA oBrwLines
+   DATA aSelectedLines                             INIT {}
 
    METHOD New()
 
@@ -52,10 +53,12 @@ CLASS TConversionDocumentos
    METHOD BotonSiguiente()
    METHOD BotonAnterior()
 
-   METHOD selectLine()                             VIRTUAL
-   METHOD unselectLine()                           VIRTUAL
-   METHOD selectAllLine()                          VIRTUAL
-   METHOD unselectAllLine()                        VIRTUAL
+   METHOD selectLine()                             
+   METHOD unSelectLine()                           
+   METHOD toogleSelectLine()
+   METHOD selectAllLine()                          
+   METHOD unselectAllLine()                        INLINE ( ::aSelectedLines := {}, ::oBrwLines:Refresh() )
+   METHOD positionSelectedLine()                   INLINE ( ascan( ::aSelectedLines, ::getRecnoArticle() ) )
 
    METHOD opcionInvalida()                         INLINE ( msgStop( "Opción invalida, por favor elija una opción valida." ), .f. )
 
@@ -77,15 +80,37 @@ CLASS TConversionDocumentos
    METHOD getLinesDictionary()                     INLINE ( ::aLinesDictionary )
    METHOD setLinesIndex( aLinesIndex )             INLINE ( ::aLinesIndex := aLinesIndex )
    METHOD getLinesIndex()                          INLINE ( ::aLinesIndex )
+   METHOD setLinesScope( Id )                      INLINE ( ( ::getLinesAlias() )->( ordscope( 0, Id ) ), ( ::getLinesAlias() )->( ordscope( 1, Id ) ) )
+   METHOD quitLinesScope()                         INLINE ( ::setLinesScope( nil ) )
 
-      METHOD getId()                               INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getHeaderAlias(), ::getHeaderDictionary() ) + "/" + alltrim( str( D():getFieldFromAliasDictionary( "Numero", ::getHeaderAlias(), ::getHeaderDictionary() ) ) ) )
+      METHOD getId()                               INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getHeaderAlias(), ::getHeaderDictionary() ) + ;
+                                                            str( D():getFieldFromAliasDictionary( "Numero", ::getHeaderAlias(), ::getHeaderDictionary() ) ) + ; 
+                                                            D():getFieldFromAliasDictionary( "Sufijo", ::getHeaderAlias(), ::getHeaderDictionary() ) )
+      METHOD getTextId()                           INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getHeaderAlias(), ::getHeaderDictionary() ) + "/" + ;
+                                                            alltrim( str( D():getFieldFromAliasDictionary( "Numero", ::getHeaderAlias(), ::getHeaderDictionary() ) ) ) )
       METHOD getDate()                             INLINE ( D():getFieldFromAliasDictionary( "Fecha", ::getHeaderAlias(), ::getHeaderDictionary() ) )
       METHOD getName()                             INLINE ( D():getFieldFromAliasDictionary( "NombreCliente", ::getHeaderAlias(), ::getHeaderDictionary() ) )
       METHOD getTotalNeto()                        INLINE ( D():getFieldFromAliasDictionary( "TotalNeto", ::getHeaderAlias(), ::getHeaderDictionary() ) )
       METHOD getTotalImpuesto()                    INLINE ( D():getFieldFromAliasDictionary( "TotalImpuesto", ::getHeaderAlias(), ::getHeaderDictionary() ) )
       METHOD getTotalDocumento()                   INLINE ( D():getFieldFromAliasDictionary( "TotalDocumento", ::getHeaderAlias(), ::getHeaderDictionary() ) )
 
+      METHOD getRecnoArticle()                     INLINE ( ( ::getLinesAlias() )->( recno() ) )
       METHOD getCodeArticle()                      INLINE ( D():getFieldFromAliasDictionary( "Articulo", ::getLinesAlias(), ::getLinesDictionary() ) )
+      METHOD getDescriptionArticle()               INLINE ( if( !empty( ::getCodeArticle() ),;
+                                                            D():getFieldFromAliasDictionary( "DescripcionArticulo", ::getLinesAlias(), ::getLinesDictionary() ),;
+                                                            D():getFieldFromAliasDictionary( "DescripcionAmpliada", ::getLinesAlias(), ::getLinesDictionary() ) ) )
+      METHOD getCodeFirstProperty()                INLINE ( D():getFieldFromAliasDictionary( "CodigoPropiedad1", ::getLinesAlias(), ::getLinesDictionary() ) )
+      METHOD getCodeSecondProperty()               INLINE ( D():getFieldFromAliasDictionary( "CodigoPropiedad2", ::getLinesAlias(), ::getLinesDictionary() ) )
+      METHOD getValueFirstProperty()               INLINE ( D():getFieldFromAliasDictionary( "ValorPropiedad1", ::getLinesAlias(), ::getLinesDictionary() ) )
+      METHOD getValueSecondProperty()              INLINE ( D():getFieldFromAliasDictionary( "ValorPropiedad2", ::getLinesAlias(), ::getLinesDictionary() ) )
+      METHOD getNameFirstProperty()                INLINE ( nombrePropiedad( ::getCodeFirstProperty(), ::getValueFirstProperty(), ::nView ) )
+      METHOD getNameSecondProperty()               INLINE ( nombrePropiedad( ::getCodeSecondProperty(), ::getValueSecondProperty(), ::nView ) )
+      METHOD getLoteArticle()                      INLINE ( D():getFieldFromAliasDictionary( "Lote", ::getLinesAlias(), ::getLinesDictionary() ) )
+      METHOD getBoxesArticle()                     INLINE ( D():getFieldFromAliasDictionary( "Cajas", ::getLinesAlias(), ::getLinesDictionary() ) )
+      METHOD getUnitsArticle()                     INLINE ( D():getFieldFromAliasDictionary( "Unidades", ::getLinesAlias(), ::getLinesDictionary() ) )
+      METHOD getTotalUnitsArticle()                INLINE ( notCaja( ::getBoxesArticle() ) * notCero( ::getUnitsArticle() ) )
+      METHOD getMeasurementUnit()                  INLINE ( D():getFieldFromAliasDictionary( "UnidadMedicion", ::getLinesAlias(), ::getLinesDictionary() ) )
+      METHOD getStoreArticle()                     INLINE ( D():getFieldFromAliasDictionary( "Almacen", ::getLinesAlias(), ::getLinesDictionary() ) )
 
    METHOD showDocuments() 
    METHOD showDocumentsLines()
@@ -96,25 +121,25 @@ ENDCLASS
 
 METHOD New()
 
-   ::cDocument    := ""
-   ::aDocuments   := {  "Compras" =>                                                   {|| ::opcionInvalida() },;                                    
-                        space( 3 ) + "Pedido proveedores" =>                           {|| ::setDocumentPedidosProveedores() },;
-                        space( 3 ) + "Albarán proveedores" =>                          {|| msgAlert( "Albarán proveedores" ) },;
-                        space( 3 ) + "Factura proveedores" =>                          {|| msgAlert( "Factura proveedores" ) },;
-                        space( 3 ) + "Factura rectificativas proveedores" =>           {|| msgAlert( "Factura rectificativas proveedores" ) },;
-                        space( 3 ) + "Recibos de proveedores" =>                       {|| msgAlert( "Recibos de proveedores" ) },;
-                        "Ventas" =>                                                    {|| ::opcionInvalida() },;                                    
-                        space( 3 ) + "S.A.T. clientes" =>                              {|| msgAlert( "" ), .t. },;
-                        space( 3 ) + "Presupuesto clientes" =>                         {|| msgAlert( "" ), .t. },;
-                        space( 3 ) + "Pedido clientes" =>                              {|| msgAlert( "" ), .t. },;
-                        space( 3 ) + "Albarán clientes" =>                             {|| msgAlert( "" ), .t. },;
-                        space( 3 ) + "Factura clientes" =>                             {|| msgAlert( "" ), .t. },;
-                        space( 3 ) + "Factura de anticipos" =>                         {|| msgAlert( "" ), .t. },;
-                        space( 3 ) + "Factura rectificativa" =>                        {|| msgAlert( "" ), .t. },;
-                        space( 3 ) + "Recibos facturas clientes" =>                    {|| msgAlert( "" ), .t. },;
-                        space( 3 ) + "Tickets clientes" =>                             {|| msgAlert( "" ), .t. },;
-                        space( 3 ) + "Parte de producción" =>                          {|| msgAlert( "" ), .t. },;
-                        space( 3 ) + "Recibos de clientes" =>                          {|| msgAlert( "" ), .t. } }
+   ::cDocument       := "Pedido proveedores"
+   ::aDocuments      := {  "Compras" =>                                                   {|| ::opcionInvalida() },;                                    
+                           space( 3 ) + "Pedido proveedores" =>                           {|| ::setDocumentPedidosProveedores() },;
+                           space( 3 ) + "Albarán proveedores" =>                          {|| msgAlert( "Albarán proveedores" ) },;
+                           space( 3 ) + "Factura proveedores" =>                          {|| msgAlert( "Factura proveedores" ) },;
+                           space( 3 ) + "Factura rectificativas proveedores" =>           {|| msgAlert( "Factura rectificativas proveedores" ) },;
+                           space( 3 ) + "Recibos de proveedores" =>                       {|| msgAlert( "Recibos de proveedores" ) },;
+                           "Ventas" =>                                                    {|| ::opcionInvalida() },;                                    
+                           space( 3 ) + "S.A.T. clientes" =>                              {|| msgAlert( "" ), .t. },;
+                           space( 3 ) + "Presupuesto clientes" =>                         {|| msgAlert( "" ), .t. },;
+                           space( 3 ) + "Pedido clientes" =>                              {|| msgAlert( "" ), .t. },;
+                           space( 3 ) + "Albarán clientes" =>                             {|| msgAlert( "" ), .t. },;
+                           space( 3 ) + "Factura clientes" =>                             {|| msgAlert( "" ), .t. },;
+                           space( 3 ) + "Factura de anticipos" =>                         {|| msgAlert( "" ), .t. },;
+                           space( 3 ) + "Factura rectificativa" =>                        {|| msgAlert( "" ), .t. },;
+                           space( 3 ) + "Recibos facturas clientes" =>                    {|| msgAlert( "" ), .t. },;
+                           space( 3 ) + "Tickets clientes" =>                             {|| msgAlert( "" ), .t. },;
+                           space( 3 ) + "Parte de producción" =>                          {|| msgAlert( "" ), .t. },;
+                           space( 3 ) + "Recibos de clientes" =>                          {|| msgAlert( "" ), .t. } }
 
    ::OpenFiles()
 
@@ -182,7 +207,7 @@ METHOD Dialog()
 
    with object ( ::oBrwDocuments:AddCol() )
       :cHeader                      := "Número"
-      :bEditValue                   := {|| ::getId() }
+      :bEditValue                   := {|| ::getTextId() }
       :nWidth                       := 80
       :cSortOrder                   := "Id"
       :bLClickHeader                := {| nMRow, nMCol, nFlags, oColumn | ::clickOnHeader( oColumn ) }
@@ -268,12 +293,248 @@ METHOD Dialog()
    ::oBrwLines:cAlias               := ::getLinesAlias()
    ::oBrwLines:nMarqueeStyle        := 5
    ::oBrwLines:cName                := "Browse.Conversion documentos lineas"
+   ::oBrwLines:bLDblClick           := {|| ::toogleSelectLine() }
 
+   with object ( ::oBrwLines:AddCol() )
+      :cHeader                      := "Seleccionando"
+      :bEditValue                   := {|| aScan( ::aSelectedLines, ::getRecnoArticle() ) > 0 }
+      :nWidth                       := 20
+      :SetCheck( { "Sel16", "Nil16" } )
+   end with
+  
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Código"
       :bEditValue                   := {|| ::getCodeArticle() }
       :nWidth                       := 80
    end with
+
+   with object ( ::oBrwLines:AddCol() )
+      :cHeader                      := "Descripción"
+      :bEditValue                   := {|| ::getDescriptionArticle() }
+      :nWidth                       := 280
+   end with
+
+   with object ( ::oBrwLines:AddCol() )
+      :cHeader                      := "Prop. 1"
+      :bEditValue                   := {|| ::getCodeFirstProperty() }
+      :nWidth                       := 60
+      :lHide                        := .t.
+   end with
+
+   with object ( ::oBrwLines:AddCol() )
+      :cHeader                      := "Prop. 2"
+      :bEditValue                   := {|| ::getCodeSecondProperty() }
+      :nWidth                       := 60
+      :lHide                        := .t.
+   end with
+
+   with object ( ::oBrwLines:AddCol() )
+      :cHeader                      := "Valor propiedad 1"
+      :bEditValue                   := {|| ::getValueFirstProperty() }
+      :nWidth                       := 60
+      :lHide                        := .t.
+   end with
+
+   with object ( ::oBrwLines:AddCol() )
+      :cHeader                      := "Valor propiedad 2"
+      :bEditValue                   := {|| ::getValueSecondProperty() }
+      :nWidth                       := 60
+      :lHide                        := .t.
+   end with
+
+   with object ( ::oBrwLines:AddCol() )
+      :cHeader                      := "Nombre propiedad 1"
+      :bEditValue                   := {|| ::getNameFirstProperty() }
+      :nWidth                       := 60
+      :lHide                        := .t.
+   end with
+
+   with object ( ::oBrwLines:AddCol() )
+      :cHeader                      := "Nombre propiedad 2"
+      :bEditValue                   := {|| ::getNameSecondProperty() }
+      :nWidth                       := 60
+      :lHide                        := .t.
+   end with
+
+   with object ( ::oBrwLines:AddCol() )
+      :cHeader                      := "Lote"
+      :bEditValue                   := {|| ::getLoteArticle() }
+      :nWidth                       := 80
+      :lHide                        := .t.
+   end with
+
+   with object ( ::oBrwLines:AddCol() )
+      :cHeader                      := cNombreCajas()
+      :bEditValue                   := {|| ::getBoxesArticle() }
+      :cEditPicture                 := masUnd()
+      :nWidth                       := 50
+      :nDataStrAlign                := 1
+      :nHeadStrAlign                := 1
+   end with
+
+   with object ( ::oBrwLines:AddCol() )
+      :cHeader                      := cNombreUnidades()
+      :bEditValue                   := {|| ::getUnitsArticle() }
+      :cEditPicture                 := masUnd()
+      :nWidth                       := 60
+      :nDataStrAlign                := 1
+      :nHeadStrAlign                := 1
+      :lHide                        := .f.
+   end with
+
+   with object ( ::oBrwLines:AddCol() )
+      :cHeader                      := "Total " + cNombreUnidades()
+      :bEditValue                   := {|| ::getTotalUnitsArticle() }
+      :cEditPicture                 := masUnd()
+      :nWidth                       := 60
+      :nDataStrAlign                := 1
+      :nHeadStrAlign                := 1
+      :lHide                        := .f.
+   end with
+
+   with object ( ::oBrwLines:AddCol() )
+      :cHeader                      := "UM. Unidad de medición"
+      :bEditValue                   := {|| ::getMeasurementUnit() }
+      :nWidth                       := 25
+      :lHide                        := .f.
+   end with
+
+   with object ( ::oBrwLines:AddCol() )
+      :cHeader                      := "Almacen"
+      :bEditValue                   := {|| ::getStoreArticle() }
+      :nWidth                       := 60
+   end with
+
+/*
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader          := "Importe"
+            :bEditValue       := {|| nTotUPedPrv( dbfTmpLin, nDinDiv ) }
+            :cEditPicture     := cPinDiv
+            :nWidth           := 90
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+         end with
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader          := "% Dto."
+            :bEditValue       := {|| ( dbfTmpLin )->nDtoLin }
+            :cEditPicture     := "@E 999.99"
+            :nWidth           := 50
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+         end with
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader          := "% Prm."
+            :bEditValue       := {|| ( dbfTmpLin )->nDtoPrm }
+            :cEditPicture     := "@E 999.99"
+            :nWidth           := 40
+            :lHide            := .t.
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+         end with
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader          := "Stock actual"
+            :bEditValue       := {|| ( dbfTmpLin )->nStkAct }
+            :cEditPicture     := cPicUnd
+            :nWidth           := 60
+            :lHide            := .t.
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+         end with
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader          := "Pendiente recibir"
+            :bEditValue       := {|| ( dbfTmpLin )->nPdtRec }
+            :cEditPicture     := cPicUnd
+            :nWidth           := 60
+            :lHide            := .t.
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+         end with
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader          := "Stock mínimo"
+            :bEditValue       := {|| ( dbfTmpLin )->nStkMin }
+            :cEditPicture     := cPicUnd
+            :nWidth           := 60
+            :lHide            := .t.
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+         end with
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader          := "Consumo"
+            :bEditValue       := {|| ( dbfTmpLin )->nConRea }
+            :cEditPicture     := cPicUnd
+            :nWidth           := 60
+            :lHide            := .t.
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+         end with
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader          := "7 dias"
+            :bEditValue       := {|| ( dbfTmpLin )->nConSem }
+            :cEditPicture     := cPicUnd
+            :nWidth           := 60
+            :lHide            := .t.
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+         end with
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader          := "15 dias"
+            :bEditValue       := {|| ( dbfTmpLin )->nConQui }
+            :cEditPicture     := cPicUnd
+            :nWidth           := 60
+            :lHide            := .t.
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+         end with
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader          := "30 dias"
+            :bEditValue       := {|| ( dbfTmpLin )->nConMes }
+            :cEditPicture     := cPicUnd
+            :nWidth           := 60
+            :lHide            := .t.
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+         end with
+
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader          := "% " + cImp()
+            :bEditValue       := {|| ( dbfTmpLin )->nIva }
+            :cEditPicture     := "@E 999.99"
+            :nWidth           := 50
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+         end with
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader          := "Total"
+            :bEditValue       := {|| nTotLPedPrv( dbfTmpLin, nDinDiv, nDirDiv ) }
+            :cEditPicture     := cPirDiv
+            :nWidth           := 80
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+            :nFooterType      := AGGR_SUM
+         end with
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader          := "Comentario"
+            :bEditValue       := {|| Padr( RetFld( ( dbfTmpLin )->cRef, D():Articulos( nView ), "mComent" ), 100 ) }
+            :nWidth           := 180
+            :lHide            := .t.
+            :nEditType        := 1
+            :cEditPicture     := "@S180"
+            :bOnPostEdit      := {|o,x,n| ChangeComentario( o, x, n, aTmp ) }
+         end with
+*/
 
    ::oBrwLines:CreateFromResource( 100 )
 
@@ -356,6 +617,8 @@ METHOD OpenFiles()
 
       D():PedidosProveedoresDocumentos( ::nView )
 
+      D():PropiedadesLineas( ::nView )
+
       D():Clientes( ::nView )
 
    RECOVER USING oError
@@ -388,9 +651,14 @@ Return ( Self )
 
 METHOD showDocuments()
 
+   local bAction  
    local lAction  := .f.
-   local bAction  := hget( ::aDocuments, ::cDocument )
 
+   if empty( ::cDocument )
+      Return ( lAction )
+   end if 
+
+   bAction        := hget( ::aDocuments, ::cDocument )
    if isBlock( bAction )
       lAction     :=  eval( bAction )
    end if 
@@ -403,16 +671,17 @@ METHOD showDocumentsLines()
 
    local Id       := ::getId()
 
-   if empty(Id)
+   if empty( Id )
       Return ( .f. )
    end if 
 
-   msgAlert( Id, "id" )
+   ::setLinesScope( Id )
+
+   ::selectAllLine()
 
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
-
 
 METHOD setDocumentType( cTableName, cTableLineName )
 
@@ -504,7 +773,68 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD selectLine()
 
+   if ::positionSelectedLine() == 0
+      aadd( ::aSelectedLines, ::getRecnoArticle() )
+      ::oBrwLines:DrawLine( .t. )
+   endif
 
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD unselectLine()
+
+   local nAt   := ::positionSelectedLine()
+
+   if nAt != 0
+      adel( ::aSelectedLines, nAt, .t. )
+      ::oBrwLines:DrawLine( .t. )
+   end if 
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD toogleSelectLine()
+
+   local nAt   := ::positionSelectedLine()
+
+   if nAt != 0
+      adel( ::aSelectedLines, nAt, .t. )
+   else
+      aadd( ::aSelectedLines, ::getRecnoArticle() )
+   end if 
+
+   ::oBrwLines:DrawLine( .t. )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD selectAllLine()
+
+   local recno       := ::getRecnoArticle()
+
+   ::aSelectedLines  := {}
+
+   CursorWait()
+
+   ( ::getLinesAlias() )->( dbgotop() ) 
+   while !( ( ::getLinesAlias() )->( eof() ) )
+      aadd( ::aSelectedLines, ::getRecnoArticle() )
+      ( ::getLinesAlias() )->( dbskip() )
+   enddo
+   
+   ( ::getLinesAlias() )->( dbgoto( recno ) )
+
+   CursorArrow()
+
+   ::oBrwLines:Refresh()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
 
 

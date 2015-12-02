@@ -2846,6 +2846,8 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "PedProvL"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "PedProvL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PedProvL.Cdx"
+   oDatatable:aDictionary  := hashDictionary( aColPedPrv() )
+   oDatatable:aDefaultValue:= hashDefaultValue( aColPedPrv() )
    oDataTable:cDescription := "Pedidos de proveedor"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
