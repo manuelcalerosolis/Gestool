@@ -8,6 +8,8 @@
 
 CLASS TConversionDocumentos
 
+   DATA oDocumentLine
+
    DATA oDlg
    DATA oFld
 
@@ -167,6 +169,8 @@ METHOD New()
                            space( 3 ) + "Recibos de clientes" =>                          {|| msgAlert( "" ), .t. } }
 
    ::OpenFiles()
+
+   ::oDocumentLine   := AliasDocumentLine( Self )   
 
    ::setDocumentPedidosProveedores()
 

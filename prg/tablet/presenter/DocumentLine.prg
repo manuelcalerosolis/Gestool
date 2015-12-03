@@ -146,5 +146,41 @@ METHOD Impuesto() CLASS DocumentLine
 Return ( Impuesto )
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
+
+CLASS AliasDocumentLine 
+
+   DATA oSender
+   DATA hDictionary
+   DATA cAlias
+
+   METHOD setAlias( cAlias )                                   INLINE ( ::cAlias := cAlias )
+   METHOD getAlias()                                           INLINE ( ::cAlias )
+
+   METHOD getDictionary()                                      INLINE ( ::hDictionary )
+   METHOD setDictionary( hDictionary )                         INLINE ( ::hDictionary := hDictionary )
+
+   METHOD new( hDictionary, cAlias )
+
+   METHOD getDictionary( key )                                 INLINE ( D():getFieldFromAliasDictionary( key, ::getAlias(), ::getDictionary() ) ) )
+   METHOD setDictionary( key, value )                          INLINE ( hSet( ::hDictionary, key, value ) )
+
+   METHOD getCode()                                            INLINE ( ::getDictionary( "Articulo" ) )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD new( oSender, hDictionary, cAlias ) CLASS AliasDocumentLine
+
+   ::oSender            := oSender
+   ::hDictionary        := hDictionary
+   ::cAlias             := cAlias
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
 
