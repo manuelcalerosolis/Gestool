@@ -47,6 +47,7 @@ CLASS TConversionDocumentos
    METHOD New()
 
    METHOD Dialog()
+      METHOD startDialog()
       METHOD clickOnHeader( oColumn )
       METHOD changeSortDocument()
       METHOD changeSearch()
@@ -97,7 +98,9 @@ CLASS TConversionDocumentos
    METHOD getLinesDictionary()                     INLINE ( ::aLinesDictionary )
    METHOD setLinesIndex( aLinesIndex )             INLINE ( ::aLinesIndex := aLinesIndex )
    METHOD getLinesIndex()                          INLINE ( ::aLinesIndex )
-   METHOD setLinesScope( Id )                      INLINE ( ( ::getLinesAlias() )->( ordscope( 0, Id ) ), ( ::getLinesAlias() )->( ordscope( 1, Id ) ) )
+   METHOD setLinesScope( Id )                      INLINE ( ( ::getLinesAlias() )->( ordscope( 0, Id ) ),;
+                                                            ( ::getLinesAlias() )->( ordscope( 1, Id ) ),;
+                                                            ( ::getLinesAlias() )->( dbgotop() ) ) 
    METHOD quitLinesScope()                         INLINE ( ::setLinesScope( nil ) )
 
       METHOD getId()                               INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getHeaderAlias(), ::getHeaderDictionary() ) + ;
@@ -333,7 +336,7 @@ METHOD Dialog()
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Descripción"
       :bEditValue                   := {|| ::getDescriptionArticle() }
-      :nWidth                       := 280
+      :nWidth                       := 340
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -392,6 +395,7 @@ METHOD Dialog()
       :nWidth                       := 50
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
+      :lHide                        := .t.
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -401,7 +405,7 @@ METHOD Dialog()
       :nWidth                       := 60
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
-      :lHide                        := .f.
+      :lHide                        := .t.
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -418,7 +422,7 @@ METHOD Dialog()
       :cHeader                      := "UM. Unidad de medición"
       :bEditValue                   := {|| ::getMeasurementUnit() }
       :nWidth                       := 25
-      :lHide                        := .f.
+      :lHide                        := .t.
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -443,6 +447,7 @@ METHOD Dialog()
       :nWidth                       := 50
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
+      :lHide                        := .t.
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -452,6 +457,7 @@ METHOD Dialog()
       :nWidth                       := 50
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
+      :lHide                        := .t.
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -466,7 +472,7 @@ METHOD Dialog()
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Total"
       :bEditValue                   := {|| ::getTotalArticle() }
-      // :cEditPicture                 := ::cPictureRound
+      :cEditPicture                 := ::cPictureRound
       :nWidth                       := 80
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
@@ -477,21 +483,21 @@ METHOD Dialog()
    // Botones -----------------------------------------------------------------
 
    REDEFINE BUTTON ::oBtnAnterior;
-      ID       3 ;
-      OF       ::oDlg ;
-      ACTION   ( ::BotonAnterior() )
+      ID          3 ;
+      OF          ::oDlg ;
+      ACTION      ( ::BotonAnterior() )
 
    REDEFINE BUTTON ::oBtnSiguiente;
-      ID       IDOK ;
-      OF       ::oDlg ;
-      ACTION   ( ::BotonSiguiente() )
+      ID          IDOK ;
+      OF          ::oDlg ;
+      ACTION      ( ::BotonSiguiente() )
 
    REDEFINE BUTTON ;
-      ID       IDCANCEL ;
-      OF       ::oDlg ;
-      ACTION   ( ::oDlg:End() )
+      ID          IDCANCEL ;
+      OF          ::oDlg ;
+      ACTION      ( ::oDlg:End() )
 
-   // ::oDlg:bStart := {|| ::oBtnInforme:Disable() }
+   ::oDlg:bStart  := {|| ::startDialog() }
 
    ACTIVATE DIALOG ::oDlg CENTER
 
@@ -503,7 +509,17 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method BotonSiguiente()
+METHOD startDialog()
+
+   ::oBrwDocuments:Load()
+
+   ::oBrwLines:Load()
+   
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD BotonSiguiente()
 
    do case
       case ::oFld:nOption == 1
@@ -777,11 +793,11 @@ METHOD getTotalArticle()
 
    local nTotalArticle  := ::getPriceArticle()
 
-   if ::getPercentageDiscount()
+   if ::getPercentageDiscount() != 0
       nTotalArticle     -= nTotalArticle * ::getPercentageDiscount() / 100
    end if 
 
-   if ::getPercentagePromotion()
+   if ::getPercentagePromotion() != 0
       nTotalArticle     -= nTotalArticle * ::getPercentagePromotion() / 100
    end if 
 

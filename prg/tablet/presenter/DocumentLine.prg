@@ -26,45 +26,45 @@ CLASS DocumentLine
 
    METHOD getDivisa()                                          INLINE ( hGet( ::getDictionaryMaster(), "Divisa" ) ) 
 
-   METHOD getSerie()                                           INLINE ( hGet( ::hDictionary, "Serie" ) )
+   METHOD getSerie()                                           INLINE ( ::getDictionary(  "Serie" ) )
    METHOD setSerieMaster()                                     INLINE ( hSet( ::hDictionary, "Serie", ::oSender:getSerie() ) )
 
-   METHOD getNumero()                                          INLINE ( hGet( ::hDictionary, "Numero" ) )
-   METHOD setNumeroMaster()                                    INLINE ( hSet( ::hDictionary, "Numero", ::oSender:getNumero() ) )
+   METHOD getNumero()                                          INLINE ( ::getDictionary( "Numero" ) )
+   METHOD setNumeroMaster()                                    INLINE ( ::setDictionary( "Numero", ::oSender:getNumero() ) )
 
-   METHOD getSufijo()                                          INLINE ( hGet( ::hDictionary, "Sufijo" ) )
-   METHOD setSufijoMaster()                                    INLINE ( hSet( ::hDictionary, "Sufijo", ::oSender:getSufijo() ) )
+   METHOD getSufijo()                                          INLINE ( ::getDictionary( "Sufijo" ) )
+   METHOD setSufijoMaster()                                    INLINE ( ::setDictionary( "Sufijo", ::oSender:getSufijo() ) )
 
-   METHOD getAlmacen()                                         INLINE ( hGet( ::hDictionary, "Almacen" ) )
-   METHOD setAlmacen( cAlmacen )                               INLINE ( hSet( ::hDictionary, "Almacen", cAlmacen ) )
+   METHOD getAlmacen()                                         INLINE ( ::getDictionary( "Almacen" ) )
+   METHOD setAlmacen( cAlmacen )                               INLINE ( ::setDictionary( "Almacen", cAlmacen ) )
    METHOD setAlmacenMaster()                                   INLINE ( if( empty( ::getAlmacen() ), ::setAlmacen( ::oSender:getAlmacen() ), ) )
 
-   METHOD getNumeroLinea()                                     INLINE ( hGet( ::hDictionary, "NumeroLinea" ) )
-   METHOD setNumeroLinea( NumeroLinea )                        INLINE ( hSet( ::hDictionary, "NumeroLinea", NumeroLinea ) )
-   METHOD setPosicionImpresion( PosicionImpresion)             INLINE ( hSet( ::hDictionary, "PosicionImpresion", PosicionImpresion ) )
+   METHOD getNumeroLinea()                                     INLINE ( ::getDictionary( "NumeroLinea" ) )
+   METHOD setNumeroLinea( NumeroLinea )                        INLINE ( ::setDictionary( "NumeroLinea", NumeroLinea ) )
+   METHOD setPosicionImpresion( PosicionImpresion)             INLINE ( ::setDictionary( "PosicionImpresion", PosicionImpresion ) )
 
-   METHOD getArticulo()                                        INLINE ( hGet( ::hDictionary, "Articulo" ) )
-   METHOD getDescripcionArticulo()                             INLINE ( hGet( ::hDictionary, "DescripcionArticulo" ) )
-   METHOD getPorcentajeImpuesto()                              INLINE ( hGet( ::hDictionary, "PorcentajeImpuesto" ) )
+   METHOD getArticulo()                                        INLINE ( ::getDictionary( "Articulo" ) )
+   METHOD getDescripcionArticulo()                             INLINE ( ::getDictionary( "DescripcionArticulo" ) )
+   METHOD getPorcentajeImpuesto()                              INLINE ( ::getDictionary( "PorcentajeImpuesto" ) )
 
-   METHOD getTipoIva()                                         INLINE ( hGet( ::hDictionary, "TipoIva" ) )
-   METHOD getDescuentoLineal()                                 INLINE ( hGet( ::hDictionary, "DescuentoLineal" ) )
-   METHOD getPrecioVenta()                                     INLINE ( Round( hGet( ::hDictionary, "PrecioVenta" ), nDouDiv() ) )
-   METHOD getPortes()                                          INLINE ( hGet( ::hDictionary, "Portes" ) )
-   METHOD getCajas()                                           INLINE ( hGet( ::hDictionary, "Cajas" ) )
-   METHOD getUnidades()                                        INLINE ( hGet( ::hDictionary, "Unidades" ) )
-   METHOD getDescuento()                                       INLINE ( hGet( ::hDictionary, "Descuento" ) )
-   METHOD getRecargoEquivalencia()                             INLINE ( hGet( ::hDictionary, "RecargoEquivalencia" ) )
+   METHOD getTipoIva()                                         INLINE ( ::getDictionary( "TipoIva" ) )
+   METHOD getDescuentoLineal()                                 INLINE ( ::getDictionary( "DescuentoLineal" ) )
+   METHOD getPrecioVenta()                                     INLINE ( Round( ::getDictionary(  "PrecioVenta" ), nDouDiv() ) )
+   METHOD getPortes()                                          INLINE ( ::getDictionary( "Portes" ) )
+   METHOD getCajas()                                           INLINE ( ::getDictionary( "Cajas" ) )
+   METHOD getUnidades()                                        INLINE ( ::getDictionary( "Unidades" ) )
+   METHOD getDescuento()                                       INLINE ( ::getDictionary( "Descuento" ) )
+   METHOD getRecargoEquivalencia()                             INLINE ( ::getDictionary( "RecargoEquivalencia" ) )
 
-   METHOD getDescuentoPorcentual()                             INLINE ( hGet( ::hDictionary, "DescuentoPorcentual" ) )
-   METHOD getDescuentoPromocion()                              INLINE ( hGet( ::hDictionary, "DescuentoPromocion" ) )
+   METHOD getDescuentoPorcentual()                             INLINE ( ::getDictionary( "DescuentoPorcentual" ) )
+   METHOD getDescuentoPromocion()                              INLINE ( ::getDictionary( "DescuentoPromocion" ) )
 
-   METHOD isLineaImpuestoIncluido()                            INLINE ( hGet( ::hDictionary, "LineaImpuestoIncluido" ) )
-   METHOD isVolumenImpuestosEspeciales()                       INLINE ( hGet( ::hDictionary, "VolumenImpuestosEspeciales" ) )
+   METHOD isLineaImpuestoIncluido()                            INLINE ( ::getDictionary( "LineaImpuestoIncluido" ) )
+   METHOD isVolumenImpuestosEspeciales()                       INLINE ( ::getDictionary( "VolumenImpuestosEspeciales" ) )
 
-   METHOD getImporteImpuestoEspecial()                         INLINE ( hGet( ::hDictionary, "ImporteImpuestoEspecial" ) )
-   METHOD getVolumen()                                         INLINE ( hGet( ::hDictionary, "Volumen" ) )
-   METHOD getPuntoVerde()                                      INLINE ( hGet( ::hDictionary, "PuntoVerde" ) )
+   METHOD getImporteImpuestoEspecial()                         INLINE ( ::getDictionary( "ImporteImpuestoEspecial" ) )
+   METHOD getVolumen()                                         INLINE ( ::getDictionary( "Volumen" ) )
+   METHOD getPuntoVerde()                                      INLINE ( ::getDictionary( "PuntoVerde" ) )
 
 END CLASS
 
