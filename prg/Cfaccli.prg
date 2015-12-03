@@ -5,8 +5,6 @@
 Realiza asientos en Contaplus, partiendo de la factura
 */
 
-Static oEnlaceContable
-
 FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfAlbCliT, dbfCli, dbfDiv, dbfArt, dbfFPago, dbfIva, oNewImp, oBrw, cCodEmp, cCodPro )
 
 	local n
@@ -78,10 +76,6 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    DEFAULT aSimula   := {}
    DEFAULT cCodEmp   := cCodEmpCnt( ( dbfFacCliT )->cSerie )
    DEFAULT cCodPro   := ( dbfFacCliT )->cCodPro
-
-   if empty( oEnlaceContable )
-      oEnlaceContable   := EnlaceA3():New()
-   end if 
 
    nDouDiv           := nDouDiv( ( dbfFacCliT )->cDivFac, dbfDiv )
    nRouDiv           := nRouDiv( ( dbfFacCliT )->cDivFac, dbfDiv )
@@ -629,22 +623,22 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
       else 
 
-         oEnlaceContable:Add( {  "Empresa"               => cEmpCnt( ( dbfFacCliT )->cSerie ),;
-                                 "Fecha"                 => dFecha ,;
-                                 "TipoRegistro"          => '1',; // Facturas
-                                 "Cuenta"                => cCtaCli,;
-                                 "DescripcionCuenta"     => cTerNom,;
-                                 "TipoFactura"           => '1',; // Ventas
-                                 "NumeroFactura"         => cFactura,;
-                                 "DescripcionApunte"     => cConcepto,;
-                                 "Importe"               => Round( ptaDebe, nRouDiv ),;
-                                 "Nif"                   => cTerNif,;
-                                 "NombreCliente"         => cTerNom,;
-                                 "CodigoPostal"          => ( dbfFacCliT )->cPosCli,;
-                                 "FechaOperacion"        => dFecha,;
-                                 "FechaFactura"          => dFecha,;
-                                 "Moneda"                => 'E',; // Euros
-                                 "Render"                => 'CabeceraFactura' } )
+         EnlaceA3():getInstance():Add( {  "Empresa"               => cEmpCnt( ( dbfFacCliT )->cSerie ),;
+                                          "Fecha"                 => dFecha ,;
+                                          "TipoRegistro"          => '1',; // Facturas
+                                          "Cuenta"                => cCtaCli,;
+                                          "DescripcionCuenta"     => cTerNom,;
+                                          "TipoFactura"           => '1',; // Ventas
+                                          "NumeroFactura"         => cFactura,;
+                                          "DescripcionApunte"     => cConcepto,;
+                                          "Importe"               => Round( ptaDebe, nRouDiv ),;
+                                          "Nif"                   => cTerNif,;
+                                          "NombreCliente"         => cTerNom,;
+                                          "CodigoPostal"          => ( dbfFacCliT )->cPosCli,;
+                                          "FechaOperacion"        => dFecha,;
+                                          "FechaFactura"          => dFecha,;
+                                          "Moneda"                => 'E',; // Euros
+                                          "Render"                => 'CabeceraFactura' } )
 
       end if 
 
@@ -696,25 +690,25 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
          else 
 
-            oEnlaceContable:Add( {  "Empresa"               => cEmpCnt( ( dbfFacCliT )->cSerie ),;
-                                    "Fecha"                 => dFecha ,;
-                                    "TipoRegistro"          => '9',; // Facturas
-                                    "Cuenta"                => aVentas[ n, 1 ],;
-                                    "DescripcionCuenta"     => '',;
-                                    "TipoImporte"           => 'C',;
-                                    "NumeroFactura"         => cFactura,;
-                                    "DescripcionApunte"     => cConcepto,;
-                                    "SubtipoFactura"        => if( lIvaCEE, '02', '01' ),; // Ventas
-                                    "BaseImponible"         => nCalculo,;
-                                    "PorcentajeIVA"         => aVentas[ n, 2 ],;
-                                    "PorcentajeRecargo"     => if( ( dbfFacCliT )->lRecargo, nPReq( dbfIva, aVentas[ n, 2 ] ), 0 ),;
-                                    "PorcentajeRetencion"   => 0,;
-                                    "Impreso"               => '01',; // 347
-                                    "SujetaIVA"             => if( aVentas[ n, 2 ] != 0, 'S', 'N' ),;
-                                    "Modelo415"             => ' ',;
-                                    "Analitico"             => ' ',;
-                                    "Moneda"                => 'E',; // Euros
-                                    "Render"                => 'VentaFactura' } )
+            EnlaceA3():getInstance():Add( {  "Empresa"               => cEmpCnt( ( dbfFacCliT )->cSerie ),;
+                                             "Fecha"                 => dFecha ,;
+                                             "TipoRegistro"          => '9',; // Facturas
+                                             "Cuenta"                => aVentas[ n, 1 ],;
+                                             "DescripcionCuenta"     => '',;
+                                             "TipoImporte"           => 'C',;
+                                             "NumeroFactura"         => cFactura,;
+                                             "DescripcionApunte"     => cConcepto,;
+                                             "SubtipoFactura"        => if( lIvaCEE, '02', '01' ),; // Ventas
+                                             "BaseImponible"         => nCalculo,;
+                                             "PorcentajeIVA"         => aVentas[ n, 2 ],;
+                                             "PorcentajeRecargo"     => if( ( dbfFacCliT )->lRecargo, nPReq( dbfIva, aVentas[ n, 2 ] ), 0 ),;
+                                             "PorcentajeRetencion"   => 0,;
+                                             "Impreso"               => '01',; // 347
+                                             "SujetaIVA"             => if( aVentas[ n, 2 ] != 0, 'S', 'N' ),;
+                                             "Modelo415"             => ' ',;
+                                             "Analitico"             => ' ',;
+                                             "Moneda"                => 'E',; // Euros
+                                             "Render"                => 'VentaFactura' } )
 
          end if 
 
@@ -749,7 +743,6 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                                     cTerNom ) )
 
       end if
-
 
       /*
       Asientos de anticipo
@@ -918,9 +911,9 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
    // Contabilizamos desde aki A3---------------------------------------------
 
-   if lAplicacionA3()
-      oEnlaceContable:Render()
-   end if 
+   // if lAplicacionA3()
+   //    oEnlaceContable:Render()
+   // end if 
 
    /*
    Contabilizamos los pagos
@@ -979,7 +972,7 @@ Static Function lCntFacCli( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacCl
    // Contabilizamos desde aki A3---------------------------------------------
 
    if lAplicacionA3()
-      oEnlaceContable:Render()
+      EnlaceA3():getInstance():Render()
    end if 
 
    // Ponemos el ticket como contabilizado-------------------------------------
@@ -992,7 +985,7 @@ Static Function lCntFacCli( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacCl
    // Mensaje------------------------------------------------------------------
 
    if lAplicacionA3()
-      oEnlaceContable:WriteInfo( oTree, "Factura cliente : " + rtrim( pFactura ) + " asiento generado." )
+      EnlaceA3():getInstance():WriteInfo( oTree, "Factura cliente : " + rtrim( pFactura ) + " asiento generado." )
    else
       oTree:Select( oTree:Add( "Factura cliente : " + rtrim( pFactura ) + " asiento generado num. " + Alltrim( Str( nAsiento ) ), 1 ) )
    end if 
@@ -5198,21 +5191,21 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
 
       else 
 
-         oEnlaceContable:Add( {  "Empresa"               => cEmpCnt( ( dbfFacCliP )->cSerie ),;
-                                 "FechaVencimiento"      => ( dbfFacCliP )->dFecVto,;
-                                 "Cuenta"                => cCtaCli,;
-                                 "DescripcionCuenta"     => cTerNom,;
-                                 "TipoRegistro"          => 'V',; 
-                                 "TipoVencimiento"       => 'C',; // Cobro
-                                 "NumeroFactura"         => cRecibo,; 
-                                 "DescripcionVencimiento"=> cConcepto,;
-                                 "ImporteVencimiento"    => nImpRec,;
-                                 "FechaFactura"          => ( dbfFacCliT )->dFecFac,;
-                                 "CuentaTesoreria"       => cCtaPgo,;
-                                 "FormaPago"             => '  ',;
-                                 "NumeroVencimiento"     => ( dbfFacCliP )->nNumRec,;
-                                 "Moneda"                => 'E',; // Euros
-                                 "Render"                => 'ReciboFactura' } )
+         EnlaceA3():getInstance():Add( {  "Empresa"               => cEmpCnt( ( dbfFacCliP )->cSerie ),;
+                                          "FechaVencimiento"      => ( dbfFacCliP )->dFecVto,;
+                                          "Cuenta"                => cCtaCli,;
+                                          "DescripcionCuenta"     => cTerNom,;
+                                          "TipoRegistro"          => 'V',; 
+                                          "TipoVencimiento"       => 'C',; // Cobro
+                                          "NumeroFactura"         => cRecibo,; 
+                                          "DescripcionVencimiento"=> cConcepto,;
+                                          "ImporteVencimiento"    => nImpRec,;
+                                          "FechaFactura"          => ( dbfFacCliT )->dFecFac,;
+                                          "CuentaTesoreria"       => cCtaPgo,;
+                                          "FormaPago"             => '  ',;
+                                          "NumeroVencimiento"     => ( dbfFacCliP )->nNumRec,;
+                                          "Moneda"                => 'E',; // Euros
+                                          "Render"                => 'ReciboFactura' } )
 
       end if 
 

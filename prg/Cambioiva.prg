@@ -41,7 +41,8 @@ CLASS TConversionDocumentos
    DATA aSelectedLines                             INIT {}
 
    DATA cPictureRound
-   DATA nDecimalPrices
+   DATA nDecimalPrice
+   DATA nRoundDecimalPrice
 
    METHOD New()
 
@@ -66,11 +67,13 @@ CLASS TConversionDocumentos
 
    METHOD opcionInvalida()                         INLINE ( msgStop( "Opción invalida, por favor elija una opción valida." ), .f. )
 
-   METHOD setSalesPictures()                       INLINE ( ::cPictureRound := cPorDiv(),;
-                                                            ::nDecimalPrices := nDinDiv() )
+   METHOD setSalesPictures()                       INLINE ( ::cPictureRound      := cPorDiv(),;
+                                                            ::nDecimalPrice      := nDinDiv(),;
+                                                            ::nRoundDecimalPrice := nRinDiv() )
 
-   METHOD setShoppingPictures()                    INLINE ( ::cPictureRound := cPirDiv(),;
-                                                            ::nDecimalPrices := nDouDiv() )
+   METHOD setShoppingPictures()                    INLINE ( ::cPictureRound      := cPirDiv(),;
+                                                            ::nDecimalPrice      := nDouDiv(),;
+                                                            ::nRoundDecimalPrice := nRouDiv() )
 
    // get the documents data---------------------------------------------------
 
@@ -125,7 +128,7 @@ CLASS TConversionDocumentos
       METHOD getTotalUnitsArticle()                INLINE ( notCaja( ::getBoxesArticle() ) * notCero( ::getUnitsArticle() ) )
       METHOD getMeasurementUnit()                  INLINE ( D():getFieldFromAliasDictionary( "UnidadMedicion", ::getLinesAlias(), ::getLinesDictionary() ) )
       METHOD getStoreArticle()                     INLINE ( D():getFieldFromAliasDictionary( "Almacen", ::getLinesAlias(), ::getLinesDictionary() ) )
-      METHOD getPriceArticle()                     INLINE ( round( D():getFieldFromAliasDictionary( "PrecioVenta", ::getLinesAlias(), ::getLinesDictionary() ), ::nDecimalPrices ) )
+      METHOD getPriceArticle()                     INLINE ( round( D():getFieldFromAliasDictionary( "PrecioVenta", ::getLinesAlias(), ::getLinesDictionary() ), ::nDecimalPrice ) )
       METHOD getPercentageDiscount()               INLINE ( D():getFieldFromAliasDictionary( "DescuentoPorcentual", ::getLinesAlias(), ::getLinesDictionary() ) )
       METHOD getPercentagePromotion()              INLINE ( D():getFieldFromAliasDictionary( "DescuentoPromocion", ::getLinesAlias(), ::getLinesDictionary() ) )
       METHOD getPercentageTax()                    INLINE ( D():getFieldFromAliasDictionary( "PorcentajeImpuesto", ::getLinesAlias(), ::getLinesDictionary() ) )
@@ -460,48 +463,14 @@ METHOD Dialog()
       :nHeadStrAlign                := 1
    end with
 
-   with object ( oBrwLin:AddCol() )
+   with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Total"
       :bEditValue                   := {|| ::getTotalArticle() }
-      :cEditPicture                 := ::cPictureRound
+      // :cEditPicture                 := ::cPictureRound
       :nWidth                       := 80
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
-      :nFooterType                  := AGGR_SUM
    end with
-
-
-/*
-
-         with object ( oBrwLin:AddCol() )
-            :cHeader          := "% " + cImp()
-            :bEditValue       := {|| ( dbfTmpLin )->nIva }
-            :cEditPicture     := "@E 999.99"
-            :nWidth           := 50
-            :nDataStrAlign    := 1
-            :nHeadStrAlign    := 1
-         end with
-
-         with object ( oBrwLin:AddCol() )
-            :cHeader          := "Total"
-            :bEditValue       := {|| nTotLPedPrv( dbfTmpLin, nDinDiv, nDirDiv ) }
-            :cEditPicture     := cPirDiv
-            :nWidth           := 80
-            :nDataStrAlign    := 1
-            :nHeadStrAlign    := 1
-            :nFooterType      := AGGR_SUM
-         end with
-
-         with object ( oBrwLin:AddCol() )
-            :cHeader          := "Comentario"
-            :bEditValue       := {|| Padr( RetFld( ( dbfTmpLin )->cRef, D():Articulos( nView ), "mComent" ), 100 ) }
-            :nWidth           := 180
-            :lHide            := .t.
-            :nEditType        := 1
-            :cEditPicture     := "@S180"
-            :bOnPostEdit      := {|o,x,n| ChangeComentario( o, x, n, aTmp ) }
-         end with
-*/
 
    ::oBrwLines:CreateFromResource( 100 )
 
@@ -807,47 +776,19 @@ Return ( Self )
 METHOD getTotalArticle()                     
 
    local nTotalArticle  := ::getPriceArticle()
-/*
-   nTotalArticle        -= 
 
-   DEFAULT nDec   := nDinDiv()
-   DEFAULT nRec   := nRinDiv()
-   DEFAULT nVdv   := 1
+   if ::getPercentageDiscount()
+      nTotalArticle     -= nTotalArticle * ::getPercentageDiscount() / 100
+   end if 
 
+   if ::getPercentagePromotion()
+      nTotalArticle     -= nTotalArticle * ::getPercentagePromotion() / 100
+   end if 
 
-   do case
-      case ValType( uTmp ) == "C"
+   nTotalArticle        *= ::getTotalUnitsArticle()
 
-         if ( uTmp )->nDtoLin != 0
-            nCalculo    -= nCalculo * ( uTmp )->nDtoLin / 100
-         end if
-
-         if ( uTmp )->nDtoPrm != 0
-            nCalculo    -= nCalculo * ( uTmp )->nDtoPrm / 100
-         end if
-
-      case ValType( uTmp ) == "O"
-
-         if uTmp:nDtoLin != 0
-            nCalculo    -= nCalculo * uTmp:nDtoLin / 100
-         end if
-
-         if uTmp:nDtoPrm != 0
-            nCalculo    -= nCalculo * uTmp:nDtoPrm / 100
-         end if
-
-   end case
-
-   // Unidades
-
-   nCalculo       *= nTotNPedPrv( uTmp )
-
-   if nRec != nil
-      nCalculo    := Round( nCalculo, nRec )
-   end if
-*/
+   nTotalArticle        := round( nTotalArticle, ::nRoundDecimalPrice )
 
 RETURN ( nTotalArticle )
 
-
-INLINE ( D():getFieldFromAliasDictionary( "PorcentajeImpuesto", ::getLinesAlias(), ::getLinesDictionary() ) )
+//---------------------------------------------------------------------------//

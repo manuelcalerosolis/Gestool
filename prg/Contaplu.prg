@@ -2650,7 +2650,8 @@ CLASS EnlaceA3
 
    METHOD New()
 
-   METHOD GetInstance()
+   METHOD getInstance()
+   METHOD destroyInstance()               INLINE ( ::oInstance := nil )
 
    METHOD Add( hAsiento )                 INLINE ( if( hhaskey( hAsiento, "Render" ) .and. !empty( hGet( hAsiento, "Render" ) ), aAdd( ::aAsiento, hAsiento ), ) )
    METHOD Show()                          INLINE ( msgInfo( ::cBuffer ) )
@@ -2658,7 +2659,6 @@ CLASS EnlaceA3
    METHOD Directory( cValue )             INLINE ( if( !Empty( cValue ), ::cDirectory        := cValue,                 ::cDirectory ) )
    METHOD File( cValue )                  INLINE ( if( !Empty( cValue ), ::cFile             := cValue,                 ::cFile ) )
    METHOD cDate( dValue )                 INLINE ( if( !Empty( dValue ), ::cDate             := DateToString( dValue ), ::cDate ) )
-   
    
    METHOD Render()
    METHOD AutoRender()
@@ -2740,11 +2740,16 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-   METHOD New()
+   METHOD New() CLASS EnlaceA3
+
+      if empty( cRutCnt() )
+         ::cDirectory                     := "C:\ENLACEA3"
+      else
+         ::cDirectory                     := cRutCnt()
+      end if 
+      ::cFile                             := "SUENLACE.DAT" 
 
       ::aAsiento                          := {}
-      ::cDirectory                        := "C:\ENLACEA3"
-      ::cFile                             := "SUENLACE.DAT" 
       ::cDate                             := DateToString()
       ::cBuffer                           := ""
 
@@ -2752,7 +2757,7 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-   METHOD GetInstance()
+   METHOD GetInstance() CLASS EnlaceA3
 
       if Empty( ::oInstance )
          ::oInstance                      := ::New()
@@ -2877,7 +2882,7 @@ ENDCLASS
 
    //------------------------------------------------------------------------//
 
-   METHOD Signo( nImporte )
+   METHOD Signo( nImporte ) CLASS EnlaceA3
 
       if nImporte == 0
          Return ( space( 14 ) )
@@ -2887,7 +2892,7 @@ ENDCLASS
 
    //------------------------------------------------------------------------//
 
-   METHOD Porcentaje( nPorcentaje )
+   METHOD Porcentaje( nPorcentaje ) CLASS EnlaceA3
 
       if nPorcentaje == 0
          Return ( space( 5 ) )
@@ -2897,7 +2902,7 @@ ENDCLASS
 
 //------------------------------------------------------------------------//
 
-   METHOD GenerateFile()
+   METHOD GenerateFile() CLASS EnlaceA3
 
       ferase( ::cDirectory + "\" + ::cFile )
 
@@ -2937,74 +2942,5 @@ ENDCLASS
 
 //------------------------------------------------------------------------//
 
-CLASS EnlaceExcel FROM EnlaceA3
-
-   DATA oOleExcel
-   DATA oWorkBook
-
-   DATA cDirectory                        INIT "C:\Enlace_Excel"
-   DATA cFile                             INIT "SuEnlace.Xls" 
-
-   METHOD createExcelObject()
-   METHOD closeExcelObject()
-
-   METHOD appendBuffer( cValue )          INLINE ( ::cBuffer   += ( cValue + ";" ) )
-   METHOD finLinea()                      INLINE ( ::cBuffer   += ":" ) 
-
-   METHOD writeASCII() 
-
-ENDCLASS
-
-//---------------------------------------------------------------------------//
-
-   METHOD createExcelObject()
-
-      local oBlock
-      local oError
-
-      oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-      BEGIN SEQUENCE
-
-         ::oOleExcel                         := TOleExcel():New( "Importando hoja de excel", "Conectando...", .f. )
-         ::oOleExcel:oExcel:Visible          := .t.
-         ::oOleExcel:oExcel:DisplayAlerts    := .f.
-         ::oWorkBook                         := ::oOleExcel:oExcel:WorkBooks:Add()
-
-      RECOVER USING oError
-
-         msgStop( "Imposible crear el fichero de excel." + CRLF + ErrorMessage( oError ) )
-
-      END SEQUENCE
-
-      ErrorBlock( oBlock )
-
-
-   Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-   METHOD WriteASCII() CLASS EnlaceExcel
-
-      ::createExcelObject()
-
-      if empty( ::oWorkBook )
-         Return ( self )
-      end if 
-
-      ::closeExcelObject()
-
-   Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-   METHOD closeExcelObject() CLASS EnlaceExcel
-
-      ::oOleExcel:oExcel:Quit()
-      ::oOleExcel:oExcel:DisplayAlerts    := .t.
-      ::oOleExcel:End()
-
-   Return ( Self )
-
-//---------------------------------------------------------------------------//
 
 

@@ -1157,7 +1157,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
       DEFINE BTNSHELL RESOURCE "BMPCONTA" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CntFacCli( lChk1, lChk2, nil, .t., oTree, nil, nil, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), dbfAntCliT, dbfAlbCliT, D():Clientes( nView ), dbfDiv, D():Articulos( nView ), dbfFPago, dbfIva, oNewImp ) }, "Contabilizar facturas", lAplicacionA3(), "Simular resultados", .f., "Contabilizar recibos", , {|| if( lAplicacionA3(), EnlaceA3():GetInstance():WriteASCII(), ) } ) ) ;
+         ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CntFacCli( lChk1, lChk2, nil, .t., oTree, nil, nil, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), dbfAntCliT, dbfAlbCliT, D():Clientes( nView ), dbfDiv, D():Articulos( nView ), dbfFPago, dbfIva, oNewImp ) }, "Contabilizar facturas", lAplicacionA3(), "Simular resultados", .f., "Contabilizar recibos", , {|| if( lAplicacionA3(), EnlaceA3():GetInstance():WriteASCII():DestroyInstance(), ) } ) ) ;
          TOOLTIP  "(C)ontabilizar" ;
          HOTKEY   "C";
          LEVEL    ACC_EDIT
