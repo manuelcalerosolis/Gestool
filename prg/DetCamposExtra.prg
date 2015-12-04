@@ -60,6 +60,12 @@ CLASS TDetCamposExtra FROM TMant
 
    Method lPreSave()
 
+   METHOD lExisteCamposExtra()         INLINE ( len( ::aCamposExtra ) < 1 )
+
+   METHOD addCamposExtra( oBrw )
+
+   METHOD nAlignData( campoExtra )     INLINE ( if( campoExtra[ "tipo" ] == 2, AL_RIGHT, AL_LEFT ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -472,4 +478,37 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD addCamposExtra( oBrw ) CLASS TDetCamposExtra
 
+   local campoExtra
+
+   if empty( oBrw )
+      Return .f.
+   end if
+
+   if Empty( ::TipoDocumento )
+      MsgStop( "No existen campos extra para este tipo de documento." )
+      Return .f.
+   end if
+
+   ::aCamposExtra    := ::oCamposExtra:aCamposExtra( ::TipoDocumento )
+
+   if ::lExisteCamposExtra()
+      Return .f.
+   end if
+
+   for each campoExtra in ::aCamposExtra
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := Capitalize( AllTrim( campoExtra[ "descripción" ] ) )
+         :bStrData         := {|| "aaa" }
+         :nDataStrAlign    := ::nAlignData( campoExtra )
+         :nHeadStrAlign    := ::nAlignData( campoExtra )
+         :nWidth           := 100
+      end with
+
+   next
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//

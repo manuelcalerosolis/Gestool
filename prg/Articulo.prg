@@ -16361,6 +16361,8 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
       end if
 
+      oDetCamposExtra:addCamposExtra( oBrw )
+
       oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
       oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
 
