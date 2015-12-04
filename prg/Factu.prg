@@ -2460,7 +2460,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Entidades'
    oItem:cMessage       := 'Acceso a las distintas entidades'
-   oItem:bAction        := {|| TEntidades():New( cPatEmp(), oWnd, "04012" ):Activate() }
+   oItem:bAction        := {|| TEntidades():New( cPatEmp(), cDriver(), oWnd, "04012" ):Activate() }
    oItem:cId            := "04012"
    oItem:cBmp           := "School_16"
    oItem:cBmpBig        := "School_32"
