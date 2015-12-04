@@ -170,7 +170,7 @@ METHOD New()
 
    ::OpenFiles()
 
-   ::oDocumentLine   := AliasDocumentLine( Self )   
+   ::oDocumentLine   := AliasDocumentLine():New( Self )   
 
    ::setDocumentPedidosProveedores()
 
@@ -333,7 +333,7 @@ METHOD Dialog()
   
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Código"
-      :bEditValue                   := {|| ::getCodeArticle() }
+      :bEditValue                   := {|| ::oDocumentLine:getCode() }
       :nWidth                       := 80
    end with
 
@@ -647,6 +647,9 @@ METHOD setDocumentType( cTableName, cTableLineName )
 
    ::setLinesAlias(        D():get( cTableLineName, ::nView ) )
    ::setLinesDictionary(   D():getDictionaryFromArea( cTableLineName ) )
+
+   ::oDocumentLine:setAlias(        D():get( cTableLineName, ::nView ) )
+   ::oDocumentLine:setDictionary(   D():getDictionaryFromArea( cTableLineName ) )
 
    ::setOrderInColumn()   
 

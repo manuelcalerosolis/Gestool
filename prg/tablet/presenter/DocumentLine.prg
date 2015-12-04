@@ -13,8 +13,8 @@ CLASS DocumentLine
    METHOD hSetMaster( key, value )                             INLINE ( hSet( ::getDictionaryMaster(), key, value ) )
    METHOD hGetMaster( key )                                    INLINE ( hGet( ::getDictionaryMaster(), key ) )
 
-   METHOD getDictionary( key )                                 INLINE ( hGet( ::hDictionary, key ) )
-   METHOD setDictionary( key, value )                          INLINE ( hSet( ::hDictionary, key, value ) )
+   METHOD getValue( key )                                      INLINE ( hGet( ::hDictionary, key ) )
+   METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
 
    METHOD hSetDetail( key, value )                             INLINE ( hSet( ::oSender:oDocumentLineTemporal:hDictionary, key, value ) )
    METHOD hGetDetail( key )                                    INLINE ( hGet( ::oSender:oDocumentLineTemporal:hDictionary, key ) )
@@ -26,45 +26,45 @@ CLASS DocumentLine
 
    METHOD getDivisa()                                          INLINE ( hGet( ::getDictionaryMaster(), "Divisa" ) ) 
 
-   METHOD getSerie()                                           INLINE ( ::getDictionary(  "Serie" ) )
+   METHOD getSerie()                                           INLINE ( ::getValue(  "Serie" ) )
    METHOD setSerieMaster()                                     INLINE ( hSet( ::hDictionary, "Serie", ::oSender:getSerie() ) )
 
-   METHOD getNumero()                                          INLINE ( ::getDictionary( "Numero" ) )
-   METHOD setNumeroMaster()                                    INLINE ( ::setDictionary( "Numero", ::oSender:getNumero() ) )
+   METHOD getNumero()                                          INLINE ( ::getValue( "Numero" ) )
+   METHOD setNumeroMaster()                                    INLINE ( ::setValue( "Numero", ::oSender:getNumero() ) )
 
-   METHOD getSufijo()                                          INLINE ( ::getDictionary( "Sufijo" ) )
-   METHOD setSufijoMaster()                                    INLINE ( ::setDictionary( "Sufijo", ::oSender:getSufijo() ) )
+   METHOD getSufijo()                                          INLINE ( ::getValue( "Sufijo" ) )
+   METHOD setSufijoMaster()                                    INLINE ( ::setValue( "Sufijo", ::oSender:getSufijo() ) )
 
-   METHOD getAlmacen()                                         INLINE ( ::getDictionary( "Almacen" ) )
-   METHOD setAlmacen( cAlmacen )                               INLINE ( ::setDictionary( "Almacen", cAlmacen ) )
+   METHOD getAlmacen()                                         INLINE ( ::getValue( "Almacen" ) )
+   METHOD setAlmacen( cAlmacen )                               INLINE ( ::setValue( "Almacen", cAlmacen ) )
    METHOD setAlmacenMaster()                                   INLINE ( if( empty( ::getAlmacen() ), ::setAlmacen( ::oSender:getAlmacen() ), ) )
 
-   METHOD getNumeroLinea()                                     INLINE ( ::getDictionary( "NumeroLinea" ) )
-   METHOD setNumeroLinea( NumeroLinea )                        INLINE ( ::setDictionary( "NumeroLinea", NumeroLinea ) )
-   METHOD setPosicionImpresion( PosicionImpresion)             INLINE ( ::setDictionary( "PosicionImpresion", PosicionImpresion ) )
+   METHOD getNumeroLinea()                                     INLINE ( ::getValue( "NumeroLinea" ) )
+   METHOD setNumeroLinea( NumeroLinea )                        INLINE ( ::setValue( "NumeroLinea", NumeroLinea ) )
+   METHOD setPosicionImpresion( PosicionImpresion)             INLINE ( ::setValue( "PosicionImpresion", PosicionImpresion ) )
 
-   METHOD getArticulo()                                        INLINE ( ::getDictionary( "Articulo" ) )
-   METHOD getDescripcionArticulo()                             INLINE ( ::getDictionary( "DescripcionArticulo" ) )
-   METHOD getPorcentajeImpuesto()                              INLINE ( ::getDictionary( "PorcentajeImpuesto" ) )
+   METHOD getArticulo()                                        INLINE ( ::getValue( "Articulo" ) )
+   METHOD getDescripcionArticulo()                             INLINE ( ::getValue( "DescripcionArticulo" ) )
+   METHOD getPorcentajeImpuesto()                              INLINE ( ::getValue( "PorcentajeImpuesto" ) )
 
-   METHOD getTipoIva()                                         INLINE ( ::getDictionary( "TipoIva" ) )
-   METHOD getDescuentoLineal()                                 INLINE ( ::getDictionary( "DescuentoLineal" ) )
-   METHOD getPrecioVenta()                                     INLINE ( Round( ::getDictionary(  "PrecioVenta" ), nDouDiv() ) )
-   METHOD getPortes()                                          INLINE ( ::getDictionary( "Portes" ) )
-   METHOD getCajas()                                           INLINE ( ::getDictionary( "Cajas" ) )
-   METHOD getUnidades()                                        INLINE ( ::getDictionary( "Unidades" ) )
-   METHOD getDescuento()                                       INLINE ( ::getDictionary( "Descuento" ) )
-   METHOD getRecargoEquivalencia()                             INLINE ( ::getDictionary( "RecargoEquivalencia" ) )
+   METHOD getTipoIva()                                         INLINE ( ::getValue( "TipoIva" ) )
+   METHOD getDescuentoLineal()                                 INLINE ( ::getValue( "DescuentoLineal" ) )
+   METHOD getPrecioVenta()                                     INLINE ( Round( ::getValue(  "PrecioVenta" ), nDouDiv() ) )
+   METHOD getPortes()                                          INLINE ( ::getValue( "Portes" ) )
+   METHOD getCajas()                                           INLINE ( ::getValue( "Cajas" ) )
+   METHOD getUnidades()                                        INLINE ( ::getValue( "Unidades" ) )
+   METHOD getDescuento()                                       INLINE ( ::getValue( "Descuento" ) )
+   METHOD getRecargoEquivalencia()                             INLINE ( ::getValue( "RecargoEquivalencia" ) )
 
-   METHOD getDescuentoPorcentual()                             INLINE ( ::getDictionary( "DescuentoPorcentual" ) )
-   METHOD getDescuentoPromocion()                              INLINE ( ::getDictionary( "DescuentoPromocion" ) )
+   METHOD getDescuentoPorcentual()                             INLINE ( ::getValue( "DescuentoPorcentual" ) )
+   METHOD getDescuentoPromocion()                              INLINE ( ::getValue( "DescuentoPromocion" ) )
 
-   METHOD isLineaImpuestoIncluido()                            INLINE ( ::getDictionary( "LineaImpuestoIncluido" ) )
-   METHOD isVolumenImpuestosEspeciales()                       INLINE ( ::getDictionary( "VolumenImpuestosEspeciales" ) )
+   METHOD isLineaImpuestoIncluido()                            INLINE ( ::getValue( "LineaImpuestoIncluido" ) )
+   METHOD isVolumenImpuestosEspeciales()                       INLINE ( ::getValue( "VolumenImpuestosEspeciales" ) )
 
-   METHOD getImporteImpuestoEspecial()                         INLINE ( ::getDictionary( "ImporteImpuestoEspecial" ) )
-   METHOD getVolumen()                                         INLINE ( ::getDictionary( "Volumen" ) )
-   METHOD getPuntoVerde()                                      INLINE ( ::getDictionary( "PuntoVerde" ) )
+   METHOD getImporteImpuestoEspecial()                         INLINE ( ::getValue( "ImporteImpuestoEspecial" ) )
+   METHOD getVolumen()                                         INLINE ( ::getValue( "Volumen" ) )
+   METHOD getPuntoVerde()                                      INLINE ( ::getValue( "PuntoVerde" ) )
 
 END CLASS
 
@@ -85,10 +85,10 @@ METHOD totalUnidades() CLASS DocumentLine
 
    totalUnidades        := notCaja( ::getCajas() )
    totalUnidades        *= ::getUnidades()
-   totalUnidades        *= notCero( ::getDictionary( "UnidadesKit" ) )
-   totalUnidades        *= notCero( ::getDictionary( "Medicion1" ) )
-   totalUnidades        *= notCero( ::getDictionary( "Medicion2" ) )
-   totalUnidades        *= notCero( ::getDictionary( "Medicion3" ) )
+   totalUnidades        *= notCero( ::getValue( "UnidadesKit" ) )
+   totalUnidades        *= notCero( ::getValue( "Medicion1" ) )
+   totalUnidades        *= notCero( ::getValue( "Medicion2" ) )
+   totalUnidades        *= notCero( ::getValue( "Medicion3" ) )
 
 Return ( totalUnidades )
 
@@ -156,6 +156,8 @@ CLASS AliasDocumentLine
    DATA oSender
    DATA hDictionary
    DATA cAlias
+   
+   METHOD new()
 
    METHOD setAlias( cAlias )                                   INLINE ( ::cAlias := cAlias )
    METHOD getAlias()                                           INLINE ( ::cAlias )
@@ -163,12 +165,10 @@ CLASS AliasDocumentLine
    METHOD getDictionary()                                      INLINE ( ::hDictionary )
    METHOD setDictionary( hDictionary )                         INLINE ( ::hDictionary := hDictionary )
 
-   METHOD new( hDictionary, cAlias )
+   METHOD getValue( key )                                      INLINE ( D():getFieldFromAliasDictionary( key, ::getAlias(), ::getDictionary() ) )
+   METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
 
-   METHOD getDictionary( key )                                 INLINE ( D():getFieldFromAliasDictionary( key, ::getAlias(), ::getDictionary() ) ) )
-   METHOD setDictionary( key, value )                          INLINE ( hSet( ::hDictionary, key, value ) )
-
-   METHOD getCode()                                            INLINE ( ::getDictionary( "Articulo" ) )
+   METHOD getCode()                                            INLINE ( ::getValue( "Articulo" ) )
 
 END CLASS
 
