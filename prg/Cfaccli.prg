@@ -4111,6 +4111,7 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
    local cTerNif     := ( dbfRctPrvT )->cDniPrv
    local cTerNom     := ( dbfRctPrvT )->cNomPrv
    local lReturn
+   local lIvaCEE     := ( dbfRctPrvT )->nRegIva > 1
 
    DEFAULT aSimula   := {}
 
