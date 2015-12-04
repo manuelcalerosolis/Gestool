@@ -122,16 +122,15 @@ METHOD getDocumentLine() CLASS DeliveryNoteCustomer
       Return ( nil )
    end if 
 
-Return ( DocumentLine():New( hLine, self ) )
+Return ( DictionaryDocumentLine():New( self, hLine ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD GetAppendDetail() CLASS DeliveryNoteCustomer
 
-   // local hLine             := D():GetAlbaranClienteLineaBlank( ::nView )
    local hLine             := D():getAlbaranClienteLineaDefaultValues( ::nView )
    
-   ::oDocumentLineTemporal := DocumentLine():New( hLine, self )
+   ::oDocumentLineTemporal := DictionaryDocumentLine():New( self, hLine )
 
 Return ( self )
 

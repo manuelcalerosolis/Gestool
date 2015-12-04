@@ -13,7 +13,7 @@ CLASS ViewDetail FROM ViewBase
    DATA oSender
 
    DATA oGetArticulo
-   DATA oGetDescripcionArticulo
+   DATA ogetDescriptionArticle
    
    DATA oGetLote
    DATA oSayLote
@@ -59,7 +59,7 @@ CLASS ViewDetail FROM ViewBase
    METHOD refreshLote()                      INLINE ( ::oGetLote:Refresh() )
 
    METHOD refreshGetArticulo()               INLINE ( ::oGetArticulo:Refresh() )
-   METHOD refreshGetDescripcion()            INLINE ( ::oGetDescripcionArticulo:Refresh() )
+   METHOD refreshGetDescripcion()            INLINE ( ::ogetDescriptionArticle:Refresh() )
    METHOD refreshGetLote()                   INLINE ( ::oGetLote:Refresh() )
    METHOD refreshGetCajas()                  INLINE ( ::oGetCajas:Refresh() )
    METHOD refreshGetUnidades()               INLINE ( ::oGetUnidades:Refresh() )
@@ -182,7 +182,7 @@ METHOD defineArticulo() CLASS ViewDetail
                                                       "lPixels"   => .t.,;
                                                       "bValid"    => {|| ::oSender:CargaArticulo() } } )
    
-   ::oGetDescripcionArticulo  := TGridGet():Build( {  "nRow"      => ::getRow(),;
+   ::ogetDescriptionArticle  := TGridGet():Build( {  "nRow"      => ::getRow(),;
                                                       "nCol"      => {|| GridWidth( 5.5, ::oDlg ) },;
                                                       "bSetGet"   => {|u| ::SetGetValue( u, "DescripcionArticulo" ) },;
                                                       "oWnd"      => ::oDlg,;

@@ -2,7 +2,7 @@
 #include "Factu.ch" 
 #include "Xbrowse.ch"
 
-CLASS DocumentSalesViewEdit FROM ViewEdit 
+CLASS DocumentSalesViewEdit FROM ViewEdit  
   
    METHOD New()
 
@@ -57,7 +57,7 @@ METHOD columnsBrowseLineas() CLASS DocumentSalesViewEdit
 
    with object ( ::oBrowse:AddCol() )
       :cHeader                := "Descripción"
-      :bEditValue             := {|| ::getDocumentLine():getDescripcionArticulo() }
+      :bEditValue             := {|| ::getDocumentLine():getDescription() }
       :bFooter                := {|| "Total..." }
       :nWidth                 := 310
    end with
@@ -86,7 +86,7 @@ METHOD columnsBrowseLineas() CLASS DocumentSalesViewEdit
 
    with object ( ::oBrowse:AddCol() )
       :cHeader                := "Und"
-      :bEditValue             := {|| ::getDocumentLine():totalUnidades() }
+      :bEditValue             := {|| ::getDocumentLine():getTotalUnits() }
       :cEditPicture           := MasUnd()
       :nWidth                 := 90
       :nDataStrAlign          := 1

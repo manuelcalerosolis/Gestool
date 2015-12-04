@@ -7,8 +7,6 @@ CLASS Iva
    Data hIva
    Data oSender
 
-
-
    METHOD New()
    METHOD Reset()
 
@@ -44,7 +42,7 @@ CLASS Iva
    METHOD ShowImportes( nPosition )
    METHOD ShowTotal( nPosition )
 
-   METHOD getDictionaryMaster( cField )            INLINE ( hGet( ::oSender:oSender:hDictionaryMaster, cField ) )
+   METHOD getValueMaster( cField )                 INLINE ( hGet( ::oSender:oSender:hDictionaryMaster, cField ) )
 
 END CLASS
 
@@ -69,10 +67,9 @@ Return( Self )
 
 METHOD add( oDocumentLine )
 
-   local nPositionR
    local nPosition
 
-   nPosition      := aScan( ::aIva, {|hIva| oDocumentLine:getPorcentajeImpuesto() == ::getTipoIva( hIva ) .and. oDocumentLine:getRecargoEquivalencia() == ::getTipoRecargo( hIva ) } )
+   nPosition      := aScan( ::aIva, {|hIva| oDocumentLine:getPercentageTax() == ::getTipoIva( hIva ) .and. oDocumentLine:getRecargoEquivalencia() == ::getTipoRecargo( hIva ) } )
 
    if nPosition != 0
       ::sumBase( nPosition, oDocumentLine:Total() )
@@ -105,7 +102,7 @@ METHOD ImporteImpuesto( nPosition )
    Local ImporteImpuesto         := 0
 
    if ::getPorcentajeImpuesto( nPosition ) !=0
-      if ::getDictionaryMaster( "ImpuestosIncluidos" )
+      if ::getValueMaster( "ImpuestosIncluidos" )
          ImporteImpuesto         := ::getBaseArray( nPosition ) - ( ::getBaseArray( nPosition ) / ( 1 + ::getPorcentajeImpuesto( nPosition ) / 100 ) )
       else
          ImporteImpuesto         := ( ::getBaseArray( nPosition ) * ::getPorcentajeImpuesto( nPosition ) ) / 100
@@ -121,12 +118,12 @@ METHOD ImporteRecargo( nPosition )
 
    Local ImporteRecargo       := 0
 
-   if !( ::getDictionaryMaster( "RecargoEquivalencia" ) )
+   if !( ::getValueMaster( "RecargoEquivalencia" ) )
       Return ImporteRecargo    
    endif
 
    if ::getPorcentajeRecargo( nPosition ) != 0
-      if ::getDictionaryMaster( "ImpuestosIncluidos" )
+      if ::getValueMaster( "ImpuestosIncluidos" )
          ImporteRecargo       := ::getBaseArray( nPosition ) - ( ::getBaseArray( nPosition ) / ( 1 + ::getPorcentajeRecargo( nPosition ) / 100 ) )
       else
          ImporteRecargo       := ( ::getBaseArray( nPosition ) * ::getPorcentajeRecargo( nPosition ) ) / 100
@@ -141,9 +138,9 @@ METHOD Base( nPosition )
 
    Local Base     := ::getBaseArray( nPosition )
 
-   if ::getDictionaryMaster( "ImpuestosIncluidos" )
+   if ::getValueMaster( "ImpuestosIncluidos" )
       Base        -= ::ImporteImpuesto( nPosition )
-      if ( ::getDictionaryMaster( "RecargoEquivalencia" ) )
+      if ( ::getValueMaster( "RecargoEquivalencia" ) )
          Base     -= ::ImporteRecargo( nPosition )
       endif        
    endif
@@ -186,7 +183,7 @@ METHOD ShowPorcentajes( nPosition )
 
    Porcentaje     += CRLF
 
-   if !( ::getDictionaryMaster( "RecargoEquivalencia" ) )
+   if !( ::getValueMaster( "RecargoEquivalencia" ) )
       Return Porcentaje
    else
       if !IsNil( ::getPorcentajeRecargo( nPosition ) )
@@ -208,7 +205,7 @@ METHOD ShowImportes( nPosition )
 
    Importe += CRLF 
 
-   if !( ::getDictionaryMaster( "RecargoEquivalencia" ) )
+   if !( ::getValueMaster( "RecargoEquivalencia" ) )
       Return Importe
    else
       if !IsNil( ::ImporteRecargo( nPosition ) )

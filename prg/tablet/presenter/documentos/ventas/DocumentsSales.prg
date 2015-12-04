@@ -69,7 +69,7 @@ CLASS DocumentsSales FROM Documents
    METHOD getSerie()                                        INLINE ( ::hGetMaster( "Serie" ) )
    METHOD getNumero()                                       INLINE ( ::hGetMaster( "Numero" ) )
    METHOD getSufijo()                                       INLINE ( ::hGetMaster( "Sufijo" ) )
-   METHOD getAlmacen()                                      INLINE ( ::hGetMaster( "Almacen" ) )
+   METHOD getStore()                                        INLINE ( ::hGetMaster( "Almacen" ) )
 
    METHOD getID()                                           INLINE ( ::getSerie() + str( ::getNumero() ) + ::getSufijo() )
 
@@ -901,9 +901,9 @@ Return ( ::setDatasInDictionaryMaster( numeroDocumento ) )
 METHOD onPreSaveAppendDetail() CLASS DocumentsSales
 
    local oDocumentLine        := ::getDocumentLine()
-   local cDescripcionArticulo := alltrim( oDocumentLine:getDictionary( "DescripcionArticulo" ) )
+   local cDescripcionArticulo := alltrim( oDocumentLine:getValue( "DescripcionArticulo" ) )
 
-   oDocumentLine:setDictionary( "DescripcionAmpliada", cDescripcionArticulo )
+   oDocumentLine:setValue( "DescripcionAmpliada", cDescripcionArticulo )
 
 Return ( .t. )
 

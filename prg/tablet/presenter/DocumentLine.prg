@@ -6,25 +6,20 @@ CLASS DocumentLine
    DATA oSender
    DATA hDictionary
 
-   METHOD new( hDictionary )
+   METHOD new()
 
-   METHOD getDictionaryMaster()                                INLINE ( ::oSender:hDictionaryMaster )
+   METHOD getDictionary()                                      INLINE ( ::hDictionary )
+   METHOD setDictionary( hDictionary )                         INLINE ( ::hDictionary := hDictionary )
 
-   METHOD hSetMaster( key, value )                             INLINE ( hSet( ::getDictionaryMaster(), key, value ) )
-   METHOD hGetMaster( key )                                    INLINE ( hGet( ::getDictionaryMaster(), key ) )
+   METHOD getValue( key )                                      VIRTUAL
+   METHOD setValue( key, value )                               VIRTUAL
 
-   METHOD getValue( key )                                      INLINE ( hGet( ::hDictionary, key ) )
-   METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
-
-   METHOD hSetDetail( key, value )                             INLINE ( hSet( ::oSender:oDocumentLineTemporal:hDictionary, key, value ) )
-   METHOD hGetDetail( key )                                    INLINE ( hGet( ::oSender:oDocumentLineTemporal:hDictionary, key ) )
-
-   METHOD totalUnidades()
-   METHOD Total()
+   METHOD getTotalUnits()
+   METHOD getTotal()
    METHOD Impuesto()  
-   METHOD Importe()
+   METHOD getPrice()
 
-   METHOD getDivisa()                                          INLINE ( hGet( ::getDictionaryMaster(), "Divisa" ) ) 
+   METHOD getDivisa()                                          INLINE ( hGet( ::getValueMaster(), "Divisa" ) ) 
 
    METHOD getSerie()                                           INLINE ( ::getValue(  "Serie" ) )
    METHOD setSerieMaster()                                     INLINE ( hSet( ::hDictionary, "Serie", ::oSender:getSerie() ) )
@@ -35,23 +30,42 @@ CLASS DocumentLine
    METHOD getSufijo()                                          INLINE ( ::getValue( "Sufijo" ) )
    METHOD setSufijoMaster()                                    INLINE ( ::setValue( "Sufijo", ::oSender:getSufijo() ) )
 
-   METHOD getAlmacen()                                         INLINE ( ::getValue( "Almacen" ) )
-   METHOD setAlmacen( cAlmacen )                               INLINE ( ::setValue( "Almacen", cAlmacen ) )
-   METHOD setAlmacenMaster()                                   INLINE ( if( empty( ::getAlmacen() ), ::setAlmacen( ::oSender:getAlmacen() ), ) )
+   METHOD getCode()                                            INLINE ( ::getValue( "Articulo" ) )
+
+   METHOD getStore()                                           INLINE ( ::getValue( "Almacen" ) )
+   METHOD setStore( cStore )                                   INLINE ( ::setValue( "Almacen", cStore ) )
+   METHOD setStoreMaster()                                     INLINE ( if( empty( ::getStore() ), ::setStore( ::oSender:getStore() ), ) )
 
    METHOD getNumeroLinea()                                     INLINE ( ::getValue( "NumeroLinea" ) )
    METHOD setNumeroLinea( NumeroLinea )                        INLINE ( ::setValue( "NumeroLinea", NumeroLinea ) )
    METHOD setPosicionImpresion( PosicionImpresion)             INLINE ( ::setValue( "PosicionImpresion", PosicionImpresion ) )
 
    METHOD getArticulo()                                        INLINE ( ::getValue( "Articulo" ) )
-   METHOD getDescripcionArticulo()                             INLINE ( ::getValue( "DescripcionArticulo" ) )
-   METHOD getPorcentajeImpuesto()                              INLINE ( ::getValue( "PorcentajeImpuesto" ) )
+   METHOD getDescription()                                     INLINE ( if(   !empty( ::getCode() ),;
+                                                                              ::getValue( "DescripcionArticulo" ),;
+                                                                              ::getValue( "DescripcionAmpliada" ) ) )
+   METHOD getCodeFirstProperty()                               INLINE ( ::getValue( "CodigoPropiedad1" ) )
+   METHOD getCodeFirstProperty()                               INLINE ( ::getValue( "CodigoPropiedad1" ) )
+   METHOD getCodeSecondProperty()                              INLINE ( ::getValue( "CodigoPropiedad2" ) )
+   METHOD getValueFirstProperty()                              INLINE ( ::getValue( "ValorPropiedad1" ) )
+   METHOD getValueSecondProperty()                             INLINE ( ::getValue( "ValorPropiedad2" ) )
+   METHOD getNameFirstProperty()                               INLINE ( nombrePropiedad( ::getCodeFirstProperty(), ::getValueFirstProperty(), ::oSender:nView ) )
+   METHOD getNameSecondProperty()                              INLINE ( nombrePropiedad( ::getCodeSecondProperty(), ::getValueSecondProperty(), ::oSender:nView ) )
+   METHOD getLote()                                            INLINE ( ::getValue( "Lote" ) )
+  
+   METHOD getBoxes()                                           INLINE ( ::getValue( "Cajas" ) )
+   METHOD getUnits()                                           INLINE ( ::getValue( "Unidades" ) )
+   METHOD getTotalUnits()
+   METHOD getMeasurementUnit()                                 INLINE ( ::getValue( "UnidadMedicion" ) )
+
+   METHOD getPercentageDiscount()                              INLINE ( ::getValue( "DescuentoPorcentual" ) )
+   METHOD getPercentagePromotion()                             INLINE ( ::getValue( "DescuentoPromocion" ) )
+   METHOD getPercentageTax()                                   INLINE ( ::getValue( "PorcentajeImpuesto" ) )
+   METHOD getMonetaryDiscount()                                INLINE ( ::getValue( "DescuentoLineal" ) )
 
    METHOD getTipoIva()                                         INLINE ( ::getValue( "TipoIva" ) )
-   METHOD getDescuentoLineal()                                 INLINE ( ::getValue( "DescuentoLineal" ) )
    METHOD getPrecioVenta()                                     INLINE ( Round( ::getValue(  "PrecioVenta" ), nDouDiv() ) )
    METHOD getPortes()                                          INLINE ( ::getValue( "Portes" ) )
-   METHOD getCajas()                                           INLINE ( ::getValue( "Cajas" ) )
    METHOD getUnidades()                                        INLINE ( ::getValue( "Unidades" ) )
    METHOD getDescuento()                                       INLINE ( ::getValue( "Descuento" ) )
    METHOD getRecargoEquivalencia()                             INLINE ( ::getValue( "RecargoEquivalencia" ) )
@@ -70,21 +84,20 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD new( hDictionary, oSender ) CLASS DocumentLine
+METHOD new( oSender ) CLASS DocumentLine
 
-   ::hDictionary        := hDictionary
    ::oSender            := oSender
 
 Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD totalUnidades() CLASS DocumentLine
+METHOD getTotalUnits() CLASS DocumentLine
 
-   local totalUnidades  := 0
+   local totalUnidades  
 
-   totalUnidades        := notCaja( ::getCajas() )
-   totalUnidades        *= ::getUnidades()
+   totalUnidades        := notCaja( ::getBoxes() )
+   totalUnidades        *= notCero( ::getUnidades() )
    totalUnidades        *= notCero( ::getValue( "UnidadesKit" ) )
    totalUnidades        *= notCero( ::getValue( "Medicion1" ) )
    totalUnidades        *= notCero( ::getValue( "Medicion2" ) )
@@ -94,38 +107,40 @@ Return ( totalUnidades )
 
 //---------------------------------------------------------------------------//
 
-METHOD Total()   CLASS DocumentLine
+METHOD getTotal()   CLASS DocumentLine
 
-   local Total          := ::Importe() * ::totalUnidades()
+   local Total          := ::getPrice()
+
+   Total                *= ::getTotalUnits()
 
    Total                += ::Impuesto()
 
    if ::oSender:isPuntoVerde()    
-      Total             += ::getPuntoVerde() * ::totalUnidades()
+      Total             += ::getPuntoVerde() * ::getTotalUnits()
    end if 
 
    if ::getPortes()  != 0
-      Total             += ::getPortes() * ::totalUnidades
+      Total             += ::getPortes() * ::getTotalUnits()
    endif
 
 Return ( Total )
 
 //---------------------------------------------------------------------------//
 
-METHOD Importe() CLASS DocumentLine
+METHOD getPrice() CLASS DocumentLine
 
-   local totalImporte   := ::getPrecioVenta()
-   totalImporte         -= ::getDescuentoLineal()
+   local Price       := ::getPrice()
+   Price             -= ::getMonetaryDiscount()
 
-   if ::getDescuentoPorcentual() != 0
-      totalImporte      -= totalImporte * ::getDescuentoPorcentual() / 100
+   if ::getPercentageDiscount() != 0
+      Price          -= Price * ::getPercentageDiscount() / 100
    end if 
 
-   if ::getDescuentoPromocion() != 0
-      totalImporte      -= totalImporte * ::getDescuentoPromocion() / 100
+   if ::getPercentagePromotion() != 0
+      Price          -= Price * ::getPercentagePromotion() / 100
    end if 
 
-Return ( totalImporte )
+Return ( Price )
 
 //---------------------------------------------------------------------------//
 
@@ -150,37 +165,50 @@ Return ( Impuesto )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
+CLASS DictionaryDocumentLine FROM DocumentLine
 
-CLASS AliasDocumentLine 
+   METHOD new( oSender, hDictionary )
 
-   DATA oSender
-   DATA hDictionary
-   DATA cAlias
-   
-   METHOD new()
+   METHOD getValueMaster()                                     INLINE ( ::oSender:hDictionaryMaster )
 
-   METHOD setAlias( cAlias )                                   INLINE ( ::cAlias := cAlias )
-   METHOD getAlias()                                           INLINE ( ::cAlias )
+   METHOD hSetMaster( key, value )                             INLINE ( hSet( ::getValueMaster(), key, value ) )
+   METHOD hGetMaster( key )                                    INLINE ( hGet( ::getValueMaster(), key ) )
 
-   METHOD getDictionary()                                      INLINE ( ::hDictionary )
-   METHOD setDictionary( hDictionary )                         INLINE ( ::hDictionary := hDictionary )
-
-   METHOD getValue( key )                                      INLINE ( D():getFieldFromAliasDictionary( key, ::getAlias(), ::getDictionary() ) )
+   METHOD getValue( key )                                      INLINE ( hGet( ::hDictionary, key ) )
    METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
 
-   METHOD getCode()                                            INLINE ( ::getValue( "Articulo" ) )
+   METHOD hSetDetail( key, value )                             INLINE ( hSet( ::oSender:oDocumentLineTemporal:hDictionary, key, value ) )
+   METHOD hGetDetail( key )                                    INLINE ( hGet( ::oSender:oDocumentLineTemporal:hDictionary, key ) )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD new( oSender, hDictionary, cAlias ) CLASS AliasDocumentLine
+METHOD new( oSender, hDictionary ) CLASS DictionaryDocumentLine
 
    ::oSender            := oSender
-   ::hDictionary        := hDictionary
-   ::cAlias             := cAlias
+
+   ::setDictionary( hDictionary )
 
 Return ( Self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS AliasDocumentLine FROM DocumentLine
+
+   DATA cAlias
+   
+   METHOD setAlias( cAlias )                                   INLINE ( ::cAlias := cAlias )
+   METHOD getAlias()                                           INLINE ( ::cAlias )
+
+   METHOD getValue( key )                                      INLINE ( D():getFieldFromAliasDictionary( key, ::getAlias(), ::getDictionary() ) )
+   METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
+
+END CLASS
 
 //---------------------------------------------------------------------------//
 

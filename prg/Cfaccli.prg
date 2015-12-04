@@ -105,7 +105,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 	*/
 
    cRuta             := cRutCnt()
-   lIvaCEE           := ( ( dbfFacCliT )->nRegIva == 2 )
+   lIvaCEE           := ( ( dbfFacCliT )->nRegIva > 1 )
 
    if !chkEmpresaAsociada( cCodEmp )
       oTree:Select( oTree:Add( "Factura cliente : " + rtrim( pFactura ) + " no se definierón empresas asociadas.", 0 ) )
@@ -2798,7 +2798,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 	*/
 
    cRuta             := cRutCnt()
-   lIvaCEE           := ( ( dbfFacRecT )->nRegIva == 2 )
+   lIvaCEE           := ( ( dbfFacRecT )->nRegIva > 1 )
 
    if !chkEmpresaAsociada( cCodEmp )
       oTree:Select( oTree:Add( "Factura rectificativa de cliente : " + rtrim( pFactura ) + " no se definierón empresas asociadas.", 0 ) )
@@ -3541,6 +3541,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
    local lErrorFound := .f.
    local cTerNif     := ( dbfFacPrvT )->cDniPrv
    local cTerNom     := ( dbfFacPrvT )->cNomPrv
+   local lIvaCEE     := ( dbfFacPrvT )->nRegIva > 1
    local lReturn
 
    DEFAULT aSimula   := {}
@@ -3598,7 +3599,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
 
       for n := 1 to Len( aTotIva )
 
-         if ( dbfFacPrvT )->nRegIva == 2
+         if lIvaCEE
             cSubCtaIva  := uFieldEmpresa( "cCtaCeeRpt" )
             cSubCtaReq  := uFieldEmpresa( "cCtaCeeSpt" )
          else
@@ -3646,7 +3647,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
                Construimos las bases de los impuestosS
                */
 
-               if ( dbfFacPrvT )->nRegIva == 2
+               if lIvaCEE
                   cSubCtaIva  := uFieldEmpresa( "cCtaCeeRpt" )
                   cSubCtaReq  := uFieldEmpresa( "cCtaCeeSpt" )
                else
@@ -3867,7 +3868,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
       Asientos de impuestos_____________________________________________________________
       */
 
-      if ( dbfFacPrvT )->nRegIva == 2
+      if lIvaCEE
 
          for n := 1 to len( aIva )
 
@@ -4179,7 +4180,7 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
             Construimos las bases de los impuestosS
             */
 
-            if ( dbfRctPrvT )->nRegIva == 2
+            if lIvaCEE
                cSubCtaIva  := uFieldEmpresa( "cCtaCeeRpt" )
                cSubCtaReq  := uFieldEmpresa( "cCtaCeeSpt" )
             else
@@ -4396,7 +4397,7 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
 
       next
 
-      if ( dbfRctPrvT )->nRegIva == 2
+      if lIvaCEE
 
       for n := 1 to len( aIva )
 

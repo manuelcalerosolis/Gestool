@@ -273,7 +273,7 @@ METHOD defineBrowseIva() CLASS ViewEditResumen
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
       :nFootStrAlign       := 1
-      :bFooter             := {|| ::oSender:oTotalDocument:transImporte() }
+      :bFooter             := {|| ::oSender:oTotalDocument:transgetPrice() }
    end with
 
    with object ( ::oBrowse:AddCol() )

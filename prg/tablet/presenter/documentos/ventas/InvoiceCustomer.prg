@@ -126,16 +126,15 @@ METHOD getDocumentLine() CLASS InvoiceCustomer
       Return ( nil )
    end if 
 
-Return ( DocumentLine():New( hLine, self ) )
+Return ( DictionaryDocumentLine():New( self, hLine ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD getAppendDetail() CLASS InvoiceCustomer
 
-   // local hLine             := D():GetFacturaClienteLineaBlank( ::nView )
    local hLine             := D():GetFacturaClienteLineaDefaultValues( ::nView )
 
-   ::oDocumentLineTemporal := DocumentLine():New( hLine, self )
+   ::oDocumentLineTemporal := DictionaryDocumentLine():New( self, hLine )
 
 Return ( self )
 

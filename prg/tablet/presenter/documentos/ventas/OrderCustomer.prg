@@ -117,20 +117,15 @@ METHOD getDocumentLine() CLASS OrderCustomer
 
    local hLine    := D():GetPedidoClienteLineasHash( ::nView )
 
-   if empty( hLine )
-      RETURN ( nil )
-   end if 
-
-RETURN ( DocumentLine():New( hLine, self ) )
+RETURN ( DictionaryDocumentLine():New( self, hLine ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD getAppendDetail() CLASS OrderCustomer
 
-   // local hLine             := D():GetPedidoClienteLineaBlank( ::nView )
    local hLine             := D():GetPedidoClienteLineasDefaultValue( ::nView )
 
-   ::oDocumentLineTemporal := DocumentLine():New( hLine, self )
+   ::oDocumentLineTemporal := DictionaryDocumentLine():New( self, hLine )
 
 RETURN ( self )
 
