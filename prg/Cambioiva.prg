@@ -153,7 +153,7 @@ METHOD New()
                            space( 3 ) + "Parte de producción" =>                          {|| msgAlert( "" ), .t. },;
                            space( 3 ) + "Recibos de clientes" =>                          {|| msgAlert( "" ), .t. } }
 
-   ::aTargetEmpresa  := aFullEmpresas( .t. )
+   ::aTargetEmpresa  := aSerializedEmpresas()
 
    ::OpenFiles()
 
@@ -550,6 +550,9 @@ METHOD BotonSiguiente()
          if ::showDocumentsLines()
             ::oFld:goNext()
          end if
+
+      case ::oFld:nOption == 3
+         ::oFld:goNext()
 
    end case
 

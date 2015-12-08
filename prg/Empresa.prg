@@ -7679,12 +7679,19 @@ RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Function aFullEmpresas(lExcludeGroup)
+Function aSerializedEmpresas()
+
+Return ( aFullEmpresas( .t., .t. ) )
+
+//---------------------------------------------------------------------------//
+
+Function aFullEmpresas( lExcludeGroup, lSerialize )
 
    local dbfEmp
    local aFullEmpresas     := {}
 
    DEFAULT lExcludeGroup   := .f.
+   DEFAULT lSerialize      := .f.
 
    USE ( cPatDat() + "Empresa.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Empresa", @dbfEmp ) )
    SET ADSINDEX TO ( cPatDat() + "Empresa.CDX" ) ADDITIVE
@@ -7692,7 +7699,11 @@ Function aFullEmpresas(lExcludeGroup)
    while !( dbfEmp )->( eof() )
 
       if !( ( dbfEmp )->lGrupo .and. lExcludeGroup )
-         aAdd( aFullEmpresas, { ( dbfEmp )->CodEmp, ( dbfEmp )->cNombre, ( dbfEmp )->lGrupo } )
+         if lSerialize
+            aAdd( aFullEmpresas, ( dbfEmp )->CodEmp + " - " + alltrim( ( dbfEmp )->cNombre ) )
+         else
+            aAdd( aFullEmpresas, { ( dbfEmp )->CodEmp, ( dbfEmp )->cNombre, ( dbfEmp )->lGrupo } )
+         end if 
       end if 
 
       ( dbfEmp )->( dbSkip() )
