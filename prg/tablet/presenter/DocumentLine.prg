@@ -64,7 +64,7 @@ CLASS DocumentLine
    METHOD getMonetaryDiscount()                                INLINE ( ::getValue( "DescuentoLineal" ) )
 
    METHOD getTipoIva()                                         INLINE ( ::getValue( "TipoIva" ) )
-   METHOD getPrecioVenta()                                     INLINE ( Round( ::getValue(  "PrecioVenta" ), nDouDiv() ) )
+   METHOD getPrecioVenta()                                     INLINE ( round( ::getValue(  "PrecioVenta" ), nDouDiv() ) )
    METHOD getPortes()                                          INLINE ( ::getValue( "Portes" ) )
    METHOD getUnidades()                                        INLINE ( ::getValue( "Unidades" ) )
    METHOD getDescuento()                                       INLINE ( ::getValue( "Descuento" ) )

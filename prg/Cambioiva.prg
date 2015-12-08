@@ -129,7 +129,7 @@ ENDCLASS
 
 METHOD New()
 
-   ::cDocument       := "Pedido proveedores"
+   ::cDocument       := "" // "Pedido proveedores"
    ::aDocuments      := {  "Compras" =>                                                   {|| ::opcionInvalida() },;                                    
                            space( 3 ) + "Pedido proveedores" =>                           {|| ::setDocumentPedidosProveedores() },;
                            space( 3 ) + "Albarán proveedores" =>                          {|| msgAlert( "Albarán proveedores" ) },;
