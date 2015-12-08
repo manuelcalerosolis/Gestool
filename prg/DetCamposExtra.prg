@@ -25,6 +25,8 @@ CLASS TDetCamposExtra FROM TMant
 
    DATA hFormatoColumnas      INIT  {}
 
+   DATA bId
+
    Method New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
 
    Method DefineFiles()
@@ -55,10 +57,18 @@ CLASS TDetCamposExtra FROM TMant
    Method setColPicture( uValue )      INLINE ( ::oCol:cEditPicture := uValue )
    Method setColListTxt( aValue )      INLINE ( ::oCol:aEditListTxt := aValue )
 
+   Method setbId( bValue )             INLINE ( ::bId := bValue )
+
    Method cFormat2Char( uValor )
    Method cChar2Format( uValor, nFormat )
 
    Method lPreSave()
+
+   METHOD lExisteCamposExtra()         INLINE ( len( ::aCamposExtra ) < 1 )
+
+   METHOD addCamposExtra( oBrw )
+
+   METHOD nAlignData( campoExtra )     INLINE ( if( campoExtra[ "tipo" ] == 2, AL_RIGHT, AL_LEFT ) )
 
 END CLASS
 
@@ -472,4 +482,41 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD addCamposExtra( oBrw ) CLASS TDetCamposExtra
 
+   local campoExtra
+
+   if empty( oBrw )
+      Return .f.
+   end if
+
+   if Empty( ::bId )
+      Return .f.
+   end if
+
+   if Empty( ::TipoDocumento )
+      Return .f.
+   end if
+
+   ::aCamposExtra    := ::oCamposExtra:aCamposExtra( ::TipoDocumento )
+
+   if ::lExisteCamposExtra()
+      Return .f.
+   end if
+
+   for each campoExtra in ::aCamposExtra
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := Capitalize( AllTrim( campoExtra[ "descripción" ] ) )
+         :bStrData         := {|| oRetFld( hGet( DOCUMENTOS_ITEMS, ::TipoDocumento ) + campoExtra[ "código" ] + eval( ::bId ), ::oDbf, "cValor", "cTotClave" ) }
+         :nDataStrAlign    := ::nAlignData( campoExtra )
+         :nHeadStrAlign    := ::nAlignData( campoExtra )
+         :nWidth           := 100
+         :lHide            := .t.
+      end with
+
+   next
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//

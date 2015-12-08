@@ -2172,6 +2172,7 @@ METHOD BuildEmpresa()
    oDataTable:cDescription := "Artículos"
    oDataTable:bCreateFile  := {| cPath | mkArticulo( cPath ) }
    oDataTable:bCreateIndex := {| cPath | rxArticulo( cPath ) }
+   oDataTable:bId          := {|| Field->Codigo }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
