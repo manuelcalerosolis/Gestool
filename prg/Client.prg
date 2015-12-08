@@ -481,12 +481,13 @@ STATIC FUNCTION OpenFiles( lExt )
          lOpenFiles        := .f.
       end if
 
+      oDetCamposExtra:SetTipoDocumento( "Clientes" )
+      oDetCamposExtra:setbId( {|| D():ClientesId( nView ) } )
+
       oEntidades        := TEntidades():Create()
       if !oEntidades:OpenFiles()
          lOpenFiles     := .f.
       end if
-
-      oDetCamposExtra:SetTipoDocumento( "Clientes" )
 
       CodigosPostales():GetInstance():OpenFiles()
 

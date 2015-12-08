@@ -25,6 +25,8 @@ CLASS TDetCamposExtra FROM TMant
 
    DATA hFormatoColumnas      INIT  {}
 
+   DATA bId
+
    Method New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
 
    Method DefineFiles()
@@ -54,6 +56,8 @@ CLASS TDetCamposExtra FROM TMant
    Method setColType( uValue )         INLINE ( ::oCol:nEditType := uValue )
    Method setColPicture( uValue )      INLINE ( ::oCol:cEditPicture := uValue )
    Method setColListTxt( aValue )      INLINE ( ::oCol:aEditListTxt := aValue )
+
+   Method setbId( bValue )             INLINE ( ::bId := bValue )
 
    Method cFormat2Char( uValor )
    Method cChar2Format( uValor, nFormat )
@@ -486,8 +490,11 @@ METHOD addCamposExtra( oBrw ) CLASS TDetCamposExtra
       Return .f.
    end if
 
+   if Empty( ::bId )
+      Return .f.
+   end if
+
    if Empty( ::TipoDocumento )
-      MsgStop( "No existen campos extra para este tipo de documento." )
       Return .f.
    end if
 
@@ -501,10 +508,11 @@ METHOD addCamposExtra( oBrw ) CLASS TDetCamposExtra
 
       with object ( oBrw:AddCol() )
          :cHeader          := Capitalize( AllTrim( campoExtra[ "descripción" ] ) )
-         :bStrData         := {|| "aaa" }
+         :bStrData         := {|| oRetFld( hGet( DOCUMENTOS_ITEMS, ::TipoDocumento ) + campoExtra[ "código" ] + eval( ::bId ), ::oDbf, "cValor", "cTotClave" ) }
          :nDataStrAlign    := ::nAlignData( campoExtra )
          :nHeadStrAlign    := ::nAlignData( campoExtra )
          :nWidth           := 100
+         :lHide            := .t.
       end with
 
    next

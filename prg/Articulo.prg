@@ -448,7 +448,9 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       if !oDetCamposExtra:OpenFiles()
          lOpenFiles        := .f.
       end if
-      oDetCamposExtra:SetTipoDocumento( "Artículos" )
+      
+      oDetCamposExtra:setTipoDocumento( "Artículos" )
+      oDetCamposExtra:setbId( {|| D():ArticulosId( nView ) } )
 
       /*
       Cargamos el valor del Euro y de la Peseta-----------------------------------
