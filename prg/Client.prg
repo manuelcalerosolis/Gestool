@@ -898,6 +898,8 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
       oWndBrw:cHtmlHelp    := "Clientes"
 
+      oDetCamposExtra:addCamposExtra( oWndBrw )
+
       oWndBrw:CreateXFromCode()
 
       DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
@@ -8136,6 +8138,8 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
          :bEditValue       := {|| ( D():Get( "Client", nView ) )->mComent }
          :nWidth           := 200
       end with
+
+      oDetCamposExtra:addCamposExtra( oBrw )
 
       oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
       oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }

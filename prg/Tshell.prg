@@ -159,6 +159,7 @@ CLASS TShell FROM TMdiChild
    Method CreateXBrowse()
    Method CreateXFromCode()
    Method AddXCol()  INLINE ( ::oBrw:AddCol() )
+   METHOD AddCol()   INLINE ( ::oBrw:AddCol() )
 
 	METHOD GotFocus()
 

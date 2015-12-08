@@ -70,6 +70,10 @@ CLASS TDetCamposExtra FROM TMant
 
    METHOD nAlignData( campoExtra )     INLINE ( if( campoExtra[ "tipo" ] == 2, AL_RIGHT, AL_LEFT ) )
 
+   METHOD cPictData( campoExtra )
+
+   METHOD cFormatValue( campoExtra )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -508,7 +512,7 @@ METHOD addCamposExtra( oBrw ) CLASS TDetCamposExtra
 
       with object ( oBrw:AddCol() )
          :cHeader          := Capitalize( AllTrim( campoExtra[ "descripción" ] ) )
-         :bStrData         := {|| oRetFld( hGet( DOCUMENTOS_ITEMS, ::TipoDocumento ) + campoExtra[ "código" ] + eval( ::bId ), ::oDbf, "cValor", "cTotClave" ) }
+         :bStrData         := {|| ::cFormatValue( campoExtra ) }
          :nDataStrAlign    := ::nAlignData( campoExtra )
          :nHeadStrAlign    := ::nAlignData( campoExtra )
          :nWidth           := 100
@@ -518,5 +522,33 @@ METHOD addCamposExtra( oBrw ) CLASS TDetCamposExtra
    next
 
 Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD cFormatValue( campoExtra ) CLASS TDetCamposExtra
+
+   local uValue
+
+   if campoExtra[ "tipo" ] == 2   
+      uValue   := Trans( Val( oRetFld( hGet( DOCUMENTOS_ITEMS, ::TipoDocumento ) + campoExtra[ "código" ] + eval( ::bId ), ::oDbf, "cValor", "cTotClave" ) ), ::cPictData( campoExtra ) )
+   else
+      uValue   := oRetFld( hGet( DOCUMENTOS_ITEMS, ::TipoDocumento ) + campoExtra[ "código" ] + eval( ::bId ), ::oDbf, "cValor", "cTotClave" )
+   end if
+
+Return uValue
+
+//---------------------------------------------------------------------------//
+
+METHOD cPictData( campoExtra ) CLASS TDetCamposExtra
+
+   local cPict    := ""
+
+   if campoExtra[ "tipo" ] == 2
+      cPict       := NumPict( ( campoExtra[ "longitud" ] + campoExtra[ "decimales" ] ) -1, campoExtra[ "decimales" ] )
+   else 
+      cPict       := ""
+   end if
+
+Return ( cPict )
 
 //---------------------------------------------------------------------------//

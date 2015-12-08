@@ -1216,6 +1216,8 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       :lHide            := .t.
    end with
 
+   oDetCamposExtra:addCamposExtra( oWndBrw )
+
    oWndBrw:cHtmlHelp    := "Articulos"
    oWndBrw:bToolTip     := {|| dlgTooltip( ( D():Articulos( nView ) )->Codigo, oWndBrw:oBrw ) }
 
