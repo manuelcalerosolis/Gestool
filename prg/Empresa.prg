@@ -5477,18 +5477,7 @@ Function ChkAllEmp( lForced )
 
    if ( !File( FullCurDir() + "ChkEmp.nil" ) .or. fSize( FullCurDir() + "ChkEmp.nil" ) == 0 .or. lForced )
 
-      USE ( cPatDat() + "Empresa.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Empresa", @dbfEmp ) )
-      SET ADSINDEX TO ( cPatDat() + "Empresa.CDX" ) ADDITIVE
-
-      while !( dbfEmp )->( eof() )
-
-         aAdd( aEmp, { ( dbfEmp )->CodEmp, ( dbfEmp )->cNombre, ( dbfEmp )->lGrupo } )
-
-         ( dbfEmp )->( dbSkip() )
-
-      end while
-
-      ( dbfEmp )->( dbCloseArea() )
+      aEmp           := aFullEmpresas()
 
       if lForced .or. ;
          ApoloMsgNoYes(    "El sistema ha detectado una nueva versión, es"       + CRLF + ;
@@ -7690,3 +7679,28 @@ RETURN nil
 
 //---------------------------------------------------------------------------//
 
+Function aFullEmpresas(lExcludeGroup)
+
+   local dbfEmp
+   local aFullEmpresas     := {}
+
+   DEFAULT lExcludeGroup   := .f.
+
+   USE ( cPatDat() + "Empresa.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Empresa", @dbfEmp ) )
+   SET ADSINDEX TO ( cPatDat() + "Empresa.CDX" ) ADDITIVE
+
+   while !( dbfEmp )->( eof() )
+
+      if !( ( dbfEmp )->lGrupo .and. lExcludeGroup )
+         aAdd( aFullEmpresas, { ( dbfEmp )->CodEmp, ( dbfEmp )->cNombre, ( dbfEmp )->lGrupo } )
+      end if 
+
+      ( dbfEmp )->( dbSkip() )
+
+   end while
+
+   ( dbfEmp )->( dbCloseArea() )
+
+Return ( aFullEmpresas )
+
+//---------------------------------------------------------------------------//

@@ -6015,13 +6015,9 @@ Return ( by( nRow ) )
 //---------------------------------------------------------------------------//
 
 Function Test() 
-/*
-   if !msgyesno("run test " + cDriver() )
-      return nil 
-   end if 
 
-   testAll()
-*/
+   TConversionDocumentos():New():Dialog()
+
 Return ( nil )
 
 Static Function testAll()

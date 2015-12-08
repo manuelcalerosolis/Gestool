@@ -973,15 +973,18 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getFieldFromAliasDictionary( cField, cAlias, aDictionary ) CLASS D
+METHOD getFieldFromAliasDictionary( cField, cAlias, hDictionary, uDefault ) CLASS D
 
-   local value       := hGet( aDictionary, cField )
+   local value       
 
-   if !empty( value )
-      Return ( ( cAlias )->( fieldget( ( cAlias )->( fieldPos( value ) ) ) ) )
-   endif
+   if hhaskey( hDictionary, cField )
+      value          := hGet( hDictionary, cField )
+      if !empty( value )
+         Return ( ( cAlias )->( fieldget( ( cAlias )->( fieldPos( value ) ) ) ) )
+      endif
+   end if 
 
-RETURN ( nil )
+RETURN ( uDefault )
 
 //---------------------------------------------------------------------------//
 

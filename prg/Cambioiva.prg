@@ -30,6 +30,9 @@ CLASS TConversionDocumentos
 
    DATA cDocument   
    DATA aDocuments   
+   DATA cTargetDocument
+   DATA aTargetEmpresa
+   DATA cTargetEmpresa
 
    DATA oSearch
    DATA cSearch
@@ -54,6 +57,8 @@ CLASS TConversionDocumentos
       METHOD changeSortDocument()
       METHOD changeSearch()
       METHOD setOrderInColumn( oColumn )  
+      METHOD getDocument()                         INLINE ( alltrim( ::cDocument ) )
+      METHOD getDocumentName()                     INLINE ( ::getDocument() + space( 1 ) + ::getTextId() )
 
    METHOD OpenFiles()
    METHOD CloseFiles()
@@ -115,10 +120,9 @@ CLASS TConversionDocumentos
       METHOD getTotalNeto()                        INLINE ( D():getFieldFromAliasDictionary( "TotalNeto", ::getHeaderAlias(), ::getHeaderDictionary() ) )
       METHOD getTotalImpuesto()                    INLINE ( D():getFieldFromAliasDictionary( "TotalImpuesto", ::getHeaderAlias(), ::getHeaderDictionary() ) )
       METHOD getTotalDocumento()                   INLINE ( D():getFieldFromAliasDictionary( "TotalDocumento", ::getHeaderAlias(), ::getHeaderDictionary() ) )
+      METHOD isPuntoVerde()                        INLINE ( D():getFieldFromAliasDictionary( "OperarPuntoVerde", ::getHeaderAlias(), ::getHeaderDictionary(), .f. ) )
 
       METHOD getRecnoArticle()                     INLINE ( ( ::getLinesAlias() )->( recno() ) )
-
-      METHOD getTotalArticle()
 
    METHOD showDocuments() 
    METHOD showDocumentsLines()
@@ -129,7 +133,7 @@ ENDCLASS
 
 METHOD New()
 
-   ::cDocument       := "" // "Pedido proveedores"
+   ::cDocument       := "Pedido proveedores"
    ::aDocuments      := {  "Compras" =>                                                   {|| ::opcionInvalida() },;                                    
                            space( 3 ) + "Pedido proveedores" =>                           {|| ::setDocumentPedidosProveedores() },;
                            space( 3 ) + "Albarán proveedores" =>                          {|| msgAlert( "Albarán proveedores" ) },;
@@ -148,6 +152,8 @@ METHOD New()
                            space( 3 ) + "Tickets clientes" =>                             {|| msgAlert( "" ), .t. },;
                            space( 3 ) + "Parte de producción" =>                          {|| msgAlert( "" ), .t. },;
                            space( 3 ) + "Recibos de clientes" =>                          {|| msgAlert( "" ), .t. } }
+
+   ::aTargetEmpresa  := aFullEmpresas( .t. )
 
    ::OpenFiles()
 
@@ -176,7 +182,8 @@ METHOD Dialog()
       OF       ::oDlg ;
       DIALOGS  "ASS_CONVERSION_DOCUMENTO_1",;
                "ASS_CONVERSION_DOCUMENTO_2",;
-               "ASS_CONVERSION_DOCUMENTO_3"
+               "ASS_CONVERSION_DOCUMENTO_3",;
+               "ASS_CONVERSION_DOCUMENTO_4"
 
    REDEFINE COMBOBOX ::cDocument ;
       ITEMS    hgetkeys( ::aDocuments );
@@ -291,7 +298,12 @@ METHOD Dialog()
       ID       530 ;
       OF       ::oFld:aDialogs[3] ;
       ACTION   ( ::unselectAllLine() )
-   
+
+   REDEFINE SAY ; 
+      VAR      ::getDocumentName() ;
+      ID       110 ;
+      OF       ::oFld:aDialogs[3]   
+
    // browse de lineas-----------------------------------------------------
 
    ::oBrwLines                      := IXBrowse():New( ::oFld:aDialogs[3] )
@@ -418,7 +430,7 @@ METHOD Dialog()
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Importe"
-      :bEditValue                   := {|| ::oDocumentLine:getPrice() }
+      :bEditValue                   := {|| ::oDocumentLine:getNetPrice() }
       :cEditPicture                 := ::cPictureRound
       :nWidth                       := 90
       :nDataStrAlign                := 1
@@ -464,6 +476,28 @@ METHOD Dialog()
    end with
 
    ::oBrwLines:CreateFromResource( 100 )
+
+   // Resumen de la exportacion------------------------------------------------
+
+   REDEFINE SAY ; 
+      VAR         ::getDocument() ;
+      ID          100 ;
+      OF          ::oFld:aDialogs[4]   
+
+   REDEFINE SAY ; 
+      VAR         ::getTextId() ;
+      ID          110 ;
+      OF          ::oFld:aDialogs[4]   
+
+   REDEFINE COMBOBOX ::cTargetDocument ;
+      ITEMS       hgetkeys( ::aDocuments );
+      ID          120 ;
+      OF          ::oFld:aDialogs[4]
+
+   REDEFINE COMBOBOX ::cTargetEmpresa ;
+      ITEMS       ::aTargetEmpresa ;
+      ID          130 ;
+      OF          ::oFld:aDialogs[4]
 
    // Botones -----------------------------------------------------------------
 
@@ -777,22 +811,3 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getTotalArticle()                     
-
-   local nTotalArticle  := ::getPriceArticle()
-
-   if ::getPercentageDiscount() != 0
-      nTotalArticle     -= nTotalArticle * ::getPercentageDiscount() / 100
-   end if 
-
-   if ::getPercentagePromotion() != 0
-      nTotalArticle     -= nTotalArticle * ::getPercentagePromotion() / 100
-   end if 
-
-   nTotalArticle        *= ::getTotalUnitsArticle()
-
-   nTotalArticle        := round( nTotalArticle, ::nRoundDecimalPrice )
-
-RETURN ( nTotalArticle )
-
-//---------------------------------------------------------------------------//

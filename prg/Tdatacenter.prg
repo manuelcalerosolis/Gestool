@@ -704,7 +704,6 @@ METHOD loadEmpresas()
    ::aEmpresas       := {}
 
    USE ( cPatDat() + "Empresa.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
-//   SET ADSINDEX TO ( cPatDat() + "Empresa.Cdx" ) ADDITIVE
 
    while !( dbfEmp )->( eof() )
       if !( dbfEmp )->lGrupo
