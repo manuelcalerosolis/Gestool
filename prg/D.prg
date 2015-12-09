@@ -93,6 +93,7 @@ CLASS D
 
    // SAT de clientes------------------------------------------------------
 
+   METHOD SatClientesTableName()                            INLINE ( "SatCliT" )
    METHOD SatClientes( nView )                              INLINE ( ::Get( "SatCliT", nView ) )
       METHOD SatClientesId( nView )                         INLINE ( ( ::Get( "SatCliT", nView ) )->cSerSat + str( ( ::Get( "SatCliT", nView ) )->nNumSat, 9 ) + ( ::Get( "SatCliT", nView ) )->cSufSat )
       METHOD SatClientesFecha( nView )                      INLINE ( ( ::Get( "SatCliT", nView ) )->dFecSat )
@@ -101,7 +102,7 @@ CLASS D
 
       METHOD GetSatClientesHash( aArray, nView )            INLINE ( ::getHashArray( aArray, "SatCliL", nView ) )
 
-
+   METHOD SATClientesLineasTableName()                      INLINE ( "SatCliL" )
    METHOD SatClientesLineas( nView )                        INLINE ( ::Get( "SatCliL", nView ) )
       METHOD GetSatClientesLineasHash( aArray, nView )      INLINE ( ::getHashArray( aArray, "SatCliT", nView ) )
 

@@ -6,6 +6,8 @@ CLASS DocumentLine
    DATA oSender
    DATA hDictionary
 
+   DATA aSelectedLines                                         INIT {}
+
    METHOD new()
 
    METHOD getDictionary()                                      INLINE ( ::hDictionary )
@@ -13,6 +15,18 @@ CLASS DocumentLine
 
    METHOD getValue( key )                                      VIRTUAL
    METHOD setValue( key, value )                               VIRTUAL
+
+   METHOD unselectAllLine()                                    INLINE ( ::aSelectedLines := {} )
+   METHOD positionSelectedLine()                               INLINE ( ascan( ::aSelectedLines, ::getRecno() ) )
+   METHOD isSelectedLine()                                     INLINE ( ::positionSelectedLine() > 0 )
+
+   METHOD selectLine()                             
+   METHOD unSelectLine()                           
+   METHOD toogleSelectLine()
+   METHOD selectAllLine()                                      VIRTUAL
+
+   METHOD setLinesScope( Id )                                  VIRTUAL
+   METHOD quitLinesScope()                                     VIRTUAL
 
    METHOD getDivisa()                                          INLINE ( hGet( ::getValueMaster(), "Divisa" ) ) 
 
@@ -157,6 +171,43 @@ METHOD getTotalSpecialTax() CLASS DocumentLine
 Return ( specialTax )
 
 //---------------------------------------------------------------------------//
+
+METHOD selectLine() CLASS DocumentLine
+
+   if ::positionSelectedLine() == 0
+      aadd( ::aSelectedLines, ::getRecno() )
+   endif
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD unselectLine() CLASS DocumentLine
+
+   local nAt   := ::positionSelectedLine()
+
+   if nAt != 0
+      adel( ::aSelectedLines, nAt, .t. )
+   end if 
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD toogleSelectLine() CLASS DocumentLine
+
+   local nAt   := ::positionSelectedLine()
+
+   if nAt != 0
+      adel( ::aSelectedLines, nAt, .t. )
+   else
+      aadd( ::aSelectedLines, ::getRecno() )
+   end if 
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -164,6 +215,8 @@ Return ( specialTax )
 CLASS DictionaryDocumentLine FROM DocumentLine
 
    METHOD new( oSender, hDictionary )
+
+   METHOD getRecno()                                           INLINE ( 0 )
 
    METHOD getValueMaster()                                     INLINE ( ::oSender:hDictionaryMaster )
 
@@ -204,7 +257,39 @@ CLASS AliasDocumentLine FROM DocumentLine
    METHOD getValue( key, uDefault )                            INLINE ( D():getFieldFromAliasDictionary( key, ::getAlias(), ::getDictionary(), uDefault ) )
    METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
 
+   METHOD getRecno()                                           INLINE ( ( ::getAlias() )->( recno() ) )
+
+   METHOD selectAllLine()
+
+   METHOD setLinesScope( Id )                                  INLINE ( ( ::getAlias() )->( ordscope( 0, Id ) ),;
+                                                                        ( ::getAlias() )->( ordscope( 1, Id ) ),;
+                                                                        ( ::getAlias() )->( dbgotop() ) ) 
+   METHOD quitLinesScope()                                     INLINE ( ::setLinesScope( nil ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
+METHOD selectAllLine() CLASS AliasDocumentLine
+
+   local recno       
+
+   CursorWait()
+
+   recno             := ::getRecno()
+
+   ::aSelectedLines  := {}
+
+   ( ::getAlias() )->( dbgotop() ) 
+   while !( ( ::getAlias() )->( eof() ) )
+      aadd( ::aSelectedLines, ::getRecno() )
+      ( ::getAlias() )->( dbskip() )
+   enddo
+   
+   ( ::getAlias() )->( dbgoto( recno ) )
+
+   CursorArrow()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//

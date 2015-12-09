@@ -669,11 +669,18 @@ CLASS ComponentGetSay FROM ComponentGet
    DATA cSayValue                INIT ""
 
    DATA oTextControl
-   DATA cTextValue
+   DATA cTextValue               
 
    METHOD New( idGet, idSay, idText, oContainer )
 
    METHOD Resource(oDlg)
+
+   METHOD Show()                 INLINE ( if( !empty( ::oGetControl ), ::oGetControl:Show(), ),;
+                                          if( !empty( ::oSayControl ), ::oSayControl:Show(), ),;
+                                          if( !empty( ::oTextControl ), ::oTextControl:Show(), ) )
+   METHOD Hide()                 INLINE ( if( !empty( ::oGetControl ), ::oGetControl:Hide(), ),;
+                                          if( !empty( ::oSayControl ), ::oSayControl:Hide(), ),;
+                                          if( !empty( ::oTextControl ), ::oTextControl:Hide(), ) )
 
    METHOD SetText( cText )       INLINE ( if( !empty( ::oTextControl ), ::oTextControl:SetText( cText ), ::cTextValue := cText ) )
 
@@ -718,7 +725,6 @@ Return ( Self )
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
-
 
 CLASS GetCombo FROM Component
 
@@ -876,25 +882,50 @@ Return ( cTarifaNombre )
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 
-//--------------------------------------------------------------------------//
+CLASS ComponentGetSayDatabase FROM ComponentGetSay
 
-CLASS GetCliente FROM ComponentGetSay
+   DATA nView
 
-   METHOD New( idGet, idSay, idText, oContainer ) 
-
-   METHOD First()    INLINE ( ::cText( Space( RetNumCodCliEmp() ) ) )
-   METHOD Last()     INLINE ( ::cText( Replicate( "Z", RetNumCodCliEmp() ) ) )
-
-   METHOD Top()      INLINE ( ::cText( D():Top( "Client", ::oContainer:nView ) ) )
-   METHOD Bottom()   INLINE ( ::cText( D():Bottom( "Client", ::oContainer:nView ) ) )
+   METHOD getView()        INLINE ( if( empty( ::nView ), ::oContainer:nView, ::nView ) )
+   METHOD setView( nView ) INLINE ( ::nView := nView )
 
 END CLASS 
 
+//--------------------------------------------------------------------------//
+
+CLASS GetCliente FROM ComponentGetSayDatabase
+
+   METHOD New( idGet, idSay, idText, oContainer ) 
+   METHOD Build( hBuilder )
+
+   METHOD First()          INLINE ( ::cText( Space( RetNumCodCliEmp() ) ) )
+   METHOD Last()           INLINE ( ::cText( Replicate( "Z", RetNumCodCliEmp() ) ) )
+
+   METHOD Top()            INLINE ( ::cText( D():Top( "Client", ::oContainer:nView ) ) )
+   METHOD Bottom()         INLINE ( ::cText( D():Bottom( "Client", ::oContainer:nView ) ) )
+
+END CLASS 
+
+METHOD Build( hBuilder ) CLASS GetCliente 
+
+   local idGet          := if( hhaskey( hBuilder, "idGet" ),      hBuilder[ "idGet"  ], nil )
+   local idSay          := if( hhaskey( hBuilder, "idSay" ),      hBuilder[ "idSay"  ], nil )
+   local idText         := if( hhaskey( hBuilder, "idText" ),     hBuilder[ "idText" ], nil )
+   local oContainer     := if( hhaskey( hBuilder, "oContainer" ), hBuilder[ "oContainer" ], nil )
+
+   ::New( idGet, idSay, idText, oContainer )
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
 METHOD New( idGet, idSay, idText, oContainer ) CLASS GetCliente
+
+   ::cTextValue   := "Cliente"
 
    ::Super:New( idGet, idSay, idText, oContainer )
 
-   ::bValid       := {|| cClient( ::oGetControl, D():Clientes( ::oContainer:nView ), ::oSayControl ) }
+   ::bValid       := {|| cClient( ::oGetControl, D():Clientes( ::getView() ), ::oSayControl ) }
    ::bHelp        := {|| BrwClient( ::oGetControl, ::oSayControl ) }
 
 Return ( Self )
@@ -1614,7 +1645,7 @@ Return ( Ctod( "01/" + cMes + "/" + cAno ) - 1 )
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 
-CLASS GetProveedor FROM ComponentGetSay
+CLASS GetProveedor FROM ComponentGetSayDatabase
 
    METHOD Build( hBuilder ) 
    METHOD New( idGet, idSay, idText, oContainer ) 
@@ -1644,10 +1675,57 @@ Return ( Self )
 
 METHOD New( idGet, idSay, idText, oContainer ) CLASS GetProveedor
 
+   ::cTextValue   := "Proveedor"
+
    ::Super:New( idGet, idSay, idText, oContainer )
 
-   ::bValid       := {|| cProvee( ::oGetControl, D():Proveedores( ::oContainer:nView ), ::oSayControl ) }
+   ::bValid       := {|| cProvee( ::oGetControl, D():Proveedores( ::getView() ), ::oSayControl ) }
    ::bHelp        := {|| BrwProvee( ::oGetControl, ::oSayControl ) }
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+
+CLASS GetEmpresa FROM ComponentGetSayDatabase
+
+   METHOD Build( hBuilder ) 
+   METHOD New( idGet, idSay, idText, oContainer ) 
+
+   METHOD Current()  INLINE ( ::cText( cCodEmp() ), ::Valid() )
+
+END CLASS 
+
+//--------------------------------------------------------------------------//
+
+METHOD Build( hBuilder ) CLASS GetEmpresa 
+
+   local idGet       := if( hhaskey( hBuilder, "idGet" ),      hBuilder[ "idGet"     ], nil )
+   local idSay       := if( hhaskey( hBuilder, "idSay"),       hBuilder[ "idSay"     ], nil )
+   local idText      := if( hhaskey( hBuilder, "idText"),      hBuilder[ "idText"    ], nil )
+   local oContainer  := if( hhaskey( hBuilder, "oContainer"),  hBuilder[ "oContainer"], nil )
+
+   ::New( idGet, idSay, idText, oContainer )
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD New( idGet, idSay, idText, oContainer ) CLASS GetEmpresa
+
+   ::cTextValue   := "Empresa"
+
+   ::Super:New( idGet, idSay, idText, oContainer )
+
+   ::bValid       := {|| cEmpresa( ::oGetControl, D():Empresa( ::getView() ), ::oSayControl ) }
+   ::bHelp        := {|| brwEmpresa( ::oGetControl, D():Empresa( ::getView() ), ::oSayControl ) }
+
+   ::Current()
 
 Return ( Self )
 
