@@ -42,6 +42,8 @@ CLASS TFastProduccion FROM TFastReportInfGen
 
    METHOD AddParteProducccion()
 
+   METHOD getFilterMaterialProducido()
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -260,7 +262,7 @@ METHOD lValidAlmacenOrigen()
    
    local lValid   := .f.
 
-   if ::oGrupoAlmacenOrigen:Cargo:Desde == Space( 3 ) .and. ::oGrupoAlmacenOrigen:Cargo:Hasta == Replicate( "Z", 3 )
+   if ::oGrupoAlmacenOrigen:Cargo:Desde == Space( 16 ) .and. ::oGrupoAlmacenOrigen:Cargo:Hasta == Replicate( "Z", 16 )
       RETURN .t.
    end if
 
@@ -282,7 +284,7 @@ METHOD lValidAlmacenDestino()
    
    local lValid   := .f.
 
-   if ::oGrupoAlmacen:Cargo:Desde == Space( 3 ) .and. ::oGrupoAlmacen:Cargo:Hasta == Replicate( "Z", 3 )
+   if ::oGrupoAlmacen:Cargo:Desde == Space( 16 ) .and. ::oGrupoAlmacen:Cargo:Hasta == Replicate( "Z", 16 )
       RETURN .t.
    end if
 
@@ -517,6 +519,11 @@ METHOD DataReport( oFr ) CLASS TFastProduccion
    ::oFastReport:SetWorkArea(       "Sección",                                ::oSeccion:oDbf:nArea )
    ::oFastReport:SetFieldAliases(   "Sección",                                cObjectsToReport( TSeccion():DefineFiles()  )  )
 
+   
+   MsgInfo( ::getFilterMaterialProducido(), "Filtro creado MP" )
+   ( ::oMaterialProducido:nArea )->( dbSetFilter( {|| ::getFilterMaterialProducido() }, ::getFilterMaterialProducido() ) )
+   
+
    ::oFastReport:SetWorkArea(       "Lineas de material producido",           ::oMaterialProducido:nArea )
    ::oFastReport:SetFieldAliases(   "Lineas de material producido",           cObjectsToReport( TDetProduccion():DefineFiles()  ) )
 
@@ -591,7 +598,7 @@ METHOD DataReport( oFr ) CLASS TFastProduccion
 
    ::oFastReport:SetResyncPair(     "Lineas de maquinaria",          "Maquinaria" )
 
-   //----------------------------------------------------------
+   //--------------------------------------------------------------------------
 
    ::AddVariable()
 
@@ -617,7 +624,7 @@ METHOD lGenerate() CLASS TFastProduccion
    ::oDbf:Zap()
 
    /*
-   Recorremos los partes de produccion------------------------------------------------------
+   Recorremos los partes de produccion-----------------------------------------
    */
 
    ::AddParteProducccion()
@@ -627,5 +634,26 @@ METHOD lGenerate() CLASS TFastProduccion
    ::oDbf:GoTop()
 
 RETURN ( ::oDbf:LastRec() > 0 )
+
+//---------------------------------------------------------------------------//
+
+METHOD getFilterMaterialProducido() CLASS TFastProduccion
+
+   local cExpresionFilter  := ""
+
+   if ::oGrupoArticulo:Cargo:Desde == Space( 18 ) .and. ::oGrupoArticulo:Cargo:Hasta == Replicate( "Z", 18 )
+      RETURN cExpresionFilter
+   end if
+
+   //MsgInfo( ::oGrupoArticulo:Cargo:Desde, "Desde" )
+   //MsgInfo( ::oGrupoArticulo:Cargo:Hasta, "Hasta" )
+
+   cExpresionFilter  := "Field->cCodArt >= '" + ::oGrupoArticulo:Cargo:Desde + "' .and. Field->cCodArt <= '" + ::oGrupoArticulo:Cargo:Hasta + "'"
+
+   //::oMaterialProducido:nArea
+
+   //::oMaterialProducido:cCodArt >= ::oGrupoArticulo:Cargo:Desde .and. ::oMaterialProducido:cCodArt <= ::oGrupoArticulo:Cargo:Hasta
+
+Return ( cExpresionFilter )
 
 //---------------------------------------------------------------------------//
