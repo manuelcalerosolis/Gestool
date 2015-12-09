@@ -465,6 +465,7 @@ CLASS ComponentGet FROM Component
    METHOD Resource( oDlg )
 
    METHOD cText( uGetValue )     INLINE ( if( !empty( ::oGetControl ), ::oGetControl:cText( uGetValue ), ::uGetValue := uGetValue ) )
+   METHOD varGet()               INLINE ( ::oGetControl:varGet() )
    METHOD Value()                INLINE ( ::uGetValue )
 
    METHOD Valid()                INLINE ( if( !empty( ::oGetControl ), ::oGetControl:lValid(), .t. ) )
@@ -1043,7 +1044,7 @@ CLASS GetSerie FROM ComponentGet
 
    METHOD New( idGet, oContainer )
 
-   METHOD Resource(oDlg)
+   METHOD Resource( oDlg )
 
 END CLASS 
 
@@ -1053,11 +1054,9 @@ METHOD New( idGet, oContainer ) CLASS GetSerie
 
    ::uGetValue    := "A"
 
-   ::bValid       := {|| ::uGetValue >= "A" .and. ::uGetValue <= "Z" }
-
 Return ( Self )
 
-METHOD Resource(oDlg) CLASS GetSerie
+METHOD Resource( oDlg ) CLASS GetSerie
 
    REDEFINE GET   ::oGetControl ;
       VAR         ::uGetValue ;
@@ -1067,8 +1066,9 @@ METHOD Resource(oDlg) CLASS GetSerie
       SPINNER ;
       ON UP       ( UpSerie( ::oGetControl ) );
       ON DOWN     ( DwSerie( ::oGetControl ) );
-      VALID       ( ::bValid );
       OF          oDlg
+
+   ::oGetControl:bValid    := {|| if( ::oGetControl:varGet() >= "A" .and. ::oGetControl:varGet() <= "Z", .t., ( msgStop( "La serie no es valida" ), .f. ) ) }
 
 Return ( Self )
 
@@ -1724,8 +1724,6 @@ METHOD New( idGet, idSay, idText, oContainer ) CLASS GetEmpresa
 
    ::bValid       := {|| cEmpresa( ::oGetControl, D():Empresa( ::getView() ), ::oSayControl ) }
    ::bHelp        := {|| brwEmpresa( ::oGetControl, D():Empresa( ::getView() ), ::oSayControl ) }
-
-   ::Current()
 
 Return ( Self )
 

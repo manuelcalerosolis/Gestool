@@ -233,6 +233,7 @@ METHOD Dialog()
    ::oEmpresa     := GetEmpresa():New( 190, 191, 192 )
       ::oEmpresa:Resource( ::oFld:aDialogs[1] )
       ::oEmpresa:setView( ::nView )
+      ::oEmpresa:Current()
 
    // segundo dialogo-----------------------------------------------------------
 
@@ -585,7 +586,9 @@ METHOD isValidDialogRequisite()
       RETURN ( .f. )
    end if 
 
-   // if empty(::oSerie:getValue() )
+   if !::oSerie:Valid()
+      RETURN ( .f. )
+   end if 
 
 RETURN ( .t. )
 
