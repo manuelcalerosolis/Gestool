@@ -33,6 +33,9 @@ Fichero de Cabecera para la Aplcaci¢n de Facturaci¢n 3.0 para Windows
 #define clrTopTPV                       Rgb( 164, 55, 58 )
 #define clrTopHerramientas              Rgb( 33, 115, 70 )
 
+#define __LENARTICULOS__                18
+#define __LENTEMPORADAS__               10
+
 /*
 Defines para ficheros INI
 */

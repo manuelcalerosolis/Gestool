@@ -41,7 +41,7 @@ CLASS IXBrowse FROM TXBrowse
    Method SetOriginal()    INLINE ( ::RestoreState( ::cOriginal ) )
 
    Method Load()           INLINE ( ::OpenData(), ::LoadData(), ::CloseData() )
-   Method Save()           INLINE ( ::OpenData(), ::SaveData( .t. ), ::CloseData() )
+   Method Save()           INLINE ( ::OpenData(), ::SaveConfigColumn( .t. ), ::CloseData() )
 
    Method CreateData( cPath )
 
@@ -49,7 +49,7 @@ CLASS IXBrowse FROM TXBrowse
 
    Method LoadData()
 
-   Method SaveData( lSaveBrowseState )
+   Method SaveConfigColumn( lSaveBrowseState )
 
    Method CleanData()
 
@@ -163,6 +163,7 @@ Method LoadData()
    local oBlock
    local oError
 
+
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
@@ -192,7 +193,7 @@ Return ( Self )
 
 //------------------------------------------------------------------------//
 
-Method SaveData( lSaveBrowseState )
+Method SaveConfigColumn( lSaveBrowseState )
 
    local oError
    local oBlock
@@ -226,7 +227,7 @@ Method SaveData( lSaveBrowseState )
       end if
 
       if lSaveBrowseState
-         msgInfo( "Configuración de columnas guardada.", ::cName )
+         msgInfo( "Configuración de columnas guardada", ::cName )
       end if
 
    end if

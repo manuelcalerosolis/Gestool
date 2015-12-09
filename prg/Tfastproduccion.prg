@@ -43,6 +43,7 @@ CLASS TFastProduccion FROM TFastReportInfGen
    METHOD AddParteProducccion()
 
    METHOD getFilterMaterialProducido()
+   METHOD getFilterMateriaPrima()
 
 ENDCLASS
 
@@ -246,10 +247,10 @@ Method lValidRegister( cCodigoProveedor ) CLASS TFastProduccion
       ( ::oDbf:cCodSec >= ::oGrupoSeccion:Cargo:Desde       .and. ::oDbf:cCodSec <= ::oGrupoSeccion:Cargo:Hasta )    .and.;
       ( ::lValidAlmacenOrigen() )                           .and.;
       ( ::lValidAlmacenDestino() )                          .and.;
-      ( ::lValidMaterialProducido() )                       .and.;
-      ( ::lValidMateriaPrima() )                            .and.;
-      ( ::lValidOperario() )                                .and.;
-      ( ::lValidMaquinaria() )
+      ( ( ::lValidMaterialProducido() )                     .or.;
+      ( ::lValidMateriaPrima() )                            .or.;
+      ( ::lValidOperario() )                                .or.;
+      ( ::lValidMaquinaria() ) )
       Return .t.
 
    end if
@@ -274,7 +275,7 @@ METHOD lValidAlmacenOrigen()
          end if
          ::oMateriasPrimas:Skip()
       end while
-   end if 
+   end if
 
 RETURN ( lValid )
 
@@ -306,18 +307,24 @@ METHOD lValidMaterialProducido()
    
    local lValid   := .f.
 
-   if ::oGrupoArticulo:Cargo:Desde == Space( 18 ) .and. ::oGrupoArticulo:Cargo:Hasta == Replicate( "Z", 18 )
-      RETURN .t.
-   end if
-
    if ::oMaterialProducido:Seek( ::oParteProduccion:cSerOrd + Str( ::oParteProduccion:nNumOrd, 9 ) + ::oParteProduccion:cSufOrd )
+
       while ( ::oMaterialProducido:cSerOrd + Str( ::oMaterialProducido:nNumOrd, 9 ) + ::oMaterialProducido:cSufOrd ) == ( ::oParteProduccion:cSerOrd + Str( ::oParteProduccion:nNumOrd, 9 ) + ::oParteProduccion:cSufOrd ) .and. ;
          !::oMaterialProducido:Eof()
-         if ::oMaterialProducido:cCodArt >= ::oGrupoArticulo:Cargo:Desde .and. ::oMaterialProducido:cCodArt <= ::oGrupoArticulo:Cargo:Hasta
+
+         if (  ( ::oGrupoArticulo:Cargo:Desde == Space( __LENARTICULOS__ ) .and. ::oGrupoArticulo:Cargo:Hasta == Replicate( "Z", __LENARTICULOS__ ) ) .or.;
+               ( ::oMaterialProducido:cCodArt >= ::oGrupoArticulo:Cargo:Desde .and. ::oMaterialProducido:cCodArt <= ::oGrupoArticulo:Cargo:Hasta ) ) .and.;
+            (  ( ::oGrupoTemporada:Cargo:Desde == Space( __LENTEMPORADAS__ ) .and. ::oGrupoTemporada:Cargo:Hasta == Replicate( "Z", __LENTEMPORADAS__ ) ) .or.;
+               ( ::oMaterialProducido:cCodTmp >= ::oGrupoTemporada:Cargo:Desde .and. ::oMaterialProducido:cCodTmp <= ::oGrupoTemporada:Cargo:Hasta ) )
+
             lValid := .t.
+
          end if
+
          ::oMaterialProducido:Skip()
+
       end while
+
    end if 
 
 RETURN ( lValid )
@@ -328,18 +335,24 @@ METHOD lValidMateriaPrima()
    
    local lValid   := .f.
 
-   if ::oGrupoMateriaPrima:Cargo:Desde == Space( 18 ) .and. ::oGrupoMateriaPrima:Cargo:Hasta == Replicate( "Z", 18 )
-      RETURN .t.
-   end if
-
    if ::oMateriasPrimas:Seek( ::oParteProduccion:cSerOrd + Str( ::oParteProduccion:nNumOrd, 9 ) + ::oParteProduccion:cSufOrd )
+
       while ( ::oMateriasPrimas:cSerOrd + Str( ::oMateriasPrimas:nNumOrd, 9 ) + ::oMateriasPrimas:cSufOrd ) == ( ::oParteProduccion:cSerOrd + Str( ::oParteProduccion:nNumOrd, 9 ) + ::oParteProduccion:cSufOrd ) .and. ;
          !::oMateriasPrimas:Eof()
-         if ::oMateriasPrimas:cCodArt >= ::oGrupoMateriaPrima:Cargo:Desde .and. ::oMateriasPrimas:cCodArt <= ::oGrupoMateriaPrima:Cargo:Hasta
+
+         if (  ( ::oGrupoMateriaPrima:Cargo:Desde == Space( __LENARTICULOS__ ) .and. ::oGrupoMateriaPrima:Cargo:Hasta == Replicate( "Z", __LENARTICULOS__ ) ) .or.;
+               ( ::oMateriasPrimas:cCodArt >= ::oGrupoMateriaPrima:Cargo:Desde .and. ::oMateriasPrimas:cCodArt <= ::oGrupoMateriaPrima:Cargo:Hasta ) ) .and.;
+            (  ( ::oGrupoTemporada:Cargo:Desde == Space( __LENTEMPORADAS__ ) .and. ::oGrupoTemporada:Cargo:Hasta == Replicate( "Z", __LENTEMPORADAS__ ) ) .or.;
+               ( ::oMateriasPrimas:cCodTmp >= ::oGrupoTemporada:Cargo:Desde .and. ::oMateriasPrimas:cCodTmp <= ::oGrupoTemporada:Cargo:Hasta ) )
+
             lValid := .t.
+
          end if
+
          ::oMateriasPrimas:Skip()
+
       end while
+
    end if 
 
 RETURN ( lValid )
@@ -519,13 +532,14 @@ METHOD DataReport( oFr ) CLASS TFastProduccion
    ::oFastReport:SetWorkArea(       "Sección",                                ::oSeccion:oDbf:nArea )
    ::oFastReport:SetFieldAliases(   "Sección",                                cObjectsToReport( TSeccion():DefineFiles()  )  )
 
-   
-   MsgInfo( ::getFilterMaterialProducido(), "Filtro creado MP" )
-   ( ::oMaterialProducido:nArea )->( dbSetFilter( {|| ::getFilterMaterialProducido() }, ::getFilterMaterialProducido() ) )
-   
+   ( ::oMaterialProducido:nArea )->( dbSetFilter( bChar2Block( ::getFilterMaterialProducido() ), ::getFilterMaterialProducido() ) )
+   ( ::oMaterialProducido:nArea )->( dbGoTop() )
 
    ::oFastReport:SetWorkArea(       "Lineas de material producido",           ::oMaterialProducido:nArea )
    ::oFastReport:SetFieldAliases(   "Lineas de material producido",           cObjectsToReport( TDetProduccion():DefineFiles()  ) )
+
+   ( ::oMateriasPrimas:nArea )->( dbSetFilter( bChar2Block( ::getFilterMateriaPrima() ), ::getFilterMateriaPrima() ) )
+   ( ::oMateriasPrimas:nArea )->( dbGoTop() )   
 
    ::oFastReport:SetWorkArea(       "Lineas de materias primas",              ::oMateriasPrimas:nArea )
    ::oFastReport:SetFieldAliases(   "Lineas de materias primas",              cObjectsToReport( TDetMaterial():DefineFiles()  ) )
@@ -641,18 +655,43 @@ METHOD getFilterMaterialProducido() CLASS TFastProduccion
 
    local cExpresionFilter  := ""
 
-   if ::oGrupoArticulo:Cargo:Desde == Space( 18 ) .and. ::oGrupoArticulo:Cargo:Hasta == Replicate( "Z", 18 )
-      RETURN cExpresionFilter
+   if ::oGrupoArticulo:Cargo:Desde != Space( __LENARTICULOS__ ) .or. ::oGrupoArticulo:Cargo:Hasta != Replicate( "Z", __LENARTICULOS__ )
+   
+      cExpresionFilter     += "Field->cCodArt >= '" + AllTrim( ::oGrupoArticulo:Cargo:Desde ) + "' .and. Field->cCodArt <= '" + AllTrim( ::oGrupoArticulo:Cargo:Hasta ) + "'"
+   
    end if
 
-   //MsgInfo( ::oGrupoArticulo:Cargo:Desde, "Desde" )
-   //MsgInfo( ::oGrupoArticulo:Cargo:Hasta, "Hasta" )
+   if ::oGrupoTemporada:Cargo:Desde != Space( __LENTEMPORADAS__ ) .or. ::oGrupoTemporada:Cargo:Hasta != Replicate( "Z", __LENTEMPORADAS__ )
+      
+      if !Empty( cExpresionFilter )
+         cExpresionFilter  += " .and. "
+      end if
 
-   cExpresionFilter  := "Field->cCodArt >= '" + ::oGrupoArticulo:Cargo:Desde + "' .and. Field->cCodArt <= '" + ::oGrupoArticulo:Cargo:Hasta + "'"
+      cExpresionFilter     += "Field->cCodTmp >= '" + AllTrim( ::oGrupoTemporada:Cargo:Desde ) + "' .and. Field->cCodTmp <= '" + AllTrim( ::oGrupoTemporada:Cargo:Hasta ) + "'"
 
-   //::oMaterialProducido:nArea
+   end if
 
-   //::oMaterialProducido:cCodArt >= ::oGrupoArticulo:Cargo:Desde .and. ::oMaterialProducido:cCodArt <= ::oGrupoArticulo:Cargo:Hasta
+Return ( cExpresionFilter )
+
+//---------------------------------------------------------------------------//
+
+METHOD getFilterMateriaPrima() CLASS TFastProduccion
+
+   local cExpresionFilter  := ""
+
+   if ::oGrupoMateriaPrima:Cargo:Desde != Space( __LENARTICULOS__ ) .or. ::oGrupoMateriaPrima:Cargo:Hasta != Replicate( "Z", __LENARTICULOS__ )
+      cExpresionFilter     += "Field->cCodArt >= '" + AllTrim( ::oGrupoMateriaPrima:Cargo:Desde ) + "' .and. Field->cCodArt <= '" + AllTrim( ::oGrupoMateriaPrima:Cargo:Hasta ) + "' "
+   end if
+
+   if ::oGrupoTemporada:Cargo:Desde != Space( __LENTEMPORADAS__ ) .or. ::oGrupoTemporada:Cargo:Hasta != Replicate( "Z", __LENTEMPORADAS__ )
+      
+      if !Empty( cExpresionFilter )
+         cExpresionFilter  += " .and. "
+      end if
+
+      cExpresionFilter     += "Field->cCodTmp >= '" + AllTrim( ::oGrupoTemporada:Cargo:Desde ) + "' .and. Field->cCodTmp <= '" + AllTrim( ::oGrupoTemporada:Cargo:Hasta ) + "'"
+
+   end if
 
 Return ( cExpresionFilter )
 
