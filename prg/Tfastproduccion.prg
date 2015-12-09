@@ -243,7 +243,8 @@ RETURN ( self )
 
 Method lValidRegister( cCodigoProveedor ) CLASS TFastProduccion
 
-   if ( ::oDbf:cCodOpe >= ::oGrupoOperacion:Cargo:Desde     .and. ::oDbf:cCodOpe <= ::oGrupoOperacion:Cargo:Hasta )  .and.;
+   if lChkSer( ::oDbf:cSerDoc, ::aSer )  .and.;
+      ( ::oDbf:cCodOpe >= ::oGrupoOperacion:Cargo:Desde     .and. ::oDbf:cCodOpe <= ::oGrupoOperacion:Cargo:Hasta )  .and.;
       ( ::oDbf:cCodSec >= ::oGrupoSeccion:Cargo:Desde       .and. ::oDbf:cCodSec <= ::oGrupoSeccion:Cargo:Hasta )    .and.;
       ( ::lValidAlmacenOrigen() )                           .and.;
       ( ::lValidAlmacenDestino() )                          .and.;
@@ -263,7 +264,7 @@ METHOD lValidAlmacenOrigen()
    
    local lValid   := .f.
 
-   if ::oGrupoAlmacenOrigen:Cargo:Desde == Space( 16 ) .and. ::oGrupoAlmacenOrigen:Cargo:Hasta == Replicate( "Z", 16 )
+   if ::oGrupoAlmacenOrigen:Cargo:Desde == Space( __LENALMACENES__ ) .and. ::oGrupoAlmacenOrigen:Cargo:Hasta == Replicate( "Z", __LENALMACENES__ )
       RETURN .t.
    end if
 
@@ -285,7 +286,7 @@ METHOD lValidAlmacenDestino()
    
    local lValid   := .f.
 
-   if ::oGrupoAlmacen:Cargo:Desde == Space( 16 ) .and. ::oGrupoAlmacen:Cargo:Hasta == Replicate( "Z", 16 )
+   if ::oGrupoAlmacen:Cargo:Desde == Space( __LENALMACENES__ ) .and. ::oGrupoAlmacen:Cargo:Hasta == Replicate( "Z", __LENALMACENES__ )
       RETURN .t.
    end if
 
@@ -315,7 +316,9 @@ METHOD lValidMaterialProducido()
          if (  ( ::oGrupoArticulo:Cargo:Desde == Space( __LENARTICULOS__ ) .and. ::oGrupoArticulo:Cargo:Hasta == Replicate( "Z", __LENARTICULOS__ ) ) .or.;
                ( ::oMaterialProducido:cCodArt >= ::oGrupoArticulo:Cargo:Desde .and. ::oMaterialProducido:cCodArt <= ::oGrupoArticulo:Cargo:Hasta ) ) .and.;
             (  ( ::oGrupoTemporada:Cargo:Desde == Space( __LENTEMPORADAS__ ) .and. ::oGrupoTemporada:Cargo:Hasta == Replicate( "Z", __LENTEMPORADAS__ ) ) .or.;
-               ( ::oMaterialProducido:cCodTmp >= ::oGrupoTemporada:Cargo:Desde .and. ::oMaterialProducido:cCodTmp <= ::oGrupoTemporada:Cargo:Hasta ) )
+               ( ::oMaterialProducido:cCodTmp >= ::oGrupoTemporada:Cargo:Desde .and. ::oMaterialProducido:cCodTmp <= ::oGrupoTemporada:Cargo:Hasta ) ) .and.;
+            (  ( ::oGrupoFamilia:Cargo:Desde == Space( __LENFAMILIAS__ ) .and. ::oGrupoFamilia:Cargo:Hasta == Replicate( "Z", __LENFAMILIAS__ ) ) .or.;
+               ( ::oMaterialProducido:cCodFam >= ::oGrupoFamilia:Cargo:Desde .and. ::oMaterialProducido:cCodFam <= ::oGrupoFamilia:Cargo:Hasta ) )
 
             lValid := .t.
 
@@ -343,7 +346,9 @@ METHOD lValidMateriaPrima()
          if (  ( ::oGrupoMateriaPrima:Cargo:Desde == Space( __LENARTICULOS__ ) .and. ::oGrupoMateriaPrima:Cargo:Hasta == Replicate( "Z", __LENARTICULOS__ ) ) .or.;
                ( ::oMateriasPrimas:cCodArt >= ::oGrupoMateriaPrima:Cargo:Desde .and. ::oMateriasPrimas:cCodArt <= ::oGrupoMateriaPrima:Cargo:Hasta ) ) .and.;
             (  ( ::oGrupoTemporada:Cargo:Desde == Space( __LENTEMPORADAS__ ) .and. ::oGrupoTemporada:Cargo:Hasta == Replicate( "Z", __LENTEMPORADAS__ ) ) .or.;
-               ( ::oMateriasPrimas:cCodTmp >= ::oGrupoTemporada:Cargo:Desde .and. ::oMateriasPrimas:cCodTmp <= ::oGrupoTemporada:Cargo:Hasta ) )
+               ( ::oMateriasPrimas:cCodTmp >= ::oGrupoTemporada:Cargo:Desde .and. ::oMateriasPrimas:cCodTmp <= ::oGrupoTemporada:Cargo:Hasta ) ) .and.;
+            (  ( ::oGrupoFamilia:Cargo:Desde == Space( __LENFAMILIAS__ ) .and. ::oGrupoFamilia:Cargo:Hasta == Replicate( "Z", __LENFAMILIAS__ ) ) .or.;
+               ( ::oMateriasPrimas:cCodFam >= ::oGrupoFamilia:Cargo:Desde .and. ::oMateriasPrimas:cCodFam <= ::oGrupoFamilia:Cargo:Hasta ) )
 
             lValid := .t.
 
@@ -363,7 +368,7 @@ METHOD lValidOperario()
 
    local lValid := .f.
 
-   if ::oGrupoOperario:Cargo:Desde == Space( 5 ) .and. ::oGrupoOperario:Cargo:Hasta == Replicate( "Z", 5 )
+   if ::oGrupoOperario:Cargo:Desde == Space( __LENOPERARIOS__ ) .and. ::oGrupoOperario:Cargo:Hasta == Replicate( "Z", __LENOPERARIOS__ )
       RETURN .t.
    end if 
 
@@ -385,7 +390,7 @@ METHOD lValidMaquinaria
 
    local lValid := .f.
 
-   if ::oGrupoMaquina:Cargo:Desde == Space( 3 ) .and. ::oGrupoMaquina:Cargo:Hasta == Replicate( "Z", 3 )
+   if ::oGrupoMaquina:Cargo:Desde == Space( __LENMAQUINAS__ ) .and. ::oGrupoMaquina:Cargo:Hasta == Replicate( "Z", __LENMAQUINAS__ )
       RETURN .t.
    end if 
 
@@ -671,6 +676,16 @@ METHOD getFilterMaterialProducido() CLASS TFastProduccion
 
    end if
 
+   if ::oGrupoFamilia:Cargo:Desde != Space( __LENFAMILIAS__ ) .or. ::oGrupoFamilia:Cargo:Hasta != Replicate( "Z", __LENFAMILIAS__ )
+      
+      if !Empty( cExpresionFilter )
+         cExpresionFilter  += " .and. "
+      end if
+
+      cExpresionFilter     += "Field->cCodFam >= '" + AllTrim( ::oGrupoFamilia:Cargo:Desde ) + "' .and. Field->cCodFam <= '" + AllTrim( ::oGrupoFamilia:Cargo:Hasta ) + "'"
+
+   end if
+
 Return ( cExpresionFilter )
 
 //---------------------------------------------------------------------------//
@@ -690,6 +705,16 @@ METHOD getFilterMateriaPrima() CLASS TFastProduccion
       end if
 
       cExpresionFilter     += "Field->cCodTmp >= '" + AllTrim( ::oGrupoTemporada:Cargo:Desde ) + "' .and. Field->cCodTmp <= '" + AllTrim( ::oGrupoTemporada:Cargo:Hasta ) + "'"
+
+   end if
+
+   if ::oGrupoFamilia:Cargo:Desde != Space( __LENFAMILIAS__ ) .or. ::oGrupoFamilia:Cargo:Hasta != Replicate( "Z", __LENFAMILIAS__ )
+      
+      if !Empty( cExpresionFilter )
+         cExpresionFilter  += " .and. "
+      end if
+
+      cExpresionFilter     += "Field->cCodFam >= '" + AllTrim( ::oGrupoFamilia:Cargo:Desde ) + "' .and. Field->cCodFam <= '" + AllTrim( ::oGrupoFamilia:Cargo:Hasta ) + "'"
 
    end if
 
