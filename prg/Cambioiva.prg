@@ -61,6 +61,9 @@ CLASS TConversionDocumentos // FROM DialogBuilder
       METHOD changeSortDocument()
       METHOD changeSearch()
       METHOD setOrderInColumn( oColumn )  
+      METHOD setAliasInBrowseDocument()            INLINE ( if ( !empty( ::oBrwDocuments ),;
+                                                               ( ::oBrwDocuments:cAlias := ::getHeaderAlias(), ::oBrwDocuments:setRdd() ),;
+                                                               ) )
       METHOD getDocument()                         INLINE ( alltrim( ::cDocument ) )
       METHOD getDocumentName()                     INLINE ( if( !empty( ::getHeaderAlias() ), ::getDocument() + space( 1 ) + ::getTextId(), "" ) )
       
@@ -748,6 +751,7 @@ METHOD setDocumentType( cTableName, cTableLineName )
    ::oDocumentLine:setAlias(        D():get( cTableLineName, ::nView ) )
    ::oDocumentLine:setDictionary(   D():getDictionaryFromArea( cTableLineName ) )
 
+   ::setAliasInBrowseDocument()
    ::setOrderInColumn()   
 
 Return ( .t. )
