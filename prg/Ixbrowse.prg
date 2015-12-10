@@ -15,33 +15,33 @@
 
 CLASS IXBrowse FROM TXBrowse
 
-   CLASSDATA lRegistered   AS LOGICAL
+   CLASSDATA lRegistered      AS LOGICAL
 
    CLASSDATA  dbfUsr
-   CLASSDATA  lOpenData    AS LOGIC       INIT .f.
+   CLASSDATA  lOpenData       AS LOGIC       INIT .f.
 
-   DATA  cOriginal         AS CHARACTER   INIT ""
-   DATA  cName             AS CHARACTER   INIT ""
+   DATA  cOriginal            AS CHARACTER   INIT ""
+   DATA  cName                AS CHARACTER   INIT ""
 
    DATA  bToolTip
    DATA  oToolTip
    DATA  oTimer
 
-   DATA  lOnProcess        AS LOGIC       INIT .f.
+   DATA  lOnProcess           AS LOGIC       INIT .f.
 
-   CLASSDATA nToolTip      AS NUMERIC     INIT 900
+   CLASSDATA nToolTip         AS NUMERIC     INIT 900
 
-   ACCESS BookMark         INLINE Eval( ::bBookMark )
-   ASSIGN BookMark(u)      INLINE Eval( ::bBookMark, u )
+   ACCESS BookMark            INLINE Eval( ::bBookMark )
+   ASSIGN BookMark(u)         INLINE Eval( ::bBookMark, u )
 
    METHOD New( oWnd )
-   // METHOD GoLeftMost()
+   METHOD setAlias( cAlias )  INLINE ( ::cAlias := cAlias, ::SetRDD() )
 
-   Method GetOriginal()    INLINE ( ::cOriginal := ::SaveState() )
-   Method SetOriginal()    INLINE ( ::RestoreState( ::cOriginal ) )
+   Method GetOriginal()       INLINE ( ::cOriginal := ::SaveState() )
+   Method SetOriginal()       INLINE ( ::RestoreState( ::cOriginal ) )
 
-   Method Load()           INLINE ( ::OpenData(), ::LoadData(), ::CloseData() )
-   Method Save()           INLINE ( ::OpenData(), ::SaveConfigColumn( .t. ), ::CloseData() )
+   Method Load()              INLINE ( ::OpenData(), ::LoadData(), ::CloseData() )
+   Method Save()              INLINE ( ::OpenData(), ::SaveConfigColumn( .t. ), ::CloseData() )
 
    Method CreateData( cPath )
 

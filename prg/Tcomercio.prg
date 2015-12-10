@@ -40,9 +40,9 @@ CLASS TComercio
 
    DATA  cIniFile
 
-   DATA  lPedidosWeb          INIT  .f.
+   DATA  lPedidosWeb                INIT  .f.
 
-   DATA  nTipoEnvio           INIT  1
+   DATA  nTipoEnvio                 INIT  1
 
    DATA  nLevel
 
@@ -63,14 +63,14 @@ CLASS TComercio
 
    DATA  oIniEmpresa
 
-   DATA  lSyncAll             INIT .f.
-   DATA  lArticulos           INIT .f.
-   DATA  lFamilias            INIT .f.
-   DATA  lPedidos             INIT .f.
-   DATA  lFabricantes         INIT .f.
-   DATA  lIva                 INIT .f.
-   DATA  lImagenes            INIT .f.
-   DATA  lClientes            INIT .f.
+   DATA  lSyncAll                   INIT .f.
+   DATA  lArticulos                 INIT .f.
+   DATA  lFamilias                  INIT .f.
+   DATA  lPedidos                   INIT .f.
+   DATA  lFabricantes               INIT .f.
+   DATA  lIva                       INIT .f.
+   DATA  lImagenes                  INIT .f.
+   DATA  lClientes                  INIT .f.
 
    DATA  oArticulos
    DATA  oPedidos
@@ -147,16 +147,17 @@ CLASS TComercio
    DATA  aTipoImagesPrestashop
    DATA  nLanguage
 
-   DATA  nPrecioMinimo        INIT  0
+   DATA  nPrecioMinimo              INIT  0
+   DATA  lProductIdColumnImageShop  
 
    DATA  nSecondTimer
 
-   DATA  lDefImgPrp           INIT .f.
+   DATA  lDefImgPrp                 INIT .f.
 
-   DATA  nNumeroCategorias    INIT 0
-   DATA  aCategorias          INIT {}
+   DATA  nNumeroCategorias          INIT 0
+   DATA  aCategorias                INIT {}
 
-   DATA  aArticulosActualizar INIT {}
+   DATA  aArticulosActualizar       INIT {}
 
    DATA  cPrefijoBaseDatos
 
@@ -182,8 +183,8 @@ CLASS TComercio
 
    METHOD lReady()                     INLINE ( !Empty( ::cHost ) .and. !Empty( ::cUser ) .and. !Empty( ::cDbName ) )
 
-
-
+   METHOD writeText( cText )           INLINE ( if( !Empty( ::oTextTotal ), ::oTextTotal:SetText( cText ), ),;
+                                                logWrite( cText, "prestashop.log" ) )
 
    // Apertura y cierre de ficheros--------------------------------------------
 
@@ -209,7 +210,7 @@ CLASS TComercio
    DATA  oTextTotal
    DATA  cTextTotal
 
-   METHOD TextTotal( oTextTotal)       INLINE ( iif( oTextTotal != nil, ::oTextTotal := oTextTotal, ::oTextTotal ) )
+   METHOD TextTotal( oTextTotal )      INLINE ( iif( oTextTotal != nil, ::oTextTotal := oTextTotal, ::oTextTotal ) )
 
    DATA  oMeterProceso
    DATA  nMeterProceso  INIT 0
@@ -316,8 +317,8 @@ CLASS TComercio
    METHOD loadOrders()
    METHOD processOrder( oQuery )
    METHOD checkDate( cDatePrestashop )
-   METHOD getSeriePedido()          INLINE ( if( !empty( uFieldEmpresa( "cSeriePed" ) ), uFieldEmpresa( "cSeriePed" ), cNewSer( "nPedCli", ::oCount:cAlias ) ) ) 
-   METHOD getSeriePresupuesto()     INLINE ( if( !empty( uFieldEmpresa( "cSeriePre" ) ), uFieldEmpresa( "cSeriePre" ), cNewSer( "nPreCli", ::oCount:cAlias ) ) )
+   METHOD getSeriePedido()             INLINE ( if( !empty( uFieldEmpresa( "cSeriePed" ) ), uFieldEmpresa( "cSeriePed" ), cNewSer( "nPedCli", ::oCount:cAlias ) ) ) 
+   METHOD getSeriePresupuesto()        INLINE ( if( !empty( uFieldEmpresa( "cSeriePre" ) ), uFieldEmpresa( "cSeriePre" ), cNewSer( "nPreCli", ::oCount:cAlias ) ) )
    METHOD payOrder( cPrestashopModule )
 
    METHOD documentRecived( oQuery, oDatabase )   
@@ -360,6 +361,7 @@ CLASS TComercio
    METHOD syncronizeStatesPresupuestoPrestashop ( cSerPre, nNumPre, cSufPre, cCodWeb )
    METHOD UploadStatePrestashop( id_order_state, dFecSit, tFecSit, cCodWeb )
 
+   METHOD isProductIdColumnImageShop() INLINE ( .f. ) // TMSCommand():New( ::oCon ):ExecDirect( "SHOW COLUMNS FROM " + ::cPrefixTable( "image_shop" ) + " LIKE 'id_product'" ) )
 
    // Datos para la recopilacion de informacion----------------------------
 
@@ -946,9 +948,7 @@ METHOD MeterTotalText( cText ) Class TComercio
 
    DEFAULT cText  := ""
 
-   if !Empty( ::oTextTotal )
-      ::oTextTotal:SetText( cText )
-   end if
+   ::writeText( cText )
 
    if !Empty( ::oMeterTotal )
       ::oMeterTotal:Set( ++::nMeterTotal )
@@ -974,9 +974,7 @@ METHOD meterProcesoText( cText ) Class TComercio
 
    DEFAULT cText  := ""
 
-   if !Empty( ::oTextTotal )
-      ::oTextTotal:SetText( cText )
-   end if
+   ::writeText( cText )
 
    if !Empty( ::oMeterProceso )
       ::oMeterProceso:Set( ++::nMeterProceso )
@@ -1954,7 +1952,7 @@ METHOD InsertCategoriesPrestashop() CLASS TComercio
    local oImagen
    local oCategoria
    local nCodigoWeb           := 0
-   local nParent              := 2
+   local nParent              := getCodigoWebFamiliaPadre( ::oFam )
    local cCommand             := ""
 
    ::cTextoWait( "Añadiendo categoría: " + alltrim( ::oFam:cNomFam ) )
@@ -2097,30 +2095,16 @@ METHOD UpdateCategoriesPrestashop() CLASS TComercio
 
    local lReturn  := .f.
    local cCommand := ""
-   local nParent  := 2
+   local nParent  := getCodigoWebFamiliaPadre( ::oFam )
 
-   /*
-   Actualizamos la familia en prestashop------------------------------------
-   */
-
-   ::cTextoWait( "Actualizando categoría: " + ::oFam:cNomFam )
-
-   if !Empty( ::oFam:cCodGrp )
-      
-      nParent                 := oRetFld( ::oFam:cCodGrp, ::oGrpFam, "cCodWeb" )
-      
-      if nParent == 0
-
-         nParent              := 2 //Por defecto toma 2, porque siempre existen dos categorias por sefecto que son Root e Inicio.
-
-      end if
-
-   end if
+   ::cTextoWait( "Actualizando categoría: " + alltrim( ::oFam:cNomFam ) )
 
    cCommand       := "UPDATE " + ::cPrefixTable( "category" ) + " SET " + ;
                         "id_parent='" + alltrim( Str( nParent ) ) + "', " + ;
                         "date_upd='" + dtos( GetSysDate() ) + "' " + ;
                      "WHERE id_category=" + alltrim( Str( ::oFam:cCodWeb ) )
+
+   ::cTextoWait( cCommand )
 
    lReturn        := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
@@ -2233,61 +2217,65 @@ METHOD ActualizaCategoriesPrestashop( cCodigoFamilia ) CLASS TComercio
       Return .f.
    end if
    
-   if ::filesOpen()
-
-      if ::oFam:Seek( cCodigoFamilia )
-   
-         if ::ConectBBDD()
-   
-            do case
-               case !::oFam:lPubInt .and. ::oFam:cCodWeb != 0
-      
-                  ::cTextoWait( "Elimina categoría: " + ::oFam:cNomFam )
-
-                  ::DeleteCategoriesPrestashop()
-      
-               case ::oFam:lPubInt .and. ::oFam:cCodWeb != 0
-      
-                  cCommand := 'SELECT * FROM ' + ::cPrefixTable( "category" ) +  ' WHERE id_category=' + alltrim( Str( ::oFam:cCodWeb ) )
-                  oQuery   := TMSQuery():New( ::oCon, cCommand )
-      
-                  if oQuery:Open()
-      
-                     if oQuery:RecCount() > 0
-      
-                        ::cTextoWait( "Actualizando categoría: " + ::oFam:cNomFam )
-
-                        ::UpdateCategoriesPrestashop()
-      
-                     else
-      
-                        ::cTextoWait( "Añadiendo categoría: " + ::oFam:cNomFam )
-
-                        ::InsertCategoriesPrestashop()
-      
-                     end if
-      
-                  end if
-      
-                  oQuery:Free()
-      
-               case ::oFam:lPubInt .and. ::oFam:cCodWeb == 0
-      
-                  ::cTextoWait( "Añadiendo categoría: " + ::oFam:cNomFam )
-
-                  ::InsertCategoriesPrestashop()
-      
-            end case   
-
-            ::DisconectBBDD()
-   
-         endif      
-
-      end if
-
+   if !::filesOpen()
       ::filesClose()
+      Return .f.
+   end if 
+
+   if ::oFam:Seek( cCodigoFamilia )
+
+      if ::ConectBBDD()
+
+         do case
+            case !::oFam:lPubInt .and. ::oFam:cCodWeb != 0
+   
+               ::cTextoWait( "Elimina categoría: " + ::oFam:cNomFam )
+
+               ::DeleteCategoriesPrestashop()
+   
+            case ::oFam:lPubInt .and. ::oFam:cCodWeb != 0
+
+               cCommand := 'SELECT * FROM ' + ::cPrefixTable( "category" ) + ' WHERE id_category=' + alltrim( Str( ::oFam:cCodWeb ) )
+
+               ::cTextoWait( cCommand )
+   
+               oQuery   := TMSQuery():New( ::oCon, cCommand )
+   
+               if oQuery:Open()
+   
+                  if oQuery:RecCount() > 0
+   
+                     ::cTextoWait( "Actualizando categoría: " + ::oFam:cNomFam )
+
+                     ::UpdateCategoriesPrestashop()
+   
+                  else
+   
+                     ::cTextoWait( "Añadiendo categoría: " + ::oFam:cNomFam )
+
+                     ::InsertCategoriesPrestashop()
+   
+                  end if
+   
+               end if
+   
+               oQuery:Free()
+   
+            case ::oFam:lPubInt .and. ::oFam:cCodWeb == 0
+   
+               ::cTextoWait( "Añadiendo categoría: " + ::oFam:cNomFam )
+
+               ::InsertCategoriesPrestashop()
+   
+         end case   
+
+         ::DisconectBBDD()
+
+      endif      
 
    end if
+
+   ::filesClose()
 
 Return .t.
 
@@ -5078,9 +5066,8 @@ METHOD ConectBBDD() Class TComercio
 
       else
 
-         if Empty( ::nLanguage )
-            ::nLanguage := ::GetLanguagePrestashop( oDb )
-         end if   
+         ::nLanguage                   := ::getLanguagePrestashop( oDb )
+         ::lProductIdColumnImageShop   := ::isProductIdColumnImageShop()
 
          lReturn        := .t.
 
@@ -5140,9 +5127,7 @@ METHOD cTextoWait( cText ) CLASS TComercio
       cText    := "Actualizando web espere por favor..."
    end if   
 
-   if !Empty( ::oTextTotal )
-      ::oTextTotal:SetText( cText )
-   end if
+   ::writeText( cText )
 
 Return nil
 
@@ -6279,7 +6264,10 @@ METHOD buildConect()
 
       else
 
-         ::nLanguage    := ::GetLanguagePrestashop( oDb )
+         ::nLanguage                   := ::getLanguagePrestashop()
+         ::lProductIdColumnImageShop   := ::isProductIdColumnImageShop()
+
+         msgAlert( ::lProductIdColumnImageShop, "lProductIdColumnImageShop" )
 
          lConect     := .t.
 
@@ -7138,8 +7126,6 @@ METHOD buildActualizaCaterogiaPadrePrestashop( hFamiliaData ) CLASS TComercio
    Actualizamos las familias padre en prestashop-------------------------------
    */
 
-   ::cTextoWait( "Actualizando categoría: " + hGet( hFamiliaData, "name" ) )
-
    nParent           := oRetFld( hGet( hFamiliaData, "id_parent" ), ::oFam, "cCodWeb" )
       
    if nParent == 0
@@ -7151,6 +7137,8 @@ METHOD buildActualizaCaterogiaPadrePrestashop( hFamiliaData ) CLASS TComercio
       cCommand       := "UPDATE " + ::cPrefixTable( "category" ) + " SET " + ;
                            "id_parent='" + alltrim( Str( nParent ) ) + "' " +;
                            "WHERE id_category=" + alltrim( Str( ::oFam:cCodWeb ) )
+
+      ::cTextoWait( cCommand )
 
       lReturn        := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 

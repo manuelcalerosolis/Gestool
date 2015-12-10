@@ -6219,35 +6219,35 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
 
       ChangePublicarTemporal( aTmp )
 
+      if ( dbfTmpImg )->( Lastrec() ) == 0
+         lChangeImage  := ( cImageOld == aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cImagen" ) ) ] )
+      end if   
+
       /*
       Grabamos el registro a disco---------------------------------------------
       */
 
       WinGather( aTmp, aGet, D():Articulos( nView ), nil, nMode )
-
-      /*
-      Actualizamos los datos de la web para tiempo real------------------------
-      */
-
-      if ( dbfTmpImg )->( Lastrec() ) == 0
-         lChangeImage  := ( cImageOld == aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cImagen" ) ) ] )
-      end if   
-
-      if lActualizaWeb
-         BuildWeb( cCod )
-      end if
-      
+  
       /*
       Terminamos la transación-------------------------------------------------
       */
 
       CommitTransaction()
 
-   // Ejecutamos script del evento after append--------------------------------
+      /*
+      Actualizamos los datos de la web para tiempo real------------------------
+      */
 
-   if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
-      runEventScript( "Articulos\afterAppend", aTmp, nView )
-   end if
+      if lActualizaWeb
+         BuildWeb( cCod )
+      end if
+
+      // Ejecutamos script del evento after append--------------------------------
+
+      if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
+         runEventScript( "Articulos\afterAppend", aTmp, nView )
+      end if
 
    RECOVER USING oError
 

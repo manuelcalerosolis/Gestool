@@ -756,7 +756,6 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
          REDEFINE GET aGet[ _CNOMFAM ] VAR aTmp[ _CNOMFAM ] ;
             ID       110 ;
             WHEN     ( nMode != ZOOM_MODE ) ;
-            PICTURE  "@!" ;
             OF       oFld:aDialogs[1]
 
          REDEFINE GET aGet[ _CCODGRP ] VAR aTmp[ _CCODGRP ] ;
@@ -915,10 +914,21 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
             MAX      ( 99 ) ;
             OF       oFld:aDialogs[2]
 
-         REDEFINE GET aGet[ _CDESWEB ] VAR aTmp[ _CDESWEB ] ;
+         REDEFINE GET aGet[ _CDESWEB ] ;
+            VAR      aTmp[ _CDESWEB ] ;
             ID       340 ;
             WHEN     ( nMode != ZOOM_MODE ) ;
             PICTURE  "@!" ;
+            OF       oFld:aDialogs[2]
+
+         REDEFINE GET aGet[ _CCODWEB ] ;
+            VAR      aTmp[ _CCODWEB ] ;
+            ID       350 ;
+            PICTURE  "9999999";
+            SPINNER ;
+            MIN      ( 1 ) ;
+            MAX      ( 9999999 ) ;
+            WHEN     ( nMode != ZOOM_MODE ) ;
             OF       oFld:aDialogs[2]
 
          // Segunda caja de dialogo--------------------------------------------------
@@ -1387,19 +1397,17 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrw, oDlg, lActualizaWeb )
          ( dbfTmp )->( dbSkip() )
       end while
 
-      /*
-      Escribe los datos pendientes---------------------------------------------
-      */
+      // Escribe los datos pendientes---------------------------------------------
 
       WinGather( aTmp, aGet, dbfFamilia, oBrw, nMode )
 
-      /*
-      Actualizamos los datos de la web para tiempo real------------------------
-      */
-
-      Actualizaweb( cCodFam, lActualizaweb )
-
       CommitTransaction()
+
+      // Actualizamos los datos de la web para tiempo real------------------------
+
+      if lActualizaWeb
+         actualizaWeb( cCodFam )
+      end if 
 
    RECOVER USING oError
 
@@ -1443,17 +1451,18 @@ RETURN .T.
 
 //------------------------------------------------------------------------//
 
-Static Function Actualizaweb( cCodFam, lActualizaweb )
+Static Function actualizaWeb( cCodFam )
 
-   if lActualizaweb .and. uFieldEmpresa( "lRealWeb" )
+   msgAlert( lPubFam(), "lPubFam" )
+   msgAlert( cCodFam, "cCodFam" )
 
-      if lPubFam()
+   if lPubFam()
 
-         with object ( TComercio():New())    
-            :ActualizaCategoriesPrestashop( cCodFam )
-         end with  
-
-      end if   
+      with object ( TComercio():New() )
+         :MeterTotal( getAutoMeterDialog() )
+         :TextTotal( getAutoTextDialog() )
+         :ActualizaCategoriesPrestashop( cCodFam )
+      end with
 
    end if   
 
@@ -1463,23 +1472,7 @@ Return .t.
 
 Static Function lPubFam()
 
-   local lPub  := .f.
-
-   if ( dbfFamilia )->lPubInt
-
-      lPub     := .t.
-
-   else
-
-      if ( dbfFamilia )->cCodWeb != 0
-
-         lPub  := .t.
-
-      end if
-
-   end if
-
-Return lPub
+Return ( ( dbfFamilia )->lPubInt .or. ( dbfFamilia )->cCodWeb != 0 )
 
 //----------------------------------------------------------------------------//
 
@@ -3239,6 +3232,27 @@ FUNCTION cFamilia( oGet, dbfFamilia, oGet2, lMessage, oGetPrp1, oGetPrp2 )
    end if
 
 RETURN lValid
+
+//---------------------------------------------------------------------------//
+
+FUNCTION getCodigoWebFamiliaPadre( oFamilia )
+
+   local cCodigoPadre            := oFamilia:cFamCmb
+   local cCodigoWebFamiliaPadre  := 2
+
+   if empty( cCodigoPadre )
+      Return ( 2 )      // id Prestashop inicio categories
+   end if 
+
+   oFamilia:getStatus()
+   if oFamilia:seekInOrd( cCodigoPadre, "cCodFam" )
+      if oFamilia:lPubInt .and. oFamilia:cCodWeb != 0
+         cCodigoWebFamiliaPadre  := oFamilia:cCodWeb
+      end if 
+   end if
+   oFamilia:setStatus()
+
+RETURN ( cCodigoWebFamiliaPadre )
 
 //---------------------------------------------------------------------------//
 
