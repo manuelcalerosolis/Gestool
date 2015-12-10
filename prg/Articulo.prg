@@ -448,7 +448,9 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       if !oDetCamposExtra:OpenFiles()
          lOpenFiles        := .f.
       end if
-      oDetCamposExtra:SetTipoDocumento( "Artículos" )
+      
+      oDetCamposExtra:setTipoDocumento( "Artículos" )
+      oDetCamposExtra:setbId( {|| D():ArticulosId( nView ) } )
 
       /*
       Cargamos el valor del Euro y de la Peseta-----------------------------------
@@ -1213,6 +1215,8 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       :nEditType        := 1
       :lHide            := .t.
    end with
+
+   oDetCamposExtra:addCamposExtra( oWndBrw )
 
    oWndBrw:cHtmlHelp    := "Articulos"
    oWndBrw:bToolTip     := {|| dlgTooltip( ( D():Articulos( nView ) )->Codigo, oWndBrw:oBrw ) }

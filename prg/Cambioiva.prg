@@ -6,7 +6,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TConversionDocumentos
+CLASS TConversionDocumentos // FROM DialogBuilder
 
    DATA oDocumentLine
 
@@ -24,12 +24,13 @@ CLASS TConversionDocumentos
    DATA aHeaderDictionary
    DATA aHeaderIndex
 
-   DATA cLinesAlias                                INIT ""
-   DATA aLinesDictionary
-   DATA aLinesIndex
-
+   DATA oDocument
    DATA cDocument   
    DATA aDocuments   
+
+   DATA cTargetDocument
+   DATA aTargetEmpresa
+   DATA cTargetEmpresa
 
    DATA oSearch
    DATA cSearch
@@ -40,11 +41,17 @@ CLASS TConversionDocumentos
    DATA oBrwDocuments
 
    DATA oBrwLines
-   DATA aSelectedLines                             INIT {}
 
    DATA cPictureRound
    DATA nDecimalPrice
    DATA nRoundDecimalPrice
+
+   DATA oPeriodo
+   DATA oCliente
+   DATA oProveedor
+   DATA oEmpresa
+   DATA oSerie
+   DATA oFecha
 
    METHOD New()
 
@@ -54,6 +61,14 @@ CLASS TConversionDocumentos
       METHOD changeSortDocument()
       METHOD changeSearch()
       METHOD setOrderInColumn( oColumn )  
+      METHOD getDocument()                         INLINE ( alltrim( ::cDocument ) )
+      METHOD getDocumentName()                     INLINE ( if( !empty( ::getHeaderAlias() ), ::getDocument() + space( 1 ) + ::getTextId(), "" ) )
+      
+      METHOD isValidDialogRequisite()
+      METHOD isValidTargetDocument()
+      
+      METHOD getActionDocument()                   INLINE ( hget( ::aDocuments, ::cDocument ) )
+      METHOD getActionTargetDocument()             INLINE ( hget( ::aDocuments, ::cTargetDocument ) )
 
    METHOD OpenFiles()
    METHOD CloseFiles()
@@ -61,12 +76,13 @@ CLASS TConversionDocumentos
    METHOD BotonSiguiente()
    METHOD BotonAnterior()
 
-   METHOD selectLine()                             
-   METHOD unSelectLine()                           
-   METHOD toogleSelectLine()
-   METHOD selectAllLine()                          
-   METHOD unselectAllLine()                        INLINE ( ::aSelectedLines := {}, ::oBrwLines:Refresh() )
-   METHOD positionSelectedLine()                   INLINE ( ascan( ::aSelectedLines, ::getRecnoArticle() ) )
+   METHOD selectLine()                             INLINE ( ::oDocumentLine:selectLine(), ::oBrwLines:DrawLine(.t.) )                             
+   METHOD unSelectLine()                           INLINE ( ::oDocumentLine:unSelectLine(), ::oBrwLines:DrawLine(.t.) )
+   METHOD toogleSelectLine()                       INLINE ( ::oDocumentLine:toogleSelectLine(), ::oBrwLines:DrawLine(.t.) )
+   METHOD selectAllLine()                          INLINE ( ::oDocumentLine:selectAllLine(), ::oBrwLines:Refresh() )
+   METHOD unselectAllLine()                        INLINE ( ::oDocumentLine:unselectAllLine(), ::oBrwLines:Refresh() )
+
+   METHOD setLinesScope( Id )                      INLINE ( ::oDocumentLine:setLinesScope( Id ) )
 
    METHOD opcionInvalida()                         INLINE ( msgStop( "Opción invalida, por favor elija una opción valida." ), .f. )
 
@@ -78,14 +94,28 @@ CLASS TConversionDocumentos
                                                             ::nDecimalPrice      := nDouDiv(),;
                                                             ::nRoundDecimalPrice := nRouDiv() )
 
+   METHOD setSalesControls()                       INLINE ( if( !empty(::oProveedor), ::oProveedor:Hide(), ),;
+                                                            if( !empty(::oCliente), ::oCliente:Show(), ) )
+
+   METHOD setShoppingControls()                    INLINE ( if( !empty(::oProveedor), ::oProveedor:Show(), ),;
+                                                            if( !empty(::oCliente), ::oCliente:Hide(), ) )
+
    // get the documents data---------------------------------------------------
 
    METHOD setDocumentType( cDataTable )
+
    METHOD setSalesDocumentType( cHeaderTable, cLineTable ) ;
-                                                   INLINE ( ::setSalesPictures(), ::setDocumentType( cHeaderTable, cLineTable ) )
+                                                   INLINE ( ::setSalesPictures(),;
+                                                            ::setSalesControls(),;
+                                                            ::setDocumentType( cHeaderTable, cLineTable ) )
+
    METHOD setShoppingDocumentType( cHeaderTable, cLineTable ) ;
-                                                   INLINE ( ::setShoppingPictures(), ::setDocumentType( cHeaderTable, cLineTable ) )
+                                                   INLINE ( ::setShoppingPictures(),;
+                                                            ::setShoppingControls(),;
+                                                            ::setDocumentType( cHeaderTable, cLineTable ) )
+
    METHOD setDocumentPedidosProveedores()          INLINE ( ::setShoppingDocumentType( D():PedidosProveedoresTableName(), D():PedidosProveedoresLineasTableName() ) )
+   METHOD setDocumentSATClientes()                 INLINE ( ::setSalesDocumentType( D():SATClientesTableName(), D():SATClientesLineasTableName() ) )
 
    METHOD setHeaderAlias( cHeaderAlias )           INLINE ( ::cHeaderAlias := cHeaderAlias )
    METHOD getHeaderAlias()                         INLINE ( ::cHeaderAlias )
@@ -94,31 +124,17 @@ CLASS TConversionDocumentos
    METHOD setHeaderIndex( aHeaderIndex )           INLINE ( ::aHeaderIndex := aHeaderIndex )
    METHOD getHeaderIndex()                         INLINE ( ::aHeaderIndex )
 
-   METHOD setLinesAlias( cLinesAlias )             INLINE ( ::cLinesAlias := cLinesAlias )
-   METHOD getLinesAlias()                          INLINE ( ::cLinesAlias )
-   METHOD setLinesDictionary( aLinesDictionary )   INLINE ( ::aLinesDictionary := aLinesDictionary )
-   METHOD getLinesDictionary()                     INLINE ( ::aLinesDictionary )
-   METHOD setLinesIndex( aLinesIndex )             INLINE ( ::aLinesIndex := aLinesIndex )
-   METHOD getLinesIndex()                          INLINE ( ::aLinesIndex )
-   METHOD setLinesScope( Id )                      INLINE ( ( ::getLinesAlias() )->( ordscope( 0, Id ) ),;
-                                                            ( ::getLinesAlias() )->( ordscope( 1, Id ) ),;
-                                                            ( ::getLinesAlias() )->( dbgotop() ) ) 
-   METHOD quitLinesScope()                         INLINE ( ::setLinesScope( nil ) )
-
-      METHOD getId()                               INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getHeaderAlias(), ::getHeaderDictionary() ) + ;
+   METHOD getId()                                  INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getHeaderAlias(), ::getHeaderDictionary() ) + ;
                                                             str( D():getFieldFromAliasDictionary( "Numero", ::getHeaderAlias(), ::getHeaderDictionary() ) ) + ; 
                                                             D():getFieldFromAliasDictionary( "Sufijo", ::getHeaderAlias(), ::getHeaderDictionary() ) )
-      METHOD getTextId()                           INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getHeaderAlias(), ::getHeaderDictionary() ) + "/" + ;
+   METHOD getTextId()                              INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getHeaderAlias(), ::getHeaderDictionary() ) + "/" + ;
                                                             alltrim( str( D():getFieldFromAliasDictionary( "Numero", ::getHeaderAlias(), ::getHeaderDictionary() ) ) ) )
-      METHOD getDate()                             INLINE ( D():getFieldFromAliasDictionary( "Fecha", ::getHeaderAlias(), ::getHeaderDictionary() ) )
-      METHOD getName()                             INLINE ( D():getFieldFromAliasDictionary( "NombreCliente", ::getHeaderAlias(), ::getHeaderDictionary() ) )
-      METHOD getTotalNeto()                        INLINE ( D():getFieldFromAliasDictionary( "TotalNeto", ::getHeaderAlias(), ::getHeaderDictionary() ) )
-      METHOD getTotalImpuesto()                    INLINE ( D():getFieldFromAliasDictionary( "TotalImpuesto", ::getHeaderAlias(), ::getHeaderDictionary() ) )
-      METHOD getTotalDocumento()                   INLINE ( D():getFieldFromAliasDictionary( "TotalDocumento", ::getHeaderAlias(), ::getHeaderDictionary() ) )
-
-      METHOD getRecnoArticle()                     INLINE ( ( ::getLinesAlias() )->( recno() ) )
-
-      METHOD getTotalArticle()
+   METHOD getDate()                                INLINE ( D():getFieldFromAliasDictionary( "Fecha", ::getHeaderAlias(), ::getHeaderDictionary() ) )
+   METHOD getName()                                INLINE ( D():getFieldFromAliasDictionary( "NombreCliente", ::getHeaderAlias(), ::getHeaderDictionary() ) )
+   METHOD getTotalNeto()                           INLINE ( D():getFieldFromAliasDictionary( "TotalNeto", ::getHeaderAlias(), ::getHeaderDictionary() ) )
+   METHOD getTotalImpuesto()                       INLINE ( D():getFieldFromAliasDictionary( "TotalImpuesto", ::getHeaderAlias(), ::getHeaderDictionary() ) )
+   METHOD getTotalDocumento()                      INLINE ( D():getFieldFromAliasDictionary( "TotalDocumento", ::getHeaderAlias(), ::getHeaderDictionary() ) )
+   METHOD isPuntoVerde()                           INLINE ( D():getFieldFromAliasDictionary( "OperarPuntoVerde", ::getHeaderAlias(), ::getHeaderDictionary(), .f. ) )
 
    METHOD showDocuments() 
    METHOD showDocumentsLines()
@@ -129,15 +145,17 @@ ENDCLASS
 
 METHOD New()
 
+   ::OpenFiles()
+
    ::cDocument       := "Pedido proveedores"
-   ::aDocuments      := {  "Compras" =>                                                   {|| ::opcionInvalida() },;                                    
+   ::aDocuments      := {  "Compras" =>                                                   nil,;                                    
                            space( 3 ) + "Pedido proveedores" =>                           {|| ::setDocumentPedidosProveedores() },;
                            space( 3 ) + "Albarán proveedores" =>                          {|| msgAlert( "Albarán proveedores" ) },;
                            space( 3 ) + "Factura proveedores" =>                          {|| msgAlert( "Factura proveedores" ) },;
                            space( 3 ) + "Factura rectificativas proveedores" =>           {|| msgAlert( "Factura rectificativas proveedores" ) },;
                            space( 3 ) + "Recibos de proveedores" =>                       {|| msgAlert( "Recibos de proveedores" ) },;
-                           "Ventas" =>                                                    {|| ::opcionInvalida() },;                                    
-                           space( 3 ) + "S.A.T. clientes" =>                              {|| msgAlert( "" ), .t. },;
+                           "Ventas" =>                                                    nil,;                                    
+                           space( 3 ) + "S.A.T. clientes" =>                              {|| ::setDocumentSATClientes() },;
                            space( 3 ) + "Presupuesto clientes" =>                         {|| msgAlert( "" ), .t. },;
                            space( 3 ) + "Pedido clientes" =>                              {|| msgAlert( "" ), .t. },;
                            space( 3 ) + "Albarán clientes" =>                             {|| msgAlert( "" ), .t. },;
@@ -149,7 +167,7 @@ METHOD New()
                            space( 3 ) + "Parte de producción" =>                          {|| msgAlert( "" ), .t. },;
                            space( 3 ) + "Recibos de clientes" =>                          {|| msgAlert( "" ), .t. } }
 
-   ::OpenFiles()
+   ::aTargetEmpresa  := aSerializedEmpresas()
 
    ::oDocumentLine   := AliasDocumentLine():New( Self )   
 
@@ -176,21 +194,55 @@ METHOD Dialog()
       OF       ::oDlg ;
       DIALOGS  "ASS_CONVERSION_DOCUMENTO_1",;
                "ASS_CONVERSION_DOCUMENTO_2",;
-               "ASS_CONVERSION_DOCUMENTO_3"
+               "ASS_CONVERSION_DOCUMENTO_3",;
+               "ASS_CONVERSION_DOCUMENTO_4"
 
-   REDEFINE COMBOBOX ::cDocument ;
-      ITEMS    hgetkeys( ::aDocuments );
-      ID       100 ;
-      OF       ::oFld:aDialogs[1]
+   REDEFINE COMBOBOX ::oDocument ;
+      VAR         ::cDocument ;
+      ITEMS       hgetkeys( ::aDocuments );
+      ID          100 ;
+      OF          ::oFld:aDialogs[1]
+
+   ::oDocument:bChange  := {|| ::showDocuments() }
+
+   ::oPeriodo     := GetPeriodo()
+      ::oPeriodo:New( 110, 120, 130 )
+      ::oPeriodo:Resource( ::oFld:aDialogs[1] )
+
+   ::oCliente     := GetCliente()
+      ::oCliente:New( 140, 141, 142 )
+      ::oCliente:Resource( ::oFld:aDialogs[1] )
+      ::oCliente:setView( ::nView )
+
+   ::oProveedor   := GetProveedor() 
+      ::oProveedor:New( 150, 151, 152 )
+      ::oProveedor:Resource( ::oFld:aDialogs[1] )
+      ::oProveedor:setView( ::nView )
+
+   REDEFINE COMBOBOX ::cTargetDocument ;
+      ITEMS       hgetkeys( ::aDocuments );
+      ID          160 ;
+      OF          ::oFld:aDialogs[1]
+
+   ::oSerie       := GetSerie():New( 170 )
+      ::oSerie:Resource( ::oFld:aDialogs[1] )      
+
+   ::oFecha       := GetFecha():New( 180 )
+      ::oFecha:Resource( ::oFld:aDialogs[1] )
+
+   ::oEmpresa     := GetEmpresa():New( 190, 191, 192 )
+      ::oEmpresa:Resource( ::oFld:aDialogs[1] )
+      ::oEmpresa:setView( ::nView )
+      ::oEmpresa:Current()
 
    // segundo dialogo-----------------------------------------------------------
 
-   REDEFINE GET ::oSearch ;
-      VAR      ::cSearch ;
-      ID       100 ;
-      PICTURE  "@!" ;
-      BITMAP   "Find" ;
-      OF       ::oFld:aDialogs[2]
+   REDEFINE GET   ::oSearch ;
+      VAR         ::cSearch ;
+      ID          100 ;
+      PICTURE     "@!" ;
+      BITMAP      "Find" ;
+      OF          ::oFld:aDialogs[2]
 
    ::oSearch:bChange                := {|| ::changeSearch() }
 
@@ -291,7 +343,12 @@ METHOD Dialog()
       ID       530 ;
       OF       ::oFld:aDialogs[3] ;
       ACTION   ( ::unselectAllLine() )
-   
+
+   REDEFINE SAY ; 
+      VAR      ::getDocumentName() ;
+      ID       110 ;
+      OF       ::oFld:aDialogs[3]   
+
    // browse de lineas-----------------------------------------------------
 
    ::oBrwLines                      := IXBrowse():New( ::oFld:aDialogs[3] )
@@ -300,14 +357,14 @@ METHOD Dialog()
    ::oBrwLines:bClrSel              := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrwLines:bClrSelFocus         := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-   ::oBrwLines:cAlias               := ::getLinesAlias()
+   ::oBrwLines:cAlias               := ::oDocumentLine:getAlias()
    ::oBrwLines:nMarqueeStyle        := 5
    ::oBrwLines:cName                := "Browse.Conversion documentos lineas"
    ::oBrwLines:bLDblClick           := {|| ::toogleSelectLine() }
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Seleccionando"
-      :bEditValue                   := {|| aScan( ::aSelectedLines, ::getRecnoArticle() ) > 0 }
+      :bEditValue                   := {|| ::oDocumentLine:isSelectedLine() }
       :nWidth                       := 20
       :SetCheck( { "Sel16", "Nil16" } )
    end with
@@ -418,7 +475,7 @@ METHOD Dialog()
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Importe"
-      :bEditValue                   := {|| ::oDocumentLine:getPrice() }
+      :bEditValue                   := {|| ::oDocumentLine:getNetPrice() }
       :cEditPicture                 := ::cPictureRound
       :nWidth                       := 90
       :nDataStrAlign                := 1
@@ -465,6 +522,23 @@ METHOD Dialog()
 
    ::oBrwLines:CreateFromResource( 100 )
 
+   // Resumen de la exportacion------------------------------------------------
+
+   REDEFINE SAY ; 
+      VAR         ::getDocument() ;
+      ID          100 ;
+      OF          ::oFld:aDialogs[4]   
+
+   REDEFINE SAY ; 
+      VAR         ::getTextId() ;
+      ID          110 ;
+      OF          ::oFld:aDialogs[4]   
+
+   REDEFINE COMBOBOX ::cTargetEmpresa ;
+      ITEMS       ::aTargetEmpresa ;
+      ID          130 ;
+      OF          ::oFld:aDialogs[4]
+
    // Botones -----------------------------------------------------------------
 
    REDEFINE BUTTON ::oBtnAnterior;
@@ -499,8 +573,45 @@ METHOD startDialog()
    ::oBrwDocuments:Load()
 
    ::oBrwLines:Load()
+
+   ::setDocumentPedidosProveedores()
    
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD isValidDialogRequisite()
+
+   if !::isValidTargetDocument()
+      RETURN ( .f. )
+   end if 
+
+   if !::oSerie:Valid()
+      RETURN ( .f. )
+   end if 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD isValidTargetDocument()
+
+   if empty(::cTargetDocument)
+      msgStop( "El documento destino no es valido.")
+      RETURN ( .f. )
+   end if 
+
+   if ( ::cTargetDocument == ::cDocument )
+      msgStop( "El documento origen y destino son del mismo tipo.")
+      RETURN ( .f. )
+   end if 
+
+   if empty( ::getActionTargetDocument() )
+      msgStop( "El documento destino seleccionado no es valido." )
+      RETURN ( .f. )
+   end if   
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -508,7 +619,8 @@ METHOD BotonSiguiente()
 
    do case
       case ::oFld:nOption == 1
-         if ::showDocuments()
+
+         if ::isValidDialogRequisite() .and. ::showDocuments()
             ::oFld:goNext()
          end if
 
@@ -516,6 +628,9 @@ METHOD BotonSiguiente()
          if ::showDocumentsLines()
             ::oFld:goNext()
          end if
+
+      case ::oFld:nOption == 3
+         ::oFld:goNext()
 
    end case
 
@@ -542,7 +657,11 @@ METHOD OpenFiles()
 
       ::nView           := D():CreateView()
 
+      D():Empresa( ::nView )
+
       D():Proveedores( ::nView )
+      
+      D():Clientes( ::nView )
 
       D():GruposProveedores( ::nView )
 
@@ -555,8 +674,6 @@ METHOD OpenFiles()
       D():PedidosProveedoresDocumentos( ::nView )
 
       D():PropiedadesLineas( ::nView )
-
-      D():Clientes( ::nView )
 
    RECOVER USING oError
 
@@ -592,12 +709,14 @@ METHOD showDocuments()
    local lAction  := .f.
 
    if empty( ::cDocument )
-      Return ( lAction )
+      Return ( .f. )
    end if 
 
-   bAction        := hget( ::aDocuments, ::cDocument )
+   bAction        := ::getActionDocument()
    if isBlock( bAction )
-      lAction     :=  eval( bAction )
+      lAction     := eval( bAction )
+   else 
+      ::opcionInvalida()
    end if 
 
 Return ( lAction )
@@ -625,9 +744,6 @@ METHOD setDocumentType( cTableName, cTableLineName )
    ::setHeaderAlias(       D():get( cTableName, ::nView ) )
    ::setHeaderDictionary(  D():getDictionaryFromArea( cTableName ) )
    ::setHeaderIndex(       D():getIndexFromArea( cTableName ) )
-
-   ::setLinesAlias(        D():get( cTableLineName, ::nView ) )
-   ::setLinesDictionary(   D():getDictionaryFromArea( cTableLineName ) )
 
    ::oDocumentLine:setAlias(        D():get( cTableLineName, ::nView ) )
    ::oDocumentLine:setDictionary(   D():getDictionaryFromArea( cTableLineName ) )
@@ -710,89 +826,5 @@ METHOD setOrderInColumn( oColumn )
    end if 
 
 Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD selectLine()
-
-   if ::positionSelectedLine() == 0
-      aadd( ::aSelectedLines, ::getRecnoArticle() )
-      ::oBrwLines:DrawLine( .t. )
-   endif
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD unselectLine()
-
-   local nAt   := ::positionSelectedLine()
-
-   if nAt != 0
-      adel( ::aSelectedLines, nAt, .t. )
-      ::oBrwLines:DrawLine( .t. )
-   end if 
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD toogleSelectLine()
-
-   local nAt   := ::positionSelectedLine()
-
-   if nAt != 0
-      adel( ::aSelectedLines, nAt, .t. )
-   else
-      aadd( ::aSelectedLines, ::getRecnoArticle() )
-   end if 
-
-   ::oBrwLines:DrawLine( .t. )
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD selectAllLine()
-
-   local recno       := ::getRecnoArticle()
-
-   ::aSelectedLines  := {}
-
-   CursorWait()
-
-   ( ::getLinesAlias() )->( dbgotop() ) 
-   while !( ( ::getLinesAlias() )->( eof() ) )
-      aadd( ::aSelectedLines, ::getRecnoArticle() )
-      ( ::getLinesAlias() )->( dbskip() )
-   enddo
-   
-   ( ::getLinesAlias() )->( dbgoto( recno ) )
-
-   CursorArrow()
-
-   ::oBrwLines:Refresh()
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD getTotalArticle()                     
-
-   local nTotalArticle  := ::getPriceArticle()
-
-   if ::getPercentageDiscount() != 0
-      nTotalArticle     -= nTotalArticle * ::getPercentageDiscount() / 100
-   end if 
-
-   if ::getPercentagePromotion() != 0
-      nTotalArticle     -= nTotalArticle * ::getPercentagePromotion() / 100
-   end if 
-
-   nTotalArticle        *= ::getTotalUnitsArticle()
-
-   nTotalArticle        := round( nTotalArticle, ::nRoundDecimalPrice )
-
-RETURN ( nTotalArticle )
 
 //---------------------------------------------------------------------------//

@@ -481,12 +481,13 @@ STATIC FUNCTION OpenFiles( lExt )
          lOpenFiles        := .f.
       end if
 
+      oDetCamposExtra:SetTipoDocumento( "Clientes" )
+      oDetCamposExtra:setbId( {|| D():ClientesId( nView ) } )
+
       oEntidades        := TEntidades():Create()
       if !oEntidades:OpenFiles()
          lOpenFiles     := .f.
       end if
-
-      oDetCamposExtra:SetTipoDocumento( "Clientes" )
 
       CodigosPostales():GetInstance():OpenFiles()
 
@@ -896,6 +897,8 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       end with
 
       oWndBrw:cHtmlHelp    := "Clientes"
+
+      oDetCamposExtra:addCamposExtra( oWndBrw )
 
       oWndBrw:CreateXFromCode()
 
@@ -8135,6 +8138,8 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
          :bEditValue       := {|| ( D():Get( "Client", nView ) )->mComent }
          :nWidth           := 200
       end with
+
+      oDetCamposExtra:addCamposExtra( oBrw )
 
       oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
       oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }

@@ -1038,11 +1038,6 @@ METHOD New( idCombo, idFechaInicio, idFechaFin, oContainer ) CLASS GetPeriodo
 
    ::CargaPeriodo()
 
-   msgInfo( "Entro en el New" )
-   msginfo( idCombo, "idCombo" )
-   msginfo( idFechaInicio, "idFechaInicio" )
-   msginfo( idFechaFin, "idFechaFin" )
-
    ::oComboPeriodo            := GetCombo():New( idCombo, ::cPeriodo, ::aPeriodo, oContainer )
    ::oComboPeriodo:SetChange( {|| ::CambiaPeriodo() } )
 

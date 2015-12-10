@@ -2804,8 +2804,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          OF       oFld:aDialogs[1]
 
       REDEFINE SAY oGetNet VAR nTotNet ;
-        ID       401 ;
-		OF 		oFld:aDialogs[1]
+         ID       401 ;
+         OF 		oFld:aDialogs[1]
 
       REDEFINE SAY oGetTrn VAR nTotTrn ;
          ID       402 ;

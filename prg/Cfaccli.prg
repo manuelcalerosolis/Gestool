@@ -4125,6 +4125,7 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
    local cTerNif     := ( dbfRctPrvT )->cDniPrv
    local cTerNom     := ( dbfRctPrvT )->cNomPrv
    local lReturn
+   local lIvaCEE     := ( dbfRctPrvT )->nRegIva > 1
 
    DEFAULT aSimula   := {}
 
@@ -4194,13 +4195,17 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
             Construimos las bases de los impuestosS
             */
 
+<<<<<<< HEAD
             if ( dbfRctPrvT )->nRegIva ==2
+=======
+            /*if lIvaCEE
+>>>>>>> origin/master
                cSubCtaIva  := uFieldEmpresa( "cCtaCeeRpt" )
                cSubCtaReq  := uFieldEmpresa( "cCtaCeeSpt" )
-            else
+            else*/
                cSubCtaIva  := cSubCuentaIva( ( dbfRctPrvL )->nIva, ( dbfRctPrvT )->lRecargo, cRuta, cCodEmp, dbfIva, .f. )
                cSubCtaReq  := cSubCuentaRecargo( ( dbfRctPrvL )->nIva, ( dbfRctPrvT )->lRecargo, cRuta, cCodEmp, dbfIva )
-            end if
+            //end if
 
             nPosIva     := aScan( aIva, {|x| x[1] == ( dbfRctPrvL )->nIva } )
             if nPosIva == 0
@@ -4411,7 +4416,11 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
 
       next
 
+<<<<<<< HEAD
       if ( dbfRctPrvT )->nRegIva == 2
+=======
+      /*if lIvaCEE
+>>>>>>> origin/master
 
       for n := 1 to len( aIva )
 
@@ -4439,7 +4448,7 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
 
       next
 
-      else
+      else*/
 
       /*
       Asientos de impuestos_____________________________________________________________
@@ -4505,7 +4514,7 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
 
       end if
 
-      end if
+      //end if
 
       /*
       Asientos del retenciones________________________________________________________

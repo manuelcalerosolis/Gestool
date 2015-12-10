@@ -17139,6 +17139,10 @@ FUNCTION sTotFacCli( cFactura, cFacCliT, cFacCliL, dbfIva, dbfDiv, dbfFacCliP, d
 
    sTotal:aTotalIva                       := aTotIva
 
+   sTotal:aTotalBase[ 1 ]                 := aTotIva[ 1, 2 ]
+   sTotal:aTotalBase[ 2 ]                 := aTotIva[ 2, 2 ]
+   sTotal:aTotalBase[ 3 ]                 := aTotIva[ 3, 2 ]
+
 Return ( sTotal )
 
 //---------------------------------------------------------------------------//

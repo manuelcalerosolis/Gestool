@@ -6,6 +6,8 @@ CLASS DocumentLine
    DATA oSender
    DATA hDictionary
 
+   DATA aSelectedLines                                         INIT {}
+
    METHOD new()
 
    METHOD getDictionary()                                      INLINE ( ::hDictionary )
@@ -14,10 +16,17 @@ CLASS DocumentLine
    METHOD getValue( key )                                      VIRTUAL
    METHOD setValue( key, value )                               VIRTUAL
 
-   METHOD getTotalUnits()
-   METHOD getTotal()
-   METHOD Impuesto()  
-   METHOD getPrice()
+   METHOD unselectAllLine()                                    INLINE ( ::aSelectedLines := {} )
+   METHOD positionSelectedLine()                               INLINE ( ascan( ::aSelectedLines, ::getRecno() ) )
+   METHOD isSelectedLine()                                     INLINE ( ::positionSelectedLine() > 0 )
+
+   METHOD selectLine()                             
+   METHOD unSelectLine()                           
+   METHOD toogleSelectLine()
+   METHOD selectAllLine()                                      VIRTUAL
+
+   METHOD setLinesScope( Id )                                  VIRTUAL
+   METHOD quitLinesScope()                                     VIRTUAL
 
    METHOD getDivisa()                                          INLINE ( hGet( ::getValueMaster(), "Divisa" ) ) 
 
@@ -57,15 +66,17 @@ CLASS DocumentLine
    METHOD getUnits()                                           INLINE ( ::getValue( "Unidades" ) )
    METHOD getTotalUnits()
    METHOD getMeasurementUnit()                                 INLINE ( ::getValue( "UnidadMedicion" ) )
+   METHOD getPrice()                                           INLINE ( ::getValue( "PrecioVenta" ) )
+   METHOD getNetPrice()
 
    METHOD getPercentageDiscount()                              INLINE ( ::getValue( "DescuentoPorcentual" ) )
    METHOD getPercentagePromotion()                             INLINE ( ::getValue( "DescuentoPromocion" ) )
    METHOD getPercentageTax()                                   INLINE ( ::getValue( "PorcentajeImpuesto" ) )
-   METHOD getMonetaryDiscount()                                INLINE ( ::getValue( "DescuentoLineal" ) )
+   METHOD getMonetaryDiscount()                                INLINE ( ::getValue( "DescuentoLineal", 0 ) )
 
    METHOD getTipoIva()                                         INLINE ( ::getValue( "TipoIva" ) )
-   METHOD getPrecioVenta()                                     INLINE ( Round( ::getValue(  "PrecioVenta" ), nDouDiv() ) )
-   METHOD getPortes()                                          INLINE ( ::getValue( "Portes" ) )
+   METHOD getPrecioVenta()                                     INLINE ( round( ::getValue(  "PrecioVenta" ), nDouDiv() ) )
+   METHOD getPortes()                                          INLINE ( ::getValue( "Portes", 0 ) )
    METHOD getUnidades()                                        INLINE ( ::getValue( "Unidades" ) )
    METHOD getDescuento()                                       INLINE ( ::getValue( "Descuento" ) )
    METHOD getRecargoEquivalencia()                             INLINE ( ::getValue( "RecargoEquivalencia" ) )
@@ -73,12 +84,15 @@ CLASS DocumentLine
    METHOD getDescuentoPorcentual()                             INLINE ( ::getValue( "DescuentoPorcentual" ) )
    METHOD getDescuentoPromocion()                              INLINE ( ::getValue( "DescuentoPromocion" ) )
 
-   METHOD isLineaImpuestoIncluido()                            INLINE ( ::getValue( "LineaImpuestoIncluido" ) )
-   METHOD isVolumenImpuestosEspeciales()                       INLINE ( ::getValue( "VolumenImpuestosEspeciales" ) )
+   METHOD isSpecialTaxInclude()                                INLINE ( ::getValue( "LineaImpuestoIncluido", .f. ) )
+   METHOD isVolumenSpecialTax()                                INLINE ( ::getValue( "VolumenImpuestosEspeciales", .f. ) )
+   METHOD getSpecialTax()                                      INLINE ( ::getValue( "ImporteImpuestoEspecial" ) )
 
-   METHOD getImporteImpuestoEspecial()                         INLINE ( ::getValue( "ImporteImpuestoEspecial" ) )
-   METHOD getVolumen()                                         INLINE ( ::getValue( "Volumen" ) )
-   METHOD getPuntoVerde()                                      INLINE ( ::getValue( "PuntoVerde" ) )
+   METHOD getTotal()
+   METHOD getTotalSpecialTax()  
+
+   METHOD getVolumen()                                         INLINE ( ::getValue( "Volumen", 0 ) )
+   METHOD getPuntoVerde()                                      INLINE ( ::getValue( "PuntoVerde", 0 ) )
 
 END CLASS
 
@@ -94,9 +108,7 @@ Return ( Self )
 
 METHOD getTotalUnits() CLASS DocumentLine
 
-   local totalUnidades  
-
-   totalUnidades        := notCaja( ::getBoxes() )
+   local totalUnidades  := notCaja( ::getBoxes() )
    totalUnidades        *= notCero( ::getUnidades() )
    totalUnidades        *= notCero( ::getValue( "UnidadesKit" ) )
    totalUnidades        *= notCero( ::getValue( "Medicion1" ) )
@@ -107,27 +119,25 @@ Return ( totalUnidades )
 
 //---------------------------------------------------------------------------//
 
-METHOD getTotal()   CLASS DocumentLine
+METHOD getTotal() CLASS DocumentLine
 
-   local Total          := ::getPrice()
+   local Total       := ::getNetPrice()
+   Total             *= ::getTotalUnits()
+   Total             += ::getTotalSpecialTax()
 
-   Total                *= ::getTotalUnits()
-
-   Total                += ::Impuesto()
+   if ::getPortes() != 0
+      Total          += ::getPortes() * ::getTotalUnits()
+   endif
 
    if ::oSender:isPuntoVerde()    
-      Total             += ::getPuntoVerde() * ::getTotalUnits()
+      Total          += ::getPuntoVerde() * ::getTotalUnits()
    end if 
-
-   if ::getPortes()  != 0
-      Total             += ::getPortes() * ::getTotalUnits()
-   endif
 
 Return ( Total )
 
 //---------------------------------------------------------------------------//
 
-METHOD getPrice() CLASS DocumentLine
+METHOD getNetPrice() CLASS DocumentLine
 
    local Price       := ::getPrice()
    Price             -= ::getMonetaryDiscount()
@@ -144,22 +154,59 @@ Return ( Price )
 
 //---------------------------------------------------------------------------//
 
-METHOD Impuesto() CLASS DocumentLine
+METHOD getTotalSpecialTax() CLASS DocumentLine
    
-   Local Impuesto := 0
+   Local specialTax  := 0
 
-   if !( ::isLineaImpuestoIncluido() )
+   if ::isSpecialTaxInclude()
+      Return ( specialTax )
+   end if 
 
-      if ::isVolumenImpuestosEspeciales()
-         Return ( ::getImporteImpuestoEspecial * NotCero( ::getVolumen ) )
-      else
-         Return ( ::getImporteImpuestoEspecial )
-      endif
+   if ::isVolumenSpecialTax()
+      specialTax     := ::getSpecialTax() * notCero( ::getVolumen() )
+   else
+      specialTax     := ::getSpecialTax()
+   end if
 
+Return ( specialTax )
+
+//---------------------------------------------------------------------------//
+
+METHOD selectLine() CLASS DocumentLine
+
+   if ::positionSelectedLine() == 0
+      aadd( ::aSelectedLines, ::getRecno() )
    endif
 
-Return ( Impuesto )
+Return ( Self )
 
+//---------------------------------------------------------------------------//
+
+METHOD unselectLine() CLASS DocumentLine
+
+   local nAt   := ::positionSelectedLine()
+
+   if nAt != 0
+      adel( ::aSelectedLines, nAt, .t. )
+   end if 
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD toogleSelectLine() CLASS DocumentLine
+
+   local nAt   := ::positionSelectedLine()
+
+   if nAt != 0
+      adel( ::aSelectedLines, nAt, .t. )
+   else
+      aadd( ::aSelectedLines, ::getRecno() )
+   end if 
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -169,16 +216,18 @@ CLASS DictionaryDocumentLine FROM DocumentLine
 
    METHOD new( oSender, hDictionary )
 
+   METHOD getRecno()                                           INLINE ( 0 )
+
    METHOD getValueMaster()                                     INLINE ( ::oSender:hDictionaryMaster )
 
-   METHOD hSetMaster( key, value )                             INLINE ( hSet( ::getValueMaster(), key, value ) )
    METHOD hGetMaster( key )                                    INLINE ( hGet( ::getValueMaster(), key ) )
+   METHOD hSetMaster( key, value )                             INLINE ( hSet( ::getValueMaster(), key, value ) )
 
    METHOD getValue( key )                                      INLINE ( hGet( ::hDictionary, key ) )
    METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
 
-   METHOD hSetDetail( key, value )                             INLINE ( hSet( ::oSender:oDocumentLineTemporal:hDictionary, key, value ) )
    METHOD hGetDetail( key )                                    INLINE ( hGet( ::oSender:oDocumentLineTemporal:hDictionary, key ) )
+   METHOD hSetDetail( key, value )                             INLINE ( hSet( ::oSender:oDocumentLineTemporal:hDictionary, key, value ) )
 
 END CLASS
 
@@ -205,10 +254,42 @@ CLASS AliasDocumentLine FROM DocumentLine
    METHOD setAlias( cAlias )                                   INLINE ( ::cAlias := cAlias )
    METHOD getAlias()                                           INLINE ( ::cAlias )
 
-   METHOD getValue( key )                                      INLINE ( D():getFieldFromAliasDictionary( key, ::getAlias(), ::getDictionary() ) )
+   METHOD getValue( key, uDefault )                            INLINE ( D():getFieldFromAliasDictionary( key, ::getAlias(), ::getDictionary(), uDefault ) )
    METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
+
+   METHOD getRecno()                                           INLINE ( ( ::getAlias() )->( recno() ) )
+
+   METHOD selectAllLine()
+
+   METHOD setLinesScope( Id )                                  INLINE ( ( ::getAlias() )->( ordscope( 0, Id ) ),;
+                                                                        ( ::getAlias() )->( ordscope( 1, Id ) ),;
+                                                                        ( ::getAlias() )->( dbgotop() ) ) 
+   METHOD quitLinesScope()                                     INLINE ( ::setLinesScope( nil ) )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
+METHOD selectAllLine() CLASS AliasDocumentLine
+
+   local recno       
+
+   CursorWait()
+
+   recno             := ::getRecno()
+
+   ::aSelectedLines  := {}
+
+   ( ::getAlias() )->( dbgotop() ) 
+   while !( ( ::getAlias() )->( eof() ) )
+      aadd( ::aSelectedLines, ::getRecno() )
+      ( ::getAlias() )->( dbskip() )
+   enddo
+   
+   ( ::getAlias() )->( dbgoto( recno ) )
+
+   CursorArrow()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//

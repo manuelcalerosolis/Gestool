@@ -242,13 +242,13 @@ METHOD lSaveResource( nMode ) CLASS CodigosPostales
 
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
       
-      if empty( ::Codigo:varGet() )
+      if empty( ::codigoPostal:varGet() )
          msgStop( "Código de grupo de família no puede estar vacío." )
-         ::Codigo:setFocus()
+         ::codigoPostal:setFocus()
          return .f.
       end if
 
-      if ::oDbf:seekInOrd( ::Codigo:varGet(), "cCodPrv" )
+      if ::oDbf:seekInOrd( ::codigoPostal:varGet(), "cCodPos" )
          msgStop( "Código ya existe."  )
          return .f.
       end if

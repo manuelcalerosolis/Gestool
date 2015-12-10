@@ -212,7 +212,7 @@ METHOD New() CLASS GeneraFacturasClientes
 
       ::oAgruparCliente    := ComponentCheck():New( 270, .t., Self )
 
-      ::oAgruparDireccion  := ComponentCheck():New( 280, .f., Self )
+      ::oAgruparDireccion        := ComponentCheck():New( 280, .f., Self )
       ::oAgruparDireccion:bWhen  := {|| ::oAgruparCliente:Value() }
 
       ::oAgruparDescuentos := ComponentCheck():New( 293, .f., Self )
