@@ -3643,7 +3643,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE CHECKBOX aGet[ _LRECARGO ] ;
          VAR      aTmp[ _LRECARGO ] ;
          ID       406 ;
-         WHEN     ( lWhen .AND. !lRecibosPagadosTmp( dbfTmpPgo ) ) ;
+         WHEN     ( lWhen .and. !lRecibosPagadosTmp( dbfTmpPgo ) ) ;
          ON CHANGE( RecalculaTotal( aTmp ) );
          OF       oFld:aDialogs[1]
 

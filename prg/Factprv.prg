@@ -2262,7 +2262,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
 
       REDEFINE RADIO aGet[ _NREGIVA ] VAR aTmp[ _NREGIVA ] ;
          ID       270, 271, 272, 273 ;
-         WHEN     ( .f. ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CCODDLG ] VAR aTmp[ _CCODDLG ] ;
