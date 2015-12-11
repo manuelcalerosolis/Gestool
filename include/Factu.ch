@@ -42,6 +42,7 @@ Fichero de Cabecera para la Aplcaci¢n de Facturaci¢n 3.0 para Windows
 #define __LENGRUPOSFAMILIAS__            3
 #define __LENTIPOSARTICULOS__            4
 #define __LENCATEGORIAS__                4
+#define __LENFABRICANTES__               3
 
 /*
 Defines para ficheros INI

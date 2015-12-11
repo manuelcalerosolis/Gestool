@@ -199,6 +199,33 @@ Return ( cValue )
 
 //---------------------------------------------------------------------------//
 
+Static Function GetDate( cColumn, nRow )
+
+   local oError
+   local oBlock
+   local uValue
+   local cValue   := ""
+
+   oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   uValue         := oOleExcel:oExcel:ActiveSheet:Range( cColumn + lTrim( Str( nRow ) ) ):Value
+   if Valtype( uValue ) == "D"
+      cValue      := alltrim( dtoc( uValue ) )
+   end if 
+
+   RECOVER USING oError
+
+      msgStop( "Imposible obtener columna de excel" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+Return ( cValue )
+
+//---------------------------------------------------------------------------//
+
 Static Function GetNumeric( cColumn, nRow )
 
    local oError
@@ -377,56 +404,65 @@ Return ( .t. )
 
 Static Function ImportaArticulosCamposExtra( nLin )
 
-   ImportaCampoExtra( "001", "Q", nLin, .f. ) //Memo
+   ImportaCampoExtra( "001", "Q", nLin, "C" ) //Memo
 
-   //ImportaCampoExtra( "002", "N", nLin, .f. ) //Referencia
+   ImportaCampoExtra( "002", "N", nLin, "C" ) //Referencia
 
-   //ImportaCampoExtra( "003", "BA", nLin, .f. ) //Auxiliar
+   ImportaCampoExtra( "003", "BA", nLin, "C" ) //Auxiliar
 
-   ImportaCampoExtra( "004", "DJ", nLin, .f. ) //Barco
+   ImportaCampoExtra( "004", "DJ", nLin, "C" ) //Barco
 
-   ImportaCampoExtra( "005", "DR", nLin, .f. ) //Observaciones ventas
+   ImportaCampoExtra( "005", "DR", nLin, "C" ) //Observaciones ventas
 
-   ImportaCampoExtra( "006", "AQ", nLin, .f. ) //Factor
+   ImportaCampoExtra( "006", "AQ", nLin, "C" ) //Factor
 
-   ImportaCampoExtra( "007", "DU", nLin, .f. ) //Nombre científico
+   ImportaCampoExtra( "007", "DU", nLin, "C" ) //Nombre científico
 
-   ImportaCampoExtra( "008", "DV", nLin, .f. ) //Composición
+   ImportaCampoExtra( "008", "DV", nLin, "C" ) //Composición
 
-   ImportaCampoExtra( "009", "DW", nLin, .f. ) //Neto
+   ImportaCampoExtra( "009", "DW", nLin, "C" ) //Neto
 
-   ImportaCampoExtra( "010", "DX", nLin, .f. ) //Conservación
+   ImportaCampoExtra( "010", "DX", nLin, "C" ) //Conservación
 
-   ImportaCampoExtra( "011", "DY", nLin, .f. ) //Lugar procedencia
+   ImportaCampoExtra( "011", "DY", nLin, "C" ) //Lugar procedencia
 
-   ImportaCampoExtra( "012", "ED", nLin, .f. ) //Formato
+   ImportaCampoExtra( "012", "ED", nLin, "C" ) //Formato
 
-   ImportaCampoExtra( "013", "EE", nLin, .f. ) //Talla
+   ImportaCampoExtra( "013", "EE", nLin, "C" ) //Talla
 
-   ImportaCampoExtra( "014", "EF", nLin, .f. ) //Presentación
+   ImportaCampoExtra( "014", "EF", nLin, "C" ) //Presentación
 
-   ImportaCampoExtra( "015", "EG", nLin, .f. ) //Origen
+   ImportaCampoExtra( "015", "EG", nLin, "C" ) //Origen
 
-   ImportaCampoExtra( "016", "EH", nLin, .f. ) //Observación formato
+   ImportaCampoExtra( "016", "EH", nLin, "C" ) //Observación formato
 
-   ImportaCampoExtra( "017", "FI", nLin, .f. ) //Descripción aAlternativa
+   ImportaCampoExtra( "017", "FI", nLin, "C" ) //Descripción aAlternativa
 
-   ImportaCampoExtra( "018", "DL", nLin, .t. ) //Marea
+   ImportaCampoExtra( "018", "DL", nLin, "N" ) //Marea
+
+   ImportaCampoExtra( "019", "DS", nLin, "D" ) //Fecha pedido
 
 Return ( .t. )
 
 //----------------------------------------------------------------------------//
 
-Static Function ImportaCampoExtra( cCod, cCol, nLin, lNum )
+Static Function ImportaCampoExtra( cCod, cCol, nLin, cType )
 
    local cValor      := ""
    //DEFAULT lNum      := .f.
 
-   if !lNum
-      cValor         := GetRange( cCol, nLin )
-   else
-      cValor         := Str( int( GetNumeric( cCol, nLin ) ) )
-   end if
+   do case
+      case cType == "C"
+         cValor      := GetRange( cCol, nLin )
+
+      case cType == "N"
+         cValor      := int( GetNumeric( cCol, nLin ) )
+         cValor      := if( cValor != 0, Str( cValor ), "" )
+
+      case cType == "D"
+         cValor      := GetDate( cCol, nLin )
+
+   end case
 
    if !Empty( cValor )
 
