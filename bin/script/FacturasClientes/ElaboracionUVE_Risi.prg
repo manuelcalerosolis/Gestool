@@ -316,7 +316,7 @@ METHOD ProcessFile() CLASS FacturasClientesRisi
                   ::oUve:PrecioBase(      ::getPrecioBase() )
 
                   ::oUve:UM(              'UN' )
-                  ::oUve:Descuentos(      nTotDtoLFacCli( D():FacturasClientesLineas( ::nView ) ) )
+                  ::oUve:Descuentos(      nTotDtoLFacCli( D():FacturasClientesLineas( ::nView ) ) / ::getCantidad() )
                   ::oUve:PrecioBrutoTotal(nTotLFacCli( D():FacturasClientesLineas( ::nView ) ) )
                   ::oUve:FechaFra(        ( D():FacturasClientes( ::nView ) )->dFecFac )
                   ::oUve:Ejercicio(       Year( ( D():FacturasClientes( ::nView ) )->dFecFac ) )
