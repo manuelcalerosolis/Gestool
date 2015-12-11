@@ -655,6 +655,30 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       end with
 
       with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Código postal"
+         :bEditValue       := {|| alltrim( ( D():PedidosProveedores( nView ) )->cPosPrv ) }
+         :nWidth           := 80
+         :lHide            := .t.
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Población"
+         :bEditValue       := {|| alltrim( ( D():PedidosProveedores( nView ) )->cPobPrv ) }
+         :nWidth           := 180
+         :lHide            := .t.
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Provincia"
+         :bEditValue       := {|| alltrim( ( D():PedidosProveedores( nView ) )->cProPrv ) }
+         :nWidth           := 180
+         :lHide            := .t.
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
+      end with
+
+      with object ( oWndBrw:AddXCol() )
          :cHeader          := "Base"
          :bEditValue       := {|| ( D():PedidosProveedores( nView ) )->nTotNet }
          :cEditPicture     := cPirDiv()

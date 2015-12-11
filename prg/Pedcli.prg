@@ -1318,6 +1318,14 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       end with
 
       with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Código postal"
+         :bEditValue       := {|| alltrim( ( D():PedidosClientes( nView ) )->cPosCli ) }
+         :nWidth           := 80
+         :lHide            := .t.
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
+      end with
+
+      with object ( oWndBrw:AddXCol() )
          :cHeader          := "Población"
          :bEditValue       := {|| alltrim( ( D():PedidosClientes( nView ) )->cPobCli ) }
          :nWidth           := 180
