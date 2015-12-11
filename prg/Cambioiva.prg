@@ -61,9 +61,7 @@ CLASS TConversionDocumentos // FROM DialogBuilder
       METHOD changeSortDocument()
       METHOD changeSearch()
       METHOD setOrderInColumn( oColumn )  
-      METHOD setAliasInBrowseDocument()            INLINE ( if ( !empty( ::oBrwDocuments ),;
-                                                               ( ::oBrwDocuments:cAlias := ::getHeaderAlias(), ::oBrwDocuments:setRdd() ),;
-                                                               ) )
+      METHOD setAliasInBrowseDocument()            INLINE ( if ( !empty( ::oBrwDocuments ), ::oBrwDocuments:setAlias( ::getHeaderAlias() ), ) )
       METHOD getDocument()                         INLINE ( alltrim( ::cDocument ) )
       METHOD getDocumentName()                     INLINE ( if( !empty( ::getHeaderAlias() ), ::getDocument() + space( 1 ) + ::getTextId(), "" ) )
       
@@ -179,6 +177,68 @@ METHOD New()
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
+
+METHOD OpenFiles()
+
+   local oError
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+      ::lOpenFiles      := .t.
+
+      ::nView           := D():CreateView()
+
+      D():Empresa( ::nView )
+
+      D():Proveedores( ::nView )
+      
+      D():Clientes( ::nView )
+
+      D():GruposProveedores( ::nView )
+
+      D():PedidosProveedores( ::nView )
+
+      D():PedidosProveedoresLineas( ::nView )
+
+      D():PedidosProveedoresIncidencias( ::nView )
+
+      D():PedidosProveedoresDocumentos( ::nView )
+
+      D():SATClientes( ::nView )
+      
+      D():SATClientesLineas( ::nView )
+
+      D():PropiedadesLineas( ::nView )
+
+   RECOVER USING oError
+
+      ::lOpenFiles      := .f.
+
+      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   if !::lOpenFiles
+      ::CloseFiles()
+   end if
+
+RETURN ( ::lOpenFiles )
+
+//---------------------------------------------------------------------------//
+
+METHOD CloseFiles()
+
+   D():DeleteView( ::nView )
+
+   ::lOpenFiles         := .f.
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
    
 METHOD Dialog() 
 
@@ -649,62 +709,6 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD OpenFiles()
-
-   local oError
-   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-
-   BEGIN SEQUENCE
-
-      ::lOpenFiles      := .t.
-
-      ::nView           := D():CreateView()
-
-      D():Empresa( ::nView )
-
-      D():Proveedores( ::nView )
-      
-      D():Clientes( ::nView )
-
-      D():GruposProveedores( ::nView )
-
-      D():PedidosProveedores( ::nView )
-
-      D():PedidosProveedoresLineas( ::nView )
-
-      D():PedidosProveedoresIncidencias( ::nView )
-
-      D():PedidosProveedoresDocumentos( ::nView )
-
-      D():PropiedadesLineas( ::nView )
-
-   RECOVER USING oError
-
-      ::lOpenFiles      := .f.
-
-      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if !::lOpenFiles
-      ::CloseFiles()
-   end if
-
-RETURN ( ::lOpenFiles )
-
-//---------------------------------------------------------------------------//
-
-METHOD CloseFiles()
-
-   D():DeleteView( ::nView )
-
-   ::lOpenFiles         := .f.
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
 
 METHOD showDocuments()
 

@@ -806,12 +806,12 @@ RETURN ( oMeter )
 
 //---------------------------------------------------------------------------//
 
-Function AutoTextDialog( oDialog, textColor, backgroundColor )
+Function autoTextDialog( oDialog, textColor, backgroundColor )
 
    DEFAULT textColor        := rgb(0,0,0)
    DEFAULT backgroundColor  := rgb(239,228,176)
 
-   oText   := TSay():New( 2, 0, {||cText}, oDialog, , , .t., .f., .f., .t., textColor, backgroundColor, oDialog:nWidth, 16, .f., .t., .f., .f., .f. )
+   oText                    := TSay():New( 2, 0, {||cText}, oDialog, , , .t., .f., .f., .t., textColor, backgroundColor, oDialog:nWidth, 16, .f., .t., .f., .f., .f. )
 
 RETURN ( oText )
 
@@ -823,7 +823,7 @@ Function SetAutoTextDialog( cText, oDialog, textColor, backgroundColor )
    DEFAULT backgroundColor  := rgb(239,228,176)
 
    if empty(oText) .and. !empty(oDialog)
-      AutoTextDialog( oDialog, textColor, backgroundColor )
+      autoTextDialog( oDialog, textColor, backgroundColor )
    end if 
 
    if !empty(oText)

@@ -520,7 +520,7 @@ METHOD NewResource( cFldRes ) CLASS TFastReportInfGen
       :cHeader       := "Desde"
       :bEditValue    := {|| ::aInitGroup[ ::oBrwRango:nArrayAt ]:Cargo:Desde }
       :bOnPostEdit   := {|o,x| ::aInitGroup[ ::oBrwRango:nArrayAt ]:Cargo:Desde := x }
-      :bEditValid    := {|oGet| ::ValidValueTextDesde( oGet ) } // msginfo( "valid desde" ),
+      :bEditValid    := {|oGet| ::ValidValueTextDesde( oGet ) }
       :bEditBlock    := {|| ::EditValueTextDesde() }
       :cEditPicture  := "@!"
       :nEditType     := 5
