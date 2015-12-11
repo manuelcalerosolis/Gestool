@@ -1453,9 +1453,6 @@ RETURN .T.
 
 Static Function actualizaWeb( cCodFam )
 
-   msgAlert( lPubFam(), "lPubFam" )
-   msgAlert( cCodFam, "cCodFam" )
-
    if lPubFam()
 
       with object ( TComercio():New() )
@@ -1540,10 +1537,10 @@ Static Function EndDetalle( aTmp, aGet, dbfTmp, oBrw, nMode, oDlg, oGet, oGet2 )
    end if
 
    if Empty( aTmp[ ( dbfTmp )->( FieldPos( "cFamPrv" ) ) ] )
-         MsgStop( "Código de la familia no puede estar vacío" )
-         oGet2:SetFocus()
-         return nil
-      end if
+      MsgStop( "Código de la familia no puede estar vacío" )
+      oGet2:SetFocus()
+      return nil
+   end if
 
    if dbSeekFamilia( aTmp, dbfTmp )
       msgStop( "Código de familia existente" )
@@ -1758,11 +1755,11 @@ static function IncTactil( lIncTactil )
       end if
    end if
 
-   if ApoloMsgNoYes(   "¿Desea " + if( lIncTactil, "seleccionar", "deseleccionar" ) +;
-                  " todos los artículos de esta familia," + CRLF +;
-                  "para que sean " + if( lIncTactil, "incluidos en el", "excluidos del" ) +;
-                  " TPV táctil ?",;
-                  ( dbfFamilia )->cCodFam + Space( 1 ) + ( dbfFamilia )->cNomFam )
+   if apoloMsgNoYes( "¿Desea " + if( lIncTactil, "seleccionar", "deseleccionar" ) +;
+                     " todos los artículos de esta familia," + CRLF +;
+                     "para que sean " + if( lIncTactil, "incluidos en el", "excluidos del" ) +;
+                     " TPV táctil ?",;
+                     ( dbfFamilia )->cCodFam + Space( 1 ) + ( dbfFamilia )->cNomFam )
 
       if ( dbfArticulo )->( dbSeek( ( dbfFamilia )->cCodFam ) )
 

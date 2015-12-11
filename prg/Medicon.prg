@@ -823,7 +823,7 @@ Function SetAutoTextDialog( cText, oDialog, textColor, backgroundColor )
    DEFAULT backgroundColor  := rgb(239,228,176)
 
    if empty(oText) .and. !empty(oDialog)
-      AutoTextDialog( oDialog, textColor, backgroundColor )
+      autoTextDialog( oDialog, textColor, backgroundColor )
    end if 
 
    if !empty(oText)

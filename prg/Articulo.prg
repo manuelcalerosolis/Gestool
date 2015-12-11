@@ -18376,8 +18376,8 @@ Static Function BuildWeb( cCodArt )
 
    with object ( TComercio():New() )  
 
-      :MeterTotal( GetAutoMeterDialog() )
-      :TextTotal( GetAutoTextDialog() )
+      :MeterTotal( getAutoMeterDialog() )
+      :TextTotal( getAutoTextDialog() )
 
       :BuildDeleteProductPrestashop( cCodArt )
       :BuildProductPrestashop( cCodArt )
