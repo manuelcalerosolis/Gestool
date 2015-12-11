@@ -29,7 +29,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
 	local n
 	local nIva
-   local lIvaCEE
+   //local lIvaCEE
    local cCtaVent
    local nPos
 	local dFecha
@@ -125,7 +125,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 	*/
 
    cRuta             := cRutCnt()
-   lIvaCEE           := ( ( dbfFacCliT )->nRegIva > 1 )
+  // lIvaCEE           := ( ( dbfFacCliT )->nRegIva > 1 )
 
    if !chkEmpresaAsociada( cCodEmp )
       oTree:Select( oTree:Add( "Factura cliente : " + rtrim( pFactura ) + " no se definierón empresas asociadas.", 0 ) )
@@ -209,7 +209,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                Construimos las bases de los impuestos-----------------------------
                */
 
-               if lIvaCEE
+               if isIVAComunidadEconomicaEuropea( dbfFacCliT )
                   cSubCtaIva  := uFieldEmpresa( "cCtaCeeRpt" )
                   cSubCtaReq  := uFieldEmpresa( "cCtaCeeSpt" )
                else
@@ -718,7 +718,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                                              "TipoImporte"           => 'C',;
                                              "NumeroFactura"         => cFactura,;
                                              "DescripcionApunte"     => cConcepto,;
-                                             "SubtipoFactura"        => if( lIvaCEE, '02', '01' ),; // Ventas
+                                             "SubtipoFactura"        => if( isIVAComunidadEconomicaEuropea( dbfFacCliT ), '02', '01' ),; // Ventas
                                              "BaseImponible"         => nCalculo,;
                                              "PorcentajeIVA"         => aVentas[ n, 2 ],;
                                              "PorcentajeRecargo"     => if( ( dbfFacCliT )->lRecargo, nPReq( dbfIva, aVentas[ n, 2 ] ), 0 ),;
@@ -3619,8 +3619,8 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
       for n := 1 to Len( aTotIva )
 
          if isIVAComunidadEconomicaEuropea( dbfFacPrvT )
-            cSubCtaIva  := uFieldEmpresa( "cCtaCeeRpt" )
-            cSubCtaReq  := uFieldEmpresa( "cCtaCeeSpt" )
+            cSubCtaIva  := uFieldEmpresa( "cCeeRptCom" )
+            cSubCtaReq  := uFieldEmpresa( "cCeeSptCom" )
          else
             cSubCtaIva  := cSubCuentaIva(       aTotIva[ n, 3 ], ( dbfFacPrvT )->lRecargo, cRuta, cCodEmp, dbfIva, .f. )
             cSubCtaReq  := cSubCuentaRecargo(   aTotIva[ n, 3 ], ( dbfFacPrvT )->lRecargo, cRuta, cCodEmp, dbfIva )
@@ -3667,8 +3667,8 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
                */
 
                if isIVAComunidadEconomicaEuropea( dbfFacPrvT )
-                  cSubCtaIva  := uFieldEmpresa( "cCtaCeeRpt" )
-                  cSubCtaReq  := uFieldEmpresa( "cCtaCeeSpt" )
+                  cSubCtaIva  := uFieldEmpresa( "cCeeRptCom" )
+                  cSubCtaReq  := uFieldEmpresa( "cCeeSptCom" )
                else
                   cSubCtaIva  := cSubCuentaIva( ( dbfFacPrvL )->nIva, ( dbfFacPrvT )->lRecargo, cRuta, cCodEmp, dbfIva, .f. )
                   cSubCtaReq  := cSubCuentaRecargo( ( dbfFacPrvL )->nIva, ( dbfFacPrvT )->lRecargo, cRuta, cCodEmp, dbfIva )

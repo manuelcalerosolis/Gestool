@@ -5953,54 +5953,60 @@ STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 127, 53, 300, 11
-  CONTROL "", 110, "TXBrowse", 0x00200000, 127, 66, 300, 75
-  CONTROL "", 370, "Edit", WS_BORDER|WS_TABSTOP, 127, 158, 36, 11
-  CONTROL "", 371, "Edit", WS_BORDER, 194, 158, 233, 11
-  CONTROL "", 380, "Edit", WS_BORDER|WS_TABSTOP, 127, 170, 36, 11
-  CONTROL "", 381, "Edit", WS_BORDER, 194, 170, 233, 11
-  CONTROL "", 390, "Edit", WS_BORDER|WS_TABSTOP, 127, 182, 36, 11
-  CONTROL "", 391, "Edit", WS_BORDER, 194, 182, 233, 11
-  CONTROL "", 400, "Edit", WS_BORDER|WS_TABSTOP, 127, 194, 66, 11
-  CONTROL "", 401, "Edit", WS_BORDER, 194, 194, 233, 11
-  CONTROL "", 410, "Edit", WS_BORDER|WS_TABSTOP, 127, 206, 66, 11
-  CONTROL "", 411, "Edit", WS_BORDER, 194, 206, 233, 11
-  CONTROL "", 430, "Edit", WS_BORDER|WS_TABSTOP, 127, 218, 66, 11
-  CONTROL "", 431, "Edit", WS_BORDER, 194, 218, 233, 11
-  CONTROL "", 440, "Edit", WS_BORDER|WS_TABSTOP, 127, 230, 66, 11
-  CONTROL "", 441, "Edit", WS_BORDER, 194, 230, 233, 11
-  CONTROL "", 445, "Edit", WS_BORDER|WS_TABSTOP, 127, 242, 66, 11
-  CONTROL "", 510, "Edit", WS_BORDER|WS_TABSTOP, 127, 254, 66, 11
-  CONTROL "", 511, "Edit", WS_BORDER, 194, 254, 233, 11
-  CONTROL "", 446, "Edit", WS_BORDER, 194, 242, 233, 11
-  CONTROL "", 450, "Edit", WS_BORDER|WS_TABSTOP, 127, 282, 66, 11
-  CONTROL "", 451, "Edit", WS_BORDER, 194, 282, 233, 11
-  CONTROL "", 460, "Edit", WS_BORDER|WS_TABSTOP, 127, 294, 66, 11
+  CONTROL "", 110, "TXBrowse", 0x00200000, 127, 66, 300, 54
+  CONTROL "", 370, "Edit", WS_BORDER|WS_TABSTOP, 127, 135, 36, 11
+  CONTROL "", 371, "Edit", WS_BORDER, 194, 135, 233, 11
+  CONTROL "", 380, "Edit", WS_BORDER|WS_TABSTOP, 127, 147, 36, 11
+  CONTROL "", 381, "Edit", WS_BORDER, 194, 147, 233, 11
+  CONTROL "", 390, "Edit", WS_BORDER|WS_TABSTOP, 127, 159, 36, 11
+  CONTROL "", 391, "Edit", WS_BORDER, 194, 159, 233, 11
+  CONTROL "", 400, "Edit", WS_BORDER|WS_TABSTOP, 127, 171, 66, 11
+  CONTROL "", 401, "Edit", WS_BORDER, 194, 171, 233, 11
+  CONTROL "", 410, "Edit", WS_BORDER|WS_TABSTOP, 127, 183, 66, 11
+  CONTROL "", 411, "Edit", WS_BORDER, 194, 183, 233, 11
+  CONTROL "", 430, "Edit", WS_BORDER|WS_TABSTOP, 127, 195, 66, 11
+  CONTROL "", 431, "Edit", WS_BORDER, 194, 195, 233, 11
+  CONTROL "", 440, "Edit", WS_BORDER|WS_TABSTOP, 127, 207, 66, 11
+  CONTROL "", 441, "Edit", WS_BORDER, 194, 207, 233, 11
+  CONTROL "", 445, "Edit", WS_BORDER|WS_TABSTOP, 127, 219, 66, 11
+  CONTROL "", 510, "Edit", WS_BORDER|WS_TABSTOP, 127, 231, 66, 11
+  CONTROL "", 511, "Edit", WS_BORDER, 194, 231, 233, 11
+  CONTROL "", 446, "Edit", WS_BORDER, 194, 219, 233, 11
+  CONTROL "", 450, "Edit", WS_BORDER|WS_TABSTOP, 151, 258, 50, 11
+  CONTROL "", 451, "Edit", WS_BORDER, 202, 258, 225, 11
+  CONTROL "", 460, "Edit", WS_BORDER|WS_TABSTOP, 151, 270, 50, 11
   CONTROL "Realizar apunte siempre incluso con importes a cero", 470, "Button", BS_AUTOCHECKBOX|BS_MULTILINE|WS_TABSTOP, 50, 309, 177, 11
   CONTROL "Utilizar decimales en cuentas con recargos de equivalencia", 480, "Button", BS_AUTOCHECKBOX|BS_MULTILINE|WS_TABSTOP, 50, 322, 213, 11
   CONTROL "Permitir realizar apuntes en negativo", 490, "Button", BS_AUTOCHECKBOX|BS_MULTILINE|WS_TABSTOP, 50, 335, 127, 11
   CONTROL "Impuesto + Recargo de equivalencia", 420, "Button", BS_AUTORADIOBUTTON, 293, 310, 129, 10
   CONTROL "Recargo de equivalencia + Impuesto", 421, "Button", BS_AUTORADIOBUTTON, 293, 322, 129, 10
-  CONTROL "", 461, "Edit", WS_BORDER, 194, 294, 233, 11
-  CONTROL "Propiedades del enlace", -1, "Button", BS_GROUPBOX, 44, 29, 388, 116
+  CONTROL "", 461, "Edit", WS_BORDER, 202, 270, 225, 11
+  CONTROL "Propiedades del enlace", -1, "Button", BS_GROUPBOX, 44, 29, 388, 94
   CONTROL "Directorio", -1, "Static", WS_GROUP, 50, 56, 35, 9
-  CONTROL "Cuentas especiales", -1, "Button", BS_GROUPBOX, 44, 147, 388, 121
-  CONTROL "Ventas", -1, "Static", WS_GROUP, 50, 161, 49, 8
-  CONTROL "Compras", -1, "Static", WS_GROUP, 50, 173, 44, 8
-  CONTROL "Imp. especiales", -1, "Static", WS_GROUP, 50, 185, 50, 8
-  CONTROL "Cobros T.P.V.", -1, "Static", WS_GROUP, 50, 197, 50, 8
-  CONTROL "Clientes ", -1, "Static", WS_GROUP, 50, 209, 50, 8
-  CONTROL "Anticipos", -1, "Static", WS_GROUP, 50, 221, 50, 8
-  CONTROL "Retenciones", -1, "Static", WS_GROUP, 50, 233, 50, 8
-  CONTROL "Impuestos y configuración de apuntes", -1, "Button", BS_GROUPBOX, 44, 271, 388, 77
-  CONTROL "IVA soportado en UE", -1, "Static", WS_GROUP, 50, 285, 72, 8
-  CONTROL "IVA repercutido en UE", -1, "Static", WS_GROUP, 50, 297, 76, 8
+  CONTROL "Cuentas especiales", -1, "Button", BS_GROUPBOX, 44, 124, 388, 121
+  CONTROL "Ventas", -1, "Static", WS_GROUP, 50, 138, 49, 8
+  CONTROL "Compras", -1, "Static", WS_GROUP, 50, 150, 44, 8
+  CONTROL "Imp. especiales", -1, "Static", WS_GROUP, 50, 162, 50, 8
+  CONTROL "Cobros T.P.V.", -1, "Static", WS_GROUP, 50, 174, 50, 8
+  CONTROL "Clientes ", -1, "Static", WS_GROUP, 50, 186, 50, 8
+  CONTROL "Anticipos", -1, "Static", WS_GROUP, 50, 198, 50, 8
+  CONTROL "Retenciones", -1, "Static", WS_GROUP, 50, 210, 50, 8
+  CONTROL "Impuestos y configuración de apuntes", -1, "Button", BS_GROUPBOX, 44, 247, 388, 101
+  CONTROL "IVA venta soportado en UE", -1, "Static", WS_GROUP, 50, 261, 94, 8
+  CONTROL "IVA venta repercutido en UE", -1, "Static", WS_GROUP, 50, 273, 95, 8
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Enlace y cuentas de contabilidad", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 384, 8
-  CONTROL "Portes", -1, "Static", WS_GROUP, 50, 245, 50, 8
-  CONTROL "Gastos", -1, "Static", WS_GROUP, 50, 257, 50, 8
+  CONTROL "Portes", -1, "Static", WS_GROUP, 50, 222, 50, 8
+  CONTROL "Gastos", -1, "Static", WS_GROUP, 50, 234, 50, 8
   CONTROL "", 90, "ComboBox", WS_BORDER|CBS_DROPDOWN|WS_VSCROLL|WS_TABSTOP, 127, 38, 300, 106
   CONTROL "Aplicación", -1, "Static", WS_GROUP, 50, 42, 38, 9
   CONTROL "Series y empresa", -1, "Static", WS_GROUP, 50, 70, 59, 10
+  CONTROL "", 550, "Edit", WS_BORDER|WS_TABSTOP, 151, 282, 50, 11
+  CONTROL "", 551, "Edit", WS_BORDER, 202, 282, 225, 11
+  CONTROL "", 560, "Edit", WS_BORDER|WS_TABSTOP, 151, 294, 50, 11
+  CONTROL "", 561, "Edit", WS_BORDER, 202, 294, 225, 11
+  CONTROL "IVA compra soportado en UE", 4005, "Static", WS_GROUP, 50, 285, 98, 8
+  CONTROL "IVA compra repercutido en UE", 4006, "Static", WS_GROUP, 50, 297, 98, 8
 }
 
 EMPRESACFG DIALOG DISCARDABLE 137, 27, 435, 429

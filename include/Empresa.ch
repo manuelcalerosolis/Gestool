@@ -309,3 +309,5 @@
 #define _LRECENT    309
 #define _CSERIEPRE  310
 #define _LSERVICIO  311
+#define _CCEERPTCOM 312
+#define _CCEESPTCOM 313

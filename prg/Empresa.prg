@@ -2260,6 +2260,30 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          VALID    ( MkSubcuenta( aGet[ _CCTACEERPT ], nil, aGet[ _CCTACEERPT ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
          OF       fldContabilidad
 
+//IVA COMPRAS------------------------------------------------------------------
+
+      REDEFINE GET aGet[ _CCEESPTCOM ] VAR aTmp[ _CCEESPTCOM ] ;
+         ID       550 ;
+         IDSAY    551 ;
+         PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
+         WHEN     ( ChkRuta( aTmp[ _CRUTCNT ], .f. ) ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwChkSubcuenta( aGet[ _CCEESPTCOM ], aGet[ _CCEESPTCOM ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
+         VALID    ( MkSubcuenta( aGet[ _CCEESPTCOM ], nil, aGet[ _CCEESPTCOM ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
+         OF       fldContabilidad
+
+      REDEFINE GET aGet[ _CCEERPTCOM ] VAR aTmp[ _CCEERPTCOM ] ;
+         ID       560 ;
+         IDSAY    561 ;
+         PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
+         WHEN     ( ChkRuta( aTmp[ _CRUTCNT ], .f. ) ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwChkSubcuenta( aGet[ _CCEERPTCOM ], aGet[ _CCEERPTCOM ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
+         VALID    ( MkSubcuenta( aGet[ _CCEERPTCOM ], nil, aGet[ _CCEERPTCOM ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
+         OF       fldContabilidad
+
+//-----------------------------------------------------------------------------         
+
       REDEFINE RADIO nIvaReq ;
          ID       420, 421 ;
          WHEN     ChkRuta( aTmp[ _CRUTCNT ], .f. ) ;
@@ -5444,6 +5468,8 @@ Static Function AppFromEmpresa( cCodEmp, dbfEmp, aGet, aTmp, tmpDlg, dbfDlg )
       aTmp[ _NDIAVAL ]     := (dbfEmp)->nDiaVal
       aTmp[ _CCTACEERPT ]  := (dbfEmp)->cCtaCeeRpt
       aTmp[ _CCTACEESPT ]  := (dbfEmp)->cCtaCeeSpt
+      aTmp[ _CCEERPTCOM ]  := (dbfEmp)->cCeeRptCom
+      aTmp[ _CCEESPTCOM ]  := (dbfEmp)->cCeeSptCom
 
       /*
       Agregamos las delegaciones-----------------------------------------------
@@ -6680,6 +6706,8 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"lRecEnt",    "L",  1, 0, "Lógico para recibir albaranes como entregados",         "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"cSeriePre",  "C",  1, 0, "Serie para presupuestos de internet",                   "", "", "aEmp()", "A" } )
    aAdd( aDbf, {"lServicio",  "L",  1, 0, "Lógico Fecha servicio",                                 "", "", "aEmp()" } )
+   aAdd( aDbf, {"cCeeRptCom", "C", 12, 0, "Cuenta en contaplus de impuestos repercutido en compras", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCeeSptCom", "C", 12, 0, "Cuenta en contaplus de impuestos devengado en compras",   "", "", "aEmp()", nil } )
 
 Return ( aDbf )
 
