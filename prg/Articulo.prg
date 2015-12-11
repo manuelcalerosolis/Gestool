@@ -3222,6 +3222,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
       TBtnBmp():ReDefine( 372, "Printer_pencil_16",,,,,{|| brwSelectPropiedad( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ], @aTmp[ ( D():Articulos( nView ) )->( fieldpos( "mValPrp2" ) ) ] ) }, fldPropiedades, .f., , .f., "Seleccionar propiedades" )
 
+      // Browse de propiedades y precios---------------------------------------
 
       oBrwDiv                 := IXBrowse():New( fldPropiedades )
 
@@ -3233,43 +3234,57 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       oBrwDiv:cName           := "Articulos.Propiedades"
 
       with object ( oBrwDiv:AddCol() )
-         :cHeader          := AllTrim( retProp( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "cCodPrp1" ) ) ], dbfPro ) )
+         :cHeader          := "Prop. 1"
          :cSortOrder       := "cValPr1"
-         :bEditValue       := {|| AllTrim( ( dbfTmpVta )->cValPr1 ) + " - " + AllTrim( retValProp( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ] + ( dbfTmpVta )->cValPr1 ) ) }
-         :nWidth           := 160
+         :bEditValue       := {|| ( dbfTmpVta )->cValPr1 }
+         :nWidth           := 40
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
+      end with
+
+      with object ( oBrwDiv:AddCol() )
+         :cHeader          := "Nombre propiedad 1"
+         :bEditValue       := {|| nombrePropiedad( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ], ( dbfTmpVta )->cValPr1, nView ) }
+         :nWidth           := 100
+         :lHide            := .t.
       end with
 
       if retFld( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "cCodPrp1" ) ) ], dbfPro, "lColor" )
 
          with object ( oBrwDiv:AddCol() )
-            :cHeader          := "C. Prp1"
-            :bStrData         := {|| "" }
-            :nWidth           := 16
-            :bClrStd          := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "cCodPrp1" ) ) ] + ( dbfTmpVta )->cValPr1, dbfTblPro, "nColor" ) } }
-            :bClrSel          := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "cCodPrp1" ) ) ] + ( dbfTmpVta )->cValPr1, dbfTblPro, "nColor" ) } }
-            :bClrSelFocus     := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "cCodPrp1" ) ) ] + ( dbfTmpVta )->cValPr1, dbfTblPro, "nColor" ) } }
+            :cHeader       := "C. Prp 1"
+            :bStrData      := {|| "" }
+            :nWidth        := 16
+            :bClrStd       := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "cCodPrp1" ) ) ] + ( dbfTmpVta )->cValPr1, dbfTblPro, "nColor" ) } }
+            :bClrSel       := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "cCodPrp1" ) ) ] + ( dbfTmpVta )->cValPr1, dbfTblPro, "nColor" ) } }
+            :bClrSelFocus  := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "cCodPrp1" ) ) ] + ( dbfTmpVta )->cValPr1, dbfTblPro, "nColor" ) } }
          end with
 
       end if
 
       with object ( oBrwDiv:AddCol() )
-         :cHeader          := AllTrim( retProp( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "cCodPrp2" ) ) ], dbfPro ) )
+         :cHeader          := "Prop. 2"
          :cSortOrder       := "cValPr2"
-         :bEditValue       := {|| AllTrim( ( dbfTmpVta )->cValPr2 ) + " - " + AllTrim( retValProp( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ] + ( dbfTmpVta )->cValPr2 ) ) }
-         :nWidth           := 160
+         :bEditValue       := {|| ( dbfTmpVta )->cValPr2 }
+         :nWidth           := 40
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
+      end with
+
+      with object ( oBrwDiv:AddCol() )
+         :cHeader          := "Nombre propiedad 2"
+         :bEditValue       := {|| nombrePropiedad( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ], ( dbfTmpVta )->cValPr2, nView ) }
+         :nWidth           := 100
+         :lHide            := .t.
       end with
 
       if retFld( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "cCodPrp2" ) ) ], dbfPro, "lColor" )
 
          with object ( oBrwDiv:AddCol() )
-            :cHeader          := "C. Prp2"
-            :bStrData         := {|| "" }
-            :nWidth           := 16
-            :bClrStd          := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "cCodPrp2" ) ) ] + ( dbfTmpVta )->cValPr2, dbfTblPro, "nColor" ) } }
-            :bClrSel          := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "cCodPrp2" ) ) ] + ( dbfTmpVta )->cValPr2, dbfTblPro, "nColor" ) } }
-            :bClrSelFocus     := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "cCodPrp2" ) ) ] + ( dbfTmpVta )->cValPr2, dbfTblPro, "nColor" ) } }
+            :cHeader       := "C. Prp2"
+            :bStrData      := {|| "" }
+            :nWidth        := 16
+            :bClrStd       := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "cCodPrp2" ) ) ] + ( dbfTmpVta )->cValPr2, dbfTblPro, "nColor" ) } }
+            :bClrSel       := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "cCodPrp2" ) ) ] + ( dbfTmpVta )->cValPr2, dbfTblPro, "nColor" ) } }
+            :bClrSelFocus  := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "cCodPrp2" ) ) ] + ( dbfTmpVta )->cValPr2, dbfTblPro, "nColor" ) } }
          end with
 
       end if
