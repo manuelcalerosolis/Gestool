@@ -6016,7 +6016,7 @@ Return ( by( nRow ) )
 
 Function Test() 
 
-   //TConversionDocumentos():New():Dialog()
+   // msgAlert( cPatTmp(), "cPatTmp" )
 
 Return ( nil )
 

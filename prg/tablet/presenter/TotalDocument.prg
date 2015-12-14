@@ -115,3 +115,5 @@ METHOD transgetPrice() CLASS TotalDocument
    endif
 
 Return( Trans( transImporte, cPorDiv() ) )
+
+//---------------------------------------------------------------------------//

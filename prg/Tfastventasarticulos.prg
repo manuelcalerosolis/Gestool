@@ -574,6 +574,7 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddField( "cTipDoc",     "C", 30, 0, {|| "" },   "Tipo de documento"                       )
    ::AddField( "cIdeDoc",     "C", 27, 0, {|| "" },   "Identificador del documento"             )
    ::AddField( "nNumLin",     "N",  4, 0, {|| "" },   "Número de línea"                         )
+
    ::AddField( "cSerDoc",     "C",  1, 0, {|| "" },   "Serie del documento"                     )
    ::AddField( "cNumDoc",     "C", 10, 0, {|| "" },   "Número del documento"                    )
    ::AddField( "cSufDoc",     "C",  2, 0, {|| "" },   "Delegación del documento"                )
@@ -1343,8 +1344,25 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
                   ::oDbf:Blank()
 
+                  ::oDbf:cClsDoc    := PED_CLI
+                  ::oDbf:cTipDoc    := "Pedido cliente"
+                  ::oDbf:cSerDoc    := ( D():PedidosClientes( ::nView ) )->cSerPed
+                  ::oDbf:cNumDoc    := str( ( D():PedidosClientes( ::nView ) )->nNumPed )
+                  ::oDbf:cSufDoc    := ( D():PedidosClientes( ::nView ) )->cSufPed
+
+                  ::oDbf:cIdeDoc    := ::idDocumento()
+                  ::oDbf:nNumLin    := ( aliasPedidosClientesLineas )->nNumLin
+
                   ::oDbf:cCodArt    := ( aliasPedidosClientesLineas )->cRef
                   ::oDbf:cNomArt    := ( aliasPedidosClientesLineas )->cDetalle
+
+                  ::oDbf:cCodPr1    := ( aliasPedidosClientesLineas )->cCodPr1
+                  ::oDbf:cCodPr2    := ( aliasPedidosClientesLineas )->cCodPr2
+                  ::oDbf:cValPr1    := ( aliasPedidosClientesLineas )->cValPr1
+                  ::oDbf:cValPr2    := ( aliasPedidosClientesLineas )->cValPr2
+
+                  ::oDbf:cLote      := ( aliasPedidosClientesLineas )->cLote
+                  ::oDbf:dFecCad    := ( aliasPedidosClientesLineas )->dFecCad
 
                   ::oDbf:cCodPrv    := ( aliasPedidosClientesLineas )->cCodPrv
                   ::oDbf:cNomPrv    := RetFld( ( aliasPedidosClientesLineas )->cCodPrv, ::oDbfPrv:cAlias )
