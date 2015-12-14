@@ -25,7 +25,7 @@ CLASS Iva
    METHOD setBase( nPosition, nValue )             INLINE ( ::setValue( nPosition, "Base", nValue ) )
    METHOD sumBase( nPosition, nValue )             INLINE ( ::setBase( nPosition, ::getBaseArray( nPosition ) + nValue ) )
 
-   METHOD getPorcentajeImpuesto( nPosition )       INLINE ( hGet( ::aIva[ nPosition ], "PorcentajeImpuesto" ) )
+   METHOD getPercentageTax( nPosition )            INLINE ( hGet( ::aIva[ nPosition ], "PorcentajeImpuesto" ) )
    METHOD getImporteImpuesto( nPosition )          INLINE ( hGet( ::aIva[ nPosition ], "ImporteImpuesto" ) )
    METHOD getPorcentajeRecargo( nPosition )        INLINE ( hGet( ::aIva[ nPosition ], "PorcentajeRecargo" ) )
    METHOD getImporteRecargo( nPosition )           INLINE ( hGet( ::aIva[ nPosition ], "ImporteRecargo" ) )
@@ -72,7 +72,7 @@ METHOD add( oDocumentLine )
    nPosition      := aScan( ::aIva, {|hIva| oDocumentLine:getPercentageTax() == ::getTipoIva( hIva ) .and. oDocumentLine:getRecargoEquivalencia() == ::getTipoRecargo( hIva ) } )
 
    if nPosition != 0
-      ::sumBase( nPosition, oDocumentLine:Total() )
+      ::sumBase( nPosition, oDocumentLine:getTotal() )
    else
       ::addIva( oDocumentLine )
    end if 
@@ -85,11 +85,11 @@ METHOD addIva( oDocumentLine )
 
    Local hHash
 
-   hHash    := {  "Base" => oDocumentLine:Total(),;
-                  "PorcentajeImpuesto" => oDocumentLine:getPorcentajeImpuesto(),;
+   hHash    := {  "Base" => oDocumentLine:getTotal(),;
+                  "PorcentajeImpuesto" => oDocumentLine:getPercentageTax(),;
                   "PorcentajeRecargo" => oDocumentLine:getRecargoEquivalencia() }
 
-   AADD( ::aIva, hHash )
+   aadd( ::aIva, hHash )
 
 Return( Self )
 
@@ -101,11 +101,11 @@ METHOD ImporteImpuesto( nPosition )
 
    Local ImporteImpuesto         := 0
 
-   if ::getPorcentajeImpuesto( nPosition ) !=0
+   if ::getPercentageTax( nPosition ) !=0
       if ::getValueMaster( "ImpuestosIncluidos" )
-         ImporteImpuesto         := ::getBaseArray( nPosition ) - ( ::getBaseArray( nPosition ) / ( 1 + ::getPorcentajeImpuesto( nPosition ) / 100 ) )
+         ImporteImpuesto         := ::getBaseArray( nPosition ) - ( ::getBaseArray( nPosition ) / ( 1 + ::getPercentageTax( nPosition ) / 100 ) )
       else
-         ImporteImpuesto         := ( ::getBaseArray( nPosition ) * ::getPorcentajeImpuesto( nPosition ) ) / 100
+         ImporteImpuesto         := ( ::getBaseArray( nPosition ) * ::getPercentageTax( nPosition ) ) / 100
       endif
 
    endif
@@ -177,8 +177,8 @@ METHOD ShowPorcentajes( nPosition )
 
    Local Porcentaje := ""
 
-   if !IsNil( ::getPorcentajeImpuesto( nPosition ) )
-      Porcentaje  += Trans( ::getPorcentajeImpuesto( nPosition ), "@E 999.99" )
+   if !IsNil( ::getPercentageTax( nPosition ) )
+      Porcentaje  += Trans( ::getPercentageTax( nPosition ), "@E 999.99" )
    endif
 
    Porcentaje     += CRLF

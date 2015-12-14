@@ -52,7 +52,7 @@ METHOD Calculate() CLASS TotalDocument
 
    for each oDocumentLine in ::oSender:oDocumentLines:aLines
       
-      ::Bruto  += oDocumentLine:Total()
+      ::Bruto  += oDocumentLine:getTotal()
 
       ::oIva:add( oDocumentLine )
 

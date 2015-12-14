@@ -108,7 +108,7 @@ CLASS DocumentsSales FROM Documents
       METHOD gotoUltimoCliente()
       METHOD setUltimoCliente()
 
-   METHOD Total()                                           INLINE ( ::oDocumentLines:Total() )
+   METHOD getTotal()                                        INLINE ( ::oDocumentLines:getTotal() )
    METHOD calculaIVA()                                      VIRTUAL
 
    METHOD saveAppendDetail()
@@ -763,7 +763,6 @@ METHOD assignLinesDocument() CLASS DocumentsSales
       oDocumentLine:setSerieMaster()
       oDocumentLine:setNumeroMaster()
       oDocumentLine:setSufijoMaster()
-      oDocumentLine:setAlmacenMaster()
 
       // msgAlert( hGet( oDocumentLine:hDictionary, "Almacen" ), "almacen" )
 

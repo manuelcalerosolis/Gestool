@@ -125,7 +125,7 @@ METHOD columnsBrowseLineas() CLASS DocumentSalesViewEdit
 
    with object ( ::oBrowse:AddCol() )
       :cHeader                := "Total"
-      :bEditValue             := {|| ::getDocumentLine():Total() }
+      :bEditValue             := {|| ::getDocumentLine():getTotal() }
       :cEditPicture           := cPouDiv()
       :nWidth                 := 120
       :nDataStrAlign          := 1

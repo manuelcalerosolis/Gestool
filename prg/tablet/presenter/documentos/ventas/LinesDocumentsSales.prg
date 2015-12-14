@@ -389,7 +389,7 @@ Return ( self )
 METHOD recalcularTotal() CLASS LinesDocumentsSales
 
    if !empty( ::oViewEditDetail:oTotalLinea )
-      ::oViewEditDetail:oTotalLinea:cText( ::oSender:oDocumentLineTemporal:Total() )
+      ::oViewEditDetail:oTotalLinea:cText( ::oSender:oDocumentLineTemporal:getTotal() )
    end if
 
 RETURN ( .t. )

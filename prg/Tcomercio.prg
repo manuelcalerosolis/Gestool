@@ -6323,7 +6323,7 @@ Return ( Self )
 METHOD buildFabricantePrestashop( id ) CLASS TComercio
 
    if aScan( ::aFabricantesData, {|h| hGet( h, "id" ) == id } ) == 0
-      if ::oFab:SeekInOrd( id, "cCodFab" ) 
+      if ::oFab:SeekInOrd( id, "cCodFab" ) .and. ::oFab:lPubInt
          if ::lSyncAll .or. ::oFab:cCodWeb == 0
             aAdd( ::aFabricantesData, { "id" => id, "name"  => rtrim( ::oFab:cNomFab ) } )
          end if

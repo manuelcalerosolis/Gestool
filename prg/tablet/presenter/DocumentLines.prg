@@ -22,7 +22,7 @@ CLASS DocumentLines
    METHOD appendLineDetail( oDocumentLine )                 INLINE ( aadd( ::aLines, oDocumentLine ) )
    METHOD saveLineDetail( nPosDetail, oDocumentLine )       INLINE ( ::aLines[ nPosDetail ] := oDocumentLine )
 
-   METHOD Total()
+   METHOD getTotal()
  
 END CLASS
 
@@ -52,15 +52,13 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Total() CLASS DocumentLines
+METHOD getTotal() CLASS DocumentLines
 
    local oLine
    local Total  := 0
 
    for each oLine in ::aLines
-
-      Total     += oLine:Total()
-
+      Total     += oLine:getTotal()
    next
 
 Return ( Total )

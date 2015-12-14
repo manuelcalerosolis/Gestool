@@ -17796,8 +17796,8 @@ Function ChangePublicar()
          ChangeFamiliaInt(       ( D():Articulos( nView ) )->Familia   )
          ChangePropiedadesInt(   ( D():Articulos( nView ) )->cCodPrp1  )
          ChangePropiedadesInt(   ( D():Articulos( nView ) )->cCodPrp2  )
-         ChangeFabricantesInt(   ( D():Articulos( nView ) )->cCodFab   )
          ChangeTipArtInt(        ( D():Articulos( nView ) )->cCodTip   )
+         // ChangeFabricantesInt(   ( D():Articulos( nView ) )->cCodFab   )
       end if
 
    next
@@ -17814,8 +17814,8 @@ static function ChangePublicarTemporal( aTmp )
       ChangeFamiliaInt(       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Familia"  ) ) ] )
       ChangePropiedadesInt(   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ] )
       ChangePropiedadesInt(   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ] )
-      ChangeFabricantesInt(   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab"  ) ) ] )
       ChangeTipArtInt(        aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodTip"  ) ) ] )
+      // ChangeFabricantesInt(   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab"  ) ) ] )
    end if
 
    if !empty( oWndBrw )
@@ -17856,6 +17856,7 @@ static function ChangeFamiliaInt( cCodFam )
 return nil
 
 //---------------------------------------------------------------------------//
+
 static function ChangePropiedadesInt( cCodPro )
 
    local nRec
@@ -17882,6 +17883,7 @@ static function ChangePropiedadesInt( cCodPro )
 return nil
 
 //---------------------------------------------------------------------------//
+
 static function ChangeFabricantesInt( cCodFab )
 
    local nRec
@@ -17930,6 +17932,7 @@ static function ChangeTipArtInt( cCodTip )
 return nil
 
 //---------------------------------------------------------------------------//
+
 static function ChangeGrpFamInt( cCodGrp )
 
    local nRec
@@ -18300,27 +18303,6 @@ Return ( .t. )
 Function nCostoUltimaCompra( cCodArt, dbfAlbPrvL, dbfFacPrvL )
 
    local nCosto   := 0
-
-/* 
-   do case //Lo cambiamos para que coge el costo con los descuentos
-      case  ( dbfAlbPrvL )->( dbSeek( cCodArt ) ) .and. ( dbfFacPrvL )->( dbSeek( cCodArt ) )
-
-         if ( dbfAlbPrvL )->dFecAlb > ( dbfFacPrvL )->dFecFac
-            nCosto   := ( dbfAlbPrvL )->nPreDiv
-         else
-            nCosto   := ( dbfFacPrvL )->nPreUnit
-         end if
-
-      case  !( dbfAlbPrvL )->( dbSeek( cCodArt ) ) .and. ( dbfFacPrvL )->( dbSeek( cCodArt ) )
-
-         nCosto   := ( dbfFacPrvL )->nPreUnit
-
-      case  ( dbfAlbPrvL )->( dbSeek( cCodArt ) ) .and. !( dbfFacPrvL )->( dbSeek( cCodArt ) )
-
-         nCosto   := ( dbfAlbPrvL )->nPreDiv
-
-   end case
-*/
 
    do case
       case  ( dbfAlbPrvL )->( dbSeek( cCodArt ) ) .and. ( dbfFacPrvL )->( dbSeek( cCodArt ) )
