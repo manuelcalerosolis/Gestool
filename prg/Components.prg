@@ -1653,8 +1653,8 @@ CLASS GetProveedor FROM ComponentGetSayDatabase
    METHOD First()    INLINE ( ::cText( Space( RetNumCodPrvEmp() ) ) )
    METHOD Last()     INLINE ( ::cText( Replicate( "Z", RetNumCodPrvEmp() ) ) )
 
-   METHOD Top()      INLINE ( ::cText( D():Top( "Provee", ::oContainer:nView ) ) )
-   METHOD Bottom()   INLINE ( ::cText( D():Bottom( "Provee", ::oContainer:nView ) ) )
+   METHOD Top()      INLINE ( ::cText( D():Top( "Provee", ::getView() ) ) )
+   METHOD Bottom()   INLINE ( ::cText( D():Bottom( "Provee", ::getView() ) ) )
 
 END CLASS 
 
@@ -1735,7 +1735,7 @@ Return ( Self )
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 
-CLASS GetArticulo FROM ComponentGetSay
+CLASS GetArticulo FROM ComponentGetSayDatabase
 
    METHOD Build( hBuilder ) 
    METHOD New( idGet, idSay, idText, oContainer ) 
@@ -1743,8 +1743,8 @@ CLASS GetArticulo FROM ComponentGetSay
    METHOD First()    INLINE ( ::cText( Space( 18 ) ) )
    METHOD Last()     INLINE ( ::cText( Replicate( "Z", 18 ) ) )
 
-   METHOD Top()      INLINE ( ::cText( D():Top( "Articulo", ::oContainer:nView ) ) )
-   METHOD Bottom()   INLINE ( ::cText( D():Bottom( "Articulo", ::oContainer:nView ) ) )
+   METHOD Top()      INLINE ( ::cText( D():Top( "Articulo", ::getView() ) ) )
+   METHOD Bottom()   INLINE ( ::cText( D():Bottom( "Articulo", ::getView() ) ) )
 
 END CLASS 
 
@@ -1765,10 +1765,12 @@ Return ( Self )
 
 METHOD New( idGet, idSay, idText, oContainer ) CLASS GetArticulo
 
+   ::cTextValue   := "Artículo"
+
    ::Super:New( idGet, idSay, idText, oContainer )
 
-   ::bValid       := {|| cArticulo( ::oGetControl, D():Get( "Articulo", ::oContainer:nView ), ::oSayControl ) }
-   ::bHelp        := {|| BrwArticulo( ::oGetControl, ::oSayControl ) }
+   ::bValid       := {|| cArticulo( ::oGetControl, D():Get( "Articulo", ::getView() ), ::oSayControl ) }
+   ::bHelp        := {|| brwArticulo( ::oGetControl, ::oSayControl ) }
 
 Return ( Self )
 

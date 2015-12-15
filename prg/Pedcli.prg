@@ -2343,7 +2343,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       oBrwLin:cAlias          := dbfTmpLin
 
       oBrwLin:nMarqueeStyle   := 6
-      oBrwLin:lFooter 		  := .t.
+      oBrwLin:lFooter         := .t.
       oBrwLin:cName           := "Pedido a cliente.Detalle"
 
       oBrwLin:CreateFromResource( 210 )
@@ -2560,8 +2560,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          :nWidth              := 70
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
-         :nEditType     	  := 1
-         :bOnPostEdit   	  := {|o,x,n| ChangePrecio( o, x, n, aTmp, dbfTmpLin ) }
+         :nEditType     	   := 1
+         :bOnPostEdit   	   := {|o,x,n| ChangePrecio( o, x, n, aTmp, dbfTmpLin ) }
       end with
 
       with object ( oBrwLin:AddCol() )

@@ -20,6 +20,8 @@ CLASS TConversionDocumentos // FROM DialogBuilder
    DATA nView
    DATA lOpenFiles
 
+   DATA oHeaderTable
+
    DATA cHeaderAlias                               INIT ""
    DATA aHeaderDictionary
    DATA aHeaderIndex
@@ -49,6 +51,7 @@ CLASS TConversionDocumentos // FROM DialogBuilder
    DATA oPeriodo
    DATA oCliente
    DATA oProveedor
+   DATA oArticulo
    DATA oEmpresa
    DATA oSerie
    DATA oFecha
@@ -56,6 +59,10 @@ CLASS TConversionDocumentos // FROM DialogBuilder
    METHOD New()
 
    METHOD Dialog()
+      METHOD DialogSelectionCriteria()
+      METHOD DialogSelectionDocument()
+      METHOD DialogSelectionLines()
+      METHOD DialogSummary()
       METHOD startDialog()
       METHOD clickOnHeader( oColumn )
       METHOD changeSortDocument()
@@ -118,6 +125,8 @@ CLASS TConversionDocumentos // FROM DialogBuilder
    METHOD setDocumentPedidosProveedores()          INLINE ( ::setShoppingDocumentType( D():PedidosProveedoresTableName(), D():PedidosProveedoresLineasTableName() ) )
    METHOD setDocumentSATClientes()                 INLINE ( ::setSalesDocumentType( D():SATClientesTableName(), D():SATClientesLineasTableName() ) )
 
+   METHOD setHeaderTable( oTable )                 INLINE ( ::oHeaderTable    := D():scanDataArea( cTableName ) ) 
+
    METHOD setHeaderAlias( cHeaderAlias )           INLINE ( ::cHeaderAlias := cHeaderAlias )
    METHOD getHeaderAlias()                         INLINE ( ::cHeaderAlias )
    METHOD setHeaderDictionary( aHeaderDictionary ) INLINE ( ::aHeaderDictionary := aHeaderDictionary )
@@ -125,7 +134,7 @@ CLASS TConversionDocumentos // FROM DialogBuilder
    METHOD setHeaderIndex( aHeaderIndex )           INLINE ( ::aHeaderIndex := aHeaderIndex )
    METHOD getHeaderIndex()                         INLINE ( ::aHeaderIndex )
 
-   METHOD getId()                                  INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getHeaderAlias(), ::getHeaderDictionary() ) + ;
+   METHOD getHeaderId()                            INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getHeaderAlias(), ::getHeaderDictionary() ) + ;
                                                             str( D():getFieldFromAliasDictionary( "Numero", ::getHeaderAlias(), ::getHeaderDictionary() ) ) + ; 
                                                             D():getFieldFromAliasDictionary( "Sufijo", ::getHeaderAlias(), ::getHeaderDictionary() ) )
    METHOD getTextId()                              INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getHeaderAlias(), ::getHeaderDictionary() ) + "/" + ;
@@ -170,7 +179,7 @@ METHOD New()
 
    ::aTargetEmpresa  := aSerializedEmpresas()
 
-   ::oDocumentLine   := AliasDocumentLine():New( Self )   
+   ::oDocumentLine   := DocumentLines():New( Self ) // AliasDocumentLine():New( Self )   
 
    ::setDocumentPedidosProveedores()
 
@@ -238,7 +247,6 @@ METHOD CloseFiles()
 Return ( Self )
 
 //---------------------------------------------------------------------------//
-
    
 METHOD Dialog() 
 
@@ -247,74 +255,128 @@ METHOD Dialog()
    DEFINE DIALOG ::oDlg RESOURCE "ASS_CONVERSION_DOCUMENTO"
 
    REDEFINE BITMAP oBmp ;
-      ID       500 ;
-      RESOURCE "hand_point_48" ;
+      ID          500 ;
+      RESOURCE    "hand_point_48" ;
       TRANSPARENT ;
-      OF       ::oDlg
+      OF          ::oDlg
 
    REDEFINE PAGES ::oFld ;
-      ID       100;
-      OF       ::oDlg ;
-      DIALOGS  "ASS_CONVERSION_DOCUMENTO_1",;
-               "ASS_CONVERSION_DOCUMENTO_2",;
-               "ASS_CONVERSION_DOCUMENTO_3",;
-               "ASS_CONVERSION_DOCUMENTO_4"
+      ID          100;
+      OF          ::oDlg ;
+      DIALOGS     "ASS_CONVERSION_DOCUMENTO_1",;
+                  "ASS_CONVERSION_DOCUMENTO_2",;
+                  "ASS_CONVERSION_DOCUMENTO_3",;
+                  "ASS_CONVERSION_DOCUMENTO_4"
+
+   ::DialogSelectionCriteria( ::oFld:aDialogs[1] )
+
+   // segundo dialogo----------------------------------------------------------
+
+   ::DialogSelectionDocument( ::oFld:aDialogs[2] )
+
+   // tercera caja de dialogo -------------------------------------------------
+
+   ::DialogSelectionLines( ::oFld:aDialogs[3] )
+   
+   // Resumen de la exportacion------------------------------------------------
+
+   ::DialogSummary( ::oFld:aDialogs[4] )
+
+   // Botones -----------------------------------------------------------------
+
+   REDEFINE BUTTON ::oBtnAnterior;
+      ID          3 ;
+      OF          ::oDlg ;
+      ACTION      ( ::BotonAnterior() )
+
+   REDEFINE BUTTON ::oBtnSiguiente;
+      ID          IDOK ;
+      OF          ::oDlg ;
+      ACTION      ( ::BotonSiguiente() )
+
+   REDEFINE BUTTON ;
+      ID          IDCANCEL ;
+      OF          ::oDlg ;
+      ACTION      ( ::oDlg:End() )
+
+   ::oDlg:bStart  := {|| ::startDialog() }
+
+   ACTIVATE DIALOG ::oDlg CENTER
+
+   ::CloseFiles()
+
+   oBmp:End()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD DialogSelectionCriteria( oDlg )
 
    REDEFINE COMBOBOX ::oDocument ;
       VAR         ::cDocument ;
       ITEMS       hgetkeys( ::aDocuments );
       ID          100 ;
-      OF          ::oFld:aDialogs[1]
+      OF          oDlg
 
    ::oDocument:bChange  := {|| ::showDocuments() }
 
    ::oPeriodo     := GetPeriodo()
       ::oPeriodo:New( 110, 120, 130 )
-      ::oPeriodo:Resource( ::oFld:aDialogs[1] )
+      ::oPeriodo:Resource( oDlg )
 
    ::oCliente     := GetCliente()
       ::oCliente:New( 140, 141, 142 )
-      ::oCliente:Resource( ::oFld:aDialogs[1] )
+      ::oCliente:Resource( oDlg )
       ::oCliente:setView( ::nView )
 
    ::oProveedor   := GetProveedor() 
       ::oProveedor:New( 150, 151, 152 )
-      ::oProveedor:Resource( ::oFld:aDialogs[1] )
+      ::oProveedor:Resource( oDlg )
       ::oProveedor:setView( ::nView )
+
+   ::oArticulo    := GetArticulo()
+      ::oArticulo:New( 200, 201, 202 )
+      ::oArticulo:Resource( oDlg )
+      ::oArticulo:setView( ::nView )
 
    REDEFINE COMBOBOX ::cTargetDocument ;
       ITEMS       hgetkeys( ::aDocuments );
       ID          160 ;
-      OF          ::oFld:aDialogs[1]
+      OF          oDlg
 
    ::oSerie       := GetSerie():New( 170 )
-      ::oSerie:Resource( ::oFld:aDialogs[1] )      
+      ::oSerie:Resource( oDlg )      
 
    ::oFecha       := GetFecha():New( 180 )
-      ::oFecha:Resource( ::oFld:aDialogs[1] )
+      ::oFecha:Resource( oDlg )
 
    ::oEmpresa     := GetEmpresa():New( 190, 191, 192 )
-      ::oEmpresa:Resource( ::oFld:aDialogs[1] )
+      ::oEmpresa:Resource( oDlg )
       ::oEmpresa:setView( ::nView )
       ::oEmpresa:Current()
 
-   // segundo dialogo-----------------------------------------------------------
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD DialogSelectionDocument( oDlg )
 
    REDEFINE GET   ::oSearch ;
       VAR         ::cSearch ;
       ID          100 ;
       PICTURE     "@!" ;
       BITMAP      "Find" ;
-      OF          ::oFld:aDialogs[2]
+      OF          oDlg
 
    ::oSearch:bChange                := {|| ::changeSearch() }
 
    REDEFINE COMBOBOX ::oSortDocument ;
-      VAR      ::cSortDocument ;
-      ITEMS    ::aSortDocument ;
-      ID       110 ;
-      ON CHANGE( ::changeSortDocument() );
-      OF       ::oFld:aDialogs[2]
+      VAR         ::cSortDocument ;
+      ITEMS       ::aSortDocument ;
+      ID          110 ;
+      ON CHANGE   ( ::changeSortDocument() );
+      OF          oDlg
 
    ::oSortDocument:bChange          := {|| ::changeSortDocument() }
 
@@ -385,36 +447,40 @@ METHOD Dialog()
 
    ::oBrwDocuments:CreateFromResource( 120 )
 
-   // botones -----------------------------------------------------------------
-   
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD DialogSelectionLines( oDlg )
+
    REDEFINE BUTTON ;
       ID       500 ;
-      OF       ::oFld:aDialogs[3] ;
+      OF       oDlg ;
       ACTION   ( ::selectLine() )
 
    REDEFINE BUTTON ;
       ID       510 ;
-      OF       ::oFld:aDialogs[3] ;
+      OF       oDlg ;
       ACTION   ( ::unselectLine() )
 
    REDEFINE BUTTON ;
       ID       520 ;
-      OF       ::oFld:aDialogs[3] ;
+      OF       oDlg ;
       ACTION   ( ::selectAllLine() )
 
    REDEFINE BUTTON ;
       ID       530 ;
-      OF       ::oFld:aDialogs[3] ;
+      OF       oDlg ;
       ACTION   ( ::unselectAllLine() )
 
    REDEFINE SAY ; 
       VAR      ::getDocumentName() ;
       ID       110 ;
-      OF       ::oFld:aDialogs[3]   
+      OF       oDlg   
 
    // browse de lineas-----------------------------------------------------
 
-   ::oBrwLines                      := IXBrowse():New( ::oFld:aDialogs[3] )
+   ::oBrwLines                      := IXBrowse():New( oDlg )
 
    ::oBrwLines:lAutoSort            := .f.
    ::oBrwLines:bClrSel              := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
@@ -585,47 +651,26 @@ METHOD Dialog()
 
    ::oBrwLines:CreateFromResource( 100 )
 
-   // Resumen de la exportacion------------------------------------------------
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD DialogSummary( oDlg )
 
    REDEFINE SAY ; 
       VAR         ::getDocument() ;
       ID          100 ;
-      OF          ::oFld:aDialogs[4]   
+      OF          oDlg
 
    REDEFINE SAY ; 
       VAR         ::getTextId() ;
       ID          110 ;
-      OF          ::oFld:aDialogs[4]   
+      OF          oDlg
 
    REDEFINE COMBOBOX ::cTargetEmpresa ;
       ITEMS       ::aTargetEmpresa ;
       ID          130 ;
-      OF          ::oFld:aDialogs[4]
-
-   // Botones -----------------------------------------------------------------
-
-   REDEFINE BUTTON ::oBtnAnterior;
-      ID          3 ;
-      OF          ::oDlg ;
-      ACTION      ( ::BotonAnterior() )
-
-   REDEFINE BUTTON ::oBtnSiguiente;
-      ID          IDOK ;
-      OF          ::oDlg ;
-      ACTION      ( ::BotonSiguiente() )
-
-   REDEFINE BUTTON ;
-      ID          IDCANCEL ;
-      OF          ::oDlg ;
-      ACTION      ( ::oDlg:End() )
-
-   ::oDlg:bStart  := {|| ::startDialog() }
-
-   ACTIVATE DIALOG ::oDlg CENTER
-
-   ::CloseFiles()
-
-   oBmp:End()
+      OF          oDlg
 
 RETURN ( Self )
 
@@ -709,7 +754,6 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-
 METHOD showDocuments()
 
    local bAction  
@@ -732,13 +776,15 @@ Return ( lAction )
 
 METHOD showDocumentsLines()
 
-   local Id       := ::getId()
+   local Id       := ::getHeaderId()
 
    if empty( Id )
       Return ( .f. )
    end if 
 
-   ::setLinesScope( Id )
+   ::getLinesDocument( Id )
+
+   // ::setLinesScope( Id )
 
    ::selectAllLine()
 
@@ -747,6 +793,8 @@ Return ( .t. )
 //---------------------------------------------------------------------------//
 
 METHOD setDocumentType( cTableName, cTableLineName )
+
+   ::setHeaderTable( ::scanDataArea( cTableName ) )
 
    ::setHeaderAlias(       D():get( cTableName, ::nView ) )
    ::setHeaderDictionary(  D():getDictionaryFromArea( cTableName ) )
@@ -834,5 +882,36 @@ METHOD setOrderInColumn( oColumn )
    end if 
 
 Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+//---------------------------------------------------------------------------//
+//
+// Convierte las lineas del albaran en objetos
+//
+
+METHOD getLinesDocument( id ) 
+
+   ::oDocumentLines:reset()
+
+   D():getStatusFacturasClientesLineas( ::nView )
+
+   ( ::getHeaderAlias() )->( ordSetFocus( 1 ) )
+
+   if ( getHeaderAlias() )->( dbSeek( id ) )  
+
+      while ( D():FacturasClientesLineasId( ::nView ) == id ) .and. !( D():FacturasClientesLineas( ::nView ) )->( eof() ) 
+
+         ::addDocumentLine()
+      
+         ( D():FacturasClientesLineas( ::nView ) )->( dbSkip() ) 
+      
+      end while
+
+   end if 
+   
+   D():setStatusFacturasClientesLineas( ::nView ) 
+
+RETURN ( self ) 
 
 //---------------------------------------------------------------------------//

@@ -17,7 +17,7 @@ CLASS DialogBuilder
 
    METHOD End()                        INLINE ( ::oDlg:end() )
 
-   METHOD AddComponent( oComponent )   INLINE ( aAdd( ::aComponents, oComponent ) )
+   METHOD AddComponent( oComponent )   INLINE ( aadd( ::aComponents, oComponent ) )
 
 END CLASS
 
@@ -1296,7 +1296,7 @@ CLASS GetArticulo FROM ComponentGetSay
    METHOD First()    INLINE ( ::cText( Space( 18 ) ) )
    METHOD Last()     INLINE ( ::cText( Replicate( "Z", 18 ) ) )
 
-   METHOD Top()      INLINE ( ::cText( D():Top( "Articulo", ::oContainer:nView ) ) )
+   METHOD Top()      INLINE ( ::cText( D():Top(    "Articulo", ::oContainer:nView ) ) )
    METHOD Bottom()   INLINE ( ::cText( D():Bottom( "Articulo", ::oContainer:nView ) ) )
 
 END CLASS 
