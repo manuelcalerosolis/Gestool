@@ -143,6 +143,7 @@
 #define _CPROVEE                 133
 #define _CCODBIC                 134
 #define _CHORARIO                135
+#define _CENTIDAD                136
 
 #define _aCCODCLI                  1      //   C     12     0
 #define _aCCODGRP                  2      //   C     12     0
@@ -1910,6 +1911,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE GET aGet[ _CHORARIO ] VAR aTmp[ _CHORARIO ] ;
          ID       150 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldComercial
+
+      REDEFINE GET aGet[ _CENTIDAD ] VAR aTmp[ _CENTIDAD ] ;
+         ID       151 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldComercial
          
@@ -8984,6 +8990,7 @@ FUNCTION aItmCli()
    aAdd( aBase, { "cProvee",   "C", 50, 0, "Código de proveedor",                           "CodigoProveedor",       "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cCodBic",   "C", 50, 0, "Código Bic",                                    "",                      "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cHorario",  "C", 50, 0, "Horario",                                       "",                      "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cEntidad",  "C", 25, 0, "Entidad",                                       "",                      "", "( cDbfCli )", nil } )
 
 RETURN ( aBase )
 

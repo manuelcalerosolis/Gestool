@@ -392,7 +392,7 @@ Static Function ImportacionArticulos()
 
       ( D():Articulos( nView ) )->( dbUnlock() )
 
-      //msgwait( "Procesando artículos: " + str( n ), , .0001 )
+      msgwait( "Procesando artículos: " + str( n ), , .0001 )
 
    next
 
@@ -438,9 +438,13 @@ Static Function ImportaArticulosCamposExtra( nLin )
 
    ImportaCampoExtra( "017", "FI", nLin, "C" ) //Descripción aAlternativa
 
-   ImportaCampoExtra( "018", "DL", nLin, "N" ) //Marea
+   ImportaCampoExtra( "018", "DL", nLin, "NC" ) //Marea
 
    ImportaCampoExtra( "019", "DS", nLin, "D" ) //Fecha pedido
+
+   ImportaCampoExtra( "020", "DW", nLin, "N" ) //Neto KG
+
+   ImportaCampoExtra( "021", "EJ", nLin, "N" ) //FACTOR MERMA
 
 Return ( .t. )
 
@@ -449,18 +453,20 @@ Return ( .t. )
 Static Function ImportaCampoExtra( cCod, cCol, nLin, cType )
 
    local cValor      := ""
-   //DEFAULT lNum      := .f.
 
    do case
       case cType == "C"
          cValor      := GetRange( cCol, nLin )
 
-      case cType == "N"
+      case cType == "NC"
          cValor      := int( GetNumeric( cCol, nLin ) )
          cValor      := if( cValor != 0, Str( cValor ), "" )
 
       case cType == "D"
          cValor      := GetDate( cCol, nLin )
+
+      case cType == "N"
+         cValor      := Str( GetNumeric( cCol, nLin ) )
 
    end case
 
@@ -548,6 +554,7 @@ Static Function ImportacionClientes()
          ( D():Clientes( nView ) )->cProvee     := GetRange( "BE", n )
          ( D():Clientes( nView ) )->cCodBic     := GetRange( "EO", n )
          ( D():Clientes( nView ) )->cHorario    := GetRange( "BD", n )
+         ( D():Clientes( nView ) )->cEntidad    := GetRange( "AE", n )
 
          ( D():Clientes( nView ) )->( dbUnlock() )
 
