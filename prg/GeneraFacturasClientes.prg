@@ -28,6 +28,7 @@ CLASS GeneraFacturasClientes FROM DialogBuilder
    DATA oEntregados
    DATA oUnificarPago
    DATA oTotalizar
+   DATA oImpuestosIncluidos
 
    DATA oBrwAlbaranes
    DATA oTreeTotales
@@ -215,6 +216,8 @@ METHOD New() CLASS GeneraFacturasClientes
       ::oAgruparDireccion        := ComponentCheck():New( 280, .f., Self )
       ::oAgruparDireccion:bWhen  := {|| ::oAgruparCliente:Value() }
 
+      ::oImpuestosIncluidos      := ComponentCheck():New( 294, lImpuestosIncluidos(), Self )
+
       ::oAgruparDescuentos := ComponentCheck():New( 293, .f., Self )
 
       ::oEntregados        := ComponentCheck():New( 290, .f., Self )
@@ -353,6 +356,8 @@ METHOD Resource() CLASS GeneraFacturasClientes
    ::oAgruparCliente:Resource( ::oPag:aDialogs[ 1 ] )
 
    ::oAgruparDireccion:Resource( ::oPag:aDialogs[ 1 ] )
+
+   ::oImpuestosIncluidos:Resource( ::oPag:aDialogs[ 1 ] )
 
    ::oEntregados:Resource( ::oPag:aDialogs[ 1 ] )
 
@@ -872,6 +877,10 @@ METHOD lIsFacturable() CLASS GeneraFacturasClientes
       end if   
    end if
 
+   if !( ::oImpuestosIncluidos:Value() == ( D():AlbaranesClientes( ::nView ) )->lIvaInc )
+      Return( .f. )
+   end if
+
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -1270,9 +1279,11 @@ METHOD appendCabeceraAlbaran( oItem ) CLASS GeneraFacturasClientes
 
    local cDesAlb  := ""
 
-   if lNumAlb() .or. lSuAlb()
+   if lNumAlb() .or. lSuAlb() .or. lNumObr()
+      
       ( D():FacturasClientesLineas( ::nView ) )->( dbAppend() )
-      ( D():FacturasClientesLineas( ::nView ) )->nNumLin    := ::nNumLin++
+      ( D():FacturasClientesLineas( ::nView ) )->nNumLin    := ::nNumLin
+      ( D():FacturasClientesLineas( ::nView ) )->nPosPrint  := ::nNumLin
       ( D():FacturasClientesLineas( ::nView ) )->cSerie     := ::cSerie
       ( D():FacturasClientesLineas( ::nView ) )->nNumFac    := ::nNumero
       ( D():FacturasClientesLineas( ::nView ) )->cSufFac    := ::cSufijo
@@ -1283,13 +1294,21 @@ METHOD appendCabeceraAlbaran( oItem ) CLASS GeneraFacturasClientes
       if lSuAlb()
          cDesAlb                 += Alltrim( cSuAlb() ) + " " + Rtrim( hGet( oItem:Cargo, "sualbaran" ) ) + Space( 1 )
       end if
-      cDesAlb                    += dtoc( hGet( oItem:Cargo, "fecha" ) )
+
+      if lNumObr()
+         cDesAlb                 += Alltrim( cNumObr() ) + " " + hGet( oItem:Cargo, "direccion" ) + Space( 1 )
+      else 
+         cDesAlb                 += dtoc( hGet( oItem:Cargo, "fecha" ) )
+      end if 
+
       ( D():FacturasClientesLineas( ::nView ) )->cDetalle   := cDesAlb
       ( D():FacturasClientesLineas( ::nView ) )->mLngDes    := cDesAlb
       ( D():FacturasClientesLineas( ::nView ) )->lControl   := .t.
       ( D():FacturasClientesLineas( ::nView ) )->cAlmLin    := oUser():cAlmacen()
 
       ( D():FacturasClientesLineas( ::nView ) )->( dbUnlock() )
+
+      ::nNumLin++
 
    end if
 
@@ -1306,7 +1325,8 @@ METHOD appendLineasAlbaran( oItem ) CLASS GeneraFacturasClientes
 
             ( D():FacturasClientesLineas( ::nView ) )->( dbAppend() )
 
-            ( D():FacturasClientesLineas( ::nView ) )->nNumLin    := ::nNumLin++
+            ( D():FacturasClientesLineas( ::nView ) )->nNumLin    := ::nNumLin
+            ( D():FacturasClientesLineas( ::nView ) )->nPosPrint  := ::nNumLin
             ( D():FacturasClientesLineas( ::nView ) )->cSerie     := ::cSerie
             ( D():FacturasClientesLineas( ::nView ) )->nNumFac    := ::nNumero
             ( D():FacturasClientesLineas( ::nView ) )->cSufFac    := ::cSufijo
@@ -1342,13 +1362,8 @@ METHOD appendLineasAlbaran( oItem ) CLASS GeneraFacturasClientes
             ( D():FacturasClientesLineas( ::nView ) )->lNotVta    := ( D():AlbaranesClientesLineas( ::nView ) )->lNotVta
             ( D():FacturasClientesLineas( ::nView ) )->lImpLin    := ( D():AlbaranesClientesLineas( ::nView ) )->lImpLin
             ( D():FacturasClientesLineas( ::nView ) )->nValImp    := ( D():AlbaranesClientesLineas( ::nView ) )->nValImp
-
-            if ( D():AlbaranesClientesLineas( ::nView ) )->lIvaLin
-               ( D():FacturasClientesLineas( ::nView ) )->nPreUnit   := ( D():AlbaranesClientesLineas( ::nView ) )->nPreUnit / ( 1 + ( ( D():AlbaranesClientesLineas( ::nView ) )->nIva / 100 ) )
-            else
-               ( D():FacturasClientesLineas( ::nView ) )->nPreUnit   := ( D():AlbaranesClientesLineas( ::nView ) )->nPreUnit
-            end if
-
+            ( D():FacturasClientesLineas( ::nView ) )->lIvaLin    := ( D():AlbaranesClientesLineas( ::nView ) )->lIvaLin            
+            ( D():FacturasClientesLineas( ::nView ) )->nPreUnit   := ( D():AlbaranesClientesLineas( ::nView ) )->nPreUnit
             ( D():FacturasClientesLineas( ::nView ) )->cImagen    := ( D():AlbaranesClientesLineas( ::nView ) )->cImagen
             ( D():FacturasClientesLineas( ::nView ) )->cCodFam    := ( D():AlbaranesClientesLineas( ::nView ) )->cCodFam
             ( D():FacturasClientesLineas( ::nView ) )->cGrpFam    := ( D():AlbaranesClientesLineas( ::nView ) )->cGrpFam
@@ -1388,6 +1403,8 @@ METHOD appendLineasAlbaran( oItem ) CLASS GeneraFacturasClientes
             end if
 
             ( D():AlbaranesClientesLineas( ::nView ) )->( dbUnlock() )
+
+            ::nNumLin++
 
          ( D():AlbaranesClientesLineas( ::nView ) )->( dbSkip() )
 

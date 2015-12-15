@@ -226,6 +226,10 @@ FUNCTION cDefCaj() ; RETURN ( aEmp()[ _CDEFCAJ ] )
 
 //---------------------------------------------------------------------------//
 
+FUNCTION lImpuestosIncluidos() ; RETURN( aEmp()[ _LIVAINC ] )
+
+//---------------------------------------------------------------------------//
+
 FUNCTION lObras()     ; RETURN ( aEmp()[ _LGETCOB ] )
 
 //---------------------------------------------------------------------------//
@@ -1286,21 +1290,13 @@ FUNCTION lBuscaImportes()
 
 //---------------------------------------------------------------------------//
 
- FUNCTION cDefVta()
+FUNCTION cDefVta()
 
-   local cDefVta  := Space( 1 )
-
-   if !Empty( aEmp() )
-
-      cDefVta     := aEmp()[ _CDEFVTA ]
-
-   end if
-
- RETURN ( cDefVta )
+RETURN ( "00" )
 
 //---------------------------------------------------------------------------//
 
- FUNCTION cRutCnt()
+FUNCTION cRutCnt()
 
    local cRutCnt  := Space( 1 )
 
@@ -1308,7 +1304,7 @@ FUNCTION lBuscaImportes()
       cRutCnt     := Rtrim( aEmp()[ _CRUTCNT ] )
    end if
 
- RETURN ( cRutCnt )
+RETURN ( cRutCnt )
 
 //----------------------------------------------------------------------------//
 
