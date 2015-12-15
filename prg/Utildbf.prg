@@ -2365,7 +2365,7 @@ return nil
 
 function aGetStatus( cAlias, lInit )
 
-   local aStatus  := { ( cAlias )->( Recno() ), ( cAlias )->( OrdSetFocus() ) }
+   local aStatus  := { ( cAlias )->( Recno() ), ( cAlias )->( ordsetfocus() ) }
 
    DEFAULT lInit  := .f.
 

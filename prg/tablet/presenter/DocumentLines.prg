@@ -6,12 +6,14 @@ CLASS DocumentLines
    DATA oSender
 
    DATA aLines                                              INIT {}
+   DATA aSelectedLines                                      INIT {}
 
    METHOD new( oSender )
 
    METHOD reset()
    
    METHOD addLines( oLine )
+   METHOD addLinesObjects( oLine )
 
    METHOD getLines()                                        INLINE ( ::aLines )
       METHOD getCloneLine()                                 INLINE ( oClone( ::getLine() ) )
@@ -23,6 +25,9 @@ CLASS DocumentLines
    METHOD saveLineDetail( nPosDetail, oDocumentLine )       INLINE ( ::aLines[ nPosDetail ] := oDocumentLine )
 
    METHOD getTotal()
+
+   METHOD selectAllLine()                                   INLINE ( aeval( ::aSelectedLines, {|oLine| oLine:select() } ) )
+   METHOD unselectAllLine()                                 INLINE ( aeval( ::aSelectedLines, {|oLine| oLine:unSelect() } ) )
  
 END CLASS
 
@@ -44,11 +49,19 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD addLines( oLine ) CLASS DocumentLines
+METHOD addLines( hLine ) CLASS DocumentLines
 
-   aAdd( ::aLines, oLine )
+   aAdd( ::aLines, hLine )
   
 Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD addLinesObjects( )
+
+   ::addLines( DocumentLine():New() )
+
+Return (  Self )
 
 //---------------------------------------------------------------------------//
 
@@ -64,4 +77,6 @@ METHOD getTotal() CLASS DocumentLines
 Return ( Total )
 
 //---------------------------------------------------------------------------//
+
+
 

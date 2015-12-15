@@ -13,24 +13,18 @@ CLASS DocumentLine
    METHOD getDictionary()                                      INLINE ( ::hDictionary )
    METHOD setDictionary( hDictionary )                         INLINE ( ::hDictionary := hDictionary )
 
-   METHOD getValue( key )                                      VIRTUAL
-   METHOD setValue( key, value )                               VIRTUAL
+   METHOD getValue( key )                                      INLINE ( hGet( ::hDictionary, key ) )
+   METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
 
-   METHOD unselectAllLine()                                    INLINE ( ::aSelectedLines := {} )
-   METHOD positionSelectedLine()                               INLINE ( ascan( ::aSelectedLines, ::getRecno() ) )
-   METHOD isSelectedLine()                                     INLINE ( ::positionSelectedLine() > 0 )
+   METHOD select()                                             INLINE ( ::setValue( "selectLine", .t. ) )                           
+   METHOD unSelect()                                           INLINE ( ::setValue( "selectLine", .f. ) )                           
+   METHOD toogleSelect()                                       INLINE ( ::setValue( "selectLine", !::isSelect() ) )                           
 
-   METHOD selectLine()                             
-   METHOD unSelectLine()                           
-   METHOD toogleSelectLine()
-   METHOD selectAllLine()                                      VIRTUAL
-
-   METHOD setLinesScope( Id )                                  VIRTUAL
-   METHOD quitLinesScope()                                     VIRTUAL
+   METHOD isSelect()                                           INLINE ( ::getValue( "selectLine") )
 
    METHOD getDivisa()                                          INLINE ( hGet( ::getValueMaster(), "Divisa" ) ) 
 
-   METHOD getSerie()                                           INLINE ( ::getValue(  "Serie" ) )
+   METHOD getSerie()                                           INLINE ( ::getValue( "Serie" ) )
    METHOD setSerieMaster()                                     INLINE ( hSet( ::hDictionary, "Serie", ::oSender:getSerie() ) )
 
    METHOD getNumero()                                          INLINE ( ::getValue( "Numero" ) )
@@ -171,41 +165,6 @@ METHOD getTotalSpecialTax() CLASS DocumentLine
 Return ( specialTax )
 
 //---------------------------------------------------------------------------//
-
-METHOD selectLine() CLASS DocumentLine
-
-   if ::positionSelectedLine() == 0
-      aadd( ::aSelectedLines, ::getRecno() )
-   endif
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD unselectLine() CLASS DocumentLine
-
-   local nAt   := ::positionSelectedLine()
-
-   if nAt != 0
-      adel( ::aSelectedLines, nAt, .t. )
-   end if 
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD toogleSelectLine() CLASS DocumentLine
-
-   local nAt   := ::positionSelectedLine()
-
-   if nAt != 0
-      adel( ::aSelectedLines, nAt, .t. )
-   else
-      aadd( ::aSelectedLines, ::getRecno() )
-   end if 
-
-Return ( Self )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -222,9 +181,6 @@ CLASS DictionaryDocumentLine FROM DocumentLine
 
    METHOD hGetMaster( key )                                    INLINE ( hGet( ::getValueMaster(), key ) )
    METHOD hSetMaster( key, value )                             INLINE ( hSet( ::getValueMaster(), key, value ) )
-
-   METHOD getValue( key )                                      INLINE ( hGet( ::hDictionary, key ) )
-   METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
 
    METHOD hGetDetail( key )                                    INLINE ( hGet( ::oSender:oDocumentLineTemporal:hDictionary, key ) )
    METHOD hSetDetail( key, value )                             INLINE ( hSet( ::oSender:oDocumentLineTemporal:hDictionary, key, value ) )
@@ -259,8 +215,6 @@ CLASS AliasDocumentLine FROM DocumentLine
 
    METHOD getRecno()                                           INLINE ( ( ::getAlias() )->( recno() ) )
 
-   METHOD selectAllLine()
-
    METHOD setLinesScope( Id )                                  INLINE ( ( ::getAlias() )->( ordscope( 0, Id ) ),;
                                                                         ( ::getAlias() )->( ordscope( 1, Id ) ),;
                                                                         ( ::getAlias() )->( dbgotop() ) ) 
@@ -270,26 +224,3 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD selectAllLine() CLASS AliasDocumentLine
-
-   local recno       
-
-   CursorWait()
-
-   recno             := ::getRecno()
-
-   ::aSelectedLines  := {}
-
-   ( ::getAlias() )->( dbgotop() ) 
-   while !( ( ::getAlias() )->( eof() ) )
-      aadd( ::aSelectedLines, ::getRecno() )
-      ( ::getAlias() )->( dbskip() )
-   enddo
-   
-   ( ::getAlias() )->( dbgoto( recno ) )
-
-   CursorArrow()
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//

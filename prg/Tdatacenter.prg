@@ -191,6 +191,7 @@ CLASS TDataCenter
    //---------------------------------------------------------------------------//
 
    METHOD ScanDataTable()
+   METHOD ScanDataTableInView()
    METHOD ScanDataArea( cArea )
    METHOD ScanDataTmp( cDataTable )
    METHOD ScanObject()
@@ -1029,6 +1030,22 @@ METHOD CreateDataTable()
    ::ReLoadTables()
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ScanDataTableInView( cDataTable, nView )
+
+   local oDataTable
+
+   msgAlert( cDataTable, "cDataTable" )
+
+   oDataTable  := ::ScanDataTable( cDataTable )
+
+   if !empty(oDatatable)
+      oDataTable:setAlias( D():get( cDataTable, nView ) )    
+   end if 
+
+RETURN ( oDataTable )
 
 //---------------------------------------------------------------------------//
 
@@ -5235,9 +5252,9 @@ CLASS TDataTable
    DATA  cPath
    DATA  cDataFile
    DATA  cIndexFile
-   DATA  cDescription   INIT ""
+   DATA  cDescription         INIT ""
    DATA  aStruct    
-   DATA  lTrigger       INIT .t.
+   DATA  lTrigger             INIT .t.
    DATA  hDefinition 
    DATA  bSyncFile   
    DATA  bCreateFile
@@ -5246,19 +5263,26 @@ CLASS TDataTable
    DATA  hIndex         
    DATA  aDefaultValue
    DATA  bId
+   DATA  cAlias
 
-   METHOD Name()        INLINE ( ::cPath + ::cArea )
-   METHOD NameTable()   INLINE ( ::cArea + ".Dbf" )
-   METHOD NameIndex()   INLINE ( ::cArea + ".Cdx" )
+   METHOD Name()              INLINE ( ::cPath + ::cArea )
+   METHOD NameTable()         INLINE ( ::cArea + ".Dbf" )
+   METHOD NameIndex()         INLINE ( ::cArea + ".Cdx" )
 
-   METHOD cFileName()   INLINE ( Upper( cNoPath( ::cName ) ) )
-   METHOD cAreaName()   INLINE ( if( lAIS(), ::cFileName() + ".Dbf", ::cDataFile ) )
+   METHOD cFileName()         INLINE ( Upper( cNoPath( ::cName ) ) )
+   METHOD cAreaName()         INLINE ( if( lAIS(), ::cFileName() + ".Dbf", ::cDataFile ) )
 
-   METHOD Say()         INLINE ( "cArea"        + ::cArea         + CRLF +;
-                                 "cName"        + ::cName         + CRLF +;
-                                 "cDataFile"    + ::cDataFile     + CRLF +;
-                                 "cIndexFile"   + ::cIndexFile    + CRLF +;
-                                 "cDescription" + ::cDescription )
+   METHOD Say()               INLINE ( "cArea"        + ::cArea         + CRLF +;
+                                       "cName"        + ::cName         + CRLF +;
+                                       "cDataFile"    + ::cDataFile     + CRLF +;
+                                       "cIndexFile"   + ::cIndexFile    + CRLF +;
+                                       "cDescription" + ::cDescription )
+
+   METHOD setAlias( cAlias )  INLINE ( ::cAlias := cAlias )
+   METHOD getAlias()          INLINE ( ::cAlias )
+
+   METHOD getDictionary()     INLINE ( ::aDictionary )
+   METHOD getIndex()          INLINE ( ::hIndex )
 
 END CLASS
 

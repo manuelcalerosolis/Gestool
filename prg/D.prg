@@ -42,6 +42,7 @@ CLASS D
    METHOD GetObject( cObject, nView )
 
    METHOD getHashRecord( cDatabase, nView )
+   METHOD getHashFromAlias( cAlias, aDictionary )
    METHOD getFieldDictionary( cField, cDataTable, nView )
    METHOD getFieldFromAliasDictionary( cField, cAlias, aDictionary )   
    METHOD getIndexFromAliasDictionary( cIndex, aIndex )     INLINE ( hGet( aIndex, cIndex ) )
@@ -949,11 +950,20 @@ RETURN ( array )
 METHOD getHashRecord( cDataTable, nView ) CLASS D
 
    local hash        := {=>}
-   local dbf         := ::Get( cDataTable, nView )   
+   local cAlias      := ::Get( cDataTable, nView )   
    local aDictionary := TDataCenter():getDictionary( cDataTable )
 
-   if isHash( aDictionary ) .and. !empty( dbf )
-      hEval( aDictionary, {|key,value| hSet( hash, key, ( dbf )->( fieldget( ( dbf )->( fieldPos( value ) ) ) ) ) } )
+RETURN ( ::getHashFromAlias( cAlias, aDictionary ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getHashFromAlias( cAlias, aDictionary ) CLASS D
+
+   local hash        := {=>}
+
+   if isHash( aDictionary ) .and. !empty( cAlias )
+      hEval( aDictionary, {|key,value| hSet( hash, key, ( cAlias )->( fieldget( ( cAlias )->( fieldPos( value ) ) ) ) ) } )
+      hSet( hash, 'lineSelected', .f. )
    end if 
 
 RETURN ( hash )

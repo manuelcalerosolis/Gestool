@@ -8,7 +8,7 @@
 
 CLASS TConversionDocumentos // FROM DialogBuilder
 
-   DATA oDocumentLine
+   DATA oDocumentLines
 
    DATA oDlg
    DATA oFld
@@ -21,10 +21,7 @@ CLASS TConversionDocumentos // FROM DialogBuilder
    DATA lOpenFiles
 
    DATA oHeaderTable
-
-   DATA cHeaderAlias                               INIT ""
-   DATA aHeaderDictionary
-   DATA aHeaderIndex
+   DATA oLineTable
 
    DATA oDocument
    DATA cDocument   
@@ -41,7 +38,6 @@ CLASS TConversionDocumentos // FROM DialogBuilder
    DATA aSortDocument                              INIT { "Número", "Fecha", "Nombre" }
    
    DATA oBrwDocuments
-
    DATA oBrwLines
 
    DATA cPictureRound
@@ -70,7 +66,7 @@ CLASS TConversionDocumentos // FROM DialogBuilder
       METHOD setOrderInColumn( oColumn )  
       METHOD setAliasInBrowseDocument()            INLINE ( if ( !empty( ::oBrwDocuments ), ::oBrwDocuments:setAlias( ::getHeaderAlias() ), ) )
       METHOD getDocument()                         INLINE ( alltrim( ::cDocument ) )
-      METHOD getDocumentName()                     INLINE ( if( !empty( ::getHeaderAlias() ), ::getDocument() + space( 1 ) + ::getTextId(), "" ) )
+      METHOD getDocumentName()                     INLINE ( if( !empty( ::getHeaderAlias() ), ::getDocument() + space( 1 ) + ::getHeaderTextId(), "" ) )
       
       METHOD isValidDialogRequisite()
       METHOD isValidTargetDocument()
@@ -84,13 +80,11 @@ CLASS TConversionDocumentos // FROM DialogBuilder
    METHOD BotonSiguiente()
    METHOD BotonAnterior()
 
-   METHOD selectLine()                             INLINE ( ::oDocumentLine:selectLine(), ::oBrwLines:DrawLine(.t.) )                             
-   METHOD unSelectLine()                           INLINE ( ::oDocumentLine:unSelectLine(), ::oBrwLines:DrawLine(.t.) )
-   METHOD toogleSelectLine()                       INLINE ( ::oDocumentLine:toogleSelectLine(), ::oBrwLines:DrawLine(.t.) )
-   METHOD selectAllLine()                          INLINE ( ::oDocumentLine:selectAllLine(), ::oBrwLines:Refresh() )
-   METHOD unselectAllLine()                        INLINE ( ::oDocumentLine:unselectAllLine(), ::oBrwLines:Refresh() )
-
-   METHOD setLinesScope( Id )                      INLINE ( ::oDocumentLine:setLinesScope( Id ) )
+   METHOD selectLine()                             INLINE ( ::oDocumentLines:selectLine(), ::oBrwLines:DrawLine(.t.) )                             
+   METHOD unSelectLine()                           INLINE ( ::oDocumentLines:unSelectLine(), ::oBrwLines:DrawLine(.t.) )
+   METHOD toogleSelectLine()                       INLINE ( ::oDocumentLines:toogleSelectLine(), ::oBrwLines:DrawLine(.t.) )
+   METHOD selectAllLine()                          INLINE ( ::oDocumentLines:selectAllLine(), ::oBrwLines:Refresh() )
+   METHOD unselectAllLine()                        INLINE ( ::oDocumentLines:unselectAllLine(), ::oBrwLines:Refresh() )
 
    METHOD opcionInvalida()                         INLINE ( msgStop( "Opción invalida, por favor elija una opción valida." ), .f. )
 
@@ -125,19 +119,15 @@ CLASS TConversionDocumentos // FROM DialogBuilder
    METHOD setDocumentPedidosProveedores()          INLINE ( ::setShoppingDocumentType( D():PedidosProveedoresTableName(), D():PedidosProveedoresLineasTableName() ) )
    METHOD setDocumentSATClientes()                 INLINE ( ::setSalesDocumentType( D():SATClientesTableName(), D():SATClientesLineasTableName() ) )
 
-   METHOD setHeaderTable( oTable )                 INLINE ( ::oHeaderTable    := D():scanDataArea( cTableName ) ) 
-
-   METHOD setHeaderAlias( cHeaderAlias )           INLINE ( ::cHeaderAlias := cHeaderAlias )
-   METHOD getHeaderAlias()                         INLINE ( ::cHeaderAlias )
-   METHOD setHeaderDictionary( aHeaderDictionary ) INLINE ( ::aHeaderDictionary := aHeaderDictionary )
-   METHOD getHeaderDictionary()                    INLINE ( ::aHeaderDictionary )
-   METHOD setHeaderIndex( aHeaderIndex )           INLINE ( ::aHeaderIndex := aHeaderIndex )
-   METHOD getHeaderIndex()                         INLINE ( ::aHeaderIndex )
+   METHOD setHeaderTable( cTableName )             INLINE ( ::oHeaderTable := TDataCenter():scanDataTableInView( cTableName, ::nView ) )
+   METHOD getHeaderAlias()                         INLINE ( ::oHeaderTable:getAlias() )
+   METHOD getHeaderDictionary()                    INLINE ( ::oHeaderTable:getDictionary() )
+   METHOD getHeaderIndex()                         INLINE ( ::oHeaderTable:getIndex() )
 
    METHOD getHeaderId()                            INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getHeaderAlias(), ::getHeaderDictionary() ) + ;
                                                             str( D():getFieldFromAliasDictionary( "Numero", ::getHeaderAlias(), ::getHeaderDictionary() ) ) + ; 
                                                             D():getFieldFromAliasDictionary( "Sufijo", ::getHeaderAlias(), ::getHeaderDictionary() ) )
-   METHOD getTextId()                              INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getHeaderAlias(), ::getHeaderDictionary() ) + "/" + ;
+   METHOD getHeaderTextId()                        INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getHeaderAlias(), ::getHeaderDictionary() ) + "/" + ;
                                                             alltrim( str( D():getFieldFromAliasDictionary( "Numero", ::getHeaderAlias(), ::getHeaderDictionary() ) ) ) )
    METHOD getDate()                                INLINE ( D():getFieldFromAliasDictionary( "Fecha", ::getHeaderAlias(), ::getHeaderDictionary() ) )
    METHOD getName()                                INLINE ( D():getFieldFromAliasDictionary( "NombreCliente", ::getHeaderAlias(), ::getHeaderDictionary() ) )
@@ -145,6 +135,19 @@ CLASS TConversionDocumentos // FROM DialogBuilder
    METHOD getTotalImpuesto()                       INLINE ( D():getFieldFromAliasDictionary( "TotalImpuesto", ::getHeaderAlias(), ::getHeaderDictionary() ) )
    METHOD getTotalDocumento()                      INLINE ( D():getFieldFromAliasDictionary( "TotalDocumento", ::getHeaderAlias(), ::getHeaderDictionary() ) )
    METHOD isPuntoVerde()                           INLINE ( D():getFieldFromAliasDictionary( "OperarPuntoVerde", ::getHeaderAlias(), ::getHeaderDictionary(), .f. ) )
+
+   METHOD setLineTable( cTableName )               INLINE ( ::oLineTable := TDataCenter():scanDataTableInView( cTableName, ::nView ) )
+   METHOD getLineAlias()                           INLINE ( ::oLineTable:getAlias() )
+   METHOD getLineDictionary()                      INLINE ( ::oLineTable:getDictionary() )
+   METHOD getLineIndex()                           INLINE ( ::oLineTable:getIndex() )
+
+   METHOD getLineId()                              INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getLineAlias(), ::getLineDictionary() ) + ;
+                                                            str( D():getFieldFromAliasDictionary( "Numero", ::getLineAlias(), ::getLineDictionary() ) ) + ; 
+                                                            D():getFieldFromAliasDictionary( "Sufijo", ::getLineAlias(), ::getLineDictionary() ) )
+   METHOD getLineTextId()                          INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getLineAlias(), ::getLineDictionary() ) + "/" + ;
+                                                            alltrim( str( D():getFieldFromAliasDictionary( "Numero", ::getLineAlias(), ::getHeaderDictionary() ) ) ) )
+
+   METHOD getLinesDocument() 
 
    METHOD showDocuments() 
    METHOD showDocumentsLines()
@@ -179,7 +182,7 @@ METHOD New()
 
    ::aTargetEmpresa  := aSerializedEmpresas()
 
-   ::oDocumentLine   := DocumentLines():New( Self ) // AliasDocumentLine():New( Self )   
+   ::oDocumentLines  := DocumentLines():New( Self ) // AliasDocumentLine():New( Self )   
 
    ::setDocumentPedidosProveedores()
 
@@ -394,7 +397,7 @@ METHOD DialogSelectionDocument( oDlg )
 
    with object ( ::oBrwDocuments:AddCol() )
       :cHeader                      := "Número"
-      :bEditValue                   := {|| ::getTextId() }
+      :bEditValue                   := {|| ::getHeaderTextId() }
       :nWidth                       := 80
       :cSortOrder                   := "Id"
       :bLClickHeader                := {| nMRow, nMCol, nFlags, oColumn | ::clickOnHeader( oColumn ) }
@@ -486,82 +489,83 @@ METHOD DialogSelectionLines( oDlg )
    ::oBrwLines:bClrSel              := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrwLines:bClrSelFocus         := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-   ::oBrwLines:cAlias               := ::oDocumentLine:getAlias()
    ::oBrwLines:nMarqueeStyle        := 5
    ::oBrwLines:cName                := "Browse.Conversion documentos lineas"
    ::oBrwLines:bLDblClick           := {|| ::toogleSelectLine() }
 
+   ::oBrwLines:setArray( ::oDocumentLines:getLines(), , , .f. )
+
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Seleccionando"
-      :bEditValue                   := {|| ::oDocumentLine:isSelectedLine() }
+      :bEditValue                   := {|| ::oDocumentLines:isSelectedLine() }
       :nWidth                       := 20
       :SetCheck( { "Sel16", "Nil16" } )
    end with
   
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Código"
-      :bEditValue                   := {|| ::oDocumentLine:getCode() }
+      :bEditValue                   := {|| ::oDocumentLines:getCode() }
       :nWidth                       := 80
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Descripción"
-      :bEditValue                   := {|| ::oDocumentLine:getDescription() }
+      :bEditValue                   := {|| ::oDocumentLines:getDescription() }
       :nWidth                       := 340
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Prop. 1"
-      :bEditValue                   := {|| ::oDocumentLine:getCodeFirstProperty() }
+      :bEditValue                   := {|| ::oDocumentLines:getCodeFirstProperty() }
       :nWidth                       := 60
       :lHide                        := .t.
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Prop. 2"
-      :bEditValue                   := {|| ::oDocumentLine:getCodeSecondProperty() }
+      :bEditValue                   := {|| ::oDocumentLines:getCodeSecondProperty() }
       :nWidth                       := 60
       :lHide                        := .t.
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Valor propiedad 1"
-      :bEditValue                   := {|| ::oDocumentLine:getValueFirstProperty() }
+      :bEditValue                   := {|| ::oDocumentLines:getValueFirstProperty() }
       :nWidth                       := 60
       :lHide                        := .t.
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Valor propiedad 2"
-      :bEditValue                   := {|| ::oDocumentLine:getValueSecondProperty() }
+      :bEditValue                   := {|| ::oDocumentLines:getValueSecondProperty() }
       :nWidth                       := 60
       :lHide                        := .t.
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Nombre propiedad 1"
-      :bEditValue                   := {|| ::oDocumentLine:getNameFirstProperty() }
+      :bEditValue                   := {|| ::oDocumentLines:getNameFirstProperty() }
       :nWidth                       := 60
       :lHide                        := .t.
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Nombre propiedad 2"
-      :bEditValue                   := {|| ::oDocumentLine:getNameSecondProperty() }
+      :bEditValue                   := {|| ::oDocumentLines:getNameSecondProperty() }
       :nWidth                       := 60
       :lHide                        := .t.
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Lote"
-      :bEditValue                   := {|| ::oDocumentLine:getLote() }
+      :bEditValue                   := {|| ::oDocumentLines:getLote() }
       :nWidth                       := 80
       :lHide                        := .t.
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := cNombreCajas()
-      :bEditValue                   := {|| ::oDocumentLine:getBoxes() }
+      :bEditValue                   := {|| ::oDocumentLines:getBoxes() }
       :cEditPicture                 := masUnd()
       :nWidth                       := 50
       :nDataStrAlign                := 1
@@ -571,7 +575,7 @@ METHOD DialogSelectionLines( oDlg )
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := cNombreUnidades()
-      :bEditValue                   := {|| ::oDocumentLine:getUnits() }
+      :bEditValue                   := {|| ::oDocumentLines:getUnits() }
       :cEditPicture                 := masUnd()
       :nWidth                       := 60
       :nDataStrAlign                := 1
@@ -581,7 +585,7 @@ METHOD DialogSelectionLines( oDlg )
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Total " + cNombreUnidades()
-      :bEditValue                   := {|| ::oDocumentLine:getTotalUnits() }
+      :bEditValue                   := {|| ::oDocumentLines:getTotalUnits() }
       :cEditPicture                 := masUnd()
       :nWidth                       := 60
       :nDataStrAlign                := 1
@@ -591,20 +595,20 @@ METHOD DialogSelectionLines( oDlg )
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "UM. Unidad de medición"
-      :bEditValue                   := {|| ::oDocumentLine:getMeasurementUnit() }
+      :bEditValue                   := {|| ::oDocumentLines:getMeasurementUnit() }
       :nWidth                       := 25
       :lHide                        := .t.
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Almacen"
-      :bEditValue                   := {|| ::oDocumentLine:getStore() }
+      :bEditValue                   := {|| ::oDocumentLines:getStore() }
       :nWidth                       := 60
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Importe"
-      :bEditValue                   := {|| ::oDocumentLine:getNetPrice() }
+      :bEditValue                   := {|| ::oDocumentLines:getNetPrice() }
       :cEditPicture                 := ::cPictureRound
       :nWidth                       := 90
       :nDataStrAlign                := 1
@@ -613,7 +617,7 @@ METHOD DialogSelectionLines( oDlg )
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "% Dto."
-      :bEditValue                   := {|| ::oDocumentLine:getPercentageDiscount() }
+      :bEditValue                   := {|| ::oDocumentLines:getPercentageDiscount() }
       :cEditPicture                 := "@E 999.99"
       :nWidth                       := 50
       :nDataStrAlign                := 1
@@ -623,7 +627,7 @@ METHOD DialogSelectionLines( oDlg )
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "% Dto."
-      :bEditValue                   := {|| ::oDocumentLine:getPercentagePromotion() }
+      :bEditValue                   := {|| ::oDocumentLines:getPercentagePromotion() }
       :cEditPicture                 := "@E 999.99"
       :nWidth                       := 50
       :nDataStrAlign                := 1
@@ -633,7 +637,7 @@ METHOD DialogSelectionLines( oDlg )
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "% " + cImp()
-      :bEditValue                   := {|| ::oDocumentLine:getPercentageTax() }
+      :bEditValue                   := {|| ::oDocumentLines:getPercentageTax() }
       :cEditPicture                 := "@E 999.99"
       :nWidth                       := 50
       :nDataStrAlign                := 1
@@ -642,7 +646,7 @@ METHOD DialogSelectionLines( oDlg )
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Total"
-      :bEditValue                   := {|| ::oDocumentLine:getTotal() }
+      :bEditValue                   := {|| ::oDocumentLines:getTotal() }
       :cEditPicture                 := ::cPictureRound
       :nWidth                       := 80
       :nDataStrAlign                := 1
@@ -663,7 +667,7 @@ METHOD DialogSummary( oDlg )
       OF          oDlg
 
    REDEFINE SAY ; 
-      VAR         ::getTextId() ;
+      VAR         ::getHeaderTextId() ;
       ID          110 ;
       OF          oDlg
 
@@ -782,7 +786,7 @@ METHOD showDocumentsLines()
       Return ( .f. )
    end if 
 
-   ::getLinesDocument( Id )
+   ::getLinesDocument()
 
    // ::setLinesScope( Id )
 
@@ -792,16 +796,11 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD setDocumentType( cTableName, cTableLineName )
+METHOD setDocumentType( cTableHeadName, cTableLineName )
 
-   ::setHeaderTable( ::scanDataArea( cTableName ) )
+   ::setHeaderTable( cTableHeadName )
 
-   ::setHeaderAlias(       D():get( cTableName, ::nView ) )
-   ::setHeaderDictionary(  D():getDictionaryFromArea( cTableName ) )
-   ::setHeaderIndex(       D():getIndexFromArea( cTableName ) )
-
-   ::oDocumentLine:setAlias(        D():get( cTableLineName, ::nView ) )
-   ::oDocumentLine:setDictionary(   D():getDictionaryFromArea( cTableLineName ) )
+   ::setLineTable( cTableLineName )
 
    ::setAliasInBrowseDocument()
    ::setOrderInColumn()   
@@ -890,27 +889,31 @@ Return ( Self )
 // Convierte las lineas del albaran en objetos
 //
 
-METHOD getLinesDocument( id ) 
+METHOD getLinesDocument() 
+
+   local aStatus
+   local oDocumentLine
 
    ::oDocumentLines:reset()
 
-   D():getStatusFacturasClientesLineas( ::nView )
+   aStatus              := aGetStatus( ::getHeaderAlias(), .t. )
 
-   ( ::getHeaderAlias() )->( ordSetFocus( 1 ) )
+   if ( ::getHeaderAlias() )->( dbSeek( ::getHeaderId() ) )  
 
-   if ( getHeaderAlias() )->( dbSeek( id ) )  
+      while ( ::getLineId() == ::getHeaderId() ) .and. !( ::getLineAlias() )->( eof() ) 
 
-      while ( D():FacturasClientesLineasId( ::nView ) == id ) .and. !( D():FacturasClientesLineas( ::nView ) )->( eof() ) 
+         oDocumentLine  := DocumentLine():New()
+         oDocumentLine:setDictionary( D():getHashFromAlias( ::getLineAlias(), ::getLineDictionary() ) )
 
-         ::addDocumentLine()
-      
-         ( D():FacturasClientesLineas( ::nView ) )->( dbSkip() ) 
+         ::oDocumentLines:addLines( oDocumentLine )
+
+         ( ::getLineAlias() )->( dbSkip() ) 
       
       end while
 
    end if 
    
-   D():setStatusFacturasClientesLineas( ::nView ) 
+   setStatus( ::getHeaderAlias(), aStatus ) 
 
 RETURN ( self ) 
 
