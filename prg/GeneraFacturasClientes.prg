@@ -648,7 +648,7 @@ METHOD OrdenaListaAlbaranes() CLASS GeneraFacturasClientes
    aeval( ::aListaAlbaranes, {|x| msgAlert( hGet( x, "clave" ) ) } ) 
 
    if len( ::aListaAlbaranes ) > 1
-      aSort( ::aListaAlbaranes, , , {|x, y| hGet( x, "clave" ) < hGet( y, "clave" ) }  )
+      aSort( ::aListaAlbaranes, , , {|x, y| hGet( x, "clave" ) + hGet( x, "direccion" ) + dtos( hGet( x, "fecha" ) ) < hGet( y, "clave" ) + hGet( y, "direccion" ) + dtos( hGet( y, "fecha" ) ) }  )
    end if
 
 Return ( self )
