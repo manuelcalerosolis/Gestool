@@ -134,6 +134,7 @@ Return ( Total )
 METHOD getNetPrice() CLASS DocumentLine
 
    local Price       := ::getPrice()
+/*
    Price             -= ::getMonetaryDiscount()
 
    if ::getPercentageDiscount() != 0
@@ -143,7 +144,7 @@ METHOD getNetPrice() CLASS DocumentLine
    if ::getPercentagePromotion() != 0
       Price          -= Price * ::getPercentagePromotion() / 100
    end if 
-
+*/
 Return ( Price )
 
 //---------------------------------------------------------------------------//

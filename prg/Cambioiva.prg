@@ -610,7 +610,7 @@ METHOD DialogSelectionLines( oDlg )
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Importe"
-      :bEditValue                   := {|| ::getLineDocument():getNetPrice() }
+      :bEditValue                   := {|| ::getLineDocument():getPrice() } // {|| ::getLineDocument():getNetPrice() }
       :cEditPicture                 := ::cPictureRound
       :nWidth                       := 90
       :nDataStrAlign                := 1
