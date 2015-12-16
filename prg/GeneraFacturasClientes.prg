@@ -103,6 +103,8 @@ CLASS GeneraFacturasClientes FROM DialogBuilder
 
    METHOD UpdatePadre()
 
+   METHOD isFechaFacturaActual()       INLINE ( ::nRadFec == 1 )
+
    METHOD lIsFacturable()
    METHOD lValidaNodo()
    METHOD CreaNodo()
@@ -332,7 +334,7 @@ METHOD Resource() CLASS GeneraFacturasClientes
       OF       ::oPag:aDialogs[ 1 ]
 
    REDEFINE GET ::dFecFac;
-      WHEN     ( ::nRadFec == 1 ) ;
+      WHEN     ( ::isFechaFacturaActual() ) ;
       SPINNER ;
       ID       230 ;
       OF       ::oPag:aDialogs[ 1 ]
@@ -643,6 +645,8 @@ Return ( self )
 
 METHOD OrdenaListaAlbaranes() CLASS GeneraFacturasClientes
 
+   aeval( ::aListaAlbaranes, {|x| msgAlert( hGet( x, "clave" ) } ) )
+
    if len( ::aListaAlbaranes ) > 1
       aSort( ::aListaAlbaranes, , , {|x, y| hGet( x, "clave" ) < hGet( y, "clave" ) }  )
    end if
@@ -936,7 +940,7 @@ METHOD cClaveAlbaran() CLASS GeneraFacturasClientes
       cClave   += ( D():AlbaranesClientes( ::nView ) )->cCodPago
    end if
 
-   if ::nRadFec == 2
+   if !::isFechaFacturaActual()
       cClave   += dToc( ( D():AlbaranesClientes( ::nView ) )->dFecAlb )
    end if 
 
@@ -1516,7 +1520,7 @@ METHOD GetFecha( oItem ) CLASS GeneraFacturasClientes
 
    local dFecha      := ::dFecFac
 
-   if ::nRadFec != 1
+   if !::isFechaFacturaActual()
       dFecha         := hGet( oItem:Cargo, "fecha" )
    end if
 

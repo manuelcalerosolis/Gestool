@@ -5978,6 +5978,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 450, "Edit", WS_BORDER|WS_TABSTOP, 151, 258, 50, 11
   CONTROL "", 451, "Edit", WS_BORDER, 202, 258, 225, 11
   CONTROL "", 460, "Edit", WS_BORDER|WS_TABSTOP, 151, 270, 50, 11
+  CONTROL "", 550, "Edit", WS_BORDER|WS_TABSTOP, 151, 282, 50, 11
+  CONTROL "", 560, "Edit", WS_BORDER|WS_TABSTOP, 151, 294, 50, 11
   CONTROL "Realizar apunte siempre incluso con importes a cero", 470, "Button", BS_AUTOCHECKBOX|BS_MULTILINE|WS_TABSTOP, 50, 309, 177, 11
   CONTROL "Utilizar decimales en cuentas con recargos de equivalencia", 480, "Button", BS_AUTOCHECKBOX|BS_MULTILINE|WS_TABSTOP, 50, 322, 213, 11
   CONTROL "Permitir realizar apuntes en negativo", 490, "Button", BS_AUTOCHECKBOX|BS_MULTILINE|WS_TABSTOP, 50, 335, 127, 11
@@ -5995,8 +5997,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "Anticipos", -1, "Static", WS_GROUP, 50, 198, 50, 8
   CONTROL "Retenciones", -1, "Static", WS_GROUP, 50, 210, 50, 8
   CONTROL "Impuestos y configuración de apuntes", -1, "Button", BS_GROUPBOX, 44, 247, 388, 101
-  CONTROL "IVA venta soportado en UE", -1, "Static", WS_GROUP, 50, 261, 94, 8
-  CONTROL "IVA venta repercutido en UE", -1, "Static", WS_GROUP, 50, 273, 95, 8
+  CONTROL "Repercutido en U.E.", -1, "Static", WS_GROUP, 50, 261, 94, 8
+  CONTROL "Soportado en U.E.", -1, "Static", WS_GROUP, 50, 273, 97, 8
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Enlace y cuentas de contabilidad", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 384, 8
   CONTROL "Portes", -1, "Static", WS_GROUP, 50, 222, 50, 8
@@ -6004,12 +6006,10 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 90, "ComboBox", WS_BORDER|CBS_DROPDOWN|WS_VSCROLL|WS_TABSTOP, 127, 38, 300, 106
   CONTROL "Aplicación", -1, "Static", WS_GROUP, 50, 42, 38, 9
   CONTROL "Series y empresa", -1, "Static", WS_GROUP, 50, 70, 59, 10
-  CONTROL "", 550, "Edit", WS_BORDER|WS_TABSTOP, 151, 282, 50, 11
   CONTROL "", 551, "Edit", WS_BORDER, 202, 282, 225, 11
-  CONTROL "", 560, "Edit", WS_BORDER|WS_TABSTOP, 151, 294, 50, 11
   CONTROL "", 561, "Edit", WS_BORDER, 202, 294, 225, 11
-  CONTROL "IVA compra soportado en UE", 4005, "Static", WS_GROUP, 50, 285, 98, 8
-  CONTROL "IVA compra repercutido en UE", 4006, "Static", WS_GROUP, 50, 297, 98, 8
+  CONTROL "Soportado en UE", -1, "Static", WS_GROUP, 50, 285, 98, 8
+  CONTROL "IVA compra repercutido en UE", -1, "Static", WS_GROUP, 50, 297, 98, 8
 }
 
 EMPRESACFG DIALOG DISCARDABLE 137, 27, 435, 429

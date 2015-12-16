@@ -3663,7 +3663,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
                end if
 
                /*
-               Construimos las bases de los impuestosS
+               Construimos las bases de los impuestos--------------------------
                */
 
                if isIVAComunidadEconomicaEuropea( dbfFacPrvT )

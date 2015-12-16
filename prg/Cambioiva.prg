@@ -147,7 +147,9 @@ CLASS TConversionDocumentos // FROM DialogBuilder
    METHOD getLineTextId()                          INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getLineAlias(), ::getLineDictionary() ) + "/" + ;
                                                             alltrim( str( D():getFieldFromAliasDictionary( "Numero", ::getLineAlias(), ::getHeaderDictionary() ) ) ) )
 
-   METHOD getLinesDocument() 
+   METHOD getLineDocument()                        INLINE ( ::oDocumentLines:getLine( ::oBrwLines:nArrayAt ) )
+
+   METHOD loadLinesDocument() 
 
    METHOD showDocuments() 
    METHOD showDocumentsLines()
@@ -497,75 +499,75 @@ METHOD DialogSelectionLines( oDlg )
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Seleccionando"
-      :bEditValue                   := {|| ::oDocumentLines:isSelectedLine() }
+      :bEditValue                   := {|| ::getLineDocument():isSelectedLine() }
       :nWidth                       := 20
       :SetCheck( { "Sel16", "Nil16" } )
    end with
   
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Código"
-      :bEditValue                   := {|| ::oDocumentLines:getCode() }
+      :bEditValue                   := {|| ::getLineDocument():getCode() }
       :nWidth                       := 80
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Descripción"
-      :bEditValue                   := {|| ::oDocumentLines:getDescription() }
+      :bEditValue                   := {|| ::getLineDocument():getDescription() }
       :nWidth                       := 340
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Prop. 1"
-      :bEditValue                   := {|| ::oDocumentLines:getCodeFirstProperty() }
+      :bEditValue                   := {|| ::getLineDocument():getCodeFirstProperty() }
       :nWidth                       := 60
       :lHide                        := .t.
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Prop. 2"
-      :bEditValue                   := {|| ::oDocumentLines:getCodeSecondProperty() }
+      :bEditValue                   := {|| ::getLineDocument():getCodeSecondProperty() }
       :nWidth                       := 60
       :lHide                        := .t.
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Valor propiedad 1"
-      :bEditValue                   := {|| ::oDocumentLines:getValueFirstProperty() }
+      :bEditValue                   := {|| ::getLineDocument():getValueFirstProperty() }
       :nWidth                       := 60
       :lHide                        := .t.
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Valor propiedad 2"
-      :bEditValue                   := {|| ::oDocumentLines:getValueSecondProperty() }
+      :bEditValue                   := {|| ::getLineDocument():getValueSecondProperty() }
       :nWidth                       := 60
       :lHide                        := .t.
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Nombre propiedad 1"
-      :bEditValue                   := {|| ::oDocumentLines:getNameFirstProperty() }
+      :bEditValue                   := {|| ::getLineDocument():getNameFirstProperty() }
       :nWidth                       := 60
       :lHide                        := .t.
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Nombre propiedad 2"
-      :bEditValue                   := {|| ::oDocumentLines:getNameSecondProperty() }
+      :bEditValue                   := {|| ::getLineDocument():getNameSecondProperty() }
       :nWidth                       := 60
       :lHide                        := .t.
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Lote"
-      :bEditValue                   := {|| ::oDocumentLines:getLote() }
+      :bEditValue                   := {|| ::getLineDocument():getLote() }
       :nWidth                       := 80
       :lHide                        := .t.
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := cNombreCajas()
-      :bEditValue                   := {|| ::oDocumentLines:getBoxes() }
+      :bEditValue                   := {|| ::getLineDocument():getBoxes() }
       :cEditPicture                 := masUnd()
       :nWidth                       := 50
       :nDataStrAlign                := 1
@@ -575,7 +577,7 @@ METHOD DialogSelectionLines( oDlg )
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := cNombreUnidades()
-      :bEditValue                   := {|| ::oDocumentLines:getUnits() }
+      :bEditValue                   := {|| ::getLineDocument():getUnits() }
       :cEditPicture                 := masUnd()
       :nWidth                       := 60
       :nDataStrAlign                := 1
@@ -585,7 +587,7 @@ METHOD DialogSelectionLines( oDlg )
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Total " + cNombreUnidades()
-      :bEditValue                   := {|| ::oDocumentLines:getTotalUnits() }
+      :bEditValue                   := {|| ::getLineDocument():getTotalUnits() }
       :cEditPicture                 := masUnd()
       :nWidth                       := 60
       :nDataStrAlign                := 1
@@ -595,20 +597,20 @@ METHOD DialogSelectionLines( oDlg )
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "UM. Unidad de medición"
-      :bEditValue                   := {|| ::oDocumentLines:getMeasurementUnit() }
+      :bEditValue                   := {|| ::getLineDocument():getMeasurementUnit() }
       :nWidth                       := 25
       :lHide                        := .t.
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Almacen"
-      :bEditValue                   := {|| ::oDocumentLines:getStore() }
+      :bEditValue                   := {|| ::getLineDocument():getStore() }
       :nWidth                       := 60
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Importe"
-      :bEditValue                   := {|| ::oDocumentLines:getNetPrice() }
+      :bEditValue                   := {|| ::getLineDocument():getNetPrice() }
       :cEditPicture                 := ::cPictureRound
       :nWidth                       := 90
       :nDataStrAlign                := 1
@@ -617,7 +619,7 @@ METHOD DialogSelectionLines( oDlg )
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "% Dto."
-      :bEditValue                   := {|| ::oDocumentLines:getPercentageDiscount() }
+      :bEditValue                   := {|| ::getLineDocument():getPercentageDiscount() }
       :cEditPicture                 := "@E 999.99"
       :nWidth                       := 50
       :nDataStrAlign                := 1
@@ -627,7 +629,7 @@ METHOD DialogSelectionLines( oDlg )
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "% Dto."
-      :bEditValue                   := {|| ::oDocumentLines:getPercentagePromotion() }
+      :bEditValue                   := {|| ::getLineDocument():getPercentagePromotion() }
       :cEditPicture                 := "@E 999.99"
       :nWidth                       := 50
       :nDataStrAlign                := 1
@@ -637,7 +639,7 @@ METHOD DialogSelectionLines( oDlg )
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "% " + cImp()
-      :bEditValue                   := {|| ::oDocumentLines:getPercentageTax() }
+      :bEditValue                   := {|| ::getLineDocument():getPercentageTax() }
       :cEditPicture                 := "@E 999.99"
       :nWidth                       := 50
       :nDataStrAlign                := 1
@@ -646,7 +648,7 @@ METHOD DialogSelectionLines( oDlg )
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Total"
-      :bEditValue                   := {|| ::oDocumentLines:getTotal() }
+      :bEditValue                   := {|| ::getLineDocument():getTotal() }
       :cEditPicture                 := ::cPictureRound
       :nWidth                       := 80
       :nDataStrAlign                := 1
@@ -786,7 +788,10 @@ METHOD showDocumentsLines()
       Return ( .f. )
    end if 
 
-   ::getLinesDocument()
+   ::loadLinesDocument()
+
+   ::oBrwLines:setArray( ::oDocumentLines:getLines(), , , .f. )
+
 
    // ::setLinesScope( Id )
 
@@ -889,7 +894,7 @@ Return ( Self )
 // Convierte las lineas del albaran en objetos
 //
 
-METHOD getLinesDocument() 
+METHOD loadLinesDocument() 
 
    local aStatus
    local oDocumentLine
@@ -904,6 +909,8 @@ METHOD getLinesDocument()
 
          oDocumentLine  := DocumentLine():New()
          oDocumentLine:setDictionary( D():getHashFromAlias( ::getLineAlias(), ::getLineDictionary() ) )
+
+         // msgAlert( hb_valtoexp( oDocumentLine ) )
 
          ::oDocumentLines:addLines( oDocumentLine )
 

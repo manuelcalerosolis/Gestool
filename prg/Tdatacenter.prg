@@ -1037,8 +1037,6 @@ METHOD ScanDataTableInView( cDataTable, nView )
 
    local oDataTable
 
-   msgAlert( cDataTable, "cDataTable" )
-
    oDataTable  := ::ScanDataTable( cDataTable )
 
    if !empty(oDatatable)
