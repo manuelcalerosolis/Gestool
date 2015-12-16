@@ -74,6 +74,8 @@ CLASS TDetCamposExtra FROM TMant
 
    METHOD cFormatValue( campoExtra )
 
+   METHOD editColCampoExtra( oCol, uNewValue, nKey )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -517,9 +519,44 @@ METHOD addCamposExtra( oBrw ) CLASS TDetCamposExtra
          :nHeadStrAlign    := ::nAlignData( campoExtra )
          :nWidth           := 100
          :lHide            := .t.
+         :nEditType        := 1
+         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::editColCampoExtra( oCol, uNewValue, campoExtra, oBrw ) }
       end with
 
    next
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD editColCampoExtra( oCol, uNewValue, campoExtra, oBrw ) CLASS TDetCamposExtra
+
+   local nRec        := ::oDbf:Recno()
+   local nOrdAnt     := ::oDbf:OrdSetFocus( "cTotClave" )
+
+   if ::oDbf:Seek( hGet( DOCUMENTOS_ITEMS, ::TipoDocumento ) + campoExtra[ "código" ] + eval( ::bId ) )
+
+      ::oDbf:Load()
+      ::oDbf:cValor    := ::cFormat2Char( uNewValue )
+      ::oDbf:Save()
+
+   else
+
+      ::oDbf:Append()
+      ::oDbf:cTipDoc    := hGet( DOCUMENTOS_ITEMS, ::TipoDocumento )
+      ::oDbf:cCodTipo   := campoExtra[ "código" ]
+      ::oDbf:cClave     := eval( ::bId )
+      ::oDbf:cValor     := ::cFormat2Char( uNewValue )
+      ::oDbf:Save()      
+
+   end if
+
+   ::oDbf:OrdSetFocus( nOrdAnt )
+   ::oDbf:GoTo( nRec )
+
+   if !Empty( oBrw )
+      oBrw:Refresh()
+   end if
 
 Return ( .t. )
 
