@@ -1209,7 +1209,7 @@ METHOD AppendFacturaCabecera( oItem ) CLASS GeneraFacturasClientes
    ( D():FacturasClientes( ::nView ) )->cDivFac       := cDivEmp()
    ( D():FacturasClientes( ::nView ) )->nVdvFac       := nChgDiv( cDivEmp(), D():Divisas( ::nView ) )
    ( D():FacturasClientes( ::nView ) )->lSndDoc       := .t.
-   ( D():FacturasClientes( ::nView ) )->lIvaInc       := uFieldEmpresa( "lIvaInc" )
+   ( D():FacturasClientes( ::nView ) )->lIvaInc       := ::oImpuestosIncluidos:Value()
    ( D():FacturasClientes( ::nView ) )->cDtoEsp       := Padr( "General", 50 )
    ( D():FacturasClientes( ::nView ) )->cDpp          := Padr( "Pronto pago", 50 )
    ( D():FacturasClientes( ::nView ) )->cDtoUno       := Space( 50 ) 
