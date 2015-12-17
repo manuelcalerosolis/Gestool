@@ -1,7 +1,7 @@
 #include "Factu.ch" 
 #include "FiveWin.ch"
 
-#define __localDirectory__       "c:\EdiversaEDI\"
+#define __localDirectory__       "c:\ficheros"
 #define __separator__            ";"
 
 //---------------------------------------------------------------------------//
@@ -81,6 +81,8 @@ CLASS TEdiExporarFacturas
       METHOD writeDatosEstablecimiento()
       METHOD writeClienteEstablecimiento()
 
+   METHOD writeReferencias()
+
    METHOD writeLineas()
       METHOD writeDetallesLinea()
       METHOD writeImpuestosLinea()
@@ -138,6 +140,8 @@ METHOD Run()
       ::writeDatosCliente()
 
       ::getDatosEstablecimiento()
+
+      ::writeReferencias()
       
       ::writeLineas()  
 
@@ -302,6 +306,33 @@ METHOD writeClienteEstablecimiento()
    cLine          += ""                                               
 
    ::oFileEDI:add( cLine )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD writeReferencias()
+
+   local cLine    := "Referencias" + __separator__
+
+   if Empty( ( D():FacturasClientes( ::nView ) )->cNumAlb )
+      cLine       += alltrim( D():FacturasClientesIdShort( ::nView ) ) + __separator__   //Número del albarán de procedencia
+      cLine       += "" + __separator__                                                  // Número del pedido no obligatorio
+      cLine       += alltrim( D():FacturasClientesIdShort( ::nView ) ) + __separator__   // Número de la factura
+      cLine       += ::getFecha( ( D():FacturasClientes( ::nView ) )->dFecFac ) + __separator__   // Fecha de la factura
+      cLine       += "" + __separator__                                                  // Fecha del pedido no obligatorio
+      cLine       += ::getFecha( ( D():FacturasClientes( ::nView ) )->dFecFac )          // Fecha de la factura
+   else
+      cLine       += alltrim( ( D():FacturasClientes( ::nView ) )->cNumAlb ) + __separator__     //Número del albarán de procedencia
+      cLine       += "" + __separator__                                                  // Número del pedido no obligatorio
+      cLine       += alltrim( D():FacturasClientesIdShort( ::nView ) ) + __separator__   // Número de la factura
+      cLine       += ::getFecha( retfld( ( D():FacturasClientes( ::nView ) )->cNumAlb, D():AlbaranesClientes( ::nView ), "dFecAlb" ) ) + __separator__   // Fecha del albarán
+      cLine       += "" + __separator__                                                  // Fecha del pedido no obligatorio
+      cLine       += ::getFecha( ( D():FacturasClientes( ::nView ) )->dFecFac )          // Fecha de la factura
+   end if
+   cLine          += ""  
+
+   ::oFileEDI:add( cLine )      
 
 Return ( self )
 
