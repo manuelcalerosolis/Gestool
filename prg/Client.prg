@@ -12581,7 +12581,7 @@ Static function getSelectedAtipica( hValue, hSelectedAtipica )
 
    if isValidAtipicaXY( hValue, hCurrentAtipica ) 
 
-      if isBetterAtipica( hValue, hCurrentAtipica, hSelectedAtipica )
+      if isBetterAtipica( hValue, hSelectedAtipica, hCurrentAtipica )
          Return ( hCurrentAtipica )
       end if
 
@@ -12688,7 +12688,9 @@ Function hAtipica( hValue )
                !( D():Atipicas( hValue[ "nView" ] ) )->( Eof() )
 
                if isValidAtipica( hValue )
+                  
                   hSelectedAtipica     := getSelectedAtipica( hValue, hSelectedAtipica )
+
                end if
 
                ( D():Atipicas( hValue[ "nView" ] ) )->( dbSkip() )

@@ -12521,7 +12521,7 @@ Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin, oDlg )
                if lConditionAtipica( nil, D():Atipicas( nView ) ) .and. ( D():Atipicas( nView ) )->lAplAlb
       
                   AppendDatosAtipicas( aTmpAlb )
-      
+
                end if
 
                SetAutoMeterDialog( ( D():Atipicas( nView ) )->( Recno() ) )
@@ -12602,12 +12602,12 @@ Static Function AppendDatosAtipicas( aTmpAlb )
 
          /*
          Vamos a por los catos de la tarifa
-         */      
+         */ 
 
          hAtipica := hAtipica( hValue( dbfTmpLin, aTmpAlb ) )
 
          if !Empty( hAtipica )
-               
+
             if hhaskey( hAtipica, "nImporte" ) .and. hAtipica[ "nImporte" ] != 0
                ( dbfTmpLin )->nPreUnit    := hAtipica[ "nImporte" ]
             end if
