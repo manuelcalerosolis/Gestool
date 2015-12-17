@@ -6,21 +6,21 @@ CLASS DocumentLine
    DATA oSender
    DATA hDictionary
 
-   DATA aSelectedLines                                         INIT {}
+   DATA selectLine                                             INIT .f.
 
    METHOD new()
 
    METHOD getDictionary()                                      INLINE ( ::hDictionary )
    METHOD setDictionary( hDictionary )                         INLINE ( ::hDictionary := hDictionary )
 
-   METHOD getValue( key )                                      INLINE ( hGet( ::hDictionary, key ) )
+   METHOD getValue( key, uDefault )                            INLINE ( hGetDefault( ::hDictionary, key, uDefault ) )
    METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
 
-   METHOD select()                                             INLINE ( ::setValue( "selectLine", .t. ) )                           
-   METHOD unSelect()                                           INLINE ( ::setValue( "selectLine", .f. ) )                           
-   METHOD toogleSelect()                                       INLINE ( ::setValue( "selectLine", !::isSelect() ) )                           
+   METHOD select()                                             INLINE ( ::selectLine   := .t. )                           
+   METHOD unSelect()                                           INLINE ( ::selectLine   := .f. )                           
+   METHOD toogleSelect()                                       INLINE ( ::selectLine   := !::selectLine )                           
 
-   METHOD isSelect()                                           INLINE ( ::getValue( "selectLine") )
+   METHOD isSelect()                                           INLINE ( ::selectLine )
 
    METHOD getDivisa()                                          INLINE ( hGet( ::getValueMaster(), "Divisa" ) ) 
 
@@ -75,12 +75,12 @@ CLASS DocumentLine
    METHOD getDescuento()                                       INLINE ( ::getValue( "Descuento" ) )
    METHOD getRecargoEquivalencia()                             INLINE ( ::getValue( "RecargoEquivalencia" ) )
 
-   METHOD getDescuentoPorcentual()                             INLINE ( ::getValue( "DescuentoPorcentual" ) )
-   METHOD getDescuentoPromocion()                              INLINE ( ::getValue( "DescuentoPromocion" ) )
+   METHOD getDescuentoPorcentual()                             INLINE ( ::getValue( "DescuentoPorcentual", 0 ) )
+   METHOD getDescuentoPromocion()                              INLINE ( ::getValue( "DescuentoPromocion", 0 ) )
 
    METHOD isSpecialTaxInclude()                                INLINE ( ::getValue( "LineaImpuestoIncluido", .f. ) )
    METHOD isVolumenSpecialTax()                                INLINE ( ::getValue( "VolumenImpuestosEspeciales", .f. ) )
-   METHOD getSpecialTax()                                      INLINE ( ::getValue( "ImporteImpuestoEspecial" ) )
+   METHOD getSpecialTax()                                      INLINE ( ::getValue( "ImporteImpuestoEspecial", 0 ) )
 
    METHOD getTotal()
    METHOD getTotalSpecialTax()  
@@ -122,11 +122,11 @@ METHOD getTotal() CLASS DocumentLine
    if ::getPortes() != 0
       Total          += ::getPortes() * ::getTotalUnits()
    endif
-
+/*
    if ::oSender:isPuntoVerde()    
       Total          += ::getPuntoVerde() * ::getTotalUnits()
    end if 
-
+*/
 Return ( Total )
 
 //---------------------------------------------------------------------------//
@@ -134,7 +134,7 @@ Return ( Total )
 METHOD getNetPrice() CLASS DocumentLine
 
    local Price       := ::getPrice()
-/*
+
    Price             -= ::getMonetaryDiscount()
 
    if ::getPercentageDiscount() != 0
@@ -144,7 +144,7 @@ METHOD getNetPrice() CLASS DocumentLine
    if ::getPercentagePromotion() != 0
       Price          -= Price * ::getPercentagePromotion() / 100
    end if 
-*/
+
 Return ( Price )
 
 //---------------------------------------------------------------------------//

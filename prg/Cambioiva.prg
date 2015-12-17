@@ -80,11 +80,11 @@ CLASS TConversionDocumentos // FROM DialogBuilder
    METHOD BotonSiguiente()
    METHOD BotonAnterior()
 
-   METHOD selectLine()                             INLINE ( ::oDocumentLines:selectLine(), ::oBrwLines:DrawLine(.t.) )                             
-   METHOD unSelectLine()                           INLINE ( ::oDocumentLines:unSelectLine(), ::oBrwLines:DrawLine(.t.) )
-   METHOD toogleSelectLine()                       INLINE ( ::oDocumentLines:toogleSelectLine(), ::oBrwLines:DrawLine(.t.) )
-   METHOD selectAllLine()                          INLINE ( ::oDocumentLines:selectAllLine(), ::oBrwLines:Refresh() )
-   METHOD unselectAllLine()                        INLINE ( ::oDocumentLines:unselectAllLine(), ::oBrwLines:Refresh() )
+   METHOD selectLine()                             INLINE ( ::getLineDocument():select(),       ::oBrwLines:DrawLine(.t.) )                             
+   METHOD unSelectLine()                           INLINE ( ::getLineDocument():unSelect(),     ::oBrwLines:DrawLine(.t.) )
+   METHOD toogleSelectLine()                       INLINE ( ::getLineDocument():toogleSelect(), ::oBrwLines:DrawLine(.t.) )
+   METHOD selectAllLine()                          INLINE ( ::oDocumentLines:selectAll(),       ::oBrwLines:Refresh() )
+   METHOD unselectAllLine()                        INLINE ( ::oDocumentLines:unSelectAll(),     ::oBrwLines:Refresh() )
 
    METHOD opcionInvalida()                         INLINE ( msgStop( "Opción invalida, por favor elija una opción valida." ), .f. )
 
@@ -499,7 +499,7 @@ METHOD DialogSelectionLines( oDlg )
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Seleccionando"
-      :bEditValue                   := {|| ::getLineDocument():isSelectedLine() }
+      :bEditValue                   := {|| ::getLineDocument():isSelect() }
       :nWidth                       := 20
       :SetCheck( { "Sel16", "Nil16" } )
    end with
@@ -610,7 +610,7 @@ METHOD DialogSelectionLines( oDlg )
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Importe"
-      :bEditValue                   := {|| ::getLineDocument():getPrice() } // {|| ::getLineDocument():getNetPrice() }
+      :bEditValue                   := {|| ::getLineDocument():getNetPrice() }
       :cEditPicture                 := ::cPictureRound
       :nWidth                       := 90
       :nDataStrAlign                := 1

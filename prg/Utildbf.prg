@@ -3743,6 +3743,16 @@ Function fieldGetByName( cFieldName )
 Return ( ( alias() )->( fieldget( fieldpos( cFieldName ) ) ) )
 
 //---------------------------------------------------------------------------//
+
+Function hGetDefault( hash, key, default )
+
+   if hhaskey( hash, key )
+      Return ( hGet( hash, key ) )
+   end if 
+
+Return ( default )
+
+//---------------------------------------------------------------------------//
    
 CLASS excluyentArray
 

@@ -18,17 +18,17 @@ CLASS DocumentLines
    METHOD getLines()                                        INLINE ( ::aLines )
       METHOD getCloneLine()                                 INLINE ( oClone( ::getLine() ) )
 
-   METHOD getLine( nPosDetail )                             INLINE ( ::aLines[ nPosDetail ] )
-   METHOD getLineDetail( nPosDetail )                       INLINE ( ::getLine( nPosDetail ) )
-      METHOD getCloneLineDetail( nPosDetail )               INLINE ( oClone( ::getLineDetail( nPosDetail ) ) )
+   METHOD getLine( nPosition )                              INLINE ( ::aLines[ nPosition  ] )
+   METHOD getLineDetail( nPosition )                        INLINE ( ::getLine( nPosition  ) )
+      METHOD getCloneLineDetail( nPosition )                INLINE ( oClone( ::getLineDetail( nPosition  ) ) )
       
    METHOD appendLineDetail( oDocumentLine )                 INLINE ( aadd( ::aLines, oDocumentLine ) )
-   METHOD saveLineDetail( nPosDetail, oDocumentLine )       INLINE ( ::aLines[ nPosDetail ] := oDocumentLine )
+   METHOD saveLineDetail( nPosition, oDocumentLine )        INLINE ( ::aLines[ nPosition  ] := oDocumentLine )
 
    METHOD getTotal()
 
-   METHOD selectAllLine()                                   INLINE ( aeval( ::aSelectedLines, {|oLine| oLine:select() } ) )
-   METHOD unselectAllLine()                                 INLINE ( aeval( ::aSelectedLines, {|oLine| oLine:unSelect() } ) )
+   METHOD selectAll()                                       INLINE ( aeval( ::aSelectedLines, {|oLine| oLine:select() } ) )
+   METHOD unselectAll()                                     INLINE ( aeval( ::aSelectedLines, {|oLine| oLine:unSelect() } ) )
  
 END CLASS
 
