@@ -6,7 +6,6 @@ CLASS DocumentLines
    DATA oSender
 
    DATA aLines                                              INIT {}
-   DATA aSelectedLines                                      INIT {}
 
    METHOD new( oSender )
 
@@ -27,8 +26,8 @@ CLASS DocumentLines
 
    METHOD getTotal()
 
-   METHOD selectAll()                                       INLINE ( aeval( ::aSelectedLines, {|oLine| oLine:select() } ) )
-   METHOD unselectAll()                                     INLINE ( aeval( ::aSelectedLines, {|oLine| oLine:unSelect() } ) )
+   METHOD selectAll()                                       INLINE ( aeval( ::aLines, {|oLine| oLine:select() } ) )
+   METHOD unselectAll()                                     INLINE ( aeval( ::aLines, {|oLine| oLine:unSelect() } ) )
  
 END CLASS
 

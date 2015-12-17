@@ -1316,10 +1316,10 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
    // Lineas de pedidos-----------------------------------------------------------
 
-   cExpLine          := '!lTotLin .and. !lControl'
+   cExpLine          := '!Field->lTotLin .and. !Field->lControl'
 
    if !::lAllArt
-      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
+      cExpLine       += ' .and. Field->cRef >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. Field->cRef <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
    end if
 
    if lAIS()

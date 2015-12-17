@@ -1588,10 +1588,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
          end with
 
          with object ( oBrwLin:AddCol() )
-            :cHeader             := "Valor prop. 1"
-            :bEditValue          := {|| retValProp( ( dbfTmp )->cCodPr1 + ( dbfTmp )->cValPr1 )}
-            :nWidth              := 40
-            :lHide               := .t.
+            :cHeader          := "Valor prop. 1"
+            :bEditValue       := {|| nombrePropiedad( ( dbfTmp )->cCodPr1, ( dbfTmp )->cValPr1, nView ) }
+            :nWidth           := 40
+            :lHide            := .t.
          end with
 
          with object ( oBrwLin:AddCol() )
@@ -1602,10 +1602,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
          end with
 
          with object ( oBrwLin:AddCol() )
-            :cHeader             := "Valor prop. 2"
-            :bEditValue          := {|| retValProp( ( dbfTmp )->cCodPr2 + ( dbfTmp )->cValPr2 )}
-            :nWidth              := 40
-            :lHide               := .t.
+            :cHeader          := "Valor prop. 2"
+            :bEditValue       := {|| nombrePropiedad( ( dbfTmp )->cCodPr2, ( dbfTmp )->cValPr2, nView ) }
+            :nWidth           := 40
+            :lHide            := .t.
          end with
 
          with object ( oBrwLin:AddCol() )
@@ -3160,8 +3160,6 @@ Static Function EdtDoc( aTmp, aGet, dbfAlbPrvD, oBrw, bWhen, bValid, nMode, aTmp
 Return ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
-
-
 /*
 Edita las lineas de Detalle
 */
@@ -3326,7 +3324,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
       REDEFINE GET aGet[ _CVALPR2 ] VAR aTmp[ _CVALPR2 ];
          ID       230 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
          BITMAP   "LUPA" ;
          VALID    ( if( lPrpAct( aGet[ _CVALPR2 ], oSayVp2, aTmp[ _CCODPR2 ], D():PropiedadesLineas( nView ) ),;
                         LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oDlg, oTotal ),;
@@ -3343,7 +3340,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
       REDEFINE GET oSayVp2 VAR cSayVp2;
          ID       232 ;
          WHEN     .f. ;
-         COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
       // Browse de propiedades-------------------------------------------------

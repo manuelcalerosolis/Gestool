@@ -559,6 +559,9 @@ CLASS Uve FROM Cuaderno
    DATA cDescTipoCliente            INIT ''
    METHOD DescTipoCliente(uValue)   INLINE ( if( !Empty(uValue), ::cDescTipoCliente    := uValue, trimpadr( ::cDescTipoCliente, 50 ) ) )
 
+   METHOD isLineaRepetida( cBuffer )
+   METHOD isSameLine( aLinea, cBuffer )
+
 ENDCLASS
 
    //------------------------------------------------------------------------//
@@ -599,9 +602,26 @@ ENDCLASS
       cBuffer         += ::DescTipoCliente()  + ::Separator()
       cBuffer         += CRLF
 
-      aadd( ::aLineas, cBuffer)
+      if !::isLineaRepetida( cBuffer )
+         aadd( ::aLineas, cBuffer)
+      end if
 
    Return ( ::aLineas )
+
+//---------------------------------------------------------------------------//
+
+   METHOD isLineaRepetida( cBuffer )  CLASS Uve 
+      
+   Return ( ascan( ::aLineas, {|cLinea| ::isSameLine( cLinea, cBuffer ) } ) != 0 )
+
+//---------------------------------------------------------------------------//
+
+   METHOD isSameLine( cLinea, cBuffer )  CLASS Uve 
+
+       local aLinea     := HB_ATokens( cLinea, ";" )
+       local aBuffer    := HB_ATokens( cBuffer, ";" )
+
+   Return ( aLinea[ 1 ] + aLinea[ 2 ] == aBuffer[ 1 ] + aBuffer[ 2 ] )
 
 //---------------------------------------------------------------------------//
 

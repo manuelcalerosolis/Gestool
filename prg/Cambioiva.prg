@@ -150,6 +150,7 @@ CLASS TConversionDocumentos // FROM DialogBuilder
    METHOD getLineDocument()                        INLINE ( ::oDocumentLines:getLine( ::oBrwLines:nArrayAt ) )
 
    METHOD loadLinesDocument() 
+   METHOD showBrowseLinesDocument()                INLINE ( ::oBrwLines:setArray( ::oDocumentLines:getLines(), , , .f. ) )
 
    METHOD showDocuments() 
    METHOD showDocumentsLines()
@@ -782,16 +783,15 @@ Return ( lAction )
 
 METHOD showDocumentsLines()
 
-   local Id       := ::getHeaderId()
+   local id    := ::getHeaderId()
 
-   if empty( Id )
+   if empty( id )
       Return ( .f. )
    end if 
 
-   ::loadLinesDocument()
-
-   ::oBrwLines:setArray( ::oDocumentLines:getLines(), , , .f. )
-
+   if ::loadLinesDocument( id )
+      ::showBrowseLinesDocument()
+   end if 
 
    // ::setLinesScope( Id )
 
@@ -894,23 +894,22 @@ Return ( Self )
 // Convierte las lineas del albaran en objetos
 //
 
-METHOD loadLinesDocument() 
+METHOD loadLinesDocument( id ) 
 
    local aStatus
+   local lLoadLines     := .f.
    local oDocumentLine
 
    ::oDocumentLines:reset()
 
-   aStatus              := aGetStatus( ::getHeaderAlias(), .t. )
+   aStatus              := aGetStatus( ::getLineAlias(), .t. )
 
-   if ( ::getHeaderAlias() )->( dbSeek( ::getHeaderId() ) )  
+   if ( ::getLineAlias() )->( dbSeek( id ) )  
 
-      while ( ::getLineId() == ::getHeaderId() ) .and. !( ::getLineAlias() )->( eof() ) 
+      while ( id == ::getLineId() ) .and. !( ::getLineAlias() )->( eof() ) 
 
          oDocumentLine  := DocumentLine():New()
          oDocumentLine:setDictionary( D():getHashFromAlias( ::getLineAlias(), ::getLineDictionary() ) )
-
-         // msgAlert( hb_valtoexp( oDocumentLine ) )
 
          ::oDocumentLines:addLines( oDocumentLine )
 
@@ -918,10 +917,12 @@ METHOD loadLinesDocument()
       
       end while
 
+      lLoadLines     := .t.
+
    end if 
    
-   setStatus( ::getHeaderAlias(), aStatus ) 
+   setStatus( ::getLineAlias(), aStatus ) 
 
-RETURN ( self ) 
+RETURN ( lLoadLines ) 
 
 //---------------------------------------------------------------------------//
