@@ -5,7 +5,7 @@
 
 Function testAfterEdit()
 
-   msgAlert("testAfterEdit")
+   //msgAlert("testAfterEdit")
 
 Return ( nil )
 

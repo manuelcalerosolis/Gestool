@@ -328,7 +328,7 @@ static cOldUndMed       := ""
 static lOpenFiles       := .f.
 static lExternal        := .f.
 
-static                                                                                                                                                                   oMailing
+static oMailing
 
 static bEdtRec          := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodPed | EdtRec( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodPed ) }
 static bEdtDet          := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aAlbPrv | EdtDet( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
@@ -2770,6 +2770,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
    local aBeneficioSobre   := { "Costo", "Venta" }
    local oSayLote
    local cCodArt           := Padr( aTmp[ _CREF ], 200 )
+
+   ?"EdtDet"
 
 	/*
 	Modificamos los valores por defecto
@@ -5385,14 +5387,22 @@ STATIC FUNCTION BeginTrans( aTmp, aOld )
       end if
 
       /*
-      A¤adimos desde el fichero de lineas
+      Añadimos desde el fichero de lineas
       */
 
       if ( D():AlbaranesProveedoresLineas( nView ) )->( dbSeek( nAlbaran ) )
+         
          while ( ( D():AlbaranesProveedoresLineas( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedoresLineas( nView ) )->nNumAlb ) + ( D():AlbaranesProveedoresLineas( nView ) )->cSufAlb == nAlbaran .AND. !( D():AlbaranesProveedoresLineas( nView ) )->( eof() ) )
-            dbPass( D():AlbaranesProveedoresLineas( nView ), dbfTmp, .t. )
+            
+            appendRegisterByHash( D():AlbaranesProveedoresLineas( nView ), dbfTmp, {   "cSerAlb" => Space(1),;
+                                                                                       "nNumAlb" => 0,;
+                                                                                       "lFacturado" => .f. } )
+
+
             ( D():AlbaranesProveedoresLineas( nView ) )->( DbSkip() )
+
          end while
+
       end if
 
       ( dbfTmp )->( dbGoTop() )
