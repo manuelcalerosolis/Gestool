@@ -645,8 +645,6 @@ Return ( self )
 
 METHOD OrdenaListaAlbaranes() CLASS GeneraFacturasClientes
 
-   aeval( ::aListaAlbaranes, {|x| msgAlert( hGet( x, "clave" ) ) } ) 
-
    if len( ::aListaAlbaranes ) > 1
       aSort( ::aListaAlbaranes, , , {|x, y| hGet( x, "clave" ) + hGet( x, "direccion" ) + dtos( hGet( x, "fecha" ) ) < hGet( y, "clave" ) + hGet( y, "direccion" ) + dtos( hGet( y, "fecha" ) ) }  )
    end if
@@ -1283,7 +1281,7 @@ METHOD appendCabeceraAlbaran( oItem ) CLASS GeneraFacturasClientes
 
    local cDesAlb  := ""
 
-   if lNumAlb() .or. lSuAlb() .or. lNumObr()
+   if lNumAlb() .or. lSuAlb() .or. !Empty( hGet( oItem:Cargo, "direccion" ) )
       
       ( D():FacturasClientesLineas( ::nView ) )->( dbAppend() )
       ( D():FacturasClientesLineas( ::nView ) )->nNumLin    := ::nNumLin
