@@ -143,10 +143,10 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TFacAutomatica
 
    ::bFirstKey                := {|| ::oDbf:cCodFac }
 
-   ::oDetFacAutomatica        := TDetFacAutomatica():New( cPath, Self )
+   ::oDetFacAutomatica        := TDetFacAutomatica():New( cPath, cDriver(), Self )
    ::AddDetail( ::oDetFacAutomatica )
 
-   ::oHisFacAutomatica        := THisFacAutomatica():New( cPath, Self )
+   ::oHisFacAutomatica        := THisFacAutomatica():New( cPath, cDriver(), Self )
    ::AddDetail( ::oHisFacAutomatica )
 
    ::oGrpFacturasAutomaticas  := TGrpFacturasAutomaticas():Create( cPatEmp() )
@@ -170,10 +170,10 @@ METHOD Create( cPath, oWndParent ) CLASS TFacAutomatica
    ::cPath                    := cPath
    ::oWndParent               := oWndParent
 
-   ::oDetFacAutomatica        := TDetFacAutomatica():New( cPath, Self )
+   ::oDetFacAutomatica        := TDetFacAutomatica():New( cPath, cDriver(), Self )
    ::AddDetail( ::oDetFacAutomatica )
 
-   ::oHisFacAutomatica        := THisFacAutomatica():New( cPath, Self )
+   ::oHisFacAutomatica        := THisFacAutomatica():New( cPath, cDriver(), Self )
    ::AddDetail( ::oHisFacAutomatica )
 
    ::oGrpFacturasAutomaticas  := TGrpFacturasAutomaticas():Create( cPatEmp() )
@@ -1856,10 +1856,10 @@ METHOD OpenFiles() CLASS TCreaFacAutomaticas
    ::oFacAutT           := TFacAutomatica():Create( cPatEmp() )
    ::oFacAutT:Openfiles( .f. )
 
-   ::oFacAutL           := TDetFacAutomatica():Create( cPatEmp() )
+   ::oFacAutL           := TDetFacAutomatica():Create( cPatEmp(), cDriver(), Self )
    ::oFacAutL:Openfiles( .f. )
 
-   ::oFacAutI           := THisFacAutomatica():Create( cPatEmp() )
+   ::oFacAutI           := THisFacAutomatica():Create( cPatEmp(), cDriver(), Self )
    ::oFacAutI:Openfiles( .f. )
 
    if ::oDbfDiv:Seek( cDivEmp() )
