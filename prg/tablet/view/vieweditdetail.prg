@@ -29,9 +29,7 @@ CLASS ViewDetail FROM ViewBase
    DATA textNombreAlmacen
 
    DATA oTotalLinea
-
-   DATA nRow                                 INIT     40
-   
+  
    METHOD New()
 
    METHOD Resource()
@@ -70,9 +68,6 @@ CLASS ViewDetail FROM ViewBase
 
    METHOD RefreshDialog()
       METHOD startDialog()
-
-   METHOD getRow()                           INLINE ( ::nRow )
-   METHOD nextRow()                          INLINE ( ::nRow += __rowDistance__ )
 
 END CLASS
 

@@ -6016,7 +6016,7 @@ Return ( by( nRow ) )
 
 Function Test() 
 
-   // msgAlert( cPatTmp(), "cPatTmp" )
+   TConversionPedidosProveedores():New():Dialog()
 
 Return ( nil )
 

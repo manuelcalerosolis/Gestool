@@ -364,7 +364,8 @@ FacAuto.prg             	\
 TDetFacAutomatica.prg   	\
 TComandas.prg           	\
 THisFacAutomatica.prg   	\
-CambioIva.prg           	\
+ConversionDocumentos.prg            \
+ConversionPedidosProveedores.prg    \
 TFacturaElectronica.prg 	\
 CobAge.prg              	\
 Carpeta.prg             	\
@@ -797,7 +798,8 @@ FacAuto.obj             \
 TDetFacAutomatica.obj   \
 TComandas.obj           \
 THisFacAutomatica.obj   \
-CambioIva.obj           \
+ConversionDocumentos.obj            \
+ConversionPedidosProveedores.obj    \
 TFacturaElectronica.obj \
 CobAge.obj              \
 Carpeta.obj             \
@@ -1219,7 +1221,8 @@ $(OBJ)\FacAuto.obj              	+
 $(OBJ)\TDetFacAutomatica.obj    	+
 $(OBJ)\TComandas.obj            	+
 $(OBJ)\THisFacAutomatica.obj    	+
-$(OBJ)\CambioIva.obj            	+
+$(OBJ)\ConversionDocumentos.obj           +
+$(OBJ)\ConversionPedidosProveedores.obj   +
 $(OBJ)\TFacturaElectronica.obj  	+
 $(OBJ)\CobAge.obj               	+
 $(OBJ)\Carpeta.obj              	+

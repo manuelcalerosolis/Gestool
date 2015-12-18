@@ -10385,7 +10385,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
                aGet[ _NCANENT  ]:cText( 0 )
                aGet[ _NUNICAJA ]:cText( 0 )
 
-               setPropertiesTable( cCodArt, aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], 0, aGet[ _NUNICAJA ], aGet[ _NPREUNIT ], oBrwProperties, nView )
+               setPropertiesTable( cCodArt, aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _NPREUNIT ], aGet[ _NUNICAJA ], oBrwProperties, nView )
 
             else 
 

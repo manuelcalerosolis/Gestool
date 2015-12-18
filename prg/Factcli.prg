@@ -19288,7 +19288,10 @@ FUNCTION rxFacCli( cPath, cDriver )
       ( cFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "cCtrCoste", "cCtrCoste", {|| Field->cCtrCoste } ) )
 
       ( cFacCliL )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( cFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "REFAUX", "cSerie + str( nNumFac ) + cSufFac + cRefAux", {|| Field->cSerie + str( Field->nNumFac ) + Field->cSufFac + Field->cRefAux } ) )
+      ( cFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "RefAux", "cSerie + str( nNumFac ) + cSufFac + cRefAux", {|| Field->cSerie + str( Field->nNumFac ) + Field->cSufFac + Field->cRefAux } ) )
+
+      ( cFacCliL )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( cFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "nNumLin", "cSerie + str( nNumFac ) + cSufFac + str( nNumLin )", {|| Field->cSerie + str( Field->nNumFac ) + Field->cSufFac + str( Field->nNumLin ) } ) )
 
       ( cFacCliL )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( cFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "nPosPrint", "cSerie + str( nNumFac ) + cSufFac + Str( nPosPrint )", {|| Field->cSerie + str( Field->nNumFac ) + Field->cSufFac + str( Field->nPosPrint ) } ) )

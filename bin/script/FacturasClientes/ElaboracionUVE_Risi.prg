@@ -228,6 +228,7 @@ METHOD OpenFiles() CLASS FacturasClientesRisi
       ( D():FacturasClientes( ::nView ) )->( ordsetfocus( "dFecFac" ) )
 
       D():FacturasClientesLineas( ::nView )    
+      ( D():FacturasClientesLineas( ::nView ) )->( ordsetfocus( "nNumLin" ) )
 
       D():Clientes( ::nView )
 
@@ -313,11 +314,12 @@ METHOD ProcessFile() CLASS FacturasClientesRisi
                   ::oUve:EAN13(           ::hProducto[ "Codigo unidades" ] ) // RetFld( ( D():FacturasClientesLineas( ::nView ) )->cRef, D():Get( "ArtCodebar", ::nView ), "cCodBar", "cDefArt" )
 
                   ::oUve:Cantidad(        ::getCantidad() )
-                  ::oUve:PrecioBase(      ::getPrecioBase() )
 
                   ::oUve:UM(              'UN' )
-                  ::oUve:Descuentos(      nTotDtoLFacCli( D():FacturasClientesLineas( ::nView ) ) / ::getCantidad() )
+                  ::oUve:PrecioBase(      ::getPrecioBase() )
+                  ::oUve:Descuentos(      nDtoLFacCli( D():FacturasClientesLineas( ::nView ) ) / ::getCantidad() )
                   ::oUve:PrecioBrutoTotal(nTotLFacCli( D():FacturasClientesLineas( ::nView ) ) )
+
                   ::oUve:FechaFra(        ( D():FacturasClientes( ::nView ) )->dFecFac )
                   ::oUve:Ejercicio(       Year( ( D():FacturasClientes( ::nView ) )->dFecFac ) )
                   ::oUve:CodigoCliente(   ( D():FacturasClientes( ::nView ) )->cCodCli )
@@ -559,7 +561,7 @@ CLASS Uve FROM Cuaderno
    DATA cDescTipoCliente            INIT ''
    METHOD DescTipoCliente(uValue)   INLINE ( if( !Empty(uValue), ::cDescTipoCliente    := uValue, trimpadr( ::cDescTipoCliente, 50 ) ) )
 
-   METHOD isLineaRepetida( cBuffer )
+   METHOD isRepeatLine( cBuffer )
    METHOD isSameLine( aLinea, cBuffer )
 
 ENDCLASS
@@ -602,7 +604,7 @@ ENDCLASS
       cBuffer         += ::DescTipoCliente()  + ::Separator()
       cBuffer         += CRLF
 
-      if !::isLineaRepetida( cBuffer )
+      if !::isRepeatLine( cBuffer )
          aadd( ::aLineas, cBuffer)
       end if
 
@@ -610,9 +612,19 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-   METHOD isLineaRepetida( cBuffer )  CLASS Uve 
+   METHOD isRepeatLine( cBuffer )  CLASS Uve 
       
-   Return ( ascan( ::aLineas, {|cLinea| ::isSameLine( cLinea, cBuffer ) } ) != 0 )
+      local aLastLine   := atail(::aLineas)
+
+      if empty(aLastLine)
+         return ( .f. )
+      end if 
+
+      // msgAlert( hb_valtoexp( aLastLine ), "aLastLine" )
+      // msgAlert( cBuffer, "cBuffer")
+      // msgAlert( ::isSameLine( aLastLine, cBuffer ), "isSameLine" )
+
+   Return ( ::isSameLine( aLastLine, cBuffer ) )
 
 //---------------------------------------------------------------------------//
 

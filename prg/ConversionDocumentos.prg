@@ -6,7 +6,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TConversionDocumentos // FROM DialogBuilder
+CLASS TConversionDocumentos 
 
    DATA oDocumentLines
 
@@ -76,13 +76,15 @@ CLASS TConversionDocumentos // FROM DialogBuilder
 
    METHOD OpenFiles()
    METHOD CloseFiles()
+   METHOD getView()                                INLINE ( ::nView )
 
    METHOD BotonSiguiente()
    METHOD BotonAnterior()
 
-   METHOD selectLine()                             INLINE ( ::getLineDocument():select(),       ::oBrwLines:DrawLine(.t.) )                             
-   METHOD unSelectLine()                           INLINE ( ::getLineDocument():unSelect(),     ::oBrwLines:DrawLine(.t.) )
-   METHOD toogleSelectLine()                       INLINE ( ::getLineDocument():toogleSelect(), ::oBrwLines:DrawLine(.t.) )
+   METHOD selectLine()                             
+   METHOD unSelectLine()                           
+   METHOD toogleSelectLine()                       
+
    METHOD selectAllLine()                          INLINE ( ::oDocumentLines:selectAll(),       ::oBrwLines:Refresh() )
    METHOD unselectAllLine()                        INLINE ( ::oDocumentLines:unSelectAll(),     ::oBrwLines:Refresh() )
 
@@ -147,10 +149,10 @@ CLASS TConversionDocumentos // FROM DialogBuilder
    METHOD getLineTextId()                          INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getLineAlias(), ::getLineDictionary() ) + "/" + ;
                                                             alltrim( str( D():getFieldFromAliasDictionary( "Numero", ::getLineAlias(), ::getHeaderDictionary() ) ) ) )
 
-   METHOD getLineDocument()                        INLINE ( ::oDocumentLines:getLine( ::oBrwLines:nArrayAt ) )
+   METHOD getLineDocument( nPosition )             INLINE ( ::oDocumentLines:getLine( if( !empty( nPosition ), nPosition, ::oBrwLines:nArrayAt ) ) )
 
    METHOD loadLinesDocument() 
-   METHOD showBrowseLinesDocument()                INLINE ( ::oBrwLines:setArray( ::oDocumentLines:getLines(), , , .f. ) )
+   METHOD setBrowseLinesDocument()                 INLINE ( ::oBrwLines:setArray( ::oDocumentLines:getLines(), .t., , .f. ) )
 
    METHOD showDocuments() 
    METHOD showDocumentsLines()
@@ -492,7 +494,7 @@ METHOD DialogSelectionLines( oDlg )
    ::oBrwLines:bClrSel              := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrwLines:bClrSelFocus         := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-   ::oBrwLines:nMarqueeStyle        := 5
+   ::oBrwLines:nMarqueeStyle        := 6
    ::oBrwLines:cName                := "Browse.Conversion documentos lineas"
    ::oBrwLines:bLDblClick           := {|| ::toogleSelectLine() }
 
@@ -509,6 +511,7 @@ METHOD DialogSelectionLines( oDlg )
       :cHeader                      := "Código"
       :bEditValue                   := {|| ::getLineDocument():getCode() }
       :nWidth                       := 80
+      :bLClickHeader                := {| nMRow, nMCol, nFlags, oCol | ::oDocumentLines:sortBy() }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -790,7 +793,7 @@ METHOD showDocumentsLines()
    end if 
 
    if ::loadLinesDocument( id )
-      ::showBrowseLinesDocument()
+      ::setBrowseLinesDocument()
    end if 
 
    // ::setLinesScope( Id )
@@ -889,7 +892,49 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD selectLine()
+   
+   local position 
+
+   for each position in ::oBrwLines:aSelected
+      ::getLineDocument( position ):select()
+   next
+
+   ::oBrwLines:Refresh()
+
+Return ( Self )
+
 //---------------------------------------------------------------------------//
+
+METHOD unselectLine()
+   
+   local position 
+
+   for each position in ::oBrwLines:aSelected
+      ::getLineDocument( position ):unselect()
+   next
+
+   ::oBrwLines:Refresh()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD toogleSelectLine()
+   
+   local position 
+
+   for each position in ::oBrwLines:aSelected
+      ::getLineDocument( position ):toogleSelect()
+   next
+
+   ::oBrwLines:Refresh()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+
 //
 // Convierte las lineas del albaran en objetos
 //

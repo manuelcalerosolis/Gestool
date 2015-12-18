@@ -9,9 +9,12 @@ CLASS DocumentLine
    DATA selectLine                                             INIT .f.
 
    METHOD new()
+   METHOD newFromDictionary()
+   METHOD getView()                                            INLINE ( ::oSender:getView() )
 
    METHOD getDictionary()                                      INLINE ( ::hDictionary )
    METHOD setDictionary( hDictionary )                         INLINE ( ::hDictionary := hDictionary )
+   METHOD loadDictionary()                                     INLINE ( ::setDictionary( D():getHashFromAlias( ::oSender:getLineAlias(), ::oSender:getLineDictionary() ) ) )
 
    METHOD getValue( key, uDefault )                            INLINE ( hGetDefault( ::hDictionary, key, uDefault ) )
    METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
@@ -52,8 +55,8 @@ CLASS DocumentLine
    METHOD getCodeSecondProperty()                              INLINE ( ::getValue( "CodigoPropiedad2" ) )
    METHOD getValueFirstProperty()                              INLINE ( ::getValue( "ValorPropiedad1" ) )
    METHOD getValueSecondProperty()                             INLINE ( ::getValue( "ValorPropiedad2" ) )
-   METHOD getNameFirstProperty()                               INLINE ( nombrePropiedad( ::getCodeFirstProperty(), ::getValueFirstProperty(), ::oSender:nView ) )
-   METHOD getNameSecondProperty()                              INLINE ( nombrePropiedad( ::getCodeSecondProperty(), ::getValueSecondProperty(), ::oSender:nView ) )
+   METHOD getNameFirstProperty()                               INLINE ( nombrePropiedad( ::getCodeFirstProperty(), ::getValueFirstProperty(), ::getView() ) )
+   METHOD getNameSecondProperty()                              INLINE ( nombrePropiedad( ::getCodeSecondProperty(), ::getValueSecondProperty(), ::getView() ) )
    METHOD getLote()                                            INLINE ( ::getValue( "Lote" ) )
   
    METHOD getBoxes()                                           INLINE ( ::getValue( "Cajas" ) )
@@ -95,6 +98,16 @@ END CLASS
 METHOD new( oSender ) CLASS DocumentLine
 
    ::oSender            := oSender
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD newFromDictionary( oSender )
+
+   ::new( oSender )
+
+   ::loadDictionary()
 
 Return ( Self )
 

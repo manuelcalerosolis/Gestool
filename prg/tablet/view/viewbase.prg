@@ -1,6 +1,9 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
+#define __initialRow__                       40
+#define __rowDistance__                      25
+
 CLASS ViewBase
 
    DATA buttonEnd
@@ -21,7 +24,9 @@ CLASS ViewBase
    DATA Style                                            INIT ( nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ) )
    
    DATA cTitleDocumento                                  INIT ""
-   
+
+   DATA nRow                                             INIT 40
+
    DATA bPreShowDialog
    DATA bPostDialog 
 
@@ -75,6 +80,10 @@ CLASS ViewBase
 
    METHOD evalDialog()
 
+   METHOD getRow()                                       INLINE ( ::nRow )
+   METHOD resetRow()                                     INLINE ( ::nRow := __initialRow__ )
+   METHOD nextRow()                                      INLINE ( ::nRow += __rowDistance__ )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -92,6 +101,8 @@ Return ( self )
 //---------------------------------------------------------------------------//
 
 METHOD Resource() CLASS ViewBase
+
+   ::resetRow()
 
    ::oDlg                  := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
 

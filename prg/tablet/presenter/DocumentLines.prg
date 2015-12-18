@@ -8,6 +8,7 @@ CLASS DocumentLines
    DATA aLines                                              INIT {}
 
    METHOD new( oSender )
+   METHOD getView()                                         INLINE ( ::oSender:getView() )
 
    METHOD reset()
    
@@ -28,14 +29,22 @@ CLASS DocumentLines
 
    METHOD selectAll()                                       INLINE ( aeval( ::aLines, {|oLine| oLine:select() } ) )
    METHOD unselectAll()                                     INLINE ( aeval( ::aLines, {|oLine| oLine:unSelect() } ) )
- 
+
+   METHOD getHeaderAlias()                                  INLINE ( ::oSender:getHeaderAlias() )
+   METHOD getHeaderDictionary()                             INLINE ( ::oSender:getHeaderDictionary() )
+
+   METHOD getLineAlias()                                    INLINE ( ::oSender:getLineAlias() )
+   METHOD getLineDictionary()                               INLINE ( ::oSender:getLineDictionary() )
+
+   METHOD sortBy( expresion )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD new( oSender )
 
-   oSender        := oSender
+   ::oSender      := oSender
 
 Return ( Self )
 
@@ -57,7 +66,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD addLinesObjects( )
+METHOD addLinesObjects()
 
    ::addLines( DocumentLine():New() )
 
@@ -77,6 +86,16 @@ METHOD getTotal() CLASS DocumentLines
 Return ( Total )
 
 //---------------------------------------------------------------------------//
+
+METHOD sortBy( expresion )
+
+   asort( ::aLines, , , {|x,y| x:getCode() < y:getCode() } )
+
+Return (  Self )
+
+//---------------------------------------------------------------------------//
+
+
 
 
 

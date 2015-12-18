@@ -20,6 +20,7 @@ CLASS ViewEditResumen FROM ViewBase
    DATA cCodigoFormaPago      INIT ""
    DATA oNombreFormaPago
    DATA cNombreFormaPago      INIT ""
+   DATA oPorcentajeDescuento
 
    METHOD New()
 
@@ -46,6 +47,8 @@ CLASS ViewEditResumen FROM ViewBase
 
    METHOD defineCheckRecargo()
 
+   METHOD definePorcentaje() 
+
    METHOD SetGet( u )                           INLINE ( hset( ::oSender:hDictionaryMaster, "RecargoEquivalencia", u ) )
 
 END CLASS
@@ -62,7 +65,9 @@ Return ( self )
 
 METHOD Resource() CLASS ViewEditResumen
 
-   ::oDlg   := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
+   ::nRow                  := 4
+
+   ::oDlg                  := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
 
    ::defineTitulo()
 
@@ -73,6 +78,8 @@ METHOD Resource() CLASS ViewEditResumen
    ::defineFormaPago()
 
    ::defineComboImpresion()
+
+   ::definePorcentaje()
 
    ::defineCheckRecargo()
 
@@ -121,7 +128,7 @@ Return ( self )
 
 METHOD defineCliente() CLASS ViewEditResumen
 
-   TGridSay():Build( {  "nRow"      => 40,;
+   TGridSay():Build( {  "nRow"      => ::getRow(),;
                         "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
                         "bText"     => {|| "Cliente: " },;
                         "oWnd"      => ::oDlg,;
@@ -133,7 +140,7 @@ METHOD defineCliente() CLASS ViewEditResumen
                         "nHeight"   => 23,;
                         "lDesign"   => .f. } )
 
-   TGridGet():Build( {  "nRow"      => 40,;
+   TGridGet():Build( {  "nRow"      => ::getRow(),;
                         "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
                         "oWnd"      => ::oDlg,;
                         "bSetGet"   => {|u| hGet( ::oSender:hDictionaryMaster, "Cliente" ) },;
@@ -142,7 +149,7 @@ METHOD defineCliente() CLASS ViewEditResumen
                         "bWhen"     => {|| .f. },;
                         "lPixels"   => .t. } )
    
-   TGridGet():Build( {  "nRow"      => 40,;
+   TGridGet():Build( {  "nRow"      => ::getRow(),;
                         "nCol"      => {|| GridWidth( 4.5, ::oDlg ) },;
                         "oWnd"      => ::oDlg,;
                         "bSetGet"   => {|u| hGet( ::oSender:hDictionaryMaster, "NombreCliente" )  },;
@@ -151,13 +158,15 @@ METHOD defineCliente() CLASS ViewEditResumen
                         "bWhen"     => {|| .f.},;
                         "nHeight"   => 23 } )
 
+   ::nextRow()
+
 Return ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD defineFormaPago() CLASS ViewEditResumen
 
-   TGridUrllink():Build({  "nTop"      => 65,;
+   TGridUrllink():Build({  "nTop"      => ::getRow(),;
                            "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
                            "cURL"      => "F. pago",;
                            "oWnd"      => ::oDlg,;
@@ -168,7 +177,7 @@ METHOD defineFormaPago() CLASS ViewEditResumen
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| ::oSender:runGridPayment() } } )
 
-   ::oCodigoFormaPago   := TGridGet():Build( {   "nRow"      => 65,;
+   ::oCodigoFormaPago   := TGridGet():Build( {  "nRow"      => ::getRow(),;
                                                 "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
                                                 "bSetGet"   => {|u| ::SetGetValue( u, "Pago" ) },;
                                                 "oWnd"      => ::oDlg,;
@@ -178,13 +187,15 @@ METHOD defineFormaPago() CLASS ViewEditResumen
                                                 "bWhen"     => {|| ::oSender:lNotZoomMode() },; 
                                                 "bValid"    => {|| ::oSender:lValidPayment() } } )
 
-   ::oNombreFormaPago   := TGridGet():Build(  {  "nRow"      => 65,;
+   ::oNombreFormaPago   := TGridGet():Build(  { "nRow"      => ::getRow(),;
                                                 "nCol"      => {|| GridWidth( 4.5, ::oDlg ) },;
                                                 "oWnd"      => ::oDlg,;
                                                 "nWidth"    => {|| GridWidth( 7, ::oDlg ) },;
                                                 "lPixels"   => .t.,;
                                                 "bWhen"     => {|| .f. },;
                                                 "nHeight"   => 23 } )
+
+   ::nextRow()
 
 Return ( self )
 
@@ -194,19 +205,19 @@ METHOD defineComboImpresion() CLASS ViewEditResumen
 
    ::oSender:SetDocuments()
 
-   TGridSay():Build(    {     "nRow"      => 90,;
-                              "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
-                              "bText"     => {|| "Impresión:" },;
-                              "oWnd"      => ::oDlg,;
-                              "oFont"     => oGridFont(),;
-                              "lPixels"   => .t.,;
-                              "nClrText"  => Rgb( 0, 0, 0 ),;
-                              "nClrBack"  => Rgb( 255, 255, 255 ),;
-                              "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
-                              "nHeight"   => 25,;
-                              "lDesign"   => .f. } )
+   TGridSay():Build(                            {  "nRow"      => ::getRow(),;
+                                                   "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+                                                   "bText"     => {|| "Impresión:" },;
+                                                   "oWnd"      => ::oDlg,;
+                                                   "oFont"     => oGridFont(),;
+                                                   "lPixels"   => .t.,;
+                                                   "nClrText"  => Rgb( 0, 0, 0 ),;
+                                                   "nClrBack"  => Rgb( 255, 255, 255 ),;
+                                                   "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
+                                                   "nHeight"   => 25,;
+                                                   "lDesign"   => .f. } )
 
-   ::oCbxImpresora  := TGridComboBox():Build(  {   "nRow"      => 90,;
+   ::oCbxImpresora  := TGridComboBox():Build(  {   "nRow"      => ::getRow(),;
                                                    "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
                                                    "bSetGet"   => {|u| if( PCount() == 0, ::cCbxImpresora, ::cCbxImpresora := u ) },;
                                                    "oWnd"      => ::oDlg,;
@@ -214,13 +225,47 @@ METHOD defineComboImpresion() CLASS ViewEditResumen
                                                    "nHeight"   => 25,;
                                                    "aItems"    => ::aCbxImpresora } )
 
+   ::nextRow()
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD definePorcentaje() CLASS ViewEditResumen
+
+   TGridSay():Build(                            {  "nRow"      => ::getRow(),;
+                                                   "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+                                                   "bText"     => {|| "Porcentaje descuento" },;
+                                                   "oWnd"      => ::oDlg,;
+                                                   "oFont"     => oGridFont(),;
+                                                   "lPixels"   => .t.,;
+                                                   "nClrText"  => Rgb( 0, 0, 0 ),;
+                                                   "nClrBack"  => Rgb( 255, 255, 255 ),;
+                                                   "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
+                                                   "nHeight"   => 23,;
+                                                   "lDesign"   => .f. } )
+
+   ::oPorcentajeDescuento := TGridGet():Build(  {  "nRow"      => ::getRow(),;
+                                                   "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                                                   "bSetGet"   => {|u| ::SetGetValue( u, "PorcentajeDescuento1" ) },;
+                                                   "oWnd"      => ::oDlg,;
+                                                   "lPixels"   => .t.,;
+                                                   "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
+                                                   "cPict"     => "@E 999.99",;
+                                                   "lRight"    => .t.,;
+                                                   "nHeight"   => 23,;
+                                                   "bWhen"     => {|| ::oSender:lNotZoomMode() },;
+                                                   "bValid"    => {|| ::oSender:recalcularTotal() } } )
+
+   ::nextRow()
+
 Return ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD defineCheckRecargo() CLASS ViewEditResumen
 
-   ::oCheckBoxRecargo   := TGridCheckBox():Build(  {  "nRow"      => 115,;       
+   ::oCheckBoxRecargo   := TGridCheckBox():Build(  {  "nRow"      => ::getRow(),;       
                                                       "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
                                                       "cCaption"  => " Recargo Equivalencia",;
                                                       "bSetGet"   => {|u| ::SetGetValue( u, "RecargoEquivalencia" ) },;
@@ -232,6 +277,7 @@ METHOD defineCheckRecargo() CLASS ViewEditResumen
                                                       "bWhen"     => {|| ::oSender:lNotZoomMode() },;
                                                       "bChange"   => {|| ::oBrowse:Refresh() } } )
 
+   ::nextRow()   
 
 Return ( self )
 
@@ -241,7 +287,7 @@ METHOD defineBrowseIva() CLASS ViewEditResumen
 
    ::oBrowse                  := TGridIXBrowse():New( ::oDlg )
 
-   ::oBrowse:nTop             := ::oBrowse:EvalRow( 150 )
+   ::oBrowse:nTop             := ::oBrowse:EvalRow( ::getRow() )
    ::oBrowse:nLeft            := ::oBrowse:EvalCol( {|| GridWidth( 0.5, ::oDlg ) } )
    ::oBrowse:nWidth           := ::oBrowse:EvalWidth( {|| GridWidth( 11, ::oDlg ) } )
    ::oBrowse:nHeight          := ::oBrowse:EvalHeight( {|| GridHeigth( ::oDlg ) - ::oBrowse:nTop - 10 } )
