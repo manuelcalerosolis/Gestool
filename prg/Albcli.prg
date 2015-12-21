@@ -443,6 +443,7 @@ static oGetTotal
 static oGetTarifa
 static oGetIvm
 static oGetRnt
+static cGetRnt          := ""
 static oGetMasDiv
 static cGetMasDiv       := ""
 static oGetNet
@@ -3239,7 +3240,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       709 ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET oGetRnt VAR nTotRnt ;
+      REDEFINE GET oGetRnt VAR cGetRnt ;
          ID       408 ;
          OF       oFld:aDialogs[1]
 
