@@ -12567,7 +12567,7 @@ Static Function isBetterAtipica( hValue, hNewAtipica, hOldAtipica )
       return .t.
    end if 
 
-Return ( nImporteUnitario( hOldAtipica ) > nImporteUnitario( hNewAtipica ) )
+Return ( nImporteUnitario( hOldAtipica ) >= nImporteUnitario( hNewAtipica ) )
 
 //---------------------------------------------------------------------------//
 
@@ -12684,9 +12684,7 @@ Function hAtipica( hValue )
                !( D():Atipicas( hValue[ "nView" ] ) )->( Eof() )
 
                if isValidAtipica( hValue )
-                  
                   hSelectedAtipica     := getSelectedAtipica( hValue, hSelectedAtipica )
-
                end if
 
                ( D():Atipicas( hValue[ "nView" ] ) )->( dbSkip() )

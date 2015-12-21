@@ -11067,7 +11067,9 @@ Static Function saveDetail( aTmp, aClo, aGet, aTmpAlb, dbfTmpLin, oBrw, nMode )
    // Ofertas------------------------------------------------------------------
 
    if empty( nCajasGratis ) .and. empty( nUnidadesGratis )
+      
       sOfertaArticulo         := structOfertaArticulo( D():getHashArray( aTmpAlb, "AlbCliT", nView ), D():getHashArray( aTmp, "AlbCliL", nView ), nTotLAlbCli( aTmp ), nView )
+
       if !empty( sOfertaArticulo ) 
          nCajasGratis         := sOfertaArticulo:nCajasGratis
          nUnidadesGratis      := sOfertaArticulo:nUnidadesGratis

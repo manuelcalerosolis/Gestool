@@ -4135,7 +4135,7 @@ Function structOfertaArticulo( hCabecera, hLinea, nTotalLinea, nView  )
    local lOfertaArticulo   := .f.
 
    if empty( hLinea[ "Articulo" ] )
-      Return nil
+      return nil
    end if 
 
    if !( D():Articulos( nView ) )->( dbSeek( hLinea[ "Articulo" ] ) )
@@ -4204,7 +4204,7 @@ Static Function hOfertaArticulo( hCabecera, hLinea, nTotalLinea, nView )
 
          ( D():Ofertas( nView ) )->( dbSkip() )
 
-      end do
+      end while
 
    end if
 
