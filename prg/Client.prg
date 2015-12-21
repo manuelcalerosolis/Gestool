@@ -754,7 +754,6 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
-
       with object ( oWndBrw:AddXCol() )
          if uFieldEmpresa( "nCifRut" ) == 1
          :cHeader          := "NIF/CIF"
@@ -8486,12 +8485,6 @@ FUNCTION rxClient( cPath, cDriver )
       ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "NIF", "Field->NIF", {|| Field->NIF }, ) )
 
       ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "DOMICILIO", "UPPER( Field->DOMICILIO )", {|| UPPER( Field->DOMICILIO ) } ) )
-
-      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "PROVINCIA", "UPPER( Field->PROVINCIA )", {|| UPPER( Field->PROVINCIA ) } ) )
-
-      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "POBLACION", "UPPER( Field->POBLACION )", {|| UPPER( Field->POBLACION ) } ) )
 
       ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
@@ -8508,6 +8501,9 @@ FUNCTION rxClient( cPath, cDriver )
 
       ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "cMeiInt", "Upper( Field->cMeiInt )", {|| Upper( Field->cMeiInt ) } ) )
+
+      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "DOMICILIO", "UPPER( Field->DOMICILIO )", {|| UPPER( Field->DOMICILIO ) } ) )
 
       ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "CCODRUT", "UPPER( Field->CCODRUT )", {|| UPPER( Field->CCODRUT ) } ) )
