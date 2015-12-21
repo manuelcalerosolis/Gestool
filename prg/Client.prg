@@ -353,13 +353,13 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Clientes( nView )
 
-      D():Get( "TIva", nView )
+      D():TiposIva( nView )
 
-      D():Get( "Divisas", nView )
+      D():Divisas( nView )
 
       D():Get( "ClientD", nView )
 
-      D():Get( "CliAtp", nView )
+      D():Atipicas( nView )
 
       D():Get( "Articulo", nView )
 
@@ -676,12 +676,12 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
                   "Correo electrónico",;
                   "Cliente web" ,;
                   "Ruta" ;
-         ALIAS    ( D():Get( "Client", nView ) );
+         ALIAS    ( D():Clientes( nView ) );
          MRU      "User1_16";
-         APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, D():Get( "Client", nView ) ) );
-         DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, D():Get( "Client", nView ) ) );
-         EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, D():Get( "Client", nView ) ) ) ;
-         DELETE   ( WinDelRec( oWndBrw:oBrw, D():Get( "Client", nView ) ) ) ;
+         APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, D():Clientes( nView ) ) );
+         DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, D():Clientes( nView ) ) );
+         EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, D():Clientes( nView ) ) ) ;
+         DELETE   ( WinDelRec( oWndBrw:oBrw, D():Clientes( nView ), {|| DelDetalle( ( D():Clientes( nView ) )->Cod ) } ) ) ;
          LEVEL    nLevel ;
          OF       oWnd
 
@@ -689,7 +689,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :cHeader          := "Bloqueado"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( D():Get( "Client", nView ) )->lBlqCli }
+         :bEditValue       := {|| ( D():Clientes( nView ) )->lBlqCli }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "stop_16" )
@@ -700,7 +700,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :cSortOrder       := "lSndInt"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( D():Get( "Client", nView ) )->lSndInt }
+         :bEditValue       := {|| ( D():Clientes( nView ) )->lSndInt }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "LBl16" )
@@ -711,7 +711,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :cSortOrder       := "lPubInt"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( D():Get( "Client", nView ) )->lPubInt }
+         :bEditValue       := {|| ( D():Clientes( nView ) )->lPubInt }
          :nWidth           := 20
          :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
@@ -722,7 +722,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :cHeader          := "Tarifas atipicas"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( D():Get( "CliAtp", nView ) )->( dbSeek( ( D():Get( "Client", nView ) )->Cod ) ) }
+         :bEditValue       := {|| ( D():Atipicas( nView ) )->( dbSeek( ( D():Clientes( nView ) )->Cod ) ) }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "PERCENT_16" )
@@ -732,7 +732,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :cHeader          := "Potencial"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( D():Get( "Client", nView ) )->nTipCli == 2 }
+         :bEditValue       := {|| ( D():Clientes( nView ) )->nTipCli == 2 }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "CLIPOT" )
@@ -741,7 +741,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Código cliente"
          :cSortOrder       := "Cod"
-         :bEditValue       := {|| ( D():Get( "Client", nView ) )->Cod }
+         :bEditValue       := {|| ( D():Clientes( nView ) )->Cod }
          :nWidth           := 110
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -749,7 +749,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Nombre"
          :cSortOrder       := "Titulo"
-         :bEditValue       := {|| ( D():Get( "Client", nView ) )->Titulo }
+         :bEditValue       := {|| ( D():Clientes( nView ) )->Titulo }
          :nWidth           := 280
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -762,7 +762,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :cEditPicture     := "@R 999999999-9"
          end if
          :cSortOrder       := "Nif"
-         :bEditValue       := {|| ( D():Get( "Client", nView ) )->Nif }
+         :bEditValue       := {|| ( D():Clientes( nView ) )->Nif }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -770,14 +770,14 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Teléfono"
          :cSortOrder       := "Telefono"
-         :bEditValue       := {|| ( D():Get( "Client", nView ) )->Telefono }
+         :bEditValue       := {|| ( D():Clientes( nView ) )->Telefono }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Fax"
-         :bEditValue       := {|| ( D():Get( "Client", nView ) )->Fax }
+         :bEditValue       := {|| ( D():Clientes( nView ) )->Fax }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -785,7 +785,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Domicilio"
          :cSortOrder       := "Domicilio"
-         :bEditValue       := {|| ( D():Get( "Client", nView ) )->Domicilio }
+         :bEditValue       := {|| ( D():Clientes( nView ) )->Domicilio }
          :nWidth           := 300
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -793,7 +793,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Población"
          :cSortOrder       := "Poblacion"
-         :bEditValue       := {|| ( D():Get( "Client", nView ) )->Poblacion }
+         :bEditValue       := {|| ( D():Clientes( nView ) )->Poblacion }
          :nWidth           := 200
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -801,7 +801,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Código postal"
          :cSortOrder       := "CodPostal"
-         :bEditValue       := {|| ( D():Get( "Client", nView ) )->CodPostal }
+         :bEditValue       := {|| ( D():Clientes( nView ) )->CodPostal }
          :nWidth           := 60
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -809,7 +809,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Provincia"
          :cSortOrder       := "Provincia"
-         :bEditValue       := {|| ( D():Get( "Client", nView ) )->Provincia }
+         :bEditValue       := {|| ( D():Clientes( nView ) )->Provincia }
          :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -817,7 +817,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Establecimiento"
          :cSortOrder       := "NbrEst"
-         :bEditValue       := {|| ( D():Get( "Client", nView ) )->NbrEst }
+         :bEditValue       := {|| ( D():Clientes( nView ) )->NbrEst }
          :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -825,14 +825,14 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Correo electrónico"
          :cSortOrder       := "cMeiInt"
-         :bEditValue       := {|| ( D():Get( "Client", nView ) )->cMeiInt }
+         :bEditValue       := {|| ( D():Clientes( nView ) )->cMeiInt }
          :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Riesgo"
-         :bEditValue       := {|| Trans( ( D():Get( "Client", nView ) )->Riesgo, PicOut() ) }
+         :bEditValue       := {|| Trans( ( D():Clientes( nView ) )->Riesgo, PicOut() ) }
          :nWidth           := 60
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -840,20 +840,20 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Contacto"
-         :bEditValue       := {|| ( D():Get( "Client", nView ) )->cPerCto }
+         :bEditValue       := {|| ( D():Clientes( nView ) )->cPerCto }
          :nWidth           := 200
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Observaciones"
-         :bEditValue       := {|| ( D():Get( "Client", nView ) )->mComent }
+         :bEditValue       := {|| ( D():Clientes( nView ) )->mComent }
          :nWidth           := 200
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Cliente web"
          :cSortOrder       := "cCliWeb"
-         :bEditValue       := {|| aStrClients[ Min( Max( ( D():Get( "Client", nView ) )->nTipCli, 1 ), len( aStrClients ) ) ] }
+         :bEditValue       := {|| aStrClients[ Min( Max( ( D():Clientes( nView ) )->nTipCli, 1 ), len( aStrClients ) ) ] }
          :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t.
@@ -862,7 +862,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Ruta"
          :cSortOrder       := "cCodRut"
-         :bEditValue       := {|| ( D():Get( "Client", nView ) )->cCodRut  + if( !Empty( ( D():Get( "Client", nView ) )->cCodRut ), " - ", "" ) + RetFld( ( D():Get( "Client", nView ) )->cCodRut, dbfRuta ) }
+         :bEditValue       := {|| ( D():Clientes( nView ) )->cCodRut  + if( !Empty( ( D():Clientes( nView ) )->cCodRut ), " - ", "" ) + RetFld( ( D():Clientes( nView ) )->cCodRut, dbfRuta ) }
          :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t.
@@ -870,28 +870,28 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Última venta"
-         :bEditValue       := {|| dtoc( dUltimaVentaCliente( ( D():Get( "Client", nView ) )->Cod, D():Get( "AlbCliT", nView ), D():Get( "FacCliT", nView ) ) ) } 
+         :bEditValue       := {|| dtoc( dUltimaVentaCliente( ( D():Clientes( nView ) )->Cod, D():Get( "AlbCliT", nView ), D():Get( "FacCliT", nView ) ) ) } 
          :nWidth           := 80
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() ) 
          :cHeader          := "Última llamada"
-         :bEditValue       := {|| dtoc( ( D():Get( "Client", nView ) )->dLlaCli ) + space( 1 ) + ( D():Get( "Client", nView ) )->cTimCli } 
+         :bEditValue       := {|| dtoc( ( D():Clientes( nView ) )->dLlaCli ) + space( 1 ) + ( D():Clientes( nView ) )->cTimCli } 
          :nWidth           := 100
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Agente"
-         :bEditValue       := {|| if( !Empty( ( D():Get( "Client", nView ) )->cAgente ), ( D():Get( "Client", nView ) )->cAgente + " - " + RetNbrAge( ( D():Get( "Client", nView ) )->cAgente, cAgente ), "" ) }
+         :bEditValue       := {|| if( !Empty( ( D():Clientes( nView ) )->cAgente ), ( D():Clientes( nView ) )->cAgente + " - " + RetNbrAge( ( D():Clientes( nView ) )->cAgente, cAgente ), "" ) }
          :nWidth           := 200
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Cod. Web"
-          :bEditValue       := {|| AllTrim( Str( ( D():Get( "Client", nView ) )->cCodWeb ) ) }
+          :bEditValue       := {|| AllTrim( Str( ( D():Clientes( nView ) )->cCodWeb ) ) }
          :nWidth           := 200
          :lHide            := .t.
       end with
@@ -935,7 +935,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
       DEFINE BTNSHELL RESOURCE "ZOOM" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( WinZooRec( oWndBrw:oBrw, bEdtRec, ( D():Get( "Client", nView ) ) ) );
+         ACTION   ( WinZooRec( oWndBrw:oBrw, bEdtRec, ( D():Clientes( nView ) ) ) );
          TOOLTIP  "(Z)oom";
          HOTKEY   "Z"
 
@@ -965,7 +965,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
       DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( BrwVtaCli( ( D():Get( "Client", nView ) )->Cod, ( D():Get( "Client", nView ) )->Titulo ) );
+         ACTION   ( BrwVtaCli( ( D():Clientes( nView ) )->Cod, ( D():Clientes( nView ) )->Titulo ) );
          TOOLTIP  "(I)nforme cliente" ;
          HOTKEY   "I" ;
          LEVEL    ACC_ZOOM
@@ -1047,7 +1047,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
             NOBORDER ;
             MENU     This:Toggle() ;
-            ACTION   ( ReplaceCreator( oWndBrw, ( D():Get( "Client", nView ) ), aItmCli(), CLI_TBL ) ) ;
+            ACTION   ( ReplaceCreator( oWndBrw, ( D():Clientes( nView ) ), aItmCli(), CLI_TBL ) ) ;
             TOOLTIP  "Cambiar campos" ;
             LEVEL    ACC_APPD
 
@@ -1063,7 +1063,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
       DEFINE BTNSHELL RESOURCE "CNFCLI" GROUP OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( CnfCli( D():Get( "Client", nView ) ) ) ;
+         ACTION   ( CnfCli( D():Clientes( nView ) ) ) ;
          TOOLTIP  "Confi(g)urar" ;
          HOTKEY   "G";
          LEVEL    ACC_APPD
@@ -1076,7 +1076,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
          DEFINE BTNSHELL RESOURCE "form_green_add_" OF oWndBrw ;
             NOBORDER ;
-            ACTION   ( oDetCamposExtra:Play( ( D():Get( "Client", nView ) )->Cod ) );
+            ACTION   ( oDetCamposExtra:Play( ( D():Clientes( nView ) )->Cod ) );
             TOOLTIP  "Campos extra" ;
             FROM     oRotor ;
             ALLOW    EXIT ;
@@ -1084,20 +1084,20 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
          DEFINE BTNSHELL RESOURCE "Notebook_user1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( PreCli( nil, oWnd, ( D():Get( "Client", nView ) )->Cod, nil ) );
+            ACTION   ( PreCli( nil, oWnd, ( D():Clientes( nView ) )->Cod, nil ) );
             TOOLTIP  "Añadir presupuesto de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "Clipboard_empty_user1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( PedCli( nil, oWnd, ( D():Get( "Client", nView ) )->Cod, nil ) );
+            ACTION   ( PedCli( nil, oWnd, ( D():Clientes( nView ) )->Cod, nil ) );
             TOOLTIP  "Añadir pedido de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "Document_plain_user1_" OF oWndBrw ;
-            ACTION   ( appAlbCli( { "Cliente" => ( D():Get( "Client", nView ) )->Cod } ) );
+            ACTION   ( appAlbCli( { "Cliente" => ( D():Clientes( nView ) )->Cod } ) );
             TOOLTIP  "Añadir albarán de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT
@@ -1105,21 +1105,21 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 /*
          DEFINE BTNSHELL RESOURCE "Document_plain_user1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( AlbCli( nil, oWnd, { "Cliente" => ( D():Get( "Client", nView ) )->Cod } ) );
+            ACTION   ( AlbCli( nil, oWnd, { "Cliente" => ( D():Clientes( nView ) )->Cod } ) );
             TOOLTIP  "Ir a albarán de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT*/
 
          DEFINE BTNSHELL RESOURCE "Document_user1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( FactCli( nil, oWnd, { "Cliente" => ( D():Get( "Client", nView ) )->Cod } ) );
+            ACTION   ( FactCli( nil, oWnd, { "Cliente" => ( D():Clientes( nView ) )->Cod } ) );
             TOOLTIP  "Añadir factura de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "Cashier_user1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( FrontTpv( nil, oWnd, ( D():Get( "Client", nView ) )->Cod, nil ) );
+            ACTION   ( FrontTpv( nil, oWnd, ( D():Clientes( nView ) )->Cod, nil ) );
             TOOLTIP  "Añadir tiket de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT
@@ -1166,7 +1166,7 @@ STATIC FUNCTION EdtBig( aTmp, aGet, dbfCli, oBrw, bWhen, bValid, nMode )
    local cResource      := "BigEdtCliente"
 
    if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
-      aTmp[ _COD     ]  := NextKey( aTmp[ _COD ], ( D():Get( "Client", nView ) ), "0", RetNumCodCliEmp() )
+      aTmp[ _COD     ]  := NextKey( aTmp[ _COD ], ( D():Clientes( nView ) ), "0", RetNumCodCliEmp() )
       aTmp[ _LSNDINT ]  := .t.
       aTmp[ _LMODDAT ]  := .t.
       aTmp[ _LCHGPRE ]  := .t.
@@ -1196,7 +1196,7 @@ STATIC FUNCTION EdtBig( aTmp, aGet, dbfCli, oBrw, bWhen, bValid, nMode )
          ID       100 ;
          PICTURE  ( Replicate( "X", RetNumCodCliEmp() ) );
          WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
-         VALID    ( NotValid( aGet[ _COD ], ( D():Get( "Client", nView ) ), .t., "0", 1, RetNumCodCliEmp() ) ) ;
+         VALID    ( NotValid( aGet[ _COD ], ( D():Clientes( nView ) ), .t., "0", 1, RetNumCodCliEmp() ) ) ;
          OF       oDlg
 
       REDEFINE GET aGet[ _TITULO ] VAR aTmp[ _TITULO ];
@@ -1405,7 +1405,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       case nMode == DUPL_MODE
 
-         aTmp[ _COD ]      := NextKey( aTmp[ _COD ], ( D():Get( "Client", nView ) ), "0", RetNumCodCliEmp() )
+         aTmp[ _COD ]      := NextKey( aTmp[ _COD ], ( D():Clientes( nView ) ), "0", RetNumCodCliEmp() )
          aTmp[ _DLLACLI ]  := ctod( "" )
 
       otherwise
@@ -1496,9 +1496,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ID       110 ;
          PICTURE  ( Replicate( "X", RetNumCodCliEmp() ) );
          WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
-         ON HELP  ( oGet:cText( NextKey( aTmp[ _COD ], ( D():Get( "Client", nView ) ), "0", RetNumCodCliEmp() ) ) ) ;
+         ON HELP  ( oGet:cText( NextKey( aTmp[ _COD ], ( D():Clientes( nView ) ), "0", RetNumCodCliEmp() ) ) ) ;
          BITMAP   "BOT" ;
-         VALID    ( NotValid( oGet, ( D():Get( "Client", nView ) ), .t., "0", 1, RetNumCodCliEmp() ) ) ;
+         VALID    ( NotValid( oGet, ( D():Clientes( nView ) ), .t., "0", 1, RetNumCodCliEmp() ) ) ;
          OF       fldGeneral
 
       REDEFINE COMBOBOX aGet[ _NTIPCLI ] VAR cTipCli ;
@@ -3033,7 +3033,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       with object ( oBrwAtp:AddCol() )
          :cHeader          := "Of. Artículo en oferta"
-         :bEditValue       := {|| ( dbfTmpAtp )->nTipAtp <= 1 .and. lArticuloEnOferta( ( dbfTmpAtp )->cCodArt, ( D():Get( "Client", nView ) )->Cod, ( D():Get( "Client", nView ) )->cCodGrp ) }
+         :bEditValue       := {|| ( dbfTmpAtp )->nTipAtp <= 1 .and. lArticuloEnOferta( ( dbfTmpAtp )->cCodArt, ( D():Clientes( nView ) )->Cod, ( D():Clientes( nView ) )->cCodGrp ) }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
       end with
@@ -4305,7 +4305,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
          ON HELP  ( BrwArticulo( aGet[ _aCCODART ], oGetArticulo ) );
          BITMAP   "LUPA" ;
          ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
-         VALID    ( IsCliAtp( aGet, aTmp, oGetArticulo, ( D():Get( "CliAtp", nView ) ), nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oCosto ) ) ;
+         VALID    ( IsCliAtp( aGet, aTmp, oGetArticulo, ( D():Atipicas( nView ) ), nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oCosto ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET oGetArticulo VAR cGetArticulo ;
@@ -4336,7 +4336,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
          WHEN     ( nMode == APPD_MODE ) ;
          ON HELP  ( brwPropiedadActual( aGet[ _aCVALPR1 ], oSayVp1, aTmp[ _aCCODPR1 ] ) ) ;
          VALID    ( if( lPrpAct( aGet[ _aCVALPR1 ], oSayVp1, aTmp[ _aCCODPR1 ], dbfProL ),;
-                    IsCliAtp( aGet, aTmp, oGetArticulo, ( D():Get( "CliAtp", nView ) ), nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oCosto ),;
+                    IsCliAtp( aGet, aTmp, oGetArticulo, ( D():Atipicas( nView ) ), nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oCosto ),;
                     .f. ) ) ;
          OF       oFld:aDialogs[1]
 
@@ -4355,7 +4355,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
          WHEN     ( nMode == APPD_MODE ) ;
          ON HELP  ( brwPropiedadActual( aGet[ _aCVALPR2 ], oSayVp2, aTmp[ _aCCODPR2 ] ) ) ;
          VALID    ( if( lPrpAct( aGet[ _aCVALPR2 ], oSayVp2, aTmp[ _aCCODPR2 ], dbfProL ),;
-                    IsCliAtp( aGet, aTmp, oGetArticulo, ( D():Get( "CliAtp", nView ) ), nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oCosto ),;
+                    IsCliAtp( aGet, aTmp, oGetArticulo, ( D():Atipicas( nView ) ), nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oCosto ),;
                     .f. ) ) ;
          OF       oFld:aDialogs[1]
 
@@ -4917,16 +4917,16 @@ STATIC FUNCTION ChkAllSubCta()
    Obtenemos los valores del primer y ultimo codigo----------------------------
    */
 
-   nRecno            := ( D():Get( "Client", nView ) )->( RecNo() )
-   cTag              := ( D():Get( "Client", nView ) )->( OrdSetFocus( 1 ) )
+   nRecno            := ( D():Clientes( nView ) )->( RecNo() )
+   cTag              := ( D():Clientes( nView ) )->( OrdSetFocus( 1 ) )
    lChkCreate        := .f.
    lChkCuenta        := .f.
    aMsg              := {}
 
-   cCliOrg           := dbFirst( ( D():Get( "Client", nView ) ), 1 )
-   cCliDes           := dbLast(  ( D():Get( "Client", nView ) ), 1 )
-   cSayCliOrg        := dbFirst( ( D():Get( "Client", nView ) ), 2 )
-   cSayCliDes        := dbLast(  ( D():Get( "Client", nView ) ), 2 )
+   cCliOrg           := dbFirst( ( D():Clientes( nView ) ), 1 )
+   cCliDes           := dbLast(  ( D():Clientes( nView ) ), 1 )
+   cSayCliOrg        := dbFirst( ( D():Clientes( nView ) ), 2 )
+   cSayCliDes        := dbLast(  ( D():Clientes( nView ) ), 2 )
 
    oImageList        := TImageList():New( 16, 16 )
    oImageList:AddMasked( TBitmap():Define( "bRed" ),     Rgb( 255, 0, 255 ) )
@@ -4944,9 +4944,9 @@ STATIC FUNCTION ChkAllSubCta()
 
    REDEFINE GET oCliOrg VAR cCliOrg;
       ID       80 ;
-      VALID    cClient( oCliOrg, ( D():Get( "Client", nView ) ), oSayCliOrg );
+      VALID    cClient( oCliOrg, ( D():Clientes( nView ) ), oSayCliOrg );
       BITMAP   "LUPA" ;
-      ON HELP  BrwCli( oCliOrg, oSayCliOrg, ( D():Get( "Client", nView ) ) );
+      ON HELP  BrwCli( oCliOrg, oSayCliOrg, ( D():Clientes( nView ) ) );
       OF       oDlg
 
    REDEFINE GET oSayCliOrg VAR cSayCliOrg ;
@@ -4956,9 +4956,9 @@ STATIC FUNCTION ChkAllSubCta()
 
    REDEFINE GET oCliDes VAR cCliDes;
       ID       90 ;
-      VALID    cClient( oCliDes, ( D():Get( "Client", nView ) ), oSayCliDes );
+      VALID    cClient( oCliDes, ( D():Clientes( nView ) ), oSayCliDes );
       BITMAP   "LUPA" ;
-      ON HELP  BrwCli( oCliDes, oSayCliDes, ( D():Get( "Client", nView ) ) );
+      ON HELP  BrwCli( oCliDes, oSayCliDes, ( D():Clientes( nView ) ) );
       OF       oDlg
 
    REDEFINE GET oSayCliDes VAR cSayCliDes ;
@@ -4992,8 +4992,8 @@ STATIC FUNCTION ChkAllSubCta()
       CENTER ;
       ON INIT  ( oTree:SetImageList( oImageList ) )
 
-   ( D():Get( "Client", nView ) )->( dbGoTo( nRecno ) )
-   ( D():Get( "Client", nView ) )->( OrdSetFocus( cTag ) )
+   ( D():Clientes( nView ) )->( dbGoTo( nRecno ) )
+   ( D():Clientes( nView ) )->( OrdSetFocus( cTag ) )
 
    if lAplicacionContaplus()
       CLOSE ( cArea )
@@ -5458,7 +5458,7 @@ STATIC FUNCTION AddArtFam( cCodCli, cFamIni, cFamFin, aPre, nPre, nDto, nDtoArt,
 
                if !( dbfTmpAtp )->( dbSeek( ( D():Get( "Articulo", nView ) )->Codigo ) )
 
-                  nIvaPct                    := nIva( D():Get( "TIva", nView ), ( D():Get( "Articulo", nView ) )->TipoIva )
+                  nIvaPct                    := nIva( D():TiposIva( nView ), ( D():Get( "Articulo", nView ) )->TipoIva )
 
                   ( dbfTmpAtp )->( dbAppend() )
 
@@ -5698,7 +5698,7 @@ STATIC FUNCTION ChgPrc( oWndBrw )
    REDEFINE GET oTipIva VAR cTipIva ;
       ID       120 ;
       PICTURE  "@!" ;
-      VALID    ( cTiva( oTipIva, D():Get( "TIva", nView ), oTxtIva ) );
+      VALID    ( cTiva( oTipIva, D():TiposIva( nView ), oTxtIva ) );
       BITMAP   "LUPA" ;
       ON HELP  ( BrwIva( oTipIva, nil, oTxtIva ) );
       COLOR    CLR_GET ;
@@ -5820,7 +5820,7 @@ STATIC FUNCTION ChgPrc( oWndBrw )
       PROMPT   "Procesando" ;
       ID       220 ;
       OF       oDlg ;
-      TOTAL    ( D():Get( "CliAtp", nView ) )->( lastrec() )
+      TOTAL    ( D():Atipicas( nView ) )->( lastrec() )
 
    REDEFINE BUTTON ;
       ID       IDOK;
@@ -5881,19 +5881,19 @@ STATIC FUNCTION mkChgPrc( cFam, cIva, cCliOrg, cCliDes, lTarifa1, lTarifa2, lTar
 
       oDlg:Disable()
 
-      nRecAct           := ( D():Get( "CliAtp", nView ) )->( RecNo() )
-      nOrdAct           := ( D():Get( "CliAtp", nView ) )->( OrdSetFocus( "cCodCli" ) )
+      nRecAct           := ( D():Atipicas( nView ) )->( RecNo() )
+      nOrdAct           := ( D():Atipicas( nView ) )->( OrdSetFocus( "cCodCli" ) )
 
-      if ( D():Get( "CliAtp", nView ) )->( dbSeek( cCliOrg ) )
+      if ( D():Atipicas( nView ) )->( dbSeek( cCliOrg ) )
 
-      while ( D():Get( "CliAtp", nView ) )->cCodCli <= cCliDes .and. !( D():Get( "CliAtp", nView ) )->( eof() )
+      while ( D():Atipicas( nView ) )->cCodCli <= cCliDes .and. !( D():Atipicas( nView ) )->( eof() )
 
-         if ( ( D():Get( "CliAtp", nView ) )->cCodArt >= cArtOrg .and. ( D():Get( "CliAtp", nView ) )->cCodArt <= cArtDes )             .and.;
-            ( empty( cFam ) .or. RetFld( ( D():Get( "CliAtp", nView ) )->cCodArt, D():Get( "Articulo", nView ), "Familia" ) == cFam )   .and.;
-            ( empty( cIva ) .or. RetFld( ( D():Get( "CliAtp", nView ) )->cCodArt, D():Get( "Articulo", nView ), "TipoIva" ) == cIva )   .and.;
-            ( !lAppTarifaFecha  .or. ( D():Get( "CliAtp", nView ) )->dFecFin >= GetSysDate() )
+         if ( ( D():Atipicas( nView ) )->cCodArt >= cArtOrg .and. ( D():Atipicas( nView ) )->cCodArt <= cArtDes )             .and.;
+            ( empty( cFam ) .or. RetFld( ( D():Atipicas( nView ) )->cCodArt, D():Get( "Articulo", nView ), "Familia" ) == cFam )   .and.;
+            ( empty( cIva ) .or. RetFld( ( D():Atipicas( nView ) )->cCodArt, D():Get( "Articulo", nView ), "TipoIva" ) == cIva )   .and.;
+            ( !lAppTarifaFecha  .or. ( D():Atipicas( nView ) )->dFecFin >= GetSysDate() )
 
-            aTmpAtp  := dbScatter( D():Get( "CliAtp", nView ) )
+            aTmpAtp  := dbScatter( D():Atipicas( nView ) )
 
             /*
             Cambio la fecha de fin a la tarifa anterior y pongo la fecha en la nueva tarifa
@@ -5901,17 +5901,17 @@ STATIC FUNCTION mkChgPrc( cFam, cIva, cCliOrg, cCliDes, lTarifa1, lTarifa2, lTar
 
             if lGenerateTarifa
 
-               aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "dFecIni" ) ) ]   := dIniPre
-               aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "dFecFin" ) ) ]   := dFinPre
+               aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "dFecIni" ) ) ]   := dIniPre
+               aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "dFecFin" ) ) ]   := dFinPre
 
-               if Empty( ( D():Get( "CliAtp", nView ) )->dFecFin ) .or. ( D():Get( "CliAtp", nView ) )->dFecFin >= dIniPre
+               if Empty( ( D():Atipicas( nView ) )->dFecFin ) .or. ( D():Atipicas( nView ) )->dFecFin >= dIniPre
 
-                  if( D():Get( "CliAtp", nView ) )->( dbRLock() )
-                     if Empty( ( D():Get( "CliAtp", nView ) )->dFecIni )
-                        ( D():Get( "CliAtp", nView ) )->dFecIni                       := CtoD( "01/01/" + Str( Year( Date() ) ) )
+                  if( D():Atipicas( nView ) )->( dbRLock() )
+                     if Empty( ( D():Atipicas( nView ) )->dFecIni )
+                        ( D():Atipicas( nView ) )->dFecIni                       := CtoD( "01/01/" + Str( Year( Date() ) ) )
                      end if
-                     ( D():Get( "CliAtp", nView ) )->dFecFin                          := dIniPre - 1
-                     ( D():Get( "CliAtp", nView ) )->( dbUnLock() )
+                     ( D():Atipicas( nView ) )->dFecFin                          := dIniPre - 1
+                     ( D():Atipicas( nView ) )->( dbUnLock() )
                   end if
 
                end if
@@ -5924,96 +5924,96 @@ STATIC FUNCTION mkChgPrc( cFam, cIva, cCliOrg, cCliDes, lTarifa1, lTarifa2, lTar
 
             if lTarifa1
 
-               aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt" ) ) ]     := nVal2Change( nPrecio, ( D():Get( "CliAtp", nView ) )->nPrcArt )
+               aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt" ) ) ]     := nVal2Change( nPrecio, ( D():Atipicas( nView ) )->nPrcArt )
 
                if nRad == 1
-                  aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt" ) ) ]  += nVal2Change( nPrecio, aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt" ) ) ] ) * nPctInc / 100
+                  aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt" ) ) ]  += nVal2Change( nPrecio, aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt" ) ) ] ) * nPctInc / 100
                else
-                  aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt" ) ) ]  += nUndInc
+                  aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt" ) ) ]  += nUndInc
                end if
 
                if lRnd
-                  aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt" ) ) ]  := Round( aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt" ) ) ], nDec )
+                  aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt" ) ) ]  := Round( aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt" ) ) ], nDec )
                end if
 
             end if
 
             if lTarifa2
 
-               aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt2" ) ) ]     := nVal2Change( nPrecio, ( D():Get( "CliAtp", nView ) )->nPrcArt2 )
+               aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt2" ) ) ]     := nVal2Change( nPrecio, ( D():Atipicas( nView ) )->nPrcArt2 )
 
                if nRad == 1
-                  aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt2" ) ) ]  += nVal2Change( nPrecio, aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt2" ) ) ] ) * nPctInc / 100
+                  aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt2" ) ) ]  += nVal2Change( nPrecio, aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt2" ) ) ] ) * nPctInc / 100
                else
-                  aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt2" ) ) ]  += nUndInc
+                  aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt2" ) ) ]  += nUndInc
                end if
 
                if lRnd
-                  aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt2" ) ) ]  := Round( aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt2" ) ) ], nDec )
+                  aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt2" ) ) ]  := Round( aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt2" ) ) ], nDec )
                end if
 
             end if
 
             if lTarifa3
 
-               aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt3" ) ) ]     := nVal2Change( nPrecio, ( D():Get( "CliAtp", nView ) )->nPrcArt3 )
+               aTmpAtp[ ( D():Atipicas(  nView ) )->( Fieldpos( "nPrcArt3" ) ) ]     := nVal2Change( nPrecio, ( D():Atipicas(  nView ) )->nPrcArt3 )
 
                if nRad == 1
-                  aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt3" ) ) ]  += nVal2Change( nPrecio, aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt3" ) ) ] ) * nPctInc / 100
+                  aTmpAtp[ ( D():Atipicas(  nView ) )->( Fieldpos( "nPrcArt3" ) ) ]  += nVal2Change( nPrecio, aTmpAtp[ ( D():Atipicas(  nView ) )->( Fieldpos( "nPrcArt3" ) ) ] ) * nPctInc / 100
                else
-                  aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt3" ) ) ]  += nUndInc
+                  aTmpAtp[ ( D():Atipicas(  nView ) )->( Fieldpos( "nPrcArt3" ) ) ]  += nUndInc
                end if
 
                if lRnd
-                  aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt3" ) ) ]  := Round( aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt3" ) ) ], nDec )
+                  aTmpAtp[ ( D():Atipicas(  nView ) )->( Fieldpos( "nPrcArt3" ) ) ]  := Round( aTmpAtp[ ( D():Atipicas(  nView ) )->( Fieldpos( "nPrcArt3" ) ) ], nDec )
                end if
 
             end if
 
             if lTarifa4
 
-               aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt4" ) ) ]     := nVal2Change( nPrecio, ( D():Get( "CliAtp", nView ) )->nPrcArt4 )
+               aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt4" ) ) ]     := nVal2Change( nPrecio, ( D():Atipicas( nView ) )->nPrcArt4 )
 
                if nRad == 1
-                  aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt4" ) ) ]  += nVal2Change( nPrecio, aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt4" ) ) ] ) * nPctInc / 100
+                  aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt4" ) ) ]  += nVal2Change( nPrecio, aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt4" ) ) ] ) * nPctInc / 100
                else
-                  aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt4" ) ) ]  += nUndInc
+                  aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt4" ) ) ]  += nUndInc
                end if
 
                if lRnd
-                  aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt4" ) ) ]  := Round( aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt4" ) ) ], nDec )
+                  aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt4" ) ) ]  := Round( aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt4" ) ) ], nDec )
                end if
 
             end if
 
             if lTarifa5
 
-               aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt5" ) ) ]     := nVal2Change( nPrecio, ( D():Get( "CliAtp", nView ) )->nPrcArt5 )
+               aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt5" ) ) ]     := nVal2Change( nPrecio, ( D():Atipicas( nView ) )->nPrcArt5 )
 
                if nRad == 1
-                  aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt5" ) ) ]  += nVal2Change( nPrecio, aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt5" ) ) ] ) * nPctInc / 100
+                  aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt5" ) ) ]  += nVal2Change( nPrecio, aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt5" ) ) ] ) * nPctInc / 100
                else
-                  aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt5" ) ) ]  += nUndInc
+                  aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt5" ) ) ]  += nUndInc
                end if
 
                if lRnd
-                  aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt5" ) ) ]  := Round( aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt5" ) ) ], nDec )
+                  aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt5" ) ) ]  := Round( aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt5" ) ) ], nDec )
                end if
 
             end if
 
             if lTarifa6
 
-               aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt6" ) ) ]     := nVal2Change( nPrecio, ( D():Get( "CliAtp", nView ) )->nPrcArt6 )
+               aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt6" ) ) ]     := nVal2Change( nPrecio, ( D():Atipicas( nView ) )->nPrcArt6 )
 
                if nRad == 1
-                  aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt6" ) ) ]  += nVal2Change( nPrecio, aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt6" ) ) ] ) * nPctInc / 100
+                  aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt6" ) ) ]  += nVal2Change( nPrecio, aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt6" ) ) ] ) * nPctInc / 100
                else
-                  aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt6" ) ) ]  += nUndInc
+                  aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt6" ) ) ]  += nUndInc
                end if
 
                if lRnd
-                  aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt6" ) ) ]  := Round( aTmpAtp[ ( D():Get( "CliAtp", nView ) )->( Fieldpos( "nPrcArt6" ) ) ], nDec )
+                  aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt6" ) ) ]  := Round( aTmpAtp[ ( D():Atipicas( nView ) )->( Fieldpos( "nPrcArt6" ) ) ], nDec )
                end if
 
             end if
@@ -6021,14 +6021,14 @@ STATIC FUNCTION mkChgPrc( cFam, cIva, cCliOrg, cCliDes, lTarifa1, lTarifa2, lTar
             if lGenerateTarifa
                aAdd( aTmpGenerate, aTmpAtp )
             else
-               dbGather( aTmpAtp, D():Get( "CliAtp", nView ) )
+               dbGather( aTmpAtp, D():Atipicas( nView ) )
             end if
 
          end if
 
-         ( D():Get( "CliAtp", nView ) )->( dbSkip() )
+         ( D():Atipicas( nView ) )->( dbSkip() )
 
-         oMtr:Set( ( D():Get( "CliAtp", nView ) )->( OrdKeyNo() ) )
+         oMtr:Set( ( D():Atipicas( nView ) )->( OrdKeyNo() ) )
 
       end do
 
@@ -6037,15 +6037,15 @@ STATIC FUNCTION mkChgPrc( cFam, cIva, cCliOrg, cCliDes, lTarifa1, lTarifa2, lTar
       if lGenerateTarifa
 
          for x := 1 to Len( aTmpGenerate )
-            DBGather( aTmpGenerate[ x ], D():Get( "CliAtp", nView ), .t. )
+            DBGather( aTmpGenerate[ x ], D():Atipicas( nView ), .t. )
          next
 
       end if
 
-      oMtr:Set( ( D():Get( "CliAtp", nView ) )->( LastRec() ) )
+      oMtr:Set( ( D():Atipicas( nView ) )->( LastRec() ) )
 
-      ( D():Get( "CliAtp", nView ) )->( OrdSetFocus( nOrdAct ) )
-      ( D():Get( "CliAtp", nView ) )->( dbGoto( nRecAct ) )
+      ( D():Atipicas( nView ) )->( OrdSetFocus( nOrdAct ) )
+      ( D():Atipicas( nView ) )->( dbGoto( nRecAct ) )
 
       oDlg:Enable()
 
@@ -6067,17 +6067,17 @@ Static Function nVal2Change( nPrecio, nImporte )
       case nPrecio == 1
          nVal2Change := nImporte
       case nPrecio == 2
-         nVal2Change := ( D():Get( "CliAtp", nView ) )->nPrcArt
+         nVal2Change := ( D():Atipicas( nView ) )->nPrcArt
       case nPrecio == 3
-         nVal2Change := ( D():Get( "CliAtp", nView ) )->nPrcArt2
+         nVal2Change := ( D():Atipicas( nView ) )->nPrcArt2
       case nPrecio == 4
-         nVal2Change := ( D():Get( "CliAtp", nView ) )->nPrcArt3
+         nVal2Change := ( D():Atipicas( nView ) )->nPrcArt3
       case nPrecio == 5
-         nVal2Change := ( D():Get( "CliAtp", nView ) )->nPrcArt4
+         nVal2Change := ( D():Atipicas( nView ) )->nPrcArt4
       case nPrecio == 6
-         nVal2Change := ( D():Get( "CliAtp", nView ) )->nPrcArt5
+         nVal2Change := ( D():Atipicas( nView ) )->nPrcArt5
       case nPrecio == 7
-         nVal2Change := ( D():Get( "CliAtp", nView ) )->nPrcArt6
+         nVal2Change := ( D():Atipicas( nView ) )->nPrcArt6
    end case
 
 RETURN nVal2Change
@@ -9771,12 +9771,12 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    if nMode != APPD_MODE
 
-      ( D():Get( "CliAtp", nView ) )->( dbGoTop() )
+      ( D():Atipicas( nView ) )->( dbGoTop() )
 
-      if ( D():Get( "CliAtp", nView ) )->( dbSeek( cCodCli ) )
-         while ( ( D():Get( "CliAtp", nView ) )->cCodCli == cCodCli ) .and. ( D():Get( "CliAtp", nView ) )->( !eof() )
-            dbPass( ( D():Get( "CliAtp", nView ) ), dbfTmpAtp, .t. )
-            ( D():Get( "CliAtp", nView ) )->( dbSkip() )
+      if ( D():Atipicas( nView ) )->( dbSeek( cCodCli ) )
+         while ( ( D():Atipicas( nView ) )->cCodCli == cCodCli ) .and. ( D():Atipicas( nView ) )->( !eof() )
+            dbPass( ( D():Atipicas( nView ) ), dbfTmpAtp, .t. )
+            ( D():Atipicas( nView ) )->( dbSkip() )
          end while
       end if
 
@@ -10198,8 +10198,8 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
       oMsgText( "Eliminando tarifas anteriores cliente" )
       oMsgProgress():SetRange( 0, ( dbfTmpAtp )->( LastRec() ) )
 
-      while ( D():Get( "CliAtp", nView ) )->( dbSeek( aTmp[ _COD ] ) ) .and. !( D():Get( "CliAtp", nView ) )->( eof() )
-         dbDel( D():Get( "CliAtp", nView ) )
+      while ( D():Atipicas( nView ) )->( dbSeek( aTmp[ _COD ] ) ) .and. !( D():Atipicas( nView ) )->( eof() )
+         dbDel( D():Atipicas( nView ) )
       end while
 
       oMsgText( "Archivando tarifas cliente" )
@@ -10207,7 +10207,7 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
 
       ( dbfTmpAtp )->( dbGoTop() )
       while ( dbfTmpAtp )->( !eof() )
-         dbPass( dbfTmpAtp, ( D():Get( "CliAtp", nView ) ), .t., aTmp[ _COD ] )
+         dbPass( dbfTmpAtp, ( D():Atipicas( nView ) ), .t., aTmp[ _COD ] )
          ( dbfTmpAtp )->( dbSkip() )
          oMsgProgress():DeltaPos( 1 )
       end while
@@ -11436,7 +11436,7 @@ Return ( lSeek )
 
 Static Function CalIva( nPrecio, lIvaInc, cTipIva, cCodImp, oGetIva )
 
-   local nIvaPct  := nIva( D():Get( "TIva", nView ), cTipIva )
+   local nIvaPct  := nIva( D():TiposIva( nView ), cTipIva )
 
    /*
    Despues si tiene impuesto especial qitarlo----------------------------------
@@ -11463,7 +11463,7 @@ Return .t.
 Static Function CalBas( nPrecio, lIvaInc, cTipIva, cCodImp, oGetBas )
 
    local nNewPre
-   local nIvaPct  := nIva( D():Get( "TIva", nView ), cTipIva )
+   local nIvaPct  := nIva( D():TiposIva( nView ), cTipIva )
 
    /*
    Primero es quitar el impuestos
@@ -11491,7 +11491,7 @@ Return .t.
 
 Function nCalIva( nPrecio, lIvaInc, cTipIva, cCodImp )
 
-   local nIvaPct  := nIva( D():Get( "TIva", nView ), cTipIva )
+   local nIvaPct  := nIva( D():TiposIva( nView ), cTipIva )
 
    /*
    Despues si tiene impuesto especial qitarlo
@@ -11514,7 +11514,7 @@ Return nPrecio
 Function nCalBas( nPrecio, lIvaInc, cTipIva, cCodImp )
 
    local nNewPre
-   local nIvaPct  := nIva( D():Get( "TIva", nView ), cTipIva )
+   local nIvaPct  := nIva( D():TiposIva( nView ), cTipIva )
 
    /*
    Primero es quitar el impuestos
@@ -11552,7 +11552,7 @@ Static Function DataReport( oFr, lTemporal )
    oFr:SetWorkArea(     "Documetos",         ( D():Get( "ClientD", nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Documetos",         cItemsToReport( aCliDoc() ) )
 
-   oFr:SetWorkArea(     "Tarifas clientes",  ( D():Get( "CliAtp", nView ) )->( Select() ) )
+   oFr:SetWorkArea(     "Tarifas clientes",  ( D():Atipicas( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Tarifas clientes",  cItemsToReport( aItmAtp() ) )
 
    oFr:SetWorkArea(     "Direcciones",       ( D():ClientesDirecciones( nView ) )->( Select() ) )
@@ -13764,6 +13764,50 @@ function externalEditAtipica( oBrwAgentesTarifas, tmpAgentesTarifas, nExternalVi
    nView    := nExternalView
 
 Return ( WinEdtRec( oBrwAgentesTarifas, bEdtAtp, tmpAgentesTarifas ) )
+
+//---------------------------------------------------------------------------//
+
+static function DelDetalle( cCodigo )
+
+   InitWait()
+
+   /*
+   Eliminamos documentos------------------------------------------------------
+   */
+
+   /*if (  )->( dbSeek( cCodArt ) )
+
+      while ( ( dbfArtPrv )->cCodArt == cCodArt )
+
+         if dbLock( dbfArtPrv )
+            ( dbfArtPrv )->( dbDelete() )
+            ( dbfArtPrv )->( dbUnLock() )
+         end if
+
+         ( dbfArtPrv )->( dbSkip( 1 ) )
+
+      end while
+
+   end if
+
+   ( dbfArtPrv )->( OrdSetFocus( nOrdAnt ) )
+
+
+
+   ClientesEntidad( nView )
+   ClientesBancos( nView )
+   ClientesIncidencias( nView )
+   ClientesDirecciones( nView )*/
+
+
+
+
+
+
+
+   EndWait()
+
+Return .t.
 
 //---------------------------------------------------------------------------//
 
