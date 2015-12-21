@@ -4624,7 +4624,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
       aGet[ _NCANENT ]:cText( 1 )
       aGet[ _NUNICAJA]:cText( 1 )
       aGet[ _CTIPMOV ]:cText( cDefVta() )
-      aGet[ _NNUMLIN ]:cText( nLastNum( dbfTmpLin ) )
+      aTmp[ _NNUMLIN ]  := nLastNum( dbfTmpLin )
       aGet[ _NPOSPRINT]:cText( nLastNum( dbfTmpLin, "nPosPrint" ) )
       aGet[ _CALMLIN ]:cText( aTmpFac[ _CCODALM ])
 
@@ -6550,16 +6550,11 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          Ahora recogemos el impuesto especial si lo hay---------------------------
          */
 
+         aTmp[ _CCODIMP ]     := ( D():Articulos( nView ) )->cCodImp
+         oNewImp:setCodeAndValue( aTmp[ _CCODIMP ], aGet[ _NVALIMP ] )
+
          if !Empty( ( D():Articulos( nView ) )->cCodImp )
-            aTmp[ _CCODIMP ]  	:= ( D():Articulos( nView ) )->cCodImp
-            aGet[ _NVALIMP ]:cText( oNewImp:nValImp( ( D():Articulos( nView ) )->cCodImp, aTmpFac[_LIVAINC], aTmp[_NIVA] ) )
-
             aTmp[ _LVOLIMP ]     := RetFld( ( D():Articulos( nView ) )->cCodImp, oNewImp:oDbf:cAlias, "lIvaVol" )
-
-            if !Empty( aGet[ _LVOLIMP ] )
-               aGet[ _LVOLIMP ]:Refresh()
-            end if
-
          end if
 
          if (D():Articulos( nView ))->nCajEnt != 0

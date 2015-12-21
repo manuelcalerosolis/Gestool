@@ -5471,18 +5471,11 @@ STATIC FUNCTION LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1,
             Impuestos especiales--------------------------------------------------
             */
 
-            if !empty( ( D():Articulos( nView ) )->cCodImp )
-            
-               aTmp[ _CCODIMP ]     := ( D():Articulos( nView ) )->cCodImp
+            aTmp[ _CCODIMP ]     := ( D():Articulos( nView ) )->cCodImp
+            oNewImp:setCodeAndValue( aTmp[ _CCODIMP ], aGet[ _NVALIMP ] )
 
-               if aGet[ _NVALIMP ] != nil
-                  aGet[ _NVALIMP ]:cText( oNewImp:nValImp( aTmp[ _CCODIMP ], aTmpSat[ _LIVAINC ], aTmp[ _NIVA ] ) )
-               else
-                  aTmp[ _NVALIMP ]  := oNewImp:nValImp( aTmp[ _CCODIMP ], aTmpSat[ _LIVAINC ], aTmp[ _NIVA ] )
-               end if
-
-               aTmp[ _LVOLIMP ]     := RetFld( aTmp[ _CCODIMP ], oNewImp:oDbf:cAlias, "lIvaVol" )
-
+            if !Empty( ( D():Articulos( nView ) )->cCodImp )
+               aTmp[ _LVOLIMP ]     := RetFld( ( D():Articulos( nView ) )->cCodImp, oNewImp:oDbf:cAlias, "lIvaVol" )
             end if
 
             /*

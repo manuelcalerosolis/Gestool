@@ -10316,13 +10316,12 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             /*
             Ahora recogemos el impuesto especial si lo hay---------------------
             */
+            
+            aTmp[ _CCODIMP ]     := ( D():Articulos( nView ) )->cCodImp
+            oNewImp:setCodeAndValue( aTmp[ _CCODIMP ], aGet[ _NVALIMP ] )
 
             if !Empty( ( D():Articulos( nView ) )->cCodImp )
-
-               aTmp[ _CCODIMP ]     := ( D():Articulos( nView ) )->cCodImp
-               aGet[ _NVALIMP ]:cText( oNewImp:nValImp( ( D():Articulos( nView ) )->cCodImp ) )
                aTmp[ _LVOLIMP ]     := RetFld( ( D():Articulos( nView ) )->cCodImp, oNewImp:oDbf:cAlias, "lIvaVol" )
-
             end if
 
             if ( D():Articulos( nView ) )->nCajEnt != 0

@@ -2771,8 +2771,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
    local oSayLote
    local cCodArt           := Padr( aTmp[ _CREF ], 200 )
 
-   ?"EdtDet"
-
 	/*
 	Modificamos los valores por defecto
 	*/

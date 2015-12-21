@@ -336,6 +336,7 @@ RETURN nil
 METHOD setCodeAndValue( cCodImp, uValue )
 
    if empty( cCodImp )
+      uValue:cText(0)
       Return nil 
    end if 
    
