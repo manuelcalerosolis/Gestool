@@ -13,7 +13,7 @@ CLASS DocumentSalesViewEdit FROM ViewEdit
 
    METHOD columnsBrowseLineas()
 
-   METHOD getDocumentLine()            INLINE ( ::oSender:oDocumentLines:aLines[ ::oBrowse:nArrayAt ] )
+   METHOD getDocumentLines()           INLINE ( ::oSender:oDocumentLines:aLines[ ::oBrowse:nArrayAt ] )
 
 END CLASS
 
@@ -51,20 +51,20 @@ METHOD columnsBrowseLineas() CLASS DocumentSalesViewEdit
 
    with object ( ::oBrowse:AddCol() )
       :cHeader                := "Código"
-      :bEditValue             := {|| ::getDocumentLine():getArticulo() }
+      :bEditValue             := {|| ::getDocumentLines():getArticulo() }
       :nWidth                 := 100
    end with
 
    with object ( ::oBrowse:AddCol() )
       :cHeader                := "Descripción"
-      :bEditValue             := {|| ::getDocumentLine():getDescription() }
+      :bEditValue             := {|| ::getDocumentLines():getDescription() }
       :bFooter                := {|| "Total..." }
       :nWidth                 := 310
    end with
 
    with object ( ::oBrowse:AddCol() )
       :cHeader                := cNombreCajas()
-      :bEditValue             := {|| ::getDocumentLine():getCajas() }
+      :bEditValue             := {|| ::getDocumentLines():getCajas() }
       :cEditPicture           := MasUnd()
       :nWidth                 := 75
       :nDataStrAlign          := 1
@@ -75,7 +75,7 @@ METHOD columnsBrowseLineas() CLASS DocumentSalesViewEdit
 
    with object ( ::oBrowse:AddCol() )
       :cHeader                := cNombreUnidades()
-      :bEditValue             := {|| ::getDocumentLine():getUnidades() }
+      :bEditValue             := {|| ::getDocumentLines():getUnidades() }
       :cEditPicture           := MasUnd()
       :nWidth                 := 130
       :nDataStrAlign          := 1
@@ -86,7 +86,7 @@ METHOD columnsBrowseLineas() CLASS DocumentSalesViewEdit
 
    with object ( ::oBrowse:AddCol() )
       :cHeader                := "Und"
-      :bEditValue             := {|| ::getDocumentLine():getTotalUnits() }
+      :bEditValue             := {|| ::getDocumentLines():getTotalUnits() }
       :cEditPicture           := MasUnd()
       :nWidth                 := 90
       :nDataStrAlign          := 1
@@ -96,7 +96,7 @@ METHOD columnsBrowseLineas() CLASS DocumentSalesViewEdit
 
    with object ( ::oBrowse:AddCol() )
       :cHeader                := "Precio"
-      :bEditValue             := {|| ::getDocumentLine():getPrecioVenta() }
+      :bEditValue             := {|| ::getDocumentLines():getPrecioVenta() }
       :cEditPicture           := cPouDiv()
       :nWidth                 := 90
       :nDataStrAlign          := 1
@@ -105,7 +105,7 @@ METHOD columnsBrowseLineas() CLASS DocumentSalesViewEdit
 
    with object ( ::oBrowse:AddCol() )
       :cHeader                := "% Dto."
-      :bEditValue             := {|| ::getDocumentLine():getDescuento() }
+      :bEditValue             := {|| ::getDocumentLines():getDescuento() }
       :cEditPicture           := "@E 999.99"
       :nWidth                 := 105
       :nDataStrAlign          := 1
@@ -115,7 +115,7 @@ METHOD columnsBrowseLineas() CLASS DocumentSalesViewEdit
 
    with object ( ::oBrowse:AddCol() )
       :cHeader                := "% " + cImp()
-      :bEditValue             := {|| ::getDocumentLine():getPorcentajeImpuesto() }
+      :bEditValue             := {|| ::getDocumentLines():getPorcentajeImpuesto() }
       :cEditPicture           := "@E 999.99"
       :nWidth                 := 95
       :nDataStrAlign          := 1
@@ -125,7 +125,7 @@ METHOD columnsBrowseLineas() CLASS DocumentSalesViewEdit
 
    with object ( ::oBrowse:AddCol() )
       :cHeader                := "Total"
-      :bEditValue             := {|| ::getDocumentLine():getTotal() }
+      :bEditValue             := {|| ::getDocumentLines():getBase() }
       :cEditPicture           := cPouDiv()
       :nWidth                 := 120
       :nDataStrAlign          := 1

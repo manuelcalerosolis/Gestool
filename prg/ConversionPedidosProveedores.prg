@@ -101,16 +101,18 @@ RETURN ( Self )
 METHOD loadLinesDocument() 
 
    local aStatus
+   local hDictionary    
 
    ::oDocumentLines:reset()
 
    aStatus              := aGetStatus( ::getLineAlias(), .t. )
 
    ( ::getLineAlias() )->( dbgotop() )  
-
    while !( ::getLineAlias() )->( eof() ) 
 
-      ::oDocumentLines:addLines( DocumentLine():newFromDictionary( ::oDocumentLines ) )
+      hDictionary       := D():getHashFromAlias( ::getLineAlias(), ::getLineDictionary() )
+
+      ::oDocumentLines:addLines( DocumentLine():newFromDictionary( hDictionary ) )
 
       ( ::getLineAlias() )->( dbskip() ) 
    

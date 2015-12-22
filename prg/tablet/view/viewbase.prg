@@ -1,8 +1,8 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-#define __initialRow__                       40
-#define __rowDistance__                      25
+#define __initialRow__                                   40
+#define __rowDistance__                                  25
 
 CLASS ViewBase
 

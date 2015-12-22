@@ -65,7 +65,7 @@ Return ( self )
 
 METHOD Resource() CLASS ViewEditResumen
 
-   ::nRow                  := 4
+   ::resetRow()
 
    ::oDlg                  := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
 
@@ -267,7 +267,7 @@ METHOD defineCheckRecargo() CLASS ViewEditResumen
 
    ::oCheckBoxRecargo   := TGridCheckBox():Build(  {  "nRow"      => ::getRow(),;       
                                                       "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
-                                                      "cCaption"  => " Recargo Equivalencia",;
+                                                      "cCaption"  => "Recargo Equivalencia",;
                                                       "bSetGet"   => {|u| ::SetGetValue( u, "RecargoEquivalencia" ) },;
                                                       "oWnd"      => ::oDlg,;
                                                       "nWidth"    => {|| GridWidth( 7, ::oDlg ) },;
@@ -296,7 +296,7 @@ METHOD defineBrowseIva() CLASS ViewEditResumen
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := "Base"
-      :bStrData            := {|| ::oSender:oTotalDocument:ShowBaseIVA( ::oBrowse:nArrayAt ) }
+      :bStrData            := {|| ::oSender:oTotalDocument:showBaseIVA( ::oBrowse:nArrayAt ) }
       :nWidth              := 170
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
@@ -306,7 +306,7 @@ METHOD defineBrowseIva() CLASS ViewEditResumen
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := "%" + cImp() + " - % RE"
-      :bStrData            := {|| ::oSender:oTotalDocument:ShowPorcentajesIVA( ::oBrowse:nArrayAt ) }
+      :bStrData            := {|| ::oSender:oTotalDocument:showPorcentajesIVA( ::oBrowse:nArrayAt ) }
       :nWidth              := 170
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
@@ -314,17 +314,17 @@ METHOD defineBrowseIva() CLASS ViewEditResumen
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := cImp() + " - RE"
-      :bStrData            := {|| ::oSender:oTotalDocument:ShowImportesIVA( ::oBrowse:nArrayAt ) }
+      :bStrData            := {|| ::oSender:oTotalDocument:showImportesIVA( ::oBrowse:nArrayAt ) }
       :nWidth              := 160
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
       :nFootStrAlign       := 1
-      :bFooter             := {|| ::oSender:oTotalDocument:transgetPrice() }
+      :bFooter             := {|| ::oSender:oTotalDocument:transPrice() }
    end with
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := "Total"
-      :bStrData            := {|| ::oSender:oTotalDocument:ShowTotalIVA( ::oBrowse:nArrayAt ) }
+      :bStrData            := {|| ::oSender:oTotalDocument:showTotalIVA( ::oBrowse:nArrayAt ) }
       :nWidth              := 170
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1

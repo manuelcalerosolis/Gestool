@@ -71,6 +71,8 @@ CLASS IXBrowse FROM TXBrowse
 
    METHOD MakeTotals( aCols )
 
+   METHOD ArrayIncrSeek()
+
 /*
    Method Refresh( lComplete )
 */
@@ -633,6 +635,56 @@ METHOD MakeTotals( aCols ) CLASS IXBrowse
    endif
 
 return Self
+
+//----------------------------------------------------------------------------//
+
+METHOD ArrayIncrSeek( cSeek, nGoTo ) CLASS IXBrowse
+
+   local nAt, nBrwCol, nSortCol, nRow, uVal
+   local lExact
+
+   msgAlert( cSeek, "ArrayIncrSeek" )
+
+   if ::lIncrFilter
+      msgAlert( "ArrayIncrSeek" )
+      return ::ArrayIncrFilter( cSeek, @nGoTo )
+   endif
+
+   if ( nBrwCol := AScan( ::aCols, { |o| !Empty( o:cOrder ) } ) ) > 0
+      if ! Empty( nSortCol := ::aCols[ nBrwCol ]:cSortOrder ) .and. ValTyPe( nSortCol ) == 'N'
+         if ! ::aCols[ nBrwCol ]:lCaseSensitive
+            cSeek    := Upper( cSeek )
+         endif
+         for nRow := 1 to ::nLen
+            uVal  := ::ArrCell( nRow, nSortCol )
+            if ValType( uVal ) $ 'CDLN'
+               uVal     := cValToChar( uVal )
+               if ! ::aCols[ nBrwCol ]:lCaseSensitive
+                  uVal  := Upper( uVal )
+               endif
+               if ::lSeekWild
+                  if hb_WildMatch( '*' + cSeek, uVal )
+                     nAt   := nRow
+                  endif
+               else
+                  lExact := Set( _SET_EXACT, .f. )
+                  if uVal = cSeek
+                     nAt   := nRow
+                  endif
+                  Set( _SET_EXACT, lExact )
+               endif
+               if ! Empty( nAt )
+                  ::nArrayAt  := nAt
+                  return .t.
+               endif
+            endif
+         next nRow
+      endif
+   endif
+
+   msgAlert( nBrwCol, "nBrwCol" )
+
+return .f.
 
 //----------------------------------------------------------------------------//
 

@@ -25,7 +25,8 @@ CLASS DocumentLines
    METHOD appendLineDetail( oDocumentLine )                 INLINE ( aadd( ::aLines, oDocumentLine ) )
    METHOD saveLineDetail( nPosition, oDocumentLine )        INLINE ( ::aLines[ nPosition  ] := oDocumentLine )
 
-   METHOD getTotal()
+   METHOD getBruto()
+   METHOD getBase()
 
    METHOD selectAll()                                       INLINE ( aeval( ::aLines, {|oLine| oLine:select() } ) )
    METHOD unselectAll()                                     INLINE ( aeval( ::aLines, {|oLine| oLine:unSelect() } ) )
@@ -36,6 +37,7 @@ CLASS DocumentLines
    METHOD getLineAlias()                                    INLINE ( ::oSender:getLineAlias() )
    METHOD getLineDictionary()                               INLINE ( ::oSender:getLineDictionary() )
 
+   METHOD sortingPleaseWait( expresion )   
    METHOD sortBy( expresion )
 
 END CLASS
@@ -58,9 +60,9 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD addLines( hLine ) CLASS DocumentLines
+METHOD addLines( oLine ) CLASS DocumentLines
 
-   aAdd( ::aLines, hLine )
+   aAdd( ::aLines, oLine )
   
 Return ( Self )
 
@@ -74,24 +76,47 @@ Return (  Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getTotal() CLASS DocumentLines
+METHOD getBruto() CLASS DocumentLines
 
    local oLine
-   local Total  := 0
+   local Bruto    := 0
 
    for each oLine in ::aLines
-      Total     += oLine:getTotal()
+      Bruto       += oLine:getBruto()
    next
 
-Return ( Total )
+Return ( Bruto )
+
+//---------------------------------------------------------------------------//
+
+METHOD getBase() CLASS DocumentLines
+
+   local oLine
+   local Base     := 0
+
+   for each oLine in ::aLines
+      Base        += oLine:getBase()
+   next
+
+Return ( Base )
+
+//---------------------------------------------------------------------------//
+
+METHOD sortingPleaseWait( expresion, oColumn, oBrowse )
+
+   msgRun( "Ordenando columna", "Espere por favor...", {|| ::sortBy( expresion ) } )
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD sortBy( expresion )
 
-   asort( ::aLines, , , {|x,y| x:getCode() < y:getCode() } )
+   DEFAULT expresion    := "getCode"
 
-Return (  Self )
+   asort( ::aLines, , , {|x,y| oSend( x, expresion ) < oSend( y, expresion ) } )
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 

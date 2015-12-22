@@ -14,7 +14,6 @@ CLASS DocumentLine
 
    METHOD getDictionary()                                      INLINE ( ::hDictionary )
    METHOD setDictionary( hDictionary )                         INLINE ( ::hDictionary := hDictionary )
-   METHOD loadDictionary()                                     INLINE ( ::setDictionary( D():getHashFromAlias( ::oSender:getLineAlias(), ::oSender:getLineDictionary() ) ) )
 
    METHOD getValue( key, uDefault )                            INLINE ( hGetDefault( ::hDictionary, key, uDefault ) )
    METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
@@ -85,7 +84,8 @@ CLASS DocumentLine
    METHOD isVolumenSpecialTax()                                INLINE ( ::getValue( "VolumenImpuestosEspeciales", .f. ) )
    METHOD getSpecialTax()                                      INLINE ( ::getValue( "ImporteImpuestoEspecial", 0 ) )
 
-   METHOD getTotal()
+   METHOD getBruto()
+   METHOD getBase() 
    METHOD getTotalSpecialTax()  
 
    METHOD getVolumen()                                         INLINE ( ::getValue( "Volumen", 0 ) )
@@ -103,11 +103,9 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD newFromDictionary( oSender )
+METHOD newFromDictionary( hDictionary ) CLASS DocumentLine
 
-   ::new( oSender )
-
-   ::loadDictionary()
+   ::setDictionary( hDictionary )
 
 Return ( Self )
 
@@ -126,7 +124,7 @@ Return ( totalUnidades )
 
 //---------------------------------------------------------------------------//
 
-METHOD getTotal() CLASS DocumentLine
+METHOD getBruto() CLASS DocumentLine
 
    local Total       := ::getNetPrice()
    Total             *= ::getTotalUnits()
@@ -159,6 +157,20 @@ METHOD getNetPrice() CLASS DocumentLine
    end if 
 
 Return ( Price )
+
+//---------------------------------------------------------------------------//
+
+METHOD getBase() CLASS DocumentLine
+
+   local Base        := ::getNetPrice()
+
+   if !empty( ::oSender ) .and. ( ::oSender:hGetMaster( "PorcentajeDescuento1" ) != 0 )
+      Base           -= Base * ::oSender:hGetMaster( "PorcentajeDescuento1" ) / 100
+   end if 
+
+   Base              *= ::getTotalUnits()
+
+Return ( Base )
 
 //---------------------------------------------------------------------------//
 

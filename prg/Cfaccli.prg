@@ -25,6 +25,12 @@ Return ( ( dbfFactura )->nRegIva == 2 )
 
 //---------------------------------------------------------------------------//
 
+Static Function isIVAExportacionFueraUE( dbfFactura )
+
+Return ( ( dbfFactura )->nRegIva == 4 )
+
+//---------------------------------------------------------------------------//
+
 FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfAlbCliT, dbfCli, dbfDiv, dbfArt, dbfFPago, dbfIva, oNewImp, oBrw, cCodEmp, cCodPro )
 
 	local n
@@ -437,15 +443,19 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
          */
 
          if isIVAComunidadEconomicaEuropea( dbfFacCliT )
-            cSubCtaIva  := uFieldEmpresa( "cCtaCeeRpt" )
-            cSubCtaReq  := uFieldEmpresa( "cCtaCeeSpt" )
+            cSubCtaIva  := cCuentaVentaIVARepercutidoUE()
+            uIva[ 3 ]   := 0
+            aAdd( uIva, cSubCtaIva )
+         elseif isIVAExportacionFueraUE( dbfFacCliT )
+            cSubCtaIva  := cCuentaVentaIVARepercutidoFueraUE()
+            uIva[ 3 ]   := 0
+            aAdd( uIva, cSubCtaIva )
          else
             cSubCtaIva  := cSubCuentaIva( uIva[ 3 ],     ( dbfFacCliT )->lRecargo, cRuta, cCodEmp, dbfIva )
             cSubCtaReq  := cSubCuentaRecargo( uIva[ 3 ], ( dbfFacCliT )->lRecargo, cRuta, cCodEmp, dbfIva )
+            aAdd( uIva, cSubCtaIva )
+            aAdd( uIva, cSubCtaReq )
          end if
-
-         aAdd( uIva, cSubCtaIva )
-         aAdd( uIva, cSubCtaReq )
 
       end if 
 
@@ -862,7 +872,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
       for each uIva in newIva
 
-         if ( len( uIva ) >= 11 ) .and. ( uIva[ 8 ] != 0 .or. uFieldEmpresa( "lConIva" ) )
+         if ( len( uIva ) >= 10 ) .and. ( uIva[ 8 ] != 0 .or. uFieldEmpresa( "lConIva" ) )
 
             if uFieldEmpresa( "lIvaImpEsp")
                nBaseImponible := uIva[2] + uIva[6]
@@ -873,15 +883,15 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
             aAdd( aSimula, MkAsiento(  nAsiento, ;                          
                                        cCodDiv, ;                          
                                        dFecha, ;                          
-                                       uIva[ 10 ],;            // Cuenta de impuestos                          
-                                       cCtaCli,;               // Contrapartida                          
-                                       ,;                      // Ptas. Debe                          
+                                       uIva[ 10 ],;                           // Cuenta de impuestos                          
+                                       cCtaCli,;                              // Contrapartida                          
+                                       ,;                                     // Ptas. Debe                          
                                        cConcepto,;                          
-                                       uIva[ 8 ],;             // Ptas. Haber                          
+                                       uIva[ 8 ],;                            // Ptas. Haber                          
                                        cFactura,;                          
-                                       nBaseImponible,;          // Base Imponible                          
+                                       nBaseImponible,;                       // Base Imponible                          
                                        uIva[ 3 ],;                          
-                                       if( lRecargo, uIva[ 4 ], 0 ),;          // Tipo de recargo                         
+                                       if( lRecargo, uIva[ 4 ], 0 ),;         // Tipo de recargo                         
                                        ,;                          
                                        cProyecto,;                          
                                        cClave,;                          
@@ -3619,8 +3629,8 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
       for n := 1 to Len( aTotIva )
 
          if isIVAComunidadEconomicaEuropea( dbfFacPrvT )
-            cSubCtaIva  := uFieldEmpresa( "cCeeRptCom" )
-            cSubCtaReq  := uFieldEmpresa( "cCeeSptCom" )
+            cSubCtaIva  := cCuentaCompraIVASoportadoUE()
+            cSubCtaReq  := cCuentaCompraIVARepercutidoUE()
          else
             cSubCtaIva  := cSubCuentaIva(       aTotIva[ n, 3 ], ( dbfFacPrvT )->lRecargo, cRuta, cCodEmp, dbfIva, .f. )
             cSubCtaReq  := cSubCuentaRecargo(   aTotIva[ n, 3 ], ( dbfFacPrvT )->lRecargo, cRuta, cCodEmp, dbfIva )

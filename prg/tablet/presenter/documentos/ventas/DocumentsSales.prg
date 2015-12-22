@@ -108,7 +108,7 @@ CLASS DocumentsSales FROM Documents
       METHOD gotoUltimoCliente()
       METHOD setUltimoCliente()
 
-   METHOD getTotal()                                        INLINE ( ::oDocumentLines:getTotal() )
+   METHOD getBruto()                                        INLINE ( ::oDocumentLines:getBruto() )
    METHOD calculaIVA()                                      VIRTUAL
 
    METHOD saveAppendDetail()

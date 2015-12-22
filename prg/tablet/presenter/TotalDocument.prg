@@ -7,29 +7,37 @@ CLASS TotalDocument
    DATA oSender
 
    DATA Bruto                                      INIT 0
+   DATA Base                                       INIT 0
 
    METHOD New( oSender )
    METHOD Calculate()
 
-   METHOD getBruto()                               INLINE ( ::Bruto )
-   METHOD getBase()                                //INLINE ( ::getBruto() )
+   METHOD getBruto()      
+   METHOD transBruto()                             INLINE ( Trans( ::getBruto(), cPorDiv() ) )
+
+   METHOD getBase()                                
    METHOD transBase()                              INLINE ( Trans( ::getBase(), cPorDiv() ) )
-   METHOD getDescuento()                           INLINE ( 0 )
-   METHOD transDescuento()                         INLINE ( Trans( ::getDescuento, cPorDiv() ) )
+   
+   METHOD getDescuento()                           
+   METHOD transDescuento()                         INLINE ( Trans( ::getDescuento(), cPorDiv() ) )
+
    METHOD getImporteIva() 
    METHOD transImporteIva()                        INLINE ( Trans( ::getImporteIva(), cPorDiv() ) ) 
+
    METHOD getImporteRecargo()
    METHOD transImporteRecargo()                    INLINE ( Trans( ::getImporteRecargo(), cPorDiv() ) )
-   METHOD transgetPrice()
+   METHOD transPrice()
+
    METHOD getTotalDocument()
-   METHOD transTotalDocument()                     INLINE ( Trans( ::getTotalDocument, cPorDiv() ) )
+   METHOD transTotalDocument()                     INLINE ( Trans( ::getTotalDocument(), cPorDiv() ) )
 
    METHOD Reset()                                  INLINE ( ::Bruto := 0, ::oIva:Reset() )
 
-   METHOD showBaseIVA( nPosition )                 INLINE ( ::oIva:ShowBase( nPosition ) )
-   METHOD ShowPorcentajesIVA( nPosition )          INLINE ( ::oIva:ShowPorcentajes( nPosition ) )
-   METHOD ShowImportesIVA( nPosition )             INLINE ( ::oIva:ShowImportes( nPosition ) )
-   METHOD ShowTotalIVA( nPosition )                INLINE ( ::oIva:ShowTotal( nPosition ) )
+   METHOD showBrutoIVA( nPosition )                INLINE ( ::oIva:showBruto( nPosition ) )
+   METHOD showBaseIVA( nPosition )                 INLINE ( ::oIva:showBase( nPosition ) )
+   METHOD showPorcentajesIVA( nPosition )          INLINE ( ::oIva:showPorcentajes( nPosition ) )
+   METHOD showImportesIVA( nPosition )             INLINE ( ::oIva:showImportes( nPosition ) )
+   METHOD showTotalIVA( nPosition )                INLINE ( ::oIva:showTotal( nPosition ) )
  
 END CLASS
 
@@ -51,11 +59,7 @@ METHOD Calculate() CLASS TotalDocument
    ::Reset()
 
    for each oDocumentLine in ::oSender:oDocumentLines:aLines
-      
-      ::Bruto  += oDocumentLine:getTotal()
-
       ::oIva:add( oDocumentLine )
-
    next
 
 Return ( Self )
@@ -64,13 +68,24 @@ Return ( Self )
 
 METHOD getBase() CLASS TotalDocument
 
-   Local TotalBase         := 0
+   Local Base           := 0
 
-   aeval( ::oIva:aIva, {|hIva, nPosition| TotalBase += ::oIva:Base( nPosition ) } )
+   aeval( ::oIva:aIva, {|hIva, nPosition| Base += ::oIva:Base( nPosition ) } )
 
-Return( TotalBase )
+Return( Base )
 
 //---------------------------------------------------------------------------//
+
+METHOD getBruto() CLASS TotalDocument
+
+   Local Bruto          := 0
+
+   aeval( ::oIva:aIva, {|hIva, nPosition| Bruto += ::oIva:Base( nPosition ) } )
+
+Return( Bruto )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD getImporteIva() CLASS TotalDocument
 
@@ -104,14 +119,26 @@ Return ( TotalDocument )
 
 //---------------------------------------------------------------------------//
 
-METHOD transgetPrice() CLASS TotalDocument
+METHOD getDescuento()
 
-   Local transImporte := ""
+   local Descuento      := 0
 
-   transImporte := ::getImporteIva()
+   if !empty( ::oSender:hGetMaster( "PorcentajeDescuento1" ) )
+      Descuento         := ::getBruto() * ::oSender:hGetMaster( "PorcentajeDescuento1" ) / 100
+   end if 
+
+Return ( Descuento )
+
+//---------------------------------------------------------------------------//
+
+METHOD transPrice() CLASS TotalDocument
+
+   Local transImporte 
+
+   transImporte         := ::getImporteIva()
 
    if ::oIva:getValueMaster( "RecargoEquivalencia" )
-      transImporte += ::getImporteRecargo()
+      transImporte      += ::getImporteRecargo()
    endif
 
 Return( Trans( transImporte, cPorDiv() ) )

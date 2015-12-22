@@ -1416,3 +1416,29 @@ FUNCTION lPasNil() ; //RETURN ( aEmp()[ _LPASNIL ] )
 return ( lPasNil )
 
 //---------------------------------------------------------------------------//
+
+Function cCuentaVentaIVARepercutidoUE()
+
+Return ( uFieldEmpresa( "cCtaCeeSpt" ) )
+
+//---------------------------------------------------------------------------//
+
+Function cCuentaVentaIVARepercutidoFueraUE()
+
+Return ( uFieldEmpresa( "cCtaCeeRpt" ) )
+
+//---------------------------------------------------------------------------//
+
+Function cCuentaCompraIVASoportadoUE()
+
+Return ( uFieldEmpresa( "cCtaCeeSpt" ) )
+
+//---------------------------------------------------------------------------//
+
+Function cCuentaCompraIVARepercutidoUE()
+
+Return ( uFieldEmpresa( "cCtaCeeSpt" ) )
+
+//---------------------------------------------------------------------------//
+
+

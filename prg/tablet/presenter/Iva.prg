@@ -17,9 +17,15 @@ CLASS Iva
 
    METHOD setValue( nPosition, Field, Value )      INLINE ( hSet( ::aIva[ nPosition ], Field, Value ) )
 
+   METHOD getBrutoArray( nPosition )               INLINE ( hGet( ::aIva[ nPosition ], "Bruto" ) )
+   METHOD getBrutoHash( hIva )                     INLINE ( hGet( hIva, "Bruto" ) )
+   METHOD Bruto( nPosition )
+
+   METHOD setBruto( nPosition, nValue )            INLINE ( ::setValue( nPosition, "Bruto", nValue ) )
+   METHOD sumBruto( nPosition, nValue )            INLINE ( ::setBruto( nPosition, ::getBrutoArray( nPosition ) + nValue ) )
+
    METHOD getBaseArray( nPosition )                INLINE ( hGet( ::aIva[ nPosition ], "Base" ) )
    METHOD getBaseHash( hIva )                      INLINE ( hGet( hIva, "Base" ) )
-
    METHOD Base( nPosition )
 
    METHOD setBase( nPosition, nValue )             INLINE ( ::setValue( nPosition, "Base", nValue ) )
@@ -37,7 +43,8 @@ CLASS Iva
    METHOD ImporteRecargo( nPosition )
    METHOD CalculaTotal( nPosition )
 
-   METHOD ShowBase( nPosition )
+   METHOD ShowBruto( nPosition )
+   METHOD showBase( nPosition )
    METHOD ShowPorcentajes( nPosition )
    METHOD ShowImportes( nPosition )
    METHOD ShowTotal( nPosition )
@@ -53,7 +60,7 @@ METHOD New( oSender )
    ::oSender      := oSender
    ::aIva         := {}
 
-Return( Self )
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -61,7 +68,7 @@ METHOD Reset()
 
    ::aIva         := {}
 
-Return( Self )
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -72,7 +79,7 @@ METHOD add( oDocumentLine )
    nPosition      := aScan( ::aIva, {|hIva| oDocumentLine:getPercentageTax() == ::getTipoIva( hIva ) .and. oDocumentLine:getRecargoEquivalencia() == ::getTipoRecargo( hIva ) } )
 
    if nPosition != 0
-      ::sumBase( nPosition, oDocumentLine:getTotal() )
+      ::sumBruto( nPosition, oDocumentLine:getBruto() )
    else
       ::addIva( oDocumentLine )
    end if 
@@ -85,13 +92,14 @@ METHOD addIva( oDocumentLine )
 
    Local hHash
 
-   hHash    := {  "Base" => oDocumentLine:getTotal(),;
+   hHash    := {  "Bruto" => oDocumentLine:getBruto(),;
+                  "Base" => oDocumentLine:getBase(),;
                   "PorcentajeImpuesto" => oDocumentLine:getPercentageTax(),;
                   "PorcentajeRecargo" => oDocumentLine:getRecargoEquivalencia() }
 
    aadd( ::aIva, hHash )
 
-Return( Self )
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -99,18 +107,18 @@ Return( Self )
 
 METHOD ImporteImpuesto( nPosition )
 
-   Local ImporteImpuesto         := 0
+   Local ImporteImpuesto      := 0
 
-   if ::getPercentageTax( nPosition ) !=0
+   if ::getPercentageTax( nPosition ) != 0
       if ::getValueMaster( "ImpuestosIncluidos" )
-         ImporteImpuesto         := ::getBaseArray( nPosition ) - ( ::getBaseArray( nPosition ) / ( 1 + ::getPercentageTax( nPosition ) / 100 ) )
+         ImporteImpuesto      := ::getBaseArray( nPosition ) - ( ::getBaseArray( nPosition ) / ( 1 + ::getPercentageTax( nPosition ) / 100 ) )
       else
-         ImporteImpuesto         := ( ::getBaseArray( nPosition ) * ::getPercentageTax( nPosition ) ) / 100
+         ImporteImpuesto      := ( ::getBaseArray( nPosition ) * ::getPercentageTax( nPosition ) ) / 100
       endif
 
    endif
 
-Return( ImporteImpuesto )
+Return ( ImporteImpuesto )
 
 //---------------------------------------------------------------------------//
 
@@ -130,13 +138,28 @@ METHOD ImporteRecargo( nPosition )
       endif
    endif
 
-Return( ImporteRecargo )
+Return ( ImporteRecargo )
+
+//---------------------------------------------------------------------------//
+
+METHOD Bruto( nPosition )
+
+   local Bruto     := ::getBrutoArray( nPosition )
+
+   if ::getValueMaster( "ImpuestosIncluidos" )
+      Bruto        -= ::ImporteImpuesto( nPosition )
+      if ( ::getValueMaster( "RecargoEquivalencia" ) )
+         Bruto     -= ::ImporteRecargo( nPosition )
+      endif        
+   endif
+
+Return ( Bruto )
 
 //---------------------------------------------------------------------------//
 
 METHOD Base( nPosition )
 
-   Local Base     := ::getBaseArray( nPosition )
+   local Base     := ::getBaseArray( nPosition )
 
    if ::getValueMaster( "ImpuestosIncluidos" )
       Base        -= ::ImporteImpuesto( nPosition )
@@ -145,49 +168,61 @@ METHOD Base( nPosition )
       endif        
    endif
 
-Return( Base )
+Return ( Base )
 
 //---------------------------------------------------------------------------//
 
 METHOD CalculaTotal( nPosition )
 
-   Local CalculaTotal      := 0
+   local CalculaTotal      
 
-   CalculaTotal            := ::Base( nPosition ) 
-   CalculaTotal            += ::ImporteImpuesto( nPosition )
-   CalculaTotal            += ::ImporteRecargo( nPosition ) 
+   CalculaTotal   := ::Base( nPosition ) 
+   CalculaTotal   += ::ImporteImpuesto( nPosition )
+   CalculaTotal   += ::ImporteRecargo( nPosition ) 
 
 Return( CalculaTotal )
 
 //---------------------------------------------------------------------------//
 
-METHOD ShowBase( nPosition )
+METHOD ShowBruto( nPosition )
 
-   Local Base := ""
+   Local Bruto  := ""
 
-   if !IsNil( ::Base( nPosition ) )
-      Base := Trans( ::Base( nPosition ), cPorDiv() )
+   if !IsNil( ::Bruto( nPosition ) )
+      Bruto     := Trans( ::Bruto( nPosition ), cPorDiv() )
    endif
 
-Return( Base )
+Return( Bruto )
+
+//---------------------------------------------------------------------------//
+
+METHOD ShowBase( nPosition )
+
+   Local Base  := ""
+
+   if !IsNil( ::Base( nPosition ) )
+      Base     := Trans( ::Base( nPosition ), cPorDiv() )
+   endif
+
+Return ( Base )
 
 //---------------------------------------------------------------------------//
 
 METHOD ShowPorcentajes( nPosition )
 
-   Local Porcentaje := ""
+   Local Porcentaje  := ""
 
    if !IsNil( ::getPercentageTax( nPosition ) )
-      Porcentaje  += Trans( ::getPercentageTax( nPosition ), "@E 999.99" )
+      Porcentaje     += Trans( ::getPercentageTax( nPosition ), "@E 999.99" )
    endif
 
-   Porcentaje     += CRLF
+   Porcentaje        += CRLF
 
    if !( ::getValueMaster( "RecargoEquivalencia" ) )
       Return Porcentaje
    else
       if !IsNil( ::getPorcentajeRecargo( nPosition ) )
-         Porcentaje += Trans( ::getPorcentajeRecargo( nPosition ), "@E 999.99")
+         Porcentaje  += Trans( ::getPorcentajeRecargo( nPosition ), "@E 999.99")
       endif
    endif
 
@@ -197,13 +232,13 @@ Return( Porcentaje )
 
 METHOD ShowImportes( nPosition )
 
-   Local Importe := ""
+   Local Importe  := ""
 
    if !IsNil( ::ImporteImpuesto( nPosition ) )
-      Importe += Trans( ::ImporteImpuesto( nPosition ), cPorDiv() )
+      Importe     += Trans( ::ImporteImpuesto( nPosition ), cPorDiv() )
    endif
 
-   Importe += CRLF 
+   Importe        += CRLF 
 
    if !( ::getValueMaster( "RecargoEquivalencia" ) )
       Return Importe
@@ -213,7 +248,7 @@ METHOD ShowImportes( nPosition )
       endif
    endif
 
-Return( Importe )
+Return ( Importe )
 
 //---------------------------------------------------------------------------//
 
@@ -221,11 +256,11 @@ METHOD ShowTotal( nPosition )
 
    Local Total := ""
 
-   if !IsNil( ::CalculaTotal( nPosition ) )
-      Total := Trans( ::CalculaTotal( nPosition ), cPorDiv() )
+   if !isNil( ::CalculaTotal( nPosition ) )
+      Total    := Trans( ::CalculaTotal( nPosition ), cPorDiv() )
    endif
 
-Return( Total )
+Return ( Total )
 
 //---------------------------------------------------------------------------//
 

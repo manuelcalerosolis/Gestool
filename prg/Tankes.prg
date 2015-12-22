@@ -84,7 +84,6 @@ METHOD OpenFiles( lExclusive )
    ::oDbf:Activate( .f., !( lExclusive ) )
 
    DATABASE NEW ::oDbfArt  PATH ( cPatArt() )   FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
-   ::oDbfArt:OrdSetFocus( "cCodTnk" )
 
    DATABASE NEW ::oIva     PATH ( cPatDat() )   FILE "TIVA.DBF"     VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 

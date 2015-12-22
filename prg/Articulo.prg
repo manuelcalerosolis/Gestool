@@ -12842,9 +12842,7 @@ Method CreateData()
       ::oSender:oMtr:nTotal := ( D():Articulos( nView ) )->( lastrec() )
    end if
 
-   ( D():Articulos( nView ) )->( OrdSetFocus( "SndCod" ) )
    ( D():Articulos( nView ) )->( dbGoTop() )
-
    while !( D():Articulos( nView ) )->( eof() )
 
       if ( D():Articulos( nView ) )->lSndDoc
@@ -12992,11 +12990,10 @@ Method RestoreData()
 
          USE ( cPatArt() + "Articulo.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArt ) )
          SET ADSINDEX TO ( cPatArt() + "Articulo.Cdx" ) ADDITIVE
-         ( dbfArt )->( ordSetFocus( "SndCod" ) )
 
          while !( dbfArt )->( Eof() )
 
-            if ( dbfArt )->( dbRLock() )
+            if ( dbfArt )->lSndDoc .and. ( dbfArt )->( dbRLock() )
                ( dbfArt )->lSndDoc   := .f.
                ( dbfArt )->( dbRUnlock() )
             end if
@@ -14970,7 +14967,7 @@ FUNCTION rxArticulo( cPath, cDriver )
       ( dbfArt )->( ordCreate( cPath + "ARTICULO.CDX", "CodObs", "Codigo", {|| Field->Codigo } ) )
 
       ( dbfArt )->( ordCondSet("!Deleted() .and. !lObs", {|| !Deleted() .and. !Field->lObs }  ) )
-      ( dbfArt )->( ordCreate( cPath + "ARTICULO.CDX", "NOMOBS", "UPPER( NOMBRE )", {|| UPPER( Field->NOMBRE ) } ) )
+      ( dbfArt )->( ordCreate( cPath + "ARTICULO.CDX", "NomObs", "Upper( Nombre )", {|| Upper( Field->Nombre ) } ) )
 
       ( dbfArt )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
       ( dbfArt )->( ordCreate( cPath + "ARTICULO.CDX", "CCODTIP", "CCODTIP", {|| Field->CCODTIP }, ) )
@@ -15005,23 +15002,8 @@ FUNCTION rxArticulo( cPath, cDriver )
       ( dbfArt )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
       ( dbfArt )->( ordCreate( cPath + "ARTICULO.CDX", "NCTLSTOCK", "NCTLSTOCK", {|| Field->NCTLSTOCK }, ) )
 
-      ( dbfArt )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
-      ( dbfArt )->( ordCreate( cPath + "Articulo.Cdx", "lSndDoc", "lSndDoc", {|| Field->lSndDoc } ) )
-
-      ( dbfArt )->( ordCondSet("!Deleted() .and. lSndDoc", {|| !Deleted() .and. Field->lSndDoc }  ) )
-      ( dbfArt )->( ordCreate( cPath + "ARTICULO.CDX", "SNDCOD", "CODIGO", {|| Field->Codigo } ) )
-
-      ( dbfArt )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
-      ( dbfArt )->( ordCreate( cPath + "ARTICULO.CDX", "MOVART", "Padl( RTrim( Field->CODIGO ), 18 )", {|| Padl( RTrim( Field->CODIGO ), 18 ) } ) )
-
-      ( dbfArt )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
-      ( dbfArt )->( ordCreate( cPath + "ARTICULO.CDX", "cCodTnk", "Field->cCodTnk", {|| Field->cCodTnk } ) )
-
       ( dbfArt )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( dbfArt )->( ordCreate( cPath + "ARTICULO.CDX", "CodeBar", "Field->CodeBar", {|| Field->CodeBar } ) )
-
-      ( dbfArt )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfArt )->( ordCreate( cPath + "Articulo.Cdx", "cCodUsr", "Field->cCodUsr + Dtos( Field->dFecChg ) + Field->cTimChg", {|| Field->cCodUsr + Dtos( Field->dFecChg ) + Field->cTimChg } ) )
 
       ( dbfArt )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( dbfArt )->( ordCreate( cPath + "Articulo.Cdx", "cCodWeb", "Str( Field->cCodWeb, 11 )", {|| Str( Field->cCodWeb, 11 ) } ) )
@@ -17908,6 +17890,7 @@ static function ChangeFabricantesInt( cCodFab )
 return nil
 
 //---------------------------------------------------------------------------//
+
 static function ChangeTipArtInt( cCodTip )
 
    local nRec
@@ -18559,8 +18542,6 @@ Function ScriptArticulo()
 
    USE ( cPatArt() + "Articulo.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArt ) )
    SET ADSINDEX TO ( cPatArt() + "Articulo.Cdx" ) ADDITIVE
-
-   ( dbfArt )->( ordSetFocus( "SndCod" ) )
 
    ( dbfArt )->( dbGoTop() )
    while !( dbfArt )->( eof() )
