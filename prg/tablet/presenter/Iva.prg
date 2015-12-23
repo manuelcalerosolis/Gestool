@@ -38,6 +38,7 @@ CLASS Iva
    METHOD getTotal( nPosition )                    INLINE ( hGet( ::aIva[ nPosition ], "Total" ) )
 
    METHOD addIva( oDocumentLine )
+   METHOD sumIva( nPosition, oDocumentLine )
 
    METHOD ImporteImpuesto( nPosition )
    METHOD ImporteRecargo( nPosition )
@@ -79,7 +80,7 @@ METHOD add( oDocumentLine )
    nPosition      := aScan( ::aIva, {|hIva| oDocumentLine:getPercentageTax() == ::getTipoIva( hIva ) .and. oDocumentLine:getRecargoEquivalencia() == ::getTipoRecargo( hIva ) } )
 
    if nPosition != 0
-      ::sumBruto( nPosition, oDocumentLine:getBruto() )
+      ::sumIva( nPosition, oDocumentLine )
    else
       ::addIva( oDocumentLine )
    end if 
@@ -98,6 +99,15 @@ METHOD addIva( oDocumentLine )
                   "PorcentajeRecargo" => oDocumentLine:getRecargoEquivalencia() }
 
    aadd( ::aIva, hHash )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD sumIva( nPosition, oDocumentLine )
+
+   ::sumBruto( nPosition, oDocumentLine:getBruto() )     
+   ::sumBase( nPosition, oDocumentLine:getBase() )
 
 Return ( Self )
 

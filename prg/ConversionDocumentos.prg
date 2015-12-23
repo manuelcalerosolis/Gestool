@@ -41,7 +41,7 @@ CLASS TConversionDocumentos
    DATA cSearchLines
    DATA oSortLines
    DATA cSortLines
-   DATA aSortLines
+   DATA aSortLines                                 INIT {}
    
    DATA oBrwDocuments
    DATA oBrwLines
@@ -158,7 +158,7 @@ CLASS TConversionDocumentos
    METHOD getLineDocument( nPosition )             INLINE ( ::oDocumentLines:getLine( if( !empty( nPosition ), nPosition, ::oBrwLines:nArrayAt ) ) )
 
    METHOD loadLinesDocument() 
-   METHOD setBrowseLinesDocument()                 INLINE ( ::oBrwLines:setArray( ::oDocumentLines:getLines(), .t., , .f. ) )
+   METHOD setBrowseLinesDocument()                 
 
    METHOD showDocuments() 
    METHOD showDocumentsLines()
@@ -166,8 +166,8 @@ CLASS TConversionDocumentos
    METHOD changeSearchLines()                      INLINE ( ::oBrwLines:Seek( alltrim( ::cSearchLines ) ) )
    METHOD changeSortLines()                        INLINE ( .t. )
 
-   METHOD sortColumn( cExpresion, oColumn )        
-
+   METHOD sortColumn( cExpresion, oColumn )     
+   METHOD seekLine( c )                            
 
 ENDCLASS
 
@@ -527,13 +527,20 @@ METHOD DialogSelectionLines( oDlg )
    ::oBrwLines:cName                := "Browse.Conversion documentos lineas"
    ::oBrwLines:bLDblClick           := {|| ::toogleSelectLine() }
 
-   ::oBrwLines:setArray( ::oDocumentLines:getLines(), , , .f. )
+   ::setBrowseLinesDocument()
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Seleccionando"
       :bEditValue                   := {|| ::getLineDocument():isSelect() }
       :nWidth                       := 20
       :SetCheck( { "Sel16", "Nil16" } )
+   end with
+
+   with object ( ::oColumnNumeroDocumento := ::oBrwLines:AddCol() )
+      :cHeader                      := "Número"
+      :bEditValue                   := {|| ::getLineDocument():getNumeroDocumento() }
+      :nWidth                       := 80
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getNumeroDocumento", oColumn ) }         
    end with
   
    with object ( ::oBrwLines:AddCol() )
@@ -547,7 +554,7 @@ METHOD DialogSelectionLines( oDlg )
       :cHeader                      := "Descripción"
       :bEditValue                   := {|| ::getLineDocument():getDescription() }
       :nWidth                       := 340
-      :bLClickHeader                := {|| ::oDocumentLines:sortingPleaseWait( "getDescription", hb_qwith(), ::oBrwLines ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getDescription", oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -555,7 +562,7 @@ METHOD DialogSelectionLines( oDlg )
       :bEditValue                   := {|| ::getLineDocument():getCodeFirstProperty() }
       :nWidth                       := 60
       :lHide                        := .t.
-      :bLClickHeader                := {|| ::oDocumentLines:sortingPleaseWait( "getCodeFirstProperty", hb_qwith(), ::oBrwLines ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getCodeFirstProperty", oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -563,7 +570,7 @@ METHOD DialogSelectionLines( oDlg )
       :bEditValue                   := {|| ::getLineDocument():getCodeSecondProperty() }
       :nWidth                       := 60
       :lHide                        := .t.
-      :bLClickHeader                := {|| ::oDocumentLines:sortingPleaseWait( "getCodeSecondProperty", hb_qwith(), ::oBrwLines ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getCodeSecondProperty", oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -571,7 +578,7 @@ METHOD DialogSelectionLines( oDlg )
       :bEditValue                   := {|| ::getLineDocument():getValueFirstProperty() }
       :nWidth                       := 60
       :lHide                        := .t.
-      :bLClickHeader                := {|| ::oDocumentLines:sortingPleaseWait( "getValueFirstProperty", hb_qwith(), ::oBrwLines ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getValueFirstProperty", oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -579,7 +586,7 @@ METHOD DialogSelectionLines( oDlg )
       :bEditValue                   := {|| ::getLineDocument():getValueSecondProperty() }
       :nWidth                       := 60
       :lHide                        := .t.
-      :bLClickHeader                := {|| ::oDocumentLines:sortingPleaseWait( "getValueSecondProperty", hb_qwith(), ::oBrwLines ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getValueSecondProperty", oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -587,7 +594,7 @@ METHOD DialogSelectionLines( oDlg )
       :bEditValue                   := {|| ::getLineDocument():getNameFirstProperty() }
       :nWidth                       := 60
       :lHide                        := .t.
-      :bLClickHeader                := {|| ::oDocumentLines:sortingPleaseWait( "getNameFirstProperty", hb_qwith(), ::oBrwLines ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getNameFirstProperty", oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -595,7 +602,7 @@ METHOD DialogSelectionLines( oDlg )
       :bEditValue                   := {|| ::getLineDocument():getNameSecondProperty() }
       :nWidth                       := 60
       :lHide                        := .t.
-      :bLClickHeader                := {|| ::oDocumentLines:sortingPleaseWait( "getNameSecondProperty", hb_qwith(), ::oBrwLines ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getNameSecondProperty", oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -603,7 +610,7 @@ METHOD DialogSelectionLines( oDlg )
       :bEditValue                   := {|| ::getLineDocument():getLote() }
       :nWidth                       := 80
       :lHide                        := .t.
-      :bLClickHeader                := {|| ::oDocumentLines:sortingPleaseWait( "getLote", hb_qwith(), ::oBrwLines ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getLote", oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -614,7 +621,7 @@ METHOD DialogSelectionLines( oDlg )
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
       :lHide                        := .t.
-      :bLClickHeader                := {|| ::oDocumentLines:sortingPleaseWait( "getBoxes", hb_qwith(), ::oBrwLines ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getBoxes", oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -625,7 +632,7 @@ METHOD DialogSelectionLines( oDlg )
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
       :lHide                        := .t.
-      :bLClickHeader                := {|| ::oDocumentLines:sortingPleaseWait( "getUnits", hb_qwith(), ::oBrwLines ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getUnits", oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -636,7 +643,7 @@ METHOD DialogSelectionLines( oDlg )
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
       :lHide                        := .f.
-      :bLClickHeader                := {|| ::oDocumentLines:sortingPleaseWait( "getTotalUnits", hb_qwith(), ::oBrwLines ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getTotalUnits", oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -644,14 +651,14 @@ METHOD DialogSelectionLines( oDlg )
       :bEditValue                   := {|| ::getLineDocument():getMeasurementUnit() }
       :nWidth                       := 25
       :lHide                        := .t.
-      :bLClickHeader                := {|| ::oDocumentLines:sortingPleaseWait( "getMeasurementUnit", hb_qwith(), ::oBrwLines ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getMeasurementUnit", oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Almacen"
       :bEditValue                   := {|| ::getLineDocument():getStore() }
       :nWidth                       := 60
-      :bLClickHeader                := {|| ::oDocumentLines:sortingPleaseWait( "getStore", hb_qwith(), ::oBrwLines ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getStore", oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -661,7 +668,7 @@ METHOD DialogSelectionLines( oDlg )
       :nWidth                       := 90
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
-      :bLClickHeader                := {|| ::oDocumentLines:sortingPleaseWait( "getNetPrice", hb_qwith(), ::oBrwLines ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getNetPrice", oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -672,7 +679,7 @@ METHOD DialogSelectionLines( oDlg )
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
       :lHide                        := .t.
-      :bLClickHeader                := {| nMRow, nMCol, nFlags, oColumn| ::oDocumentLines:sortingPleaseWait( "getPercentageDiscount", oColumn, ::oBrwLines ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getPercentageDiscount", oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -683,7 +690,7 @@ METHOD DialogSelectionLines( oDlg )
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
       :lHide                        := .t.
-      :bLClickHeader                := {|| ::oDocumentLines:sortingPleaseWait( "getPercentagePromotion", hb_qwith(), ::oBrwLines ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getPercentagePromotion", oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -693,7 +700,7 @@ METHOD DialogSelectionLines( oDlg )
       :nWidth                       := 50
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
-      :bLClickHeader                := {|| ::oDocumentLines:sortingPleaseWait( "getPercentageTax", hb_qwith(), ::oBrwLines ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getPercentageTax", oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -703,10 +710,14 @@ METHOD DialogSelectionLines( oDlg )
       :nWidth                       := 80
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
-      :bLClickHeader                := {|| ::oDocumentLines:sortingPleaseWait( "getBruto", hb_qwith(), ::oBrwLines ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getBruto", oColumn ) }         
    end with
 
    ::oBrwLines:CreateFromResource( 100 )
+
+   ::sortColumn( "getNumeroDocumento", ::oColumnNumeroDocumento )
+
+   aeval( ::oBrwLines:aCols, {|oColumn| aadd( ::aSortLines, oColumn:cHeader ) } )
 
 RETURN ( Self )
 
@@ -1018,12 +1029,57 @@ RETURN ( lLoadLines )
 
 //---------------------------------------------------------------------------//
 
+METHOD setBrowseLinesDocument()
+
+   ::oBrwLines:setArray( ::oDocumentLines:getLines(), .t., , .f. )
+   
+   ::oBrwLines:bSeek := {|c| ::seekLine( c ) }
+
+RETURN ( .t. ) 
+
+//---------------------------------------------------------------------------//
+
 METHOD sortColumn( cExpresion, oColumn )
 
-   aeval( ::oBrwLines:aCols, {| o | if( o:cOrder == oColumn:cOrder, o:cOrder := "A", o:cOrder := "" ) } )
+   aeval( ::oBrwLines:aCols, {|o| o:cOrder := "" } )
+
+   oColumn:cOrder    := "A"
+
+   ::oSortDocument:set( oColumn:cHeader )
 
    ::oDocumentLines:sortingPleaseWait( cExpresion )
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD seekLine( cSeek )
+
+   local nRow
+   local uVal
+   local nColumnToSearch
+
+   nColumnToSearch         := ascan( ::oBrwLines:aCols, { |o| !Empty( o:cOrder ) } )
+
+   if nColumnToSearch == 0
+      Return .f.
+   end if 
+
+   nRow                    := ::oBrwLines:nArrayAt
+
+   for ::oBrwLines:nArrayAt := 1 to ::oBrwLines:nLen
+
+      uVal                 := eval( ::oBrwLines:aCols[ nColumnToSearch ]:bEditValue )
+
+      if hb_WildMatch( '*' + cSeek, uVal )
+         ::oBrwLines:SelectCurrent()
+         Return .t.
+      endif
+     
+   next 
+
+   ::oBrwLines:nArrayAt    := nRow
+
+Return .t.
 
 //---------------------------------------------------------------------------//

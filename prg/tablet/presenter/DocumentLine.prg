@@ -46,6 +46,7 @@ CLASS DocumentLine
    METHOD setPosicionImpresion( PosicionImpresion)             INLINE ( ::setValue( "PosicionImpresion", PosicionImpresion ) )
 
    METHOD getArticulo()                                        INLINE ( ::getValue( "Articulo" ) )
+   METHOD getNumeroDocumento()                                 INLINE ( ::getValue( "Serie" ) + alltrim( str( ::getValue( "Numero" ) ) ) )
    METHOD getDescription()                                     INLINE ( if(   !empty( ::getCode() ),;
                                                                               ::getValue( "DescripcionArticulo" ),;
                                                                               ::getValue( "DescripcionAmpliada" ) ) )

@@ -37,35 +37,37 @@ CLASS IXBrowse FROM TXBrowse
    METHOD New( oWnd )
    METHOD setAlias( cAlias )  INLINE ( ::cAlias := cAlias, ::SetRDD() )
 
-   Method GetOriginal()       INLINE ( ::cOriginal := ::SaveState() )
-   Method SetOriginal()       INLINE ( ::RestoreState( ::cOriginal ) )
+   METHOD GetOriginal()       INLINE ( ::cOriginal := ::SaveState() )
+   METHOD SetOriginal()       INLINE ( ::RestoreState( ::cOriginal ) )
 
-   Method Load()              INLINE ( ::OpenData(), ::LoadData(), ::CloseData() )
-   Method Save()              INLINE ( ::OpenData(), ::SaveConfigColumn( .t. ), ::CloseData() )
+   METHOD Load()              INLINE ( ::OpenData(), ::LoadData(), ::CloseData() )
+   METHOD Save()              INLINE ( ::OpenData(), ::SaveConfigColumn( .t. ), ::CloseData() )
 
-   Method CreateData( cPath )
+   METHOD SelectCurrent()     INLINE ( ::Select( 0 ), ::Select( 1 ) )
 
-   Method ReindexData( cPath )
+   METHOD CreateData( cPath )
 
-   Method LoadData()
+   METHOD ReindexData( cPath )
 
-   Method SaveConfigColumn( lSaveBrowseState )
+   METHOD LoadData()
 
-   Method CleanData()
+   METHOD SaveConfigColumn( lSaveBrowseState )
 
-   Method DeleteData()
+   METHOD CleanData()
 
-   Method CloseData()
+   METHOD DeleteData()
 
-   Method OpenData( cPath )
+   METHOD CloseData()
 
-   Method RButtonDown( nRow, nCol, nFlags )
+   METHOD OpenData( cPath )
 
-   Method CheckExtendInfo()
+   METHOD RButtonDown( nRow, nCol, nFlags )
 
-   Method ShowExtendInfo()
+   METHOD CheckExtendInfo()
 
-   Method SetRDD( lAddColumns, lAutoOrder, aFldNames )
+   METHOD ShowExtendInfo()
+
+   METHOD SetRDD( lAddColumns, lAutoOrder, aFldNames )
 
    METHOD ExportToExcel()
 
@@ -74,7 +76,7 @@ CLASS IXBrowse FROM TXBrowse
    METHOD ArrayIncrSeek()
 
 /*
-   Method Refresh( lComplete )
+   METHOD Refresh( lComplete )
 */
    
 END CLASS
@@ -117,7 +119,7 @@ return nil
 */
 //----------------------------------------------------------------------------//
 
-Method CreateData( cPath )
+METHOD CreateData( cPath )
 
    DEFAULT cPath  := cPatEmp()
 
@@ -129,7 +131,7 @@ Return ( Self )
 
 //------------------------------------------------------------------------//
 
-Method ReindexData( cPath )
+METHOD ReindexData( cPath )
 
    local dbfUse
 
@@ -160,7 +162,7 @@ Return ( Self )
 
 //------------------------------------------------------------------------//
 
-Method LoadData()
+METHOD LoadData()
 
    local oBlock
    local oError
@@ -195,7 +197,7 @@ Return ( Self )
 
 //------------------------------------------------------------------------//
 
-Method SaveConfigColumn( lSaveBrowseState )
+METHOD SaveConfigColumn( lSaveBrowseState )
 
    local oError
    local oBlock
@@ -246,7 +248,7 @@ Return ( Self )
 
 //------------------------------------------------------------------------//
 
-Method CleanData()
+METHOD CleanData()
 
    // Limpiar las configuraciones----------------------------------------------
 
@@ -260,7 +262,7 @@ Return ( Self )
 
 //------------------------------------------------------------------------//
 
-Method DeleteData()
+METHOD DeleteData()
 
    fErase( cPatEmp() + "CfgUse.Dbf" )
    fErase( cPatEmp() + "CfgUse.Cdx" )
@@ -269,7 +271,7 @@ Return ( Self )
 
 //------------------------------------------------------------------------//
 
-Method CloseData()
+METHOD CloseData()
 
    if !Empty( ::dbfUsr ) .and. ( ::dbfUsr )->( Used() )
       ( ::dbfUsr )->( dbCloseArea() )
@@ -281,7 +283,7 @@ Return ( Self )
 
 //------------------------------------------------------------------------//
 
-Method OpenData( cPath )
+METHOD OpenData( cPath )
 
    local oBlock
    local oError
@@ -381,7 +383,7 @@ return {|| iif( oCol:lHide, oCol:Show(), oCol:Hide() ) }
 
 //----------------------------------------------------------------------------//
 
-Method CheckExtendInfo()
+METHOD CheckExtendInfo()
 
    if Empty( ::bToolTip )
       Return ( Self )
@@ -643,15 +645,14 @@ METHOD ArrayIncrSeek( cSeek, nGoTo ) CLASS IXBrowse
    local nAt, nBrwCol, nSortCol, nRow, uVal
    local lExact
 
-   msgAlert( cSeek, "ArrayIncrSeek" )
-
    if ::lIncrFilter
-      msgAlert( "ArrayIncrSeek" )
       return ::ArrayIncrFilter( cSeek, @nGoTo )
    endif
 
    if ( nBrwCol := AScan( ::aCols, { |o| !Empty( o:cOrder ) } ) ) > 0
+
       if ! Empty( nSortCol := ::aCols[ nBrwCol ]:cSortOrder ) .and. ValTyPe( nSortCol ) == 'N'
+      msgAlert( "llego a paso 2")
          if ! ::aCols[ nBrwCol ]:lCaseSensitive
             cSeek    := Upper( cSeek )
          endif

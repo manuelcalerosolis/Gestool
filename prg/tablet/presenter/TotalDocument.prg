@@ -6,9 +6,6 @@ CLASS TotalDocument
    DATA oIva
    DATA oSender
 
-   DATA Bruto                                      INIT 0
-   DATA Base                                       INIT 0
-
    METHOD New( oSender )
    METHOD Calculate()
 
@@ -31,7 +28,7 @@ CLASS TotalDocument
    METHOD getTotalDocument()
    METHOD transTotalDocument()                     INLINE ( Trans( ::getTotalDocument(), cPorDiv() ) )
 
-   METHOD Reset()                                  INLINE ( ::Bruto := 0, ::oIva:Reset() )
+   METHOD Reset()                                  INLINE ( ::oIva:Reset() )
 
    METHOD showBrutoIVA( nPosition )                INLINE ( ::oIva:showBruto( nPosition ) )
    METHOD showBaseIVA( nPosition )                 INLINE ( ::oIva:showBase( nPosition ) )
@@ -80,7 +77,7 @@ METHOD getBruto() CLASS TotalDocument
 
    Local Bruto          := 0
 
-   aeval( ::oIva:aIva, {|hIva, nPosition| Bruto += ::oIva:Base( nPosition ) } )
+   aeval( ::oIva:aIva, {|hIva, nPosition| Bruto += ::oIva:Bruto( nPosition ) } )
 
 Return( Bruto )
 
