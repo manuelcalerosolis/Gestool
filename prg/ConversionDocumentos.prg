@@ -42,7 +42,7 @@ CLASS TConversionDocumentos
    DATA oSortLines
    DATA cSortLines
    DATA aSortLines                                 INIT {}
-   
+
    DATA oBrwDocuments
    DATA oBrwLines
 
@@ -164,7 +164,7 @@ CLASS TConversionDocumentos
    METHOD showDocumentsLines()
 
    METHOD changeSearchLines()                      INLINE ( ::oBrwLines:Seek( alltrim( ::cSearchLines ) ) )
-   METHOD changeSortLines()                        INLINE ( .t. )
+   METHOD changeSortLines()                        
 
    METHOD sortColumn( cExpresion, oColumn )     
    METHOD seekLine( c )                            
@@ -473,6 +473,8 @@ RETURN ( Self )
 
 METHOD DialogSelectionLines( oDlg )
 
+   local oColumnNumeroDocumento
+
    REDEFINE GET   ::oSearchLines ;
       VAR         ::cSearchLines ;
       ID          200 ;
@@ -536,7 +538,7 @@ METHOD DialogSelectionLines( oDlg )
       :SetCheck( { "Sel16", "Nil16" } )
    end with
 
-   with object ( ::oColumnNumeroDocumento := ::oBrwLines:AddCol() )
+   with object ( oColumnNumeroDocumento := ::oBrwLines:AddCol() )
       :cHeader                      := "Número"
       :bEditValue                   := {|| ::getLineDocument():getNumeroDocumento() }
       :nWidth                       := 80
@@ -715,9 +717,13 @@ METHOD DialogSelectionLines( oDlg )
 
    ::oBrwLines:CreateFromResource( 100 )
 
-   ::sortColumn( "getNumeroDocumento", ::oColumnNumeroDocumento )
+   // las columnas del browse son los ordenes----------------------------------
 
    aeval( ::oBrwLines:aCols, {|oColumn| aadd( ::aSortLines, oColumn:cHeader ) } )
+
+   // orden por defecto-------------------------------------------------------
+
+   ::sortColumn( "getNumeroDocumento", oColumnNumeroDocumento )
 
 RETURN ( Self )
 
@@ -1045,7 +1051,7 @@ METHOD sortColumn( cExpresion, oColumn )
 
    oColumn:cOrder    := "A"
 
-   ::oSortDocument:set( oColumn:cHeader )
+   ::oSortLines:set( oColumn:cHeader )
 
    ::oDocumentLines:sortingPleaseWait( cExpresion )
 
@@ -1083,3 +1089,7 @@ METHOD seekLine( cSeek )
 Return .t.
 
 //---------------------------------------------------------------------------//
+
+METHOD changeSortLines()
+
+Return ( .t. )
