@@ -332,6 +332,8 @@ CLASS D
                                                                   ( ::ClientesIncidencias( nView ) )->( ordScope( 1, nil ) ),;
                                                                   ::setStatusClientesIncidencias( nView ) )  
 
+   METHOD ClientesDocumentos( nView )                 INLINE ( ::Get( "ClientD", nView ) )
+
    METHOD ClientesBancos( nView )                     INLINE ( ::Get( "CliBnc", nView ) )
       METHOD getStatusClientesBancos( nView )         INLINE ( ::aStatus := aGetStatus( ::ClientesBancos( nView ) ) )
       METHOD setStatusClientesBancos( nView )         INLINE ( SetStatus( ::Get( "CliBnc", nView ), ::aStatus ) ) 
