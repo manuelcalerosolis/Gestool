@@ -8,7 +8,11 @@
 
 CLASS TConversionDocumentos 
 
+   
+
    DATA oDocumentLines
+
+   DATA aliasDocumentLine
 
    DATA oDlg
    DATA oFld
@@ -40,7 +44,7 @@ CLASS TConversionDocumentos
    DATA oSearchLines
    DATA cSearchLines
    DATA oSortLines
-   DATA cSortLines
+   DATA cSortLines                                 INIT ""
    DATA aSortLines                                 INIT {}
 
    DATA oBrwDocuments
@@ -66,7 +70,7 @@ CLASS TConversionDocumentos
       METHOD DialogSelectionLines()
       METHOD DialogSummary()
       METHOD startDialog()
-      METHOD clickOnHeader( oColumn )
+      METHOD clickOnDocumentHeader( oColumn )
       METHOD changeSortDocument()
       METHOD changeSearch()
       METHOD setOrderInColumn( oColumn )  
@@ -137,7 +141,9 @@ CLASS TConversionDocumentos
                                                             D():getFieldFromAliasDictionary( "Sufijo", ::getHeaderAlias(), ::getHeaderDictionary() ) )
    METHOD getHeaderTextId()                        INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getHeaderAlias(), ::getHeaderDictionary() ) + "/" + ;
                                                             alltrim( str( D():getFieldFromAliasDictionary( "Numero", ::getHeaderAlias(), ::getHeaderDictionary() ) ) ) )
+   METHOD getHeaderEof()                           INLINE ( ( ::getHeaderAlias() )->( eof() ) )
    METHOD getDate()                                INLINE ( D():getFieldFromAliasDictionary( "Fecha", ::getHeaderAlias(), ::getHeaderDictionary() ) )
+   METHOD getEntityId()                            INLINE ( D():getFieldFromAliasDictionary( "Cliente", ::getHeaderAlias(), ::getHeaderDictionary() ) )
    METHOD getName()                                INLINE ( D():getFieldFromAliasDictionary( "NombreCliente", ::getHeaderAlias(), ::getHeaderDictionary() ) )
    METHOD getTotalNeto()                           INLINE ( D():getFieldFromAliasDictionary( "TotalNeto", ::getHeaderAlias(), ::getHeaderDictionary() ) )
    METHOD getTotalImpuesto()                       INLINE ( D():getFieldFromAliasDictionary( "TotalImpuesto", ::getHeaderAlias(), ::getHeaderDictionary() ) )
@@ -148,12 +154,6 @@ CLASS TConversionDocumentos
    METHOD getLineAlias()                           INLINE ( ::oLineTable:getAlias() )
    METHOD getLineDictionary()                      INLINE ( ::oLineTable:getDictionary() )
    METHOD getLineIndex()                           INLINE ( ::oLineTable:getIndex() )
-
-   METHOD getLineId()                              INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getLineAlias(), ::getLineDictionary() ) + ;
-                                                            str( D():getFieldFromAliasDictionary( "Numero", ::getLineAlias(), ::getLineDictionary() ) ) + ; 
-                                                            D():getFieldFromAliasDictionary( "Sufijo", ::getLineAlias(), ::getLineDictionary() ) )
-   METHOD getLineTextId()                          INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getLineAlias(), ::getLineDictionary() ) + "/" + ;
-                                                            alltrim( str( D():getFieldFromAliasDictionary( "Numero", ::getLineAlias(), ::getHeaderDictionary() ) ) ) )
 
    METHOD getLineDocument( nPosition )             INLINE ( ::oDocumentLines:getLine( if( !empty( nPosition ), nPosition, ::oBrwLines:nArrayAt ) ) )
 
@@ -166,7 +166,7 @@ CLASS TConversionDocumentos
    METHOD changeSearchLines()                      INLINE ( ::oBrwLines:Seek( alltrim( ::cSearchLines ) ) )
    METHOD changeSortLines()                        
 
-   METHOD sortColumn( cExpresion, oColumn )     
+   METHOD clikcOnLineHeader( oColumn )     
    METHOD seekLine( c )                            
 
 ENDCLASS
@@ -177,29 +177,32 @@ METHOD New()
 
    ::OpenFiles()
 
-   ::cDocument       := "Pedido proveedores"
-   ::aDocuments      := {  "Compras" =>                                                   nil,;                                    
-                           space( 3 ) + "Pedido proveedores" =>                           {|| ::setDocumentPedidosProveedores() },;
-                           space( 3 ) + "Albarán proveedores" =>                          {|| msgAlert( "Albarán proveedores" ) },;
-                           space( 3 ) + "Factura proveedores" =>                          {|| msgAlert( "Factura proveedores" ) },;
-                           space( 3 ) + "Factura rectificativas proveedores" =>           {|| msgAlert( "Factura rectificativas proveedores" ) },;
-                           space( 3 ) + "Recibos de proveedores" =>                       {|| msgAlert( "Recibos de proveedores" ) },;
-                           "Ventas" =>                                                    nil,;                                    
-                           space( 3 ) + "S.A.T. clientes" =>                              {|| ::setDocumentSATClientes() },;
-                           space( 3 ) + "Presupuesto clientes" =>                         {|| msgAlert( "" ), .t. },;
-                           space( 3 ) + "Pedido clientes" =>                              {|| msgAlert( "" ), .t. },;
-                           space( 3 ) + "Albarán clientes" =>                             {|| msgAlert( "" ), .t. },;
-                           space( 3 ) + "Factura clientes" =>                             {|| msgAlert( "" ), .t. },;
-                           space( 3 ) + "Factura de anticipos" =>                         {|| msgAlert( "" ), .t. },;
-                           space( 3 ) + "Factura rectificativa" =>                        {|| msgAlert( "" ), .t. },;
-                           space( 3 ) + "Recibos facturas clientes" =>                    {|| msgAlert( "" ), .t. },;
-                           space( 3 ) + "Tickets clientes" =>                             {|| msgAlert( "" ), .t. },;
-                           space( 3 ) + "Parte de producción" =>                          {|| msgAlert( "" ), .t. },;
-                           space( 3 ) + "Recibos de clientes" =>                          {|| msgAlert( "" ), .t. } }
+   ::cDocument          := "Pedido proveedores"
+   
+   ::aDocuments         := {  "Compras" =>                                                   nil,;                                    
+                              space( 3 ) + "Pedido proveedores" =>                           {|| ::setDocumentPedidosProveedores() },;
+                              space( 3 ) + "Albarán proveedores" =>                          {|| msgAlert( "Albarán proveedores" ) },;
+                              space( 3 ) + "Factura proveedores" =>                          {|| msgAlert( "Factura proveedores" ) },;
+                              space( 3 ) + "Factura rectificativas proveedores" =>           {|| msgAlert( "Factura rectificativas proveedores" ) },;
+                              space( 3 ) + "Recibos de proveedores" =>                       {|| msgAlert( "Recibos de proveedores" ) },;
+                              "Ventas" =>                                                    nil,;                                    
+                              space( 3 ) + "S.A.T. clientes" =>                              {|| ::setDocumentSATClientes() },;
+                              space( 3 ) + "Presupuesto clientes" =>                         {|| msgAlert( "" ), .t. },;
+                              space( 3 ) + "Pedido clientes" =>                              {|| msgAlert( "" ), .t. },;
+                              space( 3 ) + "Albarán clientes" =>                             {|| msgAlert( "" ), .t. },;
+                              space( 3 ) + "Factura clientes" =>                             {|| msgAlert( "" ), .t. },;
+                              space( 3 ) + "Factura de anticipos" =>                         {|| msgAlert( "" ), .t. },;
+                              space( 3 ) + "Factura rectificativa" =>                        {|| msgAlert( "" ), .t. },;
+                              space( 3 ) + "Recibos facturas clientes" =>                    {|| msgAlert( "" ), .t. },;
+                              space( 3 ) + "Tickets clientes" =>                             {|| msgAlert( "" ), .t. },;
+                              space( 3 ) + "Parte de producción" =>                          {|| msgAlert( "" ), .t. },;
+                              space( 3 ) + "Recibos de clientes" =>                          {|| msgAlert( "" ), .t. } }
 
-   ::aTargetEmpresa  := aSerializedEmpresas()
+   ::aTargetEmpresa     := aSerializedEmpresas()
 
-   ::oDocumentLines  := DocumentLines():New( Self ) // AliasDocumentLine():New( Self )   
+   ::aliasDocumentLine  := aliasDocumentLine():New( Self )
+
+   ::oDocumentLines     := DocumentLines():New( Self ) // AliasDocumentLine():New( Self )   
 
    ::setDocumentPedidosProveedores()
 
@@ -417,7 +420,7 @@ METHOD DialogSelectionDocument( oDlg )
       :bEditValue                   := {|| ::getHeaderTextId() }
       :nWidth                       := 80
       :cSortOrder                   := "Id"
-      :bLClickHeader                := {| nMRow, nMCol, nFlags, oColumn | ::clickOnHeader( oColumn ) }
+      :bLClickHeader                := {| nMRow, nMCol, nFlags, oColumn | ::clickOnDocumentHeader( oColumn ) }
    end with
 
    with object ( ::oBrwDocuments:AddCol() )
@@ -425,7 +428,7 @@ METHOD DialogSelectionDocument( oDlg )
       :bEditValue                   := {|| ::getDate() }
       :nWidth                       := 80
       :cSortOrder                   := "Fecha"
-      :bLClickHeader                := {| nMRow, nMCol, nFlags, oColumn | ::clickOnHeader( oColumn ) }
+      :bLClickHeader                := {| nMRow, nMCol, nFlags, oColumn | ::clickOnDocumentHeader( oColumn ) }
       :nDataStrAlign                := 3
       :nHeadStrAlign                := 3
    end with
@@ -435,7 +438,7 @@ METHOD DialogSelectionDocument( oDlg )
       :bEditValue                   := {|| ::getName() }
       :nWidth                       := 400
       :cSortOrder                   := "NombreEntidad"
-      :bLClickHeader                := {| nMRow, nMCol, nFlags, oColumn | ::clickOnHeader( oColumn ) }
+      :bLClickHeader                := {| nMRow, nMCol, nFlags, oColumn | ::clickOnDocumentHeader( oColumn ) }
    end with
 
    with object ( ::oBrwDocuments:AddCol() )
@@ -483,6 +486,7 @@ METHOD DialogSelectionLines( oDlg )
       OF          oDlg
 
    ::oSearchLines:bChange           := {|| ::changeSearchLines() }
+   ::oSearchLines:bValid            := {|| ::oSearchLines:varPut( space( 100 ) ), .t. }
 
    REDEFINE COMBOBOX ::oSortLines ;
       VAR         ::cSortLines ;
@@ -512,11 +516,6 @@ METHOD DialogSelectionLines( oDlg )
       OF       oDlg ;
       ACTION   ( ::unselectAllLine() )
 
-   REDEFINE SAY ; 
-      VAR      ::getDocumentName() ;
-      ID       110 ;
-      OF       oDlg   
-
    // browse de lineas-----------------------------------------------------
 
    ::oBrwLines                      := IXBrowse():New( oDlg )
@@ -540,179 +539,199 @@ METHOD DialogSelectionLines( oDlg )
 
    with object ( oColumnNumeroDocumento := ::oBrwLines:AddCol() )
       :cHeader                      := "Número"
+      :Cargo                        := "getNumeroDocumento"
       :bEditValue                   := {|| ::getLineDocument():getNumeroDocumento() }
       :nWidth                       := 80
-      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getNumeroDocumento", oColumn ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
    end with
   
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Código"
+      :Cargo                        := "getCode"
       :bEditValue                   := {|| ::getLineDocument():getCode() }
       :nWidth                       := 80
-      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getCode", oColumn ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Descripción"
+      :Cargo                        := "getDescription"
       :bEditValue                   := {|| ::getLineDocument():getDescription() }
       :nWidth                       := 340
-      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getDescription", oColumn ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Prop. 1"
+      :Cargo                        := "getCodeFirstProperty"
       :bEditValue                   := {|| ::getLineDocument():getCodeFirstProperty() }
       :nWidth                       := 60
       :lHide                        := .t.
-      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getCodeFirstProperty", oColumn ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Prop. 2"
+      :Cargo                        := "getCodeSecondProperty"
       :bEditValue                   := {|| ::getLineDocument():getCodeSecondProperty() }
       :nWidth                       := 60
       :lHide                        := .t.
-      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getCodeSecondProperty", oColumn ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Valor propiedad 1"
+      :Cargo                        := "getValueFirstProperty"
       :bEditValue                   := {|| ::getLineDocument():getValueFirstProperty() }
       :nWidth                       := 60
       :lHide                        := .t.
-      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getValueFirstProperty", oColumn ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Valor propiedad 2"
+      :Cargo                        := "getValueSecondProperty"
       :bEditValue                   := {|| ::getLineDocument():getValueSecondProperty() }
       :nWidth                       := 60
       :lHide                        := .t.
-      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getValueSecondProperty", oColumn ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Nombre propiedad 1"
+      :Cargo                        := "getNameFirstProperty"
       :bEditValue                   := {|| ::getLineDocument():getNameFirstProperty() }
       :nWidth                       := 60
       :lHide                        := .t.
-      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getNameFirstProperty", oColumn ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Nombre propiedad 2"
+      :Cargo                        := "getNameSecondProperty"
       :bEditValue                   := {|| ::getLineDocument():getNameSecondProperty() }
       :nWidth                       := 60
       :lHide                        := .t.
-      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getNameSecondProperty", oColumn ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Lote"
+      :Cargo                        := "getLote"
       :bEditValue                   := {|| ::getLineDocument():getLote() }
       :nWidth                       := 80
       :lHide                        := .t.
-      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getLote", oColumn ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := cNombreCajas()
+      :Cargo                        := "getBoxes"
       :bEditValue                   := {|| ::getLineDocument():getBoxes() }
       :cEditPicture                 := masUnd()
       :nWidth                       := 50
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
       :lHide                        := .t.
-      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getBoxes", oColumn ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := cNombreUnidades()
+      :Cargo                        := "getUnits"
       :bEditValue                   := {|| ::getLineDocument():getUnits() }
       :cEditPicture                 := masUnd()
       :nWidth                       := 60
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
       :lHide                        := .t.
-      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getUnits", oColumn ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Total " + cNombreUnidades()
+      :Cargo                        := "getTotalUnits"
       :bEditValue                   := {|| ::getLineDocument():getTotalUnits() }
       :cEditPicture                 := masUnd()
       :nWidth                       := 60
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
       :lHide                        := .f.
-      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getTotalUnits", oColumn ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "UM. Unidad de medición"
+      :Cargo                        := "getMeasurementUnit"
       :bEditValue                   := {|| ::getLineDocument():getMeasurementUnit() }
       :nWidth                       := 25
       :lHide                        := .t.
-      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getMeasurementUnit", oColumn ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Almacen"
+      :Cargo                        := "getStore"
       :bEditValue                   := {|| ::getLineDocument():getStore() }
       :nWidth                       := 60
-      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getStore", oColumn ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Importe"
+      :Cargo                        := "getNetPrice"
       :bEditValue                   := {|| ::getLineDocument():getNetPrice() }
       :cEditPicture                 := ::cPictureRound
       :nWidth                       := 90
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
-      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getNetPrice", oColumn ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "% Dto."
+      :Cargo                        := "getPercentageDiscount"
       :bEditValue                   := {|| ::getLineDocument():getPercentageDiscount() }
       :cEditPicture                 := "@E 999.99"
       :nWidth                       := 50
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
       :lHide                        := .t.
-      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getPercentageDiscount", oColumn ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "% Dto."
+      :Cargo                        := "getPercentagePromotion"
       :bEditValue                   := {|| ::getLineDocument():getPercentagePromotion() }
       :cEditPicture                 := "@E 999.99"
       :nWidth                       := 50
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
       :lHide                        := .t.
-      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getPercentagePromotion", oColumn ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "% " + cImp()
+      :Cargo                        := "getPercentageTax"
       :bEditValue                   := {|| ::getLineDocument():getPercentageTax() }
       :cEditPicture                 := "@E 999.99"
       :nWidth                       := 50
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
-      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getPercentageTax", oColumn ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
    end with
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Total"
+      :Cargo                        := "getBruto"
       :bEditValue                   := {|| ::getLineDocument():getBruto() }
       :cEditPicture                 := ::cPictureRound
       :nWidth                       := 80
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
-      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::sortColumn( "getBruto", oColumn ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
    end with
 
    ::oBrwLines:CreateFromResource( 100 )
@@ -723,7 +742,7 @@ METHOD DialogSelectionLines( oDlg )
 
    // orden por defecto-------------------------------------------------------
 
-   ::sortColumn( "getNumeroDocumento", oColumnNumeroDocumento )
+   ::clikcOnLineHeader( oColumnNumeroDocumento )
 
 RETURN ( Self )
 
@@ -881,7 +900,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD clickOnHeader( oColumn )
+METHOD clickOnDocumentHeader( oColumn )
    
    local cTag
 
@@ -912,7 +931,7 @@ METHOD changeSortDocument()
 
    nScan          := ascan( ::oBrwDocuments:aCols, {| oColumn | oColumn:cHeader == cSort } )
    if nScan != 0
-      ::clickOnHeader( ::oBrwDocuments:aCols[ nScan ] )
+      ::clickOnDocumentHeader( ::oBrwDocuments:aCols[ nScan ] )
    end if 
 
 Return ( .t. )
@@ -1015,7 +1034,7 @@ METHOD loadLinesDocument( id )
 
    if ( ::getLineAlias() )->( dbSeek( id ) )  
 
-      while ( id == ::getLineId() ) .and. !( ::getLineAlias() )->( eof() ) 
+      while ( id == ::aliasDocumentLine():getDocumentId() ) .and. !( ::getLineAlias() )->( eof() ) 
 
          hDictionary    := D():getHashFromAlias( ::getLineAlias(), ::getLineDictionary() )
 
@@ -1045,15 +1064,19 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD sortColumn( cExpresion, oColumn )
+METHOD clikcOnLineHeader( oColumn, setSortLines )
 
-   aeval( ::oBrwLines:aCols, {|o| o:cOrder := "" } )
+   DEFAULT setSortLines    := .t.
 
-   oColumn:cOrder    := "A"
+   aeval( ::oBrwLines:aCols, {|o| if( o:cHeader == oColumn:cHeader, o:cOrder := "A", o:cOrder := "" ) } )
 
-   ::oSortLines:set( oColumn:cHeader )
+   ::oDocumentLines:sortingPleaseWait( oColumn:Cargo )
+   
+   ::oBrwLines:Refresh()
 
-   ::oDocumentLines:sortingPleaseWait( cExpresion )
+   if setSortLines
+      ::oSortLines:set( oColumn:cHeader )
+   end if 
 
 RETURN ( Self )
 
@@ -1092,4 +1115,14 @@ Return .t.
 
 METHOD changeSortLines()
 
+   local nScan
+
+   nScan          := ascan( ::oBrwLines:aCols, {| oColumn | oColumn:cHeader == ::cSortLines } )
+
+   if nScan != 0
+      ::clikcOnLineHeader( ::oBrwLines:aCols[ nScan ], .f. )
+   end if 
+
 Return ( .t. )
+
+//---------------------------------------------------------------------------//

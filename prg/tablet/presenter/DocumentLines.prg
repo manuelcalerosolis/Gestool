@@ -114,7 +114,7 @@ METHOD sortBy( expresion )
 
    DEFAULT expresion    := "getCode"
 
-   asort( ::aLines, , , {|x,y| oSend( x, expresion ) < oSend( y, expresion ) } )
+   asort( ::aLines, , , {|x,y| oSend( x, expresion ) <= oSend( y, expresion ) } )
 
 Return ( Self )
 

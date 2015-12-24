@@ -729,7 +729,7 @@ METHOD SetPedPrv( cNumPed ) CLASS TStock
 
             nTotLineaAct:= nTotNPedPrv( ::cPedPrvL )
             nTotPedPrv  += nTotLineaAct
-            nRecPedPrv  += Min( nUnidadesRecibidasPedPrv( cNumPed, ( ::cPedPrvL )->cRef, ( ::cPedPrvL )->cValPr1, ( ::cPedPrvL )->cValPr2, ( ::cPedPrvL )->cRefPrv, ( ::cPedPrvL )->cDetalle, ::cAlbPrvL ), nTotLineaAct )
+            nRecPedPrv  += Min( nUnidadesRecibidasPedPrv( cNumPed, ( ::cPedPrvL )->cRef, ( ::cPedPrvL )->cValPr1, ( ::cPedPrvL )->cValPr2, ( ::cPedPrvL )->cRefPrv, ::cAlbPrvL ), nTotLineaAct )
 
          end if
 

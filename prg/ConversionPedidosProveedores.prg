@@ -8,29 +8,18 @@
 
 CLASS TConversionPedidosProveedores FROM TConversionDocumentos // FROM DialogBuilder
 
-   METHOD New()
+   DATA cCodigoProveedor                              INIT "000278      "
 
    METHOD Dialog()
+
+   METHOD setCodigoProveedor( cCodigoProveedor )      INLINE ( ::cCodigoProveedor := cCodigoProveedor )
+   METHOD getCodigoProveedor()                        INLINE ( ::cCodigoProveedor )
 
    METHOD startDialog()
 
    METHOD loadLinesDocument()
 
 ENDCLASS
-
-//----------------------------------------------------------------------------//
-
-METHOD New()
-
-   ::OpenFiles()
-
-   ::cDocument       := "Pedido proveedores"
-
-   ::oDocumentLines  := DocumentLines():New( Self ) // AliasDocumentLine():New( Self )   
-
-   ::setDocumentPedidosProveedores()
-
-RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -100,25 +89,42 @@ RETURN ( Self )
 
 METHOD loadLinesDocument() 
 
-   local aStatus
    local hDictionary    
+
+   if empty( ::getCodigoProveedor() )
+      msgStop( "Es necesario codificar un proveedor." )
+      Return .f.
+   end if 
 
    ::oDocumentLines:reset()
 
-   aStatus              := aGetStatus( ::getLineAlias(), .t. )
+   ( ::getHeaderAlias() )->( ordsetfocus( "cCodPrv" ) )
 
-   ( ::getLineAlias() )->( dbgotop() )  
-   while !( ::getLineAlias() )->( eof() ) 
+   if ( ::getHeaderAlias() )->( dbseek( ::getCodigoProveedor() ) )
 
-      hDictionary       := D():getHashFromAlias( ::getLineAlias(), ::getLineDictionary() )
+      while ( ::getHeaderAlias() )->cCodPrv == ::getCodigoProveedor() .and. !::getHeaderEof() // 
 
-      ::oDocumentLines:addLines( DocumentLine():newFromDictionary( hDictionary ) )
+         if ( ( ::getHeaderAlias() )->nEstado != 3 ) .and. ( ::getLineAlias() )->( dbSeek( ::getHeaderId() ) )
 
-      ( ::getLineAlias() )->( dbskip() ) 
-   
-   end while
+            while ::getHeaderId() == ::aliasDocumentLine:getDocumentId() .and. !::aliasDocumentLine:Eof()
 
-   setStatus( ::getLineAlias(), aStatus ) 
+               // if nTotNPedPrv( ::getLineAlias() ) > nUnidadesRecibidasPedPrv( ::getLineId(), ::getLineProductId(), cValPr1, cValPr2, cRefPrv, cAlbPrvL )
+
+               hDictionary       := D():getHashFromAlias( ::getLineAlias(), ::getLineDictionary() )
+
+               ::oDocumentLines:addLines( DocumentLine():newFromDictionary( self, hDictionary ) )
+
+               ( ::getLineAlias() )->( dbskip() ) 
+
+            end while
+
+         end if 
+
+         ( ::getHeaderAlias() )->( dbSkip() )
+
+      end while
+
+   end if 
 
 RETURN ( .t. ) 
 

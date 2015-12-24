@@ -35,6 +35,9 @@ CLASS DocumentLine
    METHOD getSufijo()                                          INLINE ( ::getValue( "Sufijo" ) )
    METHOD setSufijoMaster()                                    INLINE ( ::setValue( "Sufijo", ::oSender:getSufijo() ) )
 
+   METHOD getDocumentId()                                      INLINE ( ::getValue( "Serie" ) + str( ::getValue( "Numero" ) ) + ::getValue( "Sufijo" ) )
+   METHOD getNumeroDocumento()                                 INLINE ( ::getValue( "Serie" ) + alltrim( str( ::getValue( "Numero" ) ) ) )
+
    METHOD getCode()                                            INLINE ( ::getValue( "Articulo" ) )
 
    METHOD getStore()                                           INLINE ( ::getValue( "Almacen" ) )
@@ -45,12 +48,10 @@ CLASS DocumentLine
    METHOD setNumeroLinea( NumeroLinea )                        INLINE ( ::setValue( "NumeroLinea", NumeroLinea ) )
    METHOD setPosicionImpresion( PosicionImpresion)             INLINE ( ::setValue( "PosicionImpresion", PosicionImpresion ) )
 
-   METHOD getArticulo()                                        INLINE ( ::getValue( "Articulo" ) )
-   METHOD getNumeroDocumento()                                 INLINE ( ::getValue( "Serie" ) + alltrim( str( ::getValue( "Numero" ) ) ) )
+   METHOD getProductId()                                       INLINE ( ::getValue( "Articulo" ) )
    METHOD getDescription()                                     INLINE ( if(   !empty( ::getCode() ),;
                                                                               ::getValue( "DescripcionArticulo" ),;
                                                                               ::getValue( "DescripcionAmpliada" ) ) )
-   METHOD getCodeFirstProperty()                               INLINE ( ::getValue( "CodigoPropiedad1" ) )
    METHOD getCodeFirstProperty()                               INLINE ( ::getValue( "CodigoPropiedad1" ) )
    METHOD getCodeSecondProperty()                              INLINE ( ::getValue( "CodigoPropiedad2" ) )
    METHOD getValueFirstProperty()                              INLINE ( ::getValue( "ValorPropiedad1" ) )
@@ -104,7 +105,9 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD newFromDictionary( hDictionary ) CLASS DocumentLine
+METHOD newFromDictionary( oSender, hDictionary ) CLASS DocumentLine
+
+   ::new( oSender )
 
    ::setDictionary( hDictionary )
 
@@ -234,13 +237,14 @@ CLASS AliasDocumentLine FROM DocumentLine
 
    DATA cAlias
    
-   METHOD setAlias( cAlias )                                   INLINE ( ::cAlias := cAlias )
-   METHOD getAlias()                                           INLINE ( ::cAlias )
+   METHOD getAlias()                                           INLINE ( ::oSender:getLineAlias() )
+   METHOD getDictionary()                                      INLINE ( ::oSender:getLineDictionary() )
 
    METHOD getValue( key, uDefault )                            INLINE ( D():getFieldFromAliasDictionary( key, ::getAlias(), ::getDictionary(), uDefault ) )
    METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
 
    METHOD getRecno()                                           INLINE ( ( ::getAlias() )->( recno() ) )
+   METHOD eof()                                                INLINE ( ( ::getAlias() )->( eof() ) )
 
    METHOD setLinesScope( Id )                                  INLINE ( ( ::getAlias() )->( ordscope( 0, Id ) ),;
                                                                         ( ::getAlias() )->( ordscope( 1, Id ) ),;

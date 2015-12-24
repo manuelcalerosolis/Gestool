@@ -14746,7 +14746,7 @@ function nEstadoRecPedCli( cPedPrvL, dbfAlbPrvL, dbfTmpLin )
    if ( cPedPrvL )->( dbSeek( ( dbfTmpLin )->cSerPed + Str( ( dbfTmpLin )->nNumPed ) + ( dbfTmpLin )->cSufPed + ( dbfTmpLin )->cRef + ( dbfTmpLin )->cValPr1 + ( dbfTmpLin )->cValPr2 ) )
 
       nTotUni     := nTotNPedCli( dbfTmpLin )
-      nTotRec     := nUnidadesRecibidasPedPrv( ( cPedPrvL )->cSerPed + Str( ( cPedPrvL )->nNumPed ) + ( cPedPrvL )->cSufPed, ( dbfTmpLin)->cRef, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, ( dbfTmpLin )->cRefPrv, ( dbfTmpLin )->cDetalle, dbfAlbPrvL )
+      nTotRec     := nUnidadesRecibidasPedPrv( ( cPedPrvL )->cSerPed + Str( ( cPedPrvL )->nNumPed ) + ( cPedPrvL )->cSufPed, ( dbfTmpLin)->cRef, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, ( dbfTmpLin )->cRefPrv, dbfAlbPrvL )
 
    end if
 

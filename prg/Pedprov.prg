@@ -2559,7 +2559,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
 
    end if
 
-   nTotRes              := nUnidadesRecibidasPedPrv( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ], aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CREFPRV ], aTmp[ _CDETALLE ], D():AlbaranesProveedoresLineas( nView ) )
+   nTotRes              := nUnidadesRecibidasPedPrv( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ], aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CREFPRV ], D():AlbaranesProveedoresLineas( nView ) )
 
    if nTotRes > nTotNPedPrv( aTmp )
       nTotRes           := nTotNPedPrv( aTmp )
@@ -5548,7 +5548,7 @@ Static Function nTotRecibido( dbfLin, dbf )
    local nTotUni
    local nEstado     := 1
 
-   nTotRec           := nUnidadesRecibidasPedPrv( ( dbfLin )->cSerPed + Str( ( dbfLin )->nNumPed ) + ( dbfLin )->cSufPed, ( dbfLin )->cRef, ( dbfLin )->cValPr1, ( dbfLin )->cValPr2, ( dbfLin )->cRefPrv, ( dbfLin )->cDetalle, D():AlbaranesProveedoresLineas( nView ) )
+   nTotRec           := nUnidadesRecibidasPedPrv( ( dbfLin )->cSerPed + Str( ( dbfLin )->nNumPed ) + ( dbfLin )->cSufPed, ( dbfLin )->cRef, ( dbfLin )->cValPr1, ( dbfLin )->cValPr2, ( dbfLin )->cRefPrv, D():AlbaranesProveedoresLineas( nView ) )
    nTotUni           := nTotNPedPrv( dbfLin )
 
    do case

@@ -12167,13 +12167,18 @@ RETURN .t.
 
 function SynArt( cPath )
 
-   local cCod     := ""
-   local nCosto   := 0
+   local oBlock
+   local oError
+   local cCod           := ""
+   local nCosto         := 0
    local nOrdAnt
    local dbfArt
    local dbfFamilia
 
-   DEFAULT cPath  := cPatArt()
+   DEFAULT cPath        := cPatArt()
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
    USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() )    EXCLUSIVE ALIAS ( cCheckArea( "ARTICULO", @dbfArt ) )
    SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
@@ -12506,25 +12511,33 @@ function SynArt( cPath )
 
    end if
 
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de articulos." )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
    /*
    Cerramos todas las tablas---------------------------------------------------
    */
 
-   CLOSE ( dbfArt )
-   CLOSE ( dbfArtKit   )
-   CLOSE ( dbfArtPrv   )
-   CLOSE ( dbfFamilia  )
-   CLOSE ( dbfCodebar  )
-   CLOSE ( dbfImg      )
-   CLOSE ( dbfOfe      )
-   CLOSE ( dbfAlbPrvL  )
-   CLOSE ( dbfFacPrvL  )
+   CLOSE ( dbfArt     )
+   CLOSE ( dbfArtKit  )
+   CLOSE ( dbfArtPrv  )
+   CLOSE ( dbfFamilia )
+   CLOSE ( dbfCodebar )
+   CLOSE ( dbfImg     )
+   CLOSE ( dbfOfe     )
+   CLOSE ( dbfAlbPrvL )
+   CLOSE ( dbfFacPrvL )
 
    if !Empty( oNewImp )
       oNewImp:End()
    end if
 
-return nil
+Return nil
 
 //---------------------------------------------------------------------------//
 

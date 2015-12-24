@@ -20872,7 +20872,6 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Todos", 520, "Button", WS_TABSTOP, 112, 29, 50, 14
   CONTROL "&Ninguno", 530, "Button", WS_TABSTOP, 165, 29, 50, 14
   CONTROL "Seleccionar líneas documento", -1, "Button", BS_GROUPBOX, 1, 2, 622, 380
-  CONTROL "Documento", 110, "Static", SS_RIGHT|WS_BORDER|WS_GROUP, 520, 30, 99, 13
   CONTROL "Buscar por", -1, "Static", WS_GROUP, 7, 18, 40, 8
 }
 

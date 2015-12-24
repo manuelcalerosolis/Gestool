@@ -5089,7 +5089,7 @@ Static Function cPedPrv( aGet, aTmp, oBrw, nMode )
                */
 
                nTotPed                 := nTotNPedPrv( D():PedidosProveedoresLineas( nView ) )
-               nTotRec                 := nUnidadesRecibidasPedPrv( ( D():PedidosProveedoresLineas( nView ) )->cSerPed + Str( ( D():PedidosProveedoresLineas( nView ) )->nNumPed ) + ( D():PedidosProveedoresLineas( nView ) )->cSufPed, ( D():PedidosProveedoresLineas( nView ) )->cRef, ( D():PedidosProveedoresLineas( nView ) )->cValPr1, ( D():PedidosProveedoresLineas( nView ) )->cValPr2, ( D():PedidosProveedoresLineas( nView ) )->cRefPrv, ( D():PedidosProveedoresLineas( nView ) )->cDetalle, D():AlbaranesProveedoresLineas( nView ) )
+               nTotRec                 := nUnidadesRecibidasPedPrv( ( D():PedidosProveedoresLineas( nView ) )->cSerPed + Str( ( D():PedidosProveedoresLineas( nView ) )->nNumPed ) + ( D():PedidosProveedoresLineas( nView ) )->cSufPed, ( D():PedidosProveedoresLineas( nView ) )->cRef, ( D():PedidosProveedoresLineas( nView ) )->cValPr1, ( D():PedidosProveedoresLineas( nView ) )->cValPr2, ( D():PedidosProveedoresLineas( nView ) )->cRefPrv, D():AlbaranesProveedoresLineas( nView ) )
                nTotPdt                 := nTotPed - nTotRec
 
                /*
@@ -6368,7 +6368,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw, nMode )
                if aAlbaranes[ nItem, 2 ] == 2
 
                   nTotPed              := nTotNPedPrv( D():PedidosProveedoresLineas( nView ) )
-                  nTotRec              := nUnidadesRecibidasPedPrv( aAlbaranes[ nItem, 3 ], ( D():PedidosProveedoresLineas( nView ) )->cRef, ( D():PedidosProveedoresLineas( nView ) )->cValPr1, ( D():PedidosProveedoresLineas( nView ) )->cValPr2, ( D():PedidosProveedoresLineas( nView ) )->cRefPrv, ( D():PedidosProveedoresLineas( nView ) )->cDetalle, D():AlbaranesProveedoresLineas( nView ) )
+                  nTotRec              := nUnidadesRecibidasPedPrv( aAlbaranes[ nItem, 3 ], ( D():PedidosProveedoresLineas( nView ) )->cRef, ( D():PedidosProveedoresLineas( nView ) )->cValPr1, ( D():PedidosProveedoresLineas( nView ) )->cValPr2, ( D():PedidosProveedoresLineas( nView ) )->cRefPrv, D():AlbaranesProveedoresLineas( nView ) )
                   nTotPdt              := nTotPed - nTotRec
 
                   if nTotPdt > 0
@@ -9477,7 +9477,7 @@ return ( nTot )
 
 //-----------------------------------------------------------------------------//
 
-function nUnidadesRecibidasPedPrv( cPedPrv, cCodArt, cValPr1, cValPr2, cRefPrv, cDetalle, cAlbPrvL )
+function nUnidadesRecibidasPedPrv( cPedPrv, cCodArt, cValPr1, cValPr2, cRefPrv, cAlbPrvL )
 
    local nRec
    local nOrd

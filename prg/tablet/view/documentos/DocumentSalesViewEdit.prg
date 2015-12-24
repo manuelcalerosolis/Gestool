@@ -51,7 +51,7 @@ METHOD columnsBrowseLineas() CLASS DocumentSalesViewEdit
 
    with object ( ::oBrowse:AddCol() )
       :cHeader                := "Código"
-      :bEditValue             := {|| ::getDocumentLines():getArticulo() }
+      :bEditValue             := {|| ::getDocumentLines():getProductId() }
       :nWidth                 := 100
    end with
 
