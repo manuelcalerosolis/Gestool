@@ -6141,8 +6141,8 @@ STATIC FUNCTION cFacPrv( aGet, oBrw, nMode, aTmp )
 
 
       if !Empty( nTipRet )
-         aGet[ _NPCTRET ]:Select( ( D():FacturasProveedores( nView ) )->nTipRet )
-         aGet[ _NPCTRET ]:Refresh()
+         aGet[ _NTIPRET ]:Select( ( D():FacturasProveedores( nView ) )->nTipRet )
+         aGet[ _NTIPRET ]:Refresh()
       end if
 
       if Empty( aTmp[ _MCOMENT ] )

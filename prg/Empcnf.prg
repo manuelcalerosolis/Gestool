@@ -1431,13 +1431,13 @@ Return ( uFieldEmpresa( "cCtaCeeRpt" ) )
 
 Function cCuentaCompraIVASoportadoUE()
 
-Return ( uFieldEmpresa( "cCtaCeeSpt" ) )
+Return ( uFieldEmpresa( "cCeeSptCom" ) )
 
 //---------------------------------------------------------------------------//
 
 Function cCuentaCompraIVARepercutidoUE()
 
-Return ( uFieldEmpresa( "cCtaCeeSpt" ) )
+Return ( uFieldEmpresa( "cCeeRptCom" ) )
 
 //---------------------------------------------------------------------------//
 
