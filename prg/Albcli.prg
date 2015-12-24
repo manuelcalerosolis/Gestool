@@ -12567,6 +12567,7 @@ Static Function AppendDatosAtipicas( aTmpAlb )
          ( dbfTmpLin )->( dbAppend() )
 
          ( dbfTmpLin )->nNumLin        := nLastNum( dbfTmpLin )
+         ( dbfTmpLin )->nPosPrint      := nLastNum( dbfTmpLin, "nPosPrint")
          ( dbfTmpLin )->cRef           := ( D():Atipicas( nView ) )->cCodArt
          ( dbfTmpLin )->cCodPr1        := ( D():Atipicas( nView ) )->cCodPr1
          ( dbfTmpLin )->cCodPr2        := ( D():Atipicas( nView ) )->cCodPr2

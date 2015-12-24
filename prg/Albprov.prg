@@ -9762,11 +9762,11 @@ Function SynAlbPrv( cPath )
       end if
 
       // Michel loubet rellenar las líneas de albaranes que no tienen centro de coste, con el codigo que aparece en la cabecera
-
+/*
       if Empty( ( cAlbPrvL )->cCtrCoste )
          ( cAlbPrvL )->cCtrCoste    := RetFld( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb, cAlbPrvT, "cCtrCoste" )
       end if
-
+*/
       //------------------------
 
       ( cAlbPrvL )->( dbSkip() )
