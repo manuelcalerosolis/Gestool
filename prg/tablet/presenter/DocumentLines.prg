@@ -30,6 +30,7 @@ CLASS DocumentLines
 
    METHOD selectAll()                                       INLINE ( aeval( ::aLines, {|oLine| oLine:select() } ) )
    METHOD unselectAll()                                     INLINE ( aeval( ::aLines, {|oLine| oLine:unSelect() } ) )
+   METHOD isSelectedLines()                                 
 
    METHOD getHeaderAlias()                                  INLINE ( ::oSender:getHeaderAlias() )
    METHOD getHeaderDictionary()                             INLINE ( ::oSender:getHeaderDictionary() )
@@ -120,7 +121,14 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD isSelectedLines()
 
+   local isSelectedLines   := .f.
 
+   aeval( ::aLines, {|oLine| if( oLine:selectLine(), isSelectedLines := .t., ) } )
+
+Return ( isSelectedLines )
+
+//---------------------------------------------------------------------------//
 
 

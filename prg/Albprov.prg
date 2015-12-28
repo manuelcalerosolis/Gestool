@@ -1791,38 +1791,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
 			OF 		oFld:aDialogs[1]
 
       /*
-      Desglose del impuestos
-		________________________________________________________________________
-
-      REDEFINE LISTBOX oBrwIva ;
-			FIELDS ;
-                  if( aTotIva[ oBrwIva:nAt, 3 ] != nil,                          Trans( aTotIva[ oBrwIva:nAt, 1 ], cPirDiv ), "" ),;
-                  if( aTotIva[ oBrwIva:nAt, 3 ] != nil,                          Trans( aTotIva[ oBrwIva:nAt, 2 ], cPirDiv ), "" ),;
-                  if( aTotIva[ oBrwIva:nAt, 3 ] != nil,                          Trans( aTotIva[ oBrwIva:nAt, 3 ], "@E 99.9"), "" ),;
-                  if( aTotIva[ oBrwIva:nAt, 3 ] != nil,                          Trans( aTotIva[ oBrwIva:nAt, 3 ] * aTotIva[ oBrwIva:nAt, 2 ] / 100, cPirDiv ), "" ),;
-                  if( aTotIva[ oBrwIva:nAt, 3 ] != nil .and. aTmp[ _LRECARGO ],  Trans( aTotIva[ oBrwIva:nAt, 4 ], "@E 99.9"), "" ),;
-                  if( aTotIva[ oBrwIva:nAt, 3 ] != nil .and. aTmp[ _LRECARGO ],  Trans( aTotIva[ oBrwIva:nAt, 4 ] * aTotIva[ oBrwIva:nAt, 2 ] / 100, cPirDiv ), "" ) ;
-         FIELDSIZES ;
-                  85,;
-                  85,;
-                  40,;
-                  80,;
-                  40,;
-                  80 ;
-         HEAD ;
-                  "Bruto",;
-                  "Base",;
-                  "%" + cImp(),;
-                  cImp(),;
-                  "%R.E.",;
-                  "R.E." ;
-         ID       490 ;
-			OF 		oFld:aDialogs[1]
-
-      oBrwIva:SetArray( aTotIva )
-      oBrwIva:aJustify     := { .t., .t., .t., .t., .t., .t. }
-      oBrwIva:aFooters     := {||{ Trans( nTotBrt, cPirDiv ), Trans( nTotNet, cPirDiv ), "" , Trans( nTotIva, cPirDiv ) , "" , Trans( nTotReq, cPirDiv ) } }
-      oBrwIva:lDrawFooters := .t.
+      Desglose del impuestos---------------------------------------------------
       */
 
       oBrwIva                        := IXBrowse():New( oFld:aDialogs[ 1 ] )
@@ -1974,9 +1943,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
          OF       oFld:aDialogs[1]
 
       REDEFINE BUTTON ;
+         ID       557 ;
+         OF       oFld:aDialogs[1] ;
+         WHEN     ( nMode == APPD_MODE .and. Empty( aTmp[ _CNUMPED ] ) ) ;
+         ACTION   ( importarLineasPedidosProveedor( aTmp, aGet, oBrwLin )  )
+
+      REDEFINE BUTTON ;
          ID       558 ;
-			OF 		oFld:aDialogs[1] ;
-         WHEN     ( nMode == APPD_MODE .and. Empty( aTmp[_CNUMPED] ) ) ;
+         OF       oFld:aDialogs[1] ;
+         WHEN     ( nMode == APPD_MODE .and. Empty( aTmp[ _CNUMPED ] ) ) ;
          ACTION   ( GrpPed( aGet, aTmp, oBrwLin, nMode ) )
 
       REDEFINE GET aGet[ _CNUMPED ] VAR aTmp[ _CNUMPED ];
@@ -2343,7 +2318,7 @@ Static Function initEdtRec( cCodPed, aTmp, oDlg, oBrwLin, aGet )
       aGet[ _CNUMPED ]:lValid()
    endif
                      
-   EdtRecMenu( aTmp, oDlg )
+   EdtRecMenu( aTmp, aGet, oBrwLin, oDlg )
 
    oBrwLin:MakeTotals()
 
@@ -2431,7 +2406,7 @@ Return ( .t. )
 
 //----------------------------------------------------------------------------//
 
-Static Function EdtRecMenu( aTmp, oDlg )
+Static Function edtRecMenu( aTmp, aGet, oBrwLin, oDlg )
 
    MENU oMenu
 
@@ -6151,7 +6126,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw, nMode )
    local nItem       := 1
    local nOffSet     := 0
    local cDesAlb     := ""
-   local cCodPrv     := aGet[_CCODPRV]:varGet()
+   local cCodPrv     := aGet[ _CCODPRV ]:varGet()
 
    aNumAlb           := {}
    aAlbaranes        := {}
@@ -6328,7 +6303,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw, nMode )
          end if
       next
 
-      FOR nItem := 1 TO Len( aAlbaranes )
+      for nItem := 1 TO Len( aAlbaranes )
 
          //Cabeceras de pedidos a albaranes
 
@@ -6392,7 +6367,6 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw, nMode )
                      (dbfTmp)->nReq       := ( D():PedidosProveedoresLineas( nView ) )->nReq
                      (dbfTmp)->nDtoLin    := ( D():PedidosProveedoresLineas( nView ) )->nDtoLin
                      (dbfTmp)->nDtoPrm    := ( D():PedidosProveedoresLineas( nView ) )->nDtoPrm
-                     (dbfTmp)->cCodPed    := aAlbaranes[ nItem, 3]
                      (dbfTmp)->nUndKit    := ( D():PedidosProveedoresLineas( nView ) )->nUndKit
                      (dbfTmp)->lKitArt    := ( D():PedidosProveedoresLineas( nView ) )->lKitArt
                      (dbfTmp)->lKitChl    := ( D():PedidosProveedoresLineas( nView ) )->lKitChl
@@ -6412,7 +6386,6 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw, nMode )
                      (dbfTmp)->cAlmLin    := ( D():PedidosProveedoresLineas( nView ) )->cAlmLin
                      (dbfTmp)->nCtlStk    := ( D():PedidosProveedoresLineas( nView ) )->nCtlStk
                      (dbfTmp)->lControl   := ( D():PedidosProveedoresLineas( nView ) )->lControl
-                     (dbfTmp)->cNumPed    := aAlbaranes[ nItem, 7 ]
                      (dbfTmp)->cUnidad    := ( D():PedidosProveedoresLineas( nView ) )->cUnidad
                      (dbfTmp)->nNumMed    := ( D():PedidosProveedoresLineas( nView ) )->nNumMed
                      (dbfTmp)->nMedUno    := ( D():PedidosProveedoresLineas( nView ) )->nMedUno
@@ -6422,6 +6395,9 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw, nMode )
                      (dbfTmp)->nValImp    := ( D():PedidosProveedoresLineas( nView ) )->nValImp
                      (dbfTmp)->cRefAux    := ( D():PedidosProveedoresLineas( nView ) )->cRefAux
                      (dbfTmp)->cRefAux2   := ( D():PedidosProveedoresLineas( nView ) )->cRefAux2
+
+                     (dbfTmp)->cCodPed    := aAlbaranes[ nItem, 3 ]
+                     (dbfTmp)->cNumPed    := aAlbaranes[ nItem, 7 ]
 
                      if dbSeekInOrd( ( D():PedidosProveedoresLineas( nView ) )->cRef, "Codigo", D():Articulos( nView ) )
 
@@ -6532,7 +6508,6 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw, nMode )
                   (dbfTmp)->nReq       := ( D():PedidosProveedoresLineas( nView ) )->nReq
                   (dbfTmp)->nDtoLin    := ( D():PedidosProveedoresLineas( nView ) )->nDtoLin
                   (dbfTmp)->nDtoPrm    := ( D():PedidosProveedoresLineas( nView ) )->nDtoPrm
-                  (dbfTmp)->cCodPed    := aAlbaranes[ nItem, 3]
                   (dbfTmp)->nUniCaja   := ( D():PedidosProveedoresLineas( nView ) )->nUniCaja
                   (dbfTmp)->nCanEnt    := ( D():PedidosProveedoresLineas( nView ) )->nCanEnt
                   (dbfTmp)->nUndKit    := ( D():PedidosProveedoresLineas( nView ) )->nUndKit
@@ -6555,7 +6530,6 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw, nMode )
                   (dbfTmp)->nCtlStk    := ( D():PedidosProveedoresLineas( nView ) )->nCtlStk
                   (dbfTmp)->lControl   := ( D():PedidosProveedoresLineas( nView ) )->lControl
                   (dbfTmp)->mObsLin    := ( D():PedidosProveedoresLineas( nView ) )->mObsLin
-                  (dbfTmp)->cNumPed    := aAlbaranes[ nItem, 7 ]
                   (dbfTmp)->cUnidad    := ( D():PedidosProveedoresLineas( nView ) )->cUnidad
                   (dbfTmp)->nNumMed    := ( D():PedidosProveedoresLineas( nView ) )->nNumMed
                   (dbfTmp)->nMedUno    := ( D():PedidosProveedoresLineas( nView ) )->nMedUno
@@ -6565,6 +6539,9 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw, nMode )
                   (dbfTmp)->nValImp    := ( D():PedidosProveedoresLineas( nView ) )->nValImp
                   (dbfTmp)->cRefAux    := ( D():PedidosProveedoresLineas( nView ) )->cRefAux
                   (dbfTmp)->cRefAux2   := ( D():PedidosProveedoresLineas( nView ) )->cRefAux2
+
+                  (dbfTmp)->cCodPed    := aAlbaranes[ nItem, 3 ]
+                  (dbfTmp)->cNumPed    := aAlbaranes[ nItem, 7 ]
 
                   if dbSeekInOrd( ( D():PedidosProveedoresLineas( nView ) )->cRef, "Codigo", D():Articulos( nView ) )
 
@@ -9294,130 +9271,130 @@ function aColAlbPrv()
 
    local aColAlbPrv  := {}
 
-   aAdd( aColAlbPrv, { "CSERALB",      "C",  1,  0, "Serie del albarán",           "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NNUMALB",      "N",  9,  0, "Número de albarán",           "'999999999'",         "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CSUFALB",      "C",  2,  0, "Sufijo de albarán",           "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CREF",         "C", 18,  0, "Código de artículo",          "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CREFPRV",      "C", 18,  0, "Referencia del proveedor",    "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CDETALLE",     "C",240,  0, "Nombre del artículo",         "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NIVA",         "N",  6,  2, cImp() + " del artículo",      "'@EZ 999.99'",        "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NUNICAJA",     "N", 16,  6, "Unidades por caja",           "cMasUnd()",           "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NCANENT",      "N", 16,  6, "Cantidad recibida",           "cPirDivAlb",          "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NPREDIV",      "N", 16,  6, "Precio",                      "cPirDivAlb",          "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NCANPED",      "N", 16,  6, "Cajas pedidas",               "cMasUnd()",           "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NUNIPED",      "N", 16,  6, "Unidades pedidas",            "cMasUnd()",           "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CUNIDAD",      "C",  2,  0, cNombreUnidades(),             "'@!'",                "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "MLNGDES",      "M", 10,  0, "Descripción de artículo sin codificar", "",          "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NDTOLIN",      "N",  6,  2, "Descuento en líneas",         "'@EZ 999.99'",        "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NDTOPRM",      "N",  6,  2, "Descuento por promociones",   "'@EZ 999.99'",        "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NDTORAP",      "N",  6,  2, "Descuento por rappels",       "'@EZ 999.99'",        "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NPRECOM",      "N", 16,  6, "Precio real de la compra",    "cPinDivAlb",          "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "LBNFLIN1",     "L",  1,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "LBNFLIN2",     "L",  1,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "LBNFLIN3",     "L",  1,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "LBNFLIN4",     "L",  1,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "LBNFLIN5",     "L",  1,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "LBNFLIN6",     "L",  1,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NBNFLIN1",     "N",  6,  2, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NBNFLIN2",     "N",  6,  2, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NBNFLIN3",     "N",  6,  2, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NBNFLIN4",     "N",  6,  2, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NBNFLIN5",     "N",  6,  2, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NBNFLIN6",     "N",  6,  2, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NBNFSBR1",     "N",  1,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NBNFSBR2",     "N",  1,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NBNFSBR3",     "N",  1,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NBNFSBR4",     "N",  1,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NBNFSBR5",     "N",  1,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NBNFSBR6",     "N",  1,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NPVPLIN1",     "N", 16,  6, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NPVPLIN2",     "N", 16,  6, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NPVPLIN3",     "N", 16,  6, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NPVPLIN4",     "N", 16,  6, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NPVPLIN5",     "N", 16,  6, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NPVPLIN6",     "N", 16,  6, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NIVALIN1",     "N", 16,  6, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NIVALIN2",     "N", 16,  6, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NIVALIN3",     "N", 16,  6, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NIVALIN4",     "N", 16,  6, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NIVALIN5",     "N", 16,  6, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NIVALIN6",     "N", 16,  6, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NIVALIN",      "N",  6,  2, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "LIVALIN",      "L",  1,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "LCHGLIN",      "L",  1,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CCODPR1",      "C", 20,  0, "Código de primera propiedad", "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CCODPR2",      "C", 20,  0, "Código de segunda propiedad", "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CVALPR1",      "C", 40,  0, "Valor de primera propiedad",  "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CVALPR2",      "C", 40,  0, "Valor de segunda propiedad",  "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NFACCNV",      "N", 13,  4, "Factor de conversión de la compra","",               "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CCODPED",      "C", 12,  0, "Número del pedido",           "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "cAlmLin",      "C", 16,  0, "Código del almacén",          "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NCTLSTK",      "N",  1,  0, "Tipo de stock de la línea",   "'9'",                 "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "LLOTE",        "L",  1,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NLOTE",        "N",  9,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "cLote",        "C", 14,  0, "Número de lote",              "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NNUMLIN",      "N",  4,  0, "Número de la línea",          "'9999'",              "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NUNDKIT",      "N", 16,  6, "Unidades del producto kit",   "MasUnd()",            "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "LKITART",      "L",  1,  0, "Línea con escandallo",        "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "LKITCHL",      "L",  1,  0, "Línea pertenciente a escandallo",  "",               "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "LKITPRC",      "L",  1,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "LIMPLIN",      "L",  1,  0, "Imprimir línea",              "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "LCONTROL",     "L",  1,  0, "" ,                           "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "MNUMSER",      "M", 10,  0, "" ,                           "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NDTO1",        "N",  5,  2, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NDTO2",        "N",  5,  2, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NDTO3",        "N",  5,  2, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NDTO4",        "N",  5,  2, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NDTO5",        "N",  5,  2, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NRAP1",        "N",  5,  2, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NRAP2",        "N",  5,  2, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NRAP3",        "N",  5,  2, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NRAP4",        "N",  5,  2, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NRAP5",        "N",  5,  2, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CCODUBI1",     "C",  5,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CCODUBI2",     "C",  5,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CCODUBI3",     "C",  5,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CVALUBI1",     "C",  5,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CVALUBI2",     "C",  5,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CVALUBI3",     "C",  5,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CNOMUBI1",     "C", 30,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CNOMUBI2",     "C", 30,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CNOMUBI3",     "C", 30,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CCODFAM",      "C", 16,  0, "Código de familia",           "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CGRPFAM",      "C",  3,  0, "Código del grupo de familia", "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NREQ",         "N", 16,  6, "Recargo de equivalencia",     "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "MOBSLIN",      "M", 10,  0, "Observación de la línea",     "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CNUMPED",      "C", 12,  0, "Número del pedido de cliente" , "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "nPvpRec",      "N", 16,  6, "Precio de venta recomendado", "cPirDivAlb",          "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "nNumMed",      "N",  1,  0, "Número de mediciones",        "MasUnd()",            "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "nMedUno",      "N", 16,  6, "Primera unidad de medición",  "MasUnd()",            "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "nMedDos",      "N", 16,  6, "Segunda unidad de medición",  "MasUnd()",            "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "nMedTre",      "N", 16,  6, "Tercera unidad de medición",  "MasUnd()",            "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "lFacturado",   "L",  1,  0, "Estado del albarán",          "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "dFecCad",      "D",  8,  0, "Fecha de caducidad",          "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "nUndLin",      "N", 16,  6, "",                            "MasUnd()",            "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "lLabel",       "L",  1,  0, "Lógico para marca de etiqueta","",                   "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "nLabel",       "N",  6,  0, "Unidades de etiquetas a imprimir","",                "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "dFecAlb",      "D",  8,  0, "Fecha de albaran",            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "lNumSer",      "L",  1,  0, "Lógico solicitar numero de serie", "",               "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "lAutSer",      "L",  1,  0, "Lógico de autoserializar",     "",                   "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "nPntVer",      "N", 16,  6, "Importe punto verde" ,        "cPirDivAlb",          "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "cAlmOrigen",   "C", 16,  0, "Almacén de origen de la mercancía" , "",             "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "nBultos",      "N", 16,  6, "Numero de bultos en líneas", "",                     "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "cFormato",     "C",100,  0, "Formato de compra", "",                              "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "cNumFac",      "C", 12,  0, "Número de la factura de cliente" , "",               "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "cCodImp",      "C",  3,  0, "Código de impuesto especial",      "",               "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "nValImp",      "N", 16,  6, "Importe de impuesto especial",     "",               "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "dApertura",    "D",  8,  0, "Fecha apertura de lote",        "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "tApertura",    "C",  6,  0, "Hora apertura de lote",         "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "dCierre",      "D",  8,  0, "Fecha cierre de lote",          "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "tCierre",      "C",  6,  0, "Hora cierre de lote",           "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "tFecAlb",      "C",  6,  0, "Hora del albarán" ,             "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "cCtrCoste",    "C",  9,  0, "Código del centro de coste" ,   "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "cSuAlb",       "C", 12,  0, "Número de su albarán",          "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "cRefAux",      "C", 18,  0, "Referencia auxiliar",           "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "cRefAux2",     "C", 18,  0, "Segunda referencia auxiliar",   "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "nPosPrint",    "N",  4,  0, "Posición de impresión",         "'9999'",            "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "cSerAlb",      "C",  1,  0, "Serie del albarán",                     "Serie",                      "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nNumAlb",      "N",  9,  0, "Número de albarán",                     "Numero",                     "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cSufAlb",      "C",  2,  0, "Sufijo de albarán",                     "Sufijo",                     "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cRef",         "c", 18,  0, "Código de artículo",                    "Articulo",                   "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cRefPrv",      "C", 18,  0, "Referencia del proveedor",              "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cDetAlle",     "C",240,  0, "Nombre del artículo",                   "DescripcionArticulo",        "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nIva",         "n",  6,  2, cImp() + " del artículo",                "PorcentajeImpuesto",         "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nUniCaja",     "N", 16,  6, "Unidades por caja",                     "Unidades",                   "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nCanEnt",      "N", 16,  6, "Cantidad recibida",                     "Cajas",                      "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nPreDiv",      "N", 16,  6, "Precio",                                "PrecioVenta",                "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nCanPed",      "N", 16,  6, "Cajas pedidas",                         "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nUniPed",      "N", 16,  6, "Unidades pedidas",                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cUniDad",      "C",  2,  0, cNombreUnidades(),                       "UnidadMedicion",             "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "mLngDes",      "M", 10,  0, "Descripción de artículo sin codificar", "DescripcionAmpliada",        "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nDtoLin",      "N",  6,  2, "Descuento en líneas",                   "DescuentoPorcentual",        "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nDtoPrm",      "N",  6,  2, "Descuento por promociones",             "DescuentoPromocion",         "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nDtoRap",      "N",  6,  2, "Descuento por rappels",                 "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nPreCom",      "N", 16,  6, "Precio real de la compra",              "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "lBnfLin1",     "L",  1,  0, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "lBnfLin2",     "L",  1,  0, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "lBnfLin3",     "L",  1,  0, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "lBnfLin4",     "L",  1,  0, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "lBnfLin5",     "L",  1,  0, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "lBnfLin6",     "L",  1,  0, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nBnfLin1",     "N",  6,  2, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nBnfLin2",     "N",  6,  2, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nBnfLin3",     "N",  6,  2, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nBnfLin4",     "N",  6,  2, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nBnfLin5",     "N",  6,  2, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nBnfLin6",     "N",  6,  2, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nBnfSbr1",     "N",  1,  0, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nBnfSbr2",     "N",  1,  0, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nBnfSbr3",     "N",  1,  0, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nBnfSbr4",     "N",  1,  0, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nBnfSbr5",     "N",  1,  0, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nBnfSbr6",     "N",  1,  0, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nPvpLin1",     "N", 16,  6, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nPvpLin2",     "N", 16,  6, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nPvpLin3",     "N", 16,  6, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nPvpLin4",     "N", 16,  6, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nPvpLin5",     "N", 16,  6, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nPvpLin6",     "N", 16,  6, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nIvaLin1",     "N", 16,  6, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nIvaLin2",     "N", 16,  6, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nIvaLin3",     "N", 16,  6, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nIvaLin4",     "N", 16,  6, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nIvaLin5",     "N", 16,  6, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nIvaLin6",     "N", 16,  6, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nIvaLin",      "N",  6,  2, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "lIvaLin",      "L",  1,  0, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "lChgLin",      "L",  1,  0, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cCodPr1",      "C", 20,  0, "Código de primera propiedad",           "CodigoPropiedad1",           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cCodPr2",      "C", 20,  0, "Código de segunda propiedad",           "CodigoPropiedad2",           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cValPr1",      "C", 40,  0, "Valor de primera propiedad",            "ValorPropiedad1",            "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cValPr2",      "C", 40,  0, "Valor de segunda propiedad",            "ValorPropiedad2",            "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nFacCnv",      "N", 13,  4, "Factor de conversión de la compra",     "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cCodPed",      "C", 12,  0, "Número del pedido",                     "NumeroPedidoProveedor",      "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cAlmLin",      "C", 16,  0, "Código del almacén",                    "Almacen",                    "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nCtlStk",      "N",  1,  0, "Control de stock (1,2,3)",              "ControlStock",               "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "llote",        "L",  1,  0, "",                                      "LogicoLote",                 "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nlote",        "N",  9,  0, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "clote",        "C", 14,  0, "Número de lote",                        "Lote",                       "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nNumLin",      "N",  4,  0, "Número de la línea",                    "NumeroLinea",                "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nUndKit",      "N", 16,  6, "Unidades del producto kit",             "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "lKitArt",      "L",  1,  0, "Línea con escandallo",                  "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "lKitChl",      "L",  1,  0, "Línea pertenciente a escandallo",       "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "lKitPrc",      "L",  1,  0, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "lImpLin",      "L",  1,  0, "Imprimir línea",                        "Imprimir",                   "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "lConTrol",     "L",  1,  0, "" ,                                     "Control",                    "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "mNumSer",      "M", 10,  0, "" ,                                     "NumerosSerie",               "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "ndto1",        "N",  5,  2, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "ndto2",        "N",  5,  2, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "ndto3",        "N",  5,  2, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "ndto4",        "N",  5,  2, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "ndto5",        "N",  5,  2, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nrap1",        "N",  5,  2, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nrap2",        "N",  5,  2, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nrap3",        "N",  5,  2, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nrap4",        "N",  5,  2, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nrap5",        "N",  5,  2, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cCodUbi1",     "C",  5,  0, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cCodUbi2",     "C",  5,  0, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cCodUbi3",     "C",  5,  0, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cValUbi1",     "C",  5,  0, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cValUbi2",     "C",  5,  0, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cValUbi3",     "C",  5,  0, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cNomUbi1",     "C", 30,  0, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cNomUbi2",     "C", 30,  0, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cNomUbi3",     "C", 30,  0, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cCodFam",      "C", 16,  0, "Código de familia",                     "Familia",                    "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cGrpFam",      "C",  3,  0, "Código del grupo de familia",           "GrupoFamilia",               "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nReq",         "N", 16,  6, "Recargo de equivalencia",               "PorcentajeRecargo",          "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "mObsLin",      "M", 10,  0, "Observación de la línea",               "Observaciones",              "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cNumPed",      "C", 12,  0, "Número del pedido de cliente" ,         "NumeroPedidoCliente",        "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nPvpRec",      "N", 16,  6, "Precio de venta recomendado",           "PrecioVentaRecomendado",     "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nNumMed",      "N",  1,  0, "Número de mediciones",                  "NumeroMediciones",           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nMedUno",      "N", 16,  6, "Primera unidad de medición",            "Medicion1",                  "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nMedDos",      "N", 16,  6, "Segunda unidad de medición",            "Medicion2",                  "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nMedTre",      "N", 16,  6, "Tercera unidad de medición",            "Medicion3",                  "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "lFacturado",   "L",  1,  0, "Estado del albarán",                    "Facturda",                   "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "dFecCad",      "D",  8,  0, "Fecha de caducidad",                    "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nUndLin",      "N", 16,  6, "",                                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "lLabel",       "L",  1,  0, "Lógico para marca de etiqueta",         "LogicoEtiqueta",             "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nLabel",       "N",  6,  0, "Unidades de etiquetas a imprimir",      "NumeroEtiqueta",             "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "dFecAlb",      "D",  8,  0, "Fecha de albaran",                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "lNumSer",      "L",  1,  0, "Lógico solicitar numero de serie",      "LogicoNumeroSerie",          "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "lAutSer",      "L",  1,  0, "Lógico de autoserializar",              "LogicoAutoserializar",       "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nPntVer",      "N", 16,  6, "Importe punto verde" ,                  "PuntoVerde",                 "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cAlmOrigen",   "C", 16,  0, "Almacén de origen de la mercancía" ,    "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nBultos",      "N", 16,  6, "Numero de bultos en líneas",            "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cFormato",     "C",100,  0, "Formato de compra",                     "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cNumFac",      "C", 12,  0, "Número de la factura de cliente" ,      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cCodImp",      "C",  3,  0, "Código de impuesto especial",           "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nValImp",      "N", 16,  6, "Importe de impuesto especial",          "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "dApertura",    "D",  8,  0, "Fecha apertura de lote",                "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "tApertura",    "C",  6,  0, "Hora apertura de lote",                 "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "dCierre",      "D",  8,  0, "Fecha cierre de lote",                  "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "tCierre",      "C",  6,  0, "Hora cierre de lote",                   "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "tFecAlb",      "C",  6,  0, "Hora del albarán" ,                     "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cCtrCoste",    "C",  9,  0, "Código del centro de coste" ,           "CentroCoste",                "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cSuAlb",       "C", 12,  0, "Número de su albarán",                  "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cRefAux",      "C", 18,  0, "Referencia auxiliar",                   "CodigoAuxiliar1",            "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cRefAux2",     "C", 18,  0, "Segunda referencia auxiliar",           "CodigoAuxiliar2",            "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "nPosPrint",    "N",  4,  0, "Posición de impresión",                 "PosicionImpresion",          "", "( cDbfCol )", nil } )
 
 return ( aColAlbPrv )
 
@@ -11078,4 +11055,86 @@ Return ( getExtraField( cFieldName, oDetCamposExtra, D():AlbaranesProveedoresId(
 
 //---------------------------------------------------------------------------//
 
+Static Function ImportarLineasPedidosProveedor( aTmp, aGet, oBrwLin )
+
+   local oLine
+   local cCodigoProveedor
+   local cNombreProveedor
+   local oConversionPedidosProveedores
+
+   cCodigoProveedor                 := aGet[ _CCODPRV ]:varGet()
+   cNombreProveedor                 := aGet[ _CNOMPRV ]:varGet() 
+
+   if empty( cCodigoProveedor )
+      msgStop( "Es necesario codificar un proveedor.", "Importar pedidos" )
+      return .t.
+   end if
+
+   oConversionPedidosProveedores    := TConversionPedidosProveedores():New()
+
+   if empty( oConversionPedidosProveedores )
+      Return .f.
+   end if 
+
+   oConversionPedidosProveedores:setCodigoProveedor( cCodigoProveedor ) 
+   oConversionPedidosProveedores:setTitle( "Importando pedidos de " + alltrim( cCodigoProveedor ) + " - " + alltrim( cNombreProveedor ) )
+   if oConversionPedidosProveedores:Dialog()
+      appendLineasPedidosProveedor( oConversionPedidosProveedores:oDocumentLines:aLines, oBrwLin )
+   end if 
+
+   recalculaTotal( aTmp )
+
+   oBrwLin:refresh()
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Static Function appendLineasPedidosProveedor( aLines )
+
+   local oLine
+
+   for each oLine in aLines
+
+      if oLine:selectLine()
+
+         calculateUnidadesPendientesRecepcion( oLine )
+
+         oLine:setValue( "NumeroPedidoProveedor",  oLine:getDocumentId() )
+         oLine:setValue( "NumeroLinea",            nLastNum( dbfTmp ) )
+         oLine:setValue( "PosicionImpresion",      nLastNum( dbfTmp, "nPosPrint" ) )
+         
+         D():appendHashRecordInWorkarea( oLine:hDictionary, "AlbProvL", dbfTmp )
+
+      end if 
+   next 
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Static Function calculateUnidadesPendientesRecepcion( oLine )
+
+   local nMod
+   local nUnidadesRecibidas
+   local nUnidadesPendientes
+
+   nUnidadesRecibidas   := oLine:getUnitsReceived()
+   nUnidadesPendientes  := oLine:getTotalUnits() - nUnidadesRecibidas
+
+   if lCalCaj() .and. nUnidadesRecibidas != 0
+
+      nMod              := mod( nUnidadesPendientes, oLine:getUnits() )
+      if nMod == 0 .and. oLine:getBoxes() != 0
+         oLine:setBoxes( div( nUnidadesPendientes, oLine:getBoxes() ) )
+      else
+         oLine:setBoxes( 0 )
+         oLine:setUnits( nUnidadesPendientes )
+      end if
+
+   end if
+
+Return ( oLine )
+
+//---------------------------------------------------------------------------//
 

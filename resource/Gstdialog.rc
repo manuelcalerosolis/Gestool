@@ -653,6 +653,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Alm. Origen", 342, "Static", WS_GROUP, 466, 46, 39, 8
   CONTROL "0", 403, "Static", SS_RIGHT|WS_GROUP, 595, 308, 65, 8
   CONTROL "Imp. especiales", -1, "Static", WS_GROUP, 540, 309, 54, 8
+  CONTROL "&L", 557, "Button", WS_TABSTOP, 71, 56, 11, 11
 }
 
 ALBPRV_2 DIALOG DISCARDABLE 4, 18, 670, 375
@@ -2058,7 +2059,7 @@ FONT 8, "MS Sans Serif"
 
 ASS_CONVERSION_DOCUMENTO DIALOG DISCARDABLE -157, -139, 675, 435
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
-CAPTION "Asistente para cambio de impuestos"
+CAPTION "Asistente para importar documentos"
 FONT 8, "MS Sans Serif"
 {
   CONTROL "", 100, "TPages", WS_TABSTOP, 44, 29, 628, 384
@@ -2066,7 +2067,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Siguiente >", IDOK, "Button", WS_TABSTOP, 569, 417, 50, 14
   CONTROL "Cancelar", IDCANCEL, "Button", WS_TABSTOP, 622, 417, 50, 14
   CONTROL "", 500, "TBitmap", 0x0000020e, 4, 3, 34, 30, 0x00000020
-  CONTROL "Datos generales del artículo", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
+  CONTROL "Texto general de la importación de documento", 510, "Static", SS_LEFTNOWORDWRAP, 44, 3, 627, 8
 }
 
 ASS_CONVERSION_DOCUMENTO_2 DIALOG DISCARDABLE 99, 64, 626, 384

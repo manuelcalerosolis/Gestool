@@ -2906,6 +2906,8 @@ METHOD BuildEmpresa()
    oDataTable:cDescription := "Albaranes de proveedor lineas"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    oDataTable:aStruct      := aColAlbPrv()
+   oDatatable:aDictionary  := hashDictionary( aColAlbPrv() )
+   oDatatable:aDefaultValue:= hashDefaultValue( aColAlbPrv() )
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "AlbProvL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AlbProvL.Cdx"
    ::AddEmpresaTable( oDataTable )

@@ -16,6 +16,7 @@ CLASS TConversionPedidosProveedores FROM TConversionDocumentos // FROM DialogBui
    METHOD getCodigoProveedor()                        INLINE ( ::cCodigoProveedor )
 
    METHOD startDialog()
+      METHOD botonSiguiente()
 
    METHOD loadLinesDocument()
 
@@ -32,8 +33,13 @@ METHOD Dialog()
 
    REDEFINE BITMAP oBmp ;
       ID          500 ;
-      RESOURCE    "hand_point_48" ;
+      RESOURCE    "Pedidos_proveedores_48_alpha" ;
       TRANSPARENT ;
+      OF          ::oDlg
+
+   REDEFINE SAY   ::oTitle ;
+      PROMPT      ::cTitle ;
+      ID          510 ;
       OF          ::oDlg
 
    REDEFINE PAGES ::oFld ;
@@ -53,7 +59,7 @@ METHOD Dialog()
    REDEFINE BUTTON ::oBtnSiguiente;
       ID          IDOK ;
       OF          ::oDlg ;
-      ACTION      ( ::BotonSiguiente() )
+      ACTION      ( ::botonSiguiente() )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -68,11 +74,14 @@ METHOD Dialog()
 
    oBmp:End()
 
-RETURN ( Self )
+RETURN ( ::oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
 METHOD startDialog()
+
+   ::oBtnAnterior:Hide()
+   ::oBtnSiguiente:setText( "&Importar")
 
    ::oBrwLines:Load()
 
@@ -83,6 +92,18 @@ METHOD startDialog()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD botonSiguiente()
+
+   if !::oDocumentLines:isSelectedLines()
+      msgStop( "No hay líneas seleccionadas." )
+   else
+      ::oDlg:End( IDOK )
+   end if
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
 //
 // Convierte las lineas del albaran en objetos
 //
@@ -90,6 +111,7 @@ RETURN ( Self )
 METHOD loadLinesDocument() 
 
    local hDictionary    
+   local oDocumentLine
 
    if empty( ::getCodigoProveedor() )
       msgStop( "Es necesario codificar un proveedor." )
@@ -108,11 +130,13 @@ METHOD loadLinesDocument()
 
             while ::getHeaderId() == ::aliasDocumentLine:getDocumentId() .and. !::aliasDocumentLine:Eof()
 
-               // if nTotNPedPrv( ::getLineAlias() ) > nUnidadesRecibidasPedPrv( ::getLineId(), ::getLineProductId(), cValPr1, cValPr2, cRefPrv, cAlbPrvL )
-
                hDictionary       := D():getHashFromAlias( ::getLineAlias(), ::getLineDictionary() )
 
-               ::oDocumentLines:addLines( DocumentLine():newFromDictionary( self, hDictionary ) )
+               oDocumentLine     := supplierDeliveryNoteDocumentLine():newFromDictionary( self, hDictionary )
+
+               if oDocumentLine:getUnitsAwaitingReception() > 0
+                  ::oDocumentLines:addLines( oDocumentLine )
+               end if 
 
                ( ::getLineAlias() )->( dbskip() ) 
 

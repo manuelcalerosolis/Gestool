@@ -2488,8 +2488,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
          :lHide               := .t.
-         :nEditType     	  := 1
-         :bOnPostEdit   	  := {|o,x,n| ChangeUnidades( o, x, n, aTmp, dbfTmpLin ) }
+         :nEditType           := 1
+         :bOnPostEdit         := {|o,x,n| ChangeUnidades( o, x, n, aTmp, dbfTmpLin ) }
          :nFooterType         := AGGR_SUM
       end with
 

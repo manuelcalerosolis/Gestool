@@ -59,9 +59,13 @@ CLASS DocumentLine
    METHOD getNameFirstProperty()                               INLINE ( nombrePropiedad( ::getCodeFirstProperty(), ::getValueFirstProperty(), ::getView() ) )
    METHOD getNameSecondProperty()                              INLINE ( nombrePropiedad( ::getCodeSecondProperty(), ::getValueSecondProperty(), ::getView() ) )
    METHOD getLote()                                            INLINE ( ::getValue( "Lote" ) )
+   METHOD getCodeProvider()                                    INLINE ( ::getValue( "CodigoArticuloProveedor" ) ) 
   
    METHOD getBoxes()                                           INLINE ( ::getValue( "Cajas" ) )
+   METHOD setBoxes( Boxes )                                    INLINE ( ::setValue( "Cajas", Boxes ) )
    METHOD getUnits()                                           INLINE ( ::getValue( "Unidades" ) )
+   METHOD setUnits( Units )                                    INLINE ( ::setValue( "Unidades", Units ) )
+
    METHOD getTotalUnits()
    METHOD getMeasurementUnit()                                 INLINE ( ::getValue( "UnidadMedicion" ) )
    METHOD getPrice()                                           INLINE ( ::getValue( "PrecioVenta" ) )
@@ -199,6 +203,28 @@ Return ( specialTax )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS supplierDeliveryNoteDocumentLine FROM DocumentLine
+
+   METHOD newFromDictionary( oSender, hDictionary )
+
+   METHOD setUnitsReceived()                                   INLINE ( ::setValue( "UnitsReceived", nUnidadesRecibidasPedPrv( ::getDocumentId(), ::getCode(), ::getValueFirstProperty(), ::getValueSecondProperty(), ::getCodeProvider(), D():AlbaranesProveedoresLineas( ::getView() ) ) ) )
+   METHOD getUnitsReceived()                                   INLINE ( ::getValue( "UnitsReceived" ) )
+   METHOD getUnitsAwaitingReception()                          INLINE ( ::getTotalUnits() - ::getUnitsReceived() )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD newFromDictionary( oSender, hDictionary ) CLASS supplierDeliveryNoteDocumentLine
+
+   ::Super():newFromDictionary( oSender, hDictionary )
+
+   ::setUnitsReceived()
+
+Return ( Self )
+
 //---------------------------------------------------------------------------//
 
 CLASS DictionaryDocumentLine FROM DocumentLine

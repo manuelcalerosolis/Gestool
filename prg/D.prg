@@ -57,7 +57,8 @@ CLASS D
    METHOD getArrayRecordById( id, cDatabase, nView )
    METHOD setDefaultValue( hash, cDataTable, nView )
 
-   METHOD appendHashRecord( hTable, cDataTable, nView )  
+   METHOD appendHashRecord( hTable, cDataTable, nView ) 
+   METHOD appendHashRecordInWorkarea( hTable, cDataTable, workArea ) 
    METHOD editHashRecord( hTable, cDataTable, nView )
 
    METHOD setHashRecord( cDatabase, nView )
@@ -1028,13 +1029,22 @@ RETURN ( hash )
 
 METHOD appendHashRecord( hTable, cDataTable, nView ) CLASS D
 
+   local workArea    := ::Get( cDataTable, nView )  
+
+RETURN ( ::appendHashRecordInWorkarea( hTable, cDataTable, workArea )  )
+
+//---------------------------------------------------------------------------//
+
+METHOD appendHashRecordInWorkarea( hTable, cDataTable, workArea )
+
    local lAppend     := .f.
-   local workArea    := ::Get( cDataTable, nView )   
-   local hDictionary := TDataCenter():getDictionary( cDataTable )
+   local hDictionary 
 
    if empty( workArea )
       return ( lAppend )
    end if
+
+   hDictionary       := TDataCenter():getDictionary( cDataTable )
 
    if empty( hDictionary )
       return ( lAppend )

@@ -17,6 +17,9 @@ CLASS TConversionDocumentos
    DATA oDlg
    DATA oFld
 
+   DATA oTitle
+   DATA cTitle 
+
    DATA oBtnAnterior
    DATA oBtnSiguiente
    DATA oBtnSalir
@@ -68,16 +71,19 @@ CLASS TConversionDocumentos
       METHOD DialogSelectionCriteria()
       METHOD DialogSelectionDocument()
       METHOD DialogSelectionLines()
+         METHOD changeUnits( oColumn, uValue, nKey )
       METHOD DialogSummary()
       METHOD startDialog()
       METHOD clickOnDocumentHeader( oColumn )
       METHOD changeSortDocument()
       METHOD changeSearch()
       METHOD setOrderInColumn( oColumn )  
-      METHOD setAliasInBrowseDocument()            INLINE ( if ( !empty( ::oBrwDocuments ), ::oBrwDocuments:setAlias( ::getHeaderAlias() ), ) )
+      METHOD setAliasInBrowseDocument()            INLINE ( if( !empty( ::oBrwDocuments ), ::oBrwDocuments:setAlias( ::getHeaderAlias() ), ) )
       METHOD getDocument()                         INLINE ( alltrim( ::cDocument ) )
       METHOD getDocumentName()                     INLINE ( if( !empty( ::getHeaderAlias() ), ::getDocument() + space( 1 ) + ::getHeaderTextId(), "" ) )
       
+      METHOD setTitle( cTitle )                    INLINE ( if( !empty( ::oTitle ), ::oTitle:setText( cTitle ), ::cTitle := cTitle ) )
+
       METHOD isValidDialogRequisite()
       METHOD isValidTargetDocument()
       
@@ -526,7 +532,7 @@ METHOD DialogSelectionLines( oDlg )
 
    ::oBrwLines:nMarqueeStyle        := 6
    ::oBrwLines:cName                := "Browse.Conversion documentos lineas"
-   ::oBrwLines:bLDblClick           := {|| ::toogleSelectLine() }
+   // ::oBrwLines:bLDblClick           := {|| ::toogleSelectLine() }
 
    ::setBrowseLinesDocument()
 
@@ -542,7 +548,8 @@ METHOD DialogSelectionLines( oDlg )
       :Cargo                        := "getNumeroDocumento"
       :bEditValue                   := {|| ::getLineDocument():getNumeroDocumento() }
       :nWidth                       := 80
-      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }   
+      :bLDClickData                 := {|| ::toogleSelectLine() }
    end with
   
    with object ( ::oBrwLines:AddCol() )
@@ -551,6 +558,7 @@ METHOD DialogSelectionLines( oDlg )
       :bEditValue                   := {|| ::getLineDocument():getCode() }
       :nWidth                       := 80
       :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
+      :bLDClickData                 := {|| ::toogleSelectLine() }
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -559,6 +567,7 @@ METHOD DialogSelectionLines( oDlg )
       :bEditValue                   := {|| ::getLineDocument():getDescription() }
       :nWidth                       := 340
       :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
+      :bLDClickData                 := {|| ::toogleSelectLine() }
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -568,6 +577,7 @@ METHOD DialogSelectionLines( oDlg )
       :nWidth                       := 60
       :lHide                        := .t.
       :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
+      :bLDClickData                 := {|| ::toogleSelectLine() }
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -577,6 +587,7 @@ METHOD DialogSelectionLines( oDlg )
       :nWidth                       := 60
       :lHide                        := .t.
       :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
+      :bLDClickData                 := {|| ::toogleSelectLine() }
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -586,6 +597,7 @@ METHOD DialogSelectionLines( oDlg )
       :nWidth                       := 60
       :lHide                        := .t.
       :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
+      :bLDClickData                 := {|| ::toogleSelectLine() }
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -595,6 +607,7 @@ METHOD DialogSelectionLines( oDlg )
       :nWidth                       := 60
       :lHide                        := .t.
       :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
+      :bLDClickData                 := {|| ::toogleSelectLine() }
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -604,6 +617,7 @@ METHOD DialogSelectionLines( oDlg )
       :nWidth                       := 60
       :lHide                        := .t.
       :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
+      :bLDClickData                 := {|| ::toogleSelectLine() }
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -613,6 +627,7 @@ METHOD DialogSelectionLines( oDlg )
       :nWidth                       := 60
       :lHide                        := .t.
       :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
+      :bLDClickData                 := {|| ::toogleSelectLine() }
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -622,6 +637,7 @@ METHOD DialogSelectionLines( oDlg )
       :nWidth                       := 80
       :lHide                        := .t.
       :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
+      :bLDClickData                 := {|| ::toogleSelectLine() }
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -634,6 +650,7 @@ METHOD DialogSelectionLines( oDlg )
       :nHeadStrAlign                := 1
       :lHide                        := .t.
       :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
+      :bLDClickData                 := {|| ::toogleSelectLine() }
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -644,8 +661,10 @@ METHOD DialogSelectionLines( oDlg )
       :nWidth                       := 60
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
+      :nEditType                    := 1
       :lHide                        := .t.
-      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }      
+      :bOnPostEdit                  := {|oColumn, uValue, nKey| ::changeUnits( oColumn, uValue, nKey ) }
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -658,6 +677,7 @@ METHOD DialogSelectionLines( oDlg )
       :nHeadStrAlign                := 1
       :lHide                        := .f.
       :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
+      :bLDClickData                 := {|| ::toogleSelectLine() }
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -667,6 +687,7 @@ METHOD DialogSelectionLines( oDlg )
       :nWidth                       := 25
       :lHide                        := .t.
       :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
+      :bLDClickData                 := {|| ::toogleSelectLine() }
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -675,6 +696,7 @@ METHOD DialogSelectionLines( oDlg )
       :bEditValue                   := {|| ::getLineDocument():getStore() }
       :nWidth                       := 60
       :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
+      :bLDClickData                 := {|| ::toogleSelectLine() }
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -686,6 +708,7 @@ METHOD DialogSelectionLines( oDlg )
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
       :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
+      :bLDClickData                 := {|| ::toogleSelectLine() }
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -698,10 +721,11 @@ METHOD DialogSelectionLines( oDlg )
       :nHeadStrAlign                := 1
       :lHide                        := .t.
       :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
+      :bLDClickData                 := {|| ::toogleSelectLine() }
    end with
 
    with object ( ::oBrwLines:AddCol() )
-      :cHeader                      := "% Dto."
+      :cHeader                      := "% Dto. promoción"
       :Cargo                        := "getPercentagePromotion"
       :bEditValue                   := {|| ::getLineDocument():getPercentagePromotion() }
       :cEditPicture                 := "@E 999.99"
@@ -710,6 +734,7 @@ METHOD DialogSelectionLines( oDlg )
       :nHeadStrAlign                := 1
       :lHide                        := .t.
       :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
+      :bLDClickData                 := {|| ::toogleSelectLine() }
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -721,6 +746,7 @@ METHOD DialogSelectionLines( oDlg )
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
       :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
+      :bLDClickData                 := {|| ::toogleSelectLine() }
    end with
 
    with object ( ::oBrwLines:AddCol() )
@@ -732,6 +758,7 @@ METHOD DialogSelectionLines( oDlg )
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
       :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
+      :bLDClickData                 := {|| ::toogleSelectLine() }
    end with
 
    ::oBrwLines:CreateFromResource( 100 )
@@ -743,6 +770,20 @@ METHOD DialogSelectionLines( oDlg )
    // orden por defecto-------------------------------------------------------
 
    ::clikcOnLineHeader( oColumnNumeroDocumento )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD changeUnits( oColumn, uValue, nKey )
+
+   if isNum( nKey ) .and. ( nKey == VK_ESCAPE )
+      Return ( Self )
+   end if 
+
+   if !isNil( uValue )
+      ::getLineDocument():setUnits( uValue  )
+   end if  
 
 RETURN ( Self )
 

@@ -2993,7 +2993,7 @@ Function writeHashDictionary( hashValue, hashTable, dbf )
    for each h in hashValue
       value     := getValueHashDictionary( h:__enumKey(), hashTable )
       if value != nil
-         ( dbf )->( fieldput( ( dbf )->( fieldname( value ) ),  h:__enumValue() ) )
+         ( dbf )->( fieldput( ( dbf )->( fieldname( value ) ), h:__enumValue() ) )
       end if
    next
 
