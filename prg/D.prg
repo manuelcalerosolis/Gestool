@@ -529,6 +529,8 @@ CLASS D
       METHOD gotoIdAtipicasAgentes( idAgente, idArticulo, nView ) ;
                                              INLINE ( ::seekInOrd( ::Atipicas( nView ), idAgente + idArticulo, "cAgeArt" ) )
 
+   METHOD ClientesContactos( nView )         INLINE ( ::Get( "CliContactos", nView ) )
+
    METHOD ImpuestosEspeciales( nView )       INLINE ( ::GetObject( "ImpuestosEspeciales", nView ) )
 
    METHOD Agentes( nView )                   INLINE ( ::Get( "Agentes", nView ) )

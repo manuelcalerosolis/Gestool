@@ -6016,7 +6016,7 @@ Return ( by( nRow ) )
 
 Function Test() 
 
-   TConversionPedidosProveedores():New():Dialog()
+   //TConversionPedidosProveedores():New():Dialog()
 
 Return ( nil )
 

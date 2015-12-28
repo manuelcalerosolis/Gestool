@@ -2458,10 +2458,10 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
             Chequeamos situaciones especiales----------------------------------
             */
 
-            if lSeekAtpArt( ::oDbfCli:Cod + ::oFacAutL:oDbf:cCodArt, ::oFacAutL:oDbf:cCodPr1 + ::oFacAutL:oDbf:cCodPr2, ::oFacAutL:oDbf:cValPr1 + ::oFacAutL:oDbf:cValPr2, ::dFecDocumento, ::oDbfCliAtp:cAlias ) .and. ;
+            /*if lSeekAtpArt( ::oDbfCli:Cod + ::oFacAutL:oDbf:cCodArt, ::oFacAutL:oDbf:cCodPr1 + ::oFacAutL:oDbf:cCodPr2, ::oFacAutL:oDbf:cValPr1 + ::oFacAutL:oDbf:cValPr2, ::dFecDocumento, ::oDbfCliAtp:cAlias ) .and. ;
                ::oDbfCliAtp:lAplFac
 
-               nImpAtp                 := nImpAtp( , ::oDbfCliAtp:cAlias )
+               //nImpAtp                 := nImpAtp( , ::oDbfCliAtp:cAlias )
 
                if nImpAtp  != 0
                   ::oAlbCliL:nPreUnit  := nImpAtp
@@ -2469,13 +2469,13 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
                   ::oAlbCliL:nPreUnit  := nRetPreArt( Max( uFieldEmpresa( "nPreVta" ), ::oDbfCli:nTarifa ), cDivEmp(), uFieldEmpresa( "lIvaInc" ), ::oDbfArt:cAlias, ::oDbfDiv:cAlias, ::oDbfKit:cAlias, ::oDbfIva:cAlias )
                end if
 
-               ::oAlbCliL:nDto         := nDtoAtp( , ::oDbfCliAtp:cAlias )
+               //::oAlbCliL:nDto         := nDtoAtp( , ::oDbfCliAtp:cAlias )
 
-            else
+            else*/
 
                ::oAlbCliL:nPreUnit     := nRetPreArt( Max( uFieldEmpresa( "nPreVta" ), ::oDbfCli:nTarifa ), cDivEmp(), uFieldEmpresa( "lIvaInc" ), ::oDbfArt:cAlias, ::oDbfDiv:cAlias, ::oDbfKit:cAlias, ::oDbfIva:cAlias )
 
-            end if
+            //end if
 
          else
 
@@ -2741,10 +2741,10 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
             Chequeamos situaciones especiales----------------------------------
             */
 
-            if lSeekAtpArt( ::oDbfCli:Cod + ::oFacAutL:oDbf:cCodArt, ::oFacAutL:oDbf:cCodPr1 + ::oFacAutL:oDbf:cCodPr2, ::oFacAutL:oDbf:cValPr1 + ::oFacAutL:oDbf:cValPr2, ::dFecDocumento, ::oDbfCliAtp:cAlias ) .and. ;
+            /*if lSeekAtpArt( ::oDbfCli:Cod + ::oFacAutL:oDbf:cCodArt, ::oFacAutL:oDbf:cCodPr1 + ::oFacAutL:oDbf:cCodPr2, ::oFacAutL:oDbf:cValPr1 + ::oFacAutL:oDbf:cValPr2, ::dFecDocumento, ::oDbfCliAtp:cAlias ) .and. ;
                ::oDbfCliAtp:lAplFac
 
-               nImpAtp                 := nImpAtp( , ::oDbfCliAtp:cAlias )
+               //nImpAtp                 := nImpAtp( , ::oDbfCliAtp:cAlias )
 
                if nImpAtp  != 0
                   ::oFacCliL:nPreUnit  := nImpAtp
@@ -2752,13 +2752,13 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
                   ::oFacCliL:nPreUnit  := ::oFacAutL:oDbf:nPreUnit
                end if
 
-               ::oFacCliL:nDto         := nDtoAtp( , ::oDbfCliAtp:cAlias )
+               //::oFacCliL:nDto         := nDtoAtp( , ::oDbfCliAtp:cAlias )
 
-            else
+            else*/
 
                ::oFacCliL:nPreUnit     := nRetPreArt( Max( uFieldEmpresa( "nPreVta" ), ::oDbfCli:nTarifa ), cDivEmp(), uFieldEmpresa( "lIvaInc" ), ::oDbfArt:cAlias, ::oDbfDiv:cAlias, ::oDbfKit:cAlias, ::oDbfIva:cAlias )
 
-            end if
+            //end if
 
          else
 

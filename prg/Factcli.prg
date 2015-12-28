@@ -8003,6 +8003,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
 
                   else
 
+                     ( dbfTmpLin )->nCanEnt     := ( dbfPedCliL )->nCanPed
                      ( dbfTmpLin )->nUniCaja    := nTotRet
 
                   end if

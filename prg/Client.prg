@@ -231,7 +231,6 @@ static dbfDoc
 static cFpago
 static dbfFamilia
 static oBandera
-static dbfContactos
 static dbfAlmT
 static dbfRuta
 static dbfTmpDoc
@@ -380,12 +379,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():ClientesDocumentos( nView )
 
-      /*
-      Apertura de fichero de Contactos--------------------------------------------
-      */
-
-      USE ( cPatCli() + "CliContactos.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CliConta", @dbfContactos ) )
-      SET ADSINDEX TO ( cPatCli() + "CliContactos.Cdx" ) ADDITIVE
+      D():ClientesContactos( nView )
 
       /*
       Articulos-------------------------------------------------------------------
@@ -525,7 +519,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
    CLOSE ( dbfArtKit    )
    CLOSE ( cFPago       )
    CLOSE ( cAgente      )
-   CLOSE ( dbfContactos )
    CLOSE ( dbfFPago     )
    CLOSE ( dbfAlmT      )
    CLOSE ( dbfFamilia   )
@@ -579,7 +572,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
    dbfArtKit         := nil
    cFPago            := nil
    cAgente           := nil
-   dbfContactos      := nil
    dbfFPago          := nil
    dbfAlmT           := nil
    dbfFamilia        := nil
@@ -9034,400 +9026,6 @@ return ( nImpRiesgo )
 
 //---------------------------------------------------------------------------//
 
-Function nXbYAtipica( cCodArt, cCodCli, nCajVen, nUndVen, dFecOfe, dbfAtpCli )
-
-   local a
-   local nModOfe     := 0
-   local nTipXbY     := 0
-   local nUndGrt     := 0
-   local aXbYRet     := { 0, 0 }
-   local nOrd        := ( dbfAtpCli )->( OrdSetFocus( "cCliArt" ) )
-
-   /*
-   Primero buscar si existe el articulo en la oferta
-   */
-
-   if ( dbfAtpCli )->( dbSeek( cCodCli + cCodArt ) )
-
-      while ( dbfAtpCli )->cCodCli + ( dbfAtpCli )->cCodArt == cCodCli + cCodArt .and. !( dbfAtpCli )->( eof() )
-
-         a           := aXbY( nCajVen, nUndVen, dFecOfe, dbfAtpCli )
-
-         if IsArray( a )
-            aXbYRet  := a
-            exit 
-         end if 
-
-         ( dbfAtpCli )->( dbSkip() )
-
-      end do
-
-   end if
-
-   ( dbfAtpCli )->( OrdSetFocus( nOrd ) )
-
-Return ( aXbYRet )
-
-//---------------------------------------------------------------------------//
-
-Function aXbYGrupo( cCodArt, cCodGrp, nCajVen, nUndVen, dFecOfe, dbfAtpCli )
-
-   local a
-   local aXbYRet     := { 0, 0 }
-   local nOrd        := ( dbfAtpCli )->( OrdSetFocus( "cGrpArt" ) )
-
-   /*
-   Primero buscar si existe el articulo en la oferta
-   */
-
-   if ( dbfAtpCli )->( dbSeek( cCodGrp + cCodArt ) )
-
-      while ( dbfAtpCli )->cCodGrp + ( dbfAtpCli )->cCodArt == cCodGrp + cCodArt .and. !( dbfAtpCli )->( eof() )
-
-         a           := aXbY( nCajVen, nUndVen, dFecOfe, dbfAtpCli )
-
-         if IsArray( a )
-            aXbYRet  := a
-            exit 
-         end if 
-
-         ( dbfAtpCli )->( dbSkip() )
-
-      end do
-
-   end if
-
-   ( dbfAtpCli )->( OrdSetFocus( nOrd ) )
-
-Return ( aXbYRet )
-
-//---------------------------------------------------------------------------//
-
-Function aXbYAtipica( cCodArt, cCodCli, cCodGrp, nCajVen, nUndVen, dFecOfe, dbfAtpCli )
-
-   local aXbY  := nXbYAtipica( cCodArt, cCodCli, nCajVen, nUndVen, dFecOfe, dbfAtpCli ) 
-
-   if Empty( aXbY )
-      aXbY     := aXbYGrupo( cCodArt, cCodGrp, nCajVen, nUndVen, dFecOfe, dbfAtpCli )
-   end if
-
-Return ( aXbY )
-
-//---------------------------------------------------------------------------//
-
-Static Function aXbY( nCajVen, nUndVen, dFecOfe, dbfAtpCli )
-
-   local aXbYRet  
-   local nModOfe  := 0
-   local nTipXbY  := 0
-   local nUndGrt  := 0
-
-   /*
-   Comprobamos si esta entre las fechas----------------------------------
-   */
-
-   if ( dFecOfe >= ( dbfAtpCli )->dFecIni .or. Empty( ( dbfAtpCli )->dFecIni ) ) .and. ;
-      ( dFecOfe <= ( dbfAtpCli )->dFecFin .or. Empty( ( dbfAtpCli )->dFecFin ) ) .and. ;
-      ( dbfAtpCli )->nUnvOfe != 0                                                .and. ;
-      ( dbfAtpCli )->nUncOfe != 0
-
-      /*
-      Vamos a comprobar si la oferta es de unidades o de cajas-----------
-      */
-
-      nTipXbY     := ( dbfAtpCli )->nTipXbY
-
-      if nTipXbY == 1   // Cajas
-
-         if mod( nCajVen, ( dbfAtpCli )->nUnvOfe ) == 0
-
-            /*
-            Multiplos de la oferta---------------------------------------
-            */
-
-            nModOfe     := Int( Div( nCajVen, ( dbfAtpCli )->nUnvOfe ) )
-            nUndGrt     := ( ( dbfAtpCli )->nUnvOfe - ( dbfAtpCli )->nUncOfe ) * nModOfe
-            aXbYRet     := { nTipXbY, nUndGrt }
-
-         end if
-
-      else
-
-         /*
-         Comprobamos el numero de unidades a vender es igual a de la oferta
-         o si al dividirlo devuelve un numero de resto 0 tendremos un
-         multiplo de la oferta
-         */
-
-         if mod( nCajVen * nUndVen, ( dbfAtpCli )->nUnvOfe ) == 0
-
-            /*
-            Multiplos de la oferta
-            */
-            
-            nModOfe     := Int( Div( ( nCajVen * nUndVen ), ( dbfAtpCli )->nUnvOfe ) )
-            nUndGrt     := ( ( dbfAtpCli )->nUnvOfe - ( dbfAtpCli )->nUncOfe ) * nModOfe
-            aXbYRet     := { nTipXbY, nUndGrt }
-
-         end if
-
-      end if
-
-   end if 
-
-Return ( aXbyRet )
-
-//---------------------------------------------------------------------------//
-
-function lSeekAtpFam( cCadSea, dFecDoc, dbfCliAtp )
-
-   local lSea     := .f.
-   local nOrd     := ( dbfCliAtp )->( OrdSetFocus( "cCodFam" ) )
-
-   if ( dbfCliAtp )->( dbSeek( cCadSea ) )
-
-      while ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodFam == cCadSea .and.;
-            !( dbfCliAtp )->( eof() )
-
-         if ( ( dbfCliAtp )->dFecIni <= dFecDoc .or. Empty( ( dbfCliAtp )->dFecIni ) ) .and. ;
-            ( ( dbfCliAtp )->dFecFin >= dFecDoc .or. Empty( ( dbfCliAtp )->dFecFin ) ) .and. ;
-            ( dbfCliAtp )->nTipAtp == 2
-
-            lSea  := .t.
-            
-            exit
-
-         else
-
-            ( dbfCliAtp )->( dbSkip() )
-
-         end if
-
-      end while
-
-   end if
-
-   ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
-
-return ( lSea )
-
-//---------------------------------------------------------------------------//
-
-function nDtoAtp( nTarifa, dbfCliAtp, oDto, oTarifa )
-
-   local nDto        := 0
-
-   DEFAULT nTarifa   := 1
-
-   if nTarifa == 0
-      nTarifa        := 1
-   end if
-
-   while .t.
-
-      do case
-         case nTarifa == 1
-            nDto     := ( dbfCliAtp)->nDto1
-         case nTarifa == 2
-            nDto     := ( dbfCliAtp)->nDto2
-         case nTarifa == 3
-            nDto     := ( dbfCliAtp)->nDto3
-         case nTarifa == 4
-            nDto     := ( dbfCliAtp)->nDto4
-         case nTarifa == 5
-            nDto     := ( dbfCliAtp)->nDto5
-         case nTarifa == 6
-            nDto     := ( dbfCliAtp)->nDto6
-      end do
-
-      if nDto == 0 .and. nTarifa > 1 .and. lBuscaImportes()
-         nTarifa--
-         loop
-      else
-         exit
-      end if
-
-   end while
-
-   /*
-   Si no encontramos ningun descuento ponemos el general-----------------------
-   */
-
-   if nDto == 0
-      nDto           := ( dbfCliAtp)->nDtoArt
-   end if
-
-   /*
-   Ponemos el valor en el control----------------------------------------------
-   */
-
-   if nDto != 0 .and. oDto != nil
-      oDto:cText( nDto )
-   end if
-
-   /*
-   Ponemos la tarifa utilizada en el control-----------------------------------
-   */
-
-   if oTarifa != nil
-      oTarifa:cText( nTarifa )
-   end if
-
-return ( nDto )
-
-//---------------------------------------------------------------------------//
-
-Function nImpAtp( nTarifa, dbfCliAtp, uPreUnt, nIva, oTarifa )
-
-   local nPre        := 0
-
-   DEFAULT nTarifa   := 1
-   DEFAULT nIva      := 0
-
-   if nTarifa == 0
-      nTarifa        := 1
-   end if
-
-   while .t.
-
-      do case
-         case nTarifa == 1
-            nPre     := ( dbfCliAtp )->nPrcArt
-         case nTarifa == 2
-            nPre     := ( dbfCliAtp )->nPrcArt2
-         case nTarifa == 3
-            nPre     := ( dbfCliAtp )->nPrcArt3
-         case nTarifa == 4
-            nPre     := ( dbfCliAtp )->nPrcArt4
-         case nTarifa == 5
-            nPre     := ( dbfCliAtp )->nPrcArt5
-         case nTarifa == 6
-            nPre     := ( dbfCliAtp )->nPrcArt6
-      end do
-
-      if nPre == 0 .and. nTarifa > 1 .and. lBuscaImportes()
-         nTarifa--
-         loop
-      else
-         exit
-      end if
-
-   end while
-
-   if nIva != 0
-      nPre           += nPre * nIva / 100
-   end if
-
-   if nPre != 0 .and. uPreUnt != nil
-      uPreUnt:cText( nPre )
-   end if
-
-   if oTarifa != nil
-      oTarifa:cText( nTarifa )
-   end if
-
-return ( nPre )
- 
-//---------------------------------------------------------------------------//
-
-function lSeekAtpArt( cCadSea, cCodPrp, cValPrp, dFecDoc, dbfCliAtp )
-
-   local lSea        := .f.
-   local nOrd        := ( dbfCliAtp )->( OrdSetFocus( "cCliArt" ) )
-
-   DEFAULT cCodPrp   := Space( 20 )
-   DEFAULT cValPrp   := Space( 40 )
-
-   if ( dbfCliAtp )->( dbSeek( cCadSea + cCodPrp + cValPrp ) )
-
-      while ( ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodArt + ( dbfCliAtp )->cCodPr1 + ( dbfCliAtp )->cCodPr2 + ( dbfCliAtp )->cValPr1 + ( dbfCliAtp )->cValPr2 == cCadSea + cCodPrp + cValPrp ) .and.;
-            (!( dbfCliAtp )->( eof() ) )
-
-         if ( dbfCliAtp )->dFecIni <= dFecDoc .and. ( dbfCliAtp )->dFecFin >= dFecDoc .and. ( dbfCliAtp )->nTipAtp <= 1
-
-            lSea     := .t.
-            exit
-
-         else
-
-            ( dbfCliAtp )->( dbSkip() )
-
-         end if
-
-      end while
-
-   end if
-
-   if !lSea .and. ( dbfCliAtp )->( dbSeek( cCadSea + Space( 20 ) ) )
-
-      while ( ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodArt == cCadSea ) .and.;
-            (!( dbfCliAtp )->( eof() ) )
-
-         if ( dbfCliAtp )->dFecIni <= dFecDoc .and. ( dbfCliAtp )->dFecFin >= dFecDoc .and. ( dbfCliAtp )->nTipAtp <= 1
-
-            lSea     := .t.
-            exit
-
-         else
-
-            ( dbfCliAtp )->( dbSkip() )
-
-         end if
-
-      end while
-
-   end if
-
-   /*
-   Ahora vamos a ver si hay con fechas vacias----------------------------------
-   */
-
-   if !lSea .and. ( dbfCliAtp )->( dbSeek( cCadSea + cCodPrp + cValPrp ) )
-
-      while ( ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodArt + ( dbfCliAtp )->cCodPr1 + ( dbfCliAtp )->cCodPr2 + ( dbfCliAtp )->cValPr1 + ( dbfCliAtp )->cValPr2 == cCadSea + cCodPrp + cValPrp ) .and.;
-            (!( dbfCliAtp )->( eof() ) )
-
-         if Empty( ( dbfCliAtp )->dFecIni ) .and. Empty( ( dbfCliAtp )->dFecFin ) .and. ( dbfCliAtp )->nTipAtp <= 1
-
-            lSea     := .t.
-            exit
-
-         else
-
-            ( dbfCliAtp )->( dbSkip() )
-
-         end if
-
-      end while
-
-   end if
-
-   if !lSea .and. ( dbfCliAtp )->( dbSeek( cCadSea + Space( 20 ) ) )
-
-      while ( ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodArt == cCadSea ) .and.;
-            (!( dbfCliAtp )->( eof() ) )
-
-         if Empty( ( dbfCliAtp )->dFecIni ) .and. Empty( ( dbfCliAtp )->dFecFin )
-
-            lSea     := .t.
-            exit
-
-         else
-
-            ( dbfCliAtp )->( dbSkip() )
-
-         end if
-
-      end while
-
-   end if
-
-   ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
-
-return ( lSea )
-
-//---------------------------------------------------------------------------//
-
 /*
 Devuelve si el cliente tiene autorización para ventas de credito
 */
@@ -9815,10 +9413,10 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       AÂ¤adimos desde el fichero de contactos
       */
 
-      if ( dbfContactos )->( dbSeek( cCodCli ) )
-         while ( ( dbfContactos )->cCodCli == cCodCli ) .and. ( dbfContactos )->( !eof() )
-            dbPass( dbfContactos, dbfTmpCon, .t. )
-            ( dbfContactos )->( dbSkip() )
+      if ( D():ClientesContactos( nView ) )->( dbSeek( cCodCli ) )
+         while ( ( D():ClientesContactos( nView ) )->cCodCli == cCodCli ) .and. ( D():ClientesContactos( nView ) )->( !eof() )
+            dbPass( D():ClientesContactos( nView ), dbfTmpCon, .t. )
+            ( D():ClientesContactos( nView ) )->( dbSkip() )
          end while
       end if
 
@@ -10290,8 +9888,8 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
       oMsgText( "Eliminando contactos anteriores cliente" )
       oMsgProgress():SetRange( 0, ( dbfTmpCon )->( LastRec() ) )
 
-      while ( dbfContactos )->( dbSeek( aTmp[ _COD ] ) )
-         dbDel( dbfContactos )
+      while ( D():ClientesContactos( nView ) )->( dbSeek( aTmp[ _COD ] ) )
+         dbDel( D():ClientesContactos( nView ) )
          oMsgProgress():DeltaPos( 1 )
       end while
 
@@ -10300,7 +9898,7 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
 
       ( dbfTmpCon )->( dbGoTop() )
       while ( dbfTmpCon )->( !eof() )
-         dbPass( dbfTmpCon, dbfContactos, .t., aTmp[ _COD ] )
+         dbPass( dbfTmpCon, D():ClientesContactos( nView ), .t., aTmp[ _COD ] )
          ( dbfTmpCon )->( dbSkip() )
          oMsgProgress():DeltaPos( 1 )
       end while
@@ -11546,7 +11144,7 @@ Static Function DataReport( oFr, lTemporal )
    oFr:SetWorkArea(     "Direcciones",       ( D():ClientesDirecciones( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Direcciones",       cItemsToReport( aItmObr() ) )
 
-   oFr:SetWorkArea(     "Contactos",         ( dbfContactos )->( Select() ) )
+   oFr:SetWorkArea(     "Contactos",         ( D():ClientesContactos( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Contactos",         cItemsToReport( aItmContacto() ) )
 
    oFr:SetWorkArea(     "Bancos",            ( D():ClientesBancos( nView ) )->( Select() ) )
@@ -12504,16 +12102,6 @@ Function cClientEntidad( cCliente, dbfBncCli )
 Return cCuenta
 
 //---------------------------------------------------------------------------//
-/*
-Nos informa si tenemos atipicas para este cliente------------------------------
-*/
-
-Function lAtipicaCliente( cCodCli, dbfAtpCli )
-
-Return ( dbfAtpCli )->( dbSeek( cCodCli ) )
-
-//---------------------------------------------------------------------------//
-
 Function lConditionAtipica( dFecha, dbfClientAtp )
 
    if !Empty( ( dbfClientAtp )->cCodArt )    .and.;
@@ -13148,52 +12736,6 @@ Return lReturn
 
 //---------------------------------------------------------------------------//
 
-Function nImporteAtipica( cCodigoArticulo, cCodigoCliente, cCodigoGrupo, nTarifa, lIvaIncluido, dbfCliAtp )
-
-   local nOrd              := ( dbfCliAtp )->( ordSetFocus() ) 
-   local nRec              := ( dbfCliAtp )->( Recno() )
-   local nImporteAtipica   := 0
-
-   if dbSeekInOrd( cCodigoCliente + cCodigoArticulo, "cCliArt", dbfCliAtp )
-      nImporteAtipica      := nPrecioAtipica( nTarifa, lIvaIncluido, dbfCliAtp )
-   end if 
-
-   if empty( nImporteAtipica )
-      if dbSeekInOrd( cCodigoGrupo + cCodigoArticulo, "cGrpArt", dbfCliAtp )
-         nImporteAtipica   := nPrecioAtipica( nTarifa, lIvaIncluido, dbfCliAtp )
-      end if 
-   end if 
-
-   ( dbfCliAtp )->( ordSetFocus( nOrd ) ) 
-   ( dbfCliAtp )->( dbGoTo( nRec ) )
-
-Return ( nImporteAtipica )
-
-//---------------------------------------------------------------------------//
-
-function nPrecioAtipica( nTarifa, lIvaInc, dbfClientAtp )
-
-   local nPrecio  := 0
-
-   do case
-      case nTarifa == 1
-         nPrecio     := if( lIvaInc, ( dbfClientAtp )->nPreIva1, ( dbfClientAtp )->nPrcArt )
-      case nTarifa == 2
-         nPrecio     := if( lIvaInc, ( dbfClientAtp )->nPreIva2, ( dbfClientAtp )->nPrcArt2 )
-      case nTarifa == 3
-         nPrecio     := if( lIvaInc, ( dbfClientAtp )->nPreIva3, ( dbfClientAtp )->nPrcArt3 )
-      case nTarifa == 4
-         nPrecio     := if( lIvaInc, ( dbfClientAtp )->nPreIva4, ( dbfClientAtp )->nPrcArt4 )
-      case nTarifa == 5
-         nPrecio     := if( lIvaInc, ( dbfClientAtp )->nPreIva5, ( dbfClientAtp )->nPrcArt5 )
-      case nTarifa == 6
-         nPrecio     := if( lIvaInc, ( dbfClientAtp )->nPreIva6, ( dbfClientAtp )->nPrcArt6 )
-   end case
-
-Return nPrecio
-
-//---------------------------------------------------------------------------//
-
 FUNCTION RefBrwCta( oBrwCta, cSubCta, dbfDiario )
 
    if dbfDiario != nil
@@ -13215,244 +12757,6 @@ FUNCTION RefBrwCta( oBrwCta, cSubCta, dbfDiario )
    end if
 
 return .t.
-
-//---------------------------------------------------------------------------//
-
-Function lBuscarAtipicaArticulo( cCodCli, cCodGrp, dFecDoc, cCodArt, cCodPr1, cCodPr2, cValPr1, cValPr2, dbfCliAtp )
-
-   local nOrd        
-   local lSea        := .f.
-
-   DEFAULT cCodPr1   := Space( 20 )
-   DEFAULT cCodPr2   := Space( 20 )
-   DEFAULT cValPr1   := Space( 40 )
-   DEFAULT cValPr1   := Space( 40 )
-
-   nOrd              := ( dbfCliAtp )->( OrdSetFocus( "cCliArt" ) )
-
-   if ( dbfCliAtp )->( dbSeek( cCodCli + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) )
-
-      while ( ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodArt + ( dbfCliAtp )->cCodPr1 + ( dbfCliAtp )->cCodPr2 + ( dbfCliAtp )->cValPr1 + ( dbfCliAtp )->cValPr2 == cCodCli + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) .and. !( dbfCliAtp )->( eof() ) 
-
-         if lCheckAtipicaArticulo( dFecDoc, dbfCliAtp )
-
-            lSea     := .t.
-
-            exit
-
-         else
-
-            ( dbfCliAtp )->( dbSkip() )
-
-         end if
-
-      end while
-
-   end if
-
-   /*
-   Me voy para que el registro se quede bienposicionado------------------------
-   */
-
-   if lSea
-      ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
-      Return lSea
-   end if
-
-   if !lSea .and. ( dbfCliAtp )->( dbSeek( cCodCli + cCodArt ) )
-
-      while ( ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodArt == cCodCli + cCodArt ) .and. !( dbfCliAtp )->( eof() ) 
-
-         if lCheckAtipicaArticulo( dFecDoc, dbfCliAtp )
-
-            lSea     := .t.
-            exit
-
-         else
-
-            ( dbfCliAtp )->( dbSkip() )
-
-         end if
-
-      end while
-
-   end if
-
-   /*
-   Me voy para que el registro se quede bienposicionado------------------------
-   */
-
-   if lSea
-      ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
-      Return lSea
-   end if
-
-   // Buscamos por gupos de clientes-------------------------------------------
-
-   if !Empty( cCodGrp )
-
-      nOrd              := ( dbfCliAtp )->( OrdSetFocus( "cGrpArt" ) )
-
-      if ( dbfCliAtp )->( dbSeek( cCodGrp + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) )
-
-         while ( ( dbfCliAtp )->cCodGrp + ( dbfCliAtp )->cCodArt + ( dbfCliAtp )->cCodPr1 + ( dbfCliAtp )->cCodPr2 + ( dbfCliAtp )->cValPr1 + ( dbfCliAtp )->cValPr2 == cCodGrp + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) .and. !( dbfCliAtp )->( eof() ) 
-
-            if lCheckAtipicaArticulo( dFecDoc, dbfCliAtp ) .and. !lVaciaAtipicaArticulo( dbfCliAtp )
-
-               lSea     := .t.
-
-               exit
-
-            else
-
-               ( dbfCliAtp )->( dbSkip() )
-
-            end if
-
-         end while
-
-      end if
-
-      /*
-      Me voy para que el registro se quede bienposicionado------------------------
-      */
-
-      if lSea
-         ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
-         Return lSea
-      end if
-
-      if !lSea .and. ( dbfCliAtp )->( dbSeek( cCodGrp + cCodArt ) )
-
-         while ( ( dbfCliAtp )->cCodGrp + ( dbfCliAtp )->cCodArt == cCodGrp + cCodArt ) .and. !( dbfCliAtp )->( eof() ) 
-
-            if lCheckAtipicaArticulo( dFecDoc, dbfCliAtp ) .and. !lVaciaAtipicaArticulo( dbfCliAtp )
-
-               lSea     := .t.
-
-               exit
-
-            else
-
-               ( dbfCliAtp )->( dbSkip() )
-
-            end if
-
-         end while
-
-      end if
-
-      ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
-
-      /*
-      Me voy para que el registro se quede bienposicionado------------------------
-      */
-
-      if lSea
-         ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
-         Return lSea
-      end if
-
-   end if 
-
-Return ( lSea )
-
-//---------------------------------------------------------------------------//
-
-Function lBuscarAtipicaFamilia( cCodCli, cCodGrp, dFecDoc, cCodFam, dbfCliAtp )
-
-   local lSea     := .f.
-   local nOrd     := ( dbfCliAtp )->( OrdSetFocus( "cCodFam" ) )
-
-   if ( dbfCliAtp )->( dbSeek( cCodCli + cCodFam ) )
-
-      while ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodFam == cCodCli + cCodFam  .and. !( dbfCliAtp )->( eof() )
-
-         if lCheckAtipicaFamilia( dFecDoc, dbfCliAtp ) .and. !lVaciaAtipicaArticulo( dbfCliAtp )
-
-            lSea  := .t.
-
-            exit
-
-         else
-
-            ( dbfCliAtp )->( dbSkip() )
-
-         end if
-
-      end while
-
-   end if
-
-   ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
-
-   // Buscamos por grupo de cliente--------------------------------------------
-
-   if !Empty( cCodGrp )
-
-      nOrd     := ( dbfCliAtp )->( OrdSetFocus( "cGrpFam" ) )
-
-      if !lSea .and. ( dbfCliAtp )->( dbSeek( cCodGrp + cCodFam ) )
-
-         while ( dbfCliAtp )->cCodGrp + ( dbfCliAtp )->cCodFam == cCodGrp + cCodFam  .and. !( dbfCliAtp )->( eof() )
-
-            if lCheckAtipicaFamilia( dFecDoc, dbfCliAtp ) .and. !lVaciaAtipicaArticulo( dbfCliAtp )
-
-               lSea  := .t.
-               
-               exit
-
-            else
-
-               ( dbfCliAtp )->( dbSkip() )
-
-            end if
-
-         end while
-
-      end if
-
-      ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
-
-   end if   
-
-Return ( lSea )
-
-//---------------------------------------------------------------------------//
-
-Static Function lCheckFechaAtipica( dFecDoc, dbfCliAtp )
-
-Return ( ( empty( ( dbfCliAtp )->dFecIni ) .or. ( dbfCliAtp )->dFecIni <= dFecDoc ) .and. ;
-         ( empty( ( dbfCliAtp )->dFecFin ) .or. ( dbfCliAtp )->dFecFin >= dFecDoc ) )
-
-//---------------------------------------------------------------------------//
-
-Static Function lCheckAtipicaArticulo( dFecDoc, dbfCliAtp )
-
-Return ( lCheckFechaAtipica( dFecDoc, dbfCliAtp ) .and. ( dbfCliAtp )->nTipAtp <= 1 )
-
-//---------------------------------------------------------------------------//
-
-Static Function lCheckAtipicaFamilia( dFecDoc, dbfCliAtp )
-
-Return ( lCheckFechaAtipica( dFecDoc, dbfCliAtp ) .and. ( dbfCliAtp )->nTipAtp == 2 )
-
-//---------------------------------------------------------------------------//
-
-Static Function lVaciaAtipicaArticulo( dbfCliAtp )
-
-Return ( empty( ( dbfCliAtp )->nPrcArt  ) .and. ;
-         empty( ( dbfCliAtp )->nPrcArt2 ) .and. ;
-         empty( ( dbfCliAtp )->nPrcArt3 ) .and. ;
-         empty( ( dbfCliAtp )->nPrcArt4 ) .and. ;
-         empty( ( dbfCliAtp )->nPrcArt5 ) .and. ;
-         empty( ( dbfCliAtp )->nPrcArt6 ) .and. ;
-         empty( ( dbfCliAtp )->nDto1 )    .and. ;
-         empty( ( dbfCliAtp )->nDto2 )    .and. ;
-         empty( ( dbfCliAtp )->nDto3 )    .and. ;
-         empty( ( dbfCliAtp )->nDto4 )    .and. ;
-         empty( ( dbfCliAtp )->nDto5 )    .and. ;
-         empty( ( dbfCliAtp )->nDto6 ) )
 
 //---------------------------------------------------------------------------//
 
@@ -13853,19 +13157,75 @@ static function DelDetalle( cCodigo )
 
    ( D():ClientesEntidad( nView ) )->( OrdSetFocus( nOrdAnt ) )
 
+   /*
+   Eliminamos los bancos-------------------------------------------------------
+   */
 
+   ( D():ClientesBancos( nView ) )->( OrdSetFocus( "cCodCli" ) )
 
+   if ( D():ClientesBancos( nView ) )->( dbSeek( cCodigo ) )
 
+      while ( ( D():ClientesBancos( nView ) )->cCodCli == cCodigo )
+
+            if dbLock( D():ClientesBancos( nView ) )
+               ( D():ClientesBancos( nView ) )->( dbDelete() )
+               ( D():ClientesBancos( nView ) )->( dbUnLock() )
+            end if
+
+            ( D():ClientesBancos( nView ) )->( dbSkip( 1 ) )
+
+      end while
+
+   end if
+
+   ( D():ClientesBancos( nView ) )->( OrdSetFocus( nOrdAnt ) )
+
+   /*
+   Eliminamos las atipicas-----------------------------------------------------
+   */
+
+   ( D():Atipicas( nView ) )->( OrdSetFocus( "cCodCli" ) )
+
+   if ( D():Atipicas( nView ) )->( dbSeek( cCodigo ) )
+
+      while ( ( D():Atipicas( nView ) )->cCodCli == cCodigo )
+
+            if dbLock( D():Atipicas( nView ) )
+               ( D():Atipicas( nView ) )->( dbDelete() )
+               ( D():Atipicas( nView ) )->( dbUnLock() )
+            end if
+
+            ( D():Atipicas( nView ) )->( dbSkip( 1 ) )
+
+      end while
+
+   end if
+
+   ( D():Atipicas( nView ) )->( OrdSetFocus( nOrdAnt ) )
 
    
+   /*
+   Eliminamos los contactos----------------------------------------------------
+   */
 
-   /*ClientesBancos( nView )*/
-      
+   ( D():ClientesContactos( nView ) )->( OrdSetFocus( "cCodCli" ) )
 
+   if ( D():ClientesContactos( nView ) )->( dbSeek( cCodigo ) )
 
+      while ( ( D():ClientesContactos( nView ) )->cCodCli == cCodigo )
 
+            if dbLock( D():ClientesContactos( nView ) )
+               ( D():ClientesContactos( nView ) )->( dbDelete() )
+               ( D():ClientesContactos( nView ) )->( dbUnLock() )
+            end if
 
+            ( D():ClientesContactos( nView ) )->( dbSkip( 1 ) )
 
+      end while
+
+   end if
+
+   ( D():ClientesContactos( nView ) )->( OrdSetFocus( nOrdAnt ) )
 
    EndWait()
 
