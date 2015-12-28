@@ -6016,11 +6016,7 @@ Return ( by( nRow ) )
 
 Function Test() 
 
-<<<<<<< HEAD
    // TConversionPedidosProveedores():New():Dialog()
-=======
-   //TConversionPedidosProveedores():New():Dialog()
->>>>>>> origin/master
 
 Return ( nil )
 
