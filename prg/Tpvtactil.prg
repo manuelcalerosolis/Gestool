@@ -4720,9 +4720,9 @@ METHOD nPrecioArticulo( cCodigoArticulo, cCodigoMenu, cCodigoOrden ) CLASS TpvTa
 
    // Si el cliente tiene una tarifa atípica la buscamos tb-----------------------
 
-   if lBuscarAtipicaArticulo( ::oTiketCabecera:cCliTik, cCodGrp, GetSysDate(), cCodigoArticulo, ::GetCodigoPropiedadArticulo1(), ::GetValorPropiedadArticulo1(), ::GetCodigoPropiedadArticulo2(), ::GetValorPropiedadArticulo2(), ::oAtipicasCliente:cAlias )
+   /*if lBuscarAtipicaArticulo( ::oTiketCabecera:cCliTik, cCodGrp, GetSysDate(), cCodigoArticulo, ::GetCodigoPropiedadArticulo1(), ::GetValorPropiedadArticulo1(), ::GetCodigoPropiedadArticulo2(), ::GetValorPropiedadArticulo2(), ::oAtipicasCliente:cAlias )
       nPrecio           := nImpAtp( ::nTarifaSolo, ::oAtipicasCliente:cAlias, , nIva( ::oTipoIva, ::oArticulo:TipoIva ) )
-   end if   
+   end if   */
 
 Return ( nPrecio )
 

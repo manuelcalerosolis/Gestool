@@ -1100,12 +1100,12 @@ STATIC FUNCTION GenLqdAlm( dIniFecLqd, dFinFecLqd, cGetAlmDes, cGetAlmHas, oMetM
             */
 
             do case
-            case lSeekAtpArt( cCodCli + ( dbfNewFil )->cCodArt, , , ( dbfAlbCliT )->dFecAlb, dbfCliAtp )
+            /*case lSeekAtpArt( cCodCli + ( dbfNewFil )->cCodArt, , , ( dbfAlbCliT )->dFecAlb, dbfCliAtp )
 
                ( dbfAlbCliL )->nPreUnit   := ( dbfCliAtp )->NPRCART
                ( dbfAlbCliL )->nDto       := ( dbfCliAtp )->NDTOART
                ( dbfAlbCliL )->nDtoPrm    := ( dbfCliAtp )->NDPRART
-               ( dbfAlbCliL )->nComAge    := ( dbfCliAtp )->NCOMAGE
+               ( dbfAlbCliL )->nComAge    := ( dbfCliAtp )->NCOMAGE*/
 
             case !Empty( ( dbfAlbCliT )->cCodTar ) .and. ( dbfAlbCliL )->nPreUnit == 0
 

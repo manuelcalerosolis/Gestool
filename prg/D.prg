@@ -333,6 +333,8 @@ CLASS D
                                                                   ( ::ClientesIncidencias( nView ) )->( ordScope( 1, nil ) ),;
                                                                   ::setStatusClientesIncidencias( nView ) )  
 
+   METHOD ClientesDocumentos( nView )                 INLINE ( ::Get( "ClientD", nView ) )
+
    METHOD ClientesBancos( nView )                     INLINE ( ::Get( "CliBnc", nView ) )
       METHOD getStatusClientesBancos( nView )         INLINE ( ::aStatus := aGetStatus( ::ClientesBancos( nView ) ) )
       METHOD setStatusClientesBancos( nView )         INLINE ( SetStatus( ::Get( "CliBnc", nView ), ::aStatus ) ) 
@@ -527,6 +529,8 @@ CLASS D
    METHOD Atipicas( nView )                  INLINE ( ::Get( "CliAtp", nView ) )
       METHOD gotoIdAtipicasAgentes( idAgente, idArticulo, nView ) ;
                                              INLINE ( ::seekInOrd( ::Atipicas( nView ), idAgente + idArticulo, "cAgeArt" ) )
+
+   METHOD ClientesContactos( nView )         INLINE ( ::Get( "CliContactos", nView ) )
 
    METHOD ImpuestosEspeciales( nView )       INLINE ( ::GetObject( "ImpuestosEspeciales", nView ) )
 

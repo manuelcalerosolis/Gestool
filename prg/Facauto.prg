@@ -1517,6 +1517,8 @@ RETURN ( nil )
 
 CLASS TCreaFacAutomaticas
 
+   DATA nView
+
    DATA oDbfArt
    DATA oDbfCli
    DATA oDbfDiv
@@ -1528,7 +1530,6 @@ CLASS TCreaFacAutomaticas
    DATA oDbfUser
    DATA oDbfFPago
    DATA oDbfAge
-   DATA oDbfCliAtp
 
    DATA oAlbCliT
    DATA oAlbCliL
@@ -1751,7 +1752,7 @@ METHOD Run() CLASS TCreaFacAutomaticas
       Resto de controles-------------------------------------------------------
       */
 
-REDEFINE APOLOMETER ::oMetMsg VAR nMetMsg ;
+      REDEFINE APOLOMETER ::oMetMsg VAR nMetMsg ;
          ID       120 ;
          OF       oDlg
 
@@ -1814,6 +1815,8 @@ METHOD OpenFiles() CLASS TCreaFacAutomaticas
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+   ::nView              := D():CreateView()
+
    DATABASE NEW ::oDbfArt     PATH ( cPatArt() )   FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    DATABASE NEW ::oDbfCli     PATH ( cPatCli() )   FILE "CLIENT.DBF"   VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
@@ -1848,7 +1851,7 @@ METHOD OpenFiles() CLASS TCreaFacAutomaticas
 
    DATABASE NEW ::oDbfAge     PATH ( cPatCli() )   FILE "AGENTES.DBF"  VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
 
-   DATABASE NEW ::oDbfCliAtp  PATH ( cPatCli() )   FILE "CLIATP.DBF"   VIA ( cDriver() ) SHARED INDEX "CLIATP.CDX"
+   D():Atipicas( ::nView )
 
    ::oGrpFacturasAutomaticas  := TGrpFacturasAutomaticas():Create( cPatEmp() )
    ::oGrpFacturasAutomaticas:OpenService( .f. )
@@ -1883,6 +1886,8 @@ RETURN ( lOpen )
 //---------------------------------------------------------------------------//
 
 METHOD CloseFiles() CLASS TCreaFacAutomaticas
+
+   D():DeleteView( ::nView )
 
    if ::oDbfCli != nil .and. ::oDbfCli:Used()
       ::oDbfCli:End()
@@ -1952,10 +1957,6 @@ METHOD CloseFiles() CLASS TCreaFacAutomaticas
       ::oDbfAge:End()
    end if
 
-   if ::oDbfCliAtp != nil .and. ::oDbfCliAtp:Used()
-      ::oDbfCliAtp:End()
-   end if
-
    if ::oGrpFacturasAutomaticas != nil
       ::oGrpFacturasAutomaticas:End()
    end if 
@@ -1997,7 +1998,6 @@ METHOD CloseFiles() CLASS TCreaFacAutomaticas
    ::oDbfUser     := nil
    ::oDbfFPago    := nil
    ::oDbfAge      := nil
-   ::oDbfCliAtp   := nil
 
 RETURN ( .t. )
 
@@ -2287,6 +2287,8 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
    local nImpAtp
    local nDtoArt
    local cCodPgo
+   local hAtipica
+   local hValue      := {=>}
 
    BeginTransaction()
 
@@ -2379,6 +2381,13 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
    ::oAlbCliT:cManObr      := ::oFacAutT:oDbf:cManObr
    ::oAlbCliT:lRecargo     := ::oDbfCli:lReq
 
+   hValue[ "cCodigoCliente"    ] := ::oDbfCli:Cod
+   hValue[ "dFecha"            ] := ::dFecDocumento
+   hValue[ "cCodigoGrupo"      ] := ::oDbfCli:cCodGrp
+   hValue[ "lIvaIncluido"      ] := uFieldEmpresa( "lIvaInc" )
+   hValue[ "nDescuentoTarifa"  ] := ::oDbfCli:nDtoArt
+   hValue[ "nTarifaPrecio"     ] := Max( uFieldEmpresa( "nPreVta" ), ::oDbfCli:nTarifa )
+
    nDtoArt                 := oRetFld( ::oDbfCli:Cod, ::oDbfCli, "nDtoArt" )
 
    ::oAlbCliT:cSerAlb      := cSerAlb
@@ -2409,6 +2418,12 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
 
          ::oAlbCliL:cAlmLin         := ::oAlbCliT:cCodAlm
 
+         hValue[ "cCodigoArticulo"   ] := ::oFacAutL:oDbf:cCodArt
+         hValue[ "cCodigoPropiedad1" ] := ::oFacAutL:oDbf:cCodPr1
+         hValue[ "cCodigoPropiedad2" ] := ::oFacAutL:oDbf:cCodPr2
+         hValue[ "cValorPropiedad1"  ] := ::oFacAutL:oDbf:cValPr1
+         hValue[ "cValorPropiedad2"  ] := ::oFacAutL:oDbf:cValPr2
+         
          if ::oDbfArt:Seek( ::oFacAutL:oDbf:cCodArt )
 
             ::oAlbCliL:nPesoKg      := ::oDbfArt:nPesoKg
@@ -2425,6 +2440,8 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
             ::oAlbCliL:nCtlStk      := ::oDbfArt:nCtlStock
             ::oAlbCliL:nCosDiv      := nCosto( nil, ::oDbfArt:cAlias, ::oDbfKit:cAlias )
 
+            hValue[ "cCodigoFamilia"    ] := ::oDbfArt:Familia
+            
             if ( ::oFacAutT:oDbf:lUseCli )
 
                do case
@@ -2452,37 +2469,6 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
 
          end if
 
-         if ::oFacAutL:oDbf:lPrcAtp
-
-            /*
-            Chequeamos situaciones especiales----------------------------------
-            */
-
-            if lSeekAtpArt( ::oDbfCli:Cod + ::oFacAutL:oDbf:cCodArt, ::oFacAutL:oDbf:cCodPr1 + ::oFacAutL:oDbf:cCodPr2, ::oFacAutL:oDbf:cValPr1 + ::oFacAutL:oDbf:cValPr2, ::dFecDocumento, ::oDbfCliAtp:cAlias ) .and. ;
-               ::oDbfCliAtp:lAplFac
-
-               nImpAtp                 := nImpAtp( , ::oDbfCliAtp:cAlias )
-
-               if nImpAtp  != 0
-                  ::oAlbCliL:nPreUnit  := nImpAtp
-               else
-                  ::oAlbCliL:nPreUnit  := nRetPreArt( Max( uFieldEmpresa( "nPreVta" ), ::oDbfCli:nTarifa ), cDivEmp(), uFieldEmpresa( "lIvaInc" ), ::oDbfArt:cAlias, ::oDbfDiv:cAlias, ::oDbfKit:cAlias, ::oDbfIva:cAlias )
-               end if
-
-               ::oAlbCliL:nDto         := nDtoAtp( , ::oDbfCliAtp:cAlias )
-
-            else
-
-               ::oAlbCliL:nPreUnit     := nRetPreArt( Max( uFieldEmpresa( "nPreVta" ), ::oDbfCli:nTarifa ), cDivEmp(), uFieldEmpresa( "lIvaInc" ), ::oDbfArt:cAlias, ::oDbfDiv:cAlias, ::oDbfKit:cAlias, ::oDbfIva:cAlias )
-
-            end if
-
-         else
-
-            ::oAlbCliL:nPreUnit     := ::oFacAutL:oDbf:nPreUnit
-
-         end if
-
          ::oAlbCliL:nCanEnt         := ::oFacAutL:oDbf:nCajas
          ::oAlbCliL:nUniCaja        := ::oFacAutL:oDbf:nUnidades
          ::oAlbCliL:lKitArt         := ::oFacAutL:oDbf:lKitArt
@@ -2496,6 +2482,56 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
          ::oAlbCliL:lIvaLin         := uFieldEmpresa( "lIvaInc" )
          ::oAlbCliL:nTarLin         := Max( uFieldEmpresa( "nPreVta" ), ::oDbfCli:nTarifa )
          ::oAlbCliL:nComAge         := RetFld( ::oDbfCli:cAgente, ::oDbfAge:cAlias, "nCom1" )
+         ::oAlbCliL:nPreUnit        := ::oFacAutL:oDbf:nPreUnit
+
+         hValue[ "nCajas"            ] := ::oFacAutL:oDbf:nCajas
+         hValue[ "nUnidades"         ] := ::oFacAutL:oDbf:nUnidades
+         hValue[ "nTipoDocumento"    ] := ALB_CLI
+         hValue[ "nView"             ] := ::nView
+
+         if ::oFacAutL:oDbf:lPrcAtp
+
+            /*
+            Buscamos si existen atipicas de clientes------------------------------
+            */
+
+            hAtipica := hAtipica( hValue )
+
+            if !Empty( hAtipica )
+                  
+               if hhaskey( hAtipica, "nImporte" )
+                  if hAtipica[ "nImporte" ] != 0
+                     ::oAlbCliL:nPreUnit := hAtipica[ "nImporte" ]
+                  end if
+               end if
+
+               if hhaskey( hAtipica, "nDescuentoPorcentual" )
+                  if hAtipica[ "nDescuentoPorcentual" ] != 0
+                     ::oAlbCliL:nDto     := hAtipica[ "nDescuentoPorcentual" ]
+                  end if   
+               end if
+
+               if hhaskey( hAtipica, "nDescuentoPromocional" )
+                  if hAtipica[ "nDescuentoPromocional" ] != 0
+                     ::oAlbCliL:nDtoPrm  := hAtipica[ "nDescuentoPromocional" ]
+                  end if
+               end if
+
+               if hhaskey( hAtipica, "nDescuentoLineal" )
+                  if hAtipica[ "nDescuentoLineal" ] != 0
+                     ::oAlbCliL:nDtoDiv  := hAtipica[ "nDescuentoLineal" ]
+                  end if
+               end if
+
+               if hhaskey( hAtipica, "nComisionAgente" )
+                  if hAtipica[ "nComisionAgente" ] != 0
+                     ::oAlbCliL:nComAge  := hAtipica[ "nComisionAgente" ]
+                  end if
+               end if
+
+            end if
+
+         end if
 
          ::oAlbCliL:Save()
 
@@ -2564,6 +2600,8 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
    local nImpAtp
    local nDtoArt
    local cCodPgo
+   local hAtipica
+   local hValue            := {=>}
 
    BeginTransaction()
 
@@ -2661,6 +2699,13 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
    ::oFacCliT:nIvaMan      := ::oFacAutT:oDbf:nIvaMan
    ::oFacCliT:nManObr      := ::oFacAutT:oDbf:nManObr
 
+   hValue[ "cCodigoCliente"    ] := ::oDbfCli:Cod
+   hValue[ "dFecha"            ] := ::dFecDocumento
+   hValue[ "cCodigoGrupo"      ] := ::oDbfCli:cCodGrp
+   hValue[ "lIvaIncluido"      ] := uFieldEmpresa( "lIvaInc" )
+   hValue[ "nDescuentoTarifa"  ] := ::oDbfCli:nDtoArt
+   hValue[ "nTarifaPrecio"     ] := Max( uFieldEmpresa( "nPreVta" ), ::oDbfCli:nTarifa )
+
    nDtoArt                 := oRetFld( ::oDbfCli:Cod, ::oDbfCli, "nDtoArt" )
 
    ::oFacCliT:cSerie       := cSerFac
@@ -2692,6 +2737,12 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
 
          ::oFacCliL:cAlmLin      := ::oFacCliT:cCodAlm
 
+         hValue[ "cCodigoArticulo"   ] := ::oFacAutL:oDbf:cCodArt
+         hValue[ "cCodigoPropiedad1" ] := ::oFacAutL:oDbf:cCodPr1
+         hValue[ "cCodigoPropiedad2" ] := ::oFacAutL:oDbf:cCodPr2
+         hValue[ "cValorPropiedad1"  ] := ::oFacAutL:oDbf:cValPr1
+         hValue[ "cValorPropiedad2"  ] := ::oFacAutL:oDbf:cValPr2
+
          if ::oDbfArt:Seek( ::oFacAutL:oDbf:cCodArt )
 
             ::oFacCliL:nPesoKg   := ::oDbfArt:nPesoKg
@@ -2707,6 +2758,8 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
             ::oFacCliL:cGrpFam   := RetFld( ::oDbfArt:Familia, ::oDbfFam:cAlias, "cCodGrp" )
             ::oFacCliL:nCtlStk   := ::oDbfArt:nCtlStock
             ::oFacCliL:nCosDiv   := nCosto( nil, ::oDbfArt:cAlias, ::oDbfKit:cAlias )
+
+            hValue[ "cCodigoFamilia"    ] := ::oDbfArt:Familia
 
             if ( ::oFacAutT:oDbf:lUseCli )
 
@@ -2735,37 +2788,6 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
 
          end if
 
-         if ::oFacAutL:oDbf:lPrcAtp
-
-            /*
-            Chequeamos situaciones especiales----------------------------------
-            */
-
-            if lSeekAtpArt( ::oDbfCli:Cod + ::oFacAutL:oDbf:cCodArt, ::oFacAutL:oDbf:cCodPr1 + ::oFacAutL:oDbf:cCodPr2, ::oFacAutL:oDbf:cValPr1 + ::oFacAutL:oDbf:cValPr2, ::dFecDocumento, ::oDbfCliAtp:cAlias ) .and. ;
-               ::oDbfCliAtp:lAplFac
-
-               nImpAtp                 := nImpAtp( , ::oDbfCliAtp:cAlias )
-
-               if nImpAtp  != 0
-                  ::oFacCliL:nPreUnit  := nImpAtp
-               else
-                  ::oFacCliL:nPreUnit  := ::oFacAutL:oDbf:nPreUnit
-               end if
-
-               ::oFacCliL:nDto         := nDtoAtp( , ::oDbfCliAtp:cAlias )
-
-            else
-
-               ::oFacCliL:nPreUnit     := nRetPreArt( Max( uFieldEmpresa( "nPreVta" ), ::oDbfCli:nTarifa ), cDivEmp(), uFieldEmpresa( "lIvaInc" ), ::oDbfArt:cAlias, ::oDbfDiv:cAlias, ::oDbfKit:cAlias, ::oDbfIva:cAlias )
-
-            end if
-
-         else
-
-            ::oFacCliL:nPreUnit        := ::oFacAutL:oDbf:nPreUnit
-
-         end if
-
          ::oFacCliL:nCanEnt      := ::oFacAutL:oDbf:nCajas
          ::oFacCliL:nUniCaja     := ::oFacAutL:oDbf:nUnidades
          ::oFacCliL:lKitArt      := ::oFacAutL:oDbf:lKitArt
@@ -2781,6 +2803,55 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
          ::oFacCliL:nTarLin      := Max( uFieldEmpresa( "nPreVta" ), ::oDbfCli:nTarifa )
          ::oFacCliL:cCodAge      := ::oDbfCli:cAgente
          ::oFacCliL:nComAge      := RetFld( ::oDbfCli:cAgente, ::oDbfAge:cAlias, "nCom1" )
+
+         hValue[ "nCajas"            ] := ::oFacAutL:oDbf:nCajas
+         hValue[ "nUnidades"         ] := ::oFacAutL:oDbf:nUnidades
+         hValue[ "nTipoDocumento"    ] := FAC_CLI
+         hValue[ "nView"             ] := ::nView
+
+         if ::oFacAutL:oDbf:lPrcAtp
+
+            /*
+            Buscamos si existen atipicas de clientes------------------------------
+            */
+
+            hAtipica := hAtipica( hValue )
+
+            if !Empty( hAtipica )
+                  
+               if hhaskey( hAtipica, "nImporte" )
+                  if hAtipica[ "nImporte" ] != 0
+                     ::oFacCliL:nPreUnit := hAtipica[ "nImporte" ]
+                  end if
+               end if
+
+               if hhaskey( hAtipica, "nDescuentoPorcentual" )
+                  if hAtipica[ "nDescuentoPorcentual" ] != 0
+                     ::oFacCliL:nDto     := hAtipica[ "nDescuentoPorcentual" ]
+                  end if   
+               end if
+
+               if hhaskey( hAtipica, "nDescuentoPromocional" )
+                  if hAtipica[ "nDescuentoPromocional" ] != 0
+                     ::oFacCliL:nDtoPrm  := hAtipica[ "nDescuentoPromocional" ]
+                  end if
+               end if
+
+               if hhaskey( hAtipica, "nDescuentoLineal" )
+                  if hAtipica[ "nDescuentoLineal" ] != 0
+                     ::oFacCliL:nDtoDiv  := hAtipica[ "nDescuentoLineal" ]
+                  end if
+               end if
+
+               if hhaskey( hAtipica, "nComisionAgente" )
+                  if hAtipica[ "nComisionAgente" ] != 0
+                     ::oFacCliL:nComAge  := hAtipica[ "nComisionAgente" ]
+                  end if
+               end if
+
+            end if
+
+         end if
 
          ::oFacCliL:Save()
 
@@ -2810,7 +2881,7 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
    */
 
    cText          := "Factura: " + cSerFac + "/" + AllTrim( Str( nNumFac ) ) + "/" + AllTrim( cSufFac ) + Space( 1 ) + ;
-                     "Importe: " + AllTrim( Trans( nTotFacCli( cSerFac + Str( nNumFac ) + cSufFac, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias ), ::cPorDiv ) ) + Space(1) + cSimDiv( cDivEmp(), ::oDbfDiv ) + Space( 1 ) + ;
+                     "Importe: " + AllTrim( Trans( nTotFacCli( cSerFac + Str( nNumFac ) + cSufFac, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::oFacCliP:cAlias, ::oAntCliT:cAlias ), ::cPorDiv ) ) + Space(1) + cSimDiv( cDivEmp(), ::oDbfDiv ) + Space( 1 ) + ;
                      "Cliente: " + AllTrim( ::oDbfCli:Cod ) + " - " + AllTrim( ::oDbfCli:Titulo )
 
    fWrite( ::hFilTxt, cText + CRLF )
