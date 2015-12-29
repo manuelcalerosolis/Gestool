@@ -4466,7 +4466,7 @@ METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
 
             else
 
-               nPreMed     := nCosto( ::oParent:oArt:Codigo, ::oParent:oArt:cAlias, ::oParent:oArtKit:cAlias )
+               nPreMed        := nCosto( ::oParent:oArt:Codigo, ::oParent:oArt:cAlias, ::oParent:oArtKit:cAlias )
 
             end if
 
@@ -4476,9 +4476,9 @@ METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
             Stock actual-------------------------------------------------------
             */
 
-            // ::aStkArticulo()
-
             ::oParent:oStock:lPutStockActual( ::oDbfVir:cRefMov, ::oParent:oDbf:cAlmOrg, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote, .f., ::oParent:oArt:nCtlStock, ::oGetStockOrigen )
+
+            ::oParent:oStock:lPutStockActual( ::oDbfVir:cRefMov, ::oParent:oDbf:cAlmDes, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote, .f., ::oParent:oArt:nCtlStock, ::oGetStockDestino )
 
             /*
             Guardamos el stock anterior----------------------------------------

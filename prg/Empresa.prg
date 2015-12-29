@@ -372,7 +372,7 @@ FUNCTION Empresa( oMenuItem, oWnd )
 
       oWndBrw:AddSeaBar()
 
-if oUser():lCambiarEmpresa
+   if oUser():lCambiarEmpresa
 
       DEFINE BTNSHELL RESOURCE "SEL" OF oWndBrw ;
 			NOBORDER ;
@@ -388,6 +388,13 @@ if oUser():lCambiarEmpresa
          HOTKEY   "A" ;
          LEVEL    ACC_APPD
 
+      DEFINE BTNSHELL RESOURCE "DUP" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( if( oUser():lCambiarEmpresa, WinDupEmp(), ) );
+         TOOLTIP  "(D)uplicar";
+         HOTKEY   "D";
+         LEVEL    ACC_APPD
+
       DEFINE BTNSHELL RESOURCE "EDIT" OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( oWndBrw:RecEdit() );
@@ -396,7 +403,7 @@ if oUser():lCambiarEmpresa
          HOTKEY   "M" ;
          LEVEL    ACC_EDIT
 
-end if         
+   end if         
 
       DEFINE BTNSHELL RESOURCE "ZOOM" OF oWndBrw ;
 			NOBORDER ;
@@ -406,7 +413,7 @@ end if
          HOTKEY   "Z";
          LEVEL    ACC_ZOOM
 
-if oUser():lCambiarEmpresa      
+   if oUser():lCambiarEmpresa      
 
       DEFINE BTNSHELL RESOURCE "DEL" OF oWndBrw ;
 			NOBORDER ;
@@ -429,7 +436,7 @@ if oUser():lCambiarEmpresa
          HOTKEY   "T" ;
          LEVEL    ACC_EDIT
 
-end if         
+   end if         
 
       DEFINE BTNSHELL RESOURCE "END1" GROUP OF oWndBrw ;
 			NOBORDER ;
@@ -451,54 +458,67 @@ RETURN NIL
 
 Static Function WinAppEmp()
 
-   local cCodigoEmpresa
-   local cNombreEmpresa
-
    if WinAppRec( oWndBrw, bEdit, dbfEmp )
-
-      cCodigoEmpresa := ( dbfEmp )->CodEmp
-      cNombreEmpresa := ( dbfEmp )->cNombre
-
-      /*
-      Cerramos la ventana------------------------------------------------------
-      */
-   
-      oWndBrw:QuitOnProcess()
-      oWndBrw:End()
-
-      /*
-      Cerramos todas los servicios---------------------------------------------
-      */
-
-      StopServices()
-
-      /*
-      Creamos empresa----------------------------------------------------------
-      */
-
-      dbCloseAll()
-
-      mkPathEmp( cCodigoEmpresa, cNombreEmpresa, cOldCodigoEmpresa, aImportacion, .t., .t., nSemillaContadores )
-
-      /*
-      Establecemos la empresa como la seleccionada-----------------------------
-      */
-
-      SetEmpresa( cCodigoEmpresa, , , , , oWnd(), .t. )
-
-      /*
-      Reindexamos--------------------------------------------------------------
-      */
-
-      ReindexaEmp( cPatEmpOld( cCodigoEmpresa ), cCodigoEmpresa )
-
-      /*
-      Iniciamos todas los servicios---------------------------------------------
-      */
-
-      InitServices()
-
+      initialProccesBuildEmpresa()
    end if
+
+RETURN ( nil )
+       
+//----------------------------------------------------------------------------//
+
+Static Function WinDupEmp()
+
+   if WinDupRec( oWndBrw, bEdit, dbfEmp )
+      initialProccesBuildEmpresa()
+   end if
+
+RETURN ( nil )
+       
+//----------------------------------------------------------------------------//
+
+Static Function initialProccesBuildEmpresa()
+
+   local cCodigoEmpresa := ( dbfEmp )->CodEmp
+   local cNombreEmpresa := ( dbfEmp )->cNombre
+
+   /*
+   Cerramos la ventana------------------------------------------------------
+   */
+
+   oWndBrw:QuitOnProcess()
+   oWndBrw:End()
+
+   /*
+   Cerramos todas los servicios---------------------------------------------
+   */
+
+   stopServices()
+
+   /*
+   Creamos empresa----------------------------------------------------------
+   */
+
+   dbCloseAll()
+
+   mkPathEmp( cCodigoEmpresa, cNombreEmpresa, cOldCodigoEmpresa, aImportacion, .t., .t., nSemillaContadores )
+
+   /*
+   Establecemos la empresa como la seleccionada-----------------------------
+   */
+
+   setEmpresa( cCodigoEmpresa, , , , , oWnd(), .t. )
+
+   /*
+   Reindexamos--------------------------------------------------------------
+   */
+
+   reindexaEmp( cPatEmpOld( cCodigoEmpresa ), cCodigoEmpresa )
+
+   /*
+   Iniciamos todas los servicios---------------------------------------------
+   */
+
+   initServices()
 
 RETURN ( nil )
        
@@ -507,13 +527,7 @@ RETURN ( nil )
 Static Function WinEdtEmp()
 
    if WinEdtRec( oWndBrw, bEdit, dbfEmp )
-
-      /*
-      Establecemos la empresa como la seleccionada-----------------------------
-      */
-
       SetEmpresa( ( dbfEmp )->CodEmp, , , , , oWnd() )
-
    end if
 
 RETURN ( nil )
@@ -601,51 +615,58 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
    local oBmpImportacion
    local oBmpDelegaciones
    local oBmpBancos
+   local lAppendMode       := ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
 
-   if ( nMode == APPD_MODE ) .and. ( nUsrInUse() > 1 )
+   if ( lAppendMode ) .and. ( nUsrInUse() > 1 )
       msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
       return .f.
    end if
 
-   cOldCodigoEmpresa    := Space( 4 )
-   nSemillaContadores   := 1
-   aImportacion         := aImportacion()
+   cOldCodigoEmpresa       := Space( 4 )
+   nSemillaContadores      := 1
+   aImportacion            := aImportacion()
 
    // Para los servicios ------------------------------------------------------
 
    StopServices()
 
-   if nMode == APPD_MODE
-      aTmp[_NCODCLI]    := 7
-      aTmp[_NCODPRV]    := 7
-      aTmp[_NNUMTUR]    := 1
-      aTmp[_NNUMREM]    := 1
-      aTmp[_NNUMMOV]    := 1
-      aTmp[_NNUMLIQ]    := 1
-      aTmp[_NNUMCOB]    := 1
-      aTmp[_NNUMCAR]    := 1
-      aTmp[_NDGTUND]    := 8
-      aTmp[_NDGTESC]    := 8
-      aTmp[_CDIVEMP]    := "EUR"
-      aTmp[_CDIVCHG]    := "PTS"
-      aTmp[_DINIOPE]    := Ctod( "01/01/" + Str( Year( Date() ), 4 ) )
-      aTmp[_DFINOPE]    := Ctod( "31/12/" + Str( Year( Date() ), 4 ) )
-      aTmp[_LSHWTAR1]   := .t.
-      aTmp[_LSHWTAR2]   := .t.
-      aTmp[_LSHWTAR3]   := .t.
-      aTmp[_LSHWTAR4]   := .t.
-      aTmp[_LSHWTAR5]   := .t.
-      aTmp[_LSHWTAR6]   := .t.
-      aTmp[_CTXTTAR1]   := "Precio 1"
-      aTmp[_CTXTTAR2]   := "Precio 2"
-      aTmp[_CTXTTAR3]   := "Precio 3"
-      aTmp[_CTXTTAR4]   := "Precio 4"
-      aTmp[_CTXTTAR5]   := "Precio 5"
-      aTmp[_CTXTTAR6]   := "Precio 6"
-      aTmp[_CNOMIMP ]   := "IVA"
+   if ( nMode == DUPL_MODE )
+      cOldCodigoEmpresa    := aTmp[ _CODEMP ]
+      aTmp[ _DINIOPE ]     := Ctod( "01/01/" + Str( Year( Date() ), 4 ) )
+      aTmp[ _DFINOPE ]     := Ctod( "31/12/" + Str( Year( Date() ), 4 ) )
+   end if 
+
+   if ( nMode == APPD_MODE )
+      aTmp[ _NCODCLI ]     := 7
+      aTmp[ _NCODPRV ]     := 7
+      aTmp[ _NNUMTUR ]     := 1
+      aTmp[ _NNUMREM ]     := 1
+      aTmp[ _NNUMMOV ]     := 1
+      aTmp[ _NNUMLIQ ]     := 1
+      aTmp[ _NNUMCOB ]     := 1
+      aTmp[ _NNUMCAR ]     := 1
+      aTmp[ _NDGTUND ]     := 8
+      aTmp[ _NDGTESC ]     := 8
+      aTmp[ _CDIVEMP ]     := "EUR"
+      aTmp[ _CDIVCHG ]     := "PTS"
+      aTmp[ _LSHWTAR1 ]    := .t.
+      aTmp[ _LSHWTAR2 ]    := .t.
+      aTmp[ _LSHWTAR3 ]    := .t.
+      aTmp[ _LSHWTAR4 ]    := .t.
+      aTmp[ _LSHWTAR5 ]    := .t.
+      aTmp[ _LSHWTAR6 ]    := .t.
+      aTmp[ _CTXTTAR1 ]    := "Precio 1"
+      aTmp[ _CTXTTAR2 ]    := "Precio 2"
+      aTmp[ _CTXTTAR3 ]    := "Precio 3"
+      aTmp[ _CTXTTAR4 ]    := "Precio 4"
+      aTmp[ _CTXTTAR5 ]    := "Precio 5"
+      aTmp[ _CTXTTAR6 ]    := "Precio 6"
+      aTmp[ _CNOMIMP  ]    := "IVA"
+      aTmp[ _DINIOPE ]     := Ctod( "01/01/" + Str( Year( Date() ), 4 ) )
+      aTmp[ _DFINOPE ]     := Ctod( "31/12/" + Str( Year( Date() ), 4 ) )
    end if
 
-   cSayGrp              := RetFld( aTmp[ _CCODGRP ], dbfEmp )
+   cSayGrp                 := RetFld( aTmp[ _CCODGRP ], dbfEmp )
 
    if BeginEdtRec( aTmp, nMode )
       Return .f.
@@ -653,7 +674,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
 
    DEFINE DIALOG oDlg RESOURCE "EMPRESA" TITLE LblTitle( nMode ) + "Empresas"
 
-   if nMode == APPD_MODE
+   if ( lAppendMode )
 
    REDEFINE FOLDER oFld ;
       ID       400 ;
@@ -685,7 +706,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
 
    REDEFINE GET   aGet[ _CODEMP ] VAR aTmp[ _CODEMP ];
 			ID 		100 ;
-         WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
+         WHEN     ( lAppendMode ) ;
          VALID    ( NotValid( aGet[ _CODEMP ], dbfEmp, .t., "0" ) .and. !Empty( aTmp[ _CODEMP ] ) ) ;
          PICTURE  "@!" ;
          OF       fldGeneral
@@ -865,7 +886,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
-   if nMode == APPD_MODE
+   if ( lAppendMode )
 
       REDEFINE BITMAP oBmpImportacion ;
          ID       500 ;
@@ -876,7 +897,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
       REDEFINE GET oCodEmp VAR cOldCodigoEmpresa ;
          ID       100 ;
          PICTURE  "@!" ;
-			WHEN  	( nMode == APPD_MODE ) ;
+			WHEN  	( lAppendMode ) ;
          VALID    ( if( cEmpresa( oCodEmp, dbfEmp, oNomEmp ), AppFromEmpresa( cOldCodigoEmpresa, dbfEmp, aGet, aTmp, tmpDlg, dbfDlg ), .f. ) ) ;
          BITMAP   "LUPA";
          ON HELP  ( BrwEmpresa( oCodEmp, dbfEmp, oNomEmp ) ) ;
@@ -889,114 +910,114 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
 
       REDEFINE CHECKBOX aImportacion:lArticulos ;
          ID       230 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE RADIO aImportacion:nCosto ;
          ID       231, 232 ;
-         WHEN     ( ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) .and. aImportacion:lArticulos ) ;
+         WHEN     ( ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) .and. aImportacion:lArticulos ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lClientes ;
          ID       240 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lProveedor ;
          ID       250 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lOferta ;
          ID       251 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lPromocion ;
          ID       252 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lAlmacen ;
          ID       260 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lAgente ;
          ID       270 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lRuta ;
          ID       280 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lDocument ;
          ID       285 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lStockIni ;
          ID       290 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lFPago ;
          ID       300 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lPedPrv ;
          ID       310 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lAlbPrv ;
          ID       320 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lPreCli ;
          ID       330 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lPedCli ;
          ID       340 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lAlbCli ;
          ID       350 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lVale ;
          ID       360 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lAnticipo ;
          ID       370 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lProduccion ;
          ID       380 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lBancos ;
          ID       390 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET oGetSemilla VAR nSemillaContadores ;
          ID       130 ;
          VALID    ( nSemillaContadores > 0 ) ;
          PICTURE  "999999999" ;
-			WHEN  	( nMode == APPD_MODE ) ;
+			WHEN  	( lAppendMode ) ;
          OF       oFld:aDialogs[2]
 
    end if
@@ -1009,23 +1030,23 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
          ID       600 ;
          RESOURCE "Flag_Eu_48_Alpha" ;
          TRANSPARENT ;
-         OF       oFld:aDialogs[ if( nMode == APPD_MODE, 3, 2 ) ] ;
+         OF       oFld:aDialogs[ if( lAppendMode, 3, 2 ) ] ;
 
       REDEFINE BUTTON;
 			ID 		500 ;
-         OF       oFld:aDialogs[ if( nMode == APPD_MODE, 3, 2 ) ] ;
+         OF       oFld:aDialogs[ if( lAppendMode, 3, 2 ) ] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( WinAppRec( oBrwDet, bEdtDlg, tmpDlg, , , aTmp[ _CODEMP] ), oBrwDet:DrawSelect() )
 
       REDEFINE BUTTON;
 			ID 		501 ;
-         OF       oFld:aDialogs[ if( nMode == APPD_MODE, 3, 2 ) ] ;
+         OF       oFld:aDialogs[ if( lAppendMode, 3, 2 ) ] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( WinEdtRec( oBrwDet, bEdtDlg, tmpDlg ) )
 
       REDEFINE BUTTON;
 			ID 		502 ;
-         OF       oFld:aDialogs[ if( nMode == APPD_MODE, 3, 2 ) ] ;
+         OF       oFld:aDialogs[ if( lAppendMode, 3, 2 ) ] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( DbDelRec( oBrwDet, tmpDlg ) )
 
@@ -1033,7 +1054,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
       Browse delegaciones --------------------------------------------------------
       */
 
-      oBrwDet                 := IXBrowse():New( if( nMode == APPD_MODE, fldArticulos, fldValores ) )
+      oBrwDet                 := IXBrowse():New( if( lAppendMode, fldArticulos, fldValores ) )
 
       oBrwDet:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwDet:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -1093,10 +1114,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
          oDlg:AddFastKey( VK_F5, {|| oBtnOk:Click() } )
       end if
 
-      oDlg:bStart    := {|| oBrwDet:Load(), aGet[ _CODEMP  ]:SetFocus(), aGet[ _CDIVEMP ]:lValid(), aGet[ _CDIVCHG ]:lValid() }
+      oDlg:bStart    := {|| oBrwDet:Load(), aGet[ _CODEMP ]:SetFocus(), aGet[ _CDIVEMP ]:lValid(), aGet[ _CDIVCHG ]:lValid() }
 
    ACTIVATE DIALOG oDlg ;
-         ON INIT     ( if( nMode != APPD_MODE, oBtnPrv:Hide(), SetWindowText( oBtnOk:hWnd, "&Siguiente >" ) ) ) ;
+         ON INIT     ( if( !lAppendMode, oBtnPrv:Hide(), SetWindowText( oBtnOk:hWnd, "&Siguiente >" ) ) ) ;
          CENTER
 
    oBmpChg:End()
@@ -1202,8 +1223,8 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
    Control de errores----------------------------------------------------------
    */
 
-//   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-//   BEGIN SEQUENCE
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
    
    if Empty( aTmp[ _CDEFSER ] )
       aTmp[ _CDEFSER ]     := Space( 1 )
@@ -2540,12 +2561,12 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
 
    // Fin del control de errores--------------------------------------------------
 
-//   RECOVER USING oError
-//
-//      msgStop( "Imposible editar configuración de empresas" + CRLF + ErrorMessage( oError )  )
-//
-//   END SEQUENCE
-//   ErrorBlock( oBlock ) 
+   RECOVER USING oError
+
+      msgStop( "Imposible editar configuración de empresas" + CRLF + ErrorMessage( oError )  )
+
+   END SEQUENCE
+   ErrorBlock( oBlock ) 
 
    /*
    Matamos los objetos con las imágenes----------------------------------------
@@ -3585,8 +3606,8 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       Return ( nil )
    end if
 
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   // oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   // BEGIN SEQUENCE
 
    if lAIS
       setIndexToCDX()
@@ -4214,13 +4235,13 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
 
    end if
 
-   RECOVER USING oError
-
-      msgStop( "Error creando estructura de directorios" + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
+//   RECOVER USING oError
+//
+//      msgStop( "Error creando estructura de directorios" + CRLF + ErrorMessage( oError ) )
+//
+//   END SEQUENCE
+//
+//   ErrorBlock( oBlock )
 
    /*
    Tipo de driver q usamos--------------------------------------------------
@@ -5245,6 +5266,7 @@ Return ( lCopy )
 
 STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oFld, oDlg, oBtnOk, oBrwDet, dbfEmp, nMode )
 
+   local n
    local cCodEmp           := aTmp[ _CODEMP ]
 
    cNewEmpresa             := aTmp[ _CODEMP ]
@@ -5264,11 +5286,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oFld, oDlg, oBtnOk, oBrwDet, dbfEmp,
       end if
 
       if !Empty( cOldCodigoEmpresa ) .and. !dbSeekInOrd( cOldCodigoEmpresa, "CodEmp", dbfEmp )
-
          msgStop( "Empresa " + cOldCodigoEmpresa + " no encontrada." )
-
          Return nil
-
       end if
 
    end if
@@ -5302,7 +5321,13 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oFld, oDlg, oBtnOk, oBrwDet, dbfEmp,
    */
 
    if nMode == APPD_MODE
-
+/*
+      if !empty( cOldCodigoEmpresa ) .and. dbSeekInOrd( cOldCodigoEmpresa, "CodEmp", dbfEmp )
+         for n := 14 to ( dbfEmp )->( fCount() )
+            aTmp[ n ]      := ( dbfEmp )->( fieldget( ( dbfEmp )->( fieldpos( n ) ) ) )
+         next 
+      end if
+*/
       if Empty( aTmp[ _CDEFFPG ] )
          aTmp[ _CDEFFPG ]  := "00"
       end if

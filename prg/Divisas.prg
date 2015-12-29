@@ -1891,7 +1891,6 @@ FUNCTION nRouDiv( cCodDiv, dbfDiv )
 RETURN ( aDivBuf[ _NROUDIV ] )
 
 //---------------------------------------------------------------------------//
-
 /*
 Devuelve el cambio de una divisa
 */
@@ -1904,7 +1903,7 @@ FUNCTION nChgDiv( cCodDiv, uDiv )
       aDivBuf( cCodDiv, uDiv )
    end if
 
-RETURN ( if ( lEmpCnv(), aDivBuf[ _NEURDIV ], aDivBuf[ _NPTSDIV ] ) )
+RETURN ( if( lEmpCnv(), aDivBuf[ _NEURDIV ], aDivBuf[ _NPTSDIV ] ) )
 
 //---------------------------------------------------------------------------//
 

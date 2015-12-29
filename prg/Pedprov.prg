@@ -7044,7 +7044,7 @@ FUNCTION mkPedPrv( cPath, lAppend, cPathOld, oMeter, bFor )
 
       dbUseArea( .t., cDriver(), cPath + "PedProvL.Dbf", cCheckArea( "PedProvL", @dbfPedPrvL ), .f. )
       if !( dbfPedPrvL )->( neterr() )
-         ( dbfPedPrvT )->( ordListAdd( cPath + "PedProvL.Cdx" ) )
+         ( dbfPedPrvL )->( ordListAdd( cPath + "PedProvL.Cdx" ) )
       end if
 
       dbUseArea( .t., cDriver(), cPath + "PedPrvI.Dbf", cCheckArea( "PedPrvI", @dbfPedPrvI ), .f. )
@@ -7053,7 +7053,7 @@ FUNCTION mkPedPrv( cPath, lAppend, cPathOld, oMeter, bFor )
       end if
 
       dbUseArea( .t., cDriver(), cPath + "PedPrvD.Dbf", cCheckArea( "PedPrvD", @dbfPedPrvD ), .f. )
-      if !( dbfPedPrvD)->( neterr() )
+      if !( dbfPedPrvD )->( neterr() )
          ( dbfPedPrvD )->( ordListAdd( cPath + "PedPrvD.Cdx" ) )
       end if
 

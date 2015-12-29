@@ -128,8 +128,8 @@ METHOD GenIndices( oMsg )
       dbCloseAll()
    end if
 
-    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-    BEGIN SEQUENCE  
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE  
 
    if !Empty( oMsg )
       ::oMsg         := oMsg
@@ -542,7 +542,6 @@ METHOD GenIndices( oMsg )
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Error al realizar el proceso de organización" )
-
 
    END SEQUENCE
 
