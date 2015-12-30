@@ -17,7 +17,8 @@ CLASS TFastProduccion FROM TFastReportInfGen
    DATA oHorasPersonal
    DATA oMaquinasCostes   
    DATA oMaquinasParte   
-   DATA oFamArt   
+   DATA oFamArt 
+   DATA oTarPreL  
 
    METHOD lResource( cFld )
 
@@ -47,6 +48,8 @@ CLASS TFastProduccion FROM TFastReportInfGen
 
    METHOD putFilter()
    METHOD ClearFilter()
+
+   METHOD getPrecioTarifa( cCodTar, cCodArt )
 
 ENDCLASS
 
@@ -157,6 +160,7 @@ METHOD OpenFiles() CLASS TFastProduccion
       DATABASE NEW ::oHorasPersonal       PATH ( cPatEmp() ) CLASS "HORASPERS"   FILE "PROHPER.DBF"   VIA ( cDriver() ) SHARED INDEX "PROHPER.CDX"
       DATABASE NEW ::oMaquinasCostes      PATH ( cPatEmp() ) CLASS "MAQCOSL"     FILE "MAQCOSL.DBF"   VIA ( cDriver() ) SHARED INDEX "MAQCOSL.CDX"
       DATABASE NEW ::oMaquinasParte       PATH ( cPatEmp() ) CLASS "PROMAQ"      FILE "PROMAQ.DBF"    VIA ( cDriver() ) SHARED INDEX "PROMAQ.CDX"
+      DATABASE NEW ::oTarPreL             PATH ( cPatEmp() ) CLASS "TARPREL"     FILE "TARPREL.DBF"   VIA ( cDriver() ) SHARED INDEX "TARPREL.CDX"
 
       ::oCnfFlt   := TDataCenter():oCnfFlt()
 
@@ -208,6 +212,10 @@ METHOD CloseFiles() CLASS TFastProduccion
 
    if !Empty( ::oCnfFlt ) .and. ( ::oCnfFlt:Used() )
       ::oCnfFlt:end()
+   end if
+
+   if !Empty( ::oTarPreL ) .and. ( ::oTarPreL:Used() )
+      ::oTarPreL:end()
    end if
 
 RETURN .t.
@@ -814,5 +822,25 @@ METHOD clearFilter() CLASS TFastProduccion
    ( ::oMateriasPrimas:nArea )->( dbClearFilter() )
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD getPrecioTarifa( cCodTar, cCodArt ) CLASS TFastProduccion
+
+   local nRec
+   local nOrdAnt
+   local nPrecio  := 0
+
+   nRec           := ::oTarPreL:Recno()
+   nOrdAnt        := ::oTarPreL:OrdSetFocus( "cCodArt" )
+
+   if ::oTarPreL:Seek( cCodTar + cCodArt )
+      nPrecio     := ::oTarPreL:nPrcTar1
+   end if
+
+   ::oTarPreL:OrdSetFocus( nOrdAnt )
+   ::oTarPreL:GoTo( nRec )
+
+Return ( nPrecio )
 
 //---------------------------------------------------------------------------//

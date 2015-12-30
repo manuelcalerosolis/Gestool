@@ -494,6 +494,10 @@ CLASS D
 
    METHOD TipoArticulos( nView )                                  INLINE ( ::Get( "TipArt", nView ) )
 
+   METHOD TarifaPrecios( nView )                                  INLINE ( ::Get( "TarPreT", nView ) )
+
+   METHOD TarifaPreciosLineas( nView )                            INLINE ( ::Get( "TarPreL", nView ) )
+
    METHOD Familias( nView )                                       INLINE ( ::Get( "Familias", nView ) )
    
    METHOD Temporadas( nView )                                     INLINE ( ::Get( "Temporadas", nView ) )

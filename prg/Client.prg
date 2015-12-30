@@ -144,6 +144,8 @@
 #define _CCODBIC                 134
 #define _CHORARIO                135
 #define _CENTIDAD                136
+#define _DPETRIE                 137
+#define _DCONRIE                 138
 
 #define _aCCODCLI                  1      //   C     12     0
 #define _aCCODGRP                  2      //   C     12     0
@@ -1978,6 +1980,18 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       REDEFINE GET nImpRie ;
          ID       251 ;
          PICTURE  cPorDiv ;
+         OF       fldComercial
+
+      REDEFINE GET aGet[ _DPETRIE ] VAR aTmp[ _DPETRIE ];
+         ID       252 ;
+         WHEN     ( nMode != ZOOM_MODE );
+         SPINNER;
+         OF       fldComercial
+
+      REDEFINE GET aGet[ _DCONRIE ] VAR aTmp[ _DCONRIE ];
+         ID       253 ;
+         WHEN     ( nMode != ZOOM_MODE );
+         SPINNER;
          OF       fldComercial
 
       /*
@@ -8969,6 +8983,8 @@ FUNCTION aItmCli()
    aAdd( aBase, { "cCodBic",   "C", 50, 0, "Código Bic",                                    "",                      "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cHorario",  "C", 50, 0, "Horario",                                       "",                      "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cEntidad",  "C", 25, 0, "Entidad",                                       "",                      "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "dPetRie",   "D",  8, 0, "Fecha de petición de riesgo",                   "",                      "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "dConRie",   "D",  8, 0, "Fecha de concesión de riesgo",                  "",                      "", "( cDbfCli )", nil } )
 
 RETURN ( aBase )
 

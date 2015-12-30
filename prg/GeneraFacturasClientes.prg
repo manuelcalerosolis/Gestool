@@ -1445,10 +1445,14 @@ Return ( self )
 
 METHOD AppendLineaTotal( oItem ) CLASS GeneraFacturasClientes
 
+   local nNumero
+
    if ::oTotalizar:Value()
 
       ( D():FacturasClientesLineas( ::nView ) )->( dbAppend() )
-      ( D():FacturasClientesLineas( ::nView ) )->nNumLin    := ::nNumLin++
+      nNumero                                               := ::nNumLin++
+      ( D():FacturasClientesLineas( ::nView ) )->nNumLin    := nNumero
+      ( D():FacturasClientesLineas( ::nView ) )->nPosPrint  := nNumero
       ( D():FacturasClientesLineas( ::nView ) )->cSerie     := ::cSerie
       ( D():FacturasClientesLineas( ::nView ) )->nNumFac    := ::nNumero
       ( D():FacturasClientesLineas( ::nView ) )->cSufFac    := ::cSufijo

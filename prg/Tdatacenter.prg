@@ -2343,6 +2343,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "TarPreL"
    oDataTable:cName        := cPatEmp() + "TarPreL"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "TarPreL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "TarPreL.Cdx"

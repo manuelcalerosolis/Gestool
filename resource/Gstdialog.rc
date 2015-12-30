@@ -20705,8 +20705,10 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 147, "Edit", WS_BORDER|WS_TABSTOP, 101, 113, 114, 11
   CONTROL "Autorizado para venta de crédito", 140, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 208, 124, 10
   CONTROL "Bloquear con riesgo alcanzado", 145, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 221, 124, 10
-  CONTROL "", 250, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 101, 234, 114, 11
+  CONTROL "", 250, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 101, 235, 114, 11
   CONTROL "", 251, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 101, 247, 114, 11
+  CONTROL "", 252, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 257, 235, 77, 11
+  CONTROL "", 253, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 257, 247, 77, 11
   CONTROL "Lun.", 230, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 390, 40, 27, 11
   CONTROL "", 330, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 421, 39, 30, 11
   CONTROL "", 430, "Edit", WS_BORDER|WS_TABSTOP, 453, 39, 34, 11
@@ -20736,7 +20738,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Nombre ", -1, "Static", WS_GROUP, 50, 41, 26, 8
   CONTROL "Domicilio", -1, "Static", WS_GROUP, 50, 54, 31, 8
   CONTROL "Web", -1, "Static", WS_GROUP, 50, 66, 21, 8
-  CONTROL "Riesgo ", -1, "Static", WS_GROUP, 50, 234, 29, 11
+  CONTROL "Riesgo ", -1, "Static", WS_GROUP, 50, 235, 29, 11
   CONTROL "Alcanzado", -1, "Static", WS_GROUP, 50, 247, 39, 11
   CONTROL "Mes de vacaciones", -1, "Static", WS_GROUP, 390, 127, 73, 10
   CONTROL "Establecimiento", -1, "Button", BS_GROUPBOX, 44, 29, 338, 61
@@ -20753,7 +20755,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Codificación especial", -1, "Button", BS_GROUPBOX, 43, 90, 338, 50
   CONTROL "EDI [EAN]", -1, "Static", WS_GROUP, 50, 103, 38, 8
   CONTROL "Última llamada", -1, "Button", BS_GROUPBOX, 384, 161, 108, 30
-  CONTROL "Departamento", 4002, "Static", WS_GROUP, 50, 116, 50, 8
+  CONTROL "Departamento", -1, "Static", WS_GROUP, 50, 116, 50, 8
   CONTROL "", 310, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 101, 153, 270, 11
   CONTROL "", 320, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 101, 166, 270, 11
   CONTROL "", 340, "Edit", WS_BORDER|WS_TABSTOP, 101, 179, 76, 11
@@ -20761,15 +20763,17 @@ FONT 8, "MS Sans Serif"
   CONTROL "Población", -1, "Static", WS_GROUP, 50, 169, 33, 8
   CONTROL "Dirección de entrega", -1, "Button", BS_GROUPBOX, 43, 141, 338, 54
   CONTROL "", 350, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 180, 179, 191, 11
-  CONTROL "CP y Provincia", 4001, "Static", WS_GROUP, 50, 181, 51, 8
+  CONTROL "CP y Provincia", -1, "Static", WS_GROUP, 50, 181, 51, 8
   CONTROL "", 148, "Edit", WS_BORDER|WS_TABSTOP, 101, 126, 114, 11
   CONTROL "Proveedor", -1, "Static", WS_GROUP, 50, 129, 50, 8
   CONTROL "", 149, "Edit", WS_BORDER|WS_TABSTOP, 257, 100, 114, 11
-  CONTROL "BIC", -1, "Static", WS_GROUP, 219, 103, 28, 8
+  CONTROL "BIC", -1, "Static", WS_GROUP, 217, 103, 28, 8
   CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 257, 113, 114, 11
-  CONTROL "Horario", -1, "Static", WS_GROUP, 219, 116, 28, 8
+  CONTROL "Horario", -1, "Static", WS_GROUP, 217, 116, 28, 8
   CONTROL "", 151, "Edit", WS_BORDER|WS_TABSTOP, 257, 126, 114, 11
-  CONTROL "Entidad", -1, "Static", WS_GROUP, 219, 129, 28, 8
+  CONTROL "Entidad", -1, "Static", WS_GROUP, 217, 129, 28, 8
+  CONTROL "Petición", -1, "Static", WS_GROUP, 217, 236, 32, 10
+  CONTROL "Concesión", -1, "Static", WS_GROUP, 217, 248, 39, 10
 }
 
 CLIENT_19 DIALOG DISCARDABLE -3, 20, 496, 263
