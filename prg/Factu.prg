@@ -1734,19 +1734,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Tanques'
-   oItem:cMessage       := 'Acceso a los tanques de combustible'
-   oItem:bAction        := {|| TTankes():New( cPatArt(), oWnd, "01017" ):Activate() }
-   oItem:cId            := "01017"
-   oItem:cBmp           := "Potion_Red_16"
-   oItem:cBmpBig        := "Potion_Red_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .t.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Unidades medición'
-   oItem:cMessage       := 'Unidades de Medición'
+   oItem:cMessage       := 'Unidades de medición'
    oItem:bAction        := {|| UniMedicion():New( cPatGrp(), oWnd, "01103" ):Activate() }
    oItem:cId            := "01103"
    oItem:cBmp           := "Tape_Measure1_16"
@@ -6015,9 +6004,13 @@ Return ( by( nRow ) )
 //---------------------------------------------------------------------------//
 
 Function Test() 
+/*
+   local uVar := "Agosto"
 
-   // TConversionPedidosProveedores():New():Dialog()
+   msgCombo( "Title", "Selecciones temporada", {"enero", "febrero", "marzo" }, @uVar )
 
+   ? uVar
+*/
 Return ( nil )
 
 Static Function testAll()

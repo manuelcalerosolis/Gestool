@@ -2531,6 +2531,9 @@ Return nil
 Function OrderCustomer()
 Return nil
 
+Function TConversionPedidosProveedores()
+Return nil
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP

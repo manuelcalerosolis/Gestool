@@ -4821,9 +4821,6 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
          oMsg:SetText( "Añadiendo actuaciones de expedientes" )
          TDetActuacion():Create():SyncAllDbf()
 
-         oMsg:SetText( "Añadiendo tanques de combustible" )
-         TTankes():Create( cPatArt() ):SyncAllDbf()
-
          oMsg:SetText( "Añadiendo comentarios" )
          TComentarios():Create():SyncAllDbf()
 

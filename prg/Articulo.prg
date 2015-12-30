@@ -86,7 +86,6 @@ static filTmpAlm
 static dbfTmpAlm
 
 static oStock
-static oTankes
 static oTipArt
 static oGrpFam
 static oCatalogo
@@ -383,11 +382,6 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
          lOpenFiles        := .f.
       end if
 
-      oTankes              := TTankes():Create( cPatArt() )
-      if !oTankes:OpenFiles()
-         lOpenFiles        := .f.
-      end if
-
       oTipArt              := TTipArt():Create( cPatArt() )
       if !oTipArt:OpenFiles()
          lOpenFiles        := .f.
@@ -674,10 +668,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
       oStock:end()
    end if
 
-   if !Empty( oTankes )
-      oTankes:end()
-   end if
-
    if !Empty( oGrpFam )
       oGrpFam:end()
    end if
@@ -747,7 +737,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
    dbfTblPro         := nil
    dbfPro            := nil
    dbfCodebar        := nil
-   oTankes           := nil
    oTipArt           := nil
    oCatalogo         := nil
    oOrdenComanda     := nil 
@@ -3804,21 +3793,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
    oBrwStk:CreateFromResource( 130 )
 
-   REDEFINE GET aGet[( D():Articulos( nView ) )->( fieldpos( "CCODTNK" ) ) ] VAR aTmp[( D():Articulos( nView ) )->( fieldpos( "CCODTNK" ) ) ] ;
-         ID       150 ;
-         WHEN     ( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "NCTLSTOCK" ) ) ] == 2 .AND. nMode != ZOOM_MODE ) ;
-         VALID    ( oTankes:Existe( aGet[ ( D():Articulos( nView ) )->( fieldpos( "CCODTNK" ) ) ], oSay[ 8 ], "cNomTnk", .t., .t., "0" ) );
-         ON HELP  ( oTankes:Buscar( aGet[ ( D():Articulos( nView ) )->( fieldpos( "CCODTNK" ) ) ] ) ) ;
-         BITMAP   "LUPA" ;
-         OF       fldStocks
-
-   REDEFINE GET oSay[8] VAR cSay[8] ;
-         ID       160 ;
-			SPINNER ;
-         WHEN     ( .f. ) ;
-         COLOR    CLR_GET ;
-         OF       fldStocks
-
    REDEFINE CHECKBOX aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LCOMBUS" ) ) ] ;
          ID       170 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
@@ -3837,7 +3811,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "GRPVENT" ) ) ] ;
          VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "GRPVENT" ) ) ] ;
          ID       100 ;
-			COLOR 	CLR_GET ;
          PICTURE  ( Replicate( "9", 9 ) )  ;
          WHEN     ( !empty( cRutCnt() ) .and. nMode != ZOOM_MODE ) ;
          VALID    ( cGrpVenta( aGet[ ( D():Articulos( nView ) )->( fieldpos( "GRPVENT" ) ) ], , oSay[1] ) );
@@ -3849,7 +3822,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          VAR      cSay[1] ;
 			WHEN 		.F. ;
          ID       101 ;
-			COLOR 	CLR_GET ;
          OF       fldContabilidad
 
    REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "CCTAVTA" ) ) ] ;
@@ -5172,7 +5144,6 @@ STATIC FUNCTION EdtRec2( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       PROMPT   nPunt2Euro( aTmp, D():Articulos( nView ) ) ;
       ID       190 ;
       PICTURE  cPinDiv ;
-      COLOR    CLR_GET ;
       OF       oDlg
 
    //Definición de los botones de la caja de diálogo
