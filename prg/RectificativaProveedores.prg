@@ -6458,6 +6458,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
       Return .f.
    end if
 
+   if !lValidaSerie( aTmp[ _CSERFAC ] )
+      Return .f.
+   end if
+
    /*
    Estos campos no pueden estar vacios
    */

@@ -2619,7 +2619,11 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, nMode, nDec, nTotal, oDlg )
    Comprobamos la fecha del documento
    */
 
-   if !lValidaOperacion( aTmp[_DFECANT] )
+   if !lValidaOperacion( aTmp[ _DFECANT ] )
+      Return .f.
+   end if
+
+   if !lValidaSerie( aTmp[ _CSERANT ] )
       Return .f.
    end if
 

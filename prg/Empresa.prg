@@ -6838,6 +6838,22 @@ Return ( .f. )
 
 //---------------------------------------------------------------------------//
 
+Function lValidaSerie( cSerie, lMessage )
+
+   DEFAULT lMessage  := .t.
+
+   if ( cSerie >= "A" .and. cSerie <= "Z" )
+      Return .t.
+   end if
+
+   if lMessage
+      msgStop( "La serie del documento debe estar comprendida entre la A y la Z." )
+   end if 
+
+Return ( .f. )
+
+//---------------------------------------------------------------------------//
+
 Function cNombreUnidades()
 
    local cNombreUnidades   := "Unidades"

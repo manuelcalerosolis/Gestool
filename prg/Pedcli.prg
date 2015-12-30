@@ -8846,6 +8846,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
       Return .f.
    end if
 
+   if !lValidaSerie( aTmp[ _CSERPED ] )
+      Return .f.
+   end if
+
    /*
    Estos campos no pueden estar vacios
    */

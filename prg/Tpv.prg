@@ -3739,6 +3739,11 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
       Return .f.
    end if
 
+   if !lValidaSerie( aTmp[ _CSERTIK ] )
+      lSaveNewTik          := .f.
+      Return .f.
+   end if
+
    /*
    Ticket regalo---------------------------------------------------------------
    */
@@ -5499,6 +5504,10 @@ Static Function TmpTiket( aTmp, aGet, nMode, lClean, lImprimirComanda, lLiberarM
 
    if !lValidaOperacion( aTmp[ _DFECTIK ] )
       return .f.
+   end if
+
+   if !lValidaSerie( aTmp[ _CSERTIK ] )
+      Return .f.
    end if
 
    if !empty( aGet[ _CCLITIK ] ) .and. !aGet[ _CCLITIK ]:lValid()

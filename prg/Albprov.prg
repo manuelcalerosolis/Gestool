@@ -5507,6 +5507,9 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
       Return .f.
    end if
 
+
+
+
    /*
    Estos campos no pueden estar vacios
    */

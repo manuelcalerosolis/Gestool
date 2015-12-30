@@ -6323,6 +6323,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
       Return .f.
    end if
 
+   if !lValidaSerie( aTmp[ _CSERSAT ] )
+      return .f.
+   end if
+
    if Empty( aTmp[ _CCODCLI ] )
       msgStop( "Cliente no puede estar vacío." )
       aGet[ _CCODCLI ]:SetFocus()

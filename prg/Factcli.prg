@@ -13956,6 +13956,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       Return .f.
    end if
 
+   if !lValidaSerie( aTmp[ _CSERIE ] )
+      Return .f.
+   end if
+
    /*
    Estos campos no pueden estar vacios-----------------------------------------
    */
@@ -22966,6 +22970,10 @@ Static Function lComprobacionesFactCli( aGet, aTmp )
 
    if !lValidaOperacion( aTmp[ _DFECFAC ] )
       lReturn     := .f.
+   end if
+
+   if !lValidaSerie( aTmp[ _CSERIE ] )
+      Return .f.
    end if
 
    if lClienteBloqueado( aGet, aTmp[ _CCODCLI ] )

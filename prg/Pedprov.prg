@@ -4416,6 +4416,11 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
       Return .f.
    end if
 
+   if !lValidaSerie( aTmp[ _CSERPED ] )
+      Return .f.
+   end if
+
+
    // Estos campos no pueden estar vacios
 
    if empty( aTmp[ _CCODPRV ] )

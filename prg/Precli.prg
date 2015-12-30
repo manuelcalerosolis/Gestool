@@ -6456,6 +6456,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg, lActu
       Return .f.
    end if
 
+   if !lValidaSerie( aTmp[ _CSERPRE ] )
+      Return .f.
+   end if
+
    if Empty( aTmp[ _CCODCLI ] )
       msgStop( "Cliente no puede estar vacío." )
       aGet[ _CCODCLI ]:SetFocus()
