@@ -24,6 +24,7 @@ CLASS createParte
    DATA oParteProduccion
    DATA cDocumento
    DATA newNumero
+   DATA aItems
 
    METHOD new()
 
@@ -35,8 +36,6 @@ CLASS createParte
    METHOD compruebaFechaProceso()
 
    METHOD getGrupoParte()
-   METHOD compruebaGrupoParte()
-   METHOD compruebaArrayGrupoParte()
 
    METHOD getArrayGruposOfParte()
 
@@ -54,6 +53,8 @@ CLASS createParte
 
    METHOD updateMateriaPrima()
 
+   METHOD aItemsTemporadas()
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -63,7 +64,28 @@ METHOD new( oParte ) CLASS createParte
    ::fechaProceso         := GetSysDate()
    ::grupoParte           := Padr( "Todos", 20 )
    ::oParteProduccion     := oParte
-   
+   ::aItemsTemporadas()
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD aItemsTemporadas() CLASS createParte
+
+   ::aItems   := {}
+
+   aAdd( ::aItems, "Todos" )
+
+   ::oParteProduccion:oTemporada:GoTop()
+
+   while !::oParteProduccion:oTemporada:Eof()
+
+      aAdd( ::aItems, AllTrim( ::oParteProduccion:oTemporada:cCodigo ) )
+
+      ::oParteProduccion:oTemporada:Skip()
+
+   end while
+
 Return ( self )
 
 //---------------------------------------------------------------------------//
@@ -144,63 +166,11 @@ Return lResult
 
 METHOD getGrupoParte() CLASS CreateParte
 
-   while .t.
-      if !msgGet( "Seleccione un grupo", "Grupo: ", @::grupoParte )
-         exit
-      end if
-
-      if ::compruebaGrupoParte()
-         exit
-      end if 
-
-   end while
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
-METHOD compruebaGrupoParte() CLASS CreateParte
-
-   local lResult  := .f.
-
-   ::arrayGrupos    := hb_aTokens( ::grupoParte, "," )
-
-return ::compruebaArrayGrupoParte()
-
-//---------------------------------------------------------------------------//
-
-METHOD compruebaArrayGrupoParte() CLASS CreateParte
-
-   local lReturn     := .t.
-   local aGrupoParte
-
-   if len( ::arrayGrupos ) == 0
-      Return .f.
-   end if
-
-   if len( ::arrayGrupos ) == 1 .and. AllTrim( ::arrayGrupos[1] ) == "Todos"
+   if MsgCombo( "Seleccione un grupo", "Grupo: ", ::aItems, @::grupoParte )
       Return .t.
    end if
 
-   ::oParteProduccion:oTemporada:getStatus()
-
-   ::oParteProduccion:oTemporada:OrdSetFocus( "Codigo" )
-
-   for each aGrupoParte in ::arrayGrupos
-      
-      if !::oParteProduccion:oTemporada:Seek( Padr( aGrupoParte, 10 ) )
-         lReturn     := .f.
-      end if
-
-   next
-
-   ::oParteProduccion:oTemporada:setStatus()
-
-   if !lReturn
-      msgInfo( "Algunos de los valores introducidos no son válidos" )
-   end if
-
-Return lReturn
+Return .t.
 
 //---------------------------------------------------------------------------//
 
@@ -271,13 +241,13 @@ METHOD ProcesaGrupo() CLASS CreateParte
    local cGrupo
    local arrayTodos  := {}
 
-   if ::isOnlyOneGrupoToProcess()
+   if Empty( ::GrupoParte )
       Return .f.
    end if
 
    //Todos---------------------------------------------------------------------
 
-   if len( ::arrayGrupos ) == 1 .and. AllTrim( ::arrayGrupos[1] ) == "Todos"
+   if AllTrim( ::grupoParte ) == "Todos" 
 
       arrayTodos  := ::getArrayGruposOfParte()
 
@@ -293,19 +263,16 @@ METHOD ProcesaGrupo() CLASS CreateParte
 
    //Otros valores-------------------------------------------------------------
 
-   for each cGrupo in ::arrayGrupos
+   if !::isOnlyOneGrupoOfParte()
 
-      if !::isOnlyOneGrupoOfParte()
-
-         if aScan( ::getArrayGruposOfParte(), AllTrim( cGrupo ) ) != 0
-            ::procesaParte( cGrupo )
-         else
-            MsgStop( "El grupo que intenta crear no existe en el parte: " + ::cDocumento )
-         end if
-
+      if aScan( ::getArrayGruposOfParte(), AllTrim( ::GrupoParte ) ) != 0
+         ::procesaParte( AllTrim( ::grupoParte ) )
+      else
+         MsgStop( "El grupo que intenta crear no existe en el parte: " + ::cDocumento )
       end if
 
-   next
+   end if
+
 
 Return .t.
 

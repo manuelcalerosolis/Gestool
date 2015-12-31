@@ -2962,14 +2962,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          IDSAY    112 ;
          SPINNER;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
+         OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _DFECSAL ] VAR aTmp[ _DFECSAL ];
          ID       113 ;
          IDSAY    114 ;
 			SPINNER;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
+         OF       oFld:aDialogs[2]
 
       // Codigo del usuario----------------------------------------------------
 
@@ -3082,10 +3082,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[_CSUPED] VAR aTmp[_CSUPED];
-         ID       180 ;
+         ID       111 ;
          WHEN     ( lWhen ) ;
 			COLOR 	CLR_GET ;
-         OF       oFld:aDialogs[2]
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[_DFECENT] VAR aTmp[_DFECENT];
          ID       127 ;
@@ -9289,7 +9289,7 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
 
 	local lValid 		:= .T.
    local cNewCodCli  := aGet[ _CCODCLI ]:varGet()
-   local lChgCodCli  := ( Empty( cOldCodCli ) .or. cOldCodCli != cNewCodCli )
+   local lChgCodCli
 
    if Empty( cNewCodCli )
       Return .t.
@@ -9298,6 +9298,8 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
    else
       cNewCodCli     := Rjust( cNewCodCli, "0", RetNumCodCliEmp() )
    end if
+
+   lChgCodCli  := ( Empty( cOldCodCli ) .or. cOldCodCli != cNewCodCli )
 
    if ( D():Clientes( nView ) )->( dbSeek( cNewCodCli ) )
 
@@ -9505,53 +9507,37 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
             aGet[ _CCODTRN ]:lValid()
          end if
 
-         if lChgCodCli
+      end if
 
-            aGet[ _LRECARGO ]:Click( ( D():Clientes( nView ) )->lReq ):Refresh()
+      if lChgCodCli
 
-            aGet[ _LOPERPV  ]:Click( ( D():Clientes( nView ) )->lPntVer ):Refresh()
+         aGet[ _LRECARGO ]:Click( ( D():Clientes( nView ) )->lReq ):Refresh()
 
-            /*
-            Retenciones desde la ficha de cliente----------------------------------
+         aGet[ _LOPERPV  ]:Click( ( D():Clientes( nView ) )->lPntVer ):Refresh()
 
-            if !Empty( aGet[ _NTIPRET ] )
-               aGet[ _NTIPRET  ]:Select( ( D():Clientes( nView ) )->nTipRet )
-            else
-               aTmp[ _NTIPRET  ] := ( D():Clientes( nView ) )->nTipRet
-            end if
+         /*
+         Descuentos desde la ficha de cliente----------------------------------
+         */
 
-            if !Empty( aGet[ _NPCTRET ] )
-               aGet[ _NPCTRET  ]:cText( ( D():Clientes( nView ) )->nPctRet )
-            else
-               aTmp[ _NPCTRET  ] := ( D():Clientes( nView ) )->nPctRet
-            end if
-            */
+         aGet[ _CDTOESP ]:cText( ( D():Clientes( nView ) )->cDtoEsp )
 
-            /*
-            Descuentos desde la ficha de cliente----------------------------------
-            */
+         aGet[ _NDTOESP ]:cText( ( D():Clientes( nView ) )->nDtoEsp )
 
-            aGet[ _CDTOESP ]:cText( ( D():Clientes( nView ) )->cDtoEsp )
+         aGet[ _CDPP    ]:cText( ( D():Clientes( nView ) )->cDpp )
 
-            aGet[ _NDTOESP ]:cText( ( D():Clientes( nView ) )->nDtoEsp )
+         aGet[ _NDPP    ]:cText( ( D():Clientes( nView ) )->nDpp )
 
-            aGet[ _CDPP    ]:cText( ( D():Clientes( nView ) )->cDpp )
+         aGet[ _CDTOUNO ]:cText( ( D():Clientes( nView ) )->cDtoUno )
 
-            aGet[ _NDPP    ]:cText( ( D():Clientes( nView ) )->nDpp )
+         aGet[ _CDTODOS ]:cText( ( D():Clientes( nView ) )->cDtoDos )
 
-            aGet[ _CDTOUNO ]:cText( ( D():Clientes( nView ) )->cDtoUno )
+         aGet[ _NDTOUNO ]:cText( ( D():Clientes( nView ) )->nDtoCnt )
 
-            aGet[ _CDTODOS ]:cText( ( D():Clientes( nView ) )->cDtoDos )
+         aGet[ _NDTODOS ]:cText( ( D():Clientes( nView ) )->nDtoRap )
 
-            aGet[ _NDTOUNO ]:cText( ( D():Clientes( nView ) )->nDtoCnt )
+         aTmp[ _NDTOATP ] := ( D():Clientes( nView ) )->nDtoAtp
 
-            aGet[ _NDTODOS ]:cText( ( D():Clientes( nView ) )->nDtoRap )
-
-            aTmp[ _NDTOATP ] := ( D():Clientes( nView ) )->nDtoAtp
-
-            aTmp[ _NSBRATP ] := ( D():Clientes( nView ) )->nSbrAtp
-
-         end if
+         aTmp[ _NSBRATP ] := ( D():Clientes( nView ) )->nSbrAtp
 
       end if
 

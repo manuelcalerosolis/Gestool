@@ -3885,7 +3885,7 @@ function MsgCombo( cTitle, cText, aItems, uVar, cBmpFile, cResName )
    local cItem
 
    DEFAULT cTitle := "Title"
-   DEFAULT cText  := "Temporada"
+   DEFAULT cText  := "Valor"
    DEFAULT aItems := { "One", "Two", "Three" }
 
    cItem          := aItems[1]
@@ -3904,7 +3904,7 @@ function MsgCombo( cTitle, cText, aItems, uVar, cBmpFile, cResName )
 
       @ 0.5, 6 SAY cText OF oDlg SIZE 250, 10
       
-      @ 1.6, 4 COMBOBOX oCbx VAR cItem STYLE CBS_DROPDOWN ;
+      @ 1.6, 4 COMBOBOX oCbx VAR cItem ;
       SIZE 120, 12 ;
       ITEMS aItems ;
 
@@ -3912,7 +3912,7 @@ function MsgCombo( cTitle, cText, aItems, uVar, cBmpFile, cResName )
       
       @ 0.5, 3.3 SAY cText OF oDlg SIZE 250, 10
 
-      @ 1.6, 2.3 COMBOBOX oCbx VAR cItem STYLE CBS_DROPDOWN ;
+      @ 1.6, 2.3 COMBOBOX oCbx VAR cItem ;
       SIZE 120, 12 ;
       ITEMS aItems ;
 

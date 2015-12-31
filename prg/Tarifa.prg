@@ -2210,7 +2210,6 @@ FUNCTION RetPrcTar( cCodArt, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr2, dbfTar
 
    cCodSek        := cCodTar + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2
 
-
    if ( dbfTarPreL )->( dbSeek( cCodSek ) )
 
       do case

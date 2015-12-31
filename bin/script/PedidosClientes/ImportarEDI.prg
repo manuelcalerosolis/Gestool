@@ -8,7 +8,7 @@
 #include "Report.ch"
 #include "Print.ch"
 
-#define __localDirectory            "c:\EdiversaEDI\"
+#define __localDirectory            "C:\DatosGestool\pedidos\"
 #define __localDirectoryPorcessed   "c:\Bestseller\Processed\"
 #define __timeWait                  1
 
@@ -41,6 +41,8 @@ CLASS ImportarPedidosClientesEDI
    DATA seriePedido
    DATA numeroPedido
    DATA sufijoPedido
+
+   DATA cTarifa
 
    DATA ordTipo                              INIT  {  '220' => 'Pedido normal',;
                                                       '22E' => 'Propuesta de pedido',;
@@ -94,7 +96,7 @@ CLASS ImportarPedidosClientesEDI
    METHOD Run( nView )
    
    METHOD labelToken()                       INLINE ( ::aTokens[ 1 ] )
-   METHOD say()                              INLINE ( "Proceso terminado con éxito" ) //hb_valtoexp( ::hPedidoCabecera ) )
+   METHOD say()                              INLINE ( hb_valtoexp( ::hPedidoCabecera ) )
    
    METHOD proccessEDIFiles( cEDIFiles )
    METHOD proccessEDILine()
@@ -172,7 +174,7 @@ METHOD Run( nView ) CLASS ImportarPedidosClientesEDI
       msgStop( "No hay ficheros en el directorio")
    end if 
 
-   msgStop( ::say(), "proceso finalizado" )
+   msgStop( "proceso finalizado" )
 
 Return ( nil )
 
@@ -461,8 +463,6 @@ METHOD isbuildPedidoCliente()
       return ( .t. )
    end if
 
-   msgWait( "Cliente no encontrado", "", .001 )
-
 return .f.
 
 //-----------------------------------------------------------------------------
@@ -478,8 +478,6 @@ METHOD buildPedidoCliente()
       ::buildTotalPedido()
 
    end if 
-
-   //msgAlert( "Fin de la importación")
 
 Return ( nil )
 
@@ -745,7 +743,7 @@ METHOD datosArticulo( cNormalizado )
       ::hPedidoLinea[ "Familia" ]                  := ( D():Articulos( ::nView ) )->Familia
       ::hPedidoLinea[ "GrupoFamilia" ]             := if( !Empty( ( D():Articulos( ::nView ) )->Familia ), cGruFam( ( D():Articulos( ::nView ) )->Familia, D():Familias( ::nView ) ), "" )
       ::hPedidoLinea[ "LogicoLote" ]               := ( D():Articulos( ::nView ) )->lLote
-      ::hPedidoLinea[ "Lote" ]                     := if( ( D():Articulos( ::nView ) )->lLote, ( D():Articulos( ::nView ) )->nLote, "" )
+      //::hPedidoLinea[ "Lote" ]                     := if( ( D():Articulos( ::nView ) )->lLote, ( D():Articulos( ::nView ) )->cLote, "" )
       ::hPedidoLinea[ "AvisarSinStock" ]           := ( D():Articulos( ::nView ) )->lMsgVta
       ::hPedidoLinea[ "NoPermitirSinStock" ]       := ( D():Articulos( ::nView ) )->lNotVta
       ::hPedidoLinea[ "Peso" ]                     := ( D():Articulos( ::nView ) )->nPesoKg
@@ -758,7 +756,7 @@ METHOD datosArticulo( cNormalizado )
       ::hPedidoLinea[ "PorcentajeImpuesto" ]       := nIva( D():TiposIva( ::nView ), ( D():Articulos( ::nView ) )->TipoIva )
       ::hPedidoLinea[ "RecargoEquivalencia" ]      := nReq( D():TiposIva( ::nView ), ( D():Articulos( ::nView ) )->TipoIva )
       ::hPedidoLinea[ "PrecioCosto" ]              := ( D():Articulos( ::nView ) )->pCosto
-      ::hPedidoLinea[ "PrecioVenta" ]              := ( D():Articulos( ::nView ) )->pVenta1
+      ::hPedidoLinea[ "PrecioVenta" ]              := RetPrcTar( ( D():Articulos( ::nView ) )->Codigo, ::hPedidoCabecera[ "Tarifa" ], , , , , D():TarifaPreciosLineas( ::nView ) )
 
    end if
 
