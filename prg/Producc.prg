@@ -1118,6 +1118,7 @@ METHOD Resource( nMode, aDatosAnterior )
       end if
 
       ::oDbf:cAlmOrd       := oUser():cAlmacen()
+      ::oDbf:cAlmOrg       := oUser():cAlmacen()
       ::oDbf:cCodDiv       := cDivEmp()
       ::oDbf:nVdvDiv       := nChgDiv( cDivEmp() )
 
