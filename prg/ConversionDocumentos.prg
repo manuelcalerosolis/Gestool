@@ -8,8 +8,6 @@
 
 CLASS TConversionDocumentos 
 
-   
-
    DATA oDocumentLines
 
    DATA aliasDocumentLine
@@ -1066,6 +1064,7 @@ METHOD loadLinesDocument( id )
    local aStatus
    local lLoadLines     
    local hDictionary    
+   local oDocumentLine
 
    lLoadLines           := .f.
 
@@ -1079,7 +1078,9 @@ METHOD loadLinesDocument( id )
 
          hDictionary    := D():getHashFromAlias( ::getLineAlias(), ::getLineDictionary() )
 
-         ::oDocumentLines:addLines( DocumentLine():newFromDictionary( hDictionary ) )
+         oDocumentLine  := DocumentLine():newFromDictionary( self, hDictionary )
+
+         ::oDocumentLines:addLines( oDocumentLine )
 
          ( ::getLineAlias() )->( dbSkip() ) 
       

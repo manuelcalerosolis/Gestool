@@ -399,6 +399,8 @@ Editable.prg                           \
 ViewNavigator.prg                      \
 Documents.prg                          \
 DocumentLines.prg                      \
+DocumentBase.prg                       \
+DocumentHeader.prg                     \
 DocumentLine.prg                       \
 Customer.prg                           \
 OrderCustomer.prg                      \
@@ -833,6 +835,8 @@ Editable.obj                           \
 ViewNavigator.obj                      \
 Documents.obj                          \
 DocumentLines.obj                      \
+DocumentBase.obj                       \
+DocumentHeader.obj                     \
 DocumentLine.obj                       \
 Customer.obj                           \
 OrderCustomer.obj                      \
@@ -1292,6 +1296,8 @@ $(OBJ)\Lenguajes.obj                         +
 $(OBJ)\EstadoSat.obj                         +
 $(OBJ)\Documents.obj                         +
 $(OBJ)\DocumentLines.obj                     +
+$(OBJ)\DocumentBase.obj                      +
+$(OBJ)\DocumentHeader.obj                    +
 $(OBJ)\DocumentLine.obj                      +
 $(OBJ)\CentroCoste.Obj                       +
 $(OBJ)\TSpecialSearchArticulo.obj            +

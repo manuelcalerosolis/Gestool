@@ -8,7 +8,7 @@
 
 CLASS TConversionPedidosProveedores FROM TConversionDocumentos // FROM DialogBuilder
 
-   DATA cCodigoProveedor                              INIT "000278      "
+   DATA cCodigoProveedor                              INIT ""
 
    METHOD Dialog()
 
@@ -95,7 +95,7 @@ RETURN ( Self )
 
 METHOD botonSiguiente()
 
-   if !::oDocumentLines:isSelectedLines()
+   if !::oDocumentLines:anySelected()
       msgStop( "No hay líneas seleccionadas." )
    else
       ::oDlg:End( IDOK )
@@ -132,7 +132,7 @@ METHOD loadLinesDocument()
 
                hDictionary       := D():getHashFromAlias( ::getLineAlias(), ::getLineDictionary() )
 
-               oDocumentLine     := supplierDeliveryNoteDocumentLine():newFromDictionary( self, hDictionary )
+               oDocumentLine     := SupplierDeliveryNoteDocumentLine():newFromDictionary( self, hDictionary )
 
                if oDocumentLine:getUnitsAwaitingReception() > 0
                   ::oDocumentLines:addLines( oDocumentLine )

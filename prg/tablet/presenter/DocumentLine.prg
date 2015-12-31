@@ -1,48 +1,9 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
  
-CLASS DocumentLine 
-
-   DATA oSender
-   DATA hDictionary
-
-   DATA selectLine                                             INIT .f.
-
-   METHOD new()
-   METHOD newFromDictionary()
-   METHOD getView()                                            INLINE ( ::oSender:getView() )
-
-   METHOD getDictionary()                                      INLINE ( ::hDictionary )
-   METHOD setDictionary( hDictionary )                         INLINE ( ::hDictionary := hDictionary )
-
-   METHOD getValue( key, uDefault )                            INLINE ( hGetDefault( ::hDictionary, key, uDefault ) )
-   METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
-
-   METHOD select()                                             INLINE ( ::selectLine   := .t. )                           
-   METHOD unSelect()                                           INLINE ( ::selectLine   := .f. )                           
-   METHOD toogleSelect()                                       INLINE ( ::selectLine   := !::selectLine )                           
-
-   METHOD isSelect()                                           INLINE ( ::selectLine )
-
-   METHOD getDivisa()                                          INLINE ( hGet( ::getValueMaster(), "Divisa" ) ) 
-
-   METHOD getSerie()                                           INLINE ( ::getValue( "Serie" ) )
-   METHOD setSerieMaster()                                     INLINE ( hSet( ::hDictionary, "Serie", ::oSender:getSerie() ) )
-
-   METHOD getNumero()                                          INLINE ( ::getValue( "Numero" ) )
-   METHOD setNumeroMaster()                                    INLINE ( ::setValue( "Numero", ::oSender:getNumero() ) )
-
-   METHOD getSufijo()                                          INLINE ( ::getValue( "Sufijo" ) )
-   METHOD setSufijoMaster()                                    INLINE ( ::setValue( "Sufijo", ::oSender:getSufijo() ) )
-
-   METHOD getDocumentId()                                      INLINE ( ::getValue( "Serie" ) + str( ::getValue( "Numero" ) ) + ::getValue( "Sufijo" ) )
-   METHOD getNumeroDocumento()                                 INLINE ( ::getValue( "Serie" ) + alltrim( str( ::getValue( "Numero" ) ) ) )
+CLASS DocumentLine FROM DocumentBase
 
    METHOD getCode()                                            INLINE ( ::getValue( "Articulo" ) )
-
-   METHOD getStore()                                           INLINE ( ::getValue( "Almacen" ) )
-   METHOD setStore( cStore )                                   INLINE ( ::setValue( "Almacen", cStore ) )
-   METHOD setStoreMaster()                                     INLINE ( if( empty( ::getStore() ), ::setStore( ::oSender:getStore() ), ) )
 
    METHOD getNumeroLinea()                                     INLINE ( ::getValue( "NumeroLinea" ) )
    METHOD setNumeroLinea( NumeroLinea )                        INLINE ( ::setValue( "NumeroLinea", NumeroLinea ) )
@@ -98,24 +59,6 @@ CLASS DocumentLine
    METHOD getPuntoVerde()                                      INLINE ( ::getValue( "PuntoVerde", 0 ) )
 
 END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD new( oSender ) CLASS DocumentLine
-
-   ::oSender            := oSender
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD newFromDictionary( oSender, hDictionary ) CLASS DocumentLine
-
-   ::new( oSender )
-
-   ::setDictionary( hDictionary )
-
-Return ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -205,7 +148,7 @@ Return ( specialTax )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS supplierDeliveryNoteDocumentLine FROM DocumentLine
+CLASS SupplierDeliveryNoteDocumentLine FROM DocumentLine
 
    METHOD newFromDictionary( oSender, hDictionary )
 
@@ -259,23 +202,10 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS AliasDocumentLine FROM DocumentLine
+CLASS AliasDocumentLine FROM AliasDocumentBase
 
-   DATA cAlias
-   
    METHOD getAlias()                                           INLINE ( ::oSender:getLineAlias() )
    METHOD getDictionary()                                      INLINE ( ::oSender:getLineDictionary() )
-
-   METHOD getValue( key, uDefault )                            INLINE ( D():getFieldFromAliasDictionary( key, ::getAlias(), ::getDictionary(), uDefault ) )
-   METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
-
-   METHOD getRecno()                                           INLINE ( ( ::getAlias() )->( recno() ) )
-   METHOD eof()                                                INLINE ( ( ::getAlias() )->( eof() ) )
-
-   METHOD setLinesScope( Id )                                  INLINE ( ( ::getAlias() )->( ordscope( 0, Id ) ),;
-                                                                        ( ::getAlias() )->( ordscope( 1, Id ) ),;
-                                                                        ( ::getAlias() )->( dbgotop() ) ) 
-   METHOD quitLinesScope()                                     INLINE ( ::setLinesScope( nil ) )
 
 END CLASS
 

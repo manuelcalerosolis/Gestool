@@ -3174,8 +3174,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := "Conversión de documentos"
-   oItem:cMessage       := "Conversión de documentos"
+   oItem:cPrompt        := "Conversión documentos"
+   oItem:cMessage       := "Conversión documentos"
    oItem:bAction        := {|| TConversionDocumentos():New():Dialog() }
    oItem:cId            := "01038"
    oItem:cBmp           := "Currency_Euro_16"
@@ -6004,13 +6004,9 @@ Return ( by( nRow ) )
 //---------------------------------------------------------------------------//
 
 Function Test() 
-/*
-   local uVar := "Agosto"
 
-   msgCombo( "Title", "Selecciones temporada", {"enero", "febrero", "marzo" }, @uVar )
+   TConversionDocumentos():New():Dialog()
 
-   ? uVar
-*/
 Return ( nil )
 
 Static Function testAll()

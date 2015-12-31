@@ -7066,9 +7066,9 @@ Return oMenu
 
 //---------------------------------------------------------------------------//
 
-static Function ActDbfPda( oSayProgress, oPgrSistema, oDlg )
+Static Function ActDbfPda( oSayProgress, oPgrSistema, oDlg )
 
-RETURN .t.
+Return .t.
 
 //---------------------------------------------------------------------------//
 
