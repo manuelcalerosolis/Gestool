@@ -95,7 +95,7 @@ RETURN ( Self )
 
 METHOD botonSiguiente()
 
-   if !::oDocumentLines:anySelected()
+   if !::oDocumentLines:anySelect()
       msgStop( "No hay líneas seleccionadas." )
    else
       ::oDlg:End( IDOK )

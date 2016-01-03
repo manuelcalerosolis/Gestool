@@ -8,6 +8,7 @@
 
 CLASS TConversionDocumentos 
 
+   DATA oDocumentHeaders
    DATA oDocumentLines
 
    DATA aliasDocumentLine
@@ -161,6 +162,8 @@ CLASS TConversionDocumentos
 
    METHOD getLineDocument( nPosition )             INLINE ( ::oDocumentLines:getLine( if( !empty( nPosition ), nPosition, ::oBrwLines:nArrayAt ) ) )
 
+   METHOD loadHeaderDocument()
+      METHOD isValidHeaderDocument()               
    METHOD loadLinesDocument() 
    METHOD setBrowseLinesDocument()                 
 
@@ -205,6 +208,8 @@ METHOD New()
    ::aTargetEmpresa     := aSerializedEmpresas()
 
    ::aliasDocumentLine  := aliasDocumentLine():New( Self )
+
+   ::oDocumentHeaders   := DocumentLines():New( Self )
 
    ::oDocumentLines     := DocumentLines():New( Self ) // AliasDocumentLine():New( Self )   
 
@@ -530,13 +535,12 @@ METHOD DialogSelectionLines( oDlg )
 
    ::oBrwLines:nMarqueeStyle        := 6
    ::oBrwLines:cName                := "Browse.Conversion documentos lineas"
-   // ::oBrwLines:bLDblClick           := {|| ::toogleSelectLine() }
 
    ::setBrowseLinesDocument()
 
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Seleccionando"
-      :bEditValue                   := {|| ::getLineDocument():isSelect() }
+      :bEditValue                   := {|| ::getLineDocument():isSelectLine() }
       :nWidth                       := 20
       :SetCheck( { "Sel16", "Nil16" } )
    end with
@@ -918,8 +922,6 @@ METHOD showDocumentsLines()
       ::setBrowseLinesDocument()
    end if 
 
-   // ::setLinesScope( Id )
-
    ::selectAllLine()
 
 Return ( .t. )
@@ -933,7 +935,10 @@ METHOD setDocumentType( cTableHeadName, cTableLineName )
    ::setLineTable( cTableLineName )
 
    ::setAliasInBrowseDocument()
+   
    ::setOrderInColumn()   
+
+   ::loadHeaderDocument()
 
 Return ( .t. )
 
@@ -1019,7 +1024,7 @@ METHOD selectLine()
    local position 
 
    for each position in ::oBrwLines:aSelected
-      ::getLineDocument( position ):select()
+      ::getLineDocument( position ):selectLine()
    next
 
    ::oBrwLines:Refresh()
@@ -1028,12 +1033,12 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD unselectLine()
+METHOD unSelectLine()
    
    local position 
 
    for each position in ::oBrwLines:aSelected
-      ::getLineDocument( position ):unselect()
+      ::getLineDocument( position ):unSelectLine()
    next
 
    ::oBrwLines:Refresh()
@@ -1047,12 +1052,67 @@ METHOD toogleSelectLine()
    local position 
 
    for each position in ::oBrwLines:aSelected
-      ::getLineDocument( position ):toogleSelect()
+      ::getLineDocument( position ):toogleSelectLine()
    next
 
    ::oBrwLines:Refresh()
 
 Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadHeaderDocument() 
+
+   local aStatus
+   local hDictionary    
+   local lLoadHeaders     
+   local oDocumentHeader
+
+   lLoadHeaders         := .f.
+
+   ::oDocumentHeaders:reset()
+
+   aStatus              := aGetStatus( ::getHeaderAlias(), .t. )
+
+   ( ::getHeaderAlias() )->( dbGoTop() )  
+
+   while !( ::getHeaderAlias() )->( eof() ) 
+
+      if ::isValidHeaderDocument()
+
+         hDictionary       := D():getHashFromAlias( ::getHeaderAlias(), ::getHeaderDictionary() )
+
+         oDocumentHeader   := DocumentLine():newFromDictionary( self, hDictionary )
+
+         ::oDocumentHeaders:addLines( oDocumentHeader )
+
+         lLoadHeaders      := .t.
+
+      end if 
+
+      ( ::getHeaderAlias() )->( dbSkip() ) 
+   
+   end while
+
+   setStatus( ::getHeaderAlias(), aStatus ) 
+
+   // msgAlert( hb_valtoexp( ::oDocumentHeaders:aLines ) )
+
+RETURN ( lLoadHeaders ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD isValidHeaderDocument()
+
+   if empty( ::oProveedor )
+      Return .t.
+   end if 
+
+   if empty( ::oPeriodo )
+      Return .t.
+   end if 
+
+Return ( ::oProveedor:value() == ::getEntityId() .and. ::oPeriodo:inRange( ::getDate() ) )
 
 //---------------------------------------------------------------------------//
 //

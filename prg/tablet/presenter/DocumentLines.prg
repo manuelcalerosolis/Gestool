@@ -28,8 +28,8 @@ CLASS DocumentLines
    METHOD getBruto()
    METHOD getBase()
 
-   METHOD selectAll()                                       INLINE ( aeval( ::aLines, {|oLine| oLine:select() } ) )
-   METHOD unselectAll()                                     INLINE ( aeval( ::aLines, {|oLine| oLine:unSelect() } ) )
+   METHOD selectAll()                                       INLINE ( aeval( ::aLines, {|oLine| oLine:selectLine() } ) )
+   METHOD unselectAll()                                     INLINE ( aeval( ::aLines, {|oLine| oLine:unSelectLine() } ) )
    METHOD anySelect()                                 
 
    METHOD getHeaderAlias()                                  INLINE ( ::oSender:getHeaderAlias() )
@@ -125,7 +125,7 @@ METHOD anySelect()
 
    local anySelect   := .f.
 
-   aeval( ::aLines, {|oLine| if( oLine:selectLine(), anySelect := .t., ) } )
+   aeval( ::aLines, {|oLine| if( oLine:isSelectLine(), anySelect := .t., ) } )
 
 Return ( anySelect )
 

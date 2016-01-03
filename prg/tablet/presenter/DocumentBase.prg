@@ -19,10 +19,10 @@ CLASS DocumentBase
    METHOD getValue( key, uDefault )                            INLINE ( hGetDefault( ::hDictionary, key, uDefault ) )
    METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
 
-   METHOD select()                                             INLINE ( ::select   := .t., msgAlert("yes select") )                           
-   METHOD unSelect()                                           INLINE ( ::select   := .f. )                           
-   METHOD toogleSelect()                                       INLINE ( ::select   := !::select )                           
-   METHOD isSelect()                                           INLINE ( ::select )
+   METHOD selectLine()                                         INLINE ( ::select := .t. )                           
+   METHOD unSelectLine()                                       INLINE ( ::select := .f. )                           
+   METHOD toogleSelectLine()                                   INLINE ( ::select := !::select )                           
+   METHOD isSelectLine()                                       INLINE ( ::select )
 
    METHOD getSerie()                                           INLINE ( ::getValue( "Serie" ) )
    METHOD setSerie( value )                                    INLINE ( ::setValue( "Serie", value ) )
