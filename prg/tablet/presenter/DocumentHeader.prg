@@ -4,8 +4,14 @@
  
 CLASS DocumentHeader FROM DocumentBase
 
-   METHOD getClient()                                          INLINE ( ::getValue( "Client" ) )
-   METHOD setClient( value )                                   INLINE ( ::setValue( "Client", value ) )
+   METHOD getDate()                                            INLINE ( ::getValue( "Fecha" ) )
+   METHOD setDate( value )                                     INLINE ( ::setValue( "Fecha", value ) )
+
+   METHOD getClient()                                          INLINE ( ::getValue( "Cliente" ) )
+   METHOD setClient( value )                                   INLINE ( ::setValue( "Cliente", value ) )
+
+   METHOD getClientName()                                      INLINE ( ::getValue( "NombreCliente" ) )
+   METHOD setClientName( value )                               INLINE ( ::setValue( "NombreCliente", value ) )
 
 END CLASS
 

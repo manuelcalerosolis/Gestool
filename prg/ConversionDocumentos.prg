@@ -73,11 +73,10 @@ CLASS TConversionDocumentos
          METHOD changeUnits( oColumn, uValue, nKey )
       METHOD DialogSummary()
       METHOD startDialog()
-      METHOD clickOnDocumentHeader( oColumn )
+
       METHOD changeSortDocument()
-      METHOD changeSearch()
+      METHOD changeSearch()                        INLINE ( ::oBrwDocuments:Seek( alltrim( ::cSearch ) ) )
       METHOD setOrderInColumn( oColumn )  
-      METHOD setAliasInBrowseDocument()            INLINE ( if( !empty( ::oBrwDocuments ), ::oBrwDocuments:setAlias( ::getHeaderAlias() ), ) )
       METHOD getDocument()                         INLINE ( alltrim( ::cDocument ) )
       METHOD getDocumentName()                     INLINE ( if( !empty( ::getHeaderAlias() ), ::getDocument() + space( 1 ) + ::getHeaderTextId(), "" ) )
       
@@ -140,20 +139,7 @@ CLASS TConversionDocumentos
    METHOD getHeaderAlias()                         INLINE ( ::oHeaderTable:getAlias() )
    METHOD getHeaderDictionary()                    INLINE ( ::oHeaderTable:getDictionary() )
    METHOD getHeaderIndex()                         INLINE ( ::oHeaderTable:getIndex() )
-
-   METHOD getHeaderId()                            INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getHeaderAlias(), ::getHeaderDictionary() ) + ;
-                                                            str( D():getFieldFromAliasDictionary( "Numero", ::getHeaderAlias(), ::getHeaderDictionary() ) ) + ; 
-                                                            D():getFieldFromAliasDictionary( "Sufijo", ::getHeaderAlias(), ::getHeaderDictionary() ) )
-   METHOD getHeaderTextId()                        INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getHeaderAlias(), ::getHeaderDictionary() ) + "/" + ;
-                                                            alltrim( str( D():getFieldFromAliasDictionary( "Numero", ::getHeaderAlias(), ::getHeaderDictionary() ) ) ) )
-   METHOD getHeaderEof()                           INLINE ( ( ::getHeaderAlias() )->( eof() ) )
    METHOD getDate()                                INLINE ( D():getFieldFromAliasDictionary( "Fecha", ::getHeaderAlias(), ::getHeaderDictionary() ) )
-   METHOD getEntityId()                            INLINE ( D():getFieldFromAliasDictionary( "Cliente", ::getHeaderAlias(), ::getHeaderDictionary() ) )
-   METHOD getName()                                INLINE ( D():getFieldFromAliasDictionary( "NombreCliente", ::getHeaderAlias(), ::getHeaderDictionary() ) )
-   METHOD getTotalNeto()                           INLINE ( D():getFieldFromAliasDictionary( "TotalNeto", ::getHeaderAlias(), ::getHeaderDictionary() ) )
-   METHOD getTotalImpuesto()                       INLINE ( D():getFieldFromAliasDictionary( "TotalImpuesto", ::getHeaderAlias(), ::getHeaderDictionary() ) )
-   METHOD getTotalDocumento()                      INLINE ( D():getFieldFromAliasDictionary( "TotalDocumento", ::getHeaderAlias(), ::getHeaderDictionary() ) )
-   METHOD isPuntoVerde()                           INLINE ( D():getFieldFromAliasDictionary( "OperarPuntoVerde", ::getHeaderAlias(), ::getHeaderDictionary(), .f. ) )
 
    METHOD setLineTable( cTableName )               INLINE ( ::oLineTable := TDataCenter():scanDataTableInView( cTableName, ::nView ) )
    METHOD getLineAlias()                           INLINE ( ::oLineTable:getAlias() )
@@ -161,9 +147,12 @@ CLASS TConversionDocumentos
    METHOD getLineIndex()                           INLINE ( ::oLineTable:getIndex() )
 
    METHOD getLineDocument( nPosition )             INLINE ( ::oDocumentLines:getLine( if( !empty( nPosition ), nPosition, ::oBrwLines:nArrayAt ) ) )
+   METHOD getHeaderDocument( nPosition )           INLINE ( ::oDocumentHeaders:getLine( if( !empty( nPosition ), nPosition, ::oBrwDocuments:nArrayAt ) ) )
 
    METHOD loadHeaderDocument()
-      METHOD isValidHeaderDocument()               
+      METHOD isValidHeaderDocument()   
+   METHOD setBrowseHeaderDocument()
+
    METHOD loadLinesDocument() 
    METHOD setBrowseLinesDocument()                 
 
@@ -174,7 +163,10 @@ CLASS TConversionDocumentos
    METHOD changeSortLines()                        
 
    METHOD clikcOnLineHeader( oColumn )     
-   METHOD seekLine( c )                            
+   METHOD seekLine( c )                    
+
+   METHOD clickOnDocumentHeader( oColumn )        
+   METHOD seekHeader()
 
 ENDCLASS
 
@@ -184,7 +176,8 @@ METHOD New()
 
    ::OpenFiles()
 
-   ::cDocument          := "Pedido proveedores"
+   ::cDocument          := space( 3 ) + "Pedido proveedores"
+   ::cTargetDocument    := space( 3 ) + "S.A.T. clientes"
    
    ::aDocuments         := {  "Compras" =>                                                   nil,;                                    
                               space( 3 ) + "Pedido proveedores" =>                           {|| ::setDocumentPedidosProveedores() },;
@@ -213,7 +206,7 @@ METHOD New()
 
    ::oDocumentLines     := DocumentLines():New( Self ) // AliasDocumentLine():New( Self )   
 
-   ::setDocumentPedidosProveedores()
+   // ::setDocumentPedidosProveedores()
 
 RETURN ( Self )
 
@@ -402,6 +395,7 @@ METHOD DialogSelectionDocument( oDlg )
       OF          oDlg
 
    ::oSearch:bChange                := {|| ::changeSearch() }
+   ::oSearch:bValid                 := {|| ::oSearch:varPut( space( 100 ) ), .t. }
 
    REDEFINE COMBOBOX ::oSortDocument ;
       VAR         ::cSortDocument ;
@@ -420,9 +414,45 @@ METHOD DialogSelectionDocument( oDlg )
    ::oBrwDocuments:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrwDocuments:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-   ::oBrwDocuments:cAlias           := ::getHeaderAlias()
    ::oBrwDocuments:nMarqueeStyle    := 5
    ::oBrwDocuments:cName            := "Browse.Conversion documentos"
+
+   ::setBrowseHeaderDocument()
+
+   with object ( ::oBrwDocuments:AddCol() )
+      :cHeader                      := "Número"
+      :Cargo                        := "getNumeroDocumento"
+      :bEditValue                   := {|| ::getHeaderDocument():getNumeroDocumento() }
+      :nWidth                       := 80
+      :bLClickHeader                := {| nMRow, nMCol, nFlags, oColumn | ::clickOnDocumentHeader( oColumn ) }   
+   end with
+
+   with object ( ::oBrwDocuments:AddCol() )
+      :cHeader                      := "Fecha"
+      :Cargo                        := "getDate"
+      :bEditValue                   := {|| ::getHeaderDocument():getDate() }
+      :nWidth                       := 80
+      :bLClickHeader                := {| nMRow, nMCol, nFlags, oColumn | ::clickOnDocumentHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrwDocuments:AddCol() )
+      :cHeader                      := "Cliente"
+      :Cargo                        := "getClient"
+      :bEditValue                   := {|| ::getHeaderDocument():getClient() }
+      :nWidth                       := 80
+      :bLClickHeader                := {| nMRow, nMCol, nFlags, oColumn | ::clickOnDocumentHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrwDocuments:AddCol() )
+      :cHeader                      := "Nombre cliente"
+      :Cargo                        := "getClientName"
+      :bEditValue                   := {|| ::getHeaderDocument():getClientName() }
+      :nWidth                       := 200
+      :bLClickHeader                := {| nMRow, nMCol, nFlags, oColumn | ::clickOnDocumentHeader( oColumn ) }
+   end with
+
+  
+/*
 
    with object ( ::oBrwDocuments:AddCol() )
       :cHeader                      := "Número"
@@ -476,6 +506,7 @@ METHOD DialogSelectionDocument( oDlg )
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
    end with
+*/
 
    ::oBrwDocuments:CreateFromResource( 120 )
 
@@ -799,7 +830,7 @@ METHOD DialogSummary( oDlg )
       OF          oDlg
 
    REDEFINE SAY ; 
-      VAR         ::getHeaderTextId() ;
+      VAR         "::getHeaderTextId()" ;
       ID          110 ;
       OF          oDlg
 
@@ -839,7 +870,7 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 METHOD isValidTargetDocument()
-
+   
    if empty(::cTargetDocument)
       msgStop( "El documento destino no es valido.")
       RETURN ( .f. )
@@ -934,37 +965,31 @@ METHOD setDocumentType( cTableHeadName, cTableLineName )
 
    ::setLineTable( cTableLineName )
 
-   ::setAliasInBrowseDocument()
-   
    ::setOrderInColumn()   
 
    ::loadHeaderDocument()
+
+   ::setBrowseHeaderDocument()
 
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD clickOnDocumentHeader( oColumn )
+METHOD clickOnDocumentHeader( oColumn, setSort )
+
+   DEFAULT setSort    := .t.
+
+   aeval( ::oBrwDocuments:aCols, {|o| if( o:cHeader == oColumn:cHeader, o:cOrder := "A", o:cOrder := "" ) } )
+
+   ::oDocumentHeaders:sortingPleaseWait( oColumn:Cargo )
    
-   local cTag
-
-   if !empty( oColumn ) .and. !empty( oColumn:cSortOrder )
-      cTag           := D():getIndexFromAliasDictionary( oColumn:cSortOrder, ::getHeaderIndex() ) 
-   end if 
-
-   if empty( cTag )
-      Return ( Self )
-   end if 
-
-   ( ::getHeaderAlias() )->( ordsetfocus( cTag ) )
-
-   ::setOrderInColumn( oColumn )
-
-   ::oSortDocument:Set( oColumn:cHeader )
-
    ::oBrwDocuments:Refresh()
 
-Return ( Self )
+   if setSort
+      ::oSortDocument:set( oColumn:cHeader )
+   end if 
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -976,25 +1001,6 @@ METHOD changeSortDocument()
    nScan          := ascan( ::oBrwDocuments:aCols, {| oColumn | oColumn:cHeader == cSort } )
    if nScan != 0
       ::clickOnDocumentHeader( ::oBrwDocuments:aCols[ nScan ] )
-   end if 
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD changeSearch()
-
-   local lSeek
-   local cSearch  := alltrim( ::oSearch:varGet() )
-
-   lSeek          := lSeekKeySimple( cSearch, ::getHeaderAlias() ) // lMiniSeek( xCadena, cAlias, ::cSearchType, ::nLenSearchType )
-
-   if ( !lSeek .and. ( ( ::getHeaderAlias )->( ordnumber() ) == 1 ) )
-      lSeek       := seekDocumentoSimple( cSearch, ::getHeaderAlias() )          
-   end if 
-
-   if lSeek 
-      ::oBrwDocuments:Refresh()
    end if 
 
 Return ( .t. )
@@ -1068,11 +1074,11 @@ METHOD loadHeaderDocument()
    local lLoadHeaders     
    local oDocumentHeader
 
-   lLoadHeaders         := .f.
+   lLoadHeaders            := .f.
 
    ::oDocumentHeaders:reset()
 
-   aStatus              := aGetStatus( ::getHeaderAlias(), .t. )
+   aStatus                 := aGetStatus( ::getHeaderAlias(), .t. )
 
    ( ::getHeaderAlias() )->( dbGoTop() )  
 
@@ -1082,7 +1088,7 @@ METHOD loadHeaderDocument()
 
          hDictionary       := D():getHashFromAlias( ::getHeaderAlias(), ::getHeaderDictionary() )
 
-         oDocumentHeader   := DocumentLine():newFromDictionary( self, hDictionary )
+         oDocumentHeader   := DocumentHeader():newFromDictionary( self, hDictionary )
 
          ::oDocumentHeaders:addLines( oDocumentHeader )
 
@@ -1096,9 +1102,48 @@ METHOD loadHeaderDocument()
 
    setStatus( ::getHeaderAlias(), aStatus ) 
 
-   // msgAlert( hb_valtoexp( ::oDocumentHeaders:aLines ) )
-
 RETURN ( lLoadHeaders ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD setBrowseHeaderDocument()
+
+   ::oBrwDocuments:setArray( ::oDocumentHeaders:getLines(), .t., , .f. )
+   
+   ::oBrwDocuments:bSeek := {|c| ::seekHeader( c ) }
+
+RETURN ( .t. ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD seekHeader( cSeek )
+
+   local nRow
+   local uVal
+   local nColumnToSearch
+
+   nColumnToSearch         := ascan( ::oBrwDocuments:aCols, { |o| !Empty( o:cOrder ) } )
+
+   if nColumnToSearch == 0
+      Return .f.
+   end if 
+
+   nRow                    := ::oBrwDocuments:nArrayAt
+
+   for ::oBrwDocuments:nArrayAt := 1 to ::oBrwDocuments:nLen
+
+      uVal                 := eval( ::oBrwDocuments:aCols[ nColumnToSearch ]:bEditValue )
+
+      if hb_WildMatch( '*' + cSeek, uVal )
+         ::oBrwDocuments:SelectCurrent()
+         Return .t.
+      endif
+     
+   next 
+
+   ::oBrwDocuments:nArrayAt    := nRow
+
+Return .t.
 
 //---------------------------------------------------------------------------//
 
@@ -1112,7 +1157,7 @@ METHOD isValidHeaderDocument()
       Return .t.
    end if 
 
-Return ( ::oProveedor:value() == ::getEntityId() .and. ::oPeriodo:inRange( ::getDate() ) )
+Return ( ( empty( ::oProveedor:value() ) .or. ::oProveedor:value() == ::getEntityId() ) .and. ::oPeriodo:inRange( ::getDate() ) )
 
 //---------------------------------------------------------------------------//
 //

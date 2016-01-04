@@ -4307,7 +4307,10 @@ Function rxRecCli( cPath, cDriver )
    DEFAULT cPath     := cPatEmp()
    DEFAULT cDriver   := cDriver()
 
-   fEraseIndex( cPath + "FACCLIP.CDX", cDriver )
+   mkRecCli( cPath, nil, .f. )
+
+   fEraseIndex( cPath + "FacCliP.Cdx", cDriver )
+   fEraseIndex( cPath + "FacCliG.Cdx", cDriver )
 
    dbUseArea( .t., cDriver, cPath + "FACCLIP.DBF", cCheckArea( "FACCLIP", @dbfFacCliT ), .f. )
    if !( dbfFacCliT )->( neterr() )
@@ -4408,7 +4411,6 @@ Function rxRecCli( cPath, cDriver )
 
    // Tabla de grupos de recibos-----------------------------------------------
 
-   fEraseIndex( cPath + "FacCliG.Cdx", cDriver )
 
    dbUseArea( .t., cDriver, cPath + "FacCliG.Dbf", cCheckArea( "FACCLIG", @dbfFacCliG ), .f. )
 

@@ -5265,10 +5265,9 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oFld, oDlg, oBtnOk, oBrwDet, dbfEmp,
 
    local n
    local cCodEmp           := aTmp[ _CODEMP ]
-
    cNewEmpresa             := aTmp[ _CODEMP ]
 
-   if nMode == APPD_MODE
+   if nMode == APPD_MODE .or. nMode == DUPL_MODE
 
       if oFld:nOption != 3
 

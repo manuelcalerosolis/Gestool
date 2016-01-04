@@ -2538,7 +2538,7 @@ RETURN ( aDoc )
 Crea los ficheros de la facturaci¢n
 */
 
-FUNCTION mkRecPrv( cPath, oMeter, lReindex )
+FUNCTION mkRecPrv( cPath, oMeter, lReindex ) 
 
    DEFAULT lReindex  := .t.
 
@@ -2547,7 +2547,9 @@ FUNCTION mkRecPrv( cPath, oMeter, lReindex )
       sysrefresh()
    end if
 
-   dbCreate( cPath + "FacPrvP.DBF", aSqlStruct( aItmRecPrv() ), cLocalDriver() )
+   if !lExistTable( cPath + "FacPrvP.Dbf", cLocalDriver() )
+      dbCreate( cPath + "FacPrvP.Dbf", aSqlStruct( aItmRecPrv() ), cLocalDriver() )
+   end if 
 
    if lReindex
       rxRecPrv( cPath, cLocalDriver() )
@@ -2563,6 +2565,8 @@ FUNCTION rxRecPrv( cPath, cDriver )
 
    DEFAULT cPath     := cPatEmp()
    DEFAULT cDriver   := cDriver()
+
+   mkRecPrv( cPath, nil, .f. )
 
    fEraseIndex( cPath + "FacPrvP.CDX", cDriver )
 
