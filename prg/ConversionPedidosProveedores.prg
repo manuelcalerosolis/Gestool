@@ -80,6 +80,8 @@ RETURN ( ::oDlg:nResult == IDOK )
 
 METHOD startDialog()
 
+   ::setDocumentPedidosProveedores()
+
    ::oBtnAnterior:Hide()
    ::oBtnSiguiente:setText( "&Importar")
 

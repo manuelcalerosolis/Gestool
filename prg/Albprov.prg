@@ -11099,9 +11099,9 @@ Static Function appendLineasPedidosProveedor( aLines )
 
    for each oLine in aLines
 
-      if oLine:selectLine()
+      if oLine:isSelectLine()
 
-         calculateUnidadesPendientesRecepcion( oLine )
+         // calculateUnidadesPendientesRecepcion( oLine )
 
          oLine:setValue( "NumeroPedidoProveedor",  oLine:getDocumentId() )
          oLine:setValue( "NumeroLinea",            nLastNum( dbfTmp ) )

@@ -137,9 +137,14 @@ CLASS TConversionDocumentos
 
    METHOD setHeaderTable( cTableName )             INLINE ( ::oHeaderTable := TDataCenter():scanDataTableInView( cTableName, ::nView ) )
    METHOD getHeaderAlias()                         INLINE ( ::oHeaderTable:getAlias() )
+   METHOD getHeaderEof()                           INLINE ( ( ::oHeaderTable:getAlias() )->( eof() ) )
    METHOD getHeaderDictionary()                    INLINE ( ::oHeaderTable:getDictionary() )
    METHOD getHeaderIndex()                         INLINE ( ::oHeaderTable:getIndex() )
-   METHOD getDate()                                INLINE ( D():getFieldFromAliasDictionary( "Fecha", ::getHeaderAlias(), ::getHeaderDictionary() ) )
+
+   METHOD getHeaderId()                            INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getHeaderAlias(), ::getHeaderDictionary() ) + ;
+                                                            str( D():getFieldFromAliasDictionary( "Numero", ::getHeaderAlias(), ::getHeaderDictionary() ) ) + ;
+                                                            D():getFieldFromAliasDictionary( "Sufijo", ::getHeaderAlias(), ::getHeaderDictionary() ) )
+   METHOD getHeaderDate()                          INLINE ( D():getFieldFromAliasDictionary( "Fecha", ::getHeaderAlias(), ::getHeaderDictionary() ) )
 
    METHOD setLineTable( cTableName )               INLINE ( ::oLineTable := TDataCenter():scanDataTableInView( cTableName, ::nView ) )
    METHOD getLineAlias()                           INLINE ( ::oLineTable:getAlias() )
@@ -735,7 +740,7 @@ METHOD DialogSelectionLines( oDlg )
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Importe"
       :Cargo                        := "getNetPrice"
-      :bEditValue                   := {|| ::getLineDocument():getNetPrice() }
+      :bEditValue                   := {|| Transform( ::getLineDocument():getNetPrice(), ::cPictureRound ) }
       :cEditPicture                 := ::cPictureRound
       :nWidth                       := 90
       :nDataStrAlign                := 1
@@ -785,7 +790,7 @@ METHOD DialogSelectionLines( oDlg )
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Total"
       :Cargo                        := "getBruto"
-      :bEditValue                   := {|| ::getLineDocument():getBruto() }
+      :bEditValue                   := {|| Transform( ::getLineDocument():getBruto(), ::cPictureRound ) } 
       :cEditPicture                 := ::cPictureRound
       :nWidth                       := 80
       :nDataStrAlign                := 1
@@ -931,10 +936,21 @@ METHOD showDocuments()
    end if 
 
    bAction        := ::getActionDocument()
+
    if isBlock( bAction )
+
       lAction     := eval( bAction )
+
+      ::setOrderInColumn()   
+
+      ::loadHeaderDocument()
+
+      ::setBrowseHeaderDocument() 
+
    else 
+
       ::opcionInvalida()
+
    end if 
 
 Return ( lAction )
@@ -943,7 +959,7 @@ Return ( lAction )
 
 METHOD showDocumentsLines()
 
-   local id    := ::getHeaderId()
+   local id       := ::getHeaderId()
 
    if empty( id )
       Return ( .f. )
@@ -965,11 +981,11 @@ METHOD setDocumentType( cTableHeadName, cTableLineName )
 
    ::setLineTable( cTableLineName )
 
-   ::setOrderInColumn()   
+   // ::setOrderInColumn()   
 
-   ::loadHeaderDocument()
+   // ::loadHeaderDocument()
 
-   ::setBrowseHeaderDocument()
+   // ::setBrowseHeaderDocument()
 
 Return ( .t. )
 
@@ -1157,7 +1173,7 @@ METHOD isValidHeaderDocument()
       Return .t.
    end if 
 
-Return ( ( empty( ::oProveedor:value() ) .or. ::oProveedor:value() == ::getEntityId() ) .and. ::oPeriodo:inRange( ::getDate() ) )
+Return ( ( empty( ::oProveedor:value() ) .or. ::oProveedor:value() == ::getEntityId() ) .and. ::oPeriodo:inRange( ::getHeaderDate() ) )
 
 //---------------------------------------------------------------------------//
 //

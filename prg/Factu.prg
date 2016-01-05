@@ -6005,7 +6005,7 @@ Return ( by( nRow ) )
 
 Function Test() 
 
-   TConversionDocumentos():New():Dialog()
+   // TConversionDocumentos():New():Dialog()
 
 Return ( nil )
 

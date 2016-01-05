@@ -102,9 +102,9 @@ FUNCTION Divisas( oMenuItem, oWnd )
       DEFINE SHELL oWndBrw FROM 2, 10 TO 18, 70 ;
          XBROWSE ;
          TITLE    "Tipos de divisas" ;
-         PROMPT   "CÃ³digo",;
-                  "Nombre";
-         MRU      "Currency_Euro_16";
+         PROMPT   "Código" ,;
+                  "Nombre" ;
+         MRU      "Currency_Euro_16" ;
          BITMAP   clrTopArchivos ;
          ALIAS    ( dbfDiv );
          APPEND   WinAppRec( oWndBrw:oBrw, bEdit, dbfDiv, nil, nil, oBandera ) ;
@@ -115,7 +115,7 @@ FUNCTION Divisas( oMenuItem, oWnd )
 			OF 		oWnd
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "CÃ³digo"
+         :cHeader          := "Código"
          :cSortOrder       := "cCdoDiv"
          :bEditValue       := {|| ( dbfDiv )->cCodDiv }
          :nWidth           := 80
@@ -169,7 +169,7 @@ FUNCTION Divisas( oMenuItem, oWnd )
 			NOBORDER ;
          ACTION   ( oWndBrw:RecAdd() );
          ON DROP  ( oWndBrw:RecDup() );
-         TOOLTIP  "(A)Ã±adir";
+         TOOLTIP  "(A)ñadir";
          BEGIN GROUP;
          HOTKEY   "A";
          LEVEL    ACC_APPD
@@ -456,20 +456,20 @@ Static Function lPresave( aTmp, dbfDiv, oBrw, nMode, oCmb, oBandera, oDlg, oGetC
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
 
       if Empty( aTmp[_CCODDIV] )
-         MsgStop( "El cÃ³digo de la divisa no puede estar vacÃ­o" )
+         MsgStop( "El código de la divisa no puede estar vacío" )
          oGetCod:SetFocus()
          Return nil
       end if
 
       if dbSeekInOrd( aTmp[ _CCODDIV ], "CCODDIV", dbfDiv )
-         MsgStop( "CÃ³digo ya existe " + Rtrim( aTmp[ _CCODDIV ] ) )
+         MsgStop( "Código ya existe " + Rtrim( aTmp[ _CCODDIV ] ) )
          return nil
       end if
 
    end if
 
    if Empty( aTmp[_CNOMDIV] )
-      MsgStop( "El nombre de la divisa no puede estar vacÃ­o" )
+      MsgStop( "El nombre de la divisa no puede estar vacío" )
       oGet2:SetFocus()
       Return nil
    end if
@@ -736,7 +736,7 @@ FUNCTION BrwDiv( oGet, oBmp, oGetDiv, dbfDiv, oBan, lBigStyle )
    local nOrd        := GetBrwOpt( "BrwDiv" )
    local aSta
 	local oCbxOrd
-   local aCbxOrd     := { "CÃ³digo", "Nombre" }
+   local aCbxOrd     := { "Código", "Nombre" }
    local cCbxOrd
    local nLevel      := nLevelUsr( "01039" )
 
@@ -780,7 +780,7 @@ FUNCTION BrwDiv( oGet, oBmp, oGetDiv, dbfDiv, oBan, lBigStyle )
                   oBan:hBandera( (dbfDiv)->CBNDDIV ),;
                   Trans( nValChgDiv( dbfDiv ), "@E 999,999.9999"),;
                   Dtoc( (dbfDiv)->DACTDIV );
-         HEAD     "CÃ³digo",;
+         HEAD     "Código",;
 						"Nombre",;
                   "Bandera",;
                   "Valor",;
@@ -808,7 +808,7 @@ FUNCTION BrwDiv( oGet, oBmp, oGetDiv, dbfDiv, oBan, lBigStyle )
       oBrw:cName           := "Browse.Divisas"
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "CÃ³digo"
+         :cHeader          := "Código"
          :cSortOrder       := "cCdoDiv"
          :bEditValue       := {|| ( dbfDiv )->cCodDiv }
          :nWidth           := 80
@@ -921,7 +921,7 @@ FUNCTION BrwNbrDiv( oGet, oGetDiv, dbfDiv, oBan )
    local nOrd        := GetBrwOpt( "BrwDiv" )
    local aSta
 	local oCbxOrd
-   local aCbxOrd     := { "CÃ³digo", "Nombre" }
+   local aCbxOrd     := { "Código", "Nombre" }
    local cCbxOrd
    local nLevel      := nLevelUsr( "01039" )
 
@@ -961,7 +961,7 @@ FUNCTION BrwNbrDiv( oGet, oGetDiv, dbfDiv, oBan )
       oBrw:cName           := "Browse.Divisas por nombre"
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "CÃ³digo"
+         :cHeader          := "Código"
          :cSortOrder       := "cCdoDiv"
          :bEditValue       := {|| ( dbfDiv )->cCodDiv }
          :nWidth           := 80
@@ -1446,7 +1446,7 @@ Function IsDiv()
          ( dbfDiv )->nDwbDiv  := 2
          ( dbfDiv )->nRwbDiv  := 2
          ( dbfDiv )->cBndDiv  := "BAN_EURO"
-         ( dbfDiv )->cSmbDiv  := "â‚¬"
+         ( dbfDiv )->cSmbDiv  := "€"
          ( dbfDiv )->( dbUnLock() )
       end if
 
@@ -1602,7 +1602,7 @@ function aItmDiv()
 
    local aItmDiv  := {}
 
-   aAdd( aItmDiv, {"CCODDIV",   "C",     3,    0, "CÃ³digo de la divisa"                                  ,  "",                  "", "( cDbfDiv )", nil } )
+   aAdd( aItmDiv, {"CCODDIV",   "C",     3,    0, "Código de la divisa"                                  ,  "",                  "", "( cDbfDiv )", nil } )
    aAdd( aItmDiv, {"CNOMDIV",   "C",    20,    0, "Nombre de la divisa"                                  ,  "",                  "", "( cDbfDiv )", nil } )
    aAdd( aItmDiv, {"DACTDIV",   "D",     8,    0, "Fecha ultimo cambio de la divisa"                     ,  "",                  "", "( cDbfDiv )", nil } )
    aAdd( aItmDiv, {"NPTSDIV",   "N",    16,    6, "Valor en pesetas de la divisa"                        ,  "'999,999.999999'",  "", "( cDbfDiv )", nil } )

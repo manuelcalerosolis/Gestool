@@ -77,19 +77,21 @@ Return ( totalUnidades )
 
 METHOD getBruto() CLASS DocumentLine
 
-   local Total       := ::getNetPrice()
-   Total             *= ::getTotalUnits()
-   Total             += ::getTotalSpecialTax()
+   local Bruto       := ::getNetPrice() * ::getTotalUnits()
 
    if ::getPortes() != 0
-      Total          += ::getPortes() * ::getTotalUnits()
+      Bruto          += ::getPortes() * ::getTotalUnits()
    endif
-/*
+
+   Bruto             += ::getTotalSpecialTax()
+
+   /*
    if ::oSender:isPuntoVerde()    
       Total          += ::getPuntoVerde() * ::getTotalUnits()
    end if 
-*/
-Return ( Total )
+   */
+
+Return ( Bruto )
 
 //---------------------------------------------------------------------------//
 
