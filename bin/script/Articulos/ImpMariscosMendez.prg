@@ -25,6 +25,7 @@ static cFicheroTarifa6     := "6.xls"
 static cFicheroTarifa7     := "7.xls"
 static cFicheroTarifa11    := "11.xls"
 static cFicheroTarifa100   := "100.xls"
+static cFicheroTarifa100   := "30.xls"
 
 //---------------------------------------------------------------------------//
 
@@ -70,6 +71,10 @@ function InicioHRB()
    
    if MsgYesNo( "Importar tarifa 100", "" )
       ImportacionTarifa100()
+   end if
+
+   if MsgYesNo( "Importar tarifa 30", "" )
+      ImportacionTarifa30()
    end if
 
    if MsgYesNo( "Importar categorias", "" )
@@ -447,7 +452,7 @@ Static Function ImportaArticulosCamposExtra( nLin )
 
    //ImportaCampoExtra( "005", "DR", nLin, "C" ) //Observaciones ventas
 
-   //ImportaCampoExtra( "006", "AQ", nLin, "C" ) //Factor
+   ImportaCampoExtra( "006", "DQ", nLin, "N" ) //Factor
 
    //ImportaCampoExtra( "007", "DU", nLin, "C" ) //Nombre científico
 
@@ -475,13 +480,13 @@ Static Function ImportaArticulosCamposExtra( nLin )
 
    //ImportaCampoExtra( "019", "DS", nLin, "D" ) //Fecha pedido
 
-   ImportaCampoExtra( "020", "DW", nLin, "N" ) //Neto KG
+   //ImportaCampoExtra( "020", "DW", nLin, "N" ) //Neto KG
 
-   ImportaCampoExtra( "021", "EJ", nLin, "N" ) //FACTOR MERMA
+   //ImportaCampoExtra( "021", "EJ", nLin, "N" ) //FACTOR MERMA
 
-   ImportaCampoExtra( "022", "EU", nLin, "N" ) //UNIDAD DE EMBALAJE
+   //ImportaCampoExtra( "022", "EU", nLin, "N" ) //UNIDAD DE EMBALAJE
 
-   ImportaCampoExtra( "023", "ET", nLin, "N" ) //TARA
+   //ImportaCampoExtra( "023", "ET", nLin, "N" ) //TARA
 
 Return ( .t. )
 
@@ -1173,6 +1178,50 @@ Static Function ImportacionTarifa100()
          ( D():TarifaPreciosLineas( nView ) )->( dbAppend() )
 
          ( D():TarifaPreciosLineas( nView ) )->cCodTar   := "00100"
+         ( D():TarifaPreciosLineas( nView ) )->cCodArt   := GetRange( "C", n )
+         ( D():TarifaPreciosLineas( nView ) )->cNomArt   := ( D():Articulos( nView ) )->Nombre
+         ( D():TarifaPreciosLineas( nView ) )->cCodFam   := ( D():Articulos( nView ) )->Familia
+         ( D():TarifaPreciosLineas( nView ) )->nPrcTar1  := GetNumeric( "K", n )
+
+         ( D():TarifaPreciosLineas( nView ) )->( dbUnlock() )
+
+      end if
+
+      msgwait( "Procesando artículos: " + str( n ), , .0001 )
+
+   next
+
+   Desconexion()
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Static Function ImportacionTarifa30()
+
+   local n
+   local TipoIva
+   local cCodBar     := ""
+
+   msgwait( "Importamos tarifa 30" , , 1 )
+
+   Conexion( cFicheroTarifa30 )
+
+   for n := nLineaComienzo to 65536
+
+      /*
+      Si no encontramos mas líneas nos salimos------------------------------
+      */
+
+      if Empty( oOleExcel:oExcel:ActiveSheet:Range( "C" + lTrim( Str( n ) ) ):Value )
+         Exit
+      end if
+
+      if ( D():Articulos( nView ) )->( dbSeek( GetRange( "C", n ) ) )
+
+         ( D():TarifaPreciosLineas( nView ) )->( dbAppend() )
+
+         ( D():TarifaPreciosLineas( nView ) )->cCodTar   := "00030"
          ( D():TarifaPreciosLineas( nView ) )->cCodArt   := GetRange( "C", n )
          ( D():TarifaPreciosLineas( nView ) )->cNomArt   := ( D():Articulos( nView ) )->Nombre
          ( D():TarifaPreciosLineas( nView ) )->cCodFam   := ( D():Articulos( nView ) )->Familia

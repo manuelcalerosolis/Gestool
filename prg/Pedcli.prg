@@ -2962,14 +2962,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          IDSAY    112 ;
          SPINNER;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[2]
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _DFECSAL ] VAR aTmp[ _DFECSAL ];
          ID       113 ;
          IDSAY    114 ;
 			SPINNER;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[2]
+         OF       oFld:aDialogs[1]
 
       // Codigo del usuario----------------------------------------------------
 
@@ -3082,7 +3082,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[_CSUPED] VAR aTmp[_CSUPED];
-         ID       111 ;
+         ID       115 ;
          WHEN     ( lWhen ) ;
 			COLOR 	CLR_GET ;
          OF       oFld:aDialogs[1]

@@ -560,25 +560,29 @@ Method aCamposExtra( cTipoCampo ) CLASS TCamposExtra
 
       aCampos  := hb_deserialize( ::oDbf:mDocumento )
 
-      if hhaskey( aCampos, cTipoCampo ) .and. hGet( aCampos, cTipoCampo )
+      if !Empty( aCampos )
 
-         do case 
-            case ::oDbf:nTipo == 2
-               cValor   := 0
-            case ::oDbf:nTipo == 3
-               cValor   := cTod( "" ) 
-            otherwise
-               cValor   := Space( 100 )
-         end case
+         if hhaskey( aCampos, cTipoCampo ) .and. hGet( aCampos, cTipoCampo )
 
-         aAdd( aCamposExtra, {   "código"       => ::oDbf:cCodigo,;
-                                 "descripción"  => ::oDbf:cNombre,;
-                                 "tipo"         => ::oDbf:nTipo,;
-                                 "longitud"     => ::oDbf:nLongitud,;
-                                 "decimales"    => ::oDbf:nDecimales,;
-                                 "lrequerido"   => ::oDbf:lRequerido,;
-                                 "valores"      => hb_deserialize( ::oDbf:mDefecto ),;
-                                 "valor"        => cValor } )
+            do case 
+               case ::oDbf:nTipo == 2
+                  cValor   := 0
+               case ::oDbf:nTipo == 3
+                  cValor   := cTod( "" ) 
+               otherwise
+                  cValor   := Space( 100 )
+            end case
+
+            aAdd( aCamposExtra, {   "código"       => ::oDbf:cCodigo,;
+                                    "descripción"  => ::oDbf:cNombre,;
+                                    "tipo"         => ::oDbf:nTipo,;
+                                    "longitud"     => ::oDbf:nLongitud,;
+                                    "decimales"    => ::oDbf:nDecimales,;
+                                    "lrequerido"   => ::oDbf:lRequerido,;
+                                    "valores"      => hb_deserialize( ::oDbf:mDefecto ),;
+                                    "valor"        => cValor } )
+
+         end if
 
       end if
 

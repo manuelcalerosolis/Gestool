@@ -2975,7 +2975,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
 
    if nMode != ZOOM_MODE
       oDlg:AddFastKey(  VK_F5, {|| SaveDeta( aTmp, aGet, oBrwPrp, oFld, oDlg, oBrw, nMode, oTotal, oGet1, aTmpPed, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGetStk, oSayLote, oBtn ) } )
-   end if
+      oDlg:AddFastKey(  VK_F7, {|| runScriptF7() } )
+   end if 
 
    oDlg:AddFastKey(     VK_F1, {|| GoHelp() } )
 
@@ -9389,3 +9390,10 @@ Return ( nombrePropiedad( ( D():PedidosProveedoresLineas( view ) )->cCodPr2, ( D
 
 //---------------------------------------------------------------------------//
 
+Static function runScriptF7()
+
+   runEventScript( "PedidosProveedores\F7", nView )
+
+Return .t.
+
+//---------------------------------------------------------------------------//
