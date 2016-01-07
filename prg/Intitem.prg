@@ -141,8 +141,8 @@ Method CreateData() CLASS TClienteSenderReciver
    USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
    SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
 
-   USE ( cPatCli() + "CliContactos.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLICONTA", @dbfContactos ) )
-   SET ADSINDEX TO ( cPatCli() + "CliContactos.Cdx" ) ADDITIVE
+   USE ( cPatCli() + "CliCto.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLICONTA", @dbfContactos ) )
+   SET ADSINDEX TO ( cPatCli() + "CliCto.Cdx" ) ADDITIVE
 
    /*
    Creamos todas las bases de datos temporales
@@ -156,8 +156,8 @@ Method CreateData() CLASS TClienteSenderReciver
    dbUseArea( .t., cLocalDriver(), cPatSnd() + "ObrasT.Dbf", cCheckArea( "ObrasT", @tmpObr ), .f. )
    ( tmpObr )->( ordListAdd( cPatSnd() + "ObrasT.Cdx" ) )
 
-   dbUseArea( .t., cLocalDriver(), cPatSnd() + "CliContactos.Dbf", cCheckArea( "CLICONTA", @tmpCon ), .f. )
-   ( tmpCon )->( ordListAdd( cPatSnd() + "CliContactos.Cdx" ) )
+   dbUseArea( .t., cLocalDriver(), cPatSnd() + "CliCto.Dbf", cCheckArea( "CLICONTA", @tmpCon ), .f. )
+   ( tmpCon )->( ordListAdd( cPatSnd() + "CliCto.Cdx" ) )
 
    /*
    Creamos la temporal de atípicas---------------------------------------------
@@ -397,7 +397,7 @@ Method Process() CLASS TClienteSenderReciver
             if lExistTable( cPatSnd() + "Client.Dbf", cLocalDriver() ) .and.;
                lExistTable( cPatSnd() + "CliAtp.Dbf", cLocalDriver() ) .and.;
                lExistTable( cPatSnd() + "ObrasT.Dbf", cLocalDriver() ) .and.;
-               lExistTable( cPatSnd() + "CliContactos.Dbf", cLocalDriver() )
+               lExistTable( cPatSnd() + "CliCto.Dbf", cLocalDriver() )
 
                dbUseArea( .t., cLocalDriver(), cPatSnd() + "Client.Dbf", cCheckArea( "Client", @tmpCli ), .f. )
 
@@ -405,7 +405,7 @@ Method Process() CLASS TClienteSenderReciver
 
                dbUseArea( .t., cLocalDriver(), cPatSnd() + "ObrasT.Dbf", cCheckArea( "ObrasT", @tmpObr ), .f. )
 
-               dbUseArea( .t., cLocalDriver(), cPatSnd() + "CliContactos.Dbf", cCheckArea( "CliConta", @tmpCon ), .f. )
+               dbUseArea( .t., cLocalDriver(), cPatSnd() + "CliCto.Dbf", cCheckArea( "CliConta", @tmpCon ), .f. )
 
                USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
                SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
@@ -417,8 +417,8 @@ Method Process() CLASS TClienteSenderReciver
                USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
                SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
 
-               USE ( cPatCli() + "CliContactos.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLICONTA", @dbfContactos ) )
-               SET ADSINDEX TO ( cPatCli() + "CliContactos.Cdx" ) ADDITIVE
+               USE ( cPatCli() + "CliCto.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLICONTA", @dbfContactos ) )
+               SET ADSINDEX TO ( cPatCli() + "CliCto.Cdx" ) ADDITIVE
 
                if !Empty( ::oSender:oMtr )
                   ::oSender:oMtr:nTotal := ( tmpCli )->( lastrec() )
@@ -549,8 +549,8 @@ Method Process() CLASS TClienteSenderReciver
                   ::oSender:SetText( "Falta" + cPatSnd() + "ObrasT.Dbf" )
                end if
 
-               if !lExistTable( cPatSnd() + "CliContactos.Dbf", cLocalDriver() )
-                  ::oSender:SetText( "Falta" + cPatSnd() + "CliContactos.Dbf" )
+               if !lExistTable( cPatSnd() + "CliCto.Dbf", cLocalDriver() )
+                  ::oSender:SetText( "Falta" + cPatSnd() + "CliCto.Dbf" )
                end if
 
             end if

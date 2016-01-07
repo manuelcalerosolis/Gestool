@@ -3577,7 +3577,7 @@ METHOD DefineFiles( cPath, cDriver, lUniqueName, cFileName ) CLASS TDetMovimient
       FIELD NAME "lKitEsc"    TYPE "L" LEN   1 DEC 0 COMMENT "Línea perteneciente a escandallo"    OF oDbf
       FIELD NAME "lImpLin"    TYPE "L" LEN   1 DEC 0 COMMENT "Lógico imprimir linea"               OF oDbf
       FIELD NAME "lKitPrc"    TYPE "L" LEN   1 DEC 0 COMMENT "Lógico precio escandallo"            OF oDbf
-      FIELD NAME "nNumLin"    TYPE "N" LEN   4 DEC 0 COMMENT "Número de linea"                     OF oDbf
+      FIELD NAME "nNumLin"    TYPE "N" LEN   9 DEC 0 COMMENT "Número de linea"                     OF oDbf
       FIELD NAME "mNumSer"    TYPE "M" LEN  10 DEC 0 COMMENT "Numeros de serie"                    OF oDbf
       FIELD NAME "nVolumen"   TYPE "N" LEN  16 DEC 6 COMMENT "Volumen del producto"                OF oDbf
       FIELD NAME "cVolumen"   TYPE "C" LEN   2 DEC 0 COMMENT "Unidad del volumen"                  OF oDbf

@@ -3,12 +3,12 @@
  
 CLASS DocumentLine FROM DocumentBase
 
-   METHOD getCode()                                            INLINE ( ::getValue( "Articulo" ) )
 
    METHOD getNumeroLinea()                                     INLINE ( ::getValue( "NumeroLinea" ) )
    METHOD setNumeroLinea( NumeroLinea )                        INLINE ( ::setValue( "NumeroLinea", NumeroLinea ) )
    METHOD setPosicionImpresion( PosicionImpresion)             INLINE ( ::setValue( "PosicionImpresion", PosicionImpresion ) )
 
+   METHOD getCode()                                            INLINE ( ::getValue( "Articulo" ) )
    METHOD getProductId()                                       INLINE ( ::getValue( "Articulo" ) )
    METHOD getDescription()                                     INLINE ( if(   !empty( ::getCode() ),;
                                                                               ::getValue( "DescripcionArticulo" ),;

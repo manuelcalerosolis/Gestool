@@ -1111,10 +1111,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
       // Datos del proveedor_________________________________________________
 
       REDEFINE BITMAP oBmpGeneral ;
-            ID          990 ;
-            RESOURCE    "Pedidos_proveedores_48_alpha" ;
-            TRANSPARENT ;
-            OF          oFld:aDialogs[1]
+         ID          990 ;
+         RESOURCE    "Pedidos_proveedores_48_alpha" ;
+         TRANSPARENT ;
+         OF          oFld:aDialogs[1]
 
       REDEFINE BITMAP oBmpDatos ;
         ID       990 ;

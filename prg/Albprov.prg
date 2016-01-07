@@ -1945,7 +1945,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
       REDEFINE BUTTON ;
          ID       557 ;
          OF       oFld:aDialogs[1] ;
-         WHEN     ( nMode == APPD_MODE .and. Empty( aTmp[ _CNUMPED ] ) ) ;
          ACTION   ( importarLineasPedidosProveedor( aTmp, aGet, oBrwLin )  )
 
       REDEFINE BUTTON ;
@@ -1961,7 +1960,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
          VALID    ( cPedPrv( aGet, aTmp, oBrwLin, nMode ) );
 			COLOR 	CLR_GET ;
          BITMAP   "LUPA" ;
-         ON HELP  (  BrwPedPrv( aGet[ _CNUMPED ], D():PedidosProveedores( nView ), D():PedidosProveedoresLineas( nView ), D():TiposIva( nView ), D():Divisas( nView ), D():FormasPago( nView ) ),;
+         ON HELP  (  brwPedPrv( aGet[ _CNUMPED ], D():PedidosProveedores( nView ), D():PedidosProveedoresLineas( nView ), D():TiposIva( nView ), D():Divisas( nView ), D():FormasPago( nView ) ),;
                      ::lValid(),;
                      oFld:aDialogs[1]:GoNextCtrl( oFld:aDialogs[1]:hWnd ) );
 			OF 		oFld:aDialogs[1]
@@ -1990,7 +1989,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
       REDEFINE SAY   oSayLabels[ 6 ] ID 705 OF oFld:aDialogs[ 1 ]
       REDEFINE SAY   oSayLabels[ 7 ] ID 706 OF oFld:aDialogs[ 1 ]
 
-      //Segunda caja de dialogo
+      // Segunda caja de dialogo
 
       REDEFINE GET aGet[ _CCODDLG ] VAR aTmp[ _CCODDLG ] ;
          ID       300 ;
@@ -2002,7 +2001,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
          WHEN     ( .f. ) ;
          OF       oFld:aDialogs[2]
 
-      /* Centro de coste */
+      // Centro de coste
 
       REDEFINE GET aGet[ _CCENTROCOSTE ] VAR aTmp[ _CCENTROCOSTE ] ;
          ID       310 ;
@@ -2013,9 +2012,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
-      /*
-      Regimen de impuestos-----------------------------------------------------------
-      */
+      // Regimen de impuestos-----------------------------------------------------------
 
       REDEFINE RADIO aGet[ _NREGIVA ] VAR aTmp[ _NREGIVA ] ;
          ID       270, 271, 272, 273 ;

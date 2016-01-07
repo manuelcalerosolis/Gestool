@@ -2548,10 +2548,10 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
-   oDatatable:cArea        := "CliContactos"
-   oDataTable:cName        := cPatCli() + "CliContactos"
-   oDataTable:cDataFile    := cPatCli( , .t. ) + "CliContactos.Dbf"
-   oDataTable:cIndexFile   := cPatCli( , .t. ) + "CliContactos.Cdx"
+   oDatatable:cArea        := "CliCto"
+   oDataTable:cName        := cPatCli() + "CliCto"
+   oDataTable:cDataFile    := cPatCli( , .t. ) + "CliCto.Dbf"
+   oDataTable:cIndexFile   := cPatCli( , .t. ) + "CliCto.Cdx"
    oDataTable:cDescription := "Clientes contactos"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )

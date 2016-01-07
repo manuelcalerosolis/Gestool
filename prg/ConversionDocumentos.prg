@@ -64,6 +64,8 @@ CLASS TConversionDocumentos
    DATA oSerie
    DATA oFecha
 
+   DATA aPropertiesTable
+
    METHOD New()
 
    METHOD Dialog()
@@ -101,6 +103,7 @@ CLASS TConversionDocumentos
 
    METHOD selectAllLine()                          INLINE ( ::oDocumentLines:selectAll(),       ::oBrwLines:Refresh() )
    METHOD unselectAllLine()                        INLINE ( ::oDocumentLines:unSelectAll(),     ::oBrwLines:Refresh() )
+   METHOD propertiesLine()
 
    METHOD opcionInvalida()                         INLINE ( msgStop( "Opción invalida, por favor elija una opción valida." ), .f. )
 
@@ -151,6 +154,8 @@ CLASS TConversionDocumentos
    METHOD getLineDictionary()                      INLINE ( ::oLineTable:getDictionary() )
    METHOD getLineIndex()                           INLINE ( ::oLineTable:getIndex() )
 
+   METHOD getLinesDocument()                       INLINE ( ::oDocumentLines:getLines() )
+   METHOD injectValuesBrowseProperties( idProduct )
    METHOD getLineDocument( nPosition )             INLINE ( ::oDocumentLines:getLine( if( !empty( nPosition ), nPosition, ::oBrwLines:nArrayAt ) ) )
    METHOD getHeaderDocument( nPosition )           INLINE ( ::oDocumentHeaders:getLine( if( !empty( nPosition ), nPosition, ::oBrwDocuments:nArrayAt ) ) )
 
@@ -561,6 +566,11 @@ METHOD DialogSelectionLines( oDlg )
       OF       oDlg ;
       ACTION   ( ::unselectAllLine() )
 
+   REDEFINE BUTTON ;
+      ID       540 ;
+      OF       oDlg ;
+      ACTION   ( ::propertiesLine() )
+
    // browse de lineas-----------------------------------------------------
 
    ::oBrwLines                      := IXBrowse():New( oDlg )
@@ -827,6 +837,26 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD propertiesLine()
+
+   local idProduct               := ::getLineDocument():getCode()
+   local oDialogBrowseProperties
+
+   ::aPropertiesTable            := D():getArticuloTablaPropiedades( idProduct, ::getView() )
+   if empty( ::aPropertiesTable )
+      msgStop( "Este artículo no tiene propiedades." )
+      Return ( Self )
+   end if
+
+   ::injectValuesBrowseProperties( idProduct )
+
+   oDialogBrowseProperties       := DialogBrowseProperties():new( Self )
+   oDialogBrowseProperties:Dialog()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 METHOD DialogSummary( oDlg )
 
    REDEFINE SAY ; 
@@ -980,12 +1010,6 @@ METHOD setDocumentType( cTableHeadName, cTableLineName )
    ::setHeaderTable( cTableHeadName )
 
    ::setLineTable( cTableLineName )
-
-   // ::setOrderInColumn()   
-
-   // ::loadHeaderDocument()
-
-   // ::setBrowseHeaderDocument()
 
 Return ( .t. )
 
@@ -1289,3 +1313,25 @@ METHOD changeSortLines()
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
+
+METHOD injectValuesBrowseProperties( idProduct )
+
+   local oLine
+   local aLines   := ::getLinesDocument()
+
+   for each oLine in aLines
+      if idProduct == oLine:getProductId()
+         // msgAlert( hb_valtoexp( oLine:hDictionary ), "hDictionary" )
+         D():setArticuloTablaPropiedades( oLine:getProductId(), oLine:getCodeFirstProperty(), oLine:getCodeSecondProperty(), oLine:getValueFirstProperty(), oLine:getValueSecondProperty(), oLine:getTotalUnits(), ::aPropertiesTable )
+      end if 
+   next
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+

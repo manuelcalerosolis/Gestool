@@ -6004,9 +6004,20 @@ Return ( by( nRow ) )
 //---------------------------------------------------------------------------//
 
 Function Test() 
+/*
+   local nView                   := D():CreateView()
+   local oDialogBrowseProperties
 
-   // TConversionDocumentos():New():Dialog()
+   D():Articulos( nView )
 
+   oDialogBrowseProperties       := DialogBrowseProperties():new( nView )
+   oDialogBrowseProperties:show( "94800" )
+   oDialogBrowseProperties:end()
+
+   D():DeleteView( nView )
+
+   TConversionDocumentos():New():Dialog()
+*/
 Return ( nil )
 
 Static Function testAll()

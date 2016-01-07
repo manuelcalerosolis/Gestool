@@ -2338,6 +2338,10 @@ METHOD ResizeColumns() CLASS BrowseRangos
 Return .t.
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 CLASS BrowseProperties
 
@@ -2354,6 +2358,10 @@ CLASS BrowseProperties
    CLASSDATA oInstance
 
    METHOD New()
+   METHOD newInstance( idBrowse, oContainer, nView )  INLINE ( ::endInstance(), ::GetInstance( idBrowse, oContainer, nView ), ::oInstance ) 
+   METHOD getInstance( idBrowse, oContainer, nView )  INLINE ( if( empty( ::oInstance ), ::oInstance := ::New( idBrowse, oContainer, nView ), ::oInstance ) ) 
+   METHOD endInstance()                               INLINE ( if( !empty( ::oInstance ), ::oInstance := nil, ), nil ) 
+
    METHOD Resource()
    METHOD buildPropertiesTable()
    METHOD setPropertiesTableToBrowse()
@@ -2370,9 +2378,6 @@ CLASS BrowseProperties
    METHOD Cargo                                       INLINE ( ::oBrwProperties:Cargo )
    METHOD setBindingUnidades( oGetUnidades )          INLINE ( ::oGetUnidades := oGetUnidades )
 
-   METHOD newInstance( idBrowse, oContainer, nView )  INLINE ( ::endInstance(), ::GetInstance( idBrowse, oContainer, nView ), ::oInstance ) 
-   METHOD getInstance( idBrowse, oContainer, nView )  INLINE ( if( empty( ::oInstance ), ::oInstance := ::New( idBrowse, oContainer, nView ), ::oInstance ) ) 
-   METHOD endInstance()                               INLINE ( if( !empty( ::oInstance ), ::oInstance := nil, ), nil ) 
    METHOD setPropertiesUnits()
 
 END CLASS 
@@ -2466,6 +2471,7 @@ METHOD buildPropertiesTable( idArticulo, idPrimeraPropiedad, idSegundaPropiedad,
    end if
 
    for each hValorPropiedad in aPropiedadesArticulo1
+
       ::aPropertiesTable[ nRow, nCol ]                        := TPropertiesItems():New()
       ::aPropertiesTable[ nRow, nCol ]:cCodigo                := idArticulo
       ::aPropertiesTable[ nRow, nCol ]:cHead                  := hValorPropiedad[ "TipoPropiedad" ]
@@ -2476,6 +2482,7 @@ METHOD buildPropertiesTable( idArticulo, idPrimeraPropiedad, idSegundaPropiedad,
       ::aPropertiesTable[ nRow, nCol ]:nRgb                   := hValorPropiedad[ "RgbPropiedad" ]
 
       nRow++
+
    next
 
    if !empty( idSegundaPropiedad ) .and. !empty( aPropiedadesArticulo2 )
@@ -2544,9 +2551,19 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD setPropertiesTableToBrowse() CLASS BrowseProperties
+METHOD setPropertiesTableToBrowse( aPropertiesTable ) CLASS BrowseProperties
 
    local n
+
+   if empty( ::oBrwProperties )
+      Return ( Self )
+   end if 
+
+   if !empty( aPropertiesTable )
+      ::aPropertiesTable      := aPropertiesTable
+   end if 
+
+   ::oBrwProperties:Hide()
 
    ::oBrwProperties:aCols     := {}
    ::oBrwProperties:Cargo     := ::aPropertiesTable   
@@ -2583,7 +2600,7 @@ METHOD setPropertiesTableToBrowse() CLASS BrowseProperties
             end with
             
             ::oBrwProperties:nFreeze++
-            ::oBrwProperties:nColOffset++
+            // ::oBrwProperties:nColOffset++
 
          end if 
 
@@ -2695,3 +2712,97 @@ Return ( .t. )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
+CLASS DialogBrowseProperties
+
+   DATA oSender
+
+   DATA oContainer
+   DATA oBrwProperties
+   DATA oGetUnidades
+
+   CLASSDATA oInstance
+
+   METHOD New( nView )
+   METHOD newInstance( nView )         INLINE ( ::endInstance(), ::GetInstance( nView ), ::oInstance ) 
+   METHOD getInstance( nView )         INLINE ( if( empty( ::oInstance ), ::oInstance := ::New( nView ), ::oInstance ) ) 
+   METHOD endInstance()                INLINE ( if( !empty( ::oInstance ), ::oInstance := nil, ) ) 
+
+   METHOD getPropertiesTable()         INLINE ( ::oSender:aPropertiesTable )
+
+   METHOD Dialog()
+   METHOD StartDialog() 
+   METHOD SaveDialog()
+
+END CLASS 
+
+//---------------------------------------------------------------------------//
+
+METHOD New( oSender ) CLASS DialogBrowseProperties
+
+   ::oSender   := oSender
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Dialog() CLASS DialogBrowseProperties
+
+   local n
+   local oDlg
+   local oGetUnidades
+   local nGetUnidades   := 0
+
+   DEFINE DIALOG oDlg RESOURCE "Propiedades"
+   
+      ::oBrwProperties  := BrowseProperties():new( 100, oDlg )
+
+      ::oBrwProperties:setPropertiesTableToBrowse( ::getPropertiesTable() )
+
+      REDEFINE GET      oGetUnidades ;
+         VAR            nGetUnidades ;
+         ID             110 ;
+         WHEN           ( .f. ) ;
+         PICTURE        masUnd() ;
+         OF             oDlg 
+
+      ::oBrwProperties:setBindingUnidades( oGetUnidades )
+
+      REDEFINE BUTTON;
+         ID             IDOK ;
+         OF             oDlg ;
+         ACTION         ( ::SaveDialog( oDlg ) )
+
+      REDEFINE BUTTON ;
+         ID             IDCANCEL ;
+         OF             oDlg ;
+         CANCEL ;
+         ACTION         ( oDlg:end() )
+
+      oDlg:bStart       := {|| ::StartDialog() }
+
+      oDlg:AddFastKey( VK_F5, {|| ::SaveDialog( oDlg ) } )
+
+   ACTIVATE DIALOG oDlg CENTER
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD StartDialog() CLASS DialogBrowseProperties
+
+   ::oBrwProperties:setPropertiesTableToBrowse( ::getPropertiesTable() )
+   ::oBrwProperties:nTotalProperties()
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD SaveDialog() CLASS DialogBrowseProperties
+
+   msgAlert( hb_valtoExp( ::oBrwProperties:aPropertiesTable ), "Propiedades" )   
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+

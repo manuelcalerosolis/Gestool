@@ -2740,7 +2740,7 @@ Return ( aValores )
 
 Static Function isValoresPorpiedad( aValores, nView, cFieldCodigo, cValueCodigo )
 
-Return ( ascan( aValores, {| hash | hash[ "CodigoPropiedad" ] == rtrim( ( D():ArticuloPrecioPropiedades( nView ) )->( fieldGetByName( cFieldCodigo ) ) ) .and. hash[ "ValorPropiedad" ] == rtrim( ( D():ArticuloPrecioPropiedades( nView ) )->( fieldGetByName( cValueCodigo ) ) ) } ) != 0 )
+Return ( ascan( aValores, {| hash | rtrim( hash[ "CodigoPropiedad" ] ) == rtrim( ( D():ArticuloPrecioPropiedades( nView ) )->( fieldGetByName( cFieldCodigo ) ) ) .and. rtrim( hash[ "ValorPropiedad" ] ) == rtrim( ( D():ArticuloPrecioPropiedades( nView ) )->( fieldGetByName( cValueCodigo ) ) ) } ) != 0 )
 
 //---------------------------------------------------------------------------//
 

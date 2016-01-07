@@ -8411,8 +8411,8 @@ FUNCTION assertClient( cPath )
       dbCreate( cPath + "CliInc.Dbf", aSqlStruct( aCliInc() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "CliContactos.Dbf", cLocalDriver() )
-      dbCreate( cPath + "CliContactos.Dbf", aSqlStruct( aItmContacto() ), cLocalDriver() )
+   if !lExistTable( cPath + "CliCto.Dbf", cLocalDriver() )
+      dbCreate( cPath + "CliCto.Dbf", aSqlStruct( aItmContacto() ), cLocalDriver() )
    end if
 
    if !lExistTable( cPath + "CliDad.Dbf", cLocalDriver() )
@@ -8442,7 +8442,7 @@ FUNCTION mkClient( cPath, lAppend, cPathOld, oMeter )
       AppDbf( cPathOld, cPath, "ObrasT" )
       AppDbf( cPathOld, cPath, "CliBnc" )
       AppDbf( cPathOld, cPath, "CliInc" )
-      AppDbf( cPathOld, cPath, "CliContactos" )
+      AppDbf( cPathOld, cPath, "CliCto" )
       AppDbf( cPathOld, cPath, "ClientD" )
       AppDbf( cPathOld, cPath, "CliDad" )
    end if
@@ -8654,30 +8654,30 @@ FUNCTION rxClient( cPath, cDriver )
 
    // Tabla de contactos-------------------------------------------------------
 
-   fEraseIndex( cPath + "CliContactos.Cdx" )
+   fEraseIndex( cPath + "CliCto.Cdx" )
 
-   dbUseArea( .t., cDriver, cPath + "CliContactos.Dbf", cCheckArea( "CLICONTA", @dbfCli ), .f. )
+   dbUseArea( .t., cDriver, cPath + "CliCto.Dbf", cCheckArea( "CLICONTA", @dbfCli ), .f. )
 
    if !( dbfCli )->( neterr() )
       ( dbfCli )->( __dbPack() )
 
       ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfCli )->( ordCreate( cPath + "CliContactos.Cdx", "cCodCli", "cCodCli", {|| Field->cCodCli } ) )
+      ( dbfCli )->( ordCreate( cPath + "CliCto.Cdx", "cCodCli", "cCodCli", {|| Field->cCodCli } ) )
 
       ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfCli )->( ordCreate( cPath + "CliContactos.Cdx", "cNomCon", "cNomCon", {|| Field->cNomCon } ) )
+      ( dbfCli )->( ordCreate( cPath + "CliCto.Cdx", "cNomCon", "cNomCon", {|| Field->cNomCon } ) )
 
       ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfCli )->( ordCreate( cPath + "CliContactos.Cdx", "cPosCon", "cPosCon", {|| Field->cPosCon } ) )
+      ( dbfCli )->( ordCreate( cPath + "CliCto.Cdx", "cPosCon", "cPosCon", {|| Field->cPosCon } ) )
 
       ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfCli )->( ordCreate( cPath + "CliContactos.Cdx", "cTelCon", "cTelCon", {|| Field->cTelCon } ) )
+      ( dbfCli )->( ordCreate( cPath + "CliCto.Cdx", "cTelCon", "cTelCon", {|| Field->cTelCon } ) )
 
       ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfCli )->( ordCreate( cPath + "CliContactos.Cdx", "cMovCon", "cMovCon", {|| Field->cMovCon } ) )
+      ( dbfCli )->( ordCreate( cPath + "CliCto.Cdx", "cMovCon", "cMovCon", {|| Field->cMovCon } ) )
 
       ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfCli )->( ordCreate( cPath + "CliContactos.Cdx", "cMaiCon", "cMaiCon", {|| Field->cMaiCon } ) )
+      ( dbfCli )->( ordCreate( cPath + "CliCto.Cdx", "cMaiCon", "cMaiCon", {|| Field->cMaiCon } ) )
 
       ( dbfCli )->( dbCloseArea() )
    else

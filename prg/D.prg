@@ -476,11 +476,15 @@ CLASS D
    METHOD ArticuloLenguaje( nView )                               INLINE ( ::Get( "ArtLeng", nView ) )
 
    METHOD Articulos( nView )                                      INLINE ( ::Get( "Articulo", nView ) )
-   METHOD ArticulosId( nView )                                    INLINE ( ( ::Get( "Articulo", nView ) )->Codigo )
-   METHOD ArticulosIdText( nView )                                INLINE ( alltrim( ( ::Get( "Articulo", nView ) )->Codigo ) + Space(1) + alltrim( ( ::Get( "Articulo", nView ) )->Nombre ) )
+   METHOD ArticulosId( nView )                                    INLINE ( ( ::Articulos( nView ) )->Codigo )
+   METHOD ArticulosIdText( nView )                                INLINE ( alltrim( ( ::Articulos( nView ) )->Codigo ) + Space(1) + alltrim( ( ::Articulos( nView ) )->Nombre ) )
+
+   METHOD gotoArticulos( id, nView )                              INLINE ( ::seekInOrd( ::Articulos( nView ), id, "Codigo" ) ) 
+   METHOD getArticuloTablaPropiedades( id, nView )  
+   METHOD setArticuloTablaPropiedades( id, idCodigoPrimeraPropiedad, idCodigoSegundaPropiedad, idValorPrimeraPropiedad, idValorSegundaPropiedad, nUnidades, aPropertiesTable )
 
       METHOD getStatusArticulos( nView )                          INLINE ( ::aStatus := aGetStatus( ::Articulos( nView ) ) )
-      METHOD setStatusArticulos( nView )                          INLINE ( SetStatus( ::Get( "Articulo", nView ), ::aStatus ) ) 
+      METHOD setStatusArticulos( nView )                          INLINE ( SetStatus( ::Articulos( nView ), ::aStatus ) ) 
       METHOD setFocusArticulos( cTag, nView )                     INLINE ( ::cTag   := ( ::Articulos( nView )  )->( ordSetFocus( cTag ) ) )
 
       METHOD ArticulosCodigosBarras( nView )                      INLINE ( ::Get( "ArtCodebar", nView ) )
@@ -534,7 +538,7 @@ CLASS D
       METHOD gotoIdAtipicasAgentes( idAgente, idArticulo, nView ) ;
                                              INLINE ( ::seekInOrd( ::Atipicas( nView ), idAgente + idArticulo, "cAgeArt" ) )
 
-   METHOD ClientesContactos( nView )         INLINE ( ::Get( "CliContactos", nView ) )
+   METHOD ClientesContactos( nView )         INLINE ( ::Get( "CliCto", nView ) )
 
    METHOD ImpuestosEspeciales( nView )       INLINE ( ::GetObject( "ImpuestosEspeciales", nView ) )
 
@@ -664,14 +668,12 @@ ENDCLASS
       local cHandle
 
       if ::AssertView( nView )
-
          hView          := hGet( ::hViews, nView )
          if hb_ishash( hView ) 
             if hHasKey( hView, Upper( cDatabase ) )
                cHandle  := hGet( hView, Upper( cDatabase ) )
             end if 
          end if 
-
       end if 
 
    RETURN ( cHandle )
@@ -1230,4 +1232,154 @@ METHOD deleteRecord( cDataTable, nView ) CLASS D
 RETURN ( lDelete )
 
 //---------------------------------------------------------------------------//
+
+METHOD getArticuloTablaPropiedades( id, nView ) CLASS D
+
+   local n
+   local nRow                    := 1
+   local nCol                    := 1
+   local nTotalRow               := 0
+   local nTotalCol               := 0
+   local aHeadersTable           := {}
+   local aSizesTable             := {}
+   local aJustifyTable           := {}
+   local aPropertiesTable        := {}
+   local hValorPropiedad
+   local idPrimeraPropiedad
+   local idSegundaPropiedad
+
+   local aPropiedadesArticulo1   
+   local aPropiedadesArticulo2   
+
+   if !::gotoArticulos( id, nView )
+   msgAlert( "not found")
+      Return ( aPropertiesTable )
+   end if 
+      
+   idPrimeraPropiedad            := ( D():Articulos( nView ) )->cCodPrp1
+   idSegundaPropiedad            := ( D():Articulos( nView ) )->cCodPrp2
+
+   aPropiedadesArticulo1         := aPropiedadesArticulo1( id, nView ) 
+   nTotalRow                     := len( aPropiedadesArticulo1 )
+   if nTotalRow != 0
+      aPropiedadesArticulo2      := aPropiedadesArticulo2( id, nView ) 
+   else 
+      aPropiedadesArticulo1      := aPropiedadesGeneral( idPrimeraPropiedad, nView )
+      nTotalRow                  := len( aPropiedadesArticulo1 )
+      if nTotalRow != 0
+         aPropiedadesArticulo2   := aPropiedadesGeneral( idSegundaPropiedad, nView )
+      else
+         Return nil
+      end if 
+   end if
+
+   // Montamos los array con las propiedades-----------------------------------
+
+   if len( aPropiedadesArticulo2 ) == 0
+      nTotalCol                  := 2
+   else
+      nTotalCol                  := len( aPropiedadesArticulo2 ) + 1
+   end if
+
+   aPropertiesTable              := array( nTotalRow, nTotalCol )
+
+   if ( D():Propiedades( nView ) )->( dbSeek( idPrimeraPropiedad ) )
+      aadd( aHeadersTable, ( D():Propiedades( nView ) )->cDesPro )
+      aadd( aSizesTable,   60 )
+      aadd( aJustifyTable, .f. )
+   end if
+
+   for each hValorPropiedad in aPropiedadesArticulo1
+
+      aPropertiesTable[ nRow, nCol ]                        := TPropertiesItems():New()
+      aPropertiesTable[ nRow, nCol ]:cCodigo                := id
+      aPropertiesTable[ nRow, nCol ]:cHead                  := hValorPropiedad[ "TipoPropiedad" ]
+      aPropertiesTable[ nRow, nCol ]:cText                  := hValorPropiedad[ "CabeceraPropiedad" ]
+      aPropertiesTable[ nRow, nCol ]:cCodigoPropiedad1      := hValorPropiedad[ "CodigoPropiedad" ]
+      aPropertiesTable[ nRow, nCol ]:cValorPropiedad1       := hValorPropiedad[ "ValorPropiedad" ]
+      aPropertiesTable[ nRow, nCol ]:lColor                 := hValorPropiedad[ "ColorPropiedad" ]
+      aPropertiesTable[ nRow, nCol ]:nRgb                   := hValorPropiedad[ "RgbPropiedad" ]
+
+      nRow++
+
+   next
+
+   if !empty( idSegundaPropiedad ) .and. !empty( aPropiedadesArticulo2 )
+
+      for each hValorPropiedad in aPropiedadesArticulo2
+
+         nCol++
+
+         aadd( aHeadersTable, hValorPropiedad[ "CabeceraPropiedad" ] )
+         aadd( aSizesTable,   60 )
+         aadd( aJustifyTable, .t. )
+
+         for n := 1 to nTotalRow
+            aPropertiesTable[ n, nCol ]                     := TPropertiesItems():New()
+            aPropertiesTable[ n, nCol ]:Value               := 0
+            aPropertiesTable[ n, nCol ]:cHead               := hValorPropiedad[ "CabeceraPropiedad" ]
+            aPropertiesTable[ n, nCol ]:cCodigo             := id
+            aPropertiesTable[ n, nCol ]:cCodigoPropiedad1   := aPropertiesTable[ n, 1 ]:cCodigoPropiedad1
+            aPropertiesTable[ n, nCol ]:cValorPropiedad1    := aPropertiesTable[ n, 1 ]:cValorPropiedad1
+            aPropertiesTable[ n, nCol ]:cCodigoPropiedad2   := hValorPropiedad[ "CodigoPropiedad" ]
+            aPropertiesTable[ n, nCol ]:cValorPropiedad2    := hValorPropiedad[ "ValorPropiedad" ]
+            aPropertiesTable[ n, nCol ]:lColor              := aPropertiesTable[ n, 1 ]:lColor
+            aPropertiesTable[ n, nCol ]:nRgb                := aPropertiesTable[ n, 1 ]:nRgb
+         next
+
+      next
+
+   else
+
+      nCol++
+
+      aAdd( aHeadersTable, "Unidades" )
+      aAdd( aSizesTable,   60 )
+      aAdd( aJustifyTable, .t. )
+
+      for n := 1 to nTotalRow
+         aPropertiesTable[ n, nCol ]                        := TPropertiesItems():New()
+         aPropertiesTable[ n, nCol ]:Value                  := 0
+         aPropertiesTable[ n, nCol ]:cHead                  := "Unidades"
+         aPropertiesTable[ n, nCol ]:cCodigo                := id
+         aPropertiesTable[ n, nCol ]:cCodigoPropiedad1      := aPropertiesTable[ n, 1 ]:cCodigoPropiedad1
+         aPropertiesTable[ n, nCol ]:cValorPropiedad1       := aPropertiesTable[ n, 1 ]:cValorPropiedad1
+         aPropertiesTable[ n, nCol ]:cCodigoPropiedad2      := Space( 20 )
+         aPropertiesTable[ n, nCol ]:cValorPropiedad2       := Space( 40 )
+         aPropertiesTable[ n, nCol ]:lColor                 := aPropertiesTable[ n, 1 ]:lColor
+         aPropertiesTable[ n, nCol ]:nRgb                   := aPropertiesTable[ n, 1 ]:nRgb
+      next
+
+   end if
+
+Return ( aPropertiesTable )
+
+//---------------------------------------------------------------------------//
+
+METHOD setArticuloTablaPropiedades( id, idCodigoPrimeraPropiedad, idCodigoSegundaPropiedad, idValorPrimeraPropiedad, idValorSegundaPropiedad, nUnidades, aPropertiesTable )
+
+   local oColumn
+   local aProperty
+
+   for each aProperty in aPropertiesTable
+      for each oColumn in aProperty
+
+         if rtrim( oColumn:cCodigo )            == rtrim( id ) .and. ;
+            rtrim( oColumn:cCodigoPropiedad1 )  == rtrim( idCodigoPrimeraPropiedad ) .and. ;
+            rtrim( oColumn:cCodigoPropiedad2 )  == rtrim( idCodigoSegundaPropiedad ) .and. ;
+            rtrim( oColumn:cValorPropiedad1 )   == rtrim( idValorPrimeraPropiedad ) .and. ;
+            rtrim( oColumn:cValorPropiedad2 )   == rtrim( idValorSegundaPropiedad )
+
+            msgAlert( "yes found" )
+
+            oColumn:Value  := nUnidades
+
+         end if
+      next
+   next 
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
 
