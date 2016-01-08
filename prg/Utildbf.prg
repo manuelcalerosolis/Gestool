@@ -3306,6 +3306,7 @@ function DbDialog( cTitle )
    local oError
    local oBlock
    local nTarget
+   local nAreas      := 0
    local cErrorLog
 
    DEFAULT cTitle    := "Bases de datos abiertas"
@@ -3317,16 +3318,22 @@ function DbDialog( cTitle )
       msgStop( TDataCenter():GetAllLocksTablesUsers() )
    end if
 
+   for n = 1 to 255
+      if !empty( alias( n ) )
+         nAreas++
+      end if 
+   next 
+
    oFont             := TFont():New( "Ms Sans Serif", 0, -10, .f., .f. )
 
    DEFINE DIALOG     oDlg ;
          SIZE        300, 200 + If( IsWinNT(), 50, 0 ) ;
-         TITLE       cTitle ;
+         TITLE       cTitle + ":" + str( nAreas) ;
          FONT        oFont
 
    cErrorLog         := CRLF + "DataBases in use" + CRLF + "================" + CRLF
 
-   for n = 1 to 255
+   for n = 1 to nAreas
 
       if ! Empty( Alias( n ) )
 

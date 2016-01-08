@@ -2579,7 +2579,7 @@ METHOD setPropertiesTableToBrowse( aPropertiesTable ) CLASS BrowseProperties
 
          with object ( ::oBrwProperties:AddCol() )
             :Adjust()
-            :cHeader          := ::aPropertiesTable[ ::oBrwProperties:nArrayAt, n ]:cHead
+            :cHeader          := ::aPropertiesTable[ ::oBrwProperties:nArrayAt, n ]:getHead()
             :bEditValue       := ::bGenerateEditText( n )
             :nWidth           := 100
          end with
@@ -2608,7 +2608,7 @@ METHOD setPropertiesTableToBrowse( aPropertiesTable ) CLASS BrowseProperties
 
          with object ( ::oBrwProperties:AddCol() )
             :Adjust()
-            :cHeader          := ::aPropertiesTable[ ::oBrwProperties:nArrayAt, n ]:cHead
+            :cHeader          := ::aPropertiesTable[ ::oBrwProperties:nArrayAt, n ]:getHead()
             :bEditValue       := ::bGenerateEditValue( n )
             :cEditPicture     := MasUnd()
             :nWidth           := 50
