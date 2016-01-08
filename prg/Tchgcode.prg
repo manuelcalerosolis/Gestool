@@ -145,6 +145,8 @@ CLASS TChgCode
 
    METHOD loaArtNew()
 
+   METHOD changeSecondPropertie()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -750,19 +752,6 @@ METHOD Resource( cFldRes ) CLASS TChgCode
 
    ::oDlg:AddFastKey( VK_F5, {|| oThis:ChgCode() } )
 
-   ::oDlg:bStart  := {||   ::oTxtPr1Old:hide(),;
-                           ::oGetPr1Old:hide(),;
-                           ::oSayPr1Old:hide(),;
-                           ::oTxtPr2Old:hide(),;
-                           ::oGetPr2Old:hide(),;
-                           ::oSayPr2Old:hide(),;
-                           ::oTxtPr1New:hide(),;
-                           ::oGetPr1New:hide(),;
-                           ::oSayPr1New:hide(),;
-                           ::oTxtPr2New:hide(),;
-                           ::oGetPr2New:hide(),;
-                           ::oSayPr2New:hide() }
-
    ACTIVATE DIALOG ::oDlg CENTER
 
 RETURN ( Self )
@@ -913,7 +902,7 @@ METHOD ChgCode()
          end if
 
       case ::nRadCod == 3
-
+/*
          if Empty( ::cGetArtOld )
             MsgStop( "Artículo actual no válido" )
             lErrors  := .t.
@@ -932,8 +921,28 @@ METHOD ChgCode()
          if !lErrors .and. ::oDbfArt:Seek( ::cGetArtNew ) .and. !ApoloMsgNoYes( "El artículo nuevo ya existe.", "¿Desea anexar al código existente?" )
             lErrors  := .t.
          end if
-
+*/
          if !lErrors
+
+         ::oMtrInf:nTotal           := ::oDbfTblPro:Lastrec()
+
+         ::oDbfTblPro:OrdSetFocus( 0 )
+
+         ::oDbfTblPro:GoTop()
+         while !::oDbfTblPro:Eof()
+
+            if alltrim( ::oDbfTblPro:cCodTbl ) == alltrim( ::cGetPr2Old )
+               ::oDbfTblPro:Load()
+               ::oDbfTblPro:cCodTbl := ::cGetPr2New
+               ::oDbfTblPro:Save()
+               ::nRecChanged++
+            end if
+            
+            ::oDbfTblPro:Skip()
+            
+            ::oMtrInf:AutoInc( ::oDbfTblPro:Recno() )
+
+         end while
 
          ::oMtrInf:nTotal           := ::oDbfPrv:Lastrec()
 
@@ -1002,8 +1011,13 @@ METHOD ChgCode()
                ::oDbfArd:Save()
                ::nRecChanged++
             end if
+
+            ::changeSecondPropertie( ::oDbfArd )
+
             ::oDbfArd:Skip()
+
             ::oMtrInf:AutoInc( ::oDbfArd:Recno() )
+
          end while
 
          ::oMtrInf:nTotal           := ::oDbfKit:Lastrec()
@@ -1055,8 +1069,13 @@ METHOD ChgCode()
                ::oDbfPedPrv:Save()
                ::nRecChanged++
             end if
+
+            ::changeSecondPropertie( ::oDbfPedPrv )
+
             ::oDbfPedPrv:Skip()
+
             ::oMtrInf:AutoInc( ::oDbfPedPrv:Recno() )
+
          end while
 
          ::oMtrInf:nTotal           := ::oDbfAlbPrv:Lastrec()
@@ -1076,6 +1095,9 @@ METHOD ChgCode()
                ::oDbfAlbPrv:Save()
                ::nRecChanged++
             end if
+
+            ::changeSecondPropertie( ::oDbfAlbPrv )
+
             ::oDbfAlbPrv:Skip()
             ::oMtrInf:AutoInc( ::oDbfAlbPrv:Recno() )
          end while
@@ -1097,6 +1119,9 @@ METHOD ChgCode()
                ::oDbfFacPrv:Save()
                ::nRecChanged++
             end if
+
+            ::changeSecondPropertie( ::oDbfFacPrv )
+            
             ::oDbfFacPrv:Skip()
             ::oMtrInf:AutoInc( ::oDbfFacPrv:Recno() )
 
@@ -1120,8 +1145,13 @@ METHOD ChgCode()
                ::oDbfHis:Save()
                ::nRecChanged++
             end if
+
+            ::changeSecondPropertie( ::oDbfHis )
+
             ::oDbfHis:Skip()
+
             ::oMtrInf:AutoInc( ::oDbfHis:Recno() )
+
          end while
 
          ::oMtrInf:nTotal           := ::oDbfDepAge:Lastrec()
@@ -1170,6 +1200,9 @@ METHOD ChgCode()
                ::oDbfPreCli:Save()
                ::nRecChanged++
             end if
+
+            ::changeSecondPropertie( ::oDbfPreCli )
+
             ::oDbfPreCli:Skip()
             ::oMtrInf:AutoInc( ::oDbfPreCli:Recno() )
          end while
@@ -1190,8 +1223,13 @@ METHOD ChgCode()
                ::oDbfPedCli:Save()
                ::nRecChanged++
             end if
+
+            ::changeSecondPropertie( ::oDbfPedCli )
+
             ::oDbfPedCli:Skip()
+            
             ::oMtrInf:AutoInc( ::oDbfPedCli:Recno() )
+
          end while
 
          ::oMtrInf:nTotal           := ::oDbfAlbCli:Lastrec()
@@ -1210,8 +1248,13 @@ METHOD ChgCode()
                ::oDbfAlbCli:Save()
                ::nRecChanged++
             end if
+
+            ::changeSecondPropertie( ::oDbfAlbCli )
+
             ::oDbfAlbCli:Skip()
+            
             ::oMtrInf:AutoInc( ::oDbfAlbCli:Recno() )
+
          end while
 
          ::oMtrInf:nTotal           := ::oDbfFacCli:Lastrec()
@@ -1230,6 +1273,9 @@ METHOD ChgCode()
                ::oDbfFacCli:Save()
                ::nRecChanged++
             end if
+
+            ::changeSecondPropertie( ::oDbfFacCli )
+
             ::oDbfFacCli:Skip()
             ::oMtrInf:AutoInc( ::oDbfFacCli:Recno() )
          end while
@@ -1250,6 +1296,9 @@ METHOD ChgCode()
                ::oDbfTpvCli:Save()
                ::nRecChanged++
             end if
+
+            ::changeSecondPropertie( ::oDbfTpvCli )
+
             ::oDbfTpvCli:Skip()
             ::oMtrInf:AutoInc( ::oDbfTpvCli:Recno() )
          end while
@@ -1270,6 +1319,9 @@ METHOD ChgCode()
                ::oDbfMatProd:Save()
                ::nRecChanged++
             end if 
+
+            ::changeSecondPropertie( ::oDbfMatProd )
+
             ::oDbfMatProd:Skip()
             ::oMtrInf:AutoInc( ::oDbfMatProd:Recno() )
          end while
@@ -1290,6 +1342,9 @@ METHOD ChgCode()
                ::oDbfMatPrima:Save()
                ::nRecChanged++
             end if 
+
+            ::changeSecondPropertie( ::oDbfMatPrima )
+
             ::oDbfMatPrima:Skip()
             ::oMtrInf:AutoInc( ::oDbfMatPrima:Recno() )
          end while
@@ -1349,17 +1404,6 @@ METHOD ChgCode()
          end if
 
          MsgInfo( "Total de registros cambiados : " + Str( ::nRecChanged ) )
-
-         ::oGetArtOld:cText( Space( 18 ) )
-         ::oGetArtNew:cText( Space( 18 ) )
-         ::oGetPr1Old:cText( Space( 20 ) )
-         ::oGetPr2Old:cText( Space( 20 ) )
-         ::oSayArtOld:cText( "" )
-         ::oSayPr1Old:cText( "" )
-         ::oSayPr2Old:cText( "" )
-         ::oSayArtNew:cText( "" )
-         ::oSayPr1New:cText( "" )
-         ::oSayPr2New:cText( "" )
 
          ::oGetArtOld:SetFocus()
 
@@ -1826,68 +1870,18 @@ return .t.
 
 METHOD loaArtNew()
 
-   if ::oDbfArt:Seek( ::cGetArtNew )
-      ::oSayArtNew:cText( ::oDbfArt:Nombre )
+return .t.
 
-      if ::oDbfFam:Seek( ::oDbfArt:Familia )
-         ::cCodPr1New      := ::oDbfFam:cCodPrp1
-         ::cCodPr2New      := ::oDbfFam:cCodPrp2
-      else
-         ::cCodPr1New      := ""
-         ::cCodPr2New      := ""
-      end if
+//---------------------------------------------------------------------------//
 
-      if !empty( ::cCodPr1Old )
-         ::oGetPr1New:show()
-         ::oSayPr1New:show()
-         ::oTxtPr1New:show()
-         ::oTxtPr1New:SetText( retProp( ::cCodPr1New ) )
-      else
-         ::oTxtPr1New:hide()
-         ::oGetPr1New:hide()
-         ::oSayPr1New:hide()
-      end if
+METHOD changeSecondPropertie( oDbf )
 
-      if !empty( ::cCodPr2Old )
-         ::oGetPr2New:show()
-         ::oSayPr2New:show()
-         ::oTxtPr2New:show()
-         ::oTxtPr2New:SetText( retProp( ::cCodPr2New ) )
-      else
-         ::oTxtPr2New:hide()
-         ::oGetPr2New:hide()
-         ::oSayPr2New:hide()
-      end if
-
-   else
-
-      if !empty( ::cCodPr1Old )
-         ::cCodPr1New      := ::cCodPr1Old
-         ::oGetPr1New:cText( ::cCodPr1Old )
-         ::oGetPr1New:show()
-         ::oSayPr1New:show()
-         ::oTxtPr1New:show()
-         ::oTxtPr1New:SetText( retProp( ::cCodPr1Old ) )
-      else
-         ::oTxtPr1New:hide()
-         ::oGetPr1New:hide()
-         ::oSayPr1New:hide()
-      end if
-
-      if !empty( ::cCodPr2Old )
-         ::cCodPr2New      := ::cCodPr2Old
-         ::oGetPr2New:cText( ::cCodPr2Old )
-         ::oGetPr2New:show()
-         ::oSayPr2New:show()
-         ::oTxtPr2New:show()
-         ::oTxtPr2New:SetText( retProp( ::cCodPr2Old ) )
-      else
-         ::oTxtPr2New:hide()
-         ::oGetPr2New:hide()
-         ::oSayPr2New:hide()
-      end if
-
-   end if
+   if alltrim( oDbf:cValPr2 ) == alltrim( ::cGetPr2Old )
+      oDbf:load()
+      oDbf:cValPr2 := ::cGetPr2New
+      oDbf:save()
+      ::nRecChanged++
+   end if 
 
 return .t.
 

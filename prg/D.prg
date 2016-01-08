@@ -1240,9 +1240,6 @@ METHOD getArticuloTablaPropiedades( id, nView ) CLASS D
    local nCol                    := 1
    local nTotalRow               := 0
    local nTotalCol               := 0
-   local aHeadersTable           := {}
-   local aSizesTable             := {}
-   local aJustifyTable           := {}
    local aPropertiesTable        := {}
    local hValorPropiedad
    local idPrimeraPropiedad
@@ -1252,7 +1249,6 @@ METHOD getArticuloTablaPropiedades( id, nView ) CLASS D
    local aPropiedadesArticulo2   
 
    if !::gotoArticulos( id, nView )
-   msgAlert( "not found")
       Return ( aPropertiesTable )
    end if 
       
@@ -1283,12 +1279,6 @@ METHOD getArticuloTablaPropiedades( id, nView ) CLASS D
 
    aPropertiesTable              := array( nTotalRow, nTotalCol )
 
-   if ( D():Propiedades( nView ) )->( dbSeek( idPrimeraPropiedad ) )
-      aadd( aHeadersTable, ( D():Propiedades( nView ) )->cDesPro )
-      aadd( aSizesTable,   60 )
-      aadd( aJustifyTable, .f. )
-   end if
-
    for each hValorPropiedad in aPropiedadesArticulo1
 
       aPropertiesTable[ nRow, nCol ]                        := TPropertiesItems():New()
@@ -1310,15 +1300,11 @@ METHOD getArticuloTablaPropiedades( id, nView ) CLASS D
 
          nCol++
 
-         aadd( aHeadersTable, hValorPropiedad[ "CabeceraPropiedad" ] )
-         aadd( aSizesTable,   60 )
-         aadd( aJustifyTable, .t. )
-
          for n := 1 to nTotalRow
             aPropertiesTable[ n, nCol ]                     := TPropertiesItems():New()
             aPropertiesTable[ n, nCol ]:Value               := 0
-            aPropertiesTable[ n, nCol ]:cHead               := hValorPropiedad[ "CabeceraPropiedad" ]
             aPropertiesTable[ n, nCol ]:cCodigo             := id
+            aPropertiesTable[ n, nCol ]:cHead               := hValorPropiedad[ "CabeceraPropiedad" ]
             aPropertiesTable[ n, nCol ]:cCodigoPropiedad1   := aPropertiesTable[ n, 1 ]:cCodigoPropiedad1
             aPropertiesTable[ n, nCol ]:cValorPropiedad1    := aPropertiesTable[ n, 1 ]:cValorPropiedad1
             aPropertiesTable[ n, nCol ]:cCodigoPropiedad2   := hValorPropiedad[ "CodigoPropiedad" ]
@@ -1332,10 +1318,6 @@ METHOD getArticuloTablaPropiedades( id, nView ) CLASS D
    else
 
       nCol++
-
-      aAdd( aHeadersTable, "Unidades" )
-      aAdd( aSizesTable,   60 )
-      aAdd( aJustifyTable, .t. )
 
       for n := 1 to nTotalRow
          aPropertiesTable[ n, nCol ]                        := TPropertiesItems():New()
@@ -1362,6 +1344,7 @@ METHOD setArticuloTablaPropiedades( id, idCodigoPrimeraPropiedad, idCodigoSegund
    local aProperty
 
    for each aProperty in aPropertiesTable
+
       for each oColumn in aProperty
 
          if rtrim( oColumn:cCodigo )            == rtrim( id ) .and. ;
@@ -1370,12 +1353,12 @@ METHOD setArticuloTablaPropiedades( id, idCodigoPrimeraPropiedad, idCodigoSegund
             rtrim( oColumn:cValorPropiedad1 )   == rtrim( idValorPrimeraPropiedad ) .and. ;
             rtrim( oColumn:cValorPropiedad2 )   == rtrim( idValorSegundaPropiedad )
 
-            msgAlert( "yes found" )
-
             oColumn:Value  := nUnidades
 
          end if
+   
       next
+   
    next 
 
 Return ( .t. )

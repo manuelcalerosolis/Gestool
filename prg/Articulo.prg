@@ -49,6 +49,7 @@ memvar cDbfBar
 static pThread
 
 static oWndBrw
+
 static dbfProv
 static dbfCatalogo
 static dbfCategoria
@@ -14602,6 +14603,7 @@ Method PrepareTemporal( oFr ) CLASS TArticuloLabelGenerator
       nBlancos          += ( ::nFilaInicio - 1 )
 
       for n := 1 to nBlancos
+         msgAlert( nBlancos, "nBlancos" )
          dbPass( dbBlankRec( D():Articulos( nView ) ), tmpArticulo, .t. )
       next
 

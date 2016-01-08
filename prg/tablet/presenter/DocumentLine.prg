@@ -3,6 +3,10 @@
  
 CLASS DocumentLine FROM DocumentBase
 
+   METHOD setSerieMaster( hDictionary )                        INLINE ( ::setValueFromDictionary( hDictionary, "Serie" ) )
+   METHOD setNumeroMaster( hDictionary )                       INLINE ( ::setValueFromDictionary( hDictionary, "Numero" ) )
+   METHOD setSufijoMaster( hDictionary )                       INLINE ( ::setValueFromDictionary( hDictionary, "Sufijo" ) )
+   METHOD setAlmacenMaster( hDictionary )                      INLINE ( ::setValueFromDictionary( hDictionary, "Almacen" ) )
 
    METHOD getNumeroLinea()                                     INLINE ( ::getValue( "NumeroLinea" ) )
    METHOD setNumeroLinea( NumeroLinea )                        INLINE ( ::setValue( "NumeroLinea", NumeroLinea ) )
@@ -61,6 +65,8 @@ CLASS DocumentLine FROM DocumentBase
 END CLASS
 
 //---------------------------------------------------------------------------//
+
+
 
 METHOD getTotalUnits() CLASS DocumentLine
 

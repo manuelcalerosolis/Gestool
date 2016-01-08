@@ -156,6 +156,7 @@ CLASS TConversionDocumentos
 
    METHOD getLinesDocument()                       INLINE ( ::oDocumentLines:getLines() )
    METHOD injectValuesBrowseProperties( idProduct )
+   METHOD saveValuesBrowseProperties()
    METHOD getLineDocument( nPosition )             INLINE ( ::oDocumentLines:getLine( if( !empty( nPosition ), nPosition, ::oBrwLines:nArrayAt ) ) )
    METHOD getHeaderDocument( nPosition )           INLINE ( ::oDocumentHeaders:getLine( if( !empty( nPosition ), nPosition, ::oBrwDocuments:nArrayAt ) ) )
 
@@ -851,7 +852,9 @@ METHOD propertiesLine()
    ::injectValuesBrowseProperties( idProduct )
 
    oDialogBrowseProperties       := DialogBrowseProperties():new( Self )
-   oDialogBrowseProperties:Dialog()
+   if oDialogBrowseProperties:Dialog()
+      ::saveValuesBrowseProperties()
+   end if 
 
 RETURN ( Self )
 
@@ -1321,7 +1324,6 @@ METHOD injectValuesBrowseProperties( idProduct )
 
    for each oLine in aLines
       if idProduct == oLine:getProductId()
-         // msgAlert( hb_valtoexp( oLine:hDictionary ), "hDictionary" )
          D():setArticuloTablaPropiedades( oLine:getProductId(), oLine:getCodeFirstProperty(), oLine:getCodeSecondProperty(), oLine:getValueFirstProperty(), oLine:getValueSecondProperty(), oLine:getTotalUnits(), ::aPropertiesTable )
       end if 
    next
@@ -1329,9 +1331,41 @@ METHOD injectValuesBrowseProperties( idProduct )
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
+
+METHOD saveValuesBrowseProperties( idProduct )
+
+   local oLine
+   local aLine
+
+   for each aLine in ::aPropertiesTable
+      for each oLine in aLine
+         ::setValuesBrowseProperties( oLineSave )
+         msgAlert( hb_valtoexp( oLine ), "oLine" )
+      next 
+   next
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD setValuesBrowseProperties( oLineSave )
+
+   local oLineDocument
+   local aLinesDocument    := ::getLinesDocument()
+
+   for each oLineDocument in aLinesDocument
+      if 
+         msgAlert( hb_valtoexp( oLine ), "oLine" )
+      next 
+   next
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------- //
 

@@ -2544,6 +2544,7 @@ Function setPropertiesTable( cCodArt, cCodPr1, cCodPr2, nPrecioCosto, oGetUnidad
    end if
 
    for each hValorPropiedad in aPropiedadesArticulo1
+
       aPropertiesTable[ nRow, nCol ]                        := TPropertiesItems():New()
       aPropertiesTable[ nRow, nCol ]:cCodigo                := cCodArt
       aPropertiesTable[ nRow, nCol ]:cHead                  := hValorPropiedad[ "TipoPropiedad" ]
@@ -2554,6 +2555,7 @@ Function setPropertiesTable( cCodArt, cCodPr1, cCodPr2, nPrecioCosto, oGetUnidad
       aPropertiesTable[ nRow, nCol ]:nRgb                   := hValorPropiedad[ "RgbPropiedad" ]
 
       nRow++
+   
    next
 
    if !empty( cCodPr2 ) .and. !empty( aPropiedadesArticulo2 )

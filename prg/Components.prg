@@ -2575,7 +2575,7 @@ METHOD setPropertiesTableToBrowse( aPropertiesTable ) CLASS BrowseProperties
 
       if isNil( ::aPropertiesTable[ ::oBrwProperties:nArrayAt, n ]:Value )
 
-         // Columna del titulo de la propiedad
+         // Columna del titulo de la propiedad---------------------------------
 
          with object ( ::oBrwProperties:AddCol() )
             :Adjust()
@@ -2584,7 +2584,7 @@ METHOD setPropertiesTableToBrowse( aPropertiesTable ) CLASS BrowseProperties
             :nWidth           := 100
          end with
 
-         // Columna del color de la propiedad
+         // Columna del color de la propiedad----------------------------------
 
          if ::aPropertiesTable[ ::oBrwProperties:nArrayAt, n ]:lColor
 
@@ -2732,7 +2732,7 @@ CLASS DialogBrowseProperties
 
    METHOD Dialog()
    METHOD StartDialog() 
-   METHOD SaveDialog()
+   METHOD SaveDialog( oDlg )           INLINE ( oDlg:end( IDOK ) )
 
 END CLASS 
 
@@ -2785,24 +2785,18 @@ METHOD Dialog() CLASS DialogBrowseProperties
 
    ACTIVATE DIALOG oDlg CENTER
 
-Return ( Self )
+Return ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
 METHOD StartDialog() CLASS DialogBrowseProperties
 
    ::oBrwProperties:setPropertiesTableToBrowse( ::getPropertiesTable() )
+
    ::oBrwProperties:nTotalProperties()
 
 Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-METHOD SaveDialog() CLASS DialogBrowseProperties
-
-   msgAlert( hb_valtoExp( ::oBrwProperties:aPropertiesTable ), "Propiedades" )   
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
 

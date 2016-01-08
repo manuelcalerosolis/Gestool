@@ -698,7 +698,6 @@ METHOD isResumenVenta() CLASS DocumentsSales
       Return .f.
    end if
 
-
    if empty( ::oViewEditResumen )
       Return .f.
    end if 
@@ -758,13 +757,14 @@ METHOD assignLinesDocument() CLASS DocumentsSales
 
    for each oDocumentLine in ::oDocumentLines:aLines
    
-      oDocumentLine:setNumeroLinea( ++nNumeroLinea )
-      oDocumentLine:setPosicionImpresion( nNumeroLinea )
-      oDocumentLine:setSerieMaster()
-      oDocumentLine:setNumeroMaster()
-      oDocumentLine:setSufijoMaster()
+      nNumeroLinea++
 
-      // msgAlert( hGet( oDocumentLine:hDictionary, "Almacen" ), "almacen" )
+      oDocumentLine:setNumeroLinea( nNumeroLinea )
+      oDocumentLine:setPosicionImpresion( nNumeroLinea )
+      oDocumentLine:setSerieMaster( ::hDictionaryMaster )
+      oDocumentLine:setNumeroMaster( ::hDictionaryMaster )
+      oDocumentLine:setSufijoMaster( ::hDictionaryMaster )
+      oDocumentLine:setAlmacenMaster( ::hDictionaryMaster )
 
    next
 
