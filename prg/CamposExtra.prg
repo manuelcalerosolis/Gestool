@@ -715,6 +715,7 @@ Function getCustomExtraField( cFieldName, cDocumentType, Id )
    end if
    
    oDetCamposExtra:CloseFiles()
+   oDetCamposExtra:End()
 
 Return ( cExtraField )
 

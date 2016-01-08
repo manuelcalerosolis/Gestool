@@ -76,6 +76,10 @@ CLASS TDetCamposExtra FROM TMant
 
    METHOD editColCampoExtra( oCol, uNewValue, nKey )
 
+   METHOD aExtraFields()                 INLINE ( ::oCamposExtra:aCamposExtra( ::TipoDocumento ) )
+
+   METHOD valueExtraField()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -184,6 +188,7 @@ METHOD CloseFiles() CLASS TDetCamposExtra
    end if
 
    if ::oCamposExtra != nil
+      ::oCamposExtra:CloseFiles()
       ::oCamposExtra:End()
    end if
 
@@ -587,5 +592,31 @@ METHOD cPictData( campoExtra ) CLASS TDetCamposExtra
    end if
 
 Return ( cPict )
+
+//---------------------------------------------------------------------------//
+
+METHOD valueExtraField( cCampo, cClave, cField ) CLASS TDetCamposExtra
+
+   local nRec              := ::oDbf:Recno()
+   local nOrdAnt           := ::oDbf:OrdSetFocus( "cTotClave" )
+   local cClavePrincipal   := ""
+   local valueExtraField
+
+   cClavePrincipal         := hGet( DOCUMENTOS_ITEMS, ::TipoDocumento ) + cCampo + Padr( cClave, 20 )
+
+   if ::oDbf:Seek( cClavePrincipal )
+
+      if cField[ "tipo" ] == 2
+         valueExtraField      := Val( ::oDbf:cValor )
+      else
+         valueExtraField      := ::oDbf:cValor
+      end if
+
+   end if
+
+   ::oDbf:OrdSetFocus( nOrdAnt )
+   ::oDbf:GoTo( nRec )
+
+Return ( valueExtraField )
 
 //---------------------------------------------------------------------------//

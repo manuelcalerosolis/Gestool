@@ -13,6 +13,8 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    DATA  cType                            INIT "Articulos"
 
+   DATA  aTypeDocs                        INIT { "C", "N", "D", "L", "C" }
+
    DATA  lUnidadesNegativo                INIT .f.
 
    DATA  oProCab
@@ -33,12 +35,17 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    DATA fileHeader                        
    DATA fileLine                          
    DATA dictionaryHeader                  
-   DATA dictionaryLine                    
+   DATA dictionaryLine  
+
+   DATA oCamposExtra
+   DATA aExtraFields                      INIT {}
 
    METHOD lResource( cFld )
 
    METHOD Create()
    METHOD lValidRegister()
+
+   METHOD AddFieldCamposExtra()
 
    METHOD OpenFiles()
    METHOD CloseFiles()
@@ -109,6 +116,8 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD getFechaAlbaranProveedor()
    METHOD getEstadoAlbaranProveedor()
    METHOD geFechaPedidoProveedor()
+
+   METHOD loadValuesExtraFields()
 
 END CLASS
 
@@ -327,6 +336,14 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
          lOpen       := .f.
       end if
 
+      ::oCamposExtra      := TDetCamposExtra():New()
+      if !::oCamposExtra:OpenFiles()
+         lOpen       := .f.
+      end if
+
+      ::oCamposExtra:setTipoDocumento( "Artículos" )
+      ::aExtraFields := ::oCamposExtra:aExtraFields()
+
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de artículos" )
@@ -495,6 +512,11 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
          ::oOperario:End()
       end if
 
+      if !Empty( ::oCamposExtra )
+         ::oCamposExtra:CloseFiles()
+         ::oCamposExtra:End()
+      end if
+
    RECOVER
 
       msgStop( "Imposible cerrar todas las bases de datos" )
@@ -600,12 +622,37 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
 
    ::AddField( "cCtrCoste",    "C",  9, 0, {|| "" },   "Código del centro de coste"             )
 
+   ::AddFieldCamposExtra()
+
    ::AddTmpIndex( "cCodArt", "cCodArt" )
    ::AddTmpIndex( "cCodPrvArt", "cCodPrv + cCodArt" )
    ::AddTmpIndex( "cPrvHab", "cPrvHab")
    ::AddTmpIndex( "cCodAlm", "cCodArt + cCodAlm" )
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddFieldCamposExtra() CLASS TFastVentasArticulos
+
+   local cField
+   
+   if isArray( ::aExtraFields ) .and. Len( ::aExtraFields ) != 0
+
+      for each cField in ::aExtraFields
+
+         ::AddField( cField[ "código" ],;
+                     ::aTypeDocs[ cField[ "tipo" ] ] ,;
+                     cField[ "longitud" ],;
+                     cField[ "decimales" ],;
+                     {|| ::oCamposExtra:cPictData( cField ) },;
+                     Capitalize( cField[ "descripción" ] ) )
+
+      next
+
+   end if
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -729,6 +776,8 @@ Method lValidRegister() CLASS TFastVentasArticulos
       ( ::oDbf:cPrvHab     >= ::oGrupoProveedor:Cargo:getDesde()        .and. ::oDbf:cPrvHab    <= ::oGrupoProveedor:Cargo:getHasta() )         .and.;
       ( ::oDbf:cCodAlm     >= ::oGrupoAlmacen:Cargo:getDesde()          .and. ::oDbf:cCodAlm    <= ::oGrupoAlmacen:Cargo:getHasta() )           .and.;
       ( ::oDbf:cCtrCoste   >= ::oGrupoCentroCoste:Cargo:getDesde()      .and. ::oDbf:cCtrCoste  <= ::oGrupoCentroCoste:Cargo:getHasta() ) 
+
+      ::loadValuesExtraFields()
 
       Return .t.
 
@@ -2236,7 +2285,7 @@ METHOD appendStockArticulo( aStockArticulo )
          ::oDbf:cCodPr2    := sStock:cCodigoPropiedad2     
          ::oDbf:cValPr1    := sStock:cValorPropiedad1      
          ::oDbf:cValPr2    := sStock:cValorPropiedad2      
-         ::oDbf:cLote      := sStock:cLote                 
+         ::oDbf:cLote      := sStock:cLote
          ::oDbf:dFecCad    := sStock:dFechaCaducidad       
          ::oDbf:cNumSer    := sStock:cNumeroSerie  
          ::oDbf:nUniArt    := sStock:nUnidades
@@ -3263,4 +3312,22 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD loadValuesExtraFields() CLASS TFastVentasArticulos
 
+   local cField
+   local Valor
+
+   if isArray( ::aExtraFields ) .and. Len( ::aExtraFields ) != 0
+
+      for each cField in ::aExtraFields
+
+         ::oDbf:FieldPutByName(  cField[ "código" ],;
+                                 ::oCamposExtra:valueExtraField( cField[ "código" ], ::oDbf:cCodArt, cField ) )
+
+      next
+
+   end if
+
+Return ( self )
+
+//--------------------------------------------------------------------------//
