@@ -1321,7 +1321,7 @@ CLASS TPropertiesItems
    Method ToString()
 
    Method FromString()
-   Method getHead()     INLINE ( rtrim( ::cHead ) + " : " + rtrim( ::cValorPropiedad2 ) )
+   Method getHead()     INLINE ( rtrim( ::cHead ) )
 
 END CLASS
 

@@ -157,6 +157,7 @@ CLASS TConversionDocumentos
    METHOD getLinesDocument()                       INLINE ( ::oDocumentLines:getLines() )
    METHOD injectValuesBrowseProperties( idProduct )
    METHOD saveValuesBrowseProperties()
+   METHOD setValuesBrowseProperties()
    METHOD getLineDocument( nPosition )             INLINE ( ::oDocumentLines:getLine( if( !empty( nPosition ), nPosition, ::oBrwLines:nArrayAt ) ) )
    METHOD getHeaderDocument( nPosition )           INLINE ( ::oDocumentHeaders:getLine( if( !empty( nPosition ), nPosition, ::oBrwDocuments:nArrayAt ) ) )
 
@@ -853,7 +854,11 @@ METHOD propertiesLine()
 
    oDialogBrowseProperties       := DialogBrowseProperties():new( Self )
    if oDialogBrowseProperties:Dialog()
+
       ::saveValuesBrowseProperties()
+   
+      ::oBrwLines:Refresh()
+   
    end if 
 
 RETURN ( Self )
@@ -1334,13 +1339,12 @@ Return ( .t. )
 
 METHOD saveValuesBrowseProperties( idProduct )
 
-   local oLine
-   local aLine
+   local oLineSave
+   local aLinesSaved
 
-   for each aLine in ::aPropertiesTable
-      for each oLine in aLine
+   for each aLinesSaved in ::aPropertiesTable
+      for each oLineSave in aLinesSaved
          ::setValuesBrowseProperties( oLineSave )
-         msgAlert( hb_valtoexp( oLine ), "oLine" )
       next 
    next
 
@@ -1353,16 +1357,34 @@ METHOD setValuesBrowseProperties( oLineSave )
    local oLineDocument
    local aLinesDocument    := ::getLinesDocument()
 
+   // msgAlert( hb_valtoexp( oLineSave ), "oLineSave" )
+
    for each oLineDocument in aLinesDocument
-      if 
-         msgAlert( hb_valtoexp( oLine ), "oLine" )
-      next 
+      /*
+      msgAlert(   rtrim( oLineDocument:getProductId() )            + "=" + ;
+                  rtrim( oLineDocument:getCodeFirstProperty() )    + "=" + ;
+                  rtrim( oLineDocument:getCodeSecondProperty() )   + "=" + ;
+                  rtrim( oLineDocument:getValueFirstProperty() )   + "=" + ;
+                  rtrim( oLineDocument:getValueSecondProperty() ) )
+      */
+      if rtrim( oLineSave:cCodigo )            == rtrim( oLineDocument:getProductId() )            .and. ;
+         rtrim( oLineSave:cCodigoPropiedad1 )  == rtrim( oLineDocument:getCodeFirstProperty() )    .and. ;
+         rtrim( oLineSave:cCodigoPropiedad2 )  == rtrim( oLineDocument:getCodeSecondProperty() )   .and. ;
+         rtrim( oLineSave:cValorPropiedad1 )   == rtrim( oLineDocument:getValueFirstProperty() )   .and. ;
+         rtrim( oLineSave:cValorPropiedad2 )   == rtrim( oLineDocument:getValueSecondProperty() )
+
+         msgAlert( "yes found")
+
+         oLineDocument:setUnidades( oLineSave:Value )
+         oLineDocument:selectLine() 
+
+      end if 
+
    next
 
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
