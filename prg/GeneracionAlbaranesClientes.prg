@@ -15,6 +15,8 @@ CLASS TGeneracionAlbaranesClientes FROM TConversionDocumentos
    METHOD DialogSelectionCriteria( oDlg )
    METHOD isDialogSelectionCriteria( oDlg )
 
+   METHOD isHeadersConditions()
+
    METHOD startDialog()
       METHOD botonSiguiente()
 

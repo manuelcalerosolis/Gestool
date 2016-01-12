@@ -1055,7 +1055,7 @@ return ( cNumDoc )
 
 //----------------------------------------------------------------------------//
 
-Function MsgDbfInfo( dbfAlias, cTitle )
+Function msgDbfInfo( dbfAlias, cTitle )
 
    local oDlg
    local oTreeInfo
