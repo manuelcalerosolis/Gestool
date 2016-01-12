@@ -25,7 +25,8 @@ static cFicheroTarifa6     := "6.xls"
 static cFicheroTarifa7     := "7.xls"
 static cFicheroTarifa11    := "11.xls"
 static cFicheroTarifa100   := "100.xls"
-static cFicheroTarifa100   := "30.xls"
+static cFicheroTarifa30    := "30.xls"
+static cFicheroFecha       := "fecha.xls"
 
 //---------------------------------------------------------------------------//
 
@@ -55,6 +56,10 @@ function InicioHRB()
 
    if MsgYesNo( "Importar artículos extra", "" )
       ImportacionArticulosExtra()
+   end if
+
+   if MsgYesNo( "Importar fecha extra", "" )
+      ImportacionFechaExtra()
    end if
 
    if MsgYesNo( "Importar tarifa 6", "" )
@@ -524,7 +529,44 @@ Return ( .t. )
 
 //----------------------------------------------------------------------------//
 
-Static Function ImportaCampoExtra( cCod, cCol, nLin, cType )
+Static Function ImportacionFechaExtra()
+
+   local n
+   local TipoIva
+   local cCodBar     := ""
+
+   msgwait( "Importamos artículos", , 1 )
+
+   Conexion( cFicheroFecha )
+
+   for n := nLineaComienzo to 65536
+
+      /*
+      Si no encontramos mas líneas nos salimos------------------------------
+      */
+
+      if Empty( oOleExcel:oExcel:ActiveSheet:Range( "A" + lTrim( Str( n ) ) ):Value )
+         Exit
+      end if
+
+      MsgInfo( oOleExcel:oExcel:ActiveSheet:Range( "A" + lTrim( Str( n ) ) ):Value )
+      MsgInfo( GetDate( "B", n ) )
+
+
+      ImportaCampoExtra( "019", "B", n, "D", oOleExcel:oExcel:ActiveSheet:Range( "A" + lTrim( Str( n ) ) ):Value )
+
+      msgwait( "Procesando artículos: " + str( n ), , .0001 )
+
+   next
+
+   Desconexion()
+
+Return ( .t. )
+
+
+//----------------------------------------------------------------------------//
+
+Static Function ImportaCampoExtra( cCod, cCol, nLin, cType, cCodigo )
 
    local cValor      := ""
 
@@ -550,7 +592,7 @@ Static Function ImportaCampoExtra( cCod, cCol, nLin, cType )
 
       ( D():DetCamposExtras( nView ) )->cTipDoc    := ART_TBL
       ( D():DetCamposExtras( nView ) )->cCodTipo   := cCod
-      ( D():DetCamposExtras( nView ) )->cClave     := GetRange( "B", nLin )
+      ( D():DetCamposExtras( nView ) )->cClave     := if( !Empty( cCodigo ), cCodigo, GetRange( "B", nLin ) )
       ( D():DetCamposExtras( nView ) )->cValor     := cValor
 
       ( D():DetCamposExtras( nView ) )->( dbUnlock() )

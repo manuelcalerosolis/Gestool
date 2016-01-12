@@ -26,6 +26,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    DATA  oCtrCoste
    DATA  oOperario
    DATA  oObras
+   DATA oTarPreL
 
    DATA  oPrp1
    DATA  oPrp2
@@ -116,6 +117,8 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD getFechaAlbaranProveedor()
    METHOD getEstadoAlbaranProveedor()
    METHOD geFechaPedidoProveedor()
+
+   METHOD getTarifaArticulo()
 
    METHOD loadValuesExtraFields()
 
@@ -302,6 +305,8 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
       DATABASE NEW ::oPrp1    PATH ( cPatArt() ) CLASS "TblPro1"     FILE "TblPro.Dbf"    VIA ( cDriver() ) SHARED INDEX "TblPro.Cdx" 
 
       DATABASE NEW ::oPrp2    PATH ( cPatArt() ) CLASS "TblPro2"     FILE "TblPro.Dbf"    VIA ( cDriver() ) SHARED INDEX "TblPro.Cdx"
+
+      DATABASE NEW ::oTarPreL PATH ( cPatEmp() ) CLASS "TARPREL"     FILE "TARPREL.DBF"   VIA ( cDriver() ) SHARED INDEX "TARPREL.CDX"
 
       ::oProCab   := TDataCenter():oProCab()
 
@@ -497,7 +502,11 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
 
       if !empty( ::oPrp2 ) .and. ( ::oPrp2:Used() )
          ::oPrp2:end()
-      end if 
+      end if
+
+      if !empty( ::oTarPreL ) .and. ( ::oTarPreL:Used() )
+         ::oTarPreL:end()
+      end if
 
       if !Empty( ::oCtrCoste )
          ::oCtrCoste:end()
@@ -641,7 +650,7 @@ METHOD AddFieldCamposExtra() CLASS TFastVentasArticulos
 
       for each cField in ::aExtraFields
 
-         ::AddField( cField[ "código" ],;
+         ::AddField( "fld" + cField[ "código" ],;
                      ::aTypeDocs[ cField[ "tipo" ] ] ,;
                      cField[ "longitud" ],;
                      cField[ "decimales" ],;
@@ -3321,7 +3330,7 @@ METHOD loadValuesExtraFields() CLASS TFastVentasArticulos
 
       for each cField in ::aExtraFields
 
-         ::oDbf:FieldPutByName(  cField[ "código" ],;
+         ::oDbf:FieldPutByName(  "fld" + cField[ "código" ],;
                                  ::oCamposExtra:valueExtraField( cField[ "código" ], ::oDbf:cCodArt, cField ) )
 
       next
@@ -3331,3 +3340,46 @@ METHOD loadValuesExtraFields() CLASS TFastVentasArticulos
 Return ( self )
 
 //--------------------------------------------------------------------------//
+
+METHOD getTarifaArticulo( cCodTar, cCodArt, nPrc ) CLASS TFastVentasArticulos
+
+   local nPrecio := 0
+   local nOrdAnt := ::oTarPreL:OrdSetFocus( "cCodArt" )
+
+   if Empty( cCodTar )
+      Return nPrecio
+   end if
+
+   if Empty( cCodArt )
+      Return nPrecio
+   end if
+
+   if ::oTarPreL:Seek( cCodTar + cCodArt )
+      do case
+         case nPrc == "1"
+            nPrecio     := ::oTarPreL:nPrcTar1
+
+         case nPrc == "2"
+            nPrecio     := ::oTarPreL:nPrcTar2
+
+         case nPrc == "3"
+            nPrecio     := ::oTarPreL:nPrcTar3
+
+         case nPrc == "4"
+            nPrecio     := ::oTarPreL:nPrcTar4
+
+         case nPrc == "5"
+            nPrecio     := ::oTarPreL:nPrcTar5
+
+         case nPrc == "6"
+            nPrecio     := ::oTarPreL:nPrcTar6
+
+      end case
+
+   end if
+
+   ::oTarPreL:OrdSetFocus( nOrdAnt )
+
+Return nPrecio
+
+//---------------------------------------------------------------------------//
