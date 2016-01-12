@@ -136,6 +136,8 @@ CLASS TConversionDocumentos
                                                             ::setDocumentType( cHeaderTable, cLineTable ) )
 
    METHOD setDocumentPedidosProveedores()          INLINE ( ::setShoppingDocumentType( D():PedidosProveedoresTableName(), D():PedidosProveedoresLineasTableName() ) )
+
+   METHOD setDocumentPedidosClientes()             INLINE ( ::setSalesDocumentType( D():PedidosClientesTableName(), D():PedidosClientesLineasTableName() ) )
    METHOD setDocumentSATClientes()                 INLINE ( ::setSalesDocumentType( D():SATClientesTableName(), D():SATClientesLineasTableName() ) )
 
    METHOD setHeaderTable( cTableName )             INLINE ( ::oHeaderTable := TDataCenter():scanDataTableInView( cTableName, ::nView ) )
@@ -250,6 +252,12 @@ METHOD OpenFiles()
       D():PedidosProveedoresIncidencias( ::nView )
 
       D():PedidosProveedoresDocumentos( ::nView )
+
+      D():PedidosClientes( ::nView )
+
+      D():PedidosClientesLineas( ::nView )
+
+      D():PedidosClientesIncidencias( ::nView )
 
       D():SATClientes( ::nView )
       
@@ -1357,25 +1365,16 @@ METHOD setValuesBrowseProperties( oLineSave )
    local oLineDocument
    local aLinesDocument    := ::getLinesDocument()
 
-   // msgAlert( hb_valtoexp( oLineSave ), "oLineSave" )
-
    for each oLineDocument in aLinesDocument
-      /*
-      msgAlert(   rtrim( oLineDocument:getProductId() )            + "=" + ;
-                  rtrim( oLineDocument:getCodeFirstProperty() )    + "=" + ;
-                  rtrim( oLineDocument:getCodeSecondProperty() )   + "=" + ;
-                  rtrim( oLineDocument:getValueFirstProperty() )   + "=" + ;
-                  rtrim( oLineDocument:getValueSecondProperty() ) )
-      */
+
       if rtrim( oLineSave:cCodigo )            == rtrim( oLineDocument:getProductId() )            .and. ;
          rtrim( oLineSave:cCodigoPropiedad1 )  == rtrim( oLineDocument:getCodeFirstProperty() )    .and. ;
          rtrim( oLineSave:cCodigoPropiedad2 )  == rtrim( oLineDocument:getCodeSecondProperty() )   .and. ;
          rtrim( oLineSave:cValorPropiedad1 )   == rtrim( oLineDocument:getValueFirstProperty() )   .and. ;
          rtrim( oLineSave:cValorPropiedad2 )   == rtrim( oLineDocument:getValueSecondProperty() )
 
-         msgAlert( "yes found")
-
          oLineDocument:setUnidades( oLineSave:Value )
+         
          oLineDocument:selectLine() 
 
       end if 

@@ -235,6 +235,7 @@ CLASS D
 
    // Pedidos de clientes------------------------------------------------------
 
+   METHOD PedidosClientesTableName()                        INLINE ( "PedCliT" )
    METHOD PedidosClientes( nView )                          INLINE ( ::Get( "PedCliT", nView ) )
       METHOD PedidosClientesId( nView )                     INLINE ( ( ::Get( "PedCliT", nView ) )->cSerPed + str( ( ::Get( "PedCliT", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliT", nView ) )->cSufPed )
       METHOD PedidosClientesIdText( nView )                 INLINE ( ::Get( "PedCliT", nView ) )->cSerPed + "/" + Alltrim( Str( ( ::Get( "PedCliT", nView ) )->nNumPed ) )
@@ -251,6 +252,7 @@ CLASS D
 
    METHOD PedidosClientesReservas( nView )                  INLINE ( ::Get( "PedCliR", nView ) )
 
+   METHOD PedidosClientesLineasTableName()                  INLINE ( "PedCliL" )
    METHOD PedidosClientesLineas( nView )                    INLINE ( ::Get( "PedCliL", nView ) )
       METHOD PedidosClientesLineasId( nView )               INLINE ( ( ::Get( "PedCliL", nView ) )->cSerPed + str( ( ::Get( "PedCliL", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliL", nView ) )->cSufPed )
       METHOD GetPedidoClienteLineasHash( nView )            INLINE ( ::getHashRecord( ::PedidosClientesLineas( nView ), nView ) )

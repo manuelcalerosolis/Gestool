@@ -6,7 +6,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TConversionPedidosProveedores FROM TConversionDocumentos // FROM DialogBuilder
+CLASS TConversionPedidosProveedores FROM TConversionDocumentos 
 
    DATA cCodigoProveedor                              INIT ""
 

@@ -366,6 +366,7 @@ TComandas.prg           	\
 THisFacAutomatica.prg   	\
 ConversionDocumentos.prg            \
 ConversionPedidosProveedores.prg    \
+GeneracionAlbaranesClientes.prg     \
 TFacturaElectronica.prg 	\
 CobAge.prg              	\
 Carpeta.prg             	\
@@ -802,6 +803,7 @@ TComandas.obj           \
 THisFacAutomatica.obj   \
 ConversionDocumentos.obj            \
 ConversionPedidosProveedores.obj    \
+GeneracionAlbaranesClientes.obj     \
 TFacturaElectronica.obj \
 CobAge.obj              \
 Carpeta.obj             \
@@ -1227,6 +1229,7 @@ $(OBJ)\TComandas.obj            	+
 $(OBJ)\THisFacAutomatica.obj    	+
 $(OBJ)\ConversionDocumentos.obj           +
 $(OBJ)\ConversionPedidosProveedores.obj   +
+$(OBJ)\GeneracionAlbaranesClientes.obj    +
 $(OBJ)\TFacturaElectronica.obj  	+
 $(OBJ)\CobAge.obj               	+
 $(OBJ)\Carpeta.obj              	+

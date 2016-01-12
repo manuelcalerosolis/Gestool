@@ -2733,7 +2733,9 @@ Function aPropiedadesArticulo( cCodigoArticulo, nView, cFieldCodigo, cValueCodig
 
    end if 
 
-   asort( aValores, , , {|x,y| val( x[ "ValorPropiedad" ] ) < val( y[ "ValorPropiedad" ] ) } )
+   // asort( aValores, , , {|x,y| val( x[ "ValorPropiedad" ] ) < val( y[ "ValorPropiedad" ] ) } )
+
+   asort( aValores, , , {|x,y| x[ "OrdenPropiedad" ] < y[ "OrdenPropiedad" ] } )
 
    D():setStatus( "ArtDiv", nView )
 
@@ -2753,12 +2755,13 @@ Static Function addValoresPorpiedad( aValores, nView, cCodigoArticulo, cFieldCod
    local cCodigoPropiedad  := ( D():ArticuloPrecioPropiedades( nView ) )->( fieldGetByName( cFieldCodigo ) )
    local cValorPropiedad   := ( D():ArticuloPrecioPropiedades( nView ) )->( fieldGetByName( cValueCodigo ) )
 
-   hPropiedad  := {  "CodigoPropiedad" => rtrim( cCodigoPropiedad ),;
-                     "ValorPropiedad" => rtrim( cValorPropiedad ),;
-                     "TipoPropiedad" => rtrim( retFld( cCodigoPropiedad, D():Propiedades( nView ), "cDesPro" ) ),;
-                     "ColorPropiedad" => retFld( cCodigoPropiedad, D():Propiedades( nView ), "lColor" ),;
-                     "CabeceraPropiedad" => rtrim( retFld( cCodigoPropiedad + cValorPropiedad, D():PropiedadesLineas( nView ), "cDesTbl" ) ),;
-                     "RgbPropiedad" => retFld( cCodigoPropiedad + cValorPropiedad, D():PropiedadesLineas( nView ), "nColor" ) }
+   hPropiedad  := {  "CodigoPropiedad"    => rtrim( cCodigoPropiedad ),;
+                     "ValorPropiedad"     => rtrim( cValorPropiedad ),;
+                     "TipoPropiedad"      => rtrim( retFld( cCodigoPropiedad, D():Propiedades( nView ), "cDesPro" ) ),;
+                     "ColorPropiedad"     => retFld( cCodigoPropiedad, D():Propiedades( nView ), "lColor" ),;
+                     "CabeceraPropiedad"  => rtrim( retFld( cCodigoPropiedad + cValorPropiedad, D():PropiedadesLineas( nView ), "cDesTbl" ) ),;
+                     "RgbPropiedad"       => retFld( cCodigoPropiedad + cValorPropiedad, D():PropiedadesLineas( nView ), "nColor" ),;
+                     "OrdenPropiedad"     => retFld( cCodigoPropiedad + cValorPropiedad, D():PropiedadesLineas( nView ), "nOrdTbl" ) }
 
 Return ( aadd( aValores, hPropiedad ) )
 

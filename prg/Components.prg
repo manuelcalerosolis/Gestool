@@ -1211,7 +1211,9 @@ CLASS GetPeriodo FROM ComponentGet
 
    METHOD Resource( oContainer )
 
-   METHOD InRange( uValue )      INLINE ( uValue >= ::oFechaInicio:Value() .and. uValue <= ::oFechaFin:Value() )
+   METHOD getFechaInicio()       INLINE ( ::oFechaInicio:Value() )
+   METHOD getFechaFin()          INLINE ( ::oFechaFin:Value() )
+   METHOD inRange( uValue )      INLINE ( uValue >= ::getFechaInicio() .and. uValue <= ::getFechaFin() )
 
 END CLASS 
 
@@ -1771,6 +1773,53 @@ METHOD New( idGet, idSay, idText, oContainer ) CLASS GetArticulo
 
    ::bValid       := {|| cArticulo( ::oGetControl, D():Get( "Articulo", ::getView() ), ::oSayControl ) }
    ::bHelp        := {|| brwArticulo( ::oGetControl, ::oSayControl ) }
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+
+CLASS GetAlmacen FROM ComponentGetSayDatabase
+
+   METHOD Build( hBuilder ) 
+   METHOD New( idGet, idSay, idText, oContainer ) 
+
+   METHOD First()    INLINE ( ::cText( Space( 16 ) ) )
+   METHOD Last()     INLINE ( ::cText( Replicate( "Z", 16 ) ) )
+
+   METHOD Top()      INLINE ( ::cText( D():Top( "Articulo", ::getView() ) ) )
+   METHOD Bottom()   INLINE ( ::cText( D():Bottom( "Articulo", ::getView() ) ) )
+
+END CLASS 
+
+//--------------------------------------------------------------------------//
+
+METHOD Build( hBuilder ) CLASS GetAlmacen
+
+   local idGet       := if( hhaskey( hBuilder, "idGet" ),      hBuilder[ "idGet"     ], nil )
+   local idSay       := if( hhaskey( hBuilder, "idSay"),       hBuilder[ "idSay"     ], nil )
+   local idText      := if( hhaskey( hBuilder, "idText"),      hBuilder[ "idText"    ], nil )
+   local oContainer  := if( hhaskey( hBuilder, "oContainer"),  hBuilder[ "oContainer"], nil )
+
+   ::New( idGet, idSay, idText, oContainer )
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD New( idGet, idSay, idText, oContainer ) CLASS GetAlmacen
+
+   ::cTextValue   := "Almacén"
+
+   ::Super:New( idGet, idSay, idText, oContainer )
+
+   ::bValid       := {|| cAlmacen( ::oGetControl, D():Almacen( ::getView() ), ::oSayControl ) }
+   ::bHelp        := {|| brwAlmacen( ::oGetControl, ::oSayControl ) }
 
 Return ( Self )
 

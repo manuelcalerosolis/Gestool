@@ -1047,6 +1047,12 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          HOTKEY   "G";
          LEVEL    ACC_APPD
 
+      DEFINE BTNSHELL RESOURCE "GENFAC" GROUP OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( TGeneracionAlbaranesClientes():New():Dialog() );
+         TOOLTIP  "Importar pedidos clientes";
+         LEVEL    ACC_APPD
+
       DEFINE BTNSHELL RESOURCE "CHGSTATE" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( if( ApoloMsgNoYes(  "¿ Está seguro de cambiar el estado del documento ?", "Elija una opción" ), SetFacturadoAlbaranCliente( !lFacturado( D():Get( "AlbCliT", nView ) ), oWndBrw:oBrw ), ) ) ;

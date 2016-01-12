@@ -783,6 +783,7 @@ STATIC FUNCTION EndApp()
    local oBrush
    local oBtnOk
    local oBtnZip
+   local lFinish
    local oBtnCancel
    local oBmpVersion
 
@@ -838,11 +839,13 @@ STATIC FUNCTION EndApp()
 
    ErrorBlock( oBlock )
 
-   if ( oDlg:nResult == IDOK )
+   lFinish     := !empty( oDlg ) .and. oDlg:nResult == IDOK
+
+   if ( lFinish )
       FinishAplication()
    end if
 
-RETURN ( oDlg:nResult == IDOK )
+RETURN ( lFinish )
 
 //-----------------------------------------------------------------------------//
 
@@ -6004,6 +6007,9 @@ Return ( by( nRow ) )
 //---------------------------------------------------------------------------//
 
 Function Test() 
+
+   TGeneracionAlbaranesClientes():New():Dialog()
+
 /*
    local nView                   := D():CreateView()
    local oDialogBrowseProperties
@@ -6018,6 +6024,7 @@ Function Test()
 
    TConversionDocumentos():New():Dialog()
 */
+
 Return ( nil )
 
 Static Function testAll()

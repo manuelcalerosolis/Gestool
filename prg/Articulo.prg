@@ -7401,7 +7401,7 @@ static function cOrdenBrwPropiedades( oCol, oBrw, cOrden )
 
          case AllTrim( oCol:cHeader ) == "Código"
 
-            aSort( oBrw:aArrayData, , , {|x,y| x:cValPrp < y:cValPrp } )
+            aSort( oBrw:aArrayData, , , {|x,y| val( x:cValPrp ) < val( y:cValPrp ) } )
 
             for each oColumn in oBrw:aCols
                oColumn:cOrder := ""
@@ -14361,6 +14361,7 @@ Method SavePropertiesLabels( oDlg ) CLASS TArticuloLabelGenerator
    next
 
    if dbLock( D():Articulos( nView ) )
+      ( D():Articulos( nView ) )->lLabel := .t.
       ( D():Articulos( nView ) )->nLabel := n
       ( D():Articulos( nView ) )->( dbUnLock() )
    end if
@@ -14591,11 +14592,11 @@ Method PrepareTemporal( oFr ) CLASS TArticuloLabelGenerator
    local n
    local nBlancos       := 0
    local nPaperHeight   := oFr:GetProperty( "MainPage", "PaperHeight" ) * fr01cm
-   local nHeight        := oFr:GetProperty( "CabeceraColumnas", "Height" )
    local nColumns       := oFr:GetProperty( "MainPage", "Columns" )
+   local nHeight        := oFr:GetProperty( "MasterData", "Height" )
    local nItemsInColumn := 0
 
-   if !Empty( nPaperHeight ) .and. !Empty( nHeight ) .and. !Empty( nColumns )
+   if !empty( nPaperHeight ) .and. !empty( nHeight ) .and. !empty( nColumns )
 
       nItemsInColumn    := int( nPaperHeight / nHeight )
 
@@ -14603,7 +14604,6 @@ Method PrepareTemporal( oFr ) CLASS TArticuloLabelGenerator
       nBlancos          += ( ::nFilaInicio - 1 )
 
       for n := 1 to nBlancos
-         msgAlert( nBlancos, "nBlancos" )
          dbPass( dbBlankRec( D():Articulos( nView ) ), tmpArticulo, .t. )
       next
 
@@ -14638,17 +14638,11 @@ Method lPrintLabels() CLASS TArticuloLabelGenerator
    SysRefresh()
 
    oFr                  := frReportManager():New()
-
    oFr:LoadLangRes(     "Spanish.Xml" )
-
    oFr:SetIcon( 1 )
-
    oFr:SetTitle(        "Diseñador de documentos" )
 
-
-   /*
-   Manejador de eventos--------------------------------------------------------
-   */
+   // Manejador de eventos-----------------------------------------------------
 
    oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
 
@@ -14669,6 +14663,8 @@ Method lPrintLabels() CLASS TArticuloLabelGenerator
       /*
       Necesidad de incluir espacion en blancos---------------------------------
       */
+
+
 
       ::PrepareTemporal( oFr )
 
