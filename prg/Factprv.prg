@@ -10757,7 +10757,7 @@ Function SynFacPrv( cPath )
          ( dbfFacPrvL )->cAlmOrigen := RetFld( ( dbfFacPrvL )->iNumAlb, dbfAlbPrvL, "cAlmOrigen", "nNumLin" )
       end if
 
-      if !Empty( ( dbfFacPrvL )->nPosPrint )
+      if Empty( ( dbfFacPrvL )->nPosPrint )
          ( dbfFacPrvL )->nPosPrint := ( dbfFacPrvL )->nNumLin
       end if
 
