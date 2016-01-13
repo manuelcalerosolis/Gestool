@@ -1060,6 +1060,10 @@ Function MsgDbfInfo( dbfAlias, cTitle )
    local oDlg
    local oTreeInfo
 
+   if Empty( dbfAlias )
+      Return ( nil )      
+   end if
+
    DEFINE DIALOG oDlg RESOURCE "dbInfo" TITLE ( cTitle )
 
       oTreeInfo   := TTreeView():Redefine( 100, oDlg )
@@ -1072,9 +1076,13 @@ Function MsgDbfInfo( dbfAlias, cTitle )
 
 Return ( nil )
 
+//---------------------------------------------------------------------------//
+
 Static Function StartDbfInfo( dbfAlias, oTreeInfo )
 
    local n := 0
+
+   MsgInfo( dbfAlias )
 
    Select( dbfAlias )
 

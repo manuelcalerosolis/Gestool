@@ -671,8 +671,10 @@ METHOD New( cSubTitle, aFields, aIndex, oMenuItem, oWnd, cHelp, xOthers ) CLASS 
       fErase( ::cFileIndx )
    end if
 
-   ::oDbf         := DbfServer( ::cFileName, cFileObject )
-   ::oDbf:New( ::cFileName, "InfMov", ( cLocalDriver() ), , ( cPatTmp() ) )
+//   ::oDbf         := DbfServer( ::cFileName, cFileObject )
+//   ::oDbf:New( ::cFileName, "InfMov", ( cLocalDriver() ), , ( cPatTmp() ) )
+
+   ::oDbf   := TDbf():New( ::cFileName, "InfMov", ( cLocalDriver() ), , ( cPatTmp() ) )
 
    for n := 1 to len( aFields )
 
@@ -709,6 +711,12 @@ METHOD New( cSubTitle, aFields, aIndex, oMenuItem, oWnd, cHelp, xOthers ) CLASS 
    if ValType( ::lOpenFiles ) != "L"
       ::lOpenFiles      := .t.
    end if
+
+   MsgInfo( ::oDbf )
+   MsgInfo( ::oDbf, ::oDbf:ClassName )
+   MsgInfo( ::oDbf:cName )
+   MsgInfo( ::oDbf:cAlias )
+   MsgDbfInfo( ::oDbf:cAlias, "Titulo" )
 
    setFastReportObject( self )
 
