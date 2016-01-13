@@ -257,7 +257,7 @@ CLASS TDbf
     Method SwapUp()
     Method SwapDown()
 
-    Method lRddAdsCdx()                   INLINE ( ::cRDD == "ADSCDX" .or. lAIS() )
+    Method lRddAdsCdx()                   INLINE ( ::cRDD == "ADSCDX" )
 
     Method aCommentIndex()
 
@@ -1230,6 +1230,8 @@ METHOD AddTmpIndex( cName, cFile, cKey, cFor, bWhile, lUniq, lDes, cComment, bOp
 
     local nRec
     local oIdx
+
+    msgAlert( ::lRddAdsCdx(), "::lRddAdsCdx()" )
 
     if ::lRddAdsCdx()
 
