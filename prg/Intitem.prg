@@ -141,7 +141,7 @@ Method CreateData() CLASS TClienteSenderReciver
    USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
    SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
 
-   USE ( cPatCli() + "CliCto.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLICONTA", @dbfContactos ) )
+   USE ( cPatCli() + "CliCto.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CliCto", @dbfContactos ) )
    SET ADSINDEX TO ( cPatCli() + "CliCto.Cdx" ) ADDITIVE
 
    /*
@@ -156,7 +156,7 @@ Method CreateData() CLASS TClienteSenderReciver
    dbUseArea( .t., cLocalDriver(), cPatSnd() + "ObrasT.Dbf", cCheckArea( "ObrasT", @tmpObr ), .f. )
    ( tmpObr )->( ordListAdd( cPatSnd() + "ObrasT.Cdx" ) )
 
-   dbUseArea( .t., cLocalDriver(), cPatSnd() + "CliCto.Dbf", cCheckArea( "CLICONTA", @tmpCon ), .f. )
+   dbUseArea( .t., cLocalDriver(), cPatSnd() + "CliCto.Dbf", cCheckArea( "CliCto", @tmpCon ), .f. )
    ( tmpCon )->( ordListAdd( cPatSnd() + "CliCto.Cdx" ) )
 
    /*
@@ -245,10 +245,10 @@ Method CreateData() CLASS TClienteSenderReciver
 
    if lSnd
 
-      ::oSender:SetText( "Comprimiendo clientes" )
+      ::oSender:SetText( "Comprimiendo clientes : " + cFileName )
 
       if ::oSender:lZipData( cFileName )
-         ::oSender:SetText( "Ficheros comprimidos" )
+         ::oSender:SetText( "Ficheros comprimidos : " + cFileName )
       else
          ::oSender:SetText( "ERROR al crear fichero comprimido" )
       end if

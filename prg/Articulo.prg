@@ -12940,7 +12940,7 @@ Method CreateData()
 
    if lSnd
 
-      ::oSender:SetText( "Comprimiendo artículos "  + cFileName )
+      ::oSender:SetText( "Comprimiendo artículos : " + cFileName )
 
       if ::oSender:lZipData( cFileName )
          ::oSender:SetText( "Ficheros comprimidos" )
