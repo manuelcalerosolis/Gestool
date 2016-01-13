@@ -16,6 +16,7 @@ CLASS TGeneracionAlbaranesClientes FROM TConversionDocumentos
    METHOD isDialogSelectionCriteria( oDlg )
 
    METHOD isHeadersConditions()
+   METHOD isLineConditions()
 
    METHOD startDialog()
       METHOD botonSiguiente()
@@ -151,6 +152,16 @@ METHOD isHeadersConditions()
    end if 
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD isLineConditions()
+
+   if empty( ::oArticulo:Value() )
+      Return .t.
+   end if
+
+Return ( ::aliasDocumentLine:getCode() == ::oArticulo:Value() )
 
 //---------------------------------------------------------------------------//
 
