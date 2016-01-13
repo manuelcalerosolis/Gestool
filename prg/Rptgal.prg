@@ -2534,6 +2534,9 @@ Return nil
 Function TConversionPedidosProveedores()
 Return nil
 
+Function TGeneracionAlbaranesClientes()
+Return nil
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP
