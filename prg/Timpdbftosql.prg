@@ -278,8 +278,6 @@ METHOD Import( oDlg )
 
             ::SynSql( "Agenda" )
 
-            ::SynSql( "Tankes" )
-
             ::SynSql( "Cajas" )
 
             ::SynSql( "ImpTik" )

@@ -156,7 +156,6 @@ Return .t.
 
 METHOD loadLinesDocument() 
 
-   local hDictionary    
    local oDocumentLine
 
    ::oDocumentLines:reset()
@@ -170,11 +169,9 @@ METHOD loadLinesDocument()
 
          while ::getHeaderId() == ::aliasDocumentLine:getDocumentId() .and. !::aliasDocumentLine:Eof()
 
-            hDictionary       := D():getHashFromAlias( ::getLineAlias(), ::getLineDictionary() )
+            oDocumentLine     := ClientDeliveryNoteDocumentLine():newBuildDictionary( self )
 
-            oDocumentLine     := SupplierDeliveryNoteDocumentLine():newFromDictionary( self, hDictionary )
-
-            if oDocumentLine:getUnitsAwaitingReception() > 0
+            if oDocumentLine:getUnitsAwaitingProvided() > 0
                ::oDocumentLines:addLines( oDocumentLine )
             end if 
 

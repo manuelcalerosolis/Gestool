@@ -178,6 +178,40 @@ METHOD newFromDictionary( oSender, hDictionary ) CLASS supplierDeliveryNoteDocum
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS ClientDeliveryNoteDocumentLine FROM DocumentLine
+
+   METHOD newFromDictionary( oSender, hDictionary )
+
+   METHOD setUnitsProvided()           INLINE ( ::setValue( "UnitsProvided", nUnidadesRecibidasAlbCli( ::getDocumentId(), ::getCode(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():AlbaranesClientesLineas( ::getView() ) ) ) )
+   METHOD getUnitsProvided()           INLINE ( ::getValue( "UnitsProvided" ) )
+   METHOD getUnitsAwaitingProvided()   INLINE ( ::getTotalUnits() - ::getUnitsProvided() )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD newFromDictionary( oSender, hDictionary ) CLASS ClientDeliveryNoteDocumentLine
+
+   ::Super():newFromDictionary( oSender, hDictionary )
+
+   ::setUnitsProvided()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 CLASS DictionaryDocumentLine FROM DocumentLine
 

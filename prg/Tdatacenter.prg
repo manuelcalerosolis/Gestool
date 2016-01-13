@@ -2389,14 +2389,6 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
-   oDataTable:cName        := cPatEmp() + "Tankes"
-   oDataTable:cDataFile    := cPatEmp( , .t. ) + "Tankes.Dbf"
-   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Tankes.Cdx"
-   oDataTable:cDescription := "Tanques de combustible"
-   oDataTable:bCreateFile  := {| cPath | TTankes():BuildFiles( cPath ) }
-   ::AddEmpresaTable( oDataTable )
-
-   oDataTable              := TDataTable()
    oDataTable:cName        := cPatEmp() + "GrpFam"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "GrpFam.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "GrpFam.Cdx"

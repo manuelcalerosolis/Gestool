@@ -10,6 +10,7 @@ CLASS DocumentBase
    DATA select                                                 INIT .f.
 
    METHOD new()
+   METHOD newBuildDictionary( oSender )
    METHOD newFromDictionary()
    METHOD getView()                                            INLINE ( ::oSender:getView() )
 
@@ -48,6 +49,16 @@ END CLASS
 METHOD new( oSender ) CLASS DocumentBase
 
    ::oSender            := oSender
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD newBuildDictionary( oSender ) CLASS DocumentBase
+
+   ::new( oSender )
+
+   ::setDictionary( D():getHashFromAlias( oSender:getLineAlias(), oSender:getLineDictionary() ) )
 
 Return ( Self )
 
