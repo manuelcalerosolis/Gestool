@@ -245,10 +245,13 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS AliasDocumentLine FROM AliasDocumentBase
+CLASS AliasDocumentLine FROM DocumentLine
 
    METHOD getAlias()                                           INLINE ( ::oSender:getLineAlias() )
    METHOD getDictionary()                                      INLINE ( ::oSender:getLineDictionary() )
+
+   METHOD getValue( key, uDefault )                            INLINE ( D():getFieldFromAliasDictionary( key, ::getAlias(), ::getDictionary(), uDefault ) )
+   METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
 
 END CLASS
 

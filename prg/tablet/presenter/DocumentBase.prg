@@ -2,6 +2,38 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
  
+CLASS repositoryBase
+
+   DATA hDictionary
+
+   METHOD getValue( key, uDefault )                            VIRTUAL
+   METHOD setValue( key, value )                               VIRTUAL
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+CLASS repositoryDictionary FROM repositoryBase
+ 
+   METHOD getValue( key, uDefault )                            INLINE ( hGetDefault( ::hDictionary, key, uDefault ) )
+   METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+CLASS repositoryAlias FROM repositoryBase
+
+   METHOD getAlias()                                           VIRTUAL
+   METHOD getDictionary()                                      VIRTUAL
+
+   METHOD getValue( key, uDefault )                            INLINE ( D():getFieldFromAliasDictionary( key, ::getAlias(), ::getDictionary(), uDefault ) )
+   METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
 CLASS DocumentBase 
 
    DATA oSender
@@ -12,6 +44,7 @@ CLASS DocumentBase
    METHOD new()
    METHOD newBuildDictionary( oSender )
    METHOD newFromDictionary()
+
    METHOD getView()                                            INLINE ( ::oSender:getView() )
 
    METHOD getDictionary()                                      INLINE ( ::hDictionary )
@@ -34,10 +67,10 @@ CLASS DocumentBase
    METHOD getSufijo()                                          INLINE ( ::getValue( "Sufijo" ) )
    METHOD setSufijo( value )                                   INLINE ( ::setValue( "Sufijo", value ) )
 
-   METHOD getDivisa()                                          INLINE ( ::getValue( "Divisa" ) ) 
-
    METHOD getDocumentId()                                      INLINE ( ::getValue( "Serie" ) + str( ::getValue( "Numero" ) ) + ::getValue( "Sufijo" ) )
    METHOD getNumeroDocumento()                                 INLINE ( ::getValue( "Serie" ) + alltrim( str( ::getValue( "Numero" ) ) ) )
+
+   METHOD getDivisa()                                          INLINE ( ::getValue( "Divisa" ) ) 
 
    METHOD getStore()                                           INLINE ( ::getValue( "Almacen" ) )
    METHOD setStore( cStore )                                   INLINE ( ::setValue( "Almacen", cStore ) )
@@ -73,6 +106,14 @@ METHOD newFromDictionary( oSender, hDictionary ) CLASS DocumentBase
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 CLASS AliasDocumentBase FROM DocumentBase
 
@@ -87,8 +128,8 @@ CLASS AliasDocumentBase FROM DocumentBase
    METHOD getRecno()                                           INLINE ( ( ::getAlias() )->( recno() ) )
    METHOD eof()                                                INLINE ( ( ::getAlias() )->( eof() ) )
 
-   METHOD setLinesScope( Id )                                  INLINE ( ( ::getAlias() )->( ordscope( 0, Id ) ),;
-                                                                        ( ::getAlias() )->( ordscope( 1, Id ) ),;
+   METHOD setLinesScope( id )                                  INLINE ( ( ::getAlias() )->( ordscope( 0, id ) ),;
+                                                                        ( ::getAlias() )->( ordscope( 1, id ) ),;
                                                                         ( ::getAlias() )->( dbgotop() ) ) 
    METHOD quitLinesScope()                                     INLINE ( ::setLinesScope( nil ) )
 

@@ -22,6 +22,9 @@ CLASS AliasDocumentHeader FROM DocumentHeader
    METHOD getAlias()                                           INLINE ( ::oSender:getHeaderAlias() )
    METHOD getDictionary()                                      INLINE ( ::oSender:getHeaderDictionary() )
 
+   METHOD getValue( key, uDefault )                            INLINE ( D():getFieldFromAliasDictionary( key, ::getAlias(), ::getDictionary(), uDefault ) )
+   METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

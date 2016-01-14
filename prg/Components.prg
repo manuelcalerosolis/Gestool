@@ -1159,14 +1159,16 @@ CLASS GetFecha FROM ComponentGet
 
    METHOD Resource()
 
-   METHOD FirstDayYear()         INLINE ( ::cText( BoY( Date() ) ) )
-   METHOD LastDayYear()          INLINE ( ::cText( EoY( Date() ) ) )
+   METHOD FirstDayLastYear()     INLINE ( ::cText( ctod( "01/01/" + str( year( GetSysDate() ) - 1 ) ) ) )
 
-   METHOD FirstDayMonth()        INLINE ( ::cText( BoM( Date() ) ) )
-   METHOD LastDayMonth()         INLINE ( ::cText( EoM( Date() ) ) )
+   METHOD FirstDayYear()         INLINE ( ::cText( BoY( date() ) ) )
+   METHOD LastDayYear()          INLINE ( ::cText( EoY( date() ) ) )
 
-   METHOD FirstDayPreviusMonth() INLINE ( ::cText( BoM( AddMonth( Date(), -1 ) ) ) )
-   METHOD LastDayPreviusMonth()  INLINE ( ::cText( EoM( AddMonth( Date(), -1 ) ) ) ) 
+   METHOD FirstDayMonth()        INLINE ( ::cText( BoM( date() ) ) )
+   METHOD LastDayMonth()         INLINE ( ::cText( EoM( date() ) ) )
+
+   METHOD FirstDayPreviusMonth() INLINE ( ::cText( BoM( AddMonth( date(), -1 ) ) ) )
+   METHOD LastDayPreviusMonth()  INLINE ( ::cText( EoM( AddMonth( date(), -1 ) ) ) ) 
 
 END CLASS 
 
@@ -1236,7 +1238,7 @@ METHOD New( idCombo, idFechaInicio, idFechaFin, oContainer ) CLASS GetPeriodo
    ::oComboPeriodo:SetChange( {|| ::CambiaPeriodo() } )
 
    ::oFechaInicio             := GetFecha():New( idFechaInicio, oContainer )
-   ::oFechaInicio:FirstDayYear()
+   ::oFechaInicio:FirstDayLastYear()
 
    ::oFechaFin                := GetFecha():New( idFechaFin, oContainer )
 

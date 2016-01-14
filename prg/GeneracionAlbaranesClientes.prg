@@ -113,6 +113,8 @@ METHOD startDialog()
 
    ::setDocumentPedidosClientes()
 
+   ::oBrwLines:Load()
+
    ::oBtnAnterior:Hide()
 
 RETURN ( Self )
@@ -174,9 +176,6 @@ METHOD isLineConditions()
    if empty( ::oArticulo:Value() )
       Return .t.
    end if
-
-   msgAlert( ::aliasDocumentLine:getCode(), "getCode" )
-   msgAlert( ::oArticulo:Value(), "Value")
 
 Return ( ::aliasDocumentLine:getCode() == ::oArticulo:Value() )
 
