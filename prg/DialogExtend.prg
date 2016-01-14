@@ -20,6 +20,8 @@ local hClass
 
   __clsAddMsg( hClass, "Disable()", {|Self| Self, ( CursorWait(), ::bTmpValid := ::bValid, ::bValid := {|| .f. }, aEval( ::aControls, { |o| if( o:ClassName <> "TSAY" .AND. o:ClassName <> "TBITMAP", o:Disable(), ) } ) ) }, 3, nil, 1, .f., .f. )
 
+  __clsAddMsg( hClass, "setControlFastKey", @setControlFastKey(), 0, nil, 1, .f., .f. )
+
   __clsAddMsg( hClass, "aEvalValid", @DialogEvalValid(), 0, nil, 1, .f., .f. )
 
   __clsModMsg( hClass, "KeyDown", @DialogKeyDown(), 1 )
@@ -50,69 +52,21 @@ local hClass
 
   __clsAddMsg( hClass, "setText", {|Self, cCaption| Self, ::cCaption := cCaption, SetWindowText( ::hWnd, cCaption ) }, 3, nil, 1, .f., .f. )
 
-/*
-  hClass        := TBtnBmp():ClassH
-
-  __clsAddMsg( hClass, "bTop", __cls_IncData( hClass ), 9, nil, 1, .f., .f. )
-  __clsAddMsg( hClass, "bLeft", __cls_IncData( hClass ), 9, nil, 1, .f., .f. )
-  __clsAddMsg( hClass, "bWidth", __cls_IncData( hClass ), 9, nil, 1, .f., .f. )
-  __clsAddMsg( hClass, "bHeight", __cls_IncData( hClass ), 9, nil, 1, .f., .f. )
-
-  __clsAddMsg( hClass, "ReAdjust", @BtnBmpReAdjust(), 0, nil, 1, .f., .f. )
-*/
 Return nil
 
 //----------------------------------------------------------------------------//
 
-/*
-EXTEND CLASS TDialog WITH DATA aFastKeys//  AS ARRAY INIT {} 
+STATIC Function setControlFastKey( cDirectory, nView )
 
-EXTEND CLASS TDialog WITH DATA bTmpValid
+   local Self        := HB_QSelf()
 
-EXTEND CLASS TDialog WITH MESSAGE AddFastKey( nKey, bAction );
-    INLINE (  if( isNil(::aFastKeys), ::aFastKeys := {}, ),;
-              aAdd( ::aFastKeys, { nKey, bAction } ) )
 
-EXTEND CLASS TDialog WITH MESSAGE Enable();
-    INLINE (  ::bValid    := ::bTmpValid,;
-              aEval( ::aControls, { |o| if( o:ClassName != "TSAY" .and. o:ClassName != "TBITMAP", o:Enable(), ) } ),;
-              CursorArrow() )
-
-EXTEND CLASS TDialog WITH MESSAGE Disable();
-    INLINE (  CursorWait(),;
-              ::bTmpValid := ::bValid,;
-              ::bValid    := {|| .f. },;
-              aEval( ::aControls, { |o| if( o:ClassName != "TSAY" .and. o:ClassName != "TBITMAP", o:Disable(), ) } ) )
-
-EXTEND CLASS TDialog WITH MESSAGE aEvalValid METHOD DialogEvalValid
-
-OVERRIDE METHOD KeyDown IN CLASS TDialog WITH DialogKeyDown
-*/
-//EXTEND CLASS HBObject WITH MESSAGE log METHOD LogData
-
-RETURN ( nil )
+return ( nil )
 
 //----------------------------------------------------------------------------//
 
+
 STATIC FUNCTION DialogEvalValid() 
-
-/*
-   local n
-   local lValid     := .t.
-   local Self       := HB_QSelf()
-   local aControls  := Self:aControls
-
-   if aControls != nil .and. !Empty( aControls )
-      for n = 1 to Len( aControls )
-          if aControls[ n ] != nil .and. aControls[ n ]:bValid != nil
-             if !Eval( aControls[ n ]:bValid )
-                lValid  := .f.
-                aControls[ n ]:SetFocus()  // keep this as ::
-             endif
-         endif
-      next
-   endif
-*/
 
    local oControl
    local lValid      := .t.

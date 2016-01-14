@@ -1200,7 +1200,7 @@ CLASS GetPeriodo FROM ComponentGet
    DATA oFechaInicio
    DATA oFechaFin
 
-   DATA cPeriodo                 INIT "Año en curso"
+   DATA cPeriodo                 INIT "Año anterior y en curso" 
    DATA aPeriodo                 INIT {}
 
    METHOD Build( hBuilder )
@@ -1263,6 +1263,7 @@ METHOD CargaPeriodo() CLASS GetPeriodo
    aAdd( ::aPeriodo, "Tercer trimestre" )
    aAdd( ::aPeriodo, "Cuatro trimestre" )
    aAdd( ::aPeriodo, "Doce últimos meses" )
+   aAdd( ::aPeriodo, "Año anterior y en curso" )
    aAdd( ::aPeriodo, "Año en curso" )
    aAdd( ::aPeriodo, "Año anterior" )
 
@@ -1320,6 +1321,11 @@ METHOD CambiaPeriodo() CLASS GetPeriodo
          ::oFechaInicio:cText( BoY( GetSysDate() ) )
          ::oFechaFin:cText( EoY( GetSysDate() ) )
 
+      case cPeriodo == "Año anterior y en curso" 
+
+         ::oFechaInicio:cText( CtoD( "01/01/" + Str( Year( GetSysDate() ) - 1 ) ) )
+         ::oFechaFin:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) ) ) )
+         
       case cPeriodo == "Año en curso"
 
          ::oFechaInicio:cText( CtoD( "01/01/" + Str( Year( GetSysDate() ) ) ) )

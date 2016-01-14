@@ -993,7 +993,7 @@ METHOD ConnectDataDictionary()
 
    local cError
 
-   ::CreateDataDictionary()
+   // ::CreateDataDictionary()
 
    ::lAdsConnection     := AdsConnect60( ::getDataDictionaryFile(), nAdsServer(), "ADSSYS", "", , @::hAdsConnection )
    

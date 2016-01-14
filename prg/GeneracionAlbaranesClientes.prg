@@ -13,13 +13,15 @@ CLASS TGeneracionAlbaranesClientes FROM TConversionDocumentos
    METHOD Dialog()
 
    METHOD DialogSelectionCriteria( oDlg )
-   METHOD isDialogSelectionCriteria( oDlg )
+      METHOD validDialogSelectionCriteria()
+      METHOD notValidDialogSelectionCriteria()     INLINE ( !::validDialogSelectionCriteria() )
 
    METHOD isHeadersConditions()
    METHOD isLineConditions()
 
    METHOD startDialog()
       METHOD botonSiguiente()
+      METHOD botonAnterior()                       INLINE ( ::oFld:goPrev(), ::oBtnAnterior:Hide() )
 
    METHOD loadLinesDocument()
 
@@ -47,6 +49,8 @@ METHOD Dialog()
                   "ASS_CONVERSION_DOCUMENTO_3"
 
    ::DialogSelectionCriteria( ::oFld:aDialogs[1] )
+
+   ::DialogSelectionLines( ::oFld:aDialogs[2] )
    
    // Botones -----------------------------------------------------------------
 
@@ -115,7 +119,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD isDialogSelectionCriteria()
+METHOD validDialogSelectionCriteria()
 
    if empty( ::oAlmacen:Varget() )
       msgStop( "Código de almcén no puede estar vacio.")
@@ -128,15 +132,25 @@ Return .t.
 
 METHOD botonSiguiente()
 
-   if ::isDialogSelectionCriteria()
+   if ::notValidDialogSelectionCriteria()
       Return .f.
    end if 
 
+   ::loadLinesDocument()
+
+   ::setbrowseLinesDocument()
+
+   ::oFld:goNext()
+
+   ::oBtnAnterior:Show()
+
+   /*
    if !::oDocumentLines:anySelect()
       msgStop( "No hay líneas seleccionadas." )
    else
       ::oDlg:End( IDOK )
    end if
+   */
 
 Return ( Self )
 
@@ -147,8 +161,8 @@ Return ( Self )
 
 METHOD isHeadersConditions()
 
-   if !::oPeriodo:inRange( ( ::getHeaderAlias() )->dFecPed )
-      Return .f.
+   if ::oPeriodo:inRange( ( ::getHeaderAlias() )->dFecPed )
+      Return .t.
    end if 
 
 Return .t.
@@ -161,6 +175,9 @@ METHOD isLineConditions()
       Return .t.
    end if
 
+   msgAlert( ::aliasDocumentLine:getCode(), "getCode" )
+   msgAlert( ::oArticulo:Value(), "Value")
+
 Return ( ::aliasDocumentLine:getCode() == ::oArticulo:Value() )
 
 //---------------------------------------------------------------------------//
@@ -169,21 +186,28 @@ METHOD loadLinesDocument()
 
    local oDocumentLine
 
+   autoMeterDialog( ::oDlg )
+   setTotalAutoMeterDialog( ::getHeaderOrdKeyCount()  )
+
    ::oDocumentLines:reset()
 
    ( ::getHeaderAlias() )->( ordsetfocus( "dFecPed" ) )
+   ( ::getHeaderAlias() )->( dbGoTop() )
 
    while ( ::getHeaderAlias() )->dFecPed <= ::oPeriodo:getFechaFin() .and. !::getHeaderEof() // 
 
-      if ::isHeadersConditions() .and. ;
-         ( ::getLineAlias() )->( dbSeek( ::getHeaderId() ) )
+      if ::isHeadersConditions() .and. ::seekLineId()
 
-         while ::getHeaderId() == ::aliasDocumentLine:getDocumentId() .and. !::aliasDocumentLine:Eof()
+         while ::getHeaderId() == ::getLineId() .and. !( ::getLineAlias() )->( eof() ) 
 
-            oDocumentLine     := ClientDeliveryNoteDocumentLine():newBuildDictionary( self )
+            if ::isLineConditions()
 
-            if oDocumentLine:getUnitsAwaitingProvided() > 0
-               ::oDocumentLines:addLines( oDocumentLine )
+               oDocumentLine     := ClientDeliveryNoteDocumentLine():newBuildDictionary( self ) 
+
+               if .t. // oDocumentLine:getUnitsAwaitingProvided() > 0
+                  ::oDocumentLines:addLines( oDocumentLine )
+               end if 
+
             end if 
 
             ( ::getLineAlias() )->( dbskip() ) 
@@ -192,9 +216,13 @@ METHOD loadLinesDocument()
 
       end if 
 
+      setAutoMeterDialog( ::getHeaderOrdKeyNo() )
+
       ( ::getHeaderAlias() )->( dbSkip() )
 
    end while
+
+   endAutoMeterDialog( ::oDlg )
 
 RETURN ( .t. ) 
 

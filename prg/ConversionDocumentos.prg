@@ -95,7 +95,7 @@ CLASS TConversionDocumentos
    METHOD getView()                                INLINE ( ::nView )
 
    METHOD BotonSiguiente()
-   METHOD BotonAnterior()
+   METHOD BotonAnterior()                          INLINE ( ::oFld:goPrev() )
 
    METHOD selectLine()                             
    METHOD unSelectLine()                           
@@ -143,6 +143,9 @@ CLASS TConversionDocumentos
    METHOD setHeaderTable( cTableName )             INLINE ( ::oHeaderTable := TDataCenter():scanDataTableInView( cTableName, ::nView ) )
    METHOD getHeaderAlias()                         INLINE ( ::oHeaderTable:getAlias() )
    METHOD getHeaderEof()                           INLINE ( ( ::oHeaderTable:getAlias() )->( eof() ) )
+   METHOD getHeaderLastrec()                       INLINE ( ( ::oHeaderTable:getAlias() )->( lastrec() ) )
+   METHOD getHeaderOrdKeyCount()                   INLINE ( ( ::oHeaderTable:getAlias() )->( OrdKeyCount() ) )
+   METHOD getHeaderOrdKeyNo()                      INLINE ( ( ::oHeaderTable:getAlias() )->( OrdKeyNo() ) )
    METHOD getHeaderDictionary()                    INLINE ( ::oHeaderTable:getDictionary() )
    METHOD getHeaderIndex()                         INLINE ( ::oHeaderTable:getIndex() )
 
@@ -155,6 +158,10 @@ CLASS TConversionDocumentos
    METHOD getLineAlias()                           INLINE ( ::oLineTable:getAlias() )
    METHOD getLineDictionary()                      INLINE ( ::oLineTable:getDictionary() )
    METHOD getLineIndex()                           INLINE ( ::oLineTable:getIndex() )
+   METHOD getLineId()                              INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getLineAlias(), ::getLineDictionary() ) + ;
+                                                            str( D():getFieldFromAliasDictionary( "Numero", ::getLineAlias(), ::getLineDictionary() ) ) + ;
+                                                            D():getFieldFromAliasDictionary( "Sufijo", ::getLineAlias(), ::getLineDictionary() ) )
+   METHOD seekLineId()                             INLINE ( ( ::getLineAlias() )->( dbSeek( ::getHeaderId() ) ) )
 
    METHOD getLinesDocument()                       INLINE ( ::oDocumentLines:getLines() )
    METHOD injectValuesBrowseProperties( idProduct )
@@ -959,14 +966,6 @@ METHOD BotonSiguiente()
          ::oFld:goNext()
 
    end case
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-Method BotonAnterior()
-
-   ::oFld:goPrev()
 
 Return ( Self )
 
