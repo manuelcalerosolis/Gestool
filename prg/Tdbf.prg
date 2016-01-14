@@ -1231,8 +1231,6 @@ METHOD AddTmpIndex( cName, cFile, cKey, cFor, bWhile, lUniq, lDes, cComment, bOp
     local nRec
     local oIdx
 
-    msgAlert( ::lRddAdsCdx(), "::lRddAdsCdx()" )
-
     if ::lRddAdsCdx()
 
         if ::nArea != 0 .and. !empty(cFor)
