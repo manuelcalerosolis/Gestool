@@ -2975,10 +2975,13 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
 
    if nMode != ZOOM_MODE
       oDlg:AddFastKey(  VK_F5, {|| SaveDeta( aTmp, aGet, oBrwPrp, oFld, oDlg, oBrw, nMode, oTotal, oGet1, aTmpPed, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGetStk, oSayLote, oBtn ) } )
-      oDlg:AddFastKey(  VK_F7, {|| runScriptF7() } )
    end if 
 
    oDlg:AddFastKey(     VK_F1, {|| GoHelp() } )
+
+   MsgInfo( oDlg:ClassName )
+
+   oDlg:SetControlFastKey( "PedidosProveedoresLineas", nView )
 
    oDlg:bStart    := {||   SetDlgMode( aGet, aTmp, aTmpPed, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oSayLote, oBrwPrp, oFld, oDlg, oTotal, oGetStk ),;
                            if( !empty( cCodArt ), aGet[ _CREF ]:lValid(), ),;
@@ -9387,13 +9390,5 @@ Function nombreSegundaPropiedadPedidosProveedoresLineas( view )
    DEFAULT view   := nView
 
 Return ( nombrePropiedad( ( D():PedidosProveedoresLineas( view ) )->cCodPr2, ( D():PedidosProveedoresLineas( view ) )->cValPr2, view ) )
-
-//---------------------------------------------------------------------------//
-
-Static function runScriptF7()
-
-   runEventScript( "PedidosProveedores\F7", nView )
-
-Return .t.
 
 //---------------------------------------------------------------------------//
