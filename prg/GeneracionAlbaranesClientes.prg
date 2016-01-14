@@ -163,11 +163,15 @@ Return ( Self )
 
 METHOD isHeadersConditions()
 
-   if ::oPeriodo:inRange( ( ::getHeaderAlias() )->dFecPed )
-      Return .t.
+   if !( ::oPeriodo:inRange( ( ::getHeaderAlias() )->dFecPed ) )
+      Return .f.
    end if 
 
-Return .t.
+   if empty( ::oCliente:Value() )
+      Return .t.
+   end if
+
+Return ( ( ::getHeaderAlias() )->cCodCli == ::oCliente:Value() )
 
 //---------------------------------------------------------------------------//
 

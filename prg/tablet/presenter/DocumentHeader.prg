@@ -4,6 +4,8 @@
  
 CLASS DocumentHeader FROM DocumentBase
 
+   METHOD newBuildDictionary( oSender )
+
    METHOD getDate()                                            INLINE ( ::getValue( "Fecha" ) )
    METHOD setDate( value )                                     INLINE ( ::setValue( "Fecha", value ) )
 
@@ -14,6 +16,16 @@ CLASS DocumentHeader FROM DocumentBase
    METHOD setClientName( value )                               INLINE ( ::setValue( "NombreCliente", value ) )
 
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD newBuildDictionary( oSender ) CLASS DocumentHeader
+
+   ::new( oSender )
+
+   ::setDictionary( D():getHashFromAlias( oSender:getHeaderAlias(), oSender:getHeaderDictionary() ) )
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 

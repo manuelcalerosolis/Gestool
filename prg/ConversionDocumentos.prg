@@ -477,10 +477,8 @@ METHOD DialogSelectionDocument( oDlg )
       :nWidth                       := 200
       :bLClickHeader                := {| nMRow, nMCol, nFlags, oColumn | ::clickOnDocumentHeader( oColumn ) }
    end with
-
   
 /*
-
    with object ( ::oBrwDocuments:AddCol() )
       :cHeader                      := "Número"
       :bEditValue                   := {|| ::getHeaderTextId() }
@@ -597,7 +595,7 @@ METHOD DialogSelectionLines( oDlg )
    ::oBrwLines:bClrSelFocus         := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
    ::oBrwLines:nMarqueeStyle        := 6
-   ::oBrwLines:cName                := "Browse.Conversion documentos lineas"
+   ::oBrwLines:cName                := "Browse.Lineas." + ::ClassName()
 
    ::setBrowseLinesDocument()
 
@@ -616,7 +614,39 @@ METHOD DialogSelectionLines( oDlg )
       :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }   
       :bLDClickData                 := {|| ::toogleSelectLine() }
    end with
+
+   with object ( ::oBrwLines:AddCol() )
+      :cHeader                      := "Fecha"
+      :Cargo                        := "getHeaderDate"
+      :bEditValue                   := {|| ::getLineDocument():getHeaderDate() }
+      :nWidth                       := 80
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
+      :bLDClickData                 := {|| ::toogleSelectLine() }
+      :lHide                        := .t.
+      :nDataStrAlign                := 3
+      :nHeadStrAlign                := 3
+   end with
+
+   with object ( ::oBrwLines:AddCol() )
+      :cHeader                      := "Cliente"
+      :Cargo                        := "getHeaderClient"
+      :bEditValue                   := {|| ::getLineDocument():getHeaderClient() }
+      :nWidth                       := 80
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
+      :bLDClickData                 := {|| ::toogleSelectLine() }
+      :lHide                        := .t.
+   end with
   
+   with object ( ::oBrwLines:AddCol() )
+      :cHeader                      := "Nombre cliente"
+      :Cargo                        := "getHeaderClientName"
+      :bEditValue                   := {|| ::getLineDocument():getHeaderClientName() }
+      :nWidth                       := 280
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clikcOnLineHeader( oColumn ) }         
+      :bLDClickData                 := {|| ::toogleSelectLine() }
+      :lHide                        := .t.
+   end with
+
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Código"
       :Cargo                        := "getCode"

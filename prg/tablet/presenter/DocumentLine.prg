@@ -3,6 +3,10 @@
  
 CLASS DocumentLine FROM DocumentBase
 
+   DATA oDocumentHeader
+
+   METHOD newBuildDictionary( oSender )
+
    METHOD setSerieMaster( hDictionary )                        INLINE ( ::setValueFromDictionary( hDictionary, "Serie" ) )
    METHOD setNumeroMaster( hDictionary )                       INLINE ( ::setValueFromDictionary( hDictionary, "Numero" ) )
    METHOD setSufijoMaster( hDictionary )                       INLINE ( ::setValueFromDictionary( hDictionary, "Sufijo" ) )
@@ -65,7 +69,23 @@ CLASS DocumentLine FROM DocumentBase
    METHOD getVolumen()                                         INLINE ( ::getValue( "Volumen", 0 ) )
    METHOD getPuntoVerde()                                      INLINE ( ::getValue( "PuntoVerde", 0 ) )
 
+   METHOD getHeaderClient()                                    INLINE ( ::oDocumentHeader:getClient() )
+   METHOD getHeaderClientName()                                INLINE ( ::oDocumentHeader:getClientName() )
+   METHOD getHeaderDate()                                      INLINE ( ::oDocumentHeader:getDate() )
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD newBuildDictionary( oSender ) CLASS DocumentLine
+
+   ::new( oSender )
+
+   ::setDictionary( D():getHashFromAlias( oSender:getLineAlias(), oSender:getLineDictionary() ) )
+
+   ::oDocumentHeader    := DocumentHeader():newBuildDictionary( oSender )
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 
