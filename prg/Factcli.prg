@@ -7905,7 +7905,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
 
                nTotRet                 := ( dbfPedCliL )->nUniCaja
                nTotRet                 -= nUnidadesRecibidasAlbCli( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cCodPr1, ( dbfPedCliL )->cCodPr2, dbfAlbCliL )
-               nTotRet                 -= nUnidadesRecibidasFacCli( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cCodPr1, ( dbfPedCliL )->cCodPr2, D():FacturasClientesLineas( nView ) )
+               nTotRet                 -= nUnidadesRecibidasFacturasClientes( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cCodPr1, ( dbfPedCliL )->cCodPr2, D():FacturasClientesLineas( nView ) )
 
                (dbfTmpLin)->( dbAppend() )
 
@@ -17809,7 +17809,7 @@ return ( nTot )
 
 //---------------------------------------------------------------------------//
 
-function nUnidadesRecibidasFacCli( cNumPed, cCodArt, cCodPr1, cCodPr2, cFacCliL )
+function nUnidadesRecibidasFacturasClientes( cNumPed, cCodArt, cCodPr1, cCodPr2, cFacCliL )
 
    local nTot        := 0
    local aStaLin     := aGetStatus( cFacCliL, .f. )
@@ -19543,8 +19543,8 @@ function aColFacCli()
    aAdd( aColFacCli, { "lImpLin"    ,"L",  1, 0, "Línea no imprimible"                    , "LineaNoImprimible",           "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "cCodPr1"    ,"C", 20, 0, "Código de primera propiedad"            , "CodigoPropiedad1",            "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "cCodPr2"    ,"C", 20, 0, "Código de segunda propiedad"            , "CodigoPropiedad2",            "", "( cDbfCol )", nil } )
-   aAdd( aColFacCli, { "cValPr1"    ,"C", 40, 0, "Valor de primera propiedad"             , "ValorPropiedad1",             "", "( cDbfCol )", nil } )
-   aAdd( aColFacCli, { "cValPr2"    ,"C", 40, 0, "Valor de segunda propiedad"             , "ValorPropiedad2",             "", "( cDbfCol )", nil } )
+   aAdd( aColFacCli, { "cValPr1"    ,"C", 20, 0, "Valor de primera propiedad"             , "ValorPropiedad1",             "", "( cDbfCol )", nil } )
+   aAdd( aColFacCli, { "cValPr2"    ,"C", 20, 0, "Valor de segunda propiedad"             , "ValorPropiedad2",             "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "nFacCnv"    ,"N", 16, 6, "Factor de conversión de la compra"      , "FactorConversion",            "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "nDtoDiv"    ,"N", 16, 6, "Descuento lineal de la compra"          , "DescuentoLineal",             "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "lSel"       ,"L",  1, 0, ""                                       , "",                            "", "( cDbfCol )", nil } )

@@ -872,17 +872,17 @@ FUNCTION nNewDoc( cSerie, dbf, cTipDoc, nLen, dbfCount )
    local nPos
    local lClo        := .f.
    local nDoc        := 0
-   local nRecAnt     := ( dbf )->( Recno() )
-   local nOrdAnt     := ( dbf )->( OrdSetFocus( 1 ) )
-   local cSufEmp     := RetSufEmp()
-   local lNotSerie   := .f.
-
-   if Empty( cSerie )
-      lNotSerie      := .t.
-   end if
+   local nRecAnt     := ( dbf )->( recno() )
+   local nOrdAnt     := ( dbf )->( ordsetfocus( 1 ) )
+   local cSufEmp     := retSufEmp()
 
    DEFAULT nLen      := 9
-   DEFAULT cSerie    := "A"
+
+   // msgAlert( cSerie, "cSerie" ) 
+   // msgAlert( dbf, "dbf" ) 
+   // msgAlert( cTipDoc, "cTipDoc" ) 
+   // msgAlert( nLen, "nLen" ) 
+   // msgAlert( dbfCount, "dbfCount" ) 
 
    /*
    Chequea q exista la base de datos-------------------------------------------
@@ -907,11 +907,11 @@ FUNCTION nNewDoc( cSerie, dbf, cTipDoc, nLen, dbfCount )
 
       nDoc           := ( dbfCount )->( fieldGet( nPos ) )
 
-      if !IsNum( nDoc )
+      if !isNum( nDoc )
          nDoc        := 0
       end if
 
-      if lNotSerie
+      if empty( cSerie )
 
          while ( dbf )->( dbSeek( Str( nDoc, nLen ) + cSufEmp ) )
             ++nDoc
@@ -952,8 +952,8 @@ FUNCTION nNewDoc( cSerie, dbf, cTipDoc, nLen, dbfCount )
       CLOSE ( dbfCount )
    end if
 
-   ( dbf )->( OrdSetFocus( nOrdAnt ) )
-   ( dbf )->( dbGoTo( nRecAnt ) )
+   ( dbf )->( ordsetfocus( nOrdAnt ) )
+   ( dbf )->( dbgoto( nRecAnt ) )
 
    if nDoc == 0
       msgStop( "No puedo obtener el número de nuevo documento" )

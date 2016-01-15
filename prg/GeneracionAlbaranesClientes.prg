@@ -25,6 +25,8 @@ CLASS TGeneracionAlbaranesClientes FROM TConversionDocumentos
 
    METHOD loadLinesDocument()
 
+   METHOD columnsBrowseLines()
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -132,6 +134,26 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
+METHOD columnsBrowseLines()
+
+   ::Super:columnsBrowseLines()
+
+   with object ( ::oBrwLines:AddCol() )
+      :cHeader                      := "Pendientes"
+      :Cargo                        := "getUnitsAwaitingProvided"
+      :bEditValue                   := {|| ::getLineDocument():getUnitsAwaitingProvided() } 
+      :cEditPicture                 := masUnd()
+      :nWidth                       := 80
+      :nDataStrAlign                := 1
+      :nHeadStrAlign                := 1
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clickOnLineHeader( oColumn ) }         
+      :bLDClickData                 := {|| ::toogleSelectLine() }
+   end with
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 METHOD botonSiguiente()
 
    if ::notValidDialogSelectionCriteria()
@@ -207,7 +229,7 @@ METHOD loadLinesDocument()
 
                oDocumentLine     := ClientDeliveryNoteDocumentLine():newBuildDictionary( self ) 
 
-               if .t. // oDocumentLine:getUnitsAwaitingProvided() > 0
+               if oDocumentLine:getUnitsAwaitingProvided() > 0
                   ::oDocumentLines:addLines( oDocumentLine )
                end if 
 

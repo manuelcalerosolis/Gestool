@@ -2840,7 +2840,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Valor prop. 1"
-         :bEditValue          := {|| retValProp( ( dbfTmpLin )->cCodPr1 + ( dbfTmpLin )->cValPr1 )}
+         :bEditValue          := {|| nombrePropiedad( ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cValPr1, nView ) }
          :nWidth              := 40
          :lHide               := .t.
       end with
@@ -2854,7 +2854,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Valor prop. 2"
-         :bEditValue          := {|| retValProp( ( dbfTmpLin )->cCodPr2 + ( dbfTmpLin )->cValPr2 )}
+         :bEditValue          := {|| nombrePropiedad( ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr2, nView ) }
          :nWidth              := 40
          :lHide               := .t.
       end with
@@ -5524,7 +5524,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
 
                nTotRet                 := ( dbfPedCliL )->nUniCaja
                nTotRet                 -= nUnidadesRecibidasAlbCli( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cCodPr1, ( dbfPedCliL )->cCodPr2, D():Get( "AlbCliL", nView ) )
-               nTotRet                 -= nUnidadesRecibidasFacCli( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cCodPr1, ( dbfPedCliL )->cCodPr2, D():Get( "FacCliL", nView ) )
+               nTotRet                 -= nUnidadesRecibidasFacturasClientes( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cCodPr1, ( dbfPedCliL )->cCodPr2, D():Get( "FacCliL", nView ) )
 
                //if ( nTotNPedCli( dbfPedCliL ) == 0 .or. nTotRet > 0 ) para meter lineas en negativo
 
@@ -15303,6 +15303,8 @@ function nUnidadesRecibidasAlbaranesClientesNoFacturados( cNumPed, cCodArt, cCod
 
    ( cAlbCliL )->( OrdSetFocus( "cRefNoFac" ) )
 
+   msgAlert( cNumPed + cCodArt + cCodPr1 + cCodPr2, "nUnidadesRecibidasAlbaranesClientesNoFacturados:" + str( len( cNumPed + cCodArt + cCodPr1 + cCodPr2 ) ) )
+
    if ( cAlbCliL )->( dbSeek( cNumPed + cCodArt + cCodPr1 + cCodPr2 ) )
       
       while ( cAlbCliL )->cNumPed + ( cAlbCliL )->cRef + ( cAlbCliL )->cCodPr1 + ( cAlbCliL )->cCodPr2 == cNumPed + cCodArt + cCodPr1 + cCodPr2 .and. !( cAlbCliL )->( eof() )
@@ -16356,8 +16358,8 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "cNumPed"   ,"C", 12, 0, "Número del pedido" ,                              "NumeroPedido",                  "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cCodPr1",   "C", 20, 0, "Código de primera propiedad",                     "CodigoPropiedad1",              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cCodPr2",   "C", 20, 0, "Código de segunda propiedad",                     "CodigoPropiedad2",              "", "( cDbfCol )", nil } )
-   aAdd( aColAlbCli, { "cValPr1",   "C", 40, 0, "Valor de primera propiedad",                      "ValorPropiedad1",               "", "( cDbfCol )", nil } )
-   aAdd( aColAlbCli, { "cValPr2",   "C", 40, 0, "Valor de segunda propiedad",                      "ValorPropiedad2",               "", "( cDbfCol )", nil } )
+   aAdd( aColAlbCli, { "cValPr1",   "C", 20, 0, "Valor de primera propiedad",                      "ValorPropiedad1",               "", "( cDbfCol )", nil } )
+   aAdd( aColAlbCli, { "cValPr2",   "C", 20, 0, "Valor de segunda propiedad",                      "ValorPropiedad2",               "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "nFacCnv",   "N", 16, 6, "",                                                "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "nDtoDiv",   "N", 16, 6, "Descuento en línea",                              "DescuentoLineal",               "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "nNumLin",   "N",  4, 0, "Número de la línea",                              "NumeroLinea",                   "", "( cDbfCol )", nil } )

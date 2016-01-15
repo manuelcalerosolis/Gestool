@@ -352,8 +352,8 @@ METHOD CreateTemporalFiles( cPath ) CLASS TStock
    FIELD NAME "cAlmacen"   TYPE "C" LEN 16 DEC 0 COMMENT "Código del almacen"                    OF ::oDbfStock
    FIELD NAME "cCodPrp1"   TYPE "C" LEN 20 DEC 0 COMMENT "Código de la primera propiedad"        OF ::oDbfStock
    FIELD NAME "cCodPrp2"   TYPE "C" LEN 20 DEC 0 COMMENT "Código de la segunda propiedad"        OF ::oDbfStock
-   FIELD NAME "cValPrp1"   TYPE "C" LEN 40 DEC 0 COMMENT "Valor de la primera propiedad"         OF ::oDbfStock 
-   FIELD NAME "cValPrp2"   TYPE "C" LEN 40 DEC 0 COMMENT "Valor de la segunda propiedad"         OF ::oDbfStock
+   FIELD NAME "cValPrp1"   TYPE "C" LEN 20 DEC 0 COMMENT "Valor de la primera propiedad"         OF ::oDbfStock 
+   FIELD NAME "cValPrp2"   TYPE "C" LEN 20 DEC 0 COMMENT "Valor de la segunda propiedad"         OF ::oDbfStock
    FIELD NAME "cLote"      TYPE "C" LEN 14 DEC 0 COMMENT "Número de lote"                        OF ::oDbfStock
    FIELD NAME "cNumSer"    TYPE "C" LEN 30 DEC 0 COMMENT "Número de serie"                       OF ::oDbfStock
    FIELD NAME "dFecCad"    TYPE "D" LEN  8 DEC 0 COMMENT "Fecha de caducidad"                    OF ::oDbfStock
@@ -1043,7 +1043,7 @@ METHOD SetEstadoPedCli( cNumPed ) CLASS TStock
             nTotalUnidadesPedidas      += nLineasUnidadesPedidas
 
             nLineasUnidadesRecibidas   := nUnidadesRecibidasAlbaranesClientesNoFacturados( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cCodPr1, ( ::cPedCliL )->cCodPr2, ::cAlbCliL )
-            nLineasUnidadesRecibidas   += nUnidadesRecibidasFacCli( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cCodPr1, ( ::cPedCliL )->cCodPr2, ::cFacCliL )
+            nLineasUnidadesRecibidas   += nUnidadesRecibidasFacturasClientes( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cCodPr1, ( ::cPedCliL )->cCodPr2, ::cFacCliL )
 
             nLineasUnidadesRecibidas   := Min( nLineasUnidadesRecibidas, nLineasUnidadesPedidas )     
 

@@ -377,8 +377,11 @@ METHOD SaveDetails() CLASS TMasDet
 
    local nOrd
 
+   beginTransaction()
+
    do case
       case IsObject( ::oDbfDet )
+
 
          nOrd     := ::oDbfVir:OrdSetFocus( 0 )
 
@@ -405,7 +408,9 @@ METHOD SaveDetails() CLASS TMasDet
 
    end case
 
-   // ::CancelDetails()
+   dbCommitAll()
+
+   commitTransaction()
 
 RETURN ( Self )
 

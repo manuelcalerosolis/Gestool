@@ -334,8 +334,8 @@ METHOD CreateTemporalFiles( cPath ) CLASS TStock
    FIELD NAME "cAlmacen"   TYPE "C" LEN 16 DEC 0 COMMENT "Código del almacen"                    OF ::oDbfStock
    FIELD NAME "cCodPrp1"   TYPE "C" LEN 20 DEC 0 COMMENT "Código de la primera propiedad"        OF ::oDbfStock
    FIELD NAME "cCodPrp2"   TYPE "C" LEN 20 DEC 0 COMMENT "Código de la segunda propiedad"        OF ::oDbfStock
-   FIELD NAME "cValPrp1"   TYPE "C" LEN 40 DEC 0 COMMENT "Valor de la primera propiedad"         OF ::oDbfStock 
-   FIELD NAME "cValPrp2"   TYPE "C" LEN 40 DEC 0 COMMENT "Valor de la segunda propiedad"         OF ::oDbfStock
+   FIELD NAME "cValPrp1"   TYPE "C" LEN 20 DEC 0 COMMENT "Valor de la primera propiedad"         OF ::oDbfStock 
+   FIELD NAME "cValPrp2"   TYPE "C" LEN 20 DEC 0 COMMENT "Valor de la segunda propiedad"         OF ::oDbfStock
    FIELD NAME "cLote"      TYPE "C" LEN 14 DEC 0 COMMENT "Número de lote"                        OF ::oDbfStock
    FIELD NAME "cNumSer"    TYPE "C" LEN 30 DEC 0 COMMENT "Número de serie"                       OF ::oDbfStock
    FIELD NAME "dFecCad"    TYPE "D" LEN  8 DEC 0 COMMENT "Fecha de caducidad"                    OF ::oDbfStock
@@ -1027,7 +1027,7 @@ METHOD SetEstadoPedCli( cNumPed, lFactura, cNumFac ) CLASS TStock
             nTotPed     += nTotLineaAct
 
             nTotSer     += Min( nUnidadesRecibidasAlbCli( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cCodPr1, ( ::cPedCliL )->cCodPr2, ::cAlbCliL ), nTotLineaAct )
-            nTotSer     += Min( nUnidadesRecibidasFacCli( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cFacCliL ), nTotLineaAct )
+            nTotSer     += Min( nUnidadesRecibidasFacturasClientes( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cFacCliL ), nTotLineaAct )
             //nTotSer     += Min( nTotRFacCli( cNumFac, nil, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ( ::cPedCliL )->cLote, ::cFacCliT, ::cFacCliL ), nTotLineaAct )
 
          end if

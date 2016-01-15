@@ -1403,7 +1403,7 @@ METHOD Search() CLASS TRemMovAlm
       ID          100 ;
       OF          oDlg
       
-      oCadena:bChange   := {||   oCadena:Assign(), ::oDetMovimientos:oDbfVir:Seek( Rtrim( xCadena ), .t. ), ::oBrwDet:Refresh() }
+      oCadena:bChange   := {|| oCadena:Assign(), ::oDetMovimientos:oDbfVir:Seek( Rtrim( xCadena ), .t. ), ::oBrwDet:Refresh() }
 
 	REDEFINE COMBOBOX oIndice ;
       VAR         cIndice ;

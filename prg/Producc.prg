@@ -4377,8 +4377,8 @@ METHOD DefineAuxiliar()
       FIELD NAME "cUndVol"    TYPE "C" LEN  02  DEC 0 COMMENT "Unidad del volumen"                       OF ::cAreaTmpLabel
       FIELD NAME "cCodPr1"    TYPE "C" LEN  20  DEC 0 COMMENT "Código de primera propiedad"              OF ::cAreaTmpLabel
       FIELD NAME "cCodPr2"    TYPE "C" LEN  20  DEC 0 COMMENT "Código de segunda propiedad"              OF ::cAreaTmpLabel
-      FIELD NAME "cValPr1"    TYPE "C" LEN  40  DEC 0 COMMENT "Valor de primera propiedad"               OF ::cAreaTmpLabel
-      FIELD NAME "cValPr2"    TYPE "C" LEN  40  DEC 0 COMMENT "Valor de segunda propiedad"               OF ::cAreaTmpLabel
+      FIELD NAME "cValPr1"    TYPE "C" LEN  20  DEC 0 COMMENT "Valor de primera propiedad"               OF ::cAreaTmpLabel
+      FIELD NAME "cValPr2"    TYPE "C" LEN  20  DEC 0 COMMENT "Valor de segunda propiedad"               OF ::cAreaTmpLabel
       FIELD NAME "lLote"      TYPE "L" LEN  01  DEC 0 COMMENT "Lógico lote"                              OF ::cAreaTmpLabel
       FIELD NAME "cLote"      TYPE "C" LEN  14  DEC 0 COMMENT "Lote"                                     OF ::cAreaTmpLabel
       FIELD NAME "dFecCad"    TYPE "D" LEN  08  DEC 0 COMMENT "Fecha caducidad"                          OF ::cAreaTmpLabel
@@ -4788,8 +4788,8 @@ Method lPrepareDataReportLbl( lDesign ) CLASS TProduccion
       FIELD NAME "cUndVol"    TYPE "C" LEN  02  DEC 0 COMMENT "Unidad del volumen"                       OF ::cAreaTemporalLabel
       FIELD NAME "cCodPr1"    TYPE "C" LEN  20  DEC 0 COMMENT "Código de primera propiedad"              OF ::cAreaTemporalLabel
       FIELD NAME "cCodPr2"    TYPE "C" LEN  20  DEC 0 COMMENT "Código de segunda propiedad"              OF ::cAreaTemporalLabel
-      FIELD NAME "cValPr1"    TYPE "C" LEN  40  DEC 0 COMMENT "Valor de primera propiedad"               OF ::cAreaTemporalLabel
-      FIELD NAME "cValPr2"    TYPE "C" LEN  40  DEC 0 COMMENT "Valor de segunda propiedad"               OF ::cAreaTemporalLabel
+      FIELD NAME "cValPr1"    TYPE "C" LEN  20  DEC 0 COMMENT "Valor de primera propiedad"               OF ::cAreaTemporalLabel
+      FIELD NAME "cValPr2"    TYPE "C" LEN  20  DEC 0 COMMENT "Valor de segunda propiedad"               OF ::cAreaTemporalLabel
       FIELD NAME "lLote"      TYPE "L" LEN  01  DEC 0 COMMENT "Lógico lote"                              OF ::cAreaTemporalLabel
       FIELD NAME "cLote"      TYPE "C" LEN  14  DEC 0 COMMENT "Lote"                                     OF ::cAreaTemporalLabel
       FIELD NAME "dFecCad"    TYPE "D" LEN  08  DEC 0 COMMENT "Fecha caducidad"                          OF ::cAreaTemporalLabel

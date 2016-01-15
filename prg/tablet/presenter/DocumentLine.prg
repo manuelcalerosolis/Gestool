@@ -209,7 +209,7 @@ CLASS ClientDeliveryNoteDocumentLine FROM DocumentLine
 
    METHOD newBuildDictionary( oSender )
 
-   METHOD setUnitsProvided()           INLINE ( ::setValue( "UnitsProvided", nUnidadesRecibidasAlbCli( ::getDocumentId(), ::getCode(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():AlbaranesClientesLineas( ::getView() ) ) ) )
+   METHOD setUnitsProvided()            
    METHOD getUnitsProvided()           INLINE ( ::getValue( "UnitsProvided" ) )
    METHOD getUnitsAwaitingProvided()   INLINE ( ::getTotalUnits() - ::getUnitsProvided() )
 
@@ -222,6 +222,24 @@ METHOD newBuildDictionary( oSender ) CLASS ClientDeliveryNoteDocumentLine
    ::Super():newBuildDictionary( oSender )
 
    ::setUnitsProvided()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setUnitsProvided()
+
+   local nUnitsProvided    := nUnidadesRecibidasAlbaranesClientesNoFacturados( ::getDocumentId(), ::getCode(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():AlbaranesClientesLineas( ::getView() ) )
+   nUnitsProvided          += nUnidadesRecibidasFacturasClientes( ::getDocumentId(), ::getCode(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():FacturasClientesLineas( ::getView() ) )
+   
+   msgAlert( ::getDocumentId(),           str( len( ::getDocumentId() ) ) )
+   msgAlert( ::getCode(),                 str( len( ::getCode() ) ) )
+   msgAlert( ::getValueFirstProperty(),   str( len( ::getValueFirstProperty() ) ) )
+   msgAlert( ::getValueSecondProperty(),  str( len( ::getValueSecondProperty() ) ) )
+
+   msgAlert( nUnitsProvided, "nUnitsProvided" )
+
+   ::setValue( "UnitsProvided", nUnitsProvided )
 
 Return ( Self )
 

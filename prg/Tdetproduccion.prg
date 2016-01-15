@@ -138,8 +138,8 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetProduccion
       FIELD NAME "cUndVol"    TYPE "C" LEN  2  DEC 0 COMMENT "Unidad del volumen"            COLSIZE  80 OF oDbf
       FIELD NAME "cCodPr1"    TYPE "C" LEN 20  DEC 0 COMMENT "Código de primera propiedad"   COLSIZE  80 OF oDbf
       FIELD NAME "cCodPr2"    TYPE "C" LEN 20  DEC 0 COMMENT "Código de segunda propiedad"   COLSIZE  80 OF oDbf
-      FIELD NAME "cValPr1"    TYPE "C" LEN 40  DEC 0 COMMENT "Valor de primera propiedad"    COLSIZE  80 OF oDbf
-      FIELD NAME "cValPr2"    TYPE "C" LEN 40  DEC 0 COMMENT "Valor de segunda propiedad"    COLSIZE  80 OF oDbf
+      FIELD NAME "cValPr1"    TYPE "C" LEN 20  DEC 0 COMMENT "Valor de primera propiedad"    COLSIZE  80 OF oDbf
+      FIELD NAME "cValPr2"    TYPE "C" LEN 20  DEC 0 COMMENT "Valor de segunda propiedad"    COLSIZE  80 OF oDbf
       FIELD NAME "lLote"      TYPE "L" LEN  1  DEC 0 COMMENT "Lógico lote"                   COLSIZE  80 OF oDbf
       FIELD NAME "cLote"      TYPE "C" LEN 14  DEC 0 COMMENT "Lote"                          COLSIZE  80 OF oDbf
       FIELD NAME "dFecOrd"    TYPE "D" LEN  8  DEC 0 COMMENT "Fecha"                         HIDE        OF oDbf

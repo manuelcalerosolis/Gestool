@@ -231,7 +231,7 @@ METHOD SaveConfigColumn( lSaveBrowseState )
       end if
 
       if lSaveBrowseState
-         msgInfo( "Configuración de columnas guardada", ::cName )
+         msgInfo( "Configuración de columnas guardada", "Información" )
       end if
 
    end if
