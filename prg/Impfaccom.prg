@@ -632,6 +632,8 @@ METHOD ImportaClientes()
       ::oDbfCliGst:Nif        := ::oDbfCliFac:Cif
       ::oDbfCliGst:Domicilio  := ::oDbfCliFac:Direccion
       ::oDbfCliGst:Poblacion  := ::oDbfCliFac:Ciudad
+      ::oDbfCliGst:NbrEst     := ::oDbfCliFac:NombreF
+      ::oDbfCliGst:Direst     := ::oDbfCliFac:DireccionF + ::oDbfCliFac:CiudadF      
       ::oDbfCliGst:Telefono   := ::oDbfCliFac:Telefono
       ::oDbfCliGst:Fax        := ::oDbfCliFac:Fax
       ::oDbfCliGst:Movil      := ::oDbfCliFac:Movil
