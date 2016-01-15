@@ -2414,7 +2414,7 @@ Method ImportAlmacen( nMode, oDlg ) CLASS TRemMovAlm
       ::oArticuloFin:bValid       := {|| cArticulo( ::oArticuloFin, ::oArt:cAlias, ::oArticuloFin:oHelpText ) }
       ::oArticuloFin:bHelp        := {|| brwArticulo( ::oArticuloFin, ::oArticuloFin:oHelpText ) }
 
-REDEFINE APOLOMETER ::oMtrStock ;
+      REDEFINE APOLOMETER ::oMtrStock ;
          VAR      ::nMtrStock ;
          PROMPT   "" ;
          ID       400 ;

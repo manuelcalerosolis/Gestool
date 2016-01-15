@@ -1200,15 +1200,21 @@ METHOD Zoom() CLASS TMant
       return .f.
    end if
 
-   ::oDbf:Load()
-   
-   ::nMode     := ZOOM_MODE
+   if ::oDbf:RecLock()
 
-   ::Resource( ::nMode )
+      ::oDbf:Load()
+      
+      ::nMode     := ZOOM_MODE
 
-   ::nMode     := nil
+      ::Resource( ::nMode )
 
-   ::oDbf:Cancel()
+      ::nMode     := nil
+
+      ::oDbf:Cancel()
+
+      ::oDbf:UnLock()
+
+   end if
 
 RETURN ( .t. )
 

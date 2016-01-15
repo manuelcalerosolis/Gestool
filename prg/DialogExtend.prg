@@ -20,9 +20,13 @@ local hClass
 
   __clsAddMsg( hClass, "AddControlKeys", {|Self, nKey, bAction| Self, aAdd( ::aControlKeys, { nKey, bAction } ) }, 3, nil, 1, .f., .f. )
 
-  __clsAddMsg( hClass, "Enable()", {|Self| Self, ( ::bValid := ::bTmpValid, aEval( ::aControls, { |o| if( o:ClassName <> "TSAY" .AND. o:ClassName <> "TBITMAP", o:Enable(), ) } ), CursorArrow() ) }, 3, nil, 1, .f., .f. )
+  __clsAddMsg( hClass, "Enable()", @DialogEnable(), 0, nil, 1, .f., .f. )
 
-  __clsAddMsg( hClass, "Disable()", {|Self| Self, ( CursorWait(), ::bTmpValid := ::bValid, ::bValid := {|| .f. }, aEval( ::aControls, { |o| if( o:ClassName <> "TSAY" .AND. o:ClassName <> "TBITMAP", o:Disable(), ) } ) ) }, 3, nil, 1, .f., .f. )
+  // __clsAddMsg( hClass, "Enable()", {|Self| Self, ( ::bValid := ::bTmpValid, aEval( ::aControls, { |o| if( o:ClassName <> "TSAY" .AND. o:ClassName <> "TBITMAP", o:Enable(), ) } ), CursorArrow() ) }, 3, nil, 1, .f., .f. )
+
+  __clsAddMsg( hClass, "Disable()", @DialogDisable(), 0, nil, 1, .f., .f. )
+
+  // __clsAddMsg( hClass, "Disable()", {|Self| Self, ( msgalert( "initDisable" ), CursorWait(), ::bTmpValid := ::bValid, ::bValid := {|| msgalert( "bValidDialog"), .f. }, aEval( ::aControls, { |o| if( o:ClassName <> "TSAY" .AND. o:ClassName <> "TBITMAP", o:Disable(), ) } ) ) }, 3, nil, 1, .f., .f. )
 
   __clsAddMsg( hClass, "setControlFastKey", @setControlFastKey(), 0, nil, 1, .f., .f. )
 
@@ -60,6 +64,49 @@ Return nil
 
 //----------------------------------------------------------------------------//
 
+STATIC FUNCTION DialogDisable() 
+
+   local oControl
+   local Self        := HB_QSelf()
+
+   CursorWait()
+   
+   SysRefresh()
+
+   msgStop( "DialogDisable")
+
+   Self:bTmpValid    := Self:bValid
+   Self:bValid       := {|| msgalert( "bValidDialog"), .f. }
+
+   for each oControl in Self:aControls
+      if oControl:ClassName() <> "TSAY" .AND. oControl:ClassName() <> "TBITMAP"
+         oControl:Disable()
+      end if 
+   next
+
+Return ( .t. )
+
+//----------------------------------------------------------------------------//
+
+STATIC FUNCTION DialogEnable() 
+
+   local oControl
+   local Self        := HB_QSelf()
+
+   for each oControl in Self:aControls
+      if oControl:ClassName() <> "TSAY" .AND. oControl:ClassName() <> "TBITMAP"
+         oControl:Enable()
+      end if 
+   next
+
+   Self:bValid       := Self:bTmpValid
+
+   CursorArrow()
+
+Return ( .t. )
+
+//----------------------------------------------------------------------------//
+
 STATIC Function setControlFastKey( cDirectory, nView )
 
    local Self        := HB_QSelf()
@@ -80,7 +127,6 @@ STATIC Function setControlFastKey( cDirectory, nView )
 return ( nil )
 
 //----------------------------------------------------------------------------//
-
 
 STATIC FUNCTION DialogEvalValid() 
 
