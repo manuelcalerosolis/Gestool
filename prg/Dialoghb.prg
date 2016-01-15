@@ -147,8 +147,6 @@ CLASS TDialog FROM TWindow
 
    METHOD AEvalValid()
 
-   METHOD SetControlFastKey( cRuta, nView )
-
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -958,30 +956,5 @@ METHOD AEvalValid() CLASS TDialog
    endif
 
 return ( lValid )
-
-//----------------------------------------------------------------------------//
-
-METHOD SetControlFastKey( cRuta, nView ) CLASS TDialog
-
-  MsgInfo( "Paso por el setcontrolfastkey" )
-
-  if Empty( cRuta ) 
-    Return ( self )
-  end if
-
-  oDlg:AddFastKey(  VK_F1,    {|| if( GetKeyState( VK_CONTROL ), runEventScript( cRuta + "\F1", nView ), ) } )
-  oDlg:AddFastKey(  VK_F2,    {|| if( GetKeyState( VK_CONTROL ), runEventScript( cRuta + "\F2", nView ), ) } )
-  oDlg:AddFastKey(  VK_F3,    {|| if( GetKeyState( VK_CONTROL ), runEventScript( cRuta + "\F3", nView ), ) } )
-  oDlg:AddFastKey(  VK_F4,    {|| if( GetKeyState( VK_CONTROL ), runEventScript( cRuta + "\F4", nView ), ) } )
-  oDlg:AddFastKey(  VK_F5,    {|| if( GetKeyState( VK_CONTROL ), runEventScript( cRuta + "\F5", nView ), ) } )
-  oDlg:AddFastKey(  VK_F6,    {|| if( GetKeyState( VK_CONTROL ), runEventScript( cRuta + "\F6", nView ), ) } )
-  oDlg:AddFastKey(  VK_F7,    {|| if( GetKeyState( VK_CONTROL ), runEventScript( cRuta + "\F7", nView ), ) } )
-  oDlg:AddFastKey(  VK_F8,    {|| if( GetKeyState( VK_CONTROL ), runEventScript( cRuta + "\F8", nView ), ) } )
-  oDlg:AddFastKey(  VK_F9,    {|| if( GetKeyState( VK_CONTROL ), runEventScript( cRuta + "\F9", nView ), ) } )
-  oDlg:AddFastKey(  VK_F10,   {|| if( GetKeyState( VK_CONTROL ), runEventScript( cRuta + "\F10", nView ), ) } )
-  oDlg:AddFastKey(  VK_F11,   {|| if( GetKeyState( VK_CONTROL ), runEventScript( cRuta + "\F11", nView ), ) } )
-  oDlg:AddFastKey(  VK_F12,   {|| if( GetKeyState( VK_CONTROL ), runEventScript( cRuta + "\F12", nView ), ) } )
-
-Return ( self )
 
 //----------------------------------------------------------------------------//

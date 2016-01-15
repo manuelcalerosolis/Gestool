@@ -10,11 +10,15 @@ local hClass
 
   __clsAddMsg( hClass, "aFastKeys", __cls_IncData( hClass ), 9, {}, 1, .f., .f. )
 
+  __clsAddMsg( hClass, "aControlKeys", __cls_IncData( hClass ), 9, {}, 1, .f., .f. )
+
   __clsAddMsg( hClass, "lShowAgain", __cls_IncData( hClass ), 9, .f., 1, .f., .f. )
 
   __clsAddMsg( hClass, "bTmpValid", __cls_IncData( hClass ), 9, nil, 1, .f., .f. )
 
   __clsAddMsg( hClass, "AddFastKey", {|Self, nKey, bAction| Self, aAdd( ::aFastKeys, { nKey, bAction } ) }, 3, nil, 1, .f., .f. )
+
+  __clsAddMsg( hClass, "AddControlKeys", {|Self, nKey, bAction| Self, aAdd( ::aControlKeys, { nKey, bAction } ) }, 3, nil, 1, .f., .f. )
 
   __clsAddMsg( hClass, "Enable()", {|Self| Self, ( ::bValid := ::bTmpValid, aEval( ::aControls, { |o| if( o:ClassName <> "TSAY" .AND. o:ClassName <> "TBITMAP", o:Enable(), ) } ), CursorArrow() ) }, 3, nil, 1, .f., .f. )
 
@@ -60,7 +64,19 @@ STATIC Function setControlFastKey( cDirectory, nView )
 
    local Self        := HB_QSelf()
 
-
+  if Empty( cDirectory ) 
+    Return ( nil )
+  end if
+  
+  Self:AddControlKeys(  VK_F2,    {|| runEventScript( cDirectory + "\F2", nView ) } )
+  Self:AddControlKeys(  VK_F3,    {|| runEventScript( cDirectory + "\F3", nView ) } )
+  Self:AddControlKeys(  VK_F4,    {|| runEventScript( cDirectory + "\F4", nView ) } )
+  Self:AddControlKeys(  VK_F5,    {|| runEventScript( cDirectory + "\F5", nView ) } )
+  Self:AddControlKeys(  VK_F6,    {|| runEventScript( cDirectory + "\F6", nView ) } )
+  Self:AddControlKeys(  VK_F7,    {|| runEventScript( cDirectory + "\F7", nView ) } )
+  Self:AddControlKeys(  VK_F8,    {|| runEventScript( cDirectory + "\F8", nView ) } )
+  Self:AddControlKeys(  VK_F9,    {|| runEventScript( cDirectory + "\F9", nView ) } )
+  
 return ( nil )
 
 //----------------------------------------------------------------------------//
@@ -122,7 +138,19 @@ STATIC FUNCTION DialogKeyDown( nKey, nFlags )
 
    else
 
-      aEval( ::aFastKeys, {|aKey| if( nKey == aKey[1], Eval( aKey[2] ), ) } )
+        if GetKeyState( VK_CONTROL )
+
+          if isArray( ::aControlKeys ) .and. len( ::aControlKeys ) > 0
+            aEval( ::aControlKeys, {|aKey| if( nKey == aKey[1] , Eval( aKey[2] ), ) } )
+          end if
+
+        else
+
+          if isArray( ::aFastKeys ) .and. len( ::aFastKeys ) > 0
+            aEval( ::aFastKeys, {|aKey| if( nKey == aKey[1] , Eval( aKey[2] ), ) } )
+          end if
+
+        end if
 
       return ::Super:KeyDown( nKey, nFlags )
 

@@ -2979,8 +2979,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
 
    oDlg:AddFastKey(     VK_F1, {|| GoHelp() } )
 
-   MsgInfo( oDlg:ClassName )
-
    oDlg:SetControlFastKey( "PedidosProveedoresLineas", nView )
 
    oDlg:bStart    := {||   SetDlgMode( aGet, aTmp, aTmpPed, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oSayLote, oBrwPrp, oFld, oDlg, oTotal, oGetStk ),;
