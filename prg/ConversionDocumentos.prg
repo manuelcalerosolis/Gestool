@@ -67,6 +67,8 @@ CLASS TConversionDocumentos
 
    DATA aPropertiesTable
 
+   DATA oStock
+
    METHOD New()
 
    METHOD Dialog()
@@ -290,9 +292,15 @@ METHOD OpenFiles()
 
       D():PropiedadesLineas( ::nView )
 
+      ::oStock             := TStock():Create( cPatGrp() )
+
+      if !::oStock:lOpenFiles()
+         ::lOpenFiles      := .f.
+      end if
+
    RECOVER USING oError
 
-      ::lOpenFiles      := .f.
+      ::lOpenFiles         := .f.
 
       msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
 
@@ -311,6 +319,8 @@ RETURN ( ::lOpenFiles )
 METHOD CloseFiles()
 
    D():DeleteView( ::nView )
+
+   ::oStock:CloseFiles()
 
    ::lOpenFiles         := .f.
 

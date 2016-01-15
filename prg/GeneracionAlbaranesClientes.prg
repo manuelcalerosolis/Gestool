@@ -233,6 +233,8 @@ METHOD loadLinesDocument()
                   ::oDocumentLines:addLines( oDocumentLine )
                end if 
 
+               ::assignStock( oDocumentLine )
+
             end if 
 
             ( ::getLineAlias() )->( dbskip() ) 
@@ -252,3 +254,45 @@ METHOD loadLinesDocument()
 RETURN ( .t. ) 
 
 //---------------------------------------------------------------------------//
+/*
+METHOD assignStock( oDocumentLine )
+
+   ::assertCodeStock( oDocumentLine )
+
+   if ::isUnitsStock( oDocumentLine )
+
+      ::minusUnitsStock( oDocumentLine )
+   
+      oDocumentLine:selectLine()
+   
+   end if 
+
+RETURN ( .t. ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD assertCodeStock( oDocumentLine )
+
+   local nScan
+
+   nScan := ascan( ::oStock:aStock, {|o| o:cCodigo == oDocumentLine:getCode() } )
+   if nScan == 0
+      ::oStock:aStockArticulo( oDocumentLine:getCode() )
+   end if 
+
+RETURN ( .t. ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD isUnitsStock( oDocumentLine )
+
+   local nScan
+
+   nScan := ascan( ::oStock:aStock, {|o| o:cCodigo == oDocumentLine:getCode() .and. o:cValorPropiedad1 == oDocumentLine:getCodeFirstProperty() .and. o:cValorPropiedad2 == oDocumentLine:getCodeSecondProperty() } )
+   if nScan == 0
+      ::oStock:aStockArticulo( oDocumentLine:getCode() )
+   end if 
+*/   
+
+
+

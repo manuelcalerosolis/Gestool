@@ -229,15 +229,8 @@ Return ( Self )
 
 METHOD setUnitsProvided()
 
-   local nUnitsProvided    := nUnidadesRecibidasAlbaranesClientesNoFacturados( ::getDocumentId(), ::getCode(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():AlbaranesClientesLineas( ::getView() ) )
-   nUnitsProvided          += nUnidadesRecibidasFacturasClientes( ::getDocumentId(), ::getCode(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():FacturasClientesLineas( ::getView() ) )
-   
-   msgAlert( ::getDocumentId(),           str( len( ::getDocumentId() ) ) )
-   msgAlert( ::getCode(),                 str( len( ::getCode() ) ) )
-   msgAlert( ::getValueFirstProperty(),   str( len( ::getValueFirstProperty() ) ) )
-   msgAlert( ::getValueSecondProperty(),  str( len( ::getValueSecondProperty() ) ) )
-
-   msgAlert( nUnitsProvided, "nUnitsProvided" )
+   local nUnitsProvided    := nUnidadesRecibidasAlbaranesClientesNoFacturados( ::getDocumentId(), ::getCode(), ::getCodeFirstProperty(), ::getCodeSecondProperty(), D():AlbaranesClientesLineas( ::getView() ) )
+   nUnitsProvided          += nUnidadesRecibidasFacturasClientes( ::getDocumentId(), ::getCode(), ::getCodeFirstProperty(), ::getCodeSecondProperty(), D():FacturasClientesLineas( ::getView() ) )
 
    ::setValue( "UnitsProvided", nUnitsProvided )
 
