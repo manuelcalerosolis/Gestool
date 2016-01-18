@@ -1588,9 +1588,6 @@ RETURN ( .t. )
 METHOD EndResource( lOk, nMode, oDlg )
 
    if !Empty( oDlg )
-
-      msgAlert( "Disable oDlg" )
-
       oDlg:Disable()
    end if
 

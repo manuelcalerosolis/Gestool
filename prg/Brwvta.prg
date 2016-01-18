@@ -14,6 +14,8 @@
 #define fldGraficos              oFld:aDialogs[ 4 ]
 #define fldContadores            oFld:aDialogs[ 5 ]
 
+static nView
+
 static dbfDiv
 static dbfIva
 static dbfAlm
@@ -158,6 +160,10 @@ Static Function OpenFiles( cCodArt )
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
+
+   nView             := D():CreateView()
+
+   D():PropiedadesLineas( nView )
 
    USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
    SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
@@ -328,6 +334,8 @@ Static Function CloseFiles()
    if oTreeImageList != nil
       oTreeImageList:End()
    end if
+
+   D():DeleteView( nView )
 
    ( dbfDiv     )->( dbCloseArea() )
    ( dbfIva     )->( dbCloseArea() )
@@ -632,28 +640,42 @@ function BrwVtaComArt( cCodArt, cNomArt )
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Prop. 1"
       :nWidth                    := 50
-      :bStrData                  := {|| nTotalTree( oBrwStk, "cValorPropiedad1" ) }
+      :bStrData                  := {|| getTreeValue( oBrwStk, "cValorPropiedad1" ) }
       :lHide                     := .t.
    end with
 
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Prop. 2"
       :nWidth                    := 50
-      :bStrData                  := {|| nTotalTree( oBrwStk, "cValorPropiedad2" ) }
+      :bStrData                  := {|| getTreeValue( oBrwStk, "cValorPropiedad2" ) }
+      :lHide                     := .t.
+   end with
+
+   with object ( oBrwStk:AddCol() )
+      :cHeader                   := "Nombre propiedad 1"
+      :bEditValue                := {|| nombrePropiedad( getTreeValue( oBrwStk, "cCodigoPropiedad1" ), getTreeValue( oBrwStk, "cValorPropiedad1" ), nView ) }
+      :nWidth                    := 60
+      :lHide                     := .t.
+   end with
+
+   with object ( oBrwStk:AddCol() )
+      :cHeader                   := "Nombre propiedad 2"
+      :bEditValue                := {|| nombrePropiedad( getTreeValue( oBrwStk, "cCodigoPropiedad2" ), getTreeValue( oBrwStk, "cValorPropiedad2" ), nView ) }
+      :nWidth                    := 60
       :lHide                     := .t.
    end with
 
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Lote"
       :nWidth                    := 70
-      :bEditValue                := {|| nTotalTree( oBrwStk, "cLote" ) }
+      :bEditValue                := {|| getTreeValue( oBrwStk, "cLote" ) }
       :lHide                     := .t.
    end with
 
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Unidades"
       :nWidth                    := 110
-      :bEditValue                := {|| nTotalTree( oBrwStk, "nUnidades" ) }
+      :bEditValue                := {|| getTreeValue( oBrwStk, "nUnidades" ) }
       :bFooter                   := {|| nFooterTree( oBrwStk, "nUnidades" ) }
       :cEditPicture              := MasUnd()
    end with
@@ -661,7 +683,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Pdt. recibir"
       :nWidth                    := 110
-      :bEditValue                := {|| nTotalTree( oBrwStk, "nPendientesRecibir" ) }
+      :bEditValue                := {|| getTreeValue( oBrwStk, "nPendientesRecibir" ) }
       :bFooter                   := {|| nFooterTree( oBrwStk, "nPendientesRecibir" ) }
       :cEditPicture              := MasUnd()
    end with
@@ -669,7 +691,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Pdt. entregar"
       :nWidth                    := 110
-      :bEditValue                := {|| nTotalTree( oBrwStk, "nPendientesEntregar" ) }
+      :bEditValue                := {|| getTreeValue( oBrwStk, "nPendientesEntregar" ) }
       :bFooter                   := {|| nFooterTree( oBrwStk, "nPendientesEntregar" ) }
       :cEditPicture              := MasUnd()
    end with
@@ -677,7 +699,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Peso stock"
       :nWidth                    := 110
-      :bEditValue                := {|| nTotalTree( oBrwStk, "nUnidades" ) * nPesUnd }
+      :bEditValue                := {|| getTreeValue( oBrwStk, "nUnidades" ) * nPesUnd }
       :bFooter                   := {|| nFooterTree( oBrwStk, "nUnidades" ) * nPesUnd }
       :cEditPicture              := MasUnd()
    end with
@@ -685,7 +707,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Volumen stock"
       :nWidth                    := 110
-      :bEditValue                := {|| nTotalTree( oBrwStk, "nUnidades" ) * nVolUnd }
+      :bEditValue                := {|| getTreeValue( oBrwStk, "nUnidades" ) * nVolUnd }
       :bFooter                   := {|| nFooterTree( oBrwStk, "nUnidades" ) * nVolUnd }
       :cEditPicture              := MasUnd()
    end with
@@ -693,7 +715,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Consolidación"
       :nWidth                    := 110
-      :bStrData                  := {|| nTotalTree( oBrwStk, "dConsolidacion" ) }
+      :bStrData                  := {|| getTreeValue( oBrwStk, "dConsolidacion" ) }
       // :bStrData                  := {|| if( !Empty( oBrwStk:oTreeItem ) .and. !Empty( oBrwStk:oTreeItem:Cargo ), oBrwStk:oTreeItem:Cargo:dConsolidacion, "" ) }
       :lHide                     := .t.
    end with
@@ -3701,7 +3723,7 @@ Return ( nUnidades )
 
 //---------------------------------------------------------------------------//
 
-Function nTotalTree( oBrwStk, cData )
+Function getTreeValue( oBrwStk, cData )
 
    local oItem
    local uValue
@@ -3709,23 +3731,22 @@ Function nTotalTree( oBrwStk, cData )
 
    DEFAULT cData              := "nUnidades"
 
-   if !Empty( oBrwStk:oTreeItem ) 
+   if !empty( oBrwStk:oTreeItem ) 
 
-      if !IsNil( oBrwStk:oTreeItem:oTree )
+      if !isnil( oBrwStk:oTreeItem:oTree )
 
          oItem                := oBrwStk:oTreeItem:oTree:oFirst 
 
-         while !IsNil( oItem )
+         while !isnil( oItem )
 
-
-            if !Empty( oItem:Cargo )
+            if !empty( oItem:Cargo )
 
                uValue         := oSend( oItem:Cargo, cData ) 
                
                if isNum( uValue )
-                  nUnidades   += oSend( oItem:Cargo, cData ) 
+                  nUnidades   += uValue
                else
-                  nUnidades   := oSend( oItem:Cargo, cData ) 
+                  nUnidades   := uValue
                end if 
 
             end if 
@@ -3741,7 +3762,7 @@ Function nTotalTree( oBrwStk, cData )
       else 
 
          if !Empty( oBrwStk:oTreeItem:Cargo )
-            nUnidades         := oSend( oBrwStk:oTreeItem:Cargo, cData ) 
+            nUnidades         := oSend( oBrwStk:oTreeItem:Cargo, cData )
          end if 
 
       end if

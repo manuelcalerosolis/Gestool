@@ -21,6 +21,7 @@ CLASS DocumentLine FROM DocumentBase
    METHOD getDescription()                                     INLINE ( if(   !empty( ::getCode() ),;
                                                                               ::getValue( "DescripcionArticulo" ),;
                                                                               ::getValue( "DescripcionAmpliada" ) ) )
+   METHOD getAlmacen()                                         INLINE ( ::getValue( "Almacen") )
    METHOD getCodeFirstProperty()                               INLINE ( ::getValue( "CodigoPropiedad1" ) )
    METHOD getCodeSecondProperty()                              INLINE ( ::getValue( "CodigoPropiedad2" ) )
    METHOD getValueFirstProperty()                              INLINE ( ::getValue( "ValorPropiedad1" ) )

@@ -24,6 +24,12 @@ CLASS TGeneracionAlbaranesClientes FROM TConversionDocumentos
       METHOD botonAnterior()                       INLINE ( ::oFld:goPrev(), ::oBtnAnterior:Hide() )
 
    METHOD loadLinesDocument()
+      METHOD scanStock( oDocumentLine )
+      METHOD assignStock( oDocumentLine )
+      METHOD assertCodeStock( oDocumentLine )
+      METHOD isUnitsStock( oDocumentLine )
+      METHOD getUnitsInStock()
+      METHOD minusUnitsStock()
 
    METHOD columnsBrowseLines()
 
@@ -254,7 +260,7 @@ METHOD loadLinesDocument()
 RETURN ( .t. ) 
 
 //---------------------------------------------------------------------------//
-/*
+
 METHOD assignStock( oDocumentLine )
 
    ::assertCodeStock( oDocumentLine )
@@ -275,24 +281,92 @@ METHOD assertCodeStock( oDocumentLine )
 
    local nScan
 
-   nScan := ascan( ::oStock:aStock, {|o| o:cCodigo == oDocumentLine:getCode() } )
+   nScan := ascan( ::oStock:aStocks, {|o| o:cCodigo == oDocumentLine:getCode() } )
    if nScan == 0
       ::oStock:aStockArticulo( oDocumentLine:getCode() )
+      // msgAlert( hb_valtoexp( ::oStock:aStocks ) )
    end if 
 
 RETURN ( .t. ) 
 
 //---------------------------------------------------------------------------//
 
-METHOD isUnitsStock( oDocumentLine )
+METHOD scanStock( oDocumentLine )
 
    local nScan
+   local oStock
 
-   nScan := ascan( ::oStock:aStock, {|o| o:cCodigo == oDocumentLine:getCode() .and. o:cValorPropiedad1 == oDocumentLine:getCodeFirstProperty() .and. o:cValorPropiedad2 == oDocumentLine:getCodeSecondProperty() } )
-   if nScan == 0
-      ::oStock:aStockArticulo( oDocumentLine:getCode() )
+   nScan := ascan( ::oStock:aStocks,   {|o|  rtrim( o:cCodigo ) == rtrim( oDocumentLine:getCode() ) .and.;
+                                             rtrim( o:cCodigoAlmacen ) == rtrim( oDocumentLine:getAlmacen() ) .and.;
+                                             rtrim( o:cCodigoPropiedad1 ) == rtrim( oDocumentLine:getCodeFirstProperty() ) .and.;
+                                             rtrim( o:cCodigoPropiedad2 ) == rtrim( oDocumentLine:getCodeSecondProperty() ) .and.;
+                                             rtrim( o:cValorPropiedad1 ) == rtrim( oDocumentLine:getValueFirstProperty() ) .and.;
+                                             rtrim( o:cValorPropiedad2 ) == rtrim( oDocumentLine:getValueSecondProperty() ) } )
+   if nScan != 0
+      oStock   := ::oStock:aStocks[ nScan ]
    end if 
-*/   
 
+Return ( oStock )
 
+//---------------------------------------------------------------------------//
+
+METHOD getUnitsInStock( oDocumentLine )
+
+   local oStock      := ::scanStock( oDocumentLine )
+   local nUnidades   := 0
+
+   if !empty( oStock )
+      nUnidades      := oStock:nUnidades
+   end if 
+
+Return ( nUnidades )
+
+//---------------------------------------------------------------------------//
+
+METHOD isUnitsStock( oDocumentLine )
+
+Return ( ::getUnitsInStock( oDocumentLine ) >= oDocumentLine:getTotalUnits() )
+
+//---------------------------------------------------------------------------//
+
+METHOD minusUnitsStock( oDocumentLine )
+
+   local oStock         := ::scanStock( oDocumentLine )
+
+   if !empty(oStock)
+      oStock:nUnidades  -= oDocumentLine:getTotalUnits()
+   end if 
+
+Return ( Self ) 
+
+//---------------------------------------------------------------------------//
+/*
+   local oStock      := ::scanStock( oDocumentLine )
+   local nUnidades   := 0
+
+   if !empty( oStock )
+      nUnidades      := oStock:nUnidades
+   end if 
+*/
+   /*
+   aeval( ::oStock:aStocks, {|o| if(   rtrim( o:cCodigo ) == rtrim( oDocumentLine:getCode() ) .and.;
+                                       rtrim( o:cCodigoAlmacen ) == rtrim( oDocumentLine:getAlmacen() ) .and.;
+                                       rtrim( o:cCodigoPropiedad1 ) == rtrim( oDocumentLine:getCodeFirstProperty() ) .and.;
+                                       rtrim( o:cCodigoPropiedad2 ) == rtrim( oDocumentLine:getCodeSecondProperty() ) .and.;
+                                       rtrim( o:cValorPropiedad1 ) == rtrim( oDocumentLine:getValueFirstProperty() ) .and.;
+                                       rtrim( o:cValorPropiedad2 ) == rtrim( oDocumentLine:getValueSecondProperty() ),;
+                                       nUnidades += o:nUnidades, ) } )
+   */
+/*
+   if nUnidades != 0
+   msgAlert( oDocumentLine:getCode(), "o:cCodigo" )
+   msgAlert( oDocumentLine:getAlmacen(), "o:cCodigoAlmacen " )
+   msgAlert( oDocumentLine:getValueFirstProperty(), "o:cValorPropiedad1" )
+   msgAlert( oDocumentLine:getValueSecondProperty(), "o:cValorPropiedad2" )
+   msgAlert( nUnidades, "nUnidades" )
+   end if 
+   
+Return ( nUnidades )
+*/
+//---------------------------------------------------------------------------//
 

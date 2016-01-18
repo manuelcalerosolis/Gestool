@@ -12,27 +12,21 @@ local hClass
 
   __clsAddMsg( hClass, "aControlKeys", __cls_IncData( hClass ), 9, {}, 1, .f., .f. )
 
-  __clsAddMsg( hClass, "lShowAgain", __cls_IncData( hClass ), 9, .f., 1, .f., .f. )
-
-  __clsAddMsg( hClass, "bTmpValid", __cls_IncData( hClass ), 9, nil, 1, .f., .f. )
-
   __clsAddMsg( hClass, "AddFastKey", {|Self, nKey, bAction| Self, aAdd( ::aFastKeys, { nKey, bAction } ) }, 3, nil, 1, .f., .f. )
 
   __clsAddMsg( hClass, "AddControlKeys", {|Self, nKey, bAction| Self, aAdd( ::aControlKeys, { nKey, bAction } ) }, 3, nil, 1, .f., .f. )
 
-  __clsAddMsg( hClass, "Enable()", @DialogEnable(), 0, nil, 1, .f., .f. )
+  __clsAddMsg( hClass, "Enable", @DialogEnable(), 0, nil, 1, .f., .f. )
 
-  // __clsAddMsg( hClass, "Enable()", {|Self| Self, ( ::bValid := ::bTmpValid, aEval( ::aControls, { |o| if( o:ClassName <> "TSAY" .AND. o:ClassName <> "TBITMAP", o:Enable(), ) } ), CursorArrow() ) }, 3, nil, 1, .f., .f. )
-
-  __clsAddMsg( hClass, "Disable()", @DialogDisable(), 0, nil, 1, .f., .f. )
-
-  // __clsAddMsg( hClass, "Disable()", {|Self| Self, ( msgalert( "initDisable" ), CursorWait(), ::bTmpValid := ::bValid, ::bValid := {|| msgalert( "bValidDialog"), .f. }, aEval( ::aControls, { |o| if( o:ClassName <> "TSAY" .AND. o:ClassName <> "TBITMAP", o:Disable(), ) } ) ) }, 3, nil, 1, .f., .f. )
+  __clsAddMsg( hClass, "Disable", @DialogDisable(), 0, nil, 1, .f., .f. )
 
   __clsAddMsg( hClass, "setControlFastKey", @setControlFastKey(), 0, nil, 1, .f., .f. )
 
   __clsAddMsg( hClass, "aEvalValid", @DialogEvalValid(), 0, nil, 1, .f., .f. )
 
   __clsModMsg( hClass, "KeyDown", @DialogKeyDown(), 1 )
+
+  //----------------------------------------------------------------------------//
 
   hClass        := TCheckBox():ClassH
 
@@ -42,19 +36,27 @@ local hClass
 
   __clsModMsg( hClass, "Click", @CheckBoxClick(), 1 ) 
 
+  //----------------------------------------------------------------------------//
+
   hClass        := TXBrowse():ClassH
 
   __clsAddMsg( hClass, "SelectOne", {|Self| Self, ::Select( 0 ), ::Select( 1 ) }, 3, nil, 1, .f., .f. ) 
 
   __clsModMsg( hClass, "ToExcel", @TXBrowseToExcel(), 1 )
+  
+  //----------------------------------------------------------------------------//
 
   hClass        := TWBrowse():ClassH
 
   __clsAddMsg( hClass, "_lDrawHeaders", __cls_IncData( hClass ), 9, .f., 1, .f., .f. )
 
+  //----------------------------------------------------------------------------//
+
   hClass        := TComboBox():ClassH
 
   __clsAddMsg( hClass, "GetFont", {|| nil }, 3, nil, 1, .f., .f. )
+
+  //----------------------------------------------------------------------------//
 
   hClass        := TButton():ClassH
 
@@ -67,16 +69,12 @@ Return nil
 STATIC FUNCTION DialogDisable() 
 
    local oControl
-   local Self        := HB_QSelf()
+   local Self         := HB_QSelf()
 
    CursorWait()
    
-   SysRefresh()
-
-   msgStop( "DialogDisable")
-
-   Self:bTmpValid    := Self:bValid
-   Self:bValid       := {|| msgalert( "bValidDialog"), .f. }
+   Self:Cargo         := Self:bValid
+   Self:bValid        := {|| .f. }
 
    for each oControl in Self:aControls
       if oControl:ClassName() <> "TSAY" .AND. oControl:ClassName() <> "TBITMAP"
@@ -91,7 +89,7 @@ Return ( .t. )
 STATIC FUNCTION DialogEnable() 
 
    local oControl
-   local Self        := HB_QSelf()
+   local Self         := HB_QSelf()
 
    for each oControl in Self:aControls
       if oControl:ClassName() <> "TSAY" .AND. oControl:ClassName() <> "TBITMAP"
@@ -99,7 +97,7 @@ STATIC FUNCTION DialogEnable()
       end if 
    next
 
-   Self:bValid       := Self:bTmpValid
+   Self:bValid       := Self:Cargo
 
    CursorArrow()
 

@@ -17195,9 +17195,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Ocultar escll.", 508, "Button", WS_TABSTOP, 412, 164, 49, 14
   CONTROL "&Importar alm.", 506, "Button", WS_TABSTOP, 463, 164, 49, 14
   CONTROL "", 180, "TXBrowse", WS_TABSTOP|0x00300000, 50, 180, 606, 162
-  CONTROL "&Aceptar [F5]", 511, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 502, 357, 50, 14
-  CONTROL "&Cancelar", 510, "Button", WS_TABSTOP, 557, 357, 50, 14
-  CONTROL "A&yuda", 559, "Button", WS_TABSTOP, 612, 357, 50, 14
+  CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 557, 357, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 612, 357, 50, 14
   CONTROL "", 100, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 91, 39, 93, 12
   CONTROL "", 110, "Edit", ES_MULTILINE|WS_BORDER|WS_TABSTOP, 186, 39, 40, 12
   CONTROL "", 120, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 91, 52, 79, 12
@@ -17222,9 +17221,10 @@ FONT 8, "MS Sans Serif"
   CONTROL "Delegación", -1, "Static", WS_GROUP, 50, 81, 38, 8
   CONTROL "General", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 243, 30, 418, 121
   CONTROL "", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 44, 94, 192, 57
-  CONTROL "", 400, "msctls_progress32", 0x00000000, 44, 349, 618, 8
+  CONTROL "", 400, "msctls_progress32", 0x00000000, 44, 349, 618, 4
   CONTROL "", 990, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Movimientos entre almacenes", -1, "Static", WS_GROUP, 44, 3, 120, 8
+  CONTROL "&Recalcular", 3, "Button", WS_TABSTOP, 44, 357, 50, 14
 }
 
 REP_ARTICULO DIALOG DISCARDABLE 67, 60, 342, 205
