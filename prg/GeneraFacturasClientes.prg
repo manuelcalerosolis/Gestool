@@ -1604,7 +1604,7 @@ METHOD appendPagosAbaranes( oItem ) CLASS GeneraFacturasClientes
             ( D():FacturasClientesCobros( ::nView ) )->lConPgo       := .f.
             ( D():FacturasClientesCobros( ::nView ) )->lRecImp       := .f.
             ( D():FacturasClientesCobros( ::nView ) )->lRecDto       := .f.
-            ( D():FacturasClientesCobros( ::nView ) )->lPasado       := .t.
+         //   ( D():FacturasClientesCobros( ::nView ) )->lPasado       := .t.
          
             ( D():FacturasClientesCobros( ::nView ) )->( dbUnLock() )
 
