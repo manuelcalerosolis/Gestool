@@ -1005,7 +1005,7 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
    cSay[ 6 ]         := Rtrim( oRetFld( ::oDbf:cCodAge, ::oDbfAge, 2 ) ) + ", " + Rtrim( oRetFld( ::oDbf:cCodAge, ::oDbfAge, 3 ) )
    cSay[ 7 ]         := oRetFld( ::oDbf:cCodUsr, ::oUsr )
 
-   DEFINE DIALOG oDlg RESOURCE "RemMov" TITLE LblTitle( nMode ) + "movimientos entre almacenes"
+   DEFINE DIALOG oDlg RESOURCE "RemMov" TITLE LblTitle( nMode ) + "movimientos de almacén"
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
@@ -1254,6 +1254,20 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
          :cHeader       := "Prop. 2"
          :bStrData      := {|| ::oDetMovimientos:oDbfVir:FieldGetByName( "cValPr2" ) }
          :nWidth        := 40
+      end with
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader       := "Nombre propiedad 1"
+         :bEditValue    := {|| nombrePropiedad( ::oDetMovimientos:oDbfVir:FieldGetByName( "cCodPr1" ), ::oDetMovimientos:oDbfVir:FieldGetByName( "cValPr1" ), ::nView ) }
+         :nWidth        := 60
+         :lHide         := .t.
+      end with
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader       := "Nombre propiedad 2"
+         :bEditValue    := {|| nombrePropiedad( ::oDetMovimientos:oDbfVir:FieldGetByName( "cCodPr2" ), ::oDetMovimientos:oDbfVir:FieldGetByName( "cValPr2" ), ::nView ) }
+         :nWidth        := 60
+         :lHide         := .t.
       end with
 
       with object ( ::oBrwDet:addCol() )
@@ -4246,19 +4260,26 @@ RETURN ( .t. )
 
 METHOD RollBack() CLASS TDetMovimientos
 
-   ::oParent:GetFirstKey()
+   local cStm
 
+   ::oParent:GetFirstKey()
    if ::oParent:cFirstKey != nil
 
-      while ::oDbf:Seek( ::oParent:cFirstKey )
+      if lAIS()
 
-         ::oDbf:Delete()
+         cStm        := "DELETE FROM " + cPatEmp() + "HisMov" + " WHERE nNumRem = " + alltrim( str( ::oParent:oDbf:nNumRem ) ) + " AND cSufRem = '" + ::oParent:oDbf:cSufRem + "'"
+         TDataCenter():ExecuteSqlStatement( cStm, "RollBackDetMovimientos" )
 
-         if !Empty( ::oParent ) .and. !Empty( ::oParent:oMeter )
-            ::oParent:oMeter:AutoInc()
-         end if
+      else 
 
-      end while
+         while ::oDbf:Seek( ::oParent:cFirstKey )
+            ::oDbf:Delete()
+            if !Empty( ::oParent ) .and. !Empty( ::oParent:oMeter )
+               ::oParent:oMeter:AutoInc()
+            end if
+         end while
+
+      end if 
 
    end if
 
@@ -4684,8 +4705,8 @@ METHOD AppendKit() CLASS TDetMovimientos
             ::oDbfVir:cCodMov    := cCodMov
             ::oDbfVir:cCodPr1    := Space( 20 )
             ::oDbfVir:cCodPr2    := Space( 20 )
-            ::oDbfVir:cValPr1    := Space( 40 )
-            ::oDbfVir:cValPr2    := Space( 40 )
+            ::oDbfVir:cValPr1    := Space( 20 )
+            ::oDbfVir:cValPr2    := Space( 20 )
             ::oDbfVir:cCodUsr    := cCodUsr
             ::oDbfVir:cCodDlg    := cCodDlg
             ::oDbfVir:lLote      := ::oParent:oArt:lLote

@@ -220,7 +220,8 @@ METHOD loadLinesDocument()
    autoMeterDialog( ::oDlg )
    setTotalAutoMeterDialog( ::getHeaderOrdKeyCount()  )
 
-   ::oDocumentLines:reset()
+   ::oDocumentLines:Reset()
+   ::oStock:Reset()
 
    ( ::getHeaderAlias() )->( ordsetfocus( "dFecPed" ) )
    ( ::getHeaderAlias() )->( dbGoTop() )

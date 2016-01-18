@@ -118,10 +118,10 @@ CLASS TStock
    DATA aAlmacenes         AS ARRAY INIT {}
 
    METHOD New( cPath, lExclusive )
-
    METHOD Create( cPath, lExclusive )
-
    METHOD End()            INLINE ( if( !Empty( ::oTree ), ::oTree:End(), ), ::CloseFiles() )
+
+   METHOD Reset()          INLINE ( ::aStocks := {} ) // { sStock():New() } )
 
    METHOD lOpenFiles( lExclusive )
    METHOD CloseFiles()
@@ -303,22 +303,6 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( cPath, lExclusive ) CLASS TStock
-
-   DEFAULT cPath        := cPatGrp()
-   DEFAULT lExclusive   := .f.
-
-   ::cPath              := cPath
-   ::lExclusive         := lExclusive
-
-   ::aStocks            := { sStock():New() }
-
-   ::lOpenFiles( cPath, lExclusive )
-
-Return Self
-
-//---------------------------------------------------------------------------//
-
 METHOD Create( cPath, lExclusive ) CLASS TStock
 
    DEFAULT cPath        := cPatGrp()
@@ -327,7 +311,17 @@ METHOD Create( cPath, lExclusive ) CLASS TStock
    ::cPath              := cPath
    ::lExclusive         := lExclusive
 
-   ::aStocks            := { sStock():New() }
+   ::Reset()
+
+Return Self
+
+//---------------------------------------------------------------------------//
+
+METHOD New( cPath, lExclusive ) CLASS TStock
+
+   ::Create( cPath, lExclusive )
+
+   ::lOpenFiles( cPath, lExclusive )
 
 Return Self
 
@@ -4195,7 +4189,8 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    ::cCodigoArticulo    := cCodArt
    ::cCodigoAlmacen     := cCodAlm
-   ::aStocks            := {}
+
+   ::Reset()
 
    if Empty( cCodArt )
       Return ( ::aStocks )
@@ -4304,11 +4299,11 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    // Asignamos el array al browse------------------------------------------------
 
-   if Empty( ::aStocks )
-      ::aStocks         := { sStock():New() }
+   if empty( ::aStocks )
+      ::Reset()
    end if
 
-   if !Empty( oBrw )
+   if !empty( oBrw )
 
       oBrw:aArrayData   := {}
 
