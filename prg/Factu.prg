@@ -6008,7 +6008,7 @@ Return ( by( nRow ) )
 
 Function Test() 
 
-   TGeneracionAlbaranesClientes():New():Dialog()
+   //TGeneracionAlbaranesClientes():New():Dialog()
 
 /*
    local nView                   := D():CreateView()
