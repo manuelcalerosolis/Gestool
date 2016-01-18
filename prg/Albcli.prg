@@ -15302,9 +15302,6 @@ function nUnidadesRecibidasAlbaranesClientesNoFacturados( cNumPed, cCodArt, cCod
    DEFAULT cCodPr2   := Space( 20 )
 
    ( cAlbCliL )->( OrdSetFocus( "cRefNoFac" ) )
-
-   msgAlert( cNumPed + cCodArt + cCodPr1 + cCodPr2, "nUnidadesRecibidasAlbaranesClientesNoFacturados:" + str( len( cNumPed + cCodArt + cCodPr1 + cCodPr2 ) ) )
-
    if ( cAlbCliL )->( dbSeek( cNumPed + cCodArt + cCodPr1 + cCodPr2 ) )
       
       while ( cAlbCliL )->cNumPed + ( cAlbCliL )->cRef + ( cAlbCliL )->cCodPr1 + ( cAlbCliL )->cCodPr2 == cNumPed + cCodArt + cCodPr1 + cCodPr2 .and. !( cAlbCliL )->( eof() )

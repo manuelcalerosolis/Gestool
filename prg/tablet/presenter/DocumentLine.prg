@@ -21,6 +21,7 @@ CLASS DocumentLine FROM DocumentBase
    METHOD getDescription()                                     INLINE ( if(   !empty( ::getCode() ),;
                                                                               ::getValue( "DescripcionArticulo" ),;
                                                                               ::getValue( "DescripcionAmpliada" ) ) )
+   METHOD getAlmacen()                                         INLINE ( ::getValue( "Almacen") )
    METHOD getCodeFirstProperty()                               INLINE ( ::getValue( "CodigoPropiedad1" ) )
    METHOD getCodeSecondProperty()                              INLINE ( ::getValue( "CodigoPropiedad2" ) )
    METHOD getValueFirstProperty()                              INLINE ( ::getValue( "ValorPropiedad1" ) )
@@ -229,15 +230,8 @@ Return ( Self )
 
 METHOD setUnitsProvided()
 
-   local nUnitsProvided    := nUnidadesRecibidasAlbaranesClientesNoFacturados( ::getDocumentId(), ::getCode(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():AlbaranesClientesLineas( ::getView() ) )
-   nUnitsProvided          += nUnidadesRecibidasFacturasClientes( ::getDocumentId(), ::getCode(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():FacturasClientesLineas( ::getView() ) )
-   
-   msgAlert( ::getDocumentId(),           str( len( ::getDocumentId() ) ) )
-   msgAlert( ::getCode(),                 str( len( ::getCode() ) ) )
-   msgAlert( ::getValueFirstProperty(),   str( len( ::getValueFirstProperty() ) ) )
-   msgAlert( ::getValueSecondProperty(),  str( len( ::getValueSecondProperty() ) ) )
-
-   msgAlert( nUnitsProvided, "nUnitsProvided" )
+   local nUnitsProvided    := nUnidadesRecibidasAlbaranesClientesNoFacturados( ::getDocumentId(), ::getCode(), ::getCodeFirstProperty(), ::getCodeSecondProperty(), D():AlbaranesClientesLineas( ::getView() ) )
+   nUnitsProvided          += nUnidadesRecibidasFacturasClientes( ::getDocumentId(), ::getCode(), ::getCodeFirstProperty(), ::getCodeSecondProperty(), D():FacturasClientesLineas( ::getView() ) )
 
    ::setValue( "UnitsProvided", nUnitsProvided )
 

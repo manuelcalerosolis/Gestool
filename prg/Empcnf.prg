@@ -872,89 +872,81 @@ FUNCTION nNewDoc( cSerie, dbf, cTipDoc, nLen, dbfCount )
    local nPos
    local lClo        := .f.
    local nDoc        := 0
-   local nRecAnt     := ( dbf )->( recno() )
-   local nOrdAnt     := ( dbf )->( ordsetfocus( 1 ) )
-   local cSufEmp     := retSufEmp()
+   local nRecAnt     := ( dbf )->( Recno() )
+   local nOrdAnt     := ( dbf )->( OrdSetFocus( 1 ) )
+   local cSufEmp     := RetSufEmp()
+   local lNotSerie   := .f.
 
+   if Empty( cSerie )
+      lNotSerie      := .t.
+   end if
+   
    DEFAULT nLen      := 9
-
-   // msgAlert( cSerie, "cSerie" ) 
-   // msgAlert( dbf, "dbf" ) 
-   // msgAlert( cTipDoc, "cTipDoc" ) 
-   // msgAlert( nLen, "nLen" ) 
-   // msgAlert( dbfCount, "dbfCount" ) 
-
+   DEFAULT cSerie    := "A"
+   
    /*
    Chequea q exista la base de datos-------------------------------------------
    */
-
+   
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
+   
    if Empty( dbfCount )
       USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
       SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
       lClo           := .t.
    end if
-
+   
    nPos              := ( dbfCount )->( fieldPos( cSerie ) )
-
+   
    /*
    Hasta q no encuentre un numero valido se pone a dar vueltas-----------------
    */
-
+   
    if dbSeekInOrd( Upper( cTipDoc ), "Doc", dbfCount, nil, nil, .t. )
 
       nDoc           := ( dbfCount )->( fieldGet( nPos ) )
-
-      if !isNum( nDoc )
+      if !IsNum( nDoc )
          nDoc        := 0
       end if
-
-      if empty( cSerie )
-
+   
+      if lNotSerie
          while ( dbf )->( dbSeek( Str( nDoc, nLen ) + cSufEmp ) )
             ++nDoc
          end while
-
       else
-
          while ( dbf )->( dbSeek( cSerie + Str( nDoc, nLen ) + cSufEmp ) )
             ++nDoc
          end while
-
       end if
-
+   
       if dbLock( dbfCount )
          ( dbfCount )->( fieldPut( nPos, nDoc + 1 ) )
          ( dbfCount )->( dbUnLock() )
       end if
-
+   
    else
-
+   
       msgStop( "No encuentro el tipo de documento " + cTipDoc )
-
+   
    end if
-
+   
    /*
    Cerramos las bases de datos
    */
-
+   
    RECOVER USING oError
-
       msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
-
    END SEQUENCE
-
    ErrorBlock( oBlock )
-
+   
    if lClo
       CLOSE ( dbfCount )
    end if
-
-   ( dbf )->( ordsetfocus( nOrdAnt ) )
-   ( dbf )->( dbgoto( nRecAnt ) )
-
+   
+   ( dbf )->( OrdSetFocus( nOrdAnt ) )
+   ( dbf )->( dbGoTo( nRecAnt ) )
+   
    if nDoc == 0
       msgStop( "No puedo obtener el número de nuevo documento" )
    end if

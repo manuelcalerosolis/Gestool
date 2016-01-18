@@ -26,7 +26,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    DATA  oCtrCoste
    DATA  oOperario
    DATA  oObras
-   DATA oTarPreL
+   DATA  oTarPreL
 
    DATA  oPrp1
    DATA  oPrp2
@@ -1409,8 +1409,14 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cSufDoc    := ( D():PedidosClientes( ::nView ) )->cSufPed
 
                   ::oDbf:cIdeDoc    := ::idDocumento()
-                  ::oDbf:nNumLin    := ( aliasPedidosClientesLineas )->nNumLin
 
+                  ::oDbf:nAnoDoc    := Year( ( D():PedidosClientes( ::nView ) )->dFecPed )
+                  ::oDbf:nMesDoc    := Month( ( D():PedidosClientes( ::nView ) )->dFecPed )
+                  ::oDbf:dFecDoc    := ( D():PedidosClientes( ::nView ) )->dFecPed
+                  ::oDbf:cHorDoc    := SubStr( ( D():PedidosClientes( ::nView ) )->cTimCre, 1, 2 )
+                  ::oDbf:cMinDoc    := SubStr( ( D():PedidosClientes( ::nView ) )->cTimCre, 4, 2 )
+
+                  ::oDbf:nNumLin    := ( aliasPedidosClientesLineas )->nNumLin
                   ::oDbf:cCodArt    := ( aliasPedidosClientesLineas )->cRef
                   ::oDbf:cNomArt    := ( aliasPedidosClientesLineas )->cDetalle
 

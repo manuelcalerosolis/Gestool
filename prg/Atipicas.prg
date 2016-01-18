@@ -219,9 +219,9 @@ METHOD DefineFiles( cPath, cDriver, lUniqueName, cFileName ) CLASS TAtipicas
       FIELD NAME "cCodFam"    TYPE "C" LEN 16  DEC 0 COMMENT "Código de familias en atipicas"               OF oDbf
       FIELD NAME "nTipAtp"    TYPE "N" LEN  1  DEC 0 COMMENT "Tipo de atípicas"                             OF oDbf
       FIELD NAME "cCodPr1"    TYPE "C" LEN 20  DEC 0 COMMENT "Código propiedad 1"                           OF oDbf
-      FIELD NAME "cValPr1"    TYPE "C" LEN 40  DEC 0 COMMENT "Valor propiedad 1"                            OF oDbf
+      FIELD NAME "cValPr1"    TYPE "C" LEN 20  DEC 0 COMMENT "Valor propiedad 1"                            OF oDbf
       FIELD NAME "cCodPr2"    TYPE "C" LEN 20  DEC 0 COMMENT "Código propiedad 2"                           OF oDbf
-      FIELD NAME "cValPr2"    TYPE "C" LEN 40  DEC 0 COMMENT "Valor propiedad 2"                            OF oDbf
+      FIELD NAME "cValPr2"    TYPE "C" LEN 20  DEC 0 COMMENT "Valor propiedad 2"                            OF oDbf
       FIELD NAME "dFecIni"    TYPE "D" LEN  8  DEC 0 COMMENT "Fecha inicio de la situación atipica"         OF oDbf
       FIELD NAME "dFecFin"    TYPE "D" LEN  8  DEC 0 COMMENT "Fecha fin de la situación atipica"            OF oDbf
       FIELD NAME "lPrcCom"    TYPE "L" LEN  1  DEC 0 COMMENT "Lógico para precio de compras personal"       OF oDbf

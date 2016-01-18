@@ -6008,7 +6008,11 @@ Return ( by( nRow ) )
 
 Function Test() 
 
+<<<<<<< HEAD
    //TGeneracionAlbaranesClientes():New():Dialog()
+=======
+   // TGeneracionAlbaranesClientes():New():Dialog()
+>>>>>>> origin/master
 
 /*
    local nView                   := D():CreateView()

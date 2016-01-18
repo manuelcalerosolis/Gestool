@@ -67,6 +67,8 @@ CLASS TConversionDocumentos
 
    DATA aPropertiesTable
 
+   DATA oStock
+
    METHOD New()
 
    METHOD Dialog()
@@ -290,9 +292,15 @@ METHOD OpenFiles()
 
       D():PropiedadesLineas( ::nView )
 
+      ::oStock             := TStock():Create( cPatGrp() )
+
+      if !::oStock:lOpenFiles()
+         ::lOpenFiles      := .f.
+      end if
+
    RECOVER USING oError
 
-      ::lOpenFiles      := .f.
+      ::lOpenFiles         := .f.
 
       msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
 
@@ -311,6 +319,8 @@ RETURN ( ::lOpenFiles )
 METHOD CloseFiles()
 
    D():DeleteView( ::nView )
+
+   ::oStock:CloseFiles()
 
    ::lOpenFiles         := .f.
 
@@ -630,6 +640,9 @@ METHOD buildBrowseLines( oDlg )
    ::oBrwLines:nMarqueeStyle        := 6
    ::oBrwLines:cName                := "Browse.Lineas." + ::ClassName()
 
+   ::oBrwLines:lFooter              := .t.
+
+
    ::setBrowseLinesDocument()
 
    ::oBrwLines:CreateFromResource( 100 )
@@ -806,11 +819,15 @@ METHOD columnsBrowseLines()
       :cHeader                      := "Total " + cNombreUnidades()
       :Cargo                        := "getTotalUnits"
       :bEditValue                   := {|| ::getLineDocument():getTotalUnits() }
+      :cDataType                    := "N"
       :cEditPicture                 := masUnd()
+      :cFooterPicture               := masUnd()
       :nWidth                       := 60
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
+      :nFootStrAlign                := 1
       :lHide                        := .f.
+      :nFooterType                  := AGGR_SUM
       :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clickOnLineHeader( oColumn ) }         
       :bLDClickData                 := {|| ::toogleSelectLine() }
    end with
@@ -1327,6 +1344,8 @@ METHOD setBrowseLinesDocument()
    ::oBrwLines:setArray( ::oDocumentLines:getLines(), .t., , .f. )
    
    ::oBrwLines:bSeek := {|c| ::seekLine( c ) }
+
+   ::oBrwLines:makeTotals()
 
 RETURN ( .t. ) 
 

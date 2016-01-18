@@ -160,84 +160,85 @@ CLASS TRemMovAlm FROM TMasDet
    DATA  oDetMovimientos
    DATA  oDetSeriesMovimientos
 
-   Method New( cPath, cDriver, oWndParent, oMenuItem )   CONSTRUCTOR
+   METHOD New( cPath, cDriver, oWndParent, oMenuItem )   CONSTRUCTOR
 
-   Method Initiate( cText, oSender )            CONSTRUCTOR
+   METHOD Initiate( cText, oSender )            CONSTRUCTOR
 
-   Method OpenFiles( lExclusive )
-   Method CloseFiles()
+   METHOD OpenFiles( lExclusive )
+   METHOD CloseFiles()
 
-   Method OpenService( lExclusive )
-   Method CloseService()
-   Method CloseIndex()
+   METHOD OpenService( lExclusive )
+   METHOD CloseService()
+   METHOD CloseIndex()
 
-   Method Reindexa( oMeter )
+   METHOD Reindexa( oMeter )
 
-   Method GetNewCount()
+   METHOD GetNewCount()
 
-   Method DefineFiles()
-   Method DefineCalculate()
+   METHOD DefineFiles()
+   METHOD DefineCalculate()
 
-   Method Resource( nMode )
-   Method Activate()
+   METHOD Resource( nMode )
+   METHOD Activate()
 
-   Method AppendDet( oDlg )
-   Method EditDet( oDlg )
-   Method DeleteDet( oDlg )
+   METHOD AppendDet( oDlg )
+   METHOD EditDet( oDlg )
+   METHOD DeleteDet( oDlg )
 
-   Method lSave()
+   METHOD lSave()
+   METHOD RecalcularPrecios() INLINE ( ::oDetMovimientos:RecalcularPrecios(), ::oBrwDet:Refresh() )
 
-   Method ShwAlm( oSay, oBtnImp )
+   METHOD ShwAlm( oSay, oBtnImp )
 
-   Method nTotRemMov( lPic )
+   METHOD nTotRemMov( lPic )
 
-   Method Search()
+   METHOD Search()
 
-   Method lSelAll( lSel )
+   METHOD lSelAll( lSel )
 
-   Method lSelAllMov( lSel )  VIRTUAL
-   Method lSelMov()
+   METHOD lSelAllMov( lSel )  VIRTUAL
+   METHOD lSelMov()
 
    METHOD lSelAllDoc( lSel )
-   Method lSelDoc()
+   METHOD lSelDoc()
 
-   Method cTextoMovimiento()  INLINE   { "Entre almacenes", "Regularización", "Objetivos", "Consolidación" }[ Min( Max( ( ::oDbf:nArea )->nTipMov, 1 ), 4 ) ]
+   METHOD cTextoMovimiento()  INLINE   { "Entre almacenes", "Regularización", "Objetivos", "Consolidación" }[ Min( Max( ( ::oDbf:nArea )->nTipMov, 1 ), 4 ) ]
 
-   Method LoadAlmacen( nMode )
-   Method ImportAlmacen( nMode, oDlg )
+   METHOD LoadAlmacen( nMode )
+   METHOD ImportAlmacen( nMode, oDlg )
 
-   Method nClrText()
+   METHOD nClrText()
 
-   Method ShowKit( lSet )
+   METHOD ShowKit( lSet )
 
-   Method DataReport( oFr )
-   Method VariableReport( oFr )
-   Method DesignReportRemMov( oFr, dbfDoc )
-   Method PrintReportRemMov( nDevice, nCopies, cPrinter, dbfDoc )
+   METHOD DataReport( oFr )
+   METHOD VariableReport( oFr )
+   METHOD DesignReportRemMov( oFr, dbfDoc )
+   METHOD PrintReportRemMov( nDevice, nCopies, cPrinter, dbfDoc )
 
-   Method GenRemMov( lPrinter, cCaption, cCodDoc, cPrinter )
+   METHOD GenRemMov( lPrinter, cCaption, cCodDoc, cPrinter )
    METHOD bGenRemMov( lImprimir, cTitle, cCodDoc )
    METHOD lGenRemMov( oBrw, oBtn, lImp )
-   Method EPage( oInf, cCodDoc )
+   METHOD EPage( oInf, cCodDoc )
 
-   Method Save()
-   Method Load()
+   METHOD Save()
+   METHOD Load()
 
-   Method nGetNumberToSend()
-   Method SetNumberToSend()   INLINE   WritePProString( "Numero", ::cText, cValToChar( ::nNumberSend ), ::cIniFile )
-   Method IncNumberToSend()   INLINE   WritePProString( "Numero", ::cText, cValToChar( ++::nNumberSend ), ::cIniFile )
+   METHOD nGetNumberToSend()
+   METHOD SetNumberToSend()   INLINE   WritePProString( "Numero", ::cText, cValToChar( ::nNumberSend ), ::cIniFile )
+   METHOD IncNumberToSend()   INLINE   WritePProString( "Numero", ::cText, cValToChar( ++::nNumberSend ), ::cIniFile )
 
-   Method CreateData()
-   Method RestoreData()
-   Method SendData()
-   Method ReciveData()
-   Method Process()
+   METHOD CreateData()
+   METHOD RestoreData()
+   METHOD SendData()
+   METHOD ReciveData()
+   METHOD Process()
 
-   Method cMostrarSerie() 
+   METHOD cMostrarSerie() 
 
-   Method Report()            INLINE   TInfRemMov():New( "Remesas de movimientos", , , , , , { ::oDbf, ::oDetMovimientos:oDbf, ::oArt } ):Play()
+   METHOD Report()            INLINE   TInfRemMov():New( "Remesas de movimientos", , , , , , { ::oDbf, ::oDetMovimientos:oDbf, ::oArt } ):Play()
 
-   Method ActualizaStockWeb( cNumDoc )
+   METHOD ActualizaStockWeb( cNumDoc )
 
    METHOD GenerarEtiquetas()
 
@@ -336,12 +337,11 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TRemMovAlm
 RETURN ( ::oDbf )
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //
 // Campos calculados
 //
 
-Method DefineCalculate() CLASS TRemMovAlm 
+METHOD DefineCalculate() CLASS TRemMovAlm 
 
    ::aCal  := {}
 
@@ -1342,21 +1342,21 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
       ::oMeter          := TApoloMeter():ReDefine( 400, { | u | if( pCount() == 0, ::nMeter, ::nMeter := u ) }, 10, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
       REDEFINE BUTTON ;
-         ID       511 ;
+         ID       IDOK ;
 			OF 		oDlg ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
          ACTION   ( if( ::lSave( nMode ), ( ::EndResource( .t., nMode, oDlg ), oDlg:End( IDOK ) ), ) )
 
 		REDEFINE BUTTON ;
-         ID       510 ;
+         ID       IDCANCEL ;
 			OF 		oDlg ;
          CANCEL ;
          ACTION   ( oDlg:End() )
 
       REDEFINE BUTTON ;
-         ID       559 ;
-			OF 		oDlg ;
-         ACTION   ( ChmHelp( "Movimientosalmacen" ) )
+         ID       3 ;
+         OF       oDlg ;
+         ACTION   ( ::RecalcularPrecios() )
 
       if nMode != ZOOM_MODE
          oDlg:AddFastKey( VK_F2, {|| ::AppendDet( oDlg ) } )
@@ -1482,7 +1482,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Method GenRemMov( lPrinter, cCaption, cCodDoc, cPrinter, nCopies ) CLASS TRemMovAlm
+METHOD GenRemMov( lPrinter, cCaption, cCodDoc, cPrinter, nCopies ) CLASS TRemMovAlm
 
    local oInf
    local oDevice
@@ -1590,7 +1590,7 @@ Return Nil
 
 //----------------------------------------------------------------------------//
 
-Method EPage( oInf, cCodDoc ) CLASS TRemMovAlm 
+METHOD EPage( oInf, cCodDoc ) CLASS TRemMovAlm 
 
 	private nPagina		:= oInf:nPage
 	private lEnd			:= oInf:lFinish
@@ -1675,7 +1675,7 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-Method lSelMov() CLASS TRemMovAlm 
+METHOD lSelMov() CLASS TRemMovAlm 
 
    local nOrdAnt  := ::oDetMovimientos:oDbf:OrdSetFocus( "nNumRem" )
 
@@ -1709,7 +1709,7 @@ Return( .t. )
 
 //---------------------------------------------------------------------------//
 
-Method CreateData() CLASS TRemMovAlm 
+METHOD CreateData() CLASS TRemMovAlm 
 
    local lSnd        := .t.
    local oRemMov
@@ -1797,7 +1797,7 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method RestoreData() CLASS TRemMovAlm 
+METHOD RestoreData() CLASS TRemMovAlm 
 
    local oRemMov
 
@@ -1830,7 +1830,7 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method SendData() CLASS TRemMovAlm 
+METHOD SendData() CLASS TRemMovAlm 
 
    local cFileName
 
@@ -1856,7 +1856,7 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method ReciveData() CLASS TRemMovAlm 
+METHOD ReciveData() CLASS TRemMovAlm 
 
    local n
    local aExt
@@ -1883,7 +1883,7 @@ Return Self
 
 //----------------------------------------------------------------------------//
 
-Method Process() CLASS TRemMovAlm
+METHOD Process() CLASS TRemMovAlm
 
    local m
    local oAlm
@@ -2095,7 +2095,7 @@ Return Self
 
 //----------------------------------------------------------------------------//
 
-Method nGetNumberToSend() CLASS TRemMovAlm
+METHOD nGetNumberToSend() CLASS TRemMovAlm
 
    ::nNumberSend     := GetPvProfInt( "Numero", ::cText, ::nNumberSend, ::cIniFile )
 
@@ -2191,8 +2191,6 @@ METHOD AppendDet( oDlg ) CLASS TRemMovAlm
 
    local nDetalle
 
-   // oDlg:Disable()
-
    while .t.
 
       ::oDetMovimientos:oDbfVir:Blank()
@@ -2237,8 +2235,6 @@ METHOD AppendDet( oDlg ) CLASS TRemMovAlm
       end if
 
    end while
-
-   // oDlg:Enable()
 
 RETURN ( Self )
 
@@ -2329,7 +2325,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method ImportAlmacen( nMode, oDlg ) CLASS TRemMovAlm 
+METHOD ImportAlmacen( nMode, oDlg ) CLASS TRemMovAlm 
 
    // oDlg:Disable()
 
@@ -2414,7 +2410,7 @@ Method ImportAlmacen( nMode, oDlg ) CLASS TRemMovAlm
       ::oArticuloFin:bValid       := {|| cArticulo( ::oArticuloFin, ::oArt:cAlias, ::oArticuloFin:oHelpText ) }
       ::oArticuloFin:bHelp        := {|| brwArticulo( ::oArticuloFin, ::oArticuloFin:oHelpText ) }
 
-REDEFINE APOLOMETER ::oMtrStock ;
+      REDEFINE APOLOMETER ::oMtrStock ;
          VAR      ::nMtrStock ;
          PROMPT   "" ;
          ID       400 ;
@@ -2970,7 +2966,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Method ActualizaStockWeb( cNumDoc ) CLASS TRemMovAlm
+METHOD ActualizaStockWeb( cNumDoc ) CLASS TRemMovAlm
 
    local nRec
    local nOrdAnt
@@ -3509,6 +3505,7 @@ CLASS TDetMovimientos FROM TDet
    METHOD RollBack()
 
    METHOD loadArticulo( oDlg, lValidDetalle, nMode )
+      METHOD getPrecioCosto() 
 
    METHOD Save()
    METHOD Asigna()
@@ -3526,6 +3523,8 @@ CLASS TDetMovimientos FROM TDet
    METHOD nTotUnidadesVir( lPic )
    METHOD nTotVolumenVir( lPic )
    METHOD nTotPesoVir( lPic )
+
+   METHOD RecalcularPrecios()
 
 END CLASS
 
@@ -3556,8 +3555,8 @@ METHOD DefineFiles( cPath, cDriver, lUniqueName, cFileName ) CLASS TDetMovimient
       FIELD NAME "cCodMov"    TYPE "C" LEN   2 DEC 0 COMMENT "TM"                                  OF oDbf
       FIELD NAME "cCodPr1"    TYPE "C" LEN  20 DEC 0 COMMENT "Código propiedad 1"                  OF oDbf
       FIELD NAME "cCodPr2"    TYPE "C" LEN  20 DEC 0 COMMENT "Código propiedad 2"                  OF oDbf
-      FIELD NAME "cValPr1"    TYPE "C" LEN  40 DEC 0 COMMENT "Valor porpiedad 1"                   OF oDbf
-      FIELD NAME "cValPr2"    TYPE "C" LEN  40 DEC 0 COMMENT "Valor porpiedad 2"                   OF oDbf
+      FIELD NAME "cValPr1"    TYPE "C" LEN  20 DEC 0 COMMENT "Valor porpiedad 1"                   OF oDbf
+      FIELD NAME "cValPr2"    TYPE "C" LEN  20 DEC 0 COMMENT "Valor porpiedad 2"                   OF oDbf
       FIELD NAME "cCodUsr"    TYPE "C" LEN   3 DEC 0 COMMENT "Código usuario"                      OF oDbf
       FIELD NAME "cCodDlg"    TYPE "C" LEN   2 DEC 0 COMMENT "Código delegación"                   OF oDbf
       FIELD NAME "lLote"      TYPE "L" LEN   1 DEC 0 COMMENT "Lógico lote"                         OF oDbf
@@ -3836,7 +3835,8 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          PICTURE  ::oParent:cPicUnd ;
          OF       oDlg
 
-      REDEFINE GET ::oPreDiv VAR ::oDbfVir:nPreDiv ;
+      REDEFINE GET ::oPreDiv ;
+         VAR      ::oDbfVir:nPreDiv ;
          ID       180 ;
          IDSAY    181 ;
 			SPINNER ;
@@ -3854,7 +3854,6 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          ID       190 ;
          PICTURE  ::oParent:cPirDiv ;
 			OF 		oDlg
-
      
       /*
       Almacen origen-----------------------------------------------------------
@@ -4036,6 +4035,7 @@ METHOD ValidResource( nMode, oDlg, oBtn ) CLASS TDetMovimientos
    local cCodMov
    local lNowSer
    local lNumSer
+   local nPrecioCosto
 
    oBtn:SetFocus()
 
@@ -4085,6 +4085,7 @@ METHOD ValidResource( nMode, oDlg, oBtn ) CLASS TDetMovimientos
       cCodPr2        := ::oDbfVir:cCodPr2
       cValPr1        := ::oDbfVir:cValPr1
       cValPr2        := ::oDbfVir:cValPr2
+      nPrecioCosto   := ::oDbfVir:nPreDiv 
 
       ::oDbfVir:GetStatus()
 
@@ -4197,13 +4198,18 @@ METHOD ValidResource( nMode, oDlg, oBtn ) CLASS TDetMovimientos
                ::oDbfVir:cCodDlg    := oRetFld( cCurUsr(), ::oParent:oUsr, "cCodDlg" )
                ::oDbfVir:nCajMov    := 1
                ::oDbfVir:nUndMov    := ::oBrwPrp:Cargo[ n, i ]:Value
-               ::oDbfVir:nPreDiv    := ::oBrwPrp:Cargo[ n, i ]:nPrecioCompra
                ::oDbfVir:lSndDoc    := .t.
                ::oDbfVir:nNumLin    := nLastNum( ::oDbfVir:cAlias )
                ::oDbfVir:nVolumen   := oRetFld( cRefMov, ::oParent:oArt, "" )
                ::oDbfVir:cVolumen   := oRetFld( cRefMov, ::oParent:oArt, "" )
                ::oDbfVir:nPesoKg    := oRetFld( cRefMov, ::oParent:oArt, "" )
                ::oDbfVir:cPesoKg    := oRetFld( cRefMov, ::oParent:oArt, "" )
+
+               if ( ::oBrwPrp:Cargo[ n, i ]:nPrecioCompra != 0 )
+                  ::oDbfVir:nPreDiv := ::oBrwPrp:Cargo[ n, i ]:nPrecioCompra
+               else
+                  ::oDbfVir:nPreDiv := ::oDbfVir:nPreDiv 
+               end if 
 
                ::oDbfVir:Save()
 
@@ -4290,11 +4296,8 @@ METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
    // Articulos con numeros de serie no podemos pasarlo en regularizacion por objetivos
 
    if ( ::oParent:oDbf:nTipMov == 3 ) .and. ( RetFld( cCodArt, ::oParent:oArt:cAlias, "lNumSer" ) )
-
       MsgStop( "Artículos con números de serie no pueden incluirse regularizaciones por objetivo." )
-
       Return .f.
-
    end if
 
    // Ahora buscamos por el codigo interno----------------------------------------
@@ -4307,10 +4310,7 @@ METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
 
          if ( lChgCodArt )
 
-            ::oRefMov:cText( ::oParent:oArt:Codigo )
-
-            // Nombre-------------------------------------------------------------
-
+            ::oRefMov:cText(     ::oParent:oArt:Codigo )
             ::oGetDetalle:cText( ::oParent:oArt:Nombre )
 
             // Propiedades--------------------------------------------------------
@@ -4449,28 +4449,10 @@ METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
             end if
 
             /*
-            Precios medios--------------------------------------------------------
+            Precios de costo---------------------------------------------------
             */
 
-            if !uFieldEmpresa( "lCosAct" )
-
-               if ( ::oParent:oDbf:nTipMov == 1 )
-                  nPreMed     := ::oParent:oStock:nCostoMedio( ::oParent:oArt:Codigo, ::oParent:oDbf:cAlmOrg, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote )
-               else
-                  nPreMed     := ::oParent:oStock:nCostoMedio( ::oParent:oArt:Codigo, ::oParent:oDbf:cAlmDes, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote )
-               end if
-
-                  if nPreMed == 0
-                     nPreMed  := nCosto( ::oParent:oArt:Codigo, ::oParent:oArt:cAlias, ::oParent:oArtKit:cAlias )
-                  end if
-
-            else
-
-               nPreMed        := nCosto( ::oParent:oArt:Codigo, ::oParent:oArt:cAlias, ::oParent:oArtKit:cAlias )
-
-            end if
-
-            ::oPreDiv:cText( nPreMed )
+            ::oPreDiv:cText( ::getPrecioCosto() )
 
             /*
             Stock actual-------------------------------------------------------
@@ -4515,6 +4497,26 @@ METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
    end if
 
 Return .t.
+
+//--------------------------------------------------------------------------//
+
+METHOD getPrecioCosto() CLASS TDetMovimientos
+
+   local nPrecioCosto   := 0
+
+   if !uFieldEmpresa( "lCosAct" )
+      if ( ::oParent:oDbf:nTipMov == 1 )
+         nPrecioCosto   := ::oParent:oStock:nCostoMedio( ::oDbfVir:cRefMov, ::oParent:oDbf:cAlmOrg, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote )
+      else
+         nPrecioCosto   := ::oParent:oStock:nCostoMedio( ::oDbfVir:cRefMov, ::oParent:oDbf:cAlmDes, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote )
+      end if
+   end if 
+
+   if ( nPrecioCosto == 0 )
+      nPrecioCosto      := nCosto( ::oDbfVir:cRefMov, ::oParent:oArt:cAlias, ::oParent:oArtKit:cAlias )
+   end if
+
+Return ( nPrecioCosto )
 
 //--------------------------------------------------------------------------//
 
@@ -4827,7 +4829,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method Save() CLASS TDetMovimientos
+METHOD Save() CLASS TDetMovimientos
 
    local nSec
 
@@ -5050,6 +5052,33 @@ METHOD nTotVolumenVir( lPic ) CLASS TDetMovimientos
 RETURN ( if( lPic, Trans( nVolumen, MasUnd() ), nVolumen ) )
 
 //---------------------------------------------------------------------------//
+
+METHOD RecalcularPrecios() CLASS TDetMovimientos
+
+   local nRecno
+
+   if !msgYesNo( "¿Desea recalcular los precios de costo?", "Confirme")
+      Return .f.
+   end if 
+
+   CursorWait()
+
+   nRecno   := ::oDbfVir:Recno()
+
+   ::oDbfVir:GoTop()
+   while !::oDbfVir:Eof()
+      ::oDbfVir:FieldPutByName( "nPreDiv", ::getPrecioCosto() )
+      ::oDbfVir:Skip()
+   end while
+
+   ::oDbfVir:GoTo( nRecno )
+
+   CursorWE()
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

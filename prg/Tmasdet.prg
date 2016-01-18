@@ -717,13 +717,21 @@ METHOD Zoom( oBrw ) CLASS TMasDet
 
    ::GetFirstKey()
 
-   ::oDbf:Load()
-   ::LoadDetails( .t. )
+   if ::oDbf:RecLock()
 
-   ::Resource( 3 )
+      ::oDbf:Load()
 
-   ::CancelDetails()
-   ::oDbf:Cancel()
+      ::LoadDetails( .t. )
+
+      ::Resource( 3 )
+
+      ::CancelDetails()
+
+      ::oDbf:Cancel()
+
+      ::oDbf:UnLock()
+
+   end if
 
    if !Empty( oBrw )
       oBrw:Refresh()
