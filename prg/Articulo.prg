@@ -3422,14 +3422,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    REDEFINE BUTTON aBtnDiv[ 2 ];
 		ID 		501 ;
       OF       fldPropiedades;
-      WHEN     ( !Empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ] ) .and. nMode != ZOOM_MODE );
+      WHEN     ( nMode != ZOOM_MODE );
       ACTION   ( WinEdtRec( oBrwDiv, bEdtVta, dbfTmpVta, , , aTmp ) )
 
    REDEFINE BUTTON aBtnDiv[ 3 ];
 		ID 		502 ;
       OF       fldPropiedades;
-      WHEN     ( !Empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ] ) .and. nMode != ZOOM_MODE );
-      ACTION   ( dbDelRec( oBrwDiv, dbfTmpVta ) )
+      WHEN     ( nMode != ZOOM_MODE );
+      ACTION   ( WinDelRec( oBrwDiv, dbfTmpVta ) )
 
    /*
    Quinta caja de dialogo______________________________________________________
@@ -4708,12 +4708,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       fldImagenes:AddFastKey( VK_F3, {|| WinEdtRec( oBrwImg, bEdtImg, dbfTmpImg, aTmp ) } )
       fldImagenes:AddFastKey( VK_F4, {|| WinDelRec( oBrwImg, dbfTmpImg ) } )
 
-      oDlg:AddFastKey(  VK_F7, {|| if( oFld:nOption > 1, oFld:SetOption( oFld:nOption - 1 ), ) } )
-      oDlg:AddFastKey(  VK_F8, {|| if( oFld:nOption < Len( oFld:aDialogs ), oFld:SetOption( oFld:nOption + 1 ), ) } )
+      fldPropiedades:AddFastKey( VK_F2, {|| WinAppRec( oBrwDiv, bEdtVta, dbfTmpVta, , , aTmp ) } )
+      fldPropiedades:AddFastKey( VK_F3, {|| WinEdtRec( oBrwDiv, bEdtVta, dbfTmpVta, , , aTmp ) } )
+      fldPropiedades:AddFastKey( VK_F4, {|| WinDelRec( oBrwDiv, dbfTmpVta ) } )
 
+      oDlg:AddFastKey( VK_F5, {|| endTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2, aImpComanda ) } )
+      oDlg:AddFastKey( VK_F7, {|| if( oFld:nOption > 1, oFld:SetOption( oFld:nOption - 1 ), ) } )
+      oDlg:AddFastKey( VK_F8, {|| if( oFld:nOption < Len( oFld:aDialogs ), oFld:SetOption( oFld:nOption + 1 ), ) } )
       oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ] ) } )
-
-      oDlg:AddFastKey(  VK_F5, {|| EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2, aImpComanda ) } )
 
       if uFieldEmpresa( "lRealWeb" )
          oDlg:AddFastKey( VK_F6, {|| EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2, aImpComanda, .t. ) } )

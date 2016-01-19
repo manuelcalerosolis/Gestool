@@ -1867,7 +1867,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
       aTmp[ _LSNDDOC ]  := .t.
       aTmp[ _CCODDLG ]  := oUser():cDelegacion()
       aTmp[ _LIVAINC ]  := uFieldEmpresa( "lIvaInc" )
-      aTmp[ _CMANOBR ]  := Padr( "Gastos", 250 )
+      aTmp[ _CMANOBR ]  := padr( getTraslation( "Gastos" ), 250 )
       aTmp[ _NIVAMAN ]  := nIva( dbfIva, cDefIva() )
 
       if !Empty( cCodCli )

@@ -69,6 +69,7 @@ CLASS TUser
    Data     _NotCambiarPrecio             INIT .f.
    Method   lNotCambiarPrecio( lNewVal )
    Method   lCambiarPrecio()              INLINE ( !::lNotCambiarPrecio() )
+   Method   nEditarPrecio()               INLINE ( if( ::lCambiarPrecio(), 1, 0 ) )
 
    Data     _NotCambiarPrecioGrupo
    Method   lNotCambiarPrecioGrupo( lNewVal )   INLINE if( isLogic( lNewVal ), ::_NotCambiarPrecioGrupo := lNewVal, ::_NotCambiarPrecioGrupo )

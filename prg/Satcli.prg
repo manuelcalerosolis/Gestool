@@ -2753,7 +2753,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 
       REDEFINE CHECKBOX aGet[ _LIVAINC ] VAR aTmp[ _LIVAINC ] ;
          ID       129 ;
-         WHEN     ( ( dbfTmpLin )->( LastRec() ) == 0 ) ;
+         WHEN     ( ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CCODEST ] VAR aTmp[ _CCODEST ] ;

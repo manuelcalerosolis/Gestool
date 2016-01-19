@@ -2956,8 +2956,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :nWidth              := 80
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
-         :nEditType           := 1
-         :bOnPostEdit         := {|o,x,n| ChangePrecio( o, x, n, aTmp ) }
+         :nEditType           := oUser():nEditarPrecio()
+         :bOnPostEdit         := {|o,x,n| changeFieldLine( o, x, n, aTmp ) }
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -2967,6 +2967,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :nWidth              := 60
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
+         :nEditType           := oUser():nEditarPrecio()
+         :bOnPostEdit         := {|o,x,n| changeFieldLine( o, x, n, aTmp, "nDto" ) }
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -2976,6 +2978,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :nWidth              := 50
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
+         :nEditType           := oUser():nEditarPrecio()
+         :bOnPostEdit         := {|o,x,n| changeFieldLine( o, x, n, aTmp, "nDtoDiv" ) }
          :lHide               := .t.
       end with
 
@@ -2986,6 +2990,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :nWidth              := 40
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
+         :nEditType           := oUser():nEditarPrecio()
+         :bOnPostEdit         := {|o,x,n| changeFieldLine( o, x, n, aTmp, "nDtoPrm" ) }
          :lHide               := .t.
       end with
 
@@ -3039,10 +3045,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader          := "Centro de coste"
-         :bEditValue       := {|| ( dbfTmpLin )->cCtrCoste }
-         :nWidth           := 20
-         :lHide            := .t.
+         :cHeader             := "Centro de coste"
+         :bEditValue          := {|| ( dbfTmpLin )->cCtrCoste }
+         :nWidth              := 20
+         :lHide               := .t.
       end with
 
       if nMode != ZOOM_MODE
@@ -3050,7 +3056,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       end if
 
       /*
-      Cajas para el desglose
+      Cajas para el desglose---------------------------------------------------
       */
 
       REDEFINE GET aGet[ _CDTOESP ] VAR aTmp[ _CDTOESP ] ;
@@ -3471,18 +3477,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       160 ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE CHECKBOX aGet[ _LIVAINC ] VAR aTmp[ _LIVAINC ] ;
+      REDEFINE CHECKBOX aGet[ _LIVAINC ] ;
+         VAR      aTmp[ _LIVAINC ] ;
          ID       165 ;
-         WHEN     ( lWhen .and. ( dbfTmpLin )->( LastRec() ) == 0 ) ;
+         WHEN     ( lWhen .and. ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
          OF       oFld:aDialogs[1]
 
-      /*
-      Segunda caja de dialogo
-      */
+      // Segunda caja de dialogo-----------------------------------------------
 
-      /*
-      Transportistas-----------------------------------------------------------
-      */
+      // Transportistas--------------------------------------------------------
 
       REDEFINE GET aGet[ _CCODTRN ] VAR aTmp[ _CCODTRN ] ;
          ID       235 ;
@@ -3514,6 +3517,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       129 ;
          WHEN     ( lWhen ) ;
          OF       oFld:aDialogs[2]
+      
       /*
       Cajas____________________________________________________________________
       */
@@ -4698,26 +4702,23 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
       REDEFINE GET aGet[_NDTO] VAR aTmp[_NDTO] ;
          ID       180 ;
          SPINNER ;
-         WHEN     ( !aTmp[_LCONTROL] .and. nMode != ZOOM_MODE .and. !lTotLin ) ;
-         COLOR    CLR_GET ;
+         WHEN     ( !aTmp[ _LCONTROL ] .and. nMode != ZOOM_MODE .and. !lTotLin ) ;
          PICTURE  "@E 999.99";
          ON CHANGE( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_NDTOPRM] VAR aTmp[_NDTOPRM] ;
+      REDEFINE GET aGet[ _NDTOPRM ] VAR aTmp[ _NDTOPRM ] ;
          ID       190 ;
          SPINNER ;
-         WHEN     ( !aTmp[_LCONTROL] .and. nMode != ZOOM_MODE .and. !lTotLin ) ;
-         COLOR    CLR_GET ;
+         WHEN     ( !aTmp[ _LCONTROL ] .and. nMode != ZOOM_MODE .and. !lTotLin ) ;
          PICTURE  "@E 999.99";
          ON CHANGE( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_NCOMAGE] VAR aTmp[_NCOMAGE] ;
+      REDEFINE GET aGet[ _NCOMAGE ] VAR aTmp[ _NCOMAGE ] ;
          ID       200 ;
          SPINNER ;
-         WHEN     ( !aTmp[_LCONTROL] .and. nMode != ZOOM_MODE .and. !lTotLin ) ;
-         COLOR    CLR_GET ;
+         WHEN     ( !aTmp[ _LCONTROL ] .and. nMode != ZOOM_MODE .and. !lTotLin ) ;
          PICTURE  "@E 999.99";
          OF       oFld:aDialogs[1]
 
@@ -4731,14 +4732,14 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
 
       end if
 
-      REDEFINE GET aGet[_NDTODIV] VAR aTmp[_NDTODIV] ;
+      REDEFINE GET aGet[ _NDTODIV ] VAR aTmp[ _NDTODIV ] ;
          ID       260 ;
          IDSAY    261 ;
          SPINNER ;
          MIN      0 ;
          COLOR    Rgb( 255, 0, 0 ) ;
          ON CHANGE( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) );
-         VALID    ( !aTmp[_LCONTROL] .and. aTmp[_NDTODIV] >= 0 ) ;
+         VALID    ( !aTmp[ _LCONTROL ] .and. aTmp[ _NDTODIV ] >= 0 ) ;
          WHEN     ( nMode != ZOOM_MODE .and. !lTotLin ) ;
          PICTURE  cPouDiv ;
          OF       oFld:aDialogs[1]
@@ -4810,7 +4811,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          WHEN     .f. ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_NCOSDIV] VAR aTmp[_NCOSDIV] ;
+      REDEFINE GET aGet[ _NCOSDIV ] VAR aTmp[ _NCOSDIV ] ;
          ID       320 ;
          IDSAY    321 ;
          WHEN     ( oUser():lAdministrador() .and. nMode != ZOOM_MODE );
@@ -9708,7 +9709,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, 
       
    end case
 
-   if !Empty( aTmp[_CCODPR1 ] )
+   if !Empty( aTmp[ _CCODPR1 ] )
 
       if !Empty( aGet[ _CVALPR1 ] )
          aGet[ _CVALPR1 ]:Show()
@@ -9725,7 +9726,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, 
    else
 
       if !Empty( aGet[ _CVALPR1 ] )
-         aGet[_CVALPR1 ]:hide()
+         aGet[ _CVALPR1 ]:hide()
       end if
       if !Empty( oSayPr1 )
          oSayPr1:hide()
@@ -10932,10 +10933,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
       return nil 
    end if
 
-   if aTmp[ _NUNICAJA ] == 0
-      aTmp[ _NUNICAJA ] := 1
-   end if 
-
    if !Empty( aTmp[ _CREF ] ) .and. ( aTmp[ _LNOTVTA ] .or. aTmp[ _LMSGVTA ] )
 
       nTotUnd     := nTotNAlbCli( aTmp )
@@ -11004,8 +11001,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
       else
 
         saveDetail( aTmp, aClo, aGet, aTmpAlb, dbfTmpLin, oBrw, nMode )
-
-        //WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
 
       end if
 
@@ -16892,7 +16887,6 @@ FUNCTION nTotAlbCli( cAlbaran, cAlbCliT, cAlbCliL, cIva, cDiv, aTmp, cDivRet, lP
 
    // Descuentos atipicos sobre Descuentos especiales
 
-
    if nSbrAtp == 2 .and. nDtoAtp != 0
 
       aTotalAtp[1]   := Round( _NBASIVA1 * nDtoAtp / 100, nRouDiv )
@@ -17031,7 +17025,7 @@ FUNCTION nTotAlbCli( cAlbaran, cAlbCliT, cAlbCliL, cIva, cDiv, aTmp, cDivRet, lP
       _NBASIVA3      += _NIVMIVA3
    end if
 
-   // Calculamos los impuestosS-----------------------------------------------------
+   // Calculamos los impuestos-----------------------------------------------------
 
    if !lIvaInc
 
@@ -17100,9 +17094,9 @@ FUNCTION nTotAlbCli( cAlbaran, cAlbCliT, cAlbCliL, cIva, cDiv, aTmp, cDivRet, lP
       _NBASIVA3      -= _NIMPIVA3
 
       if uFieldEmpresa( "lIvaImpEsp")
-         _NBASIVA1         -= _NIVMIVA1
-         _NBASIVA2         -= _NIVMIVA2
-         _NBASIVA3         -= _NIVMIVA3
+         _NBASIVA1   -= _NIVMIVA1
+         _NBASIVA2   -= _NIVMIVA2
+         _NBASIVA3   -= _NIVMIVA3
       end if
 
       _NBASIVA1      -= _NIMSATQ1
@@ -17955,17 +17949,15 @@ Return ( cFormato )
 
 //---------------------------------------------------------------------------// 
 
-Static Function ChangePrecio( oCol, uNewValue, nKey, aTmp )
+Static Function changeFieldLine( oCol, uNewValue, nKey, aTmp, cFieldToChange )
 
-   /*
-   Cambiamos el valor de las unidades de la linea de la factura---------------
-   */
+   DEFAULT cFieldToChange           := "nPreUnit"
 
-   if IsNum( nKey ) .and. ( nKey != VK_ESCAPE ) .and. !IsNil( uNewValue )
+   if isNum( nKey ) .and. ( nKey != VK_ESCAPE ) .and. !isNil( uNewValue )
 
-      ( dbfTmpLin )->nPreUnit       := uNewValue
+      ( dbfTmpLin )->( fieldput( fieldpos( cFieldToChange ), uNewValue ) )
 
-      RecalculaTotal( aTmp )
+      recalculaTotal( aTmp )
 
    end if
 

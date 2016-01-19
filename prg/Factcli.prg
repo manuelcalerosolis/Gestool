@@ -2564,14 +2564,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    local cTipFac
    local oSayDias
    local hBmp
-   local hBmpGeneral			:= { 	{ "Resource" => "Factura_cliente_48_alpha", 		"Dialog" => 1 },;
-   										{ "Resource" => "Folder2_red_alpha_48", 			"Dialog" => 2 },;
-   										{ "Resource" => "Information_48_alpha", 			"Dialog" => 3 },;
-   										{ "Resource" => "Address_book2_alpha_48", 		    "Dialog" => 4 },;
-                                 		{ "Resource" => "form_blue_48",    		         	"Dialog" => 5 },;
-                                 		{ "Resource" => "document_attachment_48",    		"Dialog" => 6 } }
-   // local container1 		:=  oFld:aDialogs[1]
-
+   local hBmpGeneral			:= { 	{ "Resource" => "Factura_cliente_48_alpha",  "Dialog" => 1 },;
+                                 { "Resource" => "Folder2_red_alpha_48",      "Dialog" => 2 },;
+                                 { "Resource" => "Information_48_alpha",      "Dialog" => 3 },;
+                                 { "Resource" => "Address_book2_alpha_48",    "Dialog" => 4 },;
+                                 { "Resource" => "form_blue_48",              "Dialog" => 5 },;
+                                 { "Resource" => "document_attachment_48",    "Dialog" => 6 } }
    
    /*
    Este valor los guaradamos para detectar los posibles cambios----------------
@@ -2895,7 +2893,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       REDEFINE CHECKBOX aGet[ _LIVAINC ] VAR aTmp[ _LIVAINC ] ;
          ID       200 ;
-         WHEN     ( ( dbfTmpLin )->( LastRec() ) == 0 ) ;
+         WHEN     ( ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
          OF       oFld:aDialogs[1]
 
       /*
@@ -6725,8 +6723,6 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                (dbfTmpLin)->cDetalle   := cDesAlb
                (dbfTmpLin)->lControl   := .t.
             end if
-
-
 
             /*
             A¤ade lineas de Albaran a la Factura

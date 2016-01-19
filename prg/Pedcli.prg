@@ -1869,7 +1869,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          aTmp[ _CCODUSR ]     := cCurUsr()
          aTmp[ _CCODDLG ]     := oUser():cDelegacion()
          aTmp[ _LIVAINC ]     := uFieldEmpresa( "lIvaInc" )
-         aTmp[ _CMANOBR ]     := Padr( "Gastos", 250 )
+         aTmp[ _CMANOBR ]     := padr( getTraslation( "Gastos" ), 250 )
          aTmp[ _NIVAMAN ]     := nIva( D():TiposIva( nView ), cDefIva() )
          aTmp[ _DFECENTR]     := ctod( "" )
          aTmp[ _DFECSAL ]     := ctod( "" )
@@ -3003,7 +3003,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
       REDEFINE CHECKBOX aGet[ _LIVAINC ] VAR aTmp[ _LIVAINC ] ;
          ID       129 ;
-         WHEN     ( ( dbfTmpLin )->( LastRec() ) == 0 ) ;
+         WHEN     ( ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
          OF       oFld:aDialogs[1]
 
 		/*
@@ -15650,7 +15650,7 @@ function aItmPedCli()
    aAdd( aItmPedCli, { "lAlquiler","L",   1,  0, "Lógico de alquiler",                                      "Alquiler",                "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "dFecEntr","D",    8,  0, "Fecha inicio servicio",                                   "InicioServicio",          "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "dFecSal", "D",    8,  0, "Fecha fin de servicio",                                   "FinServicio",             "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "cManObr", "C",  250,  0, "Literal de gastos" ,                                      "LiteralGastos",           "", "( cDbf )", {|| Padr( "Gastos", 250 ) } } )
+   aAdd( aItmPedCli, { "cManObr", "C",  250,  0, "Literal de gastos" ,                                      "LiteralGastos",           "", "( cDbf )", {|| padr( getTraslation( "Gastos" ), 250 ) } } )
    aAdd( aItmPedCli, { "nGenerado","N",   1,  0, "Estado generado" ,                                        "",                        "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "nRecibido","N",   1,  0, "Estado recibido" ,                                        "",                        "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "lInternet","L",   1,  0, "Pedido desde internet" ,                                  "",                        "", "( cDbf )", nil } )
