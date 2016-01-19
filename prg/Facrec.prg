@@ -2106,7 +2106,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       aTmp[ _CTIPMOV    ]  := cDefVta()
       aTmp[ _CCODDLG    ]  := oUser():cDelegacion()
       aTmp[ _LIVAINC    ]  := uFieldEmpresa( "lIvaInc" )
-      aTmp[ _CMANOBR    ]  := Padr( "Gastos", 250 )
+      aTmp[ _CMANOBR    ]  := padr( getTraslation( "Gastos" ), 250 )
       aTmp[ _TFECFAC    ]  := getSysTime()
 
       if !Empty( cCodCli )

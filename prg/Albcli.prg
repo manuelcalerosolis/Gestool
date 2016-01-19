@@ -2249,7 +2249,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          aTmp[ _CCODDLG   ]   := oUser():cDelegacion()
          aTmp[ _LIVAINC   ]   := uFieldEmpresa( "lIvaInc" )
          aTmp[ _NIVAMAN   ]   := nIva( D():Get( "TIva", nView ), cDefIva() )
-         aTmp[ _CMANOBR   ]   := Padr( "Gastos", 250 )
+         aTmp[ _CMANOBR   ]   := Padr( getTraslation( "Gastos" ), 250 )
          aTmp[ _NFACTURADO]   := 1
          aTmp[ _TFECALB   ]   := GetSysTime()
 
@@ -16527,7 +16527,7 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "dFecEntr",  "D",  8, 0, "Fecha de entrada de alquiler",                             "EntradaAlquiler",               "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "dFecSal",   "D",  8, 0, "Fecha de salida de alquiler",                              "SalidaAlquiler",                "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "lAlquiler", "L",  1, 0, "Lógico de alquiler",                                       "Alquiler",                      "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "cManObr",   "C",250, 0, "" ,                                                        "LiteralGastos",                 "", "( cDbf )", {|| Padr( "Gastos", 250 ) } } )
+   aAdd( aItmAlbCli, { "cManObr",   "C",250, 0, "" ,                                                        "LiteralGastos",                 "", "( cDbf )", {|| padr( getTraslation( "Gastos" ), 250 ) } } )
    aAdd( aItmAlbCli, { "lOrdCar",   "L",  1, 0, "Lógico de pertenecer a un orden de carga" ,                "",                              "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "cNumTik",   "C", 13, 0, "Número del ticket" ,                                       "NumeroTicket",                  "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "cTlfCli",   "C", 20, 0, "Teléfono del cliente" ,                                    "TelefonoCliente",               "", "( cDbf )", nil } )
@@ -18108,3 +18108,16 @@ Static Function lChangeRegIva( aTmp )
 return ( .t. )
 
 //---------------------------------------------------------------------------//
+
+Function nombrePrimeraPropiedadAlbaranesClientesLineas()
+
+Return ( nombrePropiedad( ( D():AlbaranesClientesLineas( nView ) )->cCodPr1, ( D():AlbaranesClientesLineas( nView ) )->cValPr1, nView ) )
+
+//---------------------------------------------------------------------------//
+
+Function nombreSegundaPropiedadAlbaranesClientesLineas()
+
+Return ( nombrePropiedad( ( D():AlbaranesClientesLineas( nView ) )->cCodPr2, ( D():AlbaranesClientesLineas( nView ) )->cValPr2, nView ) )
+
+//---------------------------------------------------------------------------//
+
