@@ -4986,12 +4986,9 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oFld, oBrw, oDlg, oSayPr1, oSayPr
 
       nTotUnd     := nTotNFacRec( aTmp ) - nTotNFacRec( dbfTmpLin )
 
-      if nTotUnd != 0 .and. nStkAct - nTotUnd < 0
-
+      if oUser():lNotAllowSales( nTotUnd != 0 .and. ( nStkAct - nTotUnd ) < 0 )
          MsgStop( "No hay stock suficiente." )
-         
          return nil
-
       end if
 
    end if
@@ -5295,13 +5292,13 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
                nUnidades      := nUniCaj * ( dbfKit )->nUndKit
 
                do case
-                  case nStkActual - nUnidades < 0
+                  case oUser():lNotAllowSales( nStkActual - nUnidades < 0 )
 
                      MsgStop( "No hay stock suficiente para realizar la venta" + CRLF + ;
                               "del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( D():Articulos( nView ) )->Nombre ),;
                               "¡Atención!" )
 
-                  case nStkActual - nUnidades < nStockMinimo
+                  case oUser():lNotAllowSales( nStkActual - nUnidades < nStockMinimo )
 
                      MsgStop( "El stock del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( D():Articulos( nView ) )->Nombre )  + CRLF + ;
                               "está bajo minimo."                                                                                                  + CRLF + ;

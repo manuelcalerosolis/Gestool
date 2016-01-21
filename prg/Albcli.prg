@@ -2996,6 +2996,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       end with
 
       with object ( oBrwLin:AddCol() )
+         :cHeader             := "Codigo agente"
+         :bEditValue          := {|| ( dbfTmpLin )->cCodAge }
+         :nWidth              := 40
+         :lHide               := .t.
+      end with
+
+      with object ( oBrwLin:AddCol() )
          :cHeader             := "% Age"
          :bEditValue          := {|| ( dbfTmpLin )->nComAge }
          :cEditPicture        := "@E 999.99"
@@ -12723,13 +12730,13 @@ Static Function lCompruebaStock( uTmpLin, oStock, nTotalUnidades, nStockActual )
 
    end case
 
-   if nTotalUnidades  != 0
+   if nTotalUnidades != 0
 
       do case
          case ( nStockActual - nTotalUnidades ) < 0
 
-            if lNotVta
-               MsgStop( "No hay stock suficiente, tenemos " + Alltrim( Trans( nStockActual, MasUnd() ) ) + " unidad(es) disponible(s)," + CRLF + "en almacén " + cCodigoAlmacen + "." )
+            if oUser():lNotAllowSales( lNotVta )
+               msgStop( "No hay stock suficiente, tenemos " + Alltrim( Trans( nStockActual, MasUnd() ) ) + " unidad(es) disponible(s)," + CRLF + "en almacén " + cCodigoAlmacen + "." )
                return .f.
             end if
 

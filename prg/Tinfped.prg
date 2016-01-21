@@ -33,6 +33,8 @@ METHOD Create()
 
    ::AddField( "cNumDoc",   "C", 14, 0, {|| "@!" },        "Doc",            .f., "Documento",            8, .f. )
    ::AddField( "dFecDoc",   "D",  8, 0, {|| "@!" },        "Fecha",          .f., "Fecha del documento", 10, .f. )
+   ::AddField( "dFecIni",   "D",  8, 0, {|| "@!" },        "Fecha inicio",   .f., "Fecha inicio del servicio", 10, .f. )
+   ::AddField( "dFecFin",   "D",  8, 0, {|| "@!" },        "Fecha fin",      .f., "Fecha fin del servicio", 10, .f. )
    ::AddField( "cCodCli",   "C", 12, 0, {|| "@!" },        "Cliente",        .f., "Cod. cliente",         8, .f. )
    ::AddField( "cNomCli",   "C", 50, 0, {|| "@!" },        "Nombre",         .f., "Nom. cliente",         8, .f. )
    ::AddField( "cCodObr",   "C", 12, 0, {|| "@!" },        "Dirección",           .f., "Cod. dirección",            8, .f. )
@@ -188,6 +190,8 @@ METHOD lGenerate()
 
                ::oDbf:cNumDoc     := AllTrim( ::oPedCliT:cSerPed ) + "/" + AllTrim( Str( ::oPedCliT:nNumPed ) ) + "/" + AllTrim( ::oPedCliT:cSufPed )
                ::oDbf:dFecDoc     := ::oPedCliT:dFecPed
+               ::oDbf:dFecIni     := ::oPedCliT:dFecEntr
+               ::oDbf:dFecFin     := ::oPedCliT:dFecSal
                ::oDbf:cCodCli     := ::oPedCliT:cCodCli
                ::oDbf:cNomCli     := ::oPedCliT:cNomCli
                ::oDbf:cCodObr     := ::oPedCliT:cCodObr

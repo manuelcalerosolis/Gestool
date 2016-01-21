@@ -176,6 +176,7 @@ CLASS GeneraFacturasClientes FROM DialogBuilder
    METHOD appendPagosAbaranes( oItem )
 
    METHOD setEstadoAlbaran( oItem )
+   METHOD clickOnCheckHeader()
    
 ENDCLASS
 
@@ -389,6 +390,7 @@ METHOD Resource() CLASS GeneraFacturasClientes
       :bStrData                     := {|| "" }
       :bEditValue                   := {|| ::GetItemCheck() }
       :nWidth                       := 20
+      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clickOnCheckHeader( oColumn ) }         
       :SetCheck( { "check2_16_2", "Nil16" } )
    end with
 
@@ -553,7 +555,7 @@ Return ( self )
 
 METHOD SetTreeBrowse() CLASS GeneraFacturasClientes
 
-   if Empty( ::oBrwAlbaranes:oTree )
+   if empty( ::oBrwAlbaranes:oTree )
 
       ::oBrwAlbaranes:SetTree( ::oTreeTotales, { "Navigate_Minus_16", "Navigate_Plus_16", "Nil16" } ) 
 
@@ -693,14 +695,15 @@ METHOD GetItemTree() CLASS GeneraFacturasClientes
 
    local cItem    := ""
 
-   if !Empty( ::oBrwAlbaranes:oTreeItem ) 
-      if Empty( ::oBrwAlbaranes:oTreeItem:oTree )
-         cItem       := ::cTextoNodoHijo( ::oBrwAlbaranes:oTreeItem:Cargo )
-      else
-         cItem       := ::cTextoNodoPadre( ::oBrwAlbaranes:oTreeItem:Cargo )
-      end if   
+   if empty( ::oBrwAlbaranes:oTreeItem )
+      return ( cItem )
+   end if 
 
-   end if
+   if empty( ::oBrwAlbaranes:oTreeItem:oTree )
+      cItem       := ::cTextoNodoHijo( ::oBrwAlbaranes:oTreeItem:Cargo )
+   else
+      cItem       := ::cTextoNodoPadre( ::oBrwAlbaranes:oTreeItem:Cargo )
+   end if   
 
 Return ( cItem )
 
@@ -796,37 +799,41 @@ Return ( cItem )
 
 //---------------------------------------------------------------------------//
 
-METHOD ChangeBrowse() CLASS GeneraFacturasClientes
+METHOD ChangeBrowse( oTreeItem ) CLASS GeneraFacturasClientes
 
    local nLevel
 
-   if !Empty( ::oBrwAlbaranes:oTreeItem )
+   DEFAULT oTreeItem    := ::oBrwAlbaranes:oTreeItem
 
-      if Empty( ::oBrwAlbaranes:oTreeItem:oTree )
-
-         /*
-         Es un nodo hijo-------------------------------------------------------
-         */
-
-         ::SetValueCheck( ::oBrwAlbaranes:oTreeItem, !hGet( ::oBrwAlbaranes:oTreeItem:Cargo, "seleccionado" ) )
-         
-         ::UpdatePadre( ::oBrwAlbaranes:oTreeItem )
-
-      else
-
-         /*
-         Es un nodo padre------------------------------------------------------
-         */
-
-         nLevel := ::oBrwAlbaranes:oTreeItem:oTree:oFirst:nLevel
-         
-         ::oBrwAlbaranes:oTreeItem:oTree:Eval( { | oItem | If( oItem:nLevel >= nLevel, ::SetValueCheck( oItem, !hGet( ::oBrwAlbaranes:oTreeItem:Cargo, "seleccionado" ) ), ) } )
-
-         ::SetValueCheck( ::oBrwAlbaranes:oTreeItem, !hGet( ::oBrwAlbaranes:oTreeItem:Cargo, "seleccionado" ) )
-
-      end if
-
+   if Empty( oTreeItem )
+      Return ( Self )
    end if 
+
+   if Empty( oTreeItem:oTree )
+
+      /*
+      Es un nodo hijo-------------------------------------------------------
+      */
+
+      ::SetValueCheck( oTreeItem, !hGet( oTreeItem:Cargo, "seleccionado" ) )
+      
+      ::UpdatePadre( oTreeItem )
+
+   else
+
+      /*
+      Es un nodo padre------------------------------------------------------
+      */
+
+      nLevel            := oTreeItem:oTree:oFirst:nLevel
+      
+      oTreeItem:oTree:Eval( { | oItem | iif( oItem:nLevel >= nLevel,;
+                                             ::SetValueCheck( oItem, !hGet( oTreeItem:Cargo, "seleccionado" ) ),;
+                                             ) } )
+
+      ::SetValueCheck( oTreeItem, !hGet( ::oBrwAlbaranes:oTreeItem:Cargo, "seleccionado" ) )
+
+   end if
 
    ::oBrwAlbaranes:Refresh()  
    
@@ -879,7 +886,8 @@ METHOD lIsFacturable() CLASS GeneraFacturasClientes
       end if   
    end if
 
-   if !( ::oImpuestosIncluidos:Value() .and. ( D():AlbaranesClientes( ::nView ) )->lIvaInc )
+   if ( ::oImpuestosIncluidos:Value() .and. !( D():AlbaranesClientes( ::nView ) )->lIvaInc )
+      msgAlert( "Salida por impuestos oImpuestosIncluidos")
       Return( .f. )
    end if
 
@@ -1634,3 +1642,33 @@ METHOD setEstadoAlbaran( oItem )
 Return ( self )
 
 //---------------------------------------------------------------------------//
+
+METHOD clickOnCheckHeader()
+
+   local oItem
+
+   if empty( ::oBrwAlbaranes:oTree )
+      Return ( Self )
+   end if 
+
+   oItem       := ::oBrwAlbaranes:oTree:oFirst
+
+   while oItem != nil
+      
+      if !empty( oItem )
+         ::SetValueCheck( oItem, !hGet( oItem:Cargo, "seleccionado" ) )
+
+         if !empty( oItem:oTree )
+            oItem:oTree:Eval( { | oItem | ::SetValueCheck( oItem, !hGet( oItem:Cargo, "seleccionado" ) ) } )
+         end if 
+         // ::ChangeBrowse( oItem )
+      end if   
+
+      oItem    := oItem:GetNext()
+
+   end while
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+

@@ -157,8 +157,9 @@ METHOD lGenerate() CLASS TAcuCPed
 
         while ::oPedCliT:cSerPed + Str( ::oPedCliT:nNumPed ) + ::oPedCliT:cSufPed == ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed .AND. ! ::oPedCliL:eof()
 
-           if !( ::oPedCliL:lTotLin ) .and. !( ::oPedCliL:lControl )           .and.;
-              !( ::lExcCero .AND. nImpLPedCli( ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
+           if !( ::oPedCliL:lTotLin )   .and.;
+              !( ::oPedCliL:lControl )  .and.;
+              !( ::lExcCero .and. nImpLPedCli( ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
 
               ::AddPed( .t. )
 

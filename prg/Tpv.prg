@@ -8142,7 +8142,7 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
 
       if ( nStockActual - aTmp[ _NUNTTIL ] ) < 0
 
-         if lNotVta
+         if oUser():lNotAllowSales( lNotVta )
 
             SetLostFocusOff()
             MsgStop( "No hay stock suficiente, tenemos " + Alltrim( Trans( nStockActual, MasUnd() ) ) + " unidad(es) disponible(s) en almacén " + AllTrim( aTik[ _CALMTIK ] ) + "." )
@@ -8155,7 +8155,7 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
          if lMsgVta
 
             SetLostFocusOff()
-            lOk   := ApoloMsgNoYes( "No hay stock suficiente, tenemos " + Alltrim( Trans( nStockActual, MasUnd() ) ) + " unidad(es) disponible(s) en almacén " + AllTrim( aTik[ _CALMTIK ] ) + ".", "¿Continuar con la venta?" )
+            lOk   := apoloMsgNoYes( "No hay stock suficiente, tenemos " + Alltrim( Trans( nStockActual, MasUnd() ) ) + " unidad(es) disponible(s) en almacén " + AllTrim( aTik[ _CALMTIK ] ) + ".", "¿Continuar con la venta?" )
             SetLostFocusOn()
 
             if !lOk

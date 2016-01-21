@@ -734,7 +734,7 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrw, oDlg2, nMode, oTotal, aTmpDep, oBtn 
          do case
             case nStkAct - nTotUnd < 0
 
-               if aTmp[ _LNOTVTA ]
+               if oUser():lNotAllowSales( aTmp[ _LNOTVTA ] )
                   MsgStop( "No hay stock suficiente." )
                   return nil
                end if

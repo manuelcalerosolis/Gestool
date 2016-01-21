@@ -851,7 +851,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       return .f.
    end if
 
-   msgRun( "Calculando stocks", "Espere por favor...", {|| getStockArticulos() } )
+   // msgRun( "Calculando stocks", "Espere por favor...", {|| getStockArticulos() } )
 
    CursorWait()
 

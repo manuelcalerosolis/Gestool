@@ -4816,7 +4816,7 @@ Static Function CancelEdtRec( nMode, aGet )
       CursorWait()
 
    	/*
-   	rollback de los albaranes facturados-------------------------------------
+   	rollback de los Facturas facturados-------------------------------------
    	*/
 
       if len( aNumAlb ) > 0
@@ -6742,7 +6742,7 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
             end while
 
             /*
-            No permitimos mas albaranes----------------------------------------
+            No permitimos mas Facturas----------------------------------------
             */
 
             HideImportacion( aGet, aGet[ _CNUMALB ] )
@@ -7302,7 +7302,7 @@ static function QuiFacCli()
    end if
 
    /*
-   Restaura los Albaranes caso de estar facturados-----------------------------
+   Restaura los Facturas caso de estar facturados-----------------------------
    */
 
    nOrdAnt  := ( dbfAlbCliT )->( OrdSetFocus( "cNumFac" ) )
@@ -8847,7 +8847,7 @@ Return ( nil )
 //---------------------------------------------------------------------------//
 
 /*
-Funcion que nos permite a¤adir a las facturas articulos de albaranes ya
+Funcion que nos permite a¤adir a las facturas articulos de Facturas ya
 existentes
 - Parametros:
    oGet     -> Objeto que contiene el valor del nuevo albaran
@@ -8864,7 +8864,7 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
    local oTitle3
    local oBrwDet
    local nOrd
-   local nOrdLineasAlbaranes
+   local nOrdLineasFacturas
    local nNumLin
    local nPosPrint
    local nItem       := 1
@@ -8878,17 +8878,17 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
    local cCodCli     := Rtrim( aGet[ _CCODCLI ]:VarGet() )
    local lIvaInc     := aTmp[ _LIVAINC ]
    local lAlquiler   := .f.
-   local aAlbaranes  := {}
+   local aFacturas  := {}
    local nTotEntAlb  := 0
    local cSuPed      := ""
 
    if empty( cCodCli )
-      msgStop( "Es necesario codificar un cliente.", "Agrupar albaranes" )
+      msgStop( "Es necesario codificar un cliente.", "Agrupar Facturas" )
       return .t.
    end if
 
    nOrd              := ( dbfAlbCliT )->( ordSetFocus( "CCODCLI" ) )   // Orden a Codigo de Cliente
-   nOrdLineasAlbaranes := ( dbfAlbCliL )->( ordSetFocus( "nPosPrint" ) )
+   nOrdLineasFacturas := ( dbfAlbCliL )->( ordSetFocus( "nPosPrint" ) )
 
    if !Empty( oTipFac ) .and. oTipFac:nAt == 2
       lAlquiler      := .t.
@@ -8907,7 +8907,7 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
             ( lIvaInc == ( dbfAlbCliT )->lIvaInc  )                                          .and.;
             ( Empty( aTmp[ _CCODOBR ] ) .or. ( dbfAlbCliT )->cCodObr == aTmp[ _CCODOBR ] )
 
-            aAdd( aAlbaranes, {  lFacturado( dbfAlbCliT ) ,;
+            aAdd( aFacturas, {  lFacturado( dbfAlbCliT ) ,;
                                  ( dbfAlbCliT )->cSerAlb + str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb,;
                                  ( dbfAlbCliT )->cCodSuAlb ,;
                                  ( dbfAlbCliT )->dFecAlb ,;
@@ -8927,10 +8927,10 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
 
    else
 
-      msgStop( "No existen albaranes de este cliente." )
+      msgStop( "No existen Facturas de este cliente." )
 
       ( dbfAlbCliT )->( ordSetFocus( nOrd ) )
-      ( dbfAlbCliS )->( ordSetFocus( nOrdLineasAlbaranes ) )
+      ( dbfAlbCliS )->( ordSetFocus( nOrdLineasFacturas ) )
       
       return .t.
 
@@ -8943,11 +8943,11 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
    ( dbfAlbCliT )->( ordSetFocus( nOrd ) )
 
    /*
-   Puede que no hay albaranes que facturar
+   Puede que no hay Facturas que facturar
    */
 
-   if Len( aAlbaranes ) == 0
-      MsgStop( "No existen albaranes sin facturar" )
+   if Len( aFacturas ) == 0
+      MsgStop( "No existen Facturas sin facturar" )
       return .t.
    end if
 
@@ -8958,7 +8958,7 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
 
    DEFINE DIALOG  oDlg ;
       RESOURCE    "SET_ALBARAN" ;
-      TITLE       "Agrupando albaranes de clientes"
+      TITLE       "Agrupando Facturas de clientes"
 
       REDEFINE BITMAP oBmp ;
          ID       500 ;
@@ -8991,15 +8991,15 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
       oBrwDet:lRecordSelector        := .f.
       oBrwDet:lHscroll               := .f.
       oBrwDet:lFooter                := .t.
-      oBrwDet:cName                  := "Agrupar albaranes clientes"
+      oBrwDet:cName                  := "Agrupar Facturas clientes"
 
-      oBrwDet:bLDblClick   := {|| aAlbaranes[ oBrwDet:nArrayAt, 1 ] := !aAlbaranes[ oBrwDet:nArrayAt, 1 ], oBrwDet:Refresh() }
+      oBrwDet:bLDblClick   := {|| aFacturas[ oBrwDet:nArrayAt, 1 ] := !aFacturas[ oBrwDet:nArrayAt, 1 ], oBrwDet:Refresh() }
 
       with object ( oBrwDet:AddCol() )
          :cHeader          := "Seleccionado"
          :cSortOrder       := 1
          :bStrData         := {|| "" }
-         :bEditValue       := {|| aAlbaranes[ oBrwDet:nArrayAt, 1 ] }
+         :bEditValue       := {|| aFacturas[ oBrwDet:nArrayAt, 1 ] }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
       end with
@@ -9007,84 +9007,84 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
       with object ( oBrwDet:AddCol() )
          :cHeader          := "Número"
          :cSortOrder       := 2
-         :bEditValue       := {|| aAlbaranes[ oBrwDet:nArrayAt, 10 ] + "/" + AllTrim( str( aAlbaranes[ oBrwDet:nArrayAt, 11 ] ) ) + "/" + aAlbaranes[ oBrwDet:nArrayAt, 12 ] }
+         :bEditValue       := {|| aFacturas[ oBrwDet:nArrayAt, 10 ] + "/" + AllTrim( str( aFacturas[ oBrwDet:nArrayAt, 11 ] ) ) + "/" + aFacturas[ oBrwDet:nArrayAt, 12 ] }
          :nWidth           := 75
       end with
 
       with object ( oBrwDet:AddCol() )
          :cHeader          := "Su albarán"
          :cSortOrder       := 3
-         :bEditValue       := {|| aAlbaranes[ oBrwDet:nArrayAt, 3 ] }
+         :bEditValue       := {|| aFacturas[ oBrwDet:nArrayAt, 3 ] }
          :nWidth           := 75
       end with
 
       with object ( oBrwDet:AddCol() )
          :cHeader          := "Fecha"
          :cSortOrder       := 4
-         :bEditValue       := {|| Dtoc( aAlbaranes[ oBrwDet:nArrayAt, 4 ] ) }
+         :bEditValue       := {|| Dtoc( aFacturas[ oBrwDet:nArrayAt, 4 ] ) }
          :nWidth           := 80
       end with
 
       with object ( oBrwDet:AddCol() )
          :cHeader          := "Cliente"
          :cSortOrder       := 5
-         :bEditValue       := {|| Rtrim( aAlbaranes[ oBrwDet:nArrayAt, 5 ] ) + Space(1) + aAlbaranes[ oBrwDet:nArrayAt, 6 ] }
+         :bEditValue       := {|| Rtrim( aFacturas[ oBrwDet:nArrayAt, 5 ] ) + Space(1) + aFacturas[ oBrwDet:nArrayAt, 6 ] }
          :nWidth           := 225
       end with
 
       with object ( oBrwDet:AddCol() )
          :cHeader          := "Matrícula"
          :cSortOrder       := 7
-         :bEditValue       := {|| Rtrim( aAlbaranes[ oBrwDet:nArrayAt, 7 ] ) }
+         :bEditValue       := {|| Rtrim( aFacturas[ oBrwDet:nArrayAt, 7 ] ) }
          :nWidth           := 80
       end with
 
       with object ( oBrwDet:AddCol() )
          :cHeader          := "Dirección"
          :cSortOrder       := 8
-         :bEditValue       := {|| Rtrim( aAlbaranes[ oBrwDet:nArrayAt, 8 ] ) + Space(1) + RetFld( aAlbaranes[ oBrwDet:nArrayAt, 5 ] + aAlbaranes[ oBrwDet:nArrayAt, 8 ], dbfObrasT, "cNomObr" ) }
+         :bEditValue       := {|| Rtrim( aFacturas[ oBrwDet:nArrayAt, 8 ] ) + Space(1) + RetFld( aFacturas[ oBrwDet:nArrayAt, 5 ] + aFacturas[ oBrwDet:nArrayAt, 8 ], dbfObrasT, "cNomObr" ) }
          :nWidth           := 225
       end with
 
       with object ( oBrwDet:AddCol() )
          :cHeader          := "Total"
-         :bEditValue       := {|| aAlbaranes[ oBrwDet:nArrayAt, 9 ]:nTotalDocumento }
-         :bFooter          := {|| nTotalAlbaranesAgrupar( aAlbaranes ) }
+         :bEditValue       := {|| aFacturas[ oBrwDet:nArrayAt, 9 ]:nTotalDocumento }
+         :bFooter          := {|| nTotalFacturasAgrupar( aFacturas ) }
          :nWidth           := 70
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
          :nFootStrAlign    := 1
       end with
 
-      oBrwDet:SetArray( aAlbaranes, .t., , .f. )
+      oBrwDet:SetArray( aFacturas, .t., , .f. )
 
       oBrwDet:CreateFromResource( 130 )
 
       REDEFINE BUTTON ;
          ID       514 ;
          OF       oDlg ;
-         ACTION   (  aAlbaranes[ oBrwDet:nArrayAt, 1 ] := !aAlbaranes[ oBrwDet:nArrayAt, 1 ],;
+         ACTION   (  aFacturas[ oBrwDet:nArrayAt, 1 ] := !aFacturas[ oBrwDet:nArrayAt, 1 ],;
                      oBrwDet:refresh(),;
                      oBrwDet:setFocus() )
 
       REDEFINE BUTTON ;
          ID       516 ;
          OF       oDlg ;
-         ACTION   (  aEval( aAlbaranes, { |aItem| aItem[1] := .t. } ),;
+         ACTION   (  aEval( aFacturas, { |aItem| aItem[1] := .t. } ),;
                      oBrwDet:refresh(),;
                      oBrwDet:setFocus() )
 
       REDEFINE BUTTON ;
          ID       517 ;
          OF       oDlg ;
-         ACTION   (  aEval( aAlbaranes, { |aItem| aItem[1] := .f. } ),;
+         ACTION   (  aEval( aFacturas, { |aItem| aItem[1] := .f. } ),;
                      oBrwDet:refresh(),;
                      oBrwDet:setFocus() )
 
       REDEFINE BUTTON ;
          ID       518 ;
          OF       oDlg ;
-         ACTION   ( ZooAlbCli( aAlbaranes[ oBrwDet:nArrayAt, 2 ] ) )
+         ACTION   ( ZooAlbCli( aFacturas[ oBrwDet:nArrayAt, 2 ] ) )
 
       REDEFINE BUTTON ;
          ID       IDOK ;
@@ -9107,30 +9107,30 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
    Llamda a la funcion que busca el Albaran
    */
 
-   if oDlg:nResult == IDOK .and. Len( aAlbaranes ) >= 1
+   if oDlg:nResult == IDOK .and. Len( aFacturas ) >= 1
 
       CursorWait()
 
       /*
-      A¤adimos los albaranes seleccionado para despues
+      A¤adimos los Facturas seleccionado para despues
       */
 
-      for nItem := 1 to Len( aAlbaranes )
-         if ( aAlbaranes[ nItem, 1 ] )
-            if ( dbfAlbCliT )->( dbSeek( aAlbaranes[ nItem, 2] ) )
+      for nItem := 1 to Len( aFacturas )
+         if ( aFacturas[ nItem, 1 ] )
+            if ( dbfAlbCliT )->( dbSeek( aFacturas[ nItem, 2] ) )
                SetFacturadoAlbaranCliente( .t., , dbfAlbCliT, dbfAlbCliL, dbfAlbCliS )
             end if
-            aAdd( aNumAlb, aAlbaranes[ nItem, 2 ] )
+            aAdd( aNumAlb, aFacturas[ nItem, 2 ] )
          end if
       next
 
-      for nItem := 1 to Len( aAlbaranes )
+      for nItem := 1 to Len( aFacturas )
 
          /*
-         Cabeceras de albaranes a facturas
+         Cabeceras de Facturas a facturas
          */
 
-         if ( dbfAlbCliT )->( dbSeek( aAlbaranes[ nItem, 2] ) ) .and. aAlbaranes[ nItem, 1 ]
+         if ( dbfAlbCliT )->( dbSeek( aFacturas[ nItem, 2] ) ) .and. aFacturas[ nItem, 1 ]
 
             if !Empty( ( dbfAlbCliT )->cCodAge ) .and. Empty( aTmp[ _CCODAGE ] )
                aGet[ _CCODAGE  ]:cText( ( dbfAlbCliT )->cCodAge )
@@ -9153,10 +9153,10 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
          end if
 
          /*
-         Detalle de albaranes a facturas
+         Detalle de Facturas a facturas
          */
 
-         if ( dbfAlbCliL )->( dbSeek( aAlbaranes[ nItem, 2 ] ) ) .and. aAlbaranes[ nItem, 1 ]
+         if ( dbfAlbCliL )->( dbSeek( aFacturas[ nItem, 2 ] ) ) .and. aFacturas[ nItem, 1 ]
 
             nNumLin                    	:= nil
             nPosPrint 							:= nil
@@ -9167,16 +9167,16 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
 
                cDesAlb                 	:= ""
                if lNumObr()
-                  cDesAlb              	+= Alltrim( cNumObr() ) + " " + StrTran( aAlbaranes[ nItem, 8 ], " ", "" ) + Space( 1 )
-                  cDesAlb              	+= if( !Empty( aAlbaranes[ nItem, 8 ] ), AllTrim( RetFld( aAlbaranes[ nItem, 5 ] + aAlbaranes[ nItem, 8 ], dbfObrasT, "cNomObr" ) ), "" )
+                  cDesAlb              	+= Alltrim( cNumObr() ) + " " + StrTran( aFacturas[ nItem, 8 ], " ", "" ) + Space( 1 )
+                  cDesAlb              	+= if( !Empty( aFacturas[ nItem, 8 ] ), AllTrim( RetFld( aFacturas[ nItem, 5 ] + aFacturas[ nItem, 8 ], dbfObrasT, "cNomObr" ) ), "" )
                end if
                if lNumAlb()
-                  cDesAlb              	+= Alltrim( cNumAlb() ) + " " + Left( aAlbaranes[ nItem, 2 ], 1 ) + "/" + AllTrim( Substr( aAlbaranes[ nItem, 2 ], 2, 9 ) ) + "/" + Right( aAlbaranes[ nItem, 2 ], 2 ) + Space( 1 )
+                  cDesAlb              	+= Alltrim( cNumAlb() ) + " " + Left( aFacturas[ nItem, 2 ], 1 ) + "/" + AllTrim( Substr( aFacturas[ nItem, 2 ], 2, 9 ) ) + "/" + Right( aFacturas[ nItem, 2 ], 2 ) + Space( 1 )
                end if
                if lSuAlb()
-                  cDesAlb              	+= Alltrim( cSuAlb()  ) + " " + StrTran( aAlbaranes[ nItem, 3 ], " ", "" ) + Space( 1 )
+                  cDesAlb              	+= Alltrim( cSuAlb()  ) + " " + StrTran( aFacturas[ nItem, 3 ], " ", "" ) + Space( 1 )
                end if
-               cDesAlb                 	+= " - Fecha " + Dtoc( aAlbaranes[ nItem, 4] )
+               cDesAlb                 	+= " - Fecha " + Dtoc( aFacturas[ nItem, 4] )
 
                ( dbfTmpLin )->cDetalle 	:= cDesAlb
                ( dbfTmpLin )->mLngDes  	:= cDesAlb
@@ -9186,7 +9186,7 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
 
             end if
 
-            while ( ( dbfAlbCliL )->cSerAlb + str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb == aAlbaranes[ nItem, 2] .and. !( dbfAlbCliL )->( Eof() ) )
+            while ( ( dbfAlbCliL )->cSerAlb + str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb == aFacturas[ nItem, 2] .and. !( dbfAlbCliL )->( Eof() ) )
 
                if nNumLin != ( dbfAlbCliL )->nNumLin .and. !( dbfAlbCliL )->lControl
                   ++nOffSet
@@ -9199,10 +9199,10 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
                                                                "dFecFac" 	=> ( dbfAlbCliT )->dFecAlb,;
                                                                "tFecFac" 	=> ( dbfAlbCliT )->tFecAlb,;
                                                                "cSuPed"  	=> cSuPed,;
-                                                               "cCodObr" 	=> aAlbaranes[ nItem, 8 ] } )
+                                                               "cCodObr" 	=> aFacturas[ nItem, 8 ] } )
 
                /*
-               Pasamos series de albaranes-------------------------------------
+               Pasamos series de Facturas-------------------------------------
                */
 
                if ( dbfAlbCliS )->( dbSeek( ( dbfAlbCliL )->cSerAlb + str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb + str( ( dbfAlbCliL )->nNumLin ) ) )
@@ -9231,11 +9231,11 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
             Lineas de descuento------------------------------------------------
             */
 
-            nTotDoc                    	+= aAlbaranes[ nItem, 9 ]:nTotalBruto
-            nDtoEsp                    	+= aAlbaranes[ nItem, 9 ]:nTotalDescuentoGeneral
-            nDtoDpp                    	+= aAlbaranes[ nItem, 9 ]:nTotalDescuentoProntoPago
-            nDtoUno                    	+= aAlbaranes[ nItem, 9 ]:nTotalDescuentoUno
-            nDtoDos                    	+= aAlbaranes[ nItem, 9 ]:nTotalDescuentoDos
+            nTotDoc                    	+= aFacturas[ nItem, 9 ]:nTotalBruto
+            nDtoEsp                    	+= aFacturas[ nItem, 9 ]:nTotalDescuentoGeneral
+            nDtoDpp                    	+= aFacturas[ nItem, 9 ]:nTotalDescuentoProntoPago
+            nDtoUno                    	+= aFacturas[ nItem, 9 ]:nTotalDescuentoUno
+            nDtoDos                    	+= aFacturas[ nItem, 9 ]:nTotalDescuentoDos
 
             /*
             Total albaran------------------------------------------------------
@@ -9255,8 +9255,8 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
             Pasamos las incidencias del albarán--------------------------------
             */
 
-            if ( dbfAlbCliI )->( dbSeek( aAlbaranes[ nItem, 2 ] ) )
-               while ( dbfAlbCliI )->cSerAlb + str( ( dbfAlbCliI )->nNumAlb ) + ( dbfAlbCliI )->cSufAlb == aAlbaranes[ nItem, 2 ] .and. !( dbfAlbCliI )->( Eof() )
+            if ( dbfAlbCliI )->( dbSeek( aFacturas[ nItem, 2 ] ) )
+               while ( dbfAlbCliI )->cSerAlb + str( ( dbfAlbCliI )->nNumAlb ) + ( dbfAlbCliI )->cSufAlb == aFacturas[ nItem, 2 ] .and. !( dbfAlbCliI )->( Eof() )
                   dbPass( dbfAlbCliI, dbfTmpInc, .t. )
                   ( dbfAlbCliI )->( dbSkip() )
                end while
@@ -9268,8 +9268,8 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
             Pasamos los documentos de los pedidos------------------------------
             */
 
-            if ( dbfAlbCliD )->( dbSeek( aAlbaranes[ nItem, 2 ] ) )
-               while ( dbfAlbCliD )->cSerAlb + str( ( dbfAlbCliD )->nNumAlb ) + ( dbfAlbCliD )->cSufAlb == aAlbaranes[ nItem, 2 ] .and. !( dbfAlbCliD )->( Eof() )
+            if ( dbfAlbCliD )->( dbSeek( aFacturas[ nItem, 2 ] ) )
+               while ( dbfAlbCliD )->cSerAlb + str( ( dbfAlbCliD )->nNumAlb ) + ( dbfAlbCliD )->cSufAlb == aFacturas[ nItem, 2 ] .and. !( dbfAlbCliD )->( Eof() )
                   dbPass( dbfAlbCliD, dbfTmpDoc, .t. )
                   ( dbfAlbCliD )->( dbSkip() )
                end while
@@ -9292,11 +9292,11 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
       Agrupamos todas las entregas a cuenta en un recibo------------------------
       */
 
-      for nItem := 1 to Len( aAlbaranes )
+      for nItem := 1 to Len( aFacturas )
 
-         if aAlbaranes[ nItem, 1] .and. ( dbfAlbCliP )->( dbSeek( aAlbaranes[ nItem, 2 ] ) )
+         if aFacturas[ nItem, 1] .and. ( dbfAlbCliP )->( dbSeek( aFacturas[ nItem, 2 ] ) )
 
-            while ( dbfAlbCliP )->cSerAlb + str( ( dbfAlbCliP )->nNumAlb ) + ( dbfAlbCliP )->cSufAlb == aAlbaranes[ nItem, 2] .and. !( dbfAlbCliP )->( Eof() )
+            while ( dbfAlbCliP )->cSerAlb + str( ( dbfAlbCliP )->nNumAlb ) + ( dbfAlbCliP )->cSufAlb == aFacturas[ nItem, 2] .and. !( dbfAlbCliP )->( Eof() )
 
                nTotEntAlb     += ( dbfAlbCliP )->nImporte
 
@@ -9337,13 +9337,13 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
          ( dbfTmpPgo )->cTurRec  := ""
          ( dbfTmpPgo )->lCloPgo  := .t.
          ( dbfTmpPgo )->cCodPgo  := aTmp[ _CCODPAGO ]
-         ( dbfTmpPgo )->cDescrip := "Suma entregas a cuenta de albaranes"
+         ( dbfTmpPgo )->cDescrip := "Suma entregas a cuenta de Facturas"
          ( dbfTmpPgo )->( dbUnLock() )
 
       end if
 
       /*
-      No permitimos mas albaranes----------------------------------------------
+      No permitimos mas Facturas----------------------------------------------
       */
 
       aGet[ _CNUMALB ]:Hide()
@@ -9403,12 +9403,12 @@ RETURN .T.
 
 //---------------------------------------------------------------------------//
 
-static function nTotalAlbaranesAgrupar( aAlbaranes )
+static function nTotalFacturasAgrupar( aFacturas )
 
    local aAlbaran
    local nTotal   := 0
 
-   for each aAlbaran in aAlbaranes
+   for each aAlbaran in aFacturas
 
       if aAlbaran[1]
          nTotal      +=  aAlbaran[9]:nTotalDocumento
@@ -11698,7 +11698,7 @@ STATIC FUNCTION AppDeta( oBrwDet, bEdtDet, aTmp, lTot, cCodArt, aNumDoc )
    else
 
       MsgStop( "No se pueden añadir registros a una factura que" + CRLF + ;
-               "proviene de albaranes." )
+               "proviene de Facturas." )
 
    end if
 
@@ -13387,7 +13387,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
          do case
             case oStkAct:VarGet() - nTotUnd < 0
 
-               if aTmp[ _LNOTVTA ]
+               if oUser():lNotAllowSales( aTmp[ _LNOTVTA ] )
                   MsgStop( "No hay stock suficiente, tenemos " + Alltrim( Trans( oStkAct:VarGet(), MasUnd() ) ) + " unidad(es) disponible(s)," + CRLF + "en almacén " + aTmp[ _CALMLIN ] + "." )
                   return nil
                end if
@@ -13873,7 +13873,7 @@ STATIC FUNCTION EdtDeta( oBrwDet, bEdtDet, aTmp, lTot, nFacMod )
    if !Empty( aNumAlb ) .or. aTmp[ _LIMPALB ]
 
       MsgStop( "No se pueden modificar registros a una factura que" + CRLF + ;
-               "proviene de albaranes." )
+               "proviene de Facturas." )
 
    end if
    */
@@ -14164,10 +14164,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       WinGather( aTmp, , D():FacturasClientes( nView ), , nMode )
 
       /*
-      Actualizamos el estado de los albaranes de clientes----------------------
+      Actualizamos el estado de los Facturas de clientes----------------------
       */
 
-      oMsgText( "Actualizamos el estado de los albaranes" )
+      oMsgText( "Actualizamos el estado de los Facturas" )
       
       if !Empty( oMeter )
       	oMeter:Set( 5 )
@@ -14219,10 +14219,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       end if
 
       /*
-      Marcamos como pasadas las entregas de albaranes--------------------------
+      Marcamos como pasadas las entregas de Facturas--------------------------
       */
 
-      oMsgText( "Marcamos las entregas de los albaranes" )
+      oMsgText( "Marcamos las entregas de los Facturas" )
       
       if !Empty( oMeter )
 	      oMeter:Set( 7 )
@@ -18469,7 +18469,7 @@ function SynFacCli( cPath )
          	end if
          end if
 
-   		//en el caso de TuRueda,se han rellenado los importes de la ecotasa a albaranes atiguos, que ya la tenian
+   		//en el caso de TuRueda,se han rellenado los importes de la ecotasa a Facturas atiguos, que ya la tenian
 			/*
          if !Empty( ( D():FacturasClientesLineas( nView ) )->cRef ) .and. Empty( ( D():FacturasClientesLineas( nView ) )->nValImp )
             cCodImp                    := RetFld( ( D():FacturasClientesLineas( nView ) )->cRef, D():Articulos( nView ), "cCodImp" )
@@ -18555,7 +18555,7 @@ function SynFacCli( cPath )
          	end if
          end if
 
-         // Valor de stock toma la fecha de los albaranes----------------------
+         // Valor de stock toma la fecha de los Facturas----------------------
 
          if !Empty( ( D():FacturasClientesLineas( nView ) )->cCodAlb )
             if Empty( ( D():FacturasClientesLineas( nView ) )->dFecFac )
@@ -19648,7 +19648,7 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"lContab"     ,"L",  1, 0, "Lógico de la factura contabilizada" ,                        "Contabilizada",               "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"dFecEnt"     ,"D",  8, 0, "Fecha de entrega" ,                                          "FechaEntrega",                "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"cSuFac"      ,"C", 50, 0, "Su pedido" ,                                                 "SuPedido",                    "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"lImpAlb"     ,"L",  1, 0, "Lógico si la factura se importó de albaranes" ,              "ImportadaAlbaran",            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"lImpAlb"     ,"L",  1, 0, "Lógico si la factura se importó de Facturas" ,              "ImportadaAlbaran",            "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"cCondent"    ,"C",100, 0, "Condición de entrada" ,                                      "CondicionEntrada",            "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"mComEnt"     ,"M", 10, 0, "Comentarios" ,                                               "Comentarios",                 "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"mObserv"     ,"M", 10, 0, "Observaciones" ,                                             "Observaciones",               "", "( cDbf )", nil } )
@@ -21461,7 +21461,7 @@ Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL )
 	CursorWait()
 
 	/*
-	Buscamos por los albaranes no facturados-----------------------------------
+	Buscamos por los Facturas no facturados-----------------------------------
 	*/
 
 	if ( dbfAlbCliL )->( dbSeek( cCodArt + cCodCli ) )
@@ -21511,7 +21511,7 @@ Function nUnidadesUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL
 	CursorWait()
 
 	/*
-	Buscamos por los albaranes no facturados-----------------------------------
+	Buscamos por los Facturas no facturados-----------------------------------
 	*/
 
 	if ( dbfAlbCliL )->( dbSeek( cCodArt + cCodCli ) )
@@ -21563,7 +21563,7 @@ Function dUltimaVentaCliente( cCodCli, dbfAlbCliT, dbfFacCliT, dbfTikT )
 	CursorWait()
 
 	/*
-	Buscamos por los albaranes no facturados-----------------------------------
+	Buscamos por los Facturas no facturados-----------------------------------
 	*/
 
 	if ( dbfAlbCliT )->( dbSeek( cCodCli ) )
@@ -23169,7 +23169,7 @@ Static Function RollBackFacCli( cNumeroDocumento )
    local nOrd
 
    /*
-   Rollback de todos los articulos si la factura no se importo de albaranes----
+   Rollback de todos los articulos si la factura no se importo de Facturas----
    */
 
    while ( D():FacturasClientesLineas( nView ) )->( dbSeek( cNumeroDocumento ) ) .and. !( D():FacturasClientesLineas( nView ) )->( eof() ) 
@@ -23612,3 +23612,16 @@ Function RollBackOrderFacturaClienteLineas()
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
+
+Function nombrePrimeraPropiedadFacturasClientesLineas()
+
+Return ( nombrePropiedad( ( D():FacturasClientesLineas( nView ) )->cCodPr1, ( D():FacturasClientesLineas( nView ) )->cValPr1, nView ) )
+
+//---------------------------------------------------------------------------//
+
+Function nombreSegundaPropiedadFacturasClientesLineas()
+
+Return ( nombrePropiedad( ( D():FacturasClientesLineas( nView ) )->cCodPr2, ( D():FacturasClientesLineas( nView ) )->cValPr2, nView ) )
+
+//---------------------------------------------------------------------------//
+

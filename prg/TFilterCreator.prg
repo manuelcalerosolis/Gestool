@@ -697,7 +697,7 @@ METHOD okDialog() CLASS TReplaceDialog
             
             if ( ::dbfReplace() )->( dbRLock() )
                ( ::dbfReplace() )->( FieldPut( nFldPos, cGetVal ) )
-               ( ::dbfReplace() )->( dbUnLock() )
+               ( ::dbfReplace() )->( dbUnLock() )        
             end if
             
             ++nRpl

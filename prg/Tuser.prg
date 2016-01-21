@@ -60,6 +60,9 @@ CLASS TUser
    Data     _Administrador             INIT .f.
    Method   lAdministrador( lNewVal )  INLINE if( isLogic( lNewVal ), ::_Administrador := lNewVal, ::_Administrador )
 
+   METHOD   lNotAllowSales( lNoPermitirVentaSinStock ) ;
+                                       INLINE ( !::lAdministrador() .and. lNoPermitirVentaSinStock )
+
    Data     _NotBitmap                 INIT .f.
    Method   lNotBitmap( lNewVal )
 

@@ -1048,14 +1048,6 @@ STATIC FUNCTION ChkCodAlm( aTmp, aOld, aGet, oBrw, nMode, oDlg, oBtnSer )
    do case
    case nMode == APPD_MODE
 
-      /*
-      if RetFld( aTmp[ _CREFMOV ], dbfArticulo, "lNumSer" )
-         MsgStop( "Tiene que introducir números de serie para este artículo." )
-         oBtnSer:Click()
-         Return .f.
-      end if
-      */
-
       if aTmp[ _NTIPMOV ] == 3
          aTmp[ _NUNDMOV ]  := ( nTotNMovAlm( aTmp ) - nTotNMovOld( aTmp ) ) / NotCero( aTmp[ _NCAJMOV ] )
          aTmp[ _NUNDANT ]  := 0

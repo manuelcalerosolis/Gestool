@@ -321,7 +321,7 @@ FUNCTION Usuarios( oMenuItem, oWnd )
          HOTKEY   "E";
          LEVEL    ACC_DELE
 
-#ifndef __TACTIL__
+   #ifndef __TACTIL__
 
       DEFINE BTNSHELL RESOURCE "IMP" OF oWndBrw ;
 			NOBORDER ;
@@ -330,7 +330,7 @@ FUNCTION Usuarios( oMenuItem, oWnd )
          HOTKEY   "L";
          LEVEL    ACC_IMPR
 
-#endif
+   #endif
 
       DEFINE BTNSHELL oSnd RESOURCE "Lbl" GROUP OF oWndBrw ;
          NOBORDER ;
