@@ -105,7 +105,7 @@ Return ( .t. )
 
 //----------------------------------------------------------------------------//
 
-STATIC Function setControlFastKey( cDirectory, nView )
+STATIC Function setControlFastKey( cDirectory, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
 
    local Self        := HB_QSelf()
 
@@ -113,14 +113,14 @@ STATIC Function setControlFastKey( cDirectory, nView )
     Return ( nil )
   end if
   
-  Self:AddControlKeys(  VK_F2,    {|| runEventScript( cDirectory + "\F2", nView ) } )
-  Self:AddControlKeys(  VK_F3,    {|| runEventScript( cDirectory + "\F3", nView ) } )
-  Self:AddControlKeys(  VK_F4,    {|| runEventScript( cDirectory + "\F4", nView ) } )
-  Self:AddControlKeys(  VK_F5,    {|| runEventScript( cDirectory + "\F5", nView ) } )
-  Self:AddControlKeys(  VK_F6,    {|| runEventScript( cDirectory + "\F6", nView ) } )
-  Self:AddControlKeys(  VK_F7,    {|| runEventScript( cDirectory + "\F7", nView ) } )
-  Self:AddControlKeys(  VK_F8,    {|| runEventScript( cDirectory + "\F8", nView ) } )
-  Self:AddControlKeys(  VK_F9,    {|| runEventScript( cDirectory + "\F9", nView ) } )
+  Self:AddControlKeys(  VK_F2,    {|| runEventScript( cDirectory + "\F2", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
+  Self:AddControlKeys(  VK_F3,    {|| runEventScript( cDirectory + "\F3", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
+  Self:AddControlKeys(  VK_F4,    {|| runEventScript( cDirectory + "\F4", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
+  Self:AddControlKeys(  VK_F5,    {|| runEventScript( cDirectory + "\F5", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
+  Self:AddControlKeys(  VK_F6,    {|| runEventScript( cDirectory + "\F6", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
+  Self:AddControlKeys(  VK_F7,    {|| runEventScript( cDirectory + "\F7", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
+  Self:AddControlKeys(  VK_F8,    {|| runEventScript( cDirectory + "\F8", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
+  Self:AddControlKeys(  VK_F9,    {|| runEventScript( cDirectory + "\F9", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
   
 return ( nil )
 
