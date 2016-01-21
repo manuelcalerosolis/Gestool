@@ -4447,9 +4447,9 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
       end if
    end if
 
-   if aTmp[ _NUNICAJA ] == 0
+   /*if aTmp[ _NUNICAJA ] == 0
       aTmp[ _NUNICAJA ] := 1
-   end if 
+   end if */
 
    // Recno--------------------------------------------------------------------
 

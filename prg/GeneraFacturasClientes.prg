@@ -87,6 +87,9 @@ CLASS GeneraFacturasClientes FROM DialogBuilder
    METHOD CreateTree()
    METHOD GetItemTree()
    METHOD GetImporteTree()
+   METHOD getImporteTotalTree()
+   METHOD getDocumentosTotalTree()
+
    METHOD GetItemCheck()
    METHOD GetFpagoTree()
    METHOD GetDto1()
@@ -383,6 +386,8 @@ METHOD Resource() CLASS GeneraFacturasClientes
 
    ::oBrwAlbaranes:lVScroll         := .t.
    ::oBrwAlbaranes:lHScroll         := .t.
+   ::oBrwAlbaranes:lFooter          := .t.
+
    ::oBrwAlbaranes:nMarqueeStyle    := 6
 
    with object ( ::oBrwAlbaranes:AddCol() )
@@ -391,13 +396,14 @@ METHOD Resource() CLASS GeneraFacturasClientes
       :bEditValue                   := {|| ::GetItemCheck() }
       :nWidth                       := 20
       :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clickOnCheckHeader( oColumn ) }         
-      :SetCheck( { "check2_16_2", "Nil16" } )
+      :SetCheck( { "check2_16_2", "nil16" } ) // ""
    end with
 
    with object ( ::oBrwAlbaranes:AddCol() )
       :cHeader                      := "Concepto"
       :nWidth                       := 480
       :bStrData                     := {|| ::GetItemTree() }
+      :bFooter                      := {|| "Total documentos " + alltrim( trans( ::getDocumentosTotalTree(), "9999" ) ) }
    end with
 
    with object ( ::oBrwAlbaranes:AddCol() )
@@ -449,6 +455,8 @@ METHOD Resource() CLASS GeneraFacturasClientes
       :bStrData                     := {|| ::GetImporteTree() }
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
+      :nFootStrAlign                := 1
+      :bFooter                      := {|| Trans( ::getImporteTotalTree(), cPorDiv() ) }
    end with
 
    ::oBrwAlbaranes:bLDblClick       := {|| ::ChangeBrowse() }
@@ -597,7 +605,7 @@ METHOD SetTotalesDocumentos() CLASS GeneraFacturasClientes
 
          end if   
 
-         oItem = oItem:GetNext()
+         oItem    := oItem:GetNext()
          nCount   := 0
 
       end while
@@ -740,16 +748,67 @@ METHOD GetImporteTree() CLASS GeneraFacturasClientes
 
    if !Empty( ::oBrwAlbaranes:oTreeItem ) 
       if Empty( ::oBrwAlbaranes:oTreeItem:oTree )
-         cItem    := Trans( hGet( ::oBrwAlbaranes:oTreeItem:Cargo, "total" ), cPorDiv( cDivEmp(), D():Divisas( ::nView ) ) )
+         cItem    := Trans( hGet( ::oBrwAlbaranes:oTreeItem:Cargo, "total" ), cPorDiv() )
       else
          ::oBrwAlbaranes:oTreeItem:oTree:Eval( { | o | if( o:nLevel >= ::oBrwAlbaranes:oTreeItem:nLevel, ( nTotAlb := nTotAlb + hGet( o:Cargo, "total" ) ), ) } )
-         cItem    := Trans( nTotAlb, cPorDiv( cDivEmp(), D():Divisas( ::nView ) ) )
+         cItem    := Trans( nTotAlb, cPorDiv() )
       end if
    end if
 
 Return ( cItem )
 
 //---------------------------------------------------------------------------//
+
+METHOD getImporteTotalTree() CLASS GeneraFacturasClientes
+
+   local oItem 
+   local nImporteTotal  := 0
+
+   if empty( ::oBrwAlbaranes:oTree )
+      Return ( nImporteTotal )
+   end if 
+
+   oItem                := ::oBrwAlbaranes:oTree:oFirst
+
+   while oItem != nil
+
+      if empty( oItem:oTree ) .and. hGet( oItem:Cargo, "seleccionado" ) 
+         nImporteTotal  += hGet( oItem:Cargo, "total" )
+      end if   
+
+      oItem             := oItem:GetNext()
+
+   end while
+
+Return ( nImporteTotal )
+
+//---------------------------------------------------------------------------//
+
+METHOD getDocumentosTotalTree() CLASS GeneraFacturasClientes
+
+   local oItem 
+   local nDocumentosTotal  := 0
+
+   if empty( ::oBrwAlbaranes:oTree )
+      Return ( nDocumentosTotal )
+   end if 
+
+   oItem                := ::oBrwAlbaranes:oTree:oFirst
+
+   while oItem != nil
+
+      if empty( oItem:oTree ) .and. hGet( oItem:Cargo, "seleccionado" ) 
+         nDocumentosTotal++
+      end if   
+
+      oItem             := oItem:GetNext()
+
+   end while
+
+Return ( nDocumentosTotal )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD GetDto1() CLASS GeneraFacturasClientes
 
@@ -992,19 +1051,19 @@ Return ( cClave )
 
 METHOD CreaNodo( hCargo ) CLASS GeneraFacturasClientes
 
-   local h :=  {  "clave" => hGet( hCargo, "clave" ),;
+   local h :=  {  "clave" =>        hGet( hCargo, "clave" ),;
+                  "id" =>           hGet( hCargo, "id" ),;
+                  "textoid" =>      hGet( hCargo, "textoid" ),;
+                  "cliente" =>      hGet( hCargo, "cliente" ),;
+                  "nombre" =>       hGet( hCargo, "nombre" ),;
+                  "serie" =>        hGet( hCargo, "serie" ),;
+                  "formapago" =>    hGet( hCargo, "formapago" ),;
+                  "direccion" =>    hGet( hCargo, "direccion" ),;
+                  "fecha" =>        hGet( hCargo, "fecha" ),;
+                  "total" =>        hGet( hCargo, "total" ),;
+                  "sualbaran" =>    hGet( hCargo, "sualbaran" ),;
                   "seleccionado" => .t.,;
-                  "id" => hGet( hCargo, "id" ),;
-                  "textoid" => hGet( hCargo, "textoid" ),;
-                  "cliente" => hGet( hCargo, "cliente" ),;
-                  "nombre" => hGet( hCargo, "nombre" ),;
-                  "serie" => hGet( hCargo, "serie" ),;
-                  "formapago" => hGet( hCargo, "formapago" ),;
-                  "direccion" => hGet( hCargo, "direccion" ),;
-                  "fecha" => hGet( hCargo, "fecha" ),;
-                  "total" => hGet( hCargo, "total" ),;
-                  "sualbaran" => hGet( hCargo, "sualbaran" ),;
-                  "documentos" => "" }
+                  "documentos" =>   "" }
 
    TreeAddItem( hGet( hCargo, "clave" ) ):Cargo := h
 
@@ -1039,17 +1098,15 @@ METHOD CreaFacturas() CLASS GeneraFacturasClientes
 
    if !Empty( ::oBrwAlbaranes:oTree )
 
-      oItem := ::oBrwAlbaranes:oTree:oFirst
+      oItem    := ::oBrwAlbaranes:oTree:oFirst
 
       while oItem != nil
          
          if !Empty( oItem:oTree ) .and. hGet( oItem:Cargo, "seleccionado" )
-
             ::AppendFactura( oItem )
-
          end if   
 
-         oItem = oItem:GetNext()
+         oItem := oItem:GetNext()
 
       end while
 
@@ -1612,7 +1669,7 @@ METHOD appendPagosAbaranes( oItem ) CLASS GeneraFacturasClientes
             ( D():FacturasClientesCobros( ::nView ) )->lConPgo       := .f.
             ( D():FacturasClientesCobros( ::nView ) )->lRecImp       := .f.
             ( D():FacturasClientesCobros( ::nView ) )->lRecDto       := .f.
-            ( D():FacturasClientesCobros( ::nView ) )->lPasado       := .t.
+         //   ( D():FacturasClientesCobros( ::nView ) )->lPasado       := .t.
          
             ( D():FacturasClientesCobros( ::nView ) )->( dbUnLock() )
 
@@ -1652,19 +1709,14 @@ METHOD clickOnCheckHeader()
    end if 
 
    oItem       := ::oBrwAlbaranes:oTree:oFirst
-
    while oItem != nil
       
       if !empty( oItem )
          ::SetValueCheck( oItem, !hGet( oItem:Cargo, "seleccionado" ) )
-
-         if !empty( oItem:oTree )
-            oItem:oTree:Eval( { | oItem | ::SetValueCheck( oItem, !hGet( oItem:Cargo, "seleccionado" ) ) } )
-         end if 
-         // ::ChangeBrowse( oItem )
       end if   
 
-      oItem    := oItem:GetNext()
+      oItem:Open()
+      oItem    := oItem:getNext()
 
    end while
 

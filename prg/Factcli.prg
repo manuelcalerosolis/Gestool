@@ -8873,7 +8873,7 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
    local nDtoDpp     := 0
    local nDtoUno     := 0
    local nDtoDos     := 0
-   local nOffSet     := 0
+   local nOffSet     := nLastNum( dbfTmpLin )
    local cDesAlb     := ""
    local cCodCli     := Rtrim( aGet[ _CCODCLI ]:VarGet() )
    local lIvaInc     := aTmp[ _LIVAINC ]
@@ -9163,6 +9163,10 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
 
             if lNumAlb() .or. lNumObr() .or. lSuAlb()
 
+            	if nOffSet < nLastNum( dbfTmpLin )
+            		++nOffSet 
+            	end if
+
                ( dbfTmpLin )->( dbAppend() )
 
                cDesAlb                 	:= ""
@@ -9181,8 +9185,9 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
                ( dbfTmpLin )->cDetalle 	:= cDesAlb
                ( dbfTmpLin )->mLngDes  	:= cDesAlb
                ( dbfTmpLin )->lControl 	:= .t.
-               ( dbfTmpLin )->nNumLin  	:= ++nOffSet
+               ( dbfTmpLin )->nNumLin  	:= nOffSet
                ( dbfTmpLin )->nPosPrint	:= nOffSet
+            //   ++nOffSet
 
             end if
 
@@ -13337,9 +13342,9 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
       Return nil
    end if
 
-   if aTmp[ _NUNICAJA ] == 0
+   /*if aTmp[ _NUNICAJA ] == 0
       aTmp[ _NUNICAJA ] := 1
-   end if
+   end if*/
 
    aClo     	:= aClone( aTmp )
 

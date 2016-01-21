@@ -677,7 +677,7 @@ METHOD ImportaClientes()
          cCuenta                 := StrTran(Alltrim(::oDbfCliFac:Ccc), ' ','')
 
          ::oDbfCliGst:Banco      := ::oDbfCliFac:Domicilia
-         ::oDbfCliGst:Cuenta     := Substr(cCuenta, 14 )
+         ::oDbfCliGst:Cuenta     := Substr(cCuenta, 15 )
 
          ::oDbfCliBnc:Append()
 
@@ -687,9 +687,9 @@ METHOD ImportaClientes()
          ::oDbfCliBnc:cPaiBnc    := Substr(cCuenta, 1, 2 )
          ::oDbfCliBnc:cCtrlIBAN  := Substr(cCuenta, 3, 2 )
          ::oDbfCliBnc:cEntBnc    := Substr(cCuenta, 5, 4 )
-         ::oDbfCliBnc:cSucBnc    := Substr(cCuenta, 7, 4 )
-         ::oDbfCliBnc:cDigBnc    := Substr(cCuenta, 9, 2 )
-         ::oDbfCliBnc:cCtaBnc    := Substr(cCuenta, 14 )     
+         ::oDbfCliBnc:cSucBnc    := Substr(cCuenta, 9, 4 )
+         ::oDbfCliBnc:cDigBnc    := Substr(cCuenta, 13, 2 )
+         ::oDbfCliBnc:cCtaBnc    := Substr(cCuenta, 15 )     
          
          ::oDbfCliBnc:Save()
 
@@ -777,9 +777,9 @@ METHOD ImportaArticulos()
       ::oDbfArtGst:Benef1           := ::oDbfArtFac:Margen1
       ::oDbfArtGst:Benef2           := ::oDbfArtFac:Margen2
       ::oDbfArtGst:Benef3           := ::oDbfArtFac:Margen3
-      ::oDbfArtGst:lBnf1            := if(Empty(::oDbfArtFac:Margen1), .f., .t. ) 
-      ::oDbfArtGst:lBnf2            := if(Empty(::oDbfArtFac:Margen1), .f., .t. )
-      ::oDbfArtGst:lBnf3            := if(Empty(::oDbfArtFac:Margen1), .f., .t. )
+      ::oDbfArtGst:lBnf1            := if(Empty(::oDbfArtFac:Margen1) .or. ( ::oDbfArtFac:Margen1 >= 1000), .f., .t. ) 
+      ::oDbfArtGst:lBnf2            := if(Empty(::oDbfArtFac:Margen2) .or. ( ::oDbfArtFac:Margen2 >= 1000), .f., .t. )
+      ::oDbfArtGst:lBnf3            := if(Empty(::oDbfArtFac:Margen3) .or. ( ::oDbfArtFac:Margen3 >= 1000), .f., .t. )
       ::oDbfArtGst:nBnfSbr1         := 1
       ::oDbfArtGst:nBnfSbr2         := 1
       ::oDbfArtGst:nBnfSbr3         := 1      

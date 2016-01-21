@@ -10364,9 +10364,9 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
       return nil
    end if 
    
-   if aTmp[ _NUNICAJA ] == 0
+   /*if aTmp[ _NUNICAJA ] == 0
       aTmp[ _NUNICAJA ] := 0
-   end if 
+   end if */
 
    // Situaciones atipicas-----------------------------------------------------
 
