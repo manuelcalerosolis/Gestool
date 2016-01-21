@@ -190,16 +190,51 @@ static cPwrDiv
 
 static oTimerBrw
 
-static cOldCodeBar   := ""
-static aOldCodeBar   := {}
+static cOldCodeBar      := ""
+static aOldCodeBar      := {}
 
 static oBtnStockAlmacenes
 
 static oBtnAceptarActualizarWeb
 
+static hStockArticulo   := {=>}
+
 //---------------------------------------------------------------------------//
 
 #ifndef __PDA__
+
+/*
+Cargamos los stocks---------------------------------------------
+*/
+
+Static Function getStockArticulos()
+
+   local nSeconds
+   local nStockArticulo
+
+   hStockArticulo          := {=>}
+
+   nSeconds                := seconds()
+
+   while !( D():Articulos( nView ) )->( eof() )
+
+      if ( ( D():Articulos( nView ) )->lObs )
+         nStockArticulo    := 0
+      else
+         nStockArticulo    := oStock:nStockArticulo( ( D():Articulos( nView ) )->Codigo )
+      end if 
+
+      hset( hStockArticulo, ( D():Articulos( nView ) )->Codigo, nStockArticulo )
+         
+      ( D():Articulos( nView ) )->( dbskip() )
+
+   end while
+
+   ( D():Articulos( nView ) )->( dbgotop() )
+
+   msgAlert( seconds() - nSeconds )
+
+Return ( hStockArticulo )
 
 //---------------------------------------------------------------------------//
 
@@ -207,6 +242,8 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
    local oError
    local oBlock
+   local nSeconds
+   local nStockArticulo
 
    if lOpenFiles
       MsgStop( 'Imposible abrir ficheros de artículos' )
@@ -464,10 +501,6 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       nDpvDiv              := nDpvDiv( cDivEmp(), dbfDiv )
       cPicEsc              := MasEsc()
       cPicUnd              := MasUnd()                               // Picture de las unidades
-
-      /*
-      Inicializa el editor de HTML---------------------------------------------
-      */
 
       oMsgText( 'Ficheros de artículos abiertos' )
 
@@ -817,6 +850,8 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    if !OpenFiles( .f. )
       return .f.
    end if
+
+   msgRun( "Calculando stocks", "Espere por favor...", {|| getStockArticulos() } )
 
    CursorWait()
 

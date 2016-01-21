@@ -213,20 +213,20 @@ METHOD New() CLASS GeneraFacturasClientes
                                                                "idInicio" => 370,;
                                                                "oContainer" => Self } )
 
-      ::oAgruparCliente    := ComponentCheck():New( 270, .t., Self )
+      ::oAgruparCliente          := ComponentCheck():New( 270, .t., Self )
 
       ::oAgruparDireccion        := ComponentCheck():New( 280, .f., Self )
       ::oAgruparDireccion:bWhen  := {|| ::oAgruparCliente:Value() }
 
       ::oImpuestosIncluidos      := ComponentCheck():New( 294, lImpuestosIncluidos(), Self )
 
-      ::oAgruparDescuentos := ComponentCheck():New( 293, .f., Self )
+      ::oAgruparDescuentos       := ComponentCheck():New( 293, .f., Self )
 
-      ::oEntregados        := ComponentCheck():New( 290, .f., Self )
+      ::oEntregados              := ComponentCheck():New( 290, .f., Self )
 
-      ::oUnificarPago      := ComponentCheck():New( 291, .t., Self )
+      ::oUnificarPago            := ComponentCheck():New( 291, .t., Self )
 
-      ::oTotalizar         := ComponentCheck():New( 292, .f., Self )
+      ::oTotalizar               := ComponentCheck():New( 292, .f., Self )
 
       ::Resource()
 
@@ -879,7 +879,7 @@ METHOD lIsFacturable() CLASS GeneraFacturasClientes
       end if   
    end if
 
-   if !( ::oImpuestosIncluidos:Value() == ( D():AlbaranesClientes( ::nView ) )->lIvaInc )
+   if !( ::oImpuestosIncluidos:Value() .and. ( D():AlbaranesClientes( ::nView ) )->lIvaInc )
       Return( .f. )
    end if
 

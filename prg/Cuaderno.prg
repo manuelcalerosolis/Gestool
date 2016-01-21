@@ -237,41 +237,41 @@ CLASS Cuaderno1914 FROM Cuaderno
 
 ENDCLASS
 
-   //------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
 
-   METHOD New() CLASS Cuaderno1914
+METHOD New() CLASS Cuaderno1914
 
-      ::oPresentador    := Presentador():New( Self )
+   ::oPresentador    := Presentador():New( Self )
 
-   Return ( Self )
+Return ( Self )
 
-   //------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
 
-   METHOD WriteASCII()
+METHOD WriteASCII()
 
-      ::hFile  := fCreate( ::cFile )
+   ::hFile  := fCreate( ::cFile )
 
-      if !Empty( ::hFile )
-         fWrite( ::hFile, ::SerializeASCII() )
-         fClose( ::hFile )
-      end if
+   if !Empty( ::hFile )
+      fWrite( ::hFile, ::SerializeASCII() )
+      fClose( ::hFile )
+   end if
 
-   Return ( Self )
+Return ( Self )
 
-   //------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
 
-   METHOD SerializeASCII() CLASS Cuaderno1914
+METHOD SerializeASCII() CLASS Cuaderno1914
 
-      local cBuffer     := ""
+   local cBuffer     := ""
 
-      cBuffer           := ::GetPresentador():SerializeASCII()
+   cBuffer           := ::GetPresentador():SerializeASCII()
 
-      cBuffer           += ::CodigoRegistro()
-      cBuffer           += ::TotalImporte() 
-      cBuffer           += ::TotalRegistros() 
-      cBuffer           += ::TotalFinalRegistros()
+   cBuffer           += ::CodigoRegistro()
+   cBuffer           += ::TotalImporte() 
+   cBuffer           += ::TotalRegistros() 
+   cBuffer           += ::TotalFinalRegistros()
 
-   Return ( cBuffer )
+Return ( cBuffer )
 
 //---------------------------------------------------------------------------//
 
@@ -328,153 +328,153 @@ CLASS Presentador
 
 ENDCLASS
 
-   //------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
 
-   METHOD Identificador() CLASS Presentador 
- 
-      local n
-      local cId
-      local nLen
-      local cValue
-      local cAlgorithm  := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+METHOD Identificador() CLASS Presentador 
+
+   local n
+   local cId
+   local nLen
+   local cValue
+   local cAlgorithm  := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+   cId               := ""
+   nLen              := len( alltrim( ::Nif() ) )
+
+   for n := 1 to nLen
+      cValue         := substr( ::Nif(), n, 1 )
+      if isDigit( cValue )
+         cId         += cValue
+      else
+         cId         += str( at( cValue, cAlgorithm ) + 9, 2, 0 )
+      endif
+   next
+
+   cId               += str( at( substr( ::Pais(), 1, 1 ), cAlgorithm ) + 9, 2, 0 )
+   cId               += str( at( substr( ::Pais(), 2, 1 ), cAlgorithm ) + 9, 2, 0 )
+   cId               += "00"
+   cId               := ::Pais() + strzero( 98 - ( val( cId ) % 97 ), 2 ) + ::Sufijo() + alltrim( ::Nif() )
+
+Return ( padr( cId, 35 ) )
+
+//------------------------------------------------------------------------//
+
+METHOD nTotalImporte() CLASS Presentador 
+
+   local nTotalImporte        := 0
    
-      cId               := ""
-      nLen              := len( alltrim( ::Nif() ) )
+   aEval( ::aChild, {|o| nTotalImporte += o:nTotalImporte() } )
 
-      for n := 1 to nLen
-         cValue         := substr( ::Nif(), n, 1 )
-         if isDigit( cValue )
-            cId         += cValue
-         else
-            cId         += str( at( cValue, cAlgorithm ) + 9, 2, 0 )
-         endif
-      next
-   
-      cId               += str( at( substr( ::Pais(), 1, 1 ), cAlgorithm ) + 9, 2, 0 )
-      cId               += str( at( substr( ::Pais(), 2, 1 ), cAlgorithm ) + 9, 2, 0 )
-      cId               += "00"
-      cId               := ::Pais() + strzero( 98 - ( val( cId ) % 97 ), 2 ) + ::Sufijo() + alltrim( ::Nif() )
-   
-   Return ( padr( cId, 35 ) )
+Return ( nTotalImporte )
 
-   //------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
 
-   METHOD nTotalImporte() CLASS Presentador 
+METHOD nTotalRegistros() CLASS Presentador
 
-      local nTotalImporte        := 0
-      
-      aEval( ::aChild, {|o| nTotalImporte += o:nTotalImporte() } )
+   local nTotalRegistros      := 0
 
-   Return ( nTotalImporte )
+   aEval( ::aChild, {|o| nTotalRegistros += o:nTotalRegistros() } )
 
-   //------------------------------------------------------------------------//
-   
-   METHOD nTotalRegistros() CLASS Presentador
+Return ( nTotalRegistros )
 
-      local nTotalRegistros      := 0
+//------------------------------------------------------------------------//
 
-      aEval( ::aChild, {|o| nTotalRegistros += o:nTotalRegistros() } )
+METHOD SerializeASCII() CLASS Presentador 
 
-   Return ( nTotalRegistros )
+   local oAcreedor
+   local cBuffer  := ""
 
-   //------------------------------------------------------------------------//
+   cBuffer        += ::CodigoRegistro()
+   cBuffer        += ::VersionCuaderno()
+   cBuffer        += ::Dato()
+   cBuffer        += ::Identificador()
+   cBuffer        += ::Nombre()
+   cBuffer        += ::FechaCreacion()
+   cBuffer        += ::Referencia()
+   cBuffer        += ::Entidad()
+   cBuffer        += ::Oficina()
+   cBuffer        := padr( cBuffer, 600 ) + CRLF 
 
-   METHOD SerializeASCII() CLASS Presentador 
+   for each oAcreedor in ::aChild
+      cBuffer     += oAcreedor:SerializeASCII()
+   next
 
-      local oAcreedor
-      local cBuffer  := ""
+   cBuffer        += ::CodigoRegistroTotal()
+   cBuffer        += ::Identificador()
+   cBuffer        += ::TotalImporte()
+   cBuffer        += ::TotalRegistros()
+   cBuffer        += ::TotalFinalRegistros()
+   cBuffer        += padr( '', 520 ) + CRLF 
 
-      cBuffer        += ::CodigoRegistro()
-      cBuffer        += ::VersionCuaderno()
-      cBuffer        += ::Dato()
-      cBuffer        += ::Identificador()
-      cBuffer        += ::Nombre()
-      cBuffer        += ::FechaCreacion()
-      cBuffer        += ::Referencia()
-      cBuffer        += ::Entidad()
-      cBuffer        += ::Oficina()
-      cBuffer        := padr( cBuffer, 600 ) + CRLF 
-
-      for each oAcreedor in ::aChild
-         cBuffer     += oAcreedor:SerializeASCII()
-      next
-
-      cBuffer        += ::CodigoRegistroTotal()
-      cBuffer        += ::Identificador()
-      cBuffer        += ::TotalImporte()
-      cBuffer        += ::TotalRegistros()
-      cBuffer        += ::TotalFinalRegistros()
-      cBuffer        += padr( '', 520 ) + CRLF 
-
-   Return ( cBuffer )
+Return ( cBuffer )
 
 //---------------------------------------------------------------------------//
 
 CLASS Acreedor FROM Presentador
 
-   DATA cDireccion               INIT Space( 50 )      
-   DATA cCodigoPostal            INIT Space( 10 )
-   DATA cPoblacion               INIT Space( 60 )       
-   DATA cProvincia               INIT Space( 40 )      
-   DATA cCuentaIBAN              INIT Space( 34 )
-   DATA cFechaCobro              INIT DateToString()
+DATA cDireccion               INIT Space( 50 )      
+DATA cCodigoPostal            INIT Space( 10 )
+DATA cPoblacion               INIT Space( 60 )       
+DATA cProvincia               INIT Space( 40 )      
+DATA cCuentaIBAN              INIT Space( 34 )
+DATA cFechaCobro              INIT DateToString()
 
-   DATA aChild                   INIT {}
+DATA aChild                   INIT {}
 
-   METHOD Direccion( cValue )    INLINE ( if( !Empty( cValue ), ::cDireccion     := padr( cValue, 50 ),     ::cDireccion ) )    
-   METHOD CodigoPostal( cValue ) INLINE ( if( !Empty( cValue ), ::cCodigoPostal  := cValue,                 rtrim( ::cCodigoPostal ) ) )    
-   METHOD Poblacion( cValue )    INLINE ( if( !Empty( cValue ), ::cPoblacion     := cValue,                 rtrim( ::cPoblacion ) ) )    
-   METHOD Ciudad()               INLINE ( padr( ::CodigoPostal() + Space( 1 ) + ::Poblacion(), 50 ) )
-   METHOD Provincia( cValue )    INLINE ( if( !Empty( cValue ), ::cProvincia     := padr( cValue, 40 ),     ::cProvincia ) )
-   METHOD CuentaIBAN( cValue )   INLINE ( if( !Empty( cValue ), ::cCuentaIBAN    := padr( cValue, 34 ),     ::cCuentaIBAN ) )
-   METHOD FechaCobro( dValue )   INLINE ( if( !Empty( dValue ), ::cFechaCobro    := DateToString( dValue ), ::cFechaCobro ) )
+METHOD Direccion( cValue )    INLINE ( if( !Empty( cValue ), ::cDireccion     := padr( cValue, 50 ),     ::cDireccion ) )    
+METHOD CodigoPostal( cValue ) INLINE ( if( !Empty( cValue ), ::cCodigoPostal  := cValue,                 rtrim( ::cCodigoPostal ) ) )    
+METHOD Poblacion( cValue )    INLINE ( if( !Empty( cValue ), ::cPoblacion     := cValue,                 rtrim( ::cPoblacion ) ) )    
+METHOD Ciudad()               INLINE ( padr( ::CodigoPostal() + Space( 1 ) + ::Poblacion(), 50 ) )
+METHOD Provincia( cValue )    INLINE ( if( !Empty( cValue ), ::cProvincia     := padr( cValue, 40 ),     ::cProvincia ) )
+METHOD CuentaIBAN( cValue )   INLINE ( if( !Empty( cValue ), ::cCuentaIBAN    := padr( cValue, 34 ),     ::cCuentaIBAN ) )
+METHOD FechaCobro( dValue )   INLINE ( if( !Empty( dValue ), ::cFechaCobro    := DateToString( dValue ), ::cFechaCobro ) )
 
-   METHOD CodigoRegistro()       INLINE ( '02' )
-   METHOD CodigoRegistroTotal()  INLINE ( '04' )
-   METHOD Dato()                 INLINE ( '002' )
+METHOD CodigoRegistro()       INLINE ( '02' )
+METHOD CodigoRegistroTotal()  INLINE ( '04' )
+METHOD Dato()                 INLINE ( '002' )
 
-   METHOD GetDeudor()            INLINE ( atail( ::aChild ) )
-   METHOD InsertDeudor()         INLINE ( aadd( ::aChild, Deudor():New( Self ) ), ::GetDeudor() )
+METHOD GetDeudor()            INLINE ( atail( ::aChild ) )
+METHOD InsertDeudor()         INLINE ( aadd( ::aChild, Deudor():New( Self ) ), ::GetDeudor() )
 
-   METHOD TotalFinalRegistros()  INLINE ( strzero( ::nTotalRegistros() + 2, 10 ) )
+METHOD TotalFinalRegistros()  INLINE ( strzero( ::nTotalRegistros() + 2, 10 ) )
 
-   METHOD SerializeASCII()
+METHOD SerializeASCII()
 
 ENDCLASS
 
-   //------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
 
-   METHOD SerializeASCII() CLASS Acreedor
+METHOD SerializeASCII() CLASS Acreedor
 
-      local oDeudor
-      local cBuffer        := ""
+   local oDeudor
+   local cBuffer        := ""
 
-      cBuffer              += ::CodigoRegistro()
-      cBuffer              += ::VersionCuaderno()
-      cBuffer              += ::Dato()
-      cBuffer              += ::Identificador()
-      cBuffer              += ::FechaCobro()
-      cBuffer              += ::Nombre()
-      cBuffer              += ::Direccion()
-      cBuffer              += ::Ciudad()
-      cBuffer              += ::Provincia()
-      cBuffer              += ::Pais()
-      cBuffer              += ::CuentaIBAN()
-      cBuffer              := padr( cBuffer, 600 ) + CRLF 
+   cBuffer              += ::CodigoRegistro()
+   cBuffer              += ::VersionCuaderno()
+   cBuffer              += ::Dato()
+   cBuffer              += ::Identificador()
+   cBuffer              += ::FechaCobro()
+   cBuffer              += ::Nombre()
+   cBuffer              += ::Direccion()
+   cBuffer              += ::Ciudad()
+   cBuffer              += ::Provincia()
+   cBuffer              += ::Pais()
+   cBuffer              += ::CuentaIBAN()
+   cBuffer              := padr( cBuffer, 600 ) + CRLF 
 
-      for each oDeudor in ::aChild
-         cBuffer           += oDeudor:SerializeASCII()
-      next 
+   for each oDeudor in ::aChild
+      cBuffer           += oDeudor:SerializeASCII()
+   next 
 
-      cBuffer              += ::CodigoRegistroTotal()
-      cBuffer              += ::Identificador()
-      cBuffer              += ::FechaCobro()
-      cBuffer              += ::TotalImporte()
-      cBuffer              += ::TotalRegistros()
-      cBuffer              += ::TotalFinalRegistros()
-      cBuffer              += padr( '', 520 ) + CRLF 
+   cBuffer              += ::CodigoRegistroTotal()
+   cBuffer              += ::Identificador()
+   cBuffer              += ::FechaCobro()
+   cBuffer              += ::TotalImporte()
+   cBuffer              += ::TotalRegistros()
+   cBuffer              += ::TotalFinalRegistros()
+   cBuffer              += padr( '', 520 ) + CRLF 
 
-   Return ( cBuffer )
+Return ( cBuffer )
 
 //---------------------------------------------------------------------------//
 
@@ -523,74 +523,74 @@ CLASS Deudor FROM Acreedor
 
 ENDCLASS
 
-   //------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
 
-   METHOD Importe( nValue ) CLASS Deudor
+METHOD Importe( nValue ) CLASS Deudor
 
-      if !Empty( nValue )
-         ::nImporte                       := nValue
-      endif
+   if !Empty( nValue )
+      ::nImporte                       := nValue
+   endif
 
-   Return ( DecimalToString( ::nImporte, 11 ) ) 
+Return ( DecimalToString( ::nImporte, 11 ) ) 
 
-   //------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
 
-   METHOD SerializeASCII() CLASS Deudor
+METHOD SerializeASCII() CLASS Deudor
 
-      local cBuffer  := ""
+   local cBuffer  := ""
 
-      cBuffer        += ::CodigoRegistro()
-      cBuffer        += ::VersionCuaderno()
-      cBuffer        += ::Dato()
-      cBuffer        += ::Referencia()
-      cBuffer        += ::ReferenciaMandato()
+   cBuffer        += ::CodigoRegistro()
+   cBuffer        += ::VersionCuaderno()
+   cBuffer        += ::Dato()
+   cBuffer        += ::Referencia()
+   cBuffer        += ::ReferenciaMandato()
 
-      cBuffer        += ::TipoAdeudo()
-      cBuffer        += ::Categoria()
-      cBuffer        += ::Importe()
-      cBuffer        += ::FechaMandato()
-      cBuffer        += ::EntidadBIC()
-      cBuffer        += ::Nombre()
-      cBuffer        += ::Direccion()
-      cBuffer        += ::Ciudad()
-      cBuffer        += ::Provincia()
-      cBuffer        += ::Pais()
-      cBuffer        += ::Tipo()
-      cBuffer        += ::Nif()
-      cBuffer        += ::Emisor()
-      cBuffer        += ::IdentificadorCuenta()
-      cBuffer        += ::CuentaIBAN()
-      cBuffer        += ::Proposito()
-      cBuffer        += ::Concepto()
-      cBuffer        := padr( cBuffer, 600 ) + CRLF 
+   cBuffer        += ::TipoAdeudo()
+   cBuffer        += ::Categoria()
+   cBuffer        += ::Importe()
+   cBuffer        += ::FechaMandato()
+   cBuffer        += ::EntidadBIC()
+   cBuffer        += ::Nombre()
+   cBuffer        += ::Direccion()
+   cBuffer        += ::Ciudad()
+   cBuffer        += ::Provincia()
+   cBuffer        += ::Pais()
+   cBuffer        += ::Tipo()
+   cBuffer        += ::Nif()
+   cBuffer        += ::Emisor()
+   cBuffer        += ::IdentificadorCuenta()
+   cBuffer        += ::CuentaIBAN()
+   cBuffer        += ::Proposito()
+   cBuffer        += ::Concepto()
+   cBuffer        := padr( cBuffer, 600 ) + CRLF 
 
-   Return ( cBuffer )
+Return ( cBuffer )
 
 //---------------------------------------------------------------------------//
 
-   METHOD Nif( cValue ) CLASS Deudor
+METHOD Nif( cValue ) CLASS Deudor
 
-      if !Empty( cValue )
+   if !Empty( cValue )
 
-         ::cNif      := cValue
+      ::cNif      := cValue
 
-         if !isAlpha( left( ::cNif, 1 ) )
-            ::Tipo( '2' )
-         end if
-
-      else
-
-         if ::Tipo() == '1'
-            ::cNif   := 'I' + alltrim( ::cNif )
-         else 
-            ::cNif   := 'J' + alltrim( ::cNif )
-         end if 
-
+      if !isAlpha( left( ::cNif, 1 ) )
+         ::Tipo( '2' )
       end if
 
-      ::cNif         := padr( ::cNif, 36 )
+   else
 
-   RETURN ( ::cNif ) 
+      if ::Tipo() == '1'
+         ::cNif   := 'I' + alltrim( ::cNif )
+      else 
+         ::cNif   := 'J' + alltrim( ::cNif )
+      end if 
+
+   end if
+
+   ::cNif         := padr( ::cNif, 36 )
+
+RETURN ( ::cNif ) 
 
 //---------------------------------------------------------------------------//
 
