@@ -1115,6 +1115,9 @@ Static Function EndTrans( aTmp, aGet, dbf, oBrw, oDlg, nDinDiv, nMode )
       ( dbf )->lCobrado      := .f.
       ( dbf )->cDivPgo       := aTmp[ _CDIVPGO ]
       ( dbf )->nVdvPgo       := aTmp[ _NVDVPGO ]
+      ( dbf )->cCodPrv       := aTmp[ _CCODPRV ]
+      ( dbf )->cNomPrv       := aTmp[ _CNOMPRV ]
+      ( dbf )->cCodPgo       := aTmp[ _CCODPGO ] 
       ( dbf )->lConPgo       := .f.
       ( dbf )->cTurRec       := cCurSesion()
       ( dbf )->lCloPgo       := .f.

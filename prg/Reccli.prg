@@ -2580,15 +2580,40 @@ RETURN ( aDoc )
 
 static function lLiquida( oBrw )
 
-   if !( dbfFacCliP )->lCobrado
-      if ( dbfFacCliP )->( dbRLock() )
-         ( dbfFacCliP )->lCobrado   := .t.
-         ( dbfFacCliP )->dEntrada   := GetSysDate()
-         ( dbfFacCliP )->cTurRec    := cCurSesion()
-         ( dbfFacCliP )->( dbUnLock() )
-      end if
-   else
-      msgStop( "Recibo ya pagado" )
+   local nRec
+
+   if len( oBrw:aSelected ) > 0
+
+      for each nRec in ( oBrw:aSelected )
+
+         ( dbfFacCliP )->( dbGoTo( nRec ) )
+
+         if !( dbfFacCliP )->lCobrado
+
+            if ( dbfFacCliP )->( dbRLock() )
+               ( dbfFacCliP )->lCobrado   := .t.
+               ( dbfFacCliP )->dEntrada   := GetSysDate()
+               ( dbfFacCliP )->cTurRec    := cCurSesion()
+               ( dbfFacCliP )->( dbUnLock() )
+            end if
+
+         end if
+
+
+         if ( dbfFacCliT )->( dbSeek( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac ) )
+
+            ChkLqdFacCli(  nil,;
+                           dbfFacCliT,; 
+                           dbfFacCliL,; 
+                           dbfFacCliP,; 
+                           dbfAntCliT,; 
+                           dbfIva,; 
+                           dbfDiv,; 
+                           .f. )
+         end if
+
+      next
+
    end if
 
    if oBrw != nil
@@ -5164,6 +5189,7 @@ Static Function EndTrans( aTmp, aGet, dbfFacCliP, oBrw, oDlg, nMode )
       ( dbfFacCliP )->nNumRec    := nCon
       ( dbfFacCliP )->cDivPgo    := aTmp[ _CDIVPGO ]
       ( dbfFacCliP )->nVdvPgo    := aTmp[ _NVDVPGO ]
+      ( dbfFacCliP )->cCodPgo    := aTmp[ _CCODPGO ]
       ( dbfFacCliP )->lConPgo    := .f.
       ( dbfFacCliP )->dFecCre    := GetSysDate()
       ( dbfFacCliP )->cHorCre    := SubStr( Time(), 1, 5 )
@@ -5199,12 +5225,8 @@ Static Function EndTrans( aTmp, aGet, dbfFacCliP, oBrw, oDlg, nMode )
 
       for each cNumRec in aRecRel
 
-         ? cNumRec
-
          if ( dbfFacCliP )->( dbSeek( cNumRec ) ) .and. dbDialogLock( dbfFacCliP )
             
-            ? aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] + aTmp[ _CTIPREC ]
-
             ( dbfFacCliP )->cNumMtr := aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] + aTmp[ _CTIPREC ]
             ( dbfFacCliP )->( dbUnLock() )
          end if 
