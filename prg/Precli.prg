@@ -4489,9 +4489,9 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
       return nil
    end if
 
-   if aTmp[ _NUNICAJA ] == 0
+   /*if aTmp[ _NUNICAJA ] == 0
       aTmp[ _NUNICAJA ] := 1
-   end if 
+   end if */
 
    SysRefresh()
 

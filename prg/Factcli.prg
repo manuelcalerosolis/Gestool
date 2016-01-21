@@ -13337,9 +13337,9 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
       Return nil
    end if
 
-   if aTmp[ _NUNICAJA ] == 0
+   /*if aTmp[ _NUNICAJA ] == 0
       aTmp[ _NUNICAJA ] := 1
-   end if
+   end if*/
 
    aClo     	:= aClone( aTmp )
 
