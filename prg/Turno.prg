@@ -3583,7 +3583,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          PICTURE  ::cPorDiv ;
          OF       ::oFldTurno:aDialogs[3]
 
-      // ::oImporteRetirado:bChange    := {|| ::RefreshTurno() }
+      ::oImporteRetirado:bChange    := {|| ::RefreshTurno() }
 
       REDEFINE SAY ::oImporteCambio ;
          PROMPT   ::nImporteCambio ;
