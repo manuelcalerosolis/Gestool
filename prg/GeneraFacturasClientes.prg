@@ -762,21 +762,20 @@ Return ( cItem )
 METHOD getImporteTotalTree() CLASS GeneraFacturasClientes
 
    local oItem 
-   local nImporteTotal  := 0
+   local nImporteTotal     := 0
 
    if empty( ::oBrwAlbaranes:oTree )
       Return ( nImporteTotal )
    end if 
 
-   oItem                := ::oBrwAlbaranes:oTree:oFirst
-
+   oItem                   := ::oBrwAlbaranes:oTree:oFirst
    while oItem != nil
 
-      if empty( oItem:oTree ) .and. hGet( oItem:Cargo, "seleccionado" ) 
-         nImporteTotal  += hGet( oItem:Cargo, "total" )
-      end if   
+      if !empty( oItem:oTree )
+         oItem:oTree:Eval( {|oItem| if( hGet( oItem:Cargo, "seleccionado" ), nImporteTotal += hGet( oItem:Cargo, "total" ), ) } )
+      end if 
 
-      oItem             := oItem:GetNext()
+      oItem                := oItem:getNext()
 
    end while
 
@@ -793,15 +792,14 @@ METHOD getDocumentosTotalTree() CLASS GeneraFacturasClientes
       Return ( nDocumentosTotal )
    end if 
 
-   oItem                := ::oBrwAlbaranes:oTree:oFirst
-
+   oItem                   := ::oBrwAlbaranes:oTree:oFirst
    while oItem != nil
 
-      if empty( oItem:oTree ) .and. hGet( oItem:Cargo, "seleccionado" ) 
-         nDocumentosTotal++
-      end if   
+      if !empty( oItem:oTree )
+         oItem:oTree:Eval( {|oItem| if( hGet( oItem:Cargo, "seleccionado" ), nDocumentosTotal++, ) } )
+      end if 
 
-      oItem             := oItem:GetNext()
+      oItem                := oItem:getNext()
 
    end while
 
@@ -1711,11 +1709,12 @@ METHOD clickOnCheckHeader()
    oItem       := ::oBrwAlbaranes:oTree:oFirst
    while oItem != nil
       
-      if !empty( oItem )
-         ::SetValueCheck( oItem, !hGet( oItem:Cargo, "seleccionado" ) )
-      end if   
+      ::SetValueCheck( oItem, !hGet( oItem:Cargo, "seleccionado" ) )
 
-      oItem:Open()
+      if !( oItem:lOpened ) .and. !empty( oItem:oTree )
+         oItem:oTree:Eval( {|oItem| ::SetValueCheck( oItem, !hGet( oItem:Cargo, "seleccionado" ) ) } )
+      end if 
+
       oItem    := oItem:getNext()
 
    end while

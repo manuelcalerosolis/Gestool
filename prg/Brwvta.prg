@@ -933,7 +933,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
    end with
 
    with object ( oBrwTmp:addCol() )
-      :cHeader       := "Almacén"
+      :cHeader       := "Almacén destino"
       :cSortOrder    := "cAlmDoc"
       :bEditValue    := {|| oDbfTmp:cAlmDoc }
       :nWidth        := 40
@@ -1241,7 +1241,7 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
 
    oStock:oTreeStocks( cCodArt )
 
-   if Empty( oBrwStk:oTree )
+   if empty( oBrwStk:oTree )
       oBrwStk:SetTree( oStock:oTree, { "Navigate_Minus_16", "Navigate_Plus_16", "Nil16" } ) 
    else 
       oBrwStk:oTree     := oStock:oTree
@@ -1265,11 +1265,9 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
    oMeter:AutoInc()
 
    for n := 1 to 12
-
       aTotCom[1]        += aCom[n,1]
       aTotCom[2]        += aCom[n,2]
       aTotCom[3]        += aCom[n,3]
-
    next
 
    /*

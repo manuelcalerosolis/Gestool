@@ -6,7 +6,7 @@
 
 CLASS TStock
 
-   CLASSDATA aStocks                AS ARRAY INIT {}
+   CLASSDATA aStocks                
    CLASSDATA cCodigoAlmacen
    CLASSDATA cCodigoArticulo
 
@@ -101,7 +101,6 @@ CLASS TStock
    DATA oTree  
 
    DATA aMovAlm            AS ARRAY INIT {}
-   
 
    DATA lAlbPrv            AS LOGIC INIT .t.
    DATA lAlbCli            AS LOGIC INIT .t.
@@ -121,7 +120,7 @@ CLASS TStock
    METHOD Create( cPath, lExclusive )
    METHOD End()            INLINE ( if( !Empty( ::oTree ), ::oTree:End(), ), ::CloseFiles() )
 
-   METHOD Reset()          INLINE ( ::aStocks := {} ) // { sStock():New() } )
+   METHOD Reset()          INLINE ( ::aStocks := { sStock():New() } )
 
    METHOD lOpenFiles( lExclusive )
    METHOD CloseFiles()
@@ -4179,8 +4178,8 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    DEFAULT lNumeroSerie := !uFieldEmpresa( "lCalSer" )
    DEFAULT lNotPendiente:= .f.
 
-   if ( !empty( ::cCodigoArticulo ) .and. cCodArt == ::cCodigoArticulo ) .and.;
-      ( !empty( ::cCodigoAlmacen ) .and. cCodAlm == ::cCodigoAlmacen ) .and.;
+   if ( !empty( ::cCodigoArticulo ) .and. cCodArt == ::cCodigoArticulo  ) .and.;
+      ( !empty( ::cCodigoAlmacen )  .and. cCodAlm == ::cCodigoAlmacen   ) .and.;
       ( !empty( ::aStocks ) )
 
       Return ( ::aStocks )
