@@ -20232,14 +20232,13 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 191, "Edit", WS_BORDER|WS_TABSTOP, 127, 111, 200, 12
   CONTROL "Factura", 210, "Button", BS_AUTORADIOBUTTON, 8, 146, 37, 10
   CONTROL "Albarán", 220, "Button", BS_AUTORADIOBUTTON, 8, 158, 37, 10
-  CONTROL "", 230, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 51, 143, 60, 12
+  CONTROL "", 230, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 51, 143, 74, 12
   CONTROL "Generar sobre serie de albarán", 240, "Button", BS_AUTORADIOBUTTON, 178, 144, 120, 10
   CONTROL "Generar sobre serie del cliente", 241, "Button", BS_AUTORADIOBUTTON, 178, 156, 120, 10
   CONTROL "Generar sobre serie", 250, "Button", BS_AUTORADIOBUTTON, 178, 169, 72, 10
   CONTROL "", 260, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 257, 167, 40, 12
   CONTROL "Agrupar por clientes", 270, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 192, 76, 11
   CONTROL "Facturar por cada dirección", 280, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 18, 205, 103, 11
-  CONTROL "Solo albaranes con impuestos incluidos", 294, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 6, 217, 139, 11
   CONTROL "Solo albaranes entregados", 290, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 178, 194, 100, 11
   CONTROL "Facturar por forma de pago", 291, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 178, 206, 103, 11
   CONTROL "Facturar por descuentos", 293, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 178, 217, 103, 11

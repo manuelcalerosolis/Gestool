@@ -4036,7 +4036,6 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
       oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
       BEGIN SEQUENCE
 
-         oDlgTpv:Disable()
          AutoMeterDialog( oDlgTpv )
          AutoTextDialog( oDlgTpv )   
 
@@ -4453,8 +4452,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          EndAutoMeterDialog( oDlgTpv )
          EndAutoTextDialog( oDlgTpv )
 
-         oDlgTpv:Enable()
-         oDlgTpv:AEvalWhen()
+         oDlgTpv:aEvalWhen()
 
       RECOVER USING oError
 
@@ -5583,10 +5581,6 @@ Static Function TmpTiket( aTmp, aGet, nMode, lClean, lImprimirComanda, lLiberarM
 
       oDlgTpv:Disable()
 
-      /*
-      Archivamos el tipo de venta que se ha realizado--------------------------
-      */
-
 		/*
       Grabamos el tiket--------------------------------------------------------
 		*/
@@ -5994,7 +5988,7 @@ Static Function PrnSerTik( nSelTik, cNumDes, cNumHas, dFecDes, dFecHas, oDlg, lI
                ( dbfTikT )->( OrdKeyVal() ) <= uNumHas   .and.;
                !( dbfTikT )->( Bof() )
 
-            ImpTiket( IS_PRINTER, , .t., , oDatos )
+            impTiket( IS_PRINTER, , .t., , oDatos )
 
             ( dbfTikT )->( dbSkip( -1 ) )
 
@@ -18717,7 +18711,6 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
 
    oDlg:Disable()
 
-
    /*
    Obtenemos el nuevo numero del Tiket--------------------------------------
    */
@@ -18763,7 +18756,6 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
 
    winGather( aTmp, nil, dbfTikT, nil, APPD_MODE, nil, .f. )
 
-
    /*
    Añade las líneas seleccionadas-------------------------------------------
    */
@@ -18772,7 +18764,6 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
       ( dbfTmp )->( dbgoto( nRec ) )
       dbPass( dbfTmp, dbfTikL, .t., cSerieTicket, nNumeroTicket, cSufijoTicket, cTipoDocumento )
    next
-
 
    /*
    Calculamos el total del vale o devolucion--------------------------------
@@ -18844,7 +18835,6 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
    ( dbfTikT )->( ordsetfocus( nOrd ) )
    ( dbfTikT )->( dbgoto( nRec ) )
 
-
    /*
    Abrir la caja -----------------------------------------------------------
    */
@@ -18855,9 +18845,7 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
    Imprimir el registro-----------------------------------------------------
    */
    
-
    ImpTiket( IS_PRINTER )
-
 
    /*
    Tomamos el total de devoluciones de un ticket----------------------------

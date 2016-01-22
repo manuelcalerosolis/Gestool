@@ -72,9 +72,9 @@ STATIC FUNCTION DialogDisable()
    local Self         := HB_QSelf()
 
    CursorWait()
-   
+
    Self:Cargo         := Self:bValid
-   Self:bValid        := {|| .f. }
+   Self:bValid        := {|| msgStop( "Intento salir"), .f. }
 
    for each oControl in Self:aControls
       if oControl:ClassName() <> "TSAY" .AND. oControl:ClassName() <> "TBITMAP"
@@ -89,7 +89,7 @@ Return ( .t. )
 STATIC FUNCTION DialogEnable() 
 
    local oControl
-   local Self         := HB_QSelf()
+   local Self       := HB_QSelf()
 
    for each oControl in Self:aControls
       if oControl:ClassName() <> "TSAY" .AND. oControl:ClassName() <> "TBITMAP"
@@ -97,7 +97,7 @@ STATIC FUNCTION DialogEnable()
       end if 
    next
 
-   Self:bValid       := Self:Cargo
+   Self:bValid      := Self:Cargo
 
    CursorArrow()
 

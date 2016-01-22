@@ -940,6 +940,15 @@ function BrwVtaComArt( cCodArt, cNomArt )
       :lHide         := .t.
    end with
 
+   with object ( oBrwTmp:addCol() )
+      :cHeader       := "Almacén origen"
+      :cSortOrder    := "cAlmOrg"
+      :bEditValue    := {|| oDbfTmp:cAlmOrg }
+      :nWidth        := 40
+      :lHide         := .t.
+   end with
+
+
    oBrwTmp:bLDblClick   := {|| ZoomDocument( oBrwTmp ) }
 
    /*
@@ -2098,6 +2107,7 @@ Static Function LoadAlbaranProveedor( cCodArt, nYear )
             oDbfTmp:cValPr2   := ( dbfAlbPrvL )->cValPr2
             oDbfTmp:cLote     := ( dbfAlbPrvL )->cLote
             oDbfTmp:cAlmDoc   := ( dbfAlbPrvL )->cAlmLin
+            oDbfTmp:cAlmOrg   := ( dbfAlbPrvL )->cAlmOrigen
             oDbfTmp:nUndDoc   := nTotNAlbPrv( dbfAlbPrvL )
             oDbfTmp:nFacCnv   := ( dbfAlbPrvL )->nFacCnv
             oDbfTmp:nImpDoc   := nTotUAlbPrv( dbfAlbPrvL, nDinDiv )
@@ -2142,6 +2152,7 @@ Static Function LoadFacturaProveedor( cCodArt, nYear )
             oDbfTmp:cValPr2   := ( dbfFacPrvL )->cValPr2
             oDbfTmp:cLote     := ( dbfFacPrvL )->cLote
             oDbfTmp:cAlmDoc   := ( dbfFacPrvL )->cAlmLin
+            oDbfTmp:cAlmOrg   := ( dbfFacPrvL )->cAlmOrigen
             oDbfTmp:nUndDoc   := nTotNFacPrv( dbfFacPrvL )
             oDbfTmp:nFacCnv   := ( dbfFacPrvL )->nFacCnv
             oDbfTmp:nImpDoc   := nTotUFacPrv( dbfFacPrvL, nDinDiv )
@@ -2186,6 +2197,7 @@ Static Function LoadRectificativaProveedor( cCodArt, nYear )
             oDbfTmp:cValPr2   := ( dbfRctPrvL )->cValPr2
             oDbfTmp:cLote     := ( dbfRctPrvL )->cLote
             oDbfTmp:cAlmDoc   := ( dbfRctPrvL )->cAlmLin
+            oDbfTmp:cAlmOrg   := ( dbfRctPrvL )->cAlmOrigen
             oDbfTmp:nUndDoc   := nTotNRctPrv( dbfRctPrvL )
             oDbfTmp:nFacCnv   := ( dbfRctPrvL )->nFacCnv
             oDbfTmp:nImpDoc   := nTotURctPrv( dbfRctPrvL, nDinDiv )
@@ -3430,7 +3442,8 @@ Static Function DefineTemporal( cPath, lUniqueName, cFileName )
       FIELD NAME "cValPr1"    TYPE "C" LEN 20 DEC 0 COMMENT "Valor de la primera propiedad"  OF oDbf
       FIELD NAME "cValPr2"    TYPE "C" LEN 20 DEC 0 COMMENT "Valor de la segunda propiedad"  OF oDbf
       FIELD NAME "cLote"      TYPE "C" LEN 14 DEC 0 COMMENT "Número de lote"                 OF oDbf
-      FIELD NAME "cAlmDoc"    TYPE "C" LEN 16 DEC 0 COMMENT "Almacén"                        OF oDbf
+      FIELD NAME "cAlmDoc"    TYPE "C" LEN 16 DEC 0 COMMENT "Almacén destino"                OF oDbf
+      FIELD NAME "cAlmOrg"    TYPE "C" LEN 16 DEC 0 COMMENT "Almacén origen"                 OF oDbf
       FIELD NAME "nUndDoc"    TYPE "N" LEN 16 DEC 6 COMMENT "Unidades vendidas"              OF oDbf
       FIELD NAME "nFacCnv"    TYPE "N" LEN 16 DEC 6 COMMENT "Factor de conversión"           OF oDbf
       FIELD NAME "nDtoDoc"    TYPE "N" LEN 16 DEC 6 COMMENT "Descuento porcentual"           OF oDbf
@@ -3447,6 +3460,7 @@ Static Function DefineTemporal( cPath, lUniqueName, cFileName )
       INDEX TO ( cFileName ) TAG "cCodDoc" ON "cCodDoc + Dtos( dFecDoc )"                    OF oDbf
       INDEX TO ( cFileName ) TAG "cLote"   ON "cLote + Dtos( dFecDoc )"                      OF oDbf
       INDEX TO ( cFileName ) TAG "cAlmDoc" ON "cAlmDoc + Dtos( dFecDoc )"                    OF oDbf
+      INDEX TO ( cFileName ) TAG "cAlmOrg" ON "cAlmOrg + Dtos( dFecDoc )"                    OF oDbf
       INDEX TO ( cFileName ) TAG "nUndDoc" ON "nUndDoc"                                      OF oDbf
       INDEX TO ( cFileName ) TAG "nFacCnv" ON "nFacCnv"                                      OF oDbf
       INDEX TO ( cFileName ) TAG "nImpDoc" ON "nImpDoc"                                      OF oDbf
