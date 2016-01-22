@@ -331,7 +331,7 @@ static lExternal        := .f.
 static oMailing
 
 static bEdtRec          := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodPed | EdtRec( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodPed ) }
-static bEdtDet          := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aAlbPrv | EdtDet( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
+static bEdtDet          := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlbaranProveedor | EdtDet( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlbaranProveedor ) }
 static bEdtInc          := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin | EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static bEdtDoc          := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin | EdtDoc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 
@@ -1217,7 +1217,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
       aTmp[ _CDPP ]     := Padr( "Pronto pago", 50 )
    end if
 
-   if BeginTrans( aTmp )
+   if BeginTrans( aTmp, nMode )
       Return .f.
    end if
 
@@ -1685,7 +1685,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
          end with
 
          if nMode != ZOOM_MODE
-            oBrwLin:bLDblClick   := {|| EdtDeta( oBrwLin, bEdtDet, aTmp ) }
+            oBrwLin:bLDblClick   := {|| EditDetail( oBrwLin, bEdtDet, aTmp ) }
          end if
 
          oBrwLin:CreateFromResource( 190 )
@@ -1694,13 +1694,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
 			ID 		500 ;
 			OF 		oFld:aDialogs[1] ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         ACTION   ( AppDeta( oBrwLin, bEdtDet, aTmp ) )
+         ACTION   ( AppendDetail( oBrwLin, bEdtDet, aTmp ) )
 
 		REDEFINE BUTTON ;
 			ID 		501 ;
 			OF 		oFld:aDialogs[1] ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         ACTION   ( EdtDeta( oBrwLin, bEdtDet, aTmp ) )
+         ACTION   ( EditDetail( oBrwLin, bEdtDet, aTmp ) )
 
 		REDEFINE BUTTON ;
 			ID 		502 ;
@@ -1711,7 +1711,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
 		REDEFINE BUTTON ;
 			ID 		503 ;
 			OF 		oFld:aDialogs[1] ;
-         ACTION   ( EdtZoom( oBrwLin, bEdtDet, aTmp ) )
+         ACTION   ( ZoomDetail( oBrwLin, bEdtDet, aTmp ) )
 
 		REDEFINE BUTTON ;
 			ID 		524 ;
@@ -2226,8 +2226,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
    CodigosPostales():GetInstance():setBinding( { "CodigoPostal" => aGet[ _CPOSPRV ], "Poblacion" => aGet[ _CPOBPRV ], "Provincia" => aGet[ _CPROPRV ] } )
 
    if nMode != ZOOM_MODE
-      oFld:aDialogs[1]:AddFastKey( VK_F2, {|| AppDeta( oBrwLin, bEdtDet, aTmp ) } )
-      oFld:aDialogs[1]:AddFastKey( VK_F3, {|| EdtDeta( oBrwLin, bEdtDet, aTmp ) } )
+      oFld:aDialogs[1]:AddFastKey( VK_F2, {|| AppendDetail( oBrwLin, bEdtDet, aTmp ) } )
+      oFld:aDialogs[1]:AddFastKey( VK_F3, {|| EditDetail( oBrwLin, bEdtDet, aTmp ) } )
       oFld:aDialogs[1]:AddFastKey( VK_F4, {|| WinDelRec( oBrwLin, dbfTmp, {|| delDeta() }, {|| RecalculaTotal( aTmp ) } ) } )
 
       oFld:aDialogs[3]:AddFastKey( VK_F2, {|| WinAppRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) } )
@@ -2255,11 +2255,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
 
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. !Empty( cCodArt )
          oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], D():Usuarios( nView ) ),;
-                              ( AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ), ShowKitCom( D():AlbaranesProveedores( nView ), dbfTmp, oBrwLin, cCodPrv, dbfTmpInc, aGet ), StartEdtRecAlbProv( aGet, oSay, nMode ) ),;
+                              ( AppendDetail( oBrwLin, bEdtDet, aTmp, cCodArt ), ShowKitCom( D():AlbaranesProveedores( nView ), dbfTmp, oBrwLin, cCodPrv, dbfTmpInc, aGet ), StartEdtRecAlbProv( aGet, oSay, nMode ) ),;
                               oDlg:end() ) }
 
       case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !Empty( cCodArt )
-         oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ), ShowKitCom( D():AlbaranesProveedores( nView ), dbfTmp, oBrwLin, cCodPrv, dbfTmpInc, aGet ), StartEdtRecAlbProv( aGet, oSay, nMode ) }
+         oDlg:bStart := {|| AppendDetail( oBrwLin, bEdtDet, aTmp, cCodArt ), ShowKitCom( D():AlbaranesProveedores( nView ), dbfTmp, oBrwLin, cCodPrv, dbfTmpInc, aGet ), StartEdtRecAlbProv( aGet, oSay, nMode ) }
 
       otherwise
          oDlg:bStart := {|| ShowKitCom( D():AlbaranesProveedores( nView ), dbfTmp, oBrwLin, cCodPrv, dbfTmpInc, aGet ), StartEdtRecAlbProv( aGet, oSay, nMode ) }
@@ -2661,7 +2661,7 @@ RETURN lValid
 Funcion Auxiliar para A¤adir lineas de detalle a un albaran
 */
 
-STATIC FUNCTION AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt )
+STATIC FUNCTION AppendDetail( oBrwLin, bEdtDet, aTmp, cCodArt )
 
    WinAppRec( oBrwLin, bEdtDet, dbfTmp, aTmp, cCodArt )
 
@@ -2673,11 +2673,23 @@ RETURN ( RecalculaTotal( aTmp ) )
 Funcion Auxiliar para la Edici¢n de Lineas de Detalle en un albaran
 */
 
-STATIC FUNCTION EdtDeta( oBrwLin, bEdtDet, aTmp )
+STATIC FUNCTION EditDetail( oBrwLin, bEdtDet, aTmp )
 
    WinEdtRec( oBrwLin, bEdtDet, dbfTmp, aTmp )
 
 RETURN ( RecalculaTotal( aTmp ) )
+
+//--------------------------------------------------------------------------//
+
+/*
+Funcion Auxiliar para la Visualizaci¢n de Lineas de Detalle en una Abono
+*/
+
+STATIC FUNCTION ZoomDetail( oBrwLin, bEdtDet, aTmp )
+
+   WinZooRec( oBrwLin, bEdtDet, dbfTmp, aTmp )
+
+RETURN NIL
 
 //--------------------------------------------------------------------------//
 
@@ -2702,19 +2714,6 @@ STATIC FUNCTION DelDeta()
 Return ( .t. )
 
 //--------------------------------------------------------------------------//
-
-/*
-Funcion Auxiliar para la Visualizaci¢n de Lineas de Detalle en una Abono
-*/
-
-STATIC FUNCTION EdtZoom( oBrwLin, bEdtDet, aTmp )
-
-   WinZooRec( oBrwLin, bEdtDet, dbfTmp, aTmp )
-
-RETURN NIL
-
-//--------------------------------------------------------------------------//
-
 /*
 Edita las lineas de Detalle
 */
@@ -3384,7 +3383,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
             PICTURE  "@E 999.99" ;
             OF       oFld:aDialogs[ 2 ]
 
-      aGet[ _NBNFLIN6 ]:bWhen    := {|| aGet[ _NBNFLIN6 ]:lValid() }
+      aGet[ _NBNFLIN6 ]:bChange  := {|| aGet[ _NBNFLIN6 ]:lValid() }
       aGet[ _NBNFLIN6 ]:bValid   := {|| lCalPre( oBeneficioSobre[ 6 ]:nAt <= 1, aTmp[ _NPRECOM ], aTmp[ _LBNFLIN6 ], aTmp[ _NBNFLIN6 ], aTmp[ _NIVA ], aGet[ _NPVPLIN6 ], aGet[ _NIVALIN6 ], nDinDiv ) }
 
       REDEFINE COMBOBOX oBeneficioSobre[ 6 ] ;
@@ -5317,7 +5316,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION BeginTrans( aTmp, aOld )
+STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    local oBlock
    local lErrors     := .f.
@@ -5325,12 +5324,17 @@ STATIC FUNCTION BeginTrans( aTmp, aOld )
    local cDbfInc     := "AProI"
    local cDbfDoc     := "AProD"
    local cDbfSer     := "AProS"
+   local hDuplicate  := {=>}
    local nAlbaran    := aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ]
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
       CursorWait()
+
+      if nMode == DUPL_MODE
+         hDuplicate  := { "cSerAlb" => Space(1), "nNumAlb" => 0, "lFacturado" => .f. }
+      end if 
 
       cNewFile       := cGetNewFileName( cPatTmp() + cDbf )
       cTmpInc        := cGetNewFileName( cPatTmp() + cDbfInc )
@@ -5361,18 +5365,10 @@ STATIC FUNCTION BeginTrans( aTmp, aOld )
       */
 
       if ( D():AlbaranesProveedoresLineas( nView ) )->( dbSeek( nAlbaran ) )
-         
          while ( ( D():AlbaranesProveedoresLineas( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedoresLineas( nView ) )->nNumAlb ) + ( D():AlbaranesProveedoresLineas( nView ) )->cSufAlb == nAlbaran .AND. !( D():AlbaranesProveedoresLineas( nView ) )->( eof() ) )
-            
-            appendRegisterByHash( D():AlbaranesProveedoresLineas( nView ), dbfTmp, {   "cSerAlb" => Space(1),;
-                                                                                       "nNumAlb" => 0,;
-                                                                                       "lFacturado" => .f. } )
-
-
+            appendRegisterByHash( D():AlbaranesProveedoresLineas( nView ), dbfTmp, hDuplicate ) 
             ( D():AlbaranesProveedoresLineas( nView ) )->( DbSkip() )
-
          end while
-
       end if
 
       ( dbfTmp )->( dbGoTop() )
