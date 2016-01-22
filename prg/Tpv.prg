@@ -8541,6 +8541,14 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
          end if
 
          /*
+         Lote------------------------------------------------------------------
+         */
+
+         if !Empty( aGet[ _CLOTE ] ) .and. ( dbfArticulo )->lLote
+            aGet[ _CLOTE ]:cText( ( dbfArticulo )->cLote )
+         end if
+
+         /*
          Familia del artículo--------------------------------------------------
          */
 
