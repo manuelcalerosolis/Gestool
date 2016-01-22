@@ -5333,7 +5333,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       CursorWait()
 
       if nMode == DUPL_MODE
-         hDuplicate  := { "cSerAlb" => Space(1), "nNumAlb" => 0, "lFacturado" => .f. }
+         hDuplicate  := { "cSerAlb" => Space(1), "nNumAlb" => 0, "lFacturado" => .f., "cNumFac" => "" }
       end if 
 
       cNewFile       := cGetNewFileName( cPatTmp() + cDbf )
