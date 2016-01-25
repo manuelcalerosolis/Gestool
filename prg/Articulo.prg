@@ -6645,27 +6645,24 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
    Comprobamos que existan valores en las propiedades--------------------------
    */
 
-   if !Empty( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] )
-
-      
-
-
-
+   if empty( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] )
+      msgstop( "No hay propiedades seleccionadas.")
+      Return .f.
    end if   
 
    /*
    Llenamos los arrays con las posibles propiedades----------------------------
    */
 
-   aValPrp1                := aLlenaPropiedades( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ], aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ], nMode, oBrw, dbfTmpVta )
-   aValPrp2                := aLlenaPropiedades( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ], aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ], nMode, oBrw, dbfTmpVta )
+   aValPrp1                := aLlenaPropiedades( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ], aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr1" ) ) ], nMode, oBrw, dbfTmpVta )
+   aValPrp2                := aLlenaPropiedades( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ], aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr2" ) ) ], nMode, oBrw, dbfTmpVta )
 
    /*
    Preguntamos si la propiedad es de tipo color o no---------------------------
    */
 
-   lColorPrp1              := retFld( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ], dbfPro, "lColor" )
-   lColorPrp2              := retFld( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ], dbfPro, "lColor" )
+   lColorPrp1              := retFld( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ], dbfPro, "lColor" )
+   lColorPrp2              := retFld( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ], dbfPro, "lColor" )
 
    /*
    Limpiamos vaores en el caso de ser multiple selección-----------------------
@@ -6673,39 +6670,39 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
 
    if Len( oBrw:aSelected ) > 1 .and. nMode != APPD_MODE
 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr1" ) ) ] := "" 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr2" ) ) ] := "" 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreCom" ) ) ] := 0 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "lBnf1" ) ) ] := .f. 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "lBnf2" ) ) ] := .f. 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "lBnf3" ) ) ] := .f. 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "lBnf4" ) ) ] := .f. 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "lBnf5" ) ) ] := .f. 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "lBnf6" ) ) ] := .f. 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "Benef1" ) ) ] := 0 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "Benef2" ) ) ] := 0 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "Benef3" ) ) ] := 0 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "Benef4" ) ) ] := 0 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "Benef5" ) ) ] := 0 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "Benef6" ) ) ] := 0 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "nBnfSbr1" ) ) ] := 0 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "nBnfSbr2" ) ) ] := 0 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "nBnfSbr3" ) ) ] := 0 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "nBnfSbr4" ) ) ] := 0 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "nBnfSbr5" ) ) ] := 0 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "nBnfSbr6" ) ) ] := 0 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreVta1" ) ) ] := 0 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreVta2" ) ) ] := 0 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreVta3" ) ) ] := 0 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreVta4" ) ) ] := 0 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreVta5" ) ) ] := 0 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreVta6" ) ) ] := 0 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreIva1" ) ) ] := 0 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreIva2" ) ) ] := 0 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreIva3" ) ) ] := 0 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreIva4" ) ) ] := 0 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreIva5" ) ) ] := 0 
-      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreIva6" ) ) ] := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr1" ) ) ]   := "" 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr2" ) ) ]   := "" 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreCom" ) ) ]   := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "lBnf1" ) ) ]     := .f. 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "lBnf2" ) ) ]     := .f. 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "lBnf3" ) ) ]     := .f. 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "lBnf4" ) ) ]     := .f. 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "lBnf5" ) ) ]     := .f. 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "lBnf6" ) ) ]     := .f. 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "Benef1" ) ) ]    := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "Benef2" ) ) ]    := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "Benef3" ) ) ]    := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "Benef4" ) ) ]    := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "Benef5" ) ) ]    := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "Benef6" ) ) ]    := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nBnfSbr1" ) ) ]  := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nBnfSbr2" ) ) ]  := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nBnfSbr3" ) ) ]  := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nBnfSbr4" ) ) ]  := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nBnfSbr5" ) ) ]  := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nBnfSbr6" ) ) ]  := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreVta1" ) ) ]  := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreVta2" ) ) ]  := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreVta3" ) ) ]  := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreVta4" ) ) ]  := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreVta5" ) ) ]  := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreVta6" ) ) ]  := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreIva1" ) ) ]  := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreIva2" ) ) ]  := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreIva3" ) ) ]  := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreIva4" ) ) ]  := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreIva5" ) ) ]  := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreIva6" ) ) ]  := 0 
 
    end if
 
@@ -6732,8 +6729,8 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
 
    lCargaImagenes()
 
-   if Len( oBrw:aSelected ) == 1
-      SelectImagen( aTmp )
+   if len( oBrw:aSelected ) == 1
+      selectImagen( aTmp )
    end if
 
    DEFINE DIALOG oDlg RESOURCE "PREDIV" TITLE LblTitle( nMode ) + "precios por propiedades"
@@ -6774,21 +6771,21 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       with object ( oBrwPrp1:AddCol() )
          :cHeader          := "S"
          :bStrData         := {|| "" }
-         :bEditValue       := {|| if( Len( aValPrp1 ) != 0, aValPrp1[ oBrwPrp1:nArrayAt ]:lSel, .f. ) }
+         :bEditValue       := {|| if( !empty( aValPrp1 ), aValPrp1[ oBrwPrp1:nArrayAt ]:lSel, .f. ) }
          :nWidth           := 16
-         :SetCheck( { "BSEL", "Nil16" } )
+         :SetCheck( { "bSel", "Nil16" } )
       end with
 
       with object ( oBrwPrp1:AddCol() )
          :cHeader          := "Código"
-         :bStrData         := {|| aValPrp1[ oBrwPrp1:nArrayAt ]:cValPrp }
+         :bStrData         := {|| if( !empty( aValPrp1 ), aValPrp1[ oBrwPrp1:nArrayAt ]:cValPrp, "" ) }
          :nWidth           := 40
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | cOrdenBrwPropiedades( oCol, oBrwPrp1 ) }
       end with
 
       with object ( oBrwPrp1:AddCol() )
-         :cHeader          := retFld( aValPrp1[ oBrwPrp1:nArrayAt ]:cCodPrp, dbfPro )
-         :bStrData         := {|| aValPrp1[ oBrwPrp1:nArrayAt ]:cDesPrp }
+         :cHeader          := if( !empty( aValPrp1 ), retFld( aValPrp1[ oBrwPrp1:nArrayAt ]:cCodPrp, dbfPro ), "" )
+         :bStrData         := {|| if( !empty( aValPrp1 ), aValPrp1[ oBrwPrp1:nArrayAt ]:cDesPrp, "" ) }
          :nWidth           := if( lColorPrp1, 103, 119 )
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | cOrdenBrwPropiedades( oCol, oBrwPrp1, AllTrim( retFld( aValPrp1[ oBrwPrp1:nArrayAt ]:cCodPrp, dbfPro ) ) ) }
       end with
@@ -6799,9 +6796,9 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          :cHeader          := "C"
          :bStrData         := {|| "" }
          :nWidth           := 16
-         :bClrStd          := {|| { nRGB( 0, 0, 0), aValPrp1[ oBrwPrp1:nArrayAt ]:nColor } }
-         :bClrSel          := {|| { nRGB( 0, 0, 0), aValPrp1[ oBrwPrp1:nArrayAt ]:nColor } }
-         :bClrSelFocus     := {|| { nRGB( 0, 0, 0), aValPrp1[ oBrwPrp1:nArrayAt ]:nColor } }
+         :bClrStd          := {|| { nRGB( 0, 0, 0), if( !empty( aValPrp1 ), aValPrp1[ oBrwPrp1:nArrayAt ]:nColor, 0 ) } }
+         :bClrSel          := {|| { nRGB( 0, 0, 0), if( !empty( aValPrp1 ), aValPrp1[ oBrwPrp1:nArrayAt ]:nColor, 0 ) } }
+         :bClrSelFocus     := {|| { nRGB( 0, 0, 0), if( !empty( aValPrp1 ), aValPrp1[ oBrwPrp1:nArrayAt ]:nColor, 0 ) } }
       end with
 
       end if
@@ -6839,21 +6836,21 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       with object ( oBrwPrp2:AddCol() )
          :cHeader          := "S"
          :bStrData         := {|| "" }
-         :bEditValue       := {|| if( Len( aValPrp2 ) != 0, aValPrp2[ oBrwPrp2:nArrayAt ]:lSel, .f. ) }
+         :bEditValue       := {|| if( !empty( aValPrp2 ), aValPrp2[ oBrwPrp2:nArrayAt ]:lSel, .f. ) }
          :nWidth           := 16
          :SetCheck( { "BSEL", "Nil16" } )
       end with
 
       with object ( oBrwPrp2:AddCol() )
          :cHeader          := "Código"
-         :bStrData         := {|| if( Len( aValPrp2 ) != 0, aValPrp2[ oBrwPrp2:nArrayAt ]:cValPrp, "" ) }
+         :bStrData         := {|| if( !empty( aValPrp2 ), aValPrp2[ oBrwPrp2:nArrayAt ]:cValPrp, "" ) }
          :nWidth           := 40
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | cOrdenBrwPropiedades( oCol, oBrwPrp2 ) }
       end with
 
       with object ( oBrwPrp2:AddCol() )
-         :cHeader          := if( Len( aValPrp2 ) != 0, retFld( aValPrp2[ oBrwPrp2:nArrayAt ]:cCodPrp, dbfPro ), "" )
-         :bStrData         := {|| if( Len( aValPrp2 ) != 0, aValPrp2[ oBrwPrp2:nArrayAt ]:cDesPrp, "" ) }
+         :cHeader          := if( !empty( aValPrp2 ), retFld( aValPrp2[ oBrwPrp2:nArrayAt ]:cCodPrp, dbfPro ), "" )
+         :bStrData         := {|| if( !empty( aValPrp2 ), aValPrp2[ oBrwPrp2:nArrayAt ]:cDesPrp, "" ) }
          :nWidth           := if( lColorPrp2, 103, 119 )
          :cOrder           := "A"
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | cOrdenBrwPropiedades( oCol, oBrwPrp2, AllTrim( retFld( aValPrp2[ oBrwPrp2:nArrayAt ]:cCodPrp, dbfPro ) ) ) }
@@ -6865,9 +6862,9 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          :cHeader          := "C"
          :bStrData         := {|| "" }
          :nWidth           := 16
-         :bClrStd          := {|| { nRGB( 0, 0, 0), aValPrp2[ oBrwPrp2:nArrayAt ]:nColor } }
-         :bClrSel          := {|| { nRGB( 0, 0, 0), aValPrp2[ oBrwPrp2:nArrayAt ]:nColor } }
-         :bClrSelFocus     := {|| { nRGB( 0, 0, 0), aValPrp2[ oBrwPrp2:nArrayAt ]:nColor } }
+         :bClrStd          := {|| { nRGB( 0, 0, 0), if( !empty( aValPrp1 ), aValPrp2[ oBrwPrp2:nArrayAt ]:nColor, 0 ) } }
+         :bClrSel          := {|| { nRGB( 0, 0, 0), if( !empty( aValPrp1 ), aValPrp2[ oBrwPrp2:nArrayAt ]:nColor, 0 ) } }
+         :bClrSelFocus     := {|| { nRGB( 0, 0, 0), if( !empty( aValPrp1 ), aValPrp2[ oBrwPrp2:nArrayAt ]:nColor, 0 ) } }
       end with
 
       end if
@@ -6902,9 +6899,9 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          OF       oFld:aDialogs[1] ;
          IDSAY    401 ;
 
-   /*
-   Tarifa1 ______________________________________________________________________________
-   */
+      /*
+      Tarifa1 ______________________________________________________________________________
+      */
 
       REDEFINE SAY oSay[ 7 ] VAR cSay[ 7 ] ;
          ID       610 ;
@@ -6996,9 +6993,9 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          PICTURE  cPouDiv ;
          OF       oFld:aDialogs[1]
 
-   /*
-   Tarifa2 ______________________________________________________________________________
-   */
+      /*
+      Tarifa2 ______________________________________________________________________________
+      */
 
       REDEFINE CHECKBOX aGet[ ( dbfTmpVta )->( fieldpos( "lBnf2" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf2" ) ) ] ;
@@ -7552,13 +7549,13 @@ Return ( .t. )
 
 static function aLlenaPropiedades( cCodigoPropiedad, nValPrp, nMode, oBrw )
 
-   local aValores    := {}
+   local a
    local nRec
    local nOrdAnt
+   local aValores       := {}
    local oTemporal
-   local a
 
-   if Len( oBrw:aSelected ) > 1 .and.  nMode != APPD_MODE
+   if len( oBrw:aSelected ) >= 1 .and. nMode != APPD_MODE
 
       nRec              := ( dbfTblPro )->( Recno() )
       nOrdAnt           := ( dbfTblPro )->( OrdSetFocus( "cCodPro" ) )

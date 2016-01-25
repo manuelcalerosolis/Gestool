@@ -3304,7 +3304,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, o
 
                nPreCom              := nCosto( nil, D():Articulos( nView ), D():Kit( nView ), .f., aTmpPed[ _CDIVPED ], D():Divisas( nView ) )
 
-               setPropertiesTable( cCodArt, aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _NUNICAJA ], nPreCom, aGet[ _NPREDIV ], oBrwPrp, nView )
+               setPropertiesTable( cCodArt, aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _NUNICAJA ], aGet[ _NPREDIV ], oBrwPrp, nView )
 
             else
 
@@ -3546,11 +3546,11 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrwPrp, oFld, oDlg, oBrw, nMode, oTotal, 
                   aTmp[ _CCODPR2 ]     := oBrwPrp:Cargo[ n, i ]:cCodigoPropiedad2
                   aTmp[ _CVALPR2 ]     := oBrwPrp:Cargo[ n, i ]:cValorPropiedad2
                   
-                  if oBrwPrp:Cargo[ n, i ]:nPrecioCompra != 0
+                  if isNum( oBrwPrp:Cargo[ n, i ]:nPrecioCompra ) .and. ( oBrwPrp:Cargo[ n, i ]:nPrecioCompra != 0 ) 
                      aTmp[ _NPREDIV ]  := oBrwPrp:Cargo[ n, i ]:nPrecioCompra
                   end if 
                   
-                  WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode, nil, .f. )
+                  winGather( aTmp, aGet, dbfTmpLin, oBrw, nMode, nil, .f. )
 
                end if
 
