@@ -130,7 +130,7 @@ METHOD loadLinesDocument()
 
          if ( ( ::getHeaderAlias() )->nEstado != 3 ) .and. ( ::getLineAlias() )->( dbSeek( ::getHeaderId() ) )
 
-            while ::getHeaderId() == ::aliasDocumentLine:getDocumentId() .and. !::aliasDocumentLine:Eof()
+            while ::getHeaderId() == ::aliasDocumentLine:getDocumentId() .and. ! ( ::getLineAlias() )->( eof() )
 
                hDictionary       := D():getHashFromAlias( ::getLineAlias(), ::getLineDictionary() )
 
