@@ -954,14 +954,15 @@ Return ( nil )
 
 METHOD insertLineaFacturaProveedor()
 
-   local nNumeroLinea                                          := 1
+   local nNumeroLinea                                          := ( D():Tmp( "TmpPrvO", ::nView ) )->( Recno() )
 
    if ( D():FacturasProveedoresLineas( ::nView ) )->( dbappend( .t. ) ) 
 
       ( D():FacturasProveedoresLineas( ::nView ) )->cSerFac    := ::cSerieFactura
       ( D():FacturasProveedoresLineas( ::nView ) )->nNumFac    := ::nNumeroFactura
       ( D():FacturasProveedoresLineas( ::nView ) )->cSufFac    := ::cSufijoFactura
-      ( D():FacturasProveedoresLineas( ::nView ) )->nNumLin    := nNumeroLinea++
+      ( D():FacturasProveedoresLineas( ::nView ) )->nNumLin    := nNumeroLinea
+      ( D():FacturasProveedoresLineas( ::nView ) )->nPosPrint  := nNumeroLinea
       ( D():FacturasProveedoresLineas( ::nView ) )->cRef       := ( D():Tmp( "TmpPrvO", ::nView ) )->cRef
       ( D():FacturasProveedoresLineas( ::nView ) )->cDetalle   := ( D():Tmp( "TmpPrvO", ::nView ) )->cDetalle
       ( D():FacturasProveedoresLineas( ::nView ) )->mLngDes    := ( D():Tmp( "TmpPrvO", ::nView ) )->mLngDes
