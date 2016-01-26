@@ -207,34 +207,17 @@ static hStockArticulo   := {=>}
 Cargamos los stocks---------------------------------------------
 */
 
-Static Function getStockArticulos()
+Static Function getStockArticulo()
 
-   local nSeconds
-   local nStockArticulo
+   if ( D():Articulos( nView ) )->lObs
+      Return ( 0 )
+   end if 
 
-   hStockArticulo          := {=>}
+   if !hhaskey( hStockArticulo, ( D():Articulos( nView ) )->Codigo )
+      hset( hStockArticulo, ( D():Articulos( nView ) )->Codigo, oStock:nStockArticulo( ( D():Articulos( nView ) )->Codigo ) )
+   end if
 
-   nSeconds                := seconds()
-
-   while !( D():Articulos( nView ) )->( eof() )
-
-      if ( ( D():Articulos( nView ) )->lObs )
-         nStockArticulo    := 0
-      else
-         nStockArticulo    := oStock:nStockArticulo( ( D():Articulos( nView ) )->Codigo )
-      end if 
-
-      hset( hStockArticulo, ( D():Articulos( nView ) )->Codigo, nStockArticulo )
-         
-      ( D():Articulos( nView ) )->( dbskip() )
-
-   end while
-
-   ( D():Articulos( nView ) )->( dbgotop() )
-
-   msgAlert( seconds() - nSeconds )
-
-Return ( hStockArticulo )
+Return ( hGet( hStockArticulo, ( D():Articulos( nView ) )->Codigo ) )
 
 //---------------------------------------------------------------------------//
 
@@ -851,8 +834,6 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       return .f.
    end if
 
-   // msgRun( "Calculando stocks", "Espere por favor...", {|| getStockArticulos() } )
-
    CursorWait()
 
    /*
@@ -1036,6 +1017,15 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    end with
 
    with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Stock"
+      :bEditValue       := {|| getStockArticulo() }
+      :nWidth           := 80
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+      :lHide            := .t.
+   end with
+
+   with object ( oWndBrw:AddXCol() )
       :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" ) 
       :bEditValue       := {|| ( D():Articulos( nView ) )->pVenta1 }
       :cEditPicture     := cPouDiv
@@ -1046,7 +1036,6 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
       :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta1", "Iva" => "pVtaIva1", "Beneficio" => "Benef1", "BeneficioSobre" => "nBnfSbr1" } ) }
    end with
-
 
    with object ( oWndBrw:AddXCol() )
       :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" ) + Space( 1 ) +  cImp()
