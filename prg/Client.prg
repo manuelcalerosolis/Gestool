@@ -7842,7 +7842,7 @@ Method PrepareTemporal( oFr ) CLASS TClienteLabelGenerator
    local n
    local nBlancos       := 0
    local nPaperHeight   := oFr:GetProperty( "MainPage", "PaperHeight" ) * fr01cm
-   local nHeight        := oFr:GetProperty( "CabeceraColumnas", "Height" )
+   local nHeight        := oFr:GetProperty( "MasterData", "Height" )
    local nColumns       := oFr:GetProperty( "MainPage", "Columns" )
    local nItemsInColumn := 0
 

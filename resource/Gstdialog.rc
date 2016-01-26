@@ -15409,8 +15409,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 174, "TBtnBmp", 0x00000000, 431, 28, 10, 13
   CONTROL "", 711, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 485, 336, 10, 9
   CONTROL "Su pedido", -1, "Static", WS_GROUP, 45, 81, 34, 8
-  CONTROL "Entrada", 112, "Static", WS_GROUP, 45, 57, 31, 8
-  CONTROL "Salida", 114, "Static", WS_GROUP, 45, 69, 30, 8
+  CONTROL "Inicio servicio", 112, "Static", WS_GROUP, 45, 57, 48, 8
+  CONTROL "Fin servicio", 114, "Static", WS_GROUP, 45, 69, 41, 8
 }
 
 PEDCLI_2 DIALOG DISCARDABLE 45, 10, 670, 375

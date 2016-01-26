@@ -1311,6 +1311,9 @@ METHOD AppendFacturaCabecera( oItem ) CLASS GeneraFacturasClientes
          ( D():FacturasClientes( ::nView ) )->mComent   := ( D():AlbaranesClientes( ::nView ) )->mComent
          ( D():FacturasClientes( ::nView ) )->mObserv   := ( D():AlbaranesClientes( ::nView ) )->mObserv
          ( D():FacturasClientes( ::nView ) )->cCodTrn   := ( D():AlbaranesClientes( ::nView ) )->cCodTrn
+         ( D():FacturasClientes( ::nView ) )->cManObr   := ( D():AlbaranesClientes( ::nView ) )->cManObr
+         ( D():FacturasClientes( ::nView ) )->nManObr   := ( D():AlbaranesClientes( ::nView ) )->nManObr
+         ( D():FacturasClientes( ::nView ) )->nIvaMan   := ( D():AlbaranesClientes( ::nView ) )->nIvaMan
 
       end if
 
@@ -1342,7 +1345,7 @@ METHOD appendCabeceraAlbaran( oItem ) CLASS GeneraFacturasClientes
 
    local cDesAlb  := ""
 
-   if lNumAlb() .or. lSuAlb() .or. !Empty( hGet( oItem:Cargo, "direccion" ) )
+   if lNumAlb() .or. lSuAlb() .or. !empty( hGet( oItem:Cargo, "direccion" ) )
       
       ( D():FacturasClientesLineas( ::nView ) )->( dbAppend() )
       ( D():FacturasClientesLineas( ::nView ) )->nNumLin    := ::nNumLin
@@ -1350,10 +1353,12 @@ METHOD appendCabeceraAlbaran( oItem ) CLASS GeneraFacturasClientes
       ( D():FacturasClientesLineas( ::nView ) )->cSerie     := ::cSerie
       ( D():FacturasClientesLineas( ::nView ) )->nNumFac    := ::nNumero
       ( D():FacturasClientesLineas( ::nView ) )->cSufFac    := ::cSufijo
+
       cDesAlb                    := ""
       if lNumAlb()
          cDesAlb                 += Alltrim( cNumAlb() ) + " " + hGet( oItem:Cargo, "textoid" ) + Space( 1 )
       end if
+      
       if lSuAlb()
          cDesAlb                 += Alltrim( cSuAlb() ) + " " + Rtrim( hGet( oItem:Cargo, "sualbaran" ) ) + Space( 1 )
       end if

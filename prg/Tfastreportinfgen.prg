@@ -2355,8 +2355,8 @@ METHOD FastReportPedidoCliente()
    ::oFastReport:SetWorkArea(       "Lineas pedidos de clientes", ::oPedCliL:nArea ) 
    ::oFastReport:SetFieldAliases(   "Lineas pedidos de clientes", cItemsToReport( aColPedCli() ) )
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Pedidos de clientes",               {|| ::idDocumento() } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas pedidos de clientes",        {|| ::IdDocumentoLinea() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Pedidos de clientes",         {|| ::idDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas pedidos de clientes",  {|| ::IdDocumentoLinea() } )
 
    ::oFastReport:SetResyncPair(     "Informe", "Pedidos de clientes" )
    ::oFastReport:SetResyncPair(     "Informe", "Lineas pedidos de clientes" )
@@ -2379,8 +2379,8 @@ METHOD FastReportAlbaranCliente()
    ::oFastReport:SetWorkArea(       "Lineas albaranes de clientes", ::oAlbCliL:nArea )
    ::oFastReport:SetFieldAliases(   "Lineas albaranes de clientes", cItemsToReport( aColAlbCli() ) )
    
-   ::oFastReport:SetMasterDetail(   "Informe", "Albaranes de clientes",             {|| ::idDocumento() } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas albaranes de clientes",      {|| ::IdDocumentoLinea() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Albaranes de clientes",          {|| ::idDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas albaranes de clientes",   {|| ::IdDocumentoLinea() } )
    
    ::oFastReport:SetResyncPair(     "Informe", "Albaranes de clientes" )
    ::oFastReport:SetResyncPair(     "Informe", "Lineas albaranes de clientes" )
@@ -2403,8 +2403,8 @@ METHOD FastReportFacturaCliente()
    ::oFastReport:SetWorkArea(       "Lineas facturas de clientes", ::oFacCliL:nArea )
    ::oFastReport:SetFieldAliases(   "Lineas facturas de clientes", cItemsToReport( aColFacCli() ) )
    
-   ::oFastReport:SetMasterDetail(   "Informe", "Facturas de clientes",              {|| ::idDocumento() } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas facturas de clientes",       {|| ::IdDocumentoLinea() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Facturas de clientes",        {|| ::idDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas facturas de clientes", {|| ::IdDocumentoLinea() } )
    
    ::oFastReport:SetResyncPair(     "Informe", "Facturas de clientes" )
    ::oFastReport:SetResyncPair(     "Informe", "Lineas facturas de clientes" )
@@ -2451,8 +2451,8 @@ METHOD FastReportTicket()
    ::oFastReport:SetWorkArea(       "Lineas tickets de clientes", ::oTikCliL:nArea )
    ::oFastReport:SetFieldAliases(   "Lineas tickets de clientes", cItemsToReport( aColTik() ) )
    
-   ::oFastReport:SetMasterDetail(   "Informe", "Tickets de clientes",              {|| ::idDocumento() } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas tickets de clientes",       {|| ::IdDocumentoLinea() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Tickets de clientes",         {|| ::idDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas tickets de clientes",  {|| ::IdDocumentoLinea() } )
    
    ::oFastReport:SetResyncPair(     "Informe", "Tickets de clientes" )
    ::oFastReport:SetResyncPair(     "Informe", "Lineas tickets de clientes" )
@@ -2468,7 +2468,7 @@ METHOD FastReportRecibosCliente()
    ::oFastReport:SetWorkArea(       "Recibos de clientes", ::oFacCliP:nArea )
    ::oFastReport:SetFieldAliases(   "Recibos de clientes", cItemsToReport( aItmRecCli() ) )
    
-   ::oFastReport:SetMasterDetail(   "Informe", "Recibos de clientes",               {|| ::idDocumento() + ::oDbf:cNumRec } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Recibos de clientes",   {|| ::idDocumento() + ::oDbf:cNumRec } )
    ::oFastReport:SetResyncPair(     "Informe", "Recibos de clientes" )
 
 RETURN ( Self )

@@ -1491,7 +1491,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:nTotArt    += nIvaLPedCli( aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv )
                   ::oDbf:nPeso      := nPesLPedCli( aliasPedidosClientesLineas ) 
 
-                  ::oDbf:nComAge    := nComLPreCli( aliasPedidosClientes, aliasPedidosClientesLineas, ::nDecOut, ::nDerOut )
+                  ::oDbf:nComAge    := nComLPedCli( aliasPedidosClientes, aliasPedidosClientesLineas, ::nDecOut, ::nDerOut )
 
                   ::oDbf:nCosArt    := nTotCPedCli( aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv )
 

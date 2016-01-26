@@ -1239,6 +1239,24 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       end with
 
       with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Inicio servicio"
+         :cSortOrder       := "dFecEntr"
+         :bEditValue       := {|| Dtoc( ( D():PedidosClientes( nView ) )->dFecEntr ) }
+         :nWidth           := 80
+         :lHide            := .t.
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Fin servicio"
+         :cSortOrder       := "dFecSal"
+         :bEditValue       := {|| Dtoc( ( D():PedidosClientes( nView ) )->dFecSal ) }
+         :nWidth           := 80
+         :lHide            := .t.
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end with
+
+      with object ( oWndBrw:AddXCol() )
          :cHeader          := "Tipo"
          :bEditValue       := {|| aTipPed[ if( ( D():PedidosClientes( nView ) )->lAlquiler, 2, 1 ) ] }
          :nWidth           := 50
@@ -2939,7 +2957,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 			WHEN 		.F. ;
 			OF 		oFld:aDialogs[1]
 
-		REDEFINE GET aGet[_CSUFPED] VAR aTmp[_CSUFPED];
+		REDEFINE GET aGet[ _CSUFPED ] VAR aTmp[ _CSUFPED ];
 			ID 		105 ;
 			WHEN 		.F. ;
 			OF 		oFld:aDialogs[1]
@@ -2948,7 +2966,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 			ID 		110 ;
 			SPINNER;
          WHEN     ( lWhen ) ;
-			COLOR 	CLR_GET ;
 			OF 		oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _NESTADO ] VAR cEstPed;
@@ -2989,19 +3006,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          IDSAY    124 ;
          PICTURE  "@R #/#########/##" ;
          WHEN     ( nMode == APPD_MODE ) ;
-         COLOR    CLR_GET ;
          BITMAP   "LUPA" ;
-         VALID    (  cPreCli( aTmp, aGet, oBrwLin, nMode ), SetDialog( aGet, oSayGetRnt, oGetRnt ) );
-         ON HELP  (  BrwPreCli( aGet[ _CNUMPRE ], dbfPreCliT, dbfPreCliL, D():TiposIva( nView ), D():Divisas( nView ), D():FormasPago( nView ), aGet[ _LIVAINC ] ) );
+         VALID    ( cPreCli( aTmp, aGet, oBrwLin, nMode ), SetDialog( aGet, oSayGetRnt, oGetRnt ) );
+         ON HELP  ( brwPreCli( aGet[ _CNUMPRE ], dbfPreCliT, dbfPreCliL, D():TiposIva( nView ), D():Divisas( nView ), D():FormasPago( nView ), aGet[ _LIVAINC ] ) );
 			OF 		oFld:aDialogs[1]
 
-      REDEFINE COMBOBOX aGet[ _CSITUAC ] VAR aTmp[ _CSITUAC ] ;
+      REDEFINE COMBOBOX aGet[ _CSITUAC ] ;
+         VAR      aTmp[ _CSITUAC ] ;
          ID       218 ;
          WHEN     ( lWhen );
          ITEMS    ( TSituaciones():GetInstance():GetSituaciones() ) ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE CHECKBOX aGet[ _LIVAINC ] VAR aTmp[ _LIVAINC ] ;
+      REDEFINE CHECKBOX aGet[ _LIVAINC ] ;
+         VAR      aTmp[ _LIVAINC ] ;
          ID       129 ;
          WHEN     ( ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
          OF       oFld:aDialogs[1]
