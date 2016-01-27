@@ -3112,13 +3112,9 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-//---------------------------------------------------------------------------//
-
 function cNombreArticuloMovimiento()
 
-   local cNombre     := RetFld( oThis:oDetMovimientos:oDbf:cRefMov, oThis:oArt:cAlias, "Nombre" )
-
-Return cNombre
+Return ( RetFld( oThis:oDetMovimientos:oDbf:cRefMov, oThis:oArt:cAlias, "Nombre" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -5627,13 +5623,13 @@ RETURN NIL
 
 Function nombrePrimeraPropiedadFacturasClientesLineas()
 
-Return ( nombrePropiedad( ( D():FacturasClientesLineas( nView ) )->cCodPr1, ( D():FacturasClientesLineas( nView ) )->cValPr1, nView ) )
+Return ( nombrePropiedad( oThis:oDetMovimientos:oDbf:FieldGetByName( "cCodPr1" ), oThis:oDetMovimientos:oDbf:FieldGetByName( "cValPr1" ), oThis:nView ) )
 
 //---------------------------------------------------------------------------//
 
 Function nombreSegundaPropiedadFacturasClientesLineas()
 
-Return ( nombrePropiedad( ( D():FacturasClientesLineas( nView ) )->cCodPr2, ( D():FacturasClientesLineas( nView ) )->cValPr2, nView ) )
+Return ( nombrePropiedad( oThis:oDetMovimientos:oDbf:FieldGetByName( "cCodPr2" ), oThis:oDetMovimientos:oDbf:FieldGetByName( "cValPr2" ), oThis:nView ) )
 
 //---------------------------------------------------------------------------//
 
