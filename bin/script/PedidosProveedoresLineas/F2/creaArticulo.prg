@@ -63,6 +63,8 @@ CLASS fastAddArticulo
 
    METHOD ChangeBrowse()
 
+   METHOD lPresave()
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -100,6 +102,7 @@ METHOD setCampos() CLASS fastAddArticulo
       aAdd( ::aCampos, { 'clave' => 'Marea', 'valor' => Space( 100 ), "picture" => "", 'tipo' => "get", 'valores' => {=>} } )
       aAdd( ::aCampos, { 'clave' => 'Observaciones', 'valor' => Space( 200 ), "picture" => "", 'tipo' => "get", 'valores' => {=>} } )
       aAdd( ::aCampos, { 'clave' => 'Costo', 'valor' => 0, "picture" => cPinDiv(), 'tipo' => "get", 'valores' => {=>} } )
+      aAdd( ::aCampos, { 'clave' => 'Fecha entrada', 'valor' => GetSysDate(), "picture" => "", 'tipo' => "get", 'valores' => {=>} } )
 
    end if
 
@@ -158,7 +161,7 @@ METHOD Resource() CLASS fastAddArticulo
    REDEFINE BUTTON oBtnAceptar ;
       ID          IDOK ;
       OF          ::oDlg ;
-      ACTION      ( ::oDlg:End( IDOK ) )
+      ACTION      ( if( ::lPreSave(), ::oDlg:End( IDOK ), ) )
 
    REDEFINE BUTTON  ;
       ID          IDCANCEL ;
@@ -185,6 +188,12 @@ METHOD ChangeBrowse() CLASS fastAddArticulo
    ::oCol:bOnPostEdit            := {|o,x,n| hSet( ::aCampos[ ::oBrw:nArrayAt ], "valor", x ) }
 
 Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD lPresave() CLASS fastAddArticulo
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -219,7 +228,7 @@ METHOD addArticulo() CLASS fastAddArticulo
    ( D():Articulos( ::nView ) )->Nombre       := AllTrim( hGet( ::aCampos[ 2 ], "valor" ) )
    ( D():Articulos( ::nView ) )->pCosto       := hGet( ::aCampos[ 7 ], "valor" )
    ( D():Articulos( ::nView ) )->LastChg      := GetSysDate()
-   ( D():Articulos( ::nView ) )->Familia      := Padr( hGetKeyAt( ::hFamilias, HScan( ::hFamilias, {|k,v,i| v == hGet( ::aCampos[ 3 ], "valor" ) } ) ), 16 )
+   ( D():Articulos( ::nView ) )->Familia      := if( !Empty( hGet( ::aCampos[ 3 ], "valor" ) ), Padr( hGetKeyAt( ::hFamilias, HScan( ::hFamilias, {|k,v,i| v == hGet( ::aCampos[ 3 ], "valor" ) } ) ), 16 ), Space( 16 ) )
    ( D():Articulos( ::nView ) )->nLabel       := 1
    ( D():Articulos( ::nView ) )->nCtlStock    := 1
    ( D():Articulos( ::nView ) )->lIvaInc      := uFieldEmpresa( "lIvaInc" )
@@ -230,6 +239,7 @@ METHOD addArticulo() CLASS fastAddArticulo
    ::addCampoExtra( "004", AllTrim( hGet( ::aCampos[ 1 ], "valor" ) ), AllTrim( hGet( ::aCampos[ 4 ], "valor" ) ) )      // Barco
    ::addCampoExtra( "018", AllTrim( hGet( ::aCampos[ 1 ], "valor" ) ), AllTrim( hGet( ::aCampos[ 5 ], "valor" ) ) )      // Marea
    ::addCampoExtra( "005", AllTrim( hGet( ::aCampos[ 1 ], "valor" ) ), AllTrim( hGet( ::aCampos[ 6 ], "valor" ) ) )      // Observaciones
+   ::addCampoExtra( "019", AllTrim( hGet( ::aCampos[ 1 ], "valor" ) ), dtoc( hGet( ::aCampos[ 8 ], "valor" ) ) )         // fecha entrada
 
 Return ( self )
 

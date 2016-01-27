@@ -18,6 +18,7 @@ CLASS TRemesas FROM TMasDet
    DATA  oAntCliT
    DATA  oIva
    DATA  oBandera
+   DATA  oFormaPago
 
    DATA  cPorDiv
       
@@ -25,8 +26,22 @@ CLASS TRemesas FROM TMasDet
    DATA  dExpedicionIni
    DATA  dExpedicionFin
    DATA  dVencimientoIni
-
    DATA  dVencimeintoFin
+
+   DATA oSerieInicio
+   DATA cSerieInicio
+   DATA oSerieFin
+   DATA cSerieFin
+
+   DATA oClienteIni
+   DATA oClienteFin
+   DATA cClienteIni
+   DATA cClienteFin
+
+   DATA oFormaPagoIni
+   DATA oFormaPagoFin
+   DATA cFormaPagoIni
+   DATA cFormaPagoFin
 
    DATA  oMeter            AS OBJECT
    DATA  nMeter            AS NUMERIC  INIT  0
@@ -150,6 +165,8 @@ CLASS TRemesas FROM TMasDet
 
    METHOD CuentaRemesa()            INLINE ( ::oCtaRem:oDbf:cPaisIBAN + ::oCtaRem:oDbf:cCtrlIBAN + ::oCtaRem:oDbf:cEntBan + ::oCtaRem:oDbf:cAgcBan + ::oCtaRem:oDbf:cDgcBan + ::oCtaRem:oDbf:cCtaBan )
 
+   METHOD inicializaData()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -168,7 +185,7 @@ METHOD New( cPath, oMenuItem, oWndParent )
    ::dExpedicionIni        := Ctod( "01/" + Str( Month( Date() ), 2 ) + "/" + Str( Year( Date() ), 4 ) )
    ::dExpedicionFin        := Date()
    ::dVencimientoIni       := ::dExpedicionIni
-   ::dVencimeintoFin       := Date()
+   ::dVencimeintoFin       := Ctod( "01/12/" + Str( Year( Date() ), 4 ) )
 
    ::cNumDocKey            := "nNumRem"
    ::cSufDocKey            := "cSufRem"
@@ -456,22 +473,24 @@ METHOD OpenFiles( lExclusive )
 
       ::oDbf:Activate( .f., !( lExclusive ) )
 
-      DATABASE NEW ::oDbfDet  FILE "FACCLIP.DBF" PATH ( ::cPath )    VIA ( cDriver() ) SHARED INDEX "FACCLIP.CDX"
+      DATABASE NEW ::oDbfDet     FILE "FACCLIP.DBF"   PATH ( ::cPath )    VIA ( cDriver() ) SHARED INDEX "FACCLIP.CDX"
       ::oDbfDet:OrdSetFocus( "nNumRem" )
 
       ::oFacCliT        := TDataCenter():oFacCliT()
 
-      DATABASE NEW ::oFacCliL FILE "FACCLIL.DBF" PATH ( ::cPath )    VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
+      DATABASE NEW ::oFacCliL    FILE "FACCLIL.DBF"   PATH ( ::cPath )    VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
 
-      DATABASE NEW ::oAntCliT FILE "AntCliT.DBF" PATH ( ::cPath )    VIA ( cDriver() ) SHARED INDEX "AntCliT.CDX"
+      DATABASE NEW ::oAntCliT    FILE "AntCliT.DBF"   PATH ( ::cPath )    VIA ( cDriver() ) SHARED INDEX "AntCliT.CDX"
 
-      DATABASE NEW ::oClientes FILE "CLIENT.DBF" PATH ( cPatCli() )  VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
+      DATABASE NEW ::oClientes   FILE "CLIENT.DBF"    PATH ( cPatCli() )  VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-      DATABASE NEW ::oIva     FILE "TIVA.DBF"    PATH ( cPatDat() )  VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
+      DATABASE NEW ::oIva        FILE "TIVA.DBF"      PATH ( cPatDat() )  VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
-      DATABASE NEW ::oDivisas FILE "DIVISAS.DBF" PATH ( cPatDat() )  VIA ( cDriver() ) SHARED INDEX "DIVISAS.CDX"
+      DATABASE NEW ::oDivisas    FILE "DIVISAS.DBF"   PATH ( cPatDat() )  VIA ( cDriver() ) SHARED INDEX "DIVISAS.CDX"
 
-      DATABASE NEW ::oDbfCnt  FILE "nCount.Dbf"  PATH ( cPatEmp() )  VIA ( cDriver() ) SHARED INDEX "nCount.Cdx"
+      DATABASE NEW ::oDbfCnt     FILE "nCount.Dbf"    PATH ( cPatEmp() )  VIA ( cDriver() ) SHARED INDEX "nCount.Cdx"
+
+      DATABASE NEW ::oFormaPago  FILE "fPago.Dbf"     PATH ( cPatEmp() )  VIA ( cDriver() ) SHARED INDEX "fPago.Cdx"
 
       ::oCliBnc         := TDataCenter():oCliBnc()
 
@@ -577,6 +596,10 @@ METHOD CloseFiles()
       ::oCliBnc:End()
    end if 
 
+   if ::oFormaPago != nil .and. ::oFormaPago:Used()
+      ::oFormaPago:End()
+   end if 
+
    ::oDbf         := nil
    ::oDbfDet      := nil
    ::oDivisas     := nil
@@ -585,6 +608,7 @@ METHOD CloseFiles()
    ::oDbfDet      := nil
    ::oCtaRem      := nil
    ::oCliBnc      := nil
+   ::oFormaPago   := nil
 
    if ::bmpConta != nil
       DeleteObject( ::bmpConta )
@@ -608,6 +632,21 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD inicializaData()
+
+   ::cSerieInicio          := "A"
+   ::cSerieFin             := "Z"
+
+   ::cClienteIni           := dbFirst( ::oClientes, 1 )
+   ::cClienteFin           := dbLast ( ::oClientes, 1 )
+
+   ::cFormaPagoIni         := dbFirst( ::oFormaPago, 1 )
+   ::cFormaPagoFin         := dbLast ( ::oFormaPago, 1 )
+
+return ( nil )
+
+//---------------------------------------------------------------------------//
+
 METHOD Resource( nMode )
 
    local oDlg
@@ -617,6 +656,8 @@ METHOD Resource( nMode )
    local oBmpDiv
    local oBtnImportar
    local oBmpGeneral
+
+   ::inicializaData()
 
    DEFINE DIALOG oDlg RESOURCE "RemCli" TITLE LblTitle( nMode ) + "remesas de recibos a clientes"
 
@@ -858,7 +899,7 @@ METHOD Resource( nMode )
    Guardamos los datos del browse
    */
 
-   ::oBrwDet:CloseData()
+    ::oBrwDet:CloseData()
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -879,7 +920,7 @@ METHOD ImportResource( nMode )
          ID       110 ;
          SPINNER ;
          OF       oDlg
-
+ 
       REDEFINE GET ::dVencimientoIni UPDATE ;
          ID       120;
          SPINNER ;
@@ -889,6 +930,62 @@ METHOD ImportResource( nMode )
          ID       130 ;
          SPINNER ;
          OF       oDlg
+
+      REDEFINE GET ::oSerieInicio VAR ::cSerieInicio ;
+         ID       190 ;
+         SPINNER ;
+         ON UP    ( UpSerie( ::oSerieInicio ) );
+         ON DOWN  ( DwSerie( ::oSerieInicio ) );
+         PICTURE  "@!" ;
+         COLOR    CLR_GET ;
+         VALID    ( ::cSerieInicio >= "A" .and. ::cSerieInicio <= "Z"  );
+         OF       oDlg
+
+      REDEFINE GET ::oSerieFin VAR ::cSerieFin ;
+         ID       200 ;
+         SPINNER ;
+         ON UP    ( UpSerie( ::oSerieFin ) );
+         ON DOWN  ( DwSerie( ::oSerieFin ) );
+         PICTURE  "@!" ;
+         COLOR    CLR_GET ;
+         VALID    ( ::cSerieFin >= "A" .and. ::cSerieFin <= "Z"  );
+         OF       oDlg
+
+      REDEFINE GET ::oClienteIni VAR ::cClienteIni;
+         ID       150 ;
+         IDTEXT   151 ;
+         BITMAP   "LUPA" ;
+         OF       oDlg
+
+         ::oClienteIni:bValid    := {|| cClient( ::oClienteIni, ::oClientes:cAlias, ::oClienteIni:oHelpText ) }
+         ::oClienteIni:bHelp     := {|| BrwClient( ::oClienteIni, ::oClienteIni:oHelpText ) }
+
+      REDEFINE GET ::oClienteFin VAR ::cClienteFin;
+         ID       160 ;
+         IDTEXT   161 ;
+         BITMAP   "LUPA" ;
+         OF       oDlg
+
+         ::oClienteFin:bValid    := {|| cClient( ::oClienteFin, ::oClientes:cAlias, ::oClienteFin:oHelpText ) }
+         ::oClienteFin:bHelp     := {|| BrwClient( ::oClienteFin, ::oClienteFin:oHelpText ) }
+
+      REDEFINE GET ::oFormaPagoIni VAR ::cFormaPagoIni;
+         ID       170 ;
+         IDTEXT   171 ;
+         BITMAP   "LUPA" ;
+         OF       oDlg
+
+         ::oFormaPagoIni:bValid    := {|| cFpago( ::oFormaPagoIni, ::oFormaPago:cAlias, ::oFormaPagoIni:oHelpText ) }
+         ::oFormaPagoIni:bHelp     := {|| BrwFPago( ::oFormaPagoIni, ::oFormaPagoIni:oHelpText ) }
+
+      REDEFINE GET ::oFormaPagoFin VAR ::cFormaPagoFin;
+         ID       180 ;
+         IDTEXT   181 ;
+         BITMAP   "LUPA" ;
+         OF       oDlg
+
+         ::oFormaPagoFin:bValid    := {|| cFpago( ::oFormaPagoFin, ::oFormaPago:cAlias, ::oFormaPagoFin:oHelpText ) }
+         ::oFormaPagoFin:bHelp     := {|| BrwFPago( ::oFormaPagoFin, ::oFormaPagoFin:oHelpText ) }
 
       ::oMeter    := TApoloMeter():ReDefine( 140, { | u | if( pCount() == 0, ::nMeter, ::nMeter := u ) }, 140, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
@@ -906,6 +1003,8 @@ METHOD ImportResource( nMode )
          OF       oDlg ;
          CANCEL ;
          ACTION   ( oDlg:End() )
+
+      oDlg:bStart    := {|| ::oClienteIni:lValid(), ::oClienteFin:lValid(), ::oFormaPagoIni:lValid(), ::oFormaPagoFin:lValid() }
 
    oDlg:Activate( , , , .t. )
 
@@ -1300,7 +1399,7 @@ METHOD InitMod58( oDlg )
 
                end if
 
-            else
+           else
 
                MsgStop( "Cliente " + Rtrim( cCodCli ) + " no encontrado." )
 
@@ -1390,47 +1489,42 @@ METHOD GetRecCli( oDlg, nMode )
 
    if nMode == APPD_MODE
 
-      ::oDbfDet:OrdSetFocus( "cCtaRem" )
+      ::oDbfDet:GoTop()
 
-      if ::oDbfDet:Seek( cCodRem )
+      while !::oDbfDet:Eof()
+         
+         if ::oDbfDet:cSerie >= ::cSerieInicio .and. ::oDbfDet:cSerie <= ::cSerieFin                                    .and.;
+            !::lNowExist( ::oDbfDet:cSerie + Str( ::oDbfDet:nNumFac ) + ::oDbfDet:cSufFac + Str( ::oDbfDet:nNumRec ) )  .and.;
+            !::oDbfDet:lCobrado                                                                                         .and.;
+            !Empty( ::oDbfDet:dPreCob )                                                                                 .and.;
+            Empty( ::oDbfDet:nNumRem )                                                                                  .and.;
+            ::oDbfDet:dPreCob >= ::dExpedicionIni                                                                       .and.;
+            ::oDbfDet:dPreCob <= ::dExpedicionFin                                                                       .and.;
+            ::oDbfDet:dFecVto >= ::dVencimientoIni                                                                      .and.;
+            ::oDbfDet:dFecVto <= ::dVencimeintoFin                                                                      .and.;
+            ::oDbfDet:cCodCli >= ::cClienteIni                                                                          .and.;
+            ::oDbfDet:cCodCli <= ::cClienteFin                                                                          .and.;
+            ::oDbfDet:cCodPgo >= ::cFormaPagoIni                                                                        .and.;
+            ::oDbfDet:cCodPgo <= ::cFormaPagoFin                                                                        .and.;
+            ::oDbfDet:nImporte > 0
 
-         while ::oDbfDet:cCtaRem == cCodRem .and. !::oDbfDet:Eof()
-
-            if !::lNowExist( ::oDbfDet:cSerie + Str( ::oDbfDet:nNumFac ) + ::oDbfDet:cSufFac + Str( ::oDbfDet:nNumRec ) )  .and.;
-               !::oDbfDet:lCobrado                                                                                         .and.;
-               !Empty( ::oDbfDet:dPreCob )                                                                                 .and.;
-               Empty( ::oDbfDet:nNumRem )                                                                                  .and.;
-               ::oDbfDet:dPreCob >= ::dExpedicionIni                                                                       .and.;
-               ::oDbfDet:dPreCob <= ::dExpedicionFin                                                                       .and.;
-               ::oDbfDet:dFecVto >= ::dVencimientoIni                                                                      .and.;
-               ::oDbfDet:dFecVto <= ::dVencimeintoFin                                                                      .and.;
-               ::oDbfDet:nImporte > 0
-
-               if ::oDbfVir:Append()
-                  aEval( ::oDbfVir:aTField, {| oFld, n | ::oDbfVir:FldPut( n, ::oDbfDet:FieldGet( n ) ) } )
-                  ::oDbfVir:Save()
-               end if
-
-               n++
-
+            if ::oDbfVir:Append()
+               aEval( ::oDbfVir:aTField, {| oFld, n | ::oDbfVir:FldPut( n, ::oDbfDet:FieldGet( n ) ) } )
+               ::oDbfVir:Save()
             end if
 
-            ::oDbfDet:Skip()
+            n++
 
-            ::oMeter:Set( ::oDbfDet:OrdKeyNo() )
+         end if
 
-         end while
+         ::oDbfDet:Skip()
 
-      else
+         ::oMeter:Set( ::oDbfDet:OrdKeyNo() )
 
-         MsgStop( "No se encuentran recibos, en la cuenta " + cCodRem )
-
-      end if
+      end while
 
       ::oMeter:Set( 0 )
       ::oMeter:Refresh()
-
-      ::oDbfDet:OrdSetFocus( "nNumRem" )
 
       ::oDbfVir:GoTop()
 

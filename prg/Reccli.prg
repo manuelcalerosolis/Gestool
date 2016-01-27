@@ -1177,6 +1177,19 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
          WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
          OF       oFld:aDialogs[2]
 
+      REDEFINE GET aGet[ _CCTAREM ] VAR aTmp[ _CCTAREM ] ;
+         ID       290 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         BITMAP   "LUPA" ;
+         VALID    ( oGetCtaRem:cText( oRetFld( aTmp[ _CCTAREM ], oCtaRem:oDbf ) ), .t. );
+         ON HELP  ( oCtaRem:Buscar( aGet[ _CCTAREM ] ) ) ;
+         OF       oFld:aDialogs[ 2 ]
+
+      REDEFINE GET oGetCtaRem VAR cGetCtaRem ;
+         ID       291 ;
+         WHEN     .F. ;
+         OF       oFld:aDialogs[ 2 ]
+
       /*
       Segunda caja de diálogo--------------------------------------------------
       */
@@ -1334,19 +1347,6 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
       Remesa___________________________________________________________________
 		*/
 
-      REDEFINE GET aGet[ _CCTAREM ] VAR aTmp[ _CCTAREM ] ;
-         ID       250 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         BITMAP   "LUPA" ;
-         VALID    ( oGetCtaRem:cText( oRetFld( aTmp[ _CCTAREM ], oCtaRem:oDbf ) ), .t. );
-         ON HELP  ( oCtaRem:Buscar( aGet[ _CCTAREM ] ) ) ;
-         OF       oFld:aDialogs[ 5 ]
-
-      REDEFINE GET oGetCtaRem VAR cGetCtaRem ;
-         ID       251 ;
-			WHEN 		.F. ;
-         OF       oFld:aDialogs[ 5 ]
-
       REDEFINE CHECKBOX aGet[_LRECIMP] VAR aTmp[_LRECIMP];
          ID       160 ;
          WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
@@ -1366,7 +1366,6 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
          ID       165 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 5 ]
-
 
       /*
       Centro de coste______________________________________________________________

@@ -1019,6 +1019,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    with object ( oWndBrw:AddXCol() )
       :cHeader          := "Stock"
       :bEditValue       := {|| getStockArticulo() }
+      :cEditPicture     := MasUnd()
       :nWidth           := 80
       :nDataStrAlign    := 1
       :nHeadStrAlign    := 1
