@@ -10,20 +10,19 @@
 
 memvar oDbf
 memvar cDbf
+memvar lEnd
+memvar oThis
 memvar cDbfCol
 memvar oDbfCol
-memvar cDbfAlm
 memvar cDbfPro
 memvar cDbfFam
 memvar cDbfMov
 memvar cDbfArt
 memvar cDbfAge
-memvar oThis
+memvar nPagina
+memvar nTotMov
 memvar cPouDivRem
 memvar cPorDivRem
-memvar nPagina
-memvar lEnd
-memvar nTotMov
 
 static oRemesas
 static oMenu
@@ -34,7 +33,6 @@ static dbfTmpLin
 static dbfRemMov
 static dbfHisMov
 static dbfTMov
-static dbfAlm
 static dbfAge
 static dbfArticulo
 static dbfCount
@@ -58,7 +56,8 @@ CLASS TRemMovAlm FROM TMasDet
    DATA  aCal
    DATA  cMru              INIT  "Pencil_Package_16"
    DATA  cBitmap           INIT  Rgb( 128, 57, 123 )
-   DATA  oAlm
+   DATA  oAlmacenOrigen
+   DATA  oAlmacenDestino
    DATA  oFam
    DATA  oTipArt
    DATA  oPro
@@ -321,9 +320,9 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TRemMovAlm
       FIELD NAME "dFecRem"             TYPE "D" LEN  8  DEC 0                             DEFAULT  Date()                                    COMMENT "Fecha"            COLSIZE 80           OF ::oDbf
       FIELD NAME "cTimRem"             TYPE "C" LEN  6  DEC 0 PICTURE "@R 99:99:99"       DEFAULT  getSysTime()                              COMMENT "Hora"             COLSIZE 60           OF ::oDbf
       FIELD NAME "cAlmOrg"             TYPE "C" LEN 16  DEC 0 PICTURE "@!"                                                                   COMMENT "Alm. org."        COLSIZE 60           OF ::oDbf
-      FIELD CALCULATE NAME "cNomAlmOrg"         LEN 20  DEC 0 PICTURE "@!"                VAL ( oRetFld( ( ::oDbf:nArea )->cAlmOrg, ::oAlm, "cNomAlm" ) )                              HIDE  OF ::oDbf
+      FIELD CALCULATE NAME "cNomAlmOrg"         LEN 20  DEC 0 PICTURE "@!"                VAL ( oRetFld( ( ::oDbf:nArea )->cAlmOrg, ::oAlmacenOrigen, "cNomAlm" ) )                              HIDE  OF ::oDbf
       FIELD NAME "cAlmDes"             TYPE "C" LEN 16  DEC 0 PICTURE "@!"                                                                   COMMENT "Alm. des."        COLSIZE 60           OF ::oDbf
-      FIELD CALCULATE NAME "cNomAlmDes"         LEN 20  DEC 0 PICTURE "@!"                VAL ( oRetFld( ( ::oDbf:nArea )->cAlmDes, ::oAlm, "cNomAlm" ) )                              HIDE  OF ::oDbf
+      FIELD CALCULATE NAME "cNomAlmDes"         LEN 20  DEC 0 PICTURE "@!"                VAL ( oRetFld( ( ::oDbf:nArea )->cAlmDes, ::oAlmacenDestino, "cNomAlm" ) )                              HIDE  OF ::oDbf
       FIELD NAME "cCodDiv"             TYPE "C" LEN  3  DEC 0 PICTURE "@!"                HIDE                                               COMMENT "Div."                                  OF ::oDbf
       FIELD NAME "nVdvDiv"             TYPE "N" LEN 13  DEC 6 PICTURE "@E 999,999.999999" HIDE                                               COMMENT "Cambio de la divisa"                   OF ::oDbf
       FIELD NAME "cComMov"             TYPE "C" LEN 100 DEC 0 PICTURE "@!"                                                                   COMMENT "Comentario"       COLSIZE 240          OF ::oDbf
@@ -530,7 +529,9 @@ METHOD OpenFiles( lExclusive ) CLASS TRemMovAlm
 
       DATABASE NEW ::oTMov       PATH ( cPatDat() ) FILE "TMOV.DBF"        VIA ( cDriver() ) SHARED INDEX "TMov.Cdx"
 
-      DATABASE NEW ::oAlm        FILE "ALMACEN.DBF"   ALIAS "ALMACEN"   PATH ( cPatAlm() )   VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
+      DATABASE NEW ::oAlmacenOrigen    FILE "ALMACEN.DBF"   ALIAS "ALMACEN"   PATH ( cPatAlm() )   VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
+
+      DATABASE NEW ::oAlmacenDestino   FILE "ALMACEN.DBF"   ALIAS "ALMACEN"   PATH ( cPatAlm() )   VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
 
       DATABASE NEW ::oArtCom     FILE "ARTDIV.DBF"    ALIAS "ARTDIV"    PATH ( cPatArt() ) VIA ( cDriver() ) SHARED INDEX "ARTDIV.CDX"
 
@@ -677,8 +678,12 @@ METHOD CloseFiles() CLASS TRemMovAlm
       ::oDbf:End()
    end if
 
-   if ::oAlm != nil .and. ::oAlm:Used()
-      ::oAlm:End()
+   if ::oAlmacenOrigen != nil .and. ::oAlmacenOrigen:Used()
+      ::oAlmacenOrigen:End()
+   end if
+
+   if ::oAlmacenDestino != nil .and. ::oAlmacenDestino:Used()
+      ::oAlmacenDestino:End()
    end if
 
    if ::oArt != nil .and. ::oArt:Used()
@@ -877,8 +882,9 @@ METHOD CloseFiles() CLASS TRemMovAlm
       D():DeleteView( ::nView )
    end if 
 
-   ::oDbf         := nil
-   ::oAlm         := nil
+   ::oDbf               := nil
+   ::oAlmacenOrigen     := nil
+   ::oAlmacenDestino    := nil
    ::oArt         := nil
    ::oArtKit      := nil
    ::oFam         := nil
@@ -998,8 +1004,8 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
       ::oDbf:cCodDlg := oRetFld( cCurUsr(), ::oUsr, "cCodDlg" )
    end if
 
-   cSay[ 1 ]         := oRetFld( ::oDbf:cAlmOrg, ::oAlm )
-   cSay[ 2 ]         := oRetFld( ::oDbf:cAlmDes, ::oAlm )
+   cSay[ 1 ]         := oRetFld( ::oDbf:cAlmOrg, ::oAlmacenOrigen )
+   cSay[ 2 ]         := oRetFld( ::oDbf:cAlmDes, ::oAlmacenDestino )
    cSay[ 3 ]         := oRetFld( ::oDbf:cCodMov, ::oTMov )
    cSay[ 5 ]         := oRetFld( cCodEmp() + ::oDbf:cCodDlg, ::oDelega, "cNomDlg" )
    cSay[ 6 ]         := Rtrim( oRetFld( ::oDbf:cCodAge, ::oDbfAge, 2 ) ) + ", " + Rtrim( oRetFld( ::oDbf:cCodAge, ::oDbfAge, 3 ) )
@@ -1091,7 +1097,7 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
          PICTURE  ::oDbf:FieldByName( "cAlmOrg" ):cPict ;
          BITMAP   "LUPA" ;
 			OF 		oDlg
-      ::oAlmOrg:bValid     := {|| cAlmacen( ::oAlmOrg, ::oAlm:cAlias, oSay[1] ) }
+      ::oAlmOrg:bValid     := {|| cAlmacen( ::oAlmOrg, ::oAlmacenOrigen:cAlias, oSay[1] ) }
       ::oAlmOrg:bHelp      := {|| BrwAlmacen( ::oAlmOrg, oSay[1] ) }
 
       REDEFINE GET oSay[ 1 ] VAR cSay[ 1 ] ;
@@ -1107,7 +1113,7 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
          BITMAP   "LUPA" ;
 			OF 		oDlg
 
-      ::oAlmDes:bValid     := {|| cAlmacen( ::oAlmDes, ::oAlm:cAlias, oSay[2] ) }
+      ::oAlmDes:bValid     := {|| cAlmacen( ::oAlmDes, ::oAlmacenDestino:cAlias, oSay[2] ) }
       ::oAlmDes:bHelp      := {|| BrwAlmacen( ::oAlmDes, oSay[2] ) }
 
       REDEFINE GET oSay[ 2 ] VAR cSay[ 2 ] UPDATE ;
@@ -1542,7 +1548,6 @@ METHOD GenRemMov( lPrinter, cCaption, cCodDoc, cPrinter, nCopies ) CLASS TRemMov
       private cDbf         := ::oDbf:cAlias
       private oDbfCol      := ::oDetMovimientos:oDbf
       private cDbfCol      := ::oDetMovimientos:oDbf:cAlias
-      private cDbfAlm      := ::oAlm:cAlias
       private cDbfPro      := ::oTblPro:cAlias
       private cDbfFam      := ::oFam:cAlias
       private cDbfMov      := ::oTMov:cAlias
@@ -2757,10 +2762,10 @@ METHOD DataReport( oFr ) CLASS TRemMovAlm
    oFr:SetWorkArea(     "Empresa", ::oDbfEmp:nArea )
    oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
 
-   oFr:SetWorkArea(     "Almacén origen", ::oAlm:nArea )
+   oFr:SetWorkArea(     "Almacén origen", ::oAlmacenOrigen:nArea )
    oFr:SetFieldAliases( "Almacén origen", cItemsToReport( aItmAlm() ) )
 
-   oFr:SetWorkArea(     "Almacén destino", ::oAlm:nArea )
+   oFr:SetWorkArea(     "Almacén destino", ::oAlmacenDestino:nArea )
    oFr:SetFieldAliases( "Almacén destino", cItemsToReport( aItmAlm() ) )
 
    oFr:SetWorkArea(     "Agentes", ::oDbfAge:nArea )
@@ -2802,16 +2807,18 @@ METHOD VariableReport( oFr ) CLASS TRemMovAlm
    Creación de variables----------------------------------------------------
    */
 
-   oFr:AddVariable(     "Movimiento",              "Total movimiento",                  "GetHbVar('nTotMov')" )
-   oFr:AddVariable(     "Movimiento",              "Tipo de movimiento formato texto",  "CallHbFunc('cTipoMovimiento')" )
+   oFr:AddVariable(     "Movimiento",              "Total movimiento",                 "GetHbVar('nTotMov')" )
+   oFr:AddVariable(     "Movimiento",              "Tipo de movimiento formato texto", "CallHbFunc('cTipoMovimiento')" )
+   oFr:AddVariable(     "Movimiento",              "Almacén origen",                   "CallHbFunc('cTipoMovimiento')" )
+   oFr:AddVariable(     "Movimiento",              "Almacén destino",                  "CallHbFunc('cTipoMovimiento')" )
 
-   oFr:AddVariable(     "Lineas de movimientos",   "Detalle del artículo",              "CallHbFunc('cNombreArticuloMovimiento')" )
+   oFr:AddVariable(     "Lineas de movimientos",   "Detalle del artículo",             "CallHbFunc('cNombreArticuloMovimiento')" )
 
-   oFr:AddVariable(     "Lineas de movimientos",   "Nombre primera propiedad",          "CallHbFunc('nombrePrimeraPropiedadMovimientosAlmacen')" )
-   oFr:AddVariable(     "Lineas de movimientos",   "Nombre segunda propiedad",          "CallHbFunc('nombreSegundaPropiedadMovimientosAlmacen')" )
+   oFr:AddVariable(     "Lineas de movimientos",   "Nombre primera propiedad",         "CallHbFunc('nombrePrimeraPropiedadMovimientosAlmacen')" )
+   oFr:AddVariable(     "Lineas de movimientos",   "Nombre segunda propiedad",         "CallHbFunc('nombreSegundaPropiedadMovimientosAlmacen')" )
 
-   oFr:AddVariable(     "Lineas de movimientos",   "Total unidades",                    "CallHbFunc('nUnidadesLineaMovimiento')" )
-   oFr:AddVariable(     "Lineas de movimientos",   "Total linea movimiento",            "CallHbFunc('nImporteLineaMovimiento')" )
+   oFr:AddVariable(     "Lineas de movimientos",   "Total unidades",                   "CallHbFunc('nUnidadesLineaMovimiento')" )
+   oFr:AddVariable(     "Lineas de movimientos",   "Total linea movimiento",           "CallHbFunc('nImporteLineaMovimiento')" )
 
 Return nil
 
@@ -3134,7 +3141,7 @@ Return nTotLMovAlm( oThis:oDetMovimientos:oDbf )
 
 //---------------------------------------------------------------------------//
 
-function cTipoMovimiento()
+Function cTipoMovimiento()
 
    local cTipo    := ""
 
@@ -3151,8 +3158,20 @@ function cTipoMovimiento()
 
 Return cTipo
 
+//---------------------------------------------------------------------------//
+
+Function cAlmacenOrigen()
+
+Return ( oRetFld( oThis:oParent:oDbf:cAlmOrg, oThis:oParent:oAlm ) )
 
 //---------------------------------------------------------------------------//
+
+Function cAlmacenDestino()
+
+Return ( oRetFld( oThis:oParent:oDbf:cAlmDes, oThis:oParent:oAlm ) )
+
+//---------------------------------------------------------------------------//
+
 
 FUNCTION rxRemMov( cPath, oMeter )
 

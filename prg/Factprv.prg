@@ -12199,7 +12199,6 @@ Function nStockLineaFacPrv()
 Return ( oStock:nTotStockAct( ( D():FacturasProveedoresLineas( nView ) )->cRef, ( D():FacturasProveedoresLineas( nView ) )->cAlmLin, ( D():FacturasProveedoresLineas( nView ) )->cValPr1, ( D():FacturasProveedoresLineas( nView ) )->cValPr2 ) )
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 Function DesignLabelFacturaProveedor( oFr, cDbfDoc )
 

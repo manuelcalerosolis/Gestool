@@ -2856,7 +2856,7 @@ Function lDiferencia( nTotal, nCobrado, nDiferencia )
 
    DEFAULT nDiferencia  := 0
 
-Return ( Abs( nTotal - nCobrado ) >= nDiferencia )
+Return ( abs( nTotal - nCobrado ) >= nDiferencia )
 
 //---------------------------------------------------------------------------//
 

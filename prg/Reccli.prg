@@ -4584,6 +4584,10 @@ Return ( aBasRecCli )
 
 FUNCTION generatePagosFacturaCliente( Id, nView, nMode )
 
+   sysrefresh()
+
+   msgAlert( "generatePagosFacturaCliente", "llamda a generar recibos" )
+
 Return ( genPgoFacCli( Id, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), D():AnticiposClientes( nView ), D():Clientes( nView ), D():FormasPago( nView ), D():Divisas( nView ), D():TiposIva( nView ), nMode, .f. ) )   
 
 //---------------------------------------------------------------------------//
@@ -4626,7 +4630,7 @@ FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, 
    local lAlert
 
    DEFAULT nMode     := APPD_MODE
-   DEFAULT lMessage  := .t.
+   lMessage  := .t.
 
    lAlert            := ( nMode == APPD_MODE )
 
@@ -4674,6 +4678,9 @@ FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, 
 
    nTotCob           := nPagFacCli( cNumFac, dbfFacCliT, dbfFacCliP, dbfIva, dbfDiv, nil, .f. )
 
+   msgAlert( nTotal, "total factura" )
+   msgAlert( nTotCob, "total cobrado" )
+
    /*
    Ya nos viene sin los anticipos
    */
@@ -4711,10 +4718,14 @@ FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, 
       Genera pagos-------------------------------------------------------------
       */
 
+      msgAlert( cCodPgo, "forma de pago" )
+
       if ( dbfFPago )->( dbSeek( cCodPgo ) )
 
          nTotAcu        := nTotal
          nPlazos        := Max( ( dbfFPago )->nPlazos, 1 )
+
+         msgAlert( nPlazos, "numero de nPlazos")
 
          for n := 1 to nPlazos
 
@@ -4811,6 +4822,8 @@ FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, 
    end if
 
    ( dbfCli )->( dbGoTo( nRecCli ) )
+
+   msgAlert( if( lAlert, "no se generan recibos", "recibo generado"  ) )
 
    if ( lAlert .and. lMessage )
       msgWait( "Factura " + cSerFac  + '/' + allTrim( Str( nNumFac ) ) + '/' + cSufFac + " no se generaron recibos.", "Atención", 1 )

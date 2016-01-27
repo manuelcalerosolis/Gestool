@@ -702,9 +702,13 @@ Return ( self )
 METHOD ExisteNodo( hAlbaran ) CLASS GeneraFacturasClientes
 
    if !::lValidaNodo( hAlbaran )
+
       ::CierraNodo()
+      
       ::CreaNodo( hAlbaran )
+
       ::AbreNodo()
+
    end if
 
 Return ( self )

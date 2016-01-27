@@ -341,33 +341,4 @@ METHOD minusUnitsStock( oDocumentLine )
 Return ( Self ) 
 
 //---------------------------------------------------------------------------//
-/*
-   local oStock      := ::scanStock( oDocumentLine )
-   local nUnidades   := 0
-
-   if !empty( oStock )
-      nUnidades      := oStock:nUnidades
-   end if 
-*/
-   /*
-   aeval( ::oStock:aStocks, {|o| if(   rtrim( o:cCodigo ) == rtrim( oDocumentLine:getCode() ) .and.;
-                                       rtrim( o:cCodigoAlmacen ) == rtrim( oDocumentLine:getAlmacen() ) .and.;
-                                       rtrim( o:cCodigoPropiedad1 ) == rtrim( oDocumentLine:getCodeFirstProperty() ) .and.;
-                                       rtrim( o:cCodigoPropiedad2 ) == rtrim( oDocumentLine:getCodeSecondProperty() ) .and.;
-                                       rtrim( o:cValorPropiedad1 ) == rtrim( oDocumentLine:getValueFirstProperty() ) .and.;
-                                       rtrim( o:cValorPropiedad2 ) == rtrim( oDocumentLine:getValueSecondProperty() ),;
-                                       nUnidades += o:nUnidades, ) } )
-   */
-/*
-   if nUnidades != 0
-   msgAlert( oDocumentLine:getCode(), "o:cCodigo" )
-   msgAlert( oDocumentLine:getAlmacen(), "o:cCodigoAlmacen " )
-   msgAlert( oDocumentLine:getValueFirstProperty(), "o:cValorPropiedad1" )
-   msgAlert( oDocumentLine:getValueSecondProperty(), "o:cValorPropiedad2" )
-   msgAlert( nUnidades, "nUnidades" )
-   end if 
-   
-Return ( nUnidades )
-*/
-//---------------------------------------------------------------------------//
 

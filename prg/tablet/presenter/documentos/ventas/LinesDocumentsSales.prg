@@ -65,7 +65,7 @@ CLASS LinesDocumentsSales FROM Editable
    METHOD setTarifa()                                       INLINE ( ::hSetDetail( "NumeroTarifa", ::hGetMaster( "NumeroTarifa" ) ) ) 
    METHOD setPrecioCosto( nCosto )                          INLINE ( ::hSetDetail( "PrecioCosto", nCosto ) )
       METHOD setPrecioCostoMedio()                          VIRTUAL         
-   METHOD setPrecioVenta( nPrecioVenta )                    INLINE ( ::hSetDetail( "PrecioVenta", nPrecioVenta  ) )
+   METHOD setPrecioVenta( nPrecioVenta )                    INLINE ( ::hSetDetail( "PrecioVenta", nPrecioVenta ) )
 
    METHOD setOldCodigoArticulo()                            INLINE ( ::cOldCodigoArticulo := ::hGetDetail( "Articulo" ) )
    METHOD resetOldCodigoArticulo()                          INLINE ( ::cOldCodigoArticulo := "" )
@@ -105,7 +105,6 @@ CLASS LinesDocumentsSales FROM Editable
    METHOD runGridProduct()
    METHOD runGridStore()
 
-   
    METHOD cargaArticulo()
    METHOD cargaAlmacen()
 

@@ -400,8 +400,6 @@ METHOD Dialog() CLASS TLabelGenerator
          :bOnPostEdit      := {|o,x| if( dbDialogLock( ::tmpLabelEdition ), ( ( ::tmpLabelEdition )->nLabel := x, ( ::tmpLabelEdition )->( dbUnlock() ) ), ) }
       end with
 
-      //----------------------------
-
       REDEFINE APOLOMETER ::oMtrLabel ;
          VAR      ::nMtrLabel ;
          PROMPT   "" ;
@@ -721,8 +719,8 @@ METHOD prepareTempReport( oFr ) CLASS TLabelGenerator
    local n
    local nBlancos       := 0
    local nPaperHeight   := oFr:GetProperty( "MainPage", "PaperHeight" ) * fr01cm
-   local nHeight        := oFr:GetProperty( "MasterData", "Height" )
    local nColumns       := oFr:GetProperty( "MainPage", "Columns" )
+   local nHeight        := oFr:GetProperty( "MasterData", "Height" )
    local nItemsInColumn := 0
 
    if !empty( nPaperHeight ) .and. !empty( nHeight ) .and. !empty( nColumns )

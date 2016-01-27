@@ -9664,18 +9664,18 @@ Return nPreCom
 
 Function nRetPreCosto( cArticulo, cCodArt )
 
-	local nPreCos 	:= 0
-	local nOrdAnt 	:= ( cArticulo )->( OrdSetFocus( 1 ) )
-	local nRecno 	:= ( cArticulo )->( RecNo() )
+	local nPrecioCosto  := 0
+	local nOrdAnt 	     := ( cArticulo )->( ordsetfocus( 1 ) )
+	local nRecno        := ( cArticulo )->( recno() )
 
-   if ( cArticulo )->( dbSeek( cCodArt ) )
-      nPreCos     := ( cArticulo )->pCosto
+   if ( cArticulo )->( dbseek( cCodArt ) )
+      nPrecioCosto     := ( cArticulo )->pCosto
    end if
 
-	( cArticulo )->( dbGoTo( nRecno ) )
-	( cArticulo )->( OrdSetFocus( nOrdAnt ) )
+	( cArticulo )->( dbgoto( nRecno ) )
+	( cArticulo )->( ordsetfocus( nOrdAnt ) )
 
-Return nPreCos
+Return ( nPrecioCosto )
 
 //---------------------------------------------------------------------------//
 
@@ -15755,100 +15755,100 @@ RETURN ( lTmp )
 Function nRetPreArt( nTarifa, cCodDiv, lIvaInc, dbfArt, dbfDiv, dbfArtKit, dbfIva, lBuscaImportes, oTarifa, oNewImp )
 
    local nIva
-   local nPre              := 0
-   local nPreIva           := 0
-   local nPreCos           := nil
    local oError
    local oBlock
+   local nPrecioBase          := 0
+   local nPrecioIvaIncluido   := 0
+   local nPrecioCosto         := nil
 
-   DEFAULT nTarifa         := 1
-   DEFAULT lIvaInc         := .f.
-   DEFAULT lBuscaImportes  := lBuscaImportes()
+   DEFAULT nTarifa            := 1
+   DEFAULT lIvaInc            := .f.
+   DEFAULT lBuscaImportes     := lBuscaImportes()
 
-   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
    if nTarifa == 0
-      nTarifa        := 1
+      nTarifa                 := 1
    end if
 
    while .t.
 
       if ( dbfArt )->lKitArt
 
-         nIva              := nIva( dbfIva, ( dbfArt )->TipoIva )
+         nIva                 := nIva( dbfIva, ( dbfArt )->TipoIva )
 
          do case
             case nTarifa == 1
                if ( dbfArt )->lBnf1
-                  if Empty( nPreCos )
-                  nPreCos  := nCosto( nil, dbfArt, dbfArtKit )
+                  if Empty( nPrecioCosto)
+                  nPrecioCosto         := nCosto( nil, dbfArt, dbfArtKit )
                   end if
-                  nPre     := ( nPreCos * ( dbfArt )->Benef1 / 100 ) + nPreCos
-                  nPreIva  := ( nPre * nIva / 100 ) + nPre
+                  nPrecioBase          := ( nPrecioCosto * ( dbfArt )->Benef1 / 100 ) + nPrecioCosto
+                  nPrecioIvaIncluido   := ( nPrecioBase * nIva / 100 ) + nPrecioBase
                else
-                  nPreIva  := ( dbfArt )->pVtaIva1
-                  nPre     := ( dbfArt )->pVenta1
+                  nPrecioIvaIncluido   := ( dbfArt )->pVtaIva1
+                  nPrecioBase          := ( dbfArt )->pVenta1
                end if
 
             case nTarifa == 2
                if ( dbfArt )->lBnf2
-                  if Empty( nPreCos )
-                  nPreCos  := nCosto( nil, dbfArt, dbfArtKit )
+                  if Empty( nPrecioCosto)
+                  nPrecioCosto         := nCosto( nil, dbfArt, dbfArtKit )
                   end if
-                  nPre     := ( nPreCos * ( dbfArt )->Benef2 / 100 ) + nPreCos
-                  nPreIva  := ( nPre * nIva / 100 ) + nPre
+                  nPrecioBase          := ( nPrecioCosto * ( dbfArt )->Benef2 / 100 ) + nPrecioCosto
+                  nPrecioIvaIncluido   := ( nPrecioBase * nIva / 100 ) + nPrecioBase
                else
-                  nPreIva  := ( dbfArt )->pVtaIva2
-                  nPre     := ( dbfArt )->Pventa2
+                  nPrecioIvaIncluido   := ( dbfArt )->pVtaIva2
+                  nPrecioBase          := ( dbfArt )->Pventa2
                end if
 
             case nTarifa == 3
                if ( dbfArt )->lBnf3
-                  if Empty( nPreCos )
-                  nPreCos  := nCosto( nil, dbfArt, dbfArtKit )
+                  if Empty( nPrecioCosto)
+                  nPrecioCosto         := nCosto( nil, dbfArt, dbfArtKit )
                   end if
-                  nPre     := ( nPreCos * ( dbfArt )->Benef3 / 100 ) + nPreCos
-                  nPreIva  := ( nPre * nIva / 100 ) + nPre
+                  nPrecioBase          := ( nPrecioCosto * ( dbfArt )->Benef3 / 100 ) + nPrecioCosto
+                  nPrecioIvaIncluido   := ( nPrecioBase * nIva / 100 ) + nPrecioBase
                else
-                  nPreIva  := ( dbfArt )->pVtaIva3
-                  nPre     := ( dbfArt )->Pventa3
+                  nPrecioIvaIncluido   := ( dbfArt )->pVtaIva3
+                  nPrecioBase          := ( dbfArt )->Pventa3
                end if
 
             case nTarifa == 4
                if ( dbfArt )->lBnf4
-                  if Empty( nPreCos )
-                  nPreCos  := nCosto( nil, dbfArt, dbfArtKit )
+                  if Empty( nPrecioCosto)
+                  nPrecioCosto         := nCosto( nil, dbfArt, dbfArtKit )
                   end if
-                  nPre     := ( nPreCos * ( dbfArt )->Benef4 / 100 ) + nPreCos
-                  nPreIva  := ( nPre * nIva / 100 ) + nPre
+                  nPrecioBase          := ( nPrecioCosto * ( dbfArt )->Benef4 / 100 ) + nPrecioCosto
+                  nPrecioIvaIncluido   := ( nPrecioBase * nIva / 100 ) + nPrecioBase
                else
-                  nPreIva  := ( dbfArt )->pVtaIva4
-                  nPre     := ( dbfArt )->Pventa4
+                  nPrecioIvaIncluido   := ( dbfArt )->pVtaIva4
+                  nPrecioBase          := ( dbfArt )->Pventa4
                end if
 
             case nTarifa == 5
                if ( dbfArt )->lBnf5
-                  if Empty( nPreCos )
-                  nPreCos  := nCosto( nil, dbfArt, dbfArtKit )
+                  if Empty( nPrecioCosto)
+                  nPrecioCosto         := nCosto( nil, dbfArt, dbfArtKit )
                   end if
-                  nPre     := ( nPreCos * ( dbfArt )->Benef5 / 100 ) + nPreCos
-                  nPreIva  := ( nPre * nIva / 100 ) + nPre
+                  nPrecioBase          := ( nPrecioCosto * ( dbfArt )->Benef5 / 100 ) + nPrecioCosto
+                  nPrecioIvaIncluido   := ( nPrecioBase * nIva / 100 ) + nPrecioBase
                else
-                  nPreIva  := ( dbfArt )->pVtaIva5
-                  nPre     := ( dbfArt )->Pventa5
+                  nPrecioIvaIncluido   := ( dbfArt )->pVtaIva5
+                  nPrecioBase          := ( dbfArt )->Pventa5
                end if
 
             case nTarifa == 6
                if ( dbfArt )->lBnf6
-                  if Empty( nPreCos )
-                  nPreCos  := nCosto( nil, dbfArt, dbfArtKit )
+                  if Empty( nPrecioCosto)
+                  nPrecioCosto         := nCosto( nil, dbfArt, dbfArtKit )
                   end if
-                  nPre     := ( nPreCos * ( dbfArt )->Benef6 / 100 ) + nPreCos
-                  nPreIva  := ( nPre * nIva / 100 ) + nPre
+                  nPrecioBase          := ( nPrecioCosto * ( dbfArt )->Benef6 / 100 ) + nPrecioCosto
+                  nPrecioIvaIncluido   := ( nPrecioBase * nIva / 100 ) + nPrecioBase
                else
-                  nPreIva  := ( dbfArt )->pVtaIva6
-                  nPre     := ( dbfArt )->Pventa6
+                  nPrecioIvaIncluido   := ( dbfArt )->pVtaIva6
+                  nPrecioBase          := ( dbfArt )->Pventa6
                end if
 
          end do
@@ -15857,28 +15857,28 @@ Function nRetPreArt( nTarifa, cCodDiv, lIvaInc, dbfArt, dbfDiv, dbfArtKit, dbfIv
 
          do case
             case nTarifa == 1
-               nPre     := ( dbfArt )->pVenta1
-               nPreIva  := ( dbfArt )->pVtaIva1
+               nPrecioBase          := ( dbfArt )->pVenta1
+               nPrecioIvaIncluido   := ( dbfArt )->pVtaIva1
             case nTarifa == 2
-               nPre     := ( dbfArt )->pVenta2
-               nPreIva  := ( dbfArt )->pVtaIva2
+               nPrecioBase          := ( dbfArt )->pVenta2
+               nPrecioIvaIncluido   := ( dbfArt )->pVtaIva2
             case nTarifa == 3
-               nPre     := ( dbfArt )->pVenta3
-               nPreIva  := ( dbfArt )->pVtaIva3
+               nPrecioBase          := ( dbfArt )->pVenta3
+               nPrecioIvaIncluido   := ( dbfArt )->pVtaIva3
             case nTarifa == 4
-               nPre     := ( dbfArt )->pVenta4
-               nPreIva  := ( dbfArt )->pVtaIva4
+               nPrecioBase          := ( dbfArt )->pVenta4
+               nPrecioIvaIncluido   := ( dbfArt )->pVtaIva4
             case nTarifa == 5
-               nPre     := ( dbfArt )->pVenta5
-               nPreIva  := ( dbfArt )->pVtaIva5
+               nPrecioBase          := ( dbfArt )->pVenta5
+               nPrecioIvaIncluido   := ( dbfArt )->pVtaIva5
             case nTarifa == 6
-               nPre     := ( dbfArt )->pVenta6
-               nPreIva  := ( dbfArt )->pVtaIva6
+               nPrecioBase          := ( dbfArt )->pVenta6
+               nPrecioIvaIncluido   := ( dbfArt )->pVtaIva6
          end do
 
       end if
 
-      if ( nPre == 0 .or. nPreIva == 0 ) .and. nTarifa > 1 .and. lBuscaImportes
+      if ( nPrecioBase== 0 .or. nPrecioIvaIncluido == 0 ) .and. nTarifa > 1 .and. lBuscaImportes
          nTarifa--
          loop
       else
@@ -15888,11 +15888,14 @@ Function nRetPreArt( nTarifa, cCodDiv, lIvaInc, dbfArt, dbfDiv, dbfArtKit, dbfIv
    end while
 
    // Restar el importe del impuesto especial si nos los piden con iva includio
-   //Si nos piden el precio con impuestos incluidos, no le restamos el impuesto especial
+   // Si nos piden el precio con impuestos incluidos, no le restamos el impuesto especial
 
    if oTarifa != nil
       oTarifa:cText( nTarifa )
    end if
+
+   nPrecioIvaIncluido   := Round( nPrecioIvaIncluido, nDouDiv() )
+   nPrecioBase          := Round( nPrecioBase, nDouDiv() )
 
    RECOVER USING oError
 
@@ -15900,7 +15903,7 @@ Function nRetPreArt( nTarifa, cCodDiv, lIvaInc, dbfArt, dbfDiv, dbfArtKit, dbfIv
 
    ErrorBlock( oBlock )
 
-Return ( if( lIvaInc, nPreIva, nPre ) )
+Return ( if( lIvaInc, nPrecioIvaIncluido, nPrecioBase) )
 
 //---------------------------------------------------------------------------//
 
