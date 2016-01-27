@@ -1220,7 +1220,7 @@ METHOD CompruebaDescuento( oItem ) CLASS GeneraFacturasClientes
 
    ::lMedia       := .f.
 
-   ::setDescuento( hash )
+   ::setDescuento( oItem )
 
    //Comprobamos que sean iguales todos los descuentos----------------------
 
