@@ -1309,9 +1309,9 @@ METHOD AppendFacturaCabecera( oItem ) CLASS GeneraFacturasClientes
    ( D():FacturasClientes( ::nView ) )->nDtoUno       := ::nDescuento3
    ( D():FacturasClientes( ::nView ) )->nDtoDos       := ::nDescuento4
 
-   msgAlert( getTextoGasto() )
-   msgAlert( getIvaGastos() )
-   msgAlert( getGastosFactura() )
+   msgAlert( ::getTextoGasto() )
+   msgAlert( ::getIvaGastos() )
+   msgAlert( ::getGastosFactura() )
 
    ( D():FacturasClientes( ::nView ) )->cManObr       := ::getTextoGasto()
    ( D():FacturasClientes( ::nView ) )->nManObr       := ::getIvaGastos()
