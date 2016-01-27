@@ -1,7 +1,8 @@
 #include "Factu.ch" 
 #include "FiveWin.ch"
 
-#define __localDirectory__       "c:\ficheros"
+//#define __localDirectory__       "\\Srvcafesyzumos\nueva estructura servidor\FicherosVoxel\"
+#define __localDirectory__       "c:\ficheros\voxel\"
 #define __separator__            ";"
 
 //---------------------------------------------------------------------------//
@@ -85,6 +86,7 @@ CLASS TEdiExporarFacturas
 
    METHOD writeLineas()
       METHOD writeDetallesLinea()
+      METHOD writeDescuentoLinea()
       METHOD writeImpuestosLinea()
 
    METHOD writeResumenPrimerImpuesto()
@@ -100,6 +102,7 @@ CLASS TEdiExporarFacturas
    METHOD getFecha( dFecha )     INLINE   ( transform( dtos( dFecha ), "@R 9999-99-99") )
 
    METHOD isLineaValida()        INLINE   ( lValLine( D():FacturasClientesLineas( ::nView ) ) .and. !( D():FacturasClientesLineas( ::nView ) )->lTotLin .and. nTotNFacCli() != 0 )
+   METHOD isDescuentoValido()    INLINE   ( ( D():FacturasClientesLineas( ::nView ) )->nDto != 0 )
 
    METHOD setFacturaClienteGeneradaEDI()
 
@@ -132,7 +135,7 @@ METHOD Run()
    ::cCodigoCliente        := ( D():FacturasClientes( ::nView ) )->cCodCli
 
    ::createFile()
-   
+
    if ::isFile()
 
       ::writeDatosGenerales()
@@ -151,13 +154,13 @@ METHOD Run()
 
       ::writeVencimientos()
       ::writeResumenTotales()
-      
+
       ::closeFile()
 
       ::setFacturaClienteGeneradaEDI()
 
       ::infoFacturaGenerada()
-   
+
    end if
 
 Return ( self )
@@ -238,20 +241,30 @@ Return ( self )
 //---------------------------------------------------------------------------//
 
 METHOD writeDatosCliente()
+   
+    local cLine    := "DatosCliente" + __separator__                                                   
 
-   local cLine    := "DatosCliente" + __separator__                                                   
-   cLine          += "" + __separator__                                                                           // Código del cliente (interno del cliente)
-   cLine          += alltrim( ::cCodigoCliente ) + __separator__                                                  // Código del cliente (interno del proveedor)
-   cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "cCodEdi" ) ) + __separator__    // Código de un centro del cliente (interno del proveedor). Algunos proveedores no lo utilizan (solo usan el campo IDCliProv)
-   cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "Nif" ) ) + __separator__        // CIF del cliente
-   cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "Titulo" ) ) + __separator__     // Razón social del cliente
-   cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "Domicilio" ) ) + __separator__  // Domicilio del cliente
-   cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "Poblacion" ) ) + __separator__  // Población del cliente
-   cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "CodPostal" ) ) + __separator__  // Codigo postal del cliente
-   cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "Provincia" ) ) + __separator__  // Provincia del cliente
-   cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "cCodPai" ) )                    // País del cliente (España: ESP)
-   cLine          += ""                                                                                           // Nº de registro mercantil del cliente
-   cLine          += ""                                                                                           // Dirección de email del cliente
+	
+	//Cliente--------------------------------------------------------------
+
+   	cLine          += "" + __separator__                                                                           // Código del cliente (interno del cliente)
+   	cLine          += alltrim( ::cCodigoCliente ) + __separator__                                                  // Código del cliente (interno del proveedor)
+   	cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "cCodEdi" ) ) + __separator__    // Código de un centro del cliente (interno del proveedor). Algunos proveedores no lo utilizan (solo usan el campo DCliProv)
+   	cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "Nif" ) ) + __separator__        // CIF del cliente
+   		
+   	if !empty( ( D():FacturasClientes( ::nView ) )->cCodObr ) .and. ( D():ClientesDirecciones( ::nView ) )->( dbseek( ::cCodigoCliente + ( D():FacturasClientes( ::nView ) )->cCodObr ) )
+   		cLine          += alltrim( ( D():ClientesDirecciones( ::nView ) )->cNomObr ) + __separator__     // Razón social del cliente
+   	else
+   		cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "Titulo" ) ) + __separator__     // Razón social del cliente
+   	end if
+   		
+   	cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "Domicilio" ) ) + __separator__  // Domicilio del cliente
+   	cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "Poblacion" ) ) + __separator__  // Población del cliente
+   	cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "CodPostal" ) ) + __separator__  // Codigo postal del cliente
+   	cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "Provincia" ) ) + __separator__  // Provincia del cliente
+   	cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "cCodPai" ) )                    // País del cliente (España: ESP)
+   	cLine          += ""                                                                                           // Nº de registro mercantil del cliente
+   	cLine          += ""                                                                                           // Dirección de email del cliente
 
    ::oFileEDI:add( cLine )
 
@@ -277,7 +290,8 @@ METHOD writeDatosEstablecimiento()
    cLine          += alltrim( ( D():ClientesDirecciones( ::nView ) )->cCodEdi ) + __separator__    // Código del establecimiento del cliente donde se entrega de la mercancía (interno del cliente)
    cLine          += alltrim( ::cCodigoCliente ) + __separator__                                   // Código del cliente (interno del proveedor)
    cLine          += "" + __separator__                                                            // Código secundario del establecimiento del cliente según el proveedor (interno del proveedor). Algunos proveedores solo utilizan el campo IDCliProv
-   cLine          += alltrim( ( D():ClientesDirecciones( ::nView ) )->cNomObr ) + __separator__    // Nombre del establecimiento
+   //cLine          += alltrim( ( D():ClientesDirecciones( ::nView ) )->cNomObr ) + __separator__    // Nombre del establecimiento
+   cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "Titulo" ) ) + __separator__    // Nombre del establecimiento
    cLine          += alltrim( ( D():ClientesDirecciones( ::nView ) )->cDirObr ) + __separator__    // Dirección del establecimiento
    cLine          += alltrim( ( D():ClientesDirecciones( ::nView ) )->cPobObr ) + __separator__    // Población del establecimiento
    cLine          += alltrim( ( D():ClientesDirecciones( ::nView ) )->cPosObr ) + __separator__    // Código postal del establecimiento
@@ -323,7 +337,7 @@ METHOD writeReferencias()
       cLine       += "" + __separator__                                                  // Fecha del pedido no obligatorio
       cLine       += ::getFecha( ( D():FacturasClientes( ::nView ) )->dFecFac )          // Fecha de la factura
    else
-      cLine       += alltrim( ( D():FacturasClientes( ::nView ) )->cNumAlb ) + __separator__     //Número del albarán de procedencia
+      cLine       += alltrim( StrTran( ( D():FacturasClientes( ::nView ) )->cNumAlb, " ", "" ) ) + __separator__     //Número del albarán de procedencia
       cLine       += "" + __separator__                                                  // Número del pedido no obligatorio
       cLine       += alltrim( D():FacturasClientesIdShort( ::nView ) ) + __separator__   // Número de la factura
       cLine       += ::getFecha( retfld( ( D():FacturasClientes( ::nView ) )->cNumAlb, D():AlbaranesClientes( ::nView ), "dFecAlb" ) ) + __separator__   // Fecha del albarán
@@ -347,8 +361,15 @@ METHOD writeLineas()
       while ( D():FacturasClientesLineasId( ::nView ) == id ) .and. !( D():FacturasClientesLineas( ::nView ) )->( eof() ) 
 
          if ::isLineaValida()
+
             ::writeDetallesLinea()
+
+            if ::isDescuentoValido()
+               ::writeDescuentoLinea()
+            end if
+
             ::writeImpuestosLinea()
+
          end if 
       
          ( D():FacturasClientesLineas( ::nView ) )->( dbSkip() ) 
@@ -376,6 +397,20 @@ METHOD writeDetallesLinea()
    */
    cLine          += ::getNumero( nTotUFacCli() ) + __separator__                                     // Precio bruto unitario (sin descuentos, impuestos, etc.)
    cLine          += ::getNumero( nTotLFacCli() )                                                     // Importe bruto total de esta línea (Cdad x Punit)
+
+   ::oFileEDI:add( cLine )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD writeDescuentoLinea()
+
+   local cLine    := "DescuentosLinea" + __separator__                                                 
+   cLine          += "Descuento" + __separator__                                                      // Identifica si es un descuento o un cargo
+   cLine          += "Comercial" + __separator__                                                      // Indica el tipo de descuento que es, atendiendo a una tabla dada por ellos
+   cLine          += ::getNumero( ( D():FacturasClientesLineas( ::nView ) )->nDto ) + __separator__   // Indica el % de descuento
+   cLine          += ::getNumero( nDtoLFacCli() )                                                     // Indica el importe del descuento
 
    ::oFileEDI:add( cLine )
 
