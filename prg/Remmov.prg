@@ -2806,6 +2806,10 @@ METHOD VariableReport( oFr ) CLASS TRemMovAlm
    oFr:AddVariable(     "Movimiento",              "Tipo de movimiento formato texto",  "CallHbFunc('cTipoMovimiento')" )
 
    oFr:AddVariable(     "Lineas de movimientos",   "Detalle del artículo",              "CallHbFunc('cNombreArticuloMovimiento')" )
+
+   oFr:AddVariable(     "Lineas de movimientos",   "Nombre primera propiedad",          "CallHbFunc('nombrePrimeraPropiedadMovimientosAlmacen')" )
+   oFr:AddVariable(     "Lineas de movimientos",   "Nombre segunda propiedad",          "CallHbFunc('nombreSegundaPropiedadMovimientosAlmacen')" )
+
    oFr:AddVariable(     "Lineas de movimientos",   "Total unidades",                    "CallHbFunc('nUnidadesLineaMovimiento')" )
    oFr:AddVariable(     "Lineas de movimientos",   "Total linea movimiento",            "CallHbFunc('nImporteLineaMovimiento')" )
 
@@ -5621,13 +5625,13 @@ RETURN NIL
 
 //----------------------------------------------------------------------------//
 
-Function nombrePrimeraPropiedadFacturasClientesLineas()
+Function nombrePrimeraPropiedadMovimientosAlmacen()
 
 Return ( nombrePropiedad( oThis:oDetMovimientos:oDbf:FieldGetByName( "cCodPr1" ), oThis:oDetMovimientos:oDbf:FieldGetByName( "cValPr1" ), oThis:nView ) )
 
 //---------------------------------------------------------------------------//
 
-Function nombreSegundaPropiedadFacturasClientesLineas()
+Function nombreSegundaPropiedadMovimientosAlmacen()
 
 Return ( nombrePropiedad( oThis:oDetMovimientos:oDbf:FieldGetByName( "cCodPr2" ), oThis:oDetMovimientos:oDbf:FieldGetByName( "cValPr2" ), oThis:nView ) )
 

@@ -12235,7 +12235,7 @@ Function DesignLabelFacturaProveedor( oFr, cDbfDoc )
    Necesidad de incluir espacion en blancos---------------------------------
    */
 
-   oLabel:PrepareTemporal( oFr )
+   oLabel:prepareTempReport( oFr )
 
    // Zona de variables--------------------------------------------------------
 
