@@ -112,11 +112,7 @@ METHOD lResource( cFld ) CLASS TFastVentasClientes
    ::oFilter      := TFilterCreator():Init()
    if !Empty( ::oFilter )
       ::oFilter:SetDatabase( ::oDbf )
-<<<<<<< HEAD
-      ::oFilter:SetFilterType( FAC_CLI )
-=======
       ::oFilter:SetFilterType( CLI_TBL )
->>>>>>> 5b03301e46452c83998e0cd9b2670193e270b299
    end if 
 
 RETURN .t.

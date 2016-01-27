@@ -204,7 +204,7 @@ static hStockArticulo   := {=>}
 #ifndef __PDA__
 
 /*
-Cargamos los stocks---------------------------------------------
+Cargamos los stocks bajo demanda-----------------------------------------------
 */
 
 Static Function getStockArticulo()
@@ -1022,6 +1022,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       :nWidth           := 80
       :nDataStrAlign    := 1
       :nHeadStrAlign    := 1
+      :cEditPicture     := MasUnd()      
       :lHide            := .t.
    end with
 
@@ -13115,27 +13116,33 @@ Method Process()
             lExistTable( cPatSnd() + "ArtCodebar.Dbf", cLocalDriver() )    .and.;
             OpenFiles( .f. )
 
-            USE ( cPatSnd() + "ARTICULO.DBF" ) NEW VIA ( cLocalDriver() )READONLY ALIAS ( cCheckArea( "ARTICULO", @tmpArticulo ) )
+            USE ( cPatSnd() + "ARTICULO.DBF" ) NEW VIA ( cLocalDriver() ) READONLY ALIAS ( cCheckArea( "ARTICULO", @tmpArticulo ) )
             SET ADSINDEX TO ( cPatSnd() + "ARTICULO.CDX" ) ADDITIVE
 
-            USE ( cPatSnd() + "PROVART.DBF" ) NEW VIA ( cLocalDriver() )READONLY ALIAS ( cCheckArea( "PROVART", @tmpArtPrv ) )
+            USE ( cPatSnd() + "PROVART.DBF" ) NEW VIA ( cLocalDriver() ) READONLY ALIAS ( cCheckArea( "PROVART", @tmpArtPrv ) )
             SET ADSINDEX TO ( cPatSnd() + "PROVART.CDX" ) ADDITIVE
 
-            USE ( cPatSnd() + "ARTDIV.DBF" ) NEW VIA ( cLocalDriver() )READONLY ALIAS ( cCheckArea( "ARTDIV", @tmpArtDiv ) )
+            USE ( cPatSnd() + "ARTDIV.DBF" ) NEW VIA ( cLocalDriver() ) READONLY ALIAS ( cCheckArea( "ARTDIV", @tmpArtDiv ) )
             SET ADSINDEX TO ( cPatSnd() + "ARTDIV.CDX" ) ADDITIVE
 
-            USE ( cPatSnd() + "ARTKIT.DBF" ) NEW VIA ( cLocalDriver() )READONLY ALIAS ( cCheckArea( "ARTTIK", @tmpKit ) )
+            USE ( cPatSnd() + "ARTKIT.DBF" ) NEW VIA ( cLocalDriver() ) READONLY ALIAS ( cCheckArea( "ARTTIK", @tmpKit ) )
             SET ADSINDEX TO ( cPatSnd() + "ARTKIT.CDX" ) ADDITIVE
 
-            USE ( cPatSnd() + "OFERTA.DBF" ) NEW VIA ( cLocalDriver() )READONLY ALIAS ( cCheckArea( "OFERTA", @tmpOfe ) )
+            USE ( cPatSnd() + "OFERTA.DBF" ) NEW VIA ( cLocalDriver() ) READONLY ALIAS ( cCheckArea( "OFERTA", @tmpOfe ) )
             SET ADSINDEX TO ( cPatSnd() + "OFERTA.CDX" ) ADDITIVE
 
             USE ( cPatSnd() + "ArtCodebar.Dbf" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @tmpCodebar ) )
             SET ADSINDEX TO ( cPatSnd() + "ArtCodebar.Cdx" ) ADDITIVE
 
+            ::oSender:SetText( "Ficheros de articulos descomprimimos correctamente" )
+            ::oSender:SetText( "Total de registros recibidos " + alltrim( str( ( tmpArticulo )->( lastrec() ) ) ) )
+
             if !Empty( ::oSender:oMtr )
                ::oSender:oMtr:nTotal := ( tmpArticulo )->( lastrec() )
             end if
+
+            ( tmpArticulo )->( ordsetfocus( 0 ) )
+            ( tmpArticulo )->( dbgotop() )
 
             while !( tmpArticulo )->( eof() )
 
@@ -13148,9 +13155,9 @@ Method Process()
                      ::oSender:SetText( "Desestimado : " + AllTrim( ( D():Articulos( nView ) )->Codigo ) + "; " + AllTrim( ( D():Articulos( nView ) )->Nombre ) + "; " + AllTrim( Trans( ( D():Articulos( nView ) )->pVenta1, PicOut() ) ) + "; " + AllTrim( Trans( ( D():Articulos( nView ) )->pVtaIva1, PicOut() ) ) )
                   end if
                else
-                     ::CleanRelation( ( tmpArticulo )->Codigo )
-                     dbPass( tmpArticulo, D():Articulos( nView ), .t. )
-                     ::oSender:SetText( "Añadido : " + AllTrim( ( D():Articulos( nView ) )->Codigo ) + "; " + AllTrim( ( D():Articulos( nView ) )->Nombre ) + "; " + AllTrim( Trans( ( D():Articulos( nView ) )->pVenta1, PicOut() ) ) + "; " + AllTrim( Trans( ( D():Articulos( nView ) )->pVtaIva1, PicOut() ) ) )
+                  ::CleanRelation( ( tmpArticulo )->Codigo )
+                  dbPass( tmpArticulo, D():Articulos( nView ), .t. )
+                  ::oSender:SetText( "Añadido : " + AllTrim( ( D():Articulos( nView ) )->Codigo ) + "; " + AllTrim( ( D():Articulos( nView ) )->Nombre ) + "; " + AllTrim( Trans( ( D():Articulos( nView ) )->pVenta1, PicOut() ) ) + "; " + AllTrim( Trans( ( D():Articulos( nView ) )->pVtaIva1, PicOut() ) ) )
                end if
 
                ( tmpArticulo )->( dbSkip() )
@@ -13167,6 +13174,8 @@ Method Process()
                ::oSender:oMtr:nTotal := ( tmpArtPrv )->( LastRec() )
             end if
 
+            ( tmpArtPrv )->( ordsetfocus( 0 ) )
+            ( tmpArtPrv )->( dbgotop() )
             while !( tmpArtPrv )->( eof() )
 
                if ( dbfArtPrv )->( dbSeek( ( tmpArtPrv )->cCodArt ) )
@@ -13191,6 +13200,8 @@ Method Process()
                ::oSender:oMtr:nTotal := ( tmpArtDiv )->( lastrec() )
             end if
 
+            ( tmpArtDiv )->( ordsetfocus( 0 ) )
+            ( tmpArtDiv )->( dbgotop() )
             while !( tmpArtDiv )->( eof() )
 
                if ( dbfArtVta )->( dbSeek( ( tmpArtDiv )->cCodArt + ( tmpArtDiv )->CCODPR1 + ( tmpArtDiv )->CCODPR2 + ( tmpArtDiv )->CVALPR1 + ( tmpArtDiv )->CVALPR2 ) )
@@ -13223,6 +13234,8 @@ Method Process()
                ::oSender:oMtr:nTotal := (tmpKit)->( lastrec() )
             end if
 
+            ( tmpKit )->( ordsetfocus( 0 ) )
+            ( tmpKit )->( dbgotop() )
             while !( tmpKit )->( eof() )
 
                if ( dbfArtKit )->( dbSeek( ( tmpKit )->CCODKIT ) )
@@ -13251,6 +13264,8 @@ Method Process()
                ::oSender:oMtr:nTotal := ( tmpOfe )->( lastrec() )
             end if
 
+            ( tmpOfe )->( ordsetfocus( 0 ) )
+            ( tmpOfe )->( dbgotop() )
             while !( tmpOfe )->( eof() )
 
                if ( dbfOfe )->( dbSeek( ( tmpOfe )->cArtOfe ) )
@@ -13285,6 +13300,8 @@ Method Process()
                ::oSender:oMtr:nTotal := ( tmpCodebar )->( lastrec() )
             end if
 
+            ( tmpCodebar )->( ordsetfocus( 0 ) )
+            ( tmpCodebar )->( dbgotop() )
             while !( tmpCodebar )->( eof() )
 
                if ( dbfCodebar )->( dbSeek( ( tmpCodebar )->cCodArt + ( tmpCodebar )->cCodBar ) ) .and. !::oSender:lServer
