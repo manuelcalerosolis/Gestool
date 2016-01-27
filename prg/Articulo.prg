@@ -14704,8 +14704,6 @@ Method lPrintLabels() CLASS TArticuloLabelGenerator
       Necesidad de incluir espacion en blancos---------------------------------
       */
 
-
-
       ::PrepareTemporal( oFr )
 
       /*

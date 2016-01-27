@@ -12225,11 +12225,17 @@ Function DesignLabelFacturaProveedor( oFr, cDbfDoc )
       oFr:LoadFromBlob( ( cDbfDoc )->( Select() ), "mReport")
    else
       oFr:AddPage(         "MainPage" )
-      oFr:AddBand(         "CabeceraColumnas",  "MainPage",       frxMasterData )
-      oFr:SetProperty(     "CabeceraColumnas",  "Top",            200 )
-      oFr:SetProperty(     "CabeceraColumnas",  "Height",         100 )
-      oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Lineas de facturas" )
+      oFr:AddBand(         "MasterData",  "MainPage",       frxMasterData )
+      oFr:SetProperty(     "MasterData",  "Top",            200 )
+      oFr:SetProperty(     "MasterData",  "Height",         100 )
+      oFr:SetObjProperty(  "MasterData",  "DataSet",        "Lineas de facturas" )
    end if
+
+   /*
+   Necesidad de incluir espacion en blancos---------------------------------
+   */
+
+   oLabel:PrepareTemporal( oFr )
 
    // Zona de variables--------------------------------------------------------
 
@@ -12252,9 +12258,6 @@ Function DesignLabelFacturaProveedor( oFr, cDbfDoc )
 
 Return .t.
 
-//---------------------------------------------------------------------------//
-
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 Function DesignReportFacPrv( oFr, cDoc )

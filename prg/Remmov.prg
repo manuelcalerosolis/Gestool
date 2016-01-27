@@ -5625,4 +5625,16 @@ RETURN NIL
 
 //----------------------------------------------------------------------------//
 
+Function nombrePrimeraPropiedadFacturasClientesLineas()
+
+Return ( nombrePropiedad( ( D():FacturasClientesLineas( nView ) )->cCodPr1, ( D():FacturasClientesLineas( nView ) )->cValPr1, nView ) )
+
+//---------------------------------------------------------------------------//
+
+Function nombreSegundaPropiedadFacturasClientesLineas()
+
+Return ( nombrePropiedad( ( D():FacturasClientesLineas( nView ) )->cCodPr2, ( D():FacturasClientesLineas( nView ) )->cValPr2, nView ) )
+
+//---------------------------------------------------------------------------//
+
 

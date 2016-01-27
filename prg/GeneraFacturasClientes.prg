@@ -1000,7 +1000,7 @@ METHOD cClaveAlbaran() CLASS GeneraFacturasClientes
 
    cClave         += ( D():AlbaranesClientes( ::nView ) )->cManObr
 
-   cClave         += transform( ( D():AlbaranesClientes( ::nView ) )->nIvaObr, "99.99" )
+   cClave         += transform( ( D():AlbaranesClientes( ::nView ) )->nIvaMan, "99.99" )
 
    if ::oAgruparDireccion:Value()
       cClave      += ( D():AlbaranesClientes( ::nView ) )->cCodCli + ( D():AlbaranesClientes( ::nView ) )->cCodObr
@@ -1309,13 +1309,9 @@ METHOD AppendFacturaCabecera( oItem ) CLASS GeneraFacturasClientes
    ( D():FacturasClientes( ::nView ) )->nDtoUno       := ::nDescuento3
    ( D():FacturasClientes( ::nView ) )->nDtoDos       := ::nDescuento4
 
-   msgAlert( ::getTextoGasto() )
-   msgAlert( ::getIvaGastos() )
-   msgAlert( ::getGastosFactura() )
-
-   ( D():FacturasClientes( ::nView ) )->cManObr       := ::getTextoGasto()
-   ( D():FacturasClientes( ::nView ) )->nManObr       := ::getIvaGastos()
-   ( D():FacturasClientes( ::nView ) )->nIvaMan       := ::getGastosFactura()
+   ( D():FacturasClientes( ::nView ) )->cManObr       := ::getTextoGasto( oItem )
+   ( D():FacturasClientes( ::nView ) )->nIvaMan       := ::getIvaGastos( oItem )
+   ( D():FacturasClientes( ::nView ) )->nManObr       := ::getGastosFactura()
    
    // Asignando datos del cliente----------------------------------------
 
