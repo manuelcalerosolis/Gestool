@@ -3784,11 +3784,11 @@ Function DesignReportRecCli( oFr, dbfDoc )
          oFr:SetProperty(     "CuerpoDocumento",   "Top", 0 )
          oFr:SetProperty(     "CuerpoDocumento",   "Height", 300 )
 
-         oFr:AddBand(         "CabeceraColumnas",  "MainPage", frxMasterData )
-         oFr:SetProperty(     "CabeceraColumnas",  "Top", 300 )
-         oFr:SetProperty(     "CabeceraColumnas",  "Height", 0 )
-         oFr:SetProperty(     "CabeceraColumnas",  "StartNewPage", .t. )
-         oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet", "Recibos" )
+         oFr:AddBand(         "MasterData",  "MainPage", frxMasterData )
+         oFr:SetProperty(     "MasterData",  "Top", 300 )
+         oFr:SetProperty(     "MasterData",  "Height", 0 )
+         oFr:SetProperty(     "MasterData",  "StartNewPage", .t. )
+         oFr:SetObjProperty(  "MasterData",  "DataSet", "Recibos" )
 
       end if
 
@@ -4720,7 +4720,7 @@ FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, 
 
       msgAlert( cCodPgo, "forma de pago" )
 
-      if ( dbfFPago )->( dbSeek( cCodPgo ) )
+      if ( dbSeekInOrd( cCodPgo, "cCodPago", dbfFPago ) )
 
          nTotAcu        := nTotal
          nPlazos        := Max( ( dbfFPago )->nPlazos, 1 )
@@ -4781,7 +4781,7 @@ FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, 
             ( dbfFacCliP )->lEsperaDoc    := ( dbfFPago )->lEsperaDoc
 
             if !empty( ( dbfFacCliT )->cCtrCoste )
-                ( dbfFacCliP )->cCtrCoste    := ( dbfFacCliT )->cCtrCoste
+                ( dbfFacCliP )->cCtrCoste := ( dbfFacCliT )->cCtrCoste
             endif
 
             if !( "TABLET" $ cParamsMain() )

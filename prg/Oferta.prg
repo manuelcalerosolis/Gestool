@@ -4001,10 +4001,10 @@ Function DesignReportOferta( oFr, dbfDoc )
 
             oFr:AddPage(         "MainPage" )
 
-            oFr:AddBand(         "CabeceraColumnas",  "MainPage",       frxMasterData )
-            oFr:SetProperty(     "CabeceraColumnas",  "Top",            200 )
-            oFr:SetProperty(     "CabeceraColumnas",  "Height",         100 )
-            oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Ofertas" )
+            oFr:AddBand(         "MasterData",  "MainPage",       frxMasterData )
+            oFr:SetProperty(     "MasterData",  "Top",            200 )
+            oFr:SetProperty(     "MasterData",  "Height",         100 )
+            oFr:SetObjProperty(  "MasterData",  "DataSet",        "Ofertas" )
 
          end if
 

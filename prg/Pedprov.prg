@@ -9091,11 +9091,11 @@ Function DesignReportPedPrv( oFr, cDoc )
          oFr:SetProperty(     "CabeceraDocumento", "Top", 0 )
          oFr:SetProperty(     "CabeceraDocumento", "Height", 200 )
 
-         oFr:AddBand(         "CabeceraColumnas",  "MainPage", frxMasterData )
-         oFr:SetProperty(     "CabeceraColumnas",  "Top", 200 )
-         oFr:SetProperty(     "CabeceraColumnas",  "Height", 0 )
-         oFr:SetProperty(     "CabeceraColumnas",  "StartNewPage", .t. )
-         oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet", "Pedidos" )
+         oFr:AddBand(         "MasterData",  "MainPage", frxMasterData )
+         oFr:SetProperty(     "MasterData",  "Top", 200 )
+         oFr:SetProperty(     "MasterData",  "Height", 0 )
+         oFr:SetProperty(     "MasterData",  "StartNewPage", .t. )
+         oFr:SetObjProperty(  "MasterData",  "DataSet", "Pedidos" )
 
          oFr:AddBand(         "DetalleColumnas",   "MainPage", frxDetailData  )
          oFr:SetProperty(     "DetalleColumnas",   "Top", 230 )
@@ -9327,10 +9327,10 @@ Function designLabelPedidoProveedores( oFr, cDoc )
       oFr:LoadFromBlob( ( cDoc )->( Select() ), "mReport")
    else
       oFr:AddPage(         "MainPage" )
-      oFr:AddBand(         "CabeceraColumnas",  "MainPage",       frxMasterData )
-      oFr:SetProperty(     "CabeceraColumnas",  "Top",            200 )
-      oFr:SetProperty(     "CabeceraColumnas",  "Height",         100 )
-      oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Lineas de pedidos" )
+      oFr:AddBand(         "MasterData",  "MainPage",       frxMasterData )
+      oFr:SetProperty(     "MasterData",  "Top",            200 )
+      oFr:SetProperty(     "MasterData",  "Height",         100 )
+      oFr:SetObjProperty(  "MasterData",  "DataSet",        "Lineas de pedidos" )
    end if
 
    // Diseño de report------------------------------------------------------

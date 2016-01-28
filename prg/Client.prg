@@ -7842,7 +7842,7 @@ Method PrepareTemporal( oFr ) CLASS TClienteLabelGenerator
    local n
    local nBlancos       := 0
    local nPaperHeight   := oFr:GetProperty( "MainPage", "PaperHeight" ) * fr01cm
-   local nHeight        := oFr:GetProperty( "CabeceraColumnas", "Height" )
+   local nHeight        := oFr:GetProperty( "MasterData", "Height" )
    local nColumns       := oFr:GetProperty( "MainPage", "Columns" )
    local nItemsInColumn := 0
 
@@ -11270,10 +11270,10 @@ Function DesignReportClient( oFr, dbfDoc )
 
             oFr:AddPage(         "MainPage" )
 
-            oFr:AddBand(         "CabeceraColumnas",  "MainPage",       frxMasterData )
-            oFr:SetProperty(     "CabeceraColumnas",  "Top",            200 )
-            oFr:SetProperty(     "CabeceraColumnas",  "Height",         100 )
-            oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Clientes" )
+            oFr:AddBand(         "MasterData",  "MainPage",       frxMasterData )
+            oFr:SetProperty(     "MasterData",  "Top",            200 )
+            oFr:SetProperty(     "MasterData",  "Height",         100 )
+            oFr:SetObjProperty(  "MasterData",  "DataSet",        "Clientes" )
 
          end if
 

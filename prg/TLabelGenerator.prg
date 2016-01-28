@@ -588,17 +588,17 @@ METHOD buildReportLabels() CLASS TLabelGenerator
 
    ::variableLabel( oFr )
 
-   //Cargar el informe-----------------------------------------------------------
+   
+
+   // Cargar el informe-----------------------------------------------------------
    
    if !empty( ( ::dbfDocumento )->mReport )
 
       oFr:LoadFromBlob( ( ::dbfDocumento )->( Select() ), "mReport")
-      
-      //Zona de variables--------------------------------------------------------
 
       ::prepareTempReport( oFr )
       
-      //Imprimir el informe------------------------------------------------------
+      // Imprimir el informe------------------------------------------------------
 
       do case
          case nDevice == IS_SCREEN
@@ -645,6 +645,11 @@ METHOD createTempLabelReport() CLASS TLabelGenerator
 
       dbCreate( ::fileLabelReport, ::aStructureField, cLocalDriver() )
       dbUseArea( .t., cLocalDriver(), ::fileLabelReport, ::tmpLabelReport, .f. )
+
+      if!( ::tmpLabelReport )->( neterr() )
+         ( ::tmpLabelReport )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+         ( ::tmpLabelReport )->( OrdCreate( ::fileLabelReport, "cRef", "cRef", {|| Field->cRef } ) )
+      end if
 
    RECOVER USING oError
 
@@ -718,10 +723,10 @@ METHOD prepareTempReport( oFr ) CLASS TLabelGenerator
 
    local n
    local nBlancos       := 0
+   local nItemsInColumn := 0
    local nPaperHeight   := oFr:GetProperty( "MainPage", "PaperHeight" ) * fr01cm
    local nColumns       := oFr:GetProperty( "MainPage", "Columns" )
    local nHeight        := oFr:GetProperty( "MasterData", "Height" )
-   local nItemsInColumn := 0
 
    if !empty( nPaperHeight ) .and. !empty( nHeight ) .and. !empty( nColumns )
 
@@ -737,7 +742,7 @@ METHOD prepareTempReport( oFr ) CLASS TLabelGenerator
    end if 
 
    ( ::tmpLabelReport )->( dbGoTop() )
-
+   
 Return ( .t. )
 
 //--------------------------------------------------------------------------//
@@ -2598,7 +2603,6 @@ Return nil
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-
 
 CLASS TLabelGeneratorFacturaRectificativaProveedores FROM TLabelGenerator
 

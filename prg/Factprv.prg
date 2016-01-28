@@ -4870,9 +4870,9 @@ STATIC FUNCTION loaPrv( aGet, aTmp, dbf, nMode, oSay, oTlfPrv )
          Si la forma de pago es un movimiento bancario le asignamos el banco y cuenta por defecto
          */
 
-         if RetFld( aTmp[ _CCODPAGO ], D():FormasPago( nView ), "LUTLBNC" )
+         if retFld( aTmp[ _CCODPAGO ], D():FormasPago( nView ), "lUtlBnc" )
 
-            if dbSeekInOrd( ( D():Proveedores( nView ) )->Cod, "CCODDEF", D():BancosProveedores( nView ) )
+            if dbSeekInOrd( ( D():Proveedores( nView ) )->Cod, "cCodDef", D():BancosProveedores( nView ) )
 
                if !Empty( aGet[ _CBANCO ] )
                   aGet[ _CBANCO ]:cText( ( D():BancosProveedores( nView ) )->cCodBnc )
@@ -12313,11 +12313,11 @@ Function DesignReportFacPrv( oFr, cDoc )
          oFr:SetProperty(     "CabeceraDocumento", "Top", 0 )
          oFr:SetProperty(     "CabeceraDocumento", "Height", 200 )
 
-         oFr:AddBand(         "CabeceraColumnas",  "MainPage", frxMasterData )
-         oFr:SetProperty(     "CabeceraColumnas",  "Top", 200 )
-         oFr:SetProperty(     "CabeceraColumnas",  "Height", 0 )
-         oFr:SetProperty(     "CabeceraColumnas",  "StartNewPage", .t. )
-         oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet", "Facturas" )
+         oFr:AddBand(         "MasterData",  "MainPage", frxMasterData )
+         oFr:SetProperty(     "MasterData",  "Top", 200 )
+         oFr:SetProperty(     "MasterData",  "Height", 0 )
+         oFr:SetProperty(     "MasterData",  "StartNewPage", .t. )
+         oFr:SetObjProperty(  "MasterData",  "DataSet", "Facturas" )
 
          oFr:AddBand(         "DetalleColumnas",   "MainPage", frxDetailData  )
          oFr:SetProperty(     "DetalleColumnas",   "Top", 230 )

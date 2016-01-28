@@ -1453,11 +1453,11 @@ Method DesignReport( cNombre ) CLASS TFastReportInfGen
       ::oFastReport:SetProperty(    "CabeceraDocumento", "Top", 0 )
       ::oFastReport:SetProperty(    "CabeceraDocumento", "Height", 200 )
 
-      ::oFastReport:AddBand(        "CabeceraColumnas",  "MainPage", frxMasterData )
-      ::oFastReport:SetProperty(    "CabeceraColumnas",  "Top", 200 )
-      ::oFastReport:SetProperty(    "CabeceraColumnas",  "Height", 100 )
-      ::oFastReport:SetProperty(    "CabeceraColumnas",  "StartNewPage", .t. )
-      ::oFastReport:SetObjProperty( "CabeceraColumnas",  "DataSet", "Informe" )
+      ::oFastReport:AddBand(        "MasterData",  "MainPage", frxMasterData )
+      ::oFastReport:SetProperty(    "MasterData",  "Top", 200 )
+      ::oFastReport:SetProperty(    "MasterData",  "Height", 100 )
+      ::oFastReport:SetProperty(    "MasterData",  "StartNewPage", .t. )
+      ::oFastReport:SetObjProperty( "MasterData",  "DataSet", "Informe" )
 
       ::oFastReport:AddBand(        "DetalleColumnas",   "MainPage", frxDetailData  )
       ::oFastReport:SetProperty(    "DetalleColumnas",   "Top", 230 )

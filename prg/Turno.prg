@@ -8093,9 +8093,9 @@ METHOD DesignReport( oFastReport, dbfDoc )
          oFastReport:SetProperty(     "CabeceraDocumento", "Top", 0 )
          oFastReport:SetProperty(     "CabeceraDocumento", "Height", 199 )
 
-         oFastReport:AddBand(         "CabeceraColumnas",  "MainPage", frxGroupHeader )
-         oFastReport:SetProperty(     "CabeceraColumnas",  "Top", 200 )
-         oFastReport:SetProperty(     "CabeceraColumnas",  "Height", 29 )
+         oFastReport:AddBand(         "MasterData",  "MainPage", frxGroupHeader )
+         oFastReport:SetProperty(     "MasterData",  "Top", 200 )
+         oFastReport:SetProperty(     "MasterData",  "Height", 29 )
 
          oFastReport:AddBand(         "DetalleColumnas",   "MainPage", frxMasterData )
          oFastReport:SetProperty(     "DetalleColumnas",   "Top", 230 )

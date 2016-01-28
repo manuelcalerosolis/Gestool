@@ -2208,11 +2208,11 @@ METHOD DesignReport( oFr, dbfDoc ) CLASS TCobAge
          oFr:SetProperty(     "CabeceraDocumento", "Top", 0 )
          oFr:SetProperty(     "CabeceraDocumento", "Height", 200 )
 
-         oFr:AddBand(         "CabeceraColumnas",  "MainPage", frxMasterData )
-         oFr:SetProperty(     "CabeceraColumnas",  "Top", 200 )
-         oFr:SetProperty(     "CabeceraColumnas",  "Height", 0 )
-         oFr:SetProperty(     "CabeceraColumnas",  "StartNewPage", .t. )
-         oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet", "Liquidación" )
+         oFr:AddBand(         "MasterData",  "MainPage", frxMasterData )
+         oFr:SetProperty(     "MasterData",  "Top", 200 )
+         oFr:SetProperty(     "MasterData",  "Height", 0 )
+         oFr:SetProperty(     "MasterData",  "StartNewPage", .t. )
+         oFr:SetObjProperty(  "MasterData",  "DataSet", "Liquidación" )
 
          oFr:AddBand(         "DetalleColumnas",   "MainPage", frxDetailData  )
          oFr:SetProperty(     "DetalleColumnas",   "Top", 230 )

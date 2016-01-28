@@ -3738,11 +3738,11 @@ METHOD DesignReportProducc( oFr, dbfDoc )
          oFr:SetProperty(     "CabeceraDocumento", "Top", 0 )
          oFr:SetProperty(     "CabeceraDocumento", "Height", 200 )
 
-         oFr:AddBand(         "CabeceraColumnas",  "MainPage", frxMasterData )
-         oFr:SetProperty(     "CabeceraColumnas",  "Top", 200 )
-         oFr:SetProperty(     "CabeceraColumnas",  "Height", 0 )
-         oFr:SetProperty(     "CabeceraColumnas",  "StartNewPage", .t. )
-         oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet", "Producción" )
+         oFr:AddBand(         "MasterData",  "MainPage", frxMasterData )
+         oFr:SetProperty(     "MasterData",  "Top", 200 )
+         oFr:SetProperty(     "MasterData",  "Height", 0 )
+         oFr:SetProperty(     "MasterData",  "StartNewPage", .t. )
+         oFr:SetObjProperty(  "MasterData",  "DataSet", "Producción" )
 
          oFr:AddBand(         "DetalleColumnas",   "MainPage", frxDetailData  )
          oFr:SetProperty(     "DetalleColumnas",   "Top", 230 )
@@ -4618,10 +4618,10 @@ METHOD DesignLabelProducc( oFr, dbfDoc ) CLASS TProduccion
 
          oFr:AddPage(         "MainPage" )
 
-         oFr:AddBand(         "CabeceraColumnas",  "MainPage",       frxMasterData )
-         oFr:SetProperty(     "CabeceraColumnas",  "Top",            200 )
-         oFr:SetProperty(     "CabeceraColumnas",  "Height",         100 )
-         oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Lineas de producción" )
+         oFr:AddBand(         "MasterData",  "MainPage",       frxMasterData )
+         oFr:SetProperty(     "MasterData",  "Top",            200 )
+         oFr:SetProperty(     "MasterData",  "Height",         100 )
+         oFr:SetObjProperty(  "MasterData",  "DataSet",        "Lineas de producción" )
 
       end if
 

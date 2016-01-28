@@ -3,7 +3,7 @@
   <TfrxDataPage Name="Data" Height="1000" Left="0" Top="0" Width="1000"/>
   <TfrxReportPage Name="MainPage" PaperWidth="210" PaperHeight="297" PaperSize="9" LeftMargin="0" RightMargin="0" TopMargin="0" BottomMargin="0" ColumnWidth="0" ColumnPositions.Text="" HGuides.Text="" VGuides.Text="">
     <TfrxPageHeader Name="CabeceraDocumento" Height="200" Left="0" Top="18,89765" Width="793,7013"/>
-    <TfrxMasterData Name="CabeceraColumnas" Height="100" Left="0" Top="279,68522" Width="793,7013" ColumnWidth="0" ColumnGap="0" DataSet="oDM." DataSetName="Informe" RowCount="0" StartNewPage="True"/>
+    <TfrxMasterData Name="MasterData" Height="100" Left="0" Top="279,68522" Width="793,7013" ColumnWidth="0" ColumnGap="0" DataSet="oDM." DataSetName="Informe" RowCount="0" StartNewPage="True"/>
     <TfrxDetailData Name="DetalleColumnas" Height="0" Left="0" Top="453,5436" Width="793,7013" ColumnWidth="0" ColumnGap="0" DataSet="oDM." DataSetName="Informe" RowCount="0"/>
 
 <TfrxGroupHeader Name="GroupHeader1" Height="26,45671" Left="0" Top="404,40971" Width="793,7013" Condition="&#60;Informe.&#34;Hora del documento&#34;&#62;+&#60;Informe.&#34;Código artículo&#34;&#62;" KeepTogether="True"/>

@@ -10477,10 +10477,10 @@ Function DesignLabelAlbaranProveedor( oFr, cDbfDoc )
       oFr:LoadFromBlob( ( cDbfDoc )->( Select() ), "mReport")
    else
       oFr:AddPage(         "MainPage" )
-      oFr:AddBand(         "CabeceraColumnas",  "MainPage",       frxMasterData )
-      oFr:SetProperty(     "CabeceraColumnas",  "Top",            200 )
-      oFr:SetProperty(     "CabeceraColumnas",  "Height",         100 )
-      oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Lineas de albaranes" )
+      oFr:AddBand(         "MasterData",  "MainPage",       frxMasterData )
+      oFr:SetProperty(     "MasterData",  "Top",            200 )
+      oFr:SetProperty(     "MasterData",  "Height",         100 )
+      oFr:SetObjProperty(  "MasterData",  "DataSet",        "Lineas de albaranes" )
    end if
 
    // Zona de variables--------------------------------------------------------
@@ -10560,11 +10560,11 @@ Function DesignReportAlbPrv( oFr, dbfDoc )
          oFr:SetProperty(     "CabeceraDocumento", "Top", 0 )
          oFr:SetProperty(     "CabeceraDocumento", "Height", 200 )
 
-         oFr:AddBand(         "CabeceraColumnas",  "MainPage", frxMasterData )
-         oFr:SetProperty(     "CabeceraColumnas",  "Top", 200 )
-         oFr:SetProperty(     "CabeceraColumnas",  "Height", 0 )
-         oFr:SetProperty(     "CabeceraColumnas",  "StartNewPage", .t. )
-         oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet", "Albaranes" )
+         oFr:AddBand(         "MasterData",  "MainPage", frxMasterData )
+         oFr:SetProperty(     "MasterData",  "Top", 200 )
+         oFr:SetProperty(     "MasterData",  "Height", 0 )
+         oFr:SetProperty(     "MasterData",  "StartNewPage", .t. )
+         oFr:SetObjProperty(  "MasterData",  "DataSet", "Albaranes" )
 
          oFr:AddBand(         "DetalleColumnas",   "MainPage", frxDetailData  )
          oFr:SetProperty(     "DetalleColumnas",   "Top", 230 )
