@@ -938,11 +938,12 @@ METHOD setDatasFromClientes( CodigoCliente ) CLASS DocumentsSales
             hSet( ::hDictionaryMaster, "Serie", ( D():Clientes( ::nView ) )->Serie )
          end if
 
-         hSet( ::hDictionaryMaster, "TipoImpuesto",                  ( D():Clientes( ::nView ) )->nRegIva )
-         hSet( ::hDictionaryMaster, "Almacen",                       ( D():Clientes( ::nView ) )->cCodAlm )
-         hSet( ::hDictionaryMaster, "Tarifa",                        ( D():Clientes( ::nView ) )->cCodTar )
+         hSet( ::hDictionaryMaster, "Almacen",                       ( if( empty( oUser():cAlmacen() ), ( D():Clientes( ::nView ) )->cCodAlm, oUser():cAlmacen() ) ) )
          hSet( ::hDictionaryMaster, "Pago",                          ( if( empty( ( D():Clientes( ::nView ) )->CodPago ), cDefFpg(), ( D():Clientes( ::nView ) )->CodPago ) ) )
          hSet( ::hDictionaryMaster, "Agente",                        ( if( empty( AgenteIni ), ( D():Clientes( ::nView ) )->cAgente, AgenteIni ) ) )
+
+         hSet( ::hDictionaryMaster, "TipoImpuesto",                  ( D():Clientes( ::nView ) )->nRegIva )
+         hSet( ::hDictionaryMaster, "Tarifa",                        ( D():Clientes( ::nView ) )->cCodTar )
          hSet( ::hDictionaryMaster, "Ruta",                          ( D():Clientes( ::nView ) )->cCodRut )
          hSet( ::hDictionaryMaster, "NumeroTarifa",                  ( D():Clientes( ::nView ) )->nTarifa )
          hSet( ::hDictionaryMaster, "DescuentoTarifa",               ( D():Clientes( ::nView ) )->nDtoArt )
