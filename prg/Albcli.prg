@@ -16595,6 +16595,8 @@ FUNCTION nTotAlbCli( cAlbaran, cAlbCliT, cAlbCliL, cIva, cDiv, aTmp, cDivRet, lP
    local nDescuentosLineas := 0
    local lOperarPntVer     := .f.
    local nRegIva
+   local nBaseGasto
+   local nIvaGasto
 
    DEFAULT cAlbCliT        := D():Get( "AlbCliT", nView )
    DEFAULT cAlbCliL        := D():Get( "AlbCliL", nView )
@@ -16984,32 +16986,6 @@ FUNCTION nTotAlbCli( cAlbaran, cAlbCliT, cAlbCliL, cIva, cDiv, aTmp, cDivRet, lP
 
    end if
 
-   /*
-   Estudio de impuestos para el Gasto despues de los descuentos----------------------
-   */
-
-   if nManObr != 0
-
-      do case
-      case _NPCTIVA1 == nil .or. _NPCTIVA1 == nIvaMan
-
-         _NPCTIVA1   := nIvaMan
-         _NBASIVA1   += nManObr
-
-      case _NPCTIVA2 == nil .or. _NPCTIVA2 == nIvaMan
-
-         _NPCTIVA2   := nIvaMan
-         _NBASIVA2   += nManObr
-
-      case _NPCTIVA3 == nil .or. _NPCTIVA3 == nIvaMan
-
-         _NPCTIVA3   := nIvaMan
-         _NBASIVA3   += nManObr
-
-      end case
-
-   end if
-
    // Una vez echos los descuentos le sumamos los transportes------------------
 
    _NBASIVA1         += _NTRNIVA1
@@ -17053,9 +17029,9 @@ FUNCTION nTotAlbCli( cAlbaran, cAlbCliT, cAlbCliL, cIva, cDiv, aTmp, cDivRet, lP
          end if
 
          if uFieldEmpresa( "lIvaImpEsp")
-            _NBASIVA1            -= _NIVMIVA1
-            _NBASIVA2            -= _NIVMIVA2
-            _NBASIVA3            -= _NIVMIVA3
+            _NBASIVA1   -= _NIVMIVA1
+            _NBASIVA2   -= _NIVMIVA2
+            _NBASIVA3   -= _NIVMIVA3
          end if
 
       end if
@@ -17063,9 +17039,9 @@ FUNCTION nTotAlbCli( cAlbaran, cAlbCliT, cAlbCliL, cIva, cDiv, aTmp, cDivRet, lP
    else
 
       if  !uFieldEmpresa( "lIvaImpEsp" )
-         _NBASIVA1         -= _NIVMIVA1
-         _NBASIVA2         -= _NIVMIVA2
-         _NBASIVA3         -= _NIVMIVA3   
+         _NBASIVA1      -= _NIVMIVA1
+         _NBASIVA2      -= _NIVMIVA2
+         _NBASIVA3      -= _NIVMIVA3   
       end if
 
       if nRegIva <= 1
@@ -17112,7 +17088,39 @@ FUNCTION nTotAlbCli( cAlbaran, cAlbCliT, cAlbCliL, cIva, cDiv, aTmp, cDivRet, lP
 
    end if
 
-   //Neto del Albaran
+   // Estudio de impuestos para el Gasto despues de los descuentos-------------
+
+   if nManObr != 0
+
+      if lIvaInc 
+         nIvaGasto   := Round( nManObr / ( 100 / nIvaMan + 1 ), nRouDiv )
+         nBaseGasto  := nManObr - nIvaGasto
+      else 
+         nBaseGasto  := nManObr 
+         nIvaGasto   := Round( nManObr * nIvaMan / 100, nRouDiv )
+      end if 
+
+      do case
+      case _NPCTIVA1 == nil .or. _NPCTIVA1 == nIvaMan
+         _NPCTIVA1   := nIvaMan
+         _NBASIVA1   += nBaseGasto
+         _NIMPIVA1   += nIvaGasto
+
+      case _NPCTIVA2 == nil .or. _NPCTIVA2 == nIvaMan
+         _NPCTIVA2   := nIvaMan
+         _NBASIVA2   += nBaseGasto
+         _NIMPIVA2   += nIvaGasto
+
+      case _NPCTIVA3 == nil .or. _NPCTIVA3 == nIvaMan
+         _NPCTIVA3   := nIvaMan
+         _NBASIVA3   += nBaseGasto
+         _NIMPIVA3   += nIvaGasto
+
+      end case
+
+   end if
+
+   // Neto del Albaran
 
    nTotNet           := Round( _NBASIVA1 + _NBASIVA2 + _NBASIVA3, nRouDiv )
 
@@ -17120,30 +17128,26 @@ FUNCTION nTotAlbCli( cAlbaran, cAlbCliT, cAlbCliL, cIva, cDiv, aTmp, cDivRet, lP
 
    nTotIvm           := Round( aTotIvm[ 1, 3 ] + aTotIvm[ 2, 3 ] + aTotIvm[ 3, 3 ], nRouDiv )
 
-   //Total Transpote
+   // Total Transpote
 
    nTotTrn           := Round( _NTRNIVA1 + _NTRNIVA2 + _NTRNIVA3, nRouDiv )
 
-   //Total punto verde
+   // Total punto verde
 
    nTotPnt           := Round( _NPNTVER1 + _NPNTVER2 + _NPNTVER3, nRouDiv )
 
-   //Total de impuestos
+   // Total de impuestos
 
    nTotIva           := Round( _NIMPIVA1 + _NIMPIVA2 + _NIMPIVA3, nRouDiv )
 
-   //Total de R.E.
+   // Total de R.E.
 
    nTotReq           := Round( _NIMSATQ1 + _NIMSATQ2 + _NIMSATQ3, nRouDiv )
 
-   //Total de impuestos
+   // Total de impuestos
 
    nTotImp           := Round( nTotIva + nTotReq + nTotIvm, nRouDiv )
- /*
-   if !uFieldEmpresa( "lIvaImpEsp" )
-      nTotImp        += Round( nTotIvm , nRouDiv )
-   end if 
-*/
+
    /*
    Total rentabilidad----------------------------------------------------------
    */

@@ -6676,8 +6676,6 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
          aGet[ _CRETPOR  ]:cText( ( dbfAlbCliT )->cRetPor )
          aGet[ _CRETMAT	 ]:cText( ( dbfAlbCliT )->cRetMat )
 
-         
-
          aTmp[ _CCODGRP ]              := ( dbfAlbCliT )->cCodGrp
          aTmp[ _LMODCLI ]              := ( dbfAlbCliT )->lModCli
          aTmp[ _LOPERPV ]              := ( dbfAlbCliT )->lOperPv
@@ -19829,6 +19827,8 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
    local nDescuentosLineas := 0
    local lPntVer           := .f.
    local nRegIva
+   local nBaseGasto
+   local nIvaGasto
 
    DEFAULT cFactura        := D():FacturasClientesId( nView ) 
    DEFAULT cFacCliT        := D():FacturasClientes( nView )
@@ -20258,32 +20258,6 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
    end if
 
    /*
-   Estudio de " + cImp() + " para el Gasto despues de los descuentos----------------------
-   */
-
-   if nManObr != 0
-
-      do case
-      case _NPCTIVA1 == nil .or. _NPCTIVA1 == nIvaMan
-
-         _NPCTIVA1   := nIvaMan
-         _NBASIVA1   += nManObr
-
-      case _NPCTIVA2 == nil .or. _NPCTIVA2 == nIvaMan
-
-         _NPCTIVA2   := nIvaMan
-         _NBASIVA2   += nManObr
-
-      case _NPCTIVA3 == nil .or. _NPCTIVA3 == nIvaMan
-
-         _NPCTIVA3   := nIvaMan
-         _NBASIVA3   += nManObr
-
-      end case
-
-   end if
-
-   /*
    Una vez echos los descuentos le sumamos los transportes---------------------
    */
 
@@ -20451,6 +20425,38 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
       	_NBASIVA2         -= _NIVMIVA2
       	_NBASIVA3         -= _NIVMIVA3
    	end if
+
+   end if
+
+   // Estudio de impuestos para el Gasto despues de los descuentos-------------
+
+   if nManObr != 0
+
+      if lIvaInc 
+         nIvaGasto   := Round( nManObr / ( 100 / nIvaMan + 1 ), nRouDiv )
+         nBaseGasto  := nManObr - nIvaGasto
+      else 
+         nBaseGasto  := nManObr 
+         nIvaGasto   := Round( nManObr * nIvaMan / 100, nRouDiv )
+      end if 
+
+      do case
+      case _NPCTIVA1 == nil .or. _NPCTIVA1 == nIvaMan
+         _NPCTIVA1   := nIvaMan
+         _NBASIVA1   += nBaseGasto
+         _NIMPIVA1   += nIvaGasto
+
+      case _NPCTIVA2 == nil .or. _NPCTIVA2 == nIvaMan
+         _NPCTIVA2   := nIvaMan
+         _NBASIVA2   += nBaseGasto
+         _NIMPIVA2   += nIvaGasto
+
+      case _NPCTIVA3 == nil .or. _NPCTIVA3 == nIvaMan
+         _NPCTIVA3   := nIvaMan
+         _NBASIVA3   += nBaseGasto
+         _NIMPIVA3   += nIvaGasto
+
+      end case
 
    end if
 

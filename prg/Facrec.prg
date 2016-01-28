@@ -11754,6 +11754,8 @@ FUNCTION nTotFacRec( cFactura, cFacRecT, cFacRecL, cIva, cDiv, aTmp, cDivRet, lP
    local nDescuentosLineas := 0
    local lPntVer           := .f.
    local nRegIva
+   local nBaseGasto
+   local nIvaGasto
 
    DEFAULT cFacRecT        := D():FacturasRectificativas( nView )
    DEFAULT cFacRecL        := dbfFacRecL
@@ -12056,32 +12058,6 @@ FUNCTION nTotFacRec( cFactura, cFacRecT, cFacRecL, cIva, cDiv, aTmp, cDivRet, lP
 		_NBASIVA2		-= aTotalDos[2]
 		_NBASIVA3		-= aTotalDos[3]
 
-	END IF
-
-   /*
-   Estudio de impuestos para el Gasto despues de los descuentos----------------------
-   */
-
-   if nManObr != 0
-
-      do case
-      case _NPCTIVA1 == nil .or. _NPCTIVA1 == nIvaMan
-
-         _NPCTIVA1   := nIvaMan
-         _NBASIVA1   += nManObr
-
-      case _NPCTIVA2 == nil .or. _NPCTIVA2 == nIvaMan
-
-         _NPCTIVA2   := nIvaMan
-         _NBASIVA2   += nManObr
-
-      case _NPCTIVA3 == nil .or. _NPCTIVA3 == nIvaMan
-
-         _NPCTIVA3   := nIvaMan
-         _NBASIVA3   += nManObr
-
-      end case
-
    end if
 
    /*
@@ -12139,9 +12115,9 @@ FUNCTION nTotFacRec( cFactura, cFacRecT, cFacRecL, cIva, cDiv, aTmp, cDivRet, lP
          else 
 
          	if !uFieldEmpresa( "lIvaImpEsp")
-         		_NBASIVA1         -= _NIVMIVA1
-            	_NBASIVA2         -= _NIVMIVA2
-            	_NBASIVA3         -= _NIVMIVA3
+         		_NBASIVA1      -= _NIVMIVA1
+            	_NBASIVA2      -= _NIVMIVA2
+            	_NBASIVA3      -= _NIVMIVA3
          	end if 
 
             _NIMPIVA1         := if( _NPCTIVA1 != nil .and. _NPCTIVA1 != 0, Round( _NBASIVA1 / ( 100 / _NPCTIVA1 + 1 ), nRouDiv ), 0 )
@@ -12157,9 +12133,9 @@ FUNCTION nTotFacRec( cFactura, cFacRecT, cFacRecL, cIva, cDiv, aTmp, cDivRet, lP
       end if
 
       if uFieldempresa( "lIvaImpEsp")
-      	_NBASIVA1         -= _NIVMIVA1
-         _NBASIVA2         -= _NIVMIVA2
-         _NBASIVA3         -= _NIVMIVA3 
+      	_NBASIVA1            -= _NIVMIVA1
+         _NBASIVA2            -= _NIVMIVA2
+         _NBASIVA3            -= _NIVMIVA3 
       end if
 
    else
@@ -12183,6 +12159,38 @@ FUNCTION nTotFacRec( cFactura, cFacRecT, cFacRecL, cIva, cDiv, aTmp, cDivRet, lP
       	_NBASIVA2            -= _NIVMIVA2
       	_NBASIVA3            -= _NIVMIVA3
       end if
+
+   end if
+
+   // Estudio de impuestos para el Gasto despues de los descuentos-------------
+
+   if nManObr != 0
+
+      if lIvaInc 
+         nIvaGasto   := Round( nManObr / ( 100 / nIvaMan + 1 ), nRouDiv )
+         nBaseGasto  := nManObr - nIvaGasto
+      else 
+         nBaseGasto  := nManObr 
+         nIvaGasto   := Round( nManObr * nIvaMan / 100, nRouDiv )
+      end if 
+
+      do case
+      case _NPCTIVA1 == nil .or. _NPCTIVA1 == nIvaMan
+         _NPCTIVA1   := nIvaMan
+         _NBASIVA1   += nBaseGasto
+         _NIMPIVA1   += nIvaGasto
+
+      case _NPCTIVA2 == nil .or. _NPCTIVA2 == nIvaMan
+         _NPCTIVA2   := nIvaMan
+         _NBASIVA2   += nBaseGasto
+         _NIMPIVA2   += nIvaGasto
+
+      case _NPCTIVA3 == nil .or. _NPCTIVA3 == nIvaMan
+         _NPCTIVA3   := nIvaMan
+         _NBASIVA3   += nBaseGasto
+         _NIMPIVA3   += nIvaGasto
+
+      end case
 
    end if
 

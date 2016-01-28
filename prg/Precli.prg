@@ -2803,12 +2803,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          ID       122 ;
          IDSAY    123 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
          OF       oFld:aDialogs[1]
 
       REDEFINE CHECKBOX aGet[_LIVAINC] VAR aTmp[_LIVAINC] ;
          ID       129 ;
-         WHEN     ( ( dbfTmpLin )->( LastRec() ) == 0 ) ;
+         WHEN     ( nMode != ZOOM_MODE .and. ( dbfTmpLin )->( ordkeycount() ) == 0 ) ;
          OF       oFld:aDialogs[1]
 
       //Segunda caja de dialogo
@@ -8404,6 +8403,7 @@ Return .t.
 
 FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp, cDivRet, lPic )
 
+   local n
    local nRecno
    local cCodDiv
    local bCondition
@@ -8429,9 +8429,10 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
    local aTotalAtp         := { 0, 0, 0 }
    local lRecargo
    local nTotAcu           := 0
-   local n
    local nDescuentosLineas := 0
    local nRegIva
+   local nBaseGasto
+   local nIvaGasto
 
    DEFAULT cPreCliT        := D():PresupuestosClientes( nView )
    DEFAULT cPreCliL        := D():PresupuestosClientesLineas( nView )
@@ -8818,32 +8819,6 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
    end if
 
    /*
-   Estudio de " + cImp() + " para el Gasto despues de los descuentos----------------------
-   */
-
-   if nManObr != 0
-
-      do case
-      case _NPCTIVA1 == nil .or. _NPCTIVA1 == nIvaMan
-
-         _NPCTIVA1   := nIvaMan
-         _NBASIVA1   += nManObr
-
-      case _NPCTIVA2 == nil .or. _NPCTIVA2 == nIvaMan
-
-         _NPCTIVA2   := nIvaMan
-         _NBASIVA2   += nManObr
-
-      case _NPCTIVA3 == nil .or. _NPCTIVA3 == nIvaMan
-
-         _NPCTIVA3   := nIvaMan
-         _NBASIVA3   += nManObr
-
-      end case
-
-   end if
-
-   /*
    Una vez echos los descuentos le sumamos los transportes---------------------
    */
 
@@ -8892,9 +8867,9 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
          end if
 
          if uFieldEmpresa( "lIvaImpEsp" )
-            _NBASIVA1            -= _NIVMIVA1
-            _NBASIVA2            -= _NIVMIVA2
-            _NBASIVA3            -= _NIVMIVA3
+            _NBASIVA1   -= _NIVMIVA1
+            _NBASIVA2   -= _NIVMIVA2
+            _NBASIVA3   -= _NIVMIVA3
          end if
 
       end if
@@ -8902,9 +8877,9 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
    else
 
       if  !uFieldEmpresa( "lIvaImpEsp" )
-         _NBASIVA1         -= _NIVMIVA1
-         _NBASIVA2         -= _NIVMIVA2
-         _NBASIVA3         -= _NIVMIVA3   
+         _NBASIVA1      -= _NIVMIVA1
+         _NBASIVA2      -= _NIVMIVA2
+         _NBASIVA3      -= _NIVMIVA3   
       end if      
 
       if nRegIva <= 1
@@ -8931,13 +8906,13 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
             end if
          end if
 
-         _NBASIVA1      -= _NIMPIVA1
-         _NBASIVA2      -= _NIMPIVA2
-         _NBASIVA3      -= _NIMPIVA3
+         _NBASIVA1         -= _NIMPIVA1
+         _NBASIVA2         -= _NIMPIVA2
+         _NBASIVA3         -= _NIMPIVA3
 
-         _NBASIVA1      -= _NIMPREQ1
-         _NBASIVA2      -= _NIMPREQ2
-         _NBASIVA3      -= _NIMPREQ3
+         _NBASIVA1         -= _NIMPREQ1
+         _NBASIVA2         -= _NIMPREQ2
+         _NBASIVA3         -= _NIMPREQ3
 
       end if
 
@@ -8946,6 +8921,38 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
          _NBASIVA2         -= _NIVMIVA2
          _NBASIVA3         -= _NIVMIVA3
       end if
+
+   end if
+
+   // Estudio de impuestos para el Gasto despues de los descuentos-------------
+
+   if nManObr != 0
+
+      if lIvaInc 
+         nIvaGasto   := Round( nManObr / ( 100 / nIvaMan + 1 ), nRouDiv )
+         nBaseGasto  := nManObr - nIvaGasto
+      else 
+         nBaseGasto  := nManObr 
+         nIvaGasto   := Round( nManObr * nIvaMan / 100, nRouDiv )
+      end if 
+
+      do case
+      case _NPCTIVA1 == nil .or. _NPCTIVA1 == nIvaMan
+         _NPCTIVA1   := nIvaMan
+         _NBASIVA1   += nBaseGasto
+         _NIMPIVA1   += nIvaGasto
+
+      case _NPCTIVA2 == nil .or. _NPCTIVA2 == nIvaMan
+         _NPCTIVA2   := nIvaMan
+         _NBASIVA2   += nBaseGasto
+         _NIMPIVA2   += nIvaGasto
+
+      case _NPCTIVA3 == nil .or. _NPCTIVA3 == nIvaMan
+         _NPCTIVA3   := nIvaMan
+         _NBASIVA3   += nBaseGasto
+         _NIMPIVA3   += nIvaGasto
+
+      end case
 
    end if
 
@@ -9020,8 +9027,6 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
    */
 
    nTotalDto         := nDescuentosLineas + nTotDto + nTotDpp + nTotUno + nTotDos + nTotAtp
-
-
 
    ( cPreCliL )->( dbGoTo( nRecno) )
 

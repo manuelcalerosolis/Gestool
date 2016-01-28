@@ -8334,6 +8334,7 @@ Return .t.
 
 FUNCTION nTotSatCli( cSatsupuesto, cSatCliT, cSatCliL, cIva, cDiv, cFPago, aTmp, cDivRet, lPic )
 
+   local n
    local nRecno
    local cCodDiv
    local bCondition
@@ -8359,9 +8360,10 @@ FUNCTION nTotSatCli( cSatsupuesto, cSatCliT, cSatCliL, cIva, cDiv, cFPago, aTmp,
    local aTotalAtp         := { 0, 0, 0 }
    local lRecargo
    local nTotAcu           := 0
-   local n
    local nDescuentosLineas := 0
    local nRegIva
+   local nBaseGasto
+   local nIvaGasto
 
    DEFAULT cSatCliT        := D():SatClientes( nView )
    DEFAULT cSatCliL        := dbfSatCliL
@@ -8748,32 +8750,6 @@ FUNCTION nTotSatCli( cSatsupuesto, cSatCliT, cSatCliL, cIva, cDiv, cFPago, aTmp,
    end if
 
    /*
-   Estudio de " + cImp() + " para el Gasto despues de los descuentos----------------------
-   */
-
-   if nManObr != 0
-
-      do case
-      case _NPCTIVA1 == nil .or. _NPCTIVA1 == nIvaMan
-
-         _NPCTIVA1   := nIvaMan
-         _NBASIVA1   += nManObr
-
-      case _NPCTIVA2 == nil .or. _NPCTIVA2 == nIvaMan
-
-         _NPCTIVA2   := nIvaMan
-         _NBASIVA2   += nManObr
-
-      case _NPCTIVA3 == nil .or. _NPCTIVA3 == nIvaMan
-
-         _NPCTIVA3   := nIvaMan
-         _NBASIVA3   += nManObr
-
-      end case
-
-   end if
-
-   /*
    Una vez echos los descuentos le sumamos los transportes---------------------
    */
 
@@ -8876,6 +8852,38 @@ FUNCTION nTotSatCli( cSatsupuesto, cSatCliT, cSatCliL, cIva, cDiv, cFPago, aTmp,
       _NBASIVA1      -= _NIMSATQ1
       _NBASIVA2      -= _NIMSATQ2
       _NBASIVA3      -= _NIMSATQ3
+
+   end if
+
+   // Estudio de impuestos para el Gasto despues de los descuentos-------------
+
+   if nManObr != 0
+
+      if lIvaInc 
+         nIvaGasto   := Round( nManObr / ( 100 / nIvaMan + 1 ), nRouDiv )
+         nBaseGasto  := nManObr - nIvaGasto
+      else 
+         nBaseGasto  := nManObr 
+         nIvaGasto   := Round( nManObr * nIvaMan / 100, nRouDiv )
+      end if 
+
+      do case
+      case _NPCTIVA1 == nil .or. _NPCTIVA1 == nIvaMan
+         _NPCTIVA1   := nIvaMan
+         _NBASIVA1   += nBaseGasto
+         _NIMPIVA1   += nIvaGasto
+
+      case _NPCTIVA2 == nil .or. _NPCTIVA2 == nIvaMan
+         _NPCTIVA2   := nIvaMan
+         _NBASIVA2   += nBaseGasto
+         _NIMPIVA2   += nIvaGasto
+
+      case _NPCTIVA3 == nil .or. _NPCTIVA3 == nIvaMan
+         _NPCTIVA3   := nIvaMan
+         _NBASIVA3   += nBaseGasto
+         _NIMPIVA3   += nIvaGasto
+
+      end case
 
    end if
 

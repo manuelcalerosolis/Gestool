@@ -15363,25 +15363,25 @@ FUNCTION rxPedCli( cPath, cDriver )
    DEFAULT cPath     := cPatEmp()
    DEFAULT cDriver   := cDriver()
 
-   if !lExistTable( cPath + "PEDCLIT.DBF", cDriver ) .OR. ;
-      !lExistTable( cPath + "PEDCLIL.DBF", cDriver ) .OR. ;
-      !lExistTable( cPath + "PEDCLIR.DBF", cDriver ) .OR. ;
-      !lExistTable( cPath + "PEDCLII.DBF", cDriver ) .OR. ;
-      !lExistTable( cPath + "PEDCLID.DBF", cDriver ) .OR. ;
-      !lExistTable( cPath + "PEDCLIP.DBF", cDriver ) .OR. ;
-      !lExistTable( cPath + "PEDCLIE.DBF", cDriver )
+   if !lExistTable( cPath + "PedCliT.Dbf", cDriver ) .or. ;
+      !lExistTable( cPath + "PedCliL.Dbf", cDriver ) .or. ;
+      !lExistTable( cPath + "PedCliR.Dbf", cDriver ) .or. ;
+      !lExistTable( cPath + "PedCliI.Dbf", cDriver ) .or. ;
+      !lExistTable( cPath + "PedCliD.Dbf", cDriver ) .or. ;
+      !lExistTable( cPath + "PedCliP.Dbf", cDriver ) .or. ;
+      !lExistTable( cPath + "PedCliE.Dbf", cDriver )
 
       CreateFiles( cPath )
 
    end if
 
-   fEraseIndex( cPath + "PEDCLIT.CDX", cDriver )
-   fEraseIndex( cPath + "PEDCLIL.CDX", cDriver )
-   fEraseIndex( cPath + "PEDCLIR.CDX", cDriver )
-   fEraseIndex( cPath + "PEDCLII.CDX", cDriver )
-   fEraseIndex( cPath + "PEDCLID.CDX", cDriver )
-   fEraseIndex( cPath + "PEDCLIP.CDX", cDriver )
-   fEraseIndex( cPath + "PEDCLIE.CDX", cDriver )
+   fEraseIndex( cPath + "PedCliT.Cdx", cDriver )
+   fEraseIndex( cPath + "PedCliL.Cdx", cDriver )
+   fEraseIndex( cPath + "PedCliR.Cdx", cDriver )
+   fEraseIndex( cPath + "PedCliI.Cdx", cDriver )
+   fEraseIndex( cPath + "PedCliD.Cdx", cDriver )
+   fEraseIndex( cPath + "PedCliP.Cdx", cDriver )
+   fEraseIndex( cPath + "PedCliE.Cdx", cDriver )
 
    dbUseArea( .t., cDriver, cPath + "PEDCLIT.DBF", cCheckArea( "PEDCLIT", @cPedCliT ), .f. )
    if !( cPedCliT )->( neterr() )
@@ -16012,6 +16012,7 @@ Calcula el Total del pedido
 
 FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDivRet, lPic, cClient )
 
+   local n
    local nRecno
    local cCodDiv
    local cPouDiv
@@ -16036,10 +16037,11 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
    local aTotalAtp         := { 0, 0, 0 }
    local lRecargo
    local nTotAcu           := 0
-   local n
    local nDescuentosLineas := 0
    local lPntVer           := .f.
    local nRegIva
+   local nBaseGasto
+   local nIvaGasto
 
 	if !Empty( nView )
 		DEFAULT cPedCliT   	:= D():PedidosClientes( nView )
@@ -16047,7 +16049,7 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
       DEFAULT cPedCliL     := D():PedidosClientesLineas( nView )
       DEFAULT cIva         := D():TiposIva( nView )
       DEFAULT cDiv         := D():Divisas( nView )
-	  DEFAULT cFPago        := D():FormasPago( nView )
+      DEFAULT cFPago       := D():FormasPago( nView )
    end if
    
 	DEFAULT cPedido         := ( cPedCliT )->cSerPed + Str( ( cPedCliT )->nNumPed ) + ( cPedCliT )->cSufPed
@@ -16434,32 +16436,6 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
    end if
 
    /*
-   Estudio de " + cImp() + " para el Gasto despues de los descuentos----------------------
-   */
-
-   if nManObr != 0
-
-      do case
-      case _NPCTIVA1 == nil .or. _NPCTIVA1 == nIvaMan
-
-         _NPCTIVA1   := nIvaMan
-         _NBASIVA1   += nManObr
-
-      case _NPCTIVA2 == nil .or. _NPCTIVA2 == nIvaMan
-
-         _NPCTIVA2   := nIvaMan
-         _NBASIVA2   += nManObr
-
-      case _NPCTIVA3 == nil .or. _NPCTIVA3 == nIvaMan
-
-         _NPCTIVA3   := nIvaMan
-         _NBASIVA3   += nManObr
-
-      end case
-
-   end if
-
-   /*
    Una vez echos los descuentos le sumamos los transportes---------------------
 	*/
 
@@ -16558,10 +16534,42 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
       end if
 
       if uFieldEmpresa( "lIvaImpEsp")
-         _NBASIVA1         -= _NIVMIVA1
-         _NBASIVA2         -= _NIVMIVA2
-         _NBASIVA3         -= _NIVMIVA3
+         _NBASIVA1      -= _NIVMIVA1
+         _NBASIVA2      -= _NIVMIVA2
+         _NBASIVA3      -= _NIVMIVA3
       end if
+
+   end if
+
+   // Estudio de impuestos para el Gasto despues de los descuentos-------------
+
+   if nManObr != 0
+
+      if lIvaInc 
+         nIvaGasto   := Round( nManObr / ( 100 / nIvaMan + 1 ), nRouDiv )
+         nBaseGasto  := nManObr - nIvaGasto
+      else 
+         nBaseGasto  := nManObr 
+         nIvaGasto   := Round( nManObr * nIvaMan / 100, nRouDiv )
+      end if 
+
+      do case
+      case _NPCTIVA1 == nil .or. _NPCTIVA1 == nIvaMan
+         _NPCTIVA1   := nIvaMan
+         _NBASIVA1   += nBaseGasto
+         _NIMPIVA1   += nIvaGasto
+
+      case _NPCTIVA2 == nil .or. _NPCTIVA2 == nIvaMan
+         _NPCTIVA2   := nIvaMan
+         _NBASIVA2   += nBaseGasto
+         _NIMPIVA2   += nIvaGasto
+
+      case _NPCTIVA3 == nil .or. _NPCTIVA3 == nIvaMan
+         _NPCTIVA3   := nIvaMan
+         _NBASIVA3   += nBaseGasto
+         _NIMPIVA3   += nIvaGasto
+
+      end case
 
    end if
 
