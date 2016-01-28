@@ -4640,7 +4640,7 @@ FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, 
    local lAlert
 
    DEFAULT nMode     := APPD_MODE
-   lMessage  := .t.
+   DEFAULT lMessage  := .t.
 
    lAlert            := ( nMode == APPD_MODE )
 
