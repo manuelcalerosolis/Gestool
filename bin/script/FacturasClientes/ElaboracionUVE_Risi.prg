@@ -32,6 +32,8 @@ CREATE CLASS FacturasClientesRisi
 
    DATA cDelegacion
 
+   DATA aClientesExcluidos  INIT    { "0001452", "0001263", "0001071", "0001763" }
+
    CLASSDATA aProductos     INIT  { { "Codigo" => "V001004", "Nombre" => "GUSANITOS 35 g x 30 u",             "Codigo unidades" => "8411859550103",  "Codigo cajas" => "18411859550100", "Codigo interno" => "" },;
                                     { "Codigo" => "V001005", "Nombre" => "GUSANITOS  KETCHUP 35 g x 30 u",    "Codigo unidades" => "8411859550110",  "Codigo cajas" => "18411859550117", "Codigo interno" => "" },;
                                     { "Codigo" => "V001007", "Nombre" => "GUSANITOS 18 g x 40 u",             "Codigo unidades" => "8411859550134",  "Codigo cajas" => "18411859550131", "Codigo interno" => "" },;
@@ -139,7 +141,7 @@ CREATE CLASS FacturasClientesRisi
    METHOD findMainCodeInHash( cCodigoBarra )
    METHOD findCodigoInternoInHash( cCodigoInterno )
 
-   METHOD validateSerialInvoice( cSerie )       INLINE ( cSerie == "A" .or. cSerie == "B" )
+   METHOD validateInvoice()       
 
    METHOD getCantidad()
    METHOD getPrecioBase()
@@ -275,7 +277,7 @@ METHOD ProcessFile() CLASS FacturasClientesRisi
 
       ::oSayMessage:setText( "Progreso : " + alltrim( str( ( D():FacturasClientes( ::nView ) )->( ordkeyno() ) ) ) + " de " + alltrim( str( ( D():FacturasClientes( ::nView ) )->( ordkeycount() ) ) ) )
 
-      if ( ::validateSerialInvoice( ( D():FacturasClientes( ::nView ) )->cSerie ) ) .and. ( D():FacturasClientesLineas( ::nView ) )->( dbSeek( D():FacturasClientesId( ::nView ) ) )
+      if ( ::validateInvoice() ) .and. ( D():FacturasClientesLineas( ::nView ) )->( dbSeek( D():FacturasClientesId( ::nView ) ) )
 
          while ( D():FacturasClientesId( ::nView ) == D():FacturasClientesLineasId( ::nView ) ) .and. ( D():FacturasClientesLineas( ::nView ) )->( !eof() ) 
 
@@ -293,9 +295,11 @@ METHOD ProcessFile() CLASS FacturasClientesRisi
 
                   if ( D():Clientes( ::nView ) )->( dbSeek( ( D():FacturasClientes( ::nView ) )->cCodCli ) )
                      cCodigoGrupo         := ( D():Clientes( ::nView ) )->cCodGrp
+
                      if !empty(cCodigoGrupo)
                         cNombreGrupo      := oRetFld( cCodigoGrupo, D():Get( "GruposClientes", ::nView ):oDbf, "cNomGrp" )
                      end if
+
                   end if 
 
                   // Codigo de la ruta--------------------------------------------
@@ -463,7 +467,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getCantidad()
+METHOD getCantidad() CLASS FacturasClientesRisi
 
       local nUnidades   := ( D():Articulos( ::nView ) )->nUniCaja 
       local nCantidad   := nTotNFacCli( D():FacturasClientesLineas( ::nView ) )
@@ -476,7 +480,7 @@ RETURN ( nCantidad )
 
 //---------------------------------------------------------------------------//
 
-METHOD getPrecioBase()
+METHOD getPrecioBase() CLASS FacturasClientesRisi
 
       local nUnidades   := ( D():Articulos( ::nView ) )->nUniCaja 
       local nPrecioBase := nTotUFacCli( D():FacturasClientesLineas( ::nView ) )
@@ -487,6 +491,27 @@ METHOD getPrecioBase()
 
 RETURN ( nPrecioBase )
 
+//---------------------------------------------------------------------------//
+
+METHOD validateInvoice() CLASS FacturasClientesRisi
+
+    if ( D():FacturasClientes( ::nView ) )->cSerie != "A" .or. ( D():FacturasClientes( ::nView ) )->cSerie != "B"
+        Return .f.
+    end if 
+
+    if ascan( ::aClientesExcluidos, {|cCodigoCliente| alltrim( ( D():FacturasClientes( ::nView ) )->cCodCli ) == cCodigoCliente } ) != 0
+        Return .f.
+    end if 
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 CLASS Uve FROM Cuaderno
@@ -657,6 +682,7 @@ ENDCLASS
    Return ( Self )
 
 //---------------------------------------------------------------------------//
+
 
 Static Function TrimPadr( cString, nLen )
 
