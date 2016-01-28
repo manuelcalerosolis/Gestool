@@ -1588,16 +1588,22 @@ RETURN ( if( lPic, Trans( nTot, ::cPorDiv ), nTot ) )
 
 METHOD AppendDet()
 
-   local cCodRec  := ""
+   local nRec
+   local aCodRec  := {}
+   local cCodRec
 
-   if BrwRecCli( @cCodRec, ::oDbfDet:cAlias, ::oClientes:cAlias, ::oDivisas:cAlias, ::oBandera )
+   if BrwRecCli( @aCodRec, ::oDbfDet:cAlias, ::oClientes:cAlias, ::oDivisas:cAlias, ::oBandera )
 
-      if ::lNowExist( cCodRec )
-         msgStop( "Recibo ya incluido en remesa." )
-         return ( .f. )
-      end if
+      for each nRec in aCodRec
 
-      if ::oDbfDet:SeekInOrd( cCodRec, "nNumFac" )
+         ::oDbfDet:Goto( nRec )
+
+         cCodRec  := ::oDbfDet:cSerie + Str( ::oDbfDet:nNumFac ) + ::oDbfDet:cSufFac + Str( ::oDbfDet:nNumRec ) + ::oDbfDet:cTipRec
+
+         if ::lNowExist( cCodRec )
+            msgStop( "Recibo ya incluido en remesa." )
+            return ( .f. )
+         end if
 
          if ::oDbfDet:lCobrado
             msgStop( "Recibo ya cobrado." )
@@ -1614,7 +1620,7 @@ METHOD AppendDet()
             ::oDbfVir:Save()
          end if
 
-      end if
+      next
 
       ::oBrwDet:Refresh()
 

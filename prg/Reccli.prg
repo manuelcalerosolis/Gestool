@@ -1835,6 +1835,14 @@ STATIC FUNCTION PasRec( cDocIni, cDocFin, nRad, cTipo, lSimula, lChgState, oBrw,
 
    end do
 
+   /*
+   Creamos el fichero de A3----------------------------------------------------
+   */
+
+   if lAplicacionA3()
+      EnlaceA3():GetInstance():Render():WriteASCII():DestroyInstance()
+   end if
+
    oMtrInf:Set( ( dbfFacCliP )->( OrdKeyCount() ) )
 
    /*
@@ -2521,6 +2529,10 @@ FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv )
          case IsChar( uGet )
 
             uGet  := cNumRec
+
+         case IsArray( uGet )
+
+            uGet  := oBrw:aSelected
 
       end case 
 
