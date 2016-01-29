@@ -8631,7 +8631,7 @@ FUNCTION rxAlbPrv( cPath, cDriver )
       ( cAlbPrvT)->( ordCreate( cPath + "AlbProvL.Cdx", "cNumPed", "cNumPed", {|| Field->cNumPed } ) )
 
       ( cAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cAlbPrvT)->( ordCreate( cPath + "AlbProvL.Cdx", "cPedCliRef", "cNumPed + cRef + cValPr1 + cValPr2", {|| Field->cNumPed + Field->cRef + Field->cValPr1 + Field->cValPr2 } ) )
+      ( cAlbPrvT)->( ordCreate( cPath + "AlbProvL.Cdx", "cPedCliRef", "cNumPed + cRef + cCodPr1 + cCodPr2 + cValPr1 + cValPr2", {|| Field->cNumPed + Field->cRef + Field->cCodPr1 + Field->cCodPr2  + Field->cValPr1 + Field->cValPr2 } ) )
 
       ( cAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cAlbPrvT)->( ordCreate( cPath + "AlbProvL.Cdx", "cCodPed", "cCodPed", {|| Field->cCodPed } ) )

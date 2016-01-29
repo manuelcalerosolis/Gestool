@@ -246,8 +246,9 @@ METHOD lGenerate() CLASS TInfCPed
                   !( ::lExcCero .AND. nImpLPedCli( ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
 
                   ::AddPed( .f. )
+                  
                   ::oDbf:Load()
-                  ::oDbf:nUniEnt    := nUnidadesRecibidasAlbCli( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliL:cRef, ::oPedCliL:cCodPr1, ::oPedCliL:cCodPr2, ::oAlbCliL:cAlias )
+                  ::oDbf:nUniEnt    := nUnidadesRecibidasAlbCli( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliL:cRef, ::oPedCliL:cCodPr1, ::oPedCliL:cCodPr2, ::oPedCliL:cValPr1, ::oPedCliL:cValPr2, ::oAlbCliL:cAlias )
                   ::oDbf:nUniPnt    := ::oDbf:nNumUni - ::oDbf:nUniEnt
                   ::oDbf:nImpTot    := (::oDbf:nNumUni - ::oDbf:nUniEnt) * ::oDbf:nImpArt
                   ::oDbf:nIvaTot    := Round( ::oDbf:nImpTot * ::oPedCliL:nIva / 100, ::nDecOut )
@@ -255,7 +256,6 @@ METHOD lGenerate() CLASS TInfCPed
                   ::oDbf:dFecEnt    := ::oPedCliT:dFecEnt
                   ::oDbf:cSituac    := ::oPedCliT:cSituac
                   ::oDbf:cEstPro    := ::aProduccion[ Max( ::oPedCliL:nProduc + 1, 1 ) ]
-
                   ::oDbf:Save()
 
                end if

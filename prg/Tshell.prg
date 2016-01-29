@@ -14,7 +14,7 @@
 #define TVS_CHECKBOXES        256 //  0x0100
 #define TVS_TRACKSELECT       512 //   0x0200
 
-#define dfnTreeViewWidth      200
+#define dfnTreeViewWidth      250
 #define dfnSplitterWidth      0
 #define dfnSplitterHeight     44
 
@@ -28,7 +28,7 @@
 
 #ifdef __HARBOUR__
    #ifndef __XHARBOUR__
-      #xtranslate DbSkipper => __DbSkipper
+      #xtranslate DbSkipper   => __DbSkipper
    #endif
 #endif
 

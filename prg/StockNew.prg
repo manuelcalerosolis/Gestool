@@ -1026,9 +1026,8 @@ METHOD SetEstadoPedCli( cNumPed, lFactura, cNumFac ) CLASS TStock
 
             nTotPed     += nTotLineaAct
 
-            nTotSer     += Min( nUnidadesRecibidasAlbCli( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cCodPr1, ( ::cPedCliL )->cCodPr2, ::cAlbCliL ), nTotLineaAct )
+            nTotSer     += Min( nUnidadesRecibidasAlbCli( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cCodPr1, ( ::cPedCliL )->cCodPr2, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cAlbCliL ), nTotLineaAct )
             nTotSer     += Min( nUnidadesRecibidasFacturasClientes( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cFacCliL ), nTotLineaAct )
-            //nTotSer     += Min( nTotRFacCli( cNumFac, nil, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ( ::cPedCliL )->cLote, ::cFacCliT, ::cFacCliL ), nTotLineaAct )
 
          end if
 
@@ -1236,29 +1235,6 @@ METHOD SetGeneradoPedCli( cNumPed ) CLASS TStock
 
 Return ( Self )
 
-//---------------------------------------------------------------------------//
-//
-// Devuleve las unidades reservadas
-//
-/*
-METHOD nGetUndRes() CLASS TStock
-
-   local nUndRes  := nTotRPedCli( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cPedCliR )
-
-   if nUndRes != 0
-
-      nUndRes     -= nUnidadesRecibidasAlbCli( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cAlbCliL )
-
-      // No se pueden dar de baja mas q los reservados
-
-      if nUndRes < 0
-         nUndRes  := 0
-      end if
-
-   end if
-
-return ( nUndRes )
-*/
 //---------------------------------------------------------------------------//
 
 METHOD nStockReservado( cCodArt, cValPr1, cValPr2 ) CLASS TStock

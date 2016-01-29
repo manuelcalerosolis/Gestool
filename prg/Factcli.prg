@@ -7898,7 +7898,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
             while ( ( dbfPedCliL )->cSerPed + str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed == cPedido )
 
                nTotRet                 := ( dbfPedCliL )->nUniCaja
-               nTotRet                 -= nUnidadesRecibidasAlbCli( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cCodPr1, ( dbfPedCliL )->cCodPr2, dbfAlbCliL )
+               nTotRet                 -= nUnidadesRecibidasAlbCli( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cCodPr1, ( dbfPedCliL )->cCodPr2, ( dbfPedCliL )->cValPr1, ( dbfPedCliL )->cValPr2, dbfAlbCliL )
                nTotRet                 -= nUnidadesRecibidasFacturasClientes( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cCodPr1, ( dbfPedCliL )->cCodPr2, D():FacturasClientesLineas( nView ) )
 
                (dbfTmpLin)->( dbAppend() )
@@ -19265,7 +19265,7 @@ FUNCTION rxFacCli( cPath, cDriver )
       ( cFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "cNumRef", "cSerie + str( nNumFac ) + cSufFac + cRef", {|| Field->cSerie + str( Field->nNumFac ) + Field->cSufFac + Field->cRef } ) )
 
       ( cFacCliL )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( cFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "cNumPedRef", "cNumPed + cRef", {|| Field->cNumPed + Field->cRef } ) )
+      ( cFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "cNumPedRef", "cNumPed + cRef + cCodPr1 + cCodPr2 + cValPr1 + cValPr2", {|| Field->cNumPed + Field->cRef + Field->cCodPr1 + Field->cCodPr2 + Field->cValPr1 + Field->cValPr2 } ) )
 
       ( cFacCliL )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( cFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "cNumPed", "cNumPed", {|| Field->cNumPed } ) )

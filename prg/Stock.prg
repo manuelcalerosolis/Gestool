@@ -1224,29 +1224,6 @@ METHOD SetGeneradoPedCli( cNumPed ) CLASS TStock
 Return ( Self )
 
 //---------------------------------------------------------------------------//
-//
-// Devuleve las unidades reservadas
-//
-/*
-METHOD nGetUndRes() CLASS TStock
-
-   local nUndRes  := nTotRPedCli( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cPedCliR )
-
-   if nUndRes != 0
-
-      nUndRes     -= nUnidadesRecibidasAlbCli( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cAlbCliL )
-
-      // No se pueden dar de baja mas q los reservados
-
-      if nUndRes < 0
-         nUndRes  := 0
-      end if
-
-   end if
-
-return ( nUndRes )
-*/
-//---------------------------------------------------------------------------//
 
 METHOD nStockReservado( cCodArt, cValPr1, cValPr2 ) CLASS TStock
 
