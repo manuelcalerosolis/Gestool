@@ -11,7 +11,7 @@
 #define OFN_NOCHANGEDIR      0x00000008
 #define OFN_ALLOWMULTISELECT 0x00000200
 #define OFN_EXPLORER         0x00080000     // new look commdlg
-#define OFN_LONGNAMES        0x00200000     // force long names for 3.x modules 
+#define OFN_LONGNAMES        0x00200000     // force long names for 3.x modules
 #define OFN_ENABLESIZING     0x00800000
 
 #define _MENUITEM_           "01058"

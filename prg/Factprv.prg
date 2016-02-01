@@ -9569,7 +9569,7 @@ FUNCTION rxFacPrv( cPath, cDriver )
       ( cFacPrvT )->( ordCreate( cPath + "FACPRVT.CDX", "cCodPago", "cCodPago", {|| Field->cCodPago } ) )
 
       ( cFacPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cFacPrvT )->( ordCreate( cPath + "FACPRVT.CDX", "iNumFac", "'03' + CSERFAC + STR( NNUMFAC ) + CSUFFAC", {|| '03' + Field->CSERFAC + STR( Field->NNUMFAC ) + Field->CSUFFAC } ) )
+      ( cFacPrvT )->( ordCreate( cPath + "FACPRVT.CDX", "iNumFac", "'03' + CSERFAC + STR( NNUMFAC ) + Space( 1 ) + CSUFFAC", {|| '03' + Field->CSERFAC + STR( Field->NNUMFAC ) + Space( 1 ) + Field->CSUFFAC } ) )
 
       ( cFacPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cFacPrvT )->( ordCreate( cPath + "FACPRVT.CDX", "cPrvFac", "cCodPrv + Upper( cSuPed )", {|| Field->cCodPrv + Upper( Field->cSuPed ) } ) )

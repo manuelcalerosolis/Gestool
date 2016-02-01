@@ -328,6 +328,7 @@ METHOD Create( uParam ) CLASS TFastVentasClientes
    ::AddField( "cSufDoc",  "C",  2, 0, {|| "" },   "Delegación del documento"                )
    ::AddField( "cNumRec",  "C",  2, 0, {|| "" },   "Número del recibo"                       )
    ::AddField( "cCodPos",  "C", 15, 0, {|| "@!" }, "Código postal del documento"             )
+   ::AddField( "cTipRec",  "C",  1, 0, {|| "@!" }, "Tipo de recibo"                          )
 
    ::AddField( "nAnoDoc",  "N",  4, 0, {|| "" },   "Año del documento"                       )
    ::AddField( "nMesDoc",  "N",  2, 0, {|| "" },   "Mes del documento"                       )
@@ -349,6 +350,7 @@ METHOD Create( uParam ) CLASS TFastVentasClientes
    ::AddField( "nTotCob",  "N", 16, 6, {|| "" },   "Total cobros"                            )
    ::AddField( "nIva",     "N",  6, 2, {|| "" },   "Porcentaje impuesto"                     )
    ::AddField( "nReq",     "N",  6, 2, {|| "" },   "Porcentaje recargo"                      )
+   ::AddField( "lCobRec",  "L",  1, 0, {|| "" },   "Lógico recibo cobrado"                   )
 
    ::AddField( "uCargo",   "C", 20, 0, {|| "" },   "Cargo"                                   )
 
@@ -1561,7 +1563,8 @@ METHOD AddRecibosCliente( cCodigoCliente ) CLASS TFastVentasClientes
          ::oDbf:cNumDoc    := Str( ::oFacCliP:nNumFac )
          ::oDbf:cSufDoc    := ::oFacCliP:cSufFac
          ::oDbf:cNumRec    := Str( ::oFacCliP:nNumRec )
-         ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+         ::oDbf:cIdeDoc    := Upper( ::oDbf:cClsDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+         ::oDbf:cTipRec    := ::oFacCliP:cTipRec
 
          ::oDbf:nAnoDoc    := Year( ::oFacCliP:dPreCob )
          ::oDbf:nMesDoc    := Month( ::oFacCliP:dPreCob )
@@ -1642,7 +1645,7 @@ METHOD AddRecibosClienteCobro( cCodigoCliente ) CLASS TFastVentasClientes
          ::oDbf:cNumDoc    := Str( ::oFacCliP:nNumFac )
          ::oDbf:cSufDoc    := ::oFacCliP:cSufFac
          ::oDbf:cNumRec    := Str( ::oFacCliP:nNumRec )
-         ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+         ::oDbf:cIdeDoc    := Upper( ::oDbf:cClsDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
 
          ::oDbf:nAnoDoc    := Year( ::oFacCliP:dEntrada )
          ::oDbf:nMesDoc    := Month( ::oFacCliP:dEntrada )

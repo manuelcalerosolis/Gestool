@@ -8597,7 +8597,7 @@ FUNCTION rxAlbPrv( cPath, cDriver )
       ( cAlbPrvT)->( ordCreate( cPath + "AlbProvT.Cdx", "cCodUsr", "Field->cCodUsr + Dtos( Field->dFecChg ) + Field->cTimChg", {|| Field->cCodUsr + Dtos( Field->dFecChg ) + Field->cTimChg } ) )
 
       ( cAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cAlbPrvT)->( ordCreate( cPath + "AlbProvT.Cdx", "iNumAlb", "'02' + CSERALB + STR( NNUMALB ) + CSUFALB", {|| '02' + Field->cSerAlb + STR( Field->nNumAlb ) + Field->CSUFALB } ) )
+      ( cAlbPrvT)->( ordCreate( cPath + "AlbProvT.Cdx", "iNumAlb", "'02' + CSERALB + STR( NNUMALB ) + Space( 1 ) + CSUFALB", {|| '02' + Field->cSerAlb + STR( Field->nNumAlb ) + Space( 1 ) + Field->CSUFALB } ) )
 
       ( cAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cAlbPrvT)->( ordCreate( cPath + "AlbProvT.Cdx", "cCtrCoste", "cCtrCoste", {|| Field->cCtrCoste } ) )
