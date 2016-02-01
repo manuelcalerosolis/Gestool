@@ -509,7 +509,6 @@ static oGetAnt
 static oGetPes
 static oGetDif
 static cPouDiv
-static oFont
 static oMenu
 static cPinDiv
 static cPorDiv
@@ -2009,8 +2008,6 @@ STATIC FUNCTION OpenFiles()
          lOpenFiles     := .f.
       end if
 
-      oFont                         := TFont():New( "Arial", 8, 26, .F., .T. )
-
       oClienteRutaNavigator         := ClienteRutaNavigator():New( nView )
 
       oMailingFacturasClientes      := TGenmailingDatabaseFacturasClientes():New( nView )
@@ -2520,10 +2517,6 @@ STATIC FUNCTION CloseFiles()
    lOpenFiles  := .f.
 
    EnableAcceso()
-
-   if !Empty( oFont )
-      oFont:end()
-   end if
 
    if !Empty( oDetCamposExtra )
       oDetCamposExtra:CloseFiles()
@@ -3656,7 +3649,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       REDEFINE SAY oGetTotal VAR nTotal ;
          ID       485 ;
-         FONT     oFont ;
+         FONT     oFontTotal() ;
          OF       oFld:aDialogs[1]
 
       REDEFINE CHECKBOX aGet[ _LOPERPV ] ;
@@ -3688,7 +3681,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       REDEFINE SAY oGetMasDiv VAR cGetMasDiv;
          ID       488 ;
-         FONT     oFont ;
+         FONT     oFontTotal() ;
          OF       oFld:aDialogs[1]
 
       REDEFINE COMBOBOX aGet[ _NTIPRET ] VAR aTmp[ _NTIPRET ] ;

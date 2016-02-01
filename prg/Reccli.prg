@@ -2798,12 +2798,16 @@ FUNCTION GenPgoFacRec( cNumFac, dbfFacRecT, dbfFacRecL, dbfFacCliP, dbfCli, dbfF
             ( dbfFacCliP )->cDivPgo       := cDivFac
             ( dbfFacCliP )->nVdvPgo       := nVdvFac
             ( dbfFacCliP )->dPreCob       := dFecFac
-            ( dbfFacCliP )->dFecVto       := dNexDay( dFecFac + ( dbfFPago )->nPlaUno + ( ( dbfFPago )->nDiaPla * ( n - 1 ) ), dbfCli )
             ( dbfFacCliP )->cCtaRec       := ( dbfFPago )->cCtaCobro
             ( dbfFacCliP )->cCtaGas       := ( dbfFPago )->cCtaGas
             ( dbfFacCliP )->cCtaRem       := cCtaRem
             ( dbfFacCliP )->cCodAge       := cCodAge
             ( dbfFacCliP )->lEsperaDoc    := ( dbfFPago )->lEsperaDoc
+            ( dbfFacCliP )->dFecVto       := dNextDayPago( dFecFac, n, nPlazos, dbfFPago, dbfCli )
+
+            /*
+            ( dbfFacCliP )->dFecVto       := dNexDay( dFecFac + ( dbfFPago )->nPlaUno + ( ( dbfFPago )->nDiaPla * ( n - 1 ) ), dbfCli )
+            */
 
             if !empty( ( dbfFacRecT )->cCtrCoste )
                ( dbfFacCliP )->cCtrCoste  := ( dbfFacRecT )->cCtrCoste
@@ -2812,7 +2816,12 @@ FUNCTION GenPgoFacRec( cNumFac, dbfFacRecT, dbfFacRecL, dbfFacCliP, dbfCli, dbfF
             if ( dbfFPago )->nCobRec == 1 .and. nMode == APPD_MODE
                ( dbfFacCliP )->lCobrado   := .t.
                ( dbfFacCliP )->cTurRec    := cCurSesion()
+               ( dbfFacCliP )->dEntrada   := dNextDayPago( dFecFac, n, nPlazos, dbfFPago, dbfCli )
+
+               /*
                ( dbfFacCliP )->dEntrada   := dNexDay( dFecFac + ( dbfFPago )->nPlaUno + ( ( dbfFPago )->nDiaPla * ( n - 1 ) ), dbfCli )
+               */
+
             end if
 
             ( dbfFacCliP )->dFecCre       := GetSysDate()
@@ -2825,7 +2834,7 @@ FUNCTION GenPgoFacRec( cNumFac, dbfFacRecT, dbfFacRecL, dbfFacCliP, dbfCli, dbfF
             */
 
             if ( dbfFacCliP )->lCobrado
-               DelRiesgo( ( dbfFacCliP )->nImporte, ( dbfFacCliP )->cCodCli, dbfCli )
+               delRiesgo( ( dbfFacCliP )->nImporte, ( dbfFacCliP )->cCodCli, dbfCli )
             end if
 
          next
@@ -4774,7 +4783,11 @@ FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, 
             ( dbfFacCliP )->cDivPgo       := cDivFac
             ( dbfFacCliP )->nVdvPgo       := nVdvFac
             ( dbfFacCliP )->dPreCob       := dFecFac
-            ( dbfFacCliP )->dFecVto       := dNexDay( dFecFac + ( dbfFPago )->nPlaUno + ( ( dbfFPago )->nDiaPla * ( n - 1 ) ), dbfCli )
+            ( dbfFacCliP )->dFecVto       := dNextDayPago( dFecFac, n, nPlazos, dbfFPago, dbfCli )
+            
+            /*
+            ( dbfFacCliP )->dFecVto       := s( dFecFac + ( dbfFPago )->nPlaUno + ( ( dbfFPago )->nDiaPla * ( n - 1 ) ), dbfCli )
+            */
 
             ( dbfFacCliP )->cCtaRec       := ( dbfFPago )->cCtaCobro
             ( dbfFacCliP )->cCtaGas       := ( dbfFPago )->cCtaGas
@@ -4792,7 +4805,11 @@ FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, 
                if ( dbfFPago )->nCobRec == 1 .and. nMode == APPD_MODE
                   ( dbfFacCliP )->cTurRec    := cCurSesion()
                   ( dbfFacCliP )->lCobrado   := .t.
+                  ( dbfFacCliP )->dEntrada   := dNextDayPago( dFecFac, n, nPlazos, dbfFPago, dbfCli )
+                  
+                  /*
                   ( dbfFacCliP )->dEntrada   := dNexDay( dFecFac + ( dbfFPago )->nPlaUno + ( ( dbfFPago )->nDiaPla * ( n - 1 ) ), dbfCli )
+                  */
                end if
 
             else
@@ -4800,7 +4817,11 @@ FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, 
                if ( dbfFPago )->nCobRec == 1
                   ( dbfFacCliP )->cTurRec    := cCurSesion()
                   ( dbfFacCliP )->lCobrado   := .t.
+                  ( dbfFacCliP )->dEntrada   := dNextDayPago( dFecFac, n, nPlazos, dbfFPago, dbfCli )
+                  
+                  /*
                   ( dbfFacCliP )->dEntrada   := dNexDay( dFecFac + ( dbfFPago )->nPlaUno + ( ( dbfFPago )->nDiaPla * ( n - 1 ) ), dbfCli )
+                  */
                end if
 
             end if

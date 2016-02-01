@@ -34,6 +34,7 @@
 
 static oFontLittelTitle
 static oFontBigTitle
+static oFontTotal
 
 #ifndef __PDA__
 
@@ -2890,5 +2891,15 @@ Function oFontBigTitle()
    end if
 
 Return ( oFontBigTitle )
+
+//----------------------------------------------------------------------------//
+
+Function oFontTotal()
+
+   if Empty( oFontTotal )
+      oFontTotal        := TFont():New( "Arial", 8, 26, .f., .t. )
+   end if
+
+Return ( oFontTotal )
 
 //----------------------------------------------------------------------------//

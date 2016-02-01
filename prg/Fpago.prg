@@ -3,62 +3,54 @@
 #include "Font.ch"
 #include "Factu.ch" 
 #include "Report.ch"
-#else
-#include "FWCE.ch"
-REQUEST DBFCDX
-#endif
 
-#ifndef __PDA__
-
-#define _CCODPAGO                   1      //   C      2     0
-#define _CDESPAGO                   2      //   C     30     0
-#define _NTIPPGO                    3      //   N      1     0
-#define _NPCTCOM                    4      //   N      5     1
-#define _LEMTREC                    5      //   L      1     0
-#define _NCOBREC                    6      //   N      1     0
-#define _CCTACOBRO                  7      //   C     12     0
-#define _CCTAGAS                    8      //   C     12     0
-#define _LESPERADOC                 9      //   C     12     0
-#define _NPLAZOS                   10      //   N      3     0
-#define _NPLAUNO                   11      //   N      3     0
-#define _NDIAPLA                   12      //   N      3     0
-#define _NPLAULT                   13
-#define _NIMGTPV                   14      //
-#define _NPOSTPV                   15      //
-#define _NTIPOAPL                  16      //   N      1     0
-#define _NIMPAPL                   17      //   N     10     0
-#define _NPORC1                    18      //   N      3     0
-#define _NAPL1                     19      //   L      1     0
-#define _NPORC2                    20      //   N      1     0
-#define _NAPL2                     21      //   N      3     0
-#define _NPORC3                    22      //   N      3     0
-#define _NAPL3                     23      //   N      3     0
-#define _NPORC4                    24      //   N      3     0
-#define _NAPL4                     25      //   N      3     0
-#define _NPORC5                    26      //   N      3     0
-#define _NAPL5                     27      //   N      3     0
-#define _CCODXML                   28      //
-#define _NENTINI                   29      //
-#define _NPCTDTO                   30      //
-#define _LUTLBNC                   31      //
-#define _CBANCO                    32      //
-#define _CPAISIBAN                 33      //
-#define _CCTRLIBAN                 34      //
-#define _CENTBNC                   35      //
-#define _CSUCBNC                   36      //
-#define _CDIGBNC                   37      //
-#define _CCTABNC                   38      //
-#define _CCODWEB                   39  
-#define _LDOMBAN                   40
-#define _LSHWTPV                   41      //
+#define _CCODPAGO        1      //   C      2     0
+#define _CDESPAGO        2      //   C     30     0
+#define _NTIPPGO         3      //   N      1     0
+#define _NPCTCOM         4      //   N      5     1
+#define _LEMTREC         5      //   L      1     0
+#define _NCOBREC         6      //   N      1     0
+#define _CCTACOBRO       7      //   C     12     0
+#define _CCTAGAS         8      //   C     12     0
+#define _LESPERADOC      9      //   C     12     0
+#define _NPLAZOS        10      //   N      3     0
+#define _NPLAUNO        11      //   N      3     0
+#define _NDIAPLA        12      //   N      3     0
+#define _NPLAULT        13
+#define _LSHWTPV        14      //
+#define _NIMGTPV        15      //
+#define _NPOSTPV        16      //   N      1     0
+#define _NTIPOAPL       17      //   N     10     0
+#define _NIMPAPL        18      //   N      3     0
+#define _NPORC1         19      //   L      1     0
+#define _NAPL1          20      //   N      1     0
+#define _NPORC2         21      //   N      3     0
+#define _NAPL2          22      //   N      3     0
+#define _NPORC3         23      //   N      3     0
+#define _NAPL3          24      //   N      3     0
+#define _NPORC4         25      //   N      3     0
+#define _NAPL4          26      //   N      3     0
+#define _NPORC5         27      //   N      3     0
+#define _NAPL5          28      //
+#define _CCODXML        29      //
+#define _NENTINI        30      //
+#define _NPCTDTO        31      //
+#define _LUTLBNC        32      //
+#define _CBANCO         33      //
+#define _CPAISIBAN      34      //
+#define _CCTRLIBAN      35      //
+#define _CENTBNC        36      //
+#define _CSUCBNC        37      //
+#define _CDIGBNC        38      //
+#define _CCTABNC        39  
+#define _CCODWEB        40
+#define _LDOMBAN        41      //
 
 static oWndBrw
 static aBigResource
 static aPressResource
 static aTexto
 static bEdit         := { |aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode ) }
-
-#endif
 
 static dbfFormasPago
 
@@ -376,11 +368,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
    Dialogo---------------------------------------------------------------------
    */
 
-   DEFINE DIALOG oDlg RESOURCE "FormPago" TITLE LblTitle( nMode ) + "formas de pagos"
-
-		/*
-		Redefinici¢n de la primera caja de Dialogo
-		*/
+   DEFINE DIALOG oDlg RESOURCE "FORMAS_PAGO" TITLE LblTitle( nMode ) + "formas de pagos"
 
       REDEFINE GET oGet VAR aTmp[ _CCODPAGO ];
          ID       100 ;
@@ -453,9 +441,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
          MAX      999 ;
          OF       oDlg
 
-      /*
-      Datos del banco de la empresa--------------------------------------------
-      */
+      //Datos del banco de la empresa--------------------------------------------
 
       REDEFINE CHECKBOX aTmp[ _LUTLBNC ];
          ID       126;
@@ -606,11 +592,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
 			OF 		oDlg ;
          CANCEL ;
          ACTION   ( oDlg:end() )
-
-      REDEFINE BUTTON ;
-         ID       559 ;
-         OF       oDlg ;
-         ACTION   ( GoHelp() )
 
       if nMode != ZOOM_MODE
          oDlg:AddFastKey( VK_F5, {|| lPreSave( aTmp, aGet, dbfFormasPago, oBrw, nMode, oDlg, oGet, oGet2, oCmbImagen ) } )
@@ -1652,3 +1633,22 @@ function cFPagoWeb( cCodWeb, cFPago )
 return cCodigoFormaPago
 
 //---------------------------------------------------------------------------//
+
+Function dNextDayPago( dFechaPartida, nPlazoActual, nPlazosTotales, dbfFormasPago, dbfClientes )
+
+   if Empty( dbfClientes )
+      Return ( dFechaPartida )
+   end if
+
+   dFechaPartida        += ( dbfFormasPago )->nPlaUno
+   dFechaPartida        += ( dbfFormasPago )->nDiaPla * ( nPlazoActual - 1 )
+
+   if ( !empty( ( dbfFormasPago )->nPlaUlt ) ) .and. ( nPlazoActual == nPlazosTotales )
+      dFechaPartida     -= ( dbfFormasPago )->nDiaPla
+      dFechaPartida     += ( dbfFormasPago )->nPlaUlt
+   end if 
+
+Return ( dNexDay( dFechaPartida, dbfClientes ) )
+
+//---------------------------------------------------------------------------//
+
