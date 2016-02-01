@@ -3589,7 +3589,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
    end if
 
-   oDlg:AddFastKey ( VK_F1, {|| ChmHelp( "Pedido" ) } )
+   oDlg:SetControlFastKey( "PedidosClientesLineas", nView, aGet, dbfTmpLin )
 
    oDlg:bStart 		:= {|| StartEdtRec( aTmp, aGet, oDlg, nMode, cCodArt, cCodPre, oBrwLin, cCodCli ) }
 
@@ -9639,6 +9639,25 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       lErrors     := .t.
 
    end if
+
+   /*
+   D():BuildTmp(  "PedCliL",;
+                  "PedidosClientesLineas",;
+                  {  {  "tagName" => "Recno" ,;
+                        "tagExpresion" => "str( recno() )",;
+                        "tagBlock" => {|| str( recno() ) } },;
+                     {  "tagName" => "cRef" ,;
+                        "tagExpresion" => "cRef",;
+                        "tagBlock" => {|| Field->cRef } },;
+                     {  "tagName" => "nNumLin" ,;
+                        "tagExpresion" => "str( nNumLin, 4 )",;
+                        "tagBlock" => {|| str( field->nNumLin ) } },;
+                     {  "tagName" => "nNumLin" ,;
+                        "tagExpresion" => "str( nPosPrint, 4 )",;
+                        "tagBlock" => {|| str( field->nPosPrint ) } },;
+                  },;
+                  ::nView ) 
+   */
 
    dbCreate( cTmpInc, aSqlStruct( aIncPedCli() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), cTmpInc, cCheckArea( cDbfInc, @dbfTmpInc ), .f. )

@@ -2638,7 +2638,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       aTmp[ _LCLOFAC    ]  := .f.
       aTmp[ _LSNDDOC    ]  := .t.
       aTmp[ _LMAIL      ]  := .t.
-      aTmp[ _CNFC       ]  := Space( 20 )
       aTmp[ _LRECC      ]	:= lRECCEmpresa()
 
    case nMode == EDIT_MODE
@@ -3769,12 +3768,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          WHEN     ( uFieldEmpresa( "lRECC" ) .and. nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
-      /*
-      REDEFINE GET aGet[ _CNFC ] VAR aTmp[ _CNFC ] ;
-         ID       570 ;
-         WHEN     ( lWhen ) ;
-         OF       oFld:aDialogs[1]*/
-
       REDEFINE GET aGet[ _DFECSAL ] VAR aTmp[ _DFECSAL ];
          ID       111 ;
          IDSAY    112 ;
@@ -4608,12 +4601,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 	      oDlg:AddFastKey( 65,                {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
 	
 	   end if
+
+      oDlg:SetControlFastKey( "FacturasClientesLineas", nView, aGet, dbfTmpLin )
 	
 	   oDlg:bStart := {|| StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin ) }
 
    ACTIVATE DIALOG oDlg ;
-      ON INIT  (  initDialog( aTmp, oDlg, oBrwLin, oBrwInc, oBrwPgo, oBrwAnt ), SetDialog( aGet, oSayDias, oSayGetRnt, oGetRnt ) );
-      ON PAINT (  recalculaTotal( aTmp ) );
+      ON INIT     ( initDialog( aTmp, oDlg, oBrwLin, oBrwInc, oBrwPgo, oBrwAnt ), SetDialog( aGet, oSayDias, oSayGetRnt, oGetRnt ) );
+      ON PAINT    ( recalculaTotal( aTmp ) );
       CENTER
 
    /*
@@ -10548,6 +10543,7 @@ Static Function VariableReport( oFr )
    Creación de variables----------------------------------------------------
    */
 
+   oFr:AddVariable(     "Facturas",             "Identificador de factura",            "CallHbFunc('FacturasClientesId')" )
    oFr:AddVariable(     "Facturas",             "Total bruto",                         "GetHbVar('nTotBrt')" )
    oFr:AddVariable(     "Facturas",             "Total factura",                       "GetHbVar('nTotFac')" )
    oFr:AddVariable(     "Facturas",             "Total factura texto",                 "CallHbFunc('cTotFacCli')" )
@@ -14100,6 +14096,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
          runEventScript( "FacturasClientes\beforeAppend", aTmp )
 
          oMsgText( "Obteniendo nuevos numeros" )
+         
          if !Empty( oMeter )
          	oMeter:Set( 2 )
          end if
@@ -14109,13 +14106,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
          */
 
          nNumFac              := nNewDoc( cSerFac, D():FacturasClientes( nView ), "NFACCLI", , D():Contadores( nView ) )
-         /*
-         nNumNFC              := nNewNFC( cSerFac, D():FacturasClientes( nView ), "NFACCLI", D():Contadores( nView ) )
-         */
-
          aTmp[ _NNUMFAC ]     := nNumFac
-         aTmp[ _CNFC    ]     := nNumNFC
-
          aTmp[ _LIMPALB ]     := !Empty( aNumAlb )
 
       case nMode == EDIT_MODE
@@ -21434,12 +21425,17 @@ Return ( oStock:nTotStockAct( ( D():FacturasClientesLineas( nView ) )->cRef, ( D
 
 //---------------------------------------------------------------------------//
 
+Function FacturasClientesId()
+
+Return ( D():FacturasClientesId( nView ) )
+
+//---------------------------------------------------------------------------//
+
 Function cTotFacCli()
 
 Return ( Num2Text( nTotFac ) )
 
 //---------------------------------------------------------------------------//
-
 /*
 Funcion que nos indica si una factura está rectificada o no--------------------
 */

@@ -2929,11 +2929,14 @@ Function nTotEStk( cCodArt, dbfPedCliT, dbfPedCliR, dbfAlbCliT, dbfAlbCliL, nYea
          if nYear == nil .or. Year( ( dbfPedCliR )->dFecRes ) == nYear
 
             if aScan( aNumPed, {|cNumPed| cNumPed == ( dbfPedCliR )->cSerPed + Str( ( dbfPedCliR )->nNumPed ) + ( dbfPedCliR )->cSufPed } ) == 0
+
                aAdd( aNumPed, ( dbfPedCliR )->cSerPed + Str( ( dbfPedCliR )->nNumPed ) + ( dbfPedCliR )->cSufPed )
+            
                dFecRes  := ( dbfPedCliR )->dFecRes
                nTotRes  := nTotRPedCli( ( dbfPedCliR )->cSerPed + Str( ( dbfPedCliR )->nNumPed ) + ( dbfPedCliR )->cSufPed, ( dbfPedCliR )->cRef, , , dbfPedCliR )
                nTotAlb  := nUnidadesRecibidasAlbCli( ( dbfPedCliR )->cSerPed + Str( ( dbfPedCliR )->nNumPed ) + ( dbfPedCliR )->cSufPed, ( dbfPedCliR )->cRef, , , , , dbfAlbCliL )
                nTotEnt  += Min( nTotRes, nTotAlb )
+            
             end if
 
          end if

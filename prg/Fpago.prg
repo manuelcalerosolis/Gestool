@@ -22,7 +22,7 @@ REQUEST DBFCDX
 #define _NPLAZOS                   10      //   N      3     0
 #define _NPLAUNO                   11      //   N      3     0
 #define _NDIAPLA                   12      //   N      3     0
-#define _LSHWTPV                   13      //
+#define _NPLAULT                   13
 #define _NIMGTPV                   14      //
 #define _NPOSTPV                   15      //
 #define _NTIPOAPL                  16      //   N      1     0
@@ -50,6 +50,7 @@ REQUEST DBFCDX
 #define _CCTABNC                   38      //
 #define _CCODWEB                   39  
 #define _LDOMBAN                   40
+#define _LSHWTPV                   41      //
 
 static oWndBrw
 static aBigResource
@@ -436,6 +437,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
 
       REDEFINE GET aGet[ _NDIAPLA ] VAR aTmp[ _NDIAPLA ];
          ID       340 ;
+         PICTURE  "999";
+         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ _NPLAZOS ] > 1 ) ;
+         SPINNER ;
+         MIN      0 ;
+         MAX      999 ;
+         OF       oDlg
+
+      REDEFINE GET aGet[ _NPLAULT ] VAR aTmp[ _NPLAULT ];
+         ID       350 ;
          PICTURE  "999";
          WHEN     ( nMode != ZOOM_MODE .and. aTmp[ _NPLAZOS ] > 1 ) ;
          SPINNER ;
@@ -1055,6 +1065,7 @@ function IsFPago( cPatEmp )
          ( dbfFormasPago )->nPlazos      := 1
          ( dbfFormasPago )->nPlaUno      := 0
          ( dbfFormasPago )->nDiaPla      := 0
+         ( dbfFormasPago )->nPlaUlt      := 0
          ( dbfFormasPago )->lShwTpv      := .t.
          ( dbfFormasPago )->nImgTpv      := 1
          ( dbfFormasPago )->nPosTpv      := 1
@@ -1170,6 +1181,7 @@ function aItmFPago()
    aAdd( aBase, { "NPLAZOS",   "N",   3,   0, "Número plazos de aplazamiento"                          ,  "",   "", "( cDbfPgo )" } )
    aAdd( aBase, { "NPLAUNO",   "N",   3,   0, "Numero de días hasta el primer pago"                    ,  "",   "", "( cDbfPgo )" } )
    aAdd( aBase, { "NDIAPLA",   "N",   3,   0, "Número de dias entre plazos"                            ,  "",   "", "( cDbfPgo )" } )
+   aAdd( aBase, { "nPlaUlt",   "N",   3,   0, "Numero de días hasta el último pago"                    ,  "",   "", "( cDbfPgo )" } )
    aAdd( aBase, { "lShwTpv",   "L",   1,   0, "Lógico mostrar en TPV"                                  ,  "",   "", "( cDbfPgo )" } )
    aAdd( aBase, { "nImgTpv",   "N",   1,   0, "Número de la imagen a mostrar en TPV"                   ,  "",   "", "( cDbfPgo )" } )
    aAdd( aBase, { "nPosTpv",   "N",   4,   1, "Posición para mostrar en TPV"                           ,  "",   "", "( cDbfPgo )" } )
