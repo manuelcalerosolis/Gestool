@@ -2158,6 +2158,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "RemMovT"
    oDataTable:cName        := cPatEmp() + "RemMovT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "RemMovT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "RemMovT.Cdx"
@@ -2167,6 +2168,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "HisMov"
    oDataTable:cName        := cPatEmp() + "HisMov"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "HisMov.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "HisMov.Cdx"

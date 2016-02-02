@@ -164,7 +164,6 @@ static dbfFacRecL
 static dbfTikCliL
 static dbfProLin
 static dbfProMat
-static dbfHisMov
 static dbfPedPrvL
 static dbfPedCliL
 static dbfUbicaT
@@ -258,6 +257,9 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       D():Articulos( nView )
 
       D():Familias( nView )
+
+      D():MovimientosAlmacenLineas( nView )
+      ( D():MovimientosAlmacenLineas( nView ) )->( OrdSetFocus( "cRefMov" ) )
 
       CacheRecords( D():Articulos( nView ) )
 
@@ -364,10 +366,6 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       USE ( cPatEmp() + "PROMAT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMAT", @dbfProMat ) )
       SET ADSINDEX TO ( cPatEmp() + "PROMAT.CDX" ) ADDITIVE
       SET TAG TO "cCodArt"
-
-      USE ( cPatEmp() + "HISMOV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "HISMOV", @dbfHisMov ) )
-      SET ADSINDEX TO ( cPatEmp() + "HISMOV.CDX" ) ADDITIVE
-      SET TAG TO "cRefMov"
 
       USE ( cPatEmp() + "ALBPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbPrvT", @dbfAlbPrvT ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBPROVT.CDX" ) ADDITIVE
@@ -645,10 +643,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
       ( dbfProMat )->( dbCloseArea() )
    end if
 
-   if dbfHisMov != nil
-      ( dbfHisMov )->( dbCloseArea() )
-   end if
-
    if dbfAlbPrvT != nil
       ( dbfAlbPrvT )->( dbCloseArea() )
    end if
@@ -770,7 +764,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
    dbfTikCliL        := nil
    dbfProLin         := nil
    dbfProMat         := nil
-   dbfHisMov         := nil
    dbfAlbPrvT        := nil
    dbfAlbCliT        := nil
    dbfPedPrvL        := nil
@@ -1312,12 +1305,18 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       HOTKEY   "N"
 
    DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( TSqlStock():New( nView ):CalculateStock( ( D():Articulos( nView ) )->Codigo ) ) ;
+      TOOLTIP  "Nuevo stock" ;
+      HOTKEY   "k" ;
+      LEVEL    ACC_ZOOM
+
+   DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
 		NOBORDER ;
       ACTION   ( BrwVtaComArt( ( D():Articulos( nView ) )->Codigo, ( D():Articulos( nView ) )->Nombre ) ) ;
       TOOLTIP  "(I)nforme artículo" ;
       HOTKEY   "I" ;
       LEVEL    ACC_ZOOM
-
 
    DEFINE BTNSHELL RESOURCE "IMP" GROUP OF oWndBrw ;
       NOBORDER ;
@@ -11245,14 +11244,14 @@ return ( nPre )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nPreMedCom( cCodArt, cCodAlm, dbfAlbPrvT, dbfAlbPrvL, dbfFacPrvT, dbfFacPrvL, nDiv, nDecOut, nDerOut, dbfHisMov )
+FUNCTION nPreMedCom( cCodArt, cCodAlm, dbfAlbPrvT, dbfAlbPrvL, dbfFacPrvT, dbfFacPrvL, nDiv, nDecOut, nDerOut, cHisMov )
 
    local nPreMed  := 0
    local nTotUni  := 0
    local nTotPre  := 0
    local nOrdAlb  := ( dbfAlbPrvL )->( ordSetFocus( "cRef" ) )
    local nOrdFac  := ( dbfFacPrvL )->( ordSetFocus( "cRef" ) )
-   local nOrdMov  := ( dbfHisMov )->( ordSetFocus( "cRefMov" ) )
+   local nOrdMov  := ( cHisMov )->( ordSetFocus( "cRefMov" ) )
 
    if nDiv == 0
       nDiv        := 1
@@ -11293,18 +11292,18 @@ FUNCTION nPreMedCom( cCodArt, cCodAlm, dbfAlbPrvT, dbfAlbPrvL, dbfFacPrvT, dbfFa
 
    end if
 
-   if ( dbfHisMov )->( dbSeek( cCodArt ) )
+   if ( cHisMov )->( dbSeek( cCodArt ) )
 
-      while ( dbfHisMov )->cRefMov == cCodArt .AND. !( dbfHisMov )->( Eof() )
+      while ( cHisMov )->cRefMov == cCodArt .AND. !( cHisMov )->( Eof() )
 
-         if ( dbfHisMov )->cAliMov == cCodAlm .or. Empty( cCodAlm )
+         if ( cHisMov )->cAliMov == cCodAlm .or. Empty( cCodAlm )
 
-            nTotUni += nTotNMovAlm( dbfHisMov )
-            nTotPre += ( dbfHisMov )->nPreDiv
+            nTotUni += nTotNMovAlm( cHisMov )
+            nTotPre += ( cHisMov )->nPreDiv
 
          end if
 
-         ( dbfHisMov )->( dbSkip() )
+         ( cHisMov )->( dbSkip() )
 
       end while
 
@@ -11316,7 +11315,7 @@ FUNCTION nPreMedCom( cCodArt, cCodAlm, dbfAlbPrvT, dbfAlbPrvL, dbfFacPrvT, dbfFa
 
    ( dbfAlbPrvL )->( ordSetFocus( nOrdAlb ) )
    ( dbfFacPrvL )->( ordSetFocus( nOrdFac ) )
-   ( dbfHisMov )->( ordSetFocus( nOrdMov ) )
+   ( cHisMov )->( ordSetFocus( nOrdMov ) )
 
 return ( nPreMed )
 

@@ -6857,3 +6857,73 @@ RETURN (  Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
+
+CLASS TSqlStock
+
+   DATA nView
+   
+   DATA nStock
+
+   DATA consolidationDate
+   DATA consolidationTime
+
+   METHOD new()
+
+   METHOD calculateStock()
+
+   METHOD consolidationDateTime()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD new( nView ) CLASS TSqlStock
+
+   ::nView              := nView
+   ::consolidationDate  := cTod( "" )
+   ::consolidationTime  := ""
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD calculateStock( cCodArt ) CLASS TSqlStock
+
+   MsgInfo( "Calculate Stock" )
+
+   ::consolidationDateTime( cCodArt )
+   MsgInfo( ::consolidationDate, valType( ::consolidationDate ) )
+   MsgInfo( ::consolidationTime, valType( ::consolidationTime ) )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD consolidationDateTime( cCodArt ) CLASS TSqlStock
+
+   local cSentencia  := ""
+   local aPruebas
+
+   cSentencia        += "SELECT lineasMov.cRefMov, "
+   cSentencia        +=        "Max( lineasMov.dFecMov ), "
+   cSentencia        +=        "lineasMov.cTimMov, "
+   cSentencia        +=        "lineasMov.nNumRem "
+   cSentencia        += "FROM " + cPatEmp() + "HisMov lineasMov "
+   cSentencia        += "WHERE lineasMov.cRefMov='" + cCodArt + "' "
+   cSentencia        += "ORDER BY lineasMov.dFecMov DESC, lineasMov.cTimMov DESC"
+
+
+   LogWrite( cSentencia )
+   MsgInfo( cSentencia )
+
+   if TDataCenter():ExecuteSqlStatement( cSentencia, "resultado" )
+      resultado->( dbGoTop() )
+      aPruebas := dbScatter( "resultado" )
+   end if
+
+   MsgInfo( ( hb_valtoExp( aPruebas ) ) )
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//

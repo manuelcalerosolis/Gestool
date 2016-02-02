@@ -351,6 +351,9 @@ CLASS D
    METHOD GruposClientes( nView )                     INLINE ( ::GetObject( "GruposClientes", nView ) )
    METHOD GrupoClientes( nView )                      INLINE ( ::Get( "GrpCli", nView ) )
 
+   METHOD MovimientosAlmacen( nView )                 INLINE ( ::Get( "RemMovT", nView ) )
+   METHOD MovimientosAlmacenLineas( nView )           INLINE ( ::Get( "HisMov", nView ) )
+
    // Pedidos de proveedores---------------------------------------------------
 
    METHOD PedidosProveedoresTableName()               INLINE ( "PedProvT" )
