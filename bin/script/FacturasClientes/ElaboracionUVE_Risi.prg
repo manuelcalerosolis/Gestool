@@ -167,7 +167,7 @@ ENDCLASS
 
       ::CloseFiles()
 
-      msgInfo( "Porceso finalizado" )
+      msgInfo( "Porceso finalizado : " + ::oUve:cFile )
 
    Return ( Self )
 
@@ -495,7 +495,7 @@ RETURN ( nPrecioBase )
 
 METHOD validateInvoice() CLASS FacturasClientesRisi
 
-    if ( D():FacturasClientes( ::nView ) )->cSerie != "A" .or. ( D():FacturasClientes( ::nView ) )->cSerie != "B"
+    if !( ( D():FacturasClientes( ::nView ) )->cSerie $ "AB" )
         Return .f.
     end if 
 
@@ -630,7 +630,7 @@ ENDCLASS
       cBuffer         += CRLF
 
       if !::isRepeatLine( cBuffer )
-         aadd( ::aLineas, cBuffer)
+         aadd( ::aLineas, cBuffer )
       end if
 
    Return ( ::aLineas )
@@ -639,9 +639,9 @@ ENDCLASS
 
    METHOD isRepeatLine( cBuffer )  CLASS Uve 
       
-      local aLastLine   := atail(::aLineas)
+      local aLastLine   := atail( ::aLineas )
 
-      if empty(aLastLine)
+      if empty( aLastLine )
          return ( .f. )
       end if 
 
@@ -655,8 +655,8 @@ ENDCLASS
 
    METHOD isSameLine( cLinea, cBuffer )  CLASS Uve 
 
-       local aLinea     := HB_ATokens( cLinea, ";" )
-       local aBuffer    := HB_ATokens( cBuffer, ";" )
+       local aLinea     := hb_atokens( cLinea, ";" )
+       local aBuffer    := hb_atokens( cBuffer, ";" )
 
    Return ( aLinea[ 1 ] + aLinea[ 2 ] == aBuffer[ 1 ] + aBuffer[ 2 ] )
 
@@ -667,6 +667,7 @@ ENDCLASS
       local cLinea
 
       if empty( ::aLineas )
+         msgAlert( "Lineas vacias." )
          Return ( .f. )
       end if
 
@@ -682,7 +683,6 @@ ENDCLASS
    Return ( Self )
 
 //---------------------------------------------------------------------------//
-
 
 Static Function TrimPadr( cString, nLen )
 
