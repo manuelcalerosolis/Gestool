@@ -423,7 +423,6 @@ static dbfProMat
 static dbfHisMov
 static dbfHisMovS
 static dbfEmp
-static oFont
 static oMenu
 static oStock
 static oTrans
@@ -2333,8 +2332,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
    nOrd                       := ( D():Get( "AlbCliT", nView ) )->( ordSetFocus( "nNumAlb" ) )
 
-   oFont                      := TFont():New( "Arial", 8, 26, .f., .t. )
-
    cPicUnd                    := MasUnd()                            // Picture de las unidades
    cPouDiv                    := cPouDiv( aTmp[ _CDIVALB ], D():Get( "Divisas", nView ) ) // Picture de la divisa
    cPorDiv                    := cPorDiv( aTmp[ _CDIVALB ], D():Get( "Divisas", nView ) ) // Picture de la divisa redondeada
@@ -3301,7 +3298,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       REDEFINE SAY oGetTotal VAR nTotAlb;
          ID       360 ;
-         FONT     oFont ;
+         FONT     oFontTotal() ;
          OF       oFld:aDialogs[1]
 
       /*
@@ -3618,7 +3615,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       REDEFINE SAY oGetMasDiv VAR cGetMasDiv;
          ID       488 ;
-         FONT     oFont ;
+         FONT     oFontTotal() ;
          OF       oFld:aDialogs[1]
 
          /* Centro de coste */
@@ -4026,9 +4023,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
    end if
 
-   oDlg:bStart       := {|| StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin,  ) }
+   oDlg:SetControlFastKey( "AlbaranesClientesLineas", nView, aGet, dbfTmpLin )
 
-   oDlg:AddFastKey(  VK_F1, {|| ChmHelp( "Albaranes2" ) } )
+   oDlg:bStart       := {|| StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin,  ) }
 
    ACTIVATE DIALOG   oDlg ;
       ON INIT        ( initEdtRec( aTmp, aGet, oDlg, oSayDias, oSayTxtDias, oBrwPgo, hHash ) );
@@ -4036,8 +4033,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       CENTER
 
    oMenu:end()
-
-   oFont:end()
 
    oBmpEmp:end()
    oBmpDiv:end()

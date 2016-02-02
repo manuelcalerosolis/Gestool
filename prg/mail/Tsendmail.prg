@@ -212,6 +212,6 @@ METHOD sendMail( hMail )
       Return .f.
    end if
 
-Return ( ::mailServer:sendMail( hMail ) )
+Return ( isTrue( ::mailServer:sendMail( hMail ) ) )
 
 //--------------------------------------------------------------------------//

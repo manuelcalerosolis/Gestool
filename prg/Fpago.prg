@@ -646,7 +646,7 @@ STATIC FUNCTION lPreSave( aTmp, aGet, dbfFormasPago, oBrw, nMode, oDlg, oGet, oG
 
    // Reordenación de posiciones-----------------------------------------------
 
-   ChangePosition()
+   // ChangePosition()
 
 Return ( oDlg:end( IDOK ) )
 

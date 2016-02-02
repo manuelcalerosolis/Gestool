@@ -1009,6 +1009,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       AddResourceTipoCategoria( hb_QWith() )
    end with
 
+/*
    with object ( oWndBrw:AddXCol() )
       :cHeader          := "Stock"
       :bEditValue       := {|| getStockArticulo() }
@@ -1019,6 +1020,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       :cEditPicture     := MasUnd()      
       :lHide            := .t.
    end with
+*/
 
    with object ( oWndBrw:AddXCol() )
       :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" ) 
