@@ -1571,7 +1571,7 @@ Static Function dlgContabilizaReciboCliente( oBrw, cTitle, cOption, lChgState )
    local oSerIni
    local oSerFin
    local oBtnCancel
-   local nRad        := 2
+   local nRad        := 1
    local oSimula
    local lSimula     := .t.
    local nRecFac     := ( dbfFacCliT )->( Recno() )
@@ -1599,34 +1599,35 @@ Static Function dlgContabilizaReciboCliente( oBrw, cTitle, cOption, lChgState )
    nNumIni           := ( dbfFacCliP )->nNumRec
    nNumFin           := ( dbfFacCliP )->nNumRec
 
-   DEFINE DIALOG oDlg RESOURCE "ConSerRec" TITLE ( cTitle )
+   if len( oBrw:aSelected ) > 1
+      nRad           := 1
+   else
+      nRad           := 3
+   end if 
 
-   REDEFINE RADIO nRad ;
-      ID       90, 91 ;
-      OF       oDlg
+   DEFINE DIALOG oDlg ;
+      RESOURCE "CONTABILIZA_RECIBOS_CLIENTES" ;
+      TITLE    ( cTitle )
 
    REDEFINE COMBOBOX cTipo ;
       ITEMS    { "Todas", "Facturas", "Rectificativas" } ;
       ID       80 ;
       OF       oDlg
 
+   REDEFINE RADIO nRad ;
+      ID       90, 91, 92 ;
+      OF       oDlg
+
    REDEFINE GET oSerIni VAR cSerIni ;
       ID       100 ;
       PICTURE  "@!" ;
-      WHEN     ( nRad == 2 );
+      WHEN     ( nRad == 3 );
       SPINNER ;
       ON UP    ( UpSerie( oSerIni ) );
       ON DOWN  ( DwSerie( oSerIni ) );
       VALID    ( cSerIni >= "A" .and. cSerIni <= "Z" );
       UPDATE ;
       OF       oDlg
-
-   REDEFINE BTNBMP ;
-      ID       101 ;
-      OF       oDlg ;
-      RESOURCE "Up16" ;
-      NOBORDER ;
-      ACTION   ( dbFirst( dbfFacCliP, "nNumFac", oDocIni, cSerIni, "nNumFac" ) )
 
    REDEFINE GET oSerFin VAR cSerFin ;
       ID       110 ;
@@ -1638,13 +1639,6 @@ Static Function dlgContabilizaReciboCliente( oBrw, cTitle, cOption, lChgState )
       VALID    ( cSerFin >= "A" .and. cSerFin <= "Z" );
       UPDATE ;
       OF       oDlg
-
-   REDEFINE BTNBMP ;
-      ID       111 ;
-      OF       oDlg ;
-      RESOURCE "Down16" ;
-      NOBORDER ;
-      ACTION   ( dbLast( dbfFacCliP, "nNumFac", oDocFin, cSerFin, "nNumFac" ) )
 
    REDEFINE GET oDocIni VAR nDocIni;
       ID       120 ;
@@ -1702,7 +1696,7 @@ Static Function dlgContabilizaReciboCliente( oBrw, cTitle, cOption, lChgState )
    REDEFINE BUTTON ;
       ID       IDOK ;
 		OF 		oDlg ;
-      ACTION   ( PasRec( cSerIni + Str( nDocIni, 9 ) + cSufIni + Str( nNumIni ), cSerFin + Str( nDocFin, 9 ) + cSufFin + Str( nNumFin ), nRad, cTipo, lSimula, lChgState, oBrw, oBtnCancel, oDlg, oTree, oMtrInf ) )
+      ACTION   ( initContabilizaReciboCliente( cSerIni + Str( nDocIni, 9 ) + cSufIni + Str( nNumIni ), cSerFin + Str( nDocFin, 9 ) + cSufFin + Str( nNumFin ), nRad, cTipo, lSimula, lChgState, oBrw, oBtnCancel, oDlg, oTree, oMtrInf ) )
 
    REDEFINE BUTTON oBtnCancel ;
       ID       IDCANCEL ;
@@ -1710,9 +1704,9 @@ Static Function dlgContabilizaReciboCliente( oBrw, cTitle, cOption, lChgState )
       CANCEL ;
       ACTION   ( oDlg:end() )
 
-   oDlg:AddFastKey( VK_F5, {|| PasRec( cSerIni + Str( nDocIni, 9 ) + cSufIni + Str( nNumIni ), cSerFin + Str( nDocFin, 9 ) + cSufFin + Str( nNumFin ), nRad, cTipo, lSimula, lChgState, oBrw, oBtnCancel, oDlg, oTree, oMtrInf ) } )
+   oDlg:AddFastKey( VK_F5, {|| initContabilizaReciboCliente( cSerIni + Str( nDocIni, 9 ) + cSufIni + Str( nNumIni ), cSerFin + Str( nDocFin, 9 ) + cSufFin + Str( nNumFin ), nRad, cTipo, lSimula, lChgState, oBrw, oBtnCancel, oDlg, oTree, oMtrInf ) } )
 
-   oDlg:bStart := {|| oSerIni:SetFocus(), SetWindowText( oSimula:hWnd, cOption ), oSimula:Refresh() }
+   oDlg:bStart := {|| startContabilizaReciboCliente( oSerIni, oSimula, cOption ) }
 
    ACTIVATE DIALOG oDlg ;
       CENTER ;
@@ -1735,6 +1729,18 @@ RETURN NIL
 
 //------------------------------------------------------------------------//
 
+Static Function startContabilizaReciboCliente( oSerIni, oSimula, cOption )
+
+   oSerIni:SetFocus()
+
+   setWindowText( oSimula:hWnd, cOption )
+
+   oSimula:Refresh()
+
+RETURN NIL
+
+//------------------------------------------------------------------------//
+
 Static Function TreeChanged( oTree )
 
    local oItemTree   := oTree:GetItem()
@@ -1747,12 +1753,13 @@ RETURN NIL
 
 //------------------------------------------------------------------------//
 
-STATIC FUNCTION PasRec( cDocIni, cDocFin, nRad, cTipo, lSimula, lChgState, oBrw, oBtnCancel, oDlg, oTree, oMtrInf )
+STATIC FUNCTION initContabilizaReciboCliente( cDocIni, cDocFin, nRad, cTipo, lSimula, lChgState, oBrw, oBtnCancel, oDlg, oTree, oMtrInf )
 
    local aPos
    local bWhile
    local lWhile         := .t.
    local aSimula        := {}
+   local nRecord
    local nRecno         := ( dbfFacCliP )->( Recno() )
    local nOrden         := ( dbfFacCliP )->( OrdSetFocus( "nNumFac" ) )
    local lErrorFound    := .f.
@@ -1780,60 +1787,49 @@ STATIC FUNCTION PasRec( cDocIni, cDocFin, nRad, cTipo, lSimula, lChgState, oBrw,
    oTree:Enable()
    oTree:DeleteAll()
 
-   if ( nRad == 1 )
+   do case
+      case ( nRad == 1 )
 
-      ( dbfFacCliP )->( dbGoTop() )
+         for each nRecord in oWndBrw:aSelected 
 
-      bWhile            := {|| !( dbfFacCliP )->( eof() ) }
+            ( dbfFacCliP )->( dbgoto( nRecord ) )
+         
+            makeContabilizaReciboCliente( cTipo, oTree, lSimula, lChgState, aSimula, dbfFacCliT, dbfFacRecT, dbfFacCliP, dbfFpago, dbfClient, dbfDiv )
 
-   else
+            oMtrInf:Set( ( dbfFacCliP )->( ordkeyno() ) )
+         
+         next
 
-      ( dbfFacCliP )->( dbSeek( cDocIni, .t. ) )
+      case ( nRad == 2 )
 
-      bWhile            := {||   ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ) >= cDocIni .and. ;
+         ( dbfFacCliP )->( dbGoTop() )
+         while ( lWhile .and. !( dbfFacCliP )->( eof() ) )
+
+            makeContabilizaReciboCliente( cTipo, oTree, lSimula, lChgState, aSimula, dbfFacCliT, dbfFacRecT, dbfFacCliP, dbfFpago, dbfClient, dbfDiv )
+
+            ( dbfFacCliP )->( dbSkip() )
+
+            oMtrInf:Set( ( dbfFacCliP )->( ordkeyno() ) )
+
+         end do
+
+      case ( nRad == 3 )
+
+         ( dbfFacCliP )->( dbSeek( cDocIni, .t. ) )
+
+         while ( lWhile .and. (  ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ) >= cDocIni .and. ;
                                  ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ) <= cDocFin .and. ;
-                                 !( dbfFacCliP )->( eof() ) }
+                                 !( dbfFacCliP )->( eof() ) ) )
+
+            makeContabilizaReciboCliente( cTipo, oTree, lSimula, lChgState, aSimula, dbfFacCliT, dbfFacRecT, dbfFacCliP, dbfFpago, dbfClient, dbfDiv )
+
+            ( dbfFacCliP )->( dbSkip() )
+
+            oMtrInf:Set( ( dbfFacCliP )->( OrdKeyNo() ) )
+
+         end do
 
    end if
-
-   oMtrInf:Set( ( dbfFacCliP )->( OrdKeyNo() ) )
-
-   while ( lWhile .and. Eval( bWhile ) )
-
-      /*
-      Si nos piden facturas de clientes o facturas rectificativas esta linea es importante
-      */
-
-      do case
-         case ( cTipo == "Facturas" .or. cTipo == "Todas" )       .and. Empty( ( dbfFacCliP )->cTipRec )
-
-            if lChgState
-               lReturn  := ChgState( lSimula )
-            else
-               lReturn  := ContabilizaReciboCliente( nil, oTree, lSimula, aSimula, dbfFacCliT, dbfFacCliP, dbfFPago, dbfClient, dbfDiv, .f. )
-            end if
-
-         case ( cTipo == "Rectificativas" .or. cTipo == "Todas" ) .and. !Empty( ( dbfFacCliP )->cTipRec )
-
-            if lChgState
-               lReturn  := ChgState( lSimula )
-            else
-               lReturn  := ContabilizaReciboCliente( nil, oTree, lSimula, aSimula, dbfFacRecT, dbfFacCliP, dbfFPago, dbfClient, dbfDiv, .f. )
-            end if
-
-      end case
-
-      if isFalse( lReturn ) 
-         exit
-      end if
-
-      ( dbfFacCliP )->( dbSkip() )
-
-      oMtrInf:Set( ( dbfFacCliP )->( OrdKeyNo() ) )
-
-      sysrefresh()
-
-   end do
 
    /*
    Creamos el fichero de A3----------------------------------------------------
@@ -1865,6 +1861,33 @@ STATIC FUNCTION PasRec( cDocIni, cDocFin, nRad, cTipo, lSimula, lChgState, oBrw,
    end if
 
 RETURN NIL
+
+//---------------------------------------------------------------------------//
+
+Static Function makeContabilizaReciboCliente( cTipo, oTree, lSimula, lChgState, aSimula, dbfFacCliT, dbfFacRecT, dbfFacCliP, dbfFpago, dbfClient, dbfDiv )
+
+   local lReturn     := .f.
+
+   do case
+      case ( cTipo == "Facturas" .or. cTipo == "Todas" ) .and. Empty( ( dbfFacCliP )->cTipRec )
+
+         if lChgState
+            lReturn  := ChgState( lSimula )
+         else
+            lReturn  := ContabilizaReciboCliente( nil, oTree, lSimula, aSimula, dbfFacCliT, dbfFacCliP, dbfFPago, dbfClient, dbfDiv, .f. )
+         end if
+
+      case ( cTipo == "Rectificativas" .or. cTipo == "Todas" ) .and. !Empty( ( dbfFacCliP )->cTipRec )
+
+         if lChgState
+            lReturn  := ChgState( lSimula )
+         else
+            lReturn  := ContabilizaReciboCliente( nil, oTree, lSimula, aSimula, dbfFacRecT, dbfFacCliP, dbfFPago, dbfClient, dbfDiv, .f. )
+         end if
+
+   end case
+
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 

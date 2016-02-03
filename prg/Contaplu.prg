@@ -2665,6 +2665,7 @@ CLASS EnlaceA3
    METHOD RenderCabeceraFactura()
    METHOD RenderVentaFactura()
    METHOD RenderReciboFactura()
+   METHOD RenderApuntesSinIVA() 
 
    METHOD GenerateFile()
    METHOD WriteASCII()   
@@ -2678,7 +2679,7 @@ CLASS EnlaceA3
    METHOD TipoFormato()                   INLINE ( ::appendBuffer( '3' ) )
    METHOD Empresa()                       INLINE ( ::appendBuffer( padr( ::hAsiento[ "Empresa" ], 5 ) ) )
    METHOD FechaApunte()                   INLINE ( ::appendBuffer( dtos( ::hAsiento[ "Fecha"] ) ) )
-   METHOD TipoRegistro()                  INLINE ( ::appendBuffer( ::hAsiento[ "TipoRegistro"] )  )
+   METHOD TipoRegistro()                  INLINE ( ::appendBuffer( if( hhaskey( ::hAsiento, "TipoRegistro" ), ::hAsiento[ "TipoRegistro" ], "0" ) ) )
    METHOD TipoImporte()                   INLINE ( ::appendBuffer( ::hAsiento[ "TipoImporte" ] ) )
    METHOD FechaFactura()                  INLINE ( ::appendBuffer( dtos( ::hAsiento[ "FechaFactura"] ) ) )
    METHOD NumeroFactura()                 INLINE ( ::appendBuffer( padr( ::hAsiento[ "NumeroFactura" ], 10 ) )  )
@@ -2688,8 +2689,13 @@ CLASS EnlaceA3
    METHOD NIF()                           INLINE ( ::appendBuffer( padr( trimNif( ::hAsiento[ "Nif" ] ), 14 ) ) )
    METHOD NombreCliente()                 INLINE ( ::appendBuffer( padr( ::hAsiento[ "NombreCliente" ], 40 ) ) )
    METHOD CodigoPostal()                  INLINE ( ::appendBuffer( padr( ::hAsiento[ "CodigoPostal" ], 5 ) ) )
+
+
+   
    METHOD FechaOperacion()                INLINE ( ::appendBuffer( dtos( ::hAsiento[ "FechaOperacion"] ) ) )
    METHOD FechaFactura()                  INLINE ( ::appendBuffer( dtos( ::hAsiento[ "FechaFactura"] ) ) )
+   METHOD Fecha()                         INLINE ( ::appendBuffer( dtos( ::hAsiento[ "Fecha" ] ) ) )
+   
    METHOD Moneda()                        INLINE ( ::appendBuffer( ::hAsiento[ "Moneda" ] ) )
 
    METHOD Cuenta()                        INLINE ( ::appendBuffer( padr( ::hAsiento[ "Cuenta" ], 12 ) )  )
@@ -2712,16 +2718,13 @@ CLASS EnlaceA3
    METHOD Impreso()                       INLINE ( ::appendBuffer( ::hAsiento[ "Impreso" ] ) )
    METHOD SujetaIVA()                     INLINE ( ::appendBuffer( ::hAsiento[ "SujetaIVA" ] ) )
    METHOD Modelo415()                     INLINE ( ::appendBuffer( ::hAsiento[ "Modelo415" ] ) )
-   METHOD Analitico()                     INLINE ( ::appendBuffer( ::hAsiento[ "Analitico" ] ) )
+   METHOD Analitico()                     INLINE ( ::appendBuffer( if( hhaskey( ::hAsiento, "Analitico" ), ::hAsiento[ "Analitico" ], space( 1 ) ) ) )
 
    METHOD TipoFacturaVenta()              INLINE ( ::appendBuffer( '1' ) )
    METHOD TipoFacturaCompras()            INLINE ( ::appendBuffer( '2' ) )
    METHOD TipoFacturaBienes()             INLINE ( ::appendBuffer( '3' ) )
 
-   METHOD FechaOperacion()                INLINE ( ::appendBuffer( dtos( ::hAsiento[ "Fecha"] ) ) )
    METHOD Generado()                      INLINE ( ::appendBuffer( 'N' ) )
-
-   METHOD TipoImporte()                   INLINE ( ::appendBuffer( 'C' ) )
 
    METHOD FechaVencimiento()              INLINE ( ::appendBuffer( dtos( ::hAsiento[ "FechaVencimiento"] ) ) )
    METHOD TipoVencimiento()               INLINE ( ::appendBuffer( ::hAsiento[ "TipoVencimiento" ] ) )
@@ -2731,6 +2734,7 @@ CLASS EnlaceA3
    METHOD FormaPago()                     INLINE ( ::appendBuffer( ::hAsiento[ "FormaPago" ] ) )
 
    METHOD Referencia()                    INLINE ( ::appendBuffer( substr( ::hAsiento[ "Concepto" ], 1, 10 ) ) )
+   METHOD ReferenciaDocumento()           INLINE ( ::appendBuffer( substr( ::hAsiento[ "ReferenciaDocumento" ], 1, 10 ) ) )
    
    METHOD LineaApunte()                   INLINE ( ::appendBuffer( if( hb_enumindex() == 1, 'I', if( hb_enumindex() > 1 .and. hb_enumindex() < len( ::aAsiento ), 'M', 'U' ) ) )    )
    
@@ -2782,6 +2786,8 @@ ENDCLASS
                ::RenderVentaFactura()
             case hAsiento[ "Render" ] == "ReciboFactura"
                ::RenderReciboFactura()
+            case hAsiento[ "Render" ] == "ApuntesSinIVA"
+               ::RenderApuntesSinIVA()
          end case
 
       next
@@ -2873,6 +2879,30 @@ ENDCLASS
       ::FormaPago()
       ::NumeroVencimiento()
       ::Reserva( 115 )
+      ::Moneda()
+      ::Generado()
+
+      ::FinLinea() 
+
+   Return ( Self )
+
+   //------------------------------------------------------------------------//
+
+   METHOD RenderApuntesSinIVA() CLASS EnlaceA3
+
+      ::TipoFormato()
+      ::Empresa()
+      ::Fecha()
+      ::TipoRegistro()
+      ::Cuenta()
+      ::DescripcionCuenta()
+      ::TipoImporte()
+      ::ReferenciaDocumento()
+      ::LineaApunte()
+      ::DescripcionApunte()
+      ::Importe()
+      ::Reserva( 138 )
+      ::Analitico()
       ::Moneda()
       ::Generado()
 

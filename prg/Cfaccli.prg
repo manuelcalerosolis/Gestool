@@ -546,14 +546,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    --------------------------------------------------------------------------
    */
 
-   if ( "TEFESA" $ cParamsMain()  )       .and.;
-      ( ( dbfFacCliT )->cSerie == "B" )   .and.;
-      dbSeekInOrd( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, "cNumFac", dbfAlbCliT )
-      cConcepto   := "N/Alb. N." + ( dbfAlbCliT )->cSerAlb + "/" + AllTrim( Str( ( dbfAlbCliT )->nNumAlb ) + "/" + ( dbfAlbCliT )->cSufAlb )
-   else
-      cConcepto   := "N/Fcta. N." + ( dbfFacCliT )->CSERIE + "/" + AllTrim( Str( (dbfFacCliT)->NNUMFAC ) + "/" + (dbfFacCliT)->CSUFFAC )
-   end if
-
+   cConcepto      := "N/Fcta. N." + ( dbfFacCliT )->CSERIE + "/" + AllTrim( Str( (dbfFacCliT)->NNUMFAC ) + "/" + (dbfFacCliT)->CSUFFAC )
    cPago          := "C/Fcta. N." + ( dbfFacCliT )->CSERIE + "/" + AllTrim( Str( (dbfFacCliT)->NNUMFAC ) + "/" + (dbfFacCliT)->CSUFFAC )
 
    /*
@@ -4989,7 +4982,7 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
    local nRecibo        := ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->NNUMFAC, 9 ) + ( dbfFacCliP )->CSUFFAC + Str( ( dbfFacCliP )->NNUMREC )
    local cRecibo        := ( dbfFacCliP )->cSerie + "/" + Ltrim( Str( ( dbfFacCliP )->NNUMFAC, 9 ) ) + "/" + ( dbfFacCliP )->CSUFFAC + "-" + Str( ( dbfFacCliP )->NNUMREC )
    local cTerNif        := RetFld( ( dbfFacCliP )->CSERIE + Str( ( dbfFacCliP )->NNUMFAC, 9 ) + ( dbfFacCliP )->CSUFFAC, dbfFacCliT, "CDNICLI" )
-   local cTerNom        := ( dbfFacCliP )->cNomCli
+   local cNombreCliente := ( dbfFacCliP )->cNomCli
    local lErrorFound    := .f.
    local lRectif        := !Empty( ( dbfFacCliP )->cTipRec )
    local cProyecto      := Left( cCodPro, 3 )
@@ -5239,7 +5232,7 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
                                        ,;
                                        lSimula,;
                                        cTerNif,;
-                                       cTerNom ) )
+                                       cNombreCliente ) )
 
          end if
 
@@ -5269,7 +5262,7 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
                                        ,;
                                        lSimula,;
                                        cTerNif,;
-                                       cTerNom,;
+                                       cNombreCliente,;
                                        nEjeCon,;
                                        cCtaCli ) )
 
@@ -5301,16 +5294,17 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
                                        ,;
                                        lSimula,;
                                        cTerNif,;
-                                       cTerNom ) )
+                                       cNombreCliente ) )
 
          end if
 
       else
 
+/*
          EnlaceA3():getInstance():Add( {  "Empresa"               => cEmpCnt( ( dbfFacCliP )->cSerie ),;
                                           "FechaVencimiento"      => ( dbfFacCliP )->dFecVto,;
                                           "Cuenta"                => cCtaCli,;
-                                          "DescripcionCuenta"     => cTerNom,;
+                                          "DescripcionCuenta"     => cNombreCliente,;
                                           "TipoRegistro"          => 'V',; 
                                           "TipoVencimiento"       => 'C',; // Cobro
                                           "NumeroFactura"         => cRecibo,; 
@@ -5322,6 +5316,32 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
                                           "NumeroVencimiento"     => ( dbfFacCliP )->nNumRec,;
                                           "Moneda"                => 'E',; // Euros
                                           "Render"                => 'ReciboFactura' } )
+*/
+
+         EnlaceA3():getInstance():Add( {  "Empresa"               => cEmpCnt( ( dbfFacCliP )->cSerie ),;
+                                          "Fecha"                 => ( dbfFacCliP )->dEntrada,;
+                                          "TipoRegistro"          => '0',; 
+                                          "Cuenta"                => cCtaPgo,;
+                                          "DescripcionCuenta"     => cNombreCliente,;
+                                          "TipoImporte"           => 'D',; 
+                                          "ReferenciaDocumento"   => cRecibo,;
+                                          "DescripcionApunte"     => cConcepto,;
+                                          "Importe"               => nImpRec,;
+                                          "Moneda"                => 'E',; 
+                                          "Render"                => 'ApuntesSinIVA' } )
+
+
+         EnlaceA3():getInstance():Add( {  "Empresa"               => cEmpCnt( ( dbfFacCliP )->cSerie ),;
+                                          "Fecha"                 => ( dbfFacCliP )->dEntrada,;
+                                          "TipoRegistro"          => '0',; 
+                                          "Cuenta"                => cCtaCli,;
+                                          "DescripcionCuenta"     => cNombreCliente,;
+                                          "TipoImporte"           => 'H',; 
+                                          "ReferenciaDocumento"   => cRecibo,;
+                                          "DescripcionApunte"     => cConcepto,;
+                                          "Importe"               => nImpRec,;
+                                          "Moneda"                => 'E',; 
+                                          "Render"                => 'ApuntesSinIVA' } )
 
       end if 
 

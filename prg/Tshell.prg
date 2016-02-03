@@ -329,6 +329,8 @@ CLASS TShell FROM TMdiChild
 
    METHOD setWindowsBar()
 
+   METHOD aSelected()                        INLINE ( ::oBrw:aSelected )
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
