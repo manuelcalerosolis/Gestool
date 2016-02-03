@@ -6867,6 +6867,8 @@ CLASS TSqlStock
 
    DATA consolidationDate
    DATA consolidationTime
+   DATA consolidationCajas
+   DATA consolidationUnidades
 
    METHOD new()
 
@@ -6906,20 +6908,23 @@ METHOD consolidationDateTime( cCodArt ) CLASS TSqlStock
    local aPruebas
 
    cSentencia        += "SELECT lineasMov.cRefMov, "
-   cSentencia        +=        "Max( lineasMov.dFecMov ), "
+   cSentencia        +=        "lineasMov.dFecMov, "
    cSentencia        +=        "lineasMov.cTimMov, "
-   cSentencia        +=        "lineasMov.nNumRem "
+   cSentencia        +=        "lineasMov.nCajMov, "
+   cSentencia        +=        "lineasMov.nUndMov "
    cSentencia        += "FROM " + cPatEmp() + "HisMov lineasMov "
+   cSentencia        += "JOIN ( SELECT cRefMov, MAX( dFecMov ) AS dFecMov, MAX( cTimMov ) AS cTimMov FROM " + cPatEmp() + "HisMov GROUP BY cRefMov WHERE cTipMov='4' ) AS lineasMovFecha "
+   cSentencia        += "ON lineasMovFecha.cRefMov = lineasMov.cRefMov AND lineasMovFecha.dFecMov >= lineasMov.dFecMov AND lineasMovFecha.cTimMov >= lineasMov.cTimMov "
    cSentencia        += "WHERE lineasMov.cRefMov='" + cCodArt + "' "
-   cSentencia        += "ORDER BY lineasMov.dFecMov DESC, lineasMov.cTimMov DESC"
-
 
    LogWrite( cSentencia )
-   MsgInfo( cSentencia )
-
+   
    if TDataCenter():ExecuteSqlStatement( cSentencia, "resultado" )
+      
       resultado->( dbGoTop() )
-      aPruebas := dbScatter( "resultado" )
+
+      aPruebas       :=  dbScatter( "resultado" )
+         
    end if
 
    MsgInfo( ( hb_valtoExp( aPruebas ) ) )
