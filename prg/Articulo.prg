@@ -206,17 +206,42 @@ static hStockArticulo   := {=>}
 Cargamos los stocks bajo demanda-----------------------------------------------
 */
 
-Static Function getStockArticulo()
+Function SetStockArticulos()
 
-   if ( D():Articulos( nView ) )->lObs
-      Return ( 0 )
-   end if 
+   local nStock   := 0
 
-   if !hhaskey( hStockArticulo, ( D():Articulos( nView ) )->Codigo )
-      hset( hStockArticulo, ( D():Articulos( nView ) )->Codigo, oStock:nStockArticulo( ( D():Articulos( nView ) )->Codigo ) )
+   logWrite( "Entro en el timer: " + Time() )
+
+   if OpenFiles()
+
+      ( D():Articulos( nView ) )->( dbGoTop() )
+
+      while ( D():Articulos( nView ) )->( !Eof() )
+
+         if !( D():Articulos( nView ) )->lObs
+            nStock   := oStock:nStockArticulo( ( D():Articulos( nView ) )->Codigo )
+         else
+            nStock   := 0
+         end if
+
+         if ( D():Articulos( nView ) )->nStkCal != nStock
+
+            if dbLock( D():Articulos( nView ) )
+               ( D():Articulos( nView ) )->nStkCal    := nStock
+               ( D():Articulos( nView ) )->( dbUnlock() )
+            end if
+
+         end if
+
+         ( D():Articulos( nView ) )->( dbSkip() )
+
+      end while
+
+      CloseFiles()
+
    end if
 
-Return ( hGet( hStockArticulo, ( D():Articulos( nView ) )->Codigo ) )
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -1009,10 +1034,9 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       AddResourceTipoCategoria( hb_QWith() )
    end with
 
-/*
    with object ( oWndBrw:AddXCol() )
       :cHeader          := "Stock"
-      :bEditValue       := {|| getStockArticulo() }
+      :bEditValue       := {|| ( D():Articulos( nView ) )->nStkCal }
       :cEditPicture     := MasUnd()
       :nWidth           := 80
       :nDataStrAlign    := 1
@@ -1020,7 +1044,6 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       :cEditPicture     := MasUnd()      
       :lHide            := .t.
    end with
-*/
 
    with object ( oWndBrw:AddXCol() )
       :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" ) 
@@ -1444,7 +1467,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       ACTION   ( oScript:Expand() ) ;
       TOOLTIP  "Scripts" ;
 
-      ImportScript( oWndBrw, oScript, "Articulos" )  
+      ImportScript( oWndBrw, oScript, "Articulos", nView )  
 
    DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
       NOBORDER ;
@@ -15474,6 +15497,7 @@ function aItmArt()
    aAdd( aBase, { "cRefAux",   "C", 18, 0, "Referencia auxiliar",                      "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cRefAux2",  "C", 18, 0, "Referencia auxiliar 2",                    "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "Matriz",    "C", 18, 0, "Matriz para código de barras" ,            "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nStkCal",   "N", 16, 6, "Stock calculado" ,                         "",                  "", "( cDbfArt )", nil } )
 
 return ( aBase )
 

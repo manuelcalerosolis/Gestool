@@ -129,7 +129,7 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TDetCamposExtra
       INDEX TO "DETCEXTRA.Cdx" TAG "cCodTipo"     ON "cCodTipo"                       COMMENT "cCodTipo"                     NODELETED OF ::oDbf
       INDEX TO "DETCEXTRA.Cdx" TAG "cClave"       ON "cClave"                         COMMENT "cClave"                       NODELETED OF ::oDbf
       INDEX TO "DETCEXTRA.Cdx" TAG "cTipoClave"   ON "cCodTipo + cClave"              COMMENT "cCodTipo + cClave"            NODELETED OF ::oDbf
-      INDEX TO "DETCEXTRA.Cdx" TAG "cTotClave"    ON "cTipDoc + cCodTipo + cClave"    COMMENT "cTipDoc + cCodTipo + cClave"  NODELETED OF ::oDbf
+      INDEX TO "DETCEXTRA.Cdx" TAG "SetStockArticulos"    ON "cTipDoc + cCodTipo + cClave"    COMMENT "cTipDoc + cCodTipo + cClave"  NODELETED OF ::oDbf
 
    END DATABASE ::oDbf
 
