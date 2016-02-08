@@ -1645,8 +1645,10 @@ return( Self )
 //  Carga en el buffer los valores de ::aBuffer
 
 METHOD RollBack() CLASS TDbf
-
-    ( ::nArea )->( AEval( ::aTField, { | oFld, i | oFld:Val := ::aBuffer[ i ] } ) )
+    
+    if !empty( ::aBuffer ) .and. !empty( ::aTField )
+        ( ::nArea )->( aeval( ::aTField, { | oFld, i | oFld:Val := ::aBuffer[ i ] } ) )
+    end if
 
     ::lBuffer  := .f.
 

@@ -389,6 +389,7 @@ TpvMesa.prg             	\
 TpvSalon.prg            	\
 TScripts.prg            	\
 Cuaderno.prg 					\
+SepaXml.prg                            \
 FacturarLineasAlbaranes.prg \
 Components.prg 				            \
 TLabelGenerator.prg                    \
@@ -825,7 +826,8 @@ TpvPunto.obj            \
 TpvMesa.obj             \
 TpvSalon.obj            \
 TScripts.obj            \
-Cuaderno.obj 				\
+Cuaderno.obj                           \
+SepaXml.obj                            \
 FacturarLineasAlbaranes.obj            \
 Components.obj                         \
 TLabelGenerator.obj                    \
@@ -1250,7 +1252,8 @@ $(OBJ)\TpvPunto.obj             	+
 $(OBJ)\TpvMesa.obj              	+
 $(OBJ)\TpvSalon.obj             	+
 $(OBJ)\TScripts.obj             	+
-$(OBJ)\Cuaderno.obj 		  			+
+$(OBJ)\Cuaderno.obj                          +
+$(OBJ)\SepaXML.obj                           +
 $(OBJ)\FacturarLineasAlbaranes.obj 	         +
 $(OBJ)\Components.obj 					         +
 $(OBJ)\TLabelGenerator.obj                   +
@@ -1345,6 +1348,8 @@ $(HBLIB)\png.lib                 +
 $(HBLIB)\hbcurl.lib              +
 $(HBLIB)\hbusrrdd.lib            +
 $(HBLIB)\libcurl.lib             +
+$(HBLIB)\mxml.lib                +
+$(HBLIB)\hbmxml.lib              +
 $(IMG2PDFLIB)\Image2pdf.lib      +
 $(HBLIB)\b32\rddads.lib          +
 $(HBLIB)\ace32.lib               +

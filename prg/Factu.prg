@@ -60,7 +60,6 @@ static cTypeVersion     := ""
 STATIC dbfClient
 STATIC dbfObras 
 
-
 //---------------------------------------------------------------------------//
 /*
 -------------------------------------------------------------------------------
@@ -6008,22 +6007,59 @@ Return ( by( nRow ) )
 
 Function Test() 
 
-   //TGeneracionAlbaranesClientes():New():Dialog()
+   local n  
+   local oDebtor
+   local oDoc  := SepaXml():New( "c:\sepa\testSepa.xml" )
 
-/*
-   local nView                   := D():CreateView()
-   local oDialogBrowseProperties
+   // Documento----------------------------------------------------------------
+   WITH OBJECT oDoc
+     :MsgId    := id_File('REMESA001')          // Identificación del mensaje
+     :NbOfTxs  := 3                             // Número de operaciones 
+     :CtrlSum  := 740.70                        // Control de suma total importesCreDtTm
+   /* Idea ! NbOfTxs y CtrlSum deberan ser informadas, contrastar con variables calculadas en Activate() */
+   ENDWITH
 
-   D():Articulos( nView )
+   // Presentador--------------------------------------------------------------
+   WITH OBJECT oDoc:oInitPart
+     :nEntity  := 0 // ENTIDAD_JURIDICA
+     :Nm       := "NOMBRE DEL PRESENTADOR, S.L."
+     :BICOrBEI := "BSABESBBXXX"
+     :id       := "B12345678"
+   ENDWITH
 
-   oDialogBrowseProperties       := DialogBrowseProperties():new( nView )
-   oDialogBrowseProperties:show( "94800" )
-   oDialogBrowseProperties:end()
+   // Acreedor-----------------------------------------------------------------
+   WITH OBJECT oDoc:oCreditor
+     :nEntity  := 0 // ENTIDAD_JURIDICA
+     :Nm       := "NOMBRE DEL ACREEDOR, S.L."
+     :BICOrBEI := "BSABESBBXXX"
+     :id       := "B12345678"
+   ENDWITH
+   /* Si el Acreedor es tambien el presentador, especificar asi :
+    * oDoc:oCreditor := __objClone( oDoc:oInitPart )
+    */
 
-   D():DeleteView( nView )
+   // Deudor/es----------------------------------------------------------------
+   for n := 1 to 3
 
-   TConversionDocumentos():New():Dialog()
-*/
+      oDebtor := SepaDebitActor():New()
+
+      WITH OBJECT oDebtor
+        :Nm          := "NOMBRE DEL DEUDOR "+ strzero(n, 4) 
+        :nEntity     := 2  // ENTIDAD_OTRA
+        :id          := "12345678Z"
+        :InstdAmt    := 123.45 * n                 // Importe
+        :ReqdColltnDt := ctod("02-21-2014") + (n*10)     // Fecha de cobro (Vencimiento)
+        :IBAN     := "ES0321001234561234567890"
+        :BICOrBEI    := "CAIXESBBXXX"
+        :MndtId      := hb_md5(oDoc:oCreditor:Id + :id)  // Identificación del mandato, idea: Utilizar NIF Acreedor + NIF Deudor 
+        :DtOfSgntr   := ctod("02-21-2014")            // Fecha de firma 
+      ENDWITH
+
+      oDoc:DebtorAdd( oDebtor )
+
+   next
+
+   oDoc:Activate()
 
 Return ( nil )
 

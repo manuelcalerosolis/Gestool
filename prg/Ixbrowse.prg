@@ -29,6 +29,8 @@ CLASS IXBrowse FROM TXBrowse
 
    DATA  lOnProcess           AS LOGIC       INIT .f.
 
+   DATA  nVScrollPos
+
    CLASSDATA nToolTip         AS NUMERIC     INIT 900
 
    ACCESS BookMark            INLINE Eval( ::bBookMark )

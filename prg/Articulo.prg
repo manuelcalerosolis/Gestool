@@ -17086,8 +17086,8 @@ Function cSeekInternalCodebar( cCodigoBarra, dbfArt )
    if dbSeekInOrd( cCodigo, "Matriz", dbfArt ) .or. dbSeekInOrd( Upper( cCodigo ), "Matriz", dbfArt )
 
       cCodigo                 := alltrim( ( dbfArt )->Codigo )
-      cPropiedad1             := substr( cCodigoBarra, 6, 3 )
-      cPropiedad2             := substr( cCodigoBarra, 9, 3 )
+      cPropiedad1             := alltrim( str( val( substr( cCodigoBarra, 7, 3 ) ) ) )
+      cPropiedad2             := alltrim( str( val( substr( cCodigoBarra, 10, 3 ) ) ) )
 
       if !empty(cPropiedad1)
          cCodigo              += "." + cPropiedad1

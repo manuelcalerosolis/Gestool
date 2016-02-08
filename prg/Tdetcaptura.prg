@@ -121,11 +121,11 @@ Method CheckDefault( cCod, lNew )
 
    if lNew
       while ::oDbf:Seek( cCod ) .and. !::oDbf:Eof()
-         ::oDbf:Delete(.f.)
-      end while
+         ::oDbf:Delete( .f. )
+      end
    end if
 
-   if Empty( cCod ) .or. !::oDbf:Seek( cCod )
+   if empty( cCod ) .or. !( ::oDbf:Seek( cCod ) )
 
       ::oDbf:Append()
       ::oDbf:cCodigo    := cCod
@@ -225,9 +225,39 @@ Method CheckDefault( cCod, lNew )
       ::oDbf:lBitmap    := .f.
       ::oDbf:Save()
 
+      msgAlert( "bOnPreSaveDetail" )
+
       ::oDbf:Append()
       ::oDbf:cCodigo    := cCod
       ::oDbf:nNumero    := 8
+      ::oDbf:cNombre    := "Nombre propiedad 1"
+      ::oDbf:lEditable  := .t.
+      ::oDbf:lVisible   := .f.
+      ::oDbf:nCaptura   := 2
+      ::oDbf:cTitulo    := "Nombre prp. 1"
+      ::oDbf:lAlign     := .f.
+      ::oDbf:cPicture   := Space( 50 )
+      ::oDbf:nAncho     := 40
+      ::oDbf:lBitmap    := .f.
+      ::oDbf:Save()
+
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 9
+      ::oDbf:cNombre    := "Nombre propiedad 2"
+      ::oDbf:lEditable  := .t.
+      ::oDbf:lVisible   := .f.
+      ::oDbf:nCaptura   := 2
+      ::oDbf:cTitulo    := "Nombre prp. 2"
+      ::oDbf:lAlign     := .f.
+      ::oDbf:cPicture   := Space( 50 )
+      ::oDbf:nAncho     := 40
+      ::oDbf:lBitmap    := .f.
+      ::oDbf:Save()
+
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 10
       ::oDbf:cNombre    := "Lote"
       ::oDbf:lEditable  := .t.
       ::oDbf:lVisible   := .f.
@@ -241,7 +271,7 @@ Method CheckDefault( cCod, lNew )
 
       ::oDbf:Append()
       ::oDbf:cCodigo    := cCod
-      ::oDbf:nNumero    := 9
+      ::oDbf:nNumero    := 11
       ::oDbf:cNombre    := "Caducidad"
       ::oDbf:lEditable  := .t.
       ::oDbf:lVisible   := .f.
@@ -255,7 +285,7 @@ Method CheckDefault( cCod, lNew )
 
       ::oDbf:Append()
       ::oDbf:cCodigo    := cCod
-      ::oDbf:nNumero    := 10
+      ::oDbf:nNumero    := 12
       ::oDbf:cNombre    := "Detalle"
       ::oDbf:lEditable  := .t.
       ::oDbf:lVisible   := .t.
@@ -269,7 +299,7 @@ Method CheckDefault( cCod, lNew )
 
       ::oDbf:Append()
       ::oDbf:cCodigo    := cCod
-      ::oDbf:nNumero    := 11
+      ::oDbf:nNumero    := 13
       ::oDbf:cNombre    := "Importe"
       ::oDbf:lEditable  := .t.
       ::oDbf:lVisible   := .t.
@@ -283,7 +313,7 @@ Method CheckDefault( cCod, lNew )
 
       ::oDbf:Append()
       ::oDbf:cCodigo    := cCod
-      ::oDbf:nNumero    := 12
+      ::oDbf:nNumero    := 14
       ::oDbf:cNombre    := "Descuento lineal"
       ::oDbf:lEditable  := .t.
       ::oDbf:lVisible   := .t.
@@ -297,7 +327,7 @@ Method CheckDefault( cCod, lNew )
 
       ::oDbf:Append()
       ::oDbf:cCodigo    := cCod
-      ::oDbf:nNumero    := 13
+      ::oDbf:nNumero    := 15
       ::oDbf:cNombre    := "Descuento porcentual"
       ::oDbf:lEditable  := .t.
       ::oDbf:lVisible   := .t.
@@ -311,7 +341,7 @@ Method CheckDefault( cCod, lNew )
 
       ::oDbf:Append()
       ::oDbf:cCodigo    := cCod
-      ::oDbf:nNumero    := 14
+      ::oDbf:nNumero    := 16
       ::oDbf:cNombre    := "Total"
       ::oDbf:lEditable  := .f.
       ::oDbf:lVisible   := .t.
@@ -325,7 +355,7 @@ Method CheckDefault( cCod, lNew )
 
       ::oDbf:Append()
       ::oDbf:cCodigo    := cCod
-      ::oDbf:nNumero    := 15
+      ::oDbf:nNumero    := 17
       ::oDbf:cNombre    := "Número de serie"
       ::oDbf:lEditable  := .t.
       ::oDbf:lVisible   := .f.
@@ -339,7 +369,7 @@ Method CheckDefault( cCod, lNew )
 
       ::oDbf:Append()
       ::oDbf:cCodigo    := cCod
-      ::oDbf:nNumero    := 16
+      ::oDbf:nNumero    := 18
       ::oDbf:cNombre    := "Número de línea"
       ::oDbf:lEditable  := .t.
       ::oDbf:lVisible   := .f.
@@ -353,7 +383,7 @@ Method CheckDefault( cCod, lNew )
 
       ::oDbf:Append()
       ::oDbf:cCodigo    := cCod
-      ::oDbf:nNumero    := 17
+      ::oDbf:nNumero    := 19
       ::oDbf:cNombre    := "Código de barras"
       ::oDbf:lEditable  := .t.
       ::oDbf:lVisible   := .t.
@@ -367,7 +397,7 @@ Method CheckDefault( cCod, lNew )
 
       ::oDbf:Append()
       ::oDbf:cCodigo    := cCod
-      ::oDbf:nNumero    := 18
+      ::oDbf:nNumero    := 20
       ::oDbf:cNombre    := "Promoción"
       ::oDbf:lEditable  := .t.
       ::oDbf:lVisible   := .f.
@@ -381,7 +411,7 @@ Method CheckDefault( cCod, lNew )
 
       ::oDbf:Append()
       ::oDbf:cCodigo    := cCod
-      ::oDbf:nNumero    := 19
+      ::oDbf:nNumero    := 21
       ::oDbf:cNombre    := "Oferta"
       ::oDbf:lEditable  := .t.
       ::oDbf:lVisible   := .f.
@@ -395,7 +425,7 @@ Method CheckDefault( cCod, lNew )
 
       ::oDbf:Append()
       ::oDbf:cCodigo    := cCod
-      ::oDbf:nNumero    := 20
+      ::oDbf:nNumero    := 22
       ::oDbf:cNombre    := "Factor"
       ::oDbf:lEditable  := .t.
       ::oDbf:lVisible   := .f.
@@ -409,7 +439,7 @@ Method CheckDefault( cCod, lNew )
 
       ::oDbf:Append()
       ::oDbf:cCodigo    := cCod
-      ::oDbf:nNumero    := 21
+      ::oDbf:nNumero    := 23
       ::oDbf:cNombre    := "Porcentaje I.V.A."
       ::oDbf:lEditable  := .t.
       ::oDbf:lVisible   := .t.
@@ -420,7 +450,6 @@ Method CheckDefault( cCod, lNew )
       ::oDbf:nAncho     := 40
       ::oDbf:lBitmap    := .f.
       ::oDbf:Save()
-
 
    end if
 

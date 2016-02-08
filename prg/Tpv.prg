@@ -587,6 +587,8 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
 
       D():ArticuloLenguaje( nView )
 
+      D():PropiedadesLineas( nView )
+
       USE ( cPatEmp + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @dbfTikT ) )
       SET ADSINDEX TO ( cPatEmp + "TIKET.CDX" ) ADDITIVE
 
@@ -7270,21 +7272,22 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
    local oCol
    local aPos
 	local oBtn
-   local lTwo              := .f.
+   local lTwo                 := .f.
    local nTop
    local nLeft
    local nWidth
    local nHeight
    local oBtnSer
    local oGetTotal
-	local nGetTotal			:= 0
-   local lMsgVta           := .f.
-   local lNotVta           := .f.
+   local nGetTotal            := 0
+   local lMsgVta              := .f.
+   local lNotVta              := .f.
    local cName
    local nCaptura
    local oCodBarras
-   local cCodBarras        := Space( 18 )
-
+   local cCodBarras           := Space( 18 )
+   local oGetNombrePropiedad1
+   local oGetNombrePropiedad2
 
    /*
    Posiones donde colocar el dialogo y valores por defecto---------------------
@@ -7388,7 +7391,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
 
             case cName == "Unidades"
 
-               @ 0, 0 GET  aGet[ _NUNTTIL ] VAR aTmp[ _NUNTTIL ] ;
+               @ 0, 0 GET  aGet[ _NUNTTIL ] ;
+                           VAR      aTmp[ _NUNTTIL ] ;
                            NOBORDER ;
                            PICTURE  cPicUnd ;
                            RIGHT ;
@@ -7428,7 +7432,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
 
             case cName == "Medición 2"
 
-               @ 0, 0 GET  aGet[ _NMEDDOS ] VAR aTmp[ _NMEDDOS ] ;
+               @ 0, 0 GET  aGet[ _NMEDDOS ] ;
+                           VAR      aTmp[ _NMEDDOS ] ;
                            NOBORDER ;
                            PICTURE  cPicUnd ;
                            RIGHT ;
@@ -7448,7 +7453,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
 
             case cName == "Medición 3"
 
-               @ 0, 0 GET  aGet[ _NMEDTRE ] VAR aTmp[ _NMEDTRE ] ;
+               @ 0, 0 GET  aGet[ _NMEDTRE ] ;
+                           VAR      aTmp[ _NMEDTRE ] ;
                            NOBORDER ;
                            PICTURE  cPicUnd ;
                            RIGHT ;
@@ -7514,6 +7520,22 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                   aGet[ _CVALPR2 ]:lNeedGetFocus   := .t.
                end case
 
+            case cName == "Nombre propiedad 1"
+
+               @ 0, 0 SAY  oGetNombrePropiedad1 ;
+                           PROMPT   nombrePropiedad( aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], nView ) ;
+                           FONT     oBrw:oFont ;
+                           PICTURE  "@!" ;
+                           OF       oDlgDet
+
+            case cName == "Nombre propiedad 2"
+
+               @ 0, 0 SAY  oGetNombrePropiedad2 ;
+                           PROMPT   nombrePropiedad( aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], nView ) ;
+                           FONT     oBrw:oFont ;
+                           PICTURE  "@!" ;
+                           OF       oDlgDet
+
             case cName == "Lote"
 
                @ 0, 0 GET  aGet[ _CLOTE ] VAR aTmp[ _CLOTE ];
@@ -7535,7 +7557,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
 
             case cName == "Caducidad"
 
-               @ 0, 0 GET  aGet[ _DFECCAD ] VAR aTmp[ _DFECCAD ];
+               @ 0, 0 GET  aGet[ _DFECCAD ] ;
+                           VAR      aTmp[ _DFECCAD ];
                            NOBORDER ;
                            FONT     oBrw:oFont ;
                            RIGHT ;
@@ -7552,12 +7575,13 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
 
             case cName == "Detalle"
 
-               @ 0, 0 GET  aGet[ _CNOMTIL ] VAR aTmp[ _CNOMTIL ] ;
-                           NOBORDER ;
-                           FONT     oBrw:oFont ;
-                           WHEN     ( lModDes() ) ;
-                           VALID    ( .t. );
-                           OF       oDlgDet
+               @ 0, 0   GET      aGet[ _CNOMTIL ] ;
+                        VAR      aTmp[ _CNOMTIL ] ;
+                        NOBORDER ;
+                        FONT     oBrw:oFont ;
+                        WHEN     ( lModDes() ) ;
+                        VALID    ( .t. );
+                        OF       oDlgDet
 
                do case
                case nCaptura == 1
@@ -7570,13 +7594,14 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
 
             case cName == "Importe"
 
-               @ 0, 0 GET  aGet[ _NPVPTIL ] VAR aTmp[ _NPVPTIL ];
-                           NOBORDER ;
-                           FONT     oBrw:oFont ;
-                           PICTURE  cPouDiv ;
-                           RIGHT ;
-                           ON CHANGE( lCalcDeta( aTmp, oGetTotal ) ) ;
-                           OF       oDlgDet
+               @ 0, 0   GET      aGet[ _NPVPTIL ] ;
+                        VAR      aTmp[ _NPVPTIL ];
+                        NOBORDER ;
+                        FONT     oBrw:oFont ;
+                        PICTURE  cPouDiv ;
+                        RIGHT ;
+                        ON CHANGE( lCalcDeta( aTmp, oGetTotal ) ) ;
+                        OF       oDlgDet
 
                do case
                case nCaptura == 1
@@ -7589,14 +7614,15 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
 
             case cName == "Descuento lineal"
 
-               @ 0, 0 GET  aGet[ _NDTODIV ] VAR aTmp[ _NDTODIV ];
-                           NOBORDER ;
-                           FONT     oBrw:oFont ;
-                           PICTURE  cPouDiv ;
-                           RIGHT ;
-                           ON CHANGE( lCalcDeta( aTmp, oGetTotal ) ) ;
-                           COLOR    Rgb( 255, 0, 0 ) ;
-                           OF       oDlgDet
+               @ 0, 0   GET      aGet[ _NDTODIV ] ;
+                        VAR      aTmp[ _NDTODIV ] ;
+                        NOBORDER ;
+                        FONT     oBrw:oFont ;
+                        PICTURE  cPouDiv ;
+                        RIGHT ;
+                        ON CHANGE( lCalcDeta( aTmp, oGetTotal ) ) ;
+                        COLOR    Rgb( 255, 0, 0 ) ;
+                        OF       oDlgDet
 
                do case
                case nCaptura == 1
@@ -7707,7 +7733,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                      DEFAULT  ;
                      OF       oDlgDet
 
-      oDlgDet:AddFastKey( VK_F11, {|| GetPesoBalanza( aGet, oBtn ) } )
+      // oDlgDet:AddFastKey( VK_F11, {|| GetPesoBalanza( aGet, oBtn ) } )
 
       oDlgDet:bKeyDown        := {| nKey | EdtDetKeyDown( nKey, aGet, oDlgDet, oBtn ) }
       oDlgDet:bStart          := {|| if( !empty( cCodArt ), ( Eval( aGet[ _CCBATIL ]:bLostFocus ), aGet[ _CCBATIL ]:lValid() ), ), SetDlgMode( oDlgDet, aTmp, aGet, nMode, oBrw, oBtn ) }
@@ -8468,7 +8494,6 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
 
    if empty( cCodArt )
       if lRetCodArt()
-         //MsgStop( "No se pueden añadir lineas sin codificar" )
          return .f.
       else
          return .t.
@@ -12944,6 +12969,10 @@ Function NameToField( cName )
          cField   := {|| ( dbfTmpL )->cValPr1 }
       case cName == "Propiedad 2"
          cField   := {|| ( dbfTmpL )->cValPr2 }
+      case cName == "Nombre propiedad 1"
+         cField   := {|| nombrePrimeraPropiedadTicketsLineas( dbfTmpL ) }
+      case cName == "Nombre propiedad 2"
+         cField   := {|| nombreSegundaPropiedadTicketsLineas( dbfTmpL ) }
       case cName == "Lote"
          cField   := {|| ( dbfTmpL )->cLote }
       case cName == "Caducidad"
@@ -20118,6 +20147,23 @@ Static Function generatePromocion( nValePromocion, nSave )
 Return ( nil )
 
 //---------------------------------------------------------------------------//
+
+Function nombrePrimeraPropiedadTicketsLineas( dbfTmpL )
+
+   DEFAULT dbfTmpL   := dbfTikL
+
+Return ( nombrePropiedad( ( dbfTmpL )->cCodPr1, ( dbfTmpL )->cValPr1, nView ) )
+
+//---------------------------------------------------------------------------//
+
+Function nombreSegundaPropiedadTicketsLineas( dbfTmpL )
+
+   DEFAULT dbfTmpL   := dbfTikL
+
+Return ( nombrePropiedad( ( dbfTmpL )->cCodPr2, ( dbfTmpL )->cValPr2, nView ) )
+
+//---------------------------------------------------------------------------//
+
 
 /*
       if ( lValePromocion ) .and. ( nValePromocion > 0 )

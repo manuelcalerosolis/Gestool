@@ -600,7 +600,7 @@ Static Function TestBalanza( cBitsSec, cBitsDatos, cBitsPara, cBitsPari, cPuerto
                   "Dato    : " + cBitsDatos                     + CRLF +;
                   "Paridad : " + cBitsPari                      + CRLF +;
                   "Handle  : " + AllTrim( Str( oPrn:nHComm ) )  + CRLF +;
-                  "Peso    : " + oPrn:cPeso(),;
+/8                  "Peso    : " + oPrn:cPeso(),;
                   "Puerto creado" )
 
          oPrn:End()
@@ -1276,12 +1276,7 @@ METHOD cPeso()
 
    local cPeso       := "0.000"
 
-   ?"Entro en cPeso"
-
    ::Read()
-
-   ?"Despues de leer"
-   Msginfo( ::cBuffer, "cBuffer" )
 
    if !Empty( ::cBuffer )
       cPeso          := Substr( ::cBuffer, 4, 2 ) + "." + Substr( ::cBuffer, 6, 3 )

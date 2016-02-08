@@ -770,13 +770,13 @@ RETURN lValid
 FUNCTION brwProp( oGet, oSay )
 
    local oDlg
+   local oBrw
    local oGetNbr
    local cGetNbr
-   local oBrw
-   local nOrd     := GetBrwOpt( "BrwProp" )
    local oCbxOrd
-   local aCbxOrd  := { "Código", "Nombre" }
    local cCbxOrd
+   local nOrd     := GetBrwOpt( "BrwProp" )
+   local aCbxOrd  := { "Código", "Nombre" }
    local nLevel   := nLevelUsr( "01015" )
 
    nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
@@ -853,7 +853,7 @@ FUNCTION brwProp( oGet, oSay )
          WHEN     ( nAnd( nLevel, ACC_EDIT ) != 0 ) ;
          ACTION   ( WinEdtRec( oBrw, bEdit, dbfProT ) )
 
-      oBrw:bLDblClick               := {|| oDlg:end( IDOK ) }
+      oBrw:bLDblClick            := {|| oDlg:end( IDOK ) }
 
       oDlg:AddFastKey( VK_F2,       {|| if( nAnd( nLevel, ACC_APPD ) != 0, WinAppRec( oBrw, bEdit, dbfProT ), ) } )
       oDlg:AddFastKey( VK_F3,       {|| if( nAnd( nLevel, ACC_EDIT ) != 0, WinEdtRec( oBrw, bEdit, dbfProT ), ) } )
