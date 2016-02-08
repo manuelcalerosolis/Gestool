@@ -7058,9 +7058,9 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
 
          aTmp[_NREGIVA ]   := ( D():Clientes( nView ) )->nRegIva
 
-         if !Empty( aGet[ _NREGIVA ] )
+         /*if !Empty( aGet[ _NREGIVA ] )
             aGet[ _NREGIVA ]:Refresh()
-         end if
+         end if*/
 
          lChangeRegIva( aTmp )
 
