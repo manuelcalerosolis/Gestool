@@ -19,6 +19,7 @@ CLASS TDeleleteObsoletos
    DATA lNoPre          INIT .t.
    DATA lNoVta          INIT .t.
    DATA lNoMov          INIT .t.
+   DATA lNoPro          INIT .t.
 
    DATA nAction         INIT 1
 
@@ -32,6 +33,10 @@ CLASS TDeleleteObsoletos
    DATA lTodasFamilias  INIT .t.
    DATA cFamiliaOrigen
    DATA cFamiliaDestino
+
+   DATA lTodosArticulos  INIT .t.
+   DATA cArticuloOrigen
+   DATA cArticuloDestino
 
    DATA oPedPrvT
    DATA oPedPrvL
@@ -204,12 +209,26 @@ METHOD Resource()
    local oSayFamiliaDestino
    local cSayFamiliaOrigen
    local cSayFamiliaDestino
+
+   local oArticuloOrigen
+   local oArticuloDestino
+
+   local oSayArticuloOrigen
+   local oSayArticuloDestino
+   local cSayArticuloOrigen
+   local cSayArticuloDestino
+   
    local oBmp
 
    ::cFamiliaOrigen     := dbFirst( ::oDbfFam, 1 )
    ::cFamiliaDestino    := dbLast ( ::oDbfFam, 1 )
    cSayFamiliaOrigen    := dbFirst( ::oDbfFam, 2 )
    cSayFamiliaDestino   := dbLast ( ::oDbfFam, 2 )
+
+   ::cArticuloOrigen     := dbFirst( ::oDbfArt, 1 )
+   ::cArticuloDestino    := dbLast ( ::oDbfArt, 1 )
+   cSayArticuloOrigen    := dbFirst( ::oDbfArt, 2 )
+   cSayArticuloDestino   := dbLast ( ::oDbfArt, 2 )
 
    /*
    Dialogo---------------------------------------------------------------------
@@ -266,6 +285,36 @@ METHOD Resource()
       WHEN     .f.;
       OF       ::oPages:aDialogs[ 1 ]
 
+   REDEFINE CHECKBOX ::lTodosArticulos;
+      ID       250 ;
+      OF       ::oPages:aDialogs[ 1 ]
+
+   REDEFINE GET oArticuloOrigen VAR ::cArticuloOrigen;
+      ID       260;
+      WHEN     !::lTodosArticulos ;
+      VALID    cArticulo( oArticuloOrigen, ::oDbfArt:cAlias, oSayArticuloOrigen ) ;
+      BITMAP   "LUPA" ;
+      ON HELP  BrwArticulo( oArticuloOrigen, oSayArticuloDestino ) ;
+      OF       ::oPages:aDialogs[ 1 ]
+
+   REDEFINE GET oSayArticuloOrigen VAR cSayArticuloOrigen ;
+      ID       261;
+      WHEN     .f.;
+      OF       ::oPages:aDialogs[ 1 ]
+
+   REDEFINE GET oArticuloDestino VAR ::cArticuloDestino;
+      ID       270;
+      WHEN     !::lTodosArticulos ;
+      VALID    cArticulo( oArticuloDestino, ::oDbfArt:cAlias, oSayArticuloDestino ) ;
+      BITMAP   "LUPA" ;
+      ON HELP  BrwArticulo( oArticuloDestino, oSayArticuloDestino ) ;
+      OF       ::oPages:aDialogs[ 1 ]
+
+   REDEFINE GET oSayArticuloDestino VAR cSayArticuloDestino ;
+      ID       271;
+      WHEN     .f.;
+      OF       ::oPages:aDialogs[ 1 ]
+
    REDEFINE CHECKBOX ::lNoCom ;
       ID       160 ;
       OF       ::oPages:aDialogs[ 1 ]
@@ -280,6 +329,10 @@ METHOD Resource()
 
    REDEFINE CHECKBOX ::lNoMov ;
       ID       190 ;
+      OF       ::oPages:aDialogs[ 1 ]
+
+   REDEFINE CHECKBOX ::lNoPro ;
+      ID       220 ;
       OF       ::oPages:aDialogs[ 1 ]
 
  REDEFINE APOLOMETER ::oMtrProceso ;

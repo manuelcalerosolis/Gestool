@@ -1864,21 +1864,21 @@ FONT 8, "MS Sans Serif"
   CONTROL "Procesos en curso", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 3, 0, 377, 177
 }
 
-ASS_EURO DIALOG DISCARDABLE 99, 25, 386, 248
+ASS_EURO DIALOG DISCARDABLE 99, 25, 386, 296
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Eliminar artículos sin movimientos"
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "TPages", 110, "TPages", WS_TABSTOP, 1, 39, 383, 180
-  CONTROL "< &Anterior", 401, "Button", WS_TABSTOP, 224, 230, 50, 14
-  CONTROL "Siguien&te >", 402, "Button", WS_TABSTOP, 279, 230, 50, 14
-  CONTROL "&Cancelar", 403, "Button", WS_TABSTOP, 334, 230, 50, 14
+  CONTROL "TPages", 110, "TPages", WS_TABSTOP, 1, 39, 383, 229
+  CONTROL "< &Anterior", 401, "Button", WS_TABSTOP, 224, 279, 50, 14
+  CONTROL "Siguien&te >", 402, "Button", WS_TABSTOP, 279, 279, 50, 14
+  CONTROL "&Cancelar", 403, "Button", WS_TABSTOP, 334, 279, 50, 14
   CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE|SS_REALSIZEIMAGE, 0, 1, 386, 34
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 1, 34, 385, 1
-  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 1, 224, 383, 1
+  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 1, 273, 383, 1
 }
 
-ASS_EURO01 DIALOG DISCARDABLE 99, 64, 382, 180
+ASS_EURO01 DIALOG DISCARDABLE 99, 64, 382, 232
 STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
@@ -1891,31 +1891,40 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 131, "Edit", WS_BORDER|WS_TABSTOP, 129, 64, 180, 12
   CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 58, 76, 70, 12
   CONTROL "", 141, "Edit", WS_BORDER|WS_TABSTOP, 129, 76, 180, 12
-  CONTROL "Artículos no comprados", 160, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 10, 99, 88, 10
-  CONTROL "Artículos no presupuestados", 170, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 10, 111, 104, 10
-  CONTROL "Artículos no vendidos", 180, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 10, 123, 82, 10
-  CONTROL "Artículos sin movimientos", 190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 10, 135, 94, 10
-  CONTROL "msctls_progress32", 150, "msctls_progress32", 0x00000000, 58, 164, 318, 10
+  CONTROL "Todas las artículos", 250, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 9, 97, 75, 12
+  CONTROL "", 260, "Edit", WS_BORDER|WS_TABSTOP, 58, 110, 70, 12
+  CONTROL "", 261, "Edit", WS_BORDER|WS_TABSTOP, 129, 110, 180, 12
+  CONTROL "", 270, "Edit", WS_BORDER|WS_TABSTOP, 58, 122, 70, 12
+  CONTROL "", 271, "Edit", WS_BORDER|WS_TABSTOP, 129, 122, 180, 12
+  CONTROL "Artículos no comprados", 160, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 10, 141, 88, 10
+  CONTROL "Artículos no presupuestados", 170, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 10, 153, 104, 10
+  CONTROL "Artículos no vendidos", 180, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 10, 165, 82, 10
+  CONTROL "Artículos sin movimientos", 190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 10, 177, 94, 10
+  CONTROL "Artículos sin producción", 220, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 10, 188, 94, 10
+  CONTROL "", 150, "msctls_progress32", 0x00000000, 58, 212, 318, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 9, 67, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 9, 79, 30, 8
-  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 3, 41, 376, 112
+  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 3, 41, 376, 159
   CONTROL "Desde", -1, "Static", WS_GROUP, 9, 14, 43, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 9, 26, 43, 8
   CONTROL "Fecha", -1, "Button", BS_GROUPBOX, 3, 0, 186, 39
-  CONTROL "Progreso", -1, "Button", BS_GROUPBOX, 3, 155, 376, 23
+  CONTROL "Progreso", -1, "Button", BS_GROUPBOX, 3, 203, 376, 23
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 6, 92, 369, 1
   CONTROL "Acción", -1, "Button", BS_GROUPBOX, 193, 0, 186, 39
+  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 6, 137, 369, 1
+  CONTROL "Desde", -1, "Static", WS_GROUP, 9, 113, 30, 8
+  CONTROL "Hasta", -1, "Static", WS_GROUP, 9, 125, 30, 8
 }
 
-ASS_EURO02 DIALOG DISCARDABLE 102, 64, 382, 180
+ASS_EURO02 DIALOG DISCARDABLE 102, 64, 382, 232
 STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 100, "TXBrowse", WS_TABSTOP|0x00300000, 8, 28, 367, 145
+  CONTROL "", 100, "TXBrowse", WS_TABSTOP|0x00300000, 8, 28, 367, 196
   CONTROL "Seleccionar", 130, "Button", WS_TABSTOP, 8, 11, 50, 14
   CONTROL "Todos", 110, "Button", WS_TABSTOP, 64, 11, 50, 14
   CONTROL "Ninguno", 120, "Button", WS_TABSTOP, 121, 11, 50, 14
-  CONTROL "Artículos", -1, "Button", BS_GROUPBOX, 3, 0, 376, 178
+  CONTROL "Artículos", -1, "Button", BS_GROUPBOX, 3, 0, 376, 228
 }
 
 LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US
