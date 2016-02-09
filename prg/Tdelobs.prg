@@ -63,6 +63,10 @@ CLASS TDeleleteObsoletos
    DATA oArtDiv
    DATA oArtKit
    DATA oCodeBar
+   DATA oProLin
+   DATA oProMat
+   DATA oRctPrvT
+   DATA oRctPrvL
 
    METHOD New()
 
@@ -116,6 +120,10 @@ METHOD OpenFiles()
    DATABASE NEW ::oFacPrvL PATH ( cPatEmp() ) FILE "FACPRVL.DBF"     VIA ( cDriver() )  SHARED INDEX "FACPRVL.CDX"
    ::oFacPrvL:OrdSetFocus( "cRef" )
 
+   DATABASE NEW ::oRctPrvT PATH ( cPatEmp() ) FILE "RCTPRVT.DBF"     VIA ( cDriver() )  SHARED INDEX "RCTPRVT.CDX"
+   DATABASE NEW ::oRctPrvL PATH ( cPatEmp() ) FILE "RCTPRVL.DBF"     VIA ( cDriver() )  SHARED INDEX "RCTPRVL.CDX"
+   ::oRctPrvL:OrdSetFocus( "cRef" )
+
    ::oPreCliT  := TDataCenter():oPreCliT()
    DATABASE NEW ::oPreCliL PATH ( cPatEmp() ) FILE "PRECLIL.DBF"     VIA ( cDriver() )  SHARED INDEX "PRECLIL.CDX"
    ::oPreCliL:OrdSetFocus( "cRef" )
@@ -159,8 +167,13 @@ METHOD OpenFiles()
    DATABASE NEW ::oCodeBar PATH ( cPatArt() ) FILE "ARTCODEBAR.DBF"  VIA ( cDriver() )  SHARED INDEX "ARTCODEBAR.CDX"
    ::oCodeBar:OrdSetFocus( "cCodArt" )
 
-   ::nBmp               := LoadBitmap( 0, 32760 )
+   DATABASE NEW ::oProLin PATH ( cPatEmp() ) FILE "PROLIN.DBF"  VIA ( cDriver() )  SHARED INDEX "PROLIN.CDX"
+   ::oProLin:OrdSetFocus( "cCodArt" )
 
+   DATABASE NEW ::oProMat PATH ( cPatEmp() ) FILE "PROMAT.DBF"  VIA ( cDriver() )  SHARED INDEX "PROMAT.CDX"
+   ::oProMat:OrdSetFocus( "cCodArt" )
+
+   ::nBmp               := LoadBitmap( 0, 32760 )
 
 Return ( Self )
 
@@ -174,6 +187,8 @@ METHOD CloseFiles()
    ::oAlbPrvL:End()
    ::oFacPrvT:End()
    ::oFacPrvL:End()
+   ::oRctPrvT:End()
+   ::oRctPrvL:End()
    ::oPreCliT:End()
    ::oPreCliL:End()
    ::oPedCliT:End()
@@ -193,6 +208,8 @@ METHOD CloseFiles()
    ::oArtDiv:End()
    ::oArtKit:End()
    ::oCodeBar:End()
+   ::oProLin:End()
+   ::oProMat:End()
 
    DeleteObject( ::nBmp )
 
@@ -464,11 +481,16 @@ METHOD Search()
    ::oDbfArt:GoTop()
    while !::oDbfArt:Eof()
 
-      if ::lTodasFamilias  .or.;
-         ( ::oDbfArt:Familia >= ::cFamiliaOrigen .and. ::oDbfArt:Familia <= ::cFamiliaDestino )
+      if ::lTodosArticulos  .or.;
+         ( ::oDbfArt:Codigo >= ::cArticuloOrigen .and. ::oDbfArt:Codigo <= ::cArticuloDestino )
 
-         if ::lNoHayMovimientos()
-            aAdd( ::aArticulos, { .t., ::oDbfArt:Codigo, ::oDbfArt:Nombre } )
+         if ::lTodasFamilias  .or.;
+            ( ::oDbfArt:Familia >= ::cFamiliaOrigen .and. ::oDbfArt:Familia <= ::cFamiliaDestino )
+
+            if ::lNoHayMovimientos()
+               aAdd( ::aArticulos, { .t., ::oDbfArt:Codigo, ::oDbfArt:Nombre } )
+            end if
+
          end if
 
       end if
@@ -545,6 +567,24 @@ METHOD lNoHayMovimientos()
             end if
 
             ::oFacPrvL:Skip()
+
+         end while
+
+      end if
+
+      if ::oRctPrvL:Seek( cCodArt )
+
+         while ::oRctPrvL:cRef == cCodArt .and. !::oRctPrvL:Eof()
+
+            dFecha   := dFecRctPrv( ::oRctPrvL:cSerFac + Str( ::oRctPrvL:nNumFac ) + ::oRctPrvL:cSufFac, ::oRctPrvT:cAlias )
+
+            if dFecha >= ::dFechaInicial .and. dFecha <= ::dFechaFinal
+
+               Return .f.
+
+            end if
+
+            ::oRctPrvL:Skip()
 
          end while
 
@@ -688,6 +728,42 @@ METHOD lNoHayMovimientos()
 
    end if
 
+   if ::lNoPro
+
+      if ::oProMat:Seek( cCodArt )
+
+         while ::oProMat:cCodArt == cCodArt .and. !::oProMat:Eof()
+
+            if ::oProMat:dFecOrd >= ::dFechaInicial .and. ::oProMat:dFecOrd <= ::dFechaFinal
+
+               Return .f.
+
+            end if
+
+            ::oProMat:Skip()
+
+         end while
+
+      end if
+
+      if ::oProLin:Seek( cCodArt )
+
+         while ::oProLin:cCodArt == cCodArt .and. !::oProLin:Eof()
+
+            if ::oProLin:dFecOrd >= ::dFechaInicial .and. ::oProLin:dFecOrd <= ::dFechaFinal
+
+               Return .f.
+
+            end if
+
+            ::oProLin:Skip()
+
+         end while
+
+      end if
+
+   end if   
+
 RETURN .t.
 
 //---------------------------------------------------------------------------//
@@ -748,9 +824,7 @@ METHOD BorraSeleccionados()
 
             if ::oDbfArt:Seek( ::aArticulos[ n, 2 ] )
                ::oDbfArt:Load()
-               if !::oDbfArt:lNevObs
-                  ::oDbfArt:lObs := .t.
-               end if
+               ::oDbfArt:lObs := .t.
                ::oDbfArt:Save()
             end if
 

@@ -940,6 +940,17 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    end with
 
    with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Obsoleto"
+      :nHeadBmpNo       := 3
+      :bStrData         := {|| "" }
+      :bEditValue       := {|| ( D():Articulos( nView ) )->lObs }
+      :nWidth           := 18
+      :lHide            := .t.
+      :SetCheck( { "Cnt16", "Nil16" } )
+      :AddResource( "DEL16" )
+   end with
+
+   with object ( oWndBrw:AddXCol() )
       :cHeader          := "Publicar"
       :cSortOrder       := "lPubInt"
       :nHeadBmpNo       := 3
