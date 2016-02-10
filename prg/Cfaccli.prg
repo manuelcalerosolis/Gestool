@@ -5300,24 +5300,6 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
 
       else
 
-/*
-         EnlaceA3():getInstance():Add( {  "Empresa"               => cEmpCnt( ( dbfFacCliP )->cSerie ),;
-                                          "FechaVencimiento"      => ( dbfFacCliP )->dFecVto,;
-                                          "Cuenta"                => cCtaCli,;
-                                          "DescripcionCuenta"     => cNombreCliente,;
-                                          "TipoRegistro"          => 'V',; 
-                                          "TipoVencimiento"       => 'C',; // Cobro
-                                          "NumeroFactura"         => cRecibo,; 
-                                          "DescripcionVencimiento"=> cConcepto,;
-                                          "ImporteVencimiento"    => nImpRec,;
-                                          "FechaFactura"          => ( dbfFacCliT )->dFecFac,;
-                                          "CuentaTesoreria"       => cCtaPgo,;
-                                          "FormaPago"             => '  ',;
-                                          "NumeroVencimiento"     => ( dbfFacCliP )->nNumRec,;
-                                          "Moneda"                => 'E',; // Euros
-                                          "Render"                => 'ReciboFactura' } )
-*/
-
          EnlaceA3():getInstance():Add( {  "Empresa"               => cEmpCnt( ( dbfFacCliP )->cSerie ),;
                                           "Fecha"                 => ( dbfFacCliP )->dEntrada,;
                                           "TipoRegistro"          => '0',; 
@@ -5329,7 +5311,6 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
                                           "Importe"               => nImpRec,;
                                           "Moneda"                => 'E',; 
                                           "Render"                => 'ApuntesSinIVA' } )
-
 
          EnlaceA3():getInstance():Add( {  "Empresa"               => cEmpCnt( ( dbfFacCliP )->cSerie ),;
                                           "Fecha"                 => ( dbfFacCliP )->dEntrada,;

@@ -15268,25 +15268,25 @@ Return .t.
 function nUnidadesRecibidasAlbCli( cNumPed, cCodArt, cCodPr1, cCodPr2, cValPr1, cValPr2, cAlbCliL )
 
    local nTot        := 0
-   local aStaLin     := aGetStatus( cAlbCliL, .f. )
+   local aStatus     := aGetStatus( cAlbCliL, .f. )
 
    DEFAULT cCodPr1   := Space( 20 )
    DEFAULT cCodPr2   := Space( 20 )
    DEFAULT cValPr1   := Space( 20 )
    DEFAULT cValPr2   := Space( 20 )
 
-   ( cAlbCliL )->( OrdSetFocus( "cNumPedRef" ) )
+   ( cAlbCliL )->( ordsetfocus( "cNumPedRef" ) )
 
-   if ( cAlbCliL )->( dbSeek( cNumPed + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) )
+   if ( cAlbCliL )->( dbseek( cNumPed + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) )
       
       while ( cAlbCliL )->cNumPed + ( cAlbCliL )->cRef + ( cAlbCliL )->cCodPr1 + ( cAlbCliL )->cCodPr2 + ( cAlbCliL )->cValPr1 + ( cAlbCliL )->cValPr2 == cNumPed + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 .and. !( cAlbCliL )->( eof() )
          nTot        += nTotNAlbCli( cAlbCliL )
-         ( cAlbCliL )->( dbSkip() )
+         ( cAlbCliL )->( dbskip() )
       end while
 
    end if
 
-   SetStatus( cAlbCliL, aStaLin )
+   SetStatus( cAlbCliL, aStatus )
 
 return ( nTot )
 

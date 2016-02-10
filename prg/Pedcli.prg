@@ -15933,6 +15933,12 @@ Function nombreSegundaPropiedadPedidosClientesLineas()
 Return ( nombrePropiedad( ( D():PedidosClientesLineas( nView ) )->cCodPr2, ( D():PedidosClientesLineas( nView ) )->cValPr2, nView ) )
 
 //---------------------------------------------------------------------------//
+
+Function unidadesRecibidasPedidosClientesLineas()
+
+Return ( nUnidadesRecibidasAlbCli( D():PedidosClientesLineasId( nView ), ( D():PedidosClientesLineas( nView ) )->cRef, ( D():PedidosClientesLineas( nView ) )->cCodPr1, ( D():PedidosClientesLineas( nView ) )->cCodPr2, ( D():PedidosClientesLineas( nView ) )->cValPr1, ( D():PedidosClientesLineas( nView ) )->cValPr2, D():AlbaranesClientesLineas( nView ) ) )
+
+//---------------------------------------------------------------------------//
 //
 // Numero de unidades por linea------------------------------------------------
 //

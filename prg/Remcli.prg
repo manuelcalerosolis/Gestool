@@ -135,8 +135,8 @@ CLASS TRemesas FROM TMasDet
 
    METHOD Report()
 
-   METHOD Conta()
-   METHOD ChangeConta( lConta )
+   METHOD contabilizaRemesas()
+   METHOD cambiaEstadoContabilizadoRemesas( lConta )
    METHOD lContabilizaRecibos( lConta )
 
    METHOD cRetCtaRem()
@@ -154,6 +154,8 @@ CLASS TRemesas FROM TMasDet
    METHOD EndEdtRecMenu()
 
    METHOD ChangeExport()
+
+   METHOD getSerieRecibos()
 
    METHOD TipoRemesa()              INLINE ( if( ::oDbf:nTipRem == 2, "Descuento", "Pago" ) )
 
@@ -174,7 +176,7 @@ CLASS TRemesas FROM TMasDet
    METHOD IdDocumento()             INLINE ( ::oDbfDet:cSerie + AllTrim( Str( ::oDbfDet:nNumFac ) ) +  ::oDbfDet:cSufFac )
    METHOD ImporteDocumento()        INLINE ( ::oDbfDet:nImporte )
 
-   METHOD CuentaRemesa()            INLINE ( ::oCtaRem:oDbf:cPaisIBAN + ::oCtaRem:oDbf:cCtrlIBAN + ::oCtaRem:oDbf:cEntBan + ::oCtaRem:oDbf:cAgcBan + ::oCtaRem:oDbf:cDgcBan + ::oCtaRem:oDbf:cCtaBan )
+   METHOD bancoRemesa()             INLINE ( ::oCtaRem:oDbf:cPaisIBAN + ::oCtaRem:oDbf:cCtrlIBAN + ::oCtaRem:oDbf:cEntBan + ::oCtaRem:oDbf:cAgcBan + ::oCtaRem:oDbf:cDgcBan + ::oCtaRem:oDbf:cCtaBan )
 
    METHOD inicializaData()
 
@@ -432,14 +434,14 @@ METHOD Activate()
 
       DEFINE BTNSHELL RESOURCE "BmpConta" OF ::oWndBrw ;
          NOBORDER ;
-         ACTION   ( ::SelectRec( {|| ::Conta( ::lChkSelect ) }, "Contabilizar remesas", "Simular" , .f. ) ) ;
+         ACTION   ( ::SelectRec( {|| ::contabilizaRemesas( ::lChkSelect ) }, "Contabilizar remesas", "Simular" , .f. ) ) ;
          TOOLTIP  "(C)ontabilizar" ;
          HOTKEY   "C";
          LEVEL    4
 
       DEFINE BTNSHELL RESOURCE "CHGSTATE" OF ::oWndBrw ;
 			NOBORDER ;
-         ACTION   ( ::SelectRec( {|| ::ChangeConta( ::lChkSelect ) }, "Cambiar estado", "Contabilizado" , .f. ) ) ;
+         ACTION   ( ::SelectRec( {|| ::cambiaEstadoContabilizadoRemesas( ::lChkSelect ) }, "Cambiar estado", "Contabilizado" , .f. ) ) ;
          TOOLTIP  "Cambiar es(t)ado" ;
          HOTKEY   "T";
          LEVEL    4
@@ -1463,7 +1465,7 @@ METHOD InitMod58( oDlg )
 
    end if
 
-   if ApoloMsgNoYes( "Proceso de exportación realizado con éxito" + CRLF + ;
+   if apoloMsgNoYes( "Proceso de exportación realizado con éxito" + CRLF + ;
                      "¿ Desea abrir el fichero resultante ?", "Elija una opción." )
       ShellExecute( 0, "open", ::cFicheroExportacion, , , 1 )
    end if
@@ -1772,21 +1774,19 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Conta( lSimula )
+METHOD contabilizaRemesas( lSimula )
 
-   local cCtaCli     := ""
-   local cCtaCliCta
-   local cCtaCliDto  := ""
-   local aSimula     := {}
-   local cCodPro     := cProCnt()
-   local cRuta       := cRutCnt()
-   local cCodEmp     := cCodEmpCnt( "A" )
-   local cCtaCon     := ::oCtaRem:cRetCtaCon( ::oDbf:cCodRem )
-   local cCtaBcoDto  := ::oCtaRem:cRetCtaDto( ::oDbf:cCodRem )
    local nAsiento
-   local cTerNif     := Space(1)
-   local cTerNom     := Space(1)
-   local lErrorFound := .f.
+   local cCuentaPago    := ""
+   local cCuentaCliente := ""
+   local cNombreCliente := ""
+   local aSimula        := {}
+   local cCodPro        := cProCnt()
+   local cRuta          := cRutCnt()
+   local cTerNif        := Space(1)
+   local cTerNom        := Space(1)
+   local lErrorFound    := .f.
+   local cCodEmp        := cCodEmpCnt( "A" )
 
    /*
 	Chequando antes de pasar a Contaplus
@@ -1794,7 +1794,7 @@ METHOD Conta( lSimula )
 	*/
 
    if ::oDbf:lConta
-      if !ApoloMsgNoYes(  "Remesa : " + ::cNumRem() + " contabilizada." + CRLF + "¿ Desea contabilizarla de nuevo ?" )
+      if !ApoloMsgNoYes( "Remesa : " + ::cNumRem() + " contabilizada." + CRLF + "¿ Desea contabilizarla de nuevo ?" )
          return .f.
       end if
    end if
@@ -1815,56 +1815,42 @@ METHOD Conta( lSimula )
    end if
 
 	/*
-   Chequeamos los valores de cuentas de banco
+	Estudio si existe cuenta pago 
 	--------------------------------------------------------------------------
 	*/
 
-   if !::lChkSelect .and. !ChkSubcuenta( cRuta, cCodEmp, cCtaCon, , .f., .f. )
-      ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " subcuenta " + cCtaCon + " no encontada.", 0 )
+   if ::oDbf:nTipRem == 2
+      cCuentaPago          := ::oCtaRem:cRetCtaDto( ::oDbf:cCodRem )
+   else
+      cCuentaPago          := ::oCtaRem:cRetCtaCon( ::oDbf:cCodRem )
+   end if 
+
+   if ::oDbf:nTipRem == 2 .and. !ChkSubcuenta( cRuta, cCodEmp, cCuentaPago, , .f., .f. )
+      ::oTreeSelect:Add( "Cuenta : " + rtrim( cCuentaPago ) + " de pago remesa no existe.", 0 )
       lErrorFound          := .t.
    end if
 
-	/*
-	Estudio de los Articulos de una factura
-	--------------------------------------------------------------------------
-	*/
-
-
-   if !ChkSubcuenta( cRuta, cCodEmp, cCtaCon, , .f., .f. )
-      ::oTreeSelect:Add( "Cuenta : " + rtrim( cCtaCon ) + " banco no existe.", 0 )
-      lErrorFound          := .t.
-   end if
-
-   if ::oDbf:nTipRem == 2 .and. !ChkSubcuenta( cRuta, cCodEmp, cCtaBcoDto, , .f., .f. )
-      ::oTreeSelect:Add( "Cuenta : " + rtrim( cCtaBcoDto ) + " de descuento banco no existe.", 0 )
-      lErrorFound          := .t.
-   end if
+   // Procesamos todos los recibos---------------------------------------------
 
    if ::oDbfDet:Seek( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem )
 
       while Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == Str( ::oDbfDet:nNumRem ) + ::oDbfDet:cSufRem .and. !::oDbfDet:eof()
 
+         // Chequeo de cuentas de clientes-------------------------------------
+
+         cCuentaCliente          := ""
          if ::oClientes:Seek( ::oDbfDet:cCodCli )
-            cCtaCli        := ::oClientes:SubCta
-            cCtaCliCta     := ::oClientes:SubCtaDto
-         else
-            cCtaCli        := ""
-            cCtaCliCta     := ""
-         end if
+            if ::oDbf:nTipRem == 2
+               cCuentaCliente    := ::oClientes:SubCtaDto
+            else
+               cCuentaCliente    := ::oClientes:SubCta
+            end if
+         end if 
 
-         if !ChkSubcuenta( cRuta, cCodEmp, cCtaCli, , .f., .f. )
-            ::oTreeSelect:Add( "Cliente : " + rtrim( ::oClientes:Titulo ) + " cuenta contable no existe.", 0 )
+         if !ChkSubcuenta( cRuta, cCodEmp, cCuentaCliente, , .f., .f. )
+            ::oTreeSelect:Add( "Cliente : " + Rtrim( ::oClientes:Titulo ) + " cuenta cliente no existe.", 0 )
             lErrorFound    := .t.
-         end if
-
-         /*
-         Chequear en caso de remesas de descuento
-         */
-
-         if ::oDbf:nTipRem == 2 .and. !ChkSubcuenta( cRuta, cCodEmp, cCtaCliDto, , .f., .f. )
-            ::oTreeSelect:Add( "Cliente : " + Rtrim( ::oClientes:Titulo ) + " cuenta descuento no existe.", 0 )
-            lErrorFound    := .t.
-         end if
+         end if 
 
          ::oDbfDet:Skip()
 
@@ -1904,147 +1890,16 @@ METHOD Conta( lSimula )
       Return .f.
    end if
 
-   if ::oDbf:nTipRem == 2
-
-   aadd( aSimula, MkAsiento(  nAsiento, ;
-                              ::oDbf:cCodDiv,;
-                              ::oDbf:dConta,;
-                              cCtaBcoDto,;
-                              ,;
-                              ::nTotRem( .f. ),;
-                              "Pago remesa",;
-                              ,;
-                              ,;
-                              ,;
-                              ,;
-                              ,;
-                              ,;
-                              cCodPro,;
-                              ,;
-                              ,;
-                              ,;
-                              ,;
-                              lSimula,;
-                              cTerNif,;
-                              cTerNom ) )
-
-   else
-
-   aadd( aSimula, MkAsiento(  nAsiento, ;
-                              ::oDbf:cCodDiv,;
-                              ::oDbf:dConta,;
-                              cCtaCon,;
-                              ,;
-                              ::nTotRem( .f. ),;
-                              "Pago remesa",;
-                              ,;
-                              ,;
-                              ,;
-                              ,;
-                              ,;
-                              ,;
-                              cCodPro,;
-                              ,;
-                              ,;
-                              ,;
-                              ,;
-                              lSimula,;
-                              cTerNif,;
-                              cTerNom ) )
-
-   end if
-
-	/*
-	Asientos de Ventas
-	-------------------------------------------------------------------------
-	*/
-
-   if ::oDbfDet:Seek( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem )
-
-      while Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == Str( ::oDbfDet:nNumRem ) + ::oDbfDet:cSufRem .and. !::oDbf:Eof()
-
-         if ::oClientes:Seek( ::oDbfDet:cCodCli )
-            cCtaCli        := ::oClientes:SubCta
-         else
-            cCtaCli        := ""
-         end if
-
-         aadd( aSimula, MkAsiento(  nAsiento, ;
-                                    ::oDbf:cCodDiv,;
-                                    ::oDbf:dConta,;
-                                    cCtaCli,;
-                                    ,;
-                                    ,;
-                                    "Pago remesa " + AllTrim( ::oDbfDet:cSerie + "/" + Str( ::oDbfDet:nNumFac ) + "/" + ::oDbfDet:cSufFac ),;
-                                    nTotRecCli( ::oDbfDet:cAlias, ::oDivisas:cAlias, ::oDbf:cCodDiv, .f. ),;
-                                    ::oDbfDet:cSerie + Str( ::oDbfDet:nNumFac ) + ::oDbfDet:cSufFac,;
-                                    ,;
-                                    ,;
-                                    ,;
-                                    ,;
-                                    cCodPro,;
-                                    ,;
-                                    ,;
-                                    ,;
-                                    ,;
-                                    lSimula,;
-                                    cTerNif,;
-                                    cTerNom ) )
-
-         ::oDbfDet:Skip()
-
-      end while
-
-   end if
-
-   if ::oDbf:nTipRem == 2
-
-      if ::oDbfDet:Seek( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem )
-
-         while Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == Str( ::oDbfDet:nNumRem ) + ::oDbfDet:cSufRem .and. !::oDbf:Eof()
-
-            if ::oClientes:Seek( ::oDbfDet:cCodCli )
-               cCtaCli        := ::oClientes:SubCtaDto
-            else
-               cCtaCli        := ""
-            end if
-
-            aadd( aSimula, MkAsiento(  nAsiento, ;
-                                       ::oDbf:cCodDiv,;
-                                       ::oDbf:dConta,;
-                                       cCtaCli,;
-                                       ,;
-                                       nTotRecCli( ::oDbfDet:cAlias, ::oDivisas:cAlias, ::oDbf:cCodDiv, .f. ),;
-                                       "Pago remesa " + AllTrim( ::oDbfDet:cSerie + "/" + Str( ::oDbfDet:nNumFac ) + "/" + ::oDbfDet:cSufFac ),;
-                                       ,;
-                                       ::oDbfDet:cSerie + Str( ::oDbfDet:nNumFac ) + ::oDbfDet:cSufFac,;
-                                       ,;
-                                       ,;
-                                       ,;
-                                       ,;
-                                       cCodPro,;
-                                       ,;
-                                       ,;
-                                       ,;
-                                       ,;
-                                       lSimula,;
-                                       cTerNif,;
-                                       cTerNom ) )
-
-            ::oDbfDet:Skip()
-
-         end while
-
-      end if
+   if lAplicacionContaplus()
 
       aadd( aSimula, MkAsiento(  nAsiento, ;
                                  ::oDbf:cCodDiv,;
                                  ::oDbf:dConta,;
-                                 cCtaBcoDto,;
+                                 cCuentaPago,;
                                  ,;
-                                 ,;
-                                 "Pago remesa",;
                                  ::nTotRem( .f. ),;
+                                 "Cobro remesa " + ::cNumRem(),;
+                                 ,;
                                  ,;
                                  ,;
                                  ,;
@@ -2059,6 +1914,86 @@ METHOD Conta( lSimula )
                                  cTerNif,;
                                  cTerNom ) )
 
+   else 
+
+      EnlaceA3():getInstance():Add( {  "Empresa"               => cCodEmp,;
+                                       "Fecha"                 => ::oDbf:dConta,;
+                                       "TipoRegistro"          => '0',; 
+                                       "Cuenta"                => cCuentaPago,;
+                                       "DescripcionCuenta"     => "Cobro remesa " + ::cNumRem(),;
+                                       "TipoImporte"           => 'D',; 
+                                       "ReferenciaDocumento"   => ::cNumRem(),;
+                                       "DescripcionApunte"     => "Cobro remesa " + ::cNumRem(),;
+                                       "Importe"               => ::nTotRem( .f. ),;
+                                       "Moneda"                => 'E',; 
+                                       "Render"                => 'ApuntesSinIVA' } )
+
+   end if 
+
+	/*
+	Asientos de Ventas
+	-------------------------------------------------------------------------
+	*/
+
+   if ::oDbfDet:Seek( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem )
+
+      while Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == Str( ::oDbfDet:nNumRem ) + ::oDbfDet:cSufRem .and. !::oDbf:Eof()
+
+         cCuentaCliente          := ""
+         cNombreCliente          := ""
+         if ::oClientes:Seek( ::oDbfDet:cCodCli )
+            if ::oDbf:nTipRem == 2
+               cCuentaCliente    := ::oClientes:SubCtaDto
+            else
+               cCuentaCliente    := ::oClientes:SubCta
+            end if 
+            cNombreCliente       := ::oClientes:Titulo
+         end if
+
+         if lAplicacionContaplus()
+
+            aadd( aSimula, MkAsiento(  nAsiento, ;
+                                       ::oDbf:cCodDiv,;
+                                       ::oDbf:dConta,;
+                                       cCuentaCliente,;
+                                       ,;
+                                       ,;
+                                       "Cobro fra. " + ::oDbfDet:cSerie + "/" + alltrim( str( ::oDbfDet:nNumFac ) ) + "/" + ::oDbfDet:cSufFac,;
+                                       nTotRecCli( ::oDbfDet:cAlias, ::oDivisas:cAlias, ::oDbf:cCodDiv, .f. ),;
+                                       ::oDbfDet:cSerie + str( ::oDbfDet:nNumFac ) + ::oDbfDet:cSufFac,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       cCodPro,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       lSimula,;
+                                       cTerNif,;
+                                       cTerNom ) )
+
+         else 
+      
+            EnlaceA3():getInstance():Add( {  "Empresa"               => cCodEmp,;
+                                             "Fecha"                 => ::oDbf:dConta,;
+                                             "TipoRegistro"          => '0',; 
+                                             "Cuenta"                => cCuentaCliente,;
+                                             "DescripcionCuenta"     => cNombreCliente,;
+                                             "TipoImporte"           => 'H',; 
+                                             "ReferenciaDocumento"   => ::cNumRem(),;
+                                             "DescripcionApunte"     => "Cobro fra. " + ::oDbfDet:cSerie + "/" + alltrim( str( ::oDbfDet:nNumFac ) ) + "/" + ::oDbfDet:cSufFac,;
+                                             "Importe"               => nTotRecCli( ::oDbfDet:cAlias, ::oDivisas:cAlias, ::oDbf:cCodDiv, .f. ),;
+                                             "Moneda"                => 'E',; 
+                                             "Render"                => 'ApuntesSinIVA' } )
+
+         end if 
+
+         ::oDbfDet:Skip()
+
+      end while
+
    end if
 
    /*
@@ -2068,13 +2003,25 @@ METHOD Conta( lSimula )
 
    if !lSimula .and. !lErrorFound
 
-      ::ChangeConta( .t. )
+      ::cambiaEstadoContabilizadoRemesas( .t. )
 
-      ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " asiento generado num. " + Alltrim( Str( nAsiento ) ), 0 )
+      if lAplicacionA3()
+
+         if EnlaceA3():getInstance():Render():writeASCII()
+            ::oTreeSelect:Add( "Fichero " + ( EnlaceA3():getInstance():cDirectory + "\" + EnlaceA3():getInstance():cFile ) + " exportado con exito.", 1 )
+         end if 
+         
+         EnlaceA3():getInstance():destroyInstance() 
+
+      else
+         
+         ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " asiento generado num. " + alltrim( str( nAsiento ) ), 1 )
+
+      end if 
 
    else
 
-      msgTblCon( aSimula, ::oDbf:cCodDiv, ::oDivisas:cAlias, !lErrorFound, ::cNumRem(), {|| aWriteAsiento( aSimula, ::oDbf:cCodDiv, .t., ::oTreeSelect, ::cNumRem(), nAsiento ), ::ChangeConta( .t. ) } )
+      msgTblCon( aSimula, ::oDbf:cCodDiv, ::oDivisas:cAlias, !lErrorFound, ::cNumRem(), {|| aWriteAsiento( aSimula, ::oDbf:cCodDiv, .t., ::oTreeSelect, ::cNumRem(), nAsiento ), ::cambiaEstadoContabilizadoRemesas( .t. ) } )
 
    end if
 
@@ -2162,7 +2109,7 @@ RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
-METHOD ChangeConta( lConta )
+METHOD cambiaEstadoContabilizadoRemesas( lConta )
 
    ::oDbf:FieldPutByName( "lConta", lConta )
 
@@ -2775,7 +2722,7 @@ METHOD InsertAcreedor()
       :Provincia(    ::oCtaRem:oDbf:cProAcr )
       :Pais(         ::oCtaRem:oDbf:cPaiAcr )
       :Nif(          ::oCtaRem:oDbf:cNifPre )
-      :CuentaIBAN(   ::CuentaRemesa() )    
+      :CuentaIBAN(   ::bancoRemesa() )    
    end with
 
 RETURN ( Self )
@@ -2850,5 +2797,17 @@ METHOD ChangeExport()
    ::oFecExp:Refresh()
 
 RETURN .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD getSerieRecibos()
+
+   local cSerieRecibo   := ''
+
+   if ::oDbfDet:Seek( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem )
+      cSerieRecibo      := ::oDbfDet:cSerie
+   end if 
+
+RETURN ( cSerieRecibo )   
 
 //---------------------------------------------------------------------------//

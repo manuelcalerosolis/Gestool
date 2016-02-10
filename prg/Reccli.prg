@@ -461,7 +461,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Número"
          :cSortOrder       := "nNumFac"
-         :bEditValue       := {|| ( dbfFacCliP )->cSerie + "/" + AllTrim( Str( ( dbfFacCliP )->nNumFac ) ) + "-" + Alltrim( Str( ( dbfFacCliP )->nNumRec ) ) }
+         :bEditValue       := {|| ( dbfFacCliP )->cSerie + "/" + alltrim( str( ( dbfFacCliP )->nNumFac ) ) + "-" + alltrim( str( ( dbfFacCliP )->nNumRec ) ) }
          :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with

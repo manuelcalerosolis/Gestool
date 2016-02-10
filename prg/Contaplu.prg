@@ -1348,8 +1348,7 @@ FUNCTION MkAsiento( 	Asien,;
                      cNif,;
                      cNombre,;
                      nEjeCon,;
-                     cEjeCta,;
-                     cRenderA3 )
+                     cEjeCta )
 
    local cSerie            := "A"
    local oError
@@ -2659,6 +2658,7 @@ CLASS EnlaceA3
    METHOD Directory( cValue )             INLINE ( if( !Empty( cValue ), ::cDirectory        := cValue,                 ::cDirectory ) )
    METHOD File( cValue )                  INLINE ( if( !Empty( cValue ), ::cFile             := cValue,                 ::cFile ) )
    METHOD cDate( dValue )                 INLINE ( if( !Empty( dValue ), ::cDate             := DateToString( dValue ), ::cDate ) )
+   METHOD cFullFile()                     INLINE ( ::cDirectory + "\" + ::cFile )
    
    METHOD Render()
    METHOD AutoRender()
@@ -2689,8 +2689,6 @@ CLASS EnlaceA3
    METHOD NIF()                           INLINE ( ::appendBuffer( padr( trimNif( ::hAsiento[ "Nif" ] ), 14 ) ) )
    METHOD NombreCliente()                 INLINE ( ::appendBuffer( padr( ::hAsiento[ "NombreCliente" ], 40 ) ) )
    METHOD CodigoPostal()                  INLINE ( ::appendBuffer( padr( ::hAsiento[ "CodigoPostal" ], 5 ) ) )
-
-
    
    METHOD FechaOperacion()                INLINE ( ::appendBuffer( dtos( ::hAsiento[ "FechaOperacion"] ) ) )
    METHOD FechaFactura()                  INLINE ( ::appendBuffer( dtos( ::hAsiento[ "FechaFactura"] ) ) )
@@ -2934,9 +2932,9 @@ ENDCLASS
 
    METHOD GenerateFile() CLASS EnlaceA3
 
-      ferase( ::cDirectory + "\" + ::cFile )
+      ferase( ::cFullFile() )
 
-      ::hFile        := fCreate( ::cDirectory + "\" + ::cFile )
+      ::hFile        := fCreate( ::cFullFile() )
 
    RETURN ( Self )   
 
@@ -2944,10 +2942,10 @@ ENDCLASS
 
    METHOD WriteASCII() CLASS EnlaceA3
 
-      ferase( ::cDirectory + "\" + ::cFile )
+      ferase( ::cFullFile() )
 
-      if !file( ::cDirectory + "\" + ::cFile ) .or. empty( ::hFile )
-         ::hFile     := fCreate( ::cDirectory + "\" + ::cFile )
+      if !file( ::cFullFile() ) .or. empty( ::hFile )
+         ::hFile     := fCreate( ::cFullFile() )
       end if 
 
       if !empty( ::hFile )
@@ -2958,11 +2956,18 @@ ENDCLASS
          ::cBuffer   := ""
          ::aAsiento  := {}
 
-         msgInfo( "Fichero " + ( ::cDirectory + "\" + ::cFile ) + " exportado con exito.")
+         if apoloMsgNoYes( "Proceso de exportación realizado con éxito" + CRLF + ;
+                           "en fichero " + ( ::cFullFile() )            + CRLF + ;
+                           "¿ Desea abrir el fichero resultante ?",;
+                           "Elija una opción." )
+            shellExecute( 0, "open", ( ::cDirectory + "\" + ::cFile ), , , 1 )
+         end if
+
+         Return .t.
 
       end if
 
-   Return ( Self )
+   Return ( .f. )
 
 //------------------------------------------------------------------------//
 
