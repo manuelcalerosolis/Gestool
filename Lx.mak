@@ -1052,6 +1052,7 @@ CodigosPostales.prg     \
 Provincias.prg          \
 CamposExtra.prg         \
 DetCamposExtra.prg      \
+TScripts.prg            \
 
 C               =       \
 Metafi32.c              \
@@ -2094,6 +2095,7 @@ CodigosPostales.obj     \
 Provincias.obj          \
 CamposExtra.obj         \
 DetCamposExtra.obj      \
+TScripts.obj            \
 
 .PRG.OBJ:
    $(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -3142,6 +3144,7 @@ $(OBJ)\CodigosPostales.obj       +
 $(OBJ)\Provincias.obj            +
 $(OBJ)\CamposExtra.obj           +
 $(OBJ)\DetCamposExtra.obj        +
+$(OBJ)\TScripts.obj              +
 $(OBJ)\EstadoSat.obj             
 $<,$*
 $(FWLIB)\FiveH.lib               +

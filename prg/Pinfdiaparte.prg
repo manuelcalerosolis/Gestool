@@ -57,7 +57,7 @@ METHOD OpenFiles() CLASS PInfDiaParte
 
    BEGIN SEQUENCE
 
-      ::oProduccT    := TProduccion():New( cPatEmp() )
+      ::oProduccT    := TProduccion():New( cPatEmp(), cDriver(), oWnd(), "04008" )
       ::oProduccT:OpenFiles()
 
    RECOVER

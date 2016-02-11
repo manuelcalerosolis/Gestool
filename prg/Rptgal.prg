@@ -2360,12 +2360,6 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Function TScripts()
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
 Function cNameVersion()
 
 Return nil
@@ -2535,6 +2529,18 @@ Function TConversionPedidosProveedores()
 Return nil
 
 Function TGeneracionAlbaranesClientes()
+Return nil
+
+Function SepaXml()
+Return nil
+
+Function Id_File()
+Return nil
+
+Function SepaDebitactor()
+Return nil
+
+Function sDate()
 Return nil
 
 //------------------------------------------------------------------//
