@@ -3,12 +3,21 @@
 #include "Factu.ch" 
 #include "Ini.ch"
 #include "MesDbf.ch"
-#include "Report.ch"
-#include "Print.ch"
+
+#define OFN_PATHMUSTEXIST            0x00000800
+#define OFN_NOCHANGEDIR              0x00000008
+#define OFN_ALLOWMULTISELECT         0x00000200
+#define OFN_EXPLORER                 0x00080000     // new look commdlg
+#define OFN_LONGNAMES                0x00200000     // force long names for 3.x modules
+#define OFN_ENABLESIZING             0x00800000
+#define _ICG_LINE_LEN_               211
+
+static nView
+static nNumAlb
 
 //----------------------------------------------------------------------------//
 
-Function IcgMotor( nView )
+Function IcgMotor( nVie )
 
    local oDlg
    local aFichero
@@ -20,6 +29,7 @@ Function IcgMotor( nView )
    aFichero                         := {}
    cInforme                         := ""
    lIncidencia                      := .f.
+   nView                            := nVie
 
    DEFINE DIALOG oDlg RESOURCE "ImportarICG"
 
@@ -204,7 +214,9 @@ STATIC FUNCTION IcgAlbPrv( aFichero, oDlg, oInforme )
 
       else
 
-         cInforme                   += "No existe el fichero " + cFilEdm + CRLF
+         if !Empty( cFilEdm )
+            cInforme                   += "No existe el fichero " + cFilEdm + CRLF
+         end if
 
       end if
 
@@ -337,6 +349,8 @@ Static Function IcgCabAlbPrv( cSerDoc, nNumDoc, cSufDoc, dFecDoc )
       ( D():AlbaranesProveedores( nView ) )->cCodDlg    := oUser():cDelegacion()
       ( D():AlbaranesProveedores( nView ) )->cCodCaj    := oUser():cCaja()
       ( D():AlbaranesProveedores( nView ) )->cTurAlb    := cCurSesion()
+      ( D():AlbaranesProveedores( nView ) )->lFacturado := .f.
+      ( D():AlbaranesProveedores( nView ) )->nFacturado := 1
 
       ( D():AlbaranesProveedores( nView ) )->cCodPrv    := cCodPrv
 
@@ -379,6 +393,8 @@ Static Function IcgDetAlbPrv( cSerDoc, cSufDoc, cDesLin, nUntLin, nPvpLin, nDtoL
    ( D():AlbaranesProveedoresLineas( nView ) )->nPreDiv    := nPvpLin
    ( D():AlbaranesProveedoresLineas( nView ) )->nDtoLin    := nDtoLin
    ( D():AlbaranesProveedoresLineas( nView ) )->nIva       := nIva( D():TiposIva( nView ), "G" )
+   ( D():AlbaranesProveedoresLineas( nView ) )->lFacturado := .f.
+
    ( D():AlbaranesProveedoresLineas( nView ) )->( dbUnlock() )
 
 RETURN ( nil )

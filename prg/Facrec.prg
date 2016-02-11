@@ -12435,7 +12435,7 @@ FUNCTION rxFacRec( cPath, oMeter )
       ( dbfFacRecL )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( dbfFacRecL )->( ordCreate( cPath + "FacRecL.CDX", "Lote", "cLote", {|| Field->cLote }, ) )
 
-      ( dbfFacRecL )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
+      ( dbfFacRecL )->( ordCondSet( "nCtlStk < 2 .and. !Deleted()", {|| Field->nCtlStk < 2 .and. !Deleted() }, , , , , , , , , .t. ) )
       ( dbfFacRecL )->( ordCreate( cPath + "FacRecL.Cdx", "cStkFast", "cRef + cAlmLin + dtos( dFecFac ) + tFecFac", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecFac ) + Field->tFecFac } ) )
 
       ( dbfFacRecL)->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
