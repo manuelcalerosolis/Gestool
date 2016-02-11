@@ -147,14 +147,15 @@ CLASS TDbf
     MESSAGE OrdScope()     METHOD _OrdScope( uTop, uBottom )                              // mcs
     METHOD OrdClearScope()                                                                // mcs
 
-    METHOD OrdListAdd( cFile, cnTag ) ;
-        INLINE ( ::nArea )->( OrdListAdd( cFile, cnTag ) ), ::AutoIndex()
-    METHOD OrdListClear() INLINE ( ::nArea )->( OrdListClear() ), ::aTindex := {}
-    METHOD OrdListReBuild() INLINE ( ::nArea )->( OrdListReBuild() ), ::AutoIndex()
-    METHOD OrdName( nTag, cFile ) INLINE ( ::nArea )->( OrdName( nTag, cFile ) )
-    METHOD OrdNumber( cName, cFile ) INLINE ( ::nArea )->( OrdNumber( cName, cFile ) )
-    METHOD OrdDescend() INLINE ( ::nArea )->( OrdDescend() )
-    MESSAGE OrdSetFocus() METHOD _OrdSetFocus( cnTag, cFile )
+    METHOD OrdListAdd( cFile, cnTag )   INLINE ( ::nArea )->( OrdListAdd( cFile, cnTag ) ), ::AutoIndex()
+    METHOD OrdListClear()               INLINE ( ::nArea )->( OrdListClear() ), ::aTindex := {}
+    METHOD OrdListReBuild()             INLINE ( ::nArea )->( OrdListReBuild() ), ::AutoIndex()
+    METHOD OrdName( nTag, cFile )       INLINE ( ::nArea )->( OrdName( nTag, cFile ) )
+    METHOD OrdNumber( cName, cFile )    INLINE ( ::nArea )->( OrdNumber( cName, cFile ) )
+    METHOD OrdDescend()                 INLINE ( ::nArea )->( OrdDescend() )
+    METHOD OrdSetFocus( cnTag, cFile )  INLINE ( ::nArea )->( OrdSetFocus( cnTag, cFile ) )
+
+//---------------------------------------------------------------------------//
 
     METHOD IdxByTag( cnTag, cFile )
     METHOD IdxByName( cName, cFile )
@@ -1808,36 +1809,48 @@ return( oClon )
 
 METHOD GetStatus( lInit ) CLASS TDbf
 
-    DEFAULT lInit := .f.
+    local hStatus   := {=>}
 
-    ::aStatus := {}
+    DEFAULT lInit   := .f.
 
-    AAdd( ::aStatus, ::OrdSetFocus() )
-    AAdd( ::aStatus, ( ::nArea )->( RecNo() ) )
-    AAdd( ::aStatus, ::lScope )
-    AAdd( ::aStatus, if( ::lScope, { ::oIndex:uTop, ::oIndex:uBottom }, {,} ) )
-    AAdd( ::aStatus, ::lBuffer )
+    hset( hStatus, "ordsetfocus", ::ordsetfocus() )
+    hset( hStatus, "recno"      , ( ::nArea )->( recno() ) )
+    hset( hStatus, "buffer"     , ::lBuffer )
+    hset( hStatus, "scope"      , ::lScope )
+    
+    if ::lScope
+        hset( hStatus, "top"    , ::oIndex:uTop )
+        hset( hStatus, "bottom" , ::oIndex:uBottom )
+    end if 
 
     if lInit
-        ::SetIndex( 1 )
+        ::setIndex( 1 )
     end if
 
-return( ::aStatus )
+    aadd( ::aStatus, hStatus )
+
+return ( hStatus )
 
 //----------------------------------------------------------------------------//
 
-METHOD SetStatus( aStatus ) CLASS TDbf
+METHOD SetStatus( hStatus ) CLASS TDbf
 
-    DEFAULT aStatus     := ::aStatus
+    if empty( hStatus )
+        if empty( ::aStatus )
+            Return ( self )
+        end if 
+        hStatus     := atail( ::aStatus )
+        adel( ::aStatus, len( ::aStatus ) , .t. )
+    end if 
 
-    ::GoTo( aStatus[ 2 ] )
-    ::OrdSetFocus( aStatus[ 1 ] )
+    ::goTo( hget( hStatus, "recno" ) )
+    ::ordSetFocus( hget( hStatus, "ordsetfocus" ) )
 
-    if aStatus[ 3 ]
-        ::SetScope( aStatus[ 4, 1 ], aStatus[ 4, 2 ] )
+    if hget( hStatus, "scope" )
+        ::setScope( hget( hStatus, "top" ), hget( hStatus, "bottom" ) )
     endif
 
-    ::lBuffer  := aStatus[ 5 ]
+    ::lBuffer       := hget( hStatus, "scope")
 
 return( Self )
 
@@ -2072,11 +2085,6 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method _OrdSetFocus( cnTag, cFile )
-
-Return ( ( ::nArea )->( OrdSetFocus( cnTag, cFile ) ) )
-
-//---------------------------------------------------------------------------//
 /*
 Relaci�n de ordenes
 */

@@ -1589,31 +1589,26 @@ Devuelve si la caja pasada esta abiertas
 
 METHOD lOpenCaja( cCodCaj )
 
+   local aStatus
    local lOpenCaja         := .f.
 
    DEFAULT cCodCaj         := ::GetCurrentCaja()
+
+   aStatus                 := ::oDbf:GetStatus()
 
    if .t. // uFieldEmpresa( "lDesCajas" )
 
       // Vamos a ver q turno esta abiertos-------------------------------------
 
-      ::oDbf:GetStatus()
-      ::oDbf:OrdSetFocus( "nStaCaj" )
-
-      lOpenCaja            := ::oDbf:Seek( cCodCaj )
+      lOpenCaja            := ::oDbf:SeekInOrd( cCodCaj, "nStaCaj" )
       if lOpenCaja
          ::cCurTurno       := ::oDbf:cNumTur + ::oDbf:cSufTur + ::oDbf:cCodCaj
       end if 
-
-      ::oDbf:SetStatus()
 
    else 
 
       // Vamos a ver q cajas estan abiertas---------------------------------------
    
-      ::oDbfCaj:GetStatus()
-      ::oDbfCaj:OrdSetFocus( "cCajClo" )
-      
       if ::oDbfCaj:SeekInOrd( cCodCaj, "cCajClo" )
    
          while ::oDbfCaj:cCodCaj == cCodCaj .and. !::oDbfCaj:Eof()
@@ -1631,9 +1626,9 @@ METHOD lOpenCaja( cCodCaj )
    
       end if 
    
-      ::oDbfCaj:SetStatus()
-
    end if 
+
+   ::oDbf:SetStatus( aStatus )
 
 RETURN ( lOpenCaja )
 
@@ -1644,8 +1639,8 @@ Cierra el turno
 
 METHOD lCloseCajaSeleccionada()
 
-   local cCurrentTurno  
    local cTurno
+   local cCurrentTurno  
 
    // Que nadie toque-------------------------------------------------------------
 
@@ -1681,6 +1676,7 @@ METHOD lCloseCajaSeleccionada()
    // Envío de l mail--------------------------------------------------------------
 
    if ::lEnviarMail .and. !Empty( ::cEnviarMail )
+
       if !Empty( ::oTxt )
          ::oTxt:SetText( "Enviando mail..." )
       end if
@@ -1694,16 +1690,19 @@ METHOD lCloseCajaSeleccionada()
    // Envío de l mail--------------------------------------------------------------
 
    if ::lChkActualizaStockWeb
+
       if !Empty( ::oTxt )
          ::oTxt:SetText( "Actualizando stocks en web..." )
       end if
 
       ::ActualizaStockWeb()
+
    end if
 
    // Impresion----------------------------------------------------------------
 
    if !::lNoImprimirArqueo
+
       if !Empty( ::oTxt )
          ::oTxt:SetText( "Imprimiendo..." )
       end if
@@ -1715,11 +1714,13 @@ METHOD lCloseCajaSeleccionada()
    // Envío de  información por internet----------------------------------------
 
    if !::lArqueoParcial .and. ::lEnvioInformacion
+
       if !Empty( ::oTxt )
-         ::oTxt:SetText( "Enviando información a servidores..." )
+         ::oTxt:SetText( "Enviando información..." )
       end if
 
-      TSndRecInf():New():LoadFromIni():Activate( nil, .t. ) // AutoExecute( .t. )
+      TSndRecInf():Init():AutoExecute()
+
    end if
 
    // Habilitamos el dialogo---------------------------------------------------
@@ -1934,12 +1935,13 @@ RETURN ( .t. )
 
 Method lAllCloseTurno( cCurrentTurno )
 
-   DEFAULT cCurrentTurno   := ::cCurTurno
-   
-   ::oDbf:GetStatus()
-   ::oDbf:OrdSetFocus( "cNumTur" )
+   local aStatus
 
-   if ::oDbf:Seek( cCurrentTurno )
+   DEFAULT cCurrentTurno   := ::cCurTurno
+
+   aStatus                 := ::oDbf:getStatus()   
+
+   if ::oDbf:SeekInOrd( cCurrentTurno, "cNumTur" )
 
       ::oDbf:Load()
          ::oDbf:cCajTur    := ::cCajTur
@@ -1964,7 +1966,7 @@ Method lAllCloseTurno( cCurrentTurno )
 
    end if
 
-   ::oDbf:SetStatus()
+   ::oDbf:setStatus( aStatus )   
 
 Return ( .t. )
 
@@ -3431,13 +3433,6 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       end if
 
-/*
-      if lZoom
-      else
-         ::oCodCaj:bWhen   := {|| oUser():lAdministrador() }
-      end if
-*/
-
       // Formas de pago-----------------------------------------------------------
 
       REDEFINE SAY ::oSayTotalEfectivo ;
@@ -3863,7 +3858,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       ::oWndBrw:Refresh()
    end if
 
-Return ( if( !Empty( ::oDlgTurno ),  ::oDlgTurno:nResult == IDOK, .f. ) )
+Return ( if( !Empty( ::oDlgTurno ), ::oDlgTurno:nResult == IDOK, .f. ) )
 
 //---------------------------------------------------------------------------//
 

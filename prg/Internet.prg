@@ -78,57 +78,59 @@ CLASS TSndRecInf
    DATA  cPath
    DATA  cPathComunication                INIT ""
 
-   Method New()
-   Method Create()                        INLINE ( Self )
+   METHOD New()
+   METHOD Init()
+   METHOD Create()                        INLINE ( Self )
 
-   Method LoadFromIni()
-   Method SaveToIni()
+   METHOD LoadFromIni()
+   METHOD SaveToIni()
 
-   Method SaveMessageToFile()
+   METHOD SaveMessageToFile()
 
-   Method Activate( oWnd )
+   METHOD Activate( lAuto )
+   METHOD ActivateTablet()
+   METHOD AutoExecute()                   INLINE ( ::Activate( .t. ) )
 
-   Method DefineFiles()
-   Method OpenFiles()
-   Method CloseFiles()
+   METHOD DefineFiles()
+   METHOD OpenFiles()
+   METHOD CloseFiles()
 
-   Method BuildFiles( cPath )             INLINE ( ::DefineFiles( cPath ), ::oDbfSenderReciver:Create(), ::oDbfFilesReciver:Create() )
+   METHOD BuildFiles( cPath )             INLINE ( ::DefineFiles( cPath ), ::oDbfSenderReciver:Create(), ::oDbfFilesReciver:Create() )
 
-   Method BotonSiguiente()
-   Method BotonAnterior()
+   METHOD BotonSiguiente()
+   METHOD BotonAnterior()
 
-   Method Execute()
+   METHOD Execute()
 
-   Method Reindexa( cPath )
+   METHOD Reindexa( cPath )
 
-   Method SetText( cText )
+   METHOD SetText( cText )
 
-   Method StartTimer()
-   Method StopTimer()
+   METHOD StartTimer()
+   METHOD StopTimer()
 
-   Method lPriorFileRecive( cFile )
+   METHOD lPriorFileRecive( cFile )
 
-   Method AppendFileRecive( cFile )
+   METHOD AppendFileRecive( cFile )
 
-   Method ZoomHistorial()
+   METHOD ZoomHistorial()
 
-   Method FtpConexion()
-   Method CloseConexion()
+   METHOD FtpConexion()
+   METHOD CloseConexion()
 
    METHOD PrintLog( cTextFile )
 
    METHOD SayMemo( cTextfile )
 
-   Method lZipData( cFileName )
-   Method lUnZipData( cFileName )
+   METHOD lZipData( cFileName )
+   METHOD lUnZipData( cFileName )
 
-   Method lFileRecive( cFile )
-   Method lFileProcesed( cFile )
-   Method SendFiles()
-   Method GetFiles()
+   METHOD lFileRecive( cFile )
+   METHOD lFileProcesed( cFile )
+   METHOD SendFiles()
+   METHOD GetFiles()
 
-   Method SyncAllDbf()
-   METHOD ActivateTablet()
+   METHOD SyncAllDbf()
 
    METHOD setPathComunication( cPathComunication ) INLINE ( ::cPathComunication := cPathComunication )
    METHOD getPathComunication()                    INLINE ( ::cPathComunication )
@@ -143,7 +145,7 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New( oMenuItem, oWnd )
+METHOD New( oMenuItem, oWnd ) CLASS TSndRecInf
 
    DEFAULT oMenuItem    := "01073"
    DEFAULT oWnd         := oWnd()
@@ -155,6 +157,14 @@ METHOD New( oMenuItem, oWnd )
    if oWnd != nil
       SysRefresh(); oWnd:CloseAll(); SysRefresh()
    end if
+
+   ::Init()
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD Init() CLASS TSndRecInf
 
    ::cPro               := ""
    ::cSay               := ""
@@ -192,7 +202,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method LoadFromIni() CLASS TSndRecInf
+METHOD LoadFromIni() CLASS TSndRecInf
 
    if !Empty( ::aSend )
       aSend( ::aSend, "Load" )
@@ -228,7 +238,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method SaveToIni( lMessage ) CLASS TSndRecInf
+METHOD SaveToIni( lMessage ) CLASS TSndRecInf
 
    DEFAULT lMessage  := .f.
 
@@ -253,7 +263,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method StartTimer() CLASS TSndRecInf
+METHOD StartTimer() CLASS TSndRecInf
 
    if ::lPlanificarEnvio .or. ::lPlanificarRecepcion
       ::oTimer             := TTimer():New( 60000, {|| ::AutoExecute() }, oWnd() )
@@ -264,7 +274,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method StopTimer() CLASS TSndRecInf
+METHOD StopTimer() CLASS TSndRecInf
 
    if ::oTimer != nil .and. ::oTimer:lActive
       ::oTimer:DeActivate()
@@ -274,7 +284,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method SaveMessageToFile() CLASS TSndRecInf
+METHOD SaveMessageToFile() CLASS TSndRecInf
 
    if !Empty( ::hFilTxt )
       fClose( ::hFilTxt )
@@ -323,7 +333,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method OpenFiles( lExclusive, cPath ) CLASS TSndRecInf
+METHOD OpenFiles( lExclusive, cPath ) CLASS TSndRecInf
 
    local lOpen          := .t.
    local oError
@@ -356,7 +366,7 @@ Return ( lOpen )
 
 //---------------------------------------------------------------------------//
 
-Method CloseFiles() CLASS TSndRecInf
+METHOD CloseFiles() CLASS TSndRecInf
 
    local lOpen    := .t.
    local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -388,7 +398,7 @@ RETURN ( lOpen )
 
 //----------------------------------------------------------------------------//
 
-METHOD Activate( oWnd, lAuto ) CLASS TSndRecInf
+METHOD Activate( lAuto ) CLASS TSndRecInf
 
    local oBmp
    local oBrwSnd
@@ -405,10 +415,6 @@ METHOD Activate( oWnd, lAuto ) CLASS TSndRecInf
    if nAnd( ::nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       return ( Self )
-   end if
-
-   if oWnd != nil
-      sysRefresh(); oWnd:CloseAll(); sysRefresh()
    end if
 
    if !::OpenFiles()
@@ -772,7 +778,7 @@ Return nil
 
 //----------------------------------------------------------------------------//
 
-Method BotonSiguiente() CLASS TSndRecInf
+METHOD BotonSiguiente() CLASS TSndRecInf
 
    do case
       case ::oFld:nOption == 1 .and. ::nTipoEnvio == 1
@@ -805,7 +811,7 @@ return ( Self )
 //procesos a realizar al pulsar sobre anterior de la ventana principal
 //
 
-Method BotonAnterior() CLASS TSndRecInf
+METHOD BotonAnterior() CLASS TSndRecInf
 
    do case
       case ::oFld:nOption == 2
@@ -1076,7 +1082,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method FtpConexion() CLASS TSndRecInf
+METHOD FtpConexion() CLASS TSndRecInf
 
    local cUrl
    local nRetry            := 0
@@ -1133,7 +1139,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method CloseConexion() CLASS TSndRecInf
+METHOD CloseConexion() CLASS TSndRecInf
 
    if !Empty( ::oFtp )
       ::oFtp:Close()
@@ -1192,7 +1198,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method AppendFileRecive( cFile ) CLASS TSndRecInf
+METHOD AppendFileRecive( cFile ) CLASS TSndRecInf
 
    local oBlock
    local oError
@@ -1226,7 +1232,7 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method lPriorFileRecive( cFile ) CLASS TSndRecInf
+METHOD lPriorFileRecive( cFile ) CLASS TSndRecInf
 
    local lResult     := .f.
    local cFileExt    := GetFileExt( cFile )
@@ -1245,7 +1251,7 @@ Return ( lResult )
 
 //----------------------------------------------------------------------------//
 
-Method ZoomHistorial() CLASS TSndRecInf
+METHOD ZoomHistorial() CLASS TSndRecInf
 
    local oMemo
    local cMemo
@@ -1554,7 +1560,7 @@ return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method lZipData( cFileName ) CLASS TSndRecInf
+METHOD lZipData( cFileName ) CLASS TSndRecInf
 
    local lZip     := .t.
    local aDir     := Directory( cLastPath( cPatSnd() ) + "\*.*" )
@@ -1582,7 +1588,7 @@ Return ( lZip )
 
 //----------------------------------------------------------------------------//
 
-Method lUnZipData( cFileName ) CLASS TSndRecInf
+METHOD lUnZipData( cFileName ) CLASS TSndRecInf
 
    local aDir
    local nZip
@@ -1618,7 +1624,7 @@ RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method lFileRecive( cFile ) CLASS TSndRecInf
+METHOD lFileRecive( cFile ) CLASS TSndRecInf
 
    local lFileRecive    := .f.
 
@@ -1630,7 +1636,7 @@ Return ( lFileRecive )
 
 //---------------------------------------------------------------------------//
 
-Method lFileProcesed( cFile ) CLASS TSndRecInf
+METHOD lFileProcesed( cFile ) CLASS TSndRecInf
 
    local lFileProcesed  := .f.
 
@@ -1642,7 +1648,7 @@ Return ( lFileProcesed )
 
 //---------------------------------------------------------------------------//
 
-Method SyncAllDbf() CLASS TSndRecInf
+METHOD SyncAllDbf() CLASS TSndRecInf
 
    if Empty( ::oDbfSenderReciver ) .or. Empty( ::oDbfFilesReciver )
       ::DefineFiles()

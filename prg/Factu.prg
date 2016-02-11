@@ -183,7 +183,7 @@ function Main( ParamsMain, ParamsSecond )
          end if
 
          if lInitCheck()
-            TSndRecInf():New():LoadFromIni():Activate( nil, .t. ) // AutoExecute( .t. )
+            TSndRecInf():Init():AutoExecute()
          end if
 
          return nil

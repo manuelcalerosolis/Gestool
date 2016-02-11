@@ -706,14 +706,15 @@ METHOD loadEmpresas()
 
    USE ( cPatDat() + "Empresa.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
 
+   ( dbfEmp )->( dbgotop() )
    while !( dbfEmp )->( eof() )
       if !( dbfEmp )->lGrupo
          aAdd( ::aEmpresas, { ( dbfEmp )->CodEmp, ( dbfEmp )->cNombre, ( dbfEmp )->lGrupo, .f., .f., .t. } )
       end if 
-      ( dbfEmp )->( dbSkip() )
+      ( dbfEmp )->( dbskip() )
    end while
 
-   ( dbfEmp )->( dbCloseArea() )
+   ( dbfEmp )->( dbclosearea() )
 
 RETURN ( Self )   
 

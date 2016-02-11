@@ -648,6 +648,8 @@ METHOD OpenFiles( lExclusive ) CLASS TRemMovAlm
 
       D():Propiedades( ::nView )
 
+      D():Documentos( ::nView ) 
+
       ::lOpenFiles         := .t.
 
    end if
@@ -1521,7 +1523,7 @@ METHOD GenRemMov( lPrinter, cCaption, cCodDoc, cPrinter, nCopies ) CLASS TRemMov
       cCodDoc           := "RM1"
    end if
 
-   if !lExisteDocumento( cCodDoc, ::oDbfDoc:cAlias )
+   if !lExisteDocumento( cCodDoc, D():Documentos( ::nView ) )
       return nil
    end if
 
@@ -1536,11 +1538,11 @@ METHOD GenRemMov( lPrinter, cCaption, cCodDoc, cPrinter, nCopies ) CLASS TRemMov
    ::oDetSeriesMovimientos:oDbf:Seek( nNumRem )
    ::oDbfAge:Seek( ::oDbf:cCodAge )
 
-   if lVisualDocumento( cCodDoc, ::oDbfDoc:cAlias )
+   if lVisualDocumento( cCodDoc, D():Documentos( ::nView ) )
 
       public nTotMov       := ::nTotRemMov( .t. )
 
-      ::PrintReportRemMov( if( lPrinter, IS_PRINTER, IS_SCREEN ), nCopies, cPrinter, ::oDbfDoc:cAlias )
+      ::PrintReportRemMov( if( lPrinter, IS_PRINTER, IS_SCREEN ), nCopies, cPrinter, D():Documentos( ::nView ) )
 
    else
 
@@ -2146,7 +2148,7 @@ METHOD lGenRemMov( oBrw, oBtn, lImp ) CLASS TRemMovAlm
 
    DEFAULT lImp   := .f.
 
-   if !::oDbfDoc:Seek( "RM" )
+   if !( D():Documentos( ::nView ) )->( dbSeek( "RM" ) )
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT" OF ::oWndBrw ;
          NOBORDER ;
@@ -2159,13 +2161,13 @@ METHOD lGenRemMov( oBrw, oBtn, lImp ) CLASS TRemMovAlm
 
    else
 
-      while ::oDbfDoc:cTipo == "RM" .AND. !::oDbfDoc:eof()
+      while ( D():Documentos( ::nView ) )->cTipo == "RM" .AND. !( D():Documentos( ::nView ) )->( eof() )
 
-         bAction  := ::bGenRemMov( lImp, "Imprimiendo movimientoo de almacén", ::oDbfDoc:Codigo )
+         bAction  := ::bGenRemMov( lImp, "Imprimiendo movimientoo de almacén", ( D():Documentos( ::nView ) )->Codigo )
 
-         ::oWndBrw:NewAt( "Document", , , bAction, Rtrim( ::oDbfDoc:cDescrip ) , , , , , oBtn )
+         ::oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( D():Documentos( ::nView ) )->cDescrip ) , , , , , oBtn )
 
-         ::oDbfDoc:Skip()
+         ( D():Documentos( ::nView ) )->( dbskip() )
 
       end do
 
@@ -3081,37 +3083,7 @@ METHOD GenerarEtiquetas CLASS TRemMovAlm
    Instanciamos la clase-------------------------------------------------------
    */
 
-   oLabelGenetator      := TLabelGenerator():Create( Self )
-
-   /*
-   Le damos valores por defecto------------------------------------------------
-   */
-
-   oLabelGenetator:DocumentoInicio( ::oDbf:nNumRem )
-   oLabelGenetator:DocumentoFin( ::oDbf:nNumRem )      
-   oLabelGenetator:SufijoInicio( ::oDbf:cSufRem )      
-   oLabelGenetator:SufijoFin( ::oDbf:cSufRem )            
-   oLabelGenetator:TipoFormato( "FC" )
-   oLabelGenetator:lMovimientoAlmacen := .t.
-
-   /*
-   Bases de datos--------------------------------------------------------------
-   */
-
-   oLabelGenetator:cDbfCabecera( ::oDbf:cAlias )
-   oLabelGenetator:cDbfLinea( ::oDetMovimientos:oDbf:cAlias )
-   oLabelGenetator:cDbfDocumento( ::oDbfDoc:cAlias )
-   oLabelGenetator:cDbfArticulo( ::oArt:cAlias )
-
-   /*
-   Lanzamos el recurso---------------------------------------------------------
-   */
-   
-   if oLabelGenetator:lCreateAuxiliarArticulo()
-
-      oLabelGenetator:Resource( .t. )
-
-   end if   
+   oLabelGenetator      := TLabelGeneratorMovientosAlmacen():New( Self )
 
    /*
    Dejamos la tabla como estaba------------------------------------------------
@@ -3171,7 +3143,6 @@ Function cAlmacenDestino()
 Return ( oRetFld( oThis:oParent:oDbf:cAlmDes, oThis:oParent:oAlm ) )
 
 //---------------------------------------------------------------------------//
-
 
 FUNCTION rxRemMov( cPath, oMeter )
 
@@ -3617,6 +3588,8 @@ METHOD DefineFiles( cPath, cDriver, lUniqueName, cFileName ) CLASS TDetMovimient
       FIELD NAME "cPesoKg"    TYPE "C" LEN   2 DEC 0 COMMENT "Unidad de peso del producto"         OF oDbf
       FIELD NAME "nBultos"    TYPE "N" LEN  16 DEC 0 COMMENT "Número de bultos en líneas"          OF oDbf
       FIELD NAME "cFormato"   TYPE "C" LEN 100 DEC 0 COMMENT "Formato de compra/venta"             OF oDbf
+      FIELD NAME "lLabel"     TYPE "L" LEN   1 DEC 0 COMMENT "Lógico para imprimir etiqueta"       OF oDbf
+      FIELD NAME "nLabel"     TYPE "N" LEN  16 DEC 6 COMMENT "Número de etiquetas a imprimir"      OF oDbf
 
       INDEX TO ( cFileName ) TAG "nNumRem"      ON "Str( nNumRem ) + cSufRem"               NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "dFecMov"      ON "Dtoc( dFecMov ) + cTimMov"              NODELETED                     OF oDbf
