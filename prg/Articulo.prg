@@ -1340,12 +1340,12 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       TOOLTIP  "Mo(n)eda";
       HOTKEY   "N"
 
-   DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
+   /*DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
       NOBORDER ;
       ACTION   ( TSqlStock():New( nView ):CalculateStock( ( D():Articulos( nView ) )->Codigo ) ) ;
       TOOLTIP  "Nuevo stock" ;
       HOTKEY   "k" ;
-      LEVEL    ACC_ZOOM
+      LEVEL    ACC_ZOOM*/
 
    DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
 		NOBORDER ;
