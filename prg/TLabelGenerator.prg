@@ -52,6 +52,12 @@ CLASS TLabelGenerator
    Data oBtnAnterior
    Data oBtnCancel
 
+   DATA oBtnPropiedades
+   DATA oBtnModificar
+   DATA oBtnZoom
+
+   DATA lHideSerie                     INIT .f.
+
    Data aSearch
 
    Data cFileTmpLabel
@@ -80,6 +86,7 @@ CLASS TLabelGenerator
    METHOD isErrorOnCreate()               INLINE ( ::lErrorOnCreate )
 
    METHOD Dialog()
+   METHOD startDialog()
 
    METHOD lCreateTempLabelEdition()      
    METHOD loadTempLabelEdition()          VIRTUAL
@@ -126,6 +133,10 @@ METHOD New( nView ) CLASS TLabelGenerator
 
    local oError
    local oBlock
+
+   if !empty( nView )
+      ::nView              := nView
+   end if
 
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -177,9 +188,6 @@ Return ( Self )
 
 METHOD Dialog() CLASS TLabelGenerator
 
-   local oBtnPrp
-   local oBtnMod
-   local oBtnZoo
    local oGetOrd
    local cGetOrd     := Space( 100 )
    local oCbxOrd
@@ -213,7 +221,7 @@ METHOD Dialog() CLASS TLabelGenerator
          SPINNER ;
          ON UP    ( UpSerie( ::oSerieInicio ) );
          ON DOWN  ( DwSerie( ::oSerieInicio ) );
-         VALID    ( ::cSerieInicio >= "A" .and. ::cSerieInicio <= "Z" );
+         VALID    ( ( ::cSerieInicio >= "A" .and. ::cSerieInicio <= "Z" ) .or. ( ::lHideSerie ) );
          UPDATE ;
          OF       ::oFld:aDialogs[ 1 ]
 
@@ -223,7 +231,7 @@ METHOD Dialog() CLASS TLabelGenerator
          SPINNER ;
          ON UP    ( UpSerie( ::oSerieFin ) );
          ON DOWN  ( DwSerie( ::oSerieFin ) );
-         VALID    ( ::cSerieFin >= "A" .and. ::cSerieFin <= "Z" );
+         VALID    ( ( ::cSerieInicio >= "A" .and. ::cSerieInicio <= "Z" ) .or. ( ::lHideSerie ) );
          UPDATE ;
          OF       ::oFld:aDialogs[ 1 ]
 
@@ -336,17 +344,17 @@ METHOD Dialog() CLASS TLabelGenerator
          OF       ::oFld:aDialogs[ 2 ] ;
          ACTION   ( ::EditLabel() )
 
-      REDEFINE BUTTON oBtnPrp ;
+      REDEFINE BUTTON ::oBtnPropiedades ;
          ID       220 ;
          OF       ::oFld:aDialogs[ 2 ] ;
          ACTION   ( nil )
 
-      REDEFINE BUTTON oBtnMod;
+      REDEFINE BUTTON ::oBtnModificar;
          ID       160 ;
          OF       ::oFld:aDialogs[ 2 ] ;
          ACTION   ( nil )
 
-      REDEFINE BUTTON oBtnZoo;
+      REDEFINE BUTTON ::oBtnZoom;
          ID       165 ;
          OF       ::oFld:aDialogs[ 2 ] ;
          ACTION   ( nil )
@@ -446,7 +454,7 @@ METHOD Dialog() CLASS TLabelGenerator
          OF       ::oDlg ;
          ACTION   ( ::oDlg:End() )
 
-   ::oDlg:bStart  := {|| ::oBtnListado:Hide(), ::oBtnAnterior:Hide(), ::oFormatoLabel:lValid(), oBtnMod:Hide(), oBtnZoo:Hide(), oBtnPrp:Hide() }
+   ::oDlg:bStart  := {|| ::startDialog() }
 
    ACTIVATE DIALOG ::oDlg CENTER
 
@@ -457,6 +465,27 @@ METHOD Dialog() CLASS TLabelGenerator
 Return ( Self )
 
 //--------------------------------------------------------------------------//
+
+METHOD startDialog()
+
+   ::oBtnListado:Hide()
+   ::oBtnAnterior:Hide()
+   
+   ::oFormatoLabel:lValid()
+   
+   ::oBtnModificar:Hide()
+   ::oBtnZoom:Hide()
+   ::oBtnPropiedades:Hide()
+
+   if ::lHideSerie
+      ::oSerieInicio:Hide()
+      ::oSerieFin:Hide()
+   end if 
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
 
 METHOD lCreateTempLabelEdition() CLASS TLabelGenerator
 
@@ -2837,6 +2866,8 @@ METHOD New( oSender ) CLASS TLabelGeneratorMovientosAlmacen
 
    ::cNombreDocumento   := "Movimientos de almcén"
 
+   ::lHideSerie         := .t.
+
    ::inicialDoc         := "MV"
 
    ::idDocument         := str( oSender:oDbf:nNumRem, 9 ) + oSender:oDbf:cSufRem 
@@ -2921,72 +2952,42 @@ Return ( Self )
 
 METHOD dataLabel( oFr ) CLASS TLabelGeneratorMovientosAlmacen
 
-   oFr:ClearDataSets()
+   oFr:SetWorkArea(     "Movimiento", ::oDbf:nArea, .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
+   oFr:SetFieldAliases( "Movimiento", cObjectsToReport( ::oDbf ) )
 
-   oFr:SetWorkArea(     "Lineas de facturas rectificativas", ( ::tmpLabelReport )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
-   oFr:SetFieldAliases( "Lineas de facturas rectificativas", cItemsToReport( aColFacPrv() ) )
+   oFr:SetWorkArea(     "Lineas de movimientos", ::tmpLabelEdition:oDbf:nArea )
+   oFr:SetFieldAliases( "Lineas de movimientos", cObjectsToReport( ::oDetMovimientos:oDbf ) )
 
-   oFr:SetWorkArea(     "Facturas", ( ::dbfCabecera )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
-   oFr:SetFieldAliases( "Facturas", cItemsToReport( aItmFacPrv() ) )
-
-   oFr:SetWorkArea(     "Incidencias de facturas rectificativas", ( D():FacturasRectificativasProveedoresIncidencias( ::nView ) )->( Select() ) )
-   oFr:SetFieldAliases( "Incidencias de facturas rectificativas", cItemsToReport( aIncFacPrv() ) )
-
-   oFr:SetWorkArea(     "Documentos de facturas rectificativas", ( D():FacturasRectificativasProveedoresDocumentos( ::nView ) )->( Select() ) )
-   oFr:SetFieldAliases( "Documentos de facturas rectificativas", cItemsToReport( aFacPrvDoc() ) )
-
-   oFr:SetWorkArea(     "Empresa", ( D():Empresa( ::nView ) )->( Select() ) )
+   oFr:SetWorkArea(     "Empresa", ::oDbfEmp:nArea )
    oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
 
-   oFr:SetWorkArea(     "Proveedor", ( D():Proveedores( ::nView ) )->( Select() ) )
-   oFr:SetFieldAliases( "Proveedor", cItemsToReport( aItmPrv() ) )
+   oFr:SetWorkArea(     "Almacén origen", ::oAlmacenOrigen:nArea )
+   oFr:SetFieldAliases( "Almacén origen", cItemsToReport( aItmAlm() ) )
 
-   oFr:SetWorkArea(     "Almacenes", ( D():Almacen( ::nView ) )->( Select() ) )
-   oFr:SetFieldAliases( "Almacenes", cItemsToReport( aItmAlm() ) )
+   oFr:SetWorkArea(     "Almacén destino", ::oAlmacenDestino:nArea )
+   oFr:SetFieldAliases( "Almacén destino", cItemsToReport( aItmAlm() ) )
 
-   oFr:SetWorkArea(     "Formas de pago", ( D():FormasPago( ::nView ) )->( Select() ) )
-   oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
-
-   oFr:SetWorkArea(     "Artículos", ( D():Articulos( ::nView ) )->( Select() ) )
+   oFr:SetWorkArea(     "Agentes", ::oDbfAge:nArea )
+   oFr:SetFieldAliases( "Agentes", cItemsToReport( aItmAge() ) )
+   
+   oFr:SetWorkArea(     "Artículos", ::oArt:nArea )
    oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
 
-   oFr:SetWorkArea(     "Precios por propiedades", ( D():ArticuloPrecioPropiedades( ::nView ) )->( Select() ) )
-   oFr:SetFieldAliases( "Precios por propiedades", cItemsToReport( aItmVta() ) )
+   oFr:SetMasterDetail( "Movimiento",              "Lineas de movimientos",   {|| Str( ::oDbf:nNumRem ) + ::oDbf:cSufRem } )
+   oFr:SetMasterDetail( "Lineas de movimientos",   "Artículos",               {|| ::oDetMovimientos:oDbf:cRefMov } )
 
-   oFr:SetWorkArea(     "Código de proveedores", ( D():ProveedorArticulo( ::nView ) )->( Select() ) )
-   oFr:SetFieldAliases( "Código de proveedores", cItemsToReport( aItmArtPrv() ) )
+   oFr:SetMasterDetail( "Movimiento",              "Empresa",               {|| cCodigoEmpresaEnUso() } )
+   oFr:SetMasterDetail( "Movimiento",              "Almacén origen",        {|| ::oDbf:cAlmOrg } )
+   oFr:SetMasterDetail( "Movimiento",              "Almacén destino",       {|| ::oDbf:cAlmDes } )
+   oFr:SetMasterDetail( "Movimiento",              "Agentes",               {|| ::oDbf:cCodAge } )
 
-   oFr:SetWorkArea(     "Unidades de medición",  D():GetObject( "UnidadMedicion", ::nView ):Select() )
-   oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( D():GetObject( "UnidadMedicion", ::nView ):oDbf) )
+   oFr:SetResyncPair(   "Movimiento",              "Empresa" )
+   oFr:SetResyncPair(   "Movimiento",              "Almacén origen" )
+   oFr:SetResyncPair(   "Movimiento",              "Almacén destino" )
+   oFr:SetResyncPair(   "Movimiento",              "Agentes" )
 
-   oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( ::nView ):Select() )
-   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( ::nView ):oDbf) )
-   
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Facturas",                                 {|| ( ::tmpLabelReport )->cSerFac + Str( ( ::tmpLabelReport )->nNumFac ) + ( ::tmpLabelReport )->cSufFac } )
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Artículos",                                {|| ( ::tmpLabelReport )->cRef } )
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Precios por propiedades",                  {|| ( ::tmpLabelReport )->cDetalle + ( ::tmpLabelReport )->cCodPr1 + ( ::tmpLabelReport )->cCodPr2 + ( ::tmpLabelReport )->cValPr1 + ( ::tmpLabelReport )->cValPr2 } )
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Incidencias de facturas rectificativas",   {|| ( ::tmpLabelReport )->cSerFac + Str( ( ::tmpLabelReport )->nNumFac ) + ( ::tmpLabelReport )->cSufFac } )
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Documentos de facturas rectificativas",    {|| ( ::tmpLabelReport )->cSerFac + Str( ( ::tmpLabelReport )->nNumFac ) + ( ::tmpLabelReport )->cSufFac } )
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Impuestos especiales",                     {|| ( ::tmpLabelReport )->cCodImp } )
-
-   oFr:SetMasterDetail( "Facturas", "Proveedor",                          {|| ( ::dbfCabecera )->cCodPrv } )
-   oFr:SetMasterDetail( "Facturas", "Almacenes",                          {|| ( ::dbfCabecera )->cCodAlm } )
-   oFr:SetMasterDetail( "Facturas", "Formas de pago",                     {|| ( ::dbfCabecera )->cCodPago } )
-   oFr:SetMasterDetail( "Facturas", "Bancos",                             {|| ( ::dbfCabecera )->cCodPrv } )
-   oFr:SetMasterDetail( "Facturas", "Empresa",                            {|| cCodigoEmpresaEnUso() } )
-
-   oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Facturas" )
-   oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Artículos" )
-   oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Precios por propiedades" )
-   oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Incidencias de facturas rectificativas" )
-   oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Documentos de facturas rectificativas" )
-   oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Impuestos especiales" )   
-
-   oFr:SetResyncPair(   "Facturas", "Proveedor" )
-   oFr:SetResyncPair(   "Facturas", "Almacenes" )
-   oFr:SetResyncPair(   "Facturas", "Formas de pago" )
-   oFr:SetResyncPair(   "Facturas", "Bancos" )
-   oFr:SetResyncPair(   "Facturas", "Empresa" )
+   oFr:SetResyncPair(   "Movimiento",              "Lineas de movimientos" )
+   oFr:SetResyncPair(   "Lineas de movimientos",   "Artículos" )
 
 Return nil
 

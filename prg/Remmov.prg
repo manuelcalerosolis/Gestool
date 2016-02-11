@@ -3051,7 +3051,6 @@ METHOD cMostrarSerie() CLASS TRemMovAlm
             cResultado  = "[" + AllTrim( ::oDetSeriesMovimientos:oDbfVir:cNumSer ) + "] "
          else
             cResultado  = "[...]"
-
          end if
 
          i  += 1
@@ -3084,6 +3083,7 @@ METHOD GenerarEtiquetas CLASS TRemMovAlm
    */
 
    oLabelGenetator      := TLabelGeneratorMovientosAlmacen():New( Self )
+   oLabelGenetator:Dialog()
 
    /*
    Dejamos la tabla como estaba------------------------------------------------
