@@ -17,6 +17,7 @@ CLASS AccessCode
    CLASSDATA   lInvoiceModify    INIT .t.
    CLASSDATA   lUnitsModify      INIT .t.
    CLASSDATA   lSalesView        INIT .t.
+   CLASSDATA   lAddLote          INIT .f.
    
    DATA  oDlg
    DATA  oDlgConnect
@@ -280,6 +281,7 @@ METHOD loadTableConfiguration() CLASS AccessCode
    ::lUnitsModify    := ::getLogicValueFromIni( cTag, "ModificarUnidades",  ".t." )
    ::lFilterByAgent  := ::getLogicValueFromIni( cTag, "FiltrarAgente",      ".f." )
    ::lSalesView      := ::getLogicValueFromIni( cTag, "VisualizarVentas",   ".t." )
+   ::lAddLote        := ::getLogicValueFromIni( cTag, "AddLote",   ".f." )
 
    if empty( ::cGetUser ) 
       apoloMsgStop( "Código de usuario esta vacio")

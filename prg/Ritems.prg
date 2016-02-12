@@ -223,7 +223,7 @@ static aTipDoc     := {  "Artículos [Etiquetas]",;
                          "Albarán proveedores [Etiquetas]",;
                          "Factura proveedores [Etiquetas]",;
                          "Factura rectificativas de proveedores [Etiquetas]",;
-                         "Movimientos de almacén [Etiquetas]"
+                         "Movimientos de almacén [Etiquetas]",;
                          "Ofertas de artículos [Etiquetas]",;
                          "Producción [Etiquetas]",;
                          "Pedido de proveedores [Etiquetas]",;

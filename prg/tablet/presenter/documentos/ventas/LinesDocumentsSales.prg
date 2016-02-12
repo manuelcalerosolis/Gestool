@@ -292,11 +292,19 @@ METHOD setLineFromArticulo() CLASS LinesDocumentsSales
    ::setPrecioCosto( ( D():Articulos( ::getView() ) )->pCosto ) 
 
    if ( D():Articulos( ::getView() ) )->lLote
+      
       ::setLogicoLote( ( D():Articulos( ::getView() ) )->lLote )
-      ::setLote( ( D():Articulos( ::getView() ) )->cLote )
+      
+      if accessCode():lAddLote
+         ::setLote( ( D():Articulos( ::getView() ) )->cLote )
+      end if
+      
       ::oViewEditDetail:ShowLote()
+
    else
+
       ::oViewEditDetail:HideLote()
+
    end if
 
 Return ( self )
