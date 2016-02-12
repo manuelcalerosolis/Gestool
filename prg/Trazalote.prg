@@ -43,7 +43,7 @@ CLASS TTrazarLote
    DATA aBmp
 
    DATA cCodigo         INIT Space( 18 )
-   DATA cLote           INIT Space( 12 )
+   DATA cLote           INIT Space( 14 )
 
    DATA cCodigoLote
 
