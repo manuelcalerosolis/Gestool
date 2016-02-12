@@ -4102,6 +4102,9 @@ Static Function VisualEdtDocs( dbfDoc )
       case cTipo == "FI"
          DesignLabelFacturaRectificativaClientes( oFr, dbfDoc )
 
+      case cTipo == "MV"
+         DesignLabelRemesasMovimientosAlmacen( oFr, dbfDoc )
+
       case cTipo == "SA"
          DesignLabelSATClientes( oFr, dbfDoc )
 

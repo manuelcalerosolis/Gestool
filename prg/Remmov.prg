@@ -294,7 +294,7 @@ RETURN ( Self )
 
 METHOD GetNewCount() CLASS TRemMovAlm
 
-   ::oDbf:nNumRem    := nNewDoc( nil, ::oDbf:nArea, "nMovAlm", nil, ::oDbfCnt:nArea )
+   ::oDbf:nNumRem       := nNewDoc( nil, ::oDbf:nArea, "nMovAlm", nil, ::oDbfCnt:nArea )
 
 RETURN ( Self )
 
@@ -3082,7 +3082,7 @@ METHOD GenerarEtiquetas CLASS TRemMovAlm
    Instanciamos la clase-------------------------------------------------------
    */
 
-   oLabelGenetator      := TLabelGeneratorMovientosAlmacen():New( Self )
+   oLabelGenetator      := TLabelGeneratorMovimientosAlmacen():New( Self )
    oLabelGenetator:Dialog()
 
    /*
@@ -5629,4 +5629,44 @@ Return ( nombrePropiedad( oThis:oDetMovimientos:oDbf:FieldGetByName( "cCodPr2" )
 
 //---------------------------------------------------------------------------//
 
+Function DesignLabelRemesasMovimientosAlmacen( oFr, cDoc )
 
+   local oLabel
+   local oRemesasMovimientos
+
+   oRemesasMovimientos  := TRemMovAlm():New( cPatEmp(), cDriver() )
+   if !oRemesasMovimientos:Openfiles()
+      Return ( nil )
+   end if 
+
+   oLabel               := TLabelGeneratorMovimientosAlmacen():New( oRemesasMovimientos )
+
+   // Zona de datos---------------------------------------------------------
+   
+   oLabel:createTempLabelReport()
+   oLabel:loadTempLabelReport()      
+   oLabel:dataLabel( oFr )
+
+   // Paginas y bandas------------------------------------------------------
+
+   if !empty( ( cDoc )->mReport )
+      oFr:LoadFromBlob( ( cDoc )->( Select() ), "mReport")
+   else
+      oFr:AddPage(         "MainPage" )
+      oFr:AddBand(         "MasterData",  "MainPage", frxMasterData )
+      oFr:SetProperty(     "MasterData",  "Top",      200 )
+      oFr:SetProperty(     "MasterData",  "Height",   100 )
+      oFr:SetObjProperty(  "MasterData",  "DataSet",  "Lineas de movimientos de almacén" )
+   end if
+
+   oFr:DesignReport()
+   oFr:DestroyFr()
+
+   oLabel:DestroyTempReport()
+   oLabel:End()
+
+   oRemesasMovimientos:CloseFiles()
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//

@@ -2841,7 +2841,7 @@ Return nil
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TLabelGeneratorMovientosAlmacen FROM TLabelGenerator
+CLASS TLabelGeneratorMovimientosAlmacen FROM TLabelGenerator
 
    METHOD New( oSender )
 
@@ -2849,11 +2849,13 @@ CLASS TLabelGeneratorMovientosAlmacen FROM TLabelGenerator
    
    METHOD dataLabel( oFr )
 
+   METHOD createTempLabelReport()
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSender ) CLASS TLabelGeneratorMovientosAlmacen
+METHOD New( oSender ) CLASS TLabelGeneratorMovimientosAlmacen
 
    ::dbfCabecera        := oSender:oDbf:cAlias
    ::dbfLineas          := oSender:oDetMovimientos:oDbf:cAlias
@@ -2864,7 +2866,7 @@ METHOD New( oSender ) CLASS TLabelGeneratorMovientosAlmacen
    ::cSufijoInicio      := oSender:oDbf:cSufRem 
    ::cSufijoFin         := oSender:oDbf:cSufRem 
 
-   ::cNombreDocumento   := "Movimientos de almcén"
+   ::cNombreDocumento   := "Movimientos de almacén"
 
    ::lHideSerie         := .t.
 
@@ -2872,7 +2874,7 @@ METHOD New( oSender ) CLASS TLabelGeneratorMovientosAlmacen
 
    ::idDocument         := str( oSender:oDbf:nNumRem, 9 ) + oSender:oDbf:cSufRem 
 
-   ::aStructureField    := aSqlStruct( aColFacPrv() )
+   ::aStructureField    := oSender:oDetMovimientos:oDbf:aField() 
 
    ::Super:New( oSender:nView ) 
 
@@ -2880,7 +2882,44 @@ Return( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadTempLabelEdition( tmpLabel ) CLASS TLabelGeneratorMovientosAlmacen
+METHOD createTempLabelReport() CLASS TLabelGeneratorMovimientosAlmacen
+
+   local oBlock
+   local oError
+   local lCreate           := .t.
+
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      ::tmpLabelReport     := "LblRpt" + cCurUsr()
+      ::fileLabelReport    := cGetNewFileName( cPatTmp() + "LblRpt" )
+
+      msgAlert( hb_valtoexp( ::aStructureField ), "aStructureField" )
+      msgAlert( ::dbfCabecera )
+
+      dbCreate( ::fileLabelReport, ::aStructureField, cLocalDriver() )
+      dbUseArea( .t., cLocalDriver(), ::fileLabelReport, ::tmpLabelReport, .f. )
+
+      if!( ::tmpLabelReport )->( neterr() )
+         ( ::tmpLabelReport )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+         ( ::tmpLabelReport )->( OrdCreate( ::fileLabelReport, "cRefMov", "cRefMov", {|| Field->cRefMov } ) )
+      end if
+
+   RECOVER USING oError
+
+      lCreate              := .f.
+
+      MsgStop( 'Imposible crear un fichero temporal de lineas del documento' + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+Return ( lCreate )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadTempLabelEdition( tmpLabel ) CLASS TLabelGeneratorMovimientosAlmacen
 
    local nRec
    local nOrd
@@ -2889,7 +2928,7 @@ METHOD loadTempLabelEdition( tmpLabel ) CLASS TLabelGeneratorMovientosAlmacen
 
    //Limpiamos la base de datos temporal-----------------------------------------
 
-   if ( tmpLabel )->( Used() )
+   if ( tmpLabel )->( used() )
       ( tmpLabel )->( __dbZap() )
    end if 
 
@@ -2950,7 +2989,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD dataLabel( oFr ) CLASS TLabelGeneratorMovientosAlmacen
+METHOD dataLabel( oFr ) CLASS TLabelGeneratorMovimientosAlmacen
 
    oFr:SetWorkArea(     "Movimiento", ::oDbf:nArea, .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    oFr:SetFieldAliases( "Movimiento", cObjectsToReport( ::oDbf ) )
