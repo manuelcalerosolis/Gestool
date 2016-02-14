@@ -120,7 +120,7 @@ CLASS TStock
    METHOD Create( cPath, lExclusive )
    METHOD End()            INLINE ( if( !Empty( ::oTree ), ::oTree:End(), ), ::CloseFiles() )
 
-   METHOD Reset()          INLINE ( ::aStocks := { sStock():New() } )
+   METHOD Reset()          INLINE ( ::aStocks := {} )
 
    METHOD lOpenFiles( lExclusive )
    METHOD CloseFiles()
@@ -4163,10 +4163,10 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    end if
 
+   ::Reset()
+
    ::cCodigoArticulo    := cCodArt
    ::cCodigoAlmacen     := cCodAlm
-
-   ::Reset()
 
    if Empty( cCodArt )
       Return ( ::aStocks )
@@ -4204,11 +4204,13 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
       // Colocamos el codigo de almacen-----------------------------------------
 
       ::SetCodigoAlmacen( cCodAlm )
+      
       SysRefresh()
 
       // Movimientos de almacén------------------------------------------------
 
       ::aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
+      
       SysRefresh()
 
       // Albaranes de proveedor------------------------------------------------------
@@ -5230,9 +5232,13 @@ METHOD oTreeStocks( cCodArt, cCodAlm )
 
    ::aStockArticulo( cCodArt, cCodAlm )
 
+   if empty( ::aStocks )
+      ::aStocks   := { sStock():New() }
+   end if 
+
    aSort( ::aStocks, , , {|x,y| x:cCodigo + x:cCodigoAlmacen + x:cValorPropiedad1 + x:cValorPropiedad2 + x:cLote + dtos( x:dFechaDocumento ) + x:tFechaDocumento < y:cCodigo + y:cCodigoAlmacen + y:cValorPropiedad1 + y:cValorPropiedad2 + y:cLote + dtos( y:dFechaDocumento ) + y:tFechaDocumento } )
 
-   ::oTree     := TreeBegin()
+   ::oTree        := TreeBegin()
 
    for each x in ::aStocks
 
@@ -5242,7 +5248,7 @@ METHOD oTreeStocks( cCodArt, cCodAlm )
             TreeEnd()
          end if 
 
-         TreeAddItem( x:cCodigoAlmacen + Space(1) + retAlmacen( x:cCodigoAlmacen, ::cAlm ) )
+         TreeAddItem( alltrim( x:cCodigoAlmacen ) + Space(1) + retAlmacen( x:cCodigoAlmacen, ::cAlm ) )
 
          TreeBegin()
 
@@ -5250,7 +5256,7 @@ METHOD oTreeStocks( cCodArt, cCodAlm )
 
       TreeAddItem( x:Documento() ):Cargo := oClone( x )
          
-      cValue   := x:cCodigo + x:cCodigoAlmacen + x:cValorPropiedad1 + x:cValorPropiedad2 + x:cLote
+      cValue      := x:cCodigo + x:cCodigoAlmacen + x:cValorPropiedad1 + x:cValorPropiedad2 + x:cLote
       
    next 
 
@@ -5721,8 +5727,8 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
    cCodAlm              := if ( len( cCodAlm )  != 16, Padr( cCodAlm, 16 ), cCodAlm )
    cCodPrp1             := if ( len( cCodPrp1 ) != 20, Padr( cCodPrp1, 20 ), cCodPrp1 )
    cCodPrp2             := if ( len( cCodPrp2 ) != 20, Padr( cCodPrp2, 20 ), cCodPrp2 )
-   cValPrp1             := if ( len( cValPrp1 ) != 40, Padr( cValPrp1, 40 ), cValPrp1 )
-   cValPrp2             := if ( len( cValPrp2 ) != 40, Padr( cValPrp2, 40 ), cValPrp2 )
+   cValPrp1             := if ( len( cValPrp1 ) != 20, Padr( cValPrp1, 20 ), cValPrp1 )
+   cValPrp2             := if ( len( cValPrp2 ) != 20, Padr( cValPrp2, 20 ), cValPrp2 )
    cLote                := if ( len( cLote )    != 14, Padr( cLote, 14 ), cLote )
 
    // Entramos en el calculo real de la consolidacion--------------------------

@@ -1367,7 +1367,8 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
          ID       IDOK ;
 			OF 		oDlg ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         ACTION   ( if( ::lSave( nMode ), ( ::EndResource( .t., nMode, oDlg ), oDlg:End( IDOK ) ), ) )
+         ACTION   ( if  ( ::lSave( nMode ),;
+                        ( ::EndResource( .t., nMode, oDlg ), oDlg:End( IDOK ) ), ) )
 
 		REDEFINE BUTTON ;
          ID       IDCANCEL ;
