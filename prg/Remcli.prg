@@ -1163,7 +1163,7 @@ METHOD SaveModelo()
          VAR      ::cFicheroExportacion ;
          ID       130 ;
          BITMAP   "FOLDER" ;
-         ON HELP  ( oGet:cText( cGetFile( "*.txt", "Selección de fichero" ) ) ) ;
+         ON HELP  ( oGet:cText( cGetFile( "*.xml", "Selección de fichero" ) ) ) ;
          OF       oDlg
 
       REDEFINE CHECKBOX ::lAgruparRecibos ;
