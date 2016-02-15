@@ -39,11 +39,27 @@ CLASS TRemesas FROM TMasDet
    DATA oSerieFin
    DATA cSerieFin
 
+   DATA oNumeroInicio
+   DATA nNumeroInicio
+   DATA oNumeroFin
+   DATA nNumeroFin
+
+   DATA oSufijoInicio
+   DATA cSufijoInicio
+   DATA oSufijoFin
+   DATA cSufijoFin
+
+   DATA oNotImportCeros
+   DATA lNotImportCeros
+
+   DATA oNotImportSinCuenta
+   DATA lNotImportSinCuenta
+
    DATA oClienteIni
    DATA oClienteFin
    DATA cClienteIni
    DATA cClienteFin
-
+ 
    DATA oFormaPagoIni
    DATA oFormaPagoFin
    DATA cFormaPagoIni
@@ -650,6 +666,15 @@ METHOD inicializaData()
    ::cSerieInicio          := "A"
    ::cSerieFin             := "Z"
 
+   ::nNumeroInicio         := 0
+   ::nNumeroFin            := 999999999
+
+   ::cSufijoInicio         := Space( 2 )
+   ::cSufijoFin            := "ZZ"
+
+   ::lNotImportCeros       := .t.
+   ::lNotImportSinCuenta   := .t.
+
    ::cClienteIni           := dbFirst( ::oClientes, 1 )
    ::cClienteFin           := dbLast ( ::oClientes, 1 )
 
@@ -871,6 +896,13 @@ METHOD Resource( nMode )
          :nWidth           := 20
       end with
 
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader          := "Cuenta"
+         :bEditValue       := {|| ::oDbfVir:cPaisIBAN + ::oDbfVir:cCtrlIBAN + "-" + ::oDbfVir:cEntCli + "-" + ::oDbfVir:cSucCli + "-" + ::oDbfVir:cDigCli + "-" + ::oDbfVir:cCtaCli }
+         :nWidth           := 250
+         :lHide            := .t.
+      end with
+
       ::oBrwDet:CreateFromResource( 150 )
       ::oBrwDet:bLDblClick := {|| ::EditDet() }
 
@@ -885,11 +917,6 @@ METHOD Resource( nMode )
 			OF 		oDlg ;
          CANCEL ;
          ACTION   ( oDlg:end() )
-
-      REDEFINE BUTTON ;
-         ID       559 ;
-			OF 		oDlg ;
-         ACTION   ( ChmHelp( "Remesasbancarias2" ) )
 
    if nMode != ZOOM_MODE
       oDlg:AddFastKey( VK_F2, {|| ::AppendDet() } )
@@ -964,6 +991,26 @@ METHOD ImportResource( nMode )
          VALID    ( ::cSerieFin >= "A" .and. ::cSerieFin <= "Z"  );
          OF       oDlg
 
+      REDEFINE GET ::oNumeroInicio VAR ::nNumeroInicio ;
+         ID       210 ;
+         SPINNER ;
+         OF       oDlg
+
+      REDEFINE GET ::oNumeroFin VAR ::nNumeroFin ;
+         ID       220 ;
+         SPINNER ;
+         OF       oDlg
+
+      REDEFINE GET ::oSufijoInicio VAR ::cSufijoInicio ;
+         ID       230 ;
+         PICTURE  "@!" ;
+         OF       oDlg
+
+      REDEFINE GET ::oSufijoFin VAR ::cSufijoFin ;
+         ID       240 ;
+         PICTURE  "@!" ;
+         OF       oDlg
+
       REDEFINE GET ::oClienteIni VAR ::cClienteIni;
          ID       150 ;
          IDTEXT   151 ;
@@ -999,6 +1046,14 @@ METHOD ImportResource( nMode )
 
          ::oFormaPagoFin:bValid    := {|| cFpago( ::oFormaPagoFin, ::oFormaPago:cAlias, ::oFormaPagoFin:oHelpText ) }
          ::oFormaPagoFin:bHelp     := {|| BrwFPago( ::oFormaPagoFin, ::oFormaPagoFin:oHelpText ) }
+
+      REDEFINE CHECKBOX ::oNotImportCeros VAR ::lNotImportCeros ;
+         ID       250 ;
+         OF       oDlg
+
+      REDEFINE CHECKBOX ::oNotImportSinCuenta VAR ::lNotImportSinCuenta ;
+         ID       260 ;
+         OF       oDlg
 
       ::oMeter    := TApoloMeter():ReDefine( 140, { | u | if( pCount() == 0, ::nMeter, ::nMeter := u ) }, 140, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
@@ -1506,6 +1561,8 @@ METHOD GetRecCli( oDlg, nMode )
       while !::oDbfDet:Eof()
          
          if ::oDbfDet:cSerie >= ::cSerieInicio .and. ::oDbfDet:cSerie <= ::cSerieFin                                    .and.;
+            ::oDbfDet:nNumFac >= ::nNumeroInicio .and. ::oDbfDet:nNumFac <= ::nNumeroFin                                .and.;
+            ::oDbfDet:cSufFac >= ::cSufijoInicio .and. ::oDbfDet:cSufFac <= ::cSufijoFin                                .and.;
             !::lNowExist( ::oDbfDet:cSerie + Str( ::oDbfDet:nNumFac ) + ::oDbfDet:cSufFac + Str( ::oDbfDet:nNumRec ) )  .and.;
             !::oDbfDet:lCobrado                                                                                         .and.;
             !Empty( ::oDbfDet:dPreCob )                                                                                 .and.;
@@ -1518,7 +1575,8 @@ METHOD GetRecCli( oDlg, nMode )
             ::oDbfDet:cCodCli <= ::cClienteFin                                                                          .and.;
             ::oDbfDet:cCodPgo >= ::cFormaPagoIni                                                                        .and.;
             ::oDbfDet:cCodPgo <= ::cFormaPagoFin                                                                        .and.;
-            ::oDbfDet:nImporte > 0
+            ( !::lNotImportCeros .or. ::oDbfDet:nImporte > 0 )                                                          .and.;
+            ( !::lNotImportSinCuenta .or. !Empty( ::oDbfDet:cCtaCli ) )
 
             if ::oDbfVir:Append()
                aEval( ::oDbfVir:aTField, {| oFld, n | ::oDbfVir:FldPut( n, ::oDbfDet:FieldGet( n ) ) } )
