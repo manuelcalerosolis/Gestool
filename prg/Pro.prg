@@ -2798,12 +2798,12 @@ Static Function addPropiedades( aPropiedades, nView, cCodigoPropiedad )
    local hPropiedad   
    local cValorPropiedad   := ( D():PropiedadesLineas( nView ) )->cCodTbl
 
-   hPropiedad  := {  "CodigoPropiedad" => rtrim( cCodigoPropiedad ),;
-                     "ValorPropiedad" => rtrim( cValorPropiedad ),;
-                     "TipoPropiedad" => rtrim( retFld( cCodigoPropiedad, D():Propiedades( nView ), "cDesPro" ) ),;
-                     "ColorPropiedad" => retFld( cCodigoPropiedad, D():Propiedades( nView ), "lColor" ),;
-                     "CabeceraPropiedad" => rtrim( retFld( cCodigoPropiedad + cValorPropiedad, D():PropiedadesLineas( nView ), "cDesTbl" ) ),;
-                     "RgbPropiedad" => retFld( cCodigoPropiedad + cValorPropiedad, D():PropiedadesLineas( nView ), "nColor" ) }
+   hPropiedad  := {  "CodigoPropiedad"    => rtrim( cCodigoPropiedad ),;
+                     "ValorPropiedad"     => rtrim( cValorPropiedad ),;
+                     "TipoPropiedad"      => rtrim( retFld( cCodigoPropiedad, D():Propiedades( nView ), "cDesPro" ) ),;
+                     "ColorPropiedad"     => retFld( cCodigoPropiedad, D():Propiedades( nView ), "lColor" ),;
+                     "CabeceraPropiedad"  => rtrim( retFld( cCodigoPropiedad + cValorPropiedad, D():PropiedadesLineas( nView ), "cDesTbl" ) ),;
+                     "RgbPropiedad"       => retFld( cCodigoPropiedad + cValorPropiedad, D():PropiedadesLineas( nView ), "nColor" ) }
 
 Return ( aadd( aPropiedades, hPropiedad ) )
 

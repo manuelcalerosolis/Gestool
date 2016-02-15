@@ -56,6 +56,10 @@ CLASS TLabelGenerator
    DATA oBtnModificar
    DATA oBtnZoom
 
+   DATA oComboBoxOrden
+   DATA cComboBoxOrden                 INIT "Código"
+   DATA aComboBoxOrden                 INIT { "Código", "Nombre" }
+
    DATA lHideSerie                     INIT .f.
 
    Data aSearch
@@ -125,6 +129,9 @@ CLASS TLabelGenerator
 
    METHOD refreshBrowseLabel()            INLINE ( if( !empty( ::oBrwLabel ), ::oBrwLabel:Refresh(), ) )
 
+   METHOD buildCodeColumn() 
+   METHOD buildDetailColumn()
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -186,13 +193,38 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
+METHOD buildCodeColumn() CLASS TLabelGenerator
+
+   with object ( ::oBrwLabel:AddCol() )
+      :cHeader          := "Código"
+      :bEditValue       := {|| ( ::tmpLabelEdition )->cRef }
+      :nWidth           := 80
+      :cSortOrder       := "cRef"
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oComboBoxOrden:Set( oCol:cHeader ) }
+   end with
+
+Return ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD buildDetailColumn() CLASS TLabelGenerator
+
+   with object ( ::oBrwLabel:AddCol() )
+      :cHeader          := "Nombre"
+      :bEditValue       := {|| ( ::tmpLabelEdition )->cDetalle }
+      :nWidth           := 250
+      :cSortOrder       := "cDetalle"
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oComboBoxOrden:Set( oCol:cHeader ) }
+   end with
+
+Return ( Self )
+
+//------------------------------------------------------------------------//
+
 METHOD Dialog() CLASS TLabelGenerator
 
    local oGetOrd
    local cGetOrd     := Space( 100 )
-   local oCbxOrd
-   local cCbxOrd     := "Código"
-   local aCbxOrd     := { "Código", "Nombre" }
 
    if ::lErrorOnCreate
       Return ( Self )
@@ -306,13 +338,13 @@ METHOD Dialog() CLASS TLabelGenerator
       oGetOrd:bChange   := {| nKey, nFlags, oGet | AutoSeek( nKey, nFlags, oGet, ::oBrwLabel, ::tmpLabelEdition ) }
       oGetOrd:bValid    := {|| ( ::tmpLabelEdition )->( OrdScope( 0, nil ) ), ( ::tmpLabelEdition )->( OrdScope( 1, nil ) ), ::refreshBrowseLabel(), .t. }
 
-      REDEFINE COMBOBOX oCbxOrd ;
-         VAR      cCbxOrd ;
+      REDEFINE COMBOBOX ::oComboBoxOrden ;
+         VAR      ::cComboBoxOrden ;
          ID       210 ;
-         ITEMS    aCbxOrd ;
+         ITEMS    ::aComboBoxOrden ;
          OF       ::oFld:aDialogs[ 2 ]
 
-      oCbxOrd:bChange   := {|| ::SelectColumn( oCbxOrd ) }
+      ::oComboBoxOrden:bChange   := {|| ::SelectColumn( ::oComboBoxOrden ) }
 
       REDEFINE BUTTON ;
          ID       100 ;
@@ -380,21 +412,9 @@ METHOD Dialog() CLASS TLabelGenerator
          :SetCheck( { "Sel16", "Nil16" } )
       end with
 
-      with object ( ::oBrwLabel:AddCol() )
-         :cHeader          := "Código"
-         :bEditValue       := {|| ( ::tmpLabelEdition )->cRef }
-         :nWidth           := 80
-         :cSortOrder       := "cRef"
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
+      ::buildCodeColumn()
 
-      with object ( ::oBrwLabel:AddCol() )
-         :cHeader          := "Nombre"
-         :bEditValue       := {|| ( ::tmpLabelEdition )->cDetalle }
-         :nWidth           := 250
-         :cSortOrder       := "cDetalle"
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
+      ::buildDetailColumn()
 
       with object ( ::oBrwLabel:AddCol() )
          :cHeader          := "Prp. 1"
@@ -485,7 +505,6 @@ METHOD startDialog()
 Return ( Self )
 
 //--------------------------------------------------------------------------//
-
 
 METHOD lCreateTempLabelEdition() CLASS TLabelGenerator
 
@@ -628,13 +647,11 @@ METHOD buildReportLabels() CLASS TLabelGenerator
 
    ::variableLabel( oFr )
 
-   
-
    // Cargar el informe-----------------------------------------------------------
    
    if !empty( ( ::dbfDocumento )->mReport )
 
-      oFr:LoadFromBlob( ( ::dbfDocumento )->( Select() ), "mReport")
+      oFr:LoadFromBlob( ( ::dbfDocumento )->( select() ), "mReport")
 
       ::prepareTempReport( oFr )
       
@@ -1443,7 +1460,7 @@ METHOD dataLabel( oFr ) CLASS TLabelGeneratorPedidoClientes
    oFr:SetWorkArea(     "Lineas de pedidos", ( ::tmpLabelReport )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
    oFr:SetFieldAliases( "Lineas de pedidos", cItemsToReport( aColPedCli() ) )
 
-   oFr:SetWorkArea(     "Pedidos", ( ::dbfCabecera )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
+   oFr:SetWorkArea(     "Pedidos", ( ::dbfCabecera )->( Select() ) )
    oFr:SetFieldAliases( "Pedidos", cItemsToReport( aItmPedCli() ) )
 
    oFr:SetWorkArea(     "Incidencias de pedidos", ( D():PedidosClientesIncidencias( ::nView ) )->( Select() ) )
@@ -1486,22 +1503,22 @@ METHOD dataLabel( oFr ) CLASS TLabelGeneratorPedidoClientes
    oFr:SetMasterDetail( "Lineas de pedidos", "Documentos de pedidos",      {|| ( ::tmpLabelReport )->cSerPed + Str( ( ::tmpLabelReport )->nNumPed ) + ( ::tmpLabelReport )->cSufPed } )
    oFr:SetMasterDetail( "Lineas de pedidos", "Impuestos especiales",       {|| ( ::tmpLabelReport )->cCodImp } )
 
-   oFr:SetMasterDetail(    "Pedidos", "Clientes",                             {|| ( ::dbfCabecera )->cCodCli } )
-   oFr:SetMasterDetail(    "Pedidos", "Almacenes",                            {|| ( ::dbfCabecera )->cCodAlm } )
-   oFr:SetMasterDetail(    "Pedidos", "Formas de pago",                       {|| ( ::dbfCabecera )->cCodPgo} )
-   oFr:SetMasterDetail(    "Pedidos", "Empresa",                              {|| cCodigoEmpresaEnUso() } )
+   oFr:SetMasterDetail( "Pedidos", "Clientes",                             {|| ( ::dbfCabecera )->cCodCli } )
+   oFr:SetMasterDetail( "Pedidos", "Almacenes",                            {|| ( ::dbfCabecera )->cCodAlm } )
+   oFr:SetMasterDetail( "Pedidos", "Formas de pago",                       {|| ( ::dbfCabecera )->cCodPgo} )
+   oFr:SetMasterDetail( "Pedidos", "Empresa",                              {|| cCodigoEmpresaEnUso() } )
 
-   oFr:SetResyncPair(      "Lineas de pedidos", "Pedidos" )
-   oFr:SetResyncPair(      "Lineas de pedidos", "Artículos" )
-   oFr:SetResyncPair(      "Lineas de pedidos", "Precios por propiedades" )
-   oFr:SetResyncPair(      "Lineas de pedidos", "Incidencias de pedidos" )
-   oFr:SetResyncPair(      "Lineas de pedidos", "Documentos de pedidos" )
-   oFr:SetResyncPair(      "Lineas de pedidos", "Impuestos especiales" )   
+   oFr:SetResyncPair(   "Lineas de pedidos", "Pedidos" )
+   oFr:SetResyncPair(   "Lineas de pedidos", "Artículos" )
+   oFr:SetResyncPair(   "Lineas de pedidos", "Precios por propiedades" )
+   oFr:SetResyncPair(   "Lineas de pedidos", "Incidencias de pedidos" )
+   oFr:SetResyncPair(   "Lineas de pedidos", "Documentos de pedidos" )
+   oFr:SetResyncPair(   "Lineas de pedidos", "Impuestos especiales" )   
 
-   oFr:SetResyncPair(      "Pedidos", "Clientes" )
-   oFr:SetResyncPair(      "Pedidos", "Almacenes" )
-   oFr:SetResyncPair(      "Pedidos", "Formas de pago" )
-   oFr:SetResyncPair(      "Pedidos", "Empresa" )
+   oFr:SetResyncPair(   "Pedidos", "Clientes" )
+   oFr:SetResyncPair(   "Pedidos", "Almacenes" )
+   oFr:SetResyncPair(   "Pedidos", "Formas de pago" )
+   oFr:SetResyncPair(   "Pedidos", "Empresa" )
 
 Return ( nil )
 
@@ -2843,19 +2860,29 @@ Return nil
 
 CLASS TLabelGeneratorMovimientosAlmacen FROM TLabelGenerator
 
+   DATA oSender
+
    METHOD New( oSender )
 
    METHOD loadTempLabelEdition() 
    
    METHOD dataLabel( oFr )
 
+   METHOD lCreateTempLabelEdition()
+
    METHOD createTempLabelReport()
+
+   METHOD buildCodeColumn()
+
+   METHOD buildDetailColumn()
 
 ENDCLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD New( oSender ) CLASS TLabelGeneratorMovimientosAlmacen
+
+   ::oSender            := oSender
 
    ::dbfCabecera        := oSender:oDbf:cAlias
    ::dbfLineas          := oSender:oDetMovimientos:oDbf:cAlias
@@ -2882,20 +2909,59 @@ Return( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD lCreateTempLabelEdition() CLASS TLabelGeneratorMovimientosAlmacen
+
+   local oBlock
+   local oError
+   local lCreateTempLabelEdition   := .t.
+
+   oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      ::tmpLabelEdition       := "LblEdt" + cCurUsr()
+
+      ::cFileTmpLabel         := cGetNewFileName( cPatTmp() + "LblEdt" )
+
+      ::DestroyTempLabelEdition()
+
+      dbCreate( ::cFileTmpLabel,  ::aStructureField , cLocalDriver() )
+      dbUseArea( .t., cLocalDriver(), ::cFileTmpLabel, ::tmpLabelEdition, .f. )
+
+      if!( ::tmpLabelEdition )->( neterr() )
+         ( ::tmpLabelEdition )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+         ( ::tmpLabelEdition )->( OrdCreate( ::cFileTmpLabel, "cRefMov", "cRefMov", {|| Field->cRefMov } ) )
+
+         ( ::tmpLabelEdition )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+         ( ::tmpLabelEdition )->( OrdCreate( ::cFileTmpLabel, "cNomMov", "Upper( cNomMov )", {|| Upper( Field->cNomMov ) } ) )
+      end if
+
+      ( ::tmpLabelEdition )->( OrdsetFocus( "cRef" ) )
+
+   RECOVER USING oError
+
+      lCreateTempLabelEdition      := .f.
+
+      MsgStop( 'Imposible crear fichero temporal' + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+Return ( lCreateTempLabelEdition )
+
+//---------------------------------------------------------------------------//
+
 METHOD createTempLabelReport() CLASS TLabelGeneratorMovimientosAlmacen
 
    local oBlock
    local oError
-   local lCreate           := .t.
+   local createTempLabelReport := .t.
 
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
       ::tmpLabelReport     := "LblRpt" + cCurUsr()
       ::fileLabelReport    := cGetNewFileName( cPatTmp() + "LblRpt" )
-
-      msgAlert( hb_valtoexp( ::aStructureField ), "aStructureField" )
-      msgAlert( ::dbfCabecera )
 
       dbCreate( ::fileLabelReport, ::aStructureField, cLocalDriver() )
       dbUseArea( .t., cLocalDriver(), ::fileLabelReport, ::tmpLabelReport, .f. )
@@ -2907,7 +2973,7 @@ METHOD createTempLabelReport() CLASS TLabelGeneratorMovimientosAlmacen
 
    RECOVER USING oError
 
-      lCreate              := .f.
+      createTempLabelReport    := .f.
 
       MsgStop( 'Imposible crear un fichero temporal de lineas del documento' + CRLF + ErrorMessage( oError ) )
 
@@ -2915,9 +2981,37 @@ METHOD createTempLabelReport() CLASS TLabelGeneratorMovimientosAlmacen
 
    ErrorBlock( oBlock )
 
-Return ( lCreate )
+Return ( createTempLabelReport )
 
 //---------------------------------------------------------------------------//
+
+METHOD buildCodeColumn() CLASS TLabelGeneratorMovimientosAlmacen
+
+   with object ( ::oBrwLabel:AddCol() ) 
+      :cHeader          := "Código"
+      :bEditValue       := {|| ( ::tmpLabelEdition )->cRefMov }
+      :nWidth           := 80
+      :cSortOrder       := "cRefMov"
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oComboBoxOrden:Set( oCol:cHeader ) }
+   end with
+
+Return ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD buildDetailColumn() CLASS TLabelGeneratorMovimientosAlmacen
+
+   with object ( ::oBrwLabel:AddCol() )
+      :cHeader          := "Nombre"
+      :bEditValue       := {|| ( ::tmpLabelEdition )->cNomMov }
+      :nWidth           := 250
+      :cSortOrder       := "cNomMov"
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oComboBoxOrden:Set( oCol:cHeader ) }
+   end with
+
+Return ( Self )
+
+//------------------------------------------------------------------------//
 
 METHOD loadTempLabelEdition( tmpLabel ) CLASS TLabelGeneratorMovimientosAlmacen
 
@@ -2934,16 +3028,16 @@ METHOD loadTempLabelEdition( tmpLabel ) CLASS TLabelGeneratorMovimientosAlmacen
 
    //Llenamos la tabla temporal--------------------------------------------------
 
-   nRec                 := ( ::dbfCabecera )->( Recno() )
-   nOrd                 := ( ::dbfCabecera )->( OrdSetFocus( "nNumRem" ) )
+   nRec                 := ( ::dbfCabecera )->( recno() )
+   nOrd                 := ( ::dbfCabecera )->( ordsetfocus( "cNumRem" ) )
 
-   if ( ::dbfCabecera )->( dbSeek( ::idDocument, .t. ) )
+   if ( ::dbfCabecera )->( dbseek( ::idDocument, .t. ) )
 
       while str( ( ::dbfCabecera )->nNumRem ) + ( ::dbfCabecera )->cSufRem >= str( ::nDocumentoInicio, 9 ) + ::cSufijoInicio  .and.;
             str( ( ::dbfCabecera )->nNumRem ) + ( ::dbfCabecera )->cSufRem <= str( ::nDocumentoFin, 9 ) + ::cSufijoFin        .and.;
             ( ::dbfCabecera )->( !eof() )
 
-         if ( ::dbfLineas )->( dbSeek( ( ::dbfCabecera )->cSerRem + Str( ( ::dbfCabecera )->nNumRem ) + ( ::dbfCabecera )->cSufRem ) )
+         if ( ::dbfLineas )->( dbseek( str( ( ::dbfCabecera )->nNumRem ) + ( ::dbfCabecera )->cSufRem ) )
 
             while str( ( ::dbfLineas )->nNumRem ) + ( ::dbfLineas )->cSufRem == str( ( ::dbfCabecera )->nNumRem ) + ( ::dbfCabecera )->cSufRem  .and.;
                   ( ::dbfLineas )->( !eof() )
@@ -2991,42 +3085,42 @@ Return ( Self )
 
 METHOD dataLabel( oFr ) CLASS TLabelGeneratorMovimientosAlmacen
 
-   oFr:SetWorkArea(     "Movimiento", ::oDbf:nArea, .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
-   oFr:SetFieldAliases( "Movimiento", cObjectsToReport( ::oDbf ) )
+   oFr:ClearDataSets()
 
-   oFr:SetWorkArea(     "Lineas de movimientos", ::tmpLabelEdition:oDbf:nArea )
-   oFr:SetFieldAliases( "Lineas de movimientos", cObjectsToReport( ::oDetMovimientos:oDbf ) )
+   oFr:SetWorkArea(     "Lineas de movimientos",   ( ::tmpLabelReport )->( select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
+   oFr:SetFieldAliases( "Lineas de movimientos",   cObjectsToReport( ::oSender:oDetMovimientos:oDbf ) )
 
-   oFr:SetWorkArea(     "Empresa", ::oDbfEmp:nArea )
-   oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
+   oFr:SetWorkArea(     "Movimientos",             ::oSender:oDbf:nArea )
+   oFr:SetFieldAliases( "Movimientos",             cObjectsToReport( ::oSender:oDbf ) )
 
-   oFr:SetWorkArea(     "Almacén origen", ::oAlmacenOrigen:nArea )
-   oFr:SetFieldAliases( "Almacén origen", cItemsToReport( aItmAlm() ) )
+   oFr:SetWorkArea(     "Empresa",                 ::oSender:oDbfEmp:nArea )
+   oFr:SetFieldAliases( "Empresa",                 cItemsToReport( aItmEmp() ) )
 
-   oFr:SetWorkArea(     "Almacén destino", ::oAlmacenDestino:nArea )
-   oFr:SetFieldAliases( "Almacén destino", cItemsToReport( aItmAlm() ) )
+   oFr:SetWorkArea(     "Almacén origen",          ::oSender:oAlmacenOrigen:nArea )
+   oFr:SetFieldAliases( "Almacén origen",          cItemsToReport( aItmAlm() ) )
 
-   oFr:SetWorkArea(     "Agentes", ::oDbfAge:nArea )
-   oFr:SetFieldAliases( "Agentes", cItemsToReport( aItmAge() ) )
+   oFr:SetWorkArea(     "Almacén destino",         ::oSender:oAlmacenDestino:nArea )
+   oFr:SetFieldAliases( "Almacén destino",         cItemsToReport( aItmAlm() ) )
+
+   oFr:SetWorkArea(     "Agentes",                 ::oSender:oDbfAge:nArea )
+   oFr:SetFieldAliases( "Agentes",                 cItemsToReport( aItmAge() ) )
    
-   oFr:SetWorkArea(     "Artículos", ::oArt:nArea )
-   oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
+   oFr:SetWorkArea(     "Artículos",               ::oSender:oArt:nArea )
+   oFr:SetFieldAliases( "Artículos",               cItemsToReport( aItmArt() ) )
 
-   oFr:SetMasterDetail( "Movimiento",              "Lineas de movimientos",   {|| Str( ::oDbf:nNumRem ) + ::oDbf:cSufRem } )
-   oFr:SetMasterDetail( "Lineas de movimientos",   "Artículos",               {|| ::oDetMovimientos:oDbf:cRefMov } )
+   oFr:SetMasterDetail( "Lineas de movimientos",   "Movimientos",             {|| str( ( ::tmpLabelReport )->nNumRem ) + ( ::tmpLabelReport )->cSufRem } )
+   oFr:SetMasterDetail( "Lineas de movimientos",   "Artículos",               {|| ( ::tmpLabelReport )->cRefMov } )
+   oFr:SetMasterDetail( "Movimientos",             "Empresa",                 {|| cCodigoEmpresaEnUso() } )
+   oFr:SetMasterDetail( "Movimientos",             "Almacén origen",          {|| ::oSender:oDbf:cAlmOrg } )
+   oFr:SetMasterDetail( "Movimientos",             "Almacén destino",         {|| ::oSender:oDbf:cAlmDes } )
+   oFr:SetMasterDetail( "Movimientos",             "Agentes",                 {|| ::oSender:oDbf:cCodAge } )
 
-   oFr:SetMasterDetail( "Movimiento",              "Empresa",               {|| cCodigoEmpresaEnUso() } )
-   oFr:SetMasterDetail( "Movimiento",              "Almacén origen",        {|| ::oDbf:cAlmOrg } )
-   oFr:SetMasterDetail( "Movimiento",              "Almacén destino",       {|| ::oDbf:cAlmDes } )
-   oFr:SetMasterDetail( "Movimiento",              "Agentes",               {|| ::oDbf:cCodAge } )
-
-   oFr:SetResyncPair(   "Movimiento",              "Empresa" )
-   oFr:SetResyncPair(   "Movimiento",              "Almacén origen" )
-   oFr:SetResyncPair(   "Movimiento",              "Almacén destino" )
-   oFr:SetResyncPair(   "Movimiento",              "Agentes" )
-
-   oFr:SetResyncPair(   "Movimiento",              "Lineas de movimientos" )
+   oFr:SetResyncPair(   "Lineas de movimientos",   "Movimientos" )
    oFr:SetResyncPair(   "Lineas de movimientos",   "Artículos" )
+   oFr:SetResyncPair(   "Movimientos",             "Empresa" )
+   oFr:SetResyncPair(   "Movimientos",             "Almacén origen" )
+   oFr:SetResyncPair(   "Movimientos",             "Almacén destino" )
+   oFr:SetResyncPair(   "Movimientos",             "Agentes" )
 
 Return nil
 

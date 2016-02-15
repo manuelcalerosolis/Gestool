@@ -2745,6 +2745,7 @@ METHOD lSelDoc() CLASS TRemMovAlm
 RETURN nil
 
 //--------------------------------------------------------------------------//
+//  [ trim( CallHbFunc( 'oTInfGen', ['nombrePrimeraPropiedad()'] ) ) ]
 
 METHOD DataReport( oFr ) CLASS TRemMovAlm 
 
@@ -3626,7 +3627,7 @@ METHOD OpenFiles( lExclusive) CLASS TDetMovimientos
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::oDbf            := ::DefineFiles()
+         ::oDbf            := ::defineFiles()
       end if
 
       ::oDbf:Activate( .f., !lExclusive )
