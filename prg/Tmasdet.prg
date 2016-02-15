@@ -1115,11 +1115,11 @@ RETURN ( Self )
 
 METHOD MultiDeleteDet() CLASS TMasDet
 
-   local aSel
+   local nSel
    local aSelected  := ::oBrwDet:aSelected
 
-   for each asel in aselected
-      ::oDbfVir:GoTo( aSel )
+   for each nSel in aSelected
+      ::oDbfVir:GoTo( nSel )
       ::DeleteDet( .f. )
    next
 

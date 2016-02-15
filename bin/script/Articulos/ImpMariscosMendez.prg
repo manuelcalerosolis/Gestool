@@ -858,8 +858,9 @@ Static Function ImportacionClientesExtra()
 
             if dbDialogLock( D():Clientes( nView ) )
                //( D():Clientes( nView ) )->cCodTar := RJust( Str( Int( GetNumeric( "AS", n ) ) ), "0", 5 )
-               ( D():Clientes( nView ) )->dPetRie := if( valtype( oOleExcel:oExcel:ActiveSheet:Range( "AT" + lTrim( Str( n ) ) ):Value ) == "D", oOleExcel:oExcel:ActiveSheet:Range( "AT" + lTrim( Str( n ) ) ):Value, ctod( "" ) )
-               ( D():Clientes( nView ) )->dConRie := if( valtype( oOleExcel:oExcel:ActiveSheet:Range( "AU" + lTrim( Str( n ) ) ):Value ) == "D", oOleExcel:oExcel:ActiveSheet:Range( "AU" + lTrim( Str( n ) ) ):Value, ctod( "" ) )
+               //( D():Clientes( nView ) )->dPetRie := if( valtype( oOleExcel:oExcel:ActiveSheet:Range( "AT" + lTrim( Str( n ) ) ):Value ) == "D", oOleExcel:oExcel:ActiveSheet:Range( "AT" + lTrim( Str( n ) ) ):Value, ctod( "" ) )
+               //( D():Clientes( nView ) )->dConRie := if( valtype( oOleExcel:oExcel:ActiveSheet:Range( "AU" + lTrim( Str( n ) ) ):Value ) == "D", oOleExcel:oExcel:ActiveSheet:Range( "AU" + lTrim( Str( n ) ) ):Value, ctod( "" ) )
+               ( D():Clientes( nView ) )->NbrEst := GetRange( "BQ", n )
                ( D():Clientes( nView ) )->( dbUnlock() )
             end if
 

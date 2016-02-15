@@ -1015,6 +1015,34 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :lHide            := .t.
       end with
 
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "N. pedido"
+         :bEditValue       := {|| cNumeroPedidoFactura( ( D():FacturasClientes( nView ) )->cNumAlb ) }
+         :nWidth           := 100
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "N. albarán"
+         :bEditValue       := {|| if( !Empty( ( D():FacturasClientes( nView ) )->cNumAlb ), Trans( ( D():FacturasClientes( nView ) )->cNumAlb, "@R #/#########/##" ), "" ) }
+         :nWidth           := 100
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Su pedido"
+         :bEditValue       := {|| ( D():FacturasClientes( nView ) )->cSuFac }
+         :nWidth           := 100
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Su albarán"
+         :bEditValue       := {|| ( D():FacturasClientes( nView ) )->cSuAlb }
+         :nWidth           := 100
+         :lHide            := .t.
+      end with
+
    oWndBrw:CreateXFromCode()
 
    DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
@@ -23625,3 +23653,20 @@ Return ( nombrePropiedad( ( D():FacturasClientesLineas( nView ) )->cCodPr2, ( D(
 
 //---------------------------------------------------------------------------//
 
+static function cNumeroPedidoFactura( cNumAlb )
+
+   local cPedido  := ""
+
+   if Empty( cNumAlb )
+      Return cPedido
+   end if
+
+   cPedido        := retFld( cNumAlb, dbfAlbCliT, "cNumPed" )
+
+   if !Empty( cPedido )
+      cPedido     := Trans( cPedido, "@R #/#########/##" )
+   end if
+
+return cPedido
+
+//---------------------------------------------------------------------------//
