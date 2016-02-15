@@ -2183,6 +2183,22 @@ function SynRecCli( cPath )
          end if
       end if
 
+      if Empty( ( dbfFacCliP )->cCodPgo )
+         if ( dbfFacCliP )->cTipRec == "R"
+            ( dbfFacCliP )->cCodPgo := RetFld( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac, dbfFacRecT, "cCodPago" )
+         else
+            ( dbfFacCliP )->cCodPgo := RetFld( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac, dbfFacCliT, "cCodPago" )
+         end if
+      end if
+
+      if Empty( ( dbfFacCliP )->cCtaRec )
+         ( dbfFacCliP )->cCtaRec    := RetFld( ( dbfFacCliP )->cCodPgo, dbfFPago, "cCtaCobro" )
+      end if
+
+      if Empty( ( dbfFacCliP )->cCtaGas )
+         ( dbfFacCliP )->cCtaGas    := RetFld( ( dbfFacCliP )->cCodPgo, dbfFPago, "cCtaGas" )
+      end if
+
       ( dbfFacCliP )->( dbSkip() )
 
    end while

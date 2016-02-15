@@ -112,6 +112,7 @@ CLASS TMasDet FROM TMant
    METHOD ZoomDet()
    METHOD DeleteDet()
    METHOD DelDetail()
+   METHOD MultiDeleteDet()
    METHOD DupDet()            VIRTUAL
 
    METHOD Detalle( nMode )    VIRTUAL
@@ -1088,13 +1089,15 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD DeleteDet() CLASS TMasDet
+METHOD DeleteDet( lMessage ) CLASS TMasDet
+
+   DEFAULT lMessage  := .t.
 
    if ::oDbfVir:Recno() == 0
       RETURN ( Self )
    end if
 
-   if oUser():lNotConfirmDelete() .or.  ApoloMsgNoYes("¿ Desea eliminar definitivamente este registro ?", "Confirme supersión" )
+   if oUser():lNotConfirmDelete() .or. if( lMessage, ApoloMsgNoYes("¿ Desea eliminar definitivamente este registro ?", "Confirme supersión" ), .t. )
 
       ::oDbfVir:Delete( .t. )
 
@@ -1107,6 +1110,20 @@ METHOD DeleteDet() CLASS TMasDet
    end if
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD MultiDeleteDet() CLASS TMasDet
+
+   local aSel
+   local aSelected  := ::oBrwDet:aSelected
+
+   for each asel in aselected
+      ::oDbfVir:GoTo( aSel )
+      ::DeleteDet( .f. )
+   next
+
+Return ( self )
 
 //---------------------------------------------------------------------------//
 

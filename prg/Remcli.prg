@@ -782,7 +782,7 @@ METHOD Resource( nMode )
 			ID 		502 ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::DeleteDet() )
+         ACTION   ( ::MultiDeleteDet() )
 
       REDEFINE BUTTON oBtnImportar;
          ID       503 ;
@@ -893,7 +893,7 @@ METHOD Resource( nMode )
 
    if nMode != ZOOM_MODE
       oDlg:AddFastKey( VK_F2, {|| ::AppendDet() } )
-      oDlg:AddFastKey( VK_F4, {|| ::DeleteDet() } )
+      oDlg:AddFastKey( VK_F4, {|| ::MultiDeleteDet() } )
       oDlg:AddFastKey( VK_F5, {|| if( ::lSave( nMode ), oDlg:End( IDOK ), ) } )
    end if
 
