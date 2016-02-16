@@ -61,7 +61,7 @@ CLASS SepaXml
 
    DATA SchmeNm            AS CHARACTER   INIT "CORE"
    DATA cFileOut           
-   DATA lMinified          AS LOGICAL     INIT .f.             // Documento compactado o con espacios y tabuladores
+   DATA lMinified          AS LOGICAL     INIT .t.             // Documento compactado o con espacios y tabuladores
    DATA aErrors            AS ARRAY       INIT {}              // Control de errores
    DATA ErrorMessages      AS ARRAY       INIT {=>}            // Hash mensajes de error multilenguaje
    DATA aDebtors           AS ARRAY       INIT {}              // Lista de deudores
@@ -86,13 +86,14 @@ CLASS SepaXml
    METHOD setFinancialMessage( nFinancialMessage )
    METHOD setScheme( nScheme )
 
-   METHOD DebtorAdd(oDebtor)     INLINE aadd(::aDebtors, oDebtor)
+   METHOD DebtorAdd(oDebtor)     INLINE aadd( ::aDebtors, oDebtor )
 
    METHOD GroupHeader()
    METHOD InfoPayment()
    METHOD DirectDebit()
 
    METHOD SetActor()
+   METHOD SetActorOther()
    METHOD TypePayment()
    METHOD IdPayment()
    METHOD Creditor()
@@ -101,6 +102,9 @@ CLASS SepaXml
    METHOD SetLanguage()
    METHOD Activate()
    METHOD End()               INLINE mxmlDelete( ::hXmlDoc )
+
+   METHOD resetErrors()       INLINE ( ::aErrors := {} )
+   METHOD addError( cError )  INLINE ( aadd( ::aErrors, cError ) )
 
 ENDCLASS
 
@@ -156,25 +160,46 @@ RETURN ( Self )
 
 METHOD GroupHeader( hParent ) CLASS SepaXml
 
- local hItem
+   local hItem
+   local lError   := .f.
 
-   if ::MsgId != NIL .or. ::CreDtTm != NIL .or. ::NbOfTxs != NIL .or. ::CtrlSum != NIL
+   if empty( ::oInitPart:Nm )                               // Nombre presentador
+      ::addError( "Nombre de presentador no puede estar vacio." )
+      lError      := .t.
+   endif
 
-      hItem := ItemNew(hParent, "GrpHdr")             // Cabecera
+   if empty( ::MsgId )
+      ::addError( "Identificación del mensaje no puede estar vacio." )
+      lError      := .t.
+   endif
 
-      ItemNew(hItem, "MsgId",   35, ::MsgId)             // Identificación del mensaje
-      ItemNew(hItem, "CreDtTm", 19, ::CreDtTm)        // Fecha y hora de creación
-      ItemNew(hItem, "NbOfTxs", 15, str(::NbOfTxs, 0))   // Número de operaciones 
-      ItemNew(hItem, "CtrlSum", 18, ::CtrlSum)        // Control de suma
+   if empty( ::CreDtTm )
+      ::addError( "Fecha y hora de creación no puede estar vacio." )
+      lError      := .t.
+   endif
+
+   if empty( ::NbOfTxs )
+      ::addError( "Número de operaciones no puede estar vacia." )
+      lError      := .t.
+   endif
+
+   if empty( ::CtrlSum )
+      ::addError( "Control de suma no puede estar vacio." )
+      lError      := .t.
+   endif
+
+   if !lError
+      hItem       := ItemNew( hParent, "GrpHdr" )           // Cabecera
+
+      ItemNew( hItem, "MsgId",   35, ::MsgId )              // Identificación del mensaje
+      ItemNew( hItem, "CreDtTm", 19, ::CreDtTm )            // Fecha y hora de creación
+      ItemNew( hItem, "NbOfTxs", 15, str( ::NbOfTxs, 0 ) )  // Número de operaciones 
+      ItemNew( hItem, "CtrlSum", 18, ::CtrlSum )            // Control de suma
       
-      if ::oInitPart:Nm != NIL                     // Opcional o Requerido ?
-         ::SetActor(hItem, "InitgPty", ::oInitPart )  // Parte iniciadora (6)
-      else
-         // Error
-      endif
+      ::SetActor( hItem, "InitgPty", ::oInitPart )          // Parte iniciadora (6)
    endif 
 
-return NIL
+Return ( nil )
 
 //--------------------------------------------------------------------------------------//
 
@@ -185,30 +210,34 @@ bien en el nodo ‘Información del pago’ (2.0), bien en el nodo ‘Informaci�
 pero solamente en uno de ellos. 
 Se recomienda que se recojan en el bloque ‘Información del pago’ (2.0).
 */
- local hItem
+ 
+   local hItem
 
-   if ::oDebtor:PmtInfId != NIL .or. ::oDebtor:PmtMtd != NIL .or. ;
-      ::oDebtor:BtchBookg != NIL .or. ::oDebtor:NbOfTxs != NIL .or. ;
-      ::oDebtor:CtrlSum != NIL .or. ::oDebtor:ReqdColltnDt != NIL .or. ::oDebtor:ChrgBr != NIL
+   if ::oDebtor:PmtInfId != nil .or.;
+      ::oDebtor:PmtMtd != nil .or. ;
+      ::oDebtor:BtchBookg != nil .or. ;
+      ::oDebtor:NbOfTxs != nil .or. ;
+      ::oDebtor:CtrlSum != nil .or. ;
+      ::oDebtor:ReqdColltnDt != nil .or. ;
+      ::oDebtor:ChrgBr != nil
 
-      hItem := ItemNew(hParent, "PmtInf")                // Información del pago 
+      hItem       := ItemNew( hParent, "PmtInf")                      // Información del pago 
 
-      ::IdPayment(hItem)                              // Identificación de la información del pago 
+      ::IdPayment( hItem )                                           // Identificación de la información del pago 
 
-      ::TypePayment(hItem)                         // Información del tipo de pago 
+      ::TypePayment( hItem )                                         // Información del tipo de pago 
 
-      ItemNew(hItem, "ReqdColltnDt", 8, ;                // Fecha de cobro (Vencimiento)
-            ::oDebtor:ReqdColltnDt)                
+      ItemNew( hItem, "ReqdColltnDt", 8, ::oDebtor:ReqdColltnDt )    // Fecha de cobro (Vencimiento)
 
-      ::Creditor(hItem)                            // Datos Acreedor, Cuenta, Entidad
+      ::Creditor( hItem )                                            // Datos Acreedor, Cuenta, Entidad
 
-      if ::oUltimateCreditor:Nm != NIL                   // Opcional, Último acreedor (6)
-         ::SetActor(hItem, "UltmtCdtr", ::oUltimateCreditor)   
-      endif                                     // No produce error, es opcional
+      if ::oUltimateCreditor:Nm != nil                               // Opcional, Último acreedor (6)
+         ::SetActor( hItem, "UltmtCdtr", ::oUltimateCreditor )   
+      endif                                                          // No produce error, es opcional
 
-      ItemNew(hItem, "ChrgBr", 4, ::oDebtor:ChrgBr)         // Cláusula de gastos (5)
+      ItemNew( hItem, "ChrgBr", 4, ::oDebtor:ChrgBr )                // Cláusula de gastos (5)
 
-      ::IdCreditor(hItem)                          // Identificación del acreedor
+      ::IdCreditor( hItem )                                          // Identificación del acreedor
    endif
 
 return hItem
@@ -222,7 +251,7 @@ METHOD DirectDebit( hParent ) CLASS SepaXml
    if ::oDebtor:InstdAmt > 0
       hItem := ItemNew(hParent, "DrctDbtTxInf")                      // Información de la operación de adeudo directo
 
-      if ::oDebtor:InstrId != NIL .or. ::oDebtor:EndToEndId != NIL   
+      if ::oDebtor:InstrId != nil .or. ::oDebtor:EndToEndId != nil   
          hChild := ItemNew(hItem, "PmtId")                        // Identificación del pago  
          ItemNew(hChild, "InstrId", 35, ::oDebtor:InstrId)           // Identificación de la instrucción
          ItemNew(hChild, "EndToEndId", 35, ::oDebtor:EndToEndId)     // Identificación de extremo a extremo 
@@ -230,13 +259,13 @@ METHOD DirectDebit( hParent ) CLASS SepaXml
 
       ItemNew(hItem, "InstdAmt", 12, ::oDebtor:InstdAmt, .t.)        // Importe ordenado 
 
-      if ::oDebtor:MndtId != NIL .or. ::oDebtor:DtOfSgntr != NIL 
+      if ::oDebtor:MndtId != nil .or. ::oDebtor:DtOfSgntr != nil 
          hChild := ItemNew(hItem, "DrctDbtTx")                    // Operación de adeudo directo 
          hChild := ItemNew(hChild, "MndtRltdInf")                 // Información del mandato 
          ItemNew(hChild, "MndtId", 35, ::oDebtor:MndtId)             // Identificación del mandato 
          ItemNew(hChild, "DtOfSgntr", 8, ::oDebtor:DtOfSgntr)        // Fecha de firma 
          
-         if ::oDebtor:AmdmntInd != NIL .and. ::oDebtor:OrgnlMndtId != NIL
+         if ::oDebtor:AmdmntInd != nil .and. ::oDebtor:OrgnlMndtId != nil
             ItemNew(hChild, "AmdmntInd", 5, ::oDebtor:AmdmntInd)     // Indicador de modificación 
             hChild := ItemNew(hChild, "AmdmntInfDtls")               // Detalles de la modificación 
             ItemNew(hChild, "OrgnlMndtId", 35, ::oDebtor:OrgnlMndtId)   // Identificación del mandato original 
@@ -261,7 +290,7 @@ METHOD DirectDebit( hParent ) CLASS SepaXml
       FieldNew(4, "UltmtCdtr")                        // Último acreedor (6)
       */
     
-      if ::oDebtor:BICOrBEI != NIL
+      if ::oDebtor:BICOrBEI != nil
          hChild := ItemNew(hItem, "DbtrAgt")          // Entidad del deudor 
          hChild := ItemNew(hChild, "FinInstnId")      // Identificación de la entidad 
          ItemNew(hChild, "BIC", 11, ::oDebtor:BICOrBEI)  // BIC 
@@ -269,13 +298,13 @@ METHOD DirectDebit( hParent ) CLASS SepaXml
          aadd( ::aErrors, ::ErrorMessages['SEPA_DEBTOR_AGENT'] )
       endif
 
-      if ::oDebtor:Nm != NIL                       // Requerido
+      if ::oDebtor:Nm != nil                       // Requerido
          ::SetActor(hItem, "Dbtr", ::oDebtor )        // Deudor (6)
       else
          aadd( ::aErrors, ::ErrorMessages['SEPA_DEBTOR_NAME'] )
       endif
 
-      if ::oDebtor:IBAN != NIL 
+      if ::oDebtor:IBAN != nil 
          hChild := ItemNew(hItem, "DbtrAcct")         // Cuenta del deudor
          hChild := ItemNew(hChild, "Id")           // Identificación
          ItemNew(hChild, "IBAN", 34, ::oDebtor:IBAN)  // IBAN
@@ -283,11 +312,11 @@ METHOD DirectDebit( hParent ) CLASS SepaXml
          aadd( ::aErrors, ::ErrorMessages['SEPA_DEBTOR_ACCOUNT'] )
       endif
 
-      if ::oUltimateDebtor:Nm != NIL                  // Opcional o Requerido ?
+      if ::oUltimateDebtor:Nm != nil                  // Opcional o Requerido ?
          ::SetActor(hItem, "UltmtDbtr", ::oUltimateDebtor)     // Último deudor (6)
       endif
 
-      if ::PurposeCd != NIL
+      if ::PurposeCd != nil
          hChild := ItemNew(hItem, "Purp")                   // Propósito 
          ItemNew(hChild, "Cd", 4, ::PurposeCd)              // Código
       endif
@@ -302,7 +331,7 @@ METHOD DirectDebit( hParent ) CLASS SepaXml
       ItemNew(6, "Inf", 35, aData["Inf"])                // Información
       */
 
-      if ::oDebtor:Info != NIL
+      if ::oDebtor:Info != nil
          hChild := ItemNew(hItem, "RmtInf")                 // Concepto
          ItemNew(hChild, "Ustrd", 140, ::oDebtor:Info)         // No estructurado
       endif
@@ -321,7 +350,7 @@ METHOD DirectDebit( hParent ) CLASS SepaXml
       // Error
    endif
 
-return NIL
+return nil
 
 //--------------------------------------------------------------------------------------//
 
@@ -330,68 +359,85 @@ METHOD SetActor( hParent, cLabel, oActor ) CLASS SepaXml
    local hItem 
    local hChild
 
-   hItem    := ItemNew(hParent, cLabel)                           // Actor
-   ItemNew(hItem, "Nm", 70, oActor:Nm )                            // Nombre 
+   hItem    := ItemNew( hParent, cLabel )                           // Actor
+   ItemNew( hItem, "Nm", 70, oActor:Nm )                            // Nombre 
 
-   if oActor:BICOrBEI != NIL .or. oActor:BirthDt != NIL .or. oActor:PrvcOfBirth != NIL .or. ;
-      oActor:CityOfBirth != NIL .or. oActor:CtryOfBirth .or. oActor:Id != NIL .or. oActor:Issr  != NIL
+   hItem    := ItemNew( hItem, "Id" )                               // Identificación 
 
-      hItem := ItemNew(hItem, "Id")                               // Identificación 
+   do case
+   case ( oActor:nEntity == ENTIDAD_JURIDICA )
 
-      if oActor:nEntity == ENTIDAD_JURIDICA
-         hItem := ItemNew(hItem, "OrgId")                         // Persona jurídica
-      elseif oActor:nEntity == ENTIDAD_FISICA   
-         hItem := ItemNew(hItem, "PrvtId")                        // Persona física 
+      hItem := ItemNew( hItem, "OrgId" )                          // Persona jurídica
+
+      if !empty( oActor:BICOrBEI )
+
+         ItemNew( hItem, "BICOrBEI", 11, oActor:BICOrBEI)          // BIC o BEI 
+
+         ::SetActorOther( hItem, oActor )
+      
       else
-         // Error, no se ha especificado un tipo de identificador valido
-         // Solo existen 2 opciones : Fisica o Juridica
+      
+         ::addError( "BIC o BEI no puede estar vacio." )
+      
       endif
 
-      switch oActor:nEntity
-         case ENTIDAD_JURIDICA
-            if oActor:BICOrBEI != NIL
-               ItemNew(hItem, "BICOrBEI", 11, oActor:BICOrBEI)       // BIC o BEI 
-            else
-               // Error
-            endif
-            EXIT 
+   case ( oActor:nEntity == ENTIDAD_FISICA )
 
-         case ENTIDAD_FISICA
-            if oActor:BirthDt != NIL .or. oActor:PrvcOfBirth != NIL .or. ;
-               oActor:CityOfBirth != NIL .or. oActor:CtryOfBirth != NIL
+      hItem    := ItemNew( hItem, "PrvtId" )                         // Persona física 
 
-               hItem := ItemNew(hItem, "DtAndPlcOfBirth")            // Fecha y lugar de nacimiento 
-               ItemNew(hItem, "BirthDt", 8, oActor:BirthDt)          // Fecha de nacimiento 
-               ItemNew(hItem, "PrvcOfBirth", 35, oActor:PrvcOfBirth)    // Provincia de nacimiento
-               ItemNew(hItem, "CityOfBirth", 35, oActor:CityOfBirth)    // Ciudad de nacimiento 
-               ItemNew(hItem, "CtryOfBirth", 2, oActor:CtryOfBirth)  // País de nacimiento
-            else
-               // Error
-            endif
-            EXIT 
+         hItem := ItemNew( hItem, "DtAndPlcOfBirth" )                // Fecha y lugar de nacimiento 
 
-         otherwise
-            if oActor:Id != NIL .or. oActor:Cd != NIL .or. oActor:Prtry != NIL .or. oActor:Issr != NIL
-               hItem := ItemNew(hItem, "Othr")                 // Otra 
-               ItemNew(hItem, "Id", 35, oActor:Id)                // Identificación 
+         ItemNew( hItem, "BirthDt", 8, oActor:BirthDt )              // Fecha de nacimiento 
+         ItemNew( hItem, "PrvcOfBirth", 35, oActor:PrvcOfBirth )     // Provincia de nacimiento
+         ItemNew( hItem, "CityOfBirth", 35, oActor:CityOfBirth )     // Ciudad de nacimiento 
+         ItemNew( hItem, "CtryOfBirth", 2, oActor:CtryOfBirth )      // País de nacimiento
 
-               if oActor:Cd != NIL .or. oActor:Prtry != NIL
-                  hChild := ItemNew(hItem, "SchmeNm")             // Nombre del esquema 
-                  ItemNew(hChild +5, "Cd", 4, oActor:Cd)             // Código 
-                  ItemNew(hChild +5, "Prtry", 35, oActor:Prtry)      // Propietario
-               endif
-               ItemNew(hItem, "Issr", 35, oActor:Issr)            // Emisor
-            else
-               // Error
-            endif
-      end
-   else
-      // Error
-   endif
+         ::SetActorOther( hItem, oActor )
+   
+   otherwise
+      
+      ::addError( "No se ha especificado el tipo de entidad juridica o física." )
 
-return NIL
+   end case
+
+return nil
 
 //--------------------------------------------------------------------------------------//
+
+METHOD SetActorOther( hParent, oActor )
+
+   local hItem
+   local hChild
+
+   if !empty( oActor:Id )
+
+      hItem       := ItemNew( hParent, "Othr" )                // Otra 
+      
+      ItemNew( hItem, "Id", 35, oActor:Id )                    // Identificación 
+
+      if !empty( oActor:Cd ) .or. !empty( oActor:Prtry )
+         
+         hChild   := ItemNew( hItem, "SchmeNm" )               // Nombre del esquema 
+
+         msgalert( hChild, valtype( hChild ) )
+
+         ItemNew( hChild, "Cd", 4, oActor:Cd )             // Código 
+         ItemNew( hChild, "Prtry", 35, oActor:Prtry )      // Propietario
+
+      endif
+      
+      ItemNew( hItem, "Issr", 35, oActor:Issr )                // Emisor
+
+   else
+      
+      ::addError( "No se ha especificado el id de la entidad juridica o física." )
+
+   endif
+
+return nil
+
+//--------------------------------------------------------------------------------------//
+
 
 METHOD IdPayment( hItem ) CLASS SepaXml
 
@@ -404,7 +450,7 @@ METHOD IdPayment( hItem ) CLASS SepaXml
    ItemNew(hItem, "NbOfTxs", 15, str(::oDebtor:NbOfTxs, 0))    // Número de operaciones 
    ItemNew(hItem, "CtrlSum", 18, ::oDebtor:CtrlSum)         // Control de suma 
 
-return NIL
+return nil
 
 //--------------------------------------------------------------------------------------//
 
@@ -424,13 +470,13 @@ METHOD TypePayment( hParent ) CLASS SepaXml
 
    /* Lista de códigos recogidos en la norma ISO 20022 
       Ex: CASH=CashManagementTransfer (Transaction is a general cash management instruction) */
-   if ::PurposeCd != NIL
+   if ::PurposeCd != nil
       hChild := ItemNew(hItem, "CtgyPurp")               // Categoría del propósito 
       ItemNew(hChild, "Cd", 4, ::PurposeCd)              // Código 
       ItemNew(hChild, "Prtry", 35, ::PurposePrtry)          // Propietario
    endif
 
-return NIL
+return nil
 
 //--------------------------------------------------------------------------------------//
 
@@ -438,11 +484,11 @@ METHOD Creditor( hParent ) CLASS SepaXml
 
  local hItem
 
-   if ::oCreditor:Nm != NIL
+   if ::oCreditor:Nm != nil
       hItem := ItemNew(hParent, "Cdtr")                     // Acreedor 
       ItemNew(hItem, "Nm", 70, ::oCreditor:Nm)              // Nombre 
 
-      if ::oCreditor:Ctry != NIL .or. ::oCreditor:AdrLine1 != NIL
+      if ::oCreditor:Ctry != nil .or. ::oCreditor:AdrLine1 != nil
          hItem := ItemNew(hItem, "PstlAdr")                 // Dirección postal
          ItemNew(hItem, "Ctry", 2, ::oCreditor:Ctry)        // País
          ItemNew(hItem, "AdrLine", 70, ::oCreditor:AdrLine1)   // Dirección en texto libre
@@ -455,7 +501,7 @@ METHOD Creditor( hParent ) CLASS SepaXml
       // Error
    endif
 
-   if ::oCreditor:IBAN != NIL
+   if ::oCreditor:IBAN != nil
       hItem := ItemNew(hParent, "CdtrAcct")                 // Cuenta del acreedor
    // ItemNew(hItem, "Ccy", 3, aData["Ccy"])                   // Moneda 
       hItem := ItemNew(hItem, "Id")                         // Identificación
@@ -464,7 +510,7 @@ METHOD Creditor( hParent ) CLASS SepaXml
       // Error
    endif
 
-   if ::oCreditor:BIC != NIL
+   if ::oCreditor:BIC != nil
       hItem := ItemNew(hParent, "CdtrAgt")                  // Entidad del acreedor
       hItem := ItemNew(hItem, "FinInstnId")                 // Identificación de la entidad 
       ItemNew(hItem, "BIC", 11, ::oCreditor:BIC)               // BIC
@@ -472,7 +518,7 @@ METHOD Creditor( hParent ) CLASS SepaXml
       // Error
    endif 
 
-return NIL
+return nil
 
 //--------------------------------------------------------------------------------------//
 
@@ -480,7 +526,7 @@ METHOD IdCreditor( hParent ) CLASS SepaXml
 
    local hItem
 
-   if ::oCreditor:Id != NIL
+   if ::oCreditor:Id != nil
       hItem := ItemNew(hParent, "CdtrSchmeId")              // Identificación del acreedor 
       hItem := ItemNew(hItem, "Id")                         // Identificación  
       hItem := ItemNew(hItem, "PrvtId")                     // Identificación privada  
@@ -488,7 +534,7 @@ METHOD IdCreditor( hParent ) CLASS SepaXml
 
       ItemNew(hItem, "Id", 35, ::oCreditor:Id)              // Identificación 
 
-      if ::oCreditor:Prtry != NIL
+      if ::oCreditor:Prtry != nil
          hItem := ItemNew(hItem +4, "SchmeNm")              // Nombre del esquema 
          ItemNew(hItem, "Prtry", 35, ::oCreditor:Prtry)        // Propietario 
       endif
@@ -496,69 +542,59 @@ METHOD IdCreditor( hParent ) CLASS SepaXml
       // Error
    endif
 
-return NIL
+return nil
 
 //--------------------------------------------------------------------------------------//
 
 METHOD SetLanguage() CLASS SepaXml
 
-   ::ErrorMessages['SEPA_DEBTOR_AGENT']   := "La entidad del cliente no existe"
-   ::ErrorMessages['SEPA_DEBTOR_NAME']    := "El nombre del deudor no existe"
+   ::ErrorMessages['SEPA_DEBTOR_AGENT']      := "La entidad del cliente no existe"
+   ::ErrorMessages['SEPA_DEBTOR_NAME']       := "El nombre del deudor no existe"
    ::ErrorMessages['SEPA_DEBTOR_ACCOUNT']    := "La cuenta del deudor no existe"
 
-return NIL
+return nil
 
 //--------------------------------------------------------------------------------------//
 
 METHOD Activate() CLASS SepaXml
 
- local hItem, hChild, oDebtor
+   local hItem, oDebtor
 
    ::SetLanguage()
+
+   ::ResetErrors()
 
    // Comprobar numero de operaciones y suma total de importes
 
    for each oDebtor in ::aDebtors
-      ::NbOfTxs += 1
-      ::CtrlSum += oDebtor:InstdAmt
+      ::NbOfTxs   += 1
+      ::CtrlSum   += oDebtor:InstdAmt
    next
-/*
-   if ::NbOfTxs != ::oDebtor:NbOfTxs 
-      msgStop( 'Existen errores, no es posible continuar' )
-      return(NIL)
-   endif
 
-   if ::CtrlSum != ::oDebtor:CtrlSum
-      outstd( 'Existen errores, no es posible continuar' )
-      msgStop(NIL)
-   endif
-*/
-   ::hXmlDoc   := mxmlNewXML()
-   hItem       := mxmlNewElement(::hXmlDoc, "Document")
+   ::hXmlDoc      := mxmlNewXML()
+   hItem          := mxmlNewElement( ::hXmlDoc, "Document" )
+   // mxmlElementSetAttr( hItem, "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" )
+   mxmlElementSetAttr( hItem, "xmlns", "urn:iso:std:iso:20022:tech:xsd:" + ::DocumentType )
 
-   mxmlElementSetAttr( hItem, "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" )
-   mxmlElementSetAttr( hItem, "xmlns","urn:iso:std:iso:20022:tech:xsd:"+ ::DocumentType )
+   hItem          := ItemNew( hItem, ::FinancialMessage )               // Raíz del mensaje 
 
-   hItem := ItemNew(hItem, ::FinancialMessage)                  // Raíz del mensaje 
+   ::GroupHeader( hItem )                                               // Cabecera
 
-   ::GroupHeader(hItem)                               // Cabecera
-
-   /* La informacion del pago puede incluir varios adeudos por fecha de cobro
-    * Aqui se asume fecha de cobro distinta para cada adeudo, no realizando agrupacion.
-    */
+   /*
+   La informacion del pago puede incluir varios adeudos por fecha de cobro
+   Aqui se asume fecha de cobro distinta para cada adeudo, no realizando agrupacion.
+   */
 
    for each oDebtor in ::aDebtors
-      ::oDebtor:= __objClone(oDebtor)
+      ::oDebtor         := __objClone( oDebtor )
       ::oDebtor:NbOfTxs := 1
       ::oDebtor:CtrlSum := oDebtor:InstdAmt
 
-      hChild    := ::InfoPayment(hItem)                  // Informacion del pago
-      ::DirectDebit(hChild)                           // Adeudo individual
+      hItem             := ::InfoPayment( hItem )
+      ::DirectDebit( hItem )                                            // Adeudo individual
    next
 
-   if len( ::aErrors ) > 0
-      aeval( ::aErrors, {|err| outstd( err + hb_eol() ) } )
-   else
+   if empty( ::aErrors ) 
       if ::lMinified
          mxmlSaveFile( ::hXmlDoc, ::cFileOut, MXML_NO_CALLBACK )
       else
@@ -568,7 +604,7 @@ METHOD Activate() CLASS SepaXml
 
    ::End()
 
-return NIL
+return nil
 
 //--------------------------------------------------------------------------------------//
 
@@ -618,8 +654,8 @@ static function ItemNew(hParent, cLabel, nLen, xValue, lCurrency)
 
  local hItem, cType 
 
-   if nLen != NIL 
-      if xValue != NIL
+   if nLen != nil 
+      if xValue != nil
 
          hItem := mxmlNewElement( hParent, cLabel )
          cType := valtype(xValue)
@@ -637,7 +673,7 @@ static function ItemNew(hParent, cLabel, nLen, xValue, lCurrency)
       hItem := mxmlNewElement( hParent, cLabel )
    endif
 
-   if hItem != NIL .and. lCurrency != NIL
+   if hItem != nil .and. lCurrency != nil
       mxmlElementSetAttr( hItem, "Ccy", "EUR" )
    endif
 
@@ -646,7 +682,7 @@ return hItem
 //--------------------------------------------------------------------//
 
 static function WhiteSpace( hNode, nWhere )  
-return If(nWhere == MXML_WS_AFTER_OPEN .or. nWhere == MXML_WS_AFTER_CLOSE, hb_eol(), NIL)
+return If(nWhere == MXML_WS_AFTER_OPEN .or. nWhere == MXML_WS_AFTER_CLOSE, hb_eol(), nil)
 
 //--------------------------------------------------------------------//
 
@@ -663,14 +699,14 @@ return strTime
 
 function fDate( d )
    local cDateFrm := Set( 4, "yyyy/mm/dd" )
-   local strDate  := If( d != NIL, dtos(d), dtos(date()) )
+   local strDate  := If( d != nil, dtos(d), dtos(date()) )
    Set( 4, cDateFrm )
 return( strDate )
 
 
 function sDate( d )
    local cDateFrm := Set( 4, "yyyy-mm-dd" )
-   local strDate  := If( d != NIL, dtoc(d), dtoc(date()) )
+   local strDate  := If( d != nil, dtoc(d), dtoc(date()) )
    Set( 4, cDateFrm )
 return( strDate )
 
@@ -691,7 +727,7 @@ function OutFile(nHandle, a)
    local strRec := ""
    aeval( a, {|e|  strRec += e } )
    fwrite(nHandle, strRec + CRLF)
-return NIL
+return nil
 
 
 function Id_Name( cCountry, cCode, cNif )
@@ -748,3 +784,5 @@ en el momento de la creación del fichero:
    local cId   := "PRE" + fDate() + cTime() + strzero( seconds(), 5 ) + cRef
 
 return padR(cId, 35)
+
+

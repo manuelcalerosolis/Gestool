@@ -49,6 +49,8 @@ CLASS TRemesas FROM TMasDet
    DATA oSufijoFin
    DATA cSufijoFin
 
+   DATA oTreeIncidencias
+
    DATA oNotImportCeros
    DATA lNotImportCeros
 
@@ -118,7 +120,7 @@ CLASS TRemesas FROM TMasDet
    METHOD nTotRem( lPic )
    METHOD nTotRemVir( lPic )
 
-   METHOD cNumRem()        INLINE   ( Alltrim( Str( ::oDbf:nNumRem ) + "/" + ::oDbf:cSufRem ) )
+   METHOD cNumRem()        INLINE   ( alltrim( str( ::oDbf:nNumRem ) + "/" + ::oDbf:cSufRem ) )
 
    /*
    Metodos para exportacion de los modelos-------------------------------------
@@ -224,7 +226,7 @@ METHOD New( cPath, oMenuItem, oWndParent )
    ::bmpConta              := LoadBitmap( GetResources(), "bConta" )
 
    ::dVencimiento          := Date()
-   ::cFicheroExportacion   := PadR( "C:\Sepa\RemesasBancarias.Xml", 200 )
+   ::cFicheroExportacion   := PadR( "C:\Sepa\RemesasBancarias.xml", 200 )
 
    ::bFirstKey             := {|| Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem }
    ::bWhile                := {|| Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == Str( ::oDbfVir:nNumRem, 9 ) + ::oDbfVir:cSufRem .and. !::oDbfVir:Eof() }
@@ -1231,6 +1233,8 @@ METHOD SaveModelo()
          WHEN     ( ::oDbf:nTipRem != 2 ) ;
          OF       oDlg
 
+      ::oTreeIncidencias   := TTreeView():Redefine( 150, oDlg )
+
       REDEFINE BUTTON   ;
          ID       550 ;
          OF       oDlg ;
@@ -1244,21 +1248,6 @@ METHOD SaveModelo()
       oDlg:AddFastKey( VK_F5, {|| ::RunModelo( oDlg ) } )
 
    ACTIVATE DIALOG oDlg CENTER
-
-   /*
-   Marcamos la remesa para saber que la hemos exportado------------------------
-   */
-
-   if ( oDlg:nResult == IDOK )
-
-      ::oDbf:Load()
-
-      ::oDbf:lExport := .t.
-      ::oDbf:dExport := GetSysDate()
-
-      ::oDbf:Save()
-
-   end if
 
    if !Empty( oBmpGeneral )
       oBmpGeneral:End()
@@ -1283,8 +1272,10 @@ METHOD RunModelo( oDlg )
       end if 
    end if
 
+   ::oDbf:FieldPutByName( "lExport", .t. )
+   ::oDbf:FieldPutByName( "dExport",  GetSysDate() )
+
    oDlg:Enable()
-   oDlg:End( IDOK ) 
 
 RETURN ( Self )
 
@@ -2671,71 +2662,65 @@ METHOD InitSepaXML19( oDlg )
    local oBlock
    local oError
    local dOldVto
-/*
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-*/
-   if ::lAgruparRecibos
-      ::oDbfDet:OrdSetFocus( "nNumRem" )
-   end if
 
-   ::dAnteriorVencimiento  := nil
+   // oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   // BEGIN SEQUENCE
 
-   ::oCuaderno             := SepaXml():New( ::cFicheroExportacion )
-   ::oCuaderno:MsgId       := id_File( 'REMESA' + str( ::oDbf:nNumRem ) )
+      ::oTreeIncidencias:deleteAll()
 
-   // Presentador--------------------------------------------------------------
-
-   ::InsertPresentadorXml()
-
-   // Acreedor-----------------------------------------------------------------
-
-   ::InsertAcreedorXml()
-
-   // Recibos------------------------------------------------------------------
-   
-   if ::oDbfDet:Seek( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem )
-
-      while str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == str( ::oDbfDet:nNumRem, 9 ) + ::oDbfDet:cSufRem .and. !::oDbfDet:eof()
-
-         if ::oClientes:Seek( ::oDbfDet:cCodCli )
-
-            if !empty( ::GetValidCuentaCliente() )
-               ::InsertDeudorXml()
-            else 
-               MsgStop( "No se puede localizar una cuenta bancaria valida, para el cliente " + Rtrim( ::oDbfDet:cCodCli ) + "." )                
-            end if
-
-         end if 
-
-         ::oDbfDet:Skip()
-
-      end while
-
-   end if
-   
-   ::oCuaderno:Activate()
-
-   if file( ::oCuaderno:cFileOut )
-      if apoloMsgNoYes( "Proceso de exportación realizado con éxito" + CRLF + "¿ Desea abrir el fichero resultante ?", "Elija una opción." )
-         ShellExecute( 0, "open", ::oCuaderno:cFileOut, , , 1 )
+      if ::lAgruparRecibos
+         ::oDbfDet:OrdSetFocus( "nNumRem" )
       end if
-   else 
-      msgStop( hb_valtoexp( ::oCuaderno:aErrors ), "Error" )
-   end if 
 
-   if ::lAgruparRecibos
-      ::oDbfDet:OrdSetFocus( "nNumRem" )
-   end if
-/*
-   RECOVER USING oError
+      ::dAnteriorVencimiento  := nil
 
-      msgStop( "Imposible exportar  filtros " + CRLF + ErrorMessage( oError ) )
+      ::oCuaderno             := SepaXml():New( ::cFicheroExportacion )
+      ::oCuaderno:MsgId       := id_File( 'REMESA' + str( ::oDbf:nNumRem ) )
 
-   END SEQUENCE
+      // Presentador--------------------------------------------------------------
 
-   ErrorBlock( oBlock )
-*/
+      ::InsertPresentadorXml()
+
+      // Acreedor-----------------------------------------------------------------
+
+      ::InsertAcreedorXml()
+
+      // Recibos------------------------------------------------------------------
+      
+      if ::oDbfDet:Seek( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem )
+         while str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == str( ::oDbfDet:nNumRem, 9 ) + ::oDbfDet:cSufRem .and. !::oDbfDet:eof()
+
+            ::InsertDeudorXml()
+
+            ::oDbfDet:Skip()
+
+         end while
+      end if
+      
+      ::oCuaderno:Activate()
+
+      if !empty( ::oCuaderno:aErrors )
+         aeval( ::oCuaderno:aErrors, {|error| ::oTreeIncidencias:add( error ) } )
+      else 
+         if file( ::oCuaderno:cFileOut ) .and. apoloMsgNoYes( "Proceso de exportación realizado." + CRLF + "¿ Desea abrir el fichero resultante ?", "Elija una opción." )
+            ShellExecute( 0, "open", ::oCuaderno:cFileOut, , , 1 )
+         end if 
+      end if 
+
+      // Abrir fichero resultante----------------------------------------------
+
+      if ::lAgruparRecibos
+         ::oDbfDet:OrdSetFocus( "nNumRem" )
+      end if
+
+   //RECOVER USING oError
+
+   //   msgStop( "Imposible exportar  filtros " + CRLF + ErrorMessage( oError ) )
+
+   //END SEQUENCE
+
+   //ErrorBlock( oBlock )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -2758,10 +2743,11 @@ RETURN ( Self )
 METHOD InsertPresentadorXml()
 
    with object ( ::oCuaderno:oInitPart )
-      :nEntity    := 0 // ENTIDAD_JURIDICA
+      :nEntity    := ENTIDAD_JURIDICA
       :Nm         := ::oCtaRem:oDbf:cNomPre
       :BICOrBEI   := getBIC( ::oCtaRem:oDbf:cEntPre )
-      :id         := ::oCtaRem:oDbf:cNifPre
+      :id         := id_Name( ::oCtaRem:oDbf:cPaiPre, ::oCtaRem:oDbf:cSufCta, ::oCtaRem:oDbf:cNifPre )
+      :Prtry      := "SEPA"
    end with
 
 RETURN ( Self )
@@ -2790,10 +2776,10 @@ RETURN ( Self )
 METHOD InsertAcreedorXml()
 
    with object ( ::oCuaderno:oCreditor )
-      :nEntity    := 0 // ENTIDAD_JURIDICA
+      :nEntity    := ENTIDAD_JURIDICA
       :Nm         := ::oCtaRem:oDbf:cNomAcr
       :BICOrBEI   := getBIC( ::oCtaRem:oDbf:cEntPre )
-      :id         := ::oCtaRem:oDbf:cNifAcr
+      :id         := id_Name( ::oCtaRem:oDbf:cPaiPre, ::oCtaRem:oDbf:cSufCta, ::oCtaRem:oDbf:cNifAcr )
    end with
 
 RETURN ( Self )
@@ -2824,18 +2810,30 @@ RETURN ( Self )
 
 METHOD InsertDeudorXml()
 
-   local oDebtor     := SepaDebitActor():New()
+   local oDebtor     
+
+   if !::oClientes:Seek( ::oDbfDet:cCodCli )
+      ::oCuaderno:addError( "Código del cliente " + rtrim( ::oDbfDet:cCodCli ) + ", no existe." )
+      RETURN ( Self )
+   end if 
+
+   if empty( ::GetValidCuentaCliente() )
+      ::oCuaderno:addError( "Cuenta bancaria invalida, para el cliente " + rtrim( ::oDbfDet:cCodCli ) + ", en el recibo " + ::oDbfDet:cSerie + "/" + alltrim( str( ::oDbfDet:nNumFac ) ) + "-" + alltrim( str( ::oDbfDet:nNumRec ) ) )
+      RETURN ( Self )
+   end if 
+
+   oDebtor           := SepaDebitActor():New()
 
    with object ( oDebtor )
+      :nEntity       := ENTIDAD_JURIDICA
       :Nm            := ::oClientes:Titulo 
-      :nEntity       := 2  // ENTIDAD_OTRA
       :id            := ::oClientes:Nif
-      :InstdAmt      := ::ImporteDocumento()                // Importe
-      :ReqdColltnDt  := sDate( ::oDbf:dExport )             // Fecha de cobro (Vencimiento)
+      :InstdAmt      := ::ImporteDocumento()                      // Importe
+      :ReqdColltnDt  := sDate( ::oDbf:dExport )                   // Fecha de cobro (Vencimiento)
       :IBAN          := ::GetValidCuentaCliente()
       :BICOrBEI      := ::GetBICClient()
-      :MndtId        := hb_md5( ::oCuaderno:oCreditor:Id + :id )   // Identificación del mandato, idea: Utilizar NIF Acreedor + NIF Deudor 
-      :DtOfSgntr     := sDate( ::oDbf:dExport )             // Fecha de firma 
+      :MndtId        := hb_md5( ::oCuaderno:oCreditor:Id + :id )  // Identificación del mandato, idea: Utilizar NIF Acreedor + NIF Deudor 
+      :DtOfSgntr     := sDate( ::oDbf:dExport )                   // Fecha de firma 
    endwith
 
    ::oCuaderno:DebtorAdd( oDebtor )

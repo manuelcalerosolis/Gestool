@@ -1115,13 +1115,18 @@ RETURN ( Self )
 
 METHOD MultiDeleteDet() CLASS TMasDet
 
-   local nSel
+   local nSelected
    local aSelected  := ::oBrwDet:aSelected
 
-   for each nSel in aSelected
-      ::oDbfVir:GoTo( nSel )
-      ::DeleteDet( .f. )
-   next
+   if oUser():lNotConfirmDelete() .or. ;
+      ApoloMsgNoYes( "¿ Desea eliminar definitivamente " + alltrim( str( len( aSelected ) ) ) + " registro(s) ?", "Confirme supersión" )
+
+      for each nSelected in aSelected
+         ::oDbfVir:GoTo( nSelected )
+         ::DeleteDet( .f. )
+      next
+
+   end if 
 
 Return ( self )
 
