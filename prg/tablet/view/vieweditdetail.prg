@@ -69,6 +69,9 @@ CLASS ViewDetail FROM ViewBase
    METHOD RefreshDialog()
       METHOD startDialog()
 
+   METHOD disableDialog()                    INLINE ( if( !empty( ::oDlg ), ::oDlg:Disable(), ) )
+   METHOD enableDialog()                     INLINE ( if( !empty( ::oDlg ), ::oDlg:Enable(), ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -148,7 +151,7 @@ METHOD defineAceptarCancelar() CLASS ViewDetail
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_check_64",;
-                           "bLClicked" => {|| ::oDlg:End( IDOK ) },;
+                           "bLClicked" => {|| if( ::oSender:lValidResourceDetail(), ::oDlg:End( IDOK ), ) },;
                            "oWnd"      => ::oDlg } )
 
 Return ( self )

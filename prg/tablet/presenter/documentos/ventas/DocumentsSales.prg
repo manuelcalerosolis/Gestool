@@ -899,8 +899,8 @@ Return ( ::setDatasInDictionaryMaster( numeroDocumento ) )
 
 METHOD onPreSaveAppendDetail() CLASS DocumentsSales
 
-   local oDocumentLine        := ::getDocumentLine()
-   local cDescripcionArticulo := alltrim( oDocumentLine:getValue( "DescripcionArticulo" ) )
+   local oDocumentLine           := ::getDocumentLine()
+   local cDescripcionArticulo    := alltrim( ::hGetDetail( "DescripcionArticulo" ) )
 
    oDocumentLine:setValue( "DescripcionAmpliada", cDescripcionArticulo )
 

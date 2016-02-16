@@ -119,6 +119,8 @@ CLASS LinesDocumentsSales FROM Editable
 
    METHOD onPreSaveAppendDetail()                           INLINE ( .t. )
 
+   METHOD lValidResourceDetail()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -231,7 +233,7 @@ Return ( self )
 //---------------------------------------------------------------------------//
 
 METHOD setLineFromArticulo() CLASS LinesDocumentsSales
-   
+
    ::setCodigo( ( D():Articulos( ::getView() ) )->Codigo )
    
    ::setDetalle( ( D():Articulos( ::getView() ) )->Nombre )
@@ -332,6 +334,8 @@ METHOD CargaArticulo() CLASS LinesDocumentsSales
       return .f.
    end if
 
+   ::oViewEditDetail:disableDialog()
+
    ::resetDescuentoLineal()
 
    ::setLineFromArticulo()
@@ -343,6 +347,8 @@ METHOD CargaArticulo() CLASS LinesDocumentsSales
    ::setAtipicasCliente()
 
    ::setOldCodigoArticulo()
+
+   ::oViewEditDetail:enableDialog()
 
    ::oViewEditDetail:RefreshDialog()
 
@@ -451,3 +457,22 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD lValidResourceDetail() CLASS LinesDocumentsSales
+
+   local lReturn  := .t.
+
+   ::oViewEditDetail:oGetLote:lValid()
+
+   if ::hGetDetail( "LogicoLote" ) .and. Empty( ::hGetDetail( "Lote" ) )
+
+      apoloMsgStop( "El campo lote es obligatorio" )
+
+      ::oViewEditDetail:oGetLote:SetFocus()
+
+      lReturn        := .f.
+
+   end if
+
+Return ( lReturn  )
+
+//---------------------------------------------------------------------------//
