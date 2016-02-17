@@ -6007,6 +6007,7 @@ Return ( by( nRow ) )
 
 Function Test() 
 
+/*
    local n  
    local oDebtor
    local oDoc  := SepaXml():New( "c:\sepa\testSepa.xml" )
@@ -6016,7 +6017,6 @@ Function Test()
      :MsgId    := id_File('REMESA001')          // Identificación del mensaje
      :NbOfTxs  := 3                             // Número de operaciones 
      :CtrlSum  := 740.70                        // Control de suma total importesCreDtTm
-   /* Idea ! NbOfTxs y CtrlSum deberan ser informadas, contrastar con variables calculadas en Activate() */
    ENDWITH
 
    // Presentador--------------------------------------------------------------
@@ -6034,9 +6034,6 @@ Function Test()
      :BICOrBEI := "BSABESBBXXX"
      :id       := "B12345678"
    ENDWITH
-   /* Si el Acreedor es tambien el presentador, especificar asi :
-    * oDoc:oCreditor := __objClone( oDoc:oInitPart )
-    */
 
    // Deudor/es----------------------------------------------------------------
    for n := 1 to 3
@@ -6060,7 +6057,7 @@ Function Test()
    next
 
    oDoc:Activate()
-
+*/
 Return ( nil )
 
 Static Function testAll()
