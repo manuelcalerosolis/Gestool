@@ -109,7 +109,7 @@ CLASS SepaXml
    METHOD ProcessDebtors()
    METHOD SaveDocumentXML()
 
-   METHOD DebtorAdd(oDebtor)     INLINE aadd( ::aDebtors, oDebtor )
+   METHOD DebtorAdd( oDebtor )   INLINE aadd( ::aDebtors, oDebtor )
 
    METHOD GroupHeader()
    METHOD InfoPayment()
@@ -139,10 +139,10 @@ METHOD New( cFileOut ) CLASS SepaXml
    ::CreDtTm            := IsoDateTime()  // Fecha y hora de creación
 
    ::oInitPart          := SepaDebitActor():New( Self, "InitgPty" )     
-   ::oCreditor          := SepaDebitActor():New()
-   ::oUltimateCreditor  := SepaDebitActor():New()
-   ::oDebtor            := SepaDebitActor():New()
-   ::oUltimateDebtor    := SepaDebitActor():New()
+   ::oCreditor          := SepaDebitActor():New( Self )
+   ::oUltimateCreditor  := SepaDebitActor():New( Self )
+   ::oDebtor            := SepaDebitActor():New( Self )
+   ::oUltimateDebtor    := SepaDebitActor():New( Self )
 
 return Self
 
@@ -258,18 +258,6 @@ Se recomienda que se recojan en el bloque ‘Información del pago’ (2.0).
       ::oDebtor:ChrgBr != nil
 
                                                  // Identificación de la información del pago 
-
-      ::TypePayment( hItem )                                         // Información del tipo de pago 
-
-      ItemNew( hItem, "ReqdColltnDt", 8, ::oDebtor:ReqdColltnDt )    // Fecha de cobro (Vencimiento)
-
-      ::Creditor( hItem )                                            // Datos Acreedor, Cuenta, Entidad
-
-      if ::oUltimateCreditor:Nm != nil                               // Opcional, Último acreedor (6)
-         ::SetActor( hItem, "UltmtCdtr", ::oUltimateCreditor )   
-      endif                                                          // No produce error, es opcional
-
-      ItemNew( hItem, "ChrgBr", 4, ::oDebtor:ChrgBr )                // Cláusula de gastos (5)
 
       ::IdCreditor( hItem )                                          // Identificación del acreedor
    endif
@@ -582,21 +570,19 @@ METHOD ProcessDebtors( hItem )
       ::oXmlPmtInf         := ::oDebtor:getInfoPaymentXML()
          ::oXmlPmtInf:addBelow( ::getTypePaymentXML() )
 
-      ::oXmlPmtInf:addBelow( ::oDebtor:getRquiredPayDateXML() )
+         ::oXmlPmtInf:addBelow( ::oDebtor:getRquiredPayDateXML() )
 
-/*
+         ::oXmlPmtInf:addBelow( ::oDebtor:getCreditorXML() )
 
-      ::Creditor( hItem )                                            // Datos Acreedor, Cuenta, Entidad
+         ::oXmlPmtInf:addBelow( ::oDebtor:getCreditorIBANXML() )
 
-      if ::oUltimateCreditor:Nm != nil                               // Opcional, Último acreedor (6)
-         ::SetActor( hItem, "UltmtCdtr", ::oUltimateCreditor )   
-      endif                                                          // No produce error, es opcional
+         ::oXmlPmtInf:addBelow( ::oDebtor:getCreditorBICXML() )
 
-      ItemNew( hItem, "ChrgBr", 4, ::oDebtor:ChrgBr )                // Cláusula de gastos (5)
+         ::oXmlPmtInf:addBelow( ::oDebtor:getChrgBrXML() )
 
-      ::IdCreditor( hItem )                                          // Identificación del acreedor
-*/
+         ::oXmlPmtInf:addBelow( ::oDebtor:getIdCreditorXML() )
 
+         ::oXmlPmtInf:addBelow( ::oDebtor:getDirectDebitTransactionInformationXml() )
 
       ::oXmlFinancial:addBelow( ::oXmlPmtInf )
 
@@ -662,7 +648,7 @@ CLASS SepaDebitActor
    DATA Id                                      // Identificación 
    DATA Issr                                    // Emisor 
    DATA Cd                                   // Codigo
-   DATA Prtry                                   // Propietario
+   DATA Prtry           AS CHARACTER INIT "SEPA"  // Propietario
 
    DATA PmtInfId                                // Identificación de la información del pago 
    DATA BtchBookg       AS CHARACTER INIT "false"         // Indicador de apunte en cuenta (1)
@@ -688,6 +674,14 @@ CLASS SepaDebitActor
    DATA oXmlPrvId
    DATA oXmlDtAndPlcOfBirth
    DATA oXmlPmtInf
+   DATA oXmlCdrt
+   DATA oXmlPstlAdr
+   DATA oXmlCdtrAcct
+   DATA oXmlIdIBAN
+   DATA oXmlCdtrAgt
+   DATA oXmlFinInstnId
+   DATA oXmlCdtrSchmeId
+   DATA oXmlDrctDbtTxInf
 
    METHOD New()
 
@@ -695,6 +689,12 @@ CLASS SepaDebitActor
    METHOD getOtherNodeXML()
    METHOD getInfoPaymentXML()
    METHOD getRquiredPayDateXML()    INLINE ( TXmlParseNode():New( "ReqdColltnDt", ::ReqdColltnDt, 10 ) )
+   METHOD getCreditorXML()
+   METHOD getCreditorIBANXML()
+   METHOD getCreditorBICXML()
+   METHOD getChrgBrXML()            INLINE ( TXmlParseNode():New( "ChrgBr", ::ChrgBr, 4 ) )
+   METHOD getIdCreditorXML()
+   METHOD getDirectDebitTransactionInformationXml()
 
 ENDCLASS
 
@@ -791,6 +791,188 @@ METHOD getInfoPaymentXML() CLASS SepaDebitActor
 Return ( ::oXmlPmtInf )
 
 //--------------------------------------------------------------------------------------//
+
+METHOD getCreditorXML()
+
+   ::oXmlCdrt     := TXmlNode():New( , "Cdtr" )
+
+   if ::Nm != nil
+
+      ::oXmlCdrt:addBelow( TXmlParseNode():New( "Nm", ::Nm, 70 ) )
+
+      if ::Ctry != nil .or. ::AdrLine1 != nil
+         ::oXmlPstlAdr  := TXmlNode():New( , "PstlAdr" )                               // Dirección postal
+         ::oXmlPstlAdr:addBelow( TXmlParseNode():New( "Ctry", ::oCtry, 2 ) )           // País
+         ::oXmlPstlAdr:addBelow( TXmlParseNode():New( "AdrLine", ::AdrLine1, 70 ) )    // Dirección en texto libre
+         ::oXmlPstlAdr:addBelow( TXmlParseNode():New( "AdrLine", ::AdrLine2, 70 ) )    // Dirección en texto libre
+      endif
+
+   else
+      ::oSender:addError( "Nombre del acreedor no existe" )
+   endif
+
+Return ( ::oXmlCdrt )
+
+//--------------------------------------------------------------------------------------//
+
+METHOD getCreditorIBANXML()
+
+   ::oXmlCdtrAcct    := TXmlNode():New( , "CdtrAcct" )
+
+   if ::IBAN != nil
+      ::oXmlIdIBAN   := TXmlNode():New( , "Id" )
+         ::oXmlIdIBAN:addBelow( TXmlParseNode():New( "IBAN", ::IBAN, 34 ) )
+
+      ::oXmlCdtrAcct:addBelow( ::oXmlIdIBAN )
+   else
+      ::oSender:addError( "IBAN del acreedor no existe" )
+   endif
+
+Return ( ::oXmlCdtrAcct )
+
+//--------------------------------------------------------------------------------------//
+
+METHOD getCreditorBICXML()
+
+   ::oXmlCdtrAgt        := TXmlNode():New( , "CdtrAgt" )
+
+   if ::BICOrBEI != nil
+      ::oXmlFinInstnId  := TXmlNode():New( , "FinInstnId" )
+         ::oXmlFinInstnId:addBelow( TXmlParseNode():New( "BIC", ::BICOrBEI, 11 ) )
+
+      ::oXmlCdtrAgt:addBelow( ::oXmlFinInstnId )
+   else
+      ::oSender:addError( "BIC del acreedor no existe" )
+   endif
+
+Return ( ::oXmlCdtrAgt )
+
+//--------------------------------------------------------------------------------------//
+
+METHOD getIdCreditorXML()
+
+   local oXmlId
+   local oXmlPrvtId
+   local oXmlOthr
+   local oXmlSchmeNm
+
+   ::oXmlCdtrSchmeId    := TXmlNode():New( , "CdtrSchmeId" )
+
+   if ::Id != nil
+      oXmlId            := TXmlNode():New( , "Id" )
+   
+         oXmlPrvtId     := TXmlNode():New( , "PrvtId" ) 
+
+            oXmlOthr    := TXmlNode():New( , "Othr" ) 
+            oXmlOthr:addBelow( TXmlParseNode():New( "Id", ::Id, 35 ) )    
+
+            if ::Prtry != nil
+               oXmlSchmeNm    := TXmlNode():New( , "SchmeNm" )                      // Nombre del esquema 
+               oXmlSchmeNm:addBelow( TXmlParseNode():New( "Prtry", ::Prtry, 35 ) )  // Propietario 
+
+               oXmlOthr:addBelow( oXmlSchmeNm )
+            endif
+
+         oXmlPrvtId:addBelow( oXmlOthr )
+
+      oXmlId:addBelow( oXmlPrvtId )
+
+      ::oXmlCdtrSchmeId:addBelow( oXmlId )
+
+   else
+      ::oSender:addError( "Identificador del acreedor no existe" )
+   end if 
+
+Return ( ::oXmlCdtrSchmeId )
+
+//--------------------------------------------------------------------------------------//
+
+METHOD getDirectDebitTransactionInformationXml()
+
+   local oXmlPmtId
+
+   ::oXmlDrctDbtTxInf   := TXmlNode():New( , "DrctDbtTxInf" )
+
+   if ::InstdAmt > 0
+
+      if ::InstrId != nil .or. ::EndToEndId != nil
+
+         oXmlPmtId      := TXmlNode():New( , "PmtId")                                  // Identificación del pago  
+         oXmlPmtId:addBelow( TXmlParseNode():New( "InstrId", ::InstrId, 35 ) )         // Identificación de la instrucción
+         oXmlPmtId:addBelow( TXmlParseNode():New( "EndToEndId", ::EndToEndId, 35 ) )   // Identificación de extremo a extremo 
+
+         ::oXmlDrctDbtTxInf:addBelow( oXmlPmtId )
+
+      endif
+
+      ::oXmlDrctDbtTxInf:addBelow( TXmlParseNode():New( "InstdAmt", ::InstdAmt, 12, .t. ) )  // Importe ordenado
+
+      if ::MndtId != nil .or. ::DtOfSgntr != nil 
+
+         oXmlDrctDbtTx        := TXmlNode():New( , "DrctDbtTx" )                             // Operación de adeudo directo 
+            oXmlMndtRltdInf   := TXmlNode():New( , "MndtRltdInf" )                           // Información del mandato 
+            oXmlMndtRltdInf:addBelow( TXmlParseNode():New( "MndtId", ::MndtId, 35 ) )        
+            oXmlMndtRltdInf:addBelow( TXmlParseNode():New( "DtOfSgntr", ::DtOfSgntr, 8 ) )   // Fecha de firma 
+
+               oXmlAmdmntInd  := TXmlParseNode():New( "AmdmntInd", ::AmdmntInd, 5 )
+
+               // aki me quedo
+
+            oXmlMndtRltdInf:addBelow( TXmlParseNode():New( "AmdmntInd", ::AmdmntInd, 5 ) )   // Indicador de modificación
+
+         if ::oDebtor:AmdmntInd != nil .and. ::oDebtor:OrgnlMndtId != nil
+            hChild := ItemNew(hChild, "AmdmntInfDtls")               // Detalles de la modificación 
+            ItemNew(hChild, "OrgnlMndtId", 35, ::oDebtor:OrgnlMndtId)   // Identificación del mandato original 
+         endif
+      endif
+
+
+      /*
+
+      if ::oDebtor:BICOrBEI != nil
+         hChild := ItemNew(hItem, "DbtrAgt")          // Entidad del deudor 
+         hChild := ItemNew(hChild, "FinInstnId")      // Identificación de la entidad 
+         ItemNew(hChild, "BIC", 11, ::oDebtor:BICOrBEI)  // BIC 
+      else
+         aadd( ::aErrors, ::ErrorMessages['SEPA_DEBTOR_AGENT'] )
+      endif
+
+      if ::oDebtor:Nm != nil                       // Requerido
+         ::SetActor(hItem, "Dbtr", ::oDebtor )        // Deudor (6)
+      else
+         aadd( ::aErrors, ::ErrorMessages['SEPA_DEBTOR_NAME'] )
+      endif
+
+      if ::oDebtor:IBAN != nil 
+         hChild := ItemNew(hItem, "DbtrAcct")         // Cuenta del deudor
+         hChild := ItemNew(hChild, "Id")           // Identificación
+         ItemNew(hChild, "IBAN", 34, ::oDebtor:IBAN)  // IBAN
+      else
+         aadd( ::aErrors, ::ErrorMessages['SEPA_DEBTOR_ACCOUNT'] )
+      endif
+
+      if ::oUltimateDebtor:Nm != nil                  // Opcional o Requerido ?
+         ::SetActor(hItem, "UltmtDbtr", ::oUltimateDebtor)     // Último deudor (6)
+      endif
+
+      if ::PurposeCd != nil
+         hChild := ItemNew(hItem, "Purp")                   // Propósito 
+         ItemNew(hChild, "Cd", 4, ::PurposeCd)              // Código
+      endif
+
+      if ::oDebtor:Info != nil
+         hChild := ItemNew(hItem, "RmtInf")                 // Concepto
+         ItemNew(hChild, "Ustrd", 140, ::oDebtor:Info)         // No estructurado
+      endif
+      */
+
+   else
+      // Error
+   endif
+
+Return ( ::oXmlDrctDbtTxInf )
+
+//--------------------------------------------------------------------//
 
 CLASS TXmlParseNode FROM TXmlNode
 

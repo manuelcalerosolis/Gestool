@@ -2779,7 +2779,7 @@ METHOD InsertAcreedorXml()
       :nEntity    := ENTIDAD_JURIDICA
       :Nm         := ::oCtaRem:oDbf:cNomAcr
       :BICOrBEI   := getBIC( ::oCtaRem:oDbf:cEntPre )
-      :id         := id_Name( ::oCtaRem:oDbf:cPaiPre, ::oCtaRem:oDbf:cSufCta, ::oCtaRem:oDbf:cNifAcr )
+      :Id         := id_Name( ::oCtaRem:oDbf:cPaiPre, ::oCtaRem:oDbf:cSufCta, ::oCtaRem:oDbf:cNifAcr )
    end with
 
 RETURN ( Self )
@@ -2822,18 +2822,19 @@ METHOD InsertDeudorXml()
       RETURN ( Self )
    end if 
 
-   oDebtor           := SepaDebitActor():New()
+   oDebtor           := SepaDebitActor():New( ::oCuaderno )
 
    with object ( oDebtor )
       :nEntity       := ENTIDAD_JURIDICA
       :Nm            := ::oClientes:Titulo 
-      :id            := ::oClientes:Nif
+      :Id            := ::oClientes:Nif
       :InstdAmt      := ::ImporteDocumento()                      // Importe
       :ReqdColltnDt  := sDate( ::oDbf:dExport )                   // Fecha de cobro (Vencimiento)
       :IBAN          := ::GetValidCuentaCliente()
       :BICOrBEI      := ::GetBICClient()
       :MndtId        := hb_md5( ::oCuaderno:oCreditor:Id + :id )  // Identificación del mandato, idea: Utilizar NIF Acreedor + NIF Deudor 
       :DtOfSgntr     := sDate( ::oDbf:dExport )                   // Fecha de firma 
+      :EndToEndId    := "RECIBO" + ::TextoDocumento()
    endwith
 
    ::oCuaderno:DebtorAdd( oDebtor )
