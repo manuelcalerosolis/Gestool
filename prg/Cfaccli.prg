@@ -1561,8 +1561,9 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
 
            // cSubCtaIvm  := RJust( ( dbfTikL )->nValImp, "0", 2 )
            // cSubCtaIvm  := cCtaVta() + RJust( cSubCtaIvm, "0", nLenCuentaContaplus( cRuta, cCodEmp ) )
+           //cSubCtaIvm   := oNewImp:cCtaImp( ( dbfTikL )->nValImp )
 
-           cSubCtaIvm   := oNewImp:cCtaImp( ( dbfTikL )->nValImp )
+           cSubCtaIvm   := oNewImp:cCtaImp( oNewImp:nValImp( ( dbfTikL )->cCodImp ) )
 
             nPos        := aScan( aIvm, {|x| x[ 1 ] == cSubCtaIvm } )
             if nPos == 0
