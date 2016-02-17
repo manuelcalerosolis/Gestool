@@ -11509,9 +11509,9 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento, lShowInc )
             // Retenciones desde la ficha de cliente----------------------------------
 
             if !Empty( aGet[ _NTIPRET ] )
-               aGet[ _NTIPRET  ]:Select( ( D():Clientes( nView ) )->nTipRet )
+               aGet[ _NTIPRET  ]:Select( if( ( D():Clientes( nView ) )->nTipRet != 0, ( D():Clientes( nView ) )->nTipRet, 1 ) )
             else
-               aTmp[ _NTIPRET  ] := ( D():Clientes( nView ) )->nTipRet
+               aTmp[ _NTIPRET  ] := if( ( D():Clientes( nView ) )->nTipRet != 0, ( D():Clientes( nView ) )->nTipRet, 1 )
             end if
 
             if !Empty( aGet[ _NPCTRET ] )

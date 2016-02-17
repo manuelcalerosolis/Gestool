@@ -2270,9 +2270,7 @@ METHOD EditDet() CLASS TRemMovAlm
 
    ::oDetMovimientos:oDbfVir:Load()
 
-   if ::oDetMovimientos:Resource( 2 ) == IDOK
-      ::oDetMovimientos:oDbfVir:Save()
-   else
+   if ::oDetMovimientos:Resource( 2 ) != IDOK
       ::oDetMovimientos:oDbfVir:Cancel()
    end if
 

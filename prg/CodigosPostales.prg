@@ -288,11 +288,15 @@ METHOD validCodigoPostal()
    cCodigo           := ::getCodigo():varGet() 
 
    if ::oldCodigo != cCodigo
-      
-      if ::oDbf:seek( cCodigo )
-         ::setPoblacion( ::oDbf:cNomPos )
-         ::setProvincia( ::oProvincias:getNombreProvincia( ::oDbf:cCodPrv ) )
-      end if  
+
+      if !Empty( ::oDbf )
+
+         if ::oDbf:seek( cCodigo )
+            ::setPoblacion( ::oDbf:cNomPos )
+            ::setProvincia( ::oProvincias:getNombreProvincia( ::oDbf:cCodPrv ) )
+         end if  
+
+      end if
 
       ::setOldValueCodigoPostal( cCodigo )
 
