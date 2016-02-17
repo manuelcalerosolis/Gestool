@@ -285,7 +285,7 @@ METHOD DirectDebit( hParent ) CLASS SepaXml
          hChild := ItemNew(hItem, "DrctDbtTx")                    // Operación de adeudo directo 
          hChild := ItemNew(hChild, "MndtRltdInf")                 // Información del mandato 
          ItemNew(hChild, "MndtId", 35, ::oDebtor:MndtId)             // Identificación del mandato 
-         ItemNew(hChild, "DtOfSgntr", 8, ::oDebtor:DtOfSgntr)        // Fecha de firma 
+         ItemNew(hChild, "DtOfSgntr", 10, ::oDebtor:DtOfSgntr)        // Fecha de firma 
          
          if ::oDebtor:AmdmntInd != nil .and. ::oDebtor:OrgnlMndtId != nil
             ItemNew(hChild, "AmdmntInd", 5, ::oDebtor:AmdmntInd)     // Indicador de modificación 
@@ -661,10 +661,10 @@ CLASS SepaDebitActor
    DATA InstrId                                 // Identificación de la instrucción
    DATA EndToEndId                              // Identificación de extremo a extremo 
    DATA InstdAmt        AS NUMERIC INIT 0.00             // Importe ordenado 
-   DATA MndtId                                  // Identificación del mandato 
-   DATA DtOfSgntr                               // Fecha de firma 
-   DATA AmdmntInd                                  // Indicador de modificación 
-   DATA OrgnlMndtId                             // Identificación del mandato original 
+   DATA MndtId                                     // Identificación del mandato 
+   DATA DtOfSgntr                                  // Fecha de firma 
+   DATA AmdmntInd       AS CHARACTER INIT "false"  // Indicador de modificación 
+   DATA OrgnlMndtId                                // Identificación del mandato original 
 
    DATA oXmlActor
    DATA oXmlId
@@ -785,7 +785,7 @@ METHOD getInfoPaymentXML() CLASS SepaDebitActor
    ::oXmlPmtInf:addBelow( TXmlParseNode():New( "PmtInfId", ::PmtInfId, 35 ) )
    ::oXmlPmtInf:addBelow( TXmlParseNode():New( "PmtMtd", ::PmtMtd, 2 ) )
    ::oXmlPmtInf:addBelow( TXmlParseNode():New( "BtchBookg", ::BtchBookg, 5 ) )
-   ::oXmlPmtInf:addBelow( TXmlParseNode():New( "NbOfTxs", ::NbOfTxs, 15 ) )
+   ::oXmlPmtInf:addBelow( TXmlParseNode():New( "NbOfTxs", str( ::NbOfTxs, 0 ), 15 ) )
    ::oXmlPmtInf:addBelow( TXmlParseNode():New( "CtrlSum", ::CtrlSum, 18 ) )
 
 Return ( ::oXmlPmtInf )
@@ -890,6 +890,10 @@ Return ( ::oXmlCdtrSchmeId )
 METHOD getDirectDebitTransactionInformationXml()
 
    local oXmlPmtId
+   local oXmlDrctDbtTx
+   local oXmlMndtRltdInf
+   local oXmlAmdmntInd
+   local oXmlAmdmntInfDtls   
 
    ::oXmlDrctDbtTxInf   := TXmlNode():New( , "DrctDbtTxInf" )
 
@@ -907,25 +911,29 @@ METHOD getDirectDebitTransactionInformationXml()
 
       ::oXmlDrctDbtTxInf:addBelow( TXmlParseNode():New( "InstdAmt", ::InstdAmt, 12, .t. ) )  // Importe ordenado
 
-      if ::MndtId != nil .or. ::DtOfSgntr != nil 
+         if ::MndtId != nil .or. ::DtOfSgntr != nil 
 
-         oXmlDrctDbtTx        := TXmlNode():New( , "DrctDbtTx" )                             // Operación de adeudo directo 
-            oXmlMndtRltdInf   := TXmlNode():New( , "MndtRltdInf" )                           // Información del mandato 
-            oXmlMndtRltdInf:addBelow( TXmlParseNode():New( "MndtId", ::MndtId, 35 ) )        
-            oXmlMndtRltdInf:addBelow( TXmlParseNode():New( "DtOfSgntr", ::DtOfSgntr, 8 ) )   // Fecha de firma 
+            oXmlDrctDbtTx        := TXmlNode():New( , "DrctDbtTx" )                             // Operación de adeudo directo 
+               oXmlMndtRltdInf   := TXmlNode():New( , "MndtRltdInf" )                           // Información del mandato 
+               oXmlMndtRltdInf:addBelow( TXmlParseNode():New( "MndtId", ::MndtId, 35 ) )        
+               oXmlMndtRltdInf:addBelow( TXmlParseNode():New( "DtOfSgntr", ::DtOfSgntr, 10 ) )   // Fecha de firma 
 
-               oXmlAmdmntInd  := TXmlParseNode():New( "AmdmntInd", ::AmdmntInd, 5 )
+                  oXmlAmdmntInd  := TXmlParseNode():New( "AmdmntInd", ::AmdmntInd, 5 )
 
-               // aki me quedo
+                  if ::OrgnlMndtId != nil
+                     oXmlAmdmntInfDtls := TXmlNode():New( , "AmdmntInfDtls" )                               // Detalles de la modificación 
+                     oXmlAmdmntInfDtls:addBelow( TXmlParseNode():New( "OrgnlMndtId", ::OrgnlMndtId, 35 ) )  // Identificación del mandato original 
 
-            oXmlMndtRltdInf:addBelow( TXmlParseNode():New( "AmdmntInd", ::AmdmntInd, 5 ) )   // Indicador de modificación
+                     oXmlAmdmntInd:addBelow( oXmlAmdmntInfDtls )
+                  endif
 
-         if ::oDebtor:AmdmntInd != nil .and. ::oDebtor:OrgnlMndtId != nil
-            hChild := ItemNew(hChild, "AmdmntInfDtls")               // Detalles de la modificación 
-            ItemNew(hChild, "OrgnlMndtId", 35, ::oDebtor:OrgnlMndtId)   // Identificación del mandato original 
+               oXmlMndtRltdInf:addBelow( oXmlAmdmntInd )
+
+            oXmlDrctDbtTx:addBelow( oXmlMndtRltdInf )
+
+         ::oXmlDrctDbtTxInf:addBelow( oXmlDrctDbtTx )
+
          endif
-      endif
-
 
       /*
 
