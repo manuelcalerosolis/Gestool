@@ -1836,7 +1836,8 @@ STATIC FUNCTION initContabilizaReciboCliente( cDocIni, cDocFin, nRad, cTipo, lSi
    */
 
    if lAplicacionA3()
-      EnlaceA3():GetInstance():Render():WriteASCII():DestroyInstance()
+      EnlaceA3():GetInstance():Render():WriteASCII()
+      EnlaceA3():DestroyInstance()
    end if
 
    oMtrInf:Set( ( dbfFacCliP )->( OrdKeyCount() ) )

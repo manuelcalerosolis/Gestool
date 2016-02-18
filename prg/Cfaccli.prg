@@ -265,7 +265,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
                if nImpIvm != 0
 
-                  cSubCtaIvm  := oNewImp:cCtaImp( ( dbfFacCliL )->nValImp )
+                  cSubCtaIvm  := oNewImp:cCtaImp( oNewImp:nValImp( ( dbfFacCliL )->cCodImp ) )
 
                   if !Empty( cSubCtaIvm )
 
