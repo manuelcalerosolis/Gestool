@@ -250,8 +250,8 @@ CLASS TProduccion FROM TMasDet
    METHOD modeMateriaPrima()
    METHOD modeElaborado()
 
-   METHOD getIniSeccion()                 INLINE GetPvProfString( "PRODUCCION", "Seccion", "", fullcurdir() + "GstApolo.Ini" )
-   METHOD getIniOperacion()               INLINE GetPvProfString( "PRODUCCION", "Operacion", "", fullcurdir() + "GstApolo.Ini" )
+   METHOD getIniSeccion()                 INLINE GetPvProfString( "PRODUCCION", "Seccion", "", cIniAplication() )
+   METHOD getIniOperacion()               INLINE GetPvProfString( "PRODUCCION", "Operacion", "", cIniAplication() )
 
    METHOD CargaPersonalAnterior( aDatosAnterior )
 

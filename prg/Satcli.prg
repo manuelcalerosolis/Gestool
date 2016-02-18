@@ -11029,7 +11029,7 @@ Method Process()
    local tmpSatCliI
    local tmpSatCliD
    local aFiles      := Directory( cPatIn() + "SatCli*.*" )
-   local cOperario   := GetPvProfString(  "Envioyrecepcion", "Operario",     "",   FullCurDir() + "GstApolo.Ini" )
+   local cOperario   := GetPvProfString(  "Envioyrecepcion", "Operario",     "",   cIniAplication() )
 
    for m := 1 to len( aFiles )
 

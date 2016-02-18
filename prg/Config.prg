@@ -716,7 +716,7 @@ STATIC FUNCTION cWriteIni( cEmpresa )
       cEmpresa := cCodEmp()
 	END IF
 
-   cIniApp  := FullCurDir() + "GstApolo.Ini"
+   cIniApp  := cIniAplication()
    cIniEmp  := cPatEmp() + cEmpresa + ".Ini"
 
 	/*
@@ -823,7 +823,7 @@ FUNCTION LoadIni( oWnd, cEmpresa )
 	*/
 
 	aIniApp 	:= Array( _NUMINIAPP )
-   cIniApp  := FullCurDir() + "GstApolo.Ini"
+   cIniApp  := cIniAplication()
 
    aIniApp[PATHDATOS]      := "DATOS"
 
@@ -1027,7 +1027,7 @@ FUNCTION SetLstBackup( dDate )
 
    DEFAULT dDate  := Date()
 
-   WritePProString( "main", "Backup", Dtoc( dDate ), FullCurDir() + "GstApolo.Ini" )
+   WritePProString( "main", "Backup", Dtoc( dDate ), cIniAplication() )
 
 RETURN ( dDate )
 

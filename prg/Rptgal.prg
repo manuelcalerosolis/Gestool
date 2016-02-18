@@ -89,14 +89,14 @@ Function Main( cCodEmp, cCodUsr, cIp )
 
    // Chequeamos la existencia del fichero de configuracion--------------------
 
-   if !File( FullCurDir() + "GstApolo.Ini" ) .and. File( FullCurDir() + "Gestion.Ini" )
-      fRename( FullCurDir() + "Gestion.Ini", FullCurDir() + "GstApolo.Ini" )
+   if !File( cIniAplication() ) .and. File( FullCurDir() + "Gestion.Ini" )
+      fRename( FullCurDir() + "Gestion.Ini", cIniAplication() )
    end if
 
-   cAdsIp            := GetPvProfString( "ADS", "Ip",    "", FullCurDir() + "GstApolo.Ini" )
-   cAdsType          := GetPvProfString( "ADS", "Type",  "", FullCurDir() + "GstApolo.Ini" )
-   cAdsData          := GetPvProfString( "ADS", "Data",  "", FullCurDir() + "GstApolo.Ini" )
-   cAdsFile          := GetPvProfString( "ADS", "File",  "", FullCurDir() + "GstApolo.Ini" )
+   cAdsIp            := GetPvProfString( "ADS", "Ip",    "", cIniAplication() )
+   cAdsType          := GetPvProfString( "ADS", "Type",  "", cIniAplication() )
+   cAdsData          := GetPvProfString( "ADS", "Data",  "", cIniAplication() )
+   cAdsFile          := GetPvProfString( "ADS", "File",  "", cIniAplication() )
 
    // Motor de bases de datos--------------------------------------------------
 

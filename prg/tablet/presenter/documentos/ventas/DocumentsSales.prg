@@ -911,7 +911,7 @@ Return ( .t. )
 METHOD setDatasFromClientes( CodigoCliente ) CLASS DocumentsSales
 
    Local lReturn           := .f.
-   local AgenteIni         := GetPvProfString( "Tablet", "Agente", "", FullCurDir() + "GstApolo.Ini" )
+   local AgenteIni         := GetPvProfString( "Tablet", "Agente", "", cIniAplication() )
 
    D():getStatusClientes( ::nView )
 

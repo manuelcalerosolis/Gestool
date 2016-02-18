@@ -1733,8 +1733,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nTipDur" ) ) ]       := 1
 
 
-      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ]      := Padr( GetPvProfString( "PROPIEDADES", "Propiedad1",       "",   FullCurDir() + "GstApolo.Ini" ), 20 )
-      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ]      := Padr( GetPvProfString( "PROPIEDADES", "Propiedad2",       "",   FullCurDir() + "GstApolo.Ini" ), 20 )
+      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ]      := Padr( GetPvProfString( "PROPIEDADES", "Propiedad1",       "",   cIniAplication() ), 20 )
+      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ]      := Padr( GetPvProfString( "PROPIEDADES", "Propiedad2",       "",   cIniAplication() ), 20 )
 
    case nMode == DUPL_MODE
 

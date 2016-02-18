@@ -2244,6 +2244,18 @@ Return ( if( lFull, FullCurDir(), "" ) + cPatEmp + "\" )
 
 //---------------------------------------------------------------------------//
 
+Function cIniEmpresa()
+
+Return ( cPatEmp() + "Empresa.Ini" )
+
+//---------------------------------------------------------------------------//
+
+Function cIniAplication()
+
+Return ( FullCurDir() + "GstApolo.Ini" )
+
+//---------------------------------------------------------------------------//
+
 Function IsMuebles()
 
 Return ( "MUEBLES" $ cParamsMain() )

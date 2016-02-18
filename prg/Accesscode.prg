@@ -64,7 +64,7 @@ CLASS AccessCode
    DATA  nConnection             INIT  0
    DATA  lConnected              INIT  .t.
 
-   DATA  cIniFile                INIT  FullCurDir() + "GstApolo.Ini"
+   DATA  cIniFile                INIT  cIniAplication()
 
    METHOD Resource()
    METHOD InitResource()

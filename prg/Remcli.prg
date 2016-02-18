@@ -81,6 +81,8 @@ CLASS TRemesas FROM TMasDet
    DATA  oFecExp
    DATA  oExportado
 
+   DATA  cEsquema                      INIT "CORE"
+
    DATA  dVencimiento
    DATA  dAnteriorVencimiento
 
@@ -198,6 +200,13 @@ CLASS TRemesas FROM TMasDet
 
    METHOD inicializaData()
 
+   METHOD getFicheroExportacion()
+   METHOD getDirectorioExportacion()
+   METHOD setDirectorioExportacion()
+
+   METHOD getFicheroExportacionXml()   INLINE ( getFileNoExt( ::cFicheroExportacion ) + ".xml" )
+   METHOD getFicheroExportacionTxt()   INLINE ( getFileNoExt( ::cFicheroExportacion ) + ".txt" )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -226,7 +235,6 @@ METHOD New( cPath, oMenuItem, oWndParent )
    ::bmpConta              := LoadBitmap( GetResources(), "bConta" )
 
    ::dVencimiento          := Date()
-   ::cFicheroExportacion   := PadR( "C:\Sepa\RemesasBancarias.xml", 200 )
 
    ::bFirstKey             := {|| Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem }
    ::bWhile                := {|| Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == Str( ::oDbfVir:nNumRem, 9 ) + ::oDbfVir:cSufRem .and. !::oDbfVir:Eof() }
@@ -1188,12 +1196,15 @@ RETURN ( .t. )
 METHOD SaveModelo()
 
    local oDlg
-   local oGet
+   local oGetFicheroExportacion
    local oBmpGeneral
+   local oComboEsquema
 
    if ::oDbf:Recno() == 0
       RETURN ( Self )
    end if
+
+   ::cFicheroExportacion   := ::getFicheroExportacion() 
 
    DEFINE DIALOG  oDlg ;
       RESOURCE    "Modelo19" ; 
@@ -1216,11 +1227,11 @@ METHOD SaveModelo()
          OF       oDlg ;
          SPINNER
 
-      REDEFINE GET oGet ;
+      REDEFINE GET oGetFicheroExportacion ;
          VAR      ::cFicheroExportacion ;
          ID       130 ;
          BITMAP   "FOLDER" ;
-         ON HELP  ( oGet:cText( cGetFile( "*.xml", "Selección de fichero" ) ) ) ;
+         ON HELP  ( oGetFicheroExportacion:cText( cGetFile( "*.xml", "Selección de fichero" ) ) ) ;
          OF       oDlg
 
       REDEFINE CHECKBOX ::lAgruparRecibos ;
@@ -1231,6 +1242,12 @@ METHOD SaveModelo()
       REDEFINE CHECKBOX ::lUsarSEPA ;
          ID       110 ;
          WHEN     ( ::oDbf:nTipRem != 2 ) ;
+         OF       oDlg
+
+      REDEFINE COMBOBOX oComboEsquema ;
+         VAR      ::cEsquema ;
+         ID       160 ;
+         ITEMS    { "CORE", "COR1" } ;
          OF       oDlg
 
       ::oTreeIncidencias   := TTreeView():Redefine( 150, oDlg )
@@ -1275,6 +1292,8 @@ METHOD RunModelo( oDlg )
    ::oDbf:FieldPutByName( "lExport", .t. )
    ::oDbf:FieldPutByName( "dExport",  GetSysDate() )
 
+   ::setDirectorioExportacion()
+
    oDlg:Enable()
 
 RETURN ( Self )
@@ -1299,13 +1318,12 @@ METHOD InitMod58( oDlg )
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   cPreMon        := if( cDivEmp() == "EUR", "5", "0" )
+   cPreMon                 := if( cDivEmp() == "EUR", "5", "0" )
 
-   if file( Rtrim( ::cFicheroExportacion ) )
-      fErase( Rtrim( ::cFicheroExportacion ) )
-   end if
+   ::cFicheroExportacion   := ::getFicheroExportacionTxt()
 
-   nHandle        := fCreate( Rtrim( ::cFicheroExportacion ) )
+   fErase( ::cFicheroExportacion )
+   nHandle        := fCreate( ::cFicheroExportacion )
 
    if nHandle > 0
 
@@ -2274,17 +2292,16 @@ METHOD InitMod19( oDlg )
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   cPreMon           := if( cDivEmp() == "EUR", "5", "0" )
-
-   if file( Rtrim( ::cFicheroExportacion ) )
-      fErase( Rtrim( ::cFicheroExportacion ) )
-   end if
+   cPreMon                 := if( cDivEmp() == "EUR", "5", "0" )
 
    if ::lAgruparRecibos
       ::oDbfDet:OrdSetFocus( "nNumRem" )
    end if
 
-   nHandle           := fCreate( Rtrim( ::cFicheroExportacion ) )
+   ::cFicheroExportacion   := ::getFicheroExportacionTxt()
+   fErase( ::cFicheroExportacion )
+
+   nHandle                 := fCreate( ::cFicheroExportacion )
 
    if nHandle > 0
 
@@ -2595,7 +2612,7 @@ METHOD InitSepa19( oDlg )
    ::dAnteriorVencimiento  := nil
 
    ::oCuaderno             := Cuaderno1914():New()
-   ::oCuaderno:Fichero( ::cFicheroExportacion )
+   ::oCuaderno:Fichero( ::getFicheroExportacionTxt() )
 
    // Presentador--------------------------------------------------------------
 
@@ -2674,8 +2691,10 @@ METHOD InitSepaXML19( oDlg )
 
       ::dAnteriorVencimiento  := nil
 
-      ::oCuaderno             := SepaXml():New( ::cFicheroExportacion )
+      ::oCuaderno             := SepaXml():New( ::getFicheroExportacionXml() )
       ::oCuaderno:MsgId       := id_File( 'REMESA' + str( ::oDbf:nNumRem ) )
+
+      ::oCuaderno:setScheme( ::cEsquema )
 
       // Presentador--------------------------------------------------------------
 
@@ -2693,7 +2712,7 @@ METHOD InitSepaXML19( oDlg )
             ::InsertDeudorXml()
 
             ::oDbfDet:Skip()
-
+            
          end while
       end if
       
@@ -2822,7 +2841,7 @@ METHOD InsertDeudorXml()
       RETURN ( Self )
    end if 
 
-   oDebtor           := SepaDebitActor():New( ::oCuaderno )
+   oDebtor           := SepaDebitActor():New( ::oCuaderno, "Dbtr" )
 
    with object ( oDebtor )
       :nEntity       := ENTIDAD_JURIDICA
@@ -2832,9 +2851,9 @@ METHOD InsertDeudorXml()
       :ReqdColltnDt  := sDate( ::oDbf:dExport )                   // Fecha de cobro (Vencimiento)
       :IBAN          := ::GetValidCuentaCliente()
       :BICOrBEI      := ::GetBICClient()
-      :MndtId        := hb_md5( ::oCuaderno:oCreditor:Id + :id )  // Identificación del mandato, idea: Utilizar NIF Acreedor + NIF Deudor 
+      :MndtId        := ::oClientes:Nif  //   hb_md5( ::oCuaderno:oCreditor:Id + :id )  // Identificación del mandato, idea: Utilizar NIF Acreedor + NIF Deudor 
       :DtOfSgntr     := sDate( ::oDbf:dExport )                   // Fecha de firma 
-      :EndToEndId    := "RECIBO" + ::TextoDocumento()
+      :EndToEndId    := "Recibo " + ::TextoDocumento()
    endwith
 
    ::oCuaderno:DebtorAdd( oDebtor )
@@ -2868,3 +2887,48 @@ METHOD getSerieRecibos()
 RETURN ( cSerieRecibo )   
 
 //---------------------------------------------------------------------------//
+
+METHOD getFicheroExportacion()
+
+   local cFicheroExportacion  := ::getDirectorioExportacion()
+
+   if ( rat( "\", cFicheroExportacion ) == 0 )
+      cFicheroExportacion     += "\"
+   end if 
+
+   cFicheroExportacion        += "Remesa" + alltrim( str( ::oDbf:nNumRem, 9 ) ) + "-" + ::oDbf:cSufRem 
+   cFicheroExportacion        := padr( cFicheroExportacion, 200 )
+
+Return ( cFicheroExportacion )
+
+//---------------------------------------------------------------------------//
+
+METHOD getDirectorioExportacion()
+
+   local cDirectory  := getPvProfString( "main", "Directorio SEPA", "", cIniAplication() )
+
+   if empty( cDirectory )  
+      cDirectory     := "C:\Sepa"
+   end if 
+
+   cDirectory        := cpath( cDirectory )
+
+RETURN ( cDirectory ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD setDirectorioExportacion()
+
+   local cDirectory  := cOnlyPath( ::cFicheroExportacion )
+
+   msgAlert( cDirectory, "setDirectorioExportacion" )
+
+   if !empty( cDirectory )
+      writePProString( "main", "Directorio SEPA", cDirectory, cIniAplication() )   
+   end if 
+
+RETURN ( cDirectory )   
+
+//---------------------------------------------------------------------------//
+
+

@@ -3371,7 +3371,7 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
    Anotamos la empresa activa--------------------------------------------------
    */
 
-   WritePProString( "main", "Ultima Empresa", cCodEmp, FullCurDir() + "GstApolo.Ini" )
+   WritePProString( "main", "Ultima Empresa", cCodEmp, cIniAplication() )
 
    /*
    Colocamos la empresa actual a usuario actual-------------------------------

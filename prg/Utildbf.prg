@@ -3428,7 +3428,7 @@ Function getTraslation( cText )
    if HHasKey( hTraslations, cText )
       cTraslation       := HGet( hTraslations, cText )
    else 
-      cTraslation       := GetPvProfString( "Traslations", cText, "", fullcurdir() + "GstApolo.Ini" )      
+      cTraslation       := GetPvProfString( "Traslations", cText, "", cIniAplication() )      
       if !empty( cTraslation )
          hSet( hTraslations, cText, cTraslation )   
       end if

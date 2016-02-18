@@ -112,16 +112,16 @@ function Main( ParamsMain, ParamsSecond )
 
    // Chequeamos la existencia del fichero de configuracion--------------------
 
-   if !File( FullCurDir() + "GstApolo.Ini" ) .and. File( FullCurDir() + "Gestion.Ini" )
-      fRename( FullCurDir() + "Gestion.Ini", FullCurDir() + "GstApolo.Ini" )
+   if !File( cIniAplication() ) .and. File( FullCurDir() + "Gestion.Ini" )
+      fRename( FullCurDir() + "Gestion.Ini", cIniAplication() )
    end if
 
-   cAdsType          := GetPvProfString(  "ADS",      "Type",     "",   FullCurDir() + "GstApolo.Ini" )
-   cAdsIp            := GetPvProfString(  "ADS",      "Ip",       "",   FullCurDir() + "GstApolo.Ini" )
-   cAdsData          := GetPvProfString(  "ADS",      "Data",     "",   FullCurDir() + "GstApolo.Ini" )
-   nAdsServer        := GetPvProfInt(     "ADS",      "Server",   7,    FullCurDir() + "GstApolo.Ini" )
-   cAdsLocal         := GetPvProfString(  "ADS",      "Local",    "",   FullCurDir() + "GstApolo.Ini" )
-   cAdsFile          := GetPvProfString(  "ADS",      "File",     "",   FullCurDir() + "GstApolo.Ini" )
+   cAdsType          := GetPvProfString(  "ADS",      "Type",     "",   cIniAplication() )
+   cAdsIp            := GetPvProfString(  "ADS",      "Ip",       "",   cIniAplication() )
+   cAdsData          := GetPvProfString(  "ADS",      "Data",     "",   cIniAplication() )
+   nAdsServer        := GetPvProfInt(     "ADS",      "Server",   7,    cIniAplication() )
+   cAdsLocal         := GetPvProfString(  "ADS",      "Local",    "",   cIniAplication() )
+   cAdsFile          := GetPvProfString(  "ADS",      "File",     "",   cIniAplication() )
 
    cAdsIp( cAdsIp )
    cAdsData( cAdsData )
@@ -838,7 +838,7 @@ STATIC FUNCTION EndApp()
 
    ErrorBlock( oBlock )
 
-   lFinish     := !empty( oDlg ) .and. oDlg:nResult == IDOK
+   lFinish     := !empty( oDlg ) .and. ( oDlg:nResult == IDOK )
 
    if ( lFinish )
       FinishAplication()
@@ -1112,7 +1112,7 @@ Function Ejecutascript()
    Comprobaciones iniciales antes de mandar el script--------------------------
    */
 
-   dFecha         := cToD( GetPvProfString( "SCRIPT", "Fecha",    "", FullCurDir() + "GstApolo.Ini" ) )
+   dFecha         := cToD( GetPvProfString( "SCRIPT", "Fecha",    "", cIniAplication() ) )
 
    /*
    Ejecutamos el script-----------------------------------------------
@@ -1138,7 +1138,7 @@ Function Ejecutascript()
    Anotamos la fecha del último Envío de  script--------------------------------
    */
 
-   WritePProString( "SCRIPT", "Fecha", Dtoc( GetSysDate() ), FullCurDir() + "GstApolo.Ini" )
+   WritePProString( "SCRIPT", "Fecha", Dtoc( GetSysDate() ), cIniAplication() )
 
 Return u
 
@@ -1397,7 +1397,7 @@ Static Function FinishAplication() //  Static Function
    CursorWait()
 
    if !Empty( cCodEmp() )
-      WritePProString( "main", "Ultima Empresa", cCodEmp(), FullCurDir() + "GstApolo.Ini" )
+      WritePProString( "main", "Ultima Empresa", cCodEmp(), cIniAplication() )
    end if 
 
    lFreeUser()
@@ -5801,7 +5801,7 @@ Function MainTablet()
 	local oDlg
    local nRow           
    local oGridTree
-   local cAgente        := GetPvProfString( "Tablet", "Agente", "", FullCurDir() + "GstApolo.Ini" )
+   local cAgente        := GetPvProfString( "Tablet", "Agente", "", cIniAplication() )
 
    nRow                 := 0
    oDlg                 := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )  

@@ -571,7 +571,7 @@ RETURN ( Self )
 
 Method CargarPreferencias()
 
-   local oIniApp                 := TIni():New( FullCurDir() + "GstApolo.Ini" )
+   local oIniApp                 := TIni():New( cIniAplication() )
 
    ::cDirOrigen                  := PadR( oIniApp:Get( "Backup", "Origen",             "C:\",                  ::cDirOrigen ),         200 )
    ::cDir                        := PadR( oIniApp:Get( "Backup", "Destino",            "C:\",                  ::cDir ),               200 )
@@ -592,7 +592,7 @@ return ( Self )
 
 Method GuardarPreferencias()
 
-   local oIniApp                 := TIni():New( FullCurDir() + "GstApolo.Ini" )
+   local oIniApp                 := TIni():New( cIniAplication() )
 
    oIniApp:Set( "Backup",  "Origen",            ::cDirOrigen )
    oIniApp:Set( "Backup",  "Destino",           ::cDir )
@@ -1353,9 +1353,9 @@ Function CompressEmpresa( cCodEmp, cFile, aBtn, oAct, oAni, oMsg, oDlg, lAuto )
    end if
 
    if !lAuto
-      dLastBackup       := Stod( GetPvProfString( "Backup", "Ultimo", Dtos( Date() ), FullCurDir() + "GstApolo.Ini" ) )
+      dLastBackup       := Stod( GetPvProfString( "Backup", "Ultimo", Dtos( Date() ), cIniAplication() ) )
 
-      lEnableBackup     := GetPvProfString( "Backup", "Enable", ".T.", FullCurDir() + "GstApolo.Ini" )
+      lEnableBackup     := GetPvProfString( "Backup", "Enable", ".T.", cIniAplication() )
       lEnableBackup     := Upper( lEnableBackup ) == ".T."
 
       lLastBackup       := ( Date() - dLastBackup >= 7 ) .and. ( nUsrInUse() == 1 ) .and. ( lEnableBackup ) 
@@ -1393,7 +1393,7 @@ Function CompressEmpresa( cCodEmp, cFile, aBtn, oAct, oAni, oMsg, oDlg, lAuto )
          oAni:Hide()
       end if
 
-      WritePProString( "Backup", "Ultimo", Dtos( Date() ), FullCurDir() + "GstApolo.Ini" )
+      WritePProString( "Backup", "Ultimo", Dtos( Date() ), cIniAplication() )
 
    end if
 
@@ -1429,10 +1429,10 @@ Function CompressGrupo( cCodGrp, cFile, aBtn, oAct, oAni, oMsg, oDlg, lAuto )
       oAct:Hide()
    end if
 
-   lEnableBackup     := GetPvProfString( "Backup", "Enable", ".T.", FullCurDir() + "GstApolo.Ini" )
+   lEnableBackup     := GetPvProfString( "Backup", "Enable", ".T.", cIniAplication() )
    lEnableBackup     := Upper( lEnableBackup ) == ".T."
 
-   dLastBackup       := Stod( GetPvProfString( "Backup", "Ultimo", Dtos( Date() ), FullCurDir() + "GstApolo.Ini" ) )
+   dLastBackup       := Stod( GetPvProfString( "Backup", "Ultimo", Dtos( Date() ), cIniAplication() ) )
    lLastBackup       := ( Date() - dLastBackup >= 7 ) .and. ( nUsrInUse() == 1 ) .and. ( !lAuto )
 
    if lEnableBackup .and. ( lAuto .or. lLastBackup )
@@ -1466,7 +1466,7 @@ Function CompressGrupo( cCodGrp, cFile, aBtn, oAct, oAni, oMsg, oDlg, lAuto )
          oAni:Hide()
       end if
 
-      WritePProString( "Backup", "Ultimo", Dtos( Date() ), FullCurDir() + "GstApolo.Ini" )
+      WritePProString( "Backup", "Ultimo", Dtos( Date() ), cIniAplication() )
 
    end if
 
