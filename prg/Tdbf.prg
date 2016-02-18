@@ -1827,7 +1827,9 @@ METHOD GetStatus( lInit ) CLASS TDbf
         ::setIndex( 1 )
     end if
 
-    aadd( ::aStatus, hStatus )
+    if !Empty( hStatus )
+        aadd( ::aStatus, hStatus )
+    end if
 
 return ( hStatus )
 
@@ -1840,7 +1842,7 @@ METHOD SetStatus( hStatus ) CLASS TDbf
             Return ( self )
         end if 
         hStatus     := atail( ::aStatus )
-        adel( ::aStatus, len( ::aStatus ) , .t. )
+        aSize( ::aStatus, len( ::aStatus ) - 1 )
     end if 
 
     ::goTo( hget( hStatus, "recno" ) )

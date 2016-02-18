@@ -2270,7 +2270,9 @@ METHOD EditDet() CLASS TRemMovAlm
 
    ::oDetMovimientos:oDbfVir:Load()
 
-   if ::oDetMovimientos:Resource( 2 ) != IDOK
+   if ::oDetMovimientos:Resource( 2 ) == IDOK
+      ::oDetMovimientos:oDbfVir:Save()
+   else
       ::oDetMovimientos:oDbfVir:Cancel()
    end if
 
@@ -3311,6 +3313,7 @@ Function SynRemMov( cPath )
    local dbfHisMov
    local dbfArticulo
    local nTotRem  := 0
+   local nOrdAnt
 
    DEFAULT cPath  := cPatEmp()
 
@@ -3375,6 +3378,18 @@ Function SynRemMov( cPath )
 
       if Empty( ( dbfHisMov )->cTimMov )
          ( dbfHisMov )->cTimMov        := RetFld( Str( ( dbfHisMov )->nNumRem ) + ( dbfHisMov )->cSufRem, dbfRemMov, "cTimRem", "cNumRem" )
+      end if
+
+      if Empty( ( dbfHisMov )->cRefMov )
+
+         nOrdAnt                       := ( dbfArticulo )->( OrdSetFocus( "Nombre" ) )
+
+         if ( dbfArticulo )->( dbSeek( Padr( ( dbfHisMov )->cNomMov, 100 ) ) )
+            ( dbfHisMov )->cRefMov     := ( dbfArticulo )->Codigo
+         end if
+
+         ( dbfArticulo )->( OrdSetFocus( nOrdAnt ) )
+
       end if
 
       ( dbfHisMov )->( dbSkip() )

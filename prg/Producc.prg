@@ -1924,9 +1924,9 @@ METHOD Resource( nMode, aDatosAnterior )
    oBmpGeneral:End()
 
    ::oDetProduccion:oDbfVir:SetStatus()
-   ::oDetMaterial:oDbfVir:GetStatus()
-   ::oDetPersonal:oDbfVir:GetStatus()
-   ::oDetMaquina:oDbfVir:GetStatus()
+   ::oDetMaterial:oDbfVir:SetStatus()
+   ::oDetPersonal:oDbfVir:SetStatus()
+   ::oDetMaquina:oDbfVir:SetStatus()
 
    ::oBrwMaterialProducido:CloseData()
    ::oBrwMateriaPrima:CloseData()
