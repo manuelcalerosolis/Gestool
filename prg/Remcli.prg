@@ -2715,6 +2715,8 @@ METHOD InitSepaXML19( oDlg )
             
          end while
       end if
+
+      // Generacion------------------------------------------------------------
       
       ::oCuaderno:Activate()
 
