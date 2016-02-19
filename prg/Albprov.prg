@@ -1426,7 +1426,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
          ID       340 ;
          IDSAY    342 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cAlmacen( aGet[ _CALMORIGEN ], D():Almacen( nView ), oSay[ 7 ] ) ) ;
+         VALID    ( cAlmacen( aGet[ _CALMORIGEN ], , oSay[ 7 ] ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( aGet[ _CALMORIGEN ], oSay[ 7 ] ) ) ;
          OF       oFld:aDialogs[1]
@@ -1439,7 +1439,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
       REDEFINE GET aGet[ _CCODALM ] VAR aTmp[ _CCODALM ]  ;
 			ID 		150 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( cAlmacen( aGet[ _CCODALM ], D():Almacen( nView ), oSay[ 2 ] ) ) ;
+         VALID    ( cAlmacen( aGet[ _CCODALM ], , oSay[ 2 ] ) ) ;
          BITMAP   "Lupa" ;
          ON HELP  ( BrwAlmacen( Self, oSay[ 2 ] ) ) ;
 			OF 		oFld:aDialogs[1]
@@ -3083,7 +3083,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          IDTEXT   331 ;
          IDSAY    332 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    (  cAlmacen( aGet[ __CALMORIGEN ], D():Almacen( nView ), aGet[ __CALMORIGEN ]:oHelpText ) ) ;
+         VALID    (  cAlmacen( aGet[ __CALMORIGEN ], , aGet[ __CALMORIGEN ]:oHelpText ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( aGet[ __CALMORIGEN ], aGet[ __CALMORIGEN ]:oHelpText ) ) ;
          OF       oFld:aDialogs[1]
@@ -3092,7 +3092,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          ID       240 ;
          IDTEXT   241 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    (  cAlmacen( aGet[ _CALMLIN ], D():Almacen( nView ), aGet[ _CALMLIN ]:oHelpText ) ) ;
+         VALID    (  cAlmacen( aGet[ _CALMLIN ], , aGet[ _CALMLIN ]:oHelpText ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( Self, aGet[ _CALMLIN ]:oHelpText ) ) ;
 			OF 		oFld:aDialogs[1]
@@ -3747,7 +3747,7 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet, aTm
       Return nil
    end if
 
-   if !cAlmacen( aGet[ _CALMLIN ], D():Almacen( nView ) )
+   if !cAlmacen( aGet[ _CALMLIN ] )
       MsgStop( "Código de almacén no encontrado" )
       Return nil
    end if

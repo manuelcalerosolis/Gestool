@@ -1337,7 +1337,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
 			ID 		150 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
 			COLOR 	CLR_GET ;
-         VALID    cAlmacen( aGet[_CCODALM], D():Almacen( nView ), oGet[ 1 ] );
+         VALID    cAlmacen( aGet[_CCODALM], , oGet[ 1 ] );
          BITMAP   "LUPA" ;
          ON HELP  brwAlmacen( aGet[ _CCODALM ], oGet[ 1 ] );
 			OF 		oFld:aDialogs[1]
@@ -1352,7 +1352,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
          ID       340 ;
          IDSAY    342 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cAlmacen( aGet[ _CALMORIGEN ], D():Almacen( nView ), oGet[ 7 ] ) ) ;
+         VALID    ( cAlmacen( aGet[ _CALMORIGEN ], , oGet[ 7 ] ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( aGet[ _CALMORIGEN ], oGet[ 7 ] ) ) ;
          COLOR    CLR_GET ;
@@ -3514,7 +3514,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
          IDTEXT   331 ;
          IDSAY    332 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    (  cAlmacen( aGet[ __CALMORIGEN ], D():Almacen( nView ), aGet[ __CALMORIGEN ]:oHelpText ) ) ;
+         VALID    (  cAlmacen( aGet[ __CALMORIGEN ], , aGet[ __CALMORIGEN ]:oHelpText ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( aGet[ __CALMORIGEN ], aGet[ __CALMORIGEN ]:oHelpText ) ) ;
          OF       oFld:aDialogs[1]
@@ -3522,7 +3522,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
       REDEFINE GET aGet[_CALMLIN] VAR aTmp[_CALMLIN]  ;
          ID       240 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( cAlmacen( aGet[_CALMLIN], D():Almacen( nView ), oSay2 ) ) ; 
+         VALID    ( cAlmacen( aGet[_CALMLIN], , oSay2 ) ) ; 
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( Self, oSay2 ) ) ;
 			COLOR 	CLR_GET ;
@@ -3800,7 +3800,7 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrw, oDlg2, nMode, oTotal, oFld, aTmpFac,
       Return nil
    end if
 
-   if !cAlmacen( aGet[ _CALMLIN ], D():Almacen( nView ) )
+   if !cAlmacen( aGet[ _CALMLIN ] )
       MsgStop( "Código de almacen no encontrado" )
       Return nil
    end if

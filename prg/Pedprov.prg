@@ -1184,7 +1184,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
 		REDEFINE GET aGet[_CCODALM] VAR aTmp[_CCODALM]	;
 			ID 		150 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( cAlmacen( aGet[_CCODALM], D():Almacen( nView ), oSay[ 1 ] ) ) ;
+         VALID    ( cAlmacen( aGet[_CCODALM], , oSay[ 1 ] ) ) ;
          ON HELP  ( BrwAlmacen( aGet[_CCODALM], oSay[ 1 ] ) ) ;
          BITMAP   "LUPA" ;
 			OF 		oFld:aDialogs[1]
@@ -2667,7 +2667,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
       REDEFINE GET aGet[ _CALMLIN ] VAR aTmp[ _CALMLIN ]  ;
          ID       240 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    (  cAlmacen( aGet[ _CALMLIN ], D():Almacen( nView ), oSay2 ),;
+         VALID    (  cAlmacen( aGet[ _CALMLIN ], , oSay2 ),;
                      oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( Self, oSay2 ) ) ;
@@ -3516,7 +3516,7 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrwPrp, oFld, oDlg, oBrw, nMode, oTotal, 
       Return nil
    end if
 
-   if !cAlmacen( aGet[ _CALMLIN ], D():Almacen( nView ) )
+   if !cAlmacen( aGet[ _CALMLIN ] )
       Return nil
    end if
 
@@ -8801,7 +8801,7 @@ Function Generador( oBrwPed )
 
    REDEFINE GET oCodAlm VAR cCodAlm ;
       ID       190 ;
-      VALID    ( cAlmacen( oCodAlm, D():Almacen( nView ), oNomAlm ) ) ;
+      VALID    ( cAlmacen( oCodAlm, , oNomAlm ) ) ;
       BITMAP   "LUPA" ;
       ON HELP  ( BrwAlmacen( oCodAlm, oNomAlm ) ) ;
       OF       oPag:aDialogs[1]
