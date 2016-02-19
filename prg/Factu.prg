@@ -1945,7 +1945,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Cuentas de remesas"
    oItem:cMessage       := "Acceso a las cuentas de remesas"
-   oItem:bAction        := {|| TCtaRem():New( cPatCli(), oWnd, "01044" ):Activate() }
+   oItem:bAction        := {|| TCtaRem():New( cPatCli(), cDriver(), oWnd, "01044" ):Activate() }
    oItem:cId            := "01044"
    oItem:cBmp           := "Address_book2_16"
    oItem:cBmpBig        := "Address_book2_32"

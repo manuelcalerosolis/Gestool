@@ -204,8 +204,8 @@ CLASS TRemesas FROM TMasDet
    METHOD getDirectorioExportacion()
    METHOD setDirectorioExportacion()
 
-   METHOD getFicheroExportacionXml()   INLINE ( getFileNoExt( ::cFicheroExportacion ) + ".xml" )
-   METHOD getFicheroExportacionTxt()   INLINE ( getFileNoExt( ::cFicheroExportacion ) + ".txt" )
+   METHOD getFicheroExportacionXml()   INLINE ( getPathFileNoExt( ::cFicheroExportacion ) + ".xml" )
+   METHOD getFicheroExportacionTxt()   INLINE ( getPathFileNoExt( ::cFicheroExportacion ) + ".txt" )
 
 END CLASS
 
@@ -2680,8 +2680,8 @@ METHOD InitSepaXML19( oDlg )
    local oError
    local dOldVto
 
-   // oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   // BEGIN SEQUENCE
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
       ::oTreeIncidencias:deleteAll()
 
@@ -2734,13 +2734,11 @@ METHOD InitSepaXML19( oDlg )
          ::oDbfDet:OrdSetFocus( "nNumRem" )
       end if
 
-   //RECOVER USING oError
+   RECOVER USING oError
+      msgStop( "Imposible exportar  filtros " + CRLF + ErrorMessage( oError ) )
+   END SEQUENCE
 
-   //   msgStop( "Imposible exportar  filtros " + CRLF + ErrorMessage( oError ) )
-
-   //END SEQUENCE
-
-   //ErrorBlock( oBlock )
+   ErrorBlock( oBlock )
 
 RETURN ( Self )
 
@@ -2766,6 +2764,7 @@ METHOD InsertPresentadorXml()
    with object ( ::oCuaderno:oInitPart )
       :nEntity    := ENTIDAD_JURIDICA
       :Nm         := ::oCtaRem:oDbf:cNomPre
+      :IBAN       := ::oCtaRem:oDbf:cPaisIBAN + ::oCtaRem:oDbf:cCtrlIBAN + ::oCtaRem:oDbf:cEntBan + ::oCtaRem:oDbf:cAgcBan + ::oCtaRem:oDbf:cDgcBan + ::oCtaRem:oDbf:cCtaBan
       :BICOrBEI   := getBIC( ::oCtaRem:oDbf:cEntPre )
       :id         := id_Name( ::oCtaRem:oDbf:cPaiPre, ::oCtaRem:oDbf:cSufCta, ::oCtaRem:oDbf:cNifPre )
       :Prtry      := "SEPA"
@@ -2922,8 +2921,6 @@ RETURN ( cDirectory )
 METHOD setDirectorioExportacion()
 
    local cDirectory  := cOnlyPath( ::cFicheroExportacion )
-
-   msgAlert( cDirectory, "setDirectorioExportacion" )
 
    if !empty( cDirectory )
       writePProString( "main", "Directorio SEPA", cDirectory, cIniAplication() )   

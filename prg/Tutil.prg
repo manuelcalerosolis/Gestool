@@ -450,7 +450,6 @@ function GetFileNoExt( cFullFile )
 return AllTrim( if( n > 0, left( cNameFile, n - 1 ), cNameFile ) )
 
 //---------------------------------------------------------------------------//
-
 // Extrae el Path de un fichero
 
 function GetFileName( cFullFile )
@@ -468,6 +467,16 @@ function GetFileName( cFullFile )
 return( cFile )
 
 //----------------------------------------------------------------------------//
+
+function GetPathFileNoExt( cFullFile )
+
+   local cNameFile := alltrim( cFullFile )
+   local n         := at( ".", cNameFile )
+
+return alltrim( if( n > 0, left( cNameFile, n - 1 ), cNameFile ) )
+
+//---------------------------------------------------------------------------//
+
 
 function lChkSer( cSer, aSer )
 

@@ -6,7 +6,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TCtaRem FROM TMANT
+CLASS TCtaRem FROM TMant
 
    DATA  cMru                    INIT "Address_book2_16"
 

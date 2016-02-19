@@ -577,17 +577,17 @@ METHOD ProcessDebtors( hItem )
       ::oXmlPmtInf         := ::oDebtor:getInfoPaymentXML()
          ::oXmlPmtInf:addBelow( ::getTypePaymentXML() )
 
-         ::oXmlPmtInf:addBelow( ::oDebtor:getRquiredPayDateXML() )
+         ::oXmlPmtInf:addBelow( ::oDebtor:getRquiredPayDateXML() ) 
 
-         ::oXmlPmtInf:addBelow( ::oDebtor:getCreditorXML() )
+         ::oXmlPmtInf:addBelow( ::oInitPart:getCreditorXML() ) 
 
-         ::oXmlPmtInf:addBelow( ::oDebtor:getCreditorIBANXML() )
+         ::oXmlPmtInf:addBelow( ::oInitPart:getCreditorIBANXML() )
 
-         ::oXmlPmtInf:addBelow( ::oDebtor:getCreditorBICXML() )
+         ::oXmlPmtInf:addBelow( ::oInitPart:getCreditorBICXML() )
 
-         ::oXmlPmtInf:addBelow( ::oDebtor:getChrgBrXML() )
+         ::oXmlPmtInf:addBelow( ::oInitPart:getChrgBrXML() )
 
-         ::oXmlPmtInf:addBelow( ::oDebtor:getIdCreditorXML() )
+         ::oXmlPmtInf:addBelow( ::oInitPart:getIdCreditorXML() )
 
          ::oXmlPmtInf:addBelow( ::oDebtor:getDirectDebitTransactionInformationXml() )
 
