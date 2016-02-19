@@ -623,6 +623,8 @@ Function GetBic( cEntidad )
    RECOVER
    END SEQUENCE
 
+   msgAlert( cDevuelve, cEntidad )
+
 Return cDevuelve
 
 //----------------------------------------------------------------//

@@ -198,7 +198,7 @@ CLASS TDbf
 
     METHOD  Lock()          INLINE ( ::nArea )->( FLock() )
     METHOD  RecLock()
-    METHOD  UnLock()        INLINE ( ::nArea )->( DBUnLock() ), Self
+    METHOD  UnLock()        INLINE ( ::nArea )->( DBUnLock() ), msgAlert( ( ::nArea )->( recno() ), "lock" ), Self
 
 //-- MISCELLANEOUS AND NEWS METHODS ------------------------------------------//
 
@@ -1505,6 +1505,8 @@ METHOD RecLock() CLASS TDbf
     while !( lRet := DBLock( ::nArea ) ) .and. Eval( ::bNetError, Self )
     end
 
+    msgAlert( lRet, str( ( ::nArea )->( recno() ) ) )
+
 return( lRet )
 
 //----------------------------------------------------------------------------//
@@ -1637,7 +1639,7 @@ METHOD Load( lLock ) CLASS TDbf
     DEFAULT lLock       := .f.
 
     if ::RecLock()
-        ( ::nArea )->( AEval(::aTField, {|oFld| AAdd( ::aBuffer, oFld:Load() ) } ) )
+        ( ::nArea )->( aeval( ::aTField, {|oFld| aadd( ::aBuffer, oFld:Load() ) } ) )
     end if 
 
 return( Self )
@@ -1669,6 +1671,8 @@ METHOD Save( lLock ) CLASS TDbf
             ::SaveFields()
             lRet        := .t.
             ::UnLock()
+        else 
+            msgAlert( "no puedo bloquear")
         end if 
     else 
         ::SaveFields()
