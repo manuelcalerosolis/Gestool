@@ -1159,7 +1159,7 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
          ID       501 ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE .and. !Empty( ::oDbf:cAlmDes ) ) ;
-         ACTION   ( ::EditDet() )
+         ACTION   ( ::EditDet( oDlg ) )
 
 		REDEFINE BUTTON ;
 			ID 		502 ;
@@ -1211,7 +1211,7 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
       ::oBrwDet:lHScroll      := .f.
       ::oBrwDet:lFooter       := .t.
       if nMode != ZOOM_MODE
-         ::oBrwDet:bLDblClick := {|| ::EditDet() }
+         ::oBrwDet:bLDblClick := {|| ::EditDet( oDlg ) }
       end if
 
       ::oBrwDet:cName         := "Detalle movimientos de almacén"
@@ -1383,7 +1383,7 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
 
       if nMode != ZOOM_MODE
          oDlg:AddFastKey( VK_F2, {|| ::AppendDet( oDlg ) } )
-         oDlg:AddFastKey( VK_F3, {|| ::EditDet() } )
+         oDlg:AddFastKey( VK_F3, {|| ::EditDet( oDlg ) } )
          oDlg:AddFastKey( VK_F4, {|| ::DeleteDet() } )
          oDlg:AddFastKey( VK_F5, {|| if( ::lSave( nMode ), ( ::EndResource( .t., nMode, oDlg ), oDlg:End( IDOK ) ), ) } )
       end if
@@ -2260,7 +2260,15 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD EditDet() CLASS TRemMovAlm 
+METHOD EditDet( oDlg ) CLASS TRemMovAlm 
+
+   oDlg:Disable()
+
+   ::oDetMovimientos:Edit( ::oBrwDet )
+   
+   oDlg:Enable()
+
+   RETURN ( Self )
 
    if ::oDetMovimientos:oDbfVir:OrdKeyCount() == 0
       Return ( Self )
@@ -2270,10 +2278,10 @@ METHOD EditDet() CLASS TRemMovAlm
 
    if ::oDetMovimientos:Resource( EDIT_MODE ) == IDOK
       ::oDetMovimientos:oDbfVir:Save()
+   else 
+      ::oDetMovimientos:oDbfVir:Cancel()
    end if
    
-   ::oDetMovimientos:oDbfVir:Cancel()
-
    if( ::oBrwDet != nil, ::oBrwDet:Refresh(), )
 
 RETURN ( Self )
@@ -3992,7 +4000,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
 
    EndEdtDetMenu()
 
-RETURN ( oDlg:nResult )
+RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 

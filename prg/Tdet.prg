@@ -343,9 +343,11 @@ METHOD Edit( oBrw ) CLASS TDet
          Eval( ::bOnPostEdit, Self )
       end if
 
-   end if
+   else 
+   
+      ::oDbfVir:Cancel()
 
-   ::oDbfVir:Cancel()
+   end if
 
    if( oBrw != nil, oBrw:Refresh(), )
 

@@ -89,6 +89,9 @@ CLASS TDbf
 
     METHOD  AddField( cName, cType, nLen, nDec, cPic, xDefault, bValid, bSetGet, cComment, lColAlign, nColSize, lHide )
 
+    METHOD setBuffer()              INLINE ( ::lBuffer := .t. )
+    METHOD quitBuffer()             INLINE ( ::quitBuffer() )
+
     METHOD  Append()
     MESSAGE Delete( lNext )         METHOD _Delete( lNext )
     METHOD  Deleted()               INLINE ( ::nArea )->( Deleted() )
@@ -317,7 +320,7 @@ METHOD New( cFile, cName, cRDD, cComment, cPath ) CLASS TDbf
     ::lValid      := .t.
     ::lCount      := .t.
 
-    ::lBuffer     := .f.
+    ::quitBuffer()
     ::lScope      := .f.
     ::lFilter     := .f.
 
@@ -745,7 +748,7 @@ return( oFld )
 
 METHOD Append( lUnLock ) CLASS TDbf
 
-    ::lBuffer    := .t.
+    ::setBuffer()
     ( ::nArea )->( DbAppend( lUnLock ) )
 
 return( ::lAppend := !( ::nArea )->( NetErr() ) )
@@ -994,7 +997,7 @@ METHOD _Eval( bBlock, bFor, bWhile, nNext, nRecord, lRest ) CLASS TDbf
     local nRec  := ( ::nArea )->( RecNo() )
     local lBuf  := ::lBuffer
 
-    ::lBuffer := .f.
+    ::quitBuffer()
 
     DEFAULT bBlock  := { || .t. }
     DEFAULT bFor    := { || .t. }
@@ -1055,7 +1058,7 @@ METHOD Locate( bFor, bWhile, lRest ) CLASS TDbf
 
     local lBuf := ::lBuffer
 
-    ::lBuffer := .f.
+    ::quitBuffer()
 
     ::bLFor    := if( ValType( bFor )   == "B", bFor,   ::bLFor )
     ::bLWhile  := if( ValType( bWhile ) == "B", bWhile, ::bLWhile )
@@ -1502,7 +1505,7 @@ METHOD RecLock() CLASS TDbf
 
     local lRet := .f.
 
-    while !( lRet := DBLock( ::nArea ) ) .and. Eval( ::bNetError, Self )
+    while !( lRet := dblock( ::nArea ) ) .and. eval( ::bNetError, Self )
     end
 
     // msgAlert( "Bloqueo " / 0 + cvaltochar( lRet ), str( ( ::nArea )->( recno() ) ) )
@@ -1612,7 +1615,8 @@ return( lRet )
 
 METHOD Blank() CLASS TDbf
 
-    ::lBuffer  := .t.
+    :.setBuffer()
+    
     ::aBuffer  := {}
     ( ::nArea )->( AEval(::aTField, {|oFld| AAdd( ::aBuffer, oFld:Blank() ) } ) )
 
@@ -1633,16 +1637,16 @@ return( Self )
 
 METHOD Load( lLock ) CLASS TDbf
 
-    ::lBuffer           := .t.
+    ::setBuffer()
     ::aBuffer           := {}
 
     DEFAULT lLock       := .f.
 
-    if ::RecLock()
+    if !lLock .or. ::RecLock()
         ( ::nArea )->( aeval( ::aTField, {|oFld| aadd( ::aBuffer, oFld:Load() ) } ) )
     end if 
 
-return( Self )
+return ( Self )
 
 //----------------------------------------------------------------------------//
 //  Carga en el buffer los valores de ::aBuffer
@@ -1653,7 +1657,7 @@ METHOD RollBack() CLASS TDbf
         ( ::nArea )->( aeval( ::aTField, { | oFld, i | oFld:Val := ::aBuffer[ i ] } ) )
     end if
 
-    ::lBuffer  := .f.
+    ::quitBuffer()
 
 return( Self )
 
@@ -1671,8 +1675,6 @@ METHOD Save( lLock ) CLASS TDbf
             ::SaveFields()
             lRet        := .t.
             ::UnLock()
-        else 
-            msgAlert( "no puedo bloquear")
         end if 
     else 
         ::SaveFields()
@@ -1680,7 +1682,7 @@ METHOD Save( lLock ) CLASS TDbf
     end if 
 
     ::lAppend           := .f.
-    ::lBuffer           := .f.
+    ::quitBuffer()
 
 return( lRet )
 

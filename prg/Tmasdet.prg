@@ -660,7 +660,7 @@ METHOD Edit( oBrw ) CLASS TMasDet
          end if
       end if
 
-      ::oDbf:Load()
+      ::oDbf:Load( .f. )
 
       ::LoadDetails( .t. )
 
@@ -698,7 +698,7 @@ Method EndEdit( lEdit )
 
       ::RollBack()
 
-      ::oDbf:Save()
+      ::oDbf:Save( .f. )
 
       ::SaveDetails( EDIT_MODE )
 

@@ -621,7 +621,7 @@ Function GetBic( cEntidad )
       if hHasKey( BIC, cEntidad )
          cDevuelve   := BIC[ cEntidad ]
       else 
-         msgStop( "Código BIC no encontrado para la " + cEntidad + "." )
+         msgStop( "Código BIC no encontrado para la entidad : " + cEntidad + "." )
       end if
    RECOVER
    END SEQUENCE
