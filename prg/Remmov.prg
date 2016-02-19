@@ -2264,13 +2264,15 @@ RETURN ( Self )
 
 METHOD EditDet() CLASS TRemMovAlm 
 
+   MsgInfo( "Entro en el EditDet" )
+
    if ::oDetMovimientos:oDbfVir:OrdKeyCount() == 0
       Return ( Self )
    end if
 
    ::oDetMovimientos:oDbfVir:Load()
 
-   if ::oDetMovimientos:Resource( 2 ) == IDOK
+   if ::oDetMovimientos:Resource( EDIT_MODE ) == IDOK
       ::oDetMovimientos:oDbfVir:Save()
    else
       ::oDetMovimientos:oDbfVir:Cancel()
