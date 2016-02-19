@@ -614,16 +614,17 @@ Function GetBic( cEntidad )
    BIC[ "3183" ]     := 'CASDESBBXXX'
    BIC[ "3186" ]     := 'CCRIES2A186'
    BIC[ "3188" ]     := 'CCRIES2A188'
+   BIC[ "0095" ]     := 'VASCES2PXXX'
    BIC[ "9000" ]     := 'ESPBESMMXXX'
 
    BEGIN SEQUENCE 
       if hHasKey( BIC, cEntidad )
          cDevuelve   := BIC[ cEntidad ]
+      else 
+         msgError( "Código BIC no encontrado para la " + cEntidad + "." )
       end if
    RECOVER
    END SEQUENCE
-
-   msgAlert( cDevuelve, cEntidad )
 
 Return cDevuelve
 

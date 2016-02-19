@@ -198,7 +198,7 @@ CLASS TDbf
 
     METHOD  Lock()          INLINE ( ::nArea )->( FLock() )
     METHOD  RecLock()
-    METHOD  UnLock()        INLINE ( ::nArea )->( DBUnLock() ), msgAlert( ( ::nArea )->( recno() ), "lock" ), Self
+    METHOD  UnLock()        INLINE ( ::nArea )->( DBUnLock() ), Self //  msgAlert( "desbloqueo", str( ( ::nArea )->( recno() ) ) ),
 
 //-- MISCELLANEOUS AND NEWS METHODS ------------------------------------------//
 
@@ -1505,7 +1505,7 @@ METHOD RecLock() CLASS TDbf
     while !( lRet := DBLock( ::nArea ) ) .and. Eval( ::bNetError, Self )
     end
 
-    msgAlert( lRet, str( ( ::nArea )->( recno() ) ) )
+    // msgAlert( "Bloqueo " + cvaltochar( lRet ), str( ( ::nArea )->( recno() ) ) )
 
 return( lRet )
 
