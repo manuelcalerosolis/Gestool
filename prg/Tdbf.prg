@@ -89,8 +89,8 @@ CLASS TDbf
 
     METHOD  AddField( cName, cType, nLen, nDec, cPic, xDefault, bValid, bSetGet, cComment, lColAlign, nColSize, lHide )
 
-    METHOD setBuffer()              INLINE ( ::lBuffer := .t. )
-    METHOD quitBuffer()             INLINE ( ::quitBuffer() )
+    METHOD setBuffer()              INLINE ( ::lBuffer := .t., msgAlert( "setBuffer") )
+    METHOD quitBuffer()             INLINE ( ::lBuffer := .f., msgAlert( "quitBuffer") )
 
     METHOD  Append()
     MESSAGE Delete( lNext )         METHOD _Delete( lNext )
@@ -1615,8 +1615,8 @@ return( lRet )
 
 METHOD Blank() CLASS TDbf
 
-    :.setBuffer()
-    
+    ::setBuffer()
+
     ::aBuffer  := {}
     ( ::nArea )->( AEval(::aTField, {|oFld| AAdd( ::aBuffer, oFld:Blank() ) } ) )
 
