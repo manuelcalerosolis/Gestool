@@ -1417,7 +1417,7 @@ METHOD Search() CLASS TRemMovAlm
    local cIndice  := "Código"
    local aIndice  := { "Código", "Nombre" }
 	local oCadena
-   local xCadena  := Space( 100 )
+   local xCadena  := space( 100 )
    local nOrdAnt  := ::oDetMovimientos:oDbfVir:OrdSetFocus( "cRefMov" )
 
    DEFINE DIALOG oDlg RESOURCE "sSearch"
@@ -1669,9 +1669,7 @@ METHOD lSelAll( lSel ) CLASS TRemMovAlm
 
          while Str( ::oDetMovimientos:oDbf:nNumRem ) + ::oDetMovimientos:oDbf:cSufRem == Str( ::oDbf:nNumRem ) + ::oDbf:cSufRem .and. !::oDetMovimientos:oDbf:Eof()
 
-            ::oDetMovimientos:oDbf:Load()
-            ::oDetMovimientos:oDbf:lSndDoc    := ::oDbf:lSelDoc
-            ::oDetMovimientos:oDbf:Save()
+            ::oDetMovimientos:oDbf:fieldPutByName( "lSndDoc", ::oDbf:lSelDoc )
 
             ::oDetMovimientos:oDbf:Skip()
 
@@ -2264,8 +2262,6 @@ RETURN ( Self )
 
 METHOD EditDet() CLASS TRemMovAlm 
 
-   MsgInfo( "Entro en el EditDet" )
-
    if ::oDetMovimientos:oDbfVir:OrdKeyCount() == 0
       Return ( Self )
    end if
@@ -2274,9 +2270,9 @@ METHOD EditDet() CLASS TRemMovAlm
 
    if ::oDetMovimientos:Resource( EDIT_MODE ) == IDOK
       ::oDetMovimientos:oDbfVir:Save()
-   else
-      ::oDetMovimientos:oDbfVir:Cancel()
    end if
+   
+   ::oDetMovimientos:oDbfVir:Cancel()
 
    if( ::oBrwDet != nil, ::oBrwDet:Refresh(), )
 
@@ -3973,7 +3969,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
       if nMode != ZOOM_MODE
 
          if uFieldEmpresa( "lGetLot")
-            oDlg:AddFastKey( VK_RETURN,   {|| ::oRefMov:lValid(), oBtn:SetFocus(), oBtn:Click() } )
+            oDlg:AddFastKey( VK_RETURN, {|| ::oRefMov:lValid(), oBtn:SetFocus(), oBtn:Click() } )
          end if 
 
          oDlg:AddFastKey( VK_F5, {|| oBtn:Click() } )
