@@ -1505,7 +1505,7 @@ METHOD RecLock() CLASS TDbf
     while !( lRet := DBLock( ::nArea ) ) .and. Eval( ::bNetError, Self )
     end
 
-    // msgAlert( "Bloqueo " + cvaltochar( lRet ), str( ( ::nArea )->( recno() ) ) )
+    // msgAlert( "Bloqueo " / 0 + cvaltochar( lRet ), str( ( ::nArea )->( recno() ) ) )
 
 return( lRet )
 
