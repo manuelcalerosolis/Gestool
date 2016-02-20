@@ -2543,6 +2543,9 @@ Return nil
 Function sDate()
 Return nil
 
+Function id_name()
+Return nil
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP

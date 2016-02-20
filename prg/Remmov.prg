@@ -181,7 +181,7 @@ CLASS TRemMovAlm FROM TMasDet
    METHOD Activate()
 
    METHOD AppendDet( oDlg )
-   METHOD EditDet( oDlg )
+   METHOD EditDetalleMovimientos( oDlg )
    METHOD DeleteDet( oDlg )
 
    METHOD lSave()
@@ -1159,7 +1159,7 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
          ID       501 ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE .and. !Empty( ::oDbf:cAlmDes ) ) ;
-         ACTION   ( ::EditDet( oDlg ) )
+         ACTION   ( ::EditDetalleMovimientos( oDlg ) )
 
 		REDEFINE BUTTON ;
 			ID 		502 ;
@@ -1211,7 +1211,7 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
       ::oBrwDet:lHScroll      := .f.
       ::oBrwDet:lFooter       := .t.
       if nMode != ZOOM_MODE
-         ::oBrwDet:bLDblClick := {|| ::EditDet( oDlg ) }
+         ::oBrwDet:bLDblClick := {|| ::EditDetalleMovimientos( oDlg ) }
       end if
 
       ::oBrwDet:cName         := "Detalle movimientos de almacén"
@@ -1383,7 +1383,7 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
 
       if nMode != ZOOM_MODE
          oDlg:AddFastKey( VK_F2, {|| ::AppendDet( oDlg ) } )
-         oDlg:AddFastKey( VK_F3, {|| ::EditDet( oDlg ) } )
+         oDlg:AddFastKey( VK_F3, {|| ::EditDetalleMovimientos( oDlg ) } )
          oDlg:AddFastKey( VK_F4, {|| ::DeleteDet() } )
          oDlg:AddFastKey( VK_F5, {|| if( ::lSave( nMode ), ( ::EndResource( .t., nMode, oDlg ), oDlg:End( IDOK ) ), ) } )
       end if
@@ -2260,14 +2260,10 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD EditDet( oDlg ) CLASS TRemMovAlm 
-
-   oDlg:Disable()
+METHOD EditDetalleMovimientos( oDlg ) CLASS TRemMovAlm 
 
    ::oDetMovimientos:Edit( ::oBrwDet )
    
-   oDlg:Enable()
-
    RETURN ( Self )
 
    if ::oDetMovimientos:oDbfVir:OrdKeyCount() == 0

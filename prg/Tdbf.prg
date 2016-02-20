@@ -13,12 +13,6 @@
 #include "DBStruct.ch"
 #include "TDbfVer.ch"
 
-#ifndef __PDA__
-#else
-   #include "FWCE.ch"
-   REQUEST DBFCDX
-#endif
-
 #xcommand DEFAULT <uVar1> := <uVal1> ;
                [, <uVarN> := <uValN> ] => ;
                   <uVar1> := If( <uVar1> == nil, <uVal1>, <uVar1> ) ;;
@@ -34,8 +28,7 @@
 
 CLASS TDbf
 
-    DATA aTField, aTIndex, aTFilter,    ;
-         aBuffer, aStatus                           AS ARRAY
+    DATA aTField, aTIndex, aTFilter, aStatus        AS ARRAY
     DATA cAlias, cVer, cRDD, cFile, cName, cPath,   ;
          cFldInvalid, cComment                      AS STRING
     DATA nArea, FieldCount, Count,       ;
@@ -43,14 +36,14 @@ CLASS TDbf
     DATA hDataFile
     DATA lRecycle, lShared, lReadOnly, lProtec,     ;
          lScope,                                    ;
-         lMemo, lValid, lAppend, lCount, lFilter,   ;
-         lBuffer                                    AS LOGICAL
+         lMemo, lValid, lAppend, lCount, lFilter 
     DATA bNetError, bOnCreate, bOnOpen, bOnClose,   ;
          bOpenError, bBof, bEof, bLFor, bLWhile     AS BLOCK
     DATA oIndex, oFilter                            AS OBJECT
     DATA Cargo
+    DATA lBuffer                                    AS LOGICAL
 
-    DATA ClsName    AS STRING INIT "TDBF"
+    DATA ClsName                                    AS STRING INIT "TDBF"
 
 //-- INITIALIZE AND ACTIVATE METHODS -----------------------------------------//
 
@@ -89,8 +82,10 @@ CLASS TDbf
 
     METHOD  AddField( cName, cType, nLen, nDec, cPic, xDefault, bValid, bSetGet, cComment, lColAlign, nColSize, lHide )
 
-    METHOD setBuffer()              INLINE ( ::lBuffer := .t., msgAlert( "setBuffer") )
-    METHOD quitBuffer()             INLINE ( ::lBuffer := .f., msgAlert( "quitBuffer") )
+    METHOD getBuffer()              INLINE ( ::lBuffer )
+    METHOD setBuffer( lValue )      INLINE ( ::lBuffer := lValue )
+    METHOD putBuffer()              INLINE ( ::lBuffer := .t. )
+    METHOD quitBuffer()             INLINE ( ::lBuffer := .f. )
 
     METHOD  Append()
     MESSAGE Delete( lNext )         METHOD _Delete( lNext )
@@ -104,8 +99,8 @@ CLASS TDbf
     MESSAGE FieldPut()              METHOD _FieldPut( nField, uVal )
     MESSAGE FieldPutByName()        METHOD _FieldPutByName( cField, uVal )
     METHOD  FieldPos( cFld )        INLINE ( ::nArea )->( FieldPos( cFld ) )
-    METHOD  FldGet( nPos )          INLINE ( if( ::lBuffer, ::aTField[ nPos ]:Val, ::aTField[ nPos ]:GetVal() ) )
-    METHOD  FldPut( nPos, Val )     INLINE ( if( ::lBuffer, ::aTField[ nPos ]:Val := Val, ::aTField[ nPos ]:PutVal( Val ) ) )
+    METHOD  FldGet( nPos )          INLINE ( if( ::getBuffer(), ::aTField[ nPos ]:Val, ::aTField[ nPos ]:GetVal() ) )
+    METHOD  FldPut( nPos, Val )     INLINE ( if( ::getBuffer(), ::aTField[ nPos ]:Val := Val, ::aTField[ nPos ]:PutVal( Val ) ) )
     METHOD  LastRec()               INLINE ( ::nArea )->( LastRec() )
     METHOD  RecCount()              INLINE ( ::nArea )->( OrdKeyCount() )
     MESSAGE RecNo( uGo )            METHOD  _RecNo( uGo )
@@ -201,7 +196,7 @@ CLASS TDbf
 
     METHOD  Lock()          INLINE ( ::nArea )->( FLock() )
     METHOD  RecLock()
-    METHOD  UnLock()        INLINE ( ::nArea )->( DBUnLock() ), Self //  msgAlert( "desbloqueo", str( ( ::nArea )->( recno() ) ) ),
+    METHOD  UnLock()        INLINE ( ( ::nArea )->( DBUnLock() ), Self )
 
 //-- MISCELLANEOUS AND NEWS METHODS ------------------------------------------//
 
@@ -211,7 +206,6 @@ CLASS TDbf
     METHOD  aField()
     METHOD  Blank()
     METHOD  Insert()        INLINE if( ::Append(), ::Save(), .f. )
-    METHOD  SetBuffer( lVal )
     
     METHOD  LoadLock()      INLINE if( ::RecLock(), ::Load(), .f. )
     METHOD  Load()
@@ -313,16 +307,15 @@ METHOD New( cFile, cName, cRDD, cComment, cPath ) CLASS TDbf
     ::aTIndex     := {}
     ::aTField     := {}
     ::aTFilter    := {}
-    ::aBuffer     := {}
 
     ::FieldCount  := 0
 
     ::lValid      := .t.
     ::lCount      := .t.
 
-    ::quitBuffer()
     ::lScope      := .f.
     ::lFilter     := .f.
+    ::lBuffer     := .f.
 
     ::bLFor       := { || .t. }
     ::bLWhile     := { || .t. }
@@ -748,7 +741,7 @@ return( oFld )
 
 METHOD Append( lUnLock ) CLASS TDbf
 
-    ::setBuffer()
+    ::putBuffer()
     ( ::nArea )->( DbAppend( lUnLock ) )
 
 return( ::lAppend := !( ::nArea )->( NetErr() ) )
@@ -995,7 +988,7 @@ METHOD _Eval( bBlock, bFor, bWhile, nNext, nRecord, lRest ) CLASS TDbf
 
     local nEval := 0
     local nRec  := ( ::nArea )->( RecNo() )
-    local lBuf  := ::lBuffer
+    local lBuf  := ::getBuffer()
 
     ::quitBuffer()
 
@@ -1044,7 +1037,7 @@ METHOD _Eval( bBlock, bFor, bWhile, nNext, nRecord, lRest ) CLASS TDbf
 
    ( ::nArea )->( DbGoTo( nRec ) )
 
-   ::lBuffer := lBuf
+   ::setBuffer( lBuf )
 
 return( nEval )
 
@@ -1056,7 +1049,7 @@ return( nEval )
 
 METHOD Locate( bFor, bWhile, lRest ) CLASS TDbf
 
-    local lBuf := ::lBuffer
+    local lBuf := ::getBuffer()
 
     ::quitBuffer()
 
@@ -1084,7 +1077,7 @@ METHOD Locate( bFor, bWhile, lRest ) CLASS TDbf
       enddo
    endif
 
-   ::lBuffer := lBuf
+   ::setBuffer( lBuf )
 
 return( self )
 
@@ -1508,8 +1501,6 @@ METHOD RecLock() CLASS TDbf
     while !( lRet := dblock( ::nArea ) ) .and. eval( ::bNetError, Self )
     end
 
-    // msgAlert( "Bloqueo " / 0 + cvaltochar( lRet ), str( ( ::nArea )->( recno() ) ) )
-
 return( lRet )
 
 //----------------------------------------------------------------------------//
@@ -1518,31 +1509,7 @@ return( lRet )
 
 METHOD Protec( nAction ) CLASS TDbf
 
-    local nHandle   := 0
-    local cBuffer   := space( 32 )
-
-    if ::lProtec
-        nHandle   := FOpen( ::cFile, FO_READWRITE + FO_SHARED )
-        DEFAULT nAction := 1
-        if nHandle != -1
-            if FRead( nHandle, @cBuffer, 32 ) == 32
-                if nAction == 0     // Proteger
-                    if SubStr( cBuffer, 1, 1 ) <> Chr( 26 )
-                        cBuffer := Chr( 26 ) + SubStr( cBuffer, 1, 31 )
-                    endif
-                else                // Desproteger
-                    if SubStr( cBuffer, 1, 1 ) == Chr( 26 )
-                        cBuffer := SubStr( cBuffer, 2, 31 ) + Chr( 0 )
-                    endif
-                endif
-                FSeek( nHandle, 0 )
-                FWrite( nHandle, cBuffer, 32 )
-            endif
-            FClose( nHandle )
-        endif
-    endif
-
-return( FError() )
+return( nil )
 
 //----------------------------------------------------------------------------//
 // Devuelve un array con la estructura de la DBF aunque la DBF este cerrada
@@ -1601,24 +1568,15 @@ METHOD Refresh() CLASS TDBf
 return( Self )
 
 //----------------------------------------------------------------------------//
-
-METHOD SetBuffer( lVal ) CLASS TDbf
-
-    local lRet := ::lBuffer
-
-    ::lBuffer := if( ValType( lVal ) == "L", lVal, ::lBuffer )
-
-return( lRet )
-
-//----------------------------------------------------------------------------//
 //  Inicializa el array con valores vacios
 
 METHOD Blank() CLASS TDbf
 
-    ::setBuffer()
+    ::putBuffer()
 
-    ::aBuffer  := {}
-    ( ::nArea )->( AEval(::aTField, {|oFld| AAdd( ::aBuffer, oFld:Blank() ) } ) )
+    // ::aBuffer  := {}
+    // ( ::nArea )->( AEval(::aTField, {|oFld| AAdd( ::aBuffer, oFld:Blank() ) } ) )
+    ( ::nArea )->( aeval( ::aTField, {|oFld| oFld:Blank() } ) )
 
 return( Self )
 
@@ -1627,24 +1585,19 @@ return( Self )
 
 METHOD SetDefault() CLASS TDbf
 
-    ::aBuffer  := {}
-    ( ::nArea )->( AEval(::aTField, {|oFld| AAdd( ::aBuffer, oFld:SetDefault() ) } ) )
+    // ::aBuffer  := {}
+    // ( ::nArea )->( AEval(::aTField, {|oFld| AAdd( ::aBuffer, oFld:SetDefault() ) } ) )
+    ( ::nArea )->( aeval(::aTField, {|oFld| oFld:SetDefault() } ) )
 
 return( Self )
 
 //----------------------------------------------------------------------------//
 //  Carga la tabla con los valores actuales en ::aBuffer para RollBack
 
-METHOD Load( lLock ) CLASS TDbf
+METHOD Load() CLASS TDbf
 
-    ::setBuffer()
-    ::aBuffer           := {}
-
-    DEFAULT lLock       := .f.
-
-    if !lLock .or. ::RecLock()
-        ( ::nArea )->( aeval( ::aTField, {|oFld| aadd( ::aBuffer, oFld:Load() ) } ) )
-    end if 
+   ::putBuffer()
+   ( ::nArea )->( aeval( ::aTField, {|oFld| oFld:Load() } ) )
 
 return ( Self )
 
@@ -1653,13 +1606,13 @@ return ( Self )
 
 METHOD RollBack() CLASS TDbf
     
-    if !empty( ::aBuffer ) .and. !empty( ::aTField )
-        ( ::nArea )->( aeval( ::aTField, { | oFld, i | oFld:Val := ::aBuffer[ i ] } ) )
-    end if
+    // if !empty( ::aBuffer ) .and. !empty( ::aTField )
+    //     ( ::nArea )->( aeval( ::aTField, { | oFld, i | oFld:Val := ::aBuffer[ i ] } ) )
+    // end if
 
     ::quitBuffer()
 
-return( Self )
+return ( Self )
 
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
@@ -1821,7 +1774,6 @@ METHOD GetStatus( lInit ) CLASS TDbf
 
     hset( hStatus, "ordsetfocus", ::ordsetfocus() )
     hset( hStatus, "recno"      , ( ::nArea )->( recno() ) )
-    hset( hStatus, "buffer"     , ::lBuffer )
     hset( hStatus, "scope"      , ::lScope )
     
     if ::lScope
@@ -1858,8 +1810,6 @@ METHOD SetStatus( hStatus ) CLASS TDbf
         ::setScope( hget( hStatus, "top" ), hget( hStatus, "bottom" ) )
     endif
 
-    ::lBuffer       := hget( hStatus, "scope")
-
 return( Self )
 
 //----------------------------------------------------------------------------//
@@ -1888,9 +1838,7 @@ METHOD Destroy() CLASS TDbf
     oDb:aTIndex     := {}
     oDb:aTField     := {}
 
-    oDb:aBuffer     := {}
-
-    Self := nil
+    Self            := nil
 
 return( .t. )
 
@@ -1909,7 +1857,7 @@ static function GenDataField( oDb, nPos )
 
     //msgWait( Str( ++nCont ), "", .1 )
 
-    AAdd( oDb:aBuffer, oFld:Val )  // Buffer para RollBack
+    // AAdd( oDb:aBuffer, oFld:Val )  // Buffer para RollBack
 
 return( oFld )
 
