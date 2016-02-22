@@ -811,49 +811,56 @@ Return ( Self )
  */
 
 function cTime()
-   local strTime := time()
-   strTime := substr(strTime,1,2) + substr(strTime,4,2) + substr(strTime,7,2)
+
+   local strTime  := time()
+   strTime        := substr(strTime,1,2) + substr(strTime,4,2) + substr(strTime,7,2)
+
 return strTime
 
-
 function fDate( d )
+
    local cDateFrm := Set( 4, "yyyy/mm/dd" )
    local strDate  := If( d != nil, dtos(d), dtos(date()) )
-   Set( 4, cDateFrm )
-return( strDate )
 
+   Set( 4, cDateFrm )
+
+return( strDate )
 
 function sDate( d )
+
    local cDateFrm := Set( 4, "yyyy-mm-dd" )
    local strDate  := If( d != nil, dtoc(d), dtoc(date()) )
+
    Set( 4, cDateFrm )
+
 return( strDate )
 
-
 function Dec2Str(nVal, nLen)
+
    local strVal
-   strVal := str( nVal, nLen +1, 2 )     // +1 espacio que resta punto decimal
+   strVal := str( nVal, nLen + 1, 2 )     // +1 espacio que resta punto decimal
    strVal := strtran( strVal, "." )      // Quitar punto decimal
    strVal := strtran( strVal, " ", "0" ) // Reemplazar espacios por 0
+
 return( strVal )
 
-
 function IsoDateTime()
-return( sDate() +"T"+ time() )     // YYYY-MM-DDThh:mm:ss
 
+return( sDate() + "T" + time() )     // YYYY-MM-DDThh:mm:ss
 
 function OutFile(nHandle, a)
+
    local strRec := ""
+
    aeval( a, {|e|  strRec += e } )
    fwrite(nHandle, strRec + CRLF)
+
 return nil
 
-
 function Id_Name( cCountry, cCode, cNif )
-/*
-*/
- local cId, n, nLen, cValue
- local cAlgorithm := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+   local cId, n, nLen, cValue
+   local cAlgorithm := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
    cId  := ""
    nLen := len( cNif )
@@ -870,18 +877,14 @@ function Id_Name( cCountry, cCode, cNif )
    cId += str( at( substr(cCountry,2,1), cAlgorithm ) +9, 2, 0 )
    cId += "00"
    cId := cCountry + strzero(98 - ( val(cId) % 97 ), 2) + cCode + cNif
+
 return padR(cId, 35)
 
-
 function id_File( cRef )
-/*
-*/
+
    local cId   := "PRE" + fDate() + cTime() + strzero( seconds(), 5 ) + cRef
 
 return padR(cId, 35)
-
-/*
-*/
 
 function strToIso2022( xtxt )
 

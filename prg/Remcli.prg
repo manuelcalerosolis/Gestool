@@ -945,11 +945,9 @@ METHOD Resource( nMode )
    oBmpDiv:End()
    oBmpGeneral:End()
 
-   /*
-   Guardamos los datos del browse
-   */
+   // Guardamos los datos del browse
 
-    ::oBrwDet:CloseData()
+   ::oBrwDet:CloseData()
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -1096,8 +1094,8 @@ METHOD lSave( nMode )
 
    if nMode == APPD_MODE
 
-      if Empty( ::oDbf:cCodRem )
-         MsgStop( "El número de cuenta no puede estar vacío." )
+      if empty( ::oDbf:cCodRem )
+         msgStop( "El número de cuenta no puede estar vacío." )
          ::oCodRem:SetFocus()
          lReturn  := .f.
       end if
@@ -1129,26 +1127,24 @@ METHOD SaveDetails()
 
    ::RollBack()
 
-   /*
-   Ponemos todos los recibos con su cuenta de remesa
-   */
+   // Ponemos todos los recibos con su cuenta de remesa------------------------
 
    ::oDbfVir:GoTop()
    while !::oDbfVir:Eof()
 
       SysRefresh()
 
-      cNumFac     := ::oDbfVir:cSerie + Str( ::oDbfVir:nNumFac, 9 ) + ::oDbfVir:cSufFac
-      cNumRec     := cNumFac + Str( ::oDbfVir:nNumRec, 2 ) + ::oDbfVir:cTipRec
+      cNumFac                    := ::oDbfVir:cSerie + str( ::oDbfVir:nNumFac, 9 ) + ::oDbfVir:cSufFac
+      cNumRec                    := cNumFac + str( ::oDbfVir:nNumRec, 2 ) + ::oDbfVir:cTipRec
 
       if ::oDbfDet:SeekInOrd( cNumRec, "nNumFac" )
 
          ::oDbfDet:Load()
 
-         ::oDbfDet:lCobrado   := .t.
-         ::oDbfDet:dEntrada   := ::oDbf:dFecRem
+         ::oDbfDet:lCobrado      := .t.
+         ::oDbfDet:dEntrada      := ::oDbf:dFecRem
 
-         if ::oDbf:nTipRem == 2 //Remesa por descuentos
+         if ::oDbf:nTipRem == 2  //Remesa por descuentos
 
             ::oDbfDet:lRecDto    := .t.
             ::oDbfDet:dFecDto    := ::oDbf:dFecRem
@@ -1160,11 +1156,16 @@ METHOD SaveDetails()
          ::oDbfDet:cSufRem       := ::oDbf:cSufRem
          ::oDbfDet:lRemesa       := .t.
 
-         if Empty( ::oDbfDet:cEntEmp ) .or.;
-            Empty( ::oDbfDet:cSucEmp ) .or.;
-            Empty( ::oDbfDet:cDigEmp ) .or.;
-            Empty( ::oDbfDet:cCtaEmp )
+         if empty( ::oDbfDet:cPaisIBAN )  .or.;
+            empty( ::oDbfDet:cCtrlIBAN )  .or.;
+            empty( ::oDbfDet:cBncEmp )    .or.;
+            empty( ::oDbfDet:cEntEmp )    .or.;
+            empty( ::oDbfDet:cSucEmp )    .or.;
+            empty( ::oDbfDet:cDigEmp )    .or.;
+            empty( ::oDbfDet:cCtaEmp )
 
+            ::oDbfDet:cPaisIBAN  := oRetFld( ::oDbf:cCodRem, ::oCtaRem:oDbf, "cPaisIBAN" )
+            ::oDbfDet:cCtrlIBAN  := oRetFld( ::oDbf:cCodRem, ::oCtaRem:oDbf, "cCtrlIBAN" )
             ::oDbfDet:cBncEmp    := oRetFld( ::oDbf:cCodRem, ::oCtaRem:oDbf, "cBanco" )
             ::oDbfDet:cEntEmp    := oRetFld( ::oDbf:cCodRem, ::oCtaRem:oDbf, "cEntBan" )
             ::oDbfDet:cSucEmp    := oRetFld( ::oDbf:cCodRem, ::oCtaRem:oDbf, "cAgcBan" )
@@ -1177,9 +1178,7 @@ METHOD SaveDetails()
 
       end if
 
-      /*
-      Estado de las facturas---------------------------------------------------
-      */
+      // Estado de las facturas------------------------------------------------
 
       if ::oFacCliT:Seek( cNumFac )
          ChkLqdFacCli( nil, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oDbfDet:cAlias, ::oAntCliT:cAlias, ::oIva:cAlias, ::oDivisas:cAlias )
@@ -1863,14 +1862,14 @@ METHOD contabilizaRemesas( lSimula )
       end if
    end if
 
-   if !::lChkSelect .AND. !ChkRuta( cRutCnt() )
+   if !::lChkSelect .and. !ChkRuta( cRutCnt() )
       ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " ruta no valida.", 0 )
       lErrorFound          := .t.
    end if
 
    // Seleccionamos las empresa dependiendo de la serie de factura-------------
 
-   if empty( cCodEmp ) .AND. !::lChkSelect
+   if empty( cCodEmp ) .and. !::lChkSelect
       ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " no se definierón empresas asociadas.", 0 )
       lErrorFound          := .t.
    end if

@@ -2291,7 +2291,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
         TRANSPARENT ;
         OF       oFld:aDialogs[5]
 
-		REDEFINE GET aGet[_CCODCLI] VAR aTmp[_CCODCLI] ;
+		REDEFINE GET aGet[ _CCODCLI] VAR aTmp[_CCODCLI] ;
          ID       170 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( loaCli( aGet, aTmp, nMode, oRieCli ), RecalculaTotal( aTmp ) );
@@ -2330,22 +2330,22 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
          WHEN     ( nMode != ZOOM_MODE .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_CPOSCLI] VAR aTmp[_CPOSCLI] ;
+      REDEFINE GET aGet[ _CPOSCLI] VAR aTmp[_CPOSCLI] ;
          ID       184 ;
          WHEN     ( nMode != ZOOM_MODE .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_CPOBCLI] VAR aTmp[_CPOBCLI] ;
+      REDEFINE GET aGet[ _CPOBCLI] VAR aTmp[_CPOBCLI] ;
          ID       185 ;
          WHEN     ( nMode != ZOOM_MODE .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_CPRVCLI] VAR aTmp[_CPRVCLI] ;
+      REDEFINE GET aGet[ _CPRVCLI] VAR aTmp[_CPRVCLI] ;
          ID       186 ;
          WHEN     ( nMode != ZOOM_MODE .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
 
-   	REDEFINE GET aGet[_CTLFCLI] VAR aTmp[_CTLFCLI] ;
+   	REDEFINE GET aGet[ _CTLFCLI] VAR aTmp[_CTLFCLI] ;
       	ID       187 ;
       	WHEN     ( nMode != ZOOM_MODE .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
       	OF       oFld:aDialogs[1]
@@ -2471,7 +2471,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       impuestos Incluido-------------------------------------------------------------
       */
 
-   	REDEFINE CHECKBOX aGet[_LIVAINC] VAR aTmp[_LIVAINC] ;
+   	REDEFINE CHECKBOX aGet[ _LIVAINC] VAR aTmp[_LIVAINC] ;
       	ID       200 ;
       	WHEN     ( ( dbfTmpLin )->( LastRec() ) == 0 ) ;
       	OF       oFld:aDialogs[1]
@@ -2480,12 +2480,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
 		Codigo de Tarifa_______________________________________________________________
 		*/
 
-   	REDEFINE GET aGet[_CCODTAR] VAR aTmp[_CCODTAR] ;
+   	REDEFINE GET aGet[ _CCODTAR] VAR aTmp[_CCODTAR] ;
       	ID       210 ;
       	WHEN     ( nMode != ZOOM_MODE .and. oUser():lAdministrador() ) ;
-      	VALID    ( cTarifa( aGet[_CCODTAR], oSay[ 5 ] ) ) ;
+      	VALID    ( cTarifa( aGet[ _CCODTAR], oSay[ 5 ] ) ) ;
       	BITMAP   "LUPA" ;
-      	ON HELP  ( BrwTarifa( aGet[_CCODTAR], oSay[ 5 ] ) ) ;
+      	ON HELP  ( BrwTarifa( aGet[ _CCODTAR], oSay[ 5 ] ) ) ;
 			OF 		oFld:aDialogs[1]
 
    	REDEFINE GET oSay[ 5 ] VAR cSay[ 5 ] ;
@@ -2497,12 +2497,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       Codigo de obra__________________________________________________________________
 		*/
 
-		REDEFINE GET aGet[_CCODOBR] VAR aTmp[_CCODOBR] ;
+		REDEFINE GET aGet[ _CCODOBR] VAR aTmp[_CCODOBR] ;
       	ID       220 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-      	VALID    ( cObras( aGet[_CCODOBR], oSay[ 7 ], aTmp[_CCODCLI], dbfObrasT ) ) ;
+      	VALID    ( cObras( aGet[ _CCODOBR], oSay[ 7 ], aTmp[_CCODCLI], dbfObrasT ) ) ;
       	BITMAP   "LUPA" ;
-      	ON HELP  ( brwObras( aGet[_CCODOBR], oSay[ 7 ], aTmp[_CCODCLI], dbfObrasT ) ) ;
+      	ON HELP  ( brwObras( aGet[ _CCODOBR], oSay[ 7 ], aTmp[_CCODCLI], dbfObrasT ) ) ;
 			OF 		oFld:aDialogs[1]
 
    	REDEFINE GET oSay[ 7 ] VAR cSay[ 7 ] ;
@@ -2555,9 +2555,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       	REDEFINE GET aGet[ _CCODAGE ] VAR aTmp[ _CCODAGE ] ;
          	ID       250 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         	VALID    ( cAgentes( aGet[_CCODAGE], dbfAgent, oSay[ 3 ], aGet[_NPCTCOMAGE], dbfAgeCom ) );
+         	VALID    ( cAgentes( aGet[ _CCODAGE], dbfAgent, oSay[ 3 ], aGet[ _NPCTCOMAGE], dbfAgeCom ) );
          	BITMAP   "LUPA" ;
-         	ON HELP  ( BrwAgentes( aGet[_CCODAGE], oSay[ 3 ] ) );
+         	ON HELP  ( BrwAgentes( aGet[ _CCODAGE], oSay[ 3 ] ) );
 			OF 		oFld:aDialogs[1]
 
       	REDEFINE GET oSay[ 3 ] VAR cSay[ 3 ] ;
@@ -2584,13 +2584,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
 		Ruta____________________________________________________________________
 		*/
 
-		REDEFINE GET aGet[_CCODRUT] VAR aTmp[_CCODRUT] ;
+		REDEFINE GET aGet[ _CCODRUT] VAR aTmp[_CCODRUT] ;
          	ID       260 ;
 			COLOR 	CLR_GET ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         	VALID    ( cRuta( aGet[_CCODRUT], dbfRuta, oSay[ 8 ] ) );
+         	VALID    ( cRuta( aGet[ _CCODRUT], dbfRuta, oSay[ 8 ] ) );
          	BITMAP   "LUPA" ;
-         	ON HELP  ( BrwRuta( aGet[_CCODRUT ], dbfRuta, oSay[ 8 ] ) );
+         	ON HELP  ( BrwRuta( aGet[ _CCODRUT ], dbfRuta, oSay[ 8 ] ) );
          	OF       oFld:aDialogs[1]
 
       	REDEFINE GET oSay[ 8 ] VAR cSay[ 8 ] ;
@@ -2904,7 +2904,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
-     REDEFINE GET aGet[_NDTOESP ] VAR aTmp[ _NDTOESP ] ;
+     REDEFINE GET aGet[ _NDTOESP ] VAR aTmp[ _NDTOESP ] ;
          ID       300 ;
          PICTURE  "@E 999.99" ;
 			COLOR 	CLR_GET ;
@@ -3126,13 +3126,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
 
          aGet[ _CSERIE ]:bLostFocus := {|| aGet[ _CCODPRO ]:cText( cProCnt( aTmp[ _CSERIE ] ) ) }
 
-		REDEFINE GET aGet[_NNUMFAC] VAR aTmp[_NNUMFAC] ;
+		REDEFINE GET aGet[ _NNUMFAC] VAR aTmp[_NNUMFAC] ;
 			ID 		110 ;
 			PICTURE 	"999999999" ;
          WHEN     .f. ;
 			OF 		oFld:aDialogs[1]
 
-		REDEFINE GET aGet[_CSUFFAC] VAR aTmp[_CSUFFAC] ;
+		REDEFINE GET aGet[ _CSUFFAC] VAR aTmp[_CSUFFAC] ;
 			ID       120 ;
 			PICTURE  "@!" ;
          WHEN     .f. ;
@@ -3146,38 +3146,38 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
 			OF 		oFld:aDialogs[1]
 
 	  	REDEFINE GET aGet[ _TFECFAC ] VAR aTmp[ _TFECFAC ] ;
-         	ID       131 ;
-         	PICTURE  "@R 99:99:99" ;
-         	WHEN     ( nMode != ZOOM_MODE ) ;
-         	VALID    ( iif(   !validTime( aTmp[ _TFECFAC ] ),;
-                           ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
-                           .t. ) );
-         	OF       oFld:aDialogs[1]
+         ID       131 ;
+         PICTURE  "@R 99:99:99" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( iif(   !validTime( aTmp[ _TFECFAC ] ),;
+                        ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
+                        .t. ) );
+         OF       oFld:aDialogs[1]
 
-      	REDEFINE GET aGet[ _CNUMFAC ] VAR aTmp[ _CNUMFAC ] ;
+   	REDEFINE GET aGet[ _CNUMFAC ] VAR aTmp[ _CNUMFAC ] ;
 			ID 		150 ;
-         	WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
-         	BITMAP   "LUPA" ;
-         	VALID    ( cFacCli( aGet, aTmp, oBrwLin, oBrwIva, nMode ), RecalculaTotal( aTmp ) ) ;
-         	ON HELP  ( BrwFacCli( aGet[ _CNUMFAC ], aGet[ _LIVAINC ] ) );
-         	PICTURE  "@R #/#########/##" ;
-         	OF       oFld:aDialogs[1]
+         WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
+         BITMAP   "LUPA" ;
+         VALID    ( cFacCli( aGet, aTmp, oBrwLin, oBrwIva, nMode ), RecalculaTotal( aTmp ) ) ;
+         ON HELP  ( brwFacCli( aGet[ _CNUMFAC ], aGet[ _LIVAINC ] ) );
+         OF       oFld:aDialogs[ 1 ]
+         // PICTURE  "@R #/#########/##" ;
 
       /*
       Causas y motivos de las facturas rectificativas--------------------------
       */
 
-      	REDEFINE COMBOBOX aGet[ _CMOTREC ] VAR aTmp[ _CMOTREC ] ;
-         	ITEMS    RECTIFICATIVA_ITEMS ;
-         	ID       100 ;
-         	WHEN     ( nMode != ZOOM_MODE ) ;
-         	OF       oFld:aDialogs[ 2 ]
+      REDEFINE COMBOBOX aGet[ _CMOTREC ] VAR aTmp[ _CMOTREC ] ;
+      	ITEMS    RECTIFICATIVA_ITEMS ;
+      	ID       100 ;
+      	WHEN     ( nMode != ZOOM_MODE ) ;
+      	OF       oFld:aDialogs[ 2 ]
 
-      	REDEFINE GET aGet[ _CCAUREC ] VAR aTmp[ _CCAUREC ] ;
-         	ID       110 ;
-         	SPINNER ;
-         	WHEN     ( nMode != ZOOM_MODE ) ;
-         	OF       oFld:aDialogs[ 2 ]
+      REDEFINE GET aGet[ _CCAUREC ] VAR aTmp[ _CCAUREC ] ;
+      	ID       110 ;
+      	SPINNER ;
+      	WHEN     ( nMode != ZOOM_MODE ) ;
+      	OF       oFld:aDialogs[ 2 ]
 
       /*
       Transportistas-----------------------------------------------------------
@@ -3233,14 +3233,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
 			COLOR 	CLR_GET ;
          	OF       oFld:aDialogs[2]
 
-      	REDEFINE GET aGet[_CCODPRO] VAR aTmp[_CCODPRO] ;
+      	REDEFINE GET aGet[ _CCODPRO] VAR aTmp[_CCODPRO] ;
          	ID       170 ;
          	PICTURE  "@R ###.######" ;
          	COLOR    CLR_GET ;
          	WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
          	VALID    ( ChkProyecto( aTmp[_CCODPRO], oSay[ 6 ] ), .t. );
          	BITMAP   "LUPA" ;
-         	ON HELP  ( BrwProyecto( aGet[_CCODPRO], oSay[ 6 ] ) );
+         	ON HELP  ( BrwProyecto( aGet[ _CCODPRO], oSay[ 6 ] ) );
          	OF       oFld:aDialogs[2]
 
 	    REDEFINE GET oSay[ 6 ] VAR cSay[ 6 ] ;
@@ -3280,22 +3280,22 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
          COLOR    CLR_GET ;
          SPINNER;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ON HELP  aGet[_DFECENT]:cText( Calendario( aTmp[_DFECENT] ) ) ;
+         ON HELP  aGet[ _DFECENT]:cText( Calendario( aTmp[_DFECENT] ) ) ;
          OF       oFld:aDialogs[2]
 
-      REDEFINE GET aGet[_CRETPOR] VAR aTmp[_CRETPOR] ;
+      REDEFINE GET aGet[ _CRETPOR] VAR aTmp[_CRETPOR] ;
          ID       160 ;
          COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
-      REDEFINE GET aGet[_CRETMAT] VAR aTmp[_CRETMAT] ;
+      REDEFINE GET aGet[ _CRETMAT] VAR aTmp[_CRETMAT] ;
          ID       161 ;
          COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
-      REDEFINE GET aGet[_CCONDENT] VAR aTmp[_CCONDENT] ;
+      REDEFINE GET aGet[ _CCONDENT] VAR aTmp[_CCONDENT] ;
          ID       230 ;
          COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -3318,7 +3318,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
          WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
          OF       oFld:aDialogs[2]
 
-      REDEFINE GET aGet[_MCOMENT] VAR aTmp[_MCOMENT];
+      REDEFINE GET aGet[ _MCOMENT] VAR aTmp[_MCOMENT];
          MEMO ;
          ID       240 ;
          COLOR    CLR_GET ;
@@ -3953,7 +3953,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          PROMPT   "&General",    "Da&tos",    "&Observaciones" ;
          DIALOGS  "LFacCli_1",   "LFacCli_7", "LFacCli_3"
 
-      REDEFINE GET aGet[_CREF] VAR cCodArt;
+      REDEFINE GET aGet[ _CREF] VAR cCodArt;
          ID       100 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( loaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode ) );
@@ -3961,13 +3961,13 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          ON HELP  ( BrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ] , , , , aGet[ _CLOTE ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _CVALPR1 ], aGet[ _CVALPR2 ], aGet[ _DFECCAD ] ) );
          OF       oFld:aDialogs[1]
 
-		REDEFINE GET aGet[_CDETALLE] VAR aTmp[_CDETALLE] ;
+		REDEFINE GET aGet[ _CDETALLE] VAR aTmp[_CDETALLE] ;
 			ID 		110 ;
          WHEN     ( ( lModDes() .or. Empty( aTmp[ _CDETALLE ] ) ) .AND. nMode != ZOOM_MODE .AND. nMode != MULT_MODE ) ;
 			COLOR 	CLR_GET ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_MLNGDES] VAR aTmp[_MLNGDES] ;
+      REDEFINE GET aGet[ _MLNGDES] VAR aTmp[_MLNGDES] ;
 			MEMO ;
 			ID 		111 ;
          WHEN     ( ( lModDes() .or. Empty( aTmp[ _MLNGDES ] ) ) .AND. nMode != ZOOM_MODE .AND. nMode != MULT_MODE ) ;
@@ -4112,7 +4112,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  cPicUnd ;
          OF       oFld:aDialogs[1]
 
-		REDEFINE GET aGet[_NCANENT] VAR aTmp[_NCANENT] ;
+		REDEFINE GET aGet[ _NCANENT] VAR aTmp[_NCANENT] ;
 			ID 		130 ;
 			SPINNER ;
          WHEN     ( nMode != ZOOM_MODE .AND. lUseCaj() .AND. !lTotLin .AND. nMode != MULT_MODE ) ;
@@ -4122,7 +4122,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          OF       oFld:aDialogs[1] ;
          IDSAY    131
 
-		REDEFINE GET aGet[_NUNICAJA] VAR aTmp[_NUNICAJA] ;
+		REDEFINE GET aGet[ _NUNICAJA] VAR aTmp[_NUNICAJA] ;
 			ID 		140 ;
 			SPINNER ;
          WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin .AND. nMode != MULT_MODE ) ; // .AND. !aTmpFac[ _LIMPALB ]
@@ -4203,7 +4203,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
 
       aGet[ _NPREUNIT ]:bHelp := {|| DesgPnt( cCodArt, aTmp, aTmp[ _NTARLIN ], aGet[ _NPREUNIT ], aGet[ _NCOSDIV ], nMode ), lCalcDeta( aTmp, aTmpFac ) }
 
-      REDEFINE GET aGet[_NPNTVER] VAR aTmp[_NPNTVER] ;
+      REDEFINE GET aGet[ _NPNTVER] VAR aTmp[_NPNTVER] ;
          ID       151 ;
          IDSAY    152 ;
 			SPINNER ;
@@ -4265,7 +4265,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  cPouDiv ;
          OF       oFld:aDialogs[1]
 
-		REDEFINE GET aGet[_NDTO] VAR aTmp[_NDTO] ;
+		REDEFINE GET aGet[ _NDTO] VAR aTmp[_NDTO] ;
 			ID 		180 ;
 			SPINNER ;
 			COLOR 	CLR_GET ;
@@ -4275,7 +4275,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          VALID    ( lCalcDeta( aTmp, aTmpFac ) ) ;
          OF       oFld:aDialogs[1]
 
-		REDEFINE GET aGet[_NDTOPRM] VAR aTmp[_NDTOPRM] ;
+		REDEFINE GET aGet[ _NDTOPRM] VAR aTmp[_NDTOPRM] ;
 			ID 		190 ;
 			SPINNER ;
 			COLOR 	CLR_GET ;
@@ -4285,7 +4285,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          VALID    ( lCalcDeta( aTmp, aTmpFac ) ) ;
          OF       oFld:aDialogs[1]
 
-		REDEFINE GET aGet[_NCOMAGE] VAR aTmp[_NCOMAGE] ;
+		REDEFINE GET aGet[ _NCOMAGE] VAR aTmp[_NCOMAGE] ;
 			ID 		200 ;
 			SPINNER ;
          WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
@@ -4331,7 +4331,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( cAlmacen( aGet[ _CALMLIN ], , oSayAlm ), if( !uFieldEmpresa( "lNStkAct" ), oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ), .t. ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwAlmacen( aGet[_CALMLIN], oSayAlm ) ) ;
+         ON HELP  ( BrwAlmacen( aGet[ _CALMLIN], oSayAlm ) ) ;
 			COLOR 	CLR_GET ;
          OF       oFld:aDialogs[1]
 
@@ -4356,7 +4356,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  cPicUnd ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_NCOSDIV] VAR aTmp[_NCOSDIV] ;
+      REDEFINE GET aGet[ _NCOSDIV] VAR aTmp[_NCOSDIV] ;
          ID       320 ;
 			COLOR 	CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE );
@@ -4368,7 +4368,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
       Segunda caja de dilogo---------------------------------------------------
       */
 
-      REDEFINE GET aGet[_NPOSPRINT] VAR aTmp[_NPOSPRINT] ;
+      REDEFINE GET aGet[ _NPOSPRINT] VAR aTmp[_NPOSPRINT] ;
          ID       100 ;
          SPINNER ;
 			COLOR 	CLR_GET ;
@@ -4376,25 +4376,25 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  "9999" ;
          OF       oFld:aDialogs[2]
 
-      REDEFINE CHECKBOX aGet[_LIMPLIN] VAR aTmp[_LIMPLIN]  ;
+      REDEFINE CHECKBOX aGet[ _LIMPLIN] VAR aTmp[_LIMPLIN]  ;
          ID       110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
-      REDEFINE GET aGet[_DFECHA] VAR aTmp[_DFECHA] ;
+      REDEFINE GET aGet[ _DFECHA] VAR aTmp[_DFECHA] ;
          ID       120 ;
 			SPINNER ;
          WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
-         ON HELP  aGet[_DFECHA]:cText( Calendario( aTmp[_DFECHA] ) ) ;
+         ON HELP  aGet[ _DFECHA]:cText( Calendario( aTmp[_DFECHA] ) ) ;
 			COLOR 	CLR_GET ;
          OF       oFld:aDialogs[2]
 
-      REDEFINE CHECKBOX aGet[_LCONTROL] VAR aTmp[_LCONTROL]  ;
+      REDEFINE CHECKBOX aGet[ _LCONTROL] VAR aTmp[_LCONTROL]  ;
          ID       130 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
-      REDEFINE GET aGet[_NPVPREC] VAR aTmp[_NPVPREC] ;
+      REDEFINE GET aGet[ _NPVPREC] VAR aTmp[_NPVPREC] ;
          ID       140 ;
 			COLOR 	CLR_GET ;
          WHEN     ( .f. ) ;
@@ -4704,7 +4704,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
       oSayPr1:SetText( retProp( aTmp[ _CCODPR1 ], dbfPro ) )
       aGet[ _CVALPR1 ]:lValid()
    else
-      aGet[_CVALPR1 ]:hide()
+      aGet[ _CVALPR1 ]:hide()
       oSayPr1:hide()
       oSayVp1:hide()
    end if
@@ -6409,7 +6409,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
              aTmp[ _CUNIDAD ] := ( D():Articulos( nView ) )->cUnidad
          end if
 
-         if !Empty( aGet[_CCODTIP ] )
+         if !Empty( aGet[ _CCODTIP ] )
             aGet[ _CCODTIP ]:cText( ( D():Articulos( nView ) )->cCodTip )
          else
             aTmp[ _CCODTIP ]  := ( D():Articulos( nView ) )->cCodTip
@@ -6483,15 +6483,15 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          if !Empty( cCodFam )
             aTmp[_CCODFAM]    := cCodFam
             aTmp[_CGRPFAM]    := cGruFam( cCodFam, dbfFamilia )
-            aGet[_CCODFAM]:cText( cCodFam )
-            aGet[_CGRPFAM]:cText( cGruFam( cCodFam, dbfFamilia ) )
-            aGet[_CCODFAM]:lValid()
-            aGet[_CGRPFAM]:lValid()
+            aGet[ _CCODFAM]:cText( cCodFam )
+            aGet[ _CGRPFAM]:cText( cGruFam( cCodFam, dbfFamilia ) )
+            aGet[ _CCODFAM]:lValid()
+            aGet[ _CGRPFAM]:lValid()
          else
-            aGet[_CCODFAM]:cText( Space( 8 ) )
-            aGet[_CGRPFAM]:cText( Space( 3 ) )
-            aGet[_CCODFAM]:lValid()
-            aGet[_CGRPFAM]:lValid()
+            aGet[ _CCODFAM]:cText( Space( 8 ) )
+            aGet[ _CGRPFAM]:cText( Space( 3 ) )
+            aGet[ _CCODFAM]:lValid()
+            aGet[ _CGRPFAM]:lValid()
          end if
 
          /*
@@ -6555,11 +6555,11 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          end if
 
          if (D():Articulos( nView ))->nCajEnt != 0
-            aGet[_NCANENT ]:cText( (D():Articulos( nView ))->nCajEnt )
+            aGet[ _NCANENT ]:cText( (D():Articulos( nView ))->nCajEnt )
          end if
 
          if ( D():Articulos( nView ) )->nUniCaja != 0
-            aGet[_NUNICAJA]:cText( ( D():Articulos( nView ) )->nUniCaja )
+            aGet[ _NUNICAJA]:cText( ( D():Articulos( nView ) )->nUniCaja )
          end if
 
          /*
@@ -6804,9 +6804,9 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          nPrePro           := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpFac[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpFac[_CCODTAR] )
 
          if nPrePro == 0
-            aGet[_NPREUNIT]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , , oNewImp ) )
+            aGet[ _NPREUNIT]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , , oNewImp ) )
          else
-            aGet[_NPREUNIT]:cText( nPrePro )
+            aGet[ _NPREUNIT]:cText( nPrePro )
          end if
 
          //--Precios en tarifas--//
@@ -6816,32 +6816,32 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
             //--Precio--//
             nImpOfe  := RetPrcTar( cCodArt, aTmpFac[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTarPreL, aTmp[ _NTARLIN ] )
             if nImpOfe != 0
-               aGet[_NPREUNIT]:cText( nImpOfe )
+               aGet[ _NPREUNIT]:cText( nImpOfe )
             end if
 
             //--Descuento porcentual--//
             nImpOfe  := RetPctTar( cCodArt, cCodFam, aTmpFac[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTarPreL )
             if nImpOfe != 0
-               aGet[_NDTO   ]:cText( nImpOfe )
+               aGet[ _NDTO   ]:cText( nImpOfe )
             end if
 
             //--Descuento lineal--//
             nImpOfe  := RetLinTar( cCodArt, cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], dbfTarPreL )
             if nImpOfe != 0
-               aGet[_NDTODIV]:cText( nImpOfe )
+               aGet[ _NDTODIV]:cText( nImpOfe )
             end if
 
             //--Comision de agente--//
             nImpOfe  := RetComTar( cCodArt, cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_CCODAGE], dbfTarPreL, dbfTarPreS )
             if nImpOfe != 0
-               aGet[_NCOMAGE]:cText( nImpOfe )
+               aGet[ _NCOMAGE]:cText( nImpOfe )
             end if
 
             //--Descuento de promoci¢n--//
 
             nImpOfe  := RetDtoPrm( cCodArt, cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_DFECFAC], dbfTarPreL )
             if nImpOfe  != 0
-               aGet[_NDTOPRM]:cText( nImpOfe )
+               aGet[ _NDTOPRM]:cText( nImpOfe )
             end if
 
             //--Descuento de promoci¢n para el agente--//
@@ -6904,7 +6904,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          nImpOfe     := nDtoOferta( cCodArt, aTmpFac[ _CCODCLI ], aTmpFac[_CCODGRP], aTmp[ _NUNICAJA ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
          if nImpOfe  != 0
-            aGet[_NDTO]:cText( nImpOfe )
+            aGet[ _NDTO]:cText( nImpOfe )
          end if
 
          // Buscamos si existen descuentos lineales en las ofertas-------------
@@ -6995,31 +6995,31 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
       end if
 
       if ( D():Clientes( nView ) )->nColor != 0
-         aGet[_CNOMCLI]:SetColor( , ( D():Clientes( nView ) )->nColor )
+         aGet[ _CNOMCLI]:SetColor( , ( D():Clientes( nView ) )->nColor )
       end if
 
-      if Empty( aGet[_CNOMCLI]:varGet() ) .or. lChgCodCli
-         aGet[_CNOMCLI]:cText( ( D():Clientes( nView ) )->Titulo )
+      if Empty( aGet[ _CNOMCLI]:varGet() ) .or. lChgCodCli
+         aGet[ _CNOMCLI]:cText( ( D():Clientes( nView ) )->Titulo )
       end if
 
-      if Empty( aGet[_CDIRCLI]:varGet() ) .or. lChgCodCli
-         aGet[_CDIRCLI]:cText( ( D():Clientes( nView ) )->Domicilio )
+      if Empty( aGet[ _CDIRCLI]:varGet() ) .or. lChgCodCli
+         aGet[ _CDIRCLI]:cText( ( D():Clientes( nView ) )->Domicilio )
       end if
 
       if Empty( aGet[ _CTLFCLI ]:varGet() ) .or. lChgCodCli
          aGet[ _CTLFCLI ]:cText( ( D():Clientes( nView ) )->Telefono )
       end if
 
-      if Empty( aGet[_CPOBCLI]:varGet() ) .or. lChgCodCli
-         aGet[_CPOBCLI]:cText( ( D():Clientes( nView ) )->Poblacion )
+      if Empty( aGet[ _CPOBCLI]:varGet() ) .or. lChgCodCli
+         aGet[ _CPOBCLI]:cText( ( D():Clientes( nView ) )->Poblacion )
       end if
 
-      if Empty( aGet[_CPRVCLI]:varGet() ) .or. lChgCodCli
-         aGet[_CPRVCLI]:cText( ( D():Clientes( nView ) )->Provincia )
+      if Empty( aGet[ _CPRVCLI]:varGet() ) .or. lChgCodCli
+         aGet[ _CPRVCLI]:cText( ( D():Clientes( nView ) )->Provincia )
       end if
 
-      if Empty( aGet[_CPOSCLI]:varGet() ) .or. lChgCodCli
-         aGet[_CPOSCLI]:cText( ( D():Clientes( nView ) )->CodPostal )
+      if Empty( aGet[ _CPOSCLI]:varGet() ) .or. lChgCodCli
+         aGet[ _CPOSCLI]:cText( ( D():Clientes( nView ) )->CodPostal )
       end if
 
       if Empty( aGet[ _CDNICLI ]:varGet() ) .or. lChgCodCli
@@ -7084,20 +7084,20 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
 
          end if
 
-         if ( Empty( aGet[_CCODALM]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cCodAlm )
-            aGet[_CCODALM]:cText( ( D():Clientes( nView ) )->cCodAlm )
-            aGet[_CCODALM]:lValid()
+         if ( Empty( aGet[ _CCODALM]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cCodAlm )
+            aGet[ _CCODALM]:cText( ( D():Clientes( nView ) )->cCodAlm )
+            aGet[ _CCODALM]:lValid()
          end if
 
-         if ( Empty( aGet[_CCODTAR]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cCodTar )
-            aGet[_CCODTAR]:cText( ( D():Clientes( nView ) )->CCODTAR )
-            aGet[_CCODTAR]:lValid()
+         if ( Empty( aGet[ _CCODTAR]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cCodTar )
+            aGet[ _CCODTAR]:cText( ( D():Clientes( nView ) )->CCODTAR )
+            aGet[ _CCODTAR]:lValid()
          end if
 
-         if ( Empty( aGet[_CCODPAGO]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->CodPago )
+         if ( Empty( aGet[ _CCODPAGO]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->CodPago )
 
-            aGet[_CCODPAGO]:cText( (D():Clientes( nView ))->CODPAGO )
-            aGet[_CCODPAGO]:lValid()
+            aGet[ _CCODPAGO]:cText( (D():Clientes( nView ))->CODPAGO )
+            aGet[ _CCODPAGO]:lValid()
 
             /*
             Si la forma de pago es un movimiento bancario le asignamos el banco y cuenta por defecto
@@ -7148,14 +7148,14 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
 
          end if
 
-         if ( Empty( aGet[_CCODAGE]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cAgente )
-            aGet[_CCODAGE]:cText( (D():Clientes( nView ))->CAGENTE )
-            aGet[_CCODAGE]:lValid()
+         if ( Empty( aGet[ _CCODAGE]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cAgente )
+            aGet[ _CCODAGE]:cText( (D():Clientes( nView ))->CAGENTE )
+            aGet[ _CCODAGE]:lValid()
          end if
 
-         if ( Empty( aGet[_CCODRUT]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cCodRut )
-            aGet[_CCODRUT]:cText( ( D():Clientes( nView ))->CCODRUT )
-            aGet[_CCODRUT]:lValid()
+         if ( Empty( aGet[ _CCODRUT]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cCodRut )
+            aGet[ _CCODRUT]:cText( ( D():Clientes( nView ))->CCODRUT )
+            aGet[ _CCODRUT]:lValid()
          end if
 
          if !empty( oGetTarifa )
@@ -9395,13 +9395,13 @@ Return ( nEstado )
 
 STATIC FUNCTION cFacCli( aGet, aTmp, oBrw, oBrwiva, nMode )
 
+   local nOption     := 0
    local aFacCliT
    local aFacCliL
    local cFactura    := aGet[ _CNUMFAC ]:varGet()
-   local nOption     := 0
 
-   if nMode != APPD_MODE .OR. Empty( cFactura )
-      return .t.
+   if nMode != APPD_MODE .or. empty( cFactura )
+      RETURN .T.
    end if
 
    aFacCliT          := aGetStatus( dbfFacCliT, .t. )
@@ -9409,48 +9409,48 @@ STATIC FUNCTION cFacCli( aGet, aTmp, oBrw, oBrwiva, nMode )
 
    if ( dbfFacCliT )->( dbSeek( cFactura ) )
 
-      aGet[_CCODCLI ]:cText( (dbfFacCliT)->cCodCli )
-      aGet[_CCODCLI ]:bWhen    := {|| .F. }
-      aGet[_CCODCLI ]:lValid()
+      aGet[ _CCODCLI ]:cText( (dbfFacCliT)->cCodCli )
+      aGet[ _CCODCLI ]:bWhen    := {|| .f. }
+      aGet[ _CCODCLI ]:lValid()
 
-      aGet[_CNOMCLI ]:cText( (dbfFacCliT)->cNomCli )
-      aGet[_CDIRCLI ]:cText( (dbfFacCliT)->cDirCli )
-      aGet[_CPOBCLI ]:cText( (dbfFacCliT)->cPobCli )
-      aGet[_CPRVCLI ]:cText( (dbfFacCliT)->cPrvCli )
-      aGet[_CPOSCLI ]:cText( (dbfFacCliT)->cPosCli )
-      aGet[_CDNICLI ]:cText( (dbfFacCliT)->cDniCli )
+      aGet[ _CNOMCLI ]:cText( ( dbfFacCliT )->cNomCli )
+      aGet[ _CDIRCLI ]:cText( ( dbfFacCliT )->cDirCli )
+      aGet[ _CPOBCLI ]:cText( ( dbfFacCliT )->cPobCli )
+      aGet[ _CPRVCLI ]:cText( ( dbfFacCliT )->cPrvCli )
+      aGet[ _CPOSCLI ]:cText( ( dbfFacCliT )->cPosCli )
+      aGet[ _CDNICLI ]:cText( ( dbfFacCliT )->cDniCli )
 
-      aGet[_CCODALM ]:cText( ( dbfFacCliT )->cCodAlm )
-      aGet[_CCODALM ]:lValid()
+      aGet[ _CCODALM ]:cText( ( dbfFacCliT )->cCodAlm )
+      aGet[ _CCODALM ]:lValid()
 
-      aGet[_CCODCAJ ]:cText( ( dbfFacCliT )->cCodCaj )
-      aGet[_CCODCAJ ]:lValid()
+      aGet[ _CCODCAJ ]:cText( ( dbfFacCliT )->cCodCaj )
+      aGet[ _CCODCAJ ]:lValid()
 
-      aGet[_CCODPAGO]:cText( ( dbfFacCliT )->cCodPago )
-      aGet[_CCODPAGO]:lValid()
+      aGet[ _CCODPAGO]:cText( ( dbfFacCliT )->cCodPago )
+      aGet[ _CCODPAGO]:lValid()
 
-      aGet[_CCODAGE ]:cText( ( dbfFacCliT )->cCodAge )
-      aGet[_CCODAGE ]:lValid()
+      aGet[ _CCODAGE ]:cText( ( dbfFacCliT )->cCodAge )
+      aGet[ _CCODAGE ]:lValid()
 
-      aGet[_CCODTAR ]:cText( ( dbfFacCliT )->cCodTar )
-      aGet[_CCODTAR ]:lValid()
+      aGet[ _CCODTAR ]:cText( ( dbfFacCliT )->cCodTar )
+      aGet[ _CCODTAR ]:lValid()
 
-      aGet[_CCODRUT ]:cText( ( dbfFacCliT )->cCodRut )
-      aGet[_CCODRUT ]:lValid()
+      aGet[ _CCODRUT ]:cText( ( dbfFacCliT )->cCodRut )
+      aGet[ _CCODRUT ]:lValid()
 
-      aGet[_CCODOBR ]:cText( ( dbfFacCliT )->cCodObr )
-      aGet[_CCODOBR ]:lValid()
+      aGet[ _CCODOBR ]:cText( ( dbfFacCliT )->cCodObr )
+      aGet[ _CCODOBR ]:lValid()
 
-      aGet[_CCODTRN ]:cText( ( dbfFacCliT )->cCodTrn )
-      aGet[_CCODTRN ]:lValid()
+      aGet[ _CCODTRN ]:cText( ( dbfFacCliT )->cCodTrn )
+      aGet[ _CCODTRN ]:lValid()
 
       aGet[ _LRECARGO ]:Click( ( dbfFacCliT )->lRecargo )
       aGet[ _LOPERPV  ]:Click( ( dbfFacCliT )->lOperPv )
 
       aGet[ _LIVAINC ]:Click( ( dbfFacCliT )->lIvaInc )
 
-      aGet[ _CBANCO ]:cText( ( dbfFacCliT )->cBanco )
-      aGet[ _CBANCO ]:lValid()
+      aGet[ _CBANCO  ]:cText( ( dbfFacCliT )->cBanco )
+      aGet[ _CBANCO  ]:lValid()
 
       aGet[ _CPAISIBAN ]:cText( ( dbfFacCliT )->cPaisIBAN )
       aGet[ _CPAISIBAN ]:lValid()
@@ -9471,24 +9471,18 @@ STATIC FUNCTION cFacCli( aGet, aTmp, oBrw, oBrwiva, nMode )
       aGet[ _CCTABNC ]:lValid()
 
       if !empty( ( dbfFacCliT )->cCtrCoste )
-
 	      aGet[ _CCENTROCOSTE ]:cText( ( dbfFacCliT )->cCtrCoste )
 	      aGet[ _CCENTROCOSTE ]:lValid()
+      endif
 
-	  endif
+      oGetTarifa:setTarifa( ( dbfFacCliT )->nTarifa )
 
-	  oGetTarifa:setTarifa( ( dbfFacCliT )->nTarifa )
-
-      /*
-      Pasamos los comentarios
-      */
+      // Pasamos los comentarios-----------------------------------------------
 
       aGet[ _MCOMENT ]:cText( ( dbfFacCliT )->mComEnt )
       aTmp[ _MOBSERV ]  := ( dbfFacCliT )->mObsErv
 
-      /*
-      Pasamos todos los Descuentos
-      */
+      // Pasamos todos los descuentos------------------------------------------
 
       if Empty( ( dbfFacCliT )->cDtoEsp )
          aGet[ _CDTOESP ]:cText( "General" )
@@ -9517,9 +9511,7 @@ STATIC FUNCTION cFacCli( aGet, aTmp, oBrw, oBrwiva, nMode )
 
       aTmp[ _LOPERPV ] := ( dbfFacCliT )->lOperPv
 
-      /*
-      Comprobamos si la factura tiene lineas de detalle
-      */
+      // Comprobamos si la factura tiene lineas de detalle---------------------
 
       nOption           := nImportaLineas()
 
@@ -9617,9 +9609,7 @@ STATIC FUNCTION cFacCli( aGet, aTmp, oBrw, oBrwiva, nMode )
 
          ( dbfTmpLin )->( dbGoTop() )
 
-         /*
-         Pasamos todas las series----------------------------------------------
-         */
+         // Pasamos todas las series-------------------------------------------
 
          if ( dbfFacCliS )->( dbSeek( cFactura ) )
 
@@ -9645,10 +9635,6 @@ STATIC FUNCTION cFacCli( aGet, aTmp, oBrw, oBrwiva, nMode )
       oBrw:Refresh()
 
       oBrwIva:SetFocus()
-
-   else
-
-      MsgStop( "Factura : " + cFactura + " no encontrada" )
 
    end if
 

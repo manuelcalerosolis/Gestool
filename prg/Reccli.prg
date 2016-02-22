@@ -2440,6 +2440,7 @@ FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv )
 
       with object ( oBrw:AddCol() )
          :cHeader             := "Número"
+         :cSortOrder          := "nNumFac"
          :bEditValue          := {|| ( dbfFacCliP )->cSerie + "/" + AllTrim( Str( ( dbfFacCliP )->nNumFac ) ) + "-" + Alltrim( Str( ( dbfFacCliP )->nNumRec ) ) }
          :nWidth              := 95
          :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), aGet1:SetFocus() }
@@ -2453,6 +2454,7 @@ FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv )
 
       with object ( oBrw:AddCol() )
          :cHeader             := "Código cliente"
+         :cSortOrder          := "cCodCli"
          :bEditValue          := {|| ( dbfFacCliP )->cCodCli }
          :nWidth              := 80
          :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), aGet1:SetFocus() }
@@ -2460,6 +2462,7 @@ FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv )
 
       with object ( oBrw:AddCol() )
          :cHeader             := "Nombre cliente"
+         :cSortOrder          := "cNomCli"
          :bEditValue          := {|| ( dbfFacCliP )->cNomCli }
          :nWidth              := 280
          :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), aGet1:SetFocus() }
@@ -2467,6 +2470,7 @@ FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv )
 
       with object ( oBrw:AddCol() )
          :cHeader             := "Forma pago"
+         :cSortOrder          := "cCodPgo"
          :bEditValue          := {|| ( dbfFacCliP )->cCodPgo + " - " + cNbrFPago( ( dbfFacCliP )->cCodPgo ) }
          :nWidth              := 200
          :lHide               := .t.
@@ -2474,6 +2478,7 @@ FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv )
 
       with object ( oBrw:AddCol() )
          :cHeader             := "Agente"
+         :cSortOrder          := "cCodAge"
          :bEditValue          := {|| ( dbfFacCliP )->cCodAge + " - " + RetNbrAge( ( dbfFacCliP )->cCodAge ) }
          :nWidth              := 280
          :lHide               := .t.
@@ -2481,6 +2486,7 @@ FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv )
 
       with object ( oBrw:AddCol() )
          :cHeader             := "Importe"
+         :cSortOrder          := "nImporte"
          :bEditValue          := {|| nTotRecCli( dbfFacCliP, dbfDiv, cDivEmp(), .t. ) }
          :nWidth              := 100
          :nDataStrAlign       := 1
