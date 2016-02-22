@@ -567,6 +567,12 @@ FUNCTION Familia( oMenuItem, oWnd )
          :nHeadStrAlign    := 1
       end with
 
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Familia padre"
+         :bStrData         := {|| ( dbfFamilia )->cFamCmb }
+         :nWidth           := 60
+         :lHide            := .t.
+      end with
 
       oWndBrw:CreateXFromCode()
 
