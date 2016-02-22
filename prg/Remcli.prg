@@ -2835,8 +2835,8 @@ METHOD InsertDeudorXml()
       :ReqdColltnDt  := sDate( ::oDbf:dExport )                   // Fecha de cobro (Vencimiento)
       :IBAN          := ::GetValidCuentaCliente()
       :BICOrBEI      := ::GetBICClient()
-      :MndtId        := ::oClientes:Nif  //   hb_md5( ::oCuaderno:oCreditor:Id + :id )  // Identificación del mandato, idea: Utilizar NIF Acreedor + NIF Deudor 
-      :DtOfSgntr     := sDate( ::oDbf:dExport )                   // Fecha de firma 
+      :MndtId        := ::oClientes:Nif                           // hb_md5( ::oCuaderno:oCreditor:Id + :id )  // Identificación del mandato, idea: Utilizar NIF Acreedor + NIF Deudor 
+      :DtOfSgntr     := sDate( ::dVencimiento )                   // Fecha de firma 
       :EndToEndId    := "Recibo " + ::TextoDocumento()
    endwith
 

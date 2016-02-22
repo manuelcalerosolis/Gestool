@@ -1,39 +1,3 @@
-/* v.1.0 31/12/2013
- * SEPA ISO 20022 http://http://www.iso20022.org/
- * pain.008.001.02 Direct Debit Core y B2B 
- * pain.001.001.03 Credit Transfer 
- *
- * Para lenguaje Harbour - http://harbour-project.org
- * (c) Joaquim Ferrer Godoy <quim_ferrer@yahoo.es>
- *
- * Características :
- * Generacion de formato XML
- * Control de errores en campos requeridos
- * Verifica importes y numero total de efectos
- * 
- * Reglas de uso locales AEB:
- * (1) TRUE = Un apunte en cuenta por la suma de los importes de todas las operaciones del mensaje.
- *    FALSE= Un apunte en cuenta por cada una de las operaciones incluidas en el mensaje.
- * (2) FNAL=Último adeudo de una serie de adeudos recurrentes.
- *     FRST=Primer adeudo de una serie de adeudos recurrentes.
- *    OOFF=Adeudo correspondiente a una operación con un único pago(*).
- *    RCUR=Adeudo de una serie de adeudos recurrentes, cuando no se trata ni del primero ni del último.
- *    (*) Para este tipo de operaciones el mandato y su referencia deben ser únicos y no pueden utilizarse para operaciones 
- *    puntuales posteriores. Si siempre se factura a los mismos clientes, aunque varie el importe de los adeudos y la periodicidad
- *    de los mismos, es necesario utilizar el tipo de adeudo recurrente si se utiliza la misma referencia, creando para cada 
- *    cliente deudor un solo mandato que ampare todos los adeudos que se emitan. 
- *    El primer adeudo deberá ser FRST y los siguientes RCUR.
- * (3) Esta etiqueta sólo debe usarse cuando un mismo número de cuenta cubra diferentes divisas y el presentador 
- *       necesite identificar en cuál de estas divisas debe realizarse el asiento sobre su cuenta.
- * (4) Regla de uso: Solamente se admite el código ‘SLEV’
- * (5) La etiqueta ‘Cláusula de gastos’ puede aparecer, bien en el nodo ‘Información del pago’ (2.0), bien en el 
- *       nodo ‘Información de la operación de adeudo directo’ (2.28), pero solamente en uno de ellos. 
- *       Se recomienda que se recoja en el bloque ‘Información del pago’ (2.0).
- * (6) Regla de uso: Para el sistema de adeudos SEPA se utilizará exclusivamente la etiqueta 'Otra' estructurada 
- *    según lo definido en el epígrafe 'Identificador del presentador' de la sección 3.3 del cuaderno.
- * (7) Regla de uso: Solamente se admite el código 'SEPA'
- */
-
 #include "hbclass.ch"
 #include "hbmxml.ch"
 
@@ -79,14 +43,14 @@ CLASS SepaXml
    DATA ErrorMessages      AS ARRAY       INIT {=>}            // Hash mensajes de error multilenguaje
    DATA aDebtors           AS ARRAY       INIT {}              // Lista de deudores
 
-   DATA MsgId                                                  // Identificación del mensaje
-   DATA CreDtTm                                                // Fecha y hora de creación
-   DATA NbOfTxs            AS NUMERIC     INIT 0               // Número de operaciones 
+   DATA MsgId                                                  // Identificaci�n del mensaje
+   DATA CreDtTm                                                // Fecha y hora de creaci�n
+   DATA NbOfTxs            AS NUMERIC     INIT 0               // N�mero de operaciones 
    DATA CtrlSum            AS NUMERIC     INIT 0.00            // Control de suma
 
-   DATA ServiceLevel       AS CHARACTER   INIT "SEPA"          // Código Nivel de servicio (7)
+   DATA ServiceLevel       AS CHARACTER   INIT "SEPA"          // C�digo Nivel de servicio (7)
    DATA SeqTp              AS CHARACTER   INIT "RCUR"          // Tipo de secuencia (2)
-   DATA PurposeCd                                              // Código categoria proposito
+   DATA PurposeCd                                              // C�digo categoria proposito
    DATA PurposePrtry                                           // Propietario categoria proposito
 
    DATA oInitPart
@@ -96,7 +60,7 @@ CLASS SepaXml
    DATA oUltimateDebtor
 
    DATA PmtInfId
-   DATA PmtMtd             AS CHARACTER INIT "DD" READONLY     // Método de pago Regla de uso: Solamente se admite el código ‘DD’
+   DATA PmtMtd             AS CHARACTER INIT "DD" READONLY     // M�todo de pago Regla de uso: Solamente se admite el c�digo �DD�
    DATA BtchBookg          AS CHARACTER INIT "false"           // Indicador de apunte en cuenta (1)
 
    METHOD New()
@@ -141,7 +105,7 @@ ENDCLASS
 METHOD New( cFileOut ) CLASS SepaXml
 
    ::cFileOut           := cFileOut
-   ::CreDtTm            := IsoDateTime()  // Fecha y hora de creación
+   ::CreDtTm            := IsoDateTime()  // Fecha y hora de creaci�n
 
    ::oInitPart          := SepaDebitActor():New( Self, "InitgPty" )     
    ::oCreditor          := SepaDebitActor():New( Self )
@@ -199,17 +163,17 @@ METHOD GroupHeader( hParent ) CLASS SepaXml
    local lError   := .f.
 
    if empty( ::MsgId )
-      ::addError( "Identificación del mensaje no puede estar vacio." )
+      ::addError( "Identificaci�n del mensaje no puede estar vacio." )
       lError      := .t.
    endif
 
    if empty( ::CreDtTm )
-      ::addError( "Fecha y hora de creación no puede estar vacio." )
+      ::addError( "Fecha y hora de creaci�n no puede estar vacio." )
       lError      := .t.
    endif
 
    if empty( ::NbOfTxs )
-      ::addError( "Número de operaciones no puede estar vacia." )
+      ::addError( "N�mero de operaciones no puede estar vacia." )
       lError      := .t.
    endif
 
@@ -375,7 +339,7 @@ return nil
 
 METHOD getTypePaymentXML() 
 
-   ::oXmlPmtTpInf       := TXmlNode():New( , "PmtTpInf")                         // Información del tipo de pago 
+   ::oXmlPmtTpInf       := TXmlNode():New( , "PmtTpInf")                         // Informaci�n del tipo de pago 
 
       ::oXmlSvcLvl      := TXmlNode():New( , "SvcLvl")                           // Nivel de servicio 
       if ::ServiceLevel != nil
@@ -386,21 +350,21 @@ METHOD getTypePaymentXML()
 
       ::oXmlLclInstrm   := TXmlNode():New( , "LclInstrm" )   
       if ::SchmeNm != nil                 // Instrumento local
-         ::oXmlLclInstrm:addBelow( TXmlParseNode():New( "Cd", ::SchmeNm, 35 ) )  // Código Instrumento local
+         ::oXmlLclInstrm:addBelow( TXmlParseNode():New( "Cd", ::SchmeNm, 35 ) )  // C�digo Instrumento local
       end if 
 
    ::oXmlPmtTpInf:addBelow( ::oXmlLclInstrm )
 
    ::oXmlPmtTpInf:addBelow( TXmlParseNode():New( "SeqTp", ::SeqTp, 4 ) )        // Tipo de secuencia
 
-   // Lista de códigos recogidos en la norma ISO 20022----------------------------------- 
+   // Lista de c�digos recogidos en la norma ISO 20022----------------------------------- 
    // Ex: CASH=CashManagementTransfer (Transaction is a general cash management instruction) 
 
    if ::PurposeCd != nil
    
-      ::oXmlCtgyPurp    := TXmlNode():New( , "CtgyPurp" )                               // Categoría del propósito 
+      ::oXmlCtgyPurp    := TXmlNode():New( , "CtgyPurp" )                               // Categor�a del prop�sito 
       if ::PurposeCd != nil
-         ::oXmlCtgyPurp:addBelow( TXmlParseNode():New( "Cd", ::PurposeCd, 4 ) )         // Código 
+         ::oXmlCtgyPurp:addBelow( TXmlParseNode():New( "Cd", ::PurposeCd, 4 ) )         // C�digo 
       end if 
       ::oXmlCtgyPurp:addBelow( TXmlParseNode():New( "Prtry", ::PurposePrtry, 35 ) )     // Propietario
 
@@ -421,7 +385,7 @@ CLASS SepaDebitActor
 
    DATA Nm                                   // Nombre
    DATA Ctry                                    // Pais
-   DATA AdrLine1                                // Dirección en texto libre
+   DATA AdrLine1                                // Direcci�n en texto libre
    DATA AdrLine2                                // Se permiten 2 etiquetas para direccion
    DATA IBAN                                    // IBAN
    DATA BIC                                  // BIC
@@ -429,27 +393,27 @@ CLASS SepaDebitActor
    DATA BirthDt                                 // Fecha de nacimiento 
    DATA PrvcOfBirth                             // Provincia de nacimiento
    DATA CityOfBirth                             // Ciudad de nacimiento 
-   DATA CtryOfBirth                             // País de nacimiento
-   DATA Id                                      // Identificación 
+   DATA CtryOfBirth                             // Pa�s de nacimiento
+   DATA Id                                      // Identificaci�n 
    DATA Issr                                    // Emisor 
    DATA Cd                                   // Codigo
    DATA Prtry           AS CHARACTER INIT "SEPA"  // Propietario
 
-   DATA PmtInfId                                // Identificación de la información del pago 
+   DATA PmtInfId                                // Identificaci�n de la informaci�n del pago 
    DATA BtchBookg       AS CHARACTER INIT "false"         // Indicador de apunte en cuenta (1)
    DATA ReqdColltnDt                               // Fecha de cobro (Vencimiento)
    DATA Ustrd                                    // Informacion no estructurada, p.e., concepto del cobro
-   DATA NbOfTxs         AS NUMERIC INIT 0             // Número de operaciones 
+   DATA NbOfTxs         AS NUMERIC INIT 0             // N�mero de operaciones 
    DATA CtrlSum         AS NUMERIC INIT 0.00             // Control de suma 
-   DATA PmtMtd          AS CHARACTER INIT "DD"   READONLY   // Método de pago Regla de uso: Solamente se admite el código ‘DD’
-   DATA ChrgBr          AS CHARACTER INIT "SLEV" READONLY   // Cláusula de gastos (4)
-   DATA InstrId                                 // Identificación de la instrucción
-   DATA EndToEndId                              // Identificación de extremo a extremo 
+   DATA PmtMtd          AS CHARACTER INIT "DD"   READONLY   // M�todo de pago Regla de uso: Solamente se admite el c�digo �DD�
+   DATA ChrgBr          AS CHARACTER INIT "SLEV" READONLY   // Cl�usula de gastos (4)
+   DATA InstrId                                 // Identificaci�n de la instrucci�n
+   DATA EndToEndId                              // Identificaci�n de extremo a extremo 
    DATA InstdAmt        AS NUMERIC INIT 0.00             // Importe ordenado 
-   DATA MndtId                                     // Identificación del mandato 
+   DATA MndtId                                     // Identificaci�n del mandato 
    DATA DtOfSgntr                                  // Fecha de firma 
-   DATA AmdmntInd       AS CHARACTER INIT "false"  // Indicador de modificación 
-   DATA OrgnlMndtId                                // Identificación del mandato original 
+   DATA AmdmntInd       AS CHARACTER INIT "false"  // Indicador de modificaci�n 
+   DATA OrgnlMndtId                                // Identificaci�n del mandato original 
 
    DATA oXmlActor
    DATA oXmlId
@@ -498,13 +462,13 @@ METHOD getNodeXML() CLASS SepaDebitActor
    ::oXmlActor       := TXmlNode():new( , ::cName ) 
    ::oXmlActor:addBelow( TXmlParseNode():New( "Nm", ::Nm, 70 ) )
 
-   ::oXmlId          := TXmlNode():new( , "Id" )                               // Identificación 
+   ::oXmlId          := TXmlNode():new( , "Id" )                               // Identificaci�n 
       ::oXmlActor:addBelow( ::oXmlId )
 
    do case
    case ( ::nEntity == ENTIDAD_JURIDICA )
 
-      ::oXmlOrgId    := TXmlNode():new( , "OrgId" )                          // Persona jurídica
+      ::oXmlOrgId    := TXmlNode():new( , "OrgId" )                          // Persona jur�dica
 
       if !empty( ::BICOrBEI )
          ::oXmlOrgId:addBelow( TXmlParseNode():New( "BICOrBEI", ::BICOrBEI, 11 ) )         // BIC o BEI 
@@ -534,7 +498,7 @@ METHOD getNodeXML() CLASS SepaDebitActor
 
    otherwise 
 
-      ::oSender:addError( "No se ha especificado el tipo de entidad juridica o física." )
+      ::oSender:addError( "No se ha especificado el tipo de entidad juridica o f�sica." )
 
    end case
 
@@ -578,10 +542,10 @@ METHOD getCreditorXML()
       ::oXmlCdrt:addBelow( TXmlParseNode():New( "Nm", ::Nm, 70 ) )
 
       if ::Ctry != nil .or. ::AdrLine1 != nil
-         ::oXmlPstlAdr  := TXmlNode():New( , "PstlAdr" )                               // Dirección postal
-         ::oXmlPstlAdr:addBelow( TXmlParseNode():New( "Ctry", ::oCtry, 2 ) )           // País
-         ::oXmlPstlAdr:addBelow( TXmlParseNode():New( "AdrLine", ::AdrLine1, 70 ) )    // Dirección en texto libre
-         ::oXmlPstlAdr:addBelow( TXmlParseNode():New( "AdrLine", ::AdrLine2, 70 ) )    // Dirección en texto libre
+         ::oXmlPstlAdr  := TXmlNode():New( , "PstlAdr" )                               // Direcci�n postal
+         ::oXmlPstlAdr:addBelow( TXmlParseNode():New( "Ctry", ::oCtry, 2 ) )           // Pa�s
+         ::oXmlPstlAdr:addBelow( TXmlParseNode():New( "AdrLine", ::AdrLine1, 70 ) )    // Direcci�n en texto libre
+         ::oXmlPstlAdr:addBelow( TXmlParseNode():New( "AdrLine", ::AdrLine2, 70 ) )    // Direcci�n en texto libre
       endif
 
    else
@@ -687,14 +651,14 @@ METHOD getDirectDebitTransactionInformationXml()
       
       if ::InstrId != nil .or. ::EndToEndId != nil
 
-         oXmlPmtId      := TXmlNode():New( , "PmtId")                                  // Identificación del pago  
+         oXmlPmtId      := TXmlNode():New( , "PmtId")                                  // Identificaci�n del pago  
          
          if ::InstrId != nil         
-            oXmlPmtId:addBelow( TXmlParseNode():New( "InstrId", ::InstrId, 35 ) )         // Identificación de la instrucción
+            oXmlPmtId:addBelow( TXmlParseNode():New( "InstrId", ::InstrId, 35 ) )         // Identificaci�n de la instrucci�n
          end if 
          
          if ::EndToEndId != nil
-            oXmlPmtId:addBelow( TXmlParseNode():New( "EndToEndId", ::EndToEndId, 35 ) )   // Identificación de extremo a extremo 
+            oXmlPmtId:addBelow( TXmlParseNode():New( "EndToEndId", ::EndToEndId, 35 ) )   // Identificaci�n de extremo a extremo 
          end if 
 
          ::oXmlDrctDbtTxInf:addBelow( oXmlPmtId )
@@ -705,8 +669,8 @@ METHOD getDirectDebitTransactionInformationXml()
 
       if ::MndtId != nil .or. ::DtOfSgntr != nil 
 
-         oXmlDrctDbtTx        := TXmlNode():New( , "DrctDbtTx" )                             // Operación de adeudo directo 
-            oXmlMndtRltdInf   := TXmlNode():New( , "MndtRltdInf" )                           // Información del mandato 
+         oXmlDrctDbtTx        := TXmlNode():New( , "DrctDbtTx" )                             // Operaci�n de adeudo directo 
+            oXmlMndtRltdInf   := TXmlNode():New( , "MndtRltdInf" )                           // Informaci�n del mandato 
 
             if ::MndtId != nil
                oXmlMndtRltdInf:addBelow( TXmlParseNode():New( "MndtId", ::MndtId, 35 ) )        
@@ -719,8 +683,8 @@ METHOD getDirectDebitTransactionInformationXml()
             oXmlAmdmntInd     := TXmlParseNode():New( "AmdmntInd", ::AmdmntInd, 5 )
 
             if ::OrgnlMndtId != nil
-               oXmlAmdmntInfDtls := TXmlNode():New( , "AmdmntInfDtls" )                               // Detalles de la modificación 
-               oXmlAmdmntInfDtls:addBelow( TXmlParseNode():New( "OrgnlMndtId", ::OrgnlMndtId, 35 ) )  // Identificación del mandato original 
+               oXmlAmdmntInfDtls := TXmlNode():New( , "AmdmntInfDtls" )                               // Detalles de la modificaci�n 
+               oXmlAmdmntInfDtls:addBelow( TXmlParseNode():New( "OrgnlMndtId", ::OrgnlMndtId, 35 ) )  // Identificaci�n del mandato original 
 
                oXmlAmdmntInd:addBelow( oXmlAmdmntInfDtls )
             endif
@@ -737,7 +701,7 @@ METHOD getDirectDebitTransactionInformationXml()
 
       if ::BICOrBEI != nil
          oXmlDbtrAgt       := TXmlNode():New( , "DbtrAgt" )          // Entidad del deudor 
-            oXmlFinInstnId := TXmlNode():New( , "FinInstnId" )       // Identificación de la entidad 
+            oXmlFinInstnId := TXmlNode():New( , "FinInstnId" )       // Identificaci�n de la entidad 
             oXmlFinInstnId:addBelow( TXmlParseNode():New( "BIC", ::BICOrBEI, 11 ) )
          oXmlDbtrAgt:addBelow( oXmlFinInstnId )
 
@@ -769,7 +733,7 @@ METHOD getDirectDebitTransactionInformationXml()
          ::oSender:addError( ::oSender:ErrorMessages[ 'SEPA_DEBTOR_ACCOUNT' ] )
       endif
 
-      // Propósito ------------------------------------------------------------
+      // Prop�sito ------------------------------------------------------------
 
       if ::oSender:PurposeCd != nil
          oXmlPurp       := TXmlNode():New( , "Purp" )
@@ -842,7 +806,7 @@ Return ( Self )
 //--------------------------------------------------------------------//
 
 /* v.1.0 14/11/2013
- * Funciones misceláneas de apoyo a formatos SEPA
+ * Funciones miscel�neas de apoyo a formatos SEPA
  * (c) Joaquim Ferrer Godoy <quim_ferrer@yahoo.es>
  */
 
@@ -887,23 +851,6 @@ return nil
 
 function Id_Name( cCountry, cCode, cNif )
 /*
-Identificador del Presentador / Acreedor
-Este identificador es una referencia con un máximo de 35 caracteres que contiene los siguientes elementos:
-   a) Código del país3: (Posiciones 1ª y 2ª)
-   Código ISO 3166 del país que ha emitido el identificador nacional del acreedor. “ES” en el caso español.
-   b) Dígitos de control: (Posiciones 3ª y 4ª)
-   Código que hace referencia a los componentes a y d. Para su cálculo se requiere la siguiente operación:
-   • Excluir las posiciones 5 a 7 de esta referencia
-   • Entre las posiciones 8 y 35, eliminar todos los espacios y caracteres no alfanuméricos. Esto es: “/ - ? : ( ) . , ' +”.
-   • Añadir el código ISO del país, y ‘00’ a la derecha, y
-   • Convertir las letras en dígitos, de acuerdo a la tabla de conversión 1
-   • Aplicar el sistema de dígitos de control MOD 97-10.
-      A=10, B=11... Z=35 
-   c) Código comercial del Acreedor (Sufijo): (Posiciones 5 a 7) Número de tres cifras comprendido entre 000 y 999. 
-   Contiene información necesaria en la relación entre la entidad del acreedor y el acreedor y permite al acreedor identificar 
-   diferentes líneas comerciales o servicios.
-   d) Identificación del Acreedor específica de cada país: (Posiciones 8 a 35) Para los acreedores españoles, se indicará 
-   el NIF o NIE del acreedor utilizando para ello las posiciones 8 a 16.
 */
  local cId, n, nLen, cValue
  local cAlgorithm := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -928,81 +875,38 @@ return padR(cId, 35)
 
 function id_File( cRef )
 /*
-Identificación del fichero: referencia que asigna el presentador al fichero, para su envío a la entidad receptora. 
-Esta referencia se estructurará de la siguiente manera, tomando los datos generados por el ordenador del presentador 
-en el momento de la creación del fichero: 
-   Indicador del tipo de mensaje (3 caracteres) -> PRE Fichero de Presentación de adeudos 
-    AAAAMMDD (año, mes y día) = (8 caracteres) 
-    HHMMSSmmmmm (hora minuto segundo y 5 posiciones de milisegundos = 11 caracteres) 
-    Referencia identificativa que asigne el presentador (13 caracteres) 
 */
    local cId   := "PRE" + fDate() + cTime() + strzero( seconds(), 5 ) + cRef
 
 return padR(cId, 35)
 
 /*
-     3.9.5.  Características y formas de intercambio de mensajes
-     La  forma  y  lugar  de  entrega  de  los  mensajes,  se pactará bilateralmente  entre  las  entidades  y  los
-     presentadores.
-     Las características y contenido del  mensaje  deberán ajustarse a las reglas del esquema de  adeudos
-     directos SEPA. En el mismo se defin en, entre otras reglas, los caracteres admitidos, que se ajustarán
-     a los siguientes:
-     TABLA DE CODIFICACIÓN DE CARACTERES DEL ESTÁNDAR  ISO20022
-     A  B  C  D  E  F  G  H  I    J   K   L   M  N  O  P  Q  R  S T  U  
-V  W  X  Y  Z
-     a  b  c  d  e  f  g  h  i   j   k  l   m  n  o  p  q  r  S  t u  v  
-w  x  y  z
-     0  1  2  3  4  5  6  7  8  9  /  -  ?  :  (  )  .  ,    ‘  + espacio
-     La conversión de caracteres no  válidos de adeudos  a caracteres SEPA  válidos se producirá con la
-     siguiente regla:
-     Ñ,ñ  a  N,n
-     Ç,ç  a  C,c
-     No  obstante,  la  entidad  del  ac reedor  podrá  admitir el  uso de  otros  caracteres,  sin  que  pueda
-     garantizarse que los datos no sean convertidos en alguna fase del proceso.
-     Además,  hay  cinco  caracteres  que  no  pueden  utilizarse de forma  literal  en  ISO  20022,  excepto
-     cuando se utilizan para delimit ar etiquetas, o dentro  de un comentario  o una instrucción de proceso.
-     Cuando se vayan a utilizar en cualquier texto libre, se deben sustituir por su representación ASCII:
-     Carácter no permitido en XML   Representación ASCII
-     & (ampersand)  &amp;
-     < (menor que)  &lt;
-     > (mayor que)  &gt;
-     “ (dobles comillas)   &quot;
-     ' (apóstrofe)   &apos;
-     Por  razones  técnicas  puede  ser  conveniente  establecer un límite  máximo  en  el  número  de
-     operaciones a incluir en cada fichero, que deberá comunicarle su entidad.
 */
 
-function strToIso2022( cStr )
+function strToIso2022( xtxt )
 
-   local i
-   local nPos
-   local cChar
-   local cTxt     := ""
-   local nLen     := len(cStr)
-   local cPattern := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/-?:().,"
-   local cSubPtrn := [ÇcñÑ&<>"']
-   local aReplace := {"Ç" => "C", "ç" => "C", "ñ" => "n", "Ñ" => "N", "&" => "&amp;", "<" => "&lt;", ">" => "&gt;", '"' > "&quot;", "'" => "&apos;" }
+   LOCAL afrm, i, xret := "", xpos
 
-   for i := 1 to nLen
+   afrm := { ;
+      { "&", "&amp;"    }, ;
+      { '"', "&quot;"   }, ;
+      { "'", "&#039;"   }, ;
+      { "<", "&lt;"     }, ;
+      { ">", "&gt;"     }, ;
+      { "�", "&ntilde;" }, ;
+      { "�", "&Ntilde;" }, ;
+      { "�", "&ccedil;" }, ;
+      { "�", "&Ccedil;" } }
 
-      cChar       := substr(cStr, i, 1)
-      if empty(cChar)
-         cTxt     += cChar
+   for i := 1 to len( xtxt )
+      xpos := ascan( afrm, {| x | substr( xtxt, i, 1 ) == x[ 1 ] } )
+      if ( xpos > 0 )
+         xret += afrm[ xpos, 2 ]
       else
-         if at(cChar, cPattern) > 0
-            cTxt += cChar
-         else
-            if (nPos := at(cChar, cSubPtrn)) > 0
-               cTxt += aReplace[nPos]
-            else
-               cTxt += '?'
-            endif
-         endif
+         xret += substr( xtxt, i, 1 )
       endif
-   
    next
 
-return rtrim( cTxt )
-
+return xret
 
 
