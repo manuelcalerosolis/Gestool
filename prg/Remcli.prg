@@ -1855,10 +1855,7 @@ METHOD contabilizaRemesas( lSimula )
    local lErrorFound    := .f.
    local cCodEmp        := cCodEmpCnt( "A" )
 
-   /*
-	Chequando antes de pasar a Contaplus
-	--------------------------------------------------------------------------
-	*/
+	// Chequando antes de pasar a Contaplus-------------------------------------
 
    if ::oDbf:lConta
       if !ApoloMsgNoYes( "Remesa : " + ::cNumRem() + " contabilizada." + CRLF + "¿ Desea contabilizarla de nuevo ?" )
@@ -1868,23 +1865,17 @@ METHOD contabilizaRemesas( lSimula )
 
    if !::lChkSelect .AND. !ChkRuta( cRutCnt() )
       ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " ruta no valida.", 0 )
-      lErrorFound    := .t.
+      lErrorFound          := .t.
    end if
 
-   /*
-   Seleccionamos las empresa dependiendo de la serie de factura
-	--------------------------------------------------------------------------
-	*/
+   // Seleccionamos las empresa dependiendo de la serie de factura-------------
 
    if empty( cCodEmp ) .AND. !::lChkSelect
       ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " no se definierón empresas asociadas.", 0 )
       lErrorFound          := .t.
    end if
 
-	/*
-	Estudio si existe cuenta pago 
-	--------------------------------------------------------------------------
-	*/
+	// Estudio si existe cuenta pago--------------------------------------------
 
    if ::oDbf:nTipRem == 2
       cCuentaPago          := ::oCtaRem:cRetCtaDto( ::oDbf:cCodRem )
@@ -1931,10 +1922,7 @@ METHOD contabilizaRemesas( lSimula )
 
    end if
 
-   /*
-   Comporbamos fechas
-   ----------------------------------------------------------------------------
-   */
+   // Comporbamos fechas-------------------------------------------------------
 
    if Empty( ::oDbf:dConta )
       ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " sin fecha de contabilización", 0 )
@@ -1945,16 +1933,13 @@ METHOD contabilizaRemesas( lSimula )
       lErrorFound          := .t.
    end if
 
-	/*
-   Realización de Asientos
-	--------------------------------------------------------------------------
-   */
+   // Realización de Asientos--------------------------------------------------
 
    if OpenDiario( , cCodEmp )
       nAsiento             := RetLastAsi()
    else
       ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " imposible abrir ficheros.", 0 )
-      Return .f.
+      RETURN .F.
    end if
 
    if lAplicacionContaplus()
@@ -1965,7 +1950,7 @@ METHOD contabilizaRemesas( lSimula )
                                  cCuentaPago,;
                                  ,;
                                  ::nTotRem( .f. ),;
-                                 "Cobro remesa " + ::cNumRem(),;
+                                 "Remesa " + ::cNumRem(),;
                                  ,;
                                  ,;
                                  ,;
@@ -1997,10 +1982,7 @@ METHOD contabilizaRemesas( lSimula )
 
    end if 
 
-	/*
-	Asientos de Ventas
-	-------------------------------------------------------------------------
-	*/
+	// Asientos de Ventas-------------------------------------------------------
 
    if ::oDbfDet:Seek( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem )
 
@@ -2008,6 +1990,7 @@ METHOD contabilizaRemesas( lSimula )
 
          cCuentaCliente          := ""
          cNombreCliente          := ""
+
          if ::oClientes:Seek( ::oDbfDet:cCodCli )
             if ::oDbf:nTipRem == 2
                cCuentaCliente    := ::oClientes:SubCtaDto
@@ -2025,7 +2008,7 @@ METHOD contabilizaRemesas( lSimula )
                                        cCuentaCliente,;
                                        ,;
                                        ,;
-                                       "Cobro fra. " + ::oDbfDet:cSerie + "/" + alltrim( str( ::oDbfDet:nNumFac ) ) + "/" + ::oDbfDet:cSufFac,;
+                                       "Remesa " + alltrim( ::cNumRem() ) + ", Recibo " + ::oDbfDet:cSerie + "/" + alltrim( str( ::oDbfDet:nNumFac ) ) + "/" + ::oDbfDet:cSufFac + "-" + alltrim( str( ::oDbfDet:nNumRec ) ),;
                                        nTotRecCli( ::oDbfDet:cAlias, ::oDivisas:cAlias, ::oDbf:cCodDiv, .f. ),;
                                        ::oDbfDet:cSerie + str( ::oDbfDet:nNumFac ) + ::oDbfDet:cSufFac,;
                                        ,;
@@ -2050,7 +2033,7 @@ METHOD contabilizaRemesas( lSimula )
                                              "DescripcionCuenta"     => cNombreCliente,;
                                              "TipoImporte"           => 'H',; 
                                              "ReferenciaDocumento"   => ::cNumRem(),;
-                                             "DescripcionApunte"     => "Cobro fra. " + ::oDbfDet:cSerie + "/" + alltrim( str( ::oDbfDet:nNumFac ) ) + "/" + ::oDbfDet:cSufFac,;
+                                             "DescripcionApunte"     => "Remesa " + alltrim( ::cNumRem() ) + ", Recibo " + ::oDbfDet:cSerie + "/" + alltrim( str( ::oDbfDet:nNumFac ) ) + "/" + ::oDbfDet:cSufFac + "-" + alltrim( str( ::oDbfDet:nNumRec ) ),;
                                              "Importe"               => nTotRecCli( ::oDbfDet:cAlias, ::oDivisas:cAlias, ::oDbf:cCodDiv, .f. ),;
                                              "Moneda"                => 'E',; 
                                              "Render"                => 'ApuntesSinIVA' } )
@@ -2063,10 +2046,7 @@ METHOD contabilizaRemesas( lSimula )
 
    end if
 
-   /*
-   Ponemos la remesa como Contabilizada
-	--------------------------------------------------------------------------
-	*/
+   // Ponemos la remesa como Contabilizada-------------------------------------
 
    if !lSimula .and. !lErrorFound
 
@@ -2695,7 +2675,7 @@ METHOD InitSepaXML19( oDlg )
       ::oCuaderno:setScheme( ::cEsquema )
       ::oCuaderno:setOriginalMessageIdentification( id_File( 'REMESA' + str( ::oDbf:nNumRem ) ) )
       ::oCuaderno:setPaymentInformationIdentification( ::oCtaRem:oDbf:cNifPre + ttos( datetime() ) )
-      ::oCuaderno:setRequestedCollectionDate( sDate( ::oDbf:dExport ) )                  // Fecha de cobro (Vencimiento)
+      ::oCuaderno:setRequestedCollectionDate( sDate( ::dVencimiento ) )                  // Fecha de cobro (Vencimiento)
 
       // Presentador--------------------------------------------------------------
 

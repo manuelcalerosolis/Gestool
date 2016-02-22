@@ -94,7 +94,6 @@ CLASS SepaXml
    DATA oUltimateCreditor
    DATA oDebtor
    DATA oUltimateDebtor
-   DATA ReqdColltnDt
 
    DATA PmtInfId
    DATA PmtMtd             AS CHARACTER INIT "DD" READONLY     // Método de pago Regla de uso: Solamente se admite el código ‘DD’
@@ -103,10 +102,12 @@ CLASS SepaXml
    METHOD New()
    METHOD setFinancialMessage( nFinancialMessage )
    METHOD setScheme( nScheme )
-   METHOD setRequestedCollectionDate( sDate )                     INLINE ( ::ReqdColltnDt := sDate )
    METHOD setPaymentInformationIdentification( informationId )    INLINE ( ::PmtInfId := informationId )
    METHOD setOriginalMessageIdentification( messageId )           INLINE ( ::MsgId := messageId )
 
+   DATA ReqdColltnDt
+   
+   METHOD setRequestedCollectionDate( sDate )                     INLINE ( ::ReqdColltnDt := sDate )
    METHOD getRquiredPayDateXML()                                  INLINE ( TXmlParseNode():New( "ReqdColltnDt", ::ReqdColltnDt, 10 ) )
 
    METHOD CreateDocumentXML()
@@ -824,9 +825,9 @@ METHOD new( cName, xValue, nLen, lCurrency ) CLASS TXmlParseNode
       cData       := sDate( xValue )
    case cType == "C"
       if nLen != 0
-         cData    := alltrim( padr( xValue, nLen ) )
+         cData    := alltrim( strToIso2022( padr( xValue, nLen ) ) )
       else
-         cData    := alltrim( xValue )
+         cData    := alltrim( strToIso2022( xValue ) )
       end if
    end case
 
@@ -938,5 +939,70 @@ en el momento de la creación del fichero:
    local cId   := "PRE" + fDate() + cTime() + strzero( seconds(), 5 ) + cRef
 
 return padR(cId, 35)
+
+/*
+     3.9.5.  Características y formas de intercambio de mensajes
+     La  forma  y  lugar  de  entrega  de  los  mensajes,  se pactará bilateralmente  entre  las  entidades  y  los
+     presentadores.
+     Las características y contenido del  mensaje  deberán ajustarse a las reglas del esquema de  adeudos
+     directos SEPA. En el mismo se defin en, entre otras reglas, los caracteres admitidos, que se ajustarán
+     a los siguientes:
+     TABLA DE CODIFICACIÓN DE CARACTERES DEL ESTÁNDAR  ISO20022
+     A  B  C  D  E  F  G  H  I    J   K   L   M  N  O  P  Q  R  S T  U  
+V  W  X  Y  Z
+     a  b  c  d  e  f  g  h  i   j   k  l   m  n  o  p  q  r  S  t u  v  
+w  x  y  z
+     0  1  2  3  4  5  6  7  8  9  /  -  ?  :  (  )  .  ,    ‘  + espacio
+     La conversión de caracteres no  válidos de adeudos  a caracteres SEPA  válidos se producirá con la
+     siguiente regla:
+     Ñ,ñ  a  N,n
+     Ç,ç  a  C,c
+     No  obstante,  la  entidad  del  ac reedor  podrá  admitir el  uso de  otros  caracteres,  sin  que  pueda
+     garantizarse que los datos no sean convertidos en alguna fase del proceso.
+     Además,  hay  cinco  caracteres  que  no  pueden  utilizarse de forma  literal  en  ISO  20022,  excepto
+     cuando se utilizan para delimit ar etiquetas, o dentro  de un comentario  o una instrucción de proceso.
+     Cuando se vayan a utilizar en cualquier texto libre, se deben sustituir por su representación ASCII:
+     Carácter no permitido en XML   Representación ASCII
+     & (ampersand)  &amp;
+     < (menor que)  &lt;
+     > (mayor que)  &gt;
+     “ (dobles comillas)   &quot;
+     ' (apóstrofe)   &apos;
+     Por  razones  técnicas  puede  ser  conveniente  establecer un límite  máximo  en  el  número  de
+     operaciones a incluir en cada fichero, que deberá comunicarle su entidad.
+*/
+
+function strToIso2022( cStr )
+
+   local i
+   local nPos
+   local cChar
+   local cTxt     := ""
+   local nLen     := len(cStr)
+   local cPattern := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/-?:().,"
+   local cSubPtrn := [ÇcñÑ&<>"']
+   local aReplace := {"Ç" => "C", "ç" => "C", "ñ" => "n", "Ñ" => "N", "&" => "&amp;", "<" => "&lt;", ">" => "&gt;", '"' > "&quot;", "'" => "&apos;" }
+
+   for i := 1 to nLen
+
+      cChar       := substr(cStr, i, 1)
+      if empty(cChar)
+         cTxt     += cChar
+      else
+         if at(cChar, cPattern) > 0
+            cTxt += cChar
+         else
+            if (nPos := at(cChar, cSubPtrn)) > 0
+               cTxt += aReplace[nPos]
+            else
+               cTxt += '?'
+            endif
+         endif
+      endif
+   
+   next
+
+return rtrim( cTxt )
+
 
 

@@ -1413,64 +1413,36 @@ FUNCTION MkAsiento( 	Asien,;
       Asignacion de campos--------------------------------------------------------
       */
 
-         aAsiento          :=  MkAsientoContaplus( Asien,;
-                                                   cDivisa,;
-                                                   Fecha,;
-                                                   Subcuenta,;
-                                                   Contrapartida,;
-                                                   nImporteDebe,;
-                                                   Concepto,;
-                                                   nImporteHaber,;
-                                                   cSerie,;
-                                                   Factura,;
-                                                   BaseImponible,;
-                                                   IVA,;
-                                                   RecargoEquivalencia,;
-                                                   Documento,;
-                                                   Departamento,;
-                                                   Clave,;
-                                                   lRectificativa,;
-                                                   nCasado,;
-                                                   tCasado,;
-                                                   lSimula,;
-                                                   cNif,;
-                                                   cNombre,;
-                                                   nEjeCon,;
-                                                   cEjeCta )   
-
-/*
-      else 
-
-         hAsiento          := {  "Fecha"                 => Fecha ,;
-                                 "Subcuenta"             => Subcuenta,;
-                                 "Contrapartida"         => Contrapartida,;
-                                 "ImporteDebe"           => nImporteDebe,;
-                                 "ImporteHaber"          => nImporteHaber,;
-                                 "Concepto"              => Concepto,;
-                                 "Serie"                 => cSerie,;
-                                 "Factura"               => Factura,;
-                                 "BaseImponible"         => BaseImponible,;
-                                 "IVA"                   => IVA,;
-                                 "RecargoEquivalencia"   => RecargoEquivalencia,;
-                                 "Documento"             => Documento,;
-                                 "Departamento"          => Departamento,;
-                                 "Clave"                 => Clave,;
-                                 "Rectificativa"         => lRectificativa,;
-                                 "Nif"                   => cNif,;
-                                 "Nombre"                => cNombre,;
-                                 "Render"                => cRenderA3 }
-
-         EnlaceA3():GetInstance():Add( hAsiento )
-
-      end if 
-*/
+      aAsiento          :=  MkAsientoContaplus( Asien,;
+                                                cDivisa,;
+                                                Fecha,;
+                                                Subcuenta,;
+                                                Contrapartida,;
+                                                nImporteDebe,;
+                                                Concepto,;
+                                                nImporteHaber,;
+                                                cSerie,;
+                                                Factura,;
+                                                BaseImponible,;
+                                                IVA,;
+                                                RecargoEquivalencia,;
+                                                Documento,;
+                                                Departamento,;
+                                                Clave,;
+                                                lRectificativa,;
+                                                nCasado,;
+                                                tCasado,;
+                                                lSimula,;
+                                                cNif,;
+                                                cNombre,;
+                                                nEjeCon,;
+                                                cEjeCta )   
 
    RECOVER USING oError
 
       msgStop( "Error al realizar apunte contable." + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
-
    ErrorBlock( oBlock )
 
 RETURN ( aAsiento )
