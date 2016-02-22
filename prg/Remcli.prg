@@ -222,10 +222,10 @@ METHOD New( cPath, oMenuItem, oWndParent )
    ::cPath                 := cPath
    ::oWndParent            := oWndParent
 
-   ::dExpedicionIni        := Ctod( "01/" + Str( Month( Date() ), 2 ) + "/" + Str( Year( Date() ), 4 ) )
-   ::dExpedicionFin        := Date()
+   ::dExpedicionIni        := boy()
+   ::dExpedicionFin        := eoy()
    ::dVencimientoIni       := ::dExpedicionIni
-   ::dVencimeintoFin       := Ctod( "01/12/" + Str( Year( Date() ), 4 ) )
+   ::dVencimeintoFin       := date()
 
    ::cNumDocKey            := "nNumRem"
    ::cSufDocKey            := "cSufRem"
@@ -2678,7 +2678,6 @@ METHOD InitSepaXML19( oDlg )
 
    local oBlock
    local oError
-   local dOldVto
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -2692,9 +2691,11 @@ METHOD InitSepaXML19( oDlg )
       ::dAnteriorVencimiento  := nil
 
       ::oCuaderno             := SepaXml():New( ::getFicheroExportacionXml() )
-      ::oCuaderno:MsgId       := id_File( 'REMESA' + str( ::oDbf:nNumRem ) )
 
       ::oCuaderno:setScheme( ::cEsquema )
+      ::oCuaderno:setOriginalMessageIdentification( id_File( 'REMESA' + str( ::oDbf:nNumRem ) ) )
+      ::oCuaderno:setPaymentInformationIdentification( ::oCtaRem:oDbf:cNifPre + ttos( datetime() ) )
+      ::oCuaderno:setRequestedCollectionDate( sDate( ::oDbf:dExport ) )                  // Fecha de cobro (Vencimiento)
 
       // Presentador--------------------------------------------------------------
 
@@ -2735,7 +2736,9 @@ METHOD InitSepaXML19( oDlg )
       end if
 
    RECOVER USING oError
-      msgStop( "Imposible exportar  filtros " + CRLF + ErrorMessage( oError ) )
+
+      msgStop( "Error al generar remesa de recibos." + CRLF + ErrorMessage( oError ) )
+
    END SEQUENCE
 
    ErrorBlock( oBlock )

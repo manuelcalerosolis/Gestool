@@ -2220,6 +2220,8 @@ METHOD AppendDet( oDlg ) CLASS TRemMovAlm
       do case
       case nDetalle == IDOK
 
+         msgAlert( "nDetalle == IDOK" )
+
          ::oDetMovimientos:oDbfVir:Insert()
 
          if( ::oBrwDet != nil, ::oBrwDet:Refresh(), )
@@ -2234,6 +2236,8 @@ METHOD AppendDet( oDlg ) CLASS TRemMovAlm
 
       case nDetalle == IDFOUND
 
+         msgAlert( "nDetalle == IDFOUND" )
+
          ::oDetMovimientos:oDbfVir:Cancel()
 
          if( ::oBrwDet != nil, ::oBrwDet:Refresh(), )
@@ -2246,9 +2250,9 @@ METHOD AppendDet( oDlg ) CLASS TRemMovAlm
 
       otherwise
 
-         ::oDetMovimientos:oDbfVir:Cancel()
+         msgAlert( "otherwise" )
 
-         if( ::oBrwDet != nil, ::oBrwDet:Refresh(), )
+         ::oDetMovimientos:oDbfVir:Cancel()
 
          exit
 
@@ -3996,7 +4000,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
 
    EndEdtDetMenu()
 
-RETURN ( oDlg:nResult == IDOK )
+RETURN ( oDlg:nResult )
 
 //--------------------------------------------------------------------------//
 
@@ -4039,7 +4043,6 @@ METHOD ValidResource( nMode, oDlg, oBtn ) CLASS TDetMovimientos
    local n
    local i
    local cLote
-   local lProp       := .f.
    local lFound
    local cRefMov
    local nCajMov
@@ -4059,6 +4062,7 @@ METHOD ValidResource( nMode, oDlg, oBtn ) CLASS TDetMovimientos
    local lNowSer
    local lNumSer
    local nPrecioCosto
+   local lArticuloPropiedades    := .f.
 
    oBtn:SetFocus()
 
@@ -4242,7 +4246,7 @@ METHOD ValidResource( nMode, oDlg, oBtn ) CLASS TDetMovimientos
 
       next
 
-      lProp       := .t.
+      lArticuloPropiedades       := .t.
 
    end if
 
@@ -4253,7 +4257,7 @@ METHOD ValidResource( nMode, oDlg, oBtn ) CLASS TDetMovimientos
 
    CursorWE()
 
-   if lProp
+   if lArticuloPropiedades
       oDlg:end( IDCANCEL )
    else
       if lFound
