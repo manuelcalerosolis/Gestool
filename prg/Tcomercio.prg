@@ -2078,7 +2078,7 @@ METHOD InsertCategoriesPrestashop() CLASS TComercio
       */
 
       oImagen                       := SImagen()
-      oImagen:cNombreImagen         := ::oFam:cImgBtn
+      oImagen:cNombreImagen         := alltrim( ::oFam:cImgBtn )
       oImagen:nTipoImagen           := tipoCategoria
       oImagen:cPrefijoNombre        := alltrim( Str( nCodigoWeb ) )
 
@@ -4491,7 +4491,7 @@ METHOD InsertImageProductsPrestashop() CLASS TComercio
          */
 
          oImagen                       := SImagen()
-         oImagen:cNombreImagen         := ::oArt:cImagen
+         oImagen:cNombreImagen         := alltrim( ::oArt:cImagen )
          oImagen:nTipoImagen           := tipoProducto
          oImagen:cCarpeta              := alltrim( Str( nCodigoImagen ) )
          oImagen:cPrefijoNombre        := alltrim( Str( nCodigoImagen ) )
@@ -4557,7 +4557,7 @@ METHOD InsertImageProductsPrestashop() CLASS TComercio
          */
 
          oImagen                       := SImagen()
-         oImagen:cNombreImagen         := ::oArtImg:cImgArt
+         oImagen:cNombreImagen         := alltrim( ::oArtImg:cImgArt )
          oImagen:nTipoImagen           := tipoProducto
          oImagen:cCarpeta              := alltrim( Str( nCodigoImagen ) )
          oImagen:cPrefijoNombre        := alltrim( Str( nCodigoImagen ) )
@@ -4595,8 +4595,8 @@ METHOD InsertImageProductImageShop( nCodigoImagen )
    if ::lProductIdColumnImageShop
       cCommand    += "'" + alltrim( str( ::oArt:cCodWeb ) ) + "', " 
    end if
-   cCommand       += "'" + alltrim( str( nCodigoImagen ) ) + "', " 
    cCommand       += "'1', " 
+   cCommand       += "'" + alltrim( str( nCodigoImagen ) ) + "', " 
    cCommand       += "'1' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
@@ -4692,7 +4692,6 @@ METHOD buildImagenes() CLASS TComercio
       // Metemos primero la imagen que no lleva tipo------------------------------
 
       do case
-
          case oImage:nTipoImagen == tipoProducto
 
             cNewImg                       := cPatTmp() + oImage:cPrefijoNombre + ".jpg"
@@ -4727,7 +4726,6 @@ METHOD buildImagenes() CLASS TComercio
       for each oTipoImage in ::aTipoImagesPrestashop
 
          do case
-
             case oImage:nTipoImagen == tipoProducto .and. oTipoImage:lProducts
 
                cNewImg                       := cPatTmp() + oImage:cPrefijoNombre + "-" + oTipoImage:cNombreTipo + ".jpg"
@@ -5411,7 +5409,7 @@ METHOD AppTipoArticuloPrestashop( cCodTip, IdParent ) CLASS TComercio
             */
 
             oImagen                       := SImagen()
-            oImagen:cNombreImagen         := ::oTipArt:cImgTip
+            oImagen:cNombreImagen         := alltrim( ::oTipArt:cImgTip )
             oImagen:nTipoImagen           := tipoCategoria
             oImagen:cPrefijoNombre        := alltrim( Str( nCodigoWeb ) )
 
@@ -6421,6 +6419,7 @@ METHOD buildImagesArticuloPrestashop( id ) CLASS TComercio
 
    local aImgToken      := {}
    local cImgToken      := ""
+   local cImagen
    local aImages        := {}
    local nOrdAntImg
    local nOrdAntDiv     := ::oArtDiv:OrdSetFocus( "cCodigo" )
@@ -6461,7 +6460,7 @@ METHOD buildImagesArticuloPrestashop( id ) CLASS TComercio
    Pasamos las imágenes de la tabla de artículos-------------------------------
    */
 
-   if Len( aImages ) == 0
+   if len( aImages ) == 0
 
       nOrdAntImg     := ::oArtImg:OrdSetFocus( "cCodArt" )
 
@@ -6469,11 +6468,10 @@ METHOD buildImagesArticuloPrestashop( id ) CLASS TComercio
 
          while ::oArtImg:cCodArt == id .and. !::oArtImg:Eof()
 
-            if aScan( aImages, {|a| hGet( a, "name" ) == ::oArtImg:cImgArt } ) == 0
+            cImagen  := alltrim(::oArtImg:cImgArt )
 
-               aAdd( aImages, {  "name"                   => ::oArtImg:cImgArt,;
-                                 "lDefault"               => ::oArtImg:lDefImg } )
-
+            if ascan( aImages, {|a| hGet( a, "name" ) == cImagen } ) == 0
+               aadd( aImages, { "name" => cImagen, "lDefault" => ::oArtImg:lDefImg } )
             end if   
 
          ::oArtImg:Skip()
@@ -7492,7 +7490,7 @@ METHOD buildInsertImageProductsPrestashop( hArticuloData, cCodWeb ) CLASS TComer
          */
 
          oImagen                       := SImagen()
-         oImagen:cNombreImagen         := ::oArtImg:cImgArt
+         oImagen:cNombreImagen         := alltrim( ::oArtImg:cImgArt )
          oImagen:nTipoImagen           := tipoProducto
          oImagen:cCarpeta              := alltrim( Str( nCodigoImagen ) )
          oImagen:cPrefijoNombre        := alltrim( Str( nCodigoImagen ) )
@@ -9176,7 +9174,7 @@ METHOD ftpCreateDirectoryRecursive( cCarpeta ) CLASS TComercio
    local n
 
    for n := 1 to len( cCarpeta )
-      ::ftpCreateDirectory( substr(cCarpeta,n,1) )
+      ::ftpCreateDirectory( substr( cCarpeta, n, 1 ) )
    next 
 
 Return ( .t. )
@@ -9197,9 +9195,6 @@ METHOD ftpCreateFile( cFile, oMeter ) CLASS TComercio
       msgStop( "No existe el fichero " + alltrim( cFile ) )
       Return ( .f. )
    end if 
-
-   msgAlert( cFile, "cFile" )
-   msgAlert( cNoPath( cFile ), "cNoPath" )
 
    oFile             := TFtpFile():New( cNoPath( cFile ), ::oFtp )
    oFile:OpenWrite()
@@ -9259,8 +9254,6 @@ METHOD ftpCreateConexion() CLASS TComercio
       ::oFTP:bUsePasv      := ::lPassiveFtp
 
       lOpen                := ::oFTP:Open( cUrl )
-
-      msgAlert( "lOpen" )
 
       if !lOpen
          cStr              := "Could not connect to FTP server " + ::oURL:cServer

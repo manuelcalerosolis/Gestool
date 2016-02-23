@@ -1667,9 +1667,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
    CursorWait()
 
-   msgAlert( ( D():Articulos( nView ) )->( ordsetfocus() ), "focus antes" )
-   msgAlert( ( D():Articulos( nView ) )->( recno() ), "recno antes" )
-
    if BeginTrans( aTmp, nMode )
       Return .f.
    end if
@@ -4800,9 +4797,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
    END SEQUENCE
    ErrorBlock( oBlock )
-
-   msgAlert( ( D():Articulos( nView ) )->( ordsetfocus() ), "focus despues" )
-   msgAlert( ( D():Articulos( nView ) )->( recno() ), "recno despues" )
 
 Return ( oDlg:nResult == IDOK )
 
