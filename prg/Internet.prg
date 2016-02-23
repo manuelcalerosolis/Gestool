@@ -1098,7 +1098,7 @@ METHOD FtpConexion() CLASS TSndRecInf
 
          ::SetText( '> Conectando con el sitio ' + Rtrim( ftpSit ) + '...', 1 )
 
-         cUrl           := "ftp://" + nbrUsr + ":" + accUsr + "@" + ftpSit
+         cUrl                 := "ftp://" + nbrUsr + ":" + accUsr + "@" + ftpSit
 
          ::oInt               := TUrl():New( cUrl )
          ::oFTP               := TIPClientFTP():New( ::oInt, .t. )
@@ -1109,7 +1109,7 @@ METHOD FtpConexion() CLASS TSndRecInf
 
             ::SetText( "Imposible conectar con el sitio ftp " + Alltrim( ftpSit ), 1 )
 
-            ::lFtpValido   := .f.
+            ::lFtpValido      := .f.
 
             ++nRetry
             ::SetText( "Reintento " + Alltrim( Str( nRetry ) ) + " de 3, en 10 segundos", 1 )

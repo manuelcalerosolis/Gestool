@@ -6007,6 +6007,8 @@ Return ( by( nRow ) )
 
 Function Test() 
 
+   // TComercio():New():ftpTestConexion()
+
 /*
    local n  
    local oDebtor

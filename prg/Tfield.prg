@@ -33,7 +33,7 @@ CLASS TField
 
     METHOD Activate()
 
-    METHOD Destroy()    INLINE Self  := nil, .t.
+    METHOD Destroy()    INLINE Self  := nil, .t. 
 
     METHOD Blank()      INLINE ::Val := ::LowVal
     METHOD Load()       INLINE ::Val := ( ::oDbf:nArea )->( eval( ::bSetGet ) )

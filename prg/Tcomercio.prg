@@ -440,6 +440,11 @@ CLASS TComercio
    METHOD cDirectoryProduct()                INLINE ( ::cDirImagen + "/p" )
    METHOD cDirectoryCategories()             INLINE ( ::cDirImagen + "/c" )
 
+   METHOD ftpTestConexion()                  INLINE ( if (  ::ftpCreateConexion(),;
+                                                            msgInfo( "Conectado a servidor FTP correctamente." ),;
+                                                            msgStop( "Error al conectar con el servidor FTP" ) ),;
+                                                            ::ftpEndConexion() )
+
    METHOD ftpCreateConexion()
    METHOD ftpEndConexion()
    METHOD ftpCreateDirectory( cCarpeta )
@@ -8486,20 +8491,20 @@ METHOD buildExportarPrestashop() Class TComercio
 
    ::oBtnCancel:Disable()
 
-   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
-   BEGIN SEQUENCE
+   // oBlock            := ErrorBlock( { | oError | Break( oError ) } )
+   // BEGIN SEQUENCE
 
       ::treeSetText( 'Comenzamos la exportación', 1  )
 
       ::buildProductPrestashop( nil, .f. )
 
-   RECOVER USING oError
+   // RECOVER USING oError
 
-      msgStop( ErrorMessage( oError ), "Error al exportar a Prestashop." )
+   //    msgStop( ErrorMessage( oError ), "Error al exportar a Prestashop." )
 
-   END SEQUENCE
+   // END SEQUENCE
 
-   ErrorBlock( oBlock )
+   // ErrorBlock( oBlock )
 
    ::oDlg:bValid     := {|| .t. }
 
@@ -9118,17 +9123,20 @@ Return .t.
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-#ifdef __XHARBOUR__
+#ifndef __XHARBOUR__
 
 METHOD ftpCreateConexion() CLASS TComercio
 
-   local lCreate     := .t.
+   local lCreate     := .f.
 
    if !empty( ::cHostFtp )   
 
       ::oInt         := TInternet():New()
       ::oFtp         := TFtp():New( ::cHostFtp, ::oInt, ::cUserFtp, ::cPasswdFtp, ::lPassiveFtp )
-      lCreate        := empty( ::emptyoFtp ) .or. empty( ::oFtp:hFtp )
+
+      if !empty( ::oFtp )
+         lCreate     := ( ::oFtp:hFtp != 0 )
+      end if 
 
    end if 
 
@@ -9138,11 +9146,11 @@ Return ( lCreate )
 
 METHOD ftpEndConexion() CLASS TComercio
 
-   if !empty(::oInt)
+   if !empty( ::oInt )
       ::oInt:end()
    end if
 
-   if !empty(::oFtp)
+   if !empty( ::oFtp )
       ::oFtp:end()
    end if 
 
@@ -9180,35 +9188,33 @@ METHOD ftpCreateFile( cFile, oMeter ) CLASS TComercio
    local oFile
    local nBytes
    local hSource
-   local lPutFile    := .t.
+   local lPutFile    := .f.
    local cBuffer     := Space( 20000 )
    local nTotalBytes := 0
    local nWriteBytes := 0
 
+   if !file( cFile )
+      msgStop( "No existe el fichero " + alltrim( cFile ) )
+      Return ( .f. )
+   end if 
+
+   msgAlert( cFile, "cFile" )
+   msgAlert( cNoPath( cFile ), "cNoPath" )
+
    oFile             := TFtpFile():New( cNoPath( cFile ), ::oFtp )
    oFile:OpenWrite()
 
-   hSource           := fOpen( cFileBmpName( cFile ) ) 
+   hSource           := fOpen( cFile ) 
+   if ferror() == 0
 
-   if fError() == 0
+      fseek( hSource, 0, 0 )
 
-      fSeek( hSource, 0, 0 )
-
-      while ( nBytes := fRead( hSource, @cBuffer, 20000 ) ) > 0 
-
+      while ( nBytes := fread( hSource, @cBuffer, 20000 ) ) > 0 
          nWriteBytes += nBytes
-
-         oFile:Write( SubStr( cBuffer, 1, nBytes ) )
-
-         if !Empty( oMeter)
-            oMeter:Set( nWriteBytes )
-         end if
-
+         oFile:Write( substr( cBuffer, 1, nBytes ) )
       end while
 
-   else
-
-      lPutFile       := .f.
+      lPutFile       := .t.
 
    end if
 
@@ -9219,6 +9225,7 @@ METHOD ftpCreateFile( cFile, oMeter ) CLASS TComercio
    SysRefresh()
 
 Return ( lPutFile )
+
 //---------------------------------------------------------------------------//
 
 METHOD ftpReturnDirectory( cCarpeta ) CLASS TComercio
@@ -9246,11 +9253,14 @@ METHOD ftpCreateConexion() CLASS TComercio
       cUrl                 := "ftp://" + ::cUserFtp + ":" + ::cPasswdFtp + "@" + ::cHostFtp
 
       ::oUrl               := TUrl():New( cUrl )
+
       ::oFTP               := TIPClientFTP():New( ::oUrl, .t. )
       ::oFTP:nConnTimeout  := 20000
       ::oFTP:bUsePasv      := ::lPassiveFtp
 
       lOpen                := ::oFTP:Open( cUrl )
+
+      msgAlert( "lOpen" )
 
       if !lOpen
          cStr              := "Could not connect to FTP server " + ::oURL:cServer
@@ -9261,7 +9271,6 @@ METHOD ftpCreateConexion() CLASS TComercio
          else
             cStr           += hb_eol() + "Error in connection:" + " " + hb_inetErrorDesc( ::oFTP:SocketCon )
          endif
-         msgStop( cStr, "Error" )
       end if
 
    end if 
@@ -9272,7 +9281,7 @@ Return ( lOpen )
 
 METHOD ftpEndConexion() CLASS TComercio
 
-   if !empty(::oFTP)
+   if !empty( ::oFTP )
       ::oFTP:Close()
    end if 
 
@@ -9301,7 +9310,7 @@ METHOD ftpCreateDirectoryRecursive( cCarpeta ) CLASS TComercio
    local n
 
    for n := 1 to len( cCarpeta )
-      ::ftpCreateDirectory( substr(cCarpeta,n,1) )
+      ::ftpCreateDirectory( substr( cCarpeta , n, 1 ) )
    next 
 
 Return ( .t. )
@@ -9334,8 +9343,9 @@ METHOD ftpReturnDirectory( cCarpeta ) CLASS TComercio
       DirChange( ".." )   
    end if
 
-
 Return ( .t. )
+
+#endif
 
 //---------------------------------------------------------------------------//
 
@@ -10257,15 +10267,6 @@ METHOD UploadState( id_order_state, dFecSit, tFecSit, cCodWeb ) CLASS TComercio
 Return ( id  )
 
 //---------------------------------------------------------------------------//
-
-
-
-//---------------------------------------------------------------------------//
-
-
-
-#endif
-
 //---------------------------------------------------------------------------//
 //ESTRUCTURAS----------------------------------------------------------------//
 //---------------------------------------------------------------------------//

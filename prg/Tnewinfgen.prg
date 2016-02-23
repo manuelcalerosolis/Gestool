@@ -3686,8 +3686,8 @@ METHOD lGrupoRemesas( lInitGroup, lImp ) CLASS TNewInfGen
    
    ::oGrupoRemesas:Cargo:cPicDesde   := "999999999" 
    ::oGrupoRemesas:Cargo:cPicHasta   := "999999999" 
-   ::oGrupoRemesas:Cargo:HelpDesde   := {|| msgStop( "No hay ayudas para la busqueda de remesas" ), .t. }
-   ::oGrupoRemesas:Cargo:HelpHasta   := {|| msgStop( "No hay ayudas para la busqueda de remesas" ), .t. }
+   ::oGrupoRemesas:Cargo:HelpDesde   := {|| nil }
+   ::oGrupoRemesas:Cargo:HelpHasta   := {|| nil }
    ::oGrupoRemesas:Cargo:ValidDesde  := {|oGet| lValidRemesaCliente( oGet, ::oDbfRemCli ) }
    ::oGrupoRemesas:Cargo:ValidHasta  := {|oGet| lValidRemesaCliente( oGet, ::oDbfRemCli ) }
    ::oGrupoRemesas:Cargo:lImprimir   := lImp

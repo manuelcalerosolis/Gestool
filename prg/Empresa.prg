@@ -2515,6 +2515,14 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             ID       250;
             OF       fldComunicaciones
 
+      REDEFINE BTNBMP ;
+            ID       255 ;
+            OF       fldComunicaciones ;
+            RESOURCE "Data_Connection_16" ;
+            NOBORDER ;
+            TOOLTIP  "" ;
+            ACTION   ( TComercio():New():ftpTestConexion() )
+
       REDEFINE GET aTmp[ _NPRTFTP ] ;
             ID       260;
             OF       fldComunicaciones

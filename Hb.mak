@@ -1348,8 +1348,6 @@ $(HBLIB)\png.lib                 +
 $(HBLIB)\hbcurl.lib              +
 $(HBLIB)\hbusrrdd.lib            +
 $(HBLIB)\libcurl.lib             +
-$(HBLIB)\mxml.lib                +
-$(HBLIB)\hbmxml.lib              +
 $(IMG2PDFLIB)\Image2pdf.lib      +
 $(HBLIB)\b32\rddads.lib          +
 $(HBLIB)\ace32.lib               +
