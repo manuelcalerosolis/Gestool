@@ -62,6 +62,8 @@ CLASS TEdiExporarFacturas
 
    DATA sTotalFactura
 
+   DATA hAcumulaIva
+
    METHOD New( lNoExportados, oTree, nView )
    METHOD Run()
 
@@ -106,6 +108,8 @@ CLASS TEdiExporarFacturas
 
    METHOD setFacturaClienteGeneradaEDI()
 
+   METHOD acumulaIva( nIva, nImporte )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -115,6 +119,8 @@ METHOD New( lNoExportados, oTree, nView )
    ::lNoExportados            := lNoExportados
    ::oTree                    := oTree
    ::nView                    := nView
+
+   ::hAcumulaIva              := {=>}
 
 Return ( self )
 
@@ -420,10 +426,15 @@ Return ( self )
 
 METHOD writeImpuestosLinea()
 
+   local nImporte
    local cLine    := "ImpuestosLinea" + __separator__                                                 
+
    cLine          += "IVA" + __separator__                                                            // Identifica el tipo de impuesto. En la tabla códigos de impuesto se describen los valores posibles de este campo
    cLine          += ::getNumero( ( D():FacturasClientesLineas( ::nView ) )->nIva ) + __separator__   // Indica el % o el importe unitario del impuesto a aplicar
-   cLine          += ::getNumero( nTotNFacCli() * nIvaUFacCli() )                                     // Importe del impuesto
+   nImporte       := nTotNFacCli() * nIvaUFacCli()                                     // Importe del impuesto
+   cLine          += ::getNumero( nImporte )
+
+   ::acumulaIva( ( D():FacturasClientesLineas( ::nView ) )->nIva, nImporte )
 
    ::oFileEDI:add( cLine )
 
@@ -443,7 +454,7 @@ METHOD writeResumenPrimerImpuesto()
    cLine          += "IVA" + __separator__
    cLine          += ::getNumero( ::sTotalFactura:nPorcentajePrimerIva() ) + __separator__
    cLine          += ::getNumero( ::sTotalFactura:nBasePrimerIva() ) + __separator__
-   cLine          += ::getNumero( ::sTotalFactura:nTotalPrimerIva() ) 
+   cLine          += ::getNumero( hGet( ::hAcumulaIva, AllTrim( Str( ::sTotalFactura:nPorcentajePrimerIva() ) ) ) )  //::getNumero( ::sTotalFactura:nTotalPrimerIva() ) 
 
    ::oFileEDI:add( cLine )
 
@@ -463,9 +474,9 @@ METHOD writeResumenSegundoImpuesto()
    cLine          += "IVA" + __separator__
    cLine          += ::getNumero( ::sTotalFactura:nPorcentajeSegundoIva() ) + __separator__
    cLine          += ::getNumero( ::sTotalFactura:nBaseSegundoIva() ) + __separator__
-   cLine          += ::getNumero( ::sTotalFactura:nTotalSegundoIva() ) 
+   cLine          += ::getNumero( hGet( ::hAcumulaIva, AllTrim( Str( ::sTotalFactura:nPorcentajeSegundoIva() ) ) ) ) //::getNumero( ::sTotalFactura:nTotalSegundoIva() )
 
-   ::oFileEDI:add( cLine )
+   ::oFileEDI:add( cLine ) 
 
 Return ( self )
 
@@ -483,7 +494,7 @@ METHOD writeResumenTercerImpuesto()
    cLine          += "IVA" + __separator__
    cLine          += ::getNumero( ::sTotalFactura:nPorcentajeTercerIva() ) + __separator__
    cLine          += ::getNumero( ::sTotalFactura:nBaseTercerIva() ) + __separator__
-   cLine          += ::getNumero( ::sTotalFactura:nTotalTercerIva() ) 
+   cLine          += ::getNumero( hGet( ::hAcumulaIva, AllTrim( Str( ::sTotalFactura:nPorcentajeTercerIva() ) ) ) ) //::getNumero( ::sTotalFactura:nTotalTercerIva() ) 
 
    ::oFileEDI:add( cLine )
 
@@ -552,5 +563,20 @@ METHOD setFacturaClienteGeneradaEDI()
    end if 
 
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD acumulaIva( nIva, nImporte )
+
+   local nValor   := 0
+   
+   if hHaskey( ::hAcumulaIva, AllTrim( str( nIva ) ) )
+      nValor      := hGet( ::hAcumulaIva, AllTrim( str( nIva ) ) )
+      hSet( ::hAcumulaIva, AllTrim( str( nIva ) ), nValor + nImporte )      
+   else
+      hSet( ::hAcumulaIva, AllTrim( str( nIva ) ), nImporte )
+   end if
+
+Return .t.
 
 //---------------------------------------------------------------------------//
