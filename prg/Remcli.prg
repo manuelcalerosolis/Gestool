@@ -451,6 +451,13 @@ METHOD Activate()
          HOTKEY   "L" ;
          LEVEL    ACC_IMPR
 
+      DEFINE BTNSHELL RESOURCE "Document_Chart_" OF ::oWndBrw ;
+         NOBORDER ;
+         ACTION   ( TFastVentasRecibos():New():Play() );
+         TOOLTIP  "(R)eporting";
+         HOTKEY   "R";
+         LEVEL    ACC_IMPR
+
       DEFINE BTNSHELL RESOURCE "BmpExptar" OF ::oWndBrw ;
          NOBORDER ;
          ACTION   ( ::SaveModelo() ) ;
@@ -2912,4 +2919,21 @@ RETURN ( cDirectory )
 
 //---------------------------------------------------------------------------//
 
+FUNCTION lValidRemesaCliente( oGetRemesaCliente, oDbfRemesaCliente )
 
+   local lValid   := .f.
+   local xValor   := oGetRemesaCliente:varGet()
+
+   if empty( xValor )
+      return .t.
+   end if
+
+   if oDbfRemesaCliente:SeekInOrd( xValor, "nNumRem" )
+      lValid      := .t.
+   else
+      msgStop( "Remesa no encontrada" )
+   end if
+
+RETURN lValid
+
+//---------------------------------------------------------------------------//

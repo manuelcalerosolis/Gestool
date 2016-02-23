@@ -687,16 +687,12 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
       TOOLTIP  "Cobrar" ;
       LEVEL    ACC_EDIT
 
-#ifndef __TACTIL__
-
-   DEFINE BTNSHELL RESOURCE "PREV1" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "Document_Chart_" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( TFastRecibosClientes():New():Play() );
+      ACTION   ( TFastVentasRecibos():New():Play() );
       TOOLTIP  "(R)eporting";
       HOTKEY   "R";
       LEVEL    ACC_IMPR
-
-#endif
 
    DEFINE BTNSHELL RESOURCE "BMPCONTA" OF oWndBrw ;
       NOBORDER ;

@@ -2703,8 +2703,8 @@ CLASS EnlaceA3
    METHOD NumeroVencimiento()             INLINE ( ::appendBuffer( str( ::hAsiento[ "NumeroVencimiento" ], 2 ) ) )
    METHOD FormaPago()                     INLINE ( ::appendBuffer( ::hAsiento[ "FormaPago" ] ) )
 
-   METHOD Referencia()                    INLINE ( ::appendBuffer( substr( ::hAsiento[ "Concepto" ], 1, 10 ) ) )
-   METHOD ReferenciaDocumento()           INLINE ( ::appendBuffer( substr( ::hAsiento[ "ReferenciaDocumento" ], 1, 10 ) ) )
+   METHOD Referencia()                    INLINE ( ::appendBuffer( padr( ::hAsiento[ "Concepto" ], 10 ) ) )
+   METHOD ReferenciaDocumento()           INLINE ( ::appendBuffer( padr( ::hAsiento[ "ReferenciaDocumento" ], 10 ) ) )
    
    METHOD LineaApunte()                   INLINE ( ::appendBuffer( if( hb_enumindex() == 1, 'I', if( hb_enumindex() > 1 .and. hb_enumindex() < len( ::aAsiento ), 'M', 'U' ) ) )    )
    

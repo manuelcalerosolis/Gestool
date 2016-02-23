@@ -19,7 +19,7 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
 
    DATA  oStock
 
-   METHOD lResource( cFld )
+   METHOD lResource()
 
    METHOD Create()
    METHOD lGenerate()
@@ -62,7 +62,7 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD lResource( cFld ) CLASS TFastVentasClientes
+METHOD lResource() CLASS TFastVentasClientes
 
    ::lNewInforme     := .t.
    ::lDefCondiciones := .f.
@@ -2086,31 +2086,69 @@ METHOD preCliInfo()
       msgStop( ::oPreCliT:OrdSetFocus(), "ordsetfocus" )
    end if
 
-return nil 
+RETURN nil 
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-CLASS TFastRecibosClientes FROM TFastVentasClientes
+CLASS TFastVentasRecibos FROM TFastVentasClientes
 
    METHOD BuildTree( oTree, lLoadFile ) 
+
+   METHOD lResource() 
+
+   METHOD lResource()
+   
+   METHOD Create( uParam )
 
 END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD BuildTree( oTree, lLoadFile ) CLASS TFastRecibosClientes
+METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasRecibos
 
    local aReports
 
    DEFAULT oTree     := ::oTreeReporting
    DEFAULT lLoadFile := .t.
 
-   aReports := {  { "Title" => "Recibos",                      "Image" =>21, "Type" => "Recibos",                       "Directory" => "Clientes\Ventas\Recibos",                      "File" => "Recibos de clientes.fr3" },;
-                  { "Title" => "Recibos fecha de cobro",       "Image" =>21, "Type" => "Recibos cobro",                 "Directory" => "Clientes\Ventas\Recibos fecha de cobro",       "File" => "Recibos de clientes fecha de cobro.fr3" },;
-               }
+   aReports          := {  { "Title" => "Recibos",                "Image" =>21, "Type" => "Recibos",        "Directory" => "Clientes\Ventas\Recibos",                "File" => "Recibos de clientes.fr3" },;
+                           { "Title" => "Recibos fecha de cobro", "Image" =>21, "Type" => "Recibos cobro",  "Directory" => "Clientes\Ventas\Recibos fecha de cobro", "File" => "Recibos de clientes fecha de cobro.fr3" } }
 
-   ::BuildNode( aReports, oTree, lLoadFile )
+   ::BuildNode( aReports, oTree, lLoadFile ) 
 
 RETURN ( Self )
 
-//----------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+METHOD lResource() CLASS TFastVentasRecibos
+
+   ::Super:lResource()
+
+   if !::lGrupoRemesas( .t. )
+      return .t.
+   end if 
+
+   if !::lGrupoSufijo( .t. )
+      return .t.
+   end if 
+
+RETURN .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD Create( uParam ) CLASS TFastVentasRecibos
+
+   ::Super:Create( uParam )
+
+   ::AddField( "nNumRem",  "N",  9, 0, {|| "999999999" },   "Número de la remesa" )
+   ::AddField( "cSufRem",  "C",  2, 0, {|| "@!" },          "Sufijo de la remesa" )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+

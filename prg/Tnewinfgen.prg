@@ -112,6 +112,7 @@ CLASS TNewInfGen FROM TInfGen
    DATA oGrupoSerie
    DATA oGrupoNumero
    DATA oGrupoSufijo
+   DATA oGrupoRemesas
 
    DATA oTipoExpediente
    DATA oGrupoTipoExpediente
@@ -224,6 +225,8 @@ CLASS TNewInfGen FROM TInfGen
    METHOD lGrupoNumero( lInitGroup, lImp )
 
    METHOD lGrupoSufijo( lInitGroup, lImp )
+
+   METHOD lGrupoRemesas( lInitGroup, lImp )
 
    METHOD oDefEstados( nIdEstadoUno, nIdEstadoDos )
 
@@ -834,7 +837,6 @@ METHOD lGrupoArticulo( lInitGroup, lImp ) CLASS TNewInfGen
 RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
-
 
 METHOD lGrupoMateriaPrima( lInitGroup, lImp ) CLASS TNewInfGen
 
@@ -2470,7 +2472,6 @@ RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 
-
 METHOD lGrupoTipoArticulo( lInitGroup, lImp ) CLASS TNewInfGen
 
    local lOpen          := .t.
@@ -3088,7 +3089,6 @@ METHOD lGrupoFacturasCompras( lInitGroup, lImp ) CLASS TNewInfGen
    ::oFacPrvT:GoTop()
    cDesde               := ::oFacPrvT:cSerFac + Str( ::oFacPrvT:nNumFac ) + ::oFacPrvT:cSufFac
 
-
    ::oGrupoFacturasCompras                  := TRGroup():New( {|| ::oDbf:cFactura }, {|| "Factura : " + AllTrim( ::oDbf:cFactura ) }, {|| "Total factura..." }, {|| 3 }, ::lSalto )
 
    ::oGrupoFacturasCompras:Cargo            := TItemGroup()
@@ -3157,7 +3157,7 @@ METHOD lGrupoFacturas( lInitGroup, lImp ) CLASS TNewInfGen
    BEGIN SEQUENCE
 
    if ::oFacCliT == nil .or. !::oFacCliT:Used()
-      ::oFacCliT := TDataCenter():oFacCliT()
+      ::oFacCliT        := TDataCenter():oFacCliT()
       ::oFacCliT:OrdSetFocus( "nNumFac" )
    end if
 
@@ -3657,6 +3657,84 @@ RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 
+METHOD lGrupoRemesas( lInitGroup, lImp ) CLASS TNewInfGen
+
+   local lOpen          := .t.
+   local oError
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   DEFAULT lImp         := .t.
+
+   BEGIN SEQUENCE
+
+   if ::oDbfRemCli == nil .or. !::oDbfRemCli:Used()
+      DATABASE NEW ::oDbfRemCli PATH ( cPatArt() ) FILE "RemCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "RemCliT.Cdx"
+   end if
+
+   ::oGrupoRemesas                   := TRGroup():New( {|| ::oDbf:cCodTmp }, {|| "Remesas : " + alltrim( str( ::oDbf:nNumRem ) ) + " - " + alltrim( ::oDbf:cSufRem ) }, {|| "Total remesa..." }, {|| 3  }, ::lSalto )
+
+   ::oGrupoRemesas:Cargo             := TItemGroup()
+   ::oGrupoRemesas:Cargo:Nombre      := getTraslation( "Remesas" )
+   ::oGrupoRemesas:Cargo:Expresion   := "nNumRem"
+   ::oGrupoRemesas:Cargo:Todos       := .t.
+
+   ::oDbfRemCli:GoTop()
+   ::oGrupoRemesas:Cargo:Desde       := ::oDbfRemCli:nNumRem
+
+   ::oDbfRemCli:GoBottom()
+   ::oGrupoRemesas:Cargo:Hasta       := ::oDbfRemCli:nNumRem
+   
+   ::oGrupoRemesas:Cargo:cPicDesde   := "999999999" 
+   ::oGrupoRemesas:Cargo:cPicHasta   := "999999999" 
+   ::oGrupoRemesas:Cargo:HelpDesde   := {|| msgStop( "No hay ayudas para la busqueda de remesas" ), .t. }
+   ::oGrupoRemesas:Cargo:HelpHasta   := {|| msgStop( "No hay ayudas para la busqueda de remesas" ), .t. }
+   ::oGrupoRemesas:Cargo:ValidDesde  := {|oGet| lValidRemesaCliente( oGet, ::oDbfRemCli ) }
+   ::oGrupoRemesas:Cargo:ValidHasta  := {|oGet| lValidRemesaCliente( oGet, ::oDbfRemCli ) }
+   ::oGrupoRemesas:Cargo:lImprimir   := lImp
+   ::oGrupoRemesas:Cargo:cBitmap     := "Briefcase_document_16"
+
+   if !empty( ::oImageList )
+      ::oImageList:AddMasked( TBitmap():Define( "Briefcase_document_16" ), Rgb( 255, 0, 255 ) )
+   end if
+
+   if lInitGroup != nil
+
+      aAdd( ::aSelectionGroup, ::oGrupoRemesas )
+
+      if !empty( ::oImageGroup )
+         ::oImageGroup:AddMasked( TBitmap():Define( "Briefcase_document_16" ), Rgb( 255, 0, 255 ) )
+         ::oGrupoRemesas:Cargo:Imagen    := len( ::oImageGroup:aBitmaps ) - 1
+      end if
+
+      if lInitGroup
+         if !empty( ::oColNombre )
+            ::oColNombre:AddResource( ::oGrupoRemesas:Cargo:cBitmap )
+         end if
+         aAdd( ::aInitGroup, ::oGrupoRemesas )
+      end if
+
+   end if
+
+   aAdd( ::aSelectionRango, ::oGrupoRemesas )
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), 'Imposible abrir todas las bases de datos' )
+
+      if !empty( ::oDbfRemCli )
+         ::oDbfRemCli:End()
+      end if
+
+      lOpen          := .f.
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+//---------------------------------------------------------------------------//
+
 METHOD oDefEstados( nIdEstadoUno, nIdEstadoDos, oDlg ) CLASS TNewInfGen
 
    DEFAULT nIdEstadoUno := 218
@@ -3841,15 +3919,9 @@ METHOD ChangeValor() CLASS TNewInfGen
    oItemSelect       := ::oTreeRango:GetSelected()
 
    if oItemSelect != nil .and. oItemSelect:ClassName() == "TTVITEM"
-
-      // msgAlert( oItemSelect:Cargo:Cargo:Nombre, "Nombre" )
-      // msgAlert( ::oDesde:VarGet(), "ChangeValor cDesde" )
-      // msgAlert( ::oHasta:VarGet(), "ChangeValor cHasta" )
-
       oItemSelect:Cargo:Cargo:Todos  := ::lTodos
       oItemSelect:Cargo:Cargo:Desde  := ::oDesde:VarGet()
       oItemSelect:Cargo:Cargo:Hasta  := ::oHasta:VarGet()
-
    end if
 
 Return ( self )

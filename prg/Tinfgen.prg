@@ -142,6 +142,7 @@ CLASS TInfGen
    DATA oDbfTrn
    DATA oDbfUsr
    DATA oDbfCaj
+   DATA oDbfRemCli
    DATA oResumen
    DATA lResumen     INIT .f.
    DATA lExcCero     INIT .t.
@@ -783,6 +784,10 @@ METHOD End() CLASS TInfGen
 
    if ::oDbfTmp != nil .and. ::oDbfTmp:Used()
       ::oDbfTmp:End()
+   end if
+
+   if ::oDbfRemCli != nil .and. ::oDbfRemCli:Used()
+      ::oDbfRemCli:End()
    end if
 
    if ::oDbfEmp != nil .and. ::oDbfEmp:Used()
