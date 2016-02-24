@@ -1525,9 +1525,7 @@ Static Function MkAsientoContaplus( Asien,;
       aTemp[ ( cDiario )->( FieldPos( "TERNOM" ) ) ]     := If ( cNombre  != NIL, cNombre,    aTemp[ ( cDiario )->( FieldPos( "TERNOM" ) ) ] )
    end if
 
-   if lRectificativa
-      aTemp[ ( cDiario )->( FieldPos( "RECTIFICA" ) ) ]  := .t.
-   end if
+   aTemp[ ( cDiario )->( FieldPos( "RECTIFICA" ) ) ]     := lRectificativa
 
    /*
    Para contaplus euro 2000----------------------------------------------------

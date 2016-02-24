@@ -32,6 +32,14 @@ CREATE CLASS FacturasClientesRisi
 
    DATA cDelegacion
 
+   DATA oInt
+   DATA oFtp
+
+   DATA lPassiveFtp         INIT    .t.
+   DATA cUserFtp            INIT    "manolo"
+   DATA cPasswdFtp          INIT    "123Ab456"
+   DATA cHostFtp            INIT    "ftp.gestool.es"
+
    DATA aClientesExcluidos  INIT    {}
 
    CLASSDATA aProductos     INIT  { { "Codigo" => "V001004", "Nombre" => "GUSANITOS 35 g x 30 u",             "Codigo unidades" => "8411859550103",  "Codigo cajas" => "18411859550100", "Codigo interno" => "" },;
@@ -135,7 +143,6 @@ CREATE CLASS FacturasClientesRisi
    METHOD OpenFiles()
    METHOD CloseFiles()                          INLINE ( D():DeleteView( ::nView ) )
 
-   METHOD SendFile()
    METHOD ProcessFile()
 
    METHOD findMainCodeInHash( cCodigoBarra )
@@ -148,28 +155,34 @@ CREATE CLASS FacturasClientesRisi
 
    METHOD getDelegacion()                       INLINE ( oUser():cDelegacion() )
 
+   METHOD SendFile()
+
+   METHOD ftpCreateConexion()
+   METHOD ftpEndConexion()
+   METHOD ftpCreateFile( cFile )
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-   METHOD New() CLASS FacturasClientesRisi
+METHOD New() CLASS FacturasClientesRisi
 
-      if empty( ::getDelegacion() )
-         msgStop( "Código delegación esta vacio" )
-         Return ( Self )
-      end if 
+    if empty( ::getDelegacion() )
+        msgStop( "Código delegación esta vacio" )
+        Return ( Self )
+    end if 
 
-      if !::OpenFiles()
-         Return ( Self )
-      end if 
+    if !::OpenFiles()
+        Return ( Self )
+    end if 
 
-   	::Dialog() 
+    ::Dialog() 
 
-      ::CloseFiles()
+    ::CloseFiles()
 
-      msgInfo( "Porceso finalizado : " + ::oUve:cFile )
+    msgInfo( "Porceso finalizado : " + if( !empty( ::oUve ), ::oUve:cFile, "" ) )
 
-   Return ( Self )
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -371,99 +384,47 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD SendFile() CLASS FacturasClientesRisi
+METHOD findMainCodeInHash( cMainCode ) CLASS FacturasClientesRisi
 
-      local oInt
-      local oFtp
-      local cUrl
-      local oFile
-      local lOpen
-      local cDelegacion 
-      local cFile      
-      local cUserFtp    := "manolo"
-      local cPasswdFtp  := "123Ab456"
-      local cHostFtp    := "ftp.gestool.es"
+    local hProducto
 
-      cUrl              := "ftp://" + cUserFtp + ":" + cPasswdFtp + "@" + cHostFtp
-      cDelegacion       := ::getDelegacion()
-      cFile             := ::oUve:cFile
+    ::hProducto             := nil
 
-      if !file( cFile )
-         Return ( Self )
-      end if
+    cMainCode               := alltrim( cMainCode )
 
-      ::oSayMessage:setText( "Subiendo fichero " + cFile )
+    if empty( cMainCode )
+        RETURN .f.
+    end if 
 
-      oInt              := TUrl():New( cUrl )
-      oFtp              := TIPClientFTP():New( oInt, .t. )
-      oFtp:nConnTimeout := 20000
-      oFtp:bUsePasv     := .f.
+    for each hProducto in ::aProductos
 
-      lOpen             := oFTP:Open( oInt )
+        if hProducto[ "Codigo" ] == cMainCode
+            ::hProducto       := hProducto
+        end if 
 
-      if empty( oFtp ) .or. !( oFtp:Open( oInt ) )
-         msgStop( "Imposible crear la conexión con servidor ftp.", "Error" )
-         return ( Self )
-      end if   
+    next 
 
-      oFtp:Cwd( "httpdocs" )
-      oFtp:Cwd( "uve" )
-
-      if !empty( cDelegacion )
-         oFtp:MKD( cDelegacion )
-         oFtp:Cwd( cDelegacion )
-      end if 
-
-      oFtp:UploadFile( cFile ) 
-      oFtp:Close()
-
-      ::oSayMessage:setText( "Fichero " + cFile + " subido." )
-
-RETURN ( Self )
+RETURN ( ::hProducto != nil )
 
 //---------------------------------------------------------------------------//
 
-   METHOD findMainCodeInHash( cMainCode ) CLASS FacturasClientesRisi
+METHOD findCodigoInternoInHash( cCodigoInterno ) CLASS FacturasClientesRisi
 
-      local hProducto
+    local hProducto
 
-      ::hProducto             := nil
+    ::hProducto             := nil
 
-      cMainCode               := alltrim( cMainCode )
+    cCodigoInterno          := alltrim( cCodigoInterno )
 
-      if empty( cMainCode )
-            RETURN .f.
-      end if 
+    for each hProducto in ::aProductos
 
-      for each hProducto in ::aProductos
-
-         if hProducto[ "Codigo" ] == cMainCode
+        if hProducto[ "Codigo interno" ] == cCodigoInterno
             ::hProducto       := hProducto
-         end if 
+        end if 
 
-      next 
+    next 
 
-   RETURN ( ::hProducto != nil )
-
-//---------------------------------------------------------------------------//
-
-   METHOD findCodigoInternoInHash( cCodigoInterno ) CLASS FacturasClientesRisi
-
-      local hProducto
-
-      ::hProducto             := nil
-
-      cCodigoInterno          := alltrim( cCodigoInterno )
-
-      for each hProducto in ::aProductos
-
-         if hProducto[ "Codigo interno" ] == cCodigoInterno
-            ::hProducto       := hProducto
-         end if 
-
-      next 
-
-   RETURN ( ::hProducto != nil )
+RETURN ( ::hProducto != nil )
 
 //---------------------------------------------------------------------------//
 
@@ -505,6 +466,99 @@ METHOD validateInvoice() CLASS FacturasClientesRisi
 
 Return .t.
 
+//---------------------------------------------------------------------------//
+
+METHOD SendFile() CLASS FacturasClientesRisi
+
+    if ::ftpCreateConexion()
+        
+        ::oFtp:SetCurrentDirectory( "httpdocs" )
+        ::oFtp:SetCurrentDirectory( "uve" )
+        ::ftpCreateFile( ::oUve:cFile )
+        ::ftpEndConexion()                
+    
+        msgInfo( "Fichero " + ::oUve:cFile + " subido." )
+
+    end if 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ftpCreateConexion() CLASS FacturasClientesRisi
+
+   local lCreate     := .f.
+
+   if !empty( ::cHostFtp )   
+
+      ::oInt         := TInternet():New()
+      ::oFtp         := TFtp():New( ::cHostFtp, ::oInt, ::cUserFtp, ::cPasswdFtp, ::lPassiveFtp )
+
+      if !empty( ::oFtp )
+         lCreate     := ( ::oFtp:hFtp != 0 )
+      end if 
+
+   end if 
+
+Return ( lCreate )
+
+//---------------------------------------------------------------------------//
+
+METHOD ftpEndConexion() CLASS FacturasClientesRisi
+
+   if !empty( ::oInt )
+      ::oInt:end()
+   end if
+
+   if !empty( ::oFtp )
+      ::oFtp:end()
+   end if 
+
+Return( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD ftpCreateFile( cFile ) CLASS FacturasClientesRisi
+   
+   local oFile
+   local nBytes
+   local hSource
+   local lPutFile    := .f.
+   local cBuffer     := Space( 20000 )
+   local nTotalBytes := 0
+   local nWriteBytes := 0
+
+   if !file( cFile )
+      msgStop( "No existe el fichero " + alltrim( cFile ) )
+      Return ( .f. )
+   end if 
+
+   oFile             := TFtpFile():New( cNoPath( cFile ), ::oFtp )
+   oFile:OpenWrite()
+
+   hSource           := fOpen( cFile ) 
+   if ferror() == 0
+
+      fseek( hSource, 0, 0 )
+
+      while ( nBytes := fread( hSource, @cBuffer, 20000 ) ) > 0 
+         nWriteBytes += nBytes
+         oFile:Write( substr( cBuffer, 1, nBytes ) )
+      end while
+
+      lPutFile       := .t.
+
+   end if
+
+   oFile:End()
+
+   fClose( hSource )
+
+   SysRefresh()
+
+Return ( lPutFile )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -2091,16 +2091,21 @@ Return ( nPreAlq )
 
 Function nPrecioPorPorpiedades( cCodigoArticulo, cCodPr1, cValPr1, cCodPr2, cValPr2, dbfArtDiv, nTarPre, lIvaInc )
 
+   local nOrden
+   local nRecno
    local nPreVta        := 0
 
    DEFAULT nTarPre      := 1
    DEFAULT lIvaInc      := .t.
 
+   nOrden               := ( dbfArtDiv )->( ordsetfocus() )
+   nRecno               := ( dbfArtDiv )->( recno() )
+
    cCodigoArticulo      := padr( cCodigoArticulo, 18 )
    cCodPr1              := padr( cCodPr1, 20 )
-   cValPr1              := padr( cValPr1, 40 )
+   cValPr1              := padr( cValPr1, 20 )
    cCodPr2              := padr( cCodPr2, 20 )
-   cValPr2              := padr( cValPr2, 40 )
+   cValPr2              := padr( cValPr2, 20 )
 
    if dbSeekInOrd( cCodigoArticulo + cCodPr1 + cCodPr2 + cValPr1 + cValPr2, "cCodArt", dbfArtDiv )
 
@@ -2121,22 +2126,25 @@ Function nPrecioPorPorpiedades( cCodigoArticulo, cCodPr1, cValPr1, cCodPr2, cVal
 
    end if
 
+   ( dbfArtDiv )->( ordsetfocus( nOrden ) )
+   ( dbfArtDiv )->( dbgoto( nRecno) )
+
 Return ( nPreVta )
 
 //---------------------------------------------------------------------------//
 
 Function nPrePro( cCodArt, cCodPr1, cValPr1, cCodPr2, cValPr2, nTarPre, lIvaInc, dbfArtDiv, dbfTarPreL, cCodTar )
 
-   local nPreVta        := 0
+   local nPreVta     := 0
 
-   DEFAULT nTarPre      := 1
-   DEFAULT lIvaInc      := .t.
+   DEFAULT nTarPre   := 1
+   DEFAULT lIvaInc   := .t.
 
    if empty( cCodTar )
-      nPreVta           := nPrecioPorPorpiedades( cCodArt, cCodPr1, cValPr1, cCodPr2, cValPr2, dbfArtDiv, nTarPre, lIvaInc )
+      nPreVta        := nPrecioPorPorpiedades( cCodArt, cCodPr1, cValPr1, cCodPr2, cValPr2, dbfArtDiv, nTarPre, lIvaInc )
    else
       if !empty( dbfTarPreL )
-         nPreVta        := retPrcTar( cCodArt, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr2, dbfTarPreL, nTarPre )
+         nPreVta     := retPrcTar( cCodArt, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr2, dbfTarPreL, nTarPre )
       end if
    end if
 

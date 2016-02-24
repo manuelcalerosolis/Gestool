@@ -15111,12 +15111,6 @@ Return .t.
 
 //--------------------------------------------------------------------------//
 
-Function getExtraFieldFacturaRectificativa( cFieldName )
-
-Return ( getExtraField( cFieldName, oDetCamposExtra, D():FacturasRectificativasId( nView ) ) )
-
-//---------------------------------------------------------------------------//
-
 Static Function lChangeRegIva( aTmp )
 
    lImpuestos     := ( aTmp[ _NREGIVA ] <= 1 )
@@ -15126,5 +15120,22 @@ Static Function lChangeRegIva( aTmp )
    end if
 
 return ( .t. )
+//---------------------------------------------------------------------------//
+
+Function getExtraFieldFacturaRectificativa( cFieldName )
+
+Return ( getExtraField( cFieldName, oDetCamposExtra, D():FacturasRectificativasId( nView ) ) )
+
+//---------------------------------------------------------------------------//
+
+Function nombrePrimeraPropiedadFacturasRectificativasLineas()
+
+Return ( nombrePropiedad( ( dbfFacRecL )->cCodPr1, ( dbfFacRecL )->cValPr1, nView ) )
+
+//---------------------------------------------------------------------------//
+
+Function nombreSegundaPropiedadFacturasRectificativasLineas()
+
+Return ( nombrePropiedad( ( dbfFacRecL )->cCodPr2, ( dbfFacRecL )->cValPr2, nView ) )
 
 //---------------------------------------------------------------------------//
