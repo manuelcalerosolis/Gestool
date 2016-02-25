@@ -3471,6 +3471,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :lHide            := .t.
       end with
 
+      with object ( oBrwLin:AddCol() )
+         :cHeader             := "Dirección"
+         :bEditValue          := {|| ( dbfTmpLin )->cCodObr + Space( 1 ) + RetFld( aTmp[ _CCODCLI ] + ( dbfTmpLin )->cCodObr, dbfObrasT, "cNomObr" ) }
+         :nWidth              := 250
+         :lHide               := .t.
+      end with
+
       if nMode != ZOOM_MODE
          oBrwLin:bLDblClick   := {|| EdtDeta( oBrwLin, bEdtDet, aTmp, .f., nMode ) }
       end if
@@ -6749,7 +6756,7 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                                                              "cSuPed" => cSuPed,;
                                                              "dFecFac" => ( dbfAlbCliL )->dFecAlb,;
                                                              "tFecFac" => ( dbfAlbCliL )->tFecAlb,;
-                                                             "cCodObr" => ( dbfAlbCliT )->cCodObr } )
+                                                             "cCodObr" => ( dbfAlbCliL )->cObrLin } )
                
                	( dbfAlbCliL )->( dbSkip() )
 
@@ -15347,9 +15354,9 @@ CLASS sTotal
    METHOD nBaseSegundoIva()            INLINE ( ::aTotalIva[ 2, 2 ] )
    METHOD nBaseTercerIva()             INLINE ( ::aTotalIva[ 3, 2 ] )
 
-   METHOD nPorcentajePrimerIva()       INLINE ( ::aTotalIva[ 1, 3 ] )
-   METHOD nPorcentajeSegundoIva()      INLINE ( ::aTotalIva[ 2, 3 ] )
-   METHOD nPorcentajeTercerIva()       INLINE ( ::aTotalIva[ 3, 3 ] )
+   METHOD nPorcentajePrimerIva()       INLINE ( ::aPorcentajeIva[1] )
+   METHOD nPorcentajeSegundoIva()      INLINE ( ::aPorcentajeIva[2] )
+   METHOD nPorcentajeTercerIva()       INLINE ( ::aPorcentajeIva[3] )
 
    METHOD nTotalPrimerIva()            INLINE ( if( empty( ::aTotalIva ), ::aIvaTik[1], ::aTotalIva[ 1, 8 ] ) )
    METHOD nTotalSegundoIva()           INLINE ( if( empty( ::aTotalIva ), ::aIvaTik[2], ::aTotalIva[ 2, 8 ] ) )

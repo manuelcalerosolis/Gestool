@@ -3055,6 +3055,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :lHide               := .t.
       end with
 
+      with object ( oBrwLin:AddCol() )
+         :cHeader             := "Dirección"
+         :bEditValue          := {|| ( dbfTmpLin )->cObrLin + Space( 1 ) + RetFld( aTmp[ _CCODCLI ] + ( dbfTmpLin )->cObrLin, dbfObrasT, "cNomObr" ) }
+         :nWidth              := 250
+         :lHide               := .t.
+      end with
+
       if nMode != ZOOM_MODE
          oBrwLin:bLDblClick   := {|| EdtDeta( oBrwLin, bEdtDet, aTmp ) }
       end if

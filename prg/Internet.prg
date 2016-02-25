@@ -1655,6 +1655,7 @@ METHOD SyncAllDbf() CLASS TSndRecInf
    end if
 
    lCheckDbf( ::oDbfSenderReciver )
+
    lCheckDbf( ::oDbfFilesReciver )
 
 Return ( Self )

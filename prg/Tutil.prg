@@ -144,7 +144,7 @@ function lCheckDbf( oDbf, bRecord )
       return .f.
    end if
 
-   if lMemo .and. fRenameTable( cMemoName, cMemoNew, oDbf:cRDD ) != 0
+   if isTrue( lMemo ) .and. fRenameTable( cMemoName, cMemoNew, oDbf:cRDD ) != 0
       return .f.
    end if
 
@@ -185,7 +185,7 @@ function lCheckDbf( oDbf, bRecord )
       fEraseTable( cFileNew, oDbf:cRDD )
    end if
 
-   if lMemo .and. lExistTable( cMemoNew, oDbf:cRDD )
+   if isTrue( lMemo ) .and. lExistTable( cMemoNew, oDbf:cRDD )
       fEraseTable( cMemoNew, oDbf:cRDD )
    end if
 
