@@ -78,9 +78,11 @@ CLASS TEdiExporarFacturas
    METHOD isFile()               INLINE   ( file( ::cFileEDI ) )
 
    METHOD writeDatosFijos()      INLINE   ( ::oFileEDI:add( "INVOIC_D_93A_UN_EAN007" ) )
-
    METHOD writeDatosGenerales()
-   METHOD writeDatosProveedor()
+   METHOD writeFechas()
+   METHOD writeFormadePago()
+
+   /*METHOD writeDatosProveedor()
    METHOD writeDatosCliente()
    
    METHOD getDatosEstablecimiento()   
@@ -101,17 +103,15 @@ CLASS TEdiExporarFacturas
    METHOD writeVencimientos()
       METHOD writeDetallesVencimientos()
    
-   METHOD writeResumenTotales()
+   METHOD writeResumenTotales()*/
 
    METHOD getNumero( nNumero )   INLINE   ( alltrim( transform( nNumero, "@E 99999999999999.99" ) ) )
-   METHOD getFecha( dFecha )     INLINE   ( transform( dtos( dFecha ), "@R 9999-99-99") )
+   METHOD getFecha( dFecha )     INLINE   ( dtos( dFecha ) )
 
    METHOD isLineaValida()        INLINE   ( lValLine( D():FacturasClientesLineas( ::nView ) ) .and. !( D():FacturasClientesLineas( ::nView ) )->lTotLin .and. nTotNFacCli() != 0 )
    METHOD isDescuentoValido()    INLINE   ( ( D():FacturasClientesLineas( ::nView ) )->nDto != 0 )
 
    METHOD setFacturaClienteGeneradaEDI()
-
-   METHOD acumulaIva( nIva, nImporte )
 
 END CLASS
 
@@ -146,8 +146,11 @@ METHOD Run()
    if ::isFile()
 
       ::writeDatosFijos()
-      /*::writeDatosGenerales()
-      ::writeDatosProveedor()
+      ::writeDatosGenerales()
+      ::writeFechas()
+      ::writeFormadePago()
+      
+      /*::writeDatosProveedor()
       ::writeDatosCliente()
 
       ::getDatosEstablecimiento()
@@ -211,15 +214,10 @@ Return ( self )
 
 METHOD writeDatosGenerales()
 
-   local cLine    := "DatosGenerales" + __separator__
+   local cLine    := "INV" + __separator__
    cLine          += D():FacturasClientesIdShort( ::nView ) + __separator__
-   if ( D():FacturasClientes( ::nView ) )->nTotFac > 0
-      cLine       += "FacturaComercial" + __separator__ 
-   else 
-      cLine       += "FacturaAbono" + __separator__
-   end if 
-   cLine          += ::getFecha( ( D():FacturasClientes( ::nView ) )->dFecFac ) + __separator__
-   cLine          += "EUR"
+   cLine          += "380" + __separator__
+   cLine          += "9"
 
    ::oFileEDI:add( cLine )
 
@@ -227,7 +225,37 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD writeDatosProveedor()
+METHOD writeFechas()
+
+   local cLine    := "DTM" + __separator__
+   cLine          += ::getFecha( ( D():FacturasClientes( ::nView ) )->dFecFac )
+
+   ::oFileEDI:add( cLine )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD writeFormadePago()
+
+   local cLine    := "PAI" + __separator__
+   cLine          += RetFld( ( D():FacturasClientes( ::nView ) )->cCodPago, 
+
+   ::oFileEDI:add( cLine )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+/*METHOD writeDatosProveedor()
 
    local cLine    := "DatosProveedor" + __separator__
    cLine          += "9990000076857" + __separator__
@@ -398,11 +426,9 @@ METHOD writeDetallesLinea()
    cLine          += alltrim( ( D():FacturasClientesLineas( ::nView ) )->cDetalle ) + __separator__   // Descripción (nombre) del artículo
    cLine          += ::getNumero( nTotNFacCli() ) + __separator__                                     // Cantidad del artículo
    cLine          += "Unidades" + __separator__                                                       // Unidad de medida de la cantidad
-   /*
    cLine          += "" + __separator__                                                               // Número de unidades de expedición (bultos, cajas, etc.)
    cLine          += "" + __separator__                                                               // Número de unidades de consumo por unidad de expedición
    cLine          += "" + __separator__                                                               // Peso en gramos de una unidad. Solo tiene sentido cuando UM
-   */
    cLine          += ::getNumero( nTotUFacCli() ) + __separator__                                     // Precio bruto unitario (sin descuentos, impuestos, etc.)
    cLine          += ::getNumero( nTotLFacCli() )                                                     // Importe bruto total de esta línea (Cdad x Punit)
 
@@ -553,7 +579,7 @@ METHOD writeResumenTotales()
 
    ::oFileEDI:add( cLine )
 
-Return ( self )
+Return ( self )*/
 
 //---------------------------------------------------------------------------//
 
@@ -567,22 +593,5 @@ METHOD setFacturaClienteGeneradaEDI()
    end if 
 
 Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD acumulaIva( nIva, nImporte )
-
-   local nValor   := 0
-   
-   if hHaskey( ::hAcumulaIva, AllTrim( str( nIva ) ) )
-      nValor      := hGet( ::hAcumulaIva, AllTrim( str( nIva ) ) )
-      hSet( ::hAcumulaIva, AllTrim( str( nIva ) ), nValor + nImporte )      
-   else
-      hSet( ::hAcumulaIva, AllTrim( str( nIva ) ), nImporte )
-   end if
-
-   ::nTotalIva    += nImporte
-
-Return .t.
 
 //---------------------------------------------------------------------------//

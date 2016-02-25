@@ -45,6 +45,7 @@
 #define _CCTABNC        39  
 #define _CCODWEB        40
 #define _LDOMBAN        41      //
+#define _CCODEDI        42      //
 
 static oWndBrw
 static aBigResource
@@ -578,6 +579,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
 			SPINNER ;
          PICTURE  "@E 99.99" ;
          OF       oDlg
+
+      REDEFINE GET   aGet[ ( dbfFormasPago )->( FieldPos( "cCodEdi" ) ) ];
+         VAR         aTmp[ ( dbfFormasPago )->( FieldPos( "cCodEdi" ) ) ];
+         ID          360 ;
+         OF          oDlg
 
       // Botones --------------------------------------------------------------
 
@@ -1191,6 +1197,7 @@ function aItmFPago()
    aAdd( aBase, { "cCtaBnc",   "C",  10,   0, "Cuenta bancaria"                                        ,  "",   "", "( cDbfPgo )" } )
    aAdd( aBase, { "cCodWeb",   "C", 200,   0, "Modulo web para la forma de pago"                       ,  "",   "", "( cDbfPgo )" } )
    aAdd( aBase, { "lDomBan",   "L",   1,   0, "Domiciliacion bancaria"                                 ,  "",   "", "( cDbfPgo )" } )
+   aAdd( aBase, { "cCodEdi",   "C",  10,   0, "Código para pasar a plataforma EDI"                     ,  "",   "", "( cDbfPgo )" } )
    
 return ( aBase )
 
