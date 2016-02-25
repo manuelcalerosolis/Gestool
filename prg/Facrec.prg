@@ -370,7 +370,6 @@ static dbfPromoC
 static dbfAlm
 static dbfPro
 
-static dbfTblPro
 static dbfCodebar
 static dbfTarPreL
 static dbfTarPreS
@@ -770,6 +769,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Documentos( nView )
 
+      D():PropiedadesLineas( nView )
+
       USE ( cPatEmp() + "FacRecL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecL", @dbfFacRecL ) )
       SET ADSINDEX TO ( cPatEmp() + "FacRecL.CDX" ) ADDITIVE
 
@@ -856,9 +857,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatArt() + "PRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRO", @dbfPro ) )
       SET ADSINDEX TO ( cPatArt() + "PRO.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "TBLPRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLPRO", @dbfTblPro ) )
-      SET ADSINDEX TO ( cPatArt() + "TBLPRO.CDX" ) ADDITIVE
 
       USE ( cPatCli() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
       SET ADSINDEX TO ( cPatCli() + "RUTA.CDX" ) ADDITIVE
@@ -1249,10 +1247,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfPro     )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTblPro )
-      ( dbfTblPro  )->( dbCloseArea() )
-   end if
-
    if !Empty( dbfRuta )
       ( dbfRuta    )->( dbCloseArea() )
    end if
@@ -1439,7 +1433,6 @@ STATIC FUNCTION CloseFiles()
    dbfObrasT   := nil
    dbfOferta   := nil
    dbfPro      := nil
-   dbfTblPro   := nil
    dbfRuta     := nil
    dbfArtDiv   := nil
    dbfCajT     := nil
@@ -2671,7 +2664,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
          :cHeader             := "Oferta"
          :bStrData            := {|| "" }
          :bEditValue          := {|| ( dbfTmpLin )->lLinOfe }
-         :nWidth              := 46
+         :nWidth              := 20
+         :lHide               := .t.
          :SetCheck( { "Star_Red_16", "Nil16" } )
       end with
 
@@ -2724,7 +2718,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Valor prop. 1"
-         :bEditValue          := {|| retValProp( ( dbfTmpLin )->cCodPr1 + ( dbfTmpLin )->cValPr1 )}
+         :bEditValue          := {|| nombrePropiedad( ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cValPr1, nView ) }
          :nWidth              := 40
          :lHide               := .t.
       end with
@@ -2738,7 +2732,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Valor prop. 2"
-         :bEditValue          := {|| retValProp( ( dbfTmpLin )->cCodPr2 + ( dbfTmpLin )->cValPr2 )}
+         :bEditValue          := {|| nombrePropiedad( ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr2, nView ) }
          :nWidth              := 40
          :lHide               := .t.
       end with
@@ -4025,7 +4019,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          ID       270 ;
          BITMAP   "LUPA" ;
          WHEN     ( nMode != ZOOM_MODE .and. nMode != MULT_MODE ) ;
-         VALID    ( if( lPrpAct( aTmp[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ], dbfTblPro ),;
+         VALID    ( if( lPrpAct( aTmp[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ], D():PropiedadesLineas( nView ) ),;
                         loaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ),;
                         .f. ) );
          ON HELP  ( brwPropiedadActual( aGet[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ] ) ) ;
@@ -4048,7 +4042,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          ID       280 ;
          BITMAP   "LUPA" ;
          WHEN     ( nMode != ZOOM_MODE .AND. nMode != MULT_MODE ) ;
-         VALID    ( if( lPrpAct( aTmp[ _CVALPR2 ], oSayVp2, aTmp[ _CCODPR2 ], dbfTblPro ),;
+         VALID    ( if( lPrpAct( aTmp[ _CVALPR2 ], oSayVp2, aTmp[ _CCODPR2 ], D():PropiedadesLineas( nView ) ),;
                         loaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ),;
                         .f. ) );
          ON HELP  ( brwPropiedadActual( aGet[ _CVALPR2 ], oSayVp2, aTmp[ _CCODPR2 ] ) ) ;

@@ -2215,18 +2215,17 @@ METHOD AppendDet( oDlg ) CLASS TRemMovAlm
 
       ::oDetMovimientos:oDbfVir:Blank()
 
-      nDetalle    := ::oDetMovimientos:Resource( 1 )
+      nDetalle    := ::oDetMovimientos:Resource( APPD_MODE )
 
       do case
       case nDetalle == IDOK
 
-         msgAlert( "nDetalle == IDOK" )
-
          ::oDetMovimientos:oDbfVir:Insert()
-
-         if( ::oBrwDet != nil, ::oBrwDet:Refresh(), )
-
          ::oDetMovimientos:AppendKit()
+
+         if !empty( ::oBrwDet )
+            ::oBrwDet:Refresh()
+         end if 
 
          if lEntCon()
             loop
@@ -2236,11 +2235,11 @@ METHOD AppendDet( oDlg ) CLASS TRemMovAlm
 
       case nDetalle == IDFOUND
 
-         msgAlert( "nDetalle == IDFOUND" )
-
          ::oDetMovimientos:oDbfVir:Cancel()
 
-         if( ::oBrwDet != nil, ::oBrwDet:Refresh(), )
+         if !empty( ::oBrwDet )
+            ::oBrwDet:Refresh()
+         end if 
 
          if lEntCon()
             loop
@@ -2248,11 +2247,13 @@ METHOD AppendDet( oDlg ) CLASS TRemMovAlm
             exit
          end if
 
-      otherwise
-
-         msgAlert( "otherwise" )
+      case nDetalle == IDCANCEL
 
          ::oDetMovimientos:oDbfVir:Cancel()
+
+         if !empty( ::oBrwDet )
+            ::oBrwDet:Refresh()
+         end if 
 
          exit
 
@@ -2266,10 +2267,6 @@ RETURN ( Self )
 
 METHOD EditDetalleMovimientos( oDlg ) CLASS TRemMovAlm 
 
-   ::oDetMovimientos:Edit( ::oBrwDet )
-   
-   RETURN ( Self )
-
    if ::oDetMovimientos:oDbfVir:OrdKeyCount() == 0
       Return ( Self )
    end if
@@ -2281,8 +2278,10 @@ METHOD EditDetalleMovimientos( oDlg ) CLASS TRemMovAlm
    else 
       ::oDetMovimientos:oDbfVir:Cancel()
    end if
-   
-   if( ::oBrwDet != nil, ::oBrwDet:Refresh(), )
+
+   if !empty( ::oBrwDet )
+      ::oBrwDet:Refresh()
+   end if 
 
 RETURN ( Self )
 
@@ -3757,26 +3756,26 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      ::oGetLote:bValid    := {|| if( !Empty( ::oDbfVir:cLote ), ::loadArticulo( oDlg, .f., nMode ), .t. ) }
+      ::oGetLote:bValid          := {|| if( !Empty( ::oDbfVir:cLote ), ::loadArticulo( oDlg, .f., nMode ), .t. ) }
 
       // Browse de propiedades-------------------------------------------------
 
-      ::oBrwPrp                       := IXBrowse():New( oDlg )
+      ::oBrwPrp                  := IXBrowse():New( oDlg )
 
-      ::oBrwPrp:nDataType             := DATATYPE_ARRAY
+      ::oBrwPrp:nDataType        := DATATYPE_ARRAY
 
-      ::oBrwPrp:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      ::oBrwPrp:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      ::oBrwPrp:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      ::oBrwPrp:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      ::oBrwPrp:lHScroll              := .t.
-      ::oBrwPrp:lVScroll              := .t.
+      ::oBrwPrp:lHScroll         := .t.
+      ::oBrwPrp:lVScroll         := .t.
 
-      ::oBrwPrp:nMarqueeStyle         := 3
-      ::oBrwPrp:nFreeze               := 1
+      ::oBrwPrp:nMarqueeStyle    := 3
+      ::oBrwPrp:nFreeze          := 1
 
-      ::oBrwPrp:lRecordSelector       := .f.
-      ::oBrwPrp:lFastEdit             := .t.
-      ::oBrwPrp:lFooter               := .t.
+      ::oBrwPrp:lRecordSelector  := .f.
+      ::oBrwPrp:lFastEdit        := .t.
+      ::oBrwPrp:lFooter          := .t.
 
       ::oBrwPrp:SetArray( {}, .f., 0, .f. )
 
@@ -3834,7 +3833,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
       REDEFINE GET ::oCajMov VAR ::oDbfVir:nCajMov;
          ID       140;
 			SPINNER ;
-         WHEN     ( lUseCaj() .AND. nMode != ZOOM_MODE ) ;
+         WHEN     ( lUseCaj() .and. nMode != ZOOM_MODE ) ;
          ON CHANGE( oTotUnd:Refresh(), oSayPre:Refresh() );
          VALID    ( oTotUnd:Refresh(), oSayPre:Refresh(), .t. );
          PICTURE  ::oParent:cPicUnd ;
@@ -3967,7 +3966,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          ID       510 ;
 			OF 		oDlg ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         ACTION   (  ::ValidResource( nMode, oDlg, oBtn ) )
+         ACTION   ( ::ValidResource( nMode, oDlg, oBtn ) )
 
 		REDEFINE BUTTON ;
          ID       520 ;
@@ -3993,10 +3992,6 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
    /*
    Salida del dialogo----------------------------------------------------------
    */
-
-   if ( oDlg:nResult == IDOK )
-      ::oDbfVir:lSelDoc       := .t.
-   end if
 
    EndEdtDetMenu()
 
@@ -4051,8 +4046,8 @@ METHOD ValidResource( nMode, oDlg, oBtn ) CLASS TDetMovimientos
    local cCodPr2
    local cValPr1
    local cValPr2
-   local nStkAct     := 0
-   local nTotUnd     := 0
+   local nStkAct                 := 0
+   local nTotUnd                 := 0
    local dFecMov
    local cTimMov
    local nTipMov
@@ -4077,16 +4072,14 @@ METHOD ValidResource( nMode, oDlg, oBtn ) CLASS TDetMovimientos
       Return .f.
    end if
 
-   /*
-   Control para numeros de serie-----------------------------------------------
-   */
+   // Control para numeros de serie--------------------------------------------
 
-   lNumSer           := RetFld( ::oDbfVir:cRefMov, ::oParent:oArt:cAlias, "lNumSer" )
-   lNowSer           := ::oParent:oDetSeriesMovimientos:oDbfVir:SeekInOrd( Str( ::oDbfVir:nNumLin, 4 ) + ::oDbfVir:cRefMov, "nNumLin" )
+   lNumSer                       := RetFld( ::oDbfVir:cRefMov, ::oParent:oArt:cAlias, "lNumSer" )
+   lNowSer                       := ::oParent:oDetSeriesMovimientos:oDbfVir:SeekInOrd( Str( ::oDbfVir:nNumLin, 4 ) + ::oDbfVir:cRefMov, "nNumLin" )
 
-   if ( nMode == APPD_MODE )                                            .and.;
-      ( lNumSer )                                                       .and.;
-      (!lNowSer )                                                       .and.;
+   if ( nMode == APPD_MODE )     .and.;
+      ( lNumSer )                .and.;
+      (!lNowSer )                .and.;
       ( ::oParent:oDbf:nTipMov != 3 )
 
       MsgStop( "Tiene que introducir números de serie para este artículo." )
@@ -4133,10 +4126,12 @@ METHOD ValidResource( nMode, oDlg, oBtn ) CLASS TDetMovimientos
 
             ::oDbfVir:FieldPutByName( "nCajMov", nCajMov )
             ::oDbfVir:FieldPutByName( "nUndMov", nUndMov )
+            ::oDbfVir:FieldPutByName( "lSelDoc", .t. )
 
             if ::oDbfVir:FieldGetName( "lKitArt" )
                ::ActualizaKit( nMode )
             end if
+
 
             lFound   := .t.
 
@@ -4221,10 +4216,11 @@ METHOD ValidResource( nMode, oDlg, oBtn ) CLASS TDetMovimientos
                ::oDbfVir:cCodPr2    := ::oBrwPrp:Cargo[ n, i ]:cCodigoPropiedad2
                ::oDbfVir:cValPr1    := ::oBrwPrp:Cargo[ n, i ]:cValorPropiedad1
                ::oDbfVir:cValPr2    := ::oBrwPrp:Cargo[ n, i ]:cValorPropiedad2
+               ::oDbfVir:nUndMov    := ::oBrwPrp:Cargo[ n, i ]:Value
                ::oDbfVir:cCodUsr    := cCurUsr()
                ::oDbfVir:cCodDlg    := oRetFld( cCurUsr(), ::oParent:oUsr, "cCodDlg" )
                ::oDbfVir:nCajMov    := 1
-               ::oDbfVir:nUndMov    := ::oBrwPrp:Cargo[ n, i ]:Value
+               ::oDbfVir:lSelDoc    := .t.
                ::oDbfVir:lSndDoc    := .t.
                ::oDbfVir:nNumLin    := nLastNum( ::oDbfVir:cAlias )
                ::oDbfVir:nVolumen   := oRetFld( cRefMov, ::oParent:oArt, "" )
@@ -4246,14 +4242,14 @@ METHOD ValidResource( nMode, oDlg, oBtn ) CLASS TDetMovimientos
 
       next
 
-      lArticuloPropiedades       := .t.
+      lArticuloPropiedades          := .t.
 
    end if
 
-   ::cOldCodArt   := ""
-   ::cOldValPr1   := ""
-   ::cOldValPr2   := ""
-   ::cOldLote     := ""
+   ::cOldCodArt                     := ""
+   ::cOldValPr1                     := ""
+   ::cOldValPr2                     := ""
+   ::cOldLote                       := ""
 
    CursorWE()
 

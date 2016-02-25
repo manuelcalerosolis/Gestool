@@ -2757,6 +2757,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :bEditValue          := {|| ( dbfTmpLin )->lLinOfe }
          :nWidth              := 20
          :SetCheck( { "Star_Red_16", "Nil16" } )
+         :lHide               := .t.
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -2768,7 +2769,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :nWidth              := 60
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
-         :lhide               := .t.
+         :lHide               := .t.
       end with
 
       with object ( oBrwLin:AddCol() )

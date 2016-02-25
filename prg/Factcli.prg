@@ -450,7 +450,6 @@ static dbfPromoL
 static dbfPromoC
 static dbfAlm
 static dbfPro
-static dbfTblPro
 static dbfCodebar
 static dbfTarPreT
 static dbfTarPreL
@@ -1722,7 +1721,9 @@ STATIC FUNCTION OpenFiles()
       D():ImpuestosEspeciales( nView )
       
       D():FacturasClientesCobros( nView )
-    
+
+      D():PropiedadesLineas( nView )
+
       USE ( cPatEmp() + "FACCLII.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLII", @dbfFacCliI ) )
       SET ADSINDEX TO ( cPatEmp() + "FACCLII.CDX" ) ADDITIVE
 
@@ -1882,9 +1883,6 @@ STATIC FUNCTION OpenFiles()
 
       USE ( cPatArt() + "PRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRO", @dbfPro ) )
       SET ADSINDEX TO ( cPatArt() + "PRO.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "TBLPRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLPRO", @dbfTblPro ) )
-      SET ADSINDEX TO ( cPatArt() + "TBLPRO.CDX" ) ADDITIVE
 
       USE ( cPatCli() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
       SET ADSINDEX TO ( cPatCli() + "RUTA.CDX" ) ADDITIVE
@@ -2290,10 +2288,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfPro     )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTblPro )
-      ( dbfTblPro  )->( dbCloseArea() )
-   end if
-
    if !Empty( dbfRuta )
       ( dbfRuta    )->( dbCloseArea() )
    end if
@@ -2504,7 +2498,6 @@ STATIC FUNCTION CloseFiles()
    dbfObrasT   := nil
    dbfOferta   := nil
    dbfPro      := nil
-   dbfTblPro   := nil
    dbfRuta     := nil
    dbfArtDiv   := nil
    dbfCajT     := nil
@@ -3240,7 +3233,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Valor prop. 1"
-         :bEditValue          := {|| retValProp( ( dbfTmpLin )->cCodPr1 + ( dbfTmpLin )->cValPr1 ) }
+         :bEditValue          := {|| nombrePropiedad( ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cValPr1, nView ) }
          :nWidth              := 40
          :lHide               := .t.
       end with
@@ -3254,7 +3247,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Valor prop. 2"
-         :bEditValue          := {|| retValProp( ( dbfTmpLin )->cCodPr2 + ( dbfTmpLin )->cValPr2 ) }
+         :bEditValue          := {|| nombrePropiedad( ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr2, nView ) }
          :nWidth              := 40
          :lHide               := .t.
       end with
@@ -5044,7 +5037,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
          ID       270 ;
          BITMAP   "LUPA" ;
          WHEN     ( nMode != ZOOM_MODE .and. nMode != MULT_MODE ) ;
-         VALID    ( if( lPrpAct( aTmp[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ], dbfTblPro ),;
+         VALID    ( if( lPrpAct( aTmp[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ], D():PropiedadesLineas( nView ) ),;
                         loaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ),;
                         .f. ) );
          ON HELP  ( brwPropiedadActual( aGet[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ] ) ) ;
@@ -5065,7 +5058,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
          ID       280 ;
          BITMAP   "LUPA" ;
          WHEN     ( nMode != ZOOM_MODE .AND. nMode != MULT_MODE ) ;
-         VALID    ( if( lPrpAct( aTmp[ _CVALPR2 ], oSayVp2, aTmp[ _CCODPR2 ], dbfTblPro ),;
+         VALID    ( if( lPrpAct( aTmp[ _CVALPR2 ], oSayVp2, aTmp[ _CCODPR2 ], D():PropiedadesLineas( nView ) ),;
                         loaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ),;
                         .f. ) );
          ON HELP  ( brwPropiedadActual( aGet[ _CVALPR2 ], oSayVp2, aTmp[ _CCODPR2 ] ) ) ;
@@ -12436,7 +12429,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
    Ahora buscamos por el codigo interno----------------------------------------
    */
 
-   if aSeekProp( @cCodArt, @cValPr1, @cValPr2, D():Articulos( nView ), dbfTblPro )
+   if aSeekProp( @cCodArt, @cValPr1, @cValPr2, D():Articulos( nView ), D():PropiedadesLineas( nView ) )
 
       /*
       Estos valores lo recogemos siempre------------------------------------
@@ -12478,7 +12471,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          if !Empty( aTmp[ _CCODPR1 ] ) .and. !Empty( aGet[ _CVALPR1 ] )
 
             if !Empty( cValPr1 )
-               aGet[ _CVALPR1 ]:cText( cCodPrp( aTmp[ _CCODPR1 ], cValPr1, dbfTblPro ) )
+               aGet[ _CVALPR1 ]:cText( cCodPrp( aTmp[ _CCODPR1 ], cValPr1, D():PropiedadesLineas( nView ) ) )
             end if
 
          end if
@@ -12486,7 +12479,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          if !empty( aTmp[ _CCODPR2 ] ) .and. !Empty( aGet[ _CVALPR2 ] )
 
             if !Empty( cValPr2 )
-               aGet[ _CVALPR2 ]:cText( cCodPrp( aTmp[ _CCODPR2 ], cValPr2, dbfTblPro ) )
+               aGet[ _CVALPR2 ]:cText( cCodPrp( aTmp[ _CCODPR2 ], cValPr2, D():PropiedadesLineas( nView ) ) )
             end if
 
          end if
