@@ -77,7 +77,7 @@ CLASS TRemesas FROM TMasDet
    DATA  cMru                          INIT "Briefcase_document_16"
    DATA  cBitmap                       INIT clrTopArchivos
    DATA  oMenu
-   DATA  oCodRem
+   DATA  oGetCuentaRemesa
    DATA  oFecExp
    DATA  oExportado
 
@@ -87,6 +87,8 @@ CLASS TRemesas FROM TMasDet
    DATA  dAnteriorVencimiento
 
    DATA  oCuaderno
+
+   DATA  cCuentaRemesaAnterior         INIT ""
 
    METHOD New( cPath, oWndParent, oMenuItem )
 
@@ -100,6 +102,8 @@ CLASS TRemesas FROM TMasDet
    METHOD CloseService()
 
    METHOD Resource( nMode )
+      METHOD validCuentaRemesa( oSay )
+      METHOD changeCuentaRemesa()   
    METHOD ImportResource( nMode )
    METHOD Activate()
    METHOD lSave()
@@ -122,7 +126,9 @@ CLASS TRemesas FROM TMasDet
    METHOD nTotRem( lPic )
    METHOD nTotRemVir( lPic )
 
-   METHOD cNumRem()        INLINE   ( alltrim( str( ::oDbf:nNumRem ) + "/" + ::oDbf:cSufRem ) )
+   METHOD cNumRem()                 INLINE   ( alltrim( str( ::oDbf:nNumRem ) + "/" + ::oDbf:cSufRem ) )
+   METHOD getReciboVirtualId()      INLINE   ( ::oDbfVir:cSerie + Str( ::oDbfVir:nNumFac ) + ::oDbfVir:cSufFac + Str( ::oDbfVir:nNumRec ) )
+   METHOD gotoRecibo()              INLINE   ( ::oDbfDet:seekInOrd( ::getReciboVirtualId(), "nNumFac" ) )
 
    /*
    Metodos para exportacion de los modelos-------------------------------------
@@ -151,7 +157,7 @@ CLASS TRemesas FROM TMasDet
 
    METHOD nAllRecCli()
 
-   METHOD nTotRemesaVir()     INLINE   0
+   METHOD nTotRemesaVir()           INLINE   0
 
    METHOD Report()
 
@@ -698,6 +704,8 @@ METHOD inicializaData()
    ::cFormaPagoIni         := dbFirst( ::oFormaPago, 1 )
    ::cFormaPagoFin         := dbLast ( ::oFormaPago, 1 )
 
+   ::cCuentaRemesaAnterior := ::oDbf:cCodRem
+
 return ( nil )
 
 //---------------------------------------------------------------------------//
@@ -753,15 +761,17 @@ METHOD Resource( nMode )
          WHEN     ( ::oDbf:lExport .and. nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      REDEFINE GET ::oCodRem VAR ::oDbf:cCodRem UPDATE ;
+      REDEFINE GET ::oGetCuentaRemesa ;
+         VAR      ::oDbf:cCodRem ;
+         UPDATE ;
          ID       130 ;
          PICTURE  ::oDbf:FieldByName( "cCodRem" ):cPict ;
          BITMAP   "LUPA" ;
 			OF 		oDlg
 
-      ::oCodRem:bValid := {|| ::oCtaRem:lGetCtaRem( ::oCodRem, oSay ) }
-      ::oCodRem:bWhen  := {|| nMode != ZOOM_MODE }
-      ::oCodRem:bHelp  := {|| ::oCtaRem:Buscar( ::oCodRem ) }
+      ::oGetCuentaRemesa:bValid := {|| ::validCuentaRemesa( oSay ) }
+      ::oGetCuentaRemesa:bWhen  := {|| nMode != ZOOM_MODE }
+      ::oGetCuentaRemesa:bHelp  := {|| ::oCtaRem:Buscar( ::oGetCuentaRemesa ) }
 
       REDEFINE GET oSay VAR cSay UPDATE ;
          ID       131 ;
@@ -849,57 +859,57 @@ METHOD Resource( nMode )
 
       with object ( ::oBrwDet:AddCol() )
          :cHeader          := "Número"
-         :bEditValue       := {|| ::oDbfVir:cSerie + "/" + Alltrim( Str( ::oDbfVir:nNumFac ) ) + "-" + AllTrim( Str( ::oDbfVir:nNumRec ) ) }
+         :bEditValue       := {|| ::gotoRecibo(), ::oDbfDet:cSerie + "/" + Alltrim( Str( ::oDbfDet:nNumFac ) ) + "-" + AllTrim( Str( ::oDbfDet:nNumRec ) ) }
          :nWidth           := 90
       end with
 
       with object ( ::oBrwDet:AddCol() )
          :cHeader          := "Delegción"
-         :bEditValue       := {|| ::oDbfVir:cSufFac }
+         :bEditValue       := {|| ::gotoRecibo(), ::oDbfDet:cSufFac }
          :nWidth           := 40
       end with
 
       with object ( ::oBrwDet:AddCol() )
          :cHeader          := "Fecha"
-         :bStrData         := {|| DtoC( ::oDbfVir:dPreCob ) }
+         :bStrData         := {|| ::gotoRecibo(), DtoC( ::oDbfDet:dPreCob ) }
          :nWidth           := 80
       end with
 
       with object ( ::oBrwDet:AddCol() )
          :cHeader          := "Vencimiento"
-         :bStrData         := {|| DtoC( ::oDbfVir:dFecVto ) }
+         :bStrData         := {|| ::gotoRecibo(), DtoC( ::oDbfDet:dFecVto ) }
          :nWidth           := 80
       end with
 
       with object ( ::oBrwDet:AddCol() )
          :cHeader          := "Cliente"
-         :bStrData         := {|| Rtrim( ::oDbfVir:cCodCli ) + Space( 1 ) + Rtrim( ::oDbfVir:cNomCli ) }
+         :bStrData         := {|| ::gotoRecibo(), Rtrim( ::oDbfDet:cCodCli ) + Space( 1 ) + Rtrim( ::oDbfDet:cNomCli ) }
          :nWidth           := 146
       end with
 
       with object ( ::oBrwDet:AddCol() )
          :cHeader          := "Descripción"
-         :bStrData         := {|| ::oDbfVir:cDescrip }
+         :bStrData         := {|| ::gotoRecibo(), ::oDbfDet:cDescrip }
          :nWidth           := 220
       end with
 
       with object ( ::oBrwDet:AddCol() )
          :cHeader          := "Forma pago"
-         :bStrData         := {|| Rtrim( ::oDbfVir:cCodPgo ) + Space( 1 ) + cNbrFPago( ::oDbfVir:cCodPgo ) }
+         :bStrData         := {|| ::gotoRecibo(), Rtrim( ::oDbfDet:cCodPgo ) + Space( 1 ) + cNbrFPago( ::oDbfDet:cCodPgo ) }
          :nWidth           := 150
          :lHide            := .t.
       end with
 
       with object ( ::oBrwDet:AddCol() )
          :cHeader          := "Agente"
-         :bStrData         := {|| Rtrim( ::oDbfVir:cCodAge ) + Space( 1 ) + RetNbrAge( ::oDbfVir:cCodAge ) }
+         :bStrData         := {|| ::gotoRecibo(), Rtrim( ::oDbfDet:cCodAge ) + Space( 1 ) + RetNbrAge( ::oDbfDet:cCodAge ) }
          :nWidth           := 150
          :lHide            := .t.
       end with
 
       with object ( ::oBrwDet:AddCol() )
          :cHeader          := "Importe"
-         :bEditValue       := {|| nTotRecCli( ::oDbfVir, ::oDivisas:cAlias, ::oDbf:cCodDiv, .t. ) }
+         :bEditValue       := {|| ::gotoRecibo(), nTotRecCli( ::oDbfDet, ::oDivisas:cAlias, ::oDbf:cCodDiv, .t. ) }
          :nWidth           := 100
          :bFooter          := {|| ::nTotRemVir( .t. ) }
          :nDataStrAlign    := 1
@@ -909,13 +919,13 @@ METHOD Resource( nMode )
 
       with object ( ::oBrwDet:AddCol() )
          :cHeader          := "Div."
-         :bEditValue       := {|| cSimDiv( ::oDbfVir:cDivPgo, ::oDivisas:cAlias ) }
+         :bEditValue       := {|| ::gotoRecibo(), cSimDiv( ::oDbfDet:cDivPgo, ::oDivisas:cAlias ) }
          :nWidth           := 20
       end with
 
       with object ( ::oBrwDet:AddCol() )
          :cHeader          := "Cuenta"
-         :bEditValue       := {|| ::oDbfVir:cPaisIBAN + ::oDbfVir:cCtrlIBAN + "-" + ::oDbfVir:cEntCli + "-" + ::oDbfVir:cSucCli + "-" + ::oDbfVir:cDigCli + "-" + ::oDbfVir:cCtaCli }
+         :bEditValue       := {|| ::gotoRecibo(), ::oDbfDet:cPaisIBAN + ::oDbfDet:cCtrlIBAN + "-" + ::oDbfDet:cEntCli + "-" + ::oDbfDet:cSucCli + "-" + ::oDbfDet:cDigCli + "-" + ::oDbfDet:cCtaCli }
          :nWidth           := 250
          :lHide            := .t.
       end with
@@ -943,7 +953,7 @@ METHOD Resource( nMode )
 
    oDlg:AddFastKey(  VK_F1,   {|| ChmHelp( "Remesasbancarias2" ) } )
 
-   oDlg:bStart             := {|| ::oCodRem:SetFocus() }
+   oDlg:bStart             := {|| ::oGetCuentaRemesa:SetFocus() }
 
    oDlg:Activate( , , , .t., , , {|| ::EdtRecMenu( oDlg ) } )
 
@@ -957,6 +967,60 @@ METHOD Resource( nMode )
    ::oBrwDet:CloseData()
 
 RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+METHOD validCuentaRemesa( oSay )
+
+   local cCuentaRemesaActual  := ::oGetCuentaRemesa:varGet()
+
+   if !::oCtaRem:lGetCtaRem( ::oGetCuentaRemesa, oSay )
+      Return ( .f. )
+   end if 
+
+   // Nos aseguramos q han cambiado la cuenta de remesa
+
+   if ::cCuentaRemesaAnterior != cCuentaRemesaActual
+      ::changeCuentaRemesa()
+   end if 
+
+RETURN .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD changeCuentaRemesa()
+
+   if !::oCtaRem:oDbf:Seek( ::oDbf:cCodRem )   
+      msgStop( "Cuenta de remesa no encontrada." )
+      Return .f.
+   end if 
+
+   ::oDbfVir:GoTop()
+   while !::oDbfVir:Eof()
+
+      if ::gotoRecibo()
+         ::oDbfDet:Load()
+         ::oDbfDet:cBncEmp    := ::oCtaRem:oDbf:cBanco
+         ::oDbfDet:cEPaisIBAN := ::oCtaRem:oDbf:cPaisIBAN
+         ::oDbfDet:cECtrlIBAN := ::oCtaRem:oDbf:cCtrlIBAN
+         ::oDbfDet:cEntEmp    := ::oCtaRem:oDbf:cEntBan
+         ::oDbfDet:cSucEmp    := ::oCtaRem:oDbf:cAgcBan
+         ::oDbfDet:cDigEmp    := ::oCtaRem:oDbf:cDgcBan
+         ::oDbfDet:cCtaEmp    := ::oCtaRem:oDbf:cCtaBan
+         ::oDbfDet:Save()
+      end if 
+
+      ::oDbfVir:Skip()
+
+      sysrefresh()
+
+   end while
+
+   ::oDbfVir:GoTop()
+
+   ::oBrwDet:Refresh()
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -1103,7 +1167,7 @@ METHOD lSave( nMode )
 
       if empty( ::oDbf:cCodRem )
          msgStop( "El número de cuenta no puede estar vacío." )
-         ::oCodRem:SetFocus()
+         ::oGetCuentaRemesa:SetFocus()
          lReturn  := .f.
       end if
 
@@ -1188,7 +1252,7 @@ METHOD SaveDetails()
       // Estado de las facturas------------------------------------------------
 
       if ::oFacCliT:Seek( cNumFac )
-         ChkLqdFacCli( nil, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oDbfDet:cAlias, ::oAntCliT:cAlias, ::oIva:cAlias, ::oDivisas:cAlias )
+         chkLqdFacCli( nil, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oDbfDet:cAlias, ::oAntCliT:cAlias, ::oIva:cAlias, ::oDivisas:cAlias )
       end if
 
       ::oDbfVir:Skip()
@@ -1717,7 +1781,17 @@ RETURN ( Self )
 
 METHOD EditDet()
 
-   EdtRecCli( ::oDbfVir:cSerie + Str( ::oDbfVir:nNumFac ) + ::oDbfVir:cSufFac + Str( ::oDbfVir:nNumRec ) )
+   local cNumeroRecibo  := ::oDbfVir:cSerie + Str( ::oDbfVir:nNumFac ) + ::oDbfVir:cSufFac + Str( ::oDbfVir:nNumRec )
+
+   if edtRecCli( cNumeroRecibo )
+
+      if ::oDbfDet:Seek( cNumeroRecibo )
+         ::oDbfVir:Load()
+         aeval( ::oDbfVir:aTField, {| oFld, n | ::oDbfVir:FldPut( n, ::oDbfDet:FieldGet( n ) ) } )
+         ::oDbfVir:Save()
+      end if 
+
+   end if 
 
 Return ( Self )
 

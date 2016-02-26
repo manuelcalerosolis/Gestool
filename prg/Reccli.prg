@@ -595,6 +595,20 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
          :lHide            := .t.
       end with
 
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Pagado por"
+         :bEditValue       := {|| ( dbfFacCliP )->cPgdoPor }
+         :nWidth           := 100
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Documento"
+         :bEditValue       := {|| ( dbfFacCliP )->cDocPgo }
+         :nWidth           := 100
+         :lHide            := .t.
+      end with
+
       oWndBrw:CreateXFromCode()
 
    DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
@@ -2940,6 +2954,7 @@ Return( oMenu:End() )
 
 Function EdtRecCli( cNumFac, lOpenBrowse, lRectificativa )
 
+   local lEdit             := .f.
    local nLevel            := nLevelUsr( _MENUITEM_ )
 
    DEFAULT lOpenBrowse     := .f.
@@ -2965,7 +2980,7 @@ Function EdtRecCli( cNumFac, lOpenBrowse, lRectificativa )
       if OpenFiles( .t. )
 
          if dbSeekInOrd( cNumFac, "nNumFac", dbfFacCliP )
-            WinEdtRec( nil, bEdit, dbfFacCliP, lRectificativa )
+            lEdit          := WinEdtRec( nil, bEdit, dbfFacCliP, lRectificativa )
          else
             MsgStop( "No se encuentra recibo" + str( len( cNumFac ) ) )
          end if
@@ -2976,7 +2991,7 @@ Function EdtRecCli( cNumFac, lOpenBrowse, lRectificativa )
 
    end if
 
-Return .t.
+Return ( lEdit )
 
 //----------------------------------------------------------------------------//
 
