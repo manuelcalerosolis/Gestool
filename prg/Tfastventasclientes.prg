@@ -1577,7 +1577,8 @@ METHOD AddRecibosCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
          ::oDbf:nNumRem    := ::oFacCliP:nNumRem
          ::oDbf:cSufRem    := ::oFacCliP:cSufRem
-         :.oDbf:cEstado    := cEstadoRecibo( ::oFacCliP:cAlias )
+
+         ::oDbf:cEstado    := cEstadoRecibo( ::oFacCliP:cAlias )
 
          // Añadimos un nuevo registro--------------------------------------------
 

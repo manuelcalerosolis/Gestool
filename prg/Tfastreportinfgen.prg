@@ -444,6 +444,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD XmlDocument()
 
    METHOD DlgFilter()
+   METHOD SetFilterInforme( cExpresionFilter )          INLINE ( ::oDbf:SetFilter( cExpresionFilter ), sysrefresh() )
 
    METHOD InsertIfValid()
 
@@ -1048,9 +1049,7 @@ METHOD lGenerate() CLASS TFastReportInfGen
 
    // Colocamos el filtro -----------------------------------------------------
 
-   ::oDbf:SetFilter( ::oFilter:cExpresionFilter )
-
-   ::oDbf:GoTop()
+   ::setFilter( ::oFilter:cExpresionFilter )
 
 RETURN ( ::oDbf:LastRec() > 0 )
 

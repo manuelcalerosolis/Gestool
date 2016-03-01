@@ -6285,7 +6285,7 @@ Function oTInfGen( cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
    local uReturn  := ""
 
    if !Empty( oThis ) .and. !Empty( cMsg )
-      uReturn     := ApoloSender( oThis, cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
+      uReturn     := apoloSender( oThis, cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
    end if
 
 Return ( uReturn )
