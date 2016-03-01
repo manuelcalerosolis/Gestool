@@ -413,13 +413,14 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Cobrado"
-         :nHeadBmpNo       := 4
-         :bStrData         := {|| "" }
+         :nHeadBmpNo       := 5
+         :bStrData         := {|| cEstadoRecibo( dbfFacCliP ) }
          :bBmpData         := {|| nEstadoRecibo( dbfFacCliP ) }
          :nWidth           := 20
-         :AddResource( "Cnt16" )
-         :AddResource( "Sel16" )
-         :AddResource( "Document_out_16" )
+         :AddResource( "bSel" )
+         :AddResource( "bCancel" )
+         :AddResource( "bAlert" )
+         :AddResource( "bClock" )
          :AddResource( "ChgPre16" )
       end with
 
@@ -5595,9 +5596,9 @@ Return ( Self )
 
 function nEstadoRecibo( dbfFacCliP )
 
-   local nEstado  := 1
+   local nEstado     := 1
 
-   if !Empty( dbfFacCliP )
+   if !empty( dbfFacCliP )
 
       if !( dbfFacCliP )->lCobrado
          nEstado     := 1
@@ -5611,7 +5612,48 @@ function nEstadoRecibo( dbfFacCliP )
 
    end if
 
+   do case
+      case ( uFacCliP )->lEsperaDoc
+         nEstadoRecibo  := 4 // "Espera doc."
+      case ( uFacCliP )->lCobrado .and. !( uFacCliP )->lDevuelto .and. !( uFacCliP )->lRemesa
+         nEstadoRecibo  := 1 // "Cobrado"
+      case ( uFacCliP )->lCobrado .and. ( uFacCliP )->lDevuelto
+         nEstadoRecibo  := 3 // "Devuelto"
+      case ( uFacCliP )->lCobrado .and. ( uFacCliP )->lRemesa .and. !empty( ( uFacCliP )->nNumRem )
+         nEstadoRecibo  := "Remesado"
+      case !( uFacCliP )->lCobrado 
+         nEstadoRecibo  := "Pendiente"
+   end case
+
+
 return ( nEstado )
+
+//---------------------------------------------------------------------------//
+
+function cEstadoRecibo( uFacCliP )
+
+   local cEstadoRecibo  := ""
+
+   DEFAULT uFacCliP     := dbfFacCliP
+
+   if empty( uFacCliP )
+      Return ( cEstadoRecibo )
+   end if 
+
+   do case
+      case ( uFacCliP )->lEsperaDoc
+         cEstadoRecibo  := "Espera doc."
+      case ( uFacCliP )->lCobrado .and. !( uFacCliP )->lDevuelto .and. !( uFacCliP )->lRemesa
+         cEstadoRecibo  := "Cobrado"
+      case ( uFacCliP )->lCobrado .and. ( uFacCliP )->lDevuelto
+         cEstadoRecibo  := "Devuelto"
+      case ( uFacCliP )->lCobrado .and. ( uFacCliP )->lRemesa .and. !empty( ( uFacCliP )->nNumRem )
+         cEstadoRecibo  := "Remesado"
+      case !( uFacCliP )->lCobrado 
+         cEstadoRecibo  := "Pendiente"
+   end case
+
+Return ( cEstadoRecibo )
 
 //---------------------------------------------------------------------------//
 

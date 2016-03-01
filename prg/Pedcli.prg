@@ -5963,7 +5963,6 @@ STATIC FUNCTION ChgSta( oBrw )
          ( D():PedidosClientes( nView ) )->( dbGoTo( nRec ) )
 
          lQuit                         := .f.
-
          cNumPed                       := ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed
 
          /*
@@ -5975,7 +5974,7 @@ STATIC FUNCTION ChgSta( oBrw )
             if ( D():PedidosClientes( nView ) )->nEstado == 1
                ( D():PedidosClientes( nView ) )->nEstado := 3
             else
-               lQuit                   := .t.
+               lQuit                   := .f.
                ( D():PedidosClientes( nView ) )->nEstado := 1
             end if
 
@@ -5994,10 +5993,10 @@ STATIC FUNCTION ChgSta( oBrw )
           
             while ( dbfAlbCliT )->( dbSeek( cNumPed ) )  .and. !( dbfAlbCliT )->( Eof() )
 
-               	if dbLock( dbfAlbCliT )
-                  	( dbfAlbCliT )->cNumPed    := ""
-                  	( dbfAlbCliT )->( dbUnLock() )
-               	end if
+            	if dbLock( dbfAlbCliT )
+               	( dbfAlbCliT )->cNumPed    := ""
+               	( dbfAlbCliT )->( dbUnLock() )
+            	end if
 
             end while
 
@@ -6011,7 +6010,7 @@ STATIC FUNCTION ChgSta( oBrw )
             nRecAlb  := ( dbfAlbCliL )->( RecNo() )
             nOrdAnt  := ( dbfAlbCliL )->( OrdSetFocus( "cNumPed" ) )
 
-            while ( dbfAlbCliL )->( dbSeek( cNumPed ) ) .and. !( dbfAlbCliL )->( Eof() )
+            while ( dbfAlbCliL )->( dbSeek( cNumPed ) ) .and. !( dbfAlbCliL )->( eof() )
 
                if dbLock( dbfAlbCliL )
                   ( dbfAlbCliL )->cNumPed    := ""
@@ -6032,10 +6031,10 @@ STATIC FUNCTION ChgSta( oBrw )
 
             while ( dbfFacCliT )->( dbSeek( cNumPed ) )  .and. !( dbfFacCliT )->( Eof() )
 
-                if dbLock( dbfFacCliT )
-                    ( dbfFacCliT )->cNumPed    := ""
-                    ( dbfFacCliT )->( dbUnLock() )
-                end if
+               if dbLock( dbfFacCliT )
+                  ( dbfFacCliT )->cNumPed    := ""
+                  ( dbfFacCliT )->( dbUnLock() )
+               end if
 
             end while
 
@@ -6263,32 +6262,32 @@ STATIC FUNCTION RecPedCli( aTmpPed )
                
             if hhaskey( hAtipica, "nImporte" )
             	if hAtipica[ "nImporte" ] != 0
-               		( dbfTmpLin )->nPreDiv := hAtipica[ "nImporte" ]
-               	end if
+               	( dbfTmpLin )->nPreDiv := hAtipica[ "nImporte" ]
+               end if
             end if
 
             if hhaskey( hAtipica, "nDescuentoPorcentual" )
             	if hAtipica[ "nDescuentoPorcentual" ] != 0
-               		( dbfTmpLin )->nDto     := hAtipica[ "nDescuentoPorcentual" ]
-               	end if	
+            		( dbfTmpLin )->nDto     := hAtipica[ "nDescuentoPorcentual" ]
+            	end if	
             end if
 
             if hhaskey( hAtipica, "nDescuentoPromocional" )
             	if hAtipica[ "nDescuentoPromocional" ] != 0
-               		( dbfTmpLin )->nDtoPrm  := hAtipica[ "nDescuentoPromocional" ]
-               	end if	
+            		( dbfTmpLin )->nDtoPrm  := hAtipica[ "nDescuentoPromocional" ]
+            	end if	
             end if
 
             if hhaskey( hAtipica, "nDescuentoLineal" )
             	if hAtipica[ "nDescuentoLineal" ] != 0
-               		( dbfTmpLin )->nDtoDiv  := hAtipica[ "nDescuentoLineal" ]
-               	end if	
+            		( dbfTmpLin )->nDtoDiv  := hAtipica[ "nDescuentoLineal" ]
+            	end if	
             end if
 
             if hhaskey( hAtipica, "nComisionAgente" )
 	            if hAtipica[ "nComisionAgente" ] != 0
-               		( dbfTmpLin )->nComAge  := hAtipica[ "nComisionAgente" ]
-               	end if	
+            		( dbfTmpLin )->nComAge  := hAtipica[ "nComisionAgente" ]
+            	end if	
             end if
 
          end if

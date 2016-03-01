@@ -11,7 +11,6 @@
 20 BITMAP "..\\bmp\\Inicio.bmp"
 30 BITMAP "..\\bmp\\OkExit.bmp"
 40 BITMAP "..\\bmp\\btnbar.bmp"
-50 BITMAP "..\\bmp\\cancel.bmp"
 60 BITMAP "..\\bmp\\btnbar2.bmp"
 70 BITMAP "..\\bmp\\prntexit.bmp"
 80 BITMAP "..\\bmp\\zoomexit.bmp"

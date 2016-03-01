@@ -1609,7 +1609,7 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Sesiones de trabajo'
    oItem:bAction        := {|| Turnos( "01002", oWnd() ) }
    oItem:cId            := "01002"
-   oItem:cBmp           := "clock_16"
+   oItem:cBmp           := "bClock"
    oItem:cBmpBig        := "clock"
 
    oGrupo               := TGrupoAcceso()
