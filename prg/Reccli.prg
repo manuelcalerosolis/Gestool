@@ -136,6 +136,12 @@ static lOldDevuelto     := .f.
 
 static bEdit            := { |aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aTmpFac| EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aTmpFac ) }
 
+static hEstadoRecibo    := {  "Pendiente"             => "bCancel",;
+                              "Cobrado"               => "bSel",;
+                              "Devuelto"              => "bAlert",;
+                              "Remesado"              => "folder_ok_16",;
+                              "Espera documentación"  => "bClock" }
+
 #ifndef __PDA__
 
 //----------------------------------------------------------------------------//
@@ -412,15 +418,12 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Cobrado"
-         :nHeadBmpNo       := 5
+         :cHeader          := "Estado"
+         :nHeadBmpNo       := 6
          :bStrData         := {|| cEstadoRecibo( dbfFacCliP ) }
          :bBmpData         := {|| nEstadoRecibo( dbfFacCliP ) }
          :nWidth           := 20
-         :AddResource( "bSel" )
-         :AddResource( "bCancel" )
-         :AddResource( "bAlert" )
-         :AddResource( "bClock" )
+         heval( hEstadoRecibo, {|k,v,i| :AddResource( v ) } )
          :AddResource( "ChgPre16" )
       end with
 
@@ -441,16 +444,6 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
          :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "IMP16" )
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Espera de documentación"
-         :nHeadBmpNo       := 3
-         :bEditValue       := {|| ( dbfFacCliP )->lEsperaDoc }
-         :nWidth           := 20
-         :lHide            := .t.
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "document_time_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -733,19 +726,19 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
       TOOLTIP  "M(o)neda";
       HOTKEY   "O";
 
-   DEFINE BTNSHELL RESOURCE "Sel" GROUP OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "Check2_" GROUP OF oWndBrw ;
       NOBORDER ;
       ACTION   ( FilterRecibos( .t. ) );
       TOOLTIP  "Solo cob(r)ados" ;
       HOTKEY   "R";
 
-   DEFINE BTNSHELL RESOURCE "Cnt" GROUP OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "Cancel_" GROUP OF oWndBrw ;
       NOBORDER ;
       ACTION   ( FilterRecibos( .f. ) );
       TOOLTIP  "Solo (p)endientes" ;
       HOTKEY   "P";
 
-   DEFINE BTNSHELL RESOURCE "Document_out_" GROUP OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "Warning_" GROUP OF oWndBrw ;
       NOBORDER ;
       ACTION   ( FilterRecibos() );
       TOOLTIP  "Solo de(v)ueltos" ;
@@ -4587,7 +4580,7 @@ FUNCTION aItmRecCli()
    aAdd( aBasRecCli, {"dEntrada"    ,"D",  8, 0, "Fecha de cobro",              "",                   "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"nImporte"    ,"N", 16, 6, "Importe",                     "cPorDivRec",         "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cDesCriP"    ,"C",100, 0, "Concepto del pago",           "",                   "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"dPreCob"     ,"D",  8, 0, "Fecha de previsión de cobro", "",                   "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"dPreCob"     ,"D",  8, 0, "Fecha de expedición",         "",                   "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cPgdoPor"    ,"C", 50, 0, "Pagado por",                  "",                   "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cDocPgo"     ,"C", 50, 0, "Documento de pago",           "",                   "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"lCobrado"    ,"L",  1, 0, "Lógico de cobrado",           "",                   "", "( cDbfRec )" } )
@@ -5594,39 +5587,9 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-function nEstadoRecibo( dbfFacCliP )
+function nEstadoRecibo( uFacCliP )
 
-   local nEstado     := 1
-
-   if !empty( dbfFacCliP )
-
-      if !( dbfFacCliP )->lCobrado
-         nEstado     := 1
-      else
-         if !( dbfFacCliP )->lDevuelto
-            nEstado  := 2
-         else
-            nEstado  := 3
-         end if
-      end if
-
-   end if
-
-   do case
-      case ( uFacCliP )->lEsperaDoc
-         nEstadoRecibo  := 4 // "Espera doc."
-      case ( uFacCliP )->lCobrado .and. !( uFacCliP )->lDevuelto .and. !( uFacCliP )->lRemesa
-         nEstadoRecibo  := 1 // "Cobrado"
-      case ( uFacCliP )->lCobrado .and. ( uFacCliP )->lDevuelto
-         nEstadoRecibo  := 3 // "Devuelto"
-      case ( uFacCliP )->lCobrado .and. ( uFacCliP )->lRemesa .and. !empty( ( uFacCliP )->nNumRem )
-         nEstadoRecibo  := "Remesado"
-      case !( uFacCliP )->lCobrado 
-         nEstadoRecibo  := "Pendiente"
-   end case
-
-
-return ( nEstado )
+Return ( hGetPos( hEstadoRecibo, cEstadoRecibo( uFacCliP ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -5642,7 +5605,7 @@ function cEstadoRecibo( uFacCliP )
 
    do case
       case ( uFacCliP )->lEsperaDoc
-         cEstadoRecibo  := "Espera doc."
+         cEstadoRecibo  := "Espera documentación"
       case ( uFacCliP )->lCobrado .and. !( uFacCliP )->lDevuelto .and. !( uFacCliP )->lRemesa
          cEstadoRecibo  := "Cobrado"
       case ( uFacCliP )->lCobrado .and. ( uFacCliP )->lDevuelto
@@ -5675,6 +5638,15 @@ Static Function FilterRecibos( lCobrado )
 Return ( nil )
 
 //---------------------------------------------------------------------------//
+
+Function setFilterRecibo( cFilterExpresion )
+
+   createFastFilter( cFilterExpresion, dbfFacCliP, .f. )
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
 
 Function lReciboMatriz( cNumRec, dbfFacCliP ) 
    

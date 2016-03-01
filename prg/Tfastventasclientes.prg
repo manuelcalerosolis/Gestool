@@ -1575,6 +1575,10 @@ METHOD AddRecibosCliente( cCodigoCliente ) CLASS TFastVentasClientes
          ::oDbf:nTotNet    := nTotRecCli( ::oFacCliP )
          ::oDbf:nTotCob    := nTotCobCli( ::oFacCliP )
 
+         ::oDbf:nNumRem    := ::oFacCliP:nNumRem
+         ::oDbf:cSufRem    := ::oFacCliP:cSufRem
+         :.oDbf:cEstado    := cEstadoRecibo( ::oFacCliP:cAlias )
+
          // Añadimos un nuevo registro--------------------------------------------
 
          if ::lValidRegister()
@@ -2147,6 +2151,7 @@ METHOD Create( uParam ) CLASS TFastVentasRecibos
 
    ::AddField( "nNumRem",  "N",  9, 0, {|| "999999999" },   "Número de la remesa" )
    ::AddField( "cSufRem",  "C",  2, 0, {|| "@!" },          "Sufijo de la remesa" )
+   ::AddField( "cEstado",  "C", 20, 0, {|| "" },            "Estado del recibo" )
 
 RETURN ( self )
 
