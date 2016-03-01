@@ -213,6 +213,8 @@ CLASS TRemesas FROM TMasDet
    METHOD getFicheroExportacionXml()   INLINE ( getPathFileNoExt( ::cFicheroExportacion ) + ".xml" )
    METHOD getFicheroExportacionTxt()   INLINE ( getPathFileNoExt( ::cFicheroExportacion ) + ".txt" )
 
+   METHOD getIngreso()                 INLINE ( iif( empty( ::oDbf:dIngreso ), ::oDbf:dFecRem, ::oDbf:dIngreso ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -272,7 +274,9 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD CALCULATE NAME "nTotRem"            LEN 16  DEC 6                             VAL      ::nTotRem(.t.)                            COMMENT "Total"  COLSIZE 100  ALIGN RIGHT                 OF ::oDbf
       FIELD CALCULATE NAME "cBmpDiv"            LEN 20  DEC 0                             VAL      ::cBmp()                                  COMMENT "Div."   COLSIZE  25                              OF ::oDbf
       FIELD NAME "dConta"              TYPE "D" LEN  8  DEC 0                                                                                COMMENT "Contab."                                         OF ::oDbf
-      FIELD NAME "dExport"             TYPE "D" LEN  8  DEC 0                             DEFAULT CtoD( "" )                                                                           HIDE            OF ::oDbf
+      FIELD NAME "dExport"             TYPE "D" LEN  8  DEC 0                             DEFAULT  CtoD( "" )                                                                          HIDE            OF ::oDbf
+      FIELD NAME "dIngreso"            TYPE "D" LEN  8  DEC 0                             DEFAULT  Date()                                    COMMENT "Ingreso"    COLSIZE 80                           OF ::oDbf
+      FIELD NAME "mComent"             TYPE "M" LEN 10  DEC 0                                                                                COMMENT "Comentario" COLSIZE 280                          OF ::oDbf
 
       INDEX TO "RemCliT.Cdx" TAG "nNumRem" ON "Str( nNumRem ) + cSufRem"   COMMENT "Número" NODELETED OF ::oDbf
       INDEX TO "RemCliT.Cdx" TAG "cCodRem" ON "cCodRem"                    COMMENT "Cuenta" NODELETED OF ::oDbf
@@ -748,6 +752,12 @@ METHOD Resource( nMode )
 			WHEN 		( nMode != ZOOM_MODE ) ;
 			OF 		oDlg
 
+      REDEFINE GET ::oDbf:dIngreso ;
+         ID       125 ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
       REDEFINE CHECKBOX ::oExportado ;
          VAR      ::oDbf:lExport ;
          ID       200 ;
@@ -813,6 +823,11 @@ METHOD Resource( nMode )
          SPINNER ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
 			OF 		oDlg
+
+      REDEFINE GET ::oDbf:mComent ;
+         MEMO ;
+         ID       180 ;
+         OF       oDlg
 
       /*
       Botones de acceso________________________________________________________
@@ -1213,12 +1228,12 @@ METHOD SaveDetails()
          ::oDbfDet:Load()
 
          ::oDbfDet:lCobrado      := .t.
-         ::oDbfDet:dEntrada      := ::oDbf:dFecRem
+         ::oDbfDet:dEntrada      := ::getIngreso()
 
          if ::oDbf:nTipRem == 2  //Remesa por descuentos
 
             ::oDbfDet:lRecDto    := .t.
-            ::oDbfDet:dFecDto    := ::oDbf:dFecRem
+            ::oDbfDet:dFecDto    := ::getIngreso()
 
          end if
 
@@ -1413,7 +1428,7 @@ METHOD InitMod58( oDlg )
       cBuffer  += "7"                        // Constante para el modelo 58
       cBuffer  += "0"                        // Numero de linea
       cBuffer  += cHeader                    // Cabecera
-      cBuffer  += Left( Dtoc( ::oDbf:dFecRem ), 2) + SubStr( Dtoc( ::oDbf:dFecRem ), 4, 2 ) + Right( Dtoc( ::oDbf:dFecRem ), 2 )
+      cBuffer  += Left( Dtoc( ::getIngreso() ), 2) + SubStr( Dtoc( ::getIngreso() ), 4, 2 ) + Right( Dtoc( ::getIngreso() ), 2 )
       cBuffer  += Space( 6 )                 // Libre
       cBuffer  += ::oCtaRem:oDbf:cNomPre     // Nombre
       cBuffer  += Space( 20 )                // Libre
@@ -1434,7 +1449,7 @@ METHOD InitMod58( oDlg )
       cBuffer  += "7"                        // Constante para el modelo 19
       cBuffer  += "0"                        // Numero de linea
       cBuffer  += cHeader                    // Cabecera
-      cBuffer  += Left( Dtoc( ::oDbf:dFecRem ), 2) + SubStr( Dtoc( ::oDbf:dFecRem ), 4, 2 ) + Right( Dtoc( ::oDbf:dFecRem ), 2 )
+      cBuffer  += Left( Dtoc( ::getIngreso() ), 2) + SubStr( Dtoc( ::getIngreso() ), 4, 2 ) + Right( Dtoc( ::getIngreso() ), 2 )
       cBuffer  += Left( Dtoc( ::dVencimiento ), 2) + SubStr( Dtoc( ::dVencimiento ), 4, 2 ) + Right( Dtoc( ::dVencimiento ), 2 )
       cBuffer  += ::oCtaRem:oDbf:cNomPre     // Nombre de la empresa igual a del presentador
       cBuffer  += ::oCtaRem:oDbf:cEntBan     // Entidad
@@ -2381,7 +2396,7 @@ METHOD InitMod19( oDlg )
       cBuffer        += "8"                                 // Constante para el modelo 19
       cBuffer        += "0"                                 // Numero de linea
       cBuffer        += cHeader                             // Cabecera
-      cBuffer        += Left( Dtoc( ::oDbf:dFecRem ), 2) + SubStr( Dtoc( ::oDbf:dFecRem ), 4, 2 ) + Right( Dtoc( ::oDbf:dFecRem ), 2 )
+      cBuffer        += Left( Dtoc( ::getIngreso() ), 2) + SubStr( Dtoc( ::getIngreso() ), 4, 2 ) + Right( Dtoc( ::getIngreso() ), 2 )
       cBuffer        += Space( 6 )                          // Libre
       cBuffer        += Left( ::oCtaRem:oDbf:cNomPre, 40 )  // Nombre
       cBuffer        += Space( 20 )                         // Libre
@@ -2439,7 +2454,7 @@ METHOD InitMod19( oDlg )
                      cBuffer     += "8"                        // Constante para el modelo 19
                      cBuffer     += "0"                        // Numero de linea
                      cBuffer     += cHeader                    // Cabecera
-                     cBuffer     += Left( Dtoc( ::oDbf:dFecRem ), 2) + SubStr( Dtoc( ::oDbf:dFecRem ), 4, 2 ) + Right( Dtoc( ::oDbf:dFecRem ), 2 )
+                     cBuffer     += Left( Dtoc( ::getIngreso() ), 2) + SubStr( Dtoc( ::getIngreso() ), 4, 2 ) + Right( Dtoc( ::getIngreso() ), 2 )
                      cBuffer     += Left( Dtoc( dFecVto ), 2) + SubStr( Dtoc( dFecVto ), 4, 2 ) + Right( Dtoc( dFecVto ), 2 )
                      cBuffer     += ::oCtaRem:oDbf:cNomPre     // Nombre de la empresa igual a del presentador
                      cBuffer     += ::oCtaRem:oDbf:cEntBan     // Entidad
