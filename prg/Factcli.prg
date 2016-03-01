@@ -443,7 +443,6 @@ static dbfIva
 static dbfClient
 static dbfCliBnc
 static dbfArtPrv
-static dbfFPago
 static dbfTVta
 static dbfPromoT
 static dbfPromoL
@@ -1183,7 +1182,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
       DEFINE BTNSHELL RESOURCE "BMPCONTA" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CntFacCli( lChk1, lChk2, nil, .t., oTree, nil, nil, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), dbfAntCliT, dbfAlbCliT, D():Clientes( nView ), dbfDiv, D():Articulos( nView ), dbfFPago, dbfIva, oNewImp ) }, "Contabilizar facturas", lAplicacionA3(), "Simular resultados", .f., "Contabilizar recibos", , {|| if( lAplicacionA3(), ( EnlaceA3():GetInstance():WriteASCII(), EnlaceA3():DestroyInstance() ), .t. ) } ) ) ;
+         ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CntFacCli( lChk1, lChk2, nil, .t., oTree, nil, nil, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), dbfAntCliT, dbfAlbCliT, D():Clientes( nView ), dbfDiv, D():Articulos( nView ), D():FormasPago( nView ), dbfIva, oNewImp ) }, "Contabilizar facturas", lAplicacionA3(), "Simular resultados", .f., "Contabilizar recibos", , {|| if( lAplicacionA3(), ( EnlaceA3():GetInstance():WriteASCII(), EnlaceA3():DestroyInstance() ), .t. ) } ) ) ;
          TOOLTIP  "(C)ontabilizar" ;
          HOTKEY   "C";
          LEVEL    ACC_EDIT
@@ -1489,8 +1488,8 @@ Static Function oldReportFacCli( nDevice, nCopies, cPrinter, cCodDoc )
    private cDbfCli      := D():Clientes( nView )
    private cDivisa      := dbfDiv
    private cDbfDiv      := dbfDiv
-   private cFPago       := dbfFPago
-   private cDbfPgo      := dbfFPago
+   private cFPago       := D():FormasPago( nView )
+   private cDbfPgo      := D():FormasPago( nView )
    private cIva         := dbfIva
    private cDbfIva      := dbfIva
    private cAgente      := D():Agentes( nView )
@@ -1533,7 +1532,7 @@ Static Function oldReportFacCli( nDevice, nCopies, cPrinter, cCodDoc )
 
    ( D():Clientes( nView ) )->( dbSeek( ( D():FacturasClientes( nView ) )->cCodCli ) )
    ( D():Agentes( nView )  )->( dbSeek( ( D():FacturasClientes( nView ) )->cCodAge ) )
-   ( dbfFPago  )->( dbSeek( ( D():FacturasClientes( nView ) )->cCodPago) )
+   ( D():FormasPago( nView ) )->( dbSeek( ( D():FacturasClientes( nView ) )->cCodPago) )
    ( dbfDiv    )->( dbSeek( ( D():FacturasClientes( nView ) )->cDivFac ) )
    ( dbfUsr    )->( dbSeek( ( D():FacturasClientes( nView ) )->cCodUsr ) )
    ( dbfRuta   )->( dbSeek( ( D():FacturasClientes( nView ) )->cCodRut ) )
@@ -1724,6 +1723,8 @@ STATIC FUNCTION OpenFiles()
 
       D():PropiedadesLineas( nView )
 
+      D():FormasPago( nView )
+
       USE ( cPatEmp() + "FACCLII.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLII", @dbfFacCliI ) )
       SET ADSINDEX TO ( cPatEmp() + "FACCLII.CDX" ) ADDITIVE
 
@@ -1865,9 +1866,6 @@ STATIC FUNCTION OpenFiles()
 
       USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
       SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
-
-      USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
-      SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "TVTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TVTA", @dbfTVta ) )
       SET ADSINDEX TO ( cPatDat() + "TVTA.CDX" ) ADDITIVE
@@ -2120,10 +2118,6 @@ STATIC FUNCTION CloseFiles()
 
    if !Empty( dbfIva )
       ( dbfIva     )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfFPago )
-      ( dbfFPago   )->( dbCloseArea() )
    end if
 
    if !Empty( dbfFacCliI )
@@ -2458,7 +2452,6 @@ STATIC FUNCTION CloseFiles()
    end if 
 
    dbfIva      := nil
-   dbfFPago    := nil
    dbfFacCliD  := nil
    dbfFacCliS  := nil
    dbfAlbCliT  := nil
@@ -2733,7 +2726,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    */
 
    cSay[ 2 ]               := RetFld( aTmp[ _CCODALM ], dbfAlm )
-   cSay[ 4 ]               := RetFld( aTmp[ _CCODPAGO], dbfFPago )
+   cSay[ 4 ]               := RetFld( aTmp[ _CCODPAGO], D():FormasPago( nView ) )
    cSay[ 8 ]               := RetFld( aTmp[ _CCODRUT ], dbfRuta )
    cSay[ 3 ]               := RetFld( aTmp[ _CCODAGE ], D():Agentes( nView ) )
    cSay[ 5 ]               := RetFld( aTmp[ _CCODTAR ], dbfTarPreT )
@@ -2971,7 +2964,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       240 ;
          PICTURE  "@!" ;
          WHEN     ( lWhen .and. !lRecibosPagadosTmp( dbfTmpPgo ) );
-         VALID    ( cFPago( aGet[ _CCODPAGO ], dbfFPago, oSay[ 4 ] ) ) ;
+         VALID    ( cFPago( aGet[ _CCODPAGO ], D():FormasPago( nView ), oSay[ 4 ] ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwFPago( aGet[ _CCODPAGO ], oSay[ 4 ] ) );
          OF       oFld:aDialogs[1]
@@ -3817,7 +3810,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          RESOURCE "Notebook_user1_16" ;
          NOBORDER ;
          TOOLTIP  "Importar presupuesto" ;
-         ACTION   ( BrwPreCli( aGet[ _CNUMPRE ], dbfPreCliT, dbfPreCliL, dbfIva, dbfDiv, dbfFPago, aGet[ _LIVAINC ] ) )
+         ACTION   ( BrwPreCli( aGet[ _CNUMPRE ], dbfPreCliT, dbfPreCliL, dbfIva, dbfDiv, D():FormasPago( nView ), aGet[ _LIVAINC ] ) )
 
       REDEFINE BTNBMP oBtnPed ;
          ID       602 ;
@@ -3825,7 +3818,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          RESOURCE "Clipboard_empty_user1_16" ;
          NOBORDER ;
          TOOLTIP  "Importar pedido" ;
-         ACTION   ( BrwPedCli( aGet[ _CNUMPED ], dbfPedCliT, dbfPedCliL, dbfIva, dbfDiv, dbfFPago, aGet[ _LIVAINC ] ) )
+         ACTION   ( BrwPedCli( aGet[ _CNUMPED ], dbfPedCliT, dbfPedCliL, dbfIva, dbfDiv, D():FormasPago( nView ), aGet[ _LIVAINC ] ) )
 
       REDEFINE BTNBMP oBtnAlb ;
          ID       603 ;
@@ -3841,7 +3834,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          RESOURCE "Power-drill_user1_16" ;
          NOBORDER ;
          TOOLTIP  "Importar S.A.T." ;
-         ACTION   ( BrwSatCli( aGet[ _CNUMSAT ], dbfSatCliT, dbfSatCliL, dbfIva, dbfDiv, dbfFPago, aGet[ _LIVAINC ] ) )
+         ACTION   ( BrwSatCli( aGet[ _CNUMSAT ], dbfSatCliT, dbfSatCliL, dbfIva, dbfDiv, D():FormasPago( nView ), aGet[ _LIVAINC ] ) )
 
       REDEFINE BUTTON oBtnGrp ;
          ID       512 ;
@@ -4177,14 +4170,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       end with
 
       if nMode == EDIT_MODE
-         oBrwPgo:bLDblClick   := {|| ExtEdtRecCli( dbfTmpPgo, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), dbfAntCliT, dbfFPago, D():Agentes( nView ), dbfCajT, dbfIva, dbfDiv, oCtaRem, oBanco, .t., oCentroCoste ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) }
+         oBrwPgo:bLDblClick   := {|| ExtEdtRecCli( dbfTmpPgo, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), dbfAntCliT, D():FormasPago( nView ), D():Agentes( nView ), dbfCajT, dbfIva, dbfDiv, oCtaRem, oBanco, .t., oCentroCoste ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) }
       end if
 
       REDEFINE BUTTON ;
          ID       501 ;
          OF       oFld:aDialogs[2];
          WHEN     ( nMode == EDIT_MODE ) ;
-         ACTION   ( ExtEdtRecCli( dbfTmpPgo,  D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), dbfAntCliT, dbfFPago, D():Agentes( nView ), dbfCajT, dbfIva, dbfDiv, oCtaRem, oBanco, .t., oCentroCoste ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) )
+         ACTION   ( ExtEdtRecCli( dbfTmpPgo,  D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), dbfAntCliT, D():FormasPago( nView ), D():Agentes( nView ), dbfCajT, dbfIva, dbfDiv, oCtaRem, oBanco, .t., oCentroCoste ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) )
 
       REDEFINE BUTTON ;
          ID       502 ;
@@ -10452,7 +10445,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Agentes", ( D():Agentes( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Agentes", cItemsToReport( aItmAge() ) )
 
-   oFr:SetWorkArea(     "Formas de pago", ( dbfFpago )->( Select() ) )
+   oFr:SetWorkArea(     "Formas de pago", ( D():FormasPago( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
 
    oFr:SetWorkArea(     "Transportistas", oTrans:Select() )
@@ -14030,7 +14023,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       Return .f.
    end if
 
-   if !lFormaPagoCobrado( aTmp[ _CCODPAGO ], dbfFPago )
+   if !lFormaPagoCobrado( aTmp[ _CCODPAGO ], D():FormasPago( nView ) )
       if lClienteRiesgoAlcanzado( aTmp[ _CCODCLI ], oStock, D():Clientes( nView ), nTotFac, nMode )
          msgStop( "Este cliente supera el limite de riesgo permitido." )
          if !empty( aGet[ _CCODCLI ] )
@@ -14300,7 +14293,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 	      oMeter:Set( 8 )
       end if    
 
-      GenPgoFacCli( cSerFac + str( nNumFac, 9 ) + cSufFac, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), dbfAntCliT, D():Clientes( nView ), dbfFPago, dbfDiv, dbfIva, nMode )
+      GenPgoFacCli( cSerFac + str( nNumFac, 9 ) + cSufFac, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), dbfAntCliT, D():Clientes( nView ), D():FormasPago( nView ), dbfDiv, dbfIva, nMode )
 
       /*
       Comprobamos el estado de la factura-----------------------------------------
@@ -15058,12 +15051,12 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
 
             if Empty( ( D():FacturasClientesCobros( nView ) )->cTipRec )
 
-               if !Empty( cCodigoXmlPago( ( D():FacturasClientesCobros( nView ) )->cCodPgo, dbfFPago ) )
+               if !Empty( cCodigoXmlPago( ( D():FacturasClientesCobros( nView ) )->cCodPgo, D():FormasPago( nView ) ) )
 
                   oInstallment                           := Installment()
                   oInstallment:dInstallmentDueDate       := ( D():FacturasClientesCobros( nView ) )->dFecVto
                   oInstallment:nInstallmentAmount        := nTotRecCli( D():FacturasClientesCobros( nView ), dbfDiv )
-                  oInstallment:cPaymentMeans             := cCodigoXmlPago( ( D():FacturasClientesCobros( nView ) )->cCodPgo, dbfFPago )
+                  oInstallment:cPaymentMeans             := cCodigoXmlPago( ( D():FacturasClientesCobros( nView ) )->cCodPgo, D():FormasPago( nView ) )
 
                   /*
                   Recibo domiciliado rellenamos con los datos bancarios del cliente
@@ -15968,7 +15961,7 @@ static function GeneraCobrosImportacion( cSerieFactura, nNumeroFactura, cSufijoF
    Generamos los pagos------------------------------------------------
    */
 
-   GenPgoFacCli( cSerieFactura + str( nNumeroFactura ) + cSufijoFactura, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), dbfAntCliT, D():Clientes( nView ), dbfFPago, dbfDiv, dbfIva )
+   GenPgoFacCli( cSerieFactura + str( nNumeroFactura ) + cSufijoFactura, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), dbfAntCliT, D():Clientes( nView ), D():FormasPago( nView ), dbfDiv, dbfIva )
 
    ChkLqdFacCli( , D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), dbfAntCliT, dbfIva, dbfDiv, .f. )
 
@@ -17163,6 +17156,10 @@ FUNCTION sTotFacCli( cFactura, cFacCliT, cFacCliL, dbfIva, dbfDiv, dbfFacCliP, d
    sTotal:aTotalBase[ 1 ]                 := aTotIva[ 1, 2 ]
    sTotal:aTotalBase[ 2 ]                 := aTotIva[ 2, 2 ]
    sTotal:aTotalBase[ 3 ]                 := aTotIva[ 3, 2 ]
+
+   sTotal:aPorcentajeIva[ 1 ]             := aTotIva[ 1, 3 ]
+   sTotal:aPorcentajeIva[ 2 ]             := aTotIva[ 2, 3 ]
+   sTotal:aPorcentajeIva[ 3 ]             := aTotIva[ 3, 3 ]
 
 Return ( sTotal )
 
@@ -22972,7 +22969,7 @@ STATIC FUNCTION EndTransTablet( aTmp, aGet, nMode, oDlg )
 
       // Generar los pagos de las facturas-------------------------------------------
 
-      GenPgoFacCli( cSerFac + str( nNumFac, 9 ) + cSufFac, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), dbfAntCliT, D():Clientes( nView ), dbfFPago, dbfDiv, dbfIva, nMode )
+      GenPgoFacCli( cSerFac + str( nNumFac, 9 ) + cSufFac, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), dbfAntCliT, D():Clientes( nView ), D():FormasPago( nView ), dbfDiv, dbfIva, nMode )
 
       // Comprobamos el estado de la factura-----------------------------------------
 
@@ -23667,7 +23664,7 @@ Return ( nombrePropiedad( ( D():FacturasClientesLineas( nView ) )->cCodPr2, ( D(
 
 //---------------------------------------------------------------------------//
 
-static function cNumeroPedidoFactura( cNumAlb )
+function cNumeroPedidoFactura( cNumAlb )
 
    local cPedido  := ""
 
