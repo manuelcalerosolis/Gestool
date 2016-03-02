@@ -75,6 +75,7 @@ function Main( ParamsMain, ParamsSecond )
    local oIconApp
    local cAdsType
    local cAdsIp
+   local cAdsPort
    local cAdsData
    local cAdsLocal
    local cAdsFile
@@ -118,16 +119,18 @@ function Main( ParamsMain, ParamsSecond )
 
    cAdsType          := GetPvProfString(  "ADS",      "Type",     "",   cIniAplication() )
    cAdsIp            := GetPvProfString(  "ADS",      "Ip",       "",   cIniAplication() )
+   cAdsPort          := GetPvProfString(  "ADS",      "Port",     "",   cIniAplication() )
    cAdsData          := GetPvProfString(  "ADS",      "Data",     "",   cIniAplication() )
    nAdsServer        := GetPvProfInt(     "ADS",      "Server",   7,    cIniAplication() )
    cAdsLocal         := GetPvProfString(  "ADS",      "Local",    "",   cIniAplication() )
    cAdsFile          := GetPvProfString(  "ADS",      "File",     "",   cIniAplication() )
 
-   cAdsIp( cAdsIp )
-   cAdsData( cAdsData )
+   cAdsIp(     cAdsIp )
+   cAdsPort(   cAdsPort )
+   cAdsData(   cAdsData )
    nAdsServer( nAdsServer )
-   cAdsFile( cAdsFile )
-   cAdsLocal( cAdsLocal )
+   cAdsFile(   cAdsFile )
+   cAdsLocal(  cAdsLocal )
 
    // Motor de bases de datos--------------------------------------------------
 
@@ -146,7 +149,6 @@ function Main( ParamsMain, ParamsSecond )
 
       adsSetServerType( nAdsServer() )    // TODOS
       adsSetFileType( 2 )                 // ADS_CDX
-      // adsLocking( .t. )   
       adsRightsCheck( .f. )
       adsSetDeleted( .t. )
       adsCacheOpenTables( 250 )
@@ -154,6 +156,8 @@ function Main( ParamsMain, ParamsSecond )
       // Conexion con el motor de base de datos--------------------------------
 
       with object ( TDataCenter() )
+
+         :CreateDataDictionary()
 
          :ConnectDataDictionary()
 

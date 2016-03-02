@@ -124,13 +124,11 @@ CLASS TLabelGenerator
    METHOD dataLabel( oFr )                VIRTUAL
    METHOD variableLabel( oFr )            VIRTUAL 
 
-   METHOD nombrePrimeraPropiedad()        INLINE ( if( !empty( ::tmpLabelReport ), ( ::tmpLabelReport )->cCodPr1 + ( ::tmpLabelReport )->cValPr1, "empty(tmpLabelReport)" ) )
-   METHOD nombreSegundaPropiedad()        INLINE ( if( !empty( ::tmpLabelReport ), ( ::tmpLabelReport )->cCodPr2 + ( ::tmpLabelReport )->cValPr2, "empty(tmpLabelReport)" ) )
+   //METHOD nombrePrimeraPropiedad()        INLINE ( if( !empty( ::tmpLabelReport ), ( ::tmpLabelReport )->cCodPr1 + ( ::tmpLabelReport )->cValPr1, "empty(tmpLabelReport)" ) )
+   //METHOD nombreSegundaPropiedad()        INLINE ( if( !empty( ::tmpLabelReport ), ( ::tmpLabelReport )->cCodPr2 + ( ::tmpLabelReport )->cValPr2, "empty(tmpLabelReport)" ) )
 
-/*
    METHOD nombrePrimeraPropiedad()        INLINE ( if( !empty( ::tmpLabelReport ), nombrePropiedad( ( ::tmpLabelReport )->cCodPr1, ( ::tmpLabelReport )->cValPr1, ::nView ), "" ) )
    METHOD nombreSegundaPropiedad()        INLINE ( if( !empty( ::tmpLabelReport ), nombrePropiedad( ( ::tmpLabelReport )->cCodPr2, ( ::tmpLabelReport )->cValPr2, ::nView ), "" ) )
-*/
 
    METHOD refreshBrowseLabel()            INLINE ( if( !empty( ::oBrwLabel ), ::oBrwLabel:Refresh(), ) )
 

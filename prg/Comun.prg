@@ -31,8 +31,9 @@ static lAds             := .f.
 static lAIS             := .f.
 static lCdx             := .f.
 
-static cIp              := ""
-static cData            := ""
+static cAdsIp           := ""
+static cAdsPort         := ""
+static cAdsData            := ""
 static nAdsServer       := 7
 static cAdsLocal        := ""
 static cAdsFile         := "Gestool.Add"
@@ -232,20 +233,30 @@ Return ( if( lAdsRdd(), "Timestamp", "T" ) )
 Function cAdsIp( cSetIp )
 
    if IsChar( cSetIp )
-      cIp      := cSetIp
+      cAdsIp      := cSetIp
    end if
 
-Return ( cPath( cIp ) )
+Return ( cAdsIp )
+
+//----------------------------------------------------------------------------//
+
+Function cAdsPort( cPort )
+
+   if isChar( cPort )
+      cAdsPort  := cPort
+   end if 
+
+Return ( cAdsPort )
 
 //----------------------------------------------------------------------------//
 
 Function cAdsData( cSetData )
 
    if IsChar( cSetData )
-      cData    := cSetData
+      cAdsData  := cSetData
    end if
 
-Return ( if( !Empty( cData ), cPath( cData ), "" ) )
+Return ( if( !Empty( cAdsData ), cPath( cAdsData ), "" ) )
 
 //----------------------------------------------------------------------------//
 
@@ -271,18 +282,14 @@ Return ( cAdsLocal )
 
 Function cAdsUNC()
 
-   if ( "localhost" $ cAdsIp() )
-      Return( cAdsData() )
-   end if
-
-Return ( cAdsIp() + cAdsData() )
+Return ( cAdsIp() + cPath( cAdsData() ) )
 
 //----------------------------------------------------------------------------//
 
 Function cAdsFile( cFile )
 
    if ( isChar( cFile ) .and. !empty( cFile ) )
-      cAdsFile := cFile
+      cAdsFile    := cFile
    end if 
 
 Return ( cAdsFile )
@@ -402,24 +409,16 @@ Function cPatDat( lFull )
       Return ( if( lFull, cAdsUNC() + "Datos\", "Datos" ) )
    end if
 
-   if lCdx()
-      Return ( FullCurDir() + "Datos\" )
-   end if
-
 Return ( FullCurDir() + "Datos\" )
 
 //----------------------------------------------------------------------------//
 
-Function cPatDatLocal( lFull )
+Function cPathDatosLocal( lFull )
 
    DEFAULT lFull  := .f.
 
    if lAIS()
-      Return ( if( lFull, cAdsLocal() + "Datos\", "Datos" ) )
-   end if
-
-   if lCdx()
-      Return ( FullCurDir() + "Datos\" )
+      Return ( if( lFull, cAdsLocal() + "Datos\", "Datos\" ) )
    end if
 
 Return ( FullCurDir() + "Datos\" )
@@ -431,14 +430,16 @@ Function cPatADS( lFull )
    DEFAULT lFull  := .f.
 
    if lAIS()
-      Return ( if( lFull, cAdsUNC() + "ADS\", "ADS" ) )
+      Return ( if( lFull, cAdsUNC() + getSinglePathADS(), getSinglePathADS() ) )
    end if
 
-   if lCdx()
-      Return ( FullCurDir() + "ADS\" )
-   end if
+Return ( FullCurDir() + getSinglePathADS() )
 
-Return ( FullCurDir() + "ADS\" )
+//----------------------------------------------------------------------------//
+
+Function getSinglePathADS()
+
+Return ( "ADS\" )
 
 //----------------------------------------------------------------------------//
 

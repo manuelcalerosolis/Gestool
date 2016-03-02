@@ -20453,8 +20453,8 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
 
    // Estudio de impuestos para el Gasto despues de los descuentos-------------
 
-   if nManObr != 0 .and. nIvaMan != 0
-
+   if nManObr != 0 
+   
       if lIvaInc 
          nIvaGasto   := Round( nManObr / ( 100 / nIvaMan + 1 ), nRouDiv )
          nBaseGasto  := nManObr - nIvaGasto

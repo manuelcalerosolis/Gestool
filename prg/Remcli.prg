@@ -209,6 +209,13 @@ CLASS TRemesas FROM TMasDet
 
    METHOD getIngreso()                 INLINE ( iif( empty( ::oDbf:dIngreso ), ::oDbf:dFecRem, ::oDbf:dIngreso ) )
 
+   METHOD setEstadosRecibos()
+   METHOD setEstadoRecibo( lCobrado )  INLINE ( iif( lCobrado,;
+                                                      (  ::oDbfDet:FieldPutByName( "lCobrado", .t. ),;
+                                                         ::oDbfDet:FieldPutByName( "dEntrada", ::getIngreso() ) ),;
+                                                      (  ::oDbfDet:FieldPutByName( "lCobrado", .f. ),;
+                                                         ::oDbfDet:FieldPutByName( "dEntrada", ctod("") ) ) ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -849,6 +856,18 @@ METHOD Resource( nMode )
          WHEN     ( nMode == APPD_MODE ) ;
          ACTION   ( ::ImportResource( nMode ) )
 
+      REDEFINE BUTTON ;
+         ID       504 ;
+         OF       oDlg ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( ::setEstadosRecibos( .t. ) )
+
+      REDEFINE BUTTON ;
+         ID       505 ;
+         OF       oDlg ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( ::setEstadosRecibos( .f. ) )
+
       /*
       Recibos__________________________________________________________________
       */
@@ -863,6 +882,17 @@ METHOD Resource( nMode )
       ::oBrwDet:lFooter       := .t.
 
       ::oDbfVir:SetBrowse( ::oBrwDet )
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader          := "Estado"
+         :nHeadBmpNo       := 3
+         :bStrData         := {|| ::gotoRecibo(), ( if( ::oDbfDet:lCobrado, "Cobrado", "Pendiente" ) ) }
+         :bBmpData         := {|| ::gotoRecibo(), ( if( ::oDbfDet:lCobrado, 1, 2 ) ) }
+         :nWidth           := 20
+         :AddResource( "bSel" )
+         :AddResource( "bCancel" )
+         :AddResource( "chgPre16" )
+      end with
 
       with object ( ::oBrwDet:AddCol() )
          :cHeader          := "Número"
@@ -1218,9 +1248,6 @@ METHOD SaveDetails()
       if ::oDbfDet:SeekInOrd( cNumRec, "nNumFac" )
 
          ::oDbfDet:Load()
-
-         ::oDbfDet:lCobrado      := .t.
-         ::oDbfDet:dEntrada      := ::getIngreso()
 
          if ::oDbf:nTipRem == 2  //Remesa por descuentos
 
@@ -2356,6 +2383,25 @@ RETURN ( cDirectory )
 
 //---------------------------------------------------------------------------//
 
+METHOD setEstadosRecibos( lCobrado )
+
+   local nSelect
+
+   for each nSelect in ::oBrwDet:aSelected
+      
+      ::oDbfVir:goto( nSelect )
+      
+      if ::gotoRecibo()
+         ::setEstadoRecibo( lCobrado )
+         ::oBrwDet:Refresh()
+      end if 
+
+   next
+
+RETURN ( nil )   
+
+//---------------------------------------------------------------------------//
+
 FUNCTION lValidRemesaCliente( oGetRemesaCliente, oDbfRemesaCliente )
 
    local lValid   := .f.
@@ -2374,3 +2420,5 @@ FUNCTION lValidRemesaCliente( oGetRemesaCliente, oDbfRemesaCliente )
 RETURN lValid
 
 //---------------------------------------------------------------------------//
+
+

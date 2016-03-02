@@ -5606,11 +5606,11 @@ function cEstadoRecibo( uFacCliP )
    do case
       case ( uFacCliP )->lEsperaDoc
          cEstadoRecibo  := "Espera documentación"
-      case ( uFacCliP )->lCobrado .and. !( uFacCliP )->lDevuelto .and. !( uFacCliP )->lRemesa
+      case ( uFacCliP )->lCobrado .and. !( uFacCliP )->lDevuelto 
          cEstadoRecibo  := "Cobrado"
       case ( uFacCliP )->lCobrado .and. ( uFacCliP )->lDevuelto
          cEstadoRecibo  := "Devuelto"
-      case ( uFacCliP )->lCobrado .and. ( uFacCliP )->lRemesa .and. !empty( ( uFacCliP )->nNumRem )
+      case !( uFacCliP )->lCobrado .and. ( uFacCliP )->lRemesa .and. !empty( ( uFacCliP )->nNumRem )
          cEstadoRecibo  := "Remesado"
       case !( uFacCliP )->lCobrado 
          cEstadoRecibo  := "Pendiente"

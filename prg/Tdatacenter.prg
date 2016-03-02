@@ -11,7 +11,6 @@ CLASS TDataCenter
 
    CLASSDATA   oInstance
 
-   CLASSDATA   cDataDictionaryFile        INIT cPatADS(.t.) + cAdsFile()
    CLASSDATA   cDataDictionaryComment     INIT "Gestool ADS data dictionary"
 
    CLASSDATA   aDDTables                  INIT {}
@@ -80,7 +79,8 @@ CLASS TDataCenter
    DATA        cMsg                       INIT ""
    DATA        oMsg
 
-   METHOD getDataDictionaryFile()         INLINE ( cPatADS(.t.) + cAdsFile() )
+   METHOD getDataDictionaryFile()         INLINE ( cAdsIp() + cPath( cAdsData() ) + ( getSinglePathADS() ) + cAdsFile() )
+   METHOD getDataDictionaryConnection()   INLINE ( cAdsIp() + if( !empty( cAdsPort() ), ":" + cAdsPort(), "" ) + cPath( cAdsData() ) + ( getSinglePathADS() ) + cAdsFile() )
 
    METHOD CreateDataDictionary()
    METHOD ConnectDataDictionary()
@@ -877,6 +877,10 @@ METHOD StartAdministratorTask()
    lCdx( .f. )
    lAIS( .t. )
 
+   ::oMsg:SetText( "Comprabamos la existencia de la base de datos" )
+
+   ::CreateDataDictionary()
+
    ::oMsg:SetText( "Intentando conectar con la base de datos" )
 
    if ::ConnectDataDictionary()
@@ -980,9 +984,13 @@ METHOD CreateDataDictionary()
 
    if !file( ::getDataDictionaryFile() )
 
-      AdsDDCreate( ::getDataDictionaryFile(), , ::cDataDictionaryComment )
+      if msgYesNo( "La base de datos " + ::getDataDictionaryFile() + " no existe, ¿desea crearla?")
 
-      AdsDDSetDatabaseProperty( ADS_DD_ENABLE_INTERNET, .t. )
+         AdsDDCreate( ::getDataDictionaryFile(), , ::cDataDictionaryComment )
+
+         AdsDDSetDatabaseProperty( ADS_DD_ENABLE_INTERNET, .t. )
+
+      end if 
 
    end if
 
@@ -994,15 +1002,13 @@ METHOD ConnectDataDictionary()
 
    local cError
 
-   // ::CreateDataDictionary()
-
-   ::lAdsConnection     := AdsConnect60( ::getDataDictionaryFile(), nAdsServer(), "ADSSYS", "", , @::hAdsConnection )
+   ::lAdsConnection     := AdsConnect60( ::getDataDictionaryConnection(), nAdsServer(), "ADSSYS", "", , @::hAdsConnection )
    
    if !::lAdsConnection
 
       adsGetLastError( @cError )
 
-      msgInfo( cError, "Error connect data dictionary " + ::getDataDictionaryFile() )
+      msgStop( cError, "Error connect data dictionary " + ::getDataDictionaryConnection() )
 
    end if
 

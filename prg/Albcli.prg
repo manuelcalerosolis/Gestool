@@ -157,7 +157,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LTOTLIN                  24
 #define _LIMPLIN                  25
 #define _LNEWLIN                  26
-#define _dCNUMPED                 27
+#define __CNUMPED                 27
 #define _CCODPR1                  28
 #define _CCODPR2                  29
 #define _CVALPR1                  30
@@ -4362,7 +4362,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
       aTmp[ _LNEWLIN ]        := .t.
       aTmp[ _CALMLIN ]        := aTmpAlb[ _CCODALM ]
       aTmp[ _LIVALIN ]        := aTmpAlb[ _LIVAINC ]
-      aTmp[ _dCNUMPED]        := aTmpAlb[ _CNUMPED ]
+      aTmp[ __CNUMPED]        := aTmpAlb[ _CNUMPED ]
       aTmp[ _NTARLIN ]        := oGetTarifa:getTarifa()
       aTmp[ _DFECCAD ]        := Ctod( "" )
 
@@ -4956,6 +4956,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          VALID    ( iif(   !validTime( aTmp[ __TFECALB ] ),;
                            ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
                            .t. ) );
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ __CNUMPED ] VAR aTmp[ __CNUMPED ] ;
+         ID       380 ;
+         PICTURE  "@R A/#########/##" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _MOBSLIN ] VAR aTmp[ _MOBSLIN ] ;
@@ -11200,7 +11206,7 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
       nDtoDiv                          := uTmpLin[ _NDTODIV ]
       nNumLin                          := uTmpLin[ _NNUMLIN ]
       nPosPrint                        := uTmpLin[ _NPOSPRINT ]
-      cNumPed                          := uTmpLin[ _dCNUMPED]
+      cNumPed                          := uTmpLin[ __CNUMPED]
       nTarLin                          := uTmpLin[ _NTARLIN ]
    else
       cCodArt                          := ( uTmpLin )->cRef
@@ -16378,7 +16384,7 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "lTotLin",   "L",  1, 0, "Línea de total" ,                                 "LineaTotal",                    "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "lImpLin",   "L",  1, 0, "Línea no imprimible" ,                            "LineaNoImprimible",             "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "lNewLin",   "L",  1, 0, "" ,                                               "",                              "", "( cDbfCol )", nil } )
-   aAdd( aColAlbCli, { "cNumPed"   ,"C", 12, 0, "Número del pedido" ,                              "NumeroPedido",                  "", "( cDbfCol )", nil } )
+   aAdd( aColAlbCli, { "cNumPed",   "C", 12, 0, "Número del pedido" ,                              "NumeroPedido",                  "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cCodPr1",   "C", 20, 0, "Código de primera propiedad",                     "CodigoPropiedad1",              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cCodPr2",   "C", 20, 0, "Código de segunda propiedad",                     "CodigoPropiedad2",              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cValPr1",   "C", 20, 0, "Valor de primera propiedad",                      "ValorPropiedad1",               "", "( cDbfCol )", nil } )
