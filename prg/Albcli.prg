@@ -14614,6 +14614,7 @@ function SynAlbCli( cPath )
    local aNumSer
    local cNumPed
    local aNumPed     := {}
+   local cCodGrp
 
    DEFAULT cPath     := cPatEmp() 
 
@@ -14709,10 +14710,12 @@ function SynAlbCli( cPath )
 
          end if
 
-         if Empty( ( D():Get( "AlbCliT", nView ) )->cCodGrp )
+         cCodGrp        := RetGrpCli( ( D():Get( "AlbCliT", nView ) )->cCodCli, D():Get( "Client", nView ) )
+
+         if ( D():Get( "AlbCliT", nView ) )->cCodGrp != cCodGrp
             
             if D():Lock( "AlbCliT", nView )
-               ( D():Get( "AlbCliT", nView ) )->cCodGrp := RetGrpCli( ( D():Get( "AlbCliT", nView ) )->cCodCli, D():Get( "Client", nView ) )
+               ( D():Get( "AlbCliT", nView ) )->cCodGrp := cCodGrp
                D():UnLock( "AlbCliT", nView )
             end if   
 
