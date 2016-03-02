@@ -513,7 +513,7 @@ METHOD NextPage()  CLASS GeneraFacturasClientes
          Return .f.
       end if
 
-      if ::oTreeTotales:nCount() == 0
+      if ::oTreeTotales:nCount() == 0 .or. Len( ::aListaAlbaranes ) <= 0
          MsgStop( "No existen registros en las condiciones solicitadas." )
          Return .f.
       end if
