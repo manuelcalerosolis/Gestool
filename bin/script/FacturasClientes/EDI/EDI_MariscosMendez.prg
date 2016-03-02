@@ -1,8 +1,8 @@
 #include "Factu.ch" 
 #include "FiveWin.ch"
 
-//#define __localDirectory__       "\\Srvcafesyzumos\nueva estructura servidor\FicherosVoxel\"
-#define __localDirectory__       "c:\ficheros\voxel\"
+#define __localDirectory__       "c:\eDiversa\send\Planos\"
+//#define __localDirectory__       "c:\ficheros\voxel\"
 #define __separator__            "|"
 
 //---------------------------------------------------------------------------//
@@ -224,7 +224,7 @@ CLASS TEdiExporarFacturas
    METHOD writePrecioNetoUnitarioLinea()
    METHOD writeImpuestosLinea()
 
-   METHOD getNumero( nNumero )   INLINE   ( transform( nNumero, "@E 99999999999.999" ) )
+   METHOD getNumero( nNumero )   INLINE   ( transform( nNumero, "@R 99999999999.999" ) )
    METHOD getFecha( dFecha )     INLINE   ( dtos( dFecha ) )
 
    METHOD isLineaValida()        INLINE   ( lValLine( D():FacturasClientesLineas( ::nView ) ) .and. !( D():FacturasClientesLineas( ::nView ) )->lTotLin .and. nTotNFacCli() != 0 )
@@ -655,7 +655,7 @@ METHOD writeCantidadLinea()
    local cLine    := ""
 
    cLine          += "QTYLIN" + __separator__
-   cLine          += "M" + __separator__
+   cLine          += "47" + __separator__
    cLine          += ::getNumero( nTotNFacCli() )
 
    ::oFileEDI:add( cLine )

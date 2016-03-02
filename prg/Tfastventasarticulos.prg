@@ -1464,7 +1464,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cPobCli    := ( aliasPedidosClientes )->cPobCli
                   ::oDbf:cPrvCli    := ( aliasPedidosClientes )->cPrvCli
                   ::oDbf:cPosCli    := ( aliasPedidosClientes )->cPosCli
-                  ::oDbf:cCodObr    := ( aliasPedidosClientes )->cCodObr
+                  ::oDbf:cCodObr    := ( aliasPedidosClientesLineas )->cObrLin
 
                   ::oDbf:cCodFam    := ( aliasPedidosClientesLineas )->cCodFam
                   ::oDbf:cGrpFam    := ( aliasPedidosClientesLineas )->cGrpFam
