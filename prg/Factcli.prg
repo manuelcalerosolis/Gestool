@@ -11399,12 +11399,12 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento, lShowInc )
 
             if lBancoDefecto( ( D():Clientes( nView ) )->Cod, dbfCliBnc )
 
-               	if !Empty( aGet[ _CBANCO ] )
-                  	aGet[ _CBANCO ]:cText( ( dbfCliBnc )->cCodBnc )
-                  	aGet[ _CBANCO ]:lValid()
-               	else
-               		aTmp[ _CBANCO ] 	:= ( dbfCliBnc )->cCodBnc
-               	end if
+               if !Empty( aGet[ _CBANCO ] )
+                  aGet[ _CBANCO ]:cText( ( dbfCliBnc )->cCodBnc )
+                  aGet[ _CBANCO ]:lValid()
+               else
+                  aTmp[ _CBANCO ] 	:= ( dbfCliBnc )->cCodBnc
+               end if
 
 	            if !Empty( aGet[ _CPAISIBAN ] )
 	               aGet[ _CPAISIBAN ]:cText( ( dbfCliBnc )->cPaisIBAN )
@@ -11413,40 +11413,40 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento, lShowInc )
 	            	aTmp[ _CPAISIBAN ] 	:= ( dbfCliBnc )->cPaisIBAN
 	            end if
 
-   	         	if !Empty( aGet[ _CCTRLIBAN ] )
-   	            	aGet[ _CCTRLIBAN ]:cText( ( dbfCliBnc )->cCtrlIBAN )
-   	            	aGet[ _CCTRLIBAN ]:lValid()
-   	           	else
-   	           		aTmp[ _CCTRLIBAN ] 	:= ( dbfCliBnc )->cCtrlIBAN
-   	         	end if
+	         	if !Empty( aGet[ _CCTRLIBAN ] )
+	            	aGet[ _CCTRLIBAN ]:cText( ( dbfCliBnc )->cCtrlIBAN )
+	            	aGet[ _CCTRLIBAN ]:lValid()
+	           	else
+	           		aTmp[ _CCTRLIBAN ] 	:= ( dbfCliBnc )->cCtrlIBAN
+	         	end if
 
-               	if !Empty( aGet[ _CENTBNC ] )
-                  	aGet[ _CENTBNC ]:cText( ( dbfCliBnc )->cEntBnc )
-                  	aGet[ _CENTBNC ]:lValid()
-                else
-                	aTmp[ _CENTBNC ] 	:= ( dbfCliBnc )->cEntBnc
-               	end if
+            	if !Empty( aGet[ _CENTBNC ] )
+               	aGet[ _CENTBNC ]:cText( ( dbfCliBnc )->cEntBnc )
+               	aGet[ _CENTBNC ]:lValid()
+               else
+                  aTmp[ _CENTBNC ] 	:= ( dbfCliBnc )->cEntBnc
+            	end if
 
-               	if !Empty( aGet[ _CSUCBNC ] )
-                  	aGet[ _CSUCBNC ]:cText( ( dbfCliBnc )->cSucBnc )
-                  	aGet[ _CSUCBNC ]:lValid()
-                else
-                	aTmp[ _CSUCBNC ] 	:= ( dbfCliBnc )->cSucBnc
-               	end if
+            	if !Empty( aGet[ _CSUCBNC ] )
+               	aGet[ _CSUCBNC ]:cText( ( dbfCliBnc )->cSucBnc )
+               	aGet[ _CSUCBNC ]:lValid()
+               else
+                  aTmp[ _CSUCBNC ] 	:= ( dbfCliBnc )->cSucBnc
+            	end if
 
-               	if !Empty( aGet[ _CDIGBNC ] )
-                  	aGet[ _CDIGBNC ]:cText( ( dbfCliBnc )->cDigBnc )
-                  	aGet[ _CDIGBNC ]:lValid()
-                else
-                	aTmp[ _CDIGBNC ] 	:= ( dbfCliBnc )->cDigBnc
-               	end if
+            	if !Empty( aGet[ _CDIGBNC ] )
+               	aGet[ _CDIGBNC ]:cText( ( dbfCliBnc )->cDigBnc )
+               	aGet[ _CDIGBNC ]:lValid()
+               else
+                  aTmp[ _CDIGBNC ] 	:= ( dbfCliBnc )->cDigBnc
+            	end if
 
-               	if !Empty( aGet[ _CCTABNC ] )
-                  	aGet[ _CCTABNC ]:cText( ( dbfCliBnc )->cCtaBnc )
-                  	aGet[ _CCTABNC ]:lValid()
-                else
-                	aTmp[ _CCTABNC ] 	:= ( dbfCliBnc )->cCtaBnc
-               	end if
+            	if !Empty( aGet[ _CCTABNC ] )
+               	aGet[ _CCTABNC ]:cText( ( dbfCliBnc )->cCtaBnc )
+               	aGet[ _CCTABNC ]:lValid()
+               else
+                  aTmp[ _CCTABNC ] 	:= ( dbfCliBnc )->cCtaBnc
+            	end if
 
             end if
 
@@ -17947,6 +17947,8 @@ FUNCTION BrwFacCli( oGet, oIva )
          :nWidth           := 100
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
+         :cSortOrder       := "nTotFac"
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       REDEFINE BUTTON ;
@@ -19418,7 +19420,10 @@ FUNCTION rxFacCli( cPath, cDriver )
       ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "dFecDes", "Dtos( dFecFac ) + tFecFac", {|| Dtos( Field->dFecFac ) + Field->tFecFac } ) )
 
       ( cFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
-      ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "lMail", "lMail", {|| Field->lMail } ) )
+      ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "lMail", "lMail", {|| Field->lMail } ) )
+
+      ( cFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
+      ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "nTotFac", "nTotFac", {|| Field->nTotFac } ) )
 
       ( cFacCliT )->( dbCloseArea() )
 

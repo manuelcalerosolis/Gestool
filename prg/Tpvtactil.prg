@@ -519,8 +519,8 @@ CLASS TpvTactil
 
    METHOD GetCodigoPropiedadArticulo1()                              INLINE ( if( empty( ::cCodigoPropiedadArticulo1 ), space( 20 ), ::cCodigoPropiedadArticulo1 ) )
    METHOD GetCodigoPropiedadArticulo2()                              INLINE ( if( empty( ::cCodigoPropiedadArticulo2 ), space( 20 ), ::cCodigoPropiedadArticulo2 ) )
-   METHOD GetValorPropiedadArticulo1()                               INLINE ( if( empty( ::cValorPropiedadArticulo1 ),  space( 40 ), ::cValorPropiedadArticulo1 ) )
-   METHOD GetValorPropiedadArticulo2()                               INLINE ( if( empty( ::cValorPropiedadArticulo2 ),  space( 40 ), ::cValorPropiedadArticulo2 ) )
+   METHOD GetValorPropiedadArticulo1()                               INLINE ( if( empty( ::cValorPropiedadArticulo1 ),  space( 20 ), ::cValorPropiedadArticulo1 ) )
+   METHOD GetValorPropiedadArticulo2()                               INLINE ( if( empty( ::cValorPropiedadArticulo2 ),  space( 20 ), ::cValorPropiedadArticulo2 ) )
 
    //------------------------------------------------------------------------//
 
@@ -4780,7 +4780,6 @@ METHOD lAcumulaArticulo( cCodigoMenu, cCodigoOrden ) CLASS TpvTactil
    if ::oTemporalLinea:Seek( ::oArticulo:Codigo )
 
       while ( ::oTemporalLinea:cCbaTil == ::oArticulo:Codigo ) .and. !( ::oTemporalLinea:Eof() )
-
          
          nPrecioLinea      := ::nPrecioArticulo( ::oArticulo:Codigo, cCodigoMenu, cCodigoOrden )
 

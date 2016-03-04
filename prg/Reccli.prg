@@ -883,7 +883,7 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
                   "Agrupados",;
                   "Contablidad";
          DIALOGS  "Recibos_1",;
-                  "Recibos_6",;
+                  "Recibos_Bancos",;
                   "Recibos_2",;
                   "Recibos_5",; 
                   "Recibos_3"

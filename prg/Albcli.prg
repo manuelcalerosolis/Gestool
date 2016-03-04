@@ -822,6 +822,8 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
+         :cSortOrder       := "nTotAlb"
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -16088,6 +16090,9 @@ FUNCTION rxAlbCli( cPath, cDriver )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted() .and. !lFacturado", {|| !Deleted() .and. !Field->lFacturado }  ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "LCLIOBR", "CCODCLI + CCODOBR", {|| Field->CCODCLI + Field->CCODOBR } ) )
+
+      ( dbfFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , , , .t. ) )
+      ( dbfFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "nTotAlb", "nTotAlb", {|| Field->nTotAlb }, ) )
 
       ( cAlbCliT )->( dbCloseArea() )
    else

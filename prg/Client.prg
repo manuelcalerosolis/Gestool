@@ -6650,13 +6650,15 @@ Return ( .t. )
 
 Function lBancoDefecto( cCodigoCliente, cDbfBanco )
 
-   local lBanco      := .f.
-
    if ( cDbfBanco )->( dbSeekInOrd( cCodigoCliente, "cCodDef", cDbfBanco ) )
-      lBanco         := .t.
+      Return .t. 
    end if
 
-Return ( lBanco )
+   if ( cDbfBanco )->( dbSeekInOrd( cCodigoCliente, "cCodCli", cDbfBanco ) )
+      Return .t. 
+   end if
+
+Return ( .f. )
 
 //--------------------------------------------------------------------------//
 

@@ -12538,6 +12538,10 @@ FUNCTION rxFacRec( cPath, oMeter )
       ( CFacRecT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( CFacRecT )->( ordCreate( cPath + "FacRecT.Cdx", "cCtrCoste", "cCtrCoste", {|| Field->cCtrCoste } ) )
 
+      ( CFacRecT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( CFacRecT )->( ordCreate( cPath + "FacRecT.Cdx", "nTotFac", "nTotFac", {|| Field->nTotFac } ) )
+
+
       ( cFacRecT )->( dbCloseArea() )
 
    else
@@ -15025,6 +15029,8 @@ FUNCTION BrwFacRec( oGet, oIva )
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
+         :cSortOrder       := "nTotFac"
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
 		REDEFINE BUTTON ;

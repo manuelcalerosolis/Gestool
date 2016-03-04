@@ -616,6 +616,8 @@ Function GetBic( cEntidad )
    BIC[ "3188" ]     := 'CCRIES2A188'
    BIC[ "0095" ]     := 'VASCES2PXXX'
    BIC[ "9000" ]     := 'ESPBESMMXXX'
+   BIC[ "0238" ]     := 'PSTRESMMXXX'
+   BIC[ "2024" ]     := 'CSURES2CXXX'
 
    BEGIN SEQUENCE 
       if hHasKey( BIC, cEntidad )

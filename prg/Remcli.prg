@@ -1250,10 +1250,8 @@ METHOD SaveDetails()
          ::oDbfDet:Load()
 
          if ::oDbf:nTipRem == 2  //Remesa por descuentos
-
             ::oDbfDet:lRecDto    := .t.
             ::oDbfDet:dFecDto    := ::getIngreso()
-
          end if
 
          ::oDbfDet:cCtaRem       := ::oDbf:cCodRem
@@ -1261,16 +1259,16 @@ METHOD SaveDetails()
          ::oDbfDet:cSufRem       := ::oDbf:cSufRem
          ::oDbfDet:lRemesa       := .t.
 
-         if empty( ::oDbfDet:cPaisIBAN )  .or.;
-            empty( ::oDbfDet:cCtrlIBAN )  .or.;
+         if empty( ::oDbfDet:cEPaisIBAN ) .or.;
+            empty( ::oDbfDet:cECtrlIBAN ) .or.;
             empty( ::oDbfDet:cBncEmp )    .or.;
             empty( ::oDbfDet:cEntEmp )    .or.;
             empty( ::oDbfDet:cSucEmp )    .or.;
             empty( ::oDbfDet:cDigEmp )    .or.;
             empty( ::oDbfDet:cCtaEmp )
 
-            ::oDbfDet:cPaisIBAN  := oRetFld( ::oDbf:cCodRem, ::oCtaRem:oDbf, "cPaisIBAN" )
-            ::oDbfDet:cCtrlIBAN  := oRetFld( ::oDbf:cCodRem, ::oCtaRem:oDbf, "cCtrlIBAN" )
+            ::oDbfDet:cEPaisIBAN := oRetFld( ::oDbf:cCodRem, ::oCtaRem:oDbf, "cPaisIBAN" )
+            ::oDbfDet:cECtrlIBAN := oRetFld( ::oDbf:cCodRem, ::oCtaRem:oDbf, "cCtrlIBAN" )
             ::oDbfDet:cBncEmp    := oRetFld( ::oDbf:cCodRem, ::oCtaRem:oDbf, "cBanco" )
             ::oDbfDet:cEntEmp    := oRetFld( ::oDbf:cCodRem, ::oCtaRem:oDbf, "cEntBan" )
             ::oDbfDet:cSucEmp    := oRetFld( ::oDbf:cCodRem, ::oCtaRem:oDbf, "cAgcBan" )
@@ -2137,8 +2135,6 @@ METHOD InitSepaXML19( oDlg )
       if ::lAgruparRecibos
          ::oDbfDet:OrdSetFocus( "nNumRem" )
       end if
-
-      ::dAnteriorVencimiento  := nil
 
       ::oCuaderno             := SepaXml():New( ::getFicheroExportacionXml() )
 
