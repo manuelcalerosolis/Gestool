@@ -9816,7 +9816,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, 
    Solo pueden modificar los precios los administradores-----------------------
    */
 
-   if ( Empty( aTmp[ _NPREUNIT ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio() ) .and. nMode != ZOOM_MODE
+   if ( empty( aTmp[ _NPREUNIT ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio() ) .and. ( nMode != ZOOM_MODE )
 
       if !Empty( aGet[ _NPREUNIT ] )
          aGet[ _NPREUNIT ]:HardEnable()
@@ -10877,40 +10877,25 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
          Solo pueden modificar los precios los administradores--------------
          */
 
-         if Empty( aTmp[ _NPREUNIT ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio()
-
-            if !Empty( aGet[ _NPREUNIT ] )
-                aGet[ _NPREUNIT ]:HardEnable()
-            end if
-
-             aGet[ _NIMPTRN  ]:HardEnable()
-
-            if !Empty( aGet[ _NPNTVER ] )
-               aGet[ _NPNTVER  ]:HardEnable()
-            end if
-
+         if ( empty( aTmp[ _NPREUNIT ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio() ) .and. ( nMode != ZOOM_MODE )
+            aGet[ _NPREUNIT ]:HardEnable()
+            aGet[ _NIMPTRN  ]:HardEnable()
+            aGet[ _NPNTVER  ]:HardEnable()
             aGet[ _NDTO     ]:HardEnable()
             aGet[ _NDTOPRM  ]:HardEnable()
-
-            if !Empty( aGet[ _NDTODIV ] )
-               aGet[ _NDTODIV  ]:HardEnable()
-            end if
-
+            aGet[ _NDTODIV  ]:HardEnable()
          else
-
             aGet[ _NPREUNIT ]:HardDisable() 
             aGet[ _NIMPTRN  ]:HardDisable()
             aGet[ _NPNTVER  ]:HardDisable()
             aGet[ _NDTO     ]:HardDisable()
             aGet[ _NDTOPRM  ]:HardDisable()
             aGet[ _NDTODIV  ]:HardDisable()
-         
          end if
-
 
       else
 
-         MsgStop( "Artículo no encontrado" )
+         msgStop( "Artículo no encontrado." )
          
          Return ( .f. )
 
