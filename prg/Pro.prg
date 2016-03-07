@@ -276,6 +276,18 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProT, oWndBrw, bWhen, bValid, nMode )
             :lHide            := .t.
          end with
 
+         with object ( oBrw:AddCol() )
+            :cHeader          := "Web"
+            :cSortOrder       := "cCodWeb"
+            :bEditValue       := {|| ( dbfTmpProL )->cCodWeb }
+            :cEditPicture     := "9999"
+            :nWidth           := 50
+            :nDataStrAlign    := AL_RIGHT
+            :nHeadStrAlign    := AL_RIGHT
+            :lHide            := .t.
+         end with
+
+
          oBrw:CreateFromResource( 120 )
 
          oBrw:bLDblClick      := {|| WinEdtRec( oBrw, bEdtDet, dbfTmpProL, aTmp ) }
