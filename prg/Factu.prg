@@ -1074,26 +1074,29 @@ Return ( .t. )
 
 Static Function CheckDirectory()
 
-   if( !lIsDir( cPatDat() ),     MakeDir( cNamePath( cPatDat() ) ), )
-   if( !lIsDir( cPatADS() ),     MakeDir( cNamePath( cPatADS() ) ), )
-   if( !lIsDir( cPatIn()  ),     MakeDir( cNamePath( cPatIn()  ) ), )
-   if( !lIsDir( cPatTmp() ),     MakeDir( cNamePath( cPatTmp() ) ), )   
-   if( !lIsDir( cPatInFrq() ),   MakeDir( cNamePath( cPatInFrq() ) ), )
-   if( !lIsDir( cPatOut() ),     MakeDir( cNamePath( cPatOut() ) ), )
-   if( !lIsDir( cPatSnd() ),     MakeDir( cNamePath( cPatSnd() ) ), )
-   if( !lIsDir( cPatLog() ),     MakeDir( cNamePath( cPatLog() ) ), )
-   if( !lIsDir( cPatBmp() ),     MakeDir( cNamePath( cPatBmp() ) ), )
-   if( !lIsDir( cPatHtml() ),    MakeDir( cNamePath( cPatHtml() ) ), )
-   if( !lIsDir( cPatXml() ),     MakeDir( cNamePath( cPatXml() ) ), )
-   if( !lIsDir( cPatSafe() ),    MakeDir( cNamePath( cPatSafe() ) ), )
-   if( !lIsDir( cPatPsion() ),   MakeDir( cNamePath( cPatPsion() ) ), )
-   if( !lIsDir( cPatEmpTmp() ),  MakeDir( cNamePath( cPatEmpTmp() ) ), )
-   if( !lIsDir( cPatScript() ),  MakeDir( cNamePath( cPatScript() ) ), )
+   if( !lIsDir( cPatDat() ),           MakeDir( cNamePath( cPatDat() ) ), )
+   if( !lIsDir( cPatADS() ),           MakeDir( cNamePath( cPatADS() ) ), )
+   if( !lIsDir( cPatIn()  ),           MakeDir( cNamePath( cPatIn()  ) ), )
+   if( !lIsDir( cPatTmp() ),           MakeDir( cNamePath( cPatTmp() ) ), )   
+   if( !lIsDir( cPatInFrq() ),         MakeDir( cNamePath( cPatInFrq() ) ), )
+   if( !lIsDir( cPatOut() ),           MakeDir( cNamePath( cPatOut() ) ), )
+   if( !lIsDir( cPatSnd() ),           MakeDir( cNamePath( cPatSnd() ) ), )
+   if( !lIsDir( cPatLog() ),           MakeDir( cNamePath( cPatLog() ) ), )
+   if( !lIsDir( cPatBmp() ),           MakeDir( cNamePath( cPatBmp() ) ), )
+   if( !lIsDir( cPatHtml() ),          MakeDir( cNamePath( cPatHtml() ) ), )
+   if( !lIsDir( cPatXml() ),           MakeDir( cNamePath( cPatXml() ) ), )
+   if( !lIsDir( cPatSafe() ),          MakeDir( cNamePath( cPatSafe() ) ), )
+   if( !lIsDir( cPatPsion() ),         MakeDir( cNamePath( cPatPsion() ) ), )
+   if( !lIsDir( cPatEmpTmp() ),        MakeDir( cNamePath( cPatEmpTmp() ) ), )
+   if( !lIsDir( cPatScript() ),        MakeDir( cNamePath( cPatScript() ) ), )
+   if( !lIsDir( cPatReporting() ),     MakeDir( cNamePath( cPatReporting() ) ), )
+   if( !lIsDir( cPatUserReporting() ), MakeDir( cNamePath( cPatUserReporting() ) ), )
+   if( !lIsDir( cPatBIC() ),           MakeDir( cNamePath( cPatBIC() ) ), )
 
    // Elimina los temporales de la aplicación----------------------------------
 
-   EraseFilesInDirectory( cPatTmp(), "*.*" )
-   EraseFilesInDirectory( cPatLog(), "*.*" )
+   eraseFilesInDirectory( cPatTmp(), "*.*" )
+   eraseFilesInDirectory( cPatLog(), "*.*" )
 
 Return ( nil )
 
@@ -4752,18 +4755,7 @@ STATIC FUNCTION lTctInitCheck( lDir, oMessage, oProgress )
 
       // Comprobamos que exista los directorios necesarios------------------------
 
-      if( !lIsDir( cPatDat() ),        MakeDir( cNamePath( cPatDat() ) ), )
-      if( !lIsDir( cPatIn()  ),        MakeDir( cNamePath( cPatIn()  ) ), )
-      if( !lIsDir( cPatTmp() ),        MakeDir( cNamePath( cPatTmp() ) ), )
-      if( !lIsDir( cPatOut() ),        MakeDir( cNamePath( cPatOut() ) ), )
-      if( !lIsDir( cPatSnd() ),        MakeDir( cNamePath( cPatSnd() ) ), )
-      if( !lIsDir( cPatLog() ),        MakeDir( cNamePath( cPatLog() ) ), )
-      if( !lIsDir( cPatBmp() ),        MakeDir( cNamePath( cPatBmp() ) ), )
-      if( !lIsDir( cPatHtml() ),       MakeDir( cNamePath( cPatHtml() ) ), )
-      if( !lIsDir( cPatSafe() ),       MakeDir( cNamePath( cPatSafe() ) ), )
-      if( !lIsDir( cPatPsion() ),      MakeDir( cNamePath( cPatPsion() ) ), )
-      if( !lIsDir( cPatEmpTmp() ),     MakeDir( cNamePath( cPatEmpTmp() ) ), )
-      if( !lIsDir( cPatReporting() ),  MakeDir( cNamePath( cPatReporting() ) ), )
+      CheckDirectory()
 
       // Borrar los ficheros de los directorios temporales------------------------
 
@@ -6010,8 +6002,6 @@ Return ( by( nRow ) )
 //---------------------------------------------------------------------------//
 
 Function Test() 
-
-   // TComercio():New():ftpTestConexion()
 
 /*
    local n  

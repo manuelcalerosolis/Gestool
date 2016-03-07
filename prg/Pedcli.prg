@@ -6097,7 +6097,7 @@ static function lGenPedCli( oBrw, oBtn, nDevice )
 
       WHILE ( D():Documentos( nView ) )->cTipo == "PC" .AND. !( D():Documentos( nView ) )->( eof() )
 
-         bAction  := bGenFac( nDevice, "Imprimiendo pedidos de clientes", ( D():Documentos( nView ) )->CODIGO )
+         bAction  := bGenFac( nDevice, "Imprimiendo pedidos de clientes", ( D():Documentos( nView ) )->Codigo )
 
          oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
 

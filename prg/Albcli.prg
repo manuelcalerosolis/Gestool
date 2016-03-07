@@ -8773,6 +8773,7 @@ Static Function VariableReportEntAlbCli( oFr )
    oFr:AddVariable( "Albarán de cliente",    "Total anticipado",                    "GetHbVar('nTotAnt')" )
    oFr:AddVariable( "Albarán de cliente",    "Total artículos",                     "GetHbVar('nTotArt')" )
    oFr:AddVariable( "Albarán de cliente",    "Total cajas",                         "GetHbVar('nTotCaj')" )
+   
    oFr:AddVariable( "Albarán de cliente",    "Bruto primer tipo de " + cImp(),      "GetHbArrayVar('aIvaUno',1)" )
    oFr:AddVariable( "Albarán de cliente",    "Bruto segundo tipo de " + cImp(),     "GetHbArrayVar('aIvaDos',1)" )
    oFr:AddVariable( "Albarán de cliente",    "Bruto tercer tipo de " + cImp(),      "GetHbArrayVar('aIvaTre',1)" )

@@ -10621,6 +10621,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Facturas",             "Fecha del decimo vencimiento",        "GetHbArrayVar('aDatVto',10)" )
    oFr:AddVariable(     "Facturas",             "Fecha del undecimo vencimiento",      "GetHbArrayVar('aDatVto',11)" )
    oFr:AddVariable(     "Facturas",             "Fecha del duodecimo vencimiento",     "GetHbArrayVar('aDatVto',12)" )
+
    oFr:AddVariable(     "Facturas",             "Importe del primer vencimiento",      "GetHbArrayVar('aImpVto',1)" )
    oFr:AddVariable(     "Facturas",             "Importe del segundo vencimiento",     "GetHbArrayVar('aImpVto',2)" )
    oFr:AddVariable(     "Facturas",             "Importe del tercero vencimiento",     "GetHbArrayVar('aImpVto',3)" )
