@@ -87,6 +87,10 @@ static oCentroCoste
 
 static nView
 
+static hEstadoRecibo          := {  "Pendiente"             => "bCancel",;
+                                    "Cobrado"               => "bSel",;
+                                    "Devuelto"              => "bAlert" }
+
 static oMenu
 static cFiltroUsuario   := ""
 static lOldDevuelto     := .f.
@@ -2687,7 +2691,6 @@ function aItmRecPrv()
    aAdd( aRecFacPrv, { "cCtaPrv"    ,"C", 10, 0, "Cuenta bancaria del proveedor",         "",            "", "( cDbfRec )" } )
    aAdd( aRecFacPrv, { "cCtrCoste"  ,"C",  9, 0, "Código del centro de coste",            "",            "", "( cDbfRec )" } )
 
-
 return ( aRecFacPrv )
 
 //---------------------------------------------------------------------------//
@@ -3286,3 +3289,32 @@ FUNCTION ExtDelRecPrv( cFacPrvP )
 Return .t.
 
 //----------------------------------------------------------------------------//
+
+function nEstadoReciboProveedor( uFacCliP )
+
+Return ( hGetPos( hEstadoRecibo, cEstadoReciboProveedor( uFacCliP ) ) )
+
+//---------------------------------------------------------------------------//
+
+function cEstadoReciboProveedor( uFacCliP )
+
+   local cEstadoRecibo  := ""
+
+   DEFAULT uFacCliP     := D():FacturasProveedoresPagos( nView )
+
+   if empty( uFacCliP )
+      Return ( cEstadoRecibo )
+   end if 
+
+   do case
+      case ( uFacCliP )->lCobrado .and. !( uFacCliP )->lDevuelto 
+         cEstadoRecibo  := "Cobrado"
+      case ( uFacCliP )->lCobrado .and. ( uFacCliP )->lDevuelto
+         cEstadoRecibo  := "Devuelto"
+      case !( uFacCliP )->lCobrado 
+         cEstadoRecibo  := "Pendiente"
+   end case
+
+Return ( cEstadoRecibo )
+
+//---------------------------------------------------------------------------//

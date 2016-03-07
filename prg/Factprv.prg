@@ -2346,7 +2346,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
          with object ( oBrwPgo:AddCol() )
             :cHeader          := "Pg. Pagado"
             :bStrData         := {|| "" }
-            :bBmpData         := {|| nEstadoRecibo( dbfTmpPgo ) }
+            :bBmpData         := {|| nEstadoReciboProveedor( dbfTmpPgo ) }
             :nWidth           := 22
             :AddResource( "Cnt16" )
             :AddResource( "Sel16" )

@@ -948,7 +948,7 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
          ID       290 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
 			PICTURE  "@!" ;
-         VALID    ( cFPago( aGet[ _CCODPGO ], dbfFPago, oGetPgo ) ) ;
+         VALID    ( cFPago( aGet[ _CCODPGO ], dbfFPago, oGetPgo ), lUpdateSubCta( aGet, aTmp ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwFPago( aGet[ _CCODPGO ], oGetPgo ) ) ;
          OF       oFld:aDialogs[ 1 ]
@@ -5679,5 +5679,25 @@ Function cCuentaEmpresaRecibo( uFacCliP )
    end case
 
 return ( cCuentaEmpresaRecibo )
+
+//---------------------------------------------------------------------------//
+
+static function lUpdateSubCta( aGet, aTmp )
+
+   if !Empty( aTmp[ _CCODPGO ] )
+
+      if !Empty( aGet[ _CCTAREC ] )
+         aGet[ _CCTAREC ]:cText( RetFld( aTmp[ _CCODPGO ], dbfFPago, "cCtaCobro" ) )
+         aGet[ _CCTAREC ]:Refresh()
+      end if
+
+      if !Empty( aGet[ _CCTAGAS ] )
+         aGet[ _CCTAGAS ]:cText( RetFld( aTmp[ _CCODPGO ], dbfFPago, "cCtaGas" ) )
+         aGet[ _CCTAGAS ]:Refresh()
+      end if
+
+   end if
+
+Return .t.
 
 //---------------------------------------------------------------------------//

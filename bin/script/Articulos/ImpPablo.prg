@@ -235,7 +235,7 @@ Static Function ImportacionFamilias()
 
    Conexion( cFichero )
 
-   for n := nLineaComienzo to 3400
+   for n := nLineaComienzo to 3550
 
       /*
       Si no encontramos mas líneas nos salimos------------------------------
@@ -283,7 +283,7 @@ Static Function ImportacionArticulos()
 
    Conexion( cFichero )
 
-   for n := nLineaComienzo to 3400
+   for n := nLineaComienzo to 3550
 
       
       cCodArt        := oOleExcel:oExcel:ActiveSheet:Range( "A" + lTrim( Str( n ) ) ):Value   
@@ -314,7 +314,7 @@ Static Function ImportacionArticulos()
             ( D():ArticulosCodigosBarras( nView ) )->( dbAppend() )
 
             ( D():ArticulosCodigosBarras( nView ) )->cCodArt   := cCodArt
-            ( D():ArticulosCodigosBarras( nView ) )->cCodBar   := Str( cCodBar )
+            ( D():ArticulosCodigosBarras( nView ) )->cCodBar   := AllTrim( Str( Int( cCodBar ) ) )
 
             ( D():ArticulosCodigosBarras( nView ) )->( dbUnlock() )
 
@@ -343,27 +343,31 @@ Static Function ImportacionStock()
 
    Conexion( cFichero )
 
-   for n := nLineaComienzo to 3400
+   for n := nLineaComienzo to 3550
 
       
       cCodArt        := oOleExcel:oExcel:ActiveSheet:Range( "A" + lTrim( Str( n ) ) ):Value   
 
       if !Empty( cCodArt )
 
-         ( D():MovimientosAlmacenLineas( nView ) )->( dbAppend() )
+         if !Empty( GetNumeric( "G", n ) )
 
-         ( D():MovimientosAlmacenLineas( nView ) )->cRefMov       := cCodArt
-         ( D():MovimientosAlmacenLineas( nView ) )->cNomMov       := GetRange( "F", n )
-         ( D():MovimientosAlmacenLineas( nView ) )->dFecMov       := ctod( "01/01/2016" )
-         ( D():MovimientosAlmacenLineas( nView ) )->cTimMov       := "080000"
-         ( D():MovimientosAlmacenLineas( nView ) )->cAliMov       := "000"
-         ( D():MovimientosAlmacenLineas( nView ) )->nUndMov       := GetNumeric( "G", n )
-         ( D():MovimientosAlmacenLineas( nView ) )->nPreDiv       := GetNumeric( "I", n )
-         ( D():MovimientosAlmacenLineas( nView ) )->nNumRem       := 1
-         ( D():MovimientosAlmacenLineas( nView ) )->cSufRem       := "00"
-         ( D():MovimientosAlmacenLineas( nView ) )->nTipMov       := 4
- 
-         ( D():MovimientosAlmacenLineas( nView ) )->( dbUnlock() )
+            ( D():MovimientosAlmacenLineas( nView ) )->( dbAppend() )
+
+            ( D():MovimientosAlmacenLineas( nView ) )->cRefMov       := cCodArt
+            ( D():MovimientosAlmacenLineas( nView ) )->cNomMov       := GetRange( "F", n )
+            ( D():MovimientosAlmacenLineas( nView ) )->dFecMov       := ctod( "01/01/2016" )
+            ( D():MovimientosAlmacenLineas( nView ) )->cTimMov       := "080000"
+            ( D():MovimientosAlmacenLineas( nView ) )->cAliMov       := "000"
+            ( D():MovimientosAlmacenLineas( nView ) )->nUndMov       := GetNumeric( "G", n )
+            ( D():MovimientosAlmacenLineas( nView ) )->nPreDiv       := GetNumeric( "I", n )
+            ( D():MovimientosAlmacenLineas( nView ) )->nNumRem       := 1
+            ( D():MovimientosAlmacenLineas( nView ) )->cSufRem       := "00"
+            ( D():MovimientosAlmacenLineas( nView ) )->nTipMov       := 4
+    
+            ( D():MovimientosAlmacenLineas( nView ) )->( dbUnlock() )
+
+         end if
 
       end if
 

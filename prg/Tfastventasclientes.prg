@@ -354,6 +354,10 @@ METHOD Create( uParam ) CLASS TFastVentasClientes
 
    ::AddField( "uCargo",   "C", 20, 0, {|| "" },   "Cargo"                                   )
 
+   ::AddField( "nNumRem",  "N",  9, 0, {|| "999999999" },   "Número de la remesa"            )
+   ::AddField( "cSufRem",  "C",  2, 0, {|| "@!" },          "Sufijo de la remesa"            )
+   ::AddField( "cEstado",  "C", 20, 0, {|| "" },            "Estado del recibo"              )
+
    ::AddTmpIndex( "cCodCli", "cCodCli" )
 
 RETURN ( self )
@@ -2149,10 +2153,6 @@ RETURN .t.
 METHOD Create( uParam ) CLASS TFastVentasRecibos
 
    ::Super:Create( uParam )
-
-   ::AddField( "nNumRem",  "N",  9, 0, {|| "999999999" },   "Número de la remesa" )
-   ::AddField( "cSufRem",  "C",  2, 0, {|| "@!" },          "Sufijo de la remesa" )
-   ::AddField( "cEstado",  "C", 20, 0, {|| "" },            "Estado del recibo" )
 
 RETURN ( self )
 

@@ -16093,7 +16093,7 @@ FUNCTION rxAlbCli( cPath, cDriver )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "LCLIOBR", "CCODCLI + CCODOBR", {|| Field->CCODCLI + Field->CCODOBR } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , , , .t. ) )
-      ( cAlbCliT )->( ordCreate( cPath + "FACCLIP.CDX", "nTotAlb", "nTotAlb", {|| Field->nTotAlb }, ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "nTotAlb", "nTotAlb", {|| Field->nTotAlb }, ) )
 
       ( cAlbCliT )->( dbCloseArea() )
    else

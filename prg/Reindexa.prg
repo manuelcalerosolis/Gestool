@@ -129,7 +129,7 @@ METHOD GenIndices( oMsg )
    end if
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE  
+   BEGIN SEQUENCE
 
    if !Empty( oMsg )
       ::oMsg         := oMsg
