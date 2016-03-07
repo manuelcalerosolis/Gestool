@@ -5349,6 +5349,24 @@ Static Function EndTrans( aTmp, aGet, dbfFacCliP, oBrw, oDlg, nMode )
             ( dbfFacCliP )->cHorCre    := Time()
             ( dbfFacCliP )->cCodUsr    := oUser():cCodigo()
             ( dbfFacCliP )->cRecDev    := cNumRec
+            ( dbfFacCliP )->cBncEmp    := aTabla[ _CBNCEMP    ]
+            ( dbfFacCliP )->cBncCli    := aTabla[ _CBNCCLI    ]
+            ( dbfFacCliP )->cEPaisIBAN := aTabla[ _CEPAISIBAN ]
+            ( dbfFacCliP )->cECtrlIBAN := aTabla[ _CECTRLIBAN ]
+            ( dbfFacCliP )->cEntEmp    := aTabla[ _CENTEMP    ]
+            ( dbfFacCliP )->cSucEmp    := aTabla[ _CSUCEMP    ]
+            ( dbfFacCliP )->cDigEmp    := aTabla[ _CDIGEMP    ]
+            ( dbfFacCliP )->cCtaEmp    := aTabla[ _CCTAEMP    ]
+            ( dbfFacCliP )->cPaisIBAN  := aTabla[ _CPAISIBAN  ]
+            ( dbfFacCliP )->cCtrlIBAN  := aTabla[ _CCTRLIBAN  ]
+            ( dbfFacCliP )->cEntCli    := aTabla[ _CENTCLI    ]
+            ( dbfFacCliP )->cSucCli    := aTabla[ _CSUCCLI    ]
+            ( dbfFacCliP )->cDigCli    := aTabla[ _CDIGCLI    ]
+            ( dbfFacCliP )->cCtaCli    := aTabla[ _CCTACLI    ]
+            ( dbfFacCliP )->cCtaGas    := aTabla[ _CCTAGAS    ]
+            ( dbfFacCliP )->cCtaRec    := aTabla[ _CCTAREC    ]
+            ( dbfFacCliP )->cCtaRem    := aTabla[ _CCTAREM    ]
+
             ( dbfFacCliP )->( dbUnLock() )
 
          end if
