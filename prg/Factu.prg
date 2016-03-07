@@ -157,7 +157,7 @@ function Main( ParamsMain, ParamsSecond )
 
       with object ( TDataCenter() )
 
-         :CreateDataDictionary()
+         //:CreateDataDictionary()
 
          :ConnectDataDictionary()
 

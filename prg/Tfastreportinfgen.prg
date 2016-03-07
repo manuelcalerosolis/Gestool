@@ -1049,7 +1049,7 @@ METHOD lGenerate() CLASS TFastReportInfGen
 
    // Colocamos el filtro -----------------------------------------------------
 
-   ::setFilter( ::oFilter:cExpresionFilter )
+   ::SetFilterInforme( ::oFilter:cExpresionFilter )
 
 RETURN ( ::oDbf:LastRec() > 0 )
 

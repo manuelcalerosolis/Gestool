@@ -1894,7 +1894,7 @@ METHOD contabilizaRemesas( lSimula )
                                              "Cuenta"                => cCuentaCliente,;
                                              "DescripcionCuenta"     => cNombreCliente,;
                                              "TipoImporte"           => 'H',; 
-                                             "ReferenciaDocumento"   => ::cNumRem(),;
+                                             "ReferenciaDocumento"   => ::oDbfDet:cSerie + "/" + alltrim( str( ::oDbfDet:nNumFac ) ) + "/" + ::oDbfDet:cSufFac + "-" + alltrim( str( ::oDbfDet:nNumRec ) ),; //::cNumRem(),;
                                              "DescripcionApunte"     => "Remesa " + alltrim( ::cNumRem() ) + ", Recibo " + ::oDbfDet:cSerie + "/" + alltrim( str( ::oDbfDet:nNumFac ) ) + "/" + ::oDbfDet:cSufFac + "-" + alltrim( str( ::oDbfDet:nNumRec ) ),;
                                              "Importe"               => nTotRecCli( ::oDbfDet:cAlias, ::oDivisas:cAlias, ::oDbf:cCodDiv, .f. ),;
                                              "Moneda"                => 'E',; 
