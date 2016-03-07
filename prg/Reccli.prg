@@ -726,24 +726,6 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
       TOOLTIP  "M(o)neda";
       HOTKEY   "O";
 
-   DEFINE BTNSHELL RESOURCE "Check2_" GROUP OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( FilterRecibos( .t. ) );
-      TOOLTIP  "Solo cob(r)ados" ;
-      HOTKEY   "R";
-
-   DEFINE BTNSHELL RESOURCE "Cancel_" GROUP OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( FilterRecibos( .f. ) );
-      TOOLTIP  "Solo (p)endientes" ;
-      HOTKEY   "P";
-
-   DEFINE BTNSHELL RESOURCE "Warning_" GROUP OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( FilterRecibos() );
-      TOOLTIP  "Solo de(v)ueltos" ;
-      HOTKEY   "V";
-
 #ifndef __PDA__
 
 if oUser():lAdministrador()
@@ -5618,34 +5600,6 @@ function cEstadoRecibo( uFacCliP )
 Return ( cEstadoRecibo )
 
 //---------------------------------------------------------------------------//
-
-Static Function FilterRecibos( lCobrado )
-
-   local cFilterExpresion
-
-   do case
-      case IsTrue( lCobrado )
-         cFilterExpresion  := "lCobrado .and. !lDevuelto"
-      case IsFalse( lCobrado )
-         cFilterExpresion  := "!lCobrado .and. !lDevuelto"
-      case IsNil( lCobrado )
-         cFilterExpresion  := "lDevuelto"
-   end case
-
-   CreateFastFilter( cFilterExpresion, dbfFacCliP, .f. )
-
-Return ( nil )
-
-//---------------------------------------------------------------------------//
-
-Function setFilterRecibo( cFilterExpresion )
-
-   createFastFilter( cFilterExpresion, dbfFacCliP, .f. )
-
-Return ( nil )
-
-//---------------------------------------------------------------------------//
-
 
 Function lReciboMatriz( cNumRec, dbfFacCliP ) 
    
