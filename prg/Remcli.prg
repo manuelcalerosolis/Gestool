@@ -1215,7 +1215,7 @@ RETURN ( lReturn )
 //---------------------------------------------------------------------------//
 
 METHOD RollBack()
-
+/*
    ::GetFirstKey()
 
    if ::cFirstKey != nil
@@ -1223,7 +1223,7 @@ METHOD RollBack()
          ::DelItem()
       end while
    end if
-
+*/
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -1603,19 +1603,15 @@ METHOD DelItem()
 
    local cNumFac        := ::oDbfDet:cSerie + Str( ::oDbfDet:nNumFac ) + ::oDbfDet:cSufFac
 
-   ::oDbfDet:Load()
-   ::oDbfDet:nNumRem    := 0
-   ::oDbfDet:cSufRem    := ""
-   ::oDbfDet:lCobrado   := .f.
-   ::oDbfDet:dEntrada   := Ctod( "" )
-   ::oDbfDet:Save()
+   ::oDbfDet:FieldPutByName( "nNumRem", 0 )     
+   ::oDbfDet:FieldPutByName( "cSufRem", "" )     
 
    /*
    Revisamos el estado de la factura-------------------------------------------
    */
 
    if ::oFacCliT:Seek( cNumFac )
-      ChkLqdFacCli( nil, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oDbfDet:cAlias, ::oAntCliT:cAlias, ::oIva:cAlias, ::oDivisas:cAlias )
+      chkLqdFacCli( nil, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oDbfDet:cAlias, ::oAntCliT:cAlias, ::oIva:cAlias, ::oDivisas:cAlias )
    end if
 
 RETURN ( Self )
