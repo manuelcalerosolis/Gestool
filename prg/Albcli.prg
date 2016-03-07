@@ -16091,8 +16091,8 @@ FUNCTION rxAlbCli( cPath, cDriver )
       ( cAlbCliT )->( ordCondSet( "!Deleted() .and. !lFacturado", {|| !Deleted() .and. !Field->lFacturado }  ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "LCLIOBR", "CCODCLI + CCODOBR", {|| Field->CCODCLI + Field->CCODOBR } ) )
 
-      ( dbfFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , , , .t. ) )
-      ( dbfFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "nTotAlb", "nTotAlb", {|| Field->nTotAlb }, ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , , , .t. ) )
+      ( cAlbCliT )->( ordCreate( cPath + "FACCLIP.CDX", "nTotAlb", "nTotAlb", {|| Field->nTotAlb }, ) )
 
       ( cAlbCliT )->( dbCloseArea() )
    else

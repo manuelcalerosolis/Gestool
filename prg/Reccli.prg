@@ -124,23 +124,23 @@ static oCentroCoste
 static lPgdOld
 static nImpOld
 
-static aRecRel          := {}
+static aRecibosRelacionados   := {}
 
 static oMenu
 
-static lExternal        := .f.
-static lOpenFiles       := .f.
-static cFiltroUsuario   := ""
+static lExternal              := .f.
+static lOpenFiles             := .f.
+static cFiltroUsuario         := ""
 
-static lOldDevuelto     := .f.
+static lOldDevuelto           := .f.
 
-static bEdit            := { |aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aTmpFac| EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aTmpFac ) }
+static bEdit                  := { |aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aTmpFac| EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aTmpFac ) }
 
-static hEstadoRecibo    := {  "Pendiente"             => "bCancel",;
-                              "Cobrado"               => "bSel",;
-                              "Devuelto"              => "bAlert",;
-                              "Remesado"              => "folder_ok_16",;
-                              "Espera documentación"  => "bClock" }
+static hEstadoRecibo          := {  "Pendiente"             => "bCancel",;
+                                    "Cobrado"               => "bSel",;
+                                    "Devuelto"              => "bAlert",;
+                                    "Remesado"              => "folder_ok_16",;
+                                    "Espera documentación"  => "bClock" }
 
 #ifndef __PDA__
 
@@ -863,7 +863,7 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
       aTmp[ _CCODCAJ ]     := oUser():cCaja()
    end if
 
-   aRecRel                 := {}
+   aRecibosRelacionados    := {}
 
    lOldDevuelto            := aTmp[ _LDEVUELTO ]
 
@@ -1248,41 +1248,40 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
          WHEN     ( !aTmp[ _LCOBRADO ] .and. nMode != ZOOM_MODE ) ;
          ACTION   ( MsgStop( "eliminar recibo") )
 
-      oBrwRec                  := IXBrowse():New( oFld:aDialogs[ 4 ] )
+      oBrwRec                 := IXBrowse():New( oFld:aDialogs[ 4 ] )
 
-      oBrwRec:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwRec:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      oBrwRec:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwRec:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      oBrwRec:nMarqueeStyle   := 6
+      oBrwRec:lRecordSelector := .f.
+      oBrwRec:lHScroll        := .f.
 
-      oBrwRec:SetArray( aRecRel, , , .f. )
-
-      oBrwRec:nMarqueeStyle    := 6
-      oBrwRec:lRecordSelector  := .f.
-      oBrwRec:lHScroll         := .f.
+      oBrwRec:SetArray( aRecibosRelacionados, , , .f. )
 
       oBrwRec:CreateFromResource( 200 )
 
       with object ( oBrwRec:AddCol() )
-         :cHeader          := "Tipo"
-         :bStrData         := {|| if( len( aRecRel) > 0 .and. Right( aRecRel[ oBrwRec:nArrayAt ], 1 ) == "R", "Rectificativa", "" ) }
-         :nWidth           := 50
+         :cHeader             := "Tipo"
+         :bStrData            := {|| if( len( aRecibosRelacionados) > 0 .and. Right( aRecibosRelacionados[ oBrwRec:nArrayAt ], 1 ) == "R", "Rectificativa", "" ) }
+         :nWidth              := 50
       end with
 
       with object ( oBrwRec:AddCol() )
          :cHeader          := "Numero"
-         :bStrData         := {|| if( len( aRecRel) > 0, Left( aRecRel[ oBrwRec:nArrayAt ], 1 ) + "/" + Alltrim( SubStr( aRecRel[ oBrwRec:nArrayAt ], 2, 9 ) ) + "-" + Alltrim( SubStr( aRecRel[ oBrwRec:nArrayAt ], 13, 2 ) ), "" ) }
+         :bStrData         := {|| if( len( aRecibosRelacionados) > 0, Left( aRecibosRelacionados[ oBrwRec:nArrayAt ], 1 ) + "/" + Alltrim( SubStr( aRecibosRelacionados[ oBrwRec:nArrayAt ], 2, 9 ) ) + "-" + Alltrim( SubStr( aRecibosRelacionados[ oBrwRec:nArrayAt ], 13, 2 ) ), "" ) }
          :nWidth           := 100
       end with
 
       with object ( oBrwRec:AddCol() )
          :cHeader          := "Delegación"
-         :bStrData         := {|| if( len( aRecRel) > 0, SubStr( aRecRel[ oBrwRec:nArrayAt ], 11, 2 ), "" ) }
+         :bStrData         := {|| if( len( aRecibosRelacionados) > 0, SubStr( aRecibosRelacionados[ oBrwRec:nArrayAt ], 11, 2 ), "" ) }
          :nWidth           := 40
          :lHide            := .t.
       end with
 
       with object ( oBrwRec:AddCol() )
          :cHeader          := "Fecha"
-         :bStrData         := {|| if( len( aRecRel) > 0, RetFld( aRecRel[ oBrwRec:nArrayAt ], dbfFacCliP, "dPreCob", "nNumFac" ), "" ) }
+         :bStrData         := {|| if( len( aRecibosRelacionados) > 0, RetFld( aRecibosRelacionados[ oBrwRec:nArrayAt ], dbfFacCliP, "dPreCob", "nNumFac" ), "" ) }
          :nWidth           := 80
          :nDataStrAlign    := 3
          :nHeadStrAlign    := 3
@@ -1290,7 +1289,7 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
 
       with object ( oBrwRec:AddCol() )
          :cHeader          := "Vencimiento"
-         :bStrData         := {|| if( len( aRecRel) > 0, RetFld( aRecRel[ oBrwRec:nArrayAt ], dbfFacCliP, "dFecVto", "nNumFac" ), "" ) }
+         :bStrData         := {|| if( len( aRecibosRelacionados) > 0, RetFld( aRecibosRelacionados[ oBrwRec:nArrayAt ], dbfFacCliP, "dFecVto", "nNumFac" ), "" ) }
          :nWidth           := 80
          :nDataStrAlign    := 3
          :nHeadStrAlign    := 3
@@ -1298,7 +1297,7 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
 
       with object ( oBrwRec:AddCol() )
          :cHeader          := "Total"
-         :bStrData         := {|| if( len( aRecRel) > 0, Trans( nTotRecibo( aRecRel[ oBrwRec:nArrayAt ], dbfFacCliP, dbfDiv ), cPorDiv() ), "" ) }
+         :bStrData         := {|| if( len( aRecibosRelacionados) > 0, Trans( nTotRecibo( aRecibosRelacionados[ oBrwRec:nArrayAt ], dbfFacCliP, dbfDiv ), cPorDiv() ), "" ) }
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1443,43 +1442,45 @@ RETURN ( oDlg:nResult == IDOK )
 
 Static Function StartEdtRec( aTmp, aGet )
 
-   local nOrd
-   local nRec  
-   local cNum  
+   cursorWait()
 
-   /*
-   Cargamos los recibos asociados----------------------------------------------
-   */
+   aGet[ _CDIVPGO       ]:lValid()
+   aGet[ _CCTAREC       ]:lValid()
+   aGet[ _CCTAGAS       ]:lValid()
+   aGet[ _CCTAREM       ]:lValid()
+   aGet[ _CCENTROCOSTE  ]:lValid()
+   aGet[ _DPRECOB       ]:SetFocus()
 
-   cNum        := ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ) + ( dbfFacCliP )->cTipRec
-   nRec        := ( dbfFacCliP )->( Recno() )
-   nOrd        := ( dbfFacCliP )->( OrdSetFocus( "cNumMtr" ) )
-
-   if ( dbfFacCliP )->( dbSeek( cNum ) )
-      while ( dbfFacCliP )->cNumMtr == cNum .and. !( dbfFacCliP )->( eof() )
-         aAdd( aRecRel, ( dbfFacCliP )->cNumMtr )
-         ( dbfFacCliP )->( dbSkip() )
-      end while
-   end if 
-  
-   ( dbfFacCliP )->( OrdSetFocus( nOrd ) )
-   ( dbfFacCliP )->( dbGoTo( nRec ) )
-
-   /*
-   Fin carga los recibos asociados---------------------------------------------
-   */
-
-   aGet[ _CDIVPGO ]:lValid()
-   aGet[ _CCTAREC ]:lValid()
-   aGet[ _CCTAGAS ]:lValid()
-   aGet[ _CCTAREM ]:lValid()
-   aGet[ _CCENTROCOSTE ]:lValid()
-
-   aGet[ _DPRECOB ]:SetFocus()
+   cargarRecibosAsociados()
 
    lChangeDevolucion( aGet, aTmp, .t. ) 
 
+   cursorWE()
+
 Return .t.
+
+//---------------------------------------------------------------------------//
+/*
+Cargamos los recibos asociados----------------------------------------------
+*/
+
+Static Function cargarRecibosAsociados()
+
+   local cNum        := ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ) + ( dbfFacCliP )->cTipRec
+   local nRec        := ( dbfFacCliP )->( recno() )
+   local nOrd        := ( dbfFacCliP )->( ordsetfocus( "cNumMtr" ) )
+
+   if ( dbfFacCliP )->( dbseek( cNum ) )
+      while ( dbfFacCliP )->cNumMtr == cNum .and. !( dbfFacCliP )->( eof() )
+         aadd( aRecibosRelacionados, ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ) + ( dbfFacCliP )->cTipRec )
+         ( dbfFacCliP )->( dbskip() )
+      end while
+   end if 
+  
+   ( dbfFacCliP )->( ordsetfocus( nOrd ) )
+   ( dbfFacCliP )->( dbgoto( nRec ) )
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -1514,33 +1515,33 @@ Static Function GetReciboCliente( aTmp, oBrwRec )
 
    hStatus        := hGetStatus( dbfFacCliP )
 
-   if BrwRecCli( @cNumRec, dbfFacCliP, dbfClient, dbfDiv )
+   if brwRecCli( @cNumRec, dbfFacCliP, dbfClient, dbfDiv )
 
-      if Empty( cNumRec )
+      if empty( cNumRec )
          Return .f.
       end if
 
-      if ( cNumRec != aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] + Str( aTmp[ _NNUMREC ] ) + aTmp[ _CTIPREC ] )
-         msgStop( "Este recibo es el mismo")     
-         return .f.
+      if ( cNumRec == aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] + Str( aTmp[ _NNUMREC ] ) + aTmp[ _CTIPREC ] )
+         msgStop( "No se puede agrupar un recibo con el mismo." )     
+         Return .f.
       end if
 
       if RetFld( cNumRec, dbfFacCliP, "lCobrado", "nNumFac" )
-         msgStop( "Recibo ya cobrado" )
+         msgStop( "Recibo ya cobrado." )
          Return .f.
       end if 
 
-      if !Empty( RetFld( cNumRec, dbfFacCliP, "cNumMtz", "nNumFac" ) )
-         msgStop( "Recibo ya pertenece a otra matriz" )
+      if !empty( RetFld( cNumRec, dbfFacCliP, "cNumMtz", "nNumFac" ) )
+         msgStop( "Recibo ya pertenece a otra matriz." )
          Return .f.
       end if 
 
-      if aScan( aRecRel, cNumRec ) != 0
-         msgStop( "Recibo ya incluido" )
+      if aScan( aRecibosRelacionados, cNumRec ) != 0
+         msgStop( "Recibo ya incluido." )
          Return .f.
       end if
 
-      aAdd( aRecRel, cNumRec )
+      aadd( aRecibosRelacionados, cNumRec )
 
       oBrwRec:Refresh()
        
@@ -5235,7 +5236,7 @@ Static Function EndTrans( aTmp, aGet, dbfFacCliP, oBrw, oDlg, nMode )
    Comprobamos q los importes sean distintos-----------------------------------
    */
 
-   if ( nImpFld != nImpTmp ) .and. Empty( aRecRel )
+   if ( nImpFld != nImpTmp ) .and. Empty( aRecibosRelacionados )
    
       nRec                       := ( dbfFacCliP )->( Recno() )
 
@@ -5303,15 +5304,13 @@ Static Function EndTrans( aTmp, aGet, dbfFacCliP, oBrw, oDlg, nMode )
    Anotamos los recibos asociados----------------------------------------------
    */
 
-   if !Empty( aRecRel )
+   if !Empty( aRecibosRelacionados )
 
-      nRec                          := ( dbfFacCliP )->( Recno() )
-      nOrdAnt                       := ( dbfFacCliP )->( OrdSetFocus( "nNumFac" ) )
+      nRec                       := ( dbfFacCliP )->( Recno() )
+      nOrdAnt                    := ( dbfFacCliP )->( OrdSetFocus( "nNumFac" ) )
 
-      for each cNumRec in aRecRel
-
+      for each cNumRec in aRecibosRelacionados
          if ( dbfFacCliP )->( dbSeek( cNumRec ) ) .and. dbDialogLock( dbfFacCliP )
-            
             ( dbfFacCliP )->cNumMtr := aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] + aTmp[ _CTIPREC ]
             ( dbfFacCliP )->( dbUnLock() )
          end if 
