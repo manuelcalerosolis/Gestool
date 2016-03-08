@@ -4119,7 +4119,8 @@ METHOD ValidResource( nMode, oDlg, oBtn ) CLASS TDetMovimientos
             ::oDbfVir:FieldGetName( "cCodPr2" ) == cCodPr2  .and. ;
             ::oDbfVir:FieldGetName( "cValPr1" ) == cValPr1  .and. ;
             ::oDbfVir:FieldGetName( "cValPr2" ) == cValPr2  .and. ;
-            ::oDbfVir:FieldGetName( "nCajMov" ) == nCajMov
+            ::oDbfVir:FieldGetName( "nCajMov" ) == nCajMov  .and. ;
+            ::oDbfVir:FieldGetName( "nPrediv" ) == nPrecioCosto
 
             nCajMov  += ::oDbfVir:FieldGetName( "nCajMov" )
             nUndMov  += ::oDbfVir:FieldGetName( "nUndMov" )
