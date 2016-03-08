@@ -7181,7 +7181,7 @@ FUNCTION rxPedPrv( cPath, cDriver )
       ( cPedPrvT )->( ordCreate( cPath + "PedProvL.Cdx", "cPedCliDet", "cPedCli + cRef + cValPr1 + cValPr2 + cRefPrv ", {|| Field->cPedCli + Field->cRef + Field->cValPr1 + Field->cValPr2 + Field->cRefPrv } ) ) // + cDetalle
 
       ( cPedPrvT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( cPedPrvT )->( ordCreate( cPath + "PedProvL.Cdx", "iNumPed", "'01' + cSerPed + Str( nNumPed ) + cSufPed", {|| '01' + Field->cSerPed + Str( Field->nNumPed ) + Field->cSufPed } ) )
+      ( cPedPrvT )->( ordCreate( cPath + "PedProvL.Cdx", "iNumPed", "'01' + cSerPed + Str( nNumPed ) + Space( 1 ) + cSufPed", {|| '01' + Field->cSerPed + Str( Field->nNumPed ) + Space( 1 ) + Field->cSufPed } ) )
 
       ( cPedPrvT )->( ordCondSet( "!Deleted() .and. Field->nEstado != 3", {|| !Deleted() .and. Field->nEstado != 3 } ) )
       ( cPedPrvT )->( ordCreate( cPath + "PedProvL.Cdx", "cStkFast", "cRef + cAlmLin", {|| Field->cRef + Field->cAlmLin }, ) )
@@ -7191,6 +7191,9 @@ FUNCTION rxPedPrv( cPath, cDriver )
 
       ( cPedPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cPedPrvT )->( ordCreate( cPath + "PedProvL.Cdx", "nPosPrint", "cSerPed + Str( nNumPed ) + cSufPed + Str( nPosPrint )", {|| Field->cSerPed + Str( Field->nNumPed ) + Field->cSufPed + Str( Field->nPosPrint ) } ) )
+
+      ( cPedPrvT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT )->( ordCreate( cPath + "PedProvL.Cdx", "nNumPedRef", "cSerPed + Str( nNumPed ) + cSufPed + cRef", {|| Field->cSerPed + Str( Field->nNumPed ) + Field->cSufPed + Field->cRef } ) )
 
       ( cPedPrvT )->( dbCloseArea() )
    else
@@ -7723,7 +7726,7 @@ Function aIndexPedidoProveedor()
    aAdd( aIndex, { "IdPedidoCliente",     "cPedCli",     "cNumPedCli",                                                  {|| Field->cNumPedCli } } )
    aAdd( aIndex, { "IdUsuario",           "cCodUsr",     "cCodUsr + Dtos( dFecChg ) + cTimChg",                         {|| Field->cCodUsr + Dtos( Field->dFecChg ) + Field->cTimChg } } )
    aAdd( aIndex, { "IdAlbaranProveedor",  "cNumAlb",     "cNumAlb",                                                     {|| Field->cNumAlb } } )
-   aAdd( aIndex, { "IdInforme",           "iNumPed",     "'01' + cSerPed + str( nNumPed ) + cSufPed",                   {|| '01' + Field->cSerPed + str( Field->nNumPed ) + Field->cSufPed } } )
+   aAdd( aIndex, { "IdInforme",           "iNumPed",     "'01' + cSerPed + str( nNumPed ) + Space(1) + cSufPed",        {|| '01' + Field->cSerPed + str( Field->nNumPed ) + Space(1) + Field->cSufPed } } )
 
 Return ( aIndex )
 

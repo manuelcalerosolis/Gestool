@@ -115,10 +115,13 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    METHOD getNumeroAlbaranProveedor()
    METHOD getFechaAlbaranProveedor()
+   METHOD getUnidadesAlbaranProveedor()
    METHOD getEstadoAlbaranProveedor()
    METHOD geFechaPedidoProveedor()
 
    METHOD getTarifaArticulo()
+
+   METHOD getUnidadesPedidoProveedor( cNumPed, cCodArt )
 
    METHOD loadValuesExtraFields()
 
@@ -3194,6 +3197,35 @@ Return ( dFecha )
 
 //---------------------------------------------------------------------------//
 
+METHOD getUnidadesAlbaranProveedor() CLASS TFastVentasArticulos
+
+   local nRec
+   local nOrdAnt
+   local cClave
+   local nUnidades   := 0
+
+   cClave            := ::oDbf:cSerDoc
+   cClave            += Padr( ::oDbf:cNumDoc, 9 )
+   cClave            += ::oDbf:cSufDoc
+   cClave            += ::oDbf:cCodArt
+   cClave            += ::oDbf:cValPr1
+   cClave            += ::oDbf:cValPr2
+   cClave            += ::oDbf:cLote
+
+   nRec              := ::oAlbPrvL:Recno()
+   nOrdAnt           := ::oAlbPrvL:OrdSetFocus( "cPedPrvRef" )
+
+   if ::oAlbPrvL:Seek( cClave )
+      nUnidades      := nTotNAlbPrv( ::oAlbPrvL )
+   end if
+
+   ::oAlbPrvL:OrdSetFocus( nOrdAnt )
+   ::oAlbPrvL:GoTo( nRec )
+
+Return ( nUnidades )
+
+//---------------------------------------------------------------------------//
+
 METHOD getEstadoAlbaranProveedor() CLASS TFastVentasArticulos
 
    local nRec
@@ -3419,5 +3451,32 @@ METHOD getTarifaArticulo( cCodTar, cCodArt, nPrc ) CLASS TFastVentasArticulos
    ::oTarPreL:OrdSetFocus( nOrdAnt )
 
 Return nPrecio
+
+//---------------------------------------------------------------------------//
+
+METHOD getUnidadesPedidoProveedor( cNumPed, cCodArt ) CLASS TFastVentasArticulos
+
+   local nUnidades   := 0
+   local nOrdAnt
+
+   if Empty( cNumPed )
+      Return nUnidades
+   end if
+
+   if Empty( cCodArt )
+      Return nUnidades
+   end if
+
+   nOrdAnt           := ::oPedPrvL:OrdSetFocus( "nNumPedRef" )
+
+   if ::oPedPrvL:Seek( cNumPed + cCodArt )
+      
+      nUnidades      := nTotNPedPrv( ::oPedPrvL )
+
+   end if
+
+   ::oPedPrvL:OrdSetFocus( nOrdAnt )
+
+Return nUnidades
 
 //---------------------------------------------------------------------------//
