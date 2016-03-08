@@ -872,8 +872,9 @@ FUNCTION nNewDoc( cSerie, dbf, cTipDoc, nLen, dbfCount )
    local nPos
    local lClo        := .f.
    local nDoc        := 0
-   local nRecAnt     := ( dbf )->( Recno() )
-   local nOrdAnt     := ( dbf )->( OrdSetFocus( 1 ) )
+   local nRetry      := 0
+   local nRecAnt     := ( dbf )->( recno() )
+   local nOrdAnt     := ( dbf )->( ordsetfocus( 1 ) )
    local cSufEmp     := RetSufEmp()
    local lNotSerie   := .f.
 
@@ -910,15 +911,23 @@ FUNCTION nNewDoc( cSerie, dbf, cTipDoc, nLen, dbfCount )
          nDoc        := 0
       end if
    
-      if lNotSerie
-         while ( dbf )->( dbSeek( Str( nDoc, nLen ) + cSufEmp ) )
-            ++nDoc
-         end while
-      else
-         while ( dbf )->( dbSeek( cSerie + Str( nDoc, nLen ) + cSufEmp ) )
-            ++nDoc
-         end while
-      end if
+      // buscamos un par de veces para q no se repita el numero----------------
+
+      while nRetry < 2
+
+         if lNotSerie
+            while ( dbf )->( dbSeek( Str( nDoc, nLen ) + cSufEmp ) )
+               ++nDoc
+            end while
+         else
+            while ( dbf )->( dbSeek( cSerie + Str( nDoc, nLen ) + cSufEmp ) )
+               ++nDoc
+            end while
+         end if
+
+         ++nRetry
+
+      end while      
    
       if dbLock( dbfCount )
          ( dbfCount )->( fieldPut( nPos, nDoc + 1 ) )

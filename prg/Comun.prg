@@ -2287,9 +2287,9 @@ Return ( FullCurDir() + "UserReporting\" )
 
 //----------------------------------------------------------------------------//
 
-Function cPatBIC()
+Function cPatConfig()
 
-Return ( FullCurDir() + "BIC\" )
+Return ( FullCurDir() + "Config\" )
 
 //----------------------------------------------------------------------------//
 

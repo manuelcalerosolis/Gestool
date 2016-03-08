@@ -1074,24 +1074,24 @@ Return ( .t. )
 
 Static Function CheckDirectory()
 
-   if( !lIsDir( cPatDat() ),           MakeDir( cNamePath( cPatDat() ) ), )
-   if( !lIsDir( cPatADS() ),           MakeDir( cNamePath( cPatADS() ) ), )
-   if( !lIsDir( cPatIn()  ),           MakeDir( cNamePath( cPatIn()  ) ), )
-   if( !lIsDir( cPatTmp() ),           MakeDir( cNamePath( cPatTmp() ) ), )   
-   if( !lIsDir( cPatInFrq() ),         MakeDir( cNamePath( cPatInFrq() ) ), )
-   if( !lIsDir( cPatOut() ),           MakeDir( cNamePath( cPatOut() ) ), )
-   if( !lIsDir( cPatSnd() ),           MakeDir( cNamePath( cPatSnd() ) ), )
-   if( !lIsDir( cPatLog() ),           MakeDir( cNamePath( cPatLog() ) ), )
-   if( !lIsDir( cPatBmp() ),           MakeDir( cNamePath( cPatBmp() ) ), )
-   if( !lIsDir( cPatHtml() ),          MakeDir( cNamePath( cPatHtml() ) ), )
-   if( !lIsDir( cPatXml() ),           MakeDir( cNamePath( cPatXml() ) ), )
-   if( !lIsDir( cPatSafe() ),          MakeDir( cNamePath( cPatSafe() ) ), )
-   if( !lIsDir( cPatPsion() ),         MakeDir( cNamePath( cPatPsion() ) ), )
-   if( !lIsDir( cPatEmpTmp() ),        MakeDir( cNamePath( cPatEmpTmp() ) ), )
-   if( !lIsDir( cPatScript() ),        MakeDir( cNamePath( cPatScript() ) ), )
-   if( !lIsDir( cPatReporting() ),     MakeDir( cNamePath( cPatReporting() ) ), )
-   if( !lIsDir( cPatUserReporting() ), MakeDir( cNamePath( cPatUserReporting() ) ), )
-   if( !lIsDir( cPatBIC() ),           MakeDir( cNamePath( cPatBIC() ) ), )
+   if( !lIsDir( cPatDat() ),           makedir( cNamePath( cPatDat() ) ), )
+   if( !lIsDir( cPatADS() ),           makedir( cNamePath( cPatADS() ) ), )
+   if( !lIsDir( cPatIn()  ),           makedir( cNamePath( cPatIn()  ) ), )
+   if( !lIsDir( cPatTmp() ),           makedir( cNamePath( cPatTmp() ) ), )   
+   if( !lIsDir( cPatInFrq() ),         makedir( cNamePath( cPatInFrq() ) ), )
+   if( !lIsDir( cPatOut() ),           makedir( cNamePath( cPatOut() ) ), )
+   if( !lIsDir( cPatSnd() ),           makedir( cNamePath( cPatSnd() ) ), )
+   if( !lIsDir( cPatLog() ),           makedir( cNamePath( cPatLog() ) ), )
+   if( !lIsDir( cPatBmp() ),           makedir( cNamePath( cPatBmp() ) ), )
+   if( !lIsDir( cPatHtml() ),          makedir( cNamePath( cPatHtml() ) ), )
+   if( !lIsDir( cPatXml() ),           makedir( cNamePath( cPatXml() ) ), )
+   if( !lIsDir( cPatSafe() ),          makedir( cNamePath( cPatSafe() ) ), )
+   if( !lIsDir( cPatPsion() ),         makedir( cNamePath( cPatPsion() ) ), )
+   if( !lIsDir( cPatEmpTmp() ),        makedir( cNamePath( cPatEmpTmp() ) ), )
+   if( !lIsDir( cPatScript() ),        makedir( cNamePath( cPatScript() ) ), )
+   if( !lIsDir( cPatReporting() ),     makedir( cNamePath( cPatReporting() ) ), )
+   if( !lIsDir( cPatUserReporting() ), makedir( cNamePath( cPatUserReporting() ) ), )
+   if( !lIsDir( cPatConfig() ),        makedir( cNamePath( cPatConfig() ) ), )
 
    // Elimina los temporales de la aplicación----------------------------------
 
@@ -1128,15 +1128,10 @@ Function Ejecutascript()
    if dFecha  < GetSysDate()
 
       aScripts    := Directory( cPatScript() + "*.hrb" )
-
-      if Len( aScripts ) > 0
-
+      if len( aScripts ) > 0
          for each cScript in aScripts
-         
             TScripts():RunScript( cPatScript() + cScript[1] )
-
          next
-
       end if
 
    end if

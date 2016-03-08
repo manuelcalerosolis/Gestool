@@ -483,8 +483,8 @@ Function getBICFromFile()
    local cBIC
    local hBIC        := {=>}
 
-   if file( cPatBic() + "bic.json" )
-      cBIC           := memoread( cPatBic() + "bic.json" )
+   if file( cPatConfig() + "bic.json" )
+      cBIC           := memoread( cPatConfig() + "bic.json" )
       hb_jsonDecode( cBIC, @hBIC )      
    end if 
 

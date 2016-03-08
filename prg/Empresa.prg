@@ -3447,12 +3447,15 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
    */
 
    if !lSoft
-
       oMsgText( 'Seleccionado sesión actual' )
-
       ChkTurno( , oWnd )
-
    end if
+
+   // Chequeo del turno--------------------------------------------------------
+
+   oMsgText( 'Cargando configuración de prestashop' )
+   
+   TPrestashopConfig():New( cCodEmp ):LoadJSON():getWebShop()
 
    /*
    Cerrando ficheros-----------------------------------------------------------

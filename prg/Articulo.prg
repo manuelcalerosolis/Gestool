@@ -196,6 +196,8 @@ static oBtnAceptarActualizarWeb
 
 static hStockArticulo   := {=>}
 
+static oTreeWeb
+
 //---------------------------------------------------------------------------//
 
 #ifndef __PDA__
@@ -1593,27 +1595,27 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    local oBrwLeng
    local oBrwCtaCom
    local oBrwCodebar
-   local aBtnDiv        := Array( 8 )
+   local aBtnDiv              := Array( 8 )
    local oBrwOfe
    local oBrwImg
    local oBrwStk
    local oBrwPrv
    local oBrwKit
    local bmpImage
-   local oSayWeb        := Array(  6 )
-   local oSay           := Array( 23 )
-   local cSay           := Array( 23 )
+   local oSayWeb              := Array(  6 )
+   local oSay                 := Array( 23 )
+   local cSay                 := Array( 23 )
    local oFnt
-   local aBar           := { "Ean13", "Code39", "Code128" }
-   local aBnfSobre      := { "Costo", "Venta" }
-   local cDivUse        := cDivEmp()
+   local aBar                 := { "Ean13", "Code39", "Code128" }
+   local aBnfSobre            := { "Costo", "Venta" }
+   local cDivUse              := cDivEmp()
    local oGetSubCta
-   local cGetSubCta     := ""
+   local cGetSubCta           := ""
    local oGetSaldo
-   local nGetSaldo      := 0
+   local nGetSaldo            := 0
    local oBrwCtaVta
-   local nGetDebe       := 0
-   local nGetHaber      := 0
+   local nGetDebe             := 0
+   local nGetHaber            := 0
    local oGetCtaCom
    local cGetCtaCom           := ""
    local nDebCom              := 0
@@ -4436,6 +4438,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE );
          OF       fldWeb      
 
+   oTreeWeb                      := TTreeView():Redefine( 110, fldWeb )
+   oTreeWeb:bItemSelectChanged   := {|| msgAlert("treeChanged") }
+
    /*
    Cuarta Caja de Dialogo del Folder
    ----------------------------------------------------------------------------
@@ -4524,6 +4529,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       :nDataBmpAlign       := AL_CENTER
       :nWidth              := 100
    end with
+
+
 
    if nMode != ZOOM_MODE
       oBrwImg:bLDblClick   := {|| WinEdtRec( oBrwImg, bEdtImg, dbfTmpImg, aTmp ) }
@@ -5103,7 +5110,7 @@ Static Function StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, 
 
    oDlg:Disable()
 
-   EvalGet( aGet, nMode )
+   evalGet( aGet, nMode )
 
    ChgKit( aTmp, aGet, oCosto )
 
@@ -5283,11 +5290,13 @@ Static Function StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, 
       oBrwStk:Show()
    end if
 
-   if uFieldEmpresa( "lRealWeb" )
+   if TPrestashopConfig():getRealTimeConexion()
       oBtnAceptarActualizarWeb:Show()
    else   
       oBtnAceptarActualizarWeb:Hide()
    end if
+
+   TPrestashopConfig():setWebShopTree( oTreeWeb )
 
    oDlg:Enable()
 
@@ -15186,6 +15195,7 @@ function aItmArt()
    aAdd( aBase, { "LIVAINC5",  "L",  1, 0, "Iva incluido para el precio 5" ,           "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "LIVAINC6",  "L",  1, 0, "Iva incluido para el precio 6" ,           "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "LIVAPVER",  "L",  1, 0, "Iva incluido para el punto verde" ,        "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "mWebJson",  "M", 10, 0, "Tiendas web donde se publica el producto", "",                  "", "( cDbfArt )", nil } )
 
 return ( aBase )
 
@@ -17534,6 +17544,9 @@ static function ChangePublicarTemporal( aTmp )
       ChangePropiedadesInt(   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ] )
       ChangePropiedadesInt(   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ] )
       ChangeTipArtInt(        aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodTip"  ) ) ] )
+
+      TPrestashopConfig():treeToJson( oTreeWeb )
+
       // ChangeFabricantesInt(   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab"  ) ) ] )
    end if
 

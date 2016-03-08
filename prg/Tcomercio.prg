@@ -166,7 +166,6 @@ CLASS TComercio
 
    DATA TSituaciones
 
-
    DATA idOrderPrestashop
    DATA cSeriePedido
    DATA cSeriePresupuesto
@@ -174,7 +173,6 @@ CLASS TComercio
    DATA nNumeroPresupuesto
    DATA cSufijoPedido
    DATA cSufijoPresupuesto
-
 
    METHOD GetInstance()              
    METHOD New()                        CONSTRUCTOR
@@ -201,7 +199,6 @@ CLASS TComercio
    METHOD dialogStart()
 
    // Mensajes-----------------------------------------------------------------
-
 
    DATA  oTree
 
