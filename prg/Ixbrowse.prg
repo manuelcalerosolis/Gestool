@@ -685,8 +685,6 @@ METHOD ArrayIncrSeek( cSeek, nGoTo ) CLASS IXBrowse
       endif
    endif
 
-   msgAlert( nBrwCol, "nBrwCol" )
-
 return .f.
 
 //----------------------------------------------------------------------------//

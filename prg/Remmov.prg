@@ -43,6 +43,7 @@ static dbfAlbCliL
 static dbfFacCliT
 static dbfFacCliL
 
+
 //---------------------------------------------------------------------------//
 
 CLASS TRemMovAlm FROM TMasDet

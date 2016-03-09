@@ -298,10 +298,10 @@ Static Function ImportacionArticulos()
          ( D():Articulos( nView ) )->TipoIva       := "G"
 
          ( D():Articulos( nView ) )->pCosto        := GetNumeric( "I", n )
-         ( D():Articulos( nView ) )->pVenta1       := GetNumeric( "J", n ) / 1.21
-         ( D():Articulos( nView ) )->pVtaIva1      := GetNumeric( "J", n )
-         ( D():Articulos( nView ) )->pVenta2       := GetNumeric( "K", n ) / 1.21
-         ( D():Articulos( nView ) )->pVtaIva2      := GetNumeric( "K", n )
+         ( D():Articulos( nView ) )->pVenta1       := GetNumeric( "J", n )
+         ( D():Articulos( nView ) )->pVtaIva1      := GetNumeric( "J", n ) * 1.21
+         ( D():Articulos( nView ) )->pVenta2       := GetNumeric( "K", n )
+         ( D():Articulos( nView ) )->pVtaIva2      := GetNumeric( "K", n ) * 1.21
 
          ( D():Articulos( nView ) )->nMinimo       := GetNumeric( "H", n )
 

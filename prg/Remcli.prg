@@ -87,6 +87,8 @@ CLASS TRemesas FROM TMasDet
 
    DATA  cCuentaRemesaAnterior         INIT ""
 
+   DATA  lDefCobrado
+
    METHOD New( cPath, oWndParent, oMenuItem )
 
    METHOD OpenFiles( lExclusive )
@@ -210,11 +212,18 @@ CLASS TRemesas FROM TMasDet
    METHOD getIngreso()                 INLINE ( iif( empty( ::oDbf:dIngreso ), ::oDbf:dFecRem, ::oDbf:dIngreso ) )
 
    METHOD setEstadosRecibos()
-   METHOD setEstadoRecibo( lCobrado )  INLINE ( iif( lCobrado,;
-                                                      (  ::oDbfDet:FieldPutByName( "lCobrado", .t. ),;
-                                                         ::oDbfDet:FieldPutByName( "dEntrada", ::getIngreso() ) ),;
-                                                      (  ::oDbfDet:FieldPutByName( "lCobrado", .f. ),;
-                                                         ::oDbfDet:FieldPutByName( "dEntrada", ctod("") ) ) ) )
+   METHOD setEstadoRecibo( lCobrado, lDelete )  INLINE ( iif( lCobrado,;
+                                                            (  ::oDbfDet:FieldPutByName( "lCobrado", .t. ),;
+                                                               ::oDbfDet:FieldPutByName( "dEntrada", ::getIngreso() ) ),;
+                                                            (  ::oDbfDet:FieldPutByName( "lCobrado", .f. ),;
+                                                               ::oDbfDet:FieldPutByName( "dEntrada", ctod("") ) ) ),;
+                                                         iif( lDelete,;
+                                                            (  ::oDbfDet:FieldPutByName( "nNumRem", 0 ),;
+                                                               ::oDbfDet:FieldPutByName( "cSufRem", Space( 2 ) ),;
+                                                               ::oDbfDet:FieldPutByName( "lRemesa", .f. ) ), ) )
+
+   METHOD setCancelar()
+   METHOD DeleteDet( lMessage )
 
 END CLASS
 
@@ -245,6 +254,8 @@ METHOD New( cPath, oMenuItem, oWndParent )
 
    ::bFirstKey             := {|| Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem }
    ::bWhile                := {|| Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == Str( ::oDbfVir:nNumRem, 9 ) + ::oDbfVir:cSufRem .and. !::oDbfVir:Eof() }
+
+   ::lDefCobrado           := ( GetPvProfString( "REMESAS", "Cobrado", .t., cIniAplication() ) == ".T." )
 
 RETURN ( Self )
 
@@ -836,7 +847,7 @@ METHOD Resource( nMode )
 			ID 		500 ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::AppendDet() )
+         ACTION   ( ::AppendDet( nMode ) )
 
       REDEFINE BUTTON ;
          ID       501 ;
@@ -980,10 +991,10 @@ METHOD Resource( nMode )
          ID       510 ;
 			OF 		oDlg ;
          CANCEL ;
-         ACTION   ( oDlg:end() )
+         ACTION   ( ::setCancelar( nMode ), oDlg:end() )
 
    if nMode != ZOOM_MODE
-      oDlg:AddFastKey( VK_F2, {|| ::AppendDet() } )
+      oDlg:AddFastKey( VK_F2, {|| ::AppendDet( nMode ) } )
       oDlg:AddFastKey( VK_F4, {|| ::MultiDeleteDet() } )
       oDlg:AddFastKey( VK_F5, {|| if( ::lSave( nMode ), oDlg:End( IDOK ), ) } )
    end if
@@ -1441,6 +1452,11 @@ METHOD GetRecCli( oDlg, nMode )
 
             if ::oDbfVir:Append()
                aEval( ::oDbfVir:aTField, {| oFld, n | ::oDbfVir:FldPut( n, ::oDbfDet:FieldGet( n ) ) } )
+
+               if ::gotoRecibo()
+                  ::setEstadoRecibo( ::lDefCobrado, .f. )
+               end if
+
                ::oDbfVir:Save()
             end if
 
@@ -1517,7 +1533,7 @@ RETURN ( if( lPic, Trans( nTot, ::cPorDiv ), nTot ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD AppendDet()
+METHOD AppendDet( nMode )
 
    local nRec
    local aCodRec  := {}
@@ -1547,8 +1563,15 @@ METHOD AppendDet()
          end if
 
          if ::oDbfVir:Append()
+            
             aEval( ::oDbfVir:aTField, {| oFld, n | ::oDbfVir:FldPut( n, ::oDbfDet:FieldGet( n ) ) } )
+
+            if ::gotoRecibo()
+               ::setEstadoRecibo( ::lDefCobrado, .f. )
+            end if
+            
             ::oDbfVir:Save()
+
          end if
 
       next
@@ -2384,13 +2407,59 @@ METHOD setEstadosRecibos( lCobrado )
       ::oDbfVir:goto( nSelect )
       
       if ::gotoRecibo()
-         ::setEstadoRecibo( lCobrado )
+         ::setEstadoRecibo( lCobrado, .f. )
          ::oBrwDet:Refresh()
       end if 
 
    next
 
 RETURN ( nil )   
+
+//---------------------------------------------------------------------------//
+
+METHOD setCancelar( nMode )
+
+   ::oDbfVir:gotop()
+
+   while !::oDbfVir:Eof()
+
+      if ::gotoRecibo()
+         ::setEstadoRecibo( ::oDbfVir:lCobrado, .f. )
+      end if
+
+      ::oDbfVir:Skip()
+
+   end while
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD DeleteDet( lMessage )
+
+   DEFAULT lMessage  := .t.
+
+   if ::oDbfVir:Recno() == 0
+      RETURN ( Self )
+   end if
+
+   if oUser():lNotConfirmDelete() .or. if( lMessage, ApoloMsgNoYes("¿ Desea eliminar definitivamente este registro ?", "Confirme supersión" ), .t. )
+
+      if ::gotoRecibo()
+         ::setEstadoRecibo( .f., .t. )
+      end if
+
+      ::oDbfVir:Delete( .t. )
+
+      if ::bOnPostDeleteDetail != nil
+         Eval( ::bOnPostDeleteDetail, Self )
+      end if
+
+      if( ::oBrwDet != nil, ::oBrwDet:Refresh(), )
+
+   end if
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
