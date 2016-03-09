@@ -98,6 +98,9 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD nCostoMedio()                   INLINE ( ::oStock:nCostoMedio( ::oDbf:cCodArt, ::oDbf:cCodAlm ) )
    METHOD nCostoMedioPropiedades()        INLINE ( ::oStock:nCostoMedio( ::oStock:oDbfStock:cCodigo, ::oStock:oDbfStock:cAlmacen, ::oStock:oDbfStock:cCodPrp1, ::oStock:oDbfStock:cCodPrp2, ::oStock:oDbfStock:cValPrp1, ::oStock:oDbfStock:cValPrp2, ::oStock:oDbfStock:cLote ) )
 
+   METHOD nombrePrimeraPropiedad()        INLINE ( nombrePropiedad( ::oDbf:cCodPr1, ::oDbf:cValPr1, ::nView ) )
+   METHOD nombreSegundaPropiedad()        INLINE ( nombrePropiedad( ::oDbf:cCodPr2, ::oDbf:cValPr2, ::nView ) )
+
    METHOD aStockArticulo()                INLINE ( ::oStock:aStockArticulo( ::oDbf:cCodArt ) )
 
    METHOD SetUnidadesNegativo( lValue )   INLINE ( ::lUnidadesNegativo := lValue )
@@ -2314,6 +2317,8 @@ METHOD AddArticulo() CLASS TFastVentasArticulos
 
    end while
 
+   // msgAlert( ::oDbf:OrdKeyCount(), "OrdKeyCount" )
+
    ::oMtrInf:AutoInc( ::oDbfArt:OrdKeyCount() )
 
 RETURN ( Self )
@@ -2325,8 +2330,6 @@ METHOD appendStockArticulo( aStockArticulo )
    local sStock
 
    for each sStock in aStockArticulo
-
-      msgAlert( hb_valtoexp( sStock ) )
 
       if !empty( sStock:cCodigo )
 
@@ -2353,7 +2356,7 @@ METHOD appendStockArticulo( aStockArticulo )
 
          ::fillFromArticulo()
 
-         msgAlert( ::InsertIfValid(), "insertIfValid" )
+         ::insertIfValid()
 
       end if 
 
@@ -3306,9 +3309,11 @@ RETURN ( Self )
 
 METHOD AddVariableStock()
    
-   ::oFastReport:AddVariable( "Stock", "Costo medio",             "CallHbFunc( 'oTInfGen', ['nCostoMedio', ''])" )
-   ::oFastReport:AddVariable( "Stock", "Costo medio propiedades", "CallHbFunc( 'oTInfGen', ['nCostoMedioPropiedades', ''])" )
-   ::oFastReport:AddVariable( "Stock", "Total stock",             "CallHbFunc( 'oTInfGen', ['nTotalStockArticulo', ''])" )
+   ::oFastReport:AddVariable( "Stock", "Costo medio",                "CallHbFunc( 'oTInfGen', ['nCostoMedio', ''])" )
+   ::oFastReport:AddVariable( "Stock", "Costo medio propiedades",    "CallHbFunc( 'oTInfGen', ['nCostoMedioPropiedades', ''])" )
+   ::oFastReport:AddVariable( "Stock", "Total stock",                "CallHbFunc( 'oTInfGen', ['nTotalStockArticulo', ''])" )
+   ::oFastReport:AddVariable( "Stock", "Nombre primera propiedad",   "CallHbFunc( 'oTInfGen', ['nombrePrimeraPropiedad', ''])" )
+   ::oFastReport:AddVariable( "Stock", "Nombre segunda propiedad",   "CallHbFunc( 'oTInfGen', ['nombreSegundaPropiedad', ''])" )
 
 RETURN ( Self )
 

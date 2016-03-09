@@ -196,8 +196,6 @@ static oBtnAceptarActualizarWeb
 
 static hStockArticulo   := {=>}
 
-static oTreeWeb
-
 //---------------------------------------------------------------------------//
 
 #ifndef __PDA__
@@ -4438,8 +4436,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE );
          OF       fldWeb      
 
-   oTreeWeb       := TTreeView():Redefine( 110, fldWeb )
-
    /*
    Cuarta Caja de Dialogo del Folder
    ----------------------------------------------------------------------------
@@ -5296,8 +5292,6 @@ Static Function StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, 
    else   
       oBtnAceptarActualizarWeb:Hide()
    end if
-
-   TPrestashopConfig():setWebShopTree( oTreeWeb )
 
    // Liberamos el dialogo-----------------------------------------------------
 
