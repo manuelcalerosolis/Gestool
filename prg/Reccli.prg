@@ -1244,7 +1244,7 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
 
       with object ( oBrwRec:AddCol() )
          :cHeader             := "Tipo"
-         :bStrData            := {|| if( len( aRecibosRelacionados) > 0 .and. Right( aRecibosRelacionados[ oBrwRec:nArrayAt ], 1 ) == "R", "Rectificativa", "" ) }
+         :bStrData            := {|| if( len( aRecibosRelacionados ) > 0 .and. Right( aRecibosRelacionados[ oBrwRec:nArrayAt ], 1 ) == "R", "Rectificativa", "" ) }
          :nWidth              := 50
       end with
 
@@ -1513,8 +1513,18 @@ Static Function GetReciboCliente( aTmp, oBrwRec )
          Return .f.
       end if 
 
+      if RetFld( cNumRec, dbfFacCliP, "lRemesa", "nNumFac" )
+         msgStop( "Recibo ya remesado." )
+         Return .f.
+      end if 
+
       if !empty( RetFld( cNumRec, dbfFacCliP, "cNumMtz", "nNumFac" ) )
          msgStop( "Recibo ya pertenece a otra matriz." )
+         Return .f.
+      end if 
+
+      if RetFld( cNumRec, dbfFacCliP, "cCodCli", "nNumFac" ) != aTmp[ _CCODCLI ]
+         msgStop( "Recibo pertenece a otro cliente." )
          Return .f.
       end if 
 
@@ -1910,7 +1920,7 @@ Function nTotRecCli( uFacCliP, cDbfDiv, cDivRet, lPic )
       nTotRec        := nCnv2Div( nTotRec, cDivPgo, cDivRet )
    end if
 
-RETURN if( lPic, Trans( nTotRec, cPorDiv ), nTotRec )
+RETURN ( if( lPic, Trans( nTotRec, cPorDiv ), nTotRec ) )
 
 //------------------------------------------------------------------------//
 

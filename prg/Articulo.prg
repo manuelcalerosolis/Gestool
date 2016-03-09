@@ -4438,8 +4438,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE );
          OF       fldWeb      
 
-   oTreeWeb                      := TTreeView():Redefine( 110, fldWeb )
-   oTreeWeb:bItemSelectChanged   := {|| msgAlert("treeChanged") }
+   oTreeWeb       := TTreeView():Redefine( 110, fldWeb )
 
    /*
    Cuarta Caja de Dialogo del Folder
@@ -5290,6 +5289,8 @@ Static Function StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, 
       oBrwStk:Show()
    end if
 
+   // Tiendas en prestashop----------------------------------------------------
+
    if TPrestashopConfig():getRealTimeConexion()
       oBtnAceptarActualizarWeb:Show()
    else   
@@ -5297,6 +5298,8 @@ Static Function StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, 
    end if
 
    TPrestashopConfig():setWebShopTree( oTreeWeb )
+
+   // Liberamos el dialogo-----------------------------------------------------
 
    oDlg:Enable()
 
@@ -5914,15 +5917,15 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nPosTpv" ) ) ]       -= 0.5
 
       if !Empty( oImpComanda1 )
-         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp1" ) ) ]      := aImpComanda[ oImpComanda1:nAt ]
+         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp1" ) ) ]   := aImpComanda[ oImpComanda1:nAt ]
       end if
 
       if !Empty( oImpComanda2 )
-         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp2" ) ) ]      := aImpComanda[ oImpComanda2:nAt ]
+         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp2" ) ) ]    := aImpComanda[ oImpComanda2:nAt ]
       end if
 
       if !Empty( oActiveX )
-         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "mDesTec" ) ) ]    := oActiveX:DocumentHTML
+         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "mDesTec" ) ) ]     := oActiveX:DocumentHTML
       end if
 
       /*
@@ -15189,13 +15192,13 @@ function aItmArt()
    aAdd( aBase, { "cRefAux2",  "C", 18, 0, "Referencia auxiliar 2",                    "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "Matriz",    "C", 18, 0, "Matriz para código de barras" ,            "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nStkCal",   "N", 16, 6, "Stock calculado" ,                         "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LIVAINC2",  "L",  1, 0, "Iva incluido para el precio 2" ,           "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LIVAINC3",  "L",  1, 0, "Iva incluido para el precio 3" ,           "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LIVAINC4",  "L",  1, 0, "Iva incluido para el precio 4" ,           "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LIVAINC5",  "L",  1, 0, "Iva incluido para el precio 5" ,           "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LIVAINC6",  "L",  1, 0, "Iva incluido para el precio 6" ,           "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LIVAPVER",  "L",  1, 0, "Iva incluido para el punto verde" ,        "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "mWebJson",  "M", 10, 0, "Tiendas web donde se publica el producto", "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lIvaInc2",  "L",  1, 0, "Iva incluido para el precio 2" ,           "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lIvaInc3",  "L",  1, 0, "Iva incluido para el precio 3" ,           "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lIvaInc4",  "L",  1, 0, "Iva incluido para el precio 4" ,           "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lIvaInc5",  "L",  1, 0, "Iva incluido para el precio 5" ,           "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lIvaInc6",  "L",  1, 0, "Iva incluido para el precio 6" ,           "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lIvaPveR",  "L",  1, 0, "Iva incluido para el punto verde" ,        "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cWebShop",  "C",100, 0, "Tienda web donde se publica el producto",  "",                  "", "( cDbfArt )", nil } )
 
 return ( aBase )
 
@@ -17545,7 +17548,6 @@ static function ChangePublicarTemporal( aTmp )
       ChangePropiedadesInt(   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ] )
       ChangeTipArtInt(        aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodTip"  ) ) ] )
 
-      TPrestashopConfig():treeToJson( oTreeWeb )
 
       // ChangeFabricantesInt(   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab"  ) ) ] )
    end if

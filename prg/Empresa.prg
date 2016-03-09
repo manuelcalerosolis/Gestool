@@ -3455,7 +3455,7 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
 
    oMsgText( 'Cargando configuración de prestashop' )
    
-   TPrestashopConfig():New( cCodEmp ):LoadJSON():getWebShop()
+   TPrestashopConfig():New( cCodEmp ):LoadJSON():getWebs()
 
    /*
    Cerrando ficheros-----------------------------------------------------------

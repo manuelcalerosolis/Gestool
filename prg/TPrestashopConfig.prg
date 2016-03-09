@@ -15,15 +15,10 @@ CLASS TPrestashopConfig
    DATA hShops                         INIT {=>}
    
    METHOD New()                        CONSTRUCTOR
-   METHOD GetInstance()
-   METHOD LoadJSON() 
+   METHOD getInstance()
+   METHOD loadJSON() 
 
    METHOD getWebs()
-   METHOD getShops( cWeb )
-   METHOD getWebShop()
-
-   METHOD setWebShopTree( oTree )
-   METHOD treeToJson( oTree )
    
    METHOD getRealTimeConexion()        INLINE ( if( hhaskey( ::hConfig, "RealTimeConexion" ), hget( ::hConfig, "RealTimeConexion" ), .f. ) )
 
@@ -82,50 +77,6 @@ Return ( hWebs )
 
 //----------------------------------------------------------------//
 
-METHOD getWebShop() CLASS TPrestashopConfig
-   
-   ::hShops       := {=>}
-
-   heval( ::getWebs(), {|cWeb, hWeb| ::getShops( cWeb, hWeb ) } )
-
-Return ( ::hShops )
-
-//----------------------------------------------------------------//
-
-METHOD getShops( cWeb, hWeb ) CLASS TPrestashopConfig
-
-   local hShops   := hget( hWeb, "Shops")
-
-   if !empty( hShops )
-      heval( hShops, {|cKey| hset( ::hShops, cWeb + space( 1 ) + cKey, .f. ) } )
-   end if 
-
-Return ( ::hShops )
-
-//----------------------------------------------------------------//
-
-METHOD setWebShopTree( oTree ) CLASS TPrestashopConfig
-   
-   local hShops   := ::getWebShop() 
-
-   heval( hShops, {|cKey, lValue | oTree:Add( cKey ) } )
-
-Return ( Self )
-
-//----------------------------------------------------------------//
-
-METHOD treeToJson( oTree ) CLASS TPrestashopConfig
-
-   local oItem
-
-   for each oItem in oTree:aItems
-      msgAlert( hb_valtoexp( oItem, "oItem" ) )
-      msgAlert( oTree:GetCheck( oItem ), "check" )
-   next
-
-Return ( Self )
-
-//----------------------------------------------------------------//
 
 
 

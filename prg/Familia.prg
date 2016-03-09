@@ -1162,9 +1162,6 @@ static function SetTreeState( oTree, aItems, cCodFam )
       if ( cCodFam == oItem:Cargo )
 
          oTree:Select( oItem )
-
-         // tvSetCheckState( oTree:hWnd, oItem:hItem, .t. )
-
          oTree:SetCheck( oItem, .t. )
 
          SysRefresh()

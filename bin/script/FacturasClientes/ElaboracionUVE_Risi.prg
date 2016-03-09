@@ -40,7 +40,7 @@ CREATE CLASS FacturasClientesRisi
    DATA cPasswdFtp          INIT    "123Ab456"
    DATA cHostFtp            INIT    "ftp.gestool.es"
 
-   DATA aClientesExcluidos  INIT    { "0001452", "0001263", "0001071", "0001763" }
+   DATA aClientesExcluidos  INIT    { "0001452", "0001263", "0001071", "0001763" } 
 
    CLASSDATA aProductos     INIT  { { "Codigo" => "V001004", "Nombre" => "GUSANITOS 35 g x 30 u",             "Codigo unidades" => "8411859550103",  "Codigo cajas" => "18411859550100", "Codigo interno" => "" },;
                                     { "Codigo" => "V001005", "Nombre" => "GUSANITOS  KETCHUP 35 g x 30 u",    "Codigo unidades" => "8411859550110",  "Codigo cajas" => "18411859550117", "Codigo interno" => "" },;

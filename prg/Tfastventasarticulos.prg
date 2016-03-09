@@ -2290,20 +2290,23 @@ METHOD AddArticulo() CLASS TFastVentasArticulos
 
    ::oMtrInf:cText      := "Procesando artículos"
 
-   /*
-   Recorremos artículos--------------------------------------------------------
-   */
+   // Recorremos artículos-----------------------------------------------------
 
    ::oDbfArt:goTop() 
    while !::oDbfArt:eof() .and. !::lBreak
 
-      aStockArticulo    := ::oStock:aStockArticulo( ::oDbfArt:Codigo, , , , , , ::dFinInf )
+      if ( ::oDbfArt:Codigo  >= ::oGrupoArticulo:Cargo:getDesde() .and. ::oDbfArt:Codigo  <= ::oGrupoArticulo:Cargo:getHasta() ) .and.;
+         ( ::oDbfArt:Familia >= ::oGrupoFamilia:Cargo:getDesde()  .and. ::oDbfArt:Familia <= ::oGrupoFamilia:Cargo:getHasta() )           
 
-      if !empty( aStockArticulo )
-         ::appendStockArticulo( aStockArticulo )
+         aStockArticulo    := ::oStock:aStockArticulo( ::oDbfArt:Codigo, , , , , , ::dFinInf )
+
+         if !empty( aStockArticulo )
+            ::appendStockArticulo( aStockArticulo )
+         end if 
+
+         // ::appendBlankAlmacenes( ::oDbfArt:Codigo )
+
       end if 
-
-      ::appendBlankAlmacenes( ::oDbfArt:Codigo )
 
       ::oDbfArt:Skip()
 
@@ -2323,7 +2326,9 @@ METHOD appendStockArticulo( aStockArticulo )
 
    for each sStock in aStockArticulo
 
-      if !empty(sStock:cCodigo)
+      msgAlert( hb_valtoexp( sStock ) )
+
+      if !empty( sStock:cCodigo )
 
          ::oDbf:Blank()
 
@@ -2348,7 +2353,7 @@ METHOD appendStockArticulo( aStockArticulo )
 
          ::fillFromArticulo()
 
-         ::InsertIfValid()
+         msgAlert( ::InsertIfValid(), "insertIfValid" )
 
       end if 
 
@@ -2361,6 +2366,7 @@ RETURN ( Self )
 METHOD appendBlankAlmacenes( cCodigoArticulo )
 
    if ::oDbfAlm:Seek( ::oGrupoAlmacen:Cargo:getDesde() )
+      
       while ::oDbfAlm:cCodAlm <= ::oGrupoAlmacen:Cargo:getHasta() .and. !::oDbfAlm:eof()
 
          if !::existeArticuloInforme( cCodigoArticulo, ::oDbfAlm:cCodAlm )
@@ -2370,6 +2376,7 @@ METHOD appendBlankAlmacenes( cCodigoArticulo )
          ::oDbfAlm:skip()
 
       end while
+      
    end if 
 
 RETURN ( Self )

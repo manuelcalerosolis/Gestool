@@ -5998,6 +5998,10 @@ Return ( by( nRow ) )
 
 Function Test() 
 
+   local TPrestaShopId  := TPrestaShopId():New()
+   TPrestaShopId:OpenFiles()
+   TPrestaShopId:CloseFiles()
+
 /*
    local n  
    local oDebtor

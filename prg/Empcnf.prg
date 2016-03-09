@@ -1,6 +1,7 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 #include "Empresa.ch"
+#include "DbInfo.ch"
 
 //---------------------------------------------------------------------------//
 //Funciones del programa
@@ -873,9 +874,10 @@ FUNCTION nNewDoc( cSerie, dbf, cTipDoc, nLen, dbfCount )
    local lClo        := .f.
    local nDoc        := 0
    local nRetry      := 0
+   local cOldFlt     := ( dbf )->( dbinfo( DBI_DBFILTER ) )
    local nRecAnt     := ( dbf )->( recno() )
    local nOrdAnt     := ( dbf )->( ordsetfocus( 1 ) )
-   local cSufEmp     := RetSufEmp()
+   local cSufEmp     := retSufEmp()
    local lNotSerie   := .f.
 
    if Empty( cSerie )
@@ -885,9 +887,7 @@ FUNCTION nNewDoc( cSerie, dbf, cTipDoc, nLen, dbfCount )
    DEFAULT nLen      := 9
    DEFAULT cSerie    := "A"
    
-   /*
-   Chequea q exista la base de datos-------------------------------------------
-   */
+   // Chequea q exista la base de datos-------------------------------------------
    
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -897,12 +897,14 @@ FUNCTION nNewDoc( cSerie, dbf, cTipDoc, nLen, dbfCount )
       SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
       lClo           := .t.
    end if
+
+   if !empty( cOldFlt )
+      ( dbf )->( dbsetfilter() )
+   end if 
    
    nPos              := ( dbfCount )->( fieldPos( cSerie ) )
    
-   /*
-   Hasta q no encuentre un numero valido se pone a dar vueltas-----------------
-   */
+   // Hasta q no encuentre un numero valido se pone a dar vueltas-----------------
    
    if dbSeekInOrd( Upper( cTipDoc ), "Doc", dbfCount, nil, nil, .t. )
 
@@ -939,6 +941,10 @@ FUNCTION nNewDoc( cSerie, dbf, cTipDoc, nLen, dbfCount )
       msgStop( "No encuentro el tipo de documento " + cTipDoc )
    
    end if
+
+   if !empty( cOldFlt )
+      ( dbf )->( dbsetfilter( c2Block( cOldFlt ), cOldFlt ) )
+   end if 
    
    /*
    Cerramos las bases de datos

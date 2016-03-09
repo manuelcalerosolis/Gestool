@@ -2504,6 +2504,16 @@ METHOD BuildEmpresa()
    oDataTable:bCreateFile  := {| cPath | TDetCamposExtra():BuildFiles( cPath ) }
    ::AddEmpresaTable( oDataTable )
 
+   oDataTable              := TDataTable()
+   oDataTable:cArea        := "PrestaId"
+   oDataTable:cName        := cPatEmp() + "PrestaId"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "PrestaId.DBF"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PrestaId.CDX"
+   oDataTable:cDescription := "Identificadores de prestashop"
+   oDataTable:bCreateFile  := {| cPath | TPrestaShopId():BuildFiles( cPath ) }
+   ::AddEmpresaTable( oDataTable )
+
+
    /*
    Clientes--------------------------------------------------------------------
    */

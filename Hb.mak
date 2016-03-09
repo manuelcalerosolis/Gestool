@@ -43,6 +43,7 @@ WebBrow.prg             	\
 TMySql.prg              	\
 TComercio.prg           	\
 TPrestashopConfig.prg 		\
+TPrestashopId.prg 			\
 Comun.prg               	\
 AccessCode.prg          	\
 Tgraph.prg              	\
@@ -460,6 +461,7 @@ WebBrow.obj                                        \
 TMySql.obj                                         \
 TComercio.obj                                      \
 TPrestashopConfig.obj 										\
+TPrestashopId.obj 											\
 Comun.obj                                          \
 AccessCode.obj                                     \
 DialogExtend.obj                                   \
@@ -911,6 +913,7 @@ $(OBJ)\WebBrow.obj                                          +
 $(OBJ)\TMySql.obj                                           +
 $(OBJ)\TComercio.obj                                        +
 $(OBJ)\TPrestashopConfig.obj 											+
+$(OBJ)\TPrestashopId.obj 												+
 $(OBJ)\Comun.obj                                            +
 $(OBJ)\AccessCode.obj                                       +
 $(OBJ)\DialogExtend.obj                                     +
