@@ -18,6 +18,8 @@ static oMsgAlarm
 CLASS TComercio
 
    CLASSDATA oInstance
+
+   DATA  TPrestashopConfig  
    
    DATA  aSend
    DATA  oInt
@@ -60,8 +62,6 @@ CLASS TComercio
    DATA  oBtnStock
 
    DATA  cPath
-
-   DATA  oIniEmpresa
 
    DATA  lSyncAll                   INIT .f.
    DATA  lArticulos                 INIT .f.
@@ -131,11 +131,6 @@ CLASS TComercio
    DATA  cDbName
    DATA  nPort
    DATA  cSeriePed
-   DATA  cHostFtp
-   DATA  nPortFtp
-   DATA  cUserFtp
-   DATA  cPasswdFtp
-   DATA  lPassiveFtp
 
    DATA  Cookiekey
 
@@ -196,7 +191,14 @@ CLASS TComercio
    // Dialogos-----------------------------------------------------------------
 
    METHOD dialogActivate( oWnd )
-   METHOD dialogStart()
+      METHOD dialogStart()
+      METHOD disableDialog()           INLINE   (  if( !empty(::oDlg),           ::oDlg:bValid := {|| .f. }, ),;
+                                                   if( !empty(::oBtnExportar),   ::oBtnExportar:Hide(), ),;
+                                                   if( !empty(::oBtnImportar),   ::oBtnImportar:Hide(), ),;
+                                                   if( !empty(::oBtnStock),      ::oBtnStock:Hide(), ),;
+                                                   if( !empty(::oBtnCancel),     ::oBtnCancel:Disable(), ) )
+      METHOD enableDialog()            INLINE   (  if( !empty(::oDlg),           ::oDlg:bValid := {|| .t. }, ),;
+                                                   if( !empty(::oBtnCancel),     ::oBtnCancel:Enable(), ) )
 
    // Mensajes-----------------------------------------------------------------
 
@@ -264,7 +266,6 @@ CLASS TComercio
    METHOD AppendArticuloPrestashop()
    METHOD ActualizaProductsPrestashop()
    METHOD InsertProductsPrestashop()
-   METHOD UpdateProductsPrestashop()
    METHOD DeleteProductsPrestashop()
    METHOD InsertOfertasPrestashop()
    METHOD UpdateOfertasPrestashop()
@@ -342,8 +343,7 @@ CLASS TComercio
    METHOD loadOrders()
    METHOD processOrder( oQuery )
    METHOD checkDate( cDatePrestashop )
-   METHOD getSeriePedido()             INLINE ( if( !empty( uFieldEmpresa( "cSeriePed" ) ), uFieldEmpresa( "cSeriePed" ), cNewSer( "nPedCli", ::oCount:cAlias ) ) ) 
-   METHOD getSeriePresupuesto()        INLINE ( if( !empty( uFieldEmpresa( "cSeriePre" ) ), uFieldEmpresa( "cSeriePre" ), cNewSer( "nPreCli", ::oCount:cAlias ) ) )
+
    METHOD payOrder( cPrestashopModule )
 
    METHOD documentRecived( oQuery, oDatabase )   
@@ -398,15 +398,18 @@ CLASS TComercio
    DATA  aPropiedadesLinData  INIT {}
    DATA  aStockArticuloData   INIT {}
 
+   METHOD ProductInCurrentWeb()             INLINE ( ::oArt:lPubInt )  // DE MOMENTO
+
    // Metodos para la recopilacion de informacion----------------------------
 
-   METHOD buildConect()
-   METHOD buildDisConect()
+   METHOD prestaShopConnect()
+   METHOD prestashopDisConnect()
 
    METHOD buildInitData()
    METHOD buildIvaPrestashop( id )
    METHOD buildFabricantePrestashop( id )
    METHOD buildFamiliaPrestashop( id )
+
    METHOD buildProductPrestashop( id )
    METHOD buildInformacion()
    METHOD buildSubirInformacion()
@@ -460,8 +463,8 @@ CLASS TComercio
 
    DATA  cDirImagen
 
-   METHOD cDirectoryProduct()                INLINE ( ::cDirImagen + "/p" )
-   METHOD cDirectoryCategories()             INLINE ( ::cDirImagen + "/c" )
+   METHOD cDirectoryProduct()                INLINE ( ::TPrestashopConfig:getImagesDirectory() + "/p" )
+   METHOD cDirectoryCategories()             INLINE ( ::TPrestashopConfig:getImagesDirectory() + "/c" )
 
    METHOD ftpTestConexion()                  INLINE ( if (  ::ftpCreateConexion(),;
                                                             msgInfo( "Conectado a servidor FTP correctamente." ),;
@@ -496,32 +499,30 @@ METHOD New( oMenuItem, oMeterTotal, oTextTotal ) CLASS TComercio
    ::oMeterTotal           := oMeterTotal
    ::oTextTotal            := oTextTotal
 
-   ::oIniEmpresa           := TIni():New( cPatEmp() + "Empresa.Ini" )
-
    ::lSyncAll              := .f.
+   ::nTotMeter             := 0 
+
+   ::TPrestashopConfig     := TPrestashopConfig():New()
+   ::TPrestashopConfig:loadJSON()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildInitData() CLASS TComercio
+
    ::aImages               := {}
    ::aImagesArticulos      := {}
    ::aImagesCategories     := {}
    ::aTipoImagesPrestashop := {}
-   ::nTotMeter             := 0 
 
-   ::cHost                 := uFieldEmpresa( "cSitSql" )
-   ::cUser                 := uFieldEmpresa( "cUsrSql" )
-   ::cPasswd               := uFieldEmpresa( "cPswSql" )
-   ::cDbName               := uFieldEmpresa( "cDtbSql" )
-   ::nPort                 := uFieldEmpresa( "nPrtSql", 3306 )
-   ::cDirImagen            := ::cValidDirectoryFtp( uFieldEmpresa( "cdImagen" ) )
-   ::cSeriePed             := uFieldEmpresa( "cSeriePed" )
-   ::nSecondTimer          := uFieldEmpresa( "nTiempoPed", 0 ) * 60000
-   ::cUserFtp              := uFieldEmpresa( "cUsrFtpImg" )
-   ::cPasswdFtp            := uFieldEmpresa( "cPswFtpImg" )
-   ::cHostFtp              := uFieldEmpresa( "cHstFtpImg" )
-   ::nPortFtp              := uFieldEmpresa( "nPrtFtp", 21 )
-   ::lPassiveFtp           := uFieldEmpresa( "lPasFtp" )
-   ::Cookiekey             := uFieldEmpresa( "cCooKey" )
-   ::cPrefijoBaseDatos     := uFieldEmpresa( "cPrefixTbl" )
+   ::aIvaData              := {}
+   ::aFabricantesData      := {}
+   ::aFamiliaData          := {}
+   ::aArticuloData         := {}
+   ::aArticulosActualizar  := {}
 
-RETURN ( Self )
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -873,11 +874,11 @@ METHOD dialogActivate( oWnd ) CLASS TComercio
          ID       170 ;
          OF       ::oDlg
 
-      REDEFINE SAY PROMPT ::cUserFtp ;
+      REDEFINE SAY PROMPT "Usuario" ;
          ID       180 ;
          OF       ::oDlg
 
-      REDEFINE SAY PROMPT ::cDirImagen ;
+      REDEFINE SAY PROMPT "Imagenes" ;
          ID       190 ;
          OF       ::oDlg
 
@@ -935,7 +936,7 @@ Return Nil
 
 METHOD dialogStart() CLASS TComercio
 
-   if uFieldEmpresa( "lHExpWeb" )
+   if ::TPrestashopConfig:getHideExportButton()
       ::oBtnExportar:Hide()
    else
       ::oBtnExportar:Show()
@@ -1190,10 +1191,10 @@ METHOD ImportarPrestashop() CLASS TComercio
    ::oBtnStock:Hide()
 
    ::oBtnCancel:Disable()
-/*
+
    oBlock            := ErrorBlock( { | oError | Break( oError ) } )
    BEGIN SEQUENCE
-*/
+
    if ::filesOpen()
 
       ::treeSetText( 'Intentando conectar con el servidor ' + '"' + ::cHost + '"' + ', el usuario ' + '"' + ::cUser + '"' + ' y la base de datos ' + '"' + ::cDbName + '".' , 1 )
@@ -1254,7 +1255,7 @@ METHOD ImportarPrestashop() CLASS TComercio
       ::treeSetText( 'Error al abrir los ficheros necesarios.', 1 )
 
    end if
-/*
+
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Error al conectarnos con la base de datos" )
@@ -1262,7 +1263,7 @@ METHOD ImportarPrestashop() CLASS TComercio
    END SEQUENCE
 
    ErrorBlock( oBlock )
-*/
+
    ::filesClose()
 
    ::oBtnExportar:Hide()
@@ -2240,7 +2241,6 @@ METHOD ActualizaCategoriesPrestashop( cCodigoFamilia ) CLASS TComercio
    end if
    
    if !::filesOpen()
-      ::filesClose()
       Return .f.
    end if 
 
@@ -2319,11 +2319,11 @@ METHOD DeleteImagesCategories( cCodCategorie ) CLASS TComercio
 
       if ::ftpCreateConexion()
 
-         MsgStop( "Imposible conectar al sitio ftp " + ::cHostFtp )
+         MsgStop( "Imposible conectar al sitio ftp " + ::TPrestashopConfig:getFtpServer() )
 
       else
 
-         if !empty( ::cDirImagen )
+         if !empty( ::TPrestashopConfig:getImagesDirectory() )
             ::oFtp:SetCurrentDirectory( ::cDirectoryCategories() )
          end if
 
@@ -3261,30 +3261,6 @@ METHOD ActualizaProductsPrestashop( cCodigoArticulo, lChangeImage ) CLASS TComer
 
                   ::InsertProductsPrestashop( .t. )
 
-/*
-                  cCommand := 'SELECT * FROM ' + ::cPrefixTable( "product" ) +  ' WHERE id_product=' + alltrim( str( ::oArt:cCodWeb ) )
-                  oQuery   := TMSQuery():New( ::oCon, cCommand )
-      
-                  if oQuery:Open()
-      
-                     if oQuery:RecCount() > 0
-      
-                        ::cTextoWait( "Actualizando artículo en prestashop" )
-
-                        ::UpdateProductsPrestashop( lChangeImage )
-      
-                     else
-      
-                        ::cTextoWait( "Añadiendo artículo en prestashop" )
-
-                        ::InsertProductsPrestashop( .t. )
-      
-                     end if
-      
-                  end if
-      
-                  oQuery:Free()
-*/
                case ::oArt:lPubInt .and. ::oArt:cCodWeb == 0
       
                   ::cTextoWait( "Añadiendo artículo en prestashop" )
@@ -3496,24 +3472,24 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
    Metemos el stock total del artículo-----------------------------------------
    */
 
-   nTotStock   := ::oStock:nStockArticulo( ::oArt:Codigo )
+   nTotStock   := ::oStock:nStockArticulo( ::oArt:Codigo, ::TPrestashopConfig:getStore() )
 
-   cCommand    :=    "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( " + ;
-                        "id_product, " + ;
-                        "id_product_attribute, " + ;
-                        "id_shop, " + ;
-                        "id_shop_group, " + ;
-                        "quantity, " + ;
-                        "depends_on_stock, " + ;
-                        "out_of_stock )" + ;
-                     " VALUES " + ;
-                        "('" + alltrim( str( nCodigoWeb ) ) + "', " + ;
-                        "'0', " + ;   
-                        "'1', " + ;
-                        "'0', " + ;
-                        "'" + alltrim( str( nTotStock ) ) + "', " + ;
-                        "'0', " + ;
-                        "'2' )"
+   cCommand    := "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( " + ;
+                     "id_product, " + ;
+                     "id_product_attribute, " + ;
+                     "id_shop, " + ;
+                     "id_shop_group, " + ;
+                     "quantity, " + ;
+                     "depends_on_stock, " + ;
+                     "out_of_stock ) " + ;
+                  "VALUES " + ;
+                     "('" + alltrim( str( nCodigoWeb ) ) + "', " + ;
+                     "'0', " + ;   
+                     "'1', " + ;
+                     "'0', " + ;
+                     "'" + alltrim( str( nTotStock ) ) + "', " + ;
+                     "'0', " + ;
+                     "'2' )"
 
       if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
          ::treeSetText( "He insertado el artículo  " + alltrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "stock_available" ), 3 )
@@ -3565,118 +3541,6 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
    end if   
 
 return nCodigoweb
-
-//---------------------------------------------------------------------------//
-
-METHOD UpdateProductsPrestashop( lChangeImage ) CLASS TComercio
-
-   local cCommand    := ""
-   local lReturn     := .f.
-   local nParent     := ::GetParentCategories()
-   local nTotStock   := 0
-
-   ::DeleteProductsPrestashop()
-
-   ::InsertProductsPrestashop( .t. )
-
-   /*
-   ----------------------------------------------------------------------------
-   ACTUALIZAMOS LAS TABLAS DE ARTÍCULO-----------------------------------------
-   ----------------------------------------------------------------------------
-   */
-
-   /*::cTextoWait( "Modificando artículo: " + alltrim( ::oArt:Nombre ) )
-
-   cCommand          := "UPDATE " + ::cPrefixTable( "product" ) + " SET " + ;
-                           "id_manufacturer='" + alltrim( str( oRetFld( ::oArt:cCodFab, ::oFab, "CCODWEB", "CCODFAB" ) ) ) + "', " + ;
-                           "id_tax_rules_group='" + alltrim( str( oRetFld( ::oArt:TipoIva, ::oIva, "CGRPWEB", "TIPO" ) ) ) + "', " + ;
-                           "id_category_default='" + alltrim( str( nParent ) ) + "', " + ;
-                           "price='" + if( !empty( ::oArt:cCodPrp1 ), "0", alltrim( str( ::oArt:nImpInt1 ) ) ) + "', " + ;
-                           "weight='" + alltrim( str( ::oArt:nPesoKg ) ) + "', " + ;
-                           "date_upd='" + alltrim( dtoc( GetSysDate() ) ) + "' " + ;
-                        "WHERE id_product=" + alltrim( str( ::oArt:cCodWeb ) )
-
-   lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-
-   cCommand          := "UPDATE " + ::cPrefixTable( "product_lang" ) + " SET " + ;
-                           "description='" + if( !empty( ::oArt:mDesTec ), alltrim( ::oArt:mDesTec ), alltrim( ::oArt:Nombre ) ) + "', " + ;
-                           "description_short='" + alltrim( ::oArt:Nombre ) + "', " + ;
-                           "link_rewrite='" + cLinkRewrite( ::oCon:Escapestr( ::oArt:Nombre ) ) + "', " + ;
-                           "meta_title='" + alltrim( ::oArt:cTitSeo ) + "', " + ;
-                           "meta_description='" + alltrim( ::oArt:cDesSeo ) + "', " + ;
-                           "meta_keywords='" + alltrim( ::oArt:cKeySeo ) + "', " + ;
-                           "name='" + alltrim( ::oArt:Nombre ) + "' " + ;
-                        "WHERE id_product=" + alltrim( str( ::oArt:cCodWeb ) )
-
-   lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-
-   cCommand          := "UPDATE " + ::cPrefixTable( "product_shop" ) + " SET " + ;
-                           "id_category_default='" + alltrim( str( nParent ) ) + "', " + ;
-                           "price='" + if( !empty( ::oArt:cCodPrp1 ), "0", alltrim( str( ::oArt:nImpInt1 ) ) ) + "', " + ;
-                           "date_upd='" + alltrim( dtoc( GetSysDate() ) ) + "' " + ;
-                        "WHERE id_product=" + alltrim( str( ::oArt:cCodWeb ) )
-
-   lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-
-   cCommand          := "UPDATE " + ::cPrefixTable( "category_product" ) + " SET " + ;
-                           "id_category='" + alltrim( str( nParent ) ) + "' " + ;
-                        "WHERE id_product=" + alltrim( str( ::oArt:cCodWeb ) )
-
-   lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )*/
-
-   /*
-   ----------------------------------------------------------------------------
-   Actualizamos el stock total del producto------------------------------------
-   ----------------------------------------------------------------------------
-   */
-
-   /*nTotStock   := ::oStock:nStockArticulo( ::oArt:Codigo )
-
-   cCommand          := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
-                           "quantity='" + alltrim( str( nTotStock ) ) + "' " + ;
-                        "WHERE id_product=" + alltrim( str( ::oArt:cCodWeb ) ) + " AND id_product_attribute=0 "
-
-   lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )*/
-
-   /*
-   ----------------------------------------------------------------------------
-   ACTUALIZAMOS PRECIOS POR PROPIEDADES DEL ARTICULO---------------------------
-   ----------------------------------------------------------------------------
-   */
-
-   //::ActualizaPropiedadesProducts( ::oArt:cCodWeb )
-
-   /*
-   ----------------------------------------------------------------------------
-   ACTUALIZAMOS LAS OFERTAS DEL ARTÍCULO---------------------------------------
-   ----------------------------------------------------------------------------
-   */
-
-   //::UpdateOfertasPrestashop()
-
-   /*
-   ----------------------------------------------------------------------------
-   ACTUALIZAMOS IMAGENES DEL ARTÍCULO------------------------------------------
-   ----------------------------------------------------------------------------
-   */ 
-
-   /*SysRefresh()
-
-   if lChangeImage
-
-      ::DeleteImagesProducts( ::oArt:cCodWeb )
-
-      SysRefresh()
-
-      ::InsertImageProductsPrestashop()
-
-      SysRefresh()
-
-      ::buildImagenes()
-
-   end if*/
-
-Return ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -3948,15 +3812,15 @@ METHOD DeleteImagesProducts( cCodWeb ) CLASS TComercio
 
       oQuery:Free()
 
-      if !empty( ::cHostFtp )
+      if !empty( ::TPrestashopConfig:getFtpServer() )
 
-         if !empty( ::cDirImagen )
+         if !empty( ::TPrestashopConfig:getImagesDirectory() )
             
             for each idDelete in aDelImages
 
                if !::ftpCreateConexion()
 
-                  MsgStop( "Imposible conectar al sitio ftp " + ::cHostFtp )
+                  MsgStop( "Imposible conectar al sitio ftp " + ::TPrestashopConfig:getFtpServer() )
 
                else
 
@@ -3977,7 +3841,7 @@ METHOD DeleteImagesProducts( cCodWeb ) CLASS TComercio
 
       else
 
-         if isDirectory( ::cDirImagen )
+         if isDirectory( ::TPrestashopConfig:getImagesDirectory() )
             
             for each idDelete in aDelImages
 
@@ -4323,7 +4187,7 @@ METHOD buildSubirImagenes() CLASS TComercio
 
       if !::ftpCreateConexion()
 
-         MsgStop( "Imposible conectar al sitio ftp " + ::cHostFtp )
+         MsgStop( "Imposible conectar al sitio ftp " + ::TPrestashopConfig:getFtpServer() )
 
       else
 
@@ -4331,7 +4195,7 @@ METHOD buildSubirImagenes() CLASS TComercio
 
          ::meterProcesoSetTotal( len( ::aImagesArticulos ) )
 
-         if !empty( ::cDirImagen )
+         if !empty( ::TPrestashopConfig:getImagesDirectory() )
             ::ftpCreateDirectory( ::cDirectoryProduct(), .t. )
          end if
 
@@ -4357,19 +4221,17 @@ METHOD buildSubirImagenes() CLASS TComercio
 
       end if
 
-      ::ftpEndConexion()
+   end if 
 
-   end if
+   ::ftpEndConexion()
 
-   /*
-   Subimos las imagenes de las categories--------------------------------------
-   */
+   // Subimos las imagenes de las categories--------------------------------------
 
    if Len( ::aImagesCategories ) > 0
 
       if !::ftpCreateConexion()
 
-         MsgStop( "Imposible conectar al sitio ftp " + ::cHostFtp )
+         MsgStop( "Imposible conectar al sitio ftp " + ::TPrestashopConfig:getFtpServer() )
 
       else
 
@@ -4377,7 +4239,7 @@ METHOD buildSubirImagenes() CLASS TComercio
 
          ::meterProcesoSetTotal( len( ::aImagesCategories ) )
 
-         if !empty( ::cDirImagen )
+         if !empty( ::TPrestashopConfig:getImagesDirectory() )
             ::ftpCreateDirectory( ::cDirectoryCategories(), .t. )
          end if
 
@@ -4405,19 +4267,17 @@ METHOD buildSubirImagenes() CLASS TComercio
 
       ::ftpEndConexion()
 
-   end if
+      // Borramos las imagenes creadas en los temporales-----------------------------
 
-   /*
-   Borramos las imagenes creadas en los temporales-----------------------------
-   */
+      for each oImage in ::aImagesArticulos
+         fErase( oImage:cNombreImagen )
+      next
 
-   for each oImage in ::aImagesArticulos
-      fErase( oImage:cNombreImagen )
-   next
+      for each oImage in ::aImagesCategories
+         fErase( oImage:cNombreImagen )
+      next
 
-   for each oImage in ::aImagesCategories
-      fErase( oImage:cNombreImagen )
-   next
+   end if 
 
    ::aImages               := {}
 
@@ -4460,6 +4320,10 @@ METHOD aTipoImagenPrestashop() CLASS TComercio
          end while
 
       end if
+
+   else 
+
+      ::treeSetText( "Error al ejecutar la sentencia " + "SELECT * FROM " + ::cPrefixTable( "image_type" ), 3 )
 
    end if
 
@@ -4674,7 +4538,7 @@ Return .t.
 
 METHOD cPreFixtable( cName ) Class TComercio
 
-Return ( ::cPrefijoBaseDatos + alltrim( cName ) )
+Return ( ::TPrestashopConfig:getPrefixDatabase() + alltrim( cName ) )
 
 //---------------------------------------------------------------------------//
 
@@ -4990,7 +4854,7 @@ METHOD AppendClientesToPrestashop() CLASS TComercio
                                                                                     "'" + ( cFirstName ) + "', " + ;                                     //"firstname, " + ;
                                                                                     "'" + ( cLastName ) + "', " + ;                                      //"lastname, " + ;
                                                                                     "'" + ::oCon:Escapestr( ::oCli:cMeiInt ) + "', " + ;                 //"email, " + ;
-                                                                                    "'" + hb_md5( alltrim( ::Cookiekey ) + alltrim( ::oCli:cClave ) ) + "', " + ;   //"passwd, " + ;
+                                                                                    "'" + hb_md5( alltrim( ::TPrestashopConfig:getCookieKey() ) + alltrim( ::oCli:cClave ) ) + "', " + ;   //"passwd, " + ;
                                                                                     "'1', " + ;                                                          //"newletter, " + ;
                                                                                     "'" + hb_md5( alltrim( ::oCli:Cod ) ) + "', " + ;                    //"secure_key, " + ;
                                                                                     "'1', " + ;                                                          //"active, " + ;
@@ -5083,7 +4947,7 @@ METHOD AppendClientesToPrestashop() CLASS TComercio
                   if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "customer" ) + " SET firstname='" + alltrim( cFirstName ) + ;
                                                                                 "', lastname='" + alltrim( cLastName ) + ;
                                                                                 "', email='" + alltrim( ::oCli:cMeiInt ) + ;
-                                                                                "', passwd='" + hb_md5( alltrim( ::Cookiekey ) + alltrim( ::oCli:cClave ) ) + ;
+                                                                                "', passwd='" + hb_md5( alltrim( ::TPrestashopConfig:getCookieKey() ) + alltrim( ::oCli:cClave ) ) + ;
                                                                                 "', secure_key='" + hb_md5( alltrim( ::oCli:Cod ) ) + ;
                                                                                 "', date_upd='" + dtos( GetSysDate() ) + ;
                                                                                 "' WHERE id_customer=" + alltrim( str( ::oCli:cCodWeb ) ) )
@@ -5177,7 +5041,7 @@ METHOD AppendClientPrestashop() CLASS TComercio
                ::oCli:Blank()
                ::oCli:Cod        := cCodCli
                
-               if uFieldEmpresa( "lApeNomb" )
+               if ::TPrestashopConfig:getHideHideExportButton()
                   ::oCli:Titulo  := UPPER( oQuery:FieldGetbyName( "lastname" ) ) + ", " + UPPER( oQuery:FieldGetByName( "firstname" ) ) // Last Name - firstname
                else   
                   ::oCli:Titulo  := UPPER( oQuery:FieldGetbyName( "firstname" ) ) + Space( 1 ) + UPPER( oQuery:FieldGetByName( "lastname" ) ) //firstname - Last Name
@@ -5185,7 +5049,7 @@ METHOD AppendClientPrestashop() CLASS TComercio
                
                ::oCli:nTipCli    := 3
                ::oCli:CopiasF    := 1
-               ::oCli:Serie      := uFieldEmpresa( "cSeriePed" )
+               ::oCli:Serie      := ::TPrestashopConfig:getOrderSerie()
                ::oCli:nRegIva    := 1
                ::oCli:nTarifa    := 1
                ::oCli:cMeiInt    := oQuery:FieldGetByName( "email" ) //email
@@ -5250,7 +5114,7 @@ METHOD AppendClientPrestashop() CLASS TComercio
                         ::oObras:cCodCli         := cCodCli
                         ::oObras:cCodObr         := "@" + alltrim( str( oQueryDirecciones:FieldGet( 1 ) ) ) //"id_address"
                         
-                        if uFieldEmpresa( "lApeNomb" )
+                        if ::TPrestashopConfig:getHideHideExportButton() 
                            ::oObras:cNomObr      := UPPER( oQuery:FieldGetbyName( "lastname" ) ) + ", " + UPPER( oQuery:FieldGetByName( "firstname" ) ) // Last Name - firstname
                         else   
                            ::oObras:cNomObr      := UPPER( oQuery:FieldGetbyName( "firstname" ) ) + Space( 1 ) + UPPER( oQuery:FieldGetByName( "lastname" ) ) //firstname - Last Name
@@ -5501,7 +5365,7 @@ METHOD ActualizaStockProductsPrestashop( cCodigoArticulo, cCodigoPropiedad1, cCo
                      Actualizamos el stock total de la web---------------------
                      */
 
-                     nTotStock   := ::oStock:nStockArticulo( ::oArt:Codigo )
+                     nTotStock   := ::oStock:nStockArticulo( ::oArt:Codigo, ::TPrestashopConfig:getStore() )
 
                      cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
                                        "quantity='" + alltrim( str( nTotStock ) ) + "' " + ;
@@ -5515,7 +5379,7 @@ METHOD ActualizaStockProductsPrestashop( cCodigoArticulo, cCodigoPropiedad1, cCo
                      Actualizamos el stock total de la web---------------------
                      */
 
-                     nTotStock   := ::oStock:nStockArticulo( ::oArt:Codigo )
+                     nTotStock   := ::oStock:nStockArticulo( ::oArt:Codigo, ::TPrestashopConfig:getStore() )
 
                      cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
                                        "quantity='" + alltrim( str( nTotStock ) ) + "' " + ;
@@ -5527,7 +5391,7 @@ METHOD ActualizaStockProductsPrestashop( cCodigoArticulo, cCodigoPropiedad1, cCo
                      Actualizamos el stock por propiedades---------------------
                      */
 
-                     nTotStock   := ::oStock:nStockAlmacen( cCodigoArticulo, , cValorPropiedad1 )
+                     nTotStock   := ::oStock:nStockAlmacen( cCodigoArticulo, ::TPrestashopConfig:getStore(), cValorPropiedad1 )
 
                      nIdProductAttribute := ::nIdProductAttribute( ::oArt:cCodWeb, cCodWebValPr1 )
 
@@ -5547,7 +5411,7 @@ METHOD ActualizaStockProductsPrestashop( cCodigoArticulo, cCodigoPropiedad1, cCo
                      Actualizamos el stock total de la web---------------------
                      */
 
-                     nTotStock   := ::oStock:nStockArticulo( ::oArt:Codigo )
+                     nTotStock   := ::oStock:nStockArticulo( ::oArt:Codigo, ::TPrestashopConfig:getStore() )
 
                      cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
                                        "quantity='" + alltrim( str( nTotStock ) ) + "' " + ;
@@ -5559,7 +5423,7 @@ METHOD ActualizaStockProductsPrestashop( cCodigoArticulo, cCodigoPropiedad1, cCo
                      Actualizamos el stock por propiedades---------------------
                      */
 
-                     nTotStock   := ::oStock:nStockAlmacen( cCodigoArticulo, , cValorPropiedad1, cValorPropiedad2 )
+                     nTotStock   := ::oStock:nStockAlmacen( cCodigoArticulo, ::TPrestashopConfig:getStore(), cValorPropiedad1, cValorPropiedad2 )
 
                      nIdProductAttribute := ::nIdProductAttribute( ::oArt:cCodWeb, cCodWebValPr1, cCodWebValPr2 )
 
@@ -5755,16 +5619,20 @@ Return ( cResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD buildConect()
+METHOD prestaShopConnect()
 
    local oDb
    local lConect     := .f.
 
-   ::treeSetText( 'Intentando conectar con el servidor ' + '"' + ::cHost + '"' + ', el usuario ' + '"' + ::cUser + '"' + ' y la base de datos ' + '"' + ::cDbName + '".' , 3 )
+   ::treeSetText( 'Intentando conectar con el servidor ' + '"' + ::TPrestashopConfig:getMySqlServer() + '"' + ', el usuario ' + '"' + ::TPrestashopConfig:getMySqlUser()  + '"' + ' y la base de datos ' + '"' + ::TPrestashopConfig:getMySqlDatabase() + '".' , 3 )
 
    ::oCon            := TMSConnect():New()
 
-   if !::oCon:Connect( ::cHost, ::cUser, ::cPasswd, ::cDbName, ::nPort )
+   if !::oCon:Connect(  ::TPrestashopConfig:getMySqlServer(),;
+                        ::TPrestashopConfig:getMySqlUser(),;
+                        ::TPrestashopConfig:getMySqlPassword(),;
+                        ::TPrestashopConfig:getMySqlDatabase(),;
+                        ::TPrestashopConfig:getMySqlPort() )
 
       ::treeSetText( 'No se ha podido conectar con la base de datos.' )
 
@@ -5772,11 +5640,11 @@ METHOD buildConect()
 
       ::treeSetText( 'Se ha conectado con éxito a la base de datos.' , 3 )
 
-      oDb            := TMSDataBase():New( ::oCon, ::cDbName )
+      oDb            := TMSDataBase():New( ::oCon, ::TPrestashopConfig:getMySqlDatabase() )
 
       if empty( oDb )
 
-         ::treeSetText( 'La Base de datos: ' + ::cDbName + ' no esta activa.', 3 )
+         ::treeSetText( 'La Base de datos: ' + ::TPrestashopConfig:getMySqlDatabase() + ' no esta activa.', 3 )
 
       else
 
@@ -5789,11 +5657,11 @@ METHOD buildConect()
 
    end if   
 
-Return lConect
+Return ( lConect )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildDisConect()
+METHOD prestashopDisConnect()
 
    if !empty( ::oCon )
       ::oCon:Destroy()
@@ -5802,18 +5670,6 @@ METHOD buildDisConect()
    ::treeSetText( 'Base de datos desconectada.', 1 )
 
 return .t.   
-
-//---------------------------------------------------------------------------//
-
-METHOD buildInitData() CLASS TComercio
-
-   ::aIvaData              := {}
-   ::aFabricantesData      := {}
-   ::aFamiliaData          := {}
-   ::aArticuloData         := {}
-   ::aArticulosActualizar  := {}
-
-Return ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -6253,7 +6109,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildProductPrestashop( id, lShowDialogWait ) CLASS TComercio
+METHOD buildProductPrestashop( idProduct, lShowDialogWait ) CLASS TComercio
 
    lShowDialogWait      := .f.
 
@@ -6263,73 +6119,82 @@ METHOD buildProductPrestashop( id, lShowDialogWait ) CLASS TComercio
 
    ::MeterTotalSetTotal( 8 )
 
-   if ::filesOpen()
+   if !::filesOpen()
+      Return ( self )
+   end if 
 
-      ::MeterTotalText( "Elaborando información de artículos." )
+   ::MeterTotalText( "Elaborando información de artículos." )
 
-      ::buildInitData()
+   ::buildInitData()
 
-      // Elabora la inormacion para uno o varios articulos---------------------
+   // Elabora la inormacion para uno o varios articulos---------------------
 
-      if empty( id )
+   if empty( idProduct )
 
-         ::oArt:GoTop()
-         while !::oArt:Eof()
+      ::oArt:GoTop()
+      while !::oArt:Eof()
+
+         if ::productInCurrentWeb()
             ::buildInformacion()
-            ::oArt:Skip()
-         end while
+         end if 
 
-      else
+         ::oArt:Skip()
 
-         if ::oArt:Seek( id )
-            ::buildInformacion()
-         end if
+      end while
 
-      end if   
+   else
 
-      // Conectamos con la bases de datos de prestaShop------------------------
+      if ::oArt:Seek( idProduct ) .and. ::productInCurrentWeb()
+         ::buildInformacion()
+      end if
 
-      ::MeterTotalText( "Conectando con la base de datos." )
+   end if   
 
-      if ::buildConect()
+   // Conectamos con la bases de datos de prestaShop------------------------
 
-         // Eliminamos las bases de datos--------------------------------------
+   ::MeterTotalText( "Conectando con la base de datos." )
 
-         ::MeterTotalText( "Eliminando la bases de datos." )
+   if ::prestaShopConnect()
 
-         if ::lSyncAll
-            ::buildEliminaTablas()
-         end if
+      // Eliminamos las bases de datos--------------------------------------
 
-         // Subimos la informacion a mysql-------------------------------------
+      ::MeterTotalText( "Eliminando la bases de datos." )
 
-         ::MeterTotalText( "Subiendo la información." )
+      if ::lSyncAll
+         ::buildEliminaTablas()
+      end if
 
-         ::buildSubirInformacion()
+      if !empty( idProduct )
+         ::buildDeleteProductPrestashop( idProduct )
+      end if 
 
-         // Pasamos las imágenes de los artículos a prestashop-----------------
+      // Subimos la informacion a mysql-------------------------------------
 
-         ::MeterTotalText( "Generando imagenes." )
+      ::MeterTotalText( "Subiendo la información." )
 
-         ::buildImagenes()
+      ::buildSubirInformacion()
 
-         // Pasamos las imágenes de los artículos a prestashop-----------------
+      // Pasamos las imágenes de los artículos a prestashop-----------------
 
-         ::MeterTotalText( "Subiendo imagenes." )
+      ::MeterTotalText( "Generando imagenes." )
 
-         ::buildSubirImagenes()
+      ::buildImagenes()
 
-         // Desconectamos mysql------------------------------------------------
+      // Pasamos las imágenes de los artículos a prestashop-----------------
 
-         ::MeterTotalText( "Desconectando bases de datos." )
+      ::MeterTotalText( "Subiendo imagenes." )
 
-         ::buildDisConect()  
-         
-      end if  
+      ::buildSubirImagenes()
 
-      ::filesClose()
+      // Desconectamos mysql------------------------------------------------
 
-   end if
+      ::MeterTotalText( "Desconectando bases de datos." )
+
+      ::prestashopDisConnect()  
+      
+   end if  
+
+   ::filesClose()
 
    if lShowDialogWait
       ::lHideDialogWait()
@@ -6666,13 +6531,12 @@ Return lReturn
 
 METHOD buildRecalculaPosicionesCategoriasPrestashop() CLASS TComercio
 
-   local nContador         := 2
-   local aTemporal         := ::aCategorias
-   local oCategoria
    local nPos              := 0
+   local nContador         := 2
+   local oCategoria
    local oCat
    local oCat2
-   local oQuery            := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "category" ) )
+   local oQuery         
    local nTotalCategory
    local nLeft             := 0  
    local nRight            := 0
@@ -6681,6 +6545,7 @@ METHOD buildRecalculaPosicionesCategoriasPrestashop() CLASS TComercio
    Recorremos el Query con la consulta-----------------------------------------
    */
 
+   oQuery               := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "category" ) )
    if oQuery:Open()
 
       nTotalCategory    := oQuery:RecCount()
@@ -6719,7 +6584,15 @@ METHOD buildRecalculaPosicionesCategoriasPrestashop() CLASS TComercio
 
          end while
 
+      else 
+
+         ::treeSetText( "No hay elementos en la categoría", 3 )
+
       end if
+
+   else 
+
+      ::treeSetText( "Error al ejecutar "  + "SELECT * FROM " + ::cPrefixTable( "category" ), 3 )
 
    end if
 
@@ -6895,7 +6768,7 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
    Metemos el stock total del artículo-----------------------------------------
    */
 
-   nTotStock   := ::oStock:nStockArticulo( hGet( hArticuloData, "id" ) )
+   nTotStock   := ::oStock:nStockArticulo( hGet( hArticuloData, "id" ), ::TPrestashopConfig:getStore() )
 
    cCommand    :=    "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( " + ;
                         "id_product, " + ;
@@ -7192,8 +7065,8 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                                     "price, " + ;
                                     "wholesale_price, " + ;
                                     "quantity, " + ;
-                                    "minimal_quantity )" + ;
-                                 " VALUES " + ;
+                                    "minimal_quantity ) " + ;
+                                 "VALUES " + ;
                                     "('" + alltrim( str( nCodigoWeb ) ) + "', " + ;                                  //id_product
                                     "'" + alltrim( str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', " + ; //price
                                     "'" + alltrim( str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', " + ; //wholesale_price
@@ -7254,7 +7127,7 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                   Metemos el stock por cada propiedad--------------------------
                   */
 
-                  nTotStock   := ::oStock:nStockAlmacen( ::oArt:Codigo, , ::oArtDiv:cValPr1 )
+                  nTotStock   := ::oStock:nStockAlmacen( ::oArt:Codigo, ::TPrestashopConfig:getStore(), ::oArtDiv:cValPr1 )
 
                   cCommand    :=    "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( " + ;
                                        "id_product, " + ;
@@ -7442,7 +7315,7 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                Metemos el stock por cada propiedad--------------------------
                */
 
-               nTotStock   := ::oStock:nStockAlmacen( hGet( hArticuloData, "id" ), , ::oArtDiv:cValPr1, ::oArtDiv:cValPr2 )
+               nTotStock   := ::oStock:nStockAlmacen( hGet( hArticuloData, "id" ), ::TPrestashopConfig:getStore(), ::oArtDiv:cValPr1, ::oArtDiv:cValPr2 )
 
                cCommand    := "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( " + ;
                                  "id_product, " + ;
@@ -7974,37 +7847,41 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildExportarPrestashop() Class TComercio
+METHOD buildExportarPrestashop( idProduct ) Class TComercio
 
+   local hWeb
+   local hWebs
    local oBlock
    local oError
 
-   ::oDlg:bValid     := {|| .f. }
+   ::disableDialog()
 
-   ::oBtnExportar:Hide()
-   ::oBtnImportar:Hide()
-   ::oBtnStock:Hide()
+   hWebs             := ::TPrestashopConfig:getWebs()
 
-   ::oBtnCancel:Disable()
+   if empty(hWebs)
+      msgStop( "No hay web definidas en el fichero de configuración.")
+      Return .f.
+   end if 
 
    // oBlock            := ErrorBlock( { | oError | Break( oError ) } )
    // BEGIN SEQUENCE
 
-      ::treeSetText( 'Comenzamos la exportación', 1  )
+      for each hWeb in hWebs
+         
+         ::TPrestashopConfig:setCurrentWeb( hWeb )
 
-      ::buildProductPrestashop( nil, .f. )
+         if ::TPrestashopConfig:getActive()
+            ::buildProductPrestashop( idProduct, .f. )
+         end if 
+
+      next
 
    // RECOVER USING oError
-
    //    msgStop( ErrorMessage( oError ), "Error al exportar a Prestashop." )
-
    // END SEQUENCE
-
    // ErrorBlock( oBlock )
 
-   ::oDlg:bValid     := {|| .t. }
-
-   ::oBtnCancel:Enable()
+   ::EnableDialog()
 
 Return .t.
 
@@ -8064,238 +7941,222 @@ Return( idCategories )
 
 //---------------------------------------------------------------------------//
 
-METHOD BuildDeleteProductPrestashop( cCodArt ) CLASS TComercio
+METHOD BuildDeleteProductPrestashop( idProduct) CLASS TComercio
 
-   local idDelete    := 0
-   local idDelete2   := 0
-   local cCommand    := ""
    local oQuery
    local oQuery2
    local cCodWeb 
+   local idDelete    := 0
+   local idDelete2   := 0
+   local cCommand    := ""
 
-   if ::filesOpen()
+   if !( ::oArt:Seek( idProduct ) )
+      Return ( Self )
+   end if 
 
-      if ::oArt:SeekInOrd( cCodArt, "Codigo" ) .and. ::oArt:cCodWeb != 0
+   if empty( ::oArt:cCodWeb ) 
+      Return ( Self )
+   end if 
 
-         if ::buildConect()
+   cCodWeb           := alltrim( str( ::oArt:cCodWeb ) )
 
-            cCodWeb           := alltrim( str( ::oArt:cCodWeb ) )
+   ::cTextoWait( "Eliminando artículo de Prestashop" )
 
-            ::cTextoWait( "Eliminando artículo de Prestashop" )
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "product" ) + " WHERE id_product=" + cCodWeb
+   TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-            cCommand          := "DELETE FROM " + ::cPrefixTable( "product" ) + " WHERE id_product=" + cCodWeb
-            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   ::cTextoWait( "Eliminando adjuntos de Prestashop"  )
 
-            ::cTextoWait( "Eliminando adjuntos de Prestashop"  )
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attachment" ) + " WHERE id_product=" + cCodWeb
+   TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-            cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attachment" ) + " WHERE id_product=" + cCodWeb
-            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   ::cTextoWait( "Eliminando impuestos de Prestashop"  )
 
-            ::cTextoWait( "Eliminando impuestos de Prestashop"  )
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "product_country_tax" ) + " WHERE id_product=" + cCodWeb
+   TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-            cCommand          := "DELETE FROM " + ::cPrefixTable( "product_country_tax" ) + " WHERE id_product=" + cCodWeb
-            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   ::cTextoWait( "Eliminando archivos de Prestashop"  )
 
-            ::cTextoWait( "Eliminando archivos de Prestashop"  )
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "product_download" ) + " WHERE id_product=" + cCodWeb
+   TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-            cCommand          := "DELETE FROM " + ::cPrefixTable( "product_download" ) + " WHERE id_product=" + cCodWeb
-            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   ::cTextoWait( "Eliminando cache de Prestashop"  )
 
-            ::cTextoWait( "Eliminando cache de Prestashop"  )
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "product_group_reduction_cache" ) + " WHERE id_product=" + cCodWeb
+   TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-            cCommand          := "DELETE FROM " + ::cPrefixTable( "product_group_reduction_cache" ) + " WHERE id_product=" + cCodWeb
-            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   ::cTextoWait( "Eliminando multitienda de Prestashop"  )
 
-            ::cTextoWait( "Eliminando multitienda de Prestashop"  )
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "product_shop" ) + " WHERE id_product=" + cCodWeb
+   TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-            cCommand          := "DELETE FROM " + ::cPrefixTable( "product_shop" ) + " WHERE id_product=" + cCodWeb
-            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   ::cTextoWait( "Eliminando descripciones de Prestashop"  )
 
-            ::cTextoWait( "Eliminando descripciones de Prestashop"  )
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "product_lang" ) + " WHERE id_product=" + cCodWeb
+   TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-            cCommand          := "DELETE FROM " + ::cPrefixTable( "product_lang" ) + " WHERE id_product=" + cCodWeb
-            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   ::cTextoWait( "Eliminando ofertas de Prestashop"  )
 
-            ::cTextoWait( "Eliminando ofertas de Prestashop"  )
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "product_sale" ) + " WHERE id_product=" + cCodWeb
+   TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-            cCommand          := "DELETE FROM " + ::cPrefixTable( "product_sale" ) + " WHERE id_product=" + cCodWeb
-            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   ::cTextoWait( "Eliminando etiquetas de Prestashop"  )
 
-            ::cTextoWait( "Eliminando etiquetas de Prestashop"  )
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "product_tag" ) + " WHERE id_product=" + cCodWeb
+   TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-            cCommand          := "DELETE FROM " + ::cPrefixTable( "product_tag" ) + " WHERE id_product=" + cCodWeb
-            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   ::cTextoWait( "Eliminando complementos de Prestashop"  )
 
-            ::cTextoWait( "Eliminando complementos de Prestashop"  )
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "product_supplier" ) + " WHERE id_product=" + cCodWeb
+   TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-            cCommand          := "DELETE FROM " + ::cPrefixTable( "product_supplier" ) + " WHERE id_product=" + cCodWeb
-            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   ::cTextoWait( "Eliminando transporte de Prestashop"  )
 
-            ::cTextoWait( "Eliminando transporte de Prestashop"  )
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "product_carrier" ) + " WHERE id_product=" + cCodWeb
+   TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-            cCommand          := "DELETE FROM " + ::cPrefixTable( "product_carrier" ) + " WHERE id_product=" + cCodWeb
-            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   ::cTextoWait( "Eliminando atributos de Prestashop"  )
 
-            ::cTextoWait( "Eliminando atributos de Prestashop"  )
+   cCommand          := 'SELECT * FROM ' + ::cPrefixTable( "product_attribute" ) +  ' WHERE id_product=' + cCodWeb
+   oQuery            := TMSQuery():New( ::oCon, cCommand )
+   
+   ::cTextoWait( "Eliminando lineas atributos de Prestashop"  )
 
-            cCommand          := 'SELECT * FROM ' + ::cPrefixTable( "product_attribute" ) +  ' WHERE id_product=' + cCodWeb
-            oQuery            := TMSQuery():New( ::oCon, cCommand )
-            
-            ::cTextoWait( "Eliminando lineas atributos de Prestashop"  )
+   if oQuery:Open()
+   
+      if oQuery:RecCount() > 0
 
-            if oQuery:Open()
-            
-               if oQuery:RecCount() > 0
+         oQuery:GoTop()
 
-                  oQuery:GoTop()
+         while !oQuery:Eof()
 
-                  while !oQuery:Eof()
+            idDelete    := oQuery:FieldGet( 1 )
 
-                     idDelete    := oQuery:FieldGet( 1 )
+            if !empty( idDelete )
 
-                     if !empty( idDelete )
+               cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute" ) + " WHERE id_product_attribute=" + alltrim( str( idDelete ) )
+               TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-                        cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute" ) + " WHERE id_product_attribute=" + alltrim( str( idDelete ) )
-                        TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+               cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute_combination" ) + " WHERE id_product_attribute=" + alltrim( str( idDelete ) )
+               TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-                        cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute_combination" ) + " WHERE id_product_attribute=" + alltrim( str( idDelete ) )
-                        TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+               cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute_image" ) + " WHERE id_product_attribute=" + alltrim( str( idDelete ) )
+               TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-                        cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute_image" ) + " WHERE id_product_attribute=" + alltrim( str( idDelete ) )
-                        TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-
-                        cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute_shop" ) + " WHERE id_product_attribute=" + alltrim( str( idDelete ) )
-                        TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-
-                     end if
-
-                     oQuery:Skip()
-
-                     SysRefresh()
-
-                  end while
-            
-               end if
+               cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute_shop" ) + " WHERE id_product_attribute=" + alltrim( str( idDelete ) )
+               TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
             end if
 
-            ::cTextoWait( "Eliminando precios especificos de Prestashop"  )
+            oQuery:Skip()
 
-            cCommand          := "DELETE FROM " + ::cPrefixTable( "specific_price" ) + " WHERE id_product=" + cCodWeb
-            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+            SysRefresh()
 
-            ::cTextoWait( "Eliminando prioridad de precio de Prestashop"  )
+         end while
+   
+      end if
 
-            cCommand          := "DELETE FROM " + ::cPrefixTable( "specific_price_priority" ) + " WHERE id_product=" + cCodWeb
-            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   end if
 
-            ::cTextoWait( "Eliminando funciones de Prestashop"  )
+   ::cTextoWait( "Eliminando precios especificos de Prestashop"  )
 
-            cCommand          := 'SELECT * FROM ' + ::cPrefixTable( "feature_product" ) +  ' WHERE id_product=' + cCodWeb
-            oQuery            := TMSQuery():New( ::oCon, cCommand )
-            
-            ::cTextoWait( "Eliminando lineas funciones de Prestashop"  )
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "specific_price" ) + " WHERE id_product=" + cCodWeb
+   TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-            if oQuery:Open()
-            
-               if oQuery:RecCount() > 0
+   ::cTextoWait( "Eliminando prioridad de precio de Prestashop"  )
 
-                  oQuery:GoTop()
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "specific_price_priority" ) + " WHERE id_product=" + cCodWeb
+   TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-                  while !oQuery:Eof()
+   ::cTextoWait( "Eliminando funciones de Prestashop"  )
 
-                     idDelete    := oQuery:FieldGet( 1 )
+   cCommand          := 'SELECT * FROM ' + ::cPrefixTable( "feature_product" ) +  ' WHERE id_product=' + cCodWeb
+   oQuery            := TMSQuery():New( ::oCon, cCommand )
+   
+   ::cTextoWait( "Eliminando lineas funciones de Prestashop"  )
 
-                     if !empty( idDelete )
+   if oQuery:Open()
+   
+      if oQuery:RecCount() > 0
 
-                        cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_product" ) + " WHERE id_product=" + cCodWeb
-                        TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+         oQuery:GoTop()
 
-                        cCommand          := "DELETE FROM " + ::cPrefixTable( "feature" ) + " WHERE id_feature=" + alltrim( str( idDelete ) )
-                        TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+         while !oQuery:Eof()
 
-                        cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_lang" ) + " WHERE id_feature=" + alltrim( str( idDelete ) )
-                        TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+            idDelete    := oQuery:FieldGet( 1 )
 
-                        cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_shop" ) + " WHERE id_feature=" + alltrim( str( idDelete ) )
-                        TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+            if !empty( idDelete )
 
-                        cCommand          := 'SELECT * FROM ' + ::cPrefixTable( "feature_value" ) +  ' WHERE id_feature=' + alltrim( str( idDelete ) )
-                        oQuery2           := TMSQuery():New( ::oCon, cCommand )
+               cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_product" ) + " WHERE id_product=" + cCodWeb
+               TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-                        if oQuery2:Open()
-                  
-                           if oQuery2:RecCount() > 0
+               cCommand          := "DELETE FROM " + ::cPrefixTable( "feature" ) + " WHERE id_feature=" + alltrim( str( idDelete ) )
+               TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-                              oQuery2:GoTop()
+               cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_lang" ) + " WHERE id_feature=" + alltrim( str( idDelete ) )
+               TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-                              while !oQuery2:Eof()
+               cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_shop" ) + " WHERE id_feature=" + alltrim( str( idDelete ) )
+               TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-                              idDelete2    := oQuery:FieldGet( 1 )
+               cCommand          := 'SELECT * FROM ' + ::cPrefixTable( "feature_value" ) +  ' WHERE id_feature=' + alltrim( str( idDelete ) )
+               oQuery2           := TMSQuery():New( ::oCon, cCommand )
 
-                                 if !empty( idDelete2 )
+               if oQuery2:Open()
+         
+                  if oQuery2:RecCount() > 0
 
-                                    cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_value" ) + " WHERE id_feature_value=" + alltrim( str( idDelete2 ) )
-                                    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+                     oQuery2:GoTop()
 
-                                    cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_value_lang" ) + " WHERE id_feature_value=" + alltrim( str( idDelete2 ) )
-                                    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+                     while !oQuery2:Eof()
 
-                                 end if
+                     idDelete2    := oQuery:FieldGet( 1 )
 
-                                 oQuery2:Skip()
+                        if !empty( idDelete2 )
 
-                                 SysRefresh()
+                           cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_value" ) + " WHERE id_feature_value=" + alltrim( str( idDelete2 ) )
+                           TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-                              end while      
-
-                           end if
+                           cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_value_lang" ) + " WHERE id_feature_value=" + alltrim( str( idDelete2 ) )
+                           TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
                         end if
 
-                     end if
+                        oQuery2:Skip()
 
-                     oQuery:Skip()
+                        SysRefresh()
 
-                     SysRefresh()
+                     end while      
 
-                  end while      
-            
+                  end if
+
                end if
 
             end if
 
-            SysRefresh()
-
-            /*
-            Eliminamos las imágenes del artículo---------------------------------------
-            */
-
-            ::cTextoWait( "Eliminando imágenes de prestashop" )
-
-            ::buildDeleteImagesProducts( cCodWeb )
+            oQuery:Skip()
 
             SysRefresh()
 
-            /*
-            Quitamos la referencia de nuestra tabla-------------------------------------
-            */
-
-            ::oArt:fieldPutByName( "cCodWeb", 0 )
-
-            /*
-            Desconectamos------------------------------------------------------
-            */
-
-            ::buildDisConect()  
-            
-         end if
-
-      end if     
-
-      ::filesClose()
+         end while      
+   
+      end if
 
    end if
+
+   SysRefresh()
+
+   // Eliminamos las imágenes del artículo---------------------------------------
+
+   ::cTextoWait( "Eliminando imágenes de prestashop" )
+
+   ::buildDeleteImagesProducts( cCodWeb )
+
+   SysRefresh()
+
+   // Quitamos la referencia de nuestra tabla-------------------------------------
+
+   ::oArt:fieldPutByName( "cCodWeb", 0 )
 
 Return ( Self )
 
@@ -8422,7 +8283,7 @@ METHOD buildAddInformacionStockProductPrestashop() CLASS tComercio
    Recopilamos la información del Stock-------------------------------
    */
 
-   aStockArticulo   := ::oStock:aStockArticulo( ::oArt:Codigo )
+   aStockArticulo   := ::oStock:aStockArticulo( ::oArt:Codigo, ::TPrestashopConfig:getStore() )
    aEval( aStockArticulo, {|o| nTotalStock += o:nUnidades } )
 
    /*
@@ -8517,7 +8378,7 @@ METHOD buildSubirStockPrestashop() CLASS TComercio
    local nIdProductAttribute
    local aStock
 
-   if ::buildConect()
+   if ::prestaShopConnect()
 
       for each aStock in ::aStockArticuloData
 
@@ -8550,7 +8411,7 @@ METHOD buildSubirStockPrestashop() CLASS TComercio
       
       next
 
-      ::buildDisConect()
+      ::prestashopDisConnect()
 
    end if
 
@@ -8625,10 +8486,14 @@ METHOD ftpCreateConexion() CLASS TComercio
 
    local lCreate     := .f.
 
-   if !empty( ::cHostFtp )   
+   if !empty( ::TPrestashopConfig:getFtpServer() )   
 
       ::oInt         := TInternet():New()
-      ::oFtp         := TFtp():New( ::cHostFtp, ::oInt, ::cUserFtp, ::cPasswdFtp, ::lPassiveFtp )
+      ::oFtp         := TFtp():New( ::TPrestashopConfig:getFtpServer(),;
+                                    ::oInt,;
+                                    ::TPrestashopConfig:getFtpUser(),;
+                                    ::TPrestashopConfig:getFtpPassword(),;
+                                    ::TPrestashopConfig:getFtpPassive() )
 
       if !empty( ::oFtp )
          lCreate     := ( ::oFtp:hFtp != 0 )
@@ -8656,7 +8521,7 @@ Return( nil )
 
 METHOD ftpCreateDirectory( cCarpeta ) CLASS TComercio
 
-   if !empty( ::cHostFtp )   
+   if !empty( ::TPrestashopConfig:getFtpServer() )   
       ::oFtp:CreateDirectory( cCarpeta ) 
       ::oFtp:SetCurrentDirectory( cCarpeta ) 
    else 
@@ -8741,15 +8606,15 @@ METHOD ftpCreateConexion() CLASS TComercio
    local cUrl           
    local lOpen             := .t.
 
-   if !empty( ::cHostFtp )
+   if !empty( ::TPrestashopConfig:getFtpServer() )
 
-      cUrl                 := "ftp://" + ::cUserFtp + ":" + ::cPasswdFtp + "@" + ::cHostFtp
+      cUrl                 := "ftp://" + ::TPrestashopConfig:getFtpUser() + ":" + ::TPrestashopConfig:getFtpPassword() + "@" + ::TPrestashopConfig:getFtpServer()
 
       ::oUrl               := TUrl():New( cUrl )
 
       ::oFTP               := TIPClientFTP():New( ::oUrl, .t. )
       ::oFTP:nConnTimeout  := 20000
-      ::oFTP:bUsePasv      := ::lPassiveFtp
+      ::oFTP:bUsePasv      := ::TPrestashopConfig:getFtpPassive()
 
       lOpen                := ::oFTP:Open( cUrl )
 
@@ -8784,7 +8649,7 @@ METHOD ftpCreateDirectory( cCarpeta, lPos ) CLASS TComercio
 
    DEFAULT lPos   := .f.
 
-   if !empty( ::cHostFtp )   
+   if !empty( ::TPrestashopConfig:getFtpServer() )   
       ::oFtp:MKD( cCarpeta )
       ::oFtp:Cwd( cCarpeta )
    else
@@ -8812,7 +8677,7 @@ METHOD ftpCreateFile( cFile, cDirectory ) CLASS TComercio
 
    local lCreate  := .t.
 
-   if !empty( ::cHostFtp )   
+   if !empty( ::TPrestashopConfig:getFtpServer() )   
       lCreate  := ::oFtp:UploadFile( cFile )
    else
       lCreate  := CopyFile( cFile, cDirectory + "/" + cNoPath( cFile ) )
@@ -8826,7 +8691,7 @@ METHOD ftpReturnDirectory( cCarpeta ) CLASS TComercio
 
    local n
 
-   if !empty( ::cHostFtp )   
+   if !empty( ::TPrestashopConfig:getFtpServer() )   
       for n := 1 to Len( cCarpeta )
          ::oFtp:Cwd( ".." )
       next
@@ -8993,7 +8858,7 @@ return ( .t. )
 METHOD getCountersPresupustoPrestashop( oQuery ) CLASS TComercio
 
    ::idOrderPrestashop  := oQuery:FieldGet( 1 )
-   ::cSeriePresupuesto  := ::getSeriePresupuesto()
+   ::cSeriePresupuesto  := ::TPrestashopConfig:getBudgetSerie()
    ::nNumeroPresupuesto := nNewDoc( ::cSeriePresupuesto, ::oPreCliT:cAlias, "nPreCli", , ::oCount:cAlias )
    ::cSufijoPresupuesto := retSufEmp()
 
@@ -9258,7 +9123,7 @@ METHOD documentRecived( oQuery, oDatabase ) CLASS TComercio
    local cIdOrderPrestashop   := str( oQuery:FieldGet( 1 ), 11 )
 
    if ( oDatabase:SeekInOrd( cIdOrderPrestashop, "cCodWeb" ) )
-      ::treeSetText( "El documento con el indentificador " + alltrim(cIdOrderPrestashop) + " ya ha sido recibido.", 3 )
+      ::treeSetText( "El documento con el indentificador " + alltrim( cIdOrderPrestashop ) + " ya ha sido recibido.", 3 )
    else
       orderRecived      := .f.
    end if 
@@ -9269,9 +9134,9 @@ Return ( orderRecived )
 
 METHOD getCountersPedidoPrestashop( oQuery ) CLASS TComercio
 
-   ::idOrderPrestashop  := oQuery:FieldGet( 1 )
-   ::cSeriePedido       := ::getSeriePedido()
-   ::nNumeroPedido      := nNewDoc( ::cSeriePedido, ::oPedCliT:cAlias, "NPEDCLI", , ::oCount:cAlias )
+   ::idOrderPrestashop  := oQuery:fieldGet( 1 )
+   ::cSeriePedido       := ::TPrestashopConfig:getOrderSerie()
+   ::nNumeroPedido      := nNewDoc( ::cSeriePedido, ::oPedCliT:cAlias, "nPedCli", , ::oCount:cAlias )
    ::cSufijoPedido      := retSufEmp()
 
 return ( .t. )

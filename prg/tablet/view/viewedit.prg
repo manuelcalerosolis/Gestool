@@ -71,6 +71,8 @@ METHOD StartDialog() CLASS ViewEdit
       ::gotopBrowseLineas()
    end if
 
+   ::refreshBrowse()
+
 Return Self
 
 //---------------------------------------------------------------------------//

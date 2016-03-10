@@ -2369,61 +2369,61 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       Bancos-------------------------------------------------------------------
       */
 
-      	REDEFINE GET aGet[ _CBANCO ] VAR aTmp[ _CBANCO ];
-         	ID       410 ;
-         	COLOR    CLR_GET ;
-         	WHEN     ( nMode != ZOOM_MODE );
-         	BITMAP   "LUPA" ;
-         	ON HELP  ( BrwBncCli( aGet[ _CBANCO ], aGet[ _CPAISIBAN ], aGet[ _CCTRLIBAN ], aGet[ _CENTBNC ], aGet[ _CSUCBNC ], aGet[ _CDIGBNC ], aGet[ _CCTABNC ], aTmp[ _CCODCLI ] ) );
-         	OF       oFld:aDialogs[1]
+      REDEFINE GET aGet[ _CBANCO ] VAR aTmp[ _CBANCO ];
+      	ID       410 ;
+      	COLOR    CLR_GET ;
+      	WHEN     ( nMode != ZOOM_MODE );
+      	BITMAP   "LUPA" ;
+      	ON HELP  ( BrwBncCli( aGet[ _CBANCO ], aGet[ _CPAISIBAN ], aGet[ _CCTRLIBAN ], aGet[ _CENTBNC ], aGet[ _CSUCBNC ], aGet[ _CDIGBNC ], aGet[ _CCTABNC ], aTmp[ _CCODCLI ] ) );
+      	OF       oFld:aDialogs[1]
 
-      	REDEFINE GET aGet[ _CPAISIBAN ] VAR aTmp[ _CPAISIBAN ] ;
-         	PICTURE  "@!" ;
-         	ID       305 ;
-         	COLOR    CLR_GET ;
-         	WHEN     ( nMode != ZOOM_MODE );
+   	REDEFINE GET aGet[ _CPAISIBAN ] VAR aTmp[ _CPAISIBAN ] ;
+      	PICTURE  "@!" ;
+      	ID       305 ;
+      	COLOR    CLR_GET ;
+      	WHEN     ( nMode != ZOOM_MODE );
         	VALID    ( lIbanDigit( aTmp[ _CPAISIBAN ], aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CCTRLIBAN ] ) ) ;
-         	OF       oFld:aDialogs[1]
+      	OF       oFld:aDialogs[1]
 
-      	REDEFINE GET aGet[ _CCTRLIBAN ] VAR aTmp[ _CCTRLIBAN ] ;
-         	ID       306 ;
-         	COLOR    CLR_GET ;
-         	WHEN     ( nMode != ZOOM_MODE );
-         	VALID    ( lIbanDigit( aTmp[ _CPAISIBAN ], aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CCTRLIBAN ] ) ) ;
-         	OF       oFld:aDialogs[1]
+   	REDEFINE GET aGet[ _CCTRLIBAN ] VAR aTmp[ _CCTRLIBAN ] ;
+      	ID       306 ;
+      	COLOR    CLR_GET ;
+      	WHEN     ( nMode != ZOOM_MODE );
+      	VALID    ( lIbanDigit( aTmp[ _CPAISIBAN ], aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CCTRLIBAN ] ) ) ;
+      	OF       oFld:aDialogs[1]
 
-      	REDEFINE GET aGet[ _CENTBNC ] VAR aTmp[ _CENTBNC ];
-         	ID       301 ;
-         	COLOR    CLR_GET ;
-         	WHEN     ( nMode != ZOOM_MODE );
-         	VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
-                     aGet[ _CPAISIBAN ]:lValid() ) ;
-         	OF       oFld:aDialogs[1]
+   	REDEFINE GET aGet[ _CENTBNC ] VAR aTmp[ _CENTBNC ];
+      	ID       301 ;
+      	COLOR    CLR_GET ;
+      	WHEN     ( nMode != ZOOM_MODE );
+      	VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
+                  aGet[ _CPAISIBAN ]:lValid() ) ;
+      	OF       oFld:aDialogs[1]
 
-      	REDEFINE GET aGet[ _CSUCBNC ] VAR aTmp[ _CSUCBNC ];
-         	ID       302 ;
-         	COLOR    CLR_GET ;
-         	WHEN     ( nMode != ZOOM_MODE );
-         	VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
-                     aGet[ _CPAISIBAN ]:lValid() ) ;
-         	OF       oFld:aDialogs[1]
+   	REDEFINE GET aGet[ _CSUCBNC ] VAR aTmp[ _CSUCBNC ];
+      	ID       302 ;
+      	COLOR    CLR_GET ;
+      	WHEN     ( nMode != ZOOM_MODE );
+      	VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
+                  aGet[ _CPAISIBAN ]:lValid() ) ;
+      	OF       oFld:aDialogs[1]
 
-      	REDEFINE GET aGet[ _CDIGBNC ] VAR aTmp[ _CDIGBNC ];
-         	ID       303 ;
-         	COLOR    CLR_GET ;
-         	WHEN     ( nMode != ZOOM_MODE );
-         	VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
-                     aGet[ _CPAISIBAN ]:lValid() ) ;
-         	OF       oFld:aDialogs[1]
+   	REDEFINE GET aGet[ _CDIGBNC ] VAR aTmp[ _CDIGBNC ];
+      	ID       303 ;
+      	COLOR    CLR_GET ;
+      	WHEN     ( nMode != ZOOM_MODE );
+      	VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
+                  aGet[ _CPAISIBAN ]:lValid() ) ;
+      	OF       oFld:aDialogs[1]
 
-      	REDEFINE GET aGet[ _CCTABNC ] VAR aTmp[ _CCTABNC ];
-         	ID       304 ;
-         	COLOR    CLR_GET ;
-         	WHEN     ( nMode != ZOOM_MODE );
-         	PICTURE  "9999999999" ;
-         	VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
-                     aGet[ _CPAISIBAN ]:lValid() ) ;
-        	 OF       oFld:aDialogs[1]
+   	REDEFINE GET aGet[ _CCTABNC ] VAR aTmp[ _CCTABNC ];
+      	ID       304 ;
+      	COLOR    CLR_GET ;
+      	WHEN     ( nMode != ZOOM_MODE );
+      	PICTURE  "9999999999" ;
+      	VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
+                  aGet[ _CPAISIBAN ]:lValid() ) ;
+        	OF       oFld:aDialogs[1]
 
       /*
       Codigo de Divisas________________________________________________________

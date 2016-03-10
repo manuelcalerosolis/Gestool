@@ -5996,13 +5996,16 @@ Return ( by( nRow ) )
 
 //---------------------------------------------------------------------------//
 
-Function Test() 
-
-   // local TPrestaShopId  := TPrestaShopId():New()
-   // TPrestaShopId:OpenFiles()
-   // TPrestaShopId:CloseFiles()
-
+Function Test()
+ 
 /*
+   local TPrestaShopId  := TPrestaShopId():New()
+   TPrestaShopId:OpenFiles()
+   TPrestaShopId:setValueArticulos( "1234", "cWeb", 1234 ) 
+   msgAlert( TPrestaShopId:getValueArticulos( "1234", "cWeb" ) )
+   TPrestaShopId:CloseFiles()
+
+
    local n  
    local oDebtor
    local oDoc  := SepaXml():New( "c:\sepa\testSepa.xml" )

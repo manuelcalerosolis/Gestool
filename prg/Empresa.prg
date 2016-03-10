@@ -4176,9 +4176,14 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
       SysRefresh()
 
-      /*
-      Columnas de usuario------------------------------------------------------
-      */
+      if oMsg != nil
+         oMsg:SetText( "Creando identificadores de prestashop" )
+      end if
+
+      TPrestaShopId():Create( cPath ):CheckFiles()
+      SysRefresh()
+
+      // Columnas de usuario---------------------------------------------------
 
       if oMsg != nil
          oMsg:SetText( "Creando columnas de usuarios" )
@@ -4190,9 +4195,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          TShell():ReindexData( cPath )
       end if
 
-      /*
-      Favoritos de informes----------------------------------------------------
-      */
+      // Favoritos de informes-------------------------------------------------
 
       if oMsg != nil
          oMsg:SetText( "Creando favoritos de informes" )
@@ -4298,7 +4301,7 @@ Return .t.
 Cambia los datos de una empresa a las nuevas estructuras
 */
 
-FUNCTION lActualiza( cCodEmp, oWndBrw, lNoWait, cNomEmp, lCompress )
+FUNCTION lActualiza( cCodEmp, oWndBrw, lNoWait, cNomEmp, lSincroniza )
 
    local oBmp
    local oAni
@@ -4312,8 +4315,8 @@ FUNCTION lActualiza( cCodEmp, oWndBrw, lNoWait, cNomEmp, lCompress )
    local oBtnAceptar
    local oBtnCancelar
 
-   DEFAULT lNoWait   := .f.
-   DEFAULT lCompress := .t.
+   DEFAULT lNoWait      := .f.
+   DEFAULT lSincroniza  := .t.
 
    if nUsrInUse() > 1
       msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
@@ -4359,7 +4362,7 @@ FUNCTION lActualiza( cCodEmp, oWndBrw, lNoWait, cNomEmp, lCompress )
       REDEFINE BUTTON oBtnAceptar ;
          ID       IDOK ;
          OF       oDlgWat ;
-         ACTION   ( ActualizaEmpresa( cCodEmp, aMsg, oAni, oBtnAceptar, oBtnCancelar, oDlgWat, oMsg, oAct, lActEmp, lCompress ) )
+         ACTION   ( ActualizaEmpresa( cCodEmp, aMsg, oAni, oBtnAceptar, oBtnCancelar, oDlgWat, oMsg, oAct, lActEmp, lSincroniza ) )
 
       REDEFINE BUTTON oBtnCancelar ;
          ID       IDCANCEL ;
@@ -4387,7 +4390,7 @@ RETURN ( oDlgWat:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-Static Function ActualizaEmpresa( cCodEmp, aMsg, oAni, oBtnAceptar, oBtnCancelar, oDlg, oMsg, oAct, lActEmp, lCompress )
+Static Function ActualizaEmpresa( cCodEmp, aMsg, oAni, oBtnAceptar, oBtnCancelar, oDlg, oMsg, oAct, lActEmp, lSincroniza )
 
    oDlg:bValid          := {|| .f. }
 
@@ -4395,14 +4398,10 @@ Static Function ActualizaEmpresa( cCodEmp, aMsg, oAni, oBtnAceptar, oBtnCancelar
    oBtnAceptar:Hide()
    oBtnCancelar:Hide()
 
-   if .f. //lCompress
-      CompressEmpresa( cCodEmp, nil, nil, oBtnAceptar, oAni, oMsg )
-   end if
-
    if lAIS()
       TDataCenter():ActualizaEmpresa( oMsg )
    else 
-      ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, nil, lActEmp )
+      ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, nil, lActEmp, lSincroniza )
    end if 
 
    oDlg:bValid          := {|| .t. }
@@ -4413,7 +4412,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
+Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp, lSincroniza )
 
    local oBlock
    local oError
@@ -4883,6 +4882,9 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
          oMsg:SetText( "Articulos de menú" )
          TPVMenuArticulo():Create():SyncAllDbf()
 
+         oMsg:SetText( "Identificadores de prestashop" )
+         TPrestaShopId():Create():SyncAllDbf()
+
       RECOVER USING oError
 
          msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
@@ -4902,7 +4904,7 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
       */
 
       with object ( TReindex():New() )
-         :lSincroniza   := lActEmp
+         :lSincroniza   := lSincroniza
          :lMessageEnd   := .f.
          :GenIndices( oMsg )
       end with

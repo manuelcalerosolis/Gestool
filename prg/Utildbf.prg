@@ -3945,6 +3945,14 @@ function MsgCombo( cTitle, cText, aItems, uVar, cBmpFile, cResName )
       uVar := cItem
    endif
 
-return lOk
+Return lOk
 
 //----------------------------------------------------------------------------//
+
+Function debug( cText, cTitle )
+
+Return ( msgAlert( cText, cTitle ) )
+
+//----------------------------------------------------------------------------//
+
+

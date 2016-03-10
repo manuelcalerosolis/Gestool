@@ -5634,10 +5634,10 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
    AutoTextDialog( oDlg )   
 
    SetAutoTextDialog( "Archivando")
-
+/*
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
+*/
       BeginTransaction()
 
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LastChg" ) ) ] := GetSysDate()
@@ -5975,7 +5975,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
          runEventScript( "Articulos\afterAppend", aTmp, nView )
       end if
-
+/*
    RECOVER USING oError
 
       RollBackTransaction()
@@ -5985,7 +5985,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
    END SEQUENCE
    
    ErrorBlock( oBlock )
-
+*/
    /*
    Cerramos el dialogo---------------------------------------------------------
    */
@@ -18094,7 +18094,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Static Function BuildWeb( cCodArt )
+Static Function BuildWeb( idProduct )
 
    if !lPubArt()
       return .f.
@@ -18105,8 +18105,7 @@ Static Function BuildWeb( cCodArt )
       :MeterTotal( getAutoMeterDialog() )
       :TextTotal( getAutoTextDialog() )
 
-      :BuildDeleteProductPrestashop( cCodArt )
-      :BuildProductPrestashop( cCodArt )
+      :buildExportarPrestashop( idProduct )
 
    end with
 

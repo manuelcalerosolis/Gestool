@@ -39,6 +39,8 @@ CLASS DocumentsSales FROM Documents
 
    DATA oTotalDocument
 
+   DATA oldSerie                          INIT ""
+
    METHOD New( oSender )
    METHOD play() 
 
@@ -120,6 +122,16 @@ CLASS DocumentsSales FROM Documents
    METHOD saveEditDocumento()
    METHOD saveAppendDocumento()
 
+   METHOD onPreSaveAppend()
+      METHOD onPreSaveAppendDetail()                  
+
+   METHOD onPostGetDocumento()                              INLINE ( ::oldSerie  := ::getSerie() ) 
+   METHOD onPreSaveEdit()                                   
+   
+   METHOD onPreEnd()
+      METHOD setDatasFromClientes()
+      METHOD setDatasInDictionaryMaster( NumeroDocumento ) 
+
    // Lineas-------------------------------------------------------------------
 
    METHOD addDocumentLine()
@@ -127,15 +139,6 @@ CLASS DocumentsSales FROM Documents
       METHOD setLinesDocument()
       METHOD appendDocumentLine( oDocumentLine )            INLINE ( D():appendHashRecord( oDocumentLine:hDictionary, ::getDataTableLine(), ::nView ) )
       METHOD delDocumentLine()                              INLINE ( D():deleteRecord( ::getDataTableLine(), ::nView ) )
-
-   METHOD onPreSaveEdit()                                   INLINE ( ::setDatasInDictionaryMaster() )
-   
-   METHOD onPreSaveAppend()
-      METHOD onPreSaveAppendDetail()                  
-   
-   METHOD onPreEnd()
-      METHOD setDatasFromClientes()
-      METHOD setDatasInDictionaryMaster( NumeroDocumento ) 
 
    METHOD cComboRecargoValue()
 
@@ -786,13 +789,11 @@ RETURN ( self )
 
 METHOD onPreEnd() CLASS DocumentsSales
    
-   Local lPostSaveEditDocumento  := .t.
-
    ::oDocumentLines:reset() 
 
    ::isPrintDocument()
 
-Return( lPostSaveEditDocumento )
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -806,7 +807,7 @@ METHOD cComboRecargoValue() CLASS DocumentsSales
       cComboRecargoValue    := ::oViewEditResumen:cComboRecargo[1]
    endif
 
-Return( ::oViewEditResumen:cComboRecargo  := cComboRecargoValue )
+Return ( ::oViewEditResumen:cComboRecargo  := cComboRecargoValue )
 
 //---------------------------------------------------------------------------//
 
@@ -852,9 +853,9 @@ Return ( self )
 
 METHOD setDocuments() CLASS DocumentsSales
 
-   local cDocumento     := ""
    local cFormato
    local nFormato
+   local cDocumento     := ""
    local aFormatos      := aDocs( ::getTypePrintDocuments(), D():Documentos( ::nView ), .t. )
 
    cFormato             := cFormatoDocumento( ::getSerie(), ::getCounterDocuments(), D():Contadores( ::nView ) )
@@ -903,6 +904,18 @@ METHOD onPreSaveAppendDetail() CLASS DocumentsSales
    local cDescripcionArticulo    := alltrim( ::hGetDetail( "DescripcionArticulo" ) )
 
    oDocumentLine:setValue( "DescripcionAmpliada", cDescripcionArticulo )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD onPreSaveEdit() CLASS DocumentsSales
+
+   if ::oldSerie != ::getSerie()
+      ::onPreSaveAppend()
+   else
+      ::setDatasInDictionaryMaster() 
+   end if 
 
 Return ( .t. )
 
