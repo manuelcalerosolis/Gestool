@@ -6258,6 +6258,8 @@ STATIC FUNCTION ContFactu( lSimula, lPago, oTree )
          return .f.
       end if
 
+      setAsientoIntraComunitario( ( D():FacturasProveedores( nView ) )->nRegIva == 2 )
+
       /*
       Asiento de Proveedor________________________________________________________
       */
@@ -6488,6 +6490,8 @@ STATIC FUNCTION ContFactu( lSimula, lPago, oTree )
       end if
 
       CloseDiario()
+
+      setAsientoIntraComunitario( .f. )
 
    end if
 

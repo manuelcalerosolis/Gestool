@@ -616,6 +616,8 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
          Return .f.
       end if
 
+      setAsientoIntraComunitario( isIVAComunidadEconomicaEuropea( dbfFacCliT ) )
+
       /*
       Asiento de cliente----------------------------------------------------------
       */
@@ -981,6 +983,8 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    if !lOpenDiario
       CloseDiario()
    end if
+
+   setAsientoIntraComunitario( .f. )
 
    if !Empty( oBrw )
       oBrw:Refresh()

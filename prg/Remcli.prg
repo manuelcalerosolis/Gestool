@@ -2316,12 +2316,12 @@ METHOD InsertDeudorXml()
       :nEntity       := ENTIDAD_JURIDICA
       :Nm            := ::oClientes:Titulo 
       :Id            := ::oClientes:Nif
-      :InstdAmt      := ::ImporteDocumento()                      // Importe
-      :ReqdColltnDt  := sDate( ::oDbf:dExport )                   // Fecha de cobro (Vencimiento)
+      :InstdAmt      := ::ImporteDocumento()                               // Importe
+      :ReqdColltnDt  := sDate( ::oDbf:dExport )                            // Fecha de cobro (Vencimiento)
       :IBAN          := ::GetValidCuentaCliente()
       :BICOrBEI      := ::GetBICClient()
-      :MndtId        := ::oClientes:Nif                           // hb_md5( ::oCuaderno:oCreditor:Id + :id )  // Identificación del mandato, idea: Utilizar NIF Acreedor + NIF Deudor 
-      :DtOfSgntr     := sDate( ::getIngreso() )                   // Fecha de firma 
+      :MndtId        := ::oClientes:Nif                                    // hb_md5( ::oCuaderno:oCreditor:Id + :id )  // Identificación del mandato, idea: Utilizar NIF Acreedor + NIF Deudor 
+      :DtOfSgntr     := sDate( ::oCtaRem:dFechaFirma( ::oDbf:cCodRem ) )   // Fecha de firma 
       :EndToEndId    := "Recibo " + ::TextoDocumento()
    endwith
 

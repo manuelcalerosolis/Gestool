@@ -43,19 +43,21 @@ static cCuenta
 static cSubCuenta
 static cEmpresa
 
-static aLenSubCuenta       := {}
+static aLenSubCuenta             := {}
 
 static cProyecto
 
 static dFechaInicioEmpresa
 static dFechaFinEmpresa
 
-static lOpenDiario         := .f.
-static lOpenSubCuenta      := .f.
+static lOpenDiario               := .f.
+static lOpenSubCuenta            := .f.
 
 static nAplicacionContable
 
-static aSerie              := {"A","B","C","D","E","F","G","H","I","J","K","M","N","O","P","O","R","S","T","U","V","W","X","Y","Z"}
+static aSerie                    := {"A","B","C","D","E","F","G","H","I","J","K","M","N","O","P","O","R","S","T","U","V","W","X","Y","Z"}
+
+static lAsientoIntraComunitario  := .f.
 
 //----------------------------------------------------------------------------//
 
@@ -1476,9 +1478,7 @@ Static Function MkAsientoContaplus( Asien,;
 
    local aTemp
 
-   /*
-   Asignacion de campos--------------------------------------------------------
-   */
+   // Asignacion de campos--------------------------------------------------------
 
    aTemp                   := dbBlankRec( cDiario )
 
@@ -1513,10 +1513,6 @@ Static Function MkAsientoContaplus( Asien,;
    aTemp[ ( cDiario )->( FieldPos( "NCASADO" ) )   ]     := If ( nCasado  != NIL, nCasado,    aTemp[ ( cDiario )->( FieldPos( "NCASADO" ) )    ] )
    aTemp[ ( cDiario )->( FieldPos( "TCASADO" ) )   ]     := If ( tCasado  != NIL, tCasado,    aTemp[ ( cDiario )->( FieldPos( "TCASADO" ) )    ] )
 
-   if ( cDiario )->( FieldPos( "TERIDNIF" ) ) != 0
-      aTemp[ ( cDiario )->( FieldPos( "TERIDNIF" ) ) ]   := 1
-   end if
-
    if ( cDiario )->( FieldPos( "TERNIF" ) ) != 0
       aTemp[ ( cDiario )->( FieldPos( "TERNIF" ) ) ]     := If ( cNif  != NIL, cNif,    aTemp[ ( cDiario )->( FieldPos( "TERNIF" ) ) ] )
    end if
@@ -1527,15 +1523,11 @@ Static Function MkAsientoContaplus( Asien,;
 
    aTemp[ ( cDiario )->( FieldPos( "RECTIFICA" ) ) ]     := lRectificativa
 
-   /*
-   Para contaplus euro 2000----------------------------------------------------
-   */
+   // Para contaplus euro 2000----------------------------------------------------
 
    aTemp[ ( cDiario )->( FieldPos( "MONEDAUSO" ) ) ]     := "2"
 
-   /*
-   Pagos en metalico-----------------------------------------------------------
-   */
+   // Pagos en metalico-----------------------------------------------------------
 
    if !Empty( nEjeCon ) .and. !Empty( cEjeCta )
 
@@ -1550,6 +1542,18 @@ Static Function MkAsientoContaplus( Asien,;
       end if
 
    end if 
+
+   // Operaciones intracomunitarias--------------------------------------------
+
+   if ( cDiario )->( FieldPos( "TipoOpe" ) ) != 0
+      aTemp[ ( cDiario )->( FieldPos( "TipoOpe" ) ) ]    := if( getAsientoIntraComunitario(), "P", "" )
+   end if
+
+   if ( cDiario )->( FieldPos( "TERIDNIF" ) ) != 0
+      aTemp[ ( cDiario )->( FieldPos( "TERIDNIF" ) ) ]   := if( getAsientoIntraComunitario(), 2, 1 )
+   end if
+
+   // escritura en el fichero--------------------------------------------
 
    if !lSimula
       WriteAsiento( aTemp, cDivisa )
@@ -2600,6 +2604,20 @@ Return ( nAplicacionContable <= 1 )
 Function lAplicacionA3()
 
 Return ( nAplicacionContable == 2 )
+
+//---------------------------------------------------------------------------//
+
+Function setAsientoIntraComunitario( lIntracomunitario )
+
+   lAsientoIntraComunitario   := lIntracomunitario
+
+Return ( lAsientoIntraComunitario )
+
+//---------------------------------------------------------------------------//
+
+Function getAsientoIntraComunitario()
+
+Return ( lAsientoIntraComunitario )
 
 //---------------------------------------------------------------------------//
 

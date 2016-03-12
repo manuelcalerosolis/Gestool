@@ -11561,7 +11561,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    oBlock                  := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   BeginTransaction()
 
    // Quitamos los filtros--------------------------------------------------------
 
@@ -11584,14 +11583,19 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
       aTmp[ _LALQUILER ]   := .f.
    end if
 
-   do case
-   case nMode == APPD_MODE .or. nMode == DUPL_MODE
+   // obtenemos nuevo contador-------------------------------------------------
 
+   if nMode == APPD_MODE .or. nMode == DUPL_MODE
       nNumAlb              := nNewDoc( aTmp[ _CSERALB ], D():Get( "AlbCliT", nView ), "NALBCLI", , D():Get( "NCount", nView ) )
       aTmp[ _NNUMALB ]     := nNumAlb
       nTotOld              := 0
+   end if 
 
-   case nMode == EDIT_MODE
+   // comenzamos la transaccion------------------------------------------------
+
+   BeginTransaction()
+   
+   if nMode == EDIT_MODE
 
       while ( D():Get( "AlbCliL", nView ) )->( dbSeek( cSerAlb + str( nNumAlb ) + cSufAlb ) ) .and. !( D():Get( "AlbCliL", nView ) )->( eof() )
          if dbLock( D():Get( "AlbCliL", nView ) )
@@ -11635,7 +11639,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
          end if
       end while
 
-   end case
+   end if
 
    /*
    Guardamos el albaran--------------------------------------------------------
@@ -11674,12 +11678,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    aTmp[ _NTOTPAG ]     := nTotPag
 
    WinGather( aTmp, , D():Get( "AlbCliT", nView ), , nMode )
-
-   /*
-   Actualizamos el stock en la web------------------------------------------
-   */
-
-   //ActualizaStockWeb( cSerAlb + Str( nNumAlb ) + cSufAlb )
 
    /*
    Ahora escribimos en el fichero definitivo-----------------------------------

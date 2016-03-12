@@ -14093,7 +14093,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       	oMeter:Set( 1 )
       end if	
 
-      BeginTransaction()
 
       /*
       Quitamos los filtros--------------------------------------------------------
@@ -14108,43 +14107,34 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       aTmp[ _DFECCRE ]        := Date()
       aTmp[ _CTIMCRE ]        := Time()
       aTmp[ _NTARIFA ]        := oGetTarifa:getTarifa()
+      aTmp[ _LALQUILER ]      := ( !empty( oTipFac ) .and. oTipFac:nAt == 2 )
 
-      /*
-      Guardamos el tipo para alquileres-------------------------------------------
-      */
+      // Nuevo registro-------------------------------------------------------------
 
-      if !Empty( oTipFac ) .and. oTipFac:nAt == 2
-         aTmp[ _LALQUILER ]   := .t.
-      else
-         aTmp[ _LALQUILER ]   := .f.
-      end if
-
-      do case
-      case nMode == APPD_MODE .or. nMode == DUPL_MODE
+      if nMode == APPD_MODE .or. nMode == DUPL_MODE
 
          runEventScript( "FacturasClientes\beforeAppend", aTmp )
 
-         oMsgText( "Obteniendo nuevos numeros" )
-         
-         if !Empty( oMeter )
-         	oMeter:Set( 2 )
-         end if
+         oMsgText( "Obteniendo nuevo contador" )
+         if( !empty( oMeter ), oMeter:Set( 2 ), )
 
-         /*
-         Obtenemos el nuevo numero de la factura----------------------------------
-         */
+         // Obtenemos el nuevo numero de la factura----------------------------------
 
          nNumFac              := nNewDoc( cSerFac, D():FacturasClientes( nView ), "NFACCLI", , D():Contadores( nView ) )
          aTmp[ _NNUMFAC ]     := nNumFac
          aTmp[ _LIMPALB ]     := !Empty( aNumAlb )
 
-      case nMode == EDIT_MODE
+      end if 
+
+      BeginTransaction()
+
+      if nMode == EDIT_MODE
 
          runEventScript( "FacturasClientes\beforeEdit", aTmp )
 
          RollBackFacCli( cSerFac + str( nNumFac ) + cSufFac )
 
-      end case
+      end if
 
       /*
       Ahora escribimos en el fichero definitivo-----------------------------------
@@ -22829,181 +22819,6 @@ N§ PO  LC  Descripci¢n       Observaciones
    CloseFiles()
 
 RETURN ( aSucces )
-
-//-------------------------------------------------------------------------//
-/*
-Finaliza la transacción de datos
-*/
-
-STATIC FUNCTION EndTransTablet( aTmp, aGet, nMode, oDlg )
-
-   local n
-   local nOrd
-   local oError
-   local oBlock
-   local cSerFac
-   local nNumFac
-   local nNumNFC
-   local cSufFac
-   local cNumPed
-   local cNumAlb
-   local dFecFac
-   local cCodCli
-   local tFecFac
-
-   /*
-   Tomamos valores-------------------------------------------------------------
-   */
-
-   if Empty( aTmp[ _CSERIE ] )
-      aTmp[ _CSERIE ]   := "A"
-   end if
-
-   cSerFac              := aTmp[ _CSERIE  ]
-   nNumFac              := aTmp[ _NNUMFAC ]
-   cSufFac              := aTmp[ _CSUFFAC ]
-   cNumPed              := aTmp[ _CNUMPED ]
-   cNumAlb              := aTmp[ _CNUMALB ]
-   dFecFac              := aTmp[ _DFECFAC ]
-   tFecFac 				   := aTmp[ _TFECFAC ]
-   cCodCli              := aTmp[ _CCODCLI ]
-
-   // Comprobamos campos del documento--------------------------------------------
-
-   if !lComprobacionesFactCli( aGet, aTmp )
-      return .f.
-   end if
-
-   // Para q nadie toque mientras grabamos----------------------------------------
-
-   oDlg:Disable()
-
-   oBlock      := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      BeginTransaction()
-
-      /*
-      Quitamos los filtros--------------------------------------------------------
-      */
-
-      ( dbfTmpLin )->( dbClearFilter() )
-
-      /*
-      Primero hacer el RollBack---------------------------------------------------
-      */
-
-      aTmp[ _DFECCRE ]        := Date()
-      aTmp[ _CTIMCRE ]        := Time()
-      aTmp[ _LALQUILER ]      := .f.
-
-      do case
-      case nMode == APPD_MODE .or. nMode == DUPL_MODE
-
-         runEventScript( "FacturasClientes\beforeAppend", aTmp )
-
-         /*
-         Obtenemos el nuevo numero de la factura----------------------------------
-         */
-
-         nNumFac              := nNewDoc( cSerFac, D():FacturasClientes( nView ), "NFACCLI", , D():Contadores( nView ) )
-         aTmp[ _NNUMFAC ]     := nNumFac
-         aTmp[ _LSNDDOC ]     := .t.
-
-      case nMode == EDIT_MODE
-
-         runEventScript( "FacturasClientes\beforeEdit", aTmp )
-
-         if lCambioSerie( aTmp )
-            
-            /*
-            Guardo el contador anterior puesto que vamos a cambiar la serie de la factura
-            */
-
-            GuardaContadorAnterior( nNumFac, cSufFac )
-
-            RollBackFacCli( cSerieAnterior + str( nNumFac ) + cSufFac )
-            
-            /*
-            Obtenemos el nuevo número para la serie-------------------------------
-            */
-
-            nNumFac           := nNewDoc( cSerFac, D():FacturasClientes( nView ), "NFACCLI", , D():Contadores( nView ) )
-            aTmp[ _NNUMFAC ]  := nNumFac
-
-         else
-
-            RollBackFacCli( cSerFac + str( nNumFac ) + cSufFac )
-
-         end if 
-
-         /*
-         Marcamos para que podamos volver a enviarlo---------------------------
-         */
-
-         aTmp[ _LSNDDOC ]     := .t.
-
-      end case
-
-      /*
-      Ahora escribimos en el fichero definitivo--------------------------------
-      Controlando que no metan lineas con unidades a 0 por el tema-------------
-      de la importacion de las atipicas----------------------------------------
-      */
-
-      GuardaTemporalesFacCli( cSerFac, nNumFac, cSufFac, dFecFac, tFecFac, cCodCli, aTmp )
-
-      /*
-      Rellenamos los campos de totales--------------------------------------------
-      */
-
-      aTmp[ _NTOTNET ]  := nTotNet
-      aTmp[ _NTOTIVA ]  := nTotIva
-      aTmp[ _NTOTREQ ]  := nTotReq
-      aTmp[ _NTOTFAC ]  := nTotFac
-      aTmp[ _NTOTSUP ]  := nTotSup
-      aTmp[ _NTOTLIQ ]  := nTotCob
-      aTmp[ _NTOTPDT ]  := nTotFac - nTotCob
-
-      // Grabamos el registro--------------------------------------------------
-
-      WinGather( aTmp, , D():FacturasClientes( nView ), , nMode )
-
-      // Escribe los datos pendientes------------------------------------------------
-
-      dbCommitAll()
-
-      CommitTransaction()
-
-      // Generar los pagos de las facturas-------------------------------------------
-
-      GenPgoFacCli( cSerFac + str( nNumFac, 9 ) + cSufFac, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), dbfAntCliT, D():Clientes( nView ), D():FormasPago( nView ), dbfDiv, dbfIva, nMode )
-
-      // Comprobamos el estado de la factura-----------------------------------------
-
-      ChkLqdFacCli( nil, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), dbfAntCliT, dbfIva, dbfDiv )
-
-      // avanzamos al siguiente ruta------------------------------------------- 
-
-      oClienteRutaNavigator:gotoNext()
-
-   RECOVER USING oError
-
-      RollBackTransaction()
-
-      msgStop( "Imposible almacenar documento" + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-   ErrorBlock( oBlock )
-
-   /*
-   Cerramos el dialogo---------------------------------------------------------
-   */
-
-   oDlg:Enable()
-   oDlg:End( IDOK )
-
-Return .t.
 
 //------------------------------------------------------------------------//
 

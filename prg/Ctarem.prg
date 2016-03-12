@@ -2,15 +2,13 @@
 #include "Factu.ch" 
 #include "MesDbf.ch"
 
-#define IDHELP                   998
-
 //---------------------------------------------------------------------------//
 
 CLASS TCtaRem FROM TMant
 
-   DATA  cMru                    INIT "Address_book2_16"
+   DATA  cMru                       INIT "Address_book2_16"
 
-   DATA  cBitmap                 INIT clrTopArchivos
+   DATA  cBitmap                    INIT clrTopArchivos
 
    DATA  oBanco
 
@@ -31,6 +29,8 @@ CLASS TCtaRem FROM TMant
    METHOD cRetCtaCon( cCodCta )
 
    METHOD cRetCtaDto( cCodCta )
+
+   METHOD dFechaFirma( cCodCta )    INLINE ( if( ::oDbf:SeekInOrd( cCodCta, "cCodCta" ), ::oDbf:dFirPre, ctod("") ) )
 
    METHOD lValidResource( nMode, oDlg )
 
@@ -162,6 +162,7 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "cEntPre"    TYPE "C" LEN  4  DEC 0 PICTURE "9999"                       COMMENT ""                             HIDE  OF oDbf
       FIELD NAME "cAgcPre"    TYPE "C" LEN  4  DEC 0 PICTURE "9999"                       COMMENT ""                             HIDE  OF oDbf
       FIELD NAME "cPaiPre"    TYPE "C" LEN  2  DEC 0 PICTURE "@!"                         COMMENT ""                             HIDE  OF oDbf
+      FIELD NAME "dFirPre"    TYPE "D" LEN  8  DEC 0 PICTURE ""                           COMMENT ""                             HIDE  OF oDbf
 
       FIELD NAME "cCodAcr"    TYPE "C" LEN  2  DEC 0 PICTURE "99"                         COMMENT ""                             HIDE  OF oDbf
       FIELD NAME "cPaiAcr"    TYPE "C" LEN  2  DEC 0 PICTURE "@!"                         COMMENT ""                             HIDE  OF oDbf
@@ -375,6 +376,12 @@ METHOD Resource( nMode )
          ID       260 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
 			OF 		oDlg
+
+      REDEFINE GET ::oDbf:dFirPre ;
+         ID       280 ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
 
       /*
       Acreeedor----------------------------------------------------------------

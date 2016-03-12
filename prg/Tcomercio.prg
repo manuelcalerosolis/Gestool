@@ -146,7 +146,10 @@ CLASS TComercio
    DATA  nLanguage
 
    DATA  nPrecioMinimo              INIT 0
+
    DATA  lProductIdColumnImageShop  
+   DATA  lProductIdColumnProductAttribute
+   DATA  lProductIdColumnProductAttributeShop
 
    DATA  nSecondTimer
 
@@ -205,7 +208,7 @@ CLASS TComercio
    DATA  oTree
 
    DATA  oMeterTotal
-   DATA  nMeterTotal    INIT 0
+   DATA  nMeterTotal                   INIT 0
 
    METHOD MeterTotal( oMeterTotal)     INLINE ( iif( oMeterTotal != nil, ::oMeterTotal := oMeterTotal, ::oMeterTotal ) )
    METHOD setMeterTotal( nTotal )      INLINE ( ::nTotMeter := nTotal, ( if( !empty( ::oMeterProceso ), ::oMeterProceso:SetTotal( ::nTotMeter ), ) ) )
@@ -216,7 +219,15 @@ CLASS TComercio
    METHOD TextTotal( oTextTotal )      INLINE ( iif( oTextTotal != nil, ::oTextTotal := oTextTotal, ::oTextTotal ) )
 
    DATA  oMeterProceso
-   DATA  nMeterProceso  INIT 0
+   DATA  nMeterProceso                 INIT 0
+
+   DATA  aIvaData                      INIT {}
+   DATA  aFabricantesData              INIT {}
+   DATA  aFamiliaData                  INIT {}
+   DATA  aArticuloData                 INIT {}
+   DATA  aPropiedadesCabeceraData      INIT {}
+   DATA  aPropiedadesLineasData        INIT {}
+   DATA  aStockArticuloData            INIT {}
 
    METHOD treeSetText( cText )
    METHOD MeterTotalText( cText )
@@ -386,19 +397,14 @@ CLASS TComercio
    METHOD syncronizeStatesPresupuestoPrestashop ( cSerPre, nNumPre, cSufPre, cCodWeb )
    METHOD UploadStatePrestashop( id_order_state, dFecSit, tFecSit, cCodWeb )
 
-   METHOD isProductIdColumnImageShop() 
+   METHOD isProductIdColumn( cTable )
+   METHOD isProductIdColumnImageShop()                INLINE ( ::isProductIdColumn( "image_shop" ) )
+   METHOD isProductIdColumnProductAttribute()         INLINE ( ::isProductIdColumn( "product_attribute" ) )
+   METHOD isProductIdColumnProductAttributeShop()     INLINE ( ::isProductIdColumn( "product_attribute_shop" ) )
 
    // Datos para la recopilacion de informacion----------------------------
 
-   DATA  aIvaData             INIT {}
-   DATA  aFabricantesData     INIT {}
-   DATA  aFamiliaData         INIT {}
-   DATA  aArticuloData        INIT {}
-   DATA  aPropiedadesCabData  INIT {}
-   DATA  aPropiedadesLinData  INIT {}
-   DATA  aStockArticuloData   INIT {}
-
-   METHOD ProductInCurrentWeb()             INLINE ( ::oArt:lPubInt )  // DE MOMENTO
+   METHOD ProductInCurrentWeb()              INLINE ( ::oArt:lPubInt )  // DE MOMENTO
 
    // Metodos para la recopilacion de informacion----------------------------
 
@@ -511,16 +517,18 @@ RETURN ( Self )
 
 METHOD buildInitData() CLASS TComercio
 
-   ::aImages               := {}
-   ::aImagesArticulos      := {}
-   ::aImagesCategories     := {}
-   ::aTipoImagesPrestashop := {}
+   ::aImages                     := {}
+   ::aImagesArticulos            := {}
+   ::aImagesCategories           := {}
+   ::aTipoImagesPrestashop       := {}
 
-   ::aIvaData              := {}
-   ::aFabricantesData      := {}
-   ::aFamiliaData          := {}
-   ::aArticuloData         := {}
-   ::aArticulosActualizar  := {}
+   ::aIvaData                    := {}
+   ::aFabricantesData            := {}
+   ::aFamiliaData                := {}
+   ::aArticuloData               := {}
+   ::aArticulosActualizar        := {}
+   ::aPropiedadesCabeceraData    := {}
+   ::aPropiedadesLineasData      := {}
 
 Return ( Self )
 
@@ -1028,153 +1036,6 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD ExportarPrestashop() Class TComercio
-
-   local oDb
-   local oBlock
-   local oError
-
-   ::aCategorias     := {}
-
-   ::oBtnExportar:Hide()
-   ::oBtnImportar:Hide()
-
-   ::oBtnCancel:Disable()
-
-   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
-   BEGIN SEQUENCE
-
-   if ::filesOpen()
-
-      ::treeSetText( 'Intentando conectar con el servidor ' + '"' + ::cHost + '"' + ', el usuario ' + '"' + ::cUser + '"' + ' y la base de datos ' + '"' + ::cDbName + '".' , 1 )
-
-      ::oCon            := TMSConnect():New()
-
-      if !::oCon:Connect( ::cHost, ::cUser, ::cPasswd, ::cDbName, ::nPort )
-
-         ::treeSetText( 'No se ha podido conectar con la base de datos.' )
-
-      else
-
-         ::treeSetText( 'Se ha conectado con éxito a la base de datos.' , 1 )
-
-         oDb               := TMSDataBase():New( ::oCon, ::cDbName )
-
-         if empty( oDb )
-
-            ::treeSetText( 'La Base de datos: ' + ::cDbName + ' no esta activa.', 1 )
-
-         else
-
-            /*
-            Tomamos el lenguaje---------------------------------------------
-            */
-
-            ::nLanguage                   := ::getLanguagePrestashop()
-            ::lProductIdColumnImageShop   := ::isProductIdColumnImageShop()
-
-            ::oMeter:SetTotal( 10 )
-            ::nMeter                      := 1
-
-            /*
-            Pasamos los tipos de IVA a prestashop---------------------------
-            */
-
-            if ::lIva .or. ::lSyncAll
-               ::MeterTotalText( "Actualizando tipos de " + cImp() )
-               ::treeSetText( 'Exportando tablas de tipos de ' + cImp(), 2 )
-               ::AppendIvaPrestashop( odb )
-               sysRefresh()
-            end if
-
-            /*
-            Pasamos los artículos a prestashop------------------------------
-            */
-
-            if ::lArticulos .or. ::lSyncAll
-
-               ::MeterTotalText( "Actualizando fabricantes" )
-               ::treeSetText( 'Exportando tablas de fabricantes', 2 )
-               ::AppendFabricantesPrestashop()
-               sysRefresh()
-
-               ::MeterTotalText( "Actualizando familias" )
-               ::treeSetText( 'Exportando tablas de familias de artículos', 2 )
-               ::AppendFamiliaPrestashop( odb )
-               sysRefresh()
-
-               ::MeterTotalText( "Actualizando artículos" )
-               ::treeSetText( 'Exportando tablas de propiedades de artículos', 2 )
-               ::AppendPropiedadesPrestashop()
-               sysRefresh()
-
-               ::treeSetText( 'Exportando tablas de artículos', 2 )
-               ::AppendArticuloPrestashop( odb )
-               sysRefresh()
-
-               ::RecalculaPosicionesCategoriasPrestashop()
-               sysRefresh()
-
-            end if
-
-            /*
-            Pasamos los clientes desde el programa a prestashop-------------
-
-            if ::lClientes .or. ::lSyncAll
-
-               ::MeterTotalText( "Actualizando estado de los pedidos" )
-               ::AppendClientesToPrestashop()
-               sysRefresh()
-
-            end if
-            */
-
-            /*
-            Pasamos las imágenes de los artículos a prestashop--------------
-            */
-
-            ::MeterTotalText( "Subiendo imagenes" )
-
-            if ::lImagenes .or. ::lSyncAll
-               ::buildImagenes()
-            end if
-
-         end if
-
-      end if
-
-      ::oCon:Destroy()
-
-      ::treeSetText( 'Base de datos desconectada.', 1 )
-
-      /*
-      Para que al final del proceso quede totalmente llena la barra del meter--
-      */
-
-      ::oMeter:Set( 100 )
-      ::oMeterProceso:Set( 100 )
-
-      ::MeterTotalText( "Proceso finalizado" )
-
-   else
-
-      ::treeSetText( 'Error al abrir los ficheros necesarios.', 1 )
-
-   end if
-
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Error al conectarnos con la base de datos" )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   ::filesClose()
-
-   ::oBtnExportar:Hide()
-   ::oBtnImportar:Hide()
-
-   ::oBtnCancel:Enable()
 
 Return .t.
 
@@ -4181,7 +4042,7 @@ METHOD buildSubirImagenes() CLASS TComercio
 
    local oImage
 
-   // Conectamos al FTP y Subimos las imágenes de artículos-----------------------
+   // Conectamos al FTP y Subimos las imágenes de artículos--------------------
 
    if Len( ::aImagesArticulos ) > 0
 
@@ -4211,7 +4072,7 @@ METHOD buildSubirImagenes() CLASS TComercio
 
             ::ftpCreateFile( oImage:cNombreImagen, ::cDirectoryProduct() + "/" + oImage:cCarpeta )
            
-            //Volvemos al directorio raiz--------------------------------------
+            // Volvemos al directorio raiz--------------------------------------
 
             ::ftpReturnDirectory( oImage:cCarpeta )
 
@@ -4225,7 +4086,7 @@ METHOD buildSubirImagenes() CLASS TComercio
 
    ::ftpEndConexion()
 
-   // Subimos las imagenes de las categories--------------------------------------
+   // Subimos las imagenes de las categories-----------------------------------
 
    if Len( ::aImagesCategories ) > 0
 
@@ -4255,7 +4116,7 @@ METHOD buildSubirImagenes() CLASS TComercio
 
             ::ftpCreateFile( oImage:cNombreImagen, oImage:cCarpeta )
            
-            //Volvemos al directorio raiz--------------------------------------
+            // Volvemos al directorio raiz-------------------------------------
 
             ::ftpReturnDirectory( oImage:cCarpeta )
 
@@ -4267,7 +4128,7 @@ METHOD buildSubirImagenes() CLASS TComercio
 
       ::ftpEndConexion()
 
-      // Borramos las imagenes creadas en los temporales-----------------------------
+      // Borramos las imagenes creadas en los temporales-----------------------
 
       for each oImage in ::aImagesArticulos
          fErase( oImage:cNombreImagen )
@@ -4420,37 +4281,7 @@ return nCodigo
 
 METHOD ConectBBDD() Class TComercio
 
-   local oDb
-   local lReturn        := .f.
-
-   ::oCon               := TMSConnect():New()
-
-   if !::oCon:Connect( ::cHost, ::cUser, ::cPasswd, ::cDbName, ::nPort )
-
-      MsgStop( "No se ha podido conectar con la base de datos." )
-      lReturn           := .f.
-
-   else
-
-      oDb               := TMSDataBase():New ( ::oCon, ::cDbName )
-
-      if empty( oDb )
-
-         MsgStop( 'La Base de datos: ' + ::cDbName + ' no esta activa.', 1 )
-         lReturn        := .f.         
-
-      else
-
-         ::nLanguage                   := ::getLanguagePrestashop()
-         ::lProductIdColumnImageShop   := ::isProductIdColumnImageShop()
-
-         lReturn        := .t.
-
-      end if
-
-   end if   
-
-Return lReturn
+Return ( .f. )
 
 //---------------------------------------------------------------------------//
 
@@ -4464,11 +4295,15 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD isProductIdColumnImageShop()
+METHOD isProductIdColumn( cTable )
 
    local oQuery
+   local cCommand       
    local isProduct      := .f.
-   local cCommand       := "SHOW COLUMNS FROM " + ::cPrefixTable( "image_shop" ) + " LIKE 'id_product'"
+
+   DEFAULT cTable       := "image_shop"
+
+   cCommand             := "SHOW COLUMNS FROM " + ::cPrefixTable( cTable ) + " LIKE 'id_product'"
 
    oQuery               := TMSQuery():New( ::oCon, cCommand )
 
@@ -5648,8 +5483,10 @@ METHOD prestaShopConnect()
 
       else
 
-         ::nLanguage                   := ::getLanguagePrestashop()
-         ::lProductIdColumnImageShop   := ::isProductIdColumnImageShop()
+         ::nLanguage                            := ::getLanguagePrestashop()
+         ::lProductIdColumnImageShop            := ::isProductIdColumnImageShop()
+         ::lProductIdColumnProductAttribute     := ::isProductIdColumnProductAttribute()
+         ::lProductIdColumnProductAttributeShop := ::isProductIdColumnProductAttributeShop()
 
          lConect     := .t.
 
@@ -5732,48 +5569,36 @@ METHOD buildArticuloPrestashop( id ) CLASS TComercio
 
    local hImagesArticulos     := {}
 
-   if aScan( ::aArticuloData, {|h| hGet( h, "id" ) == id } ) == 0
+   if aScan( ::aArticuloData, {|h| hGet( h, "id" ) == id } ) != 0
+      Return ( self )
+   end if 
 
-      if ::oArt:SeekInOrd( id, "Codigo" ) 
+   // Recopilar info de imagenes-----------------------------------------
 
-         if ::lSyncAll .or. ::oArt:cCodWeb == 0
+   hImagesArticulos           := ::buildImagesArticuloPrestashop( id )
 
-            /*
-            Recopilar info de imagenes-----------------------------------------
-            */
+   // Rellenamos el Hash-------------------------------------------------
 
-            hImagesArticulos  := ::buildImagesArticuloPrestashop( id )
-
-            /*
-            Rellenamos el Hash-------------------------------------------------
-            */
-
-            aAdd( ::aArticuloData, { "id"                   => id,;
-                                    "name"                  => alltrim( ::oArt:Nombre ),;
-                                    "id_manufacturer"       => ::oArt:cCodFab ,;
-                                    "id_tax_rules_group"    => ::oArt:TipoIva ,;
-                                    "id_category_default"   => ::oArt:Familia ,;
-                                    "price"                 => if( ::oArtDiv:Seek( ::oArt:Codigo ), 0, ::buildPrecioArtitulo() ) ,;
-                                    "reference"             => ::oArt:Codigo ,;
-                                    "weight"                => ::oArt:nPesoKg ,;
-                                    "description"           => if( !empty( ::oArt:mDesTec ), ::oArt:mDesTec, ::oArt:Nombre ) ,; 
-                                    "description_short"     => alltrim( ::oArt:Nombre ) ,;
-                                    "link_rewrite"          => cLinkRewrite( ::oArt:Nombre ),;
-                                    "meta_title"            => alltrim( ::oArt:cTitSeo ) ,;
-                                    "meta_description"      => alltrim( ::oArt:cDesSeo ) ,;
-                                    "meta_keywords"         => alltrim( ::oArt:cKeySeo ) ,;
-                                    "lPubPor"               => ::oArt:lPubPor,;
-                                    "cImagen"               => ::oArt:cImagen,;
-                                    "lSbrInt"               => ::oArt:lSbrInt,;
-                                    "nDtoInt1"              => ::oArt:nDtoInt1,;
-                                    "nImpInt1"              => ::buildPrecioArtitulo(),;
-                                    "aImages"               => hImagesArticulos } )
-
-         end if
-
-      end if 
-
-   end if
+   aAdd( ::aArticuloData, {"id"                   => id,;
+                           "name"                  => alltrim( ::oArt:Nombre ),;
+                           "id_manufacturer"       => ::oArt:cCodFab ,;
+                           "id_tax_rules_group"    => ::oArt:TipoIva ,;
+                           "id_category_default"   => ::oArt:Familia ,;
+                           "price"                 => if( ::oArtDiv:Seek( ::oArt:Codigo ), 0, ::buildPrecioArtitulo() ) ,;
+                           "reference"             => ::oArt:Codigo ,;
+                           "weight"                => ::oArt:nPesoKg ,;
+                           "description"           => if( !empty( ::oArt:mDesTec ), ::oArt:mDesTec, ::oArt:Nombre ) ,; 
+                           "description_short"     => alltrim( ::oArt:Nombre ) ,;
+                           "link_rewrite"          => cLinkRewrite( ::oArt:Nombre ),;
+                           "meta_title"            => alltrim( ::oArt:cTitSeo ) ,;
+                           "meta_description"      => alltrim( ::oArt:cDesSeo ) ,;
+                           "meta_keywords"         => alltrim( ::oArt:cKeySeo ) ,;
+                           "lPubPor"               => ::oArt:lPubPor,;
+                           "cImagen"               => ::oArt:cImagen,;
+                           "lSbrInt"               => ::oArt:lSbrInt,;
+                           "nDtoInt1"              => ::oArt:nDtoInt1,;
+                           "nImpInt1"              => ::buildPrecioArtitulo(),;
+                           "aImages"               => hImagesArticulos } )
 
 Return ( Self )
 
@@ -5798,16 +5623,12 @@ METHOD buildImagesArticuloPrestashop( id ) CLASS TComercio
 
          if !empty( ::oArtDiv:mImgWeb )
 
-            aImgToken   := hb_aTokens( ::oArtDiv:mImgWeb, "," )
+            aImgToken   := hb_atokens( ::oArtDiv:mImgWeb, "," )
 
             for each cImgToken in aImgToken
 
-               if !empty( cImgToken )           .and.;
-                  aScan( aImages, {|a| hGet( a, "name" ) == cImgToken } ) == 0
-
-                  aAdd( aImages, {  "name"                   => cImgToken,;
-                                    "lDefault"               => oRetFld( cImgToken, ::oArtImg, "lDefImg", "cImgArt" ) } )
-
+               if !empty( cImgToken ) .and. ascan( aImages, {|a| hGet( a, "name" ) == cImgToken } ) == 0
+                  aadd( aImages, {  "name" => cImgToken, "lDefault"  => oRetFld( cImgToken, ::oArtImg, "lDefImg", "cImgArt" ) } )
                end if
 
             next
@@ -5832,7 +5653,7 @@ METHOD buildImagesArticuloPrestashop( id ) CLASS TComercio
 
          while ::oArtImg:cCodArt == id .and. !::oArtImg:Eof()
 
-            cImagen  := alltrim(::oArtImg:cImgArt )
+            cImagen  := alltrim( ::oArtImg:cImgArt )
 
             if ascan( aImages, {|a| hGet( a, "name" ) == cImagen } ) == 0
                aadd( aImages, { "name" => cImagen, "lDefault" => ::oArtImg:lDefImg } )
@@ -5885,98 +5706,90 @@ Return ( nPrecio )
 METHOD buildPropiedadesPrestashop( id ) CLASS TComercio
 
    /*
-   Tratamos las cabeceras de las propiedades-----------------------------------
+   Primera propiedad--------------------------------------------------------
    */
 
-   if ::oArt:SeekInOrd( id, "Codigo" ) 
+   if ::oPro:SeekInOrd( ::oArt:cCodPrp1 )
 
-      /*
-      Primera propiedad--------------------------------------------------------
-      */
+      if ::lSyncAll .or. ::oPro:cCodWeb == 0
+      
+         if aScan( ::aPropiedadesCabeceraData, {|h| hGet( h, "id" ) == ::oPro:cCodPro } ) == 0
 
-      if ::oPro:SeekInOrd( ::oArt:cCodPrp1 )
-
-         if ::lSyncAll .or. ::oPro:cCodWeb == 0
-         
-            if aScan( ::aPropiedadesCabData, {|h| hGet( h, "id" ) == ::oPro:cCodPro } ) == 0
-
-               aAdd( ::aPropiedadesCabData, {   "id"          => ::oPro:cCodPro,;
+            aAdd( ::aPropiedadesCabeceraData, { "id"          => ::oPro:cCodPro,;
                                                 "name"        => if( empty( ::oPro:cNomInt ), alltrim( ::oPro:cDesPro ), alltrim( ::oPro:cNomInt ) ),;
                                                 "lColor"      => ::oPro:lColor } )
-
-            end if
 
          end if
 
       end if
 
-      /*
-      Segunda propiedad--------------------------------------------------------
-      */
+   end if
 
-      if ::oPro:SeekInOrd( ::oArt:cCodPrp2 )
+   /*
+   Segunda propiedad--------------------------------------------------------
+   */
 
-         if ::lSyncAll .or. ::oPro:cCodWeb == 0
+   if ::oPro:SeekInOrd( ::oArt:cCodPrp2 )
 
-            if aScan( ::aPropiedadesCabData, {|h| hGet( h, "id" ) == ::oPro:cCodPro } ) == 0
-         
-               aAdd( ::aPropiedadesCabData, {   "id"          => ::oPro:cCodPro,;
+      if ::lSyncAll .or. ::oPro:cCodWeb == 0
+
+         if aScan( ::aPropiedadesCabeceraData, {|h| hGet( h, "id" ) == ::oPro:cCodPro } ) == 0
+      
+            aAdd( ::aPropiedadesCabeceraData, { "id"          => ::oPro:cCodPro,;
                                                 "name"        => if( empty( ::oPro:cNomInt ), alltrim( ::oPro:cDesPro ), alltrim( ::oPro:cNomInt ) ),;
                                                 "lColor"      => ::oPro:lColor } )
-
-            end if
 
          end if
 
       end if
 
-      /*
-      Líneas de propiedades de un artículo-------------------------------------
-      */
+   end if
 
-      if ::oArtDiv:Seek( ::oArt:Codigo )
+   /*
+   Líneas de propiedades de un artículo-------------------------------------
+   */
 
-         while ::oArtDiv:cCodArt == ::oArt:Codigo .and. !::oArtDiv:Eof()
+   if ::oArtDiv:Seek( ::oArt:Codigo )
 
-            if ::oTblPro:SeekInOrd( ::oArtDiv:cCodPr1 + ::oArtDiv:cValPr1, "cCodPro" )
+      while ::oArtDiv:cCodArt == ::oArt:Codigo .and. !::oArtDiv:Eof()
 
-               if ::lSyncAll .or. ::oTblPro:cCodWeb == 0
+         if ::oTblPro:SeekInOrd( ::oArtDiv:cCodPr1 + ::oArtDiv:cValPr1, "cCodPro" )
 
-                  if aScan( ::aPropiedadesLinData, {|h| hGet( h, "id" ) == ::oTblPro:cCodTbl .and. hGet( h, "idparent" ) == ::oTblPro:cCodPro } ) == 0
-         
-                     aAdd( ::aPropiedadesLinData, {   "id"          => ::oTblPro:cCodTbl,;
-                                                      "idparent"    => ::oTblPro:cCodPro,; 
-                                                      "name"        => alltrim( ::oTblPro:cDesTbl ),;
-                                                      "color"       => alltrim( RgbToRgbHex( ::oTblPro:nColor) ) } )
+            if ::lSyncAll .or. ::oTblPro:cCodWeb == 0
 
-                  end if
-
-               end if
-
-            end if
-
-            if ::oTblPro:SeekInOrd( ::oArtDiv:cCodPr2 + ::oArtDiv:cValPr2, "cCodPro" )
-
-               if ::lSyncAll .or. ::oTblPro:cCodWeb == 0
-
-                  if aScan( ::aPropiedadesLinData, {|h| hGet( h, "id" ) == ::oTblPro:cCodTbl .and. hGet( h, "idparent" ) == ::oTblPro:cCodPro } ) == 0
-         
-                     aAdd( ::aPropiedadesLinData, {   "id"          => ::oTblPro:cCodTbl,;
-                                                      "idparent"    => ::oTblPro:cCodPro,; 
-                                                      "name"        => alltrim( ::oTblPro:cDesTbl ),;
-                                                      "color"       => alltrim( RgbToRgbHex( ::oTblPro:nColor) ) } )
-
-                  end if
+               if aScan( ::aPropiedadesLineasData, {|h| hGet( h, "id" ) == ::oTblPro:cCodTbl .and. hGet( h, "idparent" ) == ::oTblPro:cCodPro } ) == 0
+      
+                  aAdd( ::aPropiedadesLineasData, {"id"          => ::oTblPro:cCodTbl,;
+                                                   "idparent"    => ::oTblPro:cCodPro,; 
+                                                   "name"        => alltrim( ::oTblPro:cDesTbl ),;
+                                                   "color"       => alltrim( RgbToRgbHex( ::oTblPro:nColor) ) } )
 
                end if
 
             end if
 
-            ::oArtDiv:Skip()
+         end if
 
-         end while
+         if ::oTblPro:SeekInOrd( ::oArtDiv:cCodPr2 + ::oArtDiv:cValPr2, "cCodPro" )
 
-      end if
+            if ::lSyncAll .or. ::oTblPro:cCodWeb == 0
+
+               if aScan( ::aPropiedadesLineasData, {|h| hGet( h, "id" ) == ::oTblPro:cCodTbl .and. hGet( h, "idparent" ) == ::oTblPro:cCodPro } ) == 0
+      
+                  aAdd( ::aPropiedadesLineasData, {"id"          => ::oTblPro:cCodTbl,;
+                                                   "idparent"    => ::oTblPro:cCodPro,; 
+                                                   "name"        => alltrim( ::oTblPro:cDesTbl ),;
+                                                   "color"       => alltrim( RgbToRgbHex( ::oTblPro:nColor) ) } )
+
+               end if
+
+            end if
+
+         end if
+
+         ::oArtDiv:Skip()
+
+      end while
 
    end if
 
@@ -6073,7 +5886,7 @@ METHOD buildSubirInformacion() CLASS TComercio
    Subimos las cabeceras de propiedades necesarias-----------------------
    */
 
-   for each hPropiedadesCabData in ::aPropiedadesCabData
+   for each hPropiedadesCabData in ::aPropiedadesCabeceraData
       ::buildInsertPropiedadesPrestashop( hPropiedadesCabData )
    next
 
@@ -6081,13 +5894,13 @@ METHOD buildSubirInformacion() CLASS TComercio
    Subimos las Lineas de propiedades necesarias--------------------------
    */
 
-   ::meterProcesoSetTotal( len(::aPropiedadesLinData) )
+   ::meterProcesoSetTotal( len(::aPropiedadesLineasData) )
 
-   for each hPropiedadesLinData in ::aPropiedadesLinData
+   for each hPropiedadesLinData in ::aPropiedadesLineasData
 
       ::buildInsertLineasPropiedadesPrestashop( hPropiedadesLinData, hb_enumindex() )
 
-      ::meterProcesoText( "Subiendo propiedad " + alltrim(str(hb_enumindex())) + " de " + alltrim(str(len(::aPropiedadesLinData))) )
+      ::meterProcesoText( "Subiendo propiedad " + alltrim(str(hb_enumindex())) + " de " + alltrim(str(len(::aPropiedadesLineasData))) )
 
    next
  
@@ -6586,13 +6399,13 @@ METHOD buildRecalculaPosicionesCategoriasPrestashop() CLASS TComercio
 
       else 
 
-         ::treeSetText( "No hay elementos en la categoría", 3 )
+         ::meterProcesoText( "No hay elementos en la categoría" )
 
       end if
 
    else 
 
-      ::treeSetText( "Error al ejecutar "  + "SELECT * FROM " + ::cPrefixTable( "category" ), 3 )
+      ::meterProcesoText( "Error al ejecutar " + "SELECT * FROM " + ::cPrefixTable( "category" ) )
 
    end if
 
@@ -7060,18 +6873,18 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                   Metemos la propiedad de éste artículo------------------------
                   */
 
-                  cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute" ) + " ( " + ;
-                                    "id_product, " + ;
-                                    "price, " + ;
-                                    "wholesale_price, " + ;
-                                    "quantity, " + ;
-                                    "minimal_quantity ) " + ;
-                                 "VALUES " + ;
-                                    "('" + alltrim( str( nCodigoWeb ) ) + "', " + ;                                  //id_product
-                                    "'" + alltrim( str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', " + ; //price
-                                    "'" + alltrim( str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', " + ; //wholesale_price
-                                    "'10000', " + ;                                                                  //quantity
-                                    "'1' )"                                                                          //minimal_quantity
+                  cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute" ) + " ( "                                     + ;
+                                    if( ::lProductIdColumnProductAttribute, "id_product, ", "" )                                    + ;
+                                    "price, "                                                                                       + ;
+                                    "wholesale_price, "                                                                             + ;
+                                    "quantity, "                                                                                    + ;
+                                    "minimal_quantity ) "                                                                           + ;
+                                 "VALUES ("                                                                                         + ;
+                                    if( ::lProductIdColumnProductAttribute, "'" + alltrim( str( nCodigoWeb ) ) + "', ", "" )        + ;      //id_product
+                                    "'" + alltrim( str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', "  + ;      //price
+                                    "'" + alltrim( str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', "  + ;      //wholesale_price
+                                    "'10000', "                                                                                     + ;      //quantity
+                                    "'1' )"                                                                                                  //minimal_quantity
 
                   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
                      nCodigoPropiedad           := ::oCon:GetInsertId()
@@ -7207,18 +7020,18 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                Metemos la propiedad de éste artículo---------------------------
                */
 
-               cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute" ) + " ( " + ;
-                                 "id_product, " + ;
-                                 "price, " + ;
-                                 "wholesale_price, " + ;
-                                 "quantity, " + ;
-                                 "minimal_quantity ) " + ;
-                              "VALUES " + ;
-                                 "('" + alltrim( str( nCodigoWeb ) ) + "', " + ;                                  //id_product
-                                 "'" + alltrim( str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', " + ; //price
-                                 "'" + alltrim( str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', " + ; //wholesale_price
-                                 "'10000', " + ;                                                                  //quantity
-                                 "'1' )"                                                                          //minimal_quantity
+               cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute" ) + " ( "                                     + ;
+                                 if( ::lProductIdColumnProductAttribute, "id_product, ", "" )                                    + ;
+                                 "price, "                                                                                       + ;
+                                 "wholesale_price, "                                                                             + ;
+                                 "quantity, "                                                                                    + ;
+                                 "minimal_quantity ) "                                                                           + ;
+                              "VALUES ("                                                                                         + ;
+                                 if( ::lProductIdColumnProductAttribute, "'" + alltrim( str( nCodigoWeb ) ) + "', ", "" )        + ;      //id_product
+                                 "'" + alltrim( str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', "  + ;      //price
+                                 "'" + alltrim( str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', "  + ;      //wholesale_price
+                                 "'10000', "                                                                                     + ;      //quantity
+                                 "'1' )"                                                                                                  //minimal_quantity
 
                ::treeSetText( cCommand )                                 
 
@@ -7282,19 +7095,19 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                Metemos la relación entre la propiedad y el shop-------------
                */
 
-               cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute_shop" ) + " ( " + ;
-                                 "id_product, " + ;
-                                 "id_product_attribute, " + ;
-                                 "id_shop, " + ;
-                                 "wholesale_price, " + ;
-                                 "price, " + ;
-                                 "ecotax, " + ;
-                                 "weight, " + ;
-                                 "unit_price_impact, " + ;
-                                 if( lDefault, "default_on, ", "" ) + ;
-                                 "minimal_quantity ) " + ;
-                              "VALUES " + ;
-                                 "('" + alltrim( str( nCodigoWeb ) ) + "', " + ;                                  //id_product
+               cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute_shop" ) + " ( "  + ;
+                                 if( ::isProductIdColumnProductAttributeShop, "id_product, ", "" ) + ;
+                                 "id_product_attribute, "                                          + ;
+                                 "id_shop, "                                                       + ;
+                                 "wholesale_price, "                                               + ;
+                                 "price, "                                                         + ;
+                                 "ecotax, "                                                        + ;
+                                 "weight, "                                                        + ;
+                                 "unit_price_impact, "                                             + ;
+                                 if( lDefault, "default_on, ", "" )                                + ;
+                                 "minimal_quantity ) "                                             + ;
+                              "VALUES ("                                                           + ;
+                                 if( ::isProductIdColumnProductAttributeShop, "'" + alltrim( str( nCodigoWeb ) ) + "', ", "" ) + ;  // id_product
                                  "'" + alltrim( str( nCodigoPropiedad ) ) + "', " + ;
                                  "'1', " + ;
                                  "'" + alltrim( str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', " + ;
