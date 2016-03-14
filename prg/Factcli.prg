@@ -4170,15 +4170,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       end with
 
       if nMode == EDIT_MODE
-         //oBrwPgo:bLDblClick   := {|| ExtEdtRecCli( dbfTmpPgo, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), dbfAntCliT, D():FormasPago( nView ), D():Agentes( nView ), dbfCajT, dbfIva, dbfDiv, oCtaRem, oBanco, .t., oCentroCoste ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) }
-         oBrwPgo:bLDblClick   := {|| ExtEdtRecCli( dbfTmpPgo, nView, .t. ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) }
+         oBrwPgo:bLDblClick   := {|| ExtEdtRecCli( dbfTmpPgo, nView, .t., oCtaRem, oCentroCoste ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) }
       end if
 
       REDEFINE BUTTON ;
          ID       501 ;
          OF       oFld:aDialogs[2];
          WHEN     ( nMode == EDIT_MODE ) ;
-         ACTION   ( ExtEdtRecCli( dbfTmpPgo,  D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), dbfAntCliT, D():FormasPago( nView ), D():Agentes( nView ), dbfCajT, dbfIva, dbfDiv, oCtaRem, oBanco, .t., oCentroCoste ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) )
+         ACTION   ( ExtEdtRecCli( dbfTmpPgo, nView, .t., oCtaRem, oCentroCoste ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) )
 
       REDEFINE BUTTON ;
          ID       502 ;

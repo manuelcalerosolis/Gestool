@@ -99,11 +99,7 @@ static oWndBrw
 
 static nView
 
-static dbfCount
-static dbfDoc
-
 static oCtaRem
-static oBandera
 static oCentroCoste
 
 static lPgdOld
@@ -183,13 +179,9 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Clientes( nView )
 
-      USE ( cPatEmp() + "RDOCUMEN.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "RDOCUMEN", @dbfDoc ) )
-      SET ADSINDEX TO ( cPatEmp() + "RDOCUMEN.CDX" ) ADDITIVE
+      D():Documentos( nView )
 
-      USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
-      SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
-
-      oBandera             := TBandera():New
+      D():Contadores( nView )
 
       oCtaRem              := TCtaRem():Create( cPatCli() )
       oCtaRem:OpenFiles()
@@ -215,13 +207,6 @@ RETURN ( lOpenFiles )
 
 STATIC FUNCTION CloseFiles()
 
-   if dbfDoc != nil
-      ( dbfDoc )->( dbCloseArea() )
-   end if
-   if dbfCount != nil
-      ( dbfCount )->( dbCloseArea() )
-   end if
-
    if oCtaRem != nil
       oCtaRem:CloseFiles()
       oCtaRem:End()
@@ -230,12 +215,6 @@ STATIC FUNCTION CloseFiles()
    if !Empty( oCentroCoste )
       oCentroCoste:CloseFiles()
    end if
-
-   D():DeleteView( nView )
-
-   oBandera    := nil
-   dbfCount    := nil
-   dbfDoc      := nil
 
    oWndBrw     := nil
 
@@ -868,12 +847,12 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, bValid, nMode, aNum
 
       REDEFINE GET aGet[ _CDIVPGO ] VAR aTmp[ _CDIVPGO ];
          WHEN     ( .f. ) ;
-         VALID    ( cDivOut( aGet[ _CDIVPGO ], oBmpDiv, aTmp[ _NVDVPGO ], nil, nil, @cPorDiv, nil, nil, nil, nil, D():Divisas( nView ), oBandera ) );
+         VALID    ( cDivOut( aGet[ _CDIVPGO ], oBmpDiv, aTmp[ _NVDVPGO ], nil, nil, @cPorDiv, nil, nil, nil, nil, D():Divisas( nView ) ) );
          PICTURE  "@!";
          ID       170 ;
 			COLOR 	CLR_GET ;
          BITMAP   "LUPA" ;
-         ON HELP  BrwDiv( aGet[ _CDIVPGO ], oBmpDiv, aTmp[ _NVDVPGO ], D():Divisas( nView ), oBandera ) ;
+         ON HELP  BrwDiv( aGet[ _CDIVPGO ], oBmpDiv, aTmp[ _NVDVPGO ], D():Divisas( nView ) ) ;
          OF       oFld:aDialogs[ 1 ]
 
 		REDEFINE BITMAP oBmpDiv ;
@@ -2211,11 +2190,11 @@ return nil
 static function lGenRecCli( oBrw, oBtn, nDevice )
 
    local bAction
-   local nOrdAnt     := ( dbfDoc )->( OrdSetFocus( "cTipo" ) )
+   local nOrdAnt     := ( D():Documentos( nView ) )->( OrdSetFocus( "cTipo" ) )
 
    DEFAULT nDevice   := IS_PRINTER
 
-   IF !( dbfDoc )->( dbSeek( "RF" ) )
+   IF !( D():Documentos( nView ) )->( dbSeek( "RF" ) )
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
          NOBORDER ;
@@ -2228,19 +2207,19 @@ static function lGenRecCli( oBrw, oBtn, nDevice )
 
    ELSE
 
-      WHILE ( dbfDoc )->CTIPO == "RF" .AND. !( dbfDoc )->( eof() )
+      WHILE ( D():Documentos( nView ) )->CTIPO == "RF" .AND. !( D():Documentos( nView ) )->( eof() )
 
-         bAction  := bGenRecCli( nDevice, ( dbfDoc )->CODIGO, "Imprimiendo recibos de clientes" )
+         bAction  := bGenRecCli( nDevice, ( D():Documentos( nView ) )->CODIGO, "Imprimiendo recibos de clientes" )
 
-         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( dbfDoc )->cDescrip ) , , , , , oBtn )
+         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
 
-         ( dbfDoc )->( dbSkip() )
+         ( D():Documentos( nView ) )->( dbSkip() )
 
       END DO
 
    END IF
 
-   ( dbfDoc )->( OrdSetFocus( nOrdAnt ) )
+   ( D():Documentos( nView ) )->( OrdSetFocus( nOrdAnt ) )
 
 return nil
 
@@ -2759,7 +2738,7 @@ FUNCTION GenPgoFacRec( cNumFac, cFacRecT, cFacRecL, cFacCliP, dbfCli, cFPago, cD
             ( cFacCliP )->cCtaGas       := ( cFPago )->cCtaGas
             ( cFacCliP )->cCtaRem       := cCtaRem
             ( cFacCliP )->cCodAge       := cCodAge
-            ( cFacCliP )->lEsperaDoc    := ( D():FormasPago( nView ) )->lEsperaDoc
+            ( cFacCliP )->lEsperaDoc    := ( cFPago )->lEsperaDoc
             ( cFacCliP )->dFecVto       := dNextDayPago( dFecFac, n, nPlazos, cFPago, dbfCli )
 
             if !empty( ( cFacRecT )->cCtrCoste )
@@ -3060,7 +3039,7 @@ Return .t.
 
 //----------------------------------------------------------------------------//
 
-FUNCTION ExtEdtRecCli( cFacCliP, nVista, lRectificativa ) //cFacCliT, cFacCliL, cAntCliT, cPgo, cAge, cCaj, cIva, cDiv, oCta, oBcn, lRectificativa, oCtrCoste )
+FUNCTION ExtEdtRecCli( cFacCliP, nVista, lRectificativa, oCta, oCtrCoste )
 
    local nLevel            := nLevelUsr( _MENUITEM_ )
 
@@ -3071,8 +3050,8 @@ FUNCTION ExtEdtRecCli( cFacCliP, nVista, lRectificativa ) //cFacCliT, cFacCliL, 
       return .t.
    end if
 
-   /*oCentroCoste            := oCtrCoste
-   oCtaRem                 := oCta*/
+   oCentroCoste            := oCtrCoste
+   oCtaRem                 := oCta
 
    nView                   := nVista
 
@@ -3141,7 +3120,7 @@ STATIC FUNCTION PrnSerie()
 
    REDEFINE GET oFmtRec VAR cFmtRec ;
       ID       100 ;
-      VALID    ( cDocumento( oFmtRec, oSayRec, dbfDoc ) ) ;
+      VALID    ( cDocumento( oFmtRec, oSayRec, D():Documentos( nView ) ) ) ;
       BITMAP   "LUPA" ;
       ON HELP  ( BrwDocumento( oFmtRec, oSayRec, "RF" ) );
       OF       oDlg
@@ -3316,7 +3295,7 @@ STATIC FUNCTION StartPrint( cCodDoc, nRad, dFecIni, dFecFin, cDocIni, cDocFin, c
 
    oDlg:Disable()
 
-   if lVisualDocumento( cCodDoc, dbfDoc )
+   if lVisualDocumento( cCodDoc, D():Documentos( nView ) )
 
       if nRad == 1
          nOrd           := ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( "dPreCob" ) )
@@ -3351,7 +3330,7 @@ STATIC FUNCTION StartPrint( cCodDoc, nRad, dFecIni, dFecFin, cDocIni, cDocFin, c
 
             // Imprimir el documento
 
-            PrintReportRecCli( IS_PRINTER, nCopPrn, nil, dbfDoc )
+            PrintReportRecCli( IS_PRINTER, nCopPrn, nil )
 
          end if
 
@@ -3415,9 +3394,9 @@ Static Function Skipping( nRad, dFecIni, dFecFin, cDocIni, cDocFin, cCodDoc, cCo
    local nLenDoc  := 0
    local nOffset  := 0
 
-   if ( dbfDoc )->( dbSeek( cCodDoc ) )
-      nLenPag     := ( dbfDoc )->nLenPag
-      nLenDoc     := ( dbfDoc )->nLenDoc
+   if ( D():Documentos( nView ) )->( dbSeek( cCodDoc ) )
+      nLenPag     := ( D():Documentos( nView ) )->nLenPag
+      nLenDoc     := ( D():Documentos( nView ) )->nLenDoc
       if nLenPag != 0 .and. nLenDoc != 0
          nDocPag  := Int( nLenPag / nLenDoc )
       end if
@@ -3489,13 +3468,13 @@ STATIC FUNCTION ImpPago( cNumRec, nDevice, cCodDoc, cCaption, nCopies )
    DEFAULT nDevice      := IS_PRINTER
    DEFAULT cCaption     := "Imprimiendo recibos"
    DEFAULT nCopies      := 1
-   DEFAULT cCodDoc      := cFormatoDocumento( ( D():FacturasClientesCobros( nView ) )->cSerie, "nRecCli", dbfCount )
+   DEFAULT cCodDoc      := cFormatoDocumento( ( D():FacturasClientesCobros( nView ) )->cSerie, "nRecCli", D():Contadores( nView ) )
 
    if Empty( cCodDoc )
-      cCodDoc           := cFirstDoc( "RF", dbfDoc )
+      cCodDoc           := cFirstDoc( "RF", D():Documentos( nView ) )
    end if
 
-   if !lExisteDocumento( cCodDoc, dbfDoc )
+   if !lExisteDocumento( cCodDoc, D():Documentos( nView ) )
       return nil
    end if
 
@@ -3503,9 +3482,9 @@ STATIC FUNCTION ImpPago( cNumRec, nDevice, cCodDoc, cCaption, nCopies )
    Continuamos con la impresion------------------------------------------------
    */
 
-   if lVisualDocumento( cCodDoc, dbfDoc )
+   if lVisualDocumento( cCodDoc, D():Documentos( nView ) )
 
-      PrintReportRecCli( nDevice, nCopies, cPrinter, dbfDoc )
+      PrintReportRecCli( nDevice, nCopies, cPrinter )
 
    else
 
@@ -3693,7 +3672,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Function DesignReportRecCli( oFr, dbfDoc )
+Function DesignReportRecCli( oFr, cDbfDoc )
 
    local lOpen    := .f.
    local lFlag    := .f.
@@ -3725,9 +3704,9 @@ Function DesignReportRecCli( oFr, dbfDoc )
       Paginas y bandas---------------------------------------------------------
       */
 
-      if !Empty( ( dbfDoc )->mReport )
+      if !Empty( ( cDbfDoc )->mReport )
 
-         oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+         oFr:LoadFromBlob( ( cDbfDoc )->( Select() ), "mReport")
 
       else
 
@@ -3791,7 +3770,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Function PrintReportRecCli( nDevice, nCopies, cPrinter, dbfDoc )
+static Function PrintReportRecCli( nDevice, nCopies, cPrinter )
 
    local oFr
    local cFilePdf       := cPatTmp() + "RecibosCliente" + StrTran( ( D():FacturasClientesCobros( nView ) )->cSerie + Str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac, " ", "" ) + ".Pdf"
@@ -3814,7 +3793,7 @@ Function PrintReportRecCli( nDevice, nCopies, cPrinter, dbfDoc )
    Manejador de eventos--------------------------------------------------------
    */
 
-   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
+   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( D():Documentos( nView ) )->( Select() ), "mReport" ) } )
 
    /*
    Zona de datos------------------------------------------------------------
@@ -3826,9 +3805,9 @@ Function PrintReportRecCli( nDevice, nCopies, cPrinter, dbfDoc )
    Cargar el informe-----------------------------------------------------------
    */
 
-   if !Empty( ( dbfDoc )->mReport )
+   if !Empty( ( D():Documentos( nView ) )->mReport )
 
-      oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+      oFr:LoadFromBlob( ( D():Documentos( nView ) )->( Select() ), "mReport")
 
       /*
       Zona de variables--------------------------------------------------------
@@ -4763,19 +4742,30 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Static Function EndTrans( aTmp, aGet, dbf, oBrw, oDlg, nMode )
+Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode )
 
    local nRec        
    local nImp
    local nCon
    local aTabla
    local nOrdAnt
-   local lImpNeg     := ( D():FacturasClientesCobros( nView ) )->nImporte < 0
-   local nImpFld     := abs( ( D():FacturasClientesCobros( nView ) )->nImporte )
-   local nImpTmp     := abs( aTmp[ _NIMPORTE ] )
-   local cNumFac     := aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ]
-   local cNumRec     := aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] + Str( aTmp[ _NNUMREC ] )
-   local lDevuelto   := aTmp[ _LDEVUELTO ]
+   local lImpNeg
+   local nImpFld
+   local nImpTmp
+   local cNumFac
+   local cNumRec
+   local lDevuelto
+
+   if Empty( cFacCliP )
+      cFacCliP       := D():FacturasClientesCobros( nView )
+   end if
+
+   lImpNeg     := ( cFacCliP )->nImporte < 0
+   nImpFld     := abs( ( cFacCliP )->nImporte )
+   nImpTmp     := abs( aTmp[ _NIMPORTE ] )
+   cNumFac     := aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ]
+   cNumRec     := aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] + Str( aTmp[ _NNUMREC ] )
+   lDevuelto   := aTmp[ _LDEVUELTO ]
 
    /*
    Condiciones antes de grabar-------------------------------------------------
@@ -4804,7 +4794,7 @@ Static Function EndTrans( aTmp, aGet, dbf, oBrw, oDlg, nMode )
 
    if ( nImpFld != nImpTmp ) .and. Empty( aRecibosRelacionados )
    
-      nRec                       := ( D():FacturasClientesCobros( nView ) )->( Recno() )
+      nRec                       := ( cFacCliP )->( Recno() )
 
       /*
       El importe ha cambiado por tanto debemos de hacer un nuevo recibo por la diferencia
@@ -4816,39 +4806,40 @@ Static Function EndTrans( aTmp, aGet, dbf, oBrw, oDlg, nMode )
       Obtnenemos el nuevo numero del contador----------------------------------
       */
 
-      nCon                       := nNewReciboCliente( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], aTmp[ _CTIPREC ], D():FacturasClientesCobros( nView ) )
+      nCon                       := nNewReciboCliente( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], aTmp[ _CTIPREC ], cFacCliP )
 
       /*
       Añadimos el nuevo recibo-------------------------------------------------
       */
 
-      ( D():FacturasClientesCobros( nView ) )->( dbAppend() )
+      ( cFacCliP )->( dbAppend() )
 
-      ( D():FacturasClientesCobros( nView ) )->cTurRec    := cCurSesion()
-      ( D():FacturasClientesCobros( nView ) )->cSerie     := aTmp[ _CSERIE  ]
-      ( D():FacturasClientesCobros( nView ) )->nNumFac    := aTmp[ _NNUMFAC ]
-      ( D():FacturasClientesCobros( nView ) )->cSufFac    := aTmp[ _CSUFFAC ]
-      ( D():FacturasClientesCobros( nView ) )->cCodCaj    := aTmp[ _CCODCAJ ]
-      ( D():FacturasClientesCobros( nView ) )->cCodCli    := aTmp[ _CCODCLI ]
-      ( D():FacturasClientesCobros( nView ) )->cNomCli    := aTmp[ _CNOMCLI ]
-      ( D():FacturasClientesCobros( nView ) )->dEntrada   := Ctod( "" )
-      ( D():FacturasClientesCobros( nView ) )->nImporte   := nImp
-      ( D():FacturasClientesCobros( nView ) )->nImpCob    := nImp
-      ( D():FacturasClientesCobros( nView ) )->cDescrip   := "Recibo nº" + AllTrim( Str( nCon ) ) + " de factura " + if( !Empty( aTmp[ _CTIPREC ] ), "rectificativa ", "" ) + aTmp[ _CSERIE ] + '/' + AllTrim( Str( aTmp[ _NNUMFAC ] ) ) + '/' + aTmp[ _CSUFFAC ]
-      ( D():FacturasClientesCobros( nView ) )->dPreCob    := dFecFacCli( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], D():FacturasClientes( nView ) )
-      ( D():FacturasClientesCobros( nView ) )->cPgdoPor   := ""
-      ( D():FacturasClientesCobros( nView ) )->lCobrado   := .f.
-      ( D():FacturasClientesCobros( nView ) )->nNumRec    := nCon
-      ( D():FacturasClientesCobros( nView ) )->cDivPgo    := aTmp[ _CDIVPGO ]
-      ( D():FacturasClientesCobros( nView ) )->nVdvPgo    := aTmp[ _NVDVPGO ]
-      ( D():FacturasClientesCobros( nView ) )->cCodPgo    := aTmp[ _CCODPGO ]
-      ( D():FacturasClientesCobros( nView ) )->lConPgo    := .f.
-      ( D():FacturasClientesCobros( nView ) )->dFecCre    := GetSysDate()
-      ( D():FacturasClientesCobros( nView ) )->cHorCre    := SubStr( Time(), 1, 5 )
+      ( cFacCliP )->cTurRec    := cCurSesion()
+      ( cFacCliP )->cSerie     := aTmp[ _CSERIE  ]
+      ( cFacCliP )->nNumFac    := aTmp[ _NNUMFAC ]
+      ( cFacCliP )->cSufFac    := aTmp[ _CSUFFAC ]
+      ( cFacCliP )->cTipRec    := aTmp[ _CTIPREC ]
+      ( cFacCliP )->cCodCaj    := aTmp[ _CCODCAJ ]
+      ( cFacCliP )->cCodCli    := aTmp[ _CCODCLI ]
+      ( cFacCliP )->cNomCli    := aTmp[ _CNOMCLI ]
+      ( cFacCliP )->dEntrada   := Ctod( "" )
+      ( cFacCliP )->nImporte   := nImp
+      ( cFacCliP )->nImpCob    := nImp
+      ( cFacCliP )->cDescrip   := "Recibo nº" + AllTrim( Str( nCon ) ) + " de factura " + if( !Empty( aTmp[ _CTIPREC ] ), "rectificativa ", "" ) + aTmp[ _CSERIE ] + '/' + AllTrim( Str( aTmp[ _NNUMFAC ] ) ) + '/' + aTmp[ _CSUFFAC ]
+      ( cFacCliP )->dPreCob    := dFecFacCli( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], D():FacturasClientes( nView ) )
+      ( cFacCliP )->cPgdoPor   := ""
+      ( cFacCliP )->lCobrado   := .f.
+      ( cFacCliP )->nNumRec    := nCon
+      ( cFacCliP )->cDivPgo    := aTmp[ _CDIVPGO ]
+      ( cFacCliP )->nVdvPgo    := aTmp[ _NVDVPGO ]
+      ( cFacCliP )->cCodPgo    := aTmp[ _CCODPGO ]
+      ( cFacCliP )->lConPgo    := .f.
+      ( cFacCliP )->dFecCre    := GetSysDate()
+      ( cFacCliP )->cHorCre    := SubStr( Time(), 1, 5 )
 
-      ( D():FacturasClientesCobros( nView ) )->( dbUnLock() )
+      ( cFacCliP )->( dbUnLock() )
 
-      ( D():FacturasClientesCobros( nView ) )->( dbGoTo( nRec ) )
+      ( cFacCliP )->( dbGoTo( nRec ) )
 
    end if
 
@@ -4864,7 +4855,7 @@ Static Function EndTrans( aTmp, aGet, dbf, oBrw, oDlg, nMode )
    Grabamos el recibo----------------------------------------------------------
    */
 
-   WinGather( aTmp, aGet, D():FacturasClientesCobros( nView ), oBrw, nMode )
+   WinGather( aTmp, aGet, cFacCliP, oBrw, nMode )
 
    /*
    Anotamos los recibos asociados----------------------------------------------
@@ -4872,18 +4863,18 @@ Static Function EndTrans( aTmp, aGet, dbf, oBrw, oDlg, nMode )
 
    if !Empty( aRecibosRelacionados )
 
-      nRec                       := ( D():FacturasClientesCobros( nView ) )->( Recno() )
-      nOrdAnt                    := ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( "nNumFac" ) )
+      nRec                       := ( cFacCliP )->( Recno() )
+      nOrdAnt                    := ( cFacCliP )->( OrdSetFocus( "nNumFac" ) )
 
       for each cNumRec in aRecibosRelacionados
-         if ( D():FacturasClientesCobros( nView ) )->( dbSeek( cNumRec ) ) .and. dbDialogLock( D():FacturasClientesCobros( nView ) )
-            ( D():FacturasClientesCobros( nView ) )->cNumMtr := aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] + aTmp[ _CTIPREC ]
-            ( D():FacturasClientesCobros( nView ) )->( dbUnLock() )
+         if ( cFacCliP )->( dbSeek( cNumRec ) ) .and. dbDialogLock( cFacCliP )
+            ( cFacCliP )->cNumMtr := aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] + aTmp[ _CTIPREC ]
+            ( cFacCliP )->( dbUnLock() )
          end if 
       next 
 
-      ( D():FacturasClientesCobros( nView ) )->( dbGoTo( nRec ) )
-      ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( nOrdAnt ) )
+      ( cFacCliP )->( dbGoTo( nRec ) )
+      ( cFacCliP )->( OrdSetFocus( nOrdAnt ) )
 
    end if 
 
@@ -4893,84 +4884,84 @@ Static Function EndTrans( aTmp, aGet, dbf, oBrw, oDlg, nMode )
 
    if lOldDevuelto != lDevuelto
 
-      nRec                             := ( D():FacturasClientesCobros( nView ) )->( Recno() )
+      nRec                             := ( cFacCliP )->( Recno() )
 
       if lDevuelto
 
-         nOrdAnt                       := ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( "nNumFac" ) )
+         nOrdAnt                       := ( cFacCliP )->( OrdSetFocus( "nNumFac" ) )
 
-         if ( D():FacturasClientesCobros( nView ) )->( dbSeek( cNumRec ) )
-            aTabla                     := dbScatter( D():FacturasClientesCobros( nView ) )
+         if ( cFacCliP )->( dbSeek( cNumRec ) )
+            aTabla                     := dbScatter( cFacCliP )
          end if
 
-         nCon                          := nNewReciboCliente( aTabla[ _CSERIE ] + Str( aTabla[ _NNUMFAC ] ) + aTabla[ _CSUFFAC ], aTabla[ _CTIPREC ], D():FacturasClientesCobros( nView ) )
+         nCon                          := nNewReciboCliente( aTabla[ _CSERIE ] + Str( aTabla[ _NNUMFAC ] ) + aTabla[ _CSUFFAC ], aTabla[ _CTIPREC ], cFacCliP )
 
          if aTabla != nil
 
-            ( D():FacturasClientesCobros( nView ) )->( dbAppend() )
-            ( D():FacturasClientesCobros( nView ) )->cSerie     := aTabla[ _CSERIE  ]
-            ( D():FacturasClientesCobros( nView ) )->nNumFac    := aTabla[ _NNUMFAC ]
-            ( D():FacturasClientesCobros( nView ) )->cSufFac    := aTabla[ _CSUFFAC ]
-            ( D():FacturasClientesCobros( nView ) )->nNumRec    := nCon
-            ( D():FacturasClientesCobros( nView ) )->cTipRec    := aTabla[ _CTIPREC ]
-            ( D():FacturasClientesCobros( nView ) )->cCodPgo    := aTabla[ _CCODPGO ]
-            ( D():FacturasClientesCobros( nView ) )->cCodCaj    := aTabla[ _CCODCAJ ]
-            ( D():FacturasClientesCobros( nView ) )->cTurRec    := cCurSesion()
-            ( D():FacturasClientesCobros( nView ) )->cCodCli    := aTabla[ _CCODCLI ]
-            ( D():FacturasClientesCobros( nView ) )->cNomCli    := aTabla[ _CNOMCLI ]
-            ( D():FacturasClientesCobros( nView ) )->dEntrada   := Ctod( "" )
-            ( D():FacturasClientesCobros( nView ) )->nImporte   := aTabla[ _NIMPORTE ]
-            ( D():FacturasClientesCobros( nView ) )->cDesCriP   := "Recibo Nº" + AllTrim( Str( nCon ) ) + " generado de la devolución del recibo " + aTabla[ _CSERIE ] + "/" + AllTrim( Str( aTabla[ _NNUMFAC ] ) ) + "/" + aTabla[ _CSUFFAC ] + " - " + AllTrim( Str( aTabla[ _NNUMREC ] ) )
-            ( D():FacturasClientesCobros( nView ) )->dPreCob    := GetSysDate()
-            ( D():FacturasClientesCobros( nView ) )->lCobrado   := .f.
-            ( D():FacturasClientesCobros( nView ) )->cDivPgo    := aTabla[ _CDIVPGO ]
-            ( D():FacturasClientesCobros( nView ) )->nVdvPgo    := aTabla[ _NVDVPGO ]
-            ( D():FacturasClientesCobros( nView ) )->lConPgo    := .f.
-            ( D():FacturasClientesCobros( nView ) )->dFecVto    := GetSysDate()
-            ( D():FacturasClientesCobros( nView ) )->cCodAge    := aTabla[ _CCODAGE ]
-            ( D():FacturasClientesCobros( nView ) )->nImpGas    := aTabla[ _NIMPGAS ]
-            ( D():FacturasClientesCobros( nView ) )->dFecCre    := GetSysDate()
-            ( D():FacturasClientesCobros( nView ) )->cHorCre    := Time()
-            ( D():FacturasClientesCobros( nView ) )->cCodUsr    := oUser():cCodigo()
-            ( D():FacturasClientesCobros( nView ) )->cRecDev    := cNumRec
-            ( D():FacturasClientesCobros( nView ) )->cBncEmp    := aTabla[ _CBNCEMP    ]
-            ( D():FacturasClientesCobros( nView ) )->cBncCli    := aTabla[ _CBNCCLI    ]
-            ( D():FacturasClientesCobros( nView ) )->cEPaisIBAN := aTabla[ _CEPAISIBAN ]
-            ( D():FacturasClientesCobros( nView ) )->cECtrlIBAN := aTabla[ _CECTRLIBAN ]
-            ( D():FacturasClientesCobros( nView ) )->cEntEmp    := aTabla[ _CENTEMP    ]
-            ( D():FacturasClientesCobros( nView ) )->cSucEmp    := aTabla[ _CSUCEMP    ]
-            ( D():FacturasClientesCobros( nView ) )->cDigEmp    := aTabla[ _CDIGEMP    ]
-            ( D():FacturasClientesCobros( nView ) )->cCtaEmp    := aTabla[ _CCTAEMP    ]
-            ( D():FacturasClientesCobros( nView ) )->cPaisIBAN  := aTabla[ _CPAISIBAN  ]
-            ( D():FacturasClientesCobros( nView ) )->cCtrlIBAN  := aTabla[ _CCTRLIBAN  ]
-            ( D():FacturasClientesCobros( nView ) )->cEntCli    := aTabla[ _CENTCLI    ]
-            ( D():FacturasClientesCobros( nView ) )->cSucCli    := aTabla[ _CSUCCLI    ]
-            ( D():FacturasClientesCobros( nView ) )->cDigCli    := aTabla[ _CDIGCLI    ]
-            ( D():FacturasClientesCobros( nView ) )->cCtaCli    := aTabla[ _CCTACLI    ]
-            ( D():FacturasClientesCobros( nView ) )->cCtaGas    := aTabla[ _CCTAGAS    ]
-            ( D():FacturasClientesCobros( nView ) )->cCtaRec    := aTabla[ _CCTAREC    ]
-            ( D():FacturasClientesCobros( nView ) )->cCtaRem    := aTabla[ _CCTAREM    ]
+            ( cFacCliP )->( dbAppend() )
+            ( cFacCliP )->cSerie     := aTabla[ _CSERIE  ]
+            ( cFacCliP )->nNumFac    := aTabla[ _NNUMFAC ]
+            ( cFacCliP )->cSufFac    := aTabla[ _CSUFFAC ]
+            ( cFacCliP )->nNumRec    := nCon
+            ( cFacCliP )->cTipRec    := aTabla[ _CTIPREC ]
+            ( cFacCliP )->cCodPgo    := aTabla[ _CCODPGO ]
+            ( cFacCliP )->cCodCaj    := aTabla[ _CCODCAJ ]
+            ( cFacCliP )->cTurRec    := cCurSesion()
+            ( cFacCliP )->cCodCli    := aTabla[ _CCODCLI ]
+            ( cFacCliP )->cNomCli    := aTabla[ _CNOMCLI ]
+            ( cFacCliP )->dEntrada   := Ctod( "" )
+            ( cFacCliP )->nImporte   := aTabla[ _NIMPORTE ]
+            ( cFacCliP )->cDesCriP   := "Recibo Nº" + AllTrim( Str( nCon ) ) + " generado de la devolución del recibo " + aTabla[ _CSERIE ] + "/" + AllTrim( Str( aTabla[ _NNUMFAC ] ) ) + "/" + aTabla[ _CSUFFAC ] + " - " + AllTrim( Str( aTabla[ _NNUMREC ] ) )
+            ( cFacCliP )->dPreCob    := GetSysDate()
+            ( cFacCliP )->lCobrado   := .f.
+            ( cFacCliP )->cDivPgo    := aTabla[ _CDIVPGO ]
+            ( cFacCliP )->nVdvPgo    := aTabla[ _NVDVPGO ]
+            ( cFacCliP )->lConPgo    := .f.
+            ( cFacCliP )->dFecVto    := GetSysDate()
+            ( cFacCliP )->cCodAge    := aTabla[ _CCODAGE ]
+            ( cFacCliP )->nImpGas    := aTabla[ _NIMPGAS ]
+            ( cFacCliP )->dFecCre    := GetSysDate()
+            ( cFacCliP )->cHorCre    := Time()
+            ( cFacCliP )->cCodUsr    := oUser():cCodigo()
+            ( cFacCliP )->cRecDev    := cNumRec
+            ( cFacCliP )->cBncEmp    := aTabla[ _CBNCEMP    ]
+            ( cFacCliP )->cBncCli    := aTabla[ _CBNCCLI    ]
+            ( cFacCliP )->cEPaisIBAN := aTabla[ _CEPAISIBAN ]
+            ( cFacCliP )->cECtrlIBAN := aTabla[ _CECTRLIBAN ]
+            ( cFacCliP )->cEntEmp    := aTabla[ _CENTEMP    ]
+            ( cFacCliP )->cSucEmp    := aTabla[ _CSUCEMP    ]
+            ( cFacCliP )->cDigEmp    := aTabla[ _CDIGEMP    ]
+            ( cFacCliP )->cCtaEmp    := aTabla[ _CCTAEMP    ]
+            ( cFacCliP )->cPaisIBAN  := aTabla[ _CPAISIBAN  ]
+            ( cFacCliP )->cCtrlIBAN  := aTabla[ _CCTRLIBAN  ]
+            ( cFacCliP )->cEntCli    := aTabla[ _CENTCLI    ]
+            ( cFacCliP )->cSucCli    := aTabla[ _CSUCCLI    ]
+            ( cFacCliP )->cDigCli    := aTabla[ _CDIGCLI    ]
+            ( cFacCliP )->cCtaCli    := aTabla[ _CCTACLI    ]
+            ( cFacCliP )->cCtaGas    := aTabla[ _CCTAGAS    ]
+            ( cFacCliP )->cCtaRec    := aTabla[ _CCTAREC    ]
+            ( cFacCliP )->cCtaRem    := aTabla[ _CCTAREM    ]
 
-            ( D():FacturasClientesCobros( nView ) )->( dbUnLock() )
+            ( cFacCliP )->( dbUnLock() )
 
          end if
 
-         ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( nOrdAnt ) )
+         ( cFacCliP )->( OrdSetFocus( nOrdAnt ) )
 
       else
 
-         nOrdAnt                       := ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( "cRecDev" ) )
+         nOrdAnt                       := ( cFacCliP )->( OrdSetFocus( "cRecDev" ) )
 
-         if ( D():FacturasClientesCobros( nView ) )->( dbSeek( cNumRec ) ) .and. dbDialogLock( D():FacturasClientesCobros( nView ) )
-            ( D():FacturasClientesCobros( nView ) )->( dbDelete() )
-            ( D():FacturasClientesCobros( nView ) )->( dbUnLock() )
+         if ( cFacCliP )->( dbSeek( cNumRec ) ) .and. dbDialogLock( cFacCliP )
+            ( cFacCliP )->( dbDelete() )
+            ( cFacCliP )->( dbUnLock() )
          end if
 
-         ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( nOrdAnt ) )
+         ( cFacCliP )->( OrdSetFocus( nOrdAnt ) )
 
       end if
 
-      ( D():FacturasClientesCobros( nView ) )->( dbGoTo( nRec ) )
+      ( cFacCliP )->( dbGoTo( nRec ) )
 
    end if
 
@@ -4978,8 +4969,14 @@ Static Function EndTrans( aTmp, aGet, dbf, oBrw, oDlg, nMode )
    Comprobamos el estado de la factura-----------------------------------------
    */
 
-   if ( D():FacturasClientes( nView ) )->( dbSeek( cNumFac ) )
-      ChkLqdFacCli( nil, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), D():AnticiposClientes( nView ), D():TiposIva( nView ), D():Divisas( nView ), .f. )
+   if ( cFacCliP )->( dbSeek( cNumFac ) )
+      
+      if Empty( ( cFacCliP )->cTipRec )
+         ChkLqdFacCli( nil, cFacCliP, D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), D():AnticiposClientes( nView ), D():TiposIva( nView ), D():Divisas( nView ), .f. )
+      else
+         ChkLqdFacRec( nil, D():FacturasRectificativas( nView ), D():FacturasRectificativasLineas( nView ), cFacCliP, D():TiposIva( nView ), D():Divisas( nView ) )
+      end if
+
    end if
 
    /*

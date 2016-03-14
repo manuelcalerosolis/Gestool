@@ -859,14 +859,14 @@ FUNCTION BrwDiv( oGet, oBmp, oGetDiv, dbfDiv, oBan, lBigStyle )
 		REDEFINE BUTTON ;
 			ID 		500 ;
 			OF 		oDlg ;
-         WHEN     ( nAnd( nLevel, ACC_APPD ) != 0 ) ;
-         ACTION   WinAppRec( oBrw, bEdit, dbfDiv, nil, nil, oBan )
+         WHEN     ( .f. ) ;
+         ACTION   ( nil )
 
 		REDEFINE BUTTON ;
 			ID 		501 ;
 			OF 		oDlg ;
-         WHEN     ( nAnd( nLevel, ACC_EDIT ) != 0 ) ;
-         ACTION   WinEdtRec( oBrw, bEdit, dbfDiv, nil, nil, oBan )
+         WHEN     ( .f. ) ;
+         ACTION   ( nil )
 
 		REDEFINE BUTTON ;
          ID       IDOK ;
