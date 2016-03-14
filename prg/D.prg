@@ -539,6 +539,7 @@ CLASS D
    METHOD Contadores( nView )                INLINE ( ::Get( "NCount", nView ) )
 
    METHOD Empresa( nView )                   INLINE ( ::Get( "Empresa", nView ) )
+   METHOD EmpresaBancos( nView )             INLINE ( ::Get( "EmpBnc", nView ) )
 
    METHOD Atipicas( nView )                  INLINE ( ::Get( "CliAtp", nView ) )
       METHOD gotoIdAtipicasAgentes( idAgente, idArticulo, nView ) ;
@@ -566,6 +567,8 @@ CLASS D
    METHOD DetCamposExtras( nView )           INLINE ( ::Get( "DETCEXTRA", nView ) )
 
    METHOD Pais( nView )                      INLINE ( ::Get( "Pais", nView ) )
+
+   METHOD Turnos( nView )                    INLINE ( ::Get( "Turno", nView ) )
 
    METHOD Lock( cDatabase, nView )           INLINE ( dbLock( ::Get( cDatabase, nView ) ) )
    METHOD UnLock( cDatabase, nView )         INLINE ( ( ::Get( cDatabase, nView ) )->( dbUnLock() ) ) 

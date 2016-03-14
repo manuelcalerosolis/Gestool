@@ -3427,7 +3427,7 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
 
       oMsgText( 'Comprobando facturas rectificativas a clientes' )
       IsFacRec()
-
+      
       oMsgText( 'Comprobando anticipos a clientes' )
       IsAntCli()
 
@@ -3454,7 +3454,7 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
    // Chequeo del turno--------------------------------------------------------
 
    oMsgText( 'Cargando configuración de prestashop' )
-   
+
    TPrestashopConfig():New( cCodEmp ):LoadJSON():getWebs()
 
    /*

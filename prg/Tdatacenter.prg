@@ -2100,19 +2100,23 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDatatable:cArea        := "EmpBnc"
    oDataTable:cName        := cPatEmp() + "EmpBnc"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "EmpBnc.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "EmpBnc.Cdx"
    oDataTable:cDescription := "Cuentas bancos"
    oDataTable:bCreateFile  := {| cPath | TCuentasBancarias():BuildFiles( cPath ) }
+   oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDatatable:cArea        := "Turno"
    oDataTable:cName        := cPatEmp() + "Turno"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Turno.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Turno.Cdx"
    oDataTable:cDescription := "Sesiones"
    oDataTable:bCreateFile  := {| cPath | TTurno():BuildFiles( cPath ) }
+   oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()

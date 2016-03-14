@@ -224,9 +224,9 @@ METHOD Search( oDlg )
    Sinconizacion de tablas de RecCli-------------------------------------------
    */
 
-   pdaRecCliSenderReciver():CreateDataPdaToPc( , ::oMessage, cPatServidor )
+   /*pdaRecCliSenderReciver():CreateDataPdaToPc( , ::oMessage, cPatServidor )
 
-   pdaRecCliSenderReciver():CreateDataPcToPda( , ::oMessage, cPatServidor )
+   pdaRecCliSenderReciver():CreateDataPcToPda( , ::oMessage, cPatServidor )*/
 
    /*
    Sinconizacion de tablas de transportistas-----------------------------------
