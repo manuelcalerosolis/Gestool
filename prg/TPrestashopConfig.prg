@@ -63,6 +63,8 @@ CLASS TPrestashopConfig
    METHOD getHideExportButton()        INLINE ( if( hhaskey( ::hConfig, "HideExportButton" ), hget( ::hConfig, "HideExportButton" ), .f. ) )
    METHOD getHideHideExportButton()    INLINE ( if( hhaskey( ::hConfig, "HideExportButton" ), hget( ::hConfig, "HideExportButton" ), .f. ) )
 
+   METHOD getFullFileName()            INLINE ( cPatConfig() + ::idEmpresa + "\prestashop.json" )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -91,7 +93,7 @@ METHOD LoadJSON() CLASS TPrestashopConfig
 
    local cConfig
    local hConfig
-   local cFileConfigEmpresa   := cPatConfig() + ::idEmpresa + "\prestashop.json"
+   local cFileConfigEmpresa   := ::getFullFileName()
 
    if file( cFileConfigEmpresa )
       
@@ -101,6 +103,10 @@ METHOD LoadJSON() CLASS TPrestashopConfig
       if !empty( hConfig )
          ::hConfig            := hConfig
       end if 
+
+   else 
+
+      msgStop( "Fichero " + alltrim( cFileConfigEmpresa ) + " no encontrado.", "Stop" )   
 
    end if 
 

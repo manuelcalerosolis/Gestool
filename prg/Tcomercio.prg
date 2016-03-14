@@ -860,7 +860,7 @@ METHOD dialogActivate( oWnd ) CLASS TComercio
 
       // Servidor--------------------------------------------------------------
 
-      REDEFINE SAY PROMPT ::cHost;
+      REDEFINE SAY PROMPT ::TPrestashopConfig:getFullFileName() ;
          ID       140 ;
          OF       ::oDlg
 
@@ -7667,14 +7667,14 @@ METHOD buildExportarPrestashop( idProduct ) Class TComercio
    local oBlock
    local oError
 
-   ::disableDialog()
-
    hWebs             := ::TPrestashopConfig:getWebs()
 
    if empty(hWebs)
       msgStop( "No hay web definidas en el fichero de configuración.")
       Return .f.
    end if 
+
+   ::disableDialog()
 
    // oBlock            := ErrorBlock( { | oError | Break( oError ) } )
    // BEGIN SEQUENCE

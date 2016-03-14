@@ -1,4 +1,4 @@
-ï»¿#include "hbclass.ch"
+#include "hbclass.ch"
 
 #define CRLF                        chr( 13 ) + chr( 10 )
 
@@ -27,10 +27,19 @@ CLASS ImportadorFacturas
 
    DATA oOleExcel
 
-   DATA aFichero              INIT {}
+   DATA aFichero                          INIT {}
+
+   DATA aErrors                           INIT {}
    
    DATA nRow
-   DATA nLineaComienzo        INIT 2
+   DATA nLineaComienzo                    INIT 4
+
+   DATA validRow                          INIT .t.
+
+   DATA companyCode                       INIT ""
+
+   DATA aInvoices                         INIT {}
+   DATA aSales                            INIT {}
 
    DATA fechaApunte
    DATA cuentaCliente
@@ -49,20 +58,33 @@ CLASS ImportadorFacturas
    DATA porcentajeRetencion
    DATA importeFactura   
 
-   METHOD New()               CONSTRUCTOR
+   METHOD New()                           CONSTRUCTOR
 
    METHOD addFichero()  
 
    METHOD processFile()
 
+      METHOD getCompanyCode()             INLINE ( ::companyCode  := ::getCharacter( "A", 2 ) )
       METHOD getRow()
-      METHOD validRow()
+      METHOD isValidRow()
       METHOD processRow()
-      METHOD emptyRow()       INLINE ( empty( ::fechaApunte ) )
+      METHOD emptyRow()                   INLINE ( empty( ::fechaApunte ) )
+      
+      METHOD buildAccountingEntry()
+         METHOD buildSales()
+         METHOD buildInvoice()         
+
+   METHOD buildAccountingExportFile()     VIRTUAL
 
    METHOD getRange()
-   METHOD getNumeric()
-   METHOD getCharacter( cColumn )
+      METHOD getDate()
+      METHOD getNumeric()
+      METHOD getCharacter( cColumn )
+
+   METHOD addErrors( errorDescription )   INLINE ( ::validRow := .f., aadd( ::aErrors, errorDescription + ", en línea " + alltrim( str( ::nRow ) ) ) )
+   METHOD cleanErrors()                   INLINE ( ::aErrors := {} )
+   METHOD emptyErrors()                   INLINE ( empty( ::aErrors ) )
+   METHOD showErrors() 
 
 ENDCLASS
 
@@ -150,9 +172,11 @@ METHOD ProcessFile( cFichero ) CLASS ImportadorFacturas
 
       ::oOleExcel:oExcel:WorkSheets( 1 ):Activate()   //Hojas de la hoja de calculo
 
-      /*
-      Recorremos la hoja de calculo--------------------------------------------
-      */
+      ::cleanErrors()
+
+      ::getCompanyCode()
+
+      // Recorremos la hoja de calculo--------------------------------------------
 
       sysrefresh()
 
@@ -162,18 +186,31 @@ METHOD ProcessFile( cFichero ) CLASS ImportadorFacturas
 
          ::getRow()
 
-         if ::validRow()
-            ::processRow()
-         end if 
-
          if ::emptyRow()
-            msgAlert( "SALIDA" )
             exit 
          end if
+
+         if ::isValidRow()
+            ::buildAccountingEntry()
+         end if 
 
          sysrefresh()
 
       next
+
+      // Montamos el fichero de exportacion contable ----------------------------
+
+      if ::emptyErrors()
+
+         ::buildAccountingExportFile()
+
+         sysrefresh()
+
+      else
+
+         ::showErrors()
+
+      end if 
 
       // Cerramos la conexion con el objeto oOleExcel-----------------------------
 
@@ -212,19 +249,38 @@ METHOD getRow() CLASS ImportadorFacturas
    ::fechaFactura                   := ::getDate( "I" )
    ::cuentaVenta                    := ::getCharacter( "J" )
    ::descripcionCuentaVenta         := ::getCharacter( "K" )
-   ::baseImponible                  := ::getCharacter( "L" )
-   ::porcentajeIVA                  := ::getCharacter( "M" )
-   ::porcentajeRecargoEquivalencia  := ::getCharacter( "N" )
-   ::porcentajeRetencion            := ::getCharacter( "O" )
-   ::importeFactura                 := ::getCharacter( "P" )
+   ::baseImponible                  := ::getNumeric( "L" )
+   ::porcentajeIVA                  := ::getNumeric( "M" )
+   ::porcentajeRecargoEquivalencia  := ::getNumeric( "N" )
+   ::porcentajeRetencion            := ::getNumeric( "O" )
+   ::importeFactura                 := ::getNumeric( "P" )
 
 Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD validRow() CLASS ImportadorFacturas
+METHOD isValidRow() CLASS ImportadorFacturas
 
-Return ( .t. )
+   ::validRow     := .t.
+
+   if( empty( ::fechaApunte                   ), ::addErrors( "Fecha de apunte vacia" ), )
+   if( empty( ::cuentaCliente                 ), ::addErrors( "Cuenta de cliente vacia" ), )
+   if( empty( ::descripcionCuentaCliente      ), ::addErrors( "Descripción de cuenta cliente vacia" ), )
+   if( empty( ::numeroFactura                 ), ::addErrors( "Número de factura vacia" ), )
+   if( empty( ::descripcionApunte             ), ::addErrors( "Descripción de apunte vacio" ), )
+   if( empty( ::nifCliente                    ), ::addErrors( "NIF de cliente vacio" ), )
+   if( empty( ::nombreCliente                 ), ::addErrors( "Nombre de cliente vacio" ), )
+   if( empty( ::codigoPostalCliente           ), ::addErrors( "Código postal de cliente vacio" ), )
+   if( empty( ::fechaFactura                  ), ::addErrors( "Fecha de factura vacia" ), )
+   if( empty( ::cuentaVenta                   ), ::addErrors( "Cuenta de venta vacia" ), )
+   // if( empty( ::descripcionCuentaVenta        ), ::addErrors( "Descripción de cuenta de venta vacia" ), )
+   if( empty( ::baseImponible                 ), ::addErrors( "Base imponible vacia" ), )
+   if( empty( ::porcentajeIVA                 ), ::addErrors( "Porcentaje de IVA vacio" ), )
+   // if( empty( ::porcentajeRecargoEquivalencia ), ::addErrors( "Porcentaje de recargo de equivalencia vacio" ), )
+   // if( empty( ::porcentajeRetencion           ), ::addErrors( "Porcentaje de rectención vacia" ), )
+   if( empty( ::importeFactura                ), ::addErrors( "Importe de factura vacio" ), )
+
+Return ( ::validRow )
 
 //---------------------------------------------------------------------------//
 
@@ -236,16 +292,20 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getRange( cColumn ) CLASS ImportadorFacturas
+METHOD getRange( cColumn, nRow ) CLASS ImportadorFacturas
 
    local oError
    local oBlock
    local uValue
 
+   if nRow == nil
+      nRow        := ::nRow
+   end if 
+
    oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      uValue      := ::oOleExcel:oExcel:ActiveSheet:Range( cColumn + lTrim( Str( ::nRow ) ) ):Value
+      uValue      := ::oOleExcel:oExcel:ActiveSheet:Range( cColumn + ltrim( str( nRow ) ) ):Value
 
    RECOVER USING oError
 
@@ -259,9 +319,9 @@ Return ( uValue )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDate( cColumn ) CLASS ImportadorFacturas
+METHOD getDate( cColumn, nRow ) CLASS ImportadorFacturas
 
-   local dValue   := ::getRange( cColumn )
+   local dValue   := ::getRange( cColumn, nRow )
 
    if valtype( dValue ) == "C"
       dValue      := ctod( dValue )
@@ -271,9 +331,9 @@ Return ( dValue )
 
 //---------------------------------------------------------------------------//
 
-METHOD getNumeric( cColumn ) CLASS ImportadorFacturas
+METHOD getNumeric( cColumn, nRow ) CLASS ImportadorFacturas
 
-   local nValue   := ::getRange( cColumn )
+   local nValue   := ::getRange( cColumn, nRow )
 
    if Valtype( nValue ) == "C"
       nValue      := Val( StrTran( nValue, ",", "." ) )
@@ -283,9 +343,9 @@ Return ( nValue )
 
 //------------------------------------------------------------------------
 
-METHOD getCharacter( cColumn ) CLASS ImportadorFacturas
+METHOD getCharacter( cColumn, nRow ) CLASS ImportadorFacturas
 
-   local cValue   := ::getRange( cColumn )
+   local cValue   := ::getRange( cColumn, nRow )
 
    if Valtype( cValue ) != "C"
       cValue      := cValToChar( cValue )
@@ -295,5 +355,81 @@ Return ( cValue )
 
 //------------------------------------------------------------------------
 
+METHOD showErrors()
 
+   local cError
+   local errorMessage   := ""
 
+   for each cError in ::aErrors
+      errorMessage      += cError
+      errorMessage      += CRLF
+   next
+
+   msgStop( errorMessage, "Error al procesar" )
+
+Return ( self )   
+
+//------------------------------------------------------------------------
+
+METHOD buildAccountingEntry()
+
+   ::buildInvoice()
+   ::buildSales()   
+
+   msgAlert( hb_valtoexp( ::aInvoices ) )
+   msgAlert( hb_valtoexp( ::aSales ) )
+
+Return ( self )   
+
+//------------------------------------------------------------------------
+
+METHOD buildInvoice()
+
+   aadd( ::aInvoices,{  "Id"                    => ::nRow,;
+                        "Empresa"               => ::companyCode,;
+                        "Fecha"                 => ::fechaApunte ,;
+                        "TipoRegistro"          => '1',; // Facturas
+                        "Cuenta"                => ::cuentaCliente,;
+                        "DescripcionCuenta"     => ::descripcionCuentaCliente,;
+                        "TipoFactura"           => '1',; // Ventas
+                        "NumeroFactura"         => ::numeroFactura,;
+                        "DescripcionApunte"     => ::descripcionApunte,;
+                        "Importe"               => ::importeFactura,;
+                        "Nif"                   => ::nifCliente,;
+                        "NombreCliente"         => ::nombreCliente,;
+                        "CodigoPostal"          => ::codigoPostalCliente,;
+                        "FechaOperacion"        => ::fechaFactura,;
+                        "FechaFactura"          => ::fechaFactura,;
+                        "Moneda"                => 'E',; // Euros
+                        "Render"                => 'CabeceraFactura' } )
+
+Return ( self )   
+
+//------------------------------------------------------------------------
+
+METHOD buildSales()
+
+   aadd( ::aSales,   {  "Id"                    => ::nRow,;
+                        "Empresa"               => ::companyCode,;
+                        "Fecha"                 => ::fechaApunte ,;
+                        "TipoRegistro"          => '9',; // Facturas
+                        "Cuenta"                => ::cuentaVenta,;
+                        "DescripcionCuenta"     => ::descripcionCuentaCliente,;
+                        "TipoImporte"           => 'C',;
+                        "NumeroFactura"         => ::numeroFactura,;
+                        "DescripcionApunte"     => ::descripcionApunte,;
+                        "SubtipoFactura"        => '01',; // Ventas
+                        "BaseImponible"         => ::baseImponible,;
+                        "PorcentajeIVA"         => ::porcentajeIVA,;
+                        "PorcentajeRecargo"     => ::porcentajeRecargoEquivalencia,;
+                        "PorcentajeRetencion"   => ::porcentajeRetencion,;
+                        "Impreso"               => '01',; // 347
+                        "SujetaIVA"             => if( ::porcentajeIVA != 0, 'S', 'N' ),;
+                        "Modelo415"             => ' ',;
+                        "Analitico"             => ' ',;
+                        "Moneda"                => 'E',; // Euros
+                        "Render"                => 'VentaFactura' } )
+
+Return ( self )   
+
+//------------------------------------------------------------------------
