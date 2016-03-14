@@ -3809,11 +3809,11 @@ METHOD InsertImageProductImage( cCodigoWeb, lDefault )
    cCommand             := "INSERT INTO " + ::cPrefixTable( "image" ) + ;
                               " ( id_product, " + ;
                               "position, " + ;
-                              "cover )" + ;
-                           " VALUES " + ;
+                              "cover ) " + ;
+                           "VALUES " + ;
                               "('" + alltrim( str( cCodigoWeb ) ) + "', " + ;
                               "'" + str( ::nImagePosition ) + "', " + ;
-                              if( lDefault, "'1'", "null" ) + " )"
+                              if( lDefault, "'1'", "'0'" ) + " )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
@@ -3837,8 +3837,8 @@ METHOD InsertImageProductImageLang( nCodigoImagen )
    cCommand := "INSERT INTO " + ::cPrefixTable( "image_lang" ) + ;
                   " ( id_image, " + ;
                   "id_lang, " + ;
-                  "legend )" + ;
-               " VALUES " + ;
+                  "legend ) " + ;
+               "VALUES " + ;
                   "('" + alltrim( str( nCodigoImagen ) ) + "', " + ;
                   "'" + alltrim( str( ::nLanguage ) ) + "', " + ;
                   "'" + ::oCon:Escapestr( ::oArtImg:cNbrArt ) + "' )"
@@ -3872,7 +3872,7 @@ METHOD InsertImageProductImageShop( nCodigoImagen, lCover )
    end if
    cCommand       += "'" + alltrim( str( nCodigoImagen ) ) + "', "   // id_image
    cCommand       += "'1', "                                         // id_shop
-   cCommand       += if( lCover, "'1'", "null" ) + ")"               // cover
+   cCommand       += if( lCover, "'1'", "0" ) + ")"                  // cover
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
       ::treeSetText( "Insertado la imagen del artículo " + alltrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
@@ -5628,7 +5628,7 @@ METHOD buildImagesArticuloPrestashop( id ) CLASS TComercio
             for each cImgToken in aImgToken
 
                if !empty( cImgToken ) .and. ascan( aImages, {|a| hGet( a, "name" ) == cImgToken } ) == 0
-                  aadd( aImages, {  "name" => cImgToken, "lDefault"  => oRetFld( cImgToken, ::oArtImg, "lDefImg", "cImgArt" ) } )
+                  aadd( aImages, { "name" => cImgToken, "lDefault"  => oRetFld( cImgToken, ::oArtImg, "lDefImg", "cImgArt" ) } )
                end if
 
             next

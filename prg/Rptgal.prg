@@ -2546,6 +2546,12 @@ Return nil
 Function id_name()
 Return nil
 
+Function TPRESTASHOPCONFIG()
+Return nil
+
+Function TPRESTASHOPID()
+Return nil
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP

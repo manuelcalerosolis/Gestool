@@ -33,6 +33,21 @@ CLASS ImportadorFacturas
    DATA nLineaComienzo        INIT 2
 
    DATA fechaApunte
+   DATA cuentaCliente
+   DATA descripcionCuentaCliente
+   DATA numeroFactura
+   DATA descripcionApunte
+   DATA nifCliente
+   DATA nombreCliente
+   DATA codigoPostalCliente
+   DATA fechaFactura
+   DATA cuentaVenta
+   DATA descripcionCuentaVenta
+   DATA baseImponible
+   DATA porcentajeIVA
+   DATA porcentajeRecargoEquivalencia
+   DATA porcentajeRetencion
+   DATA importeFactura   
 
    METHOD New()               CONSTRUCTOR
 
@@ -47,6 +62,7 @@ CLASS ImportadorFacturas
 
    METHOD getRange()
    METHOD getNumeric()
+   METHOD getCharacter( cColumn )
 
 ENDCLASS
 
@@ -185,7 +201,22 @@ Return ( Self )
 
 METHOD getRow() CLASS ImportadorFacturas
 
-   ::fechaApunte  := ::GetRange( "A" )
+   ::fechaApunte                    := ::getDate( "A" )
+   ::cuentaCliente                  := ::getCharacter( "B" )
+   ::descripcionCuentaCliente       := ::getCharacter( "C" )
+   ::numeroFactura                  := ::getCharacter( "D" )
+   ::descripcionApunte              := ::getCharacter( "E" )
+   ::nifCliente                     := ::getCharacter( "F" )
+   ::nombreCliente                  := ::getCharacter( "G" )
+   ::codigoPostalCliente            := ::getCharacter( "H" )
+   ::fechaFactura                   := ::getDate( "I" )
+   ::cuentaVenta                    := ::getCharacter( "J" )
+   ::descripcionCuentaVenta         := ::getCharacter( "K" )
+   ::baseImponible                  := ::getCharacter( "L" )
+   ::porcentajeIVA                  := ::getCharacter( "M" )
+   ::porcentajeRecargoEquivalencia  := ::getCharacter( "N" )
+   ::porcentajeRetencion            := ::getCharacter( "O" )
+   ::importeFactura                 := ::getCharacter( "P" )
 
 Return ( nil )
 
@@ -251,5 +282,18 @@ METHOD getNumeric( cColumn ) CLASS ImportadorFacturas
 Return ( nValue ) 
 
 //------------------------------------------------------------------------
+
+METHOD getCharacter( cColumn ) CLASS ImportadorFacturas
+
+   local cValue   := ::getRange( cColumn )
+
+   if Valtype( cValue ) != "C"
+      cValue      := cValToChar( cValue )
+   end if 
+
+Return ( cValue ) 
+
+//------------------------------------------------------------------------
+
 
 
