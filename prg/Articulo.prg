@@ -5640,10 +5640,10 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
    AutoTextDialog( oDlg )   
 
    SetAutoTextDialog( "Archivando")
-/*
+
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-*/
+
       BeginTransaction()
 
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LastChg" ) ) ] := GetSysDate()
@@ -5954,7 +5954,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
 
       if ( dbfTmpImg )->( Lastrec() ) == 0
          lChangeImage  := ( cImageOld == aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cImagen" ) ) ] )
-      end if   
+      end if  
 
       /*
       Grabamos el registro a disco---------------------------------------------
@@ -5981,7 +5981,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
          runEventScript( "Articulos\afterAppend", aTmp, nView )
       end if
-/*
+
    RECOVER USING oError
 
       RollBackTransaction()
@@ -5991,7 +5991,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
    END SEQUENCE
    
    ErrorBlock( oBlock )
-*/
+
    /*
    Cerramos el dialogo---------------------------------------------------------
    */

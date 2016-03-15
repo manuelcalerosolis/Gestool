@@ -2488,7 +2488,7 @@ FUNCTION browseRecCli( uGet, cFacCliP, cClient, cDiv )
       ?"ADS"
       
       getDbfFilterRecibosClientes()
-      //BrwRecCli( uGet, "RecibosFacturasClientes", cClient, cDiv )
+      BrwRecCli( uGet, "RecibosFacturasClientes", cClient, cDiv )
 
    else
 
@@ -2497,7 +2497,7 @@ FUNCTION browseRecCli( uGet, cFacCliP, cClient, cDiv )
       ( cFacCliP )->( dbSetFilter( {|| !Field->lCobrado }, "!lCobrado" ) )
       ( cFacCliP )->( dbGoTop() )
 
-      //BrwRecCli( uGet, cFacCliP, cClient, cDiv )
+      BrwRecCli( uGet, cFacCliP, cClient, cDiv )
 
    end if
 
