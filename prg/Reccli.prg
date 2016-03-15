@@ -1385,7 +1385,7 @@ Static Function GetReciboCliente( aTmp, oBrwRec )
    local hStatus
    local cNumRec  := ""
 
-   if brwRecCli( @cNumRec, D():FacturasClientesCobros( nView ), D():Clientes( nView ), D():Divisas( nView ) )
+   if browseRecCli( @cNumRec, D():FacturasClientesCobros( nView ), D():Clientes( nView ), D():Divisas( nView ) )
 
       if empty( cNumRec )
          Return .f.
@@ -2257,15 +2257,6 @@ FUNCTION BrwRecCli( uGet, cFacCliP, cClient, cDiv )
                            "Forma pago",;
                            "Agente" }
 
-   nOrd              := GetBrwOpt( "BrwRecCli" )
-   nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
-   cCbxOrd           := aCbxOrd[ nOrd ]
-
-   cNumRec           := ""
-
-   nRecAnt           := ( cFacCliP )->( Recno() )
-   nOrdAnt           := ( cFacCliP )->( OrdSetFocus( nOrd ) )
-
    ( cFacCliP )->( dbSetFilter( {|| !Field->lCobrado }, "!lCobrado" ) )
    ( cFacCliP )->( dbGoTop() )
 
@@ -2485,6 +2476,43 @@ FUNCTION BrwRecCli( uGet, cFacCliP, cClient, cDiv )
    oBrw:CloseData()
 
 RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION browseRecCli( uGet, cFacCliP, cClient, cDiv )
+
+   local cDbfFilterRecCli
+
+   if lAIS()
+
+      ?"ADS"
+      
+      getDbfFilterRecibosClientes()
+      //BrwRecCli( uGet, "RecibosFacturasClientes", cClient, cDiv )
+
+   else
+
+      ?"DBFCDX"
+      
+      ( cFacCliP )->( dbSetFilter( {|| !Field->lCobrado }, "!lCobrado" ) )
+      ( cFacCliP )->( dbGoTop() )
+
+      //BrwRecCli( uGet, cFacCliP, cClient, cDiv )
+
+   end if
+
+Return nil
+   
+//---------------------------------------------------------------------------//
+
+static function getDbfFilterRecibosClientes()
+
+   local cStm
+
+   cStm           := "SELECT * "           
+   cStm           += "FROM " + cPatEmp() + "FacCliP"
+
+Return ( TDataCenter():ExecuteSqlStatement( cStm, "RecibosFacturasClientes" ) )
 
 //---------------------------------------------------------------------------//
 
