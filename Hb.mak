@@ -44,6 +44,7 @@ TMySql.prg              	\
 TComercio.prg           	\
 TPrestashopConfig.prg 		\
 TPrestashopId.prg 			\
+TFTPLinux.prg 					\
 Comun.prg               	\
 AccessCode.prg          	\
 Tgraph.prg              	\
@@ -462,6 +463,7 @@ TMySql.obj                                         \
 TComercio.obj                                      \
 TPrestashopConfig.obj 										\
 TPrestashopId.obj 											\
+TFTPLinux.obj 													\
 Comun.obj                                          \
 AccessCode.obj                                     \
 DialogExtend.obj                                   \
@@ -914,6 +916,7 @@ $(OBJ)\TMySql.obj                                           +
 $(OBJ)\TComercio.obj                                        +
 $(OBJ)\TPrestashopConfig.obj 											+
 $(OBJ)\TPrestashopId.obj 												+
+$(OBJ)\TFTPLinux.obj 													+
 $(OBJ)\Comun.obj                                            +
 $(OBJ)\AccessCode.obj                                       +
 $(OBJ)\DialogExtend.obj                                     +

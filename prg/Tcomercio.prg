@@ -135,7 +135,6 @@ CLASS TComercio
    DATA  Cookiekey
 
    DATA  oInt
-   DATA  oFtp
    DATA  aImages
    DATA  aImagesArticulos
    DATA  aImagesCategories
@@ -228,6 +227,9 @@ CLASS TComercio
    DATA  aPropiedadesCabeceraData      INIT {}
    DATA  aPropiedadesLineasData        INIT {}
    DATA  aStockArticuloData            INIT {}
+
+   METHOD buildFTP()                   
+   METHOD destroyFTP()                 INLINE ( ::oFtp:end() )
 
    METHOD treeSetText( cText )
    METHOD MeterTotalText( cText )
@@ -472,17 +474,10 @@ CLASS TComercio
    METHOD cDirectoryProduct()                INLINE ( ::TPrestashopConfig:getImagesDirectory() + "/p" )
    METHOD cDirectoryCategories()             INLINE ( ::TPrestashopConfig:getImagesDirectory() + "/c" )
 
-   METHOD ftpTestConexion()                  INLINE ( if (  ::ftpCreateConexion(),;
+   METHOD ftpTestConexion()                  INLINE ( if (  ::oFtp:CreateConexion(),;
                                                             msgInfo( "Conectado a servidor FTP correctamente." ),;
                                                             msgStop( "Error al conectar con el servidor FTP" ) ),;
-                                                            ::ftpEndConexion() )
-
-   METHOD ftpCreateConexion()
-   METHOD ftpEndConexion()
-   METHOD ftpCreateDirectory( cCarpeta )
-   METHOD ftpCreateDirectoryRecursive( cCarpeta )
-   METHOD ftpCreateFile( cFile )
-   METHOD ftpReturnDirectory( cCarpeta )
+                                                            ::oFtp:EndConexion() )
 
 END CLASS
 
@@ -2167,7 +2162,6 @@ Return .t.
 METHOD DeleteImagesCategories( cCodCategorie ) CLASS TComercio
 
    local oInt
-   local oFtp
    local aDirectory
    local cDirectory
    local lerror
@@ -2178,7 +2172,7 @@ METHOD DeleteImagesCategories( cCodCategorie ) CLASS TComercio
       Conectamos al FTP para eliminar las imagenes de las categorías-----------
       */
 
-      if ::ftpCreateConexion()
+      if ::oFtp:CreateConexion()
 
          MsgStop( "Imposible conectar al sitio ftp " + ::TPrestashopConfig:getFtpServer() )
 
@@ -2192,7 +2186,7 @@ METHOD DeleteImagesCategories( cCodCategorie ) CLASS TComercio
 
       end if
 
-      ::ftpEndConexion()
+      ::oFtp:EndConexion()
 
    end if
 
@@ -3625,7 +3619,6 @@ Return ( Self )
 METHOD DeleteImagesProducts( cCodWeb ) CLASS TComercio 
 
    local oInt
-   local oFtp
    local aDirectory
    local cDirectory
    local lError
@@ -3679,7 +3672,7 @@ METHOD DeleteImagesProducts( cCodWeb ) CLASS TComercio
             
             for each idDelete in aDelImages
 
-               if !::ftpCreateConexion()
+               if !::oFtp:CreateConexion()
 
                   MsgStop( "Imposible conectar al sitio ftp " + ::TPrestashopConfig:getFtpServer() )
 
@@ -3694,7 +3687,7 @@ METHOD DeleteImagesProducts( cCodWeb ) CLASS TComercio
 
                end if 
 
-               ::ftpEndConexion()                  
+               ::oFtp:EndConexion()                  
 
             next
 
@@ -4046,9 +4039,9 @@ METHOD buildSubirImagenes() CLASS TComercio
 
    if Len( ::aImagesArticulos ) > 0
 
-      if !::ftpCreateConexion()
+      if !::oFtp:CreateConexion()
 
-         MsgStop( "Imposible conectar al sitio ftp " + ::TPrestashopConfig:getFtpServer() )
+         msgStop( "Imposible conectar al sitio ftp " + ::TPrestashopConfig:getFtpServer() )
 
       else
 
@@ -4057,40 +4050,40 @@ METHOD buildSubirImagenes() CLASS TComercio
          ::meterProcesoSetTotal( len( ::aImagesArticulos ) )
 
          if !empty( ::TPrestashopConfig:getImagesDirectory() )
-            ::ftpCreateDirectory( ::cDirectoryProduct(), .t. )
+            ::oFtp:CreateDirectory( ::cDirectoryProduct(), .t. )
          end if
 
          for each oImage in ::aImagesArticulos
 
-            ::meterProcesoText( "Subiendo imagen producto " + alltrim(str(hb_enumindex())) + " de "  + alltrim(str(len(::aImagesArticulos))) )
+            ::meterProcesoText( "Subiendo imagen " + oImage:cNombreImagen + " [" + alltrim(str(hb_enumindex())) + " de "  + alltrim(str(len(::aImagesArticulos))) + "]" )
 
             // Posicionamos en el directorio-----------------------------------
 
-            ::ftpCreateDirectoryRecursive( oImage:cCarpeta )
+            ::oFtp:CreateDirectoryRecursive( oImage:cCarpeta )
 
             // Sube el fichero ------------------------------------------------
 
-            ::ftpCreateFile( oImage:cNombreImagen, ::cDirectoryProduct() + "/" + oImage:cCarpeta )
+            ::oFtp:CreateFile( oImage:cNombreImagen, ::cDirectoryProduct() + "/" + oImage:cCarpeta )
            
             // Volvemos al directorio raiz--------------------------------------
 
-            ::ftpReturnDirectory( oImage:cCarpeta )
+            ::oFtp:ReturnDirectory( oImage:cCarpeta )
 
             SysRefresh()
 
          next
 
       end if
+      
+      ::oFtp:EndConexion()
 
    end if 
-
-   ::ftpEndConexion()
 
    // Subimos las imagenes de las categories-----------------------------------
 
    if Len( ::aImagesCategories ) > 0
 
-      if !::ftpCreateConexion()
+      if !::oFtp:CreateConexion()
 
          MsgStop( "Imposible conectar al sitio ftp " + ::TPrestashopConfig:getFtpServer() )
 
@@ -4101,7 +4094,7 @@ METHOD buildSubirImagenes() CLASS TComercio
          ::meterProcesoSetTotal( len( ::aImagesCategories ) )
 
          if !empty( ::TPrestashopConfig:getImagesDirectory() )
-            ::ftpCreateDirectory( ::cDirectoryCategories(), .t. )
+            ::oFtp:CreateDirectory( ::cDirectoryCategories(), .t. )
          end if
 
          for each oImage in ::aImagesCategories
@@ -4110,15 +4103,15 @@ METHOD buildSubirImagenes() CLASS TComercio
 
             // Posicionamos en el directorio-----------------------------------
 
-            ::ftpCreateDirectoryRecursive( oImage:cCarpeta )
+            ::oFtp:CreateDirectoryRecursive( oImage:cCarpeta )
 
             // Sube el fichero ------------------------------------------------
 
-            ::ftpCreateFile( oImage:cNombreImagen, oImage:cCarpeta )
+            ::oFtp:CreateFile( oImage:cNombreImagen, oImage:cCarpeta )
            
             // Volvemos al directorio raiz-------------------------------------
 
-            ::ftpReturnDirectory( oImage:cCarpeta )
+            ::oFtp:ReturnDirectory( oImage:cCarpeta )
 
             SysRefresh()
 
@@ -4126,7 +4119,7 @@ METHOD buildSubirImagenes() CLASS TComercio
 
       end if
 
-      ::ftpEndConexion()
+      ::oFtp:EndConexion()
 
       // Borramos las imagenes creadas en los temporales-----------------------
 
@@ -7674,23 +7667,24 @@ METHOD buildExportarPrestashop( idProduct ) Class TComercio
 
    ::disableDialog()
 
-   // oBlock            := ErrorBlock( { | oError | Break( oError ) } )
-   // BEGIN SEQUENCE
+   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
+   BEGIN SEQUENCE
 
       for each hWeb in hWebs
          
          ::TPrestashopConfig:setCurrentWeb( hWeb )
 
-         if ::TPrestashopConfig:getActive()
+         if ::TPrestashopConfig:isActive()
+            ::buildFTP()
             ::buildProductPrestashop( idProduct, .f. )
          end if 
 
       next
 
-   // RECOVER USING oError
-   //    msgStop( ErrorMessage( oError ), "Error al exportar a Prestashop." )
-   // END SEQUENCE
-   // ErrorBlock( oBlock )
+   RECOVER USING oError
+      msgStop( ErrorMessage( oError ), "Error al exportar a Prestashop." )
+   END SEQUENCE
+   ErrorBlock( oBlock )
 
    ::EnableDialog()
 
@@ -8284,235 +8278,6 @@ METHOD BuildAddArticuloActualizar( cCodArt ) CLASS tComercio
    end if
 
 Return .t.   
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//-------------------------FTP-----------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-#ifndef __XHARBOUR__
-
-METHOD ftpCreateConexion() CLASS TComercio
-
-   local lCreate     := .f.
-
-   if !empty( ::TPrestashopConfig:getFtpServer() )   
-
-      ::oInt         := TInternet():New()
-      ::oFtp         := TFtp():New( ::TPrestashopConfig:getFtpServer(),;
-                                    ::oInt,;
-                                    ::TPrestashopConfig:getFtpUser(),;
-                                    ::TPrestashopConfig:getFtpPassword(),;
-                                    ::TPrestashopConfig:getFtpPassive() )
-
-      if !empty( ::oFtp )
-         lCreate     := ( ::oFtp:hFtp != 0 )
-      end if 
-
-   end if 
-
-Return ( lCreate )
-
-//---------------------------------------------------------------------------//
-
-METHOD ftpEndConexion() CLASS TComercio
-
-   if !empty( ::oInt )
-      ::oInt:end()
-   end if
-
-   if !empty( ::oFtp )
-      ::oFtp:end()
-   end if 
-
-Return( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD ftpCreateDirectory( cCarpeta ) CLASS TComercio
-
-   if !empty( ::TPrestashopConfig:getFtpServer() )   
-      ::oFtp:CreateDirectory( cCarpeta ) 
-      ::oFtp:SetCurrentDirectory( cCarpeta ) 
-   else 
-      makedir( cCarpeta )
-   end if 
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD ftpCreateDirectoryRecursive( cCarpeta ) CLASS TComercio
-
-   local n
-
-   for n := 1 to len( cCarpeta )
-      ::ftpCreateDirectory( substr( cCarpeta, n, 1 ) )
-   next 
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD ftpCreateFile( cFile, oMeter ) CLASS TComercio
-   
-   local oFile
-   local nBytes
-   local hSource
-   local lPutFile    := .f.
-   local cBuffer     := Space( 20000 )
-   local nTotalBytes := 0
-   local nWriteBytes := 0
-
-   if !file( cFile )
-      msgStop( "No existe el fichero " + alltrim( cFile ) )
-      Return ( .f. )
-   end if 
-
-   oFile             := TFtpFile():New( cNoPath( cFile ), ::oFtp )
-   oFile:OpenWrite()
-
-   hSource           := fOpen( cFile ) 
-   if ferror() == 0
-
-      fseek( hSource, 0, 0 )
-
-      while ( nBytes := fread( hSource, @cBuffer, 20000 ) ) > 0 
-         nWriteBytes += nBytes
-         oFile:Write( substr( cBuffer, 1, nBytes ) )
-      end while
-
-      lPutFile       := .t.
-
-   end if
-
-   oFile:End()
-
-   fClose( hSource )
-
-   SysRefresh()
-
-Return ( lPutFile )
-
-//---------------------------------------------------------------------------//
-
-METHOD ftpReturnDirectory( cCarpeta ) CLASS TComercio
-
-   local n
-
-   for n := 1 to Len( cCarpeta )
-      ::oFtp:SetCurrentDirectory( ".." )
-   next   
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-#else
-
-METHOD ftpCreateConexion() CLASS TComercio
-
-   local cStr
-   local cUrl           
-   local lOpen             := .t.
-
-   if !empty( ::TPrestashopConfig:getFtpServer() )
-
-      cUrl                 := "ftp://" + ::TPrestashopConfig:getFtpUser() + ":" + ::TPrestashopConfig:getFtpPassword() + "@" + ::TPrestashopConfig:getFtpServer()
-
-      ::oUrl               := TUrl():New( cUrl )
-
-      ::oFTP               := TIPClientFTP():New( ::oUrl, .t. )
-      ::oFTP:nConnTimeout  := 20000
-      ::oFTP:bUsePasv      := ::TPrestashopConfig:getFtpPassive()
-
-      lOpen                := ::oFTP:Open( cUrl )
-
-      if !lOpen
-         cStr              := "Could not connect to FTP server " + ::oURL:cServer
-         if empty( ::oFTP:SocketCon )
-            cStr           += hb_eol() + "Connection not initialized"
-         elseif hb_inetErrorCode( ::oFTP:SocketCon ) == 0
-            cStr           += hb_eol() + "Server response:" + " " + ::oFTP:cReply
-         else
-            cStr           += hb_eol() + "Error in connection:" + " " + hb_inetErrorDesc( ::oFTP:SocketCon )
-         endif
-      end if
-
-   end if 
-
-Return ( lOpen )
-
-//---------------------------------------------------------------------------//
-
-METHOD ftpEndConexion() CLASS TComercio
-
-   if !empty( ::oFTP )
-      ::oFTP:Close()
-   end if 
-
-Return( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD ftpCreateDirectory( cCarpeta, lPos ) CLASS TComercio
-
-   DEFAULT lPos   := .f.
-
-   if !empty( ::TPrestashopConfig:getFtpServer() )   
-      ::oFtp:MKD( cCarpeta )
-      ::oFtp:Cwd( cCarpeta )
-   else
-      makedir( cCarpeta )
-      dirchange( cCarpeta )
-   end if 
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD ftpCreateDirectoryRecursive( cCarpeta ) CLASS TComercio
-
-   local n
-
-   for n := 1 to len( cCarpeta )
-      ::ftpCreateDirectory( substr( cCarpeta , n, 1 ) )
-   next 
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD ftpCreateFile( cFile, cDirectory ) CLASS TComercio
-
-   local lCreate  := .t.
-
-   if !empty( ::TPrestashopConfig:getFtpServer() )   
-      lCreate  := ::oFtp:UploadFile( cFile )
-   else
-      lCreate  := CopyFile( cFile, cDirectory + "/" + cNoPath( cFile ) )
-   end if 
-
-Return ( lCreate )
-
-//---------------------------------------------------------------------------//
-
-METHOD ftpReturnDirectory( cCarpeta ) CLASS TComercio
-
-   local n
-
-   if !empty( ::TPrestashopConfig:getFtpServer() )   
-      for n := 1 to Len( cCarpeta )
-         ::oFtp:Cwd( ".." )
-      next
-   else
-      DirChange( ".." )   
-   end if
-
-Return ( .t. )
-
-#endif
 
 //---------------------------------------------------------------------------//
 
@@ -9428,10 +9193,22 @@ METHOD UploadState( id_order_state, dFecSit, tFecSit, cCodWeb ) CLASS TComercio
    cCommand      :=  "INSERT INTO " + ::cPrefixtable( "order_history" ) + " VALUES ( '', 1, " + alltrim( str( cCodWeb ) ) + ", " + alltrim( str( id_order_state ) ) + ", '" + ::getDatePrestashop(::oPedCliE:dFecSit, ::oPedCliE:tFecSit) + "' )" 
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      id             := ::oCon:GetInsertId()   
+      id         := ::oCon:GetInsertId()   
    end if 
 
 Return ( id  )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildFTP() CLASS TComercio
+
+   if ::TPrestashopConfig:getFtpLinux()
+      ::oFtp      := TFtpLinux():New( ::TPrestashopConfig )
+   else 
+      ::oFtp      := TFtpWindows():New( ::TPrestashopConfig )
+   end if 
+
+Return ( self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

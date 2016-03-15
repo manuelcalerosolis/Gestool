@@ -6,12 +6,6 @@
 
 //---------------------------------------------------------------------------//
 
-// debug( ::cHost, ::TPrestashopConfig:getMySqlServer() )
-// debug( ::cUser, ::TPrestashopConfig:getMySqlUser() )
-// debug( ::cPasswd, ::TPrestashopConfig:getMySqlPassword() )
-// debug( ::cDbName, ::TPrestashopConfig:getMySqlDatabase() )
-// debug( ::nPort, ::TPrestashopConfig:getMySqlPort() )
-
 CLASS TPrestashopConfig
 
    CLASSDATA oInstance
@@ -31,9 +25,10 @@ CLASS TPrestashopConfig
    METHOD setCurrentWeb( hCurrentWeb ) INLINE ( ::hCurrentWeb := hCurrentWeb )
    METHOD getCurrentWeb( hCurrentWeb ) INLINE ( ::hCurrentWeb )
    
-   METHOD getFromCurrentWeb( key )     INLINE ( if( hhaskey( ::getCurrentWeb(), key ), hget( ::getCurrentWeb(), key ), msgStop( key + "no presente en configuración de web" ) ) )
+   METHOD getFromCurrentWeb( key, default );
+                                       INLINE ( if( hhaskey( ::getCurrentWeb(), key ), hget( ::getCurrentWeb(), key ), default ) )
    
-   METHOD getActive()                  INLINE ( ::getFromCurrentWeb( "Active" ) )
+   METHOD isActive()                   INLINE ( ::getFromCurrentWeb( "Active" ) )
 
    METHOD getMySqlServer()             INLINE ( ::getFromCurrentWeb( "MySqlServer" ) )
    METHOD getMySqlUser()               INLINE ( ::getFromCurrentWeb( "MySqlUser" ) )
@@ -51,8 +46,9 @@ CLASS TPrestashopConfig
 
    METHOD getCookieKey()               INLINE ( ::getFromCurrentWeb( "CookieKey") )
 
-   METHOD getStore()                   INLINE ( ::getFromCurrentWeb( "Store") )
-   METHOD getSyncronizeManufacturers() INLINE ( ::getFromCurrentWeb( "SyncronizeManufacturers" ) )
+   METHOD getStore()                   INLINE ( ::getFromCurrentWeb( "Store", "000" ) )
+   METHOD getSyncronizeManufacturers() INLINE ( ::getFromCurrentWeb( "SyncronizeManufacturers", .t. ) )
+   METHOD getFtpLinux()                INLINE ( ::getFromCurrentWeb( "FtpLinux", .t. ) )
    
    METHOD getOrderSerie()              INLINE ( ::getFromCurrentWeb( "OrderSerie") )
    METHOD getBudgetSerie()             INLINE ( ::getFromCurrentWeb( "BudgetSerie") )

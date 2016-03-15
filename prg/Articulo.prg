@@ -4349,10 +4349,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    Tarifas---------------------------------------------------------------------
    */
 
-   oGetTarWeb  := comboTarifa():Build( { "idCombo" => 150, "uValue" => aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nTarWeb" ) ) ] } )
+   oGetTarWeb     := comboTarifa():Build( { "idCombo" => 150, "uValue" => aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nTarWeb" ) ) ] } )
    oGetTarWeb:Resource( fldWeb )
-   oGetTarWeb:setWhen( {|| nMode != ZOOM_MODE .and. aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LSBRINT" ) ) ] } )
-   oGetTarWeb:setChange( {|| ChangeTarWeb( aGet, aTmp ), CalDtoWeb( aGet, aTmp ) } )
+   oGetTarWeb:setWhen(     {|| nMode != ZOOM_MODE .and. aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LSBRINT" ) ) ] } )
+   oGetTarWeb:setChange(   {|| ChangeTarifaPrecioWeb( aGet, aTmp ), CalculaDescuentoWeb( aGet, aTmp ) } )
 
    REDEFINE CHECKBOX aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lIvaWeb" ) ) ] ;
          ID       124 ;
@@ -4372,7 +4372,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          PICTURE  "@E 999.99" ;
          SPINNER  MIN 0 MAX 100;
          WHEN     ( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lPubInt" ) ) ] .and. aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lSbrInt" ) ) ] .and. nMode != ZOOM_MODE ) ;
-         ON CHANGE( CalDtoWeb( aGet, aTmp ) ) ;
+         ON CHANGE( CalculaDescuentoWeb( aGet, aTmp ) ) ;
          OF       fldWeb
 
    REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "nImpInt1" ) ) ] ;
@@ -4380,15 +4380,18 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          ID       122 ;
          WHEN     ( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lPubInt" ) ) ] .and. !aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lIvaWeb" ) ) ] .and. nMode != ZOOM_MODE ) ;
          PICTURE  cPwbDiv ;
-         VALID    CalBnfPts( .t.,; 
-                             aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lIvaWeb" ) ) ],;
-                             aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pCosto"  ) ) ],;
-                             aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nImpInt1" ) ) ],;
-                             ,;
-                             aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TipoIva" ) ) ],;
-                             aGet[ ( D():Articulos( nView ) )->( fieldpos( "nImpIva1" ) ) ],;
-                             nDecDiv,;
-                             aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ] ) ;
+         ON CHANGE( calculaPorcentajeDescuento( aGet[ ( D():Articulos( nView ) )->( fieldpos( "nDtoInt1" ) ) ],;
+                                                aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVtaWeb"  ) ) ],;
+                                                aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nImpInt1" ) ) ] ) );
+         VALID    CalBnfPts(  .t.,; 
+                              aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lIvaWeb"  ) ) ],;
+                              aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pCosto"   ) ) ],;
+                              aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nImpInt1" ) ) ],;
+                              ,;
+                              aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TipoIva"  ) ) ],;
+                              aGet[ ( D():Articulos( nView ) )->( fieldpos( "nImpIva1" ) ) ],;
+                              nDecDiv,;
+                              aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp"  ) ) ]);
          OF       fldWeb
 
    REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "nImpIva1" ) ) ] ;
@@ -4396,21 +4399,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          ID       123 ;
          WHEN     ( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lPubInt" ) ) ] .and. aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lIvaWeb" ) ) ] .and. nMode != ZOOM_MODE ) ;
          PICTURE  cPwbDiv ;
+         VALID    ( CalBnfIva(   .t.,;
+                                 aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lIvaWeb"  ) ) ],;
+                                 aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pCosto"   ) ) ],;
+                                 aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nImpIva1" ) ) ],; 
+                                 ,;
+                                 aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TipoIva"  ) ) ],;
+                                 aGet[ ( D():Articulos( nView ) )->( fieldpos( "nImpInt1" ) ) ],;
+                                 nDecDiv,;
+                                 aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp"  ) ) ] ) );
          OF       fldWeb
 
    REDEFINE GET aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodWeb" ) ) ] ;
          ID       210 ;
          WHEN     ( .F. );
-         VALID    ( CalBnfIva( .t.,;
-                               aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lIvaWeb" ) ) ],;
-                               aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pCosto"  ) ) ],;
-                               aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nImpIva1" ) ) ],; 
-                               ,;
-                               aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TipoIva" ) ) ],;
-                               aGet[ ( D():Articulos( nView ) )->( fieldpos( "nImpInt1" ) ) ],;
-                               nDecDiv,;
-                               aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ],;
-                               oSayWeb[ 1 ] ) );
          OF       fldWeb
 
    REDEFINE CHECKBOX aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lPubPor" ) ) ] ;
@@ -8731,7 +8733,7 @@ Return ( nPorcentajeBeneficio )
 
 //----------------------------------------------------------------------------//
 
-Static Function CalDtoWeb( aGet, aTmp )
+Static Function CalculaDescuentoWeb( aGet, aTmp )
 
    local nImpWeb
 
@@ -8739,14 +8741,15 @@ Static Function CalDtoWeb( aGet, aTmp )
 
       if aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nDtoInt1" ) ) ] != 0
 
-         nImpWeb     := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVtaWeb"  ) ) ] - ( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVtaWeb"  ) ) ] * aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nDtoInt1" ) ) ] / 100 )
+         nImpWeb     := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVtaWeb"  ) ) ] 
+         nImpWeb     -= aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVtaWeb"  ) ) ] * aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nDtoInt1" ) ) ] / 100 
 
          aGet[ ( D():Articulos( nView ) )->( fieldpos( "nImpInt1" ) ) ]:cText( nImpWeb )
          aGet[ ( D():Articulos( nView ) )->( fieldpos( "nImpIva1" ) ) ]:cText( ( nImpWeb * nIva( dbfIva, aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TipoIva"  ) ) ] ) / 100 ) + nImpWeb )
 
       else
       
-         ChangeTarWeb( aGet, aTmp )
+         ChangeTarifaPrecioWeb( aGet, aTmp )
 
       end if   
 
@@ -17989,7 +17992,7 @@ Return ( cFirstImage )
 
 //---------------------------------------------------------------------------//
 
-Function ChangeTarWeb( aGet, aTmp )
+Function ChangeTarifaPrecioWeb( aGet, aTmp )
 
    if aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LSBRINT" ) ) ]
 
@@ -18873,6 +18876,14 @@ Static Function generateMatrizCodigoBarras( getCodigoMatriz )
    getCodigoMatriz:cText( nValue )
 
    setStatus( D():Articulos( nView ), aStatus )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Static Function calculaPorcentajeDescuento( oPorcentajeDescuento, nPrecioVenta, nPrecioInternet )
+
+   oPorcentajeDescuento:cText( nPrecioInternet / nPrecioVenta * 100 )
 
 Return ( .t. )
 
