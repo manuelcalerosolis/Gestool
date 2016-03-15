@@ -1688,6 +1688,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lIvaInc5"  ) ) ]     := uFieldEmpresa( "lIvaInc" )
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lIvaInc6"  ) ) ]     := uFieldEmpresa( "lIvaInc" )
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lIvaPVer"  ) ) ]     := uFieldEmpresa( "lIvaInc" )
+      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lIvaWeb"   ) ) ]     := uFieldEmpresa( "lIvaInc" )
 
       if !empty( uFieldEmpresa( "cDefTem" ) )
          aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodTemp"  ) ) ]  := uFieldEmpresa( "cDefTem" )
@@ -4353,6 +4354,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    oGetTarWeb:setWhen( {|| nMode != ZOOM_MODE .and. aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LSBRINT" ) ) ] } )
    oGetTarWeb:setChange( {|| ChangeTarWeb( aGet, aTmp ), CalDtoWeb( aGet, aTmp ) } )
 
+   REDEFINE CHECKBOX aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lIvaWeb" ) ) ] ;
+         ID       124 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldWeb
+
    REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "pVtaWeb" ) ) ] ;
          VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVtaWeb" ) ) ] ;
          ID       120 ;
@@ -4372,23 +4378,23 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "nImpInt1" ) ) ] ;
          VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nImpInt1" ) ) ] ;
          ID       122 ;
-         WHEN     ( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lPubInt" ) ) ] .and. nMode != ZOOM_MODE ) ;
+         WHEN     ( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lPubInt" ) ) ] .and. !aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lIvaWeb" ) ) ] .and. nMode != ZOOM_MODE ) ;
          PICTURE  cPwbDiv ;
          VALID    CalBnfPts( .t.,; 
-                             aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LIVAINC" ) ) ],;
+                             aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lIvaWeb" ) ) ],;
                              aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pCosto"  ) ) ],;
                              aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nImpInt1" ) ) ],;
                              ,;
-                             aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TIPOIVA" ) ) ],;
+                             aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TipoIva" ) ) ],;
                              aGet[ ( D():Articulos( nView ) )->( fieldpos( "nImpIva1" ) ) ],;
                              nDecDiv,;
-                             aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CCODIMP" ) ) ] ) ;
+                             aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ] ) ;
          OF       fldWeb
 
    REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "nImpIva1" ) ) ] ;
          VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nImpIva1" ) ) ] ;
          ID       123 ;
-         WHEN     ( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lPubInt" ) ) ] .and. nMode != ZOOM_MODE ) ;
+         WHEN     ( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lPubInt" ) ) ] .and. aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lIvaWeb" ) ) ] .and. nMode != ZOOM_MODE ) ;
          PICTURE  cPwbDiv ;
          OF       fldWeb
 
@@ -4396,7 +4402,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          ID       210 ;
          WHEN     ( .F. );
          VALID    ( CalBnfIva( .t.,;
-                               aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lIvaInc" ) ) ],;
+                               aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lIvaWeb" ) ) ],;
                                aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pCosto"  ) ) ],;
                                aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nImpIva1" ) ) ],; 
                                ,;
@@ -15191,8 +15197,9 @@ function aItmArt()
    aAdd( aBase, { "lIvaInc4",  "L",  1, 0, "Iva incluido para el precio 4" ,           "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "lIvaInc5",  "L",  1, 0, "Iva incluido para el precio 5" ,           "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "lIvaInc6",  "L",  1, 0, "Iva incluido para el precio 6" ,           "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lIvaPveR",  "L",  1, 0, "Iva incluido para el punto verde" ,        "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lIvaPver",  "L",  1, 0, "Iva incluido para el punto verde" ,        "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cWebShop",  "C",100, 0, "Tienda web donde se publica el producto",  "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lIvaWeb",   "L",  1, 0, "Iva incluido para precio web" ,            "",                  "", "( cDbfArt )", nil } )
 
 return ( aBase )
 

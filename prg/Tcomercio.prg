@@ -898,7 +898,7 @@ METHOD dialogActivate( oWnd ) CLASS TComercio
 
       REDEFINE SAY ::oTextTotal PROMPT ::cTextTotal ID 210 OF ::oDlg
 
-      ::oMeterTotal    := TApoloMeter():ReDefine( 220, { | u | if( pCount() == 0, ::nMeterTotal, ::nMeterTotal := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+      ::oMeterTotal     := TApoloMeter():ReDefine( 220, { | u | if( pCount() == 0, ::nMeterTotal, ::nMeterTotal := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
       ::oMeterProceso   := TApoloMeter():ReDefine( 230, { | u | if( pCount() == 0, ::nMeterProceso, ::nMeterProceso := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
@@ -5818,9 +5818,7 @@ METHOD buildSubirInformacion() CLASS TComercio
    local hPropiedadesCabData
    local hPropiedadesLinData
 
-   /*
-   Subimos los tipos de IVA----------------------------------------------
-   */
+   // Subimos los tipos de IVA----------------------------------------------
 
    ::meterProcesoSetTotal( len(::aIvaData) )
 
@@ -5832,23 +5830,23 @@ METHOD buildSubirInformacion() CLASS TComercio
 
    next
 
-   /*
-   Subimos fabricantes---------------------------------------------------
-   */
+   // Subimos fabricantes---------------------------------------------------
 
-   ::meterProcesoSetTotal( len(::aFabricantesData) )
+   if ::TPrestashopConfig:getSyncronizeManufacturers()
 
-   for each hFabricantesData in ::aFabricantesData
+      ::meterProcesoSetTotal( len(::aFabricantesData) )
 
-      ::buildInsertFabricantesPrestashop( hFabricantesData )
+      for each hFabricantesData in ::aFabricantesData
 
-      ::meterProcesoText( "Subiendo fabricantes " + alltrim(str(hb_enumindex())) + " de " + alltrim(str(len(::aFabricantesData))) )
+         ::buildInsertFabricantesPrestashop( hFabricantesData )
 
-   next 
+         ::meterProcesoText( "Subiendo fabricantes " + alltrim(str(hb_enumindex())) + " de " + alltrim(str(len(::aFabricantesData))) )
 
-   /*
-   Subimos familias------------------------------------------------------
-   */
+      next 
+
+   end if 
+
+   // Subimos familias------------------------------------------------------
 
    ::meterProcesoSetTotal( len(::aFamiliaData) )
 

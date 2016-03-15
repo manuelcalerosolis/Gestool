@@ -52,6 +52,7 @@ CLASS TPrestashopConfig
    METHOD getCookieKey()               INLINE ( ::getFromCurrentWeb( "CookieKey") )
 
    METHOD getStore()                   INLINE ( ::getFromCurrentWeb( "Store") )
+   METHOD getSyncronizeManufacturers() INLINE ( ::getFromCurrentWeb( "SyncronizeManufacturers" ) )
    
    METHOD getOrderSerie()              INLINE ( ::getFromCurrentWeb( "OrderSerie") )
    METHOD getBudgetSerie()             INLINE ( ::getFromCurrentWeb( "BudgetSerie") )
@@ -103,10 +104,6 @@ METHOD LoadJSON() CLASS TPrestashopConfig
       if !empty( hConfig )
          ::hConfig            := hConfig
       end if 
-
-   else 
-
-      msgStop( "Fichero " + alltrim( cFileConfigEmpresa ) + " no encontrado.", "Stop" )   
 
    end if 
 
