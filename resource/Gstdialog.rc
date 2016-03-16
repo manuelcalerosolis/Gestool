@@ -16714,23 +16714,22 @@ CAPTION "Recibos de clientes"
 FONT 8, "MS Sans Serif"
 {
   CONTROL "", 500, "SysTabControl32", 0x00000000, 6, 1, 336, 271
-  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 181, 275, 50, 14
-  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 236, 275, 50, 14
-  CONTROL "A&yuda", 998, "Button", WS_TABSTOP, 291, 275, 50, 14
+  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 236, 275, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 291, 275, 50, 14
 }
 
-RECIBOS_1 DIALOG DISCARDABLE 82, 27, 333, 256
+RECIBOS_1 DIALOG DISCARDABLE 82, 27, 333, 272
 STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
   CONTROL "", 100, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 108, 38, 70, 11
   CONTROL "", 110, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 108, 51, 70, 11
   CONTROL "", 335, "Edit", ES_RIGHT|WS_BORDER, 265, 51, 59, 11
-  CONTROL "", 180, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 108, 76, 70, 11
-  CONTROL "", 190, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 108, 89, 70, 11
-  CONTROL "", 260, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 108, 106, 70, 11
-  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 265, 106, 37, 11
-  CONTROL "", 171, "TBitmap", 0x00800000, 305, 106, 19, 11
+  CONTROL "", 180, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 108, 77, 70, 11
+  CONTROL "", 190, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 108, 90, 70, 11
+  CONTROL "", 260, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 108, 107, 70, 11
+  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 266, 107, 37, 11
+  CONTROL "", 171, "TBitMap", 0x00800000, 305, 107, 19, 11
   CONTROL "Cobrado", 220, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 134, 40, 10
   CONTROL "", 230, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 108, 133, 70, 11
   CONTROL "", 280, "Edit", WS_BORDER|WS_TABSTOP, 108, 145, 70, 11
@@ -16745,25 +16744,25 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 108, 225, 216, 11
   CONTROL "", 155, "Edit", WS_BORDER|WS_TABSTOP, 108, 238, 216, 11
   CONTROL "Concepto ", -1, "Static", WS_GROUP, 50, 216, 38, 8
-  CONTROL "Importe", -1, "Static", WS_GROUP, 50, 79, 40, 8
+  CONTROL "Importe", -1, "Static", WS_GROUP, 50, 80, 40, 8
   CONTROL "Vencimiento", -1, "Static", WS_GROUP, 50, 54, 44, 8
   CONTROL "Pagado por", -1, "Static", WS_GROUP, 50, 228, 42, 8
-  CONTROL "Importe", -1, "Static", WS_GROUP, 50, 79, 26, 8
+  CONTROL "Importe", -1, "Static", WS_GROUP, 50, 80, 26, 8
   CONTROL "Fechas", -1, "Button", BS_GROUPBOX, 44, 29, 285, 36
-  CONTROL "Importes", -1, "Button", BS_GROUPBOX, 44, 67, 285, 54
+  CONTROL "Importes", -1, "Button", BS_GROUPBOX, 44, 68, 285, 54
   CONTROL "Expedición", -1, "Static", WS_GROUP, 50, 41, 40, 8
   CONTROL "Cliente", -1, "Static", WS_GROUP, 50, 189, 27, 8
   CONTROL "Agente", -1, "Static", WS_GROUP, 50, 202, 28, 8
-  CONTROL "Gastos", -1, "Static", WS_GROUP, 50, 109, 40, 8
-  CONTROL "Cobro", -1, "Static", WS_GROUP, 50, 92, 40, 8
-  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 50, 102, 276, 1
+  CONTROL "Gastos", -1, "Static", WS_GROUP, 50, 110, 40, 8
+  CONTROL "Cobro", -1, "Static", WS_GROUP, 50, 93, 40, 8
+  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 50, 103, 277, 1
   CONTROL "Documento", -1, "Static", WS_GROUP, 50, 242, 42, 8
-  CONTROL "Divisa", -1, "Static", WS_GROUP, 233, 109, 25, 8
+  CONTROL "Divisa", -1, "Static", WS_GROUP, 234, 110, 25, 8
   CONTROL "Forma de pago", -1, "Static", WS_GROUP, 50, 176, 53, 8
   CONTROL "Estado", -1, "Button", BS_GROUPBOX, 44, 123, 285, 37
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 9, 34, 30
-  CONTROL "Sesión", -1, "Static", WS_GROUP, 233, 54, 27, 8
-  CONTROL "No incluir en arqueo", 200, "Button", BS_AUTOCHECKBOX, 233, 39, 77, 10
+  CONTROL "Sesión", -1, "Static", WS_GROUP, 234, 54, 27, 8
+  CONTROL "No incluir en arqueo", 200, "Button", BS_AUTOCHECKBOX, 234, 39, 77, 10
   CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 44, 162, 285, 92
   CONTROL "Código caja", -1, "Static", WS_GROUP, 50, 148, 43, 8
 }
@@ -20952,5 +20951,19 @@ FONT 8, "MS Sans Serif"
   CONTROL "Seleccionados", 90, "Button", BS_AUTORADIOBUTTON, 6, 20, 60, 10
   CONTROL "", 200, "msctls_progress32", 0x00000000, 6, 124, 206, 4
   CONTROL "", 180, "SysTreeView32", TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT|TVS_TRACKSELECT|TVS_FULLROWSELECT|WS_BORDER|WS_TABSTOP, 6, 131, 206, 174
+}
+
+RECIBOSEXTEND DIALOG DISCARDABLE 278, 96, 635, 307
+STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU
+CAPTION "Recibos de clientes"
+FONT 8, "MS Sans Serif"
+{
+  CONTROL "", 500, "SysTabControl32", 0x00000000, 6, 1, 336, 271
+  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 236, 275, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 291, 275, 50, 14
+  CONTROL "Recibos agrupados", -1, "Button", BS_GROUPBOX, 345, 1, 287, 271
+  CONTROL "Aña&dir [F2]", 100, "Button", WS_TABSTOP, 349, 13, 50, 14
+  CONTROL "&Eliminar [F4]", 110, "Button", WS_TABSTOP, 404, 13, 50, 14
+  CONTROL "", 200, "TXBrowse", WS_TABSTOP|0x00300000, 349, 29, 279, 240
 }
 
