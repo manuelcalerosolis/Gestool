@@ -628,7 +628,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Entregado"
+         :cHeader          := getTraslation( "Entregado" )
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():Get( "AlbCliT", nView ) )->lEntregado }
