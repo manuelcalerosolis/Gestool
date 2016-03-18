@@ -8896,6 +8896,13 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
    Estos campos no pueden estar vacios
    */
 
+   if lCliBlq( aTmp[ _CCODCLI ], D():Clientes( nView ) )
+      if !msgYesNo(  "Cliente bloqueado, no se pueden realizar operaciones de venta." + CRLF + ;
+                     "Motivo : " + alltrim( retfld( aTmp[ _CCODCLI ], D():Clientes( nView ), "cMotBlq" ) ),;
+                     "¿Desea continuar con el pedido?" )
+         return .f.
+      end if 
+   end if
 
    if Empty( aTmp[ _CCODCLI ] )
       msgStop( "Código de cliente no puede estar vacío." )
