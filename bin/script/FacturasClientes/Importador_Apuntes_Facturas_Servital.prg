@@ -1,13 +1,13 @@
 #include "hbclass.ch"
 
-#define CRLF                        chr( 13 ) + chr( 10 )
+#define CRLF                           chr( 13 ) + chr( 10 )
 
-#define OFN_PATHMUSTEXIST            0x00000800
-#define OFN_NOCHANGEDIR              0x00000008
-#define OFN_ALLOWMULTISELECT         0x00000200
-#define OFN_EXPLORER                 0x00080000     // new look commdlg
-#define OFN_LONGNAMES                0x00200000     // force long names for 3.x modules
-#define OFN_ENABLESIZING             0x00800000
+#define OFN_PATHMUSTEXIST              0x00000800
+#define OFN_NOCHANGEDIR                0x00000008
+#define OFN_ALLOWMULTISELECT           0x00000200
+#define OFN_EXPLORER                   0x00080000     // new look commdlg
+#define OFN_LONGNAMES                  0x00200000     // force long names for 3.x modules
+#define OFN_ENABLESIZING               0x00800000
 
 #define __porcentajeIVA__            1.21 
 
@@ -52,7 +52,8 @@ CLASS ImportadorFacturas
    DATA fechaFactura
    DATA cuentaVenta
    DATA descripcionCuentaVenta
-   DATA baseImponible
+
+   DATA baseImponible1
    DATA porcentajeIVA
    DATA porcentajeRecargoEquivalencia
    DATA porcentajeRetencion
@@ -249,11 +250,13 @@ METHOD getRow() CLASS ImportadorFacturas
    ::fechaFactura                   := ::getDate( "I" )
    ::cuentaVenta                    := ::getCharacter( "J" )
    ::descripcionCuentaVenta         := ::getCharacter( "K" )
-   ::baseImponible                  := ::getNumeric( "L" )
-   ::porcentajeIVA                  := ::getNumeric( "M" )
-   ::porcentajeRecargoEquivalencia  := ::getNumeric( "N" )
+
+   ::baseImponible1                 := ::getNumeric( "L" )
+   ::porcentajeIVA1                 := ::getNumeric( "M" )
+   ::porcentajeRecargoEquivalencia1 := ::getNumeric( "N" )
+   ::importeFactura1                := ::getNumeric( "P" )
+
    ::porcentajeRetencion            := ::getNumeric( "O" )
-   ::importeFactura                 := ::getNumeric( "P" )
 
 Return ( nil )
 
@@ -274,7 +277,7 @@ METHOD isValidRow() CLASS ImportadorFacturas
    if( empty( ::fechaFactura                  ), ::addErrors( "Fecha de factura vacia" ), )
    if( empty( ::cuentaVenta                   ), ::addErrors( "Cuenta de venta vacia" ), )
    // if( empty( ::descripcionCuentaVenta        ), ::addErrors( "Descripción de cuenta de venta vacia" ), )
-   if( empty( ::baseImponible                 ), ::addErrors( "Base imponible vacia" ), )
+   if( empty( ::baseImponible1                ), ::addErrors( "Base imponible vacia" ), )
    if( empty( ::porcentajeIVA                 ), ::addErrors( "Porcentaje de IVA vacio" ), )
    // if( empty( ::porcentajeRecargoEquivalencia ), ::addErrors( "Porcentaje de recargo de equivalencia vacio" ), )
    // if( empty( ::porcentajeRetencion           ), ::addErrors( "Porcentaje de rectención vacia" ), )
@@ -419,7 +422,7 @@ METHOD buildSales()
                         "NumeroFactura"         => ::numeroFactura,;
                         "DescripcionApunte"     => ::descripcionApunte,;
                         "SubtipoFactura"        => '01',; // Ventas
-                        "BaseImponible"         => ::baseImponible,;
+                        "BaseImponible"         => ::baseImponible1;
                         "PorcentajeIVA"         => ::porcentajeIVA,;
                         "PorcentajeRecargo"     => ::porcentajeRecargoEquivalencia,;
                         "PorcentajeRetencion"   => ::porcentajeRetencion,;
