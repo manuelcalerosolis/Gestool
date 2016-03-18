@@ -1100,17 +1100,17 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, lCompensar, nMode, 
 
       REDEFINE CHECKBOX aGet[ _LREMESA ] VAR aTmp[ _LREMESA ] ;
          ID       300 ;
-         WHEN     ( lMode .and. lUsrMaster() ) ;
+         WHEN     ( lMode ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _NNUMREM ] VAR aTmp[ _NNUMREM ];
          ID       310 ;
-         WHEN     ( lMode .and. lUsrMaster() ) ;
+         WHEN     ( lMode ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CSUFREM ] VAR aTmp[ _CSUFREM ];
          ID       320 ;
-         WHEN     ( lMode .and. lUsrMaster() ) ;
+         WHEN     ( lMode ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CCTAREM ] VAR aTmp[ _CCTAREM ] ;
