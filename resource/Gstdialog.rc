@@ -20964,6 +20964,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "Recibos agrupados", -1, "Button", BS_GROUPBOX, 345, 1, 287, 271
   CONTROL "Aña&dir [F2]", 100, "Button", WS_TABSTOP, 349, 13, 50, 14
   CONTROL "&Eliminar [F4]", 110, "Button", WS_TABSTOP, 404, 13, 50, 14
-  CONTROL "", 200, "TXBrowse", WS_TABSTOP|0x00300000, 349, 29, 279, 240
+  CONTROL "", 200, "TXBrowse", WS_TABSTOP|0x00300000, 349, 29, 279, 220
+  CONTROL "Total", 488, "Static", WS_GROUP, 349, 252, 72, 16
+  CONTROL "0", 485, "Static", SS_RIGHT|WS_GROUP, 486, 252, 133, 16
 }
 
