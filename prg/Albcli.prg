@@ -628,12 +628,15 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Entregado"
+         :cHeader          := getTraslation( "Entregado" )
          :nHeadBmpNo       := 3
-         :bStrData         := {|| "" }
-         :bEditValue       := {|| ( D():Get( "AlbCliT", nView ) )->lEntregado }
+         :bStrData         := {|| if( ( D():Get( "AlbCliT", nView ) )->lEntregado, getTraslation( "Entregado" ), "" ) }
+         :bEditValue       := {|| if( ( D():Get( "AlbCliT", nView ) )->lEntregado, 1, 2 ) }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
+         :nDataStrAlign    := 3
+         :nHeadStrAlign    := 3
+         :AddResource( "Sel16" )
+         :AddResource( "Nil16" )
          :AddResource( "hand_paper_16" )
       end with
 
@@ -3562,16 +3565,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          OF       oFld:aDialogs[2]
 
       /*
-      Fecha entregado
+      Fecha entregado----------------------------------------------------------
       */
 
-      REDEFINE CHECKBOX aGet[_LENTREGADO] VAR aTmp[_LENTREGADO] ;
+      REDEFINE CHECKBOX aGet[ _LENTREGADO ] ;
+         VAR      aTmp[ _LENTREGADO ] ;
+         PROMPT   getTraslation( "Entregado" ) ;
          ID       200 ;
          ON CHANGE( ValCheck( aGet, aTmp ) ) ;
          WHEN     ( lWhen ) ;
          OF       oFld:aDialogs[2]
 
-      REDEFINE GET aGet[_DFECENV] VAR aTmp[_DFECENV] ;
+      REDEFINE GET aGet[ _DFECENV ] ;
+         VAR      aTmp[ _DFECENV ] ;
          ID       127 ;
          SPINNER ;
          WHEN     ( lWhen ) ;

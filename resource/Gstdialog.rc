@@ -520,8 +520,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 405, 47, 253, 11
   CONTROL "", 170, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 405, 60, 88, 11
   CONTROL "", 128, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 405, 73, 88, 11
-  CONTROL "Enviado", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 356, 87, 40, 10
-  CONTROL "", 127, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 405, 86, 88, 11
+  CONTROL "Entregado", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 356, 113, 46, 10
+  CONTROL "", 127, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 405, 112, 88, 11
   CONTROL "", 237, "Edit", ES_RIGHT|ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 548, 60, 110, 11
   CONTROL "", 570, "Edit", ES_RIGHT|ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 548, 73, 110, 11
   CONTROL "", 580, "Edit", ES_RIGHT|ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 548, 86, 110, 11
@@ -556,7 +556,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Observaciones", -1, "Static", WS_GROUP, 49, 140, 50, 8
   CONTROL "Comentarios", -1, "Static", WS_GROUP, 49, 193, 46, 8
   CONTROL "TARA", -1, "Static", WS_GROUP, 500, 63, 47, 8
-  CONTROL "Lógistica", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 352, 23, 311, 104
+  CONTROL "Lógistica", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 352, 23, 311, 81
   CONTROL "Diferencia ", -1, "Static", WS_GROUP, 500, 89, 47, 8
   CONTROL "", 990, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Albaranes clientes", -1, "Static", WS_GROUP, 44, 3, 120, 8
@@ -565,6 +565,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 180, "Edit", WS_BORDER, 104, 73, 66, 11
   CONTROL "", 181, "Edit", WS_BORDER, 171, 73, 168, 11
   CONTROL "Centro de Coste", 4001, "Static", WS_GROUP, 49, 74, 55, 8
+  CONTROL "", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 352, 105, 311, 21
 }
 
 LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US
@@ -16753,11 +16754,11 @@ FONT 8, "MS Sans Serif"
   CONTROL "Expedición", -1, "Static", WS_GROUP, 50, 41, 40, 8
   CONTROL "Cliente", -1, "Static", WS_GROUP, 50, 189, 27, 8
   CONTROL "Agente", -1, "Static", WS_GROUP, 50, 202, 28, 8
-  CONTROL "Gastos", -1, "Static", WS_GROUP, 50, 110, 40, 8
-  CONTROL "Cobro", -1, "Static", WS_GROUP, 50, 93, 40, 8
-  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 50, 103, 277, 1
+  CONTROL "Gastos", 261, "Static", WS_GROUP, 50, 110, 40, 8
+  CONTROL "Cobro", 191, "Static", WS_GROUP, 50, 93, 40, 8
+  CONTROL "", 161, "Static", SS_ETCHEDHORZ, 50, 103, 277, 1
   CONTROL "Documento", -1, "Static", WS_GROUP, 50, 242, 42, 8
-  CONTROL "Divisa", -1, "Static", WS_GROUP, 234, 110, 25, 8
+  CONTROL "Divisa", 172, "Static", WS_GROUP, 234, 110, 25, 8
   CONTROL "Forma de pago", -1, "Static", WS_GROUP, 50, 176, 53, 8
   CONTROL "Estado", -1, "Button", BS_GROUPBOX, 44, 123, 285, 37
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 9, 34, 30
@@ -16765,6 +16766,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "No incluir en arqueo", 200, "Button", BS_AUTOCHECKBOX, 234, 39, 77, 10
   CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 44, 162, 285, 92
   CONTROL "Código caja", -1, "Static", WS_GROUP, 50, 148, 43, 8
+  CONTROL "", 240, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 108, 77, 70, 11
 }
 
 RECIBOS_2 DIALOG DISCARDABLE 82, 27, 333, 235

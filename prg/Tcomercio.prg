@@ -1951,7 +1951,7 @@ METHOD InsertCategoriesPrestashop() CLASS TComercio
    Insertamos un registro en las tablas de imágenes----------------------
    */
 
-   if !empty( ::oFam:cImgBtn )
+   if !empty( ::oFam:cImgBtn ) .and. file( ::oFam:cImgBtn )
 
       /*
       Añadimos la imagen al array para pasarla a prestashop--------------
@@ -5620,9 +5620,13 @@ METHOD buildImagesArticuloPrestashop( id ) CLASS TComercio
 
             for each cImgToken in aImgToken
 
-               if !empty( cImgToken ) .and. ascan( aImages, {|a| hGet( a, "name" ) == cImgToken } ) == 0
-                  aadd( aImages, { "name" => cImgToken, "lDefault"  => oRetFld( cImgToken, ::oArtImg, "lDefImg", "cImgArt" ) } )
-               end if
+               if file( cImgToken )
+                  if !empty( cImgToken ) .and. ascan( aImages, {|a| hGet( a, "name" ) == cImgToken } ) == 0
+                     aadd( aImages, { "name" => cImgToken, "lDefault"  => oRetFld( cImgToken, ::oArtImg, "lDefImg", "cImgArt" ) } )
+                  end if
+               else
+                  ::treeSetText( "El fichero de imagen " + cImgToken + " no existe." ) 
+               end if 
 
             next
 
@@ -5648,9 +5652,13 @@ METHOD buildImagesArticuloPrestashop( id ) CLASS TComercio
 
             cImagen  := alltrim( ::oArtImg:cImgArt )
 
-            if ascan( aImages, {|a| hGet( a, "name" ) == cImagen } ) == 0
-               aadd( aImages, { "name" => cImagen, "lDefault" => ::oArtImg:lDefImg } )
-            end if   
+            if file( cImagen )
+               if ascan( aImages, {|a| hGet( a, "name" ) == cImagen } ) == 0
+                  aadd( aImages, { "name" => cImagen, "lDefault" => ::oArtImg:lDefImg } )
+               end if   
+            else
+               ::treeSetText( "El fichero de imagen " + cImgToken + " no existe." ) 
+            end if 
 
          ::oArtImg:Skip()
 
@@ -5683,13 +5691,9 @@ METHOD buildPrecioArtitulo() CLASS TComercio
    local nPrecio
 
    if ::oArt:lIvaInc
-
       nPrecio  := Round( ::oArt:nImpIva1 / ( ( nIva( ::oIva:cAlias, ::oArt:TipoIva ) / 100 ) + 1 ), 6 )
-
    else
-
       nPrecio  := ::oArt:pVtaWeb
-
    end if
 
 Return ( nPrecio )

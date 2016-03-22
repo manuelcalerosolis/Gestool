@@ -4340,18 +4340,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          ON CHANGE( ChangePublicarTemporal( aTmp ) ) ;
          OF       fldWeb
 
-   REDEFINE CHECKBOX aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LSBRINT" ) ) ] ;
-         ID       160 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldWeb
-
    /*
    Tarifas---------------------------------------------------------------------
    */
 
+   REDEFINE CHECKBOX aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lSbrInt" ) ) ] ;
+         ID       160 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ON CHANGE( ChangeTarifaPrecioWeb( aGet, aTmp ), CalculaDescuentoWeb( aGet, aTmp ) ) ;
+         OF       fldWeb
+
    oGetTarWeb     := comboTarifa():Build( { "idCombo" => 150, "uValue" => aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nTarWeb" ) ) ] } )
    oGetTarWeb:Resource( fldWeb )
-   oGetTarWeb:setWhen(     {|| nMode != ZOOM_MODE .and. aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LSBRINT" ) ) ] } )
+   oGetTarWeb:setWhen(     {|| nMode != ZOOM_MODE .and. aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lSbrInt" ) ) ] } )
    oGetTarWeb:setChange(   {|| ChangeTarifaPrecioWeb( aGet, aTmp ), CalculaDescuentoWeb( aGet, aTmp ) } )
 
    REDEFINE CHECKBOX aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lIvaWeb" ) ) ] ;
@@ -4407,7 +4408,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
                                  aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TipoIva"  ) ) ],;
                                  aGet[ ( D():Articulos( nView ) )->( fieldpos( "nImpInt1" ) ) ],;
                                  nDecDiv,;
-                                 aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp"  ) ) ] ) );
+                                 aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp"  ) ) ] ),;
+                     calculaPorcentajeDescuento(   aGet[ ( D():Articulos( nView ) )->( fieldpos( "nDtoInt1" ) ) ],; 
+                                                   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVtaWeb"  ) ) ],;
+                                                   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nImpInt1" ) ) ] ) );
          OF       fldWeb
 
    REDEFINE GET aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodWeb" ) ) ] ;
@@ -18883,7 +18887,7 @@ Return ( .t. )
 
 Static Function calculaPorcentajeDescuento( oPorcentajeDescuento, nPrecioVenta, nPrecioInternet )
 
-   oPorcentajeDescuento:cText( nPrecioInternet / nPrecioVenta * 100 )
+   oPorcentajeDescuento:cText( ( 1 - ( nPrecioInternet / nPrecioVenta ) ) * 100 )
 
 Return ( .t. )
 
