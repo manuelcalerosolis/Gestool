@@ -11752,7 +11752,11 @@ FUNCTION nTotFacRec( cFactura, cFacRecT, cFacRecL, cIva, cDiv, aTmp, cDivRet, lP
    local nBaseGasto
    local nIvaGasto
 
-   DEFAULT cFacRecT        := D():FacturasRectificativas( nView )
+   
+   if !Empty( nView )
+      DEFAULT cFacRecT     := D():FacturasRectificativas( nView )
+   end if
+
    DEFAULT cFacRecL        := dbfFacRecL
    DEFAULT cIva            := cIva
    DEFAULT cDiv            := cDiv
