@@ -3799,12 +3799,12 @@ METHOD InsertImageProductImage( cCodigoWeb, lDefault )
    local cCommand
    local nCodigoImagen  := 0
 
-   cCommand             := "INSERT INTO " + ::cPrefixTable( "image" ) + ;
-                              " ( id_product, " + ;
+   cCommand             := "INSERT INTO " + ::cPrefixTable( "image" ) + " ( " +;
+                              "id_product, " + ;
                               "position, " + ;
                               "cover ) " + ;
-                           "VALUES " + ;
-                              "('" + alltrim( str( cCodigoWeb ) ) + "', " + ;
+                           "VALUES ( " + ;
+                              "'" + alltrim( str( cCodigoWeb ) ) + "', " + ;
                               "'" + str( ::nImagePosition ) + "', " + ;
                               if( lDefault, "'1'", "'0'" ) + " )"
 
@@ -3827,12 +3827,12 @@ METHOD InsertImageProductImageLang( nCodigoImagen )
 
    local cCommand
 
-   cCommand := "INSERT INTO " + ::cPrefixTable( "image_lang" ) + ;
-                  " ( id_image, " + ;
+   cCommand := "INSERT INTO " + ::cPrefixTable( "image_lang" ) + " ( " +;
+                  "id_image, " + ;
                   "id_lang, " + ;
                   "legend ) " + ;
-               "VALUES " + ;
-                  "('" + alltrim( str( nCodigoImagen ) ) + "', " + ;
+               "VALUES (" + ;
+                  "'" + alltrim( str( nCodigoImagen ) ) + "', " + ;
                   "'" + alltrim( str( ::nLanguage ) ) + "', " + ;
                   "'" + ::oCon:Escapestr( ::oArtImg:cNbrArt ) + "' )"
 

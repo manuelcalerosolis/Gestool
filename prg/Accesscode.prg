@@ -277,11 +277,11 @@ METHOD loadTableConfiguration() CLASS AccessCode
    ::cAgente         := getPvProfString( cTag, "Agente",             "",      ::cIniFile )
    ::cRuta           := getPvProfString( cTag, "Ruta",               "",      ::cIniFile )
 
-   ::lInvoiceModify  := ::getLogicValueFromIni( cTag, "ModificarFactura",   ".t." )
-   ::lUnitsModify    := ::getLogicValueFromIni( cTag, "ModificarUnidades",  ".t." )
-   ::lFilterByAgent  := ::getLogicValueFromIni( cTag, "FiltrarAgente",      ".f." )
-   ::lSalesView      := ::getLogicValueFromIni( cTag, "VisualizarVentas",   ".t." )
-   ::lAddLote        := ::getLogicValueFromIni( cTag, "AddLote",   ".f." )
+   ::lInvoiceModify  := ::getLogicValueFromIni( cTag, "ModificarFactura",  ".t." )
+   ::lUnitsModify    := ::getLogicValueFromIni( cTag, "ModificarUnidades", ".t." )
+   ::lFilterByAgent  := ::getLogicValueFromIni( cTag, "FiltrarAgente",     ".f." )
+   ::lSalesView      := ::getLogicValueFromIni( cTag, "VisualizarVentas",  ".t." )
+   ::lAddLote        := ::getLogicValueFromIni( cTag, "AddLote",           ".f." )
 
    if empty( ::cGetUser ) 
       apoloMsgStop( "Código de usuario esta vacio")

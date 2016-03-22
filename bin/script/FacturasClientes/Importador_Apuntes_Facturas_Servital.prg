@@ -25,7 +25,7 @@ CLASS ImportadorFacturas
 
    DATA oOleExcel
 
-   DATA aFichero                          INIT {}
+   DATA aExcelFiles                       INIT {}
 
    DATA aErrors                           INIT {}
    
@@ -72,7 +72,10 @@ CLASS ImportadorFacturas
 
    METHOD New()                           CONSTRUCTOR
 
-   METHOD addFichero()  
+   METHOD openExcelFile()
+   METHOD closeExcelFile()
+
+   METHOD selectExcelFile()  
 
    METHOD processFile()
 
@@ -104,16 +107,19 @@ ENDCLASS
 
 METHOD New() CLASS ImportadorFacturas
 
-   local cFichero
+   local cExcelFile
 
-   ::addFichero()
-   if empty( ::aFichero )
+   EnlaceA3():getInstance()
+
+   ::selectExcelFile()
+
+   if empty( ::aExcelFiles )
       Return ( Self )
    end if 
 
-   for each cFichero in ::aFichero
-      if !empty( cFichero )
-         msgRun( "Procesando hoja de calculo " + cFichero, "Espere", {|| ::ProcessFile( cFichero ) } )
+   for each cExcelFile in ::aExcelFiles
+      if !empty( cExcelFile )
+         msgRun( "Procesando hoja de calculo " + alltrim( cExcelFile ), "Espere", {|| ::ProcessFile( cExcelFile ) } )
       end if 
    next 
 
@@ -123,74 +129,115 @@ METHOD New() CLASS ImportadorFacturas
       ::showErrors()
    end if 
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> origin/master
 Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD AddFichero() CLASS ImportadorFacturas
+METHOD selectExcelFile() CLASS ImportadorFacturas
 
    local i
    local cFile
    local aFile
    local nFlag    := nOr( OFN_PATHMUSTEXIST, OFN_NOCHANGEDIR, OFN_ALLOWMULTISELECT, OFN_EXPLORER, OFN_LONGNAMES )
 
-   ::aFichero     := {}
+   ::aExcelFiles  := {}
 
    cFile          := cGetFile( "Excel ( *.Xls ) | *.xls |Excel ( *.Xlsx ) | *.xlsx", "Seleccione los ficheros a importar", "*.*" , , .f., .t., nFlag )
-   cFile          := Left( cFile, At( Chr( 0 ) + Chr( 0 ), cFile ) - 1 )
+   cFile          := left( cFile, at( chr( 0 ) + chr( 0 ), cFile ) - 1 )
 
-   if !Empty( cFile ) //.or. Valtype( cFile ) == "N"
+   if !empty( cFile ) 
 
-      cFile       := StrTran( cFile, Chr( 0 ), "," )
-      aFile       := hb_aTokens( cFile, "," )
+      cFile       := strtran( cFile, chr( 0 ), "," )
+      aFile       := hb_atokens( cFile, "," )
 
-      if Len( aFile ) > 1
+      if len( aFile ) > 1
 
          for i := 2 to Len( aFile )
             aFile[ i ] := aFile[ 1 ] + "\" + aFile[ i ]
          next
 
-         aDel( aFile, 1, .t. )
+         adel( aFile, 1, .t. )
 
       endif
 
       if IsArray( aFile )
 
          for i := 1 to Len( aFile )
-            aAdd( ::aFichero, aFile[ i ] ) // if( SubStr( aFile[ i ], 4, 1 ) == "\", aFileDisc( aFile[i] ) + "\" + aFileName( aFile[ i ] ), aFile[ i ] ) )
+            aadd( ::aExcelFiles, aFile[ i ] ) 
          next
 
       else
 
-         aAdd( ::aFichero, aFile )
+         aadd( ::aExcelFiles, aFile )
 
       endif
 
    end if
 
-RETURN ( ::aFichero )
+RETURN ( ::aExcelFiles )
 
 //---------------------------------------------------------------------------//
 
-METHOD ProcessFile( cFichero ) CLASS ImportadorFacturas
+METHOD openExcelFile( cExcelFile )
 
    local oError
    local oBlock
 
-   oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   oBlock                              := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
+
+   ::oOleExcel                         := TOleExcel():New( "Importando hoja de excel", "Conectando...", .f. )
+
+   ::oOleExcel:oExcel:Visible          := .f.
+   ::oOleExcel:oExcel:DisplayAlerts    := .f.
+   ::oOleExcel:oExcel:WorkBooks:Open( cExcelFile )
+
+   ::oOleExcel:oExcel:WorkSheets( 1 ):Activate()   //Hojas de la hoja de calculo
+
+   RECOVER USING oError
+       msgStop( "Imposible importar datos de excel" + CRLF + ErrorMessage( oError ) )
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( .t.  )
+
+//---------------------------------------------------------------------------//
+
+METHOD closeExcelFile()
+
+   if empty( ::oOleExcel )
+      Return ( .f. )
+   end if 
+
+   ::oOleExcel:oExcel:WorkBooks:Close() 
+   ::oOleExcel:oExcel:Quit()
+   ::oOleExcel:oExcel:DisplayAlerts   := .t.
+
+   ::oOleExcel:End()
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD ProcessFile( cExcelFile ) CLASS ImportadorFacturas
+
+   local oError
+   local oBlock
+
+   // oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   // BEGIN SEQUENCE
 
    CursorWait()
 
-      ::oOleExcel                        := TOleExcel():New( "Importando hoja de excel", "Conectando...", .f. )
-
-      ::oOleExcel:oExcel:Visible         := .f.
-      ::oOleExcel:oExcel:DisplayAlerts   := .f.
-      ::oOleExcel:oExcel:WorkBooks:Open( cFichero )
-
-      ::oOleExcel:oExcel:WorkSheets( 1 ):Activate()   //Hojas de la hoja de calculo
+      if !::openExcelFile( cExcelFile )
+         Return .f.
+      end if 
 
       ::cleanErrors()
 
@@ -218,6 +265,7 @@ METHOD ProcessFile( cFichero ) CLASS ImportadorFacturas
 
       next
 
+<<<<<<< HEAD
       // Cerramos la conexion con el objeto oOleExcel-----------------------------
 
       ::oOleExcel:oExcel:WorkBooks:Close() 
@@ -225,16 +273,19 @@ METHOD ProcessFile( cFichero ) CLASS ImportadorFacturas
       ::oOleExcel:oExcel:DisplayAlerts   := .t.
 
       ::oOleExcel:End()
+=======
+      ::closeExcelFile()
+>>>>>>> origin/master
 
    CursorWE()
 
-   RECOVER USING oError
+   // RECOVER USING oError
 
-      msgStop( "Imposible importar datos de excel" + CRLF + ErrorMessage( oError ) )
+   //    msgStop( "Imposible importar datos de excel" + CRLF + ErrorMessage( oError ) )
 
-   END SEQUENCE
+   // END SEQUENCE
 
-   ErrorBlock( oBlock )
+   // ErrorBlock( oBlock )
 
 Return ( Self )
 
@@ -348,8 +399,12 @@ METHOD getNumeric( cColumn, nRow ) CLASS ImportadorFacturas
 
    local nValue   := ::getRange( cColumn, nRow )
 
-   if Valtype( nValue ) == "C"
+   if valtype( nValue ) == "C"
       nValue      := Val( StrTran( nValue, ",", "." ) )
+   end if 
+
+   if valtype( nValue ) == "U"
+      nValue      := 0
    end if 
 
 Return ( nValue ) 
@@ -450,6 +505,11 @@ METHOD buildSales()
                         "Moneda"                => 'E',; // Euros
                         "Render"                => 'VentaFactura' } )
 
+<<<<<<< HEAD
+=======
+   ::totalFactura    := ::importeFactura1
+
+>>>>>>> origin/master
    if ::baseImponible2 != 0
 
       aadd( ::aSales,   {  "Id"                    => ::nRow,;
@@ -473,6 +533,11 @@ METHOD buildSales()
                            "Moneda"                => 'E',; // Euros
                            "Render"                => 'VentaFactura' } )
 
+<<<<<<< HEAD
+=======
+      ::totalFactura += ::importeFactura2
+
+>>>>>>> origin/master
    end if 
 
    if ::baseImponible3 != 0
@@ -498,6 +563,11 @@ METHOD buildSales()
                            "Moneda"                => 'E',; // Euros
                            "Render"                => 'VentaFactura' } )
 
+<<<<<<< HEAD
+=======
+      ::totalFactura += ::importeFactura3
+
+>>>>>>> origin/master
    end if 
 
 Return ( self )   
@@ -506,6 +576,7 @@ Return ( self )
 
 METHOD buildAccountingExportFile()
 
+<<<<<<< HEAD
    local hInvoices
 
    for each hInvoices in ::aInvoices
@@ -513,6 +584,23 @@ METHOD buildAccountingExportFile()
    next
 
    EnlaceA3():getInstance():Render()
+=======
+   local hSale
+   local hInvoice
+
+   for each hInvoice in ::aInvoices
+      
+      EnlaceA3():getInstance():Add( hInvoice )
+
+      for each hSale in hInvoice[ "Sales" ]
+         EnlaceA3():getInstance():Add( hSale )
+      next
+
+   next
+
+   EnlaceA3():getInstance():Render()
+   EnlaceA3():getInstance():WriteASCII()
+>>>>>>> origin/master
 
 Return ( self )
 
