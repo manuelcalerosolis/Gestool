@@ -318,7 +318,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       USE ( cPatArt() + "TARPREL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TARPREL", @dbfTarPreL ) )
       SET ADSINDEX TO ( cPatArt() + "TARPREL.CDX" ) ADDITIVE
-      SET TAG TO "CCODART"
+      SET TAG TO "cCodArt"
 
       USE ( cPatArt() + "TARPRES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TARPRES", @dbfTarPreS ) )
       SET ADSINDEX TO ( cPatArt() + "TARPRES.CDX" ) ADDITIVE
@@ -5435,10 +5435,10 @@ Static Function BeginTrans( aTmp, nMode )
    ( dbfTmpVta )->( OrdCreate( filTmpVta, "cCodArt", "cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2", {|| Field->cCodArt + Field->cCodPr1 + Field->cCodPr2 + Field->cValPr1 + Field->cValPr2 } ) )
 
    ( dbfTmpVta )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-   ( dbfTmpVta )->( ordCreate( filTmpVta, "cValPr1", "CCODART + CVALPR1", {|| Field->CCODART + Field->CVALPR1 } ) )
+   ( dbfTmpVta )->( ordCreate( filTmpVta, "cValPr1", "cCodArt + CVALPR1", {|| Field->cCodArt + Field->CVALPR1 } ) )
 
    ( dbfTmpVta )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-   ( dbfTmpVta )->( ordCreate( filTmpVta, "cValPr2", "CCODART + CVALPR2", {|| Field->CCODART + Field->CVALPR2 } ) )
+   ( dbfTmpVta )->( ordCreate( filTmpVta, "cValPr2", "cCodArt + CVALPR2", {|| Field->cCodArt + Field->CVALPR2 } ) )
    
    if nMode != APPD_MODE .and. ( dbfArtVta )->( dbSeek( cCodArt ) )
       while ( dbfArtVta )->cCodArt == cCodArt .and. !( dbfArtVta )->( eof() )
@@ -5825,15 +5825,14 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
             cProvHab             := ( dbfTmpPrv )->cCodPrv
          end if
 
-          dbPass( dbfTmpPrv, dbfArtPrv, .t. )
+         dbPass( dbfTmpPrv, dbfArtPrv, .t. )
          ( dbfTmpPrv )->( dbSkip() )
       end while
-
 
       ( dbfTmpLeng )->( OrdSetFocus( 0 ) )
       ( dbfTmpLeng )->( dbGoTop() )
       while !( dbfTmpLeng )->( eof() )
-          dbPass( dbfTmpLeng, D():ArticuloLenguaje( nView ), .t. )
+         dbPass( dbfTmpLeng, D():ArticuloLenguaje( nView ), .t. )
          ( dbfTmpLeng )->( dbSkip() )
       end while
 
@@ -5841,7 +5840,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       ( dbfTmpAlm )->( dbGoTop() )
       while !( dbfTmpAlm )->( eof() )
          ( dbfTmpAlm )->cCodArt  := cCod
-          dbPass( dbfTmpAlm, D():ArticuloStockAlmacenes( nView ), .t. )
+         dbPass( dbfTmpAlm, D():ArticuloStockAlmacenes( nView ), .t. )
          ( dbfTmpAlm )->( dbSkip() )
       end while
 
@@ -6350,17 +6349,17 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
    local oNingunaPrp2
    local oBrwImg
 
-   if nMode == APPD_MODE
-      aTmp[ ( dbfTmpVta )->( FieldPos( "CCODART" ) ) ]   := aArt[ ( D():Articulos( nView ) )->( fieldpos( "Codigo") ) ]
-      aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ]   := aArt[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1") ) ]
-      aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ]   := aArt[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2") ) ]
-   end if
-
    /*
    Comprobamos que existan valores en las propiedades--------------------------
    */
 
-   if empty( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] )
+   if nMode == APPD_MODE
+      aTmp[ ( dbfTmpVta )->( FieldPos( "cCodArt" ) ) ]   := aArt[ ( D():Articulos( nView ) )->( fieldpos( "Codigo") ) ]
+      aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ]   := aArt[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1") ) ]
+      aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ]   := aArt[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2") ) ]
+   end if
+
+   if empty( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] )
       msgstop( "No hay propiedades seleccionadas.")
       Return .f.
    end if   
@@ -6467,21 +6466,28 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       Primer Browse de propiedades--------------------------------------------
       */
 
-      oBrwPrp1                        := IXBrowse():New( oDlg ) 
+      oBrwPrp1                   := IXBrowse():New( oDlg ) 
 
-      oBrwPrp1:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwPrp1:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      oBrwPrp1:bClrSel           := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwPrp1:bClrSelFocus      := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrwPrp1:SetArray( aValPrp1, .t., , .f. )
 
-      oBrwPrp1:nMarqueeStyle          := 5
-      oBrwPrp1:lRecordSelector        := .f.
-      oBrwPrp1:lHScroll               := .f.
-      oBrwPrp1:cName                  := "Articulo.Propiedad1"
+      oBrwPrp1:nMarqueeStyle     := 5
+      oBrwPrp1:lRecordSelector   := .f.
+      oBrwPrp1:lHScroll          := .f.
+      oBrwPrp1:cName             := "Articulo.Propiedad1"
+
+      oBrwPrp1:setArray( aValPrp1, .t., , .f. )
+
+      oBrwPrp1:bLDblClick        := {|| seleccionPropiedad( aValPrp1, oBrwPrp1, oBrwPrp1:nArrayAt ) }
+      oBrwPrp1:bSeek             := {|c,n| cSeekBrwPropiedades( c, oBrwPrp1 ) }
+
+      REDEFINE SAY         oBrwPrp1:oSeek ;
+         VAR               oBrwPrp1:cSeek ;
+         ID                115 ;
+         OF                oDlg
 
       oBrwPrp1:CreateFromResource( 100 )
-
-      oBrwPrp1:bLDblClick  := {|| SeleccionPropiedad( aValPrp1, oBrwPrp1, oBrwPrp1:nArrayAt ) }
 
       with object ( oBrwPrp1:AddCol() )
          :cHeader          := "S"
@@ -6502,7 +6508,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          :cHeader          := if( !empty( aValPrp1 ), retFld( aValPrp1[ oBrwPrp1:nArrayAt ]:cCodPrp, dbfPro ), "" )
          :bStrData         := {|| if( !empty( aValPrp1 ), aValPrp1[ oBrwPrp1:nArrayAt ]:cDesPrp, "" ) }
          :nWidth           := if( lColorPrp1, 103, 119 )
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | cOrdenBrwPropiedades( oCol, oBrwPrp1, AllTrim( retFld( aValPrp1[ oBrwPrp1:nArrayAt ]:cCodPrp, dbfPro ) ) ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | cOrdenBrwPropiedades( oCol, oBrwPrp1, alltrim( retFld( aValPrp1[ oBrwPrp1:nArrayAt ]:cCodPrp, dbfPro ) ) ) }
       end with
 
       if lColorPrp1
@@ -6529,31 +6535,39 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ACTION   ( lSelAllPrp( aValPrp1, oBrwPrp1, .f. ) )
 
       /*
-      Segundo Browse de propiedades----------------------                                                                                                                                             ---------------------
+      Segundo Browse de propiedades--------------------------------------------
       */
 
-      oBrwPrp2                        := IXBrowse():New( oDlg )
+      oBrwPrp2                   := IXBrowse():New( oDlg )
 
-      oBrwPrp2:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwPrp2:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      oBrwPrp2:bClrSel           := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwPrp2:bClrSelFocus      := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
       oBrwPrp2:SetArray( aValPrp2, .t., , .f. )
 
-      oBrwPrp2:nMarqueeStyle          := 5
-      oBrwPrp2:lRecordSelector        := .f.
-      oBrwPrp2:lHScroll               := .f.
-      oBrwPrp2:cName                  := "Articulo.Propiedad2"
+      oBrwPrp2:nMarqueeStyle     := 5
+      oBrwPrp2:lRecordSelector   := .f.
+      oBrwPrp2:lHScroll          := .f.
+      oBrwPrp2:cName             := "Articulo.Propiedad2"
 
       oBrwPrp2:CreateFromResource( 110 )
 
-      oBrwPrp2:bLDblClick  := {|| SeleccionPropiedad( aValPrp2, oBrwPrp2, oBrwPrp2:nArrayAt ) }
+      oBrwPrp2:bLDblClick        := {|| SeleccionPropiedad( aValPrp2, oBrwPrp2, oBrwPrp2:nArrayAt ) }
+
+      oBrwPrp2:bLDblClick        := {|| seleccionPropiedad( aValPrp2, oBrwPrp2, oBrwPrp2:nArrayAt ) }
+      oBrwPrp2:bSeek             := {|c,n| cSeekBrwPropiedades( c, oBrwPrp2 ) }
+
+      REDEFINE SAY         oBrwPrp2:oSeek ;
+         VAR               oBrwPrp2:cSeek ;
+         ID                116 ;
+         OF                oDlg
 
       with object ( oBrwPrp2:AddCol() )
          :cHeader          := "S"
          :bStrData         := {|| "" }
          :bEditValue       := {|| if( !empty( aValPrp2 ), aValPrp2[ oBrwPrp2:nArrayAt ]:lSel, .f. ) }
          :nWidth           := 16
-         :SetCheck( { "BSEL", "Nil16" } )
+         :SetCheck( { "bSel", "Nil16" } )
       end with
 
       with object ( oBrwPrp2:AddCol() )
@@ -7135,36 +7149,87 @@ static function cOrdenBrwPropiedades( oCol, oBrw, cOrden )
 
    local oColumn
 
-   if !Empty( oBrw)
+   if empty( oBrw )
+      Return .t.
+   end if 
 
-      do case
-         case AllTrim( oCol:cHeader ) == cOrden
+   do case
+      case alltrim( oCol:cHeader ) == cOrden
 
-            aSort( oBrw:aArrayData, , , {|x,y| x:cDesPrp < y:cDesPrp } )
+         aSort( oBrw:aArrayData, , , {|x,y| x:cDesPrp < y:cDesPrp } )
 
-            for each oColumn in oBrw:aCols
-               oColumn:cOrder := ""
-            next
+         for each oColumn in oBrw:aCols
+            oColumn:cOrder := ""
+         next
 
-            oCol:cOrder := cOrden
+         oCol:cOrder       := cOrden
 
-         case AllTrim( oCol:cHeader ) == "Código"
+      case alltrim( oCol:cHeader ) == "Código"
 
-            aSort( oBrw:aArrayData, , , {|x,y| val( x:cValPrp ) < val( y:cValPrp ) } )
+         aSort( oBrw:aArrayData, , , {|x,y| val( x:cValPrp ) < val( y:cValPrp ) } )
 
-            for each oColumn in oBrw:aCols
-               oColumn:cOrder := ""
-            next
+         for each oColumn in oBrw:aCols
+            oColumn:cOrder := ""
+         next
 
-            oCol:cOrder := "Código"
+         oCol:cOrder       := "Código"
 
-      end case
+   end case
 
-      oBrw:Refresh()
-
-   end if
+   oBrw:Refresh()
 
 return .t.
+
+//---------------------------------------------------------------------------//
+
+static function cSeekBrwPropiedades( cSeek, oBrw )
+
+   local nAt
+   local uVal
+   local nRow
+   local cHeader
+   local nColumnOrder
+
+   if empty( cSeek )
+      Return .t. 
+   end if 
+
+   if empty( oBrw )
+      Return .t.
+   end if 
+
+   nColumnOrder            := ascan( oBrw:aCols, { |o| !empty( o:cOrder ) } ) 
+   if !empty( nColumnOrder )
+      cHeader              := oBrw:aCols[ nColumnOrder ]:cHeader
+   end if 
+
+   cSeek                   := Upper( cSeek )
+
+   for nRow := 1 to oBrw:nLen
+
+      if cHeader != "Código"
+         uVal              := oBrw:aArrayData[ nRow ]:cDesPrp
+      else
+         uVal              := oBrw:aArrayData[ nRow ]:cValPrp
+      end if
+
+      if valtype( uVal ) == "C"
+         uVal              := Upper( uVal )
+
+         if ( cSeek $ uVal )
+            nAt            := nRow
+         end if
+         
+         if !empty( nAt )
+            oBrw:nArrayAt  := nAt
+            Return .t.
+         end if
+
+      end if 
+
+   next nRow
+
+Return .t.
 
 //---------------------------------------------------------------------------//
 
@@ -7422,9 +7487,9 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
                   if aVal1:lsel
 
-                     if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODART" ) ) ] + aVal1:cCodPrp + Space( 40 ) + aVal1:cValPrp + Space( 40 ) ) )
+                     if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodArt" ) ) ] + aVal1:cCodPrp + Space( 40 ) + aVal1:cValPrp + Space( 40 ) ) )
 
-                        aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aVal1:cCodPrp
+                        aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] := aVal1:cCodPrp
                         aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
                         aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
@@ -7434,7 +7499,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
                      else
 
-                        aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aVal1:cCodPrp
+                        aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] := aVal1:cCodPrp
                         aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
                         aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ] := mSer2Mem()
 
@@ -7450,9 +7515,9 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
             else
 
-               if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODART" ) ) ] + aValPrp1[ oBrwPrp1:nArrayAt ]:cCodPrp + Space( 20 ) + aValPrp1[oBrwPrp1:nArrayAt]:cValPrp + Space( 20 ) ) )
+               if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodArt" ) ) ] + aValPrp1[ oBrwPrp1:nArrayAt ]:cCodPrp + Space( 20 ) + aValPrp1[oBrwPrp1:nArrayAt]:cValPrp + Space( 20 ) ) )
 
-                  aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
+                  aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
                   aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
                   aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
@@ -7462,7 +7527,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
                else
 
-                  aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
+                  aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
                   aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
                   aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
@@ -7505,11 +7570,11 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
                         if aVal1:lSel .and. aVal2:lSel
 
-                           if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODART" ) ) ] + aVal1:cCodPrp + aVal2:cCodPrp + aVal1:cValPrp + aVal2:cValPrp ) )
+                           if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodArt" ) ) ] + aVal1:cCodPrp + aVal2:cCodPrp + aVal1:cValPrp + aVal2:cValPrp ) )
 
-                              aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aVal1:cCodPrp
+                              aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] := aVal1:cCodPrp
                               aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
-                              aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aVal2:cCodPrp
+                              aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ] := aVal2:cCodPrp
                               aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aVal2:cValPrp
                               aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
@@ -7519,9 +7584,9 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
                            else
 
-                              aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aVal1:cCodPrp
+                              aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] := aVal1:cCodPrp
                               aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
-                              aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aVal2:cCodPrp
+                              aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ] := aVal2:cCodPrp
                               aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aVal2:cValPrp
                               aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
@@ -7547,11 +7612,11 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
                      if aVal2:lSel
 
-                        if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODART" ) ) ] + aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp + aVal2:cCodPrp + aValPrp1[oBrwPrp1:nArrayAt]:cValPrp + aVal2:cValPrp ) )
+                        if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodArt" ) ) ] + aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp + aVal2:cCodPrp + aValPrp1[oBrwPrp1:nArrayAt]:cValPrp + aVal2:cValPrp ) )
 
-                           aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
-                           aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aVal2:cCodPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ] := aVal2:cCodPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aVal2:cValPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
@@ -7561,9 +7626,9 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
                         else
 
-                           aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
-                           aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aVal2:cCodPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ] := aVal2:cCodPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aVal2:cValPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
@@ -7587,11 +7652,11 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
                      if aVal1:lSel
 
-                        if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODART" ) ) ] + aVal1:cCodPrp + aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp + aVal1:cValPrp + aValPrp2[oBrwPrp2:nArrayAt]:cValPrp ) )
+                        if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodArt" ) ) ] + aVal1:cCodPrp + aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp + aVal1:cValPrp + aValPrp2[oBrwPrp2:nArrayAt]:cValPrp ) )
 
-                           aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aVal1:cCodPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] := aVal1:cCodPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
-                           aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cValPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
@@ -7601,9 +7666,9 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
                         else
 
-                           aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aVal1:cCodPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] := aVal1:cCodPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
-                           aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cValPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
@@ -7623,11 +7688,11 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
                case !lSelPr1 .and. !lSelPr2
 
-                  if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODART" ) ) ] + aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp + aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp + aValPrp1[oBrwPrp1:nArrayAt]:cValPrp + aValPrp2[oBrwPrp2:nArrayAt]:cValPrp ) )
+                  if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodArt" ) ) ] + aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp + aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp + aValPrp1[oBrwPrp1:nArrayAt]:cValPrp + aValPrp2[oBrwPrp2:nArrayAt]:cValPrp ) )
 
-                     aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
+                     aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
                      aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
-                     aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp
+                     aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp
                      aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cValPrp
                      aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
@@ -7637,9 +7702,9 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
                   else
 
-                     aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
+                     aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
                      aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
-                     aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp
+                     aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp
                      aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cValPrp
                      aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
@@ -7688,9 +7753,9 @@ RETURN ( nil )
 static function lLimpiarPantalla( aValPrp1, aValPrp2, aTmp, aGet, oBrwPrp1, oBrwPrp2, oSay, cSay, dbfTmpVta )
 
    local aValPrp
-   local cCodArt           := aTmp[ ( dbfTmpVta )->( FieldPos( "CCODART" ) ) ]
-   local cCodPrp1          := aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ]
-   local cCodPrp2          := aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ]
+   local cCodArt           := aTmp[ ( dbfTmpVta )->( FieldPos( "cCodArt" ) ) ]
+   local cCodPrp1          := aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ]
+   local cCodPrp2          := aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ]
 
    /*
    Desmarcamos todas las opciones en los arrays de propiedades-----------------
@@ -7718,9 +7783,9 @@ static function lLimpiarPantalla( aValPrp1, aValPrp2, aTmp, aGet, oBrwPrp1, oBrw
 
    aCopy( dbBlankRec( dbfTmpVta ), aTmp )
 
-   aTmp[ ( dbfTmpVta )->( FieldPos( "CCODART" ) ) ]   := cCodArt
-   aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ]   := cCodPrp1
-   aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ]   := cCodPrp2
+   aTmp[ ( dbfTmpVta )->( FieldPos( "cCodArt" ) ) ]   := cCodArt
+   aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ]   := cCodPrp1
+   aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ]   := cCodPrp2
 
    cSay[1]                 := aBenefSobre[ Max( aTmp[ ( dbfTmpVta )->( fieldpos( "nBnfSbr1" ) ) ], 1 ) ]
    cSay[2]                 := aBenefSobre[ Max( aTmp[ ( dbfTmpVta )->( fieldpos( "nBnfSbr2" ) ) ], 1 ) ]
@@ -7964,7 +8029,7 @@ Static Function StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, 
 
    if !Empty( oBrwPrp2 ) .and. !Empty( oTodasPrp2 ) .and. !Empty( oNingunaPrp2 )
 
-      if !Empty( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] )
+      if !Empty( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ] )
 
          oBrwPrp2:Show()
          oTodasPrp2:Show()
@@ -12930,7 +12995,7 @@ Method Process()
             ( tmpArtDiv )->( dbgotop() )
             while !( tmpArtDiv )->( eof() )
 
-               if ( dbfArtVta )->( dbSeek( ( tmpArtDiv )->cCodArt + ( tmpArtDiv )->CCODPR1 + ( tmpArtDiv )->CCODPR2 + ( tmpArtDiv )->CVALPR1 + ( tmpArtDiv )->CVALPR2 ) )
+               if ( dbfArtVta )->( dbSeek( ( tmpArtDiv )->cCodArt + ( tmpArtDiv )->cCodPr1 + ( tmpArtDiv )->cCodPr2 + ( tmpArtDiv )->CVALPR1 + ( tmpArtDiv )->CVALPR2 ) )
                   if !::oSender:lServer
                      dbPass( tmpArtDiv, dbfArtVta )
                   end if
@@ -14788,10 +14853,10 @@ FUNCTION rxArticulo( cPath, cDriver )
       ( dbfArt )->( __dbPack() )
 
       ( dbfArt )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfArt )->( ordCreate( cPath + "PROVART.CDX", "CCODART", "CCODART", {|| Field->CCODART } ) )
+      ( dbfArt )->( ordCreate( cPath + "PROVART.CDX", "cCodArt", "cCodArt", {|| Field->cCodArt } ) )
 
       ( dbfArt )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfArt )->( ordCreate( cPath + "PROVART.CDX", "CCODPRV", "CCODPRV + CCODART", {|| Field->CCODPRV + Field->CCODART } ) )
+      ( dbfArt )->( ordCreate( cPath + "PROVART.CDX", "CCODPRV", "CCODPRV + cCodArt", {|| Field->CCODPRV + Field->cCodArt } ) )
 
       ( dbfArt )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( dbfArt )->( ordCreate( cPath + "PROVART.CDX", "cRefPrv", "cCodPrv + cRefPrv", {|| Field->CCODPRV + Field->CREFPRV } ) )
@@ -14800,7 +14865,7 @@ FUNCTION rxArticulo( cPath, cDriver )
       ( dbfArt )->( ordCreate( cPath + "PROVART.CDX", "cRefArt", "cCodArt + cCodPrv + cRefPrv", {|| Field->cCodArt + Field->cCodPrv + Field->cRefPrv } ) )
 
       ( dbfArt )->( ordCondSet("!Deleted() .and. lDefPrv", {|| !Deleted() } ) )
-      ( dbfArt )->( ordCreate( cPath + "PROVART.CDX", "lDefPrv", "CCODART", {|| Field->CCODART } ) )
+      ( dbfArt )->( ordCreate( cPath + "PROVART.CDX", "lDefPrv", "cCodArt", {|| Field->cCodArt } ) )
 
       ( dbfArt )->( dbCloseArea() )
 
@@ -14821,10 +14886,10 @@ FUNCTION rxArticulo( cPath, cDriver )
       ( dbfArt )->( __dbPack() )
 
       ( dbfArt )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfArt )->( ordCreate( cPath + "ARTLENG.CDX", "CCODART", "CCODART", {|| Field->CCODART } ) )
+      ( dbfArt )->( ordCreate( cPath + "ARTLENG.CDX", "cCodArt", "cCodArt", {|| Field->cCodArt } ) )
 
       ( dbfArt )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfArt )->( ordCreate( cPath + "ARTLENG.CDX", "CARTLEN", "CCODART + CCODLEN", {|| Field->CCODART + Field->CCODLEN } ) )
+      ( dbfArt )->( ordCreate( cPath + "ARTLENG.CDX", "CARTLEN", "cCodArt + CCODLEN", {|| Field->cCodArt + Field->CCODLEN } ) )
 
       ( dbfArt )->( dbCloseArea() )
 
@@ -14844,13 +14909,13 @@ FUNCTION rxArticulo( cPath, cDriver )
       ( dbfArt )->( __dbPack() )
 
       ( dbfArt )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfArt )->( ordCreate( cPath + "ArtDiv.Cdx", "cCodArt", "CCODART + CCODPR1 + CCODPR2 + CVALPR1 + CVALPR2", {|| Field->CCODART + Field->CCODPR1 + Field->CCODPR2 + Field->CVALPR1 + Field->CVALPR2 } ) )
+      ( dbfArt )->( ordCreate( cPath + "ArtDiv.Cdx", "cCodArt", "cCodArt + cCodPr1 + cCodPr2 + CVALPR1 + CVALPR2", {|| Field->cCodArt + Field->cCodPr1 + Field->cCodPr2 + Field->CVALPR1 + Field->CVALPR2 } ) )
 
       ( dbfArt )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfArt )->( ordCreate( cPath + "ArtDiv.Cdx", "cValPrp", "CCODART + CVALPR1 + CVALPR2", {|| Field->CCODART + Field->CVALPR1 + Field->CVALPR2 } ) )
+      ( dbfArt )->( ordCreate( cPath + "ArtDiv.Cdx", "cValPrp", "cCodArt + CVALPR1 + CVALPR2", {|| Field->cCodArt + Field->CVALPR1 + Field->CVALPR2 } ) )
 
       ( dbfArt )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfArt )->( ordCreate( cPath + "ArtDiv.Cdx", "cCodigo", "CCODART", {|| Field->CCODART } ) )
+      ( dbfArt )->( ordCreate( cPath + "ArtDiv.Cdx", "cCodigo", "cCodArt", {|| Field->cCodArt } ) )
 
       ( dbfArt )->( dbCloseArea() )
    else

@@ -8365,9 +8365,13 @@ METHOD ArrayIncrSeek( cSeek, nGoTo ) CLASS TXBrowse
    local nAt, nBrwCol, nSortCol, nRow, uVal
    local lExact
 
+  MsgAlert( cSeek, "ArrayIncrSeek" )
+
    if ::lIncrFilter
       return ::ArrayIncrFilter( cSeek, @nGoTo )
    endif
+
+  MsgAlert( cSeek, "Ascan" )
 
    if ( nBrwCol := AScan( ::aCols, { |o| !Empty( o:cOrder ) } ) ) > 0
       if ! Empty( nSortCol := ::aCols[ nBrwCol ]:cSortOrder ) .and. ValTyPe( nSortCol ) == 'N'
