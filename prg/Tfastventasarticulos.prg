@@ -1380,18 +1380,14 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
    ( aliasPedidosClientes )->( OrdSetFocus( "dFecPed" ) )
    ( aliasPedidosClientesLineas )->( OrdSetFocus( "nNumPed" ) )
 
-   cExpHead          := 'dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   cExpHead          += ' .and. !lCancel '
-   cExpHead          += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:getDesde() ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:getHasta() ) + '"'
-   cExpHead          += ' .and. cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. cSerPed <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
-   cExpHead          += ' .and. nNumPed >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. nNumPed <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
-   cExpHead          += ' .and. cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. cSufPed <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
+   cExpHead          := 'Field->dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+   cExpHead          += ' .and. !Field->lCancel '
+   cExpHead          += ' .and. Field->cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:getDesde() ) + '" .and. Field->cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:getHasta() ) + '"'
+   cExpHead          += ' .and. Field->cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerPed <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
+   cExpHead          += ' .and. Field->nNumPed >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumPed <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
+   cExpHead          += ' .and. Field->cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufPed <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
-   if lAIS()
-      ( aliasPedidosClientes )->( adsSetAOF( cExpHead ) )
-   else
-      ( aliasPedidosClientes )->( dbSetFilter( bCheck2Block( cExpHead ), cExpHead ) )
-   end if 
+   ( aliasPedidosClientes )->( dbSetCustomFilter( cExpHead ) )
 
    ::oMtrInf:cText   := "Procesando pedidos"
    ::oMtrInf:SetTotal( ( aliasPedidosClientes )->( OrdKeyCount() ) )
@@ -1402,13 +1398,12 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
    if !::lAllArt
       cExpLine       += ' .and. Field->cRef >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. Field->cRef <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
+      cExpLine       += ' .and. Field->cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerPed <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
+      cExpLine       += ' .and. Field->nNumPed >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumPed <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
+      cExpLine       += ' .and. Field->cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() ) + '" .and. Field->cSufPed <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
    end if
 
-   if lAIS()
-      ( aliasPedidosClientesLineas )->( adsSetAOF( cExpLine ) )
-   else
-      ( aliasPedidosClientesLineas )->( dbsetfilter( bCheck2Block( cExpLine ), cExpLine ) )
-   end if 
+   ( aliasPedidosClientesLineas )->( dbSetCustomFilter( cExpLine ) )
 
    ( aliasPedidosClientes )->( dbGoTop() )
    while !::lBreak .and. !( aliasPedidosClientes )->( Eof() )
@@ -1422,7 +1417,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                if !( ::lExcCero  .and. nTotNPedCli( aliasPedidosClientesLineas ) == 0 )  .and.;
                   !( ::lExcImp   .and. nImpLPedCli( aliasPedidosClientes, aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
 
-                  // Añadimos un nuevo registro
+                  // Añadimos un nuevo registro--------------------------------
 
                   ::oDbf:Blank()
 

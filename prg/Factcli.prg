@@ -14235,7 +14235,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       Marcamos como pasadas las entregas de Facturas--------------------------
       */
 
-      oMsgText( "Marcamos las entregas de los Facturas" )
+      oMsgText( "Marcamos las entregas de las facturas" )
       
       if !Empty( oMeter )
 	      oMeter:Set( 7 )

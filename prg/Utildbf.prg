@@ -3955,4 +3955,12 @@ Return ( msgAlert( cText, cTitle ) )
 
 //----------------------------------------------------------------------------//
 
+Function dbSetCustomFilter( cExpresionFilter )
 
+   if lAIS()
+      Return ( ( Select() )->( adsSetAOF( cExpresionFilter ) ) )
+   end if 
+
+Return ( ( Select() )->( dbSetFilter( bCheck2Block( cExpresionFilter ), cExpresionFilter ) ) )
+
+//----------------------------------------------------------------------------//
