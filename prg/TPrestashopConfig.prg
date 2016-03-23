@@ -28,7 +28,8 @@ CLASS TPrestashopConfig
    METHOD getFromCurrentWeb( key, default );
                                        INLINE ( if( hhaskey( ::getCurrentWeb(), key ), hget( ::getCurrentWeb(), key ), default ) )
    
-   METHOD isActive()                   INLINE ( ::getFromCurrentWeb( "Active" ) )
+   METHOD isActive()                   INLINE ( ::getFromCurrentWeb( "Active", .t. ) )
+   METHOD isSilenceMode()              INLINE ( ::getFromCurrentWeb( "SilenceMode", .f. ) )
 
    METHOD getMySqlServer()             INLINE ( ::getFromCurrentWeb( "MySqlServer" ) )
    METHOD getMySqlUser()               INLINE ( ::getFromCurrentWeb( "MySqlUser" ) )

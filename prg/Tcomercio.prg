@@ -181,9 +181,7 @@ CLASS TComercio
 
    METHOD lReady()                     INLINE ( !empty( ::cHost ) .and. !empty( ::cUser ) .and. !empty( ::cDbName ) )
 
-   METHOD writeText( cText )           INLINE ( if( !empty( ::oTextTotal ), ::oTextTotal:SetText( cText ), ),;
-                                                if( !empty( ::oTree ), ::oTree:Select( ::oTree:Add( cText ) ), ),;
-                                                logWrite( cText, "prestashop.log" ) )
+   METHOD writeText( cText )           
 
    // Apertura y cierre de ficheros--------------------------------------------
 
@@ -998,7 +996,7 @@ METHOD MeterTotalSetTotal( nTotal ) Class TComercio
       ::oMeterTotal:SetTotal( nTotal )
    end if
 
-   ::nMeterTotal := 1
+   ::nMeterTotal     := 1
 
 RETURN ( Self )
 
@@ -1006,7 +1004,7 @@ RETURN ( Self )
 
 METHOD meterProcesoText( cText ) Class TComercio
 
-   DEFAULT cText  := ""
+   DEFAULT cText     := ""
 
    ::writeText( cText )
 
@@ -3865,7 +3863,7 @@ METHOD InsertImageProductImageShop( nCodigoImagen, lCover )
    end if
    cCommand       += "'" + alltrim( str( nCodigoImagen ) ) + "', "   // id_image
    cCommand       += "'1', "                                         // id_shop
-   cCommand       += if( lCover, "'1'", "0" ) + ")"                  // cover
+   cCommand       += if( lCover, "'1'", "null" ) + ")"               // cover
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
       ::treeSetText( "Insertado la imagen del artículo " + alltrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
@@ -5624,8 +5622,6 @@ METHOD buildImagesArticuloPrestashop( id ) CLASS TComercio
                   if !empty( cImgToken ) .and. ascan( aImages, {|a| hGet( a, "name" ) == cImgToken } ) == 0
                      aadd( aImages, { "name" => cImgToken, "lDefault"  => oRetFld( cImgToken, ::oArtImg, "lDefImg", "cImgArt" ) } )
                   end if
-               else
-                  ::treeSetText( "El fichero de imagen " + cImgToken + " no existe." ) 
                end if 
 
             next
@@ -5656,8 +5652,6 @@ METHOD buildImagesArticuloPrestashop( id ) CLASS TComercio
                if ascan( aImages, {|a| hGet( a, "name" ) == cImagen } ) == 0
                   aadd( aImages, { "name" => cImagen, "lDefault" => ::oArtImg:lDefImg } )
                end if   
-            else
-               ::treeSetText( "El fichero de imagen " + cImgToken + " no existe." ) 
             end if 
 
          ::oArtImg:Skip()
@@ -6893,9 +6887,9 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
 
                   cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute_combination" ) + " ( " + ;
                                     "id_attribute, " + ;
-                                    "id_product_attribute )" + ;
-                                 " VALUES " + ;
-                                    "('" + alltrim( str( ::oTblPro:cCodWeb ) ) + "', " + ;   //id_attribute
+                                    "id_product_attribute ) " + ;
+                                 "VALUES ( " + ;
+                                    "'" + alltrim( str( ::oTblPro:cCodWeb ) ) + "', " + ;   //id_attribute
                                     "'" + alltrim( str( nCodigoPropiedad ) ) + "' )"         //id_product_attribute
 
                   if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
@@ -6915,9 +6909,9 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                                        "weight, " + ;
                                        "unit_price_impact, " + ;
                                        if( lDefault, "default_on, ", "" ) + ;
-                                       "minimal_quantity )" + ;
-                                    " VALUES " + ;
-                                       "('" + alltrim( str( nCodigoPropiedad ) ) + "', " + ;
+                                       "minimal_quantity ) " + ;
+                                    "VALUES (" + ;
+                                       "'" + alltrim( str( nCodigoPropiedad ) ) + "', " + ;
                                        "'1', " + ;
                                        "'" + alltrim( str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', " + ;
                                        "'" + alltrim( str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', " + ;
@@ -7028,8 +7022,6 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                                  "'10000', "                                                                                     + ;      //quantity
                                  "'1' )"                                                                                                  //minimal_quantity
 
-               ::treeSetText( cCommand )                                 
-
                if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
                   nCodigoPropiedad  := ::oCon:GetInsertId()
                else
@@ -7047,11 +7039,9 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                   cCommand    := "INSERT INTO " +  ::cPrefixtable( "product_attribute_combination" ) + "( " + ;
                                     "id_attribute, " + ;
                                     "id_product_attribute ) " + ;
-                                 "VALUES " + ;
-                                    "('" + alltrim( str( ::oTblPro:cCodWeb ) ) + "', " + ;  //id_attribute
+                                 "VALUES (" + ;
+                                    "'" + alltrim( str( ::oTblPro:cCodWeb ) ) + "', " + ;  //id_attribute
                                     "'" + alltrim( str( nCodigoPropiedad ) ) + "' )"        //id_product_attribute
-
-                  ::treeSetText( cCommand )                                 
 
                   if !TMSCommand():New( ::oCon ):ExecDirect( cCommand ) 
                      ::treeSetText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::PrefixTable( "product_attribute_combination" ), 3 )
@@ -7070,11 +7060,9 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                   cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute_combination" ) + " ( " + ;
                                     "id_attribute, " + ;
                                     "id_product_attribute ) " + ;
-                                 "VALUES " + ;
-                                    "('" + alltrim( str( ::oTblPro:cCodWeb ) ) + "', " + ;   //id_attribute
+                                 "VALUES (" + ;
+                                    "'" + alltrim( str( ::oTblPro:cCodWeb ) ) + "', " + ;   //id_attribute
                                     "'" + alltrim( str( nCodigoPropiedad ) ) + "' )"         //id_product_attribute
-
-                  ::treeSetText( cCommand )                                 
 
                   if !TMSCommand():New( ::oCon ):ExecDirect( cCommand ) 
                      ::treeSetText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute_combination" ), 3 )
@@ -7113,8 +7101,6 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                                  if( lDefault, "'1',", "" ) + ;
                                  "'1' )"
 
-               ::treeSetText( cCommand )                                 
-
                if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
                   ::treeSetText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute_shop" ), 3 )
                end if
@@ -7142,8 +7128,6 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                                  "'0', " + ;
                                  "'2' )"
 
-               ::treeSetText( cCommand )                                 
-
                if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
                   ::treeSetText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "stock_available" ), 3 )
                end if
@@ -7169,12 +7153,10 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                               cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
                                                 "id_product_attribute, " + ;
                                                 "id_image ) " + ;
-                                             "VALUES " + ;
-                                                "('" + alltrim( str( nCodigoPropiedad ) ) + "', " + ;    //id_product
+                                             "VALUES (" + ;
+                                                "'" + alltrim( str( nCodigoPropiedad ) ) + "', " + ;    //id_product
                                                 "'" + alltrim( str( ::oArtImg:cCodWeb ) ) + "' )"        //cover
 
-                              ::treeSetText( cCommand )                                 
-      
                               if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
                                  ::treeSetText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
                               end if
@@ -9215,6 +9197,21 @@ METHOD buildFTP() CLASS TComercio
 Return ( self )
 
 //---------------------------------------------------------------------------//
+
+METHOD writeText( cText ) CLASS TComercio
+
+   if ::TPrestashopConfig:isSilenceMode()
+      Return ( nil )
+   end if 
+
+   if !empty( ::oTree )
+      ::oTree:Select( ::oTree:Add( cText ) )
+   end if 
+   
+   logWrite( cText, "prestashop.log" ) 
+
+Return ( nil )   
+
 //---------------------------------------------------------------------------//
 //ESTRUCTURAS----------------------------------------------------------------//
 //---------------------------------------------------------------------------//

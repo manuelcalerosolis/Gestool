@@ -4350,6 +4350,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          ON CHANGE( ChangeTarifaPrecioWeb( aGet, aTmp ), CalculaDescuentoWeb( aGet, aTmp ) ) ;
          OF       fldWeb
 
+   TPrestashopConfig:getWebs()         
+
    oGetTarWeb     := comboTarifa():Build( { "idCombo" => 150, "uValue" => aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nTarWeb" ) ) ] } )
    oGetTarWeb:Resource( fldWeb )
    oGetTarWeb:setWhen(     {|| nMode != ZOOM_MODE .and. aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lSbrInt" ) ) ] } )
