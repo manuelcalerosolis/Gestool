@@ -346,7 +346,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Tipo"
-         :bEditValue       := {|| if( !Empty( ( D():FacturasClientesCobros( nView ) )->cTipRec ), "Rectificativa", "" ) }
+         :bEditValue       := {|| cTipoRecibo( ( D():FacturasClientesCobros( nView ) )->cTipRec ) }
          :nWidth           := 60
       end with
 
@@ -1947,7 +1947,11 @@ Function nTotRecCli( uFacCliP, cDbfDiv, cDivRet, lPic )
    DEFAULT cDivRet   := cDivEmp()
    DEFAULT lPic      := .f.
 
-   nEstado           := nEstadoMatriz( uFacCliP )
+   if IsObject( uFacCliP )
+      nEstado        :=  nEstadoMatriz( uFacCliP:cAlias )
+   else
+      nEstado        :=  nEstadoMatriz( uFacCliP )
+   end if
 
    do case
       case nEstado == 1
@@ -5323,10 +5327,21 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, lCompensar )
       ( cFacCliP )->( dbAppend() )
 
       ( cFacCliP )->cTurRec    := cCurSesion()
-      ( cFacCliP )->cSerie     := aTmp[ _CSERIE  ]
-      ( cFacCliP )->nNumFac    := aTmp[ _NNUMFAC ]
-      ( cFacCliP )->cSufFac    := aTmp[ _CSUFFAC ]
-      ( cFacCliP )->cTipRec    := aTmp[ _CTIPREC ]
+      
+      if lCompensar
+         ( cFacCliP )->cTipRec := "L"
+         ( cFacCliP )->cSerie  := "A"
+         ( cFacCliP )->nNumFac := nNewDoc( "A", cFacCliP, "NRECCLI" )
+         ( cFacCliP )->cSufFac := aTmp[ _CSUFFAC ]
+         ( cFacCliP )->nNumRec := 1
+      else
+         ( cFacCliP )->cTipRec := aTmp[ _CTIPREC ]
+         ( cFacCliP )->cSerie  := aTmp[ _CSERIE  ]
+         ( cFacCliP )->nNumFac := aTmp[ _NNUMFAC ]
+         ( cFacCliP )->cSufFac := aTmp[ _CSUFFAC ]
+         ( cFacCliP )->nNumRec := nCon
+      end if
+
       ( cFacCliP )->cCodCaj    := aTmp[ _CCODCAJ ]
       ( cFacCliP )->cCodCli    := aTmp[ _CCODCLI ]
       ( cFacCliP )->cNomCli    := aTmp[ _CNOMCLI ]
@@ -5337,7 +5352,6 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, lCompensar )
       ( cFacCliP )->dPreCob    := dFecFacCli( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], D():FacturasClientes( nView ) )
       ( cFacCliP )->cPgdoPor   := ""
       ( cFacCliP )->lCobrado   := .f.
-      ( cFacCliP )->nNumRec    := nCon
       ( cFacCliP )->cDivPgo    := aTmp[ _CDIVPGO ]
       ( cFacCliP )->nVdvPgo    := aTmp[ _NVDVPGO ]
       ( cFacCliP )->cCodPgo    := aTmp[ _CCODPGO ]
@@ -5696,5 +5710,21 @@ static function lValidCompensado( aTmp )
    end if 
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+
+static function cTipoRecibo( cTipo )
+
+   local cTipoRecibo    := ""
+
+   if cTipo == "R"
+      cTipoRecibo       := "Rectificativa"
+   end if
+
+   if cTipo == "L"
+      cTipoRecibo       := "Libre"
+   end if
+
+return ( cTipoRecibo )
 
 //---------------------------------------------------------------------------//

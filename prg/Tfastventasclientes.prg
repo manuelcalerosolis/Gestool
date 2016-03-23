@@ -57,6 +57,7 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
 
    METHOD RiesgoAlcanzado()               INLINE ( ::oStock:nRiesgo( ::oDbf:cCodCli ) )
    METHOD TotalFacturado()                INLINE ( ::oStock:nFacturado( ::oDbf:cCodCli ) )
+   METHOD nPedidoCliente()                INLINE ( ::oStock:nPedidoCliente( ::oDbf:cCodCli ) )
 
 END CLASS
 
@@ -680,6 +681,7 @@ METHOD AddVariable() CLASS TFastVentasClientes
 
    ::oFastReport:AddVariable(    "Clientes",    "Riesgo alcanzado",   "CallHbFunc( 'oTinfGen', ['RiesgoAlcanzado'])" )
    ::oFastReport:AddVariable(    "Clientes",    "Total facturado",    "CallHbFunc( 'oTinfGen', ['TotalFacturado'])" )
+   ::oFastReport:AddVariable(    "Clientes",    "Total pedido",       "CallHbFunc( 'oTinfGen', ['nPedidoCliente'])" )
 
 Return ( ::Super:AddVariable() )
 

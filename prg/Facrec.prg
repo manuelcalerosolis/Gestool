@@ -11751,7 +11751,6 @@ FUNCTION nTotFacRec( cFactura, cFacRecT, cFacRecL, cIva, cDiv, aTmp, cDivRet, lP
    local nRegIva
    local nBaseGasto
    local nIvaGasto
-
    
    if !Empty( nView )
       DEFAULT cFacRecT     := D():FacturasRectificativas( nView )

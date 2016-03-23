@@ -22,7 +22,7 @@ static aDoc          := {  {"NPEDPRV", "Pedido a proveedores"                   
                            {"NORDCAR", "Ordenes de carga"                        , .f., .f., .t., .f. },;
                            {"NCOBCLI", "Cobros de clientes"                      , .f., .f., .t., .f. },;
                            {"NRECPRV", "Recibos de proveedor"                    , .t., .t., .f., .f. },;
-                           {"NRECCLI", "Recibos de clientes"                     , .t., .t., .f., .f. },;
+                           {"NRECCLI", "Recibos de clientes"                     , .t., .t., .t., .f. },;
                            {"NEXPEDI", "Expedientes"                             , .t., .t., .t., .f. },;
                            {"NCOBAGE", "Liquidación de agentes"                  , .f., .t., .t., .f. },;
                            {"NENTPED", "Entrega a cuenta pedido"                 , .f., .t., .f., .f. },;

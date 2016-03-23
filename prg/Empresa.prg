@@ -2807,11 +2807,12 @@ Static Function CmbSerieSave( uSerie )
             "cGetNFCContador : " + cGetNFCContador, "CmbSerieSave" ) */
 
    if !Empty( cSerie ) .and. dbDialogLock( tmpCount )
-      ( tmpCount )->( FieldPut( FieldPos( cSerie ),              nGetContador      ) )
-      ( tmpCount )->( FieldPut( FieldPos( "Doc"    + cSerie ),   cGetFormato       ) )
-      ( tmpCount )->( FieldPut( FieldPos( "Copias" + cSerie ),   nGetCopias        ) )
-      ( tmpCount )->( FieldPut( FieldPos( "cNCF"   + cSerie ),   cGetNFCPrefijo    ) )
-      ( tmpCount )->( FieldPut( FieldPos( "nCNF"   + cSerie ),   cGetNFCContador   ) )
+      ( tmpCount )->( FieldPut( FieldPos( cSerie ),               nGetContador      ) )
+      ( tmpCount )->( FieldPut( FieldPos( "Doc"    + cSerie ),    cGetFormato       ) )
+      ( tmpCount )->( FieldPut( FieldPos( "Copias" + cSerie ),    nGetCopias        ) )
+      ( tmpCount )->( FieldPut( FieldPos( "cNCF"   + cSerie ),    cGetNFCPrefijo    ) )
+      ( tmpCount )->( FieldPut( FieldPos( "nCNF"   + cSerie ),    cGetNFCContador   ) )
+
       ( tmpCount )->cSerie                                       := cGetSerie         
       ( tmpCount )->cPltDfl                                      := cGetPlantillaDefecto
       ( tmpCount )->( dbUnLock() )

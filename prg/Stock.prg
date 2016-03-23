@@ -70,6 +70,10 @@ CLASS TStock
    DATA cProducS
    DATA cProducP
 
+   DATA cDbfIva
+   DATA cDbfDiv
+   DATA cDbfFPago
+
    DATA nDouDiv
    DATA nDorDiv
    DATA nDinDiv
@@ -231,6 +235,7 @@ CLASS TStock
       METHOD Integra( sStock )
 
    METHOD nOperacionesCliente(cCodigoCliente, lRiesgo)
+   METHOD nPedidoCliente( cCodigoCliente )
    METHOD nConsumoArticulo( cCodArt, cCodAlm, cLote, dFecIni, dFecFin )
 
    METHOD lValidNumeroSerie( cCodArt, cCodAlm, nNumSer, lMessage )
@@ -450,6 +455,10 @@ METHOD lOpenFiles( cPath, lExclusive ) CLASS TStock
 
       ::cAlm            := cCheckArea( "Almacen" )
 
+      ::cDbfIva         := cCheckArea( "TIva" )
+      ::cDbfDiv         := cCheckArea( "Divisas" )
+      ::cDbfFPago       := cCheckArea( "FPAGO" )
+
       ::nDouDiv         := nDouDiv()
       ::nDorDiv         := nRouDiv()
       ::nDinDiv         := nDinDiv() // Decimales sin redondeo
@@ -566,6 +575,15 @@ METHOD lOpenFiles( cPath, lExclusive ) CLASS TStock
       USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cAlm ) 
       SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE
 
+      USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cDbfDiv )
+      SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
+
+      USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cDbfIva )
+      SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
+
+      USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cDbfFPago )
+      SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
+
       // Cargamos los almacenes------------------------------------------------
 
       ::Almacenes()
@@ -640,6 +658,10 @@ METHOD CloseFiles() CLASS TStock
    if ( !Empty( ::cHisMovS ), ( ::cHisMovS )->( dbCloseArea() ), )   
 
    if ( !Empty( ::cAlm ),     ( ::cAlm )->( dbCloseArea() ), )
+
+   if ( !Empty( ::cDbfDiv ),  ( ::cDbfDiv )->( dbCloseArea() ), )
+   if ( !Empty( ::cDbfIva ),  ( ::cDbfIva )->( dbCloseArea() ), )
+   if ( !Empty( ::cDbfFPago ),( ::cDbfFPago )->( dbCloseArea() ), )
 
 Return ( Self )
 
@@ -5380,6 +5402,35 @@ METHOD BrowseNumeroSerie( oCol, cCodArt, cCodAlm, aNumSer, oBrwSer )
    end if
 
 Return ( uRet )
+
+//---------------------------------------------------------------------------//
+
+METHOD nPedidoCliente( cCodCli )
+
+   local nTotal      := 0
+   local nRec        := ( ::cPedCliT )->( Recno() )
+   local nOrdAnt     := ( ::cPedCliT )->( OrdSetFocus( "cCodCli" ) )
+
+   if Empty( cCodCli )
+      Return nTotal
+   end if
+
+   if ( ::cPedCliT )->( dbSeek( cCodCli ) )
+
+      while ( ::cPedCliT )->cCodCli == cCodCli .and. !( ::cPedCliT )->( Eof() )
+
+         nTotal   += nTotPedCli( ( ::cPedCliT )->cSerPed + Str( ( ::cPedCliT )->nNumPed ) + ( ::cPedCliT )->cSufPed, ::cPedCliT, ::cPedCliL, ::cDbfIva, ::cDbfDiv, ::cDbfFPago, nil, cDivEmp(), .f. )
+
+         ( ::cPedCliT )->( dbSkip() )
+
+      end while
+
+   end if
+
+   ( ::cPedCliT )->( OrdSetFocus( nOrdAnt ) )
+   ( ::cPedCliT )->( dbGoTo( nRec ) )
+
+Return ( nTotal )
 
 //---------------------------------------------------------------------------//
 
