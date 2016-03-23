@@ -2482,11 +2482,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       WHEN     ( nMode != ZOOM_MODE ) ;
       OF       fldPrecios
 
-      REDEFINE CHECKBOX aGet[ ( D():Articulos( nView ) )->( fieldpos( "LBNF3" ) ) ] ;
-         VAR            aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LBNF3" ) ) ] ;
-         ID       230 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       fldPrecios
+   REDEFINE CHECKBOX aGet[ ( D():Articulos( nView ) )->( fieldpos( "LBNF3" ) ) ] ;
+      VAR            aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LBNF3" ) ) ] ;
+      ID       230 ;
+		WHEN 		( nMode != ZOOM_MODE ) ;
+      OF       fldPrecios
 
    REDEFINE COMBOBOX oSay[ 13 ] VAR cSay[ 13 ] ;
          ITEMS    aBnfSobre ;

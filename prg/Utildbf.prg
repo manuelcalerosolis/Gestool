@@ -3,6 +3,7 @@
 #include "DbStruct.ch"
 #include "DbInfo.ch"
 #include "Factu.ch" 
+#include "Ads.ch"
 
 #define HB_FF_AUTOINC         0x0008 /* Column is autoincrementing */
 
@@ -1081,8 +1082,6 @@ Return ( nil )
 Static Function StartDbfInfo( dbfAlias, oTreeInfo )
 
    local n := 0
-
-   MsgInfo( dbfAlias )
 
    Select( dbfAlias )
 
@@ -3114,7 +3113,6 @@ Function IsInteger( u )
 Return ( u - int( u ) == 0 )
 
 //---------------------------------------------------------------------------//
-
 /*
 Escribe un registro de disco
 */
@@ -3962,5 +3960,15 @@ Function dbSetCustomFilter( cExpresionFilter )
    end if 
 
 Return ( ( Select() )->( dbSetFilter( bCheck2Block( cExpresionFilter ), cExpresionFilter ) ) )
+
+//----------------------------------------------------------------------------//
+
+Function dbCustomKeyCount()
+
+   if lAIS()
+      Return ( ( Select() )->( AdsKeyCount( , , ADS_RESPECTFILTERS ) ) )
+   end if 
+
+Return ( ( Select() )->( OrdKeyCount() ) )
 
 //----------------------------------------------------------------------------//

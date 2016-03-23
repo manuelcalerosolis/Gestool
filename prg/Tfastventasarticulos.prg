@@ -1374,6 +1374,8 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
    local aliasPedidosClientes
    local aliasPedidosClientesLineas
 
+   nSec                       := seconds()
+
    aliasPedidosClientes       := D():PedidosClientes( ::nView )
    aliasPedidosClientesLineas := D():PedidosClientesLineas( ::nView )
 
@@ -1390,7 +1392,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
    ( aliasPedidosClientes )->( dbSetCustomFilter( cExpHead ) )
 
    ::oMtrInf:cText   := "Procesando pedidos"
-   ::oMtrInf:SetTotal( ( aliasPedidosClientes )->( OrdKeyCount() ) )
+   ::oMtrInf:SetTotal( ( aliasPedidosClientes )->( dbCustomKeyCount() ) )
 
    // Lineas de pedidos-----------------------------------------------------------
 
@@ -1517,6 +1519,8 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
       ::oMtrInf:AutoInc()
 
    end while
+
+   msgAlert( seconds() - nSec )
 
 RETURN ( Self )
 
