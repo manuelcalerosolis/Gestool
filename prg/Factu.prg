@@ -2463,7 +2463,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Colaboradores'
    oItem:cMessage       := 'Acceso a la tabla de colaboradores'
-   oItem:bAction        := {|| TColaboradores():New( cPatEmp(), oWnd, "04013" ):Activate() }
+   oItem:bAction        := {|| TColaboradores():New( cPatEmp(), cDriver(), oWnd, "04013" ):Activate() }
    oItem:cId            := "04013"
    oItem:cBmp           := "Teacher_16"
    oItem:cBmpBig        := "Teacher_32"
@@ -2473,7 +2473,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Actuaciones'
    oItem:cMessage       := 'Acceso a la tabla de actuaciones'
-   oItem:bAction        := {|| TActuaciones():New( cPatEmp(), oWnd, "04014" ):Activate() }
+   oItem:bAction        := {|| TActuaciones():New( cPatEmp(), cDriver(), oWnd, "04014" ):Activate() }
    oItem:cId            := "04014"
    oItem:cBmp           := "Power_Drill_16"
    oItem:cBmpBig        := "Power_Drill_32"

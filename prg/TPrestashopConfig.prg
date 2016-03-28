@@ -14,6 +14,7 @@ CLASS TPrestashopConfig
    DATA idEmpresa
    DATA hShops                         INIT {=>}
 
+   DATA cCurrentWeb 
    DATA hCurrentWeb
    
    METHOD New()                        CONSTRUCTOR
@@ -25,7 +26,11 @@ CLASS TPrestashopConfig
    METHOD getWebs()
    METHOD getWebsNames()
 
-   METHOD setCurrentWeb( hCurrentWeb ) INLINE ( ::hCurrentWeb := hCurrentWeb )
+   METHOD setCurrentWebName( cCurrentWeb )
+   METHOD getCurrentWebName()          INLINE ( ::cCurrentWeb )          
+
+   METHOD setCurrentWeb( hCurrentWeb, cCurrentWeb ) ;
+                                       INLINE ( ::hCurrentWeb := hCurrentWeb, ::cCurrentWeb := cCurrentWeb )
    METHOD getCurrentWeb( hCurrentWeb ) INLINE ( ::hCurrentWeb )
    
    METHOD getFromCurrentWeb( key, default );
@@ -128,6 +133,26 @@ METHOD getWebsNames() CLASS TPrestashopConfig
    local aWebsNames  := hgetkeys( ::getWebs() )
 
 Return ( aWebsNames )
+
+//----------------------------------------------------------------//
+
+METHOD setCurrentWebName( cCurrentWeb ) CLASS TPrestashopConfig
+
+   local hCurrentWeb
+
+   if !hhaskey( ::getWebs(), cCurrentWeb )
+      Return ( .f. )
+   endif
+
+   hCurrentWeb          := hget( ::getWebs(), cCurrentWeb )
+
+   if empty( hCurrentWeb )
+      Return ( .f. )
+   endif
+   
+   ::setCurrentWeb( hCurrentWeb, cCurrentWeb )
+
+Return ( .t. )
 
 //----------------------------------------------------------------//
 

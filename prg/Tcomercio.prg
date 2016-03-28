@@ -130,6 +130,11 @@ CLASS TComercio
    DATA  cPasswd
    DATA  cDbName
    DATA  nPort
+
+   DATA  oComboWebToExport
+
+   DATA  cWebToExport               INIT ""
+
    DATA  cSeriePed
 
    DATA  Cookiekey
@@ -172,16 +177,19 @@ CLASS TComercio
    DATA cSufijoPresupuesto
 
    METHOD GetInstance()              
-   METHOD New()                        CONSTRUCTOR
+   METHOD New()                           CONSTRUCTOR
    METHOD Connect()
    METHOD Disconnect()
 
-   METHOD MeterTotal( oMeterTotal )    INLINE ( iif( oMeterTotal == nil, ::oMeterTotal := oMeterTotal, ::oMeterTotal ) )
-   METHOD TextTotal( oTextTotal )      INLINE ( iif( oTextTotal == nil, ::oTextTotal := oTextTotal, ::oTextTotal ) )
+   METHOD MeterTotal( oMeterTotal )       INLINE ( iif( oMeterTotal == nil, ::oMeterTotal := oMeterTotal, ::oMeterTotal ) )
+   METHOD TextTotal( oTextTotal )         INLINE ( iif( oTextTotal == nil, ::oTextTotal := oTextTotal, ::oTextTotal ) )
 
-   METHOD lReady()                     INLINE ( !empty( ::cHost ) .and. !empty( ::cUser ) .and. !empty( ::cDbName ) )
+   METHOD lReady()                        INLINE ( !empty( ::cHost ) .and. !empty( ::cUser ) .and. !empty( ::cDbName ) )
 
    METHOD writeText( cText )           
+
+   METHOD setWebToExport( cWebToExport )  INLINE ( ::cWebToExport := alltrim( cWebToExport ) )
+   METHOD getWebToExport()                INLINE ( ::cWebToExport )
 
    // Apertura y cierre de ficheros--------------------------------------------
 
@@ -191,14 +199,20 @@ CLASS TComercio
    // Dialogos-----------------------------------------------------------------
 
    METHOD dialogActivate( oWnd )
+      METHOD dialogCreateWebCombobox( idCombobox, oDialog )
+
       METHOD dialogStart()
-      METHOD disableDialog()           INLINE   (  if( !empty(::oDlg),           ::oDlg:bValid := {|| .f. }, ),;
-                                                   if( !empty(::oBtnExportar),   ::oBtnExportar:Hide(), ),;
-                                                   if( !empty(::oBtnImportar),   ::oBtnImportar:Hide(), ),;
-                                                   if( !empty(::oBtnStock),      ::oBtnStock:Hide(), ),;
-                                                   if( !empty(::oBtnCancel),     ::oBtnCancel:Disable(), ) )
-      METHOD enableDialog()            INLINE   (  if( !empty(::oDlg),           ::oDlg:bValid := {|| .t. }, ),;
-                                                   if( !empty(::oBtnCancel),     ::oBtnCancel:Enable(), ) )
+      METHOD disableDialog()              INLINE   (  if( !empty(::oDlg),           ::oDlg:bValid := {|| .f. }, ),;
+                                                      if( !empty(::oBtnExportar),   ::oBtnExportar:Hide(), ),;
+                                                      if( !empty(::oBtnImportar),   ::oBtnImportar:Hide(), ),;
+                                                      if( !empty(::oBtnStock),      ::oBtnStock:Hide(), ),;
+                                                      if( !empty(::oBtnCancel),     ::oBtnCancel:Disable(), ) )
+      METHOD enableDialog()               INLINE   (  if( !empty(::oDlg),           ::oDlg:bValid := {|| .t. }, ),;
+                                                      if( !empty(::oBtnCancel),     ::oBtnCancel:Enable(), ) )
+
+   METHOD isValidNameWebToExport()        INLINE   (  if ( empty( ::getWebToExport() ),;
+                                                         ( msgStop( "No ha seleccionado ninguna web para exportar." ), .f. ),;
+                                                         ( .t. ) ) )
 
    // Mensajes-----------------------------------------------------------------
 
@@ -404,7 +418,7 @@ CLASS TComercio
 
    // Datos para la recopilacion de informacion----------------------------
 
-   METHOD ProductInCurrentWeb()              INLINE ( ::oArt:lPubInt )  // DE MOMENTO
+   METHOD ProductInCurrentWeb()                       INLINE ( ::oArt:lPubInt .and. alltrim( ::oArt:cWebShop ) == ::TPrestashopConfig():getCurrentWebName() )  // DE MOMENTO
 
    // Metodos para la recopilacion de informacion----------------------------
 
@@ -843,49 +857,20 @@ METHOD dialogActivate( oWnd ) CLASS TComercio
    Apertura del fichero de texto---------------------------------------------//
    */
 
-   DEFINE DIALOG ::oDlg RESOURCE "Comercio_0"
+   DEFINE DIALOG     ::oDlg ;
+      RESOURCE       "Comercio_0"
 
       REDEFINE BITMAP ::oBmp ;
-         ID       500 ;
-         RESOURCE "earth2_alpha_48" ;
+         ID          500 ;
+         RESOURCE    "earth2_alpha_48" ;
          TRANSPARENT ;
-         OF       ::oDlg
+         OF          ::oDlg
 
-      // Servidor--------------------------------------------------------------
+      // Web---------------------------------------------------------------------- 
 
-      REDEFINE SAY PROMPT ::TPrestashopConfig:getFullFileName() ;
-         ID       140 ;
-         OF       ::oDlg
+      ::dialogCreateWebCombobox( 110, ::oDlg )
 
-      // Puerto----------------------------------------------------------------
-
-      REDEFINE SAY PROMPT ::nPort; 
-         ID       150 ;
-         OF       ::oDlg
-
-      // Usuario---------------------------------------------------------------
-
-      REDEFINE SAY PROMPT ::cUser;
-         ID       160 ;
-         OF       ::oDlg
-
-      // Base de datos---------------------------------------------------------
-
-      REDEFINE SAY PROMPT ::cDbName;
-         ID       170 ;
-         OF       ::oDlg
-
-      REDEFINE SAY PROMPT "Usuario" ;
-         ID       180 ;
-         OF       ::oDlg
-
-      REDEFINE SAY PROMPT "Imagenes" ;
-         ID       190 ;
-         OF       ::oDlg
-
-      /*
-      Tree---------------------------------------------------------------------
-      */   
+      // Tree---------------------------------------------------------------------
 
       ::oTree           := TTreeView():Redefine( 200, ::oDlg )
 
@@ -931,7 +916,21 @@ METHOD dialogActivate( oWnd ) CLASS TComercio
 
    ::oBmp:End()
 
-Return Nil
+Return ( self )
+
+//------------------------------------------------------------------------//
+
+METHOD dialogCreateWebCombobox( id, oDlg ) CLASS TComercio
+
+   debug( ::TPrestashopConfig:getWebsNames() )
+
+   REDEFINE COMBOBOX ::oComboWebToExport ;
+      VAR         ::cWebToExport ;
+      ITEMS       ::TPrestashopConfig:getWebsNames() ;
+      ID          id ;
+      OF          oDlg
+
+Return ( self )
 
 //------------------------------------------------------------------------//
 
@@ -7644,10 +7643,7 @@ METHOD buildExportarPrestashop( idProduct ) Class TComercio
    local oBlock
    local oError
 
-   hWebs             := ::TPrestashopConfig:getWebs()
-
-   if empty(hWebs)
-      msgStop( "No hay web definidas en el fichero de configuración.")
+   if !( ::isValidNameWebToExport() )
       Return .f.
    end if 
 
@@ -7656,16 +7652,24 @@ METHOD buildExportarPrestashop( idProduct ) Class TComercio
    oBlock            := ErrorBlock( { | oError | Break( oError ) } )
    BEGIN SEQUENCE
 
-      for each hWeb in hWebs
-         
-         ::TPrestashopConfig:setCurrentWeb( hWeb )
+      if ::TPrestashopConfig:setCurrentWebName( ::getWebToExport() )
 
          if ::TPrestashopConfig:isActive()
+   
             ::buildFTP()
             ::buildProductPrestashop( idProduct, .f. )
+   
+         else
+
+            msgStop( "Web " + ::getWebToExport() + " esta actualmente desactivada" )
+
          end if 
 
-      next
+      else 
+
+         msgStop( "No se puede poner en uso la web " + ::getWebToExport() )
+
+      end if 
 
    RECOVER USING oError
       msgStop( ErrorMessage( oError ), "Error al exportar a Prestashop." )
@@ -8074,7 +8078,8 @@ METHOD buildAddInformacionStockProductPrestashop() CLASS tComercio
    Recopilamos la información del Stock-------------------------------
    */
 
-   aStockArticulo   := ::oStock:aStockArticulo( ::oArt:Codigo, ::TPrestashopConfig:getStore() )
+   aStockArticulo             := ::oStock:aStockArticulo( ::oArt:Codigo, ::TPrestashopConfig:getStore() )
+
    aEval( aStockArticulo, {|o| nTotalStock += o:nUnidades } )
 
    /*
@@ -8130,7 +8135,7 @@ METHOD buildInformacionStockProductPrestashop() CLASS TComercio
 
    ::meterProcesoSetTotal( ::oArt:OrdKeyCount() )
 
-   if isArray( ::aArticulosActualizar ) .and. Len( ::aArticulosActualizar ) > 0
+   if isArray( ::aArticulosActualizar ) .and. !empty( ::aArticulosActualizar ) 
 
       for each cCodArt in ::aArticulosActualizar
 
@@ -8141,20 +8146,6 @@ METHOD buildInformacionStockProductPrestashop() CLASS TComercio
          end if
 
       next   
-
-   else
-
-      while !::oArt:Eof()
-
-         if ::oArt:cCodWeb != 0
-
-            ::buildAddInformacionStockProductPrestashop()   
-
-         end if
-
-         ::oArt:Skip()
-
-      end while
 
    end if   
 

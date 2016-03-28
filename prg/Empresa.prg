@@ -52,7 +52,7 @@ static cTmpCon
 static tmpCount
 
 static bEdit                  := {| aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode ) }
-static bEdtC                  := {| aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode | EdtCnf( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode ) }
+static bEditConfig            := {| aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode | EditConfig( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode ) }
 static bEdtDlg                := {| aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode, cCod | EdtDet( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode, cCod ) }
 
 static aItmEmp                := {}
@@ -108,6 +108,8 @@ static oCmbContabilidad
 static cCmbContabilidad        
 static aCmbContabilidad        := { "Contaplus", "A3 CON" }   
 
+static TComercio
+
 static NUMERO_TARIFAS          := 6     
 
 //----------------------------------------------------------------------------//
@@ -152,6 +154,8 @@ STATIC FUNCTION OpenFiles( lCount )
       oPais:OpenFiles()
 
       oBandera    := TBandera():New()
+
+      TComercio   := TComercio():New()
 
       aDocumentos := {  "Pedido a proveedores",;
                         "Albaran de proveedores",;
@@ -424,7 +428,7 @@ FUNCTION Empresa( oMenuItem, oWnd )
 
       DEFINE BTNSHELL RESOURCE "CNFCLI" OF oWndBrw ;
 			NOBORDER ;
-         ACTION   ( WinEdtRec( oWndBrw:oBrw, bEdtC, dbfEmp ) ) ;
+         ACTION   ( WinEdtRec( oWndBrw:oBrw, bEditConfig, dbfEmp ) ) ;
          TOOLTIP  "Con(f)igurar";
          HOTKEY   "F" ;
          LEVEL    ACC_EDIT
@@ -1151,7 +1155,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
+STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
 
    local n
    local oFnt
@@ -1197,7 +1201,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
       return .f.
    end if
 
-   if BeginEdtCnf( aTmp, nMode )
+   if BeginEditConfig( aTmp, nMode )
       return .f.
    end if
 
@@ -2437,111 +2441,25 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             ID       185;
             OF       fldComunicaciones
 
-      REDEFINE GET aTmp[ _CSITSQL ] ;
-            ID       100;
-            OF       fldComunicaciones
+      // Web---------------------------------------------------------------------- 
 
-      REDEFINE GET aTmp[ _NPRTSQL ] ;
-            ID       110;
-            SPINNER ;
-            MIN      1;
-            MAX      65535;
-            OF       fldComunicaciones
-
-      REDEFINE GET aTmp[ _CUSRSQL ] ;
-            ID       120;
-            OF       fldComunicaciones
-
-      REDEFINE GET aTmp[ _CPSWSQL ] ;
-            ID       130;
-            OF       fldComunicaciones
-
-      REDEFINE GET aTmp[ _CDTBSQL ] ;
-            ID       140 ;
-            OF       fldComunicaciones
-
-      REDEFINE GET aTmp[ _CCOOKEY ] ;
-            ID       141 ;
-            OF       fldComunicaciones
-
-      REDEFINE GET aTmp[ _CPREFIXTBL ] ;
-            ID       142 ;
-            OF       fldComunicaciones      
-
-      REDEFINE GET aGet[ _CSERIEPED ] VAR aTmp[ _CSERIEPED ] ;
-            SPINNER ;
-            ON UP    ( UpSerie( aGet[ _CSERIEPED ] ) );
-            ON DOWN  ( DwSerie( aGet[ _CSERIEPED ] ) );
-            PICTURE  "@!" ;
-            VALID    ( aTmp[ _CSERIEPED ] >= "A" .AND. aTmp[ _CSERIEPED ] <= "Z"  );
-            ID       210 ;
-            OF       fldComunicaciones
-
-      REDEFINE GET aGet[ _CSERIEPRE ] VAR aTmp[ _CSERIEPRE ] ;
-            SPINNER ;
-            ON UP    ( UpSerie( aGet[ _CSERIEPRE ] ) );
-            ON DOWN  ( DwSerie( aGet[ _CSERIEPRE ] ) );
-            PICTURE  "@!" ;
-            VALID    ( aTmp[ _CSERIEPRE ] >= "A" .AND. aTmp[ _CSERIEPRE ] <= "Z"  );
-            ID       320 ;
-            OF       fldComunicaciones
+      TComercio:dialogCreateWebCombobox( 100, fldComunicaciones )
 
       REDEFINE BTNBMP ;
-            ID       150 ;
+            ID       101 ;
             OF       fldComunicaciones ;
             RESOURCE "Data_Connection_16" ;
             NOBORDER ;
             TOOLTIP  "" ;
-            ACTION   ( TMySql():New( aTmp[ _CSITSQL ], aTmp[ _CUSRSQL ], aTmp[ _CPSWSQL ], aTmp[ _CDTBSQL ], aTmp[ _NPRTSQL ] ):TestConexion() )
-
-      REDEFINE COMBOBOX cTiempoPed ;
-            ITEMS    aTiempo ;
-            ID       220 ;
-            OF       fldComunicaciones
-
-      REDEFINE CHECKBOX aGet[ _LREALWEB ] VAR aTmp[ _LREALWEB ] ;
-            ID       400 ;
-            OF       fldComunicaciones
-
-      REDEFINE CHECKBOX aGet[ _LAPENOMB ] VAR aTmp[ _LAPENOMB ] ;
-            ID       420 ;
-            OF       fldComunicaciones      
-
-      REDEFINE CHECKBOX aGet[ _LHEXPWEB ] VAR aTmp[ _LHEXPWEB ] ;
-            ID       430 ;
-            OF       fldComunicaciones      
-
-      REDEFINE GET aTmp[ _CHSTFTPIMG ] ;
-            ID       250;
-            OF       fldComunicaciones
+            ACTION   ( TestConexionDatabase() )
 
       REDEFINE BTNBMP ;
-            ID       255 ;
+            ID       102 ;
             OF       fldComunicaciones ;
             RESOURCE "Data_Connection_16" ;
             NOBORDER ;
             TOOLTIP  "" ;
-            ACTION   ( TComercio():New():ftpTestConexion() )
-
-      REDEFINE GET aTmp[ _NPRTFTP ] ;
-            ID       260;
-            OF       fldComunicaciones
-
-      REDEFINE GET aTmp[ _CUSRFTPIMG ] ;
-            ID       230;
-            OF       fldComunicaciones
-
-      REDEFINE CHECKBOX aGet[ _LPASFTP ] VAR aTmp[ _LPASFTP ] ;
-            ID       270 ;
-            OF       fldComunicaciones
-
-      REDEFINE GET aTmp[ _CPSWFTPIMG ] ;
-            ID       240;
-            OF       fldComunicaciones
-
-      REDEFINE GET aTmp[ _CDIMAGEN ] ;
-            ID       200 ;
-            OF       fldComunicaciones
+            ACTION   ( TComercio:ftpTestConexion() )
 
       REDEFINE GET   aGet[ _CRUTEDI ] ;
             VAR      aTmp[ _CRUTEDI ] ;
@@ -2559,12 +2477,12 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
 
       fldContadores:AddFastKey( VK_F3, {|| EdtCon( oBrwCon ) } )
 
-      oDlg:AddFastKey( VK_F5, {|| SaveEdtCnf( aTmp, oSay, oBrw, oDlg, nMode ) } )
+      oDlg:AddFastKey( VK_F5, {|| SaveEditConfig( aTmp, oSay, oBrw, oDlg, nMode ) } )
 
-      oDlg:bStart    := {|| StartEdtCnf( aTmp, oSay, oBrw, oDlg, oFld, nMode ) }
+      oDlg:bStart    := {|| StartEditConfig( aTmp, oSay, oBrw, oDlg, oFld, nMode ) }
 
    ACTIVATE DIALOG oDlg ;
-      ON INIT        ( InitEdtCnf( oFld, nSelFolder ) ) ;
+      ON INIT        ( InitEditConfig( oFld, nSelFolder ) ) ;
       CENTER
 
    // Fin del control de errores--------------------------------------------------
@@ -2634,7 +2552,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-Static Function InitEdtCnf( oFld, nSelFolder )
+Static Function InitEditConfig( oFld, nSelFolder )
 
    oFld:SetOption( nSelFolder ) 
 
@@ -2642,7 +2560,7 @@ Return ( nil )
 
 //--------------------------------------------------------------------------//
 
-Static Function StartEdtCnf( aTmp, oSay, oBrw, oDlg, oFld, nMode )
+Static Function StartEditConfig( aTmp, oSay, oBrw, oDlg, oFld, nMode )
 
    local oBoton
    local oGrupo
@@ -2668,7 +2586,7 @@ Static Function StartEdtCnf( aTmp, oSay, oBrw, oDlg, oFld, nMode )
       oBoton         := TDotNetButton():New( 60, oGrupo, "Earth2_32_alpha",            "Comunicaciones",    8, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
 
    oGrupo            := TDotNetGroup():New( oCarpeta, 122, "Guardar", .f. )
-      oBoton         := TDotNetButton():New( 60, oGrupo, "Floppy_disk_blue_32_alpha",  "Guardar",           1, {|| SaveEdtCnf( aTmp, oSay, oBrw, oDlg, nMode ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 60, oGrupo, "Floppy_disk_blue_32_alpha",  "Guardar",           1, {|| SaveEditConfig( aTmp, oSay, oBrw, oDlg, nMode ) }, , , .f., .f., .f. )
       oBoton         := TDotNetButton():New( 60, oGrupo, "Door2_open_32_alpha",        "Salida",            2, {|| oDlg:End() }, , , .f., .f., .f. )
 
    aEvalValid( fldValores )
@@ -5081,7 +4999,7 @@ Return ( lErrors )
 
 //---------------------------------------------------------------------------//
 
-Static Function BeginEdtCnf( aTmp )
+Static Function BeginEditConfig( aTmp )
 
    local oBlock
    local oError
@@ -5420,7 +5338,7 @@ FUNCTION ConfEmpresa( oWnd, oMenuItem, nSelFolder )
    if OpenFiles()
 
       if ( dbfEmp )->( dbSeek( cCodEmp() ) )
-         WinEdtRec( nil, bEdtC, dbfEmp, nSelFolder )
+         WinEdtRec( nil, bEditConfig, dbfEmp, nSelFolder )
       else
          MsgStop( "Código de empresa " + cCodEmp() + " no encontrada." )
       end if
@@ -5670,7 +5588,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Static Function SaveEdtCnf( aTmp, oSay, oBrw, oDlg, nMode )
+Static Function SaveEditConfig( aTmp, oSay, oBrw, oDlg, nMode )
 
    CursorWait()
 
@@ -7794,3 +7712,23 @@ Function aFullEmpresas( lExcludeGroup, lSerialize )
 Return ( aFullEmpresas )
 
 //---------------------------------------------------------------------------//
+
+Static Function TestConexionDatabase()
+
+   if !( TComercio:isValidNameWebToExport() )
+      Return .f.
+   end if 
+
+   if !( TComercio:TPrestashopConfig:setCurrentWebName( TComercio:getWebToExport() ) )
+      Return .f.
+   end if 
+
+   if TComercio:prestaShopConnect()
+      TComercio:prestashopDisConnect()  
+   end if     
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+

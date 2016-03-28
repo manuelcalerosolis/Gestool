@@ -1796,7 +1796,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    Cargamos los precios en sus variables---------------------------------------
 	*/
 
-   DEFINE DIALOG oDlg RESOURCE "Articulo" TITLE LblTitle( nMode ) + "artículo : " + Rtrim( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Nombre" ) ) ] )
+   DEFINE DIALOG oDlg ;
+      RESOURCE    "Articulo" ;
+      TITLE       LblTitle( nMode ) + "artículo : " + Rtrim( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Nombre" ) ) ] )
 
       REDEFINE FOLDER oFld;
          ID       300 ;
@@ -5608,6 +5610,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
 
    local i
    local cCod
+   local cWebShop
    local oError
    local oBlock
    local cCodArt
@@ -5630,6 +5633,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
    */
 
    cCod                    := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ]
+   cWebShop                := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cWebShop" ) ) ]
 
    if Empty( cCod ) .and. ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
       MsgStop( "Código no puede estar vacio" )
@@ -5638,6 +5642,11 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
 
    if dbSeekInOrd( cCod, "Codigo", D():Articulos( nView ) ) .and. ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
       msgStop( "Código ya existe" )
+      return nil
+   end if
+
+   if lActualizaWeb .and. !lPublishProductInPrestashop( aTmp )
+      msgStop( "El artículo que desea exportar debe marcarse para publicar en la web y tener una web asignada." )
       return nil
    end if
 
@@ -5993,7 +6002,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       */
 
       if lActualizaWeb
-         BuildWeb( cCod )
+         BuildWeb( cCod, cWebShop )
       end if
 
       // Ejecutamos script del evento after append--------------------------------
@@ -18188,28 +18197,23 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Static Function BuildWeb( idProduct )
+Static Function BuildWeb( idProduct, idShop )
 
-   if !lPubArt()
-      return .f.
-   end if
+   local TComercio   := TComercio():New()
 
-   with object ( TComercio():New() )  
+   TComercio:MeterTotal( getAutoMeterDialog() )
+   TComercio:TextTotal( getAutoTextDialog() )
 
-      :MeterTotal( getAutoMeterDialog() )
-      :TextTotal( getAutoTextDialog() )
-
-      :buildExportarPrestashop( idProduct )
-
-   end with
+   TComercio:setWebToExport( idShop ) 
+   TComercio:buildExportarPrestashop( idProduct )
 
 Return .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function lPubArt()
+Static Function lPublishProductInPrestashop( aTmp )
 
-Return ( ( D():Articulos( nView ) )->lPubInt .or. ( D():Articulos( nView ) )->cCodWeb != 0 )
+Return ( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lPubInt" ) ) ] .and. !empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cWebShop" ) ) ] ) )
 
 //---------------------------------------------------------------------------//
 
