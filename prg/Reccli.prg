@@ -121,13 +121,13 @@ static cFiltroUsuario         := ""
 
 static lOldDevuelto           := .f.
 
-static bEdit                  := { |aTmp, aGet, dbf, oBrw, lRectificativa, bValid, nMode, aTmpFac| EdtCob( aTmp, aGet, dbf, oBrw, lRectificativa, bValid, nMode, aTmpFac ) }
+static bEdit                  := { |aTmp, aGet, dbf, oBrw, lRectificativa, lCompensar, nMode, aTmpFac| EdtCob( aTmp, aGet, dbf, oBrw, lRectificativa, lCompensar, nMode, aTmpFac ) }
 
 static hEstadoRecibo          := {  "Pendiente"             => "bCancel",;
                                     "Cobrado"               => "bSel",;
                                     "Devuelto"              => "bAlert",;
                                     "Remesado"              => "folder_ok_16",;
-                                    "Espera documentación"  => "bClock" }
+                                    "Espera documentaciÃ³n"  => "bClock" }
 
 //----------------------------------------------------------------------------//
 //Funciones del programa
@@ -278,13 +278,14 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
       MRU      "Briefcase_user1_16" ;
       BITMAP   clrTopArchivos ;
       ALIAS    ( D():FacturasClientesCobros( nView ) );
-      PROMPTS  "Número",;
-               "Código",;
+      PROMPTS  "NÃºmero",;
+               "CÃ³digo",;
                "Nombre",;
-               "Expedición",;
+               "ExpediciÃ³n",;
                "Vencimiento",;
                "Cobro",;
                "Importe" ;
+      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, D():FacturasClientesCobros( nView ) ) );
       EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdit, D():FacturasClientesCobros( nView ), , , aNumRec ) ) ;
       ZOOM     ( WinZooRec( oWndBrw:oBrw, bEdit, D():FacturasClientesCobros( nView ) ) ) ;
       DELETE   ( DelCobCli( oWndBrw:oBrw, D():FacturasClientesCobros( nView ) ) ) ;
@@ -296,7 +297,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
 	  oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Sesión cerrada"
+         :cHeader          := "SesiÃ³n cerrada"
          :nHeadBmpNo       := 3
          :bEditValue       := {|| ( D():FacturasClientesCobros( nView ) )->lCloPgo }
          :nWidth           := 20
@@ -351,7 +352,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Número"
+         :cHeader          := "NÃºmero"
          :cSortOrder       := "nNumFac"
          :bEditValue       := {|| ( D():FacturasClientesCobros( nView ) )->cSerie + "/" + alltrim( str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) ) + "-" + alltrim( str( ( D():FacturasClientesCobros( nView ) )->nNumRec ) ) }
          :nWidth           := 100
@@ -359,14 +360,14 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Delegación"
+         :cHeader          := "DelegaciÃ³n"
          :bEditValue       := {|| ( D():FacturasClientesCobros( nView ) )->cSufFac  }
          :nWidth           := 40
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Sesión"
+         :cHeader          := "SesiÃ³n"
          :bEditValue       := {|| ( D():FacturasClientesCobros( nView ) )->cTurRec }
          :nWidth           := 40
          :nDataStrAlign    := 1
@@ -388,7 +389,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Código"
+         :cHeader          := "CÃ³digo"
          :cSortOrder       := "cCodCli"
          :bEditValue       := {|| ( D():FacturasClientesCobros( nView ) )->cCodCli }
          :nWidth           := 70
@@ -404,7 +405,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Expedición"
+         :cHeader          := "ExpediciÃ³n"
          :cSortOrder       := "dPreCob"
          :bEditValue       := {|| Dtoc( ( D():FacturasClientesCobros( nView ) )->dPreCob ) }
          :nWidth           := 80
@@ -428,7 +429,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Descripción"
+         :cHeader          := "DescripciÃ³n"
          :bEditValue       := {|| ( D():FacturasClientesCobros( nView ) )->cDescrip }
          :nWidth           := 180
       end with
@@ -518,6 +519,14 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
 
    oWndBrw:AddSeaBar()
 
+   DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( oWndBrw:RecAdd() );
+      TOOLTIP  "(L)ibre";
+      HOTKEY   "L";
+      BEGIN GROUP ;
+      LEVEL    ACC_APPD
+
    DEFINE BTNSHELL RESOURCE "EDIT" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( oWndBrw:RecEdit() );
@@ -589,7 +598,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
       NOBORDER ;
       MENU     This:Toggle() ;
       ACTION   ( ImpPago( nil, IS_MAIL ) ) ;
-      TOOLTIP  "Correo electrónico";
+      TOOLTIP  "Correo electrÃ³nico";
       LEVEL    ACC_IMPR
 
       lGenRecCli( oWndBrw:oBrw, oMail, IS_MAIL )
@@ -772,7 +781,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, lCompensar, nMode, 
 
       case nMode == EDIT_MODE
 
-         if aTmp[ _LCONPGO ] .and. !ApoloMsgNoYes( 'La modificación de este recibo puede provocar descuadres contables.' + CRLF + '¿Desea continuar?', 'Recibo ya contabilizado' )
+         if aTmp[ _LCONPGO ] .and. !ApoloMsgNoYes( 'La modificaciÃ³n de este recibo puede provocar descuadres contables.' + CRLF + 'Â¿Desea continuar?', 'Recibo ya contabilizado' )
             return .f.
          end if
 
@@ -817,7 +826,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, lCompensar, nMode, 
       OF       oDlg ;
       PROMPT   "&General",;
                "Bancos",;
-               "Devolución",;
+               "DevoluciÃ³n",;
                "Contablidad";
       DIALOGS  "Recibos_1",;
                "Recibos_Bancos",;
@@ -990,7 +999,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, lCompensar, nMode, 
          OF       oFld:aDialogs[ 1 ]
 
       /*
-      Pestaña de bancos--------------------------------------------------------
+      PestaÃ±a de bancos--------------------------------------------------------
       */
 
       REDEFINE BITMAP oBmpBancos ;
@@ -1142,7 +1151,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, lCompensar, nMode, 
          OF       oFld:aDialogs[ 2 ]
 
       /*
-      Segunda caja de diálogo--------------------------------------------------
+      Segunda caja de diÃ¡logo--------------------------------------------------
       */
 
       REDEFINE BITMAP oBmpDevolucion ;
@@ -1296,7 +1305,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, lCompensar, nMode, 
          end with
 
          with object ( oBrwRec:AddCol() )
-            :cHeader          := "Delegación"
+            :cHeader          := "DelegaciÃ³n"
             :bStrData         := {|| if( len( aRecibosRelacionados) > 0, SubStr( aRecibosRelacionados[ oBrwRec:nArrayAt ], 11, 2 ), "" ) }
             :nWidth           := 40
             :lHide            := .t.
@@ -1808,7 +1817,7 @@ STATIC FUNCTION initContabilizaReciboCliente( cDocIni, cDocFin, nRad, cTipo, lSi
    local lReturn
 
    /*
-   Preparamos la pantalla para mostrar la simulación---------------------------
+   Preparamos la pantalla para mostrar la simulaciÃ³n---------------------------
    */
 
    if lSimula
@@ -2500,10 +2509,10 @@ FUNCTION BrwRecCli( uGet, cFacCliP, cClient, cDiv )
 	local nOrdAnt
 	local oCbxOrd
    local cCbxOrd
-   local aCbxOrd     := {  "Número",;
-                           "Código cliente",;
+   local aCbxOrd     := {  "NÃºmero",;
+                           "CÃ³digo cliente",;
                            "Nombre cliente",;
-                           "Fecha expedición",;
+                           "Fecha expediciÃ³n",;
                            "Fecha vencimiento",;
                            "Fecha cobro",;
                            "Importe",;
@@ -2566,7 +2575,7 @@ FUNCTION BrwRecCli( uGet, cFacCliP, cClient, cDiv )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader             := "Número"
+         :cHeader             := "NÃºmero"
          :cSortOrder          := "nNumFac"
          :bEditValue          := {|| ( cFacCliP )->cSerie + "/" + AllTrim( Str( ( cFacCliP )->nNumFac ) ) + "-" + Alltrim( Str( ( cFacCliP )->nNumRec ) ) }
          :nWidth              := 95
@@ -2574,13 +2583,13 @@ FUNCTION BrwRecCli( uGet, cFacCliP, cClient, cDiv )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader             := "Delegación"
+         :cHeader             := "DelegaciÃ³n"
          :bEditValue          := {|| ( cFacCliP )->cSufFac }
          :nWidth              := 40
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader             := "Código cliente"
+         :cHeader             := "CÃ³digo cliente"
          :cSortOrder          := "cCodCli"
          :bEditValue          := {|| ( cFacCliP )->cCodCli }
          :nWidth              := 80
@@ -2630,14 +2639,14 @@ FUNCTION BrwRecCli( uGet, cFacCliP, cClient, cDiv )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader             := "Descripción"
+         :cHeader             := "DescripciÃ³n"
          :bEditValue          := {|| ( cFacCliP )->cDescrip }
          :nWidth              := 150
          :lHide               := .t.
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader             := "Fecha expedición"
+         :cHeader             := "Fecha expediciÃ³n"
          :bEditValue          := {|| Dtoc( ( cFacCliP )->dPreCob ) }
          :nWidth              := 80
          :lHide               := .t.
@@ -2788,10 +2797,10 @@ static function resourceBrowseRecCli( cFacCliP, cDiv )
    local nSelect
    local oCbxOrd
    local cCbxOrd
-   local aCbxOrd     := {  "Número",;
-                           "Código cliente",;
+   local aCbxOrd     := {  "NÃºmero",;
+                           "CÃ³digo cliente",;
                            "Nombre cliente",;
-                           "Fecha expedición",;
+                           "Fecha expediciÃ³n",;
                            "Fecha vencimiento",;
                            "Fecha cobro",;
                            "Importe",;
@@ -2851,7 +2860,7 @@ static function resourceBrowseRecCli( cFacCliP, cDiv )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader             := "Número"
+         :cHeader             := "NÃºmero"
          :cSortOrder          := "nNumFac"
          :bEditValue          := {|| ( cFacCliP )->cSerie + "/" + AllTrim( Str( ( cFacCliP )->nNumFac ) ) + "-" + Alltrim( Str( ( cFacCliP )->nNumRec ) ) }
          :nWidth              := 95
@@ -2859,13 +2868,13 @@ static function resourceBrowseRecCli( cFacCliP, cDiv )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader             := "Delegación"
+         :cHeader             := "DelegaciÃ³n"
          :bEditValue          := {|| ( cFacCliP )->cSufFac }
          :nWidth              := 40
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader             := "Código cliente"
+         :cHeader             := "CÃ³digo cliente"
          :cSortOrder          := "cCodCli"
          :bEditValue          := {|| ( cFacCliP )->cCodCli }
          :nWidth              := 80
@@ -2907,14 +2916,14 @@ static function resourceBrowseRecCli( cFacCliP, cDiv )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader             := "Descripción"
+         :cHeader             := "DescripciÃ³n"
          :bEditValue          := {|| ( cFacCliP )->cDescrip }
          :nWidth              := 150
          :lHide               := .t.
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader             := "Fecha expedición"
+         :cHeader             := "Fecha expediciÃ³n"
          :bEditValue          := {|| Dtoc( ( cFacCliP )->dPreCob ) }
          :nWidth              := 80
          :lHide               := .t.
@@ -3229,7 +3238,7 @@ FUNCTION GenPgoFacRec( cNumFac, cFacRecT, cFacRecL, cFacCliP, dbfCli, cFPago, cD
 
             ( cFacCliP )->nImporte      := if( n != nPlazos, Round( nTotal / nPlazos, nDec ), Round( nTotAcu, nDec ) )
             ( cFacCliP )->nImpCob       := if( n != nPlazos, Round( nTotal / nPlazos, nDec ), Round( nTotAcu, nDec ) )
-            ( cFacCliP )->cDescrip      := "Recibo nº" + AllTrim( Str( nInc ) ) + " de factura rectificativa " + cSerFac  + '/' + allTrim( Str( nNumFac )  ) + '/' + cSufFac
+            ( cFacCliP )->cDescrip      := "Recibo nÂº" + AllTrim( Str( nInc ) ) + " de factura rectificativa " + cSerFac  + '/' + allTrim( Str( nNumFac )  ) + '/' + cSufFac
             ( cFacCliP )->cDivPgo       := cDivFac
             ( cFacCliP )->nVdvPgo       := nVdvFac
             ( cFacCliP )->dPreCob       := dFecFac
@@ -3291,7 +3300,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
          MENU
 
             MENUITEM    "&1. Modificar factura";
-               MESSAGE  "Modificar la factura que creó el recibo" ;
+               MESSAGE  "Modificar la factura que creÃ³ el recibo" ;
                RESOURCE "Document_user1_16" ;
                ACTION   ( EdtFacCli( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] ) )
 
@@ -3300,12 +3309,12 @@ Static Function EdtRecMenu( aTmp, oDlg )
             MENUITEM    "&2. Modificar cliente";
                MESSAGE  "Modifica la ficha del cliente" ;
                RESOURCE "User1_16" ;
-               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) )
+               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "CÃ³digo de cliente vacÃ­o" ) ) )
 
             MENUITEM    "&3. Informe de cliente";
                MESSAGE  "Informe de cliente" ;
                RESOURCE "Info16" ;
-               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) );
+               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "CÃ³digo de cliente vacÃ­o" ) ) );
 
          ENDMENU
 
@@ -4158,7 +4167,7 @@ Static Function VariableReport( oFr )
    oFr:DeleteCategory(  "Recibos" )
 
    /*
-   Creación de variables----------------------------------------------------
+   CreaciÃ³n de variables----------------------------------------------------
    */
 
    oFr:AddVariable(     "Recibos", "Importe del recibo",       "CallHbFunc('nImpRecCli')" )
@@ -4240,13 +4249,13 @@ Function DesignReportRecCli( oFr, cDbfDoc )
       VariableReport( oFr )
 
       /*
-      Diseño de report---------------------------------------------------------
+      DiseÃ±o de report---------------------------------------------------------
       */
 
       oFr:DesignReport()
 
       /*
-      Destruye el diseñador----------------------------------------------------
+      Destruye el diseÃ±ador----------------------------------------------------
       */
 
       oFr:DestroyFr()
@@ -4286,7 +4295,7 @@ static Function PrintReportRecCli( nDevice, nCopies, cPrinter )
 
    oFr:SetIcon( 1 )
 
-   oFr:SetTitle(        "Diseñador de documentos" )
+   oFr:SetTitle(        "DiseÃ±ador de documentos" )
 
    /*
    Manejador de eventos--------------------------------------------------------
@@ -4367,7 +4376,7 @@ static Function PrintReportRecCli( nDevice, nCopies, cPrinter )
                   :SetItems(        aItmRecCli() )
                   :SetAdjunto(      cFilePdf )
                   :SetPara(         RetFld( ( D():FacturasClientesCobros( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )
-                  :SetAsunto(       "Envío de  recibo de cliente número " + StrTran( ( D():FacturasClientesCobros( nView ) )->cSerie + "/" + Str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac + "-" + Str( ( D():FacturasClientesCobros( nView ) )->nNumRec ), " ", "" ) )
+                  :SetAsunto(       "EnvÃ­o de  recibo de cliente nÃºmero " + StrTran( ( D():FacturasClientesCobros( nView ) )->cSerie + "/" + Str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac + "-" + Str( ( D():FacturasClientesCobros( nView ) )->nNumRec ), " ", "" ) )
                   :SetMensaje(      "Adjunto le remito nuestra factura de anticipo de cliente " + StrTran( ( D():FacturasClientesCobros( nView ) )->cSerie + "/" + Str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac + "-" + Str( ( D():FacturasClientesCobros( nView ) )->nNumRec ), " ", "" ) + Space( 1 ) )
                   :SetMensaje(      "de fecha " + Dtoc( ( D():FacturasClientesCobros( nView ) )->dPreCob ) + Space( 1 ) )
                   :SetMensaje(      CRLF )
@@ -4385,7 +4394,7 @@ static Function PrintReportRecCli( nDevice, nCopies, cPrinter )
    end if
 
    /*
-   Destruye el diseñador-------------------------------------------------------
+   Destruye el diseÃ±ador-------------------------------------------------------
    */
 
    oFr:DestroyFr()
@@ -4461,12 +4470,12 @@ Function rxRecCli( cPath, cDriver )
 
       ( cFacCliT )->( __dbPack() )
 
-      // "Número"
+      // "NÃºmero"
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( cFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "nNumFac", "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec ) + cTipRec", {|| Field->CSERIE + Str( Field->NNUMFAC ) + Field->CSUFFAC + Str( Field->NNUMREC ) + Field->cTipRec } ) )
 
-      // "Código"
+      // "CÃ³digo"
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( cFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "cCodCli", "cCodCli", {|| Field->CCODCLI } ) )
@@ -4476,7 +4485,7 @@ Function rxRecCli( cPath, cDriver )
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( cFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "cNomCli", "cNomCli", {|| Field->cNomCli } ) )
 
-      // "Expedición",;
+      // "ExpediciÃ³n",;
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( cFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "dPreCob", "dPreCob", {|| Field->dPreCob } ) )
@@ -4583,7 +4592,7 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 /*
-Crea los ficheros de la facturaci¢n
+Crea los ficheros de la facturaciÂ¢n
 */
 
 FUNCTION mkRecCli( cPath, oMeter, lReindex )
@@ -4616,73 +4625,73 @@ FUNCTION aItmRecCli()
    local aBasRecCli  := {}
 
    aAdd( aBasRecCli, {"cSerie"      ,"C",  1, 0, "Serie de factura",            "",                   "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"nNumFac"     ,"N",  9, 0, "Número de factura",           "",                   "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"nNumFac"     ,"N",  9, 0, "NÃºmero de factura",           "",                   "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cSufFac"     ,"C",  2, 0, "Sufijo de factura",           "",                   "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"nNumRec"     ,"N",  2, 0, "Número del recibo",           "",                   "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"nNumRec"     ,"N",  2, 0, "NÃºmero del recibo",           "",                   "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cTipRec"     ,"C",  1, 0, "Tipo de recibo",              "",                   "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"cCodPgo"     ,"C",  2, 0, "Código de forma de pago",     "",                   "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"cCodCaj"     ,"C",  3, 0, "Código de caja",              "",                   "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"cTurRec"     ,"C",  6, 0, "Sesión del recibo",           "",                   "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"cCodCli"     ,"C", 12, 0, "Código de cliente",           "",                   "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cCodPgo"     ,"C",  2, 0, "CÃ³digo de forma de pago",     "",                   "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cCodCaj"     ,"C",  3, 0, "CÃ³digo de caja",              "",                   "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cTurRec"     ,"C",  6, 0, "SesiÃ³n del recibo",           "",                   "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cCodCli"     ,"C", 12, 0, "CÃ³digo de cliente",           "",                   "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cNomCli"     ,"C", 80, 0, "Nombre de cliente",           "",                   "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"dEntrada"    ,"D",  8, 0, "Fecha de cobro",              "",                   "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"nImporte"    ,"N", 16, 6, "Importe",                     "cPorDivRec",         "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cDesCriP"    ,"C",100, 0, "Concepto del pago",           "",                   "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"dPreCob"     ,"D",  8, 0, "Fecha de expedición",         "",                   "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"dPreCob"     ,"D",  8, 0, "Fecha de expediciÃ³n",         "",                   "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cPgdoPor"    ,"C", 50, 0, "Pagado por",                  "",                   "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cDocPgo"     ,"C", 50, 0, "Documento de pago",           "",                   "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"lCobrado"    ,"L",  1, 0, "Lógico de cobrado",           "",                   "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"cDivPgo"     ,"C",  3, 0, "Código de la divisa",         "",                   "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"lCobrado"    ,"L",  1, 0, "LÃ³gico de cobrado",           "",                   "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cDivPgo"     ,"C",  3, 0, "CÃ³digo de la divisa",         "",                   "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"nVdvPgo"     ,"N", 10, 6, "Cambio de la divisa",         "",                   "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"lConPgo"     ,"L",  1, 0, "Lógico de contabilizado",     "",                   "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"lConPgo"     ,"L",  1, 0, "LÃ³gico de contabilizado",     "",                   "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cCtaRec"     ,"C", 12, 0, "Cuenta de contabilidad",      "",                   "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"nImpEur"     ,"N", 16, 6, "Importe del pago en Euros",   "cPorDivRec",         "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"lImpEur"     ,"L",  1, 0, "Lógico cobrar en Euros",      "",                   "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"nNumRem"     ,"N",  9, 0, "Número de la remesas",        "",                   "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"lImpEur"     ,"L",  1, 0, "LÃ³gico cobrar en Euros",      "",                   "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"nNumRem"     ,"N",  9, 0, "NÃºmero de la remesas",        "",                   "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cSufRem"     ,"C",  2, 0, "Sufijo de remesas",           "",                   "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cCtaRem"     ,"C",  3, 0, "Cuenta de remesa",            "",                   "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"lRecImp"     ,"L",  1, 0, "Lógico ya impreso",           "",                   "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"lRecDto"     ,"L",  1, 0, "Lógico descontado",           "",                   "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"lRecImp"     ,"L",  1, 0, "LÃ³gico ya impreso",           "",                   "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"lRecDto"     ,"L",  1, 0, "LÃ³gico descontado",           "",                   "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"dFecDto"     ,"D",  8, 0, "Fecha del descuento",         "",                   "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"dFecVto"     ,"D",  8, 0, "Fecha de vencimiento",        "",                   "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"cCodAge"     ,"C",  3, 0, "Código del agente",           "",                   "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"nNumCob"     ,"N",  9, 0, "Número de cobro",             "",                   "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cCodAge"     ,"C",  3, 0, "CÃ³digo del agente",           "",                   "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"nNumCob"     ,"N",  9, 0, "NÃºmero de cobro",             "",                   "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cSufCob"     ,"C",  2, 0, "Sufijo del cobro",            "",                   "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"nImpCob"     ,"N", 16, 6, "Importe del cobro",           "cPorDivRec",         "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"nImpGas"     ,"N", 16, 6, "Importe de gastos",           "cPorDivRec",         "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cCtaGas"     ,"C", 12, 0, "Subcuenta de gastos",         "",                   "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"lEsperaDoc"  ,"L",  1, 0, "Lógico a la espera de documentación","",            "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"lCloPgo"     ,"L",  1, 0, "Lógico de turno cerrado",     "",                   "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"dFecImp"     ,"D",  8, 0, "Última fecha de impresión" ,  "",                   "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"cHorImp"     ,"C",  5, 0, "Hora de la última impresión" ,"",                   "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"lNotArqueo"  ,"L",  1, 0, "Lógico de no incluir en arqueo","",                 "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"cCodBnc"     ,"C",  4, 0, "Código del banco",            "",                   "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"dFecCre"     ,"D",  8, 0, "Fecha de creación del registro" ,  "",              "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"cHorCre"     ,"C",  5, 0, "Hora de creación del registro" ,"",                 "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"cCodUsr"     ,"C",  3, 0, "Código del usuario" ,"",                            "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"lDevuelto"   ,"L",  1, 0, "Lógico recibo devuelto" ,"",                        "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"dFecDev"     ,"D",  8, 0, "Fecha devolución" ,"",                              "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"cMotDev"     ,"C",250, 0, "Motivo devolución" ,"",                             "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"lEsperaDoc"  ,"L",  1, 0, "LÃ³gico a la espera de documentaciÃ³n","",            "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"lCloPgo"     ,"L",  1, 0, "LÃ³gico de turno cerrado",     "",                   "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"dFecImp"     ,"D",  8, 0, "Ãšltima fecha de impresiÃ³n" ,  "",                   "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cHorImp"     ,"C",  5, 0, "Hora de la Ãºltima impresiÃ³n" ,"",                   "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"lNotArqueo"  ,"L",  1, 0, "LÃ³gico de no incluir en arqueo","",                 "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cCodBnc"     ,"C",  4, 0, "CÃ³digo del banco",            "",                   "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"dFecCre"     ,"D",  8, 0, "Fecha de creaciÃ³n del registro" ,  "",              "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cHorCre"     ,"C",  5, 0, "Hora de creaciÃ³n del registro" ,"",                 "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cCodUsr"     ,"C",  3, 0, "CÃ³digo del usuario" ,"",                            "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"lDevuelto"   ,"L",  1, 0, "LÃ³gico recibo devuelto" ,"",                        "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"dFecDev"     ,"D",  8, 0, "Fecha devoluciÃ³n" ,"",                              "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cMotDev"     ,"C",250, 0, "Motivo devoluciÃ³n" ,"",                             "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cRecDev"     ,"C", 14, 0, "Recibo de procedencia" ,"",                         "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"lSndDoc"     ,"L",  1, 0, "Lógico para envio" ,"",                             "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"lSndDoc"     ,"L",  1, 0, "LÃ³gico para envio" ,"",                             "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cBncEmp"     ,"C", 50, 0, "Banco de la empresa para el recibo" ,"",            "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cBncCli"     ,"C", 50, 0, "Banco del cliente para el recibo" ,"",              "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"cEPaisIBAN"  ,"C",  2, 0, "País IBAN de la empresa para el recibo" ,"",        "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"cECtrlIBAN"  ,"C",  2, 0, "Dígito de control IBAN de la empresa para el recibo" ,"", "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cEPaisIBAN"  ,"C",  2, 0, "PaÃ­s IBAN de la empresa para el recibo" ,"",        "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cECtrlIBAN"  ,"C",  2, 0, "DÃ­gito de control IBAN de la empresa para el recibo" ,"", "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cEntEmp"     ,"C",  4, 0, "Entidad de la cuenta de la empresa",  "",           "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cSucEmp"     ,"C",  4, 0, "Sucursal de la cuenta de la empresa",  "",          "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"cDigEmp"     ,"C",  2, 0, "Dígito de control de la cuenta de la empresa", "",  "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cDigEmp"     ,"C",  2, 0, "DÃ­gito de control de la cuenta de la empresa", "",  "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cCtaEmp"     ,"C", 10, 0, "Cuenta bancaria de la empresa",  "",                "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"cPaisIBAN"   ,"C",  2, 0, "País IBAN del cliente para el recibo" ,"",          "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"cCtrlIBAN"   ,"C",  2, 0, "Dígito de control IBAN del cliente para el recibo" ,"", "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cPaisIBAN"   ,"C",  2, 0, "PaÃ­s IBAN del cliente para el recibo" ,"",          "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cCtrlIBAN"   ,"C",  2, 0, "DÃ­gito de control IBAN del cliente para el recibo" ,"", "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cEntCli"     ,"C",  4, 0, "Entidad de la cuenta del cliente",  "",             "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cSucCli"     ,"C",  4, 0, "Sucursal de la cuenta del cliente",  "",            "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"cDigCli"     ,"C",  2, 0, "Dígito de control de la cuenta del cliente", "",    "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cDigCli"     ,"C",  2, 0, "DÃ­gito de control de la cuenta del cliente", "",    "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cCtaCli"     ,"C", 10, 0, "Cuenta bancaria del cliente",  "",                  "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"lRemesa"     ,"L",  1, 0, "Lógico de incluido en una remesa",  "",             "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"lRemesa"     ,"L",  1, 0, "LÃ³gico de incluido en una remesa",  "",             "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cNumMtr"     ,"C", 15, 0, "Numero del recibo matriz",   "",                    "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"lPasado"     ,"L",  1, 0, "Lógico pasado", "",                                 "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"cCtrCoste"   ,"C",  9, 0, "Código del centro de coste", "",                    "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"lPasado"     ,"L",  1, 0, "LÃ³gico pasado", "",                                 "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cCtrCoste"   ,"C",  9, 0, "CÃ³digo del centro de coste", "",                    "", "( cDbfRec )" } )
 
 Return ( aBasRecCli )
 
@@ -4692,8 +4701,8 @@ FUNCTION aItmGruposRecibos()
 
    local aBasRecCli  := {}
 
-   aAdd( aBasRecCli, {"cNumMtr"     ,"C", 14, 0, "Número de recibo matriz",         "",                "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"cNumRec"     ,"C", 14, 0, "Número de recibo relacionado",    "",                "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cNumMtr"     ,"C", 14, 0, "NÃºmero de recibo matriz",         "",                "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cNumRec"     ,"C", 14, 0, "NÃºmero de recibo relacionado",    "",                "", "( cDbfRec )" } )
 
 Return ( aBasRecCli )
 
@@ -4884,7 +4893,7 @@ FUNCTION GenPgoFacCli( cNumFac, cFacCliT, cFacCliL, cFacCliP, cAntCliT, dbfCli, 
 
             ( cFacCliP )->nImporte      := if( n != nPlazos, Round( nTotal / nPlazos, nDec ), Round( nTotAcu, nDec ) )
             ( cFacCliP )->nImpCob       := if( n != nPlazos, Round( nTotal / nPlazos, nDec ), Round( nTotAcu, nDec ) )
-            ( cFacCliP )->cDescrip      := "Recibo nº" + AllTrim( Str( nInc ) ) + " de factura " + cSerFac  + '/' + allTrim( Str( nNumFac ) ) + '/' + cSufFac
+            ( cFacCliP )->cDescrip      := "Recibo nÂº" + AllTrim( Str( nInc ) ) + " de factura " + cSerFac  + '/' + allTrim( Str( nNumFac ) ) + '/' + cSufFac
 
             ( cFacCliP )->cDivPgo       := cDivFac
             ( cFacCliP )->nVdvPgo       := nVdvFac
@@ -4944,7 +4953,7 @@ FUNCTION GenPgoFacCli( cNumFac, cFacCliT, cFacCliL, cFacCliP, cAntCliT, dbfCli, 
    ( dbfCli )->( dbGoTo( nRecCli ) )
 
    if ( lAlert .and. lMessage )
-      msgWait( "Factura " + cSerFac  + '/' + allTrim( Str( nNumFac ) ) + '/' + cSufFac + " no se generaron recibos.", "Atención", 1 )
+      msgWait( "Factura " + cSerFac  + '/' + allTrim( Str( nNumFac ) ) + '/' + cSufFac + " no se generaron recibos.", "AtenciÃ³n", 1 )
    end if
 
 RETURN NIL
@@ -5293,7 +5302,7 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, lCompensar )
    end if
 
    if !lExisteTurno( aGet[ _CTURREC ]:VarGet(), D():Turnos( nView ) )
-      msgStop( "La sesión introducida no existe." )
+      msgStop( "La sesiÃ³n introducida no existe." )
       aGet[ _CTURREC ]:SetFocus()
       return nil
    end if
@@ -5321,7 +5330,7 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, lCompensar )
       nCon                       := nNewReciboCliente( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], aTmp[ _CTIPREC ], cFacCliP )
 
       /*
-      Añadimos el nuevo recibo-------------------------------------------------
+      AÃ±adimos el nuevo recibo-------------------------------------------------
       */
 
       ( cFacCliP )->( dbAppend() )
@@ -5348,7 +5357,7 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, lCompensar )
       ( cFacCliP )->dEntrada   := Ctod( "" )
       ( cFacCliP )->nImporte   := nImp
       ( cFacCliP )->nImpCob    := nImp
-      ( cFacCliP )->cDescrip   := "Recibo nº" + AllTrim( Str( nCon ) ) + " de factura " + if( !Empty( aTmp[ _CTIPREC ] ), "rectificativa ", "" ) + aTmp[ _CSERIE ] + '/' + AllTrim( Str( aTmp[ _NNUMFAC ] ) ) + '/' + aTmp[ _CSUFFAC ]
+      ( cFacCliP )->cDescrip   := "Recibo nÂº" + AllTrim( Str( nCon ) ) + " de factura " + if( !Empty( aTmp[ _CTIPREC ] ), "rectificativa ", "" ) + aTmp[ _CSERIE ] + '/' + AllTrim( Str( aTmp[ _NNUMFAC ] ) ) + '/' + aTmp[ _CSUFFAC ]
       ( cFacCliP )->dPreCob    := dFecFacCli( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], D():FacturasClientes( nView ) )
       ( cFacCliP )->cPgdoPor   := ""
       ( cFacCliP )->lCobrado   := .f.
@@ -5429,7 +5438,7 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, lCompensar )
             ( cFacCliP )->cNomCli    := aTabla[ _CNOMCLI ]
             ( cFacCliP )->dEntrada   := Ctod( "" )
             ( cFacCliP )->nImporte   := aTabla[ _NIMPORTE ]
-            ( cFacCliP )->cDesCriP   := "Recibo Nº" + AllTrim( Str( nCon ) ) + " generado de la devolución del recibo " + aTabla[ _CSERIE ] + "/" + AllTrim( Str( aTabla[ _NNUMFAC ] ) ) + "/" + aTabla[ _CSUFFAC ] + " - " + AllTrim( Str( aTabla[ _NNUMREC ] ) )
+            ( cFacCliP )->cDesCriP   := "Recibo NÂº" + AllTrim( Str( nCon ) ) + " generado de la devoluciÃ³n del recibo " + aTabla[ _CSERIE ] + "/" + AllTrim( Str( aTabla[ _NNUMFAC ] ) ) + "/" + aTabla[ _CSUFFAC ] + " - " + AllTrim( Str( aTabla[ _NNUMREC ] ) )
             ( cFacCliP )->dPreCob    := GetSysDate()
             ( cFacCliP )->lCobrado   := .f.
             ( cFacCliP )->cDivPgo    := aTabla[ _CDIVPGO ]
@@ -5591,7 +5600,7 @@ function cEstadoRecibo( uFacCliP )
 
    do case
       case ( uFacCliP )->lEsperaDoc
-         cEstadoRecibo  := "Espera documentación"
+         cEstadoRecibo  := "Espera documentaciÃ³n"
       case ( uFacCliP )->lCobrado .and. !( uFacCliP )->lDevuelto 
          cEstadoRecibo  := "Cobrado"
       case ( uFacCliP )->lCobrado .and. ( uFacCliP )->lDevuelto
