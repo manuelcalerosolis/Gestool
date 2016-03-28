@@ -11,7 +11,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TMSError FROM TSQLVirtual
+CLASS TMSError FROM TSQLVirtual  
 
     DATA nHandle        // Manejador de la conexion o base de datos
     DATA lAutoError     // Gestion automatica de errores del sistema
@@ -67,7 +67,7 @@ METHOD Say( cMsg, lAuto ) CLASS TMSError
     DEFAULT lAuto := .f. TYPE "L"
 
     if !lAuto .or. ( lAuto .and. ::lAutoError )
-        MyMsgError( cMsg, "Eagle1 - Atención" )
+        msgWait( cMsg, "Eagle1 - Atención", 1 )
     endif
 
 return( Self )
@@ -94,8 +94,7 @@ METHOD Show( lAllways, cDefault ) CLASS TMSError
         endif
 
         if ( lAllways .or. lDisp )
-                MyMsgError( cError, "Eagle1 Class - ERROR " + ;
-                            StrNum( ::GetErrNo() ) )
+            msgWait( cError, "Eagle1 Class - ERROR " + StrNum( ::GetErrNo() ), 1 )
         endif
     endif
 

@@ -3947,9 +3947,9 @@ Return lOk
 
 //----------------------------------------------------------------------------//
 
-Function debug( cText, cTitle )
+Function debug( uValue, cTitle )
 
-Return ( msgAlert( cText, cTitle ) )
+Return ( msgAlert( hb_valtoexp( uValue ), cTitle ) )
 
 //----------------------------------------------------------------------------//
 

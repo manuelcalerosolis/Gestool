@@ -18,9 +18,12 @@ CLASS TPrestashopConfig
    
    METHOD New()                        CONSTRUCTOR
    METHOD getInstance()
+   METHOD destroyInstance()            INLINE ( ::oInstance := nil )
+
    METHOD loadJSON() 
 
    METHOD getWebs()
+   METHOD getWebsNames()
 
    METHOD setCurrentWeb( hCurrentWeb ) INLINE ( ::hCurrentWeb := hCurrentWeb )
    METHOD getCurrentWeb( hCurrentWeb ) INLINE ( ::hCurrentWeb )
@@ -117,6 +120,14 @@ METHOD getWebs() CLASS TPrestashopConfig
    end if 
 
 Return ( hWebs )
+
+//----------------------------------------------------------------//
+
+METHOD getWebsNames() CLASS TPrestashopConfig
+
+   local aWebsNames  := hgetkeys( ::getWebs() )
+
+Return ( aWebsNames )
 
 //----------------------------------------------------------------//
 

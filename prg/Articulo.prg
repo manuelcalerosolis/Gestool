@@ -488,6 +488,8 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       oDetCamposExtra:setTipoDocumento( "Artículos" )
       oDetCamposExtra:setbId( {|| D():ArticulosId( nView ) } )
 
+      TPrestashopConfig():getInstance():loadJSON()
+
       /*
       Cargamos el valor del Euro y de la Peseta-----------------------------------
       */
@@ -749,6 +751,8 @@ STATIC FUNCTION CloseFiles( lDestroy )
    if !Empty( oLenguajes )
       oLenguajes:End()
    end if
+
+   TPrestashopConfig():DestroyInstance()
 
    dbfProv           := nil
    dbfCatalogo       := nil
@@ -4345,12 +4349,21 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    */
 
    REDEFINE CHECKBOX aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lSbrInt" ) ) ] ;
-         ID       160 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ON CHANGE( ChangeTarifaPrecioWeb( aGet, aTmp ), CalculaDescuentoWeb( aGet, aTmp ) ) ;
-         OF       fldWeb
+      ID       160 ;
+      WHEN     ( nMode != ZOOM_MODE ) ;
+      ON CHANGE( ChangeTarifaPrecioWeb( aGet, aTmp ), CalculaDescuentoWeb( aGet, aTmp ) ) ;
+      OF       fldWeb
 
-   TPrestashopConfig:getWebs()         
+   // Web---------------------------------------------------------------------- 
+
+   REDEFINE COMBOBOX aGet[ ( D():Articulos( nView ) )->( fieldPos( "cWebShop" ) ) ] ;
+      VAR         aTmp[ ( D():Articulos( nView ) )->( fieldPos( "cWebShop" ) ) ] ;
+      ITEMS       TPrestashopConfig():getInstance():getWebsNames() ;
+      ID          110 ;
+      WHEN        ( nMode != ZOOM_MODE .and. aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lPubInt" ) ) ] ) ;
+      OF          fldWeb
+
+   // Tarifa-------------------------------------------------------------------
 
    oGetTarWeb     := comboTarifa():Build( { "idCombo" => 150, "uValue" => aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nTarWeb" ) ) ] } )
    oGetTarWeb:Resource( fldWeb )
@@ -5301,7 +5314,7 @@ Static Function StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, 
 
    // Tiendas en prestashop----------------------------------------------------
 
-   if TPrestashopConfig():getRealTimeConexion()
+   if TPrestashopConfig():getInstance():getRealTimeConexion()
       oBtnAceptarActualizarWeb:Show()
    else   
       oBtnAceptarActualizarWeb:Hide()
