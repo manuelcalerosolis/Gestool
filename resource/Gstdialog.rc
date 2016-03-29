@@ -5434,7 +5434,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Configuraciones para el envio de email y para el enlace de la aplicación con una página web", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 384, 8
   CONTROL "Enviar con copia a", -1, "Static", WS_GROUP, 49, 83, 65, 8
   CONTROL "Enviar copia oculta", -1, "Static", WS_GROUP, 49, 97, 66, 8
-  CONTROL "Probar conexión FTP", -1, "Static", WS_GROUP, 49, 155, 57, 8
+  CONTROL "Probar conexión FTP", -1, "Static", WS_GROUP, 49, 155, 72, 8
   CONTROL "Web", -1, "Static", WS_GROUP, 49, 127, 66, 8
 }
 

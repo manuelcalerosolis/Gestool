@@ -7724,8 +7724,13 @@ Static Function TestConexionDatabase()
    end if 
 
    if TComercio:prestaShopConnect()
-      TComercio:prestashopDisConnect()  
+      TComercio:prestashopDisConnect() 
+      msgInfo( "Conexión realizada correctamente." )
+   else
+      msgStop( "Error al conectar con la BD" )
    end if     
+
+   
 
 Return ( .t. )
 
