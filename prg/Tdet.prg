@@ -31,6 +31,8 @@ CLASS TDet
 
    DATA  nRegisterLoaded                              AS NUMERIC  INIT  0
 
+   DATA  cMessageNotFound                             INIT "Valor no encontrado."
+
    DATA  nMode           
 
    DATA  nView
@@ -701,7 +703,7 @@ METHOD Existe( uValue, oGetTxt, uField, lMessage, lFill, cFillChar, cOrder )
    else
 
       if lMessage
-         msgStop( "Valor no encontrado." )
+         msgStop( ::cMessageNotFound, "Valor buscado " + cvaltochar( uValor ) )
       end if
 
    end if

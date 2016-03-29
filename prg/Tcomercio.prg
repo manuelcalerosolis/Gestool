@@ -437,6 +437,9 @@ CLASS TComercio
    METHOD buildInsertFabricantesPrestashop( hFabricantesData )
    METHOD buildInsertCategoriesPrestashop( hFamiliaData )
    METHOD buildInsertProductsPrestashop( hArticuloData )
+   METHOD buildInsertNodeCategoryProduct( idFamilia, idProduct )
+   METHOD buildInsertCategoryProduct( idCategory, idProduct )
+
    METHOD buildArticuloPrestashop( id )
    METHOD buildActualizaCaterogiaPadrePrestashop( hFamiliaData )
    METHOD buildInsertImageProductsPrestashop( hArticuloData )
@@ -457,9 +460,11 @@ CLASS TComercio
    METHOD buildImagenes()
    METHOD buildSubirImagenes()
 
-   METHOD buildPrecioArtitulo()
+   METHOD buildPrecioArticulo()
 
    METHOD buildGetParentCategories()
+
+   METHOD buildGetNodeParentCategories()
 
    METHOD buildExportarPrestashop()
 
@@ -921,8 +926,6 @@ Return ( self )
 //------------------------------------------------------------------------//
 
 METHOD dialogCreateWebCombobox( id, oDlg ) CLASS TComercio
-
-   debug( ::TPrestashopConfig:getWebsNames() )
 
    REDEFINE COMBOBOX ::oComboWebToExport ;
       VAR         ::cWebToExport ;
@@ -3134,265 +3137,10 @@ METHOD ActualizaProductsPrestashop( cCodigoArticulo, lChangeImage ) CLASS TComer
 Return .t.
 
 //---------------------------------------------------------------------------//
-
+// deprecated
 METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
 
-   local nCodigoWeb           := 0
-   local nCodigoImagen        := 0
-   local oImagen
-   local nOrdAnt
-   local nPosition            := 1
-   local nCodigoPropiedad     := 0
-   local aPropiedades1        := {}
-   local aPropiedades2        := {}
-   local aPropiedad1
-   local aPropiedad2
-   local nPrecio              := 0
-   local nParent              := ::GetParentCategories()
-   local cCommand             := ""
-   local nTotStock
-   local nOrdArtDiv           := ::oArtDiv:OrdSetFocus( "cCodArt" )
-
-   DEFAULT lExt               := .f.
-
-   /*
-   ----------------------------------------------------------------------------
-   INSERTAMOS EL ARTÍCULO EN TODAS LAS TABLAS DE PRESTASHOP--------------------
-   ----------------------------------------------------------------------------
-   */
-
-   ::cTextoWait( "Añadiendo artículo: " + alltrim( ::oArt:Nombre ) )
-
-   /*
-   Vemos el preciodel artículo-------------------------------------------------
-   */
-
-   if ::oArtDiv:Seek( ::oArt:Codigo )
-      nPrecio  := 0
-   else
-      nPrecio  := ::oArt:pVtaWeb
-   end if
-
-   ::oArtDiv:OrdSetFocus( nOrdArtDiv )
-
-   cCommand    := "INSERT INTO " + ::cPrefixTable( "product" ) + ;
-                     " ( id_manufacturer, " + ;
-                     "id_tax_rules_group, " + ;
-                     "id_category_default, " + ;
-                     "id_shop_default, " + ;
-                     "quantity, " + ;
-                     "minimal_quantity, " + ;
-                     "price, " + ;
-                     "reference, " + ;
-                     "weight, " + ;
-                     "active, " + ;
-                     "date_add, " + ;
-                     "date_upd )" + ;
-                  " VALUES " + ;
-                     "('" + alltrim( str( oRetFld( ::oArt:cCodFab, ::oFab, "cCodWeb", "cCodFab" ) ) ) + "', " + ; //id_manufacturer
-                     "'" + alltrim( str( oRetFld( ::oArt:TipoIva, ::oIva, "CGRPWEB", "TIPO" ) ) ) + "', " + ;     //id_tax_rules_group  - tipo IVA
-                     "'" + alltrim( str( nParent ) ) + "', " + ;                                                  //id_category_default
-                     "'1', " + ;                                                                                  //id_shop_default
-                     "'1', " + ;                                                                                  //quantity
-                     "'1', " + ;                                                                                  //minimal_quantity
-                     "'" + alltrim( str( nPrecio ) ) + "', " + ;                                                  //price
-                     "'" + alltrim( ::oArt:Codigo ) + "', " + ;                                                   //reference
-                     "'" + alltrim( str( ::oArt:nPesoKg ) ) + "', " + ;                                           //weight
-                     "'1', " + ;                                                                                  //active
-                     "'" + dtos( GetSysDate() ) + "', " + ;                                                       //date_add
-                     "'" + dtos( GetSysDate() ) + "' )"
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )                                                                                                             //date_upd
-
-      nCodigoWeb           := ::oCon:GetInsertId()
-
-      ::oArt:fieldPutByName( "cCodWeb", nCodigoWeb )
-
-      ::treeSetText( "He insertado el artículo " + alltrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "product" ), 3 )
-
-   else
-
-      ::treeSetText( "Error al insertar el artículo " + alltrim( ::oArt:Nombre ) + " en la tabla " + ::cPrefixTable( "product" ), 3 )
-
-   end if
-
-   /*
-   Insertamos un artículo nuevo en la tabla category_product----------------
-    */
-
-   cCommand    := "INSERT INTO " + ::cPrefixTable( "category_product" ) + ;
-                     " ( id_category, " + ;
-                     "id_product )" + ;
-                  " VALUES " + ;
-                     "('" + alltrim( str( Max( nParent, 1 ) ) ) + "', " + ;
-                     "'" + str( nCodigoWeb ) + "' )"
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "He insertado el artículo " + alltrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "product_lang" ), 3 )
-   else
-      ::treeSetText( "Error al insertar el artículo " + alltrim( ::oArt:Nombre ) + " en la tabla " + ::cPrefixTable( "category_product" ), 3 )
-   end if
-
-   /*
-   Insertamos un artículo como producto destacado------------------------------
-   */
-
-   if ::oArt:lPubPor
-
-      cCommand    := "INSERT INTO " + ::cPrefixTable( "category_product" ) + ;
-                     " ( id_category, " + ;
-                     "id_product )" + ;
-                  " VALUES " + ;
-                     "('2', " + ;
-                     "'" + str( nCodigoWeb ) + "' )"
-   
-      if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-         ::treeSetText( "He insertado el artículo " + alltrim( ::oArt:Nombre ) + " como producto destacado", 3 )
-      else
-         ::treeSetText( "Error al insertar el artículo " + alltrim( ::oArt:Nombre ) + " como producto destacado", 3 )
-      end if
-
-   end if
-
-   /*
-   Insertamos un artículo nuevo en la tabla category_shop-------------------
-   */
-
-   cCommand    := "INSERT INTO " + ::cPrefixTable( "product_shop" ) + ;
-                     " ( id_product, " + ;
-                     "id_shop, " + ;
-                     "id_category_default, " + ;
-                     "id_tax_rules_group, " + ;
-                     "on_sale, " + ;
-                     "price, " + ;
-                     "active, " + ;
-                     "date_add, " + ;
-                     "date_upd )" + ;
-                  " VALUES " + ;
-                     "('" + str( nCodigoWeb ) + "', " + ;
-                     "'1', " + ;
-                     "'" + alltrim( str( nParent ) ) + "', " + ;
-                     "'" + alltrim( str( oRetFld( ::oArt:TipoIva, ::oIva, "CGRPWEB", "TIPO" ) ) ) + "', " + ;
-                     "'0', " + ;
-                     "'" + alltrim( str( nPrecio ) ) + "', " + ;
-                     "'1', " + ;
-                     "'" + dtos( GetSysDate() ) + "', " + ;
-                     "'" + dtos( GetSysDate() ) + "' )"
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "He insertado el artículo " + alltrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "product_shop" ), 3 )
-   else
-      ::treeSetText( "Error al insertar el artículo " + alltrim( ::oArt:Nombre ) + " en la tabla " + ::cPrefixTable( "product_shop" ), 3 )
-   end if
-
-   /*
-   Insertamos un artículo nuevo en la tabla product_lang--------------------
-   */
-
-   cCommand    := "INSERT INTO " + ::cPrefixTable( "product_lang" ) +;
-                     " ( id_product, " + ;
-                     "id_lang, " + ;
-                     "description, " + ;
-                     "description_short, " + ;
-                     "link_rewrite, " + ;
-                     "meta_title, " + ;
-                     "meta_description, " + ;
-                     "meta_keywords, " + ;
-                     "name, " + ;
-                     "available_now, " + ;
-                     "available_later )" + ;
-                  " VALUES " + ;
-                     "('" + str( nCodigoWeb ) + "', " + ;                  // id_product
-                     "'" + str( ::nLanguage ) + "', " + ;                  // id_lang
-                     "'" + if( !empty( ::oArt:mDesTec ), ::oCon:Escapestr( ::oArt:mDesTec ), ::oCon:Escapestr( ::oArt:Nombre ) ) + "', " + ;        // description
-                     "'" + alltrim( ::oArt:Nombre ) + "', " + ;   // description_short
-                     "'" + cLinkRewrite( ::oCon:Escapestr( ::oArt:Nombre ) ) + "', " + ;       // link_rewrite
-                     "'" + alltrim( ::oArt:cTitSeo ) + "', " + ;   // Meta_título
-                     "'" + alltrim( ::oArt:cDesSeo ) + "', " + ;   // Meta_description
-                     "'" + alltrim( ::oArt:cKeySeo ) + "', " + ;   // Meta_keywords
-                     "'" + ::oCon:Escapestr( ::oArt:Nombre ) + "', " + ;      // name
-                     "'En stock', " + ;                                       // avatible_now
-                     "'' )"
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "He insertado el artículo " + alltrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "product_lang" ), 3 )
-   else
-      ::treeSetText( "Error al insertar el artículo " + alltrim( ::oArt:Nombre ) + " en la tabla " + ::cPrefixTable( "product_lang" ), 3 )
-   end if
-
-   /*
-   Metemos el stock total del artículo-----------------------------------------
-   */
-
-   nTotStock   := ::oStock:nStockArticulo( ::oArt:Codigo, ::TPrestashopConfig:getStore() )
-
-   cCommand    := "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( " + ;
-                     "id_product, " + ;
-                     "id_product_attribute, " + ;
-                     "id_shop, " + ;
-                     "id_shop_group, " + ;
-                     "quantity, " + ;
-                     "depends_on_stock, " + ;
-                     "out_of_stock ) " + ;
-                  "VALUES " + ;
-                     "('" + alltrim( str( nCodigoWeb ) ) + "', " + ;
-                     "'0', " + ;   
-                     "'1', " + ;
-                     "'0', " + ;
-                     "'" + alltrim( str( nTotStock ) ) + "', " + ;
-                     "'0', " + ;
-                     "'2' )"
-
-      if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-         ::treeSetText( "He insertado el artículo  " + alltrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "stock_available" ), 3 )
-      else
-         ::treeSetText( "Error al insertar el artículo " + alltrim( ::oArt:Nombre ) + " en la tabla " + ::cPrefixTable( "stock_available" ), 3 )
-      end if
-
-   SysRefresh()
-
-   /*
-   ----------------------------------------------------------------------------
-   Insertamos las imágenes del producto----------------------------------------
-   ----------------------------------------------------------------------------
-   */
-
-   ::cTextoWait( "Añadiendo imágenes artículo: " + alltrim( ::oArt:Nombre ) )
-
-   ::InsertImageProductsPrestashop()
-
-   /*
-   ----------------------------------------------------------------------------
-   Insertamos las propiedades del producto-------------------------------------
-   ----------------------------------------------------------------------------
-   */
-
-   ::cTextoWait( "Añadiendo propiedades del artículo: " + alltrim( ::oArt:Nombre ) )
-
-   ::InsertPropiedadesProductPrestashop( nCodigoWeb )
-
-   /*
-   ----------------------------------------------------------------------------
-   Insertamos las ofertas del producto-----------------------------------------
-   ----------------------------------------------------------------------------
-   */
-
-   ::cTextoWait( "Añadiendo ofertas del artículo: " + alltrim( ::oArt:Nombre ) )
-
-   ::InsertOfertasPrestashop( nCodigoWeb )
-
-   /*
-   ----------------------------------------------------------------------------
-   Subimos las imágenes si no es una global------------------------------------
-   ----------------------------------------------------------------------------
-   */
-
-   if lExt
-      ::cTextoWait( "Añadiendo imágenes del artículo: " + alltrim( ::oArt:Nombre ) )
-      ::buildImagenes()
-   end if   
-
-return nCodigoweb
+return nil
 
 //---------------------------------------------------------------------------//
 
@@ -5574,7 +5322,7 @@ METHOD buildArticuloPrestashop( id ) CLASS TComercio
                            "id_manufacturer"       => ::oArt:cCodFab ,;
                            "id_tax_rules_group"    => ::oArt:TipoIva ,;
                            "id_category_default"   => ::oArt:Familia ,;
-                           "price"                 => if( ::oArtDiv:Seek( ::oArt:Codigo ), 0, ::buildPrecioArtitulo() ) ,;
+                           "price"                 => ::buildPrecioArticulo(),;
                            "reference"             => ::oArt:Codigo ,;
                            "weight"                => ::oArt:nPesoKg ,;
                            "description"           => if( !empty( ::oArt:mDesTec ), ::oArt:mDesTec, ::oArt:Nombre ) ,; 
@@ -5583,11 +5331,11 @@ METHOD buildArticuloPrestashop( id ) CLASS TComercio
                            "meta_title"            => alltrim( ::oArt:cTitSeo ) ,;
                            "meta_description"      => alltrim( ::oArt:cDesSeo ) ,;
                            "meta_keywords"         => alltrim( ::oArt:cKeySeo ) ,;
-                           "lPubPor"               => ::oArt:lPubPor,;
+                           "lPublicRoot"           => ::oArt:lPubPor,;
                            "cImagen"               => ::oArt:cImagen,;
                            "lSbrInt"               => ::oArt:lSbrInt,;
                            "nDtoInt1"              => ::oArt:nDtoInt1,;
-                           "nImpInt1"              => ::buildPrecioArtitulo(),;
+                           "nImpInt1"              => ::buildPrecioArticulo(),;
                            "aImages"               => hImagesArticulos } )
 
 Return ( Self )
@@ -5679,14 +5427,14 @@ Return ( aImages )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildPrecioArtitulo() CLASS TComercio
+METHOD buildPrecioArticulo() CLASS TComercio
 
    local nPrecio
 
-   if ::oArt:lIvaInc
-      nPrecio  := Round( ::oArt:nImpIva1 / ( ( nIva( ::oIva:cAlias, ::oArt:TipoIva ) / 100 ) + 1 ), 6 )
+   if ::oArt:lIvaWeb
+      nPrecio     := Round( ::oArt:nImpIva1 / ( ( nIva( ::oIva:cAlias, ::oArt:TipoIva ) / 100 ) + 1 ), 6 )
    else
-      nPrecio  := ::oArt:pVtaWeb
+      nPrecio     := ::oArt:nImpInt1
    end if
 
 Return ( nPrecio )
@@ -6403,6 +6151,7 @@ return ( .t. )
 
 METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
 
+   local cCodigoFamilia
    local nCodigoWeb           := 0
    local nCodigoImagen        := 0
    local oImagen
@@ -6425,7 +6174,8 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
    ----------------------------------------------------------------------------
    */
 
-   nParent                    := ::buildGetParentCategories( hGet( hArticuloData, "id_category_default" ) )
+   cCodigoFamilia             := hGet( hArticuloData, "id_category_default" )
+   nParent                    := ::buildGetParentCategories( cCodigoFamilia )
    nOrdArtDiv                 := ::oArtDiv:OrdSetFocus( "cCodArt" )
 
    ::cTextoWait( "Añadiendo artículo: " + alltrim( ::oArt:Nombre ) )
@@ -6436,8 +6186,8 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
 
    ::oArtDiv:OrdSetFocus( nOrdArtDiv )
 
-   cCommand    := "INSERT INTO " + ::cPrefixTable( "product" ) + ;
-                     " ( id_manufacturer, " + ;
+   cCommand    := "INSERT INTO " + ::cPrefixTable( "product" ) + " ( " + ;
+                     "id_manufacturer, " + ;
                      "id_tax_rules_group, " + ;
                      "id_category_default, " + ;
                      "id_shop_default, " + ;
@@ -6448,9 +6198,9 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
                      "weight, " + ;
                      "active, " + ;
                      "date_add, " + ;
-                     "date_upd )" + ;
-                  " VALUES " + ;
-                     "('" + alltrim( str( oRetFld( hGet( hArticuloData, "id_manufacturer" ), ::oFab, "cCodWeb", "cCodFab" ) ) ) + "', " + ; //id_manufacturer
+                     "date_upd ) " + ;
+                  "VALUES ( " + ;
+                     "'" + alltrim( str( oRetFld( hGet( hArticuloData, "id_manufacturer" ), ::oFab, "cCodWeb", "cCodFab" ) ) ) + "', " + ; //id_manufacturer
                      "'" + alltrim( str( oRetFld( hGet( hArticuloData, "id_tax_rules_group" ), ::oIva, "CGRPWEB", "TIPO" ) ) ) + "', " + ;     //id_tax_rules_group  - tipo IVA
                      "'" + alltrim( str( nParent ) ) + "', " + ;                                                  //id_category_default
                      "'1', " + ;                                                                                  //id_shop_default
@@ -6469,38 +6219,14 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
       ::treeSetText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "product" ), 3 )
    end if
 
-   /*
-   Insertamos un artículo nuevo en la tabla category_product----------------
-    */
+   // Insertamos un artículo nuevo en la tabla category_product----------------
 
-   cCommand    := "INSERT INTO " + ::cPrefixTable( "category_product" ) + ;
-                     " ( id_category, " + ;
-                     "id_product )" + ;
-                  " VALUES " + ;
-                     "('" + alltrim( str( Max( nParent, 1 ) ) ) + "', " + ;
-                     "'" + str( nCodigoWeb ) + "' )"
+   ::buildInsertNodeCategoryProduct( cCodigoFamilia, nCodigoWeb )
 
-   if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "category_product" ), 3 )
-   end if
+   // Publicar el articulo en el root
 
-   /*
-   Insertamos un artículo como producto destacado------------------------------
-   */
-
-   if hGet( hArticuloData, "lPubPor" )
-
-      cCommand    := "INSERT INTO " + ::cPrefixTable( "category_product" ) + ;
-                     " ( id_category, " + ;
-                     "id_product )" + ;
-                  " VALUES " + ;
-                     "('2', " + ;
-                     "'" + str( nCodigoWeb ) + "' )"
-   
-      if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-         ::treeSetText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " como producto destacado", 3 )
-      end if
-
+   if hGet( hArticuloData, "lPublicRoot" )
+      ::buildInsertCategoryProduct( 2, nCodigoWeb )
    end if
 
    /*
@@ -6578,9 +6304,9 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
                         "id_shop_group, " + ;
                         "quantity, " + ;
                         "depends_on_stock, " + ;
-                        "out_of_stock )" + ;
-                     " VALUES " + ;
-                        "('" + alltrim( str( nCodigoWeb ) ) + "', " + ;
+                        "out_of_stock ) " + ;
+                     "VALUES ( " + ;
+                        "'" + alltrim( str( nCodigoWeb ) ) + "', " + ;
                         "'0', " + ;   
                         "'1', " + ;
                         "'0', " + ;
@@ -6607,7 +6333,49 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
    ::cTextoWait( "Añadiendo ofertas del artículo: " + hGet( hArticuloData, "name" ) )
    ::buildInsertOfertasPrestashop( hArticuloData, nCodigoWeb )
 
-return nCodigoweb
+Return nCodigoweb
+
+//---------------------------------------------------------------------------//
+
+METHOD buildInsertNodeCategoryProduct( idFamilia, idProduct ) CLASS TComercio
+
+   local idCategory
+   local cNodeFamilia
+
+   idCategory                 := ::buildGetParentCategories( idFamilia )
+
+   ::buildInsertCategoryProduct( idCategory, idProduct ) 
+
+   cNodeFamilia               := ::buildGetNodeParentCategories( idFamilia )
+   if !empty(cNodeFamilia)
+      ::buildInsertNodeCategoryProduct( cNodeFamilia, idProduct )
+   end if 
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+/*
+Insertamos un artículo nuevo en la tabla category_product----------------
+*/
+
+METHOD buildInsertCategoryProduct( idCategory, idProduct ) CLASS TComercio
+
+   local cCommand
+
+   cCommand    := "INSERT INTO " + ::cPrefixTable( "category_product" ) + " ( " + ;
+                     "id_category, " + ;
+                     "id_product ) " + ;
+                  "VALUES ( " + ;
+                     "'" + alltrim( str( max( idCategory, 1 ) ) ) + "', " + ;
+                     "'" + str( idProduct ) + "' )"
+
+   if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::treeSetText( "Error al insertar el artículo " + str( idProduct ) + " en la tabla " + ::cPrefixTable( "category_product" ), 3 )
+      Return ( .f. )
+   end if
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 /*
@@ -6869,8 +6637,8 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                                     "minimal_quantity ) "                                                                           + ;
                                  "VALUES ("                                                                                         + ;
                                     if( ::lProductIdColumnProductAttribute, "'" + alltrim( str( nCodigoWeb ) ) + "', ", "" )        + ;      //id_product
-                                    "'" + alltrim( str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', "  + ;      //price
-                                    "'" + alltrim( str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', "  + ;      //wholesale_price
+                                    "'" + alltrim( str( nPrecio ) ) + "', "                                                         + ;      //price
+                                    "'" + alltrim( str( nPrecio ) ) + "', "                                                         + ;      //wholesale_price
                                     "'10000', "                                                                                     + ;      //quantity
                                     "'1' )"                                                                                                  //minimal_quantity
 
@@ -6912,8 +6680,8 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                                     "VALUES (" + ;
                                        "'" + alltrim( str( nCodigoPropiedad ) ) + "', " + ;
                                        "'1', " + ;
-                                       "'" + alltrim( str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', " + ;
-                                       "'" + alltrim( str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', " + ;
+                                       "'" + alltrim( str( nPrecio ) ) + "', " + ;
+                                       "'" + alltrim( str( nPrecio ) ) + "', " + ;
                                        "'0', " + ;
                                        "'0', " + ;
                                        "'0', " + ;
@@ -7016,8 +6784,8 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                                  "minimal_quantity ) "                                                                           + ;
                               "VALUES ("                                                                                         + ;
                                  if( ::lProductIdColumnProductAttribute, "'" + alltrim( str( nCodigoWeb ) ) + "', ", "" )        + ;      //id_product
-                                 "'" + alltrim( str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', "  + ;      //price
-                                 "'" + alltrim( str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', "  + ;      //wholesale_price
+                                 "'" + alltrim( str( nPrecio ) ) + "', "                                                         + ;      //price
+                                 "'" + alltrim( str( nPrecio ) ) + "', "                                                         + ;      //wholesale_price
                                  "'10000', "                                                                                     + ;      //quantity
                                  "'1' )"                                                                                                  //minimal_quantity
 
@@ -7092,8 +6860,8 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                                  if( ::isProductIdColumnProductAttributeShop, "'" + alltrim( str( nCodigoWeb ) ) + "', ", "" ) + ;  // id_product
                                  "'" + alltrim( str( nCodigoPropiedad ) ) + "', " + ;
                                  "'1', " + ;
-                                 "'" + alltrim( str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', " + ;
-                                 "'" + alltrim( str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', " + ;
+                                 "'" + alltrim( str( nPrecio ) ) + "', " + ;
+                                 "'" + alltrim( str( nPrecio ) ) + "', " + ;
                                  "'0', " + ;
                                  "'0', " + ;
                                  "'0', " + ;
@@ -7722,17 +7490,31 @@ Return ( Self )
 
 METHOD buildGetParentCategories( cCodFam ) CLASS TComercio
 
-   local idCategories := 2
+   local idCategories      := 2
 
    if !empty( cCodFam )
       if ::oFam:Seek( cCodFam )
          if ::oFam:lPubInt
-            idCategories := ::oFam:cCodWeb
+            idCategories   := ::oFam:cCodWeb
          end if
       end if
    end if   
 
 Return( idCategories )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildGetNodeParentCategories( cCodFam ) CLASS TComercio
+
+   local idNode            := ""
+
+   if !empty( cCodFam )
+      if ::oFam:Seek( cCodFam )
+         idNode            := ::oFam:cFamCmb
+      end if
+   end if   
+
+Return( idNode )
 
 //---------------------------------------------------------------------------//
 

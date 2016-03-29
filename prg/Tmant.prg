@@ -85,7 +85,7 @@ CLASS TMant
    DATA nRouDiv
 
    DATA cTipoDocumento
-   DATA cMessageNotFound   INIT "Valor no enconrado."
+   DATA cMessageNotFound   INIT "Valor no encontrado."
 
    DATA lAppendBuscar      INIT .t.
    DATA lModificarBuscar   INIT .t.

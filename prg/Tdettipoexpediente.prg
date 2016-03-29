@@ -8,6 +8,8 @@
 
 CLASS TDetTipoExpediente FROM TDet
 
+   DATA  cMessageNotFound                             INIT "Subtipo de expediente no encontrado"
+
    METHOD DefineFiles()
 
    METHOD OpenFiles( lExclusive )

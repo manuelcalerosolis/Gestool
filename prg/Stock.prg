@@ -4192,7 +4192,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    if Empty( cCodArt )
       Return ( ::aStocks )
    else
-      cCodArt           := Left( cCodArt, 18 )
+      cCodArt           := left( cCodArt, 18 )
    end if
 
    lNumeroSerie         := !uFieldEmpresa( "lCalSer" )
@@ -4205,7 +4205,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    if empty( cCodAlm )
       aAlmacenes        := ::aAlmacenes
    else 
-      aAlmacenes        := { cCodAlm }
+      aAlmacenes        := { padr( cCodAlm, 16 ) }
    end if 
 
    // Browse-------------------------------------------------------------------
@@ -4458,10 +4458,10 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecIni, dFecFi
 
    ::aStockArticulo( cCodArt, cCodAlm, , , , dFecIni, dFecFin )
 
-   aEval( ::aStocks, {|o| if( ( Empty( cCodAlm ) .or. cCodAlm == o:cCodigoAlmacen )  .and.;
-                              ( Empty( cValPr1 ) .or. cValPr1 == o:cValorPropiedad1 ).and.;
-                              ( Empty( cValPr2 ) .or. cValPr2 == o:cValorPropiedad2 ).and.;                  
-                              ( Empty( cLote   ) .or. cLote   == o:cLote   ),;
+   aEval( ::aStocks, {|o| if( ( Empty( cCodAlm ) .or. alltrim( cCodAlm ) == alltrim( o:cCodigoAlmacen ) )   .and.;
+                              ( Empty( cValPr1 ) .or. alltrim( cValPr1 ) == alltrim( o:cValorPropiedad1 ) ) .and.;
+                              ( Empty( cValPr2 ) .or. alltrim( cValPr2 ) == alltrim( o:cValorPropiedad2 ) ) .and.;                  
+                              ( Empty( cLote   ) .or. alltrim( cLote )   == alltrim( o:cLote )   ),;
                               nStockArticulo += o:nUnidades, ) } )
 
 Return ( nStockArticulo )

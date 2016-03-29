@@ -202,7 +202,7 @@ METHOD New( cPath, oWndParent, oMenuItem )
 
    ::oActuaciones          := TActuaciones():Create()
 
-   ::oDetActuaciones       := TDetActuacion():New( cPath, Self )
+   ::oDetActuaciones       := TDetActuacion():New( cPath, cDriver(), Self )
    ::AddDetail( ::oDetActuaciones )
 
 RETURN ( Self )
@@ -229,7 +229,7 @@ METHOD Create( cPath, oWndParent )
 
    ::oActuaciones          := TActuaciones():Create( cPath )
 
-   ::oDetActuaciones       := TDetActuacion():New( cPath, Self )
+   ::oDetActuaciones       := TDetActuacion():New( cPath, cDriver(), Self )
    ::AddDetail( ::oDetActuaciones )
 
    ::bFirstKey             := {|| if( !Empty( ::oDbf ) .and. ( ::oDbf:Used() ), ( ::oDbf:cSerExp + Str( ::oDbf:nNumExp ) + ::oDbf:cSufExp ), "" ) }

@@ -9,7 +9,7 @@ Function StartTTipoExpediente()
 
    local oExpediente
 
-   oExpediente    := TTipoExpediente():New( cPatEmp(), oWnd(), "04011" )
+   oExpediente    := TTipoExpediente():New( cPatEmp(), cDriver(), oWnd(), "04011" )
 
    if !Empty( oExpediente )
       oExpediente:Activate()
@@ -45,10 +45,15 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New( cPath, oWndParent, oMenuItem )
+METHOD New( cPath, cDriver, oWndParent, oMenuItem )
 
    DEFAULT cPath        := cPatEmp()
-   DEFAULT oWndParent   := GetWndFrame()
+   DEFAULT cDriver      := cDriver()
+   DEFAULT oWndParent   := oWnd()
+
+   ::cPath              := cPath
+   ::cDriver            := cDriver
+   ::oWndParent         := oWndParent
 
    if oMenuItem != nil .and. ::nLevel == nil
       ::nLevel          := nLevelUsr( oMenuItem )
@@ -63,10 +68,11 @@ METHOD New( cPath, oWndParent, oMenuItem )
 
    ::cPath              := cPath
    ::oWndParent         := oWndParent
+   ::cMessageNotFound   := "Tipo de expediente no encontrado"
 
    ::bFirstKey          := {|| ::oDbf:cCodTip }
 
-   ::oSubTipoExpediente := TDetTipoExpediente():New( cPath, Self )
+   ::oSubTipoExpediente := TDetTipoExpediente():New( cPath, ::cDriver, Self )
    ::AddDetail( ::oSubTipoExpediente )
 
 RETURN ( Self )
@@ -81,7 +87,7 @@ METHOD CreateInit( cPath )
 
    ::bFirstKey          := {|| ::oDbf:cCodTip }
 
-   ::oSubTipoExpediente := TDetTipoExpediente():New( cPath, Self )
+   ::oSubTipoExpediente := TDetTipoExpediente():New( cPath, cDriver(), Self )
 
    ::AddDetail( ::oSubTipoExpediente )
 
