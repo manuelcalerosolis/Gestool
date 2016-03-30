@@ -5,7 +5,6 @@
 #include "Factu.ch" 
 #include "FastRepH.ch"
 
-static oCamposExtra
 
 //---------------------------------------------------------------------------//
     
@@ -17,17 +16,21 @@ CLASS TPrestaShopId FROM TMant
 
    METHOD DefineFiles()
 
-   METHOD getTipoDocumento( cTipoDocumento )          INLINE ( hGet( DOCUMENTOS_ITEMS, cTipoDocumento ) )
-   
    METHOD setValue( cTipoDocumento, cClave, cWeb, idWeb )
    METHOD getValue( cTipoDocumento, cClave, cWeb )
    METHOD deleteValue( cTipoDocumento, cClave, cWeb )
 
-   METHOD setValueArticulos( cClave, cWeb, idWeb )    INLINE ::setValue( "Artículos", cClave, cWeb, idWeb )
-   METHOD getValueArticulos( cClave, cWeb )           INLINE ::getValue( "Artículos", cClave, cWeb )
+   METHOD setValueArticulos( cClave, cWeb, idWeb )    INLINE ::setValue( "01", cClave, cWeb, idWeb )
+   METHOD getValueArticulos( cClave, cWeb )           INLINE ::getValue( "01", cClave, cWeb )
 
-   METHOD setValueFamilias( cClave, cWeb, idWeb )     INLINE ::setValue( "Familias", cClave, cWeb, idWeb )
-   METHOD getValueFamilias( cClave, cWeb )            INLINE ::getValue( "Familias", cClave, cWeb )
+   METHOD setValueFamilias( cClave, cWeb, idWeb )     INLINE ::setValue( "02", cClave, cWeb, idWeb )
+   METHOD getValueFamilias( cClave, cWeb )            INLINE ::getValue( "02", cClave, cWeb )
+
+   METHOD setValueTax( cClave, cWeb, idWeb )          INLINE ::setValue( "03", cClave, cWeb, idWeb )
+   METHOD getValueTax( cClave, cWeb )                 INLINE ::getValue( "03", cClave, cWeb )
+
+   METHOD setValueTaxRuleGroup( cClave, cWeb, idWeb ) INLINE ::setValue( "04", cClave, cWeb, idWeb )
+   METHOD getValueTaxRuleGroup( cClave, cWeb )        INLINE ::getValue( "04", cClave, cWeb )
 
    METHOD isValidParameters( cTipoDocumento, cClave, cWeb, idWeb ) 
    METHOD isSeekValues( cTipoDocumento, cClave, cWeb )
@@ -81,7 +84,7 @@ METHOD setValue( cTipoDocumento, cClave, cWeb, idWeb )
       ::oDbf:fieldPutByName( "idWeb", idWeb )
    else
       ::oDbf:Append()
-      ::oDbf:cDocumento    := ::getTipoDocumento( cTipoDocumento )
+      ::oDbf:cDocumento    := cTipoDocumento
       ::oDbf:cClave        := cClave
       ::oDbf:cWeb          := cWeb
       ::oDbf:idWeb         := idWeb
@@ -94,14 +97,14 @@ RETURN ( .t. )
 
 METHOD getValue( cTipoDocumento, cClave, cWeb )
 
-   local idWeb          := 0
+   local idWeb    := 0
 
-   if !::isValidParameters( cTipoDocumento, cClave, cWeb, idWeb )
-      RETURN ( .f. )
+   if !::isValidParameters( cTipoDocumento, cClave, cWeb )
+      RETURN ( 0 )
    end if 
 
    if ::isSeekValues( cTipoDocumento, cClave, cWeb )
-      idWeb             := ::oDbf:idWeb
+      idWeb       := ::oDbf:idWeb
    end if 
 
 RETURN ( idWeb )
@@ -110,7 +113,7 @@ RETURN ( idWeb )
 
 METHOD deleteValue( cTipoDocumento, cClave, cWeb )
 
-   if !::isValidParameters( cTipoDocumento, cClave, cWeb, idWeb )
+   if !::isValidParameters( cTipoDocumento, cClave, cWeb )
       RETURN ( .f. )
    end if 
 
@@ -150,15 +153,10 @@ RETURN ( .t. )
 
 METHOD isSeekValues( cTipoDocumento, cClave, cWeb )
 
-   local idDocumento    := ::getTipoDocumento( cTipoDocumento )
-
-   if empty(idDocumento)
-      RETURN ( .f. )
-   end if 
-
    cClave               := padr( cClave, 20 )
    cWeb                 := padr( cWeb, 80 )
 
-RETURN ( ::oDbf:seekInOrd( idDocumento + cClave + cWeb, "cWeb" ) )
+RETURN ( ::oDbf:seekInOrd( cTipoDocumento + cClave + cWeb, "cWeb" ) )
 
+//---------------------------------------------------------------------------//
 

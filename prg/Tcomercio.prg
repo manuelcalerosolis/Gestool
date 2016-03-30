@@ -20,6 +20,7 @@ CLASS TComercio
    CLASSDATA oInstance
 
    DATA  TPrestashopConfig  
+   DATA  TPrestashopId
    
    DATA  aSend
    DATA  oInt
@@ -408,7 +409,9 @@ CLASS TComercio
 
    // Datos para la recopilacion de informacion----------------------------
 
-   METHOD ProductInCurrentWeb()                       INLINE ( ::oArt:lPubInt .and. alltrim( ::oArt:cWebShop ) == ::TPrestashopConfig():getCurrentWebName() )  // DE MOMENTO
+   METHOD getCurrentWebName()                         INLINE ( ::TPrestashopConfig:getCurrentWebName() )
+
+   METHOD ProductInCurrentWeb()                       INLINE ( ::oArt:lPubInt .and. alltrim( ::oArt:cWebShop ) == ::getCurrentWebName() )  // DE MOMENTO
 
    // Metodos para la recopilacion de informacion----------------------------
 
@@ -423,7 +426,7 @@ CLASS TComercio
    METHOD buildProductPrestashop( id )
    METHOD buildInformacion()
    METHOD buildSubirInformacion()
-   METHOD buildInsertIvaPrestashop( hIvaData )
+   METHOD buildInsertIvaPrestashop( hTax )
    METHOD buildInsertFabricantesPrestashop( hFabricantesData )
    METHOD buildInsertCategoriesPrestashop( hFamiliaData )
    METHOD buildInsertProductsPrestashop( hArticuloData )
@@ -635,6 +638,11 @@ METHOD filesOpen() CLASS TComercio
 
       DATABASE NEW ::oPreCliE PATH ( cPatEmp() ) FILE "PRECLIE.DBF"     VIA ( cDriver() ) SHARED INDEX "PRECLIE.CDX"
 
+      ::TPrestashopId         := TPrestashopId():New()
+      if !::TPrestashopId:OpenFiles()
+         lOpen                := .f.
+      end if
+
       ::oStock                := TStock():Create( cPatGrp() )
       if !::oStock:lOpenFiles()
          lOpen                := .f.
@@ -790,38 +798,9 @@ METHOD filesClose() CLASS TComercio
       ::oOferta:End()
    end if
 
-   ::oArt      := nil
-   ::oPro      := nil
-   ::oTblPro   := nil
-   ::oFPago    := nil
-   ::oFam      := nil
-   ::oGrpFam   := nil
-   ::oCli      := nil
-   ::oObras    := nil
-   ::oPedCliT  := nil
-   ::oPedCliI  := nil
-   ::oPedCliL  := nil
-   ::oCount    := nil
-   ::oFab      := nil
-   ::oIva      := nil
-   ::oDivisas  := nil
-   ::oTipArt   := nil
-   ::oKit      := nil
-   ::oAlbCliT  := nil
-   ::oAlbCliL  := nil
-   ::oFacCliL  := nil
-   ::oFacRecL  := nil
-   ::oTikCliL  := nil
-   ::oProLin   := nil
-   ::oProMat   := nil
-   ::oHisMov   := nil
-   ::oPedPrvL  := nil
-   ::oAlbPrvT  := nil
-   ::oAlbPrvL  := nil
-   ::oFacPrvL  := nil
-   ::oRctPrvL  := nil
-   ::oArtImg   := nil
-   ::oOferta   := nil
+   if !empty( ::TPrestashopId ) 
+      ::TPrestashopId:End()
+   end if
 
 RETURN ( Self )
 
@@ -4595,10 +4574,8 @@ return .t.
 METHOD buildIvaPrestashop( id ) CLASS TComercio
 
    if aScan( ::aIvaData, {|h| hGet( h, "id" ) == id } ) == 0
-      if ::oIva:SeekInOrd( id, "Tipo" ) 
-         if ::lSyncAll .or. ::oIva:cCodWeb == 0
-            aAdd( ::aIvaData, { "id" => id, "rate" => alltrim( str( ::oIva:TpIva ) ), "name" => rtrim( ::oIva:DescIva ) } )
-         end if
+      if ::lSyncAll .or. ::TPrestashopId:getValueTax( id, ::getCurrentWebName() ) == 0
+         aAdd( ::aIvaData, { "id" => id, "rate" => alltrim( str( ::oIva:TpIva ) ), "name" => rtrim( ::oIva:DescIva ) } )
       end if 
    end if 
 
@@ -4893,7 +4870,7 @@ Return ( Self )
 
 METHOD buildSubirInformacion() CLASS TComercio
 
-   local hIvaData
+   local hTax
    local hFabricantesData
    local hFamiliaData
    local hArticuloData
@@ -4904,9 +4881,9 @@ METHOD buildSubirInformacion() CLASS TComercio
 
    ::meterProcesoSetTotal( len(::aIvaData) )
 
-   for each hIvaData in ::aIvaData
+   for each hTax in ::aIvaData
 
-      ::buildInsertIvaPrestashop( hIvaData )
+      ::buildInsertIvaPrestashop( hTax )
 
       ::meterProcesoText( "Subiendo impuestos " + alltrim(str(hb_enumindex())) + " de " + alltrim(str(len(::aIvaData))) )
 
@@ -5099,24 +5076,24 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildInsertIvaPrestashop( hIvaData ) CLASS TComercio
+METHOD buildInsertIvaPrestashop( hTax ) CLASS TComercio
 
    local cCommand          := ""  
    local nCodigoWeb        := 0
    local nCodigoGrupoWeb   := 0
 
-   cCommand := "INSERT INTO " + ::cPreFixtable( "tax") + ;
-                  "( rate, " + ;
+   cCommand := "INSERT INTO " + ::cPreFixtable( "tax" ) + " ( " + ;
+                  "rate, " + ;
                   "active ) " + ;
-               "VALUES " + ;
-                  "('" + hGet( hIvaData, "rate" ) + "', " + ;  // rate
+               "VALUES ( " + ;
+                  "'" + hGet( hTax, "rate" ) + "', " + ;  // rate
                   "'1' )"                                      // active
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
       nCodigoWeb           := ::oCon:GetInsertId()
-      ::buildTextOk( hGet( hIvaData, "name" ), ::cPrefixTable( "tax" ) )
+      ::buildTextOk( hGet( hTax, "name" ), ::cPrefixTable( "tax" ) )
    else
-      ::buildTextCancel( hGet( hIvaData, "name" ), ::cPrefixTable( "tax" ) )
+      ::buildTextCancel( hGet( hTax, "name" ), ::cPrefixTable( "tax" ) )
    end if
 
    /*
@@ -5126,16 +5103,16 @@ METHOD buildInsertIvaPrestashop( hIvaData ) CLASS TComercio
    cCommand := "INSERT INTO " + ::cPrefixTable( "tax_lang" ) + "( " +;
                   "id_tax, " + ;
                   "id_lang, " + ;
-                  "name )" + ;
-               " VALUES " + ;
-                  "('" + str( nCodigoWeb ) + "', " + ;         // id_tax
+                  "name ) " + ;
+               "VALUES ( " + ;
+                  "'" + str( nCodigoWeb ) + "', " + ;         // id_tax
                   "'" + str( ::nLanguage ) + "', " + ;         // id_lang
-                  "'" + ::oCon:Escapestr( hGet( hIvaData, "name" ) ) + "' )"      // name
+                  "'" + ::oCon:Escapestr( hGet( hTax, "name" ) ) + "' )"      // name
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::buildTextOk( hGet( hIvaData, "name" ), ::cPrefixTable( "tax_lang" ) )
+      ::buildTextOk( hGet( hTax, "name" ), ::cPrefixTable( "tax_lang" ) )
    else
-      ::buildTextCancel( hGet( hIvaData, "name" ), ::cPrefixTable( "tax_lang" ) )
+      ::buildTextCancel( hGet( hTax, "name" ), ::cPrefixTable( "tax_lang" ) )
    end if
 
    /*
@@ -5144,16 +5121,16 @@ METHOD buildInsertIvaPrestashop( hIvaData ) CLASS TComercio
 
    cCommand := "INSERT INTO "+ ::cPrefixTable( "tax_rules_group" ) + "( " + ;
                   "name, " + ;
-                  "active )" + ;
-               " VALUES " + ;
-                  "('" + ::oCon:Escapestr( hGet( hIvaData, "name" ) ) + "', " + ; // name
+                  "active ) " + ;
+               "VALUES ( " + ;
+                  "'" + ::oCon:Escapestr( hGet( hTax, "name" ) ) + "', " + ; // name
                   "'1' )"                                      // active
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
       nCodigoGrupoWeb           := ::oCon:GetInsertId()
-      ::buildTextOk( hGet( hIvaData, "name" ), ::cPrefixTable( "tax_rule_group" ) )
+      ::buildTextOk( hGet( hTax, "name" ), ::cPrefixTable( "tax_rule_group" ) )
    else
-      ::buildTextError( hGet( hIvaData, "name" ), ::cPrefixTable( "tax_rule_group" ) )
+      ::buildTextError( hGet( hTax, "name" ), ::cPrefixTable( "tax_rule_group" ) )
    end if
 
    /*
@@ -5170,7 +5147,7 @@ METHOD buildInsertIvaPrestashop( hIvaData ) CLASS TComercio
                   "'" + str( nCodigoWeb ) + "' )"            // id_tax
 
    if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::buildTextError( hGet( hIvaData, "name" ), ::cPrefixTable( "tax_rule" ) )
+      ::buildTextError( hGet( hTax, "name" ), ::cPrefixTable( "tax_rule" ) )
    end if
 
    /*
@@ -5185,17 +5162,20 @@ METHOD buildInsertIvaPrestashop( hIvaData ) CLASS TComercio
                   "'1' )"
 
    if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::buildTextError( hGet( hIvaData, "name" ), ::cPrefixTable( "tax_rules_group_shop" ) )
+      ::buildTextError( hGet( hTax, "name" ), ::cPrefixTable( "tax_rules_group_shop" ) )
    end if
 
    // Guardo referencia a la web-----------------------------------------------
 
-   if ::oIva:SeekInOrd( hGet( hIvaData, "id" ), "Tipo" )
+   ::TPrestashopId:setValueTax(           hGet( hTax, "id" ), ::getCurrentWebName(), nCodigoWeb )
+   ::TPrestashopId:setValueTaxRuleGroup(  hGet( hTax, "id" ), ::getCurrentWebName(), nCodigoWeb )
 
+   /*
+   if ::oIva:SeekInOrd( hGet( hTax, "id" ), "Tipo" )
       ::oIva:fieldPutByName( "cCodWeb", nCodigoWeb )
       ::oIva:fieldPutByName( "cGrpWeb", nCodigoGrupoWeb )
-
    end if
+   */
 
 Return ( nCodigoweb )
 
@@ -5510,7 +5490,8 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
    local nParent              
    local cCommand             := ""
    local nTotStock
-   local nOrdArtDiv           
+   local nOrdArtDiv   
+   local idTaxRuleGroup        
 
    /*
    ----------------------------------------------------------------------------
@@ -5521,6 +5502,7 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
    cCodigoFamilia             := hGet( hArticuloData, "id_category_default" )
    nParent                    := ::buildGetParentCategories( cCodigoFamilia )
    nOrdArtDiv                 := ::oArtDiv:OrdSetFocus( "cCodArt" )
+   idTaxRuleGroup             := ::TPrestashopId:getValueTaxRuleGroup( hGet( hArticuloData, "id_tax_rules_group" ), ::getCurrentWebName() )
 
    ::writeText( "Añadiendo artículo: " + alltrim( ::oArt:Nombre ) )
 
@@ -5545,7 +5527,7 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
                      "date_upd ) " + ;
                   "VALUES ( " + ;
                      "'" + alltrim( str( oRetFld( hGet( hArticuloData, "id_manufacturer" ), ::oFab, "cCodWeb", "cCodFab" ) ) ) + "', " + ; //id_manufacturer
-                     "'" + alltrim( str( oRetFld( hGet( hArticuloData, "id_tax_rules_group" ), ::oIva, "CGRPWEB", "TIPO" ) ) ) + "', " + ;     //id_tax_rules_group  - tipo IVA
+                     "'" + alltrim( str( idTaxRuleGroup ) ) + "', " + ;                                           //id_tax_rules_group  - tipo IVA
                      "'" + alltrim( str( nParent ) ) + "', " + ;                                                  //id_category_default
                      "'1', " + ;                                                                                  //id_shop_default
                      "'1', " + ;                                                                                  //quantity
@@ -5591,7 +5573,7 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
                      "('" + str( nCodigoWeb ) + "', " + ;
                      "'1', " + ;
                      "'" + alltrim( str( nParent ) ) + "', " + ;
-                     "'" + alltrim( str( oRetFld( hGet( hArticuloData, "id_tax_rules_group" ), ::oIva, "CGRPWEB", "TIPO" ) ) ) + "', " + ;
+                     "'" + alltrim( str( idTaxRuleGroup ) ) + "', " + ;
                      "'0', " + ;
                      "'" + alltrim( str( hGet( hArticuloData, "price" ) ) ) + "', " + ;
                      "'1', " + ;
@@ -6761,8 +6743,8 @@ METHOD buildExportarPrestashop( idProduct ) Class TComercio
 
    ::disableDialog()
 
-   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
-   BEGIN SEQUENCE
+   // oBlock            := ErrorBlock( { | oError | Break( oError ) } )
+   // BEGIN SEQUENCE
 
       if ::TPrestashopConfig:setCurrentWebName( ::getWebToExport() )
 
@@ -6783,10 +6765,10 @@ METHOD buildExportarPrestashop( idProduct ) Class TComercio
 
       end if 
 
-   RECOVER USING oError
-      msgStop( ErrorMessage( oError ), "Error al exportar a Prestashop." )
-   END SEQUENCE
-   ErrorBlock( oBlock )
+   // RECOVER USING oError
+   //    msgStop( ErrorMessage( oError ), "Error al exportar a Prestashop." )
+   // END SEQUENCE
+   // ErrorBlock( oBlock )
 
    ::EnableDialog()
 
