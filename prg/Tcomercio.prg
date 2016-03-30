@@ -243,7 +243,6 @@ CLASS TComercio
    METHOD buildFTP()                   
    METHOD destroyFTP()                 INLINE ( ::oFtp:end() )
 
-   METHOD treeSetText( cText )
    METHOD MeterTotalText( cText )
    METHOD MeterTotalSetTotal( nTotal )
    METHOD meterProcesoText( cText )
@@ -344,7 +343,6 @@ CLASS TComercio
    METHOD DisconectBBDD()
    METHOD lShowDialogWait()
    METHOD lHideDialogWait()
-   METHOD cTextoWait( cText )
    METHOD AvisoSincronizaciontotal()
    METHOD cPreFixtable( cName )
    METHOD AutoRecive()
@@ -474,8 +472,8 @@ CLASS TComercio
 
    METHOD buildCleanTable( oTable )
 
-   METHOD buildTextOk( cValue, cTable )      INLINE ( ::treeSetText( "Insertado correctamente " + cValue + ", en la tabla " + cTable, 3 ) )
-   METHOD buildTextError( cValue, cTable )   INLINE ( ::treeSetText( "Error insertado " + cValue + ", en la tabla " + cTable, 3 ) )
+   METHOD buildTextOk( cValue, cTable )      INLINE ( ::writeText( "Insertado correctamente " + cValue + ", en la tabla " + cTable, 3 ) )
+   METHOD buildTextError( cValue, cTable )   INLINE ( ::writeText( "Error insertado " + cValue + ", en la tabla " + cTable, 3 ) )
 
    METHOD buildActualizaStock()
    METHOD buildActualizaStockProductPrestashop()
@@ -949,35 +947,6 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-METHOD treeSetText( cText, nLevel ) CLASS TComercio
-
-   if empty( ::cFilTxt )
-      ::cFilTxt      := cGetNewFileName( cPatLog() + "Com" + Dtos( Date() ) + StrTran( Time(), ":", "" ) ) + ".Txt"
-      ::hFilTxt      := fCreate( ::cFilTxt )
-   end if
-
-   if empty( ::hFilTxt )
-      ::hFilTxt      := fOpen( ::cFilTxt, 1 )
-   endif
-
-   // Escritura en el fichero
-
-   fWrite( ::hFilTxt, cValToChar( cText ) + CRLF )
-
-   // Pintamos en el tree
-
-   if !empty( ::oTree )
-      ::oTree:Select( ::oTree:Add( cText ) )
-   end if 
-
-   // Texto para dialogo 
-
-   ::cTextoWait( cText )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
 METHOD MeterTotalText( cText ) Class TComercio
 
    DEFAULT cText  := ""
@@ -1053,23 +1022,23 @@ METHOD ImportarPrestashop() CLASS TComercio
 
    if ::filesOpen()
 
-      ::treeSetText( 'Intentando conectar con el servidor ' + '"' + ::cHost + '"' + ', el usuario ' + '"' + ::cUser + '"' + ' y la base de datos ' + '"' + ::cDbName + '".' , 1 )
+      ::writeText( 'Intentando conectar con el servidor ' + '"' + ::cHost + '"' + ', el usuario ' + '"' + ::cUser + '"' + ' y la base de datos ' + '"' + ::cDbName + '".' , 1 )
 
       ::oCon            := TMSConnect():New()
 
       if !::oCon:Connect( ::cHost, ::cUser, ::cPasswd, ::cDbName, ::nPort )
 
-          ::treeSetText( 'No se ha podido conectar con la base de datos.' )
+          ::writeText( 'No se ha podido conectar con la base de datos.' )
 
       else
 
-           ::treeSetText( 'Se ha conectado con éxito a la base de datos.' , 1 )
+           ::writeText( 'Se ha conectado con éxito a la base de datos.' , 1 )
 
           oDb := TMSDataBase():New ( ::oCon, ::cDbName )
 
           if empty( oDb )
 
-             ::treeSetText( 'La Base de datos: ' + ::cDbName + ' no esta activa.', 1 )
+             ::writeText( 'La Base de datos: ' + ::cDbName + ' no esta activa.', 1 )
 
           else
 
@@ -1095,7 +1064,7 @@ METHOD ImportarPrestashop() CLASS TComercio
 
       ::oCon:Destroy()
 
-      ::treeSetText( 'Base de datos desconectada.', 1 )
+      ::writeText( 'Base de datos desconectada.', 1 )
 
       ::MeterTotalText( "Proceso finalizado" )
 
@@ -1108,7 +1077,7 @@ METHOD ImportarPrestashop() CLASS TComercio
 
    else
 
-      ::treeSetText( 'Error al abrir los ficheros necesarios.', 1 )
+      ::writeText( 'Error al abrir los ficheros necesarios.', 1 )
 
    end if
 
@@ -1138,27 +1107,27 @@ METHOD AppendIvaPrestashop() Class TComercio
    */
 
    if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPreFixtable( "tax" ) )
-      ::treeSetText( 'Tabla ' + ::cPreFixtable( "tax" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPreFixtable( "tax" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPreFixtable( "tax" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPreFixtable( "tax" ), 3  )
    end if
 
    if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPreFixtable( "tax_lang" ) )
-      ::treeSetText( 'Tabla ' + ::cPreFixtable( "tax_lang" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPreFixtable( "tax_lang" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPreFixtable( "tax_lang" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPreFixtable( "tax_lang" ), 3  )
    end if
 
    if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPreFixtable( "tax_rule" ) )
-      ::treeSetText( 'Tabla ' + ::cPreFixtable( "tax_rule" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPreFixtable( "tax_rule" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPreFixtable( "tax_rule" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPreFixtable( "tax_rule" ), 3  )
    end if
 
    if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPreFixtable( "tax_rules_group" ) )
-      ::treeSetText( 'Tabla ' + ::cPreFixtable( "tax_rules_group" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPreFixtable( "tax_rules_group" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPreFixtable( "tax_rules_group" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPreFixtable( "tax_rules_group" ), 3  )
    end if
 
    /*
@@ -1213,10 +1182,10 @@ METHOD InsertIvaPrestashop() CLASS TComercio
 
       ::oIva:fieldPutByName( "cCodWeb", nCodigoWeb )
 
-      ::treeSetText( "He insertado el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " correctamente en la tabla " + ::cPreFixtable( "tax" ), 3 )
+      ::writeText( "He insertado el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " correctamente en la tabla " + ::cPreFixtable( "tax" ), 3 )
 
    else
-      ::treeSetText( "Error al insertar el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " en la tabla " + ::cPreFixtable( "tax" ), 3 )
+      ::writeText( "Error al insertar el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " en la tabla " + ::cPreFixtable( "tax" ), 3 )
    end if
 
    /*
@@ -1234,11 +1203,11 @@ METHOD InsertIvaPrestashop() CLASS TComercio
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-      ::treeSetText( "He insertado el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " correctamente en la tabla" + ::cPrefixTable( "tax_lang" ), 3 )
+      ::writeText( "He insertado el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " correctamente en la tabla" + ::cPrefixTable( "tax_lang" ), 3 )
 
    else
 
-      ::treeSetText( "Error al insertar el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " en la tabla" + ::cPrefixTable( "tax_lang" ), 3 )
+      ::writeText( "Error al insertar el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " en la tabla" + ::cPrefixTable( "tax_lang" ), 3 )
 
    end if
 
@@ -1259,11 +1228,11 @@ METHOD InsertIvaPrestashop() CLASS TComercio
 
       ::oIva:fieldPutByName( "cGrpWeb", nCodigoGrupoWeb )
 
-      ::treeSetText( "He insertado el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " correctamente en la tabla " + ::cPreFixtable( "tax_rule_group" ), 3 )
+      ::writeText( "He insertado el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " correctamente en la tabla " + ::cPreFixtable( "tax_rule_group" ), 3 )
 
    else
 
-      ::treeSetText( "Error al insertar el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " en la tabla " + ::cPreFixTable( "tax_rule_group" ), 3 )
+      ::writeText( "Error al insertar el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " en la tabla " + ::cPreFixTable( "tax_rule_group" ), 3 )
 
    end if
 
@@ -1282,11 +1251,11 @@ METHOD InsertIvaPrestashop() CLASS TComercio
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-      ::treeSetText( "He insertado el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " correctamente en la tabla " + ::cPrefixTable( "tax_rule" ), 3 )
+      ::writeText( "He insertado el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " correctamente en la tabla " + ::cPrefixTable( "tax_rule" ), 3 )
 
    else
 
-      ::treeSetText( "Error al insertar el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " en la tabla " + ::cPrefixTable( "tax_rule" ), 3 )
+      ::writeText( "Error al insertar el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " en la tabla " + ::cPrefixTable( "tax_rule" ), 3 )
 
    end if
 
@@ -1303,26 +1272,26 @@ METHOD lUpdateIvaPrestashop( nId ) CLASS TComercio
    */
 
    if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "tax" ) + " SET rate='" + alltrim( str( ::oIva:TpIva ) ) + "' WHERE id_tax=" + alltrim( str( nId ) ) )
-      ::treeSetText( "Actualizada correctamente el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " en la tabla tax", 3 )
+      ::writeText( "Actualizada correctamente el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " en la tabla tax", 3 )
       lReturn     := .t.
    else
-      ::treeSetText( "Error al actualizar el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " en la tabla tax", 3 )
+      ::writeText( "Error al actualizar el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " en la tabla tax", 3 )
       lReturn     := .f.
    end if
 
    if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "tax_lang" ) + " SET name='" + alltrim( ::oIva:DescIva ) + "' WHERE id_tax=" + alltrim( str( nId ) ) )
-      ::treeSetText( "Actualizada correctamente el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " en la tabla tax_lang", 3 )
+      ::writeText( "Actualizada correctamente el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " en la tabla tax_lang", 3 )
       lReturn     := .t.
    else
-      ::treeSetText( "Error al actualizar el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " en la tabla tax_lang", 3 )
+      ::writeText( "Error al actualizar el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " en la tabla tax_lang", 3 )
       lReturn     := .f.
    end if
 
    if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "tax_rules_group" ) + " SET name='" + alltrim( ::oIva:DescIva ) + "' WHERE id_tax_rules_group=" + alltrim( str( nId ) ) )
-      ::treeSetText( "Actualizada correctamente el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " en la tabla tax_rules_group", 3 )
+      ::writeText( "Actualizada correctamente el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " en la tabla tax_rules_group", 3 )
       lReturn     := .t.
    else
-      ::treeSetText( "Error al actualizar el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " en la tabla tax_rules_group", 3 )
+      ::writeText( "Error al actualizar el tipo de " + cImp() + Space(1) + alltrim( ::oIva:DescIva ) + " en la tabla tax_rules_group", 3 )
       lReturn     := .f.
    end if
 
@@ -1343,7 +1312,7 @@ METHOD DelIdIvaPrestashop() Class TComercio
       ::oIva:cGrpWeb := 0
       ::oIva:Save()
 
-      ::treeSetText( 'Eliminando código web en el tipo de I.V.A. ' + alltrim( ::oIva:DescIva ), 3  )
+      ::writeText( 'Eliminando código web en el tipo de I.V.A. ' + alltrim( ::oIva:DescIva ), 3  )
 
       ::oIva:Skip()
 
@@ -1364,21 +1333,21 @@ METHOD AppendFabricantesPrestashop CLASS TComercio
    */
 
    if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPrefixTable( "manufacturer" ) )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "manufacturer" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "manufacturer" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "manufacturer" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "manufacturer" ), 3  )
    end if
 
    if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPrefixTable( "manufacturer_shop" ) )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "manufacturer_shop" ) + ' borrada correctamente', 3 )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "manufacturer_shop" ) + ' borrada correctamente', 3 )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPreFixtable( "manufacturer_shop" ), 3 )
+      ::writeText( 'Error al borrar la tabla ' + ::cPreFixtable( "manufacturer_shop" ), 3 )
    end if
 
    if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPrefixTable( "manufacturer_lang" ) )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "manufacturer_lang" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "manufacturer_lang" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "manufacturer_lang" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "manufacturer_lang" ), 3  )
    end if
 
    /*
@@ -1445,10 +1414,10 @@ METHOD InsertFabricantesPrestashop() CLASS TComercio
 
       ::oFab:fieldPutByName( "cCodWeb", nCodigoWeb )
 
-      ::treeSetText( "He insertado el fabricante " + alltrim( ::oFab:cNomFab ) + " correctamente en la tabla " + ::cPrefixTable( "manufacturer" ), 3 )
+      ::writeText( "He insertado el fabricante " + alltrim( ::oFab:cNomFab ) + " correctamente en la tabla " + ::cPrefixTable( "manufacturer" ), 3 )
 
    else
-      ::treeSetText( "Error al insertar el fabricante " + alltrim( ::oFab:cNomFab ) + " en la tabla " + ::cPreFixtable( "manufacturer" ), 3 )
+      ::writeText( "Error al insertar el fabricante " + alltrim( ::oFab:cNomFab ) + " en la tabla " + ::cPreFixtable( "manufacturer" ), 3 )
    end if
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "manufacturer_shop" ) + "( "+ ;
@@ -1460,9 +1429,9 @@ METHOD InsertFabricantesPrestashop() CLASS TComercio
 
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "He insertado el fabricante " + alltrim( ::oFab:cNomFab ) + " correctamente en la tabla" + ::cPreFixtable( "manufacturer_shop" ), 3 )
+      ::writeText( "He insertado el fabricante " + alltrim( ::oFab:cNomFab ) + " correctamente en la tabla" + ::cPreFixtable( "manufacturer_shop" ), 3 )
    else
-      ::treeSetText( "Error al insertar el fabricante " + alltrim( ::oFab:cNomFab ) + " en la tabla" + ::cPreFixtable( "manufacturer_shop" ), 3 )
+      ::writeText( "Error al insertar el fabricante " + alltrim( ::oFab:cNomFab ) + " en la tabla" + ::cPreFixtable( "manufacturer_shop" ), 3 )
    end if
 
    cCommand := "INSERT INTO " + ::cPreFixtable( "manufacturer_lang" ) + "( " +;
@@ -1474,10 +1443,10 @@ METHOD InsertFabricantesPrestashop() CLASS TComercio
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-      ::treeSetText( "He insertado el fabricante " + alltrim( ::oFab:cNomFab ) + " correctamente en la tabla" + ::cPreFixtable( "manufacturer_lang" ), 3 )
+      ::writeText( "He insertado el fabricante " + alltrim( ::oFab:cNomFab ) + " correctamente en la tabla" + ::cPreFixtable( "manufacturer_lang" ), 3 )
 
    else
-      ::treeSetText( "Error al insertar el fabricante " + alltrim( ::oFab:cNomFab ) + " en la tabla" + ::cPreFixtable( "manufacturer_lang" ), 3 )
+      ::writeText( "Error al insertar el fabricante " + alltrim( ::oFab:cNomFab ) + " en la tabla" + ::cPreFixtable( "manufacturer_lang" ), 3 )
    end if
 
 return nCodigoWeb
@@ -1489,10 +1458,10 @@ METHOD lUpdateFabricantesPrestashop( nId ) Class TComercio
    local lReturn  := .f.
 
    if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "manufacturer" ) + " SET name='" + alltrim( ::oFab:cNomFab ) + "', date_upd='" + dtos( GetSysDate() ) + "' WHERE id_manufacturer=" + alltrim( str( ::oFab:cCodWeb ) ) )
-      ::treeSetText( "Actualizada correctamente el fabricante " + alltrim( ::oFab:cNomFab ) + " en la tabla manufacturer", 3 )
+      ::writeText( "Actualizada correctamente el fabricante " + alltrim( ::oFab:cNomFab ) + " en la tabla manufacturer", 3 )
       lReturn     := .t.
    else
-     ::treeSetText( "Error al actualizar el fabricante " + alltrim( ::oFab:cNomFab ) + " en la tabla manufacturer", 3 )
+     ::writeText( "Error al actualizar el fabricante " + alltrim( ::oFab:cNomFab ) + " en la tabla manufacturer", 3 )
      lReturn     := .f.
    end if
 
@@ -1512,7 +1481,7 @@ METHOD DelIdFabricantePrestashop() Class TComercio
       ::oFab:cCodWeb := 0
       ::oFab:Save()
 
-      ::treeSetText( 'Eliminando código web en el fabricante ' + alltrim( ::oFab:cNomFab ), 3  )
+      ::writeText( 'Eliminando código web en el fabricante ' + alltrim( ::oFab:cNomFab ), 3  )
 
       ::oFab:Skip()
 
@@ -1536,65 +1505,65 @@ METHOD AppendFamiliaPrestashop( oDb ) CLASS TComercio
    cCommand       := "TRUNCATE TABLE " + ::cPrefixtable( "category" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPreFixtable( "category" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPreFixtable( "category" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPreFixtable( "category" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPreFixtable( "category" ), 3  )
    end if
 
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "category_lang" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "category_lang" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "category_lang" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "category_lang" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "category_lang" ), 3  )
    end if
 
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "category_product" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "category_product" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "category_product" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "category_product" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "category_product" ), 3  )
    end if
 
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "category_group" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "category_group" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "category_group" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "category_group" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "category_group" ), 3  )
    end if
 
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "category_shop" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "category_shop" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "category_shop" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla '+ ::cPrefixTable( "category_group" ), 3  )
+      ::writeText( 'Error al borrar la tabla '+ ::cPrefixTable( "category_group" ), 3  )
    end if
 
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "image" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "image" ) + 'borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "image" ) + 'borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla' + ::cPrefixTable( "image" ), 3  )
+      ::writeText( 'Error al borrar la tabla' + ::cPrefixTable( "image" ), 3  )
    end if
 
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "image_shop" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "image_shop" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "image_shop" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla '+ ::cPrefixTable( "image_shop" ), 3  )
+      ::writeText( 'Error al borrar la tabla '+ ::cPrefixTable( "image_shop" ), 3  )
    end if
 
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "image_lang" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "image_lang" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "image_lang" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "image_lang" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "image_lang" ), 3  )
    end if
 
    /*
@@ -1664,7 +1633,7 @@ METHOD ActualizaCaterogiaPadrePrestashop() CLASS TComercio
    Actualizamos las familias padre en prestashop-------------------------------
    */
 
-   ::cTextoWait( "Actualizando categoría: " + ::oFam:cNomFam )
+   ::writeText( "Actualizando categoría: " + ::oFam:cNomFam )
 
    nParent        := oRetFld( ::oFam:cFamCmb, ::oFam, "cCodWeb" )
       
@@ -1696,7 +1665,7 @@ METHOD DelIdFamiliasPrestashop() Class TComercio
       ::oFam:cCodWeb := 0
       ::oFam:Save()
 
-      ::treeSetText( 'Eliminando código web en la familia ' + alltrim( ::oFam:cNomFam ), 3  )
+      ::writeText( 'Eliminando código web en la familia ' + alltrim( ::oFam:cNomFam ), 3  )
 
       ::oFam:Skip()
 
@@ -1716,55 +1685,55 @@ METHOD AddCategoriaRaiz() CLASS TComercio
    Insertamos el root en la tabla de categorias------------------------------
    */
 
-   ::cTextoWait( "Añadiendo categoría raiz" )
+   ::writeText( "Añadiendo categoría raiz" )
 
    cCommand       := "INSERT INTO " + ::cPrefixTable( "category" ) + " ( id_category, id_parent, id_shop_default, level_depth, nleft, nright, active, date_add, date_upd, position ) VALUES ( '1', '0', '1', '0', '0', '0', '1', '" + dtos( GetSysDate() ) + "', '" + dtos( GetSysDate() ) + "', '0' ) "
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
       ::nNumeroCategorias++
-      ::treeSetText( "He insertado correctamente en la tabla categorías la categoría raiz", 3 )
+      ::writeText( "He insertado correctamente en la tabla categorías la categoría raiz", 3 )
    else
-      ::treeSetText( "Error al insertar la categoría raiz", 3 )
+      ::writeText( "Error al insertar la categoría raiz", 3 )
    end if
 
    cCommand       := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + " ( id_category, id_lang, name, description, link_rewrite, meta_title, meta_keywords, meta_description ) VALUES ( '1', '" + str( ::nLanguage ) + "', 'Root', 'Root', 'Root', '', '', '' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "He insertado correctamente en la tabla categorias lenguajes la categoría raiz", 3 )
+      ::writeText( "He insertado correctamente en la tabla categorias lenguajes la categoría raiz", 3 )
    else
-      ::treeSetText( "Error al insertar la categoría raiz", 3 )
+      ::writeText( "Error al insertar la categoría raiz", 3 )
    end if
 
    cCommand       := "INSERT INTO " + ::cPrefixTable( "category_shop" ) + " ( id_category, id_shop, position ) VALUES ( '1', '1', '0' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
+      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
    else
-      ::treeSetText( "Error al insertar la categoría raiz", 3 )
+      ::writeText( "Error al insertar la categoría raiz", 3 )
    end if
 
    cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '1', '1' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
+      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
    else
-      ::treeSetText( "Error al insertar la categoría raiz", 3 )
+      ::writeText( "Error al insertar la categoría raiz", 3 )
    end if
 
    cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '1', '2' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
+      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
    else
-      ::treeSetText( "Error al insertar la categoría raiz", 3 )
+      ::writeText( "Error al insertar la categoría raiz", 3 )
    end if
 
    cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '1', '3' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
+      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
    else
-      ::treeSetText( "Error al insertar la categoría root en category_group", 3 )
+      ::writeText( "Error al insertar la categoría root en category_group", 3 )
    end if
 
    /*
@@ -1775,49 +1744,49 @@ METHOD AddCategoriaRaiz() CLASS TComercio
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
       ::nNumeroCategorias++
-      ::treeSetText( "He insertado correctamente en la tabla categorias la categoría raiz", 3 )
+      ::writeText( "He insertado correctamente en la tabla categorias la categoría raiz", 3 )
    else
-      ::treeSetText( "Error al insertar la categoría inicio", 3 )
+      ::writeText( "Error al insertar la categoría inicio", 3 )
    end if
 
    cCommand       := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + " ( id_category, id_lang, name, description, link_rewrite, meta_title, meta_keywords, meta_description ) VALUES ( '2', '" + str( ::nLanguage ) + "', 'Inicio', 'Inicio', 'Inicio', '', '', '' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "He insertado correctamente en la tabla categorias lenguajes la categoría raiz", 3 )
+      ::writeText( "He insertado correctamente en la tabla categorias lenguajes la categoría raiz", 3 )
    else
-      ::treeSetText( "Error al insertar la categoría inicio", 3 )
+      ::writeText( "Error al insertar la categoría inicio", 3 )
    end if
 
    cCommand       := "INSERT INTO " + ::cPrefixTable( "category_shop" ) + " ( id_category, id_shop, position ) VALUES ( '2', '1', '0' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
+      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
    else
-      ::treeSetText( "Error al insertar la categoría inicio", 3 )
+      ::writeText( "Error al insertar la categoría inicio", 3 )
    end if
 
    cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '2', '1' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
+      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
    else
-      ::treeSetText( "Error al insertar la categoría inicio", 3 )
+      ::writeText( "Error al insertar la categoría inicio", 3 )
    end if
 
    cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '2', '2' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
+      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
    else
-      ::treeSetText( "Error al insertar la categoría inicio", 3 )
+      ::writeText( "Error al insertar la categoría inicio", 3 )
    end if
 
    cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '2', '3' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
+      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
    else
-      ::treeSetText( "Error al insertar la categoría inicio", 3 )
+      ::writeText( "Error al insertar la categoría inicio", 3 )
    end if
 
    SysRefresh()
@@ -1834,7 +1803,7 @@ METHOD InsertCategoriesPrestashop() CLASS TComercio
    local nParent              := getCodigoWebFamiliaPadre( ::oFam )
    local cCommand             := ""
 
-   ::cTextoWait( "Añadiendo categoría: " + alltrim( ::oFam:cNomFam ) )
+   ::writeText( "Añadiendo categoría: " + alltrim( ::oFam:cNomFam ) )
 
    /*
    Insertamos una familia nueva en las tablas de prestashop-----------------
@@ -1882,10 +1851,10 @@ METHOD InsertCategoriesPrestashop() CLASS TComercio
 
       ::oFam:fieldPutByName( "cCodWeb", nCodigoWeb )
 
-      ::treeSetText( "He insertado la familia " + alltrim( ::oFam:cNomFam ) + " correctamente en la tabla " + ::cPrefixTable( "category" ), 3 )
+      ::writeText( "He insertado la familia " + alltrim( ::oFam:cNomFam ) + " correctamente en la tabla " + ::cPrefixTable( "category" ), 3 )
 
    else
-      ::treeSetText( "Error al insertar la familia " + alltrim( ::oFam:cNomFam ) + " en la tabla " + ::cPrefixTable( "category" ), 3 )
+      ::writeText( "Error al insertar la familia " + alltrim( ::oFam:cNomFam ) + " en la tabla " + ::cPrefixTable( "category" ), 3 )
    end if
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + "( " + ;
@@ -1908,41 +1877,41 @@ METHOD InsertCategoriesPrestashop() CLASS TComercio
                   "'' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "He insertado la familia " + alltrim( ::oFam:cNomFam ) + " correctamente en la tabla " + ::cPrefixTable( "category_lang" ), 3 )
+      ::writeText( "He insertado la familia " + alltrim( ::oFam:cNomFam ) + " correctamente en la tabla " + ::cPrefixTable( "category_lang" ), 3 )
    else
-      ::treeSetText( "Error al insertar la familia " + alltrim( ::oFam:cNomFam ) + " en la tabla " + ::cPrefixTable( "category_lang" ), 3 )
+      ::writeText( "Error al insertar la familia " + alltrim( ::oFam:cNomFam ) + " en la tabla " + ::cPrefixTable( "category_lang" ), 3 )
    end if
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "category_shop" ) + "( id_category, id_shop, position ) VALUES ( '" + str( nCodigoWeb ) + "', '1', '0' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
+      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
    else
-      ::treeSetText( "Error al insertar la categoría inicio en " + ::cPrefixTable( "category_group" ), 3 )
+      ::writeText( "Error al insertar la categoría inicio en " + ::cPrefixTable( "category_group" ), 3 )
    end if
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "category_group" ) + "( id_category, id_group ) VALUES ( '" + str( nCodigoWeb ) + "', '1' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "He insertado la familia " + alltrim( ::oFam:cNomFam ) + " correctamente en la tabla " + ::cPrefixTable( "category_group" ), 3 )
+      ::writeText( "He insertado la familia " + alltrim( ::oFam:cNomFam ) + " correctamente en la tabla " + ::cPrefixTable( "category_group" ), 3 )
    else
-      ::treeSetText( "Error al insertar la familia " + alltrim( ::oFam:cNomFam ) + " en la tabla " + ::cPrefixTable( "category_group" ), 3 )
+      ::writeText( "Error al insertar la familia " + alltrim( ::oFam:cNomFam ) + " en la tabla " + ::cPrefixTable( "category_group" ), 3 )
    end if
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "category_group" ) + "( id_category, id_group ) VALUES ( '" + str( nCodigoWeb ) + "', '2' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "He insertado la familia " + alltrim( ::oFam:cNomFam ) + " correctamente en la tabla " + ::cPrefixTable( "category_group" ), 3 )
+      ::writeText( "He insertado la familia " + alltrim( ::oFam:cNomFam ) + " correctamente en la tabla " + ::cPrefixTable( "category_group" ), 3 )
    else
-      ::treeSetText( "Error al insertar la familia " + alltrim( ::oFam:cNomFam ) + " en la tabla " + ::cPrefixTable( "category_group" ), 3 )
+      ::writeText( "Error al insertar la familia " + alltrim( ::oFam:cNomFam ) + " en la tabla " + ::cPrefixTable( "category_group" ), 3 )
    end if
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "category_group" ) + "( id_category, id_group ) VALUES ( '" + str( nCodigoWeb ) + "', '3' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "He insertado la familia " + alltrim( ::oFam:cNomFam ) + " correctamente en la tabla " + ::cPrefixTable( "category_group" ), 3 )
+      ::writeText( "He insertado la familia " + alltrim( ::oFam:cNomFam ) + " correctamente en la tabla " + ::cPrefixTable( "category_group" ), 3 )
    else
-      ::treeSetText( "Error al insertar la familia " + alltrim( ::oFam:cNomFam ) + " en la tabla " + ::cPrefixTable( "category_group" ), 3 )
+      ::writeText( "Error al insertar la familia " + alltrim( ::oFam:cNomFam ) + " en la tabla " + ::cPrefixTable( "category_group" ), 3 )
    end if
 
    SysRefresh()
@@ -1976,14 +1945,14 @@ METHOD UpdateCategoriesPrestashop() CLASS TComercio
    local cCommand := ""
    local nParent  := getCodigoWebFamiliaPadre( ::oFam )
 
-   ::cTextoWait( "Actualizando categoría: " + alltrim( ::oFam:cNomFam ) )
+   ::writeText( "Actualizando categoría: " + alltrim( ::oFam:cNomFam ) )
 
    cCommand       := "UPDATE " + ::cPrefixTable( "category" ) + " SET " + ;
                         "id_parent='" + alltrim( str( nParent ) ) + "', " + ;
                         "date_upd='" + dtos( GetSysDate() ) + "' " + ;
                      "WHERE id_category=" + alltrim( str( ::oFam:cCodWeb ) )
 
-   ::cTextoWait( cCommand )
+   ::writeText( cCommand )
 
    lReturn        := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
@@ -2008,7 +1977,7 @@ METHOD DeleteCategoriesPrestashop() CLASS TComercio
    local lReturn     := .f.
    local cCommand    := ""
 
-   ::cTextoWait( "Eliminando categoría: " + ::oFam:cNomFam )
+   ::writeText( "Eliminando categoría: " + ::oFam:cNomFam )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "category" ) + " WHERE id_category=" + alltrim( str( ::oFam:cCodWeb ) )
    lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
@@ -2031,7 +2000,7 @@ METHOD DeleteCategoriesPrestashop() CLASS TComercio
    Eliminamos las imágenes de la familia---------------------------------------
    */
 
-   ::cTextoWait( "Eliminando imágenes categoría: " + ::oFam:cNomFam )
+   ::writeText( "Eliminando imágenes categoría: " + ::oFam:cNomFam )
 
    ::DeleteImagesCategories( ::oFam:cCodWeb )
 
@@ -2107,7 +2076,7 @@ METHOD ActualizaCategoriesPrestashop( cCodigoFamilia ) CLASS TComercio
          do case
             case !::oFam:lPubInt .and. ::oFam:cCodWeb != 0
    
-               ::cTextoWait( "Elimina categoría: " + ::oFam:cNomFam )
+               ::writeText( "Elimina categoría: " + ::oFam:cNomFam )
 
                ::DeleteCategoriesPrestashop()
    
@@ -2115,7 +2084,7 @@ METHOD ActualizaCategoriesPrestashop( cCodigoFamilia ) CLASS TComercio
 
                cCommand := 'SELECT * FROM ' + ::cPrefixTable( "category" ) + ' WHERE id_category=' + alltrim( str( ::oFam:cCodWeb ) )
 
-               ::cTextoWait( cCommand )
+               ::writeText( cCommand )
    
                oQuery   := TMSQuery():New( ::oCon, cCommand )
    
@@ -2123,13 +2092,13 @@ METHOD ActualizaCategoriesPrestashop( cCodigoFamilia ) CLASS TComercio
    
                   if oQuery:RecCount() > 0
    
-                     ::cTextoWait( "Actualizando categoría: " + ::oFam:cNomFam )
+                     ::writeText( "Actualizando categoría: " + ::oFam:cNomFam )
 
                      ::UpdateCategoriesPrestashop()
    
                   else
    
-                     ::cTextoWait( "Añadiendo categoría: " + ::oFam:cNomFam )
+                     ::writeText( "Añadiendo categoría: " + ::oFam:cNomFam )
 
                      ::InsertCategoriesPrestashop()
    
@@ -2141,7 +2110,7 @@ METHOD ActualizaCategoriesPrestashop( cCodigoFamilia ) CLASS TComercio
    
             case ::oFam:lPubInt .and. ::oFam:cCodWeb == 0
    
-               ::cTextoWait( "Añadiendo categoría: " + ::oFam:cNomFam )
+               ::writeText( "Añadiendo categoría: " + ::oFam:cNomFam )
 
                ::InsertCategoriesPrestashop()
    
@@ -2208,15 +2177,15 @@ METHOD RecalculaPosicionesCategoriasPrestashop() CLASS TComercio
    */
 
    if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "category" ) + " SET nLeft='1', nRight='" + alltrim( str( ::nNumeroCategorias * 2 ) ) + "' WHERE id_category=1" )
-      ::treeSetText( "Actualizada correctamente el grupo de familia en la tabla category", 3 )
+      ::writeText( "Actualizada correctamente el grupo de familia en la tabla category", 3 )
    else
-      ::treeSetText( "Error al actualizar el grupo de familia en la tabla category", 3 )
+      ::writeText( "Error al actualizar el grupo de familia en la tabla category", 3 )
    end if
 
    if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "category" ) + " SET nLeft='2', nRight='" + alltrim( str( ( ::nNumeroCategorias * 2 ) -1 ) ) + "' WHERE id_category=2" )
-      ::treeSetText( "Actualizada correctamente el grupo de familia en la tabla category", 3 )
+      ::writeText( "Actualizada correctamente el grupo de familia en la tabla category", 3 )
    else
-      ::treeSetText( "Error al actualizar el grupo de familia en la tabla category", 3 )
+      ::writeText( "Error al actualizar el grupo de familia en la tabla category", 3 )
    end if
 
    /*
@@ -2293,9 +2262,9 @@ METHOD RecalculaPosicionesCategoriasPrestashop() CLASS TComercio
    for each oCategoria in ::aCategorias
 
       if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "category" ) + " SET nLeft='" + alltrim( str( oCategoria:nLeft ) ) + "', nRight='" + alltrim( str( ( oCategoria:nRight ) ) + "' WHERE id_category=" + alltrim( str( oCategoria:id ) ) ) )
-         ::treeSetText( "Actualizada correctamente el grupo de familia en la tabla category", 3 )
+         ::writeText( "Actualizada correctamente el grupo de familia en la tabla category", 3 )
       else
-         ::treeSetText( "Error al actualizar el grupo de familia en la tabla category", 3 )
+         ::writeText( "Error al actualizar el grupo de familia en la tabla category", 3 )
       end if
 
    next
@@ -2316,49 +2285,49 @@ METHOD AppendPropiedadesPrestashop CLASS TComercio
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "attribute" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "attribute" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute" ), 3  )
    end if
 
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute_lang" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "attribute_lang" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "attribute_lang" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_lang" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_lang" ), 3  )
    end if
 
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute_shop" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "attribute_shop" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "attribute_shop" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_shop" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_shop" ), 3  )
    end if
 
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute_impact" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "attribute_impact" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "attribute_impact" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_impact" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_impact" ), 3  )
    end if
 
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute_group" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "attribute_group" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "attribute_group" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_group" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_group" ), 3  )
    end if
 
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute_group_lang" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "attribute_group_lang" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "attribute_group_lang" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_group_lang" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_group_lang" ), 3  )
    end if
 
    /*
@@ -2414,7 +2383,7 @@ METHOD InsertPropiedadesPrestashop() CLASS TComercio
 
    else
 
-      ::treeSetText( "Error al insertar la propiedad " + alltrim( ::oPro:cDesPro ) + " en la tabla " + ::cPrefixTable( "attribute_group" ), 3 )
+      ::writeText( "Error al insertar la propiedad " + alltrim( ::oPro:cDesPro ) + " en la tabla " + ::cPrefixTable( "attribute_group" ), 3 )
 
    end if
 
@@ -2431,11 +2400,11 @@ METHOD InsertPropiedadesPrestashop() CLASS TComercio
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-      ::treeSetText( "He insertado la propiedad " + alltrim( ::oPro:cDesPro ) + " correctamente en la tabla " + ::cPrefixTable( "attribute_group_lang" ), 3 )
+      ::writeText( "He insertado la propiedad " + alltrim( ::oPro:cDesPro ) + " correctamente en la tabla " + ::cPrefixTable( "attribute_group_lang" ), 3 )
 
    else
 
-      ::treeSetText( "Error al insertar la propiedad " + alltrim( ::oPro:cDesPro ) + " en la tabla " + ::cPrefixTable( "attribute_group_lang" ), 3 )
+      ::writeText( "Error al insertar la propiedad " + alltrim( ::oPro:cDesPro ) + " en la tabla " + ::cPrefixTable( "attribute_group_lang" ), 3 )
 
    end if
 
@@ -2631,7 +2600,7 @@ METHOD InsertLineasPropiedadesPrestashop( cCodPro, nCodigoGrupo ) CLASS TComerci
 
          else
 
-            ::treeSetText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPreFixtable( "attribute" ), 3 )
+            ::writeText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPreFixtable( "attribute" ), 3 )
 
          end if
 
@@ -2645,7 +2614,7 @@ METHOD InsertLineasPropiedadesPrestashop( cCodPro, nCodigoGrupo ) CLASS TComerci
                               "'" + ::oCon:Escapestr( ::oTblPro:cDesTbl ) + "' )"              //name
 
          if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-            ::treeSetText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "attribute_lang" ), 3 )
+            ::writeText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "attribute_lang" ), 3 )
          end if
 
          cCommand    := "INSERT INTO " + ::cPrefixTable( "attribute_shop" ) + ;
@@ -2656,7 +2625,7 @@ METHOD InsertLineasPropiedadesPrestashop( cCodPro, nCodigoGrupo ) CLASS TComerci
                               "'1' )"                                                 //id_shop
 
          if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-            ::treeSetText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "attribute_shop" ), 3 )
+            ::writeText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "attribute_shop" ), 3 )
          end if
 
          ::oTblPro:Skip()
@@ -2827,81 +2796,81 @@ METHOD AppendArticuloPrestashop( oDb ) CLASS TComercio
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "product" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_attachment" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product_attachment" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product_attachment" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attachment" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attachment" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_attribute" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product_attribute" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product_attribute" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attribute" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attribute" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_attribute_combination" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product_attribute_combination" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product_attribute_combination" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attribute_combination" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attribute_combination" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_attribute_shop" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product_attribute_shop" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product_attribute_shop" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attribute_shop" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attribute_shop" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPreFixTable( "product_attribute_image" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product_attribute_image" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product_attribute_image" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attribute_image" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attribute_image" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_country_tax" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product_country_tax" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product_country_tax" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_country_tax" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_country_tax" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_download" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product_download" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product_download" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la table ' + ::cPrefixTable( "product_download" ), 3  )
+      ::writeText( 'Error al borrar la table ' + ::cPrefixTable( "product_download" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_group_reduction_cache" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product_group_reduction_cache" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product_group_reduction_cache" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_group_reduction_cache" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_group_reduction_cache" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_shop" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product_shop" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product_shop" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_shop" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_shop" ), 3  )
    end if
 
    /*
@@ -2911,33 +2880,33 @@ METHOD AppendArticuloPrestashop( oDb ) CLASS TComercio
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_lang" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product_lang" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product_lang" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_lang" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_lang" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_sale" ) 
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product_sale" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product_sale" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_sale" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_sale" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_tag" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product_tag" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product_tag" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_tag" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_tag" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "specific_price")
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "specific_price" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "specific_price" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "specific_price" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "specific_price" ), 3  )
    end if
 
    /*
@@ -2947,41 +2916,41 @@ METHOD AppendArticuloPrestashop( oDb ) CLASS TComercio
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "feature" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla '  + ::cPrefixTable( "feature" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla '  + ::cPrefixTable( "feature" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "feature_lang" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "feature_lang" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "feature_lang" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature_lang" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature_lang" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "feature_product" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "feature_product" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "feature_product" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature_product" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature_product" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "feature_value" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "feature_value" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "feature_value" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature_value" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature_value" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "feature_value_lang" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "feature_value_lang" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "feature_value_lang" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature_value_lang" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature_value_lang" ), 3  )
    end if
 
    /*
@@ -2991,33 +2960,33 @@ METHOD AppendArticuloPrestashop( oDb ) CLASS TComercio
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "scene" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "scene " ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "scene " ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "scene" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "scene" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "scene_category" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "scene_category" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "scene_category" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla' + ::cPrefixTable( "scene_category" ), 3  )
+      ::writeText( 'Error al borrar la tabla' + ::cPrefixTable( "scene_category" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "scene_lang" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "scene_lang" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "scene_lang" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "scene_lang" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "scene_lang" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "scene_products" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "scene_products" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "scene_products" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "scene_products" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "scene_products" ), 3  )
    end if
 
    /*
@@ -3027,9 +2996,9 @@ METHOD AppendArticuloPrestashop( oDb ) CLASS TComercio
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "stock_available" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "stock_available" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "stock_available" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "stock_available" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "stock_available" ), 3  )
    end if
 
    /*
@@ -3102,23 +3071,23 @@ METHOD ActualizaProductsPrestashop( cCodigoArticulo, lChangeImage ) CLASS TComer
             do case
                case !::oArt:lPubInt .and. ::oArt:cCodWeb != 0
       
-                  ::cTextoWait( "Eliminando artículo en prestashop" )
+                  ::writeText( "Eliminando artículo en prestashop" )
 
                   ::DeleteProductsPrestashop()
       
                case ::oArt:lPubInt .and. ::oArt:cCodWeb != 0
 
-                  ::cTextoWait( "Eliminando artículo en prestashop" )
+                  ::writeText( "Eliminando artículo en prestashop" )
 
                   ::DeleteProductsPrestashop()
 
-                  ::cTextoWait( "Añadiendo artículo en prestashop" )
+                  ::writeText( "Añadiendo artículo en prestashop" )
 
                   ::InsertProductsPrestashop( .t. )
 
                case ::oArt:lPubInt .and. ::oArt:cCodWeb == 0
       
-                  ::cTextoWait( "Añadiendo artículo en prestashop" )
+                  ::writeText( "Añadiendo artículo en prestashop" )
 
                   ::InsertProductsPrestashop( .t. )
       
@@ -3155,67 +3124,67 @@ METHOD DeleteProductsPrestashop() CLASS TComercio
 
    cCodWeb           := alltrim( str( ::oArt:cCodWeb ) )
 
-   ::cTextoWait( "Eliminando artículo de Prestashop" )
+   ::writeText( "Eliminando artículo de Prestashop" )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando adjuntos de Prestashop"  )
+   ::writeText( "Eliminando adjuntos de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attachment" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando impuestos de Prestashop"  )
+   ::writeText( "Eliminando impuestos de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_country_tax" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando archivos de Prestashop"  )
+   ::writeText( "Eliminando archivos de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_download" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando cache de Prestashop"  )
+   ::writeText( "Eliminando cache de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_group_reduction_cache" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando multitienda de Prestashop"  )
+   ::writeText( "Eliminando multitienda de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_shop" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando descripciones de Prestashop"  )
+   ::writeText( "Eliminando descripciones de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_lang" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando ofertas de Prestashop"  )
+   ::writeText( "Eliminando ofertas de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_sale" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando etiquetas de Prestashop"  )
+   ::writeText( "Eliminando etiquetas de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_tag" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando complementos de Prestashop"  )
+   ::writeText( "Eliminando complementos de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_supplier" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando transporte de Prestashop"  )
+   ::writeText( "Eliminando transporte de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_carrier" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando atributos de Prestashop"  )
+   ::writeText( "Eliminando atributos de Prestashop"  )
 
    cCommand          := 'SELECT * FROM ' + ::cPrefixTable( "product_attribute" ) +  ' WHERE id_product=' + cCodWeb
    oQuery            := TMSQuery():New( ::oCon, cCommand )
    
-   ::cTextoWait( "Eliminando lineas atributos de Prestashop"  )
+   ::writeText( "Eliminando lineas atributos de Prestashop"  )
 
    if oQuery:Open()
    
@@ -3253,22 +3222,22 @@ METHOD DeleteProductsPrestashop() CLASS TComercio
 
    end if
 
-   ::cTextoWait( "Eliminando precios especificos de Prestashop"  )
+   ::writeText( "Eliminando precios especificos de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "specific_price" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando prioridad de precio de Prestashop"  )
+   ::writeText( "Eliminando prioridad de precio de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "specific_price_priority" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando funciones de Prestashop"  )
+   ::writeText( "Eliminando funciones de Prestashop"  )
 
    cCommand          := 'SELECT * FROM ' + ::cPrefixTable( "feature_product" ) +  ' WHERE id_product=' + cCodWeb
    oQuery            := TMSQuery():New( ::oCon, cCommand )
    
-   ::cTextoWait( "Eliminando lineas funciones de Prestashop"  )
+   ::writeText( "Eliminando lineas funciones de Prestashop"  )
 
    if oQuery:Open()
    
@@ -3345,7 +3314,7 @@ METHOD DeleteProductsPrestashop() CLASS TComercio
    Eliminamos las imágenes del artículo---------------------------------------
    */
 
-   ::cTextoWait( "Eliminando imágenes de prestashop" )
+   ::writeText( "Eliminando imágenes de prestashop" )
 
    ::DeleteImagesProducts( cCodWeb )
 
@@ -3501,11 +3470,11 @@ METHOD InsertOfertasPrestashop( nCodigoWeb ) CLASS TComercio
    
       if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-         ::treeSetText( "He insertado la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla " + ::cPrefixTable( "attribute" ), 3 )
+         ::writeText( "He insertado la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla " + ::cPrefixTable( "attribute" ), 3 )
 
       else
 
-         ::treeSetText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPreFixtable( "attribute" ), 3 )
+         ::writeText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPreFixtable( "attribute" ), 3 )
 
       end if
 
@@ -3559,9 +3528,9 @@ METHOD InsertImageProductImage( cCodigoWeb, lDefault )
       
       ::oArtImg:fieldPutByName( "cCodWeb", nCodigoImagen )
 
-      ::treeSetText( "Insertado la imagen del artículo " + alltrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "image" ), 3 )
+      ::writeText( "Insertado la imagen del artículo " + alltrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "image" ), 3 )
    else
-      ::treeSetText( "Error al insertar la imagen del artículo " + alltrim( ::oArt:Nombre ) + " en la tabla " + ::cPrefixTable( "image" ), 3 )
+      ::writeText( "Error al insertar la imagen del artículo " + alltrim( ::oArt:Nombre ) + " en la tabla " + ::cPrefixTable( "image" ), 3 )
    end if
 
 Return ( nCodigoImagen )
@@ -3582,9 +3551,9 @@ METHOD InsertImageProductImageLang( nCodigoImagen )
                   "'" + ::oCon:Escapestr( ::oArtImg:cNbrArt ) + "' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "Insertado la imagen del artículo " + alltrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
+      ::writeText( "Insertado la imagen del artículo " + alltrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
    else
-      ::treeSetText( "Error al insertar la imagen del artículo " + alltrim( ::oArt:Nombre ) + " en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
+      ::writeText( "Error al insertar la imagen del artículo " + alltrim( ::oArt:Nombre ) + " en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
    end if
 
 Return .t.
@@ -3613,9 +3582,9 @@ METHOD InsertImageProductImageShop( nCodigoImagen, lCover )
    cCommand       += if( lCover, "'1'", "null" ) + ")"               // cover
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "Insertado la imagen del artículo " + alltrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
+      ::writeText( "Insertado la imagen del artículo " + alltrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
    else
-      ::treeSetText( "Error al insertar la imagen del artículo " + alltrim( ::oArt:Nombre ) + " en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
+      ::writeText( "Error al insertar la imagen del artículo " + alltrim( ::oArt:Nombre ) + " en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
    end if
 
 Return .t.
@@ -3659,7 +3628,7 @@ METHOD DelIdArticuloPrestashop() Class TComercio
       ::oArt:cCodWeb := 0
       ::oArt:Save()
 
-      ::treeSetText( 'Eliminando código web en el artículo ' + alltrim( ::oArt:Nombre ), 3  )
+      ::writeText( 'Eliminando código web en el artículo ' + alltrim( ::oArt:Nombre ), 3  )
 
       SysRefresh()
       ::oArt:Skip()
@@ -3922,7 +3891,7 @@ METHOD aTipoImagenPrestashop() CLASS TComercio
 
    else 
 
-      ::treeSetText( "Error al ejecutar la sentencia " + "SELECT * FROM " + ::cPrefixTable( "image_type" ), 3 )
+      ::writeText( "Error al ejecutar la sentencia " + "SELECT * FROM " + ::cPrefixTable( "image_type" ), 3 )
 
    end if
 
@@ -4089,18 +4058,6 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD cTextoWait( cText ) CLASS TComercio
-
-   if empty( cText )
-      cText    := "Actualizando web espere por favor..."
-   end if   
-
-   ::writeText( cText )
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
 METHOD AvisoSincronizaciontotal() CLASS TComercio
 
    msginfo( "Faltan Avisar de que necesita una sincronización total" )
@@ -4127,23 +4084,23 @@ METHOD AutoRecive( oWnd ) CLASS TComercio
 
    if ::filesOpen()
 
-      ::treeSetText( 'Intentando conectar con el servidor ' + '"' + ::cHost + '"' + ', el usuario ' + '"' + ::cUser + '"' + ' y la base de datos ' + '"' + ::cDbName + '".' , 1 )
+      ::writeText( 'Intentando conectar con el servidor ' + '"' + ::cHost + '"' + ', el usuario ' + '"' + ::cUser + '"' + ' y la base de datos ' + '"' + ::cDbName + '".' , 1 )
 
       ::oCon            := TMSConnect():New()
 
       if !::oCon:Connect( ::cHost, ::cUser, ::cPasswd, ::cDbName, ::nPort )
 
-          ::treeSetText( 'No se ha podido conectar con la base de datos.' )
+          ::writeText( 'No se ha podido conectar con la base de datos.' )
 
       else
 
-          ::treeSetText( 'Se ha conectado con éxito a la base de datos.' , 1 )
+          ::writeText( 'Se ha conectado con éxito a la base de datos.' , 1 )
 
           oDb           := TMSDataBase():New ( ::oCon, ::cDbName )
 
           if empty( oDb )
 
-             ::treeSetText( 'La Base de datos: ' + ::cDbName + ' no está activa.', 1 )
+             ::writeText( 'La Base de datos: ' + ::cDbName + ' no está activa.', 1 )
 
           else
 
@@ -4156,11 +4113,11 @@ METHOD AutoRecive( oWnd ) CLASS TComercio
 
       ::oCon:Destroy()
 
-      ::treeSetText( 'Base de datos desconectada.', 1 )
+      ::writeText( 'Base de datos desconectada.', 1 )
 
    else
 
-      ::treeSetText( 'Error al abrir los ficheros necesarios.', 1 )
+      ::writeText( 'Error al abrir los ficheros necesarios.', 1 )
 
    end if
 
@@ -4313,10 +4270,10 @@ METHOD AppTipoArticuloPrestashop( cCodTip, IdParent ) CLASS TComercio
 
             ::oTipArt:fieldPutByName( "cCodWeb", nCodigoWeb )
 
-            ::treeSetText( "He insertado el tipo de artículo " + alltrim( ::oTipArt:cNomTip ) + " correctamente en la tabla category", 3 )
+            ::writeText( "He insertado el tipo de artículo " + alltrim( ::oTipArt:cNomTip ) + " correctamente en la tabla category", 3 )
 
          else
-            ::treeSetText( "Error al insertar el tipo de artículo " + alltrim( ::oTipArt:cNomTip ) + " en la tabla category", 3 )
+            ::writeText( "Error al insertar el tipo de artículo " + alltrim( ::oTipArt:cNomTip ) + " en la tabla category", 3 )
          end if
 
          if TMSCommand():New( ::oCon ):ExecDirect( ;
@@ -4325,33 +4282,33 @@ METHOD AppTipoArticuloPrestashop( cCodTip, IdParent ) CLASS TComercio
             "VALUES"+ ;
                " ( '" + str( nCodigoWeb ) + "', '" + str( ::nLanguage ) + "', '" + ::oCon:Escapestr( ::oTipArt:cNomTip ) + "', '" + ::oCon:Escapestr( ::oTipArt:cNomTip ) + "', '" + cLinkRewrite( ::oTipArt:cNomTip ) + "', '', '', '' )" )
 
-            ::treeSetText( "He insertado el tipo de artículo " + alltrim( ::oTipArt:cNomTip ) + " correctamente en la tabla category_lang", 3 )
+            ::writeText( "He insertado el tipo de artículo " + alltrim( ::oTipArt:cNomTip ) + " correctamente en la tabla category_lang", 3 )
          else
-            ::treeSetText( "Error al insertar el tipo de artículo " + alltrim( ::oTipArt:cNomTip ) + " en la tabla category_lang", 3 )
+            ::writeText( "Error al insertar el tipo de artículo " + alltrim( ::oTipArt:cNomTip ) + " en la tabla category_lang", 3 )
          end if
 
          if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO " + ::cPrefixTable( "category_shop" ) + " ( id_category, id_shop, position ) VALUES ( '" + str( nCodigoWeb ) + "', '1', '0' )" )
-            ::treeSetText( "He insertado correctamente en la tabla category_group la categoría raiz", 3 )
+            ::writeText( "He insertado correctamente en la tabla category_group la categoría raiz", 3 )
          else
-            ::treeSetText( "Error al insertar la categoría inicio en category_group", 3 )
+            ::writeText( "Error al insertar la categoría inicio en category_group", 3 )
          end if
 
          if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '" + str( nCodigoWeb ) + "', '1' )" )
-            ::treeSetText( "He insertado el tipo de artículo " + alltrim( ::oTipArt:cNomTip ) + " correctamente en la tabla category_group", 3 )
+            ::writeText( "He insertado el tipo de artículo " + alltrim( ::oTipArt:cNomTip ) + " correctamente en la tabla category_group", 3 )
          else
-            ::treeSetText( "Error al insertar " + alltrim( ::oTipArt:cNomTip ) + " en la tabla category_group", 3 )
+            ::writeText( "Error al insertar " + alltrim( ::oTipArt:cNomTip ) + " en la tabla category_group", 3 )
          end if
 
          if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '" + str( nCodigoWeb ) + "', '2' )" )
-            ::treeSetText( "He insertado el tipo de artículo " + alltrim( ::oTipArt:cNomTip ) + " correctamente en la tabla category_group", 3 )
+            ::writeText( "He insertado el tipo de artículo " + alltrim( ::oTipArt:cNomTip ) + " correctamente en la tabla category_group", 3 )
          else
-            ::treeSetText( "Error al insertar el tipo de artículo " + alltrim( ::oTipArt:cNomTip ) + " en la tabla category_group", 3 )
+            ::writeText( "Error al insertar el tipo de artículo " + alltrim( ::oTipArt:cNomTip ) + " en la tabla category_group", 3 )
          end if
 
          if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '" + str( nCodigoWeb ) + "', '3' )" )
-            ::treeSetText( "He insertado el tipo de artículo " + alltrim( ::oTipArt:cNomTip ) + " correctamente en la tabla category_group", 3 )
+            ::writeText( "He insertado el tipo de artículo " + alltrim( ::oTipArt:cNomTip ) + " correctamente en la tabla category_group", 3 )
          else
-            ::treeSetText( "Error al insertar el tipo de artículo " + alltrim( ::oTipArt:cNomTip ) + " en la tabla category_group", 3 )
+            ::writeText( "Error al insertar el tipo de artículo " + alltrim( ::oTipArt:cNomTip ) + " en la tabla category_group", 3 )
          end if
 
          /*
@@ -4388,7 +4345,7 @@ METHOD AppendClientesToPrestashop() CLASS TComercio
    local cFirstName  := ""
    local cLastName   := ""
 
-   ::treeSetText( "Recorremos la tabla de clientes", 2 )
+   ::writeText( "Recorremos la tabla de clientes", 2 )
 
    /*
    Añadimos familias a prestashop----------------------------------------------
@@ -4440,10 +4397,10 @@ METHOD AppendClientesToPrestashop() CLASS TComercio
 
                   ::oCli:fieldPutByName( "cCodWeb", nCodigoWeb )
 
-                  ::treeSetText( "He insertado el cliente " + alltrim( ::oCli:Titulo ) + " correctamente en la tabla customer", 3 )
+                  ::writeText( "He insertado el cliente " + alltrim( ::oCli:Titulo ) + " correctamente en la tabla customer", 3 )
 
                else
-                  ::treeSetText( "Error al insertar el cliente " + alltrim( ::oCli:Titulo ) + " en la tabla customer", 3 )
+                  ::writeText( "Error al insertar el cliente " + alltrim( ::oCli:Titulo ) + " en la tabla customer", 3 )
                end if
 
                /*
@@ -4456,10 +4413,10 @@ METHOD AppendClientesToPrestashop() CLASS TComercio
                                                                                            "('" + alltrim( str( nCodigoWeb ) ) + "', " + ;
                                                                                            "'1' )" )
 
-                  ::treeSetText( "He insertado el cliente " + alltrim( ::oCli:Titulo ) + " correctamente en la tabla customer_group", 3 )
+                  ::writeText( "He insertado el cliente " + alltrim( ::oCli:Titulo ) + " correctamente en la tabla customer_group", 3 )
 
                else
-                  ::treeSetText( "Error al insertar el cliente " + alltrim( ::oCli:Titulo ) + " en la tabla customer_group", 3 )
+                  ::writeText( "Error al insertar el cliente " + alltrim( ::oCli:Titulo ) + " en la tabla customer_group", 3 )
                end if
 
                /*
@@ -4499,10 +4456,10 @@ METHOD AppendClientesToPrestashop() CLASS TComercio
                                                                                   "'0' )" )                                                      //deleted
 
 
-                  ::treeSetText( "He insertado el cliente " + alltrim( ::oCli:Titulo ) + " correctamente en la tabla address", 3 )
+                  ::writeText( "He insertado el cliente " + alltrim( ::oCli:Titulo ) + " correctamente en la tabla address", 3 )
 
                else
-                  ::treeSetText( "Error al insertar el cliente " + alltrim( ::oCli:Titulo ) + " en la tabla address", 3 )
+                  ::writeText( "Error al insertar el cliente " + alltrim( ::oCli:Titulo ) + " en la tabla address", 3 )
                end if
 
             else
@@ -4525,9 +4482,9 @@ METHOD AppendClientesToPrestashop() CLASS TComercio
                                                                                 "', date_upd='" + dtos( GetSysDate() ) + ;
                                                                                 "' WHERE id_customer=" + alltrim( str( ::oCli:cCodWeb ) ) )
 
-                     ::treeSetText( "Actualizado correctamente el cliente " + alltrim( ::oCli:Titulo ) + " en la tabla customer", 3 )
+                     ::writeText( "Actualizado correctamente el cliente " + alltrim( ::oCli:Titulo ) + " en la tabla customer", 3 )
                   else
-                     ::treeSetText( "Error al actualizar el cliente " + alltrim( ::oCli:Titulo ) + " en la tabla customer", 3 )
+                     ::writeText( "Error al actualizar el cliente " + alltrim( ::oCli:Titulo ) + " en la tabla customer", 3 )
                   end if
 
                   /*
@@ -4546,9 +4503,9 @@ METHOD AppendClientesToPrestashop() CLASS TComercio
                                                                                 "', date_upd='" + dtos( GetSysDate() ) + ;
                                                                                 "' WHERE id_customer=" + alltrim( str( ::oCli:cCodWeb ) ) )
 
-                     ::treeSetText( "Actualizado correctamente el cliente " + alltrim( ::oCli:Titulo ) + " en la tabla address", 3 )
+                     ::writeText( "Actualizado correctamente el cliente " + alltrim( ::oCli:Titulo ) + " en la tabla address", 3 )
                   else
-                     ::treeSetText( "Error al actualizar el cliente " + alltrim( ::oCli:Titulo ) + " en la tabla address", 3 )
+                     ::writeText( "Error al actualizar el cliente " + alltrim( ::oCli:Titulo ) + " en la tabla address", 3 )
                   end if
 
                end if
@@ -4598,7 +4555,7 @@ METHOD AppendClientPrestashop() CLASS TComercio
 
       if oQuery:RecCount() > 0
 
-         ::treeSetText( "Descargando clientes desde la web", 2 )
+         ::writeText( "Descargando clientes desde la web", 2 )
 
          oQuery:GoTop()
 
@@ -4715,14 +4672,14 @@ METHOD AppendClientPrestashop() CLASS TComercio
                end if
 
                if ::oCli:Save()
-                  ::treeSetText( "Cliente " + alltrim( oQuery:FieldGetByName( "ape" ) ) + Space( 1 ) + alltrim( oQuery:FieldGetByName( "firstname" ) ) + " introducido correctamente.", 3 )
+                  ::writeText( "Cliente " + alltrim( oQuery:FieldGetByName( "ape" ) ) + Space( 1 ) + alltrim( oQuery:FieldGetByName( "firstname" ) ) + " introducido correctamente.", 3 )
                else
-                  ::treeSetText( "Error al descargar el cliente: " + alltrim( oQuery:FieldGetByName( "ape" ) ) + Space( 1 ) + alltrim( oQuery:FieldGetByName( "firstname" ) ), 3 )
+                  ::writeText( "Error al descargar el cliente: " + alltrim( oQuery:FieldGetByName( "ape" ) ) + Space( 1 ) + alltrim( oQuery:FieldGetByName( "firstname" ) ), 3 )
                end if
 
             else
 
-               ::treeSetText( "El cliente " + alltrim( oQuery:FieldGetByName( "ape" ) ) + Space( 1 ) + alltrim( oQuery:FieldGetByName( "firstname" ) ) + " ya existe en nuestra base se datos.", 3 )
+               ::writeText( "El cliente " + alltrim( oQuery:FieldGetByName( "ape" ) ) + Space( 1 ) + alltrim( oQuery:FieldGetByName( "firstname" ) ) + " ya existe en nuestra base se datos.", 3 )
 
             end if
 
@@ -4831,7 +4788,7 @@ METHOD EstadoPedidosPrestashop() Class TComercio
    Modifico los datos y tablas correspondientes--------------------------
    */
 
-   ::treeSetText( "Actualizando el estado de los pedidos", 2 )
+   ::writeText( "Actualizando el estado de los pedidos", 2 )
 
    ::oPedCliT:GoTop()
    while !::oPedCliT:Eof()
@@ -4856,11 +4813,11 @@ METHOD EstadoPedidosPrestashop() Class TComercio
                                                                                          "'5', " + ;                                            //id_ordder_state
                                                                                          "'" + dtos( GetSysDate() ) + "' )" )                   //date_add
 
-                  ::treeSetText( "Actualizado el estado del pedido " + ::oPedCliT:cSerPed + "/" + alltrim( str( ::oPedCliT:nNumPed ) ) + "/" + ::oPedCliT:cSufPed, 3 )
+                  ::writeText( "Actualizado el estado del pedido " + ::oPedCliT:cSerPed + "/" + alltrim( str( ::oPedCliT:nNumPed ) ) + "/" + ::oPedCliT:cSufPed, 3 )
 
                else
 
-                  ::treeSetText( "Error al actualizar el estado del pedido " + ::oPedCliT:cSerPed + "/" + alltrim( str( ::oPedCliT:nNumPed ) ) + "/" + ::oPedCliT:cSufPed, 3 )
+                  ::writeText( "Error al actualizar el estado del pedido " + ::oPedCliT:cSerPed + "/" + alltrim( str( ::oPedCliT:nNumPed ) ) + "/" + ::oPedCliT:cSufPed, 3 )
 
                end if
 
@@ -5197,7 +5154,7 @@ METHOD prestaShopConnect()
    local oDb
    local lConect     := .f.
 
-   ::treeSetText( 'Intentando conectar con el servidor ' + '"' + ::TPrestashopConfig:getMySqlServer() + '"' + ', el usuario ' + '"' + ::TPrestashopConfig:getMySqlUser()  + '"' + ' y la base de datos ' + '"' + ::TPrestashopConfig:getMySqlDatabase() + '".' , 3 )
+   ::writeText( 'Intentando conectar con el servidor ' + '"' + ::TPrestashopConfig:getMySqlServer() + '"' + ', el usuario ' + '"' + ::TPrestashopConfig:getMySqlUser()  + '"' + ' y la base de datos ' + '"' + ::TPrestashopConfig:getMySqlDatabase() + '".' , 3 )
 
    ::oCon            := TMSConnect():New()
 
@@ -5207,17 +5164,17 @@ METHOD prestaShopConnect()
                         ::TPrestashopConfig:getMySqlDatabase(),;
                         ::TPrestashopConfig:getMySqlPort() )
 
-      ::treeSetText( 'No se ha podido conectar con la base de datos.' )
+      ::writeText( 'No se ha podido conectar con la base de datos.' )
 
    else
 
-      ::treeSetText( 'Se ha conectado con éxito a la base de datos.' , 3 )
+      ::writeText( 'Se ha conectado con éxito a la base de datos.' , 3 )
 
       oDb            := TMSDataBase():New( ::oCon, ::TPrestashopConfig:getMySqlDatabase() )
 
       if empty( oDb )
 
-         ::treeSetText( 'La Base de datos: ' + ::TPrestashopConfig:getMySqlDatabase() + ' no esta activa.', 3 )
+         ::writeText( 'La Base de datos: ' + ::TPrestashopConfig:getMySqlDatabase() + ' no esta activa.', 3 )
 
       else
 
@@ -5242,7 +5199,7 @@ METHOD prestashopDisConnect()
       ::oCon:Destroy()
    end if   
 
-   ::treeSetText( 'Base de datos desconectada.', 1 )
+   ::writeText( 'Base de datos desconectada.', 1 )
 
 return .t.   
 
@@ -5882,7 +5839,7 @@ METHOD buildInsertFabricantesPrestashop( hFabricantesData ) CLASS TComercio
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
       nCodigoWeb           := ::oCon:GetInsertId()
    else
-      ::treeSetText( "Error al insertar el fabricante " + hGet( hFabricantesData, "name" ) + " en la tabla " + ::cPreFixtable( "manufacturer" ), 3 )
+      ::writeText( "Error al insertar el fabricante " + hGet( hFabricantesData, "name" ) + " en la tabla " + ::cPreFixtable( "manufacturer" ), 3 )
    end if
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "manufacturer_shop" ) + "( "+ ;
@@ -5894,7 +5851,7 @@ METHOD buildInsertFabricantesPrestashop( hFabricantesData ) CLASS TComercio
 
 
    if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "Error al insertar el fabricante " + hGet( hFabricantesData, "name" ) + " en la tabla" + ::cPreFixtable( "manufacturer_shop" ), 3 )
+      ::writeText( "Error al insertar el fabricante " + hGet( hFabricantesData, "name" ) + " en la tabla" + ::cPreFixtable( "manufacturer_shop" ), 3 )
    end if
 
    cCommand := "INSERT INTO " + ::cPreFixtable( "manufacturer_lang" ) + "( " +;
@@ -5905,7 +5862,7 @@ METHOD buildInsertFabricantesPrestashop( hFabricantesData ) CLASS TComercio
                   "'" + str( ::nLanguage ) + "' )"                   //id_lang
 
    if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "Error al insertar el fabricante " + hGet( hFabricantesData, "name" ) + " en la tabla" + ::cPreFixtable( "manufacturer_lang" ), 3 )
+      ::writeText( "Error al insertar el fabricante " + hGet( hFabricantesData, "name" ) + " en la tabla" + ::cPreFixtable( "manufacturer_lang" ), 3 )
    end if
 
    // Guardo referencia a la web-----------------------------------------------
@@ -5926,7 +5883,7 @@ METHOD buildInsertCategoriesPrestashop( hFamiliaData ) CLASS TComercio
    local nParent              := 2
    local cCommand             := ""
 
-   ::cTextoWait( "Añadiendo categoría: " + hGet( hFamiliaData, "name" ) )
+   ::writeText( "Añadiendo categoría: " + hGet( hFamiliaData, "name" ) )
 
    //Insertamos una familia nueva en las tablas de prestashop-----------------
 
@@ -5964,10 +5921,10 @@ METHOD buildInsertCategoriesPrestashop( hFamiliaData ) CLASS TComercio
 
       aAdd( ::aCategorias, oCategoria )
 
-      ::treeSetText( "He insertado la familia " + hGet( hFamiliaData, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "category" ), 3 )
+      ::writeText( "He insertado la familia " + hGet( hFamiliaData, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "category" ), 3 )
 
    else
-      ::treeSetText( "Error al insertar la familia " + hGet( hFamiliaData, "name" ) + " en la tabla " + ::cPrefixTable( "category" ), 3 )
+      ::writeText( "Error al insertar la familia " + hGet( hFamiliaData, "name" ) + " en la tabla " + ::cPrefixTable( "category" ), 3 )
    end if
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + "( " + ;
@@ -5990,31 +5947,31 @@ METHOD buildInsertCategoriesPrestashop( hFamiliaData ) CLASS TComercio
                   "'' )"
 
    if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "Error al insertar la familia " + hGet( hFamiliaData, "name" ) + " en la tabla " + ::cPrefixTable( "category_lang" ), 3 )
+      ::writeText( "Error al insertar la familia " + hGet( hFamiliaData, "name" ) + " en la tabla " + ::cPrefixTable( "category_lang" ), 3 )
    end if
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "category_shop" ) + "( id_category, id_shop, position ) VALUES ( '" + str( nCodigoWeb ) + "', '1', '0' )"
 
    if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "Error al insertar la categoría inicio en " + ::cPrefixTable( "category_group" ), 3 )
+      ::writeText( "Error al insertar la categoría inicio en " + ::cPrefixTable( "category_group" ), 3 )
    end if
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "category_group" ) + "( id_category, id_group ) VALUES ( '" + str( nCodigoWeb ) + "', '1' )"
 
    if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "Error al insertar la familia " + hGet( hFamiliaData, "name" ) + " en la tabla " + ::cPrefixTable( "category_group" ), 3 )
+      ::writeText( "Error al insertar la familia " + hGet( hFamiliaData, "name" ) + " en la tabla " + ::cPrefixTable( "category_group" ), 3 )
    end if
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "category_group" ) + "( id_category, id_group ) VALUES ( '" + str( nCodigoWeb ) + "', '2' )"
 
    if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "Error al insertar la familia " + hGet( hFamiliaData, "name" ) + " en la tabla " + ::cPrefixTable( "category_group" ), 3 )
+      ::writeText( "Error al insertar la familia " + hGet( hFamiliaData, "name" ) + " en la tabla " + ::cPrefixTable( "category_group" ), 3 )
    end if
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "category_group" ) + "( id_category, id_group ) VALUES ( '" + str( nCodigoWeb ) + "', '3' )"
 
    if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "Error al insertar la familia " + hGet( hFamiliaData, "name" ) + " en la tabla " + ::cPrefixTable( "category_group" ), 3 )
+      ::writeText( "Error al insertar la familia " + hGet( hFamiliaData, "name" ) + " en la tabla " + ::cPrefixTable( "category_group" ), 3 )
    end if
 
    SysRefresh()
@@ -6066,7 +6023,7 @@ METHOD buildActualizaCaterogiaPadrePrestashop( hFamiliaData ) CLASS TComercio
                            "id_parent='" + alltrim( str( nParent ) ) + "' " +;
                            "WHERE id_category=" + alltrim( str( ::oFam:cCodWeb ) )
 
-      ::cTextoWait( cCommand )
+      ::writeText( cCommand )
 
       lReturn        := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
@@ -6109,13 +6066,13 @@ METHOD buildRecalculaPosicionesCategoriasPrestashop() CLASS TComercio
                case oQuery:FieldGet( 1 ) == 1
 
                   if !TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "category" ) + " SET nLeft='1', nRight='" + alltrim( str( nTotalCategory * 2 ) ) + "' WHERE id_category=1" )
-                     ::treeSetText( "Error al actualizar el grupo de familia en la tabla category", 3 )
+                     ::writeText( "Error al actualizar el grupo de familia en la tabla category", 3 )
                   end if
 
                case oQuery:FieldGet( 1 ) == 2
 
                   if !TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "category" ) + " SET nLeft='2', nRight='" + alltrim( str( ( nTotalCategory * 2 ) -1 ) ) + "' WHERE id_category=2" )
-                     ::treeSetText( "Error al actualizar el grupo de familia en la tabla category", 3 )
+                     ::writeText( "Error al actualizar el grupo de familia en la tabla category", 3 )
                   end if
 
                otherwise
@@ -6124,7 +6081,7 @@ METHOD buildRecalculaPosicionesCategoriasPrestashop() CLASS TComercio
                   nRight   := ++nContador
 
                   if !TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "category" ) + " SET nLeft='" + alltrim( str( nLeft ) ) + "', nRight='" + alltrim( str( nRight ) ) + "' WHERE id_category=" + alltrim( str( oQuery:FieldGet( 1 ) ) ) )
-                     ::treeSetText( "Error al actualizar el grupo de familia en la tabla category", 3 )
+                     ::writeText( "Error al actualizar el grupo de familia en la tabla category", 3 )
                   end if
 
             end case               
@@ -6178,7 +6135,7 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
    nParent                    := ::buildGetParentCategories( cCodigoFamilia )
    nOrdArtDiv                 := ::oArtDiv:OrdSetFocus( "cCodArt" )
 
-   ::cTextoWait( "Añadiendo artículo: " + alltrim( ::oArt:Nombre ) )
+   ::writeText( "Añadiendo artículo: " + alltrim( ::oArt:Nombre ) )
 
    /*
    Vemos el precio del artículo------------------------------------------------
@@ -6216,7 +6173,7 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )                                                                                                             //date_upd
       nCodigoWeb           := ::oCon:GetInsertId()
    else
-      ::treeSetText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "product" ), 3 )
+      ::writeText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "product" ), 3 )
    end if
 
    // Insertamos un artículo nuevo en la tabla category_product----------------
@@ -6255,7 +6212,7 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
                      "'" + dtos( GetSysDate() ) + "' )"
 
    if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "product_shop" ), 3 )
+      ::writeText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "product_shop" ), 3 )
    end if
 
    /*
@@ -6288,7 +6245,7 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
                      "'' )"
 
    if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "product_lang" ), 3 )
+      ::writeText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "product_lang" ), 3 )
    end if
 
    /*
@@ -6315,7 +6272,7 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
                         "'2' )"
 
       if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-         ::treeSetText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "stock_available" ), 3 )
+         ::writeText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "stock_available" ), 3 )
       end if
 
    SysRefresh()
@@ -6324,13 +6281,13 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
       ::oArt:fieldPutByName( "cCodWeb", nCodigoWeb )
    end if
 
-   ::cTextoWait( "Añadiendo imágenes artículo: " + hGet( hArticuloData, "name" ) )
+   ::writeText( "Añadiendo imágenes artículo: " + hGet( hArticuloData, "name" ) )
    ::buildInsertImageProductsPrestashop( hArticuloData, nCodigoWeb )
 
-   ::cTextoWait( "Añadiendo propiedades del artículo: " + hGet( hArticuloData, "name" ) )
+   ::writeText( "Añadiendo propiedades del artículo: " + hGet( hArticuloData, "name" ) )
    ::buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb )
 
-   ::cTextoWait( "Añadiendo ofertas del artículo: " + hGet( hArticuloData, "name" ) )
+   ::writeText( "Añadiendo ofertas del artículo: " + hGet( hArticuloData, "name" ) )
    ::buildInsertOfertasPrestashop( hArticuloData, nCodigoWeb )
 
 Return nCodigoweb
@@ -6371,7 +6328,7 @@ METHOD buildInsertCategoryProduct( idCategory, idProduct ) CLASS TComercio
                      "'" + str( idProduct ) + "' )"
 
    if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "Error al insertar el artículo " + str( idProduct ) + " en la tabla " + ::cPrefixTable( "category_product" ), 3 )
+      ::writeText( "Error al insertar el artículo " + str( idProduct ) + " en la tabla " + ::cPrefixTable( "category_product" ), 3 )
       Return ( .f. )
    end if
 
@@ -6468,7 +6425,7 @@ METHOD buildInsertOfertasPrestashop( hArticuloData, nCodigoWeb ) CLASS TComercio
                               "'percentage' )"                                         //reduction_type
    
       if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-         ::treeSetText( "Error al insertar una oferta de " + hGet( hArticuloData, "name" ), 3 )
+         ::writeText( "Error al insertar una oferta de " + hGet( hArticuloData, "name" ), 3 )
       end if
 
    end if
@@ -6499,7 +6456,7 @@ METHOD buildInsertPropiedadesPrestashop( hPropiedadesCabData ) CLASS TComercio
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
       nCodigoGrupo   := ::oCon:GetInsertId()
    else
-      ::treeSetText( "Error al insertar la propiedad " + hGet( hPropiedadesCabData, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_group" ), 3 )
+      ::writeText( "Error al insertar la propiedad " + hGet( hPropiedadesCabData, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_group" ), 3 )
    end if
 
    cCommand          := "INSERT INTO " + ::cPrefixTable( "attribute_group_lang" ) + ; 
@@ -6514,7 +6471,7 @@ METHOD buildInsertPropiedadesPrestashop( hPropiedadesCabData ) CLASS TComercio
                                   "'" + hGet( hPropiedadesCabData, "name" ) + "' )"    //public_name
 
    if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "Error al insertar la propiedad " + hGet( hPropiedadesCabData, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_group_lang" ), 3 )
+      ::writeText( "Error al insertar la propiedad " + hGet( hPropiedadesCabData, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_group_lang" ), 3 )
    end if
 
    if ::oPro:SeekInOrd( hGet( hPropiedadesCabData, "id" ), "CCODPRO" )
@@ -6547,7 +6504,7 @@ METHOD buildInsertLineasPropiedadesPrestashop( hPropiedadesLinData, nPosition ) 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
       nCodigoPropiedad   := ::oCon:GetInsertId()
    else
-      ::treeSetText( "Error al insertar la propiedad " + hGet( hPropiedadesLinData, "name" ) + " en la tabla " + ::cPreFixtable( "attribute" ), 3 )
+      ::writeText( "Error al insertar la propiedad " + hGet( hPropiedadesLinData, "name" ) + " en la tabla " + ::cPreFixtable( "attribute" ), 3 )
    end if
 
    cCommand    := "INSERT INTO " + ::cPrefixTable( "attribute_lang" ) + ;
@@ -6560,7 +6517,7 @@ METHOD buildInsertLineasPropiedadesPrestashop( hPropiedadesLinData, nPosition ) 
                         "'" + ::oCon:Escapestr( hGet( hPropiedadesLinData, "name" ) ) + "' )"              //name
 
    if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "Error al insertar la propiedad " + hGet( hPropiedadesLinData, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_lang" ), 3 )
+      ::writeText( "Error al insertar la propiedad " + hGet( hPropiedadesLinData, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_lang" ), 3 )
    end if
 
    cCommand    := "INSERT INTO " + ::cPrefixTable( "attribute_shop" ) + ;
@@ -6571,7 +6528,7 @@ METHOD buildInsertLineasPropiedadesPrestashop( hPropiedadesLinData, nPosition ) 
                         "'1' )"                                                 //id_shop
 
    if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( "Error al insertar la propiedad " + hGet( hPropiedadesLinData, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_shop" ), 3 )
+      ::writeText( "Error al insertar la propiedad " + hGet( hPropiedadesLinData, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_shop" ), 3 )
    end if
 
    if ::oTblPro:SeekInOrd( hGet( hPropiedadesLinData, "idparent" ) + hGet( hPropiedadesLinData, "id" ), "CCODPRO" )
@@ -6645,7 +6602,7 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
                      nCodigoPropiedad           := ::oCon:GetInsertId()
                   else
-                     ::treeSetText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute" ), 3 )
+                     ::writeText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute" ), 3 )
                   end if
 
                   /*
@@ -6660,7 +6617,7 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                                     "'" + alltrim( str( nCodigoPropiedad ) ) + "' )"         //id_product_attribute
 
                   if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-                     ::treeSetText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute_combination" ), 3 )
+                     ::writeText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute_combination" ), 3 )
                   end if
 
                   /*
@@ -6689,7 +6646,7 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                                        "'1' )"
 
                   if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-                     ::treeSetText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute_shop" ), 3 )
+                     ::writeText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute_shop" ), 3 )
                   end if
 
                   /*
@@ -6716,7 +6673,7 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                                        "'2' )"
 
                   if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-                     ::treeSetText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "stock_available" ), 3 )
+                     ::writeText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "stock_available" ), 3 )
                   end if
 
                   /*
@@ -6745,7 +6702,7 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                                                    "'" + alltrim( str( ::oArtImg:cCodWeb ) ) + "' )"        //cover
          
                                  if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-                                    ::treeSetText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
+                                    ::writeText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
                                  end if
 
                               end if   
@@ -6792,7 +6749,7 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
                   nCodigoPropiedad  := ::oCon:GetInsertId()
                else
-                  ::treeSetText( "Error al insertar la propiedad " + alltrim( ::oArtDiv:cValPr1 ) + " - " + alltrim( ::oArtDiv:cValPr2 ) + " en la tabla " + ::cPrefixTable( "product_attribute" ), 3 )
+                  ::writeText( "Error al insertar la propiedad " + alltrim( ::oArtDiv:cValPr1 ) + " - " + alltrim( ::oArtDiv:cValPr2 ) + " en la tabla " + ::cPrefixTable( "product_attribute" ), 3 )
                end if
 
                /*
@@ -6811,11 +6768,11 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                                     "'" + alltrim( str( nCodigoPropiedad ) ) + "' )"        //id_product_attribute
 
                   if !TMSCommand():New( ::oCon ):ExecDirect( cCommand ) 
-                     ::treeSetText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::PrefixTable( "product_attribute_combination" ), 3 )
+                     ::writeText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::PrefixTable( "product_attribute_combination" ), 3 )
                   end if
 
                else 
-                  ::treeSetText( "Error al buscar en tabla de propiedades " + alltrim( ::oArtDiv:cCodPr1 ) + " : " + alltrim( ::oArtDiv:cValPr1 ), 3 )
+                  ::writeText( "Error al buscar en tabla de propiedades " + alltrim( ::oArtDiv:cCodPr1 ) + " : " + alltrim( ::oArtDiv:cValPr1 ), 3 )
                end if
 
                /*
@@ -6832,11 +6789,11 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                                     "'" + alltrim( str( nCodigoPropiedad ) ) + "' )"         //id_product_attribute
 
                   if !TMSCommand():New( ::oCon ):ExecDirect( cCommand ) 
-                     ::treeSetText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute_combination" ), 3 )
+                     ::writeText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute_combination" ), 3 )
                   end if
 
                else 
-                  ::treeSetText( "Error al buscar en tabla de propiedades " + alltrim( ::oArtDiv:cCodPr2 ) + " : " + alltrim( ::oArtDiv:cValPr2 ), 3 )
+                  ::writeText( "Error al buscar en tabla de propiedades " + alltrim( ::oArtDiv:cCodPr2 ) + " : " + alltrim( ::oArtDiv:cValPr2 ), 3 )
                end if
 
                ::oTblPro:OrdSetFocus( nOrdAnt )
@@ -6869,7 +6826,7 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                                  "'1' )"
 
                if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-                  ::treeSetText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute_shop" ), 3 )
+                  ::writeText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute_shop" ), 3 )
                end if
 
                /*
@@ -6896,7 +6853,7 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                                  "'2' )"
 
                if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-                  ::treeSetText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "stock_available" ), 3 )
+                  ::writeText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "stock_available" ), 3 )
                end if
 
                /*
@@ -6925,7 +6882,7 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                                                 "'" + alltrim( str( ::oArtImg:cCodWeb ) ) + "' )"        //cover
 
                               if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-                                 ::treeSetText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
+                                 ::writeText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
                               end if
 
                            end if   
@@ -6965,33 +6922,33 @@ METHOD buildEliminaTablas() CLASS TComercio
    */
 
    if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPreFixtable( "tax" ) )
-      ::treeSetText( 'Tabla ' + ::cPreFixtable( "tax" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPreFixtable( "tax" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPreFixtable( "tax" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPreFixtable( "tax" ), 3  )
    end if
 
    if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPreFixtable( "tax_lang" ) )
-      ::treeSetText( 'Tabla ' + ::cPreFixtable( "tax_lang" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPreFixtable( "tax_lang" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPreFixtable( "tax_lang" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPreFixtable( "tax_lang" ), 3  )
    end if
 
    if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPreFixtable( "tax_rule" ) )
-      ::treeSetText( 'Tabla ' + ::cPreFixtable( "tax_rule" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPreFixtable( "tax_rule" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPreFixtable( "tax_rule" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPreFixtable( "tax_rule" ), 3  )
    end if
 
    if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPreFixtable( "tax_rules_group" ) )
-      ::treeSetText( 'Tabla ' + ::cPreFixtable( "tax_rules_group" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPreFixtable( "tax_rules_group" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPreFixtable( "tax_rules_group" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPreFixtable( "tax_rules_group" ), 3  )
    end if
 
    if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPreFixtable( "tax_rules_group_shop" ) )
-      ::treeSetText( 'Tabla ' + ::cPreFixtable( "tax_rules_group_shop" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPreFixtable( "tax_rules_group_shop" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPreFixtable( "tax_rules_group_shop" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPreFixtable( "tax_rules_group_shop" ), 3  )
    end if
 
    /*
@@ -6999,21 +6956,21 @@ METHOD buildEliminaTablas() CLASS TComercio
    */
 
    if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPrefixTable( "manufacturer" ) )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "manufacturer" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "manufacturer" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "manufacturer" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "manufacturer" ), 3  )
    end if
 
    if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPrefixTable( "manufacturer_shop" ) )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "manufacturer_shop" ) + ' borrada correctamente', 3 )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "manufacturer_shop" ) + ' borrada correctamente', 3 )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPreFixtable( "manufacturer_shop" ), 3 )
+      ::writeText( 'Error al borrar la tabla ' + ::cPreFixtable( "manufacturer_shop" ), 3 )
    end if
 
    if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPrefixTable( "manufacturer_lang" ) )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "manufacturer_lang" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "manufacturer_lang" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "manufacturer_lang" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "manufacturer_lang" ), 3  )
    end if
 
    /*
@@ -7023,65 +6980,65 @@ METHOD buildEliminaTablas() CLASS TComercio
    cCommand       := "TRUNCATE TABLE " + ::cPrefixtable( "category" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPreFixtable( "category" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPreFixtable( "category" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPreFixtable( "category" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPreFixtable( "category" ), 3  )
    end if
 
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "category_lang" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "category_lang" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "category_lang" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "category_lang" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "category_lang" ), 3  )
    end if
 
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "category_product" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "category_product" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "category_product" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "category_product" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "category_product" ), 3  )
    end if
 
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "category_group" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "category_group" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "category_group" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "category_group" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "category_group" ), 3  )
    end if
 
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "category_shop" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "category_shop" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "category_shop" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla '+ ::cPrefixTable( "category_group" ), 3  )
+      ::writeText( 'Error al borrar la tabla '+ ::cPrefixTable( "category_group" ), 3  )
    end if
 
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "image" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "image" ) + 'borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "image" ) + 'borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla' + ::cPrefixTable( "image" ), 3  )
+      ::writeText( 'Error al borrar la tabla' + ::cPrefixTable( "image" ), 3  )
    end if
 
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "image_shop" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "image_shop" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "image_shop" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla '+ ::cPrefixTable( "image_shop" ), 3  )
+      ::writeText( 'Error al borrar la tabla '+ ::cPrefixTable( "image_shop" ), 3  )
    end if
 
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "image_lang" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "image_lang" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "image_lang" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "image_lang" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "image_lang" ), 3  )
    end if
 
    /*
@@ -7097,49 +7054,49 @@ METHOD buildEliminaTablas() CLASS TComercio
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "attribute" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "attribute" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute" ), 3  )
    end if
 
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute_lang" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "attribute_lang" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "attribute_lang" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_lang" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_lang" ), 3  )
    end if
 
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute_shop" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "attribute_shop" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "attribute_shop" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_shop" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_shop" ), 3  )
    end if
 
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute_impact" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "attribute_impact" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "attribute_impact" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_impact" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_impact" ), 3  )
    end if
 
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute_group" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "attribute_group" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "attribute_group" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_group" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_group" ), 3  )
    end if
 
    cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute_group_lang" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "attribute_group_lang" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "attribute_group_lang" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_group_lang" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_group_lang" ), 3  )
    end if
 
    /*
@@ -7149,193 +7106,193 @@ METHOD buildEliminaTablas() CLASS TComercio
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "product" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_attachment" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product_attachment" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product_attachment" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attachment" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attachment" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_attribute" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product_attribute" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product_attribute" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attribute" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attribute" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_attribute_combination" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product_attribute_combination" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product_attribute_combination" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attribute_combination" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attribute_combination" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_attribute_shop" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product_attribute_shop" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product_attribute_shop" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attribute_shop" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attribute_shop" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPreFixTable( "product_attribute_image" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product_attribute_image" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product_attribute_image" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attribute_image" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attribute_image" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_country_tax" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product_country_tax" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product_country_tax" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_country_tax" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_country_tax" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_download" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product_download" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product_download" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la table ' + ::cPrefixTable( "product_download" ), 3  )
+      ::writeText( 'Error al borrar la table ' + ::cPrefixTable( "product_download" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_group_reduction_cache" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product_group_reduction_cache" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product_group_reduction_cache" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_group_reduction_cache" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_group_reduction_cache" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_shop" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product_shop" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product_shop" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_shop" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_shop" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_lang" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product_lang" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product_lang" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_lang" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_lang" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_sale" ) 
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product_sale" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product_sale" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_sale" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_sale" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_tag" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "product_tag" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "product_tag" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_tag" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_tag" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "specific_price")
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "specific_price" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "specific_price" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "specific_price" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "specific_price" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "feature" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla '  + ::cPrefixTable( "feature" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla '  + ::cPrefixTable( "feature" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "feature_lang" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "feature_lang" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "feature_lang" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature_lang" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature_lang" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "feature_product" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "feature_product" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "feature_product" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature_product" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature_product" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "feature_value" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "feature_value" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "feature_value" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature_value" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature_value" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "feature_value_lang" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "feature_value_lang" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "feature_value_lang" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature_value_lang" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature_value_lang" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "scene" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "scene " ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "scene " ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "scene" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "scene" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "scene_category" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "scene_category" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "scene_category" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla' + ::cPrefixTable( "scene_category" ), 3  )
+      ::writeText( 'Error al borrar la tabla' + ::cPrefixTable( "scene_category" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "scene_lang" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "scene_lang" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "scene_lang" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "scene_lang" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "scene_lang" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "scene_products" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "scene_products" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "scene_products" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "scene_products" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "scene_products" ), 3  )
    end if
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "stock_available" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::treeSetText( 'Tabla ' + ::cPrefixTable( "stock_available" ) + ' borrada correctamente', 3  )
+      ::writeText( 'Tabla ' + ::cPrefixTable( "stock_available" ) + ' borrada correctamente', 3  )
    else
-      ::treeSetText( 'Error al borrar la tabla ' + ::cPrefixTable( "stock_available" ), 3  )
+      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "stock_available" ), 3  )
    end if
 
    /*
@@ -7371,7 +7328,7 @@ METHOD DelIdPropiedadesPrestashop() Class TComercio
       ::oPro:cCodWeb := 0
       ::oPro:Save()
 
-      ::treeSetText( 'Eliminando código web en la propiedad ' + alltrim( ::oPro:cDesPro ), 3  )
+      ::writeText( 'Eliminando código web en la propiedad ' + alltrim( ::oPro:cDesPro ), 3  )
 
       ::oPro:Skip()
 
@@ -7392,7 +7349,7 @@ METHOD DelIdPropiedadesPrestashop() Class TComercio
       ::oTblPro:cCodWeb := 0
       ::oTblPro:Save()
 
-      ::treeSetText( 'Eliminando código web en la propiedad ' + alltrim( ::oTblPro:cDesTbl ), 3  )
+      ::writeText( 'Eliminando código web en la propiedad ' + alltrim( ::oTblPro:cDesTbl ), 3  )
 
       ::oTblPro:Skip()
 
@@ -7452,19 +7409,19 @@ Return .t.
 
 METHOD buildCleanPrestashop() CLASS TComercio
 
-   ::treeSetText( "Limpiamos las referencias de las tablas de tipos de impuestos" )
+   ::writeText( "Limpiamos las referencias de las tablas de tipos de impuestos" )
    ::buildCleanTable( ::oIva )
 
-   ::treeSetText( "Limpiamos las referencias de las tablas de fabricantes" )
+   ::writeText( "Limpiamos las referencias de las tablas de fabricantes" )
    ::buildCleanTable( ::oFab )
 
-   ::treeSetText( "Limpiamos las referencias de las tablas de familias" )
+   ::writeText( "Limpiamos las referencias de las tablas de familias" )
    ::buildCleanTable( ::oFam )
 
-   ::treeSetText( "Limpiamos las referencias de las tablas de propiedades" )
+   ::writeText( "Limpiamos las referencias de las tablas de propiedades" )
    ::buildCleanTable( ::oPro )
 
-   ::treeSetText( "Limpiamos las referencias de las tablas de artículos" )
+   ::writeText( "Limpiamos las referencias de las tablas de artículos" )
    ::buildCleanTable( ::oArt )
 
 Return ( Self )
@@ -7537,67 +7494,67 @@ METHOD BuildDeleteProductPrestashop( idProduct) CLASS TComercio
 
    cCodWeb           := alltrim( str( ::oArt:cCodWeb ) )
 
-   ::cTextoWait( "Eliminando artículo de Prestashop" )
+   ::writeText( "Eliminando artículo de Prestashop" )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando adjuntos de Prestashop"  )
+   ::writeText( "Eliminando adjuntos de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attachment" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando impuestos de Prestashop"  )
+   ::writeText( "Eliminando impuestos de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_country_tax" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando archivos de Prestashop"  )
+   ::writeText( "Eliminando archivos de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_download" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando cache de Prestashop"  )
+   ::writeText( "Eliminando cache de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_group_reduction_cache" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando multitienda de Prestashop"  )
+   ::writeText( "Eliminando multitienda de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_shop" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando descripciones de Prestashop"  )
+   ::writeText( "Eliminando descripciones de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_lang" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando ofertas de Prestashop"  )
+   ::writeText( "Eliminando ofertas de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_sale" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando etiquetas de Prestashop"  )
+   ::writeText( "Eliminando etiquetas de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_tag" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando complementos de Prestashop"  )
+   ::writeText( "Eliminando complementos de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_supplier" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando transporte de Prestashop"  )
+   ::writeText( "Eliminando transporte de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_carrier" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando atributos de Prestashop"  )
+   ::writeText( "Eliminando atributos de Prestashop"  )
 
    cCommand          := 'SELECT * FROM ' + ::cPrefixTable( "product_attribute" ) +  ' WHERE id_product=' + cCodWeb
    oQuery            := TMSQuery():New( ::oCon, cCommand )
    
-   ::cTextoWait( "Eliminando lineas atributos de Prestashop"  )
+   ::writeText( "Eliminando lineas atributos de Prestashop"  )
 
    if oQuery:Open()
    
@@ -7635,22 +7592,22 @@ METHOD BuildDeleteProductPrestashop( idProduct) CLASS TComercio
 
    end if
 
-   ::cTextoWait( "Eliminando precios especificos de Prestashop"  )
+   ::writeText( "Eliminando precios especificos de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "specific_price" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando prioridad de precio de Prestashop"  )
+   ::writeText( "Eliminando prioridad de precio de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "specific_price_priority" ) + " WHERE id_product=" + cCodWeb
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   ::cTextoWait( "Eliminando funciones de Prestashop"  )
+   ::writeText( "Eliminando funciones de Prestashop"  )
 
    cCommand          := 'SELECT * FROM ' + ::cPrefixTable( "feature_product" ) +  ' WHERE id_product=' + cCodWeb
    oQuery            := TMSQuery():New( ::oCon, cCommand )
    
-   ::cTextoWait( "Eliminando lineas funciones de Prestashop"  )
+   ::writeText( "Eliminando lineas funciones de Prestashop"  )
 
    if oQuery:Open()
    
@@ -7725,7 +7682,7 @@ METHOD BuildDeleteProductPrestashop( idProduct) CLASS TComercio
 
    // Eliminamos las imágenes del artículo---------------------------------------
 
-   ::cTextoWait( "Eliminando imágenes de prestashop" )
+   ::writeText( "Eliminando imágenes de prestashop" )
 
    ::buildDeleteImagesProducts( cCodWeb )
 
@@ -7828,7 +7785,7 @@ METHOD buildActualizaStock() Class TComercio
    oBlock            := ErrorBlock( { | oError | Break( oError ) } )
    BEGIN SEQUENCE
 
-      ::treeSetText( 'Comenzamos la actualización', 1  )
+      ::writeText( 'Comenzamos la actualización', 1  )
 
       ::buildActualizaStockProductPrestashop()
 
@@ -7854,7 +7811,7 @@ METHOD buildAddInformacionStockProductPrestashop() CLASS tComercio
    local nTotalStock          := 0
    local sStock
 
-   ::treeSetText( "Recopilando información de " + alltrim( ::oArt:Nombre ) )
+   ::writeText( "Recopilando información de " + alltrim( ::oArt:Nombre ) )
 
    /*
    Recopilamos la información del Stock-------------------------------
@@ -7949,7 +7906,7 @@ METHOD buildSubirStockPrestashop() CLASS TComercio
          if hGet( aStock, "cCodWebVal1" ) == 0 .and.;
             hGet( aStock, "cCodWebVal2" ) == 0
 
-            ::treeSetText( "Actualizando stock de " + alltrim( hGet( aStock, "cNomArt" ) ) )        
+            ::writeText( "Actualizando stock de " + alltrim( hGet( aStock, "cNomArt" ) ) )        
 
             cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
                               "quantity='" + hGet( aStock, "nStock" ) + "' " + ;
@@ -8007,7 +7964,7 @@ METHOD buildActualizaStockProductPrestashop() CLASS TComercio
       Subimos la información recopilada----------------------------------------
       */
 
-      ::treeSetText( "Actualizando stocks" )
+      ::writeText( "Actualizando stocks" )
       ::meterProcesoSetTotal( len(::aStockArticuloData) )
       ::buildSubirStockPrestashop()
 
@@ -8064,7 +8021,7 @@ METHOD loadOrders() CLASS TComercio
       if nQueryRecCount > 0
 
          ::setMeterTotal( nQueryRecCount )
-         ::treeSetText( "Descargando pedidos desde la web", 2 )
+         ::writeText( "Descargando pedidos desde la web", 2 )
 
          oQuery:GoTop()
          while !oQuery:Eof()
@@ -8211,9 +8168,9 @@ METHOD insertDatosCabeceraPresupuestoPretashop ( oQuery ) CLASS TComercio
    ::insertClientePresupuestoPrestashop( oQuery )
 
    if ::oPreCliT:Save()
-      ::treeSetText( "Presupuesto " + ::cSeriePresupuesto + "/" + alltrim( str( ::nNumeroPresupuesto ) ) + "/" + ::cSufijoPresupuesto + " introducido correctamente.", 3 )
+      ::writeText( "Presupuesto " + ::cSeriePresupuesto + "/" + alltrim( str( ::nNumeroPresupuesto ) ) + "/" + ::cSufijoPresupuesto + " introducido correctamente.", 3 )
    else
-      ::treeSetText( "Error al descargar el presupuesto: " + ::cSeriePresupuesto + "/" + alltrim( str( ::nNumeroPresupuesto ) ) + "/" + ::cSufijoPresupuesto, 3 )
+      ::writeText( "Error al descargar el presupuesto: " + ::cSeriePresupuesto + "/" + alltrim( str( ::nNumeroPresupuesto ) ) + "/" + ::cSufijoPresupuesto, 3 )
    end if   
 
 Return ( .t. )
@@ -8331,7 +8288,7 @@ METHOD insertLineaPresupuestoPrestashop( oQuery ) CLASS TComercio
          end if
 
          if !::oPreCliL:Save()
-            ::treeSetText( "Error al descargar las lineas el pedido: " ;
+            ::writeText( "Error al descargar las lineas el pedido: " ;
                             + ::cSeriePresupuesto + "/" + alltrim( str( ::nNumeroPresupuesto ) ) ;
                             + "/" + ::cSufijoPresupuesto, 3 )
          end if
@@ -8458,7 +8415,7 @@ METHOD documentRecived( oQuery, oDatabase ) CLASS TComercio
    local cIdOrderPrestashop   := str( oQuery:FieldGet( 1 ), 11 )
 
    if ( oDatabase:SeekInOrd( cIdOrderPrestashop, "cCodWeb" ) )
-      ::treeSetText( "El documento con el indentificador " + alltrim( cIdOrderPrestashop ) + " ya ha sido recibido.", 3 )
+      ::writeText( "El documento con el indentificador " + alltrim( cIdOrderPrestashop ) + " ya ha sido recibido.", 3 )
    else
       orderRecived      := .f.
    end if 
@@ -8488,9 +8445,9 @@ METHOD insertDatosCabeceraPedidoPretashop( oQuery ) CLASS TComercio
    ::insertClientePedidoPrestashop( oQuery )
 
    if ::oPedCliT:Save()
-      ::treeSetText( "Pedido " + ::cSeriePedido + "/" + alltrim( str( ::nNumeroPedido ) ) + "/" + ::cSufijoPedido + " introducido correctamente.", 3 )
+      ::writeText( "Pedido " + ::cSeriePedido + "/" + alltrim( str( ::nNumeroPedido ) ) + "/" + ::cSufijoPedido + " introducido correctamente.", 3 )
    else
-      ::treeSetText( "Error al descargar el pedido: " + ::cSeriePedido + "/" + alltrim( str( ::nNumeroPedido ) ) + "/" + ::cSufijoPedido, 3 )
+      ::writeText( "Error al descargar el pedido: " + ::cSeriePedido + "/" + alltrim( str( ::nNumeroPedido ) ) + "/" + ::cSufijoPedido, 3 )
    end if   
 
 Return ( .t. )
@@ -8611,7 +8568,7 @@ METHOD insertLineaPedidoPrestashop( oQuery ) CLASS TComercio
                end if
 
             if !::oPedCliL:Save()
-               ::treeSetText( "Error al descargar las lineas el pedido: " ;
+               ::writeText( "Error al descargar las lineas el pedido: " ;
                                + ::cSeriePedido + "/" + alltrim( str( ::nNumeroPedido ) ) ;
                                + "/" + ::cSufijoPedido, 3 )
             end if
@@ -8973,15 +8930,13 @@ Return ( self )
 
 METHOD writeText( cText ) CLASS TComercio
 
-   if ::TPrestashopConfig:isSilenceMode()
-      Return ( nil )
-   end if 
-
-   if !empty( ::oTree )
-      ::oTree:Select( ::oTree:Add( cText ) )
+   if !( ::TPrestashopConfig:isSilenceMode() )
+      if !empty( ::oTree )
+         ::oTree:Select( ::oTree:Add( cText ) )
+      end if 
    end if 
    
-   logWrite( cText, "prestashop.log" ) 
+   logWrite( cText, cPatLog() + "prestashop.log" ) 
 
 Return ( nil )   
 

@@ -2459,7 +2459,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
             RESOURCE "Data_Connection_16" ;
             NOBORDER ;
             TOOLTIP  "" ;
-            ACTION   ( TComercio:ftpTestConexion() )
+            ACTION   ( TestConexionFTP() )
 
       REDEFINE GET   aGet[ _CRUTEDI ] ;
             VAR      aTmp[ _CRUTEDI ] ;
@@ -7715,6 +7715,8 @@ Return ( aFullEmpresas )
 
 Static Function TestConexionDatabase()
 
+   local lConected   := .f.
+
    if !( TComercio:isValidNameWebToExport() )
       Return .f.
    end if 
@@ -7723,12 +7725,39 @@ Static Function TestConexionDatabase()
       Return .f.
    end if 
 
-   if TComercio:prestaShopConnect()
-      msgInfo( "Conexión realizada correctamente." )
+   msgRun( "Intentando conectar con base de datos", "Espere por favor...", {|| lConected  :=  TComercio:prestaShopConnect() } )
+
+   if lConected
+      msgInfo( "Conexión con base de datos realizada correctamente" )
       TComercio:prestashopDisConnect() 
    else
-      msgStop( "Error al conectar con la BD" )
+      msgStop( "Error al conectar con la base de datos" )
    end if     
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Static Function TestConexionFTP()
+
+   local lConected   := .f.
+
+   if !( TComercio:isValidNameWebToExport() )
+      Return .f.
+   end if 
+
+   if !( TComercio:TPrestashopConfig:setCurrentWebName( TComercio:getWebToExport() ) )
+      Return .f.
+   end if 
+
+   msgRun( "Intentando conectar con servidor FTP", "Espere por favor...", {|| TComercio:buildFTP(), lConected := TComercio:oFtp:CreateConexion() } )
+
+   if lConected
+      msgInfo( "Conexión servidor FTP realizada correctamente" )
+      TComercio:oFtp:EndConexion()
+   else 
+      msgStop( "Error al conectar con servidor FTP" )
+   end if 
 
 Return ( .t. )
 

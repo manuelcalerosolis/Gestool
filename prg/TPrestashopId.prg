@@ -21,9 +21,14 @@ CLASS TPrestaShopId FROM TMant
    
    METHOD setValue( cTipoDocumento, cClave, cWeb, idWeb )
    METHOD getValue( cTipoDocumento, cClave, cWeb )
+   METHOD deleteValue( cTipoDocumento, cClave, cWeb )
 
    METHOD setValueArticulos( cClave, cWeb, idWeb )    INLINE ::setValue( "Artículos", cClave, cWeb, idWeb )
    METHOD getValueArticulos( cClave, cWeb )           INLINE ::getValue( "Artículos", cClave, cWeb )
+
+   METHOD setValueFamilias( cClave, cWeb, idWeb )     INLINE ::setValue( "Familias", cClave, cWeb, idWeb )
+   METHOD getValueFamilias( cClave, cWeb )            INLINE ::getValue( "Familias", cClave, cWeb )
+
 
 END CLASS
 
@@ -141,7 +146,38 @@ RETURN ( idWeb )
 
 //---------------------------------------------------------------------------//
 
+METHOD deleteValue( cTipoDocumento, cClave, cWeb )
 
+   local idWeb          := 0
+   local idDocumento    := ::getTipoDocumento( cTipoDocumento )
+
+   if empty( idDocumento )
+      msgStop( "El tipo de documento " + cTipoDocumento + " no existe" )
+      RETURN ( .f. )
+   end if 
+
+   if empty( cClave )
+      msgStop( "El campo clave no puede estar vacio" )
+      RETURN ( .f. )
+   end if 
+
+   if empty( cWeb )
+      msgStop( "El nombre de la tienda en prestashop no puede estar vacio" )
+      RETURN ( .f. )
+   end if 
+
+   cClave                  := padr( cClave, 20 )
+   cWeb                    := padr( cWeb, 80 )
+
+   ::oDbf:ordsetfocus( "cWeb" )
+
+   if ::oDbf:seek( idDocumento + cClave + cWeb )
+      ::oDbf:Delete()
+   end if 
+
+RETURN ( idWeb )
+
+//---------------------------------------------------------------------------//
 
 
 
