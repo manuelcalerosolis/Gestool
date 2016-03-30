@@ -29,6 +29,8 @@ CLASS TPrestaShopId FROM TMant
    METHOD setValueFamilias( cClave, cWeb, idWeb )     INLINE ::setValue( "Familias", cClave, cWeb, idWeb )
    METHOD getValueFamilias( cClave, cWeb )            INLINE ::getValue( "Familias", cClave, cWeb )
 
+   METHOD isValidParameters( cTipoDocumento, cClave, cWeb, idWeb ) 
+   METHOD isSeekValues( cTipoDocumento, cClave, cWeb )
 
 END CLASS
 
@@ -71,38 +73,15 @@ RETURN ( ::oDbf )
 
 METHOD setValue( cTipoDocumento, cClave, cWeb, idWeb )
 
-   local idDocumento    := ::getTipoDocumento( cTipoDocumento )
-
-   if empty( idDocumento )
-      msgStop( "El tipo de documento " + cTipoDocumento + " no existe" )
+   if !::isValidParameters( cTipoDocumento, cClave, cWeb, idWeb )
       RETURN ( .f. )
    end if 
 
-   if empty( cClave )
-      msgStop( "El campo clave no puede estar vacio" )
-      RETURN ( .f. )
-   end if 
-
-   if empty( cWeb )
-      msgStop( "El nombre de la tienda en prestashop no puede estar vacio" )
-      RETURN ( .f. )
-   end if 
-
-   if empty( idWeb )
-      msgStop( "El identificador de la tienda en prestashop no puede estar vacio" )
-      RETURN ( .f. )
-   end if 
-
-   cClave                  := padr( cClave, 20 )
-   cWeb                    := padr( cWeb, 80 )
-
-   ::oDbf:ordsetfocus( "cWeb" )
-
-   if ::oDbf:seek( idDocumento + cClave + cWeb )
+   if ::isSeekValues( cTipoDocumento, cClave, cWeb )
       ::oDbf:fieldPutByName( "idWeb", idWeb )
    else
       ::oDbf:Append()
-      ::oDbf:cDocumento    := idDocumento
+      ::oDbf:cDocumento    := ::getTipoDocumento( cTipoDocumento )
       ::oDbf:cClave        := cClave
       ::oDbf:cWeb          := cWeb
       ::oDbf:idWeb         := idWeb
@@ -116,30 +95,13 @@ RETURN ( .t. )
 METHOD getValue( cTipoDocumento, cClave, cWeb )
 
    local idWeb          := 0
-   local idDocumento    := ::getTipoDocumento( cTipoDocumento )
 
-   if empty( idDocumento )
-      msgStop( "El tipo de documento " + cTipoDocumento + " no existe" )
+   if !::isValidParameters( cTipoDocumento, cClave, cWeb, idWeb )
       RETURN ( .f. )
    end if 
 
-   if empty( cClave )
-      msgStop( "El campo clave no puede estar vacio" )
-      RETURN ( .f. )
-   end if 
-
-   if empty( cWeb )
-      msgStop( "El nombre de la tienda en prestashop no puede estar vacio" )
-      RETURN ( .f. )
-   end if 
-
-   cClave                  := padr( cClave, 20 )
-   cWeb                    := padr( cWeb, 80 )
-
-   ::oDbf:ordsetfocus( "cWeb" )
-
-   if ::oDbf:seek( idDocumento + cClave + cWeb )
-      idWeb                := ::oDbf:idWeb
+   if ::isSeekValues( cTipoDocumento, cClave, cWeb )
+      idWeb             := ::oDbf:idWeb
    end if 
 
 RETURN ( idWeb )
@@ -148,10 +110,21 @@ RETURN ( idWeb )
 
 METHOD deleteValue( cTipoDocumento, cClave, cWeb )
 
-   local idWeb          := 0
-   local idDocumento    := ::getTipoDocumento( cTipoDocumento )
+   if !::isValidParameters( cTipoDocumento, cClave, cWeb, idWeb )
+      RETURN ( .f. )
+   end if 
 
-   if empty( idDocumento )
+   if ::isSeekValues( cTipoDocumento, cClave, cWeb )
+      ::oDbf:Delete()
+   end if 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD isValidParameters( cTipoDocumento, cClave, cWeb, idWeb )
+
+   if empty( cTipoDocumento )
       msgStop( "El tipo de documento " + cTipoDocumento + " no existe" )
       RETURN ( .f. )
    end if 
@@ -166,22 +139,26 @@ METHOD deleteValue( cTipoDocumento, cClave, cWeb )
       RETURN ( .f. )
    end if 
 
-   cClave                  := padr( cClave, 20 )
-   cWeb                    := padr( cWeb, 80 )
-
-   ::oDbf:ordsetfocus( "cWeb" )
-
-   if ::oDbf:seek( idDocumento + cClave + cWeb )
-      ::oDbf:Delete()
+   if !isNil( idWeb ) .and. empty( idWeb )
+      msgStop( "El identificador de la tienda en prestashop no puede estar vacio" )
+      RETURN ( .f. )
    end if 
 
-RETURN ( idWeb )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD isSeekValues( cTipoDocumento, cClave, cWeb )
 
+   local idDocumento    := ::getTipoDocumento( cTipoDocumento )
 
+   if empty(idDocumento)
+      RETURN ( .f. )
+   end if 
 
+   cClave               := padr( cClave, 20 )
+   cWeb                 := padr( cWeb, 80 )
 
+RETURN ( ::oDbf:seekInOrd( idDocumento + cClave + cWeb, "cWeb" ) )
 
 
