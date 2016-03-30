@@ -990,7 +990,7 @@ METHOD Resource( nMode, aDatosAnterior )
 			OF 		oFld:aDialogs[1]
 
          oGetSub:bHelp     := {|| ::oTipoExpediente:BuscarEspecial( oGetTip, oGetSub ) }
-         oGetSub:bValid    := {|| ::oTipoExpediente:oSubTipoExpediente:Existe( oGetTip:VarGet() + oGetSub:VarGet(), oSaySub, "cNomSub", .t., .t., "0", "cCodSub" ) }
+         oGetSub:bValid    := {|| ::oTipoExpediente:oSubTipoExpediente:Existe( oGetTip:VarGet() + oGetSub:VarGet(), oSaySub, "cNomSub", .t., .f., nil, "cCodSub" ) }
 
       REDEFINE GET oSaySub VAR cSaySub ;
          ID       251 ;
@@ -1008,7 +1008,7 @@ METHOD Resource( nMode, aDatosAnterior )
 			OF 		oFld:aDialogs[1]
 
          oGetEnt:bHelp     := {|| ::oEntidad:Buscar( oGetEnt ) }
-         oGetEnt:bValid    := {|| ::oEntidad:Existe( oGetEnt, oSayEnt, "cDesEnt", .t., .t., "0" ) }
+         oGetEnt:bValid    := {|| ::oEntidad:Existe( oGetEnt, oSayEnt, "cDesEnt", .t. ) }
 
       REDEFINE GET oSayEnt VAR cSayEnt ;
          ID       221 ;
@@ -1026,7 +1026,7 @@ METHOD Resource( nMode, aDatosAnterior )
 			OF 		oFld:aDialogs[1]
 
          oGetTra:bHelp     := {|| ::oOperario:Buscar( oGetTra ) }
-         oGetTra:bValid    := {|| ::oOperario:Existe( oGetTra, oSayTra, "cNomTra", .t., .t., "0" ) }
+         oGetTra:bValid    := {|| ::oOperario:Existe( oGetTra, oSayTra, "cNomTra", .t. ) }
 
       REDEFINE GET oSayTra VAR cSayTra ;
          ID       231 ;
@@ -1044,7 +1044,7 @@ METHOD Resource( nMode, aDatosAnterior )
 			OF 		oFld:aDialogs[1]
 
          oGetCol:bHelp     := {|| ::oColaborador:Buscar( oGetCol ) }
-         oGetCol:bValid    := {|| ::oColaborador:Existe( oGetCol, oSayCol, "cDesCol", .t., .t., "0" ) }
+         oGetCol:bValid    := {|| ::oColaborador:Existe( oGetCol, oSayCol, "cDesCol", .t. ) }
 
       REDEFINE GET oSayCol VAR cSayCol ;
          ID       241 ;
