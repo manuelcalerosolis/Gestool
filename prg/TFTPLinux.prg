@@ -16,6 +16,8 @@ CLASS TFtpLinux
    DATA oFTP
    DATA cError                                  INIT ""
 
+   DATA lHasSSL                                 INIT .f.
+
    DATA TPrestashopConfig
 
    METHOD new( TPrestashopConfig )
@@ -56,24 +58,17 @@ METHOD CreateConexion() CLASS TFtpLinux
    local oUrl          
    local lOpen             := .f.
 
-   if !empty( ::TPrestashopConfig:getFTPServer() )
-
+   if !empty( ::TPrestashopConfig:getFtpServer() )
+ 
       cUrl                 := "ftp://" + ::TPrestashopConfig:getFtpUser() + ":" + ::TPrestashopConfig:getFtpPassword() + "@" + ::TPrestashopConfig:getFtpServer()
-
-      msgAlert( cUrl )
-      oUrl                 := TUrl():New( cUrl )
-
-      msgAlert( "oUrl creada" )
-
-      ::oFTP               := TIPClientFTP():New( oUrl, .t. )
-
-      msgAlert( "oFTP creada")
-
+ 
+      ::oUrl               := TUrl():New( cUrl )
+ 
+      ::oFTP               := TIPClientFTP():New( ::oUrl, .t. )
       ::oFTP:nConnTimeout  := 20000
       ::oFTP:bUsePasv      := ::TPrestashopConfig:getFtpPassive()
-
-      msgAlert( "antes de abir")
-      lOpen                := ::oFTP:Open( cUrl )
+ 
+       lOpen                := ::oFTP:Open( cUrl )
 
       msgAlert( "despues de abirr")
 
