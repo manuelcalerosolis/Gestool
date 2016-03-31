@@ -752,7 +752,7 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "cHorVto" TYPE "C" LEN 05  DEC 0 COMMENT "Hora de vencimiento"     PICTURE "@R 99:99"                                  OF oDbf
       FIELD NAME "cCodCli" TYPE "C" LEN 12  DEC 0 COMMENT "Cliente"                                                                     OF oDbf
       FIELD NAME "cNomCli" TYPE "C" LEN 80  DEC 0 COMMENT "Nombre cliente"                                                              OF oDbf
-      FIELD NAME "cCodTip" TYPE "C" LEN 04  DEC 0 COMMENT "Código tipo expediente"                                                      OF oDbf
+      FIELD NAME "cCodTip" TYPE "C" LEN 03  DEC 0 COMMENT "Código tipo expediente"                                                      OF oDbf
       FIELD NAME "cCodSub" TYPE "C" LEN 03  DEC 0 COMMENT "Código subtipo expediente"                                                   OF oDbf
       FIELD NAME "cCodSec" TYPE "C" LEN 03  DEC 0 COMMENT "Sección"                                                                     OF oDbf
       FIELD NAME "cCodCol" TYPE "C" LEN 03  DEC 0 COMMENT "Colaborador"                                                                 OF oDbf
@@ -972,7 +972,7 @@ METHOD Resource( nMode, aDatosAnterior )
 			OF 		oFld:aDialogs[1]
 
          oGetTip:bHelp     := {|| ::oTipoExpediente:BuscarEspecial( oGetTip, oGetSub ) }
-         oGetTip:bValid    := {|| ::oTipoExpediente:Existe( oGetTip, oSayTip, "cNomTip", .t., .t., "0" ) }
+         oGetTip:bValid    := {|| ::oTipoExpediente:Existe( oGetTip, oSayTip, "cNomTip", .t. ) }
 
       REDEFINE GET oSayTip VAR cSayTip ;
          ID       211 ;
@@ -1026,7 +1026,7 @@ METHOD Resource( nMode, aDatosAnterior )
 			OF 		oFld:aDialogs[1]
 
          oGetTra:bHelp     := {|| ::oOperario:Buscar( oGetTra ) }
-         oGetTra:bValid    := {|| ::oOperario:Existe( oGetTra, oSayTra, "cNomTra", .t. ) }
+         oGetTra:bValid    := {|| ::oOperario:Existe( oGetTra, oSayTra, "cNomTra", .t., .t., "0" ) }
 
       REDEFINE GET oSayTra VAR cSayTra ;
          ID       231 ;
@@ -1044,7 +1044,7 @@ METHOD Resource( nMode, aDatosAnterior )
 			OF 		oFld:aDialogs[1]
 
          oGetCol:bHelp     := {|| ::oColaborador:Buscar( oGetCol ) }
-         oGetCol:bValid    := {|| ::oColaborador:Existe( oGetCol, oSayCol, "cDesCol", .t. ) }
+         oGetCol:bValid    := {|| ::oColaborador:Existe( oGetCol, oSayCol, "cDesCol", .t., .t., "0" ) }
 
       REDEFINE GET oSayCol VAR cSayCol ;
          ID       241 ;
