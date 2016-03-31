@@ -32,6 +32,9 @@ CLASS TPrestaShopId FROM TMant
    METHOD setValueTaxRuleGroup( cClave, cWeb, idWeb ) INLINE ::setValue( "04", cClave, cWeb, idWeb )
    METHOD getValueTaxRuleGroup( cClave, cWeb )        INLINE ::getValue( "04", cClave, cWeb )
 
+   METHOD setValueManufacturer( cClave, cWeb, idWeb ) INLINE ::setValue( "05", cClave, cWeb, idWeb )
+   METHOD getValueManufacturer( cClave, cWeb )        INLINE ::getValue( "05", cClave, cWeb )
+
    METHOD isValidParameters( cTipoDocumento, cClave, cWeb, idWeb ) 
    METHOD isSeekValues( cTipoDocumento, cClave, cWeb )
 

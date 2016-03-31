@@ -4534,13 +4534,16 @@ Return ( .t. )
 
 METHOD buildFabricantePrestashop( id ) CLASS TComercio
 
-   if aScan( ::aFabricantesData, {|h| hGet( h, "id" ) == id } ) == 0
+   if aScan( ::aFabricantesData, {|h| hGet( h, "id" ) == id } ) != 0
+      Return .f.
+   end if 
+
+   if ::lSyncAll .or. ::TPrestashopId:getValueManufacturer( id, ::getCurrentWebName() ) == 0
       if ::oFab:SeekInOrd( id, "cCodFab" ) .and. ::oFab:lPubInt
-         if ::lSyncAll .or. ::oFab:cCodWeb == 0
-            aAdd( ::aFabricantesData, { "id" => id, "name"  => rtrim( ::oFab:cNomFab ) } )
-         end if
-      end if 
-   end if
+         aAdd( ::aFabricantesData,  {  "id"     => id,;
+                                       "name"   => rtrim( ::oFab:cNomFab ) } )
+      end if
+   end if 
 
 Return ( Self )
 
@@ -5217,9 +5220,9 @@ METHOD buildInsertFabricantesPrestashop( hFabricantesData ) CLASS TComercio
 
    // Guardo referencia a la web-----------------------------------------------
 
-   if ::oFab:SeekInOrd( hGet( hFabricantesData, "id" ), "cCodFab" )
-      ::oFab:fieldPutByName( "cCodWeb", nCodigoWeb )
-   end if
+   if !empty( nCodigoWeb )
+      ::TPrestashopId:setValueManufacturer( hget( hFabricantesData, "id" ), ::getCurrentWebName(), nCodigoWeb )
+   end if 
 
 return nCodigoWeb
 
