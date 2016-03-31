@@ -1,3 +1,4 @@
+
 #include "FiveWin.Ch" 
 #include "Struct.ch"
 #include "Factu.ch" 
@@ -58,13 +59,23 @@ METHOD CreateConexion() CLASS TFtpLinux
    if !empty( ::TPrestashopConfig:getFTPServer() )
 
       cUrl                 := "ftp://" + ::TPrestashopConfig:getFtpUser() + ":" + ::TPrestashopConfig:getFtpPassword() + "@" + ::TPrestashopConfig:getFtpServer()
+
+      msgAlert( cUrl )
       oUrl                 := TUrl():New( cUrl )
 
+      msgAlert( "oUrl creada" )
+
       ::oFTP               := TIPClientFTP():New( oUrl, .t. )
+
+      msgAlert( "oFTP creada")
+
       ::oFTP:nConnTimeout  := 20000
       ::oFTP:bUsePasv      := ::TPrestashopConfig:getFtpPassive()
 
+      msgAlert( "antes de abir")
       lOpen                := ::oFTP:Open( cUrl )
+
+      msgAlert( "despues de abirr")
 
       if !lOpen
          ::cError          := "Could not connect to FTP server " + oURL:cServer
@@ -75,6 +86,9 @@ METHOD CreateConexion() CLASS TFtpLinux
          else
             ::cError       += hb_eol() + "Error in connection:" + " " + hb_inetErrorDesc( ::oFTP:SocketCon )
          endif
+
+         msgStop( ::cError )
+
       end if
 
    end if 
