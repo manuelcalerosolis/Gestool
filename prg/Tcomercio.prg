@@ -4754,18 +4754,17 @@ METHOD buildPropiedadesPrestashop( id ) CLASS TComercio
    /*
    Primera propiedad--------------------------------------------------------
    */
+   if aScan( ::aPropiedadesCabeceraData, {|h| hGet( h, "id" ) == ::oPro:cCodPro } ) == 0
+      return .f.
+   end if
 
-   if ::oPro:SeekInOrd( ::oArt:cCodPrp1 )
+   if ::lSyncAll .or. ::TPrestashopId:getValueAttributeGroup( id, ::getCurrentWebName() ) == 0
 
-      if ::lSyncAll .or. ::oPro:cCodWeb == 0
-      
-         if aScan( ::aPropiedadesCabeceraData, {|h| hGet( h, "id" ) == ::oPro:cCodPro } ) == 0
+      if ::oPro:SeekInOrd( ::oArt:cCodPrp1 ) 
 
-            aAdd( ::aPropiedadesCabeceraData,   {  "id"     => ::oPro:cCodPro,;
-                                                   "name"   => if( empty( ::oPro:cNomInt ), alltrim( ::oPro:cDesPro ), alltrim( ::oPro:cNomInt ) ),;
-                                                   "lColor" => ::oPro:lColor } )
-
-         end if
+         aAdd( ::aPropiedadesCabeceraData,   {  "id"     => ::oPro:cCodPro,;
+                                                "name"   => if( empty( ::oPro:cNomInt ), alltrim( ::oPro:cDesPro ), alltrim( ::oPro:cNomInt ) ),;
+                                                "lColor" => ::oPro:lColor } )
 
       end if
 
@@ -4775,20 +4774,20 @@ METHOD buildPropiedadesPrestashop( id ) CLASS TComercio
    Segunda propiedad--------------------------------------------------------
    */
 
-   if ::oPro:SeekInOrd( ::oArt:cCodPrp2 )
+   if aScan( ::aPropiedadesCabeceraData, {|h| hGet( h, "id" ) == ::oPro:cCodPro } ) == 0
+      return .f.
+   end if
 
-      if ::lSyncAll .or. ::oPro:cCodWeb == 0
+   if ::lSyncAll .or. ::TPrestashopId:getValueAttributeGroup( id, ::getCurrentWebName() ) == 0
 
-         if aScan( ::aPropiedadesCabeceraData, {|h| hGet( h, "id" ) == ::oPro:cCodPro } ) == 0
-      
-            aAdd( ::aPropiedadesCabeceraData, { "id"          => ::oPro:cCodPro,;
-                                                "name"        => if( empty( ::oPro:cNomInt ), alltrim( ::oPro:cDesPro ), alltrim( ::oPro:cNomInt ) ),;
-                                                "lColor"      => ::oPro:lColor } )
+      if ::oPro:SeekInOrd( ::oArt:cCodPrp2 ) 
 
-         end if
+         aAdd( ::aPropiedadesCabeceraData,   {  "id"     => ::oPro:cCodPro,;
+                                                "name"   => if( empty( ::oPro:cNomInt ), alltrim( ::oPro:cDesPro ), alltrim( ::oPro:cNomInt ) ),;
+                                                "lColor" => ::oPro:lColor } )
 
       end if
-
+         
    end if
 
    /*
@@ -4801,7 +4800,7 @@ METHOD buildPropiedadesPrestashop( id ) CLASS TComercio
 
          if ::oTblPro:SeekInOrd( ::oArtDiv:cCodPr1 + ::oArtDiv:cValPr1, "cCodPro" )
 
-            if ::lSyncAll .or. ::oTblPro:cCodWeb == 0
+            if ::lSyncAll .or. ::TPrestashopId:getValueAttribute( id, ::getCurrentWebName() ) == 0
 
                if aScan( ::aPropiedadesLineasData, {|h| hGet( h, "id" ) == ::oTblPro:cCodTbl .and. hGet( h, "idparent" ) == ::oTblPro:cCodPro } ) == 0
       
@@ -4818,7 +4817,7 @@ METHOD buildPropiedadesPrestashop( id ) CLASS TComercio
 
          if ::oTblPro:SeekInOrd( ::oArtDiv:cCodPr2 + ::oArtDiv:cValPr2, "cCodPro" )
 
-            if ::lSyncAll .or. ::oTblPro:cCodWeb == 0
+            if ::lSyncAll .or. ::TPrestashopId:getValueAttribute( id, ::getCurrentWebName() ) == 0
 
                if aScan( ::aPropiedadesLineasData, {|h| hGet( h, "id" ) == ::oTblPro:cCodTbl .and. hGet( h, "idparent" ) == ::oTblPro:cCodPro } ) == 0
       
@@ -5795,7 +5794,7 @@ return nil
 METHOD buildInsertPropiedadesPrestashop( hPropiedadesCabData ) CLASS TComercio
 
    local oImagen
-   local nCodigoGrupo      := 0
+   local nCodigoWeb        := 0
    local nCodigoPropiedad  := 0
    local nParent           := 1
    local cCommand          := ""
@@ -5812,7 +5811,7 @@ METHOD buildInsertPropiedadesPrestashop( hPropiedadesCabData ) CLASS TComercio
                                  "'" + if( hGet( hPropiedadesCabData, "lColor" ), "color", "select" ) + "' )"    // group_type                        
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      nCodigoGrupo   := ::oCon:GetInsertId()
+      nCodigoWeb     := ::oCon:GetInsertId()
    else
       ::writeText( "Error al insertar la propiedad " + hGet( hPropiedadesCabData, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_group" ), 3 )
    end if
@@ -5823,7 +5822,7 @@ METHOD buildInsertPropiedadesPrestashop( hPropiedadesCabData ) CLASS TComercio
                                   "name, " + ;
                                   "public_name )" + ;
                               " VALUES " + ;
-                                  "('" + alltrim( str( nCodigoGrupo ) ) + "', " + ;    //id_attribute_group
+                                  "('" + alltrim( str( nCodigoWeb ) ) + "', " + ;    //id_attribute_group
                                   "'" + str( ::nLanguage ) + "', " + ;                 //id_lang
                                   "'" + hGet( hPropiedadesCabData, "name" ) + "', " + ;//name
                                   "'" + hGet( hPropiedadesCabData, "name" ) + "' )"    //public_name
@@ -5832,11 +5831,13 @@ METHOD buildInsertPropiedadesPrestashop( hPropiedadesCabData ) CLASS TComercio
       ::writeText( "Error al insertar la propiedad " + hGet( hPropiedadesCabData, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_group_lang" ), 3 )
    end if
 
-   if ::oPro:SeekInOrd( hGet( hPropiedadesCabData, "id" ), "CCODPRO" )
-      ::oPro:fieldPutByName( "cCodWeb", nCodigoGrupo )
-   end if
+   // Guardo referencia a la web-----------------------------------------------
 
-Return ( Self )
+   if !empty( nCodigoWeb )
+      ::TPrestashopId:setValueAttributeGroup( hget( hPropiedadesCabData, "id" ), ::getCurrentWebName(), nCodigoWeb )
+   end if 
+
+Return self
 
 //---------------------------------------------------------------------------//
 
@@ -5889,9 +5890,11 @@ METHOD buildInsertLineasPropiedadesPrestashop( hPropiedadesLinData, nPosition ) 
       ::writeText( "Error al insertar la propiedad " + hGet( hPropiedadesLinData, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_shop" ), 3 )
    end if
 
-   if ::oTblPro:SeekInOrd( hGet( hPropiedadesLinData, "idparent" ) + hGet( hPropiedadesLinData, "id" ), "CCODPRO" )
-      ::oTblPro:fieldPutByName( "cCodWeb", nCodigoPropiedad )
-   end if
+// Guardo referencia a la web-----------------------------------------------
+
+   if !empty( nCodigoPropiedad )
+      ::TPrestashopId:setValueAttribute( hGet( hPropiedadesLinData, "idparent" ) + hGet( hPropiedadesLinData, "id" ), "CCODPRO" ), ::getCurrentWebName(), nCodigoPropiedad )
+   end if 
 
 Return ( self )
 

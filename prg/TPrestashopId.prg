@@ -38,6 +38,12 @@ CLASS TPrestaShopId FROM TMant
    METHOD setValueCategory( cClave, cWeb, idWeb )     INLINE ::setValue( "06", cClave, cWeb, idWeb )
    METHOD getValueCategory( cClave, cWeb )            INLINE ::getValue( "06", cClave, cWeb )
 
+   METHOD setValueAttributeGroup( cClave, cWeb, idWeb )     INLINE ::setValue( "07", cClave, cWeb, idWeb )
+   METHOD getValueAttributeGroup( cClave, cWeb )            INLINE ::getValue( "07", cClave, cWeb )
+
+   METHOD setValueAttribute( cClave, cWeb, idWeb )     INLINE ::setValue( "08", cClave, cWeb, idWeb )
+   METHOD getValueAttribute( cClave, cWeb )            INLINE ::getValue( "08", cClave, cWeb )
+
    METHOD isValidParameters( cTipoDocumento, cClave, cWeb, idWeb ) 
    METHOD isSeekValues( cTipoDocumento, cClave, cWeb )
 
