@@ -4387,7 +4387,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "nDtoInt1" ) ) ] ;
          VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nDtoInt1" ) ) ] ;
          ID       121 ;
-         PICTURE  "@E 999.99" ;
+         PICTURE  "@E 999.999999" ;
          SPINNER  MIN 0 MAX 100;
          WHEN     ( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lPubInt" ) ) ] .and. aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lSbrInt" ) ) ] .and. nMode != ZOOM_MODE ) ;
          ON CHANGE( CalculaDescuentoWeb( aGet, aTmp ) ) ;
@@ -15188,22 +15188,22 @@ function aItmArt()
    aAdd( aBase, { "LPUBINT",   "L",  1, 0, "Lógico para publicar en internet (S/N)",  "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "LPUBOFE",   "L",  1, 0, "Lógico para publicar como oferta (S/N)",  "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "LPUBPOR",   "L",  1, 0, "Lógico para publicar como artículo destacado (S/N)",  "",       "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NDTOINT1",  "N",  6, 2, "Descuento de oferta para tienda web 1",   "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NDTOINT1",  "N", 10, 6, "Descuento de oferta para tienda web 1",   "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPINT1",  "N", 15, 6, "Precio del producto en oferta 1",         "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPIVA1",  "N", 15, 6, "Precio del producto en oferta con " + cImp() + " 1", "",        "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NDTOINT2",  "N",  6, 2, "Descuento de oferta para tienda web 2",   "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NDTOINT2",  "N", 10, 6, "Descuento de oferta para tienda web 2",   "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPINT2",  "N", 15, 6, "Precio del producto en oferta 2",         "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPIVA2",  "N", 15, 6, "Precio del producto en oferta con " + cImp() + " 2", "",        "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NDTOINT3",  "N",  6, 2, "Descuento de oferta para tienda web 3",   "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NDTOINT3",  "N", 10, 6, "Descuento de oferta para tienda web 3",   "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPINT3",  "N", 15, 6, "Precio del producto en oferta 3",         "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPIVA3",  "N", 15, 6, "Precio del producto en oferta con " + cImp() + " 3", "",        "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NDTOINT4",  "N",  6, 2, "Descuento de oferta para tienda web 4",   "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NDTOINT4",  "N", 10, 6, "Descuento de oferta para tienda web 4",   "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPINT4",  "N", 15, 6, "Precio del producto en oferta 4",         "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPIVA4",  "N", 15, 6, "Precio del producto en oferta con " + cImp() + " 4", "",        "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NDTOINT5",  "N",  6, 2, "Descuento de oferta para tienda web 5",   "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NDTOINT5",  "N", 10, 6, "Descuento de oferta para tienda web 5",   "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPINT5",  "N", 15, 6, "Precio del producto en oferta 5",         "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPIVA5",  "N", 15, 6, "Precio del producto en oferta con " + cImp() + " 5", "",        "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NDTOINT6",  "N",  6, 2, "Descuento de oferta para tienda web 6",   "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NDTOINT6",  "N", 10, 6, "Descuento de oferta para tienda web 6",   "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPINT6",  "N", 15, 6, "Precio del producto en oferta 6",         "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPIVA6",  "N", 15, 6, "Precio del producto en oferta con " + cImp() + " 6", "",        "", "( cDbfArt )", nil } )
    aAdd( aBase, { "MDESTEC",   "M", 10, 0, "Descripción técnica del artículo",        "",                   "", "( cDbfArt )", nil } )

@@ -453,7 +453,9 @@ CLASS TComercio
    METHOD buildImagenes()
    METHOD buildSubirImagenes()
 
-   METHOD buildPrecioArticulo()
+   METHOD buildPriceProduct()
+   METHOD buildPriceReduction()
+   METHOD buildPriceReductionTax()           INLINE ( if( ::oArt:lIvaWeb, 1, 0 ) )
 
    METHOD buildGetParentCategories()
 
@@ -2799,70 +2801,11 @@ Return nil
 
 METHOD InsertOfertasPrestashop( nCodigoWeb ) CLASS TComercio
 
-   local cCommand          := ""
-
-   if ::oArt:lSbrInt .and. ::oArt:nDtoInt1 != 0
-
-      cCommand          := "INSERT INTO " + ::cPrefixTable( "specific_price" ) + ; 
-                           " ( id_specific_price_rule, " + ;
-                              "id_cart, " + ;
-                              "id_product, " + ;
-                              "id_shop, " + ;
-                              "id_shop_group, " + ;
-                              "id_currency, " + ;
-                              "id_country, " + ;
-                              "id_group, " + ;
-                              "id_customer, " + ;
-                              "id_product_attribute, " + ;
-                              "price, " + ;
-                              "from_quantity, " + ;
-                              "reduction, " + ;
-                              "reduction_type )" + ;
-                           " VALUES " + ;
-                              "('0', " + ;                                             //id_specific_price_rule
-                              "'0', " + ;                                              //id_cart
-                              "'" + alltrim( str( nCodigoWeb ) ) + "', " + ;           //id_product
-                              "'1', " + ;                                              //id_shop
-                              "'0', " + ;                                              //id_shop_group
-                              "'0', " + ;                                              //id_currency
-                              "'0', " + ;                                              //id_country
-                              "'0', " + ;                                              //id_group
-                              "'0', " + ;                                              //id_customer
-                              "'0', " + ;                                              //id_product_attribute
-                              "'-1', " + ;                                             //price
-                              "'1', " + ;                                              //from_quantity
-                              "'" + alltrim( str( ::oArt:nDtoInt1 / 100 ) ) + "', " + ;//reduction
-                              "'percentage' )"                                         //reduction_type
-   
-      if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-
-         ::writeText( "He insertado la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla " + ::cPrefixTable( "attribute" ), 3 )
-
-      else
-
-         ::writeText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPreFixtable( "attribute" ), 3 )
-
-      end if
-
-   end if
-
 return nil
 
 //---------------------------------------------------------------------------//
 
 METHOD UpdateOfertasPrestashop() CLASS TComercio
-
-   local cCommand          := ""
-
-   if ::oArt:lSbrInt .and. ::oArt:nDtoInt1 != 0
-
-      cCommand          := "UPDATE " + ::cPrefixTable( "specific_price" ) + " SET " + ;
-                              "reduction='" + alltrim( str( ::oArt:nDtoInt1 / 100 ) ) + "' " + ;
-                           "WHERE id_product=" + alltrim( str( ::oArt:cCodWeb ) )
-
-      TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-
-   end if   
             
 return nil
 
@@ -4573,13 +4516,19 @@ return .t.
 
 METHOD buildIvaPrestashop( id ) CLASS TComercio
 
-   if aScan( ::aIvaData, {|h| hGet( h, "id" ) == id } ) == 0
-      if ::lSyncAll .or. ::TPrestashopId:getValueTax( id, ::getCurrentWebName() ) == 0
-         aAdd( ::aIvaData, { "id" => id, "rate" => alltrim( str( ::oIva:TpIva ) ), "name" => rtrim( ::oIva:DescIva ) } )
+   if aScan( ::aIvaData, {|h| hGet( h, "id" ) == id } ) != 0
+      Return .f. 
+   end if 
+
+   if ::lSyncAll .or. ::TPrestashopId:getValueTax( id, ::getCurrentWebName() ) == 0
+      if ::oIva:seekInOrd( id, "Tipo" )
+         aAdd( ::aIvaData, {  "id"     => id,;
+                              "rate"   => alltrim( str( ::oIva:TpIva ) ),;
+                              "name"   => alltrim( ::oIva:DescIva ) } )
       end if 
    end if 
 
-Return ( Self )
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -4638,26 +4587,26 @@ METHOD buildArticuloPrestashop( id ) CLASS TComercio
 
    // Rellenamos el Hash-------------------------------------------------
 
-   aAdd( ::aArticuloData, {"id"                   => id,;
-                           "name"                  => alltrim( ::oArt:Nombre ),;
-                           "id_manufacturer"       => ::oArt:cCodFab ,;
-                           "id_tax_rules_group"    => ::oArt:TipoIva ,;
-                           "id_category_default"   => ::oArt:Familia ,;
-                           "price"                 => ::buildPrecioArticulo(),;
-                           "reference"             => ::oArt:Codigo ,;
-                           "weight"                => ::oArt:nPesoKg ,;
-                           "description"           => if( !empty( ::oArt:mDesTec ), ::oArt:mDesTec, ::oArt:Nombre ) ,; 
-                           "description_short"     => alltrim( ::oArt:Nombre ) ,;
-                           "link_rewrite"          => cLinkRewrite( ::oArt:Nombre ),;
-                           "meta_title"            => alltrim( ::oArt:cTitSeo ) ,;
-                           "meta_description"      => alltrim( ::oArt:cDesSeo ) ,;
-                           "meta_keywords"         => alltrim( ::oArt:cKeySeo ) ,;
-                           "lPublicRoot"           => ::oArt:lPubPor,;
-                           "cImagen"               => ::oArt:cImagen,;
-                           "lSbrInt"               => ::oArt:lSbrInt,;
-                           "nDtoInt1"              => ::oArt:nDtoInt1,;
-                           "nImpInt1"              => ::buildPrecioArticulo(),;
-                           "aImages"               => hImagesArticulos } )
+   aAdd( ::aArticuloData,  {  "id"                    => id,;
+                              "name"                  => alltrim( ::oArt:Nombre ),;
+                              "id_manufacturer"       => ::oArt:cCodFab ,;
+                              "id_tax_rules_group"    => ::oArt:TipoIva ,;
+                              "id_category_default"   => ::oArt:Familia ,;
+                              "reference"             => ::oArt:Codigo ,;
+                              "weight"                => ::oArt:nPesoKg ,;
+                              "specific_price"        => ::oArt:lSbrInt,;
+                              "price"                 => ::buildPriceProduct(),;
+                              "reduction"             => ::buildPriceReduction(),;
+                              "reduction_tax"         => ::buildPriceReductionTax(),;
+                              "description"           => if( !empty( ::oArt:mDesTec ), ::oArt:mDesTec, ::oArt:Nombre ) ,; 
+                              "description_short"     => alltrim( ::oArt:Nombre ) ,;
+                              "link_rewrite"          => cLinkRewrite( ::oArt:Nombre ),;
+                              "meta_title"            => alltrim( ::oArt:cTitSeo ) ,;
+                              "meta_description"      => alltrim( ::oArt:cDesSeo ) ,;
+                              "meta_keywords"         => alltrim( ::oArt:cKeySeo ) ,;
+                              "lPublicRoot"           => ::oArt:lPubPor,;
+                              "cImagen"               => ::oArt:cImagen,;
+                              "aImages"               => hImagesArticulos } )
 
 Return ( Self )
 
@@ -4748,17 +4697,51 @@ Return ( aImages )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildPrecioArticulo() CLASS TComercio
+METHOD buildPriceProduct() CLASS TComercio
 
-   local nPrecio
+   local priceProduct      := 0
 
-   if ::oArt:lIvaWeb
-      nPrecio     := Round( ::oArt:nImpIva1 / ( ( nIva( ::oIva:cAlias, ::oArt:TipoIva ) / 100 ) + 1 ), 6 )
+   // calcula el precio en funcion del descuento-------------------------------
+
+   if ::oArt:lSbrInt .and. ::oArt:pVtaWeb != 0
+
+      priceProduct         := ::oArt:pVtaWeb
+
    else
-      nPrecio     := ::oArt:nImpInt1
-   end if
 
-Return ( nPrecio )
+      if ::oArt:lIvaWeb
+         priceProduct      := round( ::oArt:nImpIva1 / ( ( nIva( ::oIva:cAlias, ::oArt:TipoIva ) / 100 ) + 1 ), 6 )
+      else
+         priceProduct      := ::oArt:nImpInt1
+      end if
+
+   end if 
+
+Return ( priceProduct )
+
+//---------------------------------------------------------------------------//
+//
+// calcula la reduccion sobre el precio
+//
+
+METHOD buildPriceReduction() CLASS TComercio
+
+   local priceReduction    := 0
+
+   if ::oArt:lSbrInt .and. ::oArt:pVtaWeb != 0
+
+      if ::oArt:lIvaWeb
+         priceReduction    := ::oArt:pVtaWeb
+         priceReduction    += ::oArt:pVtaWeb * nIva( ::oIva:cAlias, ::oArt:TipoIva ) / 100
+         priceReduction    -= ::oArt:nImpIva1 
+      else
+         priceReduction    := ::oArt:pVtaWeb 
+         priceReduction    -= ::oArt:nImpInt1
+      end if
+
+   end if 
+
+Return ( priceReduction )
 
 //---------------------------------------------------------------------------//
 
@@ -4774,9 +4757,9 @@ METHOD buildPropiedadesPrestashop( id ) CLASS TComercio
       
          if aScan( ::aPropiedadesCabeceraData, {|h| hGet( h, "id" ) == ::oPro:cCodPro } ) == 0
 
-            aAdd( ::aPropiedadesCabeceraData, { "id"          => ::oPro:cCodPro,;
-                                                "name"        => if( empty( ::oPro:cNomInt ), alltrim( ::oPro:cDesPro ), alltrim( ::oPro:cNomInt ) ),;
-                                                "lColor"      => ::oPro:lColor } )
+            aAdd( ::aPropiedadesCabeceraData,   {  "id"     => ::oPro:cCodPro,;
+                                                   "name"   => if( empty( ::oPro:cNomInt ), alltrim( ::oPro:cDesPro ), alltrim( ::oPro:cNomInt ) ),;
+                                                   "lColor" => ::oPro:lColor } )
 
          end if
 
@@ -5105,8 +5088,8 @@ METHOD buildInsertIvaPrestashop( hTax ) CLASS TComercio
                   "id_lang, " + ;
                   "name ) " + ;
                "VALUES ( " + ;
-                  "'" + str( nCodigoWeb ) + "', " + ;         // id_tax
-                  "'" + str( ::nLanguage ) + "', " + ;         // id_lang
+                  "'" + str( nCodigoWeb ) + "', " + ;                         // id_tax
+                  "'" + str( ::nLanguage ) + "', " + ;                        // id_lang
                   "'" + ::oCon:Escapestr( hGet( hTax, "name" ) ) + "' )"      // name
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
@@ -5123,8 +5106,8 @@ METHOD buildInsertIvaPrestashop( hTax ) CLASS TComercio
                   "name, " + ;
                   "active ) " + ;
                "VALUES ( " + ;
-                  "'" + ::oCon:Escapestr( hGet( hTax, "name" ) ) + "', " + ; // name
-                  "'1' )"                                      // active
+                  "'" + ::oCon:Escapestr( hGet( hTax, "name" ) ) + "', " + ;  // name
+                  "'1' )"                                                     // active
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
       nCodigoGrupoWeb           := ::oCon:GetInsertId()
@@ -5156,9 +5139,9 @@ METHOD buildInsertIvaPrestashop( hTax ) CLASS TComercio
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "tax_rules_group_shop" ) + "( " +;
                   "id_tax_rules_group, " + ;
-                  "id_shop )" + ;
-               " VALUES " + ;
-                  "('" + str( nCodigoGrupoWeb ) + "', " + ;
+                  "id_shop ) " + ;
+               "VALUES ( " + ;
+                  "'" + str( nCodigoGrupoWeb ) + "', " + ;
                   "'1' )"
 
    if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
@@ -5196,9 +5179,9 @@ METHOD buildInsertFabricantesPrestashop( hFabricantesData ) CLASS TComercio
                   "name, " + ;
                   "date_add, " + ;
                   "date_upd, " + ;
-                  "active )" + ;
-               " VALUES " + ;
-                  "('" + hGet( hFabricantesData, "name" ) + "', " + ;//name
+                  "active ) " + ;
+               "VALUES ( " + ;
+                  "'" + hGet( hFabricantesData, "name" ) + "', " + ; //name
                   "'" + dtos( GetSysDate() ) + "', " + ;             //date_add
                   "'" + dtos( GetSysDate() ) + "', " + ;             //date_upd
                   "'1' )"                                            //active
@@ -5211,9 +5194,9 @@ METHOD buildInsertFabricantesPrestashop( hFabricantesData ) CLASS TComercio
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "manufacturer_shop" ) + "( "+ ;
                   "id_manufacturer, " + ;
-                  "id_shop )" + ;
-               " VALUES " + ;
-                  "('" + alltrim( str( nCodigoWeb ) ) + "', " + ;     // id_manufacturer
+                  "id_shop ) " + ;
+               "VALUES ( " + ;
+                  "'" + alltrim( str( nCodigoWeb ) ) + "', " + ;      // id_manufacturer
                   "'1' )"                                             // id_shop                  
 
 
@@ -5223,9 +5206,9 @@ METHOD buildInsertFabricantesPrestashop( hFabricantesData ) CLASS TComercio
 
    cCommand := "INSERT INTO " + ::cPreFixtable( "manufacturer_lang" ) + "( " +;
                   "id_manufacturer, " + ;
-                  "id_lang )" + ;
-               " VALUES " + ;
-                  "('" + alltrim( str( nCodigoWeb ) ) + "', " + ;    //id_manufacturer
+                  "id_lang ) " + ;
+               "VALUES ( " + ;
+                  "'" + alltrim( str( nCodigoWeb ) ) + "', " + ;     //id_manufacturer
                   "'" + str( ::nLanguage ) + "' )"                   //id_lang
 
    if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
@@ -5758,12 +5741,12 @@ Return .t.
 
 METHOD buildInsertOfertasPrestashop( hArticuloData, nCodigoWeb ) CLASS TComercio
 
-   local cCommand          := ""
+   local cCommand       := ""
 
-   if hGet( hArticuloData, "lSbrInt" ) .and. hGet( hArticuloData, "nDtoInt1" ) != 0
+   if hGet( hArticuloData, "specific_price" ) .and. hGet( hArticuloData, "reduction" ) != 0
 
-      cCommand          := "INSERT INTO " + ::cPrefixTable( "specific_price" ) + ; 
-                           " ( id_specific_price_rule, " + ;
+      cCommand          := "INSERT INTO " + ::cPrefixTable( "specific_price" ) + " ( " + ; 
+                              "id_specific_price_rule, " + ;
                               "id_cart, " + ;
                               "id_product, " + ;
                               "id_shop, " + ;
@@ -5776,22 +5759,24 @@ METHOD buildInsertOfertasPrestashop( hArticuloData, nCodigoWeb ) CLASS TComercio
                               "price, " + ;
                               "from_quantity, " + ;
                               "reduction, " + ;
-                              "reduction_type )" + ;
-                           " VALUES " + ;
-                              "('0', " + ;                                             //id_specific_price_rule
-                              "'0', " + ;                                              //id_cart
-                              "'" + alltrim( str( nCodigoWeb ) ) + "', " + ;           //id_product
-                              "'1', " + ;                                              //id_shop
-                              "'0', " + ;                                              //id_shop_group
-                              "'0', " + ;                                              //id_currency
-                              "'0', " + ;                                              //id_country
-                              "'0', " + ;                                              //id_group
-                              "'0', " + ;                                              //id_customer
-                              "'0', " + ;                                              //id_product_attribute
-                              "'-1', " + ;                                             //price
-                              "'1', " + ;                                              //from_quantity
-                              "'" + alltrim( str( hGet( hArticuloData, "nDtoInt1" ) / 100 ) ) + "', " + ;//reduction
-                              "'percentage' )"                                         //reduction_type
+                              "reduction_tax, " + ;
+                              "reduction_type ) " + ;
+                           "VALUES ( " + ;
+                              "'0', " + ;                                                                // id_specific_price_rule
+                              "'0', " + ;                                                                // id_cart
+                              "'" + alltrim( str( nCodigoWeb ) ) + "', " + ;                             // id_product
+                              "'1', " + ;                                                                // id_shop
+                              "'0', " + ;                                                                // id_shop_group
+                              "'0', " + ;                                                                // id_currency
+                              "'0', " + ;                                                                // id_country
+                              "'0', " + ;                                                                // id_group
+                              "'0', " + ;                                                                // id_customer
+                              "'0', " + ;                                                                // id_product_attribute
+                              "'-1', " + ;                                                               // price
+                              "'1', " + ;                                                                // from_quantity
+                              "'" + alltrim( str( hGet( hArticuloData, "reduction" ) ) ) + "', " + ;     // reduction
+                              "'" + alltrim( str( hGet( hArticuloData, "reduction_tax" ) ) ) + "', " + ; // reduction_tax
+                              "'amount' )"                                                               // reduction_type
    
       if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
          ::writeText( "Error al insertar una oferta de " + hGet( hArticuloData, "name" ), 3 )
@@ -5815,12 +5800,12 @@ METHOD buildInsertPropiedadesPrestashop( hPropiedadesCabData ) CLASS TComercio
    Insertamos una propiedad nueva en las tablas de prestashop-----------------
    */
 
-   cCommand          := "INSERT INTO " + ::cPrefixTable( "attribute_group" ) + ; 
-                              " ( is_color_group, " + ;
-                                  "group_type )" + ;
-                              " VALUES " + ;
-                                  "('" + if( hGet( hPropiedadesCabData, "lColor" ), "1", "0" ) + "', " + ;        //is_color_group
-                                  "'" + if( hGet( hPropiedadesCabData, "lColor" ), "color", "select" ) + "' )"    //group_type                        
+   cCommand                := "INSERT INTO " + ::cPrefixTable( "attribute_group" ) + " ( " +; 
+                                 "is_color_group, " + ;
+                                 "group_type ) " + ;
+                              "VALUES ( " + ;
+                                 "'" + if( hGet( hPropiedadesCabData, "lColor" ), "1", "0" ) + "', " + ;         // is_color_group
+                                 "'" + if( hGet( hPropiedadesCabData, "lColor" ), "color", "select" ) + "' )"    // group_type                        
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
       nCodigoGrupo   := ::oCon:GetInsertId()

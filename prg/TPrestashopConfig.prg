@@ -16,6 +16,8 @@ CLASS TPrestashopConfig
 
    DATA cCurrentWeb 
    DATA hCurrentWeb
+
+   DATA aAviableProducts               INIT {}
    
    METHOD New()                        CONSTRUCTOR
    METHOD getInstance()
