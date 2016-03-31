@@ -20,32 +20,34 @@ CLASS TPrestaShopId FROM TMant
    METHOD getValue( cTipoDocumento, cClave, cWeb )
    METHOD deleteValue( cTipoDocumento, cClave, cWeb )
 
-   METHOD setValueArticulos( cClave, cWeb, idWeb )    INLINE ::setValue( "01", cClave, cWeb, idWeb )
-   METHOD getValueArticulos( cClave, cWeb )           INLINE ::getValue( "01", cClave, cWeb )
+   METHOD setValueArticulos( cClave, cWeb, idWeb )       INLINE ::setValue( "01", cClave, cWeb, idWeb )
+   METHOD getValueArticulos( cClave, cWeb )              INLINE ::getValue( "01", cClave, cWeb )
 
-   METHOD setValueFamilias( cClave, cWeb, idWeb )     INLINE ::setValue( "02", cClave, cWeb, idWeb )
-   METHOD getValueFamilias( cClave, cWeb )            INLINE ::getValue( "02", cClave, cWeb )
+   METHOD setValueFamilias( cClave, cWeb, idWeb )        INLINE ::setValue( "02", cClave, cWeb, idWeb )
+   METHOD getValueFamilias( cClave, cWeb )               INLINE ::getValue( "02", cClave, cWeb )
+   METHOD deleteValueFamilias( cClave, cWeb )            INLINE ::deleteValue( "02", cClave, cWeb )
 
-   METHOD setValueTax( cClave, cWeb, idWeb )          INLINE ::setValue( "03", cClave, cWeb, idWeb )
-   METHOD getValueTax( cClave, cWeb )                 INLINE ::getValue( "03", cClave, cWeb )
+   METHOD setValueTax( cClave, cWeb, idWeb )             INLINE ::setValue( "03", cClave, cWeb, idWeb )
+   METHOD getValueTax( cClave, cWeb )                    INLINE ::getValue( "03", cClave, cWeb )
 
-   METHOD setValueTaxRuleGroup( cClave, cWeb, idWeb ) INLINE ::setValue( "04", cClave, cWeb, idWeb )
-   METHOD getValueTaxRuleGroup( cClave, cWeb )        INLINE ::getValue( "04", cClave, cWeb )
+   METHOD setValueTaxRuleGroup( cClave, cWeb, idWeb )    INLINE ::setValue( "04", cClave, cWeb, idWeb )
+   METHOD getValueTaxRuleGroup( cClave, cWeb )           INLINE ::getValue( "04", cClave, cWeb )
 
-   METHOD setValueManufacturer( cClave, cWeb, idWeb ) INLINE ::setValue( "05", cClave, cWeb, idWeb )
-   METHOD getValueManufacturer( cClave, cWeb )        INLINE ::getValue( "05", cClave, cWeb )
+   METHOD setValueManufacturer( cClave, cWeb, idWeb )    INLINE ::setValue( "05", cClave, cWeb, idWeb )
+   METHOD getValueManufacturer( cClave, cWeb )           INLINE ::getValue( "05", cClave, cWeb )
 
-   METHOD setValueCategory( cClave, cWeb, idWeb )     INLINE ::setValue( "06", cClave, cWeb, idWeb )
-   METHOD getValueCategory( cClave, cWeb )            INLINE ::getValue( "06", cClave, cWeb )
+   METHOD setValueCategory( cClave, cWeb, idWeb )        INLINE ::setValue( "06", cClave, cWeb, idWeb )
+   METHOD getValueCategory( cClave, cWeb )               INLINE ::getValue( "06", cClave, cWeb )
 
-   METHOD setValueAttributeGroup( cClave, cWeb, idWeb )     INLINE ::setValue( "07", cClave, cWeb, idWeb )
-   METHOD getValueAttributeGroup( cClave, cWeb )            INLINE ::getValue( "07", cClave, cWeb )
+   METHOD setValueAttributeGroup( cClave, cWeb, idWeb )  INLINE ::setValue( "07", cClave, cWeb, idWeb )
+   METHOD getValueAttributeGroup( cClave, cWeb )         INLINE ::getValue( "07", cClave, cWeb )
 
-   METHOD setValueAttribute( cClave, cWeb, idWeb )     INLINE ::setValue( "08", cClave, cWeb, idWeb )
-   METHOD getValueAttribute( cClave, cWeb )            INLINE ::getValue( "08", cClave, cWeb )
+   METHOD setValueAttribute( cClave, cWeb, idWeb )       INLINE ::setValue( "08", cClave, cWeb, idWeb )
+   METHOD getValueAttribute( cClave, cWeb )              INLINE ::getValue( "08", cClave, cWeb )
 
-   METHOD setValueProduct( cClave, cWeb, idWeb )     INLINE ::setValue( "09", cClave, cWeb, idWeb )
-   METHOD getValueProduct( cClave, cWeb )            INLINE ::getValue( "09", cClave, cWeb )
+   METHOD setValueProduct( cClave, cWeb, idWeb )         INLINE ::setValue( "09", cClave, cWeb, idWeb )
+   METHOD getValueProduct( cClave, cWeb )                INLINE ::getValue( "09", cClave, cWeb )
+   METHOD deleteValueProduct( cClave, cWeb )             INLINE ::deleteValue( "09", cClave, cWeb )
 
    METHOD isValidParameters( cTipoDocumento, cClave, cWeb, idWeb ) 
    METHOD isSeekValues( cTipoDocumento, cClave, cWeb )
