@@ -35,6 +35,9 @@ CLASS TPrestaShopId FROM TMant
    METHOD setValueManufacturer( cClave, cWeb, idWeb ) INLINE ::setValue( "05", cClave, cWeb, idWeb )
    METHOD getValueManufacturer( cClave, cWeb )        INLINE ::getValue( "05", cClave, cWeb )
 
+   METHOD setValueCategory( cClave, cWeb, idWeb )     INLINE ::setValue( "06", cClave, cWeb, idWeb )
+   METHOD getValueCategory( cClave, cWeb )            INLINE ::getValue( "06", cClave, cWeb )
+
    METHOD isValidParameters( cTipoDocumento, cClave, cWeb, idWeb ) 
    METHOD isSeekValues( cTipoDocumento, cClave, cWeb )
 

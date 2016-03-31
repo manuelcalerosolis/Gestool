@@ -4552,25 +4552,26 @@ Return ( Self )
 METHOD buildFamiliaPrestashop( id ) CLASS TComercio
 
    if aScan( ::aFamiliaData, {|h| hGet( h, "id" ) == id } ) == 0
-
-      if ::oFam:SeekInOrd( id, "cCodFam" ) 
-         
-         if ::lSyncAll .or. ::oFam:cCodWeb == 0
-            aAdd( ::aFamiliaData, { "id"           => id,;
-                                    "id_parent"    => ::oFam:cFamCmb,;
-                                    "name"         => if( empty( ::oFam:cDesWeb ), alltrim( ::oFam:cNomFam ), alltrim( ::oFam:cDesWeb ) ),;
-                                    "description"  => if( empty( ::oFam:cDesWeb ), alltrim( ::oFam:cNomFam ), alltrim( ::oFam:cDesWeb ) ),;
-                                    "link_rewrite" => cLinkRewrite( if( empty( ::oFam:cDesWeb ), alltrim( ::oFam:cNomFam ), alltrim( ::oFam:cDesWeb ) ) ),;
-                                    "image"        => ::oFam:cImgBtn } )
-         end if
-
-         if !empty( ::oFam:cFamCmb )
-            ::buildFamiliaPrestashop( ::oFam:cFamCmb )
-         end if
-
-      end if 
-
+      Return .f.
    end if
+
+   if ::lSyncAll .or. ::TPrestashopId:getValueCategory( id, ::getCurrentWebName() ) == 0
+   
+      if ::oFam:SeekInOrd( id, "cCodFam" ) 
+   
+         aAdd( ::aFamiliaData, { "id"           => id,;
+                                 "id_parent"    => ::oFam:cFamCmb,;
+                                 "name"         => if( empty( ::oFam:cDesWeb ), alltrim( ::oFam:cNomFam ), alltrim( ::oFam:cDesWeb ) ),;
+                                 "description"  => if( empty( ::oFam:cDesWeb ), alltrim( ::oFam:cNomFam ), alltrim( ::oFam:cDesWeb ) ),;
+                                 "link_rewrite" => cLinkRewrite( if( empty( ::oFam:cDesWeb ), alltrim( ::oFam:cNomFam ), alltrim( ::oFam:cDesWeb ) ) ),;
+                                 "image"        => ::oFam:cImgBtn } )
+      end if   
+
+      if !empty( ::oFam:cFamCmb )
+         ::buildFamiliaPrestashop( ::oFam:cFamCmb )
+      end if
+
+   end if 
 
 Return ( Self )
 
@@ -5346,9 +5347,9 @@ METHOD buildInsertCategoriesPrestashop( hFamiliaData ) CLASS TComercio
 
    // Guardo referencia a la web-----------------------------------------------
 
-   if ::oFam:SeekInOrd( hGet( hFamiliaData, "id" ), "cCodFam" )
-      ::oFam:fieldPutByName( "cCodWeb", nCodigoWeb )
-   end if
+   if !empty( nCodigoWeb )
+      ::TPrestashopId:setValueCategory( hget( hFamiliaData, "id" ), ::getCurrentWebName(), nCodigoWeb )
+   end if 
 
 return nCodigoWeb
 
