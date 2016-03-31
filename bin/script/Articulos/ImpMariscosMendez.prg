@@ -110,6 +110,10 @@ function InicioHRB()
       ImportacionProveedores()
    end if
 
+   if MsgYesNo( "Paso de campo extra a ubicación", "" )
+      ImportacionExtraToUbicacion()
+   end if
+
    MsgInfo( "Proceso terminado" )
 
    CursorWe()
@@ -1279,6 +1283,42 @@ Static Function ImportacionTarifa30()
    next
 
    Desconexion()
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Static Function ImportacionExtraToUbicacion()
+
+   local nRec     := ( D():Articulos( nView ) )->( Recno() )
+   local nOrdAnt  := ( D():Articulos( nView ) )->( ordSetFocus( "Codigo" ) )
+
+   ( D():DetCamposExtras( nView ) )->( dbGoTop() )
+
+   while ( D():DetCamposExtras( nView ) )->( !Eof() )
+
+      if ( D():DetCamposExtras( nView ) )->cTipDoc == ART_TBL .and.;
+         ( D():DetCamposExtras( nView ) )->cCodTipo == "005"
+
+         if ( D():Articulos( nView ) )->( dbSeek( ( D():DetCamposExtras( nView ) )->cClave ) )
+
+            if dbLock( D():Articulos( nView ) )
+
+               ( D():Articulos( nView ) )->cDesUbi    := ( D():DetCamposExtras( nView ) )->cValor
+               ( D():Articulos( nView ) )->( dbUnlock() )
+
+            end if
+
+         end if
+
+      end if
+
+      ( D():DetCamposExtras( nView ) )->( dbSkip() )
+
+   end while
+
+   ( D():Articulos( nView ) )->( ordSetFocus( nOrdAnt ) )
+   ( D():Articulos( nView ) )->( dbGoTo( nRec ) )
 
 Return ( .t. )
 

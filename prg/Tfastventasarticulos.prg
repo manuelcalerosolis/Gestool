@@ -960,6 +960,9 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Operario",                      ::oOperario:Select() )
    ::oFastReport:SetFieldAliases(   "Operario",                      cObjectsToReport( ::oOperario:oDbf ) )
 
+   ::oFastReport:SetWorkArea(       "Agentes",                    ::oDbfAge:nArea )
+   ::oFastReport:SetFieldAliases(   "Agentes",                    cItemsToReport( aItmAge() ) )
+
    // Relaciones entre tablas-----------------------------------------------------
 
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Familias",                      {|| ::oDbfArt:Familia } )
@@ -981,6 +984,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetMasterDetail(   "Informe", "Estado artículo",                   {|| ::oDbf:cCodEst } )
    ::oFastReport:SetMasterDetail(   "Informe", "Operario",                          {|| ::oDbf:cCodOpe } )
    ::oFastReport:SetMasterDetail(   "Informe", "Grupos familias",                   {|| ::oDbf:cGrpFam } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Agentes",                           {|| ::oDbf:cCodAge } )
 
    ::oFastReport:SetMasterDetail(   "Informe", "Artículos.Informe",                 {|| ::oDbf:cCodArt } )  
    ::oFastReport:SetMasterDetail(   "Informe", "Imagenes",                          {|| ::oDbf:cCodArt } )
@@ -1016,6 +1020,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetResyncPair(     "Informe", "Estado artículo" )
    ::oFastReport:SetResyncPair(     "Informe", "Operario" )
    ::oFastReport:SetResyncPair(     "Informe", "Grupos familias" )
+   ::oFastReport:SetResyncPair(     "Informe", "Agentes" )
 
    ::oFastReport:SetResyncPair(     "Informe", "Artículos.Informe" )
    ::oFastReport:SetResyncPair(     "Informe", "Imagenes" )

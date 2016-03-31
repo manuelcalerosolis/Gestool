@@ -988,7 +988,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Numero de serie", -1, "Button", BS_GROUPBOX, 210, 167, 170, 37
   CONTROL "Factor", -1, "Static", WS_GROUP, 49, 273, 33, 8
   CONTROL "Caducidad", -1, "Static", WS_GROUP, 49, 216, 40, 8
-  CONTROL "Ubicación", -1, "Static", WS_GROUP, 49, 152, 39, 8
+  CONTROL "Ubicación", 221, "Static", WS_GROUP, 49, 152, 39, 8
   CONTROL "Estado", -1, "Static", WS_GROUP, 49, 139, 35, 8
   CONTROL "", -1, "Button", BS_GROUPBOX, 44, 203, 164, 28
   CONTROL "", -1, "Button", BS_GROUPBOX, 210, 203, 170, 28

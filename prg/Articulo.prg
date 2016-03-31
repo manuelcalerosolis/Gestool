@@ -878,7 +878,8 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
                "Estado" ,;
                "Posición táctil" ,;
                "Publicar" ,;
-               "Web" ;
+               "Web",;
+               getTraslation( "Ubicacion" ) ;
       MRU      "Cube_Yellow_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( D():Articulos( nView ) ) ;
@@ -1261,6 +1262,17 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       :nHeadStrAlign    := 1
       :nEditType        := 1
       :lHide            := .t.
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := getTraslation( "Ubicacion" )
+      :cSortOrder       := "cDesUbi"
+      :bEditValue       := {|| ( D():Articulos( nView ) )->cDesUbi }
+      :nWidth           := 150
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      :lHide            := .t.
+      :nEditType        := 1
+      :bOnPostEdit      := {|oCol, uNewValue, nKey| if( dbDialogLock( D():Articulos( nView ) ), ( ( D():Articulos( nView ) )->cDesUbi := uNewValue, ( D():Articulos( nView ) )->( dbUnlock() ) ), ) }
    end with
 
    oDetCamposExtra:addCamposExtra( oWndBrw )
@@ -2068,6 +2080,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lNumSer" ) ) ];
          ID       136 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldGeneral
+
+   REDEFINE SAY ;
+         PROMPT   getTraslation( "Ubicacion" );
+         ID       221 ;
          OF       fldGeneral
 
    REDEFINE GET aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cDesUbi" ) ) ] ;
@@ -14857,6 +14874,9 @@ FUNCTION rxArticulo( cPath, cDriver )
 
       ( dbfArt )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
       ( dbfArt )->( ordCreate( cPath + "Articulo.Cdx", "Matriz", "Matriz", {|| Field->Matriz } ) )
+
+      ( dbfArt )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
+      ( dbfArt )->( ordCreate( cPath + "Articulo.Cdx", "cDesUbi", "cDesUbi", {|| Field->cDesUbi } ) )
 
       ( dbfArt )->( dbCloseArea() )
 

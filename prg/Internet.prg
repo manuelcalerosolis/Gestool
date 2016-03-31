@@ -1102,6 +1102,10 @@ METHOD FtpConexion() CLASS TSndRecInf
 
          ::oInt               := TUrl():New( cUrl )
          ::oFTP               := TIPClientFTP():New( ::oInt, .t. )
+
+         //::oInt         := TInternet():New()
+         //::oFtp         := TFtp():New( ftpSit, ::oInt, nbrUsr, accUsr, pasInt )
+
          ::oFTP:nConnTimeout  := 20000
          ::oFTP:bUsePasv      := pasInt
 

@@ -84,6 +84,7 @@ Defines para las lineas de Pago
 #define _CNUMMTR                 66
 #define _LPASADO                 67
 #define _CCENTROCOSTE            68
+#define _NIMPREL                 69
 
 memvar cDbfRec
 memvar cDbf
@@ -4705,6 +4706,7 @@ FUNCTION aItmRecCli()
    aAdd( aBasRecCli, {"cNumMtr"     ,"C", 15, 0, "Numero del recibo matriz",   "",                    "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"lPasado"     ,"L",  1, 0, "Lógico pasado", "",                                 "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cCtrCoste"   ,"C",  9, 0, "Código del centro de coste", "",                    "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"nImpRel"     ,"N", 16, 6, "Importe relacionados",        "cPorDivRec",         "", "( cDbfRec )" } )
 
 Return ( aBasRecCli )
 
