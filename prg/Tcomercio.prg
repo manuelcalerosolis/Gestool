@@ -1369,7 +1369,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD InsertImageProductImageShop( nCodigoImagen, lCover )
+METHOD InsertImageProductImageShop( hArticuloData, nCodigoImagen, lCover )
 
    local cCommand 
 
@@ -1384,7 +1384,7 @@ METHOD InsertImageProductImageShop( nCodigoImagen, lCover )
    cCommand       += "cover ) " 
    cCommand       += "VALUES ( " 
    if ::lProductIdColumnImageShop
-      cCommand    += "'" + alltrim( str( ::oArt:cCodWeb ) ) + "', "  // id_product
+      cCommand    += "'" + alltrim( str( ::TPrestashopId:getValueProduct( hget( hArticuloData, "id" ), ::getCurrentWebName() ) ) ) + "', "  // id_product
    end if
    cCommand       += "'" + alltrim( str( nCodigoImagen ) ) + "', "   // id_image
    cCommand       += "'1', "                                         // id_shop
@@ -1425,7 +1425,7 @@ Return ( nIva )
 
 //---------------------------------------------------------------------------//
 
-METHOD DelIdArticuloPrestashop() Class TComercio
+METHOD DelIdArticuloPrestashop( hArticuloData ) Class TComercio
 
    local nRec  := ::oArt:Recno()
 
@@ -1434,7 +1434,7 @@ METHOD DelIdArticuloPrestashop() Class TComercio
    while !::oArt:Eof()
 
       ::oArt:Load()
-      ::oArt:cCodWeb := 0
+      ::TPrestashopId:getValueProduct( hget( hArticuloData, "id" ), ::getCurrentWebName() ) 
       ::oArt:Save()
 
       ::writeText( 'Eliminando código web en el artículo ' + alltrim( ::oArt:Nombre ), 3  )
@@ -2672,7 +2672,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ActualizaStockProductsPrestashop( cCodigoArticulo, cCodigoPropiedad1, cCodigoPropiedad2, cValorPropiedad1, cValorPropiedad2 ) CLASS TComercio
+METHOD ActualizaStockProductsPrestashop( hArticuloData, cCodigoArticulo, cCodigoPropiedad1, cCodigoPropiedad2, cValorPropiedad1, cValorPropiedad2 ) CLASS TComercio
 
    local oQuery
    local cCommand
@@ -2707,7 +2707,7 @@ METHOD ActualizaStockProductsPrestashop( cCodigoArticulo, cCodigoPropiedad1, cCo
 
                      cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
                                        "quantity='" + alltrim( str( nTotStock ) ) + "' " + ;
-                                    "WHERE id_product=" + alltrim( str( ::oArt:cCodWeb ) ) + " AND id_product_attribute=0 "
+                                    "WHERE id_product=" + alltrim( str( ::TPrestashopId:getValueProduct( hget( hArticuloData, "id" ), ::getCurrentWebName() ) ) ) + " AND id_product_attribute=0 "
 
                      TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
@@ -2721,7 +2721,7 @@ METHOD ActualizaStockProductsPrestashop( cCodigoArticulo, cCodigoPropiedad1, cCo
 
                      cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
                                        "quantity='" + alltrim( str( nTotStock ) ) + "' " + ;
-                                    "WHERE id_product=" + alltrim( str( ::oArt:cCodWeb ) ) + " AND id_product_attribute=0 "
+                                    "WHERE id_product=" + alltrim( str( ::TPrestashopId:getValueProduct( hget( hArticuloData, "id" ), ::getCurrentWebName() ) ) ) + " AND id_product_attribute=0 "
 
                      TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
@@ -2731,13 +2731,13 @@ METHOD ActualizaStockProductsPrestashop( cCodigoArticulo, cCodigoPropiedad1, cCo
 
                      nTotStock   := ::oStock:nStockAlmacen( cCodigoArticulo, ::TPrestashopConfig:getStore(), cValorPropiedad1 )
 
-                     nIdProductAttribute := ::nIdProductAttribute( ::oArt:cCodWeb, cCodWebValPr1 )
+                     nIdProductAttribute := ::nIdProductAttribute( ::TPrestashopId:getValueProduct( hget( hArticuloData, "id" ), ::getCurrentWebName() ), cCodWebValPr1 )
 
                      if nIdProductAttribute != 0
 
                         cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
                                           "quantity='" + alltrim( str( nTotStock ) ) + "' " + ;
-                                       "WHERE id_product=" + alltrim( str( ::oArt:cCodWeb ) ) + " AND id_product_attribute=" + str( nIdProductAttribute )
+                                       "WHERE id_product=" + alltrim( str( ::TPrestashopId:getValueProduct( hget( hArticuloData, "id" ), ::getCurrentWebName() ) ) ) + " AND id_product_attribute=" + str( nIdProductAttribute )
 
                         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
@@ -2753,7 +2753,7 @@ METHOD ActualizaStockProductsPrestashop( cCodigoArticulo, cCodigoPropiedad1, cCo
 
                      cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
                                        "quantity='" + alltrim( str( nTotStock ) ) + "' " + ;
-                                    "WHERE id_product=" + alltrim( str( ::oArt:cCodWeb ) ) + " AND id_product_attribute=0 "
+                                    "WHERE id_product=" + alltrim( str( ::TPrestashopId:getValueProduct( hget( hArticuloData, "id" ), ::getCurrentWebName() ) ) ) + " AND id_product_attribute=0 "
 
                      TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
@@ -2763,13 +2763,13 @@ METHOD ActualizaStockProductsPrestashop( cCodigoArticulo, cCodigoPropiedad1, cCo
 
                      nTotStock   := ::oStock:nStockAlmacen( cCodigoArticulo, ::TPrestashopConfig:getStore(), cValorPropiedad1, cValorPropiedad2 )
 
-                     nIdProductAttribute := ::nIdProductAttribute( ::oArt:cCodWeb, cCodWebValPr1, cCodWebValPr2 )
+                     nIdProductAttribute := ::nIdProductAttribute( ::TPrestashopId:getValueProduct( hget( hArticuloData, "id" ), ::getCurrentWebName() ), cCodWebValPr1, cCodWebValPr2 )
 
                      if nIdProductAttribute != 0
 
                         cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
                                           "quantity='" + alltrim( str( nTotStock ) ) + "' " + ;
-                                       "WHERE id_product=" + alltrim( str( ::oArt:cCodWeb ) ) + " AND id_product_attribute=" + str( nIdProductAttribute )
+                                       "WHERE id_product=" + alltrim( str( ::TPrestashopId:getValueProduct( hget( hArticuloData, "id" ), ::getCurrentWebName() ) ) ) + " AND id_product_attribute=" + str( nIdProductAttribute )
 
                         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
@@ -4130,10 +4130,6 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
 
    SysRefresh()
 
-   if ::oArt:SeekInOrd( hGet( hArticuloData, "id" ), "Codigo" )
-      ::oArt:fieldPutByName( "cCodWeb", nCodigoWeb )
-   end if
-
    ::writeText( "Añadiendo imágenes artículo: " + hGet( hArticuloData, "name" ) )
    ::buildInsertImageProductsPrestashop( hArticuloData, nCodigoWeb )
 
@@ -4142,6 +4138,12 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
 
    ::writeText( "Añadiendo ofertas del artículo: " + hGet( hArticuloData, "name" ) )
    ::buildInsertOfertasPrestashop( hArticuloData, nCodigoWeb )
+
+// Guardo referencia a la web-----------------------------------------------
+
+   if !empty( nCodigoWeb )
+      ::TPrestashopId:setValueCategory( hGet( hArticuloData, "id" ), ::getCurrentWebName(), nCodigoWeb )
+   end if 
 
 Return nCodigoweb
 
@@ -4214,7 +4216,7 @@ METHOD buildInsertImageProductsPrestashop( hArticuloData, cCodWeb ) CLASS TComer
 
             ::InsertImageProductImageLang( nCodigoImagen )
 
-            ::InsertImageProductImageShop( nCodigoImagen, hGet( aImage, "lDefault" ) )
+            ::InsertImageProductImageShop( hArticuloData, nCodigoImagen, hGet( aImage, "lDefault" ) )
 
             // Añadimos la imagen al array para subirla a prestashop--------------
 
@@ -5347,11 +5349,15 @@ METHOD BuildDeleteProductPrestashop( idProduct) CLASS TComercio
       Return ( Self )
    end if 
 
-   if empty( ::oArt:cCodWeb ) 
+   if empty( ::TPrestashopId:getValueProduct( idProduct, ::getCurrentWebName() ) ) 
       Return ( Self )
    end if 
 
-   cCodWeb           := alltrim( str( ::oArt:cCodWeb ) )
+   cCodWeb           := alltrim( str( ::TPrestashopId:getValueProduct( idProduct, ::getCurrentWebName() ) ) )
+
+   if empty(cCodWeb)
+      return self
+   end if
 
    ::writeText( "Eliminando artículo de Prestashop" )
 
@@ -5536,7 +5542,7 @@ METHOD BuildDeleteProductPrestashop( idProduct) CLASS TComercio
       end if
 
    end if
-
+   
    SysRefresh()
 
    // Eliminamos las imágenes del artículo---------------------------------------
@@ -5664,7 +5670,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD buildAddInformacionStockProductPrestashop() CLASS tComercio
+METHOD buildAddInformacionStockProductPrestashop( hArticuloData ) CLASS tComercio
 
    local aStockArticulo
    local nTotalStock          := 0
@@ -5691,7 +5697,7 @@ METHOD buildAddInformacionStockProductPrestashop() CLASS tComercio
                                  "cValPrp1"     => "" ,;
                                  "cValPrp2"     => "" ,;
                                  "nStock"       => alltrim( str( nTotalStock ) ) ,;
-                                 "cCodWebArt"   => ::oArt:cCodWeb,;
+                                 "cCodWebArt"   => ::TPrestashopId:getValueProduct( hget( hArticuloData, "id" ), ::getCurrentWebName() ),;
                                  "cCodWebVal1"  => 0 ,;
                                  "cCodWebVal2"  => 0 } )
 
@@ -5715,7 +5721,7 @@ METHOD buildAddInformacionStockProductPrestashop() CLASS tComercio
                                        "cValPrp1"     => sStock:cValorPropiedad1 ,;
                                        "cValPrp2"     => sStock:cValorPropiedad2 ,;
                                        "nStock"       => alltrim( str( sStock:nUnidades ) ),;
-                                       "cCodWebArt"   => ::oArt:cCodWeb,;
+                                       "cCodWebArt"   => ::TPrestashopId:getValueProduct( hget( hArticuloData, "id" ), ::getCurrentWebName() ),;
                                        "cCodWebVal1"  => oRetFld( sStock:cCodigoPropiedad1 + sStock:cValorPropiedad1, ::oTblPro, "cCodWeb" ),;
                                        "cCodWebVal2"  => oRetFld( sStock:cCodigoPropiedad2 + sStock:cValorPropiedad2, ::oTblPro, "cCodWeb" ) } )
 
@@ -5727,7 +5733,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD buildInformacionStockProductPrestashop() CLASS TComercio
+METHOD buildInformacionStockProductPrestashop( hArticuloData ) CLASS TComercio
 
    local cCodArt
 
@@ -5737,7 +5743,7 @@ METHOD buildInformacionStockProductPrestashop() CLASS TComercio
 
       for each cCodArt in ::aArticulosActualizar
 
-         if ::oArt:Seek( cCodArt ) .and. ::oArt:cCodWeb != 0
+         if ::oArt:Seek( cCodArt ) .and. ::TPrestashopId:getValueProduct( hget( hArticuloData, "id" ), ::getCurrentWebName() ) != 0
 
             ::buildAddInformacionStockProductPrestashop()
 

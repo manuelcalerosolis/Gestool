@@ -44,6 +44,9 @@ CLASS TPrestaShopId FROM TMant
    METHOD setValueAttribute( cClave, cWeb, idWeb )     INLINE ::setValue( "08", cClave, cWeb, idWeb )
    METHOD getValueAttribute( cClave, cWeb )            INLINE ::getValue( "08", cClave, cWeb )
 
+   METHOD setValueProduct( cClave, cWeb, idWeb )     INLINE ::setValue( "09", cClave, cWeb, idWeb )
+   METHOD getValueProduct( cClave, cWeb )            INLINE ::getValue( "09", cClave, cWeb )
+
    METHOD isValidParameters( cTipoDocumento, cClave, cWeb, idWeb ) 
    METHOD isSeekValues( cTipoDocumento, cClave, cWeb )
 
