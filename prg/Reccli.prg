@@ -113,10 +113,9 @@ static nImpOld
 static oTotalRelacionados
 static nTotalRelacionados     := 0
 
-static oImporteRelacionados
-static nImporteRelacionados   := 0
-
 static aRecibosRelacionados   := {}
+
+static oClienteCompensar
 
 static oMenu
 
@@ -528,8 +527,8 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
    DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( WinAppRec( oWndBrw:oBrw, bEdit, D():FacturasClientesCobros( nView ), , LIBRE_MODE ) );
-      TOOLTIP  "Recibo (l)ibre";
-      HOTKEY   "L";
+      TOOLTIP  "(A)ñadir";
+      HOTKEY   "A";
       BEGIN GROUP ;
       LEVEL    ACC_APPD
 
@@ -555,9 +554,9 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
       HOTKEY   "E";
       LEVEL    ACC_DELE
 
-   DEFINE BTNSHELL RESOURCE "EDIT" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "ALL_COMPONENTS_" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( WinEdtRec( oWndBrw:oBrw, bEdit, D():FacturasClientesCobros( nView ), , COMPENSAR_MODE ) );
+      ACTION   ( CompensarReciboCliente( oWndBrw:oBrw ) );
       TOOLTIP  "(C)ompensar";
       BEGIN GROUP;
       HOTKEY   "C";
@@ -736,7 +735,6 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
    local oBmpBancos
    local oBmpAsociados
    local oBrwRec
-   local lMode
    local oSayTotal
    local oGroup
 
@@ -748,10 +746,6 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
       lRectificativa       := .f.
    end if
 
-   if nSpecialMode == COMPENSAR_MODE .and. !lValidCompensado( aTmp )
-      Return .f.
-   end
-
    if empty( cFacCliP )
       cFacCliP             := D():FacturasClientesCobros( nView )
    end if
@@ -761,31 +755,53 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
    cGetPgo                 := RetFld( ( cFacCliP )->cCodPgo, D():FormasPago( nView ), "cDesPago" )
    cPorDiv                 := cPorDiv( ( cFacCliP )->cDivPgo, D():Divisas( nView ) )
 
-   if nMode != APPD_MODE
-
-      do case
-         case nEstadoMatriz() == 2
-            nSpecialMode    := COMPENSAR_MODE
-
-         case nEstadoMatriz() == 3
-
-            MsgStop( "Recibo perteneciente a la matriz " + trans( aTmp[ _CNUMMTR ], "@R #/999999999/##-9#" ) )
-            Return .f.
-
-      end case
-
-   end if
-
    do case
       case nMode == APPD_MODE
 
          if lRectificativa
-            aTmp[ _CTIPREC ]  := "R"
+            aTmp[ _CTIPREC ]     := "R"
          end if
 
          if nSpecialMode == LIBRE_MODE
-            aTmp[ _CTIPREC ]  := "L"
-            aTmp[ _CTURREC ]  := cCurSesion( nil, .f. )
+            
+            aTmp[ _CTIPREC ]     := "L"
+            aTmp[ _CTURREC ]     := cCurSesion( nil, .f. )
+
+            aTmp[ _NIMPORTE ]    := nTotalRelacionados
+            aTmp[ _CDESCRIP ]    := "Recibo matriz para compensar"
+
+            if !Empty( oClienteCompensar )
+
+               aTmp[ _CCODCLI ]  := oClienteCompensar:VarGet()
+
+               if ( D():Clientes( nView ) )->( dbSeek( aTmp[ _CCODCLI ] ) )
+
+                  aTmp[ _CNOMCLI ]     := ( D():Clientes( nView ) )->Titulo
+                  aTmp[ _CCODPGO ]     := ( D():Clientes( nView ) )->CodPago
+                  aTmp[ _CCODAGE ]     := ( D():Clientes( nView ) )->cAgente
+                  aTmp[ _CCTAREM ]     := ( D():Clientes( nView ) )->cCodRem
+
+                  if !Empty( ( D():Clientes( nView ) )->CodPago )
+                     aTmp[ _CCTAREC ]  := RetFld( ( D():Clientes( nView ) )->CodPago, D():FormasPago( nView ), "cCtaCobro" )
+                     aTmp[ _CCTAGAS ]  := RetFld( ( D():Clientes( nView ) )->CodPago, D():FormasPago( nView ), "cCtaGas" )
+                  end if
+
+                  if lBancoDefecto( ( D():Clientes( nView ) )->Cod, D():ClientesBancos( nView ) )
+
+                     aTmp[ _CBNCCLI ]     := ( D():ClientesBancos( nView ) )->cCodBnc
+                     aTmp[ _CPAISIBAN ]   := ( D():ClientesBancos( nView ) )->cPaisIBAN
+                     aTmp[ _CCTRLIBAN ]   := ( D():ClientesBancos( nView ) )->cCtrlIBAN
+                     aTmp[ _CENTCLI ]     := ( D():ClientesBancos( nView ) )->cEntBnc
+                     aTmp[ _CSUCCLI ]     := ( D():ClientesBancos( nView ) )->cSucBnc
+                     aTmp[ _CDIGCLI ]     := ( D():ClientesBancos( nView ) )->cDigBnc
+                     aTmp[ _CCTACLI ]     := ( D():ClientesBancos( nView ) )->cCtaBnc
+
+                  end if
+
+               end if
+
+            end if
+
          end if
 
       case nMode == EDIT_MODE
@@ -805,30 +821,14 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
       aTmp[ _CCODCAJ ]     := oUser():cCaja()
    end if
 
-   if nSpecialMode == COMPENSAR_MODE
-      getInitRecibosRelacionados( aTmp )
-   end if
-
    lOldDevuelto            := aTmp[ _LDEVUELTO ]
 
    lPgdOld                 := ( cFacCliP )->lCobrado .or. ( cFacCliP )->lRecDto
    nImpOld                 := ( cFacCliP )->nImporte
 
-   lMode                   := ( nSpecialMode != COMPENSAR_MODE .and. nMode != ZOOM_MODE )
-
-   if nSpecialMode == COMPENSAR_MODE
-      
-      DEFINE DIALOG  oDlg ;
-         RESOURCE "RecibosExtend" ;
-         TITLE    LblTitle( nMode ) + "recibos de clientes"
-
-   else
-
-      DEFINE DIALOG  oDlg ;
-         RESOURCE "Recibos" ;
-         TITLE    LblTitle( nMode ) + "recibos de clientes"
-
-   end if
+   DEFINE DIALOG  oDlg ;
+      RESOURCE "Recibos" ;
+      TITLE    LblTitle( nMode ) + "recibos de clientes"
 
    REDEFINE FOLDER oFld ;
       ID       500;
@@ -866,31 +866,31 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
 
       REDEFINE CHECKBOX aGet[ _LNOTARQUEO ] VAR aTmp[ _LNOTARQUEO ];
          ID       200 ;
-			WHEN 		lMode ;
+			WHEN 		nMode != ZOOM_MODE ;
          OF       oFld:aDialogs[ 1 ]
 
       REDEFINE GET aGet[ _CTURREC ] VAR aTmp[ _CTURREC ] ;
          ID       335 ;
          PICTURE  "999999" ;
-         WHEN     ( lMode .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
          OF       oFld:aDialogs[ 1 ]
 
       REDEFINE GET aGet[ _CCODCLI ] VAR aTmp[ _CCODCLI ] ;
          ID       120 ;
          VALID    ( loadCliente( aGet, aTmp ) ) ;
-         WHEN     lMode ;
+         WHEN     nMode != ZOOM_MODE ;
          ON HELP  ( BrwClient( aGet[ _CCODCLI ], aGet[ _CNOMCLI ] ) );
          BITMAP   "LUPA" ;
          OF       oFld:aDialogs[ 1 ]
 
       REDEFINE GET aGet[ _CNOMCLI ] VAR aTmp[ _CNOMCLI ];
-            ID       121 ;
-            WHEN     .f. ;
-            OF       oFld:aDialogs[ 1 ]
+         ID       121 ;
+         WHEN     .f. ;
+         OF       oFld:aDialogs[ 1 ]
 
       REDEFINE GET aGet[ _CCODAGE ] VAR aTmp[ _CCODAGE ] ;
          ID       130 ;
-			WHEN 		lMode ;
+			WHEN 		nMode != ZOOM_MODE ;
          VALID    ( cAgentes( aGet[ _CCODAGE ], D():Agentes( nView ), oGetAge ) );
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAgentes( aGet[ _CCODAGE ], oGetAge ) );
@@ -903,7 +903,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
 
       REDEFINE GET aGet[ _CCODPGO ] VAR aTmp[ _CCODPGO ] ;
          ID       290 ;
-			WHEN 		( lMode ) ;
+			WHEN 		( nMode != ZOOM_MODE ) ;
 			PICTURE  "@!" ;
          VALID    ( cFPago( aGet[ _CCODPGO ], D():FormasPago( nView ), oGetPgo ), lUpdateSubCta( aGet, aTmp ) ) ;
          BITMAP   "LUPA" ;
@@ -917,17 +917,17 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
 
       REDEFINE GET aGet[ _CDESCRIP ] VAR aTmp[ _CDESCRIP ] ;
          ID       140 ;
-         WHEN     ( lMode ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 1 ]
 
 		REDEFINE GET aGet[ _CPGDOPOR ] VAR aTmp[ _CPGDOPOR ] ;
          ID       150 ;
-         WHEN     ( lMode ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 1 ]
 
       REDEFINE GET aGet [ _CDOCPGO ] VAR aTmp[ _CDOCPGO ] ;
          ID       155 ;
-         WHEN     ( lMode ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 1 ]
 
       REDEFINE GET aGet[ _CDIVPGO ] VAR aTmp[ _CDIVPGO ];
@@ -956,16 +956,10 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
          PICTURE  ( cPorDiv ) ;
          OF       oFld:aDialogs[ 1 ]
 
-      REDEFINE GET oImporteRelacionados VAR nImporteRelacionados ;
-         ID       240 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         PICTURE  ( cPorDiv ) ;
-         OF       oFld:aDialogs[ 1 ]
-
       REDEFINE GET aGet[ _NIMPCOB ] VAR aTmp[ _NIMPCOB ] ;
          ID       190 ;
          IDSAY    191 ;
-         WHEN     ( lMode ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( ValCobro( aGet, aTmp ) ) ;
          COLOR    CLR_GET ;
          PICTURE  ( cPorDiv ) ;
@@ -998,7 +992,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
       */
 
       REDEFINE GET aGet[ _CCODCAJ ] VAR aTmp[ _CCODCAJ ];
-         WHEN     ( lMode ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    cCajas( aGet[ _CCODCAJ ], D():Cajas( nView ), oGetCaj ) ;
          ID       280 ;
          BITMAP   "LUPA" ;
@@ -1022,7 +1016,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
 
       REDEFINE GET aGet[ _CBNCEMP ] VAR aTmp[ _CBNCEMP ];
          ID       100 ;
-         WHEN     ( lMode ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwBncEmp( aGet[ _CBNCEMP], aGet[ _CEPAISIBAN ], aGet[ _CECTRLIBAN ], aGet[ _CENTEMP], aGet[ _CSUCEMP], aGet[ _CDIGEMP], aGet[ _CCTAEMP] ) );
          OF       oFld:aDialogs[2]
@@ -1030,28 +1024,28 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
       REDEFINE GET aGet[ _CEPAISIBAN ] VAR aTmp[ _CEPAISIBAN ] ;
          PICTURE  "@!" ;
          ID       270 ;
-         WHEN     ( lMode ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( lIbanDigit( aTmp[ _CEPAISIBAN ], aTmp[ _CENTEMP ], aTmp[ _CSUCEMP ], aTmp[ _CDIGEMP ], aTmp[ _CCTAEMP ], aGet[ _CECTRLIBAN ] ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CECTRLIBAN ] VAR aTmp[ _CECTRLIBAN ] ;
          ID       280 ;
          PICTURE  "99" ;
-         WHEN     ( lMode ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( lIbanDigit( aTmp[ _CEPAISIBAN ], aTmp[ _CENTEMP ], aTmp[ _CSUCEMP ], aTmp[ _CDIGEMP ], aTmp[ _CCTAEMP ], aGet[ _CECTRLIBAN ] ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CENTEMP] VAR aTmp[ _CENTEMP];
          ID       110 ;
          PICTURE  "9999" ;
-         WHEN     ( lMode ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    (  lCalcDC( aTmp[ _CENTEMP], aTmp[ _CSUCEMP], aTmp[ _CDIGEMP], aTmp[ _CCTAEMP], aGet[ _CDIGEMP] ),;
                      aGet[ _CEPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CSUCEMP] VAR aTmp[ _CSUCEMP];
          ID       120 ;
-         WHEN     ( lMode ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  "9999" ;
          VALID    (  lCalcDC( aTmp[ _CENTEMP], aTmp[ _CSUCEMP], aTmp[ _CDIGEMP], aTmp[ _CCTAEMP], aGet[ _CDIGEMP] ),;
                      aGet[ _CEPAISIBAN ]:lValid() ) ;
@@ -1060,7 +1054,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
       REDEFINE GET aGet[ _CDIGEMP] VAR aTmp[ _CDIGEMP];
          ID       130 ;
          PICTURE  "99" ;
-         WHEN     ( lMode ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    (  lCalcDC( aTmp[ _CENTEMP ], aTmp[ _CSUCEMP ], aTmp[ _CDIGEMP ], aTmp[ _CCTAEMP ], aGet[ _CDIGEMP ] ),;
                      aGet[ _CEPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[2]
@@ -1068,7 +1062,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
       REDEFINE GET aGet[ _CCTAEMP ] VAR aTmp[ _CCTAEMP ];
          ID       140 ;
          PICTURE  "9999999999" ;
-         WHEN     ( lMode ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    (  lCalcDC( aTmp[ _CENTEMP ], aTmp[ _CSUCEMP ], aTmp[ _CDIGEMP ], aTmp[ _CCTAEMP ], aGet[ _CDIGEMP ] ),;
                      aGet[ _CEPAISIBAN ]:lValid() )  ;
          OF       oFld:aDialogs[2]
@@ -1079,7 +1073,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
 
       REDEFINE GET aGet[ _CBNCCLI] VAR aTmp[ _CBNCCLI];
          ID       200 ;
-         WHEN     ( lMode ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwBncCli( aGet[ _CBNCCLI], aGet[ _CPAISIBAN], aGet[ _CCTRLIBAN], aGet[ _CENTCLI], aGet[ _CSUCCLI], aGet[ _CDIGCLI], aGet[ _CCTACLI], aTmp[ _CCODCLI] ) );
          OF       oFld:aDialogs[2]
@@ -1087,21 +1081,21 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
       REDEFINE GET aGet[ _CPAISIBAN] VAR aTmp[ _CPAISIBAN] ;
          PICTURE  "@!" ;
          ID       250 ;
-         WHEN     ( lMode ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( lIbanDigit( aTmp[ _CPAISIBAN], aTmp[ _CENTCLI], aTmp[ _CSUCCLI], aTmp[ _CDIGCLI], aTmp[ _CCTACLI], aGet[ _CCTRLIBAN] ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CCTRLIBAN] VAR aTmp[ _CCTRLIBAN] ;
          ID       260 ;
          PICTURE  "99" ;
-         WHEN     ( lMode ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( lIbanDigit( aTmp[ _CPAISIBAN], aTmp[ _CENTCLI], aTmp[ _CSUCCLI], aTmp[ _CDIGCLI], aTmp[ _CCTACLI], aGet[ _CCTRLIBAN] ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CENTCLI] VAR aTmp[ _CENTCLI];
          ID       210 ;
          PICTURE  "9999" ;
-         WHEN     ( lMode ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    (  lCalcDC( aTmp[ _CENTCLI], aTmp[ _CSUCCLI], aTmp[ _CDIGCLI], aTmp[ _CCTACLI], aGet[ _CDIGCLI] ),;
                      aGet[ _CPAISIBAN]:lValid() ) ;
          OF       oFld:aDialogs[2]
@@ -1109,14 +1103,14 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
       REDEFINE GET aGet[ _CSUCCLI] VAR aTmp[ _CSUCCLI];
          ID       220 ;
          PICTURE  "9999" ;
-         WHEN     ( lMode ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    (  lCalcDC( aTmp[ _CENTCLI], aTmp[ _CSUCCLI], aTmp[ _CDIGCLI], aTmp[ _CCTACLI], aGet[ _CDIGCLI] ),;
                      aGet[ _CPAISIBAN]:lValid() ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CDIGCLI] VAR aTmp[ _CDIGCLI];
          ID       230 ;
-         WHEN     ( lMode ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  "99";
          VALID    (  lCalcDC( aTmp[ _CENTCLI], aTmp[ _CSUCCLI], aTmp[ _CDIGCLI], aTmp[ _CCTACLI], aGet[ _CDIGCLI] ),;
                      aGet[ _CPAISIBAN]:lValid() ) ;
@@ -1125,7 +1119,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
       REDEFINE GET aGet[ _CCTACLI] VAR aTmp[ _CCTACLI];
          ID       240 ;
          PICTURE  "9999999999" ;
-         WHEN     ( lMode ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    (  lCalcDC( aTmp[ _CENTCLI], aTmp[ _CSUCCLI], aTmp[ _CDIGCLI], aTmp[ _CCTACLI], aGet[ _CDIGCLI] ),;
                      aGet[ _CPAISIBAN]:lValid() ) ;
          OF       oFld:aDialogs[2]
@@ -1136,22 +1130,22 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
 
       REDEFINE CHECKBOX aGet[ _LREMESA ] VAR aTmp[ _LREMESA ] ;
          ID       300 ;
-         WHEN     ( lMode ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _NNUMREM ] VAR aTmp[ _NNUMREM ];
          ID       310 ;
-         WHEN     ( lMode ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CSUFREM ] VAR aTmp[ _CSUFREM ];
          ID       320 ;
-         WHEN     ( lMode ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CCTAREM ] VAR aTmp[ _CCTAREM ] ;
          ID       290 ;
-         WHEN     ( lMode ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
          VALID    ( oGetCtaRem:cText( oRetFld( aTmp[ _CCTAREM ], oCtaRem:oDbf ) ), .t. );
          ON HELP  ( oCtaRem:Buscar( aGet[ _CCTAREM ] ) ) ;
@@ -1174,19 +1168,19 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
 
       REDEFINE CHECKBOX aGet[ _LDEVUELTO ] VAR aTmp[ _LDEVUELTO ];
          ID       100 ;
-         WHEN     ( aTmp[ _LCOBRADO] .and. lMode ) ;
+         WHEN     ( aTmp[ _LCOBRADO] .and. nMode != ZOOM_MODE ) ;
          ON CHANGE( lChangeDevolucion( aGet, aTmp, .f. ) ) ;
          OF       oFld:aDialogs[ 3 ]
 
       REDEFINE GET aGet[ _DFECDEV ] VAR aTmp[ _DFECDEV ] ;
          ID       110 ;
          SPINNER ;
-         WHEN     ( aTmp[ _LCOBRADO] .and. lMode ) ;
+         WHEN     ( aTmp[ _LCOBRADO] .and. nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 3 ]
 
       REDEFINE GET aGet[ _CMOTDEV ] VAR aTmp[ _CMOTDEV ] ;
          ID       120 ;
-         WHEN     ( aTmp[ _LCOBRADO ] .and. lMode ) ;
+         WHEN     ( aTmp[ _LCOBRADO ] .and. nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 3 ]
 
       REDEFINE GET aGet[ _CRECDEV ] VAR aTmp[ _CRECDEV ] ;
@@ -1206,13 +1200,13 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
 
       REDEFINE CHECKBOX aGet[ _LCONPGO ] VAR aTmp[ _LCONPGO ];
          ID       230 ;
-         WHEN     ( lMode ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 4 ]
 
       REDEFINE GET aGet[ _CCTAREC ] VAR aTmp[ _CCTAREC ] ;
          ID       240 ;
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
-         WHEN     ( nLenCuentaContaplus() != 0 .AND. lMode ) ;
+         WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwChkSubcuenta( aGet[ _CCTAREC ], oGetSubCta ) ) ;
          VALID    ( MkSubcuenta( aGet[ _CCTAREC ], nil, oGetSubCta ) ) ;
@@ -1226,7 +1220,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
       REDEFINE GET aGet[ _CCTAGAS ] VAR aTmp[ _CCTAGAS ] ;
          ID       270 ;
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
-         WHEN     ( nLenCuentaContaplus() != 0 .AND. lMode ) ;
+         WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwChkSubcuenta( aGet[ _CCTAGAS ], oGetSubGas ) ) ;
          VALID    ( MkSubcuenta( aGet[ _CCTAGAS ], nil, oGetSubGas ) );
@@ -1243,22 +1237,22 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
 
       REDEFINE CHECKBOX aGet[_LRECIMP] VAR aTmp[_LRECIMP];
          ID       160 ;
-         WHEN     ( lMode .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
          OF       oFld:aDialogs[ 4 ]
 
       REDEFINE GET aGet[ _DFECIMP ] VAR aTmp[ _DFECIMP ] ;
          ID       161 ;
-         WHEN     ( lMode .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
          OF       oFld:aDialogs[ 4 ]
 
       REDEFINE GET aGet[ _CHORIMP ] VAR aTmp[ _CHORIMP ] ;
          ID       162 ;
-         WHEN     ( lMode .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
          OF       oFld:aDialogs[ 4 ]
 
       REDEFINE CHECKBOX aGet[ _LESPERADOC ] VAR aTmp[ _LESPERADOC ];
          ID       165 ;
-			WHEN 		( lMode ) ;
+			WHEN 		( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 4 ]
 
       /*
@@ -1271,94 +1265,8 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
          BITMAP   "LUPA" ;
          VALID    ( oCentroCoste:Existe( aGet[ _CCENTROCOSTE ], aGet[ _CCENTROCOSTE ]:oHelpText, "cNombre" ) );
          ON HELP  ( oCentroCoste:Buscar( aGet[ _CCENTROCOSTE ] ) ) ;
-         WHEN     ( lMode ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 4 ]
-
-      /*
-      Agrupados----------------------------------------------------------------
-      */
-
-      if nSpecialMode == COMPENSAR_MODE
-
-         REDEFINE BUTTON ;
-            ID       100 ;
-            OF       oDlg;
-            WHEN     ( !aTmp[ _LCOBRADO ] .and. nMode != ZOOM_MODE ) ;
-            ACTION   ( GetReciboCliente( aTmp, oBrwRec ) )
-
-         REDEFINE BUTTON ;
-            ID       110 ;
-            OF       oDlg;
-            WHEN     ( !aTmp[ _LCOBRADO ] .and. nMode != ZOOM_MODE ) ;
-            ACTION   ( DelReciboCliente( oBrwRec ) )
-
-         oBrwRec                 := IXBrowse():New( oDlg )
-
-         oBrwRec:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-         oBrwRec:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-         oBrwRec:nMarqueeStyle   := 6
-         oBrwRec:lRecordSelector := .f.
-         oBrwRec:lHScroll        := .f.
-
-         oBrwRec:SetArray( aRecibosRelacionados, , , .f. )
-
-         oBrwRec:CreateFromResource( 200 )
-
-         with object ( oBrwRec:AddCol() )
-            :cHeader             := "Tipo"
-            :bStrData            := {|| if( len( aRecibosRelacionados ) > 0 .and. Right( aRecibosRelacionados[ oBrwRec:nArrayAt ], 1 ) == "R", "Rectificativa", "" ) }
-            :nWidth              := 50
-         end with
-
-         with object ( oBrwRec:AddCol() )
-            :cHeader          := "Numero"
-            :bStrData         := {|| if( len( aRecibosRelacionados) > 0, Left( aRecibosRelacionados[ oBrwRec:nArrayAt ], 1 ) + "/" + Alltrim( SubStr( aRecibosRelacionados[ oBrwRec:nArrayAt ], 2, 9 ) ) + "-" + Alltrim( SubStr( aRecibosRelacionados[ oBrwRec:nArrayAt ], 13, 2 ) ), "" ) }
-            :nWidth           := 100
-         end with
-
-         with object ( oBrwRec:AddCol() )
-            :cHeader          := "Delegación"
-            :bStrData         := {|| if( len( aRecibosRelacionados) > 0, SubStr( aRecibosRelacionados[ oBrwRec:nArrayAt ], 11, 2 ), "" ) }
-            :nWidth           := 40
-            :lHide            := .t.
-         end with
-
-         with object ( oBrwRec:AddCol() )
-            :cHeader          := "Fecha"
-            :bStrData         := {|| if( len( aRecibosRelacionados) > 0, RetFld( aRecibosRelacionados[ oBrwRec:nArrayAt ], cFacCliP, "dPreCob", "nNumFac" ), "" ) }
-            :nWidth           := 80
-            :nDataStrAlign    := 3
-            :nHeadStrAlign    := 3
-         end with
-
-         with object ( oBrwRec:AddCol() )
-            :cHeader          := "Vencimiento"
-            :bStrData         := {|| if( len( aRecibosRelacionados) > 0, RetFld( aRecibosRelacionados[ oBrwRec:nArrayAt ], cFacCliP, "dFecVto", "nNumFac" ), "" ) }
-            :nWidth           := 80
-            :nDataStrAlign    := 3
-            :nHeadStrAlign    := 3
-         end with
-
-         with object ( oBrwRec:AddCol() )
-            :cHeader          := "Total"
-            :bStrData         := {|| if( len( aRecibosRelacionados) > 0, Trans( RetFld( aRecibosRelacionados[ oBrwRec:nArrayAt ], cFacCliP, "nImporte", "nNumFac" ), cPorDiv ), "" ) }
-            :nWidth           := 80
-            :nDataStrAlign    := 1
-            :nHeadStrAlign    := 1
-         end with
-
-         REDEFINE SAY oSayTotal;
-            ID       488 ;
-            FONT     oFontTotal() ;
-            OF       oDlg
-
-         REDEFINE SAY oTotalRelacionados VAR nTotalRelacionados ;
-            ID       485 ;
-            FONT     oFontTotal() ;
-            PICTURE  cPorDiv ;
-            OF       oDlg
-
-      end if
 
       /*
       Botones__________________________________________________________________
@@ -1380,7 +1288,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
          oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode ) } )
       end if
 
-      oDlg:bStart := {|| StartEdtRec( aTmp, aGet, oBrwRec, oBmpDiv, oGroup, nSpecialMode ) }
+      oDlg:bStart := {|| StartEdtRec( aTmp, aGet, nMode ) }
 
    ACTIVATE DIALOG oDlg CENTER ON INIT ( EdtRecMenu( aTmp, oDlg ) )
 
@@ -1410,7 +1318,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-Static Function StartEdtRec( aTmp, aGet, oBrwRec, oBmpDiv, oGroup, nSpecialMode )
+Static Function StartEdtRec( aTmp, aGet, nMode )
 
    cursorWait()
 
@@ -1423,66 +1331,13 @@ Static Function StartEdtRec( aTmp, aGet, oBrwRec, oBmpDiv, oGroup, nSpecialMode 
    aGet[ _CCODPGO       ]:lValid()
    aGet[ _CCODAGE       ]:lValid()
 
-   cargarRecibosAsociados( oBrwRec, D():FacturasClientesCobros( nView ) )
-
-   if nSpecialMode == COMPENSAR_MODE
-      aGet[ _NIMPORTE ]:Hide()
-      aGet[ _NIMPCOB ]:Hide()
-      aGet[ _NIMPGAS ]:Hide()
-      oImporteRelacionados:Show()
-      aGet[ _CDIVPGO ]:Hide()
-      oBmpDiv:Hide()
-      oGroup:Hide()
-
-   else
+   if nMode != ZOOM_MODE
       lChangeDevolucion( aGet, aTmp, .t. )
-      aGet[ _NIMPORTE ]:Show()
-      aGet[ _NIMPCOB ]:Show()
-      aGet[ _NIMPGAS ]:Show()
-      oImporteRelacionados:Hide()
-      aGet[ _CDIVPGO ]:Show()
-      oBmpDiv:Show()
-      oGroup:Show()
    end if
-
-   setTotalRelacionados()
 
    cursorWE()
 
 Return .t.
-
-//---------------------------------------------------------------------------//
-/*
-Cargamos los recibos asociados----------------------------------------------
-*/
-
-Function cargarRecibosAsociados( oBrwRec, uFacCliP )
-
-   local cNum
-   local nRec
-   local nOrd
-
-   DEFAULT uFacCliP  := D():FacturasClientesCobros( nView )
-
-   cNum              := ( uFacCliP )->cSerie + str( ( uFacCliP )->nNumFac ) + ( uFacCliP )->cSufFac + str( ( uFacCliP )->nNumRec ) + ( uFacCliP )->cTipRec
-   nRec              := ( uFacCliP )->( recno() )
-   nOrd              := ( uFacCliP )->( ordsetfocus( "cNumMtr" ) )
-
-   if ( uFacCliP )->( dbseek( cNum ) )
-      while ( uFacCliP )->cNumMtr == cNum .and. !( uFacCliP )->( eof() )
-         aadd( aRecibosRelacionados, ( uFacCliP )->cSerie + str( ( uFacCliP )->nNumFac ) + ( uFacCliP )->cSufFac + str( ( uFacCliP )->nNumRec ) + ( uFacCliP )->cTipRec )
-         ( uFacCliP )->( dbskip() )
-      end while
-   end if 
-  
-   ( uFacCliP )->( ordsetfocus( nOrd ) )
-   ( uFacCliP )->( dbgoto( nRec ) )
-
-   if !Empty( oBrwRec )
-      oBrwRec:Refresh()
-   end if
-
-Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -1491,16 +1346,6 @@ Static Function KillTrans( oDlg )
    oDlg:End()
 
 Return .t.
-
-//---------------------------------------------------------------------------//
-
-static function getInitRecibosRelacionados( aTmp )
-
-   aRecibosRelacionados    := {}
-
-   aAdd( aRecibosRelacionados, aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] + Str( aTmp[ _NNUMREC ] ) + aTmp[ _CTIPREC ] )
-
-return .t.
 
 //---------------------------------------------------------------------------//
 /*
@@ -1520,27 +1365,27 @@ RETURN NIL
 
 //-------------------------------------------------------------------------//
 
-Static Function GetReciboCliente( aTmp, oBrwRec )
+Static Function GetReciboCliente( cCodCli, oBrwRec )
 
    local lResult  := .t.
    local cNumRec  := ""
    local aRecibosSeleccionados
 
-   aRecibosSeleccionados      := browseRecCli( aTmp, D():FacturasClientesCobros( nView ), D():Divisas( nView ) )
+   if Empty( cCodCli )
+      MsgStop( "Tiene que seleccionar un cliente." )
+      Return nil
+   end if
+
+   aRecibosSeleccionados      := browseRecCli( cCodCli, D():FacturasClientesCobros( nView ), D():Divisas( nView ) )
 
    if isArray( aRecibosSeleccionados ) .and. Len( aRecibosSeleccionados ) > 0
 
       for each cNumRec in aRecibosSeleccionados
 
-         if lResult .and. ( cNumRec == aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] + Str( aTmp[ _NNUMREC ] ) + aTmp[ _CTIPREC ] )
-            msgStop( "No se puede agrupar un recibo con el mismo.", "Recibo: " + cNumRec )     
-            lResult := .f.
-         end if
-
          if lResult .and. RetFld( cNumRec, D():FacturasClientesCobros( nView ), "lCobrado", "nNumFac" )
             msgStop( "Recibo ya cobrado.", "Recibo: " + cNumRec )
             lResult := .f.
-         end if 
+         end if
 
          if lResult .and. RetFld( cNumRec, D():FacturasClientesCobros( nView ), "lRemesa", "nNumFac" )
             msgStop( "Recibo ya remesado.", "Recibo: " + cNumRec )
@@ -1549,11 +1394,6 @@ Static Function GetReciboCliente( aTmp, oBrwRec )
 
          if lResult .and. !empty( RetFld( cNumRec, D():FacturasClientesCobros( nView ), "cNumMtz", "nNumFac" ) )
             msgStop( "Recibo ya pertenece a otra matriz.", "Recibo: " + cNumRec )
-            lResult := .f.
-         end if 
-
-         if lResult .and. RetFld( cNumRec, D():FacturasClientesCobros( nView ), "cCodCli", "nNumFac" ) != aTmp[ _CCODCLI ]
-            msgStop( "Recibo pertenece a otro cliente.", "Recibo: " + cNumRec )
             lResult := .f.
          end if 
 
@@ -1963,7 +1803,6 @@ Function nTotRecCli( uFacCliP, cDbfDiv, cDivRet, lPic )
    local nRouDiv
    local cPorDiv
    local nTotRec
-   local nEstado
 
    DEFAULT uFacCliP  := D():FacturasClientesCobros( nView )
    DEFAULT cDbfDiv   := D():Divisas( nView )
@@ -1971,37 +1810,10 @@ Function nTotRecCli( uFacCliP, cDbfDiv, cDivRet, lPic )
    DEFAULT lPic      := .f.
 
    if IsObject( uFacCliP )
-      nEstado        :=  nEstadoMatriz( uFacCliP:cAlias )
-   else
-      nEstado        :=  nEstadoMatriz( uFacCliP )
-   end if
-
-   do case
-      case nEstado == 1
-
-         if IsObject( uFacCliP )
-            nTotRec  := uFacCliP:nImporte
-         else
-            nTotRec  := ( uFacCliP )->nImporte
-         end if
-
-      case nEstado == 2
-
-         if IsObject( uFacCliP )
-            nTotRec  := nTotalImporteRelacionados( uFacCliP:cAlias )
-         else
-            nTotRec  := nTotalImporteRelacionados( uFacCliP )
-         end if
-
-      case nEstado == 3
-
-         nTotRec     := 0
-
-   end case
-
-   if IsObject( uFacCliP )
+      nTotRec  := uFacCliP:nImporte
       cDivPgo        := uFacCliP:cDivPgo
    else
+      nTotRec  := ( uFacCliP )->nImporte
       cDivPgo        := ( uFacCliP )->cDivPgo
    end if
 
@@ -2040,49 +1852,13 @@ return nImporte
 
 function setTotalRelacionados()
 
-   local nImporte       := nTotalArrayRelacionados()
-   local cRecibo        := ""
-
-   nTotalRelacionados   := nImporte
-   nImporteRelacionados := nImporte
+   nTotalRelacionados   := nTotalArrayRelacionados()
 
    if !Empty( oTotalRelacionados )
       oTotalRelacionados:Refresh()
    end if 
 
-   if !Empty( oImporteRelacionados )
-      oImporteRelacionados:Refresh()
-   end if 
-
 return .t.
-
-//------------------------------------------------------------------------//
-
-function nTotalImporteRelacionados( uFacCliP )
-
-   local cNum
-   local nRec
-   local nOrd
-   local nImporte    := 0
-
-   DEFAULT uFacCliP  := D():FacturasClientesCobros( nView )
-   
-   nImporte          := ( uFacCliP )->nImporte
-   cNum              := ( uFacCliP )->cSerie + str( ( uFacCliP )->nNumFac ) + ( uFacCliP )->cSufFac + str( ( uFacCliP )->nNumRec ) + ( uFacCliP )->cTipRec
-   nRec              := ( uFacCliP )->( recno() )
-   nOrd              := ( uFacCliP )->( ordsetfocus( "cNumMtr" ) )
-
-   if ( uFacCliP )->( dbseek( cNum ) )
-      while ( uFacCliP )->cNumMtr == cNum .and. !( uFacCliP )->( eof() )
-         nImporte    += ( uFacCliP )->nImporte
-         ( uFacCliP )->( dbskip() )
-      end while
-   end if 
-  
-   ( uFacCliP )->( ordsetfocus( nOrd ) )
-   ( uFacCliP )->( dbgoto( nRec ) )
-
-Return nImporte
 
 //------------------------------------------------------------------------//
 
@@ -2533,6 +2309,15 @@ FUNCTION BrwRecCli( uGet, cFacCliP, cClient, cDiv )
                            "Forma pago",;
                            "Agente" }
 
+   nOrd              := GetBrwOpt( "BrwRecCli" )
+   nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd           := aCbxOrd[ nOrd ]
+
+   cNumRec           := ""
+
+   nRecAnt           := ( cFacCliP )->( Recno() )
+   nOrdAnt           := ( cFacCliP )->( OrdSetFocus( nOrd ) )                         
+
    ( cFacCliP )->( dbSetFilter( {|| !Field->lCobrado }, "!lCobrado" ) )
    ( cFacCliP )->( dbGoTop() )
 
@@ -2755,34 +2540,34 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION browseRecCli( aTmp, cFacCliP, cDiv )
+FUNCTION browseRecCli( cCodCli, cFacCliP, cDiv )
 
-   local cDbfRecCli     := getDatabaseRecibosClientes( aTmp, cFacCliP )
+   local cDbfRecCli     := getDatabaseRecibosClientes( cCodCli, cFacCliP )
 
 Return resourceBrowseRecCli( cDbfRecCli, cDiv )
    
 //---------------------------------------------------------------------------//
 
-static function getDatabaseRecibosClientes( aTmp, cFacCliP )
+static function getDatabaseRecibosClientes( cCodCli, cFacCliP )
    
    if lAIS()
-      return getAdsFilterRecibosClientes( aTmp, cFacCliP )
+      return getAdsFilterRecibosClientes( cCodCli )
    else
-      return getDbfFilterRecibosClientes( cFacCliP )
+      return getDbfFilterRecibosClientes( cCodCli, cFacCliP )
    end if
 
 Return nil
 
 //---------------------------------------------------------------------------//
 
-static function getAdsFilterRecibosClientes( aTmp, cFacCliP )
+static function getAdsFilterRecibosClientes( cCodCli )
 
    local cStm
 
    cStm           := "SELECT * "           
    cStm           += "FROM " + cPatEmp() + "FacCliP RecibosClientes "
    cStm           += "WHERE RecibosClientes.cNumMtr IS NULL AND RecibosClientes.lCobrado=false AND RecibosClientes.lRemesa=false  "
-   cStm           += "AND RecibosClientes.cCodCli='" + alltrim( aTmp[ ( cFacCliP )->( fieldPos( "cCodCli" ) ) ] ) + "' "
+   cStm           += "AND RecibosClientes.cCodCli='" + alltrim( cCodCli ) + "' "
    
    TDataCenter():ExecuteSqlStatement( cStm, "RecibosFacturasClientes" )
 
@@ -2790,9 +2575,9 @@ Return ( "RecibosFacturasClientes" )
 
 //---------------------------------------------------------------------------//
 
-static function getDbfFilterRecibosClientes( cFacCliP )
+static function getDbfFilterRecibosClientes( cCliente, cFacCliP )
 
-   ( cFacCliP )->( dbSetFilter( {|| !Field->lCobrado }, "!lCobrado" ) )
+   ( cFacCliP )->( dbSetFilter( {|| !Field->lCobrado .and. Field->cCodCli == cCliente }, "!lCobrado .and. cCodCli == cCliente" ) )
    ( cFacCliP )->( dbGoTop() )
 
 Return cFacCliP
@@ -2820,6 +2605,12 @@ static function resourceBrowseRecCli( cFacCliP, cDiv )
                            "Importe",;
                            "Forma pago",;
                            "Agente" }
+
+   nOrd              := GetBrwOpt( "BrwRecCli" )
+   nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd           := aCbxOrd[ nOrd ]
+
+   cNumRec           := ""
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Recibos de clientes"
 
@@ -2869,7 +2660,7 @@ static function resourceBrowseRecCli( cFacCliP, cDiv )
 
       with object ( oBrw:AddCol() )
          :cHeader             := "Tipo"
-         :bEditValue          := {|| if( !Empty( ( cFacCliP )->cTipRec ), "Rectificativa", "" ) }
+         :bEditValue          := {|| cTipoRecibo( ( cFacCliP )->cTipRec ) }
          :nWidth              := 60
       end with
 
@@ -5296,7 +5087,7 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
       aTmp[ _CSERIE  ]  := "A"
       aTmp[ _NNUMFAC ]  := nNewDoc( "A", cFacCliP, "NRECCLI" )
       aTmp[ _CSUFFAC ]  := RetSufEmp()
-      aTmp[ _NNUMREC ]  := 0
+      aTmp[ _NNUMREC ]  := 1
 
    end if
 
@@ -5306,17 +5097,10 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
    lDevuelto   := aTmp[ _LDEVUELTO ]
    lCobrado    := aTmp[ _LCOBRADO ]
    dFechaCobro := aTmp[ _DENTRADA ]
+   lImpNeg     := ( cFacCliP )->nImporte < 0
+   nImpFld     := abs( ( cFacCliP )->nImporte )
+   nImpTmp     := abs( aTmp[ _NIMPORTE ] )
    
-   if nSpecialMode == COMPENSAR_MODE
-      lImpNeg     := nTotalArrayRelacionados() < 0
-      nImpFld     := abs( nTotalArrayRelacionados() )
-      nImpTmp     := abs( nImporteRelacionados )
-   else
-      lImpNeg     := ( cFacCliP )->nImporte < 0
-      nImpFld     := abs( ( cFacCliP )->nImporte )
-      nImpTmp     := abs( aTmp[ _NIMPORTE ] )
-   end if
-
    /*
    Condiciones antes de grabar-------------------------------------------------
    */
@@ -5369,21 +5153,11 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
          ( cFacCliP )->( dbAppend() )
 
          ( cFacCliP )->cTurRec    := cCurSesion()
-         
-         if nSpecialMode == COMPENSAR_MODE
-            ( cFacCliP )->cTipRec := "L"
-            ( cFacCliP )->cSerie  := "A"
-            ( cFacCliP )->nNumFac := nNewDoc( "A", cFacCliP, "NRECCLI" )
-            ( cFacCliP )->cSufFac := aTmp[ _CSUFFAC ]
-            ( cFacCliP )->nNumRec := 0
-         else
-            ( cFacCliP )->cTipRec := aTmp[ _CTIPREC ]
-            ( cFacCliP )->cSerie  := aTmp[ _CSERIE  ]
-            ( cFacCliP )->nNumFac := aTmp[ _NNUMFAC ]
-            ( cFacCliP )->cSufFac := aTmp[ _CSUFFAC ]
-            ( cFacCliP )->nNumRec := nCon
-         end if
-
+         ( cFacCliP )->cTipRec    := aTmp[ _CTIPREC ]
+         ( cFacCliP )->cSerie     := aTmp[ _CSERIE  ]
+         ( cFacCliP )->nNumFac    := aTmp[ _NNUMFAC ]
+         ( cFacCliP )->cSufFac    := aTmp[ _CSUFFAC ]
+         ( cFacCliP )->nNumRec    := nCon
          ( cFacCliP )->cCodCaj    := aTmp[ _CCODCAJ ]
          ( cFacCliP )->cCodCli    := aTmp[ _CCODCLI ]
          ( cFacCliP )->cNomCli    := aTmp[ _CNOMCLI ]
@@ -5428,19 +5202,6 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
    */
 
    if nSpecialMode != LIBRE_MODE
-
-      if nSpecialMode == COMPENSAR_MODE
-
-         RollBackRecibosRelacionados( cNumRecTip, cFacCliP )      
-
-         if isArray( aRecibosRelacionados )  .and.;
-            len( aRecibosRelacionados ) > 1
-
-            SaveRecibosRelacionados( cNumRecTip, cFacCliP, lCobrado, dFechaCobro )
-
-         end if
-
-      end if 
 
       /*
       Si es Devuelto creamos el tiket nuevo---------------------------------------
@@ -5611,37 +5372,6 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-function SaveRecibosRelacionados( cNumRecTip, cFacCliP, lCobrado, dFechaCobro )
-
-   local cNumRec
-   local nRec     := ( cFacCliP )->( Recno() )
-   local nOrdAnt  := ( cFacCliP )->( OrdSetFocus( "nNumFac" ) )
-
-   for each cNumRec in aRecibosRelacionados
-
-      if cNumRec != cNumRecTip
-
-         if ( cFacCliP )->( dbSeek( cNumRec ) ) .and. dbDialogLock( cFacCliP )
-
-            ( cFacCliP )->cNumMtr   := cNumRecTip
-            ( cFacCliP )->lCobrado  := lCobrado
-            ( cFacCliP )->dEntrada  := dFechaCobro
-
-            ( cFacCliP )->( dbUnLock() )
-
-         end if 
-
-      end if
-
-   next 
-
-   ( cFacCliP )->( dbGoTo( nRec ) )
-   ( cFacCliP )->( OrdSetFocus( nOrdAnt ) )
-
-return .t.
-
-//---------------------------------------------------------------------------//
-
 function nEstadoRecibo( uFacCliP )
 
 Return ( hGetPos( hEstadoRecibo, cEstadoRecibo( uFacCliP ) ) )
@@ -5801,7 +5531,7 @@ return ( cTipoRecibo )
 Static Function loadCliente( aGet, aTmp )
 
    local lValid      := .t.
-   local cCodCli  := aGet[ _CCODCLI ]:varGet()
+   local cCodCli     := aGet[ _CCODCLI ]:varGet()
 
    if Empty( cCodCli )
       Return .t.
@@ -5855,5 +5585,188 @@ Static Function loadCliente( aGet, aTmp )
    end if
 
 Return ( lValid )
+
+//---------------------------------------------------------------------------//
+
+Static Function CompensarReciboCliente( oBrw )
+
+   local oDlg
+   local oBmp
+   local oBrwRec
+   local oSayTot
+   local cCodCli           := Space( 12 )
+   local nRec              := ( D():FacturasClientesCobros( nView ) )->( Recno() )
+   local nOrdAnt           := ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( "nNumFac" ) )
+
+   aRecibosRelacionados    := {}
+   
+   DEFINE DIALOG oDlg ;
+      RESOURCE "RECIBOSCOMPENSAR" ;
+      TITLE    "Compensación recibos de clientes"
+
+   REDEFINE BITMAP oBmp ;
+      ID       500 ;
+      RESOURCE "folder_components_48" ;
+      TRANSPARENT ;
+      OF       oDlg
+
+   REDEFINE GET oClienteCompensar VAR cCodCli ;
+      ID       310 ;
+      IDTEXT   311 ;
+      VALID    ( cClient( oClienteCompensar, , oClienteCompensar:oHelpText ) ) ;
+      ON HELP  ( BrwClient( oClienteCompensar, oClienteCompensar:oHelpText ) ) ;
+      BITMAP   "LUPA" ;
+      OF       oDlg   
+
+   REDEFINE BUTTON ;
+      ID       100 ;
+      OF       oDlg;
+      WHEN     ( !Empty( cCodCli ) );
+      ACTION   ( GetReciboCliente( cCodCli, oBrwRec ) )
+
+   REDEFINE BUTTON ;
+      ID       110 ;
+      OF       oDlg;
+      WHEN     ( !Empty( cCodCli ) );
+      ACTION   ( DelReciboCliente( oBrwRec ) )
+
+   oBrwRec                 := IXBrowse():New( oDlg )
+
+   oBrwRec:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+   oBrwRec:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+   oBrwRec:nMarqueeStyle   := 6
+   oBrwRec:lRecordSelector := .f.
+   oBrwRec:lHScroll        := .f.
+
+   oBrwRec:SetArray( aRecibosRelacionados, , , .f. )
+
+   oBrwRec:CreateFromResource( 200 )
+
+   with object ( oBrwRec:AddCol() )
+      :cHeader          := "Tipo"
+      :bStrData         := {|| if( len( aRecibosRelacionados ) > 0 , cTipoRecibo( Right( aRecibosRelacionados[ oBrwRec:nArrayAt ], 1 ) ), "" ) }
+      :nWidth           := 50
+   end with
+
+   with object ( oBrwRec:AddCol() )
+      :cHeader          := "Numero"
+      :bStrData         := {|| if( len( aRecibosRelacionados) > 0, Left( aRecibosRelacionados[ oBrwRec:nArrayAt ], 1 ) + "/" + Alltrim( SubStr( aRecibosRelacionados[ oBrwRec:nArrayAt ], 2, 9 ) ) + "-" + Alltrim( SubStr( aRecibosRelacionados[ oBrwRec:nArrayAt ], 13, 2 ) ), "" ) }
+      :nWidth           := 100
+   end with
+
+   with object ( oBrwRec:AddCol() )
+      :cHeader          := "Delegación"
+      :bStrData         := {|| if( len( aRecibosRelacionados) > 0, SubStr( aRecibosRelacionados[ oBrwRec:nArrayAt ], 11, 2 ), "" ) }
+      :nWidth           := 40
+      :lHide            := .t.
+   end with
+
+   with object ( oBrwRec:AddCol() )
+      :cHeader          := "Fecha"
+      :bStrData         := {|| if( len( aRecibosRelacionados) > 0, RetFld( aRecibosRelacionados[ oBrwRec:nArrayAt ], D():FacturasClientesCobros( nView ), "dPreCob", "nNumFac" ), "" ) }
+      :nWidth           := 80
+      :nDataStrAlign    := 3
+      :nHeadStrAlign    := 3
+   end with
+
+   with object ( oBrwRec:AddCol() )
+      :cHeader          := "Vencimiento"
+      :bStrData         := {|| if( len( aRecibosRelacionados) > 0, RetFld( aRecibosRelacionados[ oBrwRec:nArrayAt ], D():FacturasClientesCobros( nView ), "dFecVto", "nNumFac" ), "" ) }
+      :nWidth           := 80
+      :nDataStrAlign    := 3
+      :nHeadStrAlign    := 3
+   end with
+
+   with object ( oBrwRec:AddCol() )
+      :cHeader          := "Concepto"
+      :bStrData         := {|| if( len( aRecibosRelacionados) > 0, RetFld( aRecibosRelacionados[ oBrwRec:nArrayAt ], D():FacturasClientesCobros( nView ), "cDesCriP", "nNumFac" ), "" ) }
+      :nWidth           := 200
+   end with
+
+   with object ( oBrwRec:AddCol() )
+      :cHeader          := "Total"
+      :bStrData         := {|| if( len( aRecibosRelacionados) > 0, Trans( RetFld( aRecibosRelacionados[ oBrwRec:nArrayAt ], D():FacturasClientesCobros( nView ), "nImporte", "nNumFac" ), cPorDiv() ), "" ) }
+      :nWidth           := 80
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+   end with
+
+   oBrwRec:bLDblClick   := {|| ZoomReciboCliente( SubStr( aRecibosRelacionados[ oBrwRec:nArrayAt ], 1, 14 ) ) }
+
+   REDEFINE SAY oSayTot;
+      ID       488 ;
+      FONT     oFontTotal() ;
+      OF       oDlg
+
+   REDEFINE SAY oTotalRelacionados VAR nTotalRelacionados ;
+      ID       485 ;
+      FONT     oFontTotal() ;
+      PICTURE  cPorDiv() ;
+      OF       oDlg
+
+   REDEFINE BUTTON ;
+      ID       IDOK ;
+      OF       oDlg ;
+      ACTION   ( if( lPreSaveCompensarReciboCliente(), oDlg:end( IDOK ), ) )
+
+   REDEFINE BUTTON ;
+      ID       IDCANCEL ;
+      OF       oDlg ;
+      CANCEL ;
+      ACTION   ( oDlg:end() )
+
+      oDlg:bStart := {|| oClienteCompensar:SetFocus() }
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( nOrdAnt ) )
+   ( D():FacturasClientesCobros( nView ) )->( dbGoto( nRec ) )
+
+   if !Empty( oBmp )
+      oBmp:End()
+   end if
+
+   if !Empty( oBrw )
+      oBrw:Refresh()
+   end if
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Static Function lPreSaveCompensarReciboCliente()
+
+   if Empty( oClienteCompensar:VarGet() )
+      MsgStop( "Tiene que seleccionar un cliente" )
+      oClienteCompensar:SetFocus()
+      Return .f.
+   end if
+
+   if Len( aRecibosRelacionados ) < 1
+      MsgStop( "Tiene que seleccionar recibos para crear una compensación" )
+      Return .f.
+   end if
+
+   if !WinAppRec( oWndBrw:oBrw, bEdit, D():FacturasClientesCobros( nView ), , LIBRE_MODE )
+      Return .f.
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Static Function ZoomReciboCliente( cNumFac )
+
+   local nRec     := ( D():FacturasClientesCobros( nView ) )->( Recno() )
+   local nOrdAnt  := ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( "nNumFac" ) )
+
+   if ( D():FacturasClientesCobros( nView ) )->( dbSeek( cNumFac ) )
+      WinZooRec( , bEdit, D():FacturasClientesCobros( nView ) )
+   end if
+
+   ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( nOrdAnt ) )
+   ( D():FacturasClientesCobros( nView ) )->( dbGoTo( nRec ) )
+
+Return .t.
 
 //---------------------------------------------------------------------------//
