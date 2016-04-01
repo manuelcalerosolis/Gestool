@@ -146,8 +146,6 @@ CLASS TComercio
    DATA  aImagesCategories
    DATA  aTipoImagesPrestashop
 
-   DATA  nImagePosition             INIT 0
-
    DATA  nLanguage
 
    DATA  nPrecioMinimo              INIT 0
@@ -262,9 +260,9 @@ CLASS TComercio
    METHOD GetValPrp( nIdPrp, nProductAttibuteId )
    METHOD DelIdPropiedadesPrestashop()
 
-   METHOD InsertImageProductImage()
-   METHOD InsertImageProductImageShop( nCodigoImagen )
-   METHOD InsertImageProductImageLang( nCodigoImagen )
+   METHOD InsertImageProductPrestashop()
+   METHOD InsertImageProductPrestashopShop( nCodigoImagen )
+   METHOD InsertImageProductPrestashopLang( nCodigoImagen )
 
    METHOD nIvaProduct( cCodArt )
    METHOD ActualizaStockProductsPrestashop( cCodigoArticulo )
@@ -1100,36 +1098,36 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD InsertImageProductImage( cCodigoWeb, lDefault )
+METHOD InsertImageProductPrestashop( hArticuloData, hImage, idProductPrestashop, nImagePosition )
 
    local cCommand
-   local nCodigoImagen  := 0
+   local nIdImagePrestashop   := 0
 
-   cCommand             := "INSERT INTO " + ::cPrefixTable( "image" ) + " ( " +;
-                              "id_product, " + ;
-                              "position, " + ;
-                              "cover ) " + ;
-                           "VALUES ( " + ;
-                              "'" + alltrim( str( cCodigoWeb ) ) + "', " + ;
-                              "'" + str( ::nImagePosition ) + "', " + ;
-                              if( lDefault, "'1'", "'0'" ) + " )"
+   cCommand                   := "INSERT INTO " + ::cPrefixTable( "image" ) + " ( " +;
+                                    "id_product, " + ;
+                                    "position, " + ;
+                                    "cover ) " + ;
+                                 "VALUES ( " + ;
+                                    "'" + alltrim( str( idProductPrestashop ) ) + "', " + ;
+                                    "'" + str( nImagePosition ) + "', " + ;
+                                    if( hGet( hImage, "lDefault" ), "'1'", "'0'" ) + " )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-
-      nCodigoImagen     := ::oCon:GetInsertId()
-      
-      ::oArtImg:fieldPutByName( "cCodWeb", nCodigoImagen )
-
-      ::writeText( "Insertado la imagen del artículo " + alltrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "image" ), 3 )
+      nIdImagePrestashop     := ::oCon:GetInsertId()
+      ::writeText( "Insertado la imagen " + alltrim( hGet( hImage, "name" ) ) + " correctamente en la tabla " + ::cPrefixTable( "image" ), 3 )
    else
-      ::writeText( "Error al insertar la imagen del artículo " + alltrim( ::oArt:Nombre ) + " en la tabla " + ::cPrefixTable( "image" ), 3 )
+      ::writeText( "Error al insertar la imagen " + alltrim( hGet( hImage, "name" ) ) + " en la tabla " + ::cPrefixTable( "image" ), 3 )
    end if
 
-Return ( nCodigoImagen )
+   if !empty( nIdImagePrestashop )
+      ::TPrestashopId:setValueImage( hGet( hArticuloData, "id" ) + str( hGet( hImage, "id" ), 10 ), ::getCurrentWebName(), nIdImagePrestashop )
+   end if
+
+Return ( nIdImagePrestashop )
 
 //---------------------------------------------------------------------------//
 
-METHOD InsertImageProductImageLang( nCodigoImagen )
+METHOD InsertImageProductPrestashopLang( hImage, idImagenPrestashop )
 
    local cCommand
 
@@ -1138,25 +1136,23 @@ METHOD InsertImageProductImageLang( nCodigoImagen )
                   "id_lang, " + ;
                   "legend ) " + ;
                "VALUES (" + ;
-                  "'" + alltrim( str( nCodigoImagen ) ) + "', " + ;
+                  "'" + alltrim( str( idImagenPrestashop ) ) + "', " + ;
                   "'" + alltrim( str( ::nLanguage ) ) + "', " + ;
-                  "'" + ::oCon:Escapestr( ::oArtImg:cNbrArt ) + "' )"
+                  "'" + ::oCon:Escapestr( hGet( hImage, "name" ) ) + "' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( "Insertado la imagen del artículo " + alltrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
+      ::writeText( "Insertado la imagen " + hGet( hImage, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
    else
-      ::writeText( "Error al insertar la imagen del artículo " + alltrim( ::oArt:Nombre ) + " en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
+      ::writeText( "Error al insertar la imagen " + hGet( hImage, "name" ) + " en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
    end if
 
 Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD InsertImageProductImageShop( hArticuloData, nCodigoImagen, lCover )
+METHOD InsertImageProductPrestashopShop( hArticuloData, hImage, idImagenPrestashop )
 
    local cCommand 
-
-   DEFAULT lCover := .f.
 
    cCommand       := "INSERT INTO " + ::cPrefixTable( "image_shop" ) + " ( " 
    if ::lProductIdColumnImageShop
@@ -1169,14 +1165,14 @@ METHOD InsertImageProductImageShop( hArticuloData, nCodigoImagen, lCover )
    if ::lProductIdColumnImageShop
       cCommand    += "'" + alltrim( str( ::TPrestashopId:getValueProduct( hget( hArticuloData, "id" ), ::getCurrentWebName() ) ) ) + "', "  // id_product
    end if
-   cCommand       += "'" + alltrim( str( nCodigoImagen ) ) + "', "   // id_image
+   cCommand       += "'" + alltrim( str( idImagenPrestashop ) ) + "', "   // id_image
    cCommand       += "'1', "                                         // id_shop
-   cCommand       += if( lCover, "'1'", "null" ) + ")"               // cover
+   cCommand       += if( hGet( hImage, "lDefault" ), "'1'", "null" ) + ")"               // cover
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( "Insertado la imagen del artículo " + alltrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
+      ::writeText( "Insertado la imagen " + hGet( hImage, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
    else
-      ::writeText( "Error al insertar la imagen del artículo " + alltrim( ::oArt:Nombre ) + " en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
+      ::writeText( "Error al insertar la imagen " + hGet( hImage, "name" ) + " en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
    end if
 
 Return .t.
@@ -2786,7 +2782,9 @@ METHOD buildImagesArticuloPrestashop( id ) CLASS TComercio
 
                if file( cImgToken )
                   if !empty( cImgToken ) .and. ascan( aImages, {|a| hGet( a, "name" ) == cImgToken } ) == 0
-                     aadd( aImages, { "name" => cImgToken, "lDefault"  => oRetFld( cImgToken, ::oArtImg, "lDefImg", "cImgArt" ) } )
+                     aadd( aImages, {  "name"      => cImgToken,;
+                                       "id"        => oRetFld( cImgToken, ::oArtImg, "nId", "cImgArt" ),;
+                                       "lDefault"  => oRetFld( cImgToken, ::oArtImg, "lDefImg", "cImgArt" ) } )
                   end if
                end if 
 
@@ -2816,7 +2814,9 @@ METHOD buildImagesArticuloPrestashop( id ) CLASS TComercio
 
             if file( cImagen )
                if ascan( aImages, {|a| hGet( a, "name" ) == cImagen } ) == 0
-                  aadd( aImages, { "name" => cImagen, "lDefault" => ::oArtImg:lDefImg } )
+                  aadd( aImages, {  "name"      => cImagen,;
+                                    "id"        => ::oArtImg:nId,;
+                                    "lDefault"  => ::oArtImg:lDefImg } )
                end if   
             end if 
 
@@ -2945,9 +2945,6 @@ METHOD buildPropiedadesPrestashop( id ) CLASS TComercio
 
          if ::oTblPro:SeekInOrd( ::oArtDiv:cCodPr1 + ::oArtDiv:cValPr1, "cCodPro" )
 
-            debug( ::oTblPro:cCodPro + ::oTblPro:cCodTbl, "busqueda 1" )
-            debug( len( ::oTblPro:cCodPro + ::oTblPro:cCodTbl ), "len busqueda 1" )
-
             if ::lSyncAll .or. ::TPrestashopId:getValueAttribute( ::oTblPro:cCodPro + ::oTblPro:cCodTbl, ::getCurrentWebName() ) == 0
 
                if aScan( ::aPropiedadesLineasData, {|h| hGet( h, "id" ) == ::oTblPro:cCodTbl .and. hGet( h, "idparent" ) == ::oTblPro:cCodPro } ) == 0
@@ -2964,9 +2961,6 @@ METHOD buildPropiedadesPrestashop( id ) CLASS TComercio
          end if
 
          if ::oTblPro:SeekInOrd( ::oArtDiv:cCodPr2 + ::oArtDiv:cValPr2, "cCodPro" )
-
-            debug( ::oTblPro:cCodPro + ::oTblPro:cCodTbl, "busqueda 2" )
-            debug( len( ::oTblPro:cCodPro + ::oTblPro:cCodTbl ), "len busqueda 2" )
 
             if ::lSyncAll .or. ::TPrestashopId:getValueAttribute( ::oTblPro:cCodPro + ::oTblPro:cCodTbl, ::getCurrentWebName() ) == 0
 
@@ -3839,49 +3833,39 @@ Return ( .t. )
 insertamos imagenes del artículo en concreto--------------------------------
 */
 
-METHOD buildInsertImageProductsPrestashop( hArticuloData, cCodWeb ) CLASS TComercio
+METHOD buildInsertImageProductsPrestashop( hArticuloData, idProductPrestashop ) CLASS TComercio
 
-   local cCommand          := ""
-   local nCodigoImagen     := 0
+   local cCommand             := ""
+   local idImagenPrestashop   := 0
    local oImagen
-   local nOrdAnt
-   local aImage
+   local hImage
+   local nImagePosition       := 1
 
-   ::nImagePosition        := 1
-
-   nOrdAnt                 := ::oArtImg:OrdSetFocus( "cImgArt" )
-
-   for each aImage in hGet( hArticuloData, "aImages" )
+   for each hImage in hGet( hArticuloData, "aImages" )
    
-      if ::oArtImg:Seek( hGet( aImage, "name" ) )
+      idImagenPrestashop      := ::insertImageProductPrestashop( hArticuloData, hImage, idProductPrestashop, nImagePosition )
 
-         nCodigoImagen     := ::InsertImageProductImage( cCodWeb, hGet( aImage, "lDefault" ) )
+      if idImagenPrestashop != 0
 
-         if nCodigoImagen != 0
+         ::insertImageProductPrestashopLang( hImage, idImagenPrestashop )
 
-            ::InsertImageProductImageLang( nCodigoImagen )
+         ::insertImageProductPrestashopShop( hArticuloData, hImage, idImagenPrestashop )
 
-            ::InsertImageProductImageShop( hArticuloData, nCodigoImagen, hGet( aImage, "lDefault" ) )
+         // Añadimos la imagen al array para subirla a prestashop--------------
 
-            // Añadimos la imagen al array para subirla a prestashop--------------
+         oImagen                       := SImagen()
+         oImagen:cNombreImagen         := hGet( hImage, "name" )
+         oImagen:nTipoImagen           := tipoProducto
+         oImagen:cCarpeta              := alltrim( str( idImagenPrestashop ) )
+         oImagen:cPrefijoNombre        := alltrim( str( idImagenPrestashop ) )
 
-            oImagen                       := SImagen()
-            oImagen:cNombreImagen         := alltrim( ::oArtImg:cImgArt )
-            oImagen:nTipoImagen           := tipoProducto
-            oImagen:cCarpeta              := alltrim( str( nCodigoImagen ) )
-            oImagen:cPrefijoNombre        := alltrim( str( nCodigoImagen ) )
+         ::addImages( oImagen )
 
-            ::addImages( oImagen )
+      end if 
 
-         end if 
-
-         ::nImagePosition++
-
-      end if
+      nImagePosition++
 
    next
-
-   ::oArtImg:OrdSetFocus( nOrdAnt )
 
 Return .t.
 
@@ -4051,6 +4035,7 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
    local oImagen
    local nPosition            := 1
    local nCodigoPropiedad     := 0
+   local nIdProductImage
    local aPropiedades1        := {}
    local aPropiedades2        := {}
    local aPropiedad1
@@ -4119,7 +4104,7 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                                     "id_attribute, " + ;
                                     "id_product_attribute ) " + ;
                                  "VALUES ( " + ;
-                                    "'" + alltrim( str( ::oTblPro:cCodWeb ) ) + "', " + ;   //id_attribute
+                                    "'" + alltrim( str( ::TPrestashopId:getValueAttribute( ::oArtDiv:cCodPr1 + ::oArtDiv:cValPr1, ::getCurrentWebName() ) ) ) + "', " + ;   //id_attribute
                                     "'" + alltrim( str( nCodigoPropiedad ) ) + "' )"         //id_product_attribute
 
                   if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
@@ -4200,12 +4185,14 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
 
                               if alltrim( ::oArtImg:cImgArt ) == alltrim( cImage )
 
-                                 cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
-                                                   "id_product_attribute, " + ;
-                                                   "id_image )" + ;
-                                                " VALUES " + ;
-                                                   "('" + alltrim( str( nCodigoPropiedad ) ) + "', " + ;    //id_product
-                                                   "'" + alltrim( str( ::oArtImg:cCodWeb ) ) + "' )"        //cover
+                                 nIdProductImage   := ::TPrestashopId:getValueImage( hGet( hArticuloData, "id" ) + str( ::oArtImg:nId, 10 ), ::getCurrentWebName() )
+
+                                 cCommand          := "INSERT INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
+                                                         "id_product_attribute, " + ;
+                                                         "id_image )" + ;
+                                                      "VALUES ( " + ;
+                                                         "'" + alltrim( str( nCodigoPropiedad ) ) + "', " + ;     // id_product_attribute
+                                                         "'" + alltrim( str( nIdProductImage ) ) + "' )"          // id_image
          
                                  if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
                                     ::writeText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
@@ -4270,7 +4257,7 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                                     "id_attribute, " + ;
                                     "id_product_attribute ) " + ;
                                  "VALUES (" + ;
-                                    "'" + alltrim( str( ::oTblPro:cCodWeb ) ) + "', " + ;  //id_attribute
+                                    "'" + alltrim( str( ::TPrestashopId:getValueAttribute( ::oArtDiv:cCodPr1 + ::oArtDiv:cValPr1, ::getCurrentWebName() ) ) ) + "', " + ;  //id_attribute
                                     "'" + alltrim( str( nCodigoPropiedad ) ) + "' )"        //id_product_attribute
 
                   if !TMSCommand():New( ::oCon ):ExecDirect( cCommand ) 
@@ -4291,7 +4278,7 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                                     "id_attribute, " + ;
                                     "id_product_attribute ) " + ;
                                  "VALUES (" + ;
-                                    "'" + alltrim( str( ::oTblPro:cCodWeb ) ) + "', " + ;   //id_attribute
+                                    "'" + alltrim( str( ::TPrestashopId:getValueAttribute( ::oArtDiv:cCodPr2 + ::oArtDiv:cValPr2, ::getCurrentWebName() ) ) ) + "', " + ;   //id_attribute
                                     "'" + alltrim( str( nCodigoPropiedad ) ) + "' )"         //id_product_attribute
 
                   if !TMSCommand():New( ::oCon ):ExecDirect( cCommand ) 
@@ -4379,13 +4366,15 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                         while ::oArtImg:cCodArt == hGet( hArticuloData, "id" ) .and. !::oArtImg:Eof()
 
                            if alltrim( ::oArtImg:cImgArt ) == alltrim( cImage )
+                              
+                              nIdProductImage   := ::TPrestashopId:getValueImage( hGet( hArticuloData, "id" ) + str( ::oArtImg:nId, 10 ), ::getCurrentWebName() )
 
-                              cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
-                                                "id_product_attribute, " + ;
-                                                "id_image ) " + ;
-                                             "VALUES (" + ;
-                                                "'" + alltrim( str( nCodigoPropiedad ) ) + "', " + ;    //id_product
-                                                "'" + alltrim( str( ::oArtImg:cCodWeb ) ) + "' )"        //cover
+                              cCommand          := "INSERT INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
+                                                      "id_product_attribute, " + ;
+                                                      "id_image ) " + ;
+                                                   "VALUES (" + ;
+                                                      "'" + alltrim( str( nCodigoPropiedad ) ) + "', " + ;     // id_product_attribute
+                                                      "'" + alltrim( str( nIdProductImage ) ) + "' )"          // id_image
 
                               if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
                                  ::writeText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
@@ -4830,9 +4819,7 @@ METHOD DelIdPropiedadesPrestashop() Class TComercio
 
    while !::oPro:Eof()
 
-      ::oPro:Load()
-      ::oPro:cCodWeb := 0
-      ::oPro:Save()
+      ::TPrestashopId:deleteValueAttributeGroup( ::oPro:cCodPro, ::getCurrentWebName() ) 
 
       ::writeText( 'Eliminando código web en la propiedad ' + alltrim( ::oPro:cDesPro ), 3  )
 
@@ -4851,9 +4838,7 @@ METHOD DelIdPropiedadesPrestashop() Class TComercio
 
    while !::oTblPro:Eof()
 
-      ::oTblPro:Load()
-      ::oTblPro:cCodWeb := 0
-      ::oTblPro:Save()
+      ::TPrestashopId:deleteValueAttribute( ::oTblPro:cCodPro + ::oTblPro:cCodTbl, ::getCurrentWebName() ) 
 
       ::writeText( 'Eliminando código web en la propiedad ' + alltrim( ::oTblPro:cDesTbl ), 3  )
 
@@ -4916,7 +4901,7 @@ Return .t.
 METHOD buildCleanPrestashop() CLASS TComercio
 
    ::writeText( "Limpiamos las referencias de las tablas de tipos de impuestos" )
-   ::buildCleanTable( ::oIva )
+   ::TPrestashopId:deleteDocumentValuesTax( ::getCurrentWebName() )
 
    ::writeText( "Limpiamos las referencias de las tablas de fabricantes" )
    ::buildCleanTable( ::oFab )

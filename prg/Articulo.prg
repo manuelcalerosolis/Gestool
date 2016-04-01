@@ -4549,13 +4549,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    end with
 
    with object ( oBrwImg:AddCol() )
-      :cHeader             := "cCodWeb"
-      :bEditValue          := {|| AllTrim( Str( ( dbfTmpImg )->cCodWeb ) ) }
-      :lHide               := .t.
-      :nWidth              := 50
-   end with
-
-   with object ( oBrwImg:AddCol() )
       :cHeader             := "Imagen"
       :bEditValue          := {|| AllTrim( ( dbfTmpImg )->cNbrArt ) + CRLF + AllTrim( ( dbfTmpImg )->cImgArt ) }
       :nWidth              := 400
@@ -4571,7 +4564,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       :nWidth              := 100
    end with
 
-
+   with object ( oBrwImg:AddCol() )
+      :cHeader             := "id"
+      :bEditValue          := {|| transform( ( dbfTmpImg )->id, "9999999999" ) }
+      :lHide               := .t.
+      :nWidth              := 50
+   end with
 
    if nMode != ZOOM_MODE
       oBrwImg:bLDblClick   := {|| WinEdtRec( oBrwImg, bEdtImg, dbfTmpImg, aTmp ) }
@@ -5626,6 +5624,7 @@ Return ( lErrors )
 Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpComanda1, oImpComanda2, aImpComanda, lActualizaWeb )
 
    local i
+   local nIdImagen         := 0
    local cCod
    local cWebShop
    local oError
@@ -5760,7 +5759,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
 
       ( dbfTmpImg )->( dbGoTop() )
 
-      while !( dbfTmpImg )->( Eof() )
+      while !( dbfTmpImg )->( eof() )
 
          if ( dbfTmpImg )->lDefImg
             lDefault := .t.
@@ -5909,10 +5908,13 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
          ( dbfTmpOfe )->( dbSkip() )
       end while
 
+      // pasa las imagenes a definitivo----------------------------------------
+
       ( dbfTmpImg )->( OrdSetFocus( 0 ) )
       ( dbfTmpImg )->( dbGoTop() )
       while !( dbfTmpImg )->( eof() )
-         ( dbfTmpImg )->cCodArt := cCod
+         ( dbfTmpImg )->cCodArt  := cCod
+         ( dbfTmpImg )->nId      := ++nIdImagen
          dbPass( dbfTmpImg, dbfImg, .t. )
          ( dbfTmpImg )->( dbSkip() )
       end while
@@ -11999,6 +12001,7 @@ function SynArt( cPath )
    local oError
    local cCod           := ""
    local nCosto         := 0
+   local idImagen
    local nOrdAnt
    local dbfArt
    local dbfFamilia
@@ -12045,11 +12048,9 @@ function SynArt( cPath )
       while !( dbfArt )->( eof() )
 
          if !( dbfArt )->lKitArt
-
             while ( dbfArtKit )->( dbSeek( ( dbfArt )->Codigo ) )
                ( dbfArtKit )->( dbDelete() )
             end while
-
          end if
 
          nOrdAnt := ( dbfArtPrv )->( OrdSetFocus( "lDefPrv" ) )
@@ -12215,10 +12216,10 @@ function SynArt( cPath )
          Imagenes--------------------------------------------------------------
          */
 
-         if !Empty( ( dbfArt )->cImagenWeb )
+         if !empty( ( dbfArt )->cImagenWeb )
 
             ( dbfImg )->( __dbLocate( { || Rtrim( ( dbfImg )->cImgArt ) == Rtrim( ( dbfArt )->cImagenWeb ) } ) )
-            if !( dbfImg )->( Found() )
+            if !( dbfImg )->( found() )
 
                ( dbfImg )->( dbAppend() )
                ( dbfImg )->cCodArt   := ( dbfArt )->Codigo
@@ -12248,6 +12249,22 @@ function SynArt( cPath )
          if ( dbfArt )->nTarWeb   < 1
             ( dbfArt )->nTarWeb   := 1
          end if
+
+         // identificadores para las imagenes-----------------------------------
+
+         if ( dbfImg )->( dbSeek( ( dbfArt )->Codigo ) ) .and. empty( ( dbfImg )->nId )
+
+            idImagen             := 0
+         
+            while ( dbfImg )->cCodArt == ( dbfArt )->Codigo .and. !( dbfImg )->( eof() )
+
+               ( dbfImg )->nId   := ++idImagen
+            
+               ( dbfImg )->( dbSkip() )
+            
+            end while
+
+         end if 
 
          ( dbfArt )->( dbSkip() )
 
@@ -15446,12 +15463,13 @@ Function aItmImg()
 
    local aBase := {}
 
-   aAdd( aBase, { "cCodArt",   "C",  18, 0, "Código del artículo",                     "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cImgArt",   "C", 230, 0, "Imagen del artículo",                     "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cNbrArt",   "C", 230, 0, "Nombre de la imagen",                     "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cHtmArt",   "M",  10, 0, "HTML de la imagen",                       "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodWeb",   "N",  11, 0, "Código de artículo para la web",          "",                  "", "( cDbfArt )", 0 } )
-   aAdd( aBase, { "lDefImg",   "L",   1, 0, "Lógico para imágen por defecto",          "",                  "", "( cDbfArt )", .f. } )
+   aAdd( aBase, { "cCodArt",  "C",  18, 0, "Código del artículo",                     "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nId",      "N",  10, 0, "Identificador de la imagen",              "",                  "", "( cDbfArt )", 0 } )
+   aAdd( aBase, { "cImgArt",  "C", 230, 0, "Imagen del artículo",                     "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cNbrArt",  "C", 230, 0, "Nombre de la imagen",                     "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cHtmArt",  "M",  10, 0, "HTML de la imagen",                       "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodWeb",  "N",  11, 0, "Código de artículo para la web",          "",                  "", "( cDbfArt )", 0 } )
+   aAdd( aBase, { "lDefImg",  "L",   1, 0, "Lógico para imágen por defecto",          "",                  "", "( cDbfArt )", .f. } )
 
 Return ( aBase )
 

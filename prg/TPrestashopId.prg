@@ -19,6 +19,7 @@ CLASS TPrestaShopId FROM TMant
    METHOD setValue( cTipoDocumento, cClave, cWeb, idWeb )
    METHOD getValue( cTipoDocumento, cClave, cWeb )
    METHOD deleteValue( cTipoDocumento, cClave, cWeb )
+   METHOD deleteDocumentValues( cTipoDocumento, cWeb )
 
    METHOD setValueArticulos( cClave, cWeb, idWeb )       INLINE ::setValue( "01", cClave, cWeb, idWeb )
    METHOD getValueArticulos( cClave, cWeb )              INLINE ::getValue( "01", cClave, cWeb )
@@ -29,6 +30,7 @@ CLASS TPrestaShopId FROM TMant
 
    METHOD setValueTax( cClave, cWeb, idWeb )             INLINE ::setValue( "03", cClave, cWeb, idWeb )
    METHOD getValueTax( cClave, cWeb )                    INLINE ::getValue( "03", cClave, cWeb )
+   METHOD deleteDocumentValuesTax( cWeb )                INLINE ::deleteDocumentValues( "03", cWeb )
 
    METHOD setValueTaxRuleGroup( cClave, cWeb, idWeb )    INLINE ::setValue( "04", cClave, cWeb, idWeb )
    METHOD getValueTaxRuleGroup( cClave, cWeb )           INLINE ::getValue( "04", cClave, cWeb )
@@ -41,13 +43,19 @@ CLASS TPrestaShopId FROM TMant
 
    METHOD setValueAttributeGroup( cClave, cWeb, idWeb )  INLINE ::setValue( "07", cClave, cWeb, idWeb )
    METHOD getValueAttributeGroup( cClave, cWeb )         INLINE ::getValue( "07", cClave, cWeb )
+   METHOD deleteValueAttributeGroup( cClave, cWeb )      INLINE ::deleteValue( "07", cClave, cWeb )
 
    METHOD setValueAttribute( cClave, cWeb, idWeb )       INLINE ::setValue( "08", cClave, cWeb, idWeb )
    METHOD getValueAttribute( cClave, cWeb )              INLINE ::getValue( "08", cClave, cWeb )
+   METHOD deleteValueAttribute( cClave, cWeb )           INLINE ::deleteValue( "08", cClave, cWeb )
 
    METHOD setValueProduct( cClave, cWeb, idWeb )         INLINE ::setValue( "09", cClave, cWeb, idWeb )
    METHOD getValueProduct( cClave, cWeb )                INLINE ::getValue( "09", cClave, cWeb )
    METHOD deleteValueProduct( cClave, cWeb )             INLINE ::deleteValue( "09", cClave, cWeb )
+
+   METHOD setValueImage( cClave, cWeb, idWeb )           INLINE ::setValue( "10", cClave, cWeb, idWeb )
+   METHOD getValueImage( cClave, cWeb )                  INLINE ::getValue( "10", cClave, cWeb )
+   METHOD deleteValueImage( cClave, cWeb )               INLINE ::deleteValue( "10", cClave, cWeb )
 
    METHOD isValidParameters( cTipoDocumento, cClave, cWeb, idWeb ) 
    METHOD isSeekValues( cTipoDocumento, cClave, cWeb )
@@ -81,9 +89,10 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "cWeb"          TYPE "C" LEN  80  DEC 0 COMMENT "Web de Prestashop"   OF ::oDbf
       FIELD NAME "idWeb"         TYPE "N" LEN  11  DEC 0 COMMENT "Id en Prestashop"    OF ::oDbf
 
-      INDEX TO "PrestaId.Cdx" TAG "cDocumento"  ON "cDocumento"                        COMMENT "Documento"             NODELETED OF ::oDbf
-      INDEX TO "PrestaId.Cdx" TAG "cClave"      ON "cDocumento + cClave"               COMMENT "Documento clave"       NODELETED OF ::oDbf
-      INDEX TO "PrestaId.Cdx" TAG "cWeb"        ON "cDocumento + cClave + cWeb"        COMMENT "Documento clave web"   NODELETED OF ::oDbf
+      INDEX TO "PrestaId.Cdx" TAG "cDocumento"     ON "cDocumento"                        COMMENT "Documento"              NODELETED OF ::oDbf
+      INDEX TO "PrestaId.Cdx" TAG "cClave"         ON "cDocumento + cClave"               COMMENT "Documento clave"        NODELETED OF ::oDbf
+      INDEX TO "PrestaId.Cdx" TAG "cDocumentoWeb"  ON "cDocumento + cWeb"                 COMMENT "Documento web"          NODELETED OF ::oDbf
+      INDEX TO "PrestaId.Cdx" TAG "cWeb"           ON "cDocumento + cClave + cWeb"        COMMENT "Documento clave web"    NODELETED OF ::oDbf
 
    END DATABASE ::oDbf
 
@@ -137,6 +146,16 @@ METHOD deleteValue( cTipoDocumento, cClave, cWeb )
    if ::isSeekValues( cTipoDocumento, cClave, cWeb )
       ::oDbf:Delete()
    end if 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteDocumentValues( cTipoDocumento, cWeb )
+
+   while ::oDbf:seekInOrd( cTipoDocumento + cWeb, "cDocumentoWeb" )
+      ::oDbf:dbdelete()
+   end while
 
 RETURN ( .t. )
 
