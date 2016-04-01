@@ -4904,16 +4904,16 @@ METHOD buildCleanPrestashop() CLASS TComercio
    ::TPrestashopId:deleteDocumentValuesTax( ::getCurrentWebName() )
 
    ::writeText( "Limpiamos las referencias de las tablas de fabricantes" )
-   ::buildCleanTable( ::oFab )
+   ::TPrestashopId:deleteDocumentValuesManufacturer( ::getCurrentWebName() )
 
    ::writeText( "Limpiamos las referencias de las tablas de familias" )
-   ::buildCleanTable( ::oFam )
+   ::TPrestashopId:deleteDocumentValuesFamilias( ::getCurrentWebName() )
 
    ::writeText( "Limpiamos las referencias de las tablas de propiedades" )
-   ::buildCleanTable( ::oPro )
+   ::TPrestashopId:deleteDocumentValuesCategory( ::getCurrentWebName() )
 
    ::writeText( "Limpiamos las referencias de las tablas de artículos" )
-   ::buildCleanTable( ::oArt )
+   ::TPrestashopId:deleteDocumentValuesArticulos( ::getCurrentWebName() )
 
 Return ( Self )
 

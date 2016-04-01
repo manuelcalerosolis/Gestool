@@ -23,10 +23,12 @@ CLASS TPrestaShopId FROM TMant
 
    METHOD setValueArticulos( cClave, cWeb, idWeb )       INLINE ::setValue( "01", cClave, cWeb, idWeb )
    METHOD getValueArticulos( cClave, cWeb )              INLINE ::getValue( "01", cClave, cWeb )
+   METHOD deleteDocumentValuesArticulos( cWeb )          INLINE ::deleteDocumentValues( "01", cWeb )
 
    METHOD setValueFamilias( cClave, cWeb, idWeb )        INLINE ::setValue( "02", cClave, cWeb, idWeb )
    METHOD getValueFamilias( cClave, cWeb )               INLINE ::getValue( "02", cClave, cWeb )
    METHOD deleteValueFamilias( cClave, cWeb )            INLINE ::deleteValue( "02", cClave, cWeb )
+   METHOD deleteDocumentValuesFamilias( cWeb )           INLINE ::deleteDocumentValues( "02", cWeb )
 
    METHOD setValueTax( cClave, cWeb, idWeb )             INLINE ::setValue( "03", cClave, cWeb, idWeb )
    METHOD getValueTax( cClave, cWeb )                    INLINE ::getValue( "03", cClave, cWeb )
@@ -37,9 +39,11 @@ CLASS TPrestaShopId FROM TMant
 
    METHOD setValueManufacturer( cClave, cWeb, idWeb )    INLINE ::setValue( "05", cClave, cWeb, idWeb )
    METHOD getValueManufacturer( cClave, cWeb )           INLINE ::getValue( "05", cClave, cWeb )
-
+   METHOD deleteDocumentValuesManufacturer( cWeb )       INLINE ::deleteDocumentValues( "05", cWeb )
+  
    METHOD setValueCategory( cClave, cWeb, idWeb )        INLINE ::setValue( "06", cClave, cWeb, idWeb )
    METHOD getValueCategory( cClave, cWeb )               INLINE ::getValue( "06", cClave, cWeb )
+   METHOD deleteDocumentValuesCategory( cWeb )           INLINE ::deleteDocumentValues( "06", cWeb )
 
    METHOD setValueAttributeGroup( cClave, cWeb, idWeb )  INLINE ::setValue( "07", cClave, cWeb, idWeb )
    METHOD getValueAttributeGroup( cClave, cWeb )         INLINE ::getValue( "07", cClave, cWeb )
