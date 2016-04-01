@@ -67,7 +67,7 @@ METHOD Say( cMsg, lAuto ) CLASS TMSError
     DEFAULT lAuto := .f. TYPE "L"
 
     if !lAuto .or. ( lAuto .and. ::lAutoError )
-        msgWait( cMsg, "Eagle1 - Atención", 1 )
+        msgStop( cMsg, "Eagle1 - Atención", 1 )
     endif
 
 return( Self )
@@ -94,7 +94,7 @@ METHOD Show( lAllways, cDefault ) CLASS TMSError
         endif
 
         if ( lAllways .or. lDisp )
-            msgWait( cError, "Eagle1 Class - ERROR " + StrNum( ::GetErrNo() ), 1 )
+            msgStop( cError, "Eagle1 Class - ERROR " + StrNum( ::GetErrNo() ), 1 )
         endif
     endif
 

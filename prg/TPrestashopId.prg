@@ -17,18 +17,13 @@ CLASS TPrestaShopId FROM TMant
    METHOD DefineFiles()
 
    METHOD setValue( cTipoDocumento, cClave, cWeb, idWeb )
-   METHOD getValue( cTipoDocumento, cClave, cWeb )
+   METHOD getValue( cTipoDocumento, cClave, cWeb, defaultValue )
    METHOD deleteValue( cTipoDocumento, cClave, cWeb )
    METHOD deleteDocumentValues( cTipoDocumento, cWeb )
 
-   METHOD setValueArticulos( cClave, cWeb, idWeb )       INLINE ::setValue( "01", cClave, cWeb, idWeb )
-   METHOD getValueArticulos( cClave, cWeb )              INLINE ::getValue( "01", cClave, cWeb )
-   METHOD deleteDocumentValuesArticulos( cWeb )          INLINE ::deleteDocumentValues( "01", cWeb )
-
-   METHOD setValueFamilias( cClave, cWeb, idWeb )        INLINE ::setValue( "02", cClave, cWeb, idWeb )
-   METHOD getValueFamilias( cClave, cWeb )               INLINE ::getValue( "02", cClave, cWeb )
-   METHOD deleteValueFamilias( cClave, cWeb )            INLINE ::deleteValue( "02", cClave, cWeb )
-   METHOD deleteDocumentValuesFamilias( cWeb )           INLINE ::deleteDocumentValues( "02", cWeb )
+   METHOD setValueProduct( cClave, cWeb, idWeb )         INLINE ::setValue( "01", cClave, cWeb, idWeb )
+   METHOD getValueProduct( cClave, cWeb )                INLINE ::getValue( "01", cClave, cWeb )
+   METHOD deleteDocumentValuesProduct( cWeb )            INLINE ::deleteDocumentValues( "01", cWeb )
 
    METHOD setValueTax( cClave, cWeb, idWeb )             INLINE ::setValue( "03", cClave, cWeb, idWeb )
    METHOD getValueTax( cClave, cWeb )                    INLINE ::getValue( "03", cClave, cWeb )
@@ -36,6 +31,7 @@ CLASS TPrestaShopId FROM TMant
 
    METHOD setValueTaxRuleGroup( cClave, cWeb, idWeb )    INLINE ::setValue( "04", cClave, cWeb, idWeb )
    METHOD getValueTaxRuleGroup( cClave, cWeb )           INLINE ::getValue( "04", cClave, cWeb )
+   METHOD deleteDocumentValuesTaxRuleGroup( cWeb )       INLINE ::deleteDocumentValues( "04", cWeb )
 
    METHOD setValueManufacturer( cClave, cWeb, idWeb )    INLINE ::setValue( "05", cClave, cWeb, idWeb )
    METHOD getValueManufacturer( cClave, cWeb )           INLINE ::getValue( "05", cClave, cWeb )
@@ -43,23 +39,23 @@ CLASS TPrestaShopId FROM TMant
   
    METHOD setValueCategory( cClave, cWeb, idWeb )        INLINE ::setValue( "06", cClave, cWeb, idWeb )
    METHOD getValueCategory( cClave, cWeb )               INLINE ::getValue( "06", cClave, cWeb )
+   METHOD deleteValueCategory( cClave, cWeb )            INLINE ::deleteValue( "06", cClave, cWeb )
    METHOD deleteDocumentValuesCategory( cWeb )           INLINE ::deleteDocumentValues( "06", cWeb )
 
    METHOD setValueAttributeGroup( cClave, cWeb, idWeb )  INLINE ::setValue( "07", cClave, cWeb, idWeb )
    METHOD getValueAttributeGroup( cClave, cWeb )         INLINE ::getValue( "07", cClave, cWeb )
    METHOD deleteValueAttributeGroup( cClave, cWeb )      INLINE ::deleteValue( "07", cClave, cWeb )
+   METHOD deleteDocumentValuesAttributeGroup( cWeb )     INLINE ::deleteDocumentValues( "07", cWeb )
 
    METHOD setValueAttribute( cClave, cWeb, idWeb )       INLINE ::setValue( "08", cClave, cWeb, idWeb )
    METHOD getValueAttribute( cClave, cWeb )              INLINE ::getValue( "08", cClave, cWeb )
    METHOD deleteValueAttribute( cClave, cWeb )           INLINE ::deleteValue( "08", cClave, cWeb )
-
-   METHOD setValueProduct( cClave, cWeb, idWeb )         INLINE ::setValue( "09", cClave, cWeb, idWeb )
-   METHOD getValueProduct( cClave, cWeb )                INLINE ::getValue( "09", cClave, cWeb )
-   METHOD deleteValueProduct( cClave, cWeb )             INLINE ::deleteValue( "09", cClave, cWeb )
+   METHOD deleteDocumentValuesAttribute( cWeb )          INLINE ::deleteDocumentValues( "08", cWeb )
 
    METHOD setValueImage( cClave, cWeb, idWeb )           INLINE ::setValue( "10", cClave, cWeb, idWeb )
    METHOD getValueImage( cClave, cWeb )                  INLINE ::getValue( "10", cClave, cWeb )
    METHOD deleteValueImage( cClave, cWeb )               INLINE ::deleteValue( "10", cClave, cWeb )
+   METHOD deleteDocumentValuesImage( cWeb )              INLINE ::deleteDocumentValues( "10", cWeb )
 
    METHOD isValidParameters( cTipoDocumento, cClave, cWeb, idWeb ) 
    METHOD isSeekValues( cTipoDocumento, cClave, cWeb )
@@ -95,7 +91,7 @@ METHOD DefineFiles( cPath, cDriver )
 
       INDEX TO "PrestaId.Cdx" TAG "cDocumento"     ON "cDocumento"                        COMMENT "Documento"              NODELETED OF ::oDbf
       INDEX TO "PrestaId.Cdx" TAG "cClave"         ON "cDocumento + cClave"               COMMENT "Documento clave"        NODELETED OF ::oDbf
-      INDEX TO "PrestaId.Cdx" TAG "cDocumentoWeb"  ON "cDocumento + cWeb"                 COMMENT "Documento web"          NODELETED OF ::oDbf
+      INDEX TO "PrestaId.Cdx" TAG "cDocuWeb"       ON "cDocumento + cWeb"                 COMMENT "Documento web"          NODELETED OF ::oDbf
       INDEX TO "PrestaId.Cdx" TAG "cWeb"           ON "cDocumento + cClave + cWeb"        COMMENT "Documento clave web"    NODELETED OF ::oDbf
 
    END DATABASE ::oDbf
@@ -125,12 +121,16 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD getValue( cTipoDocumento, cClave, cWeb )
+METHOD getValue( cTipoDocumento, cClave, cWeb, defaultValue )
 
    local idWeb    := 0
 
+   if !empty(defaultValue)
+      idWeb       := defaultValue
+   end if 
+
    if !::isValidParameters( cTipoDocumento, cClave, cWeb )
-      RETURN ( 0 )
+      RETURN ( idWeb )
    end if 
 
    if ::isSeekValues( cTipoDocumento, cClave, cWeb )
@@ -157,8 +157,8 @@ RETURN ( .t. )
 
 METHOD deleteDocumentValues( cTipoDocumento, cWeb )
 
-   while ::oDbf:seekInOrd( cTipoDocumento + cWeb, "cDocumentoWeb" )
-      ::oDbf:dbdelete()
+   while ::oDbf:seekInOrd( cTipoDocumento + cWeb, "cDocuWeb" )
+      ::oDbf:Delete()
    end while
 
 RETURN ( .t. )
@@ -168,22 +168,22 @@ RETURN ( .t. )
 METHOD isValidParameters( cTipoDocumento, cClave, cWeb, idWeb )
 
    if empty( cTipoDocumento )
-      msgStop( "El tipo de documento " + cTipoDocumento + " no existe" )
+      msgStop( "El tipo de documento " + cTipoDocumento + " no existe", "Sistema de identificadores de Prestashop" )
       RETURN ( .f. )
    end if 
 
-   if empty( cClave )
-      msgStop( "El campo clave no puede estar vacio" )
+   if isNil( cClave )
+      msgStop( "El campo clave no puede estar vacio", "Sistema de identificadores de Prestashop" )
       RETURN ( .f. )
    end if 
 
    if empty( cWeb )
-      msgStop( "El nombre de la tienda en prestashop no puede estar vacio" )
+      msgStop( "El nombre de la tienda en prestashop no puede estar vacio", "Sistema de identificadores de Prestashop" )
       RETURN ( .f. )
    end if 
 
    if !isNil( idWeb ) .and. empty( idWeb )
-      msgStop( "El identificador de la tienda en prestashop no puede estar vacio" )
+      msgStop( "El identificador de la tienda en prestashop no puede estar vacio", "Sistema de identificadores de Prestashop" )
       RETURN ( .f. )
    end if 
 

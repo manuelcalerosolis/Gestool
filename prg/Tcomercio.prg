@@ -401,7 +401,7 @@ CLASS TComercio
    METHOD buildInsertCategoryProduct( idCategory, idProduct )
 
    METHOD buildArticuloPrestashop( id )
-   METHOD buildActualizaCaterogiaPadrePrestashop( hFamiliaData )
+   METHOD buildActualizaCatergoriaPadrePrestashop( hFamiliaData )
    METHOD buildInsertImageProductsPrestashop( hArticuloData )
    METHOD buildRecalculaPosicionesCategoriasPrestashop()
    METHOD buildInsertOfertasPrestashop( hArticuloData, nCodigoWeb )
@@ -433,8 +433,6 @@ CLASS TComercio
    METHOD buildEliminaTablas()
 
    METHOD buildCleanPrestashop()
-
-   METHOD buildCleanTable( oTable )
 
    METHOD buildTextOk( cValue, cTable )      INLINE ( ::writeText( "Insertado correctamente " + cValue + ", en la tabla " + cTable, 3 ) )
    METHOD buildTextError( cValue, cTable )   INLINE ( ::writeText( "Error insertado " + cValue + ", en la tabla " + cTable, 3 ) )
@@ -966,7 +964,7 @@ METHOD DelIdFamiliasPrestashop() Class TComercio
 
    while !::oFam:Eof()
 
-      ::TPrestashopId:deleteValueFamilias( ::oFam:cCodFam, ::getCurrentWebName() )
+      ::TPrestashopId:deleteValueCategory( ::oFam:cCodFam, ::getCurrentWebName() )
 
       ::writeText( 'Eliminando código web en la familia ' + alltrim( ::oFam:cNomFam ), 3  )
 
@@ -2692,7 +2690,7 @@ Return ( Self )
 
 METHOD buildFamiliaPrestashop( id ) CLASS TComercio
 
-   if aScan( ::aFamiliaData, {|h| hGet( h, "id" ) == id } ) == 0
+   if ascan( ::aFamiliaData, {|h| hGet( h, "id" ) == id } ) != 0
       Return .f.
    end if
 
@@ -3048,15 +3046,13 @@ METHOD buildSubirInformacion() CLASS TComercio
 
    next 
 
-   /*
-   Actualizamos padres de las familias-----------------------------------
-   */
+   // Actualizamos padres de las familias-----------------------------------
 
    ::meterProcesoSetTotal( len(::aFamiliaData) )
 
    for each hFamiliaData in ::aFamiliaData
 
-      ::buildActualizaCaterogiaPadrePrestashop( hFamiliaData )
+      ::buildActualizaCatergoriaPadrePrestashop( hFamiliaData )
 
       ::meterProcesoText( "Relacionando categorias " + alltrim(str(hb_enumindex())) + " de " + alltrim(str(len(::aFamiliaData))) )
 
@@ -3272,8 +3268,8 @@ METHOD buildInsertIvaPrestashop( hTax ) CLASS TComercio
                   "id_tax_rules_group, " + ;
                   "id_country, " + ;
                   "id_tax )" + ;
-               " VALUES " + ;
-                  "('" + str( nCodigoGrupoWeb ) + "', " + ;  // id_tax_rules_group
+               " VALUES ( " + ;
+                  "'" + str( nCodigoGrupoWeb ) + "', " + ;  // id_tax_rules_group
                   "'6', " + ;                                // id_country - 6 es el valor de España
                   "'" + str( nCodigoWeb ) + "' )"            // id_tax
 
@@ -3386,9 +3382,9 @@ METHOD buildInsertCategoriesPrestashop( hFamiliaData ) CLASS TComercio
                   "active, " + ;
                   "date_add,  " + ;
                   "date_upd, " + ;
-                  "position ( " + ;
-               "VALUES ( '" + ;
-                  str( nParent ) + "', " + ;
+                  "position ) " + ;
+               "VALUES ( " + ;
+                  "'" + str( nParent ) + "', " + ;
                   "'2', " + ;
                   "'0', " + ;
                   "'0', " + ;
@@ -3426,8 +3422,8 @@ METHOD buildInsertCategoriesPrestashop( hFamiliaData ) CLASS TComercio
                   "link_rewrite, " + ;
                   "meta_title, " + ;
                   "meta_keywords, " + ;
-                  "meta_description" + ;
-                  " ) VALUES ( '" + ;
+                  "meta_description ) " + ;
+               "VALUES ( '" + ;
                   str( nCodigoWeb ) + "', '" +;
                   str( ::nLanguage ) + "', '" + ;
                   hGet( hFamiliaData, "name" ) + "', '" + ;
@@ -3492,7 +3488,7 @@ return nCodigoWeb
 
 //---------------------------------------------------------------------------//
 
-METHOD buildActualizaCaterogiaPadrePrestashop( hFamiliaData ) CLASS TComercio
+METHOD buildActualizaCatergoriaPadrePrestashop( hFamiliaData ) CLASS TComercio
 
    local lReturn     := .f.
    local cCommand    := ""
@@ -3502,16 +3498,13 @@ METHOD buildActualizaCaterogiaPadrePrestashop( hFamiliaData ) CLASS TComercio
    Actualizamos las familias padre en prestashop-------------------------------
    */
 
-   nParent           := ::TPrestashopId:getValueFamilias( hGet( hFamiliaData, "id_parent" ), ::getCurrentWebName() )
-   if nParent == 0
-      nParent        := 2
-   end if
+   nParent           := ::TPrestashopId:getValueCategory( hGet( hFamiliaData, "id_parent" ), ::getCurrentWebName(), 2 )
 
    if ::oFam:SeekInOrd( hGet( hFamiliaData, "id" ), "cCodFam" )
 
-      cCommand       := "UPDATE " + ::cPrefixTable( "category" ) + " SET " + ;
-                           "id_parent = '" + alltrim( str( nParent ) ) + "' " +;
-                           "WHERE id_category = " + alltrim( str( ::TPrestashopId:getValueFamilias( hGet( hFamiliaData, "id" ), ::getCurrentWebName() ) ) )
+      cCommand       := "UPDATE " + ::cPrefixTable( "category" ) + " " + ;
+                           "SET id_parent = '" + alltrim( str( nParent ) ) + "' " + ;
+                           "WHERE id_category = " + alltrim( str( ::TPrestashopId:getValueCategory( hGet( hFamiliaData, "id" ), ::getCurrentWebName() ) ) )
 
       ::writeText( cCommand )
 
@@ -3613,7 +3606,6 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
    local nParent              
    local cCommand             := ""
    local nTotStock
-   local nOrdArtDiv   
    local idTaxRuleGroup        
 
    /*
@@ -3623,8 +3615,7 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
    */
 
    cCodigoFamilia             := hGet( hArticuloData, "id_category_default" )
-   nParent                    := ::buildGetParentCategories( cCodigoFamilia )
-   nOrdArtDiv                 := ::oArtDiv:OrdSetFocus( "cCodArt" )
+   nParent                    := ::TPrestashopId:getValueCategory( cCodigoFamilia, ::getCurrentWebName(), 2 )
    idTaxRuleGroup             := ::TPrestashopId:getValueTaxRuleGroup( hGet( hArticuloData, "id_tax_rules_group" ), ::getCurrentWebName() )
 
    ::writeText( "Añadiendo artículo: " + alltrim( ::oArt:Nombre ) )
@@ -3632,8 +3623,6 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
    /*
    Vemos el precio del artículo------------------------------------------------
    */
-
-   ::oArtDiv:OrdSetFocus( nOrdArtDiv )
 
    cCommand    := "INSERT INTO " + ::cPrefixTable( "product" ) + " ( " + ;
                      "id_manufacturer, " + ;
@@ -3649,7 +3638,7 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
                      "date_add, " + ;
                      "date_upd ) " + ;
                   "VALUES ( " + ;
-                     "'" + alltrim( str( oRetFld( hGet( hArticuloData, "id_manufacturer" ), ::oFab, "cCodWeb", "cCodFab" ) ) ) + "', " + ; //id_manufacturer
+                     "'" + alltrim( str( ::TPrestashopId:getValueManufacturer( hGet( hArticuloData, "id_manufacturer" ), ::getCurrentWebName() ) ) ) + "', " + ; //id_manufacturer
                      "'" + alltrim( str( idTaxRuleGroup ) ) + "', " + ;                                           //id_tax_rules_group  - tipo IVA
                      "'" + alltrim( str( nParent ) ) + "', " + ;                                                  //id_category_default
                      "'1', " + ;                                                                                  //id_shop_default
@@ -3682,8 +3671,8 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
    Insertamos un artículo nuevo en la tabla category_shop-------------------
    */
 
-   cCommand    := "INSERT INTO " + ::cPrefixTable( "product_shop" ) + ;
-                     " ( id_product, " + ;
+   cCommand    := "INSERT INTO " + ::cPrefixTable( "product_shop" ) + " ( " +;
+                     "id_product, " + ;
                      "id_shop, " + ;
                      "id_category_default, " + ;
                      "id_tax_rules_group, " + ;
@@ -3692,8 +3681,8 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
                      "active, " + ;
                      "date_add, " + ;
                      "date_upd )" + ;
-                  " VALUES " + ;
-                     "('" + str( nCodigoWeb ) + "', " + ;
+                  " VALUES ( " + ;
+                     "'" + str( nCodigoWeb ) + "', " + ;
                      "'1', " + ;
                      "'" + alltrim( str( nParent ) ) + "', " + ;
                      "'" + alltrim( str( idTaxRuleGroup ) ) + "', " + ;
@@ -3781,7 +3770,7 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
 // Guardo referencia a la web-----------------------------------------------
 
    if !empty( nCodigoWeb )
-      ::TPrestashopId:setValueCategory( hGet( hArticuloData, "id" ), ::getCurrentWebName(), nCodigoWeb )
+      ::TPrestashopId:setValueProduct( hGet( hArticuloData, "id" ), ::getCurrentWebName(), nCodigoWeb )
    end if 
 
 Return nCodigoweb
@@ -3974,7 +3963,7 @@ METHOD buildInsertLineasPropiedadesPrestashop( hPropiedadesLinData, nPosition ) 
 
    local nCodigoPropiedad  := 0
    local cCommand          := ""
-   local nCodigoGrupo      := oRetFld( hGet( hPropiedadesLinData, "idparent" ), ::oPro, "cCodWeb" )
+   local nCodigoGrupo      := ::TPrestashopId:getValueAttribute( hGet( hPropiedadesLinData, "idparent" ), ::getCurrentWebName() )
 
    /*
    Introducimos las líneas-----------------------------------------------------
@@ -4796,12 +4785,6 @@ METHOD buildEliminaTablas() CLASS TComercio
 
    ::buildCleanPrestashop()
 
-   /*
-   limpiamos refencias de imagenes a la web------------------------------------
-   */
-
-   ::lLimpiaRefImgWeb()
-
 Return ( self )
 
 //---------------------------------------------------------------------------//
@@ -4902,35 +4885,23 @@ METHOD buildCleanPrestashop() CLASS TComercio
 
    ::writeText( "Limpiamos las referencias de las tablas de tipos de impuestos" )
    ::TPrestashopId:deleteDocumentValuesTax( ::getCurrentWebName() )
+   ::TPrestashopId:deleteDocumentValuesTaxRuleGroup( ::getCurrentWebName() )
 
    ::writeText( "Limpiamos las referencias de las tablas de fabricantes" )
    ::TPrestashopId:deleteDocumentValuesManufacturer( ::getCurrentWebName() )
 
    ::writeText( "Limpiamos las referencias de las tablas de familias" )
-   ::TPrestashopId:deleteDocumentValuesFamilias( ::getCurrentWebName() )
-
-   ::writeText( "Limpiamos las referencias de las tablas de propiedades" )
    ::TPrestashopId:deleteDocumentValuesCategory( ::getCurrentWebName() )
 
+   ::writeText( "Limpiamos las referencias de las tablas de propiedades" )
+   ::TPrestashopId:deleteDocumentValuesAttribute( ::getCurrentWebName() )
+   ::TPrestashopId:deleteDocumentValuesAttributeGroup( ::getCurrentWebName() )
+
    ::writeText( "Limpiamos las referencias de las tablas de artículos" )
-   ::TPrestashopId:deleteDocumentValuesArticulos( ::getCurrentWebName() )
+   ::TPrestashopId:deleteDocumentValuesProduct( ::getCurrentWebName() )
 
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD buildCleanTable( oTable ) CLASS TComercio
-
-   oTable:GoTop()
-   while !oTable:Eof()
-
-      if oTable:FieldGetbyName( "cCodWeb" ) != 0
-         oTable:fieldPutByName( "cCodWeb", 0 )
-      endif
-
-      oTable:Skip()
-
-   end while
+   ::writeText( "Limpiamos las referencias de las imagenes" )
+   ::TPrestashopId:deleteDocumentValuesImage( ::getCurrentWebName() )
 
 Return ( Self )
 
@@ -4940,15 +4911,11 @@ METHOD buildGetParentCategories( cCodFam ) CLASS TComercio
 
    local idCategories      := 2
 
-   if !empty( cCodFam )
-      if ::oFam:Seek( cCodFam )
-         if ::oFam:lPubInt
-            idCategories   := ::oFam:cCodWeb
-         end if
-      end if
-   end if   
+   if ::oFam:Seek( cCodFam ) .and. ::oFam:lPubInt
+      idCategories         := ::TPrestashopId:getValueCategory( cCodFam, ::getCurrentWebName() )  
+   end if
 
-Return( idCategories )
+Return ( idCategories )
 
 //---------------------------------------------------------------------------//
 
@@ -5616,7 +5583,7 @@ METHOD payOrder( cPrestashopModule ) CLASS TComercio
    local nOrdenAnt   := ::oFPago:ordSetFocus( "cCodWeb" ) 
 
    if ( ::oFPago:Seek( padr( cPrestashopModule, 200 ) ) ) .and. ( ::oFPago:nCobRec <= 1 )
-         lPayOrder      := .t.
+         lPayOrder   := .t.
    endif
 
    ::oFPago:ordSetFocus( nOrdenAnt )
