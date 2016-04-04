@@ -2947,10 +2947,11 @@ METHOD buildPropiedadesPrestashop( id ) CLASS TComercio
 
                if aScan( ::aPropiedadesLineasData, {|h| hGet( h, "id" ) == ::oTblPro:cCodTbl .and. hGet( h, "idparent" ) == ::oTblPro:cCodPro } ) == 0
       
-                  aAdd( ::aPropiedadesLineasData,  {  "id"          => ::oTblPro:cCodTbl,;
-                                                      "idparent"    => ::oTblPro:cCodPro,; 
-                                                      "name"        => alltrim( ::oTblPro:cDesTbl ),;
-                                                      "color"       => alltrim( RgbToRgbHex( ::oTblPro:nColor) ) } )
+                  aAdd( ::aPropiedadesLineasData,  {  "id"           => ::oTblPro:cCodTbl,;
+                                                      "idparent"     => ::oTblPro:cCodPro,; 
+                                                      "name"         => alltrim( ::oTblPro:cDesTbl ),;
+                                                      "color"        => alltrim( RgbToRgbHex( ::oTblPro:nColor ) ),;
+                                                      "position"     => ::oTblPro:nOrdTbl } )
 
                end if
 
@@ -2964,10 +2965,11 @@ METHOD buildPropiedadesPrestashop( id ) CLASS TComercio
 
                if aScan( ::aPropiedadesLineasData, {|h| hGet( h, "id" ) == ::oTblPro:cCodTbl .and. hGet( h, "idparent" ) == ::oTblPro:cCodPro } ) == 0
       
-                  aAdd( ::aPropiedadesLineasData,  {  "id"          => ::oTblPro:cCodTbl,;
-                                                      "idparent"    => ::oTblPro:cCodPro,; 
-                                                      "name"        => alltrim( ::oTblPro:cDesTbl ),;
-                                                      "color"       => alltrim( RgbToRgbHex( ::oTblPro:nColor) ) } )
+                  aAdd( ::aPropiedadesLineasData,  {  "id"           => ::oTblPro:cCodTbl,;
+                                                      "idparent"     => ::oTblPro:cCodPro,; 
+                                                      "name"         => alltrim( ::oTblPro:cDesTbl ),;
+                                                      "color"        => alltrim( RgbToRgbHex( ::oTblPro:nColor ) ),;
+                                                      "position"     => ::oTblPro:nOrdTbl } )
 
                end if
 
@@ -3074,11 +3076,13 @@ METHOD buildSubirInformacion() CLASS TComercio
       ::buildInsertPropiedadesPrestashop( hPropiedadesCabData )
    next
 
-   /*
-   Subimos las Lineas de propiedades necesarias--------------------------
-   */
+   // Subimos las Lineas de propiedades necesarias--------------------------
 
    ::meterProcesoSetTotal( len(::aPropiedadesLineasData) )
+
+   // ordenamos por el campo position------------------------------------------
+
+   asort( ::aPropiedadesLineasData, , , {|x,y| hget( x, "position" ) < hget( y, "position" ) } )
 
    for each hPropiedadesLinData in ::aPropiedadesLineasData
 
@@ -3911,10 +3915,7 @@ return nil
 
 METHOD buildInsertPropiedadesPrestashop( hPropiedadesCabData ) CLASS TComercio
 
-   local oImagen
-   local nCodigoWeb        := 0
-   local nCodigoPropiedad  := 0
-   local nParent           := 1
+   local idPrestashop      := 0
    local cCommand          := ""
 
    /*
@@ -3929,30 +3930,31 @@ METHOD buildInsertPropiedadesPrestashop( hPropiedadesCabData ) CLASS TComercio
                                  "'" + if( hGet( hPropiedadesCabData, "lColor" ), "color", "select" ) + "' )"    // group_type                        
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      nCodigoWeb     := ::oCon:GetInsertId()
+      idPrestashop         := ::oCon:GetInsertId()
    else
       ::writeText( "Error al insertar la propiedad " + hGet( hPropiedadesCabData, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_group" ), 3 )
    end if
 
-   cCommand          := "INSERT INTO " + ::cPrefixTable( "attribute_group_lang" ) + ; 
-                              " ( id_attribute_group, " + ;
-                                  "id_lang, " + ;
-                                  "name, " + ;
-                                  "public_name )" + ;
-                              " VALUES " + ;
-                                  "('" + alltrim( str( nCodigoWeb ) ) + "', " + ;    //id_attribute_group
-                                  "'" + str( ::nLanguage ) + "', " + ;                 //id_lang
-                                  "'" + hGet( hPropiedadesCabData, "name" ) + "', " + ;//name
-                                  "'" + hGet( hPropiedadesCabData, "name" ) + "' )"    //public_name
+   if !empty( idPrestashop )
+      cCommand             := "INSERT INTO " + ::cPrefixTable( "attribute_group_lang" ) + " ( " + ; 
+                                 "id_attribute_group, " + ;
+                                 "id_lang, " + ;
+                                 "name, " + ;
+                                 "public_name ) " + ;
+                              "VALUES ( " + ;
+                                 "'" + alltrim( str( idPrestashop ) ) + "', " + ;        //id_attribute_group
+                                 "'" + str( ::nLanguage ) + "', " + ;                  //id_lang
+                                 "'" + hGet( hPropiedadesCabData, "name" ) + "', " + ; //name
+                                 "'" + hGet( hPropiedadesCabData, "name" ) + "' )"     //public_name
 
-   if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( "Error al insertar la propiedad " + hGet( hPropiedadesCabData, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_group_lang" ), 3 )
-   end if
+      if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+         ::writeText( "Error al insertar la propiedad " + hGet( hPropiedadesCabData, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_group_lang" ), 3 )
+      end if
 
-   // Guardo referencia a la web-----------------------------------------------
+      // Guardo referencia a la web-----------------------------------------------
 
-   if !empty( nCodigoWeb )
-      ::TPrestashopId:setValueAttributeGroup( hget( hPropiedadesCabData, "id" ), ::getCurrentWebName(), nCodigoWeb )
+      ::TPrestashopId:setValueAttributeGroup( hget( hPropiedadesCabData, "id" ), ::getCurrentWebName(), idPrestashop )
+
    end if 
 
 Return self
@@ -3963,18 +3965,18 @@ METHOD buildInsertLineasPropiedadesPrestashop( hPropiedadesLinData, nPosition ) 
 
    local nCodigoPropiedad  := 0
    local cCommand          := ""
-   local nCodigoGrupo      := ::TPrestashopId:getValueAttribute( hGet( hPropiedadesLinData, "idparent" ), ::getCurrentWebName() )
+   local nCodigoGrupo      := ::TPrestashopId:getValueAttributeGroup( hGet( hPropiedadesLinData, "idparent" ), ::getCurrentWebName() )
 
    /*
    Introducimos las líneas-----------------------------------------------------
    */
 
-   cCommand                := "INSERT INTO " + ::cPrefixTable( "attribute" ) + ; 
-                                 "( id_attribute_group, " + ;
+   cCommand                := "INSERT INTO " + ::cPrefixTable( "attribute" ) + " ( " + ; 
+                                 "id_attribute_group, " + ;
                                  "color, " + ;
                                  "position ) " + ;
-                              "VALUES " + ;
-                                 "('" + alltrim( str( nCodigoGrupo ) ) + "', " + ;
+                              "VALUES ( " + ;
+                                 "'" + alltrim( str( nCodigoGrupo ) ) + "', " + ;
                                  "'" + hGet( hPropiedadesLinData, "color" ) + "' ," + ;
                                  "'" + alltrim( str( nPosition ) ) + "' )"             // posicion
 
@@ -3984,33 +3986,34 @@ METHOD buildInsertLineasPropiedadesPrestashop( hPropiedadesLinData, nPosition ) 
       ::writeText( "Error al insertar la propiedad " + hGet( hPropiedadesLinData, "name" ) + " en la tabla " + ::cPreFixtable( "attribute" ), 3 )
    end if
 
-   cCommand    := "INSERT INTO " + ::cPrefixTable( "attribute_lang" ) + ;
-                     " ( id_attribute, " + ;
+   if !empty( nCodigoPropiedad )
+
+      cCommand    := "INSERT INTO " + ::cPrefixTable( "attribute_lang" ) + " ( " + ;
+                        "id_attribute, " + ;
                         "id_lang, " + ;
                         "name ) " + ;
-                     "VALUES " + ;
-                        "('" + alltrim( str( nCodigoPropiedad ) ) + "', " + ;   //id_attribute
-                        "'" + str( ::nLanguage ) + "', " + ;                    //id_lang
-                        "'" + ::oCon:Escapestr( hGet( hPropiedadesLinData, "name" ) ) + "' )"              //name
+                     "VALUES ( " + ;
+                        "'" + alltrim( str( nCodigoPropiedad ) ) + "', " + ;                    //id_attribute
+                        "'" + str( ::nLanguage ) + "', " + ;                                    //id_lang
+                        "'" + ::oCon:Escapestr( hGet( hPropiedadesLinData, "name" ) ) + "' )"   //name
 
-   if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( "Error al insertar la propiedad " + hGet( hPropiedadesLinData, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_lang" ), 3 )
-   end if
+      if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+         ::writeText( "Error al insertar la propiedad " + hGet( hPropiedadesLinData, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_lang" ), 3 )
+      end if
 
-   cCommand    := "INSERT INTO " + ::cPrefixTable( "attribute_shop" ) + ;
-                     " ( id_attribute, " + ;
+      cCommand    := "INSERT INTO " + ::cPrefixTable( "attribute_shop" ) + " ( " + ;
+                        "id_attribute, " + ;
                         "id_shop ) " + ;
-                     "VALUES " + ;
-                        "('" + alltrim( str( nCodigoPropiedad ) ) + "', " + ;   //id_attribute
+                     "VALUES ( " + ;
+                        "'" + alltrim( str( nCodigoPropiedad ) ) + "', " + ;   //id_attribute
                         "'1' )"                                                 //id_shop
 
-   if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( "Error al insertar la propiedad " + hGet( hPropiedadesLinData, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_shop" ), 3 )
-   end if
+      if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+         ::writeText( "Error al insertar la propiedad " + hGet( hPropiedadesLinData, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_shop" ), 3 )
+      end if
 
-   // Guardo referencia a la web-----------------------------------------------
+      // Guardo referencia a la web-----------------------------------------------
 
-   if !empty( nCodigoPropiedad )
       ::TPrestashopId:setValueAttribute( hGet( hPropiedadesLinData, "idparent" ) + hGet( hPropiedadesLinData, "id" ), ::getCurrentWebName(), nCodigoPropiedad )
    end if 
 

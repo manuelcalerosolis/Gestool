@@ -2005,7 +2005,7 @@ Function rxPro( cPath, oMeter )
          ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "cCodPro", "Field->cCodPro + Field->cCodTbl", {|| Field->cCodPro + Field->cCodTbl } ) )
 
          ( dbfPro )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-         ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "nOrdPro", "Field->cCodPro + Str( Field->nOrdTbl )", {|| Field->cCodPro + Str( Field->nOrdTbl )} ) )
+         ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "nOrdPro", "Field->cCodPro + Str( Field->nOrdTbl )", {|| Field->cCodPro + Str( Field->nOrdTbl ) } ) )
 
          ( dbfPro )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
          ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "NBARPRO", "Field->cCodPro + Field->nBarTbl", {|| Field->cCodPro + Field->nBarTbl } ) )

@@ -1,4 +1,3 @@
-
 #include "FiveWin.Ch" 
 #include "Struct.ch"
 #include "Factu.ch" 
@@ -61,18 +60,22 @@ METHOD CreateConexion() CLASS TFtpLinux
    if !empty( ::TPrestashopConfig:getFtpServer() )
  
       cUrl                 := "ftp://" + ::TPrestashopConfig:getFtpUser() + ":" + ::TPrestashopConfig:getFtpPassword() + "@" + ::TPrestashopConfig:getFtpServer()
+
+      oUrl                 := TUrl():New( cUrl )
+      oUrl:cProto          := "ftp"
+      oUrl:cServer         := ::TPrestashopConfig:getFtpServer()
+      oUrl:cUserID         := ::TPrestashopConfig:getFtpUser()
+      oUrl:cPassword       := ::TPrestashopConfig:getFtpPassword()
+      oUrl:nPort           := ::TPrestashopConfig:getFtpPort()
  
-      ::oUrl               := TUrl():New( cUrl )
- 
-      ::oFTP               := TIPClientFTP():New( ::oUrl, .t. )
-      ::oFTP:nConnTimeout  := 20000
+      ::oFTP               := TIPClientFTP():New( oUrl, .t. )
+      ::oFTP:nConnTimeout  := 2000
       ::oFTP:bUsePasv      := ::TPrestashopConfig:getFtpPassive()
+      ::oFTP:nDefaultPort  := ::TPrestashopConfig:getFtpPort()
  
-       lOpen                := ::oFTP:Open( cUrl )
-
-      msgAlert( "despues de abirr")
-
+      lOpen                := ::oFTP:Open( nil )
       if !lOpen
+
          ::cError          := "Could not connect to FTP server " + oURL:cServer
          if empty( ::oFTP:SocketCon )
             ::cError       += hb_eol() + "Connection not initialized"
@@ -125,7 +128,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD CreateFile( cFile, cDirectory ) CLASS TFtpLinux
+METHOD CreateFile( cFile ) CLASS TFtpLinux
 
    local lCreate  := .f.
 
