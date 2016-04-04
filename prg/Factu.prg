@@ -7,6 +7,11 @@
 #include "Xbrowse.ch"
 #include "dbInfo.ch" 
 
+#require "hbtip"
+
+#include "directry.ch"
+
+
 #define GR_GDIOBJECTS         0      /* Count of GDI objects */
 #define GR_USEROBJECTS        1      /* Count of USER objects */
 
@@ -5998,6 +6003,78 @@ Return ( by( nRow ) )
 
 Function Test()
  
+   LOCAL aFiles
+   LOCAL cUrl
+   LOCAL cStr
+   LOCAL lRetVal  := .T.
+   LOCAL oUrl
+   LOCAL oFTP
+   LOCAL cUser
+   LOCAL cServer
+   LOCAL cPassword
+   LOCAL cFile     := ""
+
+   cServer   := "127.0.0.1"   /* change ftpserver to the real name  or ip of your ftp server */
+   cUser     := "test"     /* change ftpuser to an valid user on ftpserer */
+   cPassword := "test"     /* change ftppass  to an valid password for ftpuser */
+   cUrl      := "ftp://" + cUser + ":" + cPassword + "@" + cServer
+
+   debug( cUrl, "url")
+
+   /* Leemos ficheros a enviar */
+   aFiles   := Directory( "c:\Img2Pdf\*.*" )
+
+   IF Len( aFiles ) > 0
+
+      oUrl              := TUrl():New( cUrl )
+      oUrl:cProto       := "ftp"
+      oUrl:cServer      := cServer
+      oUrl:cUserID      := cUser
+      oUrl:cPassword    := cPassword
+      oUrl:nPort        := 21
+
+      oFTP              := TIPClientFTP():New( oUrl, .T. )
+      oFTP:nConnTimeout := 20000
+      oFTP:bUsePasv     := .f.
+
+
+      /* Comprobamos si el usuario contiene una @ para forzar el userid */
+      IF .t.
+         oFTP:oUrl:cServer   := cServer
+         oFTP:oUrl:cUserID   := cUser
+         oFTP:oUrl:cPassword := cPassword
+      ENDIF
+
+      IF oFTP:Open()
+
+         FOR EACH cFile IN afiles
+            debug( "Filename: " + cFile[ F_NAME ] )
+            IF ! oFtp:UploadFile( cFile[ F_NAME ] )
+               lRetVal := .F.
+               EXIT
+            ELSE
+               lRetVal := .T.
+            ENDIF
+         NEXT
+
+         oFTP:Close()
+      ELSE
+         cStr := "Could not connect to FTP server " + oURL:cServer
+         IF oFTP:SocketCon == NIL
+            cStr += hb_eol() + "Connection not initialized"
+         ELSEIF hb_inetErrorCode( oFTP:SocketCon ) == 0
+            cStr += hb_eol() + "Server response:" + " " + oFTP:cReply
+         ELSE
+            cStr += hb_eol() + "Error in connection:" + " " + hb_inetErrorDesc( oFTP:SocketCon )
+         ENDIF
+         debug( cStr )
+         lRetVal := .F.
+      ENDIF
+   ENDIF
+
+   RETURN lRetVal
+
+
 /*
    local TPrestaShopId  := TPrestaShopId():New()
    TPrestaShopId:OpenFiles()

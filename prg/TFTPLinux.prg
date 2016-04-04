@@ -56,10 +56,14 @@ METHOD CreateConexion() CLASS TFtpLinux
    local cUrl 
    local oUrl          
    local lOpen             := .f.
+   local cREuri            := hb_regexComp( "(?:(.*)://)?([^?/]*)(/[^?]*)?\??(.*)" )
 
    if !empty( ::TPrestashopConfig:getFtpServer() )
  
       cUrl                 := "ftp://" + ::TPrestashopConfig:getFtpUser() + ":" + ::TPrestashopConfig:getFtpPassword() + "@" + ::TPrestashopConfig:getFtpServer()
+
+      debug( cUrl )
+      debug( hb_regex( cREuri, cUrl ) )
 
       oUrl                 := TUrl():New( cUrl )
       oUrl:cProto          := "ftp"
@@ -67,13 +71,15 @@ METHOD CreateConexion() CLASS TFtpLinux
       oUrl:cUserID         := ::TPrestashopConfig:getFtpUser()
       oUrl:cPassword       := ::TPrestashopConfig:getFtpPassword()
       oUrl:nPort           := ::TPrestashopConfig:getFtpPort()
+
+      debug( oUrl:BuildAddress(), "BuildAddress" )
  
       ::oFTP               := TIPClientFTP():New( oUrl, .t. )
-      ::oFTP:nConnTimeout  := 2000
+      ::oFTP:nConnTimeout  := 20000
       ::oFTP:bUsePasv      := ::TPrestashopConfig:getFtpPassive()
       ::oFTP:nDefaultPort  := ::TPrestashopConfig:getFtpPort()
  
-      lOpen                := ::oFTP:Open( nil )
+      lOpen                := ::oFTP:Open(nil)
       if !lOpen
 
          ::cError          := "Could not connect to FTP server " + oURL:cServer
@@ -86,6 +92,18 @@ METHOD CreateConexion() CLASS TFtpLinux
          endif
 
          msgStop( ::cError )
+
+      else 
+
+      debug( ::oFTP:SocketCon, "::oFTP:SocketCon")
+
+      hb_inetSendAll( ::oFTP:SocketCon, "SYST" + ::oFTP:cCRLF, len( "SYST" + ::oFTP:cCRLF ) )
+      hb_inetSendAll( ::oFTP:SocketCon, "FEAT" + ::oFTP:cCRLF, len( "FEAT" + ::oFTP:cCRLF ) )
+      hb_inetSendAll( ::oFTP:SocketCon, "OPTS UTF8 ON" + ::oFTP:cCRLF, len( "OPTS UTF8 ON" + ::oFTP:cCRLF ) )
+      hb_inetSendAll( ::oFTP:SocketCon, "PWD" + ::oFTP:cCRLF, len( "PWD" + ::oFTP:cCRLF ) )
+      hb_inetSendAll( ::oFTP:SocketCon, "TYPE I" + ::oFTP:cCRLF, len( "TYPE A" + ::oFTP:cCRLF ) )
+      ::oFTP:Port()
+      hb_inetSendAll( ::oFTP:SocketCon, "MLSD" + ::oFTP:cCRLF, len( "MLSD" + ::oFTP:cCRLF ) )
 
       end if
 
