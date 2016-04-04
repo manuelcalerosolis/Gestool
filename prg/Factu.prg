@@ -6,11 +6,10 @@
 #include "Ads.ch"
 #include "Xbrowse.ch"
 #include "dbInfo.ch" 
-
-#require "hbtip"
-
 #include "directry.ch"
+#include "hbcurl.ch"
 
+#require "hbcurl"
 
 #define GR_GDIOBJECTS         0      /* Count of GDI objects */
 #define GR_USEROBJECTS        1      /* Count of USER objects */
@@ -6001,8 +6000,82 @@ Return ( by( nRow ) )
 
 //---------------------------------------------------------------------------//
 
+#define UPLOAD_FILE_AS      "test_ul.bin"
+#define RENAME_FILE_TO      "test_ul_renamed.bin"
+#define REMOTE_URL          "ftp://harbour:power@localhost/" + UPLOAD_FILE_AS
+#define REMOTE_URL_DEL      "ftp://harbour:power@localhost/" + RENAME_FILE_TO
+#define REMOTE_URL_MEM      "ftp://harbour:power@localhost/from_mem.txt"
+
 Function Test()
- 
+
+   LOCAL curl
+   LOCAL info
+   LOCAL tmp
+   LOCAL tmp1
+   LOCAL f
+   LOCAL a
+   local cFile     := "c:\img\portada.jpg"
+   local cDL
+   local cServer   := "ftp.lajacamoda.com"   
+   local cUser     := "gestool"        
+   local cPassword := "E9cV4Ehu"     
+   local Url1      := "ftp://" + cUser + ":" + cPassword + "@" + cServer + "/test/p/1/" + cFile
+   local Url2      := "ftp://" + cUser + ":" + cPassword + "@" + cServer + "/test/p/2/" + cFile
+
+   LOCAL lVerbose := .F.
+
+   ? curl_version()
+
+   info := curl_version_info()
+
+   debug( info )
+
+   ? "INIT:", curl_global_init()
+
+   IF ! Empty( curl := curl_easy_init() )
+
+      ? "Empieza a subir 1 : ", Url1
+      curl_easy_setopt( curl, HB_CURLOPT_UPLOAD )
+      curl_easy_setopt( curl, HB_CURLOPT_URL, Url1 )
+      curl_easy_setopt( curl, HB_CURLOPT_UL_FILE_SETUP, cFile )
+      curl_easy_setopt( curl, HB_CURLOPT_INFILESIZE, hb_FSize( cFile ) )
+      curl_easy_setopt( curl, HB_CURLOPT_FTP_CREATE_MISSING_DIRS, .t. )
+      curl_easy_perform( curl )
+
+      curl_easy_getinfo( curl, HB_CURLINFO_EFFECTIVE_URL )
+      ? "Tiempo empleado : ", curl_easy_getinfo( curl, HB_CURLINFO_TOTAL_TIME )
+      curl_easy_reset( curl )
+
+
+      ? "Empieza a subir 2 : ", Url2
+      curl_easy_setopt( curl, HB_CURLOPT_UPLOAD )
+      curl_easy_setopt( curl, HB_CURLOPT_URL, Url2 )
+      curl_easy_setopt( curl, HB_CURLOPT_UL_FILE_SETUP, cFile )
+      curl_easy_setopt( curl, HB_CURLOPT_INFILESIZE, hb_FSize( cFile ) )
+      curl_easy_setopt( curl, HB_CURLOPT_FTP_CREATE_MISSING_DIRS, .t. )
+      curl_easy_perform( curl )
+
+      curl_easy_getinfo( curl, HB_CURLINFO_EFFECTIVE_URL )
+      ? "Tiempo empleado : ", curl_easy_getinfo( curl, HB_CURLINFO_TOTAL_TIME )
+      curl_easy_reset( curl )
+
+   ENDIF
+
+   curl_global_cleanup()
+
+RETURN nil
+
+STATIC FUNCTION CurGet()
+RETURN { Row(), Col() }
+
+STATIC PROCEDURE CurSet( a )
+
+   SetPos( a[ 1 ], a[ 2 ] )
+
+RETURN 
+
+
+/* 
    LOCAL aFiles
    LOCAL cUrl
    LOCAL cStr
@@ -6014,15 +6087,14 @@ Function Test()
    LOCAL cPassword
    LOCAL cFile     := ""
 
-   cServer   := "127.0.0.1"   /* change ftpserver to the real name  or ip of your ftp server */
-   cUser     := "test"     /* change ftpuser to an valid user on ftpserer */
-   cPassword := "test"     /* change ftppass  to an valid password for ftpuser */
+   cServer   := "ftp.lajacamoda.com"   
+   cUser     := "gestool"        
+   cPassword := "E9cV4Ehu"     
    cUrl      := "ftp://" + cUser + ":" + cPassword + "@" + cServer
 
    debug( cUrl, "url")
 
-   /* Leemos ficheros a enviar */
-   aFiles   := Directory( "c:\Img2Pdf\*.*" )
+   aFiles   := Directory( "c:\img\*.*" )
 
    IF Len( aFiles ) > 0
 
@@ -6037,8 +6109,8 @@ Function Test()
       oFTP:nConnTimeout := 20000
       oFTP:bUsePasv     := .f.
 
+      // Comprobamos si el usuario contiene una @ para forzar el userid 
 
-      /* Comprobamos si el usuario contiene una @ para forzar el userid */
       IF .t.
          oFTP:oUrl:cServer   := cServer
          oFTP:oUrl:cUserID   := cUser
@@ -6073,7 +6145,7 @@ Function Test()
    ENDIF
 
    RETURN lRetVal
-
+*/
 
 /*
    local TPrestaShopId  := TPrestaShopId():New()
@@ -6133,7 +6205,6 @@ Function Test()
 
    oDoc:Activate()
 */
-Return ( nil )
 
 Static Function testAll()
 
