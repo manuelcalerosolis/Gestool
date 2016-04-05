@@ -1418,7 +1418,9 @@ METHOD buildSubirImagenes() CLASS TComercio
 
    end if 
 
-   ::oFtp:EndConexion()
+   if !empty( ::oFtp )
+      ::oFtp:EndConexion() 
+   end if
 
    ::aImages               := {}
 
