@@ -358,6 +358,11 @@ METHOD createFile( cFile, cDirectory ) CLASS TFTPCurl
       Return .f.
    endif
 
+   if !file( cFile )
+      msgStop( "El fichero " + cFile + " no se ha encontrado." )
+      Return .f.
+   endif 
+
    cDirectory        := cLeftPath( cDirectory )
 
    cURL              := "ftp://" + ::cUser + ":" + ::cPassword + "@" + ::cServer + "/" + cDirectory + cFile
