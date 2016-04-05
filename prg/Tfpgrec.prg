@@ -242,9 +242,13 @@ METHOD lGenerate()
 
       ::oFacCliP:Skip()
 
-      ::oMtrInf:AutoInc( ::oFacCliP:OrdKeyNo() )
+      ::oMtrInf:AutoInc()
 
    end while
+
+   ::oMtrInf:SetTotal( ::oFacCliP:Lastrec() )
+
+   ?"Despues del while"
 
    ::oFacCliP:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ) )
 

@@ -20581,6 +20581,7 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
 
    if !Empty( cFacCliP ) .and. ( cFacCliP )->( Used() )
 
+      nRec           := ( cFacCliP )->( Recno() )
       nOrd           := ( cFacCliP )->( OrdSetFocus( "nNumFac" ) )
 
       if ( cFacCliP )->( dbSeek( cFactura ) )
@@ -20597,6 +20598,7 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
       end if
 
       ( cFacCliP )->( OrdSetFocus( nOrd ) )
+      ( cFacCliP )->( dbGoTo( nRec ) )
 
    end if
 
