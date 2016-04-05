@@ -815,6 +815,10 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
             return .f.
          end if
 
+         if !Empty( aTmp[ _CNUMMTR ] )
+            nMode       := ZOOM_MODE
+         end if
+
    end case
 
    if Empty( aTmp[ _CCODCAJ ] )
@@ -976,13 +980,13 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
       REDEFINE CHECKBOX aGet[ _LCOBRADO ] VAR aTmp[ _LCOBRADO ];
          ID       220 ;
          ON CHANGE( ValCheck( aGet, aTmp ) ) ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
+			WHEN 		( nMode != ZOOM_MODE .and. Empty( aTmp[ _CNUMMTR ] ) ) ;
          OF       oFld:aDialogs[ 1 ]
 
       REDEFINE GET aGet[ _DENTRADA ] VAR aTmp[ _DENTRADA ] ;
          ID       230 ;
          SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
+         WHEN     ( nMode != ZOOM_MODE .and. Empty( aTmp[ _CNUMMTR ] ) ) ;
          ON HELP  aGet[ _DENTRADA ]:cText( Calendario( aTmp[ _DENTRADA ] ) ) ;
          BITMAP   "LUPA" ;
          OF       oFld:aDialogs[ 1 ]
@@ -4999,9 +5003,62 @@ Function DelCobCli( oBrw, cFacCliP )
       return .f.
    end if
 
-   WinDelRec( oBrw, cFacCliP )
+   if !Empty( ( cFacCliP )->cNumMtr )
+      msgStop( "Este recibo está compensado", "Imposible eliminar" )
+      return .f.
+   end if
+
+   if !Empty( ( cFacCliP )->lCobrado )
+      msgStop( "Este recibo está liquidado", "Imposible eliminar" )
+      return .f.
+   end if
+
+   WinDelRec( oBrw, cFacCliP, {|| QuiRecCli( cFacCliP ) } )
 
 return .t.
+
+//---------------------------------------------------------------------------//
+
+Function QuiRecCli( cFacCliP )
+
+   local cNumRec  := ( cFacCliP )->cSerie + Str( ( cFacCliP )->nNumFac ) + ( cFacCliP )->cSufFac + Str( ( cFacCliP )->nNumRec ) + ( cFacCliP )->cTipRec
+   local nRec     := ( cFacCliP )->( Recno() )
+   local nOrdAnt  := ( cFacCliP )->( OrdSetFocus( "cNumMtr" ) )
+   local aRecibos := {}
+   local cRecibo
+
+   if ( cFacCliP )->( dbSeek( cNumRec ) )
+
+      while ( cFacCliP )->cNumMtr == cNumRec .and. !( cFacCliP )->( Eof() )
+
+         aAdd( aRecibos, ( cFacCliP )->cSerie + Str( ( cFacCliP )->nNumFac ) + ( cFacCliP )->cSufFac + Str( ( cFacCliP )->nNumRec ) )
+
+         ( cFacCliP )->( dbSkip() )
+
+      end while
+      
+   end if
+
+   ( cFacCliP )->( OrdSetFocus( "nNumFac" ) )
+
+   for each cRecibo in aRecibos
+
+      if ( cFacCliP )->( dbSeek( cRecibo ) ) .and.;
+         dbLock( cFacCliP )
+
+         ( cFacCliP )->lCobrado  := .f.
+         ( cFacCliP )->dEntrada  := cTod( "" )
+         ( cFacCliP )->cNumMtr   := ""
+         ( cFacCliP )->( dbUnLock() )
+
+      end if
+
+   next
+
+   ( cFacCliP )->( OrdSetFocus( nOrdAnt ) )
+   ( cFacCliP )->( dbGoTo( nRec ) )
+
+Return .t.
 
 //---------------------------------------------------------------------------//
 
@@ -5072,6 +5129,7 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
    local lDevuelto
    local lCobrado
    local dFechaCobro
+   local cRecibo
 
    if Empty( cFacCliP )
       cFacCliP       := D():FacturasClientesCobros( nView )
@@ -5092,8 +5150,8 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
    end if
 
    cNumFac     := aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ]
-   cNumRec     := aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] + Str( aTmp[ _NNUMREC ] )
-   cNumRecTip  := aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] + Str( aTmp[ _NNUMREC ] ) + aTmp[ _CTIPREC ]
+   cNumRec     := aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] + Str( aTmp[ _NNUMREC ], 2 )
+   cNumRecTip  := aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] + Str( aTmp[ _NNUMREC ], 2 ) + aTmp[ _CTIPREC ]
    lDevuelto   := aTmp[ _LDEVUELTO ]
    lCobrado    := aTmp[ _LCOBRADO ]
    dFechaCobro := aTmp[ _DENTRADA ]
@@ -5303,6 +5361,40 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
          end if
 
       end if
+
+   else
+
+      if isArray( aRecibosRelacionados ) .and. Len( aRecibosRelacionados ) > 0
+
+         if Len( aRecibosRelacionados ) > 0
+
+            nRec     := ( D():FacturasClientesCobros( nView ) )->( Recno() )
+            nOrdAnt  := ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( "nNumFac" ) )
+
+            for each cRecibo in aRecibosRelacionados
+            
+               if ( D():FacturasClientesCobros( nView ) )->( dbSeek( cRecibo ) )
+
+                  if dbLock( D():FacturasClientesCobros( nView ) )
+
+                     ( D():FacturasClientesCobros( nView ) )->lCobrado     := .t.
+                     ( D():FacturasClientesCobros( nView ) )->dEntrada     := GetSysDate()
+                     ( D():FacturasClientesCobros( nView ) )->cNumMtr      := cNumRecTip
+
+                     ( D():FacturasClientesCobros( nView ) )->( dbUnLock() )
+                  end if
+
+               end if
+
+            next
+
+            ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( nOrdAnt ) )
+            ( D():FacturasClientesCobros( nView ) )->( dbGoTo( nRec ) )
+
+         end if
+
+      end if
+
 
    end if
 
@@ -5599,6 +5691,7 @@ Static Function CompensarReciboCliente( oBrw )
    local nOrdAnt           := ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( "nNumFac" ) )
 
    aRecibosRelacionados    := {}
+   nTotalRelacionados      := 0
    
    DEFINE DIALOG oDlg ;
       RESOURCE "RECIBOSCOMPENSAR" ;
