@@ -153,6 +153,7 @@ CLASS TComercio
    DATA  lProductIdColumnImageShop  
    DATA  lProductIdColumnProductAttribute
    DATA  lProductIdColumnProductAttributeShop
+   DATA  lSpecificPriceIdColumnReductionTax
 
    DATA  nSecondTimer
 
@@ -373,6 +374,7 @@ CLASS TComercio
    METHOD isProductIdColumnImageShop()                INLINE ( ::isProductIdColumn( "image_shop" ) )
    METHOD isProductIdColumnProductAttribute()         INLINE ( ::isProductIdColumn( "product_attribute" ) )
    METHOD isProductIdColumnProductAttributeShop()     INLINE ( ::isProductIdColumn( "product_attribute_shop" ) )
+   METHOD isSpecificPriceIdColumnReductionTax()       INLINE ( ::isProductIdColumn( "specific_price", "reduction_tax" ) )
 
    // Datos para la recopilacion de informacion----------------------------
 
@@ -1165,7 +1167,7 @@ METHOD InsertImageProductPrestashopShop( hArticuloData, hImage, idImagenPrestash
    end if
    cCommand       += "'" + alltrim( str( idImagenPrestashop ) ) + "', "   // id_image
    cCommand       += "'1', "                                         // id_shop
-   cCommand       += if( hGet( hImage, "lDefault" ), "'1'", "null" ) + ")"               // cover
+   cCommand       += if( hGet( hImage, "lDefault" ), "'1'", "'0'" ) + ")"               // cover
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
       ::writeText( "Insertado la imagen " + hGet( hImage, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
@@ -1260,9 +1262,9 @@ METHOD buildImagenes() CLASS TComercio
       do case
          case oImage:nTipoImagen == tipoProducto
 
-            cNewImg                       := cPatTmp() + oImage:cPrefijoNombre + ".jpg"
+            cNewImg                       := cPatOut() + oImage:cPrefijoNombre + ".jpg"
 
-            SaveImage( oImage:cNombreImagen, cNewImg )
+            saveImage( oImage:cNombreImagen, cNewImg )
 
             oImagenFinal                  := SImagen()
             oImagenFinal:cNombreImagen    := cNewImg
@@ -1273,7 +1275,7 @@ METHOD buildImagenes() CLASS TComercio
 
          case oImage:nTipoImagen == tipoCategoria
 
-            cNewImg                       := cPatTmp() + oImage:cPrefijoNombre + ".jpg"
+            cNewImg                       := cPatOut() + oImage:cPrefijoNombre + ".jpg"
 
             SaveImage( oImage:cNombreImagen, cNewImg )
 
@@ -1294,7 +1296,7 @@ METHOD buildImagenes() CLASS TComercio
          do case
             case oImage:nTipoImagen == tipoProducto .and. oTipoImage:lProducts
 
-               cNewImg                       := cPatTmp() + oImage:cPrefijoNombre + "-" + oTipoImage:cNombreTipo + ".jpg"
+               cNewImg                       := cPatOut() + oImage:cPrefijoNombre + "-" + oTipoImage:cNombreTipo + ".jpg"
 
                SaveImage( oImage:cNombreImagen, cNewImg, oTipoImage:nAnchoTipo, oTipoImage:nAltoTipo )
 
@@ -1307,7 +1309,7 @@ METHOD buildImagenes() CLASS TComercio
 
             case oImage:nTipoImagen == tipoCategoria .and. oTipoImage:lCategories
 
-               cNewImg                       := cPatTmp() + oImage:cPrefijoNombre + "-" + oTipoImage:cNombreTipo + ".jpg"
+               cNewImg                       := cPatOut() + oImage:cPrefijoNombre + "-" + oTipoImage:cNombreTipo + ".jpg"
 
                SaveImage( oImage:cNombreImagen, cNewImg, oTipoImage:nAnchoTipo, oTipoImage:nAltoTipo )
 
@@ -1577,15 +1579,16 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD isProductIdColumn( cTable )
+METHOD isProductIdColumn( cTable, cColumn )
 
    local oQuery
    local cCommand       
    local isProduct      := .f.
 
    DEFAULT cTable       := "image_shop"
+   DEFAULT cColumn      := "id_product"
 
-   cCommand             := "SHOW COLUMNS FROM " + ::cPrefixTable( cTable ) + " LIKE 'id_product'"
+   cCommand             := "SHOW COLUMNS FROM " + ::cPrefixTable( cTable ) + " LIKE '" +  cColumn + "'"
 
    oQuery               := TMSQuery():New( ::oCon, cCommand )
 
@@ -2621,6 +2624,7 @@ METHOD prestaShopConnect()
          ::lProductIdColumnImageShop            := ::isProductIdColumnImageShop()
          ::lProductIdColumnProductAttribute     := ::isProductIdColumnProductAttribute()
          ::lProductIdColumnProductAttributeShop := ::isProductIdColumnProductAttributeShop()
+         ::lSpecificPriceIdColumnReductionTax   := ::isSpecificPriceIdColumnReductionTax()
 
          lConect     := .t.
 
@@ -3875,24 +3879,24 @@ METHOD buildInsertOfertasPrestashop( hArticuloData, nCodigoWeb ) CLASS TComercio
                               "price, " + ;
                               "from_quantity, " + ;
                               "reduction, " + ;
-                              "reduction_tax, " + ;
+                              if( ::lSpecificPriceIdColumnReductionTax, "reduction_tax, ", "" ) + ;
                               "reduction_type ) " + ;
                            "VALUES ( " + ;
-                              "'0', " + ;                                                                // id_specific_price_rule
-                              "'0', " + ;                                                                // id_cart
-                              "'" + alltrim( str( nCodigoWeb ) ) + "', " + ;                             // id_product
-                              "'1', " + ;                                                                // id_shop
-                              "'0', " + ;                                                                // id_shop_group
-                              "'0', " + ;                                                                // id_currency
-                              "'0', " + ;                                                                // id_country
-                              "'0', " + ;                                                                // id_group
-                              "'0', " + ;                                                                // id_customer
-                              "'0', " + ;                                                                // id_product_attribute
-                              "'-1', " + ;                                                               // price
-                              "'1', " + ;                                                                // from_quantity
-                              "'" + alltrim( str( hGet( hArticuloData, "reduction" ) ) ) + "', " + ;     // reduction
-                              "'" + alltrim( str( hGet( hArticuloData, "reduction_tax" ) ) ) + "', " + ; // reduction_tax
-                              "'amount' )"                                                               // reduction_type
+                              "'0', " + ;                                                                                                                // id_specific_price_rule
+                              "'0', " + ;                                                                                                                // id_cart
+                              "'" + alltrim( str( nCodigoWeb ) ) + "', " + ;                                                                             // id_product
+                              "'1', " + ;                                                                                                                // id_shop
+                              "'0', " + ;                                                                                                                // id_shop_group
+                              "'0', " + ;                                                                                                                // id_currency
+                              "'0', " + ;                                                                                                                // id_country
+                              "'0', " + ;                                                                                                                // id_group
+                              "'0', " + ;                                                                                                                // id_customer
+                              "'0', " + ;                                                                                                                // id_product_attribute
+                              "'-1', " + ;                                                                                                               // price
+                              "'1', " + ;                                                                                                                // from_quantity
+                              "'" + alltrim( str( hGet( hArticuloData, "reduction" ) ) ) + "', " + ;                                                     // reduction
+                              if( ::lSpecificPriceIdColumnReductionTax, "'" + alltrim( str( hGet( hArticuloData, "reduction_tax" ) ) ) + "', ", "" ) + ; // reduction_tax
+                              "'amount' )"                                                                                                               // reduction_type
    
       if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
          ::writeText( "Error al insertar una oferta de " + hGet( hArticuloData, "name" ), 3 )
