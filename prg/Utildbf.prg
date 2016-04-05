@@ -463,6 +463,19 @@ Return ( cPath )
 
 //----------------------------------------------------------------------------//
 
+Function cLeftPath( cPath )
+
+   cPath             := Rtrim( cPath )
+
+   if Right( cPath, 1 ) != "/"
+      cPath          += "/"
+   end if
+
+Return ( cPath )
+
+//----------------------------------------------------------------------------//
+
+
 Function RecursiveMakeDir( cPath )
 
    local cRute       := ""

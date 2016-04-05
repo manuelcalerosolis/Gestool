@@ -3,6 +3,9 @@
 #include "Factu.ch" 
 #include "Ini.ch"
 #include "MesDbf.ch" 
+#include "hbcurl.ch"
+
+#require "hbcurl"
 
 //----------------------------------------------------------------//
 //----------------------------------------------------------------//
@@ -19,10 +22,20 @@ CLASS TFtpLinux
 
    DATA TPrestashopConfig
 
-   METHOD new( TPrestashopConfig )
+   DATA cServer                                 
+   DATA cUser              
+   DATA cPassword       
+   DATA nPort                                   INIT 21
+
+   DATA lPassive                                INIT .f.
+
+   METHOD new( cUser, cPassword, cServer, nPort )
+   METHOD newPrestashopConfig( TPrestashopConfig ) 
 
    METHOD createConexion() 
    METHOD endConexion()
+
+   METHOD setPassive( lPassive )                INLINE ( if( hb_islogical( lPassive ), ::lPassive := lPassive, ::lPassive ) )
 
    METHOD getError()                            INLINE ( ::cError )
 
@@ -42,9 +55,24 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( TPrestashopConfig ) CLASS TFtpLinux
+METHOD New( cUser, cPassword, cServer, nPort ) CLASS TFtpLinux
+
+   DEFAULT nPort  := 21
+
+   ::cUser        := cUser
+   ::cPassword    := cPassword
+   ::cServer      := cServer
+   ::nPort        := nPort
+
+Return ( Self )
+
+//----------------------------------------------------------------//
+
+METHOD NewPrestashopConfig( TPrestashopConfig ) CLASS TFtpLinux
 
    ::TPrestashopConfig  := TPrestashopConfig
+
+   ::New( ::TPrestashopConfig:getFtpUser(), ::TPrestashopConfig:getFtpPassword(), ::TPrestashopConfig:getFtpServer(), ::TPrestashopConfig:getFtpPort() )
 
 Return ( Self )
 
@@ -56,30 +84,24 @@ METHOD CreateConexion() CLASS TFtpLinux
    local cUrl 
    local oUrl          
    local lOpen             := .f.
-   local cREuri            := hb_regexComp( "(?:(.*)://)?([^?/]*)(/[^?]*)?\??(.*)" )
 
    if !empty( ::TPrestashopConfig:getFtpServer() )
  
-      cUrl                 := "ftp://" + ::TPrestashopConfig:getFtpUser() + ":" + ::TPrestashopConfig:getFtpPassword() + "@" + ::TPrestashopConfig:getFtpServer()
-
-      debug( cUrl )
-      debug( hb_regex( cREuri, cUrl ) )
+      cUrl                 := "ftp://" + ::cUser + ":" + ::cPassword + "@" + ::cServer
 
       oUrl                 := TUrl():New( cUrl )
       oUrl:cProto          := "ftp"
-      oUrl:cServer         := ::TPrestashopConfig:getFtpServer()
-      oUrl:cUserID         := ::TPrestashopConfig:getFtpUser()
-      oUrl:cPassword       := ::TPrestashopConfig:getFtpPassword()
-      oUrl:nPort           := ::TPrestashopConfig:getFtpPort()
+      oUrl:cServer         := ::cServer
+      oUrl:cUserID         := ::cUser
+      oUrl:cPassword       := ::cPassword
+      oUrl:nPort           := ::nPort
 
-      debug( oUrl:BuildAddress(), "BuildAddress" )
- 
       ::oFTP               := TIPClientFTP():New( oUrl, .t. )
       ::oFTP:nConnTimeout  := 20000
-      ::oFTP:bUsePasv      := ::TPrestashopConfig:getFtpPassive()
-      ::oFTP:nDefaultPort  := ::TPrestashopConfig:getFtpPort()
+      ::oFTP:bUsePasv      := ::lPassive
+      ::oFTP:nDefaultPort  := ::nPort
  
-      lOpen                := ::oFTP:Open(nil)
+      lOpen                := ::oFTP:Open()
       if !lOpen
 
          ::cError          := "Could not connect to FTP server " + oURL:cServer
@@ -92,18 +114,6 @@ METHOD CreateConexion() CLASS TFtpLinux
          endif
 
          msgStop( ::cError )
-
-      else 
-
-      debug( ::oFTP:SocketCon, "::oFTP:SocketCon")
-
-      hb_inetSendAll( ::oFTP:SocketCon, "SYST" + ::oFTP:cCRLF, len( "SYST" + ::oFTP:cCRLF ) )
-      hb_inetSendAll( ::oFTP:SocketCon, "FEAT" + ::oFTP:cCRLF, len( "FEAT" + ::oFTP:cCRLF ) )
-      hb_inetSendAll( ::oFTP:SocketCon, "OPTS UTF8 ON" + ::oFTP:cCRLF, len( "OPTS UTF8 ON" + ::oFTP:cCRLF ) )
-      hb_inetSendAll( ::oFTP:SocketCon, "PWD" + ::oFTP:cCRLF, len( "PWD" + ::oFTP:cCRLF ) )
-      hb_inetSendAll( ::oFTP:SocketCon, "TYPE I" + ::oFTP:cCRLF, len( "TYPE A" + ::oFTP:cCRLF ) )
-      ::oFTP:Port()
-      hb_inetSendAll( ::oFTP:SocketCon, "MLSD" + ::oFTP:cCRLF, len( "MLSD" + ::oFTP:cCRLF ) )
 
       end if
 
@@ -202,10 +212,10 @@ METHOD createConexion() CLASS TFTPWindows
 
    local lCreate     := .f.
 
-   if !empty( ::TPrestashopConfig:getFtpServer() )   
+   if !empty( ::cServer )   
 
       ::oInt         := TInternet():New()
-      ::oFtp         := TFtp():New( ::TPrestashopConfig:getFtpServer(), ::oInt, ::TPrestashopConfig:getFtpUser(), ::TPrestashopConfig:getFtpPassword(), ::TPrestashopConfig:getFtpPassive() )
+      ::oFtp         := TFtp():New( ::cServer, ::oInt, ::cUser, ::cPassword, ::lPassive )
 
       if !empty( ::oFtp )
          lCreate     := ( ::oFtp:hFtp != 0 )
@@ -296,4 +306,100 @@ METHOD ReturnDirectory( cCarpeta ) CLASS TFTPWindows
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
+CLASS TFTPCurl FROM TFtpLinux
+
+   DATA idCurl
+   DATA cInitialDirectory
+   DATA cRecursiveDirectory
+
+   METHOD createConexion() 
+   METHOD endConexion()                            INLINE ( curl_global_cleanup() )
+
+   METHOD createDirectory( cDirectory )            VIRTUAL // INLINE ( ::cInitialDirectory := cDirectory )
+   METHOD createDirectoryRecursive( cDirectory )   VIRTUAL // INLINE ( ::cRecursiveDirectory := cDirectory )
+
+   METHOD returnDirectory( cCarpeta )              VIRTUAL
+
+   METHOD createFile( cFile, cDirectory ) 
+   METHOD downloadFile( cFile, cDirectory )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD createConexion() CLASS TFTPCurl
+
+   curl_global_init()
+
+   ::idCurl             := curl_easy_init()
+
+Return ( !empty( ::idCurl ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD createFile( cFile, cDirectory ) CLASS TFTPCurl
+
+   local cURL
+   local createFile  := .f.
+
+   if empty(::idCurl)
+      Return .f.
+   endif
+
+   cDirectory        := cLeftPath( cDirectory )
+
+   cURL              := "ftp://" + ::cUser + ":" + ::cPassword + "@" + ::cServer + "/" + cDirectory + cFile
+
+   curl_easy_setopt( ::idCurl, HB_CURLOPT_UPLOAD )
+   curl_easy_setopt( ::idCurl, HB_CURLOPT_URL, cURL )
+   curl_easy_setopt( ::idCurl, HB_CURLOPT_UL_FILE_SETUP, cFile )
+   curl_easy_setopt( ::idCurl, HB_CURLOPT_INFILESIZE, hb_fsize( cFile ) )
+   curl_easy_setopt( ::idCurl, HB_CURLOPT_FTP_CREATE_MISSING_DIRS, .t. )
+   
+   createFile        := curl_easy_perform( ::idCurl )
+
+   // curl_easy_getinfo( ::idCurl, HB_CURLINFO_EFFECTIVE_URL )
+   // curl_easy_getinfo( ::idCurl, HB_CURLINFO_TOTAL_TIME )
+   curl_easy_reset( ::idCurl )
+
+Return ( createFile )
+
+//---------------------------------------------------------------------------//
+
+METHOD downloadFile( cFile, cDirectory ) CLASS TFTPCurl
+
+   local cURL
+   local createFile  := .f.
+
+   if empty(::idCurl)
+      Return .f.
+   endif
+
+   cDirectory        := cLeftPath( cDirectory )
+
+   cURL              := "ftp://" + ::cUser + ":" + ::cPassword + "@" + ::cServer + "/" + cDirectory + cFile
+
+   curl_easy_setopt( ::idCurl, HB_CURLOPT_DOWNLOAD )
+   curl_easy_setopt( ::idCurl, HB_CURLOPT_URL, cURL )
+   curl_easy_setopt( ::idCurl, HB_CURLOPT_UL_FILE_SETUP, cFile )
+   curl_easy_setopt( ::idCurl, HB_CURLOPT_FTP_CREATE_MISSING_DIRS, .t. )
+   
+   createFile        := curl_easy_perform( ::idCurl )
+
+   curl_easy_reset( ::idCurl )
+
+Return ( createFile )
+
+//---------------------------------------------------------------------------//

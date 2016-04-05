@@ -529,7 +529,6 @@ function retFld( cCod, cAlias, xFld, nOrd )
 return ( xRet )
 
 //--------------------------------------------------------------------------//
-
 // Extrae el Path de un fichero
 
 function GetPath( cFile )

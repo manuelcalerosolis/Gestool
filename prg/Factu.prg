@@ -6000,14 +6000,36 @@ Return ( by( nRow ) )
 
 //---------------------------------------------------------------------------//
 
-#define UPLOAD_FILE_AS      "test_ul.bin"
-#define RENAME_FILE_TO      "test_ul_renamed.bin"
-#define REMOTE_URL          "ftp://harbour:power@localhost/" + UPLOAD_FILE_AS
-#define REMOTE_URL_DEL      "ftp://harbour:power@localhost/" + RENAME_FILE_TO
-#define REMOTE_URL_MEM      "ftp://harbour:power@localhost/from_mem.txt"
-
 Function Test()
+/*
+   local TPrestaShopConfig
+   local TFtpCUrl
 
+   TPrestaShopConfig          := TPrestaShopConfig():New( "2015" )
+   TPrestaShopConfig:LoadJSON()
+   TPrestaShopConfig:getWebs()
+
+   TPrestaShopConfig:setCurrentWebName( "Temporada" )
+
+   TFtpCUrl                   := TFtpCUrl():NewPrestashopConfig( TPrestashopConfig )
+   TFtpCUrl:createConexion()
+   TFtpCUrl:createFile( "c:\img\portada.jpg", "test/p/1/" )
+   TFtpCUrl:createFile( "c:\img\portada.jpg", "test/p/2/" )
+   TFtpCUrl:createFile( "c:\img\portada.jpg", "test/p/3/" )
+   TFtpCUrl:createFile( "c:\img\portada.jpg", "test/p/4/" )
+   TFtpCUrl:createFile( "c:\img\portada.jpg", "test/p/5/" )
+   TFtpCUrl:endConexion()
+*/
+Return ( nil )
+
+
+
+
+
+
+
+
+/*
    LOCAL curl
    LOCAL info
    LOCAL tmp
@@ -6046,7 +6068,6 @@ Function Test()
       ? "Tiempo empleado : ", curl_easy_getinfo( curl, HB_CURLINFO_TOTAL_TIME )
       curl_easy_reset( curl )
 
-
       ? "Empieza a subir 2 : ", Url2
       curl_easy_setopt( curl, HB_CURLOPT_UPLOAD )
       curl_easy_setopt( curl, HB_CURLOPT_URL, Url2 )
@@ -6073,7 +6094,7 @@ STATIC PROCEDURE CurSet( a )
    SetPos( a[ 1 ], a[ 2 ] )
 
 RETURN 
-
+*/
 
 /* 
    LOCAL aFiles

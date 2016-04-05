@@ -59,7 +59,7 @@ CLASS TPrestashopConfig
 
    METHOD getStore()                   INLINE ( ::getFromCurrentWeb( "Store", "000" ) )
    METHOD getSyncronizeManufacturers() INLINE ( ::getFromCurrentWeb( "SyncronizeManufacturers", .t. ) )
-   METHOD getFtpLinux()                INLINE ( ::getFromCurrentWeb( "FtpLinux", .t. ) )
+   METHOD getFtpService()              INLINE ( ::getFromCurrentWeb( "FtpService" ) )
    
    METHOD getOrderSerie()              INLINE ( ::getFromCurrentWeb( "OrderSerie") )
    METHOD getBudgetSerie()             INLINE ( ::getFromCurrentWeb( "BudgetSerie") )

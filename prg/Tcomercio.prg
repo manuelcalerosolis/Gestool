@@ -240,7 +240,7 @@ CLASS TComercio
    DATA  aStockArticuloData            INIT {}
 
    METHOD buildFTP()                   
-   METHOD destroyFTP()                 INLINE ( ::oFtp:end() )
+   METHOD destroyFTP()                 INLINE ( ::oFtp:endConcexion() )
 
    METHOD MeterTotalText( cText )
    METHOD MeterTotalSetTotal( nTotal )
@@ -1335,45 +1335,42 @@ METHOD buildSubirImagenes() CLASS TComercio
 
    // Conectamos al FTP y Subimos las imágenes de artículos--------------------
 
+   if len( ::aImagesArticulos ) > 0 .or. len( ::aImagesCategories ) > 0
+      if !( ::oFtp:CreateConexion() )
+         msgStop( "Imposible conectar al sitio ftp " + ::oFtp:cServer )
+         Return ( nil )
+      end if 
+   end if 
+
    if Len( ::aImagesArticulos ) > 0
 
-      if !::oFtp:CreateConexion()
+      // Subimos los ficheros de imagenes-----------------------------------
 
-         msgStop( "Imposible conectar al sitio ftp " + ::TPrestashopConfig:getFtpServer() )
+      ::meterProcesoSetTotal( len( ::aImagesArticulos ) )
 
-      else
-
-         // Subimos los ficheros de imagenes-----------------------------------
-
-         ::meterProcesoSetTotal( len( ::aImagesArticulos ) )
-
-         if !empty( ::TPrestashopConfig:getImagesDirectory() )
-            ::oFtp:CreateDirectory( ::cDirectoryProduct(), .t. )
-         end if
-
-         for each oImage in ::aImagesArticulos
-
-            ::meterProcesoText( "Subiendo imagen " + oImage:cNombreImagen + " [" + alltrim(str(hb_enumindex())) + " de "  + alltrim(str(len(::aImagesArticulos))) + "]" )
-
-            // Posicionamos en el directorio-----------------------------------
-
-            ::oFtp:CreateDirectoryRecursive( oImage:cCarpeta )
-
-            // Sube el fichero ------------------------------------------------
-
-            ::oFtp:CreateFile( oImage:cNombreImagen, ::cDirectoryProduct() + "/" + oImage:cCarpeta )
-           
-            // Volvemos al directorio raiz--------------------------------------
-
-            ::oFtp:ReturnDirectory( oImage:cCarpeta )
-
-            SysRefresh()
-
-         next
-
+      if !empty( ::TPrestashopConfig:getImagesDirectory() )
+         ::oFtp:CreateDirectory( ::cDirectoryProduct(), .t. )
       end if
-      
-      ::oFtp:EndConexion()
+
+      for each oImage in ::aImagesArticulos
+
+         ::meterProcesoText( "Subiendo imagen " + oImage:cNombreImagen + " [" + alltrim(str(hb_enumindex())) + " de "  + alltrim(str(len(::aImagesArticulos))) + "]" )
+
+         // Posicionamos en el directorio-----------------------------------
+
+         ::oFtp:CreateDirectoryRecursive( oImage:cCarpeta )
+
+         // Sube el fichero ------------------------------------------------
+
+         ::oFtp:CreateFile( oImage:cNombreImagen, ::cDirectoryProduct() + "/" + oImage:cCarpeta )
+        
+         // Volvemos al directorio raiz--------------------------------------
+
+         ::oFtp:ReturnDirectory( oImage:cCarpeta )
+
+         SysRefresh()
+
+      next
 
    end if 
 
@@ -1381,43 +1378,33 @@ METHOD buildSubirImagenes() CLASS TComercio
 
    if Len( ::aImagesCategories ) > 0
 
-      if !::oFtp:CreateConexion()
+      // Subimos los ficheros de imagenes-----------------------------------
 
-         MsgStop( "Imposible conectar al sitio ftp " + ::TPrestashopConfig:getFtpServer() )
+      ::meterProcesoSetTotal( len( ::aImagesCategories ) )
 
-      else
-
-         // Subimos los ficheros de imagenes-----------------------------------
-
-         ::meterProcesoSetTotal( len( ::aImagesCategories ) )
-
-         if !empty( ::TPrestashopConfig:getImagesDirectory() )
-            ::oFtp:CreateDirectory( ::cDirectoryCategories(), .t. )
-         end if
-
-         for each oImage in ::aImagesCategories
-
-            ::meterProcesoText( "Subiendo imagen categoría " + alltrim(str(hb_enumindex())) + " de "  + alltrim(str(len(::aImagesCategories))) )
-
-            // Posicionamos en el directorio-----------------------------------
-
-            ::oFtp:CreateDirectoryRecursive( oImage:cCarpeta )
-
-            // Sube el fichero ------------------------------------------------
-
-            ::oFtp:CreateFile( oImage:cNombreImagen, oImage:cCarpeta )
-           
-            // Volvemos al directorio raiz-------------------------------------
-
-            ::oFtp:ReturnDirectory( oImage:cCarpeta )
-
-            SysRefresh()
-
-         next
-
+      if !empty( ::TPrestashopConfig:getImagesDirectory() )
+         ::oFtp:CreateDirectory( ::cDirectoryCategories(), .t. )
       end if
 
-      ::oFtp:EndConexion()
+      for each oImage in ::aImagesCategories
+
+         ::meterProcesoText( "Subiendo imagen categoría " + alltrim(str(hb_enumindex())) + " de "  + alltrim(str(len(::aImagesCategories))) )
+
+         // Posicionamos en el directorio-----------------------------------
+
+         ::oFtp:CreateDirectoryRecursive( oImage:cCarpeta )
+
+         // Sube el fichero ------------------------------------------------
+
+         ::oFtp:CreateFile( oImage:cNombreImagen, oImage:cCarpeta )
+        
+         // Volvemos al directorio raiz-------------------------------------
+
+         ::oFtp:ReturnDirectory( oImage:cCarpeta )
+
+         SysRefresh()
+
+      next
 
       // Borramos las imagenes creadas en los temporales-----------------------
 
@@ -1430,6 +1417,8 @@ METHOD buildSubirImagenes() CLASS TComercio
       next
 
    end if 
+
+   ::oFtp:EndConexion()
 
    ::aImages               := {}
 
@@ -3478,7 +3467,7 @@ METHOD buildInsertCategoriesPrestashop( hFamiliaData ) CLASS TComercio
       oImagen:nTipoImagen           := tipoCategoria
       oImagen:cPrefijoNombre        := alltrim( str( nCodigoWeb ) )
 
-      ::AddImages( oImagen )
+      ::addImages( oImagen )
 
    end if
 
@@ -6379,11 +6368,14 @@ Return ( id  )
 
 METHOD buildFTP() CLASS TComercio
 
-   if ::TPrestashopConfig:getFtpLinux()
-      ::oFtp      := TFtpLinux():New( ::TPrestashopConfig )
-   else 
-      ::oFtp      := TFtpWindows():New( ::TPrestashopConfig )
-   end if 
+   do case
+      case ::TPrestashopConfig:getFtpService() == "Linux"
+         ::oFtp      := TFtpLinux():NewPrestashopConfig( ::TPrestashopConfig )
+      case ::TPrestashopConfig:getFtpService() == "Windows"
+         ::oFtp      := TFtpWindows():NewPrestashopConfig( ::TPrestashopConfig )
+      case ::TPrestashopConfig:getFtpService() == "Curl"
+         ::oFtp      := TFtpCurl():NewPrestashopConfig( ::TPrestashopConfig )
+   end case 
 
 Return ( self )
 
