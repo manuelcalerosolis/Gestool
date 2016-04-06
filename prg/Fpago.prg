@@ -4,50 +4,6 @@
 #include "Factu.ch" 
 #include "Report.ch"
 
-#define _CCODPAGO        1      //   C      2     0
-#define _CDESPAGO        2      //   C     30     0
-#define _NTIPPGO         3      //   N      1     0
-#define _NPCTCOM         4      //   N      5     1
-#define _LEMTREC         5      //   L      1     0
-#define _NCOBREC         6      //   N      1     0
-#define _CCTACOBRO       7      //   C     12     0
-#define _CCTAGAS         8      //   C     12     0
-#define _LESPERADOC      9      //   C     12     0
-#define _NPLAZOS        10      //   N      3     0
-#define _NPLAUNO        11      //   N      3     0
-#define _NDIAPLA        12      //   N      3     0
-#define _NPLAULT        13
-#define _LSHWTPV        14      //
-#define _NIMGTPV        15      //
-#define _NPOSTPV        16      //   N      1     0
-#define _NTIPOAPL       17      //   N     10     0
-#define _NIMPAPL        18      //   N      3     0
-#define _NPORC1         19      //   L      1     0
-#define _NAPL1          20      //   N      1     0
-#define _NPORC2         21      //   N      3     0
-#define _NAPL2          22      //   N      3     0
-#define _NPORC3         23      //   N      3     0
-#define _NAPL3          24      //   N      3     0
-#define _NPORC4         25      //   N      3     0
-#define _NAPL4          26      //   N      3     0
-#define _NPORC5         27      //   N      3     0
-#define _NAPL5          28      //
-#define _CCODXML        29      //
-#define _NENTINI        30      //
-#define _NPCTDTO        31      //
-#define _LUTLBNC        32      //
-#define _CBANCO         33      //
-#define _CPAISIBAN      34      //
-#define _CCTRLIBAN      35      //
-#define _CENTBNC        36      //
-#define _CSUCBNC        37      //
-#define _CDIGBNC        38      //
-#define _CCTABNC        39  
-#define _CCODWEB        40
-#define _LDOMBAN        41      //
-#define _CCODEDI        42      //
-#define _NGENDOC        43
-
 static oWndBrw
 static aBigResource
 static aPressResource
@@ -332,16 +288,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
       aTmp[ ( dbfFormasPago )->( fieldPos( "nPlaUno" ) ) ]  := 0
    end if
 
-   if aTmp[ _NTIPPGO ] == 0
-      aTmp[ _NTIPPGO ]  := 1
+   if aTmp[ ( dbfFormasPago )->( fieldPos( "nTipPgo" ) ) ] == 0
+      aTmp[ ( dbfFormasPago )->( fieldPos( "nTipPgo" ) ) ]  := 1
    end if
 
-   if aTmp[ _NCOBREC ] == 0
-      aTmp[ _NCOBREC ]  := 1
+   if aTmp[ ( dbfFormasPago )->( fieldPos( "nCobRec" ) ) ] == 0
+      aTmp[ ( dbfFormasPago )->( fieldPos( "nCobRec" ) ) ]  := 1
    end if
 
-   if Empty( aTmp[ _NIMGTPV ] )
-      aTmp[ _NIMGTPV ]  := 1
+   if Empty( aTmp[ ( dbfFormasPago )->( fieldPos( "nImgTpv" ) ) ] )
+      aTmp[ ( dbfFormasPago )->( fieldPos( "nImgTpv" ) ) ]  := 1
    end if
 
    if Empty( aTmp[ ( dbfFormasPago )->( fieldPos( "nPosTpv" ) ) ] )
@@ -364,7 +320,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
       aTexto            := aTextoResourceFormaPago()
    end if
 
-   cCmbImagen           := aTexto[ Min( Max( aTmp[ _NIMGTPV ], 1 ), len( aTexto ) ) ]
+   cCmbImagen           := aTexto[ Min( Max( aTmp[ ( dbfFormasPago )->( fieldPos( "nImgTpv" ) ) ], 1 ), len( aTexto ) ) ]
 
    /*
    Dialogo---------------------------------------------------------------------
@@ -372,51 +328,51 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
 
    DEFINE DIALOG oDlg RESOURCE "FORMAS_PAGO" TITLE LblTitle( nMode ) + "formas de pagos"
 
-      REDEFINE GET oGet VAR aTmp[ _CCODPAGO ];
+      REDEFINE GET oGet VAR aTmp[ ( dbfFormasPago )->( fieldPos( "cCodPago" ) ) ];
          ID       100 ;
          WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
          VALID    ( NotValid( oGet, dbfFormasPago ) ) ;
          PICTURE  "@!" ;
          OF       oDlg
 
-      REDEFINE GET oGet2 VAR aTmp[ _CDESPAGO]  ;
+      REDEFINE GET oGet2 VAR aTmp[ ( dbfFormasPago )->( fieldPos( "cDesPago" ) ) ]  ;
          ID       110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      REDEFINE RADIO aTmp[ _NTIPPGO ] ;
+      REDEFINE RADIO aTmp[ ( dbfFormasPago )->( fieldPos( "nTipPgo" ) ) ] ;
          ID       111, 112, 113 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      REDEFINE GET aTmp[ _NPCTCOM ];
+      REDEFINE GET aTmp[ ( dbfFormasPago )->( fieldPos( "nTipPgo" ) ) ];
          ID       120 ;
 			SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE .AND. aTmp[ _NTIPPGO ] == 3 ) ;
+         WHEN     ( nMode != ZOOM_MODE .AND. aTmp[ ( dbfFormasPago )->( fieldPos( "nTipPgo" ) ) ] == 3 ) ;
          PICTURE  "@E 99.99" ;
          OF       oDlg
 
-      REDEFINE CHECKBOX aTmp[ _LDOMBAN ];
+      REDEFINE CHECKBOX aTmp[ ( dbfFormasPago )->( fieldPos( "lDomBan" ) ) ];
          ID       125;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      REDEFINE RADIO aTmp[ _NCOBREC ] ;
+      REDEFINE RADIO aTmp[ ( dbfFormasPago )->( fieldPos( "nCobRec" ) ) ] ;
          ID       140, 141 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      REDEFINE GET aGet[ _NPLAZOS ] VAR aTmp[ _NPLAZOS ];
+      REDEFINE GET aGet[ ( dbfFormasPago )->( fieldPos( "nPlazos" ) ) ] VAR aTmp[ ( dbfFormasPago )->( fieldPos( "nPlazos" ) ) ];
          ID       320 ;
          PICTURE  "999" ;
-         VALID    ( aTmp[ _NPLAZOS ] > 0 ) ;
+         VALID    ( aTmp[ ( dbfFormasPago )->( fieldPos( "nPlazos" ) ) ] > 0 ) ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          SPINNER ;
          MIN      1 ;
          MAX      999 ;
          OF       oDlg
 
-      REDEFINE GET aGet[ _NPLAUNO ] VAR aTmp[ _NPLAUNO ];
+      REDEFINE GET aGet[ ( dbfFormasPago )->( fieldPos( "nPlaUno" ) ) ] VAR aTmp[ ( dbfFormasPago )->( fieldPos( "nPlaUno" ) ) ];
          ID       330 ;
          PICTURE  "999";
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -425,19 +381,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
          MAX      999 ;
          OF       oDlg
 
-      REDEFINE GET aGet[ _NDIAPLA ] VAR aTmp[ _NDIAPLA ];
+      REDEFINE GET aGet[ ( dbfFormasPago )->( fieldPos( "nDiaPla" ) ) ] VAR aTmp[ ( dbfFormasPago )->( fieldPos( "nDiaPla" ) ) ];
          ID       340 ;
          PICTURE  "999";
-         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ _NPLAZOS ] > 1 ) ;
+         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfFormasPago )->( fieldPos( "nPlazos" ) ) ] > 1 ) ;
          SPINNER ;
          MIN      0 ;
          MAX      999 ;
          OF       oDlg
 
-      REDEFINE GET aGet[ _NPLAULT ] VAR aTmp[ _NPLAULT ];
+      REDEFINE GET aGet[ ( dbfFormasPago )->( fieldPos( "nPlaUlt" ) ) ] VAR aTmp[ ( dbfFormasPago )->( fieldPos( "nPlaUlt" ) ) ];
          ID       350 ;
          PICTURE  "999";
-         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ _NPLAZOS ] > 1 ) ;
+         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfFormasPago )->( fieldPos( "nPlazos" ) ) ] > 1 ) ;
          SPINNER ;
          MIN      0 ;
          MAX      999 ;
@@ -445,122 +401,155 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
 
       //Datos del banco de la empresa--------------------------------------------
 
-      REDEFINE CHECKBOX aTmp[ _LUTLBNC ];
+      REDEFINE CHECKBOX aTmp[ ( dbfFormasPago )->( fieldPos( "lUtlBnc" ) ) ];
          ID       126;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      REDEFINE GET aGet[ _CBANCO ] VAR aTmp[ _CBANCO ];
+      REDEFINE GET aGet[ ( dbfFormasPago )->( fieldPos( "cBanco" ) ) ] VAR aTmp[ ( dbfFormasPago )->( fieldPos( "cBanco" ) ) ];
          ID       210 ;
-         WHEN     ( aTmp[ _LUTLBNC ] .and. nMode != ZOOM_MODE ) ;
+         WHEN     ( aTmp[ ( dbfFormasPago )->( fieldPos( "lUtlBnc" ) ) ] .and. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwBncEmp( aGet[ _CBANCO ], aGet[ _CPAISIBAN ], aGet[ _CCTRLIBAN ], aGet[ _CENTBNC ], aGet[ _CSUCBNC ], aGet[ _CDIGBNC ], aGet[ _CCTABNC ] ) );
+         ON HELP  ( BrwBncEmp( aGet[ ( dbfFormasPago )->( fieldPos( "cBanco" ) ) ], aGet[ ( dbfFormasPago )->( fieldPos( "cPaisIBAN" ) ) ],;
+                               aGet[ ( dbfFormasPago )->( fieldPos( "cCtrlIBAN" ) ) ], aGet[ ( dbfFormasPago )->( fieldPos( "cEntBnc" ) ) ], ;
+                               aGet[ ( dbfFormasPago )->( fieldPos( "cSucBnc" ) ) ], aGet[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ],;
+                               aGet[ ( dbfFormasPago )->( fieldPos( "cCtaBnc" ) ) ] ) );
          OF       oDlg
 
-      REDEFINE GET aGet[ _CPAISIBAN ] VAR aTmp[ _CPAISIBAN ] ;
+      REDEFINE GET aGet[ ( dbfFormasPago )->( fieldPos( "cPaisIBAN" ) ) ] VAR aTmp[ ( dbfFormasPago )->( fieldPos( "cPaisIBAN" ) ) ] ;
          PICTURE  "@!" ;
          ID       370 ;
-         WHEN     ( aTmp[ _LUTLBNC ] .and. nMode != ZOOM_MODE ) ;
-         VALID    ( lIbanDigit( aTmp[ _CPAISIBAN ], aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CCTRLIBAN ] ) ) ;
+         WHEN     ( aTmp[ ( dbfFormasPago )->( fieldPos( "lUtlBnc" ) ) ] .and. nMode != ZOOM_MODE ) ;
+         VALID    ( lIbanDigit(  aTmp[ ( dbfFormasPago )->( fieldPos( "cPaisIBAN" ) ) ],;
+                                 aTmp[ ( dbfFormasPago )->( fieldPos( "cEntBnc" ) ) ],;
+                                 aTmp[ ( dbfFormasPago )->( fieldPos( "cSucBnc" ) ) ],;
+                                 aTmp[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ],;
+                                 aTmp[ ( dbfFormasPago )->( fieldPos( "cCtaBnc" ) ) ],;
+                                 aGet[ ( dbfFormasPago )->( fieldPos( "cCtrlIBAN" ) ) ] ) ) ;
          OF       oDlg
 
-      REDEFINE GET aGet[ _CCTRLIBAN ] VAR aTmp[ _CCTRLIBAN ] ;
+      REDEFINE GET aGet[ ( dbfFormasPago )->( fieldPos( "cCtrlIBAN" ) ) ] VAR aTmp[ ( dbfFormasPago )->( fieldPos( "cCtrlIBAN" ) ) ] ;
          ID       380 ;
-         WHEN     ( aTmp[ _LUTLBNC ] .and. nMode != ZOOM_MODE ) ;
-         VALID    ( lIbanDigit( aTmp[ _CPAISIBAN ], aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CCTRLIBAN ] ) ) ;
+         WHEN     ( aTmp[ ( dbfFormasPago )->( fieldPos( "lUtlBnc" ) ) ] .and. nMode != ZOOM_MODE ) ;
+         VALID    ( lIbanDigit(  aTmp[ ( dbfFormasPago )->( fieldPos( "cPaisIBAN" ) ) ],;
+                                 aTmp[ ( dbfFormasPago )->( fieldPos( "cEntBnc" ) ) ],;
+                                 aTmp[ ( dbfFormasPago )->( fieldPos( "cSucBnc" ) ) ],;
+                                 aTmp[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ],;
+                                 aTmp[ ( dbfFormasPago )->( fieldPos( "cCtaBnc" ) ) ],;
+                                 aGet[ ( dbfFormasPago )->( fieldPos( "cCtrlIBAN" ) ) ] ) ) ;
          OF       oDlg
 
-      REDEFINE GET aGet[ _CENTBNC ] VAR aTmp[ _CENTBNC ];
+      REDEFINE GET aGet[ ( dbfFormasPago )->( fieldPos( "cEntBnc" ) ) ] VAR aTmp[ ( dbfFormasPago )->( fieldPos( "cEntBnc" ) ) ];
          ID       220 ;
-         WHEN     ( aTmp[ _LUTLBNC ] .and. nMode != ZOOM_MODE ) ;
-         VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
-                     aGet[ _CPAISIBAN ]:lValid() ) ;
+         WHEN     ( aTmp[ ( dbfFormasPago )->( fieldPos( "lUtlBnc" ) ) ] .and. nMode != ZOOM_MODE ) ;
+         VALID    (  lCalcDC( aTmp[ ( dbfFormasPago )->( fieldPos( "cEntBnc" ) ) ], ;
+                              aTmp[ ( dbfFormasPago )->( fieldPos( "cSucBnc" ) ) ], ;
+                              aTmp[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ], ;
+                              aTmp[ ( dbfFormasPago )->( fieldPos( "cCtaBnc" ) ) ], ;
+                              aGet[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ] ),;
+                     aGet[ ( dbfFormasPago )->( fieldPos( "cPaisIBAN" ) ) ]:lValid() ) ;
          OF       oDlg
 
-      REDEFINE GET aGet[ _CSUCBNC ] VAR aTmp[ _CSUCBNC ];
+      REDEFINE GET aGet[ ( dbfFormasPago )->( fieldPos( "cSucBnc" ) ) ] VAR aTmp[ ( dbfFormasPago )->( fieldPos( "cSucBnc" ) ) ];
          ID       230 ;
-         WHEN     ( aTmp[ _LUTLBNC ] .and. nMode != ZOOM_MODE ) ;
-         VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
-                     aGet[ _CPAISIBAN ]:lValid() ) ;
+         WHEN     ( aTmp[ ( dbfFormasPago )->( fieldPos( "lUtlBnc" ) ) ] .and. nMode != ZOOM_MODE ) ;
+         VALID    (  lCalcDC( aTmp[ ( dbfFormasPago )->( fieldPos( "cEntBnc" ) ) ],;
+                              aTmp[ ( dbfFormasPago )->( fieldPos( "cSucBnc" ) ) ],;
+                              aTmp[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ],;
+                              aTmp[ ( dbfFormasPago )->( fieldPos( "cCtaBnc" ) ) ],;
+                              aGet[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ] ),;
+                     aGet[ ( dbfFormasPago )->( fieldPos( "cPaisIBAN" ) ) ]:lValid() ) ;
          OF       oDlg
 
-      REDEFINE GET aGet[ _CDIGBNC ] VAR aTmp[ _CDIGBNC ];
+      REDEFINE GET aGet[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ] VAR aTmp[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ];
          ID       240 ;
-         WHEN     ( aTmp[ _LUTLBNC ] .and. nMode != ZOOM_MODE ) ;
-         VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
-                     aGet[ _CPAISIBAN ]:lValid() ) ;
+         WHEN     ( aTmp[ ( dbfFormasPago )->( fieldPos( "lUtlBnc" ) ) ] .and. nMode != ZOOM_MODE ) ;
+         VALID    (  lCalcDC( aTmp[ ( dbfFormasPago )->( fieldPos( "cEntBnc" ) ) ],; 
+                              aTmp[ ( dbfFormasPago )->( fieldPos( "cSucBnc" ) ) ],; 
+                              aTmp[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ],; 
+                              aTmp[ ( dbfFormasPago )->( fieldPos( "cCtaBnc" ) ) ],; 
+                              aGet[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ] ),;
+                     aGet[ ( dbfFormasPago )->( fieldPos( "cPaisIBAN" ) ) ]:lValid() ) ;
          OF       oDlg
 
-      REDEFINE GET aGet[ _CCTABNC ] VAR aTmp[ _CCTABNC ];
+      REDEFINE GET aGet[ ( dbfFormasPago )->( fieldPos( "cCtaBnc" ) ) ] VAR aTmp[ ( dbfFormasPago )->( fieldPos( "cCtaBnc" ) ) ];
          ID       250 ;
          PICTURE  "9999999999" ;
-         WHEN     ( aTmp[ _LUTLBNC ] .and. nMode != ZOOM_MODE ) ;
-         VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
-                     aGet[ _CPAISIBAN ]:lValid() ) ;
+         WHEN     ( aTmp[ ( dbfFormasPago )->( fieldPos( "lUtlBnc" ) ) ] .and. nMode != ZOOM_MODE ) ;
+         VALID    (  lCalcDC( aTmp[ ( dbfFormasPago )->( fieldPos( "cEntBnc" ) ) ],; 
+                              aTmp[ ( dbfFormasPago )->( fieldPos( "cSucBnc" ) ) ],; 
+                              aTmp[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ],; 
+                              aTmp[ ( dbfFormasPago )->( fieldPos( "cCtaBnc" ) ) ], ;
+                              aGet[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ] ),;
+                     aGet[ ( dbfFormasPago )->( fieldPos( "cPaisIBAN" ) ) ]:lValid() ) ;
          OF       oDlg
 
-      REDEFINE GET aGet[ _CCTACOBRO ] VAR aTmp[ _CCTACOBRO ] ;
+      REDEFINE GET aGet[ ( dbfFormasPago )->( fieldPos( "cCtaCobro" ) ) ] VAR aTmp[ ( dbfFormasPago )->( fieldPos( "cCtaCobro" ) ) ] ;
          ID       280 ;
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( !Empty( cRutCnt() ) .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubcuenta( aGet[ _CCTACOBRO ], oGetCob ) ) ;
-         VALID    ( MkSubcuenta( aGet[ _CCTACOBRO ], { aTmp[ _CCTACOBRO ], aTmp[ _CDESPAGO ] }, oGetCob ) );
-			OF oDlg
+         ON HELP  ( BrwChkSubcuenta( aGet[ ( dbfFormasPago )->( fieldPos( "cCtaCobro" ) ) ], oGetCob ) ) ;
+         VALID    ( MkSubcuenta( aGet[ ( dbfFormasPago )->( fieldPos( "cCtaCobro" ) ) ], ;
+                   { aTmp[ ( dbfFormasPago )->( fieldPos( "cCtaCobro" ) ) ], ;
+                     aTmp[ ( dbfFormasPago )->( fieldPos( "cDesPago" ) ) ] }, oGetCob ) );
+         OF oDlg
 
-		REDEFINE GET oGetCob VAR cGetCob ;
+      REDEFINE GET oGetCob VAR cGetCob ;
          ID       290 ;
-			WHEN 		( .F. );
-			OF 		oDlg
+         WHEN     ( .F. );
+         OF       oDlg
 
-      REDEFINE GET aGet[ _CCTAGAS ] VAR aTmp[ _CCTAGAS ] ;
+      REDEFINE GET aGet[ ( dbfFormasPago )->( fieldPos( "cCtaGas" ) ) ] VAR aTmp[ ( dbfFormasPago )->( fieldPos( "cCtaGas" ) ) ] ;
          ID       300 ;
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( !Empty( cRutCnt() ) .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubcuenta( aGet[ _CCTAGAS ], oGetGas ) ) ;
-         VALID    ( MkSubcuenta( aGet[ _CCTAGAS ], { aTmp[ _CCTAGAS ], aTmp[ _CDESPAGO ] }, oGetGas ) );
+         ON HELP  ( BrwChkSubcuenta( aGet[ ( dbfFormasPago )->( fieldPos( "cCtaGas" ) ) ], oGetGas ) ) ;
+         VALID    ( MkSubcuenta( aGet[ ( dbfFormasPago )->( fieldPos( "cCtaGas" ) ) ], ;
+                     { aTmp[ ( dbfFormasPago )->( fieldPos( "cCtaGas" ) ) ], ;
+                       aTmp[ ( dbfFormasPago )->( fieldPos( "cDesPago" ) ) ] }, oGetGas ) );
          OF       oDlg
 
       REDEFINE GET oGetGas VAR cGetGas ;
          ID       301 ;
-			COLOR 	CLR_GET ;
-			WHEN 		( .F. );
-			OF 		oDlg
+         COLOR    CLR_GET ;
+         WHEN     ( .F. );
+         OF       oDlg
 
       //Controles para incluir en tpv-----------------------------------------
 
-      REDEFINE CHECKBOX aTmp[ _LSHWTPV ] ;
+      REDEFINE CHECKBOX aTmp[ ( dbfFormasPago )->( fieldPos( "lShwTpv" ) ) ] ;
          ID       400 ;
-         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ _CCODPAGO ] != "00" ) ;
+         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfFormasPago )->( fieldPos( "cCodPago" ) ) ] != "00" ) ;
          OF       oDlg
 
       REDEFINE COMBOBOX oCmbImagen ;
          VAR      cCmbImagen ;
          ID       410 ;
-			OF 		oDlg ;
+         OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          ITEMS    ( aTexto ) ;
          BITMAPS  ( aBigResource )
 
-      REDEFINE GET aGet[ _NPOSTPV ] ;
-         VAR      aTmp[ _NPOSTPV ] ;
+      REDEFINE GET aGet[ ( dbfFormasPago )->( fieldPos( "nPosTpv" ) ) ] ;
+         VAR      aTmp[ ( dbfFormasPago )->( fieldPos( "nPosTpv" ) ) ] ;
          ID       420 ;
          PICTURE  "99";
          WHEN     ( nMode != ZOOM_MODE );
-         VALID    ( aTmp[ _NPOSTPV ] >= 1 .and. aTmp[ _NPOSTPV ] <= 99 ) ;
+         VALID    ( aTmp[ ( dbfFormasPago )->( fieldPos( "nPosTpv" ) ) ] >= 1 .and. aTmp[ ( dbfFormasPago )->( fieldPos( "nPosTpv" ) ) ] <= 99 ) ;
          SPINNER ;
          MIN      ( 1 ) ;
          MAX      ( 99 ) ;
          OF       oDlg
 
-      REDEFINE GET aGet[ _CCODWEB ] ;
-         VAR      aTmp[ _CCODWEB ] ;
+      REDEFINE GET aGet[ ( dbfFormasPago )->( fieldPos( "cCodWeb" ) ) ] ;
+         VAR      aTmp[ ( dbfFormasPago )->( fieldPos( "cCodWeb" ) ) ] ;
          ID       430 ;
          WHEN     ( nMode != ZOOM_MODE ); 
          OF       oDlg   
 
-      REDEFINE RADIO aTmp[ _NGENDOC ] ;
+      REDEFINE RADIO aTmp[ ( dbfFormasPago )->( fieldPos( "nGenDoc" ) ) ] ;
          ID       440, 441 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
@@ -576,13 +565,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
 
       REDEFINE GET aTmp[ ( dbfFormasPago )->( FieldPos( "nEntIni" ) ) ];
          ID       500 ;
-			SPINNER ;
+         SPINNER ;
          PICTURE  "@E 99.99" ;
          OF       oDlg
 
       REDEFINE GET aTmp[ ( dbfFormasPago )->( FieldPos( "nPctDto" ) ) ];
          ID       510 ;
-			SPINNER ;
+         SPINNER ;
          PICTURE  "@E 99.99" ;
          OF       oDlg
 
@@ -611,7 +600,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
 
       oDlg:AddFastKey ( VK_F1, {|| GoHelp() } )
 
-      oDlg:bStart := {|| oGet:SetFocus(), aGet[ _CCTACOBRO ]:lValid(), aGet[ _CCTAGAS ]:lValid() }
+      oDlg:bStart := {|| oGet:SetFocus(), aGet[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ]:lValid(), aGet[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ]:lValid() }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -623,34 +612,34 @@ STATIC FUNCTION lPreSave( aTmp, aGet, dbfFormasPago, oBrw, nMode, oDlg, oGet, oG
 
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
 
-      if Empty( aTmp[ _CCODPAGO ] )
+      if Empty( aTmp[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ] )
          MsgStop( "El código de la forma de pago no puede estar vacío." )
          oGet:SetFocus()
          Return nil
       end if
 
-      if dbSeekInOrd( aTmp[ _CCODPAGO ], "CCODPAGO", dbfFormasPago )
-         MsgStop( "Código ya existe " + Rtrim( aTmp[ _CCODPAGO ] ) )
+      if dbSeekInOrd( aTmp[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ], "CCODPAGO", dbfFormasPago )
+         MsgStop( "Código ya existe " + Rtrim( aTmp[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ] ) )
          Return nil
       end if
 
    end if
 
-   if Empty( aTmp[ _CDESPAGO ] )
+   if Empty( aTmp[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ] )
       MsgStop( "El nombre de la forma de pago no puede estar vacío." )
       oGet2:SetFocus()
       Return nil
    end if
 
-   if aTmp[ _NPLAZOS ] < 1
+   if aTmp[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ] < 1
       MsgStop( "El número de plazos tiene que ser mayor que cero." )
-      aGet[ _NPLAZOS ]:SetFocus()
+      aGet[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ]:SetFocus()
       Return nil
    end if
 
    // Numero de la imagen------------------------------------------------------
 
-   aTmp[ _NIMGTPV ]  := oCmbImagen:nAt
+   aTmp[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ]  := oCmbImagen:nAt
 
    // Grabamos el registro-----------------------------------------------------
 
