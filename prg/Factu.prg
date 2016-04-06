@@ -6001,7 +6001,7 @@ Return ( by( nRow ) )
 //---------------------------------------------------------------------------//
 
 Function Test()
-
+/*
    local TPrestaShopConfig
    local TFtpCUrl
 
@@ -6013,12 +6013,13 @@ Function Test()
 
    TFtpCUrl                   := TFtpCUrl():NewPrestashopConfig( TPrestashopConfig )
    TFtpCUrl:createConexion()
-   TFtpCUrl:createFile( "c:\fw195\Gestool\bin\out\img\1-cart_default.jpg", "test/p/1/" )
-   TFtpCUrl:createFile( "c:\fw195\Gestool\bin\out\img\1-cart_default.jpg", "test/p/2/" )
-   TFtpCUrl:createFile( "c:\fw195\Gestool\bin\out\img\1-cart_default.jpg", "test/p/3/" )
-   TFtpCUrl:createFile( "c:\fw195\Gestool\bin\out\img\1-cart_default.jpg", "test/p/4/" )
-   TFtpCUrl:createFile( "c:\fw195\Gestool\bin\out\img\1-cart_default.jpg", "test/p/5/" )
+   TFtpCUrl:createFile( "c:\fw195\Gestool\bin\out\img\1-cart_default.jpg", "test4/p/1/" )
+   TFtpCUrl:createFile( "c:\fw195\Gestool\bin\out\img\1-cart_default.jpg", "test4/p/2/" )
+   TFtpCUrl:createFile( "c:\fw195\Gestool\bin\out\img\1-cart_default.jpg", "test4/p/3/" )
+   TFtpCUrl:createFile( "c:\fw195\Gestool\bin\out\img\1-cart_default.jpg", "test4/p/4/" )
+   TFtpCUrl:createFile( "c:\fw195\Gestool\bin\out\img\1-cart_default.jpg", "test4/p/5/" )
    TFtpCUrl:endConexion()
+*/
 
 Return ( nil )
 

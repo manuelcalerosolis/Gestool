@@ -1114,9 +1114,9 @@ METHOD InsertImageProductPrestashop( hArticuloData, hImage, idProductPrestashop,
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
       nIdImagePrestashop     := ::oCon:GetInsertId()
-      ::writeText( "Insertado la imagen " + alltrim( hGet( hImage, "name" ) ) + " correctamente en la tabla " + ::cPrefixTable( "image" ), 3 )
+      ::writeText( "Insertado la imagen " + alltrim( cNoPath( hGet( hImage, "name" ) ) ) + " correctamente en la tabla " + ::cPrefixTable( "image" ), 3 )
    else
-      ::writeText( "Error al insertar la imagen " + alltrim( hGet( hImage, "name" ) ) + " en la tabla " + ::cPrefixTable( "image" ), 3 )
+      ::writeText( "Error al insertar la imagen " + alltrim( cNoPath( hGet( hImage, "name" ) ) ) + " en la tabla " + ::cPrefixTable( "image" ), 3 )
    end if
 
    if !empty( nIdImagePrestashop )
@@ -1141,9 +1141,9 @@ METHOD InsertImageProductPrestashopLang( hImage, idImagenPrestashop )
                   "'" + ::oCon:Escapestr( hGet( hImage, "name" ) ) + "' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( "Insertado la imagen " + hGet( hImage, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
+      ::writeText( "Insertado la imagen " + alltrim( cNoPath( hGet( hImage, "name" ) ) ) + " correctamente en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
    else
-      ::writeText( "Error al insertar la imagen " + hGet( hImage, "name" ) + " en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
+      ::writeText( "Error al insertar la imagen " + alltrim( cNoPath( hGet( hImage, "name" ) ) ) + " en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
    end if
 
 Return .t.
@@ -1165,9 +1165,9 @@ METHOD InsertImageProductPrestashopShop( hArticuloData, hImage, idImagenPrestash
    if ::lProductIdColumnImageShop
       cCommand    += "'" + alltrim( str( ::TPrestashopId:getValueProduct( hget( hArticuloData, "id" ), ::getCurrentWebName() ) ) ) + "', "  // id_product
    end if
-   cCommand       += "'" + alltrim( str( idImagenPrestashop ) ) + "', "   // id_image
-   cCommand       += "'1', "                                         // id_shop
-   cCommand       += if( hGet( hImage, "lDefault" ), "'1'", "'0'" ) + ")"               // cover
+   cCommand       += "'" + alltrim( str( idImagenPrestashop ) ) + "', "       // id_image
+   cCommand       += "'1', "                                                  // id_shop
+   cCommand       += if( hGet( hImage, "lDefault" ), "'1'", "'0'" ) + ")"     // cover
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
       ::writeText( "Insertado la imagen " + hGet( hImage, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
@@ -1231,10 +1231,10 @@ METHOD buildImagenes() CLASS TComercio
 
    local oFile
    local oImage
-   local oTipoImage
    local cNewImg           := ""
-   local oImagenFinal
    local cCarpeta          := ""
+   local oTipoImage
+   local oImagenFinal
 
    ::aImagesCategories     := {}
    ::aImagesArticulos      := {}
@@ -1277,7 +1277,7 @@ METHOD buildImagenes() CLASS TComercio
 
             cNewImg                       := cPatOut() + oImage:cPrefijoNombre + ".jpg"
 
-            SaveImage( oImage:cNombreImagen, cNewImg )
+            saveImage( oImage:cNombreImagen, cNewImg )
 
             oImagenFinal                  := SImagen()
             oImagenFinal:cNombreImagen    := cNewImg
