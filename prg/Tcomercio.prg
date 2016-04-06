@@ -248,7 +248,12 @@ CLASS TComercio
    METHOD meterProcesoText( cText )
    METHOD meterProcesoSetTotal( nTotal )
    
-   METHOD ImportarPrestashop()
+   // Controladores---------------------------------------------------------------
+
+   METHOD isAviableWebToExport()
+      METHOD controllerExportPrestashop()
+      METHOD controllerOrderPrestashop()
+
 
    METHOD AppendIvaPrestashop()
    METHOD InsertIvaPrestashop()
@@ -323,7 +328,6 @@ CLASS TComercio
 
    METHOD CreateDirectoryImagesLocal( cCarpeta )
 
-   METHOD controllerOrders()
    METHOD loadOrders()
    METHOD processOrder( oQuery )
    METHOD checkDate( cDatePrestashop )
@@ -430,7 +434,6 @@ CLASS TComercio
 
    METHOD buildGetNodeParentCategories()
 
-   METHOD buildExportarPrestashop()
 
    METHOD buildEliminaTablas()
 
@@ -825,24 +828,24 @@ METHOD dialogActivate( oWnd ) CLASS TComercio
       REDEFINE BUTTONBMP ::oBtnExportar ;
          ID       510 ;
          OF       ::oDlg;
-         ACTION   ( ::buildExportarPrestashop() ); //ExportarPrestashop()
+         ACTION   ( ::controllerExportPrestashop() ) 
 
       REDEFINE BUTTONBMP ::oBtnImportar ;
          ID       520 ;
          OF       ::oDlg;
-         ACTION   ( ::ImportarPrestashop() );
+         ACTION   ( ::controllerOrderPrestashop() )
 
       REDEFINE BUTTONBMP ::oBtnStock ;
          ID       530 ;
          OF       ::oDlg;
-         ACTION   ( ::buildActualizaStock() );
+         ACTION   ( ::buildActualizaStock() )
 
       REDEFINE BUTTON ::oBtnCancel ;
          ID       IDCANCEL ;
          OF       ::oDlg ;
          ACTION   ( ::oDlg:end() )
 
-      ::oDlg:AddFastKey( VK_F5, {|| ::buildExportarPrestashop() } )
+      ::oDlg:AddFastKey( VK_F5, {|| ::controllerExportPrestashop() } )
 
       ::oDlg:bStart := {|| ::dialogStart() }
 
@@ -934,11 +937,123 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ImportarPrestashop() CLASS TComercio
+METHOD controllerOrderPrestashop() CLASS TComercio
+
+   local oBlock
+   local oError
+
+   if !( ::isAviableWebToExport() )
+      Return .f.
+   end if 
+
+   ::disableDialog()
+
+   // oBlock            := ErrorBlock( { | oError | Break( oError ) } )
+   // BEGIN SEQUENCE
+
+   if ::filesOpen()
+
+      ::MeterTotalText( "Conectando con la base de datos" )
+
+      if ::prestaShopConnect()
+
+         ::MeterTotalText( "Descargando pedidos de prestashop" )
+
+         ::loadOrders()
+
+         // Desconectamos mysql------------------------------------------------
+
+         ::MeterTotalText( "Desconectando bases de datos." )
+
+         ::prestashopDisConnect()  
+      
+      end if  
+
+      ::filesClose()
+
+   end if 
+
+   // RECOVER USING oError
+   //    msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
+   // END SEQUENCE
+   // ErrorBlock( oBlock )
+
+   ::EnableDialog()
 
 Return .t.
 
 //---------------------------------------------------------------------------//
+
+METHOD loadOrders() CLASS TComercio
+
+   local oQuery
+   local nQueryRecCount
+
+   ::nMeterProceso         := 0
+
+   oQuery                  := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "orders" ) )    
+   if oQuery:Open()
+      
+      nQueryRecCount       := oQuery:RecCount()
+
+      if nQueryRecCount > 0
+5
+         ::setMeterTotal( nQueryRecCount )
+         ::writeText( "Descargando pedidos desde la web", 2 )
+
+         oQuery:GoTop()
+         while !oQuery:Eof()
+
+            ::meterProcesoText( " Descargando pedido " + alltrim( str( ++::nMeterProceso ) ) + " de "  + alltrim( str( ::nTotMeter ) ) )
+
+            // ::processOrder( oQuery )
+
+            oQuery:Skip()
+
+         end while
+
+      end if
+
+   end if
+
+   oQuery:Free()
+
+   oQuery   := nil
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD processOrder( oQuery ) CLASS TComercio
+
+   local cPrestashopModule
+
+   if empty( oQuery )
+      return .f.
+   end if 
+
+   if !::checkDate( oQuery:FieldGetByName( "date_add" ) )
+      return .f.
+   end if 
+
+   if ::payOrder( oQuery:FieldGetByName( "module" ) )
+
+      if !::orderRecived( oQuery )
+         ::insertPedidoPrestashop( oQuery )
+      end if
+
+   else
+
+      if !::estimateRecived( oQuery )
+         ::insertPresupuestoPrestashop( oQuery )
+      end if
+
+   endif
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD AppendIvaPrestashop() Class TComercio
 
@@ -4829,45 +4944,47 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildExportarPrestashop( idProduct ) Class TComercio
-
-   local hWeb
-   local hWebs
-   local oBlock
-   local oError
+METHOD isAviableWebToExport() Class TComercio
 
    if !( ::isValidNameWebToExport() )
       Return .f.
    end if 
 
+   if !( ::TPrestashopConfig:setCurrentWebName( ::getWebToExport() ) )
+      msgStop( "No se puede poner en uso la web " + ::getWebToExport() )
+      Return .f.
+   end if 
+
+   if !( ::TPrestashopConfig:isActive() )
+      msgStop( "Web " + ::getWebToExport() + " esta actualmente desactivada" )
+      Return .f.
+   end if 
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD controllerExportPrestashop( idProduct ) Class TComercio
+
+   local oBlock
+   local oError
+
+   if !( ::isAviableWebToExport() )
+      Return .f.
+   end if 
+
    ::disableDialog()
 
-   // oBlock            := ErrorBlock( { | oError | Break( oError ) } )
-   // BEGIN SEQUENCE
+   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
+   BEGIN SEQUENCE
 
-      if ::TPrestashopConfig:setCurrentWebName( ::getWebToExport() )
-
-         if ::TPrestashopConfig:isActive()
+      ::buildFTP()
+      ::buildProductPrestashop( idProduct, .f. )
    
-            ::buildFTP()
-            ::buildProductPrestashop( idProduct, .f. )
-   
-         else
-
-            msgStop( "Web " + ::getWebToExport() + " esta actualmente desactivada" )
-
-         end if 
-
-      else 
-
-         msgStop( "No se puede poner en uso la web " + ::getWebToExport() )
-
-      end if 
-
-   // RECOVER USING oError
-   //    msgStop( ErrorMessage( oError ), "Error al exportar a Prestashop." )
-   // END SEQUENCE
-   // ErrorBlock( oBlock )
+   RECOVER USING oError
+      msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
+   END SEQUENCE
+   ErrorBlock( oBlock )
 
    ::EnableDialog()
 
@@ -5449,91 +5566,12 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD controllerOrders() CLASS TComercio
-
-   if ::loadOrders()
-      ::processOrder()
-   end if
-
-Return ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD loadOrders() CLASS TComercio
-
-   local oQuery
-   local nQueryRecCount
-
-   ::nMeterProceso         := 0
-
-   oQuery                  := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "orders" ) )    
-   if oQuery:Open()
-      nQueryRecCount       := oQuery:RecCount()
-
-      if nQueryRecCount > 0
-
-         ::setMeterTotal( nQueryRecCount )
-         ::writeText( "Descargando pedidos desde la web", 2 )
-
-         oQuery:GoTop()
-         while !oQuery:Eof()
-
-            ::meterProcesoText( " Descargando pedido " + alltrim( str( ++::nMeterProceso ) ) + " de "  + alltrim( str( ::nTotMeter ) ) )
-
-            ::processOrder( oQuery )
-
-            oQuery:Skip()
-
-         end while
-
-      end if
-
-   end if
-
-   oQuery:Free()
-
-   oQuery   := nil
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD processOrder( oQuery ) CLASS TComercio
-
-   local cPrestashopModule
-
-   if empty( oQuery )
-      return .f.
-   end if 
-
-   if !::checkDate( oQuery:FieldGetByName( "date_add" ) )
-      return .f.
-   end if 
-
-   if ::payOrder( oQuery:FieldGetByName( "module" ) )
-
-      if !::orderRecived( oQuery )
-         ::insertPedidoPrestashop( oQuery )
-      end if
-
-   else
-
-      if !::estimateRecived( oQuery )
-         ::insertPresupuestoPrestashop( oQuery )
-      end if
-
-   endif
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
 METHOD getDate( cDatePrestashop ) CLASS TComercio
 
    local dFecha
 
    SET DATE FORMAT "yyyy/mm/dd"
-   dFecha   := ctod( left( cDatePrestashop, 10 ) )
+   dFecha            := ctod( left( cDatePrestashop, 10 ) )
    SET DATE FORMAT "dd/mm/yyyy"
 
 Return ( dFecha )
@@ -5577,7 +5615,7 @@ METHOD payOrder( cPrestashopModule ) CLASS TComercio
    local nOrdenAnt   := ::oFPago:ordSetFocus( "cCodWeb" ) 
 
    if ( ::oFPago:Seek( padr( cPrestashopModule, 200 ) ) ) .and. ( ::oFPago:nCobRec <= 1 )
-         lPayOrder   := .t.
+      lPayOrder      := .t.
    endif
 
    ::oFPago:ordSetFocus( nOrdenAnt )

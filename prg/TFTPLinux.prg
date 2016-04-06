@@ -367,8 +367,6 @@ METHOD createFile( cFile, cDirectory ) CLASS TFTPCurl
 
    cURL              := "ftp://" + ::cUser + ":" + ::cPassword + "@" + ::cServer + "/" + cDirectory + cNoPath( cFile )
 
-   msgAlert( cURL, "curl" )
-
    curl_easy_setopt( ::idCurl, HB_CURLOPT_UPLOAD )
    curl_easy_setopt( ::idCurl, HB_CURLOPT_URL, cURL )
    curl_easy_setopt( ::idCurl, HB_CURLOPT_UL_FILE_SETUP, cFile )
@@ -378,8 +376,7 @@ METHOD createFile( cFile, cDirectory ) CLASS TFTPCurl
    createFile        := curl_easy_perform( ::idCurl )
 
    curl_easy_getinfo( ::idCurl, HB_CURLINFO_EFFECTIVE_URL )
-   ? curl_easy_getinfo( ::idCurl, HB_CURLINFO_TOTAL_TIME )
-   ? createFile
+   curl_easy_getinfo( ::idCurl, HB_CURLINFO_TOTAL_TIME )
 
    curl_easy_reset( ::idCurl )
 
