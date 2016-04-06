@@ -1114,9 +1114,9 @@ METHOD InsertImageProductPrestashop( hArticuloData, hImage, idProductPrestashop,
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
       nIdImagePrestashop     := ::oCon:GetInsertId()
-      ::writeText( "Insertado la imagen " + alltrim( cNoPath( hGet( hImage, "name" ) ) ) + " correctamente en la tabla " + ::cPrefixTable( "image" ), 3 )
+      ::writeText( "Insertado la imagen " + hGet( hArticuloData, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "image" ), 3 )
    else
-      ::writeText( "Error al insertar la imagen " + alltrim( cNoPath( hGet( hImage, "name" ) ) ) + " en la tabla " + ::cPrefixTable( "image" ), 3 )
+      ::writeText( "Error al insertar la imagen " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "image" ), 3 )
    end if
 
    if !empty( nIdImagePrestashop )
@@ -1127,7 +1127,7 @@ Return ( nIdImagePrestashop )
 
 //---------------------------------------------------------------------------//
 
-METHOD InsertImageProductPrestashopLang( hImage, idImagenPrestashop )
+METHOD InsertImageProductPrestashopLang( hArticuloData, hImage, idImagenPrestashop )
 
    local cCommand
 
@@ -1138,12 +1138,12 @@ METHOD InsertImageProductPrestashopLang( hImage, idImagenPrestashop )
                "VALUES (" + ;
                   "'" + alltrim( str( idImagenPrestashop ) ) + "', " + ;
                   "'" + alltrim( str( ::nLanguage ) ) + "', " + ;
-                  "'" + ::oCon:Escapestr( hGet( hImage, "name" ) ) + "' )"
+                  "'" + ::oCon:Escapestr( hGet( hArticuloData, "name" ) ) + "' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( "Insertado la imagen " + alltrim( cNoPath( hGet( hImage, "name" ) ) ) + " correctamente en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
+      ::writeText( "Insertado la imagen " + hGet( hArticuloData, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
    else
-      ::writeText( "Error al insertar la imagen " + alltrim( cNoPath( hGet( hImage, "name" ) ) ) + " en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
+      ::writeText( "Error al insertar la imagen " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
    end if
 
 Return .t.
@@ -1170,9 +1170,9 @@ METHOD InsertImageProductPrestashopShop( hArticuloData, hImage, idImagenPrestash
    cCommand       += if( hGet( hImage, "lDefault" ), "'1'", "'0'" ) + ")"     // cover
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( "Insertado la imagen " + hGet( hImage, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
+      ::writeText( "Insertado la imagen " + hGet( hArticuloData, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
    else
-      ::writeText( "Error al insertar la imagen " + hGet( hImage, "name" ) + " en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
+      ::writeText( "Error al insertar la imagen " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
    end if
 
 Return .t.
@@ -2713,7 +2713,7 @@ Return ( Self )
 
 METHOD buildArticuloPrestashop( id ) CLASS TComercio
 
-   local hImagesArticulos     := {}
+   local aImagesArticulos     := {}
 
    if aScan( ::aArticuloData, {|h| hGet( h, "id" ) == id } ) != 0
       Return ( self )
@@ -2721,7 +2721,7 @@ METHOD buildArticuloPrestashop( id ) CLASS TComercio
 
    // Recopilar info de imagenes-----------------------------------------
 
-   hImagesArticulos           := ::buildImagesArticuloPrestashop( id )
+   aImagesArticulos           := ::buildImagesArticuloPrestashop( id )
 
    // Rellenamos el Hash-------------------------------------------------
 
@@ -2744,7 +2744,7 @@ METHOD buildArticuloPrestashop( id ) CLASS TComercio
                               "meta_keywords"         => alltrim( ::oArt:cKeySeo ) ,;
                               "lPublicRoot"           => ::oArt:lPubPor,;
                               "cImagen"               => ::oArt:cImagen,;
-                              "aImages"               => hImagesArticulos } )
+                              "aImages"               => aImagesArticulos } )
 
 Return ( Self )
 
@@ -2791,9 +2791,7 @@ METHOD buildImagesArticuloPrestashop( id ) CLASS TComercio
 
    end if
 
-   /*
-   Pasamos las imágenes de la tabla de artículos-------------------------------
-   */
+   // Pasamos las imágenes de la tabla de artículos-------------------------------
 
    if len( aImages ) == 0
 
@@ -2825,9 +2823,7 @@ METHOD buildImagesArticuloPrestashop( id ) CLASS TComercio
 
    ::oArtDiv:OrdSetFocus( nOrdAntDiv )
 
-   /*
-   Nos aseguramos de que por lo menos una imágen sea por defecto---------------
-   */
+   // Nos aseguramos de que por lo menos una imágen sea por defecto------------
 
    if Len( aImages ) != 0
       if aScan( aImages, {|a| hGet( a, "lDefault" ) == .t. } ) == 0
@@ -3835,7 +3831,7 @@ METHOD buildInsertImageProductsPrestashop( hArticuloData, idProductPrestashop ) 
 
       if idImagenPrestashop != 0
 
-         ::insertImageProductPrestashopLang( hImage, idImagenPrestashop )
+         ::insertImageProductPrestashopLang( hArticuloData, hImage, idImagenPrestashop )
 
          ::insertImageProductPrestashopShop( hArticuloData, hImage, idImagenPrestashop )
 
