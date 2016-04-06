@@ -48,8 +48,6 @@
 #define _CCODEDI        42      //
 #define _NGENDOC        43
 
-
-
 static oWndBrw
 static aBigResource
 static aPressResource
@@ -330,8 +328,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
    */
 
    if nMode == APPD_MODE
-      aTmp[ _NPLAZOS ]  := 1
-      aTmp[ _NPLAUNO ]  := 0
+      aTmp[ ( dbfFormasPago )->( fieldPos( "nPlazos" ) ) ]  := 1
+      aTmp[ ( dbfFormasPago )->( fieldPos( "nPlaUno" ) ) ]  := 0
    end if
 
    if aTmp[ _NTIPPGO ] == 0
@@ -346,12 +344,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
       aTmp[ _NIMGTPV ]  := 1
    end if
 
-   if Empty( aTmp[ _NPOSTPV ] )
-      aTmp[ _NPOSTPV ]  := nMaxPosition
+   if Empty( aTmp[ ( dbfFormasPago )->( fieldPos( "nPosTpv" ) ) ] )
+      aTmp[ ( dbfFormasPago )->( fieldPos( "nPosTpv" ) ) ]  := nMaxPosition
    end if
 
-   if aTmp[ _CCODPAGO ] == "00"
-      aTmp[ _LSHWTPV ]  := .t.
+   if aTmp[ ( dbfFormasPago )->( fieldPos( "cCodPago" ) ) ] == "00"
+      aTmp[ ( dbfFormasPago )->( fieldPos( "lShwTpv" ) ) ]  := .t.
    end if
 
    /*
