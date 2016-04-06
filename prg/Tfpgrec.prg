@@ -248,8 +248,6 @@ METHOD lGenerate()
 
    ::oMtrInf:SetTotal( ::oFacCliP:Lastrec() )
 
-   ?"Despues del while"
-
    ::oFacCliP:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ) )
 
    ::oDlg:Enable()
