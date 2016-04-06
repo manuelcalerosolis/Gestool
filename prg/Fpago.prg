@@ -44,8 +44,10 @@
 #define _CDIGBNC        38      //
 #define _CCTABNC        39  
 #define _CCODWEB        40
-#define _LDOMBAN        41      //
-#define _CCODEDI        42      //
+#define _NGENDOC        41
+#define _LDOMBAN        42      //
+#define _CCODEDI        43      //
+
 
 static oWndBrw
 static aBigResource
@@ -558,6 +560,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
          ID       430 ;
          WHEN     ( nMode != ZOOM_MODE ); 
          OF       oDlg   
+
+      REDEFINE RADIO aTmp[ _NGENDOC ] ;
+         ID       440, 441 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
 
       // Código de facturae ---------------------------------------------------
 
@@ -1196,8 +1203,10 @@ function aItmFPago()
    aAdd( aBase, { "cDigBnc",   "C",   2,   0, "Dígito de control de la cuenta"                         ,  "",   "", "( cDbfPgo )" } )
    aAdd( aBase, { "cCtaBnc",   "C",  10,   0, "Cuenta bancaria"                                        ,  "",   "", "( cDbfPgo )" } )
    aAdd( aBase, { "cCodWeb",   "C", 200,   0, "Modulo web para la forma de pago"                       ,  "",   "", "( cDbfPgo )" } )
+   aAdd( aBase, { "nGenDoc",   "N",   1,   0, "Generar documento como presupuesto o pedido"            ,  "",   "", "( cDbfPgo )" } )
    aAdd( aBase, { "lDomBan",   "L",   1,   0, "Domiciliacion bancaria"                                 ,  "",   "", "( cDbfPgo )" } )
    aAdd( aBase, { "cCodEdi",   "C",  10,   0, "Código para pasar a plataforma EDI"                     ,  "",   "", "( cDbfPgo )" } )
+  
    
 return ( aBase )
 
