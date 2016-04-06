@@ -184,8 +184,6 @@ CLASS TComercio
    METHOD MeterTotal( oMeterTotal )       INLINE ( iif( oMeterTotal == nil, ::oMeterTotal := oMeterTotal, ::oMeterTotal ) )
    METHOD TextTotal( oTextTotal )         INLINE ( iif( oTextTotal == nil, ::oTextTotal := oTextTotal, ::oTextTotal ) )
 
-   METHOD lReady()                        INLINE ( !empty( ::cHost ) .and. !empty( ::cUser ) .and. !empty( ::cDbName ) )
-
    METHOD writeText( cText )           
 
    METHOD setWebToExport( cWebToExport )  INLINE ( ::cWebToExport := alltrim( cWebToExport ) )
@@ -253,7 +251,7 @@ CLASS TComercio
    METHOD isAviableWebToExport()
       METHOD controllerExportPrestashop()
       METHOD controllerOrderPrestashop()
-
+      METHOD controllerUpdateStockPrestashop()
 
    METHOD AppendIvaPrestashop()
    METHOD InsertIvaPrestashop()
@@ -440,7 +438,6 @@ CLASS TComercio
    METHOD buildTextOk( cValue, cTable )      INLINE ( ::writeText( "Insertado correctamente " + cValue + ", en la tabla " + cTable, 3 ) )
    METHOD buildTextError( cValue, cTable )   INLINE ( ::writeText( "Error insertado " + cValue + ", en la tabla " + cTable, 3 ) )
 
-   METHOD buildActualizaStock()
    METHOD buildActualizaStockProductPrestashop()
    METHOD buildInformacionStockProductPrestashop()
    METHOD buildSubirStockPrestashop()
@@ -453,6 +450,7 @@ CLASS TComercio
 
    METHOD cDirectoryProduct()                INLINE ( ::TPrestashopConfig:getImagesDirectory() + "/p" )
    METHOD cDirectoryCategories()             INLINE ( ::TPrestashopConfig:getImagesDirectory() + "/c" )
+   METHOD getRecursiveFolderPrestashop( cCarpeta )
 
 END CLASS
 
@@ -836,7 +834,7 @@ METHOD dialogActivate( oWnd ) CLASS TComercio
       REDEFINE BUTTONBMP ::oBtnStock ;
          ID       530 ;
          OF       ::oDlg;
-         ACTION   ( ::buildActualizaStock() )
+         ACTION   ( ::controllerUpdateStockPrestashop() )
 
       REDEFINE BUTTON ::oBtnCancel ;
          ID       IDCANCEL ;
@@ -1372,7 +1370,7 @@ METHOD buildImagenes() CLASS TComercio
       do case
          case oImage:nTipoImagen == tipoProducto
 
-            cNewImg                       := cPatOut() + oImage:cPrefijoNombre + ".jpg"
+            cNewImg                       := cPatTmp() + oImage:cPrefijoNombre + ".jpg"
 
             saveImage( oImage:cNombreImagen, cNewImg )
 
@@ -1385,7 +1383,7 @@ METHOD buildImagenes() CLASS TComercio
 
          case oImage:nTipoImagen == tipoCategoria
 
-            cNewImg                       := cPatOut() + oImage:cPrefijoNombre + ".jpg"
+            cNewImg                       := cPatTmp() + oImage:cPrefijoNombre + ".jpg"
 
             saveImage( oImage:cNombreImagen, cNewImg )
 
@@ -1406,7 +1404,7 @@ METHOD buildImagenes() CLASS TComercio
          do case
             case oImage:nTipoImagen == tipoProducto .and. oTipoImage:lProducts
 
-               cNewImg                       := cPatOut() + oImage:cPrefijoNombre + "-" + oTipoImage:cNombreTipo + ".jpg"
+               cNewImg                       := cPatTmp() + oImage:cPrefijoNombre + "-" + oTipoImage:cNombreTipo + ".jpg"
 
                SaveImage( oImage:cNombreImagen, cNewImg, oTipoImage:nAnchoTipo, oTipoImage:nAltoTipo )
 
@@ -1419,7 +1417,7 @@ METHOD buildImagenes() CLASS TComercio
 
             case oImage:nTipoImagen == tipoCategoria .and. oTipoImage:lCategories
 
-               cNewImg                       := cPatOut() + oImage:cPrefijoNombre + "-" + oTipoImage:cNombreTipo + ".jpg"
+               cNewImg                       := cPatTmp() + oImage:cPrefijoNombre + "-" + oTipoImage:cNombreTipo + ".jpg"
 
                SaveImage( oImage:cNombreImagen, cNewImg, oTipoImage:nAnchoTipo, oTipoImage:nAltoTipo )
 
@@ -1460,26 +1458,14 @@ METHOD buildSubirImagenes() CLASS TComercio
 
       ::meterProcesoSetTotal( len( ::aImagesArticulos ) )
 
-      if !empty( ::TPrestashopConfig:getImagesDirectory() )
-         ::oFtp:CreateDirectory( ::cDirectoryProduct(), .t. )
-      end if
-
       for each oImage in ::aImagesArticulos
 
          ::meterProcesoText( "Subiendo imagen " + oImage:cNombreImagen + " [" + alltrim(str(hb_enumindex())) + " de "  + alltrim(str(len(::aImagesArticulos))) + "]" )
 
-         // Posicionamos en el directorio-----------------------------------
-
-         ::oFtp:CreateDirectoryRecursive( oImage:cCarpeta )
-
          // Sube el fichero ------------------------------------------------
 
-         ::oFtp:CreateFile( oImage:cNombreImagen, ::cDirectoryProduct() + "/" + oImage:cCarpeta )
+         ::oFtp:CreateFile( oImage:cNombreImagen, ::cDirectoryProduct() + "/" + ::getRecursiveFolderPrestashop( oImage:cCarpeta ) )
         
-         // Volvemos al directorio raiz--------------------------------------
-
-         ::oFtp:ReturnDirectory( oImage:cCarpeta )
-
          SysRefresh()
 
       next
@@ -1494,26 +1480,14 @@ METHOD buildSubirImagenes() CLASS TComercio
 
       ::meterProcesoSetTotal( len( ::aImagesCategories ) )
 
-      if !empty( ::TPrestashopConfig:getImagesDirectory() )
-         ::oFtp:CreateDirectory( ::cDirectoryCategories(), .t. )
-      end if
-
       for each oImage in ::aImagesCategories
 
          ::meterProcesoText( "Subiendo imagen categoría " + alltrim(str(hb_enumindex())) + " de "  + alltrim(str(len(::aImagesCategories))) )
 
-         // Posicionamos en el directorio-----------------------------------
-
-         ::oFtp:CreateDirectoryRecursive( oImage:cCarpeta )
-
          // Sube el fichero ------------------------------------------------
 
-         ::oFtp:CreateFile( oImage:cNombreImagen, oImage:cCarpeta )
+         ::oFtp:CreateFile( oImage:cNombreImagen, ::cDirectoryCategories() + "/" + ::getRecursiveFolderPrestashop( oImage:cCarpeta ) )
         
-         // Volvemos al directorio raiz-------------------------------------
-
-         ::oFtp:ReturnDirectory( oImage:cCarpeta )
-
          SysRefresh()
 
       next
@@ -2449,11 +2423,11 @@ METHOD ActualizaStockProductsPrestashop( cCodigoArticulo, cCodigoPropiedad1, cCo
                      Actualizamos el stock total de la web---------------------
                      */
 
-                     nTotStock   := ::oStock:nStockArticulo( ::oArt:Codigo, ::TPrestashopConfig:getStore() )
+                     nTotStock         := ::oStock:nStockArticulo( ::oArt:Codigo, ::TPrestashopConfig:getStore() )
 
-                     cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
-                                       "quantity = '" + alltrim( str( nTotStock ) ) + "' " + ;
-                                    "WHERE id_product = " + alltrimIdProductPrestashop + " AND id_product_attribute = 0 "
+                     cCommand          := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
+                                             "quantity = '" + alltrim( str( nTotStock ) ) + "' " + ;
+                                          "WHERE id_product = " + alltrimIdProductPrestashop + " AND id_product_attribute = 0 "
 
                      TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
@@ -2463,11 +2437,11 @@ METHOD ActualizaStockProductsPrestashop( cCodigoArticulo, cCodigoPropiedad1, cCo
                      Actualizamos el stock total de la web---------------------
                      */
 
-                     nTotStock   := ::oStock:nStockArticulo( ::oArt:Codigo, ::TPrestashopConfig:getStore() )
+                     nTotStock         := ::oStock:nStockArticulo( ::oArt:Codigo, ::TPrestashopConfig:getStore() )
 
-                     cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
-                                       "quantity = '" + alltrim( str( nTotStock ) ) + "' " + ;
-                                    "WHERE id_product = " + alltrimIdProductPrestashop + " AND id_product_attribute = 0 "
+                     cCommand          := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
+                                             "quantity = '" + alltrim( str( nTotStock ) ) + "' " + ;
+                                          "WHERE id_product = " + alltrimIdProductPrestashop + " AND id_product_attribute = 0 "
 
                      TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
@@ -2481,9 +2455,9 @@ METHOD ActualizaStockProductsPrestashop( cCodigoArticulo, cCodigoPropiedad1, cCo
 
                      if nIdProductAttribute != 0
 
-                        cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
-                                          "quantity = '" + alltrim( str( nTotStock ) ) + "' " + ;
-                                       "WHERE id_product = " + alltrimIdProductPrestashop + " AND id_product_attribute = " + str( nIdProductAttribute )
+                        cCommand          := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
+                                                "quantity = '" + alltrim( str( nTotStock ) ) + "' " + ;
+                                             "WHERE id_product = " + alltrimIdProductPrestashop + " AND id_product_attribute = " + str( nIdProductAttribute )
 
                         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
@@ -5333,37 +5307,48 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-METHOD buildActualizaStock() Class TComercio
+METHOD controllerUpdateStockPrestashop() Class TComercio
 
    local oBlock
    local oError
 
-   ::oDlg:bValid     := {|| .f. }
+   if !( ::isAviableWebToExport() )
+      Return .f.
+   end if 
 
-   ::oBtnExportar:Hide()
-   ::oBtnImportar:Hide()
-   ::oBtnStock:Hide()
+   ::disableDialog()
 
-   ::oBtnCancel:Disable()
+   // oBlock            := ErrorBlock( { | oError | Break( oError ) } )
+   // BEGIN SEQUENCE
 
-   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
-   BEGIN SEQUENCE
+   if ::filesOpen()
 
-      ::writeText( 'Comenzamos la actualización', 1  )
+      ::MeterTotalText( "Conectando con la base de datos" )
 
-      ::buildActualizaStockProductPrestashop()
+      if ::prestaShopConnect()
 
-   RECOVER USING oError
+         ::MeterTotalText( "Actializando stock de prestashop" )
 
-      msgStop( ErrorMessage( oError ), "Error al actualizar stock a prestashop." )
+         ::buildActualizaStockProductPrestashop()
 
-   END SEQUENCE
+         // Desconectamos mysql------------------------------------------------
 
-   ErrorBlock( oBlock )
+         ::MeterTotalText( "Desconectando bases de datos." )
 
-   ::oDlg:bValid     := {|| .t. }
+         ::prestashopDisConnect()  
+      
+      end if  
 
-   ::oBtnCancel:Enable()
+      ::filesClose()
+
+   end if 
+
+   // RECOVER USING oError
+   //    msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
+   // END SEQUENCE
+   // ErrorBlock( oBlock )
+
+   ::EnableDialog()
 
 Return .t.
 
@@ -5463,42 +5448,36 @@ METHOD buildSubirStockPrestashop() CLASS TComercio
    local nIdProductAttribute
    local aStock
 
-   if ::prestaShopConnect()
+   for each aStock in ::aStockArticuloData
 
-      for each aStock in ::aStockArticuloData
+      if hGet( aStock, "cCodWebVal1" ) == 0 .and.;
+         hGet( aStock, "cCodWebVal2" ) == 0
 
-         if hGet( aStock, "cCodWebVal1" ) == 0 .and.;
-            hGet( aStock, "cCodWebVal2" ) == 0
+         ::writeText( "Actualizando stock de " + alltrim( hGet( aStock, "cNomArt" ) ) )        
 
-            ::writeText( "Actualizando stock de " + alltrim( hGet( aStock, "cNomArt" ) ) )        
+         cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
+                           "quantity = '" + hGet( aStock, "nStock" ) + "' " + ;
+                        "WHERE id_product = " + alltrim( str( hGet( aStock, "idProductPrestashop" ) ) ) + " AND id_product_attribute = 0 "
+
+         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+      else
+
+         nIdProductAttribute := str( ::nIdProductAttribute( hGet( aStock, "idProductPrestashop" ), hGet( aStock, "cCodWebVal1" ), hGet( aStock, "cCodWebVal2" ) ) )
+
+         if !empty( nIdProductAttribute )
 
             cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
-                              "quantity = '" + hGet( aStock, "nStock" ) + "' " + ;
-                           "WHERE id_product = " + alltrim( str( hGet( aStock, "idProductPrestashop" ) ) ) + " AND id_product_attribute = 0 "
+                              "quantity='" + hGet( aStock, "nStock" ) + "' " + ;
+                           "WHERE id_product=" + alltrim( str( hGet( aStock, "idProductPrestashop" ) ) ) + " AND id_product_attribute=" + alltrim( nIdProductAttribute )
 
             TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-         else
-
-            nIdProductAttribute := str( ::nIdProductAttribute( hGet( aStock, "idProductPrestashop" ), hGet( aStock, "cCodWebVal1" ), hGet( aStock, "cCodWebVal2" ) ) )
-
-            if !empty( nIdProductAttribute )
-
-               cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
-                                 "quantity='" + hGet( aStock, "nStock" ) + "' " + ;
-                              "WHERE id_product=" + alltrim( str( hGet( aStock, "idProductPrestashop" ) ) ) + " AND id_product_attribute=" + alltrim( nIdProductAttribute )
-
-               TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-
-            end if
-
          end if
-      
-      next
 
-      ::prestashopDisConnect()
-
-   end if
+      end if
+   
+   next
 
 Return .t.
 
@@ -5506,45 +5485,18 @@ Return .t.
 
 METHOD buildActualizaStockProductPrestashop() CLASS TComercio
 
-   /*
-   Compruebo que podamos conectarnos-------------------------------------------
-   */
-
-   if !::lReady()
-      Return .f.
-   end if
-
-   if ::filesOpen()
-
-      /*
-      Recopilamos información necesaria----------------------------------------
-      */
-
-      ::MeterTotalText( "Recopialando información de stocks" )
+   ::meterTotalText( "Recopialando información de stocks" )
       
-      ::buildInformacionStockProductPrestashop()
+   ::buildInformacionStockProductPrestashop()
 
-      /*
-      Subimos la información recopilada----------------------------------------
-      */
+   ::writeText( "Actualizando stocks" )
+   ::meterProcesoSetTotal( len(::aStockArticuloData) )
 
-      ::writeText( "Actualizando stocks" )
-      ::meterProcesoSetTotal( len(::aStockArticuloData) )
-      ::buildSubirStockPrestashop()
+   // ::buildSubirStockPrestashop()
 
-      ::MeterTotalText( "Proceso finalizado" )
+   msgDebug( ::aStockArticuloData, "aStockArticuloData" )
 
-      ::filesClose()
-
-   end if
-
-   if !empty( ::oMeterTotal )
-      ::oMeterTotal:Set( 100 )
-   end if
-
-   if !empty( ::oMeterProceso )
-      ::oMeterProceso:Set( 100 )
-   end if
+   ::MeterTotalText( "Proceso finalizado" )
 
 Return .t.
 
@@ -6424,6 +6376,18 @@ METHOD writeText( cText ) CLASS TComercio
 Return ( nil )   
 
 //---------------------------------------------------------------------------//
+
+METHOD getRecursiveFolderPrestashop( cCarpeta ) CLASS TComercio
+
+   local n
+   local cFolder  := ""
+
+   for n := 1 to len( cCarpeta )
+      cFolder     += ( substr( cCarpeta, n, 1 ) + "/" )
+   next 
+
+Return ( cFolder )
+
 //ESTRUCTURAS----------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

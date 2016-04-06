@@ -149,7 +149,7 @@ METHOD CreateDirectoryRecursive( cCarpeta ) CLASS TFtpLinux
    local n
 
    for n := 1 to len( cCarpeta )
-      ::CreateDirectory( substr( cCarpeta , n, 1 ) )
+      ::CreateDirectory( substr( cCarpeta, n, 1 ) )
    next 
 
 Return ( .t. )
@@ -367,7 +367,7 @@ METHOD createFile( cFile, cDirectory ) CLASS TFTPCurl
 
    cURL              := "ftp://" + ::cUser + ":" + ::cPassword + "@" + ::cServer + "/" + cDirectory + cNoPath( cFile )
 
-   msgAlert( cURL, "cURL" )
+   // msgWait( cURL, "cURL", 1 )
 
    curl_easy_setopt( ::idCurl, HB_CURLOPT_UPLOAD )
    curl_easy_setopt( ::idCurl, HB_CURLOPT_URL, cURL )
