@@ -267,6 +267,8 @@ METHOD lOpenFiles() CLASS GeneraFacturasClientes
 
       D():Clientes( ::nView )
 
+      D():ClientesBancos( ::nView )
+
       D():GruposClientes( ::nView )
 
       D():Contadores( ::nView )
@@ -1319,29 +1321,42 @@ METHOD AppendFacturaCabecera( oItem ) CLASS GeneraFacturasClientes
    
    // Asignando datos del cliente----------------------------------------
 
-   ( D():FacturasClientes( ::nView ) )->cCodCli       := cCodCli
+   ( D():FacturasClientes( ::nView ) )->cCodCli          := cCodCli
 
    if ( D():Clientes( ::nView ) )->( dbseek( cCodCli ) )
-      ( D():FacturasClientes( ::nView ) )->cNomCli    := ( D():Clientes( ::nView ) )->Titulo
-      ( D():FacturasClientes( ::nView ) )->cDirCli    := ( D():Clientes( ::nView ) )->Domicilio
-      ( D():FacturasClientes( ::nView ) )->cPobCli    := ( D():Clientes( ::nView ) )->Poblacion
-      ( D():FacturasClientes( ::nView ) )->cPrvCli    := ( D():Clientes( ::nView ) )->Provincia
-      ( D():FacturasClientes( ::nView ) )->cPosCli    := ( D():Clientes( ::nView ) )->CodPostal
-      ( D():FacturasClientes( ::nView ) )->cDniCli    := ( D():Clientes( ::nView ) )->Nif
-      ( D():FacturasClientes( ::nView ) )->lOperPv    := ( D():Clientes( ::nView ) )->lPntVer
-      ( D():FacturasClientes( ::nView ) )->cCodRut    := ( D():Clientes( ::nView ) )->cCodRut
-      ( D():FacturasClientes( ::nView ) )->nTarifa    := max( ( D():Clientes( ::nView ) )->nTarifa, 1 )
+      ( D():FacturasClientes( ::nView ) )->cNomCli       := ( D():Clientes( ::nView ) )->Titulo
+      ( D():FacturasClientes( ::nView ) )->cDirCli       := ( D():Clientes( ::nView ) )->Domicilio
+      ( D():FacturasClientes( ::nView ) )->cPobCli       := ( D():Clientes( ::nView ) )->Poblacion
+      ( D():FacturasClientes( ::nView ) )->cPrvCli       := ( D():Clientes( ::nView ) )->Provincia
+      ( D():FacturasClientes( ::nView ) )->cPosCli       := ( D():Clientes( ::nView ) )->CodPostal
+      ( D():FacturasClientes( ::nView ) )->cDniCli       := ( D():Clientes( ::nView ) )->Nif
+      ( D():FacturasClientes( ::nView ) )->lOperPv       := ( D():Clientes( ::nView ) )->lPntVer
+      ( D():FacturasClientes( ::nView ) )->cCodRut       := ( D():Clientes( ::nView ) )->cCodRut
+      ( D():FacturasClientes( ::nView ) )->nTarifa       := max( ( D():Clientes( ::nView ) )->nTarifa, 1 )
+
+      if lBancoDefecto( cCodCli, D():ClientesBancos( ::nView ) )
+
+         ( D():FacturasClientes( ::nView ) )->cBanco     := ( D():ClientesBancos( ::nView ) )->cCodBnc
+         ( D():FacturasClientes( ::nView ) )->cPaisIBAN  := ( D():ClientesBancos( ::nView ) )->cPaisIBAN
+         ( D():FacturasClientes( ::nView ) )->cCtrlIBAN  := ( D():ClientesBancos( ::nView ) )->cCtrlIBAN
+         ( D():FacturasClientes( ::nView ) )->cEntBnc    := ( D():ClientesBancos( ::nView ) )->cEntBnc
+         ( D():FacturasClientes( ::nView ) )->cSucBnc    := ( D():ClientesBancos( ::nView ) )->cSucBnc
+         ( D():FacturasClientes( ::nView ) )->cDigBnc    := ( D():ClientesBancos( ::nView ) )->cDigBnc
+         ( D():FacturasClientes( ::nView ) )->cCtaBnc    := ( D():ClientesBancos( ::nView ) )->cCtaBnc
+
+      end if
+
    end if
 
    if !::oAgruparCliente:Value() .and. dbSeekInOrd( hGet( oItem:Cargo, "id" ), "nNumAlb", D():AlbaranesClientes( ::nView ) )
-      ( D():FacturasClientes( ::nView ) )->cNumAlb   := ( D():AlbaranesClientes( ::nView ) )->cSerAlb + Str( ( D():AlbaranesClientes( ::nView ) )->nNumAlb ) + ( D():AlbaranesClientes( ::nView ) )->cSufAlb
-      ( D():FacturasClientes( ::nView ) )->cCodAge   := ( D():AlbaranesClientes( ::nView ) )->cCodAge
-      ( D():FacturasClientes( ::nView ) )->cCodRut   := ( D():AlbaranesClientes( ::nView ) )->cCodRut
-      ( D():FacturasClientes( ::nView ) )->cCodTar   := ( D():AlbaranesClientes( ::nView ) )->cCodTar
-      ( D():FacturasClientes( ::nView ) )->cCodObr   := ( D():AlbaranesClientes( ::nView ) )->cCodObr
-      ( D():FacturasClientes( ::nView ) )->mComent   := ( D():AlbaranesClientes( ::nView ) )->mComent
-      ( D():FacturasClientes( ::nView ) )->mObserv   := ( D():AlbaranesClientes( ::nView ) )->mObserv
-      ( D():FacturasClientes( ::nView ) )->cCodTrn   := ( D():AlbaranesClientes( ::nView ) )->cCodTrn
+      ( D():FacturasClientes( ::nView ) )->cNumAlb       := ( D():AlbaranesClientes( ::nView ) )->cSerAlb + Str( ( D():AlbaranesClientes( ::nView ) )->nNumAlb ) + ( D():AlbaranesClientes( ::nView ) )->cSufAlb
+      ( D():FacturasClientes( ::nView ) )->cCodAge       := ( D():AlbaranesClientes( ::nView ) )->cCodAge
+      ( D():FacturasClientes( ::nView ) )->cCodRut       := ( D():AlbaranesClientes( ::nView ) )->cCodRut
+      ( D():FacturasClientes( ::nView ) )->cCodTar       := ( D():AlbaranesClientes( ::nView ) )->cCodTar
+      ( D():FacturasClientes( ::nView ) )->cCodObr       := ( D():AlbaranesClientes( ::nView ) )->cCodObr
+      ( D():FacturasClientes( ::nView ) )->mComent       := ( D():AlbaranesClientes( ::nView ) )->mComent
+      ( D():FacturasClientes( ::nView ) )->mObserv       := ( D():AlbaranesClientes( ::nView ) )->mObserv
+      ( D():FacturasClientes( ::nView ) )->cCodTrn       := ( D():AlbaranesClientes( ::nView ) )->cCodTrn
    end if
 
    ( D():FacturasClientes( ::nView ) )->( dbunlock() )
@@ -1381,18 +1396,20 @@ METHOD appendCabeceraAlbaran( oItem ) CLASS GeneraFacturasClientes
 
       cDesAlb                    := ""
       if lNumAlb()
-         cDesAlb                 += Alltrim( cNumAlb() ) + " " + hGet( oItem:Cargo, "textoid" ) + Space( 1 )
+         cDesAlb                 += Alltrim( cNumAlb() ) + " " + AllTrim( hGet( oItem:Cargo, "textoid" ) ) + Space( 1 )
       end if
       
       if lSuAlb()
-         cDesAlb                 += Alltrim( cSuAlb() ) + " " + Rtrim( hGet( oItem:Cargo, "sualbaran" ) ) + Space( 1 )
+         cDesAlb                 += Alltrim( cSuAlb() ) + " " + AllTrim( hGet( oItem:Cargo, "sualbaran" ) ) + Space( 1 )
       end if
 
       if lNumObr()
-         cDesAlb                 += Alltrim( cNumObr() ) + " " + hGet( oItem:Cargo, "direccion" ) + Space( 1 )
-      else 
-         cDesAlb                 += dtoc( hGet( oItem:Cargo, "fecha" ) )
+         cDesAlb                 += Alltrim( cNumObr() ) + " " + AllTrim( hGet( oItem:Cargo, "direccion" ) ) + Space( 1 )
       end if 
+
+      if !Empty( cDesAlb )
+         cDesAlb                 += "Fecha: " + dtoc( hGet( oItem:Cargo, "fecha" ) )
+      end if
 
       ( D():FacturasClientesLineas( ::nView ) )->cDetalle   := cDesAlb
       ( D():FacturasClientesLineas( ::nView ) )->mLngDes    := cDesAlb

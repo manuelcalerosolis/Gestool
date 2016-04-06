@@ -1216,6 +1216,16 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    end with
 
    with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Impuesto especial"
+      :bEditValue       := {|| oNewImp:nValImp( ( D():Articulos( nView ) )->cCodImp ) }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 90
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+      :lHide            := .t.
+   end with
+
+   with object ( oWndBrw:AddXCol() )
       :cHeader          := "Proveedor"
       :cSortOrder       := "cPrvHab"
       :bStrData         := {|| if( !Empty( ( D():Articulos( nView ) )->cPrvHab ), AllTrim( ( D():Articulos( nView ) )->cPrvHab ) + " - " + RetProvee( ( D():Articulos( nView ) )->cPrvHab, dbfProv ), "" ) }
@@ -1678,6 +1688,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    local cImpComanda2
    local aNombreTarifas       := aNombreTarifas()
    local cNombreTarifaWeb     := aNombreTarifas[1]
+   local oGetValNewImp
+   local nGetValNewImp        := 0
 
    CursorWait()
 
@@ -1768,6 +1780,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    cCatOld                                                     := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodCat" ) ) ]
    cPrvOld                                                     := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cPrvHab" ) ) ]
    cImageOld                                                   := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cImagen" ) ) ]
+   nGetValNewImp                                               := oNewImp:nValImp( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CCODIMP" ) ) ] )
 
    if Empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nColBtn" ) ) ] )
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nColBtn" ) ) ]       := GetSysColor( COLOR_BTNFACE )
@@ -2275,7 +2288,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       ID       810;
       PICTURE  "@!" ;
       WHEN     ( nMode != ZOOM_MODE ) ;
-      VALID    ( oNewImp:Existe( aGet[ ( D():Articulos( nView ) )->( fieldpos( "CCODIMP" ) ) ], oSay[ 10 ], "cNomImp", .t., .t., "0" ) );
+      ON CHANGE( changeImpuestoEspecial( oGetValNewImp, aTmp ) );
+      VALID    ( oNewImp:Existe( aGet[ ( D():Articulos( nView ) )->( fieldpos( "CCODIMP" ) ) ], oSay[ 10 ], "cNomImp", .t., .t., "0" ), changeImpuestoEspecial( oGetValNewImp, aTmp ) );
       ON HELP  ( oNewImp:Buscar( aGet[ ( D():Articulos( nView ) )->( fieldpos( "CCODIMP" ) ) ], "cCodImp" ) ) ;
       BITMAP   "LUPA" ;
       OF       fldPrecios
@@ -2283,6 +2297,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    REDEFINE GET oSay[10] VAR cSay[10] ;
       WHEN     ( .F. );
       ID       811 ;
+      OF       fldPrecios
+
+   REDEFINE GET oGetValNewImp VAR nGetValNewImp ;
+      ID       812 ;
+      PICTURE  cPouDiv ;
+      WHEN     ( .f. ) ;
       OF       fldPrecios
 
    REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "pCosto" ) ) ] ;
@@ -8703,23 +8723,23 @@ Function CalBnfPts( lSobreCoste, lIvaInc, nCosto, nPrePts, oBnf, uTipIva, oGetIv
    Despues si tiene impuesto especial
    */
 
-   if !Empty( cCodImp ) .and. !Empty( oNewImp )
+   /*if !Empty( cCodImp ) .and. !Empty( oNewImp )
       nIvm        += oNewImp:nValImp( cCodImp, .t., nIvaPct )
-   end if
+   end if*/
 
 	/*
    Calculo del impuestos-------------------------------------------------------
 	*/
 
-   if uFieldEmpresa( "lIvaImpEsp" )
+   /*if uFieldEmpresa( "lIvaImpEsp" )
       nNewIva     += nIvm
-   end if 
+   end if */
 
    nNewIva        += ( nNewIva * nIvaPct / 100 )
 
-   if !uFieldEmpresa( "lIvaImpEsp" )
+   /*if !uFieldEmpresa( "lIvaImpEsp" )
       nNewIva     += nIvm
-   end if 
+   end if */
 
    /*
    if IsLogic( lMargenAjuste )
@@ -8785,21 +8805,21 @@ Function CalBnfIva( lSobreCoste, lIvaInc, nCosto, uPrecioIva, oBnf, uTipIva, oGe
 
    // Impuesto especial
 
-   if !Empty( cCodImp ) .and. !Empty( oNewImp )
+   /*if !Empty( cCodImp ) .and. !Empty( oNewImp )
       nIvm        := oNewImp:nValImp( cCodImp, lIvaInc, nIvaPct )
-   end if 
+   end if */
 	
    // Primero es quitar el impuestos
 
-   if !uFieldEmpresa( "lIvaImpEsp" )
+   /*if !uFieldEmpresa( "lIvaImpEsp" )
       nPreIva     -= nIvm
-   end if 
+   end if */
 
    nNewPre        := Round( nPreIva / ( 1 + nIvaPct / 100 ), nDecDiv )
 
-   if uFieldEmpresa( "lIvaImpEsp" ) 
+   /*if uFieldEmpresa( "lIvaImpEsp" ) 
       nNewPre     -= nIvm
-   end if 
+   end if */
 
 	// Actualizamos la base
 
@@ -19046,3 +19066,15 @@ Function nombreSegundaPropiedadArticulo( view )
 Return ( nombrePropiedad( ( tmpArticulo )->cCodPrp2, ( tmpArticulo )->cValPrp2, view ) )
 
 //--------------------------------------------------------------------------//
+
+Static Function changeImpuestoEspecial( oGetValNewImp, aTmp )
+
+   if !Empty( oGetValNewImp )
+      oGetValNewImp:cText( oNewImp:nValImp( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CCODIMP" ) ) ] ) )
+      oGetValNewImp:Refresh()
+   end if
+
+Return .t.
+
+//--------------------------------------------------------------------------//
+

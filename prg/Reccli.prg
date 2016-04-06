@@ -2139,6 +2139,15 @@ function SynRecCli( cPath )
          ( cFacCliP )->cCtaGas    := RetFld( ( cFacCliP )->cCodPgo, cFPago, "cCtaGas" )
       end if
 
+      /*
+      Comprobamos que los números de cuenta tenga bien los cálculos de control
+      */
+
+      if !( cFacCliP )->lCobrado
+         ( cFacCliP )->cDigCli    := cDgtControl( ( cFacCliP )->cEntCli, ( cFacCliP )->cSucCli, ( cFacCliP )->cDigCli, ( cFacCliP )->cCtaCli )
+         ( cFacCliP )->cCtrlIBAN  := IbanDigit( ( cFacCliP )->cPaisIBAN, ( cFacCliP )->cEntCli, ( cFacCliP )->cSucCli, ( cFacCliP )->cDigCli, ( cFacCliP )->cCtaCli )
+      end if
+
       ( cFacCliP )->( dbSkip() )
 
    end while
@@ -5807,6 +5816,9 @@ Static Function CompensarReciboCliente( oBrw )
       OF       oDlg ;
       CANCEL ;
       ACTION   ( oDlg:end() )
+
+      oDlg:AddFastKey( VK_F2, {|| GetReciboCliente( cCodCli, oBrwRec ) } )
+      oDlg:AddFastKey( VK_F4, {|| DelReciboCliente( oBrwRec ) } )
 
       oDlg:bStart := {|| oClienteCompensar:SetFocus() }
 
