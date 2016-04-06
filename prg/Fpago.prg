@@ -44,9 +44,10 @@
 #define _CDIGBNC        38      //
 #define _CCTABNC        39  
 #define _CCODWEB        40
-#define _NGENDOC        41
-#define _LDOMBAN        42      //
-#define _CCODEDI        43      //
+#define _LDOMBAN        41      //
+#define _CCODEDI        42      //
+#define _NGENDOC        43
+
 
 
 static oWndBrw
@@ -1127,7 +1128,7 @@ FUNCTION rxFPago( cPath, oMeter )
       ( dbfFormasPago )->( ordCreate( cPath + "FPAGO.CDX", "CDESPGOBIG", "UPPER( Field->CDESPAGO )", {|| UPPER( Field->CDESPAGO ) } ) )
 
       ( dbfFormasPago )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfFormasPago )->( ordCreate( cPath + "FPAGO.CDX", "cCodWeb", "Field->cCodWeb", {|| Field->cCodWeb }, ) )
+      ( dbfFormasPago )->( ordCreate( cPath + "FPAGO.CDX", "cCodWeb", "upper( Field->cCodWeb )", {|| upper( Field->cCodWeb ) }, ) )
 
       ( dbfFormasPago )->( dbCloseArea() )
    else
@@ -1203,10 +1204,9 @@ function aItmFPago()
    aAdd( aBase, { "cDigBnc",   "C",   2,   0, "Dígito de control de la cuenta"                         ,  "",   "", "( cDbfPgo )" } )
    aAdd( aBase, { "cCtaBnc",   "C",  10,   0, "Cuenta bancaria"                                        ,  "",   "", "( cDbfPgo )" } )
    aAdd( aBase, { "cCodWeb",   "C", 200,   0, "Modulo web para la forma de pago"                       ,  "",   "", "( cDbfPgo )" } )
-   aAdd( aBase, { "nGenDoc",   "N",   1,   0, "Generar documento como presupuesto o pedido"            ,  "",   "", "( cDbfPgo )" } )
    aAdd( aBase, { "lDomBan",   "L",   1,   0, "Domiciliacion bancaria"                                 ,  "",   "", "( cDbfPgo )" } )
    aAdd( aBase, { "cCodEdi",   "C",  10,   0, "Código para pasar a plataforma EDI"                     ,  "",   "", "( cDbfPgo )" } )
-  
+   aAdd( aBase, { "nGenDoc",   "N",   1,   0, "Generar documento como presupuesto o pedido"            ,  "",   "", "( cDbfPgo )" } )
    
 return ( aBase )
 

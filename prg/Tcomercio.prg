@@ -5607,7 +5607,7 @@ METHOD isRecivedDocumentEstimated( cPrestashopModule ) CLASS TComercio
 
    local isRecivedDocumentEstimated   := .f.
 
-   if ( ::oFPago:SeekInOrd( padr( cPrestashopModule, 200 ), "cCodWeb" ) ) .and. ( ::oFPago:nGenDoc <= 1 )
+   if ( ::oFPago:SeekInOrd( upper( padr( cPrestashopModule ) ), "cCodWeb" ) ) .and. ( ::oFPago:nGenDoc <= 1 )
       isRecivedDocumentEstimated      := .t.
    endif
 
