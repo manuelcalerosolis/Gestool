@@ -318,8 +318,6 @@ CLASS TComercio
 
    METHOD AppendClientesToPrestashop()
 
-   METHOD checkDate( cDatePrestashop )
-
    METHOD AppendClientPrestashop()
    METHOD EstadoPedidosPrestashop()
    METHOD AppendMessagePedido()
@@ -332,7 +330,7 @@ CLASS TComercio
    METHOD processOrder( oQuery )
    METHOD checkDate( cDatePrestashop )
 
-   METHOD payOrder( cPrestashopModule )
+   METHOD isRecivedDocumentEstimated( cPrestashopModule )
 
    METHOD documentRecived( oQuery, oDatabase )   
       METHOD orderRecived( oQuery )    INLINE ( ::documentRecived( oQuery, ::oPedCliT ) )
@@ -995,9 +993,8 @@ METHOD loadOrders() CLASS TComercio
    if oQuery:Open()
       
       nQueryRecCount       := oQuery:RecCount()
-
       if nQueryRecCount > 0
-5
+
          ::setMeterTotal( nQueryRecCount )
          ::writeText( "Descargando pedidos desde la web", 2 )
 
@@ -1026,8 +1023,6 @@ Return ( .t. )
 
 METHOD processOrder( oQuery ) CLASS TComercio
 
-   local cPrestashopModule
-
    if empty( oQuery )
       return .f.
    end if 
@@ -1036,16 +1031,16 @@ METHOD processOrder( oQuery ) CLASS TComercio
       return .f.
    end if 
 
-   if ::payOrder( oQuery:FieldGetByName( "module" ) )
+   if ::isRecivedDocumentEstimated( oQuery:FieldGetByName( "module" ) )
 
-      if !::orderRecived( oQuery )
-         ::insertPedidoPrestashop( oQuery )
+      if !::estimateRecived( oQuery )
+         ::insertPresupuestoPrestashop( oQuery )
       end if
 
    else
 
-      if !::estimateRecived( oQuery )
-         ::insertPresupuestoPrestashop( oQuery )
+      if !::orderRecived( oQuery )
+         ::insertPedidoPrestashop( oQuery )
       end if
 
    endif
@@ -5608,20 +5603,15 @@ Return ( dFecha >= uFieldEmpresa( "dIniOpe" ) .and. dFecha <= uFieldEmpresa( "dF
 
 //---------------------------------------------------------------------------//
 
-METHOD payOrder( cPrestashopModule ) CLASS TComercio
+METHOD isRecivedDocumentEstimated( cPrestashopModule ) CLASS TComercio
 
-   local lPayOrder   := .f.
-   local nRegAnt     := ::oFPago:Recno()
-   local nOrdenAnt   := ::oFPago:ordSetFocus( "cCodWeb" ) 
+   local isRecivedDocumentEstimated   := .f.
 
-   if ( ::oFPago:Seek( padr( cPrestashopModule, 200 ) ) ) .and. ( ::oFPago:nCobRec <= 1 )
-      lPayOrder      := .t.
+   if ( ::oFPago:SeekInOrd( padr( cPrestashopModule, 200 ), "cCodWeb" ) ) .and. ( ::oFPago:nGenDoc <= 1 )
+      isRecivedDocumentEstimated      := .t.
    endif
 
-   ::oFPago:ordSetFocus( nOrdenAnt )
-   ::oFPago:goTo( nRegAnt )
-
-return ( lPayOrder )
+return ( isRecivedDocumentEstimated )
 
 //---------------------------------------------------------------------------//
 
