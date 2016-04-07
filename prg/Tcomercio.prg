@@ -343,7 +343,7 @@ CLASS TComercio
    METHOD getDate( cDatePrestashop )
    METHOD getTime( ctimePrestashop )
    METHOD insertPresupuestoPrestashop( oQuery )
-   METHOD getCountersPresupustoPrestashop( oQuery )
+   METHOD getCountersPresupuestoPrestashop( oQuery )
    METHOD insertDatosCabeceraPedidoPretashop( oQuery )
    METHOD insertDatosCabeceraPresupuestoPretashop( oQuery )
    METHOD insertLineaPresupuestoPrestashop( oQuery )
@@ -1019,6 +1019,7 @@ Return ( .t. )
 
 METHOD processOrder( oQuery ) CLASS TComercio
 
+
    if empty( oQuery )
       return .f.
    end if 
@@ -1028,16 +1029,15 @@ METHOD processOrder( oQuery ) CLASS TComercio
    end if 
 
    if ::isRecivedDocumentEstimated( oQuery:FieldGetByName( "module" ) )
-
+debug ("module")
       if !::estimateRecived( oQuery )
-         ? "Presupuesto"
-         // ::insertPresupuestoPrestashop( oQuery )
+debug ("estimateRecived")
+          ::insertPresupuestoPrestashop( oQuery )
       end if
 
    else
 
       if !::orderRecived( oQuery )
-         ? "Pedido"
          // ::insertPedidoPrestashop( oQuery )
       end if
 
@@ -5531,7 +5531,7 @@ METHOD checkDate( cDatePrestashop ) CLASS TComercio
 
    local dFecha   := ::getDate( cDatePrestashop )
 
-Return ( dFecha >= uFieldEmpresa( "dIniOpe" ) .and. dFecha <= uFieldEmpresa( "dFinOpe" ) )
+Return ( dFecha >= uFieldEmpresa( "dIniOpe" ) .or. empty( uFieldEmpresa( "dIniOpe" ) ) ) .and. ( dFecha <= uFieldEmpresa( "dFinOpe" ) .or. empty( uFieldEmpresa( "dFinOpe" ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -5539,7 +5539,7 @@ METHOD isRecivedDocumentEstimated( cPrestashopModule ) CLASS TComercio
 
    local isRecivedDocumentEstimated   := .f.
 
-   if ( ::oFPago:SeekInOrd( upper( padr( cPrestashopModule ) ), "cCodWeb" ) ) .and. ( ::oFPago:nGenDoc <= 1 )
+   if ( ::oFPago:SeekInOrd( upper( cPrestashopModule ), "cCodWeb" ) ) .and. ( ::oFPago:nGenDoc <= 1 )
       isRecivedDocumentEstimated      := .t.
    endif
 
@@ -5549,7 +5549,7 @@ return ( isRecivedDocumentEstimated )
 
 METHOD insertPresupuestoPrestashop( oQuery ) CLASS TComercio
    
-   ::getCountersPresupustoPrestashop( oQuery )
+   ::getCountersPresupuestoPrestashop( oQuery )
    ::insertDatosCabeceraPresupuestoPretashop ( oQuery )
    ::insertLineaPresupuestoPrestashop( oQuery )
    ::appendMessagePresupuesto( ::getDate( oQuery:FieldGetByName( "date_add" ) ) )
@@ -5559,7 +5559,7 @@ return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD getCountersPresupustoPrestashop( oQuery ) CLASS TComercio
+METHOD getCountersPresupuestoPrestashop( oQuery ) CLASS TComercio
 
    ::idOrderPrestashop  := oQuery:FieldGet( 1 )
    ::cSeriePresupuesto  := ::TPrestashopConfig:getBudgetSerie()
@@ -5823,11 +5823,11 @@ return ( .t. )
 
 METHOD documentRecived( oQuery, oDatabase ) CLASS TComercio
 
-   local orderRecived         := .t.
-   local cIdOrderPrestashop   := str( oQuery:FieldGet( 1 ), 11 )
+   local orderRecived        := .t.
+   local idOrderPrestashop   := oQuery:FieldGet( 1 )
 
-   if ( oDatabase:SeekInOrd( cIdOrderPrestashop, "cCodWeb" ) )
-      ::writeText( "El documento con el indentificador " + alltrim( cIdOrderPrestashop ) + " ya ha sido recibido.", 3 )
+   if ( ::TPrestashopId:getGestoolOrder( idOrderPrestashop, ::getCurrentWebName() ) )
+      ::writeText( "El documento con el indentificador " + alltrim( str( idOrderPrestashop ) ) + " ya ha sido recibido.", 3 )
    else
       orderRecived      := .f.
    end if 

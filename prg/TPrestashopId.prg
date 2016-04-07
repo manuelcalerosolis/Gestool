@@ -57,8 +57,17 @@ CLASS TPrestaShopId FROM TMant
    METHOD deleteValueImage( cClave, cWeb )                     INLINE ::deleteValue( "10", cClave, cWeb )
    METHOD deleteDocumentValuesImage( cWeb )                    INLINE ::deleteDocumentValues( "10", cWeb )
 
+   METHOD setValueOrder( cClave, cWeb, idWeb )                 INLINE ::setValue( "11", cClave, cWeb, idWeb )
+   METHOD getGestoolOrder( idWeb, cWeb, defaultValue )         INLINE ::getGestoolOrder( "11", idWeb, cWeb, defaultValue )
+   METHOD deleteValueOrder( cClave, cWeb )                     INLINE ::deleteValue( "11", cClave, cWeb )
+   METHOD deleteDocumentValuesOrder( cWeb )                    INLINE ::deleteDocumentValues( "11", cWeb )
+
    METHOD isValidParameters( cTipoDocumento, cClave, cWeb, idWeb ) 
    METHOD isSeekValues( cTipoDocumento, cClave, cWeb )
+
+   METHOD getValueGestool( cTipoDocumento, idWeb, cWeb, defaultValue )
+   METHOD isSeekGestool( cTipoDocumento, idWeb, cWeb )
+
 
 END CLASS
 
@@ -89,10 +98,11 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "cWeb"          TYPE "C" LEN  80  DEC 0 COMMENT "Web de Prestashop"   OF ::oDbf
       FIELD NAME "idWeb"         TYPE "N" LEN  11  DEC 0 COMMENT "Id en Prestashop"    OF ::oDbf
 
-      INDEX TO "PrestaId.Cdx" TAG "cDocumento"     ON "cDocumento"                        COMMENT "Documento"              NODELETED OF ::oDbf
-      INDEX TO "PrestaId.Cdx" TAG "cClave"         ON "cDocumento + cClave"               COMMENT "Documento clave"        NODELETED OF ::oDbf
-      INDEX TO "PrestaId.Cdx" TAG "cDocuWeb"       ON "cDocumento + cWeb"                 COMMENT "Documento web"          NODELETED OF ::oDbf
-      INDEX TO "PrestaId.Cdx" TAG "cWeb"           ON "cDocumento + cClave + cWeb"        COMMENT "Documento clave web"    NODELETED OF ::oDbf
+      INDEX TO "PrestaId.Cdx" TAG "cDocumento"     ON "cDocumento"                              COMMENT "Documento"              NODELETED OF ::oDbf
+      INDEX TO "PrestaId.Cdx" TAG "cClave"         ON "cDocumento + cClave"                     COMMENT "Documento clave"        NODELETED OF ::oDbf
+      INDEX TO "PrestaId.Cdx" TAG "cDocuWeb"       ON "cDocumento + cWeb"                       COMMENT "Documento web"          NODELETED OF ::oDbf
+      INDEX TO "PrestaId.Cdx" TAG "cWeb"           ON "cDocumento + cClave + cWeb"              COMMENT "Documento clave web"    NODELETED OF ::oDbf
+      INDEX TO "PrestaId.Cdx" TAG "cId"            ON "cDocumento + str( idWeb, 11 ) + cWeb"    COMMENT "Documento id web"       NODELETED OF ::oDbf
 
    END DATABASE ::oDbf
 
@@ -200,3 +210,29 @@ RETURN ( ::oDbf:seekInOrd( cTipoDocumento + cClave + cWeb, "cWeb" ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD getValueGestool( cTipoDocumento, idWeb, cWeb, defaultValue )
+
+   local cClave    := ""
+
+   if !empty(defaultValue)
+      cClave       := defaultValue
+   end if 
+
+   if !::isValidParameters( cTipoDocumento, idWeb, cWeb )
+      RETURN ( cClave )
+   end if 
+
+   if ::isSeekValues( cTipoDocumento, idWeb, cWeb )
+      cClave       := ::oDbf:cClave
+   end if 
+
+RETURN ( cClave )
+
+//---------------------------------------------------------------------------//
+
+METHOD isSeekGestool( cTipoDocumento, idWeb, cWeb )
+
+   idWeb                := str( idWeb, 11 )
+   cWeb                 := padr( cWeb, 80 )
+
+RETURN ( ::oDbf:seekInOrd( cTipoDocumento + idWeb + cWeb, "cId" ) )
