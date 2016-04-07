@@ -612,34 +612,34 @@ STATIC FUNCTION lPreSave( aTmp, aGet, dbfFormasPago, oBrw, nMode, oDlg, oGet, oG
 
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
 
-      if Empty( aTmp[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ] )
+      if Empty( aTmp[ ( dbfFormasPago )->( fieldPos( "cCodPago" ) ) ] )
          MsgStop( "El código de la forma de pago no puede estar vacío." )
          oGet:SetFocus()
          Return nil
       end if
 
-      if dbSeekInOrd( aTmp[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ], "CCODPAGO", dbfFormasPago )
-         MsgStop( "Código ya existe " + Rtrim( aTmp[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ] ) )
+      if dbSeekInOrd( aTmp[ ( dbfFormasPago )->( fieldPos( "cCodPago" ) ) ], "CCODPAGO", dbfFormasPago )
+         MsgStop( "Código ya existe " + Rtrim( aTmp[ ( dbfFormasPago )->( fieldPos( "cCodPago" ) ) ] ) )
          Return nil
       end if
 
    end if
 
-   if Empty( aTmp[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ] )
+   if Empty( aTmp[ ( dbfFormasPago )->( fieldPos( "cDesPago" ) ) ] )
       MsgStop( "El nombre de la forma de pago no puede estar vacío." )
       oGet2:SetFocus()
       Return nil
    end if
 
-   if aTmp[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ] < 1
+   if aTmp[ ( dbfFormasPago )->( fieldPos( "nPlazos" ) ) ] < 1
       MsgStop( "El número de plazos tiene que ser mayor que cero." )
-      aGet[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ]:SetFocus()
+      aGet[ ( dbfFormasPago )->( fieldPos( "nPlazos" ) ) ]:SetFocus()
       Return nil
    end if
 
    // Numero de la imagen------------------------------------------------------
 
-   aTmp[ ( dbfFormasPago )->( fieldPos( "cDigBnc" ) ) ]  := oCmbImagen:nAt
+   aTmp[ ( dbfFormasPago )->( fieldPos( "nImgTpv" ) ) ]  := oCmbImagen:nAt
 
    // Grabamos el registro-----------------------------------------------------
 
