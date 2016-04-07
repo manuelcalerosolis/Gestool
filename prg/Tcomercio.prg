@@ -330,10 +330,10 @@ CLASS TComercio
 
    // recepcion de pedidos o presupuestos--------------------------------------
 
-   METHOD isRecivedDocumentAsBudget( cPrestashopModule )    INLINE ( .t. ) // ( ::oFPago:SeekInOrd( upper( cPrestashopModule ), "cCodWeb" ) ) .and. ( ::oFPago:nGenDoc <= 1 ) )
+   METHOD isRecivedDocumentAsBudget( cPrestashopModule )      INLINE ( .t. ) // ( ::oFPago:SeekInOrd( upper( cPrestashopModule ), "cCodWeb" ) ) .and. ( ::oFPago:nGenDoc <= 1 ) )
 
-   METHOD documentRecived( oQuery, oDatabase )              INLINE ( .t. )
-      METHOD isOrderAlreadyRecived( oQuery )                INLINE ( ::documentRecived( oQuery, ::oPedCliT ) )
+   METHOD documentRecived( oQuery, oDatabase )                INLINE ( .t. )
+      METHOD isOrderAlreadyRecived( oQuery )                  INLINE ( ::documentRecived( oQuery, ::oPedCliT ) )
       METHOD isBudgetAlreadyRecived( oQuery )               
 
    METHOD insertPedidoPrestashop( oQuery )
@@ -348,10 +348,11 @@ CLASS TComercio
    METHOD getCountersPresupuestoPrestashop( oQuery )
    METHOD insertDatosCabeceraPedidoPretashop( oQuery )
    METHOD insertDatosCabeceraPresupuestoPretashop( oQuery )
+   METHOD isCustomerInGestool( idCustomer )                    INLINE ( ::TPrestashopId:getGestoolCustomer( idCustomer, ::getCurrentWebName() ) )
    METHOD insertLineaPresupuestoPrestashop( oQuery )
    METHOD appendMessagePresupuesto ( dFecha )
    METHOD insertCabeceraPresupuestoPretashop( oQuery )
-   METHOD insertClientePresupuestoPrestashop( oQuery )
+   METHOD setCustomerInOrder( oQuery )
    METHOD appendStatePedidoPrestashop( oQuery )
    METHOD appendStatePresupuestoPrestashop( oQuery )
 
@@ -373,10 +374,10 @@ CLASS TComercio
    METHOD UploadStatePrestashop( id_order_state, dFecSit, tFecSit, cCodWeb )
 
    METHOD isProductIdColumn( cTable )
-   METHOD isProductIdColumnImageShop()                INLINE ( ::isProductIdColumn( "image_shop" ) )
-   METHOD isProductIdColumnProductAttribute()         INLINE ( ::isProductIdColumn( "product_attribute" ) )
-   METHOD isProductIdColumnProductAttributeShop()     INLINE ( ::isProductIdColumn( "product_attribute_shop" ) )
-   METHOD isSpecificPriceIdColumnReductionTax()       INLINE ( ::isProductIdColumn( "specific_price", "reduction_tax" ) )
+   METHOD isProductIdColumnImageShop()                       INLINE ( ::isProductIdColumn( "image_shop" ) )
+   METHOD isProductIdColumnProductAttribute()                INLINE ( ::isProductIdColumn( "product_attribute" ) )
+   METHOD isProductIdColumnProductAttributeShop()            INLINE ( ::isProductIdColumn( "product_attribute_shop" ) )
+   METHOD isSpecificPriceIdColumnReductionTax()              INLINE ( ::isProductIdColumn( "specific_price", "reduction_tax" ) )
 
    // Datos para la recopilacion de informacion----------------------------
 
@@ -5579,14 +5580,18 @@ return ( .t. )
  
 //---------------------------------------------------------------------------//
 
-METHOD insertDatosCabeceraPresupuestoPretashop ( oQuery ) CLASS TComercio
+METHOD insertDatosCabeceraPresupuestoPretashop( oQuery ) CLASS TComercio
 
    ::oPreCliT:Append()
    ::oPreCliT:Blank()
 
    ::insertCabeceraPresupuestoPretashop( oQuery )
 
-   ::insertClientePresupuestoPrestashop( oQuery )
+   if !( ::isCustomerInGestool( oQuery:FieldGetByName( "id_customer" ) ) )
+      ::insertCustomerInGestool()
+   endif 
+
+   ::setCustomerInOrder( oQuery )
 
    if ::oPreCliT:Save()
       ::writeText( "Presupuesto " + ::cSeriePresupuesto + "/" + alltrim( str( ::nNumeroPresupuesto ) ) + "/" + ::cSufijoPresupuesto + " introducido correctamente.", 3 )
@@ -5635,7 +5640,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertClientePresupuestoPrestashop( oQuery ) CLASS TComercio
+METHOD setCustomerInOrder( oQuery ) CLASS TComercio
 
    if ::oCli:SeekInOrd( str( oQuery:FieldGetByName( "id_customer" ), 11 ) , "cCodWeb" )
 
