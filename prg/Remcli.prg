@@ -2190,7 +2190,7 @@ METHOD InitSepaXML19( oDlg )
          aeval( ::oCuaderno:aErrors, {|error| ::oTreeIncidencias:add( error ) } )
       else 
          if file( ::oCuaderno:cFileOut ) .and. apoloMsgNoYes( "Proceso de exportación realizado." + CRLF + "¿ Desea abrir el fichero resultante ?", "Elija una opción." )
-            ShellExecute( 0, "open", ::oCuaderno:cFileOut, , , 1 )
+            shellExecute( 0, "open", ::oCuaderno:cFileOut, , , 1 )
          end if 
       end if 
 

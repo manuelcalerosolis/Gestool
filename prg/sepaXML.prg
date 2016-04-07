@@ -85,6 +85,7 @@ CLASS SepaXml
 
    METHOD ProcessDebtors()
    METHOD SaveDocumentXML()
+   METHOD trimDocumentXML()
 
    METHOD DebtorAdd( oDebtor )                                    INLINE aadd( ::aDebtors, oDebtor )
 
@@ -243,7 +244,9 @@ METHOD Activate() CLASS SepaXml
 
    ::ProcessDebtors()
 
-   ::SaveDocumentXML()
+   ::saveDocumentXML()
+
+   // ::trimDocumentXML()
 
 return nil
 
@@ -251,7 +254,7 @@ return nil
 
 METHOD CreateDocumentXML()
 
-   ::oXml            := TXmlDocument():new( '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' )
+   ::oXml            := TXmlDocument():new( '<?xml version="1.0" encoding="UTF-8" standalone="no"?>' )
 
    ::oXmlDocument    := TXmlNode():new( , "Document", { "xmlns" => "urn:iso:std:iso:20022:tech:xsd:" + ::DocumentType } )
    ::oXml:oRoot:addBelow( ::oXmlDocument )   
@@ -262,19 +265,37 @@ return ( nil )
 
 METHOD SaveDocumentXML()
 
-   local fileHandle
-
    ferase( ::cFileOut )
 
-   fileHandle       := fCreate( ::cFileOut )
-
-   ::oXml:Write( fileHandle, HBXML_STYLE_NONEWLINE )
-
-   fClose( fileHandle )
+   ::oXml:Write( ::cFileOut, HBXML_STYLE_TAB ) //HBXML_STYLE_NONEWLINE )
 
 return nil
 
 //--------------------------------------------------------------------------------------//
+
+METHOD trimDocumentXML()
+
+   local cString 
+   local nHandle
+
+   if file( ::cFileOut )
+
+      cString  := memoread( ::cFileOut ) 
+      cString  := alltrim( cString )
+
+      ferase( ::cFileOut )
+      nHandle  := fcreate( ::cFileOut )
+      if ferror() == 0
+         fwrite( nHandle, cString, len( cString ) )
+         fclose( nHandle )
+      end if 
+
+   end if 
+
+Return nil
+
+//--------------------------------------------------------------------------------------//
+
 // Comprobar numero de operaciones y suma total de importes
 
 METHOD CalculateOperationsNumber()
