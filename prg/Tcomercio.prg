@@ -328,11 +328,13 @@ CLASS TComercio
    METHOD processOrder( oQuery )
    METHOD checkDate( cDatePrestashop )
 
-   METHOD isRecivedDocumentEstimated( cPrestashopModule )
+   // recepcion de pedidos o presupuestos--------------------------------------
 
-   METHOD documentRecived( oQuery, oDatabase )   
-      METHOD orderRecived( oQuery )    INLINE ( ::documentRecived( oQuery, ::oPedCliT ) )
-      METHOD estimateRecived( oQuery ) INLINE ( ::documentRecived( oQuery, ::oPreCliT ) )
+   METHOD isRecivedDocumentAsBudget( cPrestashopModule )    INLINE ( .t. ) // ( ::oFPago:SeekInOrd( upper( cPrestashopModule ), "cCodWeb" ) ) .and. ( ::oFPago:nGenDoc <= 1 ) )
+
+   METHOD documentRecived( oQuery, oDatabase )              INLINE ( .t. )
+      METHOD isOrderAlreadyRecived( oQuery )                INLINE ( ::documentRecived( oQuery, ::oPedCliT ) )
+      METHOD isBudgetAlreadyRecived( oQuery )               
 
    METHOD insertPedidoPrestashop( oQuery )
    METHOD insertPresupuestoPrestashop( oQuery )
@@ -1019,7 +1021,6 @@ Return ( .t. )
 
 METHOD processOrder( oQuery ) CLASS TComercio
 
-
    if empty( oQuery )
       return .f.
    end if 
@@ -1028,16 +1029,17 @@ METHOD processOrder( oQuery ) CLASS TComercio
       return .f.
    end if 
 
-   if ::isRecivedDocumentEstimated( oQuery:FieldGetByName( "module" ) )
-debug ("module")
-      if !::estimateRecived( oQuery )
-debug ("estimateRecived")
-          ::insertPresupuestoPrestashop( oQuery )
+   if ::isRecivedDocumentAsBudget( oQuery:FieldGetByName( "module" ) )
+      
+      debug( "isRecivedDocumentAsBudget passed") 
+
+      if !( ::isBudgetAlreadyRecived( oQuery ) )
+         ::insertPresupuestoPrestashop( oQuery )
       end if
 
    else
 
-      if !::orderRecived( oQuery )
+      if !::isOrderAlreadyRecived( oQuery )
          // ::insertPedidoPrestashop( oQuery )
       end if
 
@@ -5534,26 +5536,33 @@ METHOD checkDate( cDatePrestashop ) CLASS TComercio
 Return ( dFecha >= uFieldEmpresa( "dIniOpe" ) .or. empty( uFieldEmpresa( "dIniOpe" ) ) ) .and. ( dFecha <= uFieldEmpresa( "dFinOpe" ) .or. empty( uFieldEmpresa( "dFinOpe" ) ) )
 
 //---------------------------------------------------------------------------//
+/*
+METHOD isRecivedDocumentAsBudget( cPrestashopModule ) CLASS TComercio
 
-METHOD isRecivedDocumentEstimated( cPrestashopModule ) CLASS TComercio
+   local lAsBudget   := .f.
 
-   local isRecivedDocumentEstimated   := .f.
+   return ( lAsBudget )
+
+   debug( "antes de buscar" + cPrestashopModule, "isRecivedDocumentAsBudget"  )
 
    if ( ::oFPago:SeekInOrd( upper( cPrestashopModule ), "cCodWeb" ) ) .and. ( ::oFPago:nGenDoc <= 1 )
-      isRecivedDocumentEstimated      := .t.
+      debug( "encontrado", "isRecivedDocumentAsBudget" )
+      lAsBudget      := .t.
    endif
 
-return ( isRecivedDocumentEstimated )
+   debug( lAsBudget, "salida de isRecivedDocumentAsBudget" )
 
+return ( lAsBudget )
+*/
 //---------------------------------------------------------------------------//
 
 METHOD insertPresupuestoPrestashop( oQuery ) CLASS TComercio
    
-   ::getCountersPresupuestoPrestashop( oQuery )
-   ::insertDatosCabeceraPresupuestoPretashop ( oQuery )
-   ::insertLineaPresupuestoPrestashop( oQuery )
-   ::appendMessagePresupuesto( ::getDate( oQuery:FieldGetByName( "date_add" ) ) )
-   ::appendStatePresupuestoPrestashop( oQuery )  
+   ::getCountersPresupuestoPrestashop(          oQuery )
+   ::insertDatosCabeceraPresupuestoPretashop (  oQuery )
+   ::insertLineaPresupuestoPrestashop(          oQuery )
+   ::appendMessagePresupuesto(                  oQuery )
+   ::appendStatePresupuestoPrestashop(          oQuery )  
 
 return ( .t. )
 
@@ -5719,10 +5728,11 @@ Return ( .t. )
  
 //---------------------------------------------------------------------------//
 
-METHOD appendMessagePresupuesto ( dFecha ) CLASS TComercio
+METHOD appendMessagePresupuesto ( oQuery ) CLASS TComercio
 
    local oQueryThead
    local oQueryMessage
+   local dFecha   := ::getDate( oQuery:FieldGetByName( "date_add" ) )
 
    oQueryThead    := TMSQuery():New( ::oCon, "SELECT * FROM " + ::cPrefixtable( "customer_thread" ) + " WHERE id_order=" + alltrim( str( ::idOrderPrestashop ) ) )
 
@@ -5821,18 +5831,18 @@ return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD documentRecived( oQuery, oDatabase ) CLASS TComercio
+METHOD isBudgetAlreadyRecived( oQuery ) CLASS TComercio
 
-   local orderRecived        := .t.
-   local idOrderPrestashop   := oQuery:FieldGet( 1 )
+   local isOrderAlreadyRecived      := .t.
+   local idOrderPrestashop          := oQuery:fieldGet( 1 )
 
-   if ( ::TPrestashopId:getGestoolOrder( idOrderPrestashop, ::getCurrentWebName() ) )
-      ::writeText( "El documento con el indentificador " + alltrim( str( idOrderPrestashop ) ) + " ya ha sido recibido.", 3 )
+   if empty( ::TPrestashopId:getGestoolOrder( idOrderPrestashop, ::getCurrentWebName() ) )
+      isOrderAlreadyRecived         := .f.
    else
-      orderRecived      := .f.
+      ::writeText( "El documento con el indentificador " + alltrim( str( idOrderPrestashop ) ) + " ya ha sido recibido.", 3 )
    end if 
 
-Return ( orderRecived )   
+Return ( isOrderAlreadyRecived )   
 
 //---------------------------------------------------------------------------//
 
