@@ -1034,8 +1034,6 @@ METHOD processOrder( oQuery ) CLASS TComercio
 
    if ::isRecivedDocumentAsBudget( oQuery:FieldGetByName( "module" ) )
       
-      debug( "isRecivedDocumentAsBudget passed") 
-
       if !( ::isBudgetAlreadyRecived( oQuery ) )
          ::insertPresupuestoPrestashop( oQuery )
       end if
@@ -5324,8 +5322,8 @@ METHOD controllerUpdateStockPrestashop() Class TComercio
 
    ::disableDialog()
 
-   // oBlock            := ErrorBlock( { | oError | Break( oError ) } )
-   // BEGIN SEQUENCE
+   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
+   BEGIN SEQUENCE
 
    if ::filesOpen()
 
@@ -5339,8 +5337,6 @@ METHOD controllerUpdateStockPrestashop() Class TComercio
 
          ::MeterTotalText( "Actualizando stocks" )
 
-         debug( ::aStockArticuloData, "aStockArticuloData" )      
-
          ::uploadInformationStockProductPrestashop()
 
          ::MeterTotalText( "Desconectando bases de datos." )
@@ -5353,10 +5349,10 @@ METHOD controllerUpdateStockPrestashop() Class TComercio
 
    end if 
 
-   // RECOVER USING oError
-   //    msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
-   // END SEQUENCE
-   // ErrorBlock( oBlock )
+   RECOVER USING oError
+      msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
+   END SEQUENCE
+   ErrorBlock( oBlock )
 
    ::EnableDialog()
 
@@ -5449,31 +5445,31 @@ return .t.
 METHOD uploadInformationStockProductPrestashop() CLASS TComercio
 
    local oQuery
-   local aStock
+   local hStock
    local cCommand
    local nIdProductAttribute
 
-   for each aStock in ::aStockArticuloData
+   for each hStock in ::hStockArticuloData
 
-      if hGet( aStock, "cCodWebVal1" ) == 0 .and. hGet( aStock, "cCodWebVal2" ) == 0
+      if hGet( hStock, "cCodWebVal1" ) == 0 .and. hGet( hStock, "cCodWebVal2" ) == 0
 
-         ::writeText( "Actualizando stock de " + alltrim( hGet( aStock, "cNomArt" ) ) )        
+         ::writeText( "Actualizando stock de " + alltrim( hGet( hStock, "cNomArt" ) ) )        
 
          cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " " +;
-                        "SET quantity = '" + hGet( aStock, "nStock" ) + "' " + ;
-                        "WHERE id_product = " + alltrim( str( hGet( aStock, "idProductPrestashop" ) ) ) + " AND id_product_attribute = 0 "
+                        "SET quantity = '" + hGet( hStock, "nStock" ) + "' " + ;
+                        "WHERE id_product = " + alltrim( str( hGet( hStock, "idProductPrestashop" ) ) ) + " AND id_product_attribute = 0 "
 
          TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
       else
 
-         nIdProductAttribute := ::nIdProductAttribute( hGet( aStock, "idProductPrestashop" ), hGet( aStock, "cCodWebVal1" ), hGet( aStock, "cCodWebVal2" ) ) 
+         nIdProductAttribute := ::nIdProductAttribute( hGet( hStock, "idProductPrestashop" ), hGet( hStock, "cCodWebVal1" ), hGet( hStock, "cCodWebVal2" ) ) 
 
          if !empty( nIdProductAttribute )
 
             cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " " + ;
-                           "SET quantity ='" + hGet( aStock, "nStock" ) + "' "   + ;
-                           "WHERE id_product =" + alltrim( str( hGet( aStock, "idProductPrestashop" ) ) ) + " AND id_product_attribute = " + alltrim( str( nIdProductAttribute ) )
+                           "SET quantity ='" + hGet( hStock, "nStock" ) + "' "   + ;
+                           "WHERE id_product =" + alltrim( str( hGet( hStock, "idProductPrestashop" ) ) ) + " AND id_product_attribute = " + alltrim( str( nIdProductAttribute ) )
 
             TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
@@ -5588,13 +5584,9 @@ METHOD insertDatosCabeceraPresupuestoPretashop( oQuery ) CLASS TComercio
 
    ::insertCabeceraPresupuestoPretashop( oQuery )
 
-   debug( "insertCustomerInGestoolIfNotExist" )
-
    ::TComercioCustomer:insertCustomerInGestoolIfNotExist( oQuery:FieldGetByName( "id_customer" ) ) 
 
    ::setCustomerInOrder( oQuery )
-
-   debug( "despeuis insertCustomerInGestoolIfNotExist" )
 
    if ::oPreCliT:Save()
       ::writeText( "Presupuesto " + ::cSeriePresupuesto + "/" + alltrim( str( ::nNumeroPresupuesto ) ) + "/" + ::cSufijoPresupuesto + " introducido correctamente.", 3 )
