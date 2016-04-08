@@ -19,13 +19,23 @@ CLASS TComercioCustomer
    METHOD writeText( cText )                    INLINE ( ::TComercio:writeText( cText ) )
 
    METHOD isCustomerInGestool( idCustomer )     INLINE ( !empty( ::TPrestashopId():getGestoolCustomer( idCustomer, ::getCurrentWebName() ) ) )
-
+   METHOD isAddressInGestool( idCustomer )      INLINE ( !empty( ::TPrestashopId():getGestoolAddress( idAddress, ::getCurrentWebName() ) ) )
+  
    METHOD insertCustomerInGestoolIfNotExist( idCustomer ) ;
-                                                INLINE ( if( ::isCustomerInGestool( idCustomer ), msgAlert( str( idCustomer ) + " existe " ), ::createCustomerInGestool( idCustomer ) ) )
+                                                INLINE ( if( ::isCustomerInGestool( idCustomer ), msgAlert( str( idCustomer ) + " existe " ), ;
+                                                             ::createCustomerInGestool( idCustomer ) ) )
 
    METHOD createCustomerInGestool()    
    METHOD getCustomerFromPrestashop()
       METHOD appendCustomerInGestool()
+
+   METHOD insertAddressInGestoolIfNotExist( idAddress ) ;
+                                                INLINE ( if( ::isAddressInGestool( idCustomer ), msgAlert( str( id_address_delivery ) + " existe " ), ;
+                                                             ::createAddressInGestool( idCustomer ) ) )
+
+   METHOD createAddressInGestool()    
+   METHOD getAddressFromPrestashop()
+      METHOD appendAddressInGestool()
 
    METHOD oCustomerDatabase()                   INLINE ( ::TComercio:oCli )
 
@@ -111,8 +121,81 @@ METHOD appendCustomerInGestool( oQuery ) CLASS TComercioCustomer
       ::writeText( "Error al guardar el cliente en gestool : " + alltrim( oQuery:FieldGetByName( "ape" ) ) + Space( 1 ) + alltrim( oQuery:FieldGetByName( "firstname" ) ), 3 )
    end if
 
-   msgAlert( "salida appendCustomerInGestool" )
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD createAddressInGestool( idCustomer ) CLASS TComercioCustomer
+
+   local oQuery   := ::getAddressFromPrestashop( idAddress, id_address_delivery, id_address_invoice )
+
+   if empty( oQuery )
+      Return ( Self )
+   end if 
+
+   if oQuery:recCount() > 0 
+      ::appendAddressInGestool( oQuery )
+   end if 
+
+   oQuery:Free()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getAddressFromPrestashop( idCustomer, id_address_delivery, id_address_invoice ) CLASS TComercioCustomer
+
+   local cQuery
+   local oQuery 
+
+   cQuery            := TMSQuery():New( ::TComercio:oCon, "SELECT * FROM " + ::cPrefixTable( "address" ) + " WHERE id_customer = " + str( oQuery:FieldGet( 1 ) ) )
+
+   oQuery            := TMSQuery():New( ::TComercio:oCon, cQuery )
+
+   if oQuery:Open() 
+      Return ( oQuery )   
+   end if 
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD appendAddressInGestool( oQuery ) CLASS TComercioCustomer
+
+   local cCodCli                    := nextkey( dbLast( ::oCustomerDatabase(), 1 ), ::oCustomerDatabase():cAlias, "0", retnumcodcliemp() )
+
+   ::oCustomerDatabase():Append()
+   ::oCustomerDatabase():Cod        := cCodCli
+   
+   if ::TPrestashopConfig():isInvertedNameFormat()
+      ::oCustomerDatabase():Titulo  := upper( oQuery:FieldGetbyName( "lastname" ) ) + ", " + upper( oQuery:FieldGetByName( "firstname" ) ) // Last Name - firstname
+   else   
+      ::oCustomerDatabase():Titulo  := upper( oQuery:FieldGetbyName( "firstname" ) ) + space( 1 ) + upper( oQuery:FieldGetByName( "lastname" ) ) //firstname - Last Name
+   end if   
+   
+   ::oCustomerDatabase():nTipCli    := 3
+   ::oCustomerDatabase():CopiasF    := 1
+   ::oCustomerDatabase():Serie      := ::TPrestashopConfig():getOrderSerie()
+   ::oCustomerDatabase():nRegIva    := 1
+   ::oCustomerDatabase():nTarifa    := 1
+   ::oCustomerDatabase():cMeiInt    := oQuery:FieldGetByName( "email" ) //email
+   ::oCustomerDatabase():lChgPre    := .t.
+   ::oCustomerDatabase():lSndInt    := .t.
+   ::oCustomerDatabase():CodPago    := cDefFpg()
+   ::oCustomerDatabase():cCodAlm    := cDefAlm()
+   ::oCustomerDatabase():dFecChg    := GetSysDate()
+   ::oCustomerDatabase():cTimChg    := Time()
+   ::oCustomerDatabase():lWeb       := .t.
+
+   if ::oCustomerDatabase():Save()
+      ::TPrestashopId():setValueCustomer( cCodCli, ::getCurrentWebName(), oQuery:FieldGet( 1 ) ) 
+      ::writeText( "Cliente " + alltrim( oQuery:FieldGetByName( "ape" ) ) + Space( 1 ) + alltrim( oQuery:FieldGetByName( "firstname" ) ) + " introducido correctamente.", 3 )
+   else
+      ::writeText( "Error al guardar el cliente en gestool : " + alltrim( oQuery:FieldGetByName( "ape" ) ) + Space( 1 ) + alltrim( oQuery:FieldGetByName( "firstname" ) ), 3 )
+   end if
 
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
+
+       
