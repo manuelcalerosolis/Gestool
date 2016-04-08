@@ -62,12 +62,16 @@ CLASS TPrestaShopId FROM TMant
    METHOD deleteValueOrder( cClave, cWeb )                     INLINE ::deleteValue( "11", cClave, cWeb )
    METHOD deleteDocumentValuesOrder( cWeb )                    INLINE ::deleteDocumentValues( "11", cWeb )
 
+   METHOD setValueCustomer( cClave, cWeb, idWeb )              INLINE ::setValue( "12", cClave, cWeb, idWeb )
+   METHOD getGestoolCustomer( idWeb, cWeb, defaultValue )      INLINE ::getValueGestool( "12", idWeb, cWeb, defaultValue )
+   METHOD deleteValueCustomer( cClave, cWeb )                  INLINE ::deleteValue( "12", cClave, cWeb )
+   METHOD deleteDocumentValuesCustomer( cWeb )                 INLINE ::deleteDocumentValues( "12", cWeb )
+
    METHOD isValidParameters( cTipoDocumento, cClave, cWeb, idWeb ) 
    METHOD isSeekValues( cTipoDocumento, cClave, cWeb )
 
    METHOD getValueGestool( cTipoDocumento, idWeb, cWeb, defaultValue )
    METHOD isSeekGestool( cTipoDocumento, idWeb, cWeb )
-
 
 END CLASS
 
