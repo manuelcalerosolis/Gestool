@@ -12,32 +12,35 @@ CLASS TComercioCustomer
    
    METHOD New( TComercio )                      CONSTRUCTOR
    
-   METHOD TPrestashopId()                       INLINE ( ::TComercio:TPrestashopId )
-   METHOD TPrestashopConfig()                   INLINE ( ::TComercio:TPrestashopConfig )
+   METHOD TPrestashopId()                                   INLINE ( ::TComercio:TPrestashopId )
+   METHOD TPrestashopConfig()                               INLINE ( ::TComercio:TPrestashopConfig )
 
-   METHOD getCurrentWebName()                   INLINE ( ::TComercio:getCurrentWebName() )
-   METHOD writeText( cText )                    INLINE ( ::TComercio:writeText( cText ) )
+   METHOD getCurrentWebName()                               INLINE ( ::TComercio:getCurrentWebName() )
+   METHOD writeText( cText )                                INLINE ( ::TComercio:writeText( cText ) )
 
-   METHOD isCustomerInGestool( idCustomer )     INLINE ( !empty( ::TPrestashopId():getGestoolCustomer( idCustomer, ::getCurrentWebName() ) ) )
-   METHOD isAddressInGestool( idCustomer )      INLINE ( !empty( ::TPrestashopId():getGestoolAddress( idAddress, ::getCurrentWebName() ) ) )
+   METHOD isCustomerInGestool( idCustomer )                 INLINE ( !empty( ::TPrestashopId():getGestoolCustomer( idCustomer, ::getCurrentWebName() ) ) )
+   METHOD isAddressInGestool( idAddress )                   INLINE ( !empty( ::TPrestashopId():getGestoolAddress( idAddress, ::getCurrentWebName() ) ) )
   
    METHOD insertCustomerInGestoolIfNotExist( idCustomer ) ;
-                                                INLINE ( if( ::isCustomerInGestool( idCustomer ), msgAlert( str( idCustomer ) + " existe " ), ;
-                                                             ::createCustomerInGestool( idCustomer ) ) )
+                                                            INLINE   ( if (   ::isCustomerInGestool( idCustomer ),;
+                                                                              msgAlert( str( idCustomer ) + " existe " ), ;
+                                                                              ::createCustomerInGestool( idCustomer ) ) )
 
    METHOD createCustomerInGestool()    
    METHOD getCustomerFromPrestashop()
       METHOD appendCustomerInGestool()
 
-   METHOD insertAddressInGestoolIfNotExist( idAddress ) ;
-                                                INLINE ( if( ::isAddressInGestool( idCustomer ), msgAlert( str( id_address_delivery ) + " existe " ), ;
-                                                             ::createAddressInGestool( idCustomer ) ) )
+   METHOD insertAddressInGestoolIfNotExist( idCustomer, idAddress ) ;
+                                                            INLINE   ( if (   ::isAddressInGestool( idAddress ),;
+                                                                              msgAlert( str( idAddress ) + " existe " ), ;
+                                                                              ::createAddressInGestool( idCustomer, idAddress ) ) )
 
    METHOD createAddressInGestool()    
    METHOD getAddressFromPrestashop()
       METHOD appendAddressInGestool()
 
-   METHOD oCustomerDatabase()                   INLINE ( ::TComercio:oCli )
+   METHOD oCustomerDatabase()                               INLINE ( ::TComercio:oCli )
+   METHOD getState( idState ) 
 
 END CLASS
 
@@ -125,16 +128,20 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD createAddressInGestool( idCustomer ) CLASS TComercioCustomer
+METHOD createAddressInGestool( idCustomer, idAddress ) CLASS TComercioCustomer
 
-   local oQuery   := ::getAddressFromPrestashop( idAddress, id_address_delivery, id_address_invoice )
+   local oQuery 
+
+   debug( "createAddressInGestool")
+
+   oQuery      := ::getAddressFromPrestashop( idAddress )
 
    if empty( oQuery )
       Return ( Self )
    end if 
 
    if oQuery:recCount() > 0 
-      ::appendAddressInGestool( oQuery )
+      ::appendAddressInGestool( idCustomer, oQuery )
    end if 
 
    oQuery:Free()
@@ -143,13 +150,15 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getAddressFromPrestashop( idCustomer, id_address_delivery, id_address_invoice ) CLASS TComercioCustomer
+METHOD getAddressFromPrestashop( idAddress ) CLASS TComercioCustomer
 
    local cQuery
    local oQuery 
 
-   cQuery            := TMSQuery():New( ::TComercio:oCon, "SELECT * FROM " + ::cPrefixTable( "address" ) + " WHERE id_customer = " + str( oQuery:FieldGet( 1 ) ) )
+   debug( "getAddressFromPrestashop" )
 
+   cQuery            := "SELECT * FROM " + ::TComercio:cPrefixTable( "address" ) + " WHERE id_address = " + alltrim( str( idAddress ) ) 
+   debug ( cQuery, "cQuery" )
    oQuery            := TMSQuery():New( ::TComercio:oCon, cQuery )
 
    if oQuery:Open() 
@@ -160,42 +169,44 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD appendAddressInGestool( oQuery ) CLASS TComercioCustomer
+METHOD appendAddressInGestool( idCustomer, oQuery ) CLASS TComercioCustomer
 
-   local cCodCli                    := nextkey( dbLast( ::oCustomerDatabase(), 1 ), ::oCustomerDatabase():cAlias, "0", retnumcodcliemp() )
+   ::oObras:Append()
+   ::oObras:Blank()
 
-   ::oCustomerDatabase():Append()
-   ::oCustomerDatabase():Cod        := cCodCli
-   
-   if ::TPrestashopConfig():isInvertedNameFormat()
-      ::oCustomerDatabase():Titulo  := upper( oQuery:FieldGetbyName( "lastname" ) ) + ", " + upper( oQuery:FieldGetByName( "firstname" ) ) // Last Name - firstname
-   else   
-      ::oCustomerDatabase():Titulo  := upper( oQuery:FieldGetbyName( "firstname" ) ) + space( 1 ) + upper( oQuery:FieldGetByName( "lastname" ) ) //firstname - Last Name
-   end if   
-   
-   ::oCustomerDatabase():nTipCli    := 3
-   ::oCustomerDatabase():CopiasF    := 1
-   ::oCustomerDatabase():Serie      := ::TPrestashopConfig():getOrderSerie()
-   ::oCustomerDatabase():nRegIva    := 1
-   ::oCustomerDatabase():nTarifa    := 1
-   ::oCustomerDatabase():cMeiInt    := oQuery:FieldGetByName( "email" ) //email
-   ::oCustomerDatabase():lChgPre    := .t.
-   ::oCustomerDatabase():lSndInt    := .t.
-   ::oCustomerDatabase():CodPago    := cDefFpg()
-   ::oCustomerDatabase():cCodAlm    := cDefAlm()
-   ::oCustomerDatabase():dFecChg    := GetSysDate()
-   ::oCustomerDatabase():cTimChg    := Time()
-   ::oCustomerDatabase():lWeb       := .t.
+   ::oObras:cCodCli        := idCustomer
+   ::oObras:cCodObr        := "@" + alltrim( str( oQuery:fieldGet( 1 ) ) ) //"id_address"
+   ::oObras:cNomObr        := upper( oQuery:FieldGetbyName( "firstname" ) ) + Space( 1 ) + upper( oQuery:FieldGetByName( "lastname" ) ) //firstname - Last Name
 
-   if ::oCustomerDatabase():Save()
-      ::TPrestashopId():setValueCustomer( cCodCli, ::getCurrentWebName(), oQuery:FieldGet( 1 ) ) 
-      ::writeText( "Cliente " + alltrim( oQuery:FieldGetByName( "ape" ) ) + Space( 1 ) + alltrim( oQuery:FieldGetByName( "firstname" ) ) + " introducido correctamente.", 3 )
-   else
-      ::writeText( "Error al guardar el cliente en gestool : " + alltrim( oQuery:FieldGetByName( "ape" ) ) + Space( 1 ) + alltrim( oQuery:FieldGetByName( "firstname" ) ), 3 )
-   end if
+   ::oObras:cDirObr        := oQuery:FieldGetByName( "address1" ) + " " + oQuery:FieldGetByName( "address2" ) //"address1" - "address2"
+   ::oObras:cPobObr        := oQuery:FieldGetByName( "city" ) //"city"
+   ::oObras:cPosObr        := oQuery:FieldGetByName( "postcode" ) //"postcode"
+   ::oObras:cPrvObr        := ::getState( oQuery:fieldGetbyName( "id_state" ) )
+   ::oObras:cTelObr        := oQuery:FieldGetByName( "phone" ) //"phone"
+   ::oObras:cMovObr        := oQuery:FieldGetByName( "phone_mobile" ) //"phone_mobile"
+
+   ::oObras:cCodWeb        := oQuery:FieldGet( 1 ) //"id_address"
+
+   ::oObras:Save()
 
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-       
+METHOD getState( idState ) CLASS TComercioCustomer
+             
+   local cQuery
+   local oQuery
+   local cState      := ""
+
+   cQuery            := "SELECT * FROM " + ::cPrefixTable( "state" ) + " WHERE id_state = " + alltrim( str( idState ) )
+   oQuery            := TMSQuery():New( ::TComercio:oCon, cQuery )
+
+   if oQueryState:Open() .and. oQueryState:RecCount() > 0
+      cState         := oQuery:fieldGetbyName( "name" )
+      oQuery:free()
+   end if   
+
+Return ( cState )
+
+//---------------------------------------------------------------------------//

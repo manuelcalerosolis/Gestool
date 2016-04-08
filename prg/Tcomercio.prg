@@ -5585,6 +5585,7 @@ METHOD insertDatosCabeceraPresupuestoPretashop( oQuery ) CLASS TComercio
    ::insertCabeceraPresupuestoPretashop( oQuery )
 
    ::TComercioCustomer:insertCustomerInGestoolIfNotExist( oQuery:FieldGetByName( "id_customer" ) ) 
+   ::TComercioCustomer:insertAddressInGestoolIfNotExist( oQuery:FieldGetByName( "id_customer" ),  oQuery:FieldGetByName( "id_address_delivery" ) ) 
 
    ::setCustomerInOrder( oQuery )
 
