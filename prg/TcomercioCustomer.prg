@@ -11,14 +11,17 @@ CLASS TComercioCustomer
    DATA  TComercio
    
    METHOD New( TComercio )                      CONSTRUCTOR
+   
    METHOD TPrestashopId()                       INLINE ( ::TComercio:TPrestashopId )
    METHOD TPrestashopConfig()                   INLINE ( ::TComercio:TPrestashopConfig )
-   METHOD getCurrentWebName()                   INLINE ( ::TComercio:getCurrentWebName() )
 
-   METHOD isCustomerInGestool( idCustomer )     INLINE ( ::TPrestashopId():getGestoolCustomer( idCustomer, ::getCurrentWebName() ) )
+   METHOD getCurrentWebName()                   INLINE ( ::TComercio:getCurrentWebName() )
+   METHOD writeText( cText )                    INLINE ( ::TComercio:writeText( cText ) )
+
+   METHOD isCustomerInGestool( idCustomer )     INLINE ( !empty( ::TPrestashopId():getGestoolCustomer( idCustomer, ::getCurrentWebName() ) ) )
 
    METHOD insertCustomerInGestoolIfNotExist( idCustomer ) ;
-                                                INLINE ( if( ::isCustomerInGestool( idCustomer ), , ::createCustomerInGestool( idCustomer ) ) )
+                                                INLINE ( if( ::isCustomerInGestool( idCustomer ), msgAlert( str( idCustomer ) + " existe " ), ::createCustomerInGestool( idCustomer ) ) )
 
    METHOD createCustomerInGestool()    
    METHOD getCustomerFromPrestashop()
@@ -32,11 +35,7 @@ END CLASS
 
 METHOD New( TComercio ) CLASS TComercioCustomer
 
-   debug( Tcomercio, "self dede TComercioCustomer")
-   
    ::TComercio    := TComercio
-
-   debug( Self, "self dede TComercioCustomer")
 
 Return ( Self )
 
@@ -46,13 +45,15 @@ METHOD createCustomerInGestool( idCustomer )
 
    local oQuery   := ::getCustomerFromPrestashop( idCustomer )
 
-   if hb_isobject( oQuery )
-
-      ::appendCustomerInGestool( oQuery )
-
-      oQuery:Free()
-
+   if empty( oQuery )
+      Return ( Self )
    end if 
+
+   if oQuery:recCount() > 0 
+      ::appendCustomerInGestool( oQuery )
+   end if 
+
+   oQuery:Free()
 
 Return ( Self )
 
@@ -64,11 +65,11 @@ METHOD getCustomerFromPrestashop( idCustomer ) CLASS TComercioCustomer
    local oQuery 
 
    cQuery            := "SELECT * FROM " + ::TComercio:cPrefixTable( "customer" ) + " " + ;
-                           "WHERE id_customer = '" + alltrim( str( idCustomer ) ) + "'" 
+                           "WHERE id_customer = " + alltrim( str( idCustomer ) ) 
 
    oQuery            := TMSQuery():New( ::TComercio:oCon, cQuery )
 
-   if oQuery:Open() .and. oQuery:recCount() > 0
+   if oQuery:Open() 
       Return ( oQuery )   
    end if 
 
@@ -83,7 +84,7 @@ METHOD appendCustomerInGestool( oQuery ) CLASS TComercioCustomer
    ::oCustomerDatabase():Append()
    ::oCustomerDatabase():Cod        := cCodCli
    
-   if ::TPrestashopConfig():InvertedNameFormat()
+   if ::TPrestashopConfig():isInvertedNameFormat()
       ::oCustomerDatabase():Titulo  := upper( oQuery:FieldGetbyName( "lastname" ) ) + ", " + upper( oQuery:FieldGetByName( "firstname" ) ) // Last Name - firstname
    else   
       ::oCustomerDatabase():Titulo  := upper( oQuery:FieldGetbyName( "firstname" ) ) + space( 1 ) + upper( oQuery:FieldGetByName( "lastname" ) ) //firstname - Last Name
@@ -109,6 +110,8 @@ METHOD appendCustomerInGestool( oQuery ) CLASS TComercioCustomer
    else
       ::writeText( "Error al guardar el cliente en gestool : " + alltrim( oQuery:FieldGetByName( "ape" ) ) + Space( 1 ) + alltrim( oQuery:FieldGetByName( "firstname" ) ), 3 )
    end if
+
+   msgAlert( "salida appendCustomerInGestool" )
 
 Return ( .t. )
 

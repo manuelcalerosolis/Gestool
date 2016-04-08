@@ -207,8 +207,8 @@ RETURN ( .t. )
 
 METHOD isSeekValues( cTipoDocumento, cClave, cWeb )
 
-   cClave               := padr( cClave, 60 )
-   cWeb                 := padr( cWeb, 80 )
+   cClave         := padr( cClave, 60 )
+   cWeb           := padr( cWeb, 80 )
 
 RETURN ( ::oDbf:seekInOrd( cTipoDocumento + cClave + cWeb, "cWeb" ) )
 
@@ -216,18 +216,18 @@ RETURN ( ::oDbf:seekInOrd( cTipoDocumento + cClave + cWeb, "cWeb" ) )
 
 METHOD getValueGestool( cTipoDocumento, idWeb, cWeb, defaultValue )
 
-   local cClave    := ""
+   local cClave   := ""
 
    if !empty(defaultValue)
-      cClave       := defaultValue
+      cClave      := defaultValue
    end if 
 
    if !::isValidParameters( cTipoDocumento, idWeb, cWeb )
       RETURN ( cClave )
    end if 
 
-   if ::isSeekValues( cTipoDocumento, idWeb, cWeb )
-      cClave       := ::oDbf:cClave
+   if ::isSeekGestool( cTipoDocumento, idWeb, cWeb )
+      cClave      := ::oDbf:cClave
    end if 
 
 RETURN ( cClave )
@@ -236,7 +236,7 @@ RETURN ( cClave )
 
 METHOD isSeekGestool( cTipoDocumento, idWeb, cWeb )
 
-   idWeb                := str( idWeb, 11 )
-   cWeb                 := padr( cWeb, 80 )
+   idWeb          := str( idWeb, 11 )
+   cWeb           := padr( cWeb, 80 )
 
 RETURN ( ::oDbf:seekInOrd( cTipoDocumento + idWeb + cWeb, "cId" ) )

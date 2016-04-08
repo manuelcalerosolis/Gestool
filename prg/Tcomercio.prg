@@ -482,8 +482,6 @@ METHOD New( oMenuItem, oMeterTotal, oTextTotal ) CLASS TComercio
 
    ::TComercioCustomer     := TComercioCustomer():New( Self )
 
-   debug( ::TComercioCustomer, "TComercioCustomer" )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -5590,9 +5588,13 @@ METHOD insertDatosCabeceraPresupuestoPretashop( oQuery ) CLASS TComercio
 
    ::insertCabeceraPresupuestoPretashop( oQuery )
 
+   debug( "insertCustomerInGestoolIfNotExist" )
+
    ::TComercioCustomer:insertCustomerInGestoolIfNotExist( oQuery:FieldGetByName( "id_customer" ) ) 
 
    ::setCustomerInOrder( oQuery )
+
+   debug( "despeuis insertCustomerInGestoolIfNotExist" )
 
    if ::oPreCliT:Save()
       ::writeText( "Presupuesto " + ::cSeriePresupuesto + "/" + alltrim( str( ::nNumeroPresupuesto ) ) + "/" + ::cSufijoPresupuesto + " introducido correctamente.", 3 )
