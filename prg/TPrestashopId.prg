@@ -12,7 +12,7 @@ CLASS TPrestaShopId FROM TMant
 
    DATA lOpenFiles         INIT .f.      
 
-   METHOD New( cPath, oWndParent, oMenuItem )         CONSTRUCTOR
+   METHOD New( cPath, oWndParent, oMenuItem )                  CONSTRUCTOR
 
    METHOD DefineFiles()
 

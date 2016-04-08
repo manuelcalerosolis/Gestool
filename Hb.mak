@@ -42,6 +42,7 @@ Tinitshell.prg          	\
 WebBrow.prg             	\
 TMySql.prg              	\
 TComercio.prg           	\
+TComercioCustomer.prg 		\
 TPrestashopConfig.prg 		\
 TPrestashopId.prg 			\
 TFTPLinux.prg 					\
@@ -462,6 +463,7 @@ Tinitshell.obj                                     \
 WebBrow.obj                                        \
 TMySql.obj                                         \
 TComercio.obj                                      \
+TComercioCustomer.obj 										\
 TPrestashopConfig.obj 										\
 TPrestashopId.obj 											\
 TFTPLinux.obj 													\
@@ -916,6 +918,7 @@ $(OBJ)\Tinitshell.obj                                       +
 $(OBJ)\WebBrow.obj                                          +
 $(OBJ)\TMySql.obj                                           +
 $(OBJ)\TComercio.obj                                        +
+$(OBJ)\TComercioCustomer.obj                                +
 $(OBJ)\TPrestashopConfig.obj 											+
 $(OBJ)\TPrestashopId.obj 												+
 $(OBJ)\TFTPLinux.obj 													+

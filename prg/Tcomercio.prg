@@ -21,6 +21,7 @@ CLASS TComercio
 
    DATA  TPrestashopConfig  
    DATA  TPrestashopId
+   DATA  TComercioCustomer
    
    DATA  aSend
    DATA  oInt
@@ -348,7 +349,6 @@ CLASS TComercio
    METHOD getCountersPresupuestoPrestashop( oQuery )
    METHOD insertDatosCabeceraPedidoPretashop( oQuery )
    METHOD insertDatosCabeceraPresupuestoPretashop( oQuery )
-   METHOD isCustomerInGestool( idCustomer )                    INLINE ( ::TPrestashopId:getGestoolCustomer( idCustomer, ::getCurrentWebName() ) )
    METHOD insertLineaPresupuestoPrestashop( oQuery )
    METHOD appendMessagePresupuesto ( dFecha )
    METHOD insertCabeceraPresupuestoPretashop( oQuery )
@@ -479,6 +479,10 @@ METHOD New( oMenuItem, oMeterTotal, oTextTotal ) CLASS TComercio
 
    ::TPrestashopConfig     := TPrestashopConfig():New()
    ::TPrestashopConfig:loadJSON()
+
+   ::TComercioCustomer     := TComercioCustomer():New( Self )
+
+   debug( ::TComercioCustomer, "TComercioCustomer" )
 
 RETURN ( Self )
 
@@ -5469,8 +5473,8 @@ METHOD uploadInformationStockProductPrestashop() CLASS TComercio
 
          if !empty( nIdProductAttribute )
 
-            cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " " ;
-                           "SET quantity ='" + hGet( aStock, "nStock" ) + "' " + ;
+            cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " " + ;
+                           "SET quantity ='" + hGet( aStock, "nStock" ) + "' "   + ;
                            "WHERE id_product =" + alltrim( str( hGet( aStock, "idProductPrestashop" ) ) ) + " AND id_product_attribute = " + alltrim( str( nIdProductAttribute ) )
 
             TMSCommand():New( ::oCon ):ExecDirect( cCommand )
@@ -5586,9 +5590,7 @@ METHOD insertDatosCabeceraPresupuestoPretashop( oQuery ) CLASS TComercio
 
    ::insertCabeceraPresupuestoPretashop( oQuery )
 
-   if !( ::isCustomerInGestool( oQuery:FieldGetByName( "id_customer" ) ) )
-      ::insertCustomerInGestool()
-   endif 
+   ::TComercioCustomer:insertCustomerInGestoolIfNotExist( oQuery:FieldGetByName( "id_customer" ) ) 
 
    ::setCustomerInOrder( oQuery )
 
