@@ -441,7 +441,7 @@ CLASS TComercio
    METHOD buildTextError( cValue, cTable )   INLINE ( ::writeText( "Error insertado " + cValue + ", en la tabla " + cTable, 3 ) )
 
    METHOD buildInformationStockProductPrestashop()
-   METHOD uploadInformationProductPrestashop()
+   METHOD uploadInformationStockProductPrestashop()
    METHOD buildAddInformacionStockProductPrestashop()
    METHOD BuildAddArticuloActualizar( cCodArt )
 
@@ -5339,7 +5339,7 @@ METHOD controllerUpdateStockPrestashop() Class TComercio
 
          debug( ::aStockArticuloData, "aStockArticuloData" )      
 
-         // ::uploadInformationProductPrestashop()
+         ::uploadInformationStockProductPrestashop()
 
          ::MeterTotalText( "Desconectando bases de datos." )
 
@@ -5444,12 +5444,12 @@ return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD uploadInformationProductPrestashop() CLASS TComercio
+METHOD uploadInformationStockProductPrestashop() CLASS TComercio
 
    local oQuery
+   local aStock
    local cCommand
    local nIdProductAttribute
-   local aStock
 
    for each aStock in ::aStockArticuloData
 
@@ -5457,21 +5457,21 @@ METHOD uploadInformationProductPrestashop() CLASS TComercio
 
          ::writeText( "Actualizando stock de " + alltrim( hGet( aStock, "cNomArt" ) ) )        
 
-         cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
-                           "quantity = '" + hGet( aStock, "nStock" ) + "' " + ;
+         cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " " +;
+                        "SET quantity = '" + hGet( aStock, "nStock" ) + "' " + ;
                         "WHERE id_product = " + alltrim( str( hGet( aStock, "idProductPrestashop" ) ) ) + " AND id_product_attribute = 0 "
 
          TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
       else
 
-         nIdProductAttribute := str( ::nIdProductAttribute( hGet( aStock, "idProductPrestashop" ), hGet( aStock, "cCodWebVal1" ), hGet( aStock, "cCodWebVal2" ) ) )
+         nIdProductAttribute := ::nIdProductAttribute( hGet( aStock, "idProductPrestashop" ), hGet( aStock, "cCodWebVal1" ), hGet( aStock, "cCodWebVal2" ) ) 
 
          if !empty( nIdProductAttribute )
 
-            cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
-                              "quantity ='" + hGet( aStock, "nStock" ) + "' " + ;
-                           "WHERE id_product =" + alltrim( str( hGet( aStock, "idProductPrestashop" ) ) ) + " AND id_product_attribute = " + alltrim( nIdProductAttribute )
+            cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " " ;
+                           "SET quantity ='" + hGet( aStock, "nStock" ) + "' " + ;
+                           "WHERE id_product =" + alltrim( str( hGet( aStock, "idProductPrestashop" ) ) ) + " AND id_product_attribute = " + alltrim( str( nIdProductAttribute ) )
 
             TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
@@ -5487,9 +5487,8 @@ Return .t.
 
 METHOD BuildAddArticuloActualizar( cCodArt ) CLASS tComercio
 
-   if !empty( cCodArt )             .and.;
-      aScan( ::aArticulosActualizar, cCodArt ) == 0
-      aAdd( ::aArticulosActualizar, cCodArt )
+   if !empty( cCodArt ) .and. ascan( ::aArticulosActualizar, cCodArt ) == 0
+      aadd( ::aArticulosActualizar, cCodArt )
    end if
 
 Return .t.   
