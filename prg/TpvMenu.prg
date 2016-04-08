@@ -7,7 +7,6 @@
 #define DT_WORDBREAK                0x00000010
 #define DT_CENTER                   0x00000001
 
-
 //----------------------------------------------------------------------------//
 
 CLASS TpvMenu FROM TMasDet
@@ -116,10 +115,10 @@ METHOD New( cPath, oWndParent, nLevel )
 
    ::oOrdenComandas     := TOrdenComanda():Create()
 
-   ::oMenuOrdenes       := TpvMenuOrdenes():New( cPath, Self )
+   ::oMenuOrdenes       := TpvMenuOrdenes():New( cPath, cDriver(), Self )
    ::AddDetail( ::oMenuOrdenes )
 
-   ::oDetMenuArticulo   := TpvMenuArticulo():New( cPath, Self )
+   ::oDetMenuArticulo   := TpvMenuArticulo():New( cPath, cDriver(), Self )
    ::AddDetail( ::oDetMenuArticulo )
 
 RETURN ( Self )

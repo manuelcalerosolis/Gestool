@@ -54,9 +54,9 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
    local oDbf
 
    DEFAULT cPath        := ::cPath
+   DEFAULT cVia         := cDriver()
    DEFAULT lUniqueName  := .f.
    DEFAULT cFileName    := "TpvMnuOrd"
-   DEFAULT cVia         := cDriver()
 
    if lUniqueName
       cFileName         := cGetNewFileName( cFileName, , , cPath )

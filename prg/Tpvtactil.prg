@@ -9911,22 +9911,22 @@ RETURN ( Self )
 
 METHOD SetOrdenComanda( lCombinando )
 
-  local cOrdenComanda           := ""
+   local cOrdenComanda           := ""
 
-  if ::lEmptyDocumento()
-     MsgInfo( "No hay producto para cambiar el orden de comanda." )
-     Return ( Self )
-  end if
+   if ::lEmptyDocumento()
+      MsgInfo( "No hay producto para cambiar el orden de comanda." )
+      Return ( Self )
+   end if
 
-  cOrdenComanda                 := ::oOrdenComanda:Selector()
+   cOrdenComanda                 := ::oOrdenComanda:Selector()
 
-  if !Empty( cOrdenComanda )
-     ::oTemporalLinea:cOrdOrd   := cOrdenComanda
-  end if 
+   if !Empty( cOrdenComanda )
+      ::oTemporalLinea:cOrdOrd   := cOrdenComanda
+   end if 
 
-  ::oBrwLineas:Refresh()
+   ::oBrwLineas:Refresh()
 
-  RETURN ( Self )
+RETURN ( Self )
 
 //-----------------------------------------------------------------------//
 

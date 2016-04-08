@@ -366,7 +366,6 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-
 METHOD aNombreOrdenComanda()
 
    local aNombreOrdenComanda  := { "" }
@@ -381,11 +380,8 @@ METHOD aNombreOrdenComanda()
    ::oDbf:GoTop()
 
    while !( ::oDbf:Eof() )
-
       aAdd( aNombreOrdenComanda, AllTrim( ::oDbf:cNomOrd ) )
-
       ::oDbf:Skip()
-
    end while
 
    ::oDbf:SetStatus()
@@ -438,33 +434,33 @@ METHOD Selector()
       oBrw:CreateFromResource( 105 )
 
       REDEFINE BUTTONBMP ;
-         ID       140 ;
-         OF       oDlg ;
-         BITMAP   "UP32" ;
-         ACTION   ( oBrw:GoUp() )
+         ID                140 ;
+         OF                oDlg ;
+         BITMAP            "UP32" ;
+         ACTION            ( oBrw:GoUp() )
 
       REDEFINE BUTTONBMP ;
-         ID       150 ;
-         OF       oDlg ;
-         BITMAP   "DOWN32" ;
-         ACTION   ( oBrw:GoDown() )
+         ID                150 ;
+         OF                oDlg ;
+         BITMAP            "DOWN32" ;
+         ACTION            ( oBrw:GoDown() )
 
       REDEFINE BUTTONBMP ;
-         BITMAP   "Check_32" ;
-         ID       IDOK ;
-         OF       oDlg ;
-         ACTION   ( oDlg:end(IDOK) )
+         BITMAP            "Check_32" ;
+         ID                IDOK ;
+         OF                oDlg ;
+         ACTION            ( oDlg:end(IDOK) )
 
       REDEFINE BUTTONBMP ;
-         BITMAP   "Delete_32" ;
-         ID       IDCANCEL ;
-         OF       oDlg ;
-         ACTION   ( oDlg:End() )
+         BITMAP            "Delete_32" ;
+         ID                IDCANCEL ;
+         OF                oDlg ;
+         ACTION            ( oDlg:End() )
 
    ACTIVATE DIALOG oDlg CENTER
 
    if oDlg:nResult == IDOK
-      cReturn     := ::oDbf:cOrdOrd
+      cReturn              := ::oDbf:cCodOrd
    end if
 
    RECOVER USING oError
