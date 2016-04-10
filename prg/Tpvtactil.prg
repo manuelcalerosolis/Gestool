@@ -772,7 +772,8 @@ CLASS TpvTactil
 
    //------------------------------------------------------------------------//
 
-   METHOD SetAliasDocumento()
+   METHOD setAliasDocumento()
+   METHOD validateAliasDocumento( cNombreUbicacion ) 
 
    METHOD BuildReport( nDevice, nCopies, cPrinter, lComanda, lAnulacion )
 
@@ -6840,6 +6841,7 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
       if ::lBlankTicket()
 
          ::oTiketCabecera:cNumTik   := ::nNuevoNumeroTicket()
+
          ::oTiketCabecera:Insert()
 
       else
@@ -8055,13 +8057,13 @@ Return ( Self )
 
 METHOD SetAliasDocumento( cTexto ) CLASS TpvTactil
 
-   local cNombreUbicacion
+   local cNombreUbicacion           
 
    DEFAULT cTexto                   := "Asignar nombre"
 
    cNombreUbicacion                 := VirtualKey( .f., ::oTiketCabecera:cAliasTik, cTexto )
 
-   if !Empty( cNombreUbicacion )
+   if ::validateAliasDocumento( cNombreUbicacion )
 
       ::oTiketCabecera:cAliasTik    := cNombreUbicacion
 
@@ -8073,9 +8075,48 @@ METHOD SetAliasDocumento( cTexto ) CLASS TpvTactil
 
       Return ( .t. )
 
+   else 
+
+      apoloMsgStop( "El nombre elegido ya esta siendo utilizado en otra ubicación", "Elija uno diferente" )      
+
    end if
 
 Return ( .f. )
+
+//---------------------------------------------------------------------------//
+
+METHOD validateAliasDocumento( cNombreUbicacion ) 
+
+   local aStatus
+   local lValidate         := .t.
+
+   if empty( cNombreUbicacion )
+      Return .t.
+   end if 
+
+   if alltrim( cNombreUbicacion ) == alltrim( ::oTiketCabecera:cAliasTik )
+      Return .t.
+   end if 
+
+   aStatus                 := ::oTiketCabecera:GetStatus()
+
+   ::oTiketCabecera:OrdSetFocus( "lCloTik" )
+
+   ::oTiketCabecera:goTop()
+   while !::oTiketCabecera:eof()
+
+      if alltrim( ::oTiketCabecera:fieldGetByName( "cAliasTik" ) ) == alltrim( cNombreUbicacion )
+         lValidate         := .f.
+         exit
+      end if 
+
+      ::oTiketCabecera:skip()
+
+   end while
+
+   ::oTiketCabecera:SetStatus( aStatus )
+
+Return ( lValidate )
 
 //---------------------------------------------------------------------------//
 

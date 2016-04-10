@@ -331,7 +331,7 @@ CLASS TComercio
 
    // recepcion de pedidos o presupuestos--------------------------------------
 
-   METHOD isRecivedDocumentAsBudget( cPrestashopModule )      INLINE ( .t. ) // ( ::oFPago:SeekInOrd( upper( cPrestashopModule ), "cCodWeb" ) ) .and. ( ::oFPago:nGenDoc <= 1 ) )
+   METHOD isRecivedDocumentAsBudget( cPrestashopModule ) 
 
    METHOD documentRecived( oQuery, oDatabase )                INLINE ( .t. )
       METHOD isOrderAlreadyRecived( oQuery )                  INLINE ( ::documentRecived( oQuery, ::oPedCliT ) )
@@ -5534,24 +5534,17 @@ METHOD checkDate( cDatePrestashop ) CLASS TComercio
 Return ( dFecha >= uFieldEmpresa( "dIniOpe" ) .or. empty( uFieldEmpresa( "dIniOpe" ) ) ) .and. ( dFecha <= uFieldEmpresa( "dFinOpe" ) .or. empty( uFieldEmpresa( "dFinOpe" ) ) )
 
 //---------------------------------------------------------------------------//
-/*
+
 METHOD isRecivedDocumentAsBudget( cPrestashopModule ) CLASS TComercio
 
    local lAsBudget   := .f.
 
-   return ( lAsBudget )
-
-   debug( "antes de buscar" + cPrestashopModule, "isRecivedDocumentAsBudget"  )
-
    if ( ::oFPago:SeekInOrd( upper( cPrestashopModule ), "cCodWeb" ) ) .and. ( ::oFPago:nGenDoc <= 1 )
-      debug( "encontrado", "isRecivedDocumentAsBudget" )
       lAsBudget      := .t.
    endif
 
-   debug( lAsBudget, "salida de isRecivedDocumentAsBudget" )
-
 return ( lAsBudget )
-*/
+
 //---------------------------------------------------------------------------//
 
 METHOD insertPresupuestoPrestashop( oQuery ) CLASS TComercio
@@ -5584,8 +5577,7 @@ METHOD insertDatosCabeceraPresupuestoPretashop( oQuery ) CLASS TComercio
 
    ::insertCabeceraPresupuestoPretashop( oQuery )
 
-   ::TComercioCustomer:insertCustomerInGestoolIfNotExist( oQuery:FieldGetByName( "id_customer" ) ) 
-   ::TComercioCustomer:insertAddressInGestoolIfNotExist( oQuery:FieldGetByName( "id_customer" ),  oQuery:FieldGetByName( "id_address_delivery" ) ) 
+   ::TComercioCustomer:insertCustomerInGestoolIfNotExist( oQuery:FieldGetByName( "id_customer" ), oQuery:FieldGetByName( "id_address_delivery" ) ) 
 
    ::setCustomerInOrder( oQuery )
 

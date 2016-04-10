@@ -213,7 +213,7 @@ CLASS TDbf
     METHOD  RollBack()
 
     METHOD  Save()
-    METHOD  SaveFields()    INLINE ( ( ::nArea )->( aEval( ::aTField, { | oFld | oFld:Save() } ) ) )
+    METHOD  SaveFields()    
     METHOD  SaveUnLock()    INLINE ( ::SaveFields(), ::UnLock(), ::lAppend := .f. )
     METHOD  Update()        INLINE ::Save()
 
@@ -2041,6 +2041,19 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD SaveFields() CLASS TDbf
+
+    local aLockList     :=  ( ::nArea )->( dbrlocklist() )
+
+    if ascan( aLockList, ( ::nArea )->( recno() ) ) == 0
+        ( ::nArea )->( dbrlock() )
+    end if 
+
+    ( ::nArea )->( aeval( ::aTField, { | oFld | oFld:Save() } ) )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
 /*
 Relaci�n de ordenes
 */
@@ -2128,12 +2141,6 @@ METHOD CreateFromHash( hDefinition, cDriver, cPath )
 
     DEFAULT cDriver     := cDriver()
     DEFAULT cPath       := cPatEmp()
-
-/*
-    oDbf        := DbfServer( FullDatabase( hDefinition ), hDefinition["Table"] )
-    if !Empty( oDbf )
-        oDbf:New( FullDatabase( hDefinition ), hDefinition[ "Table" ], ( cDriver ), hDefinition[ "Comment" ], ( cPath ) )
-*/
 
         for each hField in hDefinition[ "Fields" ]
             msgStop( valtoprg( hField ) )
