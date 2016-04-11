@@ -5387,8 +5387,6 @@ METHOD buildAddInformacionStockProductPrestashop( idProduct ) CLASS tComercio
    Recopilamos la información del Stock-------------------------------
    */
 
-   msgAlert( ::TPrestashopConfig:getStore() )
-
    aStockArticulo             := ::oStock:aStockArticulo( idProduct, ::TPrestashopConfig:getStore() )
 
    aEval( aStockArticulo, {|o| nTotalStock += o:nUnidades } )
