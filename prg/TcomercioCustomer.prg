@@ -202,7 +202,7 @@ METHOD getState( idState ) CLASS TComercioCustomer
    cQuery            := "SELECT * FROM " + ::cPrefixTable( "state" ) + " WHERE id_state = " + alltrim( str( idState ) )
    oQuery            := TMSQuery():New( ::TComercio:oCon, cQuery )
 
-   if oQueryState:Open() .and. oQueryState:RecCount() > 0
+   if oQuery:Open() .and. oQuery:RecCount() > 0
       cState         := oQuery:fieldGetbyName( "name" )
       oQuery:free()
    end if   
