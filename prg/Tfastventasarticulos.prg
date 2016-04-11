@@ -10,6 +10,7 @@
 CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    DATA  nView
+   DATA  nView
 
    DATA  cType                            INIT "Articulos"
 
@@ -799,7 +800,7 @@ Method lValidRegister() CLASS TFastVentasArticulos
       ( ::oDbf:cCodAlm     >= ::oGrupoAlmacen:Cargo:getDesde()          .and. ::oDbf:cCodAlm    <= ::oGrupoAlmacen:Cargo:getHasta() )           .and.;
       ( ::oDbf:cCtrCoste   >= ::oGrupoCentroCoste:Cargo:getDesde()      .and. ::oDbf:cCtrCoste  <= ::oGrupoCentroCoste:Cargo:getHasta() ) 
 
-      ::loadValuesExtraFields()
+      //::loadValuesExtraFields()
 
       Return .t.
 
@@ -1183,15 +1184,8 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
                ::oDbf:lKitArt    := ::oSatCliL:lKitArt
                ::oDbf:lKitChl    := ::oSatCliL:lKitChl
 
-               /*
-               AÃ±adimos un nuevo registro-----------------------------------
-               */
-
-               if ::lValidRegister()
-                  ::oDbf:Insert()
-               else
-                  ::oDbf:Cancel()
-               end if
+               ::InsertIfValid()
+               ::loadValuesExtraFields()
 
                ::oSatCliL:Skip()
 
@@ -1347,6 +1341,7 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
                   ::oDbf:lKitChl    := ::oPreCliL:lKitChl
 
                   ::InsertIfValid()
+                  ::loadValuesExtraFields()
 
                end if
 
@@ -1508,6 +1503,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   end if 
 
                   ::InsertIfValid()
+                  ::loadValuesExtraFields()
 
                end if
 
@@ -1676,6 +1672,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:cCtrCoste  := ::oAlbCliL:cCtrCoste
 
                   ::InsertIfValid()
+                  ::loadValuesExtraFields()
 
                end if
 
@@ -1838,6 +1835,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
                   ::oDbf:cCtrCoste  := ::oFacCliL:cCtrCoste
 
                   ::InsertIfValid()
+                  ::loadValuesExtraFields()
 
                end if
 
@@ -1997,6 +1995,7 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
                   ::oDbf:cCtrCoste  := ::oFacRecL:cCtrCoste
 
                   ::InsertIfValid()
+                  ::loadValuesExtraFields()
 
                end if
 
@@ -2142,6 +2141,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                // Añadimos un nuevo registro-----------------------------------
 
                ::InsertIfValid()
+               ::loadValuesExtraFields()
 
             end if
 
@@ -2214,6 +2214,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                   ::oDbf:cMinDoc    := SubStr( ::oTikCliT:cHorTik, 4, 2 )
 
                ::InsertIfValid()
+               ::loadValuesExtraFields()
 
             end if
 
@@ -2272,6 +2273,7 @@ METHOD listadoArticulo() CLASS TFastVentasArticulos
       ::oDbf:nCosArt  := nCosto( nil, ::oDbfArt:cAlias, ::oArtKit:cAlias )
 
       ::InsertIfValid()
+      ::loadValuesExtraFields()
 
       ::oDbfArt:Skip()
 
@@ -2361,6 +2363,7 @@ METHOD appendStockArticulo( aStockArticulo )
          ::fillFromArticulo()
 
          ::insertIfValid()
+         ::loadValuesExtraFields()
 
       end if 
 
@@ -2406,6 +2409,7 @@ METHOD appendBlankArticulo( cCodigoArticulo, cCodigoAlmacen ) CLASS TFastVentasA
    ::fillFromArticulo()
 
    ::insertIfValid()
+   ::loadValuesExtraFields()
 
 RETURN ( Self )
 
@@ -2510,6 +2514,7 @@ METHOD AddParteProduccion() CLASS TFastVentasArticulos
                      ::oDbf:dFecDoc    := ::oProCab:dFecOrd
 
                   ::InsertIfValid()
+                  ::loadValuesExtraFields()
 
                end if
 
@@ -2644,6 +2649,7 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
                      ::oDbf:nCajas     := ::oPedPrvL:nCanPed
 
                   ::InsertIfValid()
+                  ::loadValuesExtraFields()
 
                end if
 
@@ -2794,6 +2800,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
                   ::oDBf:cCtrCoste  := ::oAlbPrvL:cCtrCoste
 
                   ::InsertIfValid()
+                  ::loadValuesExtraFields()
                   
                end if
 
@@ -2934,6 +2941,7 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:cCtrCoste  := ::oFacPrvL:cCtrCoste
 
                   ::InsertIfValid()
+                  ::loadValuesExtraFields()
 
                end if
 
@@ -3073,6 +3081,7 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:cCtrCoste  := ::oRctPrvL:cCtrCoste
 
                   ::InsertIfValid()
+                  ::loadValuesExtraFields()
 
                end if
 
@@ -3414,10 +3423,18 @@ METHOD loadValuesExtraFields() CLASS TFastVentasArticulos
 
    if isArray( ::aExtraFields ) .and. Len( ::aExtraFields ) != 0
 
+      //MsgInfo( ::oDbf:cCodArt, "Articulo" )
+
       for each cField in ::aExtraFields
 
+         //MsgInfo( ::oCamposExtra:valueExtraField( cField[ "código" ], ::oDbf:cCodArt, cField ), cField[ "código" ] )
+         
          ::oDbf:FieldPutByName(  "fld" + cField[ "código" ],;
                                  ::oCamposExtra:valueExtraField( cField[ "código" ], ::oDbf:cCodArt, cField ) )
+
+         ::oDbf:fieldput( fieldpos( "fld" + cField[ "código" ] ), ::oCamposExtra:valueExtraField( cField[ "código" ], ::oDbf:cCodArt, cField ) )
+
+         //MsgInfo( ::oDbf:FieldGetByName(  "fld" + cField[ "código" ] ) )
 
       next
 

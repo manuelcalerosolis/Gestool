@@ -86,7 +86,7 @@ METHOD createCustomerInGestool( idCustomer ) CLASS TComercioCustomer
    end if 
 
    if oQuery:recCount() > 0 
-      ::appendCustomerInGestool( oQuery )
+      ::appendCustomerInGestool( idCustomer, oQuery )
    end if 
 
    oQuery:Free()
@@ -164,12 +164,17 @@ METHOD createAddressInGestool( idAddress ) CLASS TComercioCustomer
 
    oQuery      := ::getAddressFromPrestashop( idAddress )
 
-   if empty( oQuery )
+   if empty( oQuery ) 
       Return ( Self )
    end if 
 
+<<<<<<< HEAD
    if oQuery:recCount() > 0 
       ::appendAddressInGestool( oQuery )
+=======
+   if oQuery:recCount() > 0  
+      ::appendAddressInGestool( idCustomer, oQuery )
+>>>>>>> origin/master
    end if 
 
    oQuery:Free()
@@ -180,8 +185,17 @@ Return ( Self )
 
 METHOD getAddressFromPrestashop( idAddress ) CLASS TComercioCustomer
 
+<<<<<<< HEAD
    local cQuery   := "SELECT * FROM " + ::TComercio:cPrefixTable( "address" ) + " WHERE id_address = " + alltrim( str( idAddress ) ) 
    local oQuery   := TMSQuery():New( ::TComercio:oCon, cQuery )
+=======
+   local cQuery
+   local oQuery 
+
+   cQuery            := "SELECT * FROM " + ::TComercio:cPrefixTable( "address" ) + " WHERE id_address = " + alltrim( str( idAddress ) ) 
+
+   oQuery            := TMSQuery():New( ::TComercio:oCon, cQuery )
+>>>>>>> origin/master
 
    if oQuery:Open() 
       Return ( oQuery )   
@@ -196,6 +210,7 @@ METHOD appendAddressInGestool( oQuery ) CLASS TComercioCustomer
    local idAddressGestool        := "@" + alltrim( str( oQuery:fieldGet( 1 ) ) ) 
    local nameAddressGestool      := upper( oQuery:fieldGetbyName( "firstname" ) ) + space( 1 ) + upper( oQuery:fieldGetByName( "lastname" ) ) 
 
+<<<<<<< HEAD
    ::oAddressDatabase():Append()
 
    ::oAddressDatabase():cCodObr  := idAddressGestool
@@ -222,6 +237,23 @@ METHOD appendAddressInGestool( oQuery ) CLASS TComercioCustomer
       Return ( .f. )
 
    end if 
+=======
+   ::TComercio:oObras:Append()
+   ::TComercio:oObras:Blank()
+
+   ::TComercio:oObras:cCodCli        := ::TComercio:CodigoClienteinGestool( idCustomer )
+   ::TComercio:oObras:cCodObr        := "@" + alltrim( str( oQuery:fieldGet( 1 ) ) ) //"id_address"
+   ::TComercio:oObras:cNomObr        := upper( oQuery:FieldGetbyName( "firstname" ) ) + Space( 1 ) + upper( oQuery:FieldGetByName( "lastname" ) ) //firstname - Last Name
+   ::TComercio:oObras:cDirObr        := oQuery:FieldGetByName( "address1" ) + " " + oQuery:FieldGetByName( "address2" ) //"address1" - "address2"
+   ::TComercio:oObras:cPobObr        := oQuery:FieldGetByName( "city" ) //"city"
+   ::TComercio:oObras:cPosObr        := oQuery:FieldGetByName( "postcode" ) //"postcode"
+   ::TComercio:oObras:cPrvObr        := ::getState(oQuery:fieldGetbyName( "id_state" ) )
+   ::TComercio:oObras:cTelObr        := oQuery:FieldGetByName( "phone" ) //"phone"
+   ::TComercio:oObras:cMovObr        := oQuery:FieldGetByName( "phone_mobile" ) //"phone_mobile"
+   ::TComercio:oObras:cCodWeb        := oQuery:FieldGet( 1 ) //"id_address"
+
+   ::TComercio:oObras:Save()
+>>>>>>> origin/master
 
 Return ( .t. )
 
