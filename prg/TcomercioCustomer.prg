@@ -86,7 +86,7 @@ METHOD createCustomerInGestool( idCustomer ) CLASS TComercioCustomer
    end if 
 
    if oQuery:recCount() > 0 
-      ::appendCustomerInGestool( idCustomer, oQuery )
+      ::appendCustomerInGestool( oQuery )
    end if 
 
    oQuery:Free()
@@ -164,12 +164,12 @@ METHOD createAddressInGestool( idAddress ) CLASS TComercioCustomer
 
    oQuery      := ::getAddressFromPrestashop( idAddress )
 
-   if empty( oQuery ) 
+   if empty( oQuery )
       Return ( Self )
    end if 
 
    if oQuery:recCount() > 0 
-      ::appendAddressInGestool( idAddress, oQuery )
+      ::appendAddressInGestool( oQuery )
    end if 
 
    oQuery:Free()
@@ -180,11 +180,8 @@ Return ( Self )
 
 METHOD getAddressFromPrestashop( idAddress ) CLASS TComercioCustomer
 
-   local cQuery
-   local oQuery 
-
-   cQuery            := "SELECT * FROM " + ::TComercio:cPrefixTable( "address" ) + " WHERE id_address = " + alltrim( str( idAddress ) ) 
-   oQuery            := TMSQuery():New( ::TComercio:oCon, cQuery )
+   local cQuery   := "SELECT * FROM " + ::TComercio:cPrefixTable( "address" ) + " WHERE id_address = " + alltrim( str( idAddress ) ) 
+   local oQuery   := TMSQuery():New( ::TComercio:oCon, cQuery )
 
    if oQuery:Open() 
       Return ( oQuery )   
@@ -194,26 +191,37 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD appendAddressInGestool( idAddress, oQuery ) CLASS TComercioCustomer
+METHOD appendAddressInGestool( oQuery ) CLASS TComercioCustomer
 
    local idAddressGestool        := "@" + alltrim( str( oQuery:fieldGet( 1 ) ) ) 
    local nameAddressGestool      := upper( oQuery:fieldGetbyName( "firstname" ) ) + space( 1 ) + upper( oQuery:fieldGetByName( "lastname" ) ) 
 
-   ::TComercio:oObras:Append()
-   ::TComercio:oObras:Blank()
+   ::oAddressDatabase():Append()
 
-   ::TComercio:oObras:cCodCli        := ::TComercio:CodigoClienteinGestool( idCustomer )
-   ::TComercio:oObras:cCodObr        := "@" + alltrim( str( oQuery:fieldGet( 1 ) ) ) //"id_address"
-   ::TComercio:oObras:cNomObr        := upper( oQuery:FieldGetbyName( "firstname" ) ) + Space( 1 ) + upper( oQuery:FieldGetByName( "lastname" ) ) //firstname - Last Name
-   ::TComercio:oObras:cDirObr        := oQuery:FieldGetByName( "address1" ) + " " + oQuery:FieldGetByName( "address2" ) //"address1" - "address2"
-   ::TComercio:oObras:cPobObr        := oQuery:FieldGetByName( "city" ) //"city"
-   ::TComercio:oObras:cPosObr        := oQuery:FieldGetByName( "postcode" ) //"postcode"
-   ::TComercio:oObras:cPrvObr        := ::getState(oQuery:fieldGetbyName( "id_state" ) )
-   ::TComercio:oObras:cTelObr        := oQuery:FieldGetByName( "phone" ) //"phone"
-   ::TComercio:oObras:cMovObr        := oQuery:FieldGetByName( "phone_mobile" ) //"phone_mobile"
-   ::TComercio:oObras:cCodWeb        := oQuery:FieldGet( 1 ) //"id_address"
+   ::oAddressDatabase():cCodObr  := idAddressGestool
+   ::oAddressDatabase():cCodCli  := ::idCustomerGestool
+   ::oAddressDatabase():cNomObr  := nameAddressGestool
+   ::oAddressDatabase():cDirObr  := oQuery:fieldGetByName( "address1" ) + " " + oQuery:fieldGetByName( "address2" ) 
+   ::oAddressDatabase():cPobObr  := oQuery:fieldGetByName( "city" )           
+   ::oAddressDatabase():cPosObr  := oQuery:fieldGetByName( "postcode" )       
+   ::oAddressDatabase():cTelObr  := oQuery:fieldGetByName( "phone" )          
+   ::oAddressDatabase():cMovObr  := oQuery:fieldGetByName( "phone_mobile" )   
 
-   ::TComercio:oObras:Save()
+   ::oAddressDatabase():cPrvObr  := ::getState( oQuery:fieldGetbyName( "id_state" ) )
+
+   if ::oAddressDatabase():Save()
+      
+      ::TPrestashopId():setValueAddress( ::idCustomerGestool + idAddressGestool, ::getCurrentWebName(), oQuery:fieldGet( 1 ) ) 
+
+      ::writeText( "Dirección de cliente " + nameAddressGestool + " introducida correctamente.", 3 )
+
+   else
+      
+      ::writeText( "Error al guardar la dirección del cliente en gestool " + nameAddressGestool, 3 )
+
+      Return ( .f. )
+
+   end if 
 
 Return ( .t. )
 
@@ -248,3 +256,4 @@ METHOD getPaymentGestool( cPrestashopModule ) CLASS TComercioCustomer
 Return ( paymentGestool )
 
 //---------------------------------------------------------------------------//
+
