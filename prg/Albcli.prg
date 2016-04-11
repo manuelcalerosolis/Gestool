@@ -11651,14 +11651,16 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    Guardamos el albaran--------------------------------------------------------
    */
 
+   TComercio():getInstance():resetProductsToUpadateStocks()
+
    ( dbfTmpLin )->( dbGoTop() )
    while !( dbfTmpLin )->( eof() )
 
       if !( ( dbfTmpLin )->nUniCaja == 0 .and. ( dbfTmpLin )->lFromAtp )
 
-         ( dbfTmpLin )->dFecAlb     := aTmp[ _DFECALB ]
-         ( dbfTmpLin )->tFecAlb     := aTmp[ _TFECALB ]
-         ( dbfTmpLin )->cCodCli     := aTmp[ _CCODCLI ]
+         ( dbfTmpLin )->dFecAlb        := aTmp[ _DFECALB ]
+         ( dbfTmpLin )->tFecAlb        := aTmp[ _TFECALB ]
+         ( dbfTmpLin )->cCodCli        := aTmp[ _CCODCLI ]
          if empty( ( dbfTmpLin )->cCtrCoste )
             ( dbfTmpLin )->cCtrCoste   := aTmp[ _CCENTROCOSTE ]
          endif
@@ -11667,9 +11669,11 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
 
       end if   
 
+      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpLin )->cRef, nView )
+
       ( dbfTmpLin )->( dbSkip() )
 
-      oMsgProgress():Deltapos(1)
+      oMsgProgress():deltaPos(1)
 
    end while
 
@@ -11813,13 +11817,17 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
 
    end if
 
-   /*
-   Escribe los datos pendientes------------------------------------------------
-   */
+   // Escribe los datos pendientes---------------------------------------------
 
    dbCommitAll()
 
    CommitTransaction()
+
+   // actualiza el stock de prestashop-----------------------------------------
+
+   TComercio():getInstance():updateWebProductStocks()
+
+   // script-------------------------------------------------------------------
 
    if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
       runEventScript( "AlbaranesClientes\afterAppend", aTmp, nView )
@@ -12449,42 +12457,6 @@ Static Function HideImportacion( aGet, oShow )
    end if
 
 Return nil 
-
-//---------------------------------------------------------------------------//
-
-Static Function ActualizaStockWeb( cNumDoc )
-
-   local nRec     := ( D():Get( "AlbCliL", nView ) )->( Recno() )
-   local nOrdAnt  := ( D():Get( "AlbCliL", nView ) )->( OrdSetFocus( "nNumAlb" ) )
-
-   if uFieldEmpresa( "lRealWeb" )
-
-      with object ( TComercio():New())
-
-         if ( D():Get( "AlbCliL", nView ) )->( dbSeek( cNumDoc ) )
-
-            while ( D():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliL", nView ) )->nNumAlb ) + ( D():Get( "AlbCliL", nView ) )->cSufAlb == cNumDoc .and. !( D():Get( "AlbCliL", nView ) )->( Eof() )
-
-               if Retfld( ( D():Get( "AlbCliL", nView ) )->cRef, D():Articulos( nView ), "lPubInt", "Codigo" )
-
-                  :ActualizaStockProductsPrestashop( ( D():Get( "AlbCliL", nView ) )->cRef, ( D():Get( "AlbCliL", nView ) )->cCodPr1, ( D():Get( "AlbCliL", nView ) )->cCodPr2, ( D():Get( "AlbCliL", nView ) )->cValPr1, ( D():Get( "AlbCliL", nView ) )->cValPr2 )
-
-               end if   
-
-               ( D():Get( "AlbCliL", nView ) )->( dbSkip() )
-
-            end while
-
-        end if
-        
-      end with
-
-   end if 
-
-   ( D():Get( "AlbCliL", nView ) )->( OrdSetFocus( nOrdAnt ) )
-   ( D():Get( "AlbCliL", nView ) )->( dbGoTo( nRec ) )  
-
-Return .t.
 
 //---------------------------------------------------------------------------//
 

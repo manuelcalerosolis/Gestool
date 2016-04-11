@@ -39,6 +39,7 @@ Method New( cTitle, cMessage, lMeter )
 
    if ::lMeter
       ::oWaitMeter   := TWaitMeter():New( ::cTitle, ::cMessage )
+      ::oWaitMeter:Run()
    end if
 
    TRY

@@ -18,6 +18,7 @@ static oMsgAlarm
 CLASS TComercio
 
    CLASSDATA oInstance
+   CLASSDATA hProductsToUpdate      INIT {=>}
 
    DATA  TPrestashopConfig  
    DATA  TPrestashopId
@@ -135,7 +136,7 @@ CLASS TComercio
 
    DATA  oComboWebToExport
 
-   DATA  cWebToExport               INIT ""
+   DATA  cWebToExport                     INIT ""
 
    DATA  cSeriePed
 
@@ -149,7 +150,7 @@ CLASS TComercio
 
    DATA  nLanguage
 
-   DATA  nPrecioMinimo              INIT 0
+   DATA  nPrecioMinimo                    INIT 0
 
    DATA  lProductIdColumnImageShop  
    DATA  lProductIdColumnProductAttribute
@@ -158,12 +159,12 @@ CLASS TComercio
 
    DATA  nSecondTimer
 
-   DATA  lDefImgPrp                 INIT .f.
+   DATA  lDefImgPrp                       INIT .f.
 
-   DATA  nNumeroCategorias          INIT 0
-   DATA  aCategorias                INIT {}
+   DATA  nNumeroCategorias                INIT 0
+   DATA  aCategorias                      INIT {}
 
-   DATA  aArticulosActualizar       INIT {}
+   DATA  aArticulosActualizar             INIT {}
 
    DATA  cPrefijoBaseDatos
 
@@ -177,8 +178,11 @@ CLASS TComercio
    DATA cSufijoPedido
    DATA cSufijoPresupuesto
 
-   METHOD GetInstance()              
+
    METHOD New()                           CONSTRUCTOR
+   METHOD GetInstance()              
+   METHOD EndInstance()
+
    METHOD Connect()
    METHOD Disconnect()
 
@@ -238,6 +242,8 @@ CLASS TComercio
    DATA  aPropiedadesCabeceraData      INIT {}
    DATA  aPropiedadesLineasData        INIT {}
    DATA  aStockArticuloData            INIT {}
+   
+   DATA  cDirImagen
 
    METHOD buildFTP()                   
    METHOD destroyFTP()                 INLINE ( ::oFtp:endConcexion() )
@@ -440,18 +446,24 @@ CLASS TComercio
    METHOD buildTextOk( cValue, cTable )      INLINE ( ::writeText( "Insertado correctamente " + cValue + ", en la tabla " + cTable, 3 ) )
    METHOD buildTextError( cValue, cTable )   INLINE ( ::writeText( "Error insertado " + cValue + ", en la tabla " + cTable, 3 ) )
 
-   METHOD buildInformationStockProductPrestashop()
+   METHOD buildInformationStockProductDatabase()
+   METHOD buildInformationStockProductArray()
+
    METHOD uploadInformationStockProductPrestashop()
    METHOD buildAddInformacionStockProductPrestashop()
    METHOD BuildAddArticuloActualizar( cCodArt )
 
    // ftp y movimientos de ficheros
 
-   DATA  cDirImagen
-
    METHOD cDirectoryProduct()                INLINE ( ::TPrestashopConfig:getImagesDirectory() + "/p" )
    METHOD cDirectoryCategories()             INLINE ( ::TPrestashopConfig:getImagesDirectory() + "/c" )
    METHOD getRecursiveFolderPrestashop( cCarpeta )
+
+   METHOD resetProductsToUpadateStocks()     INLINE ( ::hProductsToUpdate := {=>} )
+   METHOD getProductsToUpadateStocks()       INLINE ( ::hProductsToUpdate )
+   METHOD appendProductsToUpadateStocks( idProduct )
+   METHOD updateWebProductStocks()
+   METHOD updateProductStocks()
 
 END CLASS
 
@@ -464,6 +476,16 @@ METHOD GetInstance() CLASS TComercio
    end if
 
 RETURN ( ::oInstance )
+
+//---------------------------------------------------------------------------//
+
+METHOD EndInstance() CLASS TComercio
+
+   if empty( ::oInstance )
+      ::oInstance          := nil
+   end if
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -3230,8 +3252,6 @@ METHOD buildProductPrestashop( idProduct, lShowDialogWait ) CLASS TComercio
 
    // Conectamos con la bases de datos de prestaShop------------------------
 
-   ::MeterTotalText( "Conectando con la base de datos." )
-
    if ::prestaShopConnect()
 
       // Eliminamos las bases de datos--------------------------------------
@@ -3265,8 +3285,6 @@ METHOD buildProductPrestashop( idProduct, lShowDialogWait ) CLASS TComercio
       ::buildSubirImagenes()
 
       // Desconectamos mysql------------------------------------------------
-
-      ::MeterTotalText( "Desconectando bases de datos." )
 
       ::prestashopDisConnect()  
       
@@ -5327,19 +5345,15 @@ METHOD controllerUpdateStockPrestashop() Class TComercio
 
    if ::filesOpen()
 
-      ::MeterTotalText( "Conectando con la base de datos" )
-
       if ::prestaShopConnect()
 
-         ::MeterTotalText( "Actializando stock de prestashop" )
+         ::MeterTotalText( "Actualizando stock de prestashop" )
 
-         ::buildInformationStockProductPrestashop()
+         ::buildInformationStockProductDatabase()
 
          ::MeterTotalText( "Actualizando stocks" )
 
          ::uploadInformationStockProductPrestashop()
-
-         ::MeterTotalText( "Desconectando bases de datos." )
 
          ::prestashopDisConnect()  
       
@@ -5360,19 +5374,21 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD buildAddInformacionStockProductPrestashop() CLASS tComercio
+METHOD buildAddInformacionStockProductPrestashop( idProduct ) CLASS tComercio
 
    local sStock
    local nTotalStock          := 0
    local aStockArticulo
 
-   ::writeText( "Recopilando información de " + alltrim( ::oArt:Nombre ) )
+   ::writeText( "Recopilando información de " + alltrim( idProduct ) )
 
    /*
    Recopilamos la información del Stock-------------------------------
    */
 
-   aStockArticulo             := ::oStock:aStockArticulo( ::oArt:Codigo, ::TPrestashopConfig:getStore() )
+   msgAlert( ::TPrestashopConfig:getStore() )
+
+   aStockArticulo             := ::oStock:aStockArticulo( idProduct, ::TPrestashopConfig:getStore() )
 
    aEval( aStockArticulo, {|o| nTotalStock += o:nUnidades } )
 
@@ -5380,14 +5396,13 @@ METHOD buildAddInformacionStockProductPrestashop() CLASS tComercio
    Metemos el Stock global del artículo-------------------------------
    */
 
-   aAdd( ::aStockArticuloData, { "cCodArt"               => ::oArt:Codigo ,;
-                                 "cNomArt"               => ::oArt:Nombre ,;
+   aAdd( ::aStockArticuloData, { "cCodArt"               => idProduct ,;
                                  "cCodPrp1"              => "" ,;
                                  "cCodPrp2"              => "" ,;
                                  "cValPrp1"              => "" ,;
                                  "cValPrp2"              => "" ,;
                                  "nStock"                => alltrim( str( nTotalStock ) ) ,;
-                                 "idProductPrestashop"   => ::TPrestashopId:getValueProduct( ::oArt:Codigo, ::getCurrentWebName() ),;
+                                 "idProductPrestashop"   => ::TPrestashopId:getValueProduct( idProduct, ::getCurrentWebName() ),;
                                  "cCodWebVal1"           => 0 ,;
                                  "cCodWebVal2"           => 0 } )
 
@@ -5398,20 +5413,19 @@ METHOD buildAddInformacionStockProductPrestashop() CLASS tComercio
 
    for each sStock in aStockArticulo
 
-      if aScan( ::aStockArticuloData, {|h|   hGet( h, "cCodArt" ) == ::oArt:Codigo              .and.;
+      if aScan( ::aStockArticuloData, {|h|   hGet( h, "cCodArt" ) == idProduct                  .and.;
                                              hGet( h, "cCodPrp1" ) == sStock:cCodigoPropiedad1  .and.;
                                              hGet( h, "cCodPrp2" ) == sStock:cCodigoPropiedad2  .and.;
                                              hGet( h, "cValPrp1" ) == sStock:cValorPropiedad1   .and.;
                                              hGet( h, "cValPrp2" ) == sStock:cValorPropiedad2  } ) == 0
       
-         aAdd( ::aStockArticuloData, { "cCodArt"               => ::oArt:Codigo ,;
-                                       "cNomArt"               => ::oArt:Nombre ,;
+         aAdd( ::aStockArticuloData, { "cCodArt"               => idProduct ,;
                                        "cCodPrp1"              => sStock:cCodigoPropiedad1 ,;
                                        "cCodPrp2"              => sStock:cCodigoPropiedad2 ,;
                                        "cValPrp1"              => sStock:cValorPropiedad1 ,;
                                        "cValPrp2"              => sStock:cValorPropiedad2 ,;
                                        "nStock"                => alltrim( str( sStock:nUnidades ) ),;
-                                       "idProductPrestashop"   => ::TPrestashopId:getValueProduct( ::oArt:Codigo, ::getCurrentWebName() ),;
+                                       "idProductPrestashop"   => ::TPrestashopId:getValueProduct( idProduct, ::getCurrentWebName() ),;
                                        "cCodWebVal1"           => ::TPrestashopId:getValueAttribute( sStock:cCodigoPropiedad1 + sStock:cValorPropiedad1, ::getCurrentWebName() ),;
                                        "cCodWebVal2"           => ::TPrestashopId:getValueAttribute( sStock:cCodigoPropiedad2 + sStock:cValorPropiedad2, ::getCurrentWebName() ) } )
 
@@ -5423,7 +5437,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD buildInformationStockProductPrestashop( hArticuloData ) CLASS TComercio
+METHOD buildInformationStockProductDatabase( hArticuloData ) CLASS TComercio
 
    ::meterProcesoSetTotal( ::oArt:OrdKeyCount() )
 
@@ -5431,12 +5445,24 @@ METHOD buildInformationStockProductPrestashop( hArticuloData ) CLASS TComercio
    while !::oArt:Eof()
 
       if ::productInCurrentWeb()
-         ::buildAddInformacionStockProductPrestashop()
+         ::buildAddInformacionStockProductPrestashop( ::oArt:Codigo )
       end if 
 
       ::oArt:Skip()
 
    end while
+
+return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD buildInformationStockProductArray( aProducts ) CLASS TComercio
+
+   local idProduct
+
+   for each idProduct in aProducts
+      ::buildAddInformacionStockProductPrestashop( idProduct )
+   next
 
 return .t.
 
@@ -5449,11 +5475,11 @@ METHOD uploadInformationStockProductPrestashop() CLASS TComercio
    local cCommand
    local nIdProductAttribute
 
-   for each hStock in ::hStockArticuloData
+   for each hStock in ::aStockArticuloData
 
       if hGet( hStock, "cCodWebVal1" ) == 0 .and. hGet( hStock, "cCodWebVal2" ) == 0
 
-         ::writeText( "Actualizando stock de " + alltrim( hGet( hStock, "cNomArt" ) ) )        
+         ::writeText( "Actualizando stock de " + alltrim( hGet( hStock, "cCodArt" ) ) )        
 
          cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " " +;
                         "SET quantity = '" + hGet( hStock, "nStock" ) + "' " + ;
@@ -5467,9 +5493,9 @@ METHOD uploadInformationStockProductPrestashop() CLASS TComercio
 
          if !empty( nIdProductAttribute )
 
-            cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " " + ;
-                           "SET quantity ='" + hGet( hStock, "nStock" ) + "' "   + ;
-                           "WHERE id_product =" + alltrim( str( hGet( hStock, "idProductPrestashop" ) ) ) + " AND id_product_attribute = " + alltrim( str( nIdProductAttribute ) )
+            cCommand := "UPDATE " + ::cPrefixTable( "stock_available" ) + " " + ;
+                        "SET quantity ='" + hGet( hStock, "nStock" ) + "' "   + ;
+                        "WHERE id_product =" + alltrim( str( hGet( hStock, "idProductPrestashop" ) ) ) + " AND id_product_attribute = " + alltrim( str( nIdProductAttribute ) )
 
             TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
@@ -5478,6 +5504,8 @@ METHOD uploadInformationStockProductPrestashop() CLASS TComercio
       end if
    
    next
+
+   debug( ::aStockArticuloData, "aStockArticuloData" )
 
 Return .t.
 
@@ -6371,7 +6399,79 @@ METHOD getRecursiveFolderPrestashop( cCarpeta ) CLASS TComercio
 
 Return ( cFolder )
 
-//ESTRUCTURAS----------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+METHOD appendProductsToUpadateStocks( idProduct, nView ) CLASS TComercio
+
+   local nScan
+   local cWebShop
+
+   if !( D():gotoArticulos( idProduct, nView ) )
+      Return ( .f. )
+   end if 
+
+   if !( D():Articulos( nView ) )->lPubInt
+      Return ( .f. )
+   end if 
+
+   cWebShop          := alltrim( ( D():Articulos( nView ) )->cWebShop )
+
+   nScan             := hscan( ::hProductsToUpdate, {|k,v| k == cWebShop } )
+   if nScan == 0
+      hset( ::hProductsToUpdate, cWebShop, { idProduct } )
+   else 
+      if ascan( ::hProductsToUpdate[ cWebShop ], idProduct ) == 0
+         aadd( ::hProductsToUpdate[ cWebShop ], idProduct )
+      end if 
+   end if 
+   
+Return ( ::hProductsToUpdate )   
+
+//---------------------------------------------------------------------------//
+
+METHOD updateWebProductStocks() CLASS TComercio
+
+   local oWaitMeter
+
+   oWaitMeter        := TWaitMeter():New( "Actualizando stocks", "Espere por favor..." )
+   oWaitMeter:Run()
+
+   heval( ::hProductsToUpdate, {|k,v| ::updateProductStocks( k, v ) } )
+
+   oWaitMeter:End()
+
+Return ( ::hProductsToUpdate )   
+
+//---------------------------------------------------------------------------//
+
+METHOD updateProductStocks( cWebName, aProductsWeb )
+
+   if !::TPrestashopConfig:isRealTimeConexion()
+      Return .f.
+   end if 
+
+   if !::filesOpen()
+      ::filesClose()
+      Return .f.
+   end if 
+
+   ::TPrestashopConfig:setCurrentWebName( cWebName )
+
+   if !::prestaShopConnect()
+      Return .f.
+   end if 
+
+   ::buildInformationStockProductArray( aProductsWeb )
+
+   ::uploadInformationStockProductPrestashop()
+
+   ::prestashopDisConnect()  
+
+   ::filesClose()
+
+Return ( ::hProductsToUpdate )   
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

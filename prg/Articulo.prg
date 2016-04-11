@@ -5351,7 +5351,7 @@ Static Function StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, 
 
    // Tiendas en prestashop----------------------------------------------------
 
-   if TPrestashopConfig():getInstance():getRealTimeConexion()
+   if TPrestashopConfig():getInstance():isRealTimeConexion()
       oBtnAceptarActualizarWeb:Show()
    else   
       oBtnAceptarActualizarWeb:Hide()

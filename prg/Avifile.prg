@@ -188,6 +188,7 @@ RETURN NIL
 Function CreateWaitMeter( cMsg, cTitle, nTotal )
 
    oDlgWat              := TWaitMeter():New( cMsg, cTitle, nTotal )
+   oDlgWat:Run()
 
 Return ( SysRefresh() )
 
@@ -227,28 +228,32 @@ CLASS TWaitMeter
    DATA  oProgress
 
    DATA  cTitle
+
    DATA  oBitmap
+   DATA  cBitmap                       INIT     "LogoGestool_48"
 
    DATA  oMeter
    DATA  nTotal
    DATA  nCurrent
 
-   Method New( cMsg, cTitle, nTotal )
+   METHOD New( cMsg, cTitle, nTotal )
 
-   Method setMessage( cMessage )       INLINE   ( ::oMessage:SetText( cMessage ) )
+   METHOD setMessage( cMessage )       INLINE   ( ::oMessage:SetText( cMessage ) )
+   METHOD setBitmap( cBitmap )         INLINE   ( ::cBitmap := cBitmap )
 
-   Method incMeter()                   INLINE   ( ::refreshMeter( ++::nCurrent ) )
-   Method refreshMeter( nPosition )    INLINE   ( ::oProgress:Set( nPosition ) )
+   METHOD incMeter()                   INLINE   ( ::refreshMeter( ++::nCurrent ) )
 
-   Method setTotal( nTotal )           INLINE   ( ::oProgress:SetTotal( nTotal ) )
+   METHOD refreshMeter( nPosition )    INLINE   ( ::oProgress:Set( nPosition ) )
+   METHOD setTotal( nTotal )           INLINE   ( ::oProgress:SetTotal( nTotal ) )
 
-   Method End()
+   METHOD Run()
+   METHOD End()
 
 ENDCLASS
 
 //--------------------------------------------------------------------------//
 
-Method New( cTitle, cMsg, nTotal ) CLASS TWaitMeter
+METHOD New( cTitle, cMsg, nTotal ) CLASS TWaitMeter
 
    DEFAULT cMsg         := "Procesando"
    DEFAULT cTitle       := "Espere por favor..."
@@ -259,11 +264,17 @@ Method New( cTitle, cMsg, nTotal ) CLASS TWaitMeter
    ::nTotal             := nTotal
    ::nCurrent           := 0
 
+RETURN ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD Run() CLASS TWaitMeter
+
    CursorWait()
 
-   ::oDlgWait           := TDialog():New( , , , , ::cTitle, "Wait_Meter", , .f.,,,,,,.f. )
-
-   ::oBitmap            := TBitmap():ReDefine( 600, "Gears_48_alpha", , ::oDlgWait, , , .f., .f., , , .f., , , .f. )
+   ::oDlgWait           := TDialog():New( , , , , ::cTitle, "Wait_Meter", , .f., , , , , , .f. )
+ 
+   ::oBitmap            := TBitmap():ReDefine( 600, ::cBitmap, , ::oDlgWait, , , .f., .f., , , .f., , , .t. )
 
    ::oMessage           := TSay():ReDefine( 110, {|| ::cMessage }, ::oDlgWait, , , , .f. )
 
@@ -277,7 +288,7 @@ RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method End() CLASS TWaitMeter
+METHOD End() CLASS TWaitMeter
 
    ::RefreshMeter( 0 )
 
