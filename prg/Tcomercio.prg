@@ -355,6 +355,7 @@ CLASS TComercio
    METHOD setCustomerInOrder( oQuery )
    METHOD appendStatePedidoPrestashop( oQuery )
    METHOD appendStatePresupuestoPrestashop( oQuery )
+   METHOD CodigoClienteinGestool( cCodWeb )
 
    METHOD syncSituacionesPedidoPrestashop( cCodWeb, cSerPed, nNumPed, cSufPed )
    METHOD syncronizeStatesGestool( cCodWeb, cSerPed, nNumPed, cSufPed )
@@ -6378,6 +6379,25 @@ METHOD getRecursiveFolderPrestashop( cCarpeta ) CLASS TComercio
    next 
 
 Return ( cFolder )
+//---------------------------------------------------------------------------//
+
+METHOD CodigoClienteinGestool( cCodWeb )
+
+local nRec           := ::oCli:Recno()
+local nOrdAnt        := ::oCli:OrdSetFocus( "cCodWeb" )
+local cCodCli        := ""
+
+if ::oCli:Seek( str( cCodWeb, 11 ) )
+   cCodCli           := ::oCli:Cod
+end if
+
+
+::oCli:OrdSetFocus( nOrdAnt )
+::oCli:GoTo( nRec )
+
+return ( cCodCli )
+
+//---------------------------------------------------------------------------//
 
 //ESTRUCTURAS----------------------------------------------------------------//
 //---------------------------------------------------------------------------//
