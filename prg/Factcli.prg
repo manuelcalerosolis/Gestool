@@ -7179,8 +7179,12 @@ static function QuiFacCli()
 
    nOrdAnt           := ( D():FacturasClientesLineas( nView ) )->( OrdSetFocus( "nNumFac" ) )
 
+   TComercio():getInstance():resetProductsToUpadateStocks()
+
    while ( D():FacturasClientesLineas( nView ) )->( dbSeek( cSerDoc + str( nNumDoc ) + cSufDoc ) ) .and. !( D():FacturasClientesLineas( nView ) )->( eof() )
       
+      TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasClientesLineas( nView ) )->cRef, nView )
+
       if dbLock( D():FacturasClientesLineas( nView ) )
          ( D():FacturasClientesLineas( nView ) )->( dbDelete() )
          ( D():FacturasClientesLineas( nView ) )->( dbUnLock() )
@@ -7189,6 +7193,10 @@ static function QuiFacCli()
       ( D():FacturasClientesLineas( nView ) )->( dbSkip() )
 
    end do
+
+   // actualiza el stock de prestashop-----------------------------------------
+
+   TComercio():getInstance():updateWebProductStocks()
 
    ( D():FacturasClientesLineas( nView ) )->( OrdSetFocus( nOrdAnt ) )
 

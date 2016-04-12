@@ -6000,7 +6000,11 @@ Static Function QuiAlbPrv( lDetail )
    Detalle---------------------------------------------------------------------
    */
 
+   TComercio():getInstance():resetProductsToUpadateStocks()
+
    while ( D():AlbaranesProveedoresLineas( nView ) )->( dbSeek( ( D():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) + ( D():AlbaranesProveedores( nView ) )->cSufAlb ) ) .and. !( D():AlbaranesProveedoresLineas( nView ) )->( eof() )
+
+      TComercio():getInstance():appendProductsToUpadateStocks( ( D():AlbaranesProveedores( nView ) )->cSerAlb, nView )
 
       if dbLock( D():AlbaranesProveedoresLineas( nView ) )
          ( D():AlbaranesProveedoresLineas( nView ) )->( dbDelete() )
@@ -6009,6 +6013,10 @@ Static Function QuiAlbPrv( lDetail )
 
    end while
 
+   // actualiza el stock de prestashop-----------------------------------------
+
+   TComercio():getInstance():updateWebProductStocks()
+   
    /*
    Incidencias-----------------------------------------------------------------
    */

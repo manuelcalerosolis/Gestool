@@ -8077,15 +8077,25 @@ static function QuiFacRec()
 
    nOrdAnt     := ( dbfFacRecL )->( OrdSetFocus( "nNumFac" ) )
 
+   TComercio():getInstance():resetProductsToUpadateStocks()
+
    while ( dbfFacRecL )->( dbSeek( cSerDoc + Str( nNumDoc ) + cSufDoc ) ) .and. !( dbfFacRecL )->( eof() )
-      if dbDialogLock( dbfFacRecL )
-         ( dbfFacRecL )->( dbDelete() )
-         ( dbfFacRecL )->( dbUnLock() )
-      end if
+
+    TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasRectificativas( nView ) )->cRef, nView )
+
+    if dbDialogLock( dbfFacRecL )
+       ( dbfFacRecL )->( dbDelete() )
+       ( dbfFacRecL )->( dbUnLock() )
+    end if
 
       ( dbfFacRecL )->( dbSkip() )
+
    end do
 
+	// actualiza el stock de prestashop-----------------------------------------
+
+   TComercio():getInstance():updateWebProductStocks()
+   
    ( dbfFacRecL )->( OrdSetFocus( nOrdAnt ) )
 
    /*

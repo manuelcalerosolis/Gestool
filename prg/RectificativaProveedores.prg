@@ -6731,7 +6731,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
    // actualiza el stock de prestashop-----------------------------------------
 
    TComercio():getInstance():updateWebProductStocks()
-   
+
    //------------------------------------------------------------------------//
 
    RECOVER USING oError
@@ -7178,10 +7178,12 @@ static function QuiRctPrv( lDetail, lSetCnt )
 
    nOrdAnt        := ( D():AlbaranesProveedores( nView ) )->( OrdSetFocus( "cNumFac" ) )
 
-   while ( D():AlbaranesProveedores( nView ) )->( dbSeek( ( D():FacturasRectificativasProveedores( nView ) )->cSerFac + Str( ( D():FacturasRectificativasProveedores( nView ) )->nNumFac ) + ( D():FacturasRectificativasProveedores( nView ) )->cSufFac ) )
-      SetFacturadoAlbaranProveedor( .f., nView ) 
-   end while
+      while ( D():AlbaranesProveedores( nView ) )->( dbSeek( ( D():FacturasRectificativasProveedores( nView ) )->cSerFac + Str( ( D():FacturasRectificativasProveedores( nView ) )->nNumFac ) + ( D():FacturasRectificativasProveedores( nView ) )->cSufFac ) )
+         
+         SetFacturadoAlbaranProveedor( .f., nView ) 
 
+      end while
+     
    ( D():AlbaranesProveedores( nView ) )->( OrdSetFocus( nOrdAnt ) )
 
    if uFieldEmpresa( "LRECNUMFAC" )
@@ -7206,12 +7208,21 @@ STATIC FUNCTION DelDetalle( cFactura )
    Eliminamos los apuntes de stocks--------------------------------------------
    */
 
+   TComercio():getInstance():resetProductsToUpadateStocks()
+
    while ( D():FacturasRectificativasProveedoresLineas( nView ) )->( dbSeek( cFactura ) ) .and. !( D():FacturasRectificativasProveedoresLineas( nView ) )->( eof() )
+
+      TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasRectificativasProveedoresLineas( nView ) )->cRef, nView )
+
       if dbLock( D():FacturasRectificativasProveedoresLineas( nView ) )
          ( D():FacturasRectificativasProveedoresLineas( nView ) )->( dbDelete() )
          ( D():FacturasRectificativasProveedoresLineas( nView ) )->( dbUnLock() )
       end if
    end while
+
+   // actualiza el stock de prestashop-----------------------------------------
+
+   TComercio():getInstance():updateWebProductStocks()
 
    /*
    Eliminamos los pagos--------------------------------------------------------

@@ -7882,13 +7882,13 @@ Static Function QuiFacPrv( lDetail )
    if ( D():AlbaranesProveedores( nView ) )->( dbSeek( cFactura ) )
 
       while ( D():AlbaranesProveedores( nView ) )->cNumFac == cFactura .and. !( D():AlbaranesProveedores( nView ) )->( eof() )
-
+    
          setFacturadoAlbaranProveedor( .f., nView )
 
          ( D():AlbaranesProveedores( nView ) )->( dbSkip() )
 
       end while
-
+      
    end if
 
    ( D():AlbaranesProveedores( nView ) )->( OrdSetFocus( nOrdAnt ) )
@@ -7912,12 +7912,22 @@ Static Function delDetalle( cFactura )
    CursorWait()
 
    nOrdAnt           := ( D():FacturasProveedoresLineas( nView ) )->( OrdSetFocus( "nNumFac" ) )
+
+   TComercio():getInstance():resetProductsToUpadateStocks()
+
    while ( D():FacturasProveedoresLineas( nView ) )->( dbSeek( cFactura ) ) .and. !( D():FacturasProveedoresLineas( nView ) )->( eof() )
+
+      TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasProveedoresLineas( nView ) )->cRef, nView )
+
       aNumAlb:Add( getNumeroAlbaranProveedorLinea( nView ) )
       setNoFacturadoAlbaranProveedorLinea( nView )
       dbLockDelete( D():FacturasProveedoresLineas( nView ) )
    end do
    ( D():FacturasProveedoresLineas( nView ) )->( OrdSetFocus( nOrdAnt ) )
+
+   // actualiza el stock de prestashop-----------------------------------------
+
+   TComercio():getInstance():updateWebProductStocks()
 
    while ( D():FacturasProveedoresPagos( nView ) )->( dbSeek( cFactura ) ) .and. !( D():FacturasProveedoresPagos( nView ) )->( eof() )
       dbLockDelete( D():FacturasProveedoresPagos( nView ) )
