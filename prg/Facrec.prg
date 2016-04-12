@@ -1021,6 +1021,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       oMailing          := TGenmailingDatabaseFacturaRectificativaCliente():New( nView )
 
+	  TComercio():getInstance()
+
       /*
       Declaración de variables publicas----------------------------------------
       */
@@ -1398,6 +1400,8 @@ STATIC FUNCTION CloseFiles()
    if !Empty( oCentroCoste )
       oCentroCoste:End()
    end if
+
+   TComercio():endInstance()
 
    D():DeleteView( nView )
 
@@ -7601,6 +7605,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
    if lPasNil() .and. ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
 
+    TComercio():getInstance():resetProductsToUpadateStocks()
+
       ( dbfTmpLin )->( dbGoTop() )
       while !( dbfTmpLin )->( eof() )
 
@@ -7609,6 +7615,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
                return .f.
             end if
          end if
+
+         TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpLin )->cRef, nView )
 
          ( dbfTmpLin )->( dbSkip() )
 
@@ -7878,6 +7886,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    */
 
    dbCommitAll()
+
+   // actualiza el stock de prestashop-----------------------------------------
+
+   TComercio():getInstance():updateWebProductStocks()
 
    /*
    Cerramos el dialogo---------------------------------------------------------
