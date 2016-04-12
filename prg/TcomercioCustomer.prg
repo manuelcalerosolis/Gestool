@@ -59,6 +59,8 @@ METHOD isCustomerInGestool( idCustomer ) CLASS TComercioCustomer
 
    ::idCustomerGestool  := ::TPrestashopId():getGestoolCustomer( idCustomer, ::getCurrentWebName(), "" )
 
+   debug( ::idCustomerGestool )
+
 Return ( !empty( ::idCustomerGestool ) )
 
 //---------------------------------------------------------------------------//
@@ -84,6 +86,8 @@ METHOD createCustomerInGestool( idCustomer ) CLASS TComercioCustomer
    if empty( oQuery )
       Return ( Self )
    end if 
+
+   debug( oQuery, "oQuery" )
 
    if oQuery:recCount() > 0 
       ::appendCustomerInGestool( oQuery )
@@ -248,6 +252,10 @@ Return ( cState )
 METHOD getPaymentGestool( cPrestashopModule ) CLASS TComercioCustomer
 
    local paymentGestool    := cDefFpg()
+
+   if empty( cPrestashopModule )
+      Return ( paymentGestool )
+   end if 
 
    if ::oPaymentDatabase():seekInOrd( upper( cPrestashopModule ), "cCodWeb" )
       paymentGestool       := ::oPaymentDatabase():cCodPago 
