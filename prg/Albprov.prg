@@ -1041,6 +1041,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       CodigosPostales():GetInstance():OpenFiles()
 
+      TComercio():getInstance()
+
       /*
       Cargamos la clase bandera------------------------------------------------
       */
@@ -1114,6 +1116,8 @@ STATIC FUNCTION CloseFiles()
    D():DeleteView( nView )
 
    CodigosPostales():GetInstance():CloseFiles()
+
+   TComercio():endInstance()
 
    oBandera    := nil
    oStock      := nil
@@ -5498,9 +5502,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
       Return .f.
    end if
 
-
-
-
    /*
    Estos campos no pueden estar vacios
    */
@@ -5609,6 +5610,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
       Escritura en el fichero definitivo_______________________________________
       */
 
+      TComercio():getInstance():resetProductsToUpadateStocks()
+
       ( dbfTmp )->( dbGoTop() )
       while !( dbfTmp )->( eof() )
 
@@ -5638,6 +5641,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
          */
 
          dbGather( aTbl, D():AlbaranesProveedoresLineas( nView ), .t. )
+
+         TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmp )->cRef, nView )
 
          ( dbfTmp )->( dbSkip() )
 
@@ -5737,13 +5742,15 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
 
       end if
 
-      /*
-      Actualizamos los precios de costo-------------------------------------------
-      */
+      // Escribe los datos pendientes---------------------------------------------
 
       dbCommitAll()
 
       CommitTransaction()
+
+      // actualiza el stock de prestashop-----------------------------------------
+
+      TComercio():getInstance():updateWebProductStocks()
 
    RECOVER USING oError
 

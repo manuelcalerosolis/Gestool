@@ -6452,7 +6452,7 @@ METHOD updateWebProductStocks() CLASS TComercio
    oWaitMeter        := TWaitMeter():New( "Actualizando stocks", "Espere por favor..." )
    oWaitMeter:Run()
 
-   heval( ::hProductsToUpdate, {|k,v| ::updateProductStocks( k, v ) } )
+   heval( ::hProductsToUpdate, {|cWebName, aProductsWeb | ::updateProductStocks( cWebName, aProductsWeb ) } )
 
    oWaitMeter:End()
 
