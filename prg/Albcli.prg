@@ -5296,7 +5296,6 @@ Static Function QuiAlbCli()
    aNumPed        := {}
    cNumAlb        := ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb
    cNumPed        := ( D():Get( "AlbCliT", nView ) )->cNumPed
-   //cNumSat        := ( D():Get( "AlbCliT", nView ) )->cNumSat
    nOrdLin        := ( D():Get( "AlbCliL", nView ) )->( OrdSetFocus( "nNumAlb" ) )
    nOrdPgo        := ( D():Get( "AlbCliP", nView ) )->( OrdSetFocus( "nNumAlb" ) )
    nOrdInc        := ( D():Get( "AlbCliI", nView ) )->( OrdSetFocus( "nNumAlb" ) )
@@ -5329,8 +5328,12 @@ Static Function QuiAlbCli()
    Detalle---------------------------------------------------------------------
    */
 
+   TComercio():getInstance():resetProductsToUpadateStocks()
+
    while ( D():Get( "AlbCliL", nView ) )->( dbSeek( cNumAlb ) ) .and. !( D():Get( "AlbCliL", nView ) )->( eof() )
       
+      TComercio():getInstance():appendProductsToUpadateStocks( ( D():Get( "AlbCliL", nView ) )->cRef, nView )
+
       if aScan( aNumPed, ( D():Get( "AlbCliL", nView ) )->cNumPed ) == 0
          aAdd( aNumPed, ( D():Get( "AlbCliL", nView ) )->cNumPed )
       end if      
@@ -5341,6 +5344,10 @@ Static Function QuiAlbCli()
       end if
 
    end while
+
+   // actualiza el stock de prestashop-----------------------------------------
+
+   TComercio():getInstance():updateWebProductStocks()
 
    /*
    Incidencias-----------------------------------------------------------------
@@ -5390,14 +5397,6 @@ Static Function QuiAlbCli()
    for each cNumPed in aNumPed
       oStock:SetEstadoPedCli( cNumPed )
    next   
-
-   /*
-   Estado del Sat si tiramos de uno-----------------------------------------
-   */
-
-   /*if !Empty( cNumSat )
-      oStock:SetEstadoAlbCli( cNumSat, .t., cNumAlb )
-   end if*/
 
    /*
    Cerramos las tablas---------------------------------------------------------

@@ -836,9 +836,7 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
          lOpenFiles        := .f.
       end if
 
-      if uFieldEmpresa( "lRealWeb" )
-         oComercio            := TComercio():New()
-      end if
+      TComercio():getInstance()
 
       /*
       Creamos los botones para las formas de pago---------------------------------
@@ -1053,6 +1051,8 @@ STATIC FUNCTION CloseFiles()
       oDetCamposExtra:CloseFiles()
    end if
 
+   TComercio():endInstance()
+
    D():DeleteView( nView )
 
    dbfTikT           := nil
@@ -1121,7 +1121,6 @@ STATIC FUNCTION CloseFiles()
    oInvitacion       := nil
    oTipArt           := nil
    oFabricante       := nil
-   oComercio         := nil
 
    oFideliza         := nil
 
@@ -1919,17 +1918,11 @@ FUNCTION TpvDelRec()
 
    CursorWait()
 
-   /*
-   Limpiamos el array de articulos a actualizar--------------------------------
-   */
+   // Limpiamos el array de articulos a actualizar-----------------------------
 
-   if uFieldEmpresa( "lRealWeb" )
-      oComercio:buildInitData()
-   end if
+   TComercio():getInstance():resetProductsToUpadateStocks()
 
-   /*
-   Cambiamos el estado del albarán del que proviene----------------------------
-   */
+   // Cambiamos el estado del albarán del que proviene-------------------------
 
    if !empty( ( dbfTikT )->cAlbTik )
 
@@ -2030,7 +2023,7 @@ FUNCTION TpvDelRec()
    */
 
    while ( dbfTikL )->( dbSeek( cNumTik ) )
-      AddArticuloComercio( ( dbfTikL )->cCbaTil )
+      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTikL )->cCbaTil, nView )
       dbDel( dbfTikL )
    end while
 
@@ -2135,13 +2128,9 @@ FUNCTION TpvDelRec()
 
    end if
 
-   /*
-   Actualizamos los stocks en la web-------------------------------------------
-   */
+   // actualiza el stock de prestashop-----------------------------------------
 
-   if uFieldEmpresa( "lRealWeb" )
-      oComercio:buildActualizaStockProductPrestashop()
-   end if   
+   TComercio():getInstance():updateWebProductStocks()
 
    CursorWE()
 
@@ -2159,14 +2148,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode, aNum
 
    aGetTxt                 := Array( 10 )
    oGetTxt                 := Array( 10 )
-
-   /*
-   Inicializamos las variables para actualizar en la web
-   */
-
-   if uFieldEmpresa( "lRealWeb" )
-      oComercio:buildInitData()
-   end if   
 
    if ( nMode == EDIT_MODE ) .and. ( ( aTmp[ _CTIPTIK ] == SAVDEV ) .or. ( aTmp[ _CTIPTIK ] == SAVVAL ) )
       MsgStop( "No se pueden modificar vales, devoluciones o cheques regalos." )
@@ -4088,9 +4069,6 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
             setAutoTextDialog( 'Eliminando lineas' )
 
             while ( dbfTikL )->( dbSeek( nNumTik ) )
-               
-               AddArticuloComercio( ( dbfTikL )->cCbaTil )
-
                if dbLock( dbfTikL )
                   ( dbfTikL )->( dbDelete() )
                   ( dbfTikL )->( dbUnLock() )
@@ -4285,6 +4263,8 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Guardamos el tipo como albaranes-----------------------------------------
          */
 
+         TComercio():getInstance():resetProductsToUpadateStocks()
+
          do case
             case nMode == DUPL_MODE
 
@@ -4310,8 +4290,6 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          */
 
          setAutoTextDialog( "Archivando")
-
-         ActualizaStockWeb()
 
          /*
          Anotamos los vales ------------------------------------------------------
@@ -4445,11 +4423,13 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
          nSaveMode               := APPD_MODE
 
-         /*
-         Cerrando-----------------------------------------------------------------
-         */
+         // Cerrando-----------------------------------------------------------------
 
          CommitTransaction()
+
+         // actualiza el stock de prestashop-----------------------------------------
+
+         TComercio():getInstance():updateWebProductStocks()
 
          EndAutoMeterDialog( oDlgTpv )
          EndAutoTextDialog( oDlgTpv )
@@ -11749,7 +11729,7 @@ Function SavTik2Alb( aTik, aGet, nMode, nSave )
       ( dbfAlbCliL )->nPosPrint  := ( dbfTmpL    )->nPosPrint
       ( dbfAlbCliL )->( dbUnLock() )
 
-      AddArticuloComercio( ( dbfTmpL )->cCbaTil )
+      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpL )->cCbaTil, nView )
 
       ( dbfTmpL )->( dbSkip() )
 
@@ -12050,7 +12030,7 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
    local dFecFacCli
    local nOrdAnt
    local cCodFam
-   local tFecFacCli                 := ""
+   local tFecFacCli              := ""
 
    if nMode == DUPL_MODE
       aTik[ _CNUMTIK ]           := Str( nNewDoc( aTik[ _CSERTIK ], dbfTikT, "NTIKCLI", 10, dbfCount ), 10 )
@@ -12224,7 +12204,7 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
 
       ( dbfFacCliL )->( dbUnLock() )
 
-      AddArticuloComercio( ( dbfTmpL )->cCbaTil )
+      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpL )->cCbaTil, nView )
 
       ( dbfTmpL )->( dbSkip() )
 
@@ -12362,6 +12342,8 @@ Static Function SavTik2Neg( aTmp, aGet, nMode, nSave )
 
       dbGather( aTbl, dbfTikL, .t. )
 
+      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpL )->cCbaTil, nView )
+
       ( dbfTmpL )->( dbSkip() )
 
    end while
@@ -12422,9 +12404,9 @@ Static Function SavTik2Tik( aTmp, aGet, nMode, nSave, nNumDev )
          ( dbfTmpL )->TFecTik := aTmp[ _TFECTIK ]
       end if
 
-      AddArticuloComercio( ( dbfTmpL )->cCbaTil )
-
       dbPass( dbfTmpL, dbfTikL, .t., aTmp[ _CSERTIK ], aTmp[ _CNUMTIK ], aTmp[ _CSUFTIK ], aTmp[ _CTIPTIK ] )
+
+      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpL )->cCbaTil, nView )
 
       ( dbfTmpL )->( dbSkip() )
 
@@ -20038,16 +20020,6 @@ Static Function hValue( aTmp, aTmpTik )
    hValue[ "nView"             ] := nView
 
 Return ( hValue )
-
-//---------------------------------------------------------------------------//
-
-Static Function AddArticuloComercio( cCodArt )
-
-   if uFieldEmpresa( "lRealWeb" )
-      oComercio:BuildAddArticuloActualizar( cCodArt )
-   end if
-
-Return nil
 
 //---------------------------------------------------------------------------//
 

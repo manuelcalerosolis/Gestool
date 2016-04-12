@@ -460,6 +460,8 @@ CLASS TComercio
    METHOD cDirectoryCategories()             INLINE ( ::TPrestashopConfig:getImagesDirectory() + "/c" )
    METHOD getRecursiveFolderPrestashop( cCarpeta )
 
+   METHOD resetStockArticuloData()           INLINE ( ::aStockArticuloData := {} )
+
    METHOD resetProductsToUpadateStocks()     INLINE ( ::hProductsToUpdate := {=>} )
    METHOD getProductsToUpadateStocks()       INLINE ( ::hProductsToUpdate )
    METHOD appendProductsToUpadateStocks( idProduct )
@@ -5440,6 +5442,8 @@ METHOD buildInformationStockProductDatabase( hArticuloData ) CLASS TComercio
 
    ::meterProcesoSetTotal( ::oArt:OrdKeyCount() )
 
+   ::resetStockArticuloData()
+
    ::oArt:GoTop()
    while !::oArt:Eof()
 
@@ -5459,6 +5463,10 @@ METHOD buildInformationStockProductArray( aProducts ) CLASS TComercio
 
    local idProduct
 
+   ::meterProcesoSetTotal( len( aProducts ) )
+
+   ::resetStockArticuloData()
+
    for each idProduct in aProducts
       ::buildAddInformacionStockProductPrestashop( idProduct )
    next
@@ -5473,8 +5481,6 @@ METHOD uploadInformationStockProductPrestashop() CLASS TComercio
    local hStock
    local cCommand
    local nIdProductAttribute
-
-   debug( ::aStockArticuloData, "::aStockArticuloData" )
 
    for each hStock in ::aStockArticuloData
 

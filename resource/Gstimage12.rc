@@ -88,9 +88,9 @@ LOCK_32_ALPHA BITMAP "..\\bmp\\lock_32_alpha.bmp"
 
 PIGGY_BANK_32_ALPHA BITMAP "..\\bmp\\piggy_bank_32_alpha.bmp"
 
-DRILL_USER1_16 BITMAP "..\\bmp\\power-drill_user1_16.bmp"
+POWER-DRILL_USER1_16 BITMAP "..\\bmp\\power-drill_user1_16.bmp"
 
-DRILL_USER1_32 BITMAP "..\\bmp\\power-drill_user1_32.bmp"
+POWER-DRILL_USER1_32 BITMAP "..\\bmp\\power-drill_user1_32.bmp"
 
 LOGOGESTOOL_48 BITMAP "..\\bmp\\logogestool_48.bmp"
 
