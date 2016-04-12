@@ -7,7 +7,7 @@ static lOpenFiles       := .f.
 
 function AddEntradaAlbaranes( aTmp, nView )
 
-	if !OpenFiles()
+	/*if !OpenFiles()
 		return .f.
 	end if
 
@@ -37,14 +37,14 @@ function AddEntradaAlbaranes( aTmp, nView )
 
    /* mostrar el total en la columna entregado
    nTotPag
-   */
-   CloseFiles()
+   
+   CloseFiles()*/
 
 Return nil
 
 static function OpenFiles()
 
-	local oError
+	/*local oError
    local oBlock
 
    if lOpenFiles
@@ -76,19 +76,19 @@ static function OpenFiles()
       CloseFiles()
    end if
 
-   CursorWE()
+   CursorWE()*/
 
 return ( lOpenFiles )
 
 static function CloseFiles()
 
-	if dbfAlbCliP != nil
+	/*if dbfAlbCliP != nil
 		(dbfAlbCliP )->( dbCloseArea() )
    end if
 
    dbfAlbCliP      := nil
 
-   lOpenFiles     := .f.
+   lOpenFiles     := .f.*/
 
 return ( .t. )
 

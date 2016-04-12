@@ -5421,10 +5421,13 @@ Return ( nil )
 METHOD InitInvitacion( oDlg ) CLASS TpvTactil
 
    local nInvi := 0
+   local oItem
 
    if !Empty( ::oImageListInvitacion ) .and. !Empty( ::oListViewInvitacion ) .and. !Empty( ::oInvitacion )
 
       ::oListViewInvitacion:SetImageList( ::oImageListInvitacion )
+      ::oListViewInvitacion:EnableGroupView()
+      ::oListViewInvitacion:InsertGroup( "Invitaciones" )
 
       ::oInvitacion:oDbf:GoTop()
 
@@ -5432,7 +5435,12 @@ METHOD InitInvitacion( oDlg ) CLASS TpvTactil
 
          ::oImageListInvitacion:AddMasked( TBitmap():Define( ::oInvitacion:cBigResource() ), Rgb( 255, 0, 255 ) )
 
-         ::oListViewInvitacion:InsertItem( nInvi, Capitalize( ::oInvitacion:oDbf:cNomInv ) )
+         oItem                := TListViewItem():New( ::oListViewInvitacion )
+         oItem:cText          := Capitalize( ::oInvitacion:oDbf:cNomInv )
+         oItem:nGroup         := 0
+         oItem:nImage         := nInvi
+         oItem:Cargo          := ::oInvitacion:oDbf:cCodInv
+         oItem:Create()
 
          ::oInvitacion:oDbf:Skip()
 
@@ -5441,6 +5449,8 @@ METHOD InitInvitacion( oDlg ) CLASS TpvTactil
       end while
 
    end if
+
+   ::oListViewInvitacion:Refresh()
 
    ::oBtnUnaLinea:GoDown()
 
@@ -5471,7 +5481,7 @@ METHOD SelectInvitacion( nOpt ) CLASS TpvTactil
    if !Empty( nOpt ) .and. ::oInvitacion:oDbf:OrdKeyGoTo( nOpt )
 
       ::cCodigoInvitacion           := ::oInvitacion:oDbf:cCodInv
-      
+
       ::oTextoInvitacion:cText( ::oInvitacion:oDbf:cNomInv )
 
    end if 

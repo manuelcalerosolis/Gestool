@@ -1187,7 +1187,7 @@ STATIC FUNCTION EdtBig( aTmp, aGet, dbfCli, oBrw, bWhen, bValid, nMode )
          ID       110 ;
          PICTURE  "@!" ;
          COLOR    CLR_GET ;
-         ON CHANGE( ActTitle( nKey, nFlags, Self, nMode, oDlg ) );
+         ON CHANGE( ActTitle( nKey, nFlags, Self, nMode, oDlg, aTmp[ _COD ] ) );
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( if( nMode == APPD_MODE, lValidNombre( aGet[_TITULO] ), .t. ) ) ;
          OF       oDlg
@@ -1430,7 +1430,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
    DEFINE DIALOG  oDlg ;
          RESOURCE "CLIENT" ;
-         TITLE    LblTitle( nMode ) + "Cliente : " + Rtrim( aTmp[ _TITULO ] )
+         TITLE    LblTitle( nMode ) + "Cliente : " + Rtrim( aTmp[ _COD ] ) + "-" + Rtrim( aTmp[ _TITULO ] )
 
       REDEFINE FOLDER oFld ;
          ID       500 ;
@@ -1496,7 +1496,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ID       120 ;
          PICTURE  "@!" ;
          COLOR    CLR_GET ;
-         ON CHANGE( ActTitle( nKey, nFlags, Self, nMode, oDlg ) );
+         ON CHANGE( ActTitle( nKey, nFlags, Self, nMode, oDlg, aTmp[ _COD ] ) );
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( if( nMode == APPD_MODE, lValidNombre( aGet[_TITULO] ), .t. ) ) ;
          OF       fldGeneral
@@ -9208,10 +9208,10 @@ RETURN lValid
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION ActTitle( nKey, nFlags, oGet, nMode, oDlg )
+STATIC FUNCTION ActTitle( nKey, nFlags, oGet, nMode, oDlg, cCodCli )
 
    oGet:Assign()
-   oDlg:cTitle( LblTitle( nMode ) + " Cliente : " + Rtrim( oGet:varGet() ) ) // + Chr( nKey )
+   oDlg:cTitle( LblTitle( nMode ) + " Cliente : " + Rtrim( cCodCli ) + "-" + Rtrim( oGet:varGet() ) ) // + Chr( nKey )
 
 RETURN NIL
 

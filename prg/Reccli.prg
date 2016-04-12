@@ -1812,10 +1812,13 @@ Function nTotRecCli( uFacCliP, cDbfDiv, cDivRet, lPic )
    local cPorDiv
    local nTotRec
 
-   DEFAULT uFacCliP  := D():FacturasClientesCobros( nView )
-   DEFAULT cDbfDiv   := D():Divisas( nView )
-   DEFAULT cDivRet   := cDivEmp()
-   DEFAULT lPic      := .f.
+   if !Empty( nView )
+      DEFAULT uFacCliP  := D():FacturasClientesCobros( nView )
+      DEFAULT cDbfDiv   := D():Divisas( nView )
+   end if
+
+   DEFAULT cDivRet      := cDivEmp()
+   DEFAULT lPic         := .f.
 
    if IsObject( uFacCliP )
       nTotRec  := uFacCliP:nImporte
@@ -4633,7 +4636,7 @@ FUNCTION GenPgoFacCli( cNumFac, cFacCliT, cFacCliL, cFacCliP, cAntCliT, dbfCli, 
 
    nTotal            := nTotFacCli( cNumFac, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCliT, nil, nil, .f. )
 
-   nTotCob           := nPagFacCli( cNumFac, cFacCliT, cFacCliP, cIva, cDiv, nil, .f. )
+   nTotCob           := nPagFacCli( cNumFac, cFacCliT, cFacCliP, cIva, cDiv, nil, .t. )
 
    /*
    Ya nos viene sin los anticipos
