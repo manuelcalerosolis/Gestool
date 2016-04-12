@@ -522,6 +522,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       CodigosPostales():GetInstance():OpenFiles()
 
+      TComercio():getInstance()
+
       /*
       Numeros de serie---------------------------------------------------------
       */
@@ -610,6 +612,8 @@ Static Function CloseFiles()
    if !Empty( oCentroCoste )
       oCentroCoste:CloseFiles()
    end if
+
+   TComercio():endInstance()
 
    EnableAcceso()
 
@@ -7207,6 +7211,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
 
    // Ahora escribimos en el fichero definitivo
 
+   TComercio():getInstance():resetProductsToUpadateStocks()
+
    ( dbfTmp )->( dbGoTop() )
    while !( dbfTmp )->( eof() )
 
@@ -7244,6 +7250,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
       dbGather( aTbl, D():FacturasProveedoresLineas( nView ), .t. )
 
       setFacturadoAlbaranProveedorLinea( cSerFac, nNumFac, cSufFac, nView )
+
+      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmp )->cRef, nView )
 
       ( dbfTmp )->( dbSkip() )
 
@@ -7340,6 +7348,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
    //Escribe los datos pendientes----------------------------------------------
 
    CommitTransaction()
+
+   // actualiza el stock de prestashop-----------------------------------------
+
+   TComercio():getInstance():updateWebProductStocks()
 
    // Generar los pagos de las facturas----------------------------------------
 
