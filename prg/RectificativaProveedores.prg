@@ -555,6 +555,8 @@ STATIC FUNCTION OpenFiles( lExt )
       CloseFiles()
    end if
 
+TComercio():getInstance()
+
 Return ( lOpenFiles )
 
 //---------------------------------------------------------------------------//
@@ -585,6 +587,8 @@ Static Function CloseFiles()
    oStock      := nil
 
    lOpenFiles  := .f.
+
+   TComercio():endInstance()
 
    EnableAcceso()
 
@@ -6603,6 +6607,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
    Ahora escribimos en el fichero definitivo-----------------------------------
 	*/
 
+   TComercio():getInstance():resetProductsToUpadateStocks()
+
    ( dbfTmp )->( dbGoTop() )
    while !( dbfTmp )->( eof() )
 
@@ -6614,6 +6620,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
       aTbl[ __TFECFAC ]  := aTmp[ _TFECFAC ]
 
       dbGather( aTbl, D():FacturasRectificativasProveedoresLineas( nView ), .t. )
+
+      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmp )->cRef, nView )
 
       ( dbfTmp )->( dbSkip() )
 
@@ -6719,6 +6727,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
    */
 
    dbCommitAll()
+
+   // actualiza el stock de prestashop-----------------------------------------
+
+   TComercio():getInstance():updateWebProductStocks()
+   
+   //------------------------------------------------------------------------//
 
    RECOVER USING oError
 
