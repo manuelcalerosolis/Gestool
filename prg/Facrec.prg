@@ -8066,22 +8066,15 @@ static function QuiFacRec()
    end if
 
    /*
-   Actualizamos los riesgos de clientes
-   */
-
-   DelRiesgo( nTotFac, ( D():FacturasRectificativas( nView ) )->cCodCli, D():Clientes( nView ) )
-
-   /*
    Eliminamos las lineas-------------------------------------------------------
    */
 
-   nOrdAnt     := ( dbfFacRecL )->( OrdSetFocus( "nNumFac" ) )
-
    TComercio():getInstance():resetProductsToUpadateStocks()
 
+   nOrdAnt     := ( dbfFacRecL )->( OrdSetFocus( "nNumFac" ) )
    while ( dbfFacRecL )->( dbSeek( cSerDoc + Str( nNumDoc ) + cSufDoc ) ) .and. !( dbfFacRecL )->( eof() )
 
-    TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasRectificativas( nView ) )->cRef, nView )
+    TComercio():getInstance():appendProductsToUpadateStocks( ( dbfFacRecL )->cRef, nView )
 
     if dbDialogLock( dbfFacRecL )
        ( dbfFacRecL )->( dbDelete() )
@@ -8092,11 +8085,11 @@ static function QuiFacRec()
 
    end do
 
-	// actualiza el stock de prestashop-----------------------------------------
+   ( dbfFacRecL )->( OrdSetFocus( nOrdAnt ) )
+
+   // actualiza el stock de prestashop-----------------------------------------
 
    TComercio():getInstance():updateWebProductStocks()
-   
-   ( dbfFacRecL )->( OrdSetFocus( nOrdAnt ) )
 
    /*
    Eliminamos los pagos--------------------------------------------------------
