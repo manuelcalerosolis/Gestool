@@ -5474,6 +5474,8 @@ METHOD uploadInformationStockProductPrestashop() CLASS TComercio
    local cCommand
    local nIdProductAttribute
 
+   debug( ::aStockArticuloData, "::aStockArticuloData" )
+
    for each hStock in ::aStockArticuloData
 
       if hGet( hStock, "cCodWebVal1" ) == 0 .and. hGet( hStock, "cCodWebVal2" ) == 0
