@@ -123,6 +123,8 @@ static lExternal              := .f.
 static lOpenFiles             := .f.
 static cFiltroUsuario         := ""
 
+static cOldCodCli             := ""
+
 static lOldDevuelto           := .f.
 
 static bEdit                  := { |aTmp, aGet, dbf, oBrw, lRectificativa, nSpecialMode, nMode, aTmpFac| EdtCob( aTmp, aGet, dbf, oBrw, lRectificativa, nSpecialMode, nMode, aTmpFac ) }
@@ -826,6 +828,8 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
    end if
 
    lOldDevuelto            := aTmp[ _LDEVUELTO ]
+
+   cOldCodCli              := aTmp[ _CCODCLI ]
 
    lPgdOld                 := ( cFacCliP )->lCobrado .or. ( cFacCliP )->lRecDto
    nImpOld                 := ( cFacCliP )->nImporte
@@ -5633,6 +5637,7 @@ Static Function loadCliente( aGet, aTmp )
 
    local lValid      := .t.
    local cCodCli     := aGet[ _CCODCLI ]:varGet()
+   local lChgCodCli  := ( Empty( cOldCodCli ) .or. cOldCodCli != cCodCli )
 
    if Empty( cCodCli )
       Return .t.
@@ -5642,46 +5647,52 @@ Static Function loadCliente( aGet, aTmp )
       cCodCli     := Rjust( cCodCli, "0", RetNumCodCliEmp() )
    end if
 
-   if ( D():Clientes( nView ) )->( dbSeek( cCodCli ) )
+   if lChgCodCli
 
-      /*
-      Asignamos el codigo siempre
-      */
+      if ( D():Clientes( nView ) )->( dbSeek( cCodCli ) )
 
-      aGet[ _CCODCLI ]:cText( ( D():Clientes( nView ) )->Cod )
-      aGet[ _CNOMCLI ]:cText( ( D():Clientes( nView ) )->Titulo )
+         /*
+         Asignamos el codigo siempre
+         */
 
-      aGet[ _CCODPGO ]:cText( ( D():Clientes( nView ) )->CodPago )
-      aGet[ _CCODPGO ]:lValid()
+         aGet[ _CCODCLI ]:cText( ( D():Clientes( nView ) )->Cod )
+         aGet[ _CNOMCLI ]:cText( ( D():Clientes( nView ) )->Titulo )
 
-      aGet[ _CCODAGE ]:cText( ( D():Clientes( nView ) )->cAgente )
-      aGet[ _CCODAGE ]:lValid()
+         aGet[ _CCODPGO ]:cText( ( D():Clientes( nView ) )->CodPago )
+         aGet[ _CCODPGO ]:lValid()
 
-      aGet[ _CCTAREM ]:cText( ( D():Clientes( nView ) )->cCodRem )
-      aGet[ _CCTAREM ]:lValid()
+         aGet[ _CCODAGE ]:cText( ( D():Clientes( nView ) )->cAgente )
+         aGet[ _CCODAGE ]:lValid()
 
-      if !Empty( ( D():Clientes( nView ) )->CodPago )
-         aGet[ _CCTAREC ]:cText( RetFld( ( D():Clientes( nView ) )->CodPago, D():FormasPago( nView ), "cCtaCobro" ) )
-         aGet[ _CCTAGAS ]:cText( RetFld( ( D():Clientes( nView ) )->CodPago, D():FormasPago( nView ), "cCtaGas" ) )
+         aGet[ _CCTAREM ]:cText( ( D():Clientes( nView ) )->cCodRem )
+         aGet[ _CCTAREM ]:lValid()
+
+         if !Empty( ( D():Clientes( nView ) )->CodPago )
+            aGet[ _CCTAREC ]:cText( RetFld( ( D():Clientes( nView ) )->CodPago, D():FormasPago( nView ), "cCtaCobro" ) )
+            aGet[ _CCTAGAS ]:cText( RetFld( ( D():Clientes( nView ) )->CodPago, D():FormasPago( nView ), "cCtaGas" ) )
+         end if
+
+         if lBancoDefecto( ( D():Clientes( nView ) )->Cod, D():ClientesBancos( nView ) )
+
+            aGet[ _CBNCCLI ]:cText( ( D():ClientesBancos( nView ) )->cCodBnc )
+            aGet[ _CPAISIBAN ]:cText( ( D():ClientesBancos( nView ) )->cPaisIBAN )
+            aGet[ _CCTRLIBAN ]:cText( ( D():ClientesBancos( nView ) )->cCtrlIBAN )
+            aGet[ _CENTCLI ]:cText( ( D():ClientesBancos( nView ) )->cEntBnc )
+            aGet[ _CSUCCLI ]:cText( ( D():ClientesBancos( nView ) )->cSucBnc )
+            aGet[ _CDIGCLI ]:cText( ( D():ClientesBancos( nView ) )->cDigBnc )
+            aGet[ _CCTACLI ]:cText( ( D():ClientesBancos( nView ) )->cCtaBnc )
+
+         end if
+
+         cOldCodCli  := ( D():Clientes( nView ) )->Cod
+
+      else
+
+         MsgStop( "Cliente no encontrado" )
+
+         lValid      := .f.
+
       end if
-
-      if lBancoDefecto( ( D():Clientes( nView ) )->Cod, D():ClientesBancos( nView ) )
-
-         aGet[ _CBNCCLI ]:cText( ( D():ClientesBancos( nView ) )->cCodBnc )
-         aGet[ _CPAISIBAN ]:cText( ( D():ClientesBancos( nView ) )->cPaisIBAN )
-         aGet[ _CCTRLIBAN ]:cText( ( D():ClientesBancos( nView ) )->cCtrlIBAN )
-         aGet[ _CENTCLI ]:cText( ( D():ClientesBancos( nView ) )->cEntBnc )
-         aGet[ _CSUCCLI ]:cText( ( D():ClientesBancos( nView ) )->cSucBnc )
-         aGet[ _CDIGCLI ]:cText( ( D():ClientesBancos( nView ) )->cDigBnc )
-         aGet[ _CCTACLI ]:cText( ( D():ClientesBancos( nView ) )->cCtaBnc )
-
-      end if
-
-   else
-
-      MsgStop( "Cliente no encontrado" )
-
-      lValid      := .f.
 
    end if
 
