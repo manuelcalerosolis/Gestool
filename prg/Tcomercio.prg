@@ -4342,7 +4342,7 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
 
                nOrdAnt        := ::oTblPro:OrdSetFocus( "cCodPro" )
 
-               if ::oTblPro:Seek( ::oArtDiv:cCodPr1 + ::oArtDiv:cValPr1 )
+               if ::oTblPro:Seek( upper( ::oArtDiv:cCodPr1 ) + upper( ::oArtDiv:cValPr1 ) )
 
                   cCommand    := "INSERT INTO " +  ::cPrefixtable( "product_attribute_combination" ) + "( " + ;
                                     "id_attribute, " + ;
@@ -4363,7 +4363,7 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                Metemos la relación de la propiedad 2 con el artículo-----------
                */
 
-               if ::oTblPro:Seek( ::oArtDiv:cCodPr2 + ::oArtDiv:cValPr2 )
+               if ::oTblPro:Seek( upper( ::oArtDiv:cCodPr2 ) + upper( ::oArtDiv:cValPr2 ) )
 
                   cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute_combination" ) + " ( " + ;
                                     "id_attribute, " + ;

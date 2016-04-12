@@ -2002,19 +2002,19 @@ Function rxPro( cPath, oMeter )
          ( dbfPro )->( __dbPack() )
 
          ( dbfPro )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-         ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "cCodPro", "Field->cCodPro + Field->cCodTbl", {|| Field->cCodPro + Field->cCodTbl } ) )
+         ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "cCodPro", "upper( Field->cCodPro ) + upper( Field->cCodTbl )", {|| upper( Field->cCodPro ) + upper(  Field->cCodTbl ) } ) )
 
          ( dbfPro )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-         ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "nOrdPro", "Field->cCodPro + Str( Field->nOrdTbl )", {|| Field->cCodPro + Str( Field->nOrdTbl ) } ) )
+         ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "nOrdPro", "upper( Field->cCodPro ) + Str( Field->nOrdTbl )", {|| upper( Field->cCodPro ) + Str( Field->nOrdTbl ) } ) )
 
          ( dbfPro )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-         ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "NBARPRO", "Field->cCodPro + Field->nBarTbl", {|| Field->cCodPro + Field->nBarTbl } ) )
+         ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "NBARPRO", "upper( Field->cCodPro ) + Field->nBarTbl", {|| upper( Field->cCodPro ) + Field->nBarTbl } ) )
 
          ( dbfPro )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-         ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "CPRO", "Field->cCodPro", {|| Field->cCodPro } ) )
+         ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "CPRO", "upper( Field->cCodPro )", {|| upper( Field->cCodPro ) } ) )
 
          ( dbfPro )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-         ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "CCODDES", "Field->cCodPro + Field->cDesTbl", {|| Field->cCodPro + Field->cDesTbl } ) )
+         ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "CCODDES", "upper( Field->cCodPro ) + upper( Field->cDesTbl )", {|| upper( Field->cCodPro ) + upper( Field->cDesTbl ) } ) )
 
          ( dbfPro )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
          ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "CCODWEB", "Str( Field->cCodWeb, 11 )", {|| Str( Field->cCodWeb, 11 ) } ) )
