@@ -1594,6 +1594,8 @@ STATIC FUNCTION OpenFiles()
 
       oMailing          := TGenmailingDatabaseAlbaranesClientes():New( nView )
 
+      TComercio():getInstance()
+
       /*
       Declaración de variables públicas----------------------------------------
       */
@@ -1899,6 +1901,8 @@ STATIC FUNCTION CloseFiles()
    if !Empty( oDetCamposExtra )
       oDetCamposExtra:CloseFiles()
    end if
+
+   TComercio():endInstance()
 
    D():DeleteView( nView )
 

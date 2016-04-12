@@ -5504,8 +5504,6 @@ METHOD uploadInformationStockProductPrestashop() CLASS TComercio
    
    next
 
-   debug( ::aStockArticuloData, "aStockArticuloData" )
-
 Return .t.
 
 //---------------------------------------------------------------------------//
