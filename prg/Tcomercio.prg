@@ -6587,7 +6587,7 @@ Return( cResult )
 
 //---------------------------------------------------------------------------//
 
-Function ReemplazaAcento( cCaracter )
+Function reemplazaAcento( cCaracter )
 
    local nPos
    local cPatron     := "ΐΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡÒΣΤΥΦΩΪΫάέΰαβγδεζηθικλμνξορςστυφωϊϋόύÿ"

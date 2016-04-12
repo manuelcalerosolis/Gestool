@@ -2310,6 +2310,11 @@ METHOD InsertDeudorXml()
       RETURN ( Self )
    end if 
 
+   if empty( ::oCtaRem:dFechaFirma( ::oDbf:cCodRem ) )
+      ::oCuaderno:addError( "Fecha de firma esta vacía" )
+      RETURN ( Self )
+   end if 
+
    oDebtor           := SepaDebitActor():New( ::oCuaderno, "Dbtr" )
 
    with object ( oDebtor )
