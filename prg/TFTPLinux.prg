@@ -329,11 +329,12 @@ CLASS TFTPCurl FROM TFtpLinux
 
    METHOD createDirectory( cDirectory )            VIRTUAL // INLINE ( ::cInitialDirectory := cDirectory )
    METHOD createDirectoryRecursive( cDirectory )   VIRTUAL // INLINE ( ::cRecursiveDirectory := cDirectory )
-
    METHOD returnDirectory( cCarpeta )              VIRTUAL
 
    METHOD createFile( cFile, cDirectory ) 
    METHOD downloadFile( cFile, cDirectory )
+
+   METHOD listFiles()
 
 END CLASS
 
@@ -359,7 +360,7 @@ METHOD createFile( cFile, cDirectory ) CLASS TFTPCurl
    endif
 
    if !file( cFile )
-      msgStop( "El fichero " + cFile + " no se ha encontrado." )
+      msgStop( "El fichero " + cFile + " no se ha encontrado" )
       Return .f.
    endif 
 
@@ -384,28 +385,60 @@ Return ( createFile )
 
 //---------------------------------------------------------------------------//
 
-METHOD downloadFile( cFile, cDirectory ) CLASS TFTPCurl
+METHOD downloadFile( cRemoteFile, cLocalFile ) CLASS TFTPCurl
 
    local cURL
+   local cFile
    local createFile  := .f.
 
-   if empty(::idCurl)
+   msgAlert( cRemoteFile, "cRemoteFile" )
+   msgAlert( cLocalFile, "cLocalFile" )
+
+   if empty( ::idCurl )
       Return .f.
    endif
 
-   cDirectory        := cLeftPath( cDirectory )
-
-   cURL              := "ftp://" + ::cUser + ":" + ::cPassword + "@" + ::cServer + "/" + cDirectory + cFile
+   cURL              := "ftp://" + ::cUser + ":" + ::cPassword + "@" + ::cServer + "/" + cRemoteFile
+   msgAlert( cURL, "URL" )
 
    curl_easy_setopt( ::idCurl, HB_CURLOPT_DOWNLOAD )
    curl_easy_setopt( ::idCurl, HB_CURLOPT_URL, cURL )
-   curl_easy_setopt( ::idCurl, HB_CURLOPT_UL_FILE_SETUP, cFile )
-   curl_easy_setopt( ::idCurl, HB_CURLOPT_FTP_CREATE_MISSING_DIRS, .t. )
-   
-   createFile        := curl_easy_perform( ::idCurl )
-
+   curl_easy_setopt( ::idCurl, HB_CURLOPT_DL_FILE_SETUP, cLocalFile )
+   // curl_easy_setopt( ::idCurl, HB_CURLOPT_USERPWD, ::cUser +  ":" + ::cPassword )
+   msgAlert( curl_easy_perform( ::idCurl ) )
+   curl_easy_cleanup( ::idCurl )
    curl_easy_reset( ::idCurl )
+   
+   // fclose( cFile )
 
 Return ( createFile )
+
+//---------------------------------------------------------------------------//
+
+METHOD listFiles() CLASS TFTPCurl
+
+   local cURL
+   local listFiles
+
+   if empty( ::idCurl )
+      Return .f.
+   endif
+
+   cURL              := "ftp://" + ::cUser + ":" + ::cPassword + "@" + ::cServer 
+
+   curl_easy_setopt( ::idCurl, HB_CURLOPT_DOWNLOAD )
+   curl_easy_setopt( ::idCurl, HB_CURLOPT_DIRLISTONLY )
+   curl_easy_setopt( ::idCurl, HB_CURLOPT_URL, cURL )
+   curl_easy_setopt( ::idCurl, HB_CURLOPT_DL_BUFF_SETUP )
+   curl_easy_perform( ::idCurl )
+   curl_easy_dl_buff_get( ::idCurl ) 
+   curl_easy_setopt( ::idCurl, HB_CURLOPT_DL_BUFF_GET, @listFiles )
+
+   listFiles         := hb_atokens( listFiles, CRLF )
+   
+   curl_easy_cleanup( ::idCurl )
+   curl_easy_reset( ::idCurl )
+
+Return ( listFiles )
 
 //---------------------------------------------------------------------------//

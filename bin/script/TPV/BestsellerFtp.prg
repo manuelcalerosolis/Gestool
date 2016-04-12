@@ -39,7 +39,6 @@ CLASS BestsellerFtp
    
    METHOD fileNotProccess( cFile )
    METHOD fileDownload( cFile )
-   METHOD fileDocument( cFile )
 
 END CLASS
 
@@ -76,25 +75,17 @@ RETURN ( Self )
 
 METHOD ftpConexion()
 
-   ::oInt               := TUrl():New( ::cUrl )
-   ::oFTP               := TIPClientFTP():New( ::oInt, .t. )
-   ::oFTP:nConnTimeout  := 2000
-   ::oFTP:bUsePasv      := ::lPassive
+   ::oFTP               := TFTPCurl():New( ::cUserName, ::cPassword, ::cFtpSite )
 
-   if !::oFTP:Open( ::cUrl )
+   if ::oFTP:createConexion()
 
-      msgStop( "Imposible conectar con el sitio ftp " + ::cFtpSite, "Error" )
-
-      ::lConnect        := .f.
+      ::lConnect        := .t.
 
    else
 
-      if !Empty( ::cDirectory )
-         ::oFtp:Cwd( ::cDirectory )
-         ::oFtp:Pwd()
-      end if
-
-      ::lConnect        := .t.
+      msgStop( "Imposible conectar con el sitio ftp " + ::cFtpSite, "Error" )
+      
+      ::lConnect        := .f.
 
    end if
 
@@ -104,8 +95,8 @@ Return ( ::lConnect )
 
 METHOD closeConexion() 
 
-   if !Empty( ::oFtp )
-      ::oFtp:Close()
+   if !empty( ::oFtp )
+      ::oFtp            := nil
    end if
 
 Return ( Self )
@@ -115,14 +106,18 @@ Return ( Self )
 METHOD ftpGetFiles()
 
    local cFile
-   local aFiles            := ::oFTP:listFiles() // 
-   
-   ::oFtp:oUrl:cPath       := "."
+   local aFiles            := ::oFTP:listFiles()  
 
    for each cFile in aFiles 
-      if ::fileNotProccess( cFile )
-         ::fileDownload( cFile )
+
+      if lower( cfileext( cFile ) ) == "xml"
+
+         if ::fileNotProccess( cFile )
+            ::fileDownload( cFile )
+         end if 
+
       end if 
+
    next
 
 Return ( Self )
@@ -131,9 +126,7 @@ Return ( Self )
 
 METHOD fileNotProccess( cFile )
 
-   local fileNotProccess   := file( ::cLocalDirectoryProcessed + ::fileDocument( cFile ) ) .or. file( ::cLocalDirectory + ::fileDocument( cFile ) )
-
-   // msgAlert( file( ::cLocalDirectory + ::fileDocument( cFile ) ), ::cLocalDirectory + ::fileDocument( cFile ) )
+   local fileNotProccess   := file( ::cLocalDirectoryProcessed + cFile ) .or. file( ::cLocalDirectory + cFile )
 
 Return ( !fileNotProccess )
 
@@ -141,19 +134,12 @@ Return ( !fileNotProccess )
 
 METHOD fileDownload( cFile )
 
-   local cFileDocument  := ::fileDocument( cFile )                
+   msgAlert( cFile, "fileDownload" )
 
-   msgRun( "Descargando fichero " + cFileDocument, "Espere por favor...", {|| ::oFtp:downLoadFile( ::cLocalDirectory + cFileDocument, cFileDocument ) } )
+   msgRun( "Descargando fichero " + cFile, "Espere por favor...", {|| ::oFtp:downLoadFile( "httpdocs/edi/" + cFile, ::cLocalDirectory + cFile ) } ) // 
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD fileDocument( cFile )
-
-   cFile    := substr( cFile[ 1 ], 40 )
-
-Return ( cFile )
-
-//---------------------------------------------------------------------------//
 

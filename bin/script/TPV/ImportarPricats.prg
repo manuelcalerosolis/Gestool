@@ -63,7 +63,7 @@ Function ImportaXmlBestseller()
 
    if !Empty( aXmlDocuments )
       for each cDocumentXml in aXmlDocuments
-         proccessXml( cDocumentXml[ 1 ] )
+         proccessXml( cDocumentXml[ 1 ] ) 
       next
    else
       msgStop( "No hay ficheros en el directorio")
@@ -204,10 +204,10 @@ Static Function IteratorPrieceArticulo( oXmlNode )
    local oNode
    local nPrice
 
-   oIter                := TXMLIteratorScan():New( oXmlNode )
+   oIter                := TXMLIteratorScan():New( oXmlNode )  
    oNode                := oIter:Find( "cbc:PriceAmount" ) 
 
-   if !Empty( oNode )
+   if !Empty( oNode ) 
       nPrice            := Val( oNode:cData )
    end if 
 

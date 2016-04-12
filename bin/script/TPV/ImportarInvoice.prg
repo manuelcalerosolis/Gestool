@@ -288,8 +288,8 @@ Static Function ProccessFactura()
    end if
 
    cNumero                          := "A" + Str( hGet( hFacturaCabecera, "Numero" ), 9 ) + "00"
-   nNumero 							:= hGet( hFacturaCabecera, "Numero" )
-   dFecha 							:= hGet( hFacturaCabecera, "Fecha")
+   nNumero                          := hGet( hFacturaCabecera, "Numero" )
+   dFecha                           := hGet( hFacturaCabecera, "Fecha")
    lAppend                          := !( dbfFacPrvT )->( dbSeek( cNumero ) )
 
    if dbDialogLock( dbfFacPrvT, lAppend )
