@@ -43,6 +43,7 @@ WebBrow.prg             	\
 TMySql.prg              	\
 TComercio.prg           	\
 TComercioCustomer.prg 		\
+TComercioBudget.prg 			\
 TPrestashopConfig.prg 		\
 TPrestashopId.prg 			\
 TFTPLinux.prg 					\
@@ -464,6 +465,7 @@ WebBrow.obj                                        \
 TMySql.obj                                         \
 TComercio.obj                                      \
 TComercioCustomer.obj 										\
+TComercioBudget.obj 											\
 TPrestashopConfig.obj 										\
 TPrestashopId.obj 											\
 TFTPLinux.obj 													\
@@ -919,6 +921,7 @@ $(OBJ)\WebBrow.obj                                          +
 $(OBJ)\TMySql.obj                                           +
 $(OBJ)\TComercio.obj                                        +
 $(OBJ)\TComercioCustomer.obj                                +
+$(OBJ)\TComercioBudget.obj                                	+
 $(OBJ)\TPrestashopConfig.obj 											+
 $(OBJ)\TPrestashopId.obj 												+
 $(OBJ)\TFTPLinux.obj 													+
