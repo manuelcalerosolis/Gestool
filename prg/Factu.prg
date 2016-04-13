@@ -6002,11 +6002,8 @@ Return ( by( nRow ) )
 
 Function Test()
 
-<<<<<<< HEAD
    //TScripts():CompilarEjecutarFicheroScript( FullCurDir() + "script\tpv\ImportarPricats.prg" ) 
 
-=======
->>>>>>> origin/master
 /*
    local TPrestaShopConfig
    local TFtpCUrl
