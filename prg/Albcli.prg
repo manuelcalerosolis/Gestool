@@ -8929,8 +8929,9 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+      TComercio():getInstance():resetProductsToUpadateStocks()
+
       aNumPed        := {}
-      //aNumSat        := {}
 
       cAlbaran       := aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ]
 
@@ -8987,8 +8988,13 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
          if ( D():Get( "AlbCliL", nView ) )->( dbSeek( cAlbaran ) )
             while ( ( D():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliL", nView ) )->nNumAlb ) + ( D():Get( "AlbCliL", nView ) )->cSufAlb ) == cAlbaran .and. !( D():Get( "AlbCliL", nView ) )->( eof() )
+               
                dbPass( D():Get( "AlbCliL", nView ), dbfTmpLin, .t. )
+
+               TComercio():getInstance():appendProductsToUpadateStocks( ( D():Get( "AlbCliL", nView ) )->cRef, nView )  
+
                ( D():Get( "AlbCliL", nView ) )->( dbSkip() )
+               
             end while
          end if
 
@@ -11653,8 +11659,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    /*
    Guardamos el albaran--------------------------------------------------------
    */
-
-   TComercio():getInstance():resetProductsToUpadateStocks()
 
    ( dbfTmpLin )->( dbGoTop() )
    while !( dbfTmpLin )->( eof() )

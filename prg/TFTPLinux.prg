@@ -391,25 +391,21 @@ METHOD downloadFile( cRemoteFile, cLocalFile ) CLASS TFTPCurl
    local cFile
    local createFile  := .f.
 
-   msgAlert( cRemoteFile, "cRemoteFile" )
-   msgAlert( cLocalFile, "cLocalFile" )
-
    if empty( ::idCurl )
       Return .f.
    endif
 
-   cURL              := "ftp://" + ::cUser + ":" + ::cPassword + "@" + ::cServer + "/" + cRemoteFile
-   msgAlert( cURL, "URL" )
+   cURL              := "ftp://" + ::cServer + "/" + cRemoteFile
 
    curl_easy_setopt( ::idCurl, HB_CURLOPT_DOWNLOAD )
    curl_easy_setopt( ::idCurl, HB_CURLOPT_URL, cURL )
    curl_easy_setopt( ::idCurl, HB_CURLOPT_DL_FILE_SETUP, cLocalFile )
-   // curl_easy_setopt( ::idCurl, HB_CURLOPT_USERPWD, ::cUser +  ":" + ::cPassword )
-   msgAlert( curl_easy_perform( ::idCurl ) )
-   curl_easy_cleanup( ::idCurl )
+   curl_easy_setopt( ::idCurl, HB_CURLOPT_USERPWD, ::cUser +  ":" + ::cPassword ) 
+   curl_easy_setopt( ::idCurl, HB_CURLOPT_VERBOSE, .t. )
+
+   curl_easy_perform( ::idCurl ) 
+
    curl_easy_reset( ::idCurl )
-   
-   // fclose( cFile )
 
 Return ( createFile )
 
@@ -436,7 +432,6 @@ METHOD listFiles() CLASS TFTPCurl
 
    listFiles         := hb_atokens( listFiles, CRLF )
    
-   curl_easy_cleanup( ::idCurl )
    curl_easy_reset( ::idCurl )
 
 Return ( listFiles )
