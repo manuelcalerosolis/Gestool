@@ -26,7 +26,7 @@ CLASS TComercioCustomer
    METHOD createAddressInGestool()    
    METHOD getAddressFromPrestashop()
       METHOD appendAddressInGestool()
-      METHOD assertAddressInGestoolCustomer ()
+      METHOD assertAddressInGestoolCustomer()
 
    METHOD getState( idState ) 
    METHOD getPaymentGestool( module ) 

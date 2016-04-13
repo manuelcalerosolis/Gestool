@@ -126,7 +126,6 @@ Source: "c:\fw195\gestool\bin\libcurl.dll";             DestDir: "{app}"; Flags:
 Source: "c:\fw195\gestool\bin\libcrypto.dll";           DestDir: "{app}"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bin\libeay32.dll";            DestDir: "{app}"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bin\libssl.dll";              DestDir: "{app}"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bin\libssly32.dll";           DestDir: "{app}"; Flags: ignoreversion
                                                         
 Source: "c:\fw195\gestool\bin\mscomctl.ocx";           DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist
 Source: "c:\fw195\gestool\bin\richtx32.ocx";           DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist
