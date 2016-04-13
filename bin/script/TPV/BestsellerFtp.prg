@@ -134,9 +134,7 @@ Return ( !fileNotProccess )
 
 METHOD fileDownload( cFile )
 
-   msgAlert( cFile, "fileDownload" )
-
-   msgRun( "Descargando fichero " + cFile, "Espere por favor...", {|| ::oFtp:downLoadFile( "httpdocs/edi/" + cFile, ::cLocalDirectory + cFile ) } ) // 
+   msgRun( "Descargando fichero " + cFile, "Espere por favor...", {|| ::oFtp:downLoadFile( cFile, ::cLocalDirectory + cFile ) } ) // "httpdocs/edi/" +  
 
 RETURN ( Self )
 

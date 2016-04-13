@@ -5663,7 +5663,9 @@ Return ( .t. )
 
 METHOD setCustomerInOrder( oQuery ) CLASS TComercio
 
-   if ::oCli:SeekInOrd( str( oQuery:FieldGetByName( "id_customer" ), 11 ) , "cCodWeb" )
+ local cCodigocli          := ::TPrestashopId:getGestoolCustomer( oQuery:FieldGetByName( "id_customer" ), ::getCurrentWebName() )
+
+   if ::oCli:SeekInOrd( cCodigocli , "Cod")
 
       ::oPreCliT:cCodCli   := ::oCli:Cod
       ::oPreCliT:cNomCli   := ::oCli:Titulo

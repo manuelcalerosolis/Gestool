@@ -9,7 +9,7 @@
 #include "Print.ch"
 
 #define __localDirectory            "c:\Bestseller\"
-#define __localDirectoryPorcessed   "c:\Bestseller\Processed\"
+#define __localDirectoryPorcessed   "c:\Bestseller\Processed\" 
 
 //----------------------------------------------------------------------------//
 
@@ -75,7 +75,8 @@ Function ImportaXmlBestseller()
    ( dbfPropieades         )->( dbCloseArea() )
    ( dbfCategorias         )->( dbCloseArea() )
    ( dbfTipoArticulo       )->( dbCloseArea() )
-   ( dbfTemporadaArticulo  )->( dbCloseArea() )
+   
+   ( dbfTemporadaArticulo  )->( dbCloseArea() ) 
 
    msgStop( "Proceso finalizado :)")
 
@@ -175,7 +176,7 @@ Static Function IteratorNombreArticulo( oXmlNode )
    local oIter
    local oNode
 
-   oIter                := TXMLIteratorScan():New( oXmlNode )
+   oIter                := TXMLIteratorScan():New( oXmlNode ) 
    oNode                := oIter:Find( "cbc:Description" ) 
 
    if !Empty( oNode )
