@@ -16,9 +16,9 @@ BUILDING_FOLDER_RED_16 BITMAP "..\\bmp\\office-building_folder_red_16.bmp"
 
 BUILDING_FOLDER_RED_32 BITMAP "..\\bmp\\office-building_folder_red_32.bmp"
 
-BUILDING_ADDRESS_BOOK_16 BITMAP "..\\bmp\\office-building_address_book_16.bmp"
+OFFICE-BUILDING_ADDRESS_BOOK_16 BITMAP "..\\bmp\\office-building_address_book_16.bmp"
 
-BUILDING_ADDRESS_BOOK_32 BITMAP "..\\bmp\\office-building_address_book_32.bmp"
+OFFICE-BUILDING_ADDRESS_BOOK_32 BITMAP "..\\bmp\\office-building_address_book_32.bmp"
 
 BULLET_SQUARE_GREEN_32 BITMAP "..\\bmp\\Bullet_Square_Green_32.bmp"
 
@@ -269,4 +269,3 @@ ALL_COMPONENTS_16 BITMAP "..\\bmp\\all_components_16.bmp"
 COMPONENT_BLUE_16 BITMAP "..\\bmp\\component_blue_16.bmp"
 
 FOLDER_COMPONENTS_48 BITMAP "..\\bmp\\folder_components_48.bmp"
-

@@ -6002,7 +6002,7 @@ Return ( by( nRow ) )
 
 Function Test()
 
-   TScripts():CompilarEjecutarFicheroScript( FullCurDir() + "script\tpv\ImportarPricats.prg" ) 
+   //TScripts():CompilarEjecutarFicheroScript( FullCurDir() + "script\tpv\ImportarPricats.prg" ) 
 
 /*
    local TPrestaShopConfig
