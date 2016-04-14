@@ -351,7 +351,6 @@ CLASS TComercio
    METHOD insertClientePedidoPrestashop( oQuery )
    METHOD getDate( cDatePrestashop )
    METHOD getTime( ctimePrestashop )
-   METHOD insertPresupuestoPrestashop( oQuery )
    METHOD getCountersPresupuestoPrestashop( oQuery )
    METHOD insertDatosCabeceraPedidoPretashop( oQuery )
    METHOD insertDatosCabeceraPresupuestoPretashop( oQuery )
@@ -5586,7 +5585,7 @@ return ( lAsBudget )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertPresupuestoPrestashop( oQuery ) CLASS TComercio
+ METHOD insertPresupuestoPrestashop( oQuery ) CLASS TComercio
    
    ::getCountersPresupuestoPrestashop(          oQuery )
    ::insertDatosCabeceraPresupuestoPretashop (  oQuery )
@@ -5850,6 +5849,7 @@ METHOD appendStatePresupuestoPrestashop( oQuery ) CLASS TComercio
    end if      
 
 Return ( .t. )
+
 
 //---------------------------------------------------------------------------//
 
