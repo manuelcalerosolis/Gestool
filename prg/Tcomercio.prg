@@ -23,6 +23,7 @@ CLASS TComercio
    DATA  TPrestashopConfig  
    DATA  TPrestashopId
    DATA  TComercioCustomer
+   DATA  TComercioBudget
    
    DATA  aSend
    DATA  oInt
@@ -341,7 +342,6 @@ CLASS TComercio
 
    METHOD documentRecived( oQuery, oDatabase )                INLINE ( .t. )
       METHOD isOrderAlreadyRecived( oQuery )                  INLINE ( ::documentRecived( oQuery, ::oPedCliT ) )
-      METHOD isBudgetAlreadyRecived( oQuery )               
 
    METHOD insertPedidoPrestashop( oQuery )
    METHOD insertPresupuestoPrestashop( oQuery )
@@ -351,7 +351,6 @@ CLASS TComercio
    METHOD insertClientePedidoPrestashop( oQuery )
    METHOD getDate( cDatePrestashop )
    METHOD getTime( ctimePrestashop )
-   METHOD insertPresupuestoPrestashop( oQuery )
    METHOD getCountersPresupuestoPrestashop( oQuery )
    METHOD insertDatosCabeceraPedidoPretashop( oQuery )
    METHOD insertDatosCabeceraPresupuestoPretashop( oQuery )
@@ -506,6 +505,8 @@ METHOD New( oMenuItem, oMeterTotal, oTextTotal ) CLASS TComercio
    ::TPrestashopConfig:loadJSON()
 
    ::TComercioCustomer     := TComercioCustomer():New( Self )
+
+   ::TComercioBudget       := TComercioBudget():New( Self )
 
 RETURN ( Self )
 
@@ -1058,11 +1059,9 @@ METHOD processOrder( oQuery ) CLASS TComercio
    end if 
 
    if ::isRecivedDocumentAsBudget( oQuery:FieldGetByName( "module" ) )
-      
-      if !( ::isBudgetAlreadyRecived( oQuery ) )
-         ::insertPresupuestoPrestashop( oQuery )
-      end if
 
+      ::TComercioBudget:insertBudgetInGestoolIfNotExist( oQuery )
+      
    else
 
       if !::isOrderAlreadyRecived( oQuery )
@@ -5580,7 +5579,7 @@ return ( lAsBudget )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertPresupuestoPrestashop( oQuery ) CLASS TComercio
+ METHOD insertPresupuestoPrestashop( oQuery ) CLASS TComercio
    
    ::getCountersPresupuestoPrestashop(          oQuery )
    ::insertDatosCabeceraPresupuestoPretashop (  oQuery )
@@ -5604,7 +5603,7 @@ return ( .t. )
 //---------------------------------------------------------------------------//
 
 METHOD insertDatosCabeceraPresupuestoPretashop( oQuery ) CLASS TComercio
-
+/*
    ::oPreCliT:Append()
    ::oPreCliT:Blank()
 
@@ -5619,7 +5618,7 @@ METHOD insertDatosCabeceraPresupuestoPretashop( oQuery ) CLASS TComercio
    else
       ::writeText( "Error al descargar el presupuesto: " + ::cSeriePresupuesto + "/" + alltrim( str( ::nNumeroPresupuesto ) ) + "/" + ::cSufijoPresupuesto, 3 )
    end if   
-
+*/
 Return ( .t. )
  
 //---------------------------------------------------------------------------//
@@ -5845,6 +5844,7 @@ METHOD appendStatePresupuestoPrestashop( oQuery ) CLASS TComercio
 
 Return ( .t. )
 
+
 //---------------------------------------------------------------------------//
 
 METHOD insertPedidoPrestashop( oQuery ) CLASS TComercio
@@ -5856,21 +5856,6 @@ METHOD insertPedidoPrestashop( oQuery ) CLASS TComercio
    ::appendStatePedidoPrestashop( oQuery )
 
 return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD isBudgetAlreadyRecived( oQuery ) CLASS TComercio
-
-   local isOrderAlreadyRecived      := .t.
-   local idOrderPrestashop          := oQuery:fieldGet( 1 )
-
-   if empty( ::TPrestashopId:getGestoolOrder( idOrderPrestashop, ::getCurrentWebName() ) )
-      isOrderAlreadyRecived         := .f.
-   else
-      ::writeText( "El documento con el indentificador " + alltrim( str( idOrderPrestashop ) ) + " ya ha sido recibido.", 3 )
-   end if 
-
-Return ( isOrderAlreadyRecived )   
 
 //---------------------------------------------------------------------------//
 

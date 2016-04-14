@@ -26,7 +26,7 @@ CLASS TComercioCustomer
    METHOD createAddressInGestool()    
    METHOD getAddressFromPrestashop()
       METHOD appendAddressInGestool()
-      METHOD assertAddressInGestoolCustomer ()
+      METHOD assertAddressInGestoolCustomer()
 
    METHOD getState( idState ) 
    METHOD getPaymentGestool( module ) 
@@ -67,8 +67,6 @@ METHOD isAddressInGestool( idAddress ) CLASS TComercioCustomer
 
    local idAddressInGestool   := ::TPrestashopId():getGestoolAddress( idAddress, ::getCurrentWebName() )
 
-   debug( idAddressInGestool )
-
    if !empty( idAddressInGestool )
       if ::oAddressDatabase():seekInOrd( idAddressInGestool, "cCodCli" )      
          Return ( .t. )
@@ -79,7 +77,7 @@ Return ( .f. )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertCustomerInGestoolIfNotExist( idCustomer, idAddressDelivery ) CLASS TComercioCustomer
+METHOD insertCustomerInGestoolIfNotExist( idCustomer, idAddressDelivery, idAddressInvoice ) CLASS TComercioCustomer
 
    if !( ::isCustomerInGestool( idCustomer ) )
       ::createCustomerInGestool( idCustomer )
@@ -87,6 +85,10 @@ METHOD insertCustomerInGestoolIfNotExist( idCustomer, idAddressDelivery ) CLASS 
 
    if !( ::isAddressInGestool( idAddressDelivery ) )
       ::createAddressInGestool( idAddressDelivery )
+   end if 
+
+   if !( ::isAddressInGestool( idAddressInvoice ) )
+      ::createAddressInGestool( idAddressInvoice )
    end if 
 
 Return ( Self )
@@ -177,7 +179,7 @@ Return ( .t. )
 METHOD createAddressInGestool( idAddress ) CLASS TComercioCustomer
 
    local oQuery 
-
+  
    oQuery      := ::getAddressFromPrestashop( idAddress )
 
    if empty( oQuery )
@@ -185,7 +187,9 @@ METHOD createAddressInGestool( idAddress ) CLASS TComercioCustomer
    end if 
 
    if oQuery:recCount() > 0 
+   
       ::appendAddressInGestool( oQuery )
+      
       ::assertAddressInGestoolCustomer( oQuery )
    end if 
 
@@ -246,28 +250,22 @@ Return ( .t. )
 
 METHOD assertAddressInGestoolCustomer ( oQuery ) class TComercioCustomer
 
-debug(::oCustomerDatabase():seekInOrd(::idCustomerGestool, "Cod"),"busqueda")
+   if ::oCustomerDatabase():seekInOrd(::idCustomerGestool, "Cod")
 
-if ::oCustomerDatabase():seekInOrd(::idCustomerGestool, "Cod")
+      if empty(::oCustomerDatabase():fieldGetbyName( "Domicilio" ) )
 
-debug( ::oCustomerDatabase():fieldGetbyName( "Domicilio" ) )
+         ::oCustomerDatabase():load()
+         ::oCustomerDatabase():Domicilio     := oQuery:fieldGetByName( "address1" ) + " " + oQuery:fieldGetByName( "address2" )  
+         ::oCustomerDatabase():Poblacion     := oQuery:fieldGetByName( "city" )           
+         ::oCustomerDatabase():CodPostal     := oQuery:fieldGetByName( "postcode" ) 
+         ::oCustomerDatabase():Provincia     := ::getState( oQuery:fieldGetbyName( "id_state" ) )  
+         ::oCustomerDatabase():Telefono      := oQuery:fieldGetByName( "phone" )  
+         ::oCustomerDatabase():Movil         := oQuery:fieldGetByName( "phone_mobile" )          
+         ::oCustomerDatabase():save()
 
-   if empty(::oCustomerDatabase():fieldGetbyName( "Domicilio" ) )
-
-         debug("dentro")
-
-      ::oCustomerDatabase():load()
-      ::oCustomerDatabase():Domicilio     := oQuery:fieldGetByName( "address1" ) + " " + oQuery:fieldGetByName( "address2" )  
-      ::oCustomerDatabase():Poblacion     := oQuery:fieldGetByName( "city" )           
-      ::oCustomerDatabase():CodPostal     := oQuery:fieldGetByName( "postcode" ) 
-      ::oCustomerDatabase():Provincia     := ::getState( oQuery:fieldGetbyName( "id_state" ) )  
-      ::oCustomerDatabase():Telefono      := oQuery:fieldGetByName( "phone" )  
-      ::oCustomerDatabase():Movil         := oQuery:fieldGetByName( "phone_mobile" )          
-      ::oCustomerDatabase():save()
+      end if 
 
    end if 
-
-end if 
     
 Return(.t.)
 
