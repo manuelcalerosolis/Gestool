@@ -26,6 +26,8 @@ CLASS TComercioBudget
          METHOD insertHeaderBudgetGestool( oQuery )
          METHOD setCustomerInBudget( oQuery )
       METHOD insertLineaBudgetGestool( oQuery )
+      METHOD appendMessageBudget( oQuery )
+      METHOD appendStateBudgetPrestashop( oQuery )  
 
 
    // facades------------------------------------------------------------------
@@ -38,12 +40,17 @@ CLASS TComercioBudget
 
    METHOD writeText( cText )                                INLINE ( ::TComercio:writeText( cText ) )
    METHOD getDate( dDate )                                  INLINE ( ::TComercio:getDate( dDate ) )
+   METHOD getTime( dTime )                                  INLINE ( ::TComercio:getTime( dTime ) )
 
    METHOD oCustomerDatabase()                               INLINE ( ::TComercio:oCli )
    METHOD oAddressDatabase()                                INLINE ( ::TComercio:oObras )
    METHOD oPaymentDatabase()                                INLINE ( ::TComercio:oFPago )
    METHOD oBudgetHeaderDatabase()                           INLINE ( ::TComercio:oPreCliT )
    METHOD oBudgetLineDatabase()                             INLINE ( ::TComercio:oPreCliL )
+   METHOD oBudgetIncidenciaDatabase()                       INLINE ( ::TComercio:oPreCliI )
+   METHOD oBudgetEstadoDatabase()                           INLINE ( ::TComercio:oPreCliE )
+
+   
    METHOD oCounterDatabase()                                INLINE ( ::TComercio:oCount )
    METHOD oPaymentDatabase()                                INLINE ( ::TComercio:oFPago )
    METHOD oDivisasDatabase()                                INLINE ( ::TComercio:oDivisas )
@@ -51,7 +58,8 @@ CLASS TComercioBudget
    METHOD oArticleDatabase()                                INLINE ( ::TComercio:oArt )
    METHOD oKitDatabase()                                    INLINE ( ::TComercio:oKit )
    METHOD oFamilyDatabase()                                 INLINE ( ::TComercio:oFam )
-
+   METHOD oProductDatabase()                                INLINE ( ::TComercio:oPro )
+   
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -101,8 +109,8 @@ METHOD insertBudgetGestool( oQuery ) CLASS TComercioBudget
    ::getCountersBudgetGestool(                  oQuery )
    ::insertDatosHeaderBudgetGestool(            oQuery )
    ::insertLineaBudgetGestool(                  oQuery )
-   // ::appendMessageBudget(                  oQuery )
-   // ::appendStateBudgetPrestashop(          oQuery )  
+   ::appendMessageBudget(                       oQuery )
+   ::appendStateBudgetPrestashop(               oQuery )  
 
 Return ( .f. )
 
@@ -203,7 +211,9 @@ Return ( .t. )
 
 METHOD insertLineaBudgetGestool( oQuery ) CLASS TComercioBudget
 
-   local oQueryL           := TMSQuery():New( ::oConexionMySQLDatabase(), "SELECT * FROM " + ::cPrefixtable( "order_detail" ) + " WHERE id_order=" + alltrim( str( ::idBudgetGestool ) ) )
+   local oQueryL           := TMSQuery():New( ::oConexionMySQLDatabase(), "SELECT * FROM " + ;
+                                              ::Tcomercio:cPrefixtable( "order_detail" ) + ;
+                                              + " WHERE id_order=" + alltrim( str( ::idBudgetGestool ) ) )
    local nNumLin           := 1
 
    if oQueryL:Open() .and. ( oQueryL:RecCount() > 0 )
@@ -245,8 +255,8 @@ METHOD insertLineaBudgetGestool( oQuery ) CLASS TComercioBudget
             ::oBudgetLineDatabase():cGrpFam     := RetFld( ::oArticleDatabase():Familia, ::oFamilyDatabase():cAlias, "cCodGrp" )
             ::oBudgetLineDatabase():cCodPr1     := ::oArticleDatabase():cCodPrp1
             ::oBudgetLineDatabase():cCodPr2     := ::oArticleDatabase():cCodPrp2
-            ::oBudgetLineDatabase():cValPr1     := ::GetValPrp( oRetFld( ::oArticleDatabase():cCodPrp1, ::oPro, "cCodWeb", "cCodPro" ), oQueryL:FieldGet( 7 ) )
-            ::oBudgetLineDatabase():cValPr2     := ::GetValPrp( oRetFld( ::oArticleDatabase():cCodPrp2, ::oPro, "cCodWeb", "cCodPro" ), oQueryL:FieldGet( 7 ) )
+            ::oBudgetLineDatabase():cValPr1     := ::GetValPrp( oRetFld( ::oArticleDatabase():cCodPrp1, ::oProductDatabase(), "cCodWeb", "cCodPro" ), oQueryL:FieldGet( 7 ) )
+            ::oBudgetLineDatabase():cValPr2     := ::GetValPrp( oRetFld( ::oArticleDatabase():cCodPrp2, ::oProductDatabase(), "cCodWeb", "cCodPro" ), oQueryL:FieldGet( 7 ) )
             ::oBudgetLineDatabase():lLote       := ::oArticleDatabase():lLote 
             ::oBudgetLineDatabase():cLote       := ::oArticleDatabase():cLote 
 
@@ -270,4 +280,102 @@ METHOD insertLineaBudgetGestool( oQuery ) CLASS TComercioBudget
 
 Return ( .t. )
  
+//---------------------------------------------------------------------------//
+
+METHOD appendMessageBudget ( oQuery ) CLASS TComercioBudget
+
+   local oQueryThead
+   local oQueryMessage
+   local dFecha   := ::getDate( oQuery:FieldGetByName( "date_add" ) )
+
+   oQueryThead    := TMSQuery():New( ::oConexionMySQLDatabase(), "SELECT * FROM " + ::Tcomercio:cPrefixtable( "customer_thread" ) + ;
+                                     + " WHERE id_order=" + alltrim( str( ::idBudgetGestool ) ) )
+
+   if oQueryThead:Open() .and. ( oQueryThead:RecCount() > 0 )
+
+      oQueryThead:GoTop()
+      while !oQueryThead:Eof()
+
+         oQueryMessage    := TMSQuery():New( ::oConexionMySQLDatabase(), "SELECT * FROM " + ;
+                                             ::Tcomercio:cPrefixtable( "customer_message" ) + " WHERE id_customer_thread=" + ;
+                                             + alltrim( str( oQueryThead:FieldGet( 1 ) ) ) )
+
+         if oQueryMessage:Open() .and. ( oQueryMessage:RecCount() > 0 )
+
+            oQueryMessage:GoTop()
+            while !oQueryMessage:Eof()
+
+               ::oBudgetIncidenciaDatabase():Append()
+               ::oBudgetIncidenciaDatabase():Blank()
+
+               ::oBudgetIncidenciaDatabase():cSerPre   := ::cSerieBudget
+               ::oBudgetIncidenciaDatabase():nNumPre   := ::nNumeroBudget
+               ::oBudgetIncidenciaDatabase():cSufPre   := ::cSufijoBudget
+               ::oBudgetIncidenciaDatabase():dFecInc   := dFecha
+               ::oBudgetIncidenciaDatabase():mDesInc   := oQueryMessage:FieldGetByName( "message" )
+               ::oBudgetIncidenciaDatabase():lAviso    := .t.
+
+               ::oBudgetIncidenciaDatabase():Save()
+
+               oQueryMessage:Skip()
+
+            end while
+
+         end if
+            
+         oQueryMessage:Free()    
+
+         oQueryThead:Skip()
+
+      end while
+
+   end if   
+
+   oQueryThead:Free()
+
+Return ( .t. )
+ 
+//---------------------------------------------------------------------------//
+
+METHOD appendStateBudgetPrestashop( oQuery ) CLASS TComercioBudget
+   
+   local oQueryState
+   local nLanguage
+   
+   oQueryState    := TMSQuery():New( ::oConexionMySQLDatabase(), "SELECT * FROM " + ;
+                                     ::Tcomercio:cPrefixtable( "order_history" ) + " h inner join "+ ;
+                                     ::Tcomercio:cPrefixtable( "order_state_lang" ) + " s on h.id_order_state = s.id_order_state WHERE s.id_lang = " + ;
+                                     str( ::nLanguage ) + " and id_order = " + alltrim( str( ::idBudgetGestool ) ) )
+
+   if oQueryState:Open()
+
+      if oQueryState:RecCount() > 0
+
+         oQueryState:GoTop()
+
+         while !oQueryState:Eof()
+
+            ::oBudgetEstadoDatabase():Append()
+            ::oBudgetEstadoDatabase():Blank()
+
+            ::oBudgetEstadoDatabase():cSerPre   := ::cSerieBudget
+            ::oBudgetEstadoDatabase():nNumPre   := ::nNumeroBudget
+            ::oBudgetEstadoDatabase():cSufPre   := ::cSufijoBudget
+            ::oBudgetEstadoDatabase():cSitua    := oQueryState:FieldGetByName( "name" )
+            ::oBudgetEstadoDatabase():dFecSit   := ::getDate( oQueryState:FieldGetByName( "date_add" ) )
+            ::oBudgetEstadoDatabase():tFecSit   := ::getTime( oQueryState:FieldGetByName( "date_add" ) )
+            ::oBudgetEstadoDatabase():idPs      := oQueryState:FieldGetByName( "id_order_history" )
+                     
+            ::oBudgetEstadoDatabase():Save()
+
+         oQueryState:Skip()
+
+          end while
+
+      end if
+               
+   end if      
+
+Return ( .t. )
+
 //---------------------------------------------------------------------------//

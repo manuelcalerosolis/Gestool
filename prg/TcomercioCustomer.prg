@@ -67,8 +67,6 @@ METHOD isAddressInGestool( idAddress ) CLASS TComercioCustomer
 
    local idAddressInGestool   := ::TPrestashopId():getGestoolAddress( idAddress, ::getCurrentWebName() )
 
-   debug( idAddressInGestool )
-
    if !empty( idAddressInGestool )
       if ::oAddressDatabase():seekInOrd( idAddressInGestool, "cCodCli" )      
          Return ( .t. )
