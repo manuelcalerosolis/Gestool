@@ -179,7 +179,7 @@ Return ( .t. )
 METHOD createAddressInGestool( idAddress ) CLASS TComercioCustomer
 
    local oQuery 
-
+  
    oQuery      := ::getAddressFromPrestashop( idAddress )
 
    if empty( oQuery )
@@ -187,7 +187,9 @@ METHOD createAddressInGestool( idAddress ) CLASS TComercioCustomer
    end if 
 
    if oQuery:recCount() > 0 
+   
       ::appendAddressInGestool( oQuery )
+      
       ::assertAddressInGestoolCustomer( oQuery )
    end if 
 
