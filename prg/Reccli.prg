@@ -5235,6 +5235,7 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
          ( cFacCliP )->cCodCaj    := aTmp[ _CCODCAJ ]
          ( cFacCliP )->cCodCli    := aTmp[ _CCODCLI ]
          ( cFacCliP )->cNomCli    := aTmp[ _CNOMCLI ]
+         ( cFacCliP )->cCodAge    := aTmp[ _CCODAGE ] 
          ( cFacCliP )->dEntrada   := Ctod( "" )
          ( cFacCliP )->nImporte   := nImp
          ( cFacCliP )->nImpCob    := nImp
@@ -5412,6 +5413,18 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
       end if
 
 
+   end if
+
+   /*
+   Limpiamos los valores para que al hacer un recibo nuevo despues de compensar no tome los valores antiguos
+   */
+
+   nTotalRelacionados     := 0
+
+   aRecibosRelacionados   := {}
+
+   if !Empty( oClienteCompensar )
+      oClienteCompensar:cText( Space( 12 ) )
    end if
 
    /*

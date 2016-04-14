@@ -999,6 +999,8 @@ METHOD Resource( nMode )
       oDlg:AddFastKey( VK_F5, {|| if( ::lSave( nMode ), oDlg:End( IDOK ), ) } )
    end if
 
+   oDlg:SetControlFastKey( "remesasBancarias", self )
+
    oDlg:AddFastKey(  VK_F1,   {|| ChmHelp( "Remesasbancarias2" ) } )
 
    oDlg:bStart             := {|| ::oGetCuentaRemesa:SetFocus() }
