@@ -25,7 +25,6 @@ CLASS TComercioBudget
    METHOD insertBudgetGestool( oQuery )
       METHOD getCountersBudgetGestool( oQuery )
       METHOD insertDatosHeaderBudgetGestool( oQuery )
-         METHOD insertHeaderBudgetGestool( oQuery )
          METHOD setCustomerInBudget( oQuery )
       METHOD insertLineaBudgetGestool( oQuery )
       METHOD appendMessageBudget( oQuery )
@@ -77,7 +76,7 @@ Return ( Self )
 METHOD insertBudgetInGestoolIfNotExist( oQuery ) CLASS TComercioBudget
 
    ::idBudgetPrestashop := oQuery:fieldGet( 1 )
-
+    
    if ::isBudgetInGestool()
       ::writeText( "El documento con el indentificador " + alltrim( str( ::idBudgetPrestashop ) ) + " ya ha sido recibido." )
    else
@@ -110,13 +109,15 @@ METHOD insertBudgetGestool( oQuery ) CLASS TComercioBudget
                                                             oQuery:FieldGetByName( "id_address_delivery" ),;
                                                             oQuery:FieldGetByName( "id_address_invoice" ) ) 
 
+
    ::getCountersBudgetGestool(                  oQuery )
    ::insertDatosHeaderBudgetGestool(            oQuery )
   // ::insertLineaBudgetGestool(                  oQuery )
   // ::appendMessageBudget(                       oQuery )
   // ::appendStateBudgetPrestashop(               oQuery )  
-
-   ::TPrestashopId():setGestoolBudget( ::idBudgetPrestashop, ::getCurrentWebName() )  
+   
+   debug(::idBudgetPrestashop, "::idBudgetPrestashop")
+   ::TPrestashopId():setValueBudget( ::idBudgetPrestashop, ::getCurrentWebName() )
 
 Return ( .f. )
 
@@ -136,25 +137,6 @@ Return ( .t. )
 METHOD insertDatosHeaderBudgetGestool( oQuery ) CLASS TComercioBudget
 
    ::oBudgetHeaderDatabase():Append()
-   ::oBudgetHeaderDatabase():Blank()
-
-   ::insertHeaderBudgetGestool( oQuery )
-
-   ::insertBudgetInGestoolIfNotExist( oQuery ) 
-
-   ::setCustomerInBudget( oQuery )
-
-   if ::oBudgetHeaderDatabase():Save()
-      ::writeText( "Presupuesto " + ::cSerieBudget + "/" + alltrim( str( ::nNumeroBudget ) ) + "/" + ::cSufijoBudget + " introducido correctamente.", 3 )
-   else
-      ::writeText( "Error al descargar el presupuesto: " + ::cSerieBudget + "/" + alltrim( str( ::nNumeroBudget ) ) + "/" + ::cSufijoBudget, 3 )
-   end if   
-
-Return ( .t. )
-
- //---------------------------------------------------------------------------//
-
- METHOD insertHeaderBudgetGestool( oQuery ) CLASS TComercioBudget
 
    ::oBudgetHeaderDatabase():cSerPre      := ::cSerieBudget
    ::oBudgetHeaderDatabase():nNumPre      := ::nNumeroBudget
@@ -186,6 +168,12 @@ Return ( .t. )
    ::oBudgetHeaderDatabase():nTotNet      := oQuery:FieldGetByName( "total_products" )
    ::oBudgetHeaderDatabase():nTotIva      := oQuery:FieldGetByName( "total_paid_tax_incl" ) - ( oQuery:FieldGetByName( "total_products" ) + oQuery:FieldGetByName( "total_shipping_tax_incl" ) )
    ::oBudgetHeaderDatabase():nTotPre      := oQuery:FieldGetByName( "total_paid_tax_incl" )
+
+   if ::oBudgetHeaderDatabase():Save()
+      ::writeText( "Presupuesto " + ::cSerieBudget + "/" + alltrim( str( ::nNumeroBudget ) ) + "/" + ::cSufijoBudget + " introducido correctamente.", 3 )
+   else
+      ::writeText( "Error al descargar el presupuesto: " + ::cSerieBudget + "/" + alltrim( str( ::nNumeroBudget ) ) + "/" + ::cSufijoBudget, 3 )
+   end if   
 
 Return ( .t. )
 
