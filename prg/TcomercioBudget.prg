@@ -264,8 +264,8 @@ METHOD insertLineaBudgetGestool( oQuery ) CLASS TComercioBudget
 
          if !::oBudgetLineDatabase():Save()
             ::writeText( "Error al descargar las lineas el pedido: " ;
-                            + ::cSeriePresupuesto + "/" + alltrim( str( ::nNumeroPresupuesto ) ) ;
-                            + "/" + ::cSufijoPresupuesto, 3 )
+                            + ::cSerieBudget + "/" + alltrim( str( ::nNumeroBudget ) ) ;
+                            + "/" + ::cSufijoBudget, 3 )
          end if
 
       oQueryL:Skip()
@@ -345,7 +345,7 @@ METHOD appendStateBudgetPrestashop( oQuery ) CLASS TComercioBudget
    oQueryState    := TMSQuery():New( ::oConexionMySQLDatabase(), "SELECT * FROM " + ;
                                      ::Tcomercio:cPrefixtable( "order_history" ) + " h inner join "+ ;
                                      ::Tcomercio:cPrefixtable( "order_state_lang" ) + " s on h.id_order_state = s.id_order_state WHERE s.id_lang = " + ;
-                                     str( ::nLanguage ) + " and id_order = " + alltrim( str( ::idBudgetGestool ) ) )
+                                     str( nLanguage ) + " and id_order = " + alltrim( str( ::idBudgetGestool ) ) )
 
    if oQueryState:Open()
 
