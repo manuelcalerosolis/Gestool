@@ -117,7 +117,7 @@ METHOD insertBudgetGestool( oQuery ) CLASS TComercioBudget
   // ::appendStateBudgetPrestashop(               oQuery )  
    
    debug(::idBudgetPrestashop, "::idBudgetPrestashop")
-   ::TPrestashopId():setValueBudget( ::idBudgetPrestashop, ::getCurrentWebName() )
+   ::TPrestashopId():setGestoolBudget( ::idBudgetPrestashop, ::getCurrentWebName() )
 
 Return ( .f. )
 
