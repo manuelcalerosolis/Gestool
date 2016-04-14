@@ -72,7 +72,7 @@ CLASS TPrestaShopId FROM TMant
    METHOD deleteValueAddress( cClave, cWeb )                  INLINE ::deleteValue( "13", cClave, cWeb )
    METHOD deleteDocumentValuesAddress( cWeb )                 INLINE ::deleteDocumentValues( "13", cWeb )
 
-   METHOD setValueBudget( cClave, cWeb, idWeb )               INLINE ::setValue( "14", cClave, cWeb, idWeb )
+   METHOD setGestoolBudget( cClave, cWeb, idWeb )             INLINE ::setValueGestool( "14", cClave, cWeb, idWeb )
    METHOD getGestoolBudget( idWeb, cWeb, defaultValue )       INLINE ::getValueGestool( "14", idWeb, cWeb, defaultValue )
    METHOD deleteValueBudget( cClave, cWeb )                   INLINE ::deleteValue( "14", cClave, cWeb )
    METHOD deleteDocumentValuesBudget( cWeb )                  INLINE ::deleteDocumentValues( "14", cWeb )
@@ -81,6 +81,7 @@ CLASS TPrestaShopId FROM TMant
    METHOD isSeekValues( cTipoDocumento, cClave, cWeb )
 
    METHOD getValueGestool( cTipoDocumento, idWeb, cWeb, defaultValue )
+   METHOD setValueGestool( cTipoDocumento, idWeb, cWeb )
    METHOD isSeekGestool( cTipoDocumento, idWeb, cWeb )
 
 END CLASS
@@ -221,6 +222,27 @@ METHOD isSeekValues( cTipoDocumento, cClave, cWeb )
    cWeb           := padr( cWeb, 80 )
 
 RETURN ( ::oDbf:seekInOrd( cTipoDocumento + cClave + cWeb, "cWeb" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD setValueGestool( cTipoDocumento, cClave, cWeb, idWeb )
+
+   if !::isValidParameters( cTipoDocumento, cClave, cWeb, idWeb )
+      RETURN ( .f. )
+   end if 
+
+   if ::isSeekGestool( cTipoDocumento, cClave, cWeb )
+      ::oDbf:fieldPutByName( "idWeb", str( idWeb, 11 ) )
+   else
+      ::oDbf:Append()
+      ::oDbf:cDocumento    := cTipoDocumento
+      ::oDbf:cClave        := cClave
+      ::oDbf:cWeb          := cWeb
+      ::oDbf:idWeb         := str( idWeb, 11 )
+      ::oDbf:Save()
+   end if 
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
