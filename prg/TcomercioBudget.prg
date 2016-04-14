@@ -24,11 +24,15 @@ CLASS TComercioBudget
    METHOD isBudgetInGestool( oQuery )
 
    METHOD insertBudgetGestool( oQuery )
+      
       METHOD getCountersBudgetGestool( oQuery )
       METHOD insertDatosHeaderBudgetGestool( oQuery )
          METHOD setCustomerInBudget( oQuery )
+
       METHOD insertLineaBudgetGestool( oQuery )
          METHOD setProductInBudgetLine( oQueryLine )
+         METHOD parseProductProperties( idPropertyGestool ) 
+
       METHOD appendMessageBudget( oQuery )
       METHOD appendStateBudgetPrestashop( oQuery ) 
 
@@ -54,7 +58,6 @@ CLASS TComercioBudget
    METHOD oBudgetIncidenciaDatabase()                       INLINE ( ::TComercio:oPreCliI )
    METHOD oBudgetEstadoDatabase()                           INLINE ( ::TComercio:oPreCliE )
 
-   
    METHOD oCounterDatabase()                                INLINE ( ::TComercio:oCount )
    METHOD oPaymentDatabase()                                INLINE ( ::TComercio:oFPago )
    METHOD oDivisasDatabase()                                INLINE ( ::TComercio:oDivisas )
@@ -62,7 +65,8 @@ CLASS TComercioBudget
    METHOD oArticleDatabase()                                INLINE ( ::TComercio:oArt )
    METHOD oKitDatabase()                                    INLINE ( ::TComercio:oKit )
    METHOD oFamilyDatabase()                                 INLINE ( ::TComercio:oFam )
-   METHOD oProductDatabase()                                INLINE ( ::TComercio:oPro )
+   METHOD oProductDatabase()                                INLINE ( ::TComercio:oArt )
+   METHOD oPropertyDatabase()                               INLINE ( ::TComercio:oPro )
    
 END CLASS
 
@@ -85,8 +89,6 @@ METHOD insertBudgetInGestoolIfNotExist( oQuery ) CLASS TComercioBudget
    else
       ::insertBudgetGestool( oQuery )
    end if
-
-msgalert("salida insertBudgetInGestoolIfNotExist")
 
 Return ( Self )
 
@@ -213,8 +215,7 @@ METHOD insertLineaBudgetGestool( oQuery ) CLASS TComercioBudget
    local oQueryLine           
    local nNumLin           := 1
 
-   cQueryLine              := "SELECT * FROM " + ::TComercio:cPrefixtable( "order_detail" ) + " " + ;
-                              "WHERE id_order = " + alltrim( str( ::idBudgetPrestashop ) )
+   cQueryLine              := "SELECT * FROM " + ::TComercio:cPrefixtable( "order_detail" ) + " WHERE id_order = " + alltrim( str( ::idBudgetPrestashop ) )
    oQueryLine              := TMSQuery():New( ::oConexionMySQLDatabase(), cQueryLine )
 
    if oQueryLine:Open() .and. ( oQueryLine:RecCount() > 0 )
@@ -231,12 +232,12 @@ METHOD insertLineaBudgetGestool( oQuery ) CLASS TComercioBudget
          ::oBudgetLineDatabase():cDetalle       := oQueryLine:FieldGetByName( "product_name" )
          ::oBudgetLineDatabase():mLngDes        := oQueryLine:FieldGetByName( "product_name" )
          ::oBudgetLineDatabase():nCanPre        := 1
-         ::oBudgetLineDatabase():nUniCaja       := oQueryLine:FieldGetByName( "product_quantity" )
-         ::oBudgetLineDatabase():nPreDiv        := oQueryLine:FieldGetByName( "product_price" )
          ::oBudgetLineDatabase():nPosPrint      := nNumLin
          ::oBudgetLineDatabase():nNumLin        := nNumLin
          ::oBudgetLineDatabase():cAlmLin        := cDefAlm()
          ::oBudgetLineDatabase():nTarLin        := 1
+         ::oBudgetLineDatabase():nUniCaja       := oQueryLine:FieldGetByName( "product_quantity" )
+         ::oBudgetLineDatabase():nPreDiv        := oQueryLine:FieldGetByName( "product_price" )
          ::oBudgetLineDatabase():nDto           := oQueryLine:FieldGetByName( "reduction_percent" )
          ::oBudgetLineDatabase():nDtoDiv        := oQueryLine:FieldGetByName( "reduction_amount" )
          ::oBudgetLineDatabase():nIva           := ::TComercio:nIvaProduct( oQueryLine:FieldGetByName( "product_id" ) )
@@ -265,7 +266,6 @@ METHOD setProductInBudgetLine( oQueryLine )
 
    local idProductGestool                 := ::TPrestashopId:getGestoolProduct( oQueryLine:FieldGetByName( "product_id" ), ::getCurrentWebName() )
 
-   debug(oQueryLine:FieldGetByName( "product_id" ), "product_id")
    debug(idProductGestool, "idProductGestool" )
 
    if empty( idProductGestool )
@@ -289,10 +289,14 @@ METHOD setProductInBudgetLine( oQueryLine )
       ::oBudgetLineDatabase():cGrpFam     := RetFld( ::oArticleDatabase():Familia, ::oFamilyDatabase():cAlias, "cCodGrp" )
       ::oBudgetLineDatabase():cCodPr1     := ::oArticleDatabase():cCodPrp1
       ::oBudgetLineDatabase():cCodPr2     := ::oArticleDatabase():cCodPrp2
-      ::oBudgetLineDatabase():cValPr1     := ::TComercio:GetValPrp( oRetFld( ::oArticleDatabase():cCodPrp1, ::oProductDatabase(), "cCodWeb", "cCodPro" ), oQueryLine:FieldGetbyname( "product_attribute_id" ) )
-      ::oBudgetLineDatabase():cValPr2     := ::TComercio:GetValPrp( oRetFld( ::oArticleDatabase():cCodPrp2, ::oProductDatabase(), "cCodWeb", "cCodPro" ), oQueryLine:FieldGetbyname( "product_attribute_id" ) )
       ::oBudgetLineDatabase():lLote       := ::oArticleDatabase():lLote 
       ::oBudgetLineDatabase():cLote       := ::oArticleDatabase():cLote 
+
+      ::parseProductProperties( ::oArticleDatabase():cCodPrp1, oQueryLine:FieldGetByName( "product_name" ) )
+      ::parseProductProperties( ::oArticleDatabase():cCodPrp2, oQueryLine:FieldGetByName( "product_name" ) )
+
+//      ::oBudgetLineDatabase():cValPr1     := ::TComercio:GetValPrp( oRetFld( ::oArticleDatabase():cCodPrp1, ::oProductDatabase(), "cCodWeb", "cCodPro" ), oQueryLine:FieldGetbyname( "product_attribute_id" ) )
+//      ::oBudgetLineDatabase():cValPr2     := ::TComercio:GetValPrp( oRetFld( ::oArticleDatabase():cCodPrp2, ::oProductDatabase(), "cCodWeb", "cCodPro" ), oQueryLine:FieldGetbyname( "product_attribute_id" ) )
 
       Return ( .t. )
 
@@ -302,8 +306,35 @@ Return ( .f. )
 
 //---------------------------------------------------------------------------//
 
+METHOD parseProductProperties( idPropertyGestool, productName ) CLASS TComercioBudget
+
+   local cPropertieCode
+   local cPropertieName                   := oRetFld( idPropertyGestool, ::oPropertyDatabase(), "cDesPro" ) 
+
+   if empty(cPropertieName)
+      Return ( cPropertieName )
+   end if
+
+   cPropertieName                         := alltrim( cPropertieName ) + " : "
+
+   if at( cPropertieName, productName ) > 0
+      cPropertieCode                      := substr( productName, at( cPropertieName, productName ) ) 
+      cPropertieCode                      := strtran( cPropertieCode, cPropertieName, "" )   
+      if at( ",", cPropertieCode ) > 0
+         cPropertieCode                   := substr( cPropertieCode, 1, at( ",", cPropertieCode ) - 1 )
+      end if 
+   end if 
+
+   msgAlert( idPropertyGestool, "idPropertyGestool" )
+   msgAlert( cPropertieCode, "cPropertieCode" )
+
+Return ( cPropertieName )
+
+//---------------------------------------------------------------------------//
+
 METHOD appendMessageBudget ( oQuery ) CLASS TComercioBudget
 
+   local cQueryThead
    local oQueryThead
    local oQueryMessage
    local dFecha   := ::getDate( oQuery:FieldGetByName( "date_add" ) )

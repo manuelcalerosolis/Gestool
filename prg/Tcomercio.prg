@@ -1028,8 +1028,6 @@ METHOD loadOrders() CLASS TComercio
          oQuery:GoTop()
          while !oQuery:Eof()
 
-            ::meterProcesoText( "Descargando pedido " + alltrim( str( ++::nMeterProceso ) ) + " de "  + alltrim( str( ::nTotMeter ) ) )
-
             ::processOrder( oQuery )
 
             oQuery:Skip()
@@ -1041,8 +1039,6 @@ METHOD loadOrders() CLASS TComercio
    end if
 
    oQuery:Free()
-
-   oQuery   := nil
 
 Return ( .t. )
 
@@ -1058,11 +1054,18 @@ METHOD processOrder( oQuery ) CLASS TComercio
       return .f.
    end if 
 
+   ? oQuery:FieldGetByName( "module" )
+   
    if ::isRecivedDocumentAsBudget( oQuery:FieldGetByName( "module" ) )
+
+      ::meterProcesoText( "Descargando presupuesto " + alltrim( str( ++::nMeterProceso ) ) + " de "  + alltrim( str( ::nTotMeter ) ) )
 
       ::TComercioBudget:insertBudgetInGestoolIfNotExist( oQuery )
       
    else
+
+      ::meterProcesoText( "Descargando pedido " + alltrim( str( ++::nMeterProceso ) ) + " de "  + alltrim( str( ::nTotMeter ) ) )
+      ::meterProcesoText( "Controlador no finalizado" )
 
       if !::isOrderAlreadyRecived( oQuery )
          // ::insertPedidoPrestashop( oQuery )

@@ -6002,7 +6002,10 @@ Return ( by( nRow ) )
 
 Function Test()
 
-   //TScripts():CompilarEjecutarFicheroScript( FullCurDir() + "script\tpv\ImportarPricats.prg" ) 
+   // TComercioBudget():parseProductProperties( "Tallas",    "CINT. SRA. VAQ. PIEZAS - Tallas : 100, Color : VARIOS-900" )
+   // TComercioBudget():parseProductProperties( "Color",     "CINT. SRA. VAQ. PIEZAS - Tallas : 100, Color : VARIOS-900" )
+
+   // TScripts():CompilarEjecutarFicheroScript( FullCurDir() + "script\tpv\ImportarPricats.prg" ) 
 /*
    local TPrestaShopConfig
    local TFtpCUrl
