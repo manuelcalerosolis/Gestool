@@ -1062,12 +1062,6 @@ METHOD processOrder( oQuery ) CLASS TComercio
 
       ::TComercioBudget:insertBudgetInGestoolIfNotExist( oQuery )
       
-      /*
-      if !( ::isBudgetAlreadyRecived( oQuery ) )
-         ::insertPresupuestoPrestashop( oQuery )
-      end if
-      */
-
    else
 
       if !::isOrderAlreadyRecived( oQuery )
@@ -5609,7 +5603,7 @@ return ( .t. )
 //---------------------------------------------------------------------------//
 
 METHOD insertDatosCabeceraPresupuestoPretashop( oQuery ) CLASS TComercio
-
+/*
    ::oPreCliT:Append()
    ::oPreCliT:Blank()
 
@@ -5624,7 +5618,7 @@ METHOD insertDatosCabeceraPresupuestoPretashop( oQuery ) CLASS TComercio
    else
       ::writeText( "Error al descargar el presupuesto: " + ::cSeriePresupuesto + "/" + alltrim( str( ::nNumeroPresupuesto ) ) + "/" + ::cSufijoPresupuesto, 3 )
    end if   
-
+*/
 Return ( .t. )
  
 //---------------------------------------------------------------------------//

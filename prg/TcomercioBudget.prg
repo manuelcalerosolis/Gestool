@@ -76,11 +76,15 @@ METHOD insertBudgetInGestoolIfNotExist( oQuery ) CLASS TComercioBudget
 
    local idBudgetPrestashop          := oQuery:fieldGet( 1 )
 
+msgalert("entrada insertBudgetInGestoolIfNotExist")
+msgalert(::isBudgetInGestool( idBudgetPrestashop ), "::isBudgetInGestool( idBudgetPrestashop )")
    if ::isBudgetInGestool( idBudgetPrestashop )
       ::writeText( "El documento con el indentificador " + alltrim( str( idBudgetPrestashop ) ) + " ya ha sido recibido." )
    else
       ::insertBudgetGestool( oQuery )
    end if
+
+msgalert("salida insertBudgetInGestoolIfNotExist")
 
 Return ( Self )
 
@@ -106,11 +110,11 @@ METHOD insertBudgetGestool( oQuery ) CLASS TComercioBudget
                                                             oQuery:FieldGetByName( "id_address_delivery" ),;
                                                             oQuery:FieldGetByName( "id_address_invoice" ) ) 
 
-   ::getCountersBudgetGestool(                  oQuery )
-   ::insertDatosHeaderBudgetGestool(            oQuery )
-   ::insertLineaBudgetGestool(                  oQuery )
-   ::appendMessageBudget(                       oQuery )
-   ::appendStateBudgetPrestashop(               oQuery )  
+  ::getCountersBudgetGestool(                  oQuery )
+  ::insertDatosHeaderBudgetGestool(            oQuery )
+  // ::insertLineaBudgetGestool(                  oQuery )
+  // ::appendMessageBudget(                       oQuery )
+  // ::appendStateBudgetPrestashop(               oQuery )  
 
 Return ( .f. )
 
@@ -189,6 +193,8 @@ Return ( .t. )
 
  local cCodigocli          := ::TPrestashopId:getGestoolCustomer( oQuery:FieldGetByName( "id_customer" ), ::getCurrentWebName() )
 
+msgalert(" entrada setCustomerInBudget")
+
    if ::oCustomerDatabase():SeekInOrd( cCodigocli , "Cod")
 
       ::oBudgetHeaderDatabase():cCodCli   := ::oCustomerDatabase():Cod
@@ -204,6 +210,9 @@ Return ( .t. )
       ::oBudgetHeaderDatabase():nRegIva   := ::oCustomerDatabase():nRegIva
 
    end if
+
+
+msgalert(" salida setCustomerInBudget")
 
 Return ( .t. )
 
