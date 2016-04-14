@@ -23,6 +23,7 @@ CLASS TPrestaShopId FROM TMant
 
    METHOD setValueProduct( cClave, cWeb, idWeb )               INLINE ::setValue( "01", cClave, cWeb, idWeb )
    METHOD getValueProduct( cClave, cWeb, defaultValue )        INLINE ::getValue( "01", cClave, cWeb, defaultValue )
+   METHOD getGestoolProduct( idWeb, cWeb, defaultValue )       INLINE ::getValueGestool( "01", idWeb, cWeb, defaultValue )
    METHOD deleteDocumentValuesProduct( cWeb )                  INLINE ::deleteDocumentValues( "01", cWeb )
 
    METHOD setValueTax( cClave, cWeb, idWeb )                   INLINE ::setValue( "03", cClave, cWeb, idWeb )
@@ -81,7 +82,7 @@ CLASS TPrestaShopId FROM TMant
    METHOD isSeekValues( cTipoDocumento, cClave, cWeb )
 
    METHOD getValueGestool( cTipoDocumento, idWeb, cWeb, defaultValue )
-   METHOD setValueGestool( cTipoDocumento, idWeb, cWeb )
+   METHOD setValueGestool( cTipoDocumento, cClave, cWeb, idWeb )
    METHOD isSeekGestool( cTipoDocumento, idWeb, cWeb )
 
 END CLASS
@@ -231,14 +232,18 @@ METHOD setValueGestool( cTipoDocumento, cClave, cWeb, idWeb )
       RETURN ( .f. )
    end if 
 
-   if ::isSeekGestool( cTipoDocumento, cClave, cWeb )
-      ::oDbf:fieldPutByName( "idWeb", str( idWeb, 11 ) )
+debug( cClave, "cClave" )
+debug( cWeb, "cWeb" )
+debug( idWeb, "idWeb" )
+
+   if ::isSeekGestool( cTipoDocumento, idWeb, cWeb )
+      ::oDbf:fieldPutByName( "idWeb", idWeb )
    else
       ::oDbf:Append()
       ::oDbf:cDocumento    := cTipoDocumento
       ::oDbf:cClave        := cClave
       ::oDbf:cWeb          := cWeb
-      ::oDbf:idWeb         := str( idWeb, 11 )
+      ::oDbf:idWeb         := idWeb
       ::oDbf:Save()
    end if 
 
@@ -259,7 +264,7 @@ METHOD getValueGestool( cTipoDocumento, idWeb, cWeb, defaultValue )
    end if 
 
    if ::isSeekGestool( cTipoDocumento, idWeb, cWeb )
-      cClave      := ::oDbf:cClave
+      cClave      := alltrim( ::oDbf:cClave )
    end if 
 
 RETURN ( cClave )
@@ -272,3 +277,5 @@ METHOD isSeekGestool( cTipoDocumento, idWeb, cWeb )
    cWeb           := padr( cWeb, 80 )
 
 RETURN ( ::oDbf:seekInOrd( cTipoDocumento + idWeb + cWeb, "cId" ) )
+
+//---------------------------------------------------------------------------//
