@@ -14,6 +14,8 @@ CLASS TComercioBudget
    DATA cSerieBudget   
    DATA nNumeroBudget  
    DATA cSufijoBudget  
+
+   DATA idBudgetPrestashop
    
    METHOD New( TComercio )                                  CONSTRUCTOR
 
@@ -74,12 +76,10 @@ Return ( Self )
 
 METHOD insertBudgetInGestoolIfNotExist( oQuery ) CLASS TComercioBudget
 
-   local idBudgetPrestashop          := oQuery:fieldGet( 1 )
+   ::idBudgetPrestashop := oQuery:fieldGet( 1 )
 
-msgalert("entrada insertBudgetInGestoolIfNotExist")
-msgalert(::isBudgetInGestool( idBudgetPrestashop ), "::isBudgetInGestool( idBudgetPrestashop )")
-   if ::isBudgetInGestool( idBudgetPrestashop )
-      ::writeText( "El documento con el indentificador " + alltrim( str( idBudgetPrestashop ) ) + " ya ha sido recibido." )
+   if ::isBudgetInGestool()
+      ::writeText( "El documento con el indentificador " + alltrim( str( ::idBudgetPrestashop ) ) + " ya ha sido recibido." )
    else
       ::insertBudgetGestool( oQuery )
    end if
@@ -90,9 +90,9 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD isBudgetInGestool( idBudgetPrestashop ) CLASS TComercioBudget
+METHOD isBudgetInGestool() CLASS TComercioBudget
 
-   local idBudgetGestool               := ::TPrestashopId():getGestoolBudget( idBudgetPrestashop, ::getCurrentWebName() )
+   local idBudgetGestool               := ::TPrestashopId():getGestoolBudget( ::idBudgetPrestashop, ::getCurrentWebName() )
 
    if !empty( idBudgetGestool )
       if ::oBudgetHeaderDatabase():seekInOrd( idBudgetGestool, "NNUMPRE")
@@ -110,11 +110,13 @@ METHOD insertBudgetGestool( oQuery ) CLASS TComercioBudget
                                                             oQuery:FieldGetByName( "id_address_delivery" ),;
                                                             oQuery:FieldGetByName( "id_address_invoice" ) ) 
 
-  ::getCountersBudgetGestool(                  oQuery )
-  ::insertDatosHeaderBudgetGestool(            oQuery )
+   ::getCountersBudgetGestool(                  oQuery )
+   ::insertDatosHeaderBudgetGestool(            oQuery )
   // ::insertLineaBudgetGestool(                  oQuery )
   // ::appendMessageBudget(                       oQuery )
   // ::appendStateBudgetPrestashop(               oQuery )  
+
+   ::TPrestashopId():setGestoolBudget( ::idBudgetPrestashop, ::getCurrentWebName() )  
 
 Return ( .f. )
 
