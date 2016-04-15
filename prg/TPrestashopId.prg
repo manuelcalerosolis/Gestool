@@ -232,10 +232,6 @@ METHOD setValueGestool( cTipoDocumento, cClave, cWeb, idWeb )
       RETURN ( .f. )
    end if 
 
-debug( cClave, "cClave" )
-debug( cWeb, "cWeb" )
-debug( idWeb, "idWeb" )
-
    if ::isSeekGestool( cTipoDocumento, idWeb, cWeb )
       ::oDbf:fieldPutByName( "idWeb", idWeb )
    else

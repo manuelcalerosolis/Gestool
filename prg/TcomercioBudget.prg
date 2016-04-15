@@ -31,7 +31,8 @@ CLASS TComercioBudget
 
       METHOD insertLineaBudgetGestool( oQuery )
          METHOD setProductInBudgetLine( oQueryLine )
-         METHOD parseProductProperties( idPropertyGestool ) 
+         METHOD getProductProperty( idPropertyGestool, productName )
+         METHOD getNameProductProperty( idPropertyGestool ) 
 
       METHOD appendMessageBudget( oQuery )
       METHOD appendStateBudgetPrestashop( oQuery ) 
@@ -67,6 +68,7 @@ CLASS TComercioBudget
    METHOD oFamilyDatabase()                                 INLINE ( ::TComercio:oFam )
    METHOD oProductDatabase()                                INLINE ( ::TComercio:oArt )
    METHOD oPropertyDatabase()                               INLINE ( ::TComercio:oPro )
+   METHOD oPropertyLinesDatabase()                          INLINE ( ::TComercio:oTblPro )
    
 END CLASS
 
@@ -85,7 +87,7 @@ METHOD insertBudgetInGestoolIfNotExist( oQuery ) CLASS TComercioBudget
    ::idBudgetPrestashop := oQuery:fieldGet( 1 )
     
    if ::isBudgetInGestool()
-      ::writeText( "El documento con el indentificador " + alltrim( str( ::idBudgetPrestashop ) ) + " ya ha sido recibido." )
+      ::writeText( "El documento con el identificador " + alltrim( str( ::idBudgetPrestashop ) ) + " ya ha sido recibido." )
    else
       ::insertBudgetGestool( oQuery )
    end if
@@ -266,15 +268,11 @@ METHOD setProductInBudgetLine( oQueryLine )
 
    local idProductGestool                 := ::TPrestashopId:getGestoolProduct( oQueryLine:FieldGetByName( "product_id" ), ::getCurrentWebName() )
 
-   debug(idProductGestool, "idProductGestool" )
-
    if empty( idProductGestool )
       Return ( .f. )
    end if 
 
    if ::oArticleDatabase():seekInOrd( idProductGestool, "Codigo" )
-
-      debug( "found" )
 
       ::oBudgetLineDatabase():cRef        := ::oArticleDatabase():Codigo
       ::oBudgetLineDatabase():cUnidad     := ::oArticleDatabase():cUnidad
@@ -286,17 +284,14 @@ METHOD setProductInBudgetLine( oQueryLine )
       ::oBudgetLineDatabase():nCosDiv     := nCosto( ::oArticleDatabase():Codigo, ::oArticleDatabase():cAlias, ::oKitDatabase():cAlias )
       ::oBudgetLineDatabase():cCodTip     := ::oArticleDatabase():cCodTip
       ::oBudgetLineDatabase():cCodFam     := ::oArticleDatabase():Familia
-      ::oBudgetLineDatabase():cGrpFam     := RetFld( ::oArticleDatabase():Familia, ::oFamilyDatabase():cAlias, "cCodGrp" )
-      ::oBudgetLineDatabase():cCodPr1     := ::oArticleDatabase():cCodPrp1
-      ::oBudgetLineDatabase():cCodPr2     := ::oArticleDatabase():cCodPrp2
+      ::oBudgetLineDatabase():cGrpFam     := retfld( ::oArticleDatabase():Familia, ::oFamilyDatabase():cAlias, "cCodGrp" )
       ::oBudgetLineDatabase():lLote       := ::oArticleDatabase():lLote 
       ::oBudgetLineDatabase():cLote       := ::oArticleDatabase():cLote 
 
-      ::parseProductProperties( ::oArticleDatabase():cCodPrp1, oQueryLine:FieldGetByName( "product_name" ) )
-      ::parseProductProperties( ::oArticleDatabase():cCodPrp2, oQueryLine:FieldGetByName( "product_name" ) )
-
-//      ::oBudgetLineDatabase():cValPr1     := ::TComercio:GetValPrp( oRetFld( ::oArticleDatabase():cCodPrp1, ::oProductDatabase(), "cCodWeb", "cCodPro" ), oQueryLine:FieldGetbyname( "product_attribute_id" ) )
-//      ::oBudgetLineDatabase():cValPr2     := ::TComercio:GetValPrp( oRetFld( ::oArticleDatabase():cCodPrp2, ::oProductDatabase(), "cCodWeb", "cCodPro" ), oQueryLine:FieldGetbyname( "product_attribute_id" ) )
+      ::oBudgetLineDatabase():cCodPr1     := ::oArticleDatabase():cCodPrp1
+      ::oBudgetLineDatabase():cCodPr2     := ::oArticleDatabase():cCodPrp2
+      ::oBudgetLineDatabase():cValPr1     := ::getProductProperty( ::oArticleDatabase():cCodPrp1, oQueryLine:FieldGetByName( "product_name" ) )
+      ::oBudgetLineDatabase():cValPr2     := ::getProductProperty( ::oArticleDatabase():cCodPrp2, oQueryLine:FieldGetByName( "product_name" ) )
 
       Return ( .t. )
 
@@ -306,13 +301,30 @@ Return ( .f. )
 
 //---------------------------------------------------------------------------//
 
-METHOD parseProductProperties( idPropertyGestool, productName ) CLASS TComercioBudget
+METHOD getProductProperty( idPropertyGestool, productName ) CLASS TComercioBudget
 
-   local cPropertieCode
+   local productProperty      := ""
+   local productPropertyName  := ::getNameProductProperty( idPropertyGestool, productName )
+
+   if !empty( productPropertyName )
+
+      if ::oPropertyLinesDatabase():seekInOrd( upper( idPropertyGestool ) + upper( productPropertyName ), "cCodDes" )
+         productProperty      := ::oPropertyLinesDatabase():cCodTbl      
+      end if 
+
+   end if 
+
+Return ( productProperty )
+
+//---------------------------------------------------------------------------//
+
+METHOD getNameProductProperty( idPropertyGestool, productName ) CLASS TComercioBudget
+
+   local cPropertieCode                   := ""
    local cPropertieName                   := oRetFld( idPropertyGestool, ::oPropertyDatabase(), "cDesPro" ) 
 
-   if empty(cPropertieName)
-      Return ( cPropertieName )
+   if empty( cPropertieName )
+      Return ( cPropertieCode )
    end if
 
    cPropertieName                         := alltrim( cPropertieName ) + " : "
@@ -325,10 +337,7 @@ METHOD parseProductProperties( idPropertyGestool, productName ) CLASS TComercioB
       end if 
    end if 
 
-   msgAlert( idPropertyGestool, "idPropertyGestool" )
-   msgAlert( cPropertieCode, "cPropertieCode" )
-
-Return ( cPropertieName )
+Return ( cPropertieCode )
 
 //---------------------------------------------------------------------------//
 
