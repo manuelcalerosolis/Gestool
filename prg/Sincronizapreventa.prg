@@ -191,12 +191,6 @@ METHOD Search( oDlg )
    pdaRutaSenderReciver():CreateData( , ::oMessage, cPatServidor )
 
    /*
-   Sinconizacion de tablas de fpago--------------------------------------------
-   */
-
-   pdaFPagoSenderReciver():CreateData( ,::oMessage, cPatServidor )
-
-   /*
    Sinconizacion de tablas de almacen------------------------------------------
    */
 

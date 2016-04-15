@@ -241,13 +241,13 @@ METHOD insertLineaBudgetGestool( oQuery ) CLASS TComercioBudget
          ::oBudgetLineDatabase():nUniCaja       := oQueryLine:FieldGetByName( "product_quantity" )
          ::oBudgetLineDatabase():nPreDiv        := oQueryLine:FieldGetByName( "product_price" )
          ::oBudgetLineDatabase():nDto           := oQueryLine:FieldGetByName( "reduction_percent" )
-         ::oBudgetLineDatabase():nDtoDiv        := oQueryLine:FieldGetByName( "reduction_amount" )
+         ::oBudgetLineDatabase():nDtoDiv        := oQueryLine:FieldGetByName( "reduction_amount_tax_excl" )
          ::oBudgetLineDatabase():nIva           := ::TComercio:nIvaProduct( oQueryLine:FieldGetByName( "product_id" ) )
 
          ::setProductInBudgetLine( oQueryLine )
 
          if !::oBudgetLineDatabase():Save()
-            ::writeText( "Error al guardaar las lineas el pedido " + ::idBudgetGestool() )
+            ::writeText( "Error al guardar las lineas el pedido " + ::idBudgetGestool() )
          end if
 
          oQueryLine:Skip()
@@ -266,7 +266,11 @@ Return ( .t. )
          
 METHOD setProductInBudgetLine( oQueryLine )
 
-   local idProductGestool                 := ::TPrestashopId:getGestoolProduct( oQueryLine:FieldGetByName( "product_id" ), ::getCurrentWebName() )
+   local idProductGestool                 := oQueryLine:FieldGetByName( "product_reference" )
+
+   if empty( idProductGestool )
+      idProductGestool                    := ::TPrestashopId:getGestoolProduct( oQueryLine:FieldGetByName( "product_id" ), ::getCurrentWebName() )
+   end if 
 
    if empty( idProductGestool )
       Return ( .f. )

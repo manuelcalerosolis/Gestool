@@ -517,6 +517,9 @@ CLASS D
    METHOD Kit( nView )                                            INLINE ( ::Get( "ArtKit", nView ) )
 
    METHOD FormasPago( nView )                                     INLINE ( ::Get( "FPago", nView ) )
+      METHOD gotoFormasPago( id, nView )                          INLINE ( ::seekInOrd( ::FormasPago( nView ), id, "cCodPago" ) ) 
+      METHOD getStatusFormasPago( nView )                         INLINE ( ::aStatus := aGetStatus( ::FormasPago( nView ) ) )
+      METHOD setStatusFormasPago( nView )                         INLINE ( SetStatus( ::FormasPago( nView ), ::aStatus ) ) 
 
    METHOD Divisas( nView )                                        INLINE ( ::Get( "Divisas", nView ) )
 

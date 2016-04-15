@@ -5,12 +5,13 @@
 #include "Report.ch"
 
 static oWndBrw
+static nView
+
 static aBigResource
 static aPressResource
 static aTexto
-static bEdit         := { |aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode ) }
 
-static dbfFormasPago
+static bEdit         := { |aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode ) }
 
 #ifndef __PDA__
 
@@ -20,29 +21,32 @@ static dbfFormasPago
 
 STATIC FUNCTION OpenFiles( cPatEmp )
 
-   local lOpen       := .t.
+   local lOpen          := .t.
    local oBlock
 
-   DEFAULT cPatEmp   := cPatGrp()
+   DEFAULT cPatEmp      := cPatGrp()
 
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFormasPago ) )
-   SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
+      nView             := D():CreateView()
 
-   /*
-   Inicializacion de variables-------------------------------------------------
-   */
+      D():FormasPago( nView )
 
-   aBigResource      := aLittleResourceFormaPago()
-   aTexto            := aTextoResourceFormaPago()
+      /*
+      Inicializacion de variables-------------------------------------------------
+      */
+
+      aBigResource      := aLittleResourceFormaPago()
+      aTexto            := aTextoResourceFormaPago()
 
    RECOVER
 
       msgStop( "Imposible abrir todas las bases de datos" )
+
       CloseFiles()
-      lOpen          := .f.
+      
+      lOpen             := .f.
 
    END SEQUENCE
 
@@ -58,9 +62,7 @@ STATIC FUNCTION CloseFiles()
       oWndBrw  := nil
    end if
 
-   CLOSE ( dbfFormasPago )
-
-   dbfFormasPago    := nil
+   D():DeleteView( nView )
 
 RETURN ( .t. )
 
@@ -111,18 +113,18 @@ FUNCTION FPago( oMenuItem, oWnd )
                   "Posición" ;
          MRU      "Creditcards_16";
          BITMAP   clrTopArchivos ;
-         ALIAS    ( dbfFormasPago ) ;
-         APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfFormasPago ) );
-         DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdit, dbfFormasPago ) );
-         EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdit, dbfFormasPago ) ) ;
-         DELETE   ( WinDelRec(  oWndBrw:oBrw, dbfFormasPago ) );
+         ALIAS    ( D():FormasPago( nView ) ) ;
+         APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, D():FormasPago( nView ) ) );
+         DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdit, D():FormasPago( nView ) ) );
+         EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdit, D():FormasPago( nView ) ) ) ;
+         DELETE   ( WinDelRec(  oWndBrw:oBrw, D():FormasPago( nView ) ) );
          LEVEL    nLevel ;
          OF       oWnd
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Código"
          :cSortOrder       := "cCodPago"
-         :bEditValue       := {|| ( dbfFormasPago )->cCodPago }
+         :bEditValue       := {|| ( D():FormasPago( nView ) )->cCodPago }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -130,7 +132,7 @@ FUNCTION FPago( oMenuItem, oWnd )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Nombre"
          :cSortOrder       := "cDesPago"
-         :bEditValue       := {|| ( dbfFormasPago )->cDesPago }
+         :bEditValue       := {|| ( D():FormasPago( nView ) )->cDesPago }
          :nWidth           := 200
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -139,7 +141,7 @@ FUNCTION FPago( oMenuItem, oWnd )
          :cHeader          := "Táctil"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfFormasPago )->lShwTpv }
+         :bEditValue       := {|| ( D():FormasPago( nView ) )->lShwTpv }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "TACTIL16" )
@@ -148,7 +150,7 @@ FUNCTION FPago( oMenuItem, oWnd )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Posición"
          :cSortOrder       := "nPosTpv"
-         :bEditValue       := {|| if( ( dbfFormasPago )->lShwTpv, Trans( ( dbfFormasPago )->nPosTpv, "99" ), "" ) }
+         :bEditValue       := {|| if( ( D():FormasPago( nView ) )->lShwTpv, Trans( ( D():FormasPago( nView ) )->nPosTpv, "99" ), "" ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :nDataStrAlign    := 1
@@ -195,7 +197,7 @@ FUNCTION FPago( oMenuItem, oWnd )
 
 		DEFINE BTNSHELL RESOURCE "ZOOM" OF oWndBrw ;
 			NOBORDER ;
-         ACTION   ( WinZooRec( oWndBrw:oBrw, bEdit, dbfFormasPago ) );
+         ACTION   ( WinZooRec( oWndBrw:oBrw, bEdit, D():FormasPago( nView ) ) );
 			TOOLTIP 	"(Z)oom";
          MRU ;
          HOTKEY   "Z";
@@ -265,19 +267,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
    local cGetGas
    local oCmbImagen
    local cCmbImagen
-   local nMaxPosition
-
-   /*
-   Obtenemos la posicion del ultimo botón--------------------------------------
-   */
-
-   nOrd                 := ( dbfFormasPago )->( OrdSetFocus( "nPosTpv" ) )
-   nMaxPosition         := ( dbfFormasPago )->( OrdKeyCount() )
-   ( dbfFormasPago )->( OrdSetFocus( nOrd ) )
-
-   if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
-      nMaxPosition++
-   end if
 
    /*
    Valores por defecto---------------------------------------------------------
@@ -301,7 +290,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
    end if
 
    if Empty( aTmp[ ( dbfFormasPago )->( fieldPos( "nPosTpv" ) ) ] )
-      aTmp[ ( dbfFormasPago )->( fieldPos( "nPosTpv" ) ) ]  := nMaxPosition
+      aTmp[ ( dbfFormasPago )->( fieldPos( "nPosTpv" ) ) ]  := getMaxPosition()
    end if
 
    if aTmp[ ( dbfFormasPago )->( fieldPos( "cCodPago" ) ) ] == "00"
@@ -491,8 +480,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
          BITMAP   "LUPA" ;
          ON HELP  ( BrwChkSubcuenta( aGet[ ( dbfFormasPago )->( fieldPos( "cCtaCobro" ) ) ], oGetCob ) ) ;
          VALID    ( MkSubcuenta( aGet[ ( dbfFormasPago )->( fieldPos( "cCtaCobro" ) ) ], ;
-                   { aTmp[ ( dbfFormasPago )->( fieldPos( "cCtaCobro" ) ) ], ;
-                     aTmp[ ( dbfFormasPago )->( fieldPos( "cDesPago" ) ) ] }, oGetCob ) );
+                                 {  aTmp[ ( dbfFormasPago )->( fieldPos( "cCtaCobro" ) ) ], ;
+                                    aTmp[ ( dbfFormasPago )->( fieldPos( "cDesPago" ) ) ] }, oGetCob ) );
          OF oDlg
 
       REDEFINE GET oGetCob VAR cGetCob ;
@@ -507,8 +496,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
          BITMAP   "LUPA" ;
          ON HELP  ( BrwChkSubcuenta( aGet[ ( dbfFormasPago )->( fieldPos( "cCtaGas" ) ) ], oGetGas ) ) ;
          VALID    ( MkSubcuenta( aGet[ ( dbfFormasPago )->( fieldPos( "cCtaGas" ) ) ], ;
-                     { aTmp[ ( dbfFormasPago )->( fieldPos( "cCtaGas" ) ) ], ;
-                       aTmp[ ( dbfFormasPago )->( fieldPos( "cDesPago" ) ) ] }, oGetGas ) );
+                                 {  aTmp[ ( dbfFormasPago )->( fieldPos( "cCtaGas" ) ) ], ;
+                                    aTmp[ ( dbfFormasPago )->( fieldPos( "cDesPago" ) ) ] }, oGetGas ) );
          OF       oDlg
 
       REDEFINE GET oGetGas VAR cGetGas ;
@@ -586,7 +575,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
          ID       IDOK ;
 			OF 		oDlg ;
 			WHEN 		( nMode != ZOOM_MODE );
-         ACTION   ( lPreSave( aTmp, aGet, dbfFormasPago, oBrw, nMode, oDlg, oGet, oGet2, oCmbImagen ) )
+         ACTION   ( lPreSave( aTmp, aGet, oBrw, nMode, oDlg, oGet, oGet2, oCmbImagen ) )
 
 		REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -595,7 +584,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
          ACTION   ( oDlg:end() )
 
       if nMode != ZOOM_MODE
-         oDlg:AddFastKey( VK_F5, {|| lPreSave( aTmp, aGet, dbfFormasPago, oBrw, nMode, oDlg, oGet, oGet2, oCmbImagen ) } )
+         oDlg:AddFastKey( VK_F5, {|| lPreSave( aTmp, aGet, oBrw, nMode, oDlg, oGet, oGet2, oCmbImagen ) } )
       end if
 
       oDlg:AddFastKey ( VK_F1, {|| GoHelp() } )
@@ -608,46 +597,44 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION lPreSave( aTmp, aGet, dbfFormasPago, oBrw, nMode, oDlg, oGet, oGet2, oCmbImagen )
+STATIC FUNCTION lPreSave( aTmp, aGet, oBrw, nMode, oDlg, oGet, oGet2, oCmbImagen )
 
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
 
-      if Empty( aTmp[ ( dbfFormasPago )->( fieldPos( "cCodPago" ) ) ] )
+      if Empty( aTmp[ ( D():FormasPago( nView ) )->( fieldPos( "cCodPago" ) ) ] )
          MsgStop( "El código de la forma de pago no puede estar vacío." )
          oGet:SetFocus()
          Return nil
       end if
 
-      if dbSeekInOrd( aTmp[ ( dbfFormasPago )->( fieldPos( "cCodPago" ) ) ], "CCODPAGO", dbfFormasPago )
-         MsgStop( "Código ya existe " + Rtrim( aTmp[ ( dbfFormasPago )->( fieldPos( "cCodPago" ) ) ] ) )
+      D():getStatusFormasPago( nView ) 
+      if D():gotoFormasPago( aTmp[ ( D():FormasPago( nView ) )->( fieldPos( "cCodPago" ) ) ], nView )
+         msgStop( "Código ya existe " + alltrim( aTmp[ ( D():FormasPago( nView ) )->( fieldPos( "cCodPago" ) ) ] ) )
          Return nil
       end if
+      D():setStatusFormasPago( nView ) 
 
    end if
 
-   if Empty( aTmp[ ( dbfFormasPago )->( fieldPos( "cDesPago" ) ) ] )
+   if Empty( aTmp[ ( D():FormasPago( nView ) )->( fieldPos( "cDesPago" ) ) ] )
       MsgStop( "El nombre de la forma de pago no puede estar vacío." )
       oGet2:SetFocus()
       Return nil
    end if
 
-   if aTmp[ ( dbfFormasPago )->( fieldPos( "nPlazos" ) ) ] < 1
-      MsgStop( "El número de plazos tiene que ser mayor que cero." )
-      aGet[ ( dbfFormasPago )->( fieldPos( "nPlazos" ) ) ]:SetFocus()
+   if aTmp[ ( D():FormasPago( nView ) )->( fieldPos( "nPlazos" ) ) ] < 1
+      msgStop( "El número de plazos tiene que ser mayor que cero." )
+      aGet[ ( D():FormasPago( nView ) )->( fieldPos( "nPlazos" ) ) ]:SetFocus()
       Return nil
    end if
 
    // Numero de la imagen------------------------------------------------------
 
-   aTmp[ ( dbfFormasPago )->( fieldPos( "nImgTpv" ) ) ]  := oCmbImagen:nAt
+   aTmp[ ( D():FormasPago( nView ) )->( fieldPos( "nImgTpv" ) ) ]  := oCmbImagen:nAt
 
    // Grabamos el registro-----------------------------------------------------
 
-   WinGather( aTmp, aGet, dbfFormasPago, oBrw, nMode )
-
-   // Reordenación de posiciones-----------------------------------------------
-
-   // ChangePosition()
+   WinGather( aTmp, aGet, D():FormasPago( nView ), oBrw, nMode )
 
 Return ( oDlg:end( IDOK ) )
 
@@ -910,64 +897,6 @@ Function BuscarBrwTactil( Dbf, oBrw )
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
-
-CLASS pdaFPagoSenderReciver
-
-   Method CreateData()
-
-END CLASS
-
-//----------------------------------------------------------------------------//
-
-Method CreateData( oPgrActual, oSayStatus, cPatPreVenta ) CLASS pdaFPagoSenderReciver
-
-   local dbfFormasPago
-   local tmpFPago
-   local lExist      := .f.
-   local cFileName
-   local cPatPc      := if( Empty( cPatPreVenta ), cPatPc(), cPatPreVenta )
-
-   USE ( cPatGrp() + "FPago.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPago", @dbfFormasPago ) )
-   SET ADSINDEX TO ( cPatGrp() + "FPago.Cdx" ) ADDITIVE
-
-   dbUseArea( .t., cDriver(), cPatPc + "FPago.Dbf", cCheckArea( "FPago", @tmpFPago ), .t. )
-   ( tmpFPago )->( ordListAdd( cPatPc + "FPago.Cdx" ) )
-
-   if !Empty( oPgrActual )
-      oPgrActual:SetRange( 0, ( tmpFPago )->( OrdKeyCount() ) )
-   end if
-
-   ( tmpFPago )->( dbGoTop() )
-   while !( tmpFPago )->( eof() )
-
-         if ( dbfFormasPago )->( dbSeek( ( tmpFPago )->cCodPago ) )
-            dbPass( tmpFPago, dbfFormasPago, .f. )
-         else
-            dbPass( tmpFPago, dbfFormasPago, .t. )
-         end if
-
-         ( tmpFPago )->( dbSkip() )
-
-         if !Empty( oSayStatus )
-            oSayStatus:SetText( "Sincronizando Formas de pago " + Alltrim( Str( ( tmpFPago )->( OrdKeyNo() ) ) ) + " de " + Alltrim( Str( ( tmpFPago )->( OrdKeyCount() ) ) ) )
-         end if
-
-      SysRefresh()
-
-      if !Empty( oPgrActual )
-         oPgrActual:SetPos( ( tmpFPago )->( OrdKeyNo() ) )
-      end if
-
-      SysRefresh()
-
-   end while
-
-   CLOSE ( tmpFPago )
-   CLOSE ( dbfFormasPago )
-
-Return ( Self )
-
-//-------------------------------------------------------------------------//
 
 function IsFPago( cPatEmp )
 
@@ -1316,8 +1245,6 @@ End Class
 
 //---------------------------------------------------------------------------//
 
-#ifndef __PDA__
-
 FUNCTION BrwFPago( oGet, oGet2, lBigStyle )
 
 	local oDlg
@@ -1344,19 +1271,17 @@ FUNCTION BrwFPago( oGet, oGet2, lBigStyle )
       Return .f.
    end if
 
-   nOrd              := ( dbfFormasPago )->( OrdSetFocus( nOrd ) )
-   ( dbfFormasPago )->( dbGoTop() )
+   nOrd              := ( D():FormasPago( nView ) )->( OrdSetFocus( nOrd ) )
+   ( D():FormasPago( nView ) )->( dbGoTop() )
 
-   if lBigStyle
-      DEFINE DIALOG oDlg RESOURCE "BIGHELPENTRY"   TITLE "Seleccionar formas de pago"
-   else
-      DEFINE DIALOG oDlg RESOURCE "HELPENTRY"      TITLE "Seleccionar formas de pago"
-   end if
+   DEFINE DIALOG  oDlg ;
+      RESOURCE    ( if( lBigStyle, "BIGHELPENTRY", "HELPENTRY" ) );
+      TITLE       "Seleccionar formas de pago"
 
 		REDEFINE GET oGet1 VAR cGet1;
 			ID 		104 ;
-         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfFormasPago ) );
-         VALID    ( OrdClearScope( oBrw, dbfFormasPago ) );
+         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, D():FormasPago( nView ) ) );
+         VALID    ( OrdClearScope( oBrw, D():FormasPago( nView ) ) );
          BITMAP   "FIND" ;
          OF       oDlg
 
@@ -1364,7 +1289,7 @@ FUNCTION BrwFPago( oGet, oGet2, lBigStyle )
 			VAR 		cCbxOrd ;
 			ID 		102 ;
          ITEMS    aCbxOrd ;
-         ON CHANGE( ( dbfFormasPago )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus(), oCbxOrd:refresh() ) ;
+         ON CHANGE( ( D():FormasPago( nView ) )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus(), oCbxOrd:refresh() ) ;
 			OF 		oDlg
 
       oBrw                 := IXBrowse():New( oDlg )
@@ -1372,14 +1297,14 @@ FUNCTION BrwFPago( oGet, oGet2, lBigStyle )
       oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrw:cAlias          := dbfFormasPago
+      oBrw:cAlias          := D():FormasPago( nView )
       oBrw:nMarqueeStyle   := 5
       oBrw:cName           := "Browse.Formas de pago"
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Código"
          :cSortOrder       := "cCodPago"
-         :bEditValue       := {|| ( dbfFormasPago )->cCodPago }
+         :bEditValue       := {|| ( D():FormasPago( nView ) )->cCodPago }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
@@ -1387,7 +1312,7 @@ FUNCTION BrwFPago( oGet, oGet2, lBigStyle )
       with object ( oBrw:AddCol() )
          :cHeader          := "Nombre"
          :cSortOrder       := "cDesPago"
-         :bEditValue       := {|| ( dbfFormasPago )->cDesPago }
+         :bEditValue       := {|| ( D():FormasPago( nView ) )->cDesPago }
          :nWidth           := 200
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
@@ -1403,14 +1328,6 @@ FUNCTION BrwFPago( oGet, oGet2, lBigStyle )
          oBrw:nLineHeight     := 36
       end if
 
-   if ( "PDA" $ cParamsMain() )
-
-      REDEFINE SAY oSayText VAR cSayText ;
-         ID       100 ;
-         OF       oDlg
-
-   end if
-
       REDEFINE BUTTON ;
          ID       IDOK ;
 			OF 		oDlg ;
@@ -1421,28 +1338,24 @@ FUNCTION BrwFPago( oGet, oGet2, lBigStyle )
 			OF 		oDlg ;
 			ACTION 	( oDlg:end() )
 
-      if !( "PDA" $ cParamsMain() )
+      REDEFINE BUTTON ;
+         ID       500 ;
+         OF       oDlg ;
+         WHEN     ( nAnd( nLevel, ACC_APPD ) != 0 .and. !IsReport() ) ;
+         ACTION   ( WinAppRec( oBrw, bEdit, D():FormasPago( nView ) ) )
 
-         REDEFINE BUTTON ;
-            ID       500 ;
-            OF       oDlg ;
-            WHEN     ( nAnd( nLevel, ACC_APPD ) != 0 .and. !IsReport() ) ;
-            ACTION   ( WinAppRec( oBrw, bEdit, dbfFormasPago ) )
+      REDEFINE BUTTON ;
+         ID       501 ;
+         OF       oDlg ;
+         WHEN     ( nAnd( nLevel, ACC_EDIT ) != 0 .and. !IsReport() ) ;
+         ACTION   ( WinEdtRec( oBrw, bEdit, D():FormasPago( nView ) ) )
 
-         REDEFINE BUTTON ;
-            ID       501 ;
-            OF       oDlg ;
-            WHEN     ( nAnd( nLevel, ACC_EDIT ) != 0 .and. !IsReport() ) ;
-            ACTION   ( WinEdtRec( oBrw, bEdit, dbfFormasPago ) )
+      if nAnd( nLevel, ACC_APPD ) != 0 .and. !IsReport()
+         oDlg:AddFastKey( VK_F2, {|| WinAppRec( oBrw, bEdit, D():FormasPago( nView ) ) } )
+      end if
 
-         if nAnd( nLevel, ACC_APPD ) != 0 .and. !IsReport()
-            oDlg:AddFastKey( VK_F2, {|| WinAppRec( oBrw, bEdit, dbfFormasPago ) } )
-         end if
-
-         if nAnd( nLevel, ACC_EDIT ) != 0 .and. !IsReport()
-            oDlg:AddFastKey( VK_F3, {|| WinEdtRec( oBrw, bEdit, dbfFormasPago ) } )
-         end if
-
+      if nAnd( nLevel, ACC_EDIT ) != 0 .and. !IsReport()
+         oDlg:AddFastKey( VK_F3, {|| WinEdtRec( oBrw, bEdit, D():FormasPago( nView ) ) } )
       end if
 
    oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
@@ -1453,21 +1366,21 @@ FUNCTION BrwFPago( oGet, oGet2, lBigStyle )
 
    if oDlg:nResult == IDOK
 
-      cReturn     := ( dbfFormasPago )->cCodPago
+      cReturn     := ( D():FormasPago( nView ) )->cCodPago
 
       if IsObject( oGet )
-         oGet:cText( ( dbfFormasPago )->cCodPago )
+         oGet:cText( ( D():FormasPago( nView ) )->cCodPago )
       end if
 
       if IsObject( oGet2 )
-         oGet2:cText( ( dbfFormasPago )->cDesPago )
+         oGet2:cText( ( D():FormasPago( nView ) )->cDesPago )
       end if
 
    end if
 
-   OrdClearScope( oBrw, dbfFormasPago )
+   OrdClearScope( oBrw, D():FormasPago( nView ) )
 
-   SetBrwOpt( "BrwFPago", ( dbfFormasPago )->( OrdNumber() ) )
+   SetBrwOpt( "BrwFPago", ( D():FormasPago( nView ) )->( OrdNumber() ) )
 
    CloseFiles()
 
@@ -1476,8 +1389,6 @@ FUNCTION BrwFPago( oGet, oGet2, lBigStyle )
    end if
 
 RETURN ( cReturn )
-
-#endif
 
 //-------------------------------------------------------------------------//
 
@@ -1489,13 +1400,16 @@ FUNCTION cFpago( oGet, dbfFormasPago, oGetNombre, oGetPorcentajeEntrega, oGetPor
    local xValor   := Upper( oGet:varGet() )
 
    if Empty( xValor )
+      
       if IsObject( oGetNombre )
          oGetNombre:cText( "" )
       end if
+
       return .t.
+
    end if
 
-   if ( Alltrim( xValor ) == Replicate( "Z", len( Alltrim( xValor ) ) ) )
+   if ( alltrim( xValor ) == Replicate( "Z", len( alltrim( xValor ) ) ) )
       return .t.
    end if
 
@@ -1551,38 +1465,38 @@ Static Function ChangePosition( lInc )
    local aPos
    local nPos     := 1
    local aRec     := {}
-   local nRec     := ( dbfFormasPago )->( Recno() )
-   local nOrd     := ( dbfFormasPago )->( OrdSetFocus( "nPosTpv" ) )
+   local nRec     := ( D():FormasPago( nView ) )->( Recno() )
+   local nOrd     := ( D():FormasPago( nView ) )->( OrdSetFocus( "nPosTpv" ) )
 
    CursorWait()
 
    do case
       case IsTrue( lInc )
 
-         if ( dbfFormasPago )->( dbRLock() )
-            ( dbfFormasPago )->nPosTpv   := ( dbfFormasPago )->nPosTpv + 1.5
+         if ( D():FormasPago( nView ) )->( dbRLock() )
+            ( D():FormasPago( nView ) )->nPosTpv   := ( D():FormasPago( nView ) )->nPosTpv + 1.5
          end if
-         ( dbfFormasPago )->( dbUnLock() )
+         ( D():FormasPago( nView ) )->( dbUnLock() )
 
       case IsFalse( lInc )
 
-         if ( dbfFormasPago )->( dbRLock() )
-            ( dbfFormasPago )->nPosTpv   := ( dbfFormasPago )->nPosTpv - 1.5
+         if ( D():FormasPago( nView ) )->( dbRLock() )
+            ( D():FormasPago( nView ) )->nPosTpv   := ( D():FormasPago( nView ) )->nPosTpv - 1.5
          end if
-         ( dbfFormasPago )->( dbUnLock() )
+         ( D():FormasPago( nView ) )->( dbUnLock() )
 
    end case
 
    //--------------------------------------------------------------------------
 
-   ( dbfFormasPago )->( dbGoTop() )
-   while !( dbfFormasPago )->( eof() )
+   ( D():FormasPago( nView ) )->( dbGoTop() )
+   while !( D():FormasPago( nView ) )->( eof() )
 
-      if ( dbfFormasPago )->lShwTpv
-         aAdd( aRec, { ( dbfFormasPago )->( Recno() ), nPos++ } )
+      if ( D():FormasPago( nView ) )->lShwTpv
+         aAdd( aRec, { ( D():FormasPago( nView ) )->( Recno() ), nPos++ } )
       end if
 
-      ( dbfFormasPago )->( dbSkip() )
+      ( D():FormasPago( nView ) )->( dbSkip() )
 
    end while
 
@@ -1590,11 +1504,11 @@ Static Function ChangePosition( lInc )
 
    for each aPos in aRec
 
-      ( dbfFormasPago )->( dbGoTo( aPos[ 1 ] ) )
+      ( D():FormasPago( nView ) )->( dbGoTo( aPos[ 1 ] ) )
 
-      if ( dbfFormasPago )->( dbRLock() )
-         ( dbfFormasPago )->nPosTpv      := aPos[ 2 ]
-         ( dbfFormasPago )->( dbUnLock() )
+      if ( D():FormasPago( nView ) )->( dbRLock() )
+         ( D():FormasPago( nView ) )->nPosTpv      := aPos[ 2 ]
+         ( D():FormasPago( nView ) )->( dbUnLock() )
       end if
 
    next
@@ -1603,24 +1517,24 @@ Static Function ChangePosition( lInc )
 
    CursorWE()
 
-   ( dbfFormasPago )->( dbGoTo( nRec ) )
-   ( dbfFormasPago )->( OrdSetFocus( nOrd ) )
+   ( D():FormasPago( nView ) )->( dbGoTo( nRec ) )
+   ( D():FormasPago( nView ) )->( OrdSetFocus( nOrd ) )
 
 Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-function cFPagoWeb( cCodWeb, cFPago )
+function cFPagoWeb( cCodWeb, dbfFormasPago )
 
    local cCodigoFormaPago  := ""
-   local nRec              := ( cFPago )->( Recno() )
-   local nOrdAnt           := ( cFPago )->( OrdSetFocus( "cCodWeb" ) )
+   local nRec              := ( dbfFormasPago )->( Recno() )
+   local nOrdAnt           := ( dbfFormasPago )->( OrdSetFocus( "cCodWeb" ) )
 
    if !Empty( cCodWeb ) 
       
-      if ( cFPago )->( dbSeek( cCodWeb ) )
+      if ( dbfFormasPago )->( dbSeek( cCodWeb ) )
 
-         cCodigoFormaPago     := ( cFPago )->cCodPago
+         cCodigoFormaPago     := ( dbfFormasPago )->cCodPago
 
       else
 
@@ -1630,8 +1544,8 @@ function cFPagoWeb( cCodWeb, cFPago )
 
    end if
 
-   ( cFPago )->( dbGoTo( nRec ) )
-   ( cFPago )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfFormasPago )->( dbGoTo( nRec ) )
+   ( dbfFormasPago )->( OrdSetFocus( nOrdAnt ) )
 
 return cCodigoFormaPago
 
@@ -1655,3 +1569,15 @@ Return ( dNexDay( dFechaPartida, dbfClientes ) )
 
 //---------------------------------------------------------------------------//
 
+Static Function getMaxPosition()
+
+   local nRec           := ( D():FormasPago( nView ) )->( recno() )
+   local nOrd           := ( D():FormasPago( nView ) )->( ordsetfocus( "nPosTpv" ) )
+   local nMaxPosition   := ( D():FormasPago( nView ) )->( ordkeycount() )
+
+   ( D():FormasPago( nView ) )->( ordsetfocus( nOrd ) )
+   ( D():FormasPago( nView ) )->( dbgoto( nRec ) )
+
+Return ( nMaxPosition++ )
+
+//---------------------------------------------------------------------------//

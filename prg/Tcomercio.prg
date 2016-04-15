@@ -6065,7 +6065,7 @@ Return ( .t. )
 //---------------------------------------------------------------------------//
 
 METHOD syncSituacionesPresupuestoPrestashop( cCodWeb, cSerPre, nNumPre, cSufPre ) CLASS TComercio
-
+/*
    if !::connect()
       msginfo( "No ha sido posible la conexion" )
       Return .f.
@@ -6082,13 +6082,13 @@ METHOD syncSituacionesPresupuestoPrestashop( cCodWeb, cSerPre, nNumPre, cSufPre 
    ::filesClose()
 
    ::disconnect()
-
+*/
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
 METHOD syncronizeStatesPresupuestoGestool( cCodWeb, cSerPre, nNumPre, cSufPre ) CLASS TComercio
-   
+/*   
    local oQueryState
    
    oQueryState   := TMSQuery():New( ::oCon, "SELECT * FROM " + ::cPrefixtable( "order_history" ) +" where id_order = " + alltrim( str( cCodWeb ) ) )
@@ -6104,7 +6104,7 @@ METHOD syncronizeStatesPresupuestoGestool( cCodWeb, cSerPre, nNumPre, cSufPre ) 
       end while
       
    end if
-
+*/
 Return ( .t. )
 
 //---------------------------------------------------------------------------//

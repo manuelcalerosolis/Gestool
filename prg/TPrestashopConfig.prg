@@ -35,9 +35,8 @@ CLASS TPrestashopConfig
                                        INLINE ( ::hCurrentWeb := hCurrentWeb, ::cCurrentWeb := cCurrentWeb )
    METHOD getCurrentWeb( hCurrentWeb ) INLINE ( ::hCurrentWeb )
    
-   METHOD getFromCurrentWeb( key, default );
-                                       INLINE ( if( hhaskey( ::getCurrentWeb(), key ), hget( ::getCurrentWeb(), key ), default ) )
-   
+   METHOD getFromCurrentWeb( key, default )
+
    METHOD isActive()                   INLINE ( ::getFromCurrentWeb( "Active", .t. ) )
    METHOD isSilenceMode()              INLINE ( ::getFromCurrentWeb( "SilenceMode", .f. ) )
    METHOD isInvertedNameFormat()       INLINE ( ::getFromCurrentWeb( "InvertedNameFormat", .f. ) )
@@ -95,6 +94,22 @@ METHOD GetInstance() CLASS TPrestashopConfig
    end if
 
 RETURN ( ::oInstance )
+
+//---------------------------------------------------------------------------//
+
+METHOD getFromCurrentWeb( key, default ) CLASS TPrestashopConfig
+   
+   local value    := default
+
+   if empty( ::getCurrentWeb() )
+      Return ( value )
+   end if 
+
+   if hhaskey( ::getCurrentWeb(), key )
+      value       := hget( ::getCurrentWeb(), key )
+   end if 
+
+Return ( value )
 
 //---------------------------------------------------------------------------//
 
