@@ -6,38 +6,41 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TComercioBudget
+CLASS TComercioDocument
 
-   DATA  TComercio
+   DATA TComercio
 
-   DATA idBudgetPrestashop
+   DATA idDocumentPrestashop
 
-   DATA cSerieBudget   
-   DATA nNumeroBudget  
-   DATA cSufijoBudget  
-
-   DATA idBudgetPrestashop
-   
+   DATA cSerieDocument   
+   DATA nNumeroDocument  
+   DATA cSufijoDocument  
+  
    METHOD New( TComercio )                                  CONSTRUCTOR
 
-   METHOD insertBudgetInGestoolIfNotExist( oQuery )
-   METHOD isBudgetInGestool( oQuery )
+   METHOD insertDocumentInGestoolIfNotExist( oQuery )
+   METHOD isDocumentInGestool( oQuery )                     VIRTUAL
 
-   METHOD insertBudgetGestool( oQuery )
+   METHOD insertDocumentGestool( oQuery )
       
-      METHOD getCountersBudgetGestool( oQuery )
-      METHOD insertDatosHeaderBudgetGestool( oQuery )
-         METHOD setCustomerInBudget( oQuery )
+      METHOD getCountersDocumentGestool( oQuery )           VIRTUAL
+      METHOD insertHeaderDocumentGestool( oQuery )
+         METHOD setCustomerInDocument( oQuery )
 
-      METHOD insertLineaBudgetGestool( oQuery )
-         METHOD setProductInBudgetLine( oQueryLine )
+      METHOD insertLinesDocumentGestool( oQuery )
+         METHOD setProductInDocumentLine( oQueryLine )
          METHOD getProductProperty( idPropertyGestool, productName )
          METHOD getNameProductProperty( idPropertyGestool ) 
 
-      METHOD appendMessageBudget( oQuery )
-      METHOD appendStateBudgetPrestashop( oQuery ) 
+      METHOD insertMessageDocument( oQuery )
+      METHOD insertStateDocumentPrestashop( oQuery ) 
 
-   METHOD idBudgetGestool()                                 INLINE ( ::cSerieBudget + str( ::nNumeroBudget ) + ::cSufijoBudget ) 
+   METHOD setGestoolIdDocument( oDatabase )                 VIRTUAL
+   METHOD setGestoolSpecificDocument( oQuery )              VIRTUAL
+   METHOD setPrestashopIdDocument()                         VIRTUAL
+   METHOD setGestoolSpecificLineDocument()                  VIRTUAL
+
+   METHOD idDocumentGestool()                               INLINE ( ::cSerieDocument + str( ::nNumeroDocument ) + ::cSufijoDocument ) 
 
    // facades------------------------------------------------------------------
 
@@ -54,10 +57,6 @@ CLASS TComercioBudget
    METHOD oCustomerDatabase()                               INLINE ( ::TComercio:oCli )
    METHOD oAddressDatabase()                                INLINE ( ::TComercio:oObras )
    METHOD oPaymentDatabase()                                INLINE ( ::TComercio:oFPago )
-   METHOD oBudgetHeaderDatabase()                           INLINE ( ::TComercio:oPreCliT )
-   METHOD oBudgetLineDatabase()                             INLINE ( ::TComercio:oPreCliL )
-   METHOD oBudgetIncidenciaDatabase()                       INLINE ( ::TComercio:oPreCliI )
-   METHOD oBudgetEstadoDatabase()                           INLINE ( ::TComercio:oPreCliE )
 
    METHOD oCounterDatabase()                                INLINE ( ::TComercio:oCount )
    METHOD oPaymentDatabase()                                INLINE ( ::TComercio:oFPago )
@@ -74,7 +73,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( TComercio ) CLASS TComercioBudget
+METHOD New( TComercio ) CLASS TComercioDocument
 
    ::TComercio          := TComercio
 
@@ -82,128 +81,95 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertBudgetInGestoolIfNotExist( oQuery ) CLASS TComercioBudget
+METHOD insertDocumentInGestoolIfNotExist( oQuery ) CLASS TComercioDocument
 
-   ::idBudgetPrestashop := oQuery:fieldGet( 1 )
+   ::idDocumentPrestashop := oQuery:fieldGet( 1 )
     
-   if ::isBudgetInGestool()
-      ::writeText( "El documento con el identificador " + alltrim( str( ::idBudgetPrestashop ) ) + " ya ha sido recibido." )
+   if ::isDocumentInGestool()
+      ::writeText( "El documento con el identificador " + alltrim( str( ::idDocumentPrestashop ) ) + " ya ha sido recibido." )
    else
-      ::insertBudgetGestool( oQuery )
+      ::insertDocumentGestool( oQuery )
    end if
 
 Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD isBudgetInGestool() CLASS TComercioBudget
-
-   local idBudgetGestool               := ::TPrestashopId():getGestoolBudget( ::idBudgetPrestashop, ::getCurrentWebName() )
-
-   if !empty( idBudgetGestool )
-      if ::oBudgetHeaderDatabase():seekInOrd( idBudgetGestool, "NNUMPRE")
-         Return ( .t. )
-      end if 
-   end if 
-
-Return ( .f. )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertBudgetGestool( oQuery ) CLASS TComercioBudget
+METHOD insertDocumentGestool( oQuery ) CLASS TComercioDocument
 
    ::TComercioCustomer():insertCustomerInGestoolIfNotExist( oQuery:FieldGetByName( "id_customer" ),;
                                                             oQuery:FieldGetByName( "id_address_delivery" ),;
                                                             oQuery:FieldGetByName( "id_address_invoice" ) ) 
 
+   ::getCountersDocumentGestool(      oQuery )
+   ::insertHeaderDocumentGestool(     oQuery )
+   ::insertLinesDocumentGestool(      oQuery )
+   ::insertMessageDocument(           oQuery )
+   ::insertStateDocumentPrestashop(   oQuery )  
 
-   ::getCountersBudgetGestool(                  oQuery )
-   ::insertDatosHeaderBudgetGestool(            oQuery )
-   ::insertLineaBudgetGestool(                  oQuery )
-   // ::appendMessageBudget(                       oQuery )
-  // ::appendStateBudgetPrestashop(               oQuery )  
+   ::setPrestashopIdDocument()
    
-   ::TPrestashopId():setGestoolBudget( ::idBudgetGestool(), ::getCurrentWebName(), ::idBudgetPrestashop )
-
 Return ( .f. )
 
- //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-METHOD getCountersBudgetGestool( oQuery ) CLASS TComercioBudget
+METHOD insertHeaderDocumentGestool( oQuery ) CLASS TComercioDocument
 
-   ::idBudgetPrestashop          := oQuery:fieldGet( 1 )
-   ::cSerieBudget                := ::TPrestashopConfig():getBudgetSerie()
-   ::nNumeroBudget               := nNewDoc( ::cSerieBudget, ::oBudgetHeaderDatabase():cAlias, "nPreCli", , ::oCounterDatabase():cAlias )
-   ::cSufijoBudget               := retSufEmp()
+   ::oDocumentHeaderDatabase():Append()
 
-Return ( .t. )
+   ::setGestoolIdDocument( ::oDocumentHeaderDatabase() ) 
 
- //---------------------------------------------------------------------------//
- 
-METHOD insertDatosHeaderBudgetGestool( oQuery ) CLASS TComercioBudget
+   ::setGestoolSpecificDocument( oQuery )
 
-   ::oBudgetHeaderDatabase():Append()
+   ::oDocumentHeaderDatabase():cCodWeb      := ::idDocumentPrestashop
+   ::oDocumentHeaderDatabase():cCodAlm      := oUser():cAlmacen()
+   ::oDocumentHeaderDatabase():cCodCaj      := oUser():cCaja()
+   ::oDocumentHeaderDatabase():cCodObr      := "@" + alltrim( str( oQuery:FieldGetByName( "id_address_delivery" ) ) )
+   ::oDocumentHeaderDatabase():cCodPgo      := cFPagoWeb( alltrim( oQuery:FieldGetByName( "module" ) ), ::oPaymentDatabase():cAlias )
+   ::oDocumentHeaderDatabase():nTarifa      := 1
+   ::oDocumentHeaderDatabase():lSndDoc      := .t.
+   ::oDocumentHeaderDatabase():lIvaInc      := uFieldEmpresa( "lIvaInc" )
+   ::oDocumentHeaderDatabase():cManObr      := Padr( "Gastos envio", 250 )
+   ::oDocumentHeaderDatabase():nManObr      := oQuery:FieldGetByName( "total_shipping_tax_excl" )
+   ::oDocumentHeaderDatabase():nIvaMan      := oQuery:FieldGetByName( "carrier_tax_rate" )
+   ::oDocumentHeaderDatabase():cCodUsr      := cCurUsr()
+   ::oDocumentHeaderDatabase():dFecCre      := GetSysDate()
+   ::oDocumentHeaderDatabase():cTimCre      := Time()
+   ::oDocumentHeaderDatabase():cCodDlg      := oUser():cDelegacion()
+   ::oDocumentHeaderDatabase():lWeb         := .t.
+   ::oDocumentHeaderDatabase():lInternet    := .t.
+   ::oDocumentHeaderDatabase():nTotNet      := oQuery:FieldGetByName( "total_products" )
+   ::oDocumentHeaderDatabase():nTotIva      := oQuery:FieldGetByName( "total_paid_tax_incl" ) - ( oQuery:FieldGetByName( "total_products" ) + oQuery:FieldGetByName( "total_shipping_tax_incl" ) )
 
-   ::oBudgetHeaderDatabase():cSerPre      := ::cSerieBudget
-   ::oBudgetHeaderDatabase():nNumPre      := ::nNumeroBudget
-   ::oBudgetHeaderDatabase():cSufPre      := ::cSufijoBudget
-   ::oBudgetHeaderDatabase():cCodWeb      := ::idBudgetPrestashop
-   ::oBudgetHeaderDatabase():dFecPre      := ::getDate( oQuery:FieldGetByName( "date_add" ) )
-   ::oBudgetHeaderDatabase():cSuPre       := oQuery:FieldGetByName( "reference" )
-   ::oBudgetHeaderDatabase():cTurPre      := cCurSesion()
-   ::oBudgetHeaderDatabase():cCodAlm      := oUser():cAlmacen()
-   ::oBudgetHeaderDatabase():cCodCaj      := oUser():cCaja()
-   ::oBudgetHeaderDatabase():cCodObr      := "@" + alltrim( str( oQuery:FieldGetByName( "id_address_delivery" ) ) )
-   ::oBudgetHeaderDatabase():cCodPgo      := cFPagoWeb( alltrim( oQuery:FieldGetByName( "module" ) ), ::oPaymentDatabase():cAlias )
-   ::oBudgetHeaderDatabase():lEstado      := .t.
-   ::oBudgetHeaderDatabase():nTarifa      := 1
-   ::oBudgetHeaderDatabase():cDivPre      := cDivEmp()
-   ::oBudgetHeaderDatabase():nVdvPre      := nChgDiv( cDivEmp(), ::oDivisasDatabase():cAlias )
-   ::oBudgetHeaderDatabase():lSndDoc      := .t.
-   ::oBudgetHeaderDatabase():lIvaInc      := uFieldEmpresa( "lIvaInc" )
-   ::oBudgetHeaderDatabase():cManObr      := Padr( "Gastos envio", 250 )
-   ::oBudgetHeaderDatabase():nManObr      := oQuery:FieldGetByName( "total_shipping_tax_excl" )
-   ::oBudgetHeaderDatabase():nIvaMan      := oQuery:FieldGetByName( "carrier_tax_rate" )
-   ::oBudgetHeaderDatabase():lCloPre      := .f.
-   ::oBudgetHeaderDatabase():cCodUsr      := cCurUsr()
-   ::oBudgetHeaderDatabase():dFecCre      := GetSysDate()
-   ::oBudgetHeaderDatabase():cTimCre      := Time()
-   ::oBudgetHeaderDatabase():cCodDlg      := oUser():cDelegacion()
-   ::oBudgetHeaderDatabase():lWeb         := .t.
-   ::oBudgetHeaderDatabase():lInternet    := .t.
-   ::oBudgetHeaderDatabase():nTotNet      := oQuery:FieldGetByName( "total_products" )
-   ::oBudgetHeaderDatabase():nTotIva      := oQuery:FieldGetByName( "total_paid_tax_incl" ) - ( oQuery:FieldGetByName( "total_products" ) + oQuery:FieldGetByName( "total_shipping_tax_incl" ) )
-   ::oBudgetHeaderDatabase():nTotPre      := oQuery:FieldGetByName( "total_paid_tax_incl" )
+   ::setCustomerInDocument( oQuery )
 
-   ::setCustomerInBudget( oQuery )
-
-   if ::oBudgetHeaderDatabase():Save()
-      ::writeText( "Presupuesto " + ::cSerieBudget + "/" + alltrim( str( ::nNumeroBudget ) ) + "/" + ::cSufijoBudget + " introducido correctamente.", 3 )
+   if ::oDocumentHeaderDatabase():Save()
+      ::writeText( "Documento " + ::cSerieDocument + "/" + alltrim( str( ::nNumeroDocument ) ) + "/" + ::cSufijoDocument + " introducido correctamente.", 3 )
    else
-      ::writeText( "Error al descargar el presupuesto: " + ::cSerieBudget + "/" + alltrim( str( ::nNumeroBudget ) ) + "/" + ::cSufijoBudget, 3 )
+      ::writeText( "Error al descargar el documento : " + ::cSerieDocument + "/" + alltrim( str( ::nNumeroDocument ) ) + "/" + ::cSufijoDocument, 3 )
    end if   
 
 Return ( .t. )
 
  //---------------------------------------------------------------------------//
 
- METHOD setCustomerInBudget( oQuery ) CLASS TComercioBudget
+ METHOD setCustomerInDocument( oQuery ) CLASS TComercioDocument
 
-   local cCodigocli                       := ::TPrestashopId:getGestoolCustomer( oQuery:FieldGetByName( "id_customer" ), ::getCurrentWebName() )
+   local cCodigocli                          := ::TPrestashopId:getGestoolCustomer( oQuery:FieldGetByName( "id_customer" ), ::getCurrentWebName() )
 
    if ::oCustomerDatabase():SeekInOrd( cCodigocli , "Cod")
 
-      ::oBudgetHeaderDatabase():cCodCli   := ::oCustomerDatabase():Cod
-      ::oBudgetHeaderDatabase():cNomCli   := ::oCustomerDatabase():Titulo
-      ::oBudgetHeaderDatabase():cDirCli   := ::oCustomerDatabase():Domicilio
-      ::oBudgetHeaderDatabase():cPobCli   := ::oCustomerDatabase():Poblacion
-      ::oBudgetHeaderDatabase():cPrvCli   := ::oCustomerDatabase():Provincia
-      ::oBudgetHeaderDatabase():cPosCli   := ::oCustomerDatabase():CodPostal
-      ::oBudgetHeaderDatabase():cDniCli   := ::oCustomerDatabase():Nif
-      ::oBudgetHeaderDatabase():lModCli   := .t.
-      ::oBudgetHeaderDatabase():cTlfCli   := ::oCustomerDatabase():Telefono
-      ::oBudgetHeaderDatabase():cCodGrp   := ::oCustomerDatabase():cCodGrp
-      ::oBudgetHeaderDatabase():nRegIva   := ::oCustomerDatabase():nRegIva
+      ::oDocumentHeaderDatabase():cCodCli    := ::oCustomerDatabase():Cod
+      ::oDocumentHeaderDatabase():cNomCli    := ::oCustomerDatabase():Titulo
+      ::oDocumentHeaderDatabase():cDirCli    := ::oCustomerDatabase():Domicilio
+      ::oDocumentHeaderDatabase():cPobCli    := ::oCustomerDatabase():Poblacion
+      ::oDocumentHeaderDatabase():cPrvCli    := ::oCustomerDatabase():Provincia
+      ::oDocumentHeaderDatabase():cPosCli    := ::oCustomerDatabase():CodPostal
+      ::oDocumentHeaderDatabase():cDniCli    := ::oCustomerDatabase():Nif
+      ::oDocumentHeaderDatabase():lModCli    := .t.
+      ::oDocumentHeaderDatabase():cTlfCli    := ::oCustomerDatabase():Telefono
+      ::oDocumentHeaderDatabase():cCodGrp    := ::oCustomerDatabase():cCodGrp
+      ::oDocumentHeaderDatabase():nRegIva    := ::oCustomerDatabase():nRegIva
 
    end if
 
@@ -211,13 +177,14 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertLineaBudgetGestool( oQuery ) CLASS TComercioBudget
+METHOD insertLinesDocumentGestool( oQuery ) CLASS TComercioDocument
 
+   local nNumLin           := 1
    local cQueryLine        
    local oQueryLine           
-   local nNumLin           := 1
 
-   cQueryLine              := "SELECT * FROM " + ::TComercio:cPrefixtable( "order_detail" ) + " WHERE id_order = " + alltrim( str( ::idBudgetPrestashop ) )
+   cQueryLine              := "SELECT * FROM " + ::TComercio:cPrefixtable( "order_detail" ) + " " + ;
+                              "WHERE id_order = " + alltrim( str( ::idDocumentPrestashop ) )
    oQueryLine              := TMSQuery():New( ::oConexionMySQLDatabase(), cQueryLine )
 
    if oQueryLine:Open() .and. ( oQueryLine:RecCount() > 0 )
@@ -225,29 +192,29 @@ METHOD insertLineaBudgetGestool( oQuery ) CLASS TComercioBudget
       oQueryLine:GoTop()
       while !oQueryLine:Eof()
 
-         ::oBudgetLineDatabase():Append()
+         ::oDocumentLineDatabase():Append()
 
-         ::oBudgetLineDatabase():cSerPre        := ::cSerieBudget
-         ::oBudgetLineDatabase():nNumPre        := ::nNumeroBudget
-         ::oBudgetLineDatabase():cSufPre        := ::cSufijoBudget
-         ::oBudgetLineDatabase():dFecha         := ::getDate( oQuery:FieldGetByName( "date_add" ) )
-         ::oBudgetLineDatabase():cDetalle       := oQueryLine:FieldGetByName( "product_name" )
-         ::oBudgetLineDatabase():mLngDes        := oQueryLine:FieldGetByName( "product_name" )
-         ::oBudgetLineDatabase():nCanPre        := 1
-         ::oBudgetLineDatabase():nPosPrint      := nNumLin
-         ::oBudgetLineDatabase():nNumLin        := nNumLin
-         ::oBudgetLineDatabase():cAlmLin        := cDefAlm()
-         ::oBudgetLineDatabase():nTarLin        := 1
-         ::oBudgetLineDatabase():nUniCaja       := oQueryLine:FieldGetByName( "product_quantity" )
-         ::oBudgetLineDatabase():nPreDiv        := oQueryLine:FieldGetByName( "product_price" )
-         ::oBudgetLineDatabase():nDto           := oQueryLine:FieldGetByName( "reduction_percent" )
-         ::oBudgetLineDatabase():nDtoDiv        := oQueryLine:FieldGetByName( "reduction_amount_tax_excl" )
-         ::oBudgetLineDatabase():nIva           := ::TComercio:nIvaProduct( oQueryLine:FieldGetByName( "product_id" ) )
+         ::setGestoolIdDocument( ::oDocumentLineDatabase() )
+         
+         ::setGestoolSpecificLineDocument( )
 
-         ::setProductInBudgetLine( oQueryLine )
+         ::oDocumentLineDatabase():dFecha         := ::getDate( oQuery:FieldGetByName( "date_add" ) )
+         ::oDocumentLineDatabase():cDetalle       := oQueryLine:FieldGetByName( "product_name" )
+         ::oDocumentLineDatabase():mLngDes        := oQueryLine:FieldGetByName( "product_name" )
+         ::oDocumentLineDatabase():nPosPrint      := nNumLin
+         ::oDocumentLineDatabase():nNumLin        := nNumLin
+         ::oDocumentLineDatabase():cAlmLin        := cDefAlm()
+         ::oDocumentLineDatabase():nTarLin        := 1
+         ::oDocumentLineDatabase():nUniCaja       := oQueryLine:FieldGetByName( "product_quantity" )
+         ::oDocumentLineDatabase():nPreDiv        := oQueryLine:FieldGetByName( "product_price" )
+         ::oDocumentLineDatabase():nDto           := oQueryLine:FieldGetByName( "reduction_percent" )
+         ::oDocumentLineDatabase():nDtoDiv        := oQueryLine:FieldGetByName( "reduction_amount_tax_excl" )
+         ::oDocumentLineDatabase():nIva           := ::TComercio:nIvaProduct( oQueryLine:FieldGetByName( "product_id" ) )
 
-         if !::oBudgetLineDatabase():Save()
-            ::writeText( "Error al guardar las lineas el pedido " + ::idBudgetGestool() )
+         ::setProductInDocumentLine( oQueryLine )
+
+         if !::oDocumentLineDatabase():Save()
+            ::writeText( "Error al guardar las lineas del documento " + ::idDocumentGestool() )
          end if
 
          oQueryLine:Skip()
@@ -264,7 +231,7 @@ Return ( .t. )
  
 //---------------------------------------------------------------------------//
          
-METHOD setProductInBudgetLine( oQueryLine )
+METHOD setProductInDocumentLine( oQueryLine )
 
    local idProductGestool                 := oQueryLine:FieldGetByName( "product_reference" )
 
@@ -278,24 +245,24 @@ METHOD setProductInBudgetLine( oQueryLine )
 
    if ::oArticleDatabase():seekInOrd( idProductGestool, "Codigo" )
 
-      ::oBudgetLineDatabase():cRef        := ::oArticleDatabase():Codigo
-      ::oBudgetLineDatabase():cUnidad     := ::oArticleDatabase():cUnidad
-      ::oBudgetLineDatabase():nPesoKg     := ::oArticleDatabase():nPesoKg
-      ::oBudgetLineDatabase():cPesoKg     := ::oArticleDatabase():cUnidad
-      ::oBudgetLineDatabase():nVolumen    := ::oArticleDatabase():nVolumen
-      ::oBudgetLineDatabase():cVolumen    := ::oArticleDatabase():cVolumen
-      ::oBudgetLineDatabase():nCtlStk     := ::oArticleDatabase():nCtlStock
-      ::oBudgetLineDatabase():nCosDiv     := nCosto( ::oArticleDatabase():Codigo, ::oArticleDatabase():cAlias, ::oKitDatabase():cAlias )
-      ::oBudgetLineDatabase():cCodTip     := ::oArticleDatabase():cCodTip
-      ::oBudgetLineDatabase():cCodFam     := ::oArticleDatabase():Familia
-      ::oBudgetLineDatabase():cGrpFam     := retfld( ::oArticleDatabase():Familia, ::oFamilyDatabase():cAlias, "cCodGrp" )
-      ::oBudgetLineDatabase():lLote       := ::oArticleDatabase():lLote 
-      ::oBudgetLineDatabase():cLote       := ::oArticleDatabase():cLote 
+      ::oDocumentLineDatabase():cRef        := ::oArticleDatabase():Codigo
+      ::oDocumentLineDatabase():cUnidad     := ::oArticleDatabase():cUnidad
+      ::oDocumentLineDatabase():nPesoKg     := ::oArticleDatabase():nPesoKg
+      ::oDocumentLineDatabase():cPesoKg     := ::oArticleDatabase():cUnidad
+      ::oDocumentLineDatabase():nVolumen    := ::oArticleDatabase():nVolumen
+      ::oDocumentLineDatabase():cVolumen    := ::oArticleDatabase():cVolumen
+      ::oDocumentLineDatabase():nCtlStk     := ::oArticleDatabase():nCtlStock
+      ::oDocumentLineDatabase():nCosDiv     := nCosto( ::oArticleDatabase():Codigo, ::oArticleDatabase():cAlias, ::oKitDatabase():cAlias )
+      ::oDocumentLineDatabase():cCodTip     := ::oArticleDatabase():cCodTip
+      ::oDocumentLineDatabase():cCodFam     := ::oArticleDatabase():Familia
+      ::oDocumentLineDatabase():cGrpFam     := retfld( ::oArticleDatabase():Familia, ::oFamilyDatabase():cAlias, "cCodGrp" )
+      ::oDocumentLineDatabase():lLote       := ::oArticleDatabase():lLote 
+      ::oDocumentLineDatabase():cLote       := ::oArticleDatabase():cLote 
 
-      ::oBudgetLineDatabase():cCodPr1     := ::oArticleDatabase():cCodPrp1
-      ::oBudgetLineDatabase():cCodPr2     := ::oArticleDatabase():cCodPrp2
-      ::oBudgetLineDatabase():cValPr1     := ::getProductProperty( ::oArticleDatabase():cCodPrp1, oQueryLine:FieldGetByName( "product_name" ) )
-      ::oBudgetLineDatabase():cValPr2     := ::getProductProperty( ::oArticleDatabase():cCodPrp2, oQueryLine:FieldGetByName( "product_name" ) )
+      ::oDocumentLineDatabase():cCodPr1     := ::oArticleDatabase():cCodPrp1
+      ::oDocumentLineDatabase():cCodPr2     := ::oArticleDatabase():cCodPrp2
+      ::oDocumentLineDatabase():cValPr1     := ::getProductProperty( ::oArticleDatabase():cCodPrp1, oQueryLine:FieldGetByName( "product_name" ) )
+      ::oDocumentLineDatabase():cValPr2     := ::getProductProperty( ::oArticleDatabase():cCodPrp2, oQueryLine:FieldGetByName( "product_name" ) )
 
       Return ( .t. )
 
@@ -305,7 +272,7 @@ Return ( .f. )
 
 //---------------------------------------------------------------------------//
 
-METHOD getProductProperty( idPropertyGestool, productName ) CLASS TComercioBudget
+METHOD getProductProperty( idPropertyGestool, productName ) CLASS TComercioDocument
 
    local productProperty      := ""
    local productPropertyName  := ::getNameProductProperty( idPropertyGestool, productName )
@@ -322,22 +289,22 @@ Return ( productProperty )
 
 //---------------------------------------------------------------------------//
 
-METHOD getNameProductProperty( idPropertyGestool, productName ) CLASS TComercioBudget
+METHOD getNameProductProperty( idPropertyGestool, productName ) CLASS TComercioDocument
 
-   local cPropertieCode                   := ""
-   local cPropertieName                   := oRetFld( idPropertyGestool, ::oPropertyDatabase(), "cDesPro" ) 
+   local cPropertieCode       := ""
+   local cPropertieName       := oRetFld( idPropertyGestool, ::oPropertyDatabase(), "cDesPro" ) 
 
    if empty( cPropertieName )
       Return ( cPropertieCode )
    end if
 
-   cPropertieName                         := alltrim( cPropertieName ) + " : "
+   cPropertieName             := alltrim( cPropertieName ) + " : "
 
    if at( cPropertieName, productName ) > 0
-      cPropertieCode                      := substr( productName, at( cPropertieName, productName ) ) 
-      cPropertieCode                      := strtran( cPropertieCode, cPropertieName, "" )   
+      cPropertieCode          := substr( productName, at( cPropertieName, productName ) ) 
+      cPropertieCode          := strtran( cPropertieCode, cPropertieName, "" )   
       if at( ",", cPropertieCode ) > 0
-         cPropertieCode                   := substr( cPropertieCode, 1, at( ",", cPropertieCode ) - 1 )
+         cPropertieCode       := substr( cPropertieCode, 1, at( ",", cPropertieCode ) - 1 )
       end if 
    end if 
 
@@ -345,41 +312,43 @@ Return ( cPropertieCode )
 
 //---------------------------------------------------------------------------//
 
-METHOD appendMessageBudget ( oQuery ) CLASS TComercioBudget
+METHOD insertMessageDocument( oQuery ) CLASS TComercioDocument
 
+   local dFecha   
    local cQueryThead
    local oQueryThead
+   local cQueryMessage
    local oQueryMessage
-   local dFecha   := ::getDate( oQuery:FieldGetByName( "date_add" ) )
 
-   oQueryThead    := TMSQuery():New( ::oConexionMySQLDatabase(), "SELECT * FROM " + ::Tcomercio:cPrefixtable( "customer_thread" ) + ;
-                                     + " WHERE id_order=" + alltrim( str( ::idBudgetPrestashop ) ) )
+   dFecha                  := ::getDate( oQuery:FieldGetByName( "date_add" ) )
 
-   if oQueryThead:Open() .and. ( oQueryThead:RecCount() > 0 )
+   cQueryThead             := "SELECT * FROM " + ::Tcomercio:cPrefixtable( "customer_thread" ) + " " + ;
+                              "WHERE id_order = " + alltrim( str( ::idDocumentPrestashop ) )
+   oQueryThead             := TMSQuery():New( ::oConexionMySQLDatabase(), cQueryThead )
+
+   if oQueryThead:Open() .and. ( oQueryThead:recCount() > 0 )
 
       oQueryThead:GoTop()
-      while !oQueryThead:Eof()
+      while !oQueryThead:eof()
 
-         oQueryMessage    := TMSQuery():New( ::oConexionMySQLDatabase(), "SELECT * FROM " + ;
-                                             ::Tcomercio:cPrefixtable( "customer_message" ) + " WHERE id_customer_thread=" + ;
-                                             + alltrim( str( oQueryThead:FieldGet( 1 ) ) ) )
+         cQueryMessage     := "SELECT * FROM " + ::Tcomercio:cPrefixtable( "customer_message" ) + " " +;
+                              "WHERE id_customer_thread = " + alltrim( str( oQueryThead:fieldget( 1 ) ) )
+         oQueryMessage     := TMSQuery():New( ::oConexionMySQLDatabase(), cQueryMessage )
 
-         if oQueryMessage:Open() .and. ( oQueryMessage:RecCount() > 0 )
+         if oQueryMessage:Open() .and. ( oQueryMessage:recCount() > 0 )
 
             oQueryMessage:GoTop()
-            while !oQueryMessage:Eof()
+            while !oQueryMessage:eof()
 
-               ::oBudgetIncidenciaDatabase():Append()
-               ::oBudgetIncidenciaDatabase():Blank()
+               ::oDocumentIncidenciaDatabase():Append()
 
-               ::oBudgetIncidenciaDatabase():cSerPre   := ::cSerieBudget
-               ::oBudgetIncidenciaDatabase():nNumPre   := ::nNumeroBudget
-               ::oBudgetIncidenciaDatabase():cSufPre   := ::cSufijoBudget
-               ::oBudgetIncidenciaDatabase():dFecInc   := dFecha
-               ::oBudgetIncidenciaDatabase():mDesInc   := oQueryMessage:FieldGetByName( "message" )
-               ::oBudgetIncidenciaDatabase():lAviso    := .t.
+               ::setGestoolIdDocument( ::oDocumentIncidenciaDatabase() )
 
-               ::oBudgetIncidenciaDatabase():Save()
+               ::oDocumentIncidenciaDatabase():dFecInc   := dFecha
+               ::oDocumentIncidenciaDatabase():mDesInc   := oQueryMessage:FieldGetByName( "message" )
+               ::oDocumentIncidenciaDatabase():lAviso    := .t.
+
+               ::oDocumentIncidenciaDatabase():Save()
 
                oQueryMessage:Skip()
 
@@ -401,45 +370,223 @@ Return ( .t. )
  
 //---------------------------------------------------------------------------//
 
-METHOD appendStateBudgetPrestashop( oQuery ) CLASS TComercioBudget
+METHOD insertStateDocumentPrestashop( oQuery ) CLASS TComercioDocument
    
-   local oQueryState
    local nLanguage
+   local cQueryState
+   local oQueryState
    
-   oQueryState    := TMSQuery():New( ::oConexionMySQLDatabase(), "SELECT * FROM " + ;
-                                     ::Tcomercio:cPrefixtable( "order_history" ) + " h inner join "+ ;
-                                     ::Tcomercio:cPrefixtable( "order_state_lang" ) + " s on h.id_order_state = s.id_order_state WHERE s.id_lang = " + ;
-                                     str( nLanguage ) + " and id_order = " + alltrim( str( ::idBudgetPrestashop ) ) )
+   cQueryState    := "SELECT * FROM " + ::TComercio:cPrefixtable( "order_history" ) + " h " + ;
+                     "INNER JOIN " + ::TComercio:cPrefixtable( "order_state_lang" ) + " s on h.id_order_state = s.id_order_state " + ;
+                     "WHERE s.id_lang = " + str( ::TComercio:nLanguage ) + " and id_order = " + alltrim( str( ::idDocumentPrestashop ) )
+   oQueryState    := TMSQuery():New( ::oConexionMySQLDatabase(), cQueryState  )
 
-   if oQueryState:Open()
+   if oQueryState:Open() .and. oQueryState:RecCount() > 0
 
-      if oQueryState:RecCount() > 0
+      oQueryState:GoTop()
 
-         oQueryState:GoTop()
+      while !oQueryState:Eof()
 
-         while !oQueryState:Eof()
+         ::oDocumentEstadoDatabase():Append()
 
-            ::oBudgetEstadoDatabase():Append()
-            ::oBudgetEstadoDatabase():Blank()
+         ::setGestoolIdDocument( ::oDocumentEstadoDatabase() )
 
-            ::oBudgetEstadoDatabase():cSerPre   := ::cSerieBudget
-            ::oBudgetEstadoDatabase():nNumPre   := ::nNumeroBudget
-            ::oBudgetEstadoDatabase():cSufPre   := ::cSufijoBudget
-            ::oBudgetEstadoDatabase():cSitua    := oQueryState:FieldGetByName( "name" )
-            ::oBudgetEstadoDatabase():dFecSit   := ::getDate( oQueryState:FieldGetByName( "date_add" ) )
-            ::oBudgetEstadoDatabase():tFecSit   := ::getTime( oQueryState:FieldGetByName( "date_add" ) )
-            ::oBudgetEstadoDatabase():idPs      := oQueryState:FieldGetByName( "id_order_history" )
-                     
-            ::oBudgetEstadoDatabase():Save()
+         ::oDocumentEstadoDatabase():cSitua    := oQueryState:FieldGetByName( "name" )
+         ::oDocumentEstadoDatabase():dFecSit   := ::getDate( oQueryState:FieldGetByName( "date_add" ) )
+         ::oDocumentEstadoDatabase():tFecSit   := ::getTime( oQueryState:FieldGetByName( "date_add" ) )
+         ::oDocumentEstadoDatabase():idPs      := oQueryState:FieldGetByName( "id_order_history" )
+                  
+         ::oDocumentEstadoDatabase():Save()
 
          oQueryState:Skip()
 
-          end while
+      end while
 
-      end if
+   end if
                
-   end if      
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS TComercioBudget FROM TComercioDocument
+
+   METHOD isDocumentInGestool() 
+   METHOD getCountersDocumentGestool( oQuery ) 
+
+   METHOD setGestoolIdDocument( oDatabase ) 
+   METHOD setGestoolSpecificDocument( oQuery )
+   METHOD setGestoolSpecificLineDocument()
+
+   METHOD setPrestashopIdDocument()
+
+   METHOD oDocumentHeaderDatabase()                     INLINE ( ::TComercio:oPreCliT )
+   METHOD oDocumentLineDatabase()                       INLINE ( ::TComercio:oPreCliL )
+   METHOD oDocumentIncidenciaDatabase()                 INLINE ( ::TComercio:oPreCliI )
+   METHOD oDocumentEstadoDatabase()                     INLINE ( ::TComercio:oPreCliE )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD isDocumentInGestool() CLASS TComercioBudget
+
+   local idDocumentGestool := ::TPrestashopId():getGestoolBudget( ::idDocumentPrestashop, ::getCurrentWebName() )
+
+   if !empty( idDocumentGestool )
+      if ::oDocumentHeaderDatabase():seekInOrd( idDocumentGestool, "nNumPre" )
+         Return ( .t. )
+      end if 
+   end if 
+
+Return ( .f. )
+
+//---------------------------------------------------------------------------//
+
+METHOD getCountersDocumentGestool( oQuery ) CLASS TComercioBudget
+
+   ::idDocumentPrestashop  := oQuery:fieldGet( 1 )
+   ::cSerieDocument        := ::TPrestashopConfig():getBudgetSerie()
+   ::nNumeroDocument       := nNewDoc( ::cSerieDocument, ::oDocumentHeaderDatabase():cAlias, "nPreCli", , ::oCounterDatabase():cAlias )
+   ::cSufijoDocument       := retSufEmp()
 
 Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD setGestoolIdDocument( oDatabase ) CLASS TComercioBudget
+
+   oDatabase:cSerPre   := ::cSerieDocument
+   oDatabase:nNumPre   := ::nNumeroDocument
+   oDatabase:cSufPre   := ::cSufijoDocument
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setGestoolSpecificDocument( oQuery ) CLASS TComercioBudget
+
+   ::oDocumentHeaderDatabase():dFecPre    := ::getDate( oQuery:FieldGetByName( "date_add" ) )
+   ::oDocumentHeaderDatabase():cTurPre    := cCurSesion()
+   ::oDocumentHeaderDatabase():cSuPre     := oQuery:FieldGetByName( "reference" )
+   ::oDocumentHeaderDatabase():lEstado    := .t.
+   ::oDocumentHeaderDatabase():cDivPre    := cDivEmp()
+   ::oDocumentHeaderDatabase():nVdvPre    := nChgDiv( cDivEmp(), ::oDivisasDatabase():cAlias )
+   ::oDocumentHeaderDatabase():lCloPre    := .f.
+   ::oDocumentHeaderDatabase():nTotPre    := oQuery:FieldGetByName( "total_paid_tax_incl" )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setGestoolSpecificLineDocument() CLASS TComercioBudget
+
+   ::oDocumentLineDatabase():nCanPre      := 1
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setPrestashopIdDocument() CLASS TComercioBudget
+
+   ::TPrestashopId():setGestoolBudget( ::idDocumentGestool(), ::getCurrentWebName(), ::idDocumentPrestashop )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS TComercioOrder FROM TComercioDocument
+
+   METHOD isDocumentInGestool() 
+   METHOD getCountersDocumentGestool( oQuery ) 
+   METHOD setGestoolIdDocument( oDatabase ) 
+
+   METHOD setPrestashopIdDocument()
+   METHOD setGestoolSpecificDocument( oQuery )
+   METHOD setGestoolSpecificLineDocument() 
+
+   METHOD oDocumentHeaderDatabase()                     INLINE ( ::TComercio:oPedCliT )
+   METHOD oDocumentLineDatabase()                       INLINE ( ::TComercio:oPedCliL )
+   METHOD oDocumentIncidenciaDatabase()                 INLINE ( ::TComercio:oPedCliI )
+   METHOD oDocumentEstadoDatabase()                     INLINE ( ::TComercio:oPedCliE )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD isDocumentInGestool() CLASS TComercioOrder
+
+   local idDocumentGestool := ::TPrestashopId():getGestoolOrder( ::idDocumentPrestashop, ::getCurrentWebName() )
+
+   if !empty( idDocumentGestool )
+      if ::oDocumentHeaderDatabase():seekInOrd( idDocumentGestool, "nNumPed" )
+         Return ( .t. )
+      end if 
+   end if 
+
+Return ( .f. )
+
+//---------------------------------------------------------------------------//
+
+METHOD getCountersDocumentGestool( oQuery ) CLASS TComercioOrder
+
+   ::idDocumentPrestashop  := oQuery:fieldGet( 1 )
+   ::cSerieDocument        := ::TPrestashopConfig():getBudgetSerie()
+   ::nNumeroDocument       := nNewDoc( ::cSerieDocument, ::oDocumentHeaderDatabase():cAlias, "nPedCli", , ::oCounterDatabase():cAlias )
+   ::cSufijoDocument       := retSufEmp()
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD setGestoolIdDocument( oDatabase ) CLASS TComercioOrder
+
+   oDatabase:cSerPed       := ::cSerieDocument
+   oDatabase:nNumPed       := ::nNumeroDocument
+   oDatabase:cSufPed       := ::cSufijoDocument
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setGestoolSpecificDocument( oQuery ) CLASS TComercioOrder
+
+   ::oDocumentHeaderDatabase():dFecPed    := ::getDate( oQuery:FieldGetByName( "date_add" ) ) 
+   ::oDocumentHeaderDatabase():cTurPed    := cCurSesion()
+   ::oDocumentHeaderDatabase():cSuPed     := oQuery:FieldGetByName( "reference" )
+   ::oDocumentHeaderDatabase():cDivPed    := cDivEmp()
+   ::oDocumentHeaderDatabase():nVdvPed    := nChgDiv( cDivEmp(), ::oDivisasDatabase():cAlias )
+   ::oDocumentHeaderDatabase():lCloPed    := .f.
+   ::oDocumentHeaderDatabase():nTotPed    := oQuery:FieldGetByName( "total_paid_tax_incl" )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setGestoolSpecificLineDocument() CLASS TComercioOrder
+
+   ::oDocumentLineDatabase():nCanPed      := 1
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setPrestashopIdDocument() CLASS TComercioOrder
+
+   ::TPrestashopId():setGestoolOrder( ::idDocumentGestool(), ::getCurrentWebName(), ::idDocumentPrestashop )
+
+Return ( self )
 
 //---------------------------------------------------------------------------//

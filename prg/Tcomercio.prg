@@ -24,6 +24,7 @@ CLASS TComercio
    DATA  TPrestashopId
    DATA  TComercioCustomer
    DATA  TComercioBudget
+   DATA  TComercioOrder
    
    DATA  aSend
    DATA  oInt
@@ -507,6 +508,8 @@ METHOD New( oMenuItem, oMeterTotal, oTextTotal ) CLASS TComercio
    ::TComercioCustomer     := TComercioCustomer():New( Self )
 
    ::TComercioBudget       := TComercioBudget():New( Self )
+
+   ::TComercioOrder        := TComercioOrder():New( Self )
 
 RETURN ( Self )
 
@@ -1054,22 +1057,17 @@ METHOD processOrder( oQuery ) CLASS TComercio
       return .f.
    end if 
 
-   ? oQuery:FieldGetByName( "module" )
-   
    if ::isRecivedDocumentAsBudget( oQuery:FieldGetByName( "module" ) )
 
       ::meterProcesoText( "Descargando presupuesto " + alltrim( str( ++::nMeterProceso ) ) + " de "  + alltrim( str( ::nTotMeter ) ) )
 
-      ::TComercioBudget:insertBudgetInGestoolIfNotExist( oQuery )
+      ::TComercioBudget:insertDocumentInGestoolIfNotExist( oQuery )
       
    else
 
       ::meterProcesoText( "Descargando pedido " + alltrim( str( ++::nMeterProceso ) ) + " de "  + alltrim( str( ::nTotMeter ) ) )
-      ::meterProcesoText( "Controlador no finalizado" )
 
-      if !::isOrderAlreadyRecived( oQuery )
-         // ::insertPedidoPrestashop( oQuery )
-      end if
+      ::TComercioOrder:insertDocumentInGestoolIfNotExist( oQuery )
 
    endif
 
@@ -6200,7 +6198,7 @@ Return ( id  )
 //---------------------------------------------------------------------------//
 
 METHOD syncSituacionesPedidoPrestashop( cCodWeb, cSerPed, nNumPed, cSufPed ) CLASS TComercio
-
+/*
    if !::connect()
       msginfo( "No ha sido posible la conexion" )
       Return .f.
@@ -6217,13 +6215,13 @@ METHOD syncSituacionesPedidoPrestashop( cCodWeb, cSerPed, nNumPed, cSufPed ) CLA
    ::filesClose()
 
    ::disconnect()
-
+*/
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
 METHOD syncronizeStatesGestool( cCodWeb, cSerPed, nNumPed, cSufPed ) CLASS TComercio
-   
+/*   
    local oQueryState
    
    oQueryState   := TMSQuery():New( ::oCon, "SELECT * FROM " + ::cPrefixtable( "order_history" ) +" where id_order = " + alltrim( str( cCodWeb ) ) )
@@ -6239,7 +6237,7 @@ METHOD syncronizeStatesGestool( cCodWeb, cSerPed, nNumPed, cSufPed ) CLASS TCome
       end while
       
    end if
-
+*/
 Return ( .t. )
 
 //---------------------------------------------------------------------------//

@@ -68,15 +68,20 @@ CLASS TPrestaShopId FROM TMant
    METHOD deleteValueCustomer( cClave, cWeb )                  INLINE ::deleteValue( "12", cClave, cWeb )
    METHOD deleteDocumentValuesCustomer( cWeb )                 INLINE ::deleteDocumentValues( "12", cWeb )
 
-   METHOD setValueAddress( cClave, cWeb, idWeb )              INLINE ::setValue( "13", cClave, cWeb, idWeb )
-   METHOD getGestoolAddress( idWeb, cWeb, defaultValue )      INLINE ::getValueGestool( "13", idWeb, cWeb, defaultValue )
-   METHOD deleteValueAddress( cClave, cWeb )                  INLINE ::deleteValue( "13", cClave, cWeb )
-   METHOD deleteDocumentValuesAddress( cWeb )                 INLINE ::deleteDocumentValues( "13", cWeb )
+   METHOD setValueAddress( cClave, cWeb, idWeb )               INLINE ::setValue( "13", cClave, cWeb, idWeb )
+   METHOD getGestoolAddress( idWeb, cWeb, defaultValue )       INLINE ::getValueGestool( "13", idWeb, cWeb, defaultValue )
+   METHOD deleteValueAddress( cClave, cWeb )                   INLINE ::deleteValue( "13", cClave, cWeb )
+   METHOD deleteDocumentValuesAddress( cWeb )                  INLINE ::deleteDocumentValues( "13", cWeb )
 
-   METHOD setGestoolBudget( cClave, cWeb, idWeb )             INLINE ::setValueGestool( "14", cClave, cWeb, idWeb )
-   METHOD getGestoolBudget( idWeb, cWeb, defaultValue )       INLINE ::getValueGestool( "14", idWeb, cWeb, defaultValue )
-   METHOD deleteValueBudget( cClave, cWeb )                   INLINE ::deleteValue( "14", cClave, cWeb )
-   METHOD deleteDocumentValuesBudget( cWeb )                  INLINE ::deleteDocumentValues( "14", cWeb )
+   METHOD setGestoolBudget( cClave, cWeb, idWeb )              INLINE ::setValueGestool( "14", cClave, cWeb, idWeb )
+   METHOD getGestoolBudget( idWeb, cWeb, defaultValue )        INLINE ::getValueGestool( "14", idWeb, cWeb, defaultValue )
+   METHOD deleteValueBudget( cClave, cWeb )                    INLINE ::deleteValue( "14", cClave, cWeb )
+   METHOD deleteDocumentValuesBudget( cWeb )                   INLINE ::deleteDocumentValues( "14", cWeb )
+
+   METHOD setGestoolOrder( cClave, cWeb, idWeb )               INLINE ::setValueGestool( "15", cClave, cWeb, idWeb )
+   METHOD getGestoolOrder( idWeb, cWeb, defaultValue )         INLINE ::getValueGestool( "15", idWeb, cWeb, defaultValue )
+   METHOD deleteValueOrder( cClave, cWeb )                     INLINE ::deleteValue( "15", cClave, cWeb )
+   METHOD deleteDocumentValuesOrder( cWeb )                    INLINE ::deleteDocumentValues( "15", cWeb )
 
    METHOD isValidParameters( cTipoDocumento, cClave, cWeb, idWeb ) 
    METHOD isSeekValues( cTipoDocumento, cClave, cWeb )
