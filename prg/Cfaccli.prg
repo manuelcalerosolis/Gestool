@@ -958,8 +958,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    end if
 
    /*
-   Ponemos la factura como Contabilizada
-   ----------------------------------------------------------------------------
+   Ponemos la factura como Contabilizada---------------------------------------
    */
 
    if lSimula

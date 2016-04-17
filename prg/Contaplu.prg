@@ -61,6 +61,13 @@ static lAsientoIntraComunitario  := .f.
 
 //----------------------------------------------------------------------------//
 
+Function getDiarioDatabaseContaplus()     ; return ( cDiario )
+Function getCuentaDatabaseContaplus()     ; return ( cCuenta )
+Function getSubCuentaDatabaseContaplus()  ; return ( cSubCuenta )
+Function getEmpresaDatabaseContaplus()    ; return ( cEmpresa )
+
+//----------------------------------------------------------------------------//
+
 Function ChkRuta( cRutaConta, lMessage )
 
    local lReturn     := .f.
@@ -1572,6 +1579,11 @@ Function WriteAsiento( aTemp, cDivisa, lMessage )
    local oError
 
    DEFAULT lMessage  := .f.
+
+   if isFalse( runEventScript( "Contaplus\beforeWriteAsiento", aTemp ) )
+      debug( "isFalse" )
+      Return .f.
+   end if    
 
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
