@@ -530,8 +530,16 @@ METHOD isDocumentInGestool() CLASS TComercioOrder
 
    local idDocumentGestool := ::TPrestashopId():getGestoolOrder( ::idDocumentPrestashop, ::getCurrentWebName() )
 
+   debug( idDocumentGestool, "idDocumentGestool" )
+
    if !empty( idDocumentGestool )
+
+   debug (::oDocumentHeaderDatabase():seekInOrd( idDocumentGestool, "nNumPed" ), "Búsqueda" )
+
       if ::oDocumentHeaderDatabase():seekInOrd( idDocumentGestool, "nNumPed" )
+
+      debug( "despues de buscar" )
+
          Return ( .t. )
       end if 
    end if 
