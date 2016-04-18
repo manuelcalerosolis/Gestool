@@ -1,7 +1,5 @@
 #include "hbclass.ch"
 #include "hbmxml.ch"
-
-#include "hbxml.ch"
 #include "fileio.ch"
 
 #define CRLF                  chr( 13 ) + chr( 10 )
@@ -267,7 +265,7 @@ METHOD SaveDocumentXML()
 
    ferase( ::cFileOut )
 
-   ::oXml:Write( ::cFileOut, HBXML_STYLE_TAB ) //HBXML_STYLE_NONEWLINE )
+   ::oXml:Write( ::cFileOut, HBXML_STYLE_NONEWLINE ) // HBXML_STYLE_TAB ) //
 
 return nil
 
