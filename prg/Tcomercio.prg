@@ -1329,7 +1329,7 @@ METHOD DelIdArticuloPrestashop( hArticuloData ) Class TComercio
 
    while !::oArt:Eof()
 
-      ::TPrestashopId:deleteValueProduct( hget( hArticuloData, "id" ), ::getCurrentWebName() ) 
+      ::TPrestashopId:deleteDocumentValues( hget( hArticuloData, "id" ), ::getCurrentWebName() ) 
 
       ::writeText( 'Eliminando código web en el artículo ' + alltrim( ::oArt:Nombre ), 3  )
 
@@ -5236,7 +5236,7 @@ METHOD BuildDeleteProductPrestashop( idProduct ) CLASS TComercio
 
    // Quitamos la referencia de nuestra tabla-------------------------------------
 
-   ::TPrestashopId:deleteValueProduct( idProduct, ::getCurrentWebName() )
+   ::TPrestashopId:deleteDocumentValuesProduct( idProduct, ::getCurrentWebName() )
 
 Return ( Self )
 
