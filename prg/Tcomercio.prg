@@ -260,6 +260,7 @@ CLASS TComercio
 
    METHOD isAviableWebToExport()
       METHOD controllerExportPrestashop()
+      METHOD controllerExportProductPrestashop( idProduct )
       METHOD controllerOrderPrestashop()
       METHOD controllerUpdateStockPrestashop()
 
@@ -4981,6 +4982,19 @@ METHOD controllerExportPrestashop( idProduct ) Class TComercio
    ErrorBlock( oBlock )
 
    ::EnableDialog()
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD controllerExportProductPrestashop( idProduct ) Class TComercio
+
+   ::oWaitMeter         := TWaitMeter():New( "Actualizando articulos", "Espere por favor..." )
+   ::oWaitMeter:Run()
+
+   ::controllerExportPrestashop( idProduct )
+
+   ::oWaitMeter:End()
 
 Return .t.
 
