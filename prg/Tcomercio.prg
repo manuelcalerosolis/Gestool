@@ -5522,10 +5522,10 @@ METHOD uploadInformationStockProductPrestashop() CLASS TComercio
 
       end if
       
-      ::meterProcesoText(  "Actualizando stock de " + alltrim( hGet( hStock, "cCodArt" ) ) + ;
+      ::meterProcesoText(  "Actualizando stock de artículo" + alltrim( hGet( hStock, "cCodArt" ) ) + ;
                            " con propiedades " + alltrim( str( hGet( hStock, "cCodWebVal1" ) ) )   + ;
                            " , " + alltrim( str( hGet( hStock, "cCodWebVal2" ) ) ) + ;
-                           " y cantidad " + alltrim(  hGet( hStock, "nStock" ) ) )
+                           " y cantidad " + alltrim( hGet( hStock, "nStock" ) ) )
       
    next
 

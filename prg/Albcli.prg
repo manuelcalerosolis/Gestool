@@ -5331,8 +5331,6 @@ Static Function QuiAlbCli()
    TComercio():getInstance():resetProductsToUpadateStocks()
 
    while ( D():Get( "AlbCliL", nView ) )->( dbSeek( cNumAlb ) ) .and. !( D():Get( "AlbCliL", nView ) )->( eof() )
-      
-      TComercio():getInstance():appendProductsToUpadateStocks( ( D():Get( "AlbCliL", nView ) )->cRef, nView )
 
       if aScan( aNumPed, ( D():Get( "AlbCliL", nView ) )->cNumPed ) == 0
          aAdd( aNumPed, ( D():Get( "AlbCliL", nView ) )->cNumPed )
@@ -8988,13 +8986,8 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
          if ( D():Get( "AlbCliL", nView ) )->( dbSeek( cAlbaran ) )
             while ( ( D():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliL", nView ) )->nNumAlb ) + ( D():Get( "AlbCliL", nView ) )->cSufAlb ) == cAlbaran .and. !( D():Get( "AlbCliL", nView ) )->( eof() )
-               
                dbPass( D():Get( "AlbCliL", nView ), dbfTmpLin, .t. )
-
-               TComercio():getInstance():appendProductsToUpadateStocks( ( D():Get( "AlbCliL", nView ) )->cRef, nView )  
-
                ( D():Get( "AlbCliL", nView ) )->( dbSkip() )
-               
             end while
          end if
 
@@ -11041,34 +11034,38 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
 
    else
 
-      /*
-      Guardamos el registro de manera normal
-      */
+      // Guardamos el registro de manera normal--------------------------------
 
       WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
 
    end if
 
-   // Liberacion del bitmap-------------------------------------------------------
+   // Liberacion del bitmap----------------------------------------------------
 
    if !empty( bmpImage )
        bmpImage:Hide()
        PalBmpFree( bmpImage:hBitmap, bmpImage:hPalette )
    end if
 
+   // Anotamos para modificar este articulo------------------------------------
+
+   TComercio():getInstance():appendProductsToUpadateStocks( aTmp[ _CREF ], nView )
+
+   // Limpiamos varaibles para posteriro uso----------------------------------- 
+
    cOldCodArt     := ""
    cOldUndMed     := ""
 
    if nMode == APPD_MODE .and. lEntCon()
 
-      RecalculaTotal( aTmpAlb )
+      recalculaTotal( aTmpAlb )
 
       aCopy( dbBlankRec( dbfTmpLin ), aTmp )
       aEval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )
 
       setDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, oTotal, aTmpAlb )
 
-      SysRefresh()
+      sysRefresh()
 
    else
 
@@ -11675,8 +11672,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
          dbPass( dbfTmpLin, D():Get( "AlbCliL", nView ), .t., cSerAlb, nNumAlb, cSufAlb )
 
       end if   
-
-      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpLin )->cRef, nView )
 
       ( dbfTmpLin )->( dbSkip() )
 

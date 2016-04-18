@@ -205,7 +205,7 @@ METHOD insertLinesDocumentGestool( oQuery ) CLASS TComercioDocument
          ::oDocumentLineDatabase():cAlmLin        := cDefAlm()
          ::oDocumentLineDatabase():nTarLin        := 1
          ::oDocumentLineDatabase():nUniCaja       := oQueryLine:FieldGetByName( "product_quantity" )
-         ::oDocumentLineDatabase():nPreDiv        := oQueryLine:FieldGetByName( "product_price" )
+         ::oDocumentLineDatabase():nPreDiv        := oQueryLine:FieldGetByName( "product_price" ) 
          ::oDocumentLineDatabase():nDto           := oQueryLine:FieldGetByName( "reduction_percent" )
          ::oDocumentLineDatabase():nDtoDiv        := oQueryLine:FieldGetByName( "reduction_amount_tax_excl" )
          ::oDocumentLineDatabase():nIva           := ::TComercio:nIvaProduct( oQueryLine:FieldGetByName( "product_id" ) )

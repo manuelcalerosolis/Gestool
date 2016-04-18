@@ -699,3 +699,8 @@ return( E1SetColTinyAsLogical( ::hMySQL, nCol, lLogical ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD fieldGetDecimalByName( cFName ) CLASS TMSQuery
+    local n     := ::FieldPos( cFName )
+return( val( ::ColRead( n ) ) )
+
+
