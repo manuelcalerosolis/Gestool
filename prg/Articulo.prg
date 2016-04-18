@@ -18263,7 +18263,7 @@ Static Function BuildWeb( idProduct, idShop )
    TComercio:TextTotal( getAutoTextDialog() )
 
    TComercio:setWebToExport( idShop ) 
-   TComercio:buildExportarPrestashop( idProduct )
+   TComercio:controllerExportPrestashop( idProduct )
 
 Return .t.
 
