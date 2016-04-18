@@ -3,7 +3,7 @@
 
 function InicioHRB()
 
-   SetStockArticulos()
+   //SetStockArticulos()
    
 return .t.
 

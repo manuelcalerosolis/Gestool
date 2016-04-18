@@ -456,6 +456,7 @@ METHOD cargaValoresDocumentos( nMode ) CLASS TCamposExtra
 
    if nMode == APPD_MODE .or. Empty( ::oDbf:mDocumento )
       ::initDocumentos()
+      MsgInfo( hb_valtoexp( ::aDocumentos ), "array por defecto" )
    else
       ::getDocumentos()
    end if

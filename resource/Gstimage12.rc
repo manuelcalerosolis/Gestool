@@ -269,3 +269,9 @@ ALL_COMPONENTS_16 BITMAP "..\\bmp\\all_components_16.bmp"
 COMPONENT_BLUE_16 BITMAP "..\\bmp\\component_blue_16.bmp"
 
 FOLDER_COMPONENTS_48 BITMAP "..\\bmp\\folder_components_48.bmp"
+
+BOX_WHITE_48 BITMAP "..\\bmp\\box_white_48.bmp"
+
+BOX_WHITE_32 BITMAP "..\\bmp\\box_white_32.bmp"
+
+BOX_WHITE_16 BITMAP "..\\bmp\\box_white_16.bmp"

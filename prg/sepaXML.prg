@@ -244,7 +244,7 @@ METHOD Activate() CLASS SepaXml
 
    ::saveDocumentXML()
 
-   // ::trimDocumentXML()
+   ::trimDocumentXML()
 
 return nil
 
@@ -265,7 +265,7 @@ METHOD SaveDocumentXML()
 
    ferase( ::cFileOut )
 
-   ::oXml:Write( ::cFileOut, HBXML_STYLE_NONEWLINE ) // HBXML_STYLE_TAB ) //
+   ::oXml:Write( ::cFileOut, 2 ) //HBXML_STYLE_NONEWLINE ) // HBXML_STYLE_TAB ) //
 
 return nil
 
@@ -280,6 +280,7 @@ METHOD trimDocumentXML()
 
       cString  := memoread( ::cFileOut ) 
       cString  := alltrim( cString )
+      cString  := StrTran( cString, CRLF, "" )
 
       ferase( ::cFileOut )
       nHandle  := fcreate( ::cFileOut )

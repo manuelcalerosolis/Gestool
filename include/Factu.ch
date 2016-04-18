@@ -183,6 +183,7 @@ Defines para ficheros INI
 #define PAR_PRO                 '30'
 #define COB_TIK                 '31'
 #define SAT_CLI                 '32'
+#define ENV_ART                 '33'   
 
 #define ACC_ACCE                1        // Acceso
 #define ACC_APPD                2        // Acceso añadir
@@ -308,7 +309,8 @@ Defines para ficheros INI
                                         "Albaranes a proveedores" => "02",;
                                         "Facturas a proveedores" => "03",;
                                         "Facturas rectificativa a proveedores" => "04",;
-                                        "S.A.T" => "32" } 
+                                        "S.A.T" => "32",;
+                                        "Envases de artículos" => 33 } 
 
 #define ICONOS_DOCUMENTOS_ITEMS {       "Artículos" => "Cube_Yellow_16",;
                                         "Clientes" => "User1_16",;
@@ -325,7 +327,8 @@ Defines para ficheros INI
                                         "Albaranes a proveedores" => "Document_plain_businessman_16",;
                                         "Facturas a proveedores" => "Document_businessman_16",;
                                         "Facturas rectificativa a proveedores" => "Document_navigate_cross_16",;
-                                        "S.A.T" => "Power-drill_user1_16" } 
+                                        "S.A.T" => "Power-drill_user1_16",;
+                                        "Envases de artículos" => "box_white_16" } 
 
 #define DOCUMENTOS_SELECTED     {       "Artículos" => .F.,;
                                         "Clientes" => .F.,;
@@ -342,7 +345,8 @@ Defines para ficheros INI
                                         "Albaranes a proveedores" => .F.,;
                                         "Facturas a proveedores" => .F.,;
                                         "Facturas rectificativa a proveedores" => .F.,;
-                                        "S.A.T" => .F. } 
+                                        "S.A.T" => .F.,;
+                                        "Envases de artículos" => .F. } 
 
 #command SET TAG TO <tag> [OF <(cdx)>] ;
       => ordSetFocus( <(tag)> [, <(cdx)>] )

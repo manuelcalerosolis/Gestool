@@ -1784,6 +1784,17 @@ Function CreateAcceso( oWnd )
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := "Envasado"
+   oItem:cMessage       := 'Acceso al fichero de envasado'
+   oItem:bAction        := {|| TFrasesPublicitarias():New( , oWnd(), "01129" ):Activate() }
+   oItem:cId            := "01129"
+   oItem:cBmp           := "box_white_16"
+   oItem:cBmpBig        := "box_white_32"
+   oItem:lShow          := .f.
+   oItem:lLittle        := .t.
+
    // Tarifas------------------------------------------------------------------
 
    oGrupo               := TGrupoAcceso()

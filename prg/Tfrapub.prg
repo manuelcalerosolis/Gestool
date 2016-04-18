@@ -34,7 +34,6 @@ CLASS TFrasesPublicitarias FROM TMant
 
    METHOD lPreSave( oGet, oGet2, oDlg, nMode )
 
-
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -47,13 +46,13 @@ METHOD New( cPath, oWndParent, oMenuItem )
    if oMenuItem != nil
       ::nLevel          := nLevelUsr( oMenuItem )
    else
-      ::nLevel          := nLevelUsr( "01104" )
+      ::nLevel          := nLevelUsr( "01129" )
    end if
 
    ::cPath              := cPath
    ::oWndParent         := oWndParent
    ::oDbf               := nil
-   ::cMru               := "Led_Red_16"
+   ::cMru               := "box_white_16"
 
    ::lAutoButtons       := .t.
    ::lCreateShell       := .f.
@@ -82,7 +81,7 @@ METHOD OpenFiles( lExclusive, cPath )
 
    RECOVER USING oError
 
-      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de frases publicitarias" )
+      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de envasado" )
 
       ::CloseFiles()
 
@@ -101,11 +100,11 @@ METHOD DefineFiles( cPath, cDriver )
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := cDriver()
 
-   DEFINE DATABASE ::oDbf FILE "FraPub.Dbf" CLASS "FraPub" ALIAS "FraPub" PATH ( cPath ) VIA ( cDriver ) COMMENT "Frases publicitarias"
+   DEFINE DATABASE ::oDbf FILE "FraPub.Dbf" CLASS "FraPub" ALIAS "FraPub" PATH ( cPath ) VIA ( cDriver ) COMMENT "Envasado"
 
-      FIELD NAME "cCodFra" TYPE "C" LEN  3  DEC 0 COMMENT "Código"               PICTURE "@!"   COLSIZE 60  OF ::oDbf
-      FIELD NAME "cTxtFra" TYPE "C" LEN 200 DEC 0 COMMENT "Frase"                               COLSIZE 400 OF ::oDbf
-      FIELD NAME "lSelect" TYPE "L" LEN  1  DEC 0 COMMENT ""                     HIDE           COLSIZE 0   OF ::oDbf
+      FIELD NAME "cCodFra"    TYPE "C" LEN  3  DEC 0 COMMENT "Código"               PICTURE "@!"   COLSIZE 60  OF ::oDbf
+      FIELD NAME "cTxtFra"    TYPE "C" LEN 200 DEC 0 COMMENT "Envase"                              COLSIZE 200 OF ::oDbf
+      FIELD NAME "lSelect"    TYPE "L" LEN  1  DEC 0 COMMENT ""                     HIDE           COLSIZE 0   OF ::oDbf
 
       INDEX TO "FraPub.CDX" TAG "cCodFra" ON "cCodFra" COMMENT "Código" NODELETED OF ::oDbf
       INDEX TO "FraPub.CDX" TAG "cTxtFra" ON "cTxtFra" COMMENT "Frase"  NODELETED OF ::oDbf
@@ -118,10 +117,18 @@ RETURN ( ::oDbf )
 
 METHOD Resource( nMode )
 
-   DEFINE DIALOG ::oDlg RESOURCE "FraPub" TITLE LblTitle( nMode ) + "frases publicitarias"
+   local oBmpDlg
+
+   DEFINE DIALOG ::oDlg RESOURCE "FraPub" TITLE LblTitle( nMode ) + "envase"
+
+      REDEFINE BITMAP oBmpDlg ;
+         ID       990 ;
+         RESOURCE "box_white_48" ;
+         TRANSPARENT ;
+         OF       ::oDlg
 
       REDEFINE GET ::oGetCodigo VAR ::oDbf:cCodFra UPDATE;
-			ID 		100 ;
+	      ID 		100 ;
          WHEN     ( nMode == APPD_MODE ) ;
          PICTURE  "@!" ;
          OF       ::oDlg
@@ -145,11 +152,6 @@ METHOD Resource( nMode )
          CANCEL ;
          ACTION   ( ::oDlg:end() )
 
-      REDEFINE BUTTON ;
-         ID       9 ;
-         OF       ::oDlg ;
-         ACTION   ( GoHelp() )
-
    if nMode != ZOOM_MODE
       ::oDlg:AddFastKey( VK_F5, {|| ::lPreSave( nMode ) } )
    end if
@@ -157,6 +159,10 @@ METHOD Resource( nMode )
    ::oDlg:bStart  := {|| ::oGetCodigo:SetFocus() }
 
    ACTIVATE DIALOG ::oDlg CENTER
+
+   if !Empty( oBmpDlg )
+      oBmpDlg:End()
+   end if
 
 RETURN ( ::oDlg:nResult == IDOK )
 
@@ -167,7 +173,7 @@ METHOD lPreSave( nMode )
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
 
       if Empty( ::oDbf:cCodFra )
-         MsgStop( "Código de tipo de artículo no puede estar vacío." )
+         MsgStop( "Código de envase no puede estar vacío." )
          ::oGetCodigo:SetFocus()
          Return .f.
       end if
@@ -180,7 +186,7 @@ METHOD lPreSave( nMode )
    end if
 
    if Empty( ::oDbf:cTxtFra )
-      MsgStop( "Frase publicitaria no puede estar vacía." )
+      MsgStop( "Nombre no puede estar vacía." )
       ::oGetFrase:SetFocus()
       Return .f.
    end if
@@ -241,7 +247,7 @@ METHOD lValid( oGet, oSay )
          oSay:cText( ::oDbf:cTxtFra )
       end if
    else
-      msgStop( "Código de frase publicitaria no encontrada" )
+      msgStop( "Código de envase no encontrado" )
       return .f.
    end if
 
