@@ -5480,11 +5480,11 @@ METHOD uploadInformationStockProductPrestashop() CLASS TComercio
    local cCommand
    local nIdProductAttribute
 
+   ::meterProcesoSetTotal( len( ::aStockArticuloData ) )
+
    for each hStock in ::aStockArticuloData
 
       if hGet( hStock, "cCodWebVal1" ) == 0 .and. hGet( hStock, "cCodWebVal2" ) == 0
-
-         ::writeText( "Actualizando stock de " + alltrim( hGet( hStock, "cCodArt" ) ) )        
 
          cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " " +;
                         "SET quantity = '" + hGet( hStock, "nStock" ) + "' " + ;
@@ -5507,7 +5507,9 @@ METHOD uploadInformationStockProductPrestashop() CLASS TComercio
          end if
 
       end if
-   
+      
+      ::meterProcesoText( "Actualizando stock de " + alltrim( hGet( hStock, "cCodArt" ) ) )
+      
    next
 
 Return .t.
