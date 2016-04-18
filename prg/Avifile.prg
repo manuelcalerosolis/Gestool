@@ -241,8 +241,9 @@ CLASS TWaitMeter
    METHOD setMessage( cMessage )       INLINE   ( ::oMessage:SetText( cMessage ) )
    METHOD setBitmap( cBitmap )         INLINE   ( ::cBitmap := cBitmap )
 
+   METHOD setTotalMeter( nTotal )      INLINE   ( ::oProgress:SetTotal( nTotal ) )
    METHOD incMeter()                   INLINE   ( ::refreshMeter( ++::nCurrent ) )
-
+   METHOD setMeter( nPosition )        INLINE   ( ::oProgress:Set( nPosition ) )
    METHOD refreshMeter( nPosition )    INLINE   ( ::oProgress:Set( nPosition ) )
    METHOD setTotal( nTotal )           INLINE   ( ::oProgress:SetTotal( nTotal ) )
 

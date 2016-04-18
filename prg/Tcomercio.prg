@@ -180,6 +180,7 @@ CLASS TComercio
    DATA cSufijoPedido
    DATA cSufijoPresupuesto
 
+   DATA oWaitMeter
 
    METHOD New()                           CONSTRUCTOR
    METHOD GetInstance()              
@@ -917,6 +918,10 @@ METHOD MeterTotalSetTotal( nTotal ) Class TComercio
       ::oMeterTotal:SetTotal( nTotal )
    end if
 
+   if !empty( ::oWaitMeter )
+      ::oWaitMeter:setTotalMeter( nTotal )
+   end if
+
    ::nMeterTotal     := 1
 
 RETURN ( Self )
@@ -933,6 +938,10 @@ METHOD meterProcesoText( cText ) Class TComercio
       ::oMeterProceso:Set( ++::nMeterProceso )
    end if
 
+   if !empty( ::oWaitMeter )
+      ::oWaitMeter:setMeter( ++::nMeterProceso )
+   end if
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -941,6 +950,10 @@ METHOD meterProcesoSetTotal( nTotal ) Class TComercio
 
    if !empty( ::oMeterProceso )
       ::oMeterProceso:SetTotal( nTotal )
+   end if
+
+   if !empty( ::oWaitMeter )
+      ::oWaitMeter:setTotalMeter( nTotal )
    end if
 
    ::nMeterProceso   := 1
@@ -5871,9 +5884,15 @@ Return ( self )
 METHOD writeText( cText ) CLASS TComercio
 
    if !( ::TPrestashopConfig:isSilenceMode() )
+
       if !empty( ::oTree )
          ::oTree:Select( ::oTree:Add( cText ) )
       end if 
+
+      if !empty( ::oWaitMeter )
+         ::oWaitMeter:setMessage( cText )
+      end if 
+   
    end if 
    
    logWrite( cText, cPatLog() + "prestashop.log" ) 
@@ -5925,14 +5944,12 @@ Return ( ::hProductsToUpdate )
 
 METHOD updateWebProductStocks() CLASS TComercio
 
-   local oWaitMeter
-
-   oWaitMeter        := TWaitMeter():New( "Actualizando stocks", "Espere por favor..." )
-   oWaitMeter:Run()
+   ::oWaitMeter         := TWaitMeter():New( "Actualizando stocks", "Espere por favor..." )
+   ::oWaitMeter:Run()
 
    heval( ::hProductsToUpdate, {|cWebName, aProductsWeb | ::updateProductStocks( cWebName, aProductsWeb ) } )
 
-   oWaitMeter:End()
+   ::oWaitMeter:End()
 
 Return ( ::hProductsToUpdate )   
 
