@@ -5360,11 +5360,11 @@ METHOD controllerUpdateStockPrestashop() Class TComercio
 
    if ::filesOpen()
 
+      ::MeterTotalText( "Actualizando stock de prestashop" )
+
+      ::buildInformationStockProductDatabase()
+
       if ::prestaShopConnect()
-
-         ::MeterTotalText( "Actualizando stock de prestashop" )
-
-         ::buildInformationStockProductDatabase()
 
          ::MeterTotalText( "Actualizando stocks" )
 
@@ -5522,7 +5522,10 @@ METHOD uploadInformationStockProductPrestashop() CLASS TComercio
 
       end if
       
-      ::meterProcesoText( "Actualizando stock de " + alltrim( hGet( hStock, "cCodArt" ) ) )
+      ::meterProcesoText(  "Actualizando stock de " + alltrim( hGet( hStock, "cCodArt" ) ) + ;
+                           " con propiedades " + alltrim( str( hGet( hStock, "cCodWebVal1" ) ) )   + ;
+                           " , " + alltrim( str( hGet( hStock, "cCodWebVal2" ) ) ) + ;
+                           " y cantidad " + alltrim(  hGet( hStock, "nStock" ) ) )
       
    next
 
