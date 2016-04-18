@@ -107,7 +107,7 @@ function Main( ParamsMain, ParamsSecond )
    SET EXACT            ON
    SET AUTOPEN          ON
    SET AUTORDER         TO 1
-   SET DECIMALS         T0 6
+   SET DECIMALS         TO 6
 
    SetHandleCount( 240 )
    SetResDebug( .t. )
