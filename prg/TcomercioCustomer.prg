@@ -55,11 +55,17 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD isCustomerInGestool( idCustomer ) CLASS TComercioCustomer
+METHOD isCustomerInGestool( idCustomer, email ) CLASS TComercioCustomer
 
    ::idCustomerGestool  := ::TPrestashopId():getGestoolCustomer( idCustomer, ::getCurrentWebName(), "" )
 
-Return ( !empty( ::idCustomerGestool ) )
+   if !empty( ::idCustomerGestool )
+      if ::oCustomerDatabase():seekInOrd( email, "Nif")
+         Return ( .t. )
+      end if 
+   end if 
+
+Return ( .f. )
 
 //---------------------------------------------------------------------------//
 
@@ -77,9 +83,14 @@ Return ( .f. )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertCustomerInGestoolIfNotExist( idCustomer, idAddressDelivery, idAddressInvoice ) CLASS TComercioCustomer
+METHOD insertCustomerInGestoolIfNotExist( oQuery ) CLASS TComercioCustomer
 
-   if !( ::isCustomerInGestool( idCustomer ) )
+   local idCustomer           := oQuery:FieldGetByName( "id_customer" )
+   local idAddressDelivery    := oQuery:FieldGetByName( "id_address_delivery" )
+   local idAddressInvoice     := oQuery:FieldGetByName( "id_address_invoice" ) 
+   local email                := oQuery:FieldGetByName( "email" ) 
+
+   if !( ::isCustomerInGestool( idCustomer, email ) )
       ::createCustomerInGestool( idCustomer )
    end if 
 
@@ -201,7 +212,8 @@ Return ( Self )
 
 METHOD getAddressFromPrestashop( idAddress ) CLASS TComercioCustomer
 
-   local cQuery   := "SELECT * FROM " + ::TComercio:cPrefixTable( "address" ) + " WHERE id_address = " + alltrim( str( idAddress ) ) 
+   local cQuery   := "SELECT * FROM " + ::TComercio:cPrefixTable( "address" ) + " " +;
+                     "WHERE id_address = " + alltrim( str( idAddress ) ) 
    local oQuery   := TMSQuery():New( ::TComercio:oCon, cQuery )
 
    if oQuery:Open() 

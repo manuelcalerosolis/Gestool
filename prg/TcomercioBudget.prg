@@ -97,9 +97,8 @@ Return ( Self )
 
 METHOD insertDocumentGestool( oQuery ) CLASS TComercioDocument
 
-   ::TComercioCustomer():insertCustomerInGestoolIfNotExist( oQuery:FieldGetByName( "id_customer" ),;
-                                                            oQuery:FieldGetByName( "id_address_delivery" ),;
-                                                            oQuery:FieldGetByName( "id_address_invoice" ) ) 
+   ::TComercioCustomer():insertCustomerInGestoolIfNotExist( oQuery )
+
 
    ::getCountersDocumentGestool(      oQuery )
    ::insertHeaderDocumentGestool(     oQuery )

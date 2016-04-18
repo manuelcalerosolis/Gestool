@@ -5395,7 +5395,7 @@ METHOD buildAddInformacionStockProductPrestashop( idProduct ) CLASS tComercio
    local nTotalStock          := 0
    local aStockArticulo
 
-   ::writeText( "Recopilando información de " + alltrim( idProduct ) )
+   ::writeText( "Recopilando información del artículo " + alltrim( idProduct ) )
 
    /*
    Recopilamos la información del Stock-------------------------------
