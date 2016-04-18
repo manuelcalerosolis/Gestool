@@ -1,5 +1,6 @@
 #include "hbclass.ch"
 #include "hbmxml.ch"
+#include "hbxml.ch"
 #include "fileio.ch"
 
 #define CRLF                  chr( 13 ) + chr( 10 )

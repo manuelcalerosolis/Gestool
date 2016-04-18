@@ -97,9 +97,8 @@ Return ( Self )
 
 METHOD insertDocumentGestool( oQuery ) CLASS TComercioDocument
 
-   ::TComercioCustomer():insertCustomerInGestoolIfNotExist( oQuery:FieldGetByName( "id_customer" ),;
-                                                            oQuery:FieldGetByName( "id_address_delivery" ),;
-                                                            oQuery:FieldGetByName( "id_address_invoice" ) ) 
+   ::TComercioCustomer():insertCustomerInGestoolIfNotExist( oQuery )
+
 
    ::getCountersDocumentGestool(      oQuery )
    ::insertHeaderDocumentGestool(     oQuery )
@@ -441,6 +440,8 @@ METHOD isDocumentInGestool() CLASS TComercioBudget
    if !empty( idDocumentGestool )
       if ::oDocumentHeaderDatabase():seekInOrd( idDocumentGestool, "nNumPre" )
          Return ( .t. )
+      else 
+         ::TPrestashopId():deleteValueBudget( idDocumentGestool, ::getCurrentWebName() )
       end if 
    end if 
 
@@ -533,6 +534,8 @@ METHOD isDocumentInGestool() CLASS TComercioOrder
    if !empty( idDocumentGestool )
       if ::oDocumentHeaderDatabase():seekInOrd( idDocumentGestool, "nNumPed" )
          Return ( .t. )
+      else 
+         ::TPrestashopId():deleteValueOrder( idDocumentGestool, ::getCurrentWebName() )
       end if 
    end if 
 

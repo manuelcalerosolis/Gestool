@@ -98,15 +98,16 @@ function Main( ParamsMain, ParamsSecond )
 
    cParamsMain          := Upper( ParamsMain )
 
-   SET DATE FORMAT "dd/mm/yyyy"
-   SET TIME FORMAT TO "hh:mm:ss"
-   SET DELETED ON
-   SET EXCLUSIVE OFF
-   SET EPOCH TO 2000
-   SET OPTIMIZE ON
-   SET EXACT ON
-   SET AUTOPEN ON
-   SET AUTORDER TO 1
+   SET DATE             FORMAT "dd/mm/yyyy"
+   SET TIME             FORMAT TO "hh:mm:ss"
+   SET DELETED          ON
+   SET EXCLUSIVE        OFF
+   SET EPOCH TO         2000
+   SET OPTIMIZE         ON
+   SET EXACT            ON
+   SET AUTOPEN          ON
+   SET AUTORDER         TO 1
+   SET DECIMALS         TO 6
 
    SetHandleCount( 240 )
    SetResDebug( .t. )

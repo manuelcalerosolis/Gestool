@@ -5702,11 +5702,6 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
 
    // Notificaciones en pantalla-----------------------------------------------
 
-   AutoMeterDialog( oDlg )
-   AutoTextDialog( oDlg )   
-
-   SetAutoTextDialog( "Archivando")
-
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
@@ -6065,8 +6060,6 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
    */
 
    oMsgText()
-
-   EndAutoMeterDialog( oDlg )   
 
    oDlg:End( IDOK )
 
@@ -18259,11 +18252,8 @@ Static Function BuildWeb( idProduct, idShop )
 
    local TComercio   := TComercio():New()
 
-   TComercio:MeterTotal( getAutoMeterDialog() )
-   TComercio:TextTotal( getAutoTextDialog() )
-
    TComercio:setWebToExport( idShop ) 
-   TComercio:buildExportarPrestashop( idProduct )
+   TComercio:controllerExportProductPrestashop( idProduct )
 
 Return .t.
 
