@@ -1059,7 +1059,6 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-
 METHOD AppendIvaPrestashop() Class TComercio
 
 Return ( Self )
