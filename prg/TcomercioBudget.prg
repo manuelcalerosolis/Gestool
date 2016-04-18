@@ -441,6 +441,8 @@ METHOD isDocumentInGestool() CLASS TComercioBudget
    if !empty( idDocumentGestool )
       if ::oDocumentHeaderDatabase():seekInOrd( idDocumentGestool, "nNumPre" )
          Return ( .t. )
+      else 
+         ::TPrestashopId():deleteValueBudget( idDocumentGestool, ::getCurrentWebName() )
       end if 
    end if 
 
@@ -530,17 +532,11 @@ METHOD isDocumentInGestool() CLASS TComercioOrder
 
    local idDocumentGestool := ::TPrestashopId():getGestoolOrder( ::idDocumentPrestashop, ::getCurrentWebName() )
 
-   debug( idDocumentGestool, "idDocumentGestool" )
-
    if !empty( idDocumentGestool )
-
-   debug (::oDocumentHeaderDatabase():seekInOrd( idDocumentGestool, "nNumPed" ), "Búsqueda" )
-
       if ::oDocumentHeaderDatabase():seekInOrd( idDocumentGestool, "nNumPed" )
-
-      debug( "despues de buscar" )
-
          Return ( .t. )
+      else 
+         ::TPrestashopId():deleteValueOrder( idDocumentGestool, ::getCurrentWebName() )
       end if 
    end if 
 
