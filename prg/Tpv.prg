@@ -39,7 +39,7 @@ Ficheros-----------------------------------------------------------------------
 #define _CNCJTIK                   9      //   C,     3,     0
 #define _CALMTIK                   10     //   C,     3,     0
 #define _CCLITIK                   11     //   C,    12,     0
-#define _NTARIFA                   12     //   L,     1,     0
+#define _NTARIFA                   12     //   L,     1,     on e
 #define _CNOMTIK                   13     //   C,    50,     0
 #define _CDIRCLI                   14
 #define _CPOBCLI                   15
@@ -1947,6 +1947,8 @@ FUNCTION TpvDelRec()
 
          while ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb == ( dbfTikT )->cAlbTik .and. !( dbfAlbCliL )->( Eof() )
 
+            TComercio():getInstance():appendProductsToUpadateStocks( ( dbfAlbCliL )->cRef, nView )
+
             if dbLock( dbfAlbCliL )
                ( dbfAlbCliL )->lFacturado    := .f.
                ( dbfAlbCliL )->( dbUnLock() )
@@ -2076,6 +2078,7 @@ FUNCTION TpvDelRec()
          end if
 
          while dbSeekInOrd( cNumDoc, "nNumAlb", dbfAlbCliL )
+            TComercio():getInstance():appendProductsToUpadateStocks( ( dbfAlbCliL )->cRef, nView )
             dbDel( dbfAlbCliL )
          end if
 
@@ -2094,6 +2097,7 @@ FUNCTION TpvDelRec()
          end if
 
          while dbSeekInOrd( cNumDoc, "nNumFac", dbfFacCliL )
+            TComercio():getInstance():appendProductsToUpadateStocks( ( dbfFacCliL )->cRef, nView )
             dbDel( dbfFacCliL )
          end if
 
@@ -2703,7 +2707,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode, aNum
    if nMode != ZOOM_MODE
       oDlgTpv:AddFastKey( VK_F2, {|| AppDetRec( oBrwDet, bEditL, aTmp, cPorDiv, cPicEur ), aGet[ _CCLITIK ]:SetFocus() } )
       oDlgTpv:AddFastKey( VK_F3, {|| WinEdtRec( oBrwDet, bEditL, dbfTmpL, , , aTmp ), lRecTotal( aTmp ), aGet[ _CCLITIK ]:SetFocus() } )
-      oDlgTpv:AddFastKey( VK_F4, {|| WinDelRec( oBrwDet, dbfTmpL, nil, nil, .t. ), lRecTotal( aTmp ) } )
+      oDlgTpv:AddFastKey( VK_F4, {|| deleteLineTicket( aTmp, oBrwDet ) } )
       oDlgTpv:AddFastKey( VK_F5, {|| if( ( ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVTIK .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) ) ), NewTiket( aGet, aTmp, nMode, SAVTIK, .f., oBrw, oBrwDet ), ) } )
       oDlgTpv:AddFastKey( VK_F7, {|| if( ( ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVALB .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) ) ), NewTiket( aGet, aTmp, nMode, SAVALB, .f., oBrw, oBrwDet ), ) } )
       oDlgTpv:AddFastKey( VK_F8, {|| if( ( ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVFAC .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) ) ), NewTiket( aGet, aTmp, nMode, SAVFAC, .f., oBrw, oBrwDet ), ) } )
@@ -2742,6 +2746,16 @@ RETURN ( oDlgTpv:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
+Static Function deleteLineTicket( aTmp, oBrwDet )
+
+   TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpL )->cCbaTil, nView )
+   
+   winDelRec( oBrwDet, dbfTmpL, nil, nil, .t. )
+
+Return ( lRecTotal( aTmp ) )
+
+//--------------------------------------------------------------------------//
+
 Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc, cCodArt )
 
    local oBoton
@@ -2764,7 +2778,7 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc,
       oGrupo            := TDotNetGroup():New( oCarpeta, 186, "Lineas", .f. )
          oBtnAdd        := TDotNetButton():New( 60, oGrupo, "New32",                    "Añadir [F2]",         1, {|| AppDetRec( oBrwDet, bEditL, aTmp, cPorDiv, cPicEur ), aGet[ _CCLITIK ]:SetFocus() }, , , .f., .f., .f. )
          oBtnEdt        := TDotNetButton():New( 60, oGrupo, "Edit32",                   "Modificar [F3]",      2, {|| WinEdtRec( oBrwDet, bEditL, dbfTmpL, , , aTmp ), lRecTotal( aTmp ), aGet[ _CCLITIK ]:SetFocus() }, , , .f., .f., .f. )
-         oBtnDel        := TDotNetButton():New( 60, oGrupo, "Del32",                    "Eliminar [F4]",       3, {|| WinDelRec( oBrwDet, dbfTmpL, nil, nil, .t. ), lRecTotal( aTmp ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
+         oBtnDel        := TDotNetButton():New( 60, oGrupo, "Del32",                    "Eliminar [F4]",       3, {|| deleteLineTicket( aTmp, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
 
       oGrupo            := TDotNetGroup():New( oCarpeta, 436, "Cobros", .f. )
          oBtnTik        := TDotNetButton():New( 60, oGrupo, "Money2_32",                "Cobrar [F5]",         1, {|| NewTiket( aGet, aTmp, nMode, SAVTIK, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
@@ -4262,8 +4276,6 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          /*
          Guardamos el tipo como albaranes-----------------------------------------
          */
-
-        // TComercio():getInstance():resetProductsToUpadateStocks()
 
          do case
             case nMode == DUPL_MODE
@@ -8183,6 +8195,10 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
    if oVisor != nil
       oVisor:SetBufferLine( { aTmp[ _CNOMTIL ], Trans( aTmp[ _NPVPTIL ], cPouDiv ) }, 1 )
    end if
+
+   // anotamos el producto para actualizar su stock----------------------------
+
+   TComercio():getInstance():appendProductsToUpadateStocks( aTmp[ _CCBATIL ], nView )
 
    /*
    Chequeamos las ofertas X * Y------------------------------------------------
