@@ -5302,9 +5302,9 @@ Static Function QuiAlbCli()
    nOrdDoc        := ( D():Get( "AlbCliD", nView ) )->( OrdSetFocus( "nNumAlb" ) )
    nOrdSer        := ( D():Get( "AlbCliS", nView ) )->( OrdSetFocus( "nNumAlb" ) )
 
-   /*
-   Eliminamos las entregas-----------------------------------------------------
-   */
+   TComercio():getInstance():resetProductsToUpadateStocks()
+
+   // Eliminamos las entregas-----------------------------------------------------
 
    while ( D():Get( "AlbCliP", nView ) )->( dbSeek( cNumAlb ) ) .and. !( D():Get( "AlbCliP", nView ) )->( eof() )
 
@@ -5324,11 +5324,7 @@ Static Function QuiAlbCli()
 
    end do
 
-   /*
-   Detalle---------------------------------------------------------------------
-   */
-
-   TComercio():getInstance():resetProductsToUpadateStocks()
+   // Detalle---------------------------------------------------------------------
 
    while ( D():Get( "AlbCliL", nView ) )->( dbSeek( cNumAlb ) ) .and. !( D():Get( "AlbCliL", nView ) )->( eof() )
 
@@ -5336,16 +5332,14 @@ Static Function QuiAlbCli()
          aAdd( aNumPed, ( D():Get( "AlbCliL", nView ) )->cNumPed )
       end if      
 
+      TComercio():getInstance():appendProductsToUpadateStocks( ( D():Get( "AlbCliL", nView ) )->cRef, nView )
+
       if dbLock( D():Get( "AlbCliL", nView ) )
          ( D():Get( "AlbCliL", nView ) )->( dbDelete() )
          ( D():Get( "AlbCliL", nView ) )->( dbUnLock() )
       end if
 
    end while
-
-   // actualiza el stock de prestashop-----------------------------------------
-
-   TComercio():getInstance():updateWebProductStocks()
 
    /*
    Incidencias-----------------------------------------------------------------
@@ -5395,6 +5389,10 @@ Static Function QuiAlbCli()
    for each cNumPed in aNumPed
       oStock:SetEstadoPedCli( cNumPed )
    next   
+
+   // actualiza el stock de prestashop-----------------------------------------
+
+   TComercio():getInstance():updateWebProductStocks()
 
    /*
    Cerramos las tablas---------------------------------------------------------
@@ -10975,11 +10973,19 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
 
    end if
 
+   // comenzamos a grabar el registro------------------------------------------
+
    CursorWait()
 
    aClo              := aClone( aTmp )
 
    aTmp[ _NREQ ]     := nPReq( D():Get( "TIva", nView ), aTmp[ _NIVA ] )
+
+   // Anotamos para modificar este articulo------------------------------------
+
+   TComercio():getInstance():appendProductsToUpadateStocks( aTmp[ _CREF ], nView )
+
+   // si estamos añadiendo-----------------------------------------------------
 
    if nMode == APPD_MODE
 
@@ -11047,10 +11053,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
        PalBmpFree( bmpImage:hBitmap, bmpImage:hPalette )
    end if
 
-   // Anotamos para modificar este articulo------------------------------------
-
-   TComercio():getInstance():appendProductsToUpadateStocks( aTmp[ _CREF ], nView )
-
    // Limpiamos varaibles para posteriro uso----------------------------------- 
 
    cOldCodArt     := ""
@@ -11060,8 +11062,9 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
 
       recalculaTotal( aTmpAlb )
 
-      aCopy( dbBlankRec( dbfTmpLin ), aTmp )
-      aEval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )
+      acopy( dbBlankRec( dbfTmpLin ), aTmp )
+
+      aeval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )
 
       setDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, oTotal, aTmpAlb )
 
