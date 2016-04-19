@@ -667,7 +667,7 @@ METHOD InitDialog() CLASS TFastReportInfGen
    local oGrupo
    local oCarpeta
 
-   ::oOfficeBar            := TDotNetBar():New( 0, 0, 1020, 115, ::oDlg, 1 )
+   ::oOfficeBar            := TDotNetBar():New( 0, 0, 1100, 115, ::oDlg, 1 )
    ::oOfficeBar:lPaintAll  := .f.
    ::oOfficeBar:lDisenio   := .f.
 

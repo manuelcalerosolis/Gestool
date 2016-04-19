@@ -3019,7 +3019,7 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, aTmpPed, nMode, oSayPr1, oSayPr2, oSayVp
 
    aGet[ _NUNICAJA ]:SetText( cNombreUnidades() )
 
-   if empty( aTmp[_CALMLIN ] )
+   if empty( aTmp[ _CALMLIN ] )
       aTmp[ _CALMLIN ]  := aTmpPed[ _CCODALM ]
    end if
 
@@ -3231,10 +3231,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, o
                aGet[ _NUNICAJA ]:cText( ( D():Articulos( nView ) )->nUniCaja )
             end if
 
-            /*
-            Lotes
-            ---------------------------------------------------------------------
-            */
+            // Lotes---------------------------------------------------------------------
 
             aTmp[ _LLOTE ]    := ( D():Articulos( nView ) )->lLote
 
@@ -3293,9 +3290,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, o
                aTmp[ _NCTLSTK ]     := ( D():Articulos( nView ) )->nCtlStock
             end if
 
-            /*
-            Buscamos la familia del articulo y anotamos las propiedades--------
-            */
+            // Buscamos la familia del articulo y anotamos las propiedades--------
 
             aTmp[ _CCODPR1 ]        := ( D():Articulos( nView ) )->cCodPrp1
             aTmp[ _CCODPR2 ]        := ( D():Articulos( nView ) )->cCodPrp2
@@ -3304,7 +3299,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, o
 
                nPreCom              := nCosto( nil, D():Articulos( nView ), D():Kit( nView ), .f., aTmpPed[ _CDIVPED ], D():Divisas( nView ) )
 
-               setPropertiesTable( cCodArt, aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _NUNICAJA ], aGet[ _NPREDIV ], oBrwPrp, nView )
+               setPropertiesTable( cCodArt, aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _NPREDIV ], aGet[ _NUNICAJA ], oBrwPrp, nView )
 
             else
 
@@ -3342,7 +3337,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, o
 
                end if
 
-               if !empty( aTmp[_CCODPR2 ] ) // .and. !uFieldEmpresa( "lUseTbl" )
+               if !empty( aTmp[ _CCODPR2 ] ) // .and. !uFieldEmpresa( "lUseTbl" )
 
                   if aGet[ _CVALPR2 ] != nil
                      aGet[ _CVALPR2 ]:show()
@@ -3373,56 +3368,49 @@ STATIC FUNCTION LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, o
 
                end if
 
-               /*
-               Precios de compra--------------------------------------------------
-               */
+            end if
 
-               nPreCom           := nComPro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], D():ArticuloPrecioPropiedades( nView ) )
-               if nPrecom  != 0
+            // Precios de compra--------------------------------------------
 
+            nPreCom           := nComPro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], D():ArticuloPrecioPropiedades( nView ) )
+
+            if nPrecom  != 0
+
+               aGet[ _NPREDIV ]:cText( nPreCom )
+
+            else
+
+               if uFieldEmpresa( "lCosPrv", .f. )
+                  nPreCom     := nPrecioReferenciaProveedor( cCodPrv, cCodArt, D():ProveedorArticulo( nView ) )
+               end if
+
+               if nPreCom != 0
                   aGet[ _NPREDIV ]:cText( nPreCom )
-
                else
+                  aGet[ _NPREDIV ]:cText( nCosto( nil, D():Articulos( nView ), D():Kit( nView ), .f., aTmpPed[ _CDIVPED ], D():Divisas( nView ) ) )
+               end if
 
-                  if uFieldEmpresa( "lCosPrv", .f. )
-                     nPreCom     := nPrecioReferenciaProveedor( cCodPrv, cCodArt, D():ProveedorArticulo( nView ) )
-                  end if
+               // Descuento de articulo-------------------------------------
 
+               if uFieldEmpresa( "lCosPrv", .f. )
+
+                  nPreCom     := nDescuentoReferenciaProveedor( cCodPrv, cCodArt, D():ProveedorArticulo( nView ) )
                   if nPreCom != 0
-                     aGet[ _NPREDIV ]:cText( nPreCom )
-                  else
-                     aGet[ _NPREDIV ]:cText( nCosto( nil, D():Articulos( nView ), D():Kit( nView ), .f., aTmpPed[ _CDIVPED ], D():Divisas( nView ) ) )
+                     aGet[ _NDTOLIN ]:cText( nPreCom )
                   end if
 
-                  /*
-                  Descuento de articulo----------------------------------------------
-                  */
+                  // Descuento de promocional-------------------------------
 
-                  if uFieldEmpresa( "lCosPrv", .f. )
-
-                     nPreCom     := nDescuentoReferenciaProveedor( cCodPrv, cCodArt, D():ProveedorArticulo( nView ) )
-                     if nPreCom != 0
-                        aGet[ _NDTOLIN ]:cText( nPreCom )
-                     end if
-
-                  /*
-                  Descuento de promocional----------------------------------------------
-                  */
-
-                     nPreCom     := nPromocionReferenciaProveedor( cCodPrv, cCodArt, D():ProveedorArticulo( nView ) )
-                     if nPreCom != 0
-                        aGet[ _NDTOPRM ]:cText( nPreCom )
-                     end if
-
+                  nPreCom     := nPromocionReferenciaProveedor( cCodPrv, cCodArt, D():ProveedorArticulo( nView ) )
+                  if nPreCom != 0
+                     aGet[ _NDTOPRM ]:cText( nPreCom )
                   end if
 
                end if
 
             end if
 
-            /*
-            Recogemos las familias y los grupos de familias--------------------
-            */
+            // Recogemos las familias y los grupos de familias--------------------
 
             cCodFam              := ( D():Articulos( nView ) )->Familia
             if !empty( cCodFam )
@@ -3430,15 +3418,11 @@ STATIC FUNCTION LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, o
                aTmp[ _CGRPFAM ]  := cGruFam( cCodFam, D():Familias( nView ) )
             end if
 
-            /*
-            Ponemos el precio de venta recomendado-----------------------------
-            */
+            // Ponemos el precio de venta recomendado-----------------------------
 
             aTmp[ _NPVPREC  ]    := ( D():Articulos( nView ) )->PvpRec
 
-            /*
-            Ponemos el stock---------------------------------------------------
-            */
+            // Ponemos el stock---------------------------------------------------
 
             if oGetStk != nil .and. aTmp[ _NCTLSTK ] <= 1
                oStock:nPutStockActual( cCodArt, aTmp[ _CALMLIN ], , , , aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk )
