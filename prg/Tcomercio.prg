@@ -5987,8 +5987,6 @@ METHOD updateProductStocks( cWebName, aProductsWeb )
       Return .f.
    end if 
 
-   debug( aProductsWeb, "aProductsWeb" )
-
    ::TPrestashopConfig:setCurrentWebName( cWebName )
 
    if !::prestaShopConnect()
