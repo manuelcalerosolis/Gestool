@@ -1947,8 +1947,6 @@ FUNCTION TpvDelRec()
 
          while ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb == ( dbfTikT )->cAlbTik .and. !( dbfAlbCliL )->( Eof() )
 
-            TComercio():getInstance():appendProductsToUpadateStocks( ( dbfAlbCliL )->cRef, nView )
-
             if dbLock( dbfAlbCliL )
                ( dbfAlbCliL )->lFacturado    := .f.
                ( dbfAlbCliL )->( dbUnLock() )
@@ -12360,8 +12358,6 @@ Static Function SavTik2Neg( aTmp, aGet, nMode, nSave )
 
       dbGather( aTbl, dbfTikL, .t. )
 
-      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpL )->cCbaTil, nView )
-
       ( dbfTmpL )->( dbSkip() )
 
    end while
@@ -12423,8 +12419,6 @@ Static Function SavTik2Tik( aTmp, aGet, nMode, nSave, nNumDev )
       end if
 
       dbPass( dbfTmpL, dbfTikL, .t., aTmp[ _CSERTIK ], aTmp[ _CNUMTIK ], aTmp[ _CSUFTIK ], aTmp[ _CTIPTIK ] )
-
-      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpL )->cCbaTil, nView )
 
       ( dbfTmpL )->( dbSkip() )
 
