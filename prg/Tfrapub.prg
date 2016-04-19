@@ -13,11 +13,16 @@ CLASS TFrasesPublicitarias FROM TMant
 
    DATA  cBitmap                       INIT clrTopArchivos
 
+   DATA  oDetCamposExtra
+
    METHOD New( cPath, oWndParent, oMenuItem )
 
-   METHOD OpenFiles( lExclusive )
-   MESSAGE OpenService( lExclusive )   METHOD OpenFiles( lExclusive )
+   METHOD Activate()
 
+   METHOD OpenFiles( lExclusive )
+
+   METHOD CloseFiles()
+   
    METHOD DefineFiles()
 
    METHOD Resource( nMode )
@@ -33,6 +38,10 @@ CLASS TFrasesPublicitarias FROM TMant
    METHOD cNombre( cCodArt )
 
    METHOD lPreSave( oGet, oGet2, oDlg, nMode )
+
+   METHOD CargaValoresCamposExtra()
+
+   METHOD SaveCamposExtra()
 
 END CLASS
 
@@ -57,9 +66,91 @@ METHOD New( cPath, oWndParent, oMenuItem )
    ::lAutoButtons       := .t.
    ::lCreateShell       := .f.
 
+   ::bOnPreDelete       := {|| MsgInfo( ::oDbf:cCodFra, "Antes" ), ::oDetCamposExtra:RollBackValores( ::oDbf:cCodFra ) }
+
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
+
+METHOD Activate()
+
+   if nAnd( ::nLevel, 1 ) != 0
+      msgStop( "Acceso no permitido." )
+      Return ( Self )
+   end if
+
+   /*
+   Cerramos todas las ventanas
+   */
+
+   if ::oWndParent != nil
+      ::oWndParent:CloseAll()
+   end if
+
+   if Empty( ::oDbf ) .or. !::oDbf:Used()
+      ::lOpenFiles      := ::OpenFiles()
+   end if
+
+   /*
+   Creamos el Shell
+   */
+
+   if ::lOpenFiles
+
+      ::CreateShell( ::nLevel )
+
+      DEFINE BTNSHELL RESOURCE "BUS" OF ::oWndBrw ;
+         NOBORDER ;
+         ACTION   ( ::oWndBrw:SearchSetFocus() ) ;
+         TOOLTIP  "(B)uscar" ;
+         HOTKEY   "B";
+
+         ::oWndBrw:AddSeaBar()
+
+      DEFINE BTNSHELL RESOURCE "NEW" OF ::oWndBrw ;
+         NOBORDER ;
+         ACTION   ( ::oWndBrw:RecAdd() );
+         ON DROP  ( ::oWndBrw:RecAdd() );
+         TOOLTIP  "(A)ñadir";
+         BEGIN GROUP ;
+         HOTKEY   "A" ;
+         LEVEL    ACC_APPD
+
+      DEFINE BTNSHELL RESOURCE "EDIT" OF ::oWndBrw ;
+         NOBORDER ;
+         ACTION   ( ::oWndBrw:RecEdit() );
+         TOOLTIP  "(M)odificar";
+         HOTKEY   "M" ;
+         LEVEL    ACC_EDIT
+
+      DEFINE BTNSHELL RESOURCE "ZOOM" OF ::oWndBrw ;
+         NOBORDER ;
+         ACTION   ( ::oWndBrw:RecZoom() );
+         TOOLTIP  "(Z)oom";
+         HOTKEY   "Z" ;
+         LEVEL    ACC_ZOOM
+
+      DEFINE BTNSHELL RESOURCE "DEL" OF ::oWndBrw ;
+         NOBORDER ;
+         ACTION   ( ::oWndBrw:RecDel() );
+         TOOLTIP  "(E)liminar";
+         MRU ;
+         HOTKEY   "E";
+         LEVEL    ACC_DELE
+
+      ::oWndBrw:EndButtons( Self )
+
+      if ::cHtmlHelp != nil
+         ::oWndBrw:cHtmlHelp  := ::cHtmlHelp
+      end if
+
+      ::oWndBrw:Activate( nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, {|| ::CloseFiles() } )
+
+   end if
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
 
 METHOD OpenFiles( lExclusive, cPath )
 
@@ -76,6 +167,14 @@ METHOD OpenFiles( lExclusive, cPath )
       if Empty( ::oDbf )
          ::DefineFiles( cPath )
       end if
+
+      ::oDetCamposExtra := TDetCamposExtra():New()
+      if !::oDetCamposExtra:OpenFiles()
+         lOpen          := .f.
+      end if
+
+      ::oDetCamposExtra:setTipoDocumento( "Envases de artículos" )
+      ::oDetCamposExtra:setbId( {|| ::oDbf:cCodFra } )
 
       ::oDbf:Activate( .f., !( lExclusive ) )
 
@@ -95,6 +194,23 @@ RETURN ( lOpen )
 
 //----------------------------------------------------------------------------//
 
+METHOD CloseFiles()
+
+   if ::oDbf != nil .and. ::oDbf:Used()
+      ::oDbf:End()
+   end if
+
+   if ::oDetCamposExtra != nil
+      ::oDetCamposExtra:End()
+   end if
+
+   ::oDbf            := nil
+   ::oDetCamposExtra := nil
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
 METHOD DefineFiles( cPath, cDriver )
 
    DEFAULT cPath        := ::cPath
@@ -106,8 +222,8 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "cTxtFra"    TYPE "C" LEN 200 DEC 0 COMMENT "Envase"                              COLSIZE 200 OF ::oDbf
       FIELD NAME "lSelect"    TYPE "L" LEN  1  DEC 0 COMMENT ""                     HIDE           COLSIZE 0   OF ::oDbf
 
-      INDEX TO "FraPub.CDX" TAG "cCodFra" ON "cCodFra" COMMENT "Código" NODELETED OF ::oDbf
-      INDEX TO "FraPub.CDX" TAG "cTxtFra" ON "cTxtFra" COMMENT "Frase"  NODELETED OF ::oDbf
+      INDEX TO "FraPub.CDX" TAG "cCodFra" ON "cCodFra" COMMENT "Código"    NODELETED OF ::oDbf
+      INDEX TO "FraPub.CDX" TAG "cTxtFra" ON "cTxtFra" COMMENT "Envase"    NODELETED OF ::oDbf
 
    END DATABASE ::oDbf
 
@@ -118,6 +234,8 @@ RETURN ( ::oDbf )
 METHOD Resource( nMode )
 
    local oBmpDlg
+
+   ::CargaValoresCamposExtra()
 
    DEFINE DIALOG ::oDlg RESOURCE "FraPub" TITLE LblTitle( nMode ) + "envase"
 
@@ -140,6 +258,35 @@ METHOD Resource( nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       ::oDlg
 
+      ::oDetCamposExtra:oBrw                        := IXBrowse():New( ::oDlg )
+
+      ::oDetCamposExtra:oBrw:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      ::oDetCamposExtra:oBrw:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      ::oDetCamposExtra:oBrw:SetArray( ::oDetCamposExtra:aCamposExtra, , , .f. )
+
+      ::oDetCamposExtra:oBrw:nMarqueeStyle          := MARQSTYLE_HIGHLCELL
+      ::oDetCamposExtra:oBrw:lRecordSelector        := .f.
+      ::oDetCamposExtra:oBrw:lHScroll               := .f.
+      ::oDetCamposExtra:oBrw:lFastEdit              := .t.
+
+      ::oDetCamposExtra:oBrw:bChange                := {|| if( nMode != ZOOM_MODE, ::oDetCamposExtra:ChangeBrowse(), ) }
+
+      ::oDetCamposExtra:oBrw:CreateFromResource( 120 )
+
+      with object ( ::oDetCamposExtra:oBrw:AddCol() )
+         :cHeader          := "Campo"
+         :bStrData         := {|| AllTrim( Capitalize( hGet( ::oDetCamposExtra:aCamposExtra[ ::oDetCamposExtra:oBrw:nArrayAt ], "descripción" ) ) ) + if( hGet( ::oDetCamposExtra:aCamposExtra[ ::oDetCamposExtra:oBrw:nArrayAt ], "lrequerido" ), " *", "" ) }
+         :nWidth           := 180
+      end with
+
+      with object ( ::oDetCamposExtra:oCol := ::oDetCamposExtra:oBrw:AddCol() )
+         :cHeader          := "Valor"
+         :bEditValue       := {|| hGet( ::oDetCamposExtra:aCamposExtra[ ::oDetCamposExtra:oBrw:nArrayAt ], "valor" ) }
+         :bStrData         := {|| hGet( ::oDetCamposExtra:aCamposExtra[ ::oDetCamposExtra:oBrw:nArrayAt ], "valor" ) }
+         :nWidth           := 200
+      end with
+
       REDEFINE BUTTON ;
          ID       IDOK ;
          OF       ::oDlg ;
@@ -156,9 +303,13 @@ METHOD Resource( nMode )
       ::oDlg:AddFastKey( VK_F5, {|| ::lPreSave( nMode ) } )
    end if
 
-   ::oDlg:bStart  := {|| ::oGetCodigo:SetFocus() }
+   ::oDlg:bStart  := {|| if( nMode != ZOOM_MODE, ::oDetCamposExtra:ChangeBrowse(), ), ::oGetCodigo:SetFocus() }
 
    ACTIVATE DIALOG ::oDlg CENTER
+
+   if ::oDlg:nResult == IDOK
+      ::SaveCamposExtra()
+   end if
 
    if !Empty( oBmpDlg )
       oBmpDlg:End()
@@ -264,5 +415,22 @@ METHOD cNombre( cCodFra )
    end if
 
 RETURN ( cNombre )
+
+//---------------------------------------------------------------------------//
+
+METHOD CargaValoresCamposExtra()
+
+   ::oDetCamposExtra:Play( ::oDbf:cCodFra, .f. )
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD SaveCamposExtra()
+
+   ::oDetCamposExtra:RollBackValores( ::oDbf:cCodFra )
+   ::oDetCamposExtra:GuardaValores( ::oDbf:cCodFra )
+
+Return ( nil )
 
 //---------------------------------------------------------------------------//

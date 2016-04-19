@@ -229,7 +229,7 @@ METHOD OpenService( lExclusive, cPath ) CLASS TDetCamposExtra
 
    ErrorBlock( oBlock )
 
-   ::CloseFiles()
+   ::CloseService()
 
 RETURN ( lOpen )
 
@@ -263,7 +263,9 @@ RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method Play( cClave )
+Method Play( cClave, lResource )
+
+   DEFAULT lResource    := .t.
 
    if Empty( ::TipoDocumento )
       MsgStop( "No existen campos extra para este tipo de documento." )
@@ -281,9 +283,13 @@ Method Play( cClave )
 
    ::CargaValores( cClave ) 
 
-   if ::Resource()
-      ::RollBackValores( cClave )
-      ::GuardaValores( cClave )
+   if lResource
+
+      if ::Resource()
+         ::RollBackValores( cClave )
+         ::GuardaValores( cClave )
+      end if
+
    end if
 
 Return ( self )

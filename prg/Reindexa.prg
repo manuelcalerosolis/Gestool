@@ -232,7 +232,7 @@ METHOD GenIndices( oMsg )
          if ::lNotGrupo
 
             ::SetText( "Generando índices : Cuentas de remesas", ::aProgress[ 1 ] )          ; TCtaRem():Create( ::cPatCli ):Reindexa()
-            ::SetText( "Generando índices : Frases publicitarias", ::aProgress[ 1 ] )        ; TFrasesPublicitarias():Create( ::cPatArt ):Reindexa()
+            ::SetText( "Generando índices : Tipo de envasado", ::aProgress[ 1 ] )            ; TFrasesPublicitarias():Create( cPatArt() ):Reindexa()
             ::SetText( "Generando índices : Sala de venta", ::aProgress[ 1 ] )               ; TTpvRestaurante():Create( ::cPathEmp ):Reindexa()
             ::SetText( "Generando índices : Puntos de venta", ::aProgress[ 1 ] )             ; TDetSalaVta():Create( ::cPathEmp ):Reindexa()
             ::SetText( "Generando índices : Configuración de informes", ::aProgress[ 1 ] )   ; TInfGen():Reindexa( ::cPathEmp )

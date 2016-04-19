@@ -1467,6 +1467,9 @@ Function VirtualKey( lPassword, uGetKey, cTitle )
    DEFAULT lPassword := .f.
    DEFAULT cTitle    := "Teclado virtual"
 
+
+   ?"Entro en el teclado"
+
    do case
       case Valtype( uGetKey ) == "O"
          cVar        := uGetKey:VarGet()

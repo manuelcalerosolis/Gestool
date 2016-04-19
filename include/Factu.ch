@@ -310,7 +310,7 @@ Defines para ficheros INI
                                         "Facturas a proveedores" => "03",;
                                         "Facturas rectificativa a proveedores" => "04",;
                                         "S.A.T" => "32",;
-                                        "Envases de artículos" => 33 } 
+                                        "Envases de artículos" => "33" } 
 
 #define ICONOS_DOCUMENTOS_ITEMS {       "Artículos" => "Cube_Yellow_16",;
                                         "Clientes" => "User1_16",;
