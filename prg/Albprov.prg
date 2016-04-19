@@ -2702,6 +2702,10 @@ Funcion Auxiliar para borrar las Lineas de Detalle en un albaran
 STATIC FUNCTION DelDeta()
 
    CursorWait()
+   
+   // Anotamos para modificar este articulo------------------------------------
+
+   TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmp )->cRef, nView )
 
    while ( dbfTmpSer )->( dbSeek( Str( ( dbfTmp )->nNumLin, 4 ) ) )
       ( dbfTmpSer )->( dbDelete() )
@@ -3779,14 +3783,16 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet, aTm
       end if
 
    end if
-
-   /*
-   Cambio de la moneda---------------------------------------------------------
-   */
-
+  
+   // Cambio de la moneda---------------------------------------------------------
+   
    if aTmp[ _LLOTE ] .AND. nMode == APPD_MODE
       saveLoteActual( aTmp[ _CREF ], aTmp[ _CLOTE ], nView )
    end if
+
+   // Anotamos para modificar este articulo------------------------------------
+
+   TComercio():getInstance():appendProductsToUpadateStocks( aTmp[ _CREF ], nView )
 
    if nMode == APPD_MODE
 
@@ -5332,6 +5338,8 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+      TComercio():getInstance():resetProductsToUpadateStocks()
+
       CursorWait()
 
       if nMode == DUPL_MODE
@@ -5610,8 +5618,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
       Escritura en el fichero definitivo_______________________________________
       */
 
-      TComercio():getInstance():resetProductsToUpadateStocks()
-
       ( dbfTmp )->( dbGoTop() )
       while !( dbfTmp )->( eof() )
 
@@ -5641,8 +5647,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
          */
 
          dbGather( aTbl, D():AlbaranesProveedoresLineas( nView ), .t. )
-
-         TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmp )->cRef, nView )
 
          ( dbfTmp )->( dbSkip() )
 

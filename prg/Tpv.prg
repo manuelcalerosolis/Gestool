@@ -4263,7 +4263,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Guardamos el tipo como albaranes-----------------------------------------
          */
 
-         TComercio():getInstance():resetProductsToUpadateStocks()
+        // TComercio():getInstance():resetProductsToUpadateStocks()
 
          do case
             case nMode == DUPL_MODE
@@ -6437,6 +6437,8 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
+
+   TComercio():getInstance():resetProductsToUpadateStocks()
 
    if empty( aTmp[ _CDIVTIK ] )
       aTmp[ _CDIVTIK ]  := cDivEmp()

@@ -10953,6 +10953,8 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+	TComercio():getInstance():resetProductsToUpadateStocks()
+   
    /*
    Inicialización de variables-------------------------------------------------
    */
@@ -13455,8 +13457,12 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
    if aTmp[ _NREQ ] == 0
       aTmp[ _NREQ ]     := nPReq( dbfIva, aTmp[ _NIVA ] )
    end if   
-
+   
    if !( "TABLET" $ cParamsMain() )
+	
+	// Anotamos para modificar este articulo------------------------------------
+
+   TComercio():getInstance():appendProductsToUpadateStocks( aTmp[ _CREF ], nView )
 
       if nMode == APPD_MODE
 
@@ -13937,6 +13943,10 @@ STATIC FUNCTION DelDeta()
    
    CursorWait()
 
+   // Anotamos para modificar este articulo------------------------------------
+
+   TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpLin )->cRef, nView )
+
    while ( dbfTmpSer )->( dbSeek( str( ( dbfTmpLin )->nNumLin, 4 ) ) )
       ( dbfTmpSer )->( dbDelete() )
    end while
@@ -14068,8 +14078,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
    if lPasNil() .and. ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
 
-   TComercio():getInstance():resetProductsToUpadateStocks()
-
       ( dbfTmpLin )->( dbGoTop() )
       while !( dbfTmpLin )->( eof() )
 
@@ -14078,8 +14086,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
                return .f.
             end if
          end if
-    
-    TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpLin )->cRef, nView )
     
          ( dbfTmpLin )->( dbSkip() )
 

@@ -11436,6 +11436,10 @@ Funcion Auxiliar para borrar las Lineas de Detalle en un albaran
 STATIC FUNCTION DelDeta( oBrwLin )
 
    CursorWait()
+   
+   // Anotamos para modificar este articulo------------------------------------
+
+   TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpLin )->cRef, nView )
 
    while ( dbfTmpSer )->( dbSeek( Str( ( dbfTmpLin )->nNumLin, 4 ) ) )
       ( dbfTmpSer )->( dbDelete() )
