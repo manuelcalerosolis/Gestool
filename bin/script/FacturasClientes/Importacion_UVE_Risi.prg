@@ -44,6 +44,7 @@ CREATE CLASS ImportacionUVERisi
    METHOD processUVELinesByInvoiceId()
       METHOD isInvoiceChange( hUVELine )        INLINE ( hget( hUVELine, "NumeroFactura" ) != ::currentInvoice )
       METHOD insertInvoiceHeader( hUVELine )
+      METHOD getNewInvoiceNumber( hUVELine )
       METHOD insertInvoiceLine( hUVELine )
    
    METHOD writeUVEtoGestool()                   VIRTUAL
@@ -238,6 +239,7 @@ METHOD processUVELinesByInvoiceId()
    for each hUVELine in ::aUVELines 
 
       if ::isInvoiceChange( hUVELine )
+         ::getNewInvoiceNumber()
          ::insertInvoiceHeader( hUVELine )
       end if
 
@@ -249,13 +251,19 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertInvoiceHeader( hUVELine )
+METHOD getNewInvoiceNumber( hUVELine )
    
    ::currentInvoice     := hget( hUVELine, "NumeroFactura" )
    ::serieInvoice       := "A"
    ::numberInvoice      := nNewDoc( ::serieInvoice, D():FacturasClientes( ::nView ), "nFacCli", , D():Contadores( ::nView ) )
    ::delegationInvoice  := retSufEmp()
 
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertInvoiceHeader( hUVELine )
+   
    msgWait( str( ::numberInvoice ), "test", 0.1 )
 
    ( D():FacturasClientes( ::nView ) )->( dbappend() )
@@ -278,6 +286,17 @@ Return ( self )
 //---------------------------------------------------------------------------//
 
 METHOD insertInvoiceLine( hUVELine )
+
+   ( D():FacturasClientesLineas( ::nView ) )->( dbappend() )
+   ( D():FacturasClientesLineas( ::nView ) )->cSerie     := ::serieInvoice
+   ( D():FacturasClienteslineas( ::nView ) )->nNumFac    := ::numberInvoice
+   ( D():FacturasClienteslineas( ::nView ) )->cSufFac    := ::delegationInvoice
+   ( D():FacturasClienteslineas( ::nView ) )->cRef       := hget( hUVELine, "EAN13" )
+   ( D():FacturasClienteslineas( ::nView ) )->nCosDiv    := hget( hUVELine, "PrecioBase" )
+   ( D():FacturasClienteslineas( ::nView ) )->nPreUnit   := hget( hUVELine, "PrecioBrutoTotal" )
+   // ( D():FacturasClienteslineas( ::nView ) )->    := 
+   // ( D():FacturasClienteslineas( ::nView ) )->    := 
+   ( D():FacturasClientes( ::nView ) )->( dbrunlock() )
    
 Return ( self )
 
