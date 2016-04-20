@@ -271,6 +271,7 @@ METHOD insertInvoiceHeader( hUVELine )
    //*( D():FacturasClientes( ::nView ) )->c := hget( hUVELine, "TipoCliente" )
    //*( D():FacturasClientes( ::nView ) )->c := hget( hUVELine, "DescripciónTipoCliente" )
    ( D():FacturasClientes( ::nView ) )->( dbrunlock() )
+   
 
 Return ( self )
 
