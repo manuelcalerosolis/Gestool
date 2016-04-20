@@ -25,6 +25,8 @@ CREATE CLASS ImportacionUVERisi
 
    DATA aUVELines                               INIT {}
 
+   DATA currentInvoice
+
    METHOD New()                                 CONSTRUCTOR
 
    METHOD getFileUVE()
@@ -34,7 +36,12 @@ CREATE CLASS ImportacionUVERisi
    METHOD processFileUVE()
       METHOD processLineUVE( cLine)             
          METHOD insertLineUVE( aLine )
-
+   METHOD sortUveLinesByInvoiceId()
+   METHOD processUVELinesByInvoiceId()
+      METHOD isInvoiceChange( hUVELine )        INLINE ( hget( hUVELine, "NumeroFactura" ) != ::currentInvoice )
+      METHOD insertInvoiceHeader( hUVELine )
+      METHOD insertInvoiceLine( hUVELine )
+   
    METHOD writeUVEtoGestool()                   VIRTUAL
 
    METHOD OpenFiles()
@@ -61,7 +68,9 @@ METHOD New() CLASS ImportacionUVERisi
       Return ( Self )
    end if 
 
-   ::writeUVEtoGestool()
+   ::sortUveLinesByInvoiceId()
+
+   ::processUVELinesByInvoiceId()
 
    ::CloseFiles()
 
@@ -118,7 +127,6 @@ METHOD processLineUVE( cLine )
    local aLine          := hb_atokens( cLine, __separtor__ )
 
    if !empty( aLine )
-      msgWait( hb_valtoexp( aLine ), "aLine", 0.1 )
       ::insertLineUVE( aLine )
    end if 
 
@@ -129,7 +137,6 @@ Return ( Self )
 METHOD insertLineUVE( aLine )
 
    local hUve   := {=>}
-   local oUve   := oUve:New()
 
    hset( hUve, "NumeroFactura",                 aLine[ 1 ] )
    hset( hUve, "NumeroLinea",                   aLine[ 2 ] )
@@ -197,6 +204,8 @@ METHOD OpenFiles()
 
       D():Get( "Agentes", ::nView )
 
+      D():Contadores( ::nView )
+
    RECOVER USING oError
 
       lOpenFiles        := .f.
@@ -208,6 +217,58 @@ METHOD OpenFiles()
    ErrorBlock( oBlock )
 
 Return ( lOpenFiles )
+
+//---------------------------------------------------------------------------//
+
+METHOD sortUveLinesByInvoiceId()
+
+   asort( ::aUVELines, , , {|x,y| hget( x, "NumeroFactura" ) < hget( y, "NumeroFactura" ) } )
+
+Return ( self )
+//---------------------------------------------------------------------------//
+
+METHOD processUVELinesByInvoiceId()
+
+   local hUVELine
+
+   for each hUVELine in ::aUVELines 
+
+      if ::isInvoiceChange( hUVELine )
+         ::insertInvoiceHeader( hUVELine )
+      end if
+
+      ::insertInvoiceLine( hUVELine )
+
+   next
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertInvoiceHeader( hUVELine )
+   
+   ::currentInvoice     := hget( hUVELine, "NumeroFactura" )
+
+   ( D():FacturasClientes( ::nView ) )->( dbappend() )
+   ( D():FacturasClientes( ::nView ) )->cSerie  := "A"
+   ( D():FacturasClientes( ::nView ) )->nNumFac := nNewDoc( "A", D():FacturasClientes( ::nView ), "nFacCli", , D():Contadores( ::nView ) )
+   ( D():FacturasClientes( ::nView ) )->cSufFac := retSufEmp()
+   ( D():FacturasClientes( ::nView ) )->cCodCli := hget( hUVELine, "CodigoCliente" )
+   ( D():FacturasClientes( ::nView ) )->cNomCli := hget( hUVELine, "Nombre" )
+   //*( D():FacturasClientes( ::nView ) )->c := hget( hUVELine, "RazonSocial" )
+   ( D():FacturasClientes( ::nView ) )->cDniCli := hget( hUVELine, "CIF" )
+   ( D():FacturasClientes( ::nView ) )->cDirCli := hget( hUVELine, "Direccion" )
+   //*( D():FacturasClientes( ::nView ) )->c := hget( hUVELine, "TipoCliente" )
+   //*( D():FacturasClientes( ::nView ) )->c := hget( hUVELine, "DescripciónTipoCliente" )
+   ( D():FacturasClientes( ::nView ) )->( dbunlock() )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertInvoiceLine( hUVELine )
+   
+Return ( self )
 
 //---------------------------------------------------------------------------//
 
