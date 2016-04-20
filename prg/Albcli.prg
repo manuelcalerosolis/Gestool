@@ -12291,8 +12291,8 @@ STATIC FUNCTION cPreCli( aGet, aTmp, oBrw, nMode )
          aGet[ _NMANOBR ]:cText( ( dbfPreCliT )->nManObr )
          aGet[ _NBULTOS ]:cText( ( dbfPreCliT )->nBultos )
 
-         aTmp[ _CCODGRP]         := ( dbfPreCliT )->cCodGrp
-         aTmp[ _LMODCLI]         := ( dbfPreCliT )->lModCli
+         aTmp[ _CCODGRP ]        := ( dbfPreCliT )->cCodGrp
+         aTmp[ _LMODCLI ]        := ( dbfPreCliT )->lModCli
 
          /*
          Datos de alquileres---------------------------------------------------

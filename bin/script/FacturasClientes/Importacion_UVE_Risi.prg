@@ -27,6 +27,10 @@ CREATE CLASS ImportacionUVERisi
 
    DATA currentInvoice
 
+   DATA serieInvoice
+   DATA numberInvoice
+   DATA delegationInvoice
+
    METHOD New()                                 CONSTRUCTOR
 
    METHOD getFileUVE()
@@ -248,11 +252,17 @@ Return ( self )
 METHOD insertInvoiceHeader( hUVELine )
    
    ::currentInvoice     := hget( hUVELine, "NumeroFactura" )
+   ::serieInvoice       := "A"
+   ::numberInvoice      := nNewDoc( ::serieInvoice, D():FacturasClientes( ::nView ), "nFacCli", , D():Contadores( ::nView ) )
+   ::delegationInvoice  := retSufEmp()
+
+   msgWait( str( ::numberInvoice ), "test", 0.1 )
 
    ( D():FacturasClientes( ::nView ) )->( dbappend() )
-   ( D():FacturasClientes( ::nView ) )->cSerie  := "A"
-   ( D():FacturasClientes( ::nView ) )->nNumFac := nNewDoc( "A", D():FacturasClientes( ::nView ), "nFacCli", , D():Contadores( ::nView ) )
-   ( D():FacturasClientes( ::nView ) )->cSufFac := retSufEmp()
+   ( D():FacturasClientes( ::nView ) )->cSerie  := ::serieInvoice
+   ( D():FacturasClientes( ::nView ) )->nNumFac := ::numberInvoice
+   ( D():FacturasClientes( ::nView ) )->cSufFac := ::delegationInvoice
+
    ( D():FacturasClientes( ::nView ) )->cCodCli := hget( hUVELine, "CodigoCliente" )
    ( D():FacturasClientes( ::nView ) )->cNomCli := hget( hUVELine, "Nombre" )
    //*( D():FacturasClientes( ::nView ) )->c := hget( hUVELine, "RazonSocial" )
@@ -260,7 +270,7 @@ METHOD insertInvoiceHeader( hUVELine )
    ( D():FacturasClientes( ::nView ) )->cDirCli := hget( hUVELine, "Direccion" )
    //*( D():FacturasClientes( ::nView ) )->c := hget( hUVELine, "TipoCliente" )
    //*( D():FacturasClientes( ::nView ) )->c := hget( hUVELine, "DescripciónTipoCliente" )
-   ( D():FacturasClientes( ::nView ) )->( dbunlock() )
+   ( D():FacturasClientes( ::nView ) )->( dbrunlock() )
 
 Return ( self )
 
