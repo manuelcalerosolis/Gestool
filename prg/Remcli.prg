@@ -1565,7 +1565,7 @@ METHOD AppendDet( nMode )
          end if
 
          if ::oDbfVir:Append()
-            
+
             aEval( ::oDbfVir:aTField, {| oFld, n | ::oDbfVir:FldPut( n, ::oDbfDet:FieldGet( n ) ) } )
 
             if ::gotoRecibo()
@@ -2431,7 +2431,7 @@ METHOD setCancelar( nMode )
    while !::oDbfVir:Eof()
 
       if ::gotoRecibo()
-         ::setEstadoRecibo( ::oDbfVir:lCobrado, .f. )
+         ::setEstadoRecibo( ::oDbfVir:lCobrado, .f., .t. )
       end if
 
       ::oDbfVir:Skip()
