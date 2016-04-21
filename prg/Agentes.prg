@@ -1669,7 +1669,7 @@ FUNCTION cAgentes( oGet, dbfAge, oGet2, oGetPct )
    local lClose      := .f.
    local lValid      := .f.
 
-   if Empty( oGet:varGet() ) .or. ( oGet:varGet() == "ZZZ" )
+   if Empty( oGet:varGet() ) .or. ( oGet:varGet() == replicate( "Z", 3 ) )
 
       if isObject( oGet2 )
 			oGet2:cText( "" )

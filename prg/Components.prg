@@ -50,6 +50,9 @@ CLASS ResourceBuilder FROM DialogBuilder
 
    DATA oClienteInicio
    DATA oClienteFin
+
+   DATA oAgenteInicio
+   DATA oAgenteFin
    
    DATA oGrupoClienteInicio
    DATA oGrupoClienteFin
@@ -69,10 +72,6 @@ CLASS ResourceBuilder FROM DialogBuilder
 
    DATA oFormatoDocumento
 
-   DATA oInforme
-
-   DATA oImageList
-
    METHOD Serie( cSerie )                 INLINE ( ::oSerieInicio:cText( cSerie ), ::oSerieFin:cText( cSerie ) )
    METHOD Documento( cDocumento )         INLINE ( ::oDocumentoInicio:cText( cDocumento ), ::oDocumentoFin:cText( cDocumento ) )
    METHOD Sufijo( cSufijo )               INLINE ( ::oSufijoInicio:cText( cSufijo ), ::oSufijoFin:cText( cSufijo ) )
@@ -88,6 +87,8 @@ CLASS ResourceBuilder FROM DialogBuilder
    METHOD InRangeCliente( uValue )        INLINE ( empty( uValue ) .or. ( uValue >= ::oClienteInicio:Value() .and. uValue <= ::oClienteFin:Value() ) )
    METHOD InRangeGrupoCliente( uValue )   INLINE ( empty( uValue ) .or. ( uValue >= ::oGrupoClienteInicio:Value() .and. uValue <= ::oGrupoClienteFin:Value() ) )
 
+   METHOD InRangeAgente( uValue )         INLINE ( empty( uValue ) .or. ( uValue >= ::oAgenteInicio:Value() .and. uValue <= ::oAgenteFin:Value() ) )
+  
    METHOD InRangeProveedor( uValue )      INLINE ( empty( uValue ) .or. ( uValue >= ::oProveedorInicio:Value() .and. uValue <= ::oProveedorFin:Value() ) )
    METHOD InRangeGrupoProveedor( uValue ) INLINE ( empty( uValue ) .or. ( uValue >= ::oGrupoProveedorInicio:Value() .and. uValue <= ::oGrupoProveedorFin:Value() ) )
 
@@ -137,10 +138,6 @@ METHOD New( nView ) CLASS PrintSeries
 
    ::oCopias               := GetCopias():New( 170, 180, Self )
 
-   ::oImageList            := TImageList():New( 16, 16 )
-   ::oImageList:AddMasked( TBitmap():Define( "Bullet_Square_Red_16" ),    Rgb( 255, 0, 255 ) )
-   ::oImageList:AddMasked( TBitmap():Define( "Bullet_Square_Green_16" ),  Rgb( 255, 0, 255 ) )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -183,6 +180,16 @@ METHOD SetVentas()
    ::oClienteFin:SetText( "Hasta cliente" )
    ::oClienteFin:Last()
 
+   // Agentes-----------------------------------------------------------------
+
+   ::oAgenteInicio        := GetAgente():New( 400, 410, 401, Self )
+   ::oAgenteInicio:SetText( "Desde Agente" )
+   ::oAgenteInicio:First()
+
+   ::oAgenteFin           := GetAgente():New( 420, 430, 421, Self )
+   ::oAgenteFin:SetText( "Hasta Agente" )
+   ::oAgenteFin:Last()
+
    // Grupo de cliente---------------------------------------------------------
 
    ::oGrupoClienteInicio   := GetGrupoCliente():New( 340, 350, 341, Self )
@@ -211,8 +218,6 @@ METHOD Resource() CLASS PrintSeries
 
    aEval( ::aComponents, {| o | o:Resource(::oDlg) } )
 
-   ::oInforme     := TTreeView():Redefine( 400, ::oDlg )
-
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          ::oDlg ;
@@ -231,17 +236,11 @@ METHOD Resource() CLASS PrintSeries
 
    oBmp:end()   
    
-   ::oImageList:End()
-
-   ::oInforme:Destroy()
-
 RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
 METHOD StartResource() CLASS PrintSeries
-
-   ::oInforme:SetImageList( ::oImageList )
 
    //Si usamos clientes----------------------------------------------------
 
@@ -251,6 +250,14 @@ METHOD StartResource() CLASS PrintSeries
 
    if !empty( ::oClienteFin )
       ::oClienteFin:Valid()
+   end if
+
+   if !empty( ::oAgenteInicio ) 
+      ::oAgenteInicio:Valid()
+   end if
+
+   if !empty( ::oAgenteFin )
+      ::oAgenteFin:Valid()
    end if
 
    if !empty( ::oGrupoClienteInicio )
@@ -929,6 +936,45 @@ METHOD New( idGet, idSay, idText, oContainer ) CLASS GetCliente
    ::bValid       := {|| cClient( ::oGetControl, D():Clientes( ::getView() ), ::oSayControl ) }
    ::bHelp        := {|| BrwClient( ::oGetControl, ::oSayControl ) }
 
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+CLASS GetAgente FROM ComponentGetSayDatabase
+
+   METHOD New( idGet, idSay, idText, oContainer ) 
+   METHOD Build( hBuilder )
+
+   METHOD First()          INLINE ( ::cText( space( 3 ) ) )
+   METHOD Last()           INLINE ( ::cText( replicate( "Z", 3 ) ) )
+
+   METHOD Top()            INLINE ( ::cText( D():Top( "Agentes", ::oContainer:nView ) ) )
+   METHOD Bottom()         INLINE ( ::cText( D():Bottom( "Agentes", ::oContainer:nView ) ) )
+
+END CLASS 
+
+METHOD Build( hBuilder ) CLASS GetAgente
+
+   local idGet          := if( hhaskey( hBuilder, "idGet" ),      hBuilder[ "idGet"  ], nil )
+   local idSay          := if( hhaskey( hBuilder, "idSay" ),      hBuilder[ "idSay"  ], nil )
+   local idText         := if( hhaskey( hBuilder, "idText" ),     hBuilder[ "idText" ], nil )
+   local oContainer     := if( hhaskey( hBuilder, "oContainer" ), hBuilder[ "oContainer" ], nil )
+
+   ::New( idGet, idSay, idText, oContainer )
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD New( idGet, idSay, idText, oContainer ) CLASS GetAgente
+
+   ::cTextValue   := "Agentes"
+
+   ::Super:New( idGet, idSay, idText, oContainer )
+
+   ::bValid       := {|| cAgentes( ::oGetControl, D():Agentes( ::getView() ), ::oSayControl ) }
+   ::bHelp        := {|| BrwAgentes( ::oGetControl, ::oSayControl ) }
+   
 Return ( Self )
 
 //--------------------------------------------------------------------------//

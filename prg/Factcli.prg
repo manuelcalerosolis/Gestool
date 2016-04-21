@@ -16894,6 +16894,7 @@ Static Function ImprimirSeriesFacturas( nDevice, lExt )
 
    oPrinter:bFor     := {||   oPrinter:InRangeFecha( ( D():FacturasClientes( nView ) )->dFecFac )           .and. ;
                               oPrinter:InRangeCliente( ( D():FacturasClientes( nView ) )->cCodCli )         .and. ;
+                              oPrinter:InRangeAgente( ( D():FacturasClientes( nView ) )->cCodAge )         .and. ;
                               oPrinter:InRangeGrupoCliente( retGrpCli( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ) ) ) }
 
    oPrinter:bSkip    := {||   ( D():FacturasClientes( nView ) )->( dbSkip() ) }
