@@ -100,6 +100,8 @@ END CLASS
 
 CLASS PrintSeries FROM ResourceBuilder
 
+   DATA lShowAgentes                      INIT .t.
+
    METHOD New( nView )
 
    METHOD SetCompras()
@@ -163,6 +165,11 @@ METHOD SetCompras()
    ::oGrupoProveedorFin    := GetGrupoProveedor():New( 360, 370, 361, Self )
    ::oGrupoProveedorFin:SetText( "Hasta grupo proveedor" )
    ::oGrupoProveedorFin:Last()
+
+   ::oAgenteInicio         := GetAgente():New( 400, 410, 401, Self )
+   ::oAgenteFin            := GetAgente():New( 420, 430, 421, Self )
+   
+   ::lShowAgentes          := .f.
 
 Return ( Self )
 
@@ -253,11 +260,19 @@ METHOD StartResource() CLASS PrintSeries
    end if
 
    if !empty( ::oAgenteInicio ) 
-      ::oAgenteInicio:Valid()
+      if ::lShowAgentes
+         ::oAgenteInicio:Valid()
+      else
+         ::oAgenteInicio:Hide()
+      end if
    end if
 
    if !empty( ::oAgenteFin )
-      ::oAgenteFin:Valid()
+      if ::lShowAgentes
+         ::oAgenteFin:Valid()
+      else
+         ::oAgenteFin:Hide()
+      end if
    end if
 
    if !empty( ::oGrupoClienteInicio )
