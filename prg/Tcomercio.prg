@@ -543,10 +543,10 @@ METHOD filesOpen() CLASS TComercio
    local oBlock
    local oError
    local lOpen       := .t.
-
+/*
    oBlock            := ErrorBlock( { | oError | Break( oError ) } )
    BEGIN SEQUENCE
-
+*/
       DATABASE NEW ::oArt     PATH ( cPatArt() ) FILE "ARTICULO.DBF"    VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
       ::oArt:OrdSetFocus( "lPubInt" )
 
@@ -572,7 +572,7 @@ METHOD filesOpen() CLASS TComercio
 
       DATABASE NEW ::oDivisas PATH ( cPatDat() ) FILE "DIVISAS.DBF"     VIA ( cDriver() ) SHARED INDEX "DIVISAS.CDX"
 
-      ::oPedCliT := TDataCenter():oPedCliT()
+      DATABASE NEW ::oPedCliT PATH ( cPatEmp() ) FILE "PEDCLIT.DBF"     VIA ( cDriver() ) SHARED INDEX "PEDCLIT.CDX"
 
       DATABASE NEW ::oPedCliI PATH ( cPatEmp() ) FILE "PEDCLII.DBF"     VIA ( cDriver() ) SHARED INDEX "PEDCLII.CDX"
 
@@ -588,7 +588,7 @@ METHOD filesOpen() CLASS TComercio
 
       DATABASE NEW ::oKit     PATH ( cPatArt() ) FILE "ARTKIT.DBF"      VIA ( cDriver() ) SHARED INDEX "ARTKIT.Cdx"
 
-      ::oAlbCliT := TDataCenter():oAlbCliT()
+      DATABASE NEW ::oAlbCliT PATH ( cPatEmp() ) FILE "ALBCLIT.DBF"     VIA ( cDriver() ) SHARED INDEX "ALBCLIT.CDX"
 
       DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "ALBCLIL.DBF"     VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
 
@@ -633,19 +633,19 @@ METHOD filesOpen() CLASS TComercio
       if !::oStock:lOpenFiles()
          lOpen                := .f.
       end if
-
+/*
    RECOVER USING oError
 
       lOpen                   := .f.
 
-      msgStop( ErrorMessage( oError ), 'Imposible abrir las bases de datos de artículos' )      
+      msgStop( ErrorMessage( oError ), 'Imposible abrir las bases de datos' )      
       
       ::filesClose()
 
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
+*/
 RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
@@ -780,6 +780,10 @@ METHOD filesClose() CLASS TComercio
       ::oArtImg:End()
    end if
 
+   if !empty(::oPreCliT ) .and. ::oPreCliT:Used()
+      ::oPreCliT:End()
+   end if 
+
    if !empty( ::oOferta ) .and. ::oOferta:Used()
       ::oOferta:End()
    end if
@@ -787,6 +791,10 @@ METHOD filesClose() CLASS TComercio
    if !empty( ::TPrestashopId ) 
       ::TPrestashopId:End()
    end if
+
+   if !empty(::oStock)
+      ::oStock:End()
+   end if 
 
 RETURN ( Self )
 

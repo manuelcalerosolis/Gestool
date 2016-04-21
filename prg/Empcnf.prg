@@ -871,7 +871,6 @@ FUNCTION nNewDoc( cSerie, dbf, cTipDoc, nLen, dbfCount )
    local oBlock
    local oError
    local nPos
-   local lClo        := .f.
    local nDoc        := 0
    local nRetry      := 0
    local cOldFlt     := ( dbf )->( dbinfo( DBI_DBFILTER ) )
@@ -892,12 +891,6 @@ FUNCTION nNewDoc( cSerie, dbf, cTipDoc, nLen, dbfCount )
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    
-   if Empty( dbfCount )
-      USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
-      SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
-      lClo           := .t.
-   end if
-
    if !empty( cOldFlt )
       ( dbf )->( dbsetfilter() )
    end if 
@@ -946,21 +939,13 @@ FUNCTION nNewDoc( cSerie, dbf, cTipDoc, nLen, dbfCount )
       ( dbf )->( dbsetfilter( c2Block( cOldFlt ), cOldFlt ) )
    end if 
    
-   /*
-   Cerramos las bases de datos
-   */
-   
    RECOVER USING oError
       msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
    END SEQUENCE
    ErrorBlock( oBlock )
    
-   if lClo
-      CLOSE ( dbfCount )
-   end if
-   
-   ( dbf )->( OrdSetFocus( nOrdAnt ) )
-   ( dbf )->( dbGoTo( nRecAnt ) )
+   ( dbf )->( ordsetfocus( nOrdAnt ) )
+   ( dbf )->( dbgoto( nRecAnt ) )
    
    if nDoc == 0
       msgStop( "No puedo obtener el número de nuevo documento" )
@@ -978,7 +963,6 @@ FUNCTION nPutDoc( cSerDoc, nNumDoc, cSufDoc, dbf, cTipDoc, nLen, dbfCount )
    local oBlock
    local oError
    local nPos
-   local lClo        := .f.
    local aStaAnt     := aGetStatus( dbf )
 
    ( dbf )->( ordSetFocus( 1 ) )
@@ -988,42 +972,19 @@ FUNCTION nPutDoc( cSerDoc, nNumDoc, cSufDoc, dbf, cTipDoc, nLen, dbfCount )
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if Empty( dbfCount )
+      nPos           := ( dbfCount )->( fieldPos( cSerDoc ) )
 
-      mkCount( cPatEmp() )
-
-      USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
-      SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
-
-      lClo        := .t.
-
-   end if
-
-   nPos              := ( dbfCount )->( fieldPos( cSerDoc ) )
-
-   /*
-   Hasta q no encuentre un numero valido se pone a dar vueltas
-   */
-
-   if ( dbfCount )->( dbSeek( Upper( cTipDoc ) ) ) .and. dbLock( dbfCount )
-      ( dbfCount )->( fieldPut( nPos, nNumDoc ) )
-   end if
-
-   /*
-   Cerramos las bases de datos
-   */
+      if ( dbfCount )->( dbSeek( upper( cTipDoc ) ) ) .and. dbLock( dbfCount )
+         ( dbfCount )->( fieldPut( nPos, nNumDoc ) )
+      end if
 
    RECOVER USING oError
 
-      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
+      msgStop( "Imposible establecer contadores " + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
-   if lClo
-      CLOSE ( dbfCount )
-   end if
 
    SetStatus( dbf, aStaAnt )
 

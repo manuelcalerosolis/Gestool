@@ -7413,7 +7413,7 @@ static function QuiFacCli()
    Marcamos el contador--------------------------------------------------------
    */
 
-   if uFieldEmpresa( "LRECNUMFAC" )
+   if uFieldEmpresa( "lRecNumFac" )
       nPutDoc( cSerDoc, nNumDoc, cSufDoc, D():FacturasClientes( nView ), "nFacCli", , D():Contadores( nView ) )
    end if
 
@@ -19699,7 +19699,7 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"lContab"     ,"L",  1, 0, "Lógico de la factura contabilizada" ,                        "Contabilizada",               "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"dFecEnt"     ,"D",  8, 0, "Fecha de entrega" ,                                          "FechaEntrega",                "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"cSuFac"      ,"C", 50, 0, "Su pedido" ,                                                 "SuPedido",                    "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"lImpAlb"     ,"L",  1, 0, "Lógico si la factura se importó de Facturas" ,              "ImportadaAlbaran",            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"lImpAlb"     ,"L",  1, 0, "Lógico si la factura se importó de Facturas" ,              "ImportadaAlbaran",             "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"cCondent"    ,"C",100, 0, "Condición de entrada" ,                                      "CondicionEntrada",            "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"mComEnt"     ,"M", 10, 0, "Comentarios" ,                                               "Comentarios",                 "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"mObserv"     ,"M", 10, 0, "Observaciones" ,                                             "Observaciones",               "", "( cDbf )", nil } )
@@ -19793,7 +19793,7 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"nTotPdt"     ,"N", 16,  6, "Total pendiente" ,                                          "TotalPendiente",              "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"lOperPV"     ,"L", 1,   0, "Lógico para operar con punto verde" ,                       "OperarPuntoVerde",            "", "( cDbf )", {|| .f. } } )
    aAdd( aItmFacCli, {"lRECC" 		,"L", 1,   0, "Acogida al régimen especial del criterio de caja",          "AcogidaRECC",                 "", "( cDbf )", {|| .f. } } )
-   aAdd( aItmFacCli, {"cCodPry" 	,"C", 4,   0, "Código del proyecto",      				                     "Proyecto",                    "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cCodPry"     ,"C", 4,   0, "Código del proyecto",      				                     "Proyecto",                    "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"nDtoTarifa" 	,"N", 6,   2, "Descuentos de tarifa", 							                  "DescuentoTarifa",             "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"lMail"       ,"L", 1,   0, "Lógico para enviar mail" ,                                  "EnviarMail",                  "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"dMail"       ,"D", 8,   0, "Fecha mail enviado" ,                                       "FechaMailEnviado",            "", "( cDbf )", nil } )

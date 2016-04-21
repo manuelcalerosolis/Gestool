@@ -129,11 +129,6 @@ METHOD New() CLASS ImportadorFacturas
       ::showErrors()
    end if 
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> origin/master
 Return ( Self )
 
 //---------------------------------------------------------------------------//
@@ -215,9 +210,11 @@ METHOD closeExcelFile()
       Return ( .f. )
    end if 
 
-   ::oOleExcel:oExcel:WorkBooks:Close() 
-   ::oOleExcel:oExcel:Quit()
-   ::oOleExcel:oExcel:DisplayAlerts   := .t.
+   if !empty( ::oOleExcel:oExcel )
+      ::oOleExcel:oExcel:WorkBooks:Close() 
+      ::oOleExcel:oExcel:Quit()
+      ::oOleExcel:oExcel:DisplayAlerts   := .t.
+   end if 
 
    ::oOleExcel:End()
 
@@ -249,11 +246,16 @@ METHOD ProcessFile( cExcelFile ) CLASS ImportadorFacturas
 
       for ::nRow := ::nLineaComienzo to 65536
 
-         msgWait( "Procesando linea " + str(::nRow), "", 0.0001 )
+         msgAlert( "Procesando linea -> " + str(::nRow), "", 0.0001 )
 
          ::getRow()
 
+         msgAlert( ::fechaApunte, "fechaApunte" )
+
          if ::emptyRow()
+
+            msgAlert( "empty row" )
+
             exit 
          end if
 
@@ -265,17 +267,9 @@ METHOD ProcessFile( cExcelFile ) CLASS ImportadorFacturas
 
       next
 
-<<<<<<< HEAD
       // Cerramos la conexion con el objeto oOleExcel-----------------------------
 
-      ::oOleExcel:oExcel:WorkBooks:Close() 
-      ::oOleExcel:oExcel:Quit()
-      ::oOleExcel:oExcel:DisplayAlerts   := .t.
-
-      ::oOleExcel:End()
-=======
       ::closeExcelFile()
->>>>>>> origin/master
 
    CursorWE()
 
@@ -505,11 +499,8 @@ METHOD buildSales()
                         "Moneda"                => 'E',; // Euros
                         "Render"                => 'VentaFactura' } )
 
-<<<<<<< HEAD
-=======
    ::totalFactura    := ::importeFactura1
 
->>>>>>> origin/master
    if ::baseImponible2 != 0
 
       aadd( ::aSales,   {  "Id"                    => ::nRow,;
@@ -533,11 +524,8 @@ METHOD buildSales()
                            "Moneda"                => 'E',; // Euros
                            "Render"                => 'VentaFactura' } )
 
-<<<<<<< HEAD
-=======
       ::totalFactura += ::importeFactura2
 
->>>>>>> origin/master
    end if 
 
    if ::baseImponible3 != 0
@@ -563,11 +551,8 @@ METHOD buildSales()
                            "Moneda"                => 'E',; // Euros
                            "Render"                => 'VentaFactura' } )
 
-<<<<<<< HEAD
-=======
       ::totalFactura += ::importeFactura3
 
->>>>>>> origin/master
    end if 
 
 Return ( self )   
@@ -576,19 +561,12 @@ Return ( self )
 
 METHOD buildAccountingExportFile()
 
-<<<<<<< HEAD
-   local hInvoices
-
-   for each hInvoices in ::aInvoices
-      EnlaceA3():getInstance():Add( hInvoices )
-   next
-
-   EnlaceA3():getInstance():Render()
-=======
    local hSale
    local hInvoice
 
    for each hInvoice in ::aInvoices
+
+      msgAlert( hb_valtoexp( hInvoice ) )
       
       EnlaceA3():getInstance():Add( hInvoice )
 
@@ -600,7 +578,6 @@ METHOD buildAccountingExportFile()
 
    EnlaceA3():getInstance():Render()
    EnlaceA3():getInstance():WriteASCII()
->>>>>>> origin/master
 
 Return ( self )
 

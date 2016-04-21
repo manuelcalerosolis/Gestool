@@ -1729,7 +1729,6 @@ METHOD BuildData()
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Mapas.Cdx"
    oDataTable:cDescription := "Mapas de usuarios"
    oDataTable:aStruct      := aItmMapaUsuario()  
-   oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
