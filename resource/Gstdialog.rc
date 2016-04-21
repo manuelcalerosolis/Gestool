@@ -8612,8 +8612,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 410, "Edit", WS_BORDER|WS_TABSTOP, 215, 117, 204, 11
   CONTROL "", 420, "Edit", WS_BORDER|WS_TABSTOP, 127, 129, 86, 11
   CONTROL "", 430, "Edit", WS_BORDER|WS_TABSTOP, 215, 129, 204, 11
-  CONTROL "Desde Agente", 401, "Static", WS_GROUP, 50, 119, 70, 8
-  CONTROL "Hasta Agente", 421, "Static", WS_GROUP, 50, 131, 70, 8
+  CONTROL "Desde agente", 401, "Static", WS_GROUP, 50, 119, 70, 8
+  CONTROL "Hasta agente", 421, "Static", WS_GROUP, 50, 131, 70, 8
 }
 
 IMPSERDOC DIALOG DISCARDABLE 166, 121, 294, 164

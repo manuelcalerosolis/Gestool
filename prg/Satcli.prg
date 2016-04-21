@@ -8304,6 +8304,7 @@ Static Function ImprimirSeriesSatClientes( nDevice, lExt )
 
    oPrinter:bFor     := {||   oPrinter:InRangeFecha( ( D():SatClientes( nView ) )->dFecSat )           .and. ;
                               oPrinter:InRangeCliente( ( D():SatClientes( nView ) )->cCodCli )         .and. ;
+                              oPrinter:InRangeAgente( ( D():SatClientes( nView ) )->cCodAge )         .and. ;
                               oPrinter:InRangeGrupoCliente( retGrpCli( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ) ) ) }
 
    oPrinter:bSkip    := {||   ( D():SatClientes( nView ) )->( dbSkip() ) }

@@ -183,11 +183,11 @@ METHOD SetVentas()
    // Agentes-----------------------------------------------------------------
 
    ::oAgenteInicio        := GetAgente():New( 400, 410, 401, Self )
-   ::oAgenteInicio:SetText( "Desde Agente" )
+   ::oAgenteInicio:SetText( "Desde agente" )
    ::oAgenteInicio:First()
 
    ::oAgenteFin           := GetAgente():New( 420, 430, 421, Self )
-   ::oAgenteFin:SetText( "Hasta Agente" )
+   ::oAgenteFin:SetText( "Hasta agente" )
    ::oAgenteFin:Last()
 
    // Grupo de cliente---------------------------------------------------------

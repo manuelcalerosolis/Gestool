@@ -8383,6 +8383,7 @@ Static Function ImprimirSeriesPresupuestosClientes( nDevice, lExt )
 
    oPrinter:bFor     := {||   oPrinter:InRangeFecha( ( D():PresupuestosClientes( nView ) )->dFecPre )           .and. ;
                               oPrinter:InRangeCliente( ( D():PresupuestosClientes( nView ) )->cCodCli )         .and. ;
+                              oPrinter:InRangeAgente( ( D():PresupuestosClientes( nView ) )->cCodAge )         .and. ;
                               oPrinter:InRangeGrupoCliente( retGrpCli( ( D():PresupuestosClientes( nView ) )->cCodCli, D():Clientes( nView ) ) ) }
 
    oPrinter:bSkip    := {||   ( D():PresupuestosClientes( nView ) )->( dbSkip() ) }

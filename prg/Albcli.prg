@@ -13056,6 +13056,7 @@ Static Function ImprimirSeriesAlbaranes( nDevice, lExternal )
 
    oPrinter:bFor     := {||   oPrinter:InRangeFecha( ( D():AlbaranesClientes( nView ) )->dFecAlb )           .and. ;
                               oPrinter:InRangeCliente( ( D():AlbaranesClientes( nView ) )->cCodCli )         .and. ;
+                              oPrinter:InRangeAgente( ( D():AlbaranesClientes( nView ) )->cCodAge )         .and. ;
                               oPrinter:InRangeGrupoCliente( retGrpCli( ( D():AlbaranesClientes( nView ) )->cCodCli, D():Clientes( nView ) ) ) }
 
    oPrinter:bSkip    := {||   ( D():AlbaranesClientes( nView ) )->( dbSkip() ) }
