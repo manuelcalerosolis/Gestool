@@ -5965,19 +5965,6 @@ Return ( ::hProductsToUpdate )
 
 METHOD updateWebProductStocks() CLASS TComercio
 
-   ::oWaitMeter         := TWaitMeter():New( "Actualizando stocks", "Espere por favor..." )
-   ::oWaitMeter:Run()
-
-   heval( ::hProductsToUpdate, {|cWebName, aProductsWeb | ::updateProductStocks( cWebName, aProductsWeb ) } )
-
-   ::oWaitMeter:End()
-
-Return ( ::hProductsToUpdate )   
-
-//---------------------------------------------------------------------------//
-
-METHOD updateProductStocks( cWebName, aProductsWeb )
-
    if !::TPrestashopConfig:isRealTimeConexion()
       Return .f.
    end if 
@@ -5986,6 +5973,21 @@ METHOD updateProductStocks( cWebName, aProductsWeb )
       ::filesClose()
       Return .f.
    end if 
+
+   ::oWaitMeter         := TWaitMeter():New( "Actualizando stocks", "Espere por favor..." )
+   ::oWaitMeter:Run()
+
+   heval( ::hProductsToUpdate, {|cWebName, aProductsWeb | ::updateProductStocks( cWebName, aProductsWeb ) } )
+
+   ::oWaitMeter:End()
+
+   ::filesClose()
+
+Return ( ::hProductsToUpdate )   
+
+//---------------------------------------------------------------------------//
+
+METHOD updateProductStocks( cWebName, aProductsWeb )
 
    ::TPrestashopConfig:setCurrentWebName( cWebName )
 
@@ -5998,8 +6000,6 @@ METHOD updateProductStocks( cWebName, aProductsWeb )
    ::uploadInformationStockProductPrestashop()
 
    ::prestashopDisConnect()  
-
-   ::filesClose()
 
 Return ( ::hProductsToUpdate )   
 

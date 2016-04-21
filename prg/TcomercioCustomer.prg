@@ -125,7 +125,6 @@ METHOD getCustomerFromPrestashop( idCustomer ) CLASS TComercioCustomer
 
    cQuery            := "SELECT * FROM " + ::TComercio:cPrefixTable( "customer" ) + " " + ;
                         "WHERE id_customer = " + alltrim( str( idCustomer ) ) 
-
    oQuery            := TMSQuery():New( ::TComercio:oCon, cQuery )
 
    if oQuery:Open() 
