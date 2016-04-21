@@ -1556,8 +1556,12 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
       REDEFINE COMBOBOX aGet[ _NTIPIMPTPV ] VAR aTmp[ _NTIPIMPTPV ] ;
          ITEMS    aTipImpTpv ;
          ID       210;
-         OF       fldTPV    
-      
+         OF       fldTPV  
+
+      REDEFINE CHECKBOX aGet[ _LOPENTIK ] VAR aTmp[ _LOPENTIK ] ;
+         ID       220;
+         OF       fldTPV  
+
       // Page 2 Defecto-----------------------------------------------------------
 
       REDEFINE BITMAP oBmpDefecto ;
@@ -6661,6 +6665,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"lServicio",  "L",  1, 0, "Lógico Fecha servicio",                                 "", "", "aEmp()" } )
    aAdd( aDbf, {"cCeeRptCom", "C", 12, 0, "Cuenta en contaplus de impuestos repercutido en compras", "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cCeeSptCom", "C", 12, 0, "Cuenta en contaplus de impuestos devengado en compras",   "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"lOpenTik",   "L",  1, 0, "Lógico permitir tickets abiertos en sesiones",          "", "", "aEmp()", .t. } )
 
 Return ( aDbf )
 

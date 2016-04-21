@@ -311,3 +311,4 @@
 #define _LSERVICIO  311
 #define _CCEERPTCOM 312
 #define _CCEESPTCOM 313
+#define _LOPENTIK   314 
