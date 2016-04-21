@@ -4142,7 +4142,7 @@ METHOD GoNext( oCajTur, oBrwCnt )
 
             ::oBtnRecalcular:Show()
 
-            if ::lTikAbiertos .and. !::lArqueoParcial
+            if !uFieldEmpresa( "lOpenTik" ) .and. ::lTikAbiertos .and. !::lArqueoParcial
                MsgStop( "Existen tickets abiertos: " + CRLF + ::cTikAbiertos )
             else
                ::oFldTurno:GoNext(); ::oFldTurno:GoNext()
@@ -4187,7 +4187,7 @@ METHOD GoNext( oCajTur, oBrwCnt )
 
          ::oBtnRecalcular:Show()
 
-         if ::lTikAbiertos .and. !::lArqueoParcial
+         if !uFieldEmpresa( "lOpenTik" ) .and. ::lTikAbiertos .and. !::lArqueoParcial
             MsgStop( "Existen tickets abiertos: " + CRLF + ::cTikAbiertos )
          else
             ::oFldTurno:GoNext()
