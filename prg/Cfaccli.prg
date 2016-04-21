@@ -5191,12 +5191,26 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
 
    if ( lSimula .or. !lErrorFound )
 
-      if ( dbfFacCliP )->lDevuelto
-         cConcepto      := "Dev./Recibo. " + cRecibo
-         dFecha         := ( dbfFacCliP )->dFecDev
+      if lAplicacionContaplus()
+
+         if ( dbfFacCliP )->lDevuelto
+            cConcepto      := "Dev./Recibo. " + cRecibo
+            dFecha         := ( dbfFacCliP )->dFecDev
+         else
+            cConcepto      := "C/Recibo. " + cRecibo
+            dFecha         := ( dbfFacCliP )->dEntrada
+         end if
+
       else
-         cConcepto      := "C/Recibo. " + cRecibo
-         dFecha         := ( dbfFacCliP )->dEntrada
+
+         if ( dbfFacCliP )->lDevuelto
+            cConcepto      := "Dev./Recibo. " + nRecibo
+            dFecha         := ( dbfFacCliP )->dFecDev
+         else
+            cConcepto      := "C/Recibo. " + nRecibo
+            dFecha         := ( dbfFacCliP )->dEntrada
+         end if
+
       end if
 
    end if
@@ -5310,7 +5324,7 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
                                           "Cuenta"                => cCtaPgo,;
                                           "DescripcionCuenta"     => cNombreCliente,;
                                           "TipoImporte"           => 'D',; 
-                                          "ReferenciaDocumento"   => cRecibo,;
+                                          "ReferenciaDocumento"   => nRecibo,; // cRecibo,;
                                           "DescripcionApunte"     => cConcepto,;
                                           "Importe"               => nImpRec,;
                                           "Moneda"                => 'E',; 
@@ -5322,7 +5336,7 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
                                           "Cuenta"                => cCtaCli,;
                                           "DescripcionCuenta"     => cNombreCliente,;
                                           "TipoImporte"           => 'H',; 
-                                          "ReferenciaDocumento"   => cRecibo,;
+                                          "ReferenciaDocumento"   => nRecibo,; // cRecibo,;
                                           "DescripcionApunte"     => cConcepto,;
                                           "Importe"               => nImpRec,;
                                           "Moneda"                => 'E',; 

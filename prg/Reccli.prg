@@ -769,12 +769,11 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
             aTmp[ _CTIPREC ]     := "L"
             aTmp[ _CTURREC ]     := cCurSesion( nil, .f. )
 
-            aTmp[ _NIMPORTE ]    := nTotalRelacionados
-            aTmp[ _CDESCRIP ]    := "Recibo matriz para compensar"
-
             if !Empty( oClienteCompensar )
 
-               aTmp[ _CCODCLI ]  := oClienteCompensar:VarGet()
+               aTmp[ _CDESCRIP ]       := "Recibo matriz para compensar"
+               aTmp[ _CCODCLI ]        := oClienteCompensar:VarGet()
+               aTmp[ _NIMPORTE ]       := nTotalRelacionados
 
                if ( D():Clientes( nView ) )->( dbSeek( aTmp[ _CCODCLI ] ) )
 
@@ -5419,12 +5418,13 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
    Limpiamos los valores para que al hacer un recibo nuevo despues de compensar no tome los valores antiguos
    */
 
-   nTotalRelacionados     := 0
+   nTotalRelacionados      := 0
 
-   aRecibosRelacionados   := {}
+   aRecibosRelacionados    := {}
 
    if !Empty( oClienteCompensar )
       oClienteCompensar:cText( Space( 12 ) )
+      oClienteCompensar    := nil
    end if
 
    /*
@@ -5453,7 +5453,7 @@ static function lValidReciboLibre( aTmp )
       Return .f.
    end if
 
-   if aTmp[ _NIMPORTE ] == 0
+   if aTmp[ _NIMPORTE ] == 0 .and. Empty( oClienteCompensar )
       MsgInfo( "No puede hacer un recibo libre con importe 0" )
       Return .f.
    end if
