@@ -7,9 +7,20 @@
 //---------------------------------------------------------------------------//
 
 Function Inicio()
+/*
+   local oError
+   local oBlock
 
-   ImportacionUVERisi():New()
-
+   oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+*/
+      ImportacionUVERisi():New()
+/*
+   RECOVER USING oError
+      msgStop( "Error en la ejecución del script." + CRLF + ErrorMessage( oError ) )
+   END SEQUENCE
+   ErrorBlock( oBlock )
+*/
 Return ( nil )
 
 //---------------------------------------------------------------------------//
@@ -176,7 +187,7 @@ METHOD insertLineUVE( aLine )
    hset( hUve, "NombreRuta",                    aLine[ 23 ] )
    hset( hUve, "CodigoComercial",               aLine[ 24 ] )
    hset( hUve, "NombreComercial",               aLine[ 25 ] )
-   hset( hUve, "Peso",                          aLine[ 26 ] )
+   hset( hUve, "Peso",                          val( aLine[ 26 ] ) )
    hset( hUve, "UMPeso",                        aLine[ 27 ] )
    hset( hUve, "TipoCliente",                   aLine[ 28 ] )
    hset( hUve, "Telefono",                      aLine[ 29 ] )
@@ -254,6 +265,7 @@ METHOD processUVELinesByInvoiceId()
 
          ::getNewInvoiceNumber( hUVELine )
          ::insertInvoiceHeader( hUVELine )
+
       end if
 
       if !( ::isProduct( hUVELine ) )
@@ -304,24 +316,6 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD isProduct( hUVELine )
-
-Return ( dbSeekInOrd( hget( hUVELine, "CodigoProducto" ), "Cod", D():Articulos( ::nView ) ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD createProduct( hUVELine )
-
-   ( D():Articulos( ::nView ) )->( dbappend() )
-
-   ( D():Articulos( ::nView ) )->Codigo    := hget( hUVELine, "CodigoProducto" )
-   
-   ( D():Articulos( ::nView ) )->( dbrunlock() )
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
 METHOD insertInvoiceHeader( hUVELine )
    
    ( D():FacturasClientes( ::nView ) )->( dbappend() )
@@ -331,7 +325,6 @@ METHOD insertInvoiceHeader( hUVELine )
 
    ( D():FacturasClientes( ::nView ) )->cCodAlm := oUser():cAlmacen()
    ( D():FacturasClientes( ::nView ) )->cCodCaj := oUser():cCaja()
-   ( D():FacturasClientes( ::nView ) )->lIvaInc := uFieldEmpresa( "lIvaInc" )
    ( D():FacturasClientes( ::nView ) )->cDivFac := cDivEmp()
    ( D():FacturasClientes( ::nView ) )->nVdvFac := nChgDiv()
    ( D():FacturasClientes( ::nView ) )->cCodUsr := cCurUsr()
@@ -353,6 +346,26 @@ METHOD insertInvoiceHeader( hUVELine )
    ( D():FacturasClientes( ::nView ) )->( dbrunlock() )
    
    ::nLineNumber        := 1
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD isProduct( hUVELine )
+
+Return ( dbSeekInOrd( hget( hUVELine, "CodigoProducto" ), "Codigo", D():Articulos( ::nView ) ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD createProduct( hUVELine )
+
+   ( D():Articulos( ::nView ) )->( dbappend() )
+
+   ( D():Articulos( ::nView ) )->Codigo    := hget( hUVELine, "CodigoProducto" )
+   ( D():Articulos( ::nView ) )->Nombre    := hget( hUVELine, "DescripcionProducto" )
+   ( D():Articulos( ::nView ) )->nPreVta1  := hget( hUVELine, "PrecioBase" )
+   
+   ( D():Articulos( ::nView ) )->( dbrunlock() )
 
 Return ( self )
 
@@ -380,9 +393,7 @@ METHOD insertInvoiceLine( hUVELine )
    ( D():FacturasClienteslineas( ::nView ) )->nPesoKg    := hget( hUVELine, "Peso" )
    ( D():FacturasClienteslineas( ::nView ) )->cPesoKg    := hget( hUVELine, "UMPeso" )
 
-   ( D():FacturasClientesLineas( ::nView ) )->lIvaInc    := .f.
-
-   ( D():FacturasClientes( ::nView ) )->( dbrunlock() )
+   ( D():FacturasClientesLineas( ::nView ) )->( dbrunlock() )
 
    ::nLineNumber++
    

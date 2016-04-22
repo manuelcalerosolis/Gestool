@@ -1843,621 +1843,621 @@ RETURN ( lDup )
 
 //---------------------------------------------------------------------------//
 
-   METHOD InsertStockMovimientosAlmacen( lNumeroSerie, lDestino )
+METHOD InsertStockMovimientosAlmacen( lNumeroSerie, lDestino )
 
-      local nUnidades         := nTotNMovAlm( ::cHisMovT )
+   local nUnidades         := nTotNMovAlm( ::cHisMovT )
 
-      with object ( SStock():New() )
+   with object ( SStock():New() )
 
-         :cTipoDocumento      := MOV_ALM
+      :cTipoDocumento      := MOV_ALM
 
-         :cAlias              := ( ::cHisMovT )
-         :cNumeroDocumento    := Str( ( ::cHisMovT )->nNumRem )
-         :cDelegacion         := ( ::cHisMovT )->cSufRem
-         :dFechaDocumento     := ( ::cHisMovT )->dFecMov
-         :tFechaDocumento     := ( ::cHisMovT )->cTimMov
-         :cCodigo             := ( ::cHisMovT )->cRefMov
-         :cCodigoPropiedad1   := ( ::cHisMovT )->cCodPr1
-         :cCodigoPropiedad2   := ( ::cHisMovT )->cCodPr2
-         :cValorPropiedad1    := ( ::cHisMovT )->cValPr1
-         :cValorPropiedad2    := ( ::cHisMovT )->cValPr2
-         :cLote               := ( ::cHisMovT )->cLote
-         :dConsolidacion      := if( !Empty( ::dConsolidacion ), ::dConsolidacion, Ctod( "" ) )
+      :cAlias              := ( ::cHisMovT )
+      :cNumeroDocumento    := Str( ( ::cHisMovT )->nNumRem )
+      :cDelegacion         := ( ::cHisMovT )->cSufRem
+      :dFechaDocumento     := ( ::cHisMovT )->dFecMov
+      :tFechaDocumento     := ( ::cHisMovT )->cTimMov
+      :cCodigo             := ( ::cHisMovT )->cRefMov
+      :cCodigoPropiedad1   := ( ::cHisMovT )->cCodPr1
+      :cCodigoPropiedad2   := ( ::cHisMovT )->cCodPr2
+      :cValorPropiedad1    := ( ::cHisMovT )->cValPr1
+      :cValorPropiedad2    := ( ::cHisMovT )->cValPr2
+      :cLote               := ( ::cHisMovT )->cLote
+      :dConsolidacion      := if( !Empty( ::dConsolidacion ), ::dConsolidacion, Ctod( "" ) )
 
-         if IsTrue( lDestino )
+      if IsTrue( lDestino )
 
-            :cCodigoAlmacen   := ( ::cHisMovT )->cAliMov
-
-            if IsTrue( lNumeroSerie )
-               :nUnidades     := if( nUnidades > 0, 1, -1 ) 
-               :cNumeroSerie  := ( ::cHisMovS )->cNumSer
-            else
-               :nUnidades     := nUnidades
-               :nBultos       := ( ::cHisMovT )->nBultos
-               :nCajas        := ( ::cHisMovT )->nCajMov
-            end if 
-
-         else 
-
-            :cCodigoAlmacen   := ( ::cHisMovT )->cAloMov
-
-            if IsTrue( lNumeroSerie )
-               :nUnidades     := if( nUnidades > 0, -1, 1 ) 
-               :cNumeroSerie  := ( ::cHisMovS )->cNumSer
-            else
-               :nUnidades     := -nUnidades
-               :nBultos       := -( ::cHisMovT )->nBultos
-               :nCajas        := -( ::cHisMovT )->nCajMov
-            end if 
-
-         end if
-
-         ::Integra( hb_QWith() )
-
-      end with
-
-   RETURN nil
-
-   //---------------------------------------------------------------------------//
-
-   METHOD DeleteStockAlbaranProveedores( lNumeroSerie )
-
-      local nUnidades         := nTotNAlbPrv( ::cAlbPrvL )
-
-      with object ( SStock():New() )
-      
-         :cTipoDocumento      := ALB_PRV
-         :cAlias              := ( ::cAlbPrvL )
-         :cNumeroDocumento    := ( ::cAlbPrvL )->cSerAlb + "/" + Alltrim( Str( ( ::cAlbPrvL )->nNumAlb ) )
-         :cDelegacion         := ( ::cAlbPrvL )->cSufAlb
-         :dFechaDocumento     := ( ::cAlbPrvL )->dFecAlb
-         :tFechaDocumento     := ( ::cAlbPrvL )->tFecAlb
-         :cCodigo             := ( ::cAlbPrvL )->cRef
-         :cCodigoAlmacen      := ( ::cAlbPrvL )->cAlmOrigen
-         :cCodigoPropiedad1   := ( ::cAlbPrvL )->cCodPr1
-         :cCodigoPropiedad2   := ( ::cAlbPrvL )->cCodPr2
-         :cValorPropiedad1    := ( ::cAlbPrvL )->cValPr1
-         :cValorPropiedad2    := ( ::cAlbPrvL )->cValPr2
-         :cLote               := ( ::cAlbPrvL )->cLote
-         :dFechaCaducidad     := ( ::cAlbPrvL )->dFecCad
-         :nBultos             := -( ::cAlbPrvL )->nBultos
-         :nCajas              := -( ::cAlbPrvL )->nCanEnt
+         :cCodigoAlmacen   := ( ::cHisMovT )->cAliMov
 
          if IsTrue( lNumeroSerie )
-            :nUnidades        := if( nUnidades > 0, -1, 1 )
-            :cNumeroSerie     := ( ::cAlbPrvS )->cNumSer
+            :nUnidades     := if( nUnidades > 0, 1, -1 ) 
+            :cNumeroSerie  := ( ::cHisMovS )->cNumSer
          else
-            :nUnidades        := -nUnidades
-         end if
-         
-         ::Integra( hb_QWith() )
-
-      end with
-
-   RETURN nil
-
-   //---------------------------------------------------------------------------//
-
-   METHOD InsertStockAlbaranProveedores( lNumeroSerie )
-
-      local nUnidades         := nTotNAlbPrv( ::cAlbPrvL )
-
-      with object ( SStock():New() )
-      
-         :cTipoDocumento      := ALB_PRV
-         :cAlias              := ( ::cAlbPrvL )
-         :cNumeroDocumento    := ( ::cAlbPrvL )->cSerAlb + "/" + Alltrim( Str( ( ::cAlbPrvL )->nNumAlb ) )
-         :cDelegacion         := ( ::cAlbPrvL )->cSufAlb
-         :dFechaDocumento     := ( ::cAlbPrvL )->dFecAlb
-         :tFechaDocumento     := ( ::cAlbPrvL )->tFecAlb
-         :cCodigo             := ( ::cAlbPrvL )->cRef
-         :cCodigoAlmacen      := ( ::cAlbPrvL )->cAlmLin
-         :cCodigoPropiedad1   := ( ::cAlbPrvL )->cCodPr1
-         :cCodigoPropiedad2   := ( ::cAlbPrvL )->cCodPr2
-         :cValorPropiedad1    := ( ::cAlbPrvL )->cValPr1
-         :cValorPropiedad2    := ( ::cAlbPrvL )->cValPr2
-         :cLote               := ( ::cAlbPrvL )->cLote
-         :dFechaCaducidad     := ( ::cAlbPrvL )->dFecCad
-         :nBultos             := ( ::cAlbPrvL )->nBultos
-         :nCajas              := ( ::cAlbPrvL )->nCanEnt
-
-         if IsTrue( lNumeroSerie )
-            :nUnidades        := if( nUnidades > 0, 1, -1 )
-            :cNumeroSerie     := ( ::cAlbPrvS )->cNumSer
-         else
-            :nUnidades        :=  nUnidades
-         end if
-         
-         ::Integra( hb_QWith() )
-
-      end with
-
-   RETURN nil
-
-   //---------------------------------------------------------------------------//
-
-      METHOD DeleteStockFacturaProveedores( lNumeroSerie )
-
-      local nUnidades         := nTotNFacPrv( ::cFacPrvL )
-
-      with object ( SStock():New() )
-      
-         :cTipoDocumento      := FAC_PRV
-         :cAlias              := ( ::cFacPrvL )
-         :cNumeroDocumento    := ( ::cFacPrvL )->cSerFac + "/" + Alltrim( Str( ( ::cFacPrvL )->nNumFac ) )
-         :cDelegacion         := ( ::cFacPrvL )->cSufFac
-         :dFechaDocumento     := ( ::cFacPrvL )->dFecFac
-         :tFechaDocumento     := ( ::cFacPrvL )->tFecFac
-         :cCodigo             := ( ::cFacPrvL )->cRef
-         :cCodigoAlmacen      := ( ::cFacPrvL )->cAlmOrigen
-         :cCodigoPropiedad1   := ( ::cFacPrvL )->cCodPr1
-         :cCodigoPropiedad2   := ( ::cFacPrvL )->cCodPr2
-         :cValorPropiedad1    := ( ::cFacPrvL )->cValPr1
-         :cValorPropiedad2    := ( ::cFacPrvL )->cValPr2
-         :cLote               := ( ::cFacPrvL )->cLote
-         :dFechaCaducidad     := ( ::cFacPrvL )->dFecCad
-         :nBultos             := -( ::cFacPrvL )->nBultos
-         :nCajas              := -( ::cFacPrvL )->nCanEnt
-
-         if IsTrue( lNumeroSerie )
-            :nUnidades        := if( nUnidades > 0, -1, 1 )
-            :cNumeroSerie     := ( ::cFacPrvS )->cNumSer
-         else
-            :nUnidades        := -nUnidades
-         end if
-         
-         ::Integra( hb_QWith() )
-
-      end with
-
-   RETURN nil 
-   
-   //---------------------------------------------------------------------------//
-
-   METHOD InsertStockFacturaProveedores( lNumeroSerie )
-
-      local nUnidades         := nTotNFacPrv( ::cFacPrvL )
-
-      with object ( SStock():New() )
-      
-         :cTipoDocumento      := FAC_PRV
-         :cAlias              := ( ::cFacPrvL )
-         :cNumeroDocumento    := ( ::cFacPrvL )->cSerFac + "/" + Alltrim( Str( ( ::cFacPrvL )->nNumFac ) )
-         :cDelegacion         := ( ::cFacPrvL )->cSufFac
-         :dFechaDocumento     := ( ::cFacPrvL )->dFecFac
-         :tFechaDocumento     := ( ::cFacPrvL )->tFecFac
-         :cCodigo             := ( ::cFacPrvL )->cRef
-         :cCodigoAlmacen      := ( ::cFacPrvL )->cAlmLin
-         :cCodigoPropiedad1   := ( ::cFacPrvL )->cCodPr1
-         :cCodigoPropiedad2   := ( ::cFacPrvL )->cCodPr2
-         :cValorPropiedad1    := ( ::cFacPrvL )->cValPr1
-         :cValorPropiedad2    := ( ::cFacPrvL )->cValPr2
-         :cLote               := ( ::cFacPrvL )->cLote
-         :dFechaCaducidad     := ( ::cFacPrvL )->dFecCad
-         :nBultos             := ( ::cFacPrvL )->nBultos
-         :nCajas              := ( ::cFacPrvL )->nCanEnt
-
-         if IsTrue( lNumeroSerie )
-            :nUnidades        := if( nUnidades > 0, 1, -1 )
-            :cNumeroSerie     := ( ::cFacPrvS )->cNumSer
-         else
-            :nUnidades        := nUnidades
-         end if
-         
-         ::Integra( hb_QWith() )
-
-      end with
-
-   RETURN nil 
-   
-   //---------------------------------------------------------------------------//
-
-   METHOD InsertStockRectificativaProveedores( lNumeroSerie )
-
-      local nUnidades         := nTotNRctPrv( ::cRctPrvL )
-
-      with object ( SStock():New() )
-
-         :cTipoDocumento      := RCT_PRV
-         :cAlias              := ( ::cRctPrvL )
-         :cNumeroDocumento    := ( ::cRctPrvL )->cSerFac + "/" + Alltrim( Str( ( ::cRctPrvL )->nNumFac ) )
-         :cDelegacion         := ( ::cRctPrvL )->cSufFac
-         :dFechaDocumento     := ( ::cRctPrvL )->dFecFac
-         :tFechaDocumento     := ( ::cRctPrvL )->tFecFac
-         :cCodigo             := ( ::cRctPrvL )->cRef
-         :cCodigoAlmacen      := ( ::cRctPrvL )->cAlmLin
-         :cCodigoPropiedad1   := ( ::cRctPrvL )->cCodPr1
-         :cCodigoPropiedad2   := ( ::cRctPrvL )->cCodPr2
-         :cValorPropiedad1    := ( ::cRctPrvL )->cValPr1
-         :cValorPropiedad2    := ( ::cRctPrvL )->cValPr2
-         :cLote               := ( ::cRctPrvL )->cLote
-         :dFechaCaducidad     := ( ::cRctPrvL )->dFecCad
-         :nBultos             := ( ::cRctPrvL )->nBultos
-         :nCajas              := ( ::cRctPrvL )->nCanEnt
-
-         if IsTrue( lNumeroSerie )
-            :nUnidades        := if( nUnidades > 0, 1, -1 )
-            :cNumeroSerie     := ( ::cRctPrvS )->cNumSer
-         else
-            :nUnidades        := nUnidades
-         end if
-         
-         ::Integra( hb_QWith() )
-
-      end with
-
-   RETURN nil
-   
-   //---------------------------------------------------------------------------//
-
-   METHOD DeleteStockRectificativaProveedores( lNumeroSerie )
-
-      local nUnidades         := nTotNRctPrv( ::cRctPrvL )
-
-      with object ( SStock():New() )
-
-         :cTipoDocumento      := RCT_PRV
-         :cAlias              := ( ::cRctPrvL )
-         :cNumeroDocumento    := ( ::cRctPrvL )->cSerFac + "/" + Alltrim( Str( ( ::cRctPrvL )->nNumFac ) )
-         :cDelegacion         := ( ::cRctPrvL )->cSufFac
-         :dFechaDocumento     := ( ::cRctPrvL )->dFecFac
-         :tFechaDocumento     := ( ::cRctPrvL )->tFecFac
-         :cCodigo             := ( ::cRctPrvL )->cRef
-         :cCodigoAlmacen      := ( ::cRctPrvL )->cAlmOrigen
-         :cCodigoPropiedad1   := ( ::cRctPrvL )->cCodPr1
-         :cCodigoPropiedad2   := ( ::cRctPrvL )->cCodPr2
-         :cValorPropiedad1    := ( ::cRctPrvL )->cValPr1
-         :cValorPropiedad2    := ( ::cRctPrvL )->cValPr2
-         :cLote               := ( ::cRctPrvL )->cLote
-         :dFechaCaducidad     := ( ::cRctPrvL )->dFecCad
-         :nBultos             := ( ::cRctPrvL )->nBultos
-         :nCajas              := ( ::cRctPrvL )->nCanEnt
-
-         if IsTrue( lNumeroSerie )
-            :nUnidades        := if( nUnidades > 0, -1, 1 )
-            :cNumeroSerie     := ( ::cRctPrvS )->cNumSer
-         else
-            :nUnidades        := -nUnidades
-         end if
-         
-         ::Integra( hb_QWith() )
-
-      end with
-
-   RETURN nil
-   
-   //---------------------------------------------------------------------------//
-
-   METHOD InsertStockAlbaranClientes( lNumeroSerie )
-
-      local nUnidades         := nTotNAlbCli( ::cAlbCliL )
-
-      with object ( SStock():New() )
-      
-         :cTipoDocumento      := ALB_CLI
-         :cAlias              := ( ::cAlbCliL )
-         :cNumeroDocumento    := ( ::cAlbCliL )->cSerAlb + "/" + Alltrim( Str( ( ::cAlbCliL )->nNumAlb ) )
-         :cDelegacion         := ( ::cAlbCliL )->cSufAlb
-         :dFechaDocumento     := ( ::cAlbCliL )->dFecAlb
-         :tFechaDocumento     := ( ::cAlbCliL )->tFecAlb
-         :cCodigo             := ( ::cAlbCliL )->cRef
-         :cCodigoAlmacen      := ( ::cAlbCliL )->cAlmLin
-         :cCodigoPropiedad1   := ( ::cAlbCliL )->cCodPr1
-         :cCodigoPropiedad2   := ( ::cAlbCliL )->cCodPr2
-         :cValorPropiedad1    := ( ::cAlbCliL )->cValPr1
-         :cValorPropiedad2    := ( ::cAlbCliL )->cValPr2
-         :cLote               := ( ::cAlbCliL )->cLote
-         :dFechaCaducidad     := ( ::cAlbCliL )->dFecCad
-         :nBultos             := -( ::cAlbCliL )->nBultos
-         :nCajas              := -( ::cAlbCliL )->nCanEnt
-
-         if IsTrue( lNumeroSerie )
-            :nUnidades        := if( nUnidades > 0, -1, 1 )
-            :cNumeroSerie     := ( ::cAlbCliS )->cNumSer
-         else
-            :nUnidades        := -nUnidades
-         end if
-         
-         ::Integra( hb_QWith() )
-
-      end with
-
-   RETURN ( nUnidades )
-   
-   //---------------------------------------------------------------------------//
-
-   METHOD InsertStockFacturaClientes( lNumeroSerie )
-
-      local nUnidades         := nTotNFacCli( ::cFacCliL )
-
-      with object ( SStock():New() )
-      
-         :cTipoDocumento      := FAC_CLI
-         :cAlias              := ( ::cFacCliL )
-         :cNumeroDocumento    := ( ::cFacCliL )->cSerie + "/" + Alltrim( Str( ( ::cFacCliL )->nNumFac ) )
-         :cDelegacion         := ( ::cFacCliL )->cSufFac
-         :dFechaDocumento     := ( ::cFacCliL )->dFecFac
-         :tFechaDocumento     := ( ::cFacCliL )->tFecFac
-         :cCodigo             := ( ::cFacCliL )->cRef
-         :cCodigoAlmacen      := ( ::cFacCliL )->cAlmLin
-         :cCodigoPropiedad1   := ( ::cFacCliL )->cCodPr1
-         :cCodigoPropiedad2   := ( ::cFacCliL )->cCodPr2
-         :cValorPropiedad1    := ( ::cFacCliL )->cValPr1
-         :cValorPropiedad2    := ( ::cFacCliL )->cValPr2
-         :cLote               := ( ::cFacCliL )->cLote
-         :dFechaCaducidad     := ( ::cFacCliL )->dFecCad
-         :nBultos             := -( ::cFacCliL )->nBultos
-         :nCajas              := -( ::cFacCliL )->nCanEnt
-
-         if IsTrue( lNumeroSerie )
-            :nUnidades        := if( nUnidades > 0, -1, 1 )
-            :cNumeroSerie     := ( ::cFacCliS )->cNumSer
-         else
-            :nUnidades        := -nUnidades
-         end if
-         
-         ::Integra( hb_QWith() )
-
-      end with
-
-      RETURN nil
-
-   
-   //---------------------------------------------------------------------------//
-
-   METHOD InsertStockRectificativaClientes( lNumeroSerie )
-
-      local nUnidades         := nTotNFacRec( ::cFacRecL )
-
-      with object ( SStock():New() )
-      
-         :cTipoDocumento      := FAC_REC
-         :cAlias              := ( ::cFacRecL )
-         :cNumeroDocumento    := ( ::cFacRecL )->cSerie + "/" + Alltrim( Str( ( ::cFacRecL )->nNumFac ) )
-         :cDelegacion         := ( ::cFacRecL )->cSufFac
-         :dFechaDocumento     := ( ::cFacRecL )->dFecFac
-         :tFechaDocumento     := ( ::cFacRecL )->tFecFac
-         :cCodigo             := ( ::cFacRecL )->cRef
-         :cCodigoAlmacen      := ( ::cFacRecL )->cAlmLin
-         :cCodigoPropiedad1   := ( ::cFacRecL )->cCodPr1
-         :cCodigoPropiedad2   := ( ::cFacRecL )->cCodPr2
-         :cValorPropiedad1    := ( ::cFacRecL )->cValPr1
-         :cValorPropiedad2    := ( ::cFacRecL )->cValPr2
-         :cLote               := ( ::cFacRecL )->cLote
-         :dFechaCaducidad     := ( ::cFacRecL )->dFecCad
-         :nBultos             := -( ::cFacRecL )->nBultos
-         :nCajas              := -( ::cFacRecL )->nCanEnt
-
-         if IsTrue( lNumeroSerie )
-            :nUnidades        := if( nUnidades > 0, -1, 1 )
-            :cNumeroSerie     := ( ::cFacRecS )->cNumSer
-         else
-            :nUnidades        := - nUnidades
-         end if
-         
-         ::Integra( hb_QWith() )
-
-      end with
-
-      RETURN nil
-
-   
-   //---------------------------------------------------------------------------//
-
-   METHOD InsertStockTiketsClientes( lNumeroSerie, lCombinado )
-
-      local nUnidades            := nTotVTikTpv( ::cTikL )
-
-      with object ( SStock():New() )
-
-         do case
-         case ( ::cTikL )->cTipTil == SAVTIK
-            :cTipoDocumento      := TIK_CLI
-
-         case ( ::cTikL )->cTipTil == SAVDEV
-            :cTipoDocumento      := DEV_CLI
-
-         case ( ::cTikL )->cTipTil == SAVVAL
-            :cTipoDocumento      := VAL_CLI
-
-         case ( ::cTikL )->cTipTil == SAVAPT
-            :cTipoDocumento      := APT_CLI
-
-         end case
-
-         :cAlias                 := ( ::cTikL )
-         :cNumeroDocumento       := ( ::cTikL )->cSerTil + "/" + Alltrim( ( ::cTikL )->cNumTil )
-         :cDelegacion            := ( ::cTikL )->cSufTil
-         :dFechaDocumento        := ( ::cTikL )->dFecTik
-         :tFechaDocumento        := ( ::cTikL )->tFecTik
-
-         if IsTrue( lCombinado)
-            :cCodigo             := ( ::cTikL )->cComTil
-         else
-            :cCodigo             := ( ::cTikL )->cCbaTil
-         end if
-
-         :cCodigoAlmacen         := ( ::cTikL )->cAlmLin
-         :cCodigoPropiedad1      := ( ::cTikL )->cCodPr1
-         :cCodigoPropiedad2      := ( ::cTikL )->cCodPr2
-         :cValorPropiedad1       := ( ::cTikL )->cValPr1
-         :cValorPropiedad2       := ( ::cTikL )->cValPr2
-         :cLote                  := ( ::cTikL )->cLote
-
-         if IsTrue( lNumeroSerie )
-
-            if ( ( ::cTikL )->cTipTil == SAVTIK .or. ( ::cTikL )->cTipTil == SAVAPT )
-               :nUnidades        := if( nUnidades > 0, -1, 1 )
-            else
-               :nUnidades        := if( nUnidades > 0, 1, -1 )
-            end if
-
-            :cNumeroSerie        := ( ::cTikS )->cNumSer
-
-         else
-            
-            :nUnidades           := - nTotNTickets( ::cTikL )
-
-         end if
-
-         ::Integra( hb_QWith() )
-
-      end with
-
-   RETURN nil
-   
-   //---------------------------------------------------------------------------//
-
-   METHOD InsertStockMaterialesProducidos( lNumeroSerie )
-
-      local nUnidades         := nTotNProduccion( ::cProducL )
-
-      with object ( SStock():New() )
-
-         :cTipoDocumento      := PRO_LIN
-         :cAlias              := ( ::cProducL )
-         :cNumeroDocumento    := ( ::cProducL )->cSerOrd + "/" + Alltrim( Str( ( ::cProducL )->nNumOrd ) )
-         :cDelegacion         := ( ::cProducL )->cSufOrd
-         :dFechaDocumento     := ( ::cProducL )->dFecOrd
-         :tFechaDocumento     := ( ::cProducL )->cHorIni
-         :cCodigo             := ( ::cProducL )->cCodArt
-         :cCodigoAlmacen      := ( ::cProducL )->cAlmOrd
-         :cCodigoPropiedad1   := ( ::cProducL )->cCodPr1
-         :cCodigoPropiedad2   := ( ::cProducL )->cCodPr2
-         :cValorPropiedad1    := ( ::cProducL )->cValPr1
-         :cValorPropiedad2    := ( ::cProducL )->cValPr2
-         :cLote               := ( ::cProducL )->cLote
-         :dFechaCaducidad     := ( ::cProducL )->dFecCad
-         :nCajas              := ( ::cProducL )->nCajOrd
-         :nBultos             := ( ::cProducL )->nBultos
-
-          if IsTrue( lNumeroSerie )
-            :nUnidades        := if( nUnidades > 0, 1, -1 )
-            :cNumeroSerie     := ( ::cProducS )->cNumSer
-         else
-            :nUnidades        := nUnidades
-         end if
-
-            ::Integra( hb_QWith() )
-
-      end with
-
-      RETURN nil
-   
-   //---------------------------------------------------------------------------//
-
-   METHOD InsertStockMateriasPrimas( lNumeroSerie )
-
-
-      local nUnidades         := nTotNMaterial( ::cProducM )
-
-      with object ( SStock():New() )
-
-         :cTipoDocumento      := PRO_MAT
-         :cAlias              := ( ::cProducM )
-         :cNumeroDocumento    := ( ::cProducM )->cSerOrd + "/" + Alltrim( Str( ( ::cProducM )->nNumOrd ) )
-         :cDelegacion         := ( ::cProducM )->cSufOrd
-         :dFechaDocumento     := ( ::cProducM )->dFecOrd
-         :tFechaDocumento     := ( ::cProducM )->cHorIni
-         :cCodigo             := ( ::cProducM )->cCodArt
-         :cCodigoAlmacen      := ( ::cProducM )->cAlmOrd
-         :cCodigoPropiedad1   := ( ::cProducM )->cCodPr1
-         :cCodigoPropiedad2   := ( ::cProducM )->cCodPr2
-         :cValorPropiedad1    := ( ::cProducM )->cValPr1
-         :cValorPropiedad2    := ( ::cProducM )->cValPr2
-         :cLote               := ( ::cProducM )->cLote
-         :nCajas              := -( ::cProducM )->nCajOrd
-         :nBultos             := -( ::cProducM )->nBultos
-
-         if IsTrue( lNumeroSerie )
-            :nUnidades        := if( nUnidades > 0, -1, 1 )
-            :cNumeroSerie     := ( ::cProducP )->cNumSer
-         else
-            :nUnidades        := - nUnidades
-         end if
-
-            ::Integra( hb_QWith() )
-
-      end with
-
-      RETURN nil
-
-   //---------------------------------------------------------------------------//
-
-   METHOD SaveStockArticulo( cCodArt, cAlmcenOrigen, cAlmacenDestino, dFechaInicio, dFechaFin )
-
-      local aStock
-
-      for each aStock in ::aStockArticulo( cCodArt, , , , , dFechaInicio, dFechaFin ) 
-
-         if ( Empty( cAlmcenOrigen )     .or. rtrim( aStock:cCodigoAlmacen ) >= rtrim( cAlmcenOrigen )   ) .and. ;
-            ( Empty( cAlmacenDestino )   .or. rtrim( aStock:cCodigoAlmacen ) <= rtrim( cAlmacenDestino ) ) .and. ;
-            ( aStock:nUnidades != 0 )
-
-            aStock:Save( ::oDbfStock )
-         
+            :nUnidades     := nUnidades
+            :nBultos       := ( ::cHisMovT )->nBultos
+            :nCajas        := ( ::cHisMovT )->nCajMov
          end if 
-      
-      next 
 
-   RETURN ( Self )
+      else 
 
-   //---------------------------------------------------------------------------//
+         :cCodigoAlmacen   := ( ::cHisMovT )->cAloMov
 
-   METHOD SaveAllStockArticulo( cCodArt, cAlmcenOrigen, cAlmacenDestino, dFechaInicio, dFechaFin )
-
-      local aStock
-
-      for each aStock in ::aStockArticulo( cCodArt, , , , , dFechaInicio, dFechaFin ) 
-
-         if ( Empty( cAlmcenOrigen )     .or. rtrim( aStock:cCodigoAlmacen ) >= rtrim( cAlmcenOrigen )   ) .and. ;
-            ( Empty( cAlmacenDestino )   .or. rtrim( aStock:cCodigoAlmacen ) <= rtrim( cAlmacenDestino ) ) 
-
-            aStock:Save( ::oDbfStock )
-         
+         if IsTrue( lNumeroSerie )
+            :nUnidades     := if( nUnidades > 0, -1, 1 ) 
+            :cNumeroSerie  := ( ::cHisMovS )->cNumSer
+         else
+            :nUnidades     := -nUnidades
+            :nBultos       := -( ::cHisMovT )->nBultos
+            :nCajas        := -( ::cHisMovT )->nCajMov
          end if 
-      
-      next 
 
-   RETURN ( Self )
+      end if
 
+      ::Integra( hb_QWith() )
 
-   METHOD nUnidadesInStock()  
-         
-      local o
-      local nStockArticulo := 0
+   end with
 
-      for each o in ::aStocks
-         nStockArticulo    += o:nUnidades 
-      next
-
-   RETURN ( nStockArticulo )
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-   METHOD nPendientesRecibirInStock()  
+METHOD DeleteStockAlbaranProveedores( lNumeroSerie )
+
+   local nUnidades         := nTotNAlbPrv( ::cAlbPrvL )
+
+   with object ( SStock():New() )
+   
+      :cTipoDocumento      := ALB_PRV
+      :cAlias              := ( ::cAlbPrvL )
+      :cNumeroDocumento    := ( ::cAlbPrvL )->cSerAlb + "/" + Alltrim( Str( ( ::cAlbPrvL )->nNumAlb ) )
+      :cDelegacion         := ( ::cAlbPrvL )->cSufAlb
+      :dFechaDocumento     := ( ::cAlbPrvL )->dFecAlb
+      :tFechaDocumento     := ( ::cAlbPrvL )->tFecAlb
+      :cCodigo             := ( ::cAlbPrvL )->cRef
+      :cCodigoAlmacen      := ( ::cAlbPrvL )->cAlmOrigen
+      :cCodigoPropiedad1   := ( ::cAlbPrvL )->cCodPr1
+      :cCodigoPropiedad2   := ( ::cAlbPrvL )->cCodPr2
+      :cValorPropiedad1    := ( ::cAlbPrvL )->cValPr1
+      :cValorPropiedad2    := ( ::cAlbPrvL )->cValPr2
+      :cLote               := ( ::cAlbPrvL )->cLote
+      :dFechaCaducidad     := ( ::cAlbPrvL )->dFecCad
+      :nBultos             := -( ::cAlbPrvL )->nBultos
+      :nCajas              := -( ::cAlbPrvL )->nCanEnt
+
+      if IsTrue( lNumeroSerie )
+         :nUnidades        := if( nUnidades > 0, -1, 1 )
+         :cNumeroSerie     := ( ::cAlbPrvS )->cNumSer
+      else
+         :nUnidades        := -nUnidades
+      end if
       
-      local o
-      local nStockArticulo := 0
+      ::Integra( hb_QWith() )
 
-      for each o in ::aStocks
-         nStockArticulo    += o:nPendientesRecibir
-      next 
+   end with
 
-   RETURN ( nStockArticulo )
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-   METHOD nPendientesEntregarInStock()  
+METHOD InsertStockAlbaranProveedores( lNumeroSerie )
+
+   local nUnidades         := nTotNAlbPrv( ::cAlbPrvL )
+
+   with object ( SStock():New() )
+   
+      :cTipoDocumento      := ALB_PRV
+      :cAlias              := ( ::cAlbPrvL )
+      :cNumeroDocumento    := ( ::cAlbPrvL )->cSerAlb + "/" + Alltrim( Str( ( ::cAlbPrvL )->nNumAlb ) )
+      :cDelegacion         := ( ::cAlbPrvL )->cSufAlb
+      :dFechaDocumento     := ( ::cAlbPrvL )->dFecAlb
+      :tFechaDocumento     := ( ::cAlbPrvL )->tFecAlb
+      :cCodigo             := ( ::cAlbPrvL )->cRef
+      :cCodigoAlmacen      := ( ::cAlbPrvL )->cAlmLin
+      :cCodigoPropiedad1   := ( ::cAlbPrvL )->cCodPr1
+      :cCodigoPropiedad2   := ( ::cAlbPrvL )->cCodPr2
+      :cValorPropiedad1    := ( ::cAlbPrvL )->cValPr1
+      :cValorPropiedad2    := ( ::cAlbPrvL )->cValPr2
+      :cLote               := ( ::cAlbPrvL )->cLote
+      :dFechaCaducidad     := ( ::cAlbPrvL )->dFecCad
+      :nBultos             := ( ::cAlbPrvL )->nBultos
+      :nCajas              := ( ::cAlbPrvL )->nCanEnt
+
+      if IsTrue( lNumeroSerie )
+         :nUnidades        := if( nUnidades > 0, 1, -1 )
+         :cNumeroSerie     := ( ::cAlbPrvS )->cNumSer
+      else
+         :nUnidades        :=  nUnidades
+      end if
       
-      local o
-      local nStockArticulo := 0
+      ::Integra( hb_QWith() )
 
-      for each o in ::aStocks
-         nStockArticulo    += o:nPendientesEntregar
-      next 
+   end with
 
-   RETURN ( nStockArticulo )
+RETURN nil
+
+//---------------------------------------------------------------------------//
+
+   METHOD DeleteStockFacturaProveedores( lNumeroSerie )
+
+   local nUnidades         := nTotNFacPrv( ::cFacPrvL )
+
+   with object ( SStock():New() )
+   
+      :cTipoDocumento      := FAC_PRV
+      :cAlias              := ( ::cFacPrvL )
+      :cNumeroDocumento    := ( ::cFacPrvL )->cSerFac + "/" + Alltrim( Str( ( ::cFacPrvL )->nNumFac ) )
+      :cDelegacion         := ( ::cFacPrvL )->cSufFac
+      :dFechaDocumento     := ( ::cFacPrvL )->dFecFac
+      :tFechaDocumento     := ( ::cFacPrvL )->tFecFac
+      :cCodigo             := ( ::cFacPrvL )->cRef
+      :cCodigoAlmacen      := ( ::cFacPrvL )->cAlmOrigen
+      :cCodigoPropiedad1   := ( ::cFacPrvL )->cCodPr1
+      :cCodigoPropiedad2   := ( ::cFacPrvL )->cCodPr2
+      :cValorPropiedad1    := ( ::cFacPrvL )->cValPr1
+      :cValorPropiedad2    := ( ::cFacPrvL )->cValPr2
+      :cLote               := ( ::cFacPrvL )->cLote
+      :dFechaCaducidad     := ( ::cFacPrvL )->dFecCad
+      :nBultos             := -( ::cFacPrvL )->nBultos
+      :nCajas              := -( ::cFacPrvL )->nCanEnt
+
+      if IsTrue( lNumeroSerie )
+         :nUnidades        := if( nUnidades > 0, -1, 1 )
+         :cNumeroSerie     := ( ::cFacPrvS )->cNumSer
+      else
+         :nUnidades        := -nUnidades
+      end if
+      
+      ::Integra( hb_QWith() )
+
+   end with
+
+RETURN nil 
+
+//---------------------------------------------------------------------------//
+
+METHOD InsertStockFacturaProveedores( lNumeroSerie )
+
+   local nUnidades         := nTotNFacPrv( ::cFacPrvL )
+
+   with object ( SStock():New() )
+   
+      :cTipoDocumento      := FAC_PRV
+      :cAlias              := ( ::cFacPrvL )
+      :cNumeroDocumento    := ( ::cFacPrvL )->cSerFac + "/" + Alltrim( Str( ( ::cFacPrvL )->nNumFac ) )
+      :cDelegacion         := ( ::cFacPrvL )->cSufFac
+      :dFechaDocumento     := ( ::cFacPrvL )->dFecFac
+      :tFechaDocumento     := ( ::cFacPrvL )->tFecFac
+      :cCodigo             := ( ::cFacPrvL )->cRef
+      :cCodigoAlmacen      := ( ::cFacPrvL )->cAlmLin
+      :cCodigoPropiedad1   := ( ::cFacPrvL )->cCodPr1
+      :cCodigoPropiedad2   := ( ::cFacPrvL )->cCodPr2
+      :cValorPropiedad1    := ( ::cFacPrvL )->cValPr1
+      :cValorPropiedad2    := ( ::cFacPrvL )->cValPr2
+      :cLote               := ( ::cFacPrvL )->cLote
+      :dFechaCaducidad     := ( ::cFacPrvL )->dFecCad
+      :nBultos             := ( ::cFacPrvL )->nBultos
+      :nCajas              := ( ::cFacPrvL )->nCanEnt
+
+      if IsTrue( lNumeroSerie )
+         :nUnidades        := if( nUnidades > 0, 1, -1 )
+         :cNumeroSerie     := ( ::cFacPrvS )->cNumSer
+      else
+         :nUnidades        := nUnidades
+      end if
+      
+      ::Integra( hb_QWith() )
+
+   end with
+
+RETURN nil 
+
+//---------------------------------------------------------------------------//
+
+METHOD InsertStockRectificativaProveedores( lNumeroSerie )
+
+   local nUnidades         := nTotNRctPrv( ::cRctPrvL )
+
+   with object ( SStock():New() )
+
+      :cTipoDocumento      := RCT_PRV
+      :cAlias              := ( ::cRctPrvL )
+      :cNumeroDocumento    := ( ::cRctPrvL )->cSerFac + "/" + Alltrim( Str( ( ::cRctPrvL )->nNumFac ) )
+      :cDelegacion         := ( ::cRctPrvL )->cSufFac
+      :dFechaDocumento     := ( ::cRctPrvL )->dFecFac
+      :tFechaDocumento     := ( ::cRctPrvL )->tFecFac
+      :cCodigo             := ( ::cRctPrvL )->cRef
+      :cCodigoAlmacen      := ( ::cRctPrvL )->cAlmLin
+      :cCodigoPropiedad1   := ( ::cRctPrvL )->cCodPr1
+      :cCodigoPropiedad2   := ( ::cRctPrvL )->cCodPr2
+      :cValorPropiedad1    := ( ::cRctPrvL )->cValPr1
+      :cValorPropiedad2    := ( ::cRctPrvL )->cValPr2
+      :cLote               := ( ::cRctPrvL )->cLote
+      :dFechaCaducidad     := ( ::cRctPrvL )->dFecCad
+      :nBultos             := ( ::cRctPrvL )->nBultos
+      :nCajas              := ( ::cRctPrvL )->nCanEnt
+
+      if IsTrue( lNumeroSerie )
+         :nUnidades        := if( nUnidades > 0, 1, -1 )
+         :cNumeroSerie     := ( ::cRctPrvS )->cNumSer
+      else
+         :nUnidades        := nUnidades
+      end if
+      
+      ::Integra( hb_QWith() )
+
+   end with
+
+RETURN nil
+
+//---------------------------------------------------------------------------//
+
+METHOD DeleteStockRectificativaProveedores( lNumeroSerie )
+
+   local nUnidades         := nTotNRctPrv( ::cRctPrvL )
+
+   with object ( SStock():New() )
+
+      :cTipoDocumento      := RCT_PRV
+      :cAlias              := ( ::cRctPrvL )
+      :cNumeroDocumento    := ( ::cRctPrvL )->cSerFac + "/" + Alltrim( Str( ( ::cRctPrvL )->nNumFac ) )
+      :cDelegacion         := ( ::cRctPrvL )->cSufFac
+      :dFechaDocumento     := ( ::cRctPrvL )->dFecFac
+      :tFechaDocumento     := ( ::cRctPrvL )->tFecFac
+      :cCodigo             := ( ::cRctPrvL )->cRef
+      :cCodigoAlmacen      := ( ::cRctPrvL )->cAlmOrigen
+      :cCodigoPropiedad1   := ( ::cRctPrvL )->cCodPr1
+      :cCodigoPropiedad2   := ( ::cRctPrvL )->cCodPr2
+      :cValorPropiedad1    := ( ::cRctPrvL )->cValPr1
+      :cValorPropiedad2    := ( ::cRctPrvL )->cValPr2
+      :cLote               := ( ::cRctPrvL )->cLote
+      :dFechaCaducidad     := ( ::cRctPrvL )->dFecCad
+      :nBultos             := ( ::cRctPrvL )->nBultos
+      :nCajas              := ( ::cRctPrvL )->nCanEnt
+
+      if IsTrue( lNumeroSerie )
+         :nUnidades        := if( nUnidades > 0, -1, 1 )
+         :cNumeroSerie     := ( ::cRctPrvS )->cNumSer
+      else
+         :nUnidades        := -nUnidades
+      end if
+      
+      ::Integra( hb_QWith() )
+
+   end with
+
+RETURN nil
+
+//---------------------------------------------------------------------------//
+
+METHOD InsertStockAlbaranClientes( lNumeroSerie )
+
+   local nUnidades         := nTotNAlbCli( ::cAlbCliL )
+
+   with object ( SStock():New() )
+   
+      :cTipoDocumento      := ALB_CLI
+      :cAlias              := ( ::cAlbCliL )
+      :cNumeroDocumento    := ( ::cAlbCliL )->cSerAlb + "/" + Alltrim( Str( ( ::cAlbCliL )->nNumAlb ) )
+      :cDelegacion         := ( ::cAlbCliL )->cSufAlb
+      :dFechaDocumento     := ( ::cAlbCliL )->dFecAlb
+      :tFechaDocumento     := ( ::cAlbCliL )->tFecAlb
+      :cCodigo             := ( ::cAlbCliL )->cRef
+      :cCodigoAlmacen      := ( ::cAlbCliL )->cAlmLin
+      :cCodigoPropiedad1   := ( ::cAlbCliL )->cCodPr1
+      :cCodigoPropiedad2   := ( ::cAlbCliL )->cCodPr2
+      :cValorPropiedad1    := ( ::cAlbCliL )->cValPr1
+      :cValorPropiedad2    := ( ::cAlbCliL )->cValPr2
+      :cLote               := ( ::cAlbCliL )->cLote
+      :dFechaCaducidad     := ( ::cAlbCliL )->dFecCad
+      :nBultos             := -( ::cAlbCliL )->nBultos
+      :nCajas              := -( ::cAlbCliL )->nCanEnt
+
+      if IsTrue( lNumeroSerie )
+         :nUnidades        := if( nUnidades > 0, -1, 1 )
+         :cNumeroSerie     := ( ::cAlbCliS )->cNumSer
+      else
+         :nUnidades        := -nUnidades
+      end if
+      
+      ::Integra( hb_QWith() )
+
+   end with
+
+RETURN ( nUnidades )
+
+//---------------------------------------------------------------------------//
+
+METHOD InsertStockFacturaClientes( lNumeroSerie )
+
+   local nUnidades         := nTotNFacCli( ::cFacCliL )
+
+   with object ( SStock():New() )
+   
+      :cTipoDocumento      := FAC_CLI
+      :cAlias              := ( ::cFacCliL )
+      :cNumeroDocumento    := ( ::cFacCliL )->cSerie + "/" + Alltrim( Str( ( ::cFacCliL )->nNumFac ) )
+      :cDelegacion         := ( ::cFacCliL )->cSufFac
+      :dFechaDocumento     := ( ::cFacCliL )->dFecFac
+      :tFechaDocumento     := ( ::cFacCliL )->tFecFac
+      :cCodigo             := ( ::cFacCliL )->cRef
+      :cCodigoAlmacen      := ( ::cFacCliL )->cAlmLin
+      :cCodigoPropiedad1   := ( ::cFacCliL )->cCodPr1
+      :cCodigoPropiedad2   := ( ::cFacCliL )->cCodPr2
+      :cValorPropiedad1    := ( ::cFacCliL )->cValPr1
+      :cValorPropiedad2    := ( ::cFacCliL )->cValPr2
+      :cLote               := ( ::cFacCliL )->cLote
+      :dFechaCaducidad     := ( ::cFacCliL )->dFecCad
+      :nBultos             := -( ::cFacCliL )->nBultos
+      :nCajas              := -( ::cFacCliL )->nCanEnt
+
+      if IsTrue( lNumeroSerie )
+         :nUnidades        := if( nUnidades > 0, -1, 1 )
+         :cNumeroSerie     := ( ::cFacCliS )->cNumSer
+      else
+         :nUnidades        := -nUnidades
+      end if
+      
+      ::Integra( hb_QWith() )
+
+   end with
+
+   RETURN nil
+
+
+//---------------------------------------------------------------------------//
+
+METHOD InsertStockRectificativaClientes( lNumeroSerie )
+
+   local nUnidades         := nTotNFacRec( ::cFacRecL )
+
+   with object ( SStock():New() )
+   
+      :cTipoDocumento      := FAC_REC
+      :cAlias              := ( ::cFacRecL )
+      :cNumeroDocumento    := ( ::cFacRecL )->cSerie + "/" + Alltrim( Str( ( ::cFacRecL )->nNumFac ) )
+      :cDelegacion         := ( ::cFacRecL )->cSufFac
+      :dFechaDocumento     := ( ::cFacRecL )->dFecFac
+      :tFechaDocumento     := ( ::cFacRecL )->tFecFac
+      :cCodigo             := ( ::cFacRecL )->cRef
+      :cCodigoAlmacen      := ( ::cFacRecL )->cAlmLin
+      :cCodigoPropiedad1   := ( ::cFacRecL )->cCodPr1
+      :cCodigoPropiedad2   := ( ::cFacRecL )->cCodPr2
+      :cValorPropiedad1    := ( ::cFacRecL )->cValPr1
+      :cValorPropiedad2    := ( ::cFacRecL )->cValPr2
+      :cLote               := ( ::cFacRecL )->cLote
+      :dFechaCaducidad     := ( ::cFacRecL )->dFecCad
+      :nBultos             := -( ::cFacRecL )->nBultos
+      :nCajas              := -( ::cFacRecL )->nCanEnt
+
+      if IsTrue( lNumeroSerie )
+         :nUnidades        := if( nUnidades > 0, -1, 1 )
+         :cNumeroSerie     := ( ::cFacRecS )->cNumSer
+      else
+         :nUnidades        := - nUnidades
+      end if
+      
+      ::Integra( hb_QWith() )
+
+   end with
+
+   RETURN nil
+
+
+//---------------------------------------------------------------------------//
+
+METHOD InsertStockTiketsClientes( lNumeroSerie, lCombinado )
+
+   local nUnidades            := nTotVTikTpv( ::cTikL )
+
+   with object ( SStock():New() )
+
+      do case
+      case ( ::cTikL )->cTipTil == SAVTIK
+         :cTipoDocumento      := TIK_CLI
+
+      case ( ::cTikL )->cTipTil == SAVDEV
+         :cTipoDocumento      := DEV_CLI
+
+      case ( ::cTikL )->cTipTil == SAVVAL
+         :cTipoDocumento      := VAL_CLI
+
+      case ( ::cTikL )->cTipTil == SAVAPT
+         :cTipoDocumento      := APT_CLI
+
+      end case
+
+      :cAlias                 := ( ::cTikL )
+      :cNumeroDocumento       := ( ::cTikL )->cSerTil + "/" + Alltrim( ( ::cTikL )->cNumTil )
+      :cDelegacion            := ( ::cTikL )->cSufTil
+      :dFechaDocumento        := ( ::cTikL )->dFecTik
+      :tFechaDocumento        := ( ::cTikL )->tFecTik
+
+      if IsTrue( lCombinado)
+         :cCodigo             := ( ::cTikL )->cComTil
+      else
+         :cCodigo             := ( ::cTikL )->cCbaTil
+      end if
+
+      :cCodigoAlmacen         := ( ::cTikL )->cAlmLin
+      :cCodigoPropiedad1      := ( ::cTikL )->cCodPr1
+      :cCodigoPropiedad2      := ( ::cTikL )->cCodPr2
+      :cValorPropiedad1       := ( ::cTikL )->cValPr1
+      :cValorPropiedad2       := ( ::cTikL )->cValPr2
+      :cLote                  := ( ::cTikL )->cLote
+
+      if IsTrue( lNumeroSerie )
+
+         if ( ( ::cTikL )->cTipTil == SAVTIK .or. ( ::cTikL )->cTipTil == SAVAPT )
+            :nUnidades        := if( nUnidades > 0, -1, 1 )
+         else
+            :nUnidades        := if( nUnidades > 0, 1, -1 )
+         end if
+
+         :cNumeroSerie        := ( ::cTikS )->cNumSer
+
+      else
+         
+         :nUnidades           := - nTotNTickets( ::cTikL )
+
+      end if
+
+      ::Integra( hb_QWith() )
+
+   end with
+
+RETURN nil
+
+//---------------------------------------------------------------------------//
+
+METHOD InsertStockMaterialesProducidos( lNumeroSerie )
+
+   local nUnidades         := nTotNProduccion( ::cProducL )
+
+   with object ( SStock():New() )
+
+      :cTipoDocumento      := PRO_LIN
+      :cAlias              := ( ::cProducL )
+      :cNumeroDocumento    := ( ::cProducL )->cSerOrd + "/" + Alltrim( Str( ( ::cProducL )->nNumOrd ) )
+      :cDelegacion         := ( ::cProducL )->cSufOrd
+      :dFechaDocumento     := ( ::cProducL )->dFecOrd
+      :tFechaDocumento     := ( ::cProducL )->cHorIni
+      :cCodigo             := ( ::cProducL )->cCodArt
+      :cCodigoAlmacen      := ( ::cProducL )->cAlmOrd
+      :cCodigoPropiedad1   := ( ::cProducL )->cCodPr1
+      :cCodigoPropiedad2   := ( ::cProducL )->cCodPr2
+      :cValorPropiedad1    := ( ::cProducL )->cValPr1
+      :cValorPropiedad2    := ( ::cProducL )->cValPr2
+      :cLote               := ( ::cProducL )->cLote
+      :dFechaCaducidad     := ( ::cProducL )->dFecCad
+      :nCajas              := ( ::cProducL )->nCajOrd
+      :nBultos             := ( ::cProducL )->nBultos
+
+       if IsTrue( lNumeroSerie )
+         :nUnidades        := if( nUnidades > 0, 1, -1 )
+         :cNumeroSerie     := ( ::cProducS )->cNumSer
+      else
+         :nUnidades        := nUnidades
+      end if
+
+         ::Integra( hb_QWith() )
+
+   end with
+
+   RETURN nil
+
+//---------------------------------------------------------------------------//
+
+METHOD InsertStockMateriasPrimas( lNumeroSerie )
+
+
+   local nUnidades         := nTotNMaterial( ::cProducM )
+
+   with object ( SStock():New() )
+
+      :cTipoDocumento      := PRO_MAT
+      :cAlias              := ( ::cProducM )
+      :cNumeroDocumento    := ( ::cProducM )->cSerOrd + "/" + Alltrim( Str( ( ::cProducM )->nNumOrd ) )
+      :cDelegacion         := ( ::cProducM )->cSufOrd
+      :dFechaDocumento     := ( ::cProducM )->dFecOrd
+      :tFechaDocumento     := ( ::cProducM )->cHorIni
+      :cCodigo             := ( ::cProducM )->cCodArt
+      :cCodigoAlmacen      := ( ::cProducM )->cAlmOrd
+      :cCodigoPropiedad1   := ( ::cProducM )->cCodPr1
+      :cCodigoPropiedad2   := ( ::cProducM )->cCodPr2
+      :cValorPropiedad1    := ( ::cProducM )->cValPr1
+      :cValorPropiedad2    := ( ::cProducM )->cValPr2
+      :cLote               := ( ::cProducM )->cLote
+      :nCajas              := -( ::cProducM )->nCajOrd
+      :nBultos             := -( ::cProducM )->nBultos
+
+      if IsTrue( lNumeroSerie )
+         :nUnidades        := if( nUnidades > 0, -1, 1 )
+         :cNumeroSerie     := ( ::cProducP )->cNumSer
+      else
+         :nUnidades        := - nUnidades
+      end if
+
+         ::Integra( hb_QWith() )
+
+   end with
+
+   RETURN nil
+
+//---------------------------------------------------------------------------//
+
+METHOD SaveStockArticulo( cCodArt, cAlmcenOrigen, cAlmacenDestino, dFechaInicio, dFechaFin )
+
+   local aStock
+
+   for each aStock in ::aStockArticulo( cCodArt, , , , , dFechaInicio, dFechaFin ) 
+
+      if ( Empty( cAlmcenOrigen )     .or. rtrim( aStock:cCodigoAlmacen ) >= rtrim( cAlmcenOrigen )   ) .and. ;
+         ( Empty( cAlmacenDestino )   .or. rtrim( aStock:cCodigoAlmacen ) <= rtrim( cAlmacenDestino ) ) .and. ;
+         ( aStock:nUnidades != 0 )
+
+         aStock:Save( ::oDbfStock )
+      
+      end if 
+   
+   next 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD SaveAllStockArticulo( cCodArt, cAlmcenOrigen, cAlmacenDestino, dFechaInicio, dFechaFin )
+
+   local aStock
+
+   for each aStock in ::aStockArticulo( cCodArt, , , , , dFechaInicio, dFechaFin ) 
+
+      if ( Empty( cAlmcenOrigen )     .or. rtrim( aStock:cCodigoAlmacen ) >= rtrim( cAlmcenOrigen )   ) .and. ;
+         ( Empty( cAlmacenDestino )   .or. rtrim( aStock:cCodigoAlmacen ) <= rtrim( cAlmacenDestino ) ) 
+
+         aStock:Save( ::oDbfStock )
+      
+      end if 
+   
+   next 
+
+RETURN ( Self )
+
+
+METHOD nUnidadesInStock()  
+      
+   local o
+   local nStockArticulo := 0
+
+   for each o in ::aStocks
+      nStockArticulo    += o:nUnidades 
+   next
+
+RETURN ( nStockArticulo )
+
+//---------------------------------------------------------------------------//
+
+METHOD nPendientesRecibirInStock()  
+   
+   local o
+   local nStockArticulo := 0
+
+   for each o in ::aStocks
+      nStockArticulo    += o:nPendientesRecibir
+   next 
+
+RETURN ( nStockArticulo )
+
+//---------------------------------------------------------------------------//
+
+METHOD nPendientesEntregarInStock()  
+   
+   local o
+   local nStockArticulo := 0
+
+   for each o in ::aStocks
+      nStockArticulo    += o:nPendientesEntregar
+   next 
+
+RETURN ( nStockArticulo )
 
 //---------------------------------------------------------------------------//
 
