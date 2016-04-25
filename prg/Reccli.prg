@@ -2168,7 +2168,7 @@ function SynRecCli( cPath )
    while !( cFacCliT )->( eof() )
 
       nTotFac  := nTotFacCli( ( cFacCliT )->cSerie + Str( ( cFacCliT )->nNumFac ) + ( cFacCliT )->cSufFac, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCliT, nil, nil, .f. )
-      nTotRec  := nPagFacCli( ( cFacCliT )->cSerie + Str( ( cFacCliT )->nNumFac ) + ( cFacCliT )->cSufFac, cFacCliT, cFacCliP, cIva, cDiv, nil, .f. )
+      nTotRec  := nTotalRecibosGeneradosFacturasCliente( ( cFacCliT )->cSerie + Str( ( cFacCliT )->nNumFac ) + ( cFacCliT )->cSufFac, cFacCliT, cFacCliP, cIva, cDiv )
 
       // Si el importe de la factura es mayor q el de registros----------------
 
@@ -2198,7 +2198,7 @@ function SynRecCli( cPath )
       // Calculo de totales----------------------------------------------------
 
       nTotFac  := nTotFacRec( ( cFacRecT )->cSerie + Str( ( cFacRecT )->nNumFac ) + ( cFacRecT )->cSufFac, cFacRecT, cFacRecL, cIva, cDiv )
-      nTotRec  := nPagFacRec( ( cFacRecT )->cSerie + Str( ( cFacRecT )->nNumFac ) + ( cFacRecT )->cSufFac, cFacRecT, cFacRecL, cFacCliP, cIva, cDiv )
+      nTotRec  := nTotalRecibosGeneradosRectificativasCliente( ( cFacRecT )->cSerie + Str( ( cFacRecT )->nNumFac ) + ( cFacRecT )->cSufFac, cFacRecT, cFacCliP, cIva, cDiv )
 
       // Si el importe de la factura es mayor q el de registros----------------
 
@@ -2983,7 +2983,7 @@ FUNCTION GenPgoFacRec( cNumFac, cFacRecT, cFacRecL, cFacCliP, dbfCli, cFPago, cD
    */
 
    nTotal            := nTotFacRec( cNumFac, cFacRecT, cFacRecL, cIva, cDiv, nil, nil, .f. )
-   nTotCob           := nPagFacRec( cNumFac, cFacRecT, cFacRecL, cFacCliP, cIva, cDiv, nil, .f. )
+   nTotCob           := nTotalRecibosGeneradosRectificativasCliente( cNumFac, cFacRecT, cFacCliP, cIva, cDiv )
 
    if nTotal != nTotCob
 
@@ -3016,7 +3016,7 @@ FUNCTION GenPgoFacRec( cNumFac, cFacRecT, cFacRecL, cFacCliP, dbfCli, cFPago, cD
       Vamos a relizar pagos por la diferencia entre el total y lo cobrado
       */
 
-      nTotal         -= nPagFacRec( cSerFac + Str( nNumFac ) + cSufFac, cFacRecT, cFacRecL, cFacCliP, cIva, cDiv, nil, .t. )
+      nTotal         -= nTotalRecibosPagadosRectificativasCliente( cSerFac + Str( nNumFac ) + cSufFac, cFacRecT, cFacCliP, cIva, cDiv )
 
       /*
       Genera pagos----------------------------------------------------------
@@ -4635,7 +4635,7 @@ FUNCTION GenPgoFacCli( cNumFac, cFacCliT, cFacCliL, cFacCliP, cAntCliT, dbfCli, 
 
    nTotal            := nTotFacCli( cNumFac, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCliT, nil, nil, .f. )
 
-   nTotCob           := nPagFacCli( cNumFac, cFacCliT, cFacCliP, cIva, cDiv, nil, .t. )
+   nTotCob           := nTotalRecibosGeneradosFacturasCliente( cNumFac, cFacCliT, cFacCliP, cIva, cDiv )
 
    /*
    Ya nos viene sin los anticipos
@@ -4668,7 +4668,7 @@ FUNCTION GenPgoFacCli( cNumFac, cFacCliT, cFacCliL, cFacCliP, cAntCliT, dbfCli, 
       Vamos a relizar pagos por la diferencia entre el total y lo cobrado------
       */
 
-      nTotal         -= nPagFacCli( cSerFac + Str( nNumFac ) + cSufFac, cFacCliT, cFacCliP, cIva, cDiv, nil, .t. )
+      nTotal         -= nTotalRecibosPagadosFacturasCliente( cSerFac + Str( nNumFac ) + cSufFac, cFacCliT, cFacCliP, cIva, cDiv )
 
       /*
       Genera pagos-------------------------------------------------------------
@@ -5158,7 +5158,7 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
 
       aTmp[ _CTIPREC ]  := "L"
       aTmp[ _CSERIE  ]  := "A"
-      aTmp[ _NNUMFAC ]  := nNewDoc( "A", cFacCliP, "NRECCLI" )
+      aTmp[ _NNUMFAC ]  := nNewDoc( "A", cFacCliP, "nRecCli", D():Contadores( nView ) )
       aTmp[ _CSUFFAC ]  := RetSufEmp()
       aTmp[ _NNUMREC ]  := 1
 

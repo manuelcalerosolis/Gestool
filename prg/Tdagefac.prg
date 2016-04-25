@@ -292,7 +292,7 @@ METHOD lGenerate() CLASS TddAgeFac
          lChkSer( ::oFacRecT:cSerie, ::aSer )
 
          aTotal            := aTotFacRec( ::oFacRecT:cSerie + Str( ::oFacRecT:nNumFac ) + ::oFacRecT:cSufFac, ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias )
-         nTotPag           := nPagFacRec( ::oFacRecT:cSerie + Str( ::oFacRecT:NNUMFAC ) + ::oFacRecT:CSUFFAC, ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::oFacCliP:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias )
+         nTotPag           := nPagFacRec( ::oFacRecT:cSerie + Str( ::oFacRecT:NNUMFAC ) + ::oFacRecT:CSUFFAC, ::oFacRecT:cAlias, ::oFacCliP:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias )
 
          do case
             case ::oEstado:nAt == 1

@@ -1523,7 +1523,7 @@ Static Function oldReportFacCli( nDevice, nCopies, cPrinter, cCodDoc )
    private nRouDivFac   := nRouDiv
    private nDpvDivFac   := nDpvDiv
    private cCodPgo      := ( D():FacturasClientes( nView ) )->cCodPago
-   private nTotCob      := nPagFacCli( cNumFac, D():FacturasClientes( nView ), D():FacturasClientesCobros( nView ), dbfIva, dbfDiv, nil, .t. )
+   private nTotCob      := nTotalRecibosPagadosFacturasCliente( cNumFac, D():FacturasClientes( nView ), D():FacturasClientesCobros( nView ), dbfIva, dbfDiv )
 
    private lFacCli      := .t.
    private lAntCli      := .f.
@@ -11635,8 +11635,8 @@ RETURN lValid
 STATIC FUNCTION RecalculaTotal( aTmp )
 
    local nTotAntCli  := nTotAntFacCli( nil, dbfTmpAnt, dbfIva, dbfDiv )
-   local nPagFacCli  := nPagFacCli( nil, D():FacturasClientes( nView ), dbfTmpPgo, dbfIva, dbfDiv, nil, .t. )
    local nTotFacCli  := nTotFacCli( nil, D():FacturasClientes( nView ), dbfTmpLin, dbfIva, dbfDiv, D():FacturasClientesCobros( nView ), dbfTmpAnt, aTmp, nil, .f. )
+   local nPagFacCli  := nTotalRecibosPagadosFacturasCliente( nil, D():FacturasClientes( nView ), dbfTmpPgo, dbfIva, dbfDiv )
 
    /*
    Refrescos en Pantalla_______________________________________________________
@@ -14807,7 +14807,7 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
    cNumero              := ( D():FacturasClientes( nView ) )->cSerie + Alltrim( str( ( D():FacturasClientes( nView ) )->nNumFac ) ) + Rtrim( ( D():FacturasClientes( nView ) )->cSufFac )
 
    nTotal               := nTotFacCli( nNumero, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), dbfIva, dbfDiv, D():FacturasClientesCobros( nView ), dbfAntCliT )
-   nPago                := nPagFacCli( nNumero, D():FacturasClientes( nView ), D():FacturasClientesCobros( nView ), dbfIva, dbfDiv )
+   nPago                := nTotalRecibosPagadosFacturasCliente( nNumero, D():FacturasClientes( nView ), D():FacturasClientesCobros( nView ), dbfIva, dbfDiv )
    nAnticipo            := nTotAntFacCli( nNumero, dbfAntCliT, dbfIva, dbfDiv )
 
    oFactura             := TFacturaElectronica():New( oTree )
@@ -20397,7 +20397,7 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
 
    end if
 
-   nTotCob           := nPagFacCli( cFactura, cFacCliT, cFacCliP, cIva, cDiv, nil, .t. )
+   nTotCob           := nTotalRecibosPagadosFacturasCliente( cFactura, cFacCliT, cFacCliP, cIva, cDiv )
 
    /*
    Calculamos los impuestosS---------------------------------------------------------
@@ -21064,7 +21064,7 @@ FUNCTION ChkLqdFacCli( aTmp, cFacCliT, cFacCliL, dbfFacCliP, dbfAntCliT, dbfIva,
    end if
 
    nTotal         := abs( nTotFacCli( cFactura, cFacCliT, cFacCliL, dbfIva, dbfDiv, dbfFacCliP, nil, nil, nil, .f. ) )
-   nPagFacCli     := abs( nPagFacCli( cFactura, cFacCliT, dbfFacCliP, dbfIva, dbfDiv, nil, .t. ) )
+   nPagFacCli     := abs( nTotalRecibosPagadosFacturasCliente( cFactura, cFacCliT, dbfFacCliP, dbfIva, dbfDiv ) )
    nPagFacCli     += abs( nTotAntFacCli( cFactura, dbfAntCliT, dbfIva, dbfDiv, nil, .f. ) )
 
    lChkLqd                       := !lMayorIgual( nTotal, nPagFacCli, 0.1 )
@@ -21323,6 +21323,17 @@ RETURN ( AddMonth( JulianoToDate( , Val( ( cFacCliL )->cLote ) ), 6 ) )
 
 //---------------------------------------------------------------------------//
 
+FUNCTION nTotalRecibosGeneradosFacturasCliente( cFactura, cFacCliT, dbfFacCliP, dbfIva, dbfDiv, cDivRet )
+
+Return ( nPagFacCli( cFactura, cFacCliT, dbfFacCliP, dbfIva, dbfDiv, cDivRet, .f., .f. ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nTotalRecibosPagadosFacturasCliente( cFactura, cFacCliT, dbfFacCliP, dbfIva, cDivRet )
+
+Return ( nPagFacCli( cFactura, cFacCliT, dbfFacCliP, dbfIva, dbfDiv, cDivRet, .t., .f. ) )
+
+//---------------------------------------------------------------------------//
 /*
 Devuelve el total de pagos de una factura
 */

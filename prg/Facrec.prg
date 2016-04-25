@@ -12307,8 +12307,8 @@ RETURN ( if( lPic, Trans( nTotFac, cPorDiv ), nTotFac ) ) //
 
 STATIC FUNCTION RecalculaTotal( aTmp )
 
-   local nPagFacCli     := nPagFacRec( nil, D():FacturasRectificativas( nView ), dbfTmpLin, dbfTmpPgo, dbfIva, dbfDiv, nil, .t. )
-   local nTotFacCli     := nTotFacRec( nil, D():FacturasRectificativas( nView ), dbfTmpLin, dbfIva, dbfDiv, aTmp, nil, .f. )
+   local nPagFacCli     := nPagFacRec( nil, D():FacturasRectificativas( nView ), dbfTmpPgo, dbfIva, dbfDiv, nil, .t. )
+   local nTotFacCli     := nTotFacRec( nil, D():FacturasRectificativas( nView ), dbfIva, dbfDiv, aTmp, nil, .f. )
 
    /*
    Refrescos en Pantalla_______________________________________________________
@@ -14124,11 +14124,23 @@ Return nil
 
 //------------------------------------------------------------------------//
 
+FUNCTION nTotalRecibosGeneradosRectificativasCliente( cFactura, cFacCliT, dbfFacCliP, dbfIva, dbfDiv, cDivRet )
+
+Return ( nPagFacRec( cFactura, cFacCliT, dbfFacCliP, dbfIva, dbfDiv, cDivRet, .f., .f. ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nTotalRecibosPagadosRectificativasCliente( cFactura, cFacCliT, dbfFacCliP, dbfIva, dbfDiv, cDivRet )
+
+Return ( nPagFacRec( cFactura, cFacCliT, dbfFacCliP, dbfIva, dbfDiv, cDivRet, .t., .f. ) )
+
+//---------------------------------------------------------------------------//
+
 /*
 Devuelve el total de pagos de una factura
 */
 
-FUNCTION nPagFacRec( cFactura, cFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv, cDivRet, lOnlyCob, lPic )
+FUNCTION nPagFacRec( cFactura, cFacRecT, dbfFacCliP, dbfIva, dbfDiv, cDivRet, lOnlyCob, lPic )
 
    local nOrd
    local nRec
@@ -14250,7 +14262,7 @@ FUNCTION ChkLqdFacRec( aTmp, cFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv )
    end if
 
    nTotal         := abs( nTotFacRec( cFactura, cFacRecT, dbfFacRecL, dbfIva, dbfDiv, nil, nil, .f. ) )
-   nPagFacCli     := abs( nPagFacRec( cFactura, cFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv, nil, .t. ) )
+   nPagFacCli     := abs( nPagFacRec( cFactura, cFacRecT, dbfFacCliP, dbfIva, dbfDiv, nil, .t. ) )
 
    lChkLqd        := !lMayorIgual( nTotal, nPagFacCli, 0.1 )
 
@@ -14951,7 +14963,7 @@ FUNCTION sTotFacRec( cFactura, cFacRecT, dbfFacRecL, dbfIva, dbfDiv, dbfFacCliP,
 
    sTotal:aTotalIva                       := aTotIva
 
-   nCobro                                 := nPagFacRec( cFactura, cFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv, nil, .t. )
+   nCobro                                 := nPagFacRec( cFactura, cFacRecT, dbfFacCliP, dbfIva, dbfDiv, nil, .t. )
 
    sTotal:nTotalCobrado                   := nCobro
 
