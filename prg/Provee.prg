@@ -103,6 +103,8 @@ static dbfProvee
 static dbfProveeD
 static dbfIva
 
+static nView
+
 static dbfPedPrvT
 static dbfPedPrvL
 static dbfAlbPrvT
@@ -179,7 +181,11 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       DisableAcceso()
 
+      nView             := D():CreateView()
+
       lOpenFiles  := .t.
+
+      D():Proveedores( nView )
 
       USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
       SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
@@ -249,7 +255,10 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       if !oDetCamposExtra:OpenFiles
          lOpenFiles        := .f.
       end if
+
       oDetCamposExtra:SetTipoDocumento( "Proveedores" )
+
+      oDetCamposExtra:setbId( {|| D():ProveedoresId( nView ) } )
 
       CodigosPostales():GetInstance():OpenFiles()
 
@@ -463,6 +472,8 @@ FUNCTION Provee( oMenuItem, oWnd )
    end with
 
    oWndBrw:cHtmlHelp    := "Proveedores"
+
+   oDetCamposExtra:addCamposExtra( oWndBrw )
 
    oWndBrw:CreateXFromCode()
 

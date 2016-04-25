@@ -69,6 +69,9 @@
 
 static oWndBrw
 
+static nview
+static lOpenFiles    :=.f.
+
 static dbfPrv
 static dbfTmp
 static dbfArticulo
@@ -356,6 +359,14 @@ static function OpenFiles()
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+      DisableAcceso()
+
+      nView             := D():CreateView()
+
+      lOpenFiles  := .t.
+
+      D():Familias( nView )
+
       USE ( cPatArt() + "Familias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
       SET ADSINDEX TO ( cPatArt() + "Familias.Cdx" ) ADDITIVE
 
@@ -382,6 +393,7 @@ static function OpenFiles()
       if !empty( oDetCamposExtra )
          oDetCamposExtra:OpenFiles()
          oDetCamposExtra:SetTipoDocumento( "Familias" )
+         oDetCamposExtra:setbId( {|| D():FamiliasId( nView ) } )
       end if
 
    RECOVER USING oError
@@ -574,6 +586,10 @@ FUNCTION Familia( oMenuItem, oWnd )
          :lHide            := .t.
       end with
 
+      oDetCamposExtra:addCamposExtra( oWndBrw )
+
+      oWndBrw:cHtmlHelp    := "Familias"
+      
       oWndBrw:CreateXFromCode()
 
       DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;

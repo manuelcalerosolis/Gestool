@@ -480,6 +480,7 @@ STATIC FUNCTION OpenFiles( lExt )
    oDetCamposExtra      := TDetCamposExtra():New()
    oDetCamposExtra:OpenFiles()
    oDetCamposExtra:SetTipoDocumento( "Facturas de anticipos a clientes" )
+   oDetCamposExtra:setbId( {|| D():AnticiposClientesId( nView ) } )
 
 
    /*RECOVER USING oError
@@ -914,6 +915,10 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
          :nWidth           := 30
          :lHide            := .t.
       end with
+
+   oDetCamposExtra:addCamposExtra( oWndBrw )
+
+   oWndBrw:cHtmlHelp    := "Factura de anticipos a clientes"
 
    oWndBrw:CreateXFromCode()
 

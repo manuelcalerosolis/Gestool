@@ -1019,6 +1019,8 @@ STATIC FUNCTION OpenFiles( lExt )
       oDetCamposExtra      := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Pedidos a clientes" )
+      oDetCamposExtra:setbId( {|| D():PedidosClientesId( nView ) } )
+
 
    RECOVER USING oError
 
@@ -1508,7 +1510,11 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :lHide            := .t.
       end with
 
-      oWndBrw:CreateXFromCode()
+   	oDetCamposExtra:addCamposExtra( oWndBrw )
+
+   	oWndBrw:cHtmlHelp    := "Pedidos a clientes"
+    
+    oWndBrw:CreateXFromCode()
 
    DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
       NOBORDER ;

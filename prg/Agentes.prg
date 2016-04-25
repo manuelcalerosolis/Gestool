@@ -138,6 +138,10 @@ FUNCTION Agentes( oMenuItem, oWnd )
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
+      oDetCamposExtra:addCamposExtra( oWndBrw )
+
+      oWndBrw:cHtmlHelp    := "Agentes"
+      
       oWndBrw:CreateXFromCode()
 
       DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
@@ -243,6 +247,7 @@ Static Function OpenFiles()
       oDetCamposExtra   := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Agentes" )
+      oDetCamposExtra:setbId( {|| D():AgentesId( nView ) } )
 
       lOpenFiles        := .t.
 

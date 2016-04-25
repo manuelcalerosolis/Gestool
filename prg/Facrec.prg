@@ -1087,6 +1087,8 @@ STATIC FUNCTION OpenFiles( lExt )
       oDetCamposExtra      := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Facturas rectificativa a clientes" )
+      oDetCamposExtra:setbId( {|| D():FacturasRectificativasId( nView ) } )
+
 
    RECOVER USING oError
 
@@ -1792,7 +1794,11 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
          :lHide            := .t.
       end with
 
-      oWndBrw:CreateXFromCode()
+   oDetCamposExtra:addCamposExtra( oWndBrw )
+
+   oWndBrw:cHtmlHelp    := "Rectificativas de clientes"
+   
+   oWndBrw:CreateXFromCode()
 
    DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
       NOBORDER ;

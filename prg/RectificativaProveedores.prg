@@ -527,6 +527,8 @@ STATIC FUNCTION OpenFiles( lExt )
       oDetCamposExtra      := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Facturas rectificativa a proveedores" )
+      oDetCamposExtra:setbId( {|| D():FacturasRectificativasProveedoresId( nView ) } )
+
 
       /*
       Centro de coste-----------------------------------------------------------------------
@@ -880,6 +882,9 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
       end with
 
       oWndBrw:lAutoSeek    := .f.
+
+      oDetCamposExtra:addCamposExtra( oWndBrw )
+
       oWndBrw:cHtmlHelp    := "Factura rectificativa de proveedor"
 
       oWndBrw:CreateXFromCode()

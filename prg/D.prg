@@ -206,6 +206,7 @@ CLASS D
    METHOD FacturasClientesSeries( nView )                   INLINE ( ::Get( "FacCliS", nView ) )
 
    METHOD AnticiposClientes( nView )                        INLINE ( ::Get( "AntCliT", nView ) )
+      METHOD AnticiposClientesId( nView )                   INLINE ( ( ::Get( "AntCliT", nView ) )->cSerAnt )  
 
    // Facturas rectificativas--------------------------------------------------
 
@@ -462,6 +463,7 @@ CLASS D
    // Proveedores--------------------------------------------------------------
 
    METHOD Proveedores( nView )                                       INLINE ( ::Get( "Provee", nView ) )
+      METHOD ProveedoresId( nView )                                  INLINE ( ( ::Get( "Provee", nView ) )->COD )
       METHOD GruposProveedores( nView )                              INLINE ( ::GetObject( "GruposProveedores", nView ) )
       METHOD BancosProveedores( nView )                              INLINE ( ::Get( "PrvBnc", nView ) )
 
@@ -509,6 +511,7 @@ CLASS D
    METHOD TarifaPreciosLineas( nView )                            INLINE ( ::Get( "TarPreL", nView ) )
 
    METHOD Familias( nView )                                       INLINE ( ::Get( "Familias", nView ) )
+      METHOD FamiliasId( nView )                                  INLINE ( ( ::Get( "Familias", nView ) )->CCODFAM )
    
    METHOD Temporadas( nView )                                     INLINE ( ::Get( "Temporadas", nView ) )
 
@@ -553,6 +556,7 @@ CLASS D
    METHOD ImpuestosEspeciales( nView )       INLINE ( ::GetObject( "ImpuestosEspeciales", nView ) )
 
    METHOD Agentes( nView )                   INLINE ( ::Get( "Agentes", nView ) )
+      METHOD AgentesId( nView )              INLINE ( ( ::Get( "Agentes", nView ) )->cCodAge )
       METHOD AgentesComisiones( nView )      INLINE ( ::Get( "AgeCom", nView ) )
       METHOD AgentesRelaciones( nView )      INLINE ( ::Get( "AgeRel", nView ) )
 

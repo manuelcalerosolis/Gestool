@@ -922,6 +922,8 @@ STATIC FUNCTION OpenFiles( lExt )
       oDetCamposExtra      := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Presupuestos a clientes" )
+      oDetCamposExtra:setbId( {|| D():PresupuestosClientesId( nView ) } )
+
 
 
    RECOVER USING oError
@@ -1531,7 +1533,11 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :nHeadStrAlign    := 1
       end with
 
-      oWndBrw:CreateXFromCode()
+   oDetCamposExtra:addCamposExtra( oWndBrw )
+
+   oWndBrw:cHtmlHelp    := "Presupuestos a clientes"
+   
+   oWndBrw:CreateXFromCode()
 
    DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
       NOBORDER ;

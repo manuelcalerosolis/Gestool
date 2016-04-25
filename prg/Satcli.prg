@@ -761,6 +761,8 @@ STATIC FUNCTION OpenFiles( lExt )
       oDetCamposExtra   := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "S.A.T" )
+      oDetCamposExtra:setbId( {|| D():SatClientesId( nView ) } )
+
 
       oMailing          := TGenmailingDatabaseSATClientes():New( nView )
       oMailing:setBlockRecipients( {|| alltrim( retFld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) ) } )
@@ -1460,7 +1462,11 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :nHeadStrAlign    := 1
       end with
 
-      oWndBrw:CreateXFromCode()
+   oDetCamposExtra:addCamposExtra( oWndBrw )
+
+   oWndBrw:cHtmlHelp    := "S.A.T de clientes"
+   
+   oWndBrw:CreateXFromCode()
 
    DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
       NOBORDER ;
