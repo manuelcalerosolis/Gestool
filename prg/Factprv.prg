@@ -542,6 +542,7 @@ STATIC FUNCTION OpenFiles( lExt )
       oDetCamposExtra         := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Facturas a proveedores" )
+      oDetCamposExtra:setbId( {|| D():FacturasProveedoresId( nView ) } )
 
       /*
       Centro de coste-----------------------------------------------------------------------
@@ -947,6 +948,8 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
          :nWidth           := 30
          :lHide            := .t.
       end with
+      
+      oDetCamposExtra:addCamposExtra( oWndBrw )
 
       oWndBrw:lAutoSeek    := .f.
       oWndBrw:cHtmlHelp    := "Factura de proveedor"

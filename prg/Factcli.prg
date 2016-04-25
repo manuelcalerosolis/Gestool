@@ -1041,6 +1041,10 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :lHide            := .t.
       end with
 
+   oDetCamposExtra:addCamposExtra( oWndBrw )
+
+   oWndBrw:cHtmlHelp    := "Factura a clientes"
+
    oWndBrw:CreateXFromCode()
 
    DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
@@ -2087,6 +2091,8 @@ STATIC FUNCTION OpenFiles()
       oDetCamposExtra   := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:setTipoDocumento( "Facturas a clientes" )
+      oDetCamposExtra:setbId( {|| D():FacturasClientesId( nView ) } )
+
 
       lOpenFiles        := .t.
 

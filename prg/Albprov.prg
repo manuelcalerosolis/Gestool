@@ -656,6 +656,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
          :lHide            := .t.
       end with
 
+      oDetCamposExtra:addCamposExtra( oWndBrw )
 
       oWndBrw:cHtmlHelp    := "Albaran de proveedor"
 
@@ -1070,6 +1071,7 @@ STATIC FUNCTION OpenFiles( lExt )
       oDetCamposExtra         := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Albaranes a proveedores" )
+      oDetCamposExtra:setbId( {|| D():AlbaranesProveedoresId( nView ) } )
 
    RECOVER
 

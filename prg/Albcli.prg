@@ -904,7 +904,11 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :lHide            := .t.
       end with
 
-      oWndBrw:CreateXFromCode()
+   oDetCamposExtra:addCamposExtra( oWndBrw )
+
+   oWndBrw:cHtmlHelp    := "Albaranes a clientes"
+
+   oWndBrw:CreateXFromCode()
 
    DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
       NOBORDER ;
@@ -1657,6 +1661,8 @@ STATIC FUNCTION OpenFiles()
       oDetCamposExtra      := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Albaranes a clientes" )
+      oDetCamposExtra:setbId( {|| D():AlbaranesClientesId( nView ) } )
+
 
    RECOVER USING oError
 

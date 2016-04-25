@@ -373,6 +373,8 @@ STATIC FUNCTION OpenFiles( lExt )
       oDetCamposExtra      := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Pedidos a proveedores" )
+      oDetCamposExtra:setbId( {|| D():PedidosProveedoresId( nView ) } )
+
 
       D():ArticuloLenguaje( nView )
 
@@ -729,6 +731,8 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
          :nWidth           := 280
          :lHide            := .t.
       end with
+
+      oDetCamposExtra:addCamposExtra( oWndBrw )
 
       oWndBrw:cHtmlHelp    := "Pedido a proveedor"
 

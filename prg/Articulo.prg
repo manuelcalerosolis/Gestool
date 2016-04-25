@@ -1525,7 +1525,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          FROM     oRotor ;
          ALLOW    EXIT ;
          LEVEL    ACC_EDIT
-
+ 
       DEFINE BTNSHELL RESOURCE "Document_plain_businessman_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( AlbPrv( nil, oWnd, nil, ( D():Articulos( nView ) )->Codigo ) );
@@ -1533,7 +1533,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          FROM     oRotor ;
          ALLOW    EXIT ;
          LEVEL    ACC_EDIT
-
+ 
       DEFINE BTNSHELL RESOURCE "Document_businessman_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( FacPrv( nil, oWnd, nil, ( D():Articulos( nView ) )->Codigo ) );
