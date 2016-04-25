@@ -16899,8 +16899,7 @@ Static Function ImprimirSeriesFacturas( nDevice, lExt )
 
    oPrinter:bSkip    := {||   ( D():FacturasClientes( nView ) )->( dbSkip() ) }
 
-   //oPrinter:bAction  := {||   GenFacCli( nDevice, "Imprimiendo documento : " + D():FacturasClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, oPrinter:oCopias:uGetValue ) }
-   oPrinter:bAction  := {||   GenFacCli( nDevice, "Imprimiendo documento : " + D():FacturasClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, ) }
+   oPrinter:bAction  := {||   GenFacCli( nDevice, "Imprimiendo documento : " + D():FacturasClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, oPrinter:oCopias:uGetValue ) }
 
    oPrinter:bStart   := {||   if( lExt, oPrinter:DisableRange(), ) }
 
