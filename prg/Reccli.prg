@@ -5368,8 +5368,10 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
       Comprobamos el estado de la factura-----------------------------------------
       */
 
-      if ( cFacCliP )->( dbSeek( cNumFac ) )
-         
+      nOrdAnt                       := ( cFacCliP )->( OrdSetFocus( "nNumFac" ) )
+
+      if ( cFacCliP )->( dbSeek( cNumRecTip ) )
+
          if Empty( ( cFacCliP )->cTipRec )
             ChkLqdFacCli( nil, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), cFacCliP, D():AnticiposClientes( nView ), D():TiposIva( nView ), D():Divisas( nView ), .f. )
          else
@@ -5377,6 +5379,8 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
          end if
 
       end if
+
+      ( cFacCliP )->( OrdSetFocus( nOrdAnt ) )
 
    else
 
@@ -5410,7 +5414,6 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
          end if
 
       end if
-
 
    end if
 

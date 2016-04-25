@@ -488,7 +488,9 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       oDetCamposExtra:setTipoDocumento( "Artículos" )
       oDetCamposExtra:setbId( {|| D():ArticulosId( nView ) } )
 
-      TPrestashopConfig():getInstance():loadJSON()
+      if !IsReport()
+         TPrestashopConfig():getInstance():loadJSON()
+      end if
 
       /*
       Cargamos el valor del Euro y de la Peseta-----------------------------------
@@ -752,7 +754,9 @@ STATIC FUNCTION CloseFiles( lDestroy )
       oLenguajes:End()
    end if
 
-   TPrestashopConfig():DestroyInstance()
+   if !IsReport()
+      TPrestashopConfig():DestroyInstance()
+   end if
 
    dbfProv           := nil
    dbfCatalogo       := nil
