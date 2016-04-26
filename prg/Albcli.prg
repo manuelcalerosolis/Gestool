@@ -9005,7 +9005,6 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
       end if
 
-
       /*
       Base de datos de los anticipos----------------------------------------------
       */
@@ -9018,7 +9017,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
          ( dbfTmpPgo )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
          ( dbfTmpPgo )->( OrdCreate( cTmpPgo, "nNumAlb", "Str( Recno() )", {|| Str( Recno() ) } ) )
 
-         if ( D():Get( "AlbCliP", nView ) )->( dbSeek( cAlbaran ) )
+         if ( nMode != DUPL_MODE ) .and. ( D():Get( "AlbCliP", nView ) )->( dbSeek( cAlbaran ) )
             while ( ( D():Get( "AlbCliP", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliP", nView ) )->nNumAlb ) + ( D():Get( "AlbCliP", nView ) )->cSufAlb ) == cAlbaran .and. !( D():Get( "AlbCliP", nView ) )->( eof() )
                dbPass( D():Get( "AlbCliP", nView ), dbfTmpPgo, .t. )
                ( D():Get( "AlbCliP", nView ) )->( dbSkip() )
@@ -9044,7 +9043,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
          ( dbfTmpInc )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
          ( dbfTmpInc )->( ordCreate( cTmpInc, "nNumAlb", "Recno()", {|| Recno() } ) )
 
-         if ( D():Get( "AlbCliI", nView ) )->( dbSeek( cAlbaran ) )
+         if ( nMode != DUPL_MODE ) .and. ( D():Get( "AlbCliI", nView ) )->( dbSeek( cAlbaran ) )
             while ( ( D():Get( "AlbCliI", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliI", nView ) )->nNumAlb ) + ( D():Get( "AlbCliI", nView ) )->cSufAlb == cAlbaran ) .and. ( D():Get( "AlbCliI", nView ) )->( !eof() )
                dbPass( D():Get( "AlbCliI", nView ), dbfTmpInc, .t. )
                ( D():Get( "AlbCliI", nView ) )->( dbSkip() )
@@ -9068,7 +9067,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
          ( dbfTmpEst )->( ordCreate( cTmpEst, "nNumAlb", "cSerAlb + str( nNumAlb ) + cSufAlb + dtos( dFecSit )  + tFecSit", {|| Field->cSerAlb + str( Field->nNumAlb ) + Field->cSufAlb + dtos( Field->dFecSit )  + Field->tFecSit } ) )
          ( dbfTmpEst )->( ordListAdd( cTmpEst ) )
 
-         if ( D():AlbaranesClientesSituaciones( nView ) )->( dbSeek( cAlbaran ) )
+         if ( nMode != DUPL_MODE ) .and. ( D():AlbaranesClientesSituaciones( nView ) )->( dbSeek( cAlbaran ) )
 
             while ( ( D():AlbaranesClientesSituaciones( nView ) )->cSerAlb + Str( ( D():AlbaranesClientesSituaciones( nView ) )->nNumAlb ) + ( D():AlbaranesClientesSituaciones( nView ) )->cSufAlb == cAlbaran ) .and. ( D():AlbaranesClientesSituaciones( nView ) )->( !eof() ) 
                dbPass( D():AlbaranesClientesSituaciones( nView ), dbfTmpEst, .t. )
@@ -9097,7 +9096,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
          ( dbfTmpDoc )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
          ( dbfTmpDoc )->( ordCreate( cTmpDoc, "nNumAlb", "Recno()", {|| Recno() } ) )
 
-         if ( D():Get( "AlbCliD", nView ) )->( dbSeek( cAlbaran ) )
+         if ( nMode != DUPL_MODE ) .and. ( D():Get( "AlbCliD", nView ) )->( dbSeek( cAlbaran ) )
             while ( ( D():Get( "AlbCliD", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliD", nView ) )->nNumAlb ) + ( D():Get( "AlbCliD", nView ) )->cSufAlb == cAlbaran ) .and. ( D():Get( "AlbCliD", nView ) )->( !eof() )
                dbPass( D():Get( "AlbCliD", nView ), dbfTmpDoc, .t. )
                ( D():Get( "AlbCliD", nView ) )->( dbSkip() )
@@ -9124,7 +9123,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
          ( dbfTmpSer )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
          ( dbfTmpSer )->( OrdCreate( cTmpSer, "nNumLin", "Str( nNumLin, 4 ) + cRef", {|| Str( Field->nNumLin, 4 ) + Field->cRef } ) )
 
-         if ( D():Get( "AlbCliS", nView ) )->( dbSeek( cAlbaran ) )
+         if ( nMode != DUPL_MODE ) .and. ( D():Get( "AlbCliS", nView ) )->( dbSeek( cAlbaran ) )
             while ( ( D():Get( "AlbCliS", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliS", nView ) )->nNumAlb ) + ( D():Get( "AlbCliS", nView ) )->cSufAlb == cAlbaran ) .and. !( D():Get( "AlbCliS", nView ) )->( eof() )
                dbPass( D():Get( "AlbCliS", nView ), dbfTmpSer, .t. )
                ( D():Get( "AlbCliS", nView ) )->( dbSkip() )

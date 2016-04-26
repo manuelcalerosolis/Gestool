@@ -9777,7 +9777,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    Añadimos desde el fichero de incidencias
 	*/
 
-   if ( dbfPedCliI )->( dbSeek( cPedido ) )
+   if ( nMode != DUPL_MODE ) .and. ( dbfPedCliI )->( dbSeek( cPedido ) )
 
       while ( ( dbfPedCliI )->cSerPed + Str( ( dbfPedCliI )->nNumPed ) + ( dbfPedCliI )->cSufPed == cPedido ) .AND. ( dbfPedCliI )->( !eof() )
 
@@ -9792,7 +9792,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
   // Añadimos desde el fichero de situaiones
 	
-	if ( D():PedidosClientesSituaciones( nView ) )->( dbSeek( cPedido ) )
+	if ( nMode != DUPL_MODE ) .and. ( D():PedidosClientesSituaciones( nView ) )->( dbSeek( cPedido ) )
 
       	while ( ( D():PedidosClientesSituaciones( nView ) )->cSerPed + Str( ( D():PedidosClientesSituaciones( nView ) )->nNumPed ) + ( D():PedidosClientesSituaciones( nView ) )->cSufPed == cPedido ) .AND. ( D():PedidosClientesSituaciones( nView ) )->( !eof() ) 
 
@@ -9809,7 +9809,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    Añadimos desde el fichero de documentos
 	*/
 
-   if ( dbfPedCliD )->( dbSeek( cPedido ) )
+   if ( nMode != DUPL_MODE ) .and. ( dbfPedCliD )->( dbSeek( cPedido ) )
 
       while ( ( dbfPedCliD )->cSerPed + Str( ( dbfPedCliD )->nNumPed ) + ( dbfPedCliD )->cSufPed == cPedido ) .AND. ( dbfPedCliD )->( !eof() )
 
@@ -9826,7 +9826,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    Añadimos desde el fichero de entregas a cuenta
 	*/
 
-   if ( D():PedidosClientesPagos( nView ) )->( dbSeek( cPedido ) )
+   if ( nMode != DUPL_MODE ) .and. ( D():PedidosClientesPagos( nView ) )->( dbSeek( cPedido ) )
 
       while ( ( D():PedidosClientesPagos( nView ) )->cSerPed + Str( ( D():PedidosClientesPagos( nView ) )->nNumPed ) + ( D():PedidosClientesPagos( nView ) )->cSufPed == cPedido ) .AND. ( D():PedidosClientesPagos( nView ) )->( !eof() )
 
@@ -9843,7 +9843,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 	Añadimos desde el fichero de lineas
 	*/
 
-   if ( dbfPedCliR )->( DbSeek( cPedido ) )
+   if ( nMode != DUPL_MODE ) .and. ( dbfPedCliR )->( DbSeek( cPedido ) )
 
       while ( ( dbfPedCliR )->cSerPed + Str( ( dbfPedCliR )->nNumPed ) + ( dbfPedCliR )->cSufPed == cPedido ) .and. ( dbfPedCliR )->( !eof() )
 
