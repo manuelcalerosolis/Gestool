@@ -8149,7 +8149,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
             Pasamos las incidencias de los pedidos-----------------------------
             */
 
-            if ( dbfPedCliI )->( dbSeek( cPedido ) )
+            if ( nMode != DUPL_MODE ) .and. ( dbfPedCliI )->( dbSeek( cPedido ) )
 
                while ( dbfPedCliI )->cSerPed + str( ( dbfPedCliI )->nNumPed ) + ( dbfPedCliI )->cSufPed == cPedido .and. !( dbfPedCliI )->( Eof() )
                   dbPass( dbfPedCliI, dbfTmpInc, .t. )
@@ -8400,7 +8400,7 @@ STATIC FUNCTION cPreCli( aGet, aTmp, oBrw, nMode )
             Pasamos las incidencias del presupuesto
             */
 
-            if ( dbfPreCliI )->( dbSeek( cPedido ) )
+            if ( nMode != DUPL_MODE ) .and. ( dbfPreCliI )->( dbSeek( cPedido ) )
 
                while ( dbfPreCliI )->cSerPre + str( ( dbfPreCliI )->nNumPre ) + ( dbfPreCliI )->cSufPre == cPedido .and. !( dbfPreCliI )->( Eof() )
                   dbPass( dbfPreCliI, dbfTmpInc, .t. )
@@ -11183,7 +11183,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       ( dbfTmpEntidades )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpEntidades )->( OrdCreate( cTmpEnt, "cRolEnt", "cCodEnt + cRol", {|| Field->cCodEnt + Field->cRol } ) )
 
-      if D():gotoIdFacturasClientesEntidades( cFac, nView )
+      if ( nMode != DUPL_MODE ) .and. D():gotoIdFacturasClientesEntidades( cFac, nView )
          
          while ( D():FacturasClientesEntidadesId( nView ) == cFac .and. !D():eofFacturasClientesEntidades( nView ) )
       
@@ -11213,7 +11213,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
   		( dbfTmpEst )->( ordCreate( cTmpEst, "nNumFac", "cSerFac + str( nNumFac ) + cSufFac + dtos( dFecSit )  + tFecSit", {|| Field->cSerFac + str( Field->nNumFac ) + Field->cSufFac + dtos( Field->dFecSit )  + Field->tFecSit } ) )
     	( dbfTmpEst )->( ordListAdd( cTmpEst ) )
 
-    	if ( D():FacturasClientesSituaciones( nView ) )->( dbSeek( cFac ) )
+    	if ( nMode != DUPL_MODE ) .and.( D():FacturasClientesSituaciones( nView ) )->( dbSeek( cFac ) )
 
       	while ( ( D():FacturasClientesSituaciones( nView ) )->cSerFac + Str( ( D():FacturasClientesSituaciones( nView ) )->nNumFac ) + ( D():FacturasClientesSituaciones( nView ) )->cSufFac == cFac ) .AND. ( D():FacturasClientesSituaciones( nView ) )->( !eof() ) 
 
@@ -16377,7 +16377,7 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
             Pasamos las incidencias del SAT----------------------------
             */
 
-            if ( dbfSatCliI )->( dbSeek( cNumsat ) )
+            if ( nMode != DUPL_MODE ) .and. ( dbfSatCliI )->( dbSeek( cNumsat ) )
                while ( dbfSatCliI )->cSerSat + str( ( dbfSatCliI )->nNumSat ) + ( dbfSatCliI )->cSufSat == cNumsat .and. !( dbfSatCliI )->( Eof() )
                   dbPass( dbfSatCliI, dbfTmpInc, .t. )
                   ( dbfSatCliI )->( dbSkip() )
