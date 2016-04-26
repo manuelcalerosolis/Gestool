@@ -548,19 +548,21 @@ Return ( self )
 
 Method aCamposExtra( cTipoCampo ) CLASS TCamposExtra
 
-   local aCamposExtra := {}
-   local aCampos
-   local cValor
    local nLen
    local nDec
+   local cValor
+   local aCampos
+   local aCamposExtra   := {}
 
    ::oDbf:GoTop()
 
    while !::oDbf:Eof()
 
-      aCampos  := hb_deserialize( ::oDbf:mDocumento )
+      aCampos           := hb_deserialize( ::oDbf:mDocumento )
 
-      if !Empty( aCampos )
+      debug( aCampos )
+
+      if !empty( aCampos )
 
          if hhaskey( aCampos, cTipoCampo ) .and. hGet( aCampos, cTipoCampo )
 

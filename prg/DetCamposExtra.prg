@@ -507,15 +507,15 @@ METHOD addCamposExtra( oBrw ) CLASS TDetCamposExtra
       Return .f.
    end if
 
-   if Empty( ::bId )
+   if empty( ::bId )
       Return .f.
    end if
 
-   if Empty( ::TipoDocumento )
+   if empty( ::TipoDocumento )
       Return .f.
    end if
 
-   ::aCamposExtra    := ::oCamposExtra:aCamposExtra( ::TipoDocumento )
+   ::aCamposExtra          := ::oCamposExtra:aCamposExtra( ::TipoDocumento )
 
    if ::lExisteCamposExtra()
       Return .f.
