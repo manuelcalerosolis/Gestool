@@ -9623,7 +9623,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    local cDbfEst  := "PCliE"
    local cPedido  := ""
    local nOrd
-
+   
    if nMode != APPD_MODE
       cPedido     := aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ]
    end if

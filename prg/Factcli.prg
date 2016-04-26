@@ -8881,7 +8881,7 @@ existentes
    oBrw     -> Objeto Browse se pasa para hacer los referscos
 */
 
-STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
+STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw, nMode )
 
    local oDlg
    local oBmp
@@ -9286,7 +9286,7 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
             Pasamos las incidencias del albarán--------------------------------
             */
 
-            if ( dbfAlbCliI )->( dbSeek( aFacturas[ nItem, 2 ] ) )
+            if ( nMode != DUPL_MODE ) .and. ( dbfAlbCliI )->( dbSeek( aFacturas[ nItem, 2 ] ) )
                while ( dbfAlbCliI )->cSerAlb + str( ( dbfAlbCliI )->nNumAlb ) + ( dbfAlbCliI )->cSufAlb == aFacturas[ nItem, 2 ] .and. !( dbfAlbCliI )->( Eof() )
                   dbPass( dbfAlbCliI, dbfTmpInc, .t. )
                   ( dbfAlbCliI )->( dbSkip() )

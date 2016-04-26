@@ -6271,7 +6271,7 @@ RETURN ( nCalculo )
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION BeginTrans( aTmp, lIndex )
+STATIC FUNCTION BeginTrans( aTmp, lIndex, nMode )
 
    local lErrors  := .f.
    local cDbfLin  := "PCliL"
@@ -6281,6 +6281,8 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex )
    local cPre     := aTmp[ _CSERPRE ] + Str( aTmp[ _NNUMPRE ] ) + aTmp[ _CSUFPRE ]
    local oError
    local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   debug( nMode, "nMode" )
 
    DEFAULT lIndex := .t.
 
@@ -6370,7 +6372,7 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex )
    A¤adimos desde el fichero de incidencias
 	*/
 
-   if ( dbfPreCliI )->( dbSeek( cPre ) )
+   if ( nMode != DUPL_MODE ) .and. ( dbfPreCliI )->( dbSeek( cPre ) )
 
       do while ( ( dbfPreCliI )->cSerPre + Str( ( dbfPreCliI )->NNUMPRE ) + ( dbfPreCliI )->CSUFPRE == cPre .AND. !( dbfPreCliI )->( eof() ) )
 
@@ -6387,7 +6389,7 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex )
    A¤adimos desde el fichero de documentos
 	*/
 
-   if ( dbfPreCliD )->( dbSeek( cPre ) )
+   if ( nMode != DUPL_MODE ) .and. ( dbfPreCliD )->( dbSeek( cPre ) )
 
       do while ( ( dbfPreCliD )->cSerPre + Str( ( dbfPreCliD )->NNUMPRE ) + ( dbfPreCliD )->CSUFPRE == cPre .AND. !( dbfPreCliD )->( eof() ) )
 
@@ -6401,10 +6403,10 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex )
    ( dbfTmpDoc )->( dbGoTop() )
 
    /*
-   A¤adimos desde el fichero de situaiones
+   A¤adimos desde el fichero de situaciones
 */
    
-   if ( D():PresupuestosClientesSituaciones( nView ) )->( dbSeek( cPre ) )
+   if ( nMode != DUPL_MODE ) .and. ( D():PresupuestosClientesSituaciones( nView ) )->( dbSeek( cPre ) )
 
          while ( ( D():PresupuestosClientesSituaciones( nView ) )->cSerPre + Str( ( D():PresupuestosClientesSituaciones( nView ) )->nNumPre ) + ( D():PresupuestosClientesSituaciones( nView ) )->cSufPre == cPre ) .AND. ( D():PresupuestosClientesSituaciones( nView ) )->( !eof() ) 
 
