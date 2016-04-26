@@ -286,7 +286,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
       :cHeader          := "Pagado"
       :nHeadBmpNo       := 4
       :bStrData         := {|| "" }
-      :bBmpData         := {|| nEstadoRecibo( D():FacturasProveedoresPagos( nView ) ) }
+      :bBmpData         := {|| nEstadoReciboProveedor( D():FacturasProveedoresPagos( nView ) ) }
       :nWidth           := 20
       :AddResource( "Cnt16" )
       :AddResource( "Sel16" )
