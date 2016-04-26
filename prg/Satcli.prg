@@ -424,6 +424,8 @@ static cMaquina         := ""
 
 static oDetCamposExtra
 
+static oBtnKit
+
 static oBrwProperties
 
 //----------------------------------------------------------------------------//
@@ -1736,7 +1738,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
    local cGetMasDiv     := ""
    local oBmpEmp
    local oBmpDiv
-   local oBtnKit
    local oRieCli
    local nRieCli
    local oTlfCli
@@ -2701,7 +2702,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
       REDEFINE BUTTON oBtnKit;
          ID       526 ;
          OF       oFld:aDialogs[1] ;
-         ACTION   ( ShowKit( D():SatClientes( nView ), dbfTmpLin, oBrwLin ) )
+         ACTION   ( lEscandalloEdtRec( .t., oBrwLin ) )
 
       REDEFINE GET aGet[_CSERSAT] VAR aTmp[_CSERSAT] ;
          ID       90 ;
@@ -3134,7 +3135,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          oDlg:bStart := {|| aGet[ _CCODOPE ]:lValid(), aGet[ _CCODEST ]:lValid(), AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) }
 
       otherwise
-         oDlg:bStart := {|| ShowKit( D():SatClientes( nView ), dbfTmpLin, oBrwLin, .f., dbfTmpInc, cCodCli, D():Clientes( nView ), oGetRnt, aGet, oSayGetRnt ), aGet[ _CCODOPE ]:lValid(), aGet[ _CCODEST ]:lValid() }
+         oDlg:bStart := {|| StartEdtRec( oBrwLin ) }
 
    end case
 
@@ -3164,6 +3165,50 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
    oBrwInc:CloseData()
 
 RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+Static Function StartEdtRec( oBrwLin )
+
+   /*
+   Mostramos los escandallos---------------------------------------------------
+   */
+
+   lEscandalloEdtRec( .f., oBrwLin )
+
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+Static Function lEscandalloEdtRec( lSet, oBrwLin )
+
+   local lShwKit     := lShwKit()
+
+   if lSet
+      lShwKit        := !lShwKit
+   end if
+
+   if lShwKit
+      SetWindowText( oBtnKit:hWnd, "Ocultar Esc&ll." )
+      if ( dbfTmpLin )->( Used() )
+         ( dbfTmpLin )->( dbClearFilter() )
+      end if
+   else
+      SetWindowText( oBtnKit:hWnd, "Mostrar Esc&ll." )
+      if ( dbfTmpLin )->( Used() )
+         ( dbfTmpLin )->( dbSetFilter( {|| ! Field->lKitChl }, "!lKitChl" ) )
+      end if
+   end if
+
+   if lSet
+      lShwKit( lShwKit )
+   end if
+
+   if !Empty( oBrwLin )
+      oBrwLin:Refresh()
+   end if   
+
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -3240,7 +3285,6 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
 Return ( oMenu )
 
-//----------------------------------------------------------------------------//
 /*
 Funcion Auxiliar para Añadir lineas de detalle a un Pedido
 */
