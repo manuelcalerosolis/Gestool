@@ -5145,6 +5145,7 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
    local lCobrado
    local dFechaCobro
    local cRecibo
+   local cTipoRecibo
 
    if Empty( cFacCliP )
       cFacCliP       := D():FacturasClientesCobros( nView )
@@ -5168,6 +5169,7 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
    cNumRec     := aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] + Str( aTmp[ _NNUMREC ], 2 )
    cNumRecTip  := aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] + Str( aTmp[ _NNUMREC ], 2 ) + aTmp[ _CTIPREC ]
    lDevuelto   := aTmp[ _LDEVUELTO ]
+   cTipoRecibo := aTmp[ _CTIPREC ]
    lCobrado    := aTmp[ _LCOBRADO ]
    dFechaCobro := aTmp[ _DENTRADA ]
    lImpNeg     := ( cFacCliP )->nImporte < 0
@@ -5368,19 +5370,20 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
       Comprobamos el estado de la factura-----------------------------------------
       */
 
-      nOrdAnt                       := ( cFacCliP )->( OrdSetFocus( "nNumFac" ) )
+      do case 
+         case Empty( cTipoRecibo )
 
-      if ( cFacCliP )->( dbSeek( cNumRecTip ) )
+            if ( D():FacturasClientes( nView ) )->( dbSeek( cNumFac ) )
+               ChkLqdFacCli( nil, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), cFacCliP, D():AnticiposClientes( nView ), D():TiposIva( nView ), D():Divisas( nView ), .f. )
+            end if
 
-         if Empty( ( cFacCliP )->cTipRec )
-            ChkLqdFacCli( nil, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), cFacCliP, D():AnticiposClientes( nView ), D():TiposIva( nView ), D():Divisas( nView ), .f. )
-         else
-            ChkLqdFacRec( nil, D():FacturasRectificativas( nView ), D():FacturasRectificativasLineas( nView ), cFacCliP, D():TiposIva( nView ), D():Divisas( nView ) )
-         end if
+         case cTipoRecibo == "R"
 
-      end if
+            if ( D():FacturasRectificativas( nView ) )->( dbSeek( cNumFac ) )
+               ChkLqdFacRec( nil, D():FacturasRectificativas( nView ), D():FacturasRectificativasLineas( nView ), cFacCliP, D():TiposIva( nView ), D():Divisas( nView ) )
+            end if
 
-      ( cFacCliP )->( OrdSetFocus( nOrdAnt ) )
+      end case
 
    else
 

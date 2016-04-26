@@ -21329,7 +21329,7 @@ Return ( nPagFacCli( cFactura, cFacCliT, dbfFacCliP, dbfIva, dbfDiv, cDivRet, .f
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nTotalRecibosPagadosFacturasCliente( cFactura, cFacCliT, dbfFacCliP, dbfIva, cDivRet )
+FUNCTION nTotalRecibosPagadosFacturasCliente( cFactura, cFacCliT, dbfFacCliP, dbfIva, dbfDiv, cDivRet )
 
 Return ( nPagFacCli( cFactura, cFacCliT, dbfFacCliP, dbfIva, dbfDiv, cDivRet, .t., .f. ) )
 
@@ -21379,14 +21379,16 @@ FUNCTION nPagFacCli( cFactura, cFacCliT, dbfFacCliP, dbfIva, dbfDiv, cDivRet, lO
    nRouDiv              := nRouDiv( cCodDiv, dbfDiv )
 
    if Empty( cFactura )
-
+      
       nRec              := ( dbfFacCliP )->( Recno() )
 
       ( dbfFacCliP )->( dbGoTop() )
       while !( dbfFacCliP )->( Eof() )
 
          if ( lOnlyCob .and. ( dbfFacCliP )->lCobrado .and. !( dbfFacCliP )->lDevuelto ) .or. !lOnlyCob .and. !( dbfFacCliP )->lDevuelto
+
             nTotalPagado+= ( dbfFacCliP )->nImporte
+
          end if
 
          ( dbfFacCliP )->( dbSkip() )
@@ -21404,7 +21406,9 @@ FUNCTION nPagFacCli( cFactura, cFacCliT, dbfFacCliP, dbfIva, dbfDiv, cDivRet, lO
          while ( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == cFactura )
 
             if ( lOnlyCob .and. ( dbfFacCliP )->lCobrado .and. !( dbfFacCliP )->lDevuelto ) .or. ( !lOnlyCob .and. !( dbfFacCliP )->lDevuelto )
+
                nTotalPagado+= ( dbfFacCliP )->nImporte
+
             end if
 
             ( dbfFacCliP )->( dbSkip() )
