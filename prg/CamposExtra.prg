@@ -560,8 +560,6 @@ Method aCamposExtra( cTipoCampo ) CLASS TCamposExtra
 
       aCampos           := hb_deserialize( ::oDbf:mDocumento )
 
-      debug( aCampos )
-
       if !empty( aCampos )
 
          if hhaskey( aCampos, cTipoCampo ) .and. hGet( aCampos, cTipoCampo )

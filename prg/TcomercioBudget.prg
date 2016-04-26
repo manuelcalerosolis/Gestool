@@ -197,8 +197,6 @@ METHOD insertLinesDocumentGestool( oQuery ) CLASS TComercioDocument
          
          ::setGestoolSpecificLineDocument()
          
-         ? oQueryLine:getRow()
-
          ::oDocumentLineDatabase():dFecha         := ::getDate( oQuery:FieldGetByName( "date_add" ) )
          ::oDocumentLineDatabase():cDetalle       := oQueryLine:FieldGetByName( "product_name" )
          ::oDocumentLineDatabase():mLngDes        := oQueryLine:FieldGetByName( "product_name" )
