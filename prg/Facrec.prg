@@ -109,8 +109,8 @@
 #define _CDIGBNC            97
 #define _CCTABNC            98
 #define _LOPERPV            99
-#define _NDTOTARIFA 	   100
-#define _TFECFAC 		   101
+#define _NDTOTARIFA 	      100
+#define _TFECFAC 		      101
 #define _CCENTROCOSTE	   102
 
 /*
