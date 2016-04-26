@@ -12314,7 +12314,7 @@ RETURN ( if( lPic, Trans( nTotFac, cPorDiv ), nTotFac ) ) //
 STATIC FUNCTION RecalculaTotal( aTmp )
 
    local nPagFacCli     := nPagFacRec( nil, D():FacturasRectificativas( nView ), dbfTmpPgo, dbfIva, dbfDiv, nil, .t. )
-   local nTotFacCli     := nTotFacRec( nil, D():FacturasRectificativas( nView ), dbfFacRecL, dbfIva, dbfDiv, aTmp, nil, .f. )
+   local nTotFacCli     := nTotFacRec( nil, D():FacturasRectificativas( nView ), dbfTmpLin, dbfIva, dbfDiv, aTmp, nil, .f. )
 
    /*
    Refrescos en Pantalla_______________________________________________________
