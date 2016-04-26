@@ -1467,8 +1467,6 @@ Function VirtualKey( lPassword, uGetKey, cTitle )
    DEFAULT lPassword := .f.
    DEFAULT cTitle    := "Teclado virtual"
 
-   ?"Entro en el teclado"
-
    do case
       case Valtype( uGetKey ) == "O"
          cVar        := uGetKey:VarGet()
@@ -1568,9 +1566,9 @@ Function VirtualKey( lPassword, uGetKey, cTitle )
 
       REDEFINE BUTTON ID 140 OF oDlg ACTION ( keybPressed( oGet, "-" ) )
 
-      //REDEFINE BUTTON ID 150 OF oDlg ACTION ( setFocus( oGet:hWnd ), oGet:KeyChar( VK_BACK ) )
+      REDEFINE BUTTON ID 150 OF oDlg ACTION ( setFocus( oGet:hWnd ), oGet:keyDown( VK_BACK ) )  //oGet:KeyChar( VK_BACK ) )
 
-      REDEFINE BUTTON ID 150 OF oDlg ACTION ( setFocus( oGet:hWnd ), oGet:KeyChar( 127 ) )
+      // REDEFINE BUTTON ID 150 OF oDlg ACTION ( setFocus( oGet:hWnd ), oGet:KeyChar( 127 ) )
 
       REDEFINE BUTTON ID 151 OF oDlg ACTION ( keybPressed( oGet, " " ) )
 

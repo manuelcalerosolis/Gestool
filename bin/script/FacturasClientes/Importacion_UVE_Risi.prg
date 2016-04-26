@@ -150,7 +150,7 @@ METHOD processLineUVE( cLine )
 
    local aLine          := hb_atokens( cLine, __separtor__ )
 
-   if !empty( aLine )
+   if hb_isarray( aLine ) .and. len( aLine ) >= 30 
       ::insertLineUVE( aLine )
    end if 
 
