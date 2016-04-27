@@ -2884,6 +2884,7 @@ METHOD GetLastClose()
       
       if ::oDbf:nStaTur == cajCerrrada
          MsgInfo( ::idTruno(), "idTruno" )
+         MsgInfo( ::oDbf:Recno(), "Recno" )
          cLasTur  := ::idTruno()
          exit
       else
