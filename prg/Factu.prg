@@ -6014,9 +6014,9 @@ Return ( by( nRow ) )
 
 Function Test()
 
-   local uGetKey  := "test teclado"
+  // local uGetKey  := "test teclado"
 
-   VirtualKey( .f., uGetKey, "Title" )
+  // VirtualKey( .f., uGetKey, "Title" )
 
    // TComercioBudget():parseProductProperties( "Tallas",    "CINT. SRA. VAQ. PIEZAS - Tallas : 100, Color : VARIOS-900" )
    // TComercioBudget():parseProductProperties( "Color",     "CINT. SRA. VAQ. PIEZAS - Tallas : 100, Color : VARIOS-900" )

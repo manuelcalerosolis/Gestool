@@ -6282,9 +6282,8 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex, nMode )
    local oError
    local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
 
-   debug( nMode, "nMode" )
-
    DEFAULT lIndex := .t.
+   // nMode          := DUPL_MODE
 
    BEGIN SEQUENCE
 
