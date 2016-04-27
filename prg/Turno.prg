@@ -2881,6 +2881,7 @@ METHOD GetLastClose()
    while !::oDbf:bof()
 
       MsgInfo( cajCerrrada, "cajCerrrada" )
+      MsgInfo( ::oDbf:nStaTur, "nStaTur" )
       
       if ::oDbf:nStaTur == cajCerrrada
          MsgInfo( ::idTruno(), "idTruno" )
