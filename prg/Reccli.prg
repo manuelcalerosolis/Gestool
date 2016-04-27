@@ -739,6 +739,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
    local oBrwRec
    local oSayTotal
    local oGroup
+   local lMatriz           := .f.
 
    if Empty( nSpecialMode )
       nSpecialMode         := NORMAL_MODE
@@ -818,6 +819,12 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
 
          if !Empty( aTmp[ _CNUMMTR ] )
             nMode       := ZOOM_MODE
+         end if
+
+         if aTmp[ _CTIPREC ]  == "L" .and. nEstadoMatriz( cFacCliP ) == 2
+            MsgInfo( "Cargo los recibos agrupados" )
+            //aRacibosMatriz    := aRecibosAgrupados()
+            lMatriz           := .t.
          end if
 
    end case

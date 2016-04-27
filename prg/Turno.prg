@@ -2888,6 +2888,7 @@ METHOD GetLastClose()
          cLasTur  := ::idTruno()
          exit
       else
+         MsgInfo( "Paso por el Skip" )
          ::oDbf:Skip( -1 )
       end if
 
