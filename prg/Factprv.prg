@@ -4077,7 +4077,7 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrw, oDlg2, nMode, oTotal, oFld, aTmpFac,
 
    // Anotamos para modificar este articulo------------------------------------
 
-   TComercio():getInstance():appendProductsToUpadateStocks( aTmp[ _CREF ], nView )
+   TComercio():getInstance():appendProductsToUpadateStocks( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], nView )
 
    /*
    Grabamos el registro--------------------------------------------------------
@@ -4207,7 +4207,7 @@ STATIC FUNCTION DelDeta()
 
    // Anotamos para modificar este articulo------------------------------------
 
-   TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmp )->cRef, nView )
+   TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmp )->cRef, ( dbfTmp )->cCodPr1, ( dbfTmp )->cValPr1, ( dbfTmp )->cCodPr2, ( dbfTmp )->cValPr2, nView )
 
    while ( dbfTmpSer )->( dbSeek( Str( ( dbfTmp )->nNumLin, 4 ) ) )
       ( dbfTmpSer )->( dbDelete() )
@@ -7263,8 +7263,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
 
       setFacturadoAlbaranProveedorLinea( cSerFac, nNumFac, cSufFac, nView )
 
-    //  TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmp )->cRef, nView )
-
       ( dbfTmp )->( dbSkip() )
 
       oMsgProgress():Deltapos(1)
@@ -7931,7 +7929,7 @@ Static Function delDetalle( cFactura )
 
    while ( D():FacturasProveedoresLineas( nView ) )->( dbSeek( cFactura ) ) .and. !( D():FacturasProveedoresLineas( nView ) )->( eof() )
    
-      TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasProveedoresLineas( nView ) )->cRef, nView )
+      TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasProveedoresLineas( nView ) )->cRef, ( D():FacturasProveedoresLineas( nView ) )->cCodPr1, ( D():FacturasProveedoresLineas( nView ) )->cValPr1, ( D():FacturasProveedoresLineas( nView ) )->cCodPr2, ( D():FacturasProveedoresLineas( nView ) )->cValPr2, nView )
    
       aNumAlb:Add( getNumeroAlbaranProveedorLinea( nView ) )
       setNoFacturadoAlbaranProveedorLinea( nView )

@@ -156,9 +156,12 @@ CLASS TRemMovAlm FROM TMasDet
    DATA  lOpenFiles         INIT  .f.
 
    DATA  oBtnKit
+   DATA  oBtnImportarInventario
 
    DATA  oDetMovimientos
    DATA  oDetSeriesMovimientos
+
+   DATA  memoInventario
 
    METHOD New( cPath, cDriver, oWndParent, oMenuItem )   CONSTRUCTOR
 
@@ -241,6 +244,12 @@ CLASS TRemMovAlm FROM TMasDet
    METHOD ActualizaStockWeb( cNumDoc )
 
    METHOD GenerarEtiquetas()
+
+   METHOD importarInventario()
+
+   METHOD porcesarInventario()
+
+   METHOD procesarArticuloInventario( cInventario )
 
 END CLASS
 
@@ -1196,6 +1205,11 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
          ID       508 ;
          OF       oDlg ;
          ACTION   ( ::ShowKit( .t. ) )
+
+      REDEFINE BUTTON ::oBtnImportarInventario ;
+         ID       509 ;
+         OF       oDlg ;
+         ACTION   ( ::importarInventario() )
 
       REDEFINE BUTTON oBtnImp ;
          ID       506 ;
@@ -3098,6 +3112,88 @@ METHOD GenerarEtiquetas CLASS TRemMovAlm
    */
 
    ::oDbf:SetStatus()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD importarInventario( ) CLASS TRemMovAlm
+
+   local oDlg
+
+   DEFINE DIALOG oDlg RESOURCE "IMPORTAR_INVENTARIO" 
+
+      REDEFINE GET ::memoInventario ;
+         MEMO ;
+         ID       110 ;
+         OF       oDlg
+
+      REDEFINE BUTTON ;
+         ID       IDOK ;
+         OF       oDlg ;
+         ACTION   ( ::porcesarInventario(), oDlg:end( IDOK ) )
+
+      REDEFINE BUTTON ;
+         ID       IDCANCEL ;
+         OF       oDlg ;
+         CANCEL ;
+         ACTION   ( oDlg:end() )
+
+   oDlg:AddFastKey( VK_F5, {|| ::porcesarInventario(), oDlg:end( IDOK ) } )
+
+   ACTIVATE DIALOG oDlg CENTER
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD porcesarInventario() CLASS TRemMovAlm
+
+   local cInventario
+   local aInventario    := hb_atokens( ::memoInventario, CRLF )
+
+   ::aInventarioErrors  := {}
+
+   for each cInventario in aInventario
+      ::procesarArticuloInventario( cInventario )
+   next 
+
+   if !empty( ::aInventarioErrors )
+      msgStop( ::aInventarioErrors, "Errores en la importación" )
+   end if 
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD procesarArticuloInventario( cInventario ) CLASS TRemMovAlm
+
+   local aInventario    := hb_atokens( cInventario, "," )
+
+   if hb_isarray( aInventario ) .and. len( aInventario ) >= 2
+      ::insertaArticuloRemesaMovimiento( aInventario[ 1 ], aInventario[ 2 ] )
+   end if 
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertaArticuloRemesaMovimiento( cCodigo, nUnidades ) CLASS TRemMovAlm
+
+   if !hb_isstring( cCodigo ) 
+      aadd( ::aInventarioErrors, "El código del artículo no es un valor valido." )
+      Return ( Self )   
+   end if 
+
+   if !hb_isnumeric( nUnidades )
+      aadd( ::aInventarioErrors, "Las unidades del artículo no contienen un valor valido." )
+      Return ( Self )   
+   end if 
+
+   if !::oArt:seekInOrd( cCodigo, "Codigo")
+      aadd( ::aInventarioErrors, "El código del artículo " + cCodigo + " no existe en la base de datos." )
+      Return ( Self )   
+   end if 
 
 Return ( Self )
 

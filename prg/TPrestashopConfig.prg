@@ -61,8 +61,10 @@ CLASS TPrestashopConfig
    METHOD getSyncronizeManufacturers() INLINE ( ::getFromCurrentWeb( "SyncronizeManufacturers", .t. ) )
    METHOD getFtpService()              INLINE ( ::getFromCurrentWeb( "FtpService" ) )
    
-   METHOD getOrderSerie()              INLINE ( ::getFromCurrentWeb( "OrderSerie") )
-   METHOD getBudgetSerie()             INLINE ( ::getFromCurrentWeb( "BudgetSerie") )
+   METHOD getOrderSerie()              INLINE ( ::getFromCurrentWeb( "OrderSerie" ) )
+   METHOD getBudgetSerie()             INLINE ( ::getFromCurrentWeb( "BudgetSerie" ) )
+
+   METHOD getDateStart()               INLINE ( ::getFromCurrentWeb( "DateStart" ) )
 
    METHOD getImagesDirectory()         INLINE ( ::getValidDirectoryFtp( ::getFromCurrentWeb( "ImagesDirectory") ) )
    METHOD getValidDirectoryFtp( cDirectory )

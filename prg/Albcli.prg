@@ -5338,7 +5338,7 @@ Static Function QuiAlbCli()
          aAdd( aNumPed, ( D():Get( "AlbCliL", nView ) )->cNumPed )
       end if      
 
-      TComercio():getInstance():appendProductsToUpadateStocks( ( D():Get( "AlbCliL", nView ) )->cRef, nView )
+      TComercio():getInstance():appendProductsToUpadateStocks( ( D():Get( "AlbCliL", nView ) )->cRef, (  D():Get( "AlbCliL", nView ) )->cCodPr1, (  D():Get( "AlbCliL", nView ) )->cValPr1, (  D():Get( "AlbCliL", nView ) )->cCodPr2, (  D():Get( "AlbCliL", nView ) )->cValPr2, nView )
 
       if dbLock( D():Get( "AlbCliL", nView ) )
          ( D():Get( "AlbCliL", nView ) )->( dbDelete() )
@@ -10988,7 +10988,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
 
    // Anotamos para modificar este articulo------------------------------------
 
-   TComercio():getInstance():appendProductsToUpadateStocks( aTmp[ _CREF ], nView )
+   TComercio():getInstance():appendProductsToUpadateStocks( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], nView )
 
    // si estamos añadiendo-----------------------------------------------------
 
@@ -11444,7 +11444,7 @@ STATIC FUNCTION DelDeta( oBrwLin )
    
    // Anotamos para modificar este articulo------------------------------------
 
-   TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpLin )->cRef, nView )
+   TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr2, nView )
 
    while ( dbfTmpSer )->( dbSeek( Str( ( dbfTmpLin )->nNumLin, 4 ) ) )
       ( dbfTmpSer )->( dbDelete() )

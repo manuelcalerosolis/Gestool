@@ -2707,7 +2707,7 @@ STATIC FUNCTION DelDeta()
    
    // Anotamos para modificar este articulo------------------------------------
 
-   TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmp )->cRef, nView )
+   TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmp )->cRef, ( dbfTmp )->cCodPr1, ( dbfTmp )->cValPr1, ( dbfTmp )->cCodPr2, ( dbfTmp )->cValPr2, nView )
 
    while ( dbfTmpSer )->( dbSeek( Str( ( dbfTmp )->nNumLin, 4 ) ) )
       ( dbfTmpSer )->( dbDelete() )
@@ -3794,7 +3794,7 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet, aTm
 
    // Anotamos para modificar este articulo------------------------------------
 
-   TComercio():getInstance():appendProductsToUpadateStocks( aTmp[ _CREF ], nView )
+   TComercio():getInstance():appendProductsToUpadateStocks( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], nView )
 
    if nMode == APPD_MODE
 
@@ -6010,7 +6010,7 @@ Static Function QuiAlbPrv( lDetail )
 
    while ( D():AlbaranesProveedoresLineas( nView ) )->( dbSeek( ( D():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) + ( D():AlbaranesProveedores( nView ) )->cSufAlb ) ) .and. !( D():AlbaranesProveedoresLineas( nView ) )->( eof() )
 
-      TComercio():getInstance():appendProductsToUpadateStocks( ( D():AlbaranesProveedoresLineas( nView ) )->cRef, nView )
+      TComercio():getInstance():appendProductsToUpadateStocks( ( D():AlbaranesProveedoresLineas( nView ) )->cRef, ( D():AlbaranesProveedoresLineas( nView ) )->cCodPr1, ( D():AlbaranesProveedoresLineas( nView ) )->cValPr1, ( D():AlbaranesProveedoresLineas( nView ) )->cCodPr2, ( D():AlbaranesProveedoresLineas( nView ) )->cValPr2, nView )
 
       if dbLock( D():AlbaranesProveedoresLineas( nView ) )
          ( D():AlbaranesProveedoresLineas( nView ) )->( dbDelete() )

@@ -6013,6 +6013,19 @@ Return ( by( nRow ) )
 //---------------------------------------------------------------------------//
 
 Function Test()
+/*
+   local date        := date()
+   local jsondecode
+   local jsonencode  := hb_jsonencode( {  "texto" => "test",;
+                                          "fecha" => date } )
+
+   msgAlert( jsonencode )
+
+   hb_jsondecode( jsonencode, @jsondecode )
+
+   msgAlert( hb_valtoexp( jsondecode ) )
+*/
+Return ( nil )
 
   // local uGetKey  := "test teclado"
 
@@ -6041,15 +6054,6 @@ Function Test()
    TFtpCUrl:createFile( "c:\fw195\Gestool\bin\out\img\1-cart_default.jpg", "test4/p/5/" )
    TFtpCUrl:endConexion()
 */
-
-Return ( nil )
-
-
-
-
-
-
-
 
 /*
    LOCAL curl

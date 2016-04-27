@@ -1025,29 +1025,31 @@ Return .t.
 METHOD loadOrders() CLASS TComercio
 
    local oQuery
-   local nQueryRecCount
+   local cQuery
+   local dStar             := ::TPrestashopConfig():getDateStart()
 
    ::nMeterProceso         := 0
 
-   oQuery                  := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "orders" ) )    
-   if oQuery:Open()
-      
-      nQueryRecCount       := oQuery:RecCount()
-      if nQueryRecCount > 0
+   cQuery                  := 'SELECT * FROM ' + ::cPrefixTable( "orders" ) + " "
+   if !empty( dStar )
+      cQuery               += 'WHERE date_add >= "' + dStar + '"'
+   end if 
 
-         ::setMeterTotal( nQueryRecCount )
-         ::writeText( "Descargando pedidos desde la web", 2 )
+   oQuery                  := TMSQuery():New( ::oCon, cQuery )    
+   if oQuery:Open() .and. oQuery:recCount() > 0
 
-         oQuery:GoTop()
-         while !oQuery:Eof()
+      ::setMeterTotal( oQuery:recCount() )
 
-            ::processOrder( oQuery )
+      ::writeText( "Descargando pedidos desde la web", 2 )
 
-            oQuery:Skip()
+      oQuery:GoTop()
+      while !oQuery:Eof()
 
-         end while
+         ::processOrder( oQuery )
 
-      end if
+         oQuery:Skip()
+
+      end while
 
    end if
 
@@ -5448,9 +5450,14 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD buildAddInformacionStockProductPrestashop( idProduct ) CLASS tComercio
+METHOD buildAddInformacionStockProductPrestashop( hProduct ) CLASS tComercio
 
    local sStock
+   local idProduct            := hget( hProduct, "id" )
+   local idFirstProperty      := hget( hProduct, "idFirstProperty" )
+   local valueFirstProperty   := hget( hProduct, "valueFirstProperty" )
+   local idSecondProperty     := hget( hProduct, "idSecondProperty" )
+   local valueSecondProperty  := hget( hProduct, "valueSecondProperty" )
    local nTotalStock          := 0
    local aStockArticulo
 
@@ -5462,13 +5469,12 @@ METHOD buildAddInformacionStockProductPrestashop( idProduct ) CLASS tComercio
 
    aStockArticulo             := ::oStock:aStockArticulo( idProduct, ::TPrestashopConfig:getStore() )
 
-   aEval( aStockArticulo, {|o| nTotalStock += o:nUnidades } )
-
    /*
    Metemos el Stock global del artículo-------------------------------
-   */
 
-   aAdd( ::aStockArticuloData, { "cCodArt"               => idProduct ,;
+   aeval( aStockArticulo, {|o| nTotalStock += o:nUnidades } )
+
+   aadd( ::aStockArticuloData, { "cCodArt"               => idProduct ,;
                                  "cCodPrp1"              => "" ,;
                                  "cCodPrp2"              => "" ,;
                                  "cValPrp1"              => "" ,;
@@ -5477,7 +5483,7 @@ METHOD buildAddInformacionStockProductPrestashop( idProduct ) CLASS tComercio
                                  "idProductPrestashop"   => ::TPrestashopId:getValueProduct( idProduct, ::getCurrentWebName() ),;
                                  "cCodWebVal1"           => 0 ,;
                                  "cCodWebVal2"           => 0 } )
-
+   */
 
    /*
    Recorremos el array con los stocks---------------------------------
@@ -5485,11 +5491,11 @@ METHOD buildAddInformacionStockProductPrestashop( idProduct ) CLASS tComercio
 
    for each sStock in aStockArticulo
 
-      if aScan( ::aStockArticuloData, {|h|   hGet( h, "cCodArt" ) == idProduct                  .and.;
-                                             hGet( h, "cCodPrp1" ) == sStock:cCodigoPropiedad1  .and.;
-                                             hGet( h, "cCodPrp2" ) == sStock:cCodigoPropiedad2  .and.;
-                                             hGet( h, "cValPrp1" ) == sStock:cValorPropiedad1   .and.;
-                                             hGet( h, "cValPrp2" ) == sStock:cValorPropiedad2  } ) == 0
+      if aScan( ::aStockArticuloData, {|h|   hGet( h, "cCodArt" ) == idProduct               .and.;
+                                             hGet( h, "cCodPrp1" ) == idFirstProperty        .and.;
+                                             hGet( h, "cCodPrp2" ) == idSecondProperty       .and.;
+                                             hGet( h, "cValPrp1" ) == valueFirstProperty     .and.;
+                                             hGet( h, "cValPrp2" ) == valueSecondProperty  } ) == 0
       
          aAdd( ::aStockArticuloData, { "cCodArt"               => idProduct ,;
                                        "cCodPrp1"              => sStock:cCodigoPropiedad1 ,;
@@ -5532,14 +5538,14 @@ return .t.
 
 METHOD buildInformationStockProductArray( aProducts ) CLASS TComercio
 
-   local idProduct
+   local hProduct
 
    ::meterProcesoSetTotal( len( aProducts ) )
 
    ::resetStockArticuloData()
 
-   for each idProduct in aProducts
-      ::buildAddInformacionStockProductPrestashop( idProduct )
+   for each hProduct in aProducts
+      ::buildAddInformacionStockProductPrestashop( hProduct )
    next
 
 return .t.
@@ -5602,12 +5608,16 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD getDate( cDatePrestashop ) CLASS TComercio
+METHOD getDate( uDatePrestashop ) CLASS TComercio
 
    local dFecha
 
-   SET DATE FORMAT "yyyy/mm/dd"
-   dFecha            := ctod( left( cDatePrestashop, 10 ) )
+   if hb_isdate( uDatePrestashop )
+      uDatePrestashop   := dtoc( uDatePrestashop )
+   end if 
+
+   SET DATE FORMAT "yyyy-mm-dd"
+      dFecha            := ctod( left( uDatePrestashop, 10 ) )
    SET DATE FORMAT "dd/mm/yyyy"
 
 Return ( dFecha )
@@ -5994,10 +6004,11 @@ Return ( cFolder )
 
 //---------------------------------------------------------------------------//
 
-METHOD appendProductsToUpadateStocks( idProduct, nView ) CLASS TComercio
+METHOD appendProductsToUpadateStocks( idProduct, idFirstProperty, valueFirstProperty, idSecondProperty, valueSecondProperty, nView ) CLASS TComercio
 
    local nScan
    local cWebShop
+   local hProduct
 
    if !( D():gotoArticulos( idProduct, nView ) )
       Return ( .f. )
@@ -6009,12 +6020,18 @@ METHOD appendProductsToUpadateStocks( idProduct, nView ) CLASS TComercio
 
    cWebShop          := alltrim( ( D():Articulos( nView ) )->cWebShop )
 
+   hProduct          := {  "id" => idProduct,;
+                           "idFirstProperty" => idFirstProperty,;
+                           "valueFirstProperty" => valueFirstProperty,;
+                           "idSecondProperty" => idSecondProperty,;
+                           "valueSecondProperty" => valueSecondProperty }
+
    nScan             := hscan( ::hProductsToUpdate, {|k,v| k == cWebShop } )
    if nScan == 0
-      hset( ::hProductsToUpdate, cWebShop, { idProduct } )
+      hset( ::hProductsToUpdate, cWebShop, { hProduct } )
    else 
-      if ascan( ::hProductsToUpdate[ cWebShop ], idProduct ) == 0
-         aadd( ::hProductsToUpdate[ cWebShop ], idProduct )
+      if ascan( ::hProductsToUpdate[ cWebShop ], {|h| hget( h, "id" ) == idProduct .and. hget( h, "idFirstProperty" ) == idFirstProperty .and. hget( h, "valueFirstProperty" ) == valueFirstProperty .and. hget( h, "idSecondProperty" ) == idSecondProperty .and. hget( h, "valueSecondProperty" ) == valueSecondProperty } )  == 0
+         aadd( ::hProductsToUpdate[ cWebShop ], hProduct )
       end if 
    end if 
    

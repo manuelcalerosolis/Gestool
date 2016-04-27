@@ -2023,7 +2023,7 @@ FUNCTION TpvDelRec()
    */
 
    while ( dbfTikL )->( dbSeek( cNumTik ) )
-      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTikL )->cCbaTil, nView )
+      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTikL )->cCbaTil, ( dbfTikL )->cCodPr1, ( dbfTikL )->cValPr1, ( dbfTikL )->cCodPr2, ( dbfTikL )->cValPr2, nView )
       dbDel( dbfTikL )
    end while
 
@@ -2076,7 +2076,7 @@ FUNCTION TpvDelRec()
          end if
 
          while dbSeekInOrd( cNumDoc, "nNumAlb", dbfAlbCliL )
-            TComercio():getInstance():appendProductsToUpadateStocks( ( dbfAlbCliL )->cRef, nView )
+            TComercio():getInstance():appendProductsToUpadateStocks( ( dbfAlbCliL )->cRef, ( dbfAlbCliL )->cCodPr1, ( dbfAlbCliL )->cValPr1, ( dbfAlbCliL )->cCodPr2, ( dbfAlbCliL )->cValPr2, nView )
             dbDel( dbfAlbCliL )
          end if
 
@@ -2095,7 +2095,7 @@ FUNCTION TpvDelRec()
          end if
 
          while dbSeekInOrd( cNumDoc, "nNumFac", dbfFacCliL )
-            TComercio():getInstance():appendProductsToUpadateStocks( ( dbfFacCliL )->cRef, nView )
+            TComercio():getInstance():appendProductsToUpadateStocks( ( dbfFacCliL )->cRef, ( dbfFacCliL )->cCodPr1, ( dbfFacCliL )->cValPr1, ( dbfFacCliL )->cCodPr2, ( dbfFacCliL )->cValPr2, nView )
             dbDel( dbfFacCliL )
          end if
 
@@ -2746,7 +2746,7 @@ RETURN ( oDlgTpv:nResult == IDOK )
 
 Static Function deleteLineTicket( aTmp, oBrwDet )
 
-   TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpL )->cCbaTil, nView )
+   TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpL )->cCbaTil, ( dbfTmpL )->cCodPr1, ( dbfTmpL )->cValPr1, ( dbfTmpL )->cCodPr2, ( dbfTmpL )->cValPr2, nView )
    
    winDelRec( oBrwDet, dbfTmpL, nil, nil, .t. )
 
@@ -8196,7 +8196,7 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
 
    // anotamos el producto para actualizar su stock----------------------------
 
-   TComercio():getInstance():appendProductsToUpadateStocks( aTmp[ _CCBATIL ], nView )
+   TComercio():getInstance():appendProductsToUpadateStocks( aTmp[ _CCBATIL ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], nView )
 
    /*
    Chequeamos las ofertas X * Y------------------------------------------------
@@ -11745,7 +11745,7 @@ Function SavTik2Alb( aTik, aGet, nMode, nSave )
       ( dbfAlbCliL )->nPosPrint  := ( dbfTmpL    )->nPosPrint
       ( dbfAlbCliL )->( dbUnLock() )
 
-      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpL )->cCbaTil, nView )
+      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpL )->cCbaTil, ( dbfTmpL )->cCodPr1, ( dbfTmpL )->cValPr1, ( dbfTmpL )->cCodPr2, ( dbfTmpL )->cValPr2, nView )
 
       ( dbfTmpL )->( dbSkip() )
 
@@ -12220,7 +12220,7 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
 
       ( dbfFacCliL )->( dbUnLock() )
 
-      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpL )->cCbaTil, nView )
+      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpL )->cCbaTil, ( dbfTmpL )->cCodPr1, ( dbfTmpL )->cValPr1, ( dbfTmpL )->cCodPr2, ( dbfTmpL )->cValPr2, nView )
 
       ( dbfTmpL )->( dbSkip() )
 

@@ -5191,12 +5191,16 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
       return .f.
    end if
 
+   /*
+   El importe no puede ser mayor q el importe anterior-------------------------
+
    if nSpecialMode != LIBRE_MODE
       if nImpTmp > nImpFld
          msgStop( "El importe no puede ser superior al actual." )
          return nil
       end if
    end if
+   */
 
    if !lExisteTurno( aGet[ _CTURREC ]:VarGet(), D():Turnos( nView ) )
       msgStop( "La sesión introducida no existe." )

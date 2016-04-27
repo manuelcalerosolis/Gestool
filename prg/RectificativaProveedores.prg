@@ -2914,10 +2914,14 @@ Static Function EndPgo( nImpOld, aTmp, aGet, dbfTmpPgo, oBrw, nMode, oDlg )
    local lImpNeg     := aTmp[ ( dbfTmpPgo )->( FieldPos( "nImporte" ) ) ] < 0
    local nImpAct     := Abs( aTmp[ ( dbfTmpPgo )->( FieldPos( "nImporte" ) ) ] )
 
+   /*
+   El importe no puede ser mayor q el importe anterior-------------------------
+
    if nImpAct > nImpOld
       msgStop( "El importe no puede ser superior al actual." )
       return nil
    end if
+   */
 
    aTmp[ ( dbfTmpPgo )->( FieldPos( "DFECCHG" ) ) ]  := GetSysDate()
    aTmp[ ( dbfTmpPgo )->( FieldPos( "CTIMCHG" ) ) ]  := Time()
@@ -6626,7 +6630,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
 
       dbGather( aTbl, D():FacturasRectificativasProveedoresLineas( nView ), .t. )
 
-      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmp )->cRef, nView )
+      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmp )->cRef, ( dbfTmp )->cCodPr1, ( dbfTmp )->cValPr1, ( dbfTmp )->cCodPr2, ( dbfTmp )->cValPr2, nView )
 
       ( dbfTmp )->( dbSkip() )
 
@@ -7217,7 +7221,7 @@ STATIC FUNCTION DelDetalle( cFactura )
 
    while ( D():FacturasRectificativasProveedoresLineas( nView ) )->( dbSeek( cFactura ) ) .and. !( D():FacturasRectificativasProveedoresLineas( nView ) )->( eof() )
 
-      TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasRectificativasProveedoresLineas( nView ) )->cRef, nView )
+      TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasRectificativasProveedoresLineas( nView ) )->cRef, ( D():FacturasRectificativasProveedoresLineas( nView ) )->cCodPr1, , ( D():FacturasRectificativasProveedoresLineas( nView ) )->cValPr1, ( D():FacturasRectificativasProveedoresLineas( nView ) )->cCodPr2, ( D():FacturasRectificativasProveedoresLineas( nView ) )->cValPr2, nView )
 
       if dbLock( D():FacturasRectificativasProveedoresLineas( nView ) )
          ( D():FacturasRectificativasProveedoresLineas( nView ) )->( dbDelete() )

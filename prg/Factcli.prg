@@ -7190,7 +7190,7 @@ static function QuiFacCli()
 
    while ( D():FacturasClientesLineas( nView ) )->( dbSeek( cSerDoc + str( nNumDoc ) + cSufDoc ) ) .and. !( D():FacturasClientesLineas( nView ) )->( eof() )
       
-      TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasClientesLineas( nView ) )->cRef, nView )
+      TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasClientesLineas( nView ) )->cRef, ( D():FacturasClientesLineas( nView ) )->cCodPr1, ( D():FacturasClientesLineas( nView ) )->cValPr1, ( D():FacturasClientesLineas( nView ) )->cCodPr2, ( D():FacturasClientesLineas( nView ) )->cValPr2, nView )
 
       if dbLock( D():FacturasClientesLineas( nView ) )
          ( D():FacturasClientesLineas( nView ) )->( dbDelete() )
@@ -13466,9 +13466,9 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
    
    if !( "TABLET" $ cParamsMain() )
 	
-	// Anotamos para modificar este articulo------------------------------------
+	  // Anotamos para modificar este articulo------------------------------------
 
-   TComercio():getInstance():appendProductsToUpadateStocks( aTmp[ _CREF ], nView )
+      TComercio():getInstance():appendProductsToUpadateStocks( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], nView )
 
       if nMode == APPD_MODE
 
@@ -13951,7 +13951,7 @@ STATIC FUNCTION DelDeta()
 
    // Anotamos para modificar este articulo------------------------------------
 
-   TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpLin )->cRef, nView )
+   TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr2, nView )
 
    while ( dbfTmpSer )->( dbSeek( str( ( dbfTmpLin )->nNumLin, 4 ) ) )
       ( dbfTmpSer )->( dbDelete() )
@@ -15235,12 +15235,12 @@ Static Function EndPgo( aTmp, aGet, lPgdOld, nImpOld, dbfTmpPgo, oBrw, oDlg, nMo
 
    /*
    El importe no puede ser mayor q el importe anterior-------------------------
-   */
 
    if nImpTmp > nImpFld
       msgStop( "El importe no puede ser superior al actual." )
       return nil
    end if
+   */
 
    oDlg:Disable()
 

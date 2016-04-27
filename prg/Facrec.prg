@@ -7622,7 +7622,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
             end if
          end if
 
-         TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpLin )->cRef, nView )
+         TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr2, nView )
 
          ( dbfTmpLin )->( dbSkip() )
 
@@ -8080,7 +8080,7 @@ static function QuiFacRec()
    nOrdAnt     := ( dbfFacRecL )->( OrdSetFocus( "nNumFac" ) )
    while ( dbfFacRecL )->( dbSeek( cSerDoc + Str( nNumDoc ) + cSufDoc ) ) .and. !( dbfFacRecL )->( eof() )
 
-    TComercio():getInstance():appendProductsToUpadateStocks( ( dbfFacRecL )->cRef, nView )
+    TComercio():getInstance():appendProductsToUpadateStocks( ( dbfFacRecL )->cRef, ( dbfFacRecL )->cCodPr1, ( dbfFacRecL )->cValPr1, ( dbfFacRecL )->cCodPr2, ( dbfFacRecL )->cValPr2, nView )
 
     if dbDialogLock( dbfFacRecL )
        ( dbfFacRecL )->( dbDelete() )
@@ -10080,12 +10080,12 @@ Static Function EndPgo( aTmp, aGet, lPgdOld, nImpOld, dbfTmpPgo, oBrw, oDlg, nMo
 
    /*
    El importe no puede ser mayor q el importe anterior-------------------------
-   */
 
    if nImpTmp > nImpFld
       msgStop( "El importe no puede ser superior al actual." )
       return nil
    end if
+   */
 
    oDlg:Disable()
 

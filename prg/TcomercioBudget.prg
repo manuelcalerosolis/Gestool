@@ -11,6 +11,7 @@ CLASS TComercioDocument
    DATA TComercio
 
    DATA idDocumentPrestashop
+   DATA dateDocumentPrestashop
 
    DATA cSerieDocument   
    DATA nNumeroDocument  
@@ -83,7 +84,7 @@ Return ( Self )
 
 METHOD insertDocumentInGestoolIfNotExist( oQuery ) CLASS TComercioDocument
 
-   ::idDocumentPrestashop := oQuery:fieldGet( 1 )
+   ::idDocumentPrestashop     := oQuery:fieldGet( 1 )
     
    if ::isDocumentInGestool()
       ::writeText( "El documento con el identificador " + alltrim( str( ::idDocumentPrestashop ) ) + " ya ha sido recibido." )
@@ -98,7 +99,6 @@ Return ( Self )
 METHOD insertDocumentGestool( oQuery ) CLASS TComercioDocument
 
    ::TComercioCustomer():insertCustomerInGestoolIfNotExist( oQuery )
-
 
    ::getCountersDocumentGestool(      oQuery )
    ::insertHeaderDocumentGestool(     oQuery )
