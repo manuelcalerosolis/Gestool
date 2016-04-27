@@ -5401,7 +5401,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       A¤adimos desde el fichero de incidencias
       */
 
-      if ( D():AlbaranesProveedoresIncidencias( nView ) )->( dbSeek( nAlbaran ) )
+      if ( nMode != DUPL_MODE ) .and. ( D():AlbaranesProveedoresIncidencias( nView ) )->( dbSeek( nAlbaran ) )
          while ( ( D():AlbaranesProveedoresIncidencias( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedoresIncidencias( nView ) )->nNumAlb ) + ( D():AlbaranesProveedoresIncidencias( nView ) )->cSufAlb == nAlbaran ) .AND. ( D():AlbaranesProveedoresIncidencias( nView ) )->( !eof() )
             dbPass( D():AlbaranesProveedoresIncidencias( nView ), dbfTmpInc, .t. )
             ( D():AlbaranesProveedoresIncidencias( nView ) )->( dbSkip() )
@@ -5426,7 +5426,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       A¤adimos desde el fichero de documentos----------------------------------
       */
 
-      if ( D():AlbaranesProveedoresDocumentos( nView ) )->( dbSeek( nAlbaran ) )
+      if ( nMode != DUPL_MODE ) .and. ( D():AlbaranesProveedoresDocumentos( nView ) )->( dbSeek( nAlbaran ) )
          while ( ( D():AlbaranesProveedoresDocumentos( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedoresDocumentos( nView ) )->nNumAlb ) + ( D():AlbaranesProveedoresDocumentos( nView ) )->cSufAlb == nAlbaran ) .AND. ( D():AlbaranesProveedoresDocumentos( nView ) )->( !eof() )
             dbPass( D():AlbaranesProveedoresDocumentos( nView ), dbfTmpDoc, .t. )
             ( D():AlbaranesProveedoresDocumentos( nView ) )->( dbSkip() )
@@ -5451,7 +5451,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       A¤adimos desde el fichero de series-----------------------------------------
       */
 
-      if ( D():AlbaranesProveedoresSeries( nView ) )->( dbSeek( nAlbaran ) )
+      if ( nMode != DUPL_MODE ) .and. ( D():AlbaranesProveedoresSeries( nView ) )->( dbSeek( nAlbaran ) )
          do while ( ( D():AlbaranesProveedoresSeries( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedoresSeries( nView ) )->nNumAlb ) + ( D():AlbaranesProveedoresSeries( nView ) )->cSufAlb == nAlbaran )
             dbPass( D():AlbaranesProveedoresSeries( nView ), dbfTmpSer, .t. )
             ( D():AlbaranesProveedoresSeries( nView ) )->( dbSkip() )

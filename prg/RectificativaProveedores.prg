@@ -6321,7 +6321,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       A¤adimos desde el fichero de incidencias
       */
 
-      if ( D():FacturasRectificativasProveedoresIncidencias( nView ) )->( dbSeek( nFactura ) )
+      if ( nMode != DUPL_MODE ) .and. ( D():FacturasRectificativasProveedoresIncidencias( nView ) )->( dbSeek( nFactura ) )
 
          while ( ( D():FacturasRectificativasProveedoresIncidencias( nView ) )->cSerFac + Str( ( D():FacturasRectificativasProveedoresIncidencias( nView ) )->nNumFac ) + ( D():FacturasRectificativasProveedoresIncidencias( nView ) )->cSufFac == nFactura ) .AND. ( D():FacturasRectificativasProveedoresIncidencias( nView ) )->( !eof() )
 
@@ -6349,7 +6349,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       A¤adimos desde el fichero de documetos
       */
 
-      if ( D():FacturasRectificativasProveedoresDocumentos( nView ) )->( dbSeek( nFactura ) )
+      if ( nMode != DUPL_MODE ) .and. ( D():FacturasRectificativasProveedoresDocumentos( nView ) )->( dbSeek( nFactura ) )
          while ( ( D():FacturasRectificativasProveedoresDocumentos( nView ) )->cSerFac + Str( ( D():FacturasRectificativasProveedoresDocumentos( nView ) )->nNumFac ) + ( D():FacturasRectificativasProveedoresDocumentos( nView ) )->cSufFac == nFactura ) .AND. ( D():FacturasRectificativasProveedoresDocumentos( nView ) )->( !eof() )
             dbPass( D():FacturasRectificativasProveedoresDocumentos( nView ), dbfTmpDoc, .t. )
             ( D():FacturasRectificativasProveedoresDocumentos( nView ) )->( dbSkip() )
@@ -6374,7 +6374,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       A¤adimos desde el fichero de series-----------------------------------------
       */
 
-      if ( D():FacturasRectificativasProveedoresDocumentos( nView ) )->( dbSeek( nFactura ) )
+      if ( nMode != DUPL_MODE ) .and. ( D():FacturasRectificativasProveedoresDocumentos( nView ) )->( dbSeek( nFactura ) )
          while ( ( D():FacturasRectificativasProveedoresDocumentos( nView ) )->cSerFac + Str( ( D():FacturasRectificativasProveedoresDocumentos( nView ) )->nNumFac ) + ( D():FacturasRectificativasProveedoresDocumentos( nView ) )->cSufFac == nFactura .and. !( D():FacturasRectificativasProveedoresDocumentos( nView ) )->( eof() ) )
             dbPass( D():FacturasRectificativasProveedoresDocumentos( nView ), dbfTmpSer, .t. )
             ( D():FacturasRectificativasProveedoresDocumentos( nView ) )->( dbSkip() )
@@ -6409,7 +6409,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       A¤adimos desde el fichero de pagos
       */
 
-      if ( D():FacturasProveedoresPagos( nView ) )->( dbSeek( nFactura ) ) .and. nMode != DUPL_MODE
+      if ( nMode != DUPL_MODE ) .and. ( D():FacturasProveedoresPagos( nView ) )->( dbSeek( nFactura ) ) .and. nMode != DUPL_MODE
 
          while ( ( D():FacturasProveedoresPagos( nView ) )->cSerFac + Str( ( D():FacturasProveedoresPagos( nView ) )->nNumFac ) + ( D():FacturasProveedoresPagos( nView ) )->cSufFac == nFactura ) .and. ( D():FacturasProveedoresPagos( nView ) )->( !eof() )
 

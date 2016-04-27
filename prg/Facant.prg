@@ -2575,7 +2575,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    A¤adimos desde el fichero de incidencias
 	*/
 
-   if ( dbfAntCliI )->( dbSeek( cFac ) )
+   if ( nMode != DUPL_MODE ) .and. ( dbfAntCliI )->( dbSeek( cFac ) )
       while ( ( dbfAntCliI )->cSerAnt + Str( ( dbfAntCliI )->nNumAnt ) + ( dbfAntCliI )->cSufAnt == cFac ) .and. ( dbfAntCliI )->( !eof() )
          dbPass( dbfAntCliI, dbfTmpInc, .t. )
          ( dbfAntCliI )->( dbSkip() )
@@ -2588,7 +2588,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    A¤adimos desde el fichero de Documentos
 	*/
 
-   if ( dbfAntCliD )->( dbSeek( cFac ) )
+   if ( nMode != DUPL_MODE ) .and. ( dbfAntCliD )->( dbSeek( cFac ) )
       while ( ( dbfAntCliD )->cSerAnt + Str( ( dbfAntCliD )->nNumAnt ) + ( dbfAntCliD )->cSufAnt == cFac ) .and. ( dbfAntCliD )->( !eof() )
          dbPass( dbfAntCliD, dbfTmpDoc, .t. )
          ( dbfAntCliD )->( dbSkip() )

@@ -4330,7 +4330,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       A¤adimos desde el fichero de incidencias------------------------------------
       */
 
-      if ( D():PedidosProveedoresIncidencias( nView ) )->( dbSeek( nPedido ) )
+      if ( nMode != DUPL_MODE ) .and. ( D():PedidosProveedoresIncidencias( nView ) )->( dbSeek( nPedido ) )
 
          while ( ( D():PedidosProveedoresIncidencias( nView ) )->cSerPed + Str( ( D():PedidosProveedoresIncidencias( nView ) )->nNumPed ) + ( D():PedidosProveedoresIncidencias( nView ) )->cSufPed == nPedido ) .AND. ( D():PedidosProveedoresIncidencias( nView ) )->( !eof() )
 
@@ -4347,7 +4347,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       A¤adimos desde el fichero de Documentos-------------------------------------
       */
 
-      if ( D():PedidosProveedoresDocumentos( nView ) )->( dbSeek( nPedido ) )
+      if ( nMode != DUPL_MODE ) .and. ( D():PedidosProveedoresDocumentos( nView ) )->( dbSeek( nPedido ) )
 
          while ( ( D():PedidosProveedoresDocumentos( nView ) )->cSerPed + Str( ( D():PedidosProveedoresDocumentos( nView ) )->nNumPed ) + ( D():PedidosProveedoresDocumentos( nView ) )->cSufPed == nPedido ) .AND. ( D():PedidosProveedoresDocumentos( nView ) )->( !eof() )
 
