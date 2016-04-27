@@ -2312,7 +2312,7 @@ Function SynRecPrv( cPatEmp )
    local nTotRec
 
    BEGIN SEQUENCE
-   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )  
+   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
 
    USE ( cPatEmp + "FACPRVP.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "FACPRVP", @dbfFacPrvP ) )
    SET ADSINDEX TO ( cPatEmp + "FACPRVP.CDX" ) ADDITIVE
@@ -2329,7 +2329,7 @@ Function SynRecPrv( cPatEmp )
    USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
    SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
-   USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PROVEE", @dbfPrv ) )
+   USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfPrv ) )
    SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
 
    USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
@@ -2403,7 +2403,6 @@ Function SynRecPrv( cPatEmp )
    while !( dbfFacPrvT )->( eof() )
 
       GenPgoFacPrv( ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac, dbfFacPrvT, dbfFacPrvL, dbfFacPrvP, dbfPrv, dbfIva, dbfFPago, dbfDiv )
-
       ChkLqdFacPrv( , dbfFacPrvT, dbfFacPrvL, dbfFacPrvP, dbfIva, dbfDiv )
 
       ( dbfFacPrvT )->( dbSkip() )

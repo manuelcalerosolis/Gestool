@@ -10133,7 +10133,7 @@ Function SynRctPrv( cPath )
    SET ADSINDEX TO ( cPatEmp() + "FACPRVP.CDX" ) ADDITIVE
       ( dbfRctPrvP )->( OrdSetFocus( "rNumFac" ) )
 
-   USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PROVEE", @dbfPrv ) )
+   USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfPrv ) )
    SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
 
    USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "TIVA", @dbfIva ) )

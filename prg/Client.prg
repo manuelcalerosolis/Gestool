@@ -190,7 +190,9 @@
 #define _aNDTO3                   41     //   N     16     6
 #define _aNDTO4                   42     //   N     16     6
 #define _aNDTO5                   43     //   N     16     6
-#define _aNDTO6                   44      //   N     16     6
+#define _aNDTO6                   44     //   N     16     6
+#define _aCCODAGE                 45     //   C      3     0
+#define _aCCODENV                 46     //   C      3     0
 
 #define fldGeneral                oFld:aDialogs[1]
 #define fldComercial              oFld:aDialogs[2]
@@ -260,6 +262,7 @@ static oPais
 static oCtaRem
 static cAgente
 static oNewImp
+static oEnvases
 
 static oGetTarifa
 
@@ -480,6 +483,11 @@ STATIC FUNCTION OpenFiles( lExt )
 
       CodigosPostales():GetInstance():OpenFiles()
 
+      oEnvases              := TFrasesPublicitarias():Create( cPatArt() )
+      if !oEnvases:OpenFiles()
+         lOpenFiles        := .f.
+      end if
+
       cPinDiv              := cPinDiv( cDivEmp() ) // Picture de la divisa de compra
       cPouDiv              := cPouDiv( cDivEmp() ) // Picture de la divisa
       cPorDiv              := cPorDiv( cDivEmp() ) // Picture de la divisa redondeada
@@ -555,6 +563,10 @@ STATIC FUNCTION CloseFiles( lDestroy )
       oFacAut:End()
    end if
 
+   if !Empty( oEnvases )
+      oEnvases:end()
+   end if
+
    if !Empty( oBanco )
       oBanco:End()
    end if
@@ -584,6 +596,7 @@ STATIC FUNCTION CloseFiles( lDestroy )
    dbfArtDiv         := nil
    dbfRuta           := nil
    oDetCamposExtra   := nil 
+   oEnvases          := nil
 
    if lDestroy
       oWndBrw        := nil
@@ -4601,6 +4614,18 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
          PICTURE  "@E 999.99";
          OF       oFld:aDialogs[1]
 
+
+      REDEFINE GET   aGet[ _aCCODENV ] ;
+         VAR      aTmp[ _aCCODENV ] ; 
+         ID       460 ;
+         IDTEXT   461 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         BITMAP   "LUPA" ;
+         OF       oFld:aDialogs[1]
+
+         aGet[ _aCCODENV ]:bValid := {|| oEnvases:Existe( aGet[ _aCCODENV ], aGet[ _aCCODENV ]:oHelpText ) }
+         aGet[ _aCCODENV ]:bHelp  := {|| oEnvases:Buscar( aGet[ _aCCODENV ] ) }
+
       /*
       Segunda caja de dialogo--------------------------------------------------
       */
@@ -4783,6 +4808,10 @@ Static Function StartEdtAtp( aTmp, aGet, nMode, oSayPr1, oSayPr2, oSayVp1, oSayV
 
    ChangeNaturaleza( aGet, aTmp, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGetArticulo, oGetFamilia, oCosto, nMode, oSayLabels, .t. )
 
+   if !Empty( aGet[ _aCCODENV ] )
+      aGet[ _aCCODENV ]:lValid()
+   end if
+
 Return nil
 
 //---------------------------------------------------------------------------//
@@ -4797,10 +4826,10 @@ Static Function lExpandir( oDlg, oBtn, lSet )
 
    if lExpandida
       SetWindowText( oBtn:hWnd, "Rentabilidad <" )
-      oDlg:Move( oRect:nTop, oRect:nLeft, 800, 522, .t. )
+      oDlg:Move( oRect:nTop, oRect:nLeft, 800, 550, .t. )
    else
       SetWindowText( oBtn:hWnd, "Rentabilidad >" )
-      oDlg:Move( oRect:nTop, oRect:nLeft, 463, 522, .t. )
+      oDlg:Move( oRect:nTop, oRect:nLeft, 463, 550, .t. )
    end if
 
    lExpandida  := !lExpandida
@@ -8837,6 +8866,7 @@ FUNCTION aItmAtp()
    aAdd( aBase,  { "nDto5",     "N",  6, 2, "Descuento de tarifa de venta 5" }         )
    aAdd( aBase,  { "nDto6",     "N",  6, 2, "Descuento de tarifa de venta 6" }         ) 
    aAdd( aBase,  { "cCodAge",   "C",  3, 0, "Código del agente" }                      )
+   aAdd( aBase,  { "cCodEnv",   "C",  3, 0, "Código del envase" }                      )
 
 RETURN ( aBase )
 

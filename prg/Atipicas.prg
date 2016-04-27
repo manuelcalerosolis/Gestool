@@ -258,6 +258,7 @@ METHOD DefineFiles( cPath, cDriver, lUniqueName, cFileName ) CLASS TAtipicas
       FIELD NAME "nDto5"      TYPE "N" LEN  6  DEC 2 COMMENT "Descuento de tarifa de venta 5"               OF oDbf
       FIELD NAME "nDto6"      TYPE "N" LEN  6  DEC 2 COMMENT "Descuento de tarifa de venta 6"               OF oDbf
       FIELD NAME "cCodAge"    TYPE "C" LEN  3  DEC 0 COMMENT "Código del agente"                            OF oDbf
+      FIELD NAME "cCodEnv"    TYPE "C" LEN  3  DEC 0 COMMENT "Código del envase"                            OF oDbf
 
       INDEX TO ( cFileName ) TAG "cCodCli" ON "cCodCli"                                                     NODELETED   OF oDbf
       INDEX TO ( cFileName ) TAG "cCodGrp" ON "cCodGrp"                                                     NODELETED   OF oDbf
