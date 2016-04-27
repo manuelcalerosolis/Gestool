@@ -2878,7 +2878,10 @@ METHOD GetLastClose()
    ::oDbf:GoBottom()
    while !::oDbf:bof()
 
+      MsgInfo( cajCerrrada, "cajCerrrada" )
+      
       if ::oDbf:nStaTur == cajCerrrada
+         MsgInfo( ::idTruno(), "idTruno" )
          cLasTur  := ::idTruno()
          exit
       else
@@ -2888,6 +2891,8 @@ METHOD GetLastClose()
    end while
 
    ::oDbf:SetRecno()
+
+   MsgInfo( cLasTur, "cLasTur" )
 
 RETURN ( cLasTur )
 
@@ -2907,10 +2912,6 @@ METHOD GetLastEfectivo()
    if ::oDbfCaj:SeekInOrd( cNumeroCaja, "cNumTur" )
       nEfectivo      := ( ::oDbfCaj:nCanEfe - ::oDbfCaj:nCanRet )
    end if
-
-   MsgInfo( "Obtengo el valor" )
-   MsgInfo( cNumeroCaja, "cNumeroCaja" )
-   MsgInfo( nEfectivo, "nEfectivo" )
 
 RETURN ( nEfectivo )
 
