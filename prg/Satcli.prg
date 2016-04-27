@@ -1839,7 +1839,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
    Comineza la transaccion-----------------------------------------------------
    */
 
-   if BeginTrans( aTmp )
+   if BeginTrans( aTmp, nMode )
       Return .f.
    end if
 
@@ -6177,7 +6177,7 @@ RETURN ( nCalculo )
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION BeginTrans( aTmp, lIndex )
+STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    local lErrors  := .f.
    local cDbfLin  := "PCliL"
@@ -6187,8 +6187,6 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex )
    local cSat     := aTmp[ _CSERSAT ] + Str( aTmp[ _NNUMSAT ] ) + aTmp[ _CSUFSAT ]
    local oError
    local oBlock   
-
-   DEFAULT lIndex := .t.
 
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )   
    BEGIN SEQUENCE
@@ -6204,43 +6202,40 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex )
 
    dbCreate( cTmpInc, aSqlStruct( aIncSatCli() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), cTmpInc, cCheckArea( cDbfInc, @dbfTmpInc ), .f. )
-   if lIndex
-      if !NetErr()
-         ( dbfTmpInc )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
-         ( dbfTmpInc )->( OrdCreate( cTmpInc, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
-      else
-         lErrors     := .t.
-      end if
+
+   if !NetErr()
+      ( dbfTmpInc )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
+      ( dbfTmpInc )->( OrdCreate( cTmpInc, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
+   else
+      lErrors     := .t.
    end if
 
    dbCreate( cTmpDoc, aSqlStruct( aSatCliDoc() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), cTmpDoc, cCheckArea( cDbfDoc, @dbfTmpDoc ), .f. )
-   if lIndex
-      if !NetErr()
-         ( dbfTmpDoc )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
-         ( dbfTmpDoc )->( OrdCreate( cTmpDoc, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
-      else
-         lErrors     := .t.
-      end if
-   end if
 
+   if !NetErr()
+      ( dbfTmpDoc )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
+      ( dbfTmpDoc )->( OrdCreate( cTmpDoc, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
+   else
+      lErrors     := .t.
+   end if
+   
    dbCreate( cTmpLin, aSqlStruct( aColSatCli() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), cTmpLin, cCheckArea( cDbfLin, @dbfTmpLin ), .f. )
-   if lIndex
-      if !NetErr()
 
-         ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
-         ( dbfTmpLin )->( OrdCreate( cTmpLin, "nNumLin", "Str( nNumLin, 4 )", {|| Str( Field->nNumLin ) } ) )
+   if !NetErr()
 
-         ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
-         ( dbfTmpLin )->( OrdCreate( cTmpLin, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
+      ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpLin )->( OrdCreate( cTmpLin, "nNumLin", "Str( nNumLin, 4 )", {|| Str( Field->nNumLin ) } ) )
 
-         ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
-         ( dbfTmpLin )->( OrdCreate( cTmpLin, "nPosPrint", "Str( nPosPrint, 4 )", {|| Str( Field->nPosPrint ) } ) )
+      ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
+      ( dbfTmpLin )->( OrdCreate( cTmpLin, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
 
-      else
-         lErrors     := .t.
-      end if
+      ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpLin )->( OrdCreate( cTmpLin, "nPosPrint", "Str( nPosPrint, 4 )", {|| Str( Field->nPosPrint ) } ) )
+
+   else
+      lErrors     := .t.
    end if
 
    /*
@@ -6264,7 +6259,7 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex )
    A¤adimos desde el fichero de incidencias
    */
 
-   if ( dbfSatCliI )->( dbSeek( cSat ) )
+   if ( nMode != DUPL_MODE ) .and. ( dbfSatCliI )->( dbSeek( cSat ) )
 
       do while ( ( dbfSatCliI )->cSerSat + Str( ( dbfSatCliI )->NNUMSAT ) + ( dbfSatCliI )->CSUFSAT == cSat .AND. !( dbfSatCliI )->( eof() ) )
 
@@ -6281,7 +6276,7 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex )
    A¤adimos desde el fichero de documentos
    */
 
-   if ( dbfSatCliD )->( dbSeek( cSat ) )
+   if ( nMode != DUPL_MODE ) .and. ( dbfSatCliD )->( dbSeek( cSat ) )
 
       do while ( ( dbfSatCliD )->cSerSat + Str( ( dbfSatCliD )->NNUMSAT ) + ( dbfSatCliD )->CSUFSAT == cSat .AND. !( dbfSatCliD )->( eof() ) )
 
@@ -6307,7 +6302,7 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex )
       ( dbfTmpSer )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpSer )->( OrdCreate( cTmpSer, "nNumLin", "Str( nNumLin, 4 ) + cRef", {|| Str( Field->nNumLin, 4 ) + Field->cRef } ) )
 
-      if ( dbfSatCliS )->( dbSeek( cSat ) )
+      if ( nMode != DUPL_MODE ) .and. ( dbfSatCliS )->( dbSeek( cSat ) )
 
          while ( ( dbfSatCliS )->cSerSat + Str( ( dbfSatCliS )->nNumSat ) + ( dbfSatCliS )->cSufSat == cSat ) .and. !( dbfSatCliS )->( eof() )
       
