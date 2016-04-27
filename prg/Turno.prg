@@ -2882,6 +2882,7 @@ METHOD GetLastClose()
 
       MsgInfo( cajCerrrada, "cajCerrrada" )
       MsgInfo( ::oDbf:nStaTur, "nStaTur" )
+      MsgInfo( ::oDbf:OrdSetFocus(), "OrdSetFocus" )
       
       if ::oDbf:nStaTur == cajCerrrada
          MsgInfo( ::idTruno(), "idTruno" )
