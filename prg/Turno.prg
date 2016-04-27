@@ -2873,6 +2873,8 @@ METHOD GetLastClose()
 
    local cLasTur  := ""
 
+   MsgInfo( ::oDbf:cAlias, "tabla" )
+
    ::oDbf:GetRecno()
 
    ::oDbf:GoBottom()
