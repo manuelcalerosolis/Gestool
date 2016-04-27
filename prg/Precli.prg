@@ -1929,23 +1929,18 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
    */
 
    cTipPre              := aTipPre[ if( aTmp[ _LALQUILER ], 2, 1  ) ]
+   cAprovado            := if( aTmp[ _LESTADO ], "Aprobado", "" )
+
+   if empty( aTmp[ _CTLFCLI ] )
+      aTmp[ _CTLFCLI ] := RetFld( aTmp[ _CCODCLI ], D():Clientes( nView ), "Telefono" )
+   end if
 
    /*
    Comineza la transaccion-----------------------------------------------------
    */
 
-   if BeginTrans( aTmp )
+   if BeginTrans( aTmp, nMode )
       Return .f.
-   end if
-
-   cAprovado            := if( aTmp[ _LESTADO ], "Aprobado", "" )
-
-   /*
-   Mostramos datos de clientes-------------------------------------------------
-   */
-
-   if Empty( aTmp[ _CTLFCLI ] )
-      aTmp[ _CTLFCLI ] := RetFld( aTmp[ _CCODCLI ], D():Clientes( nView ), "Telefono" )
    end if
 
    /*
@@ -6271,7 +6266,7 @@ RETURN ( nCalculo )
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION BeginTrans( aTmp, lIndex, nMode )
+STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    local lErrors  := .f.
    local cDbfLin  := "PCliL"
@@ -6281,9 +6276,6 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex, nMode )
    local cPre     := aTmp[ _CSERPRE ] + Str( aTmp[ _NNUMPRE ] ) + aTmp[ _CSUFPRE ]
    local oError
    local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-
-   DEFAULT lIndex := .t.
-   // nMode          := DUPL_MODE
 
    BEGIN SEQUENCE
 
@@ -6298,60 +6290,52 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex, nMode )
 
    dbCreate( cTmpInc, aSqlStruct( aIncPreCli() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), cTmpInc, cCheckArea( cDbfInc, @dbfTmpInc ), .f. )
-   if lIndex
-      if !NetErr()
-         ( dbfTmpInc )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
-         ( dbfTmpInc )->( OrdCreate( cTmpInc, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
-      else
-         lErrors     := .t.
-      end if
+
+   if !NetErr()
+      ( dbfTmpInc )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
+      ( dbfTmpInc )->( OrdCreate( cTmpInc, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
+   else
+      lErrors     := .t.
    end if
 
    dbCreate( cTmpDoc, aSqlStruct( aPreCliDoc() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), cTmpDoc, cCheckArea( cDbfDoc, @dbfTmpDoc ), .f. )
-   if lIndex
-      if !NetErr()
-         ( dbfTmpDoc )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
-         ( dbfTmpDoc )->( OrdCreate( cTmpDoc, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
-      else
-         lErrors     := .t.
-      end if
+
+   if !NetErr()
+      ( dbfTmpDoc )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
+      ( dbfTmpDoc )->( OrdCreate( cTmpDoc, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
+   else
+      lErrors     := .t.
    end if
 
    dbCreate( cTmpLin, aSqlStruct( aColPreCli() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), cTmpLin, cCheckArea( cDbfLin, @dbfTmpLin ), .f. )
-   if lIndex
-      if !NetErr()
 
-         ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
-         ( dbfTmpLin )->( OrdCreate( cTmpLin, "nNumLin", "Str( nNumLin, 4 )", {|| Str( Field->nNumLin ) } ) )
+   if !NetErr()
+      ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpLin )->( OrdCreate( cTmpLin, "nNumLin", "Str( nNumLin, 4 )", {|| Str( Field->nNumLin ) } ) )
 
-         ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
-         ( dbfTmpLin )->( OrdCreate( cTmpLin, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
+      ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
+      ( dbfTmpLin )->( OrdCreate( cTmpLin, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
 
-         ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
-         ( dbfTmpLin )->( OrdCreate( cTmpLin, "nPosPrint", "Str( nPosPrint, 4 )", {|| Str( Field->nPosPrint ) } ) )
-
-      else
-         lErrors     := .t.
-      end if
+      ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpLin )->( OrdCreate( cTmpLin, "nPosPrint", "Str( nPosPrint, 4 )", {|| Str( Field->nPosPrint ) } ) )
+   else
+      lErrors     := .t.
    end if
 
    dbCreate( cTmpEst, aSqlStruct( aPreCliEst() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), cTmpEst, cCheckArea( cDbfEst, @dbfTmpEst ), .f. )
-   if lIndex
-      if !NetErr()
 
-            ( dbfTmpEst )->( ordCreate( cTmpEst, "nNumPre", "cSerPre + str( nNumPre ) + cSufPre + dtos( dFecSit )  + tFecSit", {|| Field->cSerPre + str( Field->nNumPre ) + Field->cSufPre + dtos( Field->dFecSit )  + Field->tFecSit } ) )
-            ( dbfTmpEst )->( ordListAdd( cTmpEst ) )
-
-      else
-            lErrors     := .t.
-      end if
+   if !NetErr()
+      ( dbfTmpEst )->( ordCreate( cTmpEst, "nNumPre", "cSerPre + str( nNumPre ) + cSufPre + dtos( dFecSit )  + tFecSit", {|| Field->cSerPre + str( Field->nNumPre ) + Field->cSufPre + dtos( Field->dFecSit )  + Field->tFecSit } ) )
+      ( dbfTmpEst )->( ordListAdd( cTmpEst ) )
+   else
+      lErrors     := .t.
    endif
 
 	/*
-	A¤adimos desde el fichero de lineas
+	A¤adimos desde el fichero de lineas-----------------------------------------
 	*/
 
    if ( D():PresupuestosClientesLineas( nView ) )->( dbSeek( cPre ) )
@@ -6368,7 +6352,7 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex, nMode )
    ( dbfTmpLin )->( dbGoTop() )
 
    /*
-   A¤adimos desde el fichero de incidencias
+   A¤adimos desde el fichero de incidencias------------------------------------
 	*/
 
    if ( nMode != DUPL_MODE ) .and. ( dbfPreCliI )->( dbSeek( cPre ) )
@@ -6385,7 +6369,7 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex, nMode )
    ( dbfTmpInc )->( dbGoTop() )
 
    /*
-   A¤adimos desde el fichero de documentos
+   A¤adimos desde el fichero de documentos-------------------------------------
 	*/
 
    if ( nMode != DUPL_MODE ) .and. ( dbfPreCliD )->( dbSeek( cPre ) )
@@ -6402,8 +6386,8 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex, nMode )
    ( dbfTmpDoc )->( dbGoTop() )
 
    /*
-   A¤adimos desde el fichero de situaciones
-*/
+   A¤adimos desde el fichero de situaciones------------------------------------
+   */
    
    if ( nMode != DUPL_MODE ) .and. ( D():PresupuestosClientesSituaciones( nView ) )->( dbSeek( cPre ) )
 

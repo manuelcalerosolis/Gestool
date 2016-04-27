@@ -11033,7 +11033,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    end if
 
    /*
-   Creamos la tabla temporal
+   Creamos la tabla temporal de incidencias------------------------------------
    */
 
    dbCreate( cTmpInc, aSqlStruct( aIncFacCli() ), cLocalDriver() )
@@ -11042,7 +11042,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       ( dbfTmpInc )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpInc )->( ordCreate( cTmpInc, "Recno", "Recno()", {|| Recno() } ) )
 
-      if ( dbfFacCliI )->( dbSeek( cFac ) )
+      if ( nMode != DUPL_MODE ) .and. ( dbfFacCliI )->( dbSeek( cFac ) )
          while ( ( dbfFacCliI )->cSerie + str( ( dbfFacCliI )->nNumFac ) + ( dbfFacCliI )->cSufFac == cFac ) .AND. ( dbfFacCliI )->( !eof() )
             dbPass( dbfFacCliI, dbfTmpInc, .t. )
             ( dbfFacCliI )->( dbSkip() )
@@ -11055,7 +11055,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    end if
 
    /*
-   Creamos la tabla temporal
+   Creamos la tabla temporal de documentos-------------------------------------
    */
 
    dbCreate( cTmpDoc, aSqlStruct( aFacCliDoc() ), cLocalDriver() )
@@ -11064,7 +11064,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       ( dbfTmpDoc )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpDoc )->( ordCreate( cTmpDoc, "Recno", "Recno()", {|| Recno() } ) )
 
-      if ( dbfFacCliD )->( dbSeek( cFac ) )
+      if ( nMode != DUPL_MODE ) .and. ( dbfFacCliD )->( dbSeek( cFac ) )
          while ( ( dbfFacCliD )->cSerFac + str( ( dbfFacCliD )->nNumFac ) + ( dbfFacCliD )->cSufFac == cFac ) .AND. ( dbfFacCliD )->( !eof() )
             dbPass( dbfFacCliD, dbfTmpDoc, .t. )
             ( dbfFacCliD )->( dbSkip() )
@@ -11077,7 +11077,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    end if
 
    /*
-   Creamos la tabla temporal de anticipos
+   Creamos la tabla temporal de anticipos--------------------------------------
    */
 
    dbCreate( cTmpAnt, aSqlStruct( aItmAntCli() ), cLocalDriver() )
@@ -11088,7 +11088,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
       nOrd        := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
 
-      if ( dbfAntCliT )->( dbSeek( cFac ) )
+      if ( nMode != DUPL_MODE ) .and. ( dbfAntCliT )->( dbSeek( cFac ) )
          while ( dbfAntCliT )->cNumDoc == cFac .and. ( dbfAntCliT )->( !eof() )
             dbPass( dbfAntCliT, dbfTmpAnt, .t. )
             ( dbfAntCliT )->( dbSkip() )
@@ -11121,7 +11121,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
       nOrd        := ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( "nNumFac" ) )
 
-      if ( D():FacturasClientesCobros( nView ) )->( dbSeek( cFac ) ) .and. nMode != DUPL_MODE
+      if ( nMode != DUPL_MODE ) .and. ( D():FacturasClientesCobros( nView ) )->( dbSeek( cFac ) ) 
          while ( D():FacturasClientesCobros( nView ) )->cSerie + str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac == cFac .and. ( D():FacturasClientesCobros( nView ) )->( !eof() )
             if Empty( ( D():FacturasClientesCobros( nView ) )->cTipRec )
                dbPass( D():FacturasClientesCobros( nView ), dbfTmpPgo, .t. )
@@ -11151,7 +11151,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       ( dbfTmpSer )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpSer )->( OrdCreate( cTmpSer, "nNumLin", "str( nNumLin, 4 ) + cRef", {|| str( Field->nNumLin, 4 ) + Field->cRef } ) )
 
-      if ( dbfFacCliS )->( dbSeek( cFac ) )
+      if ( nMode != DUPL_MODE ) .and. ( dbfFacCliS )->( dbSeek( cFac ) )
          while ( ( dbfFacCliS )->cSerFac + str( ( dbfFacCliS )->nNumFac ) + ( dbfFacCliS )->cSufFac == cFac ) .and. !( dbfFacCliS )->( eof() )
             dbPass( dbfFacCliS, dbfTmpSer, .t. )
             ( dbfFacCliS )->( dbSkip() )
@@ -11213,7 +11213,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
   		( dbfTmpEst )->( ordCreate( cTmpEst, "nNumFac", "cSerFac + str( nNumFac ) + cSufFac + dtos( dFecSit )  + tFecSit", {|| Field->cSerFac + str( Field->nNumFac ) + Field->cSufFac + dtos( Field->dFecSit )  + Field->tFecSit } ) )
     	( dbfTmpEst )->( ordListAdd( cTmpEst ) )
 
-    	if ( nMode != DUPL_MODE ) .and.( D():FacturasClientesSituaciones( nView ) )->( dbSeek( cFac ) )
+    	if ( nMode != DUPL_MODE ) .and. ( D():FacturasClientesSituaciones( nView ) )->( dbSeek( cFac ) )
 
       	while ( ( D():FacturasClientesSituaciones( nView ) )->cSerFac + Str( ( D():FacturasClientesSituaciones( nView ) )->nNumFac ) + ( D():FacturasClientesSituaciones( nView ) )->cSufFac == cFac ) .AND. ( D():FacturasClientesSituaciones( nView ) )->( !eof() ) 
 
@@ -11231,8 +11231,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
       lErrors     := .t.
 
-  	end if
-	
+  	end if	
 
    RECOVER USING oError
 
