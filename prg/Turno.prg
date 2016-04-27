@@ -2873,8 +2873,6 @@ METHOD GetLastClose()
 
    local cLasTur  := ""
 
-   MsgInfo( ::GetCurrentCaja(), "::GetCurrentCaja()" )
-
    ::oDbf:GetRecno()
 
    ::oDbf:GoBottom()
@@ -2901,11 +2899,7 @@ METHOD GetLastEfectivo()
    local cNumeroCaja 
    local nEfectivo   := 0
 
-   //if .t. // uFieldEmpresa( "lDesCajas" )
-      cNumeroCaja    := ::GetLastClose()
-   /*else 
-      cNumeroCaja    := ::GetLastClose() + ::GetCurrentCaja()
-   end if */
+   cNumeroCaja    := ::GetLastClose()
 
    if ::oDbfCaj:SeekInOrd( cNumeroCaja, "cNumTur" )
       nEfectivo      := ( ::oDbfCaj:nCanEfe - ::oDbfCaj:nCanRet )
