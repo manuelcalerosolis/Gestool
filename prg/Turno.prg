@@ -2908,6 +2908,10 @@ METHOD GetLastEfectivo()
       nEfectivo      := ( ::oDbfCaj:nCanEfe - ::oDbfCaj:nCanRet )
    end if
 
+   MsgInfo( "Obtengo el valor" )
+   MsgInfo( cNumeroCaja, "cNumeroCaja" )
+   MsgInfo( nEfectivo, "nEfectivo" )
+
 RETURN ( nEfectivo )
 
 //--------------------------------------------------------------------------//
