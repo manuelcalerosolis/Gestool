@@ -2873,32 +2873,24 @@ METHOD GetLastClose()
 
    local cLasTur  := ""
 
-   MsgInfo( ::oDbf:cAlias, "tabla" )
+   MsgInfo( ::GetCurrentCaja(), "::GetCurrentCaja()" )
 
    ::oDbf:GetRecno()
 
    ::oDbf:GoBottom()
+
    while !::oDbf:bof()
 
-      MsgInfo( cajCerrrada, "cajCerrrada" )
-      MsgInfo( ::oDbf:nStaTur, "nStaTur" )
-      MsgInfo( ::oDbf:OrdSetFocus(), "OrdSetFocus" )
-      
-      if ::oDbf:nStaTur == cajCerrrada
-         MsgInfo( ::idTruno(), "idTruno" )
-         MsgInfo( ::oDbf:Recno(), "Recno" )
+      if ::oDbf:nStaTur == cajCerrrada .and. ::oDbf:cCodCaj == ::GetCurrentCaja()
          cLasTur  := ::idTruno()
          exit
       else
-         MsgInfo( "Paso por el Skip" )
          ::oDbf:Skip( -1 )
       end if
 
    end while
 
    ::oDbf:SetRecno()
-
-   MsgInfo( cLasTur, "cLasTur" )
 
 RETURN ( cLasTur )
 
@@ -2909,11 +2901,11 @@ METHOD GetLastEfectivo()
    local cNumeroCaja 
    local nEfectivo   := 0
 
-   if .t. // uFieldEmpresa( "lDesCajas" )
+   //if .t. // uFieldEmpresa( "lDesCajas" )
       cNumeroCaja    := ::GetLastClose()
-   else 
+   /*else 
       cNumeroCaja    := ::GetLastClose() + ::GetCurrentCaja()
-   end if 
+   end if */
 
    if ::oDbfCaj:SeekInOrd( cNumeroCaja, "cNumTur" )
       nEfectivo      := ( ::oDbfCaj:nCanEfe - ::oDbfCaj:nCanRet )
