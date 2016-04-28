@@ -599,8 +599,8 @@ Method CreateSearchBar( oWnd )
             FONT     oFontLittelTitle() ;
             PIXEL    SIZE 210, 21
 
-   ::oGet:cBmp       := "Lupa"
-   ::oGet:bLostFocus := {|| ::oGet:cText( Space( 200 ) ), if( !Empty( ::oGet:bChange ), Eval( ::oGet:bChange ), ) }
+   // ::oGet:cBmp       := "Lupa"
+   // ::oGet:bLostFocus := {|| ::oGet:cText( Space( 200 ) ), if( !Empty( ::oGet:bChange ), Eval( ::oGet:bChange ), ) }
 
    @ 124, 220 COMBOBOX ::oComboBox ;
             VAR      ::cComboBox ;

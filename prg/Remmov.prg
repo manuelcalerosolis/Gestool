@@ -153,7 +153,7 @@ CLASS TRemMovAlm FROM TMasDet
 
    DATA  oRadTipoMovimiento
 
-   DATA  lOpenFiles         INIT  .f.
+   DATA  lOpenFiles           INIT  .f.
 
    DATA  oBtnKit
    DATA  oBtnImportarInventario
@@ -162,10 +162,10 @@ CLASS TRemMovAlm FROM TMasDet
    DATA  oDetSeriesMovimientos
 
    DATA  memoInventario
+   DATA  aInventarioErrors    INIT  {}
 
    METHOD New( cPath, cDriver, oWndParent, oMenuItem )   CONSTRUCTOR
-
-   METHOD Initiate( cText, oSender )            CONSTRUCTOR
+   METHOD Initiate( cText, oSender )                     CONSTRUCTOR
 
    METHOD OpenFiles( lExclusive )
    METHOD CloseFiles()
@@ -189,7 +189,7 @@ CLASS TRemMovAlm FROM TMasDet
    METHOD DeleteDet( oDlg )
 
    METHOD lSave()
-   METHOD RecalcularPrecios() INLINE ( ::oDetMovimientos:RecalcularPrecios(), ::oBrwDet:Refresh() )
+   METHOD RecalcularPrecios()                            INLINE   ( ::oDetMovimientos:RecalcularPrecios(), ::oBrwDet:Refresh() )
 
    METHOD ShwAlm( oSay, oBtnImp )
 
@@ -199,13 +199,13 @@ CLASS TRemMovAlm FROM TMasDet
 
    METHOD lSelAll( lSel )
 
-   METHOD lSelAllMov( lSel )  VIRTUAL
+   METHOD lSelAllMov( lSel )                             VIRTUAL
    METHOD lSelMov()
 
    METHOD lSelAllDoc( lSel )
    METHOD lSelDoc()
 
-   METHOD cTextoMovimiento()  INLINE   { "Entre almacenes", "Regularización", "Objetivos", "Consolidación" }[ Min( Max( ( ::oDbf:nArea )->nTipMov, 1 ), 4 ) ]
+   METHOD cTextoMovimiento()                             INLINE   { "Entre almacenes", "Regularización", "Objetivos", "Consolidación" }[ Min( Max( ( ::oDbf:nArea )->nTipMov, 1 ), 4 ) ]
 
    METHOD LoadAlmacen( nMode )
    METHOD ImportAlmacen( nMode, oDlg )
@@ -249,8 +249,10 @@ CLASS TRemMovAlm FROM TMasDet
 
    METHOD porcesarInventario()
 
+   METHOD showInventarioErrors()
+
    METHOD procesarArticuloInventario( cInventario )
-   
+
    METHOD insertaArticuloRemesaMovimiento( cCodigo, nUnidades )
 
 END CLASS
@@ -3160,8 +3162,19 @@ METHOD porcesarInventario() CLASS TRemMovAlm
       ::procesarArticuloInventario( cInventario )
    next 
 
+   ::showInventarioErrors()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD showInventarioErrors() CLASS TRemMovAlm
+
+   local cErrorMessage  := ""
+
    if !empty( ::aInventarioErrors )
-      msgStop( ::aInventarioErrors, "Errores en la importación" )
+      aeval(::aInventarioErrors, {|cError| cErrorMessage += cError + CRLF } )   
+      msgStop( cErrorMessage, "Errores en la importación" )
    end if 
 
 Return ( Self )
@@ -3170,31 +3183,54 @@ Return ( Self )
 
 METHOD procesarArticuloInventario( cInventario ) CLASS TRemMovAlm
 
+   local cCodigo
+   local nUnidades
    local aInventario    := hb_atokens( cInventario, "," )
 
    if hb_isarray( aInventario ) .and. len( aInventario ) >= 2
-      ::insertaArticuloRemesaMovimiento( aInventario[ 1 ], aInventario[ 2 ] )
+
+      cCodigo           := alltrim( aInventario[ 1 ] )
+      nUnidades         := val( aInventario[ 2 ] )
+
+      if !hb_isstring( cCodigo ) 
+         aadd( ::aInventarioErrors, "El código del artículo no es un valor valido." )
+         Return ( Self )   
+      end if 
+
+      if !hb_isnumeric( nUnidades )
+         aadd( ::aInventarioErrors, "Las unidades del artículo no contienen un valor valido." )
+         Return ( Self )   
+      end if 
+
+      ::insertaArticuloRemesaMovimiento( cCodigo, nUnidades )
+
    end if 
 
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+// Trata de insertar el articulo en la remesa de moviemitnos-------------------
 
 METHOD insertaArticuloRemesaMovimiento( cCodigo, nUnidades ) CLASS TRemMovAlm
 
-   if !hb_isstring( cCodigo ) 
-      aadd( ::aInventarioErrors, "El código del artículo no es un valor valido." )
-      Return ( Self )   
-   end if 
+   ::oDetMovimientos:oDbfVir:Blank()
 
-   if !hb_isnumeric( nUnidades )
-      aadd( ::aInventarioErrors, "Las unidades del artículo no contienen un valor valido." )
-      Return ( Self )   
-   end if 
+   ::oDetMovimientos:oDbfVir:cRefMov   := cCodigo
 
-   if !::oArt:seekInOrd( cCodigo, "Codigo")
-      aadd( ::aInventarioErrors, "El código del artículo " + cCodigo + " no existe en la base de datos." )
-      Return ( Self )   
+   if ::oDetMovimientos:loadArticulo( .t., APPD_MODE )
+
+      ::oDetMovimientos:oDbfVir:Insert()
+   
+      ::oDetMovimientos:appendKit()
+
+      if !empty( ::oBrwDet )
+         ::oBrwDet:Refresh()
+      end if 
+   
+   else
+
+      aadd( ::aInventarioErrors, "El código de artículo " + cCodigo + " no es un valor valido." )
+
    end if 
 
 Return ( Self )
@@ -3627,7 +3663,7 @@ CLASS TDetMovimientos FROM TDet
 
    METHOD RollBack()
 
-   METHOD loadArticulo( oDlg, lValidDetalle, nMode )
+   METHOD loadArticulo( lValidDetalle, nMode )
       METHOD getPrecioCosto() 
 
    METHOD Save()
@@ -3836,7 +3872,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          BITMAP   "LUPA" ;
          OF       oDlg
 
-      ::oRefMov:bValid     := {|| if( !Empty( ::oDbfVir:cRefMov ), ::loadArticulo( oDlg, .f., nMode ), .t. ) }
+      ::oRefMov:bValid     := {|| if( !empty( ::oDbfVir:cRefMov ), ::loadArticulo( .f., nMode ), .t. ) }
       ::oRefMov:bHelp      := {|| BrwArticulo( ::oRefMov, ::oGetDetalle , , , , ::oGetLote, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oValPr1, ::oValPr2  ) }
 
       REDEFINE GET ::oGetDetalle VAR ::oDbfVir:cNomMov ;
@@ -3855,7 +3891,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      ::oGetLote:bValid          := {|| if( !Empty( ::oDbfVir:cLote ), ::loadArticulo( oDlg, .f., nMode ), .t. ) }
+      ::oGetLote:bValid          := {|| if( !Empty( ::oDbfVir:cLote ), ::loadArticulo( .f., nMode ), .t. ) }
 
       // Browse de propiedades-------------------------------------------------
 
@@ -3888,7 +3924,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      ::oValPr1:bValid     := {|| if( lPrpAct( ::oValPr1, ::oSayVp1, ::oDbfVir:cCodPr1, ::oParent:oTblPro:cAlias ), ::loadArticulo( oDlg, .f., nMode ), .f. ) }
+      ::oValPr1:bValid     := {|| if( lPrpAct( ::oValPr1, ::oSayVp1, ::oDbfVir:cCodPr1, ::oParent:oTblPro:cAlias ), ::loadArticulo( .f., nMode ), .f. ) }
       ::oValPr1:bHelp      := {|| brwPropiedadActual( ::oValPr1, ::oSayVp1, ::oDbfVir:cCodPr1 ) }
 
       REDEFINE GET ::oSayVp1 VAR ::cSayVp1;
@@ -3906,7 +3942,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      ::oValPr2:bValid     := {|| if( lPrpAct( ::oValPr2, ::oSayVp2, ::oDbfVir:cCodPr2, ::oParent:oTblPro:cAlias ), ::loadArticulo( oDlg, .f., nMode ), .f. ) }
+      ::oValPr2:bValid     := {|| if( lPrpAct( ::oValPr2, ::oSayVp2, ::oDbfVir:cCodPr2, ::oParent:oTblPro:cAlias ), ::loadArticulo( .f., nMode ), .f. ) }
       ::oValPr2:bHelp      := {|| brwPropiedadActual( ::oValPr2, ::oSayVp2, ::oDbfVir:cCodPr2 ) }
 
       REDEFINE GET ::oSayVp2 VAR ::cSayVp2 ;
@@ -4160,7 +4196,7 @@ METHOD ValidResource( nMode, oDlg, oBtn ) CLASS TDetMovimientos
 
    oBtn:SetFocus()
 
-   if nMode == APPD_MODE .and. !::loadArticulo( nil, .t., nMode )
+   if nMode == APPD_MODE .and. !::loadArticulo( .t., nMode )
       ::oRefMov:SetFocus()
       Return .f.
    end if
@@ -4396,7 +4432,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
+METHOD loadArticulo( lValidDetalle, nMode ) CLASS TDetMovimientos
 
    local a
    local nPos
@@ -4408,8 +4444,8 @@ METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
 
    DEFAULT lValidDetalle   := .f.
 
-   if Empty( ::oDbfVir:cRefMov )
-      if !Empty( ::oBrwPrp )
+   if empty( ::oDbfVir:cRefMov )
+      if !empty( ::oBrwPrp )
          ::oBrwPrp:Hide()
       end if
       Return .t.
@@ -4417,7 +4453,7 @@ METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
 
    // Detectamos si hay cambios en los codigos y propiedades-------------------
 
-   lChgCodArt              := ( Rtrim( ::cOldCodArt ) != Rtrim( ::oDbfVir:cRefMov ) .or. ::cOldLote != ::oDbfVir:cLote .or. ::cOldValPr1 != ::oDbfVir:cValPr1 .or. ::cOldValPr2 != ::oDbfVir:cValPr2 )
+   lChgCodArt              := ( rtrim( ::cOldCodArt ) != rtrim( ::oDbfVir:cRefMov ) .or. ::cOldLote != ::oDbfVir:cLote .or. ::cOldValPr1 != ::oDbfVir:cValPr1 .or. ::cOldValPr2 != ::oDbfVir:cValPr2 )
 
    // Conversión a codigo interno-------------------------------------------------
 
@@ -4425,7 +4461,7 @@ METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
 
    // Articulos con numeros de serie no podemos pasarlo en regularizacion por objetivos
 
-   if ( ::oParent:oDbf:nTipMov == 3 ) .and. ( RetFld( cCodArt, ::oParent:oArt:cAlias, "lNumSer" ) )
+   if ( ::oParent:oDbf:nTipMov == 3 ) .and. ( retFld( cCodArt, ::oParent:oArt:cAlias, "lNumSer" ) )
       MsgStop( "Artículos con números de serie no pueden incluirse regularizaciones por objetivo." )
       Return .f.
    end if
@@ -4434,23 +4470,38 @@ METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
 
    if aSeekProp( @cCodArt, @cValPr1, @cValPr2, ::oParent:oArt:cAlias, ::oParent:oTblPro:cAlias ) // ::oArt:Seek( xVal ) .OR. ::oArt:Seek( Upper( xVal ) )
 
+      msgAlert( cCodArt, "cCodArt" )
+      msgAlert( cValPr1, "cValPr1" )
+      msgAlert( cValPr2, "cValPr2" )
+
       if !lValidDetalle
 
          CursorWait()
 
          if ( lChgCodArt )
 
-            ::oRefMov:cText(     ::oParent:oArt:Codigo )
-            ::oGetDetalle:cText( ::oParent:oArt:Nombre )
+            if !empty(::oRefMov)
+               ::oRefMov:cText(     ::oParent:oArt:Codigo )
+            end if 
+            
+            if !empty(::oGetDetalle)
+               ::oGetDetalle:cText( ::oParent:oArt:Nombre )
+            else 
+               ::oDbfVir:cNomMov    := ::oParent:oArt:Nombre 
+            end if 
 
             // Propiedades--------------------------------------------------------
 
-            if !Empty( cValPr1 )
+            if !empty( cValPr1 ) .and. !empty( ::oValPr1 )
                ::oValPr1:cText( cValPr1 )
+            else 
+               ::oDbfVir:cValPr1    := cValPr1
             end if
 
-            if !Empty( cValPr2 )
+            if !empty( cValPr2 ) .and. !empty( ::oValPr2 )
                ::oValPr2:cText( cValPr2 )
+            else 
+               ::oDbfVir:cValPr2    := cValPr2
             end if
 
             // Dejamos pasar a los productos de tipo kit-----------------------
@@ -4470,45 +4521,49 @@ METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
             end if
 
             if ::oParent:oArt:nCajEnt != 0 .and. ::oDbfVir:nCajMov == 0
-               ::oCajMov:cText( ::oParent:oArt:nCajEnt )
+               if !empty(::oCajMov)
+                  ::oCajMov:cText( ::oParent:oArt:nCajEnt )
+               else
+                  ::oDbfVir:nCajMov := ::oParent:oArt:nCajEnt
+               end if 
             end if
 
             if ::oDbfVir:nUndMov == 0
-
-               if ::oParent:oArt:nUniCaja != 0
-                  ::oUndMov:cText( ::oParent:oArt:nUniCaja )
+               if !empty(::oUndMov)
+                  ::oUndMov:cText( max( ::oParent:oArt:nUniCaja, 1 ) )
                else
-                  ::oUndMov:cText( 1 )
+                  ::oDbfVir:nUndMov := max( ::oParent:oArt:nUniCaja, 1 )
                end if
-
             end if
 
-            /*
-            Peso y Volumen--------------------------------------------------------
-            */
+            // Peso y Volumen--------------------------------------------------------
 
             ::oDbfVir:nVolumen      := ::oParent:oArt:nVolumen
             ::oDbfVir:cVolumen      := ::oParent:oArt:cVolumen
             ::oDbfVir:nPesoKg       := ::oParent:oArt:nPesoKg
             ::oDbfVir:cPesoKg       := ::oParent:oArt:cUndDim
 
-            /*
-            Lotes-----------------------------------------------------------------
-            */
+            // Lotes-----------------------------------------------------------------
 
             ::oDbfVir:lLote         := ::oParent:oArt:lLote
 
             if ::oParent:oArt:lLote
-               ::oSayLote:Show()
-               ::oGetLote:Show()
+               if !empty(::oSayLote)
+                  ::oSayLote:Show()
+               end if 
+               if !empty(::oGetLote)
+                  ::oGetLote:Show()
+               end if 
             else
-               ::oSayLote:Hide()
-               ::oGetLote:Hide()
+               if !empty(::oSayLote)
+                  ::oSayLote:Hide()
+               end if 
+               if !empty(::oGetLote)
+                  ::oGetLote:Hide()
+               end if 
             end if
 
-            /*
-            Propiedades--------------------------------------------------------------
-            */
+            // Propiedades--------------------------------------------------------------
 
             ::oDbfVir:cCodPr1       := ::oParent:oArt:cCodPrp1
             ::oDbfVir:cCodPr2       := ::oParent:oArt:cCodPrp2
@@ -4519,15 +4574,14 @@ METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
                ( uFieldEmpresa( "lUseTbl" )                                         .and.;
                ( nMode == APPD_MODE ) )
 
-               ::oValPr1:Hide()
-               ::oSayPr1:Hide()
-               ::oSayVp1:Hide()
-               ::oValPr2:Hide()
-               ::oSayPr2:Hide()
-               ::oSayVp2:Hide()
-               
-               ::oSayLote:Hide()
-               ::oGetLote:Hide()
+               if( !empty(::oValPr1),  ::oValPr1:Hide(),    )
+               if( !empty(::oSayPr1),  ::oSayPr1:Hide(),    )
+               if( !empty(::oSayVp1),  ::oSayVp1:Hide(),    )
+               if( !empty(::oValPr2),  ::oValPr2:Hide(),    )
+               if( !empty(::oSayPr2),  ::oSayPr2:Hide(),    )
+               if( !empty(::oSayVp2),  ::oSayVp2:Hide(),    )
+               if( !empty(::oSayLote), ::oSayLote:Hide(),   )
+               if( !empty(::oGetLote), ::oGetLote:Hide(),   )
 
                setPropertiesTable( ::oParent:oArt:Codigo, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, 0, ::oUndMov, ::oBrwPrp, ::oParent:nView )
                
@@ -4535,71 +4589,71 @@ METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
 
                hidePropertiesTable( ::oBrwPrp )
 
-               if !Empty( ::oDbfVir:cCodPr1 )
-                  ::oValPr1:show()
-                  ::oSayPr1:show()
-                  ::oSayPr1:setText( retProp( ::oDbfVir:cCodPr1 ) )
-                  ::oSayVp1:show()
+               if !empty( ::oDbfVir:cCodPr1 )
+                  if( !empty(::oValPr1), ::oValPr1:show(), )
+                  if( !empty(::oSayPr1), ::oSayPr1:show(), )
+                  if( !empty(::oSayPr1), ::oSayPr1:setText( retProp( ::oDbfVir:cCodPr1 ) ), )
+                  if( !empty(::oSayVp1), ::oSayVp1:show(), )
                else
-                  ::oValPr1:Hide()
-                  ::oSayPr1:Hide()
-                  ::oSayVp1:Hide()
+                  if( !empty(::oValPr1), ::oValPr1:Hide(), )
+                  if( !empty(::oSayPr1), ::oSayPr1:Hide(), )
+                  if( !empty(::oSayVp1), ::oSayVp1:Hide(), )
                end if
 
-               if !Empty( ::oDbfVir:cCodPr2 )
-                  ::oValPr2:show()
-                  ::oSayPr2:show()
-                  ::oSayPr2:setText( retProp( ::oDbfVir:cCodPr2 ) )
-                  ::oSayVp2:show()
+               if !empty( ::oDbfVir:cCodPr2 )
+                  if( !empty(::oValPr2), ::oValPr2:show(), )
+                  if( !empty(::oSayPr2), ::oSayPr2:show(), )
+                  if( !empty(::oSayPr2), ::oSayPr2:setText( retProp( ::oDbfVir:cCodPr2 ) ), )
+                  if( !empty(::oSayVp2), ::oSayVp2:show(), )
                else
-                  ::oValPr2:Hide()
-                  ::oSayPr2:Hide()
-                  ::oSayVp2:Hide()
+                  if( !empty(::oValPr2), ::oValPr2:Hide(), )
+                  if( !empty(::oSayPr2), ::oSayPr2:Hide(), )
+                  if( !empty(::oSayVp2), ::oSayVp2:Hide(), )
                end if
 
-               /*
-               Posicionar el foco----------------------------------------------------
-               */
+               // Posicionar el foco----------------------------------------------------
 
                do case
                   case !Empty( ::oDbfVir:cCodPr1 ) .and. Empty( ::oDbfVir:cValPr1 )
-                     ::oValPr1:SetFocus()
+                     if( !empty(::oValPr1), ::oValPr1:SetFocus(), )
 
                   case !Empty( ::oDbfVir:cCodPr2 ) .and. Empty( ::oDbfVir:cValPr2 )
-                     ::oValPr2:SetFocus()
+                     if( !empty(::oValPr2), ::oValPr2:SetFocus(), )
 
                   case ::oDbfVir:lLote
-                     ::oGetLote:SetFocus()
+                     if( !empty(::oGetLote), ::oGetLote:SetFocus(), )
 
                   otherwise
-                     ::oUndMov:SetFocus()
+                     if( !empty(::oUndMov), ::oUndMov:SetFocus(), )
 
                end case
 
             end if
 
-            /*
-            Precios de costo---------------------------------------------------
-            */
+            // Precios de costo---------------------------------------------------
 
-            ::oPreDiv:cText( ::getPrecioCosto() )
+            if !empty(::oPreDiv)
+               ::oPreDiv:cText( ::getPrecioCosto() )
+            else
+               ::oDbfVir:nPreDiv    := ::getPrecioCosto()
+            end if 
 
-            /*
-            Stock actual-------------------------------------------------------
-            */
+            // Stock actual-------------------------------------------------------
 
-            ::oParent:oStock:lPutStockActual( ::oDbfVir:cRefMov, ::oParent:oDbf:cAlmOrg, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote, .f., ::oParent:oArt:nCtlStock, ::oGetStockOrigen )
+            if !empty(::oGetStockOrigen)
+               ::oParent:oStock:lPutStockActual( ::oDbfVir:cRefMov, ::oParent:oDbf:cAlmOrg, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote, .f., ::oParent:oArt:nCtlStock, ::oGetStockOrigen )
+            end if 
 
-            ::oParent:oStock:lPutStockActual( ::oDbfVir:cRefMov, ::oParent:oDbf:cAlmDes, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote, .f., ::oParent:oArt:nCtlStock, ::oGetStockDestino )
+            if !empty(::oGetStockDestino)
+               ::oParent:oStock:lPutStockActual( ::oDbfVir:cRefMov, ::oParent:oDbf:cAlmDes, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote, .f., ::oParent:oArt:nCtlStock, ::oGetStockDestino )
+            end if 
 
-            /*
-            Guardamos el stock anterior----------------------------------------
-            */
+            // Guardamos el stock anterior----------------------------------------
 
             SysRefresh()
 
             nPos                 := aScan( ::oParent:oStock:aStocks, {|o| o:cCodigo == ::oParent:oArt:Codigo .and. o:cCodigoAlmacen == ::oParent:oDbf:cAlmDes .and. o:cValorPropiedad1 == ::oDbfVir:cValPr1 .and. o:cValorPropiedad2 == ::oDbfVir:cValPr2 .and. o:cLote == ::oDbfVir:cLote .and. o:cNumeroSerie == ::oDbfVir:mNumSer } )
-            if ( nPos != 0 ) .and. IsNum( ::oParent:oStock:aStocks[ nPos ]:nUnidades )
+            if ( nPos != 0 ) .and. isNum( ::oParent:oStock:aStocks[ nPos ]:nUnidades )
                ::oDbfVir:nUndAnt := ::oParent:oStock:aStocks[ nPos ]:nUnidades
             end if
 
@@ -4607,8 +4661,8 @@ METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
 
          // Variables para no volver a ejecutar--------------------------------
 
-         ::cOldCodArt            := ::oDbfVir:cRefMov
          ::cOldLote              := ::oDbfVir:cLote
+         ::cOldCodArt            := ::oDbfVir:cRefMov
          ::cOldValPr1            := ::oDbfVir:cValPr1
          ::cOldValPr2            := ::oDbfVir:cValPr2
 

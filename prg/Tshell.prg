@@ -183,7 +183,7 @@ CLASS TShell FROM TMdiChild
 
 	METHOD Search()
 
-   METHOD AddSearch()
+   METHOD killScope()
 
    METHOD ChangeSeek( oIndice )
 
@@ -216,8 +216,6 @@ CLASS TShell FROM TMdiChild
 
    METHOD SetColumn()
 
-   //METHOD DlgColumn()
-
    METHOD ActColSizes()
 
    METHOD UpColumn( nPos )
@@ -238,7 +236,7 @@ CLASS TShell FROM TMdiChild
 
    METHOD SysCommand( nWParam, nLParam )
 
-   METHOD Display() INLINE ::BeginPaint(), ::Paint(), ::EndPaint()
+   METHOD Display()                          INLINE ( ::BeginPaint(), ::Paint(), ::EndPaint() )
 
    METHOD ChgTabs()
 
@@ -313,13 +311,13 @@ CLASS TShell FROM TMdiChild
    METHOD SetAutoFilter()
 
    METHOD AplyFilter()                       
-   METHOD ChangeFilter( cFilter )            INLINE ( msgStop( cFilter ) )
+   METHOD ChangeFilter( cFilter )            INLINE   ( msgStop( cFilter ) )
 
-   METHOD EnableComboFilter( aFilter )       INLINE ( ::oWndBar:EnableComboFilter( aFilter ) )
-   METHOD SetDefaultComboFilter( aFilter )   INLINE ( ::oWndBar:SetDefaultComboFilter( aFilter ) )
-   METHOD SetComboFilter( cItem )            INLINE ( ::oWndBar:SetComboFilter( cItem ) )
+   METHOD EnableComboFilter( aFilter )       INLINE   ( ::oWndBar:EnableComboFilter( aFilter ) )
+   METHOD SetDefaultComboFilter( aFilter )   INLINE   ( ::oWndBar:SetDefaultComboFilter( aFilter ) )
+   METHOD SetComboFilter( cItem )            INLINE   ( ::oWndBar:SetComboFilter( cItem ) )
 
-   METHOD setFilterByUser( cFilterExpresion) INLINE   (  cFilterExpresion := ::oActiveFilter:defaultFilterByUser(),;
+   METHOD setFilterByUser(cFilterExpresion)  INLINE   (  cFilterExpresion := ::oActiveFilter:defaultFilterByUser(),;
                                                          iif(  !empty( cFilterExpresion ),;
                                                                ::oWndBar:setComboFilter( cFilterExpresion ),;
                                                             );
@@ -405,12 +403,11 @@ METHOD New(  nTop, nLeft, nBottom, nRight, cTitle, oMenu, oWnd, oIcon,;
       ::xAlias       := xAlias
    end if
 
-   // Fuentes en funcion del estilo
+   // Fuentes en funcion del estilo--------------------------------------------
 
    ::setFont( oFontLittelTitle() )
-   // ::oFont           := oFontLittelTitle()
 
-   // Tamaño de la ventana siempre a pixels---------------------------------------
+   // Tamaño de la ventana siempre a pixels------------------------------------
 
    ::nTop            := nTop    * if( !lPixel, MDIC_CHARPIX_H, 1 )
    ::nLeft           := nLeft   * if( !lPixel, MDIC_CHARPIX_W, 1 )
@@ -425,10 +422,7 @@ METHOD New(  nTop, nLeft, nBottom, nRight, cTitle, oMenu, oWnd, oIcon,;
 
    ::oActiveFilter   := TFilterCreator():Init( Self )
 
-   /*
-   Llamada al objeto padre para que se cree
-   ----------------------------------------------------------------------------
-   */
+   // Llamada al objeto padre para que se cree---------------------------------
 
    ::Super:New( 0, 0, 0, 0, cTitle, 0, oMenu, oWnd, oIcon, , , , oCursor, , .t., , nHelpId, "NONE", .f., .f., .f., .f. )
 
@@ -453,7 +447,6 @@ METHOD New(  nTop, nLeft, nBottom, nRight, cTitle, oMenu, oWnd, oIcon,;
    ::oBtnBar            := TTreeView():New( dfnSplitterHeight, 0, Self, , , .t., .f., dfnTreeViewWidth, 400 ) // Rgb( 51, 51, 51 )
 
    ::oBtnBar:SetItemHeight( 20 )
-   // ::oBtnBar:SetFont( oFontLittelTitle() )
 
    ::oBtnBar:OnClick    := {|| ::ClickTree() }
 
@@ -841,7 +834,7 @@ RETURN NIL
 Suma la ultima busqueda
 */
 
-METHOD AddSearch() CLASS TShell
+METHOD killScope() CLASS TShell
 
    local nRec
 
@@ -1827,7 +1820,7 @@ METHOD addSeaBar( cSearchType, nLenSearchType ) CLASS TShell
       ::oWndBar:SetAddButtonFilter(    {|| ::AddFilter() } )
       ::oWndBar:SetEditButtonFilter(   {|| ::EditFilter() } )
 
-      ::oWndBar:SetGetLostFocus(       {|| ::AddSearch() } )
+      // ::oWndBar:SetGetLostFocus(       {|| ::killScope() } )
       ::oWndBar:SetGetPostKey(         {| oGet, cText  | ::FastSeek( oGet, cText ) } )
       ::oWndBar:SetGetKeyDown(         {| nKey, nFlags | ::KeySearch( nKey ) } )
 
@@ -1922,6 +1915,8 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD ClickOnHeader( oCol ) CLASS TShell
+
+   ::killScope()
 
    if !Empty( oCol )
       if aScan( ::aPrompt, oCol:cHeader ) != 0
