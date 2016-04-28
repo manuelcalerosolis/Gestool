@@ -5491,21 +5491,21 @@ METHOD buildAddInformacionStockProductPrestashop( hProduct ) CLASS tComercio
 
    for each sStock in aStockArticulo
 
-      if aScan( ::aStockArticuloData, {|h|   hGet( h, "cCodArt" ) == idProduct               .and.;
-                                             hGet( h, "cCodPrp1" ) == idFirstProperty        .and.;
-                                             hGet( h, "cCodPrp2" ) == idSecondProperty       .and.;
-                                             hGet( h, "cValPrp1" ) == valueFirstProperty     .and.;
-                                             hGet( h, "cValPrp2" ) == valueSecondProperty  } ) == 0
+      if sStock:cCodigo             == idProduct            .and.;
+         sStock:cCodigoPropiedad1   == idFirstProperty      .and.;
+         sStock:cValorPropiedad1    == valueFirstProperty   .and.;
+         sStock:cCodigoPropiedad2   == idSecondProperty     .and.;
+         sStock:cValorPropiedad2    == valueSecondProperty
       
-         aAdd( ::aStockArticuloData, { "cCodArt"               => idProduct ,;
-                                       "cCodPrp1"              => sStock:cCodigoPropiedad1 ,;
-                                       "cCodPrp2"              => sStock:cCodigoPropiedad2 ,;
-                                       "cValPrp1"              => sStock:cValorPropiedad1 ,;
-                                       "cValPrp2"              => sStock:cValorPropiedad2 ,;
-                                       "nStock"                => alltrim( str( sStock:nUnidades ) ),;
-                                       "idProductPrestashop"   => ::TPrestashopId:getValueProduct( idProduct, ::getCurrentWebName() ),;
-                                       "cCodWebVal1"           => ::TPrestashopId:getValueAttribute( sStock:cCodigoPropiedad1 + sStock:cValorPropiedad1, ::getCurrentWebName() ),;
-                                       "cCodWebVal2"           => ::TPrestashopId:getValueAttribute( sStock:cCodigoPropiedad2 + sStock:cValorPropiedad2, ::getCurrentWebName() ) } )
+         aAdd( ::aStockArticuloData,   {  "cCodArt"               => sStock:cCodigo ,;
+                                          "cCodPrp1"              => sStock:cCodigoPropiedad1 ,;
+                                          "cCodPrp2"              => sStock:cCodigoPropiedad2 ,;
+                                          "cValPrp1"              => sStock:cValorPropiedad1 ,;
+                                          "cValPrp2"              => sStock:cValorPropiedad2 ,;
+                                          "nStock"                => alltrim( str( sStock:nUnidades ) ),;
+                                          "idProductPrestashop"   => ::TPrestashopId:getValueProduct( idProduct, ::getCurrentWebName() ),;
+                                          "cCodWebVal1"           => ::TPrestashopId:getValueAttribute( sStock:cCodigoPropiedad1 + sStock:cValorPropiedad1, ::getCurrentWebName() ),;
+                                          "cCodWebVal2"           => ::TPrestashopId:getValueAttribute( sStock:cCodigoPropiedad2 + sStock:cValorPropiedad2, ::getCurrentWebName() ) } )
 
       end if   
 
