@@ -250,6 +250,8 @@ CLASS TRemMovAlm FROM TMasDet
    METHOD porcesarInventario()
 
    METHOD procesarArticuloInventario( cInventario )
+   
+   METHOD insertaArticuloRemesaMovimiento( cCodigo, nUnidades )
 
 END CLASS
 
