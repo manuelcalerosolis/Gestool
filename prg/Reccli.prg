@@ -114,6 +114,7 @@ static oTotalRelacionados
 static nTotalRelacionados     := 0
 
 static aRecibosRelacionados   := {}
+static aRecibosMatriz         := {}
 
 static oClienteCompensar
 
@@ -739,7 +740,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
    local oBrwRec
    local oSayTotal
    local oGroup
-   local lMatriz           := .f.
+   local oBrwCompensado
 
    if Empty( nSpecialMode )
       nSpecialMode         := NORMAL_MODE
@@ -822,9 +823,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
          end if
 
          if aTmp[ _CTIPREC ]  == "L" .and. nEstadoMatriz( cFacCliP ) == 2
-            MsgInfo( "Cargo los recibos agrupados" )
-            //aRacibosMatriz    := aRecibosAgrupados()
-            lMatriz           := .t.
+            aRecibosAgrupados( cFacCliP )
          end if
 
    end case
@@ -844,17 +843,36 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
       RESOURCE "Recibos" ;
       TITLE    LblTitle( nMode ) + "recibos de clientes"
 
-   REDEFINE FOLDER oFld ;
-      ID       500;
-      OF       oDlg ;
-      PROMPT   "&General",;
-               "Bancos",;
-               "Devolución",;
-               "Contablidad";
-      DIALOGS  "Recibos_1",;
-               "Recibos_Bancos",;
-               "Recibos_2",;
-               "Recibos_3"
+   if Len( aRecibosMatriz ) <= 0
+
+      REDEFINE FOLDER oFld ;
+         ID       500;
+         OF       oDlg ;
+         PROMPT   "&General",;
+                  "Bancos",;
+                  "Devolución",;
+                  "Contablidad";
+         DIALOGS  "Recibos_1",;
+                  "Recibos_Bancos",;
+                  "Recibos_2",;
+                  "Recibos_3"
+
+   else
+
+      REDEFINE FOLDER oFld ;
+         ID       500;
+         OF       oDlg ;
+         PROMPT   "&General",;
+                  "Bancos",;
+                  "Devolución",;
+                  "Contablidad",;
+                  "Recibos compensados";
+         DIALOGS  "Recibos_1",;
+                  "Recibos_Bancos",;
+                  "Recibos_2",;
+                  "Recibos_3",;
+                  "Recibos_5"
+   end if
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       500 ;
@@ -1283,6 +1301,70 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
          OF       oFld:aDialogs[ 4 ]
 
       /*
+      Montamos la pestaña si somos un recibo compensado
+      */
+
+      if Len( aRecibosMatriz ) > 0
+
+         REDEFINE BITMAP oBmpGeneral ;
+            ID       500 ;
+            RESOURCE "folder_components_48" ;
+            TRANSPARENT ;
+            OF       oFld:aDialogs[ 5 ]
+
+         oBrwCompensado                   := IXBrowse():New( oFld:aDialogs[ 5 ] )
+         oBrwCompensado:bClrSel           := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+         oBrwCompensado:bClrSelFocus      := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+         oBrwCompensado:nMarqueeStyle     := 6
+         oBrwCompensado:lRecordSelector   := .f.
+
+         oBrwCompensado:SetArray( aRecibosMatriz, , , .f. )
+
+         oBrwCompensado:CreateFromResource( 200 )
+
+         with object ( oBrwCompensado:AddCol() )
+            :cHeader          := "Estado"
+            :nHeadBmpNo       := 1
+            :bEditValue       := {|| hGet( aRecibosMatriz[ oBrwCompensado:nArrayAt ], "Estado" ) }
+            :nWidth           := 20
+            :SetCheck( { "Sel16", "Nil16" } )
+         end with
+
+         with object ( oBrwCompensado:AddCol() )
+            :cHeader          := "Numero"
+            :bStrData         := {|| hGet( aRecibosMatriz[ oBrwCompensado:nArrayAt ], "Número" ) }
+            :nWidth           := 100
+         end with
+
+         with object ( oBrwCompensado:AddCol() )
+            :cHeader          := "Fecha"
+            :bStrData         := {|| hGet( aRecibosMatriz[ oBrwCompensado:nArrayAt ], "Fecha" ) }
+            :nWidth           := 65
+         end with
+
+         with object ( oBrwCompensado:AddCol() )
+            :cHeader          := "Vencimiento"
+            :bStrData         := {|| hGet( aRecibosMatriz[ oBrwCompensado:nArrayAt ], "Vencimiento" ) }
+            :nWidth           := 65
+         end with
+
+         with object ( oBrwCompensado:AddCol() )
+            :cHeader          := "Pago"
+            :bStrData         := {|| hGet( aRecibosMatriz[ oBrwCompensado:nArrayAt ], "Pago" ) }
+            :nWidth           := 65
+         end with
+
+         with object ( oBrwCompensado:AddCol() )
+            :cHeader          := "Importe"
+            :bStrData         := {|| hGet( aRecibosMatriz[ oBrwCompensado:nArrayAt ], "Importe" ) }
+            :nWidth           := 65
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+         end with
+
+      end if
+
+      /*
       Botones__________________________________________________________________
 		*/
 
@@ -1302,9 +1384,11 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
          oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode ) } )
       end if
 
-      oDlg:bStart := {|| StartEdtRec( aTmp, aGet, nMode ) }
+      oDlg:bStart          := {|| StartEdtRec( aTmp, aGet, nMode ) }
 
    ACTIVATE DIALOG oDlg CENTER ON INIT ( EdtRecMenu( aTmp, oDlg ) )
+
+   aRecibosMatriz          := {}
 
    EndEdtRecMenu()
 
@@ -5917,5 +6001,46 @@ Static Function ZoomReciboCliente( cNumFac )
    ( D():FacturasClientesCobros( nView ) )->( dbGoTo( nRec ) )
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+
+static Function aRecibosAgrupados( uFacCliP )
+
+   local nRec
+   local nOrd
+   local cNum
+   local hRecibo
+
+   aRecibosMatriz    := {}
+
+   DEFAULT uFacCliP  := D():FacturasClientesCobros( nView )
+
+   cNum              := ( uFacCliP )->cSerie + Str( ( uFacCliP )->nNumFac ) + ( uFacCliP )->cSufFac + Str( ( uFacCliP )->nNumRec ) + ( uFacCliP )->cTipRec
+   nRec              := ( uFacCliP )->( recno() )
+   nOrd              := ( uFacCliP )->( ordsetfocus( "cNumMtr" ) )
+
+   if ( uFacCliP )->( dbseek( cNum ) )
+      
+      while ( uFacCliP )->cNumMtr == cNum .and. !( uFacCliP )->( Eof() )
+
+         hRecibo     := {  "Número"                => ( uFacCliP )->cSerie + "/" + AllTrim( Str( ( uFacCliP )->nNumFac ) ) + "/" + AllTrim( ( uFacCliP )->cSufFac ) + "-" + AllTrim( Str( ( uFacCliP )->nNumRec ) ),;
+                           "Estado"                => ( uFacCliP )->lCobrado,;
+                           "Fecha"                 => dtos( ( uFacCliP )->dEntrada ),;
+                           "Vencimiento"           => dtos( ( uFacCliP )->dFecVto ),;
+                           "Pago"                  => ( uFacCliP )->cCodPgo + "-" + RetFld( ( uFacCliP )->cCodPgo, D():FormasPago( nView ) ),;
+                           "Importe"               => Trans( ( uFacCliP )->nImporte, cPorDiv() ) }
+
+         aAdd( aRecibosMatriz, hRecibo )
+
+         ( uFacCliP )->( dbSkip() )
+
+      end while
+
+   end if 
+  
+   ( uFacCliP )->( ordsetfocus( nOrd ) )
+   ( uFacCliP )->( dbgoto( nRec ) )
+
+Return nil
 
 //---------------------------------------------------------------------------//
