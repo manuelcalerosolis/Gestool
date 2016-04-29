@@ -4470,10 +4470,6 @@ METHOD loadArticulo( lValidDetalle, nMode ) CLASS TDetMovimientos
 
    if aSeekProp( @cCodArt, @cValPr1, @cValPr2, ::oParent:oArt:cAlias, ::oParent:oTblPro:cAlias ) // ::oArt:Seek( xVal ) .OR. ::oArt:Seek( Upper( xVal ) )
 
-      msgAlert( cCodArt, "cCodArt" )
-      msgAlert( cValPr1, "cValPr1" )
-      msgAlert( cValPr2, "cValPr2" )
-
       if !lValidDetalle
 
          CursorWait()

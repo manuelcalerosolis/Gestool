@@ -108,6 +108,7 @@ CLASS TShell FROM TMdiChild
    DATA  lFastButtons   AS LOGIC    INIT .t.
 
    DATA  lTactil        AS LOGIC    INIT .f.
+   DATA  lAsterikFilter AS LOGIC    INIT .f.
 
    DATA  oActiveFilter
    DATA  lActiveFilter  AS LOGIC    INIT .f.
@@ -189,7 +190,7 @@ CLASS TShell FROM TMdiChild
 
    METHOD ChgIndex( oGet, oIndice )
 
-   METHOD FastSeek( oGet, cText, nLen )
+   METHOD fastSeek()
 
    METHOD lCloseArea    INLINE ( .t. ) // ::oBrw:lCloseArea() )
 
@@ -323,11 +324,13 @@ CLASS TShell FROM TMdiChild
                                                             );
                                                       )
 
-   METHOD ToExcel()
+   METHOD toExcel()
 
    METHOD setWindowsBar()
 
    METHOD aSelected()                        INLINE ( ::oBrw:aSelected )
+
+   METHOD getActiveExpresionFilter()         
 
 ENDCLASS
 
@@ -599,8 +602,8 @@ return ::Super:KeyChar( nKey, nFlags )
 Method KeySearch( nKey, nFlags, oWndBar )
 
    if ( nKey == VK_ESCAPE .or. nKey == VK_RETURN )
-      ::BrwEnable()
-      ::GotFocus()
+      ::brwEnable()
+      ::gotFocus()
       Return ( 0 )
    end if
 
@@ -898,7 +901,7 @@ Realiza busquedas despues de asignar un campo del combobox
 METHOD ChangeSeek( oIndice ) CLASS TShell
 
    local n
-   local xCadena
+   local xValueToSearch
    local cType
    local oGet     := ::oTxtSea:oGet
    local nOrd     := if( SubStr( oGet:varGet(), 1, 1 ) $ "0123456789", 1, 2 )
@@ -918,13 +921,13 @@ METHOD ChangeSeek( oIndice ) CLASS TShell
 
    do case
    case IsChar( cType )
-      xCadena     := Rtrim( oGet:GetText() )
+      xValueToSearch     := Rtrim( oGet:GetText() )
    case IsNum( cType )
-      xCadena     := Val( Rtrim( oGet:GetText() ) )
+      xValueToSearch     := Val( Rtrim( oGet:GetText() ) )
    end case 
 
    if ( ::xAlias )->( Used() )
-      ( ::xAlias )->( dbSeek( xCadena ) )
+      ( ::xAlias )->( dbSeek( xValueToSearch ) )
    end case
 
    ::oBrw:Refresh()
@@ -936,13 +939,15 @@ RETURN .T.
 // Realiza busquedas de manera progresiva
 //
 
-METHOD FastSeek( oGet, xCadena ) CLASS TShell
+METHOD FastSeek() CLASS TShell
 
    local nRec
    local nOrd
    local oCol
+   local oGet
    local lSeek
    local cAlias
+   local xValueToSearch
 
    cAlias            := ::xAlias
 
@@ -952,10 +957,13 @@ METHOD FastSeek( oGet, xCadena ) CLASS TShell
 
    CursorWait()
 
-   // Estudiamos la cadena de busqueda
+   oGet              := ::oWndBar:oGet
 
-   xCadena           := Alltrim( Upper( cValToChar( xCadena ) ) )
-   xCadena           := StrTran( xCadena, Chr( 8 ), "" )
+   // Estudiamos la cadena de busqueda-------------------------------------------
+
+   xValueToSearch    := ::oWndBar:oGet:oGet:Buffer()
+   xValueToSearch    := alltrim( upper( cvaltochar( xValueToSearch ) ) )
+   xValueToSearch    := strtran( xValueToSearch, chr( 8 ), "" )
 
    // Guradamos valores iniciales-------------------------------------------------
 
@@ -964,24 +972,27 @@ METHOD FastSeek( oGet, xCadena ) CLASS TShell
 
    // Comenzamos la busqueda------------------------------------------------------
 
-   lSeek             := ::FastFilter( xCadena, cAlias )
+   lSeek             := ::FastFilter( xValueToSearch, cAlias ) // lSeekKeyWild( xValueToSearch, cAlias ) 
+
    if !lSeek
-      lSeek          := lSeekKeyType( xCadena, cAlias ) // lMiniSeek( xCadena, cAlias, ::cSearchType, ::nLenSearchType )
+      lSeek          := lSeekKeyType( xValueToSearch, cAlias ) // lMiniSeek( xValueToSearch, cAlias, ::cSearchType, ::nLenSearchType )
    end if
 
-   if ( nOrd == 1 .and. !lSeek )
+   if !lSeek .and. nOrd == 1
 
       if ::cSearchType == "justZero"
-         lSeek       := seekCodigoTerceros( xCadena, cAlias, ::nLenSearchType )
+         lSeek       := seekCodigoTerceros( xValueToSearch, cAlias, ::nLenSearchType )
       end if
 
       if ::cSearchType == "justSpace"
-         lSeek       := seekDocumento( xCadena, cAlias, ::nLenSearchType )          
+         lSeek       := seekDocumento( xValueToSearch, cAlias, ::nLenSearchType )          
       endif
 
    end if 
 
-   if lSeek .or. empty( xCadena )
+   // color para el get informar al cliente de busqueda erronea----------------
+
+   if lSeek .or. empty( xValueToSearch ) .or. ( "*" $ xValueToSearch )
       oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
    else
       oGet:SetColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
@@ -997,33 +1008,39 @@ Return ( lSeek )
 
 //--------------------------------------------------------------------------//
 
-METHOD FastFilter( xCadena, cAlias )
+METHOD FastFilter( xValueToSearch, cAlias )
 
-   DestroyFastFilter( cAlias, .f., .f. )
+   local cFilterExpresion
 
-   CreateFastFilter( "", cAlias, .f. )
+   if left( xValueToSearch, 1 ) == "*" .and. right( xValueToSearch, 1 ) == "*" .and. len( rtrim( xValueToSearch ) ) > 1
 
-   if Left( xCadena, 1 ) == "*"
+      xValueToSearch       := substr( xValueToSearch, 2, len( xValueToSearch ) - 2 )
 
-      if Right( xCadena, 1 ) == "*" .and. len( Rtrim( xCadena ) ) > 1
+      cFilterExpresion     := '"' + xValueToSearch + '" $ ' + ( cAlias )->( ordkey() ) 
 
-         CreateFastFilter( SubStr( xCadena, 2, len( xCadena ) - 2 ), cAlias, .t. )
+      if !empty( ::getActiveExpresionFilter() )
+         cFilterExpresion  += ' .and. ' + ::getActiveExpresionFilter()
+      end if 
 
-         ::SetKillFilter( {|| DestroyFastFilter( cAlias ), ::HideButtonFilter() } )
+      ( cAlias )->( setCustomFilter( cFilterExpresion ) )
 
-         ::ShowButtonFilter()
-         ::ShowAddButtonFilter()
-         ::ShowEditButtonFilter()
-
-      else
-
-         ::HideButtonFilter()
-         ::HideAddButtonFilter()
-         ::HideEditButtonFilter()
-
-      end if
+      ::lAsterikFilter     := .t.
 
       Return .t.
+
+   else
+
+      if ::lAsterikFilter
+
+         if !empty( ::getActiveExpresionFilter() )
+            ( cAlias )->( setCustomFilter( ::getActiveExpresionFilter() ) )
+         else 
+            ( cAlias )->( quitCustomFilter() )
+         end if 
+
+         ::lAsterikFilter  := .f.
+
+      end if
 
    end if
 
@@ -1821,7 +1838,9 @@ METHOD addSeaBar( cSearchType, nLenSearchType ) CLASS TShell
       ::oWndBar:SetEditButtonFilter(   {|| ::EditFilter() } )
 
       // ::oWndBar:SetGetLostFocus(       {|| ::killScope() } )
-      ::oWndBar:SetGetPostKey(         {| oGet, cText  | ::FastSeek( oGet, cText ) } )
+      // ::oWndBar:SetGetChange(          {|| ::fastSeek( ::oWndBar:oGet, ::oWndBar:oGet:varGet() ) } )
+      // ::oWndBar:SetGetPostKey(         {| oGet, cText  | ::FastSeek( oGet, cText ) } )
+      ::oWndBar:SetGetKeyUp(           {|| ::fastSeek( ::oWndBar:oGet, ::oWndBar:oGet:oGet:buffer() ) } ) 
       ::oWndBar:SetGetKeyDown(         {| nKey, nFlags | ::KeySearch( nKey ) } )
 
    end if
@@ -2519,7 +2538,7 @@ METHOD SetAutoFilter( cFilter )
    if Empty( ::bFilter ) .and. !Empty( cFilter )
 
       if ( ::xAlias )->( Used() )
-         Select( ::xAlias )->( Used() )
+         select( ::xAlias )->( Used() )
       end case
 
       if Empty( cFilter ) .or. At( Type( cFilter ), "UEUI" ) != 0
@@ -2551,8 +2570,8 @@ METHOD chgFilter() CLASS TShell
          
          cFilterExpresion     := ::oActiveFilter:getExpresionFilter( cFilter )
 
-         if !Empty ( cFilterExpresion )
-            CreateFastFilter( cFilterExpresion, ::xAlias, .f. )
+         if !empty( cFilterExpresion )
+            ( ::xAlias )->( setCustomFilter( cFilterExpresion ) )
          endif
 
          ::ShowButtonFilter()
@@ -2560,7 +2579,7 @@ METHOD chgFilter() CLASS TShell
 
       else 
 
-         DestroyFastFilter( ::xAlias )
+         ( ::xAlias )->( quitCustomFilter() )
 
          ::HideButtonFilter()
          ::HideEditButtonFilter()
@@ -2658,6 +2677,18 @@ METHOD setWindowsBar()
    end if
 
 Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD getActiveExpresionFilter()         
+
+   local cActiveExpresionFilter  := ""
+
+   if !empty( ::oWndBar:GetComboFilter() )
+      cActiveExpresionFilter     := ::oActiveFilter:getExpresionFilter( ::oWndBar:GetComboFilter() )
+   end if 
+
+Return ( cActiveExpresionFilter )
 
 //----------------------------------------------------------------------------//
 

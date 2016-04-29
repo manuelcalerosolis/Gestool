@@ -5463,31 +5463,11 @@ METHOD buildAddInformacionStockProductPrestashop( hProduct ) CLASS tComercio
 
    ::writeText( "Recopilando información del artículo " + alltrim( idProduct ) )
 
-   /*
-   Recopilamos la información del Stock-------------------------------
-   */
+   // Recopilamos la información del Stock-------------------------------------
 
    aStockArticulo             := ::oStock:aStockArticulo( idProduct, ::TPrestashopConfig:getStore() )
 
-   /*
-   Metemos el Stock global del artículo-------------------------------
-
-   aeval( aStockArticulo, {|o| nTotalStock += o:nUnidades } )
-
-   aadd( ::aStockArticuloData, { "cCodArt"               => idProduct ,;
-                                 "cCodPrp1"              => "" ,;
-                                 "cCodPrp2"              => "" ,;
-                                 "cValPrp1"              => "" ,;
-                                 "cValPrp2"              => "" ,;
-                                 "nStock"                => alltrim( str( nTotalStock ) ) ,;
-                                 "idProductPrestashop"   => ::TPrestashopId:getValueProduct( idProduct, ::getCurrentWebName() ),;
-                                 "cCodWebVal1"           => 0 ,;
-                                 "cCodWebVal2"           => 0 } )
-   */
-
-   /*
-   Recorremos el array con los stocks---------------------------------
-   */
+   // Recorremos el array con los stocks---------------------------------------
 
    for each sStock in aStockArticulo
 

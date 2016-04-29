@@ -116,64 +116,65 @@ CLASS TAcceso
    Method CreateCarpetaOfficeBar( aAccesos )
    Method CreateBotonesOfficeBar( aAcceso, oCarpeta, oGrupo )
 
-   Method SetComboBoxItems( aItems )      INLINE ( if( !Empty( ::oComboBox ), ::oComboBox:SetItems( aItems ), ) )
-   Method SetComboBoxSelect( nItems )     INLINE ( if( !Empty( ::oComboBox ), ( ::oGet:cText( Space( 200 ) ), ::oGet:oGet:Home(), ::oComboBox:Select( nItems ) ), ) )
-   Method SetComboBoxSet( cItem )         INLINE ( if( !Empty( ::oComboBox ), ( ::oComboBox:Set( cItem ) ), ) )
-   Method SetComboBoxChange( bBlock )     INLINE ( if( !Empty( ::oComboBox ), ( ::oComboBox:bChange := bBlock ), ) )
-   Method GetComboBox()                   INLINE ( if( !Empty( ::oComboBox ), ( ::oComboBox:VarGet() ), "" ) )
-   Method GetComboBoxAt()                 INLINE ( if( !Empty( ::oComboBox ), ( ::oComboBox:nAt ), 0 ) )
+   Method SetComboBoxItems( aItems )      INLINE ( if( !empty( ::oComboBox ), ::oComboBox:SetItems( aItems ), ) )
+   Method SetComboBoxSelect( nItems )     INLINE ( if( !empty( ::oComboBox ), ( ::oGet:cText( Space( 200 ) ), ::oGet:oGet:Home(), ::oComboBox:Select( nItems ) ), ) )
+   Method SetComboBoxSet( cItem )         INLINE ( if( !empty( ::oComboBox ), ( ::oComboBox:Set( cItem ) ), ) )
+   Method SetComboBoxChange( bBlock )     INLINE ( if( !empty( ::oComboBox ), ( ::oComboBox:bChange := bBlock ), ) )
+   Method GetComboBox()                   INLINE ( if( !empty( ::oComboBox ), ( ::oComboBox:VarGet() ), "" ) )
+   Method GetComboBoxAt()                 INLINE ( if( !empty( ::oComboBox ), ( ::oComboBox:nAt ), 0 ) )
 
-   Method DisableComboBox()               INLINE ( if( !Empty( ::oComboBox ), ( ::SetComboBoxItems( {} ), ::oComboBox:Hide() ), ) )
-   Method EnableComboBox( aItems )        INLINE ( if( !Empty( ::oComboBox ) .and. IsArray( aItems ), ( ::SetComboBoxItems( aItems ), ::oComboBox:Show(), ::oComboBox:Enable() ), ) )
-   Method HideComboBox()                  INLINE ( if( !Empty( ::oComboBox ), ::oComboBox:Hide(), ) )
+   Method DisableComboBox()               INLINE ( if( !empty( ::oComboBox ), ( ::SetComboBoxItems( {} ), ::oComboBox:Hide() ), ) )
+   Method EnableComboBox( aItems )        INLINE ( if( !empty( ::oComboBox ) .and. IsArray( aItems ), ( ::SetComboBoxItems( aItems ), ::oComboBox:Show(), ::oComboBox:Enable() ), ) )
+   Method HideComboBox()                  INLINE ( if( !empty( ::oComboBox ), ::oComboBox:Hide(), ) )
 
-   Method SetComboFilterItems( aItems )   INLINE ( if( !Empty( ::oComboFilter ), ::oComboFilter:SetItems( aItems ), ) )
-   Method SetComboFilterSelect( nItems )  INLINE ( if( !Empty( ::oComboFilter ), ( ::oGet:cText( Space( 200 ) ), ::oGet:oGet:Home(), ::oComboFilter:Select( nItems ) ), ) )
-   Method SetComboFilterSet( cItem )      INLINE ( if( !Empty( ::oComboFilter ), ( ::oComboFilter:Set( cItem ) ), ) )
-   Method SetComboFilterChange( bBlock )  INLINE ( if( !Empty( ::oComboFilter ), ( ::oComboFilter:bChange := bBlock ), ) )
-   Method GetComboFilter()                INLINE ( if( !Empty( ::oComboFilter ), ( ::oComboFilter:VarGet() ), "" ) )
-   Method GetComboFilterAt()              INLINE ( if( !Empty( ::oComboFilter ), ( ::oComboFilter:nAt ), 0 ) )
-   Method HideComboFilter()               INLINE ( if( !Empty( ::oComboFilter ), ::oComboFilter:Hide(), ) )
+   Method setComboFilterItems( aItems )   INLINE ( if( !empty( ::oComboFilter ), ::oComboFilter:SetItems( aItems ), ) )
+   Method setComboFilterSelect( nItems )  INLINE ( if( !empty( ::oComboFilter ), ( ::oGet:cText( Space( 200 ) ), ::oGet:oGet:Home(), ::oComboFilter:Select( nItems ) ), ) )
+   Method setComboFilterSet( cItem )      INLINE ( if( !empty( ::oComboFilter ), ( ::oComboFilter:Set( cItem ) ), ) )
+   Method setComboFilterChange( bBlock )  INLINE ( if( !empty( ::oComboFilter ), ( ::oComboFilter:bChange := bBlock ), ) )
+   Method getComboFilter()                INLINE ( if( !empty( ::oComboFilter ), ( ::oComboFilter:VarGet() ), "" ) )
+   Method getComboFilterAt()              INLINE ( if( !empty( ::oComboFilter ), ( ::oComboFilter:nAt ), 0 ) )
+   Method hideComboFilter()               INLINE ( if( !empty( ::oComboFilter ), ::oComboFilter:Hide(), ) )
 
-   Method DisableComboFilter()            INLINE ( if( !Empty( ::oComboFilter ), ( ::SetComboFilterItems( {} ), ::oComboFilter:Hide() ), ) )
+   Method DisableComboFilter()            INLINE ( if( !empty( ::oComboFilter ), ( ::SetComboFilterItems( {} ), ::oComboFilter:Hide() ), ) )
    Method EnableComboFilter( aItems )
-   Method SetDefaultComboFilter()         INLINE ( if( !Empty( ::oComboFilter ), ::oComboFilter:Set( __txtFilters__ ), ) )
-   Method SetComboFilter( cItem )         INLINE ( if( !Empty( ::oComboFilter ) .and. !Empty( cItem ), ( ::oComboFilter:Set( cItem ), Eval( ::oComboFilter:bChange ) ), ) )
+   Method SetDefaultComboFilter()         INLINE ( if( !empty( ::oComboFilter ), ::oComboFilter:Set( __txtFilters__ ), ) )
+   Method SetComboFilter( cItem )         INLINE ( if( !empty( ::oComboFilter ) .and. !empty( cItem ), ( ::oComboFilter:Set( cItem ), Eval( ::oComboFilter:bChange ) ), ) )
 
-   Method SetGetChange( bBlock )          INLINE ( if( !Empty( ::oGet ), ( ::oGet:bChange       := bBlock ), ) )
-   Method SetGetPostKey( bBlock )         INLINE ( if( !Empty( ::oGet ), ( ::oGet:bPostKey      := bBlock ), ) )
-   Method SetGetValid( bBlock )           INLINE ( if( !Empty( ::oGet ), ( ::oGet:bValid        := bBlock ), ) )
-   Method SetGetLostFocus( bBlock )       INLINE ( if( !Empty( ::oGet ), ( ::oGet:bLostFocus    := bBlock ), ) )
-   Method SetGetKeyDown( bBlock )         INLINE ( if( !Empty( ::oGet ), ( ::oGet:bKeyDown      := bBlock ), ) )
-   Method SetGetKeyChar( bBlock )         INLINE ( if( !Empty( ::oGet ), ( ::oGet:bKeyChar      := bBlock ), ) )
+   Method SetGetChange( bBlock )          INLINE ( if( !empty( ::oGet ), ( ::oGet:bChange       := bBlock ), ) )
+   Method SetGetPostKey( bBlock )         INLINE ( if( !empty( ::oGet ), ( ::oGet:bPostKey      := bBlock ), ) )
+   Method SetGetValid( bBlock )           INLINE ( if( !empty( ::oGet ), ( ::oGet:bValid        := bBlock ), ) )
+   Method SetGetLostFocus( bBlock )       INLINE ( if( !empty( ::oGet ), ( ::oGet:bLostFocus    := bBlock ), ) )
+   Method SetGetKeyDown( bBlock )         INLINE ( if( !empty( ::oGet ), ( ::oGet:bKeyDown      := bBlock ), ) )
+   Method SetGetKeyChar( bBlock )         INLINE ( if( !empty( ::oGet ), ( ::oGet:bKeyChar      := bBlock ), ) )
+   Method SetGetKeyUp( bBlock )           INLINE ( if( !empty( ::oGet ), ( ::oGet:bKeyUp        := bBlock ), ) )
 
-   Method DisableGet()                    INLINE ( if( !Empty( ::oGet ), ( ::oGet:cText( Space( 200 ) ), ::oGet:Hide(), ::oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ) ), ) )
-   Method EnableGet()                     INLINE ( if( !Empty( ::oGet ), ( ::oGet:Enable(), ::oGet:Show(), ::oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ) ), ) )
-   Method CleanGet()                      INLINE ( if( !Empty( ::oGet ), ( ::oGet:cText( Space( 200 ) ), ::oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ) ), ) )
-   Method SetGetFocus()                   INLINE ( if( !Empty( ::oGet ), ::oGet:SetFocus(), ) )
-   Method HideGet()                       INLINE ( if( !Empty( ::oGet ), ::oGet:Hide(), ) )
+   Method DisableGet()                    INLINE ( if( !empty( ::oGet ), ( ::oGet:cText( Space( 200 ) ), ::oGet:Hide(), ::oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ) ), ) )
+   Method EnableGet()                     INLINE ( if( !empty( ::oGet ), ( ::oGet:Enable(), ::oGet:Show(), ::oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ) ), ) )
+   Method CleanGet()                      INLINE ( if( !empty( ::oGet ), ( ::oGet:cText( Space( 200 ) ), ::oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ) ), ) )
+   Method SetGetFocus()                   INLINE ( if( !empty( ::oGet ), ::oGet:SetFocus(), ) )
+   Method HideGet()                       INLINE ( if( !empty( ::oGet ), ::oGet:Hide(), ) )
 
-   Method ShowButtonFilter()              INLINE ( if( !Empty( ::oButtonFilter ), ::oButtonFilter:Show(), ) )
-   Method HideButtonFilter()              INLINE ( if( !Empty( ::oButtonFilter ), ::oButtonFilter:Hide(), ), if( !Empty( ::oComboFilter ), ::oComboFilter:Select( 1 ), ) )
-   Method SetKillFilter( bBlock )         INLINE ( if( !Empty( ::oButtonFilter ), ( ::oButtonFilter:bAction := bBlock ), ) )
+   Method ShowButtonFilter()              INLINE ( if( !empty( ::oButtonFilter ), ::oButtonFilter:Show(), ) )
+   Method HideButtonFilter()              INLINE ( if( !empty( ::oButtonFilter ), ::oButtonFilter:Hide(), ), if( !empty( ::oComboFilter ), ::oComboFilter:Select( 1 ), ) )
+   Method SetKillFilter( bBlock )         INLINE ( if( !empty( ::oButtonFilter ), ( ::oButtonFilter:bAction := bBlock ), ) )
 
-   Method ShowAddButtonFilter()           INLINE ( if( !Empty( ::oButtonAddFilter ), ::oButtonAddFilter:Show(), ) )
-   Method HideAddButtonFilter()           INLINE ( if( !Empty( ::oButtonAddFilter ), ::oButtonAddFilter:Hide(), ) )
-   Method SetAddButtonFilter( bAction )   INLINE ( if( !Empty( ::oButtonAddFilter ), ( ::oButtonAddFilter:bAction := bAction ), ) )
+   Method ShowAddButtonFilter()           INLINE ( if( !empty( ::oButtonAddFilter ), ::oButtonAddFilter:Show(), ) )
+   Method HideAddButtonFilter()           INLINE ( if( !empty( ::oButtonAddFilter ), ::oButtonAddFilter:Hide(), ) )
+   Method SetAddButtonFilter( bAction )   INLINE ( if( !empty( ::oButtonAddFilter ), ( ::oButtonAddFilter:bAction := bAction ), ) )
 
-   Method ShowEditButtonFilter()          INLINE ( if( !Empty( ::oButtonEditFilter ), ::oButtonEditFilter:Show(), ) )
-   Method HideEditButtonFilter()          INLINE ( if( !Empty( ::oButtonEditFilter ), ::oButtonEditFilter:Hide(), ) )
-   Method SetEditButtonFilter( bAction )  INLINE ( if( !Empty( ::oButtonEditFilter ), ( ::oButtonEditFilter:bAction := bAction ), ) )
+   Method ShowEditButtonFilter()          INLINE ( if( !empty( ::oButtonEditFilter ), ::oButtonEditFilter:Show(), ) )
+   Method HideEditButtonFilter()          INLINE ( if( !empty( ::oButtonEditFilter ), ::oButtonEditFilter:Hide(), ) )
+   Method SetEditButtonFilter( bAction )  INLINE ( if( !empty( ::oButtonEditFilter ), ( ::oButtonEditFilter:bAction := bAction ), ) )
 
-   Method ShowYearComboBox()              INLINE ( if( !Empty( ::oYearComboBox ), ( ::lYearComboBox := .t., ::oYearComboBox:Show(), ::oYearComboBox:Set( 1 ) ), ) )
-   Method HideYearComboBox()              INLINE ( if( !Empty( ::oYearComboBox ), ( ::lYearComboBox := .f., ::oYearComboBox:Hide() ), ) )
-   Method lAllYearComboBox()              INLINE ( if( !Empty( ::oYearComboBox ), ( ::oYearComboBox:nAt == 1 ), .f. ) )
-   Method cYearComboBox()                 INLINE ( if( !Empty( ::oYearComboBox ), ( ::oYearComboBox:VarGet() ), "" ) )
-   Method nYearComboBox()                 INLINE ( if( !Empty( ::oYearComboBox ), ( Val( ::oYearComboBox:VarGet() ) ), 0 ) )
-   Method SetYearComboBoxChange( bBlock ) INLINE ( if( !Empty( ::oYearComboBox ), ( ::oYearComboBox:bChange  := bBlock ), ) )
+   Method ShowYearComboBox()              INLINE ( if( !empty( ::oYearComboBox ), ( ::lYearComboBox := .t., ::oYearComboBox:Show(), ::oYearComboBox:Set( 1 ) ), ) )
+   Method HideYearComboBox()              INLINE ( if( !empty( ::oYearComboBox ), ( ::lYearComboBox := .f., ::oYearComboBox:Hide() ), ) )
+   Method lAllYearComboBox()              INLINE ( if( !empty( ::oYearComboBox ), ( ::oYearComboBox:nAt == 1 ), .f. ) )
+   Method cYearComboBox()                 INLINE ( if( !empty( ::oYearComboBox ), ( ::oYearComboBox:VarGet() ), "" ) )
+   Method nYearComboBox()                 INLINE ( if( !empty( ::oYearComboBox ), ( Val( ::oYearComboBox:VarGet() ) ), 0 ) )
+   Method SetYearComboBoxChange( bBlock ) INLINE ( if( !empty( ::oYearComboBox ), ( ::oYearComboBox:bChange  := bBlock ), ) )
 
-   Method Disable()                       INLINE ( CursorWait(),  if( !Empty( ::oOfficeBar ), ( ::oOfficeBar:Disable(), SysRefresh() ), ) )
-   Method Enable()                        INLINE ( CursorWE(),    if( !Empty( ::oOfficeBar ), ( ::oOfficeBar:Enable(), SysRefresh() ), ) )
+   Method Disable()                       INLINE ( CursorWait(),  if( !empty( ::oOfficeBar ), ( ::oOfficeBar:Disable(), SysRefresh() ), ) )
+   Method Enable()                        INLINE ( CursorWE(),    if( !empty( ::oOfficeBar ), ( ::oOfficeBar:Enable(), SysRefresh() ), ) )
 
    Method End()
 
@@ -228,7 +229,7 @@ Method SetImageList( oTree )
 
    DEFAULT oTree        := ::oTree
 
-   if Empty( ::oImageList )
+   if empty( ::oImageList )
       ::CreateImageList()
    end if
 
@@ -280,7 +281,7 @@ Method AddTree( oTree, oAcceso )
 
    local oItemTree   := oTree:Add( oAcceso:cPrompt, oAcceso:nImageList, oAcceso:cId )
 
-   if !Empty( ::oTree )
+   if !empty( ::oTree )
       // TvSetCheckState( ::oTree:hWnd, oItemTree:hItem, oAcceso:lShow )
       ::oTree:SetCheck( oItemTree, oAcceso:lShow ) 
    end if
@@ -348,7 +349,7 @@ Method EditButtonBar( oWnd, oMenuItem )
 
    oDlg:Activate( , , , .t., , , {|| ::InitButtonBar() } )
 
-   if !Empty( oBmpGeneral )
+   if !empty( oBmpGeneral )
       oBmpGeneral:End()
    end if
 
@@ -389,7 +390,7 @@ Method SaveTree( aItems, cCurUsr, cDbf )
 
    for n := 1 to len( aItems )
 
-      if !Empty( aItems[ n ]:aItems )
+      if !empty( aItems[ n ]:aItems )
 
          ( ::cDbf )->( dbAppend() )
          ( ::cDbf )->cCodUse     := cCurUsr
@@ -447,7 +448,7 @@ Method LoadTree( aItems, cOpcion, lShow )
 
    local n
 
-   if Empty( cOpcion )
+   if empty( cOpcion )
       return nil
    end if
 
@@ -455,7 +456,7 @@ Method LoadTree( aItems, cOpcion, lShow )
 
       if Len( aItems[ n ]:aItems ) > 0
 
-         if !Empty( aItems[ n ] ) .and. Rtrim( aItems[ n ]:cPrompt ) == Rtrim( cOpcion )
+         if !empty( aItems[ n ] ) .and. Rtrim( aItems[ n ]:cPrompt ) == Rtrim( cOpcion )
 
             ::oTree:SetCheck( aItems[ n ], lShow ) 
 
@@ -465,7 +466,7 @@ Method LoadTree( aItems, cOpcion, lShow )
 
       else
 
-         if !Empty( aItems[ n ]:bAction ) .and.  Rtrim( aItems[ n ]:bAction ) == Rtrim( cOpcion )
+         if !empty( aItems[ n ]:bAction ) .and.  Rtrim( aItems[ n ]:bAction ) == Rtrim( cOpcion )
 
             ::oTree:SetCheck( aItems[ n ], lShow ) 
 
@@ -483,7 +484,7 @@ Method MakeDatabase( cPath, oMeter )
 
    DEFAULT cPath     := cPatDat()
 
-   if !Empty( oMeter )
+   if !empty( oMeter )
 		oMeter:cText	:= "Generando Bases"
       SysRefresh()
    end if
@@ -557,7 +558,7 @@ Method CreateToolbar( aAccesos )
 
    DEFAULT aAccesos           := ::aAccesos
 
-   if Empty( ::oToolBar )
+   if empty( ::oToolBar )
 
       if ::lBig
          if ::lTactil
@@ -599,8 +600,8 @@ Method CreateSearchBar( oWnd )
             FONT     oFontLittelTitle() ;
             PIXEL    SIZE 210, 21
 
-   // ::oGet:cBmp       := "Lupa"
-   // ::oGet:bLostFocus := {|| ::oGet:cText( Space( 200 ) ), if( !Empty( ::oGet:bChange ), Eval( ::oGet:bChange ), ) }
+   ::oGet:cBmp       := "Lupa"
+   // ::oGet:bLostFocus := {|| ::oGet:cText( Space( 200 ) ), if( !empty( ::oGet:bChange ), Eval( ::oGet:bChange ), ) }
 
    @ 124, 220 COMBOBOX ::oComboBox ;
             VAR      ::cComboBox ;
@@ -664,31 +665,31 @@ Return ( Self )
 
 Method EndSearchBar( oWnd )
 
-   if !Empty( ::oGet )
+   if !empty( ::oGet )
       ::oGet:End()
    end if 
 
-   if !Empty( ::oComboBox )
+   if !empty( ::oComboBox )
       ::oComboBox:End()
    end if 
 
-   if !Empty( ::oComboFilter )
+   if !empty( ::oComboFilter )
       ::oComboFilter:End()
    end if 
 
-   if !Empty( ::oButtonAddFilter )
+   if !empty( ::oButtonAddFilter )
       ::oButtonAddFilter:end()
    end if 
    
-   if !Empty( ::oButtonEditFilter )
+   if !empty( ::oButtonEditFilter )
       ::oButtonEditFilter:End()
    end if 
 
-   if !Empty( ::oButtonFilter )
+   if !empty( ::oButtonFilter )
       ::oButtonFilter:End()
    end if
 
-   if !Empty( ::oYearComboBox )
+   if !empty( ::oYearComboBox )
       ::oYearComboBox:End()
    end if 
 
@@ -698,7 +699,7 @@ Return ( Self )
 
 Method CreateLogo()
 
-   if Empty( ::oBmpLogo )
+   if empty( ::oBmpLogo )
 
       @ 120, ( ::oRebar:nWidth() - 138 ) ;
             BITMAP   ::oBmpLogo ;
@@ -800,7 +801,7 @@ Return ( lHide )
 
 Method CloseDatabase()
 
-   if !Empty( ::cDbf )
+   if !empty( ::cDbf )
       ( ::cDbf )->( dbCloseArea() )
    end if
 
@@ -917,7 +918,7 @@ Method CreateBotonesOfficeBar( aAcceso, oCarpeta )
 
    for each oAcceso in aAcceso
 
-      if !Empty( oAcceso:oGroup )
+      if !empty( oAcceso:oGroup )
 
          if aScan( aGrupo, oAcceso:oGroup:cPrompt ) == 0
 
@@ -931,7 +932,7 @@ Method CreateBotonesOfficeBar( aAcceso, oCarpeta )
 
          end if
 
-         if !Empty( oGrupo )
+         if !empty( oGrupo )
 
             if !oAcceso:lLittle
 
@@ -978,7 +979,7 @@ Method CreateFavoritosOfficeBar()
 
    // Creamos los favoritos-----------------------------------------------------
 
-   if Empty( ::oFavoritosBar )
+   if empty( ::oFavoritosBar )
       ::oFavoritosBar            := TCarpeta():New( ::oOfficeBar, "FAVORITOS", , , aColor )
    else
       ::oFavoritosBar:aGrupos    := {}
@@ -992,7 +993,7 @@ Method CreateFavoritosOfficeBar()
 
             if ::lGetShowToolBar( oItem )
 
-               if !Empty( oItem:oGroup )
+               if !empty( oItem:oGroup )
 
                   nScan          := aScan( aGrupo, oItem:oGroup:cPrompt )
                   if nScan == 0
@@ -1001,7 +1002,7 @@ Method CreateFavoritosOfficeBar()
                      nBoton      := 0
                   end if
 
-                  if !Empty( oGrupo )
+                  if !empty( oGrupo )
 
                      oBoton      := TDotNetButton():New( 60, oGrupo, oItem:cBmpBig, oItem:cPrompt, ++nBoton, oItem:bAction, , , .f., .f., .f. )
 
@@ -1025,7 +1026,7 @@ Method CreateFavoritosOfficeBar()
 
    oGrupo   := TDotNetGroup():New( ::oFavoritosBar, 66, "Salir", .f., , "End32" )
    
-   oBoton   := TDotNetButton():New( 60, oGrupo, "End32", "Salir", 1, {|| if ( !Empty( oWnd() ), oWnd():End(), ) }, , , .f., .f., .f. )
+   oBoton   := TDotNetButton():New( 60, oGrupo, "End32", "Salir", 1, {|| if ( !empty( oWnd() ), oWnd():End(), ) }, , , .f., .f., .f. )
 
 Return ( Self )
 
@@ -1035,7 +1036,7 @@ Method EnableComboFilter( aItems )
 
    local cItem
 
-   if !Empty( ::oComboFilter )
+   if !empty( ::oComboFilter )
 
       ::cComboFilter       := __txtFilters__
       ::aComboFilter       := { __txtFilters__ }
@@ -1061,35 +1062,35 @@ Return ( Self )
 
 Method End()
 
-   if !Empty( ::oRebar )
+   if !empty( ::oRebar )
       ::oRebar:End()
    end if 
 
-   if !Empty( ::oGet )
+   if !empty( ::oGet )
       ::oGet:End()
    end if 
 
-   if !Empty( ::oBmpLogo )
+   if !empty( ::oBmpLogo )
       ::oBmpLogo:End()
    end if 
 
-   if !Empty( ::oButtonAddFilter )
+   if !empty( ::oButtonAddFilter )
       ::oButtonAddFilter:End()
    end if 
 
-   if !Empty( ::oButtonEditFilter )
+   if !empty( ::oButtonEditFilter )
       ::oButtonEditFilter:End()
    end if 
    
-   if !Empty( ::oButtonFilter )
+   if !empty( ::oButtonFilter )
       ::oButtonFilter:End()
    end if 
 
-   if !Empty( ::oComboBox )
+   if !empty( ::oComboBox )
       ::oComboBox:End()
    end if 
 
-   if !Empty( ::oComboFilter )
+   if !empty( ::oComboFilter )
       ::oComboFilter:End()
    end if 
 
@@ -1114,7 +1115,7 @@ Static Function lEndApp()
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      if ( !Empty( oWnd() ), oWnd():End(), )
+      if ( !empty( oWnd() ), oWnd():End(), )
 
    RECOVER
 

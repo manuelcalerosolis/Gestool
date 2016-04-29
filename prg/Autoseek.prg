@@ -39,7 +39,7 @@ FUNCTION Searching( cAlias, aIndex, oBrw, cPreFij )
    local oIndice
 	local cIndice
 	local oCadena
-   local xCadena  := Space( 100 )
+   local xValueToSearch  := Space( 100 )
 	local nOrdAnt
 
 	DEFAULT cAlias	:= Alias()
@@ -51,7 +51,7 @@ FUNCTION Searching( cAlias, aIndex, oBrw, cPreFij )
 
    DEFINE DIALOG oDlg RESOURCE "SSEARCH"
 
-	REDEFINE GET oCadena VAR xCadena ;
+	REDEFINE GET oCadena VAR xValueToSearch ;
       ID          100 ;
       PICTURE     "@!" ;
       ON CHANGE   ( lBigSeek( nil, oCadena, cAlias ), ( if( !Empty( oBrw ), oBrw:Refresh(), ) ) );
@@ -89,7 +89,7 @@ Funciones comunes
 FUNCTION AutoSeek( nKey, nFlags, oGet, oBrw, xAlias, lUpper, cPreFij, lAllowFilter, lNotUser, lNotFecha, nLen )
 
    local cType
-	local xCadena
+	local xValueToSearch
    local lReturn        := .t.
 
    DEFAULT xAlias       := Alias()
@@ -104,12 +104,12 @@ FUNCTION AutoSeek( nKey, nFlags, oGet, oBrw, xAlias, lUpper, cPreFij, lAllowFilt
    end if
 
    oGet:Assign()
-   xCadena              := oGet:VarGet()
+   xValueToSearch              := oGet:VarGet()
 
-   if isChar( xCadena )
-      xCadena           := Rtrim( xCadena )
+   if isChar( xValueToSearch )
+      xValueToSearch           := Rtrim( xValueToSearch )
    else
-      xCadena           := ""
+      xValueToSearch           := ""
    end if
 
    cType                := ( xAlias )->( dbOrderInfo( DBOI_KEYTYPE ) )
@@ -118,16 +118,16 @@ FUNCTION AutoSeek( nKey, nFlags, oGet, oBrw, xAlias, lUpper, cPreFij, lAllowFilt
       case cType == "C"
 
          if lUpper
-            xCadena     := Upper( xCadena )
+            xValueToSearch     := Upper( xValueToSearch )
          end if
 
       case cType == "N"
 
-         xCadena        := Val( xCadena )
+         xValueToSearch        := Val( xValueToSearch )
 
    end case
 
-   if lBigSeek( cPreFij, xCadena, xAlias, oBrw, lNotUser, lNotFecha, nLen ) .or. Empty( xCadena )
+   if lBigSeek( cPreFij, xValueToSearch, xAlias, oBrw, lNotUser, lNotFecha, nLen ) .or. Empty( xValueToSearch )
 
       oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
 
@@ -147,7 +147,7 @@ Return ( lReturn )
 
 //--------------------------------------------------------------------------//
 
-FUNCTION lBigSeek( cPreFij, xCadena, xAlias, oBrw, lNotUser, lNotFecha, nLen )
+FUNCTION lBigSeek( cPreFij, xValueToSearch, xAlias, oBrw, lNotUser, lNotFecha, nLen )
 
    local oCol
    local xVal
@@ -160,9 +160,9 @@ FUNCTION lBigSeek( cPreFij, xCadena, xAlias, oBrw, lNotUser, lNotFecha, nLen )
    DEFAULT lNotFecha := .t.
    DEFAULT nLen      := 10
 
-   if isObject( xCadena )
-      xCadena:Assign()
-      xCadena        := xCadena:VarGet()
+   if isObject( xValueToSearch )
+      xValueToSearch:Assign()
+      xValueToSearch        := xValueToSearch:VarGet()
    end if
 
    if isObject( xAlias )
@@ -173,13 +173,13 @@ FUNCTION lBigSeek( cPreFij, xCadena, xAlias, oBrw, lNotUser, lNotFecha, nLen )
       return .t.
    end if
 
-   if isChar( xCadena )
+   if isChar( xValueToSearch )
 
-      xCadena        := StrTran( xCadena, Chr( 8 ), "" )
+      xValueToSearch        := StrTran( xValueToSearch, Chr( 8 ), "" )
       if !Empty( cPreFij )
-         xCadena     := cPreFij + xCadena
+         xValueToSearch     := cPreFij + xValueToSearch
       end if
-      xCadena        := Alltrim( xCadena )
+      xValueToSearch        := Alltrim( xValueToSearch )
 
       // Filtros desde la cabecera---------------------------------------------------
 
@@ -187,9 +187,9 @@ FUNCTION lBigSeek( cPreFij, xCadena, xAlias, oBrw, lNotUser, lNotFecha, nLen )
 
       CreateFastFilter( "", xAlias, .f., , , , lNotUser, lNotFecha )
 
-      if Left( xCadena, 1 ) == "*" .and. Right( xCadena, 1 ) == "*" .and. len( Rtrim( xCadena ) ) > 1
+      if Left( xValueToSearch, 1 ) == "*" .and. Right( xValueToSearch, 1 ) == "*" .and. len( Rtrim( xValueToSearch ) ) > 1
 
-         CreateFastFilter( SubStr( xCadena, 2, len( xCadena ) - 2 ), xAlias, .t. , , , , lNotUser, lNotFecha )
+         CreateFastFilter( SubStr( xValueToSearch, 2, len( xValueToSearch ) - 2 ), xAlias, .t. , , , , lNotUser, lNotFecha )
 
          return .t.
 
@@ -203,7 +203,7 @@ FUNCTION lBigSeek( cPreFij, xCadena, xAlias, oBrw, lNotUser, lNotFecha, nLen )
 
    cSort       := ( xAlias )->( OrdSetFocus() )
 
-   lRet        := lMiniSeek( xCadena, xAlias, nLen )
+   lRet        := lMiniSeek( xValueToSearch, xAlias, nLen )
 
    if !lRet
       ( xAlias )->( OrdSetFocus( cSort ) )
@@ -213,35 +213,54 @@ RETURN ( lRet )
 
 //---------------------------------------------------------------------------//
 
-Function lMiniSeek( xCadena, xAlias, nLen )
+Function lMiniSeek( xValueToSearch, xAlias, nLen )
 
    local lRet              := .f.
 
    DEFAULT nLen            := 10
 
-   lRet                    := lSeekKeyType( xCadena, xAlias )
+   lRet                    := lSeekKeyType( xValueToSearch, xAlias )
 
    if !lRet .and. ( xAlias )->( dbOrderInfo( DBOI_KEYTYPE ) ) == "C"
-      lRet                 := seekDocumento( xCadena, xAlias, nLen )
+      lRet                 := seekDocumento( xValueToSearch, xAlias, nLen )
    end if 
 
 Return ( lRet )
 
 //---------------------------------------------------------------------------//
 
-Function lSeekKeySimple( xCadena, xAlias )
+Function lSeekKeyWild( xValueToSearch, xAlias )
 
-Return ( lSeekKey( xCadena, xAlias, .f. ) )
+   local nRec              := ( xAlias )->( recno() )
+   local lFound            := .f.
+
+   if left( xValueToSearch, 1 ) == "*" .and. right( xValueToSearch, 1 ) == "*" .and. len( rtrim( xValueToSearch ) ) > 1
+      msgAlert( xValueToSearch, "xValueToSearch")
+      lFound               := ( xAlias )->( ordWildSeek( xValueToSearch, .f., .t. ) )
+      msgAlert( if( lFound, "found()", "not found()" ) )
+   end if
+
+   if !lFound
+      ( xAlias )->( dbgoto( nRec ) )
+   end if 
+
+Return ( lFound )
 
 //---------------------------------------------------------------------------//
 
-Function lSeekKeyType( xCadena, xAlias )
+Function lSeekKeySimple( xValueToSearch, xAlias )
 
-Return ( lSeekKey( xCadena, xAlias, .t. ) )
+Return ( lSeekKey( xValueToSearch, xAlias, .f. ) )
 
 //---------------------------------------------------------------------------//
 
-Function lSeekKey( xCadena, xAlias, lScope )
+Function lSeekKeyType( xValueToSearch, xAlias )
+
+Return ( lSeekKey( xValueToSearch, xAlias, .t. ) )
+
+//---------------------------------------------------------------------------//
+
+Function lSeekKey( xValueToSearch, xAlias, lScope )
 
    local nRec
    local lRet              := .f.
@@ -262,7 +281,7 @@ Function lSeekKey( xCadena, xAlias, lScope )
 
    nRec                    := ( xAlias )->( Recno() )
 
-   if !empty( xCadena )
+   if !empty( xValueToSearch )
 
       if lScope
          ( xAlias )->( OrdScope( 0, nil ) )
@@ -272,11 +291,11 @@ Function lSeekKey( xCadena, xAlias, lScope )
       do case
       case cType == "D"
 
-         if len( Rtrim( xCadena ) ) == 10
-            if ( xAlias )->( dbSeek( Ctod( xCadena ), .t. ) )
+         if len( Rtrim( xValueToSearch ) ) == 10
+            if ( xAlias )->( dbSeek( Ctod( xValueToSearch ), .t. ) )
                if lScope
-                  ( xAlias )->( OrdScope( 0, Ctod( xCadena ) ) )
-                  ( xAlias )->( OrdScope( 1, Ctod( xCadena ) ) )
+                  ( xAlias )->( OrdScope( 0, Ctod( xValueToSearch ) ) )
+                  ( xAlias )->( OrdScope( 1, Ctod( xValueToSearch ) ) )
                end if 
             else
                if lScope
@@ -290,22 +309,18 @@ Function lSeekKey( xCadena, xAlias, lScope )
 
       case cType == "N"
 
-         if ( xAlias )->( dbSeek( val( xCadena ), .t. ) ) 
-            lRet  := .t.
-         else
-            lRet  := .t.
-         end if
+         lRet     := ( xAlias )->( dbSeek( val( xValueToSearch ), .t. ) ) 
 
       case cType == "C"
 
-         if ( xAlias )->( dbSeek( xCadena, .t. ) )
+         if ( xAlias )->( dbSeek( xValueToSearch, .t. ) )
 
             if lScope
-               ( xAlias )->( OrdScope( 0, xCadena ) )
-               ( xAlias )->( OrdScope( 1, xCadena ) )
+               ( xAlias )->( OrdScope( 0, xValueToSearch ) )
+               ( xAlias )->( OrdScope( 1, xValueToSearch ) )
             end if 
 
-            lRet     := .t.
+            lRet  := .t.
 
          end if
 
@@ -314,7 +329,7 @@ Function lSeekKey( xCadena, xAlias, lScope )
    end if
 
    if !lRet
-      ( xAlias )->( dbGoTo( nRec ) )
+      ( xAlias )->( dbgoto( nRec ) )
    end if
 
    RECOVER USING oError
@@ -327,19 +342,19 @@ Return ( lRet )
 
 //---------------------------------------------------------------------------//
 
-Function seekCodigoTerceros( xCadena, xAlias, nLenCodigo )
+Function seekCodigoTerceros( xValueToSearch, xAlias, nLenCodigo )
 
    local nRec
    local lRet        := .f.
 
    nRec              := ( xAlias )->( Recno() )
 
-   xCadena           :=  rjust( alltrim( xCadena ), "0", nLenCodigo )
+   xValueToSearch           :=  rjust( alltrim( xValueToSearch ), "0", nLenCodigo )
 
-   if ( xAlias )->( dbSeek( xCadena ) ) 
+   if ( xAlias )->( dbSeek( xValueToSearch ) ) 
 
-      ( xAlias )->( OrdScope( 0, xCadena ) )
-      ( xAlias )->( OrdScope( 1, xCadena ) )
+      ( xAlias )->( OrdScope( 0, xValueToSearch ) )
+      ( xAlias )->( OrdScope( 1, xValueToSearch ) )
 
       lRet           := .t.
             
@@ -353,13 +368,13 @@ return ( lRet )
 
 //---------------------------------------------------------------------------//
 
-Function seekDocumentoSimple( xCadena, xAlias, nLen )
+Function seekDocumentoSimple( xValueToSearch, xAlias, nLen )
 
-Return seekDocumento( xCadena, xAlias, nLen, .f. )
+Return seekDocumento( xValueToSearch, xAlias, nLen, .f. )
 
 //---------------------------------------------------------------------------//
 
-Function seekDocumento( xCadena, xAlias, nLen, lScope )
+Function seekDocumento( xValueToSearch, xAlias, nLen, lScope )
    
    local n
    local nRec
@@ -372,8 +387,8 @@ Function seekDocumento( xCadena, xAlias, nLen, lScope )
 
    nRec              := ( xAlias )->( Recno() )
 
-   cPre              := SubStr( xCadena, 1, 1 )
-   cPos              := Padl( Rtrim( SubStr( xCadena, 2, nLen - 1 ) ), nLen - 1 )
+   cPre              := SubStr( xValueToSearch, 1, 1 )
+   cPos              := Padl( Rtrim( SubStr( xValueToSearch, 2, nLen - 1 ) ), nLen - 1 )
 
    for n := 1 to nLen
 
@@ -454,7 +469,7 @@ Function CreateFastFilter( cExpresionFilter, cAlias, lInclude, oMeter, cExpUsuar
 
    end if
 
-   if lAds() .or. lAIS()
+   if lAIS()
 
       buildSetFilter( cExpresionFilter, cAlias, lInclude, cExpUsuario, cExpFecha )
 
@@ -475,7 +490,7 @@ Function CreateFastFilter( cExpresionFilter, cAlias, lInclude, oMeter, cExpUsuar
       end if
 
       if lInclude
-         cExpresionFilter        := "'" + cExpresionFilter + "' $ " + cOrdKey + ".and. " + cCondAnterior
+         cExpresionFilter  := "'" + cExpresionFilter + "' $ " + cOrdKey + ".and. " + cCondAnterior
       end if
 
       if !lNotUser .and. Empty( cExpUsuario ) .and. !Empty( cFiltroUsuario )

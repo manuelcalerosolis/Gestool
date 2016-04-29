@@ -1389,7 +1389,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
    cExpHead          += ' .and. Field->nNumPed >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumPed <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
    cExpHead          += ' .and. Field->cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufPed <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
-   ( aliasPedidosClientes )->( dbSetCustomFilter( cExpHead ) )
+   ( aliasPedidosClientes )->( setCustomFilter( cExpHead ) )
 
    ::oMtrInf:cText   := "Procesando pedidos"
    ::oMtrInf:SetTotal( ( aliasPedidosClientes )->( dbCustomKeyCount() ) )
@@ -1405,7 +1405,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
       cExpLine       += ' .and. Field->cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() ) + '" .and. Field->cSufPed <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
    end if
 
-   ( aliasPedidosClientesLineas )->( dbSetCustomFilter( cExpLine ) )
+   ( aliasPedidosClientesLineas )->( setCustomFilter( cExpLine ) )
 
    ( aliasPedidosClientes )->( dbGoTop() )
    while !::lBreak .and. !( aliasPedidosClientes )->( Eof() )

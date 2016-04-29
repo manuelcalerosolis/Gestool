@@ -21,6 +21,8 @@ CLASS TGetHlp FROM TGet
    DATA  oHelpText
    DATA  cHelpText               INIT  Space( 50 )
 
+   DATA  bKeyUp
+
    DATA  lGotFocus
    DATA  lNeedGetFocus
 
@@ -28,43 +30,43 @@ CLASS TGetHlp FROM TGet
    DATA  bOldValid
    DATA  bOldLostFocus
 
-   DATA  nMargin                 INIT 16
+   DATA  nMargin                  INIT 16
 
-   Method New() CONSTRUCTOR
+   METHOD New()                   CONSTRUCTOR
+   METHOD ReDefine()              CONSTRUCTOR
 
-   Method ReDefine() CONSTRUCTOR
+   METHOD Display()
 
-   Method Display()
+   METHOD Destroy()
 
-   Method Destroy()
+   METHOD EvalHelp()
 
-   Method EvalHelp()
+   METHOD KeyChar( nKey, nFlags )
+   METHOD KeyUp( nKey, nFlags )   INLINE ( if( !empty( ::bKeyUp ), eval( ::bKeyUp ), ), ::Super:KeyUp( nKey, nFlags ) )
 
-   Method KeyChar( nKey, nFlags )
+   METHOD SetPicture( cPicture ) INLINE ( ::cPicture  := cPicture, ::oGet:Picture := cPicture, ::Refresh()  )   // MCS
 
-   Method SetPicture( cPicture ) INLINE ( ::cPicture  := cPicture, ::oGet:Picture := cPicture, ::Refresh()  )   // MCS
+   METHOD Home()                 INLINE ( ::oGet:Home(), ::SetPos( ::oGet:Pos ) )
 
-   Method Home()                 INLINE ( ::oGet:Home(), ::SetPos( ::oGet:Pos ) )
+   METHOD EvalMult()             INLINE ( if( ::bMult != nil, Eval( ::bMult, Self ), ) )
 
-   Method EvalMult()             INLINE ( if( ::bMult != nil, Eval( ::bMult, Self ), ) )
+   METHOD Hide()                 INLINE ( if( ::oSay != nil, ::oSay:Hide(), ), if( ::oHelpText != nil, ::oHelpText:Hide(), ), ::Super:Hide() )
 
-   Method Hide()                 INLINE ( if( ::oSay != nil, ::oSay:Hide(), ), if( ::oHelpText != nil, ::oHelpText:Hide(), ), ::Super:Hide() )
+   METHOD Show()                 INLINE ( if( ::oSay != nil, ::oSay:Show(), ), if( ::oHelpText != nil, ::oHelpText:Show(), ), ::Super:Show() )
 
-   Method Show()                 INLINE ( if( ::oSay != nil, ::oSay:Show(), ), if( ::oHelpText != nil, ::oHelpText:Show(), ), ::Super:Show() )
+   METHOD SetText( cText )       INLINE ( if( ::oSay != nil, ::oSay:SetText( cText ), ::cText( cText ) ) )
 
-   Method SetText( cText )       INLINE ( if( ::oSay != nil, ::oSay:SetText( cText ), ::cText( cText ) ) )
-
-   Method HardEnable()
+   METHOD HardEnable()
    
-   Method HardDisable()
+   METHOD HardDisable()
 
    METHOD GotFocus()
 
    METHOD GetDlgCode( nLastKey )
 
-   Method LostFocus( hCtlFocus )
+   METHOD LostFocus( hCtlFocus )
 
-   Method lValid()
+   METHOD lValid()
 
 ENDCLASS
 
@@ -339,7 +341,7 @@ RETURN Self
 
 //---------------------------------------------------------------------------//
 
-Method HardEnable() CLASS TGetHlp
+METHOD HardEnable() CLASS TGetHlp
 
    ::bWhen     := ::bOldWhen
 
@@ -347,7 +349,7 @@ Return ( ::Enable() )
 
 //---------------------------------------------------------------------------//
 
-Method HardDisable() CLASS TGetHlp
+METHOD HardDisable() CLASS TGetHlp
 
    ::bOldWhen  := ::bWhen
    ::bWhen     := {|| .f. }

@@ -3965,13 +3965,23 @@ Return ( msgAlert( hb_valtoexp( uValue ), cTitle ) )
 
 //----------------------------------------------------------------------------//
 
-Function dbSetCustomFilter( cExpresionFilter )
+Function setCustomFilter( cExpresionFilter )
 
    if lAIS()
       Return ( ( Select() )->( adsSetAOF( cExpresionFilter ) ) )
    end if 
 
 Return ( ( Select() )->( dbSetFilter( bCheck2Block( cExpresionFilter ), cExpresionFilter ) ) )
+
+//----------------------------------------------------------------------------//
+
+Function quitCustomFilter()
+
+   if lAIS()
+      Return ( ( Select() )->( adsClearAOF() ) )
+   end if 
+
+Return ( ( Select() )->( dbSetFilter() ) )
 
 //----------------------------------------------------------------------------//
 
