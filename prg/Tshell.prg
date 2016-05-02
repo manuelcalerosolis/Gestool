@@ -108,7 +108,8 @@ CLASS TShell FROM TMdiChild
    DATA  lFastButtons   AS LOGIC    INIT .t.
 
    DATA  lTactil        AS LOGIC    INIT .f.
-   DATA  lAsterikFilter AS LOGIC    INIT .f.
+
+   DATA  cAsteriskFilter            INIT ''
 
    DATA  oActiveFilter
    DATA  lActiveFilter  AS LOGIC    INIT .f.
@@ -158,9 +159,9 @@ CLASS TShell FROM TMdiChild
                     bLeft, bRight, bPgLeft, bPgRight, bValid, bDropFiles,;
                     bLButtonUp )
 
-   Method CreateXBrowse()
-   Method CreateXFromCode()
-   Method AddXCol()  INLINE ( ::oBrw:AddCol() )
+   METHOD CreateXBrowse()
+   METHOD CreateXFromCode()
+   METHOD AddXCol()  INLINE ( ::oBrw:AddCol() )
    METHOD AddCol()   INLINE ( ::oBrw:AddCol() )
 
 	METHOD GotFocus()
@@ -256,58 +257,57 @@ CLASS TShell FROM TMdiChild
 
    METHOD AddGoTo( cCaption, bAction )
 
-   Method SearchSetFocus()                   INLINE ( if( !Empty( ::oWndBar ), ::oWndBar:SetGetFocus(), ) )
-   Method SetYearComboBoxChange( bBlock )    INLINE ( if( !Empty( ::oWndBar ), ::oWndBar:SetYearComboBoxChange( bBlock ), ) )
+   METHOD SearchSetFocus()                   INLINE ( if( !Empty( ::oWndBar ), ::oWndBar:SetGetFocus(), ) )
+   METHOD SetYearComboBoxChange( bBlock )    INLINE ( if( !Empty( ::oWndBar ), ::oWndBar:SetYearComboBoxChange( bBlock ), ) )
 
-   Method SetKillFilter( bBlock )            INLINE ( if( !Empty( ::oWndBar ), ::oWndBar:SetKillFilter( bBlock ), ) )
+   METHOD SetKillFilter( bBlock )            INLINE ( if( !Empty( ::oWndBar ), ::oWndBar:SetKillFilter( bBlock ), ) )
 
-   Method AddImageList( cImage )
+   METHOD AddImageList( cImage )
 
-   Method ClickTree()
+   METHOD ClickTree()
 
-   Method BarDisable()                       INLINE ( if( !Empty( ::oWndBar ), ::oWndBar:Disable(), ) )
-   Method BarEnable()                        INLINE ( if( !Empty( ::oWndBar ), ::oWndBar:Enable(), ) )
+   METHOD BarDisable()                       INLINE ( if( !Empty( ::oWndBar ), ::oWndBar:Disable(), ) )
+   METHOD BarEnable()                        INLINE ( if( !Empty( ::oWndBar ), ::oWndBar:Enable(), ) )
 
-   Method BrwDisable()                       INLINE ( if( !Empty( ::oBrw ), ::oBrw:Disable(), ) )
-   Method BrwEnable()                        INLINE ( if( !Empty( ::oBrw ), ::oBrw:Enable(), ) ) //( ::oBrw:Enable(), ::oBrw:SetFocus() ), ) ) //
+   METHOD BrwDisable()                       INLINE ( if( !Empty( ::oBrw ), ::oBrw:Disable(), ) )
+   METHOD BrwEnable()                        INLINE ( if( !Empty( ::oBrw ), ::oBrw:Enable(), ) ) //( ::oBrw:Enable(), ::oBrw:SetFocus() ), ) ) //
 
-   Method SetOnProcess()                     INLINE ( ::BrwDisable(), ::BarDisable(), ::lOnProcess := .t., ::CheckExtendInfo() )
-   Method KillProcess()                      INLINE ( ::lOnProcess := .f., ::BarEnable(), ::BrwEnable() )
-   Method QuitOnProcess()                    INLINE ( ::lOnProcess := .f., ::BarEnable(), ::BrwEnable() )
+   METHOD SetOnProcess()                     INLINE ( ::BrwDisable(), ::BarDisable(), ::lOnProcess := .t., ::CheckExtendInfo() )
+   METHOD KillProcess()                      INLINE ( ::lOnProcess := .f., ::BarEnable(), ::BrwEnable() )
+   METHOD QuitOnProcess()                    INLINE ( ::lOnProcess := .f., ::BarEnable(), ::BrwEnable() )
 
-   Method ShowButtonFilter()                 INLINE ( ::lActiveFilter := .t., ::oWndBar:ShowButtonFilter() )
-   Method HideButtonFilter()                 INLINE ( ::lActiveFilter := .f., ::oWndBar:HideButtonFilter() )
+   METHOD ShowButtonFilter()                 INLINE ( ::lActiveFilter := .t., ::oWndBar:ShowButtonFilter() )
+   METHOD HideButtonFilter()                 INLINE ( ::lActiveFilter := .f., ::oWndBar:HideButtonFilter() )
 
-   Method ShowAddButtonFilter()              INLINE ( ::oWndBar:ShowAddButtonFilter() )
-   Method HideAddButtonFilter()              INLINE ( ::oWndBar:HideAddButtonFilter() )
+   METHOD ShowAddButtonFilter()              INLINE ( ::oWndBar:ShowAddButtonFilter() )
+   METHOD HideAddButtonFilter()              INLINE ( ::oWndBar:HideAddButtonFilter() )
 
-   Method ShowEditButtonFilter()             INLINE ( ::oWndBar:ShowEditButtonFilter() )
-   Method HideEditButtonFilter()             INLINE ( ::oWndBar:HideEditButtonFilter() )
+   METHOD ShowEditButtonFilter()             INLINE ( ::oWndBar:ShowEditButtonFilter() )
+   METHOD HideEditButtonFilter()             INLINE ( ::oWndBar:HideEditButtonFilter() )
 
-   Method AddFilter()                        INLINE ( if(   !Empty( ::oActiveFilter ),;
+   METHOD AddFilter()                        INLINE ( if(   !Empty( ::oActiveFilter ),;
                                                             ( ::oActiveFilter:AddFilter(), ::EnableComboFilter( ::oActiveFilter:FiltersName() ) ), ) )
-   Method EditFilter()                       INLINE ( if(   !Empty( ::oActiveFilter ) .and. !Empty( ::oWndBar ),;
+   METHOD EditFilter()                       INLINE ( if(   !Empty( ::oActiveFilter ) .and. !Empty( ::oWndBar ),;
                                                             ( ::oActiveFilter:EditFilter( ::oWndBar:GetComboFilter() ), ::ChgFilter() ), ) )
-   Method KillFilter()                       INLINE ( if(   !Empty( ::oActiveFilter ) .and. !Empty( ::oWndBar ),;
-                                                            ( ::oActiveFilter:KillFilter(), ::oWndBar:HideButtonFilter(), ::oWndBar:HideEditButtonFilter() ), ) )
+   METHOD KillFilter()                       
 
-   Method CreateData()
-   Method OpenData()
-   Method CleanData()
-   Method DeleteData()
-   Method CloseData()
-   Method ReindexData()
-   Method LoadData()
-   Method SaveData()
+   METHOD CreateData()
+   METHOD OpenData()
+   METHOD CleanData()
+   METHOD DeleteData()
+   METHOD CloseData()
+   METHOD ReindexData()
+   METHOD LoadData()
+   METHOD SaveData()
 
-   Method AppendData( cPath, cPathFrom )
+   METHOD AppendData( cPath, cPathFrom )
 
-   Method DefControl()                       VIRTUAL
+   METHOD DefControl()                       VIRTUAL
 
    METHOD CheckExtendInfo()
    METHOD ShowExtendInfo( nRow, nCol, cToolTip )
    METHOD DestroyToolTip()
-   METHOD FastFilter()
+   METHOD asteriskFilter()
 
    METHOD SetAutoFilter()
 
@@ -599,7 +599,7 @@ return ::Super:KeyChar( nKey, nFlags )
 
 //----------------------------------------------------------------------------//
 
-Method KeySearch( nKey, nFlags, oWndBar )
+METHOD KeySearch( nKey, nFlags, oWndBar )
 
    if ( nKey == VK_ESCAPE .or. nKey == VK_RETURN )
       ::brwEnable()
@@ -955,13 +955,17 @@ METHOD FastSeek() CLASS TShell
       Return .f.
    end if
 
+   if empty( ::oWndBar ) .or. empty( ::oWndBar:oGet )
+      Return .f.
+   end if
+
    CursorWait()
 
    oGet              := ::oWndBar:oGet
 
    // Estudiamos la cadena de busqueda-------------------------------------------
 
-   xValueToSearch    := ::oWndBar:oGet:oGet:Buffer()
+   xValueToSearch    := oGet:oGet:Buffer()
    xValueToSearch    := alltrim( upper( cvaltochar( xValueToSearch ) ) )
    xValueToSearch    := strtran( xValueToSearch, chr( 8 ), "" )
 
@@ -972,7 +976,7 @@ METHOD FastSeek() CLASS TShell
 
    // Comenzamos la busqueda------------------------------------------------------
 
-   lSeek             := ::FastFilter( xValueToSearch, cAlias ) // lSeekKeyWild( xValueToSearch, cAlias ) 
+   lSeek             := ::asteriskFilter( xValueToSearch, cAlias ) // lSeekKeyWild( xValueToSearch, cAlias ) 
 
    if !lSeek
       lSeek          := lSeekKeyType( xValueToSearch, cAlias ) // lMiniSeek( xValueToSearch, cAlias, ::cSearchType, ::nLenSearchType )
@@ -998,9 +1002,9 @@ METHOD FastSeek() CLASS TShell
       oGet:SetColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
    end if
 
+   ::oBrw:Refresh()
    ::oBrw:Select( 0 )
    ::oBrw:Select( 1 )
-   ::oBrw:Refresh( .t. )
 
    CursorWE()
 
@@ -1008,7 +1012,7 @@ Return ( lSeek )
 
 //--------------------------------------------------------------------------//
 
-METHOD FastFilter( xValueToSearch, cAlias )
+METHOD asteriskFilter( xValueToSearch, cAlias )
 
    local cFilterExpresion
 
@@ -1016,21 +1020,19 @@ METHOD FastFilter( xValueToSearch, cAlias )
 
       xValueToSearch       := substr( xValueToSearch, 2, len( xValueToSearch ) - 2 )
 
-      cFilterExpresion     := '"' + xValueToSearch + '" $ ' + ( cAlias )->( ordkey() ) 
+      ::cAsteriskFilter    := '"' + xValueToSearch + '" $ ' + ( cAlias )->( ordkey() ) 
 
       if !empty( ::getActiveExpresionFilter() )
-         cFilterExpresion  += ' .and. ' + ::getActiveExpresionFilter()
+         ( cAlias )->( setCustomFilter( ::cAsteriskFilter + ' .and. ' + ::getActiveExpresionFilter() ) )
+      else
+         ( cAlias )->( setCustomFilter( ::cAsteriskFilter ) )
       end if 
-
-      ( cAlias )->( setCustomFilter( cFilterExpresion ) )
-
-      ::lAsterikFilter     := .t.
 
       Return .t.
 
    else
 
-      if ::lAsterikFilter
+      if !empty( ::cAsteriskFilter )
 
          if !empty( ::getActiveExpresionFilter() )
             ( cAlias )->( setCustomFilter( ::getActiveExpresionFilter() ) )
@@ -1038,7 +1040,7 @@ METHOD FastFilter( xValueToSearch, cAlias )
             ( cAlias )->( quitCustomFilter() )
          end if 
 
-         ::lAsterikFilter  := .f.
+         ::cAsteriskFilter := ''
 
       end if
 
@@ -1057,9 +1059,7 @@ METHOD RButtonDown( nRow, nCol, nFlags ) CLASS TShell
    local oMenu       := MenuBegin( .t. )
    local bMenuSelect := ::bMenuSelect
 
-   /*
-   Montamos el menu------------------------------------------------------------
-   */
+   // Montamos el menu------------------------------------------------------------
 
    ::bMenuSelect     := nil
 
@@ -1959,7 +1959,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method AddGoTo( cCaption, bAction )
+METHOD AddGoTo( cCaption, bAction )
 
    aAdd( ::aGoTo, { cCaption, bAction } )
 
@@ -1967,7 +1967,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method AddImageList( cImage )
+METHOD AddImageList( cImage )
 
    local oImage
    local nImageList     := 0
@@ -1983,7 +1983,7 @@ Return ( nImageList )
 
 //---------------------------------------------------------------------------//
 
-Method ClickTree()
+METHOD ClickTree()
 
    local oItem       := ::oBtnBar:GetSelected()
 
@@ -2017,7 +2017,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method OpenData( cPath )
+METHOD OpenData( cPath )
 
    local oBlock
    local oError
@@ -2054,7 +2054,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method CreateData( cPath )
+METHOD CreateData( cPath )
 
    DEFAULT cPath  := cPatEmp()
 
@@ -2072,7 +2072,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method ReindexData( cPath )
+METHOD ReindexData( cPath )
 
    local dbfUse
    local dbfCol
@@ -2121,7 +2121,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-Method AppendData( cPath, cPathFrom )
+METHOD AppendData( cPath, cPathFrom )
 
    ::OpenData( cPath )
 
@@ -2139,7 +2139,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-Method LoadData()
+METHOD LoadData()
 
    local n
    local oError
@@ -2183,7 +2183,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method SaveData( lSaveBrowseState )
+METHOD SaveData( lSaveBrowseState )
 
    local n
    local nCols
@@ -2245,7 +2245,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method CleanData() CLASS TShell
+METHOD CleanData() CLASS TShell
 
    // Limpiar las configuraciones----------------------------------------------
 
@@ -2293,7 +2293,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method CreateXBrowse() CLASS TShell
+METHOD CreateXBrowse() CLASS TShell
 
    local oError
    local oBlock
@@ -2378,7 +2378,7 @@ Return ( lCreateXBrowse )
 
 //---------------------------------------------------------------------------//
 
-Method CreateXFromCode()
+METHOD CreateXFromCode()
 
    local oCol
 
@@ -2441,7 +2441,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method CheckExtendInfo()
+METHOD CheckExtendInfo()
 
    if Empty( ::bToolTip )
       Return ( Self )
@@ -2571,7 +2571,11 @@ METHOD chgFilter() CLASS TShell
          cFilterExpresion     := ::oActiveFilter:getExpresionFilter( cFilter )
 
          if !empty( cFilterExpresion )
-            ( ::xAlias )->( setCustomFilter( cFilterExpresion ) )
+            if !empty( ::cAsteriskFilter )
+               ( ::xAlias )->( setCustomFilter( cFilterExpresion + ' .and. ' + ::cAsteriskFilter ) )
+            else
+               ( ::xAlias )->( setCustomFilter( cFilterExpresion ) )
+            end if 
          endif
 
          ::ShowButtonFilter()
@@ -2579,7 +2583,11 @@ METHOD chgFilter() CLASS TShell
 
       else 
 
-         ( ::xAlias )->( quitCustomFilter() )
+         if !empty( ::cAsteriskFilter )
+            ( ::xAlias )->( setCustomFilter( ::cAsteriskFilter ) )
+         else
+            ( ::xAlias )->( quitCustomFilter() )
+         end if 
 
          ::HideButtonFilter()
          ::HideEditButtonFilter()
@@ -2689,6 +2697,23 @@ METHOD getActiveExpresionFilter()
    end if 
 
 Return ( cActiveExpresionFilter )
+
+//----------------------------------------------------------------------------//
+
+METHOD KillFilter()
+
+   if !empty( ::oActiveFilter )
+      ::oActiveFilter:KillFilter()
+   end if      
+
+   if !empty( ::oWndBar )
+      ::oWndBar:HideButtonFilter()
+      ::oWndBar:HideEditButtonFilter()
+   end if 
+
+   ::chgFilter()
+
+Return ( Self )
 
 //----------------------------------------------------------------------------//
 

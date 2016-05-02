@@ -316,7 +316,7 @@ METHOD New( aTField, oDbf, oWebBtn, lAplyFilter, oWndBrw ) CLASS TDlgFlt
 
    ::SetFields( aTField )
 
-   if Empty( ::aTField )
+   if empty( ::aTField )
       MsgStop( "No hay tabla definida." )
       return ( Self )
    end if
@@ -345,7 +345,7 @@ METHOD Create( oDbf, oWebBtn, lAplyFilter, oWndBrw ) CLASS TDlgFlt
 
    ::SetFields( aClone( oDbf:aTField ) )
 
-   if Empty( ::aTField )
+   if empty( ::aTField )
       MsgStop( "No hay tabla definida." )
       return ( Self )
    end if
@@ -375,7 +375,7 @@ Method Default()
 
    ::SetFields( ::aTField )                              
 
-   if Empty( ::aFilter )
+   if empty( ::aFilter )
       ::AppendLine()
    end if 
 
@@ -389,14 +389,14 @@ METHOD SetFields( aTField )
 
    ::aTField      := aTField
 
-   if !Empty( ::aTField )                              
+   if !empty( ::aTField )                              
    
       for each oFld in ::aTField
 
          do case
          case IsObject( oFld )
 
-            if !Empty( oFld:cComment ) .and. !( oFld:lCalculate ) .and. !( oFld:lHide )
+            if !empty( oFld:cComment ) .and. !( oFld:lCalculate ) .and. !( oFld:lHide )
                aAdd( ::aTblField,      oFld:cName )
                aAdd( ::aTblType,       oFld:cType )
                aAdd( ::aTblMask,       oFld:cComment )
@@ -404,7 +404,7 @@ METHOD SetFields( aTField )
 
          case IsArray( oFld )
 
-            if !Empty( oFld[ 5 ] )
+            if !empty( oFld[ 5 ] )
                aAdd( ::aTblField,      oFld[ 1 ] )
                aAdd( ::aTblType,       oFld[ 2 ] )
                aAdd( ::aTblMask,       oFld[ 5 ] )
@@ -596,7 +596,7 @@ RETURN ( Self )
 
 METHOD InitDialog()
 
-   if !Empty( ::cTipFilter )
+   if !empty( ::cTipFilter )
       ::SetScopeFilter( ::cTipFilter )
    end if
 
@@ -624,7 +624,7 @@ METHOD NexoOnPostEdit( o, x, n )
 
    if IsNum( n ) .and. ( n != VK_ESCAPE )
 
-      if !Empty( x )
+      if !empty( x )
       
          ::aFilter[ nAt, 4 ]  := x
 
@@ -667,7 +667,7 @@ METHOD CampoOnPostEdit( o, x, n )
 
                ::oColValor:nEditType            := EDIT_GET              
 
-               if Empty( ::aFilter[ nAt, 3 ] ) .or. lCambio
+               if empty( ::aFilter[ nAt, 3 ] ) .or. lCambio
                   ::aFilter[ nAt, 3 ]           := Space( 100 )
                end if 
 
@@ -677,7 +677,7 @@ METHOD CampoOnPostEdit( o, x, n )
 
                ::oColValor:nEditType            := EDIT_GET              
 
-               if Empty( ::aFilter[ nAt, 3 ] ) .or. lCambio
+               if empty( ::aFilter[ nAt, 3 ] ) .or. lCambio
                   ::aFilter[ nAt, 3 ]           := 0
                end if 
 
@@ -687,7 +687,7 @@ METHOD CampoOnPostEdit( o, x, n )
 
                ::oColValor:nEditType            := EDIT_DATE       
                
-               if Empty( ::aFilter[ nAt, 3 ] ) .or. lCambio
+               if empty( ::aFilter[ nAt, 3 ] ) .or. lCambio
                   ::aFilter[ nAt, 3 ]           := Date()
                end if 
                
@@ -699,7 +699,7 @@ METHOD CampoOnPostEdit( o, x, n )
 
                ::oColValor:nEditType            := EDIT_GET_LISTBOX
 
-               if Empty( ::aFilter[ nAt, 3 ] ) .or. lCambio
+               if empty( ::aFilter[ nAt, 3 ] ) .or. lCambio
                   ::aFilter[ nAt, 3 ]           := "Si"
                end if 
 
@@ -754,7 +754,7 @@ METHOD ExpresionBuilder()
       */
 
       ::bExpFilter               := Compile( ::cExpresionFilter )
-      if Empty( ::bExpFilter )
+      if empty( ::bExpFilter )
          msgStop( "Expresion erronea " + ::cExpresionFilter, "Error!" )
          ::InitExpresion()
       end if
@@ -789,7 +789,7 @@ METHOD ChgFields()
 
    local oDlg
 
-   if Empty( ::aTField )
+   if empty( ::aTField )
       MsgStop( "No hay tabla definida." )
       return ( Self )
    end if
@@ -858,7 +858,7 @@ METHOD ExecuteReplace()
    local nDbfRec
    local nFldPos
 
-   if Empty( ::cFldReplace ) .or. Empty( ::cExpReplace )
+   if empty( ::cFldReplace ) .or. empty( ::cExpReplace )
       Return nil
    end if
 
@@ -918,7 +918,7 @@ METHOD AplyFilter()
    Borramos el filtro anterior si los hubiera--------------------------------
    */
 
-   if !Empty( ::bOnAplyFilter )
+   if !empty( ::bOnAplyFilter )
       Eval( ::bOnAplyFilter )
    end if
 
@@ -927,7 +927,7 @@ METHOD AplyFilter()
       do case
          case IsObject( ::oDbf )
 
-            if Empty( ::nRecAnterior )
+            if empty( ::nRecAnterior )
                ::nRecAnterior := ( ::oDbf:cAlias )->( Recno() )
             end if
 
@@ -935,7 +935,7 @@ METHOD AplyFilter()
 
                ( ::oDbf:cAlias )->( dbSetFilter( c2Block( ::cExpresionFilter + " .and. !Deleted()" ), ::cExpresionFilter + " .and. !Deleted()" ) )
 
-               if !Empty( ::oWndBrw )
+               if !empty( ::oWndBrw )
                   ::oWndBrw:ShowButtonFilter()
                   ::oWndBrw:ShowEditButtonFilter()
                   ::oWndBrw:Refresh()
@@ -951,28 +951,28 @@ METHOD AplyFilter()
 
                   bOrdKey        := c2Block( cOrdKey )
 
-                  if !Empty( ::oMtrReplace )
+                  if !empty( ::oMtrReplace )
                      ::oMtrReplace:SetTotal( ( ::oDbf:cAlias )->( Lastrec() ) )
                      nEvery      := Int( ::oMtrReplace:nTotal / 10 )
                   end if
 
-                  if Empty( ::cOrdAnterior )
+                  if empty( ::cOrdAnterior )
                      ::cOrdAnterior := ( ::oDbf:cAlias )->( OrdSetFocus() )
                   end if
 
-                  if Empty( ::nRecAnterior )
+                  if empty( ::nRecAnterior )
                      ::nRecAnterior := ( ::oDbf:cAlias )->( Recno() )
                   end if
 
-                  if Empty( ::cBagAnterior )
+                  if empty( ::cBagAnterior )
                      ::cBagAnterior := ( ::oDbf:cAlias )->( dbOrderInfo( DBOI_FULLPATH ) )
                   end if
 
-                  if Empty( ::cNamAnterior )
+                  if empty( ::cNamAnterior )
                      ::cNamAnterior := "OrdTmp" + cCurUsr()
                   end if
 
-                  if !Empty( ::oMtrReplace )
+                  if !empty( ::oMtrReplace )
                      ( ::oDbf:cAlias )->( OrdCondSet( ::cExpresionFilter + " .and. !Deleted()", c2Block( ::cExpresionFilter + " .and. !Deleted()" ),,, {|| ::oMtrReplace:Set( ( ::oDbf:cAlias )->( RecNo() ) ), SysRefresh() }, nEvery ) )
                   else
                      ( ::oDbf:cAlias )->( OrdCondSet( ::cExpresionFilter + " .and. !Deleted()", c2Block( ::cExpresionFilter + " .and. !Deleted()" ),,, {|| SysRefresh() } ) )
@@ -982,7 +982,7 @@ METHOD AplyFilter()
                   ( ::oDbf:cAlias )->( OrdSetFocus( ::cNamAnterior, ::cBagAnterior ) )
                   ( ::oDbf:cAlias )->( dbGoTop() )
 
-                  if !Empty( ::oWndBrw )
+                  if !empty( ::oWndBrw )
                      ::oWndBrw:ShowButtonFilter()
                      ::oWndBrw:ShowEditButtonFilter()
                      ::oWndBrw:Refresh()
@@ -998,7 +998,7 @@ METHOD AplyFilter()
 
          case IsChar( ::oDbf )
 
-            if Empty( ::nRecAnterior )
+            if empty( ::nRecAnterior )
                ::nRecAnterior := ( ::oDbf )->( Recno() )
             end if
 
@@ -1006,7 +1006,7 @@ METHOD AplyFilter()
 
                ( ::oDbf )->( dbSetFilter( c2Block( ::cExpresionFilter + " .and. !Deleted()" ), ::cExpresionFilter + " .and. !Deleted()" ) )
 
-               if !Empty( ::oWndBrw )
+               if !empty( ::oWndBrw )
                   ::oWndBrw:ShowButtonFilter()
                   ::oWndBrw:ShowEditButtonFilter()
                   ::oWndBrw:Refresh()
@@ -1018,32 +1018,32 @@ METHOD AplyFilter()
 
                cOrdKey           := ( ::oDbf )->( OrdKey() )
 
-               if !Empty( cOrdKey )
+               if !empty( cOrdKey )
 
                   bOrdKey        := c2Block( cOrdKey )
 
-                  if !Empty( ::oMtrReplace )
+                  if !empty( ::oMtrReplace )
                      ::oMtrReplace:SetTotal( ( ::oDbf )->( Lastrec() ) )
                      nEvery      := Int( ::oMtrReplace:nTotal / 10 )
                   end if
 
-                  if Empty( ::cOrdAnterior )
+                  if empty( ::cOrdAnterior )
                      ::cOrdAnterior := ( ::oDbf )->( OrdSetFocus() )
                   end if
 
-                  if Empty( ::cBagAnterior )
+                  if empty( ::cBagAnterior )
                      ::cBagAnterior := ( ::oDbf )->( dbOrderInfo( DBOI_FULLPATH ) )
                   end if
 
-                  if Empty( ::nRecAnterior )
+                  if empty( ::nRecAnterior )
                      ::nRecAnterior := ( ::oDbf )->( Recno() )
                   end if
 
-                  if Empty( ::cNamAnterior )
+                  if empty( ::cNamAnterior )
                      ::cNamAnterior := "OrdTmp" + cCurUsr()
                   end if
 
-                  if !Empty( ::oMtrReplace )
+                  if !empty( ::oMtrReplace )
                      ( ::oDbf )->( OrdCondSet( ::cExpresionFilter + " .and. !Deleted()", c2Block( ::cExpresionFilter + " .and. !Deleted()" ),,, {|| ::oMtrReplace:Set( ( ::oDbf )->( RecNo() ) ), SysRefresh() }, nEvery ) )
                   else
                      ( ::oDbf )->( OrdCondSet( ::cExpresionFilter + " .and. !Deleted()", c2Block( ::cExpresionFilter + " .and. !Deleted()" ),,, {|| SysRefresh() } ) )
@@ -1053,7 +1053,7 @@ METHOD AplyFilter()
                   ( ::oDbf )->( OrdSetFocus( ::cNamAnterior, ::cBagAnterior ) )
                   ( ::oDbf )->( dbGoTop() )
 
-                  if !Empty( ::oWndBrw )
+                  if !empty( ::oWndBrw )
                      ::oWndBrw:ShowButtonFilter()
                      ::oWndBrw:ShowEditButtonFilter()
                      ::oWndBrw:Refresh()
@@ -1069,7 +1069,7 @@ METHOD AplyFilter()
 
       end case
 
-      if !Empty( ::oMtrReplace )
+      if !empty( ::oMtrReplace )
          ::oMtrReplace:SetTotal( 0 )
       end if
 
@@ -1089,42 +1089,32 @@ Return ( Self )
 
 METHOD KillFilter( oDlg )
 
-   if !Empty( ::bOnKillFilter )
+   local cAlias
+
+   if !empty( ::bOnKillFilter )
       Eval( ::bOnKillFilter )
    end if
 
-   do case
-      case IsObject( ::oDbf )
+   if hb_isobject( ::oDbf )
+      cAlias   := ::oDbf:cAlias
+   else
+      cAlias   := ::oDbf
+   end if 
 
-         if lAdsRdd()
+   if lAIS()
+      ( cAlias )->( dbClearFilter() )
+   else
+      if !empty( ::cBagAnterior )
+         ( cAlias )->( OrdSetFocus( ::cOrdAnterior, ::cBagAnterior ) )
+         ( cAlias )->( OrdDestroy( ::cNamAnterior, ::cBagAnterior ) )
+      end if
+   end if
 
-            ( ::oDbf:cAlias )->( dbClearFilter() )
-
-         else
-
-            if !Empty( ::cBagAnterior )
-               ( ::oDbf:cAlias )->( OrdSetFocus( ::cOrdAnterior, ::cBagAnterior ) )
-               ( ::oDbf:cAlias )->( OrdDestroy( ::cNamAnterior, ::cBagAnterior ) )
-            end if
-
-         end if
-
-      case IsChar( ::oDbf )
-
-         if lAdsRdd()
-
-            ( ::oDbf )->( dbClearFilter() )
-
-         else
-
-            if !Empty( ::cBagAnterior )
-               ( ::oDbf )->( OrdSetFocus( ::cOrdAnterior, ::cBagAnterior ) )
-               ( ::oDbf )->( OrdDestroy( ::cNamAnterior, ::cBagAnterior ) )
-            end if
-
-         end if
-
-   end case
+   if !empty( ::nRecAnterior )
+      ( cAlias )->( dbGoTo( ::nRecAnterior ) )
+   else
+      ( cAlias )->( dbGoTop() )
+   end if
 
    ::cOrdAnterior := nil
    ::nRecAnterior := nil
@@ -1133,32 +1123,13 @@ METHOD KillFilter( oDlg )
 
    ::InitExpresion()
 
-   do case
-      case IsObject( ::oDbf )
-
-         if !Empty( ::nRecAnterior )
-            ( ::oDbf:cAlias )->( dbGoTo( ::nRecAnterior ) )
-         else
-            ( ::oDbf:cAlias )->( dbGoTop() )
-         end if
-
-      case IsChar( ::oDbf )
-
-         if !Empty( ::nRecAnterior )
-            ( ::oDbf )->( dbGoTo( ::nRecAnterior ) )
-         else
-            ( ::oDbf )->( dbGoTop() )
-         end if
-
-   end case
-
-   if !Empty( ::oWndBrw )
+   if !empty( ::oWndBrw )
       ::oWndBrw:HideButtonFilter()
       ::oWndBrw:HideEditButtonFilter()
       ::oWndBrw:Refresh()
    end if
 
-   if !Empty( oDlg )
+   if !empty( oDlg )
       oDlg:End()
    end if
 
@@ -1181,7 +1152,7 @@ METHOD SaveFilter()
 
    if ::lGetFilterName()
 
-      if !Empty( ::oDlg )
+      if !empty( ::oDlg )
          ::oDlg:Disable()
       end if 
 
@@ -1223,7 +1194,7 @@ METHOD SaveFilter()
 
       end if
 
-      if !Empty( ::oDlg )
+      if !empty( ::oDlg )
          ::oDlg:Enable()
       end if 
 
@@ -1237,16 +1208,16 @@ METHOD DeleteFilter( oDlg )
 
    if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( "¿ Desea eliminar el filtro : " + Alltrim( ( ::cDbfFilter)->cTexFlt ) + " ?", "Confirme supresión" )
 
-      if !Empty( ::oWndBrw )
+      if !empty( ::oWndBrw )
          ::oWndBrw:EnableComboFilter( ::aFilter )
          ::KillFilter()
       end if
       
-      if !Empty( oDlg )
+      if !empty( oDlg )
          oDlg:End()
       end if 
       
-      if !Empty( ::oBrwAlmacenados )
+      if !empty( ::oBrwAlmacenados )
          ::oBrwAlmacenados:Refresh()
       end if 
 
@@ -1299,7 +1270,7 @@ Return ( oDlg:nResult == IDOK )
 
 Method lValidFilterName()
 
-   if Empty( ::cTexFilter )
+   if empty( ::cTexFilter )
       MsgStop( "El nombre del filtro no puede estar vacio" )
       Return ( .f. )
    end if
@@ -1310,12 +1281,12 @@ Return ( .t. )
 
 Method LoadFilter( cExpresionFilter )
 
-   if Empty( ::cTipFilter )
+   if empty( ::cTipFilter )
       msgStop( "El tipo del filtro esta vacio")
       Return .f.
    end if
 
-   if Empty( cExpresionFilter )
+   if empty( cExpresionFilter )
       msgStop( "El texto del filtro esta vacio")
       Return .f.
    end if
@@ -1332,16 +1303,16 @@ Method LoadFilter( cExpresionFilter )
 
       aEval( ::aFilter, {| a | if( len( a ) > 0, a[ 3 ] := ::uValue( a ), ) } )
       
-      if !Empty( ::oBrwFilter )
+      if !empty( ::oBrwFilter )
          ::oBrwFilter:SetArray( ::aFilter )
       end if 
       
-      if !Empty( ::oDlg ) .and. !Empty( ::oDlg:oTop )
+      if !empty( ::oDlg ) .and. !empty( ::oDlg:oTop )
          ::oDlg:oTop:SetOption( 1 )
          ::oDlg:oTop:Refresh()
       end if
       
-      if !Empty( ::oFld )
+      if !empty( ::oFld )
          ::oFld:SetOption( 1 )
       end if 
 
@@ -1363,7 +1334,7 @@ Method lBuildFilter()
 
    local lBuild      := .f.
 
-   if Empty( ::cExpresionFilter )
+   if empty( ::cExpresionFilter )
       Return ( lBuild )
    end if
 
@@ -1391,11 +1362,11 @@ Return ( lBuild )
 
 METHOD LoadTypeFilter()
 
-   if Empty( ::cDbfFilter )
+   if empty( ::cDbfFilter )
       Return .f.
    end if
 
-   if Empty( ::cTipFilter )   
+   if empty( ::cTipFilter )   
       Return .f.
    endif
 
@@ -1421,7 +1392,7 @@ METHOD SetFilter( cText )
 
    local nFilter        := 0
 
-   if !Empty( cText )
+   if !empty( cText )
 
       nFilter           := aScan( ::aFilter, {|a| a[ 1 ] == cText } )
       if nFilter != 0
@@ -1527,7 +1498,7 @@ STATIC FUNCTION cGetValue( xVal, cType )
    do case
       case cType == "C" .or. cType == "M"
 
-         if !Empty( xVal )
+         if !empty( xVal )
             xVal  := Rtrim( xVal )
          end if
          
@@ -1608,7 +1579,7 @@ STATIC FUNCTION cGetVal( xVal, cType, cNexo )
 
    do case
       case cType == "C" .or. cType == "M"
-         if !Empty( xVal )
+         if !empty( xVal )
             xVal  := Rtrim( xVal )
          end if
          if ( '"' $ xVal ) .or. ( "'" $ xVal )

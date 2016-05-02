@@ -53,8 +53,8 @@ FUNCTION dbSwapUp( cAlias, oBrw )
 
    if !Empty( oBrw )
       oBrw:Refresh()
-      oBrw:Select( 0 )
-      oBrw:Select( 1 )
+      oBrw:select( 0 )
+      oBrw:select( 1 )
       oBrw:SetFocus()
    end if
 
@@ -92,8 +92,8 @@ FUNCTION dbSwapDown( cAlias, oBrw )
 
    if !Empty( oBrw )
       oBrw:Refresh()
-      oBrw:Select( 0 )
-      oBrw:Select( 1 )
+      oBrw:select( 0 )
+      oBrw:select( 1 )
       oBrw:SetFocus()
    end if
 
@@ -261,7 +261,7 @@ FUNCTION dbFirstIdx( cAlias, nOrden, oGet, xDesde )
 		( cAlias )->( OrdSetFocus( nOrden ) )
 	END IF
 
-	Select( cAlias )
+	select( cAlias )
 
 	IF xDesde == NIL
 		(cAlias)->( DbGoTop() )
@@ -299,7 +299,7 @@ FUNCTION dbLastIdx( cAlias, nOrden, oGet, xHasta )
 		( cAlias )->( OrdSetFocus( nOrden ) )
 	END IF
 
-	Select( cAlias )
+	select( cAlias )
 
 	IF xHasta == NIL
 		(cAlias)->(DbGoBottom())
@@ -883,13 +883,13 @@ return nday
 Selecciona todos los registros
 */
 
-Function lSelectAll( oBrw, dbf, cFieldName, lSelect, lTop, lMeter )
+Function lselectAll( oBrw, dbf, cFieldName, lselect, lTop, lMeter )
 
    local nPos
    local nRecAct        := ( dbf )->( Recno() )
 
    DEFAULT cFieldName   := "lSndDoc"
-   DEFAULT lSelect      := .t.
+   DEFAULT lselect      := .t.
    DEFAULT lTop         := .t.
    DEFAULT lMeter       := .f.
 
@@ -907,7 +907,7 @@ Function lSelectAll( oBrw, dbf, cFieldName, lSelect, lTop, lMeter )
 
       if dbLock( dbf )
          nPos           := ( dbf )->( FieldPos( cFieldName ) )
-         ( dbf )->( FieldPut( nPos, lSelect ) )
+         ( dbf )->( FieldPut( nPos, lselect ) )
          dbSafeUnLock( dbf )
       end if
 
@@ -1095,7 +1095,7 @@ Static Function StartDbfInfo( dbfAlias, oTreeInfo )
 
    local n := 0
 
-   Select( dbfAlias )
+   select( dbfAlias )
 
    oTreeInfo:Add( "RDDI_ISDBF       : "  + cValToChar( dbInfo( RDDI_ISDBF       ) ) )
    oTreeInfo:Add( "RDDI_CANPUTREC   : "  + cValToChar( dbInfo( RDDI_CANPUTREC   ) ) )
@@ -1211,7 +1211,7 @@ FUNCTION cCheckArea( cDbfName, cAlias )
 
    cAlias      := cDbfName
 
-	while Select( cAlias ) != 0
+	while select( cAlias ) != 0
       cAlias   := cDbfName + AllTrim( Str( n++ ) )
 	end
 
@@ -1601,7 +1601,7 @@ FUNCTION WinAppRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
    DEFAULT bWhen     := "" //{ || .t. }
    DEFAULT bValid    := "" //{ || .t. }
 
-   if Select( cAlias ) == 0
+   if select( cAlias ) == 0
       return .f.
    end if
 
@@ -1650,8 +1650,8 @@ FUNCTION WinAppRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
          oBrw:MakeTotals()
       end if 
 
-      oBrw:Select( 0 )
-      oBrw:Select( 1 )
+      oBrw:select( 0 )
+      oBrw:select( 1 )
       oBrw:Refresh()
 
    end if
@@ -1679,7 +1679,7 @@ FUNCTION WinDupRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
    local lResult  := .f.
    local nOrd     := 0
 
-   if Select( cAlias ) == 0
+   if select( cAlias ) == 0
       Return .f.
    end if
 
@@ -1738,8 +1738,8 @@ FUNCTION WinDupRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
 
    if lResult .and. !Empty( oBrw ) .and. ( oBrw:lActive )
 
-      oBrw:Select( 0 )
-      oBrw:Select( 1 )
+      oBrw:select( 0 )
+      oBrw:select( 1 )
 
 		if oBrw:lFooter .and. !empty( oBrw:nFooterHeight )
 			oBrw:MakeTotals()
@@ -1776,7 +1776,7 @@ FUNCTION WinEdtRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
    DEFAULT bWhen     := "" //{ || .t. }
    DEFAULT bValid    := "" //{ || .t. }
 
-   if Select( cAlias ) == 0 .OR. ( ( cAlias )->( LastRec() ) == 0 )
+   if select( cAlias ) == 0 .OR. ( ( cAlias )->( LastRec() ) == 0 )
       return .f.
    end if
 
@@ -1813,8 +1813,8 @@ FUNCTION WinEdtRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
 
    if lResult .and. oBrw != nil
 
-      oBrw:Select( 0 )
-      oBrw:Select( 1 )
+      oBrw:select( 0 )
+      oBrw:select( 1 )
 
 		if oBrw:lFooter .and. !empty( oBrw:nFooterHeight )
 			oBrw:MakeTotals()
@@ -1853,7 +1853,7 @@ FUNCTION WinZooRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
    DEFAULT bWhen     := "" //{ || .t. }
    DEFAULT bValid    := "" //{ || .t. }
 
-	IF Select( cAlias ) == 0
+	IF select( cAlias ) == 0
 		RETURN .F.
 	END IF
 
@@ -2012,7 +2012,7 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
    DEFAULT lMaster   := .f.
    DEFAULT lTactil   := .f.
 
-   if Select( cAlias ) == 0 .or. ( cAlias )->( LastRec() ) == 0
+   if select( cAlias ) == 0 .or. ( cAlias )->( LastRec() ) == 0
       return ( .f. )
    end if
 
@@ -2020,7 +2020,7 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
 
    if !Empty( oBrw ) .and. ( "XBROWSE" $ oBrw:ClassName() )
 
-      nMarked        := len( oBrw:aSelected )
+      nMarked        := len( oBrw:aselected )
       if nMarked > 1
          cTxt        := "¿ Desea eliminar definitivamente " + AllTrim( Trans( nMarked, "999999" ) ) + " registros ?"
       end if
@@ -2029,7 +2029,7 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
 
          CursorWait()
 
-         for each nRec in ( oBrw:aSelected )
+         for each nRec in ( oBrw:aselected )
 
             ( cAlias )->( dbGoTo( nRec ) )
 
@@ -2078,8 +2078,8 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
    end if
 
    if !empty( oBrw )
-      oBrw:Select( 0 )
-      oBrw:Select( 1 )
+      oBrw:select( 0 )
+      oBrw:select( 1 )
       oBrw:Refresh()
       oBrw:SetFocus() // .t. )
    end if
@@ -2103,7 +2103,7 @@ FUNCTION dbDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lDelMarked, lBig )
    DEFAULT lDelMarked   := .f.
    DEFAULT lBig         := .f.
 
-   if Select( cAlias ) == 0 .or. ( cAlias )->( LastRec() ) == 0
+   if select( cAlias ) == 0 .or. ( cAlias )->( LastRec() ) == 0
       return ( .f. )
    end if
 
@@ -2112,13 +2112,13 @@ FUNCTION dbDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lDelMarked, lBig )
    */
 
    if ( lDelMarked ) .and. ( "TXBROWSE" $ oBrw:ClassName() )
-      nMarked           := len( oBrw:aSelected )
+      nMarked           := len( oBrw:aselected )
       if nMarked > 1
          cTxt           := "¿ Desea eliminar definitivamente " + AllTrim( Str( nMarked, 3 ) ) + " registros ?"
       end if
 
       if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( cTxt, "Confirme supersión", lBig )
-         for each nRec in oBrw:aSelected
+         for each nRec in oBrw:aselected
 
             ( cAlias )->( dbGoTo( nRec ) )
 
@@ -2181,8 +2181,8 @@ FUNCTION DelRecno( cAlias, oBrw, lDelMarked )
    end if
 
    if oBrw != nil
-      oBrw:Select( 0 )
-      oBrw:Select( 1 )
+      oBrw:select( 0 )
+      oBrw:select( 1 )
       oBrw:SetFocus()
    end if
 
@@ -2824,7 +2824,7 @@ FUNCTION WinMulRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
    DEFAULT bWhen     := "" //{ || .t. }
    DEFAULT bValid    := "" //{ || .t. }
 
-	IF Select( cAlias ) == 0
+	IF select( cAlias ) == 0
 		RETURN .F.
 	END IF
 
@@ -3355,7 +3355,7 @@ function DbDialog( cTitle )
 
       if ! Empty( Alias( n ) )
 
-         cErrorLog   += CRLF + Str( n, 3 ) + ": " + If( Select() == n,"=> ", "   " ) + ;
+         cErrorLog   += CRLF + Str( n, 3 ) + ": " + If( select() == n,"=> ", "   " ) + ;
                         PadR( Alias( n ), 15 ) + Space( 20 ) + "RddName: " + ;
                         ( Alias( n ) )->( RddName() ) + CRLF
          cErrorLog   += "     ==============================" + CRLF
@@ -3383,7 +3383,7 @@ function DbDialog( cTitle )
 
          for j = 1 to 8
 
-            if ! Empty( ( nTarget := ( Alias( n ) )->( DbRSelect( j ) ) ) )
+            if ! Empty( ( nTarget := ( Alias( n ) )->( DbRselect( j ) ) ) )
 
                cErrorLog += Space( 8 ) + Str( j ) + ": " + ;
                             "TO " + ( Alias( n ) )->( DbRelation( j ) ) + ;
@@ -3530,8 +3530,8 @@ Function lineReposition( cAlias, oBrw, lUp )
 
    if !Empty( oBrw )
       oBrw:Refresh()
-      oBrw:Select( 0 )
-      oBrw:Select( 1 )
+      oBrw:select( 0 )
+      oBrw:select( 1 )
       oBrw:SetFocus()
    end if
 
@@ -3591,8 +3591,8 @@ Function lineRepositionOld( cAlias, oBrw, lUp )
 
    if !Empty( oBrw )
       oBrw:Refresh()
-      oBrw:Select( 0 )
-      oBrw:Select( 1 )
+      oBrw:select( 0 )
+      oBrw:select( 1 )
       oBrw:SetFocus()
    end if
 
@@ -3968,29 +3968,33 @@ Return ( msgAlert( hb_valtoexp( uValue ), cTitle ) )
 Function setCustomFilter( cExpresionFilter )
 
    if lAIS()
-      Return ( ( Select() )->( adsSetAOF( cExpresionFilter ) ) )
+      ( select() )->( adsSetAOF( cExpresionFilter ) ) 
+   else 
+      ( select() )->( dbSetFilter( bCheck2Block( cExpresionFilter ), cExpresionFilter ) )
    end if 
 
-Return ( ( Select() )->( dbSetFilter( bCheck2Block( cExpresionFilter ), cExpresionFilter ) ) )
+Return ( nil )
 
 //----------------------------------------------------------------------------//
 
 Function quitCustomFilter()
 
    if lAIS()
-      Return ( ( Select() )->( adsClearAOF() ) )
+      ( select() )->( adsClearAOF() ) 
+   else 
+      ( select() )->( dbSetFilter() )
    end if 
 
-Return ( ( Select() )->( dbSetFilter() ) )
+Return ( nil )
 
 //----------------------------------------------------------------------------//
 
 Function dbCustomKeyCount()
 
    if lAIS()
-      Return ( ( Select() )->( AdsKeyCount( , , ADS_RESPECTFILTERS ) ) )
+      Return ( ( select() )->( adsKeyCount( , , ADS_RESPECTFILTERS ) ) )
    end if 
 
-Return ( ( Select() )->( OrdKeyCount() ) )
+Return ( ( select() )->( ordkeycount() ) )
 
 //----------------------------------------------------------------------------//
