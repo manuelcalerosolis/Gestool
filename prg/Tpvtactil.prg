@@ -171,6 +171,7 @@ CLASS TpvTactil
    DATA oFabricante
    
    DATA oOrdenComanda
+   DATA cOrdenComanda
    DATA oTpvMenu
    DATA oTpvMenuOrdenes
    DATA oTpvMenuArticulo
@@ -295,6 +296,8 @@ CLASS TpvTactil
    DATA oBtnArticulosPageDown
 
    DATA oBtnCambiarOrden
+   DATA oGetCambiarOrden
+
    DATA oBtnAgregarLibre
    DATA oBtnCombinado
    DATA oBtnCalculadora
@@ -816,7 +819,8 @@ CLASS TpvTactil
 
    METHOD ShowCombinado( lShowCombinando )
 
-   METHOD SetOrdenComanda( lCombinando )
+   METHOD SelectorOrdenComanda( lCombinando )
+   METHOD setOrdenComanda( cOrden )
 
    METHOD SetCalculadora()
 
@@ -2049,14 +2053,15 @@ METHOD Resource() CLASS TpvTactil
       ::oLstArticulos:nAlphaLevel   := 150
    end if
 
-   /*
-   Botones para acciones de los articulos--------------------------------------
-   */
+   // Botones para acciones de los articulos--------------------------------------
 
    ::oBtnArticulosPageUp         := TButtonBmp():ReDefine( 500, {|| if( !Empty( ::oLstArticulos ), ::oLstArticulos:PageUp(), ) },    ::oDlg, , , .f., , , , .f., "Navigate_up2" )
    ::oBtnArticulosPageDown       := TButtonBmp():ReDefine( 501, {|| if( !Empty( ::oLstArticulos ), ::oLstArticulos:PageDown(), ) },  ::oDlg, , , .f., , , , .f., "Navigate_down2" )
 
-   ::oBtnCambiarOrden            := TButtonBmp():ReDefine( 505, {|| ::SetOrdenComanda() },         ::oDlg, , , .f., , , , .f., "Sort_az_descending_32" ) //
+   ::oBtnCambiarOrden            := TButtonBmp():ReDefine( 505, {|| ::SelectorOrdenComanda() },    ::oDlg, , , .f., , , , .f., "Sort_az_descending_32" ) //
+
+   ::oGetCambiarOrden            := TGetHlp():ReDefine( 506, {|u| if( pcount () == 0, ::cOrdenComanda, ::cOrdenComanda := u ) }, ::oDlg )
+   ::oGetCambiarOrden:SetFont( ::oFntNum )
 
    ::oBtnAgregarLibre            := TButtonBmp():ReDefine( 502, {|| ::AgregarLibre() },            ::oDlg, , , .f., , , , .f., "Free_Bullet_32" ) //
    ::oBtnCombinado               := TButtonBmp():ReDefine( 503, {|| ::SetCombinando() },           ::oDlg, , , .f., , , , .f., "Led_green_32" )
@@ -2660,6 +2665,7 @@ METHOD StartResource() CLASS TpvTactil
 
    if ::oOrdenComanda:EmptyOrdenComanda()
       ::oBtnCambiarOrden:Hide()
+      ::oGetCambiarOrden:Hide()
    end if  
 
    /*
@@ -2791,6 +2797,8 @@ METHOD ResizedResource() CLASS TpvTactil
    ::oBtnArticulosPageDown:Move( ::oBtnArticulosPageDown:nTop + nDialogHeight, , , , .f. )
 
    ::oBtnCambiarOrden:Move( ::oBtnCambiarOrden:nTop + nDialogHeight, ::oBtnCambiarOrden:nLeft + nDialogWidth, , , .f. )
+   ::oGetCambiarOrden:Move( ::oGetCambiarOrden:nTop + nDialogHeight, ::oGetCambiarOrden:nLeft + nDialogWidth - 100, 200, , .f. )
+
    ::oBtnAgregarLibre:Move( ::oBtnAgregarLibre:nTop + nDialogHeight, ::oBtnAgregarLibre:nLeft + nDialogWidth, , , .f. )
 
    if !Empty( ::oBtnSCobrar )
@@ -9960,24 +9968,39 @@ RETURN ( Self )
 
 //-----------------------------------------------------------------------//
 
-METHOD SetOrdenComanda( lCombinando )
+METHOD SelectorOrdenComanda()
 
-   local cOrdenComanda           := ""
+   local cOrdenComanda           := ::oOrdenComanda:Selector()
 
-   if ::lEmptyDocumento()
-      MsgInfo( "No hay producto para cambiar el orden de comanda." )
-      Return ( Self )
-   end if
-
-   cOrdenComanda                 := ::oOrdenComanda:Selector()
-
-   if !Empty( cOrdenComanda )
+   if !empty( cOrdenComanda )
       ::oTemporalLinea:cOrdOrd   := cOrdenComanda
+      ::oGetCambiarOrden:cText( ::oOrdenComanda:cNombre( cOrdenComanda ) )
    end if 
 
    ::oBrwLineas:Refresh()
 
 RETURN ( Self )
+
+//-----------------------------------------------------------------------//
+
+METHOD setOrdenComanda( cOrdenComanda )
+
+   if empty( cOrdenComanda )
+      Return ( "" )
+   end if 
+
+   if ::lEmptyDocumento()
+      MsgInfo( "No hay producto para cambiar el orden de comanda." )
+      Return ( "" )
+   end if
+
+   debug( cOrdenComanda )
+
+   ::oTemporalLinea:cOrdOrd   := cOrdenComanda
+
+   ::oBrwLineas:Refresh()
+
+RETURN ( "" )
 
 //-----------------------------------------------------------------------//
 

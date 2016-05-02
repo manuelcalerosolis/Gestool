@@ -275,7 +275,7 @@ METHOD cNombre( cCodOrd )
    ::oDbf:GetStatus()
 
    if ::oDbf:SeekInOrd( cCodOrd, "cCodOrd" )
-      cNombre           := ::oDbf:cNomOrd
+      cNombre           := alltrim( ::oDbf:cNomOrd )
    end if
 
    ::oDbf:SetStatus()
