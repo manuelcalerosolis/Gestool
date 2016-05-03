@@ -340,15 +340,15 @@ Static Function CreateMainWindow( oIconApp )
    oWnd:oMsgBar:oDate:bMsg    := {|| GetSysDate() }
    oWnd:oMsgBar:CheckTimer()
 
-   oMsgUser                   := TMsgItem():New( oWnd:oMsgBar, "Usuario : "      + Rtrim( oUser():cNombre() ), 200,,,, .t. )
+   oMsgUser                   := TMsgItem():New( oWnd:oMsgBar, "Usuario : " + Rtrim( oUser():cNombre() ), 200,,,, .t. )
 
-   oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : "   + Rtrim( oUser():cDelegacion() ), 200,,,, .t., {|| if( oUser():lCambiarEmpresa, SelectDelegacion( oMsgDelegacion ), ) } )
+   oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : " + Rtrim( oUser():cDelegacion() ), 200,,,, .t., {|| if( oUser():lCambiarEmpresa, SelectDelegacion( oMsgDelegacion ), ) } )
 
-   oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "         + oUser():cCaja(), 100,,,, .t., {|| SelectCajas() } )
+   oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  + oUser():cCaja(), 100,,,, .t., {|| SelectCajas() } )
 
-   oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : "      + Rtrim( oUser():cAlmacen() ), 100,,,, .t., {|| SelectAlmacen() } )
+   oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : " + Rtrim( oUser():cAlmacen() ), 100,,,, .t., {|| SelectAlmacen() } )
 
-   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : "       + Transform( cCurSesion(), "######" ), 100,,,, .t., {|| dbDialog() } ) 
+   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : ", 100,,,, .t., {|| dbDialog() } ) 
 
    // Abrimos la ventana-------------------------------------------------------
 
@@ -1048,7 +1048,13 @@ Function lStartCheck()
    oMsgText( 'Comprobando scripts de inicio' )
    
    runEventScript( "IniciarAplicacion" )
+
+   // Colocamos la sesion actual-----------------------------------------------
  
+   if !empty( oMsgSesion() )
+      oMsgSesion():setText, "Sesión : " + Transform( cCurSesion(), "######" ) 
+   end if 
+
    // Colocamos los avisos pa las notas----------------------------------------
 
    oMsgText( 'Servicios de timers' )
@@ -1230,7 +1236,6 @@ Function InitClasses()
    TXBrowse():Register( nOr( CS_VREDRAW, CS_HREDRAW, CS_DBLCLKS ) )
    TBandera():New()
    TCentroCoste()
-
 
 Return .t.
 
