@@ -114,8 +114,6 @@ static NUMERO_TARIFAS          := 6
 
 //----------------------------------------------------------------------------//
 
-#ifndef __PDA__
-
 STATIC FUNCTION OpenFiles( lCount )
 
    local lOpen    := .t.
@@ -1223,9 +1221,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
    SetEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser, oBrw, oWnd(), .t. )
 
-   /*
-   Control de errores----------------------------------------------------------
-   */
+   // Control de errores-------------------------------------------------------
 
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -1558,7 +1554,8 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
          ID       210;
          OF       fldTPV  
 
-      REDEFINE CHECKBOX aGet[ _LOPENTIK ] VAR aTmp[ _LOPENTIK ] ;
+      REDEFINE CHECKBOX aGet[ ( dbfEmp )->( fieldpos( "lOpenTik" ) ) ] ;
+         VAR      aTmp[ ( dbfEmp )->( fieldpos( "lOpenTik" ) ) ] ;
          ID       220;
          OF       fldTPV  
 
@@ -2497,10 +2494,8 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
    END SEQUENCE
    ErrorBlock( oBlock ) 
-
-   /*
-   Matamos los objetos con las imágenes----------------------------------------
-   */
+   
+   // Matamos los objetos con las imágenes----------------------------------------
 
    KillTrans()
 
@@ -2508,13 +2503,11 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
       SetEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser, oBrw, oWnd(), .t. )
    end if
 
-   // Reanudamos los servicios ------------------------------------------------
+   // Reanudamos los servicios ---------------------------------------------------
 
    InitServices()
 
-   /*
-   Matamos los objetos con las imágenes----------------------------------------
-   */
+   // Matamos los objetos con las imágenes----------------------------------------
 
    if !Empty( oBmpComportamiento )
       oBmpComportamiento:End()
@@ -6168,8 +6161,6 @@ RETURN .t.
 Actualiza la base de datos
 */
 
-#endif
-
 FUNCTION TstEmpresa( cPatDat )
 
    local dbfEmp
@@ -6931,183 +6922,6 @@ Static Function cCadenaToTiempo( cTiempo )
 Return ( nTiempo )
 
 //---------------------------------------------------------------------------//
-
-#ifdef __PDA__
-
-Function ActFicheros()
-
-   local oDlg
-   local oFont
-   local oBtn
-   local oSayTit
-   local oPgrSistema
-   local oSayProgress
-   local cSayProgress   := ""
-
-
-DEFINE FONT oFont NAME "Verdana" SIZE 0, -14
-
-   DEFINE DIALOG oDlg RESOURCE "ACT_FICHEROS"
-
-      REDEFINE SAY oSayTit ;
-         VAR      "Actualizando ficheros" ;
-         ID       120 ;
-         COLOR    "N/W*" ;
-         FONT     oFont ;
-         OF       oDlg
-
-      REDEFINE BTNBMP oBtn ;
-         ID       110 ;
-         OF       oDlg ;
-         FILE     ( cPatBmp() + "folder_refresh_16.bmp" ) ;
-         NOBORDER ;
-         ACTION   ( nil )
-
-      oBtn:SetColor( 0, nRGB( 255, 255, 255 ) )
-
-      oPgrSistema   := TProgress():Redefine( 210, oDlg )
-      oPgrSistema:SetPos( 0 )
-      oPgrSistema:SetRange( 0, 65 )
-
-      REDEFINE SAY oSayProgress ;
-         VAR      cSayProgress;
-         ID       400 ;
-         OF       oDlg
-
-      oSayProgress:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-      ACTIVATE DIALOG oDlg ;
-        ON INIT ( pdaMenuActFich( oDlg, oSayProgress, oPgrSistema ) )
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
-function pdaMenuActFich( oDlg, oSayProgress, oPgrSistema )
-
-   local oMenu
-
-   DEFINE MENU oMenu ;
-      RESOURCE 100 ;
-      BITMAPS  10 ; // bitmaps resoruces ID
-      IMAGES   3     // number of images in the bitmap
-
-      REDEFINE MENUITEM ID 110 OF oMenu ACTION ( ActDbfPda( oSayProgress, oPgrSistema, oDlg ), oDlg:End( IDOK ) )
-
-      REDEFINE MENUITEM ID 120 OF oMenu ACTION ( oDlg:End( IDCANCEL ) )
-
-   oDlg:SetMenu( oMenu )
-
-Return oMenu
-
-//---------------------------------------------------------------------------//
-
-Static Function ActDbfPda( oSayProgress, oPgrSistema, oDlg )
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
-/*
-Comprueba los cambios de estructura y añade registros
-*/
-
-FUNCTION ActDbf( cEmpOld, cEmpTmp, cFile, cText, oMtr, oMsg, aMsg )
-
-   local i
-   local dbfOld
-   local tmpDlg
-   local dbfNamOld   := cEmpOld + cFile
-   local dbfNamTmp   := cEmpTmp + cFile
-   local lCopy       := .f.
-   local nField      := 0
-   local aField
-
-   if !lExistTable( dbfNamOld + ".Dbf" )
-      return nil
-   end if
-
-   if !lExistTable( dbfNamTmp + ".Dbf" )
-      return nil
-   end if
-
-   USE ( dbfNamOld + ".Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OLD", @dbfOld ) )
-   if NetErr()
-      return nil
-   end if
-
-   USE ( dbfNamTmp + ".Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TMP", @tmpDlg ) )
-   if NetErr()
-      return nil
-   end if
-
-   nField   := ( tmpDlg )->( fCount() )
-
-   aField   := Array( nField )
-
-   for i = 1 to nField
-      aField[ i ] := ( tmpDlg )->( FieldPos( ( dbfOld )->( FieldName( i ) ) ) )
-   next
-
-   while !( dbfOld )->( eof() )
-
-      ( tmpDlg )->( dbAppend() )
-
-      aEval( aField, {| nFld, i | if( nFld != 0, ( tmpDlg )->( FieldPut( nFld, ( dbfOld )->( FieldGet( i ) ) ) ), ) } )
-
-      ( dbfOld )->( dbSkip() )
-
-      SysRefresh()
-
-   end while
-
-   lCopy          := ( dbfOld )->( eof() )
-
-   CLOSE ( dbfOld )
-   CLOSE ( tmpDlg )
-
-   /*
-   Si hay copia satisfactoria cambiamos los ficheros
-   */
-
-   if lCopy
-
-      if lExistTable( dbfNamOld + ".Dbf" )
-         fEraseTable( dbfNamOld + ".Dbf" )
-         msgStop( dbfNamOld + ".Dbf", "" )
-      end if
-
-      if lExistTable( dbfNamOld + ".Fpt" )
-         fEraseTable( dbfNamOld + ".Fpt" )
-      end if
-
-      if lExistTable( dbfNamOld + ".Cdx" )
-         fEraseTable( dbfNamOld + ".Cdx" )
-      end if
-
-      if lExistTable( dbfNamTmp + ".Dbf" )
-         fRenameTable( dbfNamTmp + ".Dbf", dbfNamOld + ".Dbf" )
-      end if
-
-      if lExistTable( dbfNamTmp + ".Fpt" )
-         fRenameTable( dbfNamTmp + ".Fpt", dbfNamOld + ".Fpt" )
-      end if
-
-      if lExistTable( dbfNamTmp + ".Cdx" )
-         fRenameTable( dbfNamTmp + ".Cdx", dbfNamOld + ".Cdx" )
-      end if
-
-   else
-
-      MsgStop( "No se actualizo el fichero " + cNoPath( dbfNamOld ) + ".Dbf" )
-
-   end if
-
-return ( lCopy )
-
-#endif
-
-//--------------------------------------------------------------------------//
 
 Function SetTituloEmpresa()
 
