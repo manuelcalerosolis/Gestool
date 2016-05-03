@@ -2007,6 +2007,7 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
    local nMarked     := 0
    local lReturn     := .f.
    local lTrigger    := .t.
+   local oWaitMeter
 
    DEFAULT cAlias    := Alias()
    DEFAULT lMaster   := .f.
@@ -2027,7 +2028,9 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
 
       if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( cTxt, "Confirme supresión", lTactil )
 
-         CursorWait()
+         oWaitMeter        := TWaitMeter():New( "Eliminando registros", "Espere por favor..." )
+         oWaitMeter:run()
+         oWaitMeter:setTotal( len( oBrw:aselected ) )
 
          for each nRec in ( oBrw:aselected )
 
@@ -2047,9 +2050,11 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
 
             end if
 
+            oWaitMeter:autoInc()
+
          next
 
-         CursorWE()
+         oWaitMeter:end()
 
       end if
 

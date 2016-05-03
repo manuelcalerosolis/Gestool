@@ -383,7 +383,6 @@ METHOD SaveDetails() CLASS TMasDet
    do case
       case IsObject( ::oDbfDet )
 
-
          nOrd     := ::oDbfVir:OrdSetFocus( 0 )
 
          ::oDbfVir:GoTop()

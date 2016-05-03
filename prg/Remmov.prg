@@ -5012,6 +5012,12 @@ RETURN ( Self )
 METHOD Save() CLASS TDetMovimientos
 
    local nSec
+   local oWaitMeter
+   local nKeyCount   := ::oDbfVir:ordKeyCount()
+
+   oWaitMeter        := TWaitMeter():New( "Guardando movimientos de almacén", "Espere por favor..." )
+   oWaitMeter:Run()
+   oWaitMeter:setTotal( nKeyCount )
 
    /*
    Guardamos todo de manera definitiva-----------------------------------------
@@ -5038,7 +5044,8 @@ METHOD Save() CLASS TDetMovimientos
 
          ::oDbfVir:Skip()
 
-         ::oParent:oMeter:AutoInc()
+         oWaitMeter:setMessage( "Guardando movimiento " + alltrim( str( ::oDbfVir:OrdKeyNo() ) ) + " de " + alltrim( str( nKeyCount ) ) )
+         oWaitMeter:AutoInc()
 
       end while
 
@@ -5055,7 +5062,8 @@ METHOD Save() CLASS TDetMovimientos
 
          ::oDbfVir:Skip()
 
-         ::oParent:oMeter:AutoInc()
+         oWaitMeter:setMessage( "Guardando movimiento " + alltrim( str( ::oDbfVir:OrdKeyNo() ) ) + " de " + alltrim( str( nKeyCount ) ) )
+         oWaitMeter:AutoInc()
 
       end while
 
@@ -5090,7 +5098,8 @@ METHOD Save() CLASS TDetMovimientos
 
          ::oDbfVir:Skip()
 
-         ::oParent:oMeter:AutoInc()
+         oWaitMeter:setMessage( "Guardando movimiento " + alltrim( str( ::oDbfVir:OrdKeyNo() ) ) + " de " + alltrim( str( nKeyCount ) ) )
+         oWaitMeter:AutoInc()
 
       end while
 
@@ -5105,13 +5114,16 @@ METHOD Save() CLASS TDetMovimientos
 
          ::oDbfVir:Skip()
 
-         ::oParent:oMeter:AutoInc()
+         oWaitMeter:setMessage( "Guardando movimiento " + alltrim( str( ::oDbfVir:OrdKeyNo() ) ) + " de " + alltrim( str( nKeyCount ) ) )
+         oWaitMeter:AutoInc()
 
       end while
 
    end case
 
    ::oDbfVir:SetStatus()
+
+   oWaitMeter:end()
 
    CursorWE()
 

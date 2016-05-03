@@ -243,8 +243,9 @@ CLASS TWaitMeter
 
    METHOD setTotalMeter( nTotal )      INLINE   ( ::oProgress:SetTotal( nTotal ) )
    METHOD incMeter()                   INLINE   ( ::refreshMeter( ++::nCurrent ) )
-   METHOD setMeter( nPosition )        INLINE   ( ::oProgress:Set( nPosition ) )
-   METHOD refreshMeter( nPosition )    INLINE   ( ::oProgress:Set( nPosition ) )
+   METHOD autoInc()                    INLINE   ( ::incMeter() )
+   METHOD setMeter( nPosition )        INLINE   ( ::oProgress:set( nPosition ) )
+   METHOD refreshMeter( nPosition )    INLINE   ( ::oProgress:set( nPosition ) )
    METHOD setTotal( nTotal )           INLINE   ( ::oProgress:SetTotal( nTotal ) )
 
    METHOD Run()
