@@ -5250,7 +5250,7 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
 
       aTmp[ _CTIPREC ]  := "L"
       aTmp[ _CSERIE  ]  := "A"
-      aTmp[ _NNUMFAC ]  := nNewDoc( "A", cFacCliP, "nRecCli", D():Contadores( nView ) )
+      aTmp[ _NNUMFAC ]  := nNewDoc( "A", cFacCliP, "nRecCli", , D():Contadores( nView ) )
       aTmp[ _CSUFFAC ]  := RetSufEmp()
       aTmp[ _NNUMREC ]  := 1
 
