@@ -304,8 +304,7 @@ static nView
 static oBrwIva
 static dbfUsr
 static dbfRuta
-static dbfSatCliT
-static dbfSatCliL
+
 static dbfSatCliI
 static dbfSatCliD
 static dbfSatCliS
@@ -395,7 +394,7 @@ static oStock
 static oTipArt
 static oGrpFam
 static oFraPub
-static bEdtRec          := { | aTmp, aGet, dbfSatCliT, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfSatCliT, oBrw, bWhen, bValid, nMode ) }
+static bEdtRec          := { | aTmp, aGet, cSatCliT, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, cSatCliT, oBrw, bWhen, bValid, nMode ) }
 static bEdtDet          := { | aTmp, aGet, dbfSatCliL, oBrw, bWhen, bValid, nMode, aTmpSat | EdtDet( aTmp, aGet, dbfSatCliL, oBrw, bWhen, bValid, nMode, aTmpSat ) }
 static bEdtInc          := { | aTmp, aGet, dbfSatCliL, oBrw, bWhen, bValid, nMode, aTmpSat | EdtInc( aTmp, aGet, dbfSatCliI, oBrw, bWhen, bValid, nMode, aTmpSat ) }
 static bEdtDoc          := { | aTmp, aGet, dbfSatCliD, oBrw, bWhen, bValid, nMode, aTmpSat | EdtDoc( aTmp, aGet, dbfSatCliD, oBrw, bWhen, bValid, nMode, aTmpSat ) }
@@ -531,6 +530,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():SatClientes( nView )
 
+      D():SatClientesLineas( nView )
+
       D():Clientes( nView )
 
       D():GruposClientes( nView )
@@ -552,9 +553,6 @@ STATIC FUNCTION OpenFiles( lExt )
       D():ImpuestosEspeciales( nView )
 
       D():Ofertas( nView )
-
-      USE ( cPatEmp() + "SATCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SATCLIL", @dbfSatCliL ) )
-      SET ADSINDEX TO ( cPatEmp() + "SATCLIL.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "SATCLII.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SATCLII", @dbfSatCliI ) )
       SET ADSINDEX TO ( cPatEmp() + "SATCLII.CDX" ) ADDITIVE
@@ -867,10 +865,6 @@ STATIC FUNCTION CloseFiles()
       oFont:end()
    end if
 
-   if !Empty( dbfSatCliL   )
-      ( dbfSatCliL   )->( dbCloseArea() )
-   end if
-
    if !Empty( dbfSatCliI   )
       ( dbfSatCliI   )->( dbCloseArea() )
    end if
@@ -1103,7 +1097,6 @@ STATIC FUNCTION CloseFiles()
 
    CodigosPostales():GetInstance():CloseFiles()
 
-   dbfSatCliL     := nil
    dbfSatCliI     := nil
    dbfSatCliD     := nil
    dbfArtPrv      := nil
@@ -1643,7 +1636,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
          DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
             NOBORDER ;
-            ACTION   ( ReplaceCreator( oWndBrw, dbfSatCliL, aColSatCli() ) ) ;
+            ACTION   ( ReplaceCreator( oWndBrw, D():SatClientesLineas( nView ), aColSatCli() ) ) ;
             TOOLTIP  "Lineas" ;
             FROM     oRpl ;
             CLOSED ;
@@ -4399,33 +4392,33 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
 
    // Ocultamos o mostramos las tres unidades de medicion----------------------
 
-   if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ] )
-      aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:Hide()
+   if !Empty( aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+      aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Hide()
    end if
 
-   if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ] )
-      aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:Hide()
+   if !Empty( aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+      aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
    end if
 
-   if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ] )
-      aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:Hide()
+   if !Empty( aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+      aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
    end if
 
    if oUndMedicion:oDbf:Seek(  aTmp[ _CUNIDAD ] )
 
-      if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
-         aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
-         aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:Show()
+      if !Empty( aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
+         aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
+         aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Show()
       end if
 
-      if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 2 .and. !Empty( oUndMedicion:oDbf:cTextoDim2 )
-         aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
-         aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:Show()
+      if !Empty( aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 2 .and. !Empty( oUndMedicion:oDbf:cTextoDim2 )
+         aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
+         aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Show()
       end if
 
-      if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 3 .and. !Empty( oUndMedicion:oDbf:cTextoDim3 )
-         aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
-         aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:Show()
+      if !Empty( aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 3 .and. !Empty( oUndMedicion:oDbf:cTextoDim3 )
+         aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
+         aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Show()
       end if
 
    end if
@@ -5938,42 +5931,42 @@ STATIC FUNCTION LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1,
             if oUndMedicion:oDbf:Seek( ( D():Articulos( nView ) )->cUnidad )
 
                if oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
-                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
-                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:cText( ( D():Articulos( nView ) )->nLngArt )
-                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:Show()
+                  aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
+                  aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( ( D():Articulos( nView ) )->nLngArt )
+                  aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Show()
                else
-                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
-                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:Hide()
+                  aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
+                  aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Hide()
                end if
 
                if oUndMedicion:oDbf:nDimension >= 2 .and. !Empty( oUndMedicion:oDbf:cTextoDim2 )
-                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
-                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:cText( ( D():Articulos( nView ) )->nAltArt )
-                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:Show()
+                  aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
+                  aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( ( D():Articulos( nView ) )->nAltArt )
+                  aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Show()
                else
-                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
-                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:Hide()
+                  aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
+                  aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
                end if
 
                if oUndMedicion:oDbf:nDimension >= 3 .and. !Empty( oUndMedicion:oDbf:cTextoDim3 )
-                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
-                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:cText( ( D():Articulos( nView ) )->nAncArt )
-                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:Show()
+                  aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
+                  aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( ( D():Articulos( nView ) )->nAncArt )
+                  aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Show()
                else
-                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
-                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:Hide()
+                  aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
+                  aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
                end if
 
             else
 
-               aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
-               aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:Hide()
+               aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
+               aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Hide()
 
-               aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
-               aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:Hide()
+               aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
+               aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
 
-               aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
-               aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:Hide()
+               aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
+               aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
 
             end if
 
@@ -6242,12 +6235,12 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    A¤adimos desde el fichero de lineas
    */
 
-   if ( dbfSatCliL )->( dbSeek( cSat ) )
+   if ( D():SatClientesLineas( nView ) )->( dbSeek( cSat ) )
 
-      while ( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->NNUMSAT ) + ( dbfSatCliL )->CSUFSAT == cSat .AND. !( dbfSatCliL )->( eof() ) )
+      while ( D():SatClientesLineasId( nView ) == cSat .AND. !( D():SatClientesLineas( nView ) )->( eof() ) )
 
-         dbPass( dbfSatCliL, dbfTmpLin, .t. )
-         ( dbfSatCliL )->( dbSkip() )
+         dbPass( D():SatClientesLineas( nView ), dbfTmpLin, .t. )
+         ( D():SatClientesLineas( nView ) )->( dbSkip() )
 
       end while
 
@@ -6443,12 +6436,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
 
    case nMode == EDIT_MODE
 
-      while ( dbfSatCliL )->( dbSeek( cSerSat + str( nNumSat ) + cSufSat ) ) 
-         if dbLock( dbfSatCliL )
-            ( dbfSatCliL )->( dbDelete() )
-            ( dbfSatCliL )->( dbUnLock() )
+      while ( D():SatClientesLineas( nView ) )->( dbSeek( cSerSat + str( nNumSat ) + cSufSat ) ) 
+         if dbLock( D():SatClientesLineas( nView ) )
+            ( D():SatClientesLineas( nView ) )->( dbDelete() )
+            ( D():SatClientesLineas( nView ) )->( dbUnLock() )
          end if
-         ( dbfSatCliL )->( dbSkip() )
+         ( D():SatClientesLineas( nView ) )->( dbSkip() )
       end while
 
       while ( dbfSatCliI )->( dbSeek( cSerSat + str( nNumSat ) + cSufSat ) )
@@ -6501,7 +6494,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
 
       end if
 
-      dbPass( dbfTmpLin, dbfSatCliL, .t., cSerSat, nNumSat, cSufSat )
+      dbPass( dbfTmpLin, D():SatClientesLineas( nView ), .t., cSerSat, nNumSat, cSufSat )
       
       ( dbfTmpLin )->( dbSkip() )
 
@@ -6571,11 +6564,11 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
       if ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat == cSerSat + Str( nNumSat ) + cSufSat .and.;
          ( D():SatClientes( nView ) )->dFecSat  == dFecSat
 
-         if ( dbfSatCliL )->( dbSeek( cSerSat + Str( nNumSat ) + cSufSat ) )
+         if ( D():SatClientesLineas( nView ) )->( dbSeek( cSerSat + Str( nNumSat ) + cSufSat ) )
 
-            while ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat == cSerSat + Str( nNumSat ) + cSufSat .and. !( dbfSatCliL )->( Eof() )
+            while ( D():SatClientesLineas( nView ) )->cSerSat + Str( ( D():SatClientesLineas( nView ) )->nNumSat ) + ( D():SatClientesLineas( nView ) )->cSufSat == cSerSat + Str( nNumSat ) + cSufSat .and. !( D():SatClientesLineas( nView ) )->( Eof() )
 
-               if ( D():Articulos( nView ) )->( dbSeek( ( dbfSatCliL )->cRef ) )
+               if ( D():Articulos( nView ) )->( dbSeek( ( D():SatClientesLineas( nView ) )->cRef ) )
 
                   if dbLock( D():Articulos( nView ) )
                      ( D():Articulos( nView ) )->cCodEst    := cCodEst
@@ -6584,7 +6577,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
 
                end if
 
-               ( dbfSatCliL )->( dbSkip() )
+               ( D():SatClientesLineas( nView ) )->( dbSkip() )
 
             end while
 
@@ -7689,7 +7682,7 @@ STATIC FUNCTION DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, lCance
 
             oTxtDup:cText  := "Duplicando : " + ( D():SatClientes( nView ) )->cSerSat + "/" + Alltrim( Str( ( D():SatClientes( nView ) )->nNumSat ) ) + "/" + ( D():SatClientes( nView ) )->cSufSat
 
-            DupSatsupuesto( cFecDoc )
+            DuplicateSAST( cFecDoc )
 
          end if
 
@@ -7718,7 +7711,7 @@ STATIC FUNCTION DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, lCance
 
             oTxtDup:cText  := "Duplicando : " + ( D():SatClientes( nView ) )->cSerSat + "/" + Alltrim( Str( ( D():SatClientes( nView ) )->nNumSat ) ) + "/" + ( D():SatClientes( nView ) )->cSufSat
 
-            DupSatsupuesto( cFecDoc )
+            DuplicateSAST( cFecDoc )
 
          end if
 
@@ -7800,7 +7793,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION DupSatsupuesto( cFecDoc )
+STATIC FUNCTION DuplicateSAST( cFecDoc )
 
    local nNewNumSat  := 0
 
@@ -7814,14 +7807,13 @@ STATIC FUNCTION DupSatsupuesto( cFecDoc )
 
    //Duplicamos las lineas del documento---------------------------------------
 
-   if ( dbfSatCliL )->( dbSeek( ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat ) )
+   if ( D():SatClientesLineas( nView ) )->( dbSeek( ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat ) )
 
-      while ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat == ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat .and. ;
-            !( dbfSatCliL )->( Eof() )
+      while D():SatClientesId( nView ) == D():SatClientesLineasId( nView ) .and. D():SatClientesLineasNotEof( nView )
 
-         SatRecDup( dbfSatCliL, ( D():SatClientes( nView ) )->cSerSat, nNewNumSat, ( D():SatClientes( nView ) )->cSufSat, .f. )
+         SatRecDup( D():SatClientesLineas( nView ), ( D():SatClientes( nView ) )->cSerSat, nNewNumSat, ( D():SatClientes( nView ) )->cSufSat, .f. )
 
-         ( dbfSatCliL )->( dbSkip() )
+         ( D():SatClientesLineas( nView ) )->( dbSkip() )
 
       end while
 
@@ -7914,72 +7906,72 @@ Static Function ValidaMedicion( aTmp, aGet )
       if oUndMedicion:oDbf:Seek( aTmp[ _CUNIDAD ] )
 
          if oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
-            if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ] )
-               aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
-               aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:cText( ( D():Articulos( nView ) )->nLngArt )
-               aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:Show()
+            if !Empty( aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+               aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
+               aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( ( D():Articulos( nView ) )->nLngArt )
+               aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Show()
             else
-               aTmp[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]  := ( D():Articulos( nView ) )->nLngArt
+               aTmp[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]  := ( D():Articulos( nView ) )->nLngArt
             end if
          else
-            if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ] )
-               aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
-               aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:Hide()
+            if !Empty( aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+               aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
+               aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Hide()
             else
-               aTmp[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]  := 0
+               aTmp[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]  := 0
             end if
          end if
 
          if oUndMedicion:oDbf:nDimension >= 2 .and. !Empty( oUndMedicion:oDbf:cTextoDim2 )
-            if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ] )
-               aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
-               aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:cText( ( D():Articulos( nView ) )->nAltArt )
-               aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:Show()
+            if !Empty( aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+               aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
+               aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( ( D():Articulos( nView ) )->nAltArt )
+               aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Show()
             else
-               aTmp[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]  := ( D():Articulos( nView ) )->nAltArt
+               aTmp[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]  := ( D():Articulos( nView ) )->nAltArt
             end if
 
          else
-            if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ] )
-               aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
-               aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:Hide()
+            if !Empty( aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+               aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
+               aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
             else
-               aTmp[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]  := 0
+               aTmp[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]  := 0
             end if
          end if
 
          if oUndMedicion:oDbf:nDimension >= 3 .and. !Empty( oUndMedicion:oDbf:cTextoDim3 )
-            if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ] )
-               aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
-               aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:cText( ( D():Articulos( nView ) ) ->nAncArt )
-               aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:Show()
+            if !Empty( aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+               aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
+               aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( ( D():Articulos( nView ) ) ->nAncArt )
+               aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Show()
             else
-               aTmp[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]  := ( D():Articulos( nView ) )->nAncArt
+               aTmp[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]  := ( D():Articulos( nView ) )->nAncArt
             end if
          else
-            if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ] )
-               aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
-               aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:Hide()
+            if !Empty( aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+               aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
+               aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
             else
-               aTmp[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]  := 0
+               aTmp[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]  := 0
             end if
          end if
 
       else
 
-         if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ] )
-            aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:Hide()
-            aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
+         if !Empty( aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+            aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Hide()
+            aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
          end if
 
-         if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ] )
-            aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:Hide()
-            aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
+         if !Empty( aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+            aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
+            aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
          end if
 
-         if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ] )
-            aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:Hide()
-            aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
+         if !Empty( aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+            aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
+            aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
          end if
 
       end if
@@ -8052,7 +8044,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "SAT", ( D():SatClientes( nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    oFr:SetFieldAliases( "SAT", cItemsToReport( aItmSatCli() ) )
 
-   oFr:SetWorkArea(     "Lineas de SAT", ( dbfSatCliL )->( Select() ) )
+   oFr:SetWorkArea(     "Lineas de SAT", ( D():SatClientesLineas( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Lineas de SAT", cItemsToReport( aColSatCli() ) )
 
    oFr:SetWorkArea(     "Incidencias de SAT", ( dbfSatCliI )->( Select() ) )
@@ -8117,10 +8109,10 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "SAT", "Transportistas",                  {|| ( D():SatClientes( nView ) )->cCodTrn } )
    oFr:SetMasterDetail( "SAT", "Usuarios",                        {|| ( D():SatClientes( nView ) )->cCodUsr } )
 
-   oFr:SetMasterDetail( "Lineas de SAT", "Artículos",             {|| ( dbfSatCliL )->cRef } )
-   oFr:SetMasterDetail( "Lineas de SAT", "Ofertas",               {|| ( dbfSatCliL )->cRef } )
-   oFr:SetMasterDetail( "Lineas de SAT", "Unidades de medición",  {|| ( dbfSatCliL )->cUnidad } )
-   oFr:SetMasterDetail( "Lineas de SAT", "Impuestos especiales",  {|| ( dbfSatCliL )->cCodImp } )
+   oFr:SetMasterDetail( "Lineas de SAT", "Artículos",             {|| ( D():SatClientesLineas( nView ) )->cRef } )
+   oFr:SetMasterDetail( "Lineas de SAT", "Ofertas",               {|| ( D():SatClientesLineas( nView ) )->cRef } )
+   oFr:SetMasterDetail( "Lineas de SAT", "Unidades de medición",  {|| ( D():SatClientesLineas( nView ) )->cUnidad } )
+   oFr:SetMasterDetail( "Lineas de SAT", "Impuestos especiales",  {|| ( D():SatClientesLineas( nView ) )->cCodImp } )
 
    oFr:SetResyncPair(   "SAT", "Lineas de SAT" )
    oFr:SetResyncPair(   "SAT", "Series de lineas de SAT" )
@@ -8417,7 +8409,7 @@ FUNCTION nTotSatCli( cSatsupuesto, cSatCliT, cSatCliL, cIva, cDiv, cFPago, aTmp,
    local nIvaGasto
 
    DEFAULT cSatCliT        := D():SatClientes( nView )
-   DEFAULT cSatCliL        := dbfSatCliL
+   DEFAULT cSatCliL        := D():SatClientesLineas( nView )
    DEFAULT cIva            := dbfIva
    DEFAULT cDiv            := dbfDiv
    DEFAULT cFPago          := dbfFPago
@@ -9039,7 +9031,7 @@ RETURN ( { nTotNet, nTotIva, nTotReq, nTotSat, nTotPnt, nTotTrn, nTotAge, nTotCo
 
 //--------------------------------------------------------------------------//
 
-FUNCTION BrwSatCli( oGet, cSatCliT, dbfSatCliL, dbfIva, dbfDiv, dbfFPago, oIva )
+FUNCTION BrwSatCli( oGet, cSatCliT, cSatCliL, dbfIva, dbfDiv, dbfFPago, oIva )
 
    local oDlg
    local oBrw
@@ -9124,7 +9116,7 @@ FUNCTION BrwSatCli( oGet, cSatCliT, dbfSatCliL, dbfIva, dbfDiv, dbfFPago, oIva )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Importe"
-         :bEditValue       := {|| nTotSatCli( ( cSatCliT )->cSerSat + Str( ( cSatCliT )->nNumSat ) + ( cSatCliT )->cSufSat, cSatCliT, dbfSatCliL, dbfIva, dbfDiv, dbfFPago, nil, cDivEmp(), .t. ) }
+         :bEditValue       := {|| nTotSatCli( ( cSatCliT )->cSerSat + Str( ( cSatCliT )->nNumSat ) + ( cSatCliT )->cSufSat, cSatCliT, cSatCliL, dbfIva, dbfDiv, dbfFPago, nil, cDivEmp(), .t. ) }
          :nWidth           := 100
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -9226,7 +9218,7 @@ FUNCTION nTotUSatCli( uTmpLin, nDec, nVdv )
 
    local nCalculo       := 0
 
-   DEFAULT uTmpLin      := dbfSatCliL
+   DEFAULT uTmpLin      := D():SatClientesLineas( nView )
    DEFAULT nDec         := nDouDiv()
    DEFAULT nVdv         := 1
 
@@ -9353,7 +9345,7 @@ FUNCTION nTotFSatCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDiv 
 
    local nCalculo    := 0
 
-   DEFAULT dbfLin    := dbfSatCliL
+   DEFAULT dbfLin    := D():SatClientesLineas( nView )
    DEFAULT nDec      := nDouDiv()
    DEFAULT nRou      := nRouDiv()
    DEFAULT nVdv      := 1
@@ -9372,7 +9364,7 @@ return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 FUNCTION cDesSatCli( cSatCliL, cSatCliS )
 
-   DEFAULT cSatCliL  := dbfSatCliL
+   DEFAULT cSatCliL  := D():SatClientesLineas( nView )
    DEFAULT cSatCliS  := dbfSatCliS
 
 RETURN ( Descrip( cSatCliL, cSatCliS ) )
@@ -9381,7 +9373,7 @@ RETURN ( Descrip( cSatCliL, cSatCliS ) )
 
 FUNCTION cDesSatCliLeng( cSatCliL, cSatCliS, cArtLeng )
 
-   DEFAULT cSatCliL  := dbfSatCliL
+   DEFAULT cSatCliL  := D():SatClientesLineas( nView )
    DEFAULT cSatCliS  := dbfSatCliS
    DEFAULT cArtLeng  := D():ArticuloLenguaje( nView )
 
@@ -9474,7 +9466,7 @@ FUNCTION nTotLSatCli( uSatCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
    local nCalculo
    local nUnidades
 
-   DEFAULT uSatCliL     := dbfSatCliL
+   DEFAULT uSatCliL     := D():SatClientesLineas( nView )
    DEFAULT nDec         := nDouDiv()
    DEFAULT nRou         := nRouDiv()
    DEFAULT nVdv         := 1
@@ -9544,7 +9536,7 @@ FUNCTION nPrmLSatCli( cSatCliL, nDec, nRou, nVdv )
 
    local nCalculo       := 0
 
-   DEFAULT cSatCliL     := dbfSatCliL
+   DEFAULT cSatCliL     := D():SatClientesLineas( nView )
    DEFAULT nDec         := nDouDiv()
    DEFAULT nRou         := nRouDiv()
    DEFAULT nVdv         := 1
@@ -9606,7 +9598,7 @@ FUNCTION nPesLSatCli( cSatCliL )
 
    local nCalculo    := 0
 
-   DEFAULT cSatCliL  := dbfSatCliL
+   DEFAULT cSatCliL  := D():SatClientesLineas( nView )
 
    if !( cSatCliL )->lTotLin .and. !( cSatCliL )->lControl
       nCalculo       := Abs( nTotNSatCli( cSatCliL ) ) * ( cSatCliL )->nPesoKg
@@ -9663,7 +9655,7 @@ FUNCTION nPntLSatCli( dbfLin, nDec, nVdv )
 
    local nPntVer
 
-   DEFAULT dbfLin    := dbfSatCliL
+   DEFAULT dbfLin    := D():SatClientesLineas( nView )
    DEFAULT nDec      := nDouDiv()
    DEFAULT nVdv      := 1
 
@@ -9714,7 +9706,7 @@ FUNCTION nTrnLSatCli( dbfLin, nDec, nRou, nVdv )
 
    local nImpTrn
 
-   DEFAULT dbfLin    := dbfSatCliL
+   DEFAULT dbfLin    := D():SatClientesLineas( nView )
    DEFAULT nDec      := nDouDiv()
    DEFAULT nRou      := nRouDiv()
    DEFAULT nVdv      := 1
@@ -9740,7 +9732,7 @@ FUNCTION nDtoLSatCli( cSatCliL, nDec, nRou, nVdv )
 
    local nCalculo       := 0
 
-   DEFAULT cSatCliL     := dbfSatCliL
+   DEFAULT cSatCliL     := D():SatClientesLineas( nView )
    DEFAULT nDec         := nDouDiv()
    DEFAULT nRou         := nRouDiv()
    DEFAULT nVdv         := 1
@@ -9773,6 +9765,9 @@ RETURN ( nCalculo )
 //---------------------------------------------------------------------------//
 
 FUNCTION mkSatCli( cPath, lAppend, cPathOld, oMeter, bFor )
+   
+   local cSatCliT
+   local cSatCliL
 
    local oldSatCliT
    local oldSatCliL
@@ -9793,14 +9788,14 @@ FUNCTION mkSatCli( cPath, lAppend, cPathOld, oMeter, bFor )
 
    if lAppend .and. lIsDir( cPathOld )
 
-      dbUseArea( .t., cDriver(), cPath + "SATCLIT.DBF", cCheckArea( "SATCLIT", @dbfSatCliT ), .f. )
-      if !( dbfSatCliT )->( neterr() )
-         ( dbfSatCliT )->( ordListAdd( cPath + "SATCLIT.CDX" ) )
+      dbUseArea( .t., cDriver(), cPath + "SATCLIT.DBF", cCheckArea( "SATCLIT", @cSatCliT ), .f. )
+      if !( cSatCliT )->( neterr() )
+         ( cSatCliT )->( ordListAdd( cPath + "SATCLIT.CDX" ) )
       end if
 
-      dbUseArea( .t., cDriver(), cPath + "SatCliL.DBF", cCheckArea( "SatCliL", @dbfSatCliL ), .f. )
-      if !( dbfSatCliL )->( neterr() )
-         ( dbfSatCliL )->( ordListAdd( cPath + "SatCliL.CDX" ) )
+      dbUseArea( .t., cDriver(), cPath + "SatCliL.DBF", cCheckArea( "SatCliL", @cSatCliL ), .f. )
+      if !( cSatCliL )->( neterr() )
+         ( cSatCliL )->( ordListAdd( cPath + "SatCliL.CDX" ) )
       end if
 
       dbUseArea( .t., cDriver(), cPath + "SatCliI.Dbf", cCheckArea( "SatCliI", @dbfSatCliI ), .f. )
@@ -9818,7 +9813,7 @@ FUNCTION mkSatCli( cPath, lAppend, cPathOld, oMeter, bFor )
       */
 
       dbUseArea( .t., cDriver(), cPathOld + "SatCliT.DBF", cCheckArea( "SatCliT", @oldSatCliT ), .f. )
-      if !( dbfSatCliT )->( neterr() )
+      if !( cSatCliT )->( neterr() )
          ( oldSatCliT )->( ordListAdd( cPathOld + "SatCliT.CDX" ) )
       end if
 
@@ -9845,11 +9840,11 @@ FUNCTION mkSatCli( cPath, lAppend, cPathOld, oMeter, bFor )
 
          if eval( bFor, oldSatCliT )
 
-            dbCopy( oldSatCliT, dbfSatCliT, .t. )
+            dbCopy( oldSatCliT, cSatCliT, .t. )
 
             if ( oldSatCliL )->( dbSeek( ( oldSatCliT )->cSerSat + Str( ( oldSatCliT )->nNumSat ) + ( oldSatCliT )->cSufSat ) )
                while ( oldSatCliL )->cSerSat + Str( ( oldSatCliL )->nNumSat ) + ( oldSatCliL )->cSufSat == ( oldSatCliT )->cSerSat + Str( ( oldSatCliT )->nNumSat ) + ( oldSatCliT )->cSufSat .and. !( oldSatCliL )->( eof() )
-                  dbCopy( oldSatCliL, dbfSatCliL, .t. )
+                  dbCopy( oldSatCliL, cSatCliL, .t. )
                   ( oldSatCliL )->( dbSkip() )
                end while
             end if
@@ -9874,8 +9869,8 @@ FUNCTION mkSatCli( cPath, lAppend, cPathOld, oMeter, bFor )
 
       end while
 
-      ( dbfSatCliT )->( dbCloseArea() )
-      ( dbfSatCliL )->( dbCloseArea() )
+      ( cSatCliT )->( dbCloseArea() )
+      ( cSatCliL )->( dbCloseArea() )
       ( dbfSatCliI )->( dbCloseArea() )
       ( dbfSatCliD )->( dbCloseArea() )
 
@@ -10065,7 +10060,7 @@ FUNCTION nTotNSatCli( uDbf )
 
    local nTotUnd
 
-   DEFAULT uDbf   := dbfSatCliL
+   DEFAULT uDbf   := D():SatClientesLineas( nView )
 
    do case
       case ValType( uDbf ) == "A"
@@ -10105,7 +10100,7 @@ FUNCTION nTotISatCli( dbfLin, nDec, nRouDec, nVdv, cPorDiv )
 
    local nCalculo    := 0
 
-   DEFAULT dbfLin    := dbfSatCliL
+   DEFAULT dbfLin    := D():SatClientesLineas( nView )
    DEFAULT nDec      := 0
    DEFAULT nRouDec   := 0
    DEFAULT nVdv      := 1
@@ -10136,7 +10131,7 @@ RETURN ( if( cPorDiv != NIL, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION nImpLSatCli( uSatCliT, dbfSatCliL, nDec, nRou, nVdv, lIva, lDto, lPntVer, lImpTrn, cPouDiv )
+FUNCTION nImpLSatCli( uSatCliT, cSatCliL, nDec, nRou, nVdv, lIva, lDto, lPntVer, lImpTrn, cPouDiv )
 
    local nCalculo
    local lIvaInc
@@ -10149,7 +10144,7 @@ FUNCTION nImpLSatCli( uSatCliT, dbfSatCliL, nDec, nRou, nVdv, lIva, lDto, lPntVe
    DEFAULT lPntVer   := .f.
    DEFAULT lImpTrn   := .f.
 
-   nCalculo          := nTotLSatCli( dbfSatCliL, nDec, nRou, nVdv, .t., lPntVer, lImpTrn )
+   nCalculo          := nTotLSatCli( cSatCliL, nDec, nRou, nVdv, .t., lPntVer, lImpTrn )
 
    if ValType( uSatCliT ) == "A"
       nCalculo       -= Round( nCalculo * uSatCliT[ _NDTOESP ]  / 100, nRou )
@@ -10165,14 +10160,14 @@ FUNCTION nImpLSatCli( uSatCliT, dbfSatCliL, nDec, nRou, nVdv, lIva, lDto, lPntVe
       lIvaInc        := ( uSatCliT )->lIvaInc
    end if
 
-   if ( dbfSatCliL )->nIva != 0
+   if ( cSatCliL )->nIva != 0
       if lIva  // lo quermos con impuestos
          if !lIvaInc
-            nCalculo += Round( nCalculo * ( dbfSatCliL )->nIva / 100, nRou )
+            nCalculo += Round( nCalculo * ( cSatCliL )->nIva / 100, nRou )
          end if
       else     // lo queremos sin impuestos
          if lIvaInc
-            nCalculo -= Round( nCalculo / ( 100 / ( dbfSatCliL )->nIva  + 1 ), nRou )
+            nCalculo -= Round( nCalculo / ( 100 / ( cSatCliL )->nIva  + 1 ), nRou )
          end if
       end if
    end if
@@ -10181,7 +10176,7 @@ RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION nDtoAtpSatCli( uSatCliT, dbfSatCliL, nDec, nRou, nVdv, lPntVer, lImpTrn )
+FUNCTION nDtoAtpSatCli( uSatCliT, cSatCliL, nDec, nRou, nVdv, lPntVer, lImpTrn )
 
    local nCalculo    := 0
    local nDtoAtp     := 0
@@ -10192,7 +10187,7 @@ FUNCTION nDtoAtpSatCli( uSatCliT, dbfSatCliL, nDec, nRou, nVdv, lPntVer, lImpTrn
    DEFAULT lPntVer   := .f.
    DEFAULT lImpTrn   := .f.
 
-   nCalculo          := nTotLSatCli( dbfSatCliL, nDec, nRou, nVdv, .t., lPntVer, lImpTrn )
+   nCalculo          := nTotLSatCli( cSatCliL, nDec, nRou, nVdv, .t., lPntVer, lImpTrn )
 
    if ( uSatCliT )->nSbrAtp <= 1 .and. ( uSatCliT )->nDtoAtp != 0
       nDtoAtp     += Round( nCalculo * ( uSatCliT )->nDtoAtp / 100, nRou )
@@ -10226,11 +10221,11 @@ RETURN ( nDtoAtp )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION nComLSatCli( cSatCliT, dbfSatCliL, nDecOut, nDerOut )
+FUNCTION nComLSatCli( cSatCliT, cSatCliL, nDecOut, nDerOut )
 
-   local nImp        := nImpLSatCli( cSatCliT, dbfSatCliL, nDecOut, nDerOut )
+   local nImp        := nImpLSatCli( cSatCliT, cSatCliL, nDecOut, nDerOut )
 
-RETURN ( nImp * ( dbfSatCliL )->nComAge / 100 )
+RETURN ( nImp * ( cSatCliL )->nComAge / 100 )
 
 //--------------------------------------------------------------------------//
 
@@ -10273,32 +10268,32 @@ RETURN ( cNomCli )
 // Devuelve el total de la compra en Sataranes de clientes de un articulo
 //
 
-function nTotDSatCli( cCodArt, dbfSatCliL )
+function nTotDSatCli( cCodArt, cSatCliL )
 
    local nTotVta  := 0
-   local nRecno   := ( dbfSatCliL )->( Recno() )
+   local nRecno   := ( cSatCliL )->( Recno() )
 
-   if ( dbfSatCliL )->( dbSeek( cCodArt ) )
+   if ( cSatCliL )->( dbSeek( cCodArt ) )
 
-      while ( dbfSatCliL )->CREF == cCodArt .and. !( dbfSatCliL )->( eof() )
+      while ( cSatCliL )->CREF == cCodArt .and. !( cSatCliL )->( eof() )
 
-         If !( dbfSatCliL )->LTOTLIN
-            nTotVta += nTotNSatCli( dbfSatCliL )
+         If !( cSatCliL )->LTOTLIN
+            nTotVta += nTotNSatCli( cSatCliL )
          end if
 
-         ( dbfSatCliL )->( dbSkip() )
+         ( cSatCliL )->( dbSkip() )
 
       end while
 
    end if
 
-   ( dbfSatCliL )->( dbGoTo( nRecno ) )
+   ( cSatCliL )->( dbGoTo( nRecno ) )
 
 return ( nTotVta )
 
 //---------------------------------------------------------------------------//
 
-function nVtaSatCli( cCodCli, dDesde, dHasta, cSatCliT, dbfSatCliL, dbfIva, dbfDiv )
+function nVtaSatCli( cCodCli, dDesde, dHasta, cSatCliT, cSatCliL, dbfIva, dbfDiv )
 
    local nCon     := 0
    local nRec     := ( cSatCliT )->( Recno() )
@@ -10314,7 +10309,7 @@ function nVtaSatCli( cCodCli, dDesde, dHasta, cSatCliT, dbfSatCliL, dbfIva, dbfD
          if ( dDesde == nil .or. ( cSatCliT )->dFecSat >= dDesde )    .and.;
             ( dHasta == nil .or. ( cSatCliT )->dFecSat <= dHasta )
 
-            nCon  += nTotSatCli( ( cSatCliT )->cSerSat + Str( ( cSatCliT )->nNumSat ) + ( cSatCliT )->cSufSat, cSatCliT, dbfSatCliL, dbfIva, dbfDiv, nil, nil, cDivEmp(), .f. )
+            nCon  += nTotSatCli( ( cSatCliT )->cSerSat + Str( ( cSatCliT )->nNumSat ) + ( cSatCliT )->cSufSat, cSatCliT, cSatCliL, dbfIva, dbfDiv, nil, nil, cDivEmp(), .f. )
 
          end if
 
@@ -10649,15 +10644,17 @@ Function SynSatCli( cPath )
    local oBlock
    local nOrdAnt
    local aTotSat
+   local cSatCliL
+   local cSatCliT
    local dbfArticulo
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPatEmp() + "SATCLIT.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "SATCLIT", @dbfSatCliT ) ) EXCLUSIVE
+   USE ( cPatEmp() + "SATCLIT.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "SATCLIT", @cSatCliT ) ) EXCLUSIVE
    SET ADSINDEX TO ( cPatEmp() + "SATCLIT.CDX" ) ADDITIVE
 
-   USE ( cPatEmp() + "SATCLIL.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "SATCLIL", @dbfSatCliL ) ) EXCLUSIVE
+   USE ( cPatEmp() + "SATCLIL.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "SATCLIL", @cSatCliL ) ) EXCLUSIVE
    SET ADSINDEX TO ( cPatEmp() + "SATCLIL.CDX" ) ADDITIVE
 
    USE ( cPatEmp() + "SATCLII.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "SATCLII", @dbfSatCliI ) ) EXCLUSIVE
@@ -10684,104 +10681,104 @@ Function SynSatCli( cPath )
    USE ( cPatDat() + "DIVISAS.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) ) SHARED
    SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
-   ( dbfSatCliT )->( ordSetFocus( 0 ) )
-   ( dbfSatCliT )->( dbGoTop() )
+   ( cSatCliT )->( ordSetFocus( 0 ) )
+   ( cSatCliT )->( dbGoTop() )
 
-      while !( dbfSatCliT )->( eof() )
+      while !( cSatCliT )->( eof() )
 
-         if Empty( ( dbfSatCliT )->cSufSat )
-            ( dbfSatCliT )->cSufSat := "00"
+         if Empty( ( cSatCliT )->cSufSat )
+            ( cSatCliT )->cSufSat := "00"
          end if
 
-         if !Empty( ( dbfSatCliT )->cNumAlb ) .and. Len( AllTrim( ( dbfSatCliT )->cNumAlb ) ) != 12
-         ( dbfSatCliT )->cNumAlb := AllTrim( ( dbfSatCliT )->cNumAlb ) + "00"
+         if !Empty( ( cSatCliT )->cNumAlb ) .and. Len( AllTrim( ( cSatCliT )->cNumAlb ) ) != 12
+         ( cSatCliT )->cNumAlb := AllTrim( ( cSatCliT )->cNumAlb ) + "00"
          end if
 
-         if !Empty( ( dbfSatCliT )->cNumTik ) .and. Len( AllTrim( ( dbfSatCliT )->cNumTik ) ) != 13
-         ( dbfSatCliT )->cNumTik := AllTrim( ( dbfSatCliT )->cNumTik ) + "00"
+         if !Empty( ( cSatCliT )->cNumTik ) .and. Len( AllTrim( ( cSatCliT )->cNumTik ) ) != 13
+         ( cSatCliT )->cNumTik := AllTrim( ( cSatCliT )->cNumTik ) + "00"
          end if
 
-         if Empty( ( dbfSatCliT )->cCodCaj )
-            ( dbfSatCliT )->cCodCaj := "000"
+         if Empty( ( cSatCliT )->cCodCaj )
+            ( cSatCliT )->cCodCaj := "000"
          end if
 
-         if Empty( ( dbfSatCliT )->cCodGrp )
-            ( dbfSatCliT )->cCodGrp := RetGrpCli( ( dbfSatCliT )->cCodCli, dbfClient )
+         if Empty( ( cSatCliT )->cCodGrp )
+            ( cSatCliT )->cCodGrp := RetGrpCli( ( cSatCliT )->cCodCli, dbfClient )
          end if
 
-         if Empty( ( dbfSatCliT )->cCodRut )
-            ( dbfSatCliT )->cCodRut := RetFld( ( dbfSatCliT )->cCodCli, dbfClient, "cCodRut" )
+         if Empty( ( cSatCliT )->cCodRut )
+            ( cSatCliT )->cCodRut := RetFld( ( cSatCliT )->cCodCli, dbfClient, "cCodRut" )
          end if
 
          /*
          Rellenamos los campos de totales
          */
 
-         if ( dbfSatCliT )->nTotSat == 0 .and. dbLock( dbfSatCliT )
+         if ( cSatCliT )->nTotSat == 0 .and. dbLock( cSatCliT )
 
-            aTotSat                 := aTotSatCli( ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat, dbfSatCliT, dbfSatCliL, dbfIva, dbfDiv, dbfFPago, ( dbfSatCliT )->cDivSat )
+            aTotSat                 := aTotSatCli( ( cSatCliT )->cSerSat + Str( ( cSatCliT )->nNumSat ) + ( cSatCliT )->cSufSat, cSatCliT, cSatCliL, dbfIva, dbfDiv, dbfFPago, ( cSatCliT )->cDivSat )
 
-            ( dbfSatCliT )->nTotNet := aTotSat[1]
-            ( dbfSatCliT )->nTotIva := aTotSat[2]
-            ( dbfSatCliT )->nTotReq := aTotSat[3]
-            ( dbfSatCliT )->nTotSat := aTotSat[4]
+            ( cSatCliT )->nTotNet := aTotSat[1]
+            ( cSatCliT )->nTotIva := aTotSat[2]
+            ( cSatCliT )->nTotReq := aTotSat[3]
+            ( cSatCliT )->nTotSat := aTotSat[4]
 
-            ( dbfSatCliT )->( dbUnLock() )
+            ( cSatCliT )->( dbUnLock() )
 
          end if
 
-         ( dbfSatCliT )->( dbSkip() )
+         ( cSatCliT )->( dbSkip() )
 
       end while
 
-   ( dbfSatCliT )->( ordSetFocus( 1 ) )
+   ( cSatCliT )->( ordSetFocus( 1 ) )
 
    // lineas ------------------------------------------------------------------
 
-   ( dbfSatCliL )->( ordSetFocus( 0 ) )
-   ( dbfSatCliL )->( dbGoTop() )
+   ( cSatCliL )->( ordSetFocus( 0 ) )
+   ( cSatCliL )->( dbGoTop() )
 
-      while !( dbfSatCliL )->( eof() )
+      while !( cSatCliL )->( eof() )
 
-         if Empty( ( dbfSatCliL )->cSufSat )
-            ( dbfSatCliL )->cSufSat := "00"
+         if Empty( ( cSatCliL )->cSufSat )
+            ( cSatCliL )->cSufSat := "00"
          end if
 
-         if Empty( ( dbfSatCliL )->cLote ) .and. !Empty( ( dbfSatCliL )->nLote )
-            ( dbfSatCliL )->cLote      := AllTrim( Str( ( dbfSatCliL )->nLote ) )
+         if Empty( ( cSatCliL )->cLote ) .and. !Empty( ( cSatCliL )->nLote )
+            ( cSatCliL )->cLote      := AllTrim( Str( ( cSatCliL )->nLote ) )
          end if
 
-         if ( dbfSatCliL )->lIvaLin    != RetFld( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat, dbfSatCliT, "lIvaInc" )
-            ( dbfSatCliL )->lIvaLin    := RetFld( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat, dbfSatCliT, "lIvaInc" )
+         if ( cSatCliL )->lIvaLin    != RetFld( ( cSatCliL )->cSerSat + Str( ( cSatCliL )->nNumSat ) + ( cSatCliL )->cSufSat, cSatCliT, "lIvaInc" )
+            ( cSatCliL )->lIvaLin    := RetFld( ( cSatCliL )->cSerSat + Str( ( cSatCliL )->nNumSat ) + ( cSatCliL )->cSufSat, cSatCliT, "lIvaInc" )
          end if
 
-         if !Empty( ( dbfSatCliL )->cRef ) .and. Empty( ( dbfSatCliL )->cCodFam )
-            ( dbfSatCliL )->cCodFam    := RetFamArt( ( dbfSatCliL )->cRef, dbfArticulo )
+         if !Empty( ( cSatCliL )->cRef ) .and. Empty( ( cSatCliL )->cCodFam )
+            ( cSatCliL )->cCodFam    := RetFamArt( ( cSatCliL )->cRef, dbfArticulo )
          end if
 
-         if !Empty( ( dbfSatCliL )->cRef ) .and. !Empty( ( dbfSatCliL )->cCodFam )
-            ( dbfSatCliL )->cGrpFam    := cGruFam( ( dbfSatCliL )->cCodFam, dbfFamilia )
+         if !Empty( ( cSatCliL )->cRef ) .and. !Empty( ( cSatCliL )->cCodFam )
+            ( cSatCliL )->cGrpFam    := cGruFam( ( cSatCliL )->cCodFam, dbfFamilia )
          end if
 
-         if !Empty( ( dbfSatCliL )->cRef ) .and. Empty( ( dbfSatCliL )->cCodTip )
-            ( dbfSatCliL )->cCodTip    := RetFld( ( dbfSatCliL )->cRef, dbfArticulo, "cCodTip" )
+         if !Empty( ( cSatCliL )->cRef ) .and. Empty( ( cSatCliL )->cCodTip )
+            ( cSatCliL )->cCodTip    := RetFld( ( cSatCliL )->cRef, dbfArticulo, "cCodTip" )
          end if
 
-         if Empty( ( dbfSatCliL )->nReq )
-            ( dbfSatCliL )->nReq       := nPReq( dbfIva, ( dbfSatCliL )->nIva )
+         if Empty( ( cSatCliL )->nReq )
+            ( cSatCliL )->nReq       := nPReq( dbfIva, ( cSatCliL )->nIva )
          end if
 
-         if Empty( ( dbfSatCliL )->nPosPrint )
-            ( dbfSatCliL )->nPosPrint  := ( dbfSatCliL )->nNumLin
+         if Empty( ( cSatCliL )->nPosPrint )
+            ( cSatCliL )->nPosPrint  := ( cSatCliL )->nNumLin
          end if 
 
-         ( dbfSatCliL )->( dbSkip() )
+         ( cSatCliL )->( dbSkip() )
 
          SysRefresh()
 
       end while
 
-   ( dbfSatCliL )->( ordSetFocus( 1 ) )
+   ( cSatCliL )->( ordSetFocus( 1 ) )
 
    // Incidencias ------------------------------------------------------------------
 
@@ -10813,8 +10810,8 @@ Function SynSatCli( cPath )
             ( dbfSatCliS )->cSufSat := "00"
          end if
    
-         if ( dbfSatCliS )->dFecSat != RetFld( ( dbfSatCliS )->cSerSat + Str( ( dbfSatCliS )->nNumSat ) + ( dbfSatCliS )->cSufSat, dbfSatCliT, "dFecSat" )
-            ( dbfSatCliS )->dFecSat := RetFld( ( dbfSatCliS )->cSerSat + Str( ( dbfSatCliS )->nNumSat ) + ( dbfSatCliS )->cSufSat, dbfSatCliT, "dFecSat" )
+         if ( dbfSatCliS )->dFecSat != RetFld( ( dbfSatCliS )->cSerSat + Str( ( dbfSatCliS )->nNumSat ) + ( dbfSatCliS )->cSufSat, cSatCliT, "dFecSat" )
+            ( dbfSatCliS )->dFecSat := RetFld( ( dbfSatCliS )->cSerSat + Str( ( dbfSatCliS )->nNumSat ) + ( dbfSatCliS )->cSufSat, cSatCliT, "dFecSat" )
          end if
    
          ( dbfSatCliS )->( dbSkip() )
@@ -10833,8 +10830,8 @@ Function SynSatCli( cPath )
 
    ErrorBlock( oBlock )
 
-   CLOSE ( dbfSatCliT )
-   CLOSE ( dbfSatCliL )
+   CLOSE ( cSatCliT )
+   CLOSE ( cSatCliL )
    CLOSE ( dbfSatCliI )
    CLOSE ( dbfSatCliS )
    CLOSE ( dbfArticulo)
@@ -10874,8 +10871,8 @@ Method CreateData()
    local oBlock
    local oError
    local lSnd        := .f.
-   local dbfSatCliT
-   local dbfSatCliL
+   local cSatCliT
+   local cSatCliL
    local dbfSatCliI
    local tmpSatCliT
    local tmpSatCliL
@@ -10887,10 +10884,10 @@ Method CreateData()
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPatEmp() + "SatCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliT", @dbfSatCliT ) )
+   USE ( cPatEmp() + "SatCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliT", @cSatCliT ) )
    SET ADSINDEX TO ( cPatEmp() + "SatCliT.CDX" ) ADDITIVE
 
-   USE ( cPatEmp() + "SatCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliL", @dbfSatCliL ) )
+   USE ( cPatEmp() + "SatCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliL", @cSatCliL ) )
    SET ADSINDEX TO ( cPatEmp() + "SatCliL.CDX" ) ADDITIVE
 
    USE ( cPatEmp() + "SatCliI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliI", @dbfSatCliI ) )
@@ -10910,28 +10907,28 @@ Method CreateData()
    SET INDEX TO ( cPatSnd() + "SatCliI.CDX" ) ADDITIVE
 
    if !Empty( ::oSender:oMtr )
-      ::oSender:oMtr:nTotal := ( dbfSatCliT )->( LastRec() )
+      ::oSender:oMtr:nTotal := ( cSatCliT )->( LastRec() )
    end if
 
-   while !( dbfSatCliT )->( eof() )
+   while !( cSatCliT )->( eof() )
 
-      if ( dbfSatCliT )->lSndDoc
+      if ( cSatCliT )->lSndDoc
 
          lSnd  := .t.
 
-         dbPass( dbfSatCliT, tmpSatCliT, .t. )
+         dbPass( cSatCliT, tmpSatCliT, .t. )
          
-         ::oSender:SetText( ( dbfSatCliT )->cSerSat + "/" + AllTrim( Str( ( dbfSatCliT )->nNumSat ) ) + "/" + AllTrim( ( dbfSatCliT )->cSufSat ) + "; " + Dtoc( ( dbfSatCliT )->dFecSat ) + "; " + AllTrim( ( dbfSatCliT )->cCodCli ) + "; " + ( dbfSatCliT )->cNomCli )
+         ::oSender:SetText( ( cSatCliT )->cSerSat + "/" + AllTrim( Str( ( cSatCliT )->nNumSat ) ) + "/" + AllTrim( ( cSatCliT )->cSufSat ) + "; " + Dtoc( ( cSatCliT )->dFecSat ) + "; " + AllTrim( ( cSatCliT )->cCodCli ) + "; " + ( cSatCliT )->cNomCli )
 
-         if ( dbfSatCliL )->( dbSeek( ( dbfSatCliT )->CSERSat + Str( ( dbfSatCliT )->NNUMSat ) + ( dbfSatCliT )->CSUFSat ) )
-            while ( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->NNUMSat ) + ( dbfSatCliL )->CSUFSat ) == ( ( dbfSatCliT )->CSERSat + Str( ( dbfSatCliT )->NNUMSat ) + ( dbfSatCliT )->CSUFSat ) .AND. !( dbfSatCliL )->( eof() )
-               dbPass( dbfSatCliL, tmpSatCliL, .t. )
-               ( dbfSatCliL )->( dbSkip() )
+         if ( cSatCliL )->( dbSeek( ( cSatCliT )->CSERSat + Str( ( cSatCliT )->NNUMSat ) + ( cSatCliT )->CSUFSat ) )
+            while ( ( cSatCliL )->cSerSat + Str( ( cSatCliL )->NNUMSat ) + ( cSatCliL )->CSUFSat ) == ( ( cSatCliT )->CSERSat + Str( ( cSatCliT )->NNUMSat ) + ( cSatCliT )->CSUFSat ) .AND. !( cSatCliL )->( eof() )
+               dbPass( cSatCliL, tmpSatCliL, .t. )
+               ( cSatCliL )->( dbSkip() )
             end do
          end if
 
-         if ( dbfSatCliI )->( dbSeek( ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat ) )
-            while ( ( dbfSatCliI )->cSerSat + Str( ( dbfSatCliI )->nNumSat ) + ( dbfSatCliI )->cSufSat ) == ( ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat ) .AND. !( dbfSatCliI )->( eof() )
+         if ( dbfSatCliI )->( dbSeek( ( cSatCliT )->cSerSat + Str( ( cSatCliT )->nNumSat ) + ( cSatCliT )->cSufSat ) )
+            while ( ( dbfSatCliI )->cSerSat + Str( ( dbfSatCliI )->nNumSat ) + ( dbfSatCliI )->cSufSat ) == ( ( cSatCliT )->cSerSat + Str( ( cSatCliT )->nNumSat ) + ( cSatCliT )->cSufSat ) .AND. !( dbfSatCliI )->( eof() )
                dbPass( dbfSatCliI, tmpSatCliI, .t. )
                ( dbfSatCliI )->( dbSkip() )
             end do
@@ -10939,10 +10936,10 @@ Method CreateData()
 
       end if
 
-      ( dbfSatCliT )->( dbSkip() )
+      ( cSatCliT )->( dbSkip() )
 
       if !Empty( ::oSender:oMtr )
-         ::oSender:oMtr:Set( ( dbfSatCliT )->( OrdKeyNo() ) )
+         ::oSender:oMtr:Set( ( cSatCliT )->( OrdKeyNo() ) )
       end if
 
    end do
@@ -10955,8 +10952,8 @@ Method CreateData()
 
    ErrorBlock( oBlock )
 
-   CLOSE ( dbfSatCliT )
-   CLOSE ( dbfSatCliL )
+   CLOSE ( cSatCliT )
+   CLOSE ( cSatCliL )
    CLOSE ( dbfSatCliI )
    CLOSE ( tmpSatCliT )
    CLOSE ( tmpSatCliL )
@@ -11071,8 +11068,8 @@ Method Process()
    local m
    local oBlock
    local oError
-   local dbfSatCliT
-   local dbfSatCliL
+   local cSatCliT
+   local cSatCliL
    local dbfSatCliI
    local dbfSatClid
    local tmpSatCliT
@@ -11109,10 +11106,10 @@ Method Process()
                USE ( cPatSnd() + "SatCliD.DBF" ) NEW VIA ( cLocalDriver() ) READONLY ALIAS ( cCheckArea( "SatCliD", @tmpSatCliD ) )
                SET INDEX TO ( cPatSnd() + "SatCliD.CDX" ) ADDITIVE
 
-               USE ( cPatEmp() + "SatCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliT", @dbfSatCliT ) )
+               USE ( cPatEmp() + "SatCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliT", @cSatCliT ) )
                SET ADSINDEX TO ( cPatEmp() + "SatCliT.CDX" ) ADDITIVE
 
-               USE ( cPatEmp() + "SatCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliL", @dbfSatCliL ) )
+               USE ( cPatEmp() + "SatCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliL", @cSatCliL ) )
                SET ADSINDEX TO ( cPatEmp() + "SatCliL.CDX" ) ADDITIVE
 
                USE ( cPatEmp() + "SatCliI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliI", @dbfSatCliI ) )
@@ -11125,14 +11122,14 @@ Method Process()
 
                   if ( Empty( cOperario ) .or. ( tmpSatCliT )->cCodOpe == cOperario )  .and.;
                      lValidaOperacion( ( tmpSatCliT )->dFecSat, .f. )                  .and. ;
-                     !( dbfSatCliT )->( dbSeek( ( tmpSatCliT )->cSerSat + Str( ( tmpSatCliT )->nNumSat ) + ( tmpSatCliT )->cSufSat ) )
+                     !( cSatCliT )->( dbSeek( ( tmpSatCliT )->cSerSat + Str( ( tmpSatCliT )->nNumSat ) + ( tmpSatCliT )->cSufSat ) )
 
-                     dbPass( tmpSatCliT, dbfSatCliT, .t. )
+                     dbPass( tmpSatCliT, cSatCliT, .t. )
                      ::oSender:SetText( "Añadido     : " + ( tmpSatCliL )->cSerSat + "/" + AllTrim( Str( ( tmpSatCliL )->nNumSat ) ) + "/" + AllTrim( ( tmpSatCliL )->cSufSat ) + "; " + Dtoc( ( tmpSatCliT )->dFecSat ) + "; " + AllTrim( ( tmpSatCliT )->cCodCli ) + "; " + ( tmpSatCliT )->cNomCli )
 
                      if ( tmpSatCliL )->( dbSeek( ( tmpSatCliT )->cSerSat + Str( ( tmpSatCliT )->nNumSat ) + ( tmpSatCliT )->cSufSat ) )
                         do while ( tmpSatCliL )->cSerSat + Str( ( tmpSatCliL )->nNumSat ) + ( tmpSatCliL )->cSufSat == ( tmpSatCliT )->cSerSat + Str( ( tmpSatCliT )->nNumSat ) + ( tmpSatCliT )->cSufSat .and. !( tmpSatCliL )->( eof() )
-                           dbPass( tmpSatCliL, dbfSatCliL, .t. )
+                           dbPass( tmpSatCliL, cSatCliL, .t. )
                            ( tmpSatCliL )->( dbSkip() )
                         end do
                      end if
@@ -11161,8 +11158,8 @@ Method Process()
 
                end do
 
-               CLOSE ( dbfSatCliT )
-               CLOSE ( dbfSatCliL )
+               CLOSE ( cSatCliT )
+               CLOSE ( cSatCliL )
                CLOSE ( dbfSatCliI )
                CLOSE ( dbfSatCliD )
                CLOSE ( tmpSatCliT )
@@ -11208,8 +11205,8 @@ Method Process()
 
       RECOVER USING oError
 
-         CLOSE ( dbfSatCliT )
-         CLOSE ( dbfSatCliL )
+         CLOSE ( cSatCliT )
+         CLOSE ( cSatCliL )
          CLOSE ( dbfSatCliI )
          CLOSE ( dbfSatCliD )
          CLOSE ( tmpSatCliT )
@@ -11471,18 +11468,17 @@ FUNCTION QuiSatCli()
       Return .f.
    end if
 
-   nOrdDet        := ( dbfSatCliL )->( OrdSetFocus( "nNumSat" ) )
    nOrdInc        := ( dbfSatCliI )->( OrdSetFocus( "nNumSat" ) )
    nOrdDoc        := ( dbfSatCliD )->( OrdSetFocus( "nNumSat" ) )
 
    /*
    Detalle---------------------------------------------------------------------
    */
-
-   while ( dbfSatCliL )->( dbSeek( ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView )  )->cSufSat ) ) .and. !( dbfSatCliL )->( eof() )
-      if dbLock( dbfSatCliL )
-         ( dbfSatCliL )->( dbDelete() )
-         ( dbfSatCliL )->( dbUnLock() )
+   
+   while ( D():SatClientesLineas( nView ) )->( dbSeek( D():SatClientesId( nView ) ) ) .and. D():SatClientesLineasNotEof( nView )
+     if dbLock( D():SatClientesLineas( nView ) )
+        ( D():SatClientesLineas( nView ) )->( dbDelete() )
+        ( D():SatClientesLineas( nView ) )->( dbUnLock() )
       end if
    end while
 
@@ -11508,7 +11504,6 @@ FUNCTION QuiSatCli()
       end if
    end while
 
-   ( dbfSatCliL )->( OrdSetFocus( nOrdDet ) )
    ( dbfSatCliI )->( OrdSetFocus( nOrdInc ) )
    ( dbfSatCliD )->( OrdSetFocus( nOrdDoc ) )
 
@@ -11686,7 +11681,6 @@ Function PrintReportSatCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
 
    SysRefresh()
 
-   nOrd                       :=  ( dbfSatCliL )->( ordSetFocus( "nPosPrint" ) )
 
    oFr                        := frReportManager():New()
 
@@ -11774,7 +11768,6 @@ Function PrintReportSatCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
 
    oFr:DestroyFr()
 
-   ( dbfSatCliL )->( ordSetFocus( nOrd ) )
 
 Return cFilePdf
 
@@ -11788,7 +11781,6 @@ Function nTotDtoLSatCli( dbfLin, nDec, nVdv, cPorDiv )
 
    local nCalculo
 
-   DEFAULT dbfLin    := dbfSatCliL
    DEFAULT nDec      := nDouDiv()
    DEFAULT nVdv      := 1
 

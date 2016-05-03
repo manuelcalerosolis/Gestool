@@ -106,6 +106,9 @@ CLASS D
 
    METHOD SATClientesLineasTableName()                      INLINE ( "SatCliL" )
    METHOD SatClientesLineas( nView )                        INLINE ( ::Get( "SatCliL", nView ) )
+      METHOD SatClientesLineasId( nView )                   INLINE ( ( ::SatClientesLineas( nView ) )->cSerSat + str( ( ::SatClientesLineas( nView ) )->nNumSat, 9 ) + ( ::SatClientesLineas( nView ) )->cSufSat )
+      METHOD SatClientesLineasEof( nView )                  INLINE ( ( ::SatClientesLineas( nView ) )->( eof() ) )
+      METHOD SatClientesLineasNotEof( nView )               INLINE ( !::SatClientesLineasEof( nView ) )
       METHOD GetSatClientesLineasHash( aArray, nView )      INLINE ( ::getHashArray( aArray, "SatCliT", nView ) )
 
    METHOD SatClientesIncidencias( nView )                   INLINE ( ::Get( "SatCliI", nView ) )
