@@ -273,15 +273,7 @@ METHOD lGenerate()
             Comprobamos condiciones de fechas para el acumulado
             */
 
-            if ::oFacCliT:dFecFac >= ::dIniInf .and. ::oFacCliT:dFecFac <= ::dFinInf
-
-               ::lAppLine( .t. )
-
-            else
-
-               ::lAppLine( .f. )
-
-            end if
+            ::lAppLine( ::oFacCliT:dFecFac >= ::dIniInf .and. ::oFacCliT:dFecFac <= ::dFinInf )
 
          end if
 
