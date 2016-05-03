@@ -1052,7 +1052,7 @@ Function lStartCheck()
    // Colocamos la sesion actual-----------------------------------------------
  
    if !empty( oMsgSesion() )
-      oMsgSesion():setText, "Sesión : " + Transform( cCurSesion(), "######" ) 
+      oMsgSesion():setText( "Sesión : " + Transform( cCurSesion(), "######" ) )
    end if 
 
    // Colocamos los avisos pa las notas----------------------------------------
