@@ -12273,7 +12273,7 @@ Static Function AppendKit( uTmpLin, aTik )
             ( dbfTmpL )->cCbaTil    := ( dbfKit      )->cRefKit
             ( dbfTmpL )->cNomTil    := ( dbfArticulo )->Nombre
             ( dbfTmpL )->cFamTil    := ( dbfArticulo )->Familia
-            ( dbfTmpL )->lTipAcc    := ( dbfArticulo )->lTipAcc
+            ( dbfTmpL )->lTipAcc    := ( dbfArticulo )->lTipAccº
             ( dbfTmpL )->nCtlStk    := ( dbfArticulo )->nCtlStock
             ( dbfTmpL )->cCodImp    := ( dbfArticulo )->cCodImp
             ( dbfTmpL )->nMesGrt    := ( dbfarticulo )->nMesGrt

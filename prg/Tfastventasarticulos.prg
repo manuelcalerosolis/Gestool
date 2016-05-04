@@ -42,6 +42,9 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    DATA oCamposExtra
    DATA aExtraFields                      INIT {}
 
+   DATA cExpresionHeader
+   DATA cExpresionLine
+
    METHOD lResource( cFld )
 
    METHOD Create()
@@ -128,6 +131,11 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD getUnidadesPedidoProveedor( cNumPed, cCodArt )
 
    METHOD loadValuesExtraFields()
+
+   METHOD setFilterProductIdLine()              INLINE ( if( !::lAllArt,;
+                                                         ::cExpresionLine  += ' .and. ( cRef >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:getHasta() + '" )', ) )
+
+   METHOD setFilterStoreLine()                  INLINE ( ::cExpresionLine  += ' .and. ( cAlmLin >= "' + ::oGrupoAlmacen:Cargo:getDesde() + '" .and. cAlmLin <= "' + ::oGrupoAlmacen:Cargo:getHasta() + '" )' )               
 
 END CLASS
 
@@ -1374,8 +1382,6 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
    local aliasPedidosClientes
    local aliasPedidosClientesLineas
 
-   nSec                       := seconds()
-
    aliasPedidosClientes       := D():PedidosClientes( ::nView )
    aliasPedidosClientesLineas := D():PedidosClientesLineas( ::nView )
 
@@ -1521,54 +1527,46 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
    end while
 
-   msgAlert( seconds() - nSec )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
 
-   local cExpHead
-   local cExpLine
-
-   DEFAULT lFacturados  := .f.
+   DEFAULT lFacturados     := .f.
 
    ::InitAlbaranesClientes()
 
    ::oAlbCliT:OrdSetFocus( "dFecAlb" )
    ::oAlbCliL:OrdSetFocus( "nNumAlb" )
 
+   ::cExpresionHeader      := 'dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+   
    if lFacturados
-      cExpHead          := 'nFacturado < 3 .and. dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   else
-      cExpHead          := 'dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      ::cExpresionHeader   += ' .and. nFacturado < 3'
    end if
 
-   cExpHead             += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:getDesde() ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:getHasta() ) + '"'
-   cExpHead             += ' .and. cSerAlb >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. cSerAlb <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
-   cExpHead             += ' .and. nNumAlb >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. nNumAlb <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
-   cExpHead             += ' .and. cSufAlb >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. cSufAlb <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
+   ::cExpresionHeader      += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:getDesde() ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:getHasta() ) + '"'
+   ::cExpresionHeader      += ' .and. cSerAlb >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. cSerAlb <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
+   ::cExpresionHeader      += ' .and. nNumAlb >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. nNumAlb <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
+   ::cExpresionHeader      += ' .and. cSufAlb >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. cSufAlb <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
-   ::oAlbCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oAlbCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
-   ::oMtrInf:cText      := "Procesando albaranes"
+   ::oMtrInf:cText         := "Procesando albaranes"
    ::oMtrInf:SetTotal( ::oAlbCliT:OrdKeyCount() )
 
-   /*
-   Lineas de albaranes---------------------------------------------------------
-   */
+   // Lineas de albaranes---------------------------------------------------------
 
-   cExpLine             := '!lTotLin .and. !lControl'
+   ::cExpresionLine        := '!lTotLin .and. !lControl'
 
-   if !::lAllArt
-      cExpLine          += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
-   end if
+   ::setFilterProductIdLine()
 
-   ::oAlbCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliL:cFile ), ::oAlbCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+   ::setFilterStoreLine()
+
+   ::oAlbCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliL:cFile ), ::oAlbCliL:OrdKey(), cAllTrimer( ::cExpresionLine ), , , , , , , , .t. )
 
    ::oAlbCliT:GoTop()
-
    while !::lBreak .and. !::oAlbCliT:Eof()
 
       if lChkSer( ::oAlbCliT:cSerAlb, ::aSer )
@@ -1634,6 +1632,8 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:nComAge    := nComLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut )
 
                   ::oDbf:nCosArt    := nCosLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+
+
                   if Empty( ::oDbf:nCosArt )
                      ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
                   end if 
@@ -1701,39 +1701,37 @@ RETURN ( Self )
 
 METHOD AddFacturaCliente() CLASS TFastVentasArticulos
 
-   local cExpHead
-   local cExpLine
+   local nSec              := seconds()
 
    ::InitFacturasClientes()
 
    ::oFacCliT:OrdSetFocus( "dFecFac" )
    ::oFacCliL:OrdSetFocus( "nNumFac" )
 
-   cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   cExpHead          += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:getDesde() )   + '" .and. cCodCli <= "'   + Rtrim( ::oGrupoCliente:Cargo:getHasta() ) + '"'
-   cExpHead          += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )      + '" .and. cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
-   cExpHead          += ' .and. nNumFac >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )    + '" ) .and. nNumFac <= Val( "'    + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
-   cExpHead          += ' .and. cSufFac >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )    + '" .and. cSufFac <= "'    + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
+   ::cExpresionHeader      := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+   ::cExpresionHeader      += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:getDesde() )   + '" .and. cCodCli <= "'   + Rtrim( ::oGrupoCliente:Cargo:getHasta() ) + '"'
+   ::cExpresionHeader      += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )      + '" .and. cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
+   ::cExpresionHeader      += ' .and. nNumFac >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )    + '" ) .and. nNumFac <= Val( "'    + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
+   ::cExpresionHeader      += ' .and. cSufFac >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )    + '" .and. cSufFac <= "'    + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
-   ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
-   ::oMtrInf:cText   := "Procesando facturas"
+   ::oMtrInf:cText         := "Procesando facturas"
    ::oMtrInf:SetTotal( ::oFacCliT:OrdKeyCount() )
 
    /*
    Lineas de facturas----------------------------------------------------------
    */
 
-   cExpLine          := '!lTotLin .and. !lControl'
+   ::cExpresionLine        := '!lTotLin .and. !lControl'
 
-   if !::lAllArt
-      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
-   end if
+   ::setFilterProductIdLine()
 
-   ::oFacCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliL:cFile ), ::oFacCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+   ::setFilterStoreLine()
+
+   ::oFacCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliL:cFile ), ::oFacCliL:OrdKey(), cAllTrimer( ::cExpresionLine ), , , , , , , , .t. )
 
    ::oFacCliT:GoTop()
-
    while !::lBreak .and. !::oFacCliT:Eof()
 
       if lChkSer( ::oFacCliT:cSerie, ::aSer )
@@ -1857,6 +1855,8 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
 
    ::oFacCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ) )
    ::oFacCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliL:cFile ) )
+
+   msgAlert( seconds() - nSec, "seconds()" )
 
 RETURN ( Self )
 
@@ -2022,20 +2022,19 @@ RETURN ( Self )
 
 METHOD AddTicket() CLASS TFastVentasArticulos
 
-   local cExpHead
-   local cExpLine 
+   local nSec               := seconds()
 
    ::oTikCliT:OrdSetFocus( "dFecTik" )
    ::oTikCliL:OrdSetFocus( "cNumTil" )
 
-   cExpHead       := 'dFecTik >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecTik <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   cExpHead       += ' .and. ( cTipTik == "1" .or. cTipTik == "4" )'
-   cExpHead       += ' .and. cCliTik >= "' + Rtrim( ::oGrupoCliente:Cargo:getDesde() ) + '" .and. cCliTik <= "' + Rtrim( ::oGrupoCliente:Cargo:getHasta() ) + '"'
-   cExpHead       += ' .and. cSerTik >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. cSerTik <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
-   cExpHead       += ' .and. cNumTik >= "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )   + '" .and. cNumTik <= "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '"'
-   cExpHead       += ' .and. cSufTik >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. cSufTik <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
+   ::cExpresionHeader       := 'dFecTik >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecTik <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+   ::cExpresionHeader       += ' .and. ( cTipTik == "1" .or. cTipTik == "4" )'
+   ::cExpresionHeader       += ' .and. cCliTik >= "' + Rtrim( ::oGrupoCliente:Cargo:getDesde() ) + '" .and. cCliTik <= "' + Rtrim( ::oGrupoCliente:Cargo:getHasta() ) + '"'
+   ::cExpresionHeader       += ' .and. cSerTik >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. cSerTik <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
+   ::cExpresionHeader       += ' .and. cNumTik >= "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )   + '" .and. cNumTik <= "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '"'
+   ::cExpresionHeader       += ' .and. cSufTik >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. cSufTik <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
-   ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
    ::oMtrInf:cText := "Procesando tikets"
 
@@ -2043,10 +2042,15 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
    // Lineas de tickets -------------------------------------------------------
 
-   cExpLine       := '( ( cCbaTil >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cCbaTil <= "' + ::oGrupoArticulo:Cargo:getHasta() + '") .or. '
-   cExpLine       += '( cComTil >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cComTil <= "' + ::oGrupoArticulo:Cargo:getHasta() + '" ) )'
+   ::cExpresionLine        := '( !lControl .and. !lDelTil )'
+   ::cExpresionLine        += ' .and. ( ( cCbaTil >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cCbaTil <= "' + ::oGrupoArticulo:Cargo:getHasta() + '") .or. '
+   ::cExpresionLine        += '( cComTil >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cComTil <= "' + ::oGrupoArticulo:Cargo:getHasta() + '" ) )'
 
-   ::oTikCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliL:cFile ), ::oTikCliL:OrdKey(), ( cExpLine ), , , , , , , , .t. )
+   // ::setFilterStoreLine()
+
+   msgAlert( ::cExpresionLine, "cExpresionLine" )
+
+   ::oTikCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliL:cFile ), ::oTikCliL:OrdKey(), ( ::cExpresionLine ), , , , , , , , .t. )
 
    // Proceso -----------------------------------------------------------------
 
@@ -2058,85 +2062,85 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
          while ::oTikCliT:cSerTik + ::oTikCliT:cNumTik + ::oTikCliT:cSufTik == ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil .and. !::oTikCliL:Eof()
 
-            if !( ::oTikCliL:lControl ) .and. !( ::oTikCliL:lDelTil )
+            if .t. // !( ::oTikCliL:lControl ) .and. !( ::oTikCliL:lDelTil )
 
                ::oDbf:Blank()
                
-                  ::oDbf:cCodArt    := ::oTikCliL:cCbaTil
-                  ::oDbf:cNomArt    := ::oTikCliL:cNomTil
-                  ::oDbf:cCodCli    := ::oTikCliT:cCliTik
-                  ::oDbf:cNomCli    := ::oTikCliT:cNomTik
-                  ::oDbf:cPobCli    := ::oTikCliT:cPobCli
-                  ::oDbf:cPrvCli    := ::oTikCliT:cPrvCli
-                  ::oDbf:cPosCli    := ::oTikCliT:cPosCli
-                  ::oDbf:cCodGrp    := cGruCli( ::oTikCliT:cCliTik, ::oDbfCli )
+               ::oDbf:cCodArt    := ::oTikCliL:cCbaTil
+               ::oDbf:cNomArt    := ::oTikCliL:cNomTil
+               ::oDbf:cCodCli    := ::oTikCliT:cCliTik
+               ::oDbf:cNomCli    := ::oTikCliT:cNomTik
+               ::oDbf:cPobCli    := ::oTikCliT:cPobCli
+               ::oDbf:cPrvCli    := ::oTikCliT:cPrvCli
+               ::oDbf:cPosCli    := ::oTikCliT:cPosCli
+               ::oDbf:cCodGrp    := cGruCli( ::oTikCliT:cCliTik, ::oDbfCli )
 
-                  ::oDbf:cCodFam    := ::oTikCliL:cCodFam
-                  ::oDbf:cGrpFam    := ::oTikCliL:cGrpFam
-                  ::oDbf:cCodTip    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
-                  ::oDbf:cCodCate   := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
-                  ::oDbf:cCodEst    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
-                  ::oDbf:cCodTemp   := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
-                  ::oDbf:cCodFab    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
-                  ::oDbf:cCodAlm    := ::oTikCliL:cAlmLin
-                  ::oDbf:cCodPago   := ::oTikCliT:cFpgTik
-                  ::oDbf:cCodRut    := ::oTikCliT:cCodRut
-                  ::oDbf:cCodAge    := ::oTikCliT:cCodAge
-                  ::oDbf:cCodTrn    := ""
-                  ::oDbf:cCodUsr    := ::oTikCliT:cCcjTik
-                  ::oDbf:cCodObr    := ::oTikCliT:cCodObr
+               ::oDbf:cCodFam    := ::oTikCliL:cCodFam
+               ::oDbf:cGrpFam    := ::oTikCliL:cGrpFam
+               ::oDbf:cCodTip    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
+               ::oDbf:cCodCate   := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
+               ::oDbf:cCodEst    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
+               ::oDbf:cCodTemp   := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
+               ::oDbf:cCodFab    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+               ::oDbf:cCodAlm    := ::oTikCliL:cAlmLin
+               ::oDbf:cCodPago   := ::oTikCliT:cFpgTik
+               ::oDbf:cCodRut    := ::oTikCliT:cCodRut
+               ::oDbf:cCodAge    := ::oTikCliT:cCodAge
+               ::oDbf:cCodTrn    := ""
+               ::oDbf:cCodUsr    := ::oTikCliT:cCcjTik
+               ::oDbf:cCodObr    := ::oTikCliT:cCodObr
 
-                  if ::oTikCliT:cTipTik == "4"
-                     ::oDbf:nUniArt := - ::oTikCliL:nUntTil * if( ::lUnidadesNegativo, -1, 1 )
-                  else
-                     ::oDbf:nUniArt := ::oTikCliL:nUntTil   * if( ::lUnidadesNegativo, -1, 1 )
-                  end if
+               if ::oTikCliT:cTipTik == "4"
+                  ::oDbf:nUniArt := - ::oTikCliL:nUntTil * if( ::lUnidadesNegativo, -1, 1 )
+               else
+                  ::oDbf:nUniArt := ::oTikCliL:nUntTil   * if( ::lUnidadesNegativo, -1, 1 )
+               end if
 
-                  ::oDbf:nPreArt    := nImpUTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nValDiv, nil, 1 )
+               ::oDbf:nPreArt    := nImpUTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nValDiv, nil, 1 )
 
-                  ::oDbf:nBrtArt    := nBrtLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nValDiv, nil, 1 )
-                  ::oDbf:nImpArt    := nImpLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, nil, 1 )
+               ::oDbf:nBrtArt    := nBrtLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nValDiv, nil, 1 )
+               ::oDbf:nImpArt    := nImpLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, nil, 1 )
 
-                  ::oDbf:nDtoArt    := ::oTikCliL:nDtoLin
-                  ::oDbf:nLinArt    := ::oTikCliL:nDtoDiv
-                //::oDbf:nPrmArt    := ::oTikCliL:nDtoPrm
+               ::oDbf:nDtoArt    := ::oTikCliL:nDtoLin
+               ::oDbf:nLinArt    := ::oTikCliL:nDtoDiv
+             //::oDbf:nPrmArt    := ::oTikCliL:nDtoPrm
 
-                  ::oDbf:nTotDto    := nDtoLTpv( ::oTikCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                  ::oDbf:nTotPrm    := 0
+               ::oDbf:nTotDto    := nDtoLTpv( ::oTikCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nTotPrm    := 0
 
-                  ::oDbf:nIvaArt    := nIvaLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 1 )
-                  ::oDbf:nTotArt    := nImpLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, nil, 1 )
-                  ::oDbf:nTotArt    += nIvaLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 1 )
-                  
-                  ::oDbf:nCosArt    := nCosLTpv( ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 1 )
-                  if Empty( ::oDbf:nCosArt )
-                     ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
-                  end if 
+               ::oDbf:nIvaArt    := nIvaLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 1 )
+               ::oDbf:nTotArt    := nImpLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, nil, 1 )
+               ::oDbf:nTotArt    += nIvaLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 1 )
+               
+               ::oDbf:nCosArt    := nCosLTpv( ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 1 )
+               if Empty( ::oDbf:nCosArt )
+                  ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+               end if 
 
-                  ::oDbf:cCodPr1    := ::oTikCliL:cCodPr1
-                  ::oDbf:cCodPr2    := ::oTikCliL:cCodPr2
-                  ::oDbf:cValPr1    := ::oTikCliL:cValPr1
-                  ::oDbf:cValPr2    := ::oTikCliL:cValPr2
+               ::oDbf:cCodPr1    := ::oTikCliL:cCodPr1
+               ::oDbf:cCodPr2    := ::oTikCliL:cCodPr2
+               ::oDbf:cValPr1    := ::oTikCliL:cValPr1
+               ::oDbf:cValPr2    := ::oTikCliL:cValPr2
 
-                  ::oDbf:cLote      := ::oTikCliL:cLote
+               ::oDbf:cLote      := ::oTikCliL:cLote
 
-                  ::oDbf:cClsDoc    := TIK_CLI
-                  ::oDbf:cTipDoc    := "Ticket"
-                  ::oDbf:cSerDoc    := ::oTikCliT:cSerTik
-                  ::oDbf:cNumDoc    := ::oTikCliT:cNumTik
-                  ::oDbf:cSufDoc    := ::oTikCliT:cSufTik
+               ::oDbf:cClsDoc    := TIK_CLI
+               ::oDbf:cTipDoc    := "Ticket"
+               ::oDbf:cSerDoc    := ::oTikCliT:cSerTik
+               ::oDbf:cNumDoc    := ::oTikCliT:cNumTik
+               ::oDbf:cSufDoc    := ::oTikCliT:cSufTik
 
-                  ::oDbf:cIdeDoc    :=  ::idDocumento()
-                  ::oDbf:nNumLin    :=  ::oTikCliL:nNumLin
+               ::oDbf:cIdeDoc    :=  ::idDocumento()
+               ::oDbf:nNumLin    :=  ::oTikCliL:nNumLin
 
-                  ::oDbf:nAnoDoc    := Year( ::oTikCliT:dFecTik )
-                  ::oDbf:nMesDoc    := Month( ::oTikCliT:dFecTik )
-                  ::oDbf:dFecDoc    := ::oTikCliT:dFecTik
-                  ::oDbf:cHorDoc    := SubStr( ::oTikCliT:cHorTik, 1, 2 )
-                  ::oDbf:cMinDoc    := SubStr( ::oTikCliT:cHorTik, 4, 2 )
+               ::oDbf:nAnoDoc    := Year( ::oTikCliT:dFecTik )
+               ::oDbf:nMesDoc    := Month( ::oTikCliT:dFecTik )
+               ::oDbf:dFecDoc    := ::oTikCliT:dFecTik
+               ::oDbf:cHorDoc    := SubStr( ::oTikCliT:cHorTik, 1, 2 )
+               ::oDbf:cMinDoc    := SubStr( ::oTikCliT:cHorTik, 4, 2 )
 
-                  ::oDbf:lKitArt    := ::oTikCliL:lKitArt
-                  ::oDbf:lKitChl    := ::oTikCliL:lKitChl
+               ::oDbf:lKitArt    := ::oTikCliL:lKitArt
+               ::oDbf:lKitChl    := ::oTikCliL:lKitChl
 
                // Añadimos un nuevo registro-----------------------------------
 
@@ -2145,73 +2149,73 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
             end if
 
-            if !Empty( ::oTikCliL:cComTil ) .and. !( ::oTikCliL:lControl ) .and. !( ::oTikCliL:lDelTil )
+            if !Empty( ::oTikCliL:cComTil ) // .and. !( ::oTikCliL:lControl ) .and. !( ::oTikCliL:lDelTil )
 
                ::oDbf:Blank()
                
-                  ::oDbf:cCodArt    := ::oTikCliL:cComTil
-                  ::oDbf:cNomArt    := ::oTikCliL:cNcmTil
+               ::oDbf:cCodArt    := ::oTikCliL:cComTil
+               ::oDbf:cNomArt    := ::oTikCliL:cNcmTil
 
-                  ::oDbf:cCodCli    := ::oTikCliT:cCliTik
-                  ::oDbf:cNomCli    := ::oTikCliT:cNomTik
-                  ::oDbf:cPobCli    := ::oTikCliT:cPobCli
-                  ::oDbf:cPrvCli    := ::oTikCliT:cPrvCli
-                  ::oDbf:cPosCli    := ::oTikCliT:cPosCli
-                  ::oDbf:cCodGrp    := cGruCli( ::oTikCliT:cCliTik, ::oDbfCli )
+               ::oDbf:cCodCli    := ::oTikCliT:cCliTik
+               ::oDbf:cNomCli    := ::oTikCliT:cNomTik
+               ::oDbf:cPobCli    := ::oTikCliT:cPobCli
+               ::oDbf:cPrvCli    := ::oTikCliT:cPrvCli
+               ::oDbf:cPosCli    := ::oTikCliT:cPosCli
+               ::oDbf:cCodGrp    := cGruCli( ::oTikCliT:cCliTik, ::oDbfCli )
 
-                  ::oDbf:cCodFam    := ::oTikCliL:cCodFam
-                  ::oDbf:cGrpFam    := ::oTikCliL:cGrpFam
-                  ::oDbf:cCodTip    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
-                  ::oDbf:cCodCate   := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
-                  ::oDbf:cCodEst    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
-                  ::oDbf:cCodTemp   := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
-                  ::oDbf:cCodFab    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
-                  ::oDbf:cCodAlm    := ::oTikCliL:cAlmLin
-                  ::oDbf:cCodPago   := ::oTikCliT:cFpgTik
-                  ::oDbf:cCodRut    := ::oTikCliT:cCodRut
-                  ::oDbf:cCodAge    := ::oTikCliT:cCodAge
-                  ::oDbf:cCodTrn    := ""
-                  ::oDbf:cCodUsr    := ::oTikCliT:cCcjTik
-                  ::oDbf:cCodObr    := ::oTikCliT:cCodObr
+               ::oDbf:cCodFam    := ::oTikCliL:cCodFam
+               ::oDbf:cGrpFam    := ::oTikCliL:cGrpFam
+               ::oDbf:cCodTip    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
+               ::oDbf:cCodCate   := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
+               ::oDbf:cCodEst    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
+               ::oDbf:cCodTemp   := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
+               ::oDbf:cCodFab    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+               ::oDbf:cCodAlm    := ::oTikCliL:cAlmLin
+               ::oDbf:cCodPago   := ::oTikCliT:cFpgTik
+               ::oDbf:cCodRut    := ::oTikCliT:cCodRut
+               ::oDbf:cCodAge    := ::oTikCliT:cCodAge
+               ::oDbf:cCodTrn    := ""
+               ::oDbf:cCodUsr    := ::oTikCliT:cCcjTik
+               ::oDbf:cCodObr    := ::oTikCliT:cCodObr
 
-                  if ::oTikCliT:cTipTik == "4"
-                     ::oDbf:nUniArt := - ::oTikCliL:nUntTil * if( ::lUnidadesNegativo, -1, 1 )
-                  else
-                     ::oDbf:nUniArt := ::oTikCliL:nUntTil   * if( ::lUnidadesNegativo, -1, 1 )
-                  end if
+               if ::oTikCliT:cTipTik == "4"
+                  ::oDbf:nUniArt := - ::oTikCliL:nUntTil * if( ::lUnidadesNegativo, -1, 1 )
+               else
+                  ::oDbf:nUniArt := ::oTikCliL:nUntTil   * if( ::lUnidadesNegativo, -1, 1 )
+               end if
 
-                  ::oDbf:nPreArt    := nImpUTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nValDiv, nil, 2 )
+               ::oDbf:nPreArt    := nImpUTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nValDiv, nil, 2 )
 
-                  ::oDbf:nBrtArt    := nBrtLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nValDiv, nil, 2 )
-                  ::oDbf:nImpArt    := nImpLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, nil, 2 )
-                  ::oDbf:nIvaArt    := nIvaLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 2 )
-                  ::oDbf:nTotArt    := nImpLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, nil, 2 )
-                  ::oDbf:nTotArt    += nIvaLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 2 )
+               ::oDbf:nBrtArt    := nBrtLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nValDiv, nil, 2 )
+               ::oDbf:nImpArt    := nImpLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, nil, 2 )
+               ::oDbf:nIvaArt    := nIvaLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 2 )
+               ::oDbf:nTotArt    := nImpLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, nil, 2 )
+               ::oDbf:nTotArt    += nIvaLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 2 )
 
-                  ::oDbf:nCosArt    := nCosLTpv( ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 2 )
-                  if Empty( ::oDbf:nCosArt )
-                     ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oTikCliL:cComTil, ::oDbfArt:cAlias, ::oArtKit:cAlias )
-                  end if 
+               ::oDbf:nCosArt    := nCosLTpv( ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 2 )
+               if Empty( ::oDbf:nCosArt )
+                  ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oTikCliL:cComTil, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+               end if 
 
-                  ::oDbf:cCodPr1    := ::oTikCliL:cCodPr1
-                  ::oDbf:cCodPr2    := ::oTikCliL:cCodPr2
-                  ::oDbf:cValPr1    := ::oTikCliL:cValPr1
-                  ::oDbf:cValPr2    := ::oTikCliL:cValPr2
+               ::oDbf:cCodPr1    := ::oTikCliL:cCodPr1
+               ::oDbf:cCodPr2    := ::oTikCliL:cCodPr2
+               ::oDbf:cValPr1    := ::oTikCliL:cValPr1
+               ::oDbf:cValPr2    := ::oTikCliL:cValPr2
 
-                  ::oDbf:cClsDoc    := TIK_CLI
-                  ::oDbf:cTipDoc    := "Ticket"
-                  ::oDbf:cSerDoc    := ::oTikCliT:cSerTik
-                  ::oDbf:cNumDoc    := ::oTikCliT:cNumTik
-                  ::oDbf:cSufDoc    := ::oTikCliT:cSufTik
+               ::oDbf:cClsDoc    := TIK_CLI
+               ::oDbf:cTipDoc    := "Ticket"
+               ::oDbf:cSerDoc    := ::oTikCliT:cSerTik
+               ::oDbf:cNumDoc    := ::oTikCliT:cNumTik
+               ::oDbf:cSufDoc    := ::oTikCliT:cSufTik
 
-                  ::oDbf:cIdeDoc    :=  ::idDocumento()
-                  ::oDbf:nNumLin    :=  ::oTikCliL:nNumLin
+               ::oDbf:cIdeDoc    :=  ::idDocumento()
+               ::oDbf:nNumLin    :=  ::oTikCliL:nNumLin
 
-                  ::oDbf:nAnoDoc    := Year( ::oTikCliT:dFecTik )
-                  ::oDbf:nMesDoc    := Month( ::oTikCliT:dFecTik )
-                  ::oDbf:dFecDoc    := ::oTikCliT:dFecTik
-                  ::oDbf:cHorDoc    := SubStr( ::oTikCliT:cHorTik, 1, 2 )
-                  ::oDbf:cMinDoc    := SubStr( ::oTikCliT:cHorTik, 4, 2 )
+               ::oDbf:nAnoDoc    := Year( ::oTikCliT:dFecTik )
+               ::oDbf:nMesDoc    := Month( ::oTikCliT:dFecTik )
+               ::oDbf:dFecDoc    := ::oTikCliT:dFecTik
+               ::oDbf:cHorDoc    := SubStr( ::oTikCliT:cHorTik, 1, 2 )
+               ::oDbf:cMinDoc    := SubStr( ::oTikCliT:cHorTik, 4, 2 )
 
                ::InsertIfValid()
                ::loadValuesExtraFields()
@@ -2234,6 +2238,8 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
    ::oTikCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ) )
    ::oTikCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oTikCliL:cFile ) )
+
+   msgAlert( seconds() - nSec, "seconds()")
 
 RETURN ( Self )
 
@@ -2322,8 +2328,6 @@ METHOD AddArticulo() CLASS TFastVentasArticulos
       ::oMtrInf:AutoInc()
 
    end while
-
-   // msgAlert( ::oDbf:OrdKeyCount(), "OrdKeyCount" )
 
    ::oMtrInf:AutoInc( ::oDbfArt:OrdKeyCount() )
 
@@ -3513,3 +3517,4 @@ METHOD getUnidadesPedidoProveedor( cNumPed, cCodArt ) CLASS TFastVentasArticulos
 Return nUnidades
 
 //---------------------------------------------------------------------------//
+

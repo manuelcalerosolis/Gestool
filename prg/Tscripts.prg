@@ -565,7 +565,7 @@ Function runEventScript( cDirectory, uParam1, uParam2, uParam3, uParam4, uParam5
    local aDirectory
    local uReturn   
    
-   aDirectory  := aDirectoryEventScript( cDirectory ) 
+   aDirectory     := aDirectoryEventScript( cDirectory ) 
 
    if !empty( aDirectory )
 

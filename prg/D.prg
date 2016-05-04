@@ -134,9 +134,13 @@ CLASS D
       METHOD getAlbaranClienteLineas( nView )               INLINE ( ::getArrayRecordById( ::AlbaranesClientesId( nView ), ::AlbaranesClientesLineas( nView ), nView ) )
       METHOD getAlbaranClienteLineaBlank( nView )           INLINE ( ::getHashRecordBlank( ::AlbaranesClientesLineas( nView ), nView ) )
       METHOD getAlbaranClienteLineaDefaultValues( nView )   INLINE ( ::getHashRecordDefaultValues( ::AlbaranesClientesLineas( nView ), nView ) )
+      METHOD AlbaranClientesLineasEof( nView )              INLINE ( ( ::AlbaranesClientesLineas( nView ) )->( eof() ) )
+      METHOD AlbaranClientesLineasNotEof( nView )           INLINE (!( ::AlbaranClientesLineasEof( nView ) ) ) 
 
    METHOD getStatusAlbaranesClientesLineas( nView )         INLINE ( ::aStatus := aGetStatus( ::AlbaranesClientesLineas( nView ) ) )
    METHOD setStatusAlbaranesClientesLineas( nView )         INLINE ( SetStatus( ::AlbaranesClientesLineas( nView ), ::aStatus ) )
+
+   METHOD setFocusAlbaranesClientesLineas( cTag, nView )    INLINE ( ::cTag   := ( ::AlbaranesClientesLineas( nView ) )->( ordSetFocus( cTag ) ) )
 
    METHOD getStatusAlbaranesClientes( nView )               INLINE ( ::aStatus := aGetStatus( ::AlbaranesClientes( nView ) ) )
    METHOD setStatusAlbaranesClientes( nView )               INLINE ( SetStatus( ::AlbaranesClientes( nView ), ::aStatus ) )

@@ -352,9 +352,9 @@ FUNCTION Usuarios( oMenuItem, oWnd )
 
       DEFINE BTNSHELL RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( lFreeUser( ( dbfUser )->cCodUse, .t., dbfUser, oWndBrw ) ) ;
-         TOOLTIP  "(R)esetear" ;
-         HOTKEY   "R"
+         ACTION   ( lFreeAllUser( dbfUser ), oWndBrw:Refresh() ) ;
+         TOOLTIP  "(L)ibrear usuarios" ;
+         HOTKEY   "L"
 
       DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw ;
 			NOBORDER ;
@@ -1036,7 +1036,6 @@ return ( nLevOpc )
 */
 
 //----------------------------------------------------------------------------//
-
 /*
 Comprobamos q el usuario esta libre--------------------------------------------
 */
@@ -1087,6 +1086,44 @@ function nUsrInUse( dbfUser )
 return ( nUsr )
 
 //---------------------------------------------------------------------------//
+
+Function lFreeAllUser( dbfUser )
+
+   local oBlock
+   local oError
+   local nRecno
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   nRecno            := ( dbfUser )->( recno() )
+
+   ( dbfUser )->( dbGoTop() )
+   while !( dbfUser )->( eof() )
+
+      lFreeUser( ( dbfUser )->cCodUse, .f., dbfUser )
+
+      ( dbfUser )->( dbSkip() )
+
+      SysRefresh()
+
+   end while
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   ( dbfUser )->( dbgoto( nRecno ))
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+
 
 FUNCTION cUser( oGet, dbfUsr, oGet2 )
 

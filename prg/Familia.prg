@@ -66,6 +66,7 @@
 #define _LFAMINT                 37      //   L       1    0
 #define _CCOMFAM                 38      //   C       3    0
 #define _CDESWEB                 39      //   C       3    0
+#define _NDIAGRT                 40      //   N       3    0
 
 static oWndBrw
 
@@ -950,6 +951,16 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
             SPINNER ;
             MIN      ( 1 ) ;
             MAX      ( 9999999 ) ;
+            WHEN     ( nMode != ZOOM_MODE ) ;
+            OF       oFld:aDialogs[2]
+
+         REDEFINE GET aGet[ _NDIAGRT ] ;
+            VAR      aTmp[ _NDIAGRT ] ;
+            ID       360 ;
+            PICTURE  "999999";
+            SPINNER ;
+            MIN      ( 1 ) ;
+            MAX      ( 999999 ) ;
             WHEN     ( nMode != ZOOM_MODE ) ;
             OF       oFld:aDialogs[2]
 
@@ -3046,7 +3057,8 @@ Function aItmFam()
                      {"nPosInt",    "N",     3,    0, "Pocisión para mostrar en internet" },;
                      {"lFamInt",    "L",     1,    0, "Añade la familia junto con la descripción en internet" },;
                      {"cComFam",    "C",     3,    0, "Comentario por defecto para la familia" },;
-                     {"cDesWeb",    "C",   250,    0, "Descripción para la web" } }
+                     {"cDesWeb",    "C",   250,    0, "Descripción para la web" },;
+                     {"nDiaGrt",    "N",     6,    0, "Días de garantía" } }
 
 return ( aBase )
 
