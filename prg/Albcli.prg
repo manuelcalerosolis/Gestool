@@ -1145,7 +1145,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       ACTION   ( oScript:Expand() ) ;
       TOOLTIP  "Scripts" ;
 
-      ImportScript( oWndBrw, oScript, "AlbaranesClientes" )  
+      ImportScript( oWndBrw, oScript, "AlbaranesClientes", nView )  
 
    DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
       NOBORDER ;
