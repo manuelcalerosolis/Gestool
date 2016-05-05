@@ -244,7 +244,7 @@ CLASS TComercio
    DATA  aArticuloData                 INIT {}
    DATA  aPropiedadesCabeceraData      INIT {}
    DATA  aPropiedadesLineasData        INIT {}
-   DATA  aStockArticuloData            INIT {}
+   DATA  aStockProductData             INIT {}
    
    DATA  cDirImagen
 
@@ -268,7 +268,7 @@ CLASS TComercio
    METHOD InsertIvaPrestashop()
    METHOD lUpdateIvaPrestashop( nId )
 
-   METHOD AddCategoriaRaiz()
+   METHOD insertRootCategory()
    
    METHOD DelIdFamiliasPrestashop()
 
@@ -387,9 +387,10 @@ CLASS TComercio
    METHOD buildIvaPrestashop( id )
    METHOD buildFabricantePrestashop( id )
    METHOD buildFamiliaPrestashop( id )
+   METHOD buildStockPrestashop()
 
-   METHOD buildProductPrestashop( id )
-   METHOD buildInformacion()
+   METHOD buildProductInformationAndUploadPrestashop( id )
+   METHOD buildGlobalProductInformation()
    METHOD buildSubirInformacion()
    METHOD buildInsertIvaPrestashop( hTax )
    METHOD buildInsertFabricantesPrestashop( hFabricantesData )
@@ -398,7 +399,7 @@ CLASS TComercio
    METHOD buildInsertNodeCategoryProduct( idFamilia, idProduct )
    METHOD buildInsertCategoryProduct( idCategory, idProduct )
 
-   METHOD buildProductArrayPrestashop( id )
+   METHOD buildProductPrestashop( id )
    METHOD buildActualizaCatergoriaPadrePrestashop( hFamiliaData )
    METHOD buildInsertImageProductsPrestashop( hArticuloData )
    METHOD buildRecalculaPosicionesCategoriasPrestashop()
@@ -435,10 +436,10 @@ CLASS TComercio
    METHOD buildTextOk( cValue, cTable )      INLINE ( ::writeText( "Insertado correctamente " + cValue + ", en la tabla " + cTable, 3 ) )
    METHOD buildTextError( cValue, cTable )   INLINE ( ::writeText( "Error insertado " + cValue + ", en la tabla " + cTable, 3 ) )
 
-   METHOD buildInformationProductDatabase()
+   METHOD buildInformationStockProductDatabase()
    METHOD buildInformationStockProductArray()
 
-   METHOD uploadInformationStockProductPrestashop()
+   METHOD buildInsdertStockPrestashop()
    METHOD buildAddInformacionStockProductPrestashop()
    METHOD buildAddArticuloActualizar( cCodArt )
 
@@ -448,15 +449,14 @@ CLASS TComercio
    METHOD cDirectoryCategories()             INLINE ( ::TPrestashopConfig:getImagesDirectory() + "/c" )
    METHOD getRecursiveFolderPrestashop( cCarpeta )
 
-   METHOD resetStockArticuloData()           INLINE ( ::aStockArticuloData := {} )
+   METHOD resetStockProductData()           INLINE ( ::aStockProductData := {} )
 
    METHOD resetProductsToUpadateStocks()     INLINE ( ::hProductsToUpdate := {=>} )
    METHOD getProductsToUpadateStocks()       INLINE ( ::hProductsToUpdate )
    METHOD appendProductsToUpadateStocks( idProduct )
-   METHOD updateWebProductStocks()
-   METHOD updateProductStocks()
 
-   METHOD insertInformacionStockProductPrestashop()
+   METHOD updateWebProductStocks()
+   METHOD updateProductStocks( cWebName, aProductsWeb )   
 
 END CLASS
 
@@ -1129,7 +1129,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD AddCategoriaRaiz() CLASS TComercio
+METHOD insertRootCategory() CLASS TComercio
 
    local cCommand := ""
 
@@ -2835,7 +2835,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildProductArrayPrestashop( id ) CLASS TComercio
+METHOD buildProductPrestashop( id ) CLASS TComercio
 
    local aImagesArticulos     := {}
 
@@ -3102,13 +3102,14 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildInformacion() CLASS TComercio
+METHOD buildGlobalProductInformation() CLASS TComercio
 
    ::buildIvaPrestashop(            ::oArt:TipoIva )
    ::buildFabricantePrestashop(     ::oArt:cCodFab )
    ::buildFamiliaPrestashop(        ::oArt:Familia )
    ::buildPropiedadesPrestashop(    ::oArt:Codigo )
-   ::buildProductArrayPrestashop(   ::oArt:Codigo )
+   ::buildProductPrestashop(        ::oArt:Codigo )
+   ::buildStockPrestashop(          ::oArt:Codigo )
 
 Return ( Self )
 
@@ -3120,6 +3121,7 @@ METHOD buildSubirInformacion() CLASS TComercio
    local hFabricantesData
    local hFamiliaData
    local hArticuloData
+   local hStockArticulo
    local hPropiedadesCabData
    local hPropiedadesLinData
 
@@ -3184,14 +3186,14 @@ METHOD buildSubirInformacion() CLASS TComercio
    // Subimos las cabeceras de propiedades necesarias-----------------------
 
    for each hPropiedadesCabData in ::aPropiedadesCabeceraData
+
       ::buildInsertPropiedadesPrestashop( hPropiedadesCabData )
+
    next
 
    // Subimos las Lineas de propiedades necesarias--------------------------
 
    ::meterProcesoSetTotal( len(::aPropiedadesLineasData) )
-
-   // ordenamos por el campo position------------------------------------------
 
    asort( ::aPropiedadesLineasData, , , {|x,y| hget( x, "position" ) < hget( y, "position" ) } )
 
@@ -3215,11 +3217,23 @@ METHOD buildSubirInformacion() CLASS TComercio
    
    next
 
+   // Subimos los stocks-----------------------------------------------------
+
+   ::meterProcesoSetTotal( len( ::aStockArticulo ) )
+   
+   for each hStockArticulo in ::aStockArticulo
+
+      ::buildInsdertStockPrestashop( hStockArticulo )
+   
+      ::meterProcesoText( "Subiendo stocks " + alltrim( str( hb_enumindex() ) ) + " de " + alltrim( str( len( ::aStockArticulo ) ) ) )
+   
+   next
+
 Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildProductPrestashop( idProduct, lShowDialogWait ) CLASS TComercio
+METHOD buildProductInformationAndUploadPrestashop( idProduct, lShowDialogWait ) CLASS TComercio
 
    lShowDialogWait      := .f.
 
@@ -3245,7 +3259,7 @@ METHOD buildProductPrestashop( idProduct, lShowDialogWait ) CLASS TComercio
       while !::oArt:Eof()
 
          if ::productInCurrentWeb()
-            ::buildInformacion()
+            ::buildGlobalProductInformation()
          end if 
 
          ::oArt:Skip()
@@ -3255,7 +3269,7 @@ METHOD buildProductPrestashop( idProduct, lShowDialogWait ) CLASS TComercio
    else
 
       if ::oArt:Seek( idProduct ) .and. ::productInCurrentWeb()
-         ::buildInformacion()
+         ::buildGlobalProductInformation()
       end if
 
    end if   
@@ -3850,7 +3864,7 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
 
    ::writeText( "Añadiendo stock artículo: " + hGet( hArticuloData, "name" ) )
 
-   ::buildInsertStockProductsPrestashop( hArticuloData, nCodigoWeb )
+   // ::buildInsertStockProductsPrestashop( hArticuloData, nCodigoWeb )
 
    /*
    nTotStock   := ::oStock:nStockArticulo( hGet( hArticuloData, "id" ), ::TPrestashopConfig:getStore() )
@@ -3883,15 +3897,19 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
    end if
    */
 
-   SysRefresh()
+   sysrefresh()
 
    ::writeText( "Añadiendo imágenes artículo: " + hGet( hArticuloData, "name" ) )
 
    ::buildInsertImageProductsPrestashop( hArticuloData, nCodigoWeb )
 
+   sysrefresh()
+
    ::writeText( "Añadiendo propiedades del artículo: " + hGet( hArticuloData, "name" ) )
 
    ::buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb )
+
+   sysrefresh()
 
    ::writeText( "Añadiendo ofertas del artículo: " + hGet( hArticuloData, "name" ) )
 
@@ -4698,7 +4716,7 @@ METHOD buildEliminaTablas() CLASS TComercio
    Cargamos la categoría raiz de la que colgarán todas las demás---------------
    */
 
-   ::AddCategoriaRaiz()
+   ::insertRootCategory()
 
    /*
    Vaciamos las tablas de propiedades------------------------------------------
@@ -5035,17 +5053,17 @@ METHOD controllerExportPrestashop( idProduct ) Class TComercio
 
    ::disableDialog()
 
-   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
-   BEGIN SEQUENCE
+   // oBlock            := ErrorBlock( { | oError | Break( oError ) } )
+   // BEGIN SEQUENCE
 
       ::buildFTP()
 
-      ::buildProductPrestashop( idProduct, .f. )
+      ::buildProductInformationAndUploadPrestashop( idProduct, .f. )
    
-   RECOVER USING oError
-      msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
-   END SEQUENCE
-   ErrorBlock( oBlock )
+   // RECOVER USING oError
+   //    msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
+   // END SEQUENCE
+   // ErrorBlock( oBlock )
 
    ::EnableDialog()
 
@@ -5410,7 +5428,6 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-
 METHOD buildAddInformacionStockProductPrestashop( hProduct ) CLASS tComercio
 
    local sStock
@@ -5444,15 +5461,15 @@ METHOD buildAddInformacionStockProductPrestashop( hProduct ) CLASS tComercio
 
    next
 
-   aAdd( ::aStockArticuloData,   {  "cCodArt"               => idProduct ,;
-                                    "cCodPrp1"              => idFirstProperty ,;
-                                    "cCodPrp2"              => idSecondProperty ,;
-                                    "cValPrp1"              => valueFirstProperty ,;
-                                    "cValPrp2"              => valueSecondProperty ,;
-                                    "nStock"                => alltrim( str( nUnidadesStock ) ),;
-                                    "idProductPrestashop"   => ::TPrestashopId:getValueProduct( idProduct, ::getCurrentWebName() ),;
-                                    "cCodWebVal1"           => ::TPrestashopId:getValueAttribute( idFirstProperty + valueFirstProperty, ::getCurrentWebName() ),;
-                                    "cCodWebVal2"           => ::TPrestashopId:getValueAttribute( idSecondProperty + valueSecondProperty, ::getCurrentWebName() ) } )
+   aAdd( ::aStockProductData, {  "cCodArt"               => idProduct ,;
+                                 "cCodPrp1"              => idFirstProperty ,;
+                                 "cCodPrp2"              => idSecondProperty ,;
+                                 "cValPrp1"              => valueFirstProperty ,;
+                                 "cValPrp2"              => valueSecondProperty ,;
+                                 "nStock"                => nUnidadesStock,;
+                                 "idProductPrestashop"   => ::TPrestashopId:getValueProduct( idProduct, ::getCurrentWebName() ),;
+                                 "cCodWebVal1"           => ::TPrestashopId:getValueAttribute( idFirstProperty + valueFirstProperty, ::getCurrentWebName() ),;
+                                 "cCodWebVal2"           => ::TPrestashopId:getValueAttribute( idSecondProperty + valueSecondProperty, ::getCurrentWebName() ) } )
 
 Return .t.
 
@@ -5464,7 +5481,7 @@ METHOD buildInformationStockProductArray( aProducts ) CLASS TComercio
 
    ::meterProcesoSetTotal( len( aProducts ) )
 
-   ::resetStockArticuloData()
+   ::resetStockProductData()
 
    for each hProduct in aProducts
       ::buildAddInformacionStockProductPrestashop( hProduct )
@@ -5474,22 +5491,47 @@ return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD uploadInformationStockProductPrestashop() CLASS TComercio
+METHOD buildInsdertStockPrestashop() CLASS TComercio
 
    local oQuery
    local hStock
    local cCommand
    local nIdProductAttribute
 
-   ::meterProcesoSetTotal( len( ::aStockArticuloData ) )
+   ::meterProcesoSetTotal( len( ::aStockProductData ) )
 
-   for each hStock in ::aStockArticuloData
+   for each hStock in ::aStockProductData
 
       if hGet( hStock, "cCodWebVal1" ) == 0 .and. hGet( hStock, "cCodWebVal2" ) == 0
 
-         cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " " +;
-                        "SET quantity = '" + hGet( hStock, "nStock" ) + "' " + ;
-                        "WHERE id_product = " + alltrim( str( hGet( hStock, "idProductPrestashop" ) ) ) + " AND id_product_attribute = 0 "
+         cCommand    := "DELETE FROM " + ::cPrefixTable( "stock_available" ) + " " + ;
+                        "WHERE id_product = " + alltrim( str( hGet( hStock, "idProductPrestashop" ) ) ) + " " + ;
+                           "AND id_product_attribute = 0"
+         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+         cCommand    := "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( "   + ;
+                           "id_product, "                                              + ;
+                           "id_product_attribute, "                                    + ;
+                           "id_shop, "                                                 + ;
+                           "id_shop_group, "                                           + ;
+                           "quantity, "                                                + ;
+                           "depends_on_stock, "                                        + ;
+                           "out_of_stock ) "                                           + ;
+                        "VALUES ( "                                                    + ;
+                           "'" + alltrim( str( hGet( hStock, "idProductPrestashop" ) ) ) + "', " + ;
+                           "'0', "                                                     + ;   
+                           "'1', "                                                     + ;
+                           "'0', "                                                     + ;
+                           "'" + alltrim( str( hGet( hStock, "nStock" ) ) ) + "', "    + ;
+                           "'0', "                                                     + ;
+                           "'2' )"
+
+/*
+         cCommand    := "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " " + ;
+                           "SET quantity = '" + hGet( hStock, "nStock" ) + "' " + ;
+                        "WHERE id_product = " + alltrim( str( hGet( hStock, "idProductPrestashop" ) ) ) + " " + ;
+                           "AND id_product_attribute = 0"
+*/
 
          TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
@@ -5499,9 +5541,34 @@ METHOD uploadInformationStockProductPrestashop() CLASS TComercio
 
          if !empty( nIdProductAttribute )
 
+            cCommand := "DELETE FROM " + ::cPrefixTable( "stock_available" ) + " " + ;
+                        "WHERE id_product = " + alltrim( str( hGet( hStock, "idProductPrestashop" ) ) ) + " " + ;
+                           "AND id_product_attribute = " + alltrim( str( nIdProductAttribute ) )
+
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+            cCommand := "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( "   + ;
+                           "id_product, "                                              + ;
+                           "id_product_attribute, "                                    + ;
+                           "id_shop, "                                                 + ;
+                           "id_shop_group, "                                           + ;
+                           "quantity, "                                                + ;
+                           "depends_on_stock, "                                        + ;
+                           "out_of_stock ) "                                           + ;
+                        "VALUES ( "                                                    + ;
+                           "'" + alltrim( str( hGet( hStock, "idProductPrestashop" ) ) ) + "', " + ;
+                           "'" + alltrim( str( nIdProductAttribute ) ) + "', "         + ;   
+                           "'1', "                                                     + ;
+                           "'0', "                                                     + ;
+                           "'" + alltrim( str( hGet( hStock, "nStock" ) ) ) + "', "    + ;
+                           "'0', "                                                     + ;
+                           "'2' )"
+
+/*
             cCommand := "UPDATE " + ::cPrefixTable( "stock_available" ) + " " + ;
                         "SET quantity ='" + hGet( hStock, "nStock" ) + "' "   + ;
                         "WHERE id_product =" + alltrim( str( hGet( hStock, "idProductPrestashop" ) ) ) + " AND id_product_attribute = " + alltrim( str( nIdProductAttribute ) )
+*/
 
             TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
@@ -5509,10 +5576,10 @@ METHOD uploadInformationStockProductPrestashop() CLASS TComercio
 
       end if
       
-      ::meterProcesoText(  "Actualizando stock de artículo " + alltrim( hGet( hStock, "cCodArt" ) ) + ;
-                           " con propiedades " + alltrim( str( hGet( hStock, "cCodWebVal1" ) ) )   + ;
+      ::meterProcesoText(  "Actualizando stock de artículo " + alltrim( hGet( hStock, "cCodArt" ) )   + ;
+                           " con propiedades : " + alltrim( str( hGet( hStock, "cCodWebVal1" ) ) )      + ;
                            " , " + alltrim( str( hGet( hStock, "cCodWebVal2" ) ) ) + ;
-                           " y cantidad " + alltrim( hGet( hStock, "nStock" ) ) )
+                           " y cantidad " + alltrim( str( hGet( hStock, "nStock" ) ) ) )
       
    next
 
@@ -5589,46 +5656,11 @@ return ( lAsBudget )
 //---------------------------------------------------------------------------//
 
 METHOD syncSituacionesPresupuestoPrestashop( cCodWeb, cSerPre, nNumPre, cSufPre ) CLASS TComercio
-/*
-   if !::connect()
-      msginfo( "No ha sido posible la conexion" )
-      Return .f.
-   end if
-
-   if !::filesOpen()
-      Return .f.
-   end if 
-
-   ::syncronizeStatesPresupuestoGestool( cCodWeb, cSerPre, nNumPre, cSufPre )
-
-   ::syncronizeStatesPresupuestoPrestashop( cSerPre, nNumPre, cSufPre, cCodWeb )
-
-   ::filesClose()
-
-   ::disconnect()
-*/
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
 METHOD syncronizeStatesPresupuestoGestool( cCodWeb, cSerPre, nNumPre, cSufPre ) CLASS TComercio
-/*   
-   local oQueryState
-   
-   oQueryState   := TMSQuery():New( ::oCon, "SELECT * FROM " + ::cPrefixtable( "order_history" ) +" where id_order = " + alltrim( str( cCodWeb ) ) )
-
-   if oQueryState:Open() .and. oQueryState:RecCount() > 0
-
-      while !oQueryState:eof()
-
-         ::presupuestoCheckExistStateUp( oQueryState, cCodWeb, cSerPre, nNumPre, cSufPre )
-
-         oQueryState:Skip()
-
-      end while
-      
-   end if
-*/
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -5960,6 +5992,113 @@ METHOD appendProductsToUpadateStocks( idProduct, idFirstProperty, valueFirstProp
 Return ( ::hProductsToUpdate )   
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+METHOD controllerUpdateStockPrestashop() Class TComercio
+
+   local oBlock
+   local oError
+
+   if !( ::isAviableWebToExport() )
+      Return .f.
+   end if 
+
+   ::disableDialog()
+
+   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
+   BEGIN SEQUENCE
+
+   if ::filesOpen()
+
+      ::MeterTotalText( "Actualizando stocks de prestashop" )
+
+      ::buildInformationStockProductDatabase()
+
+      if ::prestaShopConnect()
+
+         ::MeterTotalText( "Actualizando stocks" )
+
+         ::buildInsdertStockPrestashop()
+
+         ::prestashopDisConnect()  
+      
+      end if  
+
+      ::filesClose()
+
+   end if 
+
+   RECOVER USING oError
+      msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
+   END SEQUENCE
+   ErrorBlock( oBlock )
+
+   ::enableDialog()
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD buildInformationStockProductDatabase() CLASS TComercio
+
+   local sStock
+   local aStockArticulo
+
+   ::meterProcesoSetTotal( ::oArt:ordkeycount() )
+
+   ::resetStockProductData()
+
+   ::oArt:GoTop()
+   while !::oArt:eof()
+
+      if ::productInCurrentWeb()
+
+         ::meterProcesoText( "Procesando " + alltrim( ::oArt:Codigo ) + ", " + alltrim( ::oArt:Nombre ) )
+
+         ::buildStockPrestashop( ::oArt:Codigo )
+
+      end if 
+
+      ::oArt:Skip()
+
+   end while
+
+return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD buildStockPrestashop( idProduct ) CLASS tComercio
+
+   local sStock
+   local aStockArticulo    := ::oStock:aStockArticulo( idProduct, ::TPrestashopConfig:getStore() )
+
+   for each sStock in aStockArticulo
+
+      aAdd( ::aStockProductData, {  "cCodArt"               => idProduct ,;
+                                    "cCodPrp1"              => sStock:cCodigoPropiedad1 ,;
+                                    "cCodPrp2"              => sStock:cCodigoPropiedad2 ,;
+                                    "cValPrp1"              => sStock:cValorPropiedad1 ,;
+                                    "cValPrp2"              => sStock:cValorPropiedad2 ,;
+                                    "nStock"                => sStock:nUnidades,;
+                                    "idProductPrestashop"   => ::TPrestashopId:getValueProduct( idProduct, ::getCurrentWebName() ),;
+                                    "cCodWebVal1"           => ::TPrestashopId:getValueAttribute( sStock:cCodigoPropiedad1 + sStock:cValorPropiedad1, ::getCurrentWebName() ),;
+                                    "cCodWebVal2"           => ::TPrestashopId:getValueAttribute( sStock:cCodigoPropiedad2 + sStock:cValorPropiedad2, ::getCurrentWebName() ) } )
+
+   next
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 METHOD updateWebProductStocks() CLASS TComercio
 
@@ -5985,7 +6124,7 @@ Return ( ::hProductsToUpdate )
 
 //---------------------------------------------------------------------------//
 
-METHOD updateProductStocks( cWebName, aProductsWeb )
+METHOD updateProductStocks( cWebName, aProductsWeb ) CLASS TComercio
 
    ::TPrestashopConfig:setCurrentWebName( cWebName )
 
@@ -5995,119 +6134,14 @@ METHOD updateProductStocks( cWebName, aProductsWeb )
 
    ::buildInformationStockProductArray( aProductsWeb )
 
-   ::uploadInformationStockProductPrestashop()
+   ::buildInsdertStockPrestashop()
 
-   ::prestashopDisConnect()  
+   ::prestaShopDisConnect()  
 
 Return ( ::hProductsToUpdate )   
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-METHOD controllerUpdateStockPrestashop() Class TComercio
-
-   local oBlock
-   local oError
-
-   if !( ::isAviableWebToExport() )
-      Return .f.
-   end if 
-
-   ::disableDialog()
-
-   // oBlock            := ErrorBlock( { | oError | Break( oError ) } )
-   // BEGIN SEQUENCE
-
-   if ::filesOpen()
-
-      ::MeterTotalText( "Actualizando stock de prestashop" )
-
-      ::buildInformationProductDatabase()
-
-      debug( ::aStockArticuloData, "::aStockArticuloData" )
-
-      if ::prestaShopConnect()
-
-         ::MeterTotalText( "Actualizando stocks" )
-
-         ::uploadInformationStockProductPrestashop()
-
-         ::prestashopDisConnect()  
-      
-      end if  
-
-      ::filesClose()
-
-   end if 
-
-   // RECOVER USING oError
-   //    msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
-   // END SEQUENCE
-   // ErrorBlock( oBlock )
-
-   ::enableDialog()
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
-METHOD buildInformationProductDatabase() CLASS TComercio
-
-   local sStock
-   local aStockArticulo
-
-   ::meterProcesoSetTotal( ::oArt:OrdKeyCount() )
-
-   ::resetStockArticuloData()
-
-   ::oArt:GoTop()
-   while !::oArt:Eof()
-
-      if ::productInCurrentWeb()
-
-         ::meterProcesoText( "Procesando " + alltrim( ::oArt:Codigo ) )
-
-         ::insertInformacionStockProductPrestashop( ::oArt:Codigo )
-
-      end if 
-
-      ::oArt:Skip()
-
-   end while
-
-return .t.
-
-//---------------------------------------------------------------------------//
-
-METHOD insertInformacionStockProductPrestashop( idProduct ) CLASS tComercio
-
-   local sStock
-   local aStockArticulo
-
-   aStockArticulo             := ::oStock:aStockArticulo( idProduct, ::TPrestashopConfig:getStore() )
-
-   for each sStock in aStockArticulo
-
-      aAdd( ::aStockArticuloData,   {  "cCodArt"               => idProduct ,;
-                                       "cCodPrp1"              => sStock:cCodigoPropiedad1 ,;
-                                       "cCodPrp2"              => sStock:cCodigoPropiedad2 ,;
-                                       "cValPrp1"              => sStock:cValorPropiedad1 ,;
-                                       "cValPrp2"              => sStock:cValorPropiedad2 ,;
-                                       "nStock"                => alltrim( str( sStock:nUnidades ) ),;
-                                       "idProductPrestashop"   => ::TPrestashopId:getValueProduct( idProduct, ::getCurrentWebName() ),;
-                                       "cCodWebVal1"           => ::TPrestashopId:getValueAttribute( sStock:cCodigoPropiedad1 + sStock:cValorPropiedad1, ::getCurrentWebName() ),;
-                                       "cCodWebVal2"           => ::TPrestashopId:getValueAttribute( sStock:cCodigoPropiedad2 + sStock:cValorPropiedad2, ::getCurrentWebName() ) } )
-
-   next
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
