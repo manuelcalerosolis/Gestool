@@ -241,7 +241,7 @@ CLASS TComercio
    DATA  aIvaData                      INIT {}
    DATA  aFabricantesData              INIT {}
    DATA  aFamiliaData                  INIT {}
-   DATA  aArticuloData                 INIT {}
+   DATA  aProductData                  INIT {}
    DATA  aPropiedadesCabeceraData      INIT {}
    DATA  aPropiedadesLineasData        INIT {}
    DATA  aStockProductData             INIT {}
@@ -515,7 +515,7 @@ METHOD buildInitData() CLASS TComercio
    ::aIvaData                    := {}
    ::aFabricantesData            := {}
    ::aFamiliaData                := {}
-   ::aArticuloData               := {}
+   ::aProductData               := {}
    ::aArticulosActualizar        := {}
    ::aPropiedadesCabeceraData    := {}
    ::aPropiedadesLineasData      := {}
@@ -2839,7 +2839,7 @@ METHOD buildProductPrestashop( id ) CLASS TComercio
 
    local aImagesArticulos     := {}
 
-   if aScan( ::aArticuloData, {|h| hGet( h, "id" ) == id } ) != 0
+   if aScan( ::aProductData, {|h| hGet( h, "id" ) == id } ) != 0
       Return ( self )
    end if 
 
@@ -2849,7 +2849,7 @@ METHOD buildProductPrestashop( id ) CLASS TComercio
 
    // Rellenamos el Hash-------------------------------------------------
 
-   aAdd( ::aArticuloData,  {  "id"                    => id,;
+   aAdd( ::aProductData,  {  "id"                    => id,;
                               "name"                  => alltrim( ::oArt:Nombre ),;
                               "id_manufacturer"       => ::oArt:cCodFab ,;
                               "id_tax_rules_group"    => ::oArt:TipoIva ,;
@@ -3207,25 +3207,25 @@ METHOD buildSubirInformacion() CLASS TComercio
  
    // Subimos los artículos-------------------------------------------------
 
-   ::meterProcesoSetTotal( len( ::aArticuloData ) )
+   ::meterProcesoSetTotal( len( ::aProductData ) )
    
-   for each hArticuloData in ::aArticuloData
+   for each hArticuloData in ::aProductData
 
       ::buildInsertProductsPrestashop( hArticuloData )
    
-      ::meterProcesoText( "Subiendo artículo " + alltrim(str(hb_enumindex())) + " de " + alltrim(str(len(::aArticuloData))) )
+      ::meterProcesoText( "Subiendo artículo " + alltrim(str(hb_enumindex())) + " de " + alltrim(str(len(::aProductData))) )
    
    next
 
    // Subimos los stocks-----------------------------------------------------
 
-   ::meterProcesoSetTotal( len( ::aStockArticulo ) )
+   ::meterProcesoSetTotal( len( ::aStockProductData ) )
    
-   for each hStockArticulo in ::aStockArticulo
+   for each hStockArticulo in ::aStockProductData
 
       ::buildInsdertStockPrestashop( hStockArticulo )
    
-      ::meterProcesoText( "Subiendo stocks " + alltrim( str( hb_enumindex() ) ) + " de " + alltrim( str( len( ::aStockArticulo ) ) ) )
+      ::meterProcesoText( "Subiendo stocks " + alltrim( str( hb_enumindex() ) ) + " de " + alltrim( str( len( ::aStockProductData ) ) ) )
    
    next
 
