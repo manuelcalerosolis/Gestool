@@ -456,7 +456,6 @@ CLASS TComercio
    METHOD updateWebProductStocks()
    METHOD updateProductStocks()
 
-   METHOD processInformationStockProductArray()
    METHOD insertInformacionStockProductPrestashop()
 
 END CLASS
@@ -6028,8 +6027,6 @@ METHOD controllerUpdateStockPrestashop() Class TComercio
 
       ::buildInformationProductDatabase()
 
-      ::processInformationStockProductArray()
-
       debug( ::aStockArticuloData, "::aStockArticuloData" )
 
       if ::prestaShopConnect()
@@ -6070,7 +6067,11 @@ METHOD buildInformationProductDatabase() CLASS TComercio
    while !::oArt:Eof()
 
       if ::productInCurrentWeb()
-         ::buildProductArrayPrestashop( ::oArt:Codigo )
+
+         ::meterProcesoText( "Procesando " + alltrim( ::oArt:Codigo ) )
+
+         ::insertInformacionStockProductPrestashop( ::oArt:Codigo )
+
       end if 
 
       ::oArt:Skip()
@@ -6081,27 +6082,10 @@ return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD processInformationStockProductArray( aProducts ) CLASS TComercio
-
-   local hProduct
-
-   ::resetStockArticuloData()
-
-   for each hProduct in aProducts
-      ::insertInformacionStockProductPrestashop( hProduct )
-   next
-
-return .t.
-
-//---------------------------------------------------------------------------//
-
-METHOD insertInformacionStockProductPrestashop( hProduct ) CLASS tComercio
+METHOD insertInformacionStockProductPrestashop( idProduct ) CLASS tComercio
 
    local sStock
-   local idProduct            
    local aStockArticulo
-
-   idProduct                  := hget( hProduct, "id" )
 
    aStockArticulo             := ::oStock:aStockArticulo( idProduct, ::TPrestashopConfig:getStore() )
 
