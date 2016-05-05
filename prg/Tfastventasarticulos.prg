@@ -130,7 +130,9 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    METHOD getUnidadesPedidoProveedor( cNumPed, cCodArt )
 
-   METHOD loadValuesExtraFields()
+  METHOD loadValuesExtraFields()
+
+   METHOD setFilterClientIdHeader               INLINE ( ::cExpresionHeader   += ' .and. ( Field->cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:getDesde() ) + '" .and. Field->cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:getHasta() ) + '" )' )
 
    METHOD setFilterProductIdLine()              INLINE ( if( !::lAllArt,;
                                                          ::cExpresionLine  += ' .and. ( cRef >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:getHasta() + '" )', ) )
@@ -1068,29 +1070,29 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
 
    // filtros para la cabecera------------------------------------------------
 
-   ::cExpresionHeader          := 'dFecSat >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecSat <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   ::cExpresionHeader          += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:getDesde() ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:getHasta() ) + '"'
-   ::cExpresionHeader          += ' .and. cSerSat >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. cSerSat <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
-   ::cExpresionHeader          += ' .and. nNumSat >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )   + '" ) .and. nNumSat <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
-   ::cExpresionHeader          += ' .and. cSufSat >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. cSufSat <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
-
+   ::cExpresionHeader         := 'dFecSat >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecSat <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+   ::cExpresionHeader         += ' .and. cSerSat >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. cSerSat <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
+   ::cExpresionHeader         += ' .and. nNumSat >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )   + '" ) .and. nNumSat <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
+   ::cExpresionHeader         += ' .and. cSufSat >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. cSufSat <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
    
+   ::setFilterClientIdHeader()
+
    // filtros para las líneas-------------------------------------------------
 
-   ::cExpresionLine          := '!lTotLin .and. !lControl'
-
-   if !::lAllArt
-      ::cExpresionLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
-   end if
+   ::cExpresionLine           := '!lTotLin .and. !lControl'
+   ::cExpresionHeader         += ' .and. Field->cSerSat >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. cSerSat <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
+   ::cExpresionHeader         += ' .and. Field->nNumSat >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )   + '" ) .and. nNumSat <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
+   ::cExpresionHeader         += ' .and. Field->cSufSat >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. cSufSat <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
    ::setFilterProductIdLine()
+
    ::setFilterStoreLine()
 
    // Procesando SAT ------------------------------------------------
 
-   ::oMtrInf:cText   := "Procesando SAT"
+   ::oMtrInf:cText            := "Procesando SAT"
 
-   ::oSatCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oSatCliL:cFile ), ::oSatCliL:OrdKey(), cAllTrimer( ::cExpresionLine ), , , , , , , , .t. )
+   ::oSatCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oSatCliL:cFile ), ::oSatCliL:OrdKey(), ( ::cExpresionLine ), , , , , , , , .t. )
    ::oSatCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oSatCliT:cFile ), ::oSatCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
    
    ::oMtrInf:SetTotal( ::oSatCliT:OrdKeyCount() )
@@ -1230,21 +1232,21 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
 
    // filtros para la cabecera------------------------------------------------
    
-   ::cExpresionHeader          := 'dFecPre >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPre <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   ::cExpresionHeader          += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:getDesde() ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:getHasta() ) + '"'
-   ::cExpresionHeader          += ' .and. cSerPre >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. cSerPre <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
-   ::cExpresionHeader          += ' .and. nNumPre >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )   + '" ) .and. nNumPre <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
-   ::cExpresionHeader          += ' .and. cSufPre >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. cSufPre <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
+   ::cExpresionHeader          := 'Field->dFecPre >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecPre <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+   ::cExpresionHeader          += ' .and. Field->cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:getDesde() ) + '" .and. Field->cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:getHasta() ) + '"'
+   ::cExpresionHeader          += ' .and. Field->cSerPre >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerPre <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
+   ::cExpresionHeader          += ' .and. Field->nNumPre >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )   + '" ) .and. Field->nNumPre <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
+   ::cExpresionHeader          += ' .and. Field->cSufPre >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufPre <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
    
    // filtros para las lineas-------------------------------------------------
 
-   ::cExpresionLine          := '!lTotLin .and. !lControl'
-
-   if !::lAllArt
-      ::cExpresionLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
-   end if
+   ::cExpresionLine           := '!lTotLin .and. !lControl'
+   ::cExpresionLine           += ' .and. Field->cSerPre >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerPre <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
+   ::cExpresionLine           += ' .and. Field->nNumPre >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumPre <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
+   ::cExpresionLine           += ' .and. Field->cSufPre >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() ) + '" .and. Field->cSufPre <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
    ::setFilterProductIdLine()
+
    ::setFilterStoreLine()
 
    // procesamos los presupuestos ---------------------------------------------
@@ -1411,6 +1413,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
    ::cExpresionLine           += ' .and. Field->cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() ) + '" .and. Field->cSufPed <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
    ::setFilterProductIdLine()
+
    ::setFilterStoreLine()
 
    // procesamos los pedidos----------------------------------------------------
