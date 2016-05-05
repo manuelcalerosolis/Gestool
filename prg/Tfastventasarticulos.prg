@@ -137,11 +137,23 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD setFilterProductIdLine()              INLINE ( if( !::lAllArt,;
                                                          ::cExpresionLine  += ' .and. ( Field->cRef >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. Field->cRef <= "' + ::oGrupoArticulo:Cargo:getHasta() + '" )', ) )
 
-   METHOD setFilterStoreLine()                  INLINE ( ::cExpresionLine  += ' .and. ( Field->cAlmLin >= "' + ::oGrupoAlmacen:Cargo:getDesde() + '" .and. Field->cAlmLin <= "' + ::oGrupoAlmacen:Cargo:getHasta() + '" )' )               
+   METHOD setFilterStore()                      INLINE ( ::cExpresionLine  += ' .and. ( Field->cAlmLin >= "' + ::oGrupoAlmacen:Cargo:getDesde() + '" .and. Field->cAlmLin <= "' + ::oGrupoAlmacen:Cargo:getHasta() + '" )' )               
 
    METHOD setFilterFamily()                     INLINE ( ::cExpresionLine  += ' .and. ( Field->cCodFam >= "' + ::oGrupoFamilia:Cargo:getDesde() + '" .and. Field->cCodFam <= "' + ::oGrupoFamilia:Cargo:getHasta() + '" )' )               
 
    METHOD setFilterGroupFamily()                INLINE ( ::cExpresionLine  += ' .and. ( Field->cGrpFam >= "' + ::oGrupoGFamilia:Cargo:getDesde() + '" .and. Field->cGrpFam <= "' + ::oGrupoGFamilia:Cargo:getHasta() + '" )' )               
+   
+   METHOD setFilterStateCode()                  INLINE ( ::cExpresionHeader  += ' .and. ( Field->cCodEst >= "' + ::oGrupoEstadoArticulo:Cargo:getDesde() + '" .and. Field->cCodEst <= "' + ::oGrupoEstadoArticulo:Cargo:getHasta() + '" )' )               
+   
+   METHOD setFilterPaymentId()                  INLINE ( ::cExpresionHeader  += ' .and. ( Field->cCodPago >= "' + ::oGrupoFpago:Cargo:getDesde() + '" .and. Field->cCodPago <= "' + ::oGrupoFpago:Cargo:getHasta() + '" )' )               
+   
+   METHOD setFilterRouteId()                    INLINE ( ::cExpresionHeader  += ' .and. ( Field->cCodRut >= "' + ::oGrupoRuta:Cargo:getDesde() + '" .and. Field->cCodRut <= "' + ::oGrupoRuta:Cargo:getHasta() + '" )' )               
+
+   METHOD setFilterAgentId()                    INLINE ( ::cExpresionHeader  += ' .and. ( Field->cCodAge >= "' + ::oGrupoAgente:Cargo:getDesde() + '" .and. Field->cCodAge <= "' + ::oGrupoAgente:Cargo:getHasta() + '" )' )               
+
+   METHOD setFilterTransportId()                INLINE ( ::cExpresionHeader  += ' .and. ( Field->cCodTrn >= "' + ::oGrupoTransportista:Cargo:getDesde() + '" .and. Field->cCodTrn <= "' + ::oGrupoTransportista:Cargo:getHasta() + '" )' )               
+
+   METHOD setFilterUserId()                     INLINE ( ::cExpresionHeader  += ' .and. ( Field->cCodUsr >= "' + ::oGrupoUsuario:Cargo:getDesde() + '" .and. Field->cCodUsr <= "' + ::oGrupoUsuario:Cargo:getHasta() + '" )' )               
 
 END CLASS
 
@@ -1081,6 +1093,18 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
    
    ::setFilterClientIdHeader()
 
+   ::setFilterStateCode()
+
+   ::setFilterPaymentId()
+
+   ::setFilterRouteId() 
+
+   ::setFilterAgentId()
+
+   ::setFilterTransportId()
+
+   ::setFilterUserId()
+
    // filtros para las líneas-------------------------------------------------
 
    ::cExpresionLine           := '!lTotLin .and. !lControl'
@@ -1247,6 +1271,18 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
    
    ::setFilterClientIdHeader()
 
+   ::setFilterStateCode()
+
+   ::setFilterPaymentId()
+
+   ::setFilterRouteId() 
+
+   ::setFilterAgentId()
+
+   ::setFilterTransportId()
+   
+   ::setFilterUserId()
+
    // filtros para las lineas-------------------------------------------------
 
    ::cExpresionLine           := '!lTotLin .and. !lControl'
@@ -1257,6 +1293,10 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
    ::setFilterProductIdLine()
 
    ::setFilterStoreLine()
+
+   ::setFilterFamily() 
+
+   ::setFilterGroupFamily()
 
    // procesamos los presupuestos ---------------------------------------------
 
@@ -1415,6 +1455,18 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
    ::setFilterClientIdHeader()
 
+   ::setFilterStateCode()
+
+   ::setFilterPaymentId()
+
+   ::setFilterRouteId() 
+
+   ::setFilterAgentId()
+
+   ::setFilterTransportId()
+   
+   ::setFilterUserId()
+
    // filtros para la linea----------------------------------------------------
 
    ::cExpresionLine           := '!Field->lTotLin .and. !Field->lControl'
@@ -1425,6 +1477,10 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
    ::setFilterProductIdLine()
 
    ::setFilterStoreLine()
+
+   ::setFilterFamily() 
+
+   ::setFilterGroupFamily()
 
    // procesamos los pedidos----------------------------------------------------
    
@@ -1582,6 +1638,18 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
    end if
 
    ::setFilterClientIdHeader()
+
+   ::setFilterStateCode()
+
+   ::setFilterPaymentId()
+
+   ::setFilterRouteId() 
+
+   ::setFilterAgentId()
+
+   ::setFilterTransportId()
+   
+   ::setFilterUserId()
    
    // filtros para las líneas-------------------------------------------------
 
@@ -1591,7 +1659,12 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
    ::cExpresionLine        += ' .and. Field->cSufAlb >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufAlb <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
    
    ::setFilterProductIdLine()
+
    ::setFilterStoreLine()
+
+   ::setFilterFamily() 
+
+   ::setFilterGroupFamily()
 
    // Procesando albaranes-------------------------------------------------
 
@@ -1755,6 +1828,18 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
    
    ::setFilterClientIdHeader()
 
+   ::setFilterStateCode()
+
+   ::setFilterPaymentId()
+
+   ::setFilterRouteId() 
+
+   ::setFilterAgentId()
+
+   ::setFilterTransportId()
+   
+   ::setFilterUserId()
+
    // filtros para las líneas-------------------------------------------------
 
    ::cExpresionLine        := '!lTotLin .and. !lControl'
@@ -1765,6 +1850,10 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
    ::setFilterProductIdLine()
 
    ::setFilterStoreLine()
+
+   ::setFilterFamily() 
+
+   ::setFilterGroupFamily()
 
    // Procesando facturas-------------------------------------------------
 
@@ -1924,6 +2013,18 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
    
    ::setFilterClientIdHeader()
 
+   ::setFilterStateCode()
+
+   ::setFilterPaymentId()
+
+   ::setFilterRouteId() 
+
+   ::setFilterAgentId()
+
+   ::setFilterTransportId()
+   
+   ::setFilterUserId()
+
    // filtros para la linea----------------------------------------------------
    
    ::cExpresionLine            := '!lTotLin .and. !lControl'
@@ -1934,6 +2035,10 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
    ::setFilterProductIdLine()
    
    ::setFilterStoreLine()
+
+   ::setFilterFamily() 
+
+   ::setFilterGroupFamily()
 
    // Procesando Facturas Rectifictivas----------------------------------------
 
@@ -2101,6 +2206,10 @@ METHOD AddTicket() CLASS TFastVentasArticulos
    ::cExpresionLine        += ' .and. Field->cSufTil >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufTil <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
    ::setFilterStoreLine()
+   
+   ::setFilterFamily() 
+
+   ::setFilterGroupFamily()
 
    // Procesando Tickets ------------------------------------------------
 
