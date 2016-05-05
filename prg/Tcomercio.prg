@@ -547,10 +547,10 @@ METHOD filesOpen() CLASS TComercio
    local oBlock
    local oError
    local lOpen       := .t.
-/*
+
    oBlock            := ErrorBlock( { | oError | Break( oError ) } )
    BEGIN SEQUENCE
-*/
+
       DATABASE NEW ::oArt     PATH ( cPatArt() ) FILE "ARTICULO.DBF"    VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
       ::oArt:OrdSetFocus( "lPubInt" )
 
@@ -637,7 +637,7 @@ METHOD filesOpen() CLASS TComercio
       if !::oStock:lOpenFiles()
          lOpen                := .f.
       end if
-/*
+
    RECOVER USING oError
 
       lOpen                   := .f.
@@ -649,7 +649,7 @@ METHOD filesOpen() CLASS TComercio
    END SEQUENCE
 
    ErrorBlock( oBlock )
-*/
+
 RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
@@ -5509,7 +5509,7 @@ METHOD uploadInformationStockProductPrestashop() CLASS TComercio
 
       end if
       
-      ::meterProcesoText(  "Actualizando stock de artículo" + alltrim( hGet( hStock, "cCodArt" ) ) + ;
+      ::meterProcesoText(  "Actualizando stock de artículo " + alltrim( hGet( hStock, "cCodArt" ) ) + ;
                            " con propiedades " + alltrim( str( hGet( hStock, "cCodWebVal1" ) ) )   + ;
                            " , " + alltrim( str( hGet( hStock, "cCodWebVal2" ) ) ) + ;
                            " y cantidad " + alltrim( hGet( hStock, "nStock" ) ) )
