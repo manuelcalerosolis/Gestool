@@ -1377,41 +1377,45 @@ RETURN ( Self )
 METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
    local nSec
-   local cExpHead
-   local cExpLine
    local aliasPedidosClientes
    local aliasPedidosClientesLineas
+
+   // filtros para la cabecera------------------------------------------------
+
+   ::cExpresionHeader         := 'Field->dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+   ::cExpresionHeader         += ' .and. !Field->lCancel '
+   ::cExpresionHeader         += ' .and. Field->cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:getDesde() ) + '" .and. Field->cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:getHasta() ) + '"'
+   ::cExpresionHeader         += ' .and. Field->cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerPed <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
+   ::cExpresionHeader         += ' .and. Field->nNumPed >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumPed <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
+   ::cExpresionHeader         += ' .and. Field->cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufPed <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
+
+   // filtros para la linea----------------------------------------------------
+
+   ::cExpresionLine           := '!Field->lTotLin .and. !Field->lControl'
+   ::cExpresionLine           += ' .and. Field->cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerPed <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
+   ::cExpresionLine           += ' .and. Field->nNumPed >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumPed <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
+   ::cExpresionLine           += ' .and. Field->cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() ) + '" .and. Field->cSufPed <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
+
+   ::setFilterProductIdLine()
+
+   ::setFilterStoreLine()
+
+   // procesamos los pedidos----------------------------------------------------
+   
+   ::oMtrInf:cText            := "Procesando pedidos"
 
    aliasPedidosClientes       := D():PedidosClientes( ::nView )
    aliasPedidosClientesLineas := D():PedidosClientesLineas( ::nView )
 
-   ( aliasPedidosClientes )->( OrdSetFocus( "dFecPed" ) )
-   ( aliasPedidosClientesLineas )->( OrdSetFocus( "nNumPed" ) )
+   ( aliasPedidosClientes        )->( ordsetfocus( "dFecPed" ) )
+   ( aliasPedidosClientesLineas  )->( ordsetfocus( "nNumPed" ) )
 
-   cExpHead          := 'Field->dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   cExpHead          += ' .and. !Field->lCancel '
-   cExpHead          += ' .and. Field->cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:getDesde() ) + '" .and. Field->cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:getHasta() ) + '"'
-   cExpHead          += ' .and. Field->cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerPed <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
-   cExpHead          += ' .and. Field->nNumPed >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumPed <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
-   cExpHead          += ' .and. Field->cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufPed <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
+   ( aliasPedidosClientes        )->( setCustomFilter( ::cExpresionHeader ) )
+   ( aliasPedidosClientesLineas  )->( setCustomFilter( ::cExpresionLine ) )
 
-   ( aliasPedidosClientes )->( setCustomFilter( cExpHead ) )
-
-   ::oMtrInf:cText   := "Procesando pedidos"
    ::oMtrInf:SetTotal( ( aliasPedidosClientes )->( dbCustomKeyCount() ) )
 
    // Lineas de pedidos-----------------------------------------------------------
-
-   cExpLine          := '!Field->lTotLin .and. !Field->lControl'
-
-   if !::lAllArt
-      cExpLine       += ' .and. Field->cRef >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. Field->cRef <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
-      cExpLine       += ' .and. Field->cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerPed <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
-      cExpLine       += ' .and. Field->nNumPed >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumPed <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
-      cExpLine       += ' .and. Field->cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() ) + '" .and. Field->cSufPed <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
-   end if
-
-   ( aliasPedidosClientesLineas )->( setCustomFilter( cExpLine ) )
 
    ( aliasPedidosClientes )->( dbGoTop() )
    while !::lBreak .and. !( aliasPedidosClientes )->( Eof() )
@@ -2036,7 +2040,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
    ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
-   ::oMtrInf:cText := "Procesando tikets"
+   ::oMtrInf:cText         := "Procesando tikets"
 
    ::oMtrInf:SetTotal( ::oTikCliT:OrdKeyCount() )
 
@@ -2046,7 +2050,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
    ::cExpresionLine        += ' .and. ( ( cCbaTil >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cCbaTil <= "' + ::oGrupoArticulo:Cargo:getHasta() + '") .or. '
    ::cExpresionLine        += '( cComTil >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cComTil <= "' + ::oGrupoArticulo:Cargo:getHasta() + '" ) )'
 
-   // ::setFilterStoreLine()
+   ::setFilterStoreLine()
 
    msgAlert( ::cExpresionLine, "cExpresionLine" )
 
