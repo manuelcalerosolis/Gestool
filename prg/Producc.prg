@@ -2074,7 +2074,7 @@ RETURN .t.
 
 METHOD GetNewCount()
 
-   ::oDbf:nNumOrd       := nNewDoc( ::oDbf:cSerOrd, ::oDbf:nArea, "nParPrd" )
+   ::oDbf:nNumOrd       := nNewDoc( ::oDbf:cSerOrd, ::oDbf:nArea, "nParPrd", , ::oDbfCount:cAlias )
 
 RETURN ( .t. )
 

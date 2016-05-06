@@ -17539,6 +17539,10 @@ Static Function startToolTip( cCodArt, oBrwStock, oTreeInfo, oImageListInfo )
 
    end if
 
+   if !Empty( oBrwStock )
+      oBrwStock:Load()
+   end if
+
    CursorWE()
 
 Return nil

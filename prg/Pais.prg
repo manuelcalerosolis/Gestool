@@ -28,6 +28,8 @@ CLASS TPais FROM TMant
 
    METHOD lPreSave( oCmb, oDlg, nMode )
 
+   METHOD GetIsoPais( cCodPai )
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -236,5 +238,19 @@ METHOD GetPais( cCodPai, oSay, oBmp )
    end if
 
 RETURN ( .t. )
+
+//--------------------------------------------------------------------------//
+
+METHOD GetIsoPais( cCodPai )
+
+   local cCodIso     := ""
+
+   if ::oDbf:Seek( cCodPai )
+
+      cCodIso        := ::oDbf:cCodIso
+
+   end if
+
+RETURN ( cCodIso )
 
 //----------------------------------------------------------------------------//

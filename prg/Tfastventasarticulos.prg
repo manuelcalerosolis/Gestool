@@ -642,7 +642,9 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
 
    ::AddField( "cPrvHab",     "C", 12, 0, {|| "" },   "Proveedor habitual"                      )
 
-   ::AddField( "cCtrCoste",    "C",  9, 0, {|| "" },   "Código del centro de coste"             )
+   ::AddField( "cCtrCoste",   "C",  9, 0, {|| "" },   "Código del centro de coste"             )
+
+   ::AddField( "cDesUbi",     "C",200, 0, {|| "" },   "Unicación del artículo"                 )
 
    ::AddFieldCamposExtra()
 
@@ -1118,6 +1120,7 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
                ::oDbf:cCodEst    := ::oSatCliT:cCodEst
                ::oDbf:cCodTemp   := RetFld( ::oSatCliL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                ::oDbf:cCodFab    := RetFld( ::oSatCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+               ::oDbf:cDesUbi    := RetFld( ::oSatCliL:cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
                
                ::oDbf:cCodAlm    := ::oSatCliL:cAlmLin
                ::oDbf:cCodPago   := ::oSatCliT:cCodPgo
@@ -1276,6 +1279,7 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cCodEst    := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
                   ::oDbf:cCodTemp   := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                   ::oDbf:cCodFab    := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+                  ::oDbf:cDesUbi    := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
                   ::oDbf:cCodAlm    := ::oPreCliL:cAlmLin
                   ::oDbf:cCodPago   := ::oPreCliT:cCodPgo
                   ::oDbf:cCodRut    := ::oPreCliT:cCodRut
@@ -1472,6 +1476,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cCodFam    := ( aliasPedidosClientesLineas )->cCodFam
                   ::oDbf:cGrpFam    := ( aliasPedidosClientesLineas )->cGrpFam
                   ::oDbf:cCodAlm    := ( aliasPedidosClientesLineas )->cAlmLin
+                  ::oDbf:cDesUbi    := RetFld( ( aliasPedidosClientesLineas )->cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
 
                   ::oDbf:nDtoArt    := ( aliasPedidosClientesLineas )->nDto
                   ::oDbf:nLinArt    := ( aliasPedidosClientesLineas )->nDtoDiv
@@ -1595,6 +1600,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:cCodEst    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
                   ::oDbf:cCodTemp   := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                   ::oDbf:cCodFab    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+                  ::oDbf:cDesUbi    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
 
                   ::oDbf:cCodFam    := ::oAlbCliL:cCodFam
                   ::oDbf:cGrpFam    := ::oAlbCliL:cGrpFam
@@ -1760,6 +1766,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
                   ::oDbf:cCodEst    := RetFld( ::oFacCliL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
                   ::oDbf:cCodTemp   := RetFld( ::oFacCliL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                   ::oDbf:cCodFab    := RetFld( ::oFacCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+                  ::oDbf:cDesUbi    := RetFld( ::oFacCliL:cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
                   ::oDbf:cCodAlm    := ::oFacCliL:cAlmLin
                   ::oDbf:cCodPago   := ::oFacCliT:cCodPago
                   ::oDbf:cCodRut    := ::oFacCliT:cCodRut
@@ -1920,6 +1927,7 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
                   ::oDbf:cCodEst    := RetFld( ::oFacRecL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
                   ::oDbf:cCodTemp   := RetFld( ::oFacRecL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                   ::oDbf:cCodFab    := RetFld( ::oFacRecL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+                  ::oDbf:cDesUbi    := RetFld( ::oFacRecL:cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
                   ::oDbf:cCodAlm    := ::oFacRecL:cAlmLin
                   ::oDbf:cCodPago   := ::oFacRecT:cCodPago
                   ::oDbf:cCodRut    := ::oFacRecT:cCodRut
@@ -2078,6 +2086,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                   ::oDbf:cCodEst    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
                   ::oDbf:cCodTemp   := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                   ::oDbf:cCodFab    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+                  ::oDbf:cDesUbi    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
                   ::oDbf:cCodAlm    := ::oTikCliL:cAlmLin
                   ::oDbf:cCodPago   := ::oTikCliT:cFpgTik
                   ::oDbf:cCodRut    := ::oTikCliT:cCodRut
@@ -2166,6 +2175,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                   ::oDbf:cCodEst    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
                   ::oDbf:cCodTemp   := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                   ::oDbf:cCodFab    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+                  ::oDbf:cDesUbi    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
                   ::oDbf:cCodAlm    := ::oTikCliL:cAlmLin
                   ::oDbf:cCodPago   := ::oTikCliT:cFpgTik
                   ::oDbf:cCodRut    := ::oTikCliT:cCodRut
@@ -2270,6 +2280,7 @@ METHOD listadoArticulo() CLASS TFastVentasArticulos
       ::oDbf:cCodTemp := ::oDbfArt:cCodTemp
       ::oDbf:cCodFab  := ::oDbfArt:cCodFab
       ::oDbf:cCodEst  := ::oDbfArt:cCodEst
+      ::oDbf:cDesUbi  := ::oDbfArt:cDesUbi
       ::oDbf:nCosArt  := nCosto( nil, ::oDbfArt:cAlias, ::oArtKit:cAlias )
 
       ::InsertIfValid()
@@ -2428,6 +2439,7 @@ METHOD fillFromArticulo() CLASS TFastVentasArticulos
    ::oDbf:cCodFab    := ::oDbfArt:cCodFab
    ::oDbf:nCosArt    := nCosto( nil, ::oDbfArt:cAlias, ::oArtKit:cAlias )
    ::oDbf:cPrvHab    := ::oDbfArt:cPrvHab
+   ::oDbf:cDesUbi    := ::oDbfArt:cDesUbi
 
 RETURN ( Self )
 
@@ -2487,6 +2499,7 @@ METHOD AddParteProduccion() CLASS TFastVentasArticulos
                      ::oDbf:cCodTemp   := ::oProLin:cCodTmp
                      ::oDbf:cCodFab    := ::oProLin:cCodFab
                      ::oDbf:cCodAlm    := ::oProLin:cAlmOrd
+                     ::oDbf:cDesUbi    := RetFld( ::oProLin:cCodArt, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
 
                      ::oDbf:nUniArt    := ::oProLin:Unidades()
                      ::oDbf:nPreArt    := ::oProLin:nImpOrd
@@ -2596,6 +2609,7 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
                      ::oDbf:cCodTemp   := RetFld( ::oPedPrvL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                      ::oDbf:cCodFab    := RetFld( ::oPedPrvL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                      ::oDbf:cCodGrp    := RetFld( ::oPedPrvL:cRef, ::oDbfArt:cAlias, "GrpVent", "Codigo" )
+                     ::oDbf:cDesUbi    := RetFld( ::oPedPrvL:cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
                      ::oDbf:cCodCli    := ::oPedPrvT:cCodPrv
                      ::oDbf:cNomCli    := ::oPedPrvT:cNomPrv
                      ::oDbf:cPobCli    := ::oPedPrvT:cPobPrv
@@ -2738,6 +2752,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:cCodTemp   := RetFld( ::oAlbPrvL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                   ::oDbf:cCodFab    := RetFld( ::oAlbPrvL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                   ::oDbf:cCodGrp    := RetFld( ::oAlbPrvL:cRef, ::oDbfArt:cAlias, "GrpVent", "Codigo" )
+                  ::oDbf:cDesUbi    := RetFld( ::oAlbPrvL:cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
                   ::oDbf:cCodCli    := ::oAlbPrvT:cCodPrv
                   ::oDbf:cNomCli    := ::oAlbPrvT:cNomPrv
                   ::oDbf:cPobCli    := ::oAlbPrvT:cPobPrv
@@ -2882,6 +2897,7 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:cCodTemp   := RetFld( ::oFacPrvL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                   ::oDbf:cCodFab    := RetFld( ::oFacPrvL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                   ::oDbf:cCodGrp    := RetFld( ::oFacPrvL:cRef, ::oDbfArt:cAlias, "GrpVent", "Codigo" )
+                  ::oDbf:cDesUbi    := RetFld( ::oFacPrvL:cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
                   ::oDbf:cCodCli    := ::oFacPrvT:cCodPrv
                   ::oDbf:cNomCli    := ::oFacPrvT:cNomPrv
                   ::oDbf:cPobCli    := ::oFacPrvT:cPobPrv
@@ -3023,6 +3039,7 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:cCodTemp   := RetFld( ::oRctPrvL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                   ::oDbf:cCodFab    := RetFld( ::oRctPrvL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                   ::oDbf:cCodGrp    := RetFld( ::oRctPrvL:cRef, ::oDbfArt:cAlias, "GrpVent", "Codigo" )
+                  ::oDbf:cDesUbi    := RetFld( ::oRctPrvL:cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
                   ::oDbf:cCodCli    := ::oRctPrvT:cCodPrv
                   ::oDbf:cNomCli    := ::oRctPrvT:cNomPrv
                   ::oDbf:cPobCli    := ::oRctPrvT:cPobPrv
