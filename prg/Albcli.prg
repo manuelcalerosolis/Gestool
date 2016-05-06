@@ -435,7 +435,6 @@ static dbfTblCnv
 static dbfOferta
 static dbfObrasT
 static dbfCentroCoste
-static dbfFamilia
 static dbfArtDiv
 static dbfAgeCom
 static oGetTotal
@@ -1357,6 +1356,8 @@ STATIC FUNCTION OpenFiles()
 
       D():ImpuestosEspeciales( nView )
 
+      D():Familias( nView )
+
       // Aperturas ------------------------------------------------------------
 
       if !TDataCenter():OpenPreCliT( @dbfPreCliT )
@@ -1436,8 +1437,6 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatArt() + "ArtCodebar.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @dbfCodebar ) )
       SET ADSINDEX TO ( cPatArt() + "ArtCodebar.Cdx" ) ADDITIVE
 
-      USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
-      SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
 
       USE ( cPatArt() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfKit ) )
       SET ADSINDEX TO ( cPatArt() + "ARTKIT.CDX" ) ADDITIVE
@@ -1760,9 +1759,6 @@ STATIC FUNCTION CloseFiles()
    if !Empty( dbfCodebar )
       ( dbfCodebar   )->( dbCloseArea() )
    end if
-   if !Empty( dbfFamilia )
-      ( dbfFamilia   )->( dbCloseArea() )
-   end if
    if !Empty( dbfKit )
       ( dbfKit       )->( dbCloseArea() )
    end if
@@ -1927,7 +1923,6 @@ STATIC FUNCTION CloseFiles()
    dbfPromoL      := nil
    dbfPromoC      := nil
    dbfCodebar     := nil
-   dbfFamilia     := nil
    dbfKit         := nil
    dbfTVta        := nil
    oBandera       := nil
@@ -4409,7 +4404,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
    cOldUndMed           := aTmp[ _CUNIDAD ]
 
    cSayGrp              := RetFld( aTmp[ _CGRPFAM ], oGrpFam:GetAlias() )
-   cSayFam              := RetFld( aTmp[ _CCODFAM ], dbfFamilia )
+   cSayFam              := RetFld( aTmp[ _CCODFAM ], D():Familias( nView ) )
 
    /*
    Caja de dialogo-------------------------------------------------------------
@@ -4914,7 +4909,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          ID       160 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         VALID    ( oSayFam:cText( RetFld( aTmp[ _CCODFAM  ], dbfFamilia ) ), .t. );
+         VALID    ( oSayFam:cText( RetFld( aTmp[ _CCODFAM  ], D():Familias( nView ) ) ), .t. );
          ON HELP  ( BrwFamilia( aGet[ _CCODFAM ], oSayFam ) );
          OF       oFld:aDialogs[2]
 
@@ -10299,10 +10294,10 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
                end if
 
                if aGet[ _CGRPFAM ] != nil
-                  aGet[ _CGRPFAM ]:cText( cGruFam( cCodFam, dbfFamilia ) )
+                  aGet[ _CGRPFAM ]:cText( cGruFam( cCodFam, D():Familias( nView ) ) )
                   aGet[ _CGRPFAM ]:lValid()
                else
-                  aTmp[ _CGRPFAM ]  := cGruFam( cCodFam, dbfFamilia )
+                  aTmp[ _CGRPFAM ]  := cGruFam( cCodFam, D():Familias( nView ) )
                end if
 
             else
@@ -10637,9 +10632,9 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             if aTmp[ _NDTO ] == 0
 
                if !Empty( aGet[ _NDTO ] )
-                  aGet[ _NDTO ]:cText( nDescuentoFamilia( cCodFam, dbfFamilia ) )
+                  aGet[ _NDTO ]:cText( nDescuentoFamilia( cCodFam, D():Familias( nView ) ) )
                else
-                  aTmp[ _NDTO ]     := nDescuentoFamilia( cCodFam, dbfFamilia )
+                  aTmp[ _NDTO ]     := nDescuentoFamilia( cCodFam, D():Familias( nView ) )
                end if
 
             end if
@@ -10925,6 +10920,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
    local aClo     
    local nTotUnd 
    local hAtipica 
+   local lBeforeAppendEvent
    local nPrecioPropiedades   := 0
 
    oBtn:SetFocus()
@@ -10954,9 +10950,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
       return nil
    end if 
 
-   /*
-   Comprobamos si tiene que introducir números de serie------------------------
-   */
+   // Comprobamos si tiene que introducir números de serie------------------------
 
    if ( nMode == APPD_MODE ) .and. RetFld( aTmp[ _CREF ], D():Articulos( nView ), "lNumSer" ) .and. !( dbfTmpSer )->( dbSeek( Str( aTmp[ _NNUMLIN ], 4 ) + aTmp[ _CREF ] ) )
       MsgStop( "Tiene que introducir números de serie para este artículo." )
@@ -10964,7 +10958,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
       return nil 
    end if
 
-   if !Empty( aTmp[ _CREF ] ) .and. ( aTmp[ _LNOTVTA ] .or. aTmp[ _LMSGVTA ] )
+   if !empty( aTmp[ _CREF ] ) .and. ( aTmp[ _LNOTVTA ] .or. aTmp[ _LMSGVTA ] )
 
       nTotUnd     := nTotNAlbCli( aTmp )
 
@@ -10975,6 +10969,18 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
       if !lCompruebaStock( aTmp, oStock, nTotUnd, nStkAct )
          return nil
       end if   
+
+   end if
+
+   // lanzamos los scripts-----------------------------------------------------
+
+   if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
+
+      lBeforeAppendEvent   := runEventScript( "AlbaranesClientes\Lineas\beforeAppend", aTmp, aTmpAlb, nView )
+
+      if isLogic( lBeforeAppendEvent ) .and. !lBeforeAppendEvent
+         Return nil
+      end if
 
    end if
 
@@ -11286,7 +11292,7 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
             */           
 
             ( dbfTmpLin )->cCodFam     := ( D():Articulos( nView ) )->Familia
-            ( dbfTmpLin )->cGrpFam     := cGruFam( ( dbfTmpLin )->cCodFam, dbfFamilia )
+            ( dbfTmpLin )->cGrpFam     := cGruFam( ( dbfTmpLin )->cCodFam, D():Familias( nView ) )
 
             /*
             Datos de la cabecera-----------------------------------------------
@@ -11585,7 +11591,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    oBlock                  := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-
    // Quitamos los filtros--------------------------------------------------------
 
    ( dbfTmpLin )->( dbClearFilter() )
@@ -11677,6 +11682,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
          ( dbfTmpLin )->dFecAlb        := aTmp[ _DFECALB ]
          ( dbfTmpLin )->tFecAlb        := aTmp[ _TFECALB ]
          ( dbfTmpLin )->cCodCli        := aTmp[ _CCODCLI ]
+         
          if empty( ( dbfTmpLin )->cCtrCoste )
             ( dbfTmpLin )->cCtrCoste   := aTmp[ _CCENTROCOSTE ]
          endif
@@ -14837,7 +14843,7 @@ function SynAlbCli( cPath )
 
          if !Empty( ( D():Get( "AlbCliL", nView ) )->cRef ) .and. !Empty( ( D():Get( "AlbCliL", nView ) )->cCodFam )
             if dbLock( D():Get( "AlbCliL", nView ) )
-               ( D():Get( "AlbCliL", nView ) )->cGrpFam    := cGruFam( ( D():Get( "AlbCliL", nView ) )->cCodFam, dbfFamilia )
+               ( D():Get( "AlbCliL", nView ) )->cGrpFam    := cGruFam( ( D():Get( "AlbCliL", nView ) )->cCodFam, D():Familias( nView ) )
                ( D():Get( "AlbCliL", nView ) )->( dbUnLock() )
             end if
          end if
