@@ -846,7 +846,6 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
          REDEFINE CHECKBOX aTmp[ _LPUBINT ] ;
             ID       115 ;
             WHEN     ( nMode != ZOOM_MODE ) ;
-            ON CHANGE( if( nMode != APPD_MODE, IncWeb( aTmp ), .t. ) ) ;
             OF       oFld:aDialogs[2]
 
          REDEFINE CHECKBOX aTmp[ _LFAMINT ];

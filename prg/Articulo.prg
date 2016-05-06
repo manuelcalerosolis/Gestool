@@ -1053,6 +1053,14 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    end with
 
    with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Web"
+      :cSortOrder       := "cWebShop"
+      :bEditValue       := {|| ( D():Articulos( nView ) )->cWebShop }
+      :nWidth           := 140
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+   end with
+
+   with object ( oWndBrw:AddXCol() )
       :cHeader          := "Stock"
       :bEditValue       := {|| ( D():Articulos( nView ) )->nStkCal }
       :cEditPicture     := MasUnd()
@@ -1242,15 +1250,6 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       :cHeader          := "Referencia de proveedor"
       :bStrData         := {|| cRefArtPrv( ( D():Articulos( nView ) )->Codigo, ( D():Articulos( nView ) )->cPrvHab, dbfArtPrv ) }
       :nWidth           := 100
-      :lHide            := .t.
-   end with
-
-   with object ( oWndBrw:AddXCol() )
-      :cHeader          := "Web"
-      :cSortOrder       := "cCodWeb"
-      :bStrData         := {|| ( D():Articulos( nView ) )->cCodWeb }
-      :nWidth           := 80
-      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       :lHide            := .t.
    end with
 
@@ -14891,11 +14890,11 @@ FUNCTION rxArticulo( cPath, cDriver )
       ( dbfArt )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( dbfArt )->( ordCreate( cPath + "ARTICULO.CDX", "CodeBar", "Field->CodeBar", {|| Field->CodeBar } ) )
 
-      ( dbfArt )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfArt )->( ordCreate( cPath + "Articulo.Cdx", "cCodWeb", "Str( Field->cCodWeb, 11 )", {|| Str( Field->cCodWeb, 11 ) } ) )
-
       ( dbfArt )->( ordCondSet( "!Deleted() .and. lPubInt", {|| !Deleted() .and. Field->lPubInt }  ) )
       ( dbfArt )->( ordCreate( cPath + "Articulo.Cdx", "lPubInt", "Codigo", {|| Field->Codigo } ) )
+
+      ( dbfArt )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfArt )->( ordCreate( cPath + "Articulo.Cdx", "cWebShop", "Field->cWebShop", {|| Field->cWebShop } ) )
 
       ( dbfArt )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( dbfArt )->( ordCreate( cPath + "Articulo.Cdx", "cCodEdi", "cCodEdi", {|| Field->cCodEdi } ) )

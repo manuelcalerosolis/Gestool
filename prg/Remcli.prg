@@ -117,7 +117,7 @@ CLASS TRemesas FROM TMasDet
    METHOD AppendDet()
    METHOD EditDet()
    METHOD RollBack()
-   METHOD SaveDet()        VIRTUAL
+   METHOD SaveDet()                 VIRTUAL
 
    METHOD Del()
    METHOD DelItem()
@@ -126,6 +126,8 @@ CLASS TRemesas FROM TMasDet
    METHOD nTotRemVir( lPic )
 
    METHOD cNumRem()                 INLINE   ( alltrim( str( ::oDbf:nNumRem ) + "/" + ::oDbf:cSufRem ) )
+   METHOD cTextoRemesaContable()    INLINE   ( alltrim( str( ::oDbf:nNumRem ) ) + if( empty( ::oDbf:cSufRem  ) .or. ( ::oDbf:cSufRem == "00" ), "", "/" + ::oDbf:cSufRem ) )
+   
    METHOD getReciboVirtualId()      INLINE   ( ::oDbfVir:cSerie + Str( ::oDbfVir:nNumFac ) + ::oDbfVir:cSufFac + Str( ::oDbfVir:nNumRec ) )
    METHOD gotoRecibo()              INLINE   ( ::oDbfDet:seekInOrd( ::getReciboVirtualId(), "nNumFac" ) )
 
@@ -1730,6 +1732,7 @@ METHOD contabilizaRemesas( lSimula )
    local cCuentaPago    := ""
    local cCuentaCliente := ""
    local cNombreCliente := ""
+   local cTextoRemesa   := ""
    local aSimula        := {}
    local cCodPro        := cProCnt()
    local cRuta          := cRutCnt()
@@ -1891,7 +1894,7 @@ METHOD contabilizaRemesas( lSimula )
                                        cCuentaCliente,;
                                        ,;
                                        ,;
-                                       "Remesa " + alltrim( ::cNumRem() ) + ", Recibo " + ::oDbfDet:cSerie + "/" + alltrim( str( ::oDbfDet:nNumFac ) ) + "/" + ::oDbfDet:cSufFac + "-" + alltrim( str( ::oDbfDet:nNumRec ) ),;
+                                       "Remesa " + alltrim( ::cTextoRemesaContable() ) + ", Recibo " + ::oDbfDet:cSerie + "/" + alltrim( str( ::oDbfDet:nNumFac ) ) + "/" + ::oDbfDet:cSufFac + "-" + alltrim( str( ::oDbfDet:nNumRec ) ),;
                                        nTotRecCli( ::oDbfDet:cAlias, ::oDivisas:cAlias, ::oDbf:cCodDiv, .f. ),;
                                        ::oDbfDet:cSerie + str( ::oDbfDet:nNumFac ) + ::oDbfDet:cSufFac,;
                                        ,;
