@@ -2242,38 +2242,6 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
                ::oDbf:Blank()
                
-<<<<<<< HEAD
-                  ::oDbf:cCodArt    := ::oTikCliL:cCbaTil
-                  ::oDbf:cNomArt    := ::oTikCliL:cNomTil
-                  ::oDbf:cCodCli    := ::oTikCliT:cCliTik
-                  ::oDbf:cNomCli    := ::oTikCliT:cNomTik
-                  ::oDbf:cPobCli    := ::oTikCliT:cPobCli
-                  ::oDbf:cPrvCli    := ::oTikCliT:cPrvCli
-                  ::oDbf:cPosCli    := ::oTikCliT:cPosCli
-                  ::oDbf:cCodGrp    := cGruCli( ::oTikCliT:cCliTik, ::oDbfCli )
-
-                  ::oDbf:cCodFam    := ::oTikCliL:cCodFam
-                  ::oDbf:cGrpFam    := ::oTikCliL:cGrpFam
-                  ::oDbf:cCodTip    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
-                  ::oDbf:cCodCate   := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
-                  ::oDbf:cCodEst    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
-                  ::oDbf:cCodTemp   := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
-                  ::oDbf:cCodFab    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
-                  ::oDbf:cDesUbi    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
-                  ::oDbf:cCodAlm    := ::oTikCliL:cAlmLin
-                  ::oDbf:cCodPago   := ::oTikCliT:cFpgTik
-                  ::oDbf:cCodRut    := ::oTikCliT:cCodRut
-                  ::oDbf:cCodAge    := ::oTikCliT:cCodAge
-                  ::oDbf:cCodTrn    := ""
-                  ::oDbf:cCodUsr    := ::oTikCliT:cCcjTik
-                  ::oDbf:cCodObr    := ::oTikCliT:cCodObr
-
-                  if ::oTikCliT:cTipTik == "4"
-                     ::oDbf:nUniArt := - ::oTikCliL:nUntTil * if( ::lUnidadesNegativo, -1, 1 )
-                  else
-                     ::oDbf:nUniArt := ::oTikCliL:nUntTil   * if( ::lUnidadesNegativo, -1, 1 )
-                  end if
-=======
                ::oDbf:cCodArt    := ::oTikCliL:cCbaTil
                ::oDbf:cNomArt    := ::oTikCliL:cNomTil
                ::oDbf:cCodCli    := ::oTikCliT:cCliTik
@@ -2290,6 +2258,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:cCodEst    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
                ::oDbf:cCodTemp   := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                ::oDbf:cCodFab    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+               ::oDbf:cDesUbi    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
                ::oDbf:cCodAlm    := ::oTikCliL:cAlmLin
                ::oDbf:cCodPago   := ::oTikCliT:cFpgTik
                ::oDbf:cCodRut    := ::oTikCliT:cCodRut
@@ -2303,7 +2272,6 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                else
                   ::oDbf:nUniArt := ::oTikCliL:nUntTil   * if( ::lUnidadesNegativo, -1, 1 )
                end if
->>>>>>> origin/master
 
                ::oDbf:nPreArt    := nImpUTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nValDiv, nil, 1 )
 
@@ -2362,39 +2330,6 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
                ::oDbf:Blank()
                
-<<<<<<< HEAD
-                  ::oDbf:cCodArt    := ::oTikCliL:cComTil
-                  ::oDbf:cNomArt    := ::oTikCliL:cNcmTil
-
-                  ::oDbf:cCodCli    := ::oTikCliT:cCliTik
-                  ::oDbf:cNomCli    := ::oTikCliT:cNomTik
-                  ::oDbf:cPobCli    := ::oTikCliT:cPobCli
-                  ::oDbf:cPrvCli    := ::oTikCliT:cPrvCli
-                  ::oDbf:cPosCli    := ::oTikCliT:cPosCli
-                  ::oDbf:cCodGrp    := cGruCli( ::oTikCliT:cCliTik, ::oDbfCli )
-
-                  ::oDbf:cCodFam    := ::oTikCliL:cCodFam
-                  ::oDbf:cGrpFam    := ::oTikCliL:cGrpFam
-                  ::oDbf:cCodTip    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
-                  ::oDbf:cCodCate   := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
-                  ::oDbf:cCodEst    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
-                  ::oDbf:cCodTemp   := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
-                  ::oDbf:cCodFab    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
-                  ::oDbf:cDesUbi    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
-                  ::oDbf:cCodAlm    := ::oTikCliL:cAlmLin
-                  ::oDbf:cCodPago   := ::oTikCliT:cFpgTik
-                  ::oDbf:cCodRut    := ::oTikCliT:cCodRut
-                  ::oDbf:cCodAge    := ::oTikCliT:cCodAge
-                  ::oDbf:cCodTrn    := ""
-                  ::oDbf:cCodUsr    := ::oTikCliT:cCcjTik
-                  ::oDbf:cCodObr    := ::oTikCliT:cCodObr
-
-                  if ::oTikCliT:cTipTik == "4"
-                     ::oDbf:nUniArt := - ::oTikCliL:nUntTil * if( ::lUnidadesNegativo, -1, 1 )
-                  else
-                     ::oDbf:nUniArt := ::oTikCliL:nUntTil   * if( ::lUnidadesNegativo, -1, 1 )
-                  end if
-=======
                ::oDbf:cCodArt    := ::oTikCliL:cComTil
                ::oDbf:cNomArt    := ::oTikCliL:cNcmTil
 
@@ -2412,6 +2347,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:cCodEst    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
                ::oDbf:cCodTemp   := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                ::oDbf:cCodFab    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+               ::oDbf:cDesUbi    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
                ::oDbf:cCodAlm    := ::oTikCliL:cAlmLin
                ::oDbf:cCodPago   := ::oTikCliT:cFpgTik
                ::oDbf:cCodRut    := ::oTikCliT:cCodRut
@@ -2425,7 +2361,6 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                else
                   ::oDbf:nUniArt := ::oTikCliL:nUntTil   * if( ::lUnidadesNegativo, -1, 1 )
                end if
->>>>>>> origin/master
 
                ::oDbf:nPreArt    := nImpUTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nValDiv, nil, 2 )
 
