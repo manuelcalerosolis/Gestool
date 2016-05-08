@@ -410,6 +410,7 @@ CLASS TComercio
    METHOD buildInsertImageProductsByProperties( hArticuloData, idProductAttribute )
    METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb )
       METHOD insertProductAttributePrestashop()
+      METHOD insertProductAttributeCombinationPrestashop()
 
    METHOD buildImagesArticuloPrestashop( id )
 
@@ -4180,45 +4181,11 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
 
                // Metemos la relación de la propiedad1 con el artículo------------
 
-               nOrdAnt     := ::oTblPro:OrdSetFocus( "cCodPro" )
-
-               if ::oTblPro:Seek( upper( ::oArtDiv:cCodPr1 ) + upper( ::oArtDiv:cValPr1 ) )
-
-                  cCommand := "INSERT INTO " +  ::cPrefixtable( "product_attribute_combination" ) + "( " + ;
-                                 "id_attribute, "                                                        + ;
-                                 "id_product_attribute ) "                                               + ;
-                              "VALUES ("                                                                 + ;
-                                 "'" + alltrim( str( ::TPrestashopId:getValueAttribute( ::oArtDiv:cCodPr1 + ::oArtDiv:cValPr1, ::getCurrentWebName() ) ) ) + "', " + ;  //id_attribute
-                                 "'" + alltrim( str( nCodigoPropiedad ) ) + "' )"        //id_product_attribute
-
-                  if !TMSCommand():New( ::oCon ):ExecDirect( cCommand ) 
-                     ::writeText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::PrefixTable( "product_attribute_combination" ), 3 )
-                  end if
-
-               else 
-                  ::writeText( "Error al buscar en tabla de propiedades " + alltrim( ::oArtDiv:cCodPr1 ) + " : " + alltrim( ::oArtDiv:cValPr1 ), 3 )
-               end if
-
+               ::insertProductAttributeCombinationPrestashop( ::oArtDiv:cCodPr1, ::oArtDiv:cValPr1, nCodigoPropiedad )
+               
                // Metemos la relación de la propiedad 2 con el artículo-----------
 
-               if ::oTblPro:Seek( upper( ::oArtDiv:cCodPr2 ) + upper( ::oArtDiv:cValPr2 ) )
-
-                  cCommand := "INSERT INTO " + ::cPrefixTable( "product_attribute_combination" ) + " ( " + ;
-                                 "id_attribute, "                                                        + ;
-                                 "id_product_attribute ) "                                               + ;
-                              "VALUES ("                                                                 + ;
-                                 "'" + alltrim( str( ::TPrestashopId:getValueAttribute( ::oArtDiv:cCodPr2 + ::oArtDiv:cValPr2, ::getCurrentWebName() ) ) ) + "', " + ;   //id_attribute
-                                 "'" + alltrim( str( nCodigoPropiedad ) ) + "' )"         //id_product_attribute
-
-                  if !TMSCommand():New( ::oCon ):ExecDirect( cCommand ) 
-                     ::writeText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute_combination" ), 3 )
-                  end if
-
-               else 
-                  ::writeText( "Error al buscar en tabla de propiedades " + alltrim( ::oArtDiv:cCodPr2 ) + " : " + alltrim( ::oArtDiv:cValPr2 ), 3 )
-               end if
-
-               ::oTblPro:OrdSetFocus( nOrdAnt )
+               ::insertProductAttributeCombinationPrestashop( ::oArtDiv:cCodPr2, ::oArtDiv:cValPr2, nCodigoPropiedad )
 
                // Metemos la relación entre la propiedad y el shop-------------
 
@@ -4299,6 +4266,30 @@ METHOD insertProductAttributePrestashop( hArticuloData, nCodigoWeb ) CLASS TCome
    end if
 
 Return ( idProductAttribute )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertProductAttributeCombinationPrestashop( idFirstProperty, valueFirstProperty ) CLASS TComercio
+
+   local cCommand
+
+   if !( ::oTblPro:seekInOrd( upper( idFirstProperty ) + upper( valueFirstProperty ), "cCodPro" ) )
+      ::writeText( "Error al buscar en tabla de propiedades " + alltrim( idFirstProperty ) + " : " + alltrim( valueFirstProperty ), 3 )
+      Return .f.
+   end if 
+
+   cCommand := "INSERT INTO " +  ::cPrefixtable( "product_attribute_combination" ) + "( " + ;
+                  "id_attribute, "                                                        + ;
+                  "id_product_attribute ) "                                               + ;
+               "VALUES ("                                                                 + ;
+                  "'" + alltrim( str( ::TPrestashopId:getValueAttribute( idFirstProperty + valueFirstProperty, ::getCurrentWebName() ) ) ) + "', " + ;  //id_attribute
+                  "'" + alltrim( str( nCodigoPropiedad ) ) + "' )"                        //id_product_attribute
+
+   if !TMSCommand():New( ::oCon ):ExecDirect( cCommand ) 
+      ::writeText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::PrefixTable( "product_attribute_combination" ), 3 )
+   end if
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
