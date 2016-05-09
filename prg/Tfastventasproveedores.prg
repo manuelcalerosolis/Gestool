@@ -79,9 +79,9 @@ METHOD lResource( cFld ) CLASS TFastVentasProveedores
    end if
 
    ::oFilter      := TFilterCreator():Init()
-   if !Empty( ::oFilter )
+   if !empty( ::oFilter )
       ::oFilter:SetDatabase( ::oDbf )
-      ::oFilter:SetFilterType( FST_PRV )
+      ::oFilter:SetFilterType( PRV_TBL )
    end if 
 
 RETURN .t.

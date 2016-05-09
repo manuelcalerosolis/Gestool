@@ -64,10 +64,13 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
    METHOD nPedidoCliente()                INLINE ( ::oStock:nPedidoCliente( ::oDbf:cCodCli ) )
    
    METHOD setFilterClientIdHeader()       INLINE ( if( ::lApplyFilters,;
-                                                   ::cExpresionHeader   += ' .and. ( Field->cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde ) + '" .and. Field->cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '" )', ) )
+                                                   ::cExpresionHeader   += ' .and. ( alltrim( Field->cCodCli ) >= "' + alltrim( ::oGrupoCliente:Cargo:Desde ) + '" .and. alltrim( Field->cCodCli ) <= "' + alltrim( ::oGrupoCliente:Cargo:Hasta ) + '" )', ) )
    
    METHOD setFilterPaymentId()            INLINE ( if( ::lApplyFilters,;
                                                    ::cExpresionHeader  += ' .and. ( Field->cCodPgo >= "' + ::oGrupoFpago:Cargo:Desde + '" .and. Field->cCodPgo <= "' + ::oGrupoFpago:Cargo:Hasta + '" )', ) )
+
+   METHOD setFilterPaymentInvoiceId()     INLINE ( if( ::lApplyFilters,;
+                                                   ::cExpresionHeader  += ' .and. ( Field->cCodPago >= "' + ::oGrupoFpago:Cargo:Desde + '" .and. Field->cCodPago <= "' + ::oGrupoFpago:Cargo:Hasta + '" )', ) )
    
    METHOD setFilterRouteId()              INLINE ( if( ::lApplyFilters,;
                                                    ::cExpresionHeader  += ' .and. ( Field->cCodRut >= "' + ::oGrupoRuta:Cargo:Desde + '" .and. Field->cCodRut <= "' + ::oGrupoRuta:Cargo:Hasta + '" )', ) )
@@ -150,7 +153,7 @@ METHOD OpenFiles() CLASS TFastVentasClientes
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::lApplyFilters   := .f. //lAIS()
+      ::lApplyFilters   := lAIS()
 
       ::oSatCliT        := TDataCenter():oSatCliT()
       ::oSatCliT:OrdSetFocus( "cCodCli" )
@@ -437,8 +440,7 @@ RETURN ( Self )
 
 METHOD DataReport() CLASS TFastVentasClientes
 
-   local nSec
-
+   
    /*
    Zona de detalle-------------------------------------------------------------
    */
@@ -534,7 +536,7 @@ METHOD DataReport() CLASS TFastVentasClientes
 
    ::oFastReport:SetResyncPair(     "Incidencias", "Tipos de incidencias" ) 
 
-   nSec  := seconds()
+   
 
    do case
       case ::cReportType == "SAT de clientes"
@@ -600,8 +602,6 @@ METHOD DataReport() CLASS TFastVentasClientes
          ::FastReportTicket( .t. )
 
    end case
-
-   msgAlert( seconds() - nSec )
 
    ::AddVariable()
 
@@ -717,12 +717,16 @@ Return ( ::Super:AddVariable() )
 //---------------------------------------------------------------------------//
 
 METHOD lGenerate() CLASS TFastVentasClientes
+   
+   local nsec
 
    ::oDbf:Zap()
 
    /*
    Recorremos clientes---------------------------------------------------------
    */
+
+   nSec  := seconds()
 
    do case
       case ::cReportType == "SAT de clientes"
@@ -791,6 +795,8 @@ METHOD lGenerate() CLASS TFastVentasClientes
 
    end case
 
+   msgAlert( seconds() - nSec )
+   
    ::oDbf:SetFilter( ::oFilter:cExpresionFilter )
 
    ::oDbf:GoTop()
@@ -833,7 +839,7 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
       ::oSatCliT:OrdSetFocus( "cCodCli" )
       ::oSatCliL:OrdSetFocus( "nNumSat" )
 
-   // filtros para la cabecera------------------------------------------------
+      // filtros para la cabecera------------------------------------------------
 
       ::cExpresionHeader          := 'Field->dFecSat >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecSat <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
       ::cExpresionHeader          += ' .and. Field->cSerSat >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerSat <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
@@ -848,7 +854,7 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
       ::setFilterUserId()
 
-   // Procesando SAT----------------------------------------------------------
+      // Procesando SAT----------------------------------------------------------
 
       ::oMtrInf:cText   := "Procesando SAT"
 
@@ -1080,13 +1086,13 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
       
       ::setFilterClientIdHeader()
 
-      ::setFilterPaymentId()
+      // ::setFilterPaymentId()
 
-      ::setFilterRouteId()
+      // ::setFilterRouteId()
 
-      ::setFilterAgentId()
+      // ::setFilterAgentId()
       
-      ::setFilterUserId()
+      // ::setFilterUserId()
 
    // Procesando pedidos------------------------------------------------
    
@@ -1195,24 +1201,23 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
 
       // filtros para la cabecera------------------------------------------------
 
+      ::cExpresionHeader       := '( Field->dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
+      
       if lNoFacturados
-         ::cExpresionHeader       := 'nFacturado < 3 .and. Field->dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      else
-         ::cExpresionHeader       := 'Field->dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+         ::cExpresionHeader    += ' .and. ( nFacturado < 3 ) ' 
       end if
 
-      ::cExpresionHeader          += ' .and. Field->cSerAlb >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerAlb <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+      ::cExpresionHeader       += ' .and. ( Field->cSerAlb >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerAlb <= "' + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '" ) '
 
       ::setFilterClientIdHeader()
 
-      ::setFilterPaymentId()
+      ::setFilterPaymentInvoiceId()
 
       ::setFilterRouteId()
 
       ::setFilterAgentId()
       
       ::setFilterUserId()
-
 
       // Procesando albaranes-----------------------------------------------------
 
@@ -1223,7 +1228,6 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
       ::oMtrInf:SetTotal( ::oAlbCliT:OrdKeyCount() )
 
       ::oAlbCliT:GoTop()
-      
       while !::lBreak .and. !::oAlbCliT:Eof()
 
          if lChkSer( ::oAlbCliT:cSerAlb, ::aSer )
@@ -1320,11 +1324,11 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
    // filtros para la cabecera------------------------------------------------
    
       ::cExpresionHeader          := 'Field->dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      ::cExpresionHeader          += ' .and. Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+      ::cExpresionHeader          += ' .and. ( Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '" ) '
       
       ::setFilterClientIdHeader()
 
-      ::setFilterPaymentId()
+      ::setFilterPaymentInvoiceId()
 
       ::setFilterRouteId()
 
@@ -1332,16 +1336,15 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
       
       ::setFilterUserId()
 
-   // filtros para la cabecera------------------------------------------------
+      // procesando facturas------------------------------------------------
    
-      ::oMtrInf:cText   := "Procesando facturas"
+      ::oMtrInf:cText            := "Procesando facturas"
       
       ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
       ::oMtrInf:SetTotal( ::oFacCliT:OrdKeyCount() )
 
       ::oFacCliT:GoTop()
-
       while !::lBreak .and. !::oFacCliT:Eof()
 
          if lChkSer( ::oFacCliT:cSerie, ::aSer )
