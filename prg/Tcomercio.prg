@@ -5182,6 +5182,8 @@ METHOD buildInsertStockPrestashop( hStockProductData ) CLASS TComercio
 
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
+   debug( cCommand, "delete cCommand" )
+
    if hGet( hStockProductData, "nStock" ) != 0
 
       cCommand := "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( "   + ;
@@ -5201,7 +5203,7 @@ METHOD buildInsertStockPrestashop( hStockProductData ) CLASS TComercio
                      "'0', "                                                     + ;
                      "'2' )"
 
-      debug( cCommand, "cCommand" )
+      debug( cCommand, "insert cCommand" )
 
       TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
