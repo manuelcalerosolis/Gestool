@@ -36,12 +36,16 @@ CLASS TFastVentasProveedores FROM TFastReportInfGen
    METHOD AddProveedor()
 
    METHOD idDocumento()                 INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc )
+   METHOD idDocumentoLinea()            INLINE ( ::idDocumento() )
 
    METHOD setFilterPaymentId()          INLINE ( if( ::lApplyFilters,;
-                                                   ::cExpresionHeader  += ' .and. ( Field->cCodPgo >= "' + ::oGrupoFpago:Cargo:Desde + '" .and. Field->cCodPgo <= "' + ::oGrupoFpago:Cargo:Hasta + '" )', ) )
+                                                 ::cExpresionHeader  += ' .and. ( Field->cCodPgo >= "' + ::oGrupoFpago:Cargo:Desde + '" .and. Field->cCodPgo <= "' + ::oGrupoFpago:Cargo:Hasta + '" )', ) )
+   
+   METHOD setFilterPaymentInvoiceId()   INLINE ( if( ::lApplyFilters,;
+                                                 ::cExpresionHeader  += ' .and. ( Field->cCodPago >= "' + ::oGrupoFpago:Cargo:Desde + '" .and. Field->cCodPago <= "' + ::oGrupoFpago:Cargo:Hasta + '" )', ) )
    
    METHOD setFilterProviderId()         INLINE ( if( ::lApplyFilters,;
-                                                   ::cExpresionHeader  += ' .and. ( Field->cCodPrv >= "' + ::oGrupoProveedor:Cargo:Desde + '" .and. Field->cCodPrv <= "' + ::oGrupoProveedor:Cargo:Hasta + '" )', ) )
+                                                 ::cExpresionHeader  += ' .and. ( Field->cCodPrv >= "' + ::oGrupoProveedor:Cargo:Desde + '" .and. Field->cCodPrv <= "' + ::oGrupoProveedor:Cargo:Hasta + '" )', ) )
    
 END CLASS
 
@@ -411,7 +415,7 @@ METHOD AddFacturaProveedor( cCodigoProveedor ) CLASS TFastVentasProveedores
 
       ::cExpresionHeader             := 'Field->dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
       
-      ::setFilterPaymentId()
+      ::setFilterPaymentInvoiceId()
       
       ::setFilterProviderId()
 
@@ -491,7 +495,7 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasProveedores
 
       ::cExpresionHeader             := 'Field->dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
       
-      ::setFilterPaymentId()
+      ::setFilterPaymentInvoiceId()
       
       ::setFilterProviderId()
 
@@ -635,8 +639,6 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD DataReport( oFr ) CLASS TFastVentasProveedores
-   
-   local nSec
 
    /*
    Zona de detalle-------------------------------------------------------------
@@ -664,8 +666,6 @@ METHOD DataReport( oFr ) CLASS TFastVentasProveedores
 
    ::oFastReport:SetResyncPair(     "Informe", "Proveedores" )
    ::oFastReport:SetResyncPair(     "Informe", "Empresa" )
-
-   nSec  := seconds()
 
     /*
    Tablas en funcion del tipo de informe---------------------------------------
@@ -697,8 +697,6 @@ METHOD DataReport( oFr ) CLASS TFastVentasProveedores
          ::FastReportRectificativaProveedor()
 
    end case
-
-   msgAlert( seconds() - nSec )
 
    ::AddVariable()
 
@@ -758,12 +756,16 @@ Return ( ::Super:AddVariable() )
 //---------------------------------------------------------------------------//
 
 METHOD lGenerate() CLASS TFastVentasProveedores
+   
+   local nsec
 
    ::oDbf:Zap()
 
    /*
    Recorremos proveedores------------------------------------------------------
    */
+
+   nsec   :=seconds()
 
    do case
       case ::cReportType == "Pedidos de proveedores"
@@ -795,6 +797,8 @@ METHOD lGenerate() CLASS TFastVentasProveedores
          ::AddProveedor( .t. )
 
    end case
+
+   msgAlert( seconds() - nSec )
 
    ::oDbf:SetFilter( ::oFilter:cExpresionFilter )
 

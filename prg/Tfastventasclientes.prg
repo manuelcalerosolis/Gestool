@@ -55,7 +55,8 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
    METHOD AddClientes()
 
    METHOD idDocumento()                   INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc )
-   METHOD idDocumentoLinea()              INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc )
+   METHOD idDocumentoLinea()              INLINE ( ::idDocumento() )
+
 
    METHOD preCliInfo( cTitle )
 
