@@ -157,6 +157,9 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD setFilterPaymentId()                  INLINE ( if( ::lApplyFilters,;
                                                          ::cExpresionHeader  += ' .and. ( Field->cCodPago >= "' + ::oGrupoFpago:Cargo:getDesde() + '" .and. Field->cCodPago <= "' + ::oGrupoFpago:Cargo:getHasta() + '" )', ) )
    
+   METHOD setFilterPaymentInvoiceId()           INLINE ( if( ::lApplyFilters,;
+                                                         ::cExpresionHeader  += ' .and. ( Field->cCodPgo >= "' + ::oGrupoFpago:Cargo:Desde + '" .and. Field->cCodPgo <= "' + ::oGrupoFpago:Cargo:Hasta + '" )', ) )
+   
    METHOD setFilterRouteId()                    INLINE ( if( ::lApplyFilters,;
                                                          ::cExpresionHeader  += ' .and. ( Field->cCodRut >= "' + ::oGrupoRuta:Cargo:getDesde() + '" .and. Field->cCodRut <= "' + ::oGrupoRuta:Cargo:getHasta() + '" )', ) )
 
@@ -1113,7 +1116,7 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
 
    ::setFilterStateCode()
 
-   ::setFilterPaymentId()
+   ::setFilterPaymentInvoiceId()
 
    ::setFilterRouteId() 
 
@@ -1292,7 +1295,7 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
 
    ::setFilterStateCode()
 
-   ::setFilterPaymentId()
+   ::setFilterPaymentInvoiceId()
 
    ::setFilterRouteId() 
 
@@ -1476,7 +1479,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
    ::setFilterStateCode()
 
-   ::setFilterPaymentId()
+   ::setFilterPaymentInvoiceId()
 
    ::setFilterRouteId() 
 
