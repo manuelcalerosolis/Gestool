@@ -81,7 +81,7 @@ METHOD lResource( cFld ) CLASS TFastVentasProveedores
    ::oFilter      := TFilterCreator():Init()
    if !Empty( ::oFilter )
       ::oFilter:SetDatabase( ::oDbf )
-      ::oFilter:SetFilterType( FST_PRV )
+      //::oFilter:SetFilterType( FST_PRV )
    end if 
 
 RETURN .t.
@@ -699,7 +699,7 @@ METHOD DataReport( oFr ) CLASS TFastVentasProveedores
    end case
 
    msgAlert( seconds() - nSec )
-   
+
    ::AddVariable()
 
 Return ( Self )
