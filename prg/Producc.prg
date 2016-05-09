@@ -2457,7 +2457,7 @@ METHOD GenParte( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    end if
 
    if Empty( cCodDoc )
-      cCodDoc           := if( ::oDbf:cSerOrd == "A", "PO1", "PO2" )
+      cCodDoc           := if( ::oDbf:cSerOrd == "A", "POA", "POB" )
    end if
 
    if !lExisteDocumento( cCodDoc, ::oDbfDoc:cAlias )

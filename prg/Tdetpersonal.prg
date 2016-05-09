@@ -448,11 +448,11 @@ METHOD SaveLines( oGetTra, oSayTra, nMode )
          Return .f.
       end if
 
-      if ::oDbfVir:SeekBack( oGetTra:VarGet(), "cCodTra" )
+      /*if ::oDbfVir:SeekBack( oGetTra:VarGet(), "cCodTra" )
          msgStop( "Ya existe un parte para el trabajador " + oGetTra:VarGet() + "." )
          oGetTra:SetFocus()
          Return .f.
-      end if
+      end if*/
 
    end if
 
@@ -484,10 +484,10 @@ METHOD lValidTrabajador( oGetTra, oGetSec, oGetOpe, oSayTra, nMode )
 
    cCodTra              := oGetTra:VarGet()
 
-   if ::oDbfVir:SeekBack( cCodTra, "cCodTra" )
+   /*if ::oDbfVir:SeekBack( cCodTra, "cCodTra" )
       msgStop( "Ya existe un parte para el trabajador " + cCodTra + "." )
       Return .f.
-   end if
+   end if*/
 
    /*
    Este valor no se puede mover------------------------------------------------
