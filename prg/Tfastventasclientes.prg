@@ -719,15 +719,11 @@ Return ( ::Super:AddVariable() )
 
 METHOD lGenerate() CLASS TFastVentasClientes
    
-   local nsec
-
    ::oDbf:Zap()
 
    /*
    Recorremos clientes---------------------------------------------------------
    */
-
-   nSec  := seconds()
 
    do case
       case ::cReportType == "SAT de clientes"
@@ -796,8 +792,6 @@ METHOD lGenerate() CLASS TFastVentasClientes
 
    end case
 
-   msgAlert( seconds() - nSec )
-   
    ::oDbf:SetFilter( ::oFilter:cExpresionFilter )
 
    ::oDbf:GoTop()
@@ -1087,13 +1081,13 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
       
       ::setFilterClientIdHeader()
 
-      // ::setFilterPaymentId()
+      ::setFilterPaymentId()
 
-      // ::setFilterRouteId()
+      ::setFilterRouteId()
 
-      // ::setFilterAgentId()
+      ::setFilterAgentId()
       
-      // ::setFilterUserId()
+      ::setFilterUserId()
 
    // Procesando pedidos------------------------------------------------
    
