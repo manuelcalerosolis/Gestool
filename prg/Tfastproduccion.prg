@@ -19,6 +19,10 @@ CLASS TFastProduccion FROM TFastReportInfGen
    DATA oMaquinasParte   
    DATA oFamArt 
    DATA oTarPreL  
+   
+   DATA cExpresionHeader
+
+   DATA lApplyFilters                     INIT .t.
 
    METHOD lResource( cFld )
 
@@ -50,6 +54,13 @@ CLASS TFastProduccion FROM TFastReportInfGen
    METHOD ClearFilter()
 
    METHOD getPrecioTarifa( cCodTar, cCodArt )
+
+   METHOD setFilterOperationId()   INLINE ( if( ::lApplyFilters,;
+                                                 ::cExpresionHeader  += ' .and. ( Field->cCodOpe >= "' + ::oGrupoOperacion:Cargo:Desde + '" .and. Field->cCodOpe <= "' + ::oGrupoOperacion:Cargo:Hasta + '" )', ) )
+   
+   METHOD setFilterSectionId()         INLINE ( if( ::lApplyFilters,;
+                                                 ::cExpresionHeader  += ' .and. ( Field->cCodSec >= "' + ::oGrupoSeccion:Cargo:Desde + '" .and. Field->cCodSec <= "' + ::oGrupoSeccion:Cargo:Hasta + '" )', ) )
+   
 
 ENDCLASS
 
@@ -152,7 +163,9 @@ METHOD OpenFiles() CLASS TFastProduccion
 
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
+   
+   ::lApplyFilters   := lAIS()
+   
       DATABASE NEW ::oParteProduccion     PATH ( cPatEmp() ) CLASS "PROCAB"      FILE "PROCAB.DBF"    VIA ( cDriver() ) SHARED INDEX "PROCAB.CDX"
       DATABASE NEW ::oMaterialProducido   PATH ( cPatEmp() ) CLASS "PROLIN"      FILE "PROLIN.DBF"    VIA ( cDriver() ) SHARED INDEX "PROLIN.CDX"
       DATABASE NEW ::oMateriasPrimas      PATH ( cPatEmp() ) CLASS "PROMAT"      FILE "PROMAT.DBF"    VIA ( cDriver() ) SHARED INDEX "PROMAT.CDX"
@@ -435,19 +448,27 @@ METHOD AddParteProducccion() CLASS TFastProduccion
    local sTot
    local oError
    local oBlock
-   local cExpHead
-   
+      
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
       ::oParteProduccion:OrdSetFocus( "dFecOrd" )
+   
+   // filtros para la cabecera------------------------------------------------
+   
+      ::cExpresionHeader          := 'dFecFin >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFin <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      ::cExpresionHeader          += ' .and. cSerOrd >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerOrd <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+      
+      ::setFilterOperationId()
+      
+      ::setFilterSectionId()
 
-      cExpHead          := 'dFecFin >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFin <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      cExpHead          += ' .and. cSerOrd >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerOrd <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
-
-      ::oParteProduccion:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oParteProduccion:cFile ), ::oParteProduccion:OrdKey(), ( cExpHead ), , , , , , , , .t. )
-
+   // Procesando partes de producción-----------------------------------------
+   
       ::oMtrInf:cText   := "Procesando partes de producción"
+
+      ::oParteProduccion:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oParteProduccion:cFile ), ::oParteProduccion:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+
       ::oMtrInf:SetTotal( ::oParteProduccion:OrdKeyCount() )
 
       ::oParteProduccion:GoTop()

@@ -757,15 +757,11 @@ Return ( ::Super:AddVariable() )
 
 METHOD lGenerate() CLASS TFastVentasProveedores
    
-   local nsec
-
    ::oDbf:Zap()
 
    /*
    Recorremos proveedores------------------------------------------------------
    */
-
-   nsec   :=seconds()
 
    do case
       case ::cReportType == "Pedidos de proveedores"
@@ -797,8 +793,6 @@ METHOD lGenerate() CLASS TFastVentasProveedores
          ::AddProveedor( .t. )
 
    end case
-
-   msgAlert( seconds() - nSec )
 
    ::oDbf:SetFilter( ::oFilter:cExpresionFilter )
 
