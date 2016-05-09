@@ -19,6 +19,9 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
 
    DATA  oStock
 
+   DATA cExpresionHeader
+   DATA lApplyFilters                     INIT .t.
+
    METHOD lResource()
 
    METHOD Create()
@@ -58,6 +61,22 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
    METHOD RiesgoAlcanzado()               INLINE ( ::oStock:nRiesgo( ::oDbf:cCodCli ) )
    METHOD TotalFacturado()                INLINE ( ::oStock:nFacturado( ::oDbf:cCodCli ) )
    METHOD nPedidoCliente()                INLINE ( ::oStock:nPedidoCliente( ::oDbf:cCodCli ) )
+   
+   METHOD setFilterClientIdHeader()       INLINE ( if( ::lApplyFilters,;
+                                                   ::cExpresionHeader   += ' .and. ( Field->cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde ) + '" .and. Field->cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '" )', ) )
+   
+   METHOD setFilterPaymentId()            INLINE ( if( ::lApplyFilters,;
+                                                   ::cExpresionHeader  += ' .and. ( Field->cCodPgo >= "' + ::oGrupoFpago:Cargo:Desde + '" .and. Field->cCodPgo <= "' + ::oGrupoFpago:Cargo:Hasta + '" )', ) )
+   
+   METHOD setFilterRouteId()              INLINE ( if( ::lApplyFilters,;
+                                                   ::cExpresionHeader  += ' .and. ( Field->cCodRut >= "' + ::oGrupoRuta:Cargo:Desde + '" .and. Field->cCodRut <= "' + ::oGrupoRuta:Cargo:Hasta + '" )', ) )
+
+   METHOD setFilterAgentId()              INLINE ( if( ::lApplyFilters,;
+                                                   ::cExpresionHeader  += ' .and. ( Field->cCodAge >= "' + ::oGrupoAgente:Cargo:Desde + '" .and. Field->cCodAge <= "' + ::oGrupoAgente:Cargo:Hasta + '" )', ) )
+
+   METHOD setFilterUserId()               INLINE ( if( ::lApplyFilters,;
+                                                   ::cExpresionHeader  += ' .and. ( Field->cCodUsr >= "' + ::oGrupoUsuario:Cargo:Desde + '" .and. Field->cCodUsr <= "' + ::oGrupoUsuario:Cargo:Hasta + '" )', ) )
+
 
 END CLASS
 
@@ -125,6 +144,8 @@ METHOD OpenFiles() CLASS TFastVentasClientes
    local lOpen    := .t.
    local oError
    local oBlock
+
+   ::lApplyFilters                  := lAIS()
 
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -795,7 +816,6 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
    local sTot
    local oError
    local oBlock
-   local cExpHead
    
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -805,16 +825,31 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
       ::oSatCliT:OrdSetFocus( "cCodCli" )
       ::oSatCliL:OrdSetFocus( "nNumSat" )
 
-      cExpHead          := 'dFecSat >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecSat <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      cExpHead          += ' .and. Rtrim( cCodCli ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCodCli ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
-      cExpHead          += ' .and. cSerSat >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerSat <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+   // filtros para la cabecera------------------------------------------------
 
-      ::oSatCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oSatCliT:cFile ), ::oSatCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+      ::cExpresionHeader          := 'dFecSat >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecSat <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      ::cExpresionHeader          += ' .and. cSerSat >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerSat <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+
+      ::setFilterClientIdHeader()
+
+      ::setFilterPaymentId()
+
+      ::setFilterRouteId()
+
+      ::setFilterAgentId()
+
+      ::setFilterUserId()
+
+   // Procesando SAT----------------------------------------------------------
 
       ::oMtrInf:cText   := "Procesando SAT"
+
+      ::oSatCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oSatCliT:cFile ), ::oSatCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+
       ::oMtrInf:SetTotal( ::oSatCliT:OrdKeyCount() )
 
       ::oSatCliT:GoTop()
+
       while !::lBreak .and. !::oSatCliT:Eof()
 
          if lChkSer( ::oSatCliT:cSerSat, ::aSer )
@@ -901,7 +936,6 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
    local sTot
    local oError
    local oBlock
-   local cExpHead
    
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -911,16 +945,31 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
       ::oPreCliT:OrdSetFocus( "cCodCli" )
       ::oPreCliL:OrdSetFocus( "nNumPre" )
 
-      cExpHead          := 'dFecPre >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPre <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      cExpHead          += ' .and. Rtrim( cCodCli ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCodCli ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
-      cExpHead          += ' .and. cSerPre >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerPre <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+   // filtros para la cabecera------------------------------------------------
 
-      ::oPreCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPreCliT:cFile ), ::oPreCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+      ::cExpresionHeader          := 'dFecPre >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPre <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      ::cExpresionHeader          += ' .and. cSerPre >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerPre <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+
+      ::setFilterClientIdHeader()
+
+      ::setFilterPaymentId()
+
+      ::setFilterRouteId()
+
+      ::setFilterAgentId()
+      
+      ::setFilterUserId()
+
+   // procesando presupuestos-------------------------------------------------
 
       ::oMtrInf:cText   := "Procesando presupuestos"
+      
+      ::oPreCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPreCliT:cFile ), ::oPreCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+
       ::oMtrInf:SetTotal( ::oPreCliT:OrdKeyCount() )
 
       ::oPreCliT:GoTop()
+
       while !::lBreak .and. !::oPreCliT:Eof()
 
          if lChkSer( ::oPreCliT:cSerPre, ::aSer )
@@ -1007,7 +1056,6 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
    local sTot
    local oError
    local oBlock
-   local cExpHead
    
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -1017,16 +1065,31 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
       ::oPedCliT:OrdSetFocus( "dFecPed" )
       ::oPedCliL:OrdSetFocus( "nNumPed" )
 
-      cExpHead          := 'dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      cExpHead          += ' .and. Rtrim( cCodCli ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCodCli ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
-      cExpHead          += ' .and. cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerPed <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+   // filtros para la cabecera------------------------------------------------
 
-      ::oPedCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ), ::oPedCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+      ::cExpresionHeader          := 'dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      ::cExpresionHeader          += ' .and. cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerPed <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+      
+      ::setFilterClientIdHeader()
 
+      ::setFilterPaymentId()
+
+      ::setFilterRouteId()
+
+      ::setFilterAgentId()
+      
+      ::setFilterUserId()
+
+   // Procesando pedidos------------------------------------------------
+   
       ::oMtrInf:cText   := "Procesando pedidos"
-      ::oMtrInf:SetTotal( ::oPedCliT:OrdKeyCount() )
 
+      ::oPedCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ), ::oPedCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+
+      ::oMtrInf:SetTotal( ::oPedCliT:OrdKeyCount() )
+      
       ::oPedCliT:GoTop()
+
       while !::lBreak .and. !::oPedCliT:Eof()
 
          if lChkSer( ::oPedCliT:cSerPed, ::aSer )
@@ -1111,7 +1174,6 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
    local sTot
    local oError
    local oBlock
-   local cExpHead
    
    DEFAULT lNoFacturados   := .f.
 
@@ -1123,20 +1185,36 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
       ::oAlbCliT:OrdSetFocus( "dFecAlb" )
       ::oAlbCliL:OrdSetFocus( "nNumAlb" )
 
-      if lNoFacturados
-         cExpHead       := 'nFacturado < 3 .and. dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      else
-         cExpHead       := 'dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      end if
-      cExpHead          += ' .and. Rtrim( cCodCli ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCodCli ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
-      cExpHead          += ' .and. cSerAlb >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerAlb <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+      // filtros para la cabecera------------------------------------------------
 
-      ::oAlbCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+      ::cExpresionHeader          += ' .and. cSerAlb >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerAlb <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+
+      ::setFilterClientIdHeader()
+
+      ::setFilterPaymentId()
+
+      ::setFilterRouteId()
+
+      ::setFilterAgentId()
+      
+      ::setFilterUserId()
+
+      if lNoFacturados
+         ::cExpresionHeader       := 'nFacturado < 3 .and. dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      else
+         ::cExpresionHeader       := 'dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      end if
+
+      // Procesando albaranes-----------------------------------------------------
 
       ::oMtrInf:cText   := "Procesando albaranes"
+      
+      ::oAlbCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+
       ::oMtrInf:SetTotal( ::oAlbCliT:OrdKeyCount() )
 
       ::oAlbCliT:GoTop()
+      
       while !::lBreak .and. !::oAlbCliT:Eof()
 
          if lChkSer( ::oAlbCliT:cSerAlb, ::aSer )
@@ -1221,7 +1299,6 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
    local sTot
    local oError
    local oBlock
-   local cExpHead
    
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -1231,16 +1308,31 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
       ::oFacCliT:OrdSetFocus( "dFecFac" )
       ::oFacCliL:OrdSetFocus( "nNumFac" )
 
-      cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      cExpHead          += ' .and. Rtrim( cCodCli ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCodCli ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
-      cExpHead          += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+   // filtros para la cabecera------------------------------------------------
+   
+      ::cExpresionHeader          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      ::cExpresionHeader          += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+      
+      ::setFilterClientIdHeader()
 
-      ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+      ::setFilterPaymentId()
 
+      ::setFilterRouteId()
+
+      ::setFilterAgentId()
+      
+      ::setFilterUserId()
+
+   // filtros para la cabecera------------------------------------------------
+   
       ::oMtrInf:cText   := "Procesando facturas"
+      
+      ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+
       ::oMtrInf:SetTotal( ::oFacCliT:OrdKeyCount() )
 
       ::oFacCliT:GoTop()
+
       while !::lBreak .and. !::oFacCliT:Eof()
 
          if lChkSer( ::oFacCliT:cSerie, ::aSer )
@@ -1326,7 +1418,6 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
    local sTot
    local oError
    local oBlock
-   local cExpHead
    
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -1336,16 +1427,31 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
       ::oFacRecT:OrdSetFocus( "dFecFac" )
       ::oFacRecL:OrdSetFocus( "nNumFac" )
 
-      cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      cExpHead          += ' .and. Rtrim( cCodCli ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCodCli ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
-      cExpHead          += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+   // filtros para la cabecera------------------------------------------------
+   
+      ::cExpresionHeader          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      ::cExpresionHeader          += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+      
+      ::setFilterClientIdHeader()
 
-      ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+      ::setFilterPaymentId()
+
+      ::setFilterRouteId()
+
+      ::setFilterAgentId()
+      
+      ::setFilterUserId()
+
+   // Procesando facturas recitificativas-------------------------------------
 
       ::oMtrInf:cText   := "Procesando facturas rectificativas"
+      
+      ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+
       ::oMtrInf:SetTotal( ::oFacRecT:OrdKeyCount() )
 
       ::oFacRecT:GoTop()
+
       while !::lBreak .and. !::oFacRecT:Eof()
 
          if lChkSer( ::oFacRecT:cSerie, ::aSer )
@@ -1431,7 +1537,6 @@ METHOD AddTicket() CLASS TFastVentasClientes
    local sTot
    local oError
    local oBlock
-   local cExpHead
    
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -1440,14 +1545,23 @@ METHOD AddTicket() CLASS TFastVentasClientes
 
       ::oTikCliT:OrdSetFocus( "dFecTik" )
       ::oTikCliL:OrdSetFocus( "cNumTik" )
+   
+   // filtros para la cabecera------------------------------------------------
 
-      cExpHead          := 'dFecTik >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecTik <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      cExpHead          += ' .and. Rtrim( cCliTik ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCliTik ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
-      cExpHead          += ' .and. cSerTik >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerTik <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+      ::cExpresionHeader          := 'dFecTik >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecTik <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      ::cExpresionHeader          += ' .and. Rtrim( cCliTik ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCliTik ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
+      ::cExpresionHeader          += ' .and. cSerTik >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerTik <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+     
+      ::setFilterRouteId()
 
-      ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
-
+      ::setFilterAgentId()
+      
+   // filtros para la cabecera------------------------------------------------
+   
       ::oMtrInf:cText   := "Procesando tickets"
+   
+      ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+
       ::oMtrInf:SetTotal( ::oTikCliT:OrdKeyCount() )
 
       ::oTikCliT:GoTop()
@@ -1532,23 +1646,35 @@ METHOD AddRecibosCliente( cCodigoCliente ) CLASS TFastVentasClientes
    local sTot
    local oError
    local oBlock
-   local cExpHead
    
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    
       ::oFacCliP:OrdSetFocus( "dPreCob" )
 
-      cExpHead          := 'dPreCob >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dPreCob <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      cExpHead          += ' .and. Rtrim( cCodCli ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCodCli ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
-      cExpHead          += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerie <= "' + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+   // filtros para la cabecera------------------------------------------------
 
-      ::oFacCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+      ::cExpresionHeader          := 'dPreCob >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dPreCob <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      ::cExpresionHeader          += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerie <= "' + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+
+      ::setFilterClientIdHeader()
+
+      ::setFilterPaymentId()
+
+      ::setFilterAgentId()
+      
+      ::setFilterUserId()
+
+   // Procesando recibos------------------------------------------------------
 
       ::oMtrInf:cText   := "Procesando recibos"
+      
+      ::oFacCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+
       ::oMtrInf:SetTotal( ::oFacCliP:OrdKeyCount() )
 
       ::oFacCliP:GoTop()
+
       while !::lBreak .and. !::oFacCliP:Eof()
 
          ::oDbf:Blank()
@@ -1619,23 +1745,35 @@ METHOD AddRecibosClienteCobro( cCodigoCliente ) CLASS TFastVentasClientes
    local sTot
    local oError
    local oBlock
-   local cExpHead
    
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    
       ::oFacCliP:OrdSetFocus( "dEntrada" )
 
-      cExpHead          := 'dEntrada >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dEntrada <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      cExpHead          += ' .and. Rtrim( cCodCli ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCodCli ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
-      cExpHead          += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+   // filtros para la cabecera------------------------------------------------
 
-      ::oFacCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+      ::cExpresionHeader          := 'dEntrada >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dEntrada <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      ::cExpresionHeader          += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
 
+      ::setFilterClientIdHeader()
+
+      ::setFilterPaymentId()
+
+      ::setFilterAgentId()
+      
+      ::setFilterUserId()
+
+   // Procesando recibos------------------------------------------------------
+      
       ::oMtrInf:cText   := "Procesando recibos"
+      
+      ::oFacCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+
       ::oMtrInf:SetTotal( ::oFacCliP:OrdKeyCount() )
 
       ::oFacCliP:GoTop()
+
       while !::lBreak .and. !::oFacCliP:Eof()
 
          ::oDbf:Blank()
@@ -1700,7 +1838,6 @@ METHOD insertFacturaCliente()
    local sTot
    local oError
    local oBlock
-   local cExpHead
    local aTotIva
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -1711,16 +1848,31 @@ METHOD insertFacturaCliente()
       ::oFacCliT:OrdSetFocus( "dFecFac" )
       ::oFacCliL:OrdSetFocus( "nNumFac" )
 
-      cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      cExpHead          += ' .and. Rtrim( cCodCli ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCodCli ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
-      cExpHead          += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+   // filtros para la cabecera------------------------------------------------
 
-      ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+      ::cExpresionHeader          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      ::cExpresionHeader          += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+
+      ::setFilterClientIdHeader()
+
+      ::setFilterPaymentId()
+
+      ::setFilterRouteId()
+
+      ::setFilterAgentId()
+      
+      ::setFilterUserId()
+
+   // Procesando facturas-----------------------------------------------------
 
       ::oMtrInf:cText   := "Procesando facturas"
+
+      ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+
       ::oMtrInf:SetTotal( ::oFacCliT:OrdKeyCount() )
 
       ::oFacCliT:GoTop()
+
       while !::lBreak .and. !::oFacCliT:Eof()
 
          if lChkSer( ::oFacCliT:cSerie, ::aSer )
@@ -1816,7 +1968,6 @@ METHOD insertRectificativa()
    local sTot
    local oError
    local oBlock
-   local cExpHead
    local aTotIva
    
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -1827,16 +1978,31 @@ METHOD insertRectificativa()
       ::oFacRecT:OrdSetFocus( "dFecFac" )
       ::oFacRecL:OrdSetFocus( "nNumFac" )
 
-      cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      cExpHead          += ' .and. Rtrim( cCodCli ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCodCli ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
-      cExpHead          += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+   // filtros para la cabecera------------------------------------------------
 
-      ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+      ::cExpresionHeader          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      ::cExpresionHeader          += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+      
+      ::setFilterClientIdHeader()
+
+      ::setFilterPaymentId()
+
+      ::setFilterRouteId()
+
+      ::setFilterAgentId()
+      
+      ::setFilterUserId()
+
+   // Procesando facturas rectificativas--------------------------------------
 
       ::oMtrInf:cText   := "Procesando facturas rectificativas"
+      
+      ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+
       ::oMtrInf:SetTotal( ::oFacRecT:OrdKeyCount() )
 
       ::oFacRecT:GoTop()
+      
       while !::lBreak .and. !::oFacRecT:Eof()
 
          if lChkSer( ::oFacRecT:cSerie, ::aSer )
@@ -1932,7 +2098,6 @@ METHOD insertTicketCliente()
    local sTot
    local oError
    local oBlock
-   local cExpHead
    local nPosIva        := 1
    
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -1942,17 +2107,27 @@ METHOD insertTicketCliente()
 
       ::oTikCliT:OrdSetFocus( "dFecTik" )
       ::oTikCliL:OrdSetFocus( "cNumTik" )
+   
+   // filtros para la cabecera------------------------------------------------
+   
+      ::cExpresionHeader          := 'dFecTik >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecTik <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      ::cExpresionHeader          += ' .and. Rtrim( cCliTik ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCliTik ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
+      ::cExpresionHeader          += ' .and. cSerTik >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerTik <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
 
-      cExpHead          := 'dFecTik >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecTik <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      cExpHead          += ' .and. Rtrim( cCliTik ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCliTik ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
-      cExpHead          += ' .and. cSerTik >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerTik <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+      ::setFilterRouteId()
 
-      ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+      ::setFilterAgentId()
+
+   // Procesando tickets------------------------------------------------
 
       ::oMtrInf:cText   := "Procesando tickets"
+      
+      ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+
       ::oMtrInf:SetTotal( ::oTikCliT:OrdKeyCount() )
 
       ::oTikCliT:GoTop()
+      
       while !::lBreak .and. !::oTikCliT:Eof()
 
          if lChkSer( ::oTikCliT:cSerTik, ::aSer )
