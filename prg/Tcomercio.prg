@@ -5170,6 +5170,8 @@ METHOD buildInsertStockPrestashop( hStockProductData ) CLASS TComercio
    local cCommand
    local nIdProductAttribute  := 0
 
+   debug( hStockProductData )
+
    if hGet( hStockProductData, "cCodWebVal1" ) != 0 .and. hGet( hStockProductData, "cCodWebVal2" ) != 0
       nIdProductAttribute     := ::nIdProductAttribute( hGet( hStockProductData, "idProductPrestashop" ), hGet( hStockProductData, "cCodWebVal1" ), hGet( hStockProductData, "cCodWebVal2" ) ) 
    end if 
@@ -5198,6 +5200,8 @@ METHOD buildInsertStockPrestashop( hStockProductData ) CLASS TComercio
                      "'" + alltrim( str( hGet( hStockProductData, "nStock" ) ) ) + "', "    + ;
                      "'0', "                                                     + ;
                      "'2' )"
+
+      debug( cCommand, "cCommand" )
 
       TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
