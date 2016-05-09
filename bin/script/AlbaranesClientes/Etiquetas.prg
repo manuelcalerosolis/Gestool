@@ -160,7 +160,7 @@ CLASS Redur FROM Cuaderno
    METHOD NombreConsignatario( uValue )         INLINE ( if( !Empty( uValue ), ::cNombreConsignatario := '{RC07;' + AllTrim( uValue ) + '|}', ::cNombreConsignatario ) )
    METHOD DireccionConsignatario( uValue )      INLINE ( if( !Empty( uValue ), ::cDireccionConsignatario := '{RC08;' + AllTrim( uValue ) + '|}', ::cDireccionConsignatario ) )
    METHOD PoblacionConsignatario( uValue )      INLINE ( if( !Empty( uValue ), ::cPoblacionConsignatario := '{RC09;' + AllTrim( uValue ) + '|}', ::cPoblacionConsignatario ) )
-   METHOD CodigoPostalConsignatario( uValue )   INLINE ( if( !Empty( uValue ), ::cCodigoPostalConsignatario := '{RC09;' + AllTrim( uValue ) + '|}', ::cCodigoPostalConsignatario ) )
+   METHOD CodigoPostalConsignatario( uValue )   INLINE ( if( !Empty( uValue ), ::cCodigoPostalConsignatario := '{RC10;' + AllTrim( uValue ) + '|}', ::cCodigoPostalConsignatario ) )
    METHOD PlazaReparto( uValue )
    METHOD ReferenciaAlbaran( uValue )           INLINE ( if( !Empty( uValue ), ::cReferenciaAlbaran := '{RC14;' + AllTrim( Str( uValue ) ) + '|}', ::cReferenciaAlbaran ) )
    METHOD CodigoBarras( nBulto )
@@ -208,6 +208,13 @@ ENDCLASS
 
    METHOD SerializeASCII() CLASS Redur 
 
+      
+      ::cBuffer   += '{D1515,1015,1490|}' + CRLF
+      ::cBuffer   += '{C|}' + CRLF
+      ::cBuffer   += '{LC;0010,0010,0995,1460,1,4|}' + CRLF
+      ::cBuffer   += '{LC;0010,0010,0358,1168,1,4|}' + CRLF
+      ::cBuffer   += '{LC;0640,0010,0995,0458,1,4|}' + CRLF
+      ::cBuffer   += '{LC;0640,0460,0995,1168,1,4|}' + CRLF
       ::cBuffer   += '{LC;0360,1050,0637,1460,1,4|}' + CRLF
       ::cBuffer   += '{LC;0490,0010,0490,1048,1,2|}' + CRLF
       ::cBuffer   += '{LC;0360,0390,0637,0390,1,2|}' + CRLF
@@ -272,6 +279,7 @@ ENDCLASS
       ::cBuffer   += ::Observaciones3() + CRLF
       ::cBuffer   += '{RC28;|}' + CRLF
       ::cBuffer   += ::NumeroBulto2() + CRLF
+      ::cBuffer   += '{XS;I,0001,0002CA000|}' + CRLF
 
 Return ( ::cBuffer )
 
