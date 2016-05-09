@@ -20,6 +20,7 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
    DATA  oStock
 
    DATA cExpresionHeader
+
    DATA lApplyFilters                     INIT .t.
 
    METHOD lResource()
@@ -145,37 +146,38 @@ METHOD OpenFiles() CLASS TFastVentasClientes
    local oError
    local oBlock
 
-   ::lApplyFilters                  := lAIS()
 
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::oSatCliT  := TDataCenter():oSatCliT()
+      ::lApplyFilters   := lAIS()
+
+      ::oSatCliT        := TDataCenter():oSatCliT()
       ::oSatCliT:OrdSetFocus( "cCodCli" )
 
       DATABASE NEW ::oSatCliL PATH ( cPatEmp() ) CLASS "SatCliL" FILE "SatCliL.DBF" VIA ( cDriver() ) SHARED INDEX "SatCliL.CDX"
 
-      ::oPreCliT  := TDataCenter():oPreCliT()
+      ::oPreCliT        := TDataCenter():oPreCliT()
       ::oPreCliT:OrdSetFocus( "cCodCli" )
 
       DATABASE NEW ::oPreCliL PATH ( cPatEmp() ) CLASS "PreCliL" FILE "PreCliL.DBF" VIA ( cDriver() ) SHARED INDEX "PreCliL.CDX"
 
-      ::oPedCliT := TDataCenter():oPedCliT()
+      ::oPedCliT        := TDataCenter():oPedCliT()
       ::oPedCliT:OrdSetFocus( "cCodCli" )
 
       DATABASE NEW ::oPedCliL PATH ( cPatEmp() ) CLASS "PedCliL" FILE "PedCliL.DBF" VIA ( cDriver() ) SHARED INDEX "PedCliL.CDX"
 
-      ::oAlbCliT := TDataCenter():oAlbCliT()
+      ::oAlbCliT        := TDataCenter():oAlbCliT()
       ::oAlbCliT:OrdSetFocus( "cCodCli" )
 
       DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) CLASS "ALBCLIL" FILE "ALBCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
 
-      ::oFacCliT  := TDataCenter():oFacCliT()  
+      ::oFacCliT        := TDataCenter():oFacCliT()  
       ::oFacCliT:OrdSetFocus( "cCodCli" )
 
       DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) CLASS "FACCLIL" FILE "FACCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
 
-      ::oFacCliP  := TDataCenter():oFacCliP()
+      ::oFacCliP        := TDataCenter():oFacCliP()
 
       DATABASE NEW ::oAntCliT PATH ( cPatEmp() ) CLASS "AntCliT" FILE "AntCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "AntcliT.Cdx"
 
@@ -435,6 +437,8 @@ RETURN ( Self )
 
 METHOD DataReport() CLASS TFastVentasClientes
 
+   local nSec
+
    /*
    Zona de detalle-------------------------------------------------------------
    */
@@ -508,10 +512,10 @@ METHOD DataReport() CLASS TFastVentasClientes
    Relación con la tabla de direcciones en funcion del tipo de informe
    */
 
-   if    ::cReportType == "Listado" 
-         ::oFastReport:SetMasterDetail(   "Informe", "Direcciones",           {|| ::oDbf:cCodCli } )      
+   if ::cReportType == "Listado" 
+      ::oFastReport:SetMasterDetail(   "Informe", "Direcciones",           {|| ::oDbf:cCodCli } )      
    else
-         ::oFastReport:SetMasterDetail(   "Informe", "Direcciones",           {|| ::oDbf:cCodCli + ::oDbf:cCodObr } )
+      ::oFastReport:SetMasterDetail(   "Informe", "Direcciones",           {|| ::oDbf:cCodCli + ::oDbf:cCodObr } )
    end if
 
    ::oFastReport:SetResyncPair(     "Informe", "Empresa" )
@@ -529,6 +533,8 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetResyncPair(     "Clientes", "Formas de pago" )  
 
    ::oFastReport:SetResyncPair(     "Incidencias", "Tipos de incidencias" ) 
+
+   nSec  := seconds()
 
    do case
       case ::cReportType == "SAT de clientes"
@@ -594,6 +600,8 @@ METHOD DataReport() CLASS TFastVentasClientes
          ::FastReportTicket( .t. )
 
    end case
+
+   msgAlert( seconds() - nSec )
 
    ::AddVariable()
 
@@ -1187,7 +1195,13 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
 
       // filtros para la cabecera------------------------------------------------
 
-      ::cExpresionHeader          += ' .and. cSerAlb >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerAlb <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+      if lNoFacturados
+         ::cExpresionHeader       := 'nFacturado < 3 .and. dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      else
+         ::cExpresionHeader       := 'dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      end if
+
+      ::cExpresionHeader          += ' .and. Field->cSerAlb >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerAlb <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
 
       ::setFilterClientIdHeader()
 
@@ -1199,15 +1213,10 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
       
       ::setFilterUserId()
 
-      if lNoFacturados
-         ::cExpresionHeader       := 'nFacturado < 3 .and. dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      else
-         ::cExpresionHeader       := 'dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      end if
 
       // Procesando albaranes-----------------------------------------------------
 
-      ::oMtrInf:cText   := "Procesando albaranes"
+      ::oMtrInf:cText         := "Procesando albaranes"
       
       ::oAlbCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
@@ -1311,7 +1320,7 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
    // filtros para la cabecera------------------------------------------------
    
       ::cExpresionHeader          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      ::cExpresionHeader          += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+      ::cExpresionHeader          += ' .and. Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
       
       ::setFilterClientIdHeader()
 
