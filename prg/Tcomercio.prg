@@ -1877,7 +1877,7 @@ METHOD GetValPrp( nIdPrp, nProductAttibuteId ) CLASS TComercio
    local nIdAttributeGroup
    local cValPrp                 := ""
 
-   oQuery1                       := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "product_attribute_combination" ) + ' where id_product_attribute=' + alltrim( str( nProductAttibuteId ) ) )
+   oQuery1                       := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "product_attribute_combination" ) + ' where id_product_attribute = ' + alltrim( str( nProductAttibuteId ) ) )
 
    if oQuery1:Open()
 
@@ -2440,90 +2440,84 @@ METHOD nIdProductAttribute( idProductPrestashop, cCodWebValPr1, cCodWebValPr2 ) 
    do case
       case !empty( cCodWebValPr1 ) .and. empty( cCodWebValPr2 )
 
-      cCommand                := "SELECT * FROM " + ::cPrefixTable( "product_attribute" ) + " WHERE id_product = " + alltrim( str( idProductPrestashop ) )
+         cCommand             := "SELECT * FROM " + ::cPrefixTable( "product_attribute" ) + " WHERE id_product = " + alltrim( str( idProductPrestashop ) )
 
-      oQuery                  := TMSQuery():New( ::oCon, cCommand )
+         oQuery               := TMSQuery():New( ::oCon, cCommand )
 
-      if oQuery:Open() .and. oQuery:RecCount() > 0
+         if oQuery:Open() .and. oQuery:recCount() > 0
 
-         oQuery:GoTop()
+            oQuery:GoTop()
+            while !oQuery:Eof()
 
-         while !oQuery:Eof()
+               cCommand       := "SELECT * FROM " + ::cPrefixTable( "product_attribute_combination" ) + " WHERE id_product_attribute = " + alltrim( str( oQuery:FieldGet( 1 ) ) )
 
-            cCommand          := "SELECT * FROM " + ::cPrefixTable( "product_attribute_combination" ) + " WHERE id_product_attribute = " + alltrim( str( oQuery:FieldGet( 1 ) ) )
+               oQuery2        := TMSQuery():New( ::oCon, cCommand )
 
-            oQuery2           := TMSQuery():New( ::oCon, cCommand )
+                  if oQuery2:Open() .and. oQuery2:recCount() == 1 .and. oQuery2:FieldGet( 1 ) == cCodWebValPr1
 
-               if oQuery2:Open()             .and.;
-                  oQuery2:RecCount() == 1    .and.;
-                  oQuery2:FieldGet( 1 ) == cCodWebValPr1
+                     nIdProductAttribute     := oQuery:FieldGet( 1 )
 
-                  nIdProductAttribute     := oQuery:FieldGet( 1 )
+                  end if   
 
-               end if   
+               oQuery:Skip()
 
-            oQuery:Skip()
+            end while
 
-         end while
-
-      end if
+         end if
 
       case !empty( cCodWebValPr1 ) .and. !empty( cCodWebValPr2 )
 
-      cCommand          := "SELECT * FROM " + ::cPrefixTable( "product_attribute" ) + " WHERE id_product=" + alltrim( str( idProductPrestashop ) )
+         cCommand                := "SELECT * FROM " + ::cPrefixTable( "product_attribute" ) + " WHERE id_product = " + alltrim( str( idProductPrestashop ) )
 
-      oQuery            := TMSQuery():New( ::oCon, cCommand )
+         oQuery                  := TMSQuery():New( ::oCon, cCommand )
 
-      if oQuery:Open() .and. oQuery:RecCount() > 0
+         if oQuery:Open() // .and. oQuery:recCount() > 0
 
-         oQuery:GoTop()
+            oQuery:GoTop()
+            while !oQuery:Eof()
 
-         while !oQuery:Eof()
+               cCommand          := "SELECT * FROM " + ::cPrefixTable( "product_attribute_combination" ) + " WHERE id_product_attribute=" + alltrim( str( oQuery:FieldGet( 1 ) ) )
 
-            cCommand                      := "SELECT * FROM " + ::cPrefixTable( "product_attribute_combination" ) + " WHERE id_product_attribute=" + alltrim( str( oQuery:FieldGet( 1 ) ) )
+               oQuery2           := TMSQuery():New( ::oCon, cCommand )
 
-            oQuery2                       := TMSQuery():New( ::oCon, cCommand )
+                  if oQuery2:Open() .and. oQuery2:recCount() == 2
 
-               if oQuery2:Open() .and. oQuery2:RecCount() == 2
+                     oQuery2:GoTop()
+                     while !oQuery2:Eof()
 
-                  oQuery2:GoTop()
+                        if !lPrp1
+                           lPrp1 := ( oQuery2:FieldGet( 1 ) == cCodWebValPr1 )
+                        end if
 
-                  while !oQuery2:Eof()
+                        oQuery2:Skip()
 
-                     if !lPrp1
-                        lPrp1 := ( oQuery2:FieldGet( 1 ) == cCodWebValPr1 )
+                     end while
+
+                     oQuery2:GoTop()
+                     while !oQuery2:Eof()
+
+                        if !lPrp2
+                           lPrp2 := ( oQuery2:FieldGet( 1 ) == cCodWebValPr2 )
+                        end if
+
+                        oQuery2:Skip()
+
+                     end while
+
+                     if lPrp1 .and. lPrp2
+                        nIdProductAttribute     := oQuery:FieldGet( 1 )
                      end if
 
-                     oQuery2:Skip()
-
-                  end while
-
-                  oQuery2:GoTop()
-
-                  while !oQuery2:Eof()
-
-                     if !lPrp2
-                        lPrp2 := ( oQuery2:FieldGet( 1 ) == cCodWebValPr2 )
-                     end if
-
-                     oQuery2:Skip()
-
-                  end while
-
-                  if lPrp1 .and. lPrp2
-                     nIdProductAttribute     := oQuery:FieldGet( 1 )
                   end if
 
-               end if
+               oQuery:Skip()
 
-            oQuery:Skip()
+               lPrp1          := .f.
+               lPrp2          := .f.
 
-            lPrp1 := .f.
-            lPrp2 := .f.
+            end while
 
-         end while
-
-      end if
+         end if
 
    end case
 
@@ -2725,7 +2719,7 @@ METHOD buildProductPrestashop( id ) CLASS TComercio
 
    // Rellenamos el Hash-------------------------------------------------
 
-   aAdd( ::aProductData,  {  "id"                    => id,;
+   aAdd( ::aProductData,   {  "id"                    => id,;
                               "name"                  => alltrim( ::oArt:Nombre ),;
                               "id_manufacturer"       => ::oArt:cCodFab ,;
                               "id_tax_rules_group"    => ::oArt:TipoIva ,;
@@ -3062,9 +3056,7 @@ METHOD buildSubirInformacion() CLASS TComercio
    // Subimos las cabeceras de propiedades necesarias-----------------------
 
    for each hPropiedadesCabData in ::aPropiedadesCabeceraData
-
       ::buildInsertPropiedadesPrestashop( hPropiedadesCabData )
-
    next
 
    // Subimos las Lineas de propiedades necesarias--------------------------
@@ -3089,7 +3081,7 @@ METHOD buildSubirInformacion() CLASS TComercio
 
       ::buildInsertProductsPrestashop( hArticuloData )
    
-      ::meterProcesoText( "Subiendo artículo " + alltrim(str(hb_enumindex())) + " de " + alltrim(str(len(::aProductData))) )
+      ::meterProcesoText( "Subiendo artículo " + alltrim( str(hb_enumindex())) + " de " + alltrim(str(len(::aProductData))) )
    
    next
 
@@ -3123,7 +3115,7 @@ METHOD buildProductInformationAndUploadPrestashop( idProduct, lShowDialogWait ) 
 
    if empty( idProduct )
 
-      ::oArt:GoTop()
+      ::oArt:goTop()
       while !::oArt:Eof()
 
          if ::productInCurrentWeb()
@@ -3724,43 +3716,6 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
       ::writeText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "product_lang" ), 3 )
    end if
 
-   /*
-   Metemos el stock total del artículo-----------------------------------------
-   */
-
-   // ::buildInsertStockProductsPrestashop( hArticuloData, nCodigoWeb )
-
-   /*
-   nTotStock   := ::oStock:nStockArticulo( hGet( hArticuloData, "id" ), ::TPrestashopConfig:getStore() )
-
-   cCommand    := "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( " + ;
-                     "id_product, " + ;
-                     "id_product_attribute, " + ;
-                     "id_shop, " + ;
-                     "id_shop_group, " + ;
-                     "quantity, " + ;
-                     "depends_on_stock, " + ;
-                     "out_of_stock ) " + ;
-                  "VALUES ( " + ;
-                     "'" + alltrim( str( nCodigoWeb ) ) + "', " + ;
-                     "'0', " + ;   
-                     "'1', " + ;
-                     "'0', " + ;
-                     "'" + alltrim( str( nTotStock ) ) + "', " + ;
-                     "'0', " + ;
-                     "'2' )"
-
-   if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-
-      ::writeText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "stock_available" ), 3 )
-   
-      if !empty( nCodigoWeb )
-         ::TPrestashopId:setValueProduct( hGet( hArticuloData, "id" ), ::getCurrentWebName(), nCodigoWeb )
-      end if 
-
-   end if
-   */
-
    sysrefresh()
 
    ::writeText( "Añadiendo imágenes artículo: " + hGet( hArticuloData, "name" ) )
@@ -4155,12 +4110,10 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertProductAttributePrestashop( hArticuloData, nCodigoWeb ) CLASS TComercio
+METHOD insertProductAttributePrestashop( hArticuloData, nCodigoWeb, nPrecio ) CLASS TComercio
 
-   local nPrecio
    local cCommand
-   local idProductAttribute
-
+   local idProductAttribute   := 0
 
    // Metemos la propiedad de éste artículo---------------------------
 
@@ -4178,7 +4131,7 @@ METHOD insertProductAttributePrestashop( hArticuloData, nCodigoWeb ) CLASS TCome
                   "'1' )"                                                                                                  //minimal_quantity
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      idProductAttribute  := ::oCon:GetInsertId()
+      idProductAttribute      := ::oCon:GetInsertId()
    else
       ::writeText( "Error al insertar la propiedad " + alltrim( ::oArtDiv:cValPr1 ) + " - " + alltrim( ::oArtDiv:cValPr2 ) + " en la tabla " + ::cPrefixTable( "product_attribute" ), 3 )
    end if
@@ -4875,39 +4828,35 @@ METHOD BuildDeleteProductPrestashop( idProduct ) CLASS TComercio
    
    ::writeText( "Eliminando lineas atributos de Prestashop"  )
 
-   if oQuery:Open()
-   
-      if oQuery:RecCount() > 0
+   if oQuery:Open() .and. oQuery:RecCount() > 0
 
-         oQuery:GoTop()
+      oQuery:GoTop()
 
-         while !oQuery:Eof()
+      while !oQuery:Eof()
 
-            idDelete    := oQuery:FieldGet( 1 )
+         idDelete    := oQuery:FieldGet( 1 )
 
-            if !empty( idDelete )
+         if !empty( idDelete )
 
-               cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute" ) + " WHERE id_product_attribute=" + alltrim( str( idDelete ) )
-               TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+            cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute" ) + " WHERE id_product_attribute=" + alltrim( str( idDelete ) )
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-               cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute_combination" ) + " WHERE id_product_attribute=" + alltrim( str( idDelete ) )
-               TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+            cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute_combination" ) + " WHERE id_product_attribute=" + alltrim( str( idDelete ) )
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-               cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute_image" ) + " WHERE id_product_attribute=" + alltrim( str( idDelete ) )
-               TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+            cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute_image" ) + " WHERE id_product_attribute=" + alltrim( str( idDelete ) )
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-               cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute_shop" ) + " WHERE id_product_attribute=" + alltrim( str( idDelete ) )
-               TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+            cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute_shop" ) + " WHERE id_product_attribute=" + alltrim( str( idDelete ) )
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-            end if
+         end if
 
-            oQuery:Skip()
+         oQuery:Skip()
 
-            SysRefresh()
+         SysRefresh()
 
-         end while
-   
-      end if
+      end while
 
    end if
 
@@ -4928,76 +4877,66 @@ METHOD BuildDeleteProductPrestashop( idProduct ) CLASS TComercio
    
    ::writeText( "Eliminando lineas funciones de Prestashop"  )
 
-   if oQuery:Open()
+   if oQuery:Open() .and. oQuery:RecCount() > 0
    
-      if oQuery:RecCount() > 0
+      oQuery:GoTop()
+      while !oQuery:Eof()
 
-         oQuery:GoTop()
+         idDelete    := oQuery:FieldGet( 1 )
 
-         while !oQuery:Eof()
+         if !empty( idDelete )
 
-            idDelete    := oQuery:FieldGet( 1 )
+            cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_product" ) + " WHERE id_product=" + alltrimIdProductPrestashop
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-            if !empty( idDelete )
+            cCommand          := "DELETE FROM " + ::cPrefixTable( "feature" ) + " WHERE id_feature=" + alltrim( str( idDelete ) )
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-               cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_product" ) + " WHERE id_product=" + alltrimIdProductPrestashop
-               TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+            cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_lang" ) + " WHERE id_feature=" + alltrim( str( idDelete ) )
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-               cCommand          := "DELETE FROM " + ::cPrefixTable( "feature" ) + " WHERE id_feature=" + alltrim( str( idDelete ) )
-               TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+            cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_shop" ) + " WHERE id_feature=" + alltrim( str( idDelete ) )
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-               cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_lang" ) + " WHERE id_feature=" + alltrim( str( idDelete ) )
-               TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+            cCommand          := 'SELECT * FROM ' + ::cPrefixTable( "feature_value" ) +  ' WHERE id_feature=' + alltrim( str( idDelete ) )
+            oQuery2           := TMSQuery():New( ::oCon, cCommand )
 
-               cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_shop" ) + " WHERE id_feature=" + alltrim( str( idDelete ) )
-               TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+            if oQuery2:Open() .and. oQuery2:RecCount() > 0
 
-               cCommand          := 'SELECT * FROM ' + ::cPrefixTable( "feature_value" ) +  ' WHERE id_feature=' + alltrim( str( idDelete ) )
-               oQuery2           := TMSQuery():New( ::oCon, cCommand )
+               oQuery2:GoTop()
+               while !oQuery2:Eof()
 
-               if oQuery2:Open()
-         
-                  if oQuery2:RecCount() > 0
+                  idDelete2   := oQuery:FieldGet( 1 )
 
-                     oQuery2:GoTop()
+                  if !empty( idDelete2 )
 
-                     while !oQuery2:Eof()
+                     cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_value" ) + " WHERE id_feature_value=" + alltrim( str( idDelete2 ) )
+                     TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-                     idDelete2    := oQuery:FieldGet( 1 )
-
-                        if !empty( idDelete2 )
-
-                           cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_value" ) + " WHERE id_feature_value=" + alltrim( str( idDelete2 ) )
-                           TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-
-                           cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_value_lang" ) + " WHERE id_feature_value=" + alltrim( str( idDelete2 ) )
-                           TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-
-                        end if
-
-                        oQuery2:Skip()
-
-                        SysRefresh()
-
-                     end while      
+                     cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_value_lang" ) + " WHERE id_feature_value=" + alltrim( str( idDelete2 ) )
+                     TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
                   end if
 
-               end if
+                  oQuery2:Skip()
+
+                  SysRefresh()
+
+               end while      
 
             end if
 
-            oQuery:Skip()
+         end if
 
-            SysRefresh()
+         oQuery:Skip()
 
-         end while      
-   
-      end if
+         SysRefresh()
+
+      end while      
 
    end if
-   
-   SysRefresh()
+
+   sysrefresh()
 
    // Eliminamos las imágenes del artículo---------------------------------------
 
@@ -5121,15 +5060,12 @@ METHOD buildAddInformacionStockProductPrestashop( hProduct ) CLASS tComercio
 
    next
 
-   aAdd( ::aStockProductData, {  "cCodArt"               => idProduct ,;
-                                 "cCodPrp1"              => idFirstProperty ,;
-                                 "cCodPrp2"              => idSecondProperty ,;
-                                 "cValPrp1"              => valueFirstProperty ,;
-                                 "cValPrp2"              => valueSecondProperty ,;
-                                 "nStock"                => nUnidadesStock,;
-                                 "idProductPrestashop"   => ::TPrestashopId:getValueProduct( idProduct, ::getCurrentWebName() ),;
-                                 "cCodWebVal1"           => ::TPrestashopId:getValueAttribute( idFirstProperty + valueFirstProperty, ::getCurrentWebName() ),;
-                                 "cCodWebVal2"           => ::TPrestashopId:getValueAttribute( idSecondProperty + valueSecondProperty, ::getCurrentWebName() ) } )
+   aAdd( ::aStockProductData, {  "idProduct"             => idProduct ,;
+                                 "idFirstProperty"       => idFirstProperty ,;
+                                 "idSecondProperty"      => idSecondProperty ,;
+                                 "valueFirstProperty"    => valueFirstProperty ,;
+                                 "valueSecondProperty"   => valueSecondProperty ,;
+                                 "unitStock"             => nUnidadesStock } )
 
 Return .t.
 
@@ -5167,52 +5103,57 @@ Return .t.
 
 METHOD buildInsertStockPrestashop( hStockProductData ) CLASS TComercio
 
+   local cText
    local cCommand
-   local nIdProductAttribute  := 0
+   local unitStock               
+   local idProductPrestashop     
+   local attributeFirstProperty  
+   local attributeSecondProperty 
+   local nIdProductAttribute     := 0
 
-   debug( hStockProductData )
+   idProductPrestashop           := ::TPrestashopId:getValueProduct( hget( hStockProductData, "idProduct" ), ::getCurrentWebName() )
+   attributeFirstProperty        := ::TPrestashopId:getValueAttribute( hget( hStockProductData, "idFirstProperty" ) + hget( hStockProductData, "valueFirstProperty" ),     ::getCurrentWebName() )
+   attributeSecondProperty       := ::TPrestashopId:getValueAttribute( hget( hStockProductData, "idSecondProperty" ) + hget( hStockProductData, "valueSecondProperty" ),   ::getCurrentWebName() ) 
+   unitStock                     := hget( hStockProductData, "unitStock" )
 
-   if hGet( hStockProductData, "cCodWebVal1" ) != 0 .and. hGet( hStockProductData, "cCodWebVal2" ) != 0
-      nIdProductAttribute     := ::nIdProductAttribute( hGet( hStockProductData, "idProductPrestashop" ), hGet( hStockProductData, "cCodWebVal1" ), hGet( hStockProductData, "cCodWebVal2" ) ) 
+   if ( attributeFirstProperty != 0 ) .and. ( attributeSecondProperty != 0 )
+      nIdProductAttribute        := ::nIdProductAttribute( idProductPrestashop, attributeFirstProperty, attributeSecondProperty ) 
    end if 
 
-   cCommand    := "DELETE FROM " + ::cPrefixTable( "stock_available" ) + " " + ;
-                  "WHERE id_product = " + alltrim( str( hGet( hStockProductData, "idProductPrestashop" ) ) ) + " " + ;
-                  "AND id_product_attribute = " + alltrim( str( nIdProductAttribute ) )
+   cCommand                      := "DELETE FROM " + ::cPrefixTable( "stock_available" ) + " " + ;
+                                    "WHERE id_product = " + alltrim( str( idProductPrestashop ) ) + " " + ;
+                                    "AND id_product_attribute = " + alltrim( str( nIdProductAttribute ) )
 
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   debug( cCommand, "delete cCommand" )
+   if ( unitStock != 0 )
 
-   if hGet( hStockProductData, "nStock" ) != 0
-
-      cCommand := "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( "   + ;
-                     "id_product, "                                              + ;
-                     "id_product_attribute, "                                    + ;
-                     "id_shop, "                                                 + ;
-                     "id_shop_group, "                                           + ;
-                     "quantity, "                                                + ;
-                     "depends_on_stock, "                                        + ;
-                     "out_of_stock ) "                                           + ;
-                  "VALUES ( "                                                    + ;
-                     "'" + alltrim( str( hGet( hStockProductData, "idProductPrestashop" ) ) ) + "', " + ;
-                     "'" + alltrim( str( nIdProductAttribute ) ) + "', "         + ;   
-                     "'1', "                                                     + ;
-                     "'0', "                                                     + ;
-                     "'" + alltrim( str( hGet( hStockProductData, "nStock" ) ) ) + "', "    + ;
-                     "'0', "                                                     + ;
-                     "'2' )"
-
-      debug( cCommand, "insert cCommand" )
+      cCommand                   := "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( "                        + ;
+                                       "id_product, "                                                                   + ;
+                                       "id_product_attribute, "                                                         + ;
+                                       "id_shop, "                                                                      + ;
+                                       "id_shop_group, "                                                                + ;
+                                       "quantity, "                                                                     + ;
+                                       "depends_on_stock, "                                                             + ;
+                                       "out_of_stock ) "                                                                + ;
+                                    "VALUES ( "                                                                         + ;
+                                       "'" + alltrim( str( idProductPrestashop ) ) + "', " + ;
+                                       "'" + alltrim( str( nIdProductAttribute ) ) + "', "                              + ;   
+                                       "'1', "                                                                          + ;
+                                       "'0', "                                                                          + ;
+                                       "'" + alltrim( str( unitStock ) ) + "', "                                        + ;
+                                       "'0', "                                                                          + ;
+                                       "'2' )"
 
       TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
    end if
 
-   ::meterProcesoText(  "Actualizando stock de artículo " + alltrim( hGet( hStockProductData, "cCodArt" ) )   + ;
-                        " con propiedades : " + alltrim( str( hGet( hStockProductData, "cCodWebVal1" ) ) )      + ;
-                        " , " + alltrim( str( hGet( hStockProductData, "cCodWebVal2" ) ) ) + ;
-                        " y cantidad " + alltrim( str( hGet( hStockProductData, "nStock" ) ) ) )
+   cText       := "Actualizando stock de artículo " + alltrim( hGet( hStockProductData, "idProduct" ) ) + ", "
+   cText       += "propiedades : " + alltrim( str( attributeFirstProperty ) ) + " , " + alltrim( str( attributeSecondProperty ) ) + ", "
+   cText       += "cantidad : " + alltrim( str( unitStock ) )
+
+   ::meterProcesoText( cText )
 
 Return .t.   
 
@@ -5709,15 +5650,12 @@ METHOD buildStockPrestashop( idProduct ) CLASS tComercio
 
    for each sStock in aStockArticulo
 
-      aAdd( ::aStockProductData, {  "cCodArt"               => idProduct ,;
-                                    "cCodPrp1"              => sStock:cCodigoPropiedad1 ,;
-                                    "cCodPrp2"              => sStock:cCodigoPropiedad2 ,;
-                                    "cValPrp1"              => sStock:cValorPropiedad1 ,;
-                                    "cValPrp2"              => sStock:cValorPropiedad2 ,;
-                                    "nStock"                => sStock:nUnidades,;
-                                    "idProductPrestashop"   => ::TPrestashopId:getValueProduct( idProduct, ::getCurrentWebName() ),;
-                                    "cCodWebVal1"           => ::TPrestashopId:getValueAttribute( sStock:cCodigoPropiedad1 + sStock:cValorPropiedad1, ::getCurrentWebName() ),;
-                                    "cCodWebVal2"           => ::TPrestashopId:getValueAttribute( sStock:cCodigoPropiedad2 + sStock:cValorPropiedad2, ::getCurrentWebName() ) } )
+      aAdd( ::aStockProductData, {  "idProduct"             => idProduct ,;
+                                    "idFirstProperty"       => sStock:cCodigoPropiedad1 ,;
+                                    "idSecondProperty"      => sStock:cCodigoPropiedad2 ,;
+                                    "valueFirstProperty"    => sStock:cValorPropiedad1 ,;
+                                    "valueSecondProperty"   => sStock:cValorPropiedad2 ,;
+                                    "unitStock"             => sStock:nUnidades } )
 
    next
 
