@@ -4546,6 +4546,7 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
    EndProgress()
 
    oDlg:Enable()
+
    oDlg:End( IDOK )
 
 Return .t.
@@ -5772,8 +5773,6 @@ Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor, oDlg )
       local nPorcentaje := oImportaComprasProveedor:oPorcentaje:Value()
       local nDias       := dFecFin - dFecIni
 
-      oDlg:Disable()
-
       if empty( aTmp[ _CCODPRV ] )
             msgStop( "Código del proveedor no puede esta vacio.")
             return .f.
@@ -5943,8 +5942,6 @@ Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor, oDlg )
       ( dbfTmpLin )->( dbGoTop() )
 
       CursorWE()
-
-      oDlg:Enable()
 
 Return .t. 
 
