@@ -23,6 +23,7 @@ CLASS AlbarenesClientesRedur
    DATA cNumAlbaran
    DATA cOutDirectory
    DATA nTotalBultos
+   DATA cImpresora
 
    DATA cFileCodigosPostales
    DATA aCodigosPostales   
@@ -45,6 +46,7 @@ METHOD New( nView, oPais ) CLASS AlbarenesClientesRedur
    ::cOutDirectory               := cPatScript() + "AlbaranesClientes\Resultado\"
    ::cFileCodigosPostales        := cPatScript() + "AlbaranesClientes\CODIGOS_POSTALES_PLAZA.CSV"
    ::nTotalBultos                := ( D():AlbaranesClientes( ::nView ) )->nBultos
+   ::cImpresora                  := "PDFCreator"
 
    if !::getCodigosPostalesCVS()
       MsgInfo( "No hemos encontrado la tabla de plaza de reparto" )
@@ -93,6 +95,11 @@ METHOD New( nView, oPais ) CLASS AlbarenesClientesRedur
 
       ::oAlbaran:SerializeASCII()
       ::oAlbaran:WriteASCII( ::cOutDirectory + cFileName )
+
+      if File( ::cOutDirectory + cFileName )
+         win_printFileRaw( ::cImpresora, ::cOutDirectory + cFileName )
+         fErase( ::cOutDirectory + cFileName )
+      end if
 
       ::oAlbaran     := nil
 
