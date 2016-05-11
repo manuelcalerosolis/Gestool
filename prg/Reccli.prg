@@ -128,9 +128,6 @@ static cOldCodCli             := ""
 
 static lOldDevuelto           := .f.
 
-static cReciboAnterior
-static nRecnoAnterior
-static nOrdenAnterior
 static dbfMatriz
 
 static bEdit                  := { |aTmp, aGet, dbf, oBrw, lRectificativa, nSpecialMode, nMode, aTmpFac| EdtCob( aTmp, aGet, dbf, oBrw, lRectificativa, nSpecialMode, nMode, aTmpFac ) }
@@ -6059,73 +6056,6 @@ static Function aRecibosAgrupados( uFacCliP )
   
    ( uFacCliP )->( ordsetfocus( nOrd ) )
    ( uFacCliP )->( dbgoto( nRec ) )
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
-Function ClearFiltersRecibosClientes()
-
-   local cNumMatriz
-
-   MsgInfo( "Quito todos los filtros" )
-
-   /*
-   Guardo el número del recibo para volver a poner el Scope--------------------
-   */
-
-   cReciboAnterior   := ( D():FacturasClientesCobros( nView ) )->cSerie + Str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac + Str( ( D():FacturasClientesCobros( nView ) )->nNumRec )
-   cNumMatriz        := ( D():FacturasClientesCobros( nView ) )->cSerie + Str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac + Str( ( D():FacturasClientesCobros( nView ) )->nNumRec ) + ( D():FacturasClientesCobros( nView ) )->cTipRec
-   nRecnoAnterior    := ( D():FacturasClientesCobros( nView ) )->( Recno() )
-
-   /*
-   Limpiamos el Scope----------------------------------------------------------
-   */
-
-   ( D():FacturasClientesCobros( nView ) )->( OrdScope( 0, nil ) )
-   ( D():FacturasClientesCobros( nView ) )->( OrdScope( 1, nil ) )
-
-   /*
-   Cambiamos de orden y ponemos el scope de nuevo------------------------------
-   */   
-
-   nOrdenAnterior    := ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( "cNumMtr" ) )
-
-   if ( D():FacturasClientesCobros( nView ) )->( dbSeek( cNumMatriz ) )
-      MsgInfo( "He encontrado con exito", cNumMatriz )
-      ( D():FacturasClientesCobros( nView ) )->( OrdScope( 0, cNumMatriz ) )
-      ( D():FacturasClientesCobros( nView ) )->( OrdScope( 1, cNumMatriz ) )
-      ( D():FacturasClientesCobros( nView ) )->( dbGoTop() )
-
-      MsgInfo( ( D():FacturasClientesCobros( nView ) )->( OrdKeyCount() ) , "registros")
-   end if
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
-Function RestoreFiltersRecibosClientes()
-
-   MsgInfo( "Restauro la tabla a donde estaba" )
-
-   /*
-   Limpiamos el Scope----------------------------------------------------------
-   */
-
-   ( D():FacturasClientesCobros( nView ) )->( OrdScope( 0, nil ) )
-   ( D():FacturasClientesCobros( nView ) )->( OrdScope( 1, nil ) )
-
-   /*
-   Cambiamos de orden y ponemos el scope de nuevo------------------------------
-   */   
-
-   ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( nOrdenAnterior ) )
-
-   if ( D():FacturasClientesCobros( nView ) )->( dbSeek( cReciboAnterior ) )
-      ( D():FacturasClientesCobros( nView ) )->( OrdScope( 0, cReciboAnterior ) )
-      ( D():FacturasClientesCobros( nView ) )->( OrdScope( 1, cReciboAnterior ) )
-      ( D():FacturasClientesCobros( nView ) )->( dbGoTop() )
-   end if
 
 Return nil
 
