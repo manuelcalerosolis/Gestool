@@ -2454,9 +2454,7 @@ METHOD nIdProductAttribute( idProductPrestashop, cCodWebValPr1, cCodWebValPr2 ) 
                oQuery2        := TMSQuery():New( ::oCon, cCommand )
 
                   if oQuery2:Open() .and. oQuery2:recCount() == 1 .and. oQuery2:FieldGet( 1 ) == cCodWebValPr1
-
                      nIdProductAttribute     := oQuery:FieldGet( 1 )
-
                   end if   
 
                oQuery:Skip()
@@ -5035,6 +5033,7 @@ METHOD buildAddInformacionStockProductPrestashop( hProduct ) CLASS tComercio
    local valueFirstProperty   := hget( hProduct, "valueFirstProperty" )
    local idSecondProperty     := hget( hProduct, "idSecondProperty" )
    local valueSecondProperty  := hget( hProduct, "valueSecondProperty" )
+   local nTotalStock          := 0
    local nUnidadesStock       := 0
    local aStockArticulo
 
@@ -5054,9 +5053,11 @@ METHOD buildAddInformacionStockProductPrestashop( hProduct ) CLASS tComercio
          sStock:cCodigoPropiedad2   == idSecondProperty     .and.;
          sStock:cValorPropiedad2    == valueSecondProperty
 
-         nUnidadesStock        := sStock:nUnidades
+         nUnidadesStock       := sStock:nUnidades
 
-      end if   
+      end if  
+
+      nTotalStock             += sStock:nUnidades 
 
    next
 
@@ -5066,6 +5067,13 @@ METHOD buildAddInformacionStockProductPrestashop( hProduct ) CLASS tComercio
                                  "valueFirstProperty"    => valueFirstProperty ,;
                                  "valueSecondProperty"   => valueSecondProperty ,;
                                  "unitStock"             => nUnidadesStock } )
+
+   aAdd( ::aStockProductData, {  "idProduct"             => idProduct ,;
+                                 "idFirstProperty"       => space( 20 ) ,;
+                                 "idSecondProperty"      => space( 20 ) ,;
+                                 "valueFirstProperty"    => space( 20 ) ,;
+                                 "valueSecondProperty"   => space( 20 ) ,;
+                                 "unitStock"             => nTotalStock } )
 
 Return .t.
 
@@ -5109,7 +5117,7 @@ METHOD buildInsertStockPrestashop( hStockProductData ) CLASS TComercio
    local idProductPrestashop     
    local attributeFirstProperty  
    local attributeSecondProperty 
-   local nIdProductAttribute     := 0
+   local idProductAttribute      := 0
 
    idProductPrestashop           := ::TPrestashopId:getValueProduct( hget( hStockProductData, "idProduct" ), ::getCurrentWebName() )
    attributeFirstProperty        := ::TPrestashopId:getValueAttribute( hget( hStockProductData, "idFirstProperty" ) + hget( hStockProductData, "valueFirstProperty" ),     ::getCurrentWebName() )
@@ -5117,12 +5125,12 @@ METHOD buildInsertStockPrestashop( hStockProductData ) CLASS TComercio
    unitStock                     := hget( hStockProductData, "unitStock" )
 
    if ( attributeFirstProperty != 0 ) .and. ( attributeSecondProperty != 0 )
-      nIdProductAttribute        := ::nIdProductAttribute( idProductPrestashop, attributeFirstProperty, attributeSecondProperty ) 
+      idProductAttribute         := ::nIdProductAttribute( idProductPrestashop, attributeFirstProperty, attributeSecondProperty ) 
    end if 
 
-   cCommand                      := "DELETE FROM " + ::cPrefixTable( "stock_available" ) + " " + ;
-                                    "WHERE id_product = " + alltrim( str( idProductPrestashop ) ) + " " + ;
-                                    "AND id_product_attribute = " + alltrim( str( nIdProductAttribute ) )
+   cCommand                      := "DELETE FROM " + ::cPrefixTable( "stock_available" ) + " "                          + ;
+                                    "WHERE id_product = " + alltrim( str( idProductPrestashop ) ) + " "                 + ;
+                                    "AND id_product_attribute = " + alltrim( str( idProductAttribute ) )
 
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
@@ -5137,8 +5145,8 @@ METHOD buildInsertStockPrestashop( hStockProductData ) CLASS TComercio
                                        "depends_on_stock, "                                                             + ;
                                        "out_of_stock ) "                                                                + ;
                                     "VALUES ( "                                                                         + ;
-                                       "'" + alltrim( str( idProductPrestashop ) ) + "', " + ;
-                                       "'" + alltrim( str( nIdProductAttribute ) ) + "', "                              + ;   
+                                       "'" + alltrim( str( idProductPrestashop ) ) + "', "                              + ;
+                                       "'" + alltrim( str( idProductAttribute ) ) + "', "                               + ;   
                                        "'1', "                                                                          + ;
                                        "'0', "                                                                          + ;
                                        "'" + alltrim( str( unitStock ) ) + "', "                                        + ;
@@ -5644,8 +5652,9 @@ return .t.
 //---------------------------------------------------------------------------//
 
 METHOD buildStockPrestashop( idProduct ) CLASS tComercio
-
+   
    local sStock
+   local nStock            := 0
    local aStockArticulo    := ::oStock:aStockArticulo( idProduct, ::TPrestashopConfig:getStore() )
 
    for each sStock in aStockArticulo
@@ -5657,7 +5666,18 @@ METHOD buildStockPrestashop( idProduct ) CLASS tComercio
                                     "valueSecondProperty"   => sStock:cValorPropiedad2 ,;
                                     "unitStock"             => sStock:nUnidades } )
 
+      nStock               += sStock:nUnidades
+
    next
+
+   // apunte resumen ---------------------------------------------------------
+
+   aAdd( ::aStockProductData, {  "idProduct"             => idProduct ,;
+                                 "idFirstProperty"       => space( 20 ) ,;
+                                 "idSecondProperty"      => space( 20 ) ,;
+                                 "valueFirstProperty"    => space( 20 ) ,;
+                                 "valueSecondProperty"   => space( 20 ) ,;
+                                 "unitStock"             => nStock } )
 
 Return .t.
 

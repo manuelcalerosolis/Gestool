@@ -3206,6 +3206,10 @@ METHOD procesarArticuloInventario( cInventario ) CLASS TRemMovAlm
 
    end if 
 
+   if !empty( ::oBrwDet )
+      ::oBrwDet:Refresh()
+   end if 
+
 Return ( Self )
 
 //---------------------------------------------------------------------------//
@@ -3216,16 +3220,13 @@ METHOD insertaArticuloRemesaMovimiento( cCodigo, nUnidades ) CLASS TRemMovAlm
    ::oDetMovimientos:oDbfVir:Blank()
 
    ::oDetMovimientos:oDbfVir:cRefMov   := cCodigo
+   ::oDetMovimientos:oDbfVir:nUndMov   := nUnidades
 
-   if ::oDetMovimientos:loadArticulo( .t., APPD_MODE )
+   if ::oDetMovimientos:loadArticulo( APPD_MODE, .t. )
 
       ::oDetMovimientos:oDbfVir:Insert()
    
       ::oDetMovimientos:appendKit()
-
-      if !empty( ::oBrwDet )
-         ::oBrwDet:Refresh()
-      end if 
    
    else
 
@@ -3872,7 +3873,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          BITMAP   "LUPA" ;
          OF       oDlg
 
-      ::oRefMov:bValid     := {|| if( !empty( ::oDbfVir:cRefMov ), ::loadArticulo( .f., nMode ), .t. ) }
+      ::oRefMov:bValid     := {|| if( !empty( ::oDbfVir:cRefMov ), ::loadArticulo( nMode ), .t. ) }
       ::oRefMov:bHelp      := {|| BrwArticulo( ::oRefMov, ::oGetDetalle , , , , ::oGetLote, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oValPr1, ::oValPr2  ) }
 
       REDEFINE GET ::oGetDetalle VAR ::oDbfVir:cNomMov ;
@@ -3891,7 +3892,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      ::oGetLote:bValid          := {|| if( !Empty( ::oDbfVir:cLote ), ::loadArticulo( .f., nMode ), .t. ) }
+      ::oGetLote:bValid          := {|| if( !Empty( ::oDbfVir:cLote ), ::loadArticulo( nMode ), .t. ) }
 
       // Browse de propiedades-------------------------------------------------
 
@@ -3924,7 +3925,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      ::oValPr1:bValid     := {|| if( lPrpAct( ::oValPr1, ::oSayVp1, ::oDbfVir:cCodPr1, ::oParent:oTblPro:cAlias ), ::loadArticulo( .f., nMode ), .f. ) }
+      ::oValPr1:bValid     := {|| if( lPrpAct( ::oValPr1, ::oSayVp1, ::oDbfVir:cCodPr1, ::oParent:oTblPro:cAlias ), ::loadArticulo( nMode ), .f. ) }
       ::oValPr1:bHelp      := {|| brwPropiedadActual( ::oValPr1, ::oSayVp1, ::oDbfVir:cCodPr1 ) }
 
       REDEFINE GET ::oSayVp1 VAR ::cSayVp1;
@@ -3942,7 +3943,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      ::oValPr2:bValid     := {|| if( lPrpAct( ::oValPr2, ::oSayVp2, ::oDbfVir:cCodPr2, ::oParent:oTblPro:cAlias ), ::loadArticulo( .f., nMode ), .f. ) }
+      ::oValPr2:bValid     := {|| if( lPrpAct( ::oValPr2, ::oSayVp2, ::oDbfVir:cCodPr2, ::oParent:oTblPro:cAlias ), ::loadArticulo( nMode ), .f. ) }
       ::oValPr2:bHelp      := {|| brwPropiedadActual( ::oValPr2, ::oSayVp2, ::oDbfVir:cCodPr2 ) }
 
       REDEFINE GET ::oSayVp2 VAR ::cSayVp2 ;
@@ -4196,7 +4197,7 @@ METHOD ValidResource( nMode, oDlg, oBtn ) CLASS TDetMovimientos
 
    oBtn:SetFocus()
 
-   if nMode == APPD_MODE .and. !::loadArticulo( .t., nMode )
+   if nMode == APPD_MODE // .and. !::loadArticulo( .t., nMode )
       ::oRefMov:SetFocus()
       Return .f.
    end if
@@ -4432,7 +4433,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD loadArticulo( lValidDetalle, nMode ) CLASS TDetMovimientos
+METHOD loadArticulo( nMode, lSilenceMode ) CLASS TDetMovimientos
 
    local a
    local nPos
@@ -4442,7 +4443,7 @@ METHOD loadArticulo( lValidDetalle, nMode ) CLASS TDetMovimientos
    local cCodArt           := ""
    local lChgCodArt        := .f.
 
-   DEFAULT lValidDetalle   := .f.
+   DEFAULT lSilenceMode    := .f.
 
    if empty( ::oDbfVir:cRefMov )
       if !empty( ::oBrwPrp )
@@ -4470,207 +4471,205 @@ METHOD loadArticulo( lValidDetalle, nMode ) CLASS TDetMovimientos
 
    if aSeekProp( @cCodArt, @cValPr1, @cValPr2, ::oParent:oArt:cAlias, ::oParent:oTblPro:cAlias ) // ::oArt:Seek( xVal ) .OR. ::oArt:Seek( Upper( xVal ) )
 
-      if !lValidDetalle
+      CursorWait()
 
-         CursorWait()
+      if ( lChgCodArt )
 
-         if ( lChgCodArt )
+         if !empty(::oRefMov)
+            ::oRefMov:cText(     ::oParent:oArt:Codigo )
+         else 
+            ::oDbfVir:cRefMov    := ::oParent:oArt:Codigo
+         end if 
+         
+         if !empty(::oGetDetalle)
+            ::oGetDetalle:cText( ::oParent:oArt:Nombre )
+         else 
+            ::oDbfVir:cNomMov    := ::oParent:oArt:Nombre 
+         end if 
 
-            if !empty(::oRefMov)
-               ::oRefMov:cText(     ::oParent:oArt:Codigo )
+         // Propiedades--------------------------------------------------------
+
+         if !empty( cValPr1 ) .and. !empty( ::oValPr1 )
+            ::oValPr1:cText( cValPr1 )
+         else 
+            ::oDbfVir:cValPr1    := cValPr1
+         end if
+
+         if !empty( cValPr2 ) .and. !empty( ::oValPr2 )
+            ::oValPr2:cText( cValPr2 )
+         else 
+            ::oDbfVir:cValPr2    := cValPr2
+         end if
+
+         // Dejamos pasar a los productos de tipo kit-----------------------
+
+         if ::oParent:oArt:lKitArt
+            ::oDbfVir:lNoStk     := !lStockCompuestos( ::oParent:oArt:Codigo, ::oParent:oArt:cAlias )
+            ::oDbfVir:lKitArt    := .t.
+            ::oDbfVir:lKitEsc    := .f.
+            ::oDbfVir:lImpLin    := lImprimirCompuesto( ::oParent:oArt:Codigo, ::oParent:oArt:cAlias )
+            ::oDbfVir:lKitPrc    := !lPreciosCompuestos( ::oParent:oArt:Codigo, ::oParent:oArt:cAlias )
+         else
+            ::oDbfVir:lNoStk     := ( ::oParent:oArt:nCtlStock > 1 )
+            ::oDbfVir:lKitArt    := .f.
+            ::oDbfVir:lKitEsc    := .f.
+            ::oDbfVir:lImpLin    := .f.
+            ::oDbfVir:lKitPrc    := .f.
+         end if
+
+         if ::oParent:oArt:nCajEnt != 0 .and. ::oDbfVir:nCajMov == 0
+            if !empty(::oCajMov)
+               ::oCajMov:cText( ::oParent:oArt:nCajEnt )
+            else
+               ::oDbfVir:nCajMov := ::oParent:oArt:nCajEnt
             end if 
+         end if
+
+         if ::oDbfVir:nUndMov == 0
+            if !empty(::oUndMov)
+               ::oUndMov:cText( max( ::oParent:oArt:nUniCaja, 1 ) )
+            else
+               ::oDbfVir:nUndMov := max( ::oParent:oArt:nUniCaja, 1 )
+            end if
+         end if
+
+         // Peso y Volumen--------------------------------------------------------
+
+         ::oDbfVir:nVolumen      := ::oParent:oArt:nVolumen
+         ::oDbfVir:cVolumen      := ::oParent:oArt:cVolumen
+         ::oDbfVir:nPesoKg       := ::oParent:oArt:nPesoKg
+         ::oDbfVir:cPesoKg       := ::oParent:oArt:cUndDim
+
+         // Lotes-----------------------------------------------------------------
+
+         ::oDbfVir:lLote         := ::oParent:oArt:lLote
+
+         if ::oParent:oArt:lLote
+            if !empty(::oSayLote)
+               ::oSayLote:Show()
+            end if 
+            if !empty(::oGetLote)
+               ::oGetLote:Show()
+            end if 
+         else
+            if !empty(::oSayLote)
+               ::oSayLote:Hide()
+            end if 
+            if !empty(::oGetLote)
+               ::oGetLote:Hide()
+            end if 
+         end if
+
+         // Propiedades--------------------------------------------------------------
+
+         ::oDbfVir:cCodPr1       := ::oParent:oArt:cCodPrp1
+         ::oDbfVir:cCodPr2       := ::oParent:oArt:cCodPrp2
+
+         if ( !empty( ::oDbfVir:cCodPr1 ) .or. !empty( ::oDbfVir:cCodPr2 ) )     .and.;
+            ( !lEmptyProp( ::oDbfVir:cCodPr1, ::oParent:oTblPro:cAlias ) .or. !lEmptyProp( ::oDbfVir:cCodPr2, ::oParent:oTblPro:cAlias ) ) .and.;
+            ( empty( ::oDbfVir:cValPr1 ) .or. empty( ::oDbfVir:cValPr2 ) )       .and.;
+            ( uFieldEmpresa( "lUseTbl" )                                         .and.;
+            ( nMode == APPD_MODE ) )
+
+            if( !empty(::oValPr1),  ::oValPr1:Hide(),    )
+            if( !empty(::oSayPr1),  ::oSayPr1:Hide(),    )
+            if( !empty(::oSayVp1),  ::oSayVp1:Hide(),    )
+            if( !empty(::oValPr2),  ::oValPr2:Hide(),    )
+            if( !empty(::oSayPr2),  ::oSayPr2:Hide(),    )
+            if( !empty(::oSayVp2),  ::oSayVp2:Hide(),    )
+            if( !empty(::oSayLote), ::oSayLote:Hide(),   )
+            if( !empty(::oGetLote), ::oGetLote:Hide(),   )
+
+            setPropertiesTable( ::oParent:oArt:Codigo, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, 0, ::oUndMov, ::oBrwPrp, ::oParent:nView )
             
-            if !empty(::oGetDetalle)
-               ::oGetDetalle:cText( ::oParent:oArt:Nombre )
-            else 
-               ::oDbfVir:cNomMov    := ::oParent:oArt:Nombre 
-            end if 
+         else
 
-            // Propiedades--------------------------------------------------------
+            hidePropertiesTable( ::oBrwPrp )
 
-            if !empty( cValPr1 ) .and. !empty( ::oValPr1 )
-               ::oValPr1:cText( cValPr1 )
-            else 
-               ::oDbfVir:cValPr1    := cValPr1
-            end if
-
-            if !empty( cValPr2 ) .and. !empty( ::oValPr2 )
-               ::oValPr2:cText( cValPr2 )
-            else 
-               ::oDbfVir:cValPr2    := cValPr2
-            end if
-
-            // Dejamos pasar a los productos de tipo kit-----------------------
-
-            if ::oParent:oArt:lKitArt
-               ::oDbfVir:lNoStk     := !lStockCompuestos( ::oParent:oArt:Codigo, ::oParent:oArt:cAlias )
-               ::oDbfVir:lKitArt    := .t.
-               ::oDbfVir:lKitEsc    := .f.
-               ::oDbfVir:lImpLin    := lImprimirCompuesto( ::oParent:oArt:Codigo, ::oParent:oArt:cAlias )
-               ::oDbfVir:lKitPrc    := !lPreciosCompuestos( ::oParent:oArt:Codigo, ::oParent:oArt:cAlias )
+            if !empty( ::oDbfVir:cCodPr1 )
+               if( !empty(::oValPr1), ::oValPr1:show(), )
+               if( !empty(::oSayPr1), ::oSayPr1:show(), )
+               if( !empty(::oSayPr1), ::oSayPr1:setText( retProp( ::oDbfVir:cCodPr1 ) ), )
+               if( !empty(::oSayVp1), ::oSayVp1:show(), )
             else
-               ::oDbfVir:lNoStk     := ( ::oParent:oArt:nCtlStock > 1 )
-               ::oDbfVir:lKitArt    := .f.
-               ::oDbfVir:lKitEsc    := .f.
-               ::oDbfVir:lImpLin    := .f.
-               ::oDbfVir:lKitPrc    := .f.
+               if( !empty(::oValPr1), ::oValPr1:Hide(), )
+               if( !empty(::oSayPr1), ::oSayPr1:Hide(), )
+               if( !empty(::oSayVp1), ::oSayVp1:Hide(), )
             end if
 
-            if ::oParent:oArt:nCajEnt != 0 .and. ::oDbfVir:nCajMov == 0
-               if !empty(::oCajMov)
-                  ::oCajMov:cText( ::oParent:oArt:nCajEnt )
-               else
-                  ::oDbfVir:nCajMov := ::oParent:oArt:nCajEnt
-               end if 
-            end if
-
-            if ::oDbfVir:nUndMov == 0
-               if !empty(::oUndMov)
-                  ::oUndMov:cText( max( ::oParent:oArt:nUniCaja, 1 ) )
-               else
-                  ::oDbfVir:nUndMov := max( ::oParent:oArt:nUniCaja, 1 )
-               end if
-            end if
-
-            // Peso y Volumen--------------------------------------------------------
-
-            ::oDbfVir:nVolumen      := ::oParent:oArt:nVolumen
-            ::oDbfVir:cVolumen      := ::oParent:oArt:cVolumen
-            ::oDbfVir:nPesoKg       := ::oParent:oArt:nPesoKg
-            ::oDbfVir:cPesoKg       := ::oParent:oArt:cUndDim
-
-            // Lotes-----------------------------------------------------------------
-
-            ::oDbfVir:lLote         := ::oParent:oArt:lLote
-
-            if ::oParent:oArt:lLote
-               if !empty(::oSayLote)
-                  ::oSayLote:Show()
-               end if 
-               if !empty(::oGetLote)
-                  ::oGetLote:Show()
-               end if 
+            if !empty( ::oDbfVir:cCodPr2 )
+               if( !empty(::oValPr2), ::oValPr2:show(), )
+               if( !empty(::oSayPr2), ::oSayPr2:show(), )
+               if( !empty(::oSayPr2), ::oSayPr2:setText( retProp( ::oDbfVir:cCodPr2 ) ), )
+               if( !empty(::oSayVp2), ::oSayVp2:show(), )
             else
-               if !empty(::oSayLote)
-                  ::oSayLote:Hide()
-               end if 
-               if !empty(::oGetLote)
-                  ::oGetLote:Hide()
-               end if 
+               if( !empty(::oValPr2), ::oValPr2:Hide(), )
+               if( !empty(::oSayPr2), ::oSayPr2:Hide(), )
+               if( !empty(::oSayVp2), ::oSayVp2:Hide(), )
             end if
 
-            // Propiedades--------------------------------------------------------------
+            // Posicionar el foco----------------------------------------------------
 
-            ::oDbfVir:cCodPr1       := ::oParent:oArt:cCodPrp1
-            ::oDbfVir:cCodPr2       := ::oParent:oArt:cCodPrp2
+            do case
+               case !Empty( ::oDbfVir:cCodPr1 ) .and. Empty( ::oDbfVir:cValPr1 )
+                  if( !empty(::oValPr1), ::oValPr1:SetFocus(), )
 
-            if ( !empty( ::oDbfVir:cCodPr1 ) .or. !empty( ::oDbfVir:cCodPr2 ) )     .and.;
-               ( !lEmptyProp( ::oDbfVir:cCodPr1, ::oParent:oTblPro:cAlias ) .or. !lEmptyProp( ::oDbfVir:cCodPr2, ::oParent:oTblPro:cAlias ) ) .and.;
-               ( empty( ::oDbfVir:cValPr1 ) .or. empty( ::oDbfVir:cValPr2 ) )       .and.;
-               ( uFieldEmpresa( "lUseTbl" )                                         .and.;
-               ( nMode == APPD_MODE ) )
+               case !Empty( ::oDbfVir:cCodPr2 ) .and. Empty( ::oDbfVir:cValPr2 )
+                  if( !empty(::oValPr2), ::oValPr2:SetFocus(), )
 
-               if( !empty(::oValPr1),  ::oValPr1:Hide(),    )
-               if( !empty(::oSayPr1),  ::oSayPr1:Hide(),    )
-               if( !empty(::oSayVp1),  ::oSayVp1:Hide(),    )
-               if( !empty(::oValPr2),  ::oValPr2:Hide(),    )
-               if( !empty(::oSayPr2),  ::oSayPr2:Hide(),    )
-               if( !empty(::oSayVp2),  ::oSayVp2:Hide(),    )
-               if( !empty(::oSayLote), ::oSayLote:Hide(),   )
-               if( !empty(::oGetLote), ::oGetLote:Hide(),   )
+               case ::oDbfVir:lLote
+                  if( !empty(::oGetLote), ::oGetLote:SetFocus(), )
 
-               setPropertiesTable( ::oParent:oArt:Codigo, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, 0, ::oUndMov, ::oBrwPrp, ::oParent:nView )
-               
-            else
+               otherwise
+                  if( !empty(::oUndMov), ::oUndMov:SetFocus(), )
 
-               hidePropertiesTable( ::oBrwPrp )
-
-               if !empty( ::oDbfVir:cCodPr1 )
-                  if( !empty(::oValPr1), ::oValPr1:show(), )
-                  if( !empty(::oSayPr1), ::oSayPr1:show(), )
-                  if( !empty(::oSayPr1), ::oSayPr1:setText( retProp( ::oDbfVir:cCodPr1 ) ), )
-                  if( !empty(::oSayVp1), ::oSayVp1:show(), )
-               else
-                  if( !empty(::oValPr1), ::oValPr1:Hide(), )
-                  if( !empty(::oSayPr1), ::oSayPr1:Hide(), )
-                  if( !empty(::oSayVp1), ::oSayVp1:Hide(), )
-               end if
-
-               if !empty( ::oDbfVir:cCodPr2 )
-                  if( !empty(::oValPr2), ::oValPr2:show(), )
-                  if( !empty(::oSayPr2), ::oSayPr2:show(), )
-                  if( !empty(::oSayPr2), ::oSayPr2:setText( retProp( ::oDbfVir:cCodPr2 ) ), )
-                  if( !empty(::oSayVp2), ::oSayVp2:show(), )
-               else
-                  if( !empty(::oValPr2), ::oValPr2:Hide(), )
-                  if( !empty(::oSayPr2), ::oSayPr2:Hide(), )
-                  if( !empty(::oSayVp2), ::oSayVp2:Hide(), )
-               end if
-
-               // Posicionar el foco----------------------------------------------------
-
-               do case
-                  case !Empty( ::oDbfVir:cCodPr1 ) .and. Empty( ::oDbfVir:cValPr1 )
-                     if( !empty(::oValPr1), ::oValPr1:SetFocus(), )
-
-                  case !Empty( ::oDbfVir:cCodPr2 ) .and. Empty( ::oDbfVir:cValPr2 )
-                     if( !empty(::oValPr2), ::oValPr2:SetFocus(), )
-
-                  case ::oDbfVir:lLote
-                     if( !empty(::oGetLote), ::oGetLote:SetFocus(), )
-
-                  otherwise
-                     if( !empty(::oUndMov), ::oUndMov:SetFocus(), )
-
-               end case
-
-            end if
-
-            // Precios de costo---------------------------------------------------
-
-            if !empty(::oPreDiv)
-               ::oPreDiv:cText( ::getPrecioCosto() )
-            else
-               ::oDbfVir:nPreDiv    := ::getPrecioCosto()
-            end if 
-
-            // Stock actual-------------------------------------------------------
-
-            if !empty(::oGetStockOrigen)
-               ::oParent:oStock:lPutStockActual( ::oDbfVir:cRefMov, ::oParent:oDbf:cAlmOrg, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote, .f., ::oParent:oArt:nCtlStock, ::oGetStockOrigen )
-            end if 
-
-            if !empty(::oGetStockDestino)
-               ::oParent:oStock:lPutStockActual( ::oDbfVir:cRefMov, ::oParent:oDbf:cAlmDes, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote, .f., ::oParent:oArt:nCtlStock, ::oGetStockDestino )
-            end if 
-
-            // Guardamos el stock anterior----------------------------------------
-
-            SysRefresh()
-
-            nPos                 := aScan( ::oParent:oStock:aStocks, {|o| o:cCodigo == ::oParent:oArt:Codigo .and. o:cCodigoAlmacen == ::oParent:oDbf:cAlmDes .and. o:cValorPropiedad1 == ::oDbfVir:cValPr1 .and. o:cValorPropiedad2 == ::oDbfVir:cValPr2 .and. o:cLote == ::oDbfVir:cLote .and. o:cNumeroSerie == ::oDbfVir:mNumSer } )
-            if ( nPos != 0 ) .and. isNum( ::oParent:oStock:aStocks[ nPos ]:nUnidades )
-               ::oDbfVir:nUndAnt := ::oParent:oStock:aStocks[ nPos ]:nUnidades
-            end if
+            end case
 
          end if
 
-         // Variables para no volver a ejecutar--------------------------------
+         // Precios de costo---------------------------------------------------
 
-         ::cOldLote              := ::oDbfVir:cLote
-         ::cOldCodArt            := ::oDbfVir:cRefMov
-         ::cOldValPr1            := ::oDbfVir:cValPr1
-         ::cOldValPr2            := ::oDbfVir:cValPr2
+         if !empty(::oPreDiv)
+            ::oPreDiv:cText( ::getPrecioCosto() )
+         else
+            ::oDbfVir:nPreDiv    := ::getPrecioCosto()
+         end if 
 
-         CursorWE()
+         // Stock actual-------------------------------------------------------
+
+         if !empty(::oGetStockOrigen)
+            ::oParent:oStock:lPutStockActual( ::oDbfVir:cRefMov, ::oParent:oDbf:cAlmOrg, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote, .f., ::oParent:oArt:nCtlStock, ::oGetStockOrigen )
+         end if 
+
+         if !empty(::oGetStockDestino)
+            ::oParent:oStock:lPutStockActual( ::oDbfVir:cRefMov, ::oParent:oDbf:cAlmDes, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote, .f., ::oParent:oArt:nCtlStock, ::oGetStockDestino )
+         end if 
+
+         // Guardamos el stock anterior----------------------------------------
+
+         SysRefresh()
+
+         nPos                 := aScan( ::oParent:oStock:aStocks, {|o| o:cCodigo == ::oParent:oArt:Codigo .and. o:cCodigoAlmacen == ::oParent:oDbf:cAlmDes .and. o:cValorPropiedad1 == ::oDbfVir:cValPr1 .and. o:cValorPropiedad2 == ::oDbfVir:cValPr2 .and. o:cLote == ::oDbfVir:cLote .and. o:cNumeroSerie == ::oDbfVir:mNumSer } )
+         if ( nPos != 0 ) .and. isNum( ::oParent:oStock:aStocks[ nPos ]:nUnidades )
+            ::oDbfVir:nUndAnt := ::oParent:oStock:aStocks[ nPos ]:nUnidades
+         end if
 
       end if
+
+      // Variables para no volver a ejecutar--------------------------------
+
+      ::cOldLote              := ::oDbfVir:cLote
+      ::cOldCodArt            := ::oDbfVir:cRefMov
+      ::cOldValPr1            := ::oDbfVir:cValPr1
+      ::cOldValPr2            := ::oDbfVir:cValPr2
+
+      CursorWE()
 
    else
 
-      if !lValidDetalle
+      if !lSilenceMode
          MsgStop( "Artículo no encontrado." )
-      end if
+      end if 
 
       Return .f.
 
