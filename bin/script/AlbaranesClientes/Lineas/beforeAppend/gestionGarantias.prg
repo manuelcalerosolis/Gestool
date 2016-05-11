@@ -4,14 +4,11 @@
 
 Function gestionGarantias( aLine, aHeader, nView )
 
-   local oGestionGarantia  := ExportacionAlbaranes():New( aLine, aHeader, nView )
-   oGestionGarantia:Run()
-
-Return ( nil )
+Return ( TGestionGarantias():New( aLine, aHeader, nView ):Run() )
 
 //---------------------------------------------------------------------------//
 
-CREATE CLASS ExportacionAlbaranes
+CREATE CLASS TGestionGarantias
 
    DATA aLine
    DATA aHeader
@@ -20,6 +17,7 @@ CREATE CLASS ExportacionAlbaranes
    DATA idProduct
    DATA idFamily
    DATA dateSale
+   DATA dateOriginal
    DATA warrantyDays
 
    DATA idClient
@@ -28,13 +26,19 @@ CREATE CLASS ExportacionAlbaranes
    DATA unitsSale
    DATA lastDateSale
 
-   METHOD New( aLine, aHeader, nView )  CONSTRUCTOR
+   METHOD New( aLine, aHeader, nView )    CONSTRUCTOR
 
    METHOD Run()
    
    METHOD loadProductInformation()
 
    METHOD searchLastSale()
+   METHOD searchLastSaleByClient()        INLINE ( ::searchLastSale() )
+   METHOD searchLastSaleAnonymus()        INLINE ( ::idClient := nil, ::searchLastSale() )
+
+   METHOD isEmptyDateInWarrantyPeriod()   INLINE ( empty( ::dateSale ) ) 
+   METHOD isDateOutOfWarrantyPeriod()     INLINE ( ( ::dateSale - ::dateOriginal ) > ::warrantyDays )
+   METHOD isDateInWarrantyPeriod()        INLINE (!( ::isDateOutOfWarrantyPeriod() ) )
 
    METHOD searchLastSaleAlbaranesClientes()
    METHOD searchLastSaleFacturasClientes() 
@@ -44,7 +48,7 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( aLine, aHeader, nView ) CLASS ExportacionAlbaranes
+METHOD New( aLine, aHeader, nView )
 
    ::aLine     := aLine
    ::aHeader   := aHeader
@@ -55,16 +59,41 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD Run()
+   
+   local lQuestion   := .f.
 
-   if ::aLine[ ( D():AlbaranesClientesLineas( ::nView ) )->( fieldpos( "nUniCaja" ) ) ] < 0
+   if ::aLine[ ( D():AlbaranesClientesLineas( ::nView ) )->( fieldpos( "nUniCaja" ) ) ] >= 0
+      Return ( Self )
+   end if 
+   
+   ::loadProductInformation()
 
-      ::loadProductInformation()
+   ::searchLastSaleByClient()
 
-      ::searchLastSale()
+   msgAlert( ::isEmptyDateInWarrantyPeriod(), "::isEmptyDateInWarrantyPeriod()" )
+   msgAlert( ::isDateInWarrantyPeriod(), "::isDateInWarrantyPeriod()" )
 
+   if ::isEmptyDateInWarrantyPeriod() 
+      msgStop( "El producto " + alltrim( ::idProduct ) + " no aparece en operaciones de venta, en el cliente " + alltrim( ::idClient ) )
+      Return ( .f. )
    end if 
 
-Return ( Self )
+   if ::isDateInWarrantyPeriod()
+      Return ( .t. )
+   end if 
+
+   ::searchLastSaleAnonymus()
+
+   if ::isEmptyDateInWarrantyPeriod() 
+      Return ( .f. )
+   end if 
+
+   if ::isDateInWarrantyPeriod()
+      lQuestion      := msgNoYes( "El producto " + alltrim( ::idProduct ) + " se ha vendido en un cliente diferente a la venta actual", "¿ Desea proceder a la devolución ?" )
+      Return ( lQuestion )
+   end if 
+
+Return ( .f. )
 
 //---------------------------------------------------------------------------//
 
@@ -74,6 +103,7 @@ METHOD loadProductInformation()
    ::idFamily     := ::aLine[ ( D():AlbaranesClientesLineas( ::nView ) )->( fieldpos( "cCodFam" ) ) ]
    ::dateSale     := ::aLine[ ( D():AlbaranesClientesLineas( ::nView ) )->( fieldpos( "dFecAlb" ) ) ]
 
+   ::dateOriginal := ::aHeader[ ( D():AlbaranesClientes( ::nView ) )->( fieldpos( "dFecAlb" ) ) ]
    ::idClient     := ::aHeader[ ( D():AlbaranesClientes( ::nView ) )->( fieldpos( "cCodCli" ) ) ]
 
    ::warrantyDays := retFld( ::idFamily, D():Familias( ::nView ), "nDiaGrt" )
@@ -100,9 +130,9 @@ METHOD searchLastSale()
 
    end if 
 
-   msgAlert( ::priceSale, "::priceSale" )
-   msgAlert( ::unitsSale, "::unitsSale" )
-   msgAlert( ::lastDateSale , "::lastDateSale " )
+   msgAlert( ::priceSale,        "::priceSale" )
+   msgAlert( ::unitsSale,        "::unitsSale" )
+   msgAlert( ::lastDateSale ,    "::lastDateSale " )
 
 Return ( Self )
 
@@ -118,9 +148,9 @@ METHOD searchLastSaleAlbaranesClientes()
    
       while ( D():AlbaranesClientesLineas( ::nView ) )->cRef == ::idProduct                                 .and. ;
             ( empty( ::idClient ) .or. ( D():AlbaranesClientesLineas( ::nView ) )->cCodCli == ::idClient )  .and. ;
-            D():AlbaranClientesLineasNotEof( ::nView ) 
+            D():AlbaranesClientesLineasNotEof( ::nView ) 
 
-         if empty( ::lastDateSale ) .or. ( D():AlbaranesClientesLineas( ::nView ) )->dFecAlb < ::lastDateSale
+         if empty( ::lastDateSale ) .or. ( D():AlbaranesClientesLineas( ::nView ) )->dFecAlb > ::lastDateSale
             ::unitsSale    := ( D():AlbaranesClientesLineas( ::nView ) )->nUniCaja
             ::priceSale    := ( D():AlbaranesClientesLineas( ::nView ) )->nPreUnit
             ::lastDateSale := ( D():AlbaranesClientesLineas( ::nView ) )->dFecAlb  
@@ -138,66 +168,68 @@ METHOD searchLastSaleAlbaranesClientes()
 Return ( Self )
 
 //---------------------------------------------------------------------------//
-// TODO
 
 METHOD searchLastSaleFacturasClientes() 
 
-   D():getStatusAlbaranesClientesLineas( ::nView )
+   D():getStatusFacturasClientesLineas( ::nView )
 
-   D():setFocusAlbaranesClientesLineas( "cRefFec", ::nView )
+   D():setFocusFacturasClientesLineas( "cRefFec", ::nView )
 
-   if ( D():AlbaranesClientesLineas( ::nView ) )->( dbseek( ::idProduct + ::idClient ) )  
+   if ( D():FacturasClientesLineas( ::nView ) )->( dbseek( ::idProduct + ::idClient ) )  
    
-      while ( D():AlbaranesClientesLineas( ::nView ) )->cRef == ::idProduct                                 .and. ;
-            ( empty( ::idClient ) .or. ( D():AlbaranesClientesLineas( ::nView ) )->cCodCli == ::idClient )  .and. ;
-            D():AlbaranClientesLineasNotEof( ::nView ) 
+      while ( D():FacturasClientesLineas( ::nView ) )->cRef == ::idProduct                                 .and. ;
+            ( empty( ::idClient ) .or. ( D():FacturasClientesLineas( ::nView ) )->cCodCli == ::idClient )  .and. ;
+            D():FacturasClientesLineasNotEof( ::nView ) 
 
-         if empty( ::lastDateSale ) .or. ( D():AlbaranesClientesLineas( ::nView ) )->dFecAlb < ::lastDateSale
-            ::unitsSale    := ( D():AlbaranesClientesLineas( ::nView ) )->nUniCaja
-            ::priceSale    := ( D():AlbaranesClientesLineas( ::nView ) )->nPreUnit
-            ::lastDateSale := ( D():AlbaranesClientesLineas( ::nView ) )->dFecAlb  
+         if empty( ::lastDateSale ) .or. ( D():FacturasClientesLineas( ::nView ) )->dFecFac > ::lastDateSale
+            ::unitsSale    := ( D():FacturasClientesLineas( ::nView ) )->nUniCaja
+            ::priceSale    := ( D():FacturasClientesLineas( ::nView ) )->nPreUnit
+            ::lastDateSale := ( D():FacturasClientesLineas( ::nView ) )->dFecFac  
          end if
 
-         ( D():AlbaranesClientesLineas( ::nView ) )->( dbskip() )
+         ( D():FacturasClientesLineas( ::nView ) )->( dbskip() )
 
       end while
 
    end if 
 
-   D():setStatusAlbaranesClientesLineas( ::nView )
-
+   D():setStatusFacturasClientesLineas( ::nView )
 
 Return ( Self )
 
 //---------------------------------------------------------------------------//
-// TODO
 
 METHOD searchLastSaleTicketsClientes() 
 
-   D():getStatusAlbaranesClientesLineas( ::nView )
+   D():getStatusTiketsLineas( ::nView )
 
-   D():setFocusAlbaranesClientesLineas( "cRefFec", ::nView )
+   D():setFocusTiketsLineas( "cCbaTil", ::nView )
 
-   if ( D():AlbaranesClientesLineas( ::nView ) )->( dbseek( ::idProduct + ::idClient ) )  
+   if ( D():TiketsLineas( ::nView ) )->( dbseek( ::idProduct ) )  
    
-      while ( D():AlbaranesClientesLineas( ::nView ) )->cRef == ::idProduct                                 .and. ;
-            ( empty( ::idClient ) .or. ( D():AlbaranesClientesLineas( ::nView ) )->cCodCli == ::idClient )  .and. ;
-            D():AlbaranClientesLineasNotEof( ::nView ) 
+      while ( D():TiketsLineas( ::nView ) )->cCbaTil == ::idProduct .and. D():TiketsLineasNotEof( ::nView ) 
 
-         if empty( ::lastDateSale ) .or. ( D():AlbaranesClientesLineas( ::nView ) )->dFecAlb < ::lastDateSale
-            ::unitsSale    := ( D():AlbaranesClientesLineas( ::nView ) )->nUniCaja
-            ::priceSale    := ( D():AlbaranesClientesLineas( ::nView ) )->nPreUnit
-            ::lastDateSale := ( D():AlbaranesClientesLineas( ::nView ) )->dFecAlb  
-         end if
+         if D():gotoIdTikets( D():TiketsLineasId( ::nView ), ::nView ) 
 
-         ( D():AlbaranesClientesLineas( ::nView ) )->( dbskip() )
+            if ( empty( ::idClient ) .or. ( D():Tikets( ::nView ) )->cCliTik == ::idClient )
+
+               if empty( ::lastDateSale ) .or. ( D():Tikets( ::nView ) )->dFecTik > ::lastDateSale
+                  ::unitsSale    := ( D():TiketsLineas( ::nView ) )->nUntTil
+                  ::priceSale    := ( D():TiketsLineas( ::nView ) )->nPvpTil
+                  ::lastDateSale := ( D():Tikets( ::nView ) )->dFecTik  
+               end if
+
+            end if 
+
+         end if 
+
+         ( D():TiketsLineas( ::nView ) )->( dbskip() )
 
       end while
 
    end if 
 
-   D():setStatusAlbaranesClientesLineas( ::nView )
-
+   D():getStatusTiketsLineas( ::nView )
 
 Return ( Self )
 

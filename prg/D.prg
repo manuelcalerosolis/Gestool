@@ -130,12 +130,13 @@ CLASS D
 
    METHOD AlbaranesClientesLineas( nView )                  INLINE ( ::Get( "AlbCliL", nView ) )
       METHOD AlbaranesClientesLineasId( nView )             INLINE ( ( ::Get( "AlbCliL", nView ) )->cSerAlb + str( ( ::Get( "AlbCliL", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliL", nView ) )->cSufAlb )
+      METHOD AlbaranesClientesLineasEof( nView )            INLINE ( ( ::AlbaranesClientesLineas( nView ) )->( eof() ) )
+      METHOD AlbaranesClientesLineasNotEof( nView )         INLINE (!( ::AlbaranesClientesLineasEof( nView ) ) ) 
+
       METHOD getAlbaranClienteLineasHash( nView )           INLINE ( ::getHashRecord( ::AlbaranesClientesLineas( nView ), nView ) )
       METHOD getAlbaranClienteLineas( nView )               INLINE ( ::getArrayRecordById( ::AlbaranesClientesId( nView ), ::AlbaranesClientesLineas( nView ), nView ) )
       METHOD getAlbaranClienteLineaBlank( nView )           INLINE ( ::getHashRecordBlank( ::AlbaranesClientesLineas( nView ), nView ) )
       METHOD getAlbaranClienteLineaDefaultValues( nView )   INLINE ( ::getHashRecordDefaultValues( ::AlbaranesClientesLineas( nView ), nView ) )
-      METHOD AlbaranClientesLineasEof( nView )              INLINE ( ( ::AlbaranesClientesLineas( nView ) )->( eof() ) )
-      METHOD AlbaranClientesLineasNotEof( nView )           INLINE (!( ::AlbaranClientesLineasEof( nView ) ) ) 
 
    METHOD getStatusAlbaranesClientesLineas( nView )         INLINE ( ::aStatus := aGetStatus( ::AlbaranesClientesLineas( nView ) ) )
    METHOD setStatusAlbaranesClientesLineas( nView )         INLINE ( SetStatus( ::AlbaranesClientesLineas( nView ), ::aStatus ) )
@@ -180,10 +181,15 @@ CLASS D
 
    METHOD FacturasClientesLineas( nView )                   INLINE ( ::Get( "FacCliL", nView ) )
       METHOD FacturasClientesLineasId( nView )              INLINE ( ( ::Get( "FacCliL", nView ) )->cSerie + Str( ( ::Get( "FacCliL", nView ) )->nNumFac ) +  ( ::Get( "FacCliL", nView ) )->cSufFac )
-      METHOD GetFacturaClienteLineasHash( nView )           INLINE ( ::getHashRecord( ::FacturasClientesLineas( nView ), nView ) )
-      METHOD GetFacturaClienteLineas( nView )               INLINE ( ::getArrayRecordById( ::FacturasClientesId( nView ), ::FacturasClientesLineas( nView ), nView ) )
-      METHOD GetFacturaClienteLineaBlank( nView )           INLINE ( ::getHashRecordBlank( ::FacturasClientesLineas( nView ), nView ) )
-      METHOD GetFacturaClienteLineaDefaultValues( nView )   INLINE ( ::getHashRecordDefaultValues( ::FacturasClientesLineas( nView ), nView ) )
+      METHOD FacturasClientesLineasEof( nView )             INLINE ( ( ::FacturasClientesLineas( nView ) )->( eof() ) )
+      METHOD FacturasClientesLineasNotEof( nView )          INLINE (!( ::FacturasClientesLineasEof( nView ) ) ) 
+
+      METHOD setFocusFacturasClientesLineas( cTag, nView )  INLINE ( ::cTag   := ( ::FacturasClientesLineas( nView ) )->( ordSetFocus( cTag ) ) )
+
+      METHOD getFacturaClienteLineasHash( nView )           INLINE ( ::getHashRecord( ::FacturasClientesLineas( nView ), nView ) )
+      METHOD getFacturaClienteLineas( nView )               INLINE ( ::getArrayRecordById( ::FacturasClientesId( nView ), ::FacturasClientesLineas( nView ), nView ) )
+      METHOD getFacturaClienteLineaBlank( nView )           INLINE ( ::getHashRecordBlank( ::FacturasClientesLineas( nView ), nView ) )
+      METHOD getFacturaClienteLineaDefaultValues( nView )   INLINE ( ::getHashRecordDefaultValues( ::FacturasClientesLineas( nView ), nView ) )
 
    METHOD getStatusFacturasClientesLineas( nView )          INLINE ( ::aStatus := aGetStatus( ::FacturasClientesLineas( nView ) ) )
    METHOD setStatusFacturasClientesLineas( nView )          INLINE ( SetStatus( ::FacturasClientesLineas( nView ), ::aStatus ) )
@@ -237,9 +243,19 @@ CLASS D
 
    METHOD Tikets( nView )                                   INLINE ( ::Get( "TikeT", nView ) )
       METHOD TiketsId( nView )                              INLINE ( ( ::Tikets( nView ) )->cSerTik + ( ::Tikets( nView ) )->cNumTik + ( ::Tikets( nView ) )->cSufTik )
+      METHOD gotoIdTikets( id, nView )                      INLINE ( ::seekInOrd( ::Tikets( nView ), id, "cNumTik" ) ) 
 
    METHOD TiketsLineas( nView )                             INLINE ( ::Get( "TikeL", nView ) )
       METHOD TiketsLineasId( nView )                        INLINE ( ( ::TiketsLineas( nView ) )->cSerTil + ( ::TiketsLineas( nView ) )->cNumTil + ( ::TiketsLineas( nView ) )->cSufTil )
+      METHOD gotoIdTiketsLineas( id, nView )                INLINE ( ::seekInOrd( ::TiketsLineas( nView ), id, "cNumTil" ) ) 
+
+      METHOD setFocusTiketsLineas( cTag, nView )            INLINE ( ::cTag   := ( ::TiketsLineas( nView ) )->( ordSetFocus( cTag ) ) )
+
+      METHOD TiketsLineasEof( nView )                       INLINE ( ( ::TiketsLineas( nView ) )->( eof() ) )
+      METHOD TiketsLineasNotEof( nView )                    INLINE (!( ::TiketsLineasEof( nView ) ) ) 
+
+   METHOD getStatusTiketsLineas( nView )                    INLINE ( ::aStatus := aGetStatus( ::TiketsLineas( nView ) ) )
+   METHOD setStatusTiketsLineas( nView )                    INLINE ( SetStatus( ::TiketsLineas( nView ), ::aStatus ) )
 
    // Pedidos de clientes------------------------------------------------------
 

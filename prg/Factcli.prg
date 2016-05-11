@@ -19072,13 +19072,13 @@ Cambia el importe unitario de la linea
 
 FUNCTION SetUFacCli( dbfLin, nNewVal )
 
-   	DEFAULT dbfLin    			:= D():FacturasClientesLineas( nView )
+   DEFAULT dbfLin             := D():FacturasClientesLineas( nView )
 
-    if ( dbfLin )->lAlquiler
-       ( dbfLin )->nPreAlq 		:= nNewVal
-    else
-       ( dbfLin )->nPreUnit  	:= nNewVal
-    end if
+   if ( dbfLin )->lAlquiler
+      ( dbfLin )->nPreAlq     := nNewVal
+   else
+      ( dbfLin )->nPreUnit  	:= nNewVal
+   end if
 
 RETURN ( nil )
 

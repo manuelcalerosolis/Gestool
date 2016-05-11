@@ -65,7 +65,7 @@ Ficheros-----------------------------------------------------------------------
 #define _CCODOBR                   35     //   C,     3,     0
 #define _NCOMAGE                   36     //   N      5,     1
 #define _LLIQTIK                   37     //   L      1,     0
-#define _CCODPRO                   38     //   C      9,     0, "Codigo de proyecto en contabilidad"} }
+#define _CCODPRO                   38     //   C      9,     0
 #define _LCONTIK                   39     //   L      1,     0
 #define _DFECCRE                   40
 #define _CTIMCRE                   41
@@ -593,7 +593,7 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       SET ADSINDEX TO ( cPatEmp + "TIKET.CDX" ) ADDITIVE
 
       USE ( cPatEmp + "TIKEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEL", @dbfTikL ) )
-      SET ADSINDEX TO ( cPatEmp + "TIKEL.CDX" ) ADDITIVE
+      SET ADSINDEX TO ( cPatEmp + "TikeL.Cdx" ) ADDITIVE
 
       USE ( cPatEmp + "TIKEP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEP", @dbfTikP ) )
       SET ADSINDEX TO ( cPatEmp + "TIKEP.CDX" ) ADDITIVE
@@ -6124,7 +6124,7 @@ Function nImpValTik( cNumTik, cTikT, cTikL, cDiv, cDivRet )
    DEFAULT cNumTik   := ( cTikT )->cSerTik + ( cTikT )->cNumTik + ( cTikT )->cSufTik
 
    USE ( cPatEmp() + "TIKEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEL", @cTikL ) )
-   SET ADSINDEX TO ( cPatEmp() + "TIKEL.CDX" ) ADDITIVE
+   SET ADSINDEX TO ( cPatEmp() + "TikeL.Cdx" ) ADDITIVE
 
    cCodDiv           := ( cTikT )->cDivTik
    nRecAnt           := ( cTikT )->( Recno() )
@@ -6194,7 +6194,7 @@ Function nImpValCli( cCliTik, cTikT, cTikL, cDiv, cDivRet )
    DEFAULT cCliTik   := ( cTikT )->cCliTik
 
    USE ( cPatEmp() + "TIKEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEL", @cTikL ) )
-   SET ADSINDEX TO ( cPatEmp() + "TIKEL.CDX" ) ADDITIVE
+   SET ADSINDEX TO ( cPatEmp() + "TikeL.Cdx" ) ADDITIVE
 
    cCodDiv           := ( cTikT )->cDivTik
    nRecAnt           := ( cTikT )->( Recno() )
@@ -6329,7 +6329,7 @@ Function nTotValTikInfo( cNumTik, cTikT, cDiv, cDivRet, lPic )
    */
 
    USE ( cPatEmp() + "TIKEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEL", @dbfTmpTikL ) )
-   SET ADSINDEX TO ( cPatEmp() + "TIKEL.CDX" ) ADDITIVE
+   SET ADSINDEX TO ( cPatEmp() + "TikeL.Cdx" ) ADDITIVE
    ( dbfTmpTikL )->( OrdSetFocus( "cNumTil" ) )
 
    cPorDiv           := cPorDiv( cCodDiv, cDiv ) // Picture de la divisa redondeada
@@ -13803,7 +13803,7 @@ Method CreateData() CLASS TTiketsClientesSenderReciver
    SET TAG TO "lSndDoc"
 
    USE ( cPatEmp() + "TIKEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEL", @dbfTikL ) )
-   SET ADSINDEX TO ( cPatEmp() + "TIKEL.CDX" ) ADDITIVE
+   SET ADSINDEX TO ( cPatEmp() + "TikeL.Cdx" ) ADDITIVE
 
    USE ( cPatEmp() + "TIKEP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEP", @dbfTikP ) )
    SET ADSINDEX TO ( cPatEmp() + "TIKEP.CDX" ) ADDITIVE
@@ -13818,7 +13818,7 @@ Method CreateData() CLASS TTiketsClientesSenderReciver
    SET INDEX TO ( cPatSnd() + "TIKET.CDX" ) ADDITIVE
 
    USE ( cPatSnd() + "TIKEL.DBF" ) NEW VIA ( cLocalDriver() )ALIAS ( cCheckArea( "TIKEL", @tmpTikL ) )
-   SET INDEX TO ( cPatSnd() + "TIKEL.CDX" ) ADDITIVE
+   SET INDEX TO ( cPatSnd() + "TikeL.Cdx" ) ADDITIVE
 
    USE ( cPatSnd() + "TIKEP.DBF" ) NEW VIA ( cLocalDriver() )ALIAS ( cCheckArea( "TIKEP", @tmpTikP ) )
    SET INDEX TO ( cPatSnd() + "TIKEP.CDX" ) ADDITIVE
@@ -14031,7 +14031,7 @@ Method Process() CLASS TTiketsClientesSenderReciver
             SET ADSINDEX TO ( cPatEmp() + "TIKET.CDX" ) ADDITIVE
 
             USE ( cPatEmp() + "TIKEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEL", @dbfTikL ) )
-            SET ADSINDEX TO ( cPatEmp() + "TIKEL.CDX" ) ADDITIVE
+            SET ADSINDEX TO ( cPatEmp() + "TikeL.Cdx" ) ADDITIVE
 
             USE ( cPatEmp() + "TIKEP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEP", @dbfTikP ) )
             SET ADSINDEX TO ( cPatEmp() + "TIKEP.CDX" ) ADDITIVE
@@ -14040,7 +14040,7 @@ Method Process() CLASS TTiketsClientesSenderReciver
             SET INDEX TO ( cPatSnd() + "TIKET.CDX" ) ADDITIVE
 
             USE ( cPatSnd() + "TIKEL.DBF" ) NEW VIA ( cLocalDriver() )READONLY ALIAS ( cCheckArea( "TIKEL", @tmpTikL ) )
-            SET INDEX TO ( cPatSnd() + "TIKEL.CDX" ) ADDITIVE
+            SET INDEX TO ( cPatSnd() + "TikeL.Cdx" ) ADDITIVE
 
             USE ( cPatSnd() + "TIKEP.DBF" ) NEW VIA ( cLocalDriver() )READONLY ALIAS ( cCheckArea( "TIKEP", @tmpTikP ) )
             SET INDEX TO ( cPatSnd() + "TIKEP.CDX" ) ADDITIVE
@@ -15480,7 +15480,7 @@ Function SynTikCli( cPath )
    SET ADSINDEX TO ( cPath + "TIKET.CDX" ) ADDITIVE
 
    USE ( cPath + "TIKEL.DBF" )         NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "TIKEL", @dbfTikL ) ) EXCLUSIVE
-   SET ADSINDEX TO ( cPath + "TIKEL.CDX" ) ADDITIVE
+   SET ADSINDEX TO ( cPath + "TikeL.Cdx" ) ADDITIVE
 
    USE ( cPath + "TIKEP.DBF" )         NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "TIKEP", @dbfTikP ) ) EXCLUSIVE
    SET ADSINDEX TO ( cPath + "TIKEP.CDX" ) ADDITIVE
@@ -17048,28 +17048,28 @@ FUNCTION rxTpv( cPath, cDriver )
       ( dbfTikL )->( __dbPack() )
 
       ( dbfTikL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfTikL )->( ordCreate( cPath + "TIKEL.CDX", "CNUMTIL", "CSERTIL + CNUMTIL + CSUFTIL", {|| Field->CSERTIL + Field->CNUMTIL + Field->CSUFTIL } ) )
+      ( dbfTikL )->( ordCreate( cPath + "TikeL.Cdx", "CNUMTIL", "CSERTIL + CNUMTIL + CSUFTIL", {|| Field->CSERTIL + Field->CNUMTIL + Field->CSUFTIL } ) )
 
       ( dbfTikL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfTikL )->( ordCreate( cPath + "TIKEL.CDX", "CCBATIL", "CCBATIL", {|| Field->CCBATIL } ) )
+      ( dbfTikL )->( ordCreate( cPath + "TikeL.Cdx", "CCBATIL", "CCBATIL", {|| Field->CCBATIL } ) )
 
       ( dbfTikL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfTikL )->( ordCreate( cPath + "TIKEL.CDX", "CCOMTIL", "CCOMTIL", {|| Field->CCOMTIL } ) )
+      ( dbfTikL )->( ordCreate( cPath + "TikeL.Cdx", "CCOMTIL", "CCOMTIL", {|| Field->CCOMTIL } ) )
 
       ( dbfTikL )->( ordCondSet("!Deleted() .and. cTipTil != '2' .and. cTipTil != '3' .and. nCtlStk < 2", {||!Deleted() .and. Field->cTipTil != '2' .and. Field->cTipTil != '3' .and. Field->nCtlStk < 2 }, , , , , , , , , .t. ) )
-      ( dbfTikL )->( ordCreate( cPath + "TIKEL.CDX", "cStkFast", "cCbaTil + cAlmLin + dtos( dFecTik )", {|| Field->cCbaTil + Field->cAlmLin + dtos( Field->dFecTik ) } ) )
+      ( dbfTikL )->( ordCreate( cPath + "TikeL.Cdx", "cStkFast", "cCbaTil + cAlmLin + dtos( dFecTik )", {|| Field->cCbaTil + Field->cAlmLin + dtos( Field->dFecTik ) } ) )
 
       ( dbfTikL )->( ordCondSet("!Deleted() .and. cComTil != '' .and. cTipTil != '2' .and. cTipTil != '3' .and. nCtlStk < 2", {||!Deleted() .and. Field->cComTil != '' .and. Field->cTipTil != '2' .and. Field->cTipTil != '3' .and. Field->nCtlStk < 2 }, , , , , , , , , .t. ) )
-      ( dbfTikL )->( ordCreate( cPath + "TIKEL.CDX", "cStkComb", "cComTil  + cAlmLin + dtos( dFecTik )", {|| Field->cComTil + Field->cAlmLin + dtos( Field->dFecTik ) } ) )
+      ( dbfTikL )->( ordCreate( cPath + "TikeL.Cdx", "cStkComb", "cComTil  + cAlmLin + dtos( dFecTik )", {|| Field->cComTil + Field->cAlmLin + dtos( Field->dFecTik ) } ) )
 
       ( dbfTikL )->( ordCondSet("!Deleted() .and. cTipTil == '6' ", {||!Deleted()  .and. Field->cTipTil == '6' } ) )
-      ( dbfTikL )->( ordCreate( cPath + "TIKEL.CDX", "cTikVal", "CSERTIL + CNUMTIL + CSUFTIL", {|| Field->CSERTIL + Field->CNUMTIL + Field->CSUFTIL } ) )
+      ( dbfTikL )->( ordCreate( cPath + "TikeL.Cdx", "cTikVal", "CSERTIL + CNUMTIL + CSUFTIL", {|| Field->CSERTIL + Field->CNUMTIL + Field->CSUFTIL } ) )
 
       ( dbfTikL )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfTikL )->( ordCreate( cPath + "TIKEL.CDX", "nOrTImp", "nOrTImp", {|| Field->nOrTImp } ) )
+      ( dbfTikL )->( ordCreate( cPath + "TikeL.Cdx", "nOrTImp", "nOrTImp", {|| Field->nOrTImp } ) )
 
       ( dbfTikL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfTikL )->( ordCreate( cPath + "TIKEL.CDX", "CNUMCBA", "CSERTIL + CNUMTIL + CSUFTIL + CCBATIL", {|| Field->CSERTIL + Field->CNUMTIL + Field->CSUFTIL + Field->CCBATIL } ) )
+      ( dbfTikL )->( ordCreate( cPath + "TikeL.Cdx", "CNUMCBA", "CSERTIL + CNUMTIL + CSUFTIL + CCBATIL", {|| Field->CSERTIL + Field->CNUMTIL + Field->CSUFTIL + Field->CCBATIL } ) )
 
       ( dbfTikL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfTikL )->( ordCreate( cPath + "TikeL.Cdx", "cNumDev", "cNumDev + Str( nNumLin )", {|| Field->cNumDev + Str( Field->nNumLin ) } ) )
@@ -17081,8 +17081,7 @@ FUNCTION rxTpv( cPath, cDriver )
       ( dbfTikL )->( ordCreate( cPath + "TikeL.Cdx", "iNumTik", "'12' + cSerTil + cNumTil + cSufTil", {|| '12' + Field->cSerTil + Field->cNumTil + Field->cSufTil } ) )
 
       ( dbfTikL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfTikL )->( ordCreate( cPath + "TIKEL.CDX", "nOrdLin", "cSerTil + cNumTil + cSufTil + Str( nLinMnu ) + Str( nNumLin )", {|| Field->cSerTil + Field->cNumTil + Field->cSufTil + Str( Field->nLinMnu ) + Str( Field->nNumLin ) } ) )
-
+      ( dbfTikL )->( ordCreate( cPath + "TikeL.Cdx", "nOrdLin", "cSerTil + cNumTil + cSufTil + Str( nLinMnu ) + Str( nNumLin )", {|| Field->cSerTil + Field->cNumTil + Field->cSufTil + Str( Field->nLinMnu ) + Str( Field->nNumLin ) } ) )
 
       ( dbfTikL )->( dbCloseArea() )
    else
