@@ -102,6 +102,8 @@ CLASS TAtipicas FROM TDet
    DATA oDescuento5
    DATA oDescuento6
 
+   DATA oCodEnvase
+
    DATA oPrecioCompra
    DATA nPrecioCompra                  INIT 0
 
@@ -713,6 +715,17 @@ METHOD Resource( nMode ) CLASS TAtipicas
          PICTURE  "@E 999.99";
          OF       ::oFld:aDialogs[1]
 
+      REDEFINE GET   ::oCodEnvase ;
+         VAR      ::oDbfVir:CCODENV ; 
+         ID       460 ;
+         IDTEXT   461 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         BITMAP   "LUPA" ;
+         OF       ::oFld:aDialogs[1]
+
+         ::oCodEnvase:bValid := {|| ::oParent:oEnvases:Existe( ::oCodEnvase, ::oCodEnvase:oHelpText ) }
+         ::oCodEnvase:bHelp  := {|| ::oParent:oEnvases:Buscar( ::oCodEnvase ) }
+
       /*
       Segunda caja de dialogo--------------------------------------------------
       */
@@ -1035,10 +1048,10 @@ METHOD Expandir( lSet )
 
    if ::lExpandida
       SetWindowText( ::oBtnExpandir:hWnd, "Retabilidad <" )
-      ::oDlg:Move( oRect:nTop, oRect:nLeft, 800, 522, .t. )
+      ::oDlg:Move( oRect:nTop, oRect:nLeft, 800, 550, .t. )
    else
       SetWindowText( ::oBtnExpandir:hWnd, "Retabilidad >" )
-      ::oDlg:Move( oRect:nTop, oRect:nLeft, 463, 522, .t. )
+      ::oDlg:Move( oRect:nTop, oRect:nLeft, 463, 550, .t. )
    end if
 
 RETURN ( .t. )

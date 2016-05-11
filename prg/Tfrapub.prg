@@ -66,7 +66,7 @@ METHOD New( cPath, oWndParent, oMenuItem )
    ::lAutoButtons       := .t.
    ::lCreateShell       := .f.
 
-   ::bOnPreDelete       := {|| MsgInfo( ::oDbf:cCodFra, "Antes" ), ::oDetCamposExtra:RollBackValores( ::oDbf:cCodFra ) }
+   ::bOnPreDelete       := {|| ::oDetCamposExtra:RollBackValores( ::oDbf:cCodFra ) }
 
 RETURN ( Self )
 
@@ -422,14 +422,29 @@ METHOD CargaValoresCamposExtra()
 
    ::oDetCamposExtra:Play( ::oDbf:cCodFra, .f. )
 
+   if len( ::oDetCamposExtra:aCamposExtra ) == 0
+
+      aAdd( ::oDetCamposExtra:aCamposExtra,  {  "código"       => Space(1),;
+                                                "descripción"  => Space(1),;
+                                                "tipo"         => 1,;
+                                                "longitud"     => 1,;
+                                                "decimales"    => 0,;
+                                                "lrequerido"   => .f.,;
+                                                "valores"      => Space(1),;
+                                                "valor"        => Space(1) } )
+
+   end if
+
 Return ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD SaveCamposExtra()
 
-   ::oDetCamposExtra:RollBackValores( ::oDbf:cCodFra )
-   ::oDetCamposExtra:GuardaValores( ::oDbf:cCodFra )
+   if Len( ::oDetCamposExtra:aCamposExtra ) > 1 .and. !Empty( hGet( ::oDetCamposExtra:aCamposExtra[1], "código" ) )
+      ::oDetCamposExtra:RollBackValores( ::oDbf:cCodFra )
+      ::oDetCamposExtra:GuardaValores( ::oDbf:cCodFra )
+   end if
 
 Return ( nil )
 

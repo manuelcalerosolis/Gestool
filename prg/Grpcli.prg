@@ -17,6 +17,8 @@ CLASS TGrpCli FROM TMasDet
 
    DATA  oTreePadre
 
+   DATA  oEnvases
+
    METHOD New( cPath, cDriver, oWndParent, oMenuItem )   CONSTRUCTOR
    METHOD Create( cPath, cDriver )                       CONSTRUCTOR
 
@@ -132,6 +134,11 @@ METHOD OpenFiles( lExclusive, cPath )
 
       D():Get( "Artdiv", ::nView )
 
+      ::oEnvases        := TFrasesPublicitarias():Create( cPatArt() )
+      if !::oEnvases:OpenFiles()
+         lOpen          := .f.
+      end if
+
    RECOVER USING oError
 
       MsgStop( ErrorMessage( oError ), 'Imposible abrir ficheros de grupos de clientes' )
@@ -156,6 +163,11 @@ METHOD CloseFiles()
 
    TAtipicas():GetInstance():CloseFiles()
    TAtipicas():EndInstance()
+
+   if !Empty( ::oEnvases )
+      ::oEnvases:end()
+      ::oEnvases  := nil
+   end if
 
    if !empty( ::nView )
 

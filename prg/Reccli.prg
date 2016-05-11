@@ -128,6 +128,11 @@ static cOldCodCli             := ""
 
 static lOldDevuelto           := .f.
 
+static cReciboAnterior
+static nRecnoAnterior
+static nOrdenAnterior
+static dbfMatriz
+
 static bEdit                  := { |aTmp, aGet, dbf, oBrw, lRectificativa, nSpecialMode, nMode, aTmpFac| EdtCob( aTmp, aGet, dbf, oBrw, lRectificativa, nSpecialMode, nMode, aTmpFac ) }
 
 static hEstadoRecibo          := {  "Pendiente"             => "bCancel",;
@@ -198,6 +203,10 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():ClientesBancos( nView )
 
+      USE ( cPatEmp() + "FacCliP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliP", @dbfMatriz ) )
+      SET ADSINDEX TO ( cPatEmp() + "FacCliP.CDX" ) ADDITIVE
+      SET TAG TO "cNumMtr"
+
       oCtaRem              := TCtaRem():Create( cPatCli() )
       oCtaRem:OpenFiles()
 
@@ -231,7 +240,12 @@ STATIC FUNCTION CloseFiles()
       oCentroCoste:CloseFiles()
    end if
 
+   if !Empty( dbfMatriz )
+      ( dbfMatriz )->( dbCloseArea() )
+   end if
+
    oWndBrw     := nil
+   dbfMatriz   := nil
 
    lOpenFiles  := .f.
 
@@ -4057,6 +4071,9 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Bancos", ( D():ClientesBancos( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Bancos", cItemsToReport( aCliBnc() ) )
 
+   oFr:SetWorkArea(     "Compensaciones", ( dbfMatriz )->( Select() ) )
+   oFr:SetFieldAliases( "Compensaciones", cItemsToReport( aItmRecCli() ) )
+
    oFr:SetMasterDetail( "Recibos", "Facturas",                 {|| ( D():FacturasClientesCobros( nView ) )->cSerie + Str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac } )
    oFr:SetMasterDetail( "Recibos", "Facturas rectificativas",  {|| ( D():FacturasClientesCobros( nView ) )->cSerie + Str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac } )
    oFr:SetMasterDetail( "Recibos", "Empresa",                  {|| cCodigoEmpresaEnUso() } )
@@ -4064,6 +4081,7 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Recibos", "Formas de pago",           {|| ( D():FacturasClientesCobros( nView ) )->cCodPgo } )
    oFr:SetMasterDetail( "Recibos", "Agentes",                  {|| ( D():FacturasClientesCobros( nView ) )->cCodAge } )
    oFr:SetMasterDetail( "Recibos", "Bancos",                   {|| ( D():FacturasClientesCobros( nView ) )->cCodCli } )
+   oFr:SetMasterDetail( "Recibos", "Compensaciones",           {|| ( D():FacturasClientesCobros( nView ) )->cSerie + Str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac + Str( ( D():FacturasClientesCobros( nView ) )->nNumRec ) + ( D():FacturasClientesCobros( nView ) )->cTipRec } )
 
    oFr:SetResyncPair(   "Recibos", "Facturas" )
    oFr:SetResyncPair(   "Recibos", "Facturas rectificativas" )
@@ -4072,6 +4090,7 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Recibos", "Formas de pago" )
    oFr:SetResyncPair(   "Recibos", "Agentes" )
    oFr:SetResyncPair(   "Recibos", "Bancos" )
+   oFr:SetResyncPair(   "Recibos", "Compensaciones" )
 
 Return nil
 
@@ -6040,6 +6059,73 @@ static Function aRecibosAgrupados( uFacCliP )
   
    ( uFacCliP )->( ordsetfocus( nOrd ) )
    ( uFacCliP )->( dbgoto( nRec ) )
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+Function ClearFiltersRecibosClientes()
+
+   local cNumMatriz
+
+   MsgInfo( "Quito todos los filtros" )
+
+   /*
+   Guardo el número del recibo para volver a poner el Scope--------------------
+   */
+
+   cReciboAnterior   := ( D():FacturasClientesCobros( nView ) )->cSerie + Str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac + Str( ( D():FacturasClientesCobros( nView ) )->nNumRec )
+   cNumMatriz        := ( D():FacturasClientesCobros( nView ) )->cSerie + Str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac + Str( ( D():FacturasClientesCobros( nView ) )->nNumRec ) + ( D():FacturasClientesCobros( nView ) )->cTipRec
+   nRecnoAnterior    := ( D():FacturasClientesCobros( nView ) )->( Recno() )
+
+   /*
+   Limpiamos el Scope----------------------------------------------------------
+   */
+
+   ( D():FacturasClientesCobros( nView ) )->( OrdScope( 0, nil ) )
+   ( D():FacturasClientesCobros( nView ) )->( OrdScope( 1, nil ) )
+
+   /*
+   Cambiamos de orden y ponemos el scope de nuevo------------------------------
+   */   
+
+   nOrdenAnterior    := ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( "cNumMtr" ) )
+
+   if ( D():FacturasClientesCobros( nView ) )->( dbSeek( cNumMatriz ) )
+      MsgInfo( "He encontrado con exito", cNumMatriz )
+      ( D():FacturasClientesCobros( nView ) )->( OrdScope( 0, cNumMatriz ) )
+      ( D():FacturasClientesCobros( nView ) )->( OrdScope( 1, cNumMatriz ) )
+      ( D():FacturasClientesCobros( nView ) )->( dbGoTop() )
+
+      MsgInfo( ( D():FacturasClientesCobros( nView ) )->( OrdKeyCount() ) , "registros")
+   end if
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+Function RestoreFiltersRecibosClientes()
+
+   MsgInfo( "Restauro la tabla a donde estaba" )
+
+   /*
+   Limpiamos el Scope----------------------------------------------------------
+   */
+
+   ( D():FacturasClientesCobros( nView ) )->( OrdScope( 0, nil ) )
+   ( D():FacturasClientesCobros( nView ) )->( OrdScope( 1, nil ) )
+
+   /*
+   Cambiamos de orden y ponemos el scope de nuevo------------------------------
+   */   
+
+   ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( nOrdenAnterior ) )
+
+   if ( D():FacturasClientesCobros( nView ) )->( dbSeek( cReciboAnterior ) )
+      ( D():FacturasClientesCobros( nView ) )->( OrdScope( 0, cReciboAnterior ) )
+      ( D():FacturasClientesCobros( nView ) )->( OrdScope( 1, cReciboAnterior ) )
+      ( D():FacturasClientesCobros( nView ) )->( dbGoTop() )
+   end if
 
 Return nil
 
