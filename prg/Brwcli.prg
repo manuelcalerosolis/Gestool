@@ -137,6 +137,7 @@ Static Function OpenFiles( cCodCli, lMessage )
 
       USE ( cPatEmp() + "SATCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SATCLIT", @dbfSatCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "SATCLIT.CDX" ) ADDITIVE
+      SET TAG TO "CCODCLI"
 
       USE ( cPatEmp() + "SATCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SATCLIL", @dbfSatCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "SATCLIL.CDX" ) ADDITIVE
@@ -541,6 +542,7 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
          :AddResource( "Clipboard_empty_money_16" )
          :AddResource( "Document_plain_money_16" )
          :AddResource( "Cashier_user1_16" )
+         :AddResource( "Power-drill_user1_16" )
       end with
 
       with object ( oBrwTmp:addCol() )
@@ -794,12 +796,14 @@ Static Function initDialog( cCodCli, oBrwTmp, oTree, oDlg )
    oTreeImageList:AddMasked( TBitmap():Define( "Money_envelope_16" ),         Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_money_16" ),  Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_money_16" ),   Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "Power-drill_user1_16" ),      Rgb( 255, 0, 255 ) )
 
    oTree:SetImageList( oTreeImageList )
 
    oTreeDocument     := oTree:Add( "Todos los documentos", 0 )
 
    oTreeDocumentos   := oTreeDocument:Add( "Documentos", 9 )
+   oTreeDocumentos:Add( cTextoDocumento( SAT_CLI ), 13 )
    oTreeDocumentos:Add( cTextoDocumento( PRE_CLI ), 1 )
    oTreeDocumentos:Add( cTextoDocumento( PED_CLI ), 2 )
    oTreeDocumentos:Add( cTextoDocumento( ALB_CLI ), 3 )
@@ -828,27 +832,32 @@ Static Function initDialog( cCodCli, oBrwTmp, oTree, oDlg )
 
          MENU
 
-         MENUITEM "&1. Añadir presupuesto de cliente";
+         MENUITEM "&1. Añadir SAT de cliente";
+            MESSAGE  "Añade un SAT de cliente" ;
+            RESOURCE "Power-drill_user1_16";
+            ACTION   ( AppSatCli( cCodCli ) )
+
+         MENUITEM "&2. Añadir presupuesto de cliente";
             MESSAGE  "Añade un presupuesto de cliente" ;
             RESOURCE "Notebook_user1_16";
             ACTION   ( AppPreCli( cCodCli ) )
 
-         MENUITEM "&2. Añadir pedido de cliente";
+         MENUITEM "&3. Añadir pedido de cliente";
             MESSAGE  "Añade un pedido de cliente" ;
             RESOURCE "Clipboard_empty_user1_16";
             ACTION   ( AppPedCli( cCodCli ) )
 
-         MENUITEM "&3. Añadir albarán de cliente";
+         MENUITEM "&4. Añadir albarán de cliente";
             MESSAGE  "Añade un albarán de cliente" ;
             RESOURCE "Document_plain_user1_16";
             ACTION   ( AppAlbCli( { "Cliente" => cCodCli } ) )
 
-         MENUITEM "&4. Añadir factura de cliente";
+         MENUITEM "&5. Añadir factura de cliente";
             MESSAGE  "Añade una factura de cliente" ;
             RESOURCE "Document_user1_16";
             ACTION   ( AppFacCli( cCodCli ) )
 
-         MENUITEM "&5. Añadir tiket de cliente";
+         MENUITEM "&6. Añadir tiket de cliente";
             MESSAGE  "Añade un tiket de cliente" ;
             RESOURCE "Cashier_user1_16";
             ACTION   ( AppTikCli( cCodCli ) )
@@ -960,6 +969,9 @@ Static Function LoadDatos( cCodCli, oDlg, Anio, oBrwVta )
    */
 
    oText:SetText( "Cargando los documentos" )
+
+   LoadSATCliente( cCodCli, dbfDiv, dbfIva, if( Anio == "Todos", nil, Val( Anio ) ) )
+   oMeter:AutoInc()
 
    LoadPresupuestoCliente( cCodCli, dbfDiv, dbfIva, if( Anio == "Todos", nil, Val( Anio ) ) )
    oMeter:AutoInc()
@@ -1077,6 +1089,10 @@ Static Function TreeChanged( oTree, oBrwTmp )
 
    do case
 
+      case cText == cTextoDocumento( SAT_CLI )
+         oDbfTmp:OrdSetFocus( "cTypDoc" )
+         oDbfTmp:OrdScope( SAT_CLI )
+
       case cText == cTextoDocumento( PRE_CLI )
          oDbfTmp:OrdSetFocus( "cTypDoc" )
          oDbfTmp:OrdScope( PRE_CLI )
@@ -1159,6 +1175,9 @@ Static Function nImagenDocument()
 
    do case
 
+      case oDbfTmp:nTypDoc == SAT_CLI
+         Return ( 12 )
+
       case oDbfTmp:nTypDoc == PRE_CLI
          Return ( 1 )
 
@@ -1210,6 +1229,9 @@ Return ( 1 )
 Static Function EditDocument( oBrwTmp )
 
    do case
+      case oDbfTmp:nTypDoc == SAT_CLI
+         EdtSatCli( oDbfTmp:cNumDoc )
+
       case oDbfTmp:nTypDoc == PRE_CLI
          EdtPreCli( oDbfTmp:cNumDoc )
 
@@ -1249,6 +1271,9 @@ Return nil
 Static Function ZoomDocument( oBrwTmp )
 
    do case
+      case oDbfTmp:nTypDoc == SAT_CLI
+         ZooSatCli( oDbfTmp:cNumDoc )
+
       case oDbfTmp:nTypDoc == PRE_CLI
          ZooPreCli( oDbfTmp:cNumDoc )
 
@@ -1288,6 +1313,9 @@ Return nil
 Static Function DeleteDocument( oBrwTmp )
 
    do case
+      case oDbfTmp:nTypDoc == SAT_CLI
+         DelSatCli( oDbfTmp:cNumDoc )
+
       case oDbfTmp:nTypDoc == PRE_CLI
          DelPreCli( oDbfTmp:cNumDoc )
 
@@ -1327,6 +1355,9 @@ Return nil
 Static Function VisualizaDocument( oBrwTmp )
 
    do case
+      case oDbfTmp:nTypDoc == SAT_CLI
+         VisSatCli( oDbfTmp:cNumDoc )
+
       case oDbfTmp:nTypDoc == PRE_CLI
          VisPreCli( oDbfTmp:cNumDoc )
 
@@ -1366,6 +1397,9 @@ Return nil
 Static Function PrintDocument( oBrwTmp )
 
    do case
+      case oDbfTmp:nTypDoc == SAT_CLI
+         PrnSatCli( oDbfTmp:cNumDoc )
+
       case oDbfTmp:nTypDoc == PRE_CLI
          PrnPreCli( oDbfTmp:cNumDoc )
 
@@ -1427,10 +1461,10 @@ Static Function DefineTemporal( cPath, lUniqueName, cFileName )
       FIELD NAME "nImpDoc" TYPE "N" LEN 16 DEC 6 COMMENT "Importe del documento" OF oDbf
       FIELD NAME "cDivisa" TYPE "C" LEN  3 DEC 0 COMMENT "Divisa del documento"  OF oDbf
 
-      INDEX TO ( cFileName ) TAG "cAllDoc" ON "Dtos( dFecDoc )"                                                                                                           OF oDbf
-      INDEX TO ( cFileName ) TAG "cTypDoc" ON "nTypDoc + Dtos( dFecDoc )"                                                                                                 OF oDbf
-      INDEX TO ( cFileName ) TAG "cDocume" ON "Dtos( dFecDoc )" FOR "( nTypDoc >= '05' .and. nTypDoc <= '09' ) .or. ( nTypDoc >= '12' .and. nTypDoc <= '14' )"            OF oDbf
-      INDEX TO ( cFileName ) TAG "cCobros" ON "Dtos( dFecDoc )" FOR "nTypDoc == '10' .or. nTypDoc == '15' .or. nTypDoc == '21' .or. nTypDoc == '22' .or. nTypDoc == '30'" OF oDbf
+      INDEX TO ( cFileName ) TAG "cAllDoc" ON "Dtos( dFecDoc )"                                                                                                                           OF oDbf
+      INDEX TO ( cFileName ) TAG "cTypDoc" ON "nTypDoc + Dtos( dFecDoc )"                                                                                                                 OF oDbf
+      INDEX TO ( cFileName ) TAG "cDocume" ON "Dtos( dFecDoc )" FOR "( nTypDoc >= '05' .and. nTypDoc <= '09' ) .or. ( nTypDoc >= '12' .and. nTypDoc <= '14' ) .or. ( nTypDoc == '32')"    OF oDbf
+      INDEX TO ( cFileName ) TAG "cCobros" ON "Dtos( dFecDoc )" FOR "nTypDoc == '10' .or. nTypDoc == '15' .or. nTypDoc == '21' .or. nTypDoc == '22' .or. nTypDoc == '30'"                 OF oDbf
 
    END DATABASE oDbf
 
@@ -1445,6 +1479,8 @@ Function cTextoDocumento( nTypDoc )
    DEFAULT nTypDoc      := oDbfTmp:nTypDoc
 
    do case
+      case nTypDoc == SAT_CLI
+         cTextDocument  := "SAT"
       case nTypDoc == PRE_CLI
          cTextDocument  := "Presupuestos"
       case nTypDoc == PED_CLI
@@ -1476,6 +1512,42 @@ Function cTextoDocumento( nTypDoc )
    end case
 
 Return ( cTextDocument )
+
+//---------------------------------------------------------------------------//
+
+Static Function LoadSATCliente( cCodCli, dbfDiv, dbfIva, Anio )
+
+   if ( dbfSatCliT )->( dbSeek( cCodCli ) )
+
+      while ( dbfSatCliT )->cCodCli == cCodCli .and. !( dbfSatCliT )->( eof() )
+
+         if Anio == nil .or. Anio == Year( ( dbfSatCliT )->dFecSat )
+
+            oDbfTmp:Append()
+            oDbfTmp:nTypDoc      := SAT_CLI
+            oDbfTmp:cNumDoc      := ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat
+            if ( dbfSatCliT )->lEstado
+               oDbfTmp:cEstado   := "Finalizado"
+            else
+               oDbfTmp:cEstado   := "Pendiente"
+            end if
+            oDbfTmp:dFecDoc      := ( dbfSatCliT )->dFecSat
+            oDbfTmp:cCodCli      := ( dbfSatCliT )->cCodCli
+            oDbfTmp:cNomCli      := ( dbfSatCliT )->cNomCli
+            oDbfTmp:cAlmDoc      := ( dbfSatCliT )->cCodAlm
+            oDbfTmp:nImpDoc      := ( dbfSatCliT )->nTotSat
+            oDbfTmp:cDivisa      := ( dbfSatCliT )->cDivSat
+            oDbfTmp:Save()
+
+         end if
+
+         ( dbfSatCliT )->( dbSkip() )
+
+      end while
+
+   end if
+
+Return nil
 
 //---------------------------------------------------------------------------//
 
