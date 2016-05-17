@@ -227,6 +227,8 @@ CLASS TRemesas FROM TMasDet
    METHOD setCancelar()
    METHOD DeleteDet( lMessage )
 
+   METHOD setEstadoFactura()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -287,7 +289,7 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD CALCULATE NAME "cBmpDiv"            LEN 20  DEC 0                             VAL      ::cBmp()                                  COMMENT "Div."   COLSIZE  25                              OF ::oDbf
       FIELD NAME "dConta"              TYPE "D" LEN  8  DEC 0                                                                                COMMENT "Contab."                                         OF ::oDbf
       FIELD NAME "dExport"             TYPE "D" LEN  8  DEC 0                             DEFAULT  CtoD( "" )                                                                          HIDE            OF ::oDbf
-      FIELD NAME "dIngreso"            TYPE "D" LEN  8  DEC 0                             DEFAULT  Date()                                    COMMENT "Ingreso"    COLSIZE 80                           OF ::oDbf
+      FIELD NAME "dIngreso"            TYPE "D" LEN  8  DEC 0                             DEFAULT  CtoD( "" )                                COMMENT "Ingreso"    COLSIZE 80                           OF ::oDbf
       FIELD NAME "mComent"             TYPE "M" LEN 10  DEC 0                                                                                COMMENT "Comentario" COLSIZE 280                          OF ::oDbf
 
       INDEX TO "RemCliT.Cdx" TAG "nNumRem" ON "Str( nNumRem ) + cSufRem"   COMMENT "Número" NODELETED OF ::oDbf
@@ -1608,13 +1610,17 @@ Return ( Self )
 
 METHOD Del()
 
+   local lEstadoAnterior   := .f.
+
    if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes("¿ Desea eliminar el registro en curso ?", "Confirme supresión" )
+
+      lEstadoAnterior   := ApoloMsgNoYes("¿ Desea volver los recibos a su estado original ?", "Confirmación" )
 
       ::GetFirstKey()
 
       if !Empty( ::cFirstKey )
          while ::oDbfDet:Seek( ::cFirstKey )
-            ::DelItem()
+            ::DelItem( lEstadoAnterior )
          end while
       end if
 
@@ -1626,16 +1632,19 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD DelItem()
+METHOD DelItem( lEstadoAnterior )
 
-   local cNumFac        := ::oDbfDet:cSerie + Str( ::oDbfDet:nNumFac ) + ::oDbfDet:cSufFac
+   local cNumFac              := ::oDbfDet:cSerie + Str( ::oDbfDet:nNumFac ) + ::oDbfDet:cSufFac
+
+   DEFAULT  lEstadoAnterior   := .f.
 
    ::oDbfDet:FieldPutByName( "nNumRem", 0 )     
-   ::oDbfDet:FieldPutByName( "cSufRem", "" )     
+   ::oDbfDet:FieldPutByName( "cSufRem", "" )
+   ::oDbfDet:FieldPutByName( "lRemesa", .f. )
 
-   /*
-   Revisamos el estado de la factura-------------------------------------------
-   */
+   if lEstadoAnterior
+      ::oDbfDet:FieldPutByName( "lCobrado", .f. )
+   end if
 
    if ::oFacCliT:Seek( cNumFac )
       chkLqdFacCli( nil, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oDbfDet:cAlias, ::oAntCliT:cAlias, ::oIva:cAlias, ::oDivisas:cAlias )
@@ -2457,6 +2466,7 @@ METHOD DeleteDet( lMessage )
 
       if ::gotoRecibo()
          ::setEstadoRecibo( .f., .t. )
+         ::setEstadoFactura()
       end if
 
       ::oDbfVir:Delete( .t. )
@@ -2470,6 +2480,32 @@ METHOD DeleteDet( lMessage )
    end if
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setEstadoFactura()
+
+   local nNumFac  := ""   
+   local nOrdFac
+   local nRecFac
+   local nRecRec
+
+   nNumFac        := ::oDbfDet:cSerie + Str( ::oDbfDet:nNumFac ) + ::oDbfDet:cSufFac
+
+   nRecRec        := ::oDbfDet:Recno()
+
+   nRecFac        := ::oFacCliT:Recno()
+   nOrdFac        := ::oFacCliT:OrdSetFocus( "nNumFac" )
+
+   if ::oFacCliT:Seek( nNumFac )
+      ChkLqdFacCli( nil, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oDbfDet:cAlias, ::oAntCliT:cAlias, ::oIva:cAlias, ::oDivisas:cAlias )
+   end if
+
+   ::oFacCliT:OrdSetFocus( nOrdFac )
+   ::oFacCliT:GoTo( nRecFac )
+   ::oDbfDet:GoTo( nRecRec )
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 
