@@ -1238,6 +1238,84 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    end with
 
    with object ( oWndBrw:AddXCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar7", "Precio IVA con Imp. Esp. 1" ) + Space( 1 ) +  cImp()
+      :bEditValue       := {|| totalArticuloConImpuestoEspecialUno( nView ) }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+      :nEditType        := 1
+      :lHide            := .t.
+      :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
+      :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta1", "Iva" => "pVtaIva1", "Beneficio" => "Benef1", "BeneficioSobre" => "nBnfSbr1" } ) }
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar8", "Precio IVA con Imp. Esp. 2" ) + Space( 1 ) +  cImp()
+      :bEditValue       := {|| totalArticuloConImpuestoEspecialDos( nView ) }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+      :nEditType        := 1
+      :lHide            := .t.
+      :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
+      :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta2", "Iva" => "pVtaIva2", "Beneficio" => "Benef2", "BeneficioSobre" => "nBnfSbr2" } ) }
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar9", "Precio IVA con Imp. Esp. 3" ) + Space( 1 ) +  cImp()
+      :bEditValue       := {|| totalArticuloConImpuestoEspecialTres( nView ) }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+      :nEditType        := 1
+      :lHide            := .t.
+      :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
+      :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta3", "Iva" => "pVtaIva3", "Beneficio" => "Benef3", "BeneficioSobre" => "nBnfSbr3" } ) }
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar10", "Precio IVA con Imp. Esp. 4" ) + Space( 1 ) +  cImp()
+      :bEditValue       := {|| totalArticuloConImpuestoEspecialCuatro( nView ) }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+      :nEditType        := 1
+      :lHide            := .t.
+      :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
+      :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta4", "Iva" => "pVtaIva4", "Beneficio" => "Benef4", "BeneficioSobre" => "nBnfSbr4" } ) }
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar11", "Precio IVA con Imp. Esp. 5" ) + Space( 1 ) +  cImp()
+      :bEditValue       := {|| totalArticuloConImpuestoEspecialCinco( nView ) }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+      :nEditType        := 1
+      :lHide            := .t.
+      :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
+      :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta5", "Iva" => "pVtaIva5", "Beneficio" => "Benef5", "BeneficioSobre" => "nBnfSbr5" } ) }
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar12", "Precio IVA con Imp. Esp. 6" ) + Space( 1 ) +  cImp()
+      :bEditValue       := {|| totalArticuloConImpuestoEspecialSeis( nView ) }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+      :nEditType        := 1
+      :lHide            := .t.
+      :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
+      :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta6", "Iva" => "pVtaIva6", "Beneficio" => "Benef6", "BeneficioSobre" => "nBnfSbr6" } ) }
+   end with
+
+   with object ( oWndBrw:AddXCol() )
       :cHeader          := "Proveedor"
       :cSortOrder       := "cPrvHab"
       :bStrData         := {|| if( !Empty( ( D():Articulos( nView ) )->cPrvHab ), AllTrim( ( D():Articulos( nView ) )->cPrvHab ) + " - " + RetProvee( ( D():Articulos( nView ) )->cPrvHab, dbfProv ), "" ) }
@@ -19075,3 +19153,38 @@ Return .t.
 
 //--------------------------------------------------------------------------//
 
+Static Function totalArticuloConImpuestoEspecialUno( nView )
+
+Return ( oNewImp:nValImp( ( D():Articulos( nView ) )->cCodImp ) + ( D():Articulos( nView ) )->pVtaIva1 )
+
+//--------------------------------------------------------------------------//
+
+Static Function totalArticuloConImpuestoEspecialDos( nView )
+
+Return ( oNewImp:nValImp( ( D():Articulos( nView ) )->cCodImp ) + ( D():Articulos( nView ) )->pVtaIva2 )
+
+//--------------------------------------------------------------------------//
+
+Static Function totalArticuloConImpuestoEspecialTres( nView )
+
+Return ( oNewImp:nValImp( ( D():Articulos( nView ) )->cCodImp ) + ( D():Articulos( nView ) )->pVtaIva3 )
+
+//--------------------------------------------------------------------------//
+
+Static Function totalArticuloConImpuestoEspecialCuatro( nView )
+
+Return ( oNewImp:nValImp( ( D():Articulos( nView ) )->cCodImp ) + ( D():Articulos( nView ) )->pVtaIva4 )
+
+//--------------------------------------------------------------------------//
+
+Static Function totalArticuloConImpuestoEspecialCinco( nView )
+
+Return ( oNewImp:nValImp( ( D():Articulos( nView ) )->cCodImp ) + ( D():Articulos( nView ) )->pVtaIva5 )
+
+//--------------------------------------------------------------------------//
+
+Static Function totalArticuloConImpuestoEspecialSeis( nView )
+
+Return ( oNewImp:nValImp( ( D():Articulos( nView ) )->cCodImp ) + ( D():Articulos( nView ) )->pVtaIva6 )
+
+//--------------------------------------------------------------------------//
