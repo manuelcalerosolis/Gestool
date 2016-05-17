@@ -4,6 +4,8 @@
 
 Function gestionGarantias( aLine, aHeader, nView )
 
+   Return .t.
+
 Return ( TGestionGarantias():New( aLine, aHeader, nView ):Run() )
 
 //---------------------------------------------------------------------------//

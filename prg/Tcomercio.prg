@@ -317,8 +317,6 @@ CLASS TComercio
 
    METHOD ConectBBDD()
    METHOD DisconectBBDD()
-   METHOD lShowDialogWait()
-   METHOD lHideDialogWait()
    METHOD AvisoSincronizaciontotal()
    METHOD cPreFixtable( cName )
    METHOD AutoRecive()
@@ -1731,38 +1729,6 @@ Return ( isProduct )
 
 //---------------------------------------------------------------------------//
 
-METHOD lShowDialogWait() Class TComercio
-
-   CursorWait()
-
-   ::oDlgWait     := TDialog():New( , , , , , "wait_web", , .f.,,,,,,.f. )
-
-   ::oBmpWait     := TBitmap():ReDefine( 500, "logogestool_48", , ::oDlgWait, , , .f., .f., , , .f., , , .t. ) 
-
-   ::oSayWait     := TSay():ReDefine( 510, {|| "Actualizando web espere por favor..." }, ::oDlgWait )
-
-   TAnimat():Redefine( ::oDlgWait, 520, { "BAR_01" }, 1 )
-
-   ::oDlgWait:Activate( , , , .t., ,.f. )
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
-METHOD lHideDialogWait() Class TComercio
-
-   ::oDlgWait:End()
-
-   if !empty( ::oBmpWait )
-      ::oBmpWait:End()
-   end if
-
-   CursorWe()
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
 METHOD AvisoSincronizaciontotal() CLASS TComercio
 
    msginfo( "Faltan Avisar de que necesita una sincronización total" )
@@ -3091,19 +3057,13 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildProductInformationAndUploadPrestashop( idProduct, lShowDialogWait ) CLASS TComercio
-
-   lShowDialogWait      := .f.
-
-   if lShowDialogWait
-      ::lShowDialogWait()
-   end if   
-
-   ::MeterTotalSetTotal( 8 )
+METHOD buildProductInformationAndUploadPrestashop( idProduct ) CLASS TComercio
 
    if !::filesOpen()
       Return ( self )
    end if 
+
+   ::MeterTotalSetTotal( 8 )
 
    ::MeterTotalText( "Elaborando información de artículos." )
 
@@ -3173,10 +3133,6 @@ METHOD buildProductInformationAndUploadPrestashop( idProduct, lShowDialogWait ) 
    end if  
 
    ::filesClose()
-
-   if lShowDialogWait
-      ::lHideDialogWait()
-   end if   
 
    ::MeterTotalText( "Proceso finalizado." )
 

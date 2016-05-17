@@ -307,3 +307,67 @@ METHOD End() CLASS TWaitMeter
 RETURN ( nil )
 
 //--------------------------------------------------------------------------//
+
+CLASS TGetDialog
+
+   DATA  oDlg
+
+   DATA  oGet
+   DATA  cGet
+
+   DATA  oBitmap
+   DATA  cBitmap        INIT  "LogoGestool_48"
+
+   DATA  bAction 
+
+   METHOD New()
+   METHOD Run()
+   METHOD End()
+
+ENDCLASS
+
+//--------------------------------------------------------------------------//
+
+METHOD New( bAction, cGet ) CLASS TGetDialog
+
+   DEFAULT bAction      := {|| msgInfo( "Please redefine bAction" ) }
+   DEFAULT cGet         := space( 200 )
+
+   ::bAction            := bAction
+   ::cGet               := cGet
+
+RETURN ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD Run() CLASS TGetDialog
+
+   ::oDlg               := TDialog():New( , , , , , "massive_append_lines", , .f., , , , , , .f. )
+ 
+   ::oBitmap            := TBitmap():ReDefine( 600, ::cBitmap, , ::oDlg, , , .f., .f., , , .f., , , .t. )
+
+   ::oGet               := TGet():ReDefine( 100, { | u | if( pcount() == 0, ::cGet, ::cGet := u ) }, ::oDlg, , "",,,,,,, .f.,,, .f., .f. )
+
+   TButton():ReDefine( IDOK, {|| eval( ::bAction, self ) }, ::oDlg, , , .f. )
+    
+   TButton():ReDefine( IDCANCEL, {|| ::oDlg:end() }, ::oDlg, , , .f. )
+
+   ::oDlg:Activate( , , , .t., ,.f. )
+
+RETURN ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD End() CLASS TGetDialog
+
+   ::oBitmap:End()
+
+   ::oDlg:End()
+
+   ::oDlg               := nil
+
+   SysRefresh()
+
+RETURN ( nil )
+
+//--------------------------------------------------------------------------//

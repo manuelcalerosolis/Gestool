@@ -51,7 +51,7 @@ FUNCTION dbSwapUp( cAlias, oBrw )
 
    ( cAlias )->( OrdSetFocus( nOrdNum ) )
 
-   if !Empty( oBrw )
+   if !empty( oBrw )
       oBrw:Refresh()
       oBrw:select( 0 )
       oBrw:select( 1 )
@@ -90,7 +90,7 @@ FUNCTION dbSwapDown( cAlias, oBrw )
 
    ( cAlias )->( OrdSetFocus( nOrdNum ) )
 
-   if !Empty( oBrw )
+   if !empty( oBrw )
       oBrw:Refresh()
       oBrw:select( 0 )
       oBrw:select( 1 )
@@ -215,7 +215,7 @@ FUNCTION dbFirst( cAlias, nField, oGet, xDesde, nOrd )
    end if
 
 
-   if Empty( xDesde )
+   if empty( xDesde )
       ( cAlias )->( dbGoTop() )
    else
       ( cAlias )->( dbSeek( xDesde, .t. ) ) // Busqueda suuuuave
@@ -232,11 +232,11 @@ FUNCTION dbFirst( cAlias, nField, oGet, xDesde, nOrd )
 
    ( cAlias )->( dbGoTo( nPosAct ) )
 
-   if !Empty( nOrd )
+   if !empty( nOrd )
       ( cAlias )->( OrdSetFocus( nOrdAct ) )
    end if
 
-   if !Empty( oGet )
+   if !empty( oGet )
 		oGet:cText( xValRet )
       Return .t.
    end if
@@ -331,7 +331,7 @@ FUNCTION DBRetIndex( cAlias )
 	local cIndice
    local i        := 1
 
-   IF Empty( ( cAlias )->( OrdSetFocus() ) )
+   IF empty( ( cAlias )->( OrdSetFocus() ) )
 		RETURN aIndexes
 	END IF
 
@@ -521,7 +521,7 @@ FUNCTION bChar2Block( cChar, lLogic, lMessage, lHard )
    DEFAULT lMessage  := .t.
    DEFAULT lHard     := .f.
 
-   if Empty( cChar )
+   if empty( cChar )
 
       if lLogic
          bBlock      := {|| .t.}
@@ -721,11 +721,11 @@ Function retChr( cCadena )
 
    cCadena        := AllTrim( cCadena )
 
-   if !Empty( cCadena )
+   if !empty( cCadena )
       cCadena     += Space( 1 )
    end if
 
-   while !Empty( cCadena )
+   while !empty( cCadena )
       cChr        += Chr( Val( SubStr( cCadena, 1, At( " ", cCadena ) ) ) )
       cCadena     := SubStr( cCadena, At( " ", cCadena ) + 1 )
    end while
@@ -929,7 +929,7 @@ Function lselectAll( oBrw, dbf, cFieldName, lselect, lTop, lMeter )
       CursorWE()
    end if
 
-   if !Empty( oBrw )
+   if !empty( oBrw )
       oBrw:Refresh()
       oBrw:SetFocus()
    end if
@@ -1037,7 +1037,7 @@ Function cNumTiket( cCodAlb, dbfAlbCliT )
 
    if ( dbfTiket )->( dbSeek( cCodAlb ) )
 
-      if Empty( ( dbfTiket )->cRetMat )
+      if empty( ( dbfTiket )->cRetMat )
 
          cNumTiq     := ( dbfTiket )->cNumDoc
 
@@ -1073,7 +1073,7 @@ Function msgDbfInfo( dbfAlias, cTitle )
    local oDlg
    local oTreeInfo
 
-   if Empty( dbfAlias )
+   if empty( dbfAlias )
       Return ( nil )      
    end if
 
@@ -1300,7 +1300,7 @@ Function hSeekInOrd( hHash )
          lLast          := HGet( hHash, "Last" ) 
       end if 
 
-      if !Empty( uValue ) .and. !Empty( uOrder ) .and. !Empty( cAlias )
+      if !empty( uValue ) .and. !empty( uOrder ) .and. !empty( cAlias )
 
          if ( cAlias )->( Used() )
             uOrder      := ( cAlias )->( OrdSetFocus( uOrder ) )
@@ -1415,7 +1415,7 @@ FUNCTION dbAppendDefault( cAliOrigen, cAliDestino, aStruct )
 
       for i := 1 to nField
 
-         if ( len( aStruct[ i ] ) >= 9 ) .and. ( !Empty( aStruct[ i, 9 ] ) )
+         if ( len( aStruct[ i ] ) >= 9 ) .and. ( !empty( aStruct[ i, 9 ] ) )
             ( cAliDestino )->( FieldPut( i, aStruct[ i, 9 ] ) )
          end if
 
@@ -1489,7 +1489,7 @@ FUNCTION bCheck2Block( cChar, lMessage )
 
    DEFAULT lMessage  := .t.
 
-   if Empty( cChar )
+   if empty( cChar )
       return ( bBlock )
    end if
 
@@ -1610,13 +1610,13 @@ FUNCTION WinAppRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
       return .f.
    end if
 
-   // Script antes de añadir
+   // Script antes de añadir---------------------------------------------------
 
    runScriptBeforeAppend()
 
-   // Orden principal
+   // Orden principal----------------------------------------------------------
 
-   if Empty( ( cAlias )->( OrdSetFocus() ) )
+   if empty( ( cAlias )->( OrdSetFocus() ) )
       nOrd        := ( cAlias )->( OrdSetFocus( 1 ) )
    end if
 
@@ -1644,7 +1644,7 @@ FUNCTION WinAppRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
 
    // refrescos en pantalla
 
-   if !Empty( oBrw ) .and. ( oBrw:lActive )
+   if !empty( oBrw ) .and. ( oBrw:lActive )
 
       if oBrw:lFooter .and. !empty( oBrw:nFooterHeight )
          oBrw:MakeTotals()
@@ -1696,7 +1696,7 @@ FUNCTION WinDupRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
 
    nRec           := ( cAlias )->( Recno() )
 
-   if Empty( ( cAlias )->( OrdSetFocus() ) )
+   if empty( ( cAlias )->( OrdSetFocus() ) )
       nOrd        := ( cAlias )->( OrdSetFocus( 1 ) )
    end if
 
@@ -1736,7 +1736,7 @@ FUNCTION WinDupRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
 
    // refrescos en pantalla
 
-   if lResult .and. !Empty( oBrw ) .and. ( oBrw:lActive )
+   if lResult .and. !empty( oBrw ) .and. ( oBrw:lActive )
 
       oBrw:select( 0 )
       oBrw:select( 1 )
@@ -1786,7 +1786,7 @@ FUNCTION WinEdtRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
 
    // Orden principal
 
-   if Empty( ( cAlias )->( OrdSetFocus() ) )
+   if empty( ( cAlias )->( OrdSetFocus() ) )
       nOrd           := ( cAlias )->( OrdSetFocus( 1 ) )
    end if
 
@@ -1857,7 +1857,7 @@ FUNCTION WinZooRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
 		RETURN .F.
 	END IF
 
-   if Empty( ( cAlias )->( OrdSetFocus() ) )
+   if empty( ( cAlias )->( OrdSetFocus() ) )
       nOrd        := ( cAlias )->( OrdSetFocus( 1 ) )
    end if
 
@@ -2019,7 +2019,7 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
 
    // Cuantos registros marcados tenemos---------------------------------------
 
-   if !Empty( oBrw ) .and. ( "XBROWSE" $ oBrw:ClassName() )
+   if !empty( oBrw ) .and. ( "XBROWSE" $ oBrw:ClassName() )
 
       nMarked        := len( oBrw:aselected )
       if nMarked > 1
@@ -2036,7 +2036,7 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
 
             ( cAlias )->( dbGoTo( nRec ) )
 
-            if !Empty( bPreBlock )
+            if !empty( bPreBlock )
                lTrigger    := CheckEval( bPreBlock )
             end if
 
@@ -2044,7 +2044,7 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
 
                dbDel( cAlias )
 
-               if !Empty( bPostBlock )
+               if !empty( bPostBlock )
                   checkEval( bPostBlock )
                end if
 
@@ -2148,7 +2148,7 @@ FUNCTION dbDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lDelMarked, lBig )
 
          CheckEval( bPostBlock )
 
-         if !Empty( oBrw )
+         if !empty( oBrw )
             oBrw:Refresh()
          end if
 
@@ -2204,7 +2204,7 @@ Function CheckEval( bCodeBlock )
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      if !Empty( bCodeBlock ) .and. Valtype( bCodeBlock ) == "B"
+      if !empty( bCodeBlock ) .and. Valtype( bCodeBlock ) == "B"
          lCheckEval  := Eval( bCodeBlock )
       end if
 
@@ -2301,11 +2301,11 @@ return( cMark )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION WinGather( aTmp, aGet, cAlias, oBrw, nMode, bPostAction, lEmpty )
+FUNCTION WinGather( aTmp, aGet, cAlias, oBrw, nMode, bPostAction, lempty )
 
    local lAdd     := ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
 
-	DEFAULT lEmpty	:= .t.
+	DEFAULT lempty	:= .t.
 
 	CursorWait()
 
@@ -2316,9 +2316,9 @@ FUNCTION WinGather( aTmp, aGet, cAlias, oBrw, nMode, bPostAction, lEmpty )
 
    ( cAlias )->( dbCommit() )
 
-   if lEmpty
+   if lempty
       aCopy( dbBlankRec( cAlias ), aTmp )
-      if !Empty( aGet )
+      if !empty( aGet )
          aEval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )
       end if
    end if
@@ -2468,7 +2468,7 @@ FUNCTION validKey( oGet, uAlias, lRjust, cChar, nTag, nLen )
 	Cambiamos el tag y guardamos el anterior
 	*/
 
-   if Empty( ( cAlias )->( OrdSetFocus() ) )
+   if empty( ( cAlias )->( OrdSetFocus() ) )
       MsgInfo( "Indice no disponible, comprobación imposible" )
       return .t.
    end if
@@ -2572,7 +2572,7 @@ Return ( cFile + ".Fpt" )
 
 Function dbfErase( cFileName )
 
-   if Empty( cFileName )
+   if empty( cFileName )
       return .t.
    end if
 
@@ -2636,7 +2636,7 @@ Function dbDelKit( oBrw, dbfTmp, nNumLin )
    local cFlt  := ( dbfTmp )->( dbFilter() )
    local nNum  := Str( nNumLin, 4 )
 
-   if !Empty( cFlt )
+   if !empty( cFlt )
       ( dbfTmp )->( dbSetFilter() )
    end if 
 
@@ -2650,14 +2650,14 @@ Function dbDelKit( oBrw, dbfTmp, nNumLin )
       end while
    end if 
 
-   if !Empty( cFlt )
+   if !empty( cFlt )
       ( dbfTmp )->( dbSetFilter( c2Block( cFlt ), cFlt ) )
    end if 
 
    ( dbfTmp )->( OrdSetFocus( nOrd ) )
    ( dbfTmp )->( dbGoTo( nRec ) )
 
-   if !Empty( oBrw )
+   if !empty( oBrw )
       oBrw:Refresh()
    end if
 
@@ -2779,7 +2779,7 @@ FUNCTION dbLast( cAlias, nField, oGet, xHasta, nOrd )
       nOrdAct     := ( cAlias )->( OrdSetFocus( nOrd ) )
    end if
 
-   if Empty( xHasta )
+   if empty( xHasta )
       ( cAlias )->( dbGoBottom() )
    else
       ( cAlias )->( dbSeek( xHasta, .t., .t. ) )
@@ -2799,11 +2799,11 @@ FUNCTION dbLast( cAlias, nField, oGet, xHasta, nOrd )
 
    ( cAlias )->( dbGoTo( nPosAct ) )
 
-   if !Empty( nOrd )
+   if !empty( nOrd )
       ( cAlias )->( OrdSetFocus( nOrdAct ) )
    end if
 
-   if !Empty( oGet )
+   if !empty( oGet )
 		oGet:cText( xValRet )
       return .t.
    end if
@@ -2833,7 +2833,7 @@ FUNCTION WinMulRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
 		RETURN .F.
 	END IF
 
-   if Empty( ( cAlias )->( OrdSetFocus() ) )
+   if empty( ( cAlias )->( OrdSetFocus() ) )
       nOrd        := ( cAlias )->( OrdSetFocus( 1 ) )
    end if
 
@@ -2905,23 +2905,23 @@ FUNCTION dbPass( cAliOrigen, cAliDestino, lApp, xField1, xField2, xField3, xFiel
 
          next
 
-         if !Empty( xField1 )
+         if !empty( xField1 )
             ( cAliDestino )->( FieldPut( 1, xField1 ) )
          end if
 
-         if !Empty( xField2 )
+         if !empty( xField2 )
             ( cAliDestino )->( FieldPut( 2, xField2 ) )
          end if
 
-         if !Empty( xField3 )
+         if !empty( xField3 )
             ( cAliDestino )->( FieldPut( 3, xField3 ) )
          end if
 
-         if !Empty( xField4 )
+         if !empty( xField4 )
             ( cAliDestino )->( FieldPut( 4, xField4 ) )
          end if
 
-         if !Empty( xField5 )
+         if !empty( xField5 )
             ( cAliDestino )->( FieldPut( 5, xField5 ) )
          end if
 
@@ -2947,23 +2947,23 @@ FUNCTION dbPass( cAliOrigen, cAliDestino, lApp, xField1, xField2, xField3, xFiel
 
          next
 
-         if !Empty( xField1 )
+         if !empty( xField1 )
             ( cAliDestino )->( FieldPut( 1, xField1 ) )
          end if
 
-         if !Empty( xField2 )
+         if !empty( xField2 )
             ( cAliDestino )->( FieldPut( 2, xField2 ) )
          end if
 
-         if !Empty( xField3 )
+         if !empty( xField3 )
             ( cAliDestino )->( FieldPut( 3, xField3 ) )
          end if
 
-         if !Empty( xField4 )
+         if !empty( xField4 )
             ( cAliDestino )->( FieldPut( 4, xField4 ) )
          end if
 
-         if !Empty( xField5 )
+         if !empty( xField5 )
             ( cAliDestino )->( FieldPut( 5, xField5 ) )
          end if
 
@@ -3079,7 +3079,7 @@ Function ValidEmailAddress( cMail, lMessage )
 
    DEFAULT lMessage  := .f.
 
-   lValid            := Empty( cMail ) .or. HB_RegExMatch( "[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}", cMail, .f. )
+   lValid            := empty( cMail ) .or. HB_RegExMatch( "[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}", cMail, .f. )
 
    if !lValid .and. lMessage
       MsgStop( "La dirección de mail introducida no es correcta" )
@@ -3162,11 +3162,11 @@ Function DisableMainWnd( oWnd )
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if !Empty( oWnd:oMenu )
+   if !empty( oWnd:oMenu )
       oWnd:oMenu:Disable()
    end if
 
-   if !Empty( oWnd:oTop:oTop )
+   if !empty( oWnd:oTop:oTop )
       oWnd:oTop:oTop:Disable()
    end if
 
@@ -3187,11 +3187,11 @@ Function EnableMainWnd( oWnd )
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if !Empty( oWnd:oMenu )
+   if !empty( oWnd:oMenu )
       oWnd:oMenu:Enable()
    end if
 
-   if !Empty( oWnd:oTop:oTop )
+   if !empty( oWnd:oTop:oTop )
       oWnd:oTop:oTop:Enable()
    end if
 
@@ -3257,7 +3257,7 @@ Function AdsFile( cFile )
 
    local cAdsFile
 
-   if Empty( aAdsDirectory )
+   if empty( aAdsDirectory )
       aAdsDirectory  := AdsDirectory()
    end if
 
@@ -3358,7 +3358,7 @@ function DbDialog( cTitle )
 
    for n = 1 to nAreas
 
-      if ! Empty( Alias( n ) )
+      if ! empty( Alias( n ) )
 
          cErrorLog   += CRLF + Str( n, 3 ) + ": " + If( select() == n,"=> ", "   " ) + ;
                         PadR( Alias( n ), 15 ) + Space( 20 ) + "RddName: " + ;
@@ -3373,7 +3373,7 @@ function DbDialog( cTitle )
 
          for j = 1 to 15
 
-            if ! Empty( ( Alias( n ) )->( IndexKey( j ) ) )
+            if ! empty( ( Alias( n ) )->( IndexKey( j ) ) )
 
                cErrorLog   += Space( 8 ) + ;
                               If( ( Alias( n ) )->( OrdNumber() ) == j, "=> ", "   " ) + ;
@@ -3388,7 +3388,7 @@ function DbDialog( cTitle )
 
          for j = 1 to 8
 
-            if ! Empty( ( nTarget := ( Alias( n ) )->( DbRselect( j ) ) ) )
+            if ! empty( ( nTarget := ( Alias( n ) )->( DbRselect( j ) ) ) )
 
                cErrorLog += Space( 8 ) + Str( j ) + ": " + ;
                             "TO " + ( Alias( n ) )->( DbRelation( j ) ) + ;
@@ -3533,7 +3533,7 @@ Function lineReposition( cAlias, oBrw, lUp )
 
    CursorWE()
 
-   if !Empty( oBrw )
+   if !empty( oBrw )
       oBrw:Refresh()
       oBrw:select( 0 )
       oBrw:select( 1 )
@@ -3594,7 +3594,7 @@ Function lineRepositionOld( cAlias, oBrw, lUp )
 
    CursorWE()
 
-   if !Empty( oBrw )
+   if !empty( oBrw )
       oBrw:Refresh()
       oBrw:select( 0 )
       oBrw:select( 1 )
@@ -3750,7 +3750,7 @@ Return ( nValor )
 
 Function setLenguajeSegundario( cLenguaje )
 
-   if !Empty( cLenguaje )
+   if !empty( cLenguaje )
       cLenguajeSegundario  := cLenguaje
    end if
 
@@ -3791,7 +3791,7 @@ CLASS excluyentArray
    Method Init()           INLINE ( ::aArray := {} )
    Method Add(uValue)      INLINE ( if( aScan( ::aArray, uValue ) == 0, aAdd( ::aArray, uValue ), ) )
    Method Get(n)           INLINE ( if( empty(n), ::aArray, ::aArray[ n ] ) )
-   Method Empty()          INLINE ( empty( ::aArray ) )
+   Method empty()          INLINE ( empty( ::aArray ) )
 
 END CLASS
 
@@ -3922,13 +3922,13 @@ function MsgCombo( cTitle, cText, aItems, uVar, cBmpFile, cResName )
 
    DEFINE DIALOG oDlg FROM 10, 20 TO 18, 59.5 TITLE cTitle
 
-   if ! Empty( cBmpFile ) .or. ! Empty( cResName )
+   if ! empty( cBmpFile ) .or. ! empty( cResName )
 
-      if ! Empty( cBmpFile )
+      if ! empty( cBmpFile )
          @ 1, 1 BITMAP oBmp FILENAME cBmpFile SIZE 20, 20 NO BORDER OF oDlg
       endif
 
-      if ! Empty( cResName )
+      if ! empty( cResName )
          @ 1, 1 BITMAP oBmp RESOURCE cResName SIZE 20, 20 NO BORDER OF oDlg
       endif
 
