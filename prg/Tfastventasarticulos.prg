@@ -181,7 +181,7 @@ METHOD lResource( cFld ) CLASS TFastVentasArticulos
    ::lNewInforme     := .t.
    ::lDefCondiciones := .f.
 
-   ::cSubTitle       := "Informe de artÃ­culos"
+   ::cSubTitle       := "Informe de artículos"
 
    if !::NewResource()
       return .f.
@@ -402,12 +402,12 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
          lOpen       := .f.
       end if
 
-      ::oCamposExtra:setTipoDocumento( "ArtÃ­culos" )
+      ::oCamposExtra:setTipoDocumento( "Artículos" )
       ::aExtraFields := ::oCamposExtra:aExtraFields()
 
    RECOVER USING oError
 
-      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de artÃ­culos" )
+      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de artículos" )
 
       ::CloseFiles()
 
@@ -598,99 +598,99 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
 
    ::uParam    := uParam
 
-   ::AddField( "cCodArt",     "C", 18, 0, {|| "@!" }, "CÃ³digo artÃ­culo"                         )
-   ::AddField( "cNomArt",     "C",100, 0, {|| ""   }, "Nombre artÃ­culo"                         )
+   ::AddField( "cCodArt",     "C", 18, 0, {|| "@!" }, "Código artículo"                         )
+   ::AddField( "cNomArt",     "C",100, 0, {|| ""   }, "Nombre artículo"                         )
 
-   ::AddField( "cCodFam",     "C", 16, 0, {|| "@!" }, "CÃ³digo familia"                          )
-   ::AddField( "cGrpFam",     "C",  3, 0, {|| "@!" }, "CÃ³digo grupo de familia"                 )
-   ::AddField( "TipoIva",     "C",  1, 0, {|| "@!" }, "CÃ³digo del tipo de " + cImp()            )
-   ::AddField( "cCodTip",     "C",  4, 0, {|| "@!" }, "CÃ³digo del tipo de artÃ­culo"             )
-   ::AddField( "cCodCate",    "C", 10, 0, {|| "@!" }, "CÃ³digo categorÃ­a"                        )
-   ::AddField( "cCodEst",     "C",  3, 0, {|| "@!" }, "CÃ³digo estado artÃ­culo"                  )
-   ::AddField( "cCodTemp",    "C", 10, 0, {|| "@!" }, "CÃ³digo temporada"                        )
-   ::AddField( "cCodFab",     "C",  3, 0, {|| "@!" }, "CÃ³digo fabricante"                       )
-   ::AddField( "cCodGrp",     "C", 12, 0, {|| "@!" }, "CÃ³digo grupo de cliente"                 )
-   ::AddField( "cCodAlm",     "C", 16, 0, {|| "@!" }, "CÃ³digo del almacÃ©n"                      )
-   ::AddField( "cCodPago",    "C",  2, 0, {|| "@!" }, "CÃ³digo de la forma de pago"              )
-   ::AddField( "cCodRut",     "C", 12, 0, {|| "@!" }, "CÃ³digo de la ruta"                       )
-   ::AddField( "cCodAge",     "C", 12, 0, {|| "@!" }, "CÃ³digo del agente"                       )
-   ::AddField( "cCodTrn",     "C", 12, 0, {|| "@!" }, "CÃ³digo del transportista"                )
-   ::AddField( "cCodUsr",     "C",  3, 0, {|| "@!" }, "CÃ³digo usuario"                          )
-   ::AddField( "cCodOpe",     "C",  5, 0, {|| "@!" }, "CÃ³digo operario"                         )
+   ::AddField( "cCodFam",     "C", 16, 0, {|| "@!" }, "Código familia"                          )
+   ::AddField( "cGrpFam",     "C",  3, 0, {|| "@!" }, "Código grupo de familia"                 )
+   ::AddField( "TipoIva",     "C",  1, 0, {|| "@!" }, "Código del tipo de " + cImp()            )
+   ::AddField( "cCodTip",     "C",  4, 0, {|| "@!" }, "Código del tipo de artículo"             )
+   ::AddField( "cCodCate",    "C", 10, 0, {|| "@!" }, "Código categoría"                        )
+   ::AddField( "cCodEst",     "C",  3, 0, {|| "@!" }, "Código estado artículo"                  )
+   ::AddField( "cCodTemp",    "C", 10, 0, {|| "@!" }, "Código temporada"                        )
+   ::AddField( "cCodFab",     "C",  3, 0, {|| "@!" }, "Código fabricante"                       )
+   ::AddField( "cCodGrp",     "C", 12, 0, {|| "@!" }, "Código grupo de cliente"                 )
+   ::AddField( "cCodAlm",     "C", 16, 0, {|| "@!" }, "Código del almacén"                      )
+   ::AddField( "cCodPago",    "C",  2, 0, {|| "@!" }, "Código de la forma de pago"              )
+   ::AddField( "cCodRut",     "C", 12, 0, {|| "@!" }, "Código de la ruta"                       )
+   ::AddField( "cCodAge",     "C", 12, 0, {|| "@!" }, "Código del agente"                       )
+   ::AddField( "cCodTrn",     "C", 12, 0, {|| "@!" }, "Código del transportista"                )
+   ::AddField( "cCodUsr",     "C",  3, 0, {|| "@!" }, "Código usuario"                          )
+   ::AddField( "cCodOpe",     "C",  5, 0, {|| "@!" }, "Código operario"                         )
 
-   ::AddField( "cCodCli",     "C", 12, 0, {|| "@!" }, "CÃ³digo cliente/proveedor"                )
+   ::AddField( "cCodCli",     "C", 12, 0, {|| "@!" }, "Código cliente/proveedor"                )
    ::AddField( "cNomCli",     "C", 80, 0, {|| "@!" }, "Nombre cliente/proveedor"                )
-   ::AddField( "cPobCli",     "C", 35, 0, {|| "@!" }, "PoblaciÃ³n cliente/proveedor"             )
+   ::AddField( "cPobCli",     "C", 35, 0, {|| "@!" }, "Población cliente/proveedor"             )
    ::AddField( "cPrvCli",     "C", 20, 0, {|| "@!" }, "Provincia cliente/proveedor"             )
-   ::AddField( "cPosCli",     "C", 15, 0, {|| "@!" }, "CÃ³digo postal cliente/proveedor"         )
-   ::AddField( "cCodObr",     "C", 10, 0, {|| "@!" }, "CÃ³digo de la direcciÃ³n"                  )
+   ::AddField( "cPosCli",     "C", 15, 0, {|| "@!" }, "Código postal cliente/proveedor"         )
+   ::AddField( "cCodObr",     "C", 10, 0, {|| "@!" }, "Código de la dirección"                  )
 
-   ::AddField( "nUniArt",     "N", 16, 6, {|| "" },   "Unidades artÃ­culo"                       )
- //  ::AddField( "nBultos",     "N", 16, 6, {|| "" },   "Bultos artÃ­culo"                         )
-   ::AddField( "nPreArt",     "N", 16, 6, {|| "" },   "Precio unitario artÃ­culo"                ) 
+   ::AddField( "nUniArt",     "N", 16, 6, {|| "" },   "Unidades artículo"                       )
+ //  ::AddField( "nBultos",     "N", 16, 6, {|| "" },   "Bultos artículo"                         )
+   ::AddField( "nPreArt",     "N", 16, 6, {|| "" },   "Precio unitario artículo"                ) 
 
    ::AddField( "nPdtRec",     "N", 16, 6, {|| "" },   "Unidades pendientes de recibir"          )
    ::AddField( "nPdtEnt",     "N", 16, 6, {|| "" },   "Unidades pendientes de entregar"         )
 
-   ::AddField( "nDtoArt",     "N",  6, 2, {|| "" },   "Descuento porcentual artÃ­culo"           ) 
-   ::AddField( "nLinArt",     "N", 16, 6, {|| "" },   "Descuento lineal artÃ­culo"               ) 
-   ::AddField( "nPrmArt",     "N",  6, 2, {|| "" },   "Descuento promocional artÃ­culo"          )
+   ::AddField( "nDtoArt",     "N",  6, 2, {|| "" },   "Descuento porcentual artículo"           ) 
+   ::AddField( "nLinArt",     "N", 16, 6, {|| "" },   "Descuento lineal artículo"               ) 
+   ::AddField( "nPrmArt",     "N",  6, 2, {|| "" },   "Descuento promocional artículo"          )
 
-   ::AddField( "nTotDto",     "N", 16, 6, {|| "" },   "Total descuento porcentual artÃ­culo"     ) 
-   ::AddField( "nTotPrm",     "N", 16, 6, {|| "" },   "Total descuento promocional artÃ­culo"    )
+   ::AddField( "nTotDto",     "N", 16, 6, {|| "" },   "Total descuento porcentual artículo"     ) 
+   ::AddField( "nTotPrm",     "N", 16, 6, {|| "" },   "Total descuento promocional artículo"    )
 
-   ::AddField( "nTrnArt",     "N", 16, 6, {|| "" },   "Total transporte artÃ­culo"               ) 
-   ::AddField( "nPntArt",     "N", 16, 6, {|| "" },   "Total punto verde artÃ­culo"              ) 
+   ::AddField( "nTrnArt",     "N", 16, 6, {|| "" },   "Total transporte artículo"               ) 
+   ::AddField( "nPntArt",     "N", 16, 6, {|| "" },   "Total punto verde artículo"              ) 
    
-   ::AddField( "nBrtArt",     "N", 16, 6, {|| "" },   "Total importe bruto artÃ­culo"            )
-   ::AddField( "nImpArt",     "N", 16, 6, {|| "" },   "Total importe artÃ­culo"                  )
-   ::AddField( "nIvaArt",     "N", 16, 6, {|| "" },   "Total " + cImp() + " artÃ­culo"           )
-   ::AddField( "nImpEsp",     "N", 16, 6, {|| "" },   "Total impuesto especial artÃ­culo"        )
-   ::AddField( "nTotArt",     "N", 16, 6, {|| "" },   "Total importe artÃ­culo " + cImp() + " incluido" )
-   ::AddField( "nCosArt",     "N", 16, 6, {|| "" },   "Total costo artÃ­culo"                    )
+   ::AddField( "nBrtArt",     "N", 16, 6, {|| "" },   "Total importe bruto artículo"            )
+   ::AddField( "nImpArt",     "N", 16, 6, {|| "" },   "Total importe artículo"                  )
+   ::AddField( "nIvaArt",     "N", 16, 6, {|| "" },   "Total " + cImp() + " artículo"           )
+   ::AddField( "nImpEsp",     "N", 16, 6, {|| "" },   "Total impuesto especial artículo"        )
+   ::AddField( "nTotArt",     "N", 16, 6, {|| "" },   "Total importe artículo " + cImp() + " incluido" )
+   ::AddField( "nCosArt",     "N", 16, 6, {|| "" },   "Total costo artículo"                    )
    ::AddField( "nComAge",     "N", 16, 6, {|| "" },   "Comision agente"                         )
 
-   ::AddField( "cCodPr1",     "C", 20, 0, {|| "" },   "CÃ³digo de la primera propiedad"          )
-   ::AddField( "cCodPr2",     "C", 20, 0, {|| "" },   "CÃ³digo de la segunda propiedad"          )
+   ::AddField( "cCodPr1",     "C", 20, 0, {|| "" },   "Código de la primera propiedad"          )
+   ::AddField( "cCodPr2",     "C", 20, 0, {|| "" },   "Código de la segunda propiedad"          )
    ::AddField( "cValPr1",     "C", 20, 0, {|| "" },   "Valor de la primera propiedad"           )
    ::AddField( "cValPr2",     "C", 20, 0, {|| "" },   "Valor de la segunda propiedad"           )
 
-   ::AddField( "cLote",       "C", 14, 0, {|| "" },   "NÃºmero de lote"                          )
+   ::AddField( "cLote",       "C", 14, 0, {|| "" },   "Número de lote"                          )
    ::AddField( "dFecCad",     "D",  8, 0, {|| "" },   "Fecha de caducidad"                      )
 
-   ::AddField( "cNumSer",     "C", 30, 0, {|| "" },   "NÃºmero de serie"                         )
+   ::AddField( "cNumSer",     "C", 30, 0, {|| "" },   "Número de serie"                         )
 
    ::AddField( "cClsDoc",     "C",  2, 0, {|| "" },   "Clase de documento"                      )
    ::AddField( "cTipDoc",     "C", 30, 0, {|| "" },   "Tipo de documento"                       )
    ::AddField( "cIdeDoc",     "C", 27, 0, {|| "" },   "Identificador del documento"             )
-   ::AddField( "nNumLin",     "N",  4, 0, {|| "" },   "NÃºmero de lÃ­nea"                         )
+   ::AddField( "nNumLin",     "N",  4, 0, {|| "" },   "Número de línea"                         )
 
    ::AddField( "cSerDoc",     "C",  1, 0, {|| "" },   "Serie del documento"                     )
-   ::AddField( "cNumDoc",     "C", 10, 0, {|| "" },   "NÃºmero del documento"                    )
-   ::AddField( "cSufDoc",     "C",  2, 0, {|| "" },   "DelegaciÃ³n del documento"                )
+   ::AddField( "cNumDoc",     "C", 10, 0, {|| "" },   "Número del documento"                    )
+   ::AddField( "cSufDoc",     "C",  2, 0, {|| "" },   "Delegación del documento"                )
 
-   ::AddField( "nAnoDoc",     "N",  4, 0, {|| "" },   "AÃ±o del documento"                       )
+   ::AddField( "nAnoDoc",     "N",  4, 0, {|| "" },   "Año del documento"                       )
    ::AddField( "nMesDoc",     "N",  2, 0, {|| "" },   "Mes del documento"                       )
    ::AddField( "dFecDoc",     "D",  8, 0, {|| "" },   "Fecha del documento"                     )
    ::AddField( "cHorDoc",     "C",  2, 0, {|| "" },   "Hora del documento"                      )
    ::AddField( "cMinDoc",     "C",  2, 0, {|| "" },   "Minutos del documento"                   )
 
-   ::AddField( "cCodPrv",     "C", 12, 0, {|| "@!" }, "CÃ³digo proveedor lineas"                 )
+   ::AddField( "cCodPrv",     "C", 12, 0, {|| "@!" }, "Código proveedor lineas"                 )
    ::AddField( "cNomPrv",     "C", 80, 0, {|| "@!" }, "Nombre proveedor lineas"                 )
 
-   ::AddField( "nBultos",     "N", 16, 0, {|| "" },   "Numero de bultos en lÃ­neas"              )
-   ::AddField( "cFormato",    "C",100, 0, {|| "" },   "Formato de compra/venta en lÃ­neas"       )
-   ::AddField( "nCajas",      "N", 16, 6, {|| "" },   "Cajas en lÃ­neas"                         )
-   ::AddField( "nPeso",       "N", 16, 6, {|| "" },   "Peso en lÃ­neas"                          )
+   ::AddField( "nBultos",     "N", 16, 0, {|| "" },   "Numero de bultos en líneas"              )
+   ::AddField( "cFormato",    "C",100, 0, {|| "" },   "Formato de compra/venta en líneas"       )
+   ::AddField( "nCajas",      "N", 16, 6, {|| "" },   "Cajas en líneas"                         )
+   ::AddField( "nPeso",       "N", 16, 6, {|| "" },   "Peso en líneas"                          )
 
-   ::AddField( "lKitArt",     "L",  1, 0, {|| "" },   "LÃ­nea con escandallos"                   )
-   ::AddField( "lKitChl",     "L",  1, 0, {|| "" },   "LÃ­nea perteneciente a escandallo"        )
+   ::AddField( "lKitArt",     "L",  1, 0, {|| "" },   "Línea con escandallos"                   )
+   ::AddField( "lKitChl",     "L",  1, 0, {|| "" },   "Línea perteneciente a escandallo"        )
 
    ::AddField( "cPrvHab",     "C", 12, 0, {|| "" },   "Proveedor habitual"                      )
 
-   ::AddField( "cCtrCoste",   "C",  9, 0, {|| "" },   "CÃ³digo del centro de coste"             )
+   ::AddField( "cCtrCoste",   "C",  9, 0, {|| "" },   "Código del centro de coste"             )
 
-   ::AddField( "cDesUbi",     "C",200, 0, {|| "" },   "UnicaciÃ³n del artÃ­culo"                 )
+   ::AddField( "cDesUbi",     "C",200, 0, {|| "" },   "Unicación del artículo"                 )
 
    ::AddFieldCamposExtra()
 
@@ -711,12 +711,12 @@ METHOD AddFieldCamposExtra() CLASS TFastVentasArticulos
 
       for each cField in ::aExtraFields
 
-         ::AddField( "fld" + cField[ "cÃ³digo" ],;
+         ::AddField( "fld" + cField[ "código" ],;
                      ::aTypeDocs[ cField[ "tipo" ] ] ,;
                      cField[ "longitud" ],;
                      cField[ "decimales" ],;
                      {|| ::oCamposExtra:cPictData( cField ) },;
-                     Capitalize( cField[ "descripciÃ³n" ] ) )
+                     Capitalize( cField[ "descripción" ] ) )
 
       next
 
@@ -766,7 +766,7 @@ METHOD BuildReportCorrespondences()
                                                                               ::FastReportFacturaCliente(),;
                                                                               ::FastReportFacturaRectificativa(),;
                                                                               ::FastReportTicket( .t. ) } },;
-                     "Partes de producciÃ³n" =>        {  "Generate" =>  {||   ::AddParteProduccion() },;
+                     "Partes de producción" =>        {  "Generate" =>  {||   ::AddParteProduccion() },;
                                                          "Variable" =>  {||   ::AddVariableLineasParteProduccion() },;
                                                          "Data" =>      {||   ::FastReportParteProduccion() } },;
                      "Pedidos de proveedores" =>      {  "Generate" =>  {||   ::AddPedidoProveedor() },;
@@ -878,9 +878,9 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
                      { "Title" => "Ventas",                       "Image" =>11, "Type" => "Ventas",                        "Directory" => "Articulos\Ventas\Ventas",                      "File" => "Ventas.fr3" },;
                   } ;
                   },;
-                  {  "Title" => "ProducciÃ³n",                     "Image" => 14, "Subnode" =>;
+                  {  "Title" => "Producción",                     "Image" => 14, "Subnode" =>;
                   { ;
-                     { "Title" => "Partes de producciÃ³n",         "Image" => 14, "Type" => "Partes de producciÃ³n",         "Directory" => "Articulos\ProducciÃ³n\Partes de producciÃ³n",    "File" => "Partes de producciÃ³n.fr3" },;
+                     { "Title" => "Partes de producción",         "Image" => 14, "Type" => "Partes de producción",         "Directory" => "Articulos\Producción\Partes de producción",    "File" => "Partes de producción.fr3" },;
                   } ;
                   },; 
                   {  "Title" => "Compras",                        "Image" => 12, "Subnode" =>;
@@ -934,17 +934,17 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Empresa",                    ::oDbfEmp:nArea )
    ::oFastReport:SetFieldAliases(   "Empresa",                    cItemsToReport( aItmEmp() ) )
 
-   ::oFastReport:SetWorkArea(       "ArtÃ­culos.Informe",          ::oDbfArt:nArea )
-   ::oFastReport:SetFieldAliases(   "ArtÃ­culos.Informe",          cItemsToReport( aItmArt() ) )
+   ::oFastReport:SetWorkArea(       "Artículos.Informe",          ::oDbfArt:nArea )
+   ::oFastReport:SetFieldAliases(   "Artículos.Informe",          cItemsToReport( aItmArt() ) )
 
-   ::oFastReport:SetWorkArea(       "ArtÃ­culos.Escandallos",      ::oDbfArt:nArea )
-   ::oFastReport:SetFieldAliases(   "ArtÃ­culos.Escandallos",      cItemsToReport( aItmArt() ) )
+   ::oFastReport:SetWorkArea(       "Artículos.Escandallos",      ::oDbfArt:nArea )
+   ::oFastReport:SetFieldAliases(   "Artículos.Escandallos",      cItemsToReport( aItmArt() ) )
 
    ::oFastReport:SetWorkArea(       "Imagenes",                   ::oArtImg:nArea )
    ::oFastReport:SetFieldAliases(   "Imagenes",                   cItemsToReport( aItmImg() ) )
 
-   ::oFastReport:SetWorkArea(       "CÃ³digos de barras",          ::oArtCod:nArea )
-   ::oFastReport:SetFieldAliases(   "CÃ³digos de barras",          cItemsToReport( aItmBar() ) )
+   ::oFastReport:SetWorkArea(       "Códigos de barras",          ::oArtCod:nArea )
+   ::oFastReport:SetFieldAliases(   "Códigos de barras",          cItemsToReport( aItmBar() ) )
 
    ::oFastReport:SetWorkArea(       "Escandallos",                ::oArtKit:nArea )
    ::oFastReport:SetFieldAliases(   "Escandallos",                cItemsToReport( aItmKit() ) )
@@ -952,8 +952,8 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Familias",                   ::oDbfFam:nArea )
    ::oFastReport:SetFieldAliases(   "Familias",                   cItemsToReport( aItmFam() ) )
 
-   ::oFastReport:SetWorkArea(       "Tipo artÃ­culos",             ::oTipArt:Select() )
-   ::oFastReport:SetFieldAliases(   "Tipo artÃ­culos",             cObjectsToReport( ::oTipArt:oDbf ) )
+   ::oFastReport:SetWorkArea(       "Tipo artículos",             ::oTipArt:Select() )
+   ::oFastReport:SetFieldAliases(   "Tipo artículos",             cObjectsToReport( ::oTipArt:oDbf ) )
 
    ::oFastReport:SetWorkArea(       "Grupos familias",            ::oGruFam:Select() )
    ::oFastReport:SetFieldAliases(   "Grupos familias",            cObjectsToReport( ::oGruFam:oDbf ) )
@@ -967,8 +967,8 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Fabricantes",                ::oDbfFab:Select() )
    ::oFastReport:SetFieldAliases(   "Fabricantes",                cObjectsToReport( ::oDbfFab:oDbf ) )
 
-   ::oFastReport:SetWorkArea(       "Estado artÃ­culo",            ::oDbfEstArt:nArea )
-   ::oFastReport:SetFieldAliases(   "Estado artÃ­culo",            cItemsToReport( aItmEstadoSat() ) )
+   ::oFastReport:SetWorkArea(       "Estado artículo",            ::oDbfEstArt:nArea )
+   ::oFastReport:SetFieldAliases(   "Estado artículo",            cItemsToReport( aItmEstadoSat() ) )
 
    ::oFastReport:SetWorkArea(       "Tipos de " + cImp(),         ::oDbfIva:nArea )
    ::oFastReport:SetFieldAliases(   "Tipos de " + cImp(),         cItemsToReport( aItmTIva() ) )
@@ -985,8 +985,8 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Usuarios",                   ::oDbfUsr:nArea ) 
    ::oFastReport:SetFieldAliases(   "Usuarios",                   cItemsToReport( aItmUsuario() ) )
 
-   ::oFastReport:SetWorkArea(       "Stock por almacÃ©n",          ::oArtAlm:nArea )
-   ::oFastReport:SetFieldAliases(   "Stock por almacÃ©n",          cItemsToReport( aItmStockaAlmacenes() ) )
+   ::oFastReport:SetWorkArea(       "Stock por almacén",          ::oArtAlm:nArea )
+   ::oFastReport:SetFieldAliases(   "Stock por almacén",          cItemsToReport( aItmStockaAlmacenes() ) )
 
    ::oFastReport:SetWorkArea(       "Centro de coste",            ::oCtrCoste:Select() )
    ::oFastReport:SetFieldAliases(   "Centro de coste",            cObjectsToReport( ::oCtrCoste:oDbf ) )
@@ -1003,8 +1003,8 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Propiedades 2",              ::oPrp2:nArea ) 
    ::oFastReport:SetFieldAliases(   "Propiedades 2",              cItemsToReport( aItmPro() ) )
 
-   ::oFastReport:SetWorkArea(       "CodificaciÃ³n de proveedores",   ::oArtPrv:nArea )
-   ::oFastReport:SetFieldAliases(   "CodificaciÃ³n de proveedores",   cItemsToReport( aItmArtPrv() ) )
+   ::oFastReport:SetWorkArea(       "Codificación de proveedores",   ::oArtPrv:nArea )
+   ::oFastReport:SetFieldAliases(   "Codificación de proveedores",   cItemsToReport( aItmArtPrv() ) )
 
    ::oFastReport:SetWorkArea(       "Operario",                      ::oOperario:Select() )
    ::oFastReport:SetFieldAliases(   "Operario",                      cObjectsToReport( ::oOperario:oDbf ) )
@@ -1014,14 +1014,14 @@ METHOD DataReport() CLASS TFastVentasArticulos
 
    // Relaciones entre tablas-----------------------------------------------------
 
-   ::oFastReport:SetMasterDetail(   "ArtÃ­culos.Informe", "Familias",                      {|| ::oDbfArt:Familia } )
-   ::oFastReport:SetMasterDetail(   "ArtÃ­culos.Informe", "Tipo artÃ­culos",                {|| ::oDbfArt:cCodTip } )
-   ::oFastReport:SetMasterDetail(   "ArtÃ­culos.Informe", "Categorias",                    {|| ::oDbfArt:cCodCate } )
-   ::oFastReport:SetMasterDetail(   "ArtÃ­culos.Informe", "Temporadas",                    {|| ::oDbfArt:cCodTemp } )
-   ::oFastReport:SetMasterDetail(   "ArtÃ­culos.Informe", "Fabricantes",                   {|| ::oDbfArt:cCodFab } )
-   ::oFastReport:SetMasterDetail(   "ArtÃ­culos.Informe", "Tipos de " + cImp(),            {|| ::oDbfArt:TipoIva } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Familias",                      {|| ::oDbfArt:Familia } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipo artículos",                {|| ::oDbfArt:cCodTip } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Categorias",                    {|| ::oDbfArt:cCodCate } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Temporadas",                    {|| ::oDbfArt:cCodTemp } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Fabricantes",                   {|| ::oDbfArt:cCodFab } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipos de " + cImp(),            {|| ::oDbfArt:TipoIva } )
 
-   ::oFastReport:SetMasterDetail(   "Escandallos", "ArtÃ­culos.Escandallos",         {|| ::oArtKit:cRefKit } )
+   ::oFastReport:SetMasterDetail(   "Escandallos", "Artículos.Escandallos",         {|| ::oArtKit:cRefKit } )
    
    ::oFastReport:SetMasterDetail(   "Informe", "Empresa",                           {|| cCodEmp() } )
    ::oFastReport:SetMasterDetail(   "Informe", "Clientes",                          {|| ::oDbf:cCodCli } )
@@ -1030,18 +1030,18 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetMasterDetail(   "Informe", "Almacenes",                         {|| ::oDbf:cCodAlm } )
    ::oFastReport:SetMasterDetail(   "Informe", "Direcciones",                       {|| ::oDbf:cCodCli + ::oDbf:cCodObr } )
    ::oFastReport:SetMasterDetail(   "Informe", "Rutas",                             {|| ::oDbf:cCodRut } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Estado artÃ­culo",                   {|| ::oDbf:cCodEst } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Estado artículo",                   {|| ::oDbf:cCodEst } )
    ::oFastReport:SetMasterDetail(   "Informe", "Operario",                          {|| ::oDbf:cCodOpe } )
    ::oFastReport:SetMasterDetail(   "Informe", "Grupos familias",                   {|| ::oDbf:cGrpFam } )
    ::oFastReport:SetMasterDetail(   "Informe", "Agentes",                           {|| ::oDbf:cCodAge } )
 
-   ::oFastReport:SetMasterDetail(   "Informe", "ArtÃ­culos.Informe",                 {|| ::oDbf:cCodArt } )  
+   ::oFastReport:SetMasterDetail(   "Informe", "Artículos.Informe",                 {|| ::oDbf:cCodArt } )  
    ::oFastReport:SetMasterDetail(   "Informe", "Imagenes",                          {|| ::oDbf:cCodArt } )
    ::oFastReport:SetMasterDetail(   "Informe", "Escandallos",                       {|| ::oDbf:cCodArt } )
-   ::oFastReport:SetMasterDetail(   "Informe", "CÃ³digos de barras",                 {|| ::oDbf:cCodArt } )
-   ::oFastReport:SetMasterDetail(   "Informe", "CodificaciÃ³n de proveedores",       {|| ::oDbf:cCodArt } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Códigos de barras",                 {|| ::oDbf:cCodArt } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Codificación de proveedores",       {|| ::oDbf:cCodArt } )
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Stock por almacÃ©n",  {|| ::oDbf:cCodArt + ::oDbf:cCodAlm } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Stock por almacén",  {|| ::oDbf:cCodArt + ::oDbf:cCodAlm } )
    ::oFastReport:SetMasterDetail(   "Informe", "Centro de coste",    {|| ::oDbf:cCtrCoste } )   
 
    ::oFastReport:SetMasterDetail(   "Informe", "Propiedades 1",    {|| ::oDbf:cCodPr1 + ::oDbf:cValPr1 } )   
@@ -1049,14 +1049,14 @@ METHOD DataReport() CLASS TFastVentasArticulos
 
    // Resincronizar con los movimientos-------------------------------------------
 
-   ::oFastReport:SetResyncPair(     "ArtÃ­culos.Informe", "Familias" )
-   ::oFastReport:SetResyncPair(     "ArtÃ­culos.Informe", "Tipo artÃ­culos" )
-   ::oFastReport:SetResyncPair(     "ArtÃ­culos.Informe", "Categorias" )
-   ::oFastReport:SetResyncPair(     "ArtÃ­culos.Informe", "Temporadas" )
-   ::oFastReport:SetResyncPair(     "ArtÃ­culos.Informe", "Fabricantes" )
-   ::oFastReport:SetResyncPair(     "ArtÃ­culos.Informe", "Tipos de " + cImp() )
+   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Familias" )
+   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Tipo artículos" )
+   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Categorias" )
+   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Temporadas" )
+   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Fabricantes" )
+   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Tipos de " + cImp() )
    
-   ::oFastReport:SetResyncPair(     "Escandallos", "ArtÃ­culos.Escandallos" )
+   ::oFastReport:SetResyncPair(     "Escandallos", "Artículos.Escandallos" )
 
    ::oFastReport:SetResyncPair(     "Informe", "Clientes" )
    ::oFastReport:SetResyncPair(     "Informe", "Proveedores" )
@@ -1065,17 +1065,17 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetResyncPair(     "Informe", "Almacenes" )
    ::oFastReport:SetResyncPair(     "Informe", "Direcciones" )
    ::oFastReport:SetResyncPair(     "Informe", "Rutas" )
-   ::oFastReport:SetResyncPair(     "Informe", "CodificaciÃ³n de proveedores" )
-   ::oFastReport:SetResyncPair(     "Informe", "Estado artÃ­culo" )
+   ::oFastReport:SetResyncPair(     "Informe", "Codificación de proveedores" )
+   ::oFastReport:SetResyncPair(     "Informe", "Estado artículo" )
    ::oFastReport:SetResyncPair(     "Informe", "Operario" )
    ::oFastReport:SetResyncPair(     "Informe", "Grupos familias" )
    ::oFastReport:SetResyncPair(     "Informe", "Agentes" )
 
-   ::oFastReport:SetResyncPair(     "Informe", "ArtÃ­culos.Informe" )
+   ::oFastReport:SetResyncPair(     "Informe", "Artículos.Informe" )
    ::oFastReport:SetResyncPair(     "Informe", "Imagenes" )
    ::oFastReport:SetResyncPair(     "Informe", "Escandallos" )
-   ::oFastReport:SetResyncPair(     "Informe", "CÃ³digos de barras" )
-   ::oFastReport:SetResyncPair(     "Informe", "Stock por almacÃ©n" )  
+   ::oFastReport:SetResyncPair(     "Informe", "Códigos de barras" )
+   ::oFastReport:SetResyncPair(     "Informe", "Stock por almacén" )  
    ::oFastReport:SetResyncPair(     "Informe", "Centro de coste" ) 
 
    ::oFastReport:SetResyncPair(     "Informe", "Propiedades 1" )   
@@ -1127,7 +1127,7 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
 
    ::setFilterUserId()
 
-   // filtros para las lÃ­neas-------------------------------------------------
+   // filtros para las líneas-------------------------------------------------
 
    ::cExpresionLine           := '!lTotLin .and. !lControl'
    ::cExpresionLine           += ' .and. Field->cSerSat >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerSat <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
@@ -1165,7 +1165,7 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
             while !::lBreak .and. ( ::oSatCliT:cSerSat + Str( ::oSatCliT:nNumSat ) + ::oSatCliT:cSufSat == ::oSatCliL:cSerSat + Str( ::oSatCliL:nNumSat ) + ::oSatCliL:cSufSat )
 
                /*
-               AÃƒÂ±adimos un nuevo registro-----------------------------------
+               AÃ±adimos un nuevo registro-----------------------------------
                */
 
                ::oDbf:Blank()
@@ -1349,7 +1349,7 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
                   !( ::lExcImp   .and. nImpLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
 
                   /*
-                  AÃƒÂ±adimos un nuevo registro-----------------------------------
+                  AÃ±adimos un nuevo registro-----------------------------------
                   */
 
                   ::oDbf:Blank()
@@ -1536,7 +1536,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                if !( ::lExcCero  .and. nTotNPedCli( aliasPedidosClientesLineas ) == 0 )  .and.;
                   !( ::lExcImp   .and. nImpLPedCli( aliasPedidosClientes, aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
 
-                  // AÃ±adimos un nuevo registro--------------------------------
+                  // Añadimos un nuevo registro--------------------------------
 
                   ::oDbf:Blank()
 
@@ -1676,7 +1676,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
    
    ::setFilterUserId()
    
-   // filtros para las lÃ­neas-------------------------------------------------
+   // filtros para las líneas-------------------------------------------------
 
    ::cExpresionLine        := '!lTotLin .and. !lControl'
    ::cExpresionLine        += ' .and. Field->cSerAlb >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerAlb <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
@@ -1786,7 +1786,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:dFecCad    := ::oAlbCliL:dFecCad
 
                   ::oDbf:cClsDoc    := ALB_CLI
-                  ::oDbf:cTipDoc    := "AlbarÃ¡n cliente"
+                  ::oDbf:cTipDoc    := "Albarán cliente"
                   ::oDbf:cSerDoc    := ::oAlbCliT:cSerAlb
                   ::oDbf:cNumDoc    := Str( ::oAlbCliT:nNumAlb )
                   ::oDbf:cSufDoc    := ::oAlbCliT:cSufAlb
@@ -1866,7 +1866,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
    
    ::setFilterUserId()
 
-   // filtros para las lÃ­neas-------------------------------------------------
+   // filtros para las líneas-------------------------------------------------
 
    ::cExpresionLine        := '!lTotLin .and. !lControl'
    ::cExpresionLine        += ' .and. Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )      + '" .and. Field->cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
@@ -2222,7 +2222,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
    ::cExpresionHeader       += ' .and. Field->cNumTik >= "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )   + '" .and. Field->cNumTik <= "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '"'
    ::cExpresionHeader       += ' .and. Field->cSufTik >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufTik <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
-   // Filtros para las lÃ­neas ------------------------------------------------
+   // Filtros para las líneas ------------------------------------------------
 
    ::cExpresionLine        := '( !Field->lControl .and. !Field->lDelTil )'
    ::cExpresionLine        += ' .and. ( ( Field->cCbaTil >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. Field->cCbaTil <= "' + ::oGrupoArticulo:Cargo:getHasta() + '") .or. '
@@ -2293,7 +2293,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
                ::oDbf:nPreArt    := nImpUTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nValDiv, nil, 1 )
 
-               ::oDbf:nBrtArt    := nBrtLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nValDiv, nil, 1 )
+               ::oDbf:nBrtArt    := nNetLTpv( ::oTikCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                ::oDbf:nImpArt    := nImpLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, nil, 1 )
 
                ::oDbf:nDtoArt    := ::oTikCliL:nDtoLin
@@ -2304,7 +2304,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:nTotPrm    := 0
 
                ::oDbf:nIvaArt    := nIvaLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 1 )
-               //::oDbf:nImpEsp    := nTotLTpv( ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 1 )
+               ::oDbf:nImpEsp    := nIvmLTpv( ::oTikCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                ::oDbf:nTotArt    := nImpLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, nil, 1 )
                ::oDbf:nTotArt    += nIvaLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 1 )
                
@@ -2338,7 +2338,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:lKitArt    := ::oTikCliL:lKitArt
                ::oDbf:lKitChl    := ::oTikCliL:lKitChl
 
-               // AÃ±adimos un nuevo registro-----------------------------------
+               // Añadimos un nuevo registro-----------------------------------
 
                ::InsertIfValid()
                ::loadValuesExtraFields()
@@ -2386,7 +2386,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:nBrtArt    := nBrtLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nValDiv, nil, 2 )
                ::oDbf:nImpArt    := nImpLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, nil, 2 )
                ::oDbf:nIvaArt    := nIvaLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 2 )
-               //::oDbf:nImpEsp    := nTotLTpv( ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 2 )
+               ::oDbf:nImpEsp    := nIvmLTpv( ::oTikCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                ::oDbf:nTotArt    := nImpLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, nil, 2 )
                ::oDbf:nTotArt    += nIvaLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 2 )
 
@@ -2450,10 +2450,10 @@ METHOD listadoArticulo() CLASS TFastVentasArticulos
    ::oMtrInf:SetTotal( ::oDbfArt:OrdKeyCount() )
    ::oMtrInf:AutoInc( ::oDbfArt:OrdKeyCount() )
 
-   ::oMtrInf:cText         := "Procesando artÃ­culos"
+   ::oMtrInf:cText         := "Procesando artículos"
 
    /*
-   Recorremos artÃ­culos--------------------------------------------------------
+   Recorremos artículos--------------------------------------------------------
    */
 
    ::oDbfArt:goTop() 
@@ -2500,9 +2500,9 @@ METHOD AddArticulo() CLASS TFastVentasArticulos
    ::oMtrInf:SetTotal(  ::oDbfArt:OrdKeyCount() )
    ::oMtrInf:AutoInc(   ::oDbfArt:OrdKeyCount() )
 
-   ::oMtrInf:cText      := "Procesando artÃ­culos"
+   ::oMtrInf:cText      := "Procesando artículos"
 
-   // Recorremos artÃ­culos-----------------------------------------------------
+   // Recorremos artículos-----------------------------------------------------
 
    ::oDbfArt:goTop() 
    while !::oDbfArt:eof() .and. !::lBreak
@@ -2649,7 +2649,7 @@ METHOD AddParteProduccion() CLASS TFastVentasArticulos
 
    ::oProCab:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oProCab:cFile ), ::oProCab:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
-   ::oMtrInf:cText   := "Procesando partes de producciÃ³n"
+   ::oMtrInf:cText   := "Procesando partes de producción"
    
    ::oMtrInf:SetTotal( ::oProCab:OrdKeyCount() )
 
@@ -2703,7 +2703,7 @@ METHOD AddParteProduccion() CLASS TFastVentasArticulos
                      ::oDbf:cValPr2    := ::oProLin:cValPr2
 
                      ::oDbf:cClsDoc    := PAR_PRO
-                     ::oDbf:cTipDoc    := "Parte producciÃ³n"
+                     ::oDbf:cTipDoc    := "Parte producción"
 
                      ::oDbf:cSerDoc    := ::oProCab:cSerOrd
                      ::oDbf:cNumDoc    := Str( ::oProCab:nNumOrd )
@@ -2956,7 +2956,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:cCodTrn    := ""
                   ::oDbf:cCodUsr    := ::oAlbPrvT:cCodUsr
 
-                  //Para poder filtrar por proveedor, guardamos su cÃ³dipo tambiÃ©n en el campo provhab
+                  //Para poder filtrar por proveedor, guardamos su códipo también en el campo provhab
 
                   ::oDbf:cPrvHab    := ::oAlbPrvT:cCodPrv
                   
@@ -2986,7 +2986,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:dFecCad    := ::oAlbPrvL:dFecCad
 
                   ::oDbf:cClsDoc    := ALB_PRV
-                  ::oDbf:cTipDoc    := "AlbarÃ¡n proveedor"
+                  ::oDbf:cTipDoc    := "Albarán proveedor"
                   ::oDbf:cSerDoc    := ::oAlbPrvT:cSerAlb
                   ::oDbf:cNumDoc    := Str( ::oAlbPrvT:nNumAlb )
                   ::oDbf:cSufDoc    := ::oAlbPrvT:cSufAlb 
@@ -3634,14 +3634,14 @@ METHOD loadValuesExtraFields() CLASS TFastVentasArticulos
 
       for each cField in ::aExtraFields
 
-         //MsgInfo( ::oCamposExtra:valueExtraField( cField[ "cÃ³digo" ], ::oDbf:cCodArt, cField ), cField[ "cÃ³digo" ] )
+         //MsgInfo( ::oCamposExtra:valueExtraField( cField[ "código" ], ::oDbf:cCodArt, cField ), cField[ "código" ] )
          
-         ::oDbf:FieldPutByName(  "fld" + cField[ "cÃ³digo" ],;
-                                 ::oCamposExtra:valueExtraField( cField[ "cÃ³digo" ], ::oDbf:cCodArt, cField ) )
+         ::oDbf:FieldPutByName(  "fld" + cField[ "código" ],;
+                                 ::oCamposExtra:valueExtraField( cField[ "código" ], ::oDbf:cCodArt, cField ) )
 
-         ::oDbf:fieldput( fieldpos( "fld" + cField[ "cÃ³digo" ] ), ::oCamposExtra:valueExtraField( cField[ "cÃ³digo" ], ::oDbf:cCodArt, cField ) )
+         ::oDbf:fieldput( fieldpos( "fld" + cField[ "código" ] ), ::oCamposExtra:valueExtraField( cField[ "código" ], ::oDbf:cCodArt, cField ) )
 
-         //MsgInfo( ::oDbf:FieldGetByName(  "fld" + cField[ "cÃ³digo" ] ) )
+         //MsgInfo( ::oDbf:FieldGetByName(  "fld" + cField[ "código" ] ) )
 
       next
 
