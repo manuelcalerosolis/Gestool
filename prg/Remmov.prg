@@ -1008,9 +1008,7 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
    local oBtnImp
    local oBmpGeneral
 
-   /*
-   Ordeno oDbfVir por el numero de linea---------------------------------------
-   */
+   // Ordeno oDbfVir por el numero de linea------------------------------------
 
    ::oDetMovimientos:oDbfVir:OrdSetFocus( "nNumLin" )
 
@@ -1504,7 +1502,7 @@ METHOD lSave( nMode ) CLASS TRemMovAlm
    end if
 
    if !::oDetMovimientos:oDbfVir:LastRec() > 0
-      MsgStop( "No puede hacer un movimiento de almacén sin líneas" )
+      MsgStop( "No puede hacer un movimiento de almacén sin líneas." )
       Return .f.
    end if
 
@@ -1556,6 +1554,7 @@ METHOD GenRemMov( lPrinter, cCaption, cCodDoc, cPrinter, nCopies ) CLASS TRemMov
    ::oDbf:Seek( nNumRem )
    ::oDetMovimientos:oDbf:Seek( nNumRem )
    ::oDetSeriesMovimientos:oDbf:Seek( nNumRem )
+
    ::oDbfAge:Seek( ::oDbf:cCodAge )
 
    if lVisualDocumento( cCodDoc, D():Documentos( ::nView ) )
@@ -1566,62 +1565,7 @@ METHOD GenRemMov( lPrinter, cCaption, cCodDoc, cPrinter, nCopies ) CLASS TRemMov
 
    else
 
-      private oDbf         := ::oDbf
-      private cDbf         := ::oDbf:cAlias
-      private oDbfCol      := ::oDetMovimientos:oDbf
-      private cDbfCol      := ::oDetMovimientos:oDbf:cAlias
-      private cDbfPro      := ::oTblPro:cAlias
-      private cDbfFam      := ::oFam:cAlias
-      private cDbfMov      := ::oTMov:cAlias
-      private cDbfArt      := ::oArt:cAlias
-      private cDbfAge      := ::oDbfAge:cAlias
-
-      private cPouDivRem   := ::cPinDiv
-      private cPorDivRem   := ::cPirDiv
-
-      ::nTotRemMov( .t. )
-
-      /*
-      Creamos el informe con la impresora seleccionada para ese informe-----------
-      */
-
-      if !Empty( cPrinter )
-         oDevice           := TPrinter():New( cCaption, .f., .t., cPrinter )
-         REPORT oInf CAPTION cCaption TO DEVICE oDevice
-      else
-         REPORT oInf CAPTION cCaption PREVIEW
-      end if
-
-      if !Empty( oInf ) .and. oInf:lCreated
-
-         oInf:lAutoland          := .f.
-         oInf:lFinish            := .f.
-         oInf:lNoCancel          := .t.
-         oInf:bSkip              := {|| ::oDetMovimientos:oDbf:Skip() }
-
-         oInf:oDevice:lPrvModal  := .t.
-
-         if lPrinter
-            oInf:bPreview        := {| oDevice | PrintPreview( oDevice ) }
-         end if
-
-         SetMargin(  cCodDoc, oInf )
-         PrintColum( cCodDoc, oInf )
-
-         END REPORT
-
-         ACTIVATE REPORT oInf ;
-            WHILE       ( Str( ::oDetMovimientos:oDbf:nNumRem ) + ::oDetMovimientos:oDbf:cSufRem == nNumRem .and. !::oDetMovimientos:oDbf:Eof() );
-            FOR         ( !::oDetMovimientos:oDbf:lImpLin ) ;
-            ON ENDPAGE  ( ::EPage( oInf, cCodDoc ) )
-
-         if lPrinter
-            oInf:oDevice:end()
-         end if
-
-         oInf        := nil
-
-      end if
+      msgStop( "El documento " + cCodDoc + " no es un formato valido.", "Formato obsoleto" )
 
    end if
 
@@ -4125,9 +4069,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
 
    oDlg:Activate( , , , .t., , , {|| EdtDetMenu( Self, oDlg ) } )
 
-   /*
-   Salida del dialogo----------------------------------------------------------
-   */
+   // Salida del dialogo----------------------------------------------------------
 
    EndEdtDetMenu()
 
@@ -4197,20 +4139,22 @@ METHOD ValidResource( nMode, oDlg, oBtn ) CLASS TDetMovimientos
 
    oBtn:SetFocus()
 
-   if nMode == APPD_MODE // .and. !::loadArticulo( .t., nMode )
+   /*
+   if nMode == APPD_MODE .and. !::loadArticulo( .t., nMode )
       ::oRefMov:SetFocus()
       Return .f.
    end if
+   */
 
    if Empty( ::oDbfVir:cRefMov )
-      MsgStop( "Código de artículo vacío." )
+      msgstop( "Código de artículo vacío." )
       ::oRefMov:SetFocus()
       Return .f.
    end if
 
    // Control para numeros de serie--------------------------------------------
 
-   lNumSer                       := RetFld( ::oDbfVir:cRefMov, ::oParent:oArt:cAlias, "lNumSer" )
+   lNumSer                       := retfld( ::oDbfVir:cRefMov, ::oParent:oArt:cAlias, "lNumSer" )
    lNowSer                       := ::oParent:oDetSeriesMovimientos:oDbfVir:SeekInOrd( Str( ::oDbfVir:nNumLin, 4 ) + ::oDbfVir:cRefMov, "nNumLin" )
 
    if ( nMode == APPD_MODE )     .and.;

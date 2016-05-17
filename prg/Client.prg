@@ -8524,7 +8524,7 @@ FUNCTION rxClient( cPath, cDriver )
       ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "Telefono", "Field->Telefono", {|| Field->Telefono } ) )
 
       ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "NbrEst", "Field->NbrEst", {|| Field->NbrEst } ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "NbrEst", "Upper( Field->NbrEst )", {|| Upper( Field->NbrEst ) } ) )
 
       ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "cMeiInt", "Upper( Field->cMeiInt )", {|| Upper( Field->cMeiInt ) } ) )

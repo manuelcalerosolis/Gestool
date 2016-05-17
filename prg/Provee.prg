@@ -349,7 +349,8 @@ FUNCTION Provee( oMenuItem, oWnd )
                "Código postal",;
                "Provincia",;
                "Correo electrónico",;
-               "Contacto" ;
+               "Contacto",;
+               "Establecimiento" ;
       MRU      "Businessman_16";
       BITMAP   ( clrTopCompras ) ;
       ALIAS    ( dbfProvee ) ;
@@ -460,9 +461,19 @@ FUNCTION Provee( oMenuItem, oWnd )
 
    with object ( oWndBrw:AddXCol() )
       :cHeader          := "Contacto"
+      :cSortOrder       := "cPerCto"
       :bEditValue       := {|| ( dbfProvee )->cPerCto }
       :nWidth           := 200
       :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Establecimiento"
+      :cSortOrder       := "cNbrEst"
+      :bEditValue       := {|| ( dbfProvee )->cNbrEst }
+      :nWidth           := 150
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      :lHide            := .t.
    end with
 
    with object ( oWndBrw:AddXCol() )
@@ -4550,6 +4561,9 @@ FUNCTION rxProvee( cPath, cDriver )
 
       ( dbfProvee )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfProvee )->( ordCreate( cPath + "Provee.Cdx", "cPerCto", "cPerCto", {|| Field->cPerCto } ) )
+
+      ( dbfProvee )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfProvee )->( ordCreate( cPath + "Provee.Cdx", "cNbrEst", "Upper( cNbrEst )", {|| Upper( Field->cNbrEst ) } ) )
 
       ( dbfProvee )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfProvee )->( ordCreate( cPath + "Provee.Cdx", "lSndInt", "lSndInt", {|| Field->lSndInt } ) )

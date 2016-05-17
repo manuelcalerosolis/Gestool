@@ -10992,8 +10992,11 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
 
       lBeforeAppendEvent   := runEventScript( "AlbaranesClientes\Lineas\beforeAppend", aTmp, aTmpAlb, nView )
 
+<<<<<<< HEAD
       //msgAlert( lBeforeAppendEvent, "lBeforeAppendEvent" )
 
+=======
+>>>>>>> origin/master
       if isLogic( lBeforeAppendEvent ) .and. !lBeforeAppendEvent
          Return nil
       end if
