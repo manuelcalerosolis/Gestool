@@ -335,16 +335,19 @@ RETURN nil
 
 METHOD setCodeAndValue( cCodImp, uValue )
 
-   if empty( cCodImp )
-      uValue:cText(0)
-      Return nil 
+   local nImporteImpuesto  := 0
+ 
+   if !empty( cCodImp )
+      nImporteImpuesto     := ::nValImp( cCodImp ) 
    end if 
-   
-   sysRefresh()
 
    if isObject( uValue )
-      uValue:cText( ::nValImp( cCodImp ) )
+      uValue:cText( nImporteImpuesto )
+   else 
+      uValue               := nImporteImpuesto
    end if
+
+   sysrefresh()
 
 Return nil
 

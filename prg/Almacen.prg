@@ -1142,10 +1142,21 @@ RETURN NIL
 Function cSeekStoreView( cCodigoAlmacen, nView )
 
    if dbSeekInOrd( cCodigoAlmacen, "cCodAlm", D():Almacen( nView ) )
-      return .t.
+      Return .t.
    end if 
 
 Return ( .f. )
+
+//--------------------------------------------------------------------------//
+
+Function lValidAlmacen( cCodigoAlmacen, dbfAlmacen )
+
+   if !( dbfAlmacen )->( dbSeekInOrd( cCodigoAlmacen, "cCodAlm",  dbfAlmacen ) )
+      msgStop( "Almacén no encontrado" )
+      Return .f.
+   end if 
+
+Return ( .t. )
 
 //--------------------------------------------------------------------------//
 

@@ -2490,17 +2490,11 @@ Static Function lPubPrp()
    local lPub  := .f.
 
    if ( dbfProT )->lPubInt
-
       lPub     := .t.
-
    else
-
       if ( dbfProT )->cCodWeb != 0
-
          lPub  := .t.
-
       end if
-
    end if
 
 Return lPub
@@ -2511,6 +2505,7 @@ Function hidePropertiesTable( oBrw )
 
    if !empty( oBrw )
       oBrw:Hide()
+      oBrw:Cargo                 := nil
    end if 
 
 Return ( nil )   
