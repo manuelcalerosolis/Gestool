@@ -151,9 +151,6 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD setFilterGroupFamily()                INLINE ( if( ::lApplyFilters,;
                                                          ::cExpresionLine  += ' .and. ( Field->cGrpFam >= "' + ::oGrupoGFamilia:Cargo:getDesde() + '" .and. Field->cGrpFam <= "' + ::oGrupoGFamilia:Cargo:getHasta() + '" )', ) )               
    
-   METHOD setFilterStateCode()                  INLINE ( if( ::lApplyFilters,;
-                                                         ::cExpresionHeader  += ' .and. ( Field->cCodEst >= "' + ::oGrupoEstadoArticulo:Cargo:getDesde() + '" .and. Field->cCodEst <= "' + ::oGrupoEstadoArticulo:Cargo:getHasta() + '" )', ) )
-   
    METHOD setFilterPaymentId()                  INLINE ( if( ::lApplyFilters,;
                                                          ::cExpresionHeader  += ' .and. ( Field->cCodPago >= "' + ::oGrupoFpago:Cargo:getDesde() + '" .and. Field->cCodPago <= "' + ::oGrupoFpago:Cargo:getHasta() + '" )', ) )
    
@@ -1108,14 +1105,12 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
 
    // filtros para la cabecera------------------------------------------------
 
-   ::cExpresionHeader         := 'Field->dFecSat >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecSat <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   ::cExpresionHeader         += ' .and. Field->cSerSat >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerSat <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
-   ::cExpresionHeader         += ' .and. Field->nNumSat >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )   + '" ) .and. Field->nNumSat <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
-   ::cExpresionHeader         += ' .and. Field->cSufSat >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufSat <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
+   ::cExpresionHeader         := '( Field->dFecSat >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecSat <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
+   ::cExpresionHeader         += ' .and. ( Field->cSerSat >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerSat <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '" )'
+   ::cExpresionHeader         += ' .and. ( Field->nNumSat >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )   + '" ) .and. Field->nNumSat <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" ) )'
+   ::cExpresionHeader         += ' .and. ( Field->cSufSat >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufSat <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '" )'
    
    ::setFilterClientIdHeader()
-
-   ::setFilterStateCode()
 
    ::setFilterPaymentInvoiceId()
 
@@ -1130,9 +1125,9 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
    // filtros para las líneas-------------------------------------------------
 
    ::cExpresionLine           := '!lTotLin .and. !lControl'
-   ::cExpresionLine           += ' .and. Field->cSerSat >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerSat <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
-   ::cExpresionLine           += ' .and. Field->nNumSat >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )   + '" ) .and. Field->nNumSat <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
-   ::cExpresionLine           += ' .and. Field->cSufSat >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufSat <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
+   ::cExpresionLine           += ' .and. ( Field->cSerSat >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerSat <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '" )'
+   ::cExpresionLine           += ' .and. ( Field->nNumSat >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )   + '" ) .and. Field->nNumSat <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" ) )'
+   ::cExpresionLine           += ' .and. ( Field->cSufSat >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufSat <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '" )'
 
    ::setFilterProductIdLine()
 
@@ -1288,14 +1283,12 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
 
    // filtros para la cabecera------------------------------------------------
    
-   ::cExpresionHeader          := 'Field->dFecPre >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecPre <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   ::cExpresionHeader          += ' .and. Field->cSerPre >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerPre <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
-   ::cExpresionHeader          += ' .and. Field->nNumPre >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )   + '" ) .and. Field->nNumPre <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
-   ::cExpresionHeader          += ' .and. Field->cSufPre >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufPre <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
+   ::cExpresionHeader          := '( Field->dFecPre >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecPre <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
+   ::cExpresionHeader          += ' .and. ( Field->cSerPre >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerPre <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '" )'
+   ::cExpresionHeader          += ' .and. ( Field->nNumPre >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )   + '" ) .and. Field->nNumPre <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" ) )'
+   ::cExpresionHeader          += ' .and. ( Field->cSufPre >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufPre <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '" )'
    
    ::setFilterClientIdHeader()
-
-   ::setFilterStateCode()
 
    ::setFilterPaymentInvoiceId()
 
@@ -1310,9 +1303,9 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
    // filtros para las lineas-------------------------------------------------
 
    ::cExpresionLine           := '!lTotLin .and. !lControl'
-   ::cExpresionLine           += ' .and. Field->cSerPre >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerPre <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
-   ::cExpresionLine           += ' .and. Field->nNumPre >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumPre <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
-   ::cExpresionLine           += ' .and. Field->cSufPre >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() ) + '" .and. Field->cSufPre <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
+   ::cExpresionLine           += ' .and. ( Field->cSerPre >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerPre <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '" )'
+   ::cExpresionLine           += ' .and. ( Field->nNumPre >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumPre <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" ) )'
+   ::cExpresionLine           += ' .and. ( Field->cSufPre >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() ) + '" .and. Field->cSufPre <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '" )'
 
    ::setFilterProductIdLine()
 
@@ -1472,15 +1465,13 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
    // filtros para la cabecera------------------------------------------------
 
-   ::cExpresionHeader         := 'Field->dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+   ::cExpresionHeader         := '( Field->dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
    ::cExpresionHeader         += ' .and. !Field->lCancel '
-   ::cExpresionHeader         += ' .and. Field->cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerPed <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
-   ::cExpresionHeader         += ' .and. Field->nNumPed >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumPed <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
-   ::cExpresionHeader         += ' .and. Field->cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufPed <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
+   ::cExpresionHeader         += ' .and. ( Field->cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerPed <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '") '
+   ::cExpresionHeader         += ' .and. ( Field->nNumPed >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumPed <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )) '
+   ::cExpresionHeader         += ' .and. ( Field->cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufPed <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '") '
 
    ::setFilterClientIdHeader()
-
-   ::setFilterStateCode()
 
    ::setFilterPaymentInvoiceId()
 
@@ -1495,9 +1486,9 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
    // filtros para la linea----------------------------------------------------
 
    ::cExpresionLine           := '!Field->lTotLin .and. !Field->lControl'
-   ::cExpresionLine           += ' .and. Field->cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerPed <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
-   ::cExpresionLine           += ' .and. Field->nNumPed >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumPed <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
-   ::cExpresionLine           += ' .and. Field->cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() ) + '" .and. Field->cSufPed <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
+   ::cExpresionLine           += ' .and. ( Field->cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerPed <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '" )'
+   ::cExpresionLine           += ' .and. ( Field->nNumPed >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumPed <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" ) )'
+   ::cExpresionLine           += ' .and. ( Field->cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() ) + '" .and. Field->cSufPed <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '" )'
 
    ::setFilterProductIdLine()
 
@@ -1655,10 +1646,10 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
    
    // filtros para la cabecera-------------------------------------------------
 
-   ::cExpresionHeader      := 'Field->dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   ::cExpresionHeader      += ' .and. Field->cSerAlb >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerAlb <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
-   ::cExpresionHeader      += ' .and. Field->nNumAlb >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumAlb <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
-   ::cExpresionHeader      += ' .and. Field->cSufAlb >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufAlb <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
+   ::cExpresionHeader      := '( Field->dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
+   ::cExpresionHeader      += ' .and. ( Field->cSerAlb >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerAlb <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '" )'
+   ::cExpresionHeader      += ' .and. ( Field->nNumAlb >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumAlb <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" ) )'
+   ::cExpresionHeader      += ' .and. ( Field->cSufAlb >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufAlb <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '")'
    
    if lFacturados
       ::cExpresionHeader   += ' .and. nFacturado < 3'
@@ -1679,9 +1670,9 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
    // filtros para las líneas-------------------------------------------------
 
    ::cExpresionLine        := '!lTotLin .and. !lControl'
-   ::cExpresionLine        += ' .and. Field->cSerAlb >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerAlb <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
-   ::cExpresionLine        += ' .and. Field->nNumAlb >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumAlb <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
-   ::cExpresionLine        += ' .and. Field->cSufAlb >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufAlb <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
+   ::cExpresionLine        += ' .and. ( Field->cSerAlb >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerAlb <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '" )'
+   ::cExpresionLine        += ' .and. ( Field->nNumAlb >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumAlb <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" ) )'
+   ::cExpresionLine        += ' .and. ( Field->cSufAlb >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufAlb <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '" )'
    
    ::setFilterProductIdLine()
 
@@ -1847,14 +1838,12 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
 
    // filtros para la cabecera-------------------------------------------------
    
-   ::cExpresionHeader      := 'Field->dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   ::cExpresionHeader      += ' .and. Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )      + '" .and. Field->cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
-   ::cExpresionHeader      += ' .and. Field->nNumFac >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )    + '" ) .and. Field->nNumFac <= Val( "'    + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
-   ::cExpresionHeader      += ' .and. Field->cSufFac >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )    + '" .and. Field->cSufFac <= "'    + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
+   ::cExpresionHeader      := '( Field->dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
+   ::cExpresionHeader      += ' .and. ( Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )      + '" .and. Field->cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '" )'
+   ::cExpresionHeader      += ' .and. ( Field->nNumFac >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )    + '" ) .and. Field->nNumFac <= Val( "'    + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" ) )'
+   ::cExpresionHeader      += ' .and. ( Field->cSufFac >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )    + '" .and. Field->cSufFac <= "'    + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '" )'
    
    ::setFilterClientIdHeader()
-
-   ::setFilterStateCode()
 
    ::setFilterPaymentId()
 
@@ -1869,9 +1858,9 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
    // filtros para las líneas-------------------------------------------------
 
    ::cExpresionLine        := '!lTotLin .and. !lControl'
-   ::cExpresionLine        += ' .and. Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )      + '" .and. Field->cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
-   ::cExpresionLine        += ' .and. Field->nNumFac >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )    + '" ) .and. Field->nNumFac <= Val( "'    + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
-   ::cExpresionLine        += ' .and. Field->cSufFac >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )    + '" .and. Field->cSufFac <= "'    + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
+   ::cExpresionLine        += ' .and. ( Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )      + '" .and. Field->cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '" )'
+   ::cExpresionLine        += ' .and. ( Field->nNumFac >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )    + '" ) .and. Field->nNumFac <= Val( "'    + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" ) )'
+   ::cExpresionLine        += ' .and. ( Field->cSufFac >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )    + '" .and. Field->cSufFac <= "'    + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '" )'
    
    ::setFilterProductIdLine()
 
@@ -1884,7 +1873,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
    // Procesando facturas-------------------------------------------------
 
    ::oMtrInf:cText         := "Procesando facturas"
-   
+
    ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
    ::oFacCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliL:cFile ), ::oFacCliL:OrdKey(), cAllTrimer( ::cExpresionLine ), , , , , , , , .t. )
 
@@ -2032,14 +2021,12 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
 
    // filtros para la cabecera-------------------------------------------------
 
-   ::cExpresionHeader          := 'Field->dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   ::cExpresionHeader          += ' .and. Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerie <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
-   ::cExpresionHeader          += ' .and. Field->nNumFac >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumFac <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
-   ::cExpresionHeader          += ' .and. Field->cSufFac >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufFac <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
+   ::cExpresionHeader          := '( Field->dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
+   ::cExpresionHeader          += ' .and. ( Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerie <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '" )'
+   ::cExpresionHeader          += ' .and. ( Field->nNumFac >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumFac <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" ) )'
+   ::cExpresionHeader          += ' .and. ( Field->cSufFac >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufFac <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '" )'
    
    ::setFilterClientIdHeader()
-
-   ::setFilterStateCode()
 
    ::setFilterPaymentId()
 
@@ -2054,9 +2041,9 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
    // filtros para la linea----------------------------------------------------
    
    ::cExpresionLine            := '!lTotLin .and. !lControl'
-   ::cExpresionHeader          += ' .and. Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerie <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
-   ::cExpresionHeader          += ' .and. Field->nNumFac >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumFac <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
-   ::cExpresionHeader          += ' .and. Field->cSufFac >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufFac <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
+   ::cExpresionHeader          += ' .and. ( Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerie <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '" )'
+   ::cExpresionHeader          += ' .and. ( Field->nNumFac >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumFac <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" ) )'
+   ::cExpresionHeader          += ' .and. ( Field->cSufFac >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufFac <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '" )'
    
    ::setFilterProductIdLine()
    
@@ -2215,7 +2202,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
    // Filtros para la cabecera ------------------------------------------------
 
-   ::cExpresionHeader       := 'Field->dFecTik >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecTik <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+   ::cExpresionHeader       := '( Field->dFecTik >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecTik <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
    ::cExpresionHeader       += ' .and. ( cTipTik == "1" .or. cTipTik == "4" )'
    ::cExpresionHeader       += ' .and. Field->cCliTik >= "' + Rtrim( ::oGrupoCliente:Cargo:getDesde() ) + '" .and. Field->cCliTik <= "' + Rtrim( ::oGrupoCliente:Cargo:getHasta() ) + '"'
    ::cExpresionHeader       += ' .and. Field->cSerTik >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerTik <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
@@ -2642,10 +2629,10 @@ METHOD AddParteProduccion() CLASS TFastVentasArticulos
 
    ::oProCab:OrdSetFocus( "dFecOrd" )
 
-   cExpHead          := 'dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   cExpHead          += ' .and. cSerOrd >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )        + '" .and. cSerOrd <= "'   + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
-   cExpHead          += ' .and. nNumOrd >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )  + '" ) .and. nNumOrd <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
-   cExpHead          += ' .and. cSufOrd >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )       + '" .and. cSufOrd <= "'   + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
+   cExpHead          := '( dFecOrd >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecOrd <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
+   cExpHead          += ' .and. ( cSerOrd >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )        + '" .and. cSerOrd <= "'   + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '" )'
+   cExpHead          += ' .and. ( nNumOrd >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )  + '" ) .and. nNumOrd <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" ) )'
+   cExpHead          += ' .and. ( cSufOrd >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )       + '" .and. cSufOrd <= "'   + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '" )'
 
    ::oProCab:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oProCab:cFile ), ::oProCab:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
@@ -2750,7 +2737,7 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
    ::oPedPrvT:OrdSetFocus( "dFecPed" )
    ::oPedPrvL:OrdSetFocus( "nNumPed" )
 
-   cExpHead          := 'dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+   cExpHead          := '( dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
    cExpHead          += ' .and. cCodPrv >= "' + Rtrim( ::oGrupoProveedor:Cargo:getDesde() )    + '" .and. cCodPrv <= "'   + Rtrim( ::oGrupoProveedor:Cargo:getHasta() ) + '"'
    cExpHead          += ' .and. cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )        + '" .and. cSerPed <= "'   + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
    cExpHead          += ' .and. nNumPed >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )  + '" ) .and. nNumPed <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
@@ -2890,9 +2877,9 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
    ::oAlbPrvL:OrdSetFocus( "nNumAlb" )
 
    if lFacturados
-      cExpHead          := '!lFacturado .and. dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      cExpHead          := '!lFacturado .and. ( dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
    else
-      cExpHead          := 'dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      cExpHead          := '( dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
    end if
 
    cExpHead             += ' .and. cCodPrv >= "' + Rtrim( ::oGrupoProveedor:Cargo:getDesde() )    + '" .and. cCodPrv <= "'   + Rtrim( ::oGrupoProveedor:Cargo:getHasta() ) + '"'
@@ -3040,7 +3027,7 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
    ::oFacPrvT:OrdSetFocus( "dFecFac" )
    ::oFacPrvL:OrdSetFocus( "nNumFac" )
 
-   cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+   cExpHead          := '( dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
    cExpHead          += ' .and. cCodPrv >= "' + Rtrim( ::oGrupoProveedor:Cargo:getDesde() )    + '" .and. cCodPrv <= "'   + Rtrim( ::oGrupoProveedor:Cargo:getHasta() ) + '"'
    cExpHead          += ' .and. cSerFac >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )        + '" .and. cSerFac <= "'   + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
    cExpHead          += ' .and. nNumFac >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )  + '" ) .and. nNumFac <= Val( "'   + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
@@ -3183,7 +3170,7 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
    ::oRctPrvT:OrdSetFocus( "dFecFac" )
    ::oRctPrvL:OrdSetFocus( "nNumFac" )
 
-   cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+   cExpHead          := '( dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
    cExpHead          += ' .and. cCodPrv >= "' + Rtrim( ::oGrupoProveedor:Cargo:getDesde() ) + '" .and. cCodPrv <= "'   + Rtrim( ::oGrupoProveedor:Cargo:getHasta() ) + '"'
    cExpHead          += ' .and. cSerFac >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )     + '" .and. cSerFac <= "'   + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
    cExpHead          += ' .and. nNumFac >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. nNumFac <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'

@@ -69,17 +69,19 @@ METHOD New( nView, oPais ) CLASS AlbarenesClientesRedur
          ::oAlbaran:PoblacionConsignatario( ( D():Clientes( ::nView ) )->cPobEnt )
          ::oAlbaran:CodigoPostalConsignatario( ( D():Clientes( ::nView ) )->cCPEnt )
          ::oAlbaran:PlazaReparto( ( D():Clientes( ::nView ) )->cCPEnt )
+         ::oAlbaran:Observaciones1( ( D():Clientes( ::nView ) )->mComent )
       else
          ::oAlbaran:DireccionConsignatario( ( D():AlbaranesClientes( ::nView ) )->cDirCli )
          ::oAlbaran:PoblacionConsignatario( ( D():AlbaranesClientes( ::nView ) )->cPobCli )
          ::oAlbaran:CodigoPostalConsignatario( ( D():AlbaranesClientes( ::nView ) )->cPosCli )
          ::oAlbaran:PlazaReparto( ( D():AlbaranesClientes( ::nView ) )->cPosCli )
+         ::oAlbaran:Observaciones1( ( D():AlbaranesClientes( ::nView ) )->mObserv )
       end if
 
       ::oAlbaran:ReferenciaAlbaran( ( D():AlbaranesClientes( ::nView ) )->nNumAlb )
       ::oAlbaran:CodigoBarras( nBulto )
       ::oAlbaran:TotalBultos( FotmatoBultos( ( D():AlbaranesClientes( ::nView ) )->nBultos ) )
-      ::oAlbaran:Observaciones1( ( D():AlbaranesClientes( ::nView ) )->mObserv )
+      //::oAlbaran:Observaciones1( ( D():AlbaranesClientes( ::nView ) )->mObserv )
       ::oAlbaran:TotalPeso( nTotalPesoAlbaranCliente( ::cNumAlbaran, ::nView, MasUnd() ) )
       ::oAlbaran:SufijoTraking( ( D():AlbaranesClientes( ::nView ) )->nNumAlb )
       ::oAlbaran:NumeroBulto( FotmatoBultos( nBulto ) )
