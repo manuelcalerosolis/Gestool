@@ -10182,9 +10182,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
    
             end if
 
-            /*
-            Descripciones largas--------------------------------------------------
-            */
+            // Descripciones largas--------------------------------------------------
 
             if !empty( ( D():Articulos( nView ) )->Descrip )
 
@@ -10198,9 +10196,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
             end if 
 
-            /*
-            Peso y volumen-----------------------------------------------------
-            */
+            // Peso y volumen-----------------------------------------------------
 
             aTmp[ _NPESOKG ]        := ( D():Articulos( nView ) )->nPesoKg
             if !empty(aGet)
@@ -10228,9 +10224,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
                aGet[ _CVOLUMEN ]:cText( aTmp[ _CVOLUMEN ]  )
             end if
 
-            /*
-            Cogemos las familias y los grupos de familias----------------------
-            */
+            // Cogemos las familias y los grupos de familias----------------------
 
             cCodFam              := ( D():Articulos( nView ) )->Familia
 
@@ -10358,7 +10352,6 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             // Imagen del producto------------------------------------------------
 
             aTmp[ _CIMAGEN ]     := ( D():Articulos( nView ) )->cImagen
-            
             if !empty(aGet)
                aGet[ _CIMAGEN ]:cText( aTmp[ _CIMAGEN ] )
             end if
@@ -10379,8 +10372,10 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             Comprobamos que tenga valores las propiedades----------------------
             */
 
-            if ( !empty( aTmp[ _CCODPR1 ] ) .and. empty( aTmp[ _CVALPR1 ] ) ) .or. ( !empty( aTmp[ _CCODPR2 ] ) .and. empty( aTmp[ _CVALPR2 ] ) ) .and.;
-               ( !empty( aGet ) .and. uFieldEmpresa( "lUseTbl" ) .and. ( nMode == APPD_MODE ) )
+            if ( !empty( aGet ) )                                                                                                                  .and.;
+               ( !empty( aTmp[ _CCODPR1 ] ) .and. empty( aTmp[ _CVALPR1 ] ) ) .or. ( !empty( aTmp[ _CCODPR2 ] ) .and. empty( aTmp[ _CVALPR2 ] ) )  .and.;
+               ( uFieldEmpresa( "lUseTbl" ) )                                                                                                      .and.;
+               ( nMode == APPD_MODE ) 
 
                aGet[ _NCANENT  ]:cText( 0 )
                aGet[ _NUNICAJA ]:cText( 0 )
@@ -10394,9 +10389,8 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
                if !empty( aTmp[ _CCODPR1 ] )
 
                   if !empty(aGet)
-                     
+
                      aGet[ _CVALPR1 ]:Show()
-                     
                      if lFocused
                         aGet[ _CVALPR1 ]:SetFocus()
                      end if
@@ -10407,12 +10401,12 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
                   end if
 
-                  if oSayPr1 != nil
+                  if !empty( oSayPr1 )
                      oSayPr1:SetText( retProp( ( D():Articulos( nView ) )->cCodPrp1, dbfPro ) )
-                     oSayPr1:show()
+                     oSayPr1:Show()
                   end if
 
-                  if oSayVp1 != nil
+                  if !empty( oSayVp1 )
                      oSayVp1:SetText( "" )
                      oSayVp1:Show()
                   end if
@@ -10445,12 +10439,12 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
                   end if
 
-                  if oSayPr2 != nil
+                  if !empty( oSayPr2 )
                      oSayPr2:SetText( retProp( ( D():Articulos( nView ) )->cCodPrp2, dbfPro ) )
                      oSayPr2:show()
                   end if
 
-                  if oSayVp2 != nil
+                  if !empty( oSayVp2 )
                      oSayVp2:SetText( "" )
                      oSayVp2:Show()
                   end if
@@ -10546,7 +10540,6 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             // Cargamos el codigo de las unidades---------------------------------
             
             aTmp[ _CUNIDAD ]     := ( D():Articulos( nView ) )->cUnidad
-
             if !empty( aGet )
                aGet[ _CUNIDAD ]:cText( aTmp[ _CUNIDAD ] )
             end if
@@ -10579,15 +10572,9 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
             end if
 
-            /*
-            Precios por tarifas------------------------------------------------
-            */
+            // Precios por tarifas---------------------------------------------
 
             if !empty( aTmpAlb[ _CCODTAR ] )
-
-               /*
-               Precio
-               */
 
                nImpOfe     := RetPrcTar( aTmp[ _CREF ], aTmpAlb[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTarPreL, aTmp[ _NTARLIN ] )
                if nImpOfe  != 0
@@ -10597,7 +10584,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
                   end if 
                end if
 
-               //--Descuento porcentual--//
+               // Descuento porcentual-----------------------------------------
 
                nImpOfe     := RetPctTar( aTmp[ _CREF ], cCodFam, aTmpAlb[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTarPreL )
                if nImpOfe  != 0
@@ -10607,7 +10594,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
                   end if
                end if
 
-               //--Descuento Lineal--//
+               // Descuento Lineal---------------------------------------------
 
                nImpOfe     := RetLinTar( aTmp[ _CREF ], cCodFam, aTmpAlb[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], dbfTarPreL )
                if nImpOfe  != 0
@@ -10617,7 +10604,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
                   end if
                end if
 
-               //--comisión de agente--//
+               // Comisión de agente-------------------------------------------
 
                nImpOfe     := RetComTar( aTmp[ _CREF ], cCodFam, aTmpAlb[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpAlb[_CCODAGE], dbfTarPreL, dbfTarPreS )
                if nImpOfe  != 0
@@ -10639,7 +10626,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
                // Descuento de promoci¢n para agente---------------------------
 
-               nDtoAge     := RetDtoAge( aTmp[ _CREF ], cCodFam, aTmpAlb[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpAlb[_DFECALB], aTmpAlb[_CCODAGE], dbfTarPreL, dbfTarPreS )
+               nDtoAge     := RetDtoAge( aTmp[ _CREF ], cCodFam, aTmpAlb[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmpAlb[ _DFECALB ], aTmpAlb[ _CCODAGE ], dbfTarPreL, dbfTarPreS )
                if nDtoAge  != 0
                   aTmp[ _NCOMAGE ]  := nDtoAge 
                   if !empty(aGet)
@@ -10651,7 +10638,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
             // Chequeamos las atipicas del cliente-----------------------------
 
-            hAtipica := hAtipica( hValue( aTmp, aTmpAlb ) )
+            hAtipica       := hAtipica( hValue( aTmp, aTmpAlb ) )
 
             if !empty( hAtipica )
 
@@ -10794,24 +10781,18 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
          end if 
 
-         /*
-         Buscamos si hay ofertas-----------------------------------------------
-         */
+         // Buscamos si hay ofertas-----------------------------------------------
 
          lBuscaOferta( aTmp[ _CREF ], aGet, aTmp, aTmpAlb, dbfKit )
 
-         /*
-         Cargamos los valores para los cambios---------------------------------
-         */
+         // Cargamos los valores para los cambios---------------------------------
 
          cOldPrpArt     := cPrpArt
          cOldCodArt     := cCodArt
          dOldFecCad     := dFechaCaducidad
          cOldLotArt     := aTmp[ _CLOTE ]
 
-         /*
-         Solo pueden modificar los precios los administradores--------------
-         */
+         // Solo pueden modificar los precios los administradores--------------
 
          if !empty(aGet)
             if ( empty( aTmp[ _NPREUNIT ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio() ) .and. ( nMode != ZOOM_MODE )
