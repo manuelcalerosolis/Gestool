@@ -4655,7 +4655,7 @@ Return ( genPgoFacCli( Id, D():FacturasClientes( nView ), D():FacturasClientesLi
 Genera los recibos de una factura
 */
 
-FUNCTION controlRecibosFacturasClientes( cNumFac, cFacCliT, cFacCliL, cFacCliP, cAntCliT, cClient, cFPago, cDiv, cIva, nMode, lMessage ) 
+FUNCTION genPgoFacCli( cNumFac, cFacCliT, cFacCliL, cFacCliP, cAntCliT, cClient, cFPago, cDiv, cIva, nMode, lMessage ) 
 
    local cCodPgo
    local cSerFac
@@ -4720,10 +4720,8 @@ FUNCTION controlRecibosFacturasClientes( cNumFac, cFacCliT, cFacCliL, cFacCliP, 
    cControl          := ( cFacCliT )->cDigBnc
    cCuenta           := ( cFacCliT )->cCtaBnc
 
-   if ( nMode == APPD_MODE .and. nMode == DUPL_MODE )
-      generaRecibosFacturasClientes( cNumFac, cFacCliT, cFacCliL, cFacCliP, cAntCliT, cClient, cFPago, cDiv, cIva, nMode, lMessage )
-
-
+//   if ( nMode == APPD_MODE .and. nMode == DUPL_MODE )
+//      generaRecibosFacturasClientes( cNumFac, cFacCliT, cFacCliL, cFacCliP, cAntCliT, cClient, cFPago, cDiv, cIva, nMode, lMessage )
 
    /*
    Cuenta de remesas-----------------------------------------------------------
@@ -4763,7 +4761,7 @@ FUNCTION controlRecibosFacturasClientes( cNumFac, cFacCliT, cFacCliL, cFacCliP, 
 
          while cSerFac + Str( nNumFac ) + cSufFac == ( cFacCliP )->cSerie + Str( ( cFacCliP )->nNumFac ) + ( cFacCliP )->cSufFac
 
-            if !( cFacCliP )->lCobrado .and. dbLock( cFacCliP )
+            if !( cFacCliP )->lCobrado .and. !( cFacCliP )->lDevuelto .and. dbLock( cFacCliP )
                ( cFacCliP )->( dbDelete() )
                ( cFacCliP )->( dbUnLock() )
             else
@@ -4835,7 +4833,7 @@ FUNCTION controlRecibosFacturasClientes( cNumFac, cFacCliT, cFacCliL, cFacCliP, 
             ( cFacCliP )->cDivPgo       := cDivFac
             ( cFacCliP )->nVdvPgo       := nVdvFac
             ( cFacCliP )->dPreCob       := dFecFac
-            ( cFacCliP )->dFecVto       := dNextDayPago( dFecFac, n, nPlazos, cFPago, dbfCli )
+            ( cFacCliP )->dFecVto       := dNextDayPago( dFecFac, n, nPlazos, cFPago, cClient )
             
             ( cFacCliP )->cCtaRec       := ( cFPago )->cCtaCobro
             ( cFacCliP )->cCtaGas       := ( cFPago )->cCtaGas
@@ -4853,8 +4851,7 @@ FUNCTION controlRecibosFacturasClientes( cNumFac, cFacCliT, cFacCliL, cFacCliP, 
                if ( cFPago )->nCobRec == 1 .and. nMode == APPD_MODE
                   ( cFacCliP )->cTurRec    := cCurSesion()
                   ( cFacCliP )->lCobrado   := .t.
-                  ( cFacCliP )->dEntrada   := dNextDayPago( dFecFac, n, nPlazos, cFPago, dbfCli )
-                  
+                  ( cFacCliP )->dEntrada   := dNextDayPago( dFecFac, n, nPlazos, cFPago, cClient )
                end if
 
             else
@@ -4862,8 +4859,7 @@ FUNCTION controlRecibosFacturasClientes( cNumFac, cFacCliT, cFacCliL, cFacCliP, 
                if ( cFPago )->nCobRec == 1
                   ( cFacCliP )->cTurRec    := cCurSesion()
                   ( cFacCliP )->lCobrado   := .t.
-                  ( cFacCliP )->dEntrada   := dNextDayPago( dFecFac, n, nPlazos, cFPago, dbfCli )
-                  
+                  ( cFacCliP )->dEntrada   := dNextDayPago( dFecFac, n, nPlazos, cFPago, cClient )
                end if
 
             end if
@@ -4871,7 +4867,7 @@ FUNCTION controlRecibosFacturasClientes( cNumFac, cFacCliT, cFacCliL, cFacCliP, 
             ( cFacCliP )->dFecCre          := GetSysDate()
             ( cFacCliP )->cHorCre          := SubStr( Time(), 1, 5 )
 
-            lAlert                           := .f.
+            lAlert                         := .f.
 
             ( cFacCliP )->( dbUnLock() )
 
@@ -4887,7 +4883,7 @@ FUNCTION controlRecibosFacturasClientes( cNumFac, cFacCliT, cFacCliL, cFacCliP, 
 
    end if
 
-   ( dbfCli )->( dbGoTo( nRecCli ) )
+   ( cClient )->( dbGoTo( nRecCli ) )
 
    if ( lAlert .and. lMessage )
       msgWait( "Factura " + cSerFac  + '/' + allTrim( Str( nNumFac ) ) + '/' + cSufFac + " no se generaron recibos.", "Atención", 1 )
@@ -4896,8 +4892,8 @@ FUNCTION controlRecibosFacturasClientes( cNumFac, cFacCliT, cFacCliL, cFacCliP, 
 RETURN NIL
 
 //---------------------------------------------------------------------------//
-
-static function  generaRecibosFacturasClientes( cNumFac, cFacCliT, cFacCliL, cFacCliP, cAntCliT, cClient, cFPago, cDiv, cIva, nMode, lMessage )
+/*
+static function generaRecibosFacturasClientes( cNumFac, cFacCliT, cFacCliL, cFacCliP, cAntCliT, cClient, cFPago, cDiv, cIva, nMode, lMessage )
 
    local nPlazo
    local nPlazos                 := 0
@@ -4907,7 +4903,6 @@ static function  generaRecibosFacturasClientes( cNumFac, cFacCliT, cFacCliL, cFa
    local nTotalFactura           := nTotFacCli( cNumFac, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCliT, nil, nil, .f. )
    local nTotalRecibosGenerados  := nTotalRecibosGeneradosFacturasCliente( cNumFac, cFacCliT, cFacCliP, cIva, cDiv )
    local nTotalRecibosPagados    := nTotalRecibosPagadosFacturasCliente( cNumFac, cFacCliT, cFacCliP, cIva, cDiv )
-
 
    // Elimnamos recibos existentes pero no deberia si es nueva----------------
 
@@ -4925,7 +4920,7 @@ static function  generaRecibosFacturasClientes( cNumFac, cFacCliT, cFacCliL, cFa
    for nPlazo := 1 to nPlazos
 
       if nPlazo != nPlazos
-         generaReciboFacturaCliente( )
+         generaReciboFacturaCliente( cNumFac, nImporteRecibo, nPlazo, cFacCliT, cFacCliP )
 
          nTotAcu                 = Round( nTotal / nPlazos, nDec )
             end if
@@ -4934,15 +4929,19 @@ static function  generaRecibosFacturasClientes( cNumFac, cFacCliT, cFacCliL, cFa
 
 
 
-static function generaReciboFacturaCliente( nPlazo, cFacCliT, cFacCliP )
+static function generaReciboFacturaCliente( cNumFac, nImporteRecibo, nPlazo, cFacCliT, cFacCliP )
 
-            ( cFacCliP )->( dbAppend() )
+   local nRecno   := ( cFacCliT )->( recno() )
 
-            ( cFacCliP )->cTurRec       := cCurSesion()
-            ( cFacCliP )->cSerie        := cSerFac
-            ( cFacCliP )->nNumFac       := nNumFac
-            ( cFacCliP )->cSufFac       := cSufFac
-            ( cFacCliP )->nNumRec       := ++nInc
+   if dbSeekInOrd( cNumFac, "nNumFac", cFacCliT )
+
+      ( cFacCliP )->( dbAppend() )
+
+      ( cFacCliP )->cTurRec       := cCurSesion()
+      ( cFacCliP )->cSerie        := ( cFacCliT )->cSerie
+      ( cFacCliP )->nNumFac       := ( cFacCliT )->nNumFac
+      ( cFacCliP )->cSufFac       := ( cFacCliT )->cSufFac
+      ( cFacCliP )->nNumRec       := nPlazo
             ( cFacCliP )->cCodCaj       := cCodCaj
             ( cFacCliP )->cCodUsr       := cCodUsr
             ( cFacCliP )->cCodPgo       := cCodPgo
@@ -5016,6 +5015,7 @@ static function generaReciboFacturaCliente( nPlazo, cFacCliT, cFacCliP )
 
          next
 
+*/
 
 FUNCTION dNexDay( dFecPgo, dbfCli )
 

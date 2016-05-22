@@ -2373,7 +2373,7 @@ Return ( nVtaFacRec( cCodCli, nil, nil, dbfFacRecT, dbfFacRecL, dbfIva, dbfDiv, 
 
 Static Function nTotalFacturas( cCodCli, nYear )
 
-Return ( nVtaFacCli( cCodCli, nil, nil, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, nYear ) )
+Return ( nVtaFacCli( cCodCli, nil, nil, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfIva, dbfDiv, nYear ) )
 
 //---------------------------------------------------------------------------//
 

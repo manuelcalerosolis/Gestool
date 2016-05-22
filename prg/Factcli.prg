@@ -430,7 +430,6 @@ static dbfSatCliI
 static dbfSatCliD
 static dbfSatCliS
 
-static dbfAntCliT
 static dbfAlbPrvL
 static dbfAlbPrvS
 static dbfPedCliR
@@ -1197,7 +1196,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
       DEFINE BTNSHELL RESOURCE "BMPCONTA" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CntFacCli( lChk1, lChk2, nil, .t., oTree, nil, nil, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), dbfAntCliT, dbfAlbCliT, D():Clientes( nView ), dbfDiv, D():Articulos( nView ), D():FormasPago( nView ), dbfIva, oNewImp ) }, "Contabilizar facturas", lAplicacionA3(), "Simular resultados", .f., "Contabilizar recibos", , {|| if( lAplicacionA3(), ( EnlaceA3():GetInstance():WriteASCII(), EnlaceA3():DestroyInstance() ), .t. ) } ) ) ;
+         ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CntFacCli( lChk1, lChk2, nil, .t., oTree, nil, nil, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), D():AnticiposClientes( nView ), dbfAlbCliT, D():Clientes( nView ), dbfDiv, D():Articulos( nView ), D():FormasPago( nView ), dbfIva, oNewImp ) }, "Contabilizar facturas", lAplicacionA3(), "Simular resultados", .f., "Contabilizar recibos", , {|| if( lAplicacionA3(), ( EnlaceA3():GetInstance():WriteASCII(), EnlaceA3():DestroyInstance() ), .t. ) } ) ) ;
          TOOLTIP  "(C)ontabilizar" ;
          HOTKEY   "C";
          LEVEL    ACC_EDIT
@@ -1486,9 +1485,9 @@ Static Function FacCliReportSkipper( cNumFac )
          lAntCli           := .t.
       end if
 
-   elseif ( dbfAntCliT )->cNumDoc = cNumFac .and. !( dbfAntCliT )->( eof() )
+   elseif ( D():AnticiposClientes( nView ) )->cNumDoc = cNumFac .and. !( D():AnticiposClientes( nView ) )->( eof() )
 
-      ( dbfAntCliT )->( dbSkip() )
+      ( D():AnticiposClientes( nView ) )->( dbSkip() )
 
    end if
 
@@ -1571,6 +1570,8 @@ STATIC FUNCTION OpenFiles()
       D():PropiedadesLineas( nView )
 
       D():FormasPago( nView )
+
+      D():AnticiposClientes( nView )
 
       USE ( cPatEmp() + "FACCLII.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLII", @dbfFacCliI ) )
       SET ADSINDEX TO ( cPatEmp() + "FACCLII.CDX" ) ADDITIVE
@@ -1737,9 +1738,6 @@ STATIC FUNCTION OpenFiles()
 
       USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCajT ) )
       SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
-
-      USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE
 
       USE ( cPatAlm() + "Almacen.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Almacen", @dbfAlm ) )
       SET ADSINDEX TO ( cPatAlm() + "Almacen.CDX" ) ADDITIVE
@@ -2145,10 +2143,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfCajT    )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfAntCliT )
-      ( dbfAntCliT )->( dbCloseArea() )
-   end if
-
    if !Empty( dbfUsr )
       ( dbfUsr     )->( dbCloseArea() )
    end if
@@ -2345,7 +2339,6 @@ STATIC FUNCTION CloseFiles()
    dbfRuta     := nil
    dbfArtDiv   := nil
    dbfCajT     := nil
-   dbfAntCliT  := nil
    dbfUsr      := nil
    dbfInci     := nil
    dbfArtPrv   := nil
@@ -4122,13 +4115,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       270 ;
          OF       fldData ;
          WHEN     ( lWhen ) ;
-         ACTION   ( BrwAntCli( , dbfAntCliT, dbfIva, dbfDiv, dbfTmpAnt, oBrwAnt ), RecalculaTotal( aTmp ) )
+         ACTION   ( BrwAntCli( , D():AnticiposClientes( nView ), dbfIva, dbfDiv, dbfTmpAnt, oBrwAnt ), RecalculaTotal( aTmp ) )
 
       REDEFINE BUTTON ;
          ID       400 ;
          OF       fldData ;
          WHEN     ( lWhen ) ;
-         ACTION   ( BrwAntCli( aTmp[ _CCODCLI ], dbfAntCliT, dbfIva, dbfDiv, dbfTmpAnt, oBrwAnt ) )
+         ACTION   ( BrwAntCli( aTmp[ _CCODCLI ], D():AnticiposClientes( nView ), dbfIva, dbfDiv, dbfTmpAnt, oBrwAnt ) )
 
       REDEFINE BUTTON ;
          ID       280 ;
@@ -6396,7 +6389,7 @@ STATIC FUNCTION lLiquida( oBrw, cFactura )
    Chekea el estado de la factura---------------------------------------------
    */
 
-   ChkLqdFacCli( nil, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), dbfAntCliT, dbfIva, dbfDiv, .f. )
+   ChkLqdFacCli( nil, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), D():AnticiposClientes( nView ), dbfIva, dbfDiv, .f. )
 
    /*
    Información para el Auditor-------------------------------------------------
@@ -7224,24 +7217,24 @@ static function QuiFacCli()
    Devolvemos los anticipos a su estado anterior-------------------------------
    */
 
-   nOrdAnt     := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
+   nOrdAnt     := ( D():AnticiposClientes( nView ) )->( OrdSetFocus( "cNumDoc" ) )
 
-   if ( dbfAntCliT )->( dbSeek( ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac ) )
+   if ( D():AnticiposClientes( nView ) )->( dbSeek( ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac ) )
 
-      while ( dbfAntCliT )->cNumDoc == ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac .and. !( dbfAntCliT )->( eof() )
+      while ( D():AnticiposClientes( nView ) )->cNumDoc == ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac .and. !( D():AnticiposClientes( nView ) )->( eof() )
 
-         if dbLock( dbfAntCliT )
-            ( dbfAntCliT )->lLiquidada := .f.
-            ( dbfAntCliT )->( dbUnLock() )
+         if dbLock( D():AnticiposClientes( nView ) )
+            ( D():AnticiposClientes( nView ) )->lLiquidada := .f.
+            ( D():AnticiposClientes( nView ) )->( dbUnLock() )
          end if
 
-         ( dbfAntCliT )->( dbSkip() )
+         ( D():AnticiposClientes( nView ) )->( dbSkip() )
 
       end while
 
    end if
 
-   ( dbfAntCliT )->( OrdSetFocus( nOrdAnt ) ) 
+   ( D():AnticiposClientes( nView ) )->( OrdSetFocus( nOrdAnt ) ) 
 
    /*
    Elimina el documento asociado-----------------------------------------------
@@ -10320,7 +10313,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Recibos", ( D():FacturasClientesCobros( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Recibos", cItemsToReport( aItmRecCli() ) )
 
-   oFr:SetWorkArea(     "Anticipos", ( dbfAntCliT )->( Select() ) )
+   oFr:SetWorkArea(     "Anticipos", ( D():AnticiposClientes( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Anticipos", cItemsToReport( aItmAntCli() ) )
 
    oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
@@ -10549,7 +10542,7 @@ Function DesignReportFacCli( oFr, dbfDoc )
       end if
    end if
 
-   nOrdAnt        := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
+   nOrdAnt        := ( D():AnticiposClientes( nView ) )->( OrdSetFocus( "cNumDoc" ) )
 
    if lFlag
 
@@ -10623,7 +10616,7 @@ Function DesignReportFacCli( oFr, dbfDoc )
 
       oFr:DestroyFr()
 
-      ( dbfAntCliT )->( OrdSetFocus( nOrdAnt ) )
+      ( D():AnticiposClientes( nView ) )->( OrdSetFocus( nOrdAnt ) )
 
       /*
       Cierra ficheros----------------------------------------------------------
@@ -10668,7 +10661,7 @@ Function printReportFacCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
 
    SysRefresh()
 
-   nOrdAnt                    := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
+   nOrdAnt                    := ( D():AnticiposClientes( nView ) )->( OrdSetFocus( "cNumDoc" ) )
    nOrdFacL 						:= ( D():FacturasClientesLineas( nView ) )->( ordSetFocus( "nPosPrint" ) )
    cFilePdf                   := cPatTmp() + "FacturasCliente" + StrTran( D():FacturasClientesId( nView ), " ", "" ) + ".Pdf"
 
@@ -10745,7 +10738,7 @@ Function printReportFacCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
 
    oFr:DestroyFr()
 
-   ( dbfAntCliT )->( OrdSetFocus( nOrdAnt ) )
+   ( D():AnticiposClientes( nView ) )->( OrdSetFocus( nOrdAnt ) )
   	( D():FacturasClientesLineas( nView ) )->( ordSetFocus( nOrdFacL ) )
 
 Return ( cFilePdf )
@@ -10921,17 +10914,17 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       ( dbfTmpAnt )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpAnt )->( ordCreate( cTmpAnt, "Recno", "Recno()", {|| Recno() } ) )
 
-      nOrd        := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
+      nOrd        := ( D():AnticiposClientes( nView ) )->( OrdSetFocus( "cNumDoc" ) )
 
-      if ( nMode != DUPL_MODE ) .and. ( dbfAntCliT )->( dbSeek( cFac ) )
-         while ( dbfAntCliT )->cNumDoc == cFac .and. ( dbfAntCliT )->( !eof() )
-            dbPass( dbfAntCliT, dbfTmpAnt, .t. )
-            ( dbfAntCliT )->( dbSkip() )
+      if ( nMode != DUPL_MODE ) .and. ( D():AnticiposClientes( nView ) )->( dbSeek( cFac ) )
+         while ( D():AnticiposClientes( nView ) )->cNumDoc == cFac .and. ( D():AnticiposClientes( nView ) )->( !eof() )
+            dbPass( D():AnticiposClientes( nView ), dbfTmpAnt, .t. )
+            ( D():AnticiposClientes( nView ) )->( dbSkip() )
          end while
       end if
 
       ( dbfTmpAnt )->( dbGoTop() )
-      ( dbfAntCliT )->( OrdSetFocus( nOrd ) )
+      ( D():AnticiposClientes( nView ) )->( OrdSetFocus( nOrd ) )
    else
       lErrors     := .t.
    end if
@@ -11702,7 +11695,7 @@ static function lRecibosPagadosTmp( dbfTmpPgo )
    nRecAct        := ( dbfTmpPgo )->( Recno() )
 
    while !( dbfTmpPgo )->( eof() )
-      if ( dbfTmpPgo )->lCobrado
+      if ( dbfTmpPgo )->lCobrado .or. ( dbfTmpPgo )->lDevuelto
          lRecPgd  := .t.
          exit
       end if
@@ -14145,7 +14138,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 	      oMeter:Set( 8 )
       end if    
 
-      controlRecibosFacturasClientes( cSerFac + str( nNumFac, 9 ) + cSufFac, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), dbfAntCliT, D():Clientes( nView ), D():FormasPago( nView ), dbfDiv, dbfIva, nMode )
+      genPgoFacCli( cSerFac + str( nNumFac, 9 ) + cSufFac, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), D():AnticiposClientes( nView ), D():Clientes( nView ), D():FormasPago( nView ), dbfDiv, dbfIva, nMode )
 
       // genPgoFacCli( cSerFac + str( nNumFac, 9 ) + cSufFac, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), dbfAntCliT, D():Clientes( nView ), D():FormasPago( nView ), dbfDiv, dbfIva, nMode )
 
@@ -14159,7 +14152,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       	oMeter:Set( 9 )
       end if	
 
-      ChkLqdFacCli( nil, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), dbfAntCliT, dbfIva, dbfDiv )
+      ChkLqdFacCli( nil, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), D():AnticiposClientes( nView ), dbfIva, dbfDiv )
 
 	RECOVER USING oError
 
@@ -14269,7 +14262,7 @@ Static Function ExportarEDI( lNoExportados, oTree )
       hDescuentoFactura       != -1 .and.;
       hImpuestosFactura       != -1
 
-      nTotFacCli( cNumeroFactura, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), dbfIva, dbfDiv, D():FacturasClientesCobros( nView ), dbfAntCliT )
+      nTotFacCli( cNumeroFactura, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), dbfIva, dbfDiv, D():FacturasClientesCobros( nView ), D():AnticiposClientes( nView ) )
 
       /*
       Cabecera de facturas-----------------------------------------------------
@@ -14637,9 +14630,9 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
    nNumero              := ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac
    cNumero              := ( D():FacturasClientes( nView ) )->cSerie + Alltrim( str( ( D():FacturasClientes( nView ) )->nNumFac ) ) + Rtrim( ( D():FacturasClientes( nView ) )->cSufFac )
 
-   nTotal               := nTotFacCli( nNumero, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), dbfIva, dbfDiv, D():FacturasClientesCobros( nView ), dbfAntCliT )
+   nTotal               := nTotFacCli( nNumero, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), dbfIva, dbfDiv, D():FacturasClientesCobros( nView ), D():AnticiposClientes( nView ) )
    nPago                := nTotalRecibosPagadosFacturasCliente( nNumero, D():FacturasClientes( nView ), D():FacturasClientesCobros( nView ), dbfIva, dbfDiv )
-   nAnticipo            := nTotAntFacCli( nNumero, dbfAntCliT, dbfIva, dbfDiv )
+   nAnticipo            := nTotAntFacCli( nNumero, D():AnticiposClientes( nView ), dbfIva, dbfDiv )
 
    oFactura             := TFacturaElectronica():New( oTree )
 
@@ -15815,15 +15808,15 @@ static function GeneraCobrosImportacion( cSerieFactura, nNumeroFactura, cSufijoF
    Generamos los pagos------------------------------------------------
    */
 
-   GenPgoFacCli( cSerieFactura + str( nNumeroFactura ) + cSufijoFactura, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), dbfAntCliT, D():Clientes( nView ), D():FormasPago( nView ), dbfDiv, dbfIva )
+   GenPgoFacCli( cSerieFactura + str( nNumeroFactura ) + cSufijoFactura, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), D():AnticiposClientes( nView ), D():Clientes( nView ), D():FormasPago( nView ), dbfDiv, dbfIva )
 
-   ChkLqdFacCli( , D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), dbfAntCliT, dbfIva, dbfDiv, .f. )
+   ChkLqdFacCli( , D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), D():AnticiposClientes( nView ), dbfIva, dbfDiv, .f. )
 
    /*
    Guardamos los totales----------------------------------------------
    */
 
-   aTotalFactura                 := aTotFacCli( cSerieFactura + str( nNumeroFactura ) + cSufijoFactura, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), dbfIva, dbfDiv, D():FacturasClientesCobros( nView ), dbfAntCliT, ( D():FacturasClientes( nView ) )->cDivFac )
+   aTotalFactura                 := aTotFacCli( cSerieFactura + str( nNumeroFactura ) + cSufijoFactura, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), dbfIva, dbfDiv, D():FacturasClientesCobros( nView ), D():AnticiposClientes( nView ), ( D():FacturasClientes( nView ) )->cDivFac )
 
    if dbLock( D():FacturasClientes( nView ) )
 
@@ -16973,19 +16966,19 @@ RETURN ( nCalculo )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION aTotFacCli( cFactura, cFacCliT, cFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, cDivRet )
+FUNCTION aTotFacCli( cFactura, cFacCliT, cFacCliL, dbfIva, dbfDiv, dbfFacCliP, cAntCliT, cDivRet )
 
-   nTotFacCli( cFactura, cFacCliT, cFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, nil, cDivRet )
+   nTotFacCli( cFactura, cFacCliT, cFacCliL, dbfIva, dbfDiv, dbfFacCliP, cAntCliT, nil, cDivRet )
 
 RETURN ( { nTotNet, nTotIva, nTotReq, nTotFac, nTotPnt, nTotTrn, nTotAge, aTotIva, nTotCos, nTotIvm, nTotRnt, nTotRet, nTotCob } )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION sTotFacCli( cFactura, cFacCliT, cFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, cDivRet )
+FUNCTION sTotFacCli( cFactura, cFacCliT, cFacCliL, dbfIva, dbfDiv, dbfFacCliP, cAntCliT, cDivRet )
 
    local sTotal
 
-   nTotFacCli( cFactura, cFacCliT, cFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, nil, cDivRet )
+   nTotFacCli( cFactura, cFacCliT, cFacCliL, dbfIva, dbfDiv, dbfFacCliP, cAntCliT, nil, cDivRet )
 
    sTotal                                 := sTotal()
 
@@ -17474,7 +17467,7 @@ RETURN ( if( cPouDiv != NIL, Trans( nCalculo, cPouDiv ), nCalculo ) )
 // Devuelve el total de la venta en Facturas de un clientes determinado
 //
 
-function nVtaFacCli( cCodCli, dDesde, dHasta, cFacCliT, cFacCliL, cFacCliP, dbfIva, dbfDiv, nYear )
+function nVtaFacCli( cCodCli, dDesde, dHasta, cFacCliT, cFacCliL, cFacCliP, cAntCliT, dbfIva, dbfDiv, nYear )
 
    local nCon     := 0
    local nOrd     := ( cFacCliT )->( OrdSetFocus( "CCODCLI" ) )
@@ -17490,7 +17483,7 @@ function nVtaFacCli( cCodCli, dDesde, dHasta, cFacCliT, cFacCliL, cFacCliP, dbfI
             ( dHasta == nil .or. ( cFacCliT )->DFECFAC <= dHasta ) .and.;
             ( nYear == nil .or. Year( ( cFacCliT )->dFecFac ) == nYear )
 
-            nCon  += nTotFacCli( ( cFacCliT )->cSerie + str( ( cFacCliT )->nNumFac ) + ( cFacCliT )->cSufFac, cFacCliT, cFacCliL, dbfIva, dbfDiv, cFacCliP, dbfAntCliT, nil, cDivEmp(), .f. )
+            nCon  += nTotFacCli( ( cFacCliT )->cSerie + str( ( cFacCliT )->nNumFac ) + ( cFacCliT )->cSufFac, cFacCliT, cFacCliL, dbfIva, dbfDiv, cFacCliP, cAntCliT, nil, cDivEmp(), .f. )
 
          end if
 
@@ -18576,7 +18569,7 @@ function SynFacCli( cPath )
       ( D():FacturasClientes( nView ) )->( dbGoTop() )
       while !( D():FacturasClientes( nView ) )->( eof() )
 
-         aTotFac           := aTotFacCli( ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), dbfIva, dbfDiv, D():FacturasClientesCobros( nView ), dbfAntCliT, ( D():FacturasClientes( nView ) )->cDivFac )
+         aTotFac           := aTotFacCli( ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), dbfIva, dbfDiv, D():FacturasClientesCobros( nView ), D():AnticiposClientes( nView ), ( D():FacturasClientes( nView ) )->cDivFac )
 
          if ( D():FacturasClientes( nView ) )->nTotFac == 0
          	if ( D():FacturasClientes( nView ) )->( dbRLock() )
@@ -19722,7 +19715,7 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
    DEFAULT cFacCliT        := D():FacturasClientes( nView )
    DEFAULT cFacCliL        := D():FacturasClientesLineas( nView )
    DEFAULT cFacCliP        := D():FacturasClientesCobros( nView )
-   DEFAULT cAntCliT        := dbfAntCliT
+   DEFAULT cAntCliT        := D():AnticiposClientes( nView )
    DEFAULT cIva            := dbfIva
    DEFAULT cDiv            := dbfDiv
    DEFAULT lPic            := .f.
@@ -20881,7 +20874,7 @@ Return ( ChkLqdFacCli( nil, D():FacturasClientes( nView ), D():FacturasClientesL
 Comprueba si una factura esta liquidada
 */
 
-FUNCTION ChkLqdFacCli( aTmp, cFacCliT, cFacCliL, dbfFacCliP, dbfAntCliT, dbfIva, dbfDiv )
+FUNCTION ChkLqdFacCli( aTmp, cFacCliT, cFacCliL, dbfFacCliP, cAntCliT, dbfIva, dbfDiv )
 
    local lChkLqd
    local cFactura
@@ -20900,7 +20893,7 @@ FUNCTION ChkLqdFacCli( aTmp, cFacCliT, cFacCliL, dbfFacCliP, dbfAntCliT, dbfIva,
 
    nTotal         := abs( nTotFacCli( cFactura, cFacCliT, cFacCliL, dbfIva, dbfDiv, dbfFacCliP, nil, nil, nil, .f. ) )
    nPagFacCli     := abs( nTotalRecibosPagadosFacturasCliente( cFactura, cFacCliT, dbfFacCliP, dbfIva, dbfDiv ) )
-   nPagFacCli     += abs( nTotAntFacCli( cFactura, dbfAntCliT, dbfIva, dbfDiv, nil, .f. ) )
+   nPagFacCli     += abs( nTotAntFacCli( cFactura, cAntCliT, dbfIva, dbfDiv, nil, .f. ) )
 
    lChkLqd                       := !lMayorIgual( nTotal, nPagFacCli, 0.1 )
 
@@ -21054,7 +21047,7 @@ FUNCTION BrowseInformesFacCli( oGet, oGet2 )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Importe"
-         :bEditValue       := {|| nTotFacCli( D():FacturasClientesId( nView ), D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), dbfIva, dbfDiv, D():FacturasClientesCobros( nView ), dbfAntCliT, nil, cDivEmp(), .t. ) }
+         :bEditValue       := {|| nTotFacCli( D():FacturasClientesId( nView ), D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), dbfIva, dbfDiv, D():FacturasClientesCobros( nView ), D():AnticiposClientes( nView ), nil, cDivEmp(), .t. ) }
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -22665,7 +22658,7 @@ N§ PO  LC  Descripci¢n       Observaciones
                   Comprobamos el estado de la factura-----------------------------------------
                   */
 
-                  ChkLqdFacCli( nil, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), dbfAntCliT, dbfIva, dbfDiv )
+                  ChkLqdFacCli( nil, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), D():AnticiposClientes( nView ), dbfIva, dbfDiv )
 
                else
 
@@ -22987,16 +22980,16 @@ Static Function RollBackFacCli( cNumeroDocumento )
    Eliminamos los anticipos anteriores-----------------------------------------
    */
 
-   nOrd                             := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
-   while ( ( dbfAntCliT )->( dbSeek( cNumeroDocumento ) ) .and. !( dbfAntCliT )->( eof() ) )
-      if dbLock( dbfAntCliT )
-         ( dbfAntCliT )->lLiquidada := .f.
-         ( dbfAntCliT )->cNumDoc    := ""
-         ( dbfAntCliT )->( dbUnLock() )
+   nOrd                             := ( D():AnticiposClientes( nView ) )->( OrdSetFocus( "cNumDoc" ) )
+   while ( ( D():AnticiposClientes( nView ) )->( dbSeek( cNumeroDocumento ) ) .and. !( D():AnticiposClientes( nView ) )->( eof() ) )
+      if dbLock( D():AnticiposClientes( nView ) )
+         ( D():AnticiposClientes( nView ) )->lLiquidada := .f.
+         ( D():AnticiposClientes( nView ) )->cNumDoc    := ""
+         ( D():AnticiposClientes( nView ) )->( dbUnLock() )
       end if
       SysRefresh()
    end while
-   ( dbfAntCliT )->( OrdSetFocus( nOrd ) )
+   ( D():AnticiposClientes( nView ) )->( OrdSetFocus( nOrd ) )
 
    /*
    Eliminamos las situaciones anteriores-----------------------------------------
@@ -23100,15 +23093,15 @@ Static Function GuardaTemporalesFacCli( cSerFac, nNumFac, cSufFac, dFecFac, tFec
 
    ( dbfTmpAnt )->( dbGoTop() )
    while ( dbfTmpAnt )->( !eof() )
-      if ( dbfAntCliT )->( dbSeek( ( dbfTmpAnt )->cSerAnt + str( ( dbfTmpAnt )->nNumAnt ) + ( dbfTmpAnt )->cSufAnt ) )
-         if dbLock( dbfAntCliT )
-            ( dbfAntCliT )->lLiquidada := .t.
-            ( dbfAntCliT )->lSndDoc    := .t.
-            ( dbfAntCliT )->cNumDoc    := cSerFac + str( nNumFac ) + cSufFac
-            ( dbfAntCliT )->dLiquidada := GetSysDate()
-            ( dbfAntCliT )->cTurLiq    := cCurSesion()
-            ( dbfAntCliT )->cCajLiq    := oUser():cCaja()
-            ( dbfAntCliT )->( dbUnLock() )
+      if ( D():AnticiposClientes( nView ) )->( dbSeek( ( dbfTmpAnt )->cSerAnt + str( ( dbfTmpAnt )->nNumAnt ) + ( dbfTmpAnt )->cSufAnt ) )
+         if dbLock( D():AnticiposClientes( nView ) )
+            ( D():AnticiposClientes( nView ) )->lLiquidada := .t.
+            ( D():AnticiposClientes( nView ) )->lSndDoc    := .t.
+            ( D():AnticiposClientes( nView ) )->cNumDoc    := cSerFac + str( nNumFac ) + cSufFac
+            ( D():AnticiposClientes( nView ) )->dLiquidada := GetSysDate()
+            ( D():AnticiposClientes( nView ) )->cTurLiq    := cCurSesion()
+            ( D():AnticiposClientes( nView ) )->cCajLiq    := oUser():cCaja()
+            ( D():AnticiposClientes( nView ) )->( dbUnLock() )
          end if
       end if
       ( dbfTmpAnt )->( dbSkip() )
