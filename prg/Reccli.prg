@@ -4406,17 +4406,17 @@ Function rxRecCli( cPath, cDriver )
       // "Número"
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( cFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "nNumFac", "cSerie + str( nNumFac ) + cSufFac + str( nNumRec ) + cTipRec", {|| Field->CSERIE + str( Field->NNUMFAC ) + Field->CSUFFAC + str( Field->NNUMREC ) + Field->cTipRec } ) )
+      ( cFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "nNumFac", "cSerie + str( nNumFac ) + cSufFac + str( nNumRec ) + cTipRec", {|| Field->cSerie + str( Field->nNumFac ) + Field->cSufFac + str( Field->nNumRec ) + Field->cTipRec } ) )
 
       // "Código"
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( cFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "cCodCli", "cCodCli", {|| Field->CCODCLI } ) )
+      ( cFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "cCodCli", "cCodCli + cSerie + str( nNumFac ) + cSufFac + str( nNumRec ) + cTipRec", {|| Field->cCodCli + Field->cSerie + str( Field->nNumFac ) + Field->cSufFac + str( Field->nNumRec ) + Field->cTipRec } ) )
 
       // "Nombre",;
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( cFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "cNomCli", "cNomCli", {|| Field->cNomCli } ) )
+      ( cFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "cNomCli", "cNomCli + cSerie + str( nNumFac ) + cSufFac + str( nNumRec ) + cTipRec", {|| Field->cNomCli + Field->cSerie + str( Field->nNumFac ) + Field->cSufFac + str( Field->nNumRec ) + Field->cTipRec } ) )
 
       // "Expedición",;
 
@@ -4446,7 +4446,7 @@ Function rxRecCli( cPath, cDriver )
       //Agente,;
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( cFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "cCodAge", "cCodAge", {|| Field->CCODAGE } ) )
+      ( cFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "cCodAge", "cCodAge", {|| Field->cCodAge } ) )
 
       // Codigo de clientes no cobrados
 
@@ -4461,13 +4461,13 @@ Function rxRecCli( cPath, cDriver )
       // Cuentas de remesas----------------------------------------------------
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( cFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "cCtaRem", "cCtaRem", {|| Field->CCTAREM }, ) )
+      ( cFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "cCtaRem", "cCtaRem", {|| Field->cCtaRem }, ) )
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( cFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "nNumCob", "str( nNumCob ) + cSufCob", {|| str( Field->NNUMCOB ) + Field->CSUFCOB } ) )
+      ( cFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "nNumCob", "str( nNumCob ) + cSufCob", {|| str( Field->nNumCob ) + Field->cSufCob } ) )
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( cFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "cTurRec", "cTurRec + cSufFac + cCodCaj", {|| Field->CTURREC + Field->CSUFFAC + Field->cCodCaj } ) )
+      ( cFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "cTurRec", "cTurRec + cSufFac + cCodCaj", {|| Field->cTurRec + Field->cSufFac + Field->cCodCaj } ) )
 
       ( cFacCliT )->( ordCondSet("!Deleted() .and. Empty( cTipRec )", {|| !Deleted() .and.  Empty( Field->cTipRec ) } ) )
       ( cFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "fNumFac", "cSerie + str( nNumFac ) + cSufFac + str( nNumRec )", {|| Field->CSERIE + str( Field->NNUMFAC ) + Field->CSUFFAC + str( Field->NNUMREC ) } ) )
@@ -4496,7 +4496,6 @@ Function rxRecCli( cPath, cDriver )
    end if
 
    // Tabla de grupos de recibos-----------------------------------------------
-
 
    dbUseArea( .t., cDriver, cPath + "FacCliG.Dbf", cCheckArea( "FACCLIG", @dbfFacCliG ), .f. )
 
@@ -5403,7 +5402,7 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
    cNumRec              := aTmp[ _CSERIE ] + str( aTmp[ _NNUMFAC ], 9 ) + aTmp[ _CSUFFAC ] + str( aTmp[ _NNUMREC ], 2 )
    cNumRecTip           := aTmp[ _CSERIE ] + str( aTmp[ _NNUMFAC ], 9 ) + aTmp[ _CSUFFAC ] + str( aTmp[ _NNUMREC ], 2 ) + aTmp[ _CTIPREC ]
    lDevuelto            := aTmp[ _LDEVUELTO ]
-   cTipoRecibo          := aTmp[ _CTIPREC ]
+   cTipoRecibo          := aTmp[ _CTIPREC  ]
    lCobrado             := aTmp[ _LCOBRADO ]
    dFechaCobro          := aTmp[ _DENTRADA ]
    lImpNeg              := ( cFacCliP )->nImporte < 0
@@ -5529,13 +5528,13 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
 
             nOrdAnt                       := ( cFacCliP )->( OrdSetFocus( "nNumFac" ) )
 
+            msgAlert( cNumRec, "valor buscado" )
+
             if ( cFacCliP )->( dbSeek( cNumRec ) )
+
                aTabla                     := dbScatter( cFacCliP )
-            end if
 
-            nCon                          := nNewReciboCliente( aTabla[ _CSERIE ] + str( aTabla[ _NNUMFAC ] ) + aTabla[ _CSUFFAC ], aTabla[ _CTIPREC ], cFacCliP )
-
-            if aTabla != nil
+               nCon                       := nNewReciboCliente( aTabla[ _CSERIE ] + str( aTabla[ _NNUMFAC ] ) + aTabla[ _CSUFFAC ], aTabla[ _CTIPREC ], cFacCliP )
 
                ( cFacCliP )->( dbAppend() )
                ( cFacCliP )->cSerie     := aTabla[ _CSERIE  ]
@@ -5582,6 +5581,10 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
                ( cFacCliP )->cCtaRem    := aTabla[ _CCTAREM    ]
 
                ( cFacCliP )->( dbUnLock() )
+
+            else 
+
+               msgStop( "Número de recibo " + alltrim( cNumRec ) + " no encontrado" )
 
             end if
 

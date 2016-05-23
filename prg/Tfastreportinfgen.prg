@@ -69,25 +69,25 @@ CLASS TFastReportInfGen FROM TNewInfGen
    DATA  nRecargoSatClientes                    INIT 0
    DATA  nTotalSatClientes                      INIT 0
 
-   DATA  nBasePresupuestosClientes     INIT 0
-   DATA  nIVAPresupuestosClientes      INIT 0
-   DATA  nRecargoPresupuestosClientes  INIT 0
-   DATA  nTotalPresupuestosClientes    INIT 0
+   DATA  nBasePresupuestosClientes              INIT 0
+   DATA  nIVAPresupuestosClientes               INIT 0
+   DATA  nRecargoPresupuestosClientes           INIT 0
+   DATA  nTotalPresupuestosClientes             INIT 0
 
-   DATA  nBasePedidosClientes          INIT 0
-   DATA  nIVAPedidosClientes           INIT 0
-   DATA  nRecargoPedidosClientes       INIT 0
-   DATA  nTotalPedidosClientes         INIT 0
+   DATA  nBasePedidosClientes                   INIT 0
+   DATA  nIVAPedidosClientes                    INIT 0
+   DATA  nRecargoPedidosClientes                INIT 0
+   DATA  nTotalPedidosClientes                  INIT 0
 
-   DATA  nBaseAlbaranesClientes        INIT 0
-   DATA  nIVAAlbaranesClientes         INIT 0
-   DATA  nRecargoAlbaranesClientes     INIT 0
-   DATA  nTotalAlbaranesClientes       INIT 0
+   DATA  nBaseAlbaranesClientes                 INIT 0
+   DATA  nIVAAlbaranesClientes                  INIT 0
+   DATA  nRecargoAlbaranesClientes              INIT 0
+   DATA  nTotalAlbaranesClientes                INIT 0
 
-   DATA  nBaseFacturasClientes         INIT 0
-   DATA  nIVAFacturasClientes          INIT 0
-   DATA  nRecargoFacturasClientes      INIT 0
-   DATA  nTotalFacturasClientes        INIT 0
+   DATA  nBaseFacturasClientes                  INIT 0
+   DATA  nIVAFacturasClientes                   INIT 0
+   DATA  nRecargoFacturasClientes               INIT 0
+   DATA  nTotalFacturasClientes                 INIT 0
 
    DATA  nBaseFacturasRectificativasClientes    INIT 0
    DATA  nIVAFacturasRectificativasClientes     INIT 0
@@ -1500,7 +1500,7 @@ Method SaveReport( lSaveAs ) CLASS TFastReportInfGen
          Return ( .f. )
       end if 
       
-      cFile       := StrTran( ::cReportDirectory, cPatReporting(), cPatUserReporting() )
+      cFile       := ::cReportDirectory //  StrTran( ::cReportDirectory, cPatReporting(), cPatUserReporting() )
       cFile       += "\" + alltrim( ::cReportName ) + ".fr3"
 
    else
@@ -1511,7 +1511,7 @@ Method SaveReport( lSaveAs ) CLASS TFastReportInfGen
 
    // Creamos todos los directorios necesarios---------------------------------
 
-   RecursiveMakeDir( cOnlyPath( cFile )  )
+   recursiveMakeDir( cOnlyPath( cFile ) )
 
    // Salvamos el fichero------------------------------------------------------
 

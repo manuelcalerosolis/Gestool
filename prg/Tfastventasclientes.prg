@@ -1753,15 +1753,15 @@ METHOD AddRecibosClienteCobro( cCodigoCliente ) CLASS TFastVentasClientes
    local oError
    local oBlock
    
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    
       ::oFacCliP:OrdSetFocus( "dEntrada" )
 
-   // filtros para la cabecera------------------------------------------------
+      // filtros para la cabecera------------------------------------------------
 
-      ::cExpresionHeader          := 'Field->dEntrada >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dEntrada <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      ::cExpresionHeader          += ' .and. Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+      ::cExpresionHeader   := 'Field->dEntrada >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dEntrada <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      ::cExpresionHeader   += ' .and. Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
 
       ::setFilterClientIdHeader()
 
@@ -1771,9 +1771,9 @@ METHOD AddRecibosClienteCobro( cCodigoCliente ) CLASS TFastVentasClientes
       
       ::setFilterUserId()
 
-   // Procesando recibos------------------------------------------------------
+      // Procesando recibos------------------------------------------------------
       
-      ::oMtrInf:cText   := "Procesando recibos"
+      ::oMtrInf:cText      := "Procesando recibos"
       
       ::oFacCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
@@ -1811,6 +1811,8 @@ METHOD AddRecibosClienteCobro( cCodigoCliente ) CLASS TFastVentasClientes
 
          ::oDbf:nTotNet    := nTotRecCli( ::oFacCliP )
          ::oDbf:nTotCob    := nTotCobCli( ::oFacCliP )
+
+         ::oDbf:cEstado    := cEstadoRecibo( ::oFacCliP:cAlias )
 
          // Añadimos un nuevo registro--------------------------------------------
 
@@ -1985,7 +1987,7 @@ METHOD insertRectificativa()
       ::oFacRecT:OrdSetFocus( "dFecFac" )
       ::oFacRecL:OrdSetFocus( "nNumFac" )
 
-   // filtros para la cabecera------------------------------------------------
+      // filtros para la cabecera------------------------------------------------
 
       ::cExpresionHeader          := 'Field->dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
       ::cExpresionHeader          += ' .and. Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
@@ -2000,7 +2002,7 @@ METHOD insertRectificativa()
       
       ::setFilterUserId()
 
-   // Procesando facturas rectificativas--------------------------------------
+      // Procesando facturas rectificativas--------------------------------------
 
       ::oMtrInf:cText   := "Procesando facturas rectificativas"
       
