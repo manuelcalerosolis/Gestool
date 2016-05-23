@@ -20874,14 +20874,14 @@ Return ( ChkLqdFacCli( nil, D():FacturasClientes( nView ), D():FacturasClientesL
 Comprueba si una factura esta liquidada
 */
 
-FUNCTION ChkLqdFacCli( aTmp, cFacCliT, cFacCliL, dbfFacCliP, cAntCliT, dbfIva, dbfDiv )
+FUNCTION ChkLqdFacCli( aTmp, cFacCliT, cFacCliL, cFacCliP, cAntCliT, dbfIva, dbfDiv )
 
    local lChkLqd
    local cFactura
-   local nPagFacCli
    local nTotal
    local cDivFac
-   local nRec     := ( dbfFacCliP )->( RecNo() )
+   local nPagFacCli
+   local nRec     := ( cFacCliP )->( RecNo() )
 
    if aTmp != nil
       cFactura    := aTmp[ _CSERIE  ] + str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ]
@@ -20891,8 +20891,9 @@ FUNCTION ChkLqdFacCli( aTmp, cFacCliT, cFacCliL, dbfFacCliP, cAntCliT, dbfIva, d
       cDivFac     := ( cFacCliT )->cDivFac
    end if
 
-   nTotal         := abs( nTotFacCli( cFactura, cFacCliT, cFacCliL, dbfIva, dbfDiv, dbfFacCliP, nil, nil, nil, .f. ) )
-   nPagFacCli     := abs( nTotalRecibosPagadosFacturasCliente( cFactura, cFacCliT, dbfFacCliP, dbfIva, dbfDiv ) )
+   nTotal         := abs( nTotFacCli( cFactura, cFacCliT, cFacCliL, dbfIva, dbfDiv, cFacCliP, cAntCliT, nil, nil, .f. ) )
+   
+   nPagFacCli     := abs( nTotalRecibosPagadosFacturasCliente( cFactura, cFacCliT, cFacCliP, dbfIva, dbfDiv ) )
    nPagFacCli     += abs( nTotAntFacCli( cFactura, cAntCliT, dbfIva, dbfDiv, nil, .f. ) )
 
    lChkLqd                       := !lMayorIgual( nTotal, nPagFacCli, 0.1 )
@@ -20906,7 +20907,7 @@ FUNCTION ChkLqdFacCli( aTmp, cFacCliT, cFacCliL, dbfFacCliP, cAntCliT, dbfIva, d
       ( cFacCliT )->( dbUnLock() )
    end if
 
-   ( dbfFacCliP )->( dbGoTo( nRec ) )
+   ( cFacCliP )->( dbGoTo( nRec ) )
 
 RETURN ( lChkLqd )
 

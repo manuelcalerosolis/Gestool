@@ -413,7 +413,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Bajar", 525, "Button", WS_TABSTOP, 373, 129, 50, 14
   CONTROL "Ocultar Esc&ll.", 526, "Button", WS_TABSTOP, 428, 129, 50, 14
   CONTROL "Importar tarifa", 527, "Button", WS_TABSTOP, 483, 129, 50, 14
-  CONTROL "Lector ", 528, "Button", WS_TABSTOP, 616, 129, 50, 14
+  CONTROL "Lector  [F8]", 528, "Button", WS_TABSTOP, 616, 129, 50, 14
   CONTROL "", 240, "TXBrowse", WS_TABSTOP|0x00300000, 44, 145, 622, 139
   CONTROL "Descuentos", 700, "Button", BS_GROUPBOX, 44, 288, 154, 61
   CONTROL "", 173, "Edit", ES_RIGHT|WS_BORDER, 391, 54, 54, 11
@@ -6653,17 +6653,10 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 580, "Edit", ES_RIGHT|ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 547, 72, 110, 11
   CONTROL "", 240, "Edit", ES_MULTILINE|ES_AUTOVSCROLL|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 230, 158, 428, 29
   CONTROL "", 250, "Edit", ES_MULTILINE|ES_AUTOVSCROLL|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 230, 188, 428, 29
-  CONTROL "&Modificar", 501, "Button", WS_TABSTOP, 48, 234, 50, 14
-  CONTROL "&Eliminar", 502, "Button", WS_TABSTOP, 48, 249, 50, 14
-  CONTROL "&Previsualizar", 506, "Button", WS_TABSTOP, 48, 264, 50, 14
-  CONTROL "&Imprimir", 505, "Button", WS_TABSTOP, 48, 279, 50, 14
-  CONTROL "", 260, "TXBrowse", WS_TABSTOP|0x00300000, 102, 234, 400, 66
   CONTROL "A&gregar", 270, "Button", WS_TABSTOP, 48, 317, 50, 14
   CONTROL "Ag. de c&liente", 400, "Button", WS_TABSTOP, 48, 332, 50, 14
   CONTROL "", 290, "TXBrowse", WS_TABSTOP|0x00300000, 102, 317, 400, 50
-  CONTROL "0", 460, "Static", SS_RIGHT|WS_GROUP, 575, 249, 80, 10
   CONTROL "0", 480, "Static", SS_RIGHT|WS_GROUP, 585, 317, 70, 10
-  CONTROL "Cobros", 112, "Button", BS_GROUPBOX, 44, 223, 465, 81
   CONTROL "Entrega", -1, "Static", WS_GROUP, 370, 75, 46, 8
   CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 174, 145, 489, 76
   CONTROL "Comentarios", -1, "Static", WS_GROUP, 178, 189, 44, 8
@@ -6672,9 +6665,6 @@ FONT 8, "MS Sans Serif"
   CONTROL "Retirado por", -1, "Static", WS_GROUP, 370, 40, 46, 8
   CONTROL "Matrícula", -1, "Static", WS_GROUP, 370, 51, 46, 8
   CONTROL "Pendiente", -1, "Static", WS_GROUP, 518, 317, 44, 10
-  CONTROL "Cobrado", -1, "Static", WS_GROUP, 518, 249, 44, 10
-  CONTROL "Total factura", -1, "Static", WS_GROUP, 518, 234, 44, 10
-  CONTROL "0", 455, "Static", SS_RIGHT|WS_GROUP, 575, 234, 80, 10
   CONTROL "Proyecto", -1, "Static", WS_GROUP, 50, 63, 44, 8
   CONTROL "Su pedido", -1, "Static", WS_GROUP, 50, 108, 37, 8
   CONTROL "", -1, "Button", BS_GROUPBOX, 44, 18, 316, 82
@@ -6682,9 +6672,6 @@ FONT 8, "MS Sans Serif"
   CONTROL "Caja", -1, "Static", WS_GROUP, 50, 51, 44, 8
   CONTROL "Bultos", -1, "Static", WS_GROUP, 370, 63, 46, 8
   CONTROL "Anticipos", -1, "Button", BS_GROUPBOX, 44, 306, 465, 65
-  CONTROL "Anticipos", -1, "Static", WS_GROUP, 518, 264, 44, 10
-  CONTROL "0", 470, "Static", SS_RIGHT|WS_GROUP, 575, 264, 80, 10
-  CONTROL "", -1, "Button", BS_GROUPBOX, 513, 223, 150, 81
   CONTROL "&Quitar", 280, "Button", WS_TABSTOP, 48, 347, 50, 14
   CONTROL "Delegación", -1, "Static", WS_GROUP, 50, 39, 44, 8
   CONTROL "", -1, "Button", BS_GROUPBOX, 365, 18, 298, 82

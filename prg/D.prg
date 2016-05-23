@@ -636,7 +636,8 @@ ENDCLASS
       end if
 
       if !hHasKey( ::hViews, nView )
-         msgStop( "Vista " + alltrim( str( nView ) ) + " no encontrada." )
+         msgStop( "Vista " + alltrim( str( nView ) / 0 ) + " no encontrada." )
+
          Return ( .f. )
       end if 
 

@@ -4024,6 +4024,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       oFld:aDialogs[1]:AddFastKey( VK_F2, {|| AppDeta( oBrwLin, bEdtDet, aTmp, .f., nMode ) } )
       oFld:aDialogs[1]:AddFastKey( VK_F3, {|| EdtDeta( oBrwLin, bEdtDet, aTmp, .f., nMode ) } )
       oFld:aDialogs[1]:AddFastKey( VK_F4, {|| WinDelRec( oBrwLin, dbfTmpLin, {|| delDeta() }, {|| RecalculaTotal( aTmp ) } ) } )
+      oFld:aDialogs[1]:AddFastKey( VK_F8, {|| masiveAppendLines( aTmp, nMode ) } )
 
       oFld:aDialogs[2]:AddFastKey( VK_F2, {|| WinAppRec( oBrwPgo, bEdtPgo, dbfTmpPgo, nil, nil, aTmp ), RecalculaTotal( aTmp ) } )
       oFld:aDialogs[2]:AddFastKey( VK_F3, {|| WinEdtRec( oBrwPgo, bEdtPgo, dbfTmpPgo, nil, nil, aTmp ), RecalculaTotal( aTmp ) } )
@@ -5055,8 +5056,6 @@ Static Function masiveAppendLines( aCabeceraAlbaran, nMode )
    
    oDlg:Run()
 
-   oBrwLin:Refresh()
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -5074,7 +5073,15 @@ Static Function runMasiveAppendLines( getDialog, aCabeceraAlbaran, nMode )
    setDlgMode( aLineasAlbaranes, aCabeceraAlbaran, nMode )
 
    if loaArt( getDialog:cGet, aLineasAlbaranes, nil, aCabeceraAlbaran )
+
       saveDeta( aLineasAlbaranes, aCabeceraAlbaran, , , , , , nMode )
+
+      if !empty( oBrwLin )
+         oBrwLin:Refresh()
+      end if
+
+      recalculaTotal( aCabeceraAlbaran )
+   
    end if 
 
    getDialog:oGet:cText( space( 200 ) ) 
