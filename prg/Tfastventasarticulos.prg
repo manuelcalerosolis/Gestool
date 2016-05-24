@@ -1042,7 +1042,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetMasterDetail(   "Informe", "Grupos familias",                   {|| ::oDbf:cGrpFam } )
    ::oFastReport:SetMasterDetail(   "Informe", "Agentes",                           {|| ::oDbf:cCodAge } )
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Atipicas de clientes",              {|| ::oDbf:cCodCli + :oDbf:cCodArt } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Atipicas de clientes",              {|| ::oDbf:cCodCli + ::oDbf:cCodArt } )
 
    ::oFastReport:SetMasterDetail(   "Informe", "Artículos.Informe",                 {|| ::oDbf:cCodArt } )  
    ::oFastReport:SetMasterDetail(   "Informe", "Imagenes",                          {|| ::oDbf:cCodArt } )
