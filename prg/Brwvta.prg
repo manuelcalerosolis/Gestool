@@ -302,11 +302,12 @@ Static Function OpenFiles( cCodArt )
    oDbfTmp              := DefineTemporal()
    oDbfTmp:Activate( .f., .f. )
 
-   oStock            := TStock():Create( cPatGrp() )
+   oStock                                          := TStock():Create( cPatGrp() )
    if oStock:lOpenFiles()
-      oStock:lIntegra   := .f.
+      oStock:lIntegra                              := .f.
+      oStock:lCalculateUnidadesPendientesRecibir   := .t.
    else 
-      lOpenFiles        := .f.
+      lOpenFiles                                   := .f.
    end if
 
    RECOVER USING oError

@@ -30,6 +30,7 @@ CLASS TStock
    DATA cPedCliT
    DATA cPedCliL
    DATA cPedCliR
+   DATA cPedCliS
 
    DATA cAlbCliT
    DATA cAlbCliL
@@ -100,39 +101,36 @@ CLASS TStock
    DATA tmpFacRecL
    DATA tmpFacRecS
 
-   DATA aSeries            AS ARRAY INIT {}
+   DATA aSeries                              AS ARRAY INIT {}
 
    DATA oTree  
 
-   DATA aMovAlm            AS ARRAY INIT {}
+   DATA aMovAlm                              AS ARRAY INIT {}
 
-   DATA lAlbPrv            AS LOGIC INIT .t.
-   DATA lAlbCli            AS LOGIC INIT .t.
+   DATA lAlbPrv                              AS LOGIC INIT .t.
+   DATA lAlbCli                              AS LOGIC INIT .t.
 
-   DATA lIntegra           AS LOGIC INIT .t.
+   DATA lIntegra                             AS LOGIC INIT .t.
 
-   DATA lLote              AS LOGIC INIT .f.
-   DATA lNumeroSerie       AS LOGIC INIT .f.
+   DATA lLote                                AS LOGIC INIT .f.
+   DATA lNumeroSerie                         AS LOGIC INIT .f.
 
    DATA oDbfStock
    DATA cDbfStock
    DATA cCdxStock
 
-   DATA aAlmacenes         AS ARRAY INIT {}
+   DATA aAlmacenes                           AS ARRAY INIT {}
+
+   DATA lCalculateUnidadesPendientesRecibir  AS LOGIC INIT .f.
 
    METHOD New( cPath, lExclusive )
    METHOD Create( cPath, lExclusive )
-   METHOD End()            INLINE ( if( !Empty( ::oTree ), ::oTree:End(), ), ::CloseFiles() )
+   METHOD End()                              INLINE ( if( !empty( ::oTree ), ::oTree:End(), ), ::CloseFiles() )
 
-   METHOD Reset()          INLINE ( ::aStocks := {} )
+   METHOD Reset()                            INLINE ( ::aStocks := {} )
 
    METHOD lOpenFiles( lExclusive )
    METHOD CloseFiles()
-
-   METHOD CreateTemporalFiles( cPath )
-   METHOD DeleteTemporalFiles( cPath )
-
-   METHOD Zap()
 
    METHOD PedPrv( cNumPed, cCodAlm, lDelete, lIncremento )
 
@@ -158,8 +156,6 @@ CLASS TStock
 
    METHOD TpvCli( cNumFac, cCodAlm, lIncremento )
    METHOD ChkTikCli( cNumTik )
-
-   //METHOD lAppStock( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, nStkAct, nImpStk, nStkPdr, nStkPde, nStkPdc, cDoc )
 
    METHOD nStockActual( cCodArt, cCodAlm, cValPr1, cValPr2 )
 
@@ -224,6 +220,8 @@ CLASS TStock
       METHOD aStockFacturaProveedor()
       METHOD aStockRectificativaProveedor()
 
+      METHOD aStockPedidoCliente()
+
       METHOD aStockAlbaranCliente()
       METHOD aStockFacturaCliente()
       METHOD aStockRectificativaCliente()
@@ -254,9 +252,6 @@ CLASS TStock
    METHOD nRiesgo( cCodigoCliente )          INLINE   ( ::nOperacionesCliente( cCodigoCliente, .t. ) )
    METHOD nFacturado( cCodigoCliente )       INLINE   ( ::nOperacionesCliente( cCodigoCliente, .f. ) )
 
-   METHOD Select()                           INLINE ( if( ::oDbfStock:Used(), ::oDbfStock:nArea, 0 ) )
-   METHOD ZapStockArticulo( cCodArt )        INLINE ( ::oDbfStock:Zap() )
-
    METHOD SetRiesgo( cCodigoCliente, oGetRiesgo, nRiesgoCliente )
 
    METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote )
@@ -283,6 +278,7 @@ CLASS TStock
    METHOD InsertStockRectificativaProveedores( lNumeroSerie )
    METHOD DeleteStockRectificativaProveedores( lNumeroSerie )
 
+   METHOD InsertStockPedidoClientes( lNumeroSerie )
    METHOD InsertStockAlbaranClientes( lNumeroSerie )
    METHOD InsertStockFacturaClientes( lNumeroSerie )
    METHOD InsertStockRectificativaClientes( lNumeroSerie )
@@ -328,62 +324,6 @@ METHOD New( cPath, lExclusive ) CLASS TStock
    ::lOpenFiles( cPath, lExclusive )
 
 Return Self
-
-//---------------------------------------------------------------------------//
-
-METHOD CreateTemporalFiles( cPath ) CLASS TStock
-
-   local aStock
-
-   DEFAULT cPath        := cPatTmp()
-
-   ::cDbfStock          := "Stock" + cCurUsr() + ".Dbf"
-   ::cCdxStock          := "Stock" + cCurUsr() + ".Cdx"
-
-   ::DeleteTemporalFiles( cPath )
-
-   DEFINE DATABASE ::oDbfStock FILE ( ::cDbfStock ) CLASS "StockDbf" ALIAS "StockDbf" PATH ( cPath ) VIA ( cLocalDriver() ) 
-
-   FIELD NAME "cCodigo"    TYPE "C" LEN 18 DEC 0 COMMENT "Código de artículo"                    OF ::oDbfStock
-   FIELD NAME "cDelega"    TYPE "C" LEN  3 DEC 0 COMMENT "Delegación"                            OF ::oDbfStock
-   FIELD NAME "dFecDoc"    TYPE "D" LEN  8 DEC 0 COMMENT "Fecha del documento"                   OF ::oDbfStock
-   FIELD NAME "cAlmacen"   TYPE "C" LEN 16 DEC 0 COMMENT "Código del almacen"                    OF ::oDbfStock
-   FIELD NAME "cCodPrp1"   TYPE "C" LEN 20 DEC 0 COMMENT "Código de la primera propiedad"        OF ::oDbfStock
-   FIELD NAME "cCodPrp2"   TYPE "C" LEN 20 DEC 0 COMMENT "Código de la segunda propiedad"        OF ::oDbfStock
-   FIELD NAME "cValPrp1"   TYPE "C" LEN 20 DEC 0 COMMENT "Valor de la primera propiedad"         OF ::oDbfStock 
-   FIELD NAME "cValPrp2"   TYPE "C" LEN 20 DEC 0 COMMENT "Valor de la segunda propiedad"         OF ::oDbfStock
-   FIELD NAME "cLote"      TYPE "C" LEN 14 DEC 0 COMMENT "Número de lote"                        OF ::oDbfStock
-   FIELD NAME "cNumSer"    TYPE "C" LEN 30 DEC 0 COMMENT "Número de serie"                       OF ::oDbfStock
-   FIELD NAME "dFecCad"    TYPE "D" LEN  8 DEC 0 COMMENT "Fecha de caducidad"                    OF ::oDbfStock
-   FIELD NAME "nUnd"       TYPE "N" LEN 16 DEC 6 COMMENT "Total unidades"                        OF ::oDbfStock
-   FIELD NAME "nPdtRec"    TYPE "N" LEN 16 DEC 6 COMMENT "Total unidades pendientes de recibir"  OF ::oDbfStock
-   FIELD NAME "nPdtEnt"    TYPE "N" LEN 16 DEC 6 COMMENT "Total unidades pendientes de entregar" OF ::oDbfStock
-   FIELD NAME "cNumDoc"    TYPE "C" LEN 13 DEC 0 COMMENT "Número del documento lote"             OF ::oDbfStock
-   FIELD NAME "cTipDoc"    TYPE "C" LEN 12 DEC 0 COMMENT "Tipo del documento"                    OF ::oDbfStock
-
-   INDEX TO ( ::cCdxStock ) TAG "cCodArt"  ON "cCodigo + cAlmacen + cValPrp1 + cValPrp2 + cLote"  COMMENT "Código"           FOR "!Deleted()" OF ::oDbfStock
-   INDEX TO ( ::cCdxStock ) TAG "cCodAlm"  ON "cAlmacen + cCodigo + cValPrp1 + cValPrp2 + cLote"  COMMENT "Almacen"          FOR "!Deleted()" OF ::oDbfStock
-   INDEX TO ( ::cCdxStock ) TAG "dFecCad"  ON "Dtos( dFecCad ) + cLote"                           COMMENT "Fecha caducidad"  FOR "!Deleted()" OF ::oDbfStock
-
-   END DATABASE ::oDbfStock
-
-   ::oDbfStock:Activate( .f., .f. )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD DeleteTemporalFiles( cPath ) CLASS TStock
-
-   DEFAULT cPath        := cPatTmp()
-
-   if !Empty( ::oDbfStock ) .and. ::oDbfStock:Used()
-      ::oDbfStock:Close()
-   end if      
-
-   dbfErase( ::cDbfStock )
-
-RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -608,60 +548,60 @@ RETURN ( lOpen )
 
 METHOD CloseFiles() CLASS TStock
 
-   if ( !Empty( ::cSatCliT ), ( ::cSatCliT )->( dbCloseArea() ), )
-   if ( !Empty( ::cSatCliL ), ( ::cSatCliL )->( dbCloseArea() ), )
+   if ( !empty( ::cSatCliT ), ( ::cSatCliT )->( dbCloseArea() ), )
+   if ( !empty( ::cSatCliL ), ( ::cSatCliL )->( dbCloseArea() ), )
 
-   if ( !Empty( ::cPedCliT ), ( ::cPedCliT )->( dbCloseArea() ), )
-   if ( !Empty( ::cPedCliL ), ( ::cPedCliL )->( dbCloseArea() ), )
-   if ( !Empty( ::cPedCliR ), ( ::cPedCliR )->( dbCloseArea() ), )
+   if ( !empty( ::cPedCliT ), ( ::cPedCliT )->( dbCloseArea() ), )
+   if ( !empty( ::cPedCliL ), ( ::cPedCliL )->( dbCloseArea() ), )
+   if ( !empty( ::cPedCliR ), ( ::cPedCliR )->( dbCloseArea() ), )
 
-   if ( !Empty( ::cAlbCliT ), ( ::cAlbCliT )->( dbCloseArea() ), )
-   if ( !Empty( ::cAlbCliL ), ( ::cAlbCliL )->( dbCloseArea() ), )
-   if ( !Empty( ::cAlbCliS ), ( ::cAlbCliS )->( dbCloseArea() ), )
+   if ( !empty( ::cAlbCliT ), ( ::cAlbCliT )->( dbCloseArea() ), )
+   if ( !empty( ::cAlbCliL ), ( ::cAlbCliL )->( dbCloseArea() ), )
+   if ( !empty( ::cAlbCliS ), ( ::cAlbCliS )->( dbCloseArea() ), )
 
-   if ( !Empty( ::cFacCliT ), ( ::cFacCliT )->( dbCloseArea() ), )
-   if ( !Empty( ::cFacCliL ), ( ::cFacCliL )->( dbCloseArea() ), )
-   if ( !Empty( ::cFacCliS ), ( ::cFacCliS )->( dbCloseArea() ), )
-   if ( !Empty( ::cFacCliP ), ( ::cFacCliP )->( dbCloseArea() ), )
+   if ( !empty( ::cFacCliT ), ( ::cFacCliT )->( dbCloseArea() ), )
+   if ( !empty( ::cFacCliL ), ( ::cFacCliL )->( dbCloseArea() ), )
+   if ( !empty( ::cFacCliS ), ( ::cFacCliS )->( dbCloseArea() ), )
+   if ( !empty( ::cFacCliP ), ( ::cFacCliP )->( dbCloseArea() ), )
 
-   if ( !Empty( ::cFacRecT ), ( ::cFacRecT )->( dbCloseArea() ), )
-   if ( !Empty( ::cFacRecL ), ( ::cFacRecL )->( dbCloseArea() ), )
-   if ( !Empty( ::cFacRecS ), ( ::cFacRecS )->( dbCloseArea() ), )
+   if ( !empty( ::cFacRecT ), ( ::cFacRecT )->( dbCloseArea() ), )
+   if ( !empty( ::cFacRecL ), ( ::cFacRecL )->( dbCloseArea() ), )
+   if ( !empty( ::cFacRecS ), ( ::cFacRecS )->( dbCloseArea() ), )
 
-   if ( !Empty( ::cTikT ),    ( ::cTikT )->( dbCloseArea() ), )
-   if ( !Empty( ::cTikL ),    ( ::cTikL )->( dbCloseArea() ), )
-   if ( !Empty( ::cTikS ),    ( ::cTikS )->( dbCloseArea() ), )
+   if ( !empty( ::cTikT ),    ( ::cTikT )->( dbCloseArea() ), )
+   if ( !empty( ::cTikL ),    ( ::cTikL )->( dbCloseArea() ), )
+   if ( !empty( ::cTikS ),    ( ::cTikS )->( dbCloseArea() ), )
 
-   if ( !Empty( ::cAntCliT ), ( ::cAntCliT )->( dbCloseArea() ), )
+   if ( !empty( ::cAntCliT ), ( ::cAntCliT )->( dbCloseArea() ), )
 
-   if ( !Empty( ::cArticulo), ( ::cArticulo )->( dbCloseArea() ), )
-   if ( !Empty( ::cKit ),     ( ::cKit )->( dbCloseArea() ), )
+   if ( !empty( ::cArticulo), ( ::cArticulo )->( dbCloseArea() ), )
+   if ( !empty( ::cKit ),     ( ::cKit )->( dbCloseArea() ), )
 
-   if ( !Empty( ::cPedPrvT ), ( ::cPedPrvT )->( dbCloseArea() ), )
-   if ( !Empty( ::cPedPrvL ), ( ::cPedPrvL )->( dbCloseArea() ), )
+   if ( !empty( ::cPedPrvT ), ( ::cPedPrvT )->( dbCloseArea() ), )
+   if ( !empty( ::cPedPrvL ), ( ::cPedPrvL )->( dbCloseArea() ), )
 
-   if ( !Empty( ::cAlbPrvL ), ( ::cAlbPrvL )->( dbCloseArea() ), )
-   if ( !Empty( ::cAlbPrvS ), ( ::cAlbPrvS )->( dbCloseArea() ), )
+   if ( !empty( ::cAlbPrvL ), ( ::cAlbPrvL )->( dbCloseArea() ), )
+   if ( !empty( ::cAlbPrvS ), ( ::cAlbPrvS )->( dbCloseArea() ), )
 
-   if ( !Empty( ::cFacPrvL ), ( ::cFacPrvL )->( dbCloseArea() ), )
-   if ( !Empty( ::cFacPrvS ), ( ::cFacPrvS )->( dbCloseArea() ), )
+   if ( !empty( ::cFacPrvL ), ( ::cFacPrvL )->( dbCloseArea() ), )
+   if ( !empty( ::cFacPrvS ), ( ::cFacPrvS )->( dbCloseArea() ), )
 
-   if ( !Empty( ::cRctPrvL ), ( ::cRctPrvL )->( dbCloseArea() ), )
-   if ( !Empty( ::cRctPrvS ), ( ::cRctPrvS )->( dbCloseArea() ), )
+   if ( !empty( ::cRctPrvL ), ( ::cRctPrvL )->( dbCloseArea() ), )
+   if ( !empty( ::cRctPrvS ), ( ::cRctPrvS )->( dbCloseArea() ), )
 
-   if ( !Empty( ::cProducL ), ( ::cProducL )->( dbCloseArea() ), )   
-   if ( !Empty( ::cProducM ), ( ::cProducM )->( dbCloseArea() ), )   
-   if ( !Empty( ::cProducS ), ( ::cProducS )->( dbCloseArea() ), )   
-   if ( !Empty( ::cProducP ), ( ::cProducP )->( dbCloseArea() ), )   
+   if ( !empty( ::cProducL ), ( ::cProducL )->( dbCloseArea() ), )   
+   if ( !empty( ::cProducM ), ( ::cProducM )->( dbCloseArea() ), )   
+   if ( !empty( ::cProducS ), ( ::cProducS )->( dbCloseArea() ), )   
+   if ( !empty( ::cProducP ), ( ::cProducP )->( dbCloseArea() ), )   
 
-   if ( !Empty( ::cHisMovT ), ( ::cHisMovT )->( dbCloseArea() ), )   
-   if ( !Empty( ::cHisMovS ), ( ::cHisMovS )->( dbCloseArea() ), )   
+   if ( !empty( ::cHisMovT ), ( ::cHisMovT )->( dbCloseArea() ), )   
+   if ( !empty( ::cHisMovS ), ( ::cHisMovS )->( dbCloseArea() ), )   
 
-   if ( !Empty( ::cAlm ),     ( ::cAlm )->( dbCloseArea() ), )
+   if ( !empty( ::cAlm ),     ( ::cAlm )->( dbCloseArea() ), )
 
-   if ( !Empty( ::cDbfDiv ),  ( ::cDbfDiv )->( dbCloseArea() ), )
-   if ( !Empty( ::cDbfIva ),  ( ::cDbfIva )->( dbCloseArea() ), )
-   if ( !Empty( ::cDbfFPago ),( ::cDbfFPago )->( dbCloseArea() ), )
+   if ( !empty( ::cDbfDiv ),  ( ::cDbfDiv )->( dbCloseArea() ), )
+   if ( !empty( ::cDbfIva ),  ( ::cDbfIva )->( dbCloseArea() ), )
+   if ( !empty( ::cDbfFPago ),( ::cDbfFPago )->( dbCloseArea() ), )
 
 Return ( Self )
 
@@ -692,7 +632,7 @@ METHOD PedPrv( cNumPed, cCodAlm, lDelete, lIncremento ) CLASS TStock
       while ( ::cPedPrvL )->cSerPed + Str( ( ::cPedPrvL )->nNumPed ) + ( ::cPedPrvL )->cSufPed == cNumPed .and. ;
             !( ::cPedPrvL )->( eof() );
 
-         if !Empty( Rtrim( ( ::cPedPrvL )->cRef ) )
+         if !empty( Rtrim( ( ::cPedPrvL )->cRef ) )
 
             nUnits      := nTotNPedPrv( ::cPedPrvL ) - ( ::cPedPrvL )->nUniEnt
 
@@ -740,16 +680,16 @@ METHOD SetPedPrv( cNumPed ) CLASS TStock
    local nRecPedPrv     := 0
    local nTotLineaAct   := 0
 
-   if Empty( ::cPedPrvT ) .or. Empty( ::cPedPrvL )
+   if empty( ::cPedPrvT ) .or. empty( ::cPedPrvL )
       return .f.
    end if
 
    nRegAnt              := ( ::cPedPrvT )->( RecNo() )
-   nOrdAnt              := ( ::cPedPrvT )->( OrdSetFocus( "nNumPed" ) )
+   nOrdAnt              := ( ::cPedPrvT )->( ordsetfocus( "nNumPed" ) )
 
    // Comprobamos como esta el pedido------------------------------------------
 
-   if !Empty( cNumPed )                            .and.;
+   if !empty( cNumPed )                            .and.;
       ( ::cPedPrvT )->( dbSeek( cNumPed ) )        .and.;
       ( ::cPedPrvL )->( dbSeek( cNumPed ) )
 
@@ -804,7 +744,7 @@ METHOD SetPedPrv( cNumPed ) CLASS TStock
 
    end if
 
-   ( ::cPedPrvT )->( OrdSetFocus( nOrdAnt ) )
+   ( ::cPedPrvT )->( ordsetfocus( nOrdAnt ) )
    ( ::cPedPrvT )->( DbGoTo( nRegAnt ) )
 
 Return ( Self )
@@ -847,7 +787,7 @@ METHOD FacPrv( cNumFac, cCodAlm, lDelete, lIncremento ) CLASS TStock
 
             //Si no tenemos almacen en linea se lo ponemos
 
-            if Empty( ( ::cFacPrvL )->cAlmLin ) .and. dbLock( ::cFacPrvL )
+            if empty( ( ::cFacPrvL )->cAlmLin ) .and. dbLock( ::cFacPrvL )
                ( ::cFacPrvL )->cAlmLin    := ( ::cFacPrvT )->cCodAlm
                ( ::cFacPrvL )->( dbUnLock() )
             end if
@@ -915,7 +855,7 @@ METHOD RctPrv( cNumFac, cCodAlm, lDelete, lIncremento ) CLASS TStock
 
             //Si no tenemos almacen en linea se lo ponemos
 
-            if Empty( ( ::cRctPrvL )->cAlmLin ) .and. dbLock( ::cRctPrvL )
+            if empty( ( ::cRctPrvL )->cAlmLin ) .and. dbLock( ::cRctPrvL )
                ( ::cRctPrvL )->cAlmLin    := ( ::cRctPrvT )->cCodAlm
                ( ::cRctPrvL )->( dbUnLock() )
             end if
@@ -960,7 +900,7 @@ METHOD PedCli( cNumPed, cCodAlm, lDelete, lIncremento ) CLASS TStock
    datos necesarios------------------------------------------------------------
    */
 
-   if Empty( cNumPed ) .or. Empty( ::cPedCliL ) .or. Empty( ::cAlbCliT ) .or. Empty( ::cAlbCliL ) .or. Empty( ::cAlbPrvL )
+   if empty( cNumPed ) .or. empty( ::cPedCliL ) .or. empty( ::cAlbCliT ) .or. empty( ::cAlbCliL ) .or. empty( ::cAlbPrvL )
       msgStop( "Imposible realizar la actualización de stocks.", "Atención" )
       return self
    end if
@@ -970,7 +910,7 @@ METHOD PedCli( cNumPed, cCodAlm, lDelete, lIncremento ) CLASS TStock
       while ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed == cNumPed .and. ;
             !( ::cPedCliL )->( eof() )
 
-         if !Empty( Rtrim( ( ::cPedCliL )->cRef ) )
+         if !empty( Rtrim( ( ::cPedCliL )->cRef ) )
 
             nUndPed     := nTotNPedCli( ::cPedCliL )
             nUndRes     := nTotRPedCli( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cPedCliR )
@@ -979,7 +919,7 @@ METHOD PedCli( cNumPed, cCodAlm, lDelete, lIncremento ) CLASS TStock
             Si no tenemos almacen en linea se lo ponemos
             */
 
-            if Empty( ( ::cPedCliL )->cAlmLin )
+            if empty( ( ::cPedCliL )->cAlmLin )
                if dbLock( ::cPedCliL )
                   ( ::cPedCliL )->cAlmLin    := ( ::cPedCliT )->cCodAlm
                   ( ::cPedCliL )->( dbUnLock() )
@@ -1035,7 +975,7 @@ METHOD SetEstadoPedCli( cNumPed ) CLASS TStock
    local nLineasUnidadesPedidas     := 0
    local nTotalUnidadesRecibidas    := 0
 
-   if Empty( ::cPedCliT ) .or. Empty( ::cPedCliL )
+   if empty( ::cPedCliT ) .or. empty( ::cPedCliL )
       return .f.
    end if
 
@@ -1095,7 +1035,7 @@ Return .t.
 
 METHOD SetEstadoSatCli( cNumSat ) CLASS TStock
 
-   if Empty( ::cSatCliT ) 
+   if empty( ::cSatCliT ) 
       return .f.
    end if
 
@@ -1133,7 +1073,7 @@ METHOD SetRecibidoPedCli( cNumPed ) CLASS TStock
    Datos necesarios------------------------------------------------------------
    */
 
-   if Empty( cNumPed ) .or. Empty( ::cPedCliT ) .or. Empty( ::cPedCliL ) .or. Empty( ::cAlbPrvL )
+   if empty( cNumPed ) .or. empty( ::cPedCliT ) .or. empty( ::cPedCliL ) .or. empty( ::cAlbPrvL )
       return self
    end if
 
@@ -1143,7 +1083,7 @@ METHOD SetRecibidoPedCli( cNumPed ) CLASS TStock
       while ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed == cNumPed .and. ;
             !( ::cPedCliL )->( eof() )
 
-         if !Empty( ( ::cPedCliL )->cRef )
+         if !empty( ( ::cPedCliL )->cRef )
 
             nUndPed     := nTotNPedCli( ::cPedCliL )
             nTotPed     += nUndPed
@@ -1184,14 +1124,14 @@ METHOD SetGeneradoPedCli( cNumPed ) CLASS TStock
    local nEstado  := 0
    local nRecCliT := ( ::cPedCliT )->( Recno() )
    local nRecCliL := ( ::cPedCliL )->( Recno() )
-   local nOrdCliT := ( ::cPedCliT )->( OrdSetFocus( "nNumPed" ) )
-   local nOrdCliL := ( ::cPedCliL )->( OrdSetFocus( "nNumPed" ) )
+   local nOrdCliT := ( ::cPedCliT )->( ordsetfocus( "nNumPed" ) )
+   local nOrdCliL := ( ::cPedCliL )->( ordsetfocus( "nNumPed" ) )
 
    /*
    Datos necesarios------------------------------------------------------------
    */
 
-   if Empty( cNumPed ) .or. Empty( ::cPedCliT ) .or. Empty( ::cPedCliL ) .or. Empty( ::cPedPrvL )
+   if empty( cNumPed ) .or. empty( ::cPedCliT ) .or. empty( ::cPedCliL ) .or. empty( ::cPedPrvL )
       msgStop( "Imposible actualizar el estado del pedido.", "Atención" )
       return self
    end if
@@ -1237,8 +1177,8 @@ METHOD SetGeneradoPedCli( cNumPed ) CLASS TStock
 
    end if
 
-   ( ::cPedCliT )->( OrdSetFocus( nOrdCliT ) )
-   ( ::cPedCliL )->( OrdSetFocus( nOrdCliL ) )
+   ( ::cPedCliT )->( ordsetfocus( nOrdCliT ) )
+   ( ::cPedCliL )->( ordsetfocus( nOrdCliL ) )
    ( ::cPedCliT )->( dbGoTo( nRecCliT ) )
    ( ::cPedCliL )->( dbGoTo( nRecCliL ) )
 
@@ -1249,7 +1189,7 @@ Return ( Self )
 METHOD nStockReservado( cCodArt, cValPr1, cValPr2 ) CLASS TStock
 
    local nTotal         := 0
-   local nOrdPedCliR    := ( ::cPedCliR )->( OrdSetFocus( "cRef" ) )
+   local nOrdPedCliR    := ( ::cPedCliR )->( ordsetfocus( "cRef" ) )
 
    if ( ::cPedCliR )->( dbSeek( cCodArt ) )
 
@@ -1263,7 +1203,7 @@ METHOD nStockReservado( cCodArt, cValPr1, cValPr2 ) CLASS TStock
 
    end if
 
-   ( ::cPedCliR )->( OrdSetFocus( nOrdPedCliR ) )
+   ( ::cPedCliR )->( ordsetfocus( nOrdPedCliR ) )
 
 RETURN ( nTotal )
 
@@ -1339,7 +1279,7 @@ METHOD FacRec( cNumFac, cCodAlm, lDelete, lIncremento, lActPendientes ) CLASS TS
             Si no tenemos almacen en linea se lo ponemos
             */
 
-            if Empty( ( ::cFacRecL )->cAlmLin )
+            if empty( ( ::cFacRecL )->cAlmLin )
                if dbLock( ::cFacRecL )
                   ( ::cFacRecL )->cAlmLin    := ( ::cFacRecT )->cCodAlm
                   ( ::cFacRecL )->( dbUnLock() )
@@ -1401,7 +1341,7 @@ METHOD TpvCli( cNumTik, cCodAlm, lIncremento, lDevolucion, lChequea ) CLASS TSto
       while ( ::cTikL )->cSerTil + ( ::cTikL )->cNumTil + ( ::cTikL )->cSufTil == cNumTik .and. ;
             !( ::cTikL )->( eof() );
 
-         if !Empty( Rtrim( ( ::cTikL )->cCbaTil ) )
+         if !empty( Rtrim( ( ::cTikL )->cCbaTil ) )
 
             nUnits      := ( ::cTikL )->nUntTil
 
@@ -1417,7 +1357,7 @@ METHOD TpvCli( cNumTik, cCodAlm, lIncremento, lDevolucion, lChequea ) CLASS TSto
             Si no tenemos almacen en linea se lo ponemos
             */
 
-            if Empty( ( ::cTikL )->cAlmLin ) .and. dbLock( ::cTikL )
+            if empty( ( ::cTikL )->cAlmLin ) .and. dbLock( ::cTikL )
                ( ::cTikL )->cAlmLin    := cCodAlm
                ( ::cTikL )->( dbUnLock() )
             end if
@@ -1480,7 +1420,7 @@ METHOD nTotStockAct( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nKitStk
    DEFAULT nKitStk      := 0
    DEFAULT nCtlStk      := 1
 
-   if Empty( cCodArt )
+   if empty( cCodArt )
       RETURN ( nUnits )
    end if 
 
@@ -1862,7 +1802,7 @@ METHOD InsertStockMovimientosAlmacen( lNumeroSerie, lDestino )
       :cValorPropiedad1    := ( ::cHisMovT )->cValPr1
       :cValorPropiedad2    := ( ::cHisMovT )->cValPr2
       :cLote               := ( ::cHisMovT )->cLote
-      :dConsolidacion      := if( !Empty( ::dConsolidacion ), ::dConsolidacion, Ctod( "" ) )
+      :dConsolidacion      := if( !empty( ::dConsolidacion ), ::dConsolidacion, Ctod( "" ) )
 
       if IsTrue( lDestino )
 
@@ -1908,7 +1848,7 @@ METHOD DeleteStockAlbaranProveedores( lNumeroSerie )
    
       :cTipoDocumento      := ALB_PRV
       :cAlias              := ( ::cAlbPrvL )
-      :cNumeroDocumento    := ( ::cAlbPrvL )->cSerAlb + "/" + Alltrim( Str( ( ::cAlbPrvL )->nNumAlb ) )
+      :cNumeroDocumento    := ( ::cAlbPrvL )->cSerAlb + "/" + alltrim( Str( ( ::cAlbPrvL )->nNumAlb ) )
       :cDelegacion         := ( ::cAlbPrvL )->cSufAlb
       :dFechaDocumento     := ( ::cAlbPrvL )->dFecAlb
       :tFechaDocumento     := ( ::cAlbPrvL )->tFecAlb
@@ -1946,7 +1886,7 @@ METHOD InsertStockAlbaranProveedores( lNumeroSerie )
    
       :cTipoDocumento      := ALB_PRV
       :cAlias              := ( ::cAlbPrvL )
-      :cNumeroDocumento    := ( ::cAlbPrvL )->cSerAlb + "/" + Alltrim( Str( ( ::cAlbPrvL )->nNumAlb ) )
+      :cNumeroDocumento    := ( ::cAlbPrvL )->cSerAlb + "/" + alltrim( Str( ( ::cAlbPrvL )->nNumAlb ) )
       :cDelegacion         := ( ::cAlbPrvL )->cSufAlb
       :dFechaDocumento     := ( ::cAlbPrvL )->dFecAlb
       :tFechaDocumento     := ( ::cAlbPrvL )->tFecAlb
@@ -1984,7 +1924,7 @@ RETURN nil
    
       :cTipoDocumento      := FAC_PRV
       :cAlias              := ( ::cFacPrvL )
-      :cNumeroDocumento    := ( ::cFacPrvL )->cSerFac + "/" + Alltrim( Str( ( ::cFacPrvL )->nNumFac ) )
+      :cNumeroDocumento    := ( ::cFacPrvL )->cSerFac + "/" + alltrim( Str( ( ::cFacPrvL )->nNumFac ) )
       :cDelegacion         := ( ::cFacPrvL )->cSufFac
       :dFechaDocumento     := ( ::cFacPrvL )->dFecFac
       :tFechaDocumento     := ( ::cFacPrvL )->tFecFac
@@ -2022,7 +1962,7 @@ METHOD InsertStockFacturaProveedores( lNumeroSerie )
    
       :cTipoDocumento      := FAC_PRV
       :cAlias              := ( ::cFacPrvL )
-      :cNumeroDocumento    := ( ::cFacPrvL )->cSerFac + "/" + Alltrim( Str( ( ::cFacPrvL )->nNumFac ) )
+      :cNumeroDocumento    := ( ::cFacPrvL )->cSerFac + "/" + alltrim( Str( ( ::cFacPrvL )->nNumFac ) )
       :cDelegacion         := ( ::cFacPrvL )->cSufFac
       :dFechaDocumento     := ( ::cFacPrvL )->dFecFac
       :tFechaDocumento     := ( ::cFacPrvL )->tFecFac
@@ -2060,7 +2000,7 @@ METHOD InsertStockRectificativaProveedores( lNumeroSerie )
 
       :cTipoDocumento      := RCT_PRV
       :cAlias              := ( ::cRctPrvL )
-      :cNumeroDocumento    := ( ::cRctPrvL )->cSerFac + "/" + Alltrim( Str( ( ::cRctPrvL )->nNumFac ) )
+      :cNumeroDocumento    := ( ::cRctPrvL )->cSerFac + "/" + alltrim( Str( ( ::cRctPrvL )->nNumFac ) )
       :cDelegacion         := ( ::cRctPrvL )->cSufFac
       :dFechaDocumento     := ( ::cRctPrvL )->dFecFac
       :tFechaDocumento     := ( ::cRctPrvL )->tFecFac
@@ -2098,7 +2038,7 @@ METHOD DeleteStockRectificativaProveedores( lNumeroSerie )
 
       :cTipoDocumento      := RCT_PRV
       :cAlias              := ( ::cRctPrvL )
-      :cNumeroDocumento    := ( ::cRctPrvL )->cSerFac + "/" + Alltrim( Str( ( ::cRctPrvL )->nNumFac ) )
+      :cNumeroDocumento    := ( ::cRctPrvL )->cSerFac + "/" + alltrim( Str( ( ::cRctPrvL )->nNumFac ) )
       :cDelegacion         := ( ::cRctPrvL )->cSufFac
       :dFechaDocumento     := ( ::cRctPrvL )->dFecFac
       :tFechaDocumento     := ( ::cRctPrvL )->tFecFac
@@ -2128,6 +2068,41 @@ RETURN nil
 
 //---------------------------------------------------------------------------//
 
+METHOD InsertStockPedidoClientes()
+
+   local nPendientesEntregar  := nTotNPedCli( ::cPedCliL )
+   local nUnidadesRecibidas   := nUnidadesRecibidasAlbaranesClientesNoFacturados( ( ::cPedCliL )->cSerPed + str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cCodPr1, ( ::cPedCliL )->cCodPr2, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cAlbCliL )
+   nUnidadesRecibidas         += nUnidadesRecibidasFacturasClientes( ( ::cPedCliL )->cSerPed + str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cCodPr1, ( ::cPedCliL )->cCodPr2, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cFacCliL )
+
+   nPendientesEntregar        -= nUnidadesRecibidas
+
+   with object ( SStock():New() )
+   
+      :cTipoDocumento         := PED_CLI
+      :dFechaDocumento        := ( ::cPedCliT )->dFecPed
+      :tFechaDocumento        := "000000"
+      :cAlias                 := ( ::cPedCliL )
+      :cNumeroDocumento       := ( ::cPedCliL )->cSerPed + "/" + alltrim( Str( ( ::cPedCliL )->nNumPed ) )
+      :cDelegacion            := ( ::cPedCliL )->cSufPed
+      :cCodigo                := ( ::cPedCliL )->cRef
+      :cCodigoAlmacen         := ( ::cPedCliL )->cAlmLin
+      :cCodigoPropiedad1      := ( ::cPedCliL )->cCodPr1
+      :cCodigoPropiedad2      := ( ::cPedCliL )->cCodPr2
+      :cValorPropiedad1       := ( ::cPedCliL )->cValPr1
+      :cValorPropiedad2       := ( ::cPedCliL )->cValPr2
+      :cLote                  := ( ::cPedCliL )->cLote
+      :dFechaCaducidad        := ( ::cPedCliL )->dFecCad
+
+      :nPendientesEntregar    := nPendientesEntregar
+      
+      ::Integra( hb_QWith() )
+
+   end with
+
+RETURN ( nPendientesEntregar )
+
+//---------------------------------------------------------------------------//
+
 METHOD InsertStockAlbaranClientes( lNumeroSerie )
 
    local nUnidades         := nTotNAlbCli( ::cAlbCliL )
@@ -2136,7 +2111,7 @@ METHOD InsertStockAlbaranClientes( lNumeroSerie )
    
       :cTipoDocumento      := ALB_CLI
       :cAlias              := ( ::cAlbCliL )
-      :cNumeroDocumento    := ( ::cAlbCliL )->cSerAlb + "/" + Alltrim( Str( ( ::cAlbCliL )->nNumAlb ) )
+      :cNumeroDocumento    := ( ::cAlbCliL )->cSerAlb + "/" + alltrim( Str( ( ::cAlbCliL )->nNumAlb ) )
       :cDelegacion         := ( ::cAlbCliL )->cSufAlb
       :dFechaDocumento     := ( ::cAlbCliL )->dFecAlb
       :tFechaDocumento     := ( ::cAlbCliL )->tFecAlb
@@ -2174,7 +2149,7 @@ METHOD InsertStockFacturaClientes( lNumeroSerie )
    
       :cTipoDocumento      := FAC_CLI
       :cAlias              := ( ::cFacCliL )
-      :cNumeroDocumento    := ( ::cFacCliL )->cSerie + "/" + Alltrim( Str( ( ::cFacCliL )->nNumFac ) )
+      :cNumeroDocumento    := ( ::cFacCliL )->cSerie + "/" + alltrim( Str( ( ::cFacCliL )->nNumFac ) )
       :cDelegacion         := ( ::cFacCliL )->cSufFac
       :dFechaDocumento     := ( ::cFacCliL )->dFecFac
       :tFechaDocumento     := ( ::cFacCliL )->tFecFac
@@ -2213,7 +2188,7 @@ METHOD InsertStockRectificativaClientes( lNumeroSerie )
    
       :cTipoDocumento      := FAC_REC
       :cAlias              := ( ::cFacRecL )
-      :cNumeroDocumento    := ( ::cFacRecL )->cSerie + "/" + Alltrim( Str( ( ::cFacRecL )->nNumFac ) )
+      :cNumeroDocumento    := ( ::cFacRecL )->cSerie + "/" + alltrim( Str( ( ::cFacRecL )->nNumFac ) )
       :cDelegacion         := ( ::cFacRecL )->cSufFac
       :dFechaDocumento     := ( ::cFacRecL )->dFecFac
       :tFechaDocumento     := ( ::cFacRecL )->tFecFac
@@ -2266,7 +2241,7 @@ METHOD InsertStockTiketsClientes( lNumeroSerie, lCombinado )
       end case
 
       :cAlias                 := ( ::cTikL )
-      :cNumeroDocumento       := ( ::cTikL )->cSerTil + "/" + Alltrim( ( ::cTikL )->cNumTil )
+      :cNumeroDocumento       := ( ::cTikL )->cSerTil + "/" + alltrim( ( ::cTikL )->cNumTil )
       :cDelegacion            := ( ::cTikL )->cSufTil
       :dFechaDocumento        := ( ::cTikL )->dFecTik
       :tFechaDocumento        := ( ::cTikL )->tFecTik
@@ -2316,7 +2291,7 @@ METHOD InsertStockMaterialesProducidos( lNumeroSerie )
 
       :cTipoDocumento      := PRO_LIN
       :cAlias              := ( ::cProducL )
-      :cNumeroDocumento    := ( ::cProducL )->cSerOrd + "/" + Alltrim( Str( ( ::cProducL )->nNumOrd ) )
+      :cNumeroDocumento    := ( ::cProducL )->cSerOrd + "/" + alltrim( Str( ( ::cProducL )->nNumOrd ) )
       :cDelegacion         := ( ::cProducL )->cSufOrd
       :dFechaDocumento     := ( ::cProducL )->dFecOrd
       :tFechaDocumento     := ( ::cProducL )->cHorIni
@@ -2355,7 +2330,7 @@ METHOD InsertStockMateriasPrimas( lNumeroSerie )
 
       :cTipoDocumento      := PRO_MAT
       :cAlias              := ( ::cProducM )
-      :cNumeroDocumento    := ( ::cProducM )->cSerOrd + "/" + Alltrim( Str( ( ::cProducM )->nNumOrd ) )
+      :cNumeroDocumento    := ( ::cProducM )->cSerOrd + "/" + alltrim( Str( ( ::cProducM )->nNumOrd ) )
       :cDelegacion         := ( ::cProducM )->cSufOrd
       :dFechaDocumento     := ( ::cProducM )->dFecOrd
       :tFechaDocumento     := ( ::cProducM )->cHorIni
@@ -2390,8 +2365,8 @@ METHOD SaveStockArticulo( cCodArt, cAlmcenOrigen, cAlmacenDestino, dFechaInicio,
 
    for each aStock in ::aStockArticulo( cCodArt, , , , , dFechaInicio, dFechaFin ) 
 
-      if ( Empty( cAlmcenOrigen )     .or. rtrim( aStock:cCodigoAlmacen ) >= rtrim( cAlmcenOrigen )   ) .and. ;
-         ( Empty( cAlmacenDestino )   .or. rtrim( aStock:cCodigoAlmacen ) <= rtrim( cAlmacenDestino ) ) .and. ;
+      if ( empty( cAlmcenOrigen )     .or. rtrim( aStock:cCodigoAlmacen ) >= rtrim( cAlmcenOrigen )   ) .and. ;
+         ( empty( cAlmacenDestino )   .or. rtrim( aStock:cCodigoAlmacen ) <= rtrim( cAlmacenDestino ) ) .and. ;
          ( aStock:nUnidades != 0 )
 
          aStock:Save( ::oDbfStock )
@@ -2410,8 +2385,8 @@ METHOD SaveAllStockArticulo( cCodArt, cAlmcenOrigen, cAlmacenDestino, dFechaInic
 
    for each aStock in ::aStockArticulo( cCodArt, , , , , dFechaInicio, dFechaFin ) 
 
-      if ( Empty( cAlmcenOrigen )     .or. rtrim( aStock:cCodigoAlmacen ) >= rtrim( cAlmcenOrigen )   ) .and. ;
-         ( Empty( cAlmacenDestino )   .or. rtrim( aStock:cCodigoAlmacen ) <= rtrim( cAlmacenDestino ) ) 
+      if ( empty( cAlmcenOrigen )     .or. rtrim( aStock:cCodigoAlmacen ) >= rtrim( cAlmcenOrigen )   ) .and. ;
+         ( empty( cAlmacenDestino )   .or. rtrim( aStock:cCodigoAlmacen ) <= rtrim( cAlmacenDestino ) ) 
 
          aStock:Save( ::oDbfStock )
       
@@ -2485,7 +2460,7 @@ METHOD StockInit( cPath, cPathOld, oMsg, nCalcCosto ) CLASS TStock
    local oldFacCliL
    local oldFacRecL
 
-   if Empty( cPathOld )
+   if empty( cPathOld )
       Return nil
    end if
 
@@ -2606,8 +2581,8 @@ METHOD StockInit( cPath, cPathOld, oMsg, nCalcCosto ) CLASS TStock
 
                for each sStk in aStk
 
-                  if !Empty( sStk:cCodigo )                          .and. ;
-                     !Empty( sStk:nUnidades )                        .and. ;
+                  if !empty( sStk:cCodigo )                          .and. ;
+                     !empty( sStk:nUnidades )                        .and. ;
                      ( sStk:cCodigoAlmacen == ( dbfAlm )->cCodAlm )  .and. ;
                      dbAppe( dbfHisMov )
 
@@ -2679,7 +2654,7 @@ METHOD AppMovAlm( cRefMov, cValPr1, cValPr2, cCodAlm, nCajMov, nUndMov, dbfHisMo
    DEFAULT lApp      := .t.
    DEFAULT cLote     := ""
 
-   if !Empty( nCajMov )
+   if !empty( nCajMov )
       nTotMov        := NotCaja( nCajMov ) * nUndMov
    else
       nTotMov        := nUndMov
@@ -2741,13 +2716,13 @@ METHOD nTotAlbPrv( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
          if cCodEmp == cCodEmp()
 
-            nOrd     := ( ::cAlbPrvL )->( OrdSetFocus( "cRef" ) )
+            nOrd     := ( ::cAlbPrvL )->( ordsetfocus( "cRef" ) )
             if ( ::cAlbPrvL )->( dbSeek( cCodArt ) )
 
                while ( ::cAlbPrvL )->cRef == cCodArt .and. !( ::cAlbPrvL )->( Eof() )
 
                   if ( ::cAlbPrvT )->( dbSeek( ( ::cAlbPrvL )->cSerAlb + Str( ( ::cAlbPrvL )->nNumAlb ) + ( ::cAlbPrvL )->cSufAlb ) )  .and.;
-                     ( Empty( dFecha ) .or. ( ::cAlbPrvT )->dFecAlb <= dFecha )                                                        .and.;
+                     ( empty( dFecha ) .or. ( ::cAlbPrvT )->dFecAlb <= dFecha )                                                        .and.;
                      !( ::cAlbPrvT )->lFacturado
 
                      if ( cCodAlm == ( ::cAlbPrvL )->cAlmLin )     .and.;
@@ -2767,7 +2742,7 @@ METHOD nTotAlbPrv( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
                end while
 
             end if
-            ( ::cAlbPrvL )->( OrdSetFocus( nOrd ) )
+            ( ::cAlbPrvL )->( ordsetfocus( nOrd ) )
 
          else
 
@@ -2776,14 +2751,14 @@ METHOD nTotAlbPrv( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
             USE ( cPatStk( cCodEmp ) + "ALBPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPROVL", @cAlbEmpL ) )
             SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBPROVL.CDX" ) ADDITIVE
-            ( cAlbEmpL )->( ordSetFocus( "cRef" ) )
+            ( cAlbEmpL )->( ordsetfocus( "cRef" ) )
 
             if ( cAlbEmpL )->( dbSeek( cCodArt ) )
 
                while ( cAlbEmpL )->cRef == cCodArt .and. !( cAlbEmpL )->( Eof() )
 
                   if ( cAlbEmpT )->( dbSeek( ( cAlbEmpL )->cSerAlb + Str( ( cAlbEmpL )->nNumAlb ) + ( cAlbEmpL )->cSufAlb ) )  .and.;
-                     ( Empty( dFecha ) .or. ( cAlbEmpT )->dFecAlb <= dFecha )                                                  .and.;
+                     ( empty( dFecha ) .or. ( cAlbEmpT )->dFecAlb <= dFecha )                                                  .and.;
                      !( cAlbEmpT )->lFacturado
 
                      if ( cCodAlm == ( cAlbEmpL )->cAlmLin )     .and.;
@@ -2837,13 +2812,13 @@ METHOD nTotFacPrv( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
          if cCodEmp == cCodEmp()
 
-            nOrd     := ( ::cFacPrvL )->( ordSetFocus( "cRef" ) )
+            nOrd     := ( ::cFacPrvL )->( ordsetfocus( "cRef" ) )
             if ( ::cFacPrvL )->( dbSeek( cCodArt ) )
 
                while ( ::cFacPrvL )->cRef == cCodArt .and. !( ::cFacPrvL )->( Eof() )
 
                   if ( ::cFacPrvT )->( dbSeek( ( ::cFacPrvL )->cSerFac + Str( ( ::cFacPrvL )->nNumFac ) + ( ::cFacPrvL )->cSufFac ) )  .and.;
-                     ( Empty( dFecha ) .or. ( ::cFacPrvT )->dFecFac <= dFecha )
+                     ( empty( dFecha ) .or. ( ::cFacPrvT )->dFecFac <= dFecha )
 
                      if ( cCodAlm == ( ::cFacPrvL )->cAlmLin )     .and.;
                         ( cValPr1 == ( ::cFacPrvL )->cValPr1 )     .and.;
@@ -2861,7 +2836,7 @@ METHOD nTotFacPrv( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
                end while
 
             end if
-            ( ::cFacPrvL )->( ordSetFocus( nOrd ) )
+            ( ::cFacPrvL )->( ordsetfocus( nOrd ) )
 
          else
 
@@ -2870,14 +2845,14 @@ METHOD nTotFacPrv( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
             USE ( cPatStk( cCodEmp ) + "FACPRVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVL", @cFacEmpL ) )
             SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACPRVL.CDX" ) ADDITIVE
-            ( cFacEmpL )->( ordSetFocus( "cRef" ) )
+            ( cFacEmpL )->( ordsetfocus( "cRef" ) )
 
             if ( cFacEmpL )->( dbSeek( cCodArt ) )
 
                while ( cFacEmpL )->cRef == cCodArt .and. !( cFacEmpL )->( Eof() )
 
                   if ( cFacEmpT )->( dbSeek( ( cFacEmpL )->cSerFac + Str( ( cFacEmpL )->nNumFac ) + ( cFacEmpL )->cSufFac ) )  .and.;
-                     ( Empty( dFecha ) .or. ( cFacEmpT )->dFecFac <= dFecha )
+                     ( empty( dFecha ) .or. ( cFacEmpT )->dFecFac <= dFecha )
 
                      if ( cCodAlm == ( cFacEmpL )->cAlmLin )     .and.;
                         ( cValPr1 == ( cFacEmpL )->cValPr1 )     .and.;
@@ -2929,13 +2904,13 @@ METHOD nTotRctPrv( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
          if cCodEmp == cCodEmp()
 
-            nOrd     := ( ::cRctPrvL )->( ordSetFocus( "cRef" ) )
+            nOrd     := ( ::cRctPrvL )->( ordsetfocus( "cRef" ) )
             if ( ::cRctPrvL )->( dbSeek( cCodArt ) )
 
                while ( ::cRctPrvL )->cRef == cCodArt .and. !( ::cRctPrvL )->( Eof() )
 
                   if ( ::cRctPrvT )->( dbSeek( ( ::cRctPrvL )->cSerFac + Str( ( ::cRctPrvL )->nNumFac ) + ( ::cRctPrvL )->cSufFac ) )  .and.;
-                     ( Empty( dFecha ) .or. ( ::cRctPrvT )->dFecFac <= dFecha )
+                     ( empty( dFecha ) .or. ( ::cRctPrvT )->dFecFac <= dFecha )
 
                      if ( cCodAlm == ( ::cRctPrvL )->cAlmLin )     .and.;
                         ( cValPr1 == ( ::cRctPrvL )->cValPr1 )     .and.;
@@ -2954,7 +2929,7 @@ METHOD nTotRctPrv( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
             end if
 
-            ( ::cRctPrvL )->( ordSetFocus( nOrd ) )
+            ( ::cRctPrvL )->( ordsetfocus( nOrd ) )
 
          else
 
@@ -2963,14 +2938,14 @@ METHOD nTotRctPrv( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
             USE ( cPatStk( cCodEmp ) + "RctPrvL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RctPrvL", @cFacEmpL ) )
             SET ADSINDEX TO ( cPatStk( cCodEmp ) + "RctPrvL.CDX" ) ADDITIVE
-            ( cFacEmpL )->( ordSetFocus( "cRef" ) )
+            ( cFacEmpL )->( ordsetfocus( "cRef" ) )
 
             if ( cFacEmpL )->( dbSeek( cCodArt ) )
 
                while ( cFacEmpL )->cRef == cCodArt .and. !( cFacEmpL )->( Eof() )
 
                   if ( cFacEmpT )->( dbSeek( ( cFacEmpL )->cSerFac + Str( ( cFacEmpL )->nNumFac ) + ( cFacEmpL )->cSufFac ) )  .and.;
-                     ( Empty( dFecha ) .or. ( cFacEmpT )->dFecFac <= dFecha )
+                     ( empty( dFecha ) .or. ( cFacEmpT )->dFecFac <= dFecha )
 
                      if ( cCodAlm == ( cFacEmpL )->cAlmLin )     .and.;
                         ( cValPr1 == ( cFacEmpL )->cValPr1 )     .and.;
@@ -3020,13 +2995,13 @@ METHOD nTotAlbCli( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
          if cCodEmp == cCodEmp()
 
-            nOrd     := ( ::cAlbCliL )->( ordSetFocus( "cRef" ) )
+            nOrd     := ( ::cAlbCliL )->( ordsetfocus( "cRef" ) )
             if ( ::cAlbCliL )->( dbSeek( cCodArt ) )
 
                while ( ::cAlbCliL )->cRef == cCodArt .and. !( ::cAlbCliL )->( Eof() )
 
                   if ( ::cAlbCliT )->( dbSeek( ( ::cAlbCliL )->cSerAlb + Str( ( ::cAlbCliL )->nNumAlb ) + ( ::cAlbCliL )->cSufAlb ) )  .and.;
-                     ( Empty( dFecha ) .or. ( ::cAlbCliT )->dFecAlb <= dFecha )                                                        .and.;
+                     ( empty( dFecha ) .or. ( ::cAlbCliT )->dFecAlb <= dFecha )                                                        .and.;
                      !lFacturado( ::cAlbCliT )
 
                      if ( cCodAlm == ( ::cAlbCliL )->cAlmLin )     .and.;
@@ -3045,7 +3020,7 @@ METHOD nTotAlbCli( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
                end while
 
             end if
-            ( ::cAlbCliL )->( ordSetFocus( nOrd ) )
+            ( ::cAlbCliL )->( ordsetfocus( nOrd ) )
 
          else
 
@@ -3054,14 +3029,14 @@ METHOD nTotAlbCli( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
             USE ( cPatStk( cCodEmp ) + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @cAlbEmpL ) )
             SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBCLIL.CDX" ) ADDITIVE
-            ( cAlbEmpL )->( ordSetFocus( "cRef" ) )
+            ( cAlbEmpL )->( ordsetfocus( "cRef" ) )
 
             if ( cAlbEmpL )->( dbSeek( cCodArt ) )
 
                while ( cAlbEmpL )->cRef == cCodArt .and. !( cAlbEmpL )->( Eof() )
 
                   if ( cAlbEmpT )->( dbSeek( ( cAlbEmpL )->cSerAlb + Str( ( cAlbEmpL )->nNumAlb ) + ( cAlbEmpL )->cSufAlb ) )  .and.;
-                     ( Empty( dFecha ) .or. ( cAlbEmpT )->dFecAlb <= dFecha )                                                        .and.;
+                     ( empty( dFecha ) .or. ( cAlbEmpT )->dFecAlb <= dFecha )                                                        .and.;
                      !lFacturado( cAlbEmpT )
 
                      if ( cCodAlm == ( cAlbEmpL )->cAlmLin )     .and.;
@@ -3112,14 +3087,14 @@ METHOD nTotFacCli( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
          if cCodEmp == cCodEmp()
 
-            nOrd     := ( ::cFacCliL )->( ordSetFocus( "cRef" ) )
+            nOrd     := ( ::cFacCliL )->( ordsetfocus( "cRef" ) )
 
             if ( ::cFacCliL )->( dbSeek( cCodArt ) )
 
                while ( ::cFacCliL )->cRef == cCodArt .and. !( ::cFacCliL )->( Eof() )
 
                   if ( ::cFacCliT )->( dbSeek( ( ::cFacCliL )->cSerie + Str( ( ::cFacCliL )->nNumFac ) + ( ::cFacCliL )->cSufFac ) )   .and.;
-                     ( Empty( dFecha ) .or. ( ::cFacCliT )->dFecFac <= dFecha )
+                     ( empty( dFecha ) .or. ( ::cFacCliT )->dFecFac <= dFecha )
 
                      if ( cCodAlm == ( ::cFacCliL )->cAlmLin )   .and.;
                         ( cValPr1 == ( ::cFacCliL )->cValPr1 )   .and.;
@@ -3138,7 +3113,7 @@ METHOD nTotFacCli( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
             end if
 
-            ( ::cFacCliL )->( ordSetFocus( nOrd ) )
+            ( ::cFacCliL )->( ordsetfocus( nOrd ) )
 
          else
 
@@ -3147,14 +3122,14 @@ METHOD nTotFacCli( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
             USE ( cPatStk( cCodEmp ) + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @cFacEmpL ) )
             SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACCLIL.CDX" ) ADDITIVE
-            ( cFacEmpL )->( ordSetFocus( "cRef" ) )
+            ( cFacEmpL )->( ordsetfocus( "cRef" ) )
 
             if ( cFacEmpL )->( dbSeek( cCodArt ) )
 
                while ( cFacEmpL )->cRef == cCodArt .and. !( cFacEmpL )->( Eof() )
 
                   if ( cFacEmpT )->( dbSeek( ( cFacEmpL )->cSerie + Str( ( cFacEmpL )->nNumFac ) + ( cFacEmpL )->cSufFac ) )   .and.;
-                     ( Empty( dFecha ) .or. ( cFacEmpT )->dFecFac <= dFecha )
+                     ( empty( dFecha ) .or. ( cFacEmpT )->dFecFac <= dFecha )
 
                      if ( cCodAlm == ( cFacEmpL )->cAlmLin )   .and.;
                         ( cValPr1 == ( cFacEmpL )->cValPr1 )   .and.;
@@ -3204,13 +3179,13 @@ METHOD nTotFacRec( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
          if cCodEmp == cCodEmp()
 
-            nOrd     := ( ::cFacRecL )->( ordSetFocus( "cRef" ) )
+            nOrd     := ( ::cFacRecL )->( ordsetfocus( "cRef" ) )
             if ( ::cFacRecL )->( dbSeek( cCodArt ) )
 
                while ( ::cFacRecL )->cRef == cCodArt .and. !( ::cFacCliL )->( Eof() )
 
                   if ( ::cFacRecT )->( dbSeek( ( ::cFacRecL )->cSerie + Str( ( ::cFacRecL )->nNumFac ) + ( ::cFacRecL )->cSufFac ) )   .and.;
-                     ( Empty( dFecha ) .or. ( ::cFacRecT )->dFecFac <= dFecha )
+                     ( empty( dFecha ) .or. ( ::cFacRecT )->dFecFac <= dFecha )
 
                      if ( cCodAlm == ( ::cFacRecL )->cAlmLin )   .and.;
                         ( cValPr1 == ( ::cFacRecL )->cValPr1 )   .and.;
@@ -3229,7 +3204,7 @@ METHOD nTotFacRec( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
             end if
 
-            ( ::cFacRecL )->( ordSetFocus( nOrd ) )
+            ( ::cFacRecL )->( ordsetfocus( nOrd ) )
 
          else
 
@@ -3238,14 +3213,14 @@ METHOD nTotFacRec( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
             USE ( cPatStk( cCodEmp ) + "FACRECL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECL", @cFacRecEmpL ) )
             SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACRECL.CDX" ) ADDITIVE
-            ( cFacRecEmpL )->( ordSetFocus( "cRef" ) )
+            ( cFacRecEmpL )->( ordsetfocus( "cRef" ) )
 
             if ( cFacRecEmpL )->( dbSeek( cCodArt ) )
 
                while ( cFacRecEmpL )->cRef == cCodArt .and. !( cFacRecEmpL )->( Eof() )
 
                   if ( cFacRecEmpT )->( dbSeek( ( cFacRecEmpL )->cSerie + Str( ( cFacRecEmpL )->nNumFac ) + ( cFacRecEmpL )->cSufFac ) )   .and.;
-                     ( Empty( dFecha ) .or. ( cFacRecEmpT )->dFecFac <= dFecha )
+                     ( empty( dFecha ) .or. ( cFacRecEmpT )->dFecFac <= dFecha )
 
                      if ( cCodAlm == ( cFacRecEmpL )->cAlmLin )   .and.;
                         ( cValPr1 == ( cFacRecEmpL )->cValPr1 )   .and.;
@@ -3295,14 +3270,14 @@ METHOD nTotTikCli( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
          if cCodEmp == cCodEmp()
 
-            nOrd     := ( ::cTikL )->( OrdSetFocus( "cCbaTil" ) )
+            nOrd     := ( ::cTikL )->( ordsetfocus( "cCbaTil" ) )
 
             if ( ::cTikL )->( dbSeek( cCodArt ) )
 
                while ( ::cTikL )->cCbaTil == cCodArt .and. !( ::cTikL )->( Eof() )
 
                   if ( ::cTikT )->( dbSeek( ( ::cTikL )->cSerTil + ( ::cTikL )->cNumTil + ( ::cTikL )->cSufTil ) )   .and.;
-                     ( Empty( dFecha ) .or. ( ::cTikT )->dFecTik <= dFecha )
+                     ( empty( dFecha ) .or. ( ::cTikT )->dFecTik <= dFecha )
 
                      if ( cCodAlm == ( ::cTikL )->cAlmLin )   .and.;
                         ( cValPr1 == ( ::cTikL )->cValPr1 )   .and.;
@@ -3321,7 +3296,7 @@ METHOD nTotTikCli( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
             end if
 
-            ( ::cTikL )->( OrdSetFocus( "cComTil" ) )
+            ( ::cTikL )->( ordsetfocus( "cComTil" ) )
 
             if ( ::cTikL )->( dbSeek( cCodArt ) )
 
@@ -3346,7 +3321,7 @@ METHOD nTotTikCli( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
             end if
 
-            ( ::cTikL )->( OrdSetFocus( nOrd ) )
+            ( ::cTikL )->( ordsetfocus( nOrd ) )
 
          else
 
@@ -3355,13 +3330,13 @@ METHOD nTotTikCli( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
             USE ( cPatStk( cCodEmp ) + "TIKEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEL", @cTikEmpL ) )
             SET ADSINDEX TO ( cPatStk( cCodEmp ) + "TIKEL.CDX" ) ADDITIVE
-            ( cTikEmpL )->( ordSetFocus( "cCbaTil" ) )
+            ( cTikEmpL )->( ordsetfocus( "cCbaTil" ) )
 
             if ( cTikEmpL )->( dbSeek( cCodArt ) )
                while ( cTikEmpL )->cCbaTil == cCodArt .and. !( cTikEmpL )->( Eof() )
 
                   if ( cTikEmpT )->( dbSeek( ( cTikEmpL )->cSerTil + ( cTikEmpL )->cNumTil + ( cTikEmpL )->cSufTil ) )   .and.;
-                     ( Empty( dFecha ) .or. ( cTikEmpT )->dFecTik <= dFecha )
+                     ( empty( dFecha ) .or. ( cTikEmpT )->dFecTik <= dFecha )
 
                      if ( cCodAlm == ( cTikEmpL )->cAlmLin )   .and.;
                         ( cValPr1 == ( cTikEmpL )->cValPr1 )   .and.;
@@ -3380,7 +3355,7 @@ METHOD nTotTikCli( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
             end if
 
-            ( cTikEmpL )->( OrdSetFocus( "cComTil" ) )
+            ( cTikEmpL )->( ordsetfocus( "cComTil" ) )
 
             if ( cTikEmpL )->( dbSeek( cCodArt ) )
 
@@ -3405,7 +3380,7 @@ METHOD nTotTikCli( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
             end if
 
-            ( cTikEmpL )->( OrdSetFocus( "cCbaTil" ) )
+            ( cTikEmpL )->( ordsetfocus( "cCbaTil" ) )
 
             CLOSE( cTikEmpT )
             CLOSE( cTikEmpL )
@@ -3429,12 +3404,12 @@ METHOD nTotMovAlm( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
    DEFAULT cValPr2   := Space( 40 )
    DEFAULT cLote     := Space( 12 )
 
-   nOrd              := ( ::cHisMovT)->( OrdSetFocus( "cRefMov" ) )
+   nOrd              := ( ::cHisMovT)->( ordsetfocus( "cRefMov" ) )
    if ( ::cHisMovT)->( dbSeek( cCodArt ) )
 
       while ( ::cHisMovT)->cRefMov == cCodArt .and. !( ::cHisMovT)->( Eof() )
 
-         if ( Empty( dFecha ) .or. ( ::cHisMovT)->dFecMov <= dFecha )   .and.;
+         if ( empty( dFecha ) .or. ( ::cHisMovT)->dFecMov <= dFecha )   .and.;
             ( cValPr1 == ( ::cHisMovT)->cValPr1 )                       .and.;
             ( cValPr2 == ( ::cHisMovT)->cValPr2 )                       .and.;
             ( cLote   == ( ::cHisMovT)->cLote   )
@@ -3459,7 +3434,7 @@ METHOD nTotMovAlm( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
    end if
 
-   ( ::cHisMovT)->( OrdSetFocus( nOrd ) )
+   ( ::cHisMovT)->( ordsetfocus( nOrd ) )
 
 RETURN ( nTotal )
 
@@ -3498,7 +3473,7 @@ METHOD nTotalSaldo( cCodArt, cCodCli, dFecha ) CLASS TStock
 
    nRecCab        := ( ::cAlbCliT )->( RecNo() )
    nRecLin        := ( ::cAlbCliL )->( Recno() )
-   nOrdLin        := ( ::cAlbCliL )->( OrdSetFocus( "cRef" ) )
+   nOrdLin        := ( ::cAlbCliL )->( ordsetfocus( "cRef" ) )
 
    if ( ::cAlbCliL )->( dbSeek( cCodArt ) )
 
@@ -3519,7 +3494,7 @@ METHOD nTotalSaldo( cCodArt, cCodCli, dFecha ) CLASS TStock
 
    end if
 
-   ( ::cAlbCliL )->( OrdSetFocus( nOrdLin ) )
+   ( ::cAlbCliL )->( ordsetfocus( nOrdLin ) )
    ( ::cAlbCliL )->( dbGoTo( nRecLin ) )
    ( ::cAlbCliT )->( dbGoTo( nRecCab ) )
 
@@ -3529,7 +3504,7 @@ METHOD nTotalSaldo( cCodArt, cCodCli, dFecha ) CLASS TStock
 
    nRecCab        := ( ::cFacCliT )->( RecNo() )
    nRecLin        := ( ::cFacCliL )->( Recno() )
-   nOrdLin        := ( ::cFacCliL )->( OrdSetFocus( "cRef" ) )
+   nOrdLin        := ( ::cFacCliL )->( ordsetfocus( "cRef" ) )
 
    if ( ::cFacCliL )->( dbSeek( cCodArt ) )
 
@@ -3549,7 +3524,7 @@ METHOD nTotalSaldo( cCodArt, cCodCli, dFecha ) CLASS TStock
 
    end if
 
-   ( ::cFacCliL )->( OrdSetFocus( nOrdLin ) )
+   ( ::cFacCliL )->( ordsetfocus( nOrdLin ) )
    ( ::cFacCliL )->( dbGoTo( nRecLin ) )
    ( ::cFacCliT )->( dbGoTo( nRecCab ) )
 
@@ -3559,7 +3534,7 @@ METHOD nTotalSaldo( cCodArt, cCodCli, dFecha ) CLASS TStock
 
    nRecCab        := ( ::cFacRecT )->( RecNo() )
    nRecLin        := ( ::cFacRecL )->( Recno() )
-   nOrdLin        := ( ::cFacRecL )->( OrdSetFocus( "cRef" ) )
+   nOrdLin        := ( ::cFacRecL )->( ordsetfocus( "cRef" ) )
 
    if ( ::cFacRecL )->( dbSeek( cCodArt ) )
 
@@ -3579,7 +3554,7 @@ METHOD nTotalSaldo( cCodArt, cCodCli, dFecha ) CLASS TStock
 
    end if
 
-   ( ::cFacRecL )->( OrdSetFocus( nOrdLin ) )
+   ( ::cFacRecL )->( ordsetfocus( nOrdLin ) )
    ( ::cFacRecL )->( dbGoTo( nRecLin ) )
    ( ::cFacRecT )->( dbGoTo( nRecCab ) )
 
@@ -3589,7 +3564,7 @@ METHOD nTotalSaldo( cCodArt, cCodCli, dFecha ) CLASS TStock
 
    nRecCab        := ( ::cTikT )->( RecNo() )
    nRecLin        := ( ::cTikL )->( Recno() )
-   nOrdLin        := ( ::cTikL )->( OrdSetFocus( "CCBATIL" ) )
+   nOrdLin        := ( ::cTikL )->( ordsetfocus( "CCBATIL" ) )
 
    if ( ::cTikL )->( dbSeek( cCodArt ) )
 
@@ -3609,7 +3584,7 @@ METHOD nTotalSaldo( cCodArt, cCodCli, dFecha ) CLASS TStock
 
    end if
 
-   ( ::cTikL )->( OrdSetFocus( nOrdLin ) )
+   ( ::cTikL )->( ordsetfocus( nOrdLin ) )
    ( ::cTikL )->( dbGoTo( nRecLin ) )
    ( ::cTikT )->( dbGoTo( nRecCab ) )
 
@@ -3619,7 +3594,7 @@ METHOD nTotalSaldo( cCodArt, cCodCli, dFecha ) CLASS TStock
 
    nRecCab        := ( ::cTikT )->( RecNo() )
    nRecLin        := ( ::cTikL )->( Recno() )
-   nOrdLin        := ( ::cTikL )->( OrdSetFocus( "CCOMTIL" ) )
+   nOrdLin        := ( ::cTikL )->( ordsetfocus( "CCOMTIL" ) )
 
    if ( ::cTikL )->( dbSeek( cCodArt ) )
 
@@ -3639,7 +3614,7 @@ METHOD nTotalSaldo( cCodArt, cCodCli, dFecha ) CLASS TStock
 
    end if
 
-   ( ::cTikL )->( OrdSetFocus( nOrdLin ) )
+   ( ::cTikL )->( ordsetfocus( nOrdLin ) )
    ( ::cTikL )->( dbGoTo( nRecLin ) )
    ( ::cTikT )->( dbGoTo( nRecCab ) )
 
@@ -3651,7 +3626,7 @@ METHOD nSaldoDocumento( cCodArt, cNumDoc ) CLASS TStock
 
    local nTotal   := 0
    local nRecLin  := ( ::cFacCliL )->( Recno() )
-   local nOrdAnt  := ( ::cFacCliL )->( OrdSetFocus( "nNumFac" ) )
+   local nOrdAnt  := ( ::cFacCliL )->( ordsetfocus( "nNumFac" ) )
 
    if ( ::cFacCliL )->( dbSeek( cNumDoc ) )
 
@@ -3669,7 +3644,7 @@ METHOD nSaldoDocumento( cCodArt, cNumDoc ) CLASS TStock
 
    end if
 
-   ( ::cFacCliL )->( OrdSetFocus( nOrdAnt ) )
+   ( ::cFacCliL )->( ordsetfocus( nOrdAnt ) )
    ( ::cFacCliL )->( dbGoTo( nRecLin ) )
 
 RETURN ( nTotal )
@@ -3681,14 +3656,14 @@ METHOD nSaldoAnterior( cCodArt, cNumDoc ) CLASS TStock
    local cCodCli
    local dFecha
    local nRec     := ( ::cFacCliT )->( Recno() )
-   local nOrdAnt  := ( ::cFacCliT )->( OrdSetFocus( "NNUMFAC" ) )
+   local nOrdAnt  := ( ::cFacCliT )->( ordsetfocus( "NNUMFAC" ) )
 
    if ( ::cFacCliT )->( dbSeek( cNumDoc ) )
       cCodCli     := ( ::cFacCliT )->cCodCli
       dFecha      := ( ::cFacCliT )->dFecFac
    end if
 
-   ( ::cFacCliT )->( OrdSetFocus( nOrdAnt ) )
+   ( ::cFacCliT )->( ordsetfocus( nOrdAnt ) )
    ( ::cFacCliT )->( dbGoTo( nRec ) )
 
 RETURN ( ::nTotalSaldo( cCodArt, cCodCli, dFecha ) - ::nSaldoDocumento( cCodArt, cNumDoc ) )
@@ -3699,7 +3674,7 @@ METHOD nSaldoDocAlb( cCodArt, cNumDoc ) CLASS TStock
 
    local nTotal   := 0
    local nRecLin  := ( ::cAlbCliL )->( Recno() )
-   local nOrdAnt  := ( ::cAlbCliL )->( OrdSetFocus( "nNumAlb" ) )
+   local nOrdAnt  := ( ::cAlbCliL )->( ordsetfocus( "nNumAlb" ) )
 
    if ( ::cAlbCliL )->( dbSeek( cNumDoc ) )
 
@@ -3717,7 +3692,7 @@ METHOD nSaldoDocAlb( cCodArt, cNumDoc ) CLASS TStock
 
    end if
 
-   ( ::cAlbCliL )->( OrdSetFocus( nOrdAnt ) )
+   ( ::cAlbCliL )->( ordsetfocus( nOrdAnt ) )
    ( ::cAlbCliL )->( dbGoTo( nRecLin ) )
 
 RETURN ( nTotal )
@@ -3729,14 +3704,14 @@ METHOD nSaldoAntAlb( cCodArt, cNumDoc ) CLASS TStock
    local cCodCli
    local dFecha
    local nRec     := ( ::cAlbCliT )->( Recno() )
-   local nOrdAnt  := ( ::cAlbCliT )->( OrdSetFocus( "NNUMALB" ) )
+   local nOrdAnt  := ( ::cAlbCliT )->( ordsetfocus( "NNUMALB" ) )
 
    if ( ::cAlbCliT )->( dbSeek( cNumDoc ) )
       cCodCli     := ( ::cAlbCliT )->cCodCli
       dFecha      := ( ::cAlbCliT )->dFecAlb
    end if
 
-   ( ::cAlbCliT )->( OrdSetFocus( nOrdAnt ) )
+   ( ::cAlbCliT )->( ordsetfocus( nOrdAnt ) )
    ( ::cAlbCliT )->( dbGoTo( nRec ) )
 
 RETURN ( ::nTotalSaldo( cCodArt, cCodCli, dFecha ) - ::nSaldoDocAlb( cCodArt, cNumDoc ) )
@@ -3750,10 +3725,10 @@ METHOD nPrecioMedioCompra( cCodArt, cCodAlm, dFecIni, dFecFin, lSerie, lExcCero,
    local nImpAnt        := 0
    local aMov           := {}
    local aMovimientos   := {}
-   local nOrdAlbPrvL    := ( ::cAlbPrvL )->( OrdSetFocus( "cStkFastin") )
-   local nOrdFacPrvL    := ( ::cFacPrvL )->( OrdSetFocus( "cRef"    ) )
-   local nOrdRctPrvL    := ( ::cRctPrvL )->( OrdSetFocus( "cRef"    ) )
-   local cHisMovT       := ( ::cHisMovT )->( OrdSetFocus( "cRefMov" ) )
+   local nOrdAlbPrvL    := ( ::cAlbPrvL )->( ordsetfocus( "cStkFastin") )
+   local nOrdFacPrvL    := ( ::cFacPrvL )->( ordsetfocus( "cRef"    ) )
+   local nOrdRctPrvL    := ( ::cRctPrvL )->( ordsetfocus( "cRef"    ) )
+   local cHisMovT       := ( ::cHisMovT )->( ordsetfocus( "cRefMov" ) )
 
    DEFAULT lExcCero     := .f.
    DEFAULT lExcImp      := .f.
@@ -3769,11 +3744,11 @@ METHOD nPrecioMedioCompra( cCodArt, cCodAlm, dFecIni, dFecFin, lSerie, lExcCero,
 
       while ( ::cAlbPrvL )->cRef == cCodArt .and. !( ::cAlbPrvL )->( eof() )
 
-         if ( Empty( cCodAlm ) .or. ( ( ::cAlbPrvL )->cAlmLin == cCodAlm ) )           .and.;
+         if ( empty( cCodAlm ) .or. ( ( ::cAlbPrvL )->cAlmLin == cCodAlm ) )           .and.;
             !( lExcCero .and. nTotNAlbPrv( ::cAlbPrvL ) == 0 )                         .and.;
             !( lExcImp .and. nTotLAlbPrv( ::cAlbPrvL, ::nDecIn, ::nDerIn ) == 0 )      .and.;
-            ( Empty( dFecIni ) .or. ( ::cAlbPrvL )->dFecAlb >= dFecIni )               .and.;
-            ( Empty( dFecFin ) .or. ( ::cAlbPrvL )->dFecAlb <= dFecFin )               .and.;
+            ( empty( dFecIni ) .or. ( ::cAlbPrvL )->dFecAlb >= dFecIni )               .and.;
+            ( empty( dFecFin ) .or. ( ::cAlbPrvL )->dFecAlb <= dFecFin )               .and.;
             ( !lSerie .or. lChkSer( ( ::cAlbPrvL )->cSerAlb, aSer ) )
 
             aAdd( aMovimientos, STemporal():New( ( ::cAlbPrvL )->dFecAlb, nil, nTotNAlbPrv( ::cAlbPrvL ), 0, nTotLAlbPrv( ::cAlbPrvL, ::nDecIn, ::nDerIn ), "alb prv", ( ::cAlbPrvL )->cSerAlb + Str( ( ::cAlbPrvL )->nNumAlb ) + ( ::cAlbPrvL )->cSufAlb ) )
@@ -3796,11 +3771,11 @@ METHOD nPrecioMedioCompra( cCodArt, cCodAlm, dFecIni, dFecFin, lSerie, lExcCero,
 
       while ( ::cFacPrvL )->cRef == cCodArt .and. !( ::cFacPrvL )->( eof() )
 
-         if ( Empty( cCodAlm ) .or. ( ( ::cFacPrvL )->cAlmLin == cCodAlm ) )           .and.;
+         if ( empty( cCodAlm ) .or. ( ( ::cFacPrvL )->cAlmLin == cCodAlm ) )           .and.;
             !( lExcCero .and. nTotNFacPrv( ::cFacPrvL ) == 0 )                         .and.;
             !( lExcImp .and. nTotLFacPrv( ::cFacPrvL, ::nDecIn, ::nDerIn ) == 0 )      .and.;
-            ( Empty( dFecIni ) .or. ( ::cFacPrvL )->dFecFac >= dFecIni )               .and.;
-            ( Empty( dFecFin ) .or. ( ::cFacPrvL )->dFecFac <= dFecFin )               .and.;
+            ( empty( dFecIni ) .or. ( ::cFacPrvL )->dFecFac >= dFecIni )               .and.;
+            ( empty( dFecFin ) .or. ( ::cFacPrvL )->dFecFac <= dFecFin )               .and.;
             ( !lSerie .or. lChkSer( ( ::cFacPrvL )->cSerFac, aSer ) )
 
             aAdd( aMovimientos, STemporal():New( ( ::cFacPrvL )->dFecFac, nil, nTotNFacPrv( ::cFacPrvL ), 0, nTotLFacPrv( ::cFacPrvL, ::nDecIn, ::nDerIn ), "fac prv", ( ::cFacPrvL )->cSerFac + Str( ( ::cFacPrvL )->nNumFac ) + ( ::cFacPrvL )->cSufFac ) )
@@ -3823,11 +3798,11 @@ METHOD nPrecioMedioCompra( cCodArt, cCodAlm, dFecIni, dFecFin, lSerie, lExcCero,
 
       while ( ::cRctPrvL )->cRef == cCodArt .and. !( ::cRctPrvL )->( eof() )
 
-         if ( Empty( cCodAlm ) .or. ( ( ::cRctPrvL )->cAlmLin == cCodAlm ) )           .and.;
+         if ( empty( cCodAlm ) .or. ( ( ::cRctPrvL )->cAlmLin == cCodAlm ) )           .and.;
             !( lExcCero .and. nTotNRctPrv( ::cRctPrvL ) == 0 )                         .and.;
             !( lExcImp .and. nTotLRctPrv( ::cRctPrvL, ::nDecIn, ::nDerIn ) == 0 )      .and.;
-            ( Empty( dFecIni ) .or. ( ::cRctPrvL )->dFecFac >= dFecIni )               .and.;
-            ( Empty( dFecFin ) .or. ( ::cRctPrvL )->dFecFac <= dFecFin )               .and.;
+            ( empty( dFecIni ) .or. ( ::cRctPrvL )->dFecFac >= dFecIni )               .and.;
+            ( empty( dFecFin ) .or. ( ::cRctPrvL )->dFecFac <= dFecFin )               .and.;
             ( !lSerie .or. lChkSer( ( ::cRctPrvL )->cSerFac, aSer ) )
 
             aAdd( aMovimientos, STemporal():New( ( ::cRctPrvL )->dFecFac, nil, nTotNRctPrv( ::cRctPrvL ), 0, nTotLRctPrv( ::cRctPrvL, ::nDecIn, ::nDerIn ), "fac prv", ( ::cRctPrvL )->cSerFac + Str( ( ::cRctPrvL )->nNumFac ) + ( ::cRctPrvL )->cSufFac ) )
@@ -3850,15 +3825,15 @@ METHOD nPrecioMedioCompra( cCodArt, cCodAlm, dFecIni, dFecFin, lSerie, lExcCero,
 
       while ( ::cHisMovT)->cRefMov == cCodArt .and. !( ::cHisMovT)->( Eof() )
 
-         if ( Empty( dFecIni ) .or. ( ::cHisMovT)->dFecMov >= dFecIni )                   .and.;
-            ( Empty( dFecFin ) .or. ( ::cHisMovT)->dFecMov <= dFecFin )                   .and.;
+         if ( empty( dFecIni ) .or. ( ::cHisMovT)->dFecMov >= dFecIni )                   .and.;
+            ( empty( dFecFin ) .or. ( ::cHisMovT)->dFecMov <= dFecFin )                   .and.;
             !( lExcCero .and. nTotNMovAlm( ::cHisMovT) == 0 )                             .and.;
             !( lExcImp  .and. nTotLMovAlm( ::cHisMovT) == 0 )
 
             // Movimiento de entrada-------------------------------------------
 
-            if !Empty( ( ::cHisMovT)->cAliMov )                                           .and.;
-               ( Empty( cCodAlm ) .or. ( ::cHisMovT)->cAliMov == cCodAlm )
+            if !empty( ( ::cHisMovT)->cAliMov )                                           .and.;
+               ( empty( cCodAlm ) .or. ( ::cHisMovT)->cAliMov == cCodAlm )
 
                aAdd( aMovimientos, STemporal():New( ( ::cHisMovT)->dFecMov, nil, nTotNMovAlm( ::cHisMovT), 0, nTotLMovAlm( ::cHisMovT), "mov alm", dtos( ( ::cHisMovT)->dFecMov ) ) )
 
@@ -3898,10 +3873,10 @@ METHOD nPrecioMedioCompra( cCodArt, cCodAlm, dFecIni, dFecFin, lSerie, lExcCero,
 
    // Devolvemos el orden que tenian las tablas--------------------------------
 
-   ( ::cAlbPrvL )->( OrdSetFocus( nOrdAlbPrvL ) )
-   ( ::cFacPrvL )->( OrdSetFocus( nOrdFacPrvL ) )
-   ( ::cRctPrvL )->( OrdSetFocus( nOrdRctPrvL ) )
-   ( ::cHisMovT )->( OrdSetFocus( cHisMovT    ) )
+   ( ::cAlbPrvL )->( ordsetfocus( nOrdAlbPrvL ) )
+   ( ::cFacPrvL )->( ordsetfocus( nOrdFacPrvL ) )
+   ( ::cRctPrvL )->( ordsetfocus( nOrdRctPrvL ) )
+   ( ::cHisMovT )->( ordsetfocus( cHisMovT    ) )
 
 RETURN ( nPreMed )
 
@@ -3912,11 +3887,11 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
    local nUnidades      := 0
    local nImporte       := 0
    local nCostoMedio    := 0
-   local nOrdAlbPrvL    := ( ::cAlbPrvL )->( OrdSetFocus( "cStkRef" ) )
-   local nOrdFacPrvL    := ( ::cFacPrvL )->( OrdSetFocus( "cRefLote" ) )
-   local nOrdRctPrvL    := ( ::cRctPrvL )->( OrdSetFocus( "cRef" ) )
-   local nOrdMovAlm     := ( ::cHisMovT )->( OrdSetFocus( "cRefMov" ) )
-   local nOrdProducL    := ( ::cProducL )->( OrdSetFocus( "cArtLot" ) )
+   local nOrdAlbPrvL    := ( ::cAlbPrvL )->( ordsetfocus( "cStkRef" ) )
+   local nOrdFacPrvL    := ( ::cFacPrvL )->( ordsetfocus( "cRefLote" ) )
+   local nOrdRctPrvL    := ( ::cRctPrvL )->( ordsetfocus( "cRef" ) )
+   local nOrdMovAlm     := ( ::cHisMovT )->( ordsetfocus( "cRefMov" ) )
+   local nOrdProducL    := ( ::cProducL )->( ordsetfocus( "cArtLot" ) )
 
    DEFAULT cCodPr1      := Space( 20 )
    DEFAULT cCodPr2      := Space( 20 )
@@ -3931,15 +3906,15 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
    if ( ::cHisMovT )->( dbSeek( cCodArt + cValPr1 + cValPr2 + cLote ) )
 
       while ( ::cHisMovT)->cRefMov == cCodArt                        .and.;
-         ( Empty( cValPr1 ) .or. ( ::cHisMovT)->cValPr1 == cValPr1 ) .and.;
-         ( Empty( cValPr2 ) .or. ( ::cHisMovT)->cValPr2 == cValPr2 ) .and.;
-         ( Empty( cLote )   .or. ( ::cHisMovT )->cLote == cLote )    .and.;
+         ( empty( cValPr1 ) .or. ( ::cHisMovT)->cValPr1 == cValPr1 ) .and.;
+         ( empty( cValPr2 ) .or. ( ::cHisMovT)->cValPr2 == cValPr2 ) .and.;
+         ( empty( cLote )   .or. ( ::cHisMovT )->cLote == cLote )    .and.;
          ( ::cHisMovT)->( !Eof() )
 
          if ::lValoracionCostoMedio( ( ::cHisMovT)->nTipMov )
 
-            if !Empty( ( ::cHisMovT)->cAloMov )                            .and.;
-               ( Empty( cCodAlm ) .or. ( ::cHisMovT)->cAloMov == cCodAlm ) .and.;
+            if !empty( ( ::cHisMovT)->cAloMov )                            .and.;
+               ( empty( cCodAlm ) .or. ( ::cHisMovT)->cAloMov == cCodAlm ) .and.;
                ::lCheckConsolidacion( ( ::cHisMovT )->cRefMov, ( ::cHisMovT)->cAloMov, ( ::cHisMovT)->cCodPr1, ( ::cHisMovT)->cCodPr2, ( ::cHisMovT)->cValPr1, ( ::cHisMovT)->cValPr2, ( ::cHisMovT)->cLote, ( ::cHisMovT)->dFecMov, ( ::cHisMovT )->cTimMov )
                
                if nTotLMovAlm( ::cHisMovT ) > 0 
@@ -3951,8 +3926,8 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
 
             end if
 
-            if !Empty( ( ::cHisMovT)->cAliMov )                            .and.;
-               ( Empty( cCodAlm ) .or. ( ::cHisMovT)->cAliMov == cCodAlm ) .and.;
+            if !empty( ( ::cHisMovT)->cAliMov )                            .and.;
+               ( empty( cCodAlm ) .or. ( ::cHisMovT)->cAliMov == cCodAlm ) .and.;
                ::lCheckConsolidacion( ( ::cHisMovT )->cRefMov, ( ::cHisMovT)->cAliMov, ( ::cHisMovT)->cCodPr1, ( ::cHisMovT)->cCodPr2, ( ::cHisMovT)->cValPr1, ( ::cHisMovT)->cValPr2, ( ::cHisMovT)->cLote, ( ::cHisMovT)->dFecMov, ( ::cHisMovT )->cTimMov )
 
                if nTotNMovAlm( ::cHisMovT ) > 0
@@ -3979,9 +3954,9 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
    if ( ::cAlbPrvL )->( dbSeek( cCodArt + cValPr1 + cValPr2 + cLote ) )
 
       while ( ::cAlbPrvL )->cRef == cCodArt                             .and.;
-         ( Empty( cValPr1 ) .or. ( ::cAlbPrvL )->cValPr1 == cValPr1 )   .and.;
-         ( Empty( cValPr2 ) .or. ( ::cAlbPrvL )->cValPr2 == cValPr2 )   .and.;
-         ( Empty( cLote )   .or. ( ::cAlbPrvL )->cLote == cLote )       .and.;
+         ( empty( cValPr1 ) .or. ( ::cAlbPrvL )->cValPr1 == cValPr1 )   .and.;
+         ( empty( cValPr2 ) .or. ( ::cAlbPrvL )->cValPr2 == cValPr2 )   .and.;
+         ( empty( cLote )   .or. ( ::cAlbPrvL )->cLote == cLote )       .and.;
          !( ::cAlbPrvL )->( eof() )
 
          if ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmLin, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb, ( ::cAlbPrvL )->tFecAlb )
@@ -4004,9 +3979,9 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
    if ( ::cFacPrvL )->( dbSeek( cCodArt + cValPr1 + cValPr2 + cLote ) )
 
       while ( ::cFacPrvL )->cRef == cCodArt                         .and.;
-      ( Empty( cValPr1 ) .or. ( ::cFacPrvL )->cValPr1 == cValPr1 )  .and.;
-      ( Empty( cValPr2 ) .or. ( ::cFacPrvL )->cValPr2 == cValPr2 )  .and.;
-      ( Empty( cLote )   .or. ( ::cFacPrvL )->cLote == cLote )      .and.;
+      ( empty( cValPr1 ) .or. ( ::cFacPrvL )->cValPr1 == cValPr1 )  .and.;
+      ( empty( cValPr2 ) .or. ( ::cFacPrvL )->cValPr2 == cValPr2 )  .and.;
+      ( empty( cLote )   .or. ( ::cFacPrvL )->cLote == cLote )      .and.;
       !( ::cFacPrvL )->( eof() )
 
          if ::lCheckConsolidacion( ( ::cFacPrvL )->cRef, ( ::cFacPrvL )->cAlmLin, ( ::cFacPrvL )->cCodPr1, ( ::cFacPrvL )->cCodPr2, ( ::cFacPrvL )->cValPr1, ( ::cFacPrvL )->cValPr2, ( ::cFacPrvL )->cLote, ( ::cFacPrvL )->dFecFac, ( ::cFacPrvL )->tFecFac )
@@ -4031,9 +4006,9 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
    if ( ::cRctPrvL )->( dbSeek( cCodArt + cValPr1 + cValPr2 + cLote ) )
 
       while ( ::cRctPrvL )->cRef == cCodArt                          .and.;
-      ( Empty ( cValPr1 ) .or. ( ::cRctPrvL )->cValPr1 == cValPr1 )  .and.;
-      ( Empty ( cValPr2 ) .or. ( ::cRctPrvL )->cValPr2 == cValPr2 )  .and.;
-      ( Empty( cLote )    .or. ( ::cRctPrvL )->cLote == cLote )      .and.;
+      ( empty ( cValPr1 ) .or. ( ::cRctPrvL )->cValPr1 == cValPr1 )  .and.;
+      ( empty ( cValPr2 ) .or. ( ::cRctPrvL )->cValPr2 == cValPr2 )  .and.;
+      ( empty( cLote )    .or. ( ::cRctPrvL )->cLote == cLote )      .and.;
       !( ::cRctPrvL )->( eof() )
 
          if ::lCheckConsolidacion( ( ::cRctPrvL )->cRef, ( ::cRctPrvL )->cAlmLin, ( ::cRctPrvL )->cCodPr1, ( ::cRctPrvL )->cCodPr2, ( ::cRctPrvL )->cValPr1, ( ::cRctPrvL )->cValPr2, ( ::cRctPrvL )->cLote, ( ::cRctPrvL )->dFecFac, ( ::cRctPrvL )->tFecFac )
@@ -4056,9 +4031,9 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
    if ( ::cProducL )->( dbSeek( cCodArt + cValPr1 + cValPr2 + cLote ) )
 
       while ( ::cProducL )->cCodArt == cCodArt                          .and.;
-         ( Empty( cValPr1 ) .or. ( ::cProducL )->cValPr1 == cValPr1 )   .and.;
-         ( Empty( cValPr2 ) .or. ( ::cProducL )->cValPr2 == cValPr2 )   .and.;
-         ( Empty( cLote )    .or. ( ::cProducL )->cLote == cLote )      .and.;
+         ( empty( cValPr1 ) .or. ( ::cProducL )->cValPr1 == cValPr1 )   .and.;
+         ( empty( cValPr2 ) .or. ( ::cProducL )->cValPr2 == cValPr2 )   .and.;
+         ( empty( cLote )    .or. ( ::cProducL )->cLote == cLote )      .and.;
          !( ::cProducL )->( eof() )
       
          if ::lCheckConsolidacion( ( ::cProducL )->cCodArt, ( ::cProducL )->cAlmOrd, ( ::cProducL )->cCodPr1, ( ::cProducL )->cCodPr2, ( ::cProducL )->cValPr1, ( ::cProducL )->cValPr2, ( ::cProducL )->cLote, ( ::cProducL )->dFecOrd, ( ::cProducL )->cHorIni ) 
@@ -4086,7 +4061,7 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
    Si el costo medio es 0, devolvemos el costo de la ficha---------------------
    */
 
-   if nCostoMedio == 0 .and. !Empty( ::cArticulo ) .and. !Empty( ::cKit )
+   if nCostoMedio == 0 .and. !empty( ::cArticulo ) .and. !empty( ::cKit )
       nCostoMedio       := nCosto( cCodArt, ::cArticulo, ::cKit )
    end if
 
@@ -4094,11 +4069,11 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
    Devolvemos el orden que tenian las tablas-----------------------------------
    */
 
-   ( ::cAlbPrvL )->( OrdSetFocus( nOrdAlbPrvL ) )
-   ( ::cFacPrvL )->( OrdSetFocus( nOrdFacPrvL ) )
-   ( ::cRctPrvL )->( OrdSetFocus( nOrdRctPrvL ) )
-   ( ::cHisMovT )->( OrdSetFocus( nOrdMovAlm  ) )
-   ( ::cProducL )->( OrdSetFocus( nOrdProducL ) )
+   ( ::cAlbPrvL )->( ordsetfocus( nOrdAlbPrvL ) )
+   ( ::cFacPrvL )->( ordsetfocus( nOrdFacPrvL ) )
+   ( ::cRctPrvL )->( ordsetfocus( nOrdRctPrvL ) )
+   ( ::cHisMovT )->( ordsetfocus( nOrdMovAlm  ) )
+   ( ::cProducL )->( ordsetfocus( nOrdProducL ) )
 
 RETURN ( nCostoMedio )
 
@@ -4108,36 +4083,6 @@ METHOD lValoracionCostoMedio( nTipMov )
 
 //RETURN ( !uFieldEmpresa( "lMovCos" ) .and. ( nTipMov == 2 .or. nTipMov == 4 ) )
 RETURN ( !uFieldEmpresa( "lMovCos" ) .and. ( nTipMov == 2 .or. nTipMov == 4 .or. ntipMov == 1 )  )
-
-//---------------------------------------------------------------------------//
-
-METHOD Zap() CLASS TStock
-
-   if ( ::oDbf )->( Used() )
-
-      if !( ::oDbf )->( IsShared() )
-
-         ( ::oDbf )->( __dbZap() )
-
-      else
-
-         ( ::oDbf )->( dbGoTop() )
-         while !( ::oDbf )->( eof() )
-
-            if dbLock( ::oDbf )
-               ( ::oDbf )->( dbDelete() )
-               ( ::oDbf )->( dbUnLock() )
-            end if
-
-            ( ::oDbf )->( dbSkip( 0 ) )
-
-         end while
-
-      end if
-
-   end if
-
-RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -4189,7 +4134,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    ::cCodigoArticulo    := cCodArt
    ::cCodigoAlmacen     := cCodAlm
 
-   if Empty( cCodArt )
+   if empty( cCodArt )
       Return ( ::aStocks )
    else
       cCodArt           := left( cCodArt, 18 )
@@ -4210,7 +4155,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    // Browse-------------------------------------------------------------------
 
-   if !Empty( oBrw )
+   if !empty( oBrw )
       oBrw:aArrayData   := {}
       oBrw:Refresh()
    end if
@@ -4250,6 +4195,15 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
       ::aStockRectificativaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
       SysRefresh()
+
+      // Pedidos de clientes-------------------------------------------------
+
+      if ::lCalculateUnidadesPendientesRecibir
+
+         ::aStockPedidoCliente( cCodArt, cCodAlm, lLote, dFecIni, dFecFin )
+         SysRefresh()
+
+      end if 
 
       // Albaranes de clientes-------------------------------------------------
 
@@ -4308,7 +4262,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
       for each oStocks in ::aStocks
 
-         if !Empty( oStocks ) 
+         if !empty( oStocks ) 
          
             if ( ::lStockInit ) .or. ;
                ( ( ( Round( oStocks:nUnidades, 6 ) != 0.000000 ) .or. ( Round( oStocks:nPendientesRecibir, 6 ) != 0.000000 ) .or. ( Round( oStocks:nPendientesEntregar, 6 ) != 0.000000 ) ) )
@@ -4328,18 +4282,13 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    // Control de erroress-------------------------------------------------------
 
    RECOVER USING oError
-
       msgStop( ErrorMessage( oError ), "Calculo de stock" )
-
    END SEQUENCE
    
    ErrorBlock( oBlock )
 
-   Return ( ::aStocks )
-
    /*
    Pasamos por el temporal para albaranes--------------------------------------
-   */
 
    if IsChar( ::tmpAlbCliL )
 
@@ -4348,13 +4297,13 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
       ( ::tmpAlbCliL )->( dbGoTop() )
       while !( ::tmpAlbCliL )->( eof() )
 
-         if ( ( ::tmpAlbCliL )->cRef == cCodArt ) .and. ( Empty( cCodAlm ) .or. ( ::tmpAlbCliL )->cAlmLin == cCodAlm )
+         if ( ( ::tmpAlbCliL )->cRef == cCodArt ) .and. ( empty( cCodAlm ) .or. ( ::tmpAlbCliL )->cAlmLin == cCodAlm )
 
             with object ( SStock():New() )
 
                :cTipoDocumento      := ALB_CLI
                :cCodigo             := ( ::tmpAlbCliL )->cRef
-               :cNumeroDocumento    := ( ::tmpAlbCliL )->cSerAlb + "/" + Alltrim( Str( ( ::tmpAlbCliL )->nNumAlb ) )
+               :cNumeroDocumento    := ( ::tmpAlbCliL )->cSerAlb + "/" + alltrim( Str( ( ::tmpAlbCliL )->nNumAlb ) )
                :cDelegacion         := ( ::tmpAlbCliL )->cSufAlb
                :dFechaDocumento     := ( ::tmpAlbCliL )->dFecAlb
                :tFechaDocumento     := ( ::tmpAlbCliL )->tFecAlb
@@ -4381,9 +4330,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    end if
 
-   /*
-   Pasamos por el temporal para Facturas-------------------------------------
-   */
+   // Pasamos por el temporal para Facturas-------------------------------------
 
    if IsChar( ::tmpFacCliL )
       nRec                          := ( ::tmpFacCliL )->( Recno() )
@@ -4391,13 +4338,13 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
       ( ::tmpFacCliL )->( dbGoTop() )
       while !( ::tmpFacCliL )->( Eof() )
 
-         if ( ( ::tmpFacCliL )->cRef == cCodArt ) .and. ( Empty( cCodAlm ) .or. ( ::tmpFacCliL )->cAlmLin == cCodAlm )
+         if ( ( ::tmpFacCliL )->cRef == cCodArt ) .and. ( empty( cCodAlm ) .or. ( ::tmpFacCliL )->cAlmLin == cCodAlm )
 
             with object ( SStock():New() )
 
                :cTipoDocumento      := FAC_CLI
                :cCodigo             := ( ::tmpFacCliL )->cRef
-               :cNumeroDocumento    := ( ::tmpFacCliL )->cSerie + "/" + Alltrim( Str( ( ::tmpFacCliL )->nNumFac ) )
+               :cNumeroDocumento    := ( ::tmpFacCliL )->cSerie + "/" + alltrim( Str( ( ::tmpFacCliL )->nNumFac ) )
                :cDelegacion         := ( ::tmpFacCliL )->cSufFac
                :dFechaDocumento     := ( ::tmpFacCliL )->dFecFac
                :tFechaDocumento     := ( ::tmpFacCliL )->tFecFac
@@ -4423,6 +4370,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
       ( ::tmpFacCliL )->( dbGoTo( nRec ) )
 
    end if
+   */
 
 Return ( ::aStocks )
 
@@ -4458,10 +4406,10 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecIni, dFecFi
 
    ::aStockArticulo( cCodArt, cCodAlm, , , , dFecIni, dFecFin )
 
-   aEval( ::aStocks, {|o| if( ( Empty( cCodAlm ) .or. alltrim( cCodAlm ) == alltrim( o:cCodigoAlmacen ) )   .and.;
-                              ( Empty( cValPr1 ) .or. alltrim( cValPr1 ) == alltrim( o:cValorPropiedad1 ) ) .and.;
-                              ( Empty( cValPr2 ) .or. alltrim( cValPr2 ) == alltrim( o:cValorPropiedad2 ) ) .and.;                  
-                              ( Empty( cLote   ) .or. alltrim( cLote )   == alltrim( o:cLote )   ),;
+   aEval( ::aStocks, {|o| if( ( empty( cCodAlm ) .or. alltrim( cCodAlm ) == alltrim( o:cCodigoAlmacen ) )   .and.;
+                              ( empty( cValPr1 ) .or. alltrim( cValPr1 ) == alltrim( o:cValorPropiedad1 ) ) .and.;
+                              ( empty( cValPr2 ) .or. alltrim( cValPr2 ) == alltrim( o:cValorPropiedad2 ) ) .and.;                  
+                              ( empty( cLote   ) .or. alltrim( cLote )   == alltrim( o:cLote )   ),;
                               nStockArticulo += o:nUnidades, ) } )
 
 Return ( nStockArticulo )
@@ -4472,19 +4420,19 @@ METHOD nStockSerie( cCodArt, cCodAlm, cNumeroSerie ) CLASS TStock
 
    local nRec
    local nUnidades      := 0
-   local nOrdHisMov     := ( ::cHisMovT )->( OrdSetFocus( "cRefMov" ) )
-   local nOrdAlbPrvS    := ( ::cAlbPrvS )->( OrdSetFocus( "cRefSer" ) )
-   local nOrdFacPrvS    := ( ::cFacPrvS )->( OrdSetFocus( "cRefSer" ) )
-   local nOrdRctPrvS    := ( ::cRctPrvS )->( OrdSetFocus( "cRefSer" ) )
-   local nOrdAlbCliS    := ( ::cAlbCliS )->( OrdSetFocus( "cRefSer" ) )
-   local nOrdFacCliS    := ( ::cFacCliS )->( OrdSetFocus( "cRefSer" ) )
-   local nOrdFacRecS    := ( ::cFacRecS )->( OrdSetFocus( "cRefSer" ) )
-   local nOrdTikCliS    := ( ::cTikS    )->( OrdSetFocus( "cRefSer" ) )
-   local nOrdProducS    := ( ::cProducS )->( OrdSetFocus( "cCodArt" ) )
-   local nOrdProducP    := ( ::cProducP )->( OrdSetFocus( "cCodArt" ) )
-   local nOrdHisMovS    := ( ::cHisMovS )->( OrdSetFocus( "cCodArt" ) )
+   local nOrdHisMov     := ( ::cHisMovT )->( ordsetfocus( "cRefMov" ) )
+   local nOrdAlbPrvS    := ( ::cAlbPrvS )->( ordsetfocus( "cRefSer" ) )
+   local nOrdFacPrvS    := ( ::cFacPrvS )->( ordsetfocus( "cRefSer" ) )
+   local nOrdRctPrvS    := ( ::cRctPrvS )->( ordsetfocus( "cRefSer" ) )
+   local nOrdAlbCliS    := ( ::cAlbCliS )->( ordsetfocus( "cRefSer" ) )
+   local nOrdFacCliS    := ( ::cFacCliS )->( ordsetfocus( "cRefSer" ) )
+   local nOrdFacRecS    := ( ::cFacRecS )->( ordsetfocus( "cRefSer" ) )
+   local nOrdTikCliS    := ( ::cTikS    )->( ordsetfocus( "cRefSer" ) )
+   local nOrdProducS    := ( ::cProducS )->( ordsetfocus( "cCodArt" ) )
+   local nOrdProducP    := ( ::cProducP )->( ordsetfocus( "cCodArt" ) )
+   local nOrdHisMovS    := ( ::cHisMovS )->( ordsetfocus( "cCodArt" ) )
 
-   if !Empty( cNumeroSerie )
+   if !empty( cNumeroSerie )
 
       ::lCheckConsolidacion( cCodArt )
 
@@ -4496,7 +4444,7 @@ METHOD nStockSerie( cCodArt, cCodAlm, cNumeroSerie ) CLASS TStock
 
          while ( ::cHisMovS )->cCodArt == cCodArt .and. ( ::cHisMovS )->cAlmOrd == cCodAlm .and. ( ::cHisMovS )->cNumSer == cNumeroSerie .and. !( ::cHisMovS )->( Eof() )
 
-            if ( Empty( ::dConsolidacion ) .or. ( ::cHisMovS )->dFecRem >= ::dConsolidacion )
+            if ( empty( ::dConsolidacion ) .or. ( ::cHisMovS )->dFecRem >= ::dConsolidacion )
 
                if ( ::cHisMovS )->lUndNeg
                   nUnidades--
@@ -4520,7 +4468,7 @@ METHOD nStockSerie( cCodArt, cCodAlm, cNumeroSerie ) CLASS TStock
 
          while ( ::cAlbPrvS )->cRef == cCodArt .and. ( ::cAlbPrvS )->cAlmLin == cCodAlm .and. ( ::cAlbPrvS )->cNumSer == cNumeroSerie .and. !( ::cAlbPrvS )->( Eof() )
 
-            if ( Empty( ::dConsolidacion ) .or. ( ::cAlbPrvS )->dFecAlb >= ::dConsolidacion )
+            if ( empty( ::dConsolidacion ) .or. ( ::cAlbPrvS )->dFecAlb >= ::dConsolidacion )
 
                if ( ::cAlbPrvS )->lUndNeg
                   nUnidades--
@@ -4544,7 +4492,7 @@ METHOD nStockSerie( cCodArt, cCodAlm, cNumeroSerie ) CLASS TStock
 
          while ( ::cFacPrvS )->cRef == cCodArt .and. ( ::cFacPrvS )->cAlmLin == cCodAlm .and. ( ::cFacPrvS )->cNumSer == cNumeroSerie .and. !( ::cFacPrvS )->( Eof() )
 
-            if ( Empty( ::dConsolidacion ) .or. ( ::cFacPrvS )->dFecFac >= ::dConsolidacion )
+            if ( empty( ::dConsolidacion ) .or. ( ::cFacPrvS )->dFecFac >= ::dConsolidacion )
 
                if ( ::cFacPrvS )->lUndNeg
                   nUnidades--
@@ -4568,7 +4516,7 @@ METHOD nStockSerie( cCodArt, cCodAlm, cNumeroSerie ) CLASS TStock
 
          while ( ::cRctPrvS )->cRef == cCodArt .and. ( ::cRctPrvS )->cAlmLin == cCodAlm .and. ( ::cRctPrvS )->cNumSer == cNumeroSerie .and. !( ::cRctPrvS )->( Eof() )
 
-            if ( Empty( ::dConsolidacion ) .or. ( ::cFacPrvS )->dFecFac >= ::dConsolidacion )
+            if ( empty( ::dConsolidacion ) .or. ( ::cFacPrvS )->dFecFac >= ::dConsolidacion )
 
                if ( ::cRctPrvS )->lUndNeg
                   nUnidades--
@@ -4592,7 +4540,7 @@ METHOD nStockSerie( cCodArt, cCodAlm, cNumeroSerie ) CLASS TStock
 
          while ( ::cAlbCliS )->cRef == cCodArt .and. ( ::cAlbCliS )->cAlmLin == cCodAlm .and. ( ::cAlbCliS )->cNumSer == cNumeroSerie .and. !( ::cAlbCliS )->( Eof() )
 
-            if ( Empty( ::dConsolidacion ) .or. ( ::cAlbCliS )->dFecAlb >= ::dConsolidacion )
+            if ( empty( ::dConsolidacion ) .or. ( ::cAlbCliS )->dFecAlb >= ::dConsolidacion )
 
                if ( ::cAlbCliS )->lUndNeg
                   nUnidades++
@@ -4616,7 +4564,7 @@ METHOD nStockSerie( cCodArt, cCodAlm, cNumeroSerie ) CLASS TStock
 
          while ( ::cFacCliS )->cRef == cCodArt .and. ( ::cFacCliS )->cAlmLin == cCodAlm .and. ( ::cFacCliS )->cNumSer == cNumeroSerie .and. !( ::cFacCliS )->( Eof() )
 
-            if ( Empty( ::dConsolidacion ) .or. ( ::cFacCliS )->dFecFac >= ::dConsolidacion )
+            if ( empty( ::dConsolidacion ) .or. ( ::cFacCliS )->dFecFac >= ::dConsolidacion )
 
                if ( ::cFacCliS )->lUndNeg
                   nUnidades++
@@ -4640,7 +4588,7 @@ METHOD nStockSerie( cCodArt, cCodAlm, cNumeroSerie ) CLASS TStock
 
          while ( ::cFacRecS )->cRef == cCodArt .and. ( ::cFacRecS )->cAlmLin == cCodAlm .and. ( ::cFacRecS )->cNumSer == cNumeroSerie .and. !( ::cFacRecS )->( Eof() )
 
-            if ( Empty( ::dConsolidacion ) .or. ( ::cFacRecS )->dFecFac >= ::dConsolidacion )
+            if ( empty( ::dConsolidacion ) .or. ( ::cFacRecS )->dFecFac >= ::dConsolidacion )
 
                if ( ::cFacRecS )->lUndNeg
                   nUnidades++
@@ -4664,7 +4612,7 @@ METHOD nStockSerie( cCodArt, cCodAlm, cNumeroSerie ) CLASS TStock
 
          while ( ::cTikS )->cCbaTil == cCodArt .and. ( ::cTikS )->cAlmLin == cCodAlm .and. ( ::cTikS )->cNumSer == cNumeroSerie .and. !( ::cTikS )->( Eof() )
 
-            if ( Empty( ::dConsolidacion ) .or. ( ::cTikS )->dFecTik >= ::dConsolidacion )
+            if ( empty( ::dConsolidacion ) .or. ( ::cTikS )->dFecTik >= ::dConsolidacion )
 
                if ( ::cTikS )->lUndNeg
                   nUnidades++
@@ -4688,7 +4636,7 @@ METHOD nStockSerie( cCodArt, cCodAlm, cNumeroSerie ) CLASS TStock
 
          while ( ::cProducS )->cCodArt == cCodArt .and. ( ::cProducS )->cAlmOrd == cCodAlm .and. ( ::cProducS )->cNumSer == cNumeroSerie .and. !( ::cProducS )->( Eof() )
 
-            if ( Empty( ::dConsolidacion ) .or. ( ::cProducS )->dFecOrd >= ::dConsolidacion )
+            if ( empty( ::dConsolidacion ) .or. ( ::cProducS )->dFecOrd >= ::dConsolidacion )
 
                if ( ::cProducS )->lUndNeg
                   nUnidades--
@@ -4712,7 +4660,7 @@ METHOD nStockSerie( cCodArt, cCodAlm, cNumeroSerie ) CLASS TStock
 
          while ( ::cProducP )->cCodArt == cCodArt .and. ( ::cProducP )->cAlmOrd == cCodAlm .and. ( ::cProducP )->cNumSer == cNumeroSerie .and. !( ::cProducP )->( Eof() )
 
-            if ( Empty( ::dConsolidacion ) .or. ( ::cProducP )->dFecOrd >= ::dConsolidacion )
+            if ( empty( ::dConsolidacion ) .or. ( ::cProducP )->dFecOrd >= ::dConsolidacion )
 
                if ( ::cProducP )->lUndNeg
                   nUnidades++
@@ -4734,17 +4682,17 @@ METHOD nStockSerie( cCodArt, cCodAlm, cNumeroSerie ) CLASS TStock
    Comprobamos la marca de la empresa para no mostrar los valores cero --------
    */
 
-   ( ::cHisMovT )->( OrdSetFocus( nOrdHisMov  ) )
-   ( ::cAlbPrvS )->( OrdSetFocus( nOrdAlbPrvS ) )
-   ( ::cFacPrvS )->( OrdSetFocus( nOrdFacPrvS ) )
-   ( ::cRctPrvS )->( OrdSetFocus( nOrdRctPrvS ) )
-   ( ::cAlbCliS )->( OrdSetFocus( nOrdAlbCliS ) )
-   ( ::cFacCliS )->( OrdSetFocus( nOrdFacCliS ) )
-   ( ::cFacRecS )->( OrdSetFocus( nOrdFacRecs ) )
-   ( ::cTikS    )->( OrdSetFocus( nOrdTikCliS ) )
-   ( ::cProducS )->( OrdSetFocus( nOrdProducS ) )
-   ( ::cProducP )->( OrdSetFocus( nOrdProducP ) )
-   ( ::cHisMovS )->( OrdSetFocus( nOrdHisMovS ) )
+   ( ::cHisMovT )->( ordsetfocus( nOrdHisMov  ) )
+   ( ::cAlbPrvS )->( ordsetfocus( nOrdAlbPrvS ) )
+   ( ::cFacPrvS )->( ordsetfocus( nOrdFacPrvS ) )
+   ( ::cRctPrvS )->( ordsetfocus( nOrdRctPrvS ) )
+   ( ::cAlbCliS )->( ordsetfocus( nOrdAlbCliS ) )
+   ( ::cFacCliS )->( ordsetfocus( nOrdFacCliS ) )
+   ( ::cFacRecS )->( ordsetfocus( nOrdFacRecs ) )
+   ( ::cTikS    )->( ordsetfocus( nOrdTikCliS ) )
+   ( ::cProducS )->( ordsetfocus( nOrdProducS ) )
+   ( ::cProducP )->( ordsetfocus( nOrdProducP ) )
+   ( ::cHisMovS )->( ordsetfocus( nOrdHisMovS ) )
 
 return ( nUnidades )
 
@@ -4759,17 +4707,17 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
 
    local cCodAlm
    local nOrdAnt
-   local nOrdArt        := ( ::cArticulo)->( OrdSetFocus( "Codigo"   ) )
-   local nOrdAlbPrvL    := ( ::cAlbPrvL )->( OrdSetFocus( "cStkFast" ) )
-   local nOrdFacPrvL    := ( ::cFacPrvL )->( OrdSetFocus( "cRef"     ) )
-   local nOrdRctPrvL    := ( ::cRctPrvL )->( OrdSetFocus( "cRef"     ) )
-   local nOrdAlbCliL    := ( ::cAlbCliL )->( OrdSetFocus( "cStkFast" ) )
-   local nOrdFacCliL    := ( ::cFacCliL )->( OrdSetFocus( "cRef"     ) )
-   local nOrdFacRecL    := ( ::cFacRecL )->( OrdSetFocus( "cRef"     ) )
-   local nOrdTikCliL    := ( ::cTikL    )->( OrdSetFocus( "cStkFast" ) )
-   local nOrdProducL    := ( ::cProducL )->( OrdSetFocus( "cCodArt"  ) )
-   local nOrdProducM    := ( ::cProducM )->( OrdSetFocus( "cCodArt"  ) )
-   local nOrdHisMov     := ( ::cHisMovT )->( OrdSetFocus( "cRefMov"  ) )
+   local nOrdArt        := ( ::cArticulo)->( ordsetfocus( "Codigo"   ) )
+   local nOrdAlbPrvL    := ( ::cAlbPrvL )->( ordsetfocus( "cStkFast" ) )
+   local nOrdFacPrvL    := ( ::cFacPrvL )->( ordsetfocus( "cRef"     ) )
+   local nOrdRctPrvL    := ( ::cRctPrvL )->( ordsetfocus( "cRef"     ) )
+   local nOrdAlbCliL    := ( ::cAlbCliL )->( ordsetfocus( "cStkFast" ) )
+   local nOrdFacCliL    := ( ::cFacCliL )->( ordsetfocus( "cRef"     ) )
+   local nOrdFacRecL    := ( ::cFacRecL )->( ordsetfocus( "cRef"     ) )
+   local nOrdTikCliL    := ( ::cTikL    )->( ordsetfocus( "cStkFast" ) )
+   local nOrdProducL    := ( ::cProducL )->( ordsetfocus( "cCodArt"  ) )
+   local nOrdProducM    := ( ::cProducM )->( ordsetfocus( "cCodArt"  ) )
+   local nOrdHisMov     := ( ::cHisMovT )->( ordsetfocus( "cRefMov"  ) )
 
    cCodAlm              := oRemMov:oDbf:cAlmDes
 
@@ -5038,11 +4986,11 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
 
          ( ::cTikL )->( dbGoTop() )
 
-         nOrdAnt              := ( ::cTikL )->( OrdSetFocus( "cStkComb" ) )
+         nOrdAnt              := ( ::cTikL )->( ordsetfocus( "cStkComb" ) )
 
          if ( ::cTikL )->( dbSeek( ( ::cArticulo )->Codigo ) )
 
-            if !Empty( ( ::cTikL )->cComTil )
+            if !empty( ( ::cTikL )->cComTil )
 
                while ( ::cTikL )->cComTil == ( ::cArticulo )->Codigo .and. !( ::cTikL )->( Eof() )
 
@@ -5070,7 +5018,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
 
          end if
 
-         ( ::cTikL )->( OrdSetFocus( nOrdAnt ) )
+         ( ::cTikL )->( ordsetfocus( nOrdAnt ) )
 
          /*
          Materiales producidos-------------------------------------------------------
@@ -5146,7 +5094,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
 
             while ( ::cHisMovT)->cRefMov == ( ::cArticulo )->Codigo .and. !( ::cHisMovT)->( Eof() )
 
-               if !Empty( ( ::cHisMovT)->cAliMov ) .and. ( ::cHisMovT)->cAliMov == cCodAlm
+               if !empty( ( ::cHisMovT)->cAliMov ) .and. ( ::cHisMovT)->cAliMov == cCodAlm
 
                   with object ( SStock():New() )
                      :cCodigo             := ( ::cHisMovT )->cRefMov
@@ -5163,7 +5111,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
 
                end if
 
-               if !Empty( ( ::cHisMovT)->cAloMov ) .and. ( ::cHisMovT)->cAloMov == cCodAlm
+               if !empty( ( ::cHisMovT)->cAloMov ) .and. ( ::cHisMovT)->cAloMov == cCodAlm
 
                   with object ( SStock():New() )
                      :cCodigo             := ( ::cHisMovT )->cRefMov
@@ -5198,17 +5146,17 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
    Comprobamos la marca de la empresa para no mostrar los valores cero --------
    */
 
-   ( ::cArticulo)->( OrdSetFocus( nOrdArt     ) )
-   ( ::cAlbPrvL )->( OrdSetFocus( nOrdAlbPrvL ) )
-   ( ::cFacPrvL )->( OrdSetFocus( nOrdFacPrvL ) )
-   ( ::cRctPrvL )->( OrdSetFocus( nOrdRctPrvL ) )
-   ( ::cAlbCliL )->( OrdSetFocus( nOrdAlbCliL ) )
-   ( ::cFacCliL )->( OrdSetFocus( nOrdFacCliL ) )
-   ( ::cFacRecL )->( OrdSetFocus( nOrdFacRecL ) )
-   ( ::cTikL    )->( OrdSetFocus( nOrdTikCliL ) )
-   ( ::cProducL )->( OrdSetFocus( nOrdProducL ) )
-   ( ::cProducM )->( OrdSetFocus( nOrdProducM ) )
-   ( ::cHisMovT )->( OrdSetFocus( nOrdHisMov  ) )
+   ( ::cArticulo)->( ordsetfocus( nOrdArt     ) )
+   ( ::cAlbPrvL )->( ordsetfocus( nOrdAlbPrvL ) )
+   ( ::cFacPrvL )->( ordsetfocus( nOrdFacPrvL ) )
+   ( ::cRctPrvL )->( ordsetfocus( nOrdRctPrvL ) )
+   ( ::cAlbCliL )->( ordsetfocus( nOrdAlbCliL ) )
+   ( ::cFacCliL )->( ordsetfocus( nOrdFacCliL ) )
+   ( ::cFacRecL )->( ordsetfocus( nOrdFacRecL ) )
+   ( ::cTikL    )->( ordsetfocus( nOrdTikCliL ) )
+   ( ::cProducL )->( ordsetfocus( nOrdProducL ) )
+   ( ::cProducM )->( ordsetfocus( nOrdProducM ) )
+   ( ::cHisMovT )->( ordsetfocus( nOrdHisMov  ) )
 
 return ( ::aStocks )
 
@@ -5297,7 +5245,7 @@ METHOD lValidNumeroSerie( cCodArt, cCodAlm, uNumSer, lMessage )
 
    DEFAULT lMessage     := .t.
 
-   if !Empty( uNumSer )
+   if !empty( uNumSer )
       lValid            := ( ::nStockSerie( cCodArt, cCodAlm, uNumSer ) > 0 )
    end if
 
@@ -5343,13 +5291,13 @@ METHOD BrowseNumeroSerie( oCol, cCodArt, cCodAlm, aNumSer, oBrwSer )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Número de serie"
-         :bStrData         := {|| if( !Empty( oBrw:aArrayData ), oBrw:aArrayData[ oBrw:nArrayAt ]:cNumeroSerie, "" ) }
+         :bStrData         := {|| if( !empty( oBrw:aArrayData ), oBrw:aArrayData[ oBrw:nArrayAt ]:cNumeroSerie, "" ) }
          :nWidth           := 200
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Stock"
-         :bStrData         := {|| if( !Empty( oBrw:aArrayData ), Trans( oBrw:aArrayData[ oBrw:nArrayAt ]:nUnidades, MasUnd() ), 0 ) }
+         :bStrData         := {|| if( !empty( oBrw:aArrayData ), Trans( oBrw:aArrayData[ oBrw:nArrayAt ]:nUnidades, MasUnd() ), 0 ) }
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -5357,13 +5305,13 @@ METHOD BrowseNumeroSerie( oCol, cCodArt, cCodAlm, aNumSer, oBrwSer )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Prp. 1"
-         :bStrData         := {|| if( !Empty( oBrw:aArrayData ), oBrw:aArrayData[ oBrw:nArrayAt ]:cValorPropiedad1, "" ) }
+         :bStrData         := {|| if( !empty( oBrw:aArrayData ), oBrw:aArrayData[ oBrw:nArrayAt ]:cValorPropiedad1, "" ) }
          :nWidth           := 60
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Prp. 2"
-         :bStrData         := {|| if( !Empty( oBrw:aArrayData ), oBrw:aArrayData[ oBrw:nArrayAt ]:cValorPropiedad2, "" ) }
+         :bStrData         := {|| if( !empty( oBrw:aArrayData ), oBrw:aArrayData[ oBrw:nArrayAt ]:cValorPropiedad2, "" ) }
          :nWidth           := 60
       end with
 
@@ -5409,9 +5357,9 @@ METHOD nPedidoCliente( cCodCli )
 
    local nTotal      := 0
    local nRec        := ( ::cPedCliT )->( Recno() )
-   local nOrdAnt     := ( ::cPedCliT )->( OrdSetFocus( "cCodCli" ) )
+   local nOrdAnt     := ( ::cPedCliT )->( ordsetfocus( "cCodCli" ) )
 
-   if Empty( cCodCli )
+   if empty( cCodCli )
       Return nTotal
    end if
 
@@ -5427,7 +5375,7 @@ METHOD nPedidoCliente( cCodCli )
 
    end if
 
-   ( ::cPedCliT )->( OrdSetFocus( nOrdAnt ) )
+   ( ::cPedCliT )->( ordsetfocus( nOrdAnt ) )
    ( ::cPedCliT )->( dbGoTo( nRec ) )
 
 Return ( nTotal )
@@ -5441,11 +5389,11 @@ Method nOperacionesCliente( cCodigoCliente, lRiesgo )
    local oBlock
    local nRiesgo     := 0
 
-   if Empty( cCodigoCliente )
+   if empty( cCodigoCliente )
       Return ( nRiesgo )
    end if
 
-   if AllTrim( cCodigoCliente ) == AllTrim( cDefCli() )
+   if alltrim( cCodigoCliente ) == alltrim( cDefCli() )
       Return ( nRiesgo )
    end if
 
@@ -5455,11 +5403,11 @@ Method nOperacionesCliente( cCodigoCliente, lRiesgo )
    BEGIN SEQUENCE
 
    nRec              := ( ::cAlbCliT )->( Recno() )
-   nOrd              := ( ::cAlbCliT )->( OrdSetFocus( "lCodCli" ) )
+   nOrd              := ( ::cAlbCliT )->( ordsetfocus( "lCodCli" ) )
 
    if ( ::cAlbCliT )->( dbSeek( cCodigoCliente ) )
 
-      while ( Alltrim( ( ::cAlbCliT )->cCodCli ) == Alltrim( cCodigoCliente ) ) .and. !( ::cAlbCliT )->( Eof() )
+      while ( alltrim( ( ::cAlbCliT )->cCodCli ) == alltrim( cCodigoCliente ) ) .and. !( ::cAlbCliT )->( Eof() )
 
          if !( ::cAlbCliT )->lFacturado
 
@@ -5479,17 +5427,17 @@ Method nOperacionesCliente( cCodigoCliente, lRiesgo )
 
    end if
 
-   ( ::cAlbCliT )->( OrdSetFocus( nOrd ) )
+   ( ::cAlbCliT )->( ordsetfocus( nOrd ) )
    ( ::cAlbCliT )->( dbGoTo( nRec ) )
 
    // Pagos no cobrados en facturas--------------------------------------------
 
    nRec              := ( ::cFacCliP )->( Recno() )
-   nOrd              := ( ::cFacCliP )->( OrdSetFocus( "cCodCli" ) )
+   nOrd              := ( ::cFacCliP )->( ordsetfocus( "cCodCli" ) )
 
    if ( ::cFacCliP )->( dbSeek( cCodigoCliente ) )
 
-      while ( Alltrim( ( ::cFacCliP )->cCodCli ) == Alltrim( cCodigoCliente ) ) .and. !( ::cFacCliP )->( Eof() )
+      while ( alltrim( ( ::cFacCliP )->cCodCli ) == alltrim( cCodigoCliente ) ) .and. !( ::cFacCliP )->( Eof() )
 
          nRiesgo     += ( ::cFacCliP )->nImporte
 
@@ -5505,17 +5453,17 @@ Method nOperacionesCliente( cCodigoCliente, lRiesgo )
 
    end if
 
-   ( ::cFacCliP )->( OrdSetFocus( nOrd ) )
+   ( ::cFacCliP )->( ordsetfocus( nOrd ) )
    ( ::cFacCliP )->( dbGoTo( nRec ) )
 
    // Anticipos no liquidados-------------------------------------------------
 
    nRec              := ( ::cAntCliT )->( Recno() )
-   nOrd              := ( ::cAntCliT )->( OrdSetFocus( "lCodCli" ) )
+   nOrd              := ( ::cAntCliT )->( ordsetfocus( "lCodCli" ) )
 
    if ( ::cAntCliT )->( dbSeek( cCodigoCliente ) )
 
-      while ( Alltrim( ( ::cAntCliT )->cCodCli ) == Alltrim( cCodigoCliente ) ) .and. !( ::cAntCliT )->( Eof() )
+      while ( alltrim( ( ::cAntCliT )->cCodCli ) == alltrim( cCodigoCliente ) ) .and. !( ::cAntCliT )->( Eof() )
 
          if lRiesgo
             nRiesgo  -= ( ::cAntCliT )->nTotAnt
@@ -5529,17 +5477,17 @@ Method nOperacionesCliente( cCodigoCliente, lRiesgo )
 
    end if
 
-   ( ::cAntCliT )->( OrdSetFocus( nOrd ) )
+   ( ::cAntCliT )->( ordsetfocus( nOrd ) )
    ( ::cAntCliT )->( dbGoTo( nRec ) )
 
    // Pagos no cobrados en facturas---------------------------------------------------
 
    nRec              := ( ::cTikT )->( Recno() )
-   nOrd              := ( ::cTikT )->( OrdSetFocus( "lCliTik" ) )
+   nOrd              := ( ::cTikT )->( ordsetfocus( "lCliTik" ) )
 
    if ( ::cTikT )->( dbSeek( cCodigoCliente ) )
 
-      while ( Alltrim( ( ::cTikT )->cCliTik ) == Alltrim( cCodigoCliente ) ) .and. !( ::cTikT )->( Eof() )
+      while ( alltrim( ( ::cTikT )->cCliTik ) == alltrim( cCodigoCliente ) ) .and. !( ::cTikT )->( Eof() )
 
          nRiesgo     += ( ::cTikT )->nTotTik 
 
@@ -5555,7 +5503,7 @@ Method nOperacionesCliente( cCodigoCliente, lRiesgo )
 
    end if
 
-   ( ::cTikT )->( OrdSetFocus( nOrd ) )
+   ( ::cTikT )->( ordsetfocus( nOrd ) )
    ( ::cTikT )->( dbGoTo( nRec ) )
 
    END SEQUENCE
@@ -5570,10 +5518,10 @@ Method nConsumoArticulo( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecIni, dFe
 
    local dFecDoc
    local nUnidades         := 0
-   local nOrdAlbCliL       := ( ::cAlbCliL )->( OrdSetFocus( "cStkFast" ) )
-   local nOrdFacCliL       := ( ::cFacCliL )->( OrdSetFocus( "cRef"     ) )
-   local nOrdFacRecL       := ( ::cFacRecL )->( OrdSetFocus( "cRef"     ) )
-   local nOrdTikCliL       := ( ::cTikL    )->( OrdSetFocus( "cStkFast" ) )
+   local nOrdAlbCliL       := ( ::cAlbCliL )->( ordsetfocus( "cStkFast" ) )
+   local nOrdFacCliL       := ( ::cFacCliL )->( ordsetfocus( "cRef"     ) )
+   local nOrdFacRecL       := ( ::cFacRecL )->( ordsetfocus( "cRef"     ) )
+   local nOrdTikCliL       := ( ::cTikL    )->( ordsetfocus( "cStkFast" ) )
 
    /*
    Albaranes de clientes-------------------------------------------------------
@@ -5585,11 +5533,11 @@ Method nConsumoArticulo( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecIni, dFe
 
       while ( ::cAlbCliL )->cRef == cCodArt .and. !( ::cAlbCliL )->( Eof() )
 
-         if ( Empty( dFecIni ) .or. ( ::cAlbCliL )->dFecAlb >= dFecIni )   .and. ;
-            ( Empty( dFecFin ) .or. ( ::cAlbCliL )->dFecAlb <= dFecFin )   .and. ;
-            ( Empty( cValPr1 ) .or. ( ::cAlbCliL )->cValPr1 == cValPr1 )   .and. ;
-            ( Empty( cValPr2 ) .or. ( ::cAlbCliL )->cValPr2 == cValPr2 )   .and. ;
-            ( Empty( cCodAlm ) .or. ( ::cAlbCliL )->cAlmLin == cCodAlm ) 
+         if ( empty( dFecIni ) .or. ( ::cAlbCliL )->dFecAlb >= dFecIni )   .and. ;
+            ( empty( dFecFin ) .or. ( ::cAlbCliL )->dFecAlb <= dFecFin )   .and. ;
+            ( empty( cValPr1 ) .or. ( ::cAlbCliL )->cValPr1 == cValPr1 )   .and. ;
+            ( empty( cValPr2 ) .or. ( ::cAlbCliL )->cValPr2 == cValPr2 )   .and. ;
+            ( empty( cCodAlm ) .or. ( ::cAlbCliL )->cAlmLin == cCodAlm ) 
 
             nUnidades      += nTotNAlbCli( ::cAlbCliL )
 
@@ -5611,17 +5559,17 @@ Method nConsumoArticulo( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecIni, dFe
 
       while ( ::cFacCliL )->cRef == cCodArt .and. !( ::cFacCliL )->( Eof() )
 
-         if !Empty( ( ::cFacCliL )->dFecAlb )
+         if !empty( ( ::cFacCliL )->dFecAlb )
             dFecDoc        := ( ::cFacCliL )->dFecAlb
          else
             dFecDoc        := ( ::cFacCliL )->dFecFac
          end if
 
-         if ( Empty( dFecIni ) .or. dFecDoc >= dFecIni )    .and. ;
-            ( Empty( dFecFin ) .or. dFecDoc <= dFecFin )    .and. ;
-            ( Empty( cValPr1 ) .or. ( ::cFacCliL )->cValPr1 == cValPr1 )   .and. ;
-            ( Empty( cValPr2 ) .or. ( ::cFacCliL )->cValPr2 == cValPr2 )   .and. ;
-            ( Empty( cCodAlm ) .or. ( ::cFacCliL )->cAlmLin == cCodAlm )
+         if ( empty( dFecIni ) .or. dFecDoc >= dFecIni )    .and. ;
+            ( empty( dFecFin ) .or. dFecDoc <= dFecFin )    .and. ;
+            ( empty( cValPr1 ) .or. ( ::cFacCliL )->cValPr1 == cValPr1 )   .and. ;
+            ( empty( cValPr2 ) .or. ( ::cFacCliL )->cValPr2 == cValPr2 )   .and. ;
+            ( empty( cCodAlm ) .or. ( ::cFacCliL )->cAlmLin == cCodAlm )
 
             nUnidades      += nTotNFacCli( ::cFacCliL )
 
@@ -5643,11 +5591,11 @@ Method nConsumoArticulo( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecIni, dFe
 
       while ( ::cFacRecL )->cRef == cCodArt .and. !( ::cFacRecL )->( Eof() )
 
-         if ( Empty( dFecIni ) .or. ( ::cFacRecL )->dFecFac >= dFecIni )   .and. ;
-            ( Empty( dFecFin ) .or. ( ::cFacRecL )->dFecFac <= dFecFin )   .and. ;
-            ( Empty( cValPr1 ) .or. ( ::cFacRecL )->cValPr1 == cValPr1 )   .and. ;
-            ( Empty( cValPr2 ) .or. ( ::cFacRecL )->cValPr2 == cValPr2 )   .and. ;
-            ( Empty( cCodAlm ) .or. ( ::cFacRecL )->cAlmLin == cCodAlm )
+         if ( empty( dFecIni ) .or. ( ::cFacRecL )->dFecFac >= dFecIni )   .and. ;
+            ( empty( dFecFin ) .or. ( ::cFacRecL )->dFecFac <= dFecFin )   .and. ;
+            ( empty( cValPr1 ) .or. ( ::cFacRecL )->cValPr1 == cValPr1 )   .and. ;
+            ( empty( cValPr2 ) .or. ( ::cFacRecL )->cValPr2 == cValPr2 )   .and. ;
+            ( empty( cCodAlm ) .or. ( ::cFacRecL )->cAlmLin == cCodAlm )
 
             nUnidades      += nTotNFacRec( ::cFacRecL )
 
@@ -5669,11 +5617,11 @@ Method nConsumoArticulo( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecIni, dFe
 
       while ( ::cTikL )->cCbaTil == cCodArt .and. !( ::cTikL )->( Eof() )
 
-         if ( Empty( dFecIni ) .or. ( ::cTikL )->dFecTik >= dFecIni )   .and. ;
-            ( Empty( dFecFin ) .or. ( ::cTikL )->dFecTik <= dFecFin )   .and. ;
-            ( Empty( cValPr1 ) .or. ( ::cTikL )->cValPr1 == cValPr1 )   .and. ;
-            ( Empty( cValPr2 ) .or. ( ::cTikL )->cValPr2 == cValPr2 )   .and. ;
-            ( Empty( cCodAlm ) .or. ( ::cTikL )->cAlmLin == cCodAlm ) 
+         if ( empty( dFecIni ) .or. ( ::cTikL )->dFecTik >= dFecIni )   .and. ;
+            ( empty( dFecFin ) .or. ( ::cTikL )->dFecTik <= dFecFin )   .and. ;
+            ( empty( cValPr1 ) .or. ( ::cTikL )->cValPr1 == cValPr1 )   .and. ;
+            ( empty( cValPr2 ) .or. ( ::cTikL )->cValPr2 == cValPr2 )   .and. ;
+            ( empty( cCodAlm ) .or. ( ::cTikL )->cAlmLin == cCodAlm ) 
 
             nUnidades   += nTotNTickets( ::cTikL )
 
@@ -5691,19 +5639,19 @@ Method nConsumoArticulo( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecIni, dFe
 
    SysRefresh()
 
-   ( ::cTikL )->( OrdSetFocus( "cStkComb" ) )
+   ( ::cTikL )->( ordsetfocus( "cStkComb" ) )
 
    if ( ::cTikL )->( dbSeek( cCodArt ) )
 
-      if !Empty( ( ::cTikL )->cComTil )
+      if !empty( ( ::cTikL )->cComTil )
 
          while ( ::cTikL )->cComTil == cCodArt .and. !( ::cTikL )->( Eof() )
 
-            if ( Empty( dFecIni ) .or. ( ::cTikL )->dFecTik >= dFecIni )   .and. ;
-               ( Empty( dFecFin ) .or. ( ::cTikL )->dFecTik <= dFecFin )   .and. ;
-               ( Empty( cValPr1 ) .or. ( ::cTikL )->cValPr1 == cValPr1 )   .and. ;
-               ( Empty( cValPr2 ) .or. ( ::cTikL )->cValPr2 == cValPr2 )   .and. ;
-               ( Empty( cCodAlm ) .or. ( ::cTikL )->cAlmLin == cCodAlm )
+            if ( empty( dFecIni ) .or. ( ::cTikL )->dFecTik >= dFecIni )   .and. ;
+               ( empty( dFecFin ) .or. ( ::cTikL )->dFecTik <= dFecFin )   .and. ;
+               ( empty( cValPr1 ) .or. ( ::cTikL )->cValPr1 == cValPr1 )   .and. ;
+               ( empty( cValPr2 ) .or. ( ::cTikL )->cValPr2 == cValPr2 )   .and. ;
+               ( empty( cCodAlm ) .or. ( ::cTikL )->cAlmLin == cCodAlm )
 
                nUnidades   += nTotNTickets( ::cTikL ) 
 
@@ -5717,10 +5665,10 @@ Method nConsumoArticulo( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecIni, dFe
 
    end if
 
-   ( ::cAlbCliL )->( OrdSetFocus( nOrdAlbCliL ) )
-   ( ::cFacCliL )->( OrdSetFocus( nOrdFacCliL ) )
-   ( ::cFacRecL )->( OrdSetFocus( nOrdFacRecL ) )
-   ( ::cTikL    )->( OrdSetFocus( nOrdTikCliL ) )
+   ( ::cAlbCliL )->( ordsetfocus( nOrdAlbCliL ) )
+   ( ::cFacCliL )->( ordsetfocus( nOrdFacCliL ) )
+   ( ::cFacRecL )->( ordsetfocus( nOrdFacRecL ) )
+   ( ::cTikL    )->( ordsetfocus( nOrdTikCliL ) )
 
 RETURN ( nUnidades )
 
@@ -5786,13 +5734,13 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
    ::dConsolidacion     := nil
 
    nRec                 := ( ::cHisMovT )->( Recno() )
-   nOrd                 := ( ::cHisMovT )->( OrdSetFocus( "cStock" ) )
+   nOrd                 := ( ::cHisMovT )->( ordsetfocus( "cStock" ) )
 
    if ( ::cHisMovT )->( dbSeek( cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote ) )
 
       while ( ::cHisMovT )->cRefMov == cCodArt .and. ( ::cHisMovT )->cAliMov == cCodAlm .and. ( ::cHisMovT )->cCodPr1 == cCodPrp1 .and. ( ::cHisMovT )->cCodPr2 == cCodPrp2 .and. ( ::cHisMovT )->cValPr1 == cValPrp1 .and. ( ::cHisMovT )->cValPr2 == cValPrp2 .and. ( ::cHisMovT )->cLote == cLote .and. !( ::cHisMovT)->( Eof() )
 
-         if Empty( ::dConsolidacion )
+         if empty( ::dConsolidacion )
 
             ::dConsolidacion     := ::getFechaHoraConsolidacion()
 
@@ -5812,7 +5760,7 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
 
    // Guardamos el criterio de busqueda para la proxima-----------------------
 
-   ( ::cHisMovT )->( ordSetFocus( nOrd ) )
+   ( ::cHisMovT )->( ordsetfocus( nOrd ) )
    ( ::cHisMovT )->( dbGoTo( nRec ) )
 
 Return ( ::dConsolidacion )
@@ -5823,13 +5771,13 @@ METHOD lCheckConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cVal
 
    local dConsolidacion := ::GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
 
-Return ( Empty( dConsolidacion ) .or. dtos( dFecha ) + tHora >= dConsolidacion )
+Return ( empty( dConsolidacion ) .or. dtos( dFecha ) + tHora >= dConsolidacion )
 
 //---------------------------------------------------------------------------//
 
 METHOD SetCodigoAlmacen( cCodigoAlmacen )
 
-   if !Empty( cCodigoAlmacen )
+   if !empty( cCodigoAlmacen )
       ::uCodigoAlmacen  := { cCodigoAlmacen }
       aChildAlmacen( cCodigoAlmacen, ::uCodigoAlmacen, ::cAlm )
    else
@@ -5859,7 +5807,7 @@ Return ( aScan( ::uCodigoAlmacen, cCodigoAlmacen ) != 0 )
 
 METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
 
-   local nOrdHisMov  := ( ::cHisMovT )->( OrdSetFocus( "cStkFastIn" ) )
+   local nOrdHisMov  := ( ::cHisMovT )->( ordsetfocus( "cStkFastIn" ) )
 
    SysRefresh()
 
@@ -5867,7 +5815,7 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni,
 
       while ( ::cHisMovT )->cRefMov == cCodArt .and. ( ::cHisMovT )->cAliMov == cCodAlm .and. !( ::cHisMovT )->( Eof() )
 
-         if ( Empty( dFecIni ) .or. ( ::cHisMovT )->dFecMov >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cHisMovT)->dFecMov <= dFecFin )
+         if ( empty( dFecIni ) .or. ( ::cHisMovT )->dFecMov >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cHisMovT)->dFecMov <= dFecFin )
 
             if ::lCheckConsolidacion( ( ::cHisMovT )->cRefMov, ( ::cHisMovT )->cAliMov, ( ::cHisMovT )->cCodPr1, ( ::cHisMovT )->cCodPr2, ( ::cHisMovT )->cValPr1, ( ::cHisMovT )->cValPr2, ( ::cHisMovT )->cLote, ( ::cHisMovT )->dFecMov, ( ::cHisMovT )->cTimMov ) 
 
@@ -5899,13 +5847,13 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni,
 
    end if
 
-   ( ::cHisMovT )->( OrdSetFocus( "cStkFastOu" ) )
+   ( ::cHisMovT )->( ordsetfocus( "cStkFastOu" ) )
 
    if ( ::cHisMovT )->( dbSeek( cCodArt + cCodAlm ) )
 
       while ( ::cHisMovT )->cRefMov == cCodArt .and. ( ::cHisMovT )->cAloMov == cCodAlm .and. !( ::cHisMovT )->( Eof() )
 
-         if ( Empty( dFecIni ) .or. ( ::cHisMovT )->dFecMov >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cHisMovT)->dFecMov <= dFecFin )
+         if ( empty( dFecIni ) .or. ( ::cHisMovT )->dFecMov >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cHisMovT)->dFecMov <= dFecFin )
 
             if ::lCheckConsolidacion( ( ::cHisMovT )->cRefMov, ( ::cHisMovT)->cAloMov, ( ::cHisMovT )->cCodPr1, ( ::cHisMovT )->cCodPr2, ( ::cHisMovT )->cValPr1, ( ::cHisMovT )->cValPr2, ( ::cHisMovT )->cLote, ( ::cHisMovT )->dFecMov, ( ::cHisMovT )->cTimMov ) 
 
@@ -5937,7 +5885,7 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni,
 
    end if
 
-   ( ::cHisMovT )->( OrdSetFocus( nOrdHisMov ) )
+   ( ::cHisMovT )->( ordsetfocus( nOrdHisMov ) )
 
 Return ( nil )
 
@@ -5949,8 +5897,8 @@ Return ( nil )
 METHOD aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
 
    local cCodigoArticulo      := ""
-   local nOrdAlbPrvL          := ( ::cAlbPrvL )->( OrdSetFocus( "cStkFastIn" ) )
-   local nOrdAlbPrvS          := ( ::cAlbPrvS )->( OrdSetFocus( "nNumAlb"  ) )
+   local nOrdAlbPrvL          := ( ::cAlbPrvL )->( ordsetfocus( "cStkFastIn" ) )
+   local nOrdAlbPrvS          := ( ::cAlbPrvS )->( ordsetfocus( "nNumAlb"  ) )
 
    if ( ::cAlbPrvL )->( dbSeek( cCodArt + cCodAlm ) )
 
@@ -5960,7 +5908,7 @@ METHOD aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, d
 
             if ( ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmLin, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb, ( ::cAlbPrvL )->tFecAlb ) ) 
 
-               if ( Empty( dFecIni ) .or. ( ::cAlbPrvL )->dFecAlb >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cAlbPrvL )->dFecAlb <= dFecFin ) 
+               if ( empty( dFecIni ) .or. ( ::cAlbPrvL )->dFecAlb >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cAlbPrvL )->dFecAlb <= dFecFin ) 
 
                   // Buscamos el numero de serie----------------------------------------
 
@@ -6000,7 +5948,7 @@ METHOD aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, d
 
    cCodigoArticulo            := ""
 
-   ( ::cAlbPrvL )->( OrdSetFocus( "cStkFastOu" ) )
+   ( ::cAlbPrvL )->( ordsetfocus( "cStkFastOu" ) )
 
    if ( ::cAlbPrvL )->( dbSeek( cCodArt + cCodAlm ) )
 
@@ -6010,7 +5958,7 @@ METHOD aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, d
 
             if ( ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmOrigen, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb, ( ::cAlbPrvL )->tFecAlb ) ) 
 
-               if ( Empty( dFecIni ) .or. ( ::cAlbPrvL )->dFecAlb >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cAlbPrvL )->dFecAlb <= dFecFin ) 
+               if ( empty( dFecIni ) .or. ( ::cAlbPrvL )->dFecAlb >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cAlbPrvL )->dFecAlb <= dFecFin ) 
 
                   // Buscamos el numero de serie----------------------------------------
 
@@ -6046,8 +5994,8 @@ METHOD aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, d
 
    end if
 
-   ( ::cAlbPrvL )->( OrdSetFocus( nOrdAlbPrvL ) )
-   ( ::cAlbPrvS )->( OrdSetFocus( nOrdAlbPrvS ) )
+   ( ::cAlbPrvL )->( ordsetfocus( nOrdAlbPrvL ) )
+   ( ::cAlbPrvS )->( ordsetfocus( nOrdAlbPrvS ) )
 
 RETURN ( nil )
 
@@ -6056,8 +6004,8 @@ RETURN ( nil )
 METHOD aStockFacturaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
 
    local cCodigoArticulo      := ""
-   local nOrdFacPrvL          := ( ::cFacPrvL )->( OrdSetFocus( "cStkFast" ) )
-   local nOrdFacPrvS          := ( ::cFacPrvS )->( OrdSetFocus( "nNumFac"  ) )
+   local nOrdFacPrvL          := ( ::cFacPrvL )->( ordsetfocus( "cStkFast" ) )
+   local nOrdFacPrvS          := ( ::cFacPrvS )->( ordsetfocus( "nNumFac"  ) )
 
    if ( ::cFacPrvL )->( dbSeek( cCodArt + cCodAlm ) )
 
@@ -6067,7 +6015,7 @@ METHOD aStockFacturaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, d
 
             if ( ::lCheckConsolidacion( ( ::cFacPrvL )->cRef, ( ::cFacPrvL )->cAlmLin, ( ::cFacPrvL )->cCodPr1, ( ::cFacPrvL )->cCodPr2, ( ::cFacPrvL )->cValPr1, ( ::cFacPrvL )->cValPr2, ( ::cFacPrvL )->cLote, ( ::cFacPrvL )->dFecFac, ( ::cFacPrvL )->tFecFac ) )
 
-               if ( Empty( dFecIni ) .or. ( ::cFacPrvL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cFacPrvL )->dFecFac <= dFecFin )
+               if ( empty( dFecIni ) .or. ( ::cFacPrvL )->dFecFac >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cFacPrvL )->dFecFac <= dFecFin )
                   
                   // Buscamos el numero de serie----------------------------------
 
@@ -6107,7 +6055,7 @@ METHOD aStockFacturaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, d
 
    cCodigoArticulo            := ""
 
-   ( ::cFacPrvL )->( ordSetFocus( "cStkFastOu" ) )   
+   ( ::cFacPrvL )->( ordsetfocus( "cStkFastOu" ) )   
 
    if ( ::cFacPrvL )->( dbSeek( cCodArt + cCodAlm ) )
 
@@ -6117,7 +6065,7 @@ METHOD aStockFacturaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, d
 
             if ( ::lCheckConsolidacion( ( ::cFacPrvL )->cRef, ( ::cFacPrvL )->cAlmOrigen, ( ::cFacPrvL )->cCodPr1, ( ::cFacPrvL )->cCodPr2, ( ::cFacPrvL )->cValPr1, ( ::cFacPrvL )->cValPr2, ( ::cFacPrvL )->cLote, ( ::cFacPrvL )->dFecFac, ( ::cFacPrvL )->tFecFac ) )
 
-               if ( Empty( dFecIni ) .or. ( ::cFacPrvL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cFacPrvL )->dFecFac <= dFecFin )
+               if ( empty( dFecIni ) .or. ( ::cFacPrvL )->dFecFac >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cFacPrvL )->dFecFac <= dFecFin )
                   
                   // Buscamos el numero de serie----------------------------------
 
@@ -6153,8 +6101,8 @@ METHOD aStockFacturaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, d
 
    end if
 
-   ( ::cFacPrvL )->( OrdSetFocus( nOrdFacPrvL ) )
-   ( ::cFacPrvS )->( OrdSetFocus( nOrdFacPrvS ) )
+   ( ::cFacPrvL )->( ordsetfocus( nOrdFacPrvL ) )
+   ( ::cFacPrvS )->( ordsetfocus( nOrdFacPrvS ) )
 
 RETURN ( nil )
 
@@ -6163,8 +6111,8 @@ RETURN ( nil )
 METHOD aStockRectificativaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
 
    local cCodigoArticulo      := ""
-   local nOrdRctPrvL          := ( ::cRctPrvL )->( OrdSetFocus( "cStkFast" ) )
-   local nOrdRctPrvS          := ( ::cRctPrvS )->( OrdSetFocus( "nNumFac"  ) )
+   local nOrdRctPrvL          := ( ::cRctPrvL )->( ordsetfocus( "cStkFast" ) )
+   local nOrdRctPrvS          := ( ::cRctPrvS )->( ordsetfocus( "nNumFac"  ) )
 
    if ( ::cRctPrvL )->( dbSeek( cCodArt + cCodAlm ) )
 
@@ -6174,7 +6122,7 @@ METHOD aStockRectificativaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFec
 
             if ::lCheckConsolidacion( ( ::cRctPrvL )->cRef, ( ::cRctPrvL )->cAlmLin, ( ::cRctPrvL )->cCodPr1, ( ::cRctPrvL )->cCodPr2, ( ::cRctPrvL )->cValPr1, ( ::cRctPrvL )->cValPr2, ( ::cRctPrvL )->cLote, ( ::cRctPrvL )->dFecFac, ( ::cRctPrvL )->tFecFac ) 
 
-               if ( Empty( dFecIni ) .or. ( ::cRctPrvL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cRctPrvL )->dFecFac <= dFecFin ) 
+               if ( empty( dFecIni ) .or. ( ::cRctPrvL )->dFecFac >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cRctPrvL )->dFecFac <= dFecFin ) 
 
                   // Buscamos el numero de serie-------------------------------------
 
@@ -6214,7 +6162,7 @@ METHOD aStockRectificativaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFec
 
    cCodigoArticulo         := ""
 
-   ( ::cRctPrvL )->( ordSetFocus( "cStkFastOu" ) )
+   ( ::cRctPrvL )->( ordsetfocus( "cStkFastOu" ) )
 
    if ( ::cRctPrvL )->( dbSeek( cCodArt + cCodAlm ) )
 
@@ -6224,7 +6172,7 @@ METHOD aStockRectificativaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFec
 
             if ::lCheckConsolidacion( ( ::cRctPrvL )->cRef, ( ::cRctPrvL )->cAlmOrigen, ( ::cRctPrvL )->cCodPr1, ( ::cRctPrvL )->cCodPr2, ( ::cRctPrvL )->cValPr1, ( ::cRctPrvL )->cValPr2, ( ::cRctPrvL )->cLote, ( ::cRctPrvL )->dFecFac, ( ::cRctPrvL )->tFecFac ) 
 
-               if ( Empty( dFecIni ) .or. ( ::cRctPrvL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cRctPrvL )->dFecFac <= dFecFin ) 
+               if ( empty( dFecIni ) .or. ( ::cRctPrvL )->dFecFac >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cRctPrvL )->dFecFac <= dFecFin ) 
 
                   // Buscamos el numero de serie-------------------------------------
 
@@ -6260,8 +6208,48 @@ METHOD aStockRectificativaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFec
 
    end if 
 
-   ( ::cRctPrvL )->( OrdSetFocus( nOrdRctPrvL ) )
-   ( ::cRctPrvS )->( OrdSetFocus( nOrdRctPrvS ) )
+   ( ::cRctPrvL )->( ordsetfocus( nOrdRctPrvL ) )
+   ( ::cRctPrvS )->( ordsetfocus( nOrdRctPrvS ) )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD aStockPedidoCliente( cCodArt, cCodAlm, lLote, dFecIni, dFecFin )
+
+   local nOrdPedCliT          := ( ::cPedCliT )->( ordsetfocus( "nNumPed"  ) )
+   local nOrdPedCliL          := ( ::cPedCliL )->( ordsetfocus( "cStkFast" ) )
+
+   if ( ::cPedCliL )->( dbSeek( cCodArt + cCodAlm ) )
+
+      while ( ::cPedCliL )->cRef == cCodArt .and. ( ::cPedCliL )->cAlmLin == cCodAlm .and.  !( ::cPedCliL )->( eof() )
+
+         if ( ::cPedCliT )->( dbseek( ( ::cPedCliL )->cSerPed + str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed ) )
+
+            // if ( ::cPedCliT )->nNumPed == 138
+            // msgAlert( ( ( ::cPedCliL )->cSerPed + str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed ), "pedido" )
+            // msgAlert( ( ::cPedCliT )->nEstado, "nEstado" )
+            // msgAlert( ( ::cPedCliT )->lCancel, "lCancel" )
+            // msgAlert( ( ( ::cPedCliT )->nEstado != 3 .and. !( ::cPedCliT )->lCancel ) .and. ( ( empty( dFecIni ) .or. ( ::cPedCliT )->dFecPed >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cPedCliT )->dFecPed <= dFecFin ) ), "condicion" )
+            // end if 
+
+            if ( ( ::cPedCliT )->nEstado != 3 .and. !( ::cPedCliT )->lCancel ) .and.;
+               ( ( empty( dFecIni ) .or. ( ::cPedCliT )->dFecPed >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cPedCliT )->dFecPed <= dFecFin ) )  
+
+               ::InsertStockPedidoClientes()
+
+            end if 
+
+         end if
+
+         ( ::cPedCliL )->( dbSkip() )
+
+      end while
+
+   end if
+
+   ( ::cPedCliL )->( ordsetfocus( nOrdPedCliL ) )
+   ( ::cPedCliT )->( ordsetfocus( nOrdPedCliT ) )
 
 RETURN ( nil )
 
@@ -6270,18 +6258,18 @@ RETURN ( nil )
 METHOD aStockAlbaranCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
 
    local cCodigoArticulo      := ""
-   local nOrdAlbCliL          := ( ::cAlbCliL )->( OrdSetFocus( "cStkFast" ) )
-   local nOrdAlbCliS          := ( ::cAlbCliS )->( OrdSetFocus( "nNumAlb"  ) )
+   local nOrdAlbCliL          := ( ::cAlbCliL )->( ordsetfocus( "cStkFast" ) )
+   local nOrdAlbCliS          := ( ::cAlbCliS )->( ordsetfocus( "nNumAlb"  ) )
 
    if ( ::cAlbCliL )->( dbSeek( cCodArt + cCodAlm ) )
 
-      while ( ::cAlbCliL )->cRef == cCodArt .and. ( ::cAlbCliL )->cAlmLin == cCodAlm .and.  !( ::cAlbCliL )->( eof() )
+      while ( ::cAlbCliL )->cRef == cCodArt .and. ( ::cAlbCliL )->cAlmLin == cCodAlm .and. !( ::cAlbCliL )->( eof() )
 
          if cCodigoArticulo != ( ::cAlbCliL )->cRef + ( ::cAlbCliL )->cAlmLin + ( ::cAlbCliL )->cCodPr1 + ( ::cAlbCliL )->cCodPr2 + ( ::cAlbCliL )->cValPr1 + ( ::cAlbCliL )->cValPr2 + ( ::cAlbCliL )->cLote
 
             if ::lCheckConsolidacion( ( ::cAlbCliL )->cRef, ( ::cAlbCliL )->cAlmLin, ( ::cAlbCliL )->cCodPr1, ( ::cAlbCliL )->cCodPr2, ( ::cAlbCliL )->cValPr1, ( ::cAlbCliL )->cValPr2, ( ::cAlbCliL )->cLote, ( ::cAlbCliL )->dFecAlb, ( ::cAlbCliL )->tFecAlb ) 
 
-               if ( Empty( dFecIni ) .or. ( ::cAlbCliL )->dFecAlb >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cAlbCliL )->dFecAlb <= dFecFin )  
+               if ( empty( dFecIni ) .or. ( ::cAlbCliL )->dFecAlb >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cAlbCliL )->dFecAlb <= dFecFin )  
 
                   if lNumeroSerie .and. ( ::cAlbCliS )->( dbSeek( ( ::cAlbCliL )->cSerAlb + Str( ( ::cAlbCliL )->nNumAlb ) + ( ::cAlbCliL )->cSufAlb + Str( ( ::cAlbCliL )->nNumLin ) ) )
 
@@ -6315,8 +6303,8 @@ METHOD aStockAlbaranCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFe
 
    end if
 
-   ( ::cAlbCliL )->( OrdSetFocus( nOrdAlbCliL ) )
-   ( ::cAlbCliS )->( OrdSetFocus( nOrdAlbCliS ) )
+   ( ::cAlbCliL )->( ordsetfocus( nOrdAlbCliL ) )
+   ( ::cAlbCliS )->( ordsetfocus( nOrdAlbCliS ) )
 
 RETURN ( nil )
 
@@ -6325,8 +6313,8 @@ RETURN ( nil )
 METHOD aStockFacturaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
 
    local cCodigoArticulo      := ""
-   local nOrdFacCliL          := ( ::cFacCliL )->( OrdSetFocus( "cStkFast" ) )
-   local nOrdFacCliS          := ( ::cFacCliS )->( OrdSetFocus( "nNumFac"  ) )
+   local nOrdFacCliL          := ( ::cFacCliL )->( ordsetfocus( "cStkFast" ) )
+   local nOrdFacCliS          := ( ::cFacCliS )->( ordsetfocus( "nNumFac"  ) )
 
    if ( ::cFacCliL )->( dbSeek( cCodArt + cCodAlm ) )
 
@@ -6336,7 +6324,7 @@ METHOD aStockFacturaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFe
 
             if ::lCheckConsolidacion( ( ::cFacCliL )->cRef, ( ::cFacCliL )->cAlmLin, ( ::cFacCliL )->cCodPr1, ( ::cFacCliL )->cCodPr2, ( ::cFacCliL )->cValPr1, ( ::cFacCliL )->cValPr2, ( ::cFacCliL )->cLote, ( ::cFacCliL )->dFecFac, ( ::cFacCliL )->tFecFac ) 
          
-               if ( Empty( dFecIni ) .or. ( ::cFacCliL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cFacCliL )->dFecFac <= dFecFin )
+               if ( empty( dFecIni ) .or. ( ::cFacCliL )->dFecFac >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cFacCliL )->dFecFac <= dFecFin )
 
                   if lNumeroSerie .and. ( ::cFacCliS )->( dbSeek( ( ::cFacCliL )->cSerie + Str( ( ::cFacCliL )->nNumFac ) + ( ::cFacCliL )->cSufFac + Str( ( ::cFacCliL )->nNumLin ) ) )
 
@@ -6370,8 +6358,8 @@ METHOD aStockFacturaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFe
 
    end if
 
-   ( ::cFacCliL )->( OrdSetFocus( nOrdFacCliL ) )
-   ( ::cFacCliS )->( OrdSetFocus( nOrdFacCliS ) )
+   ( ::cFacCliL )->( ordsetfocus( nOrdFacCliL ) )
+   ( ::cFacCliS )->( ordsetfocus( nOrdFacCliS ) )
 
 RETURN ( nil )
 
@@ -6380,8 +6368,8 @@ RETURN ( nil )
 METHOD aStockRectificativaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
 
    local cCodigoArticulo      := ""
-   local nOrdFacRecL          := ( ::cFacRecL )->( OrdSetFocus( "cStkFast" ) )
-   local nOrdFacRecS          := ( ::cFacRecS )->( OrdSetFocus( "nNumFac"  ) )
+   local nOrdFacRecL          := ( ::cFacRecL )->( ordsetfocus( "cStkFast" ) )
+   local nOrdFacRecS          := ( ::cFacRecS )->( ordsetfocus( "nNumFac"  ) )
 
    if ( ::cFacRecL )->( dbSeek( cCodArt + cCodAlm ) )
 
@@ -6391,7 +6379,7 @@ METHOD aStockRectificativaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIn
 
             if ::lCheckConsolidacion( ( ::cFacRecL )->cRef, ( ::cFacRecL )->cAlmLin, ( ::cFacRecL )->cCodPr1, ( ::cFacRecL )->cCodPr2, ( ::cFacRecL )->cValPr1, ( ::cFacRecL )->cValPr2, ( ::cFacRecL )->cLote, ( ::cFacRecL )->dFecFac, ( ::cFacRecL )->tFecFac )
 
-               if ( Empty( dFecIni ) .or. ( ::cFacRecL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cFacRecL )->dFecFac <= dFecFin )
+               if ( empty( dFecIni ) .or. ( ::cFacRecL )->dFecFac >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cFacRecL )->dFecFac <= dFecFin )
 
                   if lNumeroSerie .and. ( ::cFacRecS )->( dbSeek( ( ::cFacRecL )->cSerie + Str( ( ::cFacRecL )->nNumFac ) + ( ::cFacRecL )->cSufFac + Str( ( ::cFacRecL )->nNumLin ) ) )
 
@@ -6425,8 +6413,8 @@ METHOD aStockRectificativaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIn
 
    end if
 
-   ( ::cFacRecL )->( OrdSetFocus( nOrdFacRecL ) )
-   ( ::cFacRecS )->( OrdSetFocus( nOrdFacRecS ) )
+   ( ::cFacRecL )->( ordsetfocus( nOrdFacRecL ) )
+   ( ::cFacRecS )->( ordsetfocus( nOrdFacRecS ) )
 
 RETURN ( nil )
 
@@ -6435,8 +6423,8 @@ RETURN ( nil )
 METHOD aStockTicketsCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
 
    local cCodigoArticulo   := ""
-   local nOrdTikL          := ( ::cTikL )->( OrdSetFocus( "cStkFast" ) )
-   local nOrdTikS          := ( ::cTikS )->( OrdSetFocus( "nNumTik" ) )
+   local nOrdTikL          := ( ::cTikL )->( ordsetfocus( "cStkFast" ) )
+   local nOrdTikS          := ( ::cTikS )->( ordsetfocus( "nNumTik" ) )
 
    if ( ::cTikL )->( dbSeek( cCodArt + cCodAlm ) )
 
@@ -6446,7 +6434,7 @@ METHOD aStockTicketsCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFe
 
             if ::lCheckConsolidacion( ( ::cTikL )->cCbaTil, ( ::cTikL )->cAlmLin, ( ::cTikL )->cCodPr1, ( ::cTikL )->cCodPr2, ( ::cTikL )->cValPr1, ( ::cTikL )->cValPr2, ( ::cTikL )->cLote, ( ::cTikL )->dFecTik, ( ::cTikL )->tFecTik ) 
 
-               if ( Empty( dFecIni ) .or. ( ::cTikL )->dFecTik >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cTikL )->dFecTik <= dFecFin ) 
+               if ( empty( dFecIni ) .or. ( ::cTikL )->dFecTik >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cTikL )->dFecTik <= dFecFin ) 
 
                   if lNumeroSerie .and. ( ::cTikS )->( dbSeek( ( ::cTikL )->cSerTil + ( ::cTikL )->cNumTil + ( ::cTikL )->cSufTil + Str( ( ::cTikl )->nNumLin ) ) )
 
@@ -6484,7 +6472,7 @@ METHOD aStockTicketsCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFe
 
    cCodigoArticulo   := ""
 
-   ( ::cTikL )->( OrdSetFocus( "cStkComb" ) )
+   ( ::cTikL )->( ordsetfocus( "cStkComb" ) )
 
    if ( ::cTikL )->( dbSeek( cCodArt + cCodAlm ) )
 
@@ -6494,7 +6482,7 @@ METHOD aStockTicketsCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFe
 
             if ::lCheckConsolidacion( ( ::cTikL )->cComTil, ( ::cTikL )->cAlmLin, ( ::cTikL )->cCodPr1, ( ::cTikL )->cCodPr2, ( ::cTikL )->cValPr1, ( ::cTikL )->cValPr2, ( ::cTikL )->cLote, ( ::cTikL )->dFecTik, ( ::cTikL )->tFecTik ) 
 
-               if ( Empty( dFecIni ) .or. ( ::cTikL )->dFecTik >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cTikL )->dFecTik <= dFecFin ) 
+               if ( empty( dFecIni ) .or. ( ::cTikL )->dFecTik >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cTikL )->dFecTik <= dFecFin ) 
 
                   ::InsertStockTiketsClientes( .f. , .t. )
 
@@ -6514,8 +6502,8 @@ METHOD aStockTicketsCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFe
 
    end if
 
-   ( ::cTikL )->( OrdSetFocus( nOrdTikL ) )
-   ( ::cTikS )->( OrdSetFocus( nOrdTikS ) )
+   ( ::cTikL )->( ordsetfocus( nOrdTikL ) )
+   ( ::cTikS )->( ordsetfocus( nOrdTikS ) )
 
 RETURN ( nil )
 
@@ -6524,8 +6512,8 @@ RETURN ( nil )
 METHOD aStockProduccion( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
 
    local cCodigoArticulo   := ""
-   local nOrdProL          := ( ::cProducL )->( ordSetFocus( "cStkFast" ) )
-   local nOrdProS          := ( ::cProducS )->( ordSetFocus( "cNumOrd" ) )
+   local nOrdProL          := ( ::cProducL )->( ordsetfocus( "cStkFast" ) )
+   local nOrdProS          := ( ::cProducS )->( ordsetfocus( "cNumOrd" ) )
 
    if ( ::cProducL )->( dbSeek( cCodArt + cCodAlm ) )
 
@@ -6535,7 +6523,7 @@ METHOD aStockProduccion( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin
 
             if ::lCheckConsolidacion( ( ::cProducL )->cCodArt, ( ::cProducL )->cAlmOrd, ( ::cProducL )->cCodPr1, ( ::cProducL )->cCodPr2, ( ::cProducL )->cValPr1, ( ::cProducL )->cValPr2, ( ::cProducL )->cLote, ( ::cProducL )->dFecOrd, ( ::cProducL )->cHorIni )
 
-               if ( Empty( dFecIni ) .or. ( ::cProducL )->dFecOrd >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cProducL )->dFecOrd <= dFecFin )
+               if ( empty( dFecIni ) .or. ( ::cProducL )->dFecOrd >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cProducL )->dFecOrd <= dFecFin )
 
                   if lNumeroSerie .and. ( ::cProducS )->( dbSeek( ( ::cProducL )->cSerOrd + Str( ( ::cProducL )->nNumOrd ) + ( ::cProducL )->cSufOrd + Str( ( ::cProducL )->nNumLin ) ) )
 
@@ -6569,8 +6557,8 @@ METHOD aStockProduccion( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin
 
    end if
 
-   ( ::cProducL )->( ordSetFocus( nOrdProL ) )
-   ( ::cProducS )->( ordSetFocus( nOrdProS ) )
+   ( ::cProducL )->( ordsetfocus( nOrdProL ) )
+   ( ::cProducS )->( ordsetfocus( nOrdProS ) )
 
 RETURN ( nil )
 
@@ -6579,8 +6567,8 @@ RETURN ( nil )
 METHOD aStockMateriaPrima( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
 
    local cCodigoArticulo   := ""
-   local nOrdProM          := ( ::cProducM )->( ordSetFocus( "cStkFast" ) )
-   local nOrdProP          := ( ::cProducP )->( ordSetFocus( "cNumOrd" ) )
+   local nOrdProM          := ( ::cProducM )->( ordsetfocus( "cStkFast" ) )
+   local nOrdProP          := ( ::cProducP )->( ordsetfocus( "cNumOrd" ) )
 
    if ( ::cProducM )->( dbSeek( cCodArt + cCodAlm ) )
 
@@ -6590,7 +6578,7 @@ METHOD aStockMateriaPrima( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecF
 
             if ::lCheckConsolidacion( ( ::cProducM )->cCodArt, ( ::cProducM )->cAlmOrd, ( ::cProducM )->cCodPr1, ( ::cProducM )->cCodPr2, ( ::cProducM )->cValPr1, ( ::cProducM )->cValPr2, ( ::cProducM )->cLote, ( ::cProducM )->dFecOrd, ( ::cProducM )->cHorIni ) 
 
-               if ( Empty( dFecIni ) .or. ( ::cProducM )->dFecOrd >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cProducM )->dFecOrd <= dFecFin )
+               if ( empty( dFecIni ) .or. ( ::cProducM )->dFecOrd >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cProducM )->dFecOrd <= dFecFin )
 
                   if lNumeroSerie .and. ( ::cProducP )->( dbSeek( ( ::cProducM )->cSerOrd + Str( ( ::cProducM )->nNumOrd ) + ( ::cProducM )->cSufOrd + Str( ( ::cProducM )->nNumLin ) ) )
 
@@ -6624,8 +6612,8 @@ METHOD aStockMateriaPrima( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecF
 
    end if
 
-   ( ::cProducM )->( ordSetFocus( nOrdProM ) )  
-   ( ::cProducP )->( ordSetFocus( nOrdProP ) ) 
+   ( ::cProducM )->( ordsetfocus( nOrdProM ) )  
+   ( ::cProducP )->( ordsetfocus( nOrdProP ) ) 
 
 RETURN ( nil )
 
@@ -6637,8 +6625,8 @@ RETURN ( nil )
 METHOD aStockPendiente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
 
    local nTotal            := 0
-   local nOrdPedPrvL       := ( ::cPedPrvL )->( ordSetFocus( "cStkFast" ) )
-   local nOrdAlbPrvL       := ( ::cAlbPrvL )->( ordSetFocus( "cPedRef" ) )
+   local nOrdPedPrvL       := ( ::cPedPrvL )->( ordsetfocus( "cStkFast" ) )
+   local nOrdAlbPrvL       := ( ::cAlbPrvL )->( ordsetfocus( "cPedRef" ) )
 
    if ( ::cPedPrvL )->( dbSeek( cCodArt + cCodAlm ) )
 
@@ -6672,8 +6660,8 @@ METHOD aStockPendiente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin 
 
    end if
 
-   ( ::cPedPrvL )->( ordSetFocus( nOrdPedPrvL ) )
-   ( ::cAlbPrvL )->( ordSetFocus( nOrdAlbPrvL ) )
+   ( ::cPedPrvL )->( ordsetfocus( nOrdPedPrvL ) )
+   ( ::cAlbPrvL )->( ordsetfocus( nOrdAlbPrvL ) )
 
 RETURN ( nil )
 
@@ -6685,7 +6673,7 @@ METHOD InsertStockPendiente( nTotal, lLote, lNumeroSerie )
 
       :cTipoDocumento      := PED_PRV
       :cCodigo             := ( ::cPedPrvL )->cRef
-      :cNumeroDocumento    := ( ::cPedPrvL )->cSerPed + "/" + Alltrim( Str( ( ::cPedPrvL )->nNumPed ) )
+      :cNumeroDocumento    := ( ::cPedPrvL )->cSerPed + "/" + alltrim( Str( ( ::cPedPrvL )->nNumPed ) )
       :cDelegacion         := ( ::cPedPrvL )->cSufPed
       :dFechaDocumento     := dFecPedPrv( ( ::cPedPrvL )->cSerPed + Str( ( ::cPedPrvL )->nNumPed ) + ( ::cPedPrvL )->cSufPed, ::cPedPrvT )
       :tFechaDocumento     := ""
@@ -6709,7 +6697,7 @@ Static Function SeekOnStock( cSeek, oBrw )
 
    local nAt
 
-   nAt               := aScan( oBrw:aArrayData, {|o| Alltrim( Upper( cValToChar( o:cNumeroSerie ) ) ) == Alltrim( Upper( cSeek ) ) } )
+   nAt               := aScan( oBrw:aArrayData, {|o| alltrim( Upper( cValToChar( o:cNumeroSerie ) ) ) == alltrim( Upper( cSeek ) ) } )
    if nAt > 0
       oBrw:nArrayAt  := nAt
    endif

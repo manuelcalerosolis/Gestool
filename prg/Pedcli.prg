@@ -476,6 +476,7 @@ static oMsgAlarm
 static bEdtInc             := { |aTmp, aGet, dbfPedCliI, oBrw, bWhen, bValid, nMode, aTmpLin | EdtInc( aTmp, aGet, dbfPedCliI, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 
 static aEstadoProduccion   := { "Producido", "En producción", "Pendiente de producción" }
+static aEstadoPedido       := { "Pendiente", "Parcial", "Entregado" }
 
 static oMailing
 
@@ -1138,7 +1139,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Estado"
          :nHeadBmpNo       := 4
-         :bStrData         := {|| "" }
+         :bStrData         := {|| cEstadoPedido( ( D():PedidosClientes( nView ) )->nEstado ) }
          :bBmpData         := {|| ( D():PedidosClientes( nView ) )->nEstado }
          :nWidth           := 20
          :AddResource( "Bullet_Square_Red_16" )
@@ -1990,14 +1991,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
    cPicEur              := cPouDiv( "EUR", D():Divisas( nView ) )            // Picture del euro
    cPicUnd              := MasUnd()
 
-   do case
-      case  aTmp[ _NESTADO ] == 1
-         cEstPed        := "Pendiente"
-      case  aTmp[ _NESTADO ] == 2
-         cEstPed        := "Parcial"
-      case  aTmp[ _NESTADO ] == 3
-         cEstPed        := "Entregado"
-   end case
+   cEstPed              := cEstadoPedido( aTmp[ _NESTADO ] )
 
    /*
    Etiquetas-------------------------------------------------------------------
@@ -11785,6 +11779,11 @@ Static Function cEstadoProduccion( cNumPed )
 
 Return ( aEstadoProduccion[ Max( Min( nEstadoProduccion( cNumPed ), 3 ), 1 ) ] )
 
+//---------------------------------------------------------------------------//
+
+Static Function cEstadoPedido( nEstado )
+
+Return ( aEstadoPedido[ Max( Min( nEstado, 3 ), 1 ) ] )
 
 //---------------------------------------------------------------------------//
 
@@ -15502,7 +15501,7 @@ FUNCTION rxPedCli( cPath, cDriver )
       msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de clientes" )
    end if
 
-   dbUseArea( .t., cDriver, cPath + "PEDCLIL.DBF", cCheckArea( "PEDCLIL", @cPedCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "PedCliL.DBF", cCheckArea( "PedCliL", @cPedCliT ), .f. )
    if !( cPedCliT )->( neterr() )
       ( cPedCliT )->( __dbPack() )
 
@@ -15520,6 +15519,11 @@ FUNCTION rxPedCli( cPath, cDriver )
 
       ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cPedCliT )->( ordCreate( cPath + "PedCliL.Cdx", "nPosPrint", "cSerPed + Str( nNumPed ) + cSufPed + Str( nPosPrint )", {|| Field->cSerPed + Str( Field->nNumPed ) + Field->cSufPed + Str( Field->nPosPrint )}, ) )
+
+      // Albaranes no facturados-----------------------------------------------
+
+      ( cPedCliT )->( ordCondSet( "nCtlStk < 2 .and. !Deleted()", {|| Field->nCtlStk < 2 .and. !Deleted() }, , , , , , , , , .t. ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliL.Cdx", "cStkFast", "cRef + cAlmLin", {|| Field->cRef + Field->cAlmLin } ) )
 
       ( cPedCliT )->( dbCloseArea() )
    else
@@ -18169,5 +18173,17 @@ Static Function lChangeRegIva( aTmp )
    end if
 
 return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Function lEntregadoPedidoCliente( cNumeroPedido, cPedCliT )
+
+   local lEntregadoPedidoCliente    := .f.
+
+   if dbSeekInOrd( cNumeroPedido, "nNumPed", cPedCliT )
+      lEntregadoPedidoCliente       := ( cPedCliT )->nEstado == 3 .or. ( cPedCliT )->lCancel
+   end if 
+
+Return ( lEntregadoPedidoCliente )   
 
 //---------------------------------------------------------------------------//
