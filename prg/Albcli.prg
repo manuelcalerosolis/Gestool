@@ -9430,37 +9430,37 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode )
 
          if ( lChgCodCli .and. lBancoDefecto( ( D():Get( "Client", nView ) )->Cod, dbfCliBnc ) )
 
-            if !empty( aGet[ _CBANCO ] )
+            if !empty( aGet[ _CBANCO ] ) .or. lChgCodCli
                aGet[ _CBANCO ]:cText( ( dbfCliBnc )->cCodBnc )
                aGet[ _CBANCO ]:lValid()
             end if
 
-            if !empty( aGet[ _CPAISIBAN ] )
+            if !empty( aGet[ _CPAISIBAN ] ) .or. lChgCodCli
                aGet[ _CPAISIBAN ]:cText( ( dbfCliBnc )->cPaisIBAN )
                aGet[ _CPAISIBAN ]:lValid()
             end if
 
-            if !empty( aGet[ _CCTRLIBAN ] )
+            if !empty( aGet[ _CCTRLIBAN ] ) .or. lChgCodCli
                aGet[ _CCTRLIBAN ]:cText( ( dbfCliBnc )->cCtrlIBAN )
                aGet[ _CCTRLIBAN ]:lValid()
             end if
 
-            if !empty( aGet[ _CENTBNC ] )
+            if !empty( aGet[ _CENTBNC ] ) .or. lChgCodCli
                aGet[ _CENTBNC ]:cText( ( dbfCliBnc )->cEntBnc )
                aGet[ _CENTBNC ]:lValid()
             end if
 
-            if !empty( aGet[ _CSUCBNC ] )
+            if !empty( aGet[ _CSUCBNC ] ) .or. lChgCodCli
                aGet[ _CSUCBNC ]:cText( ( dbfCliBnc )->cSucBnc )
                aGet[ _CSUCBNC ]:lValid()
             end if
 
-            if !empty( aGet[ _CDIGBNC ] )
+            if !empty( aGet[ _CDIGBNC ] ) .or. lChgCodCli
                aGet[ _CDIGBNC ]:cText( ( dbfCliBnc )->cDigBnc )
                aGet[ _CDIGBNC ]:lValid()
             end if
 
-            if !empty( aGet[ _CCTABNC ] )
+            if !empty( aGet[ _CCTABNC ] ) .or. lChgCodCli
                aGet[ _CCTABNC ]:cText( ( dbfCliBnc )->cCtaBnc )
                aGet[ _CCTABNC ]:lValid()
             end if

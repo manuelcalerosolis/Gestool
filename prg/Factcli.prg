@@ -11248,49 +11248,49 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento, lShowInc )
 
             if lBancoDefecto( ( D():Clientes( nView ) )->Cod, dbfCliBnc )
 
-               if !Empty( aGet[ _CBANCO ] )
+               if !Empty( aGet[ _CBANCO ] ) .or. lChgCodCli
                   aGet[ _CBANCO ]:cText( ( dbfCliBnc )->cCodBnc )
                   aGet[ _CBANCO ]:lValid()
                else
                   aTmp[ _CBANCO ] 	:= ( dbfCliBnc )->cCodBnc
                end if
 
-	            if !Empty( aGet[ _CPAISIBAN ] )
+	            if !Empty( aGet[ _CPAISIBAN ] ) .or. lChgCodCli
 	               aGet[ _CPAISIBAN ]:cText( ( dbfCliBnc )->cPaisIBAN )
 	               aGet[ _CPAISIBAN ]:lValid()
 	            else
 	            	aTmp[ _CPAISIBAN ] 	:= ( dbfCliBnc )->cPaisIBAN
 	            end if
 
-	         	if !Empty( aGet[ _CCTRLIBAN ] )
+	         	if !Empty( aGet[ _CCTRLIBAN ] ) .or. lChgCodCli
 	            	aGet[ _CCTRLIBAN ]:cText( ( dbfCliBnc )->cCtrlIBAN )
 	            	aGet[ _CCTRLIBAN ]:lValid()
 	           	else
 	           		aTmp[ _CCTRLIBAN ] 	:= ( dbfCliBnc )->cCtrlIBAN
 	         	end if
 
-            	if !Empty( aGet[ _CENTBNC ] )
+            	if !Empty( aGet[ _CENTBNC ] ) .or. lChgCodCli
                	aGet[ _CENTBNC ]:cText( ( dbfCliBnc )->cEntBnc )
                	aGet[ _CENTBNC ]:lValid()
                else
                   aTmp[ _CENTBNC ] 	:= ( dbfCliBnc )->cEntBnc
             	end if
 
-            	if !Empty( aGet[ _CSUCBNC ] )
+            	if !Empty( aGet[ _CSUCBNC ] ) .or. lChgCodCli
                	aGet[ _CSUCBNC ]:cText( ( dbfCliBnc )->cSucBnc )
                	aGet[ _CSUCBNC ]:lValid()
                else
                   aTmp[ _CSUCBNC ] 	:= ( dbfCliBnc )->cSucBnc
             	end if
 
-            	if !Empty( aGet[ _CDIGBNC ] )
+            	if !Empty( aGet[ _CDIGBNC ] ) .or. lChgCodCli
                	aGet[ _CDIGBNC ]:cText( ( dbfCliBnc )->cDigBnc )
                	aGet[ _CDIGBNC ]:lValid()
                else
                   aTmp[ _CDIGBNC ] 	:= ( dbfCliBnc )->cDigBnc
             	end if
 
-            	if !Empty( aGet[ _CCTABNC ] )
+            	if !Empty( aGet[ _CCTABNC ] ) .or. lChgCodCli
                	aGet[ _CCTABNC ]:cText( ( dbfCliBnc )->cCtaBnc )
                	aGet[ _CCTABNC ]:lValid()
                else
