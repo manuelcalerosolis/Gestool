@@ -5553,7 +5553,7 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
                ( cFacCliP )->cNomCli    := aTabla[ _CNOMCLI ]
                ( cFacCliP )->dEntrada   := Ctod( "" )
                ( cFacCliP )->nImporte   := aTabla[ _NIMPORTE ]
-               ( cFacCliP )->cDesCrip   := "Recibo Nº" + alltrim( str( nCon ) ) + " generado de la devolución del recibo " + aTabla[ _CSERIE ] + "/" + AllTrim( str( aTabla[ _NNUMFAC ] ) ) + "/" + aTabla[ _CSUFFAC ] + " - " + AllTrim( str( aTabla[ _NNUMREC ] ) )
+               ( cFacCliP )->cDescrip   := "Recibo Nº" + alltrim( str( nCon ) ) + " generado de la devolución del recibo " + aTabla[ _CSERIE ] + "/" + alltrim( str( aTabla[ _NNUMFAC ] ) ) + "/" + aTabla[ _CSUFFAC ] + " - " + AllTrim( str( aTabla[ _NNUMREC ] ) )
                ( cFacCliP )->dPreCob    := GetSysDate()
                ( cFacCliP )->lCobrado   := .f.
                ( cFacCliP )->cDivPgo    := aTabla[ _CDIVPGO ]

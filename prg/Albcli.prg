@@ -4369,8 +4369,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
    do case
    case nMode == APPD_MODE
 
-      aTmp[ _dCSERALB]        := aTmpAlb[_CSERALB]
-      aTmp[ _dNNUMALB]        := aTmpAlb[_NNUMALB]
+      aTmp[ _dCSERALB]        := aTmpAlb[ _CSERALB ]
+      aTmp[ _dNNUMALB]        := aTmpAlb[ _NNUMALB ]
       aTmp[ _NCANENT ]        := 1
       aTmp[ _NUNICAJA]        := 1
       aTmp[ _DFECHA  ]        := GetSysDate()
@@ -4385,7 +4385,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
 
       aTmp[ __DFECSAL ]       := aTmpAlb[ _DFECSAL ]
       aTmp[ __DFECENT ]       := aTmpAlb[ _DFECENTR ]
-      aTmp[ __LALQUILER ]     := !empty( oTipAlb ) .and. oTipAlb:nAt == 2
+      aTmp[ __LALQUILER ]     := !empty( oTipAlb ) .and. ( oTipAlb:nAt == 2 )
 
       aTmp[ _COBRLIN ]        := aTmpAlb[ _CCODOBR ]
 
@@ -5050,9 +5050,9 @@ RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-Static Function masiveAppendLines( aCabeceraAlbaran, nMode )
+Static Function masiveAppendLines( aCabeceraAlbaran )
 
-   local oDlg  := TGetDialog():New( {|getDialog| runMasiveAppendLines( getDialog, aCabeceraAlbaran, nMode ) } )
+   local oDlg  := TGetDialog():New( {|getDialog| runMasiveAppendLines( getDialog, aCabeceraAlbaran ) } )
    
    oDlg:Run()
 
@@ -5060,7 +5060,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Static Function runMasiveAppendLines( getDialog, aCabeceraAlbaran, nMode )
+Static Function runMasiveAppendLines( getDialog, aCabeceraAlbaran )
 
    local aLineasAlbaranes  
 
@@ -5070,11 +5070,11 @@ Static Function runMasiveAppendLines( getDialog, aCabeceraAlbaran, nMode )
 
    aLineasAlbaranes        := dbBlankRec( dbfAlbCliL )
 
-   setDlgMode( aLineasAlbaranes, aCabeceraAlbaran, nMode )
+   setDlgMode( aLineasAlbaranes, aCabeceraAlbaran, APPD_MODE )
 
    if loaArt( getDialog:cGet, aLineasAlbaranes, nil, aCabeceraAlbaran )
 
-      saveDeta( aLineasAlbaranes, aCabeceraAlbaran, , , , , , nMode )
+      saveDeta( aLineasAlbaranes, aCabeceraAlbaran, , , , , , APPD_MODE )
 
       if !empty( oBrwLin )
          oBrwLin:Refresh()
@@ -10067,6 +10067,46 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
    DEFAULT lFocused              := .t.
 
+   if empty( aTmp[ _DFECHA ] )
+      aTmp[ _DFECHA ]            := GetSysDate()
+   end if 
+
+   if empty( aTmp[ _CTIPMOV ] )
+      aTmp[ _CTIPMOV ]           := cDefVta()
+   end if 
+
+   if empty( aTmp[ _CALMLIN ] ) 
+      aTmp[ _CALMLIN ]           := aTmpAlb[ _CCODALM ]
+   end if 
+
+   if empty( aTmp[ _LIVALIN ] ) 
+      aTmp[ _LIVALIN ]           := aTmpAlb[ _LIVAINC ]
+   end if 
+
+   if empty( aTmp[ __CNUMPED ] ) 
+      aTmp[ __CNUMPED ]          := aTmpAlb[ _CNUMPED ]
+   end if 
+      
+   if empty( aTmp[ __DFECSAL ] ) 
+      aTmp[ __DFECSAL ]          := aTmpAlb[ _DFECSAL ]
+   end if 
+
+   if empty( aTmp[ __DFECENT ] ) 
+      aTmp[ __DFECENT ]          := aTmpAlb[ _DFECENTR ]
+   end if 
+
+   if empty( aTmp[ _COBRLIN ] ) 
+      aTmp[ _COBRLIN ]           := aTmpAlb[ _CCODOBR ]
+   end if 
+
+   if empty( aTmp[ _NTARLIN ] ) .and. !empty( oGetTarifa:getTarifa() )
+      aTmp[ _NTARLIN ]           := oGetTarifa:getTarifa()
+   end if 
+
+   if empty( aTmp[ _CALMLIN ] ) .and. !empty( oTipAlb )
+      aTmp[ __LALQUILER ]        :=  ( oTipAlb:nAt == 2 )
+   end if 
+
    if empty( cCodArt )
 
       if lRetCodArt()
@@ -10082,7 +10122,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
          aGet[ _CDETALLE ]:cText( Space( 50 ) )
          aGet[ _CDETALLE ]:bWhen    := {|| .t. }
          aGet[ _CDETALLE ]:Hide()
-         aGet[ _MLNGDES ]:Show()
+         aGet[ _MLNGDES  ]:Show()
          if lFocused 
            aGet[ _MLNGDES ]:SetFocus()
          end if
@@ -10093,11 +10133,10 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
    else
 
       if !empty(aGet)
-         aGet[ _NIVA ]:bWhen     := {|| lModIva() }
+         aGet[ _NIVA ]:bWhen  := {|| lModIva() }
       end if 
-      /*
-      Buscamos codificacion GS1-128--------------------------------------------
-      */
+
+      // Buscamos codificacion GS1-128--------------------------------------------
 
       if Len( Alltrim( cCodArt ) ) > 18
 
@@ -10139,9 +10178,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
                msgstop( trim( ( D():Articulos( nView ) )->mComent ) )
             end if
 
-            /*
-            Metemos el proveedor habitual--------------------------------------
-            */
+            // Metemos el proveedor habitual--------------------------------------
 
             aTmp[ _CCODPRV  ]    := ( D():Articulos( nView ) )->cPrvHab   
             aTmp[ _CREFPRV  ]    := Padr( cRefPrvArt( aTmp[ _CREF ], ( D():Articulos( nView ) )->cPrvHab , dbfArtPrv ), 18 )
@@ -10286,6 +10323,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
                aTmp[ _LIMPLIN ]     := .f.
                aTmp[ _NCTLSTK ]     := ( D():Articulos( nView ) )->nCtlStock
+
                if !empty(aGet)
                   aGet[ _NCTLSTK ]:setOption( aTmp[ _NCTLSTK ] )
                end if
@@ -10375,9 +10413,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             aTmp[ _CCODPR1 ]   := ( D():Articulos( nView ) )->cCodPrp1
             aTmp[ _CCODPR2 ]   := ( D():Articulos( nView ) )->cCodPrp2
 
-            /*
-            Comprobamos que tenga valores las propiedades----------------------
-            */
+            // Comprobamos que tenga valores las propiedades----------------------
 
             if ( !empty( aGet ) )                                                                                                                  .and.;
                ( !empty( aTmp[ _CCODPR1 ] ) .and. empty( aTmp[ _CVALPR1 ] ) ) .or. ( !empty( aTmp[ _CCODPR2 ] ) .and. empty( aTmp[ _CVALPR2 ] ) )  .and.;

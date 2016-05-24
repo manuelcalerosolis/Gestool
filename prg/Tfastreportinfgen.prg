@@ -1492,7 +1492,7 @@ Method SaveReport( lSaveAs ) CLASS TFastReportInfGen
 
    local cFile    
 
-   if !::lUserDefine .or. lSaveAs
+   if lSaveAs // !::lUserDefine .or. 
 
       // Nuevo informe --------------------------------------------------------
 

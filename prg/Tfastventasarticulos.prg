@@ -30,6 +30,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    DATA  oOperario
    DATA  oObras
    DATA  oTarPreL
+   DATA  oAtipicasCliente
 
    DATA  oPrp1
    DATA  oPrp2
@@ -361,6 +362,8 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       DATABASE NEW ::oTarPreL PATH ( cPatEmp() ) CLASS "TARPREL"     FILE "TARPREL.DBF"   VIA ( cDriver() ) SHARED INDEX "TARPREL.CDX"
 
+      DATABASE NEW ::oAtipicasCliente PATH ( cPatEmp() ) CLASS "CliAtp" FILE "CliAtp.Dbf" VIA ( cDriver() ) SHARED INDEX "CliAtp.CDX"
+
       ::oProCab   := TDataCenter():oProCab()
 
       ::oProLin   := TDataCenter():oProLin()
@@ -555,6 +558,10 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
 
       if !empty( ::oPrp2 ) .and. ( ::oPrp2:Used() )
          ::oPrp2:end()
+      end if
+
+      if !empty( ::oAtipicasCliente ) .and. ( ::oAtipicasCliente:Used() )
+         ::oAtipicasCliente:end()
       end if
 
       if !empty( ::oTarPreL ) .and. ( ::oTarPreL:Used() )
@@ -1009,14 +1016,17 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Agentes",                    ::oDbfAge:nArea )
    ::oFastReport:SetFieldAliases(   "Agentes",                    cItemsToReport( aItmAge() ) )
 
+   ::oFastReport:SetWorkArea(       "Atipicas de clientes",       ::oAtipicasCliente:nArea )
+   ::oFastReport:SetFieldAliases(   "Atipicas de clientes",       cItemsToReport( aItmAtp() ) )
+
    // Relaciones entre tablas-----------------------------------------------------
 
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Familias",                      {|| ::oDbfArt:Familia } )
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipo artículos",                {|| ::oDbfArt:cCodTip } )
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Categorias",                    {|| ::oDbfArt:cCodCate } )
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Temporadas",                    {|| ::oDbfArt:cCodTemp } )
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Fabricantes",                   {|| ::oDbfArt:cCodFab } )
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipos de " + cImp(),            {|| ::oDbfArt:TipoIva } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Familias",                {|| ::oDbfArt:Familia } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipo artículos",          {|| ::oDbfArt:cCodTip } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Categorias",              {|| ::oDbfArt:cCodCate } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Temporadas",              {|| ::oDbfArt:cCodTemp } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Fabricantes",             {|| ::oDbfArt:cCodFab } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipos de " + cImp(),      {|| ::oDbfArt:TipoIva } )
 
    ::oFastReport:SetMasterDetail(   "Escandallos", "Artículos.Escandallos",         {|| ::oArtKit:cRefKit } )
    
@@ -1032,17 +1042,19 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetMasterDetail(   "Informe", "Grupos familias",                   {|| ::oDbf:cGrpFam } )
    ::oFastReport:SetMasterDetail(   "Informe", "Agentes",                           {|| ::oDbf:cCodAge } )
 
+   ::oFastReport:SetMasterDetail(   "Informe", "Atipicas de clientes",              {|| ::oDbf:cCodCli + :oDbf:cCodArt } )
+
    ::oFastReport:SetMasterDetail(   "Informe", "Artículos.Informe",                 {|| ::oDbf:cCodArt } )  
    ::oFastReport:SetMasterDetail(   "Informe", "Imagenes",                          {|| ::oDbf:cCodArt } )
    ::oFastReport:SetMasterDetail(   "Informe", "Escandallos",                       {|| ::oDbf:cCodArt } )
    ::oFastReport:SetMasterDetail(   "Informe", "Códigos de barras",                 {|| ::oDbf:cCodArt } )
    ::oFastReport:SetMasterDetail(   "Informe", "Codificación de proveedores",       {|| ::oDbf:cCodArt } )
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Stock por almacén",  {|| ::oDbf:cCodArt + ::oDbf:cCodAlm } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Centro de coste",    {|| ::oDbf:cCtrCoste } )   
+   ::oFastReport:SetMasterDetail(   "Informe", "Stock por almacén",                 {|| ::oDbf:cCodArt + ::oDbf:cCodAlm } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Centro de coste",                   {|| ::oDbf:cCtrCoste } )   
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Propiedades 1",    {|| ::oDbf:cCodPr1 + ::oDbf:cValPr1 } )   
-   ::oFastReport:SetMasterDetail(   "Informe", "Propiedades 2",    {|| ::oDbf:cCodPr2 + ::oDbf:cValPr2 } )   
+   ::oFastReport:SetMasterDetail(   "Informe", "Propiedades 1",                     {|| ::oDbf:cCodPr1 + ::oDbf:cValPr1 } )   
+   ::oFastReport:SetMasterDetail(   "Informe", "Propiedades 2",                     {|| ::oDbf:cCodPr2 + ::oDbf:cValPr2 } )   
 
    // Resincronizar con los movimientos-------------------------------------------
 
@@ -1074,6 +1086,8 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetResyncPair(     "Informe", "Códigos de barras" )
    ::oFastReport:SetResyncPair(     "Informe", "Stock por almacén" )  
    ::oFastReport:SetResyncPair(     "Informe", "Centro de coste" ) 
+
+   ::oFastReport:SetResyncPair(     "Informe", "Atipicas de clientes" )
 
    ::oFastReport:SetResyncPair(     "Informe", "Propiedades 1" )   
    ::oFastReport:SetResyncPair(     "Informe", "Propiedades 2" )   
