@@ -1352,8 +1352,8 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
 
             while !::lBreak .and. ( ::oPreCliT:cSerPre + Str( ::oPreCliT:nNumPre ) + ::oPreCliT:cSufPre == ::oPreCliL:cSerPre + Str( ::oPreCliL:nNumPre ) + ::oPreCliL:cSufPre )
 
-               if !( ::lExcCero  .and. nTotNPreCli( ::oPreCliL:cAlias ) == 0 )  .and.;
-                  !( ::lExcImp   .and. nImpLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
+               //if !( ::lExcCero  .and. nTotNPreCli( ::oPreCliL:cAlias ) == 0 )  .and.;
+               //   !( ::lExcImp   .and. nImpLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
 
                   /*
                   AÃ±adimos un nuevo registro-----------------------------------
@@ -1449,7 +1449,7 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
                   ::InsertIfValid()
                   ::loadValuesExtraFields()
 
-               end if
+               //end if
 
                ::oPreCliL:Skip()
 
@@ -1538,8 +1538,8 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
             while !::lBreak .and. D():PedidosClientesId( ::nView ) == D():PedidosClientesLineasId( ::nView ) 
 
-               if !( ::lExcCero  .and. nTotNPedCli( aliasPedidosClientesLineas ) == 0 )  .and.;
-                  !( ::lExcImp   .and. nImpLPedCli( aliasPedidosClientes, aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
+               //if !( ::lExcCero  .and. nTotNPedCli( aliasPedidosClientesLineas ) == 0 )  .and.;
+               //   !( ::lExcImp   .and. nImpLPedCli( aliasPedidosClientes, aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
 
                   // Añadimos un nuevo registro--------------------------------
 
@@ -1629,7 +1629,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::InsertIfValid()
                   ::loadValuesExtraFields()
 
-               end if
+               //end if
 
                ( aliasPedidosClientesLineas )->( dbSkip() )
 
@@ -1716,8 +1716,8 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
 
             while !::lBreak .and. ( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb == ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb )
 
-               if !( ::lExcCero  .and. nTotNAlbCli( ::oAlbCliL:cAlias ) == 0 )  .and.;
-                  !( ::lExcImp   .and. nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
+               //if !( ::lExcCero  .and. nTotNAlbCli( ::oAlbCliL:cAlias ) == 0 )  .and.;
+               //   !( ::lExcImp   .and. nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
 
                   ::oDbf:Blank()
 
@@ -1818,7 +1818,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
                   ::InsertIfValid()
                   ::loadValuesExtraFields()
 
-               end if
+               //end if
 
                ::oAlbCliL:Skip()
 
@@ -1906,8 +1906,8 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
 
             while !::lBreak .and. ( ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac == ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac )
 
-               if !( ::lExcCero  .and. nTotNFacCli( ::oFacCliL:cAlias ) == 0 )  .and.;
-                  !( ::lExcImp   .and. nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
+               //if !( ::lExcCero  .and. nTotNFacCli( ::oFacCliL:cAlias ) == 0 )  .and.;
+               //   !( ::lExcImp   .and. nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
 
                   ::oDbf:Blank()
                   ::oDbf:cCodArt    := ::oFacCliL:cRef
@@ -2003,7 +2003,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
                   ::InsertIfValid()
                   ::loadValuesExtraFields()
 
-               end if
+               //end if
 
                ::oFacCliL:Skip()
 
@@ -2088,8 +2088,8 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
 
             while !::lBreak .and. ( ::oFacRecT:cSerie + Str( ::oFacRecT:nNumFac ) + ::oFacRecT:cSufFac == ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac )
 
-               if !( ::lExcCero  .and. nTotNFacRec ( ::oFacRecL:cAlias ) == 0 )  .and.;
-                  !( ::lExcImp   .and. nImpLFacRec ( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
+               //if !( ::lExcCero  .and. nTotNFacRec ( ::oFacRecL:cAlias ) == 0 )  .and.;
+               //   !( ::lExcImp   .and. nImpLFacRec ( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
 
                   ::oDbf:Blank()
 
@@ -2186,7 +2186,7 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
                   ::InsertIfValid()
                   ::loadValuesExtraFields()
 
-               end if
+               //end if
 
                ::oFacRecL:Skip()
 
@@ -2675,8 +2675,8 @@ METHOD AddParteProduccion() CLASS TFastVentasArticulos
 
             while !::lBreak .and. ( ::oProLin:cSerOrd + Str( ::oProLin:nNumOrd, 9 ) + ::oProLin:cSufOrd == ::oProCab:cSerOrd + Str( ::oProCab:nNumOrd, 9 ) + ::oProCab:cSufOrd ) .and. !::oProLin:Eof()
 
-               if !( ::lExcCero  .and. ::oProLin:Unidades() == 0 )  .and.;
-                  !( ::lExcImp   .and. ::oProLin:TotalImporte() == 0 )
+               //if !( ::lExcCero  .and. ::oProLin:Unidades() == 0 )  .and.;
+               //   !( ::lExcImp   .and. ::oProLin:TotalImporte() == 0 )
 
                      ::oDbf:Blank()
 
@@ -2720,7 +2720,7 @@ METHOD AddParteProduccion() CLASS TFastVentasArticulos
                   ::InsertIfValid()
                   ::loadValuesExtraFields()
 
-               end if
+               //end if
 
                ::oPedPrvL:Skip()
 
@@ -2784,8 +2784,8 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
 
             while !::lBreak .and. ( ::oPedPrvT:cSerPed + Str( ::oPedPrvT:nNumPed ) + ::oPedPrvT:cSufPed == ::oPedPrvL:cSerPed + Str( ::oPedPrvL:nNumPed ) + ::oPedPrvL:cSufPed ) .and. !::oPedPrvL:Eof()
 
-               if !( ::lExcCero  .and. nTotNPedPrv( ::oPedPrvL:cAlias ) == 0 )  .and.;
-                  !( ::lExcImp   .and. nImpLPedPrv( ::oPedPrvT:cAlias, ::oPedPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
+               //if !( ::lExcCero  .and. nTotNPedPrv( ::oPedPrvL:cAlias ) == 0 )  .and.;
+               //   !( ::lExcImp   .and. nImpLPedPrv( ::oPedPrvT:cAlias, ::oPedPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
 
                      ::oDbf:Blank()
 
@@ -2857,7 +2857,7 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
                   ::InsertIfValid()
                   ::loadValuesExtraFields()
 
-               end if
+               //end if
 
                ::oPedPrvL:Skip()
 
@@ -2928,8 +2928,8 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
 
             while !::lBreak .and. ( ::oAlbPrvT:cSerAlb + Str( ::oAlbPrvT:nNumAlb ) + ::oAlbPrvT:cSufAlb == ::oAlbPrvL:cSerAlb + Str( ::oAlbPrvL:nNumAlb ) + ::oAlbPrvL:cSufAlb ) .and. !::oAlbPrvL:Eof()
 
-               if !( ::lExcCero  .and. nTotNAlbPrv( ::oAlbPrvL:cAlias ) == 0 )  .and.;
-                  !( ::lExcImp   .and. nImpLAlbPrv( ::oAlbPrvT:cAlias, ::oAlbPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
+               //if !( ::lExcCero  .and. nTotNAlbPrv( ::oAlbPrvL:cAlias ) == 0 )  .and.;
+               //   !( ::lExcImp   .and. nImpLAlbPrv( ::oAlbPrvT:cAlias, ::oAlbPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
 
                   ::oDbf:Blank()
 
@@ -3010,7 +3010,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
                   ::InsertIfValid()
                   ::loadValuesExtraFields()
                   
-               end if
+               //end if
 
                ::oAlbPrvL:Skip()
 
@@ -3074,8 +3074,8 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
 
             while !::lBreak .and. ( ::oFacPrvT:cSerFac + Str( ::oFacPrvT:nNumFac ) + ::oFacPrvT:cSufFac == ::oFacPrvL:cSerFac + Str( ::oFacPrvL:nNumFac ) + ::oFacPrvL:cSufFac )
 
-               if !( ::lExcCero  .and. nTotNFacPrv( ::oFacPrvL:cAlias ) == 0 )  .and.;
-                  !( ::lExcImp   .and. nImpLFacPrv( ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
+               //if !( ::lExcCero  .and. nTotNFacPrv( ::oFacPrvL:cAlias ) == 0 )  .and.;
+               //   !( ::lExcImp   .and. nImpLFacPrv( ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
 
                   ::oDbf:Blank()
 
@@ -3153,7 +3153,7 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::InsertIfValid()
                   ::loadValuesExtraFields()
 
-               end if
+               //end if
 
                ::oFacPrvL:Skip()
 
@@ -3217,8 +3217,8 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
 
             while !::lBreak .and. ( ::oRctPrvT:cSerFac + Str( ::oRctPrvT:nNumFac ) + ::oRctPrvT:cSufFac == ::oRctPrvL:cSerFac + Str( ::oRctPrvL:nNumFac ) + ::oRctPrvL:cSufFac )
 
-               if !( ::lExcCero  .and. nTotNRctPrv( ::oRctPrvL:cAlias ) == 0 )  .and.;
-                  !( ::lExcImp   .and. nImpLRctPrv( ::oRctPrvT:cAlias, ::oRctPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
+               //if !( ::lExcCero  .and. nTotNRctPrv( ::oRctPrvL:cAlias ) == 0 )  .and.;
+               //   !( ::lExcImp   .and. nImpLRctPrv( ::oRctPrvT:cAlias, ::oRctPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
 
                   ::oDbf:Blank()
 
@@ -3295,7 +3295,7 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::InsertIfValid()
                   ::loadValuesExtraFields()
 
-               end if
+               //end if
 
                ::oRctPrvL:Skip()
 
