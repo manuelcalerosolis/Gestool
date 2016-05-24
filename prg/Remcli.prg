@@ -67,6 +67,9 @@ CLASS TRemesas FROM TMasDet
    DATA cFormaPagoIni
    DATA cFormaPagoFin
 
+   DATA nRecAnterior
+   DATA cOrdenAnterior
+
    DATA  oMeter            AS OBJECT
    DATA  nMeter            AS NUMERIC  INIT  0
    DATA  bmpConta
@@ -228,6 +231,9 @@ CLASS TRemesas FROM TMasDet
    METHOD DeleteDet( lMessage )
 
    METHOD setEstadoFactura()
+
+   METHOD SetOrdenNumeroRemesa()
+   METHOD RestoreOrdenNumeroRemesa()
 
 END CLASS
 
@@ -491,14 +497,14 @@ METHOD Activate()
 
       DEFINE BTNSHELL RESOURCE "BmpConta" OF ::oWndBrw ;
          NOBORDER ;
-         ACTION   ( ::SelectRec( {|| ::contabilizaRemesas( ::lChkSelect ) }, "Contabilizar remesas", "Simular" , .f. ) ) ;
+         ACTION   ( ::SetOrdenNumeroRemesa(), ::SelectRec( {|| ::contabilizaRemesas( ::lChkSelect ) }, "Contabilizar remesas", "Simular" , .f. ), ::RestoreOrdenNumeroRemesa() ) ;
          TOOLTIP  "(C)ontabilizar" ;
          HOTKEY   "C";
          LEVEL    4
 
       DEFINE BTNSHELL RESOURCE "CHGSTATE" OF ::oWndBrw ;
 			NOBORDER ;
-         ACTION   ( ::SelectRec( {|| ::cambiaEstadoContabilizadoRemesas( ::lChkSelect ) }, "Cambiar estado", "Contabilizado" , .f. ) ) ;
+         ACTION   ( ::SetOrdenNumeroRemesa(), ::SelectRec( {|| ::cambiaEstadoContabilizadoRemesas( ::lChkSelect ) }, "Cambiar estado", "Contabilizado" , .f. ), ::RestoreOrdenNumeroRemesa() ) ;
          TOOLTIP  "Cambiar es(t)ado" ;
          HOTKEY   "T";
          LEVEL    4
@@ -2506,6 +2512,24 @@ METHOD setEstadoFactura()
    ::oDbfDet:GoTo( nRecRec )
 
 Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD SetOrdenNumeroRemesa()
+
+   ::nRecAnterior       := ::oDbf:Recno()
+   ::cOrdenAnterior     := ::oDbf:OrdSetFocus( "nNumRem" )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD RestoreOrdenNumeroRemesa()
+
+   ::oDbf:OrdSetFocus( ::cOrdenAnterior )
+   ::oDbf:GoTo( ::nRecAnterior )
+
+Return ( self )
 
 //---------------------------------------------------------------------------//
 

@@ -1308,7 +1308,7 @@ METHOD SelectRec( bAction, cDlgTitle, cChkTitle, lClose ) CLASS TMasDet
       OF       ::oDlgSelect ;
       ACTION   ( ::oDlgSelect:end() )
 
- REDEFINE APOLOMETER ::oMtrSelect ;
+   REDEFINE APOLOMETER ::oMtrSelect ;
       VAR      nMtrInf ;
       PROMPT   "Proceso" ;
       ID       200;
@@ -1354,6 +1354,7 @@ METHOD EvalSelect( bAction ) CLASS TMasDet
    local cSeek
    local bCond
    local lWhile   := .t.
+   local lresult
 
    /*
    Preparamos la pantalla para mostrar la simulación---------------------------
@@ -1430,7 +1431,7 @@ METHOD EvalSelect( bAction ) CLASS TMasDet
 
       end if
 
-      ::oDbf:Seek( cSeek, .t. )
+      lResult        := ::oDbf:Seek( cSeek, .t. )
 
       ::oMtrSelect:Set( ::oDbf:OrdKeyNo() )
 

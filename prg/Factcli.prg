@@ -19711,11 +19711,16 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
    local nBaseGasto
    local nIvaGasto
 
-   DEFAULT cFactura        := D():FacturasClientesId( nView ) 
-   DEFAULT cFacCliT        := D():FacturasClientes( nView )
-   DEFAULT cFacCliL        := D():FacturasClientesLineas( nView )
-   DEFAULT cFacCliP        := D():FacturasClientesCobros( nView )
-   DEFAULT cAntCliT        := D():AnticiposClientes( nView )
+   if !Empty( nView )
+
+      DEFAULT cFactura     := D():FacturasClientesId( nView ) 
+      DEFAULT cFacCliT     := D():FacturasClientes( nView )
+      DEFAULT cFacCliL     := D():FacturasClientesLineas( nView )
+      DEFAULT cFacCliP     := D():FacturasClientesCobros( nView )
+      DEFAULT cAntCliT     := D():AnticiposClientes( nView )
+
+   end if
+
    DEFAULT cIva            := dbfIva
    DEFAULT cDiv            := dbfDiv
    DEFAULT lPic            := .f.

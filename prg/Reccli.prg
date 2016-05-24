@@ -2161,8 +2161,8 @@ function SynRecCli( cPath )
 
    DEFAULT cPath     := cPatEmp()
 
-   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   /*oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE*/
 
    USE ( cPath + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacCliT", @cFacCliT ) ) EXCLUSIVE
    if !lAIS() ; ( cFacCliT )->( ordListAdd( cPath + "FACCLIT.CDX" ) ); else ; ordSetFocus( 1 ) ; end 
@@ -2173,7 +2173,7 @@ function SynRecCli( cPath )
    USE ( cPath + "FACCLIP.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacCliP", @cFacCliP ) ) EXCLUSIVE
    if !lAIS() ; ( cFacCliP )->( ordListAdd( cPath + "FACCLIP.CDX" ) ); else ; ordSetFocus( 1 ) ; end
 
-   USE ( cPath + "AntCliT.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "AntCliT", @cAntCliT ) ) EXCLUSIVE
+   USE ( cPath + "AntCliT.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "AntCliT", @cAntCliT ) )
    if !lAIS() ; ( cAntCliT )->( ordListAdd( cPath + "AntCliT.CDX" ) ); else ; ordSetFocus( 1 ) ; end
 
    USE ( cPath + "FACRECT.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacRecT", @cFacRecT ) ) EXCLUSIVE
@@ -2339,13 +2339,13 @@ function SynRecCli( cPath )
 
    ( cFacCliP )->( ordSetFocus( 1 ) )
 
-   RECOVER USING oError
+   /*RECOVER USING oError
 
       msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
 
    CLOSE ( cFacCliT )
    CLOSE ( cFacCliL )
@@ -4692,12 +4692,16 @@ FUNCTION genPgoFacCli( cNumFac, cFacCliT, cFacCliL, cFacCliP, cAntCliT, cClient,
    DEFAULT nMode     := APPD_MODE
    DEFAULT lMessage  := .t.
 
-   DEFAULT cFacCliP  := D():FacturasClientesCobros( nView )
-   DEFAULT cFPago    := D():FormasPago( nView )
-   DEFAULT cDiv      := D():Divisas( nView )
-   DEFAULT cFacCliL  := D():FacturasClientesLineas( nView )
-   DEFAULT cFacCliT  := D():FacturasClientes( nView )
-   DEFAULT cAntCliT  := D():AnticiposClientes( nView )
+   if !Empty( nView )
+
+      DEFAULT cFacCliP  := D():FacturasClientesCobros( nView )
+      DEFAULT cFPago    := D():FormasPago( nView )
+      DEFAULT cDiv      := D():Divisas( nView )
+      DEFAULT cFacCliL  := D():FacturasClientesLineas( nView )
+      DEFAULT cFacCliT  := D():FacturasClientes( nView )
+      DEFAULT cAntCliT  := D():AnticiposClientes( nView )
+
+   end if
 
    lAlert            := ( nMode == APPD_MODE )
 
