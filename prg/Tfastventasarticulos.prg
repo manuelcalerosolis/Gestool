@@ -363,6 +363,7 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
       DATABASE NEW ::oTarPreL PATH ( cPatEmp() ) CLASS "TARPREL"     FILE "TARPREL.DBF"   VIA ( cDriver() ) SHARED INDEX "TARPREL.CDX"
 
       DATABASE NEW ::oAtipicasCliente PATH ( cPatEmp() ) CLASS "CliAtp" FILE "CliAtp.Dbf" VIA ( cDriver() ) SHARED INDEX "CliAtp.CDX"
+      ::oAtipicasCliente:ordsetfocus( "cCliArt" )
 
       ::oProCab   := TDataCenter():oProCab()
 
