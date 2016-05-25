@@ -10938,7 +10938,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
 
    if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
 
-      lBeforeAppendEvent   := runEventScript( "AlbaranesClientes\Lineas\beforeAppend", aTmp, aTmpAlb, nView )
+      lBeforeAppendEvent   := runEventScript( "AlbaranesClientes\Lineas\beforeAppend", aTmp, aTmpAlb, nView, dbfTmpLin )
 
       if isLogic( lBeforeAppendEvent ) .and. !lBeforeAppendEvent
          Return nil
