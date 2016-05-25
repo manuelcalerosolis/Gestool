@@ -132,6 +132,10 @@ CLASS TStock
    METHOD lOpenFiles( lExclusive )
    METHOD CloseFiles()
 
+   METHOD CreateTemporalFiles( cPath )
+   METHOD DeleteTemporalFiles( cPath )
+   METHOD Zap()
+
    METHOD PedPrv( cNumPed, cCodAlm, lDelete, lIncremento )
 
    METHOD AlbPrv( cNumAlb, cCodAlm, cNumPed, lDelete, lIncremento, lIgnEstado )
@@ -6976,3 +6980,88 @@ METHOD consolidationDateTime( cCodArt ) CLASS TSqlStock
 Return ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD CreateTemporalFiles( cPath ) CLASS TStock
+
+   local aStock
+
+   DEFAULT cPath        := cPatTmp()
+
+   ::cDbfStock          := "Stock" + cCurUsr() + ".Dbf"
+   ::cCdxStock          := "Stock" + cCurUsr() + ".Cdx"
+
+   ::DeleteTemporalFiles( cPath )
+
+   DEFINE DATABASE ::oDbfStock FILE ( ::cDbfStock ) CLASS "StockDbf" ALIAS "StockDbf" PATH ( cPath ) VIA ( cLocalDriver() ) 
+
+   FIELD NAME "cCodigo"    TYPE "C" LEN 18 DEC 0 COMMENT "Código de artículo"                    OF ::oDbfStock
+   FIELD NAME "cDelega"    TYPE "C" LEN  3 DEC 0 COMMENT "Delegación"                            OF ::oDbfStock
+   FIELD NAME "dFecDoc"    TYPE "D" LEN  8 DEC 0 COMMENT "Fecha del documento"                   OF ::oDbfStock
+   FIELD NAME "cAlmacen"   TYPE "C" LEN 16 DEC 0 COMMENT "Código del almacen"                    OF ::oDbfStock
+   FIELD NAME "cCodPrp1"   TYPE "C" LEN 20 DEC 0 COMMENT "Código de la primera propiedad"        OF ::oDbfStock
+   FIELD NAME "cCodPrp2"   TYPE "C" LEN 20 DEC 0 COMMENT "Código de la segunda propiedad"        OF ::oDbfStock
+   FIELD NAME "cValPrp1"   TYPE "C" LEN 20 DEC 0 COMMENT "Valor de la primera propiedad"         OF ::oDbfStock 
+   FIELD NAME "cValPrp2"   TYPE "C" LEN 20 DEC 0 COMMENT "Valor de la segunda propiedad"         OF ::oDbfStock
+   FIELD NAME "cLote"      TYPE "C" LEN 14 DEC 0 COMMENT "Número de lote"                        OF ::oDbfStock
+   FIELD NAME "cNumSer"    TYPE "C" LEN 30 DEC 0 COMMENT "Número de serie"                       OF ::oDbfStock
+   FIELD NAME "dFecCad"    TYPE "D" LEN  8 DEC 0 COMMENT "Fecha de caducidad"                    OF ::oDbfStock
+   FIELD NAME "nUnd"       TYPE "N" LEN 16 DEC 6 COMMENT "Total unidades"                        OF ::oDbfStock
+   FIELD NAME "nPdtRec"    TYPE "N" LEN 16 DEC 6 COMMENT "Total unidades pendientes de recibir"  OF ::oDbfStock
+   FIELD NAME "nPdtEnt"    TYPE "N" LEN 16 DEC 6 COMMENT "Total unidades pendientes de entregar" OF ::oDbfStock
+   FIELD NAME "cNumDoc"    TYPE "C" LEN 13 DEC 0 COMMENT "Número del documento lote"             OF ::oDbfStock
+   FIELD NAME "cTipDoc"    TYPE "C" LEN 12 DEC 0 COMMENT "Tipo del documento"                    OF ::oDbfStock
+
+   INDEX TO ( ::cCdxStock ) TAG "cCodArt"  ON "cCodigo + cAlmacen + cValPrp1 + cValPrp2 + cLote"  COMMENT "Código"           FOR "!Deleted()" OF ::oDbfStock
+   INDEX TO ( ::cCdxStock ) TAG "cCodAlm"  ON "cAlmacen + cCodigo + cValPrp1 + cValPrp2 + cLote"  COMMENT "Almacen"          FOR "!Deleted()" OF ::oDbfStock
+   INDEX TO ( ::cCdxStock ) TAG "dFecCad"  ON "Dtos( dFecCad ) + cLote"                           COMMENT "Fecha caducidad"  FOR "!Deleted()" OF ::oDbfStock
+
+   END DATABASE ::oDbfStock
+
+   ::oDbfStock:Activate( .f., .f. )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD DeleteTemporalFiles( cPath ) CLASS TStock
+
+   DEFAULT cPath        := cPatTmp()
+
+   if !Empty( ::oDbfStock ) .and. ::oDbfStock:Used()
+      ::oDbfStock:Close()
+   end if      
+
+   dbfErase( ::cDbfStock )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Zap() CLASS TStock
+
+   if ( ::oDbf )->( Used() )
+
+      if !( ::oDbf )->( IsShared() )
+         ( ::oDbf )->( __dbZap() )
+      else
+
+         ( ::oDbf )->( dbGoTop() )
+         while !( ::oDbf )->( eof() )
+
+            if dbLock( ::oDbf )
+               ( ::oDbf )->( dbDelete() )
+               ( ::oDbf )->( dbUnLock() )
+            end if
+
+            ( ::oDbf )->( dbSkip( 0 ) )
+
+         end while
+
+      end if
+
+   end if
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+

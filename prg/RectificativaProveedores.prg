@@ -1345,7 +1345,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
       REDEFINE GET aGet[ _CCODALM ] VAR aTmp[ _CCODALM ] ;
 			ID 		150 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
          VALID    cAlmacen( aGet[_CCODALM], , oGet[ 1 ] );
          BITMAP   "LUPA" ;
          ON HELP  brwAlmacen( aGet[ _CCODALM ], oGet[ 1 ] );
@@ -1353,8 +1352,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
 
       REDEFINE GET oGet[1] VAR cGet[1] ;
 			ID 		151 ;
-			WHEN 		( .F. );
-			COLOR 	CLR_GET ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         BITMAP   "Bot" ;
+         ON HELP  ( ExpAlmacen( aTmp[ _CCODALM ], dbfTmp, oBrwLin ) ) ;
 			OF 		oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CALMORIGEN ] VAR aTmp[ _CALMORIGEN ]  ;

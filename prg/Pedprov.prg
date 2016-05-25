@@ -1185,33 +1185,33 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
 			WHEN 		( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
-		REDEFINE GET aGet[_CCODALM] VAR aTmp[_CCODALM]	;
+		REDEFINE GET aGet[ _CCODALM ] VAR aTmp[ _CCODALM ]	;
 			ID 		150 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( cAlmacen( aGet[_CCODALM], , oSay[ 1 ] ) ) ;
-         ON HELP  ( BrwAlmacen( aGet[_CCODALM], oSay[ 1 ] ) ) ;
-         BITMAP   "LUPA" ;
+         VALID    ( cAlmacen( aGet[ _CCODALM ], , oSay[ 1 ] ) ) ;
+         ON HELP  ( BrwAlmacen( aGet[ _CCODALM ], oSay[ 1 ] ) ) ;
+         BITMAP   "Lupa" ;
 			OF 		oFld:aDialogs[1]
 
       REDEFINE GET oSay[ 1 ] VAR cSay[ 1 ] ;
-         WHEN     .f. ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
 			ID 		151 ;
+         BITMAP   "Bot" ;
+         ON HELP  ( ExpAlmacen( aTmp[ _CCODALM ], dbfTmpLin, oBrwLin ) ) ;
 			OF 		oFld:aDialogs[1] ;
 
-      REDEFINE GET aGet[_CCODPGO] VAR aTmp[_CCODPGO];
+      REDEFINE GET aGet[ _CCODPGO ] VAR aTmp[ _CCODPGO ];
 			ID 		160 ;
 			PICTURE 	"@!" ;
-			COLOR 	CLR_GET ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    cFPago( aGet[_CCODPGO], D():FormasPago( nView ), oSay[ 2 ] ) ;
-         ON HELP  BrwFPago( aGet[_CCODPGO ], oSay[ 2 ]) ;
-         BITMAP   "LUPA" ;
+         VALID    cFPago( aGet[ _CCODPGO ], D():FormasPago( nView ), oSay[ 2 ] ) ;
+         ON HELP  brwFPago( aGet[ _CCODPGO ], oSay[ 2 ]) ;
+         BITMAP   "Lupa" ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET oSay[ 2 ] VAR cSay[ 2 ];
 			ID 		161 ;
          WHEN     .f. ;
-			COLOR 	CLR_GET ;
 			OF 		oFld:aDialogs[1]
 
       /*
@@ -1222,7 +1222,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
 			WHEN 		( nMode != ZOOM_MODE ) ;
          VALID    cCajas( aGet[ _CCODCAJ ], D():Cajas( nView ), oSay[ 3 ] ) ;
          ID       165 ;
-			COLOR 	CLR_GET ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwCajas( aGet[ _CCODCAJ ], oSay[ 3 ] ) ) ;
          OF       oFld:aDialogs[1]
@@ -1230,7 +1229,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
       REDEFINE GET oSay[ 3 ] VAR cSay[ 3 ] ;
          ID       166 ;
          WHEN     .f. ;
-			COLOR 	CLR_GET ;
          OF       oFld:aDialogs[1]
 
 		/*
@@ -1242,7 +1240,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
          VALID    ( cDivIn( aGet[ _CDIVPED ], oBmpDiv, aGet[ _NVDVPED ], @cPinDiv, @nDinDiv, @cPirDiv, @nDirDiv, oGetMasDiv, D():Divisas( nView ), oBandera ) );
 			PICTURE	"@!";
 			ID 		170 ;
-			COLOR 	CLR_GET ;
          ON HELP  BrwDiv( aGet[ _CDIVPED ], oBmpDiv, aGet[ _NVDVPED ], D():Divisas( nView ), oBandera ) ;
          BITMAP   "LUPA" ;
          OF       oFld:aDialogs[1]
@@ -1256,7 +1253,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
 			WHEN 		( .F. ) ;
 			ID 		180 ;
 			PICTURE	"@E 999,999.9999" ;
-			COLOR 	CLR_GET ;
 			OF 		oFld:aDialogs[1]
 
 		/*
@@ -1651,14 +1647,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
 			WHEN 		( nMode != ZOOM_MODE ) ;
          PICTURE  "@E 999.99" ;
          SPINNER ;
-			COLOR 	CLR_GET ;
          ON CHANGE( RecalculaTotal( aTmp ) );
 			OF 		oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CDTOUNO ] VAR aTmp[ _CDTOUNO ] ;
 			ID 		240 ;
 			PICTURE 	"@!" ;
-			COLOR 	CLR_GET ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
 			OF 		oFld:aDialogs[1]
 
@@ -1666,7 +1660,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
 			ID 		250 ;
 			PICTURE 	"@E 99.99" ;
          SPINNER ;
-			COLOR 	CLR_GET ;
          ON CHANGE( RecalculaTotal( aTmp ) );
          WHEN     ( nMode != ZOOM_MODE ) ;
 			OF 		oFld:aDialogs[1]
@@ -1674,7 +1667,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
       REDEFINE GET aGet[ _CDTODOS ] VAR aTmp[ _CDTODOS ] ;
          ID       260 ;
 			PICTURE 	"@!" ;
-         COLOR    CLR_GET ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
 			OF 		oFld:aDialogs[1]
 
@@ -1682,7 +1674,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
          ID       270 ;
 			PICTURE 	"@E 99.99" ;
          SPINNER ;
-         COLOR    CLR_GET ;
          ON CHANGE( RecalculaTotal( aTmp ) );
          WHEN     ( nMode != ZOOM_MODE ) ;
 			OF 		oFld:aDialogs[1]
@@ -1808,7 +1799,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
          SPINNER ;
          ON UP    ( UpSerie( aGet[_CSERPED] ) );
          ON DOWN  ( DwSerie( aGet[_CSERPED] ) );
-         COLOR    CLR_GET ;
          WHEN     ( nMode == APPD_MODE .OR. nMode == DUPL_MODE );
          VALID    ( aTmp[_CSERPED] >= "A" .AND. aTmp[_CSERPED] <= "Z"  );
          OF       oFld:aDialogs[1]
@@ -1828,7 +1818,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
 			ID 		110 ;
 			SPINNER;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
 			OF 		oFld:aDialogs[1]
 
       REDEFINE GET aGet[_NESTADO] VAR cEstPed;
@@ -1836,11 +1825,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
          ID       120 ;
 			OF 		oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_DFECENT] VAR aTmp[_DFECENT] ;
+      REDEFINE GET aGet[ _DFECENT ] VAR aTmp[ _DFECENT ] ;
          ID       125 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
          SPINNER ;
-			COLOR 	CLR_GET ;
          OF       oFld:aDialogs[1]
 
       REDEFINE COMBOBOX aGet[ _CSITUAC ] VAR aTmp[ _CSITUAC ] ;
@@ -1854,7 +1842,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
          WHEN     ( .f. ) ;
          OF       oFld:aDialogs[2]
 
-      REDEFINE GET aGet[_NBULTOS] VAR aTmp[_NBULTOS] ;
+      REDEFINE GET aGet[ _NBULTOS ] VAR aTmp[ _NBULTOS ] ;
          ID       130 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
          SPINNER ;
@@ -4146,7 +4134,7 @@ STATIC FUNCTION LoaPrv( aGet, aTmp, dbf, nMode, oSay, oTlfPrv )
          aGet[ _NDPP    ]:cText( ( D():Proveedores( nView ) )->DtoPp   )
       end if
 
-      if empty( aGet[_CCODPGO]:VarGet() )
+      if empty( aGet[ _CCODPGO ]:VarGet() )
          aGet[ _CCODPGO ]:cText( ( D():Proveedores( nView ) )->fPago )
          aGet[ _CCODPGO ]:lValid()
       end if
