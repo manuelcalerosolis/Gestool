@@ -11,8 +11,8 @@
 #define TVS_LINESATROOT       4
 #define TVS_SHOWSELALWAYS     32 //  0x0020
 #define TVS_DISABLEDRAGDROP   16 //  0x0010
-#define TVS_CHECKBOXES        256 //  0x0100
-#define TVS_TRACKSELECT       512 //   0x0200
+#define TVS_CHECKBOXES        256 // 0x0100
+#define TVS_TRACKSELECT       512 // 0x0200
 
 #define dfnTreeViewWidth      250
 #define dfnSplitterWidth      0
