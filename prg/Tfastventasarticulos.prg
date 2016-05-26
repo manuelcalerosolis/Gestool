@@ -31,6 +31,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    DATA  oObras
    DATA  oTarPreL
    DATA  oAtipicasCliente
+   DATA  oFraPub
 
    DATA  oPrp1
    DATA  oPrp2
@@ -365,6 +366,11 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
       DATABASE NEW ::oAtipicasCliente PATH ( cPatEmp() ) CLASS "CliAtp" FILE "CliAtp.Dbf" VIA ( cDriver() ) SHARED INDEX "CliAtp.CDX"
       ::oAtipicasCliente:ordsetfocus( "cCliArt" )
 
+      ::oFraPub           := TFrasesPublicitarias():Create( cPatArt() )
+      if !::oFraPub:OpenFiles()
+         lOpenFiles     := .f.
+      end if
+
       ::oProCab   := TDataCenter():oProCab()
 
       ::oProLin   := TDataCenter():oProLin()
@@ -563,6 +569,10 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
 
       if !empty( ::oAtipicasCliente ) .and. ( ::oAtipicasCliente:Used() )
          ::oAtipicasCliente:end()
+      end if
+
+      if !Empty( ::oFraPub )
+         ::oFraPub:end()
       end if
 
       if !empty( ::oTarPreL ) .and. ( ::oTarPreL:Used() )
@@ -1020,6 +1030,9 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Atipicas de clientes",       ::oAtipicasCliente:nArea )
    ::oFastReport:SetFieldAliases(   "Atipicas de clientes",       cItemsToReport( aItmAtp() ) )
 
+   ::oFastReport:SetWorkArea(       "Tipo envases",               ::oFraPub:Select() )
+   ::oFastReport:SetFieldAliases(   "Tipo envases",               cObjectsToReport( ::oFraPub:oDbf ) )
+
    // Relaciones entre tablas-----------------------------------------------------
 
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Familias",                {|| ::oDbfArt:Familia } )
@@ -1028,7 +1041,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Temporadas",              {|| ::oDbfArt:cCodTemp } )
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Fabricantes",             {|| ::oDbfArt:cCodFab } )
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipos de " + cImp(),      {|| ::oDbfArt:TipoIva } )
-
+   
    ::oFastReport:SetMasterDetail(   "Escandallos", "Artículos.Escandallos",         {|| ::oArtKit:cRefKit } )
    
    ::oFastReport:SetMasterDetail(   "Informe", "Empresa",                           {|| cCodEmp() } )
