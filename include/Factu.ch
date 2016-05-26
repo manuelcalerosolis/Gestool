@@ -4,10 +4,10 @@ Fichero de Cabecera para la Aplcaci¢n de Facturaci¢n 3.0 para Windows
 
 #define __GSTROTOR__                    "Gestool"
 #define __GSTTACTIL__                   "Gestool táctil"
-#define __GSTVERSION__                  "2K15"
+#define __GSTVERSION__                  "2K16"
 #define __GSTTPV__                      "Gestool"
 #define __GSTFACTORY__                  "Gestool"
-#define __GSTCOPYRIGHT__                "(c) Gestool 2015"
+#define __GSTCOPYRIGHT__                "(c) Gestool 2016"
 #define __GSTWEB__                      "http://www.gestool.es"
 #define __GSTHELP__                     "http://www.gstrotor.com/ayuda/Index.html"
 #define __GSTBROWSER__                  "http://www.gestool.es/fondo/index.html"

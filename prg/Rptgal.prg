@@ -67,10 +67,13 @@ Function Main( cCodEmp, cCodUsr, cIp )
    local cCodGrp     := Space( 4 )
    local nError
    local cError
-   local cAdsIp
-   local cAdsType
-   local cAdsData
-   local cAdsFile
+   local cAdsType   
+   local cAdsIp     
+   local cAdsPort   
+   local cAdsData   
+   local nAdsServer 
+   local cAdsLocal  
+   local cAdsFile   
 
    DEFAULT cCodEmp   := Alltrim( Str( Year( Date() ) ) )
    DEFAULT cCodUsr   := "000"
@@ -93,29 +96,35 @@ Function Main( cCodEmp, cCodUsr, cIp )
       fRename( FullCurDir() + "Gestion.Ini", cIniAplication() )
    end if
 
-   cAdsIp            := GetPvProfString( "ADS", "Ip",    "", cIniAplication() )
-   cAdsType          := GetPvProfString( "ADS", "Type",  "", cIniAplication() )
-   cAdsData          := GetPvProfString( "ADS", "Data",  "", cIniAplication() )
-   cAdsFile          := GetPvProfString( "ADS", "File",  "", cIniAplication() )
+   cAdsType          := GetPvProfString(  "ADS",      "Type",     "",   cIniAplication() )
+   cAdsIp            := GetPvProfString(  "ADS",      "Ip",       "",   cIniAplication() )
+   cAdsPort          := GetPvProfString(  "ADS",      "Port",     "",   cIniAplication() )
+   cAdsData          := GetPvProfString(  "ADS",      "Data",     "",   cIniAplication() )
+   nAdsServer        := GetPvProfInt(     "ADS",      "Server",   7,    cIniAplication() )
+   cAdsLocal         := GetPvProfString(  "ADS",      "Local",    "",   cIniAplication() )
+   cAdsFile          := GetPvProfString(  "ADS",      "File",     "",   cIniAplication() )
 
    // Motor de bases de datos--------------------------------------------------
 
    if ( "ADSINTERNET" $ cAdsType )
 
       lAIS( .t. )
-      cAdsIp( cAdsIp )
-      cAdsData( cAdsData )
-      cAdsFile( cAdsFile )
+
+      cAdsIp(     cAdsIp )
+      cAdsPort(   cAdsPort )
+      cAdsData(   cAdsData )
+      nAdsServer( nAdsServer )
+      cAdsFile(   cAdsFile )
+      cAdsLocal(  cAdsLocal )
 
       RddRegister(   'ADS', 1 )
       RddSetDefault( 'ADSCDX' )
 
-      AdsSetServerType( 7 )   // TODOS
-      AdsSetFileType( 2 )     // ADS_CDX
-
-      AdsRightsCheck( .f. )
-
-      AdsCacheOpenTables( 250 )
+      adsSetServerType( nAdsServer() )    // TODOS
+      adsSetFileType( 2 )                 // ADS_CDX
+      adsRightsCheck( .f. )
+      adsSetDeleted( .t. )
+      adsCacheOpenTables( 250 )
 
       with object ( TDataCenter() )
 
