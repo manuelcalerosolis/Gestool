@@ -1217,7 +1217,7 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
                ::oDbf:cCodFab    := RetFld( ::oSatCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                ::oDbf:cDesUbi    := RetFld( ::oSatCliL:cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
 
-               if ::oAtipicasCliente( ::oSatCliT:cCodCli + ::oSatCliL:cRef ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
+               if ::oAtipicasCliente:Seek( ::oSatCliT:cCodCli + ::oSatCliL:cRef ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
                   ::oDbf:cCodEnv    := ::oAtipicasCliente:cCodEnv
                else
                   ::oDbf:cCodEnv    := RetFld( ::oSatCliL:cRef, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
@@ -1405,7 +1405,7 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cCodFab    := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                   ::oDbf:cDesUbi    := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
 
-                  if ::oAtipicasCliente( ::oPreCliT:cCodCli + ::oPreCliL:cRef ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
+                  if ::oAtipicasCliente:Seek( ::oPreCliT:cCodCli + ::oPreCliL:cRef ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
                      ::oDbf:cCodEnv    := ::oAtipicasCliente:cCodEnv
                   else
                      ::oDbf:cCodEnv    := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
@@ -1626,7 +1626,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cCodAlm    := ( aliasPedidosClientesLineas )->cAlmLin
                   ::oDbf:cDesUbi    := RetFld( ( aliasPedidosClientesLineas )->cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
 
-                  if ::oAtipicasCliente( ( aliasPedidosClientes )->cCodCli + ( aliasPedidosClientesLineas )->cRef ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
+                  if ::oAtipicasCliente:Seek( ( aliasPedidosClientes )->cCodCli + ( aliasPedidosClientesLineas )->cRef ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
                      ::oDbf:cCodEnv    := ::oAtipicasCliente:cCodEnv
                   else
                      ::oDbf:cCodEnv    := RetFld( ( aliasPedidosClientesLineas )->cRef, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
@@ -1772,7 +1772,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:cCodFab    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                   ::oDbf:cDesUbi    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
 
-                  if ::oAtipicasCliente( ::oAlbCliT:cCodCli + ::oAlbCliL:cRef ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
+                  if ::oAtipicasCliente:Seek( ::oAlbCliT:cCodCli + ::oAlbCliL:cRef ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
                      ::oDbf:cCodEnv    := ::oAtipicasCliente:cCodEnv
                   else
                      ::oDbf:cCodEnv    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
@@ -1965,7 +1965,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
                   ::oDbf:cCodFab    := RetFld( ::oFacCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                   ::oDbf:cDesUbi    := RetFld( ::oFacCliL:cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
 
-                  if ::oAtipicasCliente( ::oFacCliT:cCodCli + ::oFacCliL:cRef ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
+                  if ::oAtipicasCliente:Seek( ::oFacCliT:cCodCli + ::oFacCliL:cRef ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
                      ::oDbf:cCodEnv    := ::oAtipicasCliente:cCodEnv
                   else
                      ::oDbf:cCodEnv    := RetFld( ::oFacCliL:cRef, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
@@ -2156,7 +2156,7 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
                   ::oDbf:cCodFab    := RetFld( ::oFacRecL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                   ::oDbf:cDesUbi    := RetFld( ::oFacRecL:cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
 
-                  if ::oAtipicasCliente( ::oFacRecT:cCodCli + ::oFacRecL:cRef ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
+                  if ::oAtipicasCliente:Seek( ::oFacRecT:cCodCli + ::oFacRecL:cRef ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
                      ::oDbf:cCodEnv    := ::oAtipicasCliente:cCodEnv
                   else
                      ::oDbf:cCodEnv    := RetFld( ::oFacRecL:cRef, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
@@ -2333,7 +2333,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:cCodFab    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                ::oDbf:cDesUbi    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
 
-               if ::oAtipicasCliente( ::oTikCliT:cCliTik + ::oTikCliL:cCbaTil ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
+               if ::oAtipicasCliente:Seek( ::oTikCliT:cCliTik + ::oTikCliL:cCbaTil ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
                   ::oDbf:cCodEnv    := ::oAtipicasCliente:cCodEnv
                else
                   ::oDbf:cCodEnv    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
@@ -2430,7 +2430,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:cCodFab    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                ::oDbf:cDesUbi    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
                
-               if ::oAtipicasCliente( ::oTikCliT:cCliTik + ::oTikCliL:cCbaTil ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
+               if ::oAtipicasCliente:Seek( ::oTikCliT:cCliTik + ::oTikCliL:cCbaTil ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
                   ::oDbf:cCodEnv    := ::oAtipicasCliente:cCodEnv
                else
                   ::oDbf:cCodEnv    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
