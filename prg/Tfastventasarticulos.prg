@@ -151,6 +151,9 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    METHOD setFilterGroupFamily()                INLINE ( if( ::lApplyFilters,;
                                                          ::cExpresionLine  += ' .and. ( Field->cGrpFam >= "' + ::oGrupoGFamilia:Cargo:getDesde() + '" .and. Field->cGrpFam <= "' + ::oGrupoGFamilia:Cargo:getHasta() + '" )', ) )               
+
+   METHOD setFilterAgentLine()                INLINE ( if( ::lApplyFilters,;
+                                                         ::cExpresionLine  += ' .and. ( Field->cCodAge >= "' + ::oGrupoAgente:Cargo:getDesde() + '" .and. Field->cCodAge <= "' + ::oGrupoAgente:Cargo:getHasta() + '" )', ) )
    
    METHOD setFilterPaymentId()                  INLINE ( if( ::lApplyFilters,;
                                                          ::cExpresionHeader  += ' .and. ( Field->cCodPago >= "' + ::oGrupoFpago:Cargo:getDesde() + '" .and. Field->cCodPago <= "' + ::oGrupoFpago:Cargo:getHasta() + '" )', ) )
@@ -160,9 +163,6 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    
    METHOD setFilterRouteId()                    INLINE ( if( ::lApplyFilters,;
                                                          ::cExpresionHeader  += ' .and. ( Field->cCodRut >= "' + ::oGrupoRuta:Cargo:getDesde() + '" .and. Field->cCodRut <= "' + ::oGrupoRuta:Cargo:getHasta() + '" )', ) )
-
-   METHOD setFilterAgentId()                    INLINE ( if( ::lApplyFilters,;
-                                                         ::cExpresionHeader  += ' .and. ( Field->cCodAge >= "' + ::oGrupoAgente:Cargo:getDesde() + '" .and. Field->cCodAge <= "' + ::oGrupoAgente:Cargo:getHasta() + '" )', ) )
 
    METHOD setFilterTransportId()                INLINE ( if( ::lApplyFilters,;
                                                          ::cExpresionHeader  += ' .and. ( Field->cCodTrn >= "' + ::oGrupoTransportista:Cargo:getDesde() + '" .and. Field->cCodTrn <= "' + ::oGrupoTransportista:Cargo:getHasta() + '" )', ) )
@@ -1131,8 +1131,6 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
 
    ::setFilterRouteId() 
 
-   ::setFilterAgentId()
-
    ::setFilterTransportId()
 
    ::setFilterUserId()
@@ -1151,6 +1149,8 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
    ::setFilterFamily() 
 
    ::setFilterGroupFamily() 
+
+   ::setFilterAgentLine()
 
    // Procesando SAT ------------------------------------------------
 
@@ -1309,8 +1309,6 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
 
    ::setFilterRouteId() 
 
-   ::setFilterAgentId()
-
    ::setFilterTransportId()
    
    ::setFilterUserId()
@@ -1329,6 +1327,8 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
    ::setFilterFamily() 
 
    ::setFilterGroupFamily()
+
+   ::setFilterAgentLine()   
 
    // procesamos los presupuestos ---------------------------------------------
 
@@ -1492,8 +1492,6 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
    ::setFilterRouteId() 
 
-   ::setFilterAgentId()
-
    ::setFilterTransportId()
    
    ::setFilterUserId()
@@ -1512,6 +1510,8 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
    ::setFilterFamily() 
 
    ::setFilterGroupFamily()
+
+   ::setFilterAgentLine()
 
    // procesamos los pedidos----------------------------------------------------
    
@@ -1676,8 +1676,6 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
 
    ::setFilterRouteId() 
 
-   ::setFilterAgentId()
-
    ::setFilterTransportId()
    
    ::setFilterUserId()
@@ -1696,6 +1694,8 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
    ::setFilterFamily() 
 
    ::setFilterGroupFamily()
+
+   ::setFilterAgentLine()
 
    // Procesando albaranes-------------------------------------------------
 
@@ -1864,8 +1864,6 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
 
    ::setFilterRouteId() 
 
-   ::setFilterAgentId()
-
    ::setFilterTransportId()
    
    ::setFilterUserId()
@@ -1884,6 +1882,8 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
    ::setFilterFamily() 
 
    ::setFilterGroupFamily()
+
+   ::setFilterAgentLine()
 
    // Procesando facturas-------------------------------------------------
 
@@ -1906,9 +1906,6 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
          if ::oFacCliL:Seek( ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac )
 
             while !::lBreak .and. ( ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac == ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac )
-
-               //if !( ::lExcCero  .and. nTotNFacCli( ::oFacCliL:cAlias ) == 0 )  .and.;
-               //   !( ::lExcImp   .and. nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
 
                   ::oDbf:Blank()
                   ::oDbf:cCodArt    := ::oFacCliL:cRef
@@ -1964,6 +1961,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
                   ::oDbf:nComAge    := nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut )
 
                   ::oDbf:nCosArt    := nCosLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                  
                   if Empty( ::oDbf:nCosArt )
                      ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
                   end if 
@@ -2047,8 +2045,6 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
 
    ::setFilterRouteId() 
 
-   ::setFilterAgentId()
-
    ::setFilterTransportId()
    
    ::setFilterUserId()
@@ -2068,9 +2064,11 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
 
    ::setFilterGroupFamily()
 
+   ::setFilterAgentLine()
+
    // Procesando Facturas Rectifictivas----------------------------------------
 
-   ::oMtrInf:cText   := "Procesando facturas rectificativas"
+   ::oMtrInf:cText            := "Procesando facturas rectificativas"
 
    ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
    ::oFacRecL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecL:cFile ), ::oFacRecL:OrdKey(), cAllTrimer( ::cExpresionLine ), , , , , , , , .t. )
