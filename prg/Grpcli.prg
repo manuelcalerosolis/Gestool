@@ -386,8 +386,6 @@ METHOD IsPadreMayor( cCodGrupo, cCodDesde )
    local cPadre
    local aPadre
 
-   ?"entro en is padre mayor"
-
    if cCodGrupo >= cCodDesde
       Return .t.
    end if
@@ -395,8 +393,6 @@ METHOD IsPadreMayor( cCodGrupo, cCodDesde )
    if !Empty( cCodGrupo )
 
       aPadre         := ::aChild( cCodGrupo )
-
-      MsgInfo( hb_valtoexp( aPadre ), "aPadre" )
 
       for each cPadre in aPadre
          if cPadre >= cCodDesde
