@@ -3157,11 +3157,11 @@ METHOD buildInsertIvaPrestashop( hTax ) CLASS TComercio
       nCodigoWeb           := ::oCon:GetInsertId()
       ::buildTextOk( hGet( hTax, "name" ), ::cPrefixTable( "tax" ) )
    else
-      ::buildTextCancel( hGet( hTax, "name" ), ::cPrefixTable( "tax" ) )
+      ::buildTextError( hGet( hTax, "name" ), ::cPrefixTable( "tax" ) )
    end if
 
    /*
-   Insertamos un tipo de IVA nuevo en la tabla tax_lang-----------------
+   Insertamos un tipo de IVA nuevo en la tabla tax_lang------------------------
    */
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "tax_lang" ) + "( " +;
@@ -3176,11 +3176,11 @@ METHOD buildInsertIvaPrestashop( hTax ) CLASS TComercio
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
       ::buildTextOk( hGet( hTax, "name" ), ::cPrefixTable( "tax_lang" ) )
    else
-      ::buildTextCancel( hGet( hTax, "name" ), ::cPrefixTable( "tax_lang" ) )
+      ::buildTextError( hGet( hTax, "name" ), ::cPrefixTable( "tax_lang" ) )
    end if
 
    /*
-   Insertamos un tipo de IVA nuevo en la tabla tax_rule_group-----------------
+   Insertamos un tipo de IVA nuevo en la tabla tax_rule_group------------------
    */
 
    cCommand := "INSERT INTO "+ ::cPrefixTable( "tax_rules_group" ) + "( " + ;

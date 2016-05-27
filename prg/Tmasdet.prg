@@ -752,6 +752,9 @@ METHOD Del( lHead, lDetail ) CLASS TMasDet
    DEFAULT lHead     := .t.
    DEFAULT lDetail   := .t.
 
+   msgAlert( lHead, "lHead" )
+   msgAlert( lDetail, "lDetail" )
+
    if ::bOnPreDelete != nil
       lTrigger       := Eval( ::bOnPreDelete, Self )
       if IsLogic( lTrigger ) .and. !lTrigger
@@ -759,7 +762,7 @@ METHOD Del( lHead, lDetail ) CLASS TMasDet
       end if
    end if
 
-   if !Empty( ::oWndBrw ) .and. !Empty( ::oWndBrw:oBrw ) .and. ( "XBROWSE" $ ::oWndBrw:oBrw:ClassName() ) .and. ( len( ::oWndBrw:oBrw:aSelected ) > 1 )
+   if !empty( ::oWndBrw ) .and. !empty( ::oWndBrw:oBrw ) .and. ( "XBROWSE" $ ::oWndBrw:oBrw:ClassName() ) .and. ( len( ::oWndBrw:oBrw:aSelected ) > 1 )
 
       cTxt           := "¿ Desea eliminar definitivamente " + AllTrim( Trans( len( ::oWndBrw:oBrw:aSelected ), "999999" ) ) + " registros ?"
 
@@ -776,7 +779,7 @@ METHOD Del( lHead, lDetail ) CLASS TMasDet
             end if
 
             if lHead
-               ::oDbf:Delete( .t. )
+               ::oDbf:Delete()
             end if
 
             lDel     := .t.
@@ -789,16 +792,16 @@ METHOD Del( lHead, lDetail ) CLASS TMasDet
 
    else
    
-      if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes("¿Desea eliminar el registro en curso?", "Confirme supresión" )
+      if oUser():lNotConfirmDelete() .or. apoloMsgNoYes("¿Desea eliminar el registro en curso?", "Confirme supresión" )
    
          CursorWait()
-   
+
          if lDetail
             ::RollBack()
          end if
    
          if lHead
-            ::oDbf:Delete( .t. )
+            ::oDbf:Delete()
          end if
    
          lDel     := .t.

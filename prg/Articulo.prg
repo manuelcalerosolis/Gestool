@@ -1439,18 +1439,20 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          CLOSED ;
          LEVEL    ACC_DELE
 
+   /*
 	DEFINE BTNSHELL oBtnEur RESOURCE "BAL_EURO" OF oWndBrw ;
 		NOBORDER ;
 		ACTION 	( SetPtsEur( oWndBrw, oBtnEur ) ) ;
       TOOLTIP  "Mo(n)eda";
       HOTKEY   "N"
 
-   /*DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
       NOBORDER ;
       ACTION   ( TSqlStock():New( nView ):CalculateStock( ( D():Articulos( nView ) )->Codigo ) ) ;
       TOOLTIP  "Nuevo stock" ;
       HOTKEY   "k" ;
-      LEVEL    ACC_ZOOM*/
+      LEVEL    ACC_ZOOM
+   */
 
    DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
 		NOBORDER ;
@@ -14187,13 +14189,13 @@ Method PutStockLabels() CLASS TArticuloLabelGenerator
 
    local o
    local aStock
-   local nStock                        := 0
+   local nStock                           := 0
 
-   ( D():Articulos( nView ) )->lLabel             := .t.
+   ( D():Articulos( nView ) )->lLabel     := .t.
 
    if ::nCantidadLabels == 1
 
-      ( D():Articulos( nView ) )->nLabel          := ::nUnidadesLabels
+      ( D():Articulos( nView ) )->nLabel  := ::nUnidadesLabels
 
    else
 
@@ -14214,31 +14216,31 @@ Method PutStockLabels() CLASS TArticuloLabelGenerator
          Calculo de stock------------------------------------------------------
          */
 
-         aStock                        := oStock:aStockArticulo( ( D():Articulos( nView ) )->Codigo, , , .f., .f. )
+         aStock                           := oStock:aStockArticulo( ( D():Articulos( nView ) )->Codigo, , , .f., .f. )
 
          for each o in aStock
 
             if dbAppe( dbfArtLbl )
-               ( dbfArtLbl )->cCodArt  := o:cCodigo
-               ( dbfArtLbl )->cCodPr1  := o:cCodigoPropiedad1
-               ( dbfArtLbl )->cCodPr2  := o:cCodigoPropiedad2
-               ( dbfArtLbl )->cValPr1  := o:cValorPropiedad1
-               ( dbfArtLbl )->cValPr2  := o:cValorPropiedad2
-               ( dbfArtLbl )->nUndLbl  := o:nUnidades
+               ( dbfArtLbl )->cCodArt     := o:cCodigo
+               ( dbfArtLbl )->cCodPr1     := o:cCodigoPropiedad1
+               ( dbfArtLbl )->cCodPr2     := o:cCodigoPropiedad2
+               ( dbfArtLbl )->cValPr1     := o:cValorPropiedad1
+               ( dbfArtLbl )->cValPr2     := o:cValorPropiedad2
+               ( dbfArtLbl )->nUndLbl     := o:nUnidades
                ( dbfArtLbl )->( dbUnLock() )
             end if
 
-            nStock                     += o:nUnidades
+            nStock                        += o:nUnidades
 
          next
 
-         ( D():Articulos( nView ) )->nLabel       := Max( nStock, 0 )
+         ( D():Articulos( nView ) )->nLabel        := Max( nStock, 0 )
 
       else
 
-         nStock                        := oStock:nStockArticulo( ( D():Articulos( nView ) )->Codigo, , , .f., .f. )
+         nStock                                    := oStock:nStockArticulo( ( D():Articulos( nView ) )->Codigo, , , .f., .f. )
 
-         ( D():Articulos( nView ) )->nLabel       := Max( nStock, 0 )
+         ( D():Articulos( nView ) )->nLabel        := Max( nStock, 0 )
 
       end if
 
@@ -14272,6 +14274,11 @@ Method SelectPropertiesLabels() CLASS TArticuloLabelGenerator
          OF       oDlg 
 
       BrowseProperties():getInstance():setBindingUnidades( oGetUnidades )
+
+      REDEFINE BUTTON;
+         ID       500 ;
+         OF       oDlg ;
+         ACTION   ( BrowseProperties():getInstance():cleanPropertiesUnits() )
 
       REDEFINE BUTTON;
          ID       IDOK ;

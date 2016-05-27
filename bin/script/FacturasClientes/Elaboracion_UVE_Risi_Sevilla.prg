@@ -347,14 +347,18 @@ METHOD ProcessFile() CLASS FacturasClientesRisi
                   ::oUve:Poblacion(       ( D():FacturasClientes( ::nView ) )->cPobCli )
                   ::oUve:CodigoPostal(    ( D():FacturasClientes( ::nView ) )->cPosCli )
                   ::oUve:Ruta(            cCodigoRuta )
-                  ::oUve:NombreRuta(      retFld( cCodigoRuta, D():Get( "Ruta", ::nView ), "cDesRut" ) )
-                  ::oUve:CodigoComercial( cCodigoRuta )
-                  ::oUve:NombreComercial( retFld( cCodigoRuta, D():Get( "Ruta", ::nView ), "cDesRut" ) )
+
                   ::oUve:Peso()
                   ::oUve:UMPeso()
                   ::oUve:TipoCliente(     cCodigoGrupo )
                   ::oUve:Telefono(        ( D():FacturasClientes( ::nView ) )->cTlfCli ) 
                   ::oUve:DescTipoCliente( cNombreGrupo )
+
+                  // Rutas comerciales hay q ver si en la factura se guarda el agente comercial
+
+                  ::oUve:NombreRuta(      retFld( cCodigoRuta, D():Get( "Ruta", ::nView ), "cDesRut" ) )
+                  ::oUve:CodigoComercial( cCodigoRuta )
+                  ::oUve:NombreComercial( retFld( cCodigoRuta, D():Get( "Ruta", ::nView ), "cDesRut" ) )
 
                   ::oUve:SerializeASCII()
 

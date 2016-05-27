@@ -1,7 +1,5 @@
 #include "hbclass.ch"
 
-#define __separtor__    "|#|"
-
 #define CRLF chr( 13 ) + chr( 10 )
 
 //---------------------------------------------------------------------------//
@@ -31,6 +29,8 @@ CREATE CLASS ImportacionUVERisi
 
    DATA oUve
 
+   DATA oDlg
+
    DATA cFileUVE
    DATA nFileHandle
 
@@ -44,7 +44,19 @@ CREATE CLASS ImportacionUVERisi
 
    DATA nLineNumber                             INIT 0
 
+   DATA aSepartors                              INIT { "|#|", ";" }
+   DATA cSeparator                              INIT "|#|"
+
+   DATA oComboDistributor
+
+   DATA aDitributors                            INIT { "90 - Blanco", "91 - Begines" }
+   DATA cDistributor                            INIT "90 - Blanco"
+
+   DATA oComboSeparator
+   DATA oComboDistributor
+
    METHOD New()                                 CONSTRUCTOR
+   METHOD Dialog() 
 
    METHOD getFileUVE()
    METHOD isFileUVE() 
@@ -77,6 +89,10 @@ ENDCLASS
 
 METHOD New() CLASS ImportacionUVERisi
 
+   if !::Dialog()
+      Return ( Self )
+   end if
+
    ::getFileUVE()
 
    if !::isFileUVE()
@@ -103,6 +119,29 @@ METHOD New() CLASS ImportacionUVERisi
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD Dialog() CLASS ImportacionUVERisi
+
+   ::oDlg          := TDialog():New( 5, 5, 18, 60, "Importacion UVE Risi" )
+
+   TSay():New( 1, 1, {|| "Separador" }, ::oDlg )      
+
+   ::oComboSeparator    := TComboBox():New( 1, 6, {| u | if( pcount() == 0, ::cSeparator, ::cSeparator := u ) }, ::aSepartors, , , ::oDlg, , , , , , .f., nil, , .f., , .f., , , , , , "ocbx1" )
+
+   TSay():New( 2, 1, {|| "Distribuidor" }, ::oDlg )      
+
+   ::oComboDistributor  := TComboBox():New( 2, 6, {| u | if( pcount() == 0, ::cDistributor, ::cDistributor := u ) }, ::aDitributors, , , ::oDlg, , , , , , .f., nil, , .f., , .f., , , , , , "ocbx2" )
+
+   TButton():New( 4, 4, "&Aceptar", ::oDlg, {|| ( ::oDlg:end( 1 ) ) }, 40, 12 )
+
+   TButton():New( 4, 12, "&Cancel", ::oDlg, {|| ::oDlg:End() }, 40, 12 )
+
+   ::oDlg:Activate( , , , .t. )
+
+Return ( ::oDlg:nResult == 1 )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD getFileUVE()
 
@@ -148,7 +187,7 @@ Return ( Self )
 
 METHOD processLineUVE( cLine )
 
-   local aLine          := hb_atokens( cLine, __separtor__ )
+   local aLine          := hb_atokens( cLine, ::cSeparator )
 
    if hb_isarray( aLine ) .and. len( aLine ) >= 30 
       ::insertLineUVE( aLine )
@@ -177,8 +216,8 @@ METHOD insertLineUVE( aLine )
    hset( hUve, "FechaFactura",                  aLine[ 13 ] )
    hset( hUve, "Ejercicio",                     aLine[ 14 ] )
    hset( hUve, "CodigoCliente",                 aLine[ 15 ] )
-   hset( hUve, "Nombre",                        aLine[ 16 ] )
-   hset( hUve, "RazonSocial",                   aLine[ 17 ] )
+   hset( hUve, "Establecimiento",               aLine[ 16 ] )
+   hset( hUve, "Nombre",                        aLine[ 17 ] )
    hset( hUve, "CIF",                           aLine[ 18 ] )
    hset( hUve, "Direccion",                     aLine[ 19 ] )
    hset( hUve, "Poblacion",                     aLine[ 20 ] )
@@ -246,7 +285,7 @@ Return ( lOpenFiles )
 
 METHOD sortUveLinesByInvoiceId()
 
-   asort( ::aUVELines, , , {|x,y| hget( x, "NumeroFactura" ) < hget( y, "NumeroFactura" ) } )
+   asort( ::aUVELines, , , {|x,y| hget( x, "NumeroFactura" ) + hget( x, "NumeroLinea" ) < hget( y, "NumeroFactura" ) + hget( y, "NumeroLinea" ) } )
 
 Return ( self )
 //---------------------------------------------------------------------------//
@@ -285,7 +324,7 @@ METHOD getNewInvoiceNumber( hUVELine )
    ::currentInvoice     := hget( hUVELine, "NumeroFactura" )
    ::serieInvoice       := "A"
    ::numberInvoice      := nNewDoc( ::serieInvoice, D():FacturasClientes( ::nView ), "nFacCli", , D():Contadores( ::nView ) )
-   ::delegationInvoice  := retSufEmp()
+   ::delegationInvoice  := substr( ::cDistributor, 1, 2 )
 
 Return ( self )
 
@@ -303,12 +342,14 @@ METHOD createClient( hUVELine )
 
    ( D():Clientes( ::nView ) )->Cod       := hget( hUVELine, "CodigoCliente" )
    ( D():Clientes( ::nView ) )->Titulo    := hget( hUVELine, "Nombre" )
-   ( D():Clientes( ::nView ) )->NbrEst    := hget( hUVELine, "RazonSocial" )
+   ( D():Clientes( ::nView ) )->NbrEst    := hget( hUVELine, "Establecimiento" )
    ( D():Clientes( ::nView ) )->Nif       := hget( hUVELine, "CIF" )
    ( D():Clientes( ::nView ) )->Domicilio := hget( hUVELine, "Direccion" )
    ( D():Clientes( ::nView ) )->Poblacion := hget( hUVELine, "Poblacion" )
    ( D():Clientes( ::nView ) )->CodPostal := hget( hUVELine, "CodigoPostal" )
    ( D():Clientes( ::nView ) )->Telefono  := hget( hUVELine, "Telefono" )
+
+   ( D():Clientes( ::nView ) )->cAgente   := hget( hUVELine, "Telefono" )
    
    ( D():Clientes( ::nView ) )->( dbrunlock() )
 
@@ -319,29 +360,33 @@ Return ( self )
 METHOD insertInvoiceHeader( hUVELine )
    
    ( D():FacturasClientes( ::nView ) )->( dbappend() )
-   ( D():FacturasClientes( ::nView ) )->cSerie  := ::serieInvoice
-   ( D():FacturasClientes( ::nView ) )->nNumFac := ::numberInvoice
-   ( D():FacturasClientes( ::nView ) )->cSufFac := ::delegationInvoice
+   ( D():FacturasClientes( ::nView ) )->cSerie     := ::serieInvoice
+   ( D():FacturasClientes( ::nView ) )->nNumFac    := ::numberInvoice
+   ( D():FacturasClientes( ::nView ) )->cSufFac    := ::delegationInvoice
 
-   ( D():FacturasClientes( ::nView ) )->cCodAlm := oUser():cAlmacen()
-   ( D():FacturasClientes( ::nView ) )->cCodCaj := oUser():cCaja()
-   ( D():FacturasClientes( ::nView ) )->cDivFac := cDivEmp()
-   ( D():FacturasClientes( ::nView ) )->nVdvFac := nChgDiv()
-   ( D():FacturasClientes( ::nView ) )->cCodUsr := cCurUsr()
-   ( D():FacturasClientes( ::nView ) )->dFecCre := date() 
-   ( D():FacturasClientes( ::nView ) )->cTimCre := time() 
-   ( D():FacturasClientes( ::nView ) )->cCodDlg := oUser():cDelegacion()
+   // recerencia a la factura de UVE-------------------------------------------
 
-   ( D():FacturasClientes( ::nView ) )->dFecFac := ctod( hget( hUVELine, "FechaFactura" ) )
+   ( D():FacturasClientes( ::nView ) )->cSuFac     := ::currentInvoice
 
-   ( D():FacturasClientes( ::nView ) )->cCodCli := hget( hUVELine, "CodigoCliente" )
-   ( D():FacturasClientes( ::nView ) )->cNomCli := hget( hUVELine, "Nombre" )
-   ( D():FacturasClientes( ::nView ) )->cDniCli := hget( hUVELine, "CIF" )
-   ( D():FacturasClientes( ::nView ) )->cDirCli := hget( hUVELine, "Direccion" )
-   ( D():FacturasClientes( ::nView ) )->cPobCli := hget( hUVELine, "Poblacion" )
-   ( D():FacturasClientes( ::nView ) )->cPosCli := hget( hUVELine, "CodigoPostal" )
+   ( D():FacturasClientes( ::nView ) )->cCodAlm    := oUser():cAlmacen()
+   ( D():FacturasClientes( ::nView ) )->cCodCaj    := oUser():cCaja()
+   ( D():FacturasClientes( ::nView ) )->cDivFac    := cDivEmp()
+   ( D():FacturasClientes( ::nView ) )->nVdvFac    := nChgDiv()
+   ( D():FacturasClientes( ::nView ) )->cCodUsr    := cCurUsr()
+   ( D():FacturasClientes( ::nView ) )->dFecCre    := date() 
+   ( D():FacturasClientes( ::nView ) )->cTimCre    := time() 
+   ( D():FacturasClientes( ::nView ) )->cCodDlg    := oUser():cDelegacion()
 
-   ( D():FacturasClientes( ::nView ) )->cCodAge := hget( hUVELine, "CodigoComercial" )
+   ( D():FacturasClientes( ::nView ) )->dFecFac    := ctod( hget( hUVELine, "FechaFactura" ) )
+
+   ( D():FacturasClientes( ::nView ) )->cCodCli    := hget( hUVELine, "CodigoCliente" )
+   ( D():FacturasClientes( ::nView ) )->cNomCli    := hget( hUVELine, "Nombre" )
+   ( D():FacturasClientes( ::nView ) )->cDniCli    := hget( hUVELine, "CIF" )
+   ( D():FacturasClientes( ::nView ) )->cDirCli    := hget( hUVELine, "Direccion" )
+   ( D():FacturasClientes( ::nView ) )->cPobCli    := hget( hUVELine, "Poblacion" )
+   ( D():FacturasClientes( ::nView ) )->cPosCli    := hget( hUVELine, "CodigoPostal" )
+
+   ( D():FacturasClientes( ::nView ) )->cCondEnt   := alltrim( hget( hUVELine, "CodigoComercial" ) ) + " - " + alltrim( hget( hUVELine, "NombreComercial" ) )
 
    ( D():FacturasClientes( ::nView ) )->( dbrunlock() )
    
@@ -361,9 +406,9 @@ METHOD createProduct( hUVELine )
 
    ( D():Articulos( ::nView ) )->( dbappend() )
 
-   ( D():Articulos( ::nView ) )->Codigo    := hget( hUVELine, "CodigoProducto" )
-   ( D():Articulos( ::nView ) )->Nombre    := hget( hUVELine, "DescripcionProducto" )
-   ( D():Articulos( ::nView ) )->nPreVta1  := hget( hUVELine, "PrecioBase" )
+   ( D():Articulos( ::nView ) )->Codigo      := hget( hUVELine, "CodigoProducto" )
+   ( D():Articulos( ::nView ) )->Nombre      := hget( hUVELine, "DescripcionProducto" )
+   ( D():Articulos( ::nView ) )->pVenta1     := hget( hUVELine, "PrecioBase" )
    
    ( D():Articulos( ::nView ) )->( dbrunlock() )
 

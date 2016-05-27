@@ -2497,6 +2497,7 @@ CLASS BrowseProperties
    METHOD setBindingUnidades( oGetUnidades )          INLINE ( ::oGetUnidades := oGetUnidades )
 
    METHOD setPropertiesUnits()
+   METHOD cleanPropertiesUnits()
 
 END CLASS 
 
@@ -2824,6 +2825,25 @@ METHOD setPropertiesUnits( idArticulo, idCodigoPrimeraPropiedad, idCodigoSegunda
          end if
       next
    next 
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD cleanPropertiesUnits()
+
+   local oColumn
+   local aProperty
+
+   for each aProperty in ::aPropertiesTable
+      for each oColumn in aProperty
+         oColumn:Value  := 0
+      next
+   next 
+
+   ::nTotalProperties()
+
+   ::oBrwProperties:Refresh()
 
 Return ( .t. )
 

@@ -755,7 +755,7 @@ METHOD _Delete( lNext ) CLASS TDbf
    local nRecNo
    local lDeleted := .f.
 
-   DEFAULT lNext  := .t.
+   DEFAULT lNext  := .f.
 
    if lNext
       nRecNo      := ( ::nArea )->( OrdKeyNo() )
