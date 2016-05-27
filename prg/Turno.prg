@@ -1039,7 +1039,7 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "nStaTur" TYPE "N"  LEN  1  DEC 0 COMMENT ""                                                                    HIDE                     OF ::oDbf
 
       INDEX TO "Turno.Cdx" TAG "cNumTur" ON "cNumTur + cSufTur + cCodCaj"  COMMENT "Número"        FOR "!Deleted()"                       OF ::oDbf
-      INDEX TO "Turno.Cdx" TAG "dOpnTur" ON "dOpnTur"                                              FOR "!Deleted()"                       OF ::oDbf
+      INDEX TO "Turno.Cdx" TAG "dOpnTur" ON "dOpnTur"                      COMMENT "Fecha inicio"  FOR "!Deleted()"                       OF ::oDbf
       INDEX TO "Turno.Cdx" TAG "lSndTur" ON "lSndTur"                                              FOR "!Deleted()"                       OF ::oDbf
       INDEX TO "Turno.Cdx" TAG "nStaTur" ON "nStaTur"                                              FOR "!Deleted() .and. nStaTur != 0"    OF ::oDbf
       INDEX TO "Turno.Cdx" TAG "nStaCaj" ON "cCodCaj + str( nStaTur, 1 )"                          FOR "!Deleted() .and. nStaTur != 0"    OF ::oDbf
