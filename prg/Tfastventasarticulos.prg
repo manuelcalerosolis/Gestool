@@ -1010,14 +1010,14 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Direcciones",                ::oObras:nArea ) 
    ::oFastReport:SetFieldAliases(   "Direcciones",                cItemsToReport( aItmObr() ) )
 
-   ::oFastReport:SetWorkArea(       "Rutas",                      ::oDbfRut:nArea ) 
-   ::oFastReport:SetFieldAliases(   "Rutas",                      cItemsToReport( aItmRut() ) )
+   ::oFastReport:SetWorkArea(       "Rutas",                         ::oDbfRut:nArea ) 
+   ::oFastReport:SetFieldAliases(   "Rutas",                         cItemsToReport( aItmRut() ) )
 
-   ::oFastReport:SetWorkArea(       "Propiedades 1",              ::oPrp1:nArea ) 
-   ::oFastReport:SetFieldAliases(   "Propiedades 1",              cItemsToReport( aItmPro() ) )
+   ::oFastReport:SetWorkArea(       "Propiedades 1",                 ::oPrp1:nArea ) 
+   ::oFastReport:SetFieldAliases(   "Propiedades 1",                 cItemsToReport( aItmPro() ) )
 
-   ::oFastReport:SetWorkArea(       "Propiedades 2",              ::oPrp2:nArea ) 
-   ::oFastReport:SetFieldAliases(   "Propiedades 2",              cItemsToReport( aItmPro() ) )
+   ::oFastReport:SetWorkArea(       "Propiedades 2",                 ::oPrp2:nArea ) 
+   ::oFastReport:SetFieldAliases(   "Propiedades 2",                 cItemsToReport( aItmPro() ) )
 
    ::oFastReport:SetWorkArea(       "Codificación de proveedores",   ::oArtPrv:nArea )
    ::oFastReport:SetFieldAliases(   "Codificación de proveedores",   cItemsToReport( aItmArtPrv() ) )
@@ -1025,11 +1025,14 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Operario",                      ::oOperario:Select() )
    ::oFastReport:SetFieldAliases(   "Operario",                      cObjectsToReport( ::oOperario:oDbf ) )
 
-   ::oFastReport:SetWorkArea(       "Agentes",                    ::oDbfAge:nArea )
-   ::oFastReport:SetFieldAliases(   "Agentes",                    cItemsToReport( aItmAge() ) )
+   ::oFastReport:SetWorkArea(       "Grupo clientes",                ::oGrpCli:Select() )
+   ::oFastReport:SetFieldAliases(   "Grupo clientes",                cObjectsToReport( ::oGrpCli:oDbf ) )
 
-   ::oFastReport:SetWorkArea(       "Atipicas de clientes",       ::oAtipicasCliente:nArea )
-   ::oFastReport:SetFieldAliases(   "Atipicas de clientes",       cItemsToReport( aItmAtp() ) )
+   ::oFastReport:SetWorkArea(       "Agentes",                       ::oDbfAge:nArea )
+   ::oFastReport:SetFieldAliases(   "Agentes",                       cItemsToReport( aItmAge() ) )
+
+   ::oFastReport:SetWorkArea(       "Atipicas de clientes",          ::oAtipicasCliente:nArea )
+   ::oFastReport:SetFieldAliases(   "Atipicas de clientes",          cItemsToReport( aItmAtp() ) )
 
    ::oFastReport:SetWorkArea(       "Tipo envases",               ::oFraPub:Select() )
    ::oFastReport:SetFieldAliases(   "Tipo envases",               cObjectsToReport( ::oFraPub:oDbf ) )
@@ -1047,6 +1050,8 @@ METHOD DataReport() CLASS TFastVentasArticulos
    
    ::oFastReport:SetMasterDetail(   "Informe", "Empresa",                           {|| cCodEmp() } )
    ::oFastReport:SetMasterDetail(   "Informe", "Clientes",                          {|| ::oDbf:cCodCli } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Grupo clientes",                    {|| ::oDbf:cCodGrp } )
+   
    ::oFastReport:SetMasterDetail(   "Informe", "Proveedores",                       {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Usuarios",                          {|| ::oDbf:cCodUsr } )
    ::oFastReport:SetMasterDetail(   "Informe", "Almacenes",                         {|| ::oDbf:cCodAlm } )
@@ -1084,6 +1089,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetResyncPair(     "Escandallos", "Artículos.Escandallos" )
 
    ::oFastReport:SetResyncPair(     "Informe", "Clientes" )
+   ::oFastReport:SetResyncPair(     "Informe", "Grupo clientes" )
    ::oFastReport:SetResyncPair(     "Informe", "Proveedores" )
    ::oFastReport:SetResyncPair(     "Informe", "Empresa" )
    ::oFastReport:SetResyncPair(     "Informe", "Usuarios" )
@@ -2116,7 +2122,7 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
 
    // Procesando Facturas Rectifictivas----------------------------------------
 
-   ::oMtrInf:cText            := "Procesando facturas rectificativas"
+   ::oMtrInf:cText   := "Procesando facturas rectificativas"
 
    ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
    ::oFacRecL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecL:cFile ), ::oFacRecL:OrdKey(), cAllTrimer( ::cExpresionLine ), , , , , , , , .t. )

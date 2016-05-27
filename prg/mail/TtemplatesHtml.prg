@@ -130,13 +130,11 @@ METHOD saveAsHtml() CLASS TTemplatesHtml
       cHtmlFile      := cFilePath( cHtmlFile ) + cFileNoExt( cHtmlFile ) + ".Html"
    endif
 
-   if file( cHtmlFile ) .and. ApoloMsgNoYes( "El fichero " + cHtmlFile + " ya existe. ¿Desea sobreescribir el fichero?", "Guardar fichero" )
+   if file( cHtmlFile ) .and. apoloMsgNoYes( "El fichero " + cHtmlFile + " ya existe. ¿Desea sobreescribir el fichero?", "Guardar fichero" )
       ferase( cHtmlFile )
-   else 
-      Return ( Self )
    end if
 
-   ::oSender:oActiveX:SaveToFile( cHtmlFile )
+   ::oSender:SaveToFile( cHtmlFile )
 
 Return ( Self )
 
@@ -148,7 +146,7 @@ METHOD saveHTML() CLASS TTemplatesHtml
       Return ( ::saveAsHtml() )
    end if 
 
-   ::oSender:oActiveX:SaveToFile( ::cHtmlFile )
+   ::oSender:SaveToFile( ::cHtmlFile )
 
 Return ( Self )
 

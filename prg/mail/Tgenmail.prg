@@ -48,8 +48,8 @@ CLASS TGenMailing
                                                          ::evalBlockRecipients(),;
                                                          alltrim( ::cRecipients ) ) )
 
-      METHOD hideRecipients()             INLINE ( ::lHideRecipients := .t., if ( !empty( ::oRecipients ), ::oRecipients:Hide(), ) )
-      METHOD showRecipients()             INLINE ( ::lHideRecipients := .f., if ( !empty( ::oRecipients ), ::oRecipients:Show(), ) )
+      METHOD hideRecipients()             INLINE ( ::lHideRecipients := .t., if ( !empty( ::oRecipients ), ::oRecipients:Disable(), ) )
+      METHOD showRecipients()             INLINE ( ::lHideRecipients := .f., if ( !empty( ::oRecipients ), ::oRecipients:Enable(), ) )
 
    // Asunto-------------------------------------------------------------------
 
@@ -68,6 +68,7 @@ CLASS TGenMailing
 
    DATA oFormatoDocumento
    DATA cFormatoDocumento 
+   
    DATA oEditDocumento
 
    // Tipos de documentos------------------------------------------------------
@@ -78,22 +79,20 @@ CLASS TGenMailing
    // Seleccion de registros---------------------------------------------------
 
    DATA aSelected                         INIT {}
-   METHOD setSelected( aSelected )        INLINE ( ::aSelected := aSelected,;
-                                                   ::setMultiSelect( len( aSelected ) > 1 ) )
+   METHOD setSelected( aSelected )        INLINE ( ::aSelected := aSelected, ::setMultiSelect( len( aSelected ) > 1 ) )
    METHOD setMultiSelect( lMultiSelect )  INLINE ( ::lMultiSelect := lMultiSelect )
    METHOD getMultiSelect()                INLINE ( ::lMultiSelect )
 
    METHOD setMultiSelectMode()            INLINE ( iif(  ::getMultiSelect(),;
-                                                         ( ::setRecipients( "" ), ::HideRecipients() ),;
+                                                         ( ::setRecipients( ::getTextSelectedMails() ), ::HideRecipients() ),;
                                                          ( ::setRecipients( ::evalBlockRecipients() ), ::showRecipients() ) ) )
 
    DATA cBmpDatabase
-   METHOD setBmpDatabase( cBmpDatabase ) ;
-                                          INLINE   ( ::cBmpDatabase := cBmpDatabase )
-
+   METHOD setBmpDatabase( cBmpDatabase )  INLINE ( ::cBmpDatabase := cBmpDatabase )
 
    DATA cMensaje                          INIT ""
    METHOD setMensaje( cMensaje )          INLINE ( ::cMensaje := cMensaje, if( !empty( ::oRichEdit ), ::oRichEdit:oRTF:SetText( cMensaje ), ) )
+   METHOD saveToFile( cFile )             INLINE ( if( !empty( ::oRichEdit ), ::oRichEdit:saveToFile( cFile ), ) )
 
    DATA oGetCopia                      
    DATA cGetCopia                         INIT Padr( uFieldEmpresa( "cCcpMai" ), 250 )
@@ -241,6 +240,7 @@ CLASS TGenMailing
 
    METHOD getDatabaseList()               VIRTUAL
    METHOD getSelectedList()
+   METHOD getTextSelectedMails()
 
    METHOD addDatabaseList()
       METHOD hashDatabaseList()
@@ -326,7 +326,7 @@ METHOD startResource() CLASS TGenMailing
    ::getStatusWorkArea()
 
    if ::lHideRecipients
-      ::oRecipients:Hide()
+      ::oRecipients:Disable()
    end if 
 
    if ::lHideCopia
@@ -451,7 +451,7 @@ METHOD buildPageRedactar()
 
    // Componentes-----------------------------------------------------------
 
-   ::oRichEdit := GetRichEdit():ReDefine( 600, oDlg )
+   ::oRichEdit          := GetRichEdit():ReDefine( 600, oDlg )
 
    ::oRichEdit:oRTF:SetText( ::cMensaje )
 
@@ -789,4 +789,32 @@ METHOD getSelectedList() CLASS TGenMailing
 Return ( ::aMailingList )
 
 //--------------------------------------------------------------------------//
+
+METHOD getTextSelectedMails() CLASS TGenMailing
+
+   local nSelect
+   local nMails            := 0
+   local cSelectedMails    := ""   
+
+   CursorWait()
+
+   for each nSelect in ::aSelected 
+
+      ::gotoRecord( nSelect )
+   
+      if !empty( ::getRecipients() )
+         nMails++
+         cSelectedMails    += alltrim( ::getRecipients() ) + ";" 
+      end if 
+
+   next 
+
+   cSelectedMails          := alltrim( str( nMails ) ) + " registros ( " + cSelectedMails + " )"
+
+   CursorArrow()
+
+Return ( cSelectedMails )
+
+//--------------------------------------------------------------------------//
+
 

@@ -291,6 +291,7 @@ static oPeriodoCli
 static aPeriodoCli      := {}
 static cPeriodoCli
 
+static cDescuentosAtipicos
 static aDescuentosAtipicos
 
 static oBrwRecCli
@@ -327,6 +328,7 @@ static bEdtInc          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode | Edt
 static bEdtFacturae     := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodCli | EdtFacturae( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodCli ) }
 
 static oReporting
+static oMailing 
 
 //-----------------------------------------------------------------------------
 
@@ -493,6 +495,8 @@ STATIC FUNCTION OpenFiles( lExt )
       cPorDiv              := cPorDiv( cDivEmp() ) // Picture de la divisa redondeada
 
       LoaIniCli( cPatEmp() )
+
+      oMailing             := TGenMailingClientes():New( nView )
 
       EnableAcceso()
 
@@ -996,7 +1000,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
       DEFINE BTNSHELL RESOURCE "Mail" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( TGenMailingClientes():New( nView ):Resource() ) ;
+         ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected )  ) ;
          TOOLTIP  "Enviar correos" ;
          HOTKEY   "V" ;
          LEVEL    ACC_IMPR
@@ -1376,10 +1380,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
    end if
 
    aDescuentosAtipicos  := {  "Base",;
-                              if( !Empty( aTmp[ _CDTOESP ] ), aTmp[ _CDTOESP ], "General" ),;
-                              if( !Empty( aTmp[ _CDPP    ] ), aTmp[ _CDPP    ], "Pronto pago" ),;
-                              if( !Empty( aTmp[ _CDTOUNO ] ), aTmp[ _CDTOUNO ], "Definido 1" ),;
-                              if( !Empty( aTmp[ _CDTODOS ] ), aTmp[ _CDTODOS ], "Definido 2" ) }
+                              if( !empty( aTmp[ _CDTOESP ] ), aTmp[ _CDTOESP ], "General" ),;
+                              if( !empty( aTmp[ _CDPP    ] ), aTmp[ _CDPP    ], "Pronto pago" ),;
+                              if( !empty( aTmp[ _CDTOUNO ] ), aTmp[ _CDTOUNO ], "Definido 1" ),;
+                              if( !empty( aTmp[ _CDTODOS ] ), aTmp[ _CDTODOS ], "Definido 2" ) }
+
+   cDescuentosAtipicos  := aDescuentosAtipicos[ min( max( aTmp[ _NSBRATP ], 1 ), len( aDescuentosAtipicos ) ) ]
 
    /*
    Abrimos las bases de datos temporales si no estan abiertas------------------
@@ -2083,7 +2089,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          OF       fldImpuestos
 
       REDEFINE COMBOBOX aGet[ _NSBRATP ] ;
-         VAR      aTmp[ _NSBRATP ] ;
+         VAR      cDescuentosAtipicos ;
          ITEMS    aDescuentosAtipicos ;
          ID       300 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -9790,6 +9796,10 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
    if !Empty( aGet[ _NCOLOR ] )
       aTmp[ _NCOLOR  ]  := aRgbColor[ Min( Max( aGet[ _NCOLOR ]:nAt, 1 ), len( aRgbColor ) ) ]
    end if
+
+   if !Empty( aGet[ _NSBRATP ] )
+      aTmp[ _NSBRATP ]  := aDescuentosAtipicos[ Min( Max( aGet[ _NSBRATP ]:nAt, 1 ), len( aDescuentosAtipicos ) ) ]
+   end if 
 
    if !Empty( aGet[ _NMESVAC ] )
       aTmp[ _NMESVAC ]  := aGet[ _NMESVAC ]:nAt

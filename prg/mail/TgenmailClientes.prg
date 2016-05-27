@@ -7,6 +7,7 @@ CLASS TGenMailingClientes FROM TGenMailingDatabase
 
    METHOD New( nView )
 
+
    METHOD getPara()        INLINE ( ( ::getWorkArea() )->cMeiInt )
    
 END CLASS
@@ -20,6 +21,8 @@ METHOD New( nView ) CLASS TGenMailingClientes
    ::setItems( aItmCli() )
 
    ::setWorkArea( D():Clientes( nView ) )
+
+   ::setBlockRecipients( {|| ( D():Clientes( nView ) )->cMeiInt } )
 
    ::oSendMail       := TSendMail():New( Self )
 

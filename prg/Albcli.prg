@@ -1060,7 +1060,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       DEFINE BTNSHELL RESOURCE "CHGSTATE" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( if( ApoloMsgNoYes(  "¿ Está seguro de cambiar el estado del documento ?", "Elija una opción" ), SetFacturadoAlbaranCliente( !lFacturado( D():Get( "AlbCliT", nView ) ), oWndBrw:oBrw ), ) ) ;
+         ACTION   ( if( ApoloMsgNoYes( "¿ Está seguro de cambiar el estado del documento ?", "Elija una opción" ), SetFacturadoAlbaranCliente( !lFacturado( D():Get( "AlbCliT", nView ) ), oWndBrw:oBrw ), ) ) ;
          TOOLTIP  "Cambiar Es(t)ado" ;
          HOTKEY   "T";
          LEVEL    ACC_EDIT

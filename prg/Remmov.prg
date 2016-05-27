@@ -121,25 +121,25 @@ CLASS TRemMovAlm FROM TMasDet
    DATA  cIniFile
    DATA  lSuccesfullSend
 
-   DATA  lReclculado          INIT .f.
+   DATA  lReclculado                                     INIT .f.
 
-   DATA  nNumberSend          INIT  0
-   DATA  nNumberRecive        INIT  0
+   DATA  nNumberSend                                     INIT  0
+   DATA  nNumberRecive                                   INIT  0
 
    DATA  oDlgImport
-   DATA  lFamilia             INIT  .t.
+   DATA  lFamilia                                        INIT  .t.
    DATA  oFamiliaInicio
    DATA  cFamiliaInicio
    DATA  oFamiliaFin
    DATA  cFamiliaFin
 
-   DATA  lArticulo            INIT  .t.
+   DATA  lArticulo                                       INIT  .t.
    DATA  oArticuloInicio
    DATA  cArticuloInicio
    DATA  oArticuloFin
    DATA  cArticuloFin
 
-   DATA  lTipoArticulo        INIT  .t.
+   DATA  lTipoArticulo                                   INIT  .t.
    DATA  oTipoArticuloInicio
    DATA  cTipoArticuloInicio
    DATA  oTipoArticuloFin
@@ -153,7 +153,7 @@ CLASS TRemMovAlm FROM TMasDet
 
    DATA  oRadTipoMovimiento
 
-   DATA  lOpenFiles           INIT  .f.
+   DATA  lOpenFiles                                      INIT  .f.
 
    DATA  oBtnKit
    DATA  oBtnImportarInventario
@@ -162,7 +162,7 @@ CLASS TRemMovAlm FROM TMasDet
    DATA  oDetSeriesMovimientos
 
    DATA  memoInventario
-   DATA  aInventarioErrors    INIT  {}
+   DATA  aInventarioErrors                               INIT  {}
 
    METHOD New( cPath, cDriver, oWndParent, oMenuItem )   CONSTRUCTOR
    METHOD Initiate( cText, oSender )                     CONSTRUCTOR
@@ -901,44 +901,44 @@ METHOD CloseFiles() CLASS TRemMovAlm
    ::oDbf               := nil
    ::oAlmacenOrigen     := nil
    ::oAlmacenDestino    := nil
-   ::oArt         := nil
-   ::oArtKit      := nil
-   ::oFam         := nil
-   ::oPro         := nil
-   ::oTblPro      := nil
-   ::oArtCom      := nil
-   ::oTMov        := nil
-   ::oStock       := nil
-   ::oAlbPrvT     := nil
-   ::oAlbPrvL     := nil
-   ::oAlbPrvS     := nil
-   ::oFacPrvT     := nil
-   ::oRctPrvT     := nil
-   ::oRctPrvL     := nil
-   ::oPedCliT     := nil
-   ::oPedCliL     := nil
-   ::oPedCliR     := nil
-   ::oAlbCliT     := nil
-   ::oAlbCliL     := nil
-   ::oFacCliT     := nil
-   ::oFacCliL     := nil
-   ::oTikCliT     := nil
-   ::oTikCliL     := nil
-   ::oHisMov      := nil
-   ::oDbfDiv      := nil
-   ::oDbfAge      := nil
-   ::oDbfBar      := nil
-   ::oDbfDoc      := nil
-   ::oTipArt      := nil
-   ::oDbfEmp      := nil
-   ::oDbfProLin   := nil
-   ::oDbfProMat   := nil
+   ::oArt               := nil
+   ::oArtKit            := nil
+   ::oFam               := nil
+   ::oPro               := nil
+   ::oTblPro            := nil
+   ::oArtCom            := nil
+   ::oTMov              := nil
+   ::oStock             := nil
+   ::oAlbPrvT           := nil
+   ::oAlbPrvL           := nil
+   ::oAlbPrvS           := nil
+   ::oFacPrvT           := nil
+   ::oRctPrvT           := nil
+   ::oRctPrvL           := nil
+   ::oPedCliT           := nil
+   ::oPedCliL           := nil
+   ::oPedCliR           := nil
+   ::oAlbCliT           := nil
+   ::oAlbCliL           := nil
+   ::oFacCliT           := nil
+   ::oFacCliL           := nil
+   ::oTikCliT           := nil
+   ::oTikCliL           := nil
+   ::oHisMov            := nil
+   ::oDbfDiv            := nil
+   ::oDbfAge            := nil
+   ::oDbfBar            := nil
+   ::oDbfDoc            := nil
+   ::oTipArt            := nil
+   ::oDbfEmp            := nil
+   ::oDbfProLin         := nil
+   ::oDbfProMat         := nil
 
-   ::oBandera     := nil
+   ::oBandera           := nil
 
-   ::lOpenFiles   := .f.
+   ::lOpenFiles         := .f.
 
-   ::nView        := nil 
+   ::nView              := nil 
 
 RETURN ( .t. )
 
