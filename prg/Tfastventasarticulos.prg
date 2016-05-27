@@ -886,7 +886,7 @@ METHOD validGrupoCliente() CLASS TFastVentasArticulos
 
 
    MsgInfo( ::oDbf:cCodGrp, "cCodGrp" )
-   MsgInfo( ::aChild( ::oDbf:cCodGrp ), "Hijos" )
+   MsgInfo( ::oGrpCli:aChild( ::oDbf:cCodGrp ), "Hijos" )
 
 
    lReturn        := ::oGrpCli:IsPadreMayor( ::oDbf:cCodGrp, ::oGrupoGCliente:Cargo:getDesde() ) .and. ::oGrpCli:IsPadreMenor( ::oDbf:cCodGrp, ::oGrupoGCliente:Cargo:getHasta() )
