@@ -5858,17 +5858,21 @@ METHOD TotTipoIva( cTurno, cCaja )
 
                while ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik == ::oTikL:cSerTil + ::oTikL:cNumTil + ::oTikL:cSufTil .and. !::oTikL:Eof()
 
-                  nBasLin     := nImpLTpv( ::oTikT:cAlias, ::oTikL:cAlias, ::nDouDiv, ::nDorDiv, ::nVdvDiv )
-                  nIvaLin     := nIvaLTpv( ::oTikT:cAlias, ::oTikL:cAlias, ::nDouDiv, ::nDorDiv, ::nVdvDiv )
-                  nTotLin     := nBasLin + nIvaLin
+                  if !::oTikL:lDelTil
 
-                  nPos        := aScan( ::aTipIva, {|x| x[1] == ::oTikL:nIvaTil } )
-                  if nPos != 0
-                     ::aTipIva[ nPos, 2 ] += nBasLin
-                     ::aTipIva[ nPos, 3 ] += nIvaLin
-                     ::aTipIva[ nPos, 4 ] += nTotLin
-                  else
-                     aAdd( ::aTipIva, { ::oTikL:nIvaTil, nBasLin, nIvaLin, nTotLin } )
+                     nBasLin     := nImpLTpv( ::oTikT:cAlias, ::oTikL:cAlias, ::nDouDiv, ::nDorDiv, ::nVdvDiv )
+                     nIvaLin     := nIvaLTpv( ::oTikT:cAlias, ::oTikL:cAlias, ::nDouDiv, ::nDorDiv, ::nVdvDiv )
+                     nTotLin     := nBasLin + nIvaLin
+
+                     nPos        := aScan( ::aTipIva, {|x| x[1] == ::oTikL:nIvaTil } )
+                     if nPos != 0
+                        ::aTipIva[ nPos, 2 ] += nBasLin
+                        ::aTipIva[ nPos, 3 ] += nIvaLin
+                        ::aTipIva[ nPos, 4 ] += nTotLin
+                     else
+                        aAdd( ::aTipIva, { ::oTikL:nIvaTil, nBasLin, nIvaLin, nTotLin } )
+                     end if
+
                   end if
 
                ::oTikL:Skip()

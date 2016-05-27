@@ -10,7 +10,7 @@ Fichero de Cabecera para la Aplcaci¢n de Facturaci¢n 3.0 para Windows
 #define __GSTCOPYRIGHT__                "(c) Gestool 2016"
 #define __GSTWEB__                      "http://www.gestool.es"
 #define __GSTHELP__                     "http://www.gstrotor.com/ayuda/Index.html"
-#define __GSTBROWSER__                  "http://www.gestool.es/fondo/index.html"
+#define __GSTBROWSER__                  "http://www.gestool.es/fondo2ktorce/index.html"
 #define __GSTICON__                     "GstRotor.Ico"
 #define __GSTTELEFONO__                 "902.930.252"
 #define __GSTLOGO__                     "Bmp\GstWellcome.Bmp"

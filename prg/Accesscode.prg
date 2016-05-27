@@ -124,7 +124,7 @@ METHOD Resource() CLASS AccessCode
    Preparamos el dialogo-------------------------------------------------------
    */
 
-   DEFINE BRUSH ::oBrush COLOR Rgb( 255, 255, 255 ) // FILE ( cBmpVersion() )
+   DEFINE BRUSH ::oBrush COLOR Rgb( 255, 255, 255 ) // FILE ( cBmpVersion() ) 
 
    DEFINE DIALOG oDlg RESOURCE "Bienvenidos" TITLE "Bienvenidos a " + __GSTROTOR__ + Space( 1 ) + __GSTVERSION__ + " - " + __GSTFACTORY__ BRUSH ::oBrush ICON oIcoApp
 
