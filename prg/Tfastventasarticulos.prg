@@ -880,7 +880,14 @@ METHOD validGrupoCliente() CLASS TFastVentasArticulos
 
    local lReturn  := .f.
 
-   lReturn        := ( ::oDbf:cCodGrp     >= ::oGrupoGCliente:Cargo:getDesde()         .and. ::oDbf:cCodGrp    <= ::oGrupoGCliente:Cargo:getHasta() )
+   /*lReturn        := ( ::oDbf:cCodGrp     >= ::oGrupoGCliente:Cargo:getDesde()         .and. ::oDbf:cCodGrp    <= ::oGrupoGCliente:Cargo:getHasta() )
+
+   IsPadreMayor*/
+
+   lReturn        := ::oGrpCli:IsPadreMayor( ::oDbf:cCodGrp, ::oGrupoGCliente:Cargo:getDesde() ) .and. ::oGrpCli:IsPadreMenor( ::oDbf:cCodGrp, ::oGrupoGCliente:Cargo:getHasta() )
+
+   //::oGrupoGCliente:Cargo:bValidMayorIgual := {|uVal, uDesde| ::oGrpCli:IsPadreMayor( uVal, uDesde ) }
+   //::oGrupoGCliente:Cargo:bValidMenorIgual := {|uVal, uHasta| ::oGrpCli:IsPadreMenor( uVal, uHasta ) }
 
 Return lReturn 
 
