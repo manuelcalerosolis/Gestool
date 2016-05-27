@@ -171,6 +171,8 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD setFilterUserId()                     INLINE ( if( ::lApplyFilters,;
                                                          ::cExpresionHeader  += ' .and. ( Field->cCodUsr >= "' + ::oGrupoUsuario:Cargo:getDesde() + '" .and. Field->cCodUsr <= "' + ::oGrupoUsuario:Cargo:getHasta() + '" )', ) )
 
+   METHOD validGrupoCliente()
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -854,7 +856,7 @@ Method lValidRegister() CLASS TFastVentasArticulos
       ( ::oDbf:cCodTemp    >= ::oGrupoTemporada:Cargo:getDesde()        .and. ::oDbf:cCodTemp   <= ::oGrupoTemporada:Cargo:getHasta() )         .and.;
       ( ::oDbf:cCodFab     >= ::oGrupoFabricante:Cargo:getDesde()       .and. ::oDbf:cCodFab    <= ::oGrupoFabricante:Cargo:getHasta() )        .and.;
       ( ::oDbf:cCodCli     >= ::oGrupoCliente:Cargo:getDesde()          .and. ::oDbf:cCodCli    <= ::oGrupoCliente:Cargo:getHasta() )           .and.;
-      ( ::oDbf:cCodGrp     >= ::oGrupoGCliente:Cargo:getDesde()         .and. ::oDbf:cCodGrp    <= ::oGrupoGCliente:Cargo:getHasta() )          .and.;
+      ::validGrupoCliente()                                                                                                                       .and.;
       ( ::oDbf:cCodPago    >= ::oGrupoFpago:Cargo:getDesde()            .and. ::oDbf:cCodPago   <= ::oGrupoFpago:Cargo:getHasta() )             .and.;
       ( ::oDbf:cCodRut     >= ::oGrupoRuta:Cargo:getDesde()             .and. ::oDbf:cCodRut    <= ::oGrupoRuta:Cargo:getHasta() )              .and.;
       ( ::oDbf:cCodAge     >= ::oGrupoAgente:Cargo:getDesde()           .and. ::oDbf:cCodAge    <= ::oGrupoAgente:Cargo:getHasta() )            .and.;
@@ -871,6 +873,16 @@ Method lValidRegister() CLASS TFastVentasArticulos
    end if
 
 RETURN ( .f. )
+
+//---------------------------------------------------------------------------//
+
+METHOD validGrupoCliente() CLASS TFastVentasArticulos
+
+   local lReturn  := .f.
+
+   lReturn        := ( ::oDbf:cCodGrp     >= ::oGrupoGCliente:Cargo:getDesde()         .and. ::oDbf:cCodGrp    <= ::oGrupoGCliente:Cargo:getHasta() )
+
+Return lReturn 
 
 //---------------------------------------------------------------------------//
 
