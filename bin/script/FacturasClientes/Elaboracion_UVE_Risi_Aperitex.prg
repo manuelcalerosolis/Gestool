@@ -32,15 +32,7 @@ CREATE CLASS FacturasClientesRisi
 
    DATA cDelegacion
 
-   DATA oInt
-   DATA oFtp
-
-   DATA lPassiveFtp         INIT    .t.
-   DATA cUserFtp            INIT    "manolo"
-   DATA cPasswdFtp          INIT    "123Ab456"
-   DATA cHostFtp            INIT    "ftp.gestool.es"
-
-   DATA aClientesExcluidos  INIT    {}
+   DATA aClientesExcluidos  INIT    { "0001452", "0001263", "0001071", "0001763" }
 
    CLASSDATA aProductos     INIT  { { "Codigo" => "V001004", "Nombre" => "GUSANITOS 35 g x 30 u",             "Codigo unidades" => "8411859550103",  "Codigo cajas" => "18411859550100", "Codigo interno" => "" },;
                                     { "Codigo" => "V001005", "Nombre" => "GUSANITOS  KETCHUP 35 g x 30 u",    "Codigo unidades" => "8411859550110",  "Codigo cajas" => "18411859550117", "Codigo interno" => "" },;
@@ -143,6 +135,7 @@ CREATE CLASS FacturasClientesRisi
    METHOD OpenFiles()
    METHOD CloseFiles()                          INLINE ( D():DeleteView( ::nView ) )
 
+   METHOD SendFile()
    METHOD ProcessFile()
 
    METHOD findMainCodeInHash( cCodigoBarra )
@@ -155,34 +148,28 @@ CREATE CLASS FacturasClientesRisi
 
    METHOD getDelegacion()                       INLINE ( oUser():cDelegacion() )
 
-   METHOD SendFile()
-
-   METHOD ftpCreateConexion()
-   METHOD ftpEndConexion()
-   METHOD ftpCreateFile( cFile )
-
 ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS FacturasClientesRisi
+   METHOD New() CLASS FacturasClientesRisi
 
-    if empty( ::getDelegacion() )
-        msgStop( "Código delegación esta vacio" )
-        Return ( Self )
-    end if 
+      if empty( ::getDelegacion() )
+         msgStop( "Código delegación esta vacio" )
+         Return ( Self )
+      end if 
 
-    if !::OpenFiles()
-        Return ( Self )
-    end if 
+      if !::OpenFiles()
+         Return ( Self )
+      end if 
 
-    ::Dialog() 
+   	::Dialog() 
 
-    ::CloseFiles()
+      ::CloseFiles()
 
-    msgInfo( "Porceso finalizado : " + if( !empty( ::oUve ), ::oUve:cFile, "" ) )
+      msgInfo( "Porceso finalizado : " + ::oUve:cFile )
 
-Return ( Self )
+   Return ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -192,7 +179,7 @@ Return ( Self )
 
       ::ProcessFile()
 
-      ::SendFile()
+      // ::SendFile()
 
       ::oDlg:Enable()
       ::oDlg:End()
@@ -279,6 +266,9 @@ METHOD ProcessFile() CLASS FacturasClientesRisi
    local cCodigoBarra   := ""
    local cCodigoInterno := ""
    local cUbicacion     := ""
+   local cCodigoAgente  := ""
+   local cNombreProducto:= ""
+   local lFamiliaRisi   := .f.
 
    CursorWait()
 
@@ -301,8 +291,14 @@ METHOD ProcessFile() CLASS FacturasClientesRisi
                cCodigoInterno             := ( D():Articulos( ::nView ) )->Codigo
                cCodigoBarra               := ( D():Articulos( ::nView ) )->CodeBar
                cUbicacion                 := ( D():Articulos( ::nView ) )->cDesUbi 
+               cNombreProducto            := ( D():Articulos( ::nView ) )->Nombre
+               lFamiliaRisi               := alltrim( ( D():Articulos( ::nView ) )->Familia ) == "00001" .or. alltrim( ( D():Articulos( ::nView ) )->Familia ) == "00010" 
 
-               if .t. // ::findMainCodeInHash( cUbicacion )
+               // Busqueda en productos de Risi--------------------------------
+
+               if lFamiliaRisi
+
+                  ::findMainCodeInHash( cUbicacion )
 
                   // Codigo del grupo-------------------------------------------
 
@@ -322,13 +318,30 @@ METHOD ProcessFile() CLASS FacturasClientesRisi
                      cCodigoRuta          := ( D():Clientes( ::nView ) )->cCodRut
                   end if 
 
+                  // Codigo del agente--------------------------------------------
+
+                  cCodigoAgente           := ( ( D():FacturasClientes( ::nView ) )->cCodAge )
+                  if empty( cCodigoAgente )
+                     cCodigoAgente        := ( D():Clientes( ::nView ) )->cAgente
+                  end if 
+
+                  // carga de datos-----------------------------------------------
+
                   ::oUve:NumFactura(      D():FacturasClientesLineasId( ::nView ) ) 
                   ::oUve:NumLinea(        ( D():FacturasClientesLineas( ::nView ) )->nNumLin ) 
-                  ::oUve:CodigoProducto(  ::hProducto[ "Codigo" ] ) 
-                  ::oUve:DescProducto(    ::hProducto[ "Nombre" ] )
+                  ::oUve:CodigoProducto(  alltrim( cCodigoInterno ) ) 
+                  ::oUve:DescProducto(    cNombreProducto )
                   ::oUve:Fabricante(      'RISI' )
-                  ::oUve:CodigoProdFab(   ::hProducto[ "Codigo unidades" ] ) // RetFld( ( D():FacturasClientesLineas( ::nView ) )->cRef, D():Get( "ArtCodebar", ::nView ), "cCodBar", "cDefArt" )
-                  ::oUve:EAN13(           ::hProducto[ "Codigo unidades" ] ) // RetFld( ( D():FacturasClientesLineas( ::nView ) )->cRef, D():Get( "ArtCodebar", ::nView ), "cCodBar", "cDefArt" )
+
+                  ::oUve:CodigoProdFab( cUbicacion )             // RetFld( , D():Get( "ArtCodebar", ::nView ), "cCodBar", "cDefArt" )
+
+                  // el producto no enctrado en tabla de risi---------------------
+
+                  if isnil( ::hProducto )   
+                      ::oUve:EAN13(       "" )
+                  else
+                      ::oUve:EAN13(       ::hProducto[ "Codigo unidades" ] )    // RetFld( ( D():FacturasClientesLineas( ::nView ) )->cRef, D():Get( "ArtCodebar", ::nView ), "cCodBar", "cDefArt" )
+                  end if 
 
                   ::oUve:Cantidad(        ::getCantidad() )
 
@@ -347,24 +360,14 @@ METHOD ProcessFile() CLASS FacturasClientesRisi
                   ::oUve:Poblacion(       ( D():FacturasClientes( ::nView ) )->cPobCli )
                   ::oUve:CodigoPostal(    ( D():FacturasClientes( ::nView ) )->cPosCli )
                   ::oUve:Ruta(            cCodigoRuta )
-
+                  ::oUve:NombreRuta(      retFld( cCodigoRuta, D():Get( "Ruta", ::nView ), "cDesRut" ) )
+                  ::oUve:CodigoComercial( cCodigoAgente )
+                  ::oUve:NombreComercial( alltrim( retFld( cCodigoAgente, D():Get( "Agentes", ::nView ), "cNbrAge" ) ) + space( 1 ) + alltrim( retFld( cCodigoAgente, D():Get( "Agentes", ::nView ), "cApeAge" ) ) )
                   ::oUve:Peso()
                   ::oUve:UMPeso()
                   ::oUve:TipoCliente(     cCodigoGrupo )
                   ::oUve:Telefono(        ( D():FacturasClientes( ::nView ) )->cTlfCli ) 
                   ::oUve:DescTipoCliente( cNombreGrupo )
-
-                  // Rutas comerciales hay q ver si en la factura se guarda el agente comercial
-
-                  if !empty( ( D():FacturasClientes( ::nView ) )->cCondEnt )
-                     ::oUve:NombreRuta(      substr( ( D():FacturasClientes( ::nView ) )->cCondEnt, 5 ) )
-                     ::oUve:CodigoComercial( substr( ( D():FacturasClientes( ::nView ) )->cCondEnt, 1, 3 ) )
-                     ::oUve:NombreComercial( substr( ( D():FacturasClientes( ::nView ) )->cCondEnt, 5 ) ) 
-                  else
-                     ::oUve:NombreRuta(      retFld( cCodigoRuta, D():Get( "Ruta", ::nView ), "cDesRut" ) )
-                     ::oUve:CodigoComercial( cCodigoRuta )
-                     ::oUve:NombreComercial( retFld( cCodigoRuta, D():Get( "Ruta", ::nView ), "cDesRut" ) )
-                  end if 
 
                   ::oUve:SerializeASCII()
 
@@ -394,47 +397,99 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD findMainCodeInHash( cMainCode ) CLASS FacturasClientesRisi
+METHOD SendFile() CLASS FacturasClientesRisi
 
-    local hProducto
+      local oInt
+      local oFtp
+      local cUrl
+      local oFile
+      local lOpen
+      local cDelegacion 
+      local cFile      
+      local cUserFtp    := "manolo"
+      local cPasswdFtp  := "123Ab456"
+      local cHostFtp    := "ftp.gestool.es"
 
-    ::hProducto             := nil
+      cUrl              := "ftp://" + cUserFtp + ":" + cPasswdFtp + "@" + cHostFtp
+      cDelegacion       := ::getDelegacion()
+      cFile             := ::oUve:cFile
 
-    cMainCode               := alltrim( cMainCode )
+      if !file( cFile )
+         Return ( Self )
+      end if
 
-    if empty( cMainCode )
-        RETURN .f.
-    end if 
+      ::oSayMessage:setText( "Subiendo fichero " + cFile )
 
-    for each hProducto in ::aProductos
+      oInt              := TUrl():New( cUrl )
+      oFtp              := TIPClientFTP():New( oInt, .t. )
+      oFtp:nConnTimeout := 20000
+      oFtp:bUsePasv     := .f.
 
-        if hProducto[ "Codigo" ] == cMainCode
-            ::hProducto       := hProducto
-        end if 
+      lOpen             := oFTP:Open( oInt )
 
-    next 
+      if empty( oFtp ) .or. !( oFtp:Open( oInt ) )
+         msgStop( "Imposible crear la conexión con servidor ftp.", "Error" )
+         return ( Self )
+      end if   
 
-RETURN ( ::hProducto != nil )
+      oFtp:Cwd( "httpdocs" )
+      oFtp:Cwd( "uve" )
+
+      if !empty( cDelegacion )
+         oFtp:MKD( cDelegacion )
+         oFtp:Cwd( cDelegacion )
+      end if 
+
+      oFtp:UploadFile( cFile ) 
+      oFtp:Close()
+
+      ::oSayMessage:setText( "Fichero " + cFile + " subido." )
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD findCodigoInternoInHash( cCodigoInterno ) CLASS FacturasClientesRisi
+   METHOD findMainCodeInHash( cMainCode ) CLASS FacturasClientesRisi
 
-    local hProducto
+      local hProducto
 
-    ::hProducto             := nil
+      ::hProducto             := nil
 
-    cCodigoInterno          := alltrim( cCodigoInterno )
+      cMainCode               := alltrim( cMainCode )
 
-    for each hProducto in ::aProductos
+      if empty( cMainCode )
+            RETURN .f.
+      end if 
 
-        if hProducto[ "Codigo interno" ] == cCodigoInterno
+      for each hProducto in ::aProductos
+
+         if hProducto[ "Codigo" ] == cMainCode
             ::hProducto       := hProducto
-        end if 
+         end if 
 
-    next 
+      next 
 
-RETURN ( ::hProducto != nil )
+   RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+   METHOD findCodigoInternoInHash( cCodigoInterno ) CLASS FacturasClientesRisi
+
+      local hProducto
+
+      ::hProducto             := nil
+
+      cCodigoInterno          := alltrim( cCodigoInterno )
+
+      for each hProducto in ::aProductos
+
+         if hProducto[ "Codigo interno" ] == cCodigoInterno
+            ::hProducto       := hProducto
+         end if 
+
+      next 
+
+   RETURN ( ::hProducto != nil )
 
 //---------------------------------------------------------------------------//
 
@@ -444,7 +499,7 @@ METHOD getCantidad() CLASS FacturasClientesRisi
       local nCantidad   := nTotNFacCli( D():FacturasClientesLineas( ::nView ) )
 
       if nUnidades != 0
-         nCantidad      := nCantidad / nUnidades
+            nCantidad   := nCantidad / nUnidades
       end if 
 
 RETURN ( nCantidad )
@@ -457,7 +512,7 @@ METHOD getPrecioBase() CLASS FacturasClientesRisi
       local nPrecioBase := nTotUFacCli( D():FacturasClientesLineas( ::nView ) )
 
       if nUnidades != 0
-         nPrecioBase    := nPrecioBase * nUnidades
+            nPrecioBase := nPrecioBase * nUnidades
       end if 
 
 RETURN ( nPrecioBase )
@@ -476,99 +531,6 @@ METHOD validateInvoice() CLASS FacturasClientesRisi
 
 Return .t.
 
-//---------------------------------------------------------------------------//
-
-METHOD SendFile() CLASS FacturasClientesRisi
-
-    if ::ftpCreateConexion()
-        
-        ::oFtp:SetCurrentDirectory( "httpdocs" )
-        ::oFtp:SetCurrentDirectory( "uve" )
-        ::ftpCreateFile( ::oUve:cFile )
-        ::ftpEndConexion()                
-    
-        msgInfo( "Fichero " + ::oUve:cFile + " subido." )
-
-    end if 
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD ftpCreateConexion() CLASS FacturasClientesRisi
-
-   local lCreate     := .f.
-
-   if !empty( ::cHostFtp )   
-
-      ::oInt         := TInternet():New()
-      ::oFtp         := TFtp():New( ::cHostFtp, ::oInt, ::cUserFtp, ::cPasswdFtp, ::lPassiveFtp )
-
-      if !empty( ::oFtp )
-         lCreate     := ( ::oFtp:hFtp != 0 )
-      end if 
-
-   end if 
-
-Return ( lCreate )
-
-//---------------------------------------------------------------------------//
-
-METHOD ftpEndConexion() CLASS FacturasClientesRisi
-
-   if !empty( ::oInt )
-      ::oInt:end()
-   end if
-
-   if !empty( ::oFtp )
-      ::oFtp:end()
-   end if 
-
-Return( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD ftpCreateFile( cFile ) CLASS FacturasClientesRisi
-   
-   local oFile
-   local nBytes
-   local hSource
-   local lPutFile    := .f.
-   local cBuffer     := Space( 20000 )
-   local nTotalBytes := 0
-   local nWriteBytes := 0
-
-   if !file( cFile )
-      msgStop( "No existe el fichero " + alltrim( cFile ) )
-      Return ( .f. )
-   end if 
-
-   oFile             := TFtpFile():New( cNoPath( cFile ), ::oFtp )
-   oFile:OpenWrite()
-
-   hSource           := fOpen( cFile ) 
-   if ferror() == 0
-
-      fseek( hSource, 0, 0 )
-
-      while ( nBytes := fread( hSource, @cBuffer, 20000 ) ) > 0 
-         nWriteBytes += nBytes
-         oFile:Write( substr( cBuffer, 1, nBytes ) )
-      end while
-
-      lPutFile       := .t.
-
-   end if
-
-   oFile:End()
-
-   fClose( hSource )
-
-   SysRefresh()
-
-Return ( lPutFile )
-
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -590,65 +552,65 @@ CLASS Uve FROM Cuaderno
    METHOD SerializeASCII()
 
    DATA cNumFactura                 INIT ''
-   METHOD NumFactura(uValue)        INLINE ( if( !Empty(uValue), ::cNumFactura         := uValue, trimpadr( strtran( ::cNumFactura, " ", "" ), 20 ) ) )
+   METHOD NumFactura(uValue)        INLINE ( if( !isnil(uValue), ::cNumFactura         := uValue, trimpadr( strtran( ::cNumFactura, " ", "" ), 20 ) ) )
    DATA nNumLinea                   INIT 0
-   METHOD NumLinea(uValue)          INLINE ( if( !Empty(uValue), ::nNumLinea           := uValue, trimpadr( trans( ::nNumLinea, "@E 9999999.99" ), 10 ) ) )
+   METHOD NumLinea(uValue)          INLINE ( if( !isnil(uValue), ::nNumLinea           := uValue, trimpadr( trans( ::nNumLinea, "@E 9999999.99" ), 10 ) ) )
    DATA cCodigoProducto             INIT ''
-   METHOD CodigoProducto(uValue)    INLINE ( if( !Empty(uValue), ::cCodigoProducto     := uValue, trimpadr( ::cCodigoProducto, 18 ) ) )
+   METHOD CodigoProducto(uValue)    INLINE ( if( !isnil(uValue), ::cCodigoProducto     := uValue, trimpadr( ::cCodigoProducto, 18 ) ) )
    DATA cDescProducto               INIT ''
-   METHOD DescProducto(uValue)      INLINE ( if( !Empty(uValue), ::cDescProducto       := uValue, trimpadr( ::cDescProducto, 50 ) ) )
+   METHOD DescProducto(uValue)      INLINE ( if( !isnil(uValue), ::cDescProducto       := uValue, trimpadr( ::cDescProducto, 50 ) ) )
    DATA cFabricante                 INIT ''
-   METHOD Fabricante(uValue)        INLINE ( if( !Empty(uValue), ::cFabricante         := uValue, trimpadr( ::cFabricante, 10 ) ) )
+   METHOD Fabricante(uValue)        INLINE ( if( !isnil(uValue), ::cFabricante         := uValue, trimpadr( ::cFabricante, 10 ) ) )
    DATA cCodigoProdFab              INIT ''
-   METHOD CodigoProdFab(uValue)     INLINE ( if( !Empty(uValue), ::cCodigoProdFab      := uValue, trimpadr( ::cCodigoProdFab, 18 ) ) )
+   METHOD CodigoProdFab(uValue)     INLINE ( if( !isnil(uValue), ::cCodigoProdFab      := uValue, trimpadr( ::cCodigoProdFab, 18 ) ) )
    DATA cEAN13                      INIT ''
-   METHOD EAN13(uValue)             INLINE ( if( !Empty(uValue), ::cEAN13              := uValue, trimpadr( ::cEAN13, 13 ) ) )
+   METHOD EAN13(uValue)             INLINE ( if( !isnil(uValue), ::cEAN13              := uValue, trimpadr( ::cEAN13, 13 ) ) )
    DATA nCantidad                   INIT 0
-   METHOD Cantidad(uValue)          INLINE ( if( !Empty(uValue), ::nCantidad           := uValue, trimpadr( trans( ::nCantidad, "@E 9999999999.999" ), 14 ) ) )
+   METHOD Cantidad(uValue)          INLINE ( if( !isnil(uValue), ::nCantidad           := uValue, trimpadr( trans( ::nCantidad, "@E 9999999999.999" ), 14 ) ) )
    DATA cUM                         INIT ''
-   METHOD UM(uValue)                INLINE ( if( !Empty(uValue), ::cUM                 := uValue, trimpadr( ::cUM, 5 ) ) )
+   METHOD UM(uValue)                INLINE ( if( !isnil(uValue), ::cUM                 := uValue, trimpadr( ::cUM, 5 ) ) )
    DATA nPrecioBase                 INIT 0
-   METHOD PrecioBase(uValue)        INLINE ( if( !Empty(uValue), ::nPrecioBase         := uValue, trimpadr( trans( ::nPrecioBase, "@E 9999999999.999" ), 14 ) ) )
+   METHOD PrecioBase(uValue)        INLINE ( if( !isnil(uValue), ::nPrecioBase         := uValue, trimpadr( trans( ::nPrecioBase, "@E 9999999999.999" ), 14 ) ) )
    DATA nDescuentos                 INIT 0
-   METHOD Descuentos(uValue)        INLINE ( if( !Empty(uValue), ::nDescuentos         := uValue, trimpadr( trans( ::nDescuentos, "@E 9999999999.999" ), 14 ) ) )
+   METHOD Descuentos(uValue)        INLINE ( if( !isnil(uValue), ::nDescuentos         := uValue, trimpadr( trans( ::nDescuentos, "@E 9999999999.999" ), 14 ) ) )
    DATA nPrecioBrutoTotal           INIT 0
-   METHOD PrecioBrutoTotal(uValue)  INLINE ( if( !Empty(uValue), ::nPrecioBrutoTotal   := uValue, trimpadr( trans( ::nPrecioBrutoTotal, "@E 9999999999.999" ), 14 ) ) )
+   METHOD PrecioBrutoTotal(uValue)  INLINE ( if( !isnil(uValue), ::nPrecioBrutoTotal   := uValue, trimpadr( trans( ::nPrecioBrutoTotal, "@E 9999999999.999" ), 14 ) ) )
    DATA dFechaFra                   INIT date()
-   METHOD FechaFra(uValue)          INLINE ( if( !Empty(uValue), ::dFechaFra           := uValue, dtos( ::dFechaFra ) ) )
+   METHOD FechaFra(uValue)          INLINE ( if( !isnil(uValue), ::dFechaFra           := uValue, dtos( ::dFechaFra ) ) )
    DATA nEjercicio                  INIT 0
-   METHOD Ejercicio(uValue)         INLINE ( if( !Empty(uValue), ::nEjercicio          := uValue, str( ::nEjercicio, 4 ) ) )
+   METHOD Ejercicio(uValue)         INLINE ( if( !isnil(uValue), ::nEjercicio          := uValue, str( ::nEjercicio, 4 ) ) )
    DATA cCodigoCliente              INIT ''
-   METHOD CodigoCliente(uValue)     INLINE ( if( !Empty(uValue), ::cCodigoCliente      := uValue, trimpadr( ::cCodigoCliente, 15 ) ) )
+   METHOD CodigoCliente(uValue)     INLINE ( if( !isnil(uValue), ::cCodigoCliente      := uValue, trimpadr( ::cCodigoCliente, 15 ) ) )
    DATA cNombre                     INIT ''
-   METHOD Nombre(uValue)            INLINE ( if( !Empty(uValue), ::cNombre             := uValue, trimpadr( ::cNombre, 50 ) ) )
+   METHOD Nombre(uValue)            INLINE ( if( !isnil(uValue), ::cNombre             := uValue, trimpadr( ::cNombre, 50 ) ) )
    DATA cRazonSocial                INIT ''
-   METHOD RazonSocial(uValue)       INLINE ( if( !Empty(uValue), ::cRazonSocial        := uValue, trimpadr( ::cRazonSocial, 50 ) ) )
+   METHOD RazonSocial(uValue)       INLINE ( if( !isnil(uValue), ::cRazonSocial        := uValue, trimpadr( ::cRazonSocial, 50 ) ) )
    DATA cCIF                        INIT ''
-   METHOD CIF(uValue)               INLINE ( if( !Empty(uValue), ::cCIF                := uValue, trimpadr( ::cCIF, 15 ) ) )
+   METHOD CIF(uValue)               INLINE ( if( !isnil(uValue), ::cCIF                := uValue, trimpadr( ::cCIF, 15 ) ) )
    DATA cDireccion                  INIT ''
-   METHOD Direccion(uValue)         INLINE ( if( !Empty(uValue), ::cDireccion          := uValue, trimpadr( ::cDireccion, 100 ) ) ) 
+   METHOD Direccion(uValue)         INLINE ( if( !isnil(uValue), ::cDireccion          := uValue, trimpadr( ::cDireccion, 100 ) ) ) 
    DATA cPoblacion                  INIT ''
-   METHOD Poblacion(uValue)         INLINE ( if( !Empty(uValue), ::cPoblacion          := uValue, trimpadr( ::cPoblacion, 50 ) ) )
+   METHOD Poblacion(uValue)         INLINE ( if( !isnil(uValue), ::cPoblacion          := uValue, trimpadr( ::cPoblacion, 50 ) ) )
    DATA cCodigoPostal               INIT ''
-   METHOD CodigoPostal(uValue)      INLINE ( if( !Empty(uValue), ::cCodigoPostal       := uValue, trimpadr( ::cCodigoPostal, 5 ) ) )
+   METHOD CodigoPostal(uValue)      INLINE ( if( !isnil(uValue), ::cCodigoPostal       := uValue, trimpadr( ::cCodigoPostal, 5 ) ) )
    DATA cRuta                       INIT ''
-   METHOD Ruta(uValue)              INLINE ( if( !Empty(uValue), ::cRuta               := uValue, trimpadr( ::cRuta, 10 ) ) )
+   METHOD Ruta(uValue)              INLINE ( if( !isnil(uValue), ::cRuta               := uValue, trimpadr( ::cRuta, 10 ) ) )
    DATA cNombreRuta                 INIT ''
-   METHOD NombreRuta(uValue)        INLINE ( if( !Empty(uValue), ::cNombreRuta         := uValue, trimpadr( ::cNombreRuta, 50 ) ) )
+   METHOD NombreRuta(uValue)        INLINE ( if( !isnil(uValue), ::cNombreRuta         := uValue, trimpadr( ::cNombreRuta, 50 ) ) )
    DATA cCodigoComercial            INIT ''
-   METHOD CodigoComercial(uValue)   INLINE ( if( !Empty(uValue), ::cCodigoComercial    := uValue, trimpadr( ::cCodigoComercial, 10 ) ) )
+   METHOD CodigoComercial(uValue)   INLINE ( if( !isnil(uValue), ::cCodigoComercial    := uValue, trimpadr( ::cCodigoComercial, 10 ) ) )
    DATA cNombreComercial            INIT ''
-   METHOD NombreComercial(uValue)   INLINE ( if( !Empty(uValue), ::cNombreComercial    := uValue, trimpadr( ::cNombreComercial, 50 ) ) )
+   METHOD NombreComercial(uValue)   INLINE ( if( !isnil(uValue), ::cNombreComercial    := uValue, trimpadr( ::cNombreComercial, 50 ) ) )
    DATA nPeso                       INIT 0
-   METHOD Peso(uValue)              INLINE ( if( !Empty(uValue), ::nPeso               := uValue, trimpadr( trans( ::nPeso, "@E 9999999999.999" ), 14 ) ) )
+   METHOD Peso(uValue)              INLINE ( if( !isnil(uValue), ::nPeso               := uValue, trimpadr( trans( ::nPeso, "@E 9999999999.999" ), 14 ) ) )
    DATA cUMPeso                     INIT ''
-   METHOD UMPeso(uValue)            INLINE ( if( !Empty(uValue), ::cUMPeso             := uValue, trimpadr( ::cUMPeso, 5 ) ) )
+   METHOD UMPeso(uValue)            INLINE ( if( !isnil(uValue), ::cUMPeso             := uValue, trimpadr( ::cUMPeso, 5 ) ) )
    DATA cTipoCliente                INIT ''
-   METHOD TipoCliente(uValue)       INLINE ( if( !Empty(uValue), ::cTipoCliente        := uValue, trimpadr( ::cTipoCliente, 6 ) ) )
+   METHOD TipoCliente(uValue)       INLINE ( if( !isnil(uValue), ::cTipoCliente        := uValue, trimpadr( ::cTipoCliente, 6 ) ) )
    DATA cTelefono                   INIT ''
-   METHOD Telefono(uValue)          INLINE ( if( !Empty(uValue), ::cTelefono           := uValue, trimpadr( ::cTelefono, 11 ) ) )
+   METHOD Telefono(uValue)          INLINE ( if( !isnil(uValue), ::cTelefono           := uValue, trimpadr( ::cTelefono, 11 ) ) )
    DATA cDescTipoCliente            INIT ''
-   METHOD DescTipoCliente(uValue)   INLINE ( if( !Empty(uValue), ::cDescTipoCliente    := uValue, trimpadr( ::cDescTipoCliente, 50 ) ) )
+   METHOD DescTipoCliente(uValue)   INLINE ( if( !isnil(uValue), ::cDescTipoCliente    := uValue, trimpadr( ::cDescTipoCliente, 50 ) ) )
 
    METHOD isRepeatLine( cBuffer )
    METHOD isSameLine( aLinea, cBuffer )

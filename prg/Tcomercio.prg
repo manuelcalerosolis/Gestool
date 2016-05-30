@@ -22,9 +22,11 @@ CLASS TComercio
 
    DATA  TPrestashopConfig  
    DATA  TPrestashopId
+
    DATA  TComercioCustomer
    DATA  TComercioBudget
    DATA  TComercioOrder
+   DATA  TComercioProduct
 
    DATA  aSend
    DATA  oInt
@@ -515,6 +517,8 @@ METHOD New( oMenuItem, oMeterTotal, oTextTotal ) CLASS TComercio
    ::TComercioBudget       := TComercioBudget():New( Self )
 
    ::TComercioOrder        := TComercioOrder():New( Self )
+
+   ::TComercioProduct      := TComercioProduct():New( Self )
 
 RETURN ( Self )
 
@@ -3160,17 +3164,11 @@ METHOD uploadProductToPrestashop()
    
    for each hArticuloData in ::aProductData
 
-      if ::prestaShopConnect() .and. ::ftpConnect()      
+      ::prestaShopPing()
 
-         ::buildInsertProductsPrestashop( hArticuloData )
-   
-         ::meterProcesoText( "Subiendo artículo " + alltrim( str(hb_enumindex())) + " de " + alltrim(str(len(::aProductData))) )
+      ::buildInsertProductsPrestashop( hArticuloData )
 
-         ::prestashopDisConnect()
-
-         ::ftpDisConnect()
-
-      end if 
+      ::meterProcesoText( "Subiendo artículo " + alltrim( str(hb_enumindex())) + " de " + alltrim(str(len(::aProductData))) )
    
    next
 
@@ -3231,12 +3229,6 @@ Return ( Self )
 
 METHOD uploadInformationToPrestashop( idProduct )
 
-   // Conectamos con la bases de datos de prestaShop---------------------------
-
-   if !::prestaShopConnect()
-      Return (  Self )   
-   end if 
-
    // Recogemos los tipos de imagenes------------------------------------------
 
    ::aTipoImagenPrestashop()
@@ -3259,64 +3251,15 @@ METHOD uploadInformationToPrestashop( idProduct )
 
    ::uploadAditionalInformationToPrestashop()
 
-   // Desconexiones------------------------------------------------------------
-
-   ::prestashopDisConnect() 
-
 Return ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD updateInformationToPrestashop( idProduct )
 
-   // Conectamos con la bases de datos de prestaShop------------------------
-
-   if ::prestaShopConnect()
-
-      // Eliminamos las bases de datos--------------------------------------
-
-      ::MeterTotalText( "Eliminando la bases de datos." )
-
-      if ::lSyncAll
-         ::buildEliminaTablas()
-      end if
-
-      if !empty( idProduct )
-         ::buildDeleteProductPrestashop( idProduct )
-      end if 
-
-      // Subimos la informacion a mysql-------------------------------------
-
-      ::MeterTotalText( "Subiendo la información adicional." )
-
-      ::uploadAditionalInformationToPrestashop()
-
-      ::MeterTotalText( "Subiendo la información de productos." )
-
-      ::uploadProductToPrestashop()
-
-      // Pasamos las imágenes de los artículos a prestashop-----------------
-
-      ::MeterTotalText( "Generando imagenes." )
-
-      ::buildImagenes()
-
-      // Pasamos las imágenes de los artículos a prestashop-----------------
-
-      ::MeterTotalText( "Subiendo imagenes." )
-
-      ::buildSubirImagenes()
-
-      // Desconectamos mysql------------------------------------------------
-
-      ::prestashopDisConnect()  
-      
-   end if  
-
 Return ( Self )
 
 //---------------------------------------------------------------------------//
-
 
 METHOD buildInsertIvaPrestashop( hTax ) CLASS TComercio
 
@@ -4813,11 +4756,21 @@ METHOD controllerExportPrestashop( idProduct ) Class TComercio
 
          ::buildProductInformation( idProduct, .f. )
 
-         ::uploadInformationToPrestashop( idProduct )
+         if ::prestaShopConnect() .and. ::ftpConnect()
 
-         ::MeterTotalText( "Subiendo la información de productos." )
+            ::MeterTotalText( "Subiendo la información adicional a los productos." )
 
-         ::uploadProductToPrestashop()
+            ::uploadInformationToPrestashop( idProduct )
+
+            ::MeterTotalText( "Subiendo la información de productos." )
+
+            ::uploadProductToPrestashop()
+
+            ::prestashopDisConnect()
+
+            ::ftpDisConnect()
+
+         end if 
 
          ::filesClose()
 
