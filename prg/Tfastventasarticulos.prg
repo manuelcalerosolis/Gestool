@@ -878,23 +878,52 @@ RETURN ( .f. )
 
 METHOD validGrupoCliente() CLASS TFastVentasArticulos
 
-   local lReturn  := .f.
+   local aChild
+   local cChild
+   local lRetDesde   := .f.
+   local lRetHasta   := .f.
 
    /*lReturn        := ( ::oDbf:cCodGrp     >= ::oGrupoGCliente:Cargo:getDesde()         .and. ::oDbf:cCodGrp    <= ::oGrupoGCliente:Cargo:getHasta() )
 
    IsPadreMayor*/
 
+   /*MsgInfo( ::oDbf:cCodGrp, "cCodGrp" )
+   
+   MsgInfo( ::oGrupoGCliente:Cargo:getDesde(), "Desde" )
+   MsgInfo( hb_valtoexp( ::oGrpCli:aChild( ::oGrupoGCliente:Cargo:getDesde() ) ), "Desde" )
 
-   MsgInfo( ::oDbf:cCodGrp, "cCodGrp" )
-   MsgInfo( hb_valtoexp( ::oGrpCli:aChild( ::oDbf:cCodGrp ) ), "Hijos" )
+   MsgInfo( ::oGrupoGCliente:Cargo:getHasta(), "Hasta" )
+   MsgInfo( hb_valtoexp( ::oGrpCli:aChild( ::oGrupoGCliente:Cargo:getHasta() ) ), "Hasta" )*/
+
+   aChild         := ::oGrpCli:aChild( ::oGrupoGCliente:Cargo:getDesde() )
+
+   for each cChild in aChild
+      if cChild >= ::oDbf:cCodGrp
+         lRetDesde   := .t.
+         exit
+      end if
+   next
 
 
-   lReturn        := ::oGrpCli:IsPadreMayor( ::oDbf:cCodGrp, ::oGrupoGCliente:Cargo:getDesde() ) .and. ::oGrpCli:IsPadreMenor( ::oDbf:cCodGrp, ::oGrupoGCliente:Cargo:getHasta() )
+   //MsgInfo( lRetDesde, "lRetDesde" )
+
+   aChild         := ::oGrpCli:aChild( ::oGrupoGCliente:Cargo:getHasta() )
+
+   for each cChild in aChild
+      if cChild <= ::oDbf:cCodGrp
+         lRetHasta   := .t.
+         exit
+      end if
+   next
+
+   //MsgInfo( lRetHasta, "lRetHasta" )
+
+   //lReturn        := ::oGrpCli:IsPadreMayor( ::oDbf:cCodGrp, ::oGrupoGCliente:Cargo:getDesde() ) .and. ::oGrpCli:IsPadreMenor( ::oDbf:cCodGrp, ::oGrupoGCliente:Cargo:getHasta() )
 
    //::oGrupoGCliente:Cargo:bValidMayorIgual := {|uVal, uDesde| ::oGrpCli:IsPadreMayor( uVal, uDesde ) }
    //::oGrupoGCliente:Cargo:bValidMenorIgual := {|uVal, uHasta| ::oGrpCli:IsPadreMenor( uVal, uHasta ) }
 
-Return lReturn 
+Return ( lRetDesde .and. lRetHasta ) //lReturn 
 
 //---------------------------------------------------------------------------//
 
