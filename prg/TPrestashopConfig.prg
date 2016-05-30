@@ -43,19 +43,20 @@ CLASS TPrestashopConfig
 
    METHOD getMySqlServer()             INLINE ( ::getFromCurrentWeb( "MySqlServer" ) )
    METHOD getMySqlUser()               INLINE ( ::getFromCurrentWeb( "MySqlUser" ) )
-   METHOD getMySqlPassword()           INLINE ( ::getFromCurrentWeb( "MySqlPassword") )
-   METHOD getMySqlDatabase()           INLINE ( ::getFromCurrentWeb( "MySqlDatabase") )
-   METHOD getMySqlPort()               INLINE ( ::getFromCurrentWeb( "MySqlPort") )
+   METHOD getMySqlPassword()           INLINE ( ::getFromCurrentWeb( "MySqlPassword" ) )
+   METHOD getMySqlDatabase()           INLINE ( ::getFromCurrentWeb( "MySqlDatabase" ) )
+   METHOD getMySqlPort()               INLINE ( ::getFromCurrentWeb( "MySqlPort" ) )
+   METHOD getMySqlTimeOut()            INLINE ( ::getFromCurrentWeb( "MySqlTimeOut" ) )
 
-   METHOD getPrefixDatabase()          INLINE ( ::getFromCurrentWeb( "PrefixDatabase") )
+   METHOD getPrefixDatabase()          INLINE ( ::getFromCurrentWeb( "PrefixDatabase" ) )
 
-   METHOD getFtpServer()               INLINE ( ::getFromCurrentWeb( "FtpServer") )
-   METHOD getFtpUser()                 INLINE ( ::getFromCurrentWeb( "FtpUser") )
-   METHOD getFtpPassword()             INLINE ( ::getFromCurrentWeb( "FtpPassword") )
-   METHOD getFtpPassive()              INLINE ( ::getFromCurrentWeb( "FtpPassive") )
-   METHOD getFtpPort()                 INLINE ( ::getFromCurrentWeb( "FtpPort") )
+   METHOD getFtpServer()               INLINE ( ::getFromCurrentWeb( "FtpServer" ) )
+   METHOD getFtpUser()                 INLINE ( ::getFromCurrentWeb( "FtpUser" ) )
+   METHOD getFtpPassword()             INLINE ( ::getFromCurrentWeb( "FtpPassword" ) )
+   METHOD getFtpPassive()              INLINE ( ::getFromCurrentWeb( "FtpPassive" ) )
+   METHOD getFtpPort()                 INLINE ( ::getFromCurrentWeb( "FtpPort" ) )
 
-   METHOD getCookieKey()               INLINE ( ::getFromCurrentWeb( "CookieKey") )
+   METHOD getCookieKey()               INLINE ( ::getFromCurrentWeb( "CookieKey" ) )
 
    METHOD getStore()                   INLINE ( ::getFromCurrentWeb( "Store", "000" ) )
    METHOD getSyncronizeManufacturers() INLINE ( ::getFromCurrentWeb( "SyncronizeManufacturers", .t. ) )
