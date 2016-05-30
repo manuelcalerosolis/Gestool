@@ -896,6 +896,7 @@ METHOD validGrupoCliente() CLASS TFastVentasArticulos
    MsgInfo( hb_valtoexp( ::oGrpCli:aChild( ::oGrupoGCliente:Cargo:getHasta() ) ), "Hasta" )*/
 
    aChild         := ::oGrpCli:aChild( ::oGrupoGCliente:Cargo:getDesde() )
+   aAdd( aChild, ::oGrupoGCliente:Cargo:getDesde() )
 
    for each cChild in aChild
       if cChild >= ::oDbf:cCodGrp
