@@ -299,11 +299,11 @@ METHOD Activate() CLASS TCobAge
 
       ::lGenLiquidacion( ::oWndBrw:oBrw, oPdf, IS_PDF )
 
-   DEFINE BTNSHELL RESOURCE "Document_businessman_" OF ::oWndBrw ;
+   /*DEFINE BTNSHELL RESOURCE "Document_businessman_" OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::GeneraFacturaGastos( .t. ) ) ;
       TOOLTIP  "Genera factura" ;
-      LEVEL    ACC_EDIT
+      LEVEL    ACC_EDIT*/
 
    DEFINE BTNSHELL RESOURCE "BmpConta" OF ::oWndBrw ;
       NOBORDER ;
@@ -627,7 +627,6 @@ METHOD Resource( nMode ) CLASS TCobAge
    local oGetCodAge
    local oGetCodDiv
    local oGetValDiv
-   local oFactura
    local oBmpGeneral
 
    if ( nMode == APPD_MODE )
@@ -667,7 +666,7 @@ METHOD Resource( nMode ) CLASS TCobAge
          WHEN     ( nMode != ZOOM_MODE ) ;
 			OF 		oDlg
 
-      REDEFINE GET oFactura VAR ::oDbf:cNumFac ;
+      /*REDEFINE GET oFactura VAR ::oDbf:cNumFac ;
          ID       180 ;
          PICTURE  "@R X/#########/XX" ;
          BITMAP   "Lupa" ;
@@ -675,15 +674,15 @@ METHOD Resource( nMode ) CLASS TCobAge
          OF       oDlg
 
       oFactura:bHelp       := {|| BrwFacPrvLiq( oFactura, ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::oIva:cAlias, ::oDivisas:cAlias ) }
-      oFactura:bValid      := {|| ::lValidFacturaProveedor( oFactura, nMode ) }
+      oFactura:bValid      := {|| ::lValidFacturaProveedor( oFactura, nMode ) }*/
 
-      REDEFINE BTNBMP oBtnFac ;
+      /*REDEFINE BTNBMP oBtnFac ;
          ID       190 ;
          OF       oDlg ;
          RESOURCE "Document_businessman_16" ;
          NOBORDER
 
-      oBtnFac:bAction      := {|| EdtFacPrv( ::oDbf:cNumFac ) }
+      oBtnFac:bAction      := {|| EdtFacPrv( ::oDbf:cNumFac ) }*/
 
       REDEFINE GET ::oCodAge VAR ::oDbf:cCodAge UPDATE ;
          ID       130 ;
@@ -773,7 +772,7 @@ METHOD Resource( nMode ) CLASS TCobAge
 
       with object ( ::oBrwDet:AddCol() )
          :cHeader                := "Tipo"
-         :bStrData               := {|| if( ::oDetCobAge:oDbfVir:lFacRec, "Rectificativa", "" ) }
+         :bStrData               := {|| if( ::oDetCobAge:oDbfVir:lFacRec, "Rectificativa", "Factura" ) }
          :nWidth                 := 60
       end with
 
@@ -801,8 +800,15 @@ METHOD Resource( nMode ) CLASS TCobAge
       with object ( ::oBrwDet:AddCol() )
          :cHeader                := "Cliente"
          :cSortOrder             := "cCodCli"
-         :bStrData               := {|| Rtrim( ::oDetCobAge:oDbfVir:cCodCli ) + Space( 1 ) + RetClient( ::oDetCobAge:oDbfVir:cCodCli, ::oClientes:cAlias ) }
-         :nWidth                 := 220
+         :bStrData               := {|| Rtrim( ::oDetCobAge:oDbfVir:cCodCli ) }
+         :nWidth                 := 60
+      end with
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader                := "Nombre"
+         :cSortOrder             := "cNomCli"
+         :bStrData               := {|| Rtrim( ::oDetCobAge:oDbfVir:cNomCli ) }
+         :nWidth                 := 160
       end with
 
       with object ( ::oBrwDet:AddCol() )
@@ -917,7 +923,12 @@ METHOD EdtRecMenu( oDlg )
 
             SEPARATOR
 
-            MENUITEM    "&4. Visualiza factura";
+            MENUITEM    "&4. Modifica factura";
+               MESSAGE  "Modifica la factura" ;
+               RESOURCE "EDIT16" ;
+               ACTION   ( if( ::oDetCobAge:oDbfVir:lFacRec, EdtFacRec( ::oDetCobAge:oDbfVir:cSerFac + Str( ::oDetCobAge:oDbfVir:nNumFac ) + ::oDetCobAge:oDbfVir:cSufFac ), EdtFacCli( ::oDetCobAge:oDbfVir:cSerFac + Str( ::oDetCobAge:oDbfVir:nNumFac ) + ::oDetCobAge:oDbfVir:cSufFac ) ) )
+
+            MENUITEM    "&5. Visualiza factura";
                MESSAGE  "Visualiza la factura" ;
                RESOURCE "ZOOM16" ;
                ACTION   ( if( ::oDetCobAge:oDbfVir:lFacRec, ZooFacRec( ::oDetCobAge:oDbfVir:cSerFac + Str( ::oDetCobAge:oDbfVir:nNumFac ) + ::oDetCobAge:oDbfVir:cSufFac ), ZooFacCli( ::oDetCobAge:oDbfVir:cSerFac + Str( ::oDetCobAge:oDbfVir:nNumFac ) + ::oDetCobAge:oDbfVir:cSufFac ) ) )
@@ -954,9 +965,9 @@ METHOD lSave( nMode ) CLASS TCobAge
       ::oDbf:nNumCob := ::cValidCobro()
    end if
 
-   if Empty( ::oDbf:cNumFac ) .and. ApoloMsgNoYes( "¿Desea generar la factura de gastos?", "Confirme" )
+   /*if Empty( ::oDbf:cNumFac ) .and. ApoloMsgNoYes( "¿Desea generar la factura de gastos?", "Confirme" )
       ::GeneraFacturaGastos( .f. )
-   end if
+   end if*/
 
 RETURN ( .t. )
 
@@ -1463,7 +1474,7 @@ METHOD AsistenteImportarFacturas() CLASS TCobAge
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Tipo"
-         :bStrData         := {|| if( ::aDbfVir[ oBrw:nArrayAt, 10 ], "Rectificativa", "" ) }
+         :bStrData         := {|| if( ::aDbfVir[ oBrw:nArrayAt, 10 ], "Rectificativa", "Factura" ) }
          :nWidth           := 60
       end with
 
@@ -1481,8 +1492,14 @@ METHOD AsistenteImportarFacturas() CLASS TCobAge
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Cliente"
-         :bStrData         := {|| Rtrim( ::aDbfVir[ oBrw:nArrayAt, 6 ] ) + Space( 1 ) + Rtrim( ::aDbfVir[ oBrw:nArrayAt, 7 ] ) }
-         :nWidth           := 200
+         :bStrData         := {|| Rtrim( ::aDbfVir[ oBrw:nArrayAt, 6 ] ) }
+         :nWidth           := 60
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :bStrData         := {|| Rtrim( ::aDbfVir[ oBrw:nArrayAt, 7 ] ) }
+         :nWidth           := 140
       end with
 
       with object ( oBrw:AddCol() )
@@ -1582,9 +1599,9 @@ METHOD IntBtnNxt( oPag, oBtnPrv, oBtnNxt, oDlg, oBrw ) CLASS TCobAge
 
          ::ImportaFacturaAgentes( oBrw )
 
-         for each aAgente in ::aAgentesRelacionados
+         /*for each aAgente in ::aAgentesRelacionados
             ::ImportaFacturaAgentes( oBrw, aAgente[ 1 ], aAgente[ 2 ], .t. )
-         next
+         next*/
 
          /*
          Si no hemos conseguido añadir nada------------------------------------
@@ -1626,6 +1643,7 @@ METHOD IntBtnNxt( oPag, oBtnPrv, oBtnNxt, oDlg, oBrw ) CLASS TCobAge
                   ::oDetCobAge:oDbfVir:cSufFac  := ::aDbfVir[ n, 4 ]
                   ::oDetCobAge:oDbfVir:dFecFac  := ::aDbfVir[ n, 5 ]
                   ::oDetCobAge:oDbfVir:cCodCli  := ::aDbfVir[ n, 6 ]
+                  ::oDetCobAge:oDbfVir:cNomCli  := ::aDbfVir[ n, 7 ]
                   ::oDetCobAge:oDbfVir:nImpCom  := ::aDbfVir[ n, 8 ]
                   ::oDetCobAge:oDbfVir:nComAge  := ::aDbfVir[ n, 9 ] / ::aDbfVir[ n, 8 ] * 100
                   ::oDetCobAge:oDbfVir:Save()
@@ -1654,7 +1672,7 @@ RETURN nil
 
 METHOD cValidCobro() CLASS TCobAge
 
-   local nCurCob  := nNewDoc( nil, ::oDbf:nArea, "nCobAge" )
+   local nCurCob  := nNewDoc( nil, ::oDbf:nArea, "nCobAge", , ::oCount:cAlias )
 
    ::oDbf:GetStatus()
    ::oDbf:OrdSetFocus( "nNumCob" )
@@ -2350,32 +2368,19 @@ Estudia si la factura es valida para ser procesada
 METHOD lFacturaProcesar( lRectificativa, lRelacionado ) CLASS TCobAge
 
    local lFacturaProcesar  := .f.
+   local cFactura          := ""
+   local cAgente           := ""
 
-   if lRelacionado
-
-      /*
-      La factura tuvo q ser previamente facturada por su propio agente y no haber sido liquidada en el nuevo agente
-      */
-
-      if ( ::oDetCobAge:lFacturaRemesada( lRectificativa, ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac, ::oFacCliT:cCodAge ) ) .and. ;
-         ( ::lFacturasIncluidas .or. ( !::lFacturasIncluidas .and. !::oDetCobAge:lFacturaRemesada( lRectificativa, ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac, ::oDbf:cCodAge ) ) )
-
-         lFacturaProcesar  := .t.
-
-      end if
-
+   if lRectificativa
+      cFactura          := ::oFacRecT:cSerie + Str( ::oFacRecT:nNumFac ) + ::oFacRecT:cSufFac
+      cAgente           := ::oFacRecT:cCodAge
    else
+      cFactura          := ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac
+      cAgente           := ::oFacCliT:cCodAge
+   end if
 
-      /*
-      Esto es para liquidar tambien las facturas propias del agente
-      */
-
-      if ( ::lFacturasIncluidas ) .or. ( !::lFacturasIncluidas .and. !::oDetCobAge:lFacturaRemesada( lRectificativa, ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac, ::oFacCliT:cCodAge ) )
-
-         lFacturaProcesar  := .t.
-
-      end if
-
+   if ( ::lFacturasIncluidas ) .or. ( !::lFacturasIncluidas .and. !::oDetCobAge:lFacturaRemesada( lRectificativa, cFactura, cAgente ) )
+      lFacturaProcesar  := .t.
    end if
 
 Return ( lFacturaProcesar )
@@ -2619,6 +2624,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetCobAge
       FIELD NAME "lFacRec"    TYPE "L" LEN 01  DEC 0 COMMENT "Factura rectificativa"               OF oDbf
       FIELD NAME "dFecFac"    TYPE "D" LEN 08  DEC 0 COMMENT "Fecha factura"                       OF oDbf
       FIELD NAME "cCodCli"    TYPE "C" LEN 12  DEC 0 COMMENT "Código de cliente"                   OF oDbf
+      FIELD NAME "cNomCli"    TYPE "C" LEN 80  DEC 0 COMMENT "Nombre de cliente"                   OF oDbf
       FIELD NAME "cCodAge"    TYPE "C" LEN 03  DEC 0 COMMENT "Código de agente"                    OF oDbf
       FIELD NAME "nImpCom"    TYPE "N" LEN 16  DEC 6 COMMENT "Importe comisión"                    OF oDbf
       FIELD NAME "nComAge"    TYPE "N" LEN 06  DEC 2 COMMENT "Comisión del agente"                 OF oDbf
@@ -2629,6 +2635,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetCobAge
       INDEX TO ( cFileName )  TAG "cNumRct" ON "cSerFac + Str( nNumFac, 9 ) + cSufFac + cCodAge"   NODELETED FOR "lFacRec"    OF oDbf
       INDEX TO ( cFileName )  TAG "dFecFac" ON "dFecFac"                                           NODELETED                  OF oDbf
       INDEX TO ( cFileName )  TAG "cCodCli" ON "cCodCli"                                           NODELETED                  OF oDbf
+      INDEX TO ( cFileName )  TAG "cNomCli" ON "cNomCli"                                           NODELETED                  OF oDbf
       INDEX TO ( cFileName )  TAG "cCodAge" ON "cCodAge"                                           NODELETED                  OF oDbf
       INDEX TO ( cFileName )  TAG "xNumCob" ON "Str( nNumCob ) + cSufCob + cCodAge + cCodCli + cSerFac + Str( nNumFac, 9 ) + cSufFac" NODELETED OF oDbf
 
@@ -2677,7 +2684,7 @@ METHOD Resource( nMode, lRectificativa ) CLASS TDetCobAge
    local cNumFac
    local cCodAge
    local cNomAge
-   local cNomCli
+   //local cNomCli
    local nPctCom           := 0
    local nImpCom           := 0
    local nTotCom           := 0
@@ -2686,7 +2693,7 @@ METHOD Resource( nMode, lRectificativa ) CLASS TDetCobAge
 
    cNumFac                 := ::oDbfVir:cSerFac + Str( ::oDbfVir:nNumFac ) + ::oDbfVir:cSufFac
    cNomAge                 := oRetFld( ::oDbfVir:cCodAge, ::oParent:oAgentes )
-   cNomCli                 := oRetFld( ::oDbfVir:cCodCli, ::oParent:oClientes )
+   //cNomCli                 := oRetFld( ::oDbfVir:cCodCli, ::oParent:oClientes )
 
    DEFINE DIALOG oDlg RESOURCE "lCobRec" TITLE lblTitle( nMode ) + if( !lRectificativa, "facturas de clientes", "facturas rectificativas de clientes" )
 
@@ -2705,7 +2712,7 @@ METHOD Resource( nMode, lRectificativa ) CLASS TDetCobAge
          WHEN     ( .f. ) ;
          OF       oDlg
 
-      REDEFINE GET ::oNomCli VAR cNomCli ;
+      REDEFINE GET ::oNomCli VAR ::oDbfVir:cNomCli ;
          ID       111 ;
          WHEN     ( .f. ) ;
          OF       oDlg

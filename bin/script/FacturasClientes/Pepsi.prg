@@ -358,15 +358,17 @@ static function Exportacion()
 
          for each aLinea in aArticulo
        
-            MsgInfo( EoM( ( dbfFacCliT )->dFecFac ), ( dbfFacCliT )->dFecFac )
-
             cTextoFinal       += Str( Year( ( dbfFacCliT )->dFecFac ) ) + "-" + PadL( month( ( dbfFacCliT )->dFecFac ), 2, "0" )
+            cTextoFinal       += ";"
+            cTextoFinal       += Str( Year( ( dbfFacCliT )->dFecFac ) ) + "-" + PadL( month( ( dbfFacCliT )->dFecFac ), 2, "0" ) + "-" + PadL( Day( ( dbfFacCliT )->dFecFac ), 2, "0" )
+            cTextoFinal       += ";"
+            cTextoFinal       += ( dbfFacCliT )->cSerie + AllTrim( Str( ( dbfFacCliT )->nNumFac ) ) 
             cTextoFinal       += ";"
             cTextoFinal       += cConcesionario
             cTextoFinal       += ";"
             cTextoFinal       += AllTrim( ( dbfFacCliT )->cCodCli )
             cTextoFinal       += ";"
-            cTextoFinal       += AllTrim( aLinea[1] )
+            cTextoFinal       += AllTrim( retfld( aLinea[1], dbfArticulo, "cRefAux" ) )
             cTextoFinal       += ";"
             cTextoFinal       += AllTrim( Trans( aLinea[2], cPicture ) )
             cTextoFinal       += ";"
