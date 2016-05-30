@@ -883,26 +883,13 @@ METHOD validGrupoCliente() CLASS TFastVentasArticulos
    local lRetDesde   := .f.
    local lRetHasta   := .f.
 
-   /*lReturn        := ( ::oDbf:cCodGrp     >= ::oGrupoGCliente:Cargo:getDesde()         .and. ::oDbf:cCodGrp    <= ::oGrupoGCliente:Cargo:getHasta() )
-
-   IsPadreMayor*/
-
-   MsgInfo( ::oDbf:cCodGrp, "cCodGrp" )
-   
-  // MsgInfo( ::oGrupoGCliente:Cargo:getDesde(), "Desde" )
-  // MsgInfo( hb_valtoexp( ::oGrpCli:aChild( ::oGrupoGCliente:Cargo:getDesde() ) ), "Desde" )
-
- //  MsgInfo( ::oGrupoGCliente:Cargo:getHasta(), "Hasta" )
-  // MsgInfo( hb_valtoexp( ::oGrpCli:aChild( ::oGrupoGCliente:Cargo:getHasta() ) ), "Hasta" )
+   /*
+   Evaluamos el desde----------------------------------------------------------
+   */
 
    aChild         := ::oGrpCli:aChild( ::oGrupoGCliente:Cargo:getDesde() )
    aAdd( aChild, ::oGrupoGCliente:Cargo:getDesde() )
-<<<<<<< HEAD
-=======
    
-   MsgInfo ( hb_valtoexp(aChild), "aChild" )
->>>>>>> origin/master
-
    for each cChild in aChild
       if ::oDbf:cCodGrp >= cChild 
          lRetDesde   := .t.
@@ -910,13 +897,12 @@ METHOD validGrupoCliente() CLASS TFastVentasArticulos
       end if
    next
 
-   
-   MsgInfo( lRetDesde, "lRetDesde" )
+   /*
+   Evaluamos el hasta----------------------------------------------------------
+   */
 
    aChild         := ::oGrpCli:aChild( ::oGrupoGCliente:Cargo:getHasta() )
    aAdd( aChild, ::oGrupoGCliente:Cargo:getHasta() )
-
-   MsgInfo ( hb_valtoexp(aChild), "aChild" )
 
    for each cChild in aChild
       if ::oDbf:cCodGrp <= cChild
@@ -925,15 +911,7 @@ METHOD validGrupoCliente() CLASS TFastVentasArticulos
       end if
    next
 
-   
-   MsgInfo( lRetHasta, "lRetHasta" )
-
-   //lReturn        := ::oGrpCli:IsPadreMayor( ::oDbf:cCodGrp, ::oGrupoGCliente:Cargo:getDesde() ) .and. ::oGrpCli:IsPadreMenor( ::oDbf:cCodGrp, ::oGrupoGCliente:Cargo:getHasta() )
-
-   //::oGrupoGCliente:Cargo:bValidMayorIgual := {|uVal, uDesde| ::oGrpCli:IsPadreMayor( uVal, uDesde ) }
-   //::oGrupoGCliente:Cargo:bValidMenorIgual := {|uVal, uHasta| ::oGrpCli:IsPadreMenor( uVal, uHasta ) }
-
-Return ( lRetDesde .and. lRetHasta ) //lReturn 
+Return ( lRetDesde .and. lRetHasta )
 
 //---------------------------------------------------------------------------//
 
