@@ -887,36 +887,43 @@ METHOD validGrupoCliente() CLASS TFastVentasArticulos
 
    IsPadreMayor*/
 
-   /*MsgInfo( ::oDbf:cCodGrp, "cCodGrp" )
+   MsgInfo( ::oDbf:cCodGrp, "cCodGrp" )
    
-   MsgInfo( ::oGrupoGCliente:Cargo:getDesde(), "Desde" )
-   MsgInfo( hb_valtoexp( ::oGrpCli:aChild( ::oGrupoGCliente:Cargo:getDesde() ) ), "Desde" )
+  // MsgInfo( ::oGrupoGCliente:Cargo:getDesde(), "Desde" )
+  // MsgInfo( hb_valtoexp( ::oGrpCli:aChild( ::oGrupoGCliente:Cargo:getDesde() ) ), "Desde" )
 
-   MsgInfo( ::oGrupoGCliente:Cargo:getHasta(), "Hasta" )
-   MsgInfo( hb_valtoexp( ::oGrpCli:aChild( ::oGrupoGCliente:Cargo:getHasta() ) ), "Hasta" )*/
+ //  MsgInfo( ::oGrupoGCliente:Cargo:getHasta(), "Hasta" )
+  // MsgInfo( hb_valtoexp( ::oGrpCli:aChild( ::oGrupoGCliente:Cargo:getHasta() ) ), "Hasta" )
 
    aChild         := ::oGrpCli:aChild( ::oGrupoGCliente:Cargo:getDesde() )
+   aAdd( aChild, ::oGrupoGCliente:Cargo:getDesde() )
+   
+   MsgInfo ( hb_valtoexp(aChild), "aChild" )
 
    for each cChild in aChild
-      if cChild >= ::oDbf:cCodGrp
+      if ::oDbf:cCodGrp >= cChild 
          lRetDesde   := .t.
          exit
       end if
    next
 
-
-   //MsgInfo( lRetDesde, "lRetDesde" )
+   
+   MsgInfo( lRetDesde, "lRetDesde" )
 
    aChild         := ::oGrpCli:aChild( ::oGrupoGCliente:Cargo:getHasta() )
+   aAdd( aChild, ::oGrupoGCliente:Cargo:getHasta() )
+
+   MsgInfo ( hb_valtoexp(aChild), "aChild" )
 
    for each cChild in aChild
-      if cChild <= ::oDbf:cCodGrp
+      if ::oDbf:cCodGrp <= cChild
          lRetHasta   := .t.
          exit
       end if
    next
 
-   //MsgInfo( lRetHasta, "lRetHasta" )
+   
+   MsgInfo( lRetHasta, "lRetHasta" )
 
    //lReturn        := ::oGrpCli:IsPadreMayor( ::oDbf:cCodGrp, ::oGrupoGCliente:Cargo:getDesde() ) .and. ::oGrpCli:IsPadreMenor( ::oDbf:cCodGrp, ::oGrupoGCliente:Cargo:getHasta() )
 
