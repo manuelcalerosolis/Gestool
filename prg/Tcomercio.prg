@@ -3811,10 +3811,6 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
 
    ::uploadStockToPrestashop( hGet( hArticuloData, "aStock") )
 
-   ::writeText( "Subiendo imagenes del artículo: " + hGet( hArticuloData, "name" ) )
-
-   ::uploadProductImages( hGet( hArticuloData, "aImages" ) )   
-
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -4756,7 +4752,7 @@ METHOD controllerExportPrestashop( idProduct ) Class TComercio
 
          ::buildProductInformation( idProduct, .f. )
 
-         if ::prestaShopConnect() .and. ::ftpConnect()
+         if ::prestaShopConnect()
 
             ::MeterTotalText( "Subiendo la información adicional a los productos." )
 
@@ -4765,6 +4761,16 @@ METHOD controllerExportPrestashop( idProduct ) Class TComercio
             ::MeterTotalText( "Subiendo la información de productos." )
 
             ::uploadProductToPrestashop()
+
+            ::prestashopDisConnect()
+
+            // subiendo imagenes-----------------------------------------------
+
+            ::ftpConnect()
+
+            ::writeText( "Subiendo imagenes del artículos" )
+
+            ::uploadImageToPrestashop()
 
             ::prestashopDisConnect()
 
@@ -4791,10 +4797,22 @@ Return .t.
 
 METHOD controllerExportProductPrestashop( idProduct ) Class TComercio
 
+   if !( ::isAviableWebToExport() )
+      Return .f.
+   end if 
+
    ::oWaitMeter         := TWaitMeter():New( "Actualizando articulos", "Espere por favor..." )
    ::oWaitMeter:Run()
 
-   ::controllerExportPrestashop( idProduct )
+   // ::controllerExportPrestashop( idProduct )
+
+   if ::filesOpen()
+
+      ::TComercioProduct:buildProductInformation( idProduct )
+   
+      ::filesClose()
+   
+   end if 
 
    ::oWaitMeter:End()
 
@@ -4865,7 +4883,7 @@ METHOD BuildDeleteProductPrestashop( idProduct ) CLASS TComercio
       Return ( Self )
    end if 
 
-   alltrimIdProductPrestashop            := alltrim( str( ::TPrestashopId:getValueProduct( idProduct, ::getCurrentWebName() ) ) )
+   alltrimIdProductPrestashop          := alltrim( str( ::TPrestashopId:getValueProduct( idProduct, ::getCurrentWebName() ) ) )
 
    if empty(alltrimIdProductPrestashop)
       return self
