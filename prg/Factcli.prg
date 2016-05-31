@@ -18197,11 +18197,12 @@ function SynFacCli( cPath )
    local cNumSer
    local aNumSer
    local cNumPed 
-   local aNumPed     := {}
+   local aNumPed        := {}
+   local nPorCabecera   := 0
 
-   DEFAULT cPath     := cPatEmp()
+   DEFAULT cPath        := cPatEmp()
 
-   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
    if OpenFiles()
@@ -18274,6 +18275,19 @@ function SynFacCli( cPath )
             	( D():FacturasClientes( nView ) )->cNomCli := RetFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "Titulo" )
             	( D():FacturasClientes( nView ) )->( dbUnLock() )
             end if 
+         end if
+
+         /*
+         Esto es para la Jaca para que todas las facturas tengan las comisiones de agente bien-------------------------------------
+         */
+
+         if !Empty( ( D():FacturasClientes( nView ) )->cCodAge )
+
+            if ( D():FacturasClientes( nView ) )->( dbRLock() )
+               ( D():FacturasClientes( nView ) )->nPctComAge := RetFld( ( D():FacturasClientes( nView ) )->cCodAge, D():Agentes( nView ), "nCom1" )
+               ( D():FacturasClientes( nView ) )->( dbUnLock() )
+            end if
+
          end if
 
          /*
@@ -18434,6 +18448,20 @@ function SynFacCli( cPath )
                ( D():FacturasClientesLineas( nView ) )->cCodAge    := RetFld( ( D():FacturasClientesLineas( nView ) )->cSerie + str( ( D():FacturasClientesLineas( nView ) )->nNumFac ) + ( D():FacturasClientesLineas( nView ) )->cSufFac, D():FacturasClientes( nView ), "cCodAge" )
                ( D():FacturasClientesLineas( nView ) )->( dbUnLock() )
          	end if
+         end if
+
+
+         /*
+         Esto es para la jaca para que las líneas tengan la misma comisión de agente que la cabecera
+         */
+         
+         nPorCabecera      := RetFld( ( D():FacturasClientesLineas( nView ) )->cSerie + str( ( D():FacturasClientesLineas( nView ) )->nNumFac ) + ( D():FacturasClientesLineas( nView ) )->cSufFac, D():FacturasClientes( nView ), "nPctComAge" )
+
+         if ( D():FacturasClientesLineas( nView ) )->nComAge != nPorCabecera
+            if ( D():FacturasClientesLineas( nView ) )->( dbRLock() )
+               ( D():FacturasClientesLineas( nView ) )->nComAge    := nPorCabecera
+               ( D():FacturasClientesLineas( nView ) )->( dbUnLock() )
+            end if
          end if
 
          // Valor de stock toma la fecha de los Facturas----------------------

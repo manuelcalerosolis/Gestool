@@ -10176,6 +10176,8 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
 
                      ( D():Articulos( nView ) )->pVtaIva1        := ( ( D():Articulos( nView ) )->pVenta1 * nIva( dbfIva, ( D():Articulos( nView ) )->TipoIva ) / 100 ) + ( D():Articulos( nView ) )->pVenta1
 
+                     ( D():Articulos( nView ) )->lBnf1           := .f.
+
                   end if
 
                end if
@@ -10299,6 +10301,8 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                      end if
 
                      ( D():Articulos( nView ) )->pVtaIva2        := ( ( D():Articulos( nView ) )->pVenta2 * nIva( dbfIva, ( D():Articulos( nView ) )->TipoIva ) / 100 ) + ( D():Articulos( nView ) )->pVenta2
+
+                     ( D():Articulos( nView ) )->lBnf2           := .f.
 
                   end if
 
@@ -10424,6 +10428,8 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
 
                      ( D():Articulos( nView ) )->pVtaIva3        := ( ( D():Articulos( nView ) )->pVenta3 * nIva( dbfIva, ( D():Articulos( nView ) )->TipoIva ) / 100 ) + ( D():Articulos( nView ) )->pVenta3
 
+                     ( D():Articulos( nView ) )->lBnf3           := .f.
+
                   end if
 
                end if
@@ -10543,6 +10549,8 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                      end if
 
                      ( D():Articulos( nView ) )->pVtaIva4        := ( ( D():Articulos( nView ) )->pVenta4 * nIva( dbfIva, ( D():Articulos( nView ) )->TipoIva ) / 100 ) + ( D():Articulos( nView ) )->pVenta4
+
+                     ( D():Articulos( nView ) )->lBnf4           := .f.
 
                   end if
 
@@ -10668,6 +10676,8 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
 
                      ( D():Articulos( nView ) )->pVtaIva5        := ( ( D():Articulos( nView ) )->pVenta5 * nIva( dbfIva, ( D():Articulos( nView ) )->TipoIva ) / 100 ) + ( D():Articulos( nView ) )->pVenta5
 
+                     ( D():Articulos( nView ) )->lBnf5           := .f.
+
                   end if
 
                end if
@@ -10791,6 +10801,8 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                      end if
 
                      ( D():Articulos( nView ) )->pVtaIva6        := ( ( D():Articulos( nView ) )->pVenta6 * nIva( dbfIva, ( D():Articulos( nView ) )->TipoIva ) / 100 ) + ( D():Articulos( nView ) )->pVenta6
+
+                     ( D():Articulos( nView ) )->lBnf6           := .f.
 
                   end if
 
