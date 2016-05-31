@@ -34,6 +34,14 @@ memvar cGrupoAlmacenDesde
 memvar cGrupoAlmacenHasta
 memvar cGrupoCentroCosteDesde
 memvar cGrupoCentroCosteHasta
+memvar cGrupoGClienteDesde      
+memvar cGrupoGClienteHasta      
+memvar cGrupoGClienteNombreDesde
+memvar cGrupoGClienteNombreHasta
+memvar cGrupoArticuloNombreDesde
+memvar cGrupoArticuloNombreHasta
+memvar cGrupoClienteNombreDesde
+memvar cGrupoClienteNombreHasta
 
 //---------------------------------------------------------------------------//
 
@@ -1179,6 +1187,7 @@ METHOD lGrupoTOperacion( lInitGroup, lImp ) CLASS TNewInfGen
    end if   
 
    if lInitGroup != nil
+
 
       aAdd( ::aSelectionGroup, ::oGrupoTOperacion )
 
@@ -4254,9 +4263,13 @@ Method AddVariable() CLASS TNewInfGen
    if !Empty( ::oGrupoArticulo )
       public cGrupoArticuloDesde       := ::oGrupoArticulo:Cargo:Desde
       public cGrupoArticuloHasta       := ::oGrupoArticulo:Cargo:Hasta
+      public cGrupoArticuloNombreDesde := oRetFld( ::oGrupoArticulo:Cargo:Desde, ::oDbfArt )
+      public cGrupoArticuloNombreHasta := oRetFld( ::oGrupoArticulo:Cargo:Hasta, ::oDbfArt )
 
       ::oFastReport:AddVariable(       "Informe", "Desde código de artículo",       "GetHbVar('cGrupoArticuloDesde')" )
       ::oFastReport:AddVariable(       "Informe", "Hasta código de artículo",       "GetHbVar('cGrupoArticuloHasta')" )
+      ::oFastReport:AddVariable(       "Informe", "Desde nombre de artículo",       "GetHbVar('cGrupoArticuloNombreDesde')" )
+      ::oFastReport:AddVariable(       "Informe", "Hasta nombre de artículo",       "GetHbVar('cGrupoArticuloNombreHasta')" )
    end if
 
    if !Empty( ::oGrupoMateriaPrima )
@@ -4270,9 +4283,13 @@ Method AddVariable() CLASS TNewInfGen
    if !Empty( ::oGrupoCliente )
       public cGrupoClienteDesde        := ::oGrupoCliente:Cargo:Desde
       public cGrupoClienteHasta        := ::oGrupoCliente:Cargo:Hasta
+      public cGrupoClienteNombreDesde  := oRetFld( ::oGrupoCliente:Cargo:Desde, ::oDbfCli )
+      public cGrupoClienteNombreHasta  := oRetFld( ::oGrupoCliente:Cargo:Hasta, ::oDbfCli )
 
       ::oFastReport:AddVariable(       "Informe", "Desde código de cliente",        "GetHbVar('cGrupoClienteDesde')" )
       ::oFastReport:AddVariable(       "Informe", "Hasta código de cliente",        "GetHbVar('cGrupoClienteHasta')" )
+      ::oFastReport:AddVariable(       "Informe", "Desde nombre de cliente",        "GetHbVar('cGrupoClienteNombreDesde')" )
+      ::oFastReport:AddVariable(       "Informe", "Hasta nombre de cliente",        "GetHbVar('cGrupoClienteNombreHasta')" )
    end if
 
    if !Empty( ::oGrupoProveedor )
@@ -4333,6 +4350,18 @@ Method AddVariable() CLASS TNewInfGen
    end if
 
    if !Empty( ::oGrupoGCliente )
+
+      public cGrupoGClienteDesde        := ::oGrupoGCliente:Cargo:Desde
+      public cGrupoGClienteHasta        := ::oGrupoGCliente:Cargo:Hasta
+      public cGrupoGClienteNombreDesde  := oRetFld( ::oGrupoGCliente:Cargo:Desde, ::oGrpCli:oDbf )
+      public cGrupoGClienteNombreHasta  := oRetFld( ::oGrupoGCliente:Cargo:Hasta, ::oGrpCli:oDbf )
+
+      ::oFastReport:AddVariable(       "Informe", "Desde código grupo de cliente",        "GetHbVar('cGrupoGClienteDesde')" )
+      ::oFastReport:AddVariable(       "Informe", "Hasta código grupo de cliente",        "GetHbVar('cGrupoGClienteHasta')" )
+
+      ::oFastReport:AddVariable(       "Informe", "Desde nombre grupo de cliente",        "GetHbVar('cGrupoGClienteNombreDesde')" )
+      ::oFastReport:AddVariable(       "Informe", "Hasta nombre grupo de cliente",        "GetHbVar('cGrupoGClienteNombreHasta')" )
+
    end if
 
    if !Empty( ::oGrupoGProveedor )
