@@ -5787,7 +5787,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
 
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
+   
       BeginTransaction()
 
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LastChg" ) ) ] := GetSysDate()
@@ -6129,13 +6129,9 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       end if
 
    RECOVER USING oError
-
       RollBackTransaction()
-
       msgStop( "Imposible actualizar bases de datos" + CRLF + ErrorMessage( oError ) )
-
    END SEQUENCE
-   
    ErrorBlock( oBlock )
 
    /*
@@ -18357,7 +18353,7 @@ Static Function BuildWeb( idProduct, idShop )
    local TComercio   := TComercio():New()
 
    TComercio:setWebToExport( idShop ) 
-   TComercio:controllerExportProductPrestashop( idProduct )
+   TComercio:controllerExportOneProductToPrestashop( idProduct )
 
 Return .t.
 

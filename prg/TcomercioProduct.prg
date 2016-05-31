@@ -56,9 +56,10 @@ CLASS TComercioProduct
       METHOD buildCategoryProduct( id )
       METHOD buildPropertyProduct( id )
       METHOD buildProduct( id )
-      METHOD buildPriceReductionTax()                       INLINE ( if( ::oProductDatabase():lIvaWeb, 1, 0 ) )
-
-
+      METHOD getPrice()
+      METHOD getPriceReduction()
+      METHOD getPriceReductionTax()                         INLINE ( if( ::oProductDatabase():lIvaWeb, 1, 0 ) )
+      METHOD getDescription()                               INLINE ( if( !empty( ::oProductDatabase():mDesTec ), ::oProductDatabase():mDesTec, ::oProductDatabase():Nombre ) )
 
       METHOD imagesProduct( id )
       METHOD stockProduct( id )
@@ -306,10 +307,6 @@ METHOD buildProduct( id ) CLASS TComercioProduct
                         "reference"             => ::oProductDatabase():Codigo ,;
                         "weight"                => ::oProductDatabase():nPesoKg ,;
                         "specific_price"        => ::oProductDatabase():lSbrInt,;
-                        "price"                 => ::buildPriceProduct(),;
-                        "reduction"             => ::buildPriceReduction(),;
-                        "reduction_tax"         => ::buildPriceReductionTax(),;
-                        "description"           => if( !empty( ::oProductDatabase():mDesTec ), ::oProductDatabase():mDesTec, ::oProductDatabase():Nombre ) ,; 
                         "description_short"     => alltrim( ::oProductDatabase():Nombre ) ,;
                         "link_rewrite"          => cLinkRewrite( ::oProductDatabase():Nombre ),;
                         "meta_title"            => alltrim( ::oProductDatabase():cTitSeo ) ,;
@@ -317,6 +314,10 @@ METHOD buildProduct( id ) CLASS TComercioProduct
                         "meta_keywords"         => alltrim( ::oProductDatabase():cKeySeo ) ,;
                         "lPublicRoot"           => ::oProductDatabase():lPubPor,;
                         "cImagen"               => ::oProductDatabase():cImagen,;
+                        "price"                 => ::getPrice(),;
+                        "reduction"             => ::getPriceReduction(),;
+                        "reduction_tax"         => ::getPriceReductionTax(),;
+                        "description"           => ::getDescription(),; 
                         "aImages"               => aImagesArticulos,;
                         "aStock"                => aStockArticulo } )
 
@@ -324,22 +325,22 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildPriceProduct() CLASS TComercio
+METHOD getPrice() CLASS TComercioProduct
 
    local priceProduct      := 0
 
    // calcula el precio en funcion del descuento-------------------------------
 
-   if ::oArt:lSbrInt .and. ::oArt:pVtaWeb != 0
+   if ::oProductDatabase():lSbrInt .and. ::oProductDatabase():pVtaWeb != 0
 
-      priceProduct         := ::oArt:pVtaWeb
+      priceProduct         := ::oProductDatabase():pVtaWeb
 
    else
 
-      if ::oArt:lIvaWeb
-         priceProduct      := round( ::oArt:nImpIva1 / ( ( nIva( ::oIva:cAlias, ::oArt:TipoIva ) / 100 ) + 1 ), 6 )
+      if ::oProductDatabase():lIvaWeb
+         priceProduct      := round( ::oProductDatabase():nImpIva1 / ( ( nIva( ::oIvaDatabase():cAlias, ::oProductDatabase():TipoIva ) / 100 ) + 1 ), 6 )
       else
-         priceProduct      := ::oArt:nImpInt1
+         priceProduct      := ::oProductDatabase():nImpInt1
       end if
 
    end if 
@@ -351,19 +352,19 @@ Return ( priceProduct )
 // calcula la reduccion sobre el precio
 //
 
-METHOD buildPriceReduction() CLASS TComercio
+METHOD getPriceReduction() CLASS TComercioProduct
 
    local priceReduction    := 0
 
-   if ::oArt:lSbrInt .and. ::oArt:pVtaWeb != 0
+   if ::oProductDatabase():lSbrInt .and. ::oProductDatabase():pVtaWeb != 0
 
-      if ::oArt:lIvaWeb
-         priceReduction    := ::oArt:pVtaWeb
-         priceReduction    += ::oArt:pVtaWeb * nIva( ::oIva:cAlias, ::oArt:TipoIva ) / 100
-         priceReduction    -= ::oArt:nImpIva1 
+      if ::oProductDatabase():lIvaWeb
+         priceReduction    := ::oProductDatabase():pVtaWeb
+         priceReduction    += ::oProductDatabase():pVtaWeb * nIva( ::oIvaDatabase():cAlias, ::oProductDatabase():TipoIva ) / 100
+         priceReduction    -= ::oProductDatabase():nImpIva1 
       else
-         priceReduction    := ::oArt:pVtaWeb 
-         priceReduction    -= ::oArt:nImpInt1
+         priceReduction    := ::oProductDatabase():pVtaWeb 
+         priceReduction    -= ::oProductDatabase():nImpInt1
       end if
 
    end if 

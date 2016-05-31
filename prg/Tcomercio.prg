@@ -188,9 +188,6 @@ CLASS TComercio
    METHOD GetInstance()              
    METHOD EndInstance()
 
-   METHOD Connect()
-   METHOD Disconnect()
-
    METHOD MeterTotal( oMeterTotal )       INLINE ( iif( oMeterTotal == nil, ::oMeterTotal := oMeterTotal, ::oMeterTotal ) )
    METHOD TextTotal( oTextTotal )         INLINE ( iif( oTextTotal == nil, ::oTextTotal := oTextTotal, ::oTextTotal ) )
 
@@ -262,7 +259,7 @@ CLASS TComercio
 
    METHOD isAviableWebToExport()
       METHOD controllerExportPrestashop()
-      METHOD controllerExportProductPrestashop( idProduct )
+      METHOD controllerExportOneProductToPrestashop( idProduct )
       METHOD controllerOrderPrestashop()
       METHOD controllerUpdateStockPrestashop()
 
@@ -288,7 +285,7 @@ CLASS TComercio
 
    //---------------------------------------------------------------------------//
 
-   METHOD aTipoImagenPrestashop()
+   METHOD getTypeImagePrestashop()
    METHOD buildFilesProductImages( hProductImage )
 
    METHOD addImages( cImage )                INLINE ( iif(  ascan( ::aImages, cImage ) == 0,;
@@ -307,10 +304,6 @@ CLASS TComercio
                                                       ::aImagesCategories )
 
 
-   METHOD addTipoImagesPrestashop( cImage )  INLINE ( iif(  ascan( ::aTypeImagesPrestashop, cImage ) == 0,;
-                                                            aadd( ::aTypeImagesPrestashop, cImage ),;
-                                                            ),;
-                                                      ::aTypeImagesPrestashop )
 
    //---------------------------------------------------------------------------//
 
@@ -383,6 +376,10 @@ CLASS TComercio
    METHOD prestaShopConnect()
    METHOD prestashopDisConnect()
    METHOD prestaShopPing()                            INLINE ( if( !empty( ::oCon ), ::oCon:Ping(), ) )
+
+   METHOD prestaShopStart()                           INLINE ( if( !empty( ::oCon ), E1ExecDirect( ::oCon:hConnect, "start" ), ) )
+   METHOD prestaShopCommit()                          INLINE ( if( !empty( ::oCon ), E1ExecDirect( ::oCon:hConnect, "commit" ), ) )
+   METHOD prestaShopRollBack()                        INLINE ( if( !empty( ::oCon ), E1ExecDirect( ::oCon:hConnect, "rollback" ), ) )
 
    METHOD ftpConnect()                                INLINE ( if( ::oFtp:CreateConexion(), .t., ( msgStop( "Imposible conectar al sitio ftp " + ::oFtp:cServer ), .t. ) ) )
    METHOD ftpDisConnect()                             INLINE ( if( !empty( ::oFtp ), ::oFtp:EndConexion(), ) )
@@ -540,24 +537,6 @@ METHOD buildInitData() CLASS TComercio
    ::aPropiedadesLineasData      := {}
 
 Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD Connect()
-
-   ::oCon            := TMSConnect():New()
-
-RETURN ( ::oCon:Connect( ::cHost, ::cUser, ::cPasswd, ::cDbName, ::nPort ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD Disconnect()
-
-   if !empty( ::oCon )
-      ::oCon:Destroy()
-   end if
-
-RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -1411,8 +1390,6 @@ METHOD buildImagenes() CLASS TComercio
    Recogemos los tipos de imagenes---------------------------------------------
    */
 
-   ::aTipoImagenPrestashop()
-
    ::meterProcesoSetTotal( len( ::aImages ) )
 
    /*
@@ -1657,19 +1634,19 @@ Return( nil )
 
 //---------------------------------------------------------------------------//
 
-
-METHOD aTipoImagenPrestashop() CLASS TComercio
+METHOD getTypeImagePrestashop() CLASS TComercio
 
    local oQuery            
    local cQuery
    local oImagen
+   local aTypeImagesPrestashop   := {}
 
    if !empty( ::aTypeImagesPrestashop )
       Return ( ::aTypeImagesPrestashop )
    end if 
 
-   cQuery                  := 'SELECT * FROM ' + ::cPrefixTable( "image_type" )
-   oQuery                  := TMSQuery():New( ::oCon, cQuery )
+   cQuery                        := 'SELECT * FROM ' + ::cPrefixTable( "image_type" )
+   oQuery                        := TMSQuery():New( ::oCon, cQuery )
    if oQuery:Open()
 
       if oQuery:RecCount() > 0
@@ -1689,7 +1666,7 @@ METHOD aTipoImagenPrestashop() CLASS TComercio
             oImagen:lScenes               := ( oQuery:FieldGetByName( "scenes" ) == 1 )
             oImagen:lStores               := ( oQuery:FieldGetByName( "stores" ) == 1 )
 
-            ::AddTipoImagesPrestashop( oImagen )
+            aadd( aTypeImagesPrestashop, oImagen )
 
             oQuery:Skip()
 
@@ -1709,7 +1686,7 @@ METHOD aTipoImagenPrestashop() CLASS TComercio
 
    oQuery            := nil
 
-Return ( ::aTypeImagesPrestashop )
+Return ( aTypeImagesPrestashop )
 
 //---------------------------------------------------------------------------//
 
@@ -1852,73 +1829,6 @@ Return ( ::TPrestashopConfig:getPrefixDatabase() + alltrim( cName ) )
 //---------------------------------------------------------------------------//
 
 METHOD AutoRecive( oWnd ) CLASS TComercio
-
-   local oDb
-
-   if !empty( oTimer )
-      oTimer:DedialogActivate()
-   end if
-
-   DEFAULT  oWnd        := oWnd()
-
-   if ::filesOpen()
-
-      ::writeText( 'Intentando conectar con el servidor ' + '"' + ::cHost + '"' + ', el usuario ' + '"' + ::cUser + '"' + ' y la base de datos ' + '"' + ::cDbName + '".' , 1 )
-
-      ::oCon            := TMSConnect():New()
-
-      if !::oCon:Connect( ::cHost, ::cUser, ::cPasswd, ::cDbName, ::nPort )
-
-          ::writeText( 'No se ha podido conectar con la base de datos.' )
-
-      else
-
-          ::writeText( 'Se ha conectado con éxito a la base de datos.' , 1 )
-
-          oDb           := TMSDataBase():New ( ::oCon, ::cDbName )
-
-          if empty( oDb )
-
-             ::writeText( 'La Base de datos: ' + ::cDbName + ' no está activa.', 1 )
-
-          else
-
-            ::AppendClient( oDb )
-            ::AppendPedido( oDb )
-
-          end if
-
-      end if
-
-      ::oCon:Destroy()
-
-      ::writeText( 'Base de datos desconectada.', 1 )
-
-   else
-
-      ::writeText( 'Error al abrir los ficheros necesarios.', 1 )
-
-   end if
-
-   /*
-   Comprobamos q existen pedidos para recibir----------------------------------
-   */
-
-   lPedidosWeb( ::oPedCliT:cAlias )
-
-   /*
-   Cerramos los ficheros-------------------------------------------------------
-   */
-
-   ::filesClose()
-
-   /*
-   Reactivamos el timer--------------------------------------------------------
-   */
-
-   if !empty( oTimer )
-      oTimer:dialogActivate()
-   end if
 
 Return Nil
 
@@ -2659,7 +2569,12 @@ Return ( cResult )
 METHOD prestaShopConnect()
 
    local oDb
-   local lConect     := .f.
+   local lConnect     := .f.
+
+   if empty( ::TPrestashopConfig:getMySqlServer() )
+      msgStop( "No se ha definido ningun servidor web" )
+      Return ( lConnect )
+   end if 
 
    ::writeText( 'Intentando conectar con el servidor ' + '"' + ::TPrestashopConfig:getMySqlServer() + '"' + ', el usuario ' + '"' + ::TPrestashopConfig:getMySqlUser()  + '"' + ' y la base de datos ' + '"' + ::TPrestashopConfig:getMySqlDatabase() + '".' , 3 )
 
@@ -2694,14 +2609,15 @@ METHOD prestaShopConnect()
          ::lProductIdColumnProductAttribute     := ::isProductIdColumnProductAttribute()
          ::lProductIdColumnProductAttributeShop := ::isProductIdColumnProductAttributeShop()
          ::lSpecificPriceIdColumnReductionTax   := ::isSpecificPriceIdColumnReductionTax()
+         ::aTypeImagesPrestashop                := ::getTypeImagePrestashop()
 
-         lConect     := .t.
+         lConnect                               := .t.
 
       end if
 
    end if   
 
-Return ( lConect )
+Return ( lConnect )
 
 //---------------------------------------------------------------------------//
 
@@ -3228,10 +3144,6 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD uploadInformationToPrestashop( idProduct )
-
-   // Recogemos los tipos de imagenes------------------------------------------
-
-   ::aTipoImagenPrestashop()
 
    // Eliminamos las bases de datos--------------------------------------------
 
@@ -4754,6 +4666,8 @@ METHOD controllerExportPrestashop( idProduct ) Class TComercio
 
          if ::prestaShopConnect()
 
+            ::prestaShopStart()
+
             ::MeterTotalText( "Subiendo la información adicional a los productos." )
 
             ::uploadInformationToPrestashop( idProduct )
@@ -4761,6 +4675,8 @@ METHOD controllerExportPrestashop( idProduct ) Class TComercio
             ::MeterTotalText( "Subiendo la información de productos." )
 
             ::uploadProductToPrestashop()
+
+            ::prestaShopCommit()
 
             ::prestashopDisConnect()
 
@@ -4795,7 +4711,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD controllerExportProductPrestashop( idProduct ) Class TComercio
+METHOD controllerExportOneProductToPrestashop( idProduct ) Class TComercio
 
    if !( ::isAviableWebToExport() )
       Return .f.
@@ -4804,15 +4720,51 @@ METHOD controllerExportProductPrestashop( idProduct ) Class TComercio
    ::oWaitMeter         := TWaitMeter():New( "Actualizando articulos", "Espere por favor..." )
    ::oWaitMeter:Run()
 
-   // ::controllerExportPrestashop( idProduct )
+   msgAlert( "filesOpen")
 
    if ::filesOpen()
 
-      ::TComercioProduct:buildProductInformation( idProduct )
-   
+      msgAlert( "buildFTP")
+
+      ::buildFTP()
+
+      msgAlert( "::prestaShopConnect()")
+
+      if ::prestaShopConnect()
+
+         msgAlert( "::prestaShopStart()")
+
+         ::prestaShopStart()
+
+         msgAlert( "::TComercioProduct:buildProductInformation( idProduct )" )
+
+         ::TComercioProduct:buildProductInformation( idProduct )
+
+         msgAlert( "::prestaShopCommit()")
+
+         ::prestaShopCommit()
+
+         msgAlert( "::prestashopDisConnect()")
+
+         ::prestaShopDisConnect()
+
+         // subiendo imagenes-----------------------------------------------
+         /*
+         ::ftpConnect()
+
+         ::writeText( "Subiendo imagenes del artículos" )
+
+         ::uploadImageToPrestashop()
+
+         ::prestashopDisConnect()
+
+         ::ftpDisConnect()
+         */
+      end if 
+
       ::filesClose()
-   
-   end if 
+
+   end if
 
    ::oWaitMeter:End()
 
@@ -4883,7 +4835,7 @@ METHOD BuildDeleteProductPrestashop( idProduct ) CLASS TComercio
       Return ( Self )
    end if 
 
-   alltrimIdProductPrestashop          := alltrim( str( ::TPrestashopId:getValueProduct( idProduct, ::getCurrentWebName() ) ) )
+   alltrimIdProductPrestashop            := alltrim( str( ::TPrestashopId:getValueProduct( idProduct, ::getCurrentWebName() ) ) )
 
    if empty(alltrimIdProductPrestashop)
       return self
