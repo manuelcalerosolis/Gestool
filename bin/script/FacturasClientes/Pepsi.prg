@@ -2,8 +2,8 @@
 Script2 creado a Pepsi Inma, para crear y mandar el informe que necesita
 ******************************************************************************/
 
-//#include ".\Include\Factu.ch"
-#include "Factu.ch"
+#include ".\Include\Factu.ch"
+//#include "Factu.ch"
 #define CRLF chr( 13 ) + chr( 10 )
 
 static dbfArticulo 
@@ -23,6 +23,7 @@ static cConcesionario
 static cGetDir
 static cFamilia
 static cPicture
+static oStock
 
 //---------------------------------------------------------------------------//
 
@@ -109,6 +110,11 @@ static function OpenFiles()
       USE ( cPatArt() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfKit ) )
       SET ADSINDEX TO ( cPatArt() + "ARTKIT.CDX" ) ADDITIVE
 
+      oStock            := TStock():Create( cPatGrp() )
+      if !oStock:lOpenFiles()
+         lOpenFiles     := .f.
+      end if
+
    RECOVER USING oError
 
       lOpenFiles           := .f.
@@ -159,6 +165,10 @@ static function CloseFiles()
       ( dbfIva )->( dbCloseArea() )
    end if
 
+   if !Empty( oStock )
+      oStock:end()
+   end if
+
    dbfArticulo    := nil
    dbfClient      := nil
    dbfFacCliT     := nil
@@ -166,6 +176,7 @@ static function CloseFiles()
    dbfDiv         := nil
    dbfKit         := nil
    dbfIva         := nil
+   oStock         := nil
 
    lOpenFiles     := .f.
 
@@ -182,6 +193,7 @@ static function Exportacion()
    local nOrdAntL       := ( dbfFacCliL )->( OrdSetFocus( "nNumFac" ) )
    local cTextoFinal    := ""
    local cTextoCliente  := ""
+   local cTextoStock    := ""
    local nHand
    local cNameFile
    local aClientes      := {}
@@ -193,6 +205,12 @@ static function Exportacion()
    local nImpReg        := 0
    local nImpDto        := 0
    local aLinea         := {}
+   local aArticuloTotal := {}
+   local nStockArticulo := 0
+   local lFileFinal     := .f.
+   local lFileCliente   := .f.
+   local lFileStock     := .f.
+   local cTextoFin      := ""
 
    CursorWait()
 
@@ -277,6 +295,8 @@ static function Exportacion()
    Damos una segunda vuelta para los artículos---------------------------------
    */
 
+   aArticuloTotal := {}
+
    ( dbfFacCliT )->( dbGoTop() )
 
    while !( dbfFacCliT )->( Eof() )
@@ -315,6 +335,34 @@ static function Exportacion()
 
                      end if
 
+                     /*
+                     Array para el total de ventas de los artículos------------
+                     */
+
+                     if Len( aArticuloTotal ) == 0
+
+                        aAdd( aArticuloTotal, { ( dbfFacCliL )->cRef, nTotUniVen } )
+
+                     else
+
+                        n     := aScan( aArticuloTotal, {|x| x[1] == ( dbfFacCliL )->cRef } )   
+
+                        if n == 0
+
+                           aAdd( aArticuloTotal, { ( dbfFacCliL )->cRef, nTotUniVen } )
+
+                        else
+
+                           aArticuloTotal[n, 2]   += nTotUniVen
+
+                        end if
+
+                     end if
+
+                     /*
+                     Array Para cada una de las lineas-------------------------
+                     */
+
                      if Len( aArticulo ) == 0
 
                         aAdd( aArticulo, { ( dbfFacCliL )->cRef, nTotUniVen, nTotUniReg, nImpReg, nImpDto } )
@@ -324,8 +372,6 @@ static function Exportacion()
                         n     := aScan( aArticulo, {|x| x[1] == ( dbfFacCliL )->cRef } )
 
                         if n == 0
-
-
 
                            aAdd( aArticulo, { ( dbfFacCliL )->cRef, nTotUniVen, nTotUniReg, nImpReg, nImpDto } )
 
@@ -358,9 +404,9 @@ static function Exportacion()
 
          for each aLinea in aArticulo
        
-            cTextoFinal       += Str( Year( ( dbfFacCliT )->dFecFac ) ) + "-" + PadL( month( ( dbfFacCliT )->dFecFac ), 2, "0" )
+            cTextoFinal       += AllTrim( Str( Year( ( dbfFacCliT )->dFecFac ) ) ) + PadL( month( ( dbfFacCliT )->dFecFac ), 2, "0" )
             cTextoFinal       += ";"
-            cTextoFinal       += Str( Year( ( dbfFacCliT )->dFecFac ) ) + "-" + PadL( month( ( dbfFacCliT )->dFecFac ), 2, "0" ) + "-" + PadL( Day( ( dbfFacCliT )->dFecFac ), 2, "0" )
+            cTextoFinal       += AllTrim( Str( Year( ( dbfFacCliT )->dFecFac ) ) ) + PadL( month( ( dbfFacCliT )->dFecFac ), 2, "0" ) + PadL( Day( ( dbfFacCliT )->dFecFac ), 2, "0" )
             cTextoFinal       += ";"
             cTextoFinal       += ( dbfFacCliT )->cSerie + AllTrim( Str( ( dbfFacCliT )->nNumFac ) ) 
             cTextoFinal       += ";"
@@ -370,13 +416,15 @@ static function Exportacion()
             cTextoFinal       += ";"
             cTextoFinal       += AllTrim( retfld( aLinea[1], dbfArticulo, "cRefAux" ) )
             cTextoFinal       += ";"
-            cTextoFinal       += AllTrim( Trans( aLinea[2], cPicture ) )
+            cTextoFinal       += AllTrim( Str( int( aLinea[2] ) ) ) //Unidades entregadas
             cTextoFinal       += ";"
-            cTextoFinal       += AllTrim( Trans( aLinea[3], cPicture ) ) //Unidades promocion
+            cTextoFinal       += AllTrim( Str( int( aLinea[3] ) ) ) //Unidades sin cargo
             cTextoFinal       += ";"
-            cTextoFinal       += AllTrim( Trans( aLinea[4], cPicture ) ) //Importe promoción
+            cTextoFinal       += AllTrim( Trans( aLinea[4], cPicture ) ) //Importe unidades sin cargo
             cTextoFinal       += ";"
-            cTextoFinal       += AllTrim( Trans( ( aLinea[5] + aLinea[4] ) , cPicture ) ) //Total Importe Promoción
+            cTextoFinal       += AllTrim( Trans( aLinea[5], cPicture ) ) //Importe descuento
+            cTextoFinal       += ";"
+            cTextoFinal       += AllTrim( Trans( ( aLinea[4] + aLinea[5] ) , cPicture ) ) //Total Importe Promoción
             cTextoFinal       += CRLF
 
          next
@@ -398,8 +446,34 @@ static function Exportacion()
    ( dbfFacCliL )->( dbGoTo( nRecL ) )
    ( dbfFacCliT )->( dbGoTo( nRec ) )
 
-   MsgInfo( cTextoFinal, "cTextoFinal" )
-   MsgInfo( cTextoCliente, "cTextoCliente" )
+   /*
+   Creo el fichero para los stocks---------------------------------------------
+   */
+
+   /*
+   Lo pasamos al fichero----------------------------------------------------
+   */
+
+   if Len( aArticuloTotal ) != 0
+
+      for each aLinea in aArticuloTotal
+
+         nStockArticulo    := oStock:nStockArticulo( aLinea[1] )
+    
+         cTextoStock       += AllTrim( Str( Year( dFecDes ) ) ) + PadL( month( dFecDes ), 2, "0" ) + PadL( Day( dFecDes ), 2, "0" )
+         cTextoStock       += ";"
+         cTextoStock       += cConcesionario
+         cTextoStock       += ";"
+         cTextoStock       += AllTrim( retfld( aLinea[1], dbfArticulo, "cRefAux" ) )
+         cTextoStock       += ";"
+         cTextoStock       += if( nStockArticulo >= 0, AllTrim( Str( Int( nStockArticulo ) ) ), "0"  )//Stock actual
+         cTextoStock       += ";"
+         cTextoStock       += AllTrim( Str( int( aLinea[2] ) ) ) //Unidades entregadas
+         cTextoStock       += CRLF
+
+      next
+
+   end if
 
    if !Empty( cTextoFinal )
 
@@ -410,11 +484,7 @@ static function Exportacion()
       fWrite( nHand, cTextoFinal )
       fClose( nHand )
 
-      MsgInfo( "Fichero consumos exportado correctamente en " + cGetDir )
-
-   else
-      
-      MsgInfo( "Fichero consumos no ha sido exportado" )
+      lFileFinal           := .t.
 
    end if   
 
@@ -427,11 +497,39 @@ static function Exportacion()
       fWrite( nHand, cTextoCliente )
       fClose( nHand )
 
-      MsgInfo( "Fichero clientes exportado correctamente en " + cGetDir )
+      lFileCliente         := .t.
 
+   end if
+
+   if !Empty( cTextoStock )
+
+      cNameFile            :=  cGetDir + Right( cConcesionario, 5 ) + PadL( month( Date() ), 2, "0" ) + "B.csv"
+
+      fErase( cNameFile )
+      nHand       := fCreate( cNameFile )
+      fWrite( nHand, cTextoStock )
+      fClose( nHand )
+
+      lFileStock           := .t.
+
+   end if
+
+   if !lFileCliente .and. !lFileFinal .and. !lFileStock
+      MsgInfo( "Errores en la creación de ficheros" )
    else
       
-      MsgInfo( "Fichero clientes no ha sido exportado" )
+      cTextoFin      := "Ficheros exportado correctamente en " + cGetDir
+      if lFileFinal  
+         cTextoFin   += CRLF + Space( 3 ) + "- Fichero de consumo."
+      end if
+      if lFileCliente  
+         cTextoFin   += CRLF + Space( 3 ) + "- Fichero de clientes."
+      end if
+      if lFileStock 
+         cTextoFin   += CRLF + Space( 3 ) + "- Fichero de stocks."
+      end if
+
+      MsgInfo( cTextoFin )
 
    end if
 
