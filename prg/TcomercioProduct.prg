@@ -10,8 +10,8 @@ CLASS TComercioProduct
 
    DATA  TComercio
 
-   DATA  aProduct                                           INIT {}
-   DATA  aIvaProduct                                        INIT {}
+   DATA  aProducts                                          INIT {}
+   DATA  aIvaProducts                                       INIT {}
    DATA  aManufacturerProduct                               INIT {}
    DATA  aCategoryProduct                                   INIT {}
    DATA  aPropertiesHeaderProduct                           INIT {}
@@ -51,7 +51,7 @@ CLASS TComercioProduct
    METHOD isProductInCurrentWeb()                           
 
    METHOD buildProductInformation( idProduct )
-      METHOD buildIvaProduct( id )  
+      METHOD buildIvaProducts( id )  
       METHOD buildManufacturerProduct( id )
       METHOD buildCategoryProduct( id )
       METHOD buildPropertyProduct( id )
@@ -64,10 +64,15 @@ CLASS TComercioProduct
       METHOD imagesProduct( id )
       METHOD stockProduct( id )
 
+   METHOD uploadProductsToPrestashop()
+      METHOD uploadProductToPrestashop()
+         METHOD insertProductPrestashopTable( hProduct )
+
    METHOD truncteAllTables() 
       METHOD truncateTable( cTable )   
 
    METHOD insertRootCategory() 
+   METHOD cleanGestoolReferences()
 
 END CLASS
 
@@ -89,13 +94,13 @@ METHOD buildProductInformation( idProduct ) CLASS TComercioProduct
 
    ::writeText( alltrim( ::oProductDatabase():Codigo ) + " - " + alltrim( ::oProductDatabase():Nombre ) )
 
-   ::buildIvaProduct(               ::oProductDatabase():TipoIva )
-   ::buildManufacturerProduct(      ::oProductDatabase():cCodFab )
-   ::buildCategoryProduct(          ::oProductDatabase():Familia )
-   ::buildPropertyProduct(          ::oProductDatabase():Codigo )
-   ::buildProduct(                  ::oProductDatabase():Codigo )
+   ::buildIvaProducts(            ::oProductDatabase():TipoIva )
+   ::buildManufacturerProduct(   ::oProductDatabase():cCodFab )
+   ::buildCategoryProduct(       ::oProductDatabase():Familia )
+   ::buildPropertyProduct(       ::oProductDatabase():Codigo )
+   ::buildProduct(               ::oProductDatabase():Codigo )
 
-   debug( ::aProduct )
+   debug( ::aProducts )
 
 Return ( .t. )
 
@@ -122,15 +127,19 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD buildIvaProduct( id ) CLASS TComercioProduct
+METHOD buildIvaProducts( id ) CLASS TComercioProduct
 
-   if aScan( ::aIvaProduct, {|h| hGet( h, "id" ) == id } ) != 0
+   if !( ::isSyncronizeAll() )
       Return .f. 
    end if 
 
-   if ::isSyncronizeAll() .or. ::TPrestashopId():getValueTax( id, ::getCurrentWebName() ) == 0
+   if aScan( ::aIvaProducts, {|h| hGet( h, "id" ) == id } ) != 0
+      Return .f. 
+   end if 
+   
+   if ::TPrestashopId():getValueTax( id, ::getCurrentWebName() ) == 0
       if ::oIvaDatabase():seekInOrd( id, "Tipo" )
-         aAdd( ::aIvaProduct, {  "id"     => id,;
+         aadd( ::aIvaProducts, {  "id"     => id,;
                                  "rate"   => alltrim( str( ::oIvaDatabase():TpIva ) ),;
                                  "name"   => alltrim( ::oIvaDatabase():DescIva ) } )
       end if 
@@ -142,13 +151,17 @@ Return ( .t. )
 
 METHOD buildManufacturerProduct( id ) CLASS TComercioProduct
 
+   if !( ::isSyncronizeAll() )
+      Return .f. 
+   end if 
+
    if aScan( ::aManufacturerProduct, {|h| hGet( h, "id" ) == id } ) != 0
       Return .f.
    end if 
 
-   if ::isSyncronizeAll() .or. ::TPrestashopId():getValueManufacturer( id, ::getCurrentWebName() ) == 0
+   if ::TPrestashopId():getValueManufacturer( id, ::getCurrentWebName() ) == 0
       if ::oManufacturerDatabase():SeekInOrd( id, "cCodFab" ) .and. ::oManufacturerDatabase():lPubInt
-         aAdd( ::aManufacturerProduct, {  "id"     => id,;
+         aadd( ::aManufacturerProduct, {  "id"     => id,;
                                           "name"   => rtrim( ::oManufacturerDatabase():cNomFab ) } )
       end if
    end if 
@@ -159,11 +172,15 @@ Return ( Self )
 
 METHOD buildCategoryProduct( id ) CLASS TComercioProduct
 
+   if !( ::isSyncronizeAll() )
+      Return .f. 
+   end if 
+
    if ascan( ::aCategoryProduct, {|h| hGet( h, "id" ) == id } ) != 0
       Return .f.
    end if
 
-   if ::isSyncronizeAll() .or. ::TPrestashopId():getValueCategory( id, ::getCurrentWebName() ) == 0
+   if ::TPrestashopId():getValueCategory( id, ::getCurrentWebName() ) == 0
    
       if ::oCategoryDatabase():SeekInOrd( id, "cCodFam" ) 
    
@@ -196,7 +213,7 @@ METHOD buildPropertyProduct( id ) CLASS TComercioProduct
 
       if aScan( ::aPropertiesHeaderProduct, {|h| hGet( h, "id" ) == ::oPropertyDatabase():cCodPro } ) == 0
 
-         if ::isSyncronizeAll() .or. ::TPrestashopId:getValueAttributeGroup( id, ::getCurrentWebName() ) == 0
+         if ::isSyncronizeAll() .or. ::TPrestashopId():getValueAttributeGroup( id, ::getCurrentWebName() ) == 0
 
             aAdd( ::aPropertiesHeaderProduct,   {  "id"     => ::oPropertyDatabase():cCodPro,;
                                                    "name"   => if( empty( ::oPropertyDatabase():cNomInt ), alltrim( ::oPropertyDatabase():cDesPro ), alltrim( ::oPropertyDatabase():cNomInt ) ),;
@@ -216,7 +233,7 @@ METHOD buildPropertyProduct( id ) CLASS TComercioProduct
       
       if aScan( ::aPropertiesHeaderProduct, {|h| hGet( h, "id" ) == ::oPropertyDatabase():cCodPro } ) == 0
 
-         if ::isSyncronizeAll() .or. ::TPrestashopId:getValueAttributeGroup( id, ::getCurrentWebName() ) == 0
+         if ::isSyncronizeAll() .or. ::TPrestashopId():getValueAttributeGroup( id, ::getCurrentWebName() ) == 0
 
             aAdd( ::aPropertiesHeaderProduct,   {  "id"     => ::oPropertyDatabase():cCodPro,;
                                                    "name"   => if( empty( ::oPropertyDatabase():cNomInt ), alltrim( ::oPropertyDatabase():cDesPro ), alltrim( ::oPropertyDatabase():cNomInt ) ),;
@@ -238,7 +255,7 @@ METHOD buildPropertyProduct( id ) CLASS TComercioProduct
 
          if ::oPropertiesLinesDatabase():SeekInOrd( ::oPropertyProductDatabase():cCodPr1 + ::oPropertyProductDatabase():cValPr1, "cCodPro" )
 
-            if ::isSyncronizeAll() .or. ::TPrestashopId:getValueAttribute( ::oPropertiesLinesDatabase():cCodPro + ::oPropertiesLinesDatabase():cCodTbl, ::getCurrentWebName() ) == 0
+            if ::isSyncronizeAll() .or. ::TPrestashopId():getValueAttribute( ::oPropertiesLinesDatabase():cCodPro + ::oPropertiesLinesDatabase():cCodTbl, ::getCurrentWebName() ) == 0
 
                if aScan( ::aPropertiesLineProduct, {|h| hGet( h, "id" ) == ::oPropertiesLinesDatabase():cCodTbl .and. hGet( h, "idparent" ) == ::oPropertiesLinesDatabase():cCodPro } ) == 0
       
@@ -256,7 +273,7 @@ METHOD buildPropertyProduct( id ) CLASS TComercioProduct
 
          if ::oPropertiesLinesDatabase():SeekInOrd( ::oPropertyProductDatabase():cCodPr2 + ::oPropertyProductDatabase():cValPr2, "cCodPro" )
 
-            if ::isSyncronizeAll() .or. ::TPrestashopId:getValueAttribute( ::oPropertiesLinesDatabase():cCodPro + ::oPropertiesLinesDatabase():cCodTbl, ::getCurrentWebName() ) == 0
+            if ::isSyncronizeAll() .or. ::TPrestashopId():getValueAttribute( ::oPropertiesLinesDatabase():cCodPro + ::oPropertiesLinesDatabase():cCodTbl, ::getCurrentWebName() ) == 0
 
                if aScan( ::aPropertiesLineProduct, {|h| hGet( h, "id" ) == ::oPropertiesLinesDatabase():cCodTbl .and. hGet( h, "idparent" ) == ::oPropertiesLinesDatabase():cCodPro } ) == 0
       
@@ -287,7 +304,7 @@ METHOD buildProduct( id ) CLASS TComercioProduct
    local aStockArticulo       := {}
    local aImagesArticulos     := {}
 
-   if aScan( ::aProduct, {|h| hGet( h, "id" ) == id } ) != 0
+   if aScan( ::aProducts, {|h| hGet( h, "id" ) == id } ) != 0
       Return ( self )
    end if 
 
@@ -299,7 +316,7 @@ METHOD buildProduct( id ) CLASS TComercioProduct
 
    // Rellenamos el Hash-------------------------------------------------
 
-   aAdd( ::aProduct, {  "id"                    => id,;
+   aAdd( ::aProducts, {  "id"                    => id,;
                         "name"                  => alltrim( ::oProductDatabase():Nombre ),;
                         "id_manufacturer"       => ::oProductDatabase():cCodFab ,;
                         "id_tax_rules_group"    => ::oProductDatabase():TipoIva ,;
@@ -678,4 +695,176 @@ METHOD insertRootCategory() CLASS TComercioProduct
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD cleanGestoolReferences() CLASS TComercioProduct
+
+   ::writeText( "Limpiamos las referencias de las tablas de tipos de impuestos" )
+
+   ::TPrestashopId():deleteDocumentValuesTax( ::getCurrentWebName() )
+   ::TPrestashopId():deleteDocumentValuesTaxRuleGroup( ::getCurrentWebName() )
+
+   ::writeText( "Limpiamos las referencias de las tablas de fabricantes" )
+
+   ::TPrestashopId():deleteDocumentValuesManufacturer( ::getCurrentWebName() )
+
+   ::writeText( "Limpiamos las referencias de las tablas de familias" )
+
+   ::TPrestashopId():deleteDocumentValuesCategory( ::getCurrentWebName() )
+
+   ::writeText( "Limpiamos las referencias de las tablas de propiedades" )
+
+   ::TPrestashopId():deleteDocumentValuesAttribute( ::getCurrentWebName() )
+   ::TPrestashopId():deleteDocumentValuesAttributeGroup( ::getCurrentWebName() )
+
+   ::writeText( "Limpiamos las referencias de las tablas de artículos" )
+
+   ::TPrestashopId():deleteDocumentValuesProduct( ::getCurrentWebName() )
+
+   ::writeText( "Limpiamos las referencias de las imagenes" )
+
+   ::TPrestashopId():deleteDocumentValuesImage( ::getCurrentWebName() )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+// Subimos los artículos----------------------------------------------------
+
+METHOD uploadProductsToPrestashop() CLASS TComercioProduct
+
+   local hProduct
+   local nProducts   := len( ::aProducts )
+
+   ::meterProcesoSetTotal( nProducts )
+   
+   for each hProduct in ::aProducts
+
+      ::meterProcesoText( "Subiendo artículo " + alltrim( str( hb_enumindex() ) ) + " de " + alltrim( str( nProducts ) ) ) 
+
+      ::uploadProductToPrestashop( hProduct )
+   
+   next
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD uploadProductToPrestashop( hProduct ) CLASS TComercioProduct
+
+   local idProduct
+   local idCategory
+
+   idCategory        := hGet( hProduct, "id_category_default" )
+
+   idProduct         := ::insertProductPrestashopTable( hProduct, idCategory )
+
+   ::insertNodeCategoryProduct( idProduct, idCategory )
+
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertProductPrestashopTable( hProduct, idCategory ) CLASS TComercioProduct
+
+   local cCommand
+   local idProduct
+   local idTaxRuleGroup 
+   local idCategoryDefault
+
+   ::writeText( "Añadiendo artículo: " + hGet( hProduct, "description" ) )
+
+   idProduct         := 0
+   idCategoryDefault := ::TPrestashopId():getValueCategory( idCategory, ::getCurrentWebName(), 2 )
+   idTaxRuleGroup    := ::TPrestashopId():getValueTaxRuleGroup( hGet( hProduct, "id_tax_rules_group" ), ::getCurrentWebName() )
+
+   cCommand          := "INSERT INTO " + ::cPrefixTable( "product" ) + " ( " + ;
+                           "id_manufacturer, " + ;
+                           "id_tax_rules_group, " + ;
+                           "id_category_default, " + ;
+                           "id_shop_default, " + ;
+                           "quantity, " + ;
+                           "minimal_quantity, " + ;
+                           "price, " + ;
+                           "reference, " + ;
+                           "weight, " + ;
+                           "active, " + ;
+                           "date_add, " + ;
+                           "date_upd ) " + ;
+                        "VALUES ( " + ;
+                           "'" + alltrim( str( ::TPrestashopId():getValueManufacturer( hGet( hProduct, "id_manufacturer" ), ::getCurrentWebName() ) ) ) + "', " + ; //id_manufacturer
+                           "'" + alltrim( str( idTaxRuleGroup ) ) + "', " + ;                                           //id_tax_rules_group  - tipo IVA
+                           "'" + alltrim( str( idCategoryDefault ) ) + "', " + ;                                                  //id_category_default
+                           "'1', " + ;                                                                                  //id_shop_default
+                           "'1', " + ;                                                                                  //quantity
+                           "'1', " + ;                                                                                  //minimal_quantity
+                           "'" + alltrim( str( hGet( hProduct, "price" ) ) ) + "', " + ;                           //price
+                           "'" + alltrim( hGet( hProduct, "id" ) ) + "', " + ;                                     //reference
+                           "'" + alltrim( str( hGet( hProduct, "weight" ) ) ) + "', " + ;                          //weight
+                           "'1', " + ;                                                                                  //active
+                           "'" + dtos( GetSysDate() ) + "', " + ;                                                       //date_add
+                           "'" + dtos( GetSysDate() ) + "' )"
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand ) 
+
+      idProduct      := ::oCon:GetInsertId()
+      
+      if !empty( idProduct )
+         ::TPrestashopId():setValueProduct( hGet( hProduct, "id" ), ::getCurrentWebName(), idProduct )
+      end if 
+
+   else
+      
+      ::writeText( "Error al insertar el artículo " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "product" ), 3 )
+
+      Return ( idProduct )
+
+   end if
+
+Return ( idProduct )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertNodeCategoryProduct( idProduct, idCategory ) CLASS TComercioProduct
+
+   local idCategory
+   local cNodeFamilia
+
+   idCategory                 := ::buildGetParentCategories( idCategory )
+
+   ::buildInsertCategoryProduct( idCategory, idProduct ) 
+
+   cNodeFamilia               := ::buildGetNodeParentCategories( idCategory )
+   if !empty( cNodeFamilia )
+      ::buildInsertNodeCategoryProduct( cNodeFamilia, idProduct )
+   end if 
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildGetParentCategories( idCategory ) CLASS TComercioProduct
+
+   local idCategories      := 2
+
+   if ::oFam:Seek( idCategory ) .and. ::oFam:lPubInt
+      idCategories         := ::TPrestashopId():getValueCategory( idCategory, ::getCurrentWebName() )  
+   end if
+
+Return ( idCategories )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildGetNodeParentCategories( idCategory ) CLASS TComercio
+
+   local idNode            := ""
+
+   if !empty( idCategory ) .and. ::oFam:Seek( idCategory )
+      idNode               := ::oFam:cFamCmb
+   end if   
+
+Return ( idNode )
+
+//---------------------------------------------------------------------------//
+
+
 
