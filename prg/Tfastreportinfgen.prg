@@ -20,6 +20,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
    DATA  nDias
 
    DATA  hReport 
+   DATA  hOptions
 
    DATA  aliasPedidosClientes
    DATA  aliasPedidosClientesLineas

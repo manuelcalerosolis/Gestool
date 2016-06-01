@@ -135,6 +135,8 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD getTarifaArticulo()
 
    METHOD getUnidadesPedidoProveedor( cNumPed, cCodArt )
+   METHOD existeClienteInforme()
+   METHOD isClientInReport()
 
   METHOD loadValuesExtraFields()
 
@@ -713,6 +715,7 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddFieldCamposExtra()
 
    ::AddTmpIndex( "cCodArt", "cCodArt" )
+   ::AddTmpIndex( "cCodCli", "cCodCli" )
    ::AddTmpIndex( "cCodPrvArt", "cCodPrv + cCodArt" )
    ::AddTmpIndex( "cPrvHab", "cPrvHab")
    ::AddTmpIndex( "cCodAlm", "cCodArt + cCodAlm" )
@@ -748,7 +751,10 @@ METHOD BuildReportCorrespondences()
    
    ::hReport   := {  "Listado" =>                     {  "Generate" =>  {||   ::listadoArticulo() } ,;
                                                          "Variable" =>  {||   nil },;
-                                                         "Data" =>      {||   nil } },;
+                                                         "Data" =>      {||   nil },;
+                                                         "Options" =>   {  "Estado"                =>  { "Todos", "Finalizado", "No finalizado" },;
+                                                                           "Excluir importe cero"  => .f.,;
+                                                                           "Excluir unidades cero" => .f. } },; 
                      "SAT de clientes" =>             {  "Generate" =>  {||   ::AddSATClientes() },;
                                                          "Variable" =>  {||   ::AddVariableLineasSATCliente() },;
                                                          "Data" =>      {||   ::FastReportSATCliente() } },;
@@ -3843,3 +3849,39 @@ Return nUnidades
 
 //---------------------------------------------------------------------------//
 
+METHOD existeClienteInforme( cCodCli ) CLASS TFastVentasArticulos
+
+   local nRec
+   local nOrdAnt
+
+   nRec           := ::oDbfCli:Recno()
+   nOrdAnt        := ::oDbfCli:OrdSetFocus( "Cod" )
+
+   ::oDbfCli:goTop() 
+   while !::oDbfCli:Eof() .and. !::lBreak
+
+      if !( ::isClientInReport( ::oDbfCli:Cod ) )
+      
+      ::oDbf:Blank()
+      ::oDbf:cCodCli := ::oDbfCli:Cod
+      ::oDbf:cNomCli := ::oDbfCli:Titulo
+      ::oDbf:Insert()
+
+      end if 
+
+      ::oDbfCli:Skip()
+
+   end while
+
+   ::oDbfCli:OrdSetFocus( nOrdAnt )
+   ::oDbfCli:GoTo( nRec )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD isClientInReport( cCodCli ) CLASS TFastVentasArticulos
+
+RETURN ( ::oDbf:SeekInOrd( cCodCli, "cCodCli" ) )
+
+//---------------------------------------------------------------------------//
