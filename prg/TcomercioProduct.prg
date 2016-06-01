@@ -67,6 +67,10 @@ CLASS TComercioProduct
    METHOD uploadProductsToPrestashop()
       METHOD uploadProductToPrestashop()
          METHOD insertProductPrestashopTable( hProduct )
+         METHOD insertCategoryProduct( idProduct, idCategory ) 
+            METHOD insertNodeCategoryProduct( idProduct, idCategory ) 
+            METHOD getParentCategory( idCategory ) 
+            METHOD getNodeParentCategory( idCategory )
 
    METHOD truncteAllTables() 
       METHOD truncateTable( cTable )   
@@ -591,7 +595,7 @@ METHOD insertRootCategory() CLASS TComercioProduct
    cCommand       := "INSERT INTO " + ::cPrefixTable( "category" ) + " ( id_category, id_parent, id_shop_default, level_depth, nleft, nright, active, date_add, date_upd, position ) " + ;
                      "VALUES ( '1', '0', '1', '0', '0', '0', '1', '" + dtos( GetSysDate() ) + "', '" + dtos( GetSysDate() ) + "', '0' ) "
 
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   if TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand )
       ::nNumeroCategorias++
       ::writeText( "He insertado correctamente en la tabla categorías la categoría raiz", 3 )
    else
@@ -601,7 +605,7 @@ METHOD insertRootCategory() CLASS TComercioProduct
    cCommand       := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + " ( id_category, id_lang, name, description, link_rewrite, meta_title, meta_keywords, meta_description ) " + ;
                      "VALUES ( '1', '" + str( ::nLanguage ) + "', 'Root', 'Root', 'Root', '', '', '' )"
 
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   if TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand )
       ::writeText( "He insertado correctamente en la tabla categorias lenguajes la categoría raiz", 3 )
    else
       ::writeText( "Error al insertar la categoría raiz", 3 )
@@ -609,7 +613,7 @@ METHOD insertRootCategory() CLASS TComercioProduct
 
    cCommand       := "INSERT INTO " + ::cPrefixTable( "category_shop" ) + " ( id_category, id_shop, position ) VALUES ( '1', '1', '0' )"
 
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   if TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand )
       ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
    else
       ::writeText( "Error al insertar la categoría raiz", 3 )
@@ -617,7 +621,7 @@ METHOD insertRootCategory() CLASS TComercioProduct
 
    cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '1', '1' )"
 
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   if TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand )
       ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
    else
       ::writeText( "Error al insertar la categoría raiz", 3 )
@@ -625,7 +629,7 @@ METHOD insertRootCategory() CLASS TComercioProduct
 
    cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '1', '2' )"
 
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   if TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand )
       ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
    else
       ::writeText( "Error al insertar la categoría raiz", 3 )
@@ -633,7 +637,7 @@ METHOD insertRootCategory() CLASS TComercioProduct
 
    cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '1', '3' )"
 
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   if TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand )
       ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
    else
       ::writeText( "Error al insertar la categoría root en category_group", 3 )
@@ -643,7 +647,7 @@ METHOD insertRootCategory() CLASS TComercioProduct
 
    cCommand       := "INSERT INTO " + ::cPrefixTable( "category" ) + " ( id_parent, id_shop_default, level_depth, nleft, nright, active, date_add, date_upd, position, is_root_category ) VALUES ( '1', '1', '1', '0', '0', '1', '" + dtos( GetSysDate() ) + "', '" + dtos( GetSysDate() ) + "', '0', '1' ) "
 
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   if TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand )
       ::nNumeroCategorias++
       ::writeText( "He insertado correctamente en la tabla categorias la categoría raiz", 3 )
    else
@@ -652,7 +656,7 @@ METHOD insertRootCategory() CLASS TComercioProduct
 
    cCommand       := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + " ( id_category, id_lang, name, description, link_rewrite, meta_title, meta_keywords, meta_description ) VALUES ( '2', '" + str( ::nLanguage ) + "', 'Inicio', 'Inicio', 'Inicio', '', '', '' )"
 
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   if TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand )
       ::writeText( "He insertado correctamente en la tabla categorias lenguajes la categoría raiz", 3 )
    else
       ::writeText( "Error al insertar la categoría inicio", 3 )
@@ -660,7 +664,7 @@ METHOD insertRootCategory() CLASS TComercioProduct
 
    cCommand       := "INSERT INTO " + ::cPrefixTable( "category_shop" ) + " ( id_category, id_shop, position ) VALUES ( '2', '1', '0' )"
 
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   if TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand )
       ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
    else
       ::writeText( "Error al insertar la categoría inicio", 3 )
@@ -668,7 +672,7 @@ METHOD insertRootCategory() CLASS TComercioProduct
 
    cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '2', '1' )"
 
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   if TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand )
       ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
    else
       ::writeText( "Error al insertar la categoría inicio", 3 )
@@ -676,7 +680,7 @@ METHOD insertRootCategory() CLASS TComercioProduct
 
    cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '2', '2' )"
 
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   if TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand )
       ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
    else
       ::writeText( "Error al insertar la categoría inicio", 3 )
@@ -684,7 +688,7 @@ METHOD insertRootCategory() CLASS TComercioProduct
 
    cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '2', '3' )"
 
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   if TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand )
       ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
    else
       ::writeText( "Error al insertar la categoría inicio", 3 )
@@ -759,7 +763,6 @@ METHOD uploadProductToPrestashop( hProduct ) CLASS TComercioProduct
 
    ::insertNodeCategoryProduct( idProduct, idCategory )
 
-
 Return ( Self )
 
 //---------------------------------------------------------------------------//
@@ -804,9 +807,9 @@ METHOD insertProductPrestashopTable( hProduct, idCategory ) CLASS TComercioProdu
                            "'" + dtos( GetSysDate() ) + "', " + ;                                                       //date_add
                            "'" + dtos( GetSysDate() ) + "' )"
 
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand ) 
+   if TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand ) 
 
-      idProduct      := ::oCon:GetInsertId()
+      idProduct      := ::oConexionMySQLDatabase():GetInsertId()
       
       if !empty( idProduct )
          ::TPrestashopId():setValueProduct( hGet( hProduct, "id" ), ::getCurrentWebName(), idProduct )
@@ -826,27 +829,27 @@ Return ( idProduct )
 
 METHOD insertNodeCategoryProduct( idProduct, idCategory ) CLASS TComercioProduct
 
-   local idCategory
-   local cNodeFamilia
+   local parentCategory
+   local nodeParentCategory
 
-   idCategory                 := ::buildGetParentCategories( idCategory )
+   parentCategory             := ::getParentCategory( idCategory )
 
-   ::buildInsertCategoryProduct( idCategory, idProduct ) 
+   ::insertCategoryProduct( idProduct, parentCategory ) 
 
-   cNodeFamilia               := ::buildGetNodeParentCategories( idCategory )
-   if !empty( cNodeFamilia )
-      ::buildInsertNodeCategoryProduct( cNodeFamilia, idProduct )
+   nodeParentCategory         := ::getNodeParentCategory( idCategory )
+   if !empty( nodeParentCategory )
+      ::insertNodeCategoryProduct( idProduct, nodeParentCategory )
    end if 
 
 Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildGetParentCategories( idCategory ) CLASS TComercioProduct
+METHOD getParentCategory( idCategory ) CLASS TComercioProduct
 
    local idCategories      := 2
 
-   if ::oFam:Seek( idCategory ) .and. ::oFam:lPubInt
+   if ::oCategoryDatabase():Seek( idCategory ) .and. ::oCategoryDatabase():lPubInt
       idCategories         := ::TPrestashopId():getValueCategory( idCategory, ::getCurrentWebName() )  
    end if
 
@@ -854,17 +857,34 @@ Return ( idCategories )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildGetNodeParentCategories( idCategory ) CLASS TComercio
+METHOD getNodeParentCategory( idCategory ) CLASS TComercioProduct
 
    local idNode            := ""
 
-   if !empty( idCategory ) .and. ::oFam:Seek( idCategory )
-      idNode               := ::oFam:cFamCmb
+   if !empty( idCategory ) .and. ::oCategoryDatabase():Seek( idCategory )
+      idNode               := ::oCategoryDatabase():cFamCmb
    end if   
 
 Return ( idNode )
 
 //---------------------------------------------------------------------------//
 
+METHOD insertCategoryProduct( idProduct, idCategory ) CLASS TComercioProduct
+
+   local cCommand := "INSERT INTO " + ::cPrefixTable( "category_product" ) + " ( " + ;
+                        "id_category, " + ;
+                        "id_product ) " + ;
+                     "VALUES ( " + ;
+                        "'" + alltrim( str( max( idCategory, 1 ) ) ) + "', " + ;
+                        "'" + str( idProduct ) + "' )"
+
+   if !TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand )
+      ::writeText( "Error al insertar el artículo " + str( idProduct ) + " en la tabla " + ::cPrefixTable( "category_product" ), 3 )
+      Return ( .f. )
+   end if
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
 
 

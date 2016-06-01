@@ -3961,7 +3961,7 @@ METHOD acumulaDbf( nRecnoAcumula )
 Return ( self )
 
 //----------------------------------------------------------------------------//
-=======
+
 METHOD existeClienteInforme( cCodCli ) CLASS TFastVentasArticulos
 
    local nRec
@@ -3998,4 +3998,3 @@ METHOD isClientInReport( cCodCli ) CLASS TFastVentasArticulos
 RETURN ( ::oDbf:SeekInOrd( cCodCli, "cCodCli" ) )
 
 //---------------------------------------------------------------------------//
->>>>>>> origin/master
