@@ -10,22 +10,30 @@
 CLASS TFastreportOptions 
 
 	DATA hOptions 				INIT {=>}
-	DATA aOptions				INIT {}
-	DATA oBrw
-	DATA oDlg
+
+   DATA oDlg
+   DATA oBrw
+	DATA oColumnValue
 
 	METHOD New()   			CONSTRUCTOR
 	METHOD setOptions()
 	METHOD getOptions()
+
 	METHOD Dialog()
-	METHOD ChangeBrowse()
+      METHOD setColValue( uValue )        INLINE ( ::oColumnValue:Value          := uValue )
+      METHOD setColType( uValue )         INLINE ( ::oColumnValue:nEditType      := uValue )
+      METHOD setColPicture( uValue )      INLINE ( ::oColumnValue:cEditPicture   := uValue )
+      METHOD setColListTxt( aValue )      INLINE ( ::oColumnValue:aEditListTxt   := aValue )
+      METHOD columnPosEdit( o, x, n )
+
+   	METHOD ChangeBrowse()
 
 END CLASS
 //--------------------------------------------------------------------------//
 
 METHOD New() CLASS TFastReportOptions
 
-	::hOptions				:= {  "Estado"                =>  { "Todos", "Finalizado", "No finalizado" },;
+   ::hOptions           := {  "Estado"                =>  { "Todos", "Finalizado", "No finalizado" },;
                               "Excluir importe cero"  => .f.,;
                               "Excluir unidades cero" => .f. }
 
@@ -59,35 +67,33 @@ METHOD Dialog() CLASS TFastReportOptions
 
    DEFINE DIALOG ::oDlg RESOURCE "OPTIONSREPORT"
 
-   msgalert( hb_valtoexp( ::aOptions ), "hOptions" ) 
-   msgalert( valtype( ::aOptions ), "hOptions" ) 
-
    ::oBrw                        := IXBrowse():New( ::oDlg )
 
    ::oBrw:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrw:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-   //::oBrw:SetArray( ::hOptions, , , .f. )
+   ::oBrw:SetArray( ::hOptions, , , .f. )
 
    ::oBrw:nMarqueeStyle          := MARQSTYLE_HIGHLCELL
    ::oBrw:lRecordSelector        := .f.
    ::oBrw:lHScroll               := .f.
    ::oBrw:lFastEdit              := .t.
 
-   ::oBrw:bChange                := {|| msgalert( "bchangue" ) }//::ChangeBrowse() }
+   ::oBrw:bChange                := {|| ::ChangeBrowse() }
 
    ::oBrw:CreateFromResource( 100 )
 
    with object ( ::oBrw:AddCol() )
       :cHeader          := "Campo"
-      :bStrData         := {|| "Nombre del campo" }//AllTrim( hGet( ::hOptions[ ::oBrw:nArrayAt ], "descripción" ) ) + if( hGet( ::hOptions[ ::oBrw:nArrayAt ], "lrequerido" ), " *", "" ) }
+      :bStrData         := {|| hb_hKeyAt( ::hOptions, ::oBrw:nArrayAt ) }
       :nWidth           := 250
    end with
 
-   with object ( oCol := ::oBrw:AddCol() )
+   with object ( ::oColumnValue := ::oBrw:AddCol() )
       :cHeader          := "Valor"
-      :bEditValue       := {|| "Valor del campo" }//hGet( ::hOptions[ ::oBrw:nArrayAt ], "valor" ) }
-      :bStrData         := {|| "Valor del campo" }//hGet( ::hOptions[ ::oBrw:nArrayAt ], "valor" ) }
+      :bEditValue       := {|| hb_hValueAt( ::hOptions, ::oBrw:nArrayAt ) }
+      :bStrData         := {|| hb_hValueAt( ::hOptions, ::oBrw:nArrayAt ) }
+      :bOnPostEdit      := {|o,x,n| ::columnPosEdit( o, x, n ) }
       :nWidth           := 300
    end with 
 
@@ -104,7 +110,7 @@ METHOD Dialog() CLASS TFastReportOptions
 
    ::oDlg:AddFastKey( VK_F5, {|| ::oDlg:end( IDOK ) } )
 
-  // ::oDlg:bStart        := {|| ::ChangeBrowse() }
+   ::oDlg:bStart        := {|| ::ChangeBrowse() }
 
    ACTIVATE DIALOG ::oDlg CENTER
 
@@ -114,8 +120,48 @@ Return ( ::oDlg:nResult == IDOK )
 
 METHOD ChangeBrowse() CLASS TFastReportOptions
 
-   Eval( hGet( ::hOptions, AllTrim( Str( hGet( ::hOptions[ ::oBrw:nArrayAt ], "tipo" ) ) ) ) )
+   local valueColumn    := hb_hValueAt( ::hOptions, ::oBrw:nArrayAt )
+   local valtypeColumn  := valtype( valueColumn )
 
-   ::oCol:bOnPostEdit            := {|o,x,n| hSet( ::hOptions[ ::oBrw:nArrayAt ], "valor", x ) }
+   msgAlert( valtypeColumn )
+
+   do case
+      case valtypeColumn == 'A'
+         
+         debug( valueColumn, "valueColumn" )
+         msgAlert( valueColumn[ 1 ], "valueColumn1" )
+
+         ::setColType( EDIT_LISTBOX )
+         ::setColListTxt( valueColumn ) 
+         ::setColValue( valueColumn[ 1 ] )
+         ::setColPicture( "" )
+
+   end case
+
+/*
+   ::hFormatoColumnas      := {  "1" => {||  ::setColType( EDIT_GET ) ,;
+                                             ::setColPicture( "" ) } ,;
+                                 "2" => {||  ::setColType( EDIT_GET ) ,;
+                                             ::setColPicture( NumPict( hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "longitud" ) + hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "decimales" ) - 1, hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "decimales" ), , .t. ) ) } ,;
+                                 "3" => {||  ::setColType( EDIT_GET ) ,;
+                                             ::setColPicture( "" ) } ,;
+                                 "4" => {||  ::setColType( EDIT_LISTBOX ),;
+                                             ::setColListTxt( { "si", "no" } ),;
+                                             ::setColPicture( "" ) } ,;
+*/
+
+
+   // Eval( hGet( ::hOptions, AllTrim( Str( hGet( ::hOptions[ ::oBrw:nArrayAt ], "tipo" ) ) ) ) )
+
+   // ::oCol:bOnPostEdit            := {|o,x,n| hSet( ::hOptions[ ::oBrw:nArrayAt ], "valor", x ) }
 
 Return ( Self )
+
+METHOD columnPosEdit( oColumn, uValue, n )
+
+   msgAlert( uValue )
+
+Return ( .t. )
+
+
+
