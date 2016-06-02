@@ -21,6 +21,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    DATA  hReport 
    DATA  hOptions
+   DATA oTfastreportOptions
 
    DATA  aliasPedidosClientes
    DATA  aliasPedidosClientesLineas
@@ -490,6 +491,14 @@ METHOD NewResource( cFldRes ) CLASS TFastReportInfGen
       ::oDefFinInf( 1120, ::oDlg, 1121 )
       ::lPeriodoInforme( 220, ::oDlg )
    end if
+
+   //Opciones
+   ::oTfastreportOptions      := TFastreportOptions():New()
+
+   REDEFINE BUTTON ;
+   ID       1130 ;
+   OF       ::oDlg ;
+   ACTION   ( ::oTfastreportOptions:Dialog() )
    
    //Browse de los rangos----------------------------------------------------------
    

@@ -375,6 +375,9 @@ METHOD Resource() CLASS TDetCamposExtra
       ::oBrw:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrw:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
+      msgalert( hb_valtoexp( ::aCamposExtra ), "aCamposExtra" )
+      msgalert( valtype( ::aCamposExtra ), "hOptions" ) 
+
       ::oBrw:SetArray( ::aCamposExtra, , , .f. )
 
       ::oBrw:nMarqueeStyle          := MARQSTYLE_HIGHLCELL
