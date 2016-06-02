@@ -325,6 +325,8 @@ CLASS TInfGen
 
    DATA uParam 
 
+   DATA oTFastReportOptions
+
    METHOD New( cSubTitle, aFields, oMenuItem, oWnd ) CONSTRUCTOR
 
    METHOD Activate()
@@ -598,24 +600,6 @@ METHOD New( cSubTitle, aFields, aIndex, oMenuItem, oWnd, cHelp, xOthers ) CLASS 
    ::aSelectionRango := {}
 
    /*
-   Niveles de acceso
-
-   if !Empty( oMenuItem ) .and. nAnd( nLevelUsr( oMenuItem ), 1 ) != 0
-      msgStop( "Acceso no permitido." )
-      return nil
-   end if
-   */
-
-   /*
-   Cargamos las fuentes--------------------------------------------------------
-
-   DEFAULT ::aFont      := aGetFont()
-   DEFAULT ::acSizes    := { "10", "10", "10", "40", "60", "70" }
-   DEFAULT ::acEstilo   := { "Normal", "Normal", "Negrita", "Normal", "Normal", "Normal" }
-   DEFAULT ::acFont     := { "Courier New", "Courier New", "Courier New", "UPCHeightA", "Code 39", "Code128B" }
-   */
-
-   /*
    Inicialización de objetos---------------------------------------------------
    */
 
@@ -655,7 +639,9 @@ METHOD New( cSubTitle, aFields, aIndex, oMenuItem, oWnd, cHelp, xOthers ) CLASS 
    aAdd( ::aCmbReport, "Adobe PDF"  )
    aAdd( ::aBmpReport, "DOCLOCK"    )
 
-   ::cCmbReport   := "Visualizar"
+   ::cCmbReport            := "Visualizar"
+
+   ::oTFastReportOptions   := TFastreportOptions():New()
 
    /*
    Creamos las bases de datos temporales---------------------------------------
