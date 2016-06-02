@@ -2613,7 +2613,12 @@ RETURN ( Self )
 
 METHOD AddArticulo() CLASS TFastVentasArticulos
 
+   local cAlmacen
    local aStockArticulo
+
+   if ::oGrupoAlmacen:getDesde() == ::oGrupoAlmacen:getHasta()
+      cAlmacen          := ::oGrupoAlmacen:getDesde()
+   end if 
 
    ::oDbf:Zap()
    ::oDbfArt:OrdClearScope()   
@@ -2631,7 +2636,7 @@ METHOD AddArticulo() CLASS TFastVentasArticulos
       if ( ::oDbfArt:Codigo  >= ::oGrupoArticulo:Cargo:getDesde() .and. ::oDbfArt:Codigo  <= ::oGrupoArticulo:Cargo:getHasta() ) .and.;
          ( ::oDbfArt:Familia >= ::oGrupoFamilia:Cargo:getDesde()  .and. ::oDbfArt:Familia <= ::oGrupoFamilia:Cargo:getHasta() )           
 
-         aStockArticulo    := ::oStock:aStockArticulo( ::oDbfArt:Codigo, , , , , , ::dFinInf )
+         aStockArticulo    := ::oStock:aStockArticulo( ::oDbfArt:Codigo, cAlmacen, , , , , ::dFinInf )
 
          if !empty( aStockArticulo )
             ::appendStockArticulo( aStockArticulo )

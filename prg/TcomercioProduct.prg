@@ -761,7 +761,9 @@ METHOD uploadProductToPrestashop( hProduct ) CLASS TComercioProduct
 
    idProduct         := ::insertProductPrestashopTable( hProduct, idCategory )
 
-   ::insertNodeCategoryProduct( idProduct, idCategory )
+   if !empty( idProduct )
+      ::insertNodeCategoryProduct( idProduct, idCategory )
+   end if 
 
 Return ( Self )
 
@@ -795,21 +797,21 @@ METHOD insertProductPrestashopTable( hProduct, idCategory ) CLASS TComercioProdu
                            "date_upd ) " + ;
                         "VALUES ( " + ;
                            "'" + alltrim( str( ::TPrestashopId():getValueManufacturer( hGet( hProduct, "id_manufacturer" ), ::getCurrentWebName() ) ) ) + "', " + ; //id_manufacturer
-                           "'" + alltrim( str( idTaxRuleGroup ) ) + "', " + ;                                           //id_tax_rules_group  - tipo IVA
-                           "'" + alltrim( str( idCategoryDefault ) ) + "', " + ;                                                  //id_category_default
-                           "'1', " + ;                                                                                  //id_shop_default
-                           "'1', " + ;                                                                                  //quantity
-                           "'1', " + ;                                                                                  //minimal_quantity
-                           "'" + alltrim( str( hGet( hProduct, "price" ) ) ) + "', " + ;                           //price
-                           "'" + alltrim( hGet( hProduct, "id" ) ) + "', " + ;                                     //reference
-                           "'" + alltrim( str( hGet( hProduct, "weight" ) ) ) + "', " + ;                          //weight
-                           "'1', " + ;                                                                                  //active
-                           "'" + dtos( GetSysDate() ) + "', " + ;                                                       //date_add
+                           "'" + alltrim( str( idTaxRuleGroup ) ) + "', " + ;                                      // id_tax_rules_group  - tipo IVA
+                           "'" + alltrim( str( idCategoryDefault ) ) + "', " + ;                                   // id_category_default
+                           "'1', " + ;                                                                             // id_shop_default
+                           "'1', " + ;                                                                             // quantity
+                           "'1', " + ;                                                                             // minimal_quantity
+                           "'" + alltrim( str( hGet( hProduct, "price" ) ) ) + "', " + ;                           // price
+                           "'" + alltrim( hGet( hProduct, "id" ) ) + "', " + ;                                     // reference
+                           "'" + alltrim( str( hGet( hProduct, "weight" ) ) ) + "', " + ;                          // weight
+                           "'1', " + ;                                                                             // active
+                           "'" + dtos( GetSysDate() ) + "', " + ;                                                  // date_add
                            "'" + dtos( GetSysDate() ) + "' )"
 
    if TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand ) 
 
-      idProduct      := ::oConexionMySQLDatabase():GetInsertId()
+      idProduct      := ::oConexionMySQLDatabase():getInsertId()
       
       if !empty( idProduct )
          ::TPrestashopId():setValueProduct( hGet( hProduct, "id" ), ::getCurrentWebName(), idProduct )
