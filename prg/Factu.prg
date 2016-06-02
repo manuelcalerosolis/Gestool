@@ -5015,6 +5015,7 @@ Function Test()
 
    msgAlert( hb_valtoexp( jsondecode ) )
 */
+
 Return ( nil )
 
   // local uGetKey  := "test teclado"

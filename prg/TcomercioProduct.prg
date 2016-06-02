@@ -4,6 +4,9 @@
 #include "Ini.ch"
 #include "MesDbf.ch" 
 
+#define __tipoProducto__      1
+#define __tipoCategoria__     2     
+
 //---------------------------------------------------------------------------//
 
 CLASS TComercioProduct
@@ -17,12 +20,17 @@ CLASS TComercioProduct
    DATA  aPropertiesHeaderProduct                           INIT {}
    DATA  aPropertiesLineProduct                             INIT {}
 
+   DATA  idCategoryDefault  
+   DATA  idTaxRulesGroup 
+   DATA  idManufacturer    
+
    METHOD New( TComercio )                                  CONSTRUCTOR
 
    // facades------------------------------------------------------------------
 
    METHOD TPrestashopId()                                   INLINE ( ::TComercio:TPrestashopId )
    METHOD TPrestashopConfig()                               INLINE ( ::TComercio:TPrestashopConfig )
+   METHOD lProductIdColumnImageShop()                       INLINE ( ::TComercio:lProductIdColumnImageShop )
 
    METHOD isSyncronizeAll()                                 INLINE ( ::TComercio:lSyncAll )
 
@@ -67,10 +75,25 @@ CLASS TComercioProduct
    METHOD uploadProductsToPrestashop()
       METHOD uploadProductToPrestashop()
          METHOD insertProductPrestashopTable( hProduct )
+         
          METHOD insertCategoryProduct( idProduct, idCategory ) 
             METHOD insertNodeCategoryProduct( idProduct, idCategory ) 
             METHOD getParentCategory( idCategory ) 
             METHOD getNodeParentCategory( idCategory )
+         
+         METHOD insertProductShop( idProduct, idCategory )
+         METHOD insertProductLang( idProduct, idCategory )
+
+         METHOD processImageProducts( idProduct, hProduct )
+            METHOD insertImage( idProduct, hProduct, hImage, nImagePosition )
+               METHOD insertImageLang( hProduct, hImage, idImagePrestashop )
+               METHOD insertImageShop( idProduct, hProduct, hImage, idImagePrestashop )
+
+      METHOD processPropertyProduct( idProduct, hProduct )
+         METHOD insertProductAttributePrestashop( idProduct, hProduct, priceProperty )
+         METHOD insertProductAttributeCombination( idFirstProperty, valueFirstProperty, idProperty )
+         METHOD insertProductAttributeShop( lDefault, idProduct, idProperty, priceProperty )
+         METHOD insertProductAttributeImage( hProduct, idProductAttribute )
 
    METHOD truncteAllTables() 
       METHOD truncateTable( cTable )   
@@ -757,13 +780,35 @@ METHOD uploadProductToPrestashop( hProduct ) CLASS TComercioProduct
    local idProduct
    local idCategory
 
-   idCategory        := hGet( hProduct, "id_category_default" )
+   idCategory           := hGet( hProduct, "id_category_default" )
 
-   idProduct         := ::insertProductPrestashopTable( hProduct, idCategory )
+   ::idCategoryDefault  := ::TPrestashopId():getValueCategory( idCategory, ::getCurrentWebName(), 2 )
+   ::idTaxRulesGroup     := ::TPrestashopId():getValueTaxRuleGroup( hGet( hProduct, "id_tax_rules_group" ), ::getCurrentWebName() )
+   ::idManufacturer     := ::TPrestashopId():getValueManufacturer( hGet( hProduct, "id_manufacturer" ), ::getCurrentWebName() )
 
-   if !empty( idProduct )
-      ::insertNodeCategoryProduct( idProduct, idCategory )
+   idProduct            := ::insertProductPrestashopTable( hProduct, idCategory )
+
+   if empty( idProduct )
+      Return ( Self )
    end if 
+
+   // Publicar el articulo en su categoria-------------------------------------
+
+   ::insertNodeCategoryProduct( idProduct, idCategory )
+
+   // Publicar el articulo en el root------------------------------------------
+
+   if hGet( hProduct, "lPublicRoot" )
+      ::insertNodeCategoryProduct( idProduct, 2 )
+   end if
+
+   ::insertProductShop( idProduct, hProduct )
+
+   ::insertProductLang( idProduct, hProduct )
+
+   ::processImageProducts( idProduct, hProduct )
+
+   ::processPropertyProduct( idProduct, hProduct )
 
 Return ( Self )
 
@@ -773,14 +818,10 @@ METHOD insertProductPrestashopTable( hProduct, idCategory ) CLASS TComercioProdu
 
    local cCommand
    local idProduct
-   local idTaxRuleGroup 
-   local idCategoryDefault
 
    ::writeText( "Añadiendo artículo: " + hGet( hProduct, "description" ) )
 
    idProduct         := 0
-   idCategoryDefault := ::TPrestashopId():getValueCategory( idCategory, ::getCurrentWebName(), 2 )
-   idTaxRuleGroup    := ::TPrestashopId():getValueTaxRuleGroup( hGet( hProduct, "id_tax_rules_group" ), ::getCurrentWebName() )
 
    cCommand          := "INSERT INTO " + ::cPrefixTable( "product" ) + " ( " + ;
                            "id_manufacturer, " + ;
@@ -796,9 +837,9 @@ METHOD insertProductPrestashopTable( hProduct, idCategory ) CLASS TComercioProdu
                            "date_add, " + ;
                            "date_upd ) " + ;
                         "VALUES ( " + ;
-                           "'" + alltrim( str( ::TPrestashopId():getValueManufacturer( hGet( hProduct, "id_manufacturer" ), ::getCurrentWebName() ) ) ) + "', " + ; //id_manufacturer
-                           "'" + alltrim( str( idTaxRuleGroup ) ) + "', " + ;                                      // id_tax_rules_group  - tipo IVA
-                           "'" + alltrim( str( idCategoryDefault ) ) + "', " + ;                                   // id_category_default
+                           "'" + alltrim( str( ::idManufacturer ) ) + "', " + ; //id_manufacturer
+                           "'" + alltrim( str( ::idTaxRulesGroup ) ) + "', " + ;                                    // id_tax_rules_group  - tipo IVA
+                           "'" + alltrim( str( ::idCategoryDefault ) ) + "', " + ;                                 // id_category_default
                            "'1', " + ;                                                                             // id_shop_default
                            "'1', " + ;                                                                             // quantity
                            "'1', " + ;                                                                             // minimal_quantity
@@ -834,11 +875,11 @@ METHOD insertNodeCategoryProduct( idProduct, idCategory ) CLASS TComercioProduct
    local parentCategory
    local nodeParentCategory
 
-   parentCategory             := ::getParentCategory( idCategory )
+   parentCategory          := ::getParentCategory( idCategory )
 
    ::insertCategoryProduct( idProduct, parentCategory ) 
 
-   nodeParentCategory         := ::getNodeParentCategory( idCategory )
+   nodeParentCategory      := ::getNodeParentCategory( idCategory )
    if !empty( nodeParentCategory )
       ::insertNodeCategoryProduct( idProduct, nodeParentCategory )
    end if 
@@ -849,13 +890,13 @@ Return ( nil )
 
 METHOD getParentCategory( idCategory ) CLASS TComercioProduct
 
-   local idCategories      := 2
+   local idParentCategory    := 2
 
    if ::oCategoryDatabase():Seek( idCategory ) .and. ::oCategoryDatabase():lPubInt
-      idCategories         := ::TPrestashopId():getValueCategory( idCategory, ::getCurrentWebName() )  
+      idParentCategory       := ::TPrestashopId():getValueCategory( idCategory, ::getCurrentWebName() )  
    end if
 
-Return ( idCategories )
+Return ( idParentCategory )
 
 //---------------------------------------------------------------------------//
 
@@ -885,8 +926,376 @@ METHOD insertCategoryProduct( idProduct, idCategory ) CLASS TComercioProduct
       Return ( .f. )
    end if
 
+   SysRefresh()
+
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD insertProductShop( idProduct, hProduct ) CLASS TComercioProduct
 
+   local cCommand
+
+   cCommand    := "INSERT INTO " + ::cPrefixTable( "product_shop" ) + " ( " +;
+                     "id_product, " + ;
+                     "id_shop, " + ;
+                     "id_category_default, " + ;
+                     "id_tax_rules_group, " + ;
+                     "on_sale, " + ;
+                     "price, " + ;
+                     "active, " + ;
+                     "date_add, " + ;
+                     "date_upd )" + ;
+                  " VALUES ( " + ;
+                     "'" + str( idProduct ) + "', " + ;
+                     "'1', " + ;
+                     "'" + alltrim( str( ::idCategoryDefault ) ) + "', " + ;
+                     "'" + alltrim( str( ::idTaxRulesGroup ) ) + "', " + ;
+                     "'0', " + ;
+                     "'" + alltrim( str( hGet( hProduct, "price" ) ) ) + "', " + ;
+                     "'1', " + ;
+                     "'" + dtos( GetSysDate() ) + "', " + ;
+                     "'" + dtos( GetSysDate() ) + "' )"
+
+   if !TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand )
+      ::writeText( "Error al insertar el artículo " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "product_shop" ), 3 )
+   end if
+
+   SysRefresh()
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertProductLang( idProduct, hProduct ) CLASS TComercioProduct
+
+   local cCommand
+
+   cCommand    := "INSERT INTO " + ::cPrefixTable( "product_lang" ) + " ( " +;
+                     "id_product, " + ;
+                     "id_lang, " + ;
+                     "description, " + ;
+                     "description_short, " + ;
+                     "link_rewrite, " + ;
+                     "meta_title, " + ;
+                     "meta_description, " + ;
+                     "meta_keywords, " + ;
+                     "name, " + ;
+                     "available_now, " + ;
+                     "available_later )" + ;
+                  " VALUES ( " + ;
+                     "'" + str( idProduct ) + "', " + ;                            // id_product
+                     "'" + str( ::nLanguage ) + "', " + ;                           // id_lang
+                     "'" + ::oCon:Escapestr( hGet( hProduct, "description" ) ) + "', " + ;        // description
+                     "'" + hGet( hProduct, "description_short" ) + "', " + ;   // description_short
+                     "'" + hGet( hProduct, "link_rewrite" ) + "', " + ;        // link_rewrite
+                     "'" + hGet( hProduct, "meta_title" ) + "', " + ;          // Meta_título
+                     "'" + hGet( hProduct, "meta_description" ) + "', " + ;    // Meta_description
+                     "'" + hGet( hProduct, "meta_keywords" ) + "', " + ;       // Meta_keywords
+                     "'" + hGet( hProduct, "name" ) + "', " + ;                // name
+                     "'En stock', " + ;                                             // avatible_now
+                     "'' )"
+
+   if !TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand )
+      ::writeText( "Error al insertar el artículo " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "product_lang" ), 3 )
+   end if
+
+   SysRefresh()
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD processImageProducts( idProduct, hProduct ) CLASS TComercioProduct
+
+   local hImage
+   local nImagePosition       := 1
+   local idImagePrestashop    := 0
+
+   for each hImage in hGet( hProduct, "aImages" )
+
+      idImagePrestashop       := ::insertImage( idProduct, hProduct, hImage, nImagePosition )
+
+      if idImagePrestashop != 0
+
+         ::insertImageLang( hProduct, hImage, idImagePrestashop )
+
+         ::insertImageShop( idProduct, hProduct, hImage, idImagePrestashop )
+
+         // Añadimos la imagen al array para subirla a prestashop--------------
+
+         hSet( hImage, "nTipoImagen", __tipoProducto__ )
+         hSet( hImage, "cCarpeta", alltrim( str( idImagePrestashop ) ) )
+         hSet( hImage, "cPrefijoNombre", alltrim( str( idImagePrestashop ) ) )
+         hSet( hImage, "aTypeImages", {} )
+
+      end if 
+
+      nImagePosition++
+
+   next
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD insertImage( idProduct, hProduct, hImage, nImagePosition )
+
+   local cCommand
+   local idImagePrestashop    := 0
+
+   cCommand := "INSERT INTO " + ::cPrefixTable( "image" ) + " ( " +;
+                  "id_product, " + ;
+                  "position, " + ;
+                  "cover ) " + ;
+               "VALUES ( " + ;
+                  "'" + alltrim( str( idProduct ) ) + "', " + ;
+                  "'" + str( nImagePosition ) + "', " + ;
+                  if( hGet( hImage, "lDefault" ), "'1'", "'0'" ) + " )"
+
+   if TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand )
+      idImagePrestashop       := ::oConexionMySQLDatabase():GetInsertId()
+      ::writeText( "Insertado la imagen " + hGet( hProduct, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "image" ), 3 )
+   else
+      ::writeText( "Error al insertar la imagen " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "image" ), 3 )
+   end if
+
+   if !empty( idImagePrestashop )
+      ::TPrestashopId():setValueImage( hGet( hProduct, "id" ) + str( hGet( hImage, "id" ), 10 ), ::getCurrentWebName(), idImagePrestashop )
+   end if
+
+Return ( idImagePrestashop )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertImageLang( hProduct, hImage, idImagePrestashop )
+
+   local cCommand
+
+   cCommand := "INSERT INTO " + ::cPrefixTable( "image_lang" ) + " ( " +;
+                  "id_image, " + ;
+                  "id_lang, " + ;
+                  "legend ) " + ;
+               "VALUES (" + ;
+                  "'" + alltrim( str( idImagePrestashop ) ) + "', " + ;
+                  "'" + alltrim( str( ::nLanguage ) ) + "', " + ;
+                  "'" + ::oConexionMySQLDatabase():Escapestr( hGet( hProduct, "name" ) ) + "' )"
+
+   if TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand )
+      ::writeText( "Insertado la imagen " + hGet( hProduct, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
+   else
+      ::writeText( "Error al insertar la imagen " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD insertImageShop( idProduct, hProduct, hImage, idImagePrestashop )
+
+   local cCommand 
+   local cNullCover     := "'0'"
+
+   if ::lProductIdColumnImageShop()
+      cNullCover        := "null"
+   end if 
+
+   cCommand             := "INSERT INTO " + ::cPrefixTable( "image_shop" ) + " ( "  + ;
+                              if( ::lProductIdColumnImageShop(), "id_product, ", "" ) + ;
+                              "id_image, "                                          + ;
+                              "id_shop, "                                           + ;
+                              "cover ) "                                            + ;
+                           "VALUES ( "                                              + ;
+                              if( ::lProductIdColumnImageShop(), "'" + alltrim( str( idProduct ) ) + "', ", "" ) + ;  // id_product
+                              "'" + alltrim( str( idImagePrestashop ) ) + "', "     + ;      // id_image
+                              "'1', "                                               + ;      // id_shop
+                              if( hGet( hImage, "lDefault" ), "'1'", "'0'" ) + ")"           // cover
+
+   if TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand )
+      ::writeText( "Insertado la imagen " + hGet( hProduct, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
+   else
+      ::writeText( "Error al insertar la imagen " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD processPropertyProduct( idProduct, hProduct ) CLASS TComercioProduct
+
+   local lDefault          := .t.
+   local idProperty        := 0
+   local priceProperty     := 0
+
+   // Comprobamos si el artículo tiene propiedades y metemos las propiedades
+
+   if ::oPropertyProductDatabase():SeekInOrd( hGet( hProduct, "id" ), "cCodArt" )
+
+      while ::oPropertyProductDatabase():cCodArt == hGet( hProduct, "id" ) .and. !::oPropertyProductDatabase():Eof()
+
+         if !empty( ::oPropertyProductDatabase():cValPr1 )
+
+            priceProperty  := nPrePro( hGet( hProduct, "id" ), ::oPropertyProductDatabase():cCodPr1, ::oPropertyProductDatabase():cValPr1, space( 20 ), space( 20 ), 1, .f., ::oPropertyProductDatabase():cAlias )
+
+            idProperty     := ::insertProductAttributePrestashop( idProduct, hProduct, priceProperty )
+
+            ::insertProductAttributeCombination( ::oPropertyProductDatabase():cCodPr1, ::oPropertyProductDatabase():cValPr1, idProperty )
+
+            if !empty( ::oPropertyProductDatabase():cValPr2 )
+            
+               ::insertProductAttributeCombination( ::oPropertyProductDatabase():cCodPr2, ::oPropertyProductDatabase():cValPr2, idProperty )
+
+            end if 
+            
+            ::insertProductAttributeShop( idProduct, idProperty, priceProperty, lDefault )
+
+            ::insertProductAttributeImage( hProduct, idProperty )
+
+         end if 
+
+         ::oPropertyProductDatabase():Skip()
+
+         lDefault    := .f.
+
+      end while
+
+   end if
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertProductAttributePrestashop( idProduct, hProduct, priceProperty ) CLASS TComercioProduct
+
+   local cCommand
+   local idProductAttribute   := 0
+
+   // Metemos la propiedad de éste artículo---------------------------
+
+   cCommand := "INSERT INTO " + ::cPrefixTable( "product_attribute" ) + " ( "                                     + ;
+                  if( ::lProductIdColumnProductAttribute, "id_product, ", "" )                                    + ;
+                  "price, "                                                                                       + ;
+                  "wholesale_price, "                                                                             + ;
+                  "quantity, "                                                                                    + ;
+                  "minimal_quantity ) "                                                                           + ;
+               "VALUES ( "                                                                                        + ;
+                  if( ::lProductIdColumnProductAttribute, "'" + alltrim( str( idProduct ) ) + "', ", "" )        + ;      //id_product
+                  "'" + alltrim( str( priceProperty ) ) + "', "                                                         + ;      //price
+                  "'" + alltrim( str( priceProperty ) ) + "', "                                                         + ;      //wholesale_price
+                  "'10000', "                                                                                     + ;      //quantity
+                  "'1' )"                                                                                                  //minimal_quantity
+
+   if TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand )
+      idProductAttribute      := ::oCon:GetInsertId()
+   else
+      ::writeText( "Error al insertar la propiedad " + alltrim( ::oPropertyProductDatabase():cValPr1 ) + " - " + alltrim( ::oPropertyProductDatabase():cValPr2 ) + " en la tabla " + ::cPrefixTable( "product_attribute" ), 3 )
+   end if
+
+Return ( idProductAttribute )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertProductAttributeCombination( idFirstProperty, valueFirstProperty, idProperty ) CLASS TComercioProduct
+
+   local cCommand
+
+   if !( ::oPropertiesLinesDatabase():seekInOrd( upper( idFirstProperty ) + upper( valueFirstProperty ), "cCodPro" ) )
+      ::writeText( "Error al buscar en tabla de propiedades " + alltrim( idFirstProperty ) + " : " + alltrim( valueFirstProperty ), 3 )
+      Return .f.
+   end if 
+
+   cCommand := "INSERT INTO " +  ::cPrefixtable( "product_attribute_combination" ) + "( " + ;
+                  "id_attribute, "                                                        + ;
+                  "id_product_attribute ) "                                               + ;
+               "VALUES ("                                                                 + ;
+                  "'" + alltrim( str( ::TPrestashopId():getValueAttribute( idFirstProperty + valueFirstProperty, ::getCurrentWebName() ) ) ) + "', " + ;  //id_attribute
+                  "'" + alltrim( str( idProperty ) ) + "' )"                        //id_product_attribute
+
+   if !TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand ) 
+      ::writeText( "Error al insertar la propiedad " + alltrim( ::oPropertiesLinesDatabase():cDesTbl ) + " en la tabla " + ::PrefixTable( "product_attribute_combination" ), 3 )
+   end if
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertProductAttributeShop( idProduct, idProperty, priceProperty, lDefault ) CLASS TComercioProduct
+
+   local cCommand := "INSERT INTO " + ::cPrefixTable( "product_attribute_shop" ) + " ( "  + ;
+                        if( ::isProductIdColumnProductAttributeShop, "id_product, ", "" ) + ;
+                        "id_product_attribute, "                                          + ;
+                        "id_shop, "                                                       + ;
+                        "wholesale_price, "                                               + ;
+                        "price, "                                                         + ;
+                        "ecotax, "                                                        + ;
+                        "weight, "                                                        + ;
+                        "unit_price_impact, "                                             + ;
+                        if( lDefault, "default_on, ", "" )                                + ;
+                        "minimal_quantity ) "                                             + ;
+                     "VALUES ( "                                                          + ;
+                        if( ::isProductIdColumnProductAttributeShop, "'" + alltrim( str( idProduct ) ) + "', ", "" ) + ;  // id_product
+                        "'" + alltrim( str( idProperty ) ) + "', "                  + ;
+                        "'1', "                                                           + ;
+                        "'" + alltrim( str( priceProperty ) ) + "', "                     + ;
+                        "'" + alltrim( str( priceProperty ) ) + "', "                     + ;
+                        "'0', "                                                           + ;
+                        "'0', "                                                           + ;
+                        "'0', "                                                           + ;
+                        if( lDefault, "'1',", "" )                                        + ;
+                        "'1' )"
+
+   if !TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand )
+      ::writeText( "Error al insertar la propiedad " + alltrim( ::oPropertiesLinesDatabase():cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute_shop" ), 3 )
+   end if
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertProductAttributeImage( hProduct, idProductAttribute ) CLASS TComercioProduct
+
+   local cImage
+   local aImages
+   local cCommand
+   local nIdProductImage
+
+   aImages                 := hb_aTokens( ::oArtDiv:mImgWeb, "," )
+   
+   if empty( aImages )
+      Return ( self )
+   end if 
+
+   for each cImage in aImages
+
+      if ::oPropertyProductDatabase():SeekInOrd( hGet( hProduct, "id" ), "cCodArt" )
+
+         while ::oPropertyProductDatabase():cCodArt == hGet( hProduct, "id" ) .and. !::oPropertyProductDatabase():Eof()
+
+            if alltrim( ::oPropertyProductDatabase():cImgArt ) == alltrim( cImage )
+
+               nIdProductImage   := ::TPrestashopId():getValueImage( hGet( hProduct, "id" ) + str( ::oPropertyProductDatabase():nId, 10 ), ::getCurrentWebName() )
+
+               cCommand          := "INSERT INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
+                                       "id_product_attribute, " + ;
+                                       "id_image )" + ;
+                                    "VALUES ( " + ;
+                                       "'" + alltrim( str( idProductAttribute ) ) + "', " + ;      // id_product_attribute
+                                       "'" + alltrim( str( nIdProductImage ) ) + "' )"             // id_image
+
+               if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+                  ::writeText( "Error al insertar el artículo " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
+               end if
+
+            end if   
+
+            ::oPropertyProductDatabase():Skip()
+
+         end while   
+
+      end if
+
+   next   
+
+Return ( self )
+
+//---------------------------------------------------------------------------//

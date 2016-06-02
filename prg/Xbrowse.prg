@@ -8364,13 +8364,9 @@ METHOD ArrayIncrSeek( cSeek, nGoTo ) CLASS TXBrowse
    local nAt, nBrwCol, nSortCol, nRow, uVal
    local lExact
 
-  MsgAlert( cSeek, "ArrayIncrSeek" )
-
    if ::lIncrFilter
       return ::ArrayIncrFilter( cSeek, @nGoTo )
    endif
-
-  MsgAlert( cSeek, "Ascan" )
 
    if ( nBrwCol := AScan( ::aCols, { |o| !Empty( o:cOrder ) } ) ) > 0
       if ! Empty( nSortCol := ::aCols[ nBrwCol ]:cSortOrder ) .and. ValTyPe( nSortCol ) == 'N'
@@ -11490,10 +11486,6 @@ METHOD ShowBtnList( nKey ) CLASS TXBrwColumn
    if ValType( xValue := ::Value ) == 'C'
       xValue   := Trim( xValue )
    endif
-
-   debug( ::Value, "value")
-
-   debug( aBound, "aBound")
 
    if ( nAt := Ascan( aBound, xValue ) ) == 0
       if ValType( xValue ) == 'C'

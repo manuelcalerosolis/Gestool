@@ -2616,8 +2616,8 @@ METHOD AddArticulo() CLASS TFastVentasArticulos
    local cAlmacen
    local aStockArticulo
 
-   if ::oGrupoAlmacen:getDesde() == ::oGrupoAlmacen:getHasta()
-      cAlmacen          := ::oGrupoAlmacen:getDesde()
+   if ::oGrupoAlmacen:cargo:getDesde() == ::oGrupoAlmacen:cargo:getHasta()
+      cAlmacen          := ::oGrupoAlmacen:cargo:getDesde()
    end if 
 
    ::oDbf:Zap()
