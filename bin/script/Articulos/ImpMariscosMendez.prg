@@ -38,6 +38,10 @@ function InicioHRB()
 
    CursorWait()
    
+   if MsgYesNo( "Paso de campo extra a Kg por cajas", "" )
+      ImportacionExtratoKGcajas()
+   end if
+
    if MsgYesNo( "Importar agentes", "" )
       ImportacionAgentes()
    end if
@@ -1305,6 +1309,42 @@ Static Function ImportacionExtraToUbicacion()
             if dbLock( D():Articulos( nView ) )
 
                ( D():Articulos( nView ) )->cDesUbi    := ( D():DetCamposExtras( nView ) )->cValor
+               ( D():Articulos( nView ) )->( dbUnlock() )
+
+            end if
+
+         end if
+
+      end if
+
+      ( D():DetCamposExtras( nView ) )->( dbSkip() )
+
+   end while
+
+   ( D():Articulos( nView ) )->( ordSetFocus( nOrdAnt ) )
+   ( D():Articulos( nView ) )->( dbGoTo( nRec ) )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Static Function ImportacionExtratoKGcajas()
+
+   local nRec     := ( D():Articulos( nView ) )->( Recno() )
+   local nOrdAnt  := ( D():Articulos( nView ) )->( ordSetFocus( "Codigo" ) )
+
+   ( D():DetCamposExtras( nView ) )->( dbGoTop() )
+
+   while ( D():DetCamposExtras( nView ) )->( !Eof() )
+
+      if ( D():DetCamposExtras( nView ) )->cTipDoc == ART_TBL .and.;
+         ( D():DetCamposExtras( nView ) )->cCodTipo == "022"
+
+         if ( D():Articulos( nView ) )->( dbSeek( ( D():DetCamposExtras( nView ) )->cClave ) )
+
+            if dbLock( D():Articulos( nView ) )
+
+               ( D():Articulos( nView ) )->nCajPlt    := val( ( D():DetCamposExtras( nView ) )->cValor )
                ( D():Articulos( nView ) )->( dbUnlock() )
 
             end if
