@@ -173,7 +173,10 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD setFilterUserId()                     INLINE ( if( ::lApplyFilters,;
                                                          ::cExpresionHeader  += ' .and. ( Field->cCodUsr >= "' + ::oGrupoUsuario:Cargo:getDesde() + '" .and. Field->cCodUsr <= "' + ::oGrupoUsuario:Cargo:getHasta() + '" )', ) )
 
-   METHOD validGrupoCliente()
+   METHOD DesdeHastaGrupoCliente()
+
+   METHOD getTotalUnidadesGrupoCliente( cCodGrp, cCodArt )
+   METHOD ValidGrupoCliente( cCodGrp )
 
 END CLASS
 
@@ -862,7 +865,7 @@ Method lValidRegister() CLASS TFastVentasArticulos
       ( ::oDbf:cCodTemp    >= ::oGrupoTemporada:Cargo:getDesde()        .and. ::oDbf:cCodTemp   <= ::oGrupoTemporada:Cargo:getHasta() )         .and.;
       ( ::oDbf:cCodFab     >= ::oGrupoFabricante:Cargo:getDesde()       .and. ::oDbf:cCodFab    <= ::oGrupoFabricante:Cargo:getHasta() )        .and.;
       ( ::oDbf:cCodCli     >= ::oGrupoCliente:Cargo:getDesde()          .and. ::oDbf:cCodCli    <= ::oGrupoCliente:Cargo:getHasta() )           .and.;
-      ::validGrupoCliente()                                                                                                                       .and.;
+      ::DesdeHastaGrupoCliente()                                                                                                                .and.;
       ( ::oDbf:cCodPago    >= ::oGrupoFpago:Cargo:getDesde()            .and. ::oDbf:cCodPago   <= ::oGrupoFpago:Cargo:getHasta() )             .and.;
       ( ::oDbf:cCodRut     >= ::oGrupoRuta:Cargo:getDesde()             .and. ::oDbf:cCodRut    <= ::oGrupoRuta:Cargo:getHasta() )              .and.;
       ( ::oDbf:cCodAge     >= ::oGrupoAgente:Cargo:getDesde()           .and. ::oDbf:cCodAge    <= ::oGrupoAgente:Cargo:getHasta() )            .and.;
@@ -882,7 +885,7 @@ RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 
-METHOD validGrupoCliente() CLASS TFastVentasArticulos
+METHOD DesdeHastaGrupoCliente() CLASS TFastVentasArticulos
 
    local aChild
    local cChild
@@ -3883,5 +3886,47 @@ Return ( self )
 METHOD isClientInReport( cCodCli ) CLASS TFastVentasArticulos
 
 RETURN ( ::oDbf:SeekInOrd( cCodCli, "cCodCli" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getTotalUnidadesGrupoCliente( cCodGrp, cCodArt ) CLASS TFastVentasArticulos
+   
+   local nRec     := ::oDbf:Recno()
+   local nOrdAnt  := ::oDbf:OrdSetFocus( "cCodArt" )
+   local nTotal   := 0
+
+   if ::oDbf:Seek( Padr( cCodArt, 18 ) ) 
+
+      while ::oDbf:cCodArt == Padr( cCodArt, 18 ) .and. !::oDbf:Eof()
+
+         if ::ValidGrupoCliente( cCodGrp )
+            nTotal   += ::oDbf:nUniArt
+         end if
+
+         ::oDbf:Skip()
+
+      end while
+
+   end if
+
+   ::oDbf:OrdSetFocus( nOrdAnt )
+   ::oDbf:GoTo( nRec )
+
+Return nTotal
+
+//---------------------------------------------------------------------------//
+
+METHOD ValidGrupoCliente( cCodGrp ) CLASS TFastVentasArticulos
+
+   local lValid   := .f.
+   local aChild   := ::oGrpCli:aChild( cCodGrp )
+
+   aAdd( aChild, cCodGrp )
+
+   if aScan( aChild, ::oDbf:cCodGrp ) != 0
+      lValid   := .t.
+   end if
+
+Return lValid 
 
 //---------------------------------------------------------------------------//
