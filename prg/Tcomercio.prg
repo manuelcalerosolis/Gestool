@@ -250,8 +250,8 @@ CLASS TComercio
    METHOD buildFTP()                   
    METHOD destroyFTP()                 INLINE ( ::oFtp:endConcexion() )
 
-   METHOD MeterTotalText( cText )
-   METHOD MeterTotalSetTotal( nTotal )
+   METHOD meterTotalText( cText )
+   METHOD meterTotalSetTotal( nTotal )
    METHOD meterProcesoText( cText )
    METHOD meterProcesoSetTotal( nTotal )
    
@@ -4736,7 +4736,9 @@ METHOD controllerExportOneProductToPrestashop( idProduct ) Class TComercio
 
          ::TComercioProduct:buildProductInformation( idProduct )
 
-         ::TComercioProduct:uploadProductToPrestashop()
+         ::TComercioProduct:uploadProductsToPrestashop()
+
+         msgAlert( "he vuelto" )
 
          ::prestaShopCommit()
 
