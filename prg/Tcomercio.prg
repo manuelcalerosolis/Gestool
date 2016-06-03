@@ -3073,18 +3073,22 @@ Return ( Self )
 METHOD uploadProductToPrestashop()
 
    local hArticuloData
+   local nArticuloData     := len(::aProductData)
+   local nArticuloStart    := ::TPrestashopConfig:getStart()
 
-   // Subimos los artículos-------------------------------------------------
+   // Subimos los artículos----------------------------------------------------
 
    ::meterProcesoSetTotal( len( ::aProductData ) )
    
    for each hArticuloData in ::aProductData
 
-      ::prestaShopPing()
+      if hb_enumindex() >= nArticuloStart
 
-      ::buildInsertProductsPrestashop( hArticuloData )
+         ::buildInsertProductsPrestashop( hArticuloData )
 
-      ::meterProcesoText( "Subiendo artículo " + alltrim( str(hb_enumindex())) + " de " + alltrim(str(len(::aProductData))) )
+         ::meterProcesoText( "Subiendo artículo " + alltrim( str( hb_enumindex() ) ) + " de " + alltrim( str( nArticuloData ) ) ) 
+
+      end if 
    
    next
 
@@ -3149,7 +3153,7 @@ METHOD uploadInformationToPrestashop( idProduct )
 
    ::MeterTotalText( "Eliminando la bases de datos." )
 
-   if ::lSyncAll
+   if ::lSyncAll 
       ::buildEliminaTablas()
    end if
 
@@ -4666,17 +4670,19 @@ METHOD controllerExportPrestashop( idProduct ) Class TComercio
 
          if ::prestaShopConnect()
 
-            ::prestaShopStart()
+            // ::prestaShopStart()
 
             ::MeterTotalText( "Subiendo la información adicional a los productos." )
 
-            ::uploadInformationToPrestashop( idProduct )
+            if empty( ::TPrestashopConfig:getStart() )
+               ::uploadInformationToPrestashop( idProduct )
+            end if 
 
             ::MeterTotalText( "Subiendo la información de productos." )
 
             ::uploadProductToPrestashop()
 
-            ::prestaShopCommit()
+            // ::prestaShopCommit()
 
             ::prestashopDisConnect()
 
@@ -4720,31 +4726,19 @@ METHOD controllerExportOneProductToPrestashop( idProduct ) Class TComercio
    ::oWaitMeter         := TWaitMeter():New( "Actualizando articulos", "Espere por favor..." )
    ::oWaitMeter:Run()
 
-   msgAlert( "filesOpen")
-
    if ::filesOpen()
-
-      msgAlert( "buildFTP")
 
       ::buildFTP()
 
-      msgAlert( "::prestaShopConnect()")
-
       if ::prestaShopConnect()
-
-         msgAlert( "::prestaShopStart()")
 
          ::prestaShopStart()
 
-         msgAlert( "::TComercioProduct:buildProductInformation( idProduct )" )
-
          ::TComercioProduct:buildProductInformation( idProduct )
 
-         msgAlert( "::prestaShopCommit()")
+         ::TComercioProduct:uploadProductToPrestashop()
 
          ::prestaShopCommit()
-
-         msgAlert( "::prestashopDisConnect()")
 
          ::prestaShopDisConnect()
 

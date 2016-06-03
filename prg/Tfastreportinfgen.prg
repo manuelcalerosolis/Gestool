@@ -22,6 +22,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
    DATA  hReport 
    DATA  hOptions
 
+
    DATA  aliasPedidosClientes
    DATA  aliasPedidosClientesLineas
 
@@ -37,6 +38,8 @@ CLASS TFastReportInfGen FROM TNewInfGen
    DATA  oColHasta
 
    DATA  lPersonalizado    INIT .f.
+   DATA  lSummary          INIT .f.
+
    DATA  oDbfPersonalizado
 
    DATA  cResource         INIT "ReportingDialog"
@@ -137,6 +140,8 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD SetDialog()
 
    METHOD StartDialog()                VIRTUAL
+
+   METHOD summaryReport()              VIRTUAL
 
    METHOD LoadPersonalizado()
 
@@ -486,6 +491,14 @@ METHOD NewResource( cFldRes ) CLASS TFastReportInfGen
       ::oDefFinInf( 1120, ::oDlg, 1121 )
       ::lPeriodoInforme( 220, ::oDlg )
    end if
+
+   //Opciones
+   
+
+   REDEFINE BUTTON ;
+   ID       1130 ;
+   OF       ::oDlg ;
+   ACTION   ( ::oTFastReportOptions:Dialog() )
    
    //Browse de los rangos----------------------------------------------------------
    
@@ -1048,6 +1061,10 @@ METHOD lGenerate() CLASS TFastReportInfGen
       Eval( hGet( aGenerate, "Generate" ) )
    end if 
 
+   if ::lSummary
+      ::summaryReport()   
+   end if 
+
    // Colocamos el filtro -----------------------------------------------------
 
    ::SetFilterInforme( ::oFilter:cExpresionFilter )
@@ -1597,6 +1614,7 @@ METHOD ExtractOrder() CLASS TFastReportInfGen
    local cText
    local cField         := ""
    local cIndex         := ""
+   local lDescendente   := .f.
 
    if !Empty( ::cInformeFastReport )
 
@@ -1624,13 +1642,14 @@ METHOD ExtractOrder() CLASS TFastReportInfGen
 
                         do case
                            case ::aFields[ n, 2 ] == "C"
-                              cExpresion  := ::aFields[ n, 1 ]
+                              cExpresion     := ::aFields[ n, 1 ]
 
                            case ::aFields[ n, 2 ] == "N"
-                              cExpresion  := "Str( " +  ::aFields[ n, 1 ] + " )"
+                              cExpresion     := "Str( " +  ::aFields[ n, 1 ] + " )"
+                              lDescendente   := .t.
 
                            case ::aFields[ n, 2 ] == "D"
-                              cExpresion  := "Dtos( " +  ::aFields[ n, 1 ] + " )"
+                              cExpresion     := "Dtos( " +  ::aFields[ n, 1 ] + " )"
 
                         end case
 
@@ -1652,8 +1671,8 @@ METHOD ExtractOrder() CLASS TFastReportInfGen
 
       end if
 
-      if !Empty( cIndex )
-         ::oDbf:AddTmpIndex( "Grupos", ( ::cFileIndx ), ( cIndex ), , , , , , , , , .t. )
+      if !empty( cIndex )
+         ::oDbf:AddTmpIndex( "Grupos", ( ::cFileIndx ), ( cIndex ), , , , ( lDescendente ), , , , , .t. )
       end if
 
    end if
@@ -1805,17 +1824,10 @@ METHOD lLoadInfo() CLASS TFastReportInfGen
       ::cReportType        := oTreeInforme:bAction[ "Type" ]
       ::cReportDirectory   := oTreeInforme:bAction[ "Directory" ]
       ::cReportName        := oTreeInforme:bAction[ "Title" ] 
-
-      ::lUserDefine        := ( left( ::cReportName, 1 ) == "[" )
       ::cReportFile        := oTreeInforme:bAction[ "Directory" ] + "\" + oTreeInforme:bAction[ "File" ]
 
-/*
-      if ::lUserDefine
-         ::cReportFile     := cPatUserReporting() + oTreeInforme:bAction[ "Directory" ] + "\" + oTreeInforme:bAction[ "File" ]  //  oTreeInforme:bAction[ "Directory" ] + "\" +
-      else 
-         ::cReportFile     := oTreeInforme:bAction[ "Directory" ] + "\" + oTreeInforme:bAction[ "File" ]  // cPatReporting() + 
-      end if
-*/
+      ::lUserDefine        := ( left( oTreeInforme:bAction[ "File" ], 1 ) == "[" )
+      ::lSummary           := ( upper( "\Estadisticas" ) $ upper( oTreeInforme:bAction[ "Directory" ] ) )
 
    else 
       

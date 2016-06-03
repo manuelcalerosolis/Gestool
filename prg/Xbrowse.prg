@@ -4222,8 +4222,7 @@ METHOD SetArray( aData, lAutoOrder, nColOrder, aCols, bOnSkip ) CLASS TXBrowse
 
    else
 
-      if Len( aData ) > 0 .and. ValType( aData[ 1 ] ) == 'H' .and. ;
-         ValType( ATail( aData ) ) == 'H' .and. lAddCols
+      if Len( aData ) > 0 .and. ValType( aData ) == 'H' .and. ValType( ATail( aData ) ) == 'H' .and. lAddCols
 
          AEval( aData, { |h| hb_hCaseMatch( h, .f. ) } )
 
@@ -8365,13 +8364,9 @@ METHOD ArrayIncrSeek( cSeek, nGoTo ) CLASS TXBrowse
    local nAt, nBrwCol, nSortCol, nRow, uVal
    local lExact
 
-  MsgAlert( cSeek, "ArrayIncrSeek" )
-
    if ::lIncrFilter
       return ::ArrayIncrFilter( cSeek, @nGoTo )
    endif
-
-  MsgAlert( cSeek, "Ascan" )
 
    if ( nBrwCol := AScan( ::aCols, { |o| !Empty( o:cOrder ) } ) ) > 0
       if ! Empty( nSortCol := ::aCols[ nBrwCol ]:cSortOrder ) .and. ValTyPe( nSortCol ) == 'N'
@@ -11491,6 +11486,7 @@ METHOD ShowBtnList( nKey ) CLASS TXBrwColumn
    if ValType( xValue := ::Value ) == 'C'
       xValue   := Trim( xValue )
    endif
+
    if ( nAt := Ascan( aBound, xValue ) ) == 0
       if ValType( xValue ) == 'C'
          do while Len( xValue ) > 1 .and. nAt == 0

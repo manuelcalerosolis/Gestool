@@ -166,6 +166,7 @@ TFastVentasArticulos.prg									\
 TFastVentasClientes.prg 									\
 TFastVentasProveedores.prg 								\
 TFastProduccion.prg 											\
+TFastreportOptions.prg 										\
 Titemgroup.prg          									\
 Ttikstka.prg            									\
 TStockMinimoFamilia.prg 									\
@@ -601,6 +602,7 @@ TFastVentasArticulos.obj                           \
 TFastVentasClientes.obj                            \
 TFastVentasProveedores.obj                         \
 TFastProduccion.obj		                           \
+TFastreportOptions.obj 										\
 Titemgroup.obj                                     \
 Tartalb.obj                                        \
 Tfamtik.obj                                        \
@@ -1059,6 +1061,7 @@ $(OBJ)\TFastVentasArticulos.obj +
 $(OBJ)\TFastVentasClientes.obj    	+
 $(OBJ)\TFastVentasProveedores.obj 	+
 $(OBJ)\TFastProduccion.obj    		+
+$(OBJ)\TFastreportOptions.obj    	+
 $(OBJ)\Titemgroup.obj           	+
 $(OBJ)\Ttikstka.obj             	+
 $(OBJ)\TStockMinimoFamilia.obj  	+

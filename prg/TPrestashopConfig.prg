@@ -48,6 +48,8 @@ CLASS TPrestashopConfig
    METHOD getMySqlPort()               INLINE ( ::getFromCurrentWeb( "MySqlPort" ) )
    METHOD getMySqlTimeOut()            INLINE ( ::getFromCurrentWeb( "MySqlTimeOut" ) )
 
+   METHOD getStart()                   INLINE ( ::getFromCurrentWeb( "Start" ) )
+
    METHOD getPrefixDatabase()          INLINE ( ::getFromCurrentWeb( "PrefixDatabase" ) )
 
    METHOD getFtpServer()               INLINE ( ::getFromCurrentWeb( "FtpServer" ) )
