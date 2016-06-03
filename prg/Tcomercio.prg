@@ -4738,24 +4738,20 @@ METHOD controllerExportOneProductToPrestashop( idProduct ) Class TComercio
 
          ::TComercioProduct:uploadProductsToPrestashop()
 
-         msgAlert( "he vuelto" )
-
          ::prestaShopCommit()
 
          ::prestaShopDisConnect()
 
          // subiendo imagenes-----------------------------------------------
-         /*
+
+         msgAlert( "subiendo imagenes" )
+         
          ::ftpConnect()
 
-         ::writeText( "Subiendo imagenes del artículos" )
-
-         ::uploadImageToPrestashop()
-
-         ::prestashopDisConnect()
+         ::TComercioProduct:uploadImagesToPrestashop()
 
          ::ftpDisConnect()
-         */
+         
       end if 
 
       ::filesClose()
