@@ -902,7 +902,7 @@ METHOD DesdeHastaGrupoCliente() CLASS TFastVentasArticulos
    aAdd( aChild, ::oGrupoGCliente:Cargo:getDesde() )
    
    for each cChild in aChild
-      if ::oDbf:cCodGrp >= cChild 
+      if ::oDbf:cCodGrp == cChild 
          lRetDesde   := .t.
          exit
       end if
@@ -916,7 +916,7 @@ METHOD DesdeHastaGrupoCliente() CLASS TFastVentasArticulos
    aAdd( aChild, ::oGrupoGCliente:Cargo:getHasta() )
 
    for each cChild in aChild
-      if ::oDbf:cCodGrp <= cChild
+      if ::oDbf:cCodGrp == cChild
          lRetHasta   := .t.
          exit
       end if
