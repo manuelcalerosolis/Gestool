@@ -3871,7 +3871,6 @@ METHOD insertIfValid() CLASS TFastVentasArticulos
       ::oDbf:Insert()
    end if
 
-<<<<<<< HEAD
 Return ( lValidRegister )
 */
 //----------------------------------------------------------------------------//
@@ -4006,7 +4005,6 @@ METHOD isClientInReport( cCodCli ) CLASS TFastVentasArticulos
 RETURN ( ::oDbf:SeekInOrd( cCodCli, "cCodCli" ) )
 
 //---------------------------------------------------------------------------//
-<<<<<<< HEAD
 
 METHOD getTotalUnidadesGrupoCliente( cCodGrp, cCodArt ) CLASS TFastVentasArticulos
    
@@ -4049,5 +4047,3 @@ METHOD ValidGrupoCliente( cCodGrp ) CLASS TFastVentasArticulos
 Return lValid 
 
 //---------------------------------------------------------------------------//
-=======
->>>>>>> origin/master
