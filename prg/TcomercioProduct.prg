@@ -14,9 +14,9 @@ CLASS TComercioProduct
    DATA  TComercio
 
    DATA  aProducts                                          INIT {}
-   DATA  aIvaProducts                                       INIT {}
-   DATA  aManufacturerProduct                               INIT {}
-   DATA  aCategoryProduct                                   INIT {}
+   DATA  aTaxProducts                                       INIT {}
+   DATA  aManufacturersProduct                              INIT {}
+   DATA  aCategoriesProduct                                 INIT {}
    DATA  aPropertiesHeaderProduct                           INIT {}
    DATA  aPropertiesLineProduct                             INIT {}
 
@@ -72,11 +72,15 @@ CLASS TComercioProduct
    METHOD cDirectoryCategories()                            INLINE ( ::TComercio:cDirectoryCategories() )
    METHOD getRecursiveFolderPrestashop( cCarpeta )          INLINE ( ::TComercio:getRecursiveFolderPrestashop( cCarpeta ) )
 
+   METHOD writeTextOk( cValue, cTable )                     INLINE ( ::TComercio:writeTextOk( cValue, cTable ) )
+   METHOD writeTextError( cValue, cTable )                  INLINE ( ::TComercio:writeTextError( cValue, cTable ) )
+
    METHOD commandExecDirect( cCommand )                     INLINE ( TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand ) )
    METHOD queryExecDirect( cQuery )                         INLINE ( TMSQuery():New( ::oConexionMySQLDatabase(), cQuery ) )
 
    METHOD isProductInCurrentWeb()                           
 
+   METHOD buildAllProductInformation()
    METHOD buildProductInformation( idProduct )
       METHOD buildIvaProducts( id )  
       METHOD buildManufacturerProduct( id )
@@ -87,8 +91,8 @@ CLASS TComercioProduct
       METHOD getPrice()
       METHOD getPriceReduction()
       METHOD getPriceReductionTax()                         INLINE ( iif(  ::oProductDatabase():lIvaWeb, 1, 0 ) )
-      METHOD getDescription()                               INLINE ( iif(  !empty( ::oProductDatabase():mDesTec ),;
-                                                                           alltrim( ::oProductDatabase():mDesTec ),;
+      METHOD getDescription()                               INLINE ( iif(  !empty( ::oProductDatabase():mDestec ),;
+                                                                           alltrim( ::oProductDatabase():mDestec ),;
                                                                            alltrim( ::oProductDatabase():Nombre ) ) )
 
       METHOD imagesProduct( id )
@@ -144,6 +148,27 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD buildAllProductInformation() CLASS TComercioProduct
+
+   ::oProductDatabase():ordsetfocus( "cWebShop" )
+
+   if ::oProductDatabase():seek( ::getCurrentWebName() )
+
+      while !( ::oProductDatabase():eof() )
+
+         ::buildProductInformation( ::oProductDatabase():Codigo )
+
+         ::oProductDatabase():Skip()
+
+      end while
+
+   end if 
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+
 METHOD buildProductInformation( idProduct ) CLASS TComercioProduct
 
    if !( ::isProductInCurrentWeb( idProduct ) )
@@ -164,20 +189,36 @@ Return ( .t. )
 
 METHOD isProductInCurrentWeb( idProduct ) CLASS TComercioProduct
 
-   if !( ::oProductDatabase():seekInOrd( idProduct, "Codigo" ) )
+   local isProductInCurrentWeb      := .t.
+
+   ::oProductDatabase:getStatus()
+
+   if ::oProductDatabase():seekInOrd( idProduct, "Codigo" )
+
+      if ( ::oProductDatabase():lPubInt )
+
+         if ( alltrim( ::oProductDatabase():cWebShop ) != ::getCurrentWebName() ) 
+            
+            ::writeText( "Artículo " + alltrim( idProduct ) + " no pertence a la web seleccionada" )
+            isProductInCurrentWeb   := .f.
+
+         end if 
+
+      else 
+
+         ::writeText( "Artículo " + alltrim( idProduct ) + " no seleccionado para web" )
+         isProductInCurrentWeb      := .f.
+
+      end if 
+
+   else
+
       ::writeText( "Artículo " + alltrim( idProduct ) + " no encontrado" )
-      Return .f.
+      isProductInCurrentWeb         := .f.
+
    end if 
 
-   if !( ::oProductDatabase():lPubInt )
-      ::writeText( "Artículo " + alltrim( idProduct ) + " no seleccionado para web" )
-      Return .f.
-   end if 
-
-   if ( alltrim( ::oProductDatabase():cWebShop ) != ::getCurrentWebName() ) 
-      ::writeText( "Artículo " + alltrim( idProduct ) + " no pertence a la web seleccionada" )
-      Return .f.
-   end if 
+   ::oProductDatabase():setStatus()
 
 Return .t.
 
@@ -189,13 +230,13 @@ METHOD buildIvaProducts( id ) CLASS TComercioProduct
       Return .f. 
    end if 
 
-   if aScan( ::aIvaProducts, {|h| hGet( h, "id" ) == id } ) != 0
+   if aScan( ::aTaxProducts, {|h| hGet( h, "id" ) == id } ) != 0
       Return .f. 
    end if 
    
    if ::TPrestashopId():getValueTax( id, ::getCurrentWebName() ) == 0
       if ::oIvaDatabase():seekInOrd( id, "Tipo" )
-         aadd( ::aIvaProducts,   {  "id"     => id,;
+         aadd( ::aTaxProducts,   {  "id"     => id,;
                                     "rate"   => alltrim( str( ::oIvaDatabase():TpIva ) ),;
                                     "name"   => alltrim( ::oIvaDatabase():DescIva ) } )
       end if 
@@ -211,18 +252,18 @@ METHOD buildManufacturerProduct( id ) CLASS TComercioProduct
       Return .f. 
    end if 
 
-   if aScan( ::aManufacturerProduct, {|h| hGet( h, "id" ) == id } ) != 0
+   if aScan( ::aManufacturersProduct, {|h| hGet( h, "id" ) == id } ) != 0
       Return .f.
    end if 
 
    if ::TPrestashopId():getValueManufacturer( id, ::getCurrentWebName() ) == 0
       if ::oManufacturerDatabase():SeekInOrd( id, "cCodFab" ) .and. ::oManufacturerDatabase():lPubInt
-         aadd( ::aManufacturerProduct, {  "id"     => id,;
-                                          "name"   => rtrim( ::oManufacturerDatabase():cNomFab ) } )
+         aadd( ::aManufacturersProduct,   {  "id"     => id,;
+                                             "name"   => rtrim( ::oManufacturerDatabase():cNomFab ) } )
       end if
    end if 
 
-Return ( Self )
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -232,7 +273,7 @@ METHOD buildCategoryProduct( id ) CLASS TComercioProduct
       Return .f. 
    end if 
 
-   if ascan( ::aCategoryProduct, {|h| hGet( h, "id" ) == id } ) != 0
+   if ascan( ::aCategoriesProduct, {|h| hGet( h, "id" ) == id } ) != 0
       Return .f.
    end if
 
@@ -240,12 +281,13 @@ METHOD buildCategoryProduct( id ) CLASS TComercioProduct
    
       if ::oCategoryDatabase():SeekInOrd( id, "cCodFam" ) 
    
-         aAdd( ::aCategoryProduct,  {  "id"           => id,;
-                                       "id_parent"    => ::oCategoryDatabase():cFamCmb,;
-                                       "name"         => if( empty( ::oCategoryDatabase():cDesWeb ), alltrim( ::oCategoryDatabase():cNomFam ), alltrim( ::oCategoryDatabase():cDesWeb ) ),;
-                                       "description"  => if( empty( ::oCategoryDatabase():cDesWeb ), alltrim( ::oCategoryDatabase():cNomFam ), alltrim( ::oCategoryDatabase():cDesWeb ) ),;
-                                       "link_rewrite" => cLinkRewrite( if( empty( ::oCategoryDatabase():cDesWeb ), alltrim( ::oCategoryDatabase():cNomFam ), alltrim( ::oCategoryDatabase():cDesWeb ) ) ),;
-                                       "image"        => ::oCategoryDatabase():cImgBtn } )
+         aAdd( ::aCategoriesProduct,   {  "id"              => id,;
+                                          "id_parent"       => ::oCategoryDatabase():cFamCmb,;
+                                          "name"            => if( empty( ::oCategoryDatabase():cDesWeb ), alltrim( ::oCategoryDatabase():cNomFam ), alltrim( ::oCategoryDatabase():cDesWeb ) ),;
+                                          "description"     => if( empty( ::oCategoryDatabase():cDesWeb ), alltrim( ::oCategoryDatabase():cNomFam ), alltrim( ::oCategoryDatabase():cDesWeb ) ),;
+                                          "link_rewrite"    => cLinkRewrite( if( empty( ::oCategoryDatabase():cDesWeb ), alltrim( ::oCategoryDatabase():cNomFam ), alltrim( ::oCategoryDatabase():cDesWeb ) ) ),;
+                                          "image"           => ::oCategoryDatabase():cImgBtn,;
+                                          "cPrefijoNombre"  => "" } )
    
       end if   
 
@@ -448,10 +490,10 @@ Return ( priceReduction )
 
 METHOD imagesProduct( id ) CLASS TComercioProduct
 
-   local aImgToken      := {}
-   local cImgToken      := ""
    local cImagen
    local aImages        := {}
+   local cImgToken      := ""
+   local aImgToken      := {}
    local nOrdAntImg
    local nOrdAntDiv     
 
@@ -558,7 +600,7 @@ Return ( aStockProduct )
 
 METHOD truncateTable( cTable )   
 
-   if TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( "TRUNCATE TABLE " + ::cPreFixtable( cTable ) )
+   if ::commandExecDirect( ::oConexionMySQLDatabase() ):ExecDirect( "TRUNCATE TABLE " + ::cPreFixtable( cTable ) )
       ::writeText( 'Tabla ' + ::cPreFixtable( cTable ) + ' borrada correctamente', 3  )
    else
       ::writeText( 'Error al borrar la tabla ' + ::cPreFixtable( cTable ), 3  )
@@ -636,120 +678,6 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 // Insertamos el root en la tabla de categorias------------------------------
-
-METHOD insertRootCategory() CLASS TComercioProduct
-
-   local cCommand := ""
-
-   ::writeText( "Añadiendo categoría raiz" )
-
-   cCommand       := "INSERT INTO " + ::cPrefixTable( "category" ) + " ( id_category, id_parent, id_shop_default, level_depth, nleft, nright, active, date_add, date_upd, position ) " + ;
-                     "VALUES ( '1', '0', '1', '0', '0', '0', '1', '" + dtos( GetSysDate() ) + "', '" + dtos( GetSysDate() ) + "', '0' ) "
-
-   if ::commandExecDirect( cCommand )
-      ::nNumeroCategorias++
-      ::writeText( "He insertado correctamente en la tabla categorías la categoría raiz", 3 )
-   else
-      ::writeText( "Error al insertar la categoría raiz", 3 )
-   end if
-
-   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + " ( id_category, id_lang, name, description, link_rewrite, meta_title, meta_keywords, meta_description ) " + ;
-                     "VALUES ( '1', '" + str( ::getLanguage() ) + "', 'Root', 'Root', 'Root', '', '', '' )"
-
-   if ::commandExecDirect( cCommand )
-      ::writeText( "He insertado correctamente en la tabla categorias lenguajes la categoría raiz", 3 )
-   else
-      ::writeText( "Error al insertar la categoría raiz", 3 )
-   end if
-
-   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_shop" ) + " ( id_category, id_shop, position ) VALUES ( '1', '1', '0' )"
-
-   if ::commandExecDirect( cCommand )
-      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
-   else
-      ::writeText( "Error al insertar la categoría raiz", 3 )
-   end if
-
-   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '1', '1' )"
-
-   if ::commandExecDirect( cCommand )
-      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
-   else
-      ::writeText( "Error al insertar la categoría raiz", 3 )
-   end if
-
-   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '1', '2' )"
-
-   if ::commandExecDirect( cCommand )
-      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
-   else
-      ::writeText( "Error al insertar la categoría raiz", 3 )
-   end if
-
-   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '1', '3' )"
-
-   if ::commandExecDirect( cCommand )
-      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
-   else
-      ::writeText( "Error al insertar la categoría root en category_group", 3 )
-   end if
-
-   // Metemos la categoría de inicio de la que colgarán los grupos y las categorias
-
-   cCommand       := "INSERT INTO " + ::cPrefixTable( "category" ) + " ( id_parent, id_shop_default, level_depth, nleft, nright, active, date_add, date_upd, position, is_root_category ) VALUES ( '1', '1', '1', '0', '0', '1', '" + dtos( GetSysDate() ) + "', '" + dtos( GetSysDate() ) + "', '0', '1' ) "
-
-   if ::commandExecDirect( cCommand )
-      ::nNumeroCategorias++
-      ::writeText( "He insertado correctamente en la tabla categorias la categoría raiz", 3 )
-   else
-      ::writeText( "Error al insertar la categoría inicio", 3 )
-   end if
-
-   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + " ( id_category, id_lang, name, description, link_rewrite, meta_title, meta_keywords, meta_description ) VALUES ( '2', '" + str( ::getLanguage() ) + "', 'Inicio', 'Inicio', 'Inicio', '', '', '' )"
-
-   if ::commandExecDirect( cCommand )
-      ::writeText( "He insertado correctamente en la tabla categorias lenguajes la categoría raiz", 3 )
-   else
-      ::writeText( "Error al insertar la categoría inicio", 3 )
-   end if
-
-   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_shop" ) + " ( id_category, id_shop, position ) VALUES ( '2', '1', '0' )"
-
-   if ::commandExecDirect( cCommand )
-      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
-   else
-      ::writeText( "Error al insertar la categoría inicio", 3 )
-   end if
-
-   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '2', '1' )"
-
-   if ::commandExecDirect( cCommand )
-      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
-   else
-      ::writeText( "Error al insertar la categoría inicio", 3 )
-   end if
-
-   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '2', '2' )"
-
-   if ::commandExecDirect( cCommand )
-      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
-   else
-      ::writeText( "Error al insertar la categoría inicio", 3 )
-   end if
-
-   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '2', '3' )"
-
-   if ::commandExecDirect( cCommand )
-      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
-   else
-      ::writeText( "Error al insertar la categoría inicio", 3 )
-   end if
-
-   SysRefresh()
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
 
 METHOD cleanGestoolReferences() CLASS TComercioProduct
 
@@ -1181,7 +1109,7 @@ METHOD processPropertyProduct( idProduct, hProduct ) CLASS TComercioProduct
             
             ::insertProductAttributeShop( idProduct, idProperty, priceProperty, lDefault )
 
-            ::insertProductAttributeImage( hProduct, idProperty, ::oPropertyProductDatabase():mImgWeb )
+            ::insertProductAttributeImage( hProduct, idProperty )
 
          end if 
 
@@ -1284,46 +1212,32 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertProductAttributeImage( hProduct, idProductAttribute, memoImages ) CLASS TComercioProduct
+METHOD insertProductAttributeImage( hProduct, idProductAttribute ) CLASS TComercioProduct
 
-   local cImage
+   local hImage
    local aImages
    local cCommand
    local nIdProductImage
 
-   aImages                 := hb_aTokens( memoImages, "," )
-   
+   aImages                 := hget( hProduct, "aImages" )
+
    if empty( aImages )
       Return ( self )
    end if 
 
-   for each cImage in aImages
+   for each hImage in aImages
 
-      if ::oImageProductDatabase():SeekInOrd( hGet( hProduct, "id" ), "cCodArt" )
+      nIdProductImage   := ::TPrestashopId():getValueImage( hGet( hProduct, "id" ) + str( hget( hImage, "id" ), 10 ), ::getCurrentWebName() )
 
-         while ::oImageProductDatabase():cCodArt == hGet( hProduct, "id" ) .and. !::oImageProductDatabase():Eof()
+      cCommand          := "INSERT INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
+                              "id_product_attribute, "                                          + ;
+                              "id_image ) "                                                     + ;
+                           "VALUES ( "                                                          + ;
+                              "'" + alltrim( str( idProductAttribute ) ) + "', "                + ;   // id_product_attribute
+                              "'" + alltrim( str( nIdProductImage ) ) + "' )"                         // id_image
 
-            if alltrim( ::oImageProductDatabase():cImgArt ) == alltrim( cImage )
-
-               nIdProductImage   := ::TPrestashopId():getValueImage( hGet( hProduct, "id" ) + str( ::oImageProductDatabase():nId, 10 ), ::getCurrentWebName() )
-
-               cCommand          := "INSERT INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
-                                       "id_product_attribute, "                                          + ;
-                                       "id_image ) "                                                     + ;
-                                    "VALUES ( "                                                          + ;
-                                       "'" + alltrim( str( idProductAttribute ) ) + "', "                + ;   // id_product_attribute
-                                       "'" + alltrim( str( nIdProductImage ) ) + "' )"                         // id_image
-
-               if ::commandExecDirect( cCommand )
-                  ::writeText( "Error al insertar el artículo " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
-               end if
-
-            end if   
-
-            ::oImageProductDatabase():Skip()
-
-         end while   
-
+      if ::commandExecDirect( cCommand )
+         ::writeText( "Error al insertar el artículo " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
       end if
 
    next   
@@ -1591,12 +1505,6 @@ METHOD uploadImagesToPrestashop() CLASS TComercioProduct
 
    ::meterProcesoSetTotal( nProducts )
 
-   msgAlert( "uploadImagesToPrestashop()" )
-
-   // Subimos las imagenes de los  artículos-----------------------------------
-
-   ::meterProcesoSetTotal( len( ::aProducts ) )
-   
    for each hProduct in ::aProducts
 
       ::uploadImageToPrestashop( hProduct )
@@ -1614,8 +1522,6 @@ METHOD uploadImageToPrestashop( hProduct ) CLASS TComercioProduct
    local cTypeImage
    local hProductImage
    local aProductsImages   := hGet( hProduct, "aImages" )
-
-   debug( aProductsImages, "uploadImagesToPrestashop()" )
 
    if empty( aProductsImages )
       Return ( nil )
@@ -1696,3 +1602,392 @@ METHOD ftpUploadFilesProductImages( hProductImage ) CLASS TComercioProduct
 Return ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD uploadAditionalInformationToPrestashop() CLASS TComercioProduct
+
+   local hTax
+   local hCategory
+   local hManufacturer
+   local hPropiedadesCabData
+   local hPropiedadesLinData
+
+   // Subimos los tipos de IVA----------------------------------------------
+
+   ::meterProcesoSetTotal( len( ::aTaxProducts ) )
+
+   for each hTax in ::aTaxProducts
+
+      ::insertTaxPrestashop( hTax )
+
+      ::meterProcesoText( "Subiendo impuestos " + alltrim(str(hb_enumindex())) + " de " + alltrim(str(len(::aTaxProducts))) )
+
+   next
+
+   // Subimos fabricantes---------------------------------------------------
+
+   if ::TPrestashopConfig():getSyncronizeManufacturers()
+
+      ::meterProcesoSetTotal( len( ::aManufacturersProduct ) )
+
+      for each hManufacturer in ::aManufacturersProduct
+
+         ::insertManufacturersPrestashop( hManufacturer )
+
+         ::meterProcesoText( "Subiendo fabricantes " + alltrim(str(hb_enumindex())) + " de " + alltrim(str(len(::aManufacturersProduct))) )
+
+      next 
+
+   end if 
+
+   // Subimos familias------------------------------------------------------
+
+   ::meterProcesoSetTotal( len(::aCategoriesProduct) )
+
+   for each hCategory in ::aCategoriesProduct
+
+      ::insertCategoriesPrestashop( hCategory )
+
+      ::meterProcesoText( "Subiendo categorias " + alltrim(str(hb_enumindex())) + " de " + alltrim(str(len(::aCategoriesProduct))) )
+
+   next 
+
+   // Actualizamos padres de las familias-----------------------------------
+
+   ::meterProcesoSetTotal( len(::aCategoriesProduct) )
+
+   for each hCategory in ::aCategoriesProduct
+
+      ::buildActualizaCatergoriaPadrePrestashop( hCategory )
+
+      ::meterProcesoText( "Relacionando categorias " + alltrim(str(hb_enumindex())) + " de " + alltrim(str(len(::aCategoriesProduct))) )
+
+   next
+
+   // Recalculamos las posiciones de las categorias-------------------------
+
+   ::meterProcesoText( "Recalculando posiciones de categorias" )
+
+   ::buildRecalculaPosicionesCategoriasPrestashop()
+
+   // Subimos las cabeceras de propiedades necesarias-----------------------
+
+   for each hPropiedadesCabData in ::aPropiedadesCabeceraData
+      ::buildInsertPropiedadesPrestashop( hPropiedadesCabData )
+   next
+
+   // Subimos las Lineas de propiedades necesarias--------------------------
+
+   ::meterProcesoSetTotal( len( ::aPropiedadesLineasData ) )
+
+   asort( ::aPropiedadesLineasData, , , {|x,y| hget( x, "position" ) < hget( y, "position" ) } )
+
+   for each hPropiedadesLinData in ::aPropiedadesLineasData
+
+      ::buildInsertLineasPropiedadesPrestashop( hPropiedadesLinData, hb_enumindex() )
+
+      ::meterProcesoText( "Subiendo propiedad " + alltrim(str(hb_enumindex())) + " de " + alltrim(str(len(::aPropiedadesLineasData))) )
+
+   next
+ 
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertTaxPrestashop( hTax ) CLASS TComercioProduct
+
+   local cCommand          := ""  
+   local idTax             := 0
+   local idGroupWeb        := 0
+
+   cCommand := "INSERT INTO " + ::cPreFixtable( "tax" ) + " ( " + ;
+                  "rate, " + ;
+                  "active ) " + ;
+               "VALUES ( " + ;
+                  "'" + hGet( hTax, "rate" ) + "', " + ;    // rate
+                  "'1' )"                                   // active
+
+   if ::commandExecDirect( cCommand )
+      idTax                := ::oConexionMySQLDatabase():GetInsertId()
+      ::writeTextOk( hGet( hTax, "name" ), ::cPrefixTable( "tax" ) )
+   else
+      ::writeTextError( hGet( hTax, "name" ), ::cPrefixTable( "tax" ) )
+      Return .f.
+   end if
+
+   /*
+   Insertamos un tipo de IVA nuevo en la tabla tax_lang------------------------
+   */
+
+   cCommand := "INSERT INTO " + ::cPrefixTable( "tax_lang" ) + "( " +;
+                  "id_tax, " + ;
+                  "id_lang, " + ;
+                  "name ) " + ;
+               "VALUES ( " + ;
+                  "'" + str( idTax ) + "', " + ;                           // id_tax
+                  "'" + str( ::nLanguage ) + "', " + ;                     // id_lang
+                  "'" + ::oConexionMySQLDatabase():Escapestr( hGet( hTax, "name" ) ) + "' )"   // name
+
+   if ::commandExecDirect( cCommand )
+      ::writeTextOk( hGet( hTax, "name" ), ::cPrefixTable( "tax_lang" ) )
+   else
+      ::writeTextError( hGet( hTax, "name" ), ::cPrefixTable( "tax_lang" ) )
+   end if
+
+   /*
+   Insertamos un tipo de IVA nuevo en la tabla tax_rule_group------------------
+   */
+
+   cCommand := "INSERT INTO "+ ::cPrefixTable( "tax_rules_group" ) + "( " + ;
+                  "name, " + ;
+                  "active ) " + ;
+               "VALUES ( " + ;
+                  "'" + ::oConexionMySQLDatabase():Escapestr( hGet( hTax, "name" ) ) + "', " + ;  // name
+                  "'1' )"                                                     // active
+
+   if ::commandExecDirect( cCommand )
+      idGroupWeb           := ::oConexionMySQLDatabase():GetInsertId()
+      ::writeTextOk( hGet( hTax, "name" ), ::cPrefixTable( "tax_rule_group" ) )
+   else
+      ::writeTextError( hGet( hTax, "name" ), ::cPrefixTable( "tax_rule_group" ) )
+   end if
+
+   /*
+   Insertamos un tipo de IVA nuevo en la tabla tax_rule------------------------
+   */
+
+   cCommand := "INSERT INTO " + ::cPrefixTable( "tax_rule" ) + "( " +;
+                  "id_tax_rules_group, " + ;
+                  "id_country, " + ;
+                  "id_tax ) " + ;
+               "VALUES ( " + ;
+                  "'" + str( idGroupWeb ) + "', " + ;       // id_tax_rules_group
+                  "'6', " + ;                               // id_country - 6 es el valor de España
+                  "'" + str( idTax ) + "' )"                // id_tax
+
+   if !::commandExecDirect( cCommand )
+      ::writeTextError( hGet( hTax, "name" ), ::cPrefixTable( "tax_rule" ) )
+   end if
+
+   /*
+   Insertamos un tipo de IVA nuevo en la tabla tax_rule------------------------
+   */
+
+   cCommand := "INSERT INTO " + ::cPrefixTable( "tax_rules_group_shop" ) + "( " +;
+                  "id_tax_rules_group, " + ;
+                  "id_shop ) " + ;
+               "VALUES ( " + ;
+                  "'" + str( idGroupWeb ) + "', " + ;
+                  "'1' )"
+
+   if !::commandExecDirect( cCommand )
+      ::writeTextError( hGet( hTax, "name" ), ::cPrefixTable( "tax_rules_group_shop" ) )
+   end if
+
+   // Guardo referencia a la web-----------------------------------------------
+
+   ::TPrestashopId():setValueTax(           hGet( hTax, "id" ), ::getCurrentWebName(), idTax )
+   ::TPrestashopId():setValueTaxRuleGroup(  hGet( hTax, "id" ), ::getCurrentWebName(), idTax )
+
+Return ( idTax )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertManufacturersPrestashop( hFabricantesData ) CLASS TComercio
+
+   local oImagen
+   local cCommand    := ""    
+   local nCodigoWeb  := 0
+   local nParent     := 1
+
+   /*
+   Insertamos un fabricante nuevo en las tablas de prestashop-----------------
+   */
+
+   cCommand := "INSERT INTO " + ::cPrefixTable( "manufacturer" ) + "( " +;
+                  "name, " + ;
+                  "date_add, " + ;
+                  "date_upd, " + ;
+                  "active ) " + ;
+               "VALUES ( " + ;
+                  "'" + hGet( hFabricantesData, "name" ) + "', " + ; //name
+                  "'" + dtos( GetSysDate() ) + "', " + ;             //date_add
+                  "'" + dtos( GetSysDate() ) + "', " + ;             //date_upd
+                  "'1' )"                                            //active
+
+   if ::commandExecDirect( cCommand )
+      nCodigoWeb           := ::oConexionMySQLDatabase():GetInsertId()
+   else
+      ::writeText( "Error al insertar el fabricante " + hGet( hFabricantesData, "name" ) + " en la tabla " + ::cPreFixtable( "manufacturer" ), 3 )
+   end if
+
+   cCommand := "INSERT INTO " + ::cPrefixTable( "manufacturer_shop" ) + "( "+ ;
+                  "id_manufacturer, " + ;
+                  "id_shop ) " + ;
+               "VALUES ( " + ;
+                  "'" + alltrim( str( nCodigoWeb ) ) + "', " + ;      // id_manufacturer
+                  "'1' )"                                             // id_shop                  
+
+
+   if !::commandExecDirect( cCommand )
+      ::writeText( "Error al insertar el fabricante " + hGet( hFabricantesData, "name" ) + " en la tabla" + ::cPreFixtable( "manufacturer_shop" ), 3 )
+   end if
+
+   cCommand := "INSERT INTO " + ::cPreFixtable( "manufacturer_lang" ) + "( " +;
+                  "id_manufacturer, " + ;
+                  "id_lang ) " + ;
+               "VALUES ( " + ;
+                  "'" + alltrim( str( nCodigoWeb ) ) + "', " + ;     //id_manufacturer
+                  "'" + str( ::nLanguage ) + "' )"                   //id_lang
+
+   if !::commandExecDirect( cCommand )
+      ::writeText( "Error al insertar el fabricante " + hGet( hFabricantesData, "name" ) + " en la tabla" + ::cPreFixtable( "manufacturer_lang" ), 3 )
+   end if
+
+   // Guardo referencia a la web-----------------------------------------------
+
+   if !empty( nCodigoWeb )
+      ::TPrestashopId:setValueManufacturer( hget( hFabricantesData, "id" ), ::getCurrentWebName(), nCodigoWeb )
+   end if 
+
+return nCodigoWeb
+
+//---------------------------------------------------------------------------//
+
+METHOD insertRootCategory() CLASS TComercioProduct
+
+   local hCategory   := {  "id"              => '1',;
+                           "id_parent"       => '',;
+                           "name"            => 'Root',;
+                           "description"     => 'Root',;
+                           "link_rewrite"    => 'Root',;
+                           "image"           => '',;
+                           "cPrefijoNombre"  => '' } )
+
+   ::insertCategoryProduct( hCategory )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertCategoriesPrestashop( hCategory ) CLASS TComercioProduct
+
+   local oImagen
+   local idCategory           := 0
+   local nParent              := 2
+   local cCommand             := ""
+
+   DEFAULT 
+
+   ::writeText( "Añadiendo categoría: " + hGet( hCategory, "name" ) )
+
+   //Insertamos una familia nueva en las tablas de prestashop-----------------
+
+   cCommand := "INSERT INTO " + ::cPrefixTable( "category" ) + "( "  + ;
+                  "id_parent, "                                      + ;
+                  "level_depth, "                                    + ;
+                  "nleft, "                                          + ;
+                  "nright, "                                         + ;
+                  "active, "                                         + ;
+                  "date_add,  "                                      + ;
+                  "date_upd, "                                       + ;
+                  "position ) "                                      + ;
+               "VALUES ( "                                           + ;
+                  "'" + str( nParent ) + "', "                       + ;
+                  "'2', "                                            + ;
+                  "'0', "                                            + ;
+                  "'0', "                                            + ;
+                  "'1', "                                            + ;
+                  "'" + dtos( GetSysDate() ) + "', "                 + ;
+                  "'" + dtos( GetSysDate() ) + "', "                 + ;
+                  "'0' ) "
+
+   if ::commandExecDirect( cCommand )
+      idCategory           := ::oConexionMySQLDatabase():GetInsertId()
+      ::writeText( "He insertado la familia " + hGet( hCategory, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "category" ), 3 )
+   else
+      ::writeText( "Error al insertar la familia " + hGet( hCategory, "name" ) + " en la tabla " + ::cPrefixTable( "category" ), 3 )
+   end if
+
+   cCommand := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + "( "   + ;
+                  "id_category, "                                          + ;
+                  "id_lang, "                                              + ;
+                  "name, "                                                 + ;
+                  "description, "                                          + ;
+                  "link_rewrite, "                                         + ;
+                  "meta_title, "                                           + ;
+                  "meta_keywords, "                                        + ;
+                  "meta_description ) "                                    + ;
+               "VALUES ( '"                                                + ;
+                  str( idCategory ) + "', '"                               + ;
+                  str( ::nLanguage ) + "', '"                              + ;
+                  hGet( hCategory, "name" ) + "', '"                       + ;
+                  hGet( hCategory, "description" ) + "', '"                + ;
+                  hGet( hCategory, "link_rewrite" ) + "', "                + ;
+                  "'', "                                                   + ;
+                  "'', "                                                   + ;
+                  "'' )"
+
+   if !::commandExecDirect( cCommand )
+      ::writeText( "Error al insertar la familia " + hGet( hCategory, "name" ) + " en la tabla " + ::cPrefixTable( "category_lang" ), 3 )
+   end if
+
+   cCommand := "INSERT INTO " + ::cPrefixTable( "category_shop" ) + "( "   + ;
+                  "id_category, "                                          + ;
+                  "id_shop, "                                              + ;
+                  "position ) "                                            + ;
+               "VALUES ( "                                                 + ;
+                  "'" + str( idCategory ) + "'"                            + ;
+                  "'1', "                                                  + ;
+                  "'0' )"
+
+   if !::commandExecDirect( cCommand )
+      ::writeText( "Error al insertar la categoría inicio en " + ::cPrefixTable( "category_group" ), 3 )
+   end if
+
+   cCommand := "INSERT INTO " + ::cPrefixTable( "category_group" ) + "( "  + ;
+                  "id_category, id_group ) "                               + ;
+               "VALUES ( '"                                                + ;
+                  "'" + str( idCategory ) + "', "                          + ;
+                  "'1' )"
+
+   if !::commandExecDirect( cCommand )
+      ::writeText( "Error al insertar la familia " + hGet( hCategory, "name" ) + " en la tabla " + ::cPrefixTable( "category_group" ), 3 )
+   end if
+
+   cCommand := "INSERT INTO " + ::cPrefixTable( "category_group" ) + "( "  + ; 
+                  "id_category, "                                          + ;
+                  " id_group ) "                                           + ;
+               "VALUES ( "                                                 + ;
+                  "'" + str( idCategory ) + "', "                          + ;
+                  "'2' )"
+
+   if !::commandExecDirect( cCommand )
+      ::writeText( "Error al insertar la familia " + hGet( hCategory, "name" ) + " en la tabla " + ::cPrefixTable( "category_group" ), 3 )
+   end if
+
+   cCommand := "INSERT INTO " + ::cPrefixTable( "category_group" ) + "( "  + ;
+                  "id_category, "                                          + ;
+                  "id_group ) "                                            + ;
+               "VALUES ( "                                                 + ;
+                  "'" + str( idCategory ) + "', "                          + ;
+                  "'3' )"
+
+   if !::commandExecDirect( cCommand )
+      ::writeText( "Error al insertar la familia " + hGet( hCategory, "name" ) + " en la tabla " + ::cPrefixTable( "category_group" ), 3 )
+   end if
+
+   SysRefresh()
+
+   //Insertamos un registro en las tablas de imágenes----------------------
+
+   if !empty( hGet( hCategory, "image" ) )
+      hset( hCategory, "cPrefijoNombre", alltrim( str( idCategory ) ) )
+   end if
+
+   // Guardo referencia a la web-----------------------------------------------
+
+   if !empty( idCategory )
+      ::TPrestashopId:setValueCategory( hget( hCategory, "id" ), ::getCurrentWebName(), idCategory )
+   end if 
+
+return idCategory
