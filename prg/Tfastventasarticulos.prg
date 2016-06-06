@@ -3854,26 +3854,6 @@ METHOD getUnidadesPedidoProveedor( cNumPed, cCodArt ) CLASS TFastVentasArticulos
 Return nUnidades
 
 //---------------------------------------------------------------------------//
-/*
-METHOD insertIfValid() CLASS TFastVentasArticulos
-
-   if !( ::lValidRegister() )
-
-      ::oDbf:Cancel()
-      
-      Return .f.
-
-   end if 
-
-   if ::lSummary .and. ::isAcumulable()
-      ::acumulaDbf()
-   else
-      ::oDbf:Insert()
-   end if
-
-Return ( lValidRegister )
-*/
-//----------------------------------------------------------------------------//
 
 METHOD summaryReport()
 
