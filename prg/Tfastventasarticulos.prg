@@ -890,11 +890,11 @@ RETURN ( .f. )
 
 METHOD DesdeHastaGrupoCliente() CLASS TFastVentasArticulos
 
-   if !( ::oDbf:cCodGrp >= ::oGrupoGCliente:Cargo:getDesde() .or. ascan( ::aChildDesdeGrupoCliente, {|cChild| ::oDbf:cCodGrp == cChild } ) )
+   if !( ::oDbf:cCodGrp >= ::oGrupoGCliente:Cargo:getDesde() .or. ascan( ::aChildDesdeGrupoCliente, {|cChild| ::oDbf:cCodGrp == cChild } ) != 0 )
       Return .f.
    end if 
 
-   if !( ::oDbf:cCodGrp <= ::oGrupoGCliente:Cargo:getHasta() .or. ascan( ::aChildHastaGrupoCliente, {|cChild| ::oDbf:cCodGrp == cChild } ) )
+   if !( ::oDbf:cCodGrp <= ::oGrupoGCliente:Cargo:getHasta() .or. ascan( ::aChildHastaGrupoCliente, {|cChild| ::oDbf:cCodGrp == cChild } ) != 0 )
       Return .f.
    end if 
 
