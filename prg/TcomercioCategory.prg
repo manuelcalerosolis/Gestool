@@ -16,13 +16,14 @@ CLASS TComercioCategory FROM TComercioConector
    DATA  aCategoriesProduct                                 INIT {}
 
    METHOD buildCategory( id )
-         
-   METHOD insertCategoriesPrestashop( hCategory )
-      METHOD insertRootCategory() 
-      METHOD getParentCategory( idCategory ) 
-      METHOD getNodeParentCategory( idCategory )
 
-   METHOD truncteAllTables() 
+   METHOD insertCategories( hCategory )
+      METHOD insertCategory()
+      METHOD insertRootCategory() 
+         METHOD getParentCategory( idCategory ) 
+         METHOD getNodeParentCategory( idCategory )
+
+   METHOD truncateAllTables() 
       
    METHOD cleanGestoolReferences()
 
@@ -44,11 +45,11 @@ METHOD buildCategory( id ) CLASS TComercioCategory
    if ::oCategoryDatabase():SeekInOrd( id, "cCodFam" ) 
 
       aAdd( ::aCategoriesProduct,   {  "id"              => id,;
-                                       "id_parent"       => ::oCategoryDatabase():cFamCmb,;
+                                       "id_parent"       => alltrim( ::oCategoryDatabase():cFamCmb ),;
                                        "name"            => if( empty( ::oCategoryDatabase():cDesWeb ), alltrim( ::oCategoryDatabase():cNomFam ), alltrim( ::oCategoryDatabase():cDesWeb ) ),;
                                        "description"     => if( empty( ::oCategoryDatabase():cDesWeb ), alltrim( ::oCategoryDatabase():cNomFam ), alltrim( ::oCategoryDatabase():cDesWeb ) ),;
                                        "link_rewrite"    => cLinkRewrite( if( empty( ::oCategoryDatabase():cDesWeb ), alltrim( ::oCategoryDatabase():cNomFam ), alltrim( ::oCategoryDatabase():cDesWeb ) ) ),;
-                                       "image"           => ::oCategoryDatabase():cImgBtn,;
+                                       "image"           => alltrim( ::oCategoryDatabase():cImgBtn ),;
                                        "cPrefijoNombre"  => "" } )
 
    end if   
@@ -61,7 +62,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD truncteAllTables() CLASS TComercioCategory
+METHOD truncateAllTables() CLASS TComercioCategory
 
    local tableToDelete
    local tablesToDelete := {  "category",;
@@ -70,19 +71,9 @@ METHOD truncteAllTables() CLASS TComercioCategory
                               "category_group",;
                               "category_shop" }
 
-   // Vaciamos las tablas de tipos de Iva-----------------------------------------
-
    for each tableToDelete in tablesToDelete
       ::truncateTable( tableToDelete )
    next 
-
-   // Cargamos la categoría raiz de la que colgarán todas las demás---------------
-
-   // ::insertRootCategory()
-
-   // Limpiamos las referencias de las tablas de gestool--------------------------
-
-   // ::buildCleanPrestashop()
 
 Return ( self )
 
@@ -109,13 +100,29 @@ METHOD insertRootCategory() CLASS TComercioCategory
                            "image"           => '',;
                            "cPrefijoNombre"  => '' }
 
-   ::insertCategoryProduct( hCategory )
+   ::insertCategory( hCategory )
 
 Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertCategoriesPrestashop( hCategory ) CLASS TComercioCategory
+METHOD insertCategories() CLASS TComercioCategory
+
+   local hCategoryProduct
+
+   ::insertRootCategory()
+
+   debug( ::aCategoriesProduct )
+
+   for each hCategoryProduct in ::aCategoriesProduct
+      ::insertCategory( hCategoryProduct )
+   next 
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertCategory( hCategory ) CLASS TComercioCategory
 
    local oImagen
    local nParent        := 2
@@ -136,7 +143,7 @@ METHOD insertCategoriesPrestashop( hCategory ) CLASS TComercioCategory
                   "date_upd, "                                       + ;
                   "position ) "                                      + ;
                "VALUES ( "                                           + ;
-                  "'" + str( nParent ) + "', "                       + ;
+                  "'" + alltrim( str( nParent ) ) + "', "            + ;
                   "'2', "                                            + ;
                   "'0', "                                            + ;
                   "'0', "                                            + ;
@@ -146,7 +153,7 @@ METHOD insertCategoriesPrestashop( hCategory ) CLASS TComercioCategory
                   "'0' ) "
 
    if ::commandExecDirect( cCommand )
-      idCategory           := ::oConexionMySQLDatabase():GetInsertId()
+      idCategory  := ::oConexionMySQLDatabase():GetInsertId()
       ::writeText( "He insertado la familia " + hGet( hCategory, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "category" ), 3 )
    else
       ::writeText( "Error al insertar la familia " + hGet( hCategory, "name" ) + " en la tabla " + ::cPrefixTable( "category" ), 3 )
@@ -161,12 +168,12 @@ METHOD insertCategoriesPrestashop( hCategory ) CLASS TComercioCategory
                   "meta_title, "                                           + ;
                   "meta_keywords, "                                        + ;
                   "meta_description ) "                                    + ;
-               "VALUES ( '"                                                + ;
-                  str( idCategory ) + "', '"                               + ;
-                  str( ::nLanguage ) + "', '"                              + ;
-                  hGet( hCategory, "name" ) + "', '"                       + ;
-                  hGet( hCategory, "description" ) + "', '"                + ;
-                  hGet( hCategory, "link_rewrite" ) + "', "                + ;
+               "VALUES ( "                                                 + ;
+                  "'" + alltrim( str( idCategory ) ) + "', "               + ;
+                  "'" + alltrim( str( ::getLanguage() ) ) + "', "          + ;
+                  "'" + hGet( hCategory, "name" ) + "', "                  + ;
+                  "'" + hGet( hCategory, "description" ) + "', "           + ;
+                  "'" + hGet( hCategory, "link_rewrite" ) + "', "          + ;
                   "'', "                                                   + ;
                   "'', "                                                   + ;
                   "'' )"
@@ -180,7 +187,7 @@ METHOD insertCategoriesPrestashop( hCategory ) CLASS TComercioCategory
                   "id_shop, "                                              + ;
                   "position ) "                                            + ;
                "VALUES ( "                                                 + ;
-                  "'" + str( idCategory ) + "'"                            + ;
+                  "'" + alltrim( str( idCategory ) ) + "', "               + ;
                   "'1', "                                                  + ;
                   "'0' )"
 
@@ -190,8 +197,8 @@ METHOD insertCategoriesPrestashop( hCategory ) CLASS TComercioCategory
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "category_group" ) + "( "  + ;
                   "id_category, id_group ) "                               + ;
-               "VALUES ( '"                                                + ;
-                  "'" + str( idCategory ) + "', "                          + ;
+               "VALUES ( "                                                 + ;
+                  "'" + alltrim( str( idCategory ) ) + "', "               + ;
                   "'1' )"
 
    if !::commandExecDirect( cCommand )
@@ -202,7 +209,7 @@ METHOD insertCategoriesPrestashop( hCategory ) CLASS TComercioCategory
                   "id_category, "                                          + ;
                   " id_group ) "                                           + ;
                "VALUES ( "                                                 + ;
-                  "'" + str( idCategory ) + "', "                          + ;
+                  "'" + alltrim( str( idCategory ) ) + "', "               + ;
                   "'2' )"
 
    if !::commandExecDirect( cCommand )
@@ -213,7 +220,7 @@ METHOD insertCategoriesPrestashop( hCategory ) CLASS TComercioCategory
                   "id_category, "                                          + ;
                   "id_group ) "                                            + ;
                "VALUES ( "                                                 + ;
-                  "'" + str( idCategory ) + "', "                          + ;
+                  "'" + alltrim( str( idCategory ) ) + "', "               + ;
                   "'3' )"
 
    if !::commandExecDirect( cCommand )
@@ -242,7 +249,7 @@ METHOD getParentCategory( idCategory ) CLASS TComercioCategory
 
    local idParentCategory    := 2
 
-   if ::oCategoryDatabase():Seek( idCategory ) .and. ::oCategoryDatabase():lPubInt
+   if ::oCategoryDatabase():Seek( idCategory ) // .and. ::oCategoryDatabase():lPubInt
       idParentCategory       := ::TPrestashopId():getValueCategory( idCategory, ::getCurrentWebName() )  
    end if
 

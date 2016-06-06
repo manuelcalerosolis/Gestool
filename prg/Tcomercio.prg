@@ -4669,6 +4669,8 @@ METHOD controllerExportPrestashop( idProduct ) Class TComercio
 
          ::TComercioProduct:cleanGestoolReferences()
 
+         ::TComercioCategory:cleanGestoolReferences()
+
          ::buildFTP()
 
          if ::prestaShopConnect()
@@ -4677,17 +4679,21 @@ METHOD controllerExportPrestashop( idProduct ) Class TComercio
 
             ::TComercioProduct:truncateAllTables()
 
-            ::MeterTotalText( "Subiendo la información adicional a los productos." )
+            ::TComercioCategory:truncateAllTables()
 
-            // if empty( ::TPrestashopConfig:getStart() )
-            //    ::uploadInformationToPrestashop( idProduct )
-            // end if 
-   
+            // Construimos la informacion de todos los productos---------------
+
             ::TComercioProduct:buildAllProductInformation()
 
-            ::TComercioProduct:uploadProductsToPrestashop()
+            ::MeterTotalText( "Subiendo la información adicional a los productos." )
 
-            ::prestaShopCommit()
+            ::TComercioProduct:insertAditionalInformation()
+
+            ::TComercioCategory:insertCategories()   
+
+            ::TComercioProduct:insertProducts()
+
+            // ::prestaShopCommit()
 
             ::prestaShopDisConnect()
 
@@ -4739,7 +4745,7 @@ METHOD controllerExportOneProductToPrestashop( idProduct ) Class TComercio
 
          ::TComercioProduct:buildProductInformation( idProduct )
 
-         ::TComercioProduct:uploadProductsToPrestashop()
+         ::TComercioProduct:insertProducts()
 
          ::prestaShopCommit()
 

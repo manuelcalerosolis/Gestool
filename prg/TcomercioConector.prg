@@ -69,7 +69,7 @@ CLASS TComercioConector
    METHOD cDirectoryCategories()                            INLINE ( ::TComercio:cDirectoryCategories() )
    METHOD getRecursiveFolderPrestashop( cCarpeta )          INLINE ( ::TComercio:getRecursiveFolderPrestashop( cCarpeta ) )
 
-   METHOD commandExecDirect( cCommand )                     INLINE ( TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand ) )
+   METHOD commandExecDirect( cCommand )                     INLINE ( ::writeText( cCommand ), TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand ) )
    METHOD queryExecDirect( cQuery )                         INLINE ( TMSQuery():New( ::oConexionMySQLDatabase(), cQuery ) )
 
    METHOD truncateTable( cTable )   
@@ -88,10 +88,10 @@ Return ( Self )
 
 METHOD truncateTable( cTable ) CLASS TComercioConector
 
-   if ::commandExecDirect( ::oConexionMySQLDatabase() ):ExecDirect( "TRUNCATE TABLE " + ::cPreFixtable( cTable ) )
-      ::writeText( 'Tabla borrada correctamente', ::cPreFixtable( cTable ) )
+   if ::commandExecDirect( "TRUNCATE TABLE " + ::cPreFixtable( cTable ) )
+      ::writeText( 'Tabla ' + ::cPreFixtable( cTable ) + ' borrada correctamente' )
    else
-      ::writeText( 'Error al borrar la tabla', ::cPreFixtable( cTable ) )
+      ::writeText( 'Error al borrar la tabla ' + ::cPreFixtable( cTable ) ) 
    end if
 
 Return ( Self )

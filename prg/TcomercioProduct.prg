@@ -44,8 +44,8 @@ CLASS TComercioProduct FROM TComercioConector
 
    METHOD insertNodeProductCategory()
 
-   METHOD uploadProductsToPrestashop()
-      METHOD uploadProductToPrestashop()
+   METHOD insertProducts()
+      METHOD insertProduct()
          METHOD insertProductPrestashopTable( hProduct )
          
          METHOD insertProductShop( idProduct, idCategory )
@@ -62,12 +62,14 @@ CLASS TComercioProduct FROM TComercioConector
          METHOD insertProductAttributeShop( lDefault, idProduct, idProperty, priceProperty )
          METHOD insertProductAttributeImage( hProduct, idProductAttribute )
 
+      METHOD insertPropertiesHeader( hPropertiesHeaderProduct ) 
+      METHOD insertPropertiesLineProduct( hPropertiesLineProduct )
+
    METHOD insertProductCategory( idProduct, idCategory )
 
-   METHOD uploadAditionalInformationToPrestashop()
+   METHOD insertAditionalInformation()
 
-   METHOD truncteAllTables() 
-      METHOD truncateTable( cTable )   
+   METHOD truncateAllTables() 
 
    METHOD insertTaxPrestashop( hTax )
    METHOD insertManufacturersPrestashop( hFabricantesData )
@@ -110,18 +112,18 @@ METHOD buildProductInformation( idProduct ) CLASS TComercioProduct
 
    ::oProductDatabase():getStatus()
 
-   if ::oProductDatabase():seekInOrd( idProduct, "Codigo" )
-
-      if !( ::isProductInCurrentWeb( idProduct ) )
-         Return .f.
-      end if 
+   if ::oProductDatabase():seekInOrd( idProduct, "Codigo" ) .and. ;
+      ::isProductInCurrentWeb( idProduct ) 
 
       ::writeText( alltrim( ::oProductDatabase():Codigo ) + " - " + alltrim( ::oProductDatabase():Nombre ) )
 
-      ::buildIvaProducts(           ::oProductDatabase():TipoIva )
-      ::buildManufacturerProduct(   ::oProductDatabase():cCodFab )
-      ::buildPropertyProduct(       ::oProductDatabase():Codigo )
-      ::buildProduct(               ::oProductDatabase():Codigo )
+      ::buildIvaProducts( ::oProductDatabase():TipoIva )
+      ::buildManufacturerProduct( ::oProductDatabase():cCodFab )
+
+      ::TComercioCategory():buildCategory( ::oProductDatabase():Familia )
+      
+      ::buildPropertyProduct( ::oProductDatabase():Codigo )
+      ::buildProduct( ::oProductDatabase():Codigo )
 
    end if
 
@@ -487,19 +489,7 @@ Return ( aStockProduct )
 
 //---------------------------------------------------------------------------//
 
-METHOD truncateTable( cTable )   
-
-   if ::commandExecDirect( ::oConexionMySQLDatabase() ):ExecDirect( "TRUNCATE TABLE " + ::cPreFixtable( cTable ) )
-      ::writeText( 'Tabla ' + ::cPreFixtable( cTable ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPreFixtable( cTable ), 3  )
-   end if
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD truncteAllTables() CLASS TComercioProduct
+METHOD truncateAllTables() CLASS TComercioProduct
 
    local tableToDelete
    local tablesToDelete := {  "tax",;
@@ -544,24 +534,13 @@ METHOD truncteAllTables() CLASS TComercioProduct
                               "scene_products",;
                               "stock_available" }
 
-   // Vaciamos las tablas de tipos de Iva-----------------------------------------
-
    for each tableToDelete in tablesToDelete
       ::truncateTable( tableToDelete )
    next 
 
-   // Cargamos la categoría raiz de la que colgarán todas las demás---------------
-
-   // ::insertRootCategory()
-
-   // Limpiamos las referencias de las tablas de gestool--------------------------
-
-   // ::buildCleanPrestashop()
-
 Return ( self )
 
 //---------------------------------------------------------------------------//
-// Insertamos el root en la tabla de categorias------------------------------
 
 METHOD cleanGestoolReferences() CLASS TComercioProduct
 
@@ -592,7 +571,7 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 // Subimos los artículos----------------------------------------------------
 
-METHOD uploadProductsToPrestashop() CLASS TComercioProduct
+METHOD insertProducts() CLASS TComercioProduct
 
    local hProduct
    local nProducts   := len( ::aProducts )
@@ -607,7 +586,7 @@ METHOD uploadProductsToPrestashop() CLASS TComercioProduct
 
       ::meterProcesoText( "Subiendo artículo " + alltrim( str( hb_enumindex() ) ) + " de " + alltrim( str( nProducts ) ) ) 
 
-      ::uploadProductToPrestashop( hProduct )
+      ::insertProduct( hProduct )
    
    next
 
@@ -615,7 +594,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD uploadProductToPrestashop( hProduct ) CLASS TComercioProduct
+METHOD insertProduct( hProduct ) CLASS TComercioProduct
 
    local idProduct
    local idCategory
@@ -789,11 +768,18 @@ METHOD insertNodeProductCategory( idProduct, idCategory ) CLASS TComercioProduct
    local parentCategory
    local nodeParentCategory
 
+   msgAlert( idCategory, "idCategory" )
+
    parentCategory          := ::TComercioCategory():getParentCategory( idCategory )
+
+   msgAlert( parentCategory, "parentCategory" )
 
    ::insertProductCategory( idProduct, parentCategory ) 
 
    nodeParentCategory      := ::TComercioCategory():getNodeParentCategory( idCategory )
+
+   msgAlert( nodeParentCategory, "nodeParentCategory" )
+
    if !empty( nodeParentCategory )
       ::insertNodeProductCategory( idProduct, nodeParentCategory )
    end if 
@@ -1092,7 +1078,7 @@ METHOD insertProductAttributeImage( hProduct, idProductAttribute ) CLASS TComerc
                               "'" + alltrim( str( idProductAttribute ) ) + "', "                + ;   // id_product_attribute
                               "'" + alltrim( str( nIdProductImage ) ) + "' )"                         // id_image
 
-      if ::commandExecDirect( cCommand )
+      if !::commandExecDirect( cCommand )
          ::writeText( "Error al insertar el artículo " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
       end if
 
@@ -1459,13 +1445,13 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD uploadAditionalInformationToPrestashop() CLASS TComercioProduct
+METHOD insertAditionalInformation() CLASS TComercioProduct
 
    local hTax
    local hCategory
    local hManufacturer
-   local hPropiedadesCabData
-   local hPropiedadesLinData
+   local hPropertiesHeaderProduct
+   local hPropertiesLineProduct
 
    // Subimos los tipos de IVA----------------------------------------------
 
@@ -1497,21 +1483,27 @@ METHOD uploadAditionalInformationToPrestashop() CLASS TComercioProduct
 
    // Subimos las cabeceras de propiedades necesarias-----------------------
 
-   for each hPropiedadesCabData in ::aPropiedadesCabeceraData
-      ::buildInsertPropiedadesPrestashop( hPropiedadesCabData )
+   ::meterProcesoSetTotal( len( ::aPropertiesHeaderProduct ) )
+
+   for each hPropertiesHeaderProduct in ::aPropertiesHeaderProduct
+
+      ::insertPropertiesHeader( hPropertiesHeaderProduct )
+
+      ::meterProcesoText( "Subiendo propiedad " + alltrim(str(hb_enumindex())) + " de " + alltrim(str(len(::aPropertiesHeaderProduct))) )
+
    next
 
    // Subimos las Lineas de propiedades necesarias--------------------------
 
-   ::meterProcesoSetTotal( len( ::aPropiedadesLineasData ) )
+   ::meterProcesoSetTotal( len( ::aPropertiesLineProduct ) )
 
-   asort( ::aPropiedadesLineasData, , , {|x,y| hget( x, "position" ) < hget( y, "position" ) } )
+   asort( ::aPropertiesLineProduct, , , {|x,y| hget( x, "position" ) < hget( y, "position" ) } )
 
-   for each hPropiedadesLinData in ::aPropiedadesLineasData
+   for each hPropertiesLineProduct in ::aPropertiesLineProduct
 
-      ::buildInsertLineasPropiedadesPrestashop( hPropiedadesLinData, hb_enumindex() )
+      ::insertPropertiesLineProduct( hPropertiesLineProduct, hb_enumindex() )
 
-      ::meterProcesoText( "Subiendo propiedad " + alltrim(str(hb_enumindex())) + " de " + alltrim(str(len(::aPropiedadesLineasData))) )
+      ::meterProcesoText( "Subiendo propiedad " + alltrim(str(hb_enumindex())) + " de " + alltrim(str(len(::aPropertiesLineProduct))) )
 
    next
  
@@ -1550,7 +1542,7 @@ METHOD insertTaxPrestashop( hTax ) CLASS TComercioProduct
                   "name ) " + ;
                "VALUES ( " + ;
                   "'" + str( idTax ) + "', " + ;                           // id_tax
-                  "'" + str( ::nLanguage ) + "', " + ;                     // id_lang
+                  "'" + str( ::getLanguage() ) + "', " + ;                     // id_lang
                   "'" + ::oConexionMySQLDatabase():Escapestr( hGet( hTax, "name" ) ) + "' )"   // name
 
    if ::commandExecDirect( cCommand )
@@ -1679,3 +1671,103 @@ return nCodigoWeb
 
 //---------------------------------------------------------------------------//
 
+METHOD insertPropertiesHeader( hPropertiesHeaderProduct ) CLASS TComercioProduct
+
+   local cCommand          := ""
+   local idPrestashop      := 0
+
+   cCommand                := "INSERT INTO " + ::cPrefixTable( "attribute_group" ) + " ( " +; 
+                                 "is_color_group, " + ;
+                                 "group_type ) " + ;
+                              "VALUES ( " + ;
+                                 "'" + if( hGet( hPropertiesHeaderProduct, "lColor" ), "1", "0" ) + "', " + ;         // is_color_group
+                                 "'" + if( hGet( hPropertiesHeaderProduct, "lColor" ), "color", "select" ) + "' )"    // group_type                        
+
+   if ::commandExecDirect( cCommand )
+      idPrestashop         := ::oConexionMySQLDatabase():GetInsertId()
+   else
+      ::writeText( "Error al insertar la propiedad " + hGet( hPropertiesHeaderProduct, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_group" ), 3 )
+   end if
+
+   if !empty( idPrestashop )
+      cCommand             := "INSERT INTO " + ::cPrefixTable( "attribute_group_lang" ) + " ( " + ; 
+                                 "id_attribute_group, " + ;
+                                 "id_lang, " + ;
+                                 "name, " + ;
+                                 "public_name ) " + ;
+                              "VALUES ( " + ;
+                                 "'" + alltrim( str( idPrestashop ) ) + "', " + ;            // id_attribute_group
+                                 "'" + str( ::getLanguage() ) + "', " + ;                    // id_lang
+                                 "'" + hGet( hPropertiesHeaderProduct, "name" ) + "', " + ;  // name
+                                 "'" + hGet( hPropertiesHeaderProduct, "name" ) + "' )"      // public_name
+
+      if !::commandExecDirect( cCommand )
+         ::writeText( "Error al insertar la propiedad " + hGet( hPropertiesHeaderProduct, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_group_lang" ), 3 )
+      end if
+
+      // Guardo referencia a la web-----------------------------------------------
+
+      ::TPrestashopId():setValueAttributeGroup( hget( hPropertiesHeaderProduct, "id" ), ::getCurrentWebName(), idPrestashop )
+
+   end if 
+
+Return self
+
+//---------------------------------------------------------------------------//
+
+METHOD insertPropertiesLineProduct( hPropertiesLineProduct, nPosition ) CLASS TComercioProduct
+
+   local idPrestashop      := 0
+   local cCommand          := ""
+   local nCodigoGrupo      := ::TPrestashopId():getValueAttributeGroup( hGet( hPropertiesLineProduct, "idparent" ), ::getCurrentWebName() )
+
+   cCommand                := "INSERT INTO " + ::cPrefixTable( "attribute" ) + " ( " + ; 
+                                 "id_attribute_group, " + ;
+                                 "color, " + ;
+                                 "position ) " + ;
+                              "VALUES ( " + ;
+                                 "'" + alltrim( str( nCodigoGrupo ) ) + "', " + ;
+                                 "'" + hGet( hPropertiesLineProduct, "color" ) + "' ," + ;
+                                 "'" + alltrim( str( nPosition ) ) + "' )"                // posicion
+
+   if ::commandExecDirect( cCommand )
+      idPrestashop   := ::oConexionMySQLDatabase():GetInsertId()
+   else
+      ::writeText( "Error al insertar la propiedad " + hGet( hPropertiesLineProduct, "name" ) + " en la tabla " + ::cPreFixtable( "attribute" ), 3 )
+   end if
+
+   if !empty( idPrestashop )
+
+      cCommand    := "INSERT INTO " + ::cPrefixTable( "attribute_lang" ) + " ( " + ;
+                        "id_attribute, " + ;
+                        "id_lang, " + ;
+                        "name ) " + ;
+                     "VALUES ( " + ;
+                        "'" + alltrim( str( idPrestashop ) ) + "', " + ;                                             // id_attribute
+                        "'" + str( ::getLanguage() ) + "', " + ;                                                     // id_lang
+                        "'" + ::oConexionMySQLDatabase():Escapestr( hGet( hPropertiesLineProduct, "name" ) ) + "' )" // name
+
+      if !::commandExecDirect( cCommand )
+         ::writeText( "Error al insertar la propiedad " + hGet( hPropertiesLineProduct, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_lang" ), 3 )
+      end if
+
+      cCommand    := "INSERT INTO " + ::cPrefixTable( "attribute_shop" ) + " ( " + ;
+                        "id_attribute, " + ;
+                        "id_shop ) " + ;
+                     "VALUES ( " + ;
+                        "'" + alltrim( str( idPrestashop ) ) + "', " + ;   // id_attribute
+                        "'1' )"                                            // id_shop
+
+      if !::commandExecDirect( cCommand )
+         ::writeText( "Error al insertar la propiedad " + hGet( hPropertiesLineProduct, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_shop" ), 3 )
+      end if
+
+      // Guardo referencia a la web-----------------------------------------------
+
+      ::TPrestashopId():setValueAttribute( hGet( hPropertiesLineProduct, "idparent" ) + hGet( hPropertiesLineProduct, "id" ), ::getCurrentWebName(), idPrestashop )
+
+   end if 
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
