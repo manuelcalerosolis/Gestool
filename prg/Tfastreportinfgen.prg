@@ -126,6 +126,9 @@ CLASS TFastReportInfGen FROM TNewInfGen
    DATA  nRecargoFacturasRectificativasProveedores INIT 0
    DATA  nTotalFacturasRectificativasProveedores   INIT 0
 
+   DATA  aChildDesdeGrupoCliente                   INIT {}
+   DATA  aChildHastaGrupoCliente                   INIT {}
+
    //------------------------------------------------------------------------//
 
    METHOD Create()
@@ -135,6 +138,8 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD NewResource( cFldRes )
 
    METHOD lResource( cFld )
+
+   METHOD initVariables()              
 
    METHOD InitDialog()
    METHOD SetDialog()
@@ -990,6 +995,8 @@ METHOD GenReport( nOption ) CLASS TFastReportInfGen
 
    ::lBreak             := .f.
    ::oBtnCancel:bAction := {|| ::lBreak := .t. }
+
+   ::initVariables()
 
    /*
    Extraer el orden------------------------------------------------------------
@@ -3662,5 +3669,24 @@ METHOD ValorCampoExtra( cTipoDoccumento, cCodCampoExtra )
    local cValorCampoExtra  := cTipoDoccumento + cCodCampoExtra
 
 Return ( cValorCampoExtra )
+
+//----------------------------------------------------------------------------//
+
+METHOD initVariables()
+
+   ::aChildDesdeGrupoCliente              := {}
+   ::aChildHastaGrupoCliente              := {}
+
+   if !empty( ::oGrpCli )
+      ::aChildDesdeGrupoCliente            := ::oGrpCli:aChild( ::oGrupoGCliente:Cargo:getDesde() )
+      aadd( ::aChildDesdeGrupoCliente, ::oGrupoGCliente:Cargo:getDesde() )
+   end if 
+
+   if !empty( ::oGrpCli )
+      ::aChildHastaGrupoCliente            := ::oGrpCli:aChild( ::oGrupoGCliente:Cargo:getHasta() )
+      aadd( ::aChildHastaGrupoCliente, ::oGrupoGCliente:Cargo:getHasta() )
+   end if 
+
+Return ( self )
 
 //----------------------------------------------------------------------------//

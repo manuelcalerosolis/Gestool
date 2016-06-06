@@ -45,6 +45,8 @@ TComercio.prg           									\
 TComercioCustomer.prg 										\
 TComercioBudget.prg 											\
 TComercioProduct.prg 										\
+TComercioConector.prg 										\
+TComercioCategory.prg 										\
 TPrestashopConfig.prg 										\
 TPrestashopId.prg 											\
 TFTPLinux.prg 													\
@@ -469,6 +471,8 @@ TComercio.obj                                      \
 TComercioCustomer.obj 										\
 TComercioBudget.obj 											\
 TComercioProduct.obj 										\
+TComercioConector.obj 										\
+TComercioCategory.obj 										\
 TPrestashopConfig.obj 										\
 TPrestashopId.obj 											\
 TFTPLinux.obj 													\
@@ -927,6 +931,8 @@ $(OBJ)\TComercio.obj                                        +
 $(OBJ)\TComercioCustomer.obj                                +
 $(OBJ)\TComercioBudget.obj                                	+
 $(OBJ)\TComercioProduct.obj                                	+
+$(OBJ)\TComercioConector.obj  										+
+$(OBJ)\TComercioCategory.obj  										+
 $(OBJ)\TPrestashopConfig.obj 											+
 $(OBJ)\TPrestashopId.obj 												+
 $(OBJ)\TFTPLinux.obj 													+

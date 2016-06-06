@@ -232,3 +232,4 @@ METHOD New( nView, oTipoArticulo ) CLASS TItemGroupTipoArticulo
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+

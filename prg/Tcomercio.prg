@@ -27,6 +27,7 @@ CLASS TComercio
    DATA  TComercioBudget
    DATA  TComercioOrder
    DATA  TComercioProduct
+   DATA  TComercioCategory
 
    DATA  aSend
    DATA  oInt
@@ -516,6 +517,8 @@ METHOD New( oMenuItem, oMeterTotal, oTextTotal ) CLASS TComercio
    ::TComercioOrder        := TComercioOrder():New( Self )
 
    ::TComercioProduct      := TComercioProduct():New( Self )
+
+   ::TComercioCategory     := TComercioCategory():New( Self )
 
 RETURN ( Self )
 
@@ -4716,6 +4719,8 @@ Return .t.
 //---------------------------------------------------------------------------//
 
 METHOD controllerExportOneProductToPrestashop( idProduct ) Class TComercio
+
+   msgAlert( idProduct, "idProduct")
 
    if !( ::isAviableWebToExport() )
       Return .f.

@@ -173,6 +173,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD setFilterUserId()                     INLINE ( if( ::lApplyFilters,;
                                                          ::cExpresionHeader  += ' .and. ( Field->cCodUsr >= "' + ::oGrupoUsuario:Cargo:getDesde() + '" .and. Field->cCodUsr <= "' + ::oGrupoUsuario:Cargo:getHasta() + '" )', ) )
 
+
    METHOD DesdeHastaGrupoCliente()
 
    METHOD getTotalUnidadesGrupoCliente( cCodGrp, cCodArt )
@@ -867,7 +868,7 @@ Method lValidRegister() CLASS TFastVentasArticulos
       ( ::oDbf:cCodTemp    >= ::oGrupoTemporada:Cargo:getDesde()        .and. ::oDbf:cCodTemp   <= ::oGrupoTemporada:Cargo:getHasta() )         .and.;
       ( ::oDbf:cCodFab     >= ::oGrupoFabricante:Cargo:getDesde()       .and. ::oDbf:cCodFab    <= ::oGrupoFabricante:Cargo:getHasta() )        .and.;
       ( ::oDbf:cCodCli     >= ::oGrupoCliente:Cargo:getDesde()          .and. ::oDbf:cCodCli    <= ::oGrupoCliente:Cargo:getHasta() )           .and.;
-      ::DesdeHastaGrupoCliente()                                                                                                                .and.;
+      ( ::DesdeHastaGrupoCliente() )                                                                                                            .and.;
       ( ::oDbf:cCodPago    >= ::oGrupoFpago:Cargo:getDesde()            .and. ::oDbf:cCodPago   <= ::oGrupoFpago:Cargo:getHasta() )             .and.;
       ( ::oDbf:cCodRut     >= ::oGrupoRuta:Cargo:getDesde()             .and. ::oDbf:cCodRut    <= ::oGrupoRuta:Cargo:getHasta() )              .and.;
       ( ::oDbf:cCodAge     >= ::oGrupoAgente:Cargo:getDesde()           .and. ::oDbf:cCodAge    <= ::oGrupoAgente:Cargo:getHasta() )            .and.;
@@ -889,40 +890,15 @@ RETURN ( .f. )
 
 METHOD DesdeHastaGrupoCliente() CLASS TFastVentasArticulos
 
-   local aChild
-   local cChild
-   local lRetDesde   := .f.
-   local lRetHasta   := .f.
+   if !( ::oDbf:cCodGrp >= ::oGrupoGCliente:Cargo:getDesde() .or. ascan( ::aChildDesdeGrupoCliente, {|cChild| ::oDbf:cCodGrp == cChild } ) )
+      Return .f.
+   end if 
 
-   /*
-   Evaluamos el desde----------------------------------------------------------
-   */
+   if !( ::oDbf:cCodGrp <= ::oGrupoGCliente:Cargo:getHasta() .or. ascan( ::aChildHastaGrupoCliente, {|cChild| ::oDbf:cCodGrp == cChild } ) )
+      Return .f.
+   end if 
 
-   aChild         := ::oGrpCli:aChild( ::oGrupoGCliente:Cargo:getDesde() )
-   aAdd( aChild, ::oGrupoGCliente:Cargo:getDesde() )
-   
-   for each cChild in aChild
-      if ::oDbf:cCodGrp == cChild 
-         lRetDesde   := .t.
-         exit
-      end if
-   next
-
-   /*
-   Evaluamos el hasta----------------------------------------------------------
-   */
-
-   aChild         := ::oGrpCli:aChild( ::oGrupoGCliente:Cargo:getHasta() )
-   aAdd( aChild, ::oGrupoGCliente:Cargo:getHasta() )
-
-   for each cChild in aChild
-      if ::oDbf:cCodGrp == cChild
-         lRetHasta   := .t.
-         exit
-      end if
-   next
-
-Return ( lRetDesde .and. lRetHasta )
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
