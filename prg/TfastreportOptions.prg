@@ -18,7 +18,7 @@ CLASS TFastreportOptions
 
 	METHOD New()   			CONSTRUCTOR
 	METHOD setOptions()
-	METHOD getOptions()
+	METHOD getOptionValue( key )
 
 	METHOD Dialog()
       METHOD setColValue( uValue )        INLINE ( ::oColumnValue:Value          := uValue )
@@ -54,21 +54,26 @@ RETURN ( ::hOptions )
 
 //---------------------------------------------------------------------------//
 
-METHOD getOptions( key ) CLASS TFastReportOptions
+METHOD getOptionValue( key ) CLASS TFastReportOptions
 		
-	local cValor
+	local uValue
+	local hOptionValue
 
 	if hhaskey( ::hOptions, key ) 
-      cValor         := hget( ::hOptions, key ) 
+      hOptionValue    	:= hget( ::hOptions, key ) 
+      if hhaskey( hOptionValue, "Value" )
+      	uValue    		:= hget( hOptionValue, "Value" )
+      end if
    end if 
 
-RETURN ( cValor )
+RETURN ( uValue )
 
 //---------------------------------------------------------------------------//
 
 METHOD Dialog() CLASS TFastReportOptions
    
    local oCol
+   local oBmp
 
    DEFINE DIALOG ::oDlg RESOURCE "OPTIONSREPORT"
 
@@ -89,7 +94,7 @@ METHOD Dialog() CLASS TFastReportOptions
    ::oBrw:CreateFromResource( 100 )
 
    with object ( ::oBrw:AddCol() )
-      :cHeader          := "Campo"
+      :cHeader          := "Condicion"
       :bStrData         := {|| hb_hKeyAt( ::hOptions, ::oBrw:nArrayAt ) }
       :nWidth           := 250
    end with
@@ -99,8 +104,14 @@ METHOD Dialog() CLASS TFastReportOptions
       :bEditValue       := {|| hget( hb_hValueAt( ::hOptions, ::oBrw:nArrayAt ), "Value" ) }
       :bStrData         := {|| hget( hb_hValueAt( ::hOptions, ::oBrw:nArrayAt ), "Value" ) }
       :bOnPostEdit      := {|o,x| ::columnPosEdit( o, x ) }
-      :nWidth           := 300
+      :nWidth           := 180
    end with 
+
+   REDEFINE BITMAP oBmp ;
+   ID       400 ;
+   RESOURCE "preferences_edit_48_alpha" ;
+   TRANSPARENT ;
+   OF       ::oDlg
 
    REDEFINE BUTTON ;
       ID       IDOK ;
@@ -118,6 +129,8 @@ METHOD Dialog() CLASS TFastReportOptions
    ::oDlg:bStart        := {|| ::ChangeBrowse() }
 
    ACTIVATE DIALOG ::oDlg CENTER
+
+   oBmp:end()
 
 Return ( ::oDlg:nResult == IDOK )
 
