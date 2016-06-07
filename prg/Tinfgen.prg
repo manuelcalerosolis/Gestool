@@ -325,6 +325,8 @@ CLASS TInfGen
 
    DATA uParam 
 
+   DATA oBtnOptions
+
    DATA oTFastReportOptions
 
    METHOD New( cSubTitle, aFields, oMenuItem, oWnd ) CONSTRUCTOR

@@ -768,17 +768,11 @@ METHOD insertNodeProductCategory( idProduct, idCategory ) CLASS TComercioProduct
    local parentCategory
    local nodeParentCategory
 
-   msgAlert( idCategory, "idCategory" )
-
    parentCategory          := ::TComercioCategory():getParentCategory( idCategory )
-
-   msgAlert( parentCategory, "parentCategory" )
 
    ::insertProductCategory( idProduct, parentCategory ) 
 
    nodeParentCategory      := ::TComercioCategory():getNodeParentCategory( idCategory )
-
-   msgAlert( nodeParentCategory, "nodeParentCategory" )
 
    if !empty( nodeParentCategory )
       ::insertNodeProductCategory( idProduct, nodeParentCategory )

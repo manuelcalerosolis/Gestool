@@ -22,7 +22,6 @@ CLASS TFastReportInfGen FROM TNewInfGen
    DATA  hReport 
    DATA  hOptions
 
-
    DATA  aliasPedidosClientes
    DATA  aliasPedidosClientesLineas
 
@@ -49,6 +48,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
    DATA  cReportName       INIT ""
    DATA  cReportFile       INIT ""
    DATA  cReportDirectory  INIT ""
+   DATA  hReportOptions 
 
    DATA  lUserDefine       INIT .f.
 
@@ -455,9 +455,12 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD XmlDocument()
 
    METHOD DlgFilter()
-   METHOD SetFilterInforme( cExpresionFilter )          INLINE ( ::oDbf:SetFilter( cExpresionFilter ), sysrefresh() )
+   METHOD SetFilterInforme( cExpresionFilter )           INLINE ( ::oDbf:SetFilter( cExpresionFilter ), sysrefresh() )
 
    METHOD InsertIfValid()
+
+   METHOD lHideOptions()                                 INLINE ( if( !empty(::oBtnOptions), ::oBtnOptions:Hide(), ) )
+   METHOD lShowOptions()                                 INLINE ( if( !empty(::oBtnOptions), ::oBtnOptions:Show(), ) )
 
 END CLASS
 
@@ -497,13 +500,12 @@ METHOD NewResource( cFldRes ) CLASS TFastReportInfGen
       ::lPeriodoInforme( 220, ::oDlg )
    end if
 
-   //Opciones
+   // Opciones
    
-
-   REDEFINE BUTTON ;
-   ID       1130 ;
-   OF       ::oDlg ;
-   ACTION   ( ::oTFastReportOptions:Dialog() )
+   REDEFINE BUTTON ::oBtnOptions ;
+      ID       1130 ;
+      OF       ::oDlg ;
+      ACTION   ( ::oTFastReportOptions:Dialog() )
    
    //Browse de los rangos----------------------------------------------------------
    
@@ -1824,6 +1826,7 @@ METHOD lLoadInfo() CLASS TFastReportInfGen
       Return ( .f. )
    end if 
 
+
    if hHasKey( oTreeInforme:bAction, "Title" ) .and. hHasKey( oTreeInforme:bAction, "Type" ) .and. hHasKey( oTreeInforme:bAction, "File" )
 
       ::oReportTree        := oTreeInforme
@@ -1832,6 +1835,12 @@ METHOD lLoadInfo() CLASS TFastReportInfGen
       ::cReportDirectory   := oTreeInforme:bAction[ "Directory" ]
       ::cReportName        := oTreeInforme:bAction[ "Title" ] 
       ::cReportFile        := oTreeInforme:bAction[ "Directory" ] + "\" + oTreeInforme:bAction[ "File" ]
+
+      if hhaskey( oTreeInforme:bAction, "Options" )
+         ::hReportOptions  := oTreeInforme:bAction[ "Options" ]
+      else
+         ::hReportOptions  := nil
+      end if 
 
       ::lUserDefine        := ( left( oTreeInforme:bAction[ "File" ], 1 ) == "[" )
       ::lSummary           := ( upper( "\Estadisticas" ) $ upper( oTreeInforme:bAction[ "Directory" ] ) )
@@ -1848,12 +1857,12 @@ Return ( .t. )
 
 METHOD lLoadReport() CLASS TFastReportInfGen
 
-   ::cInformeFastReport             := ""
+   ::cInformeFastReport          := ""
 
    // Report por nombre del fichero ----------------------------------------------
 
    if File( ::cReportFile )
-      ::cInformeFastReport       := MemoRead( ::cReportFile )
+      ::cInformeFastReport       := memoread( ::cReportFile )
    end if
 
 RETURN ( !Empty( ::cInformeFastReport ) )
@@ -3051,6 +3060,7 @@ METHOD AddNode( cDirectory, hHash, oNode, lBrackets )
    local cFile
    local oNewNode
    local aDirectory
+   local hProperties
 
    DEFAULT lBrackets       := .f.
 
@@ -3068,14 +3078,26 @@ METHOD AddNode( cDirectory, hHash, oNode, lBrackets )
                cFile       := putBrackets( cFile )
             end if 
 
+            // Propiedades q se pasan al nodo----------------------------------
+
+            hProperties       := {=>}
+            hset( hProperties, "Title", cFile )
+            hset( hProperties, "Directory", cDirectory )
+            hset( hProperties, "File", aFile[ 1 ] )
+            hset( hProperties, "Type", hHash[ "Type" ] )
+
+            if hhaskey( hHash, "Options" )
+               hset( hProperties, "Options", hHash[ "Options" ] )
+            end if 
+
             // Si es un directorio----------------------------------------------
 
             if ( aFile[ 5 ] == 'D' )
-               oNewNode    := oNode:Add( cFile, 22, { "Title" => cFile, "Type" => hHash[ "Type" ], "Directory" => cDirectory, "File" => aFile[ 1 ] } )
+               oNewNode    := oNode:Add( cFile, 22, hProperties )
                ::AddNode( cDirectory + "\" + aFile[ 1 ], hHash, oNewNode )
             else 
                if ( '.fr3' $ aFile[ 1 ] ) 
-                  oNode:Add( cFile, hHash[ "Image" ], { "Title" => cFile, "Type" => hHash[ "Type" ], "Directory" => cDirectory, "File" => aFile[ 1 ] } )
+                  oNode:Add( cFile, hHash[ "Image" ], hProperties )
                end if 
             end if            
          
@@ -3551,35 +3573,35 @@ RETURN ( Self )
 
 METHOD CreateTreeImageList()
 
-      ::oTreeImageList        := TImageList():New( 16, 16 )
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_16" ),                      Rgb( 255, 0, 255 ) ) // 0
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_new_16" ),                  Rgb( 255, 0, 255 ) ) // 1
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_businessman_16" ),   Rgb( 255, 0, 255 ) ) // 2
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_businessman_16" ),    Rgb( 255, 0, 255 ) ) // 3
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_businessman_16" ),          Rgb( 255, 0, 255 ) ) // 4
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Notebook_user1_16" ),                Rgb( 255, 0, 255 ) ) // 5
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_user1_16" ),         Rgb( 255, 0, 255 ) ) // 6
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_user1_16" ),          Rgb( 255, 0, 255 ) ) // 7
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_user1_16" ),                Rgb( 255, 0, 255 ) ) // 8
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_delete_16" ),               Rgb( 255, 0, 255 ) ) // 9 Rectificativas
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Cashier_user1_16" ),                 Rgb( 255, 0, 255 ) ) // 10
-      ::oTreeImageList:AddMasked( TBitmap():Define( "ChgPre16" ),                         Rgb( 255, 0, 255 ) ) // 11
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Truck_red_16" ),                     Rgb( 255, 0, 255 ) ) // 12
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Package_16" ),                       Rgb( 255, 0, 255 ) ) // 13
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Worker2_Form_Red_16" ),              Rgb( 255, 0, 255 ) ) // 14
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_navigate_cross_16" ),       Rgb( 255, 0, 255 ) ) // 15 Rectifiactivas proveedores
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Package_16" ),                       Rgb( 255, 0, 255 ) ) // 16
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Office-building_address_book_16" ),  Rgb( 255, 0, 255 ) ) // 17
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_navigate_cross_16" ),       Rgb( 255, 0, 255 ) ) // 18
-      ::oTreeImageList:AddMasked( TBitmap():Define( "User1_16" ),                         Rgb( 255, 0, 255 ) ) // 19
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Power-drill_user1_16" ),             Rgb( 255, 0, 255 ) ) // 20 SAT
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Briefcase_user1_16" ),               Rgb( 255, 0, 255 ) ) // 21 Recibos
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Folder_document_16" ),               Rgb( 255, 0, 255 ) ) // 22 Folder
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Moneybag_16" ),                      Rgb( 255, 0, 255 ) ) // 23 Iva
+   ::oTreeImageList        := TImageList():New( 16, 16 )
+   ::oTreeImageList:AddMasked( TBitmap():Define( "Document_16" ),                      Rgb( 255, 0, 255 ) ) // 0
+   ::oTreeImageList:AddMasked( TBitmap():Define( "Document_new_16" ),                  Rgb( 255, 0, 255 ) ) // 1
+   ::oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_businessman_16" ),   Rgb( 255, 0, 255 ) ) // 2
+   ::oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_businessman_16" ),    Rgb( 255, 0, 255 ) ) // 3
+   ::oTreeImageList:AddMasked( TBitmap():Define( "Document_businessman_16" ),          Rgb( 255, 0, 255 ) ) // 4
+   ::oTreeImageList:AddMasked( TBitmap():Define( "Notebook_user1_16" ),                Rgb( 255, 0, 255 ) ) // 5
+   ::oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_user1_16" ),         Rgb( 255, 0, 255 ) ) // 6
+   ::oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_user1_16" ),          Rgb( 255, 0, 255 ) ) // 7
+   ::oTreeImageList:AddMasked( TBitmap():Define( "Document_user1_16" ),                Rgb( 255, 0, 255 ) ) // 8
+   ::oTreeImageList:AddMasked( TBitmap():Define( "Document_delete_16" ),               Rgb( 255, 0, 255 ) ) // 9 Rectificativas
+   ::oTreeImageList:AddMasked( TBitmap():Define( "Cashier_user1_16" ),                 Rgb( 255, 0, 255 ) ) // 10
+   ::oTreeImageList:AddMasked( TBitmap():Define( "ChgPre16" ),                         Rgb( 255, 0, 255 ) ) // 11
+   ::oTreeImageList:AddMasked( TBitmap():Define( "Truck_red_16" ),                     Rgb( 255, 0, 255 ) ) // 12
+   ::oTreeImageList:AddMasked( TBitmap():Define( "Package_16" ),                       Rgb( 255, 0, 255 ) ) // 13
+   ::oTreeImageList:AddMasked( TBitmap():Define( "Worker2_Form_Red_16" ),              Rgb( 255, 0, 255 ) ) // 14
+   ::oTreeImageList:AddMasked( TBitmap():Define( "Document_navigate_cross_16" ),       Rgb( 255, 0, 255 ) ) // 15 Rectifiactivas proveedores
+   ::oTreeImageList:AddMasked( TBitmap():Define( "Package_16" ),                       Rgb( 255, 0, 255 ) ) // 16
+   ::oTreeImageList:AddMasked( TBitmap():Define( "Office-building_address_book_16" ),  Rgb( 255, 0, 255 ) ) // 17
+   ::oTreeImageList:AddMasked( TBitmap():Define( "Document_navigate_cross_16" ),       Rgb( 255, 0, 255 ) ) // 18
+   ::oTreeImageList:AddMasked( TBitmap():Define( "User1_16" ),                         Rgb( 255, 0, 255 ) ) // 19
+   ::oTreeImageList:AddMasked( TBitmap():Define( "Power-drill_user1_16" ),             Rgb( 255, 0, 255 ) ) // 20 SAT
+   ::oTreeImageList:AddMasked( TBitmap():Define( "Briefcase_user1_16" ),               Rgb( 255, 0, 255 ) ) // 21 Recibos
+   ::oTreeImageList:AddMasked( TBitmap():Define( "Folder_document_16" ),               Rgb( 255, 0, 255 ) ) // 22 Folder
+   ::oTreeImageList:AddMasked( TBitmap():Define( "Moneybag_16" ),                      Rgb( 255, 0, 255 ) ) // 23 Iva
 
-      if !Empty( ::oTreeReporting )
-         ::oTreeReporting:SetImageList( ::oTreeImageList )
-      end if
+   if !Empty( ::oTreeReporting )
+      ::oTreeReporting:SetImageList( ::oTreeImageList )
+   end if
 
 RETURN ( Self )
 
@@ -3587,7 +3609,24 @@ RETURN ( Self )
 
 METHOD TreeReportingChanged() 
 
-   local cTitle   := ::oTreeReporting:GetSelText()
+   local cTitle   := ::oTreeReporting:getSelText()
+
+   if !empty( ::oTreeReporting:getSelected() )
+
+      if !empty( ::oTreeReporting:getSelected():bAction ) .and. hhaskey( ::oTreeReporting:getSelected():bAction, "Options" )
+
+         ::oTFastReportOptions:setOptions( hget( ::oTreeReporting:getSelected():bAction, "Options" ) )
+
+         ::lShowOptions()
+      
+      else
+         
+         ::lHideOptions()
+
+      end if 
+
+   end if 
+
 
    if ( "Listado" $ cTitle )
       ::lHideFecha()
@@ -3690,3 +3729,4 @@ METHOD initVariables()
 Return ( self )
 
 //----------------------------------------------------------------------------//
+

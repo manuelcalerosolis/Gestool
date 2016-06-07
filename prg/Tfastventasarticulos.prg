@@ -757,10 +757,7 @@ METHOD BuildReportCorrespondences()
    
    ::hReport   := {  "Listado" =>                     {  "Generate" =>  {||   ::listadoArticulo() } ,;
                                                          "Variable" =>  {||   nil },;
-                                                         "Data" =>      {||   nil },;
-                                                         "Options" =>   {  "Estado"                =>  { "Todos", "Finalizado", "No finalizado" },;
-                                                                           "Excluir importe cero"  => .f.,;
-                                                                           "Excluir unidades cero" => .f. } },; 
+                                                         "Data" =>      {||   nil } },; 
                      "SAT de clientes" =>             {  "Generate" =>  {||   ::AddSATClientes() },;
                                                          "Variable" =>  {||   ::AddVariableLineasSATCliente() },;
                                                          "Data" =>      {||   ::FastReportSATCliente() } },;
@@ -919,7 +916,13 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
                      { "Title" => "Facturas de clientes",         "Image" => 8, "Type" => "Facturas de clientes",          "Directory" => "Articulos\Ventas\Facturas de clientes",        "File" => "Facturas de clientes.fr3" },;
                      { "Title" => "Rectificativas de clientes",   "Image" => 9, "Type" => "Rectificativas de clientes",    "Directory" => "Articulos\Ventas\Rectificativas de clientes",  "File" => "Rectificativas de clientes.fr3" },;
                      { "Title" => "Tickets de clientes",          "Image" =>10, "Type" => "Tickets de clientes",           "Directory" => "Articulos\Ventas\Tickets de clientes",         "File" => "Tickets de clientes.fr3" },;
-                     { "Title" => "Ventas",                       "Image" =>11, "Type" => "Ventas",                        "Directory" => "Articulos\Ventas\Ventas",                      "File" => "Ventas.fr3" },;
+                     {  "Title" => "Ventas",;
+                        "Image" => 11,;
+                        "Type" => "Ventas",;
+                        "Directory" => "Articulos\Ventas\Ventas",;
+                        "File" => "Ventas.fr3",;
+                        "Options" =>   {  "Incluir clientes sin ventas" => {  "Options"   => .f.,;
+                                                                              "Value"     => .f. } } },;
                   } ;
                   },;
                   {  "Title" => "Producción",                     "Image" => 14, "Subnode" =>;

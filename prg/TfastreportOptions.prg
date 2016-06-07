@@ -35,12 +35,12 @@ END CLASS
 
 METHOD New() CLASS TFastReportOptions
 
-   ::hOptions           := {  "Estado"                => {  "Values" => { "Todos", "Finalizado", "No finalizado" },;
-                                                            "Value"  => "Todos" },;
-                              "Excluir importe cero"  => {  "Values" => .f.,;
-                                                            "Value"  => .f. },;
-                              "Excluir unidades cero" => {  "Values" => .f.,;
-                                                            "Value"  => .f. } }
+   ::hOptions           := {  "Estado"                => {  "Options"   => { "Todos", "Finalizado", "No finalizado" },;
+                                                            "Value"     => "Todos" },;
+                              "Excluir importe cero"  => {  "Options"   => .f.,;
+                                                            "Value"     => .f. },;
+                              "Excluir unidades cero" => {  "Options"   => .f.,;
+                                                            "Value"     => .f. } }
 
 Return ( self )
 
@@ -49,6 +49,8 @@ Return ( self )
 METHOD setOptions( hOptions ) CLASS TFastReportOptions
 
    ::hOptions 		:= hOptions
+
+   debug( hOptions, "asignado hOptions" )
 
 RETURN ( ::hOptions )
 
@@ -138,7 +140,7 @@ Return ( ::oDlg:nResult == IDOK )
 
 METHOD ChangeBrowse() CLASS TFastReportOptions
 
-   local valuesColumn   := hget( hb_hValueAt( ::hOptions, ::oBrw:nArrayAt ), "Values" )
+   local valuesColumn   := hget( hb_hValueAt( ::hOptions, ::oBrw:nArrayAt ), "Options" )
    local valueColumn    := hget( hb_hValueAt( ::hOptions, ::oBrw:nArrayAt ), "Value" )
    local valtypeColumn  := valtype( valuesColumn )
 
