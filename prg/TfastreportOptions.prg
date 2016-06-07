@@ -46,15 +46,15 @@ METHOD setOptions( hOptions ) CLASS TFastReportOptions
 
    ::hOptions 		:= hOptions
 
-   debug( hOptions, "asignado hOptions" )
+ //  debug( hOptions, "asignado hOptions" )
 
 RETURN ( ::hOptions )
 
 //---------------------------------------------------------------------------//
 
-METHOD getOptionValue( key ) CLASS TFastReportOptions
+METHOD getOptionValue( key, default ) CLASS TFastReportOptions
 		
-	local uValue
+	local uValue 			:= default
 	local hOptionValue
 
 	if hhaskey( ::hOptions, key ) 
