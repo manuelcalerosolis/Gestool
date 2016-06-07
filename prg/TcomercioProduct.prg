@@ -93,13 +93,17 @@ END CLASS
 
 METHOD buildAllProductInformation() CLASS TComercioProduct
 
+   local nProducts   := 0
+
    ::oProductDatabase():ordsetfocus( "cWebShop" )
 
    if ::oProductDatabase():seek( ::getCurrentWebName() )
 
-      while !( ::oProductDatabase():eof() )
+      while ( alltrim( ::oProductDatabase():cWebShop ) == ::getCurrentWebName() ) .and. !( ::oProductDatabase():eof() )
 
-         ::buildProductInformation(    ::oProductDatabase():Codigo )
+         ::buildProductInformation( ::oProductDatabase():Codigo )
+
+         nProducts++
 
          ::oProductDatabase():Skip()
 
@@ -1783,8 +1787,6 @@ METHOD getTotalStock( aStock ) CLASS TComercioProduct
    for each hStock in aStock
       nTotalStock    += hGet( hStock, "unitStock" )
    next 
-
-   msgAlert( nTotalStock, "nTotalStock" )
 
 Return ( nTotalStock )
 

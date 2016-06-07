@@ -112,8 +112,6 @@ METHOD insertCategories() CLASS TComercioCategory
 
    ::insertRootCategory()
 
-   debug( ::aCategoriesProduct )
-
    for each hCategoryProduct in ::aCategoriesProduct
       ::insertCategory( hCategoryProduct )
    next 

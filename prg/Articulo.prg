@@ -14986,7 +14986,7 @@ FUNCTION rxArticulo( cPath, cDriver )
       ( dbfArt )->( ordCondSet( "!Deleted() .and. lPubInt", {|| !Deleted() .and. Field->lPubInt }  ) )
       ( dbfArt )->( ordCreate( cPath + "Articulo.Cdx", "lPubInt", "Codigo", {|| Field->Codigo } ) )
 
-      ( dbfArt )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfArt )->( ordCondSet( "!Deleted() .and. lPubInt", {|| !Deleted() .and. Field->lPubInt }  ) )
       ( dbfArt )->( ordCreate( cPath + "Articulo.Cdx", "cWebShop", "Field->cWebShop", {|| Field->cWebShop } ) )
 
       ( dbfArt )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )

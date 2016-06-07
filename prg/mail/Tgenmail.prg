@@ -421,17 +421,21 @@ METHOD buildPageRedactar()
 
    // Formato------------------------------------------------------------------
 
-   REDEFINE GET ::oFormatoDocumento VAR ::cFormatoDocumento ;
-      IDSAY    191 ;
-      ID       190 ;
-      IDTEXT   192 ;
-      BITMAP   "Lupa" ;
-      OF       oDlg
+   if !empty( ::nView )
 
-   ::oFormatoDocumento:bValid    := {|| cDocumento( ::oFormatoDocumento, ::oFormatoDocumento:oHelpText, D():Documentos( ::nView ) ) }
-   ::oFormatoDocumento:bHelp     := {|| brwDocumento( ::oFormatoDocumento, ::oFormatoDocumento:oHelpText, ::cTypeFormat ) }
+      REDEFINE GET ::oFormatoDocumento VAR ::cFormatoDocumento ;
+         IDSAY    191 ;
+         ID       190 ;
+         IDTEXT   192 ;
+         BITMAP   "Lupa" ;
+         OF       oDlg
 
-   ::oEditDocumento     := TBtnBmp():ReDefine( 193, "Printer_pencil_16",,,,,{|| EdtDocumento( ::cFormatoDocumento ) }, oDlg, .f., , .f.,  )
+      ::oFormatoDocumento:bValid    := {|| cDocumento( ::oFormatoDocumento, ::oFormatoDocumento:oHelpText, D():Documentos( ::nView ) ) }
+      ::oFormatoDocumento:bHelp     := {|| brwDocumento( ::oFormatoDocumento, ::oFormatoDocumento:oHelpText, ::cTypeFormat ) }
+
+      ::oEditDocumento              := TBtnBmp():ReDefine( 193, "Printer_pencil_16",,,,,{|| EdtDocumento( ::cFormatoDocumento ) }, oDlg, .f., , .f.,  )
+
+   end if 
 
    // Adjunto------------------------------------------------------------------
 
@@ -722,7 +726,7 @@ METHOD replaceExpresion( cDocument, cExpresion ) CLASS TGenMailing
 
    cExpresionToSearch      := Alltrim( SubStr( cExpresion, 2, len( cExpresion ) - 2 ) )
 
-   if ( "()" $ cExpresionToSearch )
+   if ( "(" $ cExpresionToSearch .and. ")" $ cExpresionToSearch )
 
       cDocument            := StrTran( cDocument, cExpresion, cValToText( Eval( bChar2Block( cExpresionToSearch ) ) ) )
 
