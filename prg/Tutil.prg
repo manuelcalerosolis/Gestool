@@ -477,7 +477,6 @@ return alltrim( if( n > 0, left( cNameFile, n - 1 ), cNameFile ) )
 
 //---------------------------------------------------------------------------//
 
-
 function lChkSer( cSer, aSer )
 
    if Empty( cSer )
@@ -672,6 +671,10 @@ function oRetFld( cCod, oDbf, xFld, nOrd )
       xFld        := 2
    end if
 
+   if Empty( nOrd )
+      nOrd        := 1
+   end if
+
    nRec           := oDbf:Recno()
 
    if nOrd != nil
@@ -684,8 +687,17 @@ function oRetFld( cCod, oDbf, xFld, nOrd )
    */
 
    if !oDbf:Seek( cCod )
+       
+       /*if cCod == "0001"
+        ?"no lo encuentro"
+        msginfo( cCod, "cCod" )
+        msginfo( nOrd, "nOrd" )
+       end if*/
+
        oDbf:GoBottom()
+
        oDbf:Skip()
+
    end if
 
    if ( valType( xFld ) == "N" )

@@ -4353,8 +4353,18 @@ Method AddVariable() CLASS TNewInfGen
 
       public cGrupoGClienteDesde        := ::oGrupoGCliente:Cargo:Desde
       public cGrupoGClienteHasta        := ::oGrupoGCliente:Cargo:Hasta
-      public cGrupoGClienteNombreDesde  := oRetFld( ::oGrupoGCliente:Cargo:Desde, ::oGrpCli:oDbf )
-      public cGrupoGClienteNombreHasta  := oRetFld( ::oGrupoGCliente:Cargo:Hasta, ::oGrpCli:oDbf )
+      
+      /*MsgInfo( cGrupoGClienteDesde, len( cGrupoGClienteDesde ) )
+      MsgInfo( cGrupoGClienteHasta, len( cGrupoGClienteHasta ) )
+      MsgInfo( ::oGrpCli:oDbf:ClassName(), "ClassName" )
+      MsgInfo( ::oGrpCli:oDbf:OrdSetFocus(), "OrdSetFocus" )
+      
+      MsgInfo( oRetFld( ::oGrupoGCliente:Cargo:Desde, ::oGrpCli:oDbf, "CNOMGRP", "CCODGRP" ), "Nombre desde" )*/
+
+
+      public cGrupoGClienteNombreDesde  := oRetFld( ::oGrupoGCliente:Cargo:Desde, ::oGrpCli:oDbf, "CNOMGRP", "CCODGRP" )
+      public cGrupoGClienteNombreHasta  := oRetFld( ::oGrupoGCliente:Cargo:Hasta, ::oGrpCli:oDbf, "CNOMGRP", "CCODGRP" )
+
 
       ::oFastReport:AddVariable(       "Informe", "Desde código grupo de cliente",        "GetHbVar('cGrupoGClienteDesde')" )
       ::oFastReport:AddVariable(       "Informe", "Hasta código grupo de cliente",        "GetHbVar('cGrupoGClienteHasta')" )
