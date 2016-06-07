@@ -4726,8 +4726,6 @@ Return .t.
 
 METHOD controllerExportOneProductToPrestashop( idProduct ) Class TComercio
 
-   msgAlert( idProduct, "idProduct")
-
    if !( ::isAviableWebToExport() )
       Return .f.
    end if 

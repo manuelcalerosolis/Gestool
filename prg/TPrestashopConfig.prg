@@ -40,6 +40,7 @@ CLASS TPrestashopConfig
    METHOD isActive()                   INLINE ( ::getFromCurrentWeb( "Active", .t. ) )
    METHOD isSilenceMode()              INLINE ( ::getFromCurrentWeb( "SilenceMode", .f. ) )
    METHOD isInvertedNameFormat()       INLINE ( ::getFromCurrentWeb( "InvertedNameFormat", .f. ) )
+   METHOD isProcessWithoutStock()      INLINE ( ::getFromCurrentWeb( "ProcessWithoutStock", .t. ) )
 
    METHOD getMySqlServer()             INLINE ( ::getFromCurrentWeb( "MySqlServer" ) )
    METHOD getMySqlUser()               INLINE ( ::getFromCurrentWeb( "MySqlUser" ) )

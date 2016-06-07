@@ -84,6 +84,9 @@ CLASS TComercioProduct FROM TComercioConector
          METHOD buildFilesProductImages( hProductImage )
          METHOD ftpUploadFilesProductImages( hProductImage )
 
+   METHOD getTotalStock( hProduct ) 
+   METHOD isTotalStockZero( hProduct )                         INLINE ( ::getTotalStock( hProduct ) == 0 )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -297,35 +300,41 @@ METHOD buildProduct( id ) CLASS TComercioProduct
       Return ( self )
    end if 
 
+   // Recopilar info del stock-------------------------------------------------
+
+   aStockArticulo             := ::stockProduct( id )
+
+   if !( ::TPrestashopConfig():isProcessWithoutStock() ) .and. ::isTotalStockZero( aStockArticulo )
+      Return ( Self )
+   end if 
+
    // Recopilar info de imagenes-----------------------------------------
 
    aImagesArticulos           := ::imagesProduct( id )
 
-   aStockArticulo             := ::stockProduct( id )
-
    // Rellenamos el Hash-------------------------------------------------
 
-   aAdd( ::aProducts, { "id"                    => id,;
-                        "name"                  => alltrim( ::oProductDatabase():Nombre ),;
-                        "id_manufacturer"       => ::oProductDatabase():cCodFab ,;
-                        "id_tax_rules_group"    => ::oProductDatabase():TipoIva ,;
-                        "id_category_default"   => ::oProductDatabase():Familia ,;
-                        "reference"             => ::oProductDatabase():Codigo ,;
-                        "weight"                => ::oProductDatabase():nPesoKg ,;
-                        "specific_price"        => ::oProductDatabase():lSbrInt,;
-                        "description_short"     => alltrim( ::oProductDatabase():Nombre ) ,;
-                        "link_rewrite"          => cLinkRewrite( ::oProductDatabase():Nombre ),;
-                        "meta_title"            => alltrim( ::oProductDatabase():cTitSeo ) ,;
-                        "meta_description"      => alltrim( ::oProductDatabase():cDesSeo ) ,;
-                        "meta_keywords"         => alltrim( ::oProductDatabase():cKeySeo ) ,;
-                        "lPublicRoot"           => ::oProductDatabase():lPubPor,;
-                        "cImagen"               => alltrim( ::oProductDatabase():cImagen ),;
-                        "price"                 => ::getPrice(),;
-                        "reduction"             => ::getPriceReduction(),;
-                        "reduction_tax"         => ::getPriceReductionTax(),;
-                        "description"           => ::getDescription(),; 
-                        "aImages"               => aImagesArticulos,;
-                        "aStock"                => aStockArticulo } )
+   aAdd( ::aProducts,   {  "id"                    => id,;
+                           "name"                  => alltrim( ::oProductDatabase():Nombre ),;
+                           "id_manufacturer"       => ::oProductDatabase():cCodFab ,;
+                           "id_tax_rules_group"    => ::oProductDatabase():TipoIva ,;
+                           "id_category_default"   => ::oProductDatabase():Familia ,;
+                           "reference"             => ::oProductDatabase():Codigo ,;
+                           "weight"                => ::oProductDatabase():nPesoKg ,;
+                           "specific_price"        => ::oProductDatabase():lSbrInt,;
+                           "description_short"     => alltrim( ::oProductDatabase():Nombre ) ,;
+                           "link_rewrite"          => cLinkRewrite( ::oProductDatabase():Nombre ),;
+                           "meta_title"            => alltrim( ::oProductDatabase():cTitSeo ) ,;
+                           "meta_description"      => alltrim( ::oProductDatabase():cDesSeo ) ,;
+                           "meta_keywords"         => alltrim( ::oProductDatabase():cKeySeo ) ,;
+                           "lPublicRoot"           => ::oProductDatabase():lPubPor,;
+                           "cImagen"               => alltrim( ::oProductDatabase():cImagen ),;
+                           "price"                 => ::getPrice(),;
+                           "reduction"             => ::getPriceReduction(),;
+                           "reduction_tax"         => ::getPriceReductionTax(),;
+                           "description"           => ::getDescription(),; 
+                           "aImages"               => aImagesArticulos,;
+                           "aStock"                => aStockArticulo } )
 
 Return ( Self )
 
@@ -1765,3 +1774,22 @@ METHOD insertPropertiesLineProduct( hPropertiesLineProduct, nPosition ) CLASS TC
 Return ( self )
 
 //---------------------------------------------------------------------------//
+
+METHOD getTotalStock( aStock ) CLASS TComercioProduct
+
+   local hStock
+   local nTotalStock := 0
+
+   for each hStock in aStock
+      nTotalStock    += hGet( hStock, "unitStock" )
+   next 
+
+   msgAlert( nTotalStock, "nTotalStock" )
+
+Return ( nTotalStock )
+
+//---------------------------------------------------------------------------//
+
+
+
+
