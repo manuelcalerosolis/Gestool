@@ -96,6 +96,8 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD AddAlbaranProveedor()
    METHOD AddFacturaProveedor()
    METHOD AddRectificativaProveedor()
+   
+   METHOD processAllClients()
 
    METHOD idDocumento()                   INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc ) 
    METHOD IdDocumentoLinea()              INLINE ( ::idDocumento() + Str( ::oDbf:nNumLin ) )
@@ -135,7 +137,6 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD getTarifaArticulo()
 
    METHOD getUnidadesPedidoProveedor( cNumPed, cCodArt )
-   METHOD existeClienteInforme()
    METHOD isClientInReport()
 
    METHOD loadValuesExtraFields()
@@ -758,33 +759,41 @@ METHOD BuildReportCorrespondences()
    ::hReport   := {  "Listado" =>                     {  "Generate" =>  {||   ::listadoArticulo() } ,;
                                                          "Variable" =>  {||   nil },;
                                                          "Data" =>      {||   nil } },; 
-                     "SAT de clientes" =>             {  "Generate" =>  {||   ::AddSATClientes() },;
+                     "SAT de clientes" =>             {  "Generate" =>  {||   ::AddSATClientes(),;
+                                                                              ::processAllClients() },;
                                                          "Variable" =>  {||   ::AddVariableLineasSATCliente() },;
                                                          "Data" =>      {||   ::FastReportSATCliente() } },;
-                     "Presupuestos de clientes" =>    {  "Generate" =>  {||   ::AddPresupuestoClientes() },;
+                     "Presupuestos de clientes" =>    {  "Generate" =>  {||   ::AddPresupuestoClientes(),;
+                                                                              ::processAllClients() },;
                                                          "Variable" =>  {||   ::AddVariableLineasPresupuestoCliente() },;
                                                          "Data" =>      {||   ::FastReportPresupuestoCliente() } },;
-                     "Pedidos de clientes" =>         {  "Generate" =>  {||   ::AddPedidoClientes() },;
+                     "Pedidos de clientes" =>         {  "Generate" =>  {||   ::AddPedidoClientes(),;
+                                                                              ::processAllClients() },;
                                                          "Variable" =>  {||   ::AddVariableLineasPedidoCliente() },;
                                                          "Data" =>      {||   ::FastReportPedidoCliente() } },;
-                     "Albaranes de clientes" =>       {  "Generate" =>  {||   ::AddAlbaranCliente() },;
+                     "Albaranes de clientes" =>       {  "Generate" =>  {||   ::AddAlbaranCliente(),;
+                                                                              ::processAllClients() },;
                                                          "Variable" =>  {||   ::AddVariableLineasAlbaranCliente() },;
                                                          "Data" =>      {||   ::FastReportAlbaranCliente() } },;
                      "Facturas de clientes" =>        {  "Generate" =>  {||   ::AddFacturaCliente(),;
-                                                                              ::AddFacturaRectificativa() },;
+                                                                              ::AddFacturaRectificativa(),;
+                                                                              ::processAllClients() },;
                                                          "Variable" =>  {||   ::AddVariableFacturaCliente() },;
                                                          "Data" =>      {||   ::FastReportFacturaCliente(),;
                                                                               ::FastReportFacturaRectificativa() } },;
-                     "Rectificativas de clientes" =>  {  "Generate" =>  {||   ::AddFacturaRectificativa( .t. ) },;
+                     "Rectificativas de clientes" =>  {  "Generate" =>  {||   ::AddFacturaRectificativa( .t. ),;
+                                                                              ::processAllClients() },;
                                                          "Variable" =>  {||   ::AddVariableLineasRectificativaCliente() },;
                                                          "Data" =>      {||   ::FastReportFacturaRectificativa() } },;
-                     "Tickets de clientes" =>         {  "Generate" =>  {||   ::AddTicket( .t. ) },;
+                     "Tickets de clientes" =>         {  "Generate" =>  {||   ::AddTicket( .t. ),;
+                                                                              ::processAllClients() },;
                                                          "Variable" =>  {||   ::AddVariableLineasTicketCliente() },;
                                                          "Data" =>      {||   ::FastReportTicket( .t. ) } },;
                      "Ventas" =>                      {  "Generate" =>  {||   ::AddAlbaranCliente( .t. ),;
                                                                               ::AddFacturaCliente(),;
                                                                               ::AddFacturaRectificativa(),;
-                                                                              ::AddTicket() },;
+                                                                              ::AddTicket(),;
+                                                                              ::processAllClients() },;
                                                          "Variable" =>  {||   ::AddVariableLineasAlbaranCliente(),;
                                                                               ::AddVariableLineasFacturaCliente(),;
                                                                               ::AddVariableLineasRectificativaCliente(),;
@@ -3928,13 +3937,15 @@ Return ( self )
 
 //----------------------------------------------------------------------------//
 
-METHOD existeClienteInforme( cCodCli ) CLASS TFastVentasArticulos
+METHOD processAllClients() CLASS TFastVentasArticulos
 
-   local nRec
-   local nOrdAnt
+   if !( ::oTFastReportOptions:getOptionValue( "Incluir clientes sin ventas", .f. ) )
+      Return ( self )
+   end if 
 
-   nRec           := ::oDbfCli:Recno()
-   nOrdAnt        := ::oDbfCli:OrdSetFocus( "Cod" )
+   ::oDbfCli:getStatus()
+   
+   ::oDbfCli:OrdSetFocus( "Cod" )
 
    ::oDbfCli:goTop() 
    while !::oDbfCli:Eof() .and. !::lBreak
@@ -3942,8 +3953,14 @@ METHOD existeClienteInforme( cCodCli ) CLASS TFastVentasArticulos
       if !( ::isClientInReport( ::oDbfCli:Cod ) )
       
       ::oDbf:Blank()
-      ::oDbf:cCodCli := ::oDbfCli:Cod
-      ::oDbf:cNomCli := ::oDbfCli:Titulo
+      ::oDbf:cCodCli       := ::oDbfCli:Cod
+      ::oDbf:cNomCli       := ::oDbfCli:Titulo
+      ::oDbf:cCodRut       := ::oDbfCli:cCodRut
+      ::oDbf:cCodPago      := ::oDbfCli:CodPago
+      ::oDbf:cCodAge       := ::oDbfCli:cCodAge
+      ::oDbf:cCodTrn       := ::oDbfCli:cCodTrn
+      ::oDbf:cCodUsr       := ::oDbfCli:cCodUsr
+
       ::oDbf:Insert()
 
       end if 
@@ -3952,8 +3969,7 @@ METHOD existeClienteInforme( cCodCli ) CLASS TFastVentasArticulos
 
    end while
 
-   ::oDbfCli:OrdSetFocus( nOrdAnt )
-   ::oDbfCli:GoTo( nRec )
+   ::oDbfCli:setStatus()
 
 Return ( self )
 
@@ -4006,3 +4022,5 @@ METHOD ValidGrupoCliente( cCodGrp ) CLASS TFastVentasArticulos
 Return lValid 
 
 //---------------------------------------------------------------------------//
+
+

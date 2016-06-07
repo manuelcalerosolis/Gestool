@@ -35,12 +35,8 @@ END CLASS
 
 METHOD New() CLASS TFastReportOptions
 
-   ::hOptions           := {  "Estado"                => {  "Options"   => { "Todos", "Finalizado", "No finalizado" },;
-                                                            "Value"     => "Todos" },;
-                              "Excluir importe cero"  => {  "Options"   => .f.,;
-                                                            "Value"     => .f. },;
-                              "Excluir unidades cero" => {  "Options"   => .f.,;
-                                                            "Value"     => .f. } }
+   ::hOptions           := {  "Incluir clientes sin ventas" => {  "Options"   => .f.,;
+  		                                                            "Value"     => .f. } }
 
 Return ( self )
 
