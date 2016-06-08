@@ -13653,6 +13653,9 @@ CLASS TArticuloLabelGenerator
    Data nCantidadLabels
    Data nUnidadesLabels
 
+   Data oAlmacen 
+   Data cAlmacen
+
    Data oMtrLabel
    Data nMtrLabel
 
@@ -13866,6 +13869,17 @@ Method Create() CLASS TArticuloLabelGenerator
             MAX      99999 ;
             WHEN     ( ::nCantidadLabels == 1 ) ;
             OF       ::fldGeneral
+
+         REDEFINE GET ::oAlmacen Var ::cAlmacen ;
+            ID       230 ;
+            IDTEXT   231 ;
+            PICTURE  "@!" ;
+            WHEN     ( ::nCantidadLabels == 2 ) ;
+            BITMAP   "LUPA" ;
+            OF       ::fldGeneral
+
+            ::oAlmacen:bValid    := { || cAlmacen( ::oAlmacen, , ::oAlmacen:oHelpText ) }
+            ::oAlmacen:bHelp     := { || BrwAlmacen( ::oAlmacen, ::oAlmacen:oHelpText ) }
 
          // Segunda caja de dialogo--------------------------------------------------
 
