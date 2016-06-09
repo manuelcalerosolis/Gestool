@@ -65,17 +65,41 @@ METHOD New( nView, oPais ) CLASS AlbarenesClientesRedur
       ::oAlbaran:NombreConsignatario( ( D():AlbaranesClientes( ::nView ) )->cNomCli )
       
       if ( D():Clientes( ::nView ) )->( dbSeek( ( D():AlbaranesClientes( ::nView ) )->cCodCli ) )
-         ::oAlbaran:DireccionConsignatario( ( D():Clientes( ::nView ) )->cDomEnt )
-         ::oAlbaran:PoblacionConsignatario( ( D():Clientes( ::nView ) )->cPobEnt )
-         ::oAlbaran:CodigoPostalConsignatario( ( D():Clientes( ::nView ) )->cCPEnt )
-         ::oAlbaran:PlazaReparto( ( D():Clientes( ::nView ) )->cCPEnt )
-         ::oAlbaran:Observaciones1( ( D():Clientes( ::nView ) )->mComent )
+         
+         if !Empty( ( D():Clientes( ::nView ) )->cDomEnt )
+            ::oAlbaran:DireccionConsignatario( ( D():Clientes( ::nView ) )->cDomEnt )
+         else
+            ::oAlbaran:DireccionConsignatario( ( D():AlbaranesClientes( ::nView ) )->cDirCli )
+         end if
+
+         if !Empty( ( D():Clientes( ::nView ) )->cPobEnt )
+            ::oAlbaran:PoblacionConsignatario( ( D():Clientes( ::nView ) )->cPobEnt )
+         else
+            ::oAlbaran:PoblacionConsignatario( ( D():AlbaranesClientes( ::nView ) )->cPobCli )
+         end if
+
+         if !Empty( ( D():Clientes( ::nView ) )->cCPEnt )
+            ::oAlbaran:CodigoPostalConsignatario( ( D():Clientes( ::nView ) )->cCPEnt )
+         else
+            ::oAlbaran:CodigoPostalConsignatario( ( D():AlbaranesClientes( ::nView ) )->cPosCli )
+         end if
+
+         ::oAlbaran:PlazaReparto( ( D():Clientes( ::nView ) )->cCPEnt, ::oPais:GetIsoPais( ( D():Clientes( ::nView ) )->cCodPai ) )
+
+         if !Empty( ( D():Clientes( ::nView ) )->mComent )
+            ::oAlbaran:Observaciones1( ( D():Clientes( ::nView ) )->mComent )
+         else
+            ::oAlbaran:Observaciones1( ( D():AlbaranesClientes( ::nView ) )->mObserv )
+         end if
+      
       else
+
          ::oAlbaran:DireccionConsignatario( ( D():AlbaranesClientes( ::nView ) )->cDirCli )
          ::oAlbaran:PoblacionConsignatario( ( D():AlbaranesClientes( ::nView ) )->cPobCli )
          ::oAlbaran:CodigoPostalConsignatario( ( D():AlbaranesClientes( ::nView ) )->cPosCli )
-         ::oAlbaran:PlazaReparto( ( D():AlbaranesClientes( ::nView ) )->cPosCli )
+         ::oAlbaran:PlazaReparto( ( D():AlbaranesClientes( ::nView ) )->cPosCli, "" )
          ::oAlbaran:Observaciones1( ( D():AlbaranesClientes( ::nView ) )->mObserv )
+
       end if
 
       ::oAlbaran:ReferenciaAlbaran( ( D():AlbaranesClientes( ::nView ) )->nNumAlb )
@@ -303,9 +327,9 @@ METHOD CodigoBarras( nBulto ) CLASS Redur
 
    if ( D():Clientes( ::nView ) )->( dbSeek( ( D():AlbaranesClientes( ::nView ) )->cCodCli ) )
 
-      cCodBar   += AllTrim( ( D():Clientes( ::nView ) )->cCPEnt )
+      cCodBar   += AllTrim( Padr( ( D():Clientes( ::nView ) )->cCPEnt, 5, '0' ) )
     
-      cCodPai           := ::oPais:GetIsoPais( ( D():Clientes( ::nView ) )->cCodPai )
+      cCodPai   := ::oPais:GetIsoPais( ( D():Clientes( ::nView ) )->cCodPai )
 
    end if
 
@@ -321,14 +345,13 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-METHOD PlazaReparto( uValue ) CLASS Redur
+METHOD PlazaReparto( uValue, ISOPais ) CLASS Redur
 
    local cPlaza   := ""
    local nPos     := 0
-   
-   
+
    if len( ::oParent:aCodigosPostales ) > 0
-      nPos        := aScan( ::oParent:aCodigosPostales, {|x| if( isArray(x), x[2] == AllTrim( uValue ), .f. ) } )
+      nPos        := aScan( ::oParent:aCodigosPostales, {|x| if( isArray(x), x[1] == AllTrim( ISOPais ) .and. x[2] == AllTrim( uValue ), .f. ) } )
    end if
 
    if nPos != 0

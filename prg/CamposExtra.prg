@@ -16,7 +16,7 @@ CLASS TCamposExtra FROM TMant
 
    DATA oDlg
 
-   DATA lOpenFiles         INIT .f.      
+   DATA lOpenFiles         INIT .f.       
 
    DATA oCodigo
    DATA oNombre

@@ -688,12 +688,6 @@ function oRetFld( cCod, oDbf, xFld, nOrd )
 
    if !oDbf:Seek( cCod )
        
-       /*if cCod == "0001"
-        ?"no lo encuentro"
-        msginfo( cCod, "cCod" )
-        msginfo( nOrd, "nOrd" )
-       end if*/
-
        oDbf:GoBottom()
 
        oDbf:Skip()

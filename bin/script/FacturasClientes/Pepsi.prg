@@ -264,6 +264,8 @@ static function Exportacion()
                         cTextoCliente  += ";"
                         cTextoCliente  += Padr( AllTrim( ( dbfFacCliT )->cPosCli ), 5 )
                         cTextoCliente  += ";"
+                        cTextoCliente  += AllTrim( ( dbfFacCliT )->cNomCli )
+                        cTextoCliente  += ";"
                         cTextoCliente  += AllTrim( ( dbfFacCliT )->cDniCli )
                         cTextoCliente  += ";"
                         cTextoCliente  += AllTrim( ( dbfFacCliT )->cDirCli )

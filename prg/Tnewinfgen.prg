@@ -286,6 +286,15 @@ CLASS TNewInfGen FROM TInfGen
 
    METHOD End()
 
+   METHOD SetNombreDesdeGrupoCliente()
+   METHOD SetNombreHastaGrupoCliente()
+
+   METHOD SetNombreDesdeCliente()
+   METHOD SetNombreHastaCliente()
+
+   METHOD SetNombreDesdeArticulo()
+   METHOD SetNombreHastaArticulo()
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -792,8 +801,8 @@ METHOD lGrupoArticulo( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoArticulo:Cargo:Hasta        := Replicate( "Z", 18 ) // dbLast( ::oDbfArt, 1 )
    ::oGrupoArticulo:Cargo:cPicDesde    := Replicate( "#", 18 )
    ::oGrupoArticulo:Cargo:cPicHasta    := Replicate( "#", 18 )
-   ::oGrupoArticulo:Cargo:TextDesde    := {|| oRetFld( ::oGrupoArticulo:Cargo:Desde, ::oDbfArt, "Nombre", "Codigo" ) }
-   ::oGrupoArticulo:Cargo:TextHasta    := {|| oRetFld( ::oGrupoArticulo:Cargo:Hasta, ::oDbfArt, "Nombre", "Codigo" ) }
+   ::oGrupoArticulo:Cargo:TextDesde    := {|| ::SetNombreDesdeArticulo() }
+   ::oGrupoArticulo:Cargo:TextHasta    := {|| ::SetNombreHastaArticulo() }
    ::oGrupoArticulo:Cargo:HelpDesde    := {|| BrwArticulo( ::oDesde, ::oSayDesde, , .f. ) }
    ::oGrupoArticulo:Cargo:HelpHasta    := {|| BrwArticulo( ::oHasta, ::oSayHasta, , .f. ) }
    ::oGrupoArticulo:Cargo:ValidDesde   := {|oGet| if( cArticulo( if( !empty( oGet ), oGet, ::oDesde ), ::oDbfArt:cAlias, ::oSayDesde ), ( ::ChangeValor(), .t. ), .f. ) }
@@ -951,8 +960,8 @@ METHOD lGrupoCliente( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoCliente:Cargo:cPicHasta  := Replicate( "X", RetNumCodCliEmp() )
    ::oGrupoCliente:Cargo:HelpDesde  := {|| BrwCli( ::oDesde, ::oSayDesde, ::oDbfCli:cAlias ) }
    ::oGrupoCliente:Cargo:HelpHasta  := {|| BrwCli( ::oHasta, ::oSayHasta, ::oDbfCli:cAlias ) }
-   ::oGrupoCliente:Cargo:TextDesde  := {|| oRetFld( ::oGrupoCliente:Cargo:Desde, ::oDbfCli, "TITULO", "COD" ) }
-   ::oGrupoCliente:Cargo:TextHasta  := {|| oRetFld( ::oGrupoCliente:Cargo:Hasta, ::oDbfCli, "TITULO", "COD" ) }
+   ::oGrupoCliente:Cargo:TextDesde  := {|| ::SetNombreDesdeCliente() }
+   ::oGrupoCliente:Cargo:TextHasta  := {|| ::SetNombreHastaCliente() }
    ::oGrupoCliente:Cargo:ValidDesde := {|oGet| if( cClient( if( !Empty( oGet ), oGet, ::oDesde ), , ::oDbfCli:cAlias, ::oSayDesde ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoCliente:Cargo:ValidHasta := {|oGet| if( cClient( if( !Empty( oGet ), oGet, ::oHasta ), , ::oDbfCli:cAlias, ::oSayHasta ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoCliente:Cargo:lImprimir  := lImp
@@ -2061,8 +2070,8 @@ METHOD lGrupoGrupoCliente( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoGCliente:Cargo:cPicHasta  := "@!"
    ::oGrupoGCliente:Cargo:HelpDesde  := {|| ::oGrpCli:Buscar( ::oDesde ) }
    ::oGrupoGCliente:Cargo:HelpHasta  := {|| ::oGrpCli:Buscar( ::oHasta ) }
-   ::oGrupoGCliente:Cargo:TextDesde  := {|| oRetFld( ::oGrupoGCliente:Cargo:Desde, ::oGrpCli:oDbf, "cNomGrp", "cCodGrp" ) }
-   ::oGrupoGCliente:Cargo:TextHasta  := {|| oRetFld( ::oGrupoGCliente:Cargo:Hasta, ::oGrpCli:oDbf, "cNomGrp", "cCodGrp" ) }
+   ::oGrupoGCliente:Cargo:TextDesde  := {|| ::SetNombreDesdeGrupoCliente() }
+   ::oGrupoGCliente:Cargo:TextHasta  := {|| ::SetNombreHastaGrupoCliente() }
    ::oGrupoGCliente:Cargo:ValidDesde := {|oGet| if( ::oGrpCli:Existe( if( !Empty( oGet ), oGet, ::oDesde ), ::oSayDesde, "cNomGrp", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoGCliente:Cargo:ValidHasta := {|oGet| if( ::oGrpCli:Existe( if( !Empty( oGet ), oGet, ::oHasta ), ::oSayHasta, "cNomGrp", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoGCliente:Cargo:lImprimir  := lImp
@@ -4263,8 +4272,6 @@ Method AddVariable() CLASS TNewInfGen
    if !Empty( ::oGrupoArticulo )
       public cGrupoArticuloDesde       := ::oGrupoArticulo:Cargo:Desde
       public cGrupoArticuloHasta       := ::oGrupoArticulo:Cargo:Hasta
-      public cGrupoArticuloNombreDesde := oRetFld( ::oGrupoArticulo:Cargo:Desde, ::oDbfArt )
-      public cGrupoArticuloNombreHasta := oRetFld( ::oGrupoArticulo:Cargo:Hasta, ::oDbfArt )
 
       ::oFastReport:AddVariable(       "Informe", "Desde código de artículo",       "GetHbVar('cGrupoArticuloDesde')" )
       ::oFastReport:AddVariable(       "Informe", "Hasta código de artículo",       "GetHbVar('cGrupoArticuloHasta')" )
@@ -4283,8 +4290,6 @@ Method AddVariable() CLASS TNewInfGen
    if !Empty( ::oGrupoCliente )
       public cGrupoClienteDesde        := ::oGrupoCliente:Cargo:Desde
       public cGrupoClienteHasta        := ::oGrupoCliente:Cargo:Hasta
-      public cGrupoClienteNombreDesde  := oRetFld( ::oGrupoCliente:Cargo:Desde, ::oDbfCli )
-      public cGrupoClienteNombreHasta  := oRetFld( ::oGrupoCliente:Cargo:Hasta, ::oDbfCli )
 
       ::oFastReport:AddVariable(       "Informe", "Desde código de cliente",        "GetHbVar('cGrupoClienteDesde')" )
       ::oFastReport:AddVariable(       "Informe", "Hasta código de cliente",        "GetHbVar('cGrupoClienteHasta')" )
@@ -4354,18 +4359,6 @@ Method AddVariable() CLASS TNewInfGen
       public cGrupoGClienteDesde        := ::oGrupoGCliente:Cargo:Desde
       public cGrupoGClienteHasta        := ::oGrupoGCliente:Cargo:Hasta
       
-      /*MsgInfo( cGrupoGClienteDesde, len( cGrupoGClienteDesde ) )
-      MsgInfo( cGrupoGClienteHasta, len( cGrupoGClienteHasta ) )
-      MsgInfo( ::oGrpCli:oDbf:ClassName(), "ClassName" )
-      MsgInfo( ::oGrpCli:oDbf:OrdSetFocus(), "OrdSetFocus" )
-      
-      MsgInfo( oRetFld( ::oGrupoGCliente:Cargo:Desde, ::oGrpCli:oDbf, "CNOMGRP", "CCODGRP" ), "Nombre desde" )*/
-
-
-      public cGrupoGClienteNombreDesde  := oRetFld( ::oGrupoGCliente:Cargo:Desde, ::oGrpCli:oDbf, "CNOMGRP", "CCODGRP" )
-      public cGrupoGClienteNombreHasta  := oRetFld( ::oGrupoGCliente:Cargo:Hasta, ::oGrpCli:oDbf, "CNOMGRP", "CCODGRP" )
-
-
       ::oFastReport:AddVariable(       "Informe", "Desde código grupo de cliente",        "GetHbVar('cGrupoGClienteDesde')" )
       ::oFastReport:AddVariable(       "Informe", "Hasta código grupo de cliente",        "GetHbVar('cGrupoGClienteHasta')" )
 
@@ -4558,9 +4551,78 @@ METHOD End() CLASS TNewInfGen
       ::oGrpCli:CloseService()
    end if
 
-
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD SetNombreDesdeGrupoCliente() CLASS TNewInfGen
+   
+   if !Empty( ::oGrupoGCliente:Cargo:Desde )
+      public cGrupoGClienteNombreDesde  := oRetFld( ::oGrupoGCliente:Cargo:Desde, ::oGrpCli:oDbf, "CNOMGRP", "CCODGRP" )
+   else
+      public cGrupoGClienteNombreDesde  := ""
+   end if
+
+Return ( cGrupoGClienteNombreDesde )
+
+//---------------------------------------------------------------------------//
+
+METHOD SetNombreHastaGrupoCliente() CLASS TNewInfGen
+
+   if !Empty( ::oGrupoGCliente:Cargo:Hasta )
+      public cGrupoGClienteNombreHasta  := oRetFld( ::oGrupoGCliente:Cargo:Hasta, ::oGrpCli:oDbf, "CNOMGRP", "CCODGRP" )
+   else
+      public cGrupoGClienteNombreHasta  := ""
+   end if
+
+Return ( cGrupoGClienteNombreHasta )
+
+//---------------------------------------------------------------------------//
+
+METHOD SetNombreDesdeCliente() CLASS TNewInfGen
+   
+   if !Empty( ::oGrupoCliente:Cargo:Desde )
+      public cGrupoClienteNombreDesde  := oRetFld( ::oGrupoCliente:Cargo:Desde, ::oDbfCli, "TITULO", "COD" )
+   else
+      public cGrupoClienteNombreDesde  := ""
+   end if
+
+Return ( cGrupoClienteNombreDesde )
+
+//---------------------------------------------------------------------------//
+
+METHOD SetNombreHastaCliente() CLASS TNewInfGen
+
+   if !Empty( ::oGrupoCliente:Cargo:Hasta )
+      public cGrupoClienteNombreHasta  := oRetFld( ::oGrupoCliente:Cargo:Hasta, ::oDbfCli, "TITULO", "COD" )
+   else
+      public cGrupoClienteNombreHasta  := ""
+   end if
+
+Return ( cGrupoClienteNombreHasta )
+
+//---------------------------------------------------------------------------//
+
+METHOD SetNombreDesdeArticulo() CLASS TNewInfGen
+   
+   if !Empty( ::oGrupoArticulo:Cargo:Desde )
+      public cGrupoArticuloNombreDesde  := oRetFld( ::oGrupoArticulo:Cargo:Desde, ::oDbfArt, "Nombre", "Codigo" )
+   else
+      public cGrupoArticuloNombreDesde  := ""
+   end if
+
+Return ( cGrupoArticuloNombreDesde )
+
+//---------------------------------------------------------------------------//
+
+METHOD SetNombreHastaArticulo() CLASS TNewInfGen
+
+   if !Empty( ::oGrupoArticulo:Cargo:Hasta )
+      public cGrupoArticuloNombreHasta  := oRetFld( ::oGrupoArticulo:Cargo:Hasta, ::oDbfArt, "Nombre", "Codigo" )
+   else
+      public cGrupoArticuloNombreHasta  := ""
+   end if
+
+Return ( cGrupoArticuloNombreHasta )
+
+//---------------------------------------------------------------------------//

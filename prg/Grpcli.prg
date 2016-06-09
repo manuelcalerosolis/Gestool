@@ -18,6 +18,9 @@ CLASS TGrpCli FROM TMasDet
    DATA  oTreePadre
 
    DATA  oEnvases
+   DATA  oDetCamposExtra
+
+   DATA  oMenu
 
    METHOD New( cPath, cDriver, oWndParent, oMenuItem )   CONSTRUCTOR
    METHOD Create( cPath, cDriver )                       CONSTRUCTOR
@@ -46,6 +49,8 @@ CLASS TGrpCli FROM TMasDet
    METHOD ChangeTreeState( oTree, aItems )
    METHOD GetTreeState( oTree, aItems )
    METHOD SetTreeState( oTree, aItems )
+
+   METHOD EdtRotorMenu( oDlg )
 
 END CLASS
 
@@ -121,7 +126,7 @@ METHOD OpenFiles( lExclusive, cPath )
       end if 
 
       if !TAtipicas():GetInstance():OpenFiles()
-         lOpen          := .f.
+         lOpen             := .f.
       else 
          TAtipicas():GetInstance():oDbf:OrdSetFocus( "cCodGrp" ) 
       end if
@@ -134,10 +139,18 @@ METHOD OpenFiles( lExclusive, cPath )
 
       D():Get( "Artdiv", ::nView )
 
-      ::oEnvases        := TFrasesPublicitarias():Create( cPatArt() )
+      ::oEnvases           := TFrasesPublicitarias():Create( cPatArt() )
       if !::oEnvases:OpenFiles()
-         lOpen          := .f.
+         lOpen             := .f.
       end if
+
+      ::oDetCamposExtra    := TDetCamposExtra():New()
+      if !::oDetCamposExtra:OpenFiles
+         lOpen             := .f.
+      end if
+
+      ::oDetCamposExtra:SetTipoDocumento( "Grupos de clientes" )
+      //::oDetCamposExtra:setbId( {|| ::oDbf:cCodGrp } )
 
    RECOVER USING oError
 
@@ -217,6 +230,8 @@ METHOD Resource( nMode )
 
 	local oDlg
    local oFld
+   local oBmpGeneral
+   local oBmpTarifa
 
    DEFINE DIALOG     oDlg ;
       RESOURCE       "GRPCLI" ;
@@ -229,6 +244,12 @@ METHOD Resource( nMode )
                      "&Tarifas" ;
          DIALOGS     "GRPCLI_01" ,;
                      "GRPCLI_02"
+
+      REDEFINE BITMAP oBmpGeneral ;
+         ID          600 ;
+         RESOURCE    "businessmen_48" ;
+         TRANSPARENT ;
+         OF          oFld:aDialogs[ 1 ]
 
       REDEFINE GET   ::oGetCodigo ;
          VAR         ::oDbf:cCodGrp ;
@@ -251,6 +272,12 @@ METHOD Resource( nMode )
       Browse para atipicas-----------------------------------------------------
       */
 
+      REDEFINE BITMAP oBmpTarifa ;
+         ID          600 ;
+         RESOURCE    "Symbol_euro_48" ;
+         TRANSPARENT ;
+         OF          oFld:aDialogs[ 2 ]
+
       TAtipicas():GetInstance():ButtonAppend( 110, oFld:aDialogs[ 2 ] )
 
       TAtipicas():GetInstance():ButtonEdit( 120, oFld:aDialogs[ 2 ] )
@@ -270,20 +297,56 @@ METHOD Resource( nMode )
          ACTION      ( ::lSaveResource( nMode, oDlg ) )
 
 		REDEFINE BUTTON ;
-         ID          IDCANCEL ;
+         ID          IDCANCEL ; 
 			OF          oDlg ;
          CANCEL ;
 			ACTION      ( oDlg:end() )
 
    oDlg:AddFastKey( VK_F5, {|| ::lSaveResource( nMode, oDlg ) } )
+   oDlg:AddFastKey( VK_F9, {|| ::oDetCamposExtra:Play( ::oDbf:cCodGrp ) } )
 
-   oDlg:bStart       := {|| ::StartResource() }
+   oDlg:bStart       := {|| ::StartResource(), ::EdtRotorMenu( oDlg ) }
 
-	ACTIVATE DIALOG oDlg	CENTER
+	ACTIVATE DIALOG oDlg CENTER
+
+   if !Empty( ::oMenu )
+      ::oMenu:End()
+   end if
+
+   if !Empty( oBmpTarifa )
+      oBmpTarifa:End()
+   end if
+
+   if !Empty( oBmpGeneral )
+      oBmpGeneral:End()
+   end if
 
 RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
+
+METHOD EdtRotorMenu( oDlg )
+
+   MENU ::oMenu
+
+      MENUITEM    "&1. Rotor"
+
+      MENU
+
+         MENUITEM "&1. Campos extra [F9]";
+            MESSAGE  "Mostramos y rellenamos los campos extra para el grupo cliente" ;
+            RESOURCE "form_green_add_16" ;
+            ACTION   ( ::oDetCamposExtra:Play( ::oDbf:cCodGrp ) )
+
+      ENDMENU
+
+   ENDMENU
+
+   oDlg:SetMenu( ::oMenu )
+
+Return ( ::oMenu )
+
+//---------------------------------------------------------------------------//
 
 Method lSaveResource( nMode, oDlg )
 
