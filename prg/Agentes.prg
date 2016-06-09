@@ -2021,4 +2021,4 @@ Function setOldCodigoAgente( cCodigoAgente )
    
    cOldCodigoAgente := cCodigoAgente 
 
-RETURN
+RETURN (nil)
