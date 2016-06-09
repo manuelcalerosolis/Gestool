@@ -1668,7 +1668,7 @@ RETURN ( aBase )
 
 //--------------------------------------------------------------------------//
 
-FUNCTION cAgentes( oGet, dbfAge, oGet2, oGetPct )
+FUNCTION cAgentes( oGet, dbfAge, oGet2, oGetPct ) 
 
    local nRec
    local oBlock
