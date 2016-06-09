@@ -64,8 +64,10 @@ CLASS TCobAge FROM TMasDet
 
    DATA  oSer                    INIT Array( 26 )
    DATA  aSer                    INIT Afill( Array( 26 ), .t. )
-   DATA  dFecIni
-   DATA  dFecFin
+
+   DATA  oFecIni
+   DATA  oFecFin
+   
    DATA  lFacLiq
    DATA  lFacturasComisiones
    DATA  lFacturasNoCobradas
@@ -198,8 +200,6 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS TCobAge
 
    ::cCodAge               := Space( 5 )
 
-   ::dFecIni               := Ctod( "01/" + Str( Month( Date() ), 2 ) + "/" + Str( Year( Date() ), 4 ) )
-   ::dFecFin               := Date()
    ::lFacLiq               := .f.
    ::lFacturasComisiones   := .t.
    ::lFacturasNoCobradas   := .t.
@@ -351,6 +351,8 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TCobAge
    FIELD NAME "nTotCob"    TYPE "N" LEN  16 DEC  6                      COMMENT "Total liquidación" ALIGN RIGHT PICTURE cPorDiv()                                     COLSIZE 100      OF oDbf
    FIELD NAME "cCodPrv"    TYPE "C" LEN  12 DEC  0                      COMMENT "Proveedor"                                                                                       HIDE OF oDbf
    FIELD NAME "cNumFac"    TYPE "C" LEN  12 DEC  0                      COMMENT "Factura de gastos"                                                                               HIDE OF oDbf
+   FIELD NAME "dFecIni"    TYPE "D" LEN   8 DEC  0 DEFAULT GetSysDate() COMMENT "Fecha inicio de la liquidacion"                                                      COLSIZE  80      OF oDbf
+   FIELD NAME "dFecFin"    TYPE "D" LEN   8 DEC  0 DEFAULT GetSysDate() COMMENT "Fecha fin de la liquidacion"                                                         COLSIZE  80      OF oDbf
 
    INDEX TO "RemAgeT.Cdx" TAG "nNumCob"  ON "Str( nNumCob ) + cSufCob" COMMENT "Número"   NODELETED OF oDbf
    INDEX TO "RemAgeT.Cdx" TAG "cCoaAge"  ON "cCodAge"                  COMMENT "Agente"   NODELETED OF oDbf
@@ -628,9 +630,12 @@ METHOD Resource( nMode ) CLASS TCobAge
    local oGetCodDiv
    local oGetValDiv
    local oBmpGeneral
+   local oBtnAst
 
    if ( nMode == APPD_MODE )
       ::oDbf:dFecCob := GetSysDate()
+      ::oDbf:dFecIni := Ctod( "01/" + Str( Month( GetSysDate() ), 2 ) + "/" + Str( Year( GetSysDate() ), 4 ) )
+      ::oDbf:dFecFin := GetSysDate()
       ::oDbf:cCodDiv := cDivEmp()
       ::oDbf:nVdvDiv := nChgDiv( cDivEmp(), ::oDivisas )
    end if
@@ -666,6 +671,18 @@ METHOD Resource( nMode ) CLASS TCobAge
          WHEN     ( nMode != ZOOM_MODE ) ;
 			OF 		oDlg
 
+      REDEFINE GET ::oFecIni VAR ::oDbf:dFecIni ;
+         ID       180 ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET ::oFecFin VAR ::oDbf:dFecFin ;
+         ID       190 ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
       /*REDEFINE GET oFactura VAR ::oDbf:cNumFac ;
          ID       180 ;
          PICTURE  "@R X/#########/XX" ;
@@ -698,6 +715,12 @@ METHOD Resource( nMode ) CLASS TCobAge
          ID       131 ;
          WHEN     ( .f. ) ;
          OF       oDlg
+
+      REDEFINE BUTTON oBtnAst;
+         ID       170 ;
+         OF       oDlg; 
+         WHEN     ( nMode != ZOOM_MODE );
+         ACTION   ::AsistenteImportarFacturas()    
 
       REDEFINE GET oGetCodDiv VAR ::oDbf:cCodDiv UPDATE ;
          WHEN     ( nMode == APPD_MODE .and. ::oDbf:LastRec() == 0 ) ;
@@ -1373,6 +1396,7 @@ METHOD AsistenteImportarFacturas() CLASS TCobAge
    local oBtnNxt
 
    if Empty( ::oDbf:cCodAge ) .or. !( ::oAgentes:SeekInOrd( ::oDbf:cCodAge, "cCodAge" ) )
+      msgStop( "Es necesario codificar un agente.", "Importar Facturas" )
       return .f.
    end if
 
@@ -1386,12 +1410,12 @@ METHOD AsistenteImportarFacturas() CLASS TCobAge
       TRANSPARENT ;
       OF       oDlg
 
-   REDEFINE GET ::dFecIni ;
+   REDEFINE GET ::oDbf:dFecIni ;
       ID       150 ;
-      SPINNER ;
-      OF       oPag:aDialogs[ 1 ]
+      SPINNER ;      
+      OF       oPag:aDialogs[ 1 ]      
 
-   REDEFINE GET ::dFecFin ;
+   REDEFINE GET ::oDbf:dFecFin ;
       ID       160 ;
       SPINNER ;
       OF       oPag:aDialogs[ 1 ]
@@ -1569,6 +1593,9 @@ METHOD AsistenteImportarFacturas() CLASS TCobAge
 
    oBmp:End()
 
+   ::oFecIni:Refresh()
+   ::oFecFin:Refresh()
+
 RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
@@ -1745,8 +1772,8 @@ METHOD ImportaFacturaAgentes( oBrw, cCodigoAgente, nPorcentajeAgente, lRelaciona
 
       while ( ::oFacCliT:cCodAge == cCodigoAgente ) .and. !::oFacCliT:eof()
 
-         if ::oFacCliT:dFecFac >= ::dFecIni                       .and.;
-            ::oFacCliT:dFecFac <= ::dFecFin                       .and.;
+         if ::oFacCliT:dFecFac >= ::oDbf:dFecIni                       .and.;
+            ::oFacCliT:dFecFac <= ::oDbf:dFecFin                       .and.;
             lChkSer( ::oFacCliT:cSerie, ::aSer )
 
             if ::lFacturaProcesar( .f., lRelacionado )
@@ -1790,8 +1817,8 @@ METHOD ImportaFacturaAgentes( oBrw, cCodigoAgente, nPorcentajeAgente, lRelaciona
 
       while ( ::oFacRecT:cCodAge == cCodigoAgente ) .and. !::oFacRecT:eof()
 
-         if ::oFacRecT:dFecFac >= ::dFecIni                       .and.;
-            ::oFacRecT:dFecFac <= ::dFecFin                       .and.;
+         if ::oFacRecT:dFecFac >= ::oDbf:dFecIni                       .and.;
+            ::oFacRecT:dFecFac <= ::oDbf:dFecFin                       .and.;
             lChkSer( ::oFacRecT:cSerie, ::aSer )
 
             if ::lFacturaProcesar( .t., lRelacionado )

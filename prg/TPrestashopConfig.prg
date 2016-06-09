@@ -24,6 +24,7 @@ CLASS TPrestashopConfig
    METHOD destroyInstance()            INLINE ( ::oInstance := nil )
 
    METHOD loadJSON() 
+   METHOD saveJSON()
 
    METHOD getWebs()
    METHOD getWebsNames()
@@ -36,10 +37,13 @@ CLASS TPrestashopConfig
    METHOD getCurrentWeb( hCurrentWeb ) INLINE ( ::hCurrentWeb )
    
    METHOD getFromCurrentWeb( key, default )
+   METHOD setToCurrentWeb( key, value )
 
    METHOD isActive()                   INLINE ( ::getFromCurrentWeb( "Active", .t. ) )
    METHOD isSilenceMode()              INLINE ( ::getFromCurrentWeb( "SilenceMode", .f. ) )
    METHOD isInvertedNameFormat()       INLINE ( ::getFromCurrentWeb( "InvertedNameFormat", .f. ) )
+   METHOD isProcessWithoutStock()      INLINE ( ::getFromCurrentWeb( "ProcessWithoutStock", .t. ) )
+   METHOD isProcessWithoutImage()      INLINE ( ::getFromCurrentWeb( "ProcessWithoutImage", .t. ) )
 
    METHOD getMySqlServer()             INLINE ( ::getFromCurrentWeb( "MySqlServer" ) )
    METHOD getMySqlUser()               INLINE ( ::getFromCurrentWeb( "MySqlUser" ) )
@@ -118,6 +122,18 @@ Return ( value )
 
 //---------------------------------------------------------------------------//
 
+METHOD setToCurrentWeb( key, value ) CLASS TPrestashopConfig
+   
+   if empty( ::getCurrentWeb() )
+      Return ( .f. )
+   end if 
+
+   hset( ::getCurrentWeb(), key, value )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
 METHOD LoadJSON() CLASS TPrestashopConfig
 
    local cConfig
@@ -133,6 +149,20 @@ METHOD LoadJSON() CLASS TPrestashopConfig
          ::hConfig            := hConfig
       end if 
 
+   end if 
+
+Return ( Self )
+
+//----------------------------------------------------------------//
+
+METHOD SaveJSON() CLASS TPrestashopConfig
+
+   local cConfig
+   local hConfig
+   local cFileConfigEmpresa   := ::getFullFileName()
+
+   if file( cFileConfigEmpresa )
+      memowrit( cFileConfigEmpresa, hb_jsonencode( ::hConfig, .t. ) )
    end if 
 
 Return ( Self )

@@ -249,13 +249,12 @@ CLASS TComercio
    DATA  cDirImagen
 
    METHOD buildFTP()                   
+   METHOD destroyFTP()                 INLINE ( ::oFtp:endConcexion() )
 
    METHOD meterTotalText( cText )
    METHOD meterTotalSetTotal( nTotal )
    METHOD meterProcesoText( cText )
    METHOD meterProcesoSetTotal( nTotal )
-
-   METHOD oProductDatabase()           INLINE ( ::oArt )
    
    // Controladores---------------------------------------------------------------
 
@@ -383,8 +382,7 @@ CLASS TComercio
    METHOD prestaShopCommit()                          INLINE ( if( !empty( ::oCon ), E1ExecDirect( ::oCon:hConnect, "commit" ), ) )
    METHOD prestaShopRollBack()                        INLINE ( if( !empty( ::oCon ), E1ExecDirect( ::oCon:hConnect, "rollback" ), ) )
 
-   METHOD ftpConnect()                                INLINE ( if( empty( ::oFtp ), ::buildFTP(), ),;
-                                                               if( ::oFtp:CreateConexion(), .t., ( msgStop( "Imposible conectar al sitio ftp " + ::oFtp:cServer ), .t. ) ) )
+   METHOD ftpConnect()                                INLINE ( if( ::oFtp:CreateConexion(), .t., ( msgStop( "Imposible conectar al sitio ftp " + ::oFtp:cServer ), .t. ) ) )
    METHOD ftpDisConnect()                             INLINE ( if( !empty( ::oFtp ), ::oFtp:EndConexion(), ) )
 
    METHOD buildInitData()
@@ -474,12 +472,6 @@ CLASS TComercio
 
    METHOD updateWebProductStocks()
    METHOD updateProductStocks( cWebName, aProductsWeb )   
-
-   Method insertStructureInformation()
-   Method insertOneProductToPrestashop( idProduct )
-   Method insertAllProducts()
-
-   METHOD saveLastInsertProduct( idProduct )
 
 END CLASS
 
@@ -4666,64 +4658,91 @@ METHOD controllerExportPrestashop( idProduct ) Class TComercio
 
    ::disableDialog()
 
-   //oBlock            := ErrorBlock( { | oError | Break( oError ) } )
-   //BEGIN SEQUENCE
+   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
+   BEGIN SEQUENCE
 
       if ::filesOpen()
 
+         ::MeterTotalSetTotal( 8 )
+
+         ::MeterTotalText( "Eliminando referencias en gestool." )
+
+         ::TComercioProduct:cleanGestoolReferences()
+
+         ::TComercioCategory:cleanGestoolReferences()
+
+         // Construimos la informacion de todos los productos---------------
+
+         ::TComercioProduct:buildAllProductInformation()
+
+         ::buildFTP()
+
+         if ::prestaShopConnect()
+
+            ::prestaShopStart()
+
+            ::TComercioProduct:truncateAllTables()
+
+            ::TComercioCategory:truncateAllTables()
+
+            ::MeterTotalText( "Subiendo la información adicional a los productos." )
+
+            ::TComercioProduct:insertAditionalInformation()
+
+            ::TComercioCategory:insertCategories()   
+
+            // ::TComercioProduct:insertProducts()
+
+            ::prestaShopCommit()
+
+            ::prestaShopDisConnect()
+
+            // subiendo imagenes-----------------------------------------------
+
+            // ::ftpConnect()
+
+            // ::TComercioProduct:uploadImagesToPrestashop()
+
+            // ::ftpDisConnect()
+
+         end if 
+
+         waitSeconds( 30 )
+
+         if ::prestaShopConnect()
+
+            ::prestaShopStart()
+
+            ::TComercioProduct:insertProducts()
+
+            ::prestaShopCommit()
+
+            ::prestaShopDisConnect()
+
+         end if 
+
+         waitSeconds( 30 )
+
+         // subiendo imagenes-----------------------------------------------
+
          ::ftpConnect()
 
-         ::insertStructureInformation()
-
-         waitSeconds( 1 )
-
-         ::insertAllProducts()
+         ::TComercioProduct:uploadImagesToPrestashop()
 
          ::ftpDisConnect()
 
+         ::filesClose()
+
+         ::MeterTotalText( "Proceso finalizado." )
+
       end if
    
-//   RECOVER USING oError
-//      msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
-//   END SEQUENCE
-//   ErrorBlock( oBlock )
+   RECOVER USING oError
+      msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
+   END SEQUENCE
+   ErrorBlock( oBlock )
 
    ::EnableDialog()
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-//
-// Construimos la estructura de la informacion de todos los productos----------
-//
-
-METHOD insertStructureInformation() CLASS TComercio
-
-   ::MeterTotalText( "Eliminando referencias en gestool." )
-
-   ::TComercioProduct:cleanGestoolReferences()
-
-   ::TComercioCategory:cleanGestoolReferences()
-
-   ::TComercioProduct:buildAllProductInformation()
-
-   if ::prestaShopConnect()
-
-      ::TComercioProduct:truncateAllTables()
-
-      ::TComercioCategory:truncateAllTables()
-
-      ::MeterTotalText( "Subiendo la información adicional a los productos." )
-
-      ::TComercioProduct:insertAditionalInformation()
-
-      ::TComercioCategory:insertCategories()   
-
-      ::TComercioCategory:updateCategoriesParent()
-
-      ::prestaShopDisConnect()
-
-   end if 
 
 Return .t.
 
@@ -4740,11 +4759,29 @@ METHOD controllerExportOneProductToPrestashop( idProduct ) Class TComercio
 
    if ::filesOpen()
 
-      ::ftpConnect()
+      ::buildFTP()
 
-      ::insertOneProductToPrestashop( idProduct )
+      if ::prestaShopConnect()
+
+         ::prestaShopStart()
+
+         ::TComercioProduct:buildProductInformation( idProduct )
+
+         ::TComercioProduct:insertProducts()
+
+         ::prestaShopCommit()
+
+         ::prestaShopDisConnect()
+
+         // subiendo imagenes-----------------------------------------------
+
+         ::ftpConnect()
+
+         ::TComercioProduct:uploadImagesToPrestashop()
+
+         ::ftpDisConnect()
          
-      ::ftpDisConnect()
+      end if 
 
       ::filesClose()
 
@@ -4753,66 +4790,6 @@ METHOD controllerExportOneProductToPrestashop( idProduct ) Class TComercio
    ::oWaitMeter:End()
 
 Return .t.
-
-//---------------------------------------------------------------------------//
-
-METHOD insertOneProductToPrestashop( idProduct ) Class TComercio
-
-   if !( ::TComercioProduct:buildProduct( idProduct, .t. ) )
-      Return .f.
-   end if 
-
-   if ::prestaShopConnect()
-
-      ::TComercioProduct:insertProducts()
-
-      ::prestaShopDisConnect()
-
-      // subiendo imagenes-----------------------------------------------------
-
-      ::TComercioProduct:uploadImagesToPrestashop()
-      
-   end if 
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
-METHOD insertAllProducts() CLASS TComercio
-
-   ::oProductDatabase():ordsetfocus( "lWebShop" )
-
-   if ::oProductDatabase():seek( ::getCurrentWebName() )
-
-      while ( alltrim( ::oProductDatabase():cWebShop ) == ::getCurrentWebName() ) .and. !( ::oProductDatabase():eof() )
-
-         if ::insertOneProductToPrestashop( ::oProductDatabase():Codigo )
-            ::saveLastInsertProduct( ::oProductDatabase():Codigo )
-         end if 
-
-         ::oProductDatabase():Skip()
-
-      end while
-
-      ::saveLastInsertProduct()
-
-   end if 
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD saveLastInsertProduct( idProduct ) CLASS TComercio
-
-   DEFAULT idProduct    := ""
-
-   ::TPrestashopConfig():setToCurrentWeb( "IdProduct", idProduct )
-
-   ::TPrestashopConfig():saveJSON()
-
-   msgAlert("mira el json")
-
-Return ( self )
 
 //---------------------------------------------------------------------------//
 

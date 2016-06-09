@@ -23,6 +23,9 @@ CLASS TComercioCategory FROM TComercioConector
          METHOD getParentCategory( idCategory ) 
          METHOD getNodeParentCategory( idCategory )
 
+   METHOD updateCategoriesParent()
+      METHOD updateCategoryParent( hCategory )
+
    METHOD truncateAllTables() 
       
    METHOD cleanGestoolReferences()
@@ -92,6 +95,7 @@ Return ( Self )
 
 METHOD insertRootCategory() CLASS TComercioCategory
 
+   /*
    local hCategory   := {  "id"              => '1',;
                            "id_parent"       => '',;
                            "name"            => 'Root',;
@@ -101,6 +105,117 @@ METHOD insertRootCategory() CLASS TComercioCategory
                            "cPrefijoNombre"  => '' }
 
    ::insertCategory( hCategory )
+*/
+
+   local cCommand := ""
+
+   /*
+   Insertamos el root en la tabla de categorias------------------------------
+   */
+
+   ::writeText( "Añadiendo categoría raiz" )
+
+   cCommand       := "INSERT INTO " + ::cPrefixTable( "category" ) + " ( id_category, id_parent, id_shop_default, level_depth, nleft, nright, active, date_add, date_upd, position ) VALUES ( '1', '0', '1', '0', '0', '0', '1', '" + dtos( GetSysDate() ) + "', '" + dtos( GetSysDate() ) + "', '0' ) "
+
+   if ::commandExecDirect( cCommand )
+      ::writeText( "He insertado correctamente en la tabla categorías la categoría raiz", 3 )
+   else
+      ::writeText( "Error al insertar la categoría raiz", 3 )
+   end if
+
+   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + " ( id_category, id_lang, name, description, link_rewrite, meta_title, meta_keywords, meta_description ) VALUES ( '1', '" + str( ::getLanguage() ) + "', 'Root', 'Root', 'Root', '', '', '' )"
+
+   if ::commandExecDirect( cCommand )
+      ::writeText( "He insertado correctamente en la tabla categorias lenguajes la categoría raiz", 3 )
+   else
+      ::writeText( "Error al insertar la categoría raiz", 3 )
+   end if
+
+   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_shop" ) + " ( id_category, id_shop, position ) VALUES ( '1', '1', '0' )"
+
+   if ::commandExecDirect( cCommand )
+      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
+   else
+      ::writeText( "Error al insertar la categoría raiz", 3 )
+   end if
+
+   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '1', '1' )"
+
+   if ::commandExecDirect( cCommand )
+      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
+   else
+      ::writeText( "Error al insertar la categoría raiz", 3 )
+   end if
+
+   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '1', '2' )"
+
+   if ::commandExecDirect( cCommand )
+      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
+   else
+      ::writeText( "Error al insertar la categoría raiz", 3 )
+   end if
+
+   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '1', '3' )"
+
+   if ::commandExecDirect( cCommand )
+      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
+   else
+      ::writeText( "Error al insertar la categoría root en category_group", 3 )
+   end if
+
+   /*
+   Metemos la categoría de inicio de la que colgarán los grupos y las categorias
+   */
+
+   cCommand       := "INSERT INTO " + ::cPrefixTable( "category" ) + " ( id_parent, id_shop_default, level_depth, nleft, nright, active, date_add, date_upd, position, is_root_category ) VALUES ( '1', '1', '1', '0', '0', '1', '" + dtos( GetSysDate() ) + "', '" + dtos( GetSysDate() ) + "', '0', '1' ) "
+
+   if ::commandExecDirect( cCommand )
+      ::writeText( "He insertado correctamente en la tabla categorias la categoría raiz", 3 )
+   else
+      ::writeText( "Error al insertar la categoría inicio", 3 )
+   end if
+
+   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + " ( id_category, id_lang, name, description, link_rewrite, meta_title, meta_keywords, meta_description ) VALUES ( '2', '" + str( ::getLanguage() ) + "', 'Inicio', 'Inicio', 'Inicio', '', '', '' )"
+
+   if ::commandExecDirect( cCommand )
+      ::writeText( "He insertado correctamente en la tabla categorias lenguajes la categoría raiz", 3 )
+   else
+      ::writeText( "Error al insertar la categoría inicio", 3 )
+   end if
+
+   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_shop" ) + " ( id_category, id_shop, position ) VALUES ( '2', '1', '0' )"
+
+   if ::commandExecDirect( cCommand )
+      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
+   else
+      ::writeText( "Error al insertar la categoría inicio", 3 )
+   end if
+
+   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '2', '1' )"
+
+   if ::commandExecDirect( cCommand )
+      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
+   else
+      ::writeText( "Error al insertar la categoría inicio", 3 )
+   end if
+
+   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '2', '2' )"
+
+   if ::commandExecDirect( cCommand )
+      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
+   else
+      ::writeText( "Error al insertar la categoría inicio", 3 )
+   end if
+
+   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '2', '3' )"
+
+   if ::commandExecDirect( cCommand )
+      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
+   else
+      ::writeText( "Error al insertar la categoría inicio", 3 )
+   end if
+
+   SysRefresh()
 
 Return ( Self )
 
@@ -112,11 +227,44 @@ METHOD insertCategories() CLASS TComercioCategory
 
    ::insertRootCategory()
 
-   debug( ::aCategoriesProduct )
-
    for each hCategoryProduct in ::aCategoriesProduct
       ::insertCategory( hCategoryProduct )
    next 
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD updateCategoriesParent() CLASS TComercioCategory
+
+   local hCategoryProduct
+
+   for each hCategoryProduct in ::aCategoriesProduct
+      ::updateCategoryParent( hCategoryProduct )
+   next 
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD updateCategoryParent( hCategoryProduct ) CLASS TComercioCategory
+
+   local nParent     
+   local cCommand    
+
+   nParent           := ::TPrestashopId:getValueCategory( hGet( hCategoryProduct, "id_parent" ), ::getCurrentWebName(), 2 )
+
+   cCommand          := "UPDATE " + ::cPrefixTable( "category" ) + " " + ;
+                           "SET id_parent = '" + alltrim( str( nParent ) ) + "' " + ;
+                        "WHERE id_category = " + alltrim( str( ::TPrestashopId():getValueCategory( hGet( hCategoryProduct, "id" ), ::getCurrentWebName() ) ) )
+
+   if ::commandExecDirect( cCommand )
+      ::writeText( "He relacionado la familia " + hGet( hCategoryProduct, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "category" ) )
+   else
+      ::writeText( "Error al relacionar la familia " + hGet( hCategoryProduct, "name" ) + " en la tabla " + ::cPrefixTable( "category" ) )
+   end if
+
+   SysRefresh()
 
 Return ( Self )
 

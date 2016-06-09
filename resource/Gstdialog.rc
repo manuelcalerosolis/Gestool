@@ -4033,36 +4033,41 @@ FONT 8, "MS Sans Serif"
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN
 
-COBAGE DIALOG DISCARDABLE 87, -147, 620, 374
+COBAGE DIALOG DISCARDABLE 87, -147, 620, 392
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Cobros de agentes"
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 239, 30, 70, 12
-  CONTROL "", 131, "Edit", WS_BORDER|WS_TABSTOP, 311, 30, 300, 12
-  CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 239, 42, 70, 12
-  CONTROL "TBitmap", 141, "TBitmap", 0x00800000, 311, 42, 16, 11
-  CONTROL "", 142, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 521, 42, 90, 12
-  CONTROL "Aña&dir factura de cliente [F2]", 500, "Button", WS_TABSTOP, 47, 69, 110, 14
-  CONTROL "Aña&dir factura rectificativa", 504, "Button", WS_TABSTOP, 162, 69, 110, 14
-  CONTROL "&Modificar [F3]", 501, "Button", WS_TABSTOP, 276, 69, 50, 14
-  CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 331, 69, 50, 14
-  CONTROL "&Zoom", 503, "Button", WS_TABSTOP, 386, 69, 50, 14
-  CONTROL "", 150, "TXBrowse", WS_TABSTOP|0x00300000, 47, 85, 562, 242
-  CONTROL "&Aceptar [F5]", 511, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 511, 345, 50, 14
-  CONTROL "&Cancelar", 510, "Button", WS_TABSTOP, 566, 345, 50, 14
-  CONTROL "", 100, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 103, 30, 76, 12
-  CONTROL "", 110, "Edit", ES_MULTILINE|WS_BORDER|WS_TABSTOP, 181, 30, 26, 12
-  CONTROL "", 120, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 103, 42, 104, 12
-  CONTROL "Facturas de clientes", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 42, 58, 572, 273
-  CONTROL "Agente", -1, "Static", WS_GROUP, 212, 33, 26, 8
-  CONTROL "Número", -1, "Static", WS_GROUP, 44, 33, 56, 8
-  CONTROL "Fecha", -1, "Static", WS_GROUP, 44, 45, 56, 8
-  CONTROL "Cambio divisa", -1, "Static", WS_GROUP, 475, 45, 45, 8
-  CONTROL "Divisa", -1, "Static", WS_GROUP, 212, 45, 26, 8
-  CONTROL "", 160, "msctls_progress32", WS_BORDER, 42, 335, 571, 8
+  CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 240, 14, 70, 12
+  CONTROL "", 131, "Edit", WS_BORDER|WS_TABSTOP, 312, 14, 285, 12
+  CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 240, 28, 70, 12
+  CONTROL "TBitmap", 141, "TBitmap", 0x00800000, 312, 28, 16, 11
+  CONTROL "", 142, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 520, 28, 90, 12
+  CONTROL "Aña&dir factura de cliente [F2]", 500, "Button", WS_TABSTOP, 47, 83, 110, 14
+  CONTROL "Aña&dir factura rectificativa", 504, "Button", WS_TABSTOP, 162, 83, 110, 14
+  CONTROL "&Modificar [F3]", 501, "Button", WS_TABSTOP, 276, 83, 50, 14
+  CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 331, 83, 50, 14
+  CONTROL "&Zoom", 503, "Button", WS_TABSTOP, 386, 83, 50, 14
+  CONTROL "", 150, "TXBrowse", WS_TABSTOP|0x00300000, 48, 98, 562, 242
+  CONTROL "&Aceptar [F5]", 511, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 511, 359, 50, 14
+  CONTROL "&Cancelar", 510, "Button", WS_TABSTOP, 566, 359, 50, 14
+  CONTROL "", 100, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 104, 14, 65, 12
+  CONTROL "", 110, "Edit", ES_MULTILINE|WS_BORDER|WS_TABSTOP, 170, 14, 26, 12
+  CONTROL "", 120, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 104, 28, 92, 12
+  CONTROL "Facturas de clientes", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 42, 72, 572, 273
+  CONTROL "Agente", -1, "Static", WS_GROUP, 200, 18, 26, 8
+  CONTROL "Número", -1, "Static", WS_GROUP, 44, 18, 30, 8
+  CONTROL "Fecha", -1, "Static", WS_GROUP, 44, 32, 48, 8
+  CONTROL "Cambio divisa", -1, "Static", WS_GROUP, 474, 32, 45, 8
+  CONTROL "Divisa", -1, "Static", WS_GROUP, 200, 32, 26, 8
+  CONTROL "", 160, "msctls_progress32", WS_BORDER, 42, 349, 571, 8
   CONTROL "", 990, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Liquidación de agentes", -1, "Static", WS_GROUP, 44, 3, 120, 8
+  CONTROL "...", 170, "Button", WS_TABSTOP, 598, 14, 12, 12
+  CONTROL "", 180, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 104, 42, 92, 12
+  CONTROL "Inicio Liquidación", -1, "Static", WS_GROUP, 44, 46, 60, 8
+  CONTROL "", 190, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 104, 56, 92, 12
+  CONTROL "Fin Liquidación", -1, "Static", WS_GROUP, 44, 60, 57, 8
 }
 
 COBROTPV_1024X768 DIALOG DISCARDABLE -30, -89, 600, 414
@@ -15511,7 +15516,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Situación", -1, "Static", WS_GROUP, 44, 81, 49, 8
   CONTROL "", 990, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Pedidos a proveedores", -1, "Static", WS_GROUP, 44, 3, 120, 8
-  CONTROL "&Importar", 526, "Button", WS_TABSTOP, 611, 106, 50, 14
+  CONTROL "&Importar", 526, "Button", WS_TABSTOP, 612, 104, 50, 14
   CONTROL "0", 403, "Static", SS_RIGHT|WS_GROUP, 601, 306, 60, 8
   CONTROL "Imp. especiales", -1, "Static", WS_GROUP, 536, 307, 53, 8
 }

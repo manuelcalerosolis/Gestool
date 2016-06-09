@@ -96,6 +96,8 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD AddAlbaranProveedor()
    METHOD AddFacturaProveedor()
    METHOD AddRectificativaProveedor()
+   
+   METHOD processAllClients()
 
    METHOD idDocumento()                   INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc ) 
    METHOD IdDocumentoLinea()              INLINE ( ::idDocumento() + Str( ::oDbf:nNumLin ) )
@@ -135,7 +137,6 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD getTarifaArticulo()
 
    METHOD getUnidadesPedidoProveedor( cNumPed, cCodArt )
-   METHOD existeClienteInforme()
    METHOD isClientInReport()
 
    METHOD loadValuesExtraFields()
@@ -757,37 +758,42 @@ METHOD BuildReportCorrespondences()
    
    ::hReport   := {  "Listado" =>                     {  "Generate" =>  {||   ::listadoArticulo() } ,;
                                                          "Variable" =>  {||   nil },;
-                                                         "Data" =>      {||   nil },;
-                                                         "Options" =>   {  "Estado"                =>  { "Todos", "Finalizado", "No finalizado" },;
-                                                                           "Excluir importe cero"  => .f.,;
-                                                                           "Excluir unidades cero" => .f. } },; 
-                     "SAT de clientes" =>             {  "Generate" =>  {||   ::AddSATClientes() },;
+                                                         "Data" =>      {||   nil } },; 
+                     "SAT de clientes" =>             {  "Generate" =>  {||   ::AddSATClientes(),;
+                                                                              ::processAllClients() },;
                                                          "Variable" =>  {||   ::AddVariableLineasSATCliente() },;
                                                          "Data" =>      {||   ::FastReportSATCliente() } },;
-                     "Presupuestos de clientes" =>    {  "Generate" =>  {||   ::AddPresupuestoClientes() },;
+                     "Presupuestos de clientes" =>    {  "Generate" =>  {||   ::AddPresupuestoClientes(),;
+                                                                              ::processAllClients() },;
                                                          "Variable" =>  {||   ::AddVariableLineasPresupuestoCliente() },;
                                                          "Data" =>      {||   ::FastReportPresupuestoCliente() } },;
-                     "Pedidos de clientes" =>         {  "Generate" =>  {||   ::AddPedidoClientes() },;
+                     "Pedidos de clientes" =>         {  "Generate" =>  {||   ::AddPedidoClientes(),;
+                                                                              ::processAllClients() },;
                                                          "Variable" =>  {||   ::AddVariableLineasPedidoCliente() },;
                                                          "Data" =>      {||   ::FastReportPedidoCliente() } },;
-                     "Albaranes de clientes" =>       {  "Generate" =>  {||   ::AddAlbaranCliente() },;
+                     "Albaranes de clientes" =>       {  "Generate" =>  {||   ::AddAlbaranCliente(),;
+                                                                              ::processAllClients() },;
                                                          "Variable" =>  {||   ::AddVariableLineasAlbaranCliente() },;
                                                          "Data" =>      {||   ::FastReportAlbaranCliente() } },;
                      "Facturas de clientes" =>        {  "Generate" =>  {||   ::AddFacturaCliente(),;
-                                                                              ::AddFacturaRectificativa() },;
+                                                                              ::AddFacturaRectificativa(),;
+                                                                              ::processAllClients() },;
                                                          "Variable" =>  {||   ::AddVariableFacturaCliente() },;
                                                          "Data" =>      {||   ::FastReportFacturaCliente(),;
                                                                               ::FastReportFacturaRectificativa() } },;
-                     "Rectificativas de clientes" =>  {  "Generate" =>  {||   ::AddFacturaRectificativa( .t. ) },;
+                     "Rectificativas de clientes" =>  {  "Generate" =>  {||   ::AddFacturaRectificativa( .t. ),;
+                                                                              ::processAllClients() },;
                                                          "Variable" =>  {||   ::AddVariableLineasRectificativaCliente() },;
                                                          "Data" =>      {||   ::FastReportFacturaRectificativa() } },;
-                     "Tickets de clientes" =>         {  "Generate" =>  {||   ::AddTicket( .t. ) },;
+                     "Tickets de clientes" =>         {  "Generate" =>  {||   ::AddTicket( .t. ),;
+                                                                              ::processAllClients() },;
                                                          "Variable" =>  {||   ::AddVariableLineasTicketCliente() },;
                                                          "Data" =>      {||   ::FastReportTicket( .t. ) } },;
                      "Ventas" =>                      {  "Generate" =>  {||   ::AddAlbaranCliente( .t. ),;
                                                                               ::AddFacturaCliente(),;
                                                                               ::AddFacturaRectificativa(),;
-                                                                              ::AddTicket() },;
+                                                                              ::AddTicket(),;
+                                                                              ::processAllClients() },;
                                                          "Variable" =>  {||   ::AddVariableLineasAlbaranCliente(),;
                                                                               ::AddVariableLineasFacturaCliente(),;
                                                                               ::AddVariableLineasRectificativaCliente(),;
@@ -912,14 +918,62 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
    aReports := {  {  "Title" => "Listado",                        "Image" => 0,  "Type" => "Listado",                      "Directory" => "Articulos\Listado",                            "File" => "Listado.fr3"  },;
                   {  "Title" => "Ventas",                         "Image" => 11, "Subnode" =>;
                   { ;
-                     { "Title" => "SAT de clientes",              "Image" =>20, "Type" => "SAT de clientes",               "Directory" => "Articulos\Ventas\SAT de clientes",             "File" => "SAT de clientes.fr3" },;
-                     { "Title" => "Presupuestos de clientes",     "Image" => 5, "Type" => "Presupuestos de clientes",      "Directory" => "Articulos\Ventas\Presupuestos de clientes",    "File" => "Presupuestos de clientes.fr3" },;
-                     { "Title" => "Pedidos de clientes",          "Image" => 6, "Type" => "Pedidos de clientes",           "Directory" => "Articulos\Ventas\Pedidos de clientes",         "File" => "Pedidos de clientes.fr3" },;
-                     { "Title" => "Albaranes de clientes",        "Image" => 7, "Type" => "Albaranes de clientes",         "Directory" => "Articulos\Ventas\Albaranes de clientes",       "File" => "Albaranes de clientes.fr3" },;
-                     { "Title" => "Facturas de clientes",         "Image" => 8, "Type" => "Facturas de clientes",          "Directory" => "Articulos\Ventas\Facturas de clientes",        "File" => "Facturas de clientes.fr3" },;
-                     { "Title" => "Rectificativas de clientes",   "Image" => 9, "Type" => "Rectificativas de clientes",    "Directory" => "Articulos\Ventas\Rectificativas de clientes",  "File" => "Rectificativas de clientes.fr3" },;
-                     { "Title" => "Tickets de clientes",          "Image" =>10, "Type" => "Tickets de clientes",           "Directory" => "Articulos\Ventas\Tickets de clientes",         "File" => "Tickets de clientes.fr3" },;
-                     { "Title" => "Ventas",                       "Image" =>11, "Type" => "Ventas",                        "Directory" => "Articulos\Ventas\Ventas",                      "File" => "Ventas.fr3" },;
+                     { "Title"      => "SAT de clientes",;
+                       "Image"      => 20,;
+                       "Type"       => "SAT de clientes",;          
+                       "Directory"  => "Articulos\Ventas\SAT de clientes",;  
+                       "File"       => "SAT de clientes.fr3" ,;              
+                       "Options"    => {  "Incluir clientes sin ventas" => {  "Options"   => .f.,;
+                                                                              "Value"     => .f. } } },;  
+                     { "Title"      => "Presupuestos de clientes",;     
+                       "Image"      => 5,; 
+                       "Type"       => "Presupuestos de clientes",;      
+                       "Directory"  => "Articulos\Ventas\Presupuestos de clientes",;    
+                       "File"       => "Presupuestos de clientes.fr3" ,;     
+                       "Options"    => {  "Incluir clientes sin ventas" => {  "Options"   => .f.,;
+                                                                              "Value"     => .f. } } },;
+                     { "Title"      => "Pedidos de clientes",;          
+                       "Image"      => 6,; 
+                       "Type"       => "Pedidos de clientes",;           
+                       "Directory"  => "Articulos\Ventas\Pedidos de clientes",;         
+                       "File"       => "Pedidos de clientes.fr3" ,;          
+                       "Options"    => {  "Incluir clientes sin ventas" => {  "Options"   => .f.,;
+                                                                              "Value"     => .f. } } },;
+                     { "Title"      => "Albaranes de clientes",;        
+                       "Image"      => 7,; 
+                       "Type"       => "Albaranes de clientes",;         
+                       "Directory"  => "Articulos\Ventas\Albaranes de clientes",;       
+                       "File"       => "Albaranes de clientes.fr3" ,;        
+                       "Options"    => {  "Incluir clientes sin ventas" => {  "Options"   => .f.,;
+                                                                              "Value"     => .f. } } },;
+                     { "Title"      => "Facturas de clientes",;         
+                       "Image"      => 8,; 
+                       "Type"       => "Facturas de clientes",;          
+                       "Directory"  => "Articulos\Ventas\Facturas de clientes",;        
+                       "File"       => "Facturas de clientes.fr3" ,;         
+                       "Options"    => {  "Incluir clientes sin ventas" => {  "Options"   => .f.,;
+                                                                              "Value"     => .f. } } },;
+                     { "Title"      => "Rectificativas de clientes",;   
+                       "Image"      => 9,; 
+                       "Type"       => "Rectificativas de clientes",;    
+                       "Directory"  => "Articulos\Ventas\Rectificativas de clientes",;  
+                       "File"       => "Rectificativas de clientes.fr3" ,;   
+                       "Options"    => {  "Incluir clientes sin ventas" => {  "Options"   => .f.,;
+                                                                              "Value"     => .f. } } },;
+                     { "Title"      => "Tickets de clientes",;          
+                       "Image"      =>10,; 
+                       "Type"       => "Tickets de clientes",;           
+                       "Directory"  => "Articulos\Ventas\Tickets de clientes",;         
+                       "File"       => "Tickets de clientes.fr3" ,;          
+                       "Options"    => {  "Incluir clientes sin ventas" => {  "Options"   => .f.,;
+                                                                              "Value"     => .f. } } },;
+                     {  "Title"     => "Ventas",;
+                        "Image"     => 11,;
+                        "Type"      => "Ventas",;
+                        "Directory" => "Articulos\Ventas\Ventas",;
+                        "File"      => "Ventas.fr3",;
+                        "Options"   => {  "Incluir clientes sin ventas" => {  "Options"   => .f.,;
+                                                                              "Value"     => .f. } } },;
                   } ;
                   },;
                   {  "Title" => "Producción",                     "Image" => 14, "Subnode" =>;
@@ -943,9 +997,9 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
                   },; 
                   {  "Title" => "Existencias",                    "Image" => 16, "Subnode" =>;
                   { ;
-                     { "Title" => "Stocks",                       "Image" => 16, "Type" => "Stocks",                       "Directory" => "Articulos\Existencias\Stocks",                "File" => "Existencias por stock.fr3" },;
+                     { "Title" => "Stocks",                       "Image" => 16, "Type" => "Stocks",                       "Directory" => "Articulos\Existencias\Stocks",                    "File" => "Existencias por stock.fr3" },;
                   } ;
-                  } }
+                  } } 
 
    do case 
       case ( ::uParam == ALB_CLI )
@@ -3925,13 +3979,15 @@ Return ( self )
 
 //----------------------------------------------------------------------------//
 
-METHOD existeClienteInforme( cCodCli ) CLASS TFastVentasArticulos
+METHOD processAllClients() CLASS TFastVentasArticulos
 
-   local nRec
-   local nOrdAnt
+   if !( ::oTFastReportOptions:getOptionValue( "Incluir clientes sin ventas", .f. ) )
+      Return ( self )
+   end if 
 
-   nRec           := ::oDbfCli:Recno()
-   nOrdAnt        := ::oDbfCli:OrdSetFocus( "Cod" )
+   ::oDbfCli:getStatus()
+   
+   ::oDbfCli:OrdSetFocus( "Cod" )
 
    ::oDbfCli:goTop() 
    while !::oDbfCli:Eof() .and. !::lBreak
@@ -3939,8 +3995,14 @@ METHOD existeClienteInforme( cCodCli ) CLASS TFastVentasArticulos
       if !( ::isClientInReport( ::oDbfCli:Cod ) )
       
       ::oDbf:Blank()
-      ::oDbf:cCodCli := ::oDbfCli:Cod
-      ::oDbf:cNomCli := ::oDbfCli:Titulo
+      ::oDbf:cCodCli       := ::oDbfCli:Cod
+      ::oDbf:cNomCli       := ::oDbfCli:Titulo
+      ::oDbf:cCodRut       := ::oDbfCli:cCodRut
+      ::oDbf:cCodPago      := ::oDbfCli:CodPago
+      ::oDbf:cCodAge       := ::oDbfCli:cCodAge
+      ::oDbf:cCodTrn       := ::oDbfCli:cCodTrn
+      ::oDbf:cCodUsr       := ::oDbfCli:cCodUsr
+
       ::oDbf:Insert()
 
       end if 
@@ -3949,8 +4011,7 @@ METHOD existeClienteInforme( cCodCli ) CLASS TFastVentasArticulos
 
    end while
 
-   ::oDbfCli:OrdSetFocus( nOrdAnt )
-   ::oDbfCli:GoTo( nRec )
+   ::oDbfCli:setStatus()
 
 Return ( self )
 
@@ -4003,3 +4064,5 @@ METHOD ValidGrupoCliente( cCodGrp ) CLASS TFastVentasArticulos
 Return lValid 
 
 //---------------------------------------------------------------------------//
+
+
