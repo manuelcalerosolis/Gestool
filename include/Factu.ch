@@ -183,7 +183,8 @@ Defines para ficheros INI
 #define PAR_PRO                 '30'
 #define COB_TIK                 '31'
 #define SAT_CLI                 '32'
-#define ENV_ART                 '33'   
+#define ENV_ART                 '33' 
+#define GRP_CLI                 '34' 
 
 #define ACC_ACCE                1        // Acceso
 #define ACC_APPD                2        // Acceso añadir
@@ -297,7 +298,7 @@ Defines para ficheros INI
 #define DOCUMENTOS_ITEMS        {       "Artículos" => "20",;
                                         "Clientes" => "21",;
                                         "Proveedores" => "22",;
-                                        "Familias" => "37",;
+                                        "Familias" => "37",; 
                                         "Agentes" => "38",;
                                         "Presupuestos a clientes" => "08",;
                                         "Pedidos a clientes" => "09",;
@@ -310,7 +311,8 @@ Defines para ficheros INI
                                         "Facturas a proveedores" => "03",;
                                         "Facturas rectificativa a proveedores" => "04",;
                                         "S.A.T" => "32",;
-                                        "Envases de artículos" => "33" } 
+                                        "Envases de artículos" => "33" ,;
+                                        "Grupos de clientes" => "34" }
 
 #define ICONOS_DOCUMENTOS_ITEMS {       "Artículos" => "Cube_Yellow_16",;
                                         "Clientes" => "User1_16",;
@@ -328,7 +330,8 @@ Defines para ficheros INI
                                         "Facturas a proveedores" => "Document_businessman_16",;
                                         "Facturas rectificativa a proveedores" => "Document_navigate_cross_16",;
                                         "S.A.T" => "Power-drill_user1_16",;
-                                        "Envases de artículos" => "box_white_16" } 
+                                        "Envases de artículos" => "box_white_16",; 
+                                        "Grupos de clientes" => "Users2_16" }
 
 #define DOCUMENTOS_SELECTED     {       "Artículos" => .F.,;
                                         "Clientes" => .F.,;
@@ -346,7 +349,8 @@ Defines para ficheros INI
                                         "Facturas a proveedores" => .F.,;
                                         "Facturas rectificativa a proveedores" => .F.,;
                                         "S.A.T" => .F.,;
-                                        "Envases de artículos" => .F. } 
+                                        "Envases de artículos" => .F.,;
+                                        "Grupos de clientes" => .F. } 
 
 #command SET TAG TO <tag> [OF <(cdx)>] ;
       => ordSetFocus( <(tag)> [, <(cdx)>] )

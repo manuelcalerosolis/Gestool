@@ -13653,9 +13653,6 @@ CLASS TArticuloLabelGenerator
    Data nCantidadLabels
    Data nUnidadesLabels
 
-   Data oAlmacen 
-   Data cAlmacen
-
    Data oMtrLabel
    Data nMtrLabel
 
@@ -13870,17 +13867,6 @@ Method Create() CLASS TArticuloLabelGenerator
             WHEN     ( ::nCantidadLabels == 1 ) ;
             OF       ::fldGeneral
 
-         REDEFINE GET ::oAlmacen Var ::cAlmacen ;
-            ID       230 ;
-            IDTEXT   231 ;
-            PICTURE  "@!" ;
-            WHEN     ( ::nCantidadLabels == 2 ) ;
-            BITMAP   "LUPA" ;
-            OF       ::fldGeneral
-
-            ::oAlmacen:bValid    := { || cAlmacen( ::oAlmacen, , ::oAlmacen:oHelpText ) }
-            ::oAlmacen:bHelp     := { || BrwAlmacen( ::oAlmacen, ::oAlmacen:oHelpText ) }
-
          // Segunda caja de dialogo--------------------------------------------------
 
          REDEFINE GET oGetOrd ;
@@ -14066,9 +14052,9 @@ Method BotonSiguiente() CLASS TArticuloLabelGenerator
             ::oFld:GoNext()
             ::oBtnAnterior:Show()
 
-            //if ::oCriterio:nAt != 1
-            ::SelectCriterioLabels()
-            //end if
+            if ::oCriterio:nAt != 1
+               ::SelectCriterioLabels()
+            end if
 
             SetWindowText( ::oBtnSiguiente:hWnd, "&Terminar" )
 
@@ -14165,7 +14151,7 @@ Method SelectCriterioLabels() CLASS TArticuloLabelGenerator
       if dbLock( D():Articulos( nView ) )
 
          do case
-            case ::oCriterio:nAt == 1 .or. ::oCriterio:nAt == 2
+            case ::oCriterio:nAt == 2
 
                ::PutStockLabels()
 
@@ -14214,18 +14200,6 @@ Method PutStockLabels() CLASS TArticuloLabelGenerator
    local nStock                           := 0
 
    ( D():Articulos( nView ) )->lLabel     := .t.
-   
-   /*
-   Limpiamos las etiquetas por propiedades-------------------------------
-   */
-
-   while ( dbfArtLbl )->( dbSeek( ( D():Articulos( nView ) )->Codigo ) ) .and. !( dbfArtLbl )->( eof() )
-      if dbLock( dbfArtLbl )
-         ( dbfArtLbl )->( dbDelete() )
-         ( dbfArtLbl )->( dbUnLock() )
-      end if
-   end while
-
 
    if ::nCantidadLabels == 1
 
@@ -14236,18 +14210,21 @@ Method PutStockLabels() CLASS TArticuloLabelGenerator
       if !Empty( ( D():Articulos( nView ) )->cCodPrp1 ) .or. !Empty( ( D():Articulos( nView ) )->cCodPrp2 )
 
          /*
+         Limpiamos las etiquetas por propiedades-------------------------------
+         */
+
+         while ( dbfArtLbl )->( dbSeek( ( D():Articulos( nView ) )->Codigo ) ) .and. !( dbfArtLbl )->( eof() )
+            if dbLock( dbfArtLbl )
+               ( dbfArtLbl )->( dbDelete() )
+               ( dbfArtLbl )->( dbUnLock() )
+            end if
+         end while
+
+         /*
          Calculo de stock------------------------------------------------------
          */
 
-         if !Empty( ::cAlmacen )
-
-            aStock                           := oStock:aStockArticulo( ( D():Articulos( nView ) )->Codigo, ::cAlmacen, , .f., .f. )
-
-         else
-
-            aStock                           := oStock:aStockArticulo( ( D():Articulos( nView ) )->Codigo, , , .f., .f. )
-
-         end if
+         aStock                           := oStock:aStockArticulo( ( D():Articulos( nView ) )->Codigo, , , .f., .f. )
 
          for each o in aStock
 
@@ -15010,7 +14987,10 @@ FUNCTION rxArticulo( cPath, cDriver )
       ( dbfArt )->( ordCreate( cPath + "Articulo.Cdx", "lPubInt", "Codigo", {|| Field->Codigo } ) )
 
       ( dbfArt )->( ordCondSet( "!Deleted() .and. lPubInt", {|| !Deleted() .and. Field->lPubInt }  ) )
-      ( dbfArt )->( ordCreate( cPath + "Articulo.Cdx", "cWebShop", "Field->cWebShop", {|| Field->cWebShop } ) )
+      ( dbfArt )->( ordCreate( cPath + "Articulo.Cdx", "lWebShop", "Field->cWebShop + Field->Codigo", {|| Field->cWebShop + Field->Codigo } ) )
+
+      ( dbfArt )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfArt )->( ordCreate( cPath + "Articulo.Cdx", "cWebShop", "Field->cWebShop + Field->Codigo", {|| Field->cWebShop + Field->Codigo } ) )
 
       ( dbfArt )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( dbfArt )->( ordCreate( cPath + "Articulo.Cdx", "cCodEdi", "cCodEdi", {|| Field->cCodEdi } ) )

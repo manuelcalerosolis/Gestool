@@ -38,14 +38,14 @@ ENDCLASS
 
       if ::OpenFiles()
 
-         ( D():AlbaranesClientes( ::nView ) )->( dbSetFilter( {|| Field->lEntregado .and. rTrim( Field->cCodTrn ) == "001" },;
-                                                                  "lEntregado .and. rTrim( cCodTrn ) == 001" ) )
+         ( D():AlbaranesClientes( ::nView ) )->( dbSetFilter( {|| Field->lEntregado .and. rTrim( Field->cCodTrn ) == "001" .and. Field->dFecEnv == Date() },;
+                                                                  "lEntregado .and. rTrim( cCodTrn ) == 001 .and. dFecEnv == Date()") )
 
          ( D():AlbaranesClientes( ::nView ) )->( dbGoTop() )
 
          while !( D():AlbaranesClientes( ::nView ) )->( eof() )
 
-            if ( D():AlbaranesClientes( ::nView ) )->dFecEnv == Date()
+            //if ( D():AlbaranesClientes( ::nView ) )->dFecEnv == Date()
 
                if Empty( ::oAlbaran )
                   ::oAlbaran                          := Redur():New()
@@ -79,7 +79,7 @@ ENDCLASS
                
                ::oAlbaran:SerializeASCII()
 
-            end if
+            //end if
 
             msgWait( "Procesando " + str( ( D():AlbaranesClientes( ::nView ) )->( ordkeyNo() ) ) + " de " + ;
                      str( ( D():AlbaranesClientes( ::nView ) )->( ordkeyCount() ) ), , 0.3 )
