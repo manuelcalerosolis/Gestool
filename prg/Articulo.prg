@@ -14214,6 +14214,18 @@ Method PutStockLabels() CLASS TArticuloLabelGenerator
    local nStock                           := 0
 
    ( D():Articulos( nView ) )->lLabel     := .t.
+   
+   /*
+   Limpiamos las etiquetas por propiedades-------------------------------
+   */
+
+   while ( dbfArtLbl )->( dbSeek( ( D():Articulos( nView ) )->Codigo ) ) .and. !( dbfArtLbl )->( eof() )
+      if dbLock( dbfArtLbl )
+         ( dbfArtLbl )->( dbDelete() )
+         ( dbfArtLbl )->( dbUnLock() )
+      end if
+   end while
+
 
    if ::nCantidadLabels == 1
 
@@ -14222,17 +14234,6 @@ Method PutStockLabels() CLASS TArticuloLabelGenerator
    else
 
       if !Empty( ( D():Articulos( nView ) )->cCodPrp1 ) .or. !Empty( ( D():Articulos( nView ) )->cCodPrp2 )
-
-         /*
-         Limpiamos las etiquetas por propiedades-------------------------------
-         */
-
-         while ( dbfArtLbl )->( dbSeek( ( D():Articulos( nView ) )->Codigo ) ) .and. !( dbfArtLbl )->( eof() )
-            if dbLock( dbfArtLbl )
-               ( dbfArtLbl )->( dbDelete() )
-               ( dbfArtLbl )->( dbUnLock() )
-            end if
-         end while
 
          /*
          Calculo de stock------------------------------------------------------
