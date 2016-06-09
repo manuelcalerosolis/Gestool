@@ -4780,13 +4780,19 @@ Return .t.
 
 METHOD insertAllProducts() CLASS TComercio
 
+   local lInsert
+
    ::oProductDatabase():ordsetfocus( "lWebShop" )
 
    if ::oProductDatabase():seek( ::getCurrentWebName() )
 
       while ( alltrim( ::oProductDatabase():cWebShop ) == ::getCurrentWebName() ) .and. !( ::oProductDatabase():eof() )
 
-         if ::insertOneProductToPrestashop( ::oProductDatabase():Codigo )
+         lInsert  := ::insertOneProductToPrestashop( ::oProductDatabase():Codigo )
+
+         msgAlert( lInsert )
+         
+         if lInsert
             ::saveLastInsertProduct( ::oProductDatabase():Codigo )
          end if 
 
