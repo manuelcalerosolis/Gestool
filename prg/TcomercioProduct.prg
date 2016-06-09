@@ -23,6 +23,7 @@ CLASS TComercioProduct FROM TComercioConector
    DATA  idTaxRulesGroup 
    DATA  idManufacturer    
 
+   METHOD isProductInDatabase( idProduct )                         
    METHOD isProductInCurrentWeb()                           
 
    METHOD buildAllProductInformation()
@@ -87,23 +88,28 @@ CLASS TComercioProduct FROM TComercioConector
    METHOD getTotalStock( hProduct ) 
    METHOD isTotalStockZero( hProduct )                         INLINE ( ::getTotalStock( hProduct ) == 0 )
 
+   METHOD insertReduction( hProduct, idProduct )
+
+   METHOD processStockProduct( hProduct, idProduct )
+      METHOD insertStockProduct( hStock ) 
+
+   METHOD getProductAttribute( idProductPrestashop, cCodWebValPr1, cCodWebValPr2 )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD buildAllProductInformation() CLASS TComercioProduct
 
-   local nProducts   := 0
+   ::writeText( "Procesando articulos ... " )
 
-   ::oProductDatabase():ordsetfocus( "cWebShop" )
+   ::oProductDatabase():ordsetfocus( "lWebShop" )
 
    if ::oProductDatabase():seek( ::getCurrentWebName() )
 
       while ( alltrim( ::oProductDatabase():cWebShop ) == ::getCurrentWebName() ) .and. !( ::oProductDatabase():eof() )
 
          ::buildProductInformation( ::oProductDatabase():Codigo )
-
-         nProducts++
 
          ::oProductDatabase():Skip()
 
@@ -117,33 +123,43 @@ Return ( .t. )
 
 METHOD buildProductInformation( idProduct ) CLASS TComercioProduct
 
-   ::oProductDatabase():getStatus()
+   if !( ::isProductInDatabase( idProduct ) )
+      Return .f.
+   end if 
 
-   if ::oProductDatabase():seekInOrd( idProduct, "Codigo" ) .and. ;
-      ::isProductInCurrentWeb( idProduct ) 
+   if !( ::isProductInCurrentWeb( idProduct ) )
+      Return ( .f. )
+   end if 
 
-      ::writeText( alltrim( ::oProductDatabase():Codigo ) + " - " + alltrim( ::oProductDatabase():Nombre ) )
+   // ::writeText( alltrim( ::oProductDatabase():Codigo ) + " - " + alltrim( ::oProductDatabase():Nombre ) )
 
-      ::buildIvaProducts( ::oProductDatabase():TipoIva )
-      ::buildManufacturerProduct( ::oProductDatabase():cCodFab )
+   ::buildIvaProducts( ::oProductDatabase():TipoIva )
 
-      ::TComercioCategory():buildCategory( ::oProductDatabase():Familia )
+   ::buildManufacturerProduct( ::oProductDatabase():cCodFab )
+
+   ::TComercioCategory():buildCategory( ::oProductDatabase():Familia )
+   
+   ::buildPropertyProduct( ::oProductDatabase():Codigo )
       
-      ::buildPropertyProduct( ::oProductDatabase():Codigo )
-      ::buildProduct( ::oProductDatabase():Codigo )
-
-   end if
-
-   ::oProductDatabase():setStatus()
-
 Return ( .t. )
 
+//---------------------------------------------------------------------------//
+
+METHOD isProductInDatabase( idProduct ) CLASS TComercioProduct
+
+   if !( ::oProductDatabase():seekInOrd( idProduct, "Codigo" ) )
+      ::writeText( "El artículo " + alltrim( idProduct  ) + " no se ha encontrado en la base de datos" )
+      Return ( .f. )
+   end if 
+
+Return ( .t. )
+                                                                           
 //---------------------------------------------------------------------------//
 
 METHOD isProductInCurrentWeb( idProduct ) CLASS TComercioProduct
 
    if !( ::oProductDatabase():lPubInt )
-      ::writeText( "Artículo " + alltrim( idProduct ) + " no seleccionado para web" )
+      ::writeText( "Artículo " + alltrim( idProduct ) + " no seleccionado para web" ) 
       Return .f.
    end if 
 
@@ -295,30 +311,49 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildProduct( id ) CLASS TComercioProduct
+METHOD buildProduct( idProduct, lCleanProducts ) CLASS TComercioProduct
 
    local aStockArticulo       := {}
    local aImagesArticulos     := {}
 
-   if aScan( ::aProducts, {|h| hGet( h, "id" ) == id } ) != 0
-      Return ( self )
+   DEFAULT lCleanProducts     := .f.
+
+   if lCleanProducts
+      ::aProducts             := {}
+   else
+      if aScan( ::aProducts, {|h| hGet( h, "id" ) == idProduct } ) != 0
+         Return ( .f. )
+      end if 
+   end if 
+
+   if !( ::isProductInDatabase( idProduct ) )
+      Return ( .f. )
+   end if 
+
+   if !( ::isProductInCurrentWeb( idProduct ) )
+      Return ( .f. )
    end if 
 
    // Recopilar info del stock-------------------------------------------------
 
-   aStockArticulo             := ::stockProduct( id )
+   aStockArticulo             := ::stockProduct( idProduct )
 
    if !( ::TPrestashopConfig():isProcessWithoutStock() ) .and. ::isTotalStockZero( aStockArticulo )
-      Return ( Self )
+      ::writeText( "El artículo " + alltrim( idProduct ) + " no tiene stock en el almacen de la web")
+      Return ( .f. )
    end if 
 
    // Recopilar info de imagenes-----------------------------------------
 
-   aImagesArticulos           := ::imagesProduct( id )
+   aImagesArticulos           := ::imagesProduct( idProduct )
+   if !( ::TPrestashopConfig():isProcessWithoutImage() ) .and. empty( aImagesArticulos ) 
+      ::writeText( "El artículo " + alltrim( idProduct ) + " no tiene imagenes")
+      Return ( .f. )
+   end if 
 
    // Rellenamos el Hash-------------------------------------------------
 
-   aAdd( ::aProducts,   {  "id"                    => id,;
+   aAdd( ::aProducts,   {  "id"                    => idProduct,;
                            "name"                  => alltrim( ::oProductDatabase():Nombre ),;
                            "id_manufacturer"       => ::oProductDatabase():cCodFab ,;
                            "id_tax_rules_group"    => ::oProductDatabase():TipoIva ,;
@@ -340,7 +375,7 @@ METHOD buildProduct( id ) CLASS TComercioProduct
                            "aImages"               => aImagesArticulos,;
                            "aStock"                => aStockArticulo } )
 
-Return ( Self )
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -618,13 +653,13 @@ METHOD insertProduct( hProduct ) CLASS TComercioProduct
    ::idTaxRulesGroup    := ::TPrestashopId():getValueTaxRuleGroup( hGet( hProduct, "id_tax_rules_group" ), ::getCurrentWebName() )
    ::idManufacturer     := ::TPrestashopId():getValueManufacturer( hGet( hProduct, "id_manufacturer" ), ::getCurrentWebName() )
 
+   // Publicar el articulo en su categoria-------------------------------------
+
    idProduct            := ::insertProductPrestashopTable( hProduct, idCategory )
 
    if empty( idProduct )
       Return ( Self )
    end if 
-
-   // Publicar el articulo en su categoria-------------------------------------
 
    ::insertNodeProductCategory( idProduct, idCategory )
 
@@ -641,6 +676,10 @@ METHOD insertProduct( hProduct ) CLASS TComercioProduct
    ::processImageProducts( idProduct, hProduct )
 
    ::processPropertyProduct( idProduct, hProduct )
+
+   ::insertReduction( idProduct, hProduct )
+
+   ::processStockProduct( idProduct, hProduct )
 
 Return ( Self )
 
@@ -823,7 +862,11 @@ METHOD processImageProducts( idProduct, hProduct ) CLASS TComercioProduct
 
    for each hImage in hGet( hProduct, "aImages" )
 
+      // msgalert( idProduct, "idProduct" )
+
       idImagePrestashop       := ::insertImage( idProduct, hProduct, hImage, nImagePosition )
+
+      // msgalert( idImagePrestashop, "idImagePrestashop" )
 
       if idImagePrestashop != 0
 
@@ -834,8 +877,8 @@ METHOD processImageProducts( idProduct, hProduct ) CLASS TComercioProduct
          // Añadimos la imagen al array para subirla a prestashop--------------
 
          hSet( hImage, "nTipoImagen", __tipoProducto__ )
-         hSet( hImage, "cCarpeta", alltrim( str( idImagePrestashop ) ) )
-         hSet( hImage, "cPrefijoNombre", alltrim( str( idImagePrestashop ) ) )
+         hSet( hImage, "cCarpeta", alltrim( str( idProduct ) ) )
+         hSet( hImage, "cPrefijoNombre", alltrim( str( idProduct ) ) )
          hSet( hImage, "aTypeImages", {} )
 
       end if 
@@ -1792,6 +1835,218 @@ Return ( nTotalStock )
 
 //---------------------------------------------------------------------------//
 
+METHOD insertReduction( idProduct, hProduct ) CLASS TComercioProduct
+
+   local cCommand       := ""
+
+   if hGet( hProduct, "specific_price" ) .and. hGet( hProduct, "reduction" ) != 0
+
+      cCommand          := "INSERT INTO " + ::cPrefixTable( "specific_price" ) + " ( " + ; 
+                              "id_specific_price_rule, " + ;
+                              "id_cart, " + ;
+                              "id_product, " + ;
+                              "id_shop, " + ;
+                              "id_shop_group, " + ;
+                              "id_currency, " + ;
+                              "id_country, " + ;
+                              "id_group, " + ;
+                              "id_customer, " + ;
+                              "id_product_attribute, " + ;
+                              "price, " + ;
+                              "from_quantity, " + ;
+                              "reduction, " + ;
+                              if( ::lSpecificPriceIdColumnReductionTax, "reduction_tax, ", "" ) + ;
+                              "reduction_type ) " + ;
+                           "VALUES ( " + ;
+                              "'0', " + ;                                                                                                                // id_specific_price_rule
+                              "'0', " + ;                                                                                                                // id_cart
+                              "'" + alltrim( str( idProduct ) ) + "', " + ;                                                                             // id_product
+                              "'1', " + ;                                                                                                                // id_shop
+                              "'0', " + ;                                                                                                                // id_shop_group
+                              "'0', " + ;                                                                                                                // id_currency
+                              "'0', " + ;                                                                                                                // id_country
+                              "'0', " + ;                                                                                                                // id_group
+                              "'0', " + ;                                                                                                                // id_customer
+                              "'0', " + ;                                                                                                                // id_product_attribute
+                              "'-1', " + ;                                                                                                               // price
+                              "'1', " + ;                                                                                                                // from_quantity
+                              "'" + alltrim( str( hGet( hProduct, "reduction" ) ) ) + "', " + ;                                                     // reduction
+                              if( ::lSpecificPriceIdColumnReductionTax, "'" + alltrim( str( hGet( hProduct, "reduction_tax" ) ) ) + "', ", "" ) + ; // reduction_tax
+                              "'amount' )"                                                                                                               // reduction_type
+   
+      if !::commandExecDirect( cCommand )
+         ::writeText( "Error al insertar una oferta de " + hGet( hProduct, "name" ), 3 )
+      end if
+
+   end if
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD processStockProduct( idProduct, hProduct ) CLASS TComercioProduct
+
+   local hStock
+
+   for each hStock in hGet( hProduct, "aStock" )
+      ::insertStockProduct( hStock )
+   next
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertStockProduct( hStock ) CLASS TComercioProduct
+
+   local cText
+   local cCommand
+   local unitStock               
+   local idProductPrestashop     
+   local attributeFirstProperty  
+   local attributeSecondProperty 
+   local idProductAttribute      := 0
+
+   idProductPrestashop           := ::TPrestashopId():getValueProduct( hget( hStock, "idProduct" ), ::getCurrentWebName() )
+   attributeFirstProperty        := ::TPrestashopId():getValueAttribute( hget( hStock, "idFirstProperty" ) + hget( hStock, "valueFirstProperty" ),     ::getCurrentWebName() )
+   attributeSecondProperty       := ::TPrestashopId():getValueAttribute( hget( hStock, "idSecondProperty" ) + hget( hStock, "valueSecondProperty" ),   ::getCurrentWebName() ) 
+   unitStock                     := hget( hStock, "unitStock" )
+
+   if ( attributeFirstProperty != 0 ) .and. ( attributeSecondProperty != 0 )
+      idProductAttribute         := ::getProductAttribute( idProductPrestashop, attributeFirstProperty, attributeSecondProperty ) 
+   end if 
+
+   cCommand                      := "DELETE FROM " + ::cPrefixTable( "stock_available" ) + " "                          + ;
+                                    "WHERE id_product = " + alltrim( str( idProductPrestashop ) ) + " "                 + ;
+                                    "AND id_product_attribute = " + alltrim( str( idProductAttribute ) )
+
+   ::commandExecDirect( cCommand )
+
+   if ( unitStock != 0 )
+
+      cCommand                   := "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( "                        + ;
+                                       "id_product, "                                                                   + ;
+                                       "id_product_attribute, "                                                         + ;
+                                       "id_shop, "                                                                      + ;
+                                       "id_shop_group, "                                                                + ;
+                                       "quantity, "                                                                     + ;
+                                       "depends_on_stock, "                                                             + ;
+                                       "out_of_stock ) "                                                                + ;
+                                    "VALUES ( "                                                                         + ;
+                                       "'" + alltrim( str( idProductPrestashop ) ) + "', "                              + ;
+                                       "'" + alltrim( str( idProductAttribute ) ) + "', "                               + ;   
+                                       "'1', "                                                                          + ;
+                                       "'0', "                                                                          + ;
+                                       "'" + alltrim( str( unitStock ) ) + "', "                                        + ;
+                                       "'0', "                                                                          + ;
+                                       "'2' )"
+
+      ::commandExecDirect( cCommand )
+
+   end if
+
+   cText       := "Actualizando stock con propiedades : " + alltrim( str( attributeFirstProperty ) ) + " , " + alltrim( str( attributeSecondProperty ) ) + ", "
+   cText       += "cantidad : " + alltrim( str( unitStock ) )
+
+   ::writeText( cText )
+
+Return .t.   
+
+//---------------------------------------------------------------------------//
+
+METHOD getProductAttribute( idProductPrestashop, cCodWebValPr1, cCodWebValPr2 ) CLASS TComercioProduct
+
+   local idProductAttribute   := 0
+   local cCommand             := ""
+   local oQuery
+   local oQueryCombination
+   local lPrp1                := .f.
+   local lPrp2                := .f.
+
+   do case
+      case !empty( cCodWebValPr1 ) .and. empty( cCodWebValPr2 )
+
+         cCommand             := "SELECT * FROM " + ::cPrefixTable( "product_attribute" ) + " WHERE id_product = " + alltrim( str( idProductPrestashop ) )
+
+         oQuery               := ::queryExecDirect( cCommand )
+
+         if oQuery:Open() .and. oQuery:recCount() > 0
+
+            oQuery:GoTop()
+            while !oQuery:Eof()
+
+               cCommand       := "SELECT * FROM " + ::cPrefixTable( "product_attribute_combination" ) + " WHERE id_product_attribute = " + alltrim( str( oQuery:FieldGet( 1 ) ) )
+
+               oQueryCombination        := ::queryExecDirect( cCommand )
+
+                  if oQueryCombination:Open() .and. oQueryCombination:recCount() == 1 .and. oQueryCombination:FieldGet( 1 ) == cCodWebValPr1
+                     idProductAttribute     := oQuery:FieldGet( 1 )
+                  end if   
+
+               oQuery:Skip()
+
+            end while
+
+         end if
+
+      case !empty( cCodWebValPr1 ) .and. !empty( cCodWebValPr2 )
+
+         cCommand                := "SELECT * FROM " + ::cPrefixTable( "product_attribute" ) + " WHERE id_product = " + alltrim( str( idProductPrestashop ) )
+
+         oQuery                  := ::queryExecDirect( cCommand )
+
+         if oQuery:Open() // .and. oQuery:recCount() > 0
+
+            oQuery:GoTop()
+            while !oQuery:Eof()
+
+               cCommand          := "SELECT * FROM " + ::cPrefixTable( "product_attribute_combination" ) + " WHERE id_product_attribute=" + alltrim( str( oQuery:FieldGet( 1 ) ) )
+
+               oQueryCombination           := ::queryExecDirect( cCommand )
+
+                  if oQueryCombination:Open() .and. oQueryCombination:recCount() == 2
+
+                     oQueryCombination:GoTop()
+                     while !oQueryCombination:Eof()
+
+                        if !lPrp1
+                           lPrp1 := ( oQueryCombination:FieldGet( 1 ) == cCodWebValPr1 )
+                        end if
+
+                        oQueryCombination:Skip()
+
+                     end while
+
+                     oQueryCombination:GoTop()
+                     while !oQueryCombination:Eof()
+
+                        if !lPrp2
+                           lPrp2 := ( oQueryCombination:FieldGet( 1 ) == cCodWebValPr2 )
+                        end if
+
+                        oQueryCombination:Skip()
+
+                     end while
+
+                     if lPrp1 .and. lPrp2
+                        idProductAttribute     := oQuery:FieldGet( 1 )
+                     end if
+
+                  end if
+
+               oQuery:Skip()
+
+               lPrp1          := .f.
+               lPrp2          := .f.
+
+            end while
+
+         end if
+
+   end case
+
+Return ( idProductAttribute )
+
+//---------------------------------------------------------------------------//
 
 
 
