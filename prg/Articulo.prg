@@ -14066,9 +14066,9 @@ Method BotonSiguiente() CLASS TArticuloLabelGenerator
             ::oFld:GoNext()
             ::oBtnAnterior:Show()
 
-            if ::oCriterio:nAt != 1
-               ::SelectCriterioLabels()
-            end if
+            //if ::oCriterio:nAt != 1
+            ::SelectCriterioLabels()
+            //end if
 
             SetWindowText( ::oBtnSiguiente:hWnd, "&Terminar" )
 
@@ -14165,7 +14165,7 @@ Method SelectCriterioLabels() CLASS TArticuloLabelGenerator
       if dbLock( D():Articulos( nView ) )
 
          do case
-            case ::oCriterio:nAt == 2
+            case ::oCriterio:nAt == 1 .or. ::oCriterio:nAt == 2
 
                ::PutStockLabels()
 
@@ -14238,7 +14238,15 @@ Method PutStockLabels() CLASS TArticuloLabelGenerator
          Calculo de stock------------------------------------------------------
          */
 
-         aStock                           := oStock:aStockArticulo( ( D():Articulos( nView ) )->Codigo, , , .f., .f. )
+         if !Empty( ::cAlmacen )
+
+            aStock                           := oStock:aStockArticulo( ( D():Articulos( nView ) )->Codigo, ::cAlmacen, , .f., .f. )
+
+         else
+
+            aStock                           := oStock:aStockArticulo( ( D():Articulos( nView ) )->Codigo, , , .f., .f. )
+
+         end if
 
          for each o in aStock
 
