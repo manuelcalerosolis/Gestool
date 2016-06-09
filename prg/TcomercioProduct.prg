@@ -862,11 +862,7 @@ METHOD processImageProducts( idProduct, hProduct ) CLASS TComercioProduct
 
    for each hImage in hGet( hProduct, "aImages" )
 
-      // msgalert( idProduct, "idProduct" )
-
       idImagePrestashop       := ::insertImage( idProduct, hProduct, hImage, nImagePosition )
-
-      // msgalert( idImagePrestashop, "idImagePrestashop" )
 
       if idImagePrestashop != 0
 
@@ -877,8 +873,8 @@ METHOD processImageProducts( idProduct, hProduct ) CLASS TComercioProduct
          // Añadimos la imagen al array para subirla a prestashop--------------
 
          hSet( hImage, "nTipoImagen", __tipoProducto__ )
-         hSet( hImage, "cCarpeta", alltrim( str( idProduct ) ) )
-         hSet( hImage, "cPrefijoNombre", alltrim( str( idProduct ) ) )
+         hSet( hImage, "cCarpeta", alltrim( str( idImagePrestashop ) ) )
+         hSet( hImage, "cPrefijoNombre", alltrim( str( idImagePrestashop ) ) )
          hSet( hImage, "aTypeImages", {} )
 
       end if 
@@ -1591,9 +1587,9 @@ METHOD insertTaxPrestashop( hTax ) CLASS TComercioProduct
                   "id_lang, " + ;
                   "name ) " + ;
                "VALUES ( " + ;
-                  "'" + str( idTax ) + "', " + ;                           // id_tax
-                  "'" + str( ::getLanguage() ) + "', " + ;                     // id_lang
-                  "'" + ::oConexionMySQLDatabase():Escapestr( hGet( hTax, "name" ) ) + "' )"   // name
+                  "'" + alltrim( str( idTax ) ) + "', " + ;                                  // id_tax
+                  "'" + alltrim( str( ::getLanguage() ) ) + "', " + ;                        // id_lang
+                  "'" + ::oConexionMySQLDatabase():Escapestr( hGet( hTax, "name" ) ) + "' )" // name
 
    if ::commandExecDirect( cCommand )
       ::writeTextOk( hGet( hTax, "name" ), ::cPrefixTable( "tax_lang" ) )
@@ -1747,7 +1743,7 @@ METHOD insertPropertiesHeader( hPropertiesHeaderProduct ) CLASS TComercioProduct
                                  "public_name ) " + ;
                               "VALUES ( " + ;
                                  "'" + alltrim( str( idPrestashop ) ) + "', " + ;            // id_attribute_group
-                                 "'" + str( ::getLanguage() ) + "', " + ;                    // id_lang
+                                 "'" + alltrim( str( ::getLanguage() ) ) + "', " + ;         // id_lang
                                  "'" + hGet( hPropertiesHeaderProduct, "name" ) + "', " + ;  // name
                                  "'" + hGet( hPropertiesHeaderProduct, "name" ) + "' )"      // public_name
 
@@ -1794,7 +1790,7 @@ METHOD insertPropertiesLineProduct( hPropertiesLineProduct, nPosition ) CLASS TC
                         "name ) " + ;
                      "VALUES ( " + ;
                         "'" + alltrim( str( idPrestashop ) ) + "', " + ;                                             // id_attribute
-                        "'" + str( ::getLanguage() ) + "', " + ;                                                     // id_lang
+                        "'" + alltrim( str( ::getLanguage() ) ) + "', " + ;                                          // id_lang
                         "'" + ::oConexionMySQLDatabase():Escapestr( hGet( hPropertiesLineProduct, "name" ) ) + "' )" // name
 
       if !::commandExecDirect( cCommand )

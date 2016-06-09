@@ -466,7 +466,7 @@ CLASS TComercio
    METHOD cDirectoryCategories()             INLINE ( ::TPrestashopConfig:getImagesDirectory() + "/c" )
    METHOD getRecursiveFolderPrestashop( cCarpeta )
 
-   METHOD resetStockProductData()           INLINE ( ::aStockProductData := {} )
+   METHOD resetStockProductData()            INLINE ( ::aStockProductData := {} )
 
    METHOD resetProductsToUpadateStocks()     INLINE ( ::hProductsToUpdate := {=>} )
    METHOD getProductsToUpadateStocks()       INLINE ( ::hProductsToUpdate )
@@ -475,11 +475,15 @@ CLASS TComercio
    METHOD updateWebProductStocks()
    METHOD updateProductStocks( cWebName, aProductsWeb )   
 
-   Method insertStructureInformation()
-   Method insertOneProductToPrestashop( idProduct )
-   Method insertAllProducts()
+   METHOD insertStructureInformation()
+   METHOD insertOneProductToPrestashop( idProduct )
+   METHOD insertAllProducts()
+
+   METHOD getLastInsertProduct( idProduct )  INLINE ( ::TPrestashopConfig():getFromCurrentWeb( "IdProduct", "" ) )
 
    METHOD saveLastInsertProduct( idProduct )
+
+   METHOD getStartId( idProduct )            INLINE ( padr( ::getCurrentWebName(), 100 ) + ( if( !empty( idProduct ), padr( idProduct, 18 ), "" ) ) )
 
 END CLASS
 
@@ -3787,8 +3791,8 @@ insertamos imagenes del artículo en concreto--------------------------------
 METHOD buildInsertImageProductsPrestashop( hProduct, idProductPrestashop ) CLASS TComercio
 
    local idImagenPrestashop   := 0
-   local oImagen
    local hImage
+   local oImagen
    local nImagePosition       := 1
 
    for each hImage in hGet( hProduct, "aImages" )
@@ -4659,34 +4663,50 @@ METHOD controllerExportPrestashop( idProduct ) Class TComercio
 
    local oBlock
    local oError
+   local lastInsertProduct
+   local restoreLastInsert    := .f.    
 
    if !( ::isAviableWebToExport() )
       Return .f.
    end if 
 
+   lastInsertProduct          := ::getLastInsertProduct()
+   if !empty( lastInsertProduct )
+      restoreLastInsert       :=  msgYesNo(  "La última sincronización con la web no finalizo correctamente" + CRLF + ;
+                                             "¿Desea continuar desde el último artículo insertado?" )
+   end if  
+
    ::disableDialog()
 
-   //oBlock            := ErrorBlock( { | oError | Break( oError ) } )
-   //BEGIN SEQUENCE
+   oBlock                     := ErrorBlock( { | oError | Break( oError ) } )
+   BEGIN SEQUENCE
 
       if ::filesOpen()
 
          ::ftpConnect()
 
-         ::insertStructureInformation()
+         if restoreLastInsert 
 
-         waitSeconds( 1 )
+            ::insertAllProducts( lastInsertProduct )
 
-         ::insertAllProducts()
+         else 
+
+            ::insertStructureInformation()
+
+            waitSeconds( 1 )
+
+            ::insertAllProducts()
+
+         end if 
 
          ::ftpDisConnect()
 
       end if
    
-//   RECOVER USING oError
-//      msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
-//   END SEQUENCE
-//   ErrorBlock( oBlock )
+   RECOVER USING oError
+      msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
+   END SEQUENCE
+   ErrorBlock( oBlock )
 
    ::EnableDialog()
 
@@ -4778,21 +4798,15 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD insertAllProducts() CLASS TComercio
-
-   local lInsert
+METHOD insertAllProducts( idProduct ) CLASS TComercio
 
    ::oProductDatabase():ordsetfocus( "lWebShop" )
 
-   if ::oProductDatabase():seek( ::getCurrentWebName() )
+   if ::oProductDatabase():seek( ::getStartId( idProduct ) )
 
       while ( alltrim( ::oProductDatabase():cWebShop ) == ::getCurrentWebName() ) .and. !( ::oProductDatabase():eof() )
 
-         lInsert  := ::insertOneProductToPrestashop( ::oProductDatabase():Codigo )
-
-         msgAlert( lInsert )
-         
-         if lInsert
+         if ::insertOneProductToPrestashop( ::oProductDatabase():Codigo )
             ::saveLastInsertProduct( ::oProductDatabase():Codigo )
          end if 
 
@@ -4815,9 +4829,7 @@ METHOD saveLastInsertProduct( idProduct ) CLASS TComercio
    ::TPrestashopConfig():setToCurrentWeb( "IdProduct", idProduct )
 
    ::TPrestashopConfig():saveJSON()
-
-   msgAlert("mira el json")
-
+   
 Return ( self )
 
 //---------------------------------------------------------------------------//
