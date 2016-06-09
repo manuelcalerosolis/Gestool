@@ -1847,6 +1847,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
    cOldCodCli           := aTmp[ _CCODCLI ]
    cOldSituacion        := aTmp[ _CSITUAC ]
 
+   setOldCodigoAgente( aTmp[ _CCODAGE ] )
+
    do case
    case nMode == APPD_MODE
 
