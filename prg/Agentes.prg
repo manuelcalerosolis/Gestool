@@ -45,7 +45,7 @@ static cAgentesRelaciones
 static cAgentesAtipicas
 
 static cOldCodigoAgente          := ""
-static nOldPctComision
+static nOldPctComision           := 0
 
 static lOpenFiles                := .f.
 
@@ -1677,7 +1677,6 @@ FUNCTION cAgentes( oGet, dbfAge, oGet2, oGetPct )
    local lClose      := .f.
    local lValid      := .f.
 
-
    if Empty( oGet:varGet() ) .or. ( oGet:varGet() == replicate( "Z", 3 ) )
 
       if isObject( oGet2 )
@@ -2017,8 +2016,43 @@ RETURN ( nPrecioAgenteArticuloTarifa )
 
 //---------------------------------------------------------------------------//
 
-Function setOldCodigoAgente( cCodigoAgente )
+Function setOldCodigoAgente( cCodigoAgente, nPctComision )
    
-   cOldCodigoAgente := cCodigoAgente 
+   cOldCodigoAgente  := cCodigoAgente 
+   nOldPctComision   := nPctComision
 
 RETURN (nil)
+
+//---------------------------------------------------------------------------//
+
+FUNCTION LoadAgente( oGet, dbfAge, oGet2, oGetPct, dbfAgeCom, dbfTmpLin, oBrw ) 
+
+   local cNewCodigoAgente
+   local nNewPctComision
+
+   if cAgentes( oGet, dbfAge, oGet2, oGetPct )  
+
+      cNewCodigoAgente  := oGet:varGet()
+      nNewPctComision   := oGetPct:varGet()
+
+      if ( !empty( cOldCodigoAgente ) .and. cNewCodigoAgente != cOldCodigoAgente  ) .and.;
+         ( !empty( nNewPctComision ) .and. nNewPctComision != nOldPctComision )     .and.;
+         ApoloMsgNoYes( "La comisión del agente seleccionado es distinta a la anterior.", "¿Desea cambiar la comisión ?" )
+      
+         msgAlert( "hago los cambios" )
+         ExpAgente( , nNewPctComision, dbfTmpLin, oBrw )
+        
+      else
+      
+         msgAlert( "no hago nada" )
+
+      end if  
+
+   end if  
+
+   SetOldCodigoAgente( cNewCodigoAgente, nNewPctComision )
+   msgAlert( cOldCodigoAgente, "me quedo con el agente")
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
