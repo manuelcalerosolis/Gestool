@@ -13763,7 +13763,7 @@ Return ( !lError )
 
 //--------------------------------------------------------------------------//
 
-Method Create() CLASS TArticuloLabelGenerator
+Method Create() CLASS TArticuloLabelGenerator 
 
    local oGetOrd
    local cGetOrd     := Space( 100 )

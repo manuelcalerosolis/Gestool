@@ -5003,24 +5003,6 @@ Return ( by( nRow ) )
 
 Function Test()
 
-   local cFile    := cPatConfig() + cCodEmp() + "\prestashop.json"
-   local cConfig  := memoread( cFile )
-   local hConfig  
-   local hWeb
-   local hOutlet
-
-   hb_jsonDecode( cConfig, @hConfig )     
-
-   hWeb           := hGet( hConfig, "Webs" ) 
-   hOutlet        := hGet( hWeb, "Outlet" )
-
-   hSet( hOutlet, "IdProduct", "123" )
-
-   memowrit( cFile, hb_jsonencode( hConfig, .t. ) )
-
-
-
-
 /*
    local date        := date()
    local jsondecode

@@ -44,6 +44,9 @@ static cAgentesComisiones
 static cAgentesRelaciones
 static cAgentesAtipicas
 
+static cOldCodigoAgente          := ""
+static nOldPctComision
+
 static lOpenFiles                := .f.
 
 static bEdit                     := { |aTmp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode ) }
@@ -1665,7 +1668,7 @@ RETURN ( aBase )
 
 //--------------------------------------------------------------------------//
 
-FUNCTION cAgentes( oGet, dbfAge, oGet2, oGetPct )
+FUNCTION cAgentes( oGet, dbfAge, oGet2, oGetPct ) 
 
    local nRec
    local oBlock
@@ -1673,6 +1676,7 @@ FUNCTION cAgentes( oGet, dbfAge, oGet2, oGetPct )
    local xValor
    local lClose      := .f.
    local lValid      := .f.
+
 
    if Empty( oGet:varGet() ) .or. ( oGet:varGet() == replicate( "Z", 3 ) )
 
@@ -2013,4 +2017,8 @@ RETURN ( nPrecioAgenteArticuloTarifa )
 
 //---------------------------------------------------------------------------//
 
+Function setOldCodigoAgente( cCodigoAgente )
+   
+   cOldCodigoAgente := cCodigoAgente 
 
+RETURN (nil)
