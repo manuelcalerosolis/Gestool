@@ -12344,6 +12344,7 @@ STATIC FUNCTION RecalculaTotal( aTmp )
       oGetNet:SetText( Trans( nTotNet, cPorDiv ) )
    end if
 
+
    IF oGetIva != nil
       oGetIva:SetText( Trans( nTotIva, cPorDiv ) )
    END IF
@@ -14201,6 +14202,7 @@ FUNCTION nPagFacRec( cFactura, cFacRecT, dbfFacCliP, dbfIva, dbfDiv, cDivRet, lO
       nOrd              := ( dbfFacCliP )->( OrdSetFocus( "rNumFac" ) )
 
       if ( dbfFacCliP )->( dbSeek( cFactura ) )
+
          while ( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == cFactura )
 
             if ( lOnlyCob .and. ( dbfFacCliP )->lCobrado .and. !( dbfFacCliP )->lDevuelto ) .or. ( !lOnlyCob .and. !( dbfFacCliP )->lDevuelto )
@@ -14289,7 +14291,7 @@ FUNCTION ChkLqdFacRec( aTmp, cFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv )
    end if
 
    if dbLock( cFacRecT )
-      ( cFacRecT )->lLiquidada := lChkLqd
+      ( cFacRecT )->lLiquidada   := lChkLqd
       ( cFacRecT )->( dbUnLock() )
    end if
 

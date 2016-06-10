@@ -3659,8 +3659,8 @@ METHOD DefineFiles( cPath, cDriver, lUniqueName, cFileName ) CLASS TDetMovimient
       FIELD NAME "cCodMov"    TYPE "C" LEN   2 DEC 0 COMMENT "TM"                                  OF oDbf
       FIELD NAME "cCodPr1"    TYPE "C" LEN  20 DEC 0 COMMENT "Código propiedad 1"                  OF oDbf
       FIELD NAME "cCodPr2"    TYPE "C" LEN  20 DEC 0 COMMENT "Código propiedad 2"                  OF oDbf
-      FIELD NAME "cValPr1"    TYPE "C" LEN  20 DEC 0 COMMENT "Valor porpiedad 1"                   OF oDbf
-      FIELD NAME "cValPr2"    TYPE "C" LEN  20 DEC 0 COMMENT "Valor porpiedad 2"                   OF oDbf
+      FIELD NAME "cValPr1"    TYPE "C" LEN  20 DEC 0 COMMENT "Valor propiedad 1"                   OF oDbf
+      FIELD NAME "cValPr2"    TYPE "C" LEN  20 DEC 0 COMMENT "Valor propiedad 2"                   OF oDbf
       FIELD NAME "cCodUsr"    TYPE "C" LEN   3 DEC 0 COMMENT "Código usuario"                      OF oDbf
       FIELD NAME "cCodDlg"    TYPE "C" LEN   2 DEC 0 COMMENT "Código delegación"                   OF oDbf
       FIELD NAME "lLote"      TYPE "L" LEN   1 DEC 0 COMMENT "Lógico lote"                         OF oDbf
