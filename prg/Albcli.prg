@@ -9579,10 +9579,8 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode )
 
          ShowIncidenciaCliente( ( D():Get( "Client", nView ) )->Cod, nView )
 
-         if ( D():Get( "Client", nView ) )->lBlqCli
-            msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" + CRLF + ;
-                     "Motivo: " + AllTrim( ( D():Get( "Client", nView ) )->cMotBlq ),;
-                     "Imposible archivar" )
+         if !( isAviableClient( nView ) )
+            return .f.
          end if
 
          if !( D():Get( "Client", nView ) )->lChgPre

@@ -2057,6 +2057,7 @@ RETURN ( nil )
 FUNCTION ValidComision( oGet, dbfTmpLin, oBrw )
 
    local nNewPctComision   := oGet:varGet()
+   local cNewCodigoAgente
 
    if nNewPctComision != nOldPctComision 
 

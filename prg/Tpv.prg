@@ -11379,10 +11379,7 @@ Static Function loaCli( aGet, aTmp, nMode, oTelefonoClient, oMailClient )
 
    if ( dbfClient )->( dbSeek( cNewCodCli ) )
 
-      if ( dbfClient )->lBlqCli
-         msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" + CRLF + ;
-                  "Motivo: " + AllTrim( ( dbfClient )->cMotBlq ),;
-                  "Imposible archivar" )
+      if !( isAviableClient( nView ) )
          return .f.
       end if
 
