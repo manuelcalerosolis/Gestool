@@ -1869,6 +1869,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
    */
 
    cOldCodCli           := aTmp[ _CCODCLI ]
+   setOldCodigoAgente( aTmp[ _CCODAGE ], aTmp[ _NPCTCOMAGE ] )
 
    do case
       case nMode == APPD_MODE
@@ -2268,7 +2269,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       REDEFINE GET aGet[ _CCODAGE ] VAR aTmp[ _CCODAGE ] ;
 			ID 		180 ;
          WHEN     ( lWhen ) ;
-         VALID    ( cAgentes( aGet[ _CCODAGE ], dbfAgent, oSay[ 6 ], aGet[ _NPCTCOMAGE ], dbfAgeCom ) ) ;
+         VALID    ( LoadAgente( aGet[ _CCODAGE ], dbfAgent, oSay[ 6 ], aGet[ _NPCTCOMAGE ], dbfAgeCom, dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAgentes( aGet[ _CCODAGE ], oSay[ 6 ] ) ) ;
 			OF 		oFld:aDialogs[1]

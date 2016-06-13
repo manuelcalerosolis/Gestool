@@ -2082,6 +2082,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
    DEFAULT cSerie          := cNewSer( "nFacRec", dbfCount )
    DEFAULT aNumDoc         := Array( 3 )
 
+   setOldCodigoAgente( aTmp[ _CCODAGE ], aTmp[ _NPCTCOMAGE ] )   
+
    do case
    case nMode == APPD_MODE
 
@@ -2558,7 +2560,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       	REDEFINE GET aGet[ _CCODAGE ] VAR aTmp[ _CCODAGE ] ;
          	ID       250 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         	VALID    ( cAgentes( aGet[ _CCODAGE], dbfAgent, oSay[ 3 ], aGet[ _NPCTCOMAGE], dbfAgeCom ) );
+         	VALID    ( LoadAgente( aGet[ _CCODAGE], dbfAgent, oSay[ 3 ], aGet[ _NPCTCOMAGE], dbfAgeCom, dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) );
          	BITMAP   "LUPA" ;
          	ON HELP  ( BrwAgentes( aGet[ _CCODAGE], oSay[ 3 ] ) );
 			OF 		oFld:aDialogs[1]
