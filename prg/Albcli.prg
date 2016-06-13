@@ -9579,6 +9579,13 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode )
 
          ShowIncidenciaCliente( ( D():Get( "Client", nView ) )->Cod, nView )
 
+<<<<<<< HEAD
+=======
+         if !( isAviableClient( nView ) )
+            return .f.
+         end if
+
+>>>>>>> origin/master
          if !( D():Get( "Client", nView ) )->lChgPre
             msgStop( "Este cliente no tiene autorización para venta a credito", "Imposible archivar como albarán" )
          end if
