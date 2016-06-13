@@ -2017,9 +2017,14 @@ RETURN ( nPrecioAgenteArticuloTarifa )
 //---------------------------------------------------------------------------//
 
 Function setOldCodigoAgente( cCodigoAgente, nPctComision )
-   
-   cOldCodigoAgente  := cCodigoAgente 
-   nOldPctComision   := nPctComision
+
+   if !empty( cCodigoAgente)
+      cOldCodigoAgente  := cCodigoAgente 
+   end if 
+
+   if nPctComision != nil
+      nOldPctComision   := nPctComision
+   end if 
 
 RETURN (nil)
 
@@ -2036,23 +2041,32 @@ FUNCTION LoadAgente( oGet, dbfAge, oGet2, oGetPct, dbfAgeCom, dbfTmpLin, oBrw )
       nNewPctComision   := oGetPct:varGet()
 
       if ( !empty( cOldCodigoAgente ) .and. cNewCodigoAgente != cOldCodigoAgente  ) .and.;
-         ( !empty( nNewPctComision ) .and. nNewPctComision != nOldPctComision )     .and.;
+         ( nNewPctComision != nOldPctComision ) .and.;
          ApoloMsgNoYes( "La comisión del agente seleccionado es distinta a la anterior.", "¿Desea cambiar la comisión ?" )
       
-         msgAlert( "hago los cambios" )
          ExpAgente( , nNewPctComision, dbfTmpLin, oBrw )
         
-      else
-      
-         msgAlert( "no hago nada" )
-
       end if  
 
    end if  
 
    SetOldCodigoAgente( cNewCodigoAgente, nNewPctComision )
-   msgAlert( cOldCodigoAgente, "me quedo con el agente")
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+FUNCTION ValidComision( oGet, dbfTmpLin, oBrw )
+
+   local nNewPctComision   := oGet:varGet()
+
+   if nNewPctComision != nOldPctComision 
+
+      ApoloMsgNoYes( "La comisión seleccionada es distinta a la anterior.", "¿Desea cambiar la comisión en todas las líneas?" )
+      ExpAgente( , nNewPctComision, dbfTmpLin, oBrw )
+
+   end if
+
+   SetOldCodigoAgente( , nNewPctComision )
+
+RETURN ( nil )

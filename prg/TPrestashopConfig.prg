@@ -61,12 +61,12 @@ CLASS TPrestashopConfig
    METHOD getFtpPassword()             INLINE ( ::getFromCurrentWeb( "FtpPassword" ) )
    METHOD getFtpPassive()              INLINE ( ::getFromCurrentWeb( "FtpPassive" ) )
    METHOD getFtpPort()                 INLINE ( ::getFromCurrentWeb( "FtpPort" ) )
+   METHOD getFtpService()              INLINE ( ::getFromCurrentWeb( "FtpService" ) )
 
    METHOD getCookieKey()               INLINE ( ::getFromCurrentWeb( "CookieKey" ) )
 
    METHOD getStore()                   INLINE ( ::getFromCurrentWeb( "Store", "000" ) )
    METHOD getSyncronizeManufacturers() INLINE ( ::getFromCurrentWeb( "SyncronizeManufacturers", .t. ) )
-   METHOD getFtpService()              INLINE ( ::getFromCurrentWeb( "FtpService" ) )
    
    METHOD getOrderSerie()              INLINE ( ::getFromCurrentWeb( "OrderSerie" ) )
    METHOD getBudgetSerie()             INLINE ( ::getFromCurrentWeb( "BudgetSerie" ) )

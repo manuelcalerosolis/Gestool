@@ -2674,6 +2674,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       REDEFINE GET aGet[ _NPCTCOMAGE ] VAR aTmp[ _NPCTCOMAGE ] ;
          WHEN     ( !empty( aTmp[ _CCODAGE ] ) .and. lWhen ) ;
+         VALID    ( ValidComision( aGet[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) );
          PICTURE  "@E 999.99" ;
          SPINNER;
          ID       222 ;
