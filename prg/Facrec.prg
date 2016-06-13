@@ -14278,15 +14278,8 @@ FUNCTION ChkLqdFacRec( aTmp, cFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv )
       cDivFac                    := ( cFacRecT )->CDIVFAC
    end if
 
-<<<<<<< HEAD
    nTotal                        := abs( nTotFacRec( cFactura, cFacRecT, dbfFacRecL, dbfIva, dbfDiv, nil, nil, .f. ) )
    nPagFacCli                    := abs( nPagFacRec( cFactura, cFacRecT, dbfFacCliP, dbfIva, dbfDiv, nil, .t. ) )
-=======
-   nTotal         := abs( nTotFacRec( cFactura, cFacRecT, dbfFacRecL, dbfIva, dbfDiv, nil, nil, .f. ) )
-   ?"antes2"
-   nPagFacCli     := abs( nPagFacRec( cFactura, cFacRecT, dbfFacCliP, dbfIva, dbfDiv, nil, .t. ) )
-   ?"despues2"
->>>>>>> 222d1920306fac095958638470ae04760fee14b5
 
    lChkLqd                       := !lMayorIgual( nTotal, nPagFacCli, 0.1 )
 
