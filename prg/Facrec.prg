@@ -14280,7 +14280,9 @@ FUNCTION ChkLqdFacRec( aTmp, cFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv )
    end if
 
    nTotal         := abs( nTotFacRec( cFactura, cFacRecT, dbfFacRecL, dbfIva, dbfDiv, nil, nil, .f. ) )
+   ?"antes2"
    nPagFacCli     := abs( nPagFacRec( cFactura, cFacRecT, dbfFacCliP, dbfIva, dbfDiv, nil, .t. ) )
+   ?"despues2"
 
    lChkLqd        := !lMayorIgual( nTotal, nPagFacCli, 0.1 )
 
