@@ -9070,21 +9070,21 @@ RETURN lRet
 
 //---------------------------------------------------------------------------//
 
-FUNCTION isAviableClient( cCodCli, dbfCli )
+FUNCTION isAviableClient( nView )
 
-   if dbSeekInOrd( cCodCli, "Cod", dbfCli )
+   if !( D():Clientes( nView ) )->lInaCli
+      msgStop( "Cliente inactivo, no se pueden realizar operaciones de venta" + CRLF + ;
+               "Motivo: " + alltrim( ( D():Clientes( nView ) )->cMotIna ),;
+               "Imposible crear documento" )   
+      Return .f.
+   end if 
 
-      if !( dbfCli )->lInaCli
-         msgStop( ( dbfCli )->cMotIna, "Cliente inactivo" )
-         Return .f.
-      end if 
-
-      if !( dbfCli )->lBlqCli
-         msgStop( ( dbfCli )->cMotBlq, "Cliente bloqueado" )
-         Return .f.
-      end if 
-
-   end if
+   if !( D():Clientes( nView ) )->lBlqCli
+      msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" + CRLF + ;
+               "Motivo: " + alltrim( ( D():Clientes( nView ) )->cMotBlq ),;
+               "Imposible crear documento" )   
+      Return .f.
+   end if 
 
 RETURN .t.
 
