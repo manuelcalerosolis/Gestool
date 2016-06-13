@@ -7277,6 +7277,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    local cDbfPgo  := "FCliP"
    local cDbfSer  := "FCliS"
    local cDbfEst  := "FCliE"
+   local nOrd
    local cFac     := aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ]
 
    CursorWait()
@@ -7438,6 +7439,11 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       ( dbfTmpPgo )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfTmpPgo )->( ordCreate( cTmpPgo, "cNumMtr", "Field->cNumMtr", {|| Field->cNumMtr } ) )
 
+      ( dbfTmpPgo )->( ordCondSet("!Deleted() .and. Field->cTipRec == 'R'", {|| !Deleted() .and. Field->cTipRec == 'R' } ) )
+      ( dbfTmpPgo )->( ordCreate( cTmpPgo, "rNumFac", "cSerie + str( nNumFac ) + cSufFac + str( nNumRec )", {|| Field->CSERIE + str( Field->NNUMFAC ) + Field->CSUFFAC + str( Field->NNUMREC ) } ) )
+
+      nOrd        := ( dbfFacCliP )->( OrdSetFocus( "rNumFac" ) )
+
       if ( dbfFacCliP )->( dbSeek( cFac ) ) .and. nMode != DUPL_MODE
          while ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == cFac .and. ( dbfFacCliP )->( !eof() )
             dbPass( dbfFacCliP, dbfTmpPgo, .t. )
@@ -7446,6 +7452,8 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       end if
 
       ( dbfTmpPgo  )->( dbGoTop() )
+
+      ( dbfFacCliP )->( OrdSetFocus( nOrd ) )
 
    else
 
@@ -14198,13 +14206,7 @@ FUNCTION nPagFacRec( cFactura, cFacRecT, dbfFacCliP, dbfIva, dbfDiv, cDivRet, lO
       nRec              := ( dbfFacCliP )->( Recno() )
       nOrd              := ( dbfFacCliP )->( OrdSetFocus( "rNumFac" ) )
 
-      MsgInfo( nRec, "nRec" )
-      MsgInfo( nOrd, "nPag" )
-      MsgInfo( cFactura, "Numero factura" )
-
       if ( dbfFacCliP )->( dbSeek( cFactura ) )
-
-         ?"Lo encuentro"
 
          while ( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == cFactura )
 
@@ -14285,13 +14287,8 @@ FUNCTION ChkLqdFacRec( aTmp, cFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv )
       cDivFac                    := ( cFacRecT )->CDIVFAC
    end if
 
-<<<<<<< HEAD
-   nTotal         := abs( nTotFacRec( cFactura, cFacRecT, dbfFacRecL, dbfIva, dbfDiv, nil, nil, .f. ) )
-   nPagFacCli     := abs( nPagFacRec( cFactura, cFacRecT, dbfFacCliP, dbfIva, dbfDiv, nil, .t. ) )
-=======
    nTotal                        := abs( nTotFacRec( cFactura, cFacRecT, dbfFacRecL, dbfIva, dbfDiv, nil, nil, .f. ) )
    nPagFacCli                    := abs( nPagFacRec( cFactura, cFacRecT, dbfFacCliP, dbfIva, dbfDiv, nil, .t. ) )
->>>>>>> 3fe63d1d62d9ead725f9b7e0cf3fbca841e415bd
 
    lChkLqd                       := !lMayorIgual( nTotal, nPagFacCli, 0.1 )
 
