@@ -14201,7 +14201,13 @@ FUNCTION nPagFacRec( cFactura, cFacRecT, dbfFacCliP, dbfIva, dbfDiv, cDivRet, lO
       nRec              := ( dbfFacCliP )->( Recno() )
       nOrd              := ( dbfFacCliP )->( OrdSetFocus( "rNumFac" ) )
 
+      MsgInfo( nRec, "nRec" )
+      MsgInfo( nOrd, "nPag" )
+      MsgInfo( cFactura, "Numero factura" )
+
       if ( dbfFacCliP )->( dbSeek( cFactura ) )
+
+         ?"Lo encuentro"
 
          while ( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == cFactura )
 
@@ -14212,6 +14218,7 @@ FUNCTION nPagFacRec( cFactura, cFacRecT, dbfFacCliP, dbfIva, dbfDiv, cDivRet, lO
             ( dbfFacCliP )->( dbSkip() )
 
          end while
+
       end if
 
       ( dbfFacCliP )->( OrdSetFocus( nOrd ) )
@@ -14282,9 +14289,7 @@ FUNCTION ChkLqdFacRec( aTmp, cFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv )
    end if
 
    nTotal         := abs( nTotFacRec( cFactura, cFacRecT, dbfFacRecL, dbfIva, dbfDiv, nil, nil, .f. ) )
-   ?"antes2"
    nPagFacCli     := abs( nPagFacRec( cFactura, cFacRecT, dbfFacCliP, dbfIva, dbfDiv, nil, .t. ) )
-   ?"despues2"
 
    lChkLqd        := !lMayorIgual( nTotal, nPagFacCli, 0.1 )
 

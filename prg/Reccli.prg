@@ -5623,10 +5623,7 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
          case cTipoRecibo == "R"
 
             if ( D():FacturasRectificativas( nView ) )->( dbSeek( cNumFac ) )
-               ?"Antes"
-               ?cFacCliP
                ChkLqdFacRec( nil, D():FacturasRectificativas( nView ), D():FacturasRectificativasLineas( nView ), cFacCliP, D():TiposIva( nView ), D():Divisas( nView ) )
-               ?"Después"
             end if
 
       end case
