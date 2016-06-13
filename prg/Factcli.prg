@@ -2428,7 +2428,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    */
 
    cOldCodCli              := aTmp[ _CCODCLI ]
-   setOldCodigoAgente( aTmp[ _CCODAGE ], aTmp[ _NPCTCOMAGE ] )
+
+   setOldPorcentajeAgente( aTmp[ _NPCTCOMAGE ] )
 
    /*
    Operaciones segun el mode---------------------------------------------------
@@ -2893,13 +2894,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       251 ;
          WHEN     ( !Empty( aTmp[ _CCODAGE ] ) .AND. lWhen ) ;
          BITMAP   "Bot" ;
-         ON HELP  ( ExpAgente( aTmp[ _CCODAGE ], aTmp[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) ) ;
+         ON HELP  ( changeAgentPercentageInAllLines(aTmp[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) ) ;
          OF       fldGeneral
 
       REDEFINE GET aGet[ _NPCTCOMAGE ] VAR aTmp[ _NPCTCOMAGE ] ;
          ID       252 ;
          WHEN     ( !Empty( aTmp[ _CCODAGE ] ) .AND. lWhen ) ;
-         VALID    ( ValidComision( aGet[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) );
+         VALID    ( validateAgentPercentage( aGet[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) );
          PICTURE  "@E 99.99" ;
          SPINNER;
          OF       fldGeneral

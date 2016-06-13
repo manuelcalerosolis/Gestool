@@ -1063,7 +1063,7 @@ Function lStartCheck()
 
    // Test---------------------------------------------------------------------
 
-   //Test()
+   Test()
 
    // Navegación---------------------------------------------------------------
 
@@ -5002,247 +5002,24 @@ Return ( by( nRow ) )
 //---------------------------------------------------------------------------//
 
 Function Test()
-
 /*
-   local date        := date()
-   local jsondecode
-   local jsonencode  := hb_jsonencode( {  "texto" => "test",;
-                                          "fecha" => date } )
+   local dbfMatriz
 
-   msgAlert( jsonencode )
+   USE ( cPatEmp() + "FacCliP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliP", @dbfMatriz ) )
+   SET ADSINDEX TO ( cPatEmp() + "FacCliP.CDX" ) ADDITIVE
+   SET TAG TO "nImporte"
 
-   hb_jsondecode( jsonencode, @jsondecode )
+   if ( dbfMatriz )->( dbseek( 103, .t. ) )
+      msgStop( "Encontrado 103.14")
+   else
+      msgStop( "NO Encontrado 103.14")
+   end if 
 
-   msgAlert( hb_valtoexp( jsondecode ) )
+   CLOSE ( dbfMatriz )
 */
-
 Return ( nil )
 
-  // local uGetKey  := "test teclado"
-
-  // VirtualKey( .f., uGetKey, "Title" )
-
-   // TComercioBudget():parseProductProperties( "Tallas",    "CINT. SRA. VAQ. PIEZAS - Tallas : 100, Color : VARIOS-900" )
-   // TComercioBudget():parseProductProperties( "Color",     "CINT. SRA. VAQ. PIEZAS - Tallas : 100, Color : VARIOS-900" )
-
-   // TScripts():CompilarEjecutarFicheroScript( FullCurDir() + "script\tpv\ImportarPricats.prg" ) 
-/*
-   local TPrestaShopConfig
-   local TFtpCUrl
-
-   TPrestaShopConfig          := TPrestaShopConfig():New( "2015" ) 
-   TPrestaShopConfig:LoadJSON()
-   TPrestaShopConfig:getWebs()
-
-   TPrestaShopConfig:setCurrentWebName( "Temporada" )
-
-   TFtpCUrl                   := TFtpCUrl():NewPrestashopConfig( TPrestashopConfig )
-   TFtpCUrl:createConexion()
-   TFtpCUrl:createFile( "c:\fw195\Gestool\bin\out\img\1-cart_default.jpg", "test4/p/1/" )
-   TFtpCUrl:createFile( "c:\fw195\Gestool\bin\out\img\1-cart_default.jpg", "test4/p/2/" )
-   TFtpCUrl:createFile( "c:\fw195\Gestool\bin\out\img\1-cart_default.jpg", "test4/p/3/" )
-   TFtpCUrl:createFile( "c:\fw195\Gestool\bin\out\img\1-cart_default.jpg", "test4/p/4/" )
-   TFtpCUrl:createFile( "c:\fw195\Gestool\bin\out\img\1-cart_default.jpg", "test4/p/5/" )
-   TFtpCUrl:endConexion()
-*/
-
-/*
-   LOCAL curl
-   LOCAL info
-   LOCAL tmp
-   LOCAL tmp1
-   LOCAL f
-   LOCAL a
-   local cFile     := "c:\img\portada.jpg"
-   local cDL
-   local cServer   := "ftp.lajacamoda.com"   
-   local cUser     := "gestool"        
-   local cPassword := "E9cV4Ehu"     
-   local Url1      := "ftp://" + cUser + ":" + cPassword + "@" + cServer + "/test/p/1/" + cFile
-   local Url2      := "ftp://" + cUser + ":" + cPassword + "@" + cServer + "/test/p/2/" + cFile
-
-   LOCAL lVerbose := .F.
-
-   ? curl_version()
-
-   info := curl_version_info()
-
-   debug( info )
-
-   ? "INIT:", curl_global_init()
-
-   IF ! Empty( curl := curl_easy_init() )
-
-      ? "Empieza a subir 1 : ", Url1
-      curl_easy_setopt( curl, HB_CURLOPT_UPLOAD )
-      curl_easy_setopt( curl, HB_CURLOPT_URL, Url1 )
-      curl_easy_setopt( curl, HB_CURLOPT_UL_FILE_SETUP, cFile )
-      curl_easy_setopt( curl, HB_CURLOPT_INFILESIZE, hb_FSize( cFile ) )
-      curl_easy_setopt( curl, HB_CURLOPT_FTP_CREATE_MISSING_DIRS, .t. )
-      curl_easy_perform( curl )
-
-      curl_easy_getinfo( curl, HB_CURLINFO_EFFECTIVE_URL )
-      ? "Tiempo empleado : ", curl_easy_getinfo( curl, HB_CURLINFO_TOTAL_TIME )
-      curl_easy_reset( curl )
-
-      ? "Empieza a subir 2 : ", Url2
-      curl_easy_setopt( curl, HB_CURLOPT_UPLOAD )
-      curl_easy_setopt( curl, HB_CURLOPT_URL, Url2 )
-      curl_easy_setopt( curl, HB_CURLOPT_UL_FILE_SETUP, cFile )
-      curl_easy_setopt( curl, HB_CURLOPT_INFILESIZE, hb_FSize( cFile ) )
-      curl_easy_setopt( curl, HB_CURLOPT_FTP_CREATE_MISSING_DIRS, .t. )
-      curl_easy_perform( curl )
-
-      curl_easy_getinfo( curl, HB_CURLINFO_EFFECTIVE_URL )
-      ? "Tiempo empleado : ", curl_easy_getinfo( curl, HB_CURLINFO_TOTAL_TIME )
-      curl_easy_reset( curl )
-
-   ENDIF
-
-   curl_global_cleanup()
-
-RETURN nil
-
-STATIC FUNCTION CurGet()
-RETURN { Row(), Col() }
-
-STATIC PROCEDURE CurSet( a )
-
-   SetPos( a[ 1 ], a[ 2 ] )
-
-RETURN 
-*/
-
-/* 
-   LOCAL aFiles
-   LOCAL cUrl
-   LOCAL cStr
-   LOCAL lRetVal  := .T.
-   LOCAL oUrl
-   LOCAL oFTP
-   LOCAL cUser
-   LOCAL cServer
-   LOCAL cPassword
-   LOCAL cFile     := ""
-
-   cServer   := "ftp.lajacamoda.com"   
-   cUser     := "gestool"        
-   cPassword := "E9cV4Ehu"     
-   cUrl      := "ftp://" + cUser + ":" + cPassword + "@" + cServer
-
-   debug( cUrl, "url")
-
-   aFiles   := Directory( "c:\img\*.*" )
-
-   IF Len( aFiles ) > 0
-
-      oUrl              := TUrl():New( cUrl )
-      oUrl:cProto       := "ftp"
-      oUrl:cServer      := cServer
-      oUrl:cUserID      := cUser
-      oUrl:cPassword    := cPassword
-      oUrl:nPort        := 21
-
-      oFTP              := TIPClientFTP():New( oUrl, .T. )
-      oFTP:nConnTimeout := 20000
-      oFTP:bUsePasv     := .f.
-
-      // Comprobamos si el usuario contiene una @ para forzar el userid 
-
-      IF .t.
-         oFTP:oUrl:cServer   := cServer
-         oFTP:oUrl:cUserID   := cUser
-         oFTP:oUrl:cPassword := cPassword
-      ENDIF
-
-      IF oFTP:Open()
-
-         FOR EACH cFile IN afiles
-            debug( "Filename: " + cFile[ F_NAME ] )
-            IF ! oFtp:UploadFile( cFile[ F_NAME ] )
-               lRetVal := .F.
-               EXIT
-            ELSE
-               lRetVal := .T.
-            ENDIF
-         NEXT
-
-         oFTP:Close()
-      ELSE
-         cStr := "Could not connect to FTP server " + oURL:cServer
-         IF oFTP:SocketCon == NIL
-            cStr += hb_eol() + "Connection not initialized"
-         ELSEIF hb_inetErrorCode( oFTP:SocketCon ) == 0
-            cStr += hb_eol() + "Server response:" + " " + oFTP:cReply
-         ELSE
-            cStr += hb_eol() + "Error in connection:" + " " + hb_inetErrorDesc( oFTP:SocketCon )
-         ENDIF
-         debug( cStr )
-         lRetVal := .F.
-      ENDIF
-   ENDIF
-
-   RETURN lRetVal
-*/
-
-/*
-   local TPrestaShopId  := TPrestaShopId():New()
-   TPrestaShopId:OpenFiles()
-   TPrestaShopId:setValueArticulos( "1234", "cWeb", 1234 ) 
-   msgAlert( TPrestaShopId:getValueArticulos( "1234", "cWeb" ) )
-   TPrestaShopId:CloseFiles()
-
-
-   local n  
-   local oDebtor
-   local oDoc  := SepaXml():New( "c:\sepa\testSepa.xml" )
-
-   // Documento----------------------------------------------------------------
-   WITH OBJECT oDoc
-     :MsgId    := id_File('REMESA001')          // Identificación del mensaje
-     :NbOfTxs  := 3                             // Número de operaciones 
-     :CtrlSum  := 740.70                        // Control de suma total importesCreDtTm
-   ENDWITH
-
-   // Presentador--------------------------------------------------------------
-   WITH OBJECT oDoc:oInitPart
-     :nEntity  := 0 // ENTIDAD_JURIDICA
-     :Nm       := "NOMBRE DEL PRESENTADOR, S.L."
-     :BICOrBEI := "BSABESBBXXX"
-     :id       := "B12345678"
-   ENDWITH
-
-   // Acreedor-----------------------------------------------------------------
-   WITH OBJECT oDoc:oCreditor
-     :nEntity  := 0 // ENTIDAD_JURIDICA
-     :Nm       := "NOMBRE DEL ACREEDOR, S.L."
-     :BICOrBEI := "BSABESBBXXX"
-     :id       := "B12345678"
-   ENDWITH
-
-   // Deudor/es----------------------------------------------------------------
-   for n := 1 to 3
-
-      oDebtor := SepaDebitActor():New()
-
-      WITH OBJECT oDebtor
-        :Nm          := "NOMBRE DEL DEUDOR "+ strzero(n, 4) 
-        :nEntity     := 2  // ENTIDAD_OTRA
-        :id          := "12345678Z"
-        :InstdAmt    := 123.45 * n                 // Importe
-        :ReqdColltnDt := ctod("02-21-2014") + (n*10)     // Fecha de cobro (Vencimiento)
-        :IBAN     := "ES0321001234561234567890"
-        :BICOrBEI    := "CAIXESBBXXX"
-        :MndtId      := hb_md5(oDoc:oCreditor:Id + :id)  // Identificación del mandato, idea: Utilizar NIF Acreedor + NIF Deudor 
-        :DtOfSgntr   := ctod("02-21-2014")            // Fecha de firma 
-      ENDWITH
-
-      oDoc:DebtorAdd( oDebtor )
-
-   next
-
-   oDoc:Activate()
-*/
+//---------------------------------------------------------------------------//
 
 Static Function testAll()
 

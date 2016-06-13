@@ -1750,7 +1750,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 
    cOldCodCli           := aTmp[_CCODCLI]
    cOldSituacion        := aTmp[ _CSITUAC ]
-   setOldCodigoAgente( aTmp[ _CCODAGE ], aTmp[ _NPCTCOMAGE ] )
+
+   setOldPorcentajeAgente( aTmp[ _NPCTCOMAGE ] )
 
    do case
    case nMode == APPD_MODE
@@ -2107,12 +2108,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          ID       181 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          BITMAP   "Bot" ;
-         ON HELP  ( ExpAgente( aTmp[ _CCODAGE ], aTmp[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) ) ;
+         ON HELP  ( changeAgentPercentageInAllLines(aTmp[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _NPCTCOMAGE ] VAR aTmp[ _NPCTCOMAGE ] ;
          WHEN     ( !Empty( aTmp[ _CCODAGE ] ) .AND. nMode != ZOOM_MODE ) ;
-         VALID    ( ValidComision( aGet[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) );
+         VALID    ( validateAgentPercentage( aGet[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) );
          PICTURE  "@E 99.99" ;
          SPINNER;
          ID       182 ;
@@ -6655,10 +6656,7 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
 
    if ( D():Clientes( nView ) )->( dbSeek( cNewCodCli ) )
 
-      if ( D():Clientes( nView ) )->lBlqCli
-         msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" + CRLF + ;
-                  "Motivo: " + AllTrim( ( D():Clientes( nView ) )->cMotBlq ),;
-                  "Imposible archivar" )
+      if !( isAviableClient( nView, nMode ) )
          return .f.
       end if
 

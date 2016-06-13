@@ -9070,16 +9070,20 @@ RETURN lRet
 
 //---------------------------------------------------------------------------//
 
-FUNCTION isAviableClient( nView )
+FUNCTION isAviableClient( nView, nMode )
 
-   if !( D():Clientes( nView ) )->lInaCli
+   if ( nMode != APPD_MODE .and. nMode != DUPL_MODE )
+      Return .t.
+   end if 
+
+   if ( D():Clientes( nView ) )->lInaCli
       msgStop( "Cliente inactivo, no se pueden realizar operaciones de venta" + CRLF + ;
                "Motivo: " + alltrim( ( D():Clientes( nView ) )->cMotIna ),;
                "Imposible crear documento" )   
       Return .f.
    end if 
 
-   if !( D():Clientes( nView ) )->lBlqCli
+   if ( D():Clientes( nView ) )->lBlqCli
       msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" + CRLF + ;
                "Motivo: " + alltrim( ( D():Clientes( nView ) )->cMotBlq ),;
                "Imposible crear documento" )   

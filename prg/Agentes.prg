@@ -2016,55 +2016,45 @@ RETURN ( nPrecioAgenteArticuloTarifa )
 
 //---------------------------------------------------------------------------//
 
-Function setOldCodigoAgente( cCodigoAgente, nPctComision )
+Function setOldPorcentajeAgente( nPctComision )
 
-   cOldCodigoAgente  := cCodigoAgente 
    nOldPctComision   := nPctComision
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION LoadAgente( oGet, dbfAge, oGet2, oGetPct, dbfAgeCom, dbfTmpLin, oBrw ) 
+FUNCTION LoadAgente( oGetCodigoAgente, dbfAge, oGetNombreAgente, oGetPorcentajeAgente, dbfAgeCom, dbfTmpLin, oBrw ) 
 
-   local cNewCodigoAgente
-   local nNewPctComision
+   if cAgentes( oGetCodigoAgente, dbfAge, oGetNombreAgente, oGetPorcentajeAgente )  
 
-   if cAgentes( oGet, dbfAge, oGet2, oGetPct )  
-
-      cNewCodigoAgente  := oGet:varGet()
-      nNewPctComision   := oGetPct:varGet()
-
-      if ( cNewCodigoAgente != cOldCodigoAgente ) .or. ( nNewPctComision != nOldPctComision ) 
-
-         if ( dbfTmpLin )->( ordkeycount() ) > 0 .and. ;
-            apoloMsgNoYes( "La comisión del agente seleccionado es distinta a la anterior.", "¿Desea cambiar la comisión ?" )
-      
-            expAgente( cNewCodigoAgente, nNewPctComision, dbfTmpLin, oBrw )
-
-         end if 
-        
-      end if  
+      validateAgentPercentage( oGetPorcentajeAgente, dbfTmpLin, oBrw )
 
    end if  
-
-   SetOldCodigoAgente( cNewCodigoAgente, nNewPctComision )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION ValidComision( oGet, dbfTmpLin, oBrw )
+FUNCTION validateAgentPercentage( oGetPorcentajeAgente, dbfTmpLin, oBrw )
 
-   local nNewPctComision   := oGet:varGet()
+   local nNewPctComision   := oGetPorcentajeAgente:varGet()
 
-   if nNewPctComision != nOldPctComision 
+   if ( nNewPctComision != nOldPctComision ) 
 
-      ApoloMsgNoYes( "La comisión seleccionada es distinta a la anterior.", "¿Desea cambiar la comisión en todas las líneas?" )
-      ExpAgente( cNewCodigoAgente, nNewPctComision, dbfTmpLin, oBrw )
+      if ( dbfTmpLin )->( ordkeycount() ) > 0 .and. ;
+         apoloMsgNoYes( "La comisión del agente seleccionado es distinta a la anterior," + CRLF + ;
+                        "¿desea extender el cambio de comisión a todas las líneas?",;
+                        "¿Relizar el cambio?" )
+   
+         changeAgentPercentageInAllLines( nNewPctComision, dbfTmpLin, oBrw )
 
-   end if
+      end if 
+     
+   end if  
 
-   SetOldCodigoAgente( , nNewPctComision )
+   setOldPorcentajeAgente( nNewPctComision )
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//

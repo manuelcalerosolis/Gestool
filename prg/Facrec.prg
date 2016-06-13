@@ -2082,7 +2082,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
    DEFAULT cSerie          := cNewSer( "nFacRec", dbfCount )
    DEFAULT aNumDoc         := Array( 3 )
 
-   setOldCodigoAgente( aTmp[ _CCODAGE ], aTmp[ _NPCTCOMAGE ] )   
+   setOldPorcentajeAgente( aTmp[ _NPCTCOMAGE ] )   
 
    do case
    case nMode == APPD_MODE
@@ -2569,13 +2569,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
          	ID       251 ;
          	WHEN     ( !Empty( aTmp[ _CCODAGE ] ) .and. nMode != ZOOM_MODE ) ;
          	BITMAP   "Bot" ;
-         	ON HELP  ( ExpAgente( aTmp[ _CCODAGE ], aTmp[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) ) ;
+         	ON HELP  ( changeAgentPercentageInAllLines(aTmp[ _CCODAGE ], aTmp[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) ) ;
          	OF       oFld:aDialogs[1]
 
       	REDEFINE GET aGet[ _NPCTCOMAGE ] VAR aTmp[ _NPCTCOMAGE ] ;
          	ID       252 ;
          	WHEN     ( !Empty( aTmp[ _CCODAGE ] ) .and. nMode != ZOOM_MODE ) ;
-         	VALID    ( ValidComision( aGet[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) ) ;
+         	VALID    ( validateAgentPercentage( aGet[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) ) ;
          	PICTURE  "@E 99.99" ;
         	SPINNER ;
          	OF       oFld:aDialogs[1]

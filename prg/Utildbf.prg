@@ -538,31 +538,22 @@ FUNCTION bChar2Block( cChar, lLogic, lMessage, lHard )
 
       /*
       Esto es para probar la expresion-----------------------------------------
+      */
 
-      if Type( cChar ) == "UE" .or. ;
-         Type( cChar ) == "UI"
+      if ValType( cChar ) == "C"
+         cChar    := rtrim( cChar )
+         bBlock   := &( "{||" + cChar + "}" )
 
-         lError      := .t.
-         */
+      elseif ValType( cChar ) == "N"
+         bBlock   := {|| cChar }
 
-         if ValType( cChar ) == "C"
-            cChar    := Rtrim( cChar )
-            bBlock   := &( "{||" + cChar + "}" )
-
-         elseif ValType( cChar ) == "N"
-            bBlock   := {|| cChar }
-
-         end if
-
-         /*
-         Probamos la expresion-------------------------------------------------
-         */
-
-         Eval( bBlock )
+      end if
 
       /*
-      end if
+      Probamos la expresion-------------------------------------------------
       */
+
+      Eval( bBlock )
 
    RECOVER USING oError
 

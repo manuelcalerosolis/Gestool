@@ -1847,7 +1847,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
    cOldCodCli           := aTmp[ _CCODCLI ]
    cOldSituacion        := aTmp[ _CSITUAC ]
 
-   setOldCodigoAgente( aTmp[ _CCODAGE ], aTmp[ _NPCTCOMAGE ] )
+   setOldPorcentajeAgente( aTmp[ _NPCTCOMAGE ] )
 
    do case
    case nMode == APPD_MODE
@@ -2189,12 +2189,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          ID       181 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          BITMAP   "Bot" ;
-         ON HELP  ( ExpAgente( aTmp[ _CCODAGE ], aTmp[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) ) ;
+         ON HELP  ( changeAgentPercentageInAllLines(aTmp[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _NPCTCOMAGE ] VAR aTmp[ _NPCTCOMAGE ] ;
          WHEN     ( !Empty( aTmp[ _CCODAGE ] ) .AND. nMode != ZOOM_MODE ) ;
-         VALID    ( ValidComision( aGet[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) );
+         VALID    ( validateAgentPercentage( aGet[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) );
          PICTURE  "@E 99.99" ;
          SPINNER;
          ID       182 ;
@@ -6710,7 +6710,7 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
 
    if ( D():Clientes( nView ) )->( dbSeek( cNewCodCli ) )
 
-      if !( isAviableClient( nView ) )
+      if !( isAviableClient( nView, nMode ) )
          return .f.
       end if
 
@@ -6719,7 +6719,7 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
       end if
 
       /*
-      Asignamos el codigo siempre
+      Asignamos el codigo siempre----------------------------------------------
       */
 
       aGet[ _CCODCLI ]:cText( ( D():Clientes( nView ) )->Cod )
@@ -6780,11 +6780,11 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
 
       end if
 
-      if ( lChgCodCli )
+      /*
+      Calculo del reisgo del cliente-------------------------------------------
+      */
 
-         /*
-         Calculo del reisgo del cliente-------------------------------------------
-         */
+      if ( lChgCodCli )
 
          if oRieCli != nil
             oStock:SetRiesgo( cNewCodCli, oRieCli, ( D():Clientes( nView ) )->Riesgo )
@@ -6792,9 +6792,6 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
 
          aTmp[ _LMODCLI ]  := ( D():Clientes( nView ) )->lModDat
 
-      end if
-
-      if ( lChgCodCli )
          aTmp[ _LOPERPV ]  := ( D():Clientes( nView ) )->lPntVer
       end if
 
@@ -6879,22 +6876,6 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
             if ( D():Clientes( nView ) )->lMosCom .and. !Empty( ( D():Clientes( nView ) )->mComent ) .and. lChgCodCli
                MsgStop( Trim( ( D():Clientes( nView ) )->mComent ) )
             end if
-
-            /*
-            Retenciones desde la ficha de cliente----------------------------------
-
-            if !Empty( aGet[ _NTIPRET ] )
-               aGet[ _NTIPRET  ]:Select( ( D():Clientes( nView ) )->nTipRet )
-            else
-               aTmp[ _NTIPRET  ] := ( D():Clientes( nView ) )->nTipRet
-            end if
-
-            if !Empty( aGet[ _NPCTRET ] )
-               aGet[ _NPCTRET  ]:cText( ( D():Clientes( nView ) )->nPctRet )
-            else
-               aTmp[ _NPCTRET  ] := ( D():Clientes( nView ) )->nPctRet
-            end if
-            */
 
             /*
             Descuentos desde la ficha de cliente----------------------------------
@@ -11891,7 +11872,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Function ExpAgente( cCodAge, nComAge, dbfTmpLin, oBrw )
+Function changeAgentPercentageInAllLines(nComAge, dbfTmpLin, oBrw )
 
    local nRec  := ( dbfTmpLin )->( Recno() )
 

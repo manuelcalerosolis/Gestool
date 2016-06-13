@@ -4471,10 +4471,6 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
             Return nil
          end if
 
-         if uFieldEmpresa( "lRealWeb" )
-            oComercio:buildInitData()
-         end if
-
          /*
          Validamos los controles-----------------------------------------------
          */
@@ -11379,15 +11375,22 @@ Static Function loaCli( aGet, aTmp, nMode, oTelefonoClient, oMailClient )
 
    if ( dbfClient )->( dbSeek( cNewCodCli ) )
 
-      if ( dbfClient )->lBlqCli
+      if ( nMode == APPD_MODE ) .and. ( ( dbfClient )->lInaCli )
+         msgStop( "Cliente inactivo, no se pueden realizar operaciones de venta" + CRLF + ;
+                  "Motivo: " + alltrim( ( dbfClient )->cMotIna ),;
+                  "Imposible crear documento" )   
+         Return .f.
+      end if 
+
+      if ( nMode == APPD_MODE ) .and. ( ( dbfClient )->lBlqCli )
          msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" + CRLF + ;
-                  "Motivo: " + AllTrim( ( dbfClient )->cMotBlq ),;
-                  "Imposible archivar" )
-         return .f.
+                  "Motivo: " + alltrim( ( dbfClient )->cMotBlq ),;
+                  "Imposible crear documento" )
+         Return .f.
       end if
 
       /*
-      Calculo del reisgo del cliente
+      Calculo del reisgo del cliente-------------------------------------------
       */
 
       if ( lChgCodCli )

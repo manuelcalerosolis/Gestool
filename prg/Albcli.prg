@@ -2226,7 +2226,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    */
 
    cOldCodCli                 := aTmp[ _CCODCLI ]
-   setOldCodigoAgente( aTmp[ _CCODAGE ], aTmp[ _NPCTCOMAGE ] )
+   
+   setOldPorcentajeAgente( aTmp[ _NPCTCOMAGE ] )
 
    do case
       case nMode == APPD_MODE
@@ -2669,12 +2670,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       221 ;
          WHEN     ( !empty( aTmp[ _CCODAGE ] ) .and. lWhen ) ;
          BITMAP   "Bot" ;
-         ON HELP  ( ExpAgente( aTmp[ _CCODAGE ], aTmp[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) ) ;
+         ON HELP  ( changeAgentPercentageInAllLines(aTmp[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _NPCTCOMAGE ] VAR aTmp[ _NPCTCOMAGE ] ;
          WHEN     ( !empty( aTmp[ _CCODAGE ] ) .and. lWhen ) ;
-         VALID    ( ValidComision( aGet[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) );
+         VALID    ( validateAgentPercentage( aGet[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) );
          PICTURE  "@E 999.99" ;
          SPINNER;
          ID       222 ;
@@ -9291,6 +9292,10 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode )
 
    if ( D():Get( "Client", nView ) )->( dbSeek( cNewCodCli ) )
 
+      if !( isAviableClient( nView, nMode ) )
+         return .f.
+      end if
+
       /*
       Asignamos el codigo siempre
       */
@@ -9481,10 +9486,6 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode )
             aGet[_CCODRUT]:lValid()
          end if
 
-        /* if ( empty( oGetTarifa:varGet() ) .or. lChgCodCli ) .and. !empty( ( D():Get( "Client", nView ) )->nTarifa )
-             oGetTarifa:cText( ( D():Get( "Client", nView ) )->nTarifa )
-         end if*/
-
          if !empty( oGetTarifa )         
             if ( empty( oGetTarifa:varGet() ) .or. lChgCodCli ) .and. !empty( ( D():Clientes( nView ) )->nTarifa )
                oGetTarifa:setTarifa( ( D():Clientes( nView ) )->nTarifa )
@@ -9492,7 +9493,6 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode )
          else
             aTmp[ _NTARIFA ]  := ( D():Clientes( nView ) )->nTarifa
          end if
-
 
          if ( empty( aTmp[ _NDTOTARIFA ] ) .or. lChgCodCli )
              aTmp[ _NDTOTARIFA ]    := ( D():Get( "Client", nView ) )->nDtoArt
@@ -9578,12 +9578,6 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode )
          end if
 
          ShowIncidenciaCliente( ( D():Get( "Client", nView ) )->Cod, nView )
-
-         if ( D():Get( "Client", nView ) )->lBlqCli
-            msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" + CRLF + ;
-                     "Motivo: " + AllTrim( ( D():Get( "Client", nView ) )->cMotBlq ),;
-                     "Imposible archivar" )
-         end if
 
          if !( D():Get( "Client", nView ) )->lChgPre
             msgStop( "Este cliente no tiene autorización para venta a credito", "Imposible archivar como albarán" )

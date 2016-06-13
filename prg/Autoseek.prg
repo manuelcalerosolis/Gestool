@@ -309,9 +309,15 @@ Function lSeekKey( xValueToSearch, xAlias, lScope )
 
       case cType == "N"
 
-         msgAlert( xValueToSearch, "Numerico" )
+         // msgAlert( xValueToSearch, "Numerico" )
 
-         lRet     := ( xAlias )->( dbSeek( val( alltrim( xValueToSearch ) ), .t. ) ) 
+         xValueToSearch := alltrim( xValueToSearch )
+         xValueToSearch := strtran( xValueToSearch, ",", "." )
+         xValueToSearch := val( xValueToSearch )
+
+         ( xAlias )->( dbSeek( xValueToSearch, .t. ) ) 
+
+         lRet           := .t.
 
       case cType == "C"
 

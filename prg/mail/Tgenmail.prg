@@ -728,7 +728,8 @@ METHOD replaceExpresion( cDocument, cExpresion ) CLASS TGenMailing
 
    if ( "(" $ cExpresionToSearch .and. ")" $ cExpresionToSearch )
 
-      cDocument            := StrTran( cDocument, cExpresion, cValToText( Eval( bChar2Block( cExpresionToSearch ) ) ) )
+      cDocument            := StrTran( cDocument, cExpresion, cValToText( eval( bChar2Block( cExpresionToSearch ) ) ) )
+      // cDocument            := StrTran( cDocument, cExpresion, cValToText( eval( &( "{| self | " + cExpresionToSearch + "}" ) ) ) )
 
    else
 

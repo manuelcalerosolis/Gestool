@@ -20624,11 +20624,11 @@ FONT 8, "MS Sans Serif"
   CONTROL "Excluir de fidelización", 158, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 390, 179, 81, 11
   CONTROL "", 210, "ComboBox", WS_BORDER|CBS_DROPDOWN|WS_TABSTOP, 390, 139, 96, 11
   CONTROL "Bloquear cliente", 155, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 276, 249, 64, 11
-  CONTROL "", 156, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 428, 250, 60, 11
-  CONTROL "", 157, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 327, 263, 161, 11
+  CONTROL "", 156, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 433, 250, 55, 11
+  CONTROL "", 157, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 318, 263, 170, 11
   CONTROL "Inactivo", 255, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 250, 81, 11
-  CONTROL "", 256, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 179, 250, 83, 11
-  CONTROL "", 257, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 101, 263, 161, 11
+  CONTROL "", 256, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 207, 250, 55, 11
+  CONTROL "", 257, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 92, 263, 170, 11
   CONTROL "Nombre ", -1, "Static", WS_GROUP, 50, 41, 26, 8
   CONTROL "Domicilio", -1, "Static", WS_GROUP, 50, 54, 31, 8
   CONTROL "Web", -1, "Static", WS_GROUP, 50, 66, 21, 8
@@ -20639,7 +20639,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Bloqueo", -1, "Button", BS_GROUPBOX, 269, 240, 222, 38
   CONTROL "Días de visita", -1, "Button", BS_GROUPBOX, 384, 29, 108, 166
   CONTROL "Crédito", -1, "Button", BS_GROUPBOX, 43, 196, 449, 42
-  CONTROL "Fecha", -1, "Static", WS_GROUP, 398, 252, 25, 10
+  CONTROL "Fecha", -1, "Static", WS_GROUP, 405, 251, 25, 10
   CONTROL "Contraseña", -1, "Static", WS_GROUP, 50, 78, 37, 8
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Datos realcionados con la actividad comercial del cliente ", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
@@ -20668,10 +20668,10 @@ FONT 8, "MS Sans Serif"
   CONTROL "Petición", -1, "Static", WS_GROUP, 349, 208, 31, 10
   CONTROL "Concesión", -1, "Static", WS_GROUP, 349, 220, 39, 10
   CONTROL "Inactivo", -1, "Button", BS_GROUPBOX, 43, 240, 222, 38
-  CONTROL "Fecha", -1, "Static", WS_GROUP, 142, 250, 25, 10
+  CONTROL "Fecha", -1, "Static", WS_GROUP, 180, 251, 25, 10
   CONTROL "Última llamada", -1, "Static", WS_GROUP, 390, 155, 51, 10
-  CONTROL "Causa", -1, "Static", WS_GROUP, 49, 263, 25, 10
-  CONTROL "Causa", -1, "Static", WS_GROUP, 276, 263, 25, 10
+  CONTROL "Causa", -1, "Static", WS_GROUP, 49, 264, 25, 10
+  CONTROL "Causa", -1, "Static", WS_GROUP, 276, 264, 25, 10
 }
 
 CLIENT_19 DIALOG DISCARDABLE -3, 20, 496, 263
