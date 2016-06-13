@@ -146,6 +146,9 @@
 #define _CENTIDAD                136
 #define _DPETRIE                 137
 #define _DCONRIE                 138
+#define _LINACLI                 139
+#define _DFECINA                 140
+#define _CMOTINA                 141
 
 #define _aCCODCLI                  1      //   C     12     0
 #define _aCCODGRP                  2      //   C     12     0
@@ -2094,6 +2097,27 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ID       300 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldImpuestos
+
+      //-----------------------------------------------------------------------------------------------------------
+      
+      REDEFINE CHECKBOX aGet[ _LINACLI ] VAR aTmp[ _LINACLI ] ;
+         ID       255 ;
+         WHEN     ( oUser():lAdministrador() .and. nMode != ZOOM_MODE ) ;
+         ON CHANGE( if( aTmp[ _LINACLI ], aGet[ _DFECINA ]:cText( GetSysDate() ), ( aGet[ _DFECINA ]:cText( Ctod("") ), aGet[ _CMOTINA ]:cText( Space(50) ) ) ) );
+         OF       fldComercial
+
+      REDEFINE GET aGet[ _DFECINA ] VAR aTmp[ _DFECINA ];
+         ID       256 ;
+         WHEN     ( oUser():lAdministrador() .and. nMode != ZOOM_MODE .and. aTmp[ _LINACLI ] );
+         SPINNER;
+         OF       fldComercial
+
+      REDEFINE GET aGet[ _CMOTINA ] VAR aTmp[ _CMOTINA ];
+         ID       257 ;
+         WHEN     ( oUser():lAdministrador() .and. nMode != ZOOM_MODE .and. aTmp[ _LINACLI ] );
+         OF       fldComercial
+
+      //---------------------------------------------------------------------------------------------------------
 
       REDEFINE CHECKBOX aGet[ _LBLQCLI ] VAR aTmp[ _LBLQCLI ] ;
          ID       155 ;
@@ -8065,9 +8089,9 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
       oBrw:cName           := "Browse.Clientes"
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Bl. Bloqueado"
+         :cHeader          := "Disponible"
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( D():Clientes( nView ) )->lBlqCli }
+         :bEditValue       := {|| ( D():Clientes( nView ) )->lBlqCli .or. ( D():Clientes( nView ) )->lInaCli }
          :nWidth           := 20
          :SetCheck( { "Cnt16", "Nil16" } )
       end with
@@ -9023,6 +9047,9 @@ FUNCTION aItmCli()
    aAdd( aBase, { "cEntidad",  "C", 25, 0, "Entidad",                                       "",                      "", "( cDbfCli )", nil } )
    aAdd( aBase, { "dPetRie",   "D",  8, 0, "Fecha de petición de riesgo",                   "",                      "", "( cDbfCli )", nil } )
    aAdd( aBase, { "dConRie",   "D",  8, 0, "Fecha de concesión de riesgo",                  "",                      "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "lInaCli",   "L",  1, 0, "Lógico para cliente inactivo",                  "",                      "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "dFecIna",   "D",  8, 0, "Fecha de inactividad del cliente",              "",                      "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cMotIna",   "C",250, 0, "Motivo de inactividad del cliente",             "",                      "", "( cDbfCli )", nil } )
 
 RETURN ( aBase )
 
@@ -9040,6 +9067,26 @@ FUNCTION lCliBlq( cCodCli, dbfCli )
    end if
 
 RETURN lRet
+
+//---------------------------------------------------------------------------//
+
+FUNCTION isAviableClient( cCodCli, dbfCli )
+
+   if dbSeekInOrd( cCodCli, "Cod", dbfCli )
+
+      if !( dbfCli )->lInaCli
+         msgStop( ( dbfCli )->cMotIna, "Cliente inactivo" )
+         Return .f.
+      end if 
+
+      if !( dbfCli )->lBlqCli
+         msgStop( ( dbfCli )->cMotBlq, "Cliente bloqueado" )
+         Return .f.
+      end if 
+
+   end if
+
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
