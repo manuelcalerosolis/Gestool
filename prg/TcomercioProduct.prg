@@ -1700,8 +1700,8 @@ METHOD insertManufacturersPrestashop( hFabricantesData ) CLASS TComercioProduct
                   "id_manufacturer, " + ;
                   "id_lang ) " + ;
                "VALUES ( " + ;
-                  "'" + alltrim( str( nCodigoWeb ) ) + "', " + ;     //id_manufacturer
-                  "'" + str( ::nLanguage ) + "' )"                   //id_lang
+                  "'" + alltrim( str( nCodigoWeb ) ) + "', " + ;     // id_manufacturer
+                  "'" + str( ::nLanguage ) + "' )"                   // id_lang
 
    if !::commandExecDirect( cCommand )
       ::writeText( "Error al insertar el fabricante " + hGet( hFabricantesData, "name" ) + " en la tabla" + ::cPreFixtable( "manufacturer_lang" ), 3 )
@@ -1772,9 +1772,9 @@ METHOD insertPropertiesLineProduct( hPropertiesLineProduct, nPosition ) CLASS TC
                                  "color, " + ;
                                  "position ) " + ;
                               "VALUES ( " + ;
-                                 "'" + alltrim( str( nCodigoGrupo ) ) + "', " + ;
-                                 "'" + hGet( hPropertiesLineProduct, "color" ) + "' ," + ;
-                                 "'" + alltrim( str( nPosition ) ) + "' )"                // posicion
+                                 "'" + alltrim( str( nCodigoGrupo ) ) + "', " + ;            // id_attribute_group
+                                 "'" + hGet( hPropertiesLineProduct, "color" ) + "' ," + ;   // color
+                                 "'" + alltrim( str( nPosition ) ) + "' )"                   // posicion
 
    if ::commandExecDirect( cCommand )
       idPrestashop   := ::oConexionMySQLDatabase():GetInsertId()
@@ -1854,21 +1854,21 @@ METHOD insertReduction( idProduct, hProduct ) CLASS TComercioProduct
                               if( ::lSpecificPriceIdColumnReductionTax, "reduction_tax, ", "" ) + ;
                               "reduction_type ) " + ;
                            "VALUES ( " + ;
-                              "'0', " + ;                                                                                                                // id_specific_price_rule
-                              "'0', " + ;                                                                                                                // id_cart
-                              "'" + alltrim( str( idProduct ) ) + "', " + ;                                                                             // id_product
-                              "'1', " + ;                                                                                                                // id_shop
-                              "'0', " + ;                                                                                                                // id_shop_group
-                              "'0', " + ;                                                                                                                // id_currency
-                              "'0', " + ;                                                                                                                // id_country
-                              "'0', " + ;                                                                                                                // id_group
-                              "'0', " + ;                                                                                                                // id_customer
-                              "'0', " + ;                                                                                                                // id_product_attribute
-                              "'-1', " + ;                                                                                                               // price
-                              "'1', " + ;                                                                                                                // from_quantity
+                              "'0', " + ;                                                                                                           // id_specific_price_rule
+                              "'0', " + ;                                                                                                           // id_cart
+                              "'" + alltrim( str( idProduct ) ) + "', " + ;                                                                         // id_product
+                              "'1', " + ;                                                                                                           // id_shop
+                              "'0', " + ;                                                                                                           // id_shop_group
+                              "'0', " + ;                                                                                                           // id_currency
+                              "'0', " + ;                                                                                                           // id_country
+                              "'0', " + ;                                                                                                           // id_group
+                              "'0', " + ;                                                                                                           // id_customer
+                              "'0', " + ;                                                                                                           // id_product_attribute
+                              "'-1', " + ;                                                                                                          // price
+                              "'1', " + ;                                                                                                           // from_quantity
                               "'" + alltrim( str( hGet( hProduct, "reduction" ) ) ) + "', " + ;                                                     // reduction
                               if( ::lSpecificPriceIdColumnReductionTax, "'" + alltrim( str( hGet( hProduct, "reduction_tax" ) ) ) + "', ", "" ) + ; // reduction_tax
-                              "'amount' )"                                                                                                               // reduction_type
+                              "'amount' )"                                                                                                          // reduction_type
    
       if !::commandExecDirect( cCommand )
          ::writeText( "Error al insertar una oferta de " + hGet( hProduct, "name" ), 3 )

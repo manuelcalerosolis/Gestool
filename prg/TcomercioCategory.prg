@@ -95,18 +95,6 @@ Return ( Self )
 
 METHOD insertRootCategory() CLASS TComercioCategory
 
-   /*
-   local hCategory   := {  "id"              => '1',;
-                           "id_parent"       => '',;
-                           "name"            => 'Root',;
-                           "description"     => 'Root',;
-                           "link_rewrite"    => 'Root',;
-                           "image"           => '',;
-                           "cPrefijoNombre"  => '' }
-
-   ::insertCategory( hCategory )
-*/
-
    local cCommand := ""
 
    /*
@@ -115,7 +103,28 @@ METHOD insertRootCategory() CLASS TComercioCategory
 
    ::writeText( "Añadiendo categoría raiz" )
 
-   cCommand       := "INSERT INTO " + ::cPrefixTable( "category" ) + " ( id_category, id_parent, id_shop_default, level_depth, nleft, nright, active, date_add, date_upd, position ) VALUES ( '1', '0', '1', '0', '0', '0', '1', '" + dtos( GetSysDate() ) + "', '" + dtos( GetSysDate() ) + "', '0' ) "
+   cCommand       := "INSERT INTO " + ::cPrefixTable( "category" ) + " ( " + ;
+                        "id_category, "                                    + ;
+                        "id_parent, "                                      + ;
+                        "id_shop_default, "                                + ;
+                        "level_depth, "                                    + ;
+                        "nleft, "                                          + ;
+                        "nright, "                                         + ;
+                        "active, "                                         + ;
+                        "date_add, "                                       + ;
+                        "date_upd, "                                       + ;
+                        "position ) "                                      + ;
+                     "VALUES ( "                                           + ;
+                        "'1', "                                            + ;
+                        "'0', "                                            + ;
+                        "'1', "                                            + ;
+                        "'0', "                                            + ;
+                        "'0', "                                            + ;
+                        "'0', "                                            + ;
+                        "'1', "                                            + ;
+                        "'" + dtos( GetSysDate() ) + "',"                  + ;
+                        "'" + dtos( GetSysDate() ) + "', "                 + ;
+                        "'0' ) "
 
    if ::commandExecDirect( cCommand )
       ::writeText( "He insertado correctamente en la tabla categorías la categoría raiz", 3 )
@@ -123,7 +132,23 @@ METHOD insertRootCategory() CLASS TComercioCategory
       ::writeText( "Error al insertar la categoría raiz", 3 )
    end if
 
-   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + " ( id_category, id_lang, name, description, link_rewrite, meta_title, meta_keywords, meta_description ) VALUES ( '1', '" + str( ::getLanguage() ) + "', 'Root', 'Root', 'Root', '', '', '' )"
+   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + " ( "  + ;
+                        "id_category, "                                          + ;
+                        "id_lang, name, "                                        + ;
+                        "description, "                                          + ;
+                        "link_rewrite, "                                         + ;
+                        "meta_title, "                                           + ;
+                        "meta_keywords, "                                        + ;
+                        "meta_description ) "                                    + ;
+                     "VALUES ( "                                                 + ;
+                        "'1', "                                                  + ;
+                        "'" + alltrim( str( ::getLanguage() ) ) + "', "          + ;
+                        "'Root',  "                                              + ;
+                        "'Root',  "                                              + ;
+                        "'Root',  "                                              + ;
+                        "'',  "                                                  + ;
+                        "'',  "                                                  + ;
+                        "'' )" 
 
    if ::commandExecDirect( cCommand )
       ::writeText( "He insertado correctamente en la tabla categorias lenguajes la categoría raiz", 3 )
@@ -167,7 +192,28 @@ METHOD insertRootCategory() CLASS TComercioCategory
    Metemos la categoría de inicio de la que colgarán los grupos y las categorias
    */
 
-   cCommand       := "INSERT INTO " + ::cPrefixTable( "category" ) + " ( id_parent, id_shop_default, level_depth, nleft, nright, active, date_add, date_upd, position, is_root_category ) VALUES ( '1', '1', '1', '0', '0', '1', '" + dtos( GetSysDate() ) + "', '" + dtos( GetSysDate() ) + "', '0', '1' ) "
+   cCommand       := "INSERT INTO " + ::cPrefixTable( "category" ) + " ( " + ;
+                        "id_parent, "                                      + ; 
+                        "id_shop_default, "                                + ; 
+                        "level_depth, "                                    + ; 
+                        "nleft, "                                          + ; 
+                        "nright, "                                         + ; 
+                        "active, "                                         + ; 
+                        "date_add, "                                       + ; 
+                        "date_upd, "                                       + ; 
+                        "position, "                                       + ; 
+                        "is_root_category ) "                              + ; 
+                     "VALUES ( "                                           + ;
+                        "'1', "                                            + ;
+                        "'1', "                                            + ;
+                        "'1', "                                            + ;
+                        "'0', "                                            + ;
+                        "'0', "                                            + ;
+                        "'1', "                                            + ;
+                        "'" + dtos( GetSysDate() ) + "', "                 + ;
+                        "'" + dtos( GetSysDate() ) + "', "                 + ;
+                        "'0', "                                            + ;
+                        "'1' )"
 
    if ::commandExecDirect( cCommand )
       ::writeText( "He insertado correctamente en la tabla categorias la categoría raiz", 3 )
@@ -175,7 +221,24 @@ METHOD insertRootCategory() CLASS TComercioCategory
       ::writeText( "Error al insertar la categoría inicio", 3 )
    end if
 
-   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + " ( id_category, id_lang, name, description, link_rewrite, meta_title, meta_keywords, meta_description ) VALUES ( '2', '" + str( ::getLanguage() ) + "', 'Inicio', 'Inicio', 'Inicio', '', '', '' )"
+   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + " ( "  + ;
+                        "id_category, "                                          + ;
+                        "id_lang, "                                              + ;
+                        "name, "                                                 + ;
+                        "description, "                                          + ;
+                        "link_rewrite, "                                         + ;
+                        "meta_title, "                                           + ;
+                        "meta_keywords, "                                        + ;
+                        "meta_description ) "                                    + ;
+                     "VALUES ( "                                                 + ;
+                        "'2', "                                                  + ; 
+                        "'" + alltrim( str( ::getLanguage() ) ) + "', "          + ; 
+                        "'Inicio', "                                             + ; 
+                        "'Inicio', "                                             + ; 
+                        "'Inicio', "                                             + ; 
+                        "'', "                                                   + ; 
+                        "'', "                                                   + ; 
+                        "'' )"         
 
    if ::commandExecDirect( cCommand )
       ::writeText( "He insertado correctamente en la tabla categorias lenguajes la categoría raiz", 3 )
