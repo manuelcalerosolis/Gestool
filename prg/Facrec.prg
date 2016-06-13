@@ -2575,7 +2575,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       	REDEFINE GET aGet[ _NPCTCOMAGE ] VAR aTmp[ _NPCTCOMAGE ] ;
          	ID       252 ;
          	WHEN     ( !Empty( aTmp[ _CCODAGE ] ) .and. nMode != ZOOM_MODE ) ;
-         	VALID    ( RecalculaTotal( aTmp ) ) ;
+         	VALID    ( ValidComision( aGet[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) ) ;
          	PICTURE  "@E 99.99" ;
         	SPINNER ;
          	OF       oFld:aDialogs[1]
