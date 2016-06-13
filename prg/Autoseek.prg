@@ -104,12 +104,12 @@ FUNCTION AutoSeek( nKey, nFlags, oGet, oBrw, xAlias, lUpper, cPreFij, lAllowFilt
    end if
 
    oGet:Assign()
-   xValueToSearch              := oGet:VarGet()
+   xValueToSearch       := oGet:VarGet()
 
    if isChar( xValueToSearch )
-      xValueToSearch           := Rtrim( xValueToSearch )
+      xValueToSearch    := Rtrim( xValueToSearch )
    else
-      xValueToSearch           := ""
+      xValueToSearch    := ""
    end if
 
    cType                := ( xAlias )->( dbOrderInfo( DBOI_KEYTYPE ) )
@@ -309,7 +309,9 @@ Function lSeekKey( xValueToSearch, xAlias, lScope )
 
       case cType == "N"
 
-         lRet     := ( xAlias )->( dbSeek( val( xValueToSearch ), .t. ) ) 
+         msgAlert( xValueToSearch, "Numerico" )
+
+         lRet     := ( xAlias )->( dbSeek( val( alltrim( xValueToSearch ) ), .t. ) ) 
 
       case cType == "C"
 

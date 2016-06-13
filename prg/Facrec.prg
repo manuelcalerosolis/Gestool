@@ -7453,9 +7453,9 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    end if
 
-/*
+   /*
    A¤adimos desde el fichero de situaiones
-*/
+   */
 	
 	dbCreate( cTmpEst, aSqlStruct( aFacRecEst() ), cLocalDriver() )
    	dbUseArea( .t., cLocalDriver(), cTmpEst, cCheckArea( cDbfEst, @dbfTmpEst ), .f. )
@@ -7463,24 +7463,25 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
   	if !NetErr()
 
   		( dbfTmpEst )->( ordCreate( cTmpEst, "nNumFac", "cSerFac + str( nNumFac ) + cSufFac + dtos( dFecSit )  + tFecSit", {|| Field->cSerFac + str( Field->nNumFac ) + Field->cSufFac + dtos( Field->dFecSit )  + Field->tFecSit } ) )
-      	( dbfTmpEst )->( ordListAdd( cTmpEst ) )
+   	( dbfTmpEst )->( ordListAdd( cTmpEst ) )
 
-      	if ( D():FacturasRectificativasSituaciones( nView ) )->( dbSeek( cFac ) )
+    	if ( D():FacturasRectificativasSituaciones( nView ) )->( dbSeek( cFac ) )
 
-      	while ( ( D():FacturasRectificativasSituaciones( nView ) )->cSerFac + Str( ( D():FacturasRectificativasSituaciones( nView ) )->nNumFac ) + ( D():FacturasRectificativasSituaciones( nView ) )->cSufFac == cFac ) .AND. ( D():FacturasRectificativasSituaciones( nView ) )->( !eof() ) 
+        	while ( ( D():FacturasRectificativasSituaciones( nView ) )->cSerFac + Str( ( D():FacturasRectificativasSituaciones( nView ) )->nNumFac ) + ( D():FacturasRectificativasSituaciones( nView ) )->cSufFac == cFac ) .AND. ( D():FacturasRectificativasSituaciones( nView ) )->( !eof() ) 
 
-         dbPass( D():FacturasRectificativasSituaciones( nView ), dbfTmpEst, .t. )
-         ( D():FacturasRectificativasSituaciones( nView ) )->( dbSkip() )
+            dbPass( D():FacturasRectificativasSituaciones( nView ), dbfTmpEst, .t. )
+         
+            ( D():FacturasRectificativasSituaciones( nView ) )->( dbSkip() )
 
-    	end while
+         end while
 
-  	end if
+  	   end if
 
-  	( dbfTmpEst )->( dbGoTop() )
+  	   ( dbfTmpEst )->( dbGoTop() )
 
   	else
 
-      	lErrors     := .t.
+      lErrors     := .t.
 
   	end if
 
@@ -8113,19 +8114,15 @@ static function QuiFacRec()
    Eliminamos los pagos--------------------------------------------------------
    */
 
-   nOrdAnt     := ( dbfFacCliP )->( OrdSetFocus( "nNumFac" ) )
+   nOrdAnt     := ( dbfFacCliP )->( OrdSetFocus( "rNumFac" ) )
 
    if ( dbfFacCliP )->( dbSeek( cSerDoc + Str( nNumDoc ) + cSufDoc ) )
 
       while cSerDoc + Str( nNumDoc ) + cSufDoc == ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac .and. !( dbfFacCliP )->( eof() )
 
-         if ( dbfFacCliP )->cTipRec == "R"
-
-            if dbDialogLock( dbfFacCliP )
-               ( dbfFacCliP )->( dbDelete() )
-               ( dbfFacCliP )->( dbUnLock() )
-            end if
-
+         if dbDialogLock( dbfFacCliP )
+            ( dbfFacCliP )->( dbDelete() )
+            ( dbfFacCliP )->( dbUnLock() )
          end if
 
          ( dbfFacCliP )->( dbSkip() )
@@ -8290,7 +8287,7 @@ STATIC FUNCTION aGetSelRec( oBrw, bAction, cTitle, lHide1, cTitle1, lHide2, cTit
       OF       oDlg ;
       RESOURCE "Down16" ;
       NOBORDER ;
-      ACTION   ( dbLast( D():FacturasRectificativas( nView ), "nNumFac", oDocFin, cSerFin, "nNumFAc" ) )
+      ACTION   ( dbLast( D():FacturasRectificativas( nView ), "nNumFac", oDocFin, cSerFin, "nNumFac" ) )
 
    REDEFINE GET oDocIni VAR nDocIni;
       ID       120 ;
@@ -14278,20 +14275,25 @@ FUNCTION ChkLqdFacRec( aTmp, cFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv )
    local cDivFac
    local cFactura
    local nPagFacCli
-   local nRec     := ( dbfFacCliP )->( RecNo() )
+   local nRec                    := ( dbfFacCliP )->( RecNo() )
 
    if aTmp != nil
-      cFactura    := aTmp[_CSERIE ] + Str( aTmp[_NNUMFAC] ) + aTmp[_CSUFFAC]
-      cDivFac     := aTmp[_CDIVFAC]
+      cFactura                   := aTmp[_CSERIE ] + Str( aTmp[_NNUMFAC] ) + aTmp[_CSUFFAC]
+      cDivFac                    := aTmp[_CDIVFAC]
    else
-      cFactura    := ( cFacRecT )->CSERIE + Str( ( cFacRecT )->NNUMFAC ) + ( cFacRecT )->CSUFFAC
-      cDivFac     := ( cFacRecT )->CDIVFAC
+      cFactura                   := ( cFacRecT )->CSERIE + Str( ( cFacRecT )->NNUMFAC ) + ( cFacRecT )->CSUFFAC
+      cDivFac                    := ( cFacRecT )->CDIVFAC
    end if
 
+<<<<<<< HEAD
    nTotal         := abs( nTotFacRec( cFactura, cFacRecT, dbfFacRecL, dbfIva, dbfDiv, nil, nil, .f. ) )
    nPagFacCli     := abs( nPagFacRec( cFactura, cFacRecT, dbfFacCliP, dbfIva, dbfDiv, nil, .t. ) )
+=======
+   nTotal                        := abs( nTotFacRec( cFactura, cFacRecT, dbfFacRecL, dbfIva, dbfDiv, nil, nil, .f. ) )
+   nPagFacCli                    := abs( nPagFacRec( cFactura, cFacRecT, dbfFacCliP, dbfIva, dbfDiv, nil, .t. ) )
+>>>>>>> 3fe63d1d62d9ead725f9b7e0cf3fbca841e415bd
 
-   lChkLqd        := !lMayorIgual( nTotal, nPagFacCli, 0.1 )
+   lChkLqd                       := !lMayorIgual( nTotal, nPagFacCli, 0.1 )
 
    if aTmp != nil
       aTmp[ _LLIQUIDADA ]        := lChkLqd
@@ -14732,7 +14734,7 @@ Function cCtaFacRec( cFacRecT, cFacCliP, cBncCli )
    cCtaFacRec        := Rtrim( ( cFacRecT )->cEntBnc + ( cFacRecT )->cSucBnc + ( cFacRecT )->cDigBnc + ( cFacRecT )->cCtaBnc )
 
    if Empty( cCtaFacRec )
-      if dbSeekInOrd( ( cFacRecT )->cSerie + Str( ( cFacRecT )->nNumFac ) + ( cFacRecT )->cSufFac, "nNumFac", cFacCliP )
+      if dbSeekInOrd( ( cFacRecT )->cSerie + Str( ( cFacRecT )->nNumFac ) + ( cFacRecT )->cSufFac, "rNumFac", cFacCliP )
          cCtaFacRec  := cClientCuenta( ( cFacCliP )->cCodCli, cBncCli )
       end if
    end if
