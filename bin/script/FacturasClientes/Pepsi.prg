@@ -331,7 +331,11 @@ static function Exportacion()
                         nTotUniVen        := ( dbfFacCliL )->nUniCaja
                         nTotUniReg        := ( dbfFacCliL )->nUniCaja
                         if ( dbfArticulo )->( dbSeek( ( dbfFacCliL )->cRef ) )
-                           nImpReg        := ( dbfFacCliL )->nUniCaja * nRetPreArt( ( dbfFacCliL )->nTarLin, ( dbfFacCliT )->cDivFac, ( dbfFacCliT )->lIvaInc, dbfArticulo, dbfDiv, dbfKit, dbfIva )
+                           if Empty( ( dbfArticulo )->cCodEdi )
+                              nImpReg     := ( dbfFacCliL )->nUniCaja * nRetPreArt( ( dbfFacCliL )->nTarLin, ( dbfFacCliT )->cDivFac, ( dbfFacCliT )->lIvaInc, dbfArticulo, dbfDiv, dbfKit, dbfIva )
+                           else
+                              nImpReg     := ( dbfFacCliL )->nUniCaja * pCosto( dbfArticulo, .f., , dbfDiv )
+                           end if
                         end if
                         nImpDto           := 0
 
