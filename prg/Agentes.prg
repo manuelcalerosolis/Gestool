@@ -2038,12 +2038,7 @@ RETURN ( nil )
 
 FUNCTION validateAgentPercentage( oGetPorcentajeAgente, dbfTmpLin, oBrw )
 
-<<<<<<< HEAD
    local nNewPctComision   := oGetPorcentajeAgente:varGet()
-=======
-   local nNewPctComision   := oGet:varGet()
-   local cNewCodigoAgente
->>>>>>> origin/master
 
    if ( nNewPctComision != nOldPctComision ) 
 

@@ -11375,7 +11375,6 @@ Static Function loaCli( aGet, aTmp, nMode, oTelefonoClient, oMailClient )
 
    if ( dbfClient )->( dbSeek( cNewCodCli ) )
 
-<<<<<<< HEAD
       if ( nMode == APPD_MODE ) .and. ( ( dbfClient )->lInaCli )
          msgStop( "Cliente inactivo, no se pueden realizar operaciones de venta" + CRLF + ;
                   "Motivo: " + alltrim( ( dbfClient )->cMotIna ),;
@@ -11388,10 +11387,6 @@ Static Function loaCli( aGet, aTmp, nMode, oTelefonoClient, oMailClient )
                   "Motivo: " + alltrim( ( dbfClient )->cMotBlq ),;
                   "Imposible crear documento" )
          Return .f.
-=======
-      if !( isAviableClient( nView ) )
-         return .f.
->>>>>>> origin/master
       end if
 
       /*
