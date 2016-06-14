@@ -2057,7 +2057,7 @@ METHOD Importar()
                oTemporal:nUniCaja      := ::oDbfPedLFac:nCanPed
                oTemporal:nPreDiv       := ::oDbfPedLFac:nPreUnit
                oTemporal:nDto          := ::oDbfPedLFac:nDto
-               oTemporal:cLote         := ::oDbfPedLFac:cLote
+              // oTemporal:cLote         := ::oDbfPedLFac:cLote
                oTemporal:nNumLin       := ::oDbfPedLFac:nServicio
 
                aAdd( aTemporalLineas, oTemporal )   
