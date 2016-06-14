@@ -853,6 +853,32 @@ METHOD BuildReportCorrespondences()
                                                                               ::FastReportAlbaranProveedor(),;
                                                                               ::FastReportFacturaProveedor(),;
                                                                               ::FastReportRectificativaProveedor() } },;
+                     "Todos los movimientos" =>       {  "Generate" =>  {||   ::AddAlbaranCliente( .t. ),;
+                                                                              ::AddFacturaCliente(),;
+                                                                              ::AddFacturaRectificativa(),;
+                                                                              ::AddTicket(),;
+                                                                              ::AddAlbaranProveedor( .t. ),;
+                                                                              ::AddFacturaProveedor(),;
+                                                                              ::AddRectificativaProveedor(),;
+                                                                              ::AddParteProduccion() },;
+                                                         "Variable" =>  {||   ::AddVariableLineasAlbaranCliente(),;
+                                                                              ::AddVariableFacturaCliente(),;
+                                                                              ::AddVariableLineasRectificativaCliente(),;
+                                                                              ::AddVariableLineasTicketCliente(),;
+                                                                              ::AddVariableLineasAlbaranProveedor(),;
+                                                                              ::AddVariableLineasFacturaProveedor(),;
+                                                                              ::AddVariableLineasRectificativaProveedor(),;
+                                                                              ::AddVariableStock(),;
+                                                                              ::AddVariableLineasParteProduccion },;
+                                                         "Data" =>      {||   ::FastReportAlbaranCliente(),;
+                                                                              ::FastReportFacturaCliente(),;
+                                                                              ::FastReportFacturaRectificativa(),;
+                                                                              ::FastReportTicket( .t. ),;
+                                                                              ::FastReportPedidoProveedor(),;
+                                                                              ::FastReportAlbaranProveedor(),;
+                                                                              ::FastReportFacturaProveedor(),;
+                                                                              ::FastReportRectificativaProveedor(),;
+                                                                              ::FastReportParteProduccion() } },;
                      "Stocks" =>                      {  "Generate" =>  {||   ::AddArticulo() },;
                                                          "Variable" =>  {||   ::AddVariableStock() },;
                                                          "Data" =>      {||   nil } } }
@@ -882,7 +908,7 @@ Method lValidRegister() CLASS TFastVentasArticulos
       ( ::oDbf:cCodUsr     >= ::oGrupoUsuario:Cargo:getDesde()          .and. ::oDbf:cCodUsr    <= ::oGrupoUsuario:Cargo:getHasta() )           .and.;
       ( ::oDbf:cCodCli     >= ::oGrupoProveedor:Cargo:getDesde()        .and. ::oDbf:cCodCli    <= ::oGrupoProveedor:Cargo:getHasta() )         .and.;
       ( ::oDbf:cCodAlm     >= ::oGrupoAlmacen:Cargo:getDesde()          .and. ::oDbf:cCodAlm    <= ::oGrupoAlmacen:Cargo:getHasta() )           .and.;
-      ( ::oDbf:cCtrCoste   >= ::oGrupoCentroCoste:Cargo:getDesde()      .and. ::oDbf:cCtrCoste  <= ::oGrupoCentroCoste:Cargo:getHasta() ) 
+      ( ::oDbf:cCtrCoste   >= ::oGrupoCentroCoste:Cargo:getDesde()      .and. ::oDbf:cCtrCoste  <= ::oGrupoCentroCoste:Cargo:getHasta() )
 
       //::loadValuesExtraFields()
 
@@ -916,6 +942,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
    DEFAULT lLoadFile       := .t. 
 
    aReports := {  {  "Title" => "Listado",                        "Image" => 0,  "Type" => "Listado",                      "Directory" => "Articulos\Listado",                            "File" => "Listado.fr3"  },;
+                  {  "Title" => "Compras/Ventas/Producción",      "Image" => 24, "Type" => "Todos los movimientos",        "Directory" => "Articulos\Movimientos",                        "File" => "Todos los movimientos.fr3"  },;
                   {  "Title" => "Ventas",                         "Image" => 11, "Subnode" =>;
                   { ;
                      { "Title"      => "SAT de clientes",;
@@ -999,7 +1026,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
                   { ;
                      { "Title" => "Stocks",                       "Image" => 16, "Type" => "Stocks",                       "Directory" => "Articulos\Existencias\Stocks",                    "File" => "Existencias por stock.fr3" },;
                   } ;
-                  } } 
+                  } }
 
    do case 
       case ( ::uParam == ALB_CLI )
@@ -2816,10 +2843,10 @@ METHOD AddParteProduccion() CLASS TFastVentasArticulos
    Lineas de produccion----------------------------------------------------------
    */
 
-   cExpLine          := '!lControl'
+   cExpLine          := ''
 
    if !::lAllArt
-      cExpLine       += ' .and. cCodArt >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cCodArt <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
+      cExpLine       += 'cCodArt >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cCodArt <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
    end if
 
    ::oProLin:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oProLin:cFile ), ::oProLin:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )

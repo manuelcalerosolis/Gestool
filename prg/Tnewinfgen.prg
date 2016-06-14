@@ -24,6 +24,8 @@ memvar cGrupoTemporadaDesde
 memvar cGrupoTemporadaHasta
 memvar cGrupoCategoriaDesde
 memvar cGrupoCategoriaHasta
+memvar cGrupoCategoriaNombreDesde
+memvar cGrupoCategoriaNombreHasta
 memvar cGrupoEstadoArticuloDesde
 memvar cGrupoEstadoArticuloHasta
 memvar cGrupoFamiliaDesde
@@ -294,6 +296,9 @@ CLASS TNewInfGen FROM TInfGen
 
    METHOD SetNombreDesdeArticulo()
    METHOD SetNombreHastaArticulo()
+
+   METHOD SetNombreDesdeCategoria()
+   METHOD SetNombreHastaCategoria()
 
 END CLASS
 
@@ -2869,8 +2874,8 @@ METHOD lGrupoCategoria( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoCategoria:Cargo:cPicHasta   := "@!"
    ::oGrupoCategoria:Cargo:HelpDesde   := {|| BrwCategoria( ::oDesde, ::oSayDesde ) }
    ::oGrupoCategoria:Cargo:HelpHasta   := {|| BrwCategoria( ::oHasta, ::oSayHasta ) }
-   ::oGrupoCategoria:Cargo:TextDesde   := {|| oRetFld( ::oGrupoCategoria:Cargo:Desde, ::oDbfCat, "cNombre", "Codigo" ) }
-   ::oGrupoCategoria:Cargo:TextHasta   := {|| oRetFld( ::oGrupoCategoria:Cargo:Hasta, ::oDbfCat, "cNombre", "Codigo" ) }
+   ::oGrupoCategoria:Cargo:TextDesde   := {|| ::SetNombreDesdeCategoria() }
+   ::oGrupoCategoria:Cargo:TextHasta   := {|| ::SetNombreHastaCategoria() }
    ::oGrupoCategoria:Cargo:ValidDesde  := {|oGet| if( cCategoria( if( !Empty( oGet ), oGet, ::oDesde ), ::oDbfCat:cAlias, ::oSayDesde ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoCategoria:Cargo:ValidHasta  := {|oGet| if( cCategoria( if( !Empty( oGet ), oGet, ::oHasta ), ::oDbfCat:cAlias, ::oSayHasta ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoCategoria:Cargo:lImprimir   := lImp
@@ -4420,6 +4425,9 @@ Method AddVariable() CLASS TNewInfGen
       ::oFastReport:AddVariable(       "Informe", "Desde código de categoria",  "GetHbVar('cGrupoCategoriaDesde')" )
       ::oFastReport:AddVariable(       "Informe", "Hasta código de categoria",  "GetHbVar('cGrupoCategoriaHasta')" )
 
+      ::oFastReport:AddVariable(       "Informe", "Desde nombre de categoria",  "GetHbVar('cGrupoCategoriaNombreDesde')" )
+      ::oFastReport:AddVariable(       "Informe", "Hasta nombre de categoria",  "GetHbVar('cGrupoCategoriaNombreHasta')" )
+
    end if
 
    if !Empty( ::oGrupoEstadoArticulo )
@@ -4624,5 +4632,29 @@ METHOD SetNombreHastaArticulo() CLASS TNewInfGen
    end if
 
 Return ( cGrupoArticuloNombreHasta )
+
+//---------------------------------------------------------------------------//
+
+METHOD SetNombreDesdeCategoria() CLASS TNewInfGen
+   
+   if !Empty( ::oGrupoCategoria:Cargo:Desde )
+      public cGrupoCategoriaNombreDesde  := oRetFld( ::oGrupoCategoria:Cargo:Desde, ::oDbfCat, "cNombre", "Codigo" )
+   else
+      public cGrupoCategoriaNombreDesde  := ""
+   end if
+
+Return ( cGrupoArticuloNombreDesde )
+
+//---------------------------------------------------------------------------//
+
+METHOD SetNombreHastaCategoria() CLASS TNewInfGen
+
+   if !Empty( ::oGrupoCategoria:Cargo:Hasta )
+      public cGrupoCategoriaNombreHasta  := oRetFld( ::oGrupoCategoria:Cargo:Hasta, ::oDbfCat, "cNombre", "Codigo" )
+   else
+      public cGrupoCategoriaNombreHasta  := ""
+   end if
+
+Return ( cGrupoCategoriaNombreHasta )
 
 //---------------------------------------------------------------------------//
