@@ -295,7 +295,7 @@ CLASS TpvTactil
    DATA oBtnArticulosPageUp
    DATA oBtnArticulosPageDown
 
-   DATA oBtnCambiarOrden
+   DATA oBtnOrdenComandaActual
    DATA oGetCambiarOrden
 
    DATA oBtnAgregarLibre
@@ -411,6 +411,8 @@ CLASS TpvTactil
 
    DATA cNumeroAlbaran              INIT ""
 
+   DATA cCodigoOrdenComandaActual   INIT ""
+
    METHOD New( oMenuItem, oWnd ) CONSTRUCTOR
 
    METHOD Activate( lAlone )
@@ -479,6 +481,8 @@ CLASS TpvTactil
       METHOD AgregarArticulosInicio( cCodigoArticulo, nUnidades )
 
       METHOD AgregarAcompannamiento()
+
+      METHOD AgregarOrdenComanda()
 
       METHOD nLineaMenuActivo()
       METHOD nNumeroArticulosOrden()
@@ -820,7 +824,7 @@ CLASS TpvTactil
    METHOD ShowCombinado( lShowCombinando )
 
    METHOD SelectorOrdenComanda( lCombinando )
-   METHOD setOrdenComanda( cOrden )
+   METHOD initOrdenComanda( cOrden )
 
    METHOD SetCalculadora()
 
@@ -871,6 +875,11 @@ CLASS TpvTactil
 
    METHOD setTicketParcial()
    METHOD setTicketPagado()
+
+   METHOD setCodigoOrdenComandaActual( idOrdenComanda )        INLINE ( ::cCodigoOrdenComandaActual := idOrdenComanda )
+   METHOD getCodigoOrdenComandaActual()                        INLINE ( ::cCodigoOrdenComandaActual )
+
+   METHOD setTextButtonOrdenComandaActual( textoOrdenComanda ) INLINE ( if( !empty( ::oBtnOrdenComandaActual ), ::oBtnOrdenComandaActual:setText( textoOrdenComanda ), ) )
 
 END CLASS
 
@@ -2058,10 +2067,15 @@ METHOD Resource() CLASS TpvTactil
    ::oBtnArticulosPageUp         := TButtonBmp():ReDefine( 500, {|| if( !Empty( ::oLstArticulos ), ::oLstArticulos:PageUp(), ) },    ::oDlg, , , .f., , , , .f., "Navigate_up2" )
    ::oBtnArticulosPageDown       := TButtonBmp():ReDefine( 501, {|| if( !Empty( ::oLstArticulos ), ::oLstArticulos:PageDown(), ) },  ::oDlg, , , .f., , , , .f., "Navigate_down2" )
 
-   ::oBtnCambiarOrden            := TButtonBmp():ReDefine( 505, {|| ::SelectorOrdenComanda() },    ::oDlg, , , .f., , , , .f., "Sort_az_descending_32" ) //
+   // ::oBtnOrdenComandaActual            := TButtonBmp():ReDefine( 505, {|| ::SelectorOrdenComanda() },    ::oDlg, , , .f., , , "TEXTO", .f., "Sort_az_descending_32" ) //
 
+   ::oBtnOrdenComandaActual      := TButton():ReDefine( 505, {|| ::SelectorOrdenComanda() }, ::oDlg, , , .f., , , "" )
+   ::oBtnOrdenComandaActual:setFont( ::oFntNum )
+   
    ::oGetCambiarOrden            := TGetHlp():ReDefine( 506, {|u| if( pcount () == 0, ::cOrdenComanda, ::cOrdenComanda := u ) }, ::oDlg )
-   ::oGetCambiarOrden:SetFont( ::oFntNum )
+   ::oGetCambiarOrden:bWhen      := {|| .f. }
+   ::oGetCambiarOrden:setColor( GetSysColor( COLOR_WINDOWTEXT ), GetSysColor( COLOR_WINDOW ) )
+   ::oGetCambiarOrden:setFont( ::oFntNum )
 
    ::oBtnAgregarLibre            := TButtonBmp():ReDefine( 502, {|| ::AgregarLibre() },            ::oDlg, , , .f., , , , .f., "Free_Bullet_32" ) //
    ::oBtnCombinado               := TButtonBmp():ReDefine( 503, {|| ::SetCombinando() },           ::oDlg, , , .f., , , , .f., "Led_green_32" )
@@ -2664,7 +2678,7 @@ METHOD StartResource() CLASS TpvTactil
    */
 
    if ::oOrdenComanda:EmptyOrdenComanda()
-      ::oBtnCambiarOrden:Hide()
+      ::oBtnOrdenComandaActual:Hide()
       ::oGetCambiarOrden:Hide()
    end if  
 
@@ -2796,8 +2810,10 @@ METHOD ResizedResource() CLASS TpvTactil
    ::oBtnArticulosPageUp:Move( ::oBtnArticulosPageUp:nTop + nDialogHeight, , , , .f. )
    ::oBtnArticulosPageDown:Move( ::oBtnArticulosPageDown:nTop + nDialogHeight, , , , .f. )
 
-   ::oBtnCambiarOrden:Move( ::oBtnCambiarOrden:nTop + nDialogHeight, ::oBtnCambiarOrden:nLeft + nDialogWidth, , , .f. )
-   ::oGetCambiarOrden:Move( ::oGetCambiarOrden:nTop + nDialogHeight, ::oGetCambiarOrden:nLeft + nDialogWidth - 100, 200, , .f. )
+   ::oBtnOrdenComandaActual:Move( ::oBtnOrdenComandaActual:nTop + nDialogHeight, ::oBtnOrdenComandaActual:nLeft + nDialogWidth -100, 262, , .f. )
+
+   // ::oGetCambiarOrden:Move( ::oGetCambiarOrden:nTop + nDialogHeight, ::oGetCambiarOrden:nLeft + nDialogWidth - 100, 200, , .f. )
+   ::oGetCambiarOrden:Hide()
 
    ::oBtnAgregarLibre:Move( ::oBtnAgregarLibre:nTop + nDialogHeight, ::oBtnAgregarLibre:nLeft + nDialogWidth, , , .f. )
 
@@ -4195,6 +4211,10 @@ METHOD AgregarLineas( cCodigoArticulo, cCodigoMenu, cCodigoOrden ) CLASS TpvTact
       ::nUnidades             := ::nGetUnidades( .t. )
    end if
 
+   if empty( cCodigoOrden ) .and. !( ::lEmptyOrdenComanda )
+      cCodigoOrden            := ::getCodigoOrdenComandaActual()
+   end if 
+
    // Preguntamos si estamos combinando----------------------------------------
 
    if ::lCombinandoDos
@@ -4579,6 +4599,33 @@ METHOD AgregarCombinado()
    ::AgregarKit( ::oArticulo:Codigo, ::nUnidades, ::oArticulo:cTipImp1, ::oArticulo:cTipImp2 )
    
    ::SetCombinando( .f. )
+
+   CursorWE()
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD AgregarOrdenComanda( cOrdenComanda )
+
+   CursorWait()
+
+   SysRefresh()
+
+   ::nNumeroLinea                := nLastNum( ::oTemporalLinea )
+   ::nPosPrint                   := nLastNum( ::oTemporalLinea, "nPosPrint" )
+
+   ::oTemporalLinea:Append()
+   ::oTemporalLinea:Blank()
+       
+   ::oTemporalLinea:nNumLin      := ::nNumeroLinea
+   ::oTemporalLinea:nPosPrint    := ::nPosPrint
+   ::oTemporalLinea:nLinMnu      := bottomNumber
+   ::oTemporalLinea:cNomTil      := "* * " + alltrim( cOrdenComanda ) + " * *"
+
+   ::oTemporalLinea:Save()
+
+   ::oBrwLineas:Refresh()
 
    CursorWE()
 
@@ -9970,35 +10017,32 @@ RETURN ( Self )
 
 METHOD SelectorOrdenComanda()
 
-   local cOrdenComanda           := ::oOrdenComanda:Selector()
+   local idOrdenComanda          := ::oOrdenComanda:Selector()
+   local textoOrdenComanda       := ""
 
-   if !empty( cOrdenComanda )
-      ::oTemporalLinea:cOrdOrd   := cOrdenComanda
-      ::oGetCambiarOrden:cText( ::oOrdenComanda:cNombre( cOrdenComanda ) )
+   if !empty( idOrdenComanda ) .and. ( idOrdenComanda != ::getCodigoOrdenComandaActual() )
+
+      ::setCodigoOrdenComandaActual( idOrdenComanda ) 
+
+      textoOrdenComanda          := ::oOrdenComanda:cNombre( idOrdenComanda )   
+      
+      ::setTextButtonOrdenComandaActual( textoOrdenComanda )
+      ::agregarOrdenComanda( textoOrdenComanda )
+
    end if 
-
-   ::oBrwLineas:Refresh()
 
 RETURN ( Self )
 
 //-----------------------------------------------------------------------//
 
-METHOD setOrdenComanda( cOrdenComanda )
+METHOD initOrdenComanda()
 
-   if empty( cOrdenComanda )
-      Return ( "" )
+   local idOrdenComanda           := ::oOrdenComanda:getFirstOrderId()
+
+   if !empty( idOrdenComanda ) 
+      ::setCodigoOrdenComandaActual( idOrdenComanda ) 
+      ::setTextButtonOrdenComandaActual( idOrdenComanda )
    end if 
-
-   if ::lEmptyDocumento()
-      MsgInfo( "No hay producto para cambiar el orden de comanda." )
-      Return ( "" )
-   end if
-
-   debug( cOrdenComanda )
-
-   ::oTemporalLinea:cOrdOrd   := cOrdenComanda
-
-   ::oBrwLineas:Refresh()
 
 RETURN ( "" )
 
@@ -10137,7 +10181,7 @@ RETURN ( Self )
 
 METHOD OnClickImportesExactos()
 
-   SetFieldEmpresa( !uFieldEmpresa( "lImpExa" ), "lImpExa" )
+   setFieldEmpresa( !uFieldEmpresa( "lImpExa" ), "lImpExa" )
 
    if uFieldEmpresa( "lImpExa" )
       ::oBtnImportesExactos:Selected()

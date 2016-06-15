@@ -2561,6 +2561,10 @@ Return nil
 Function TPRESTASHOPID()
 Return nil
 
+Function TFastReportOptions()
+Return nil
+
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP

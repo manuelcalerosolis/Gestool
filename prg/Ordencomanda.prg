@@ -37,6 +37,7 @@ CLASS TOrdenComanda FROM TMant
    METHOD EmptyOrdenComanda()          INLINE ( if( !Empty( ::oDbf ) .and. ::oDbf:Used(), !( ::oDbf:OrdKeyCount() > 0 ), .t. ) )
 
    METHOD Selector()
+   METHOD getFirstOrderId()
 
 END CLASS
 
@@ -479,6 +480,17 @@ Return ( cReturn )
 
 //---------------------------------------------------------------------------//
 
+METHOD getFirstOrderId()
 
+   local cCodigoOrden
 
+   ::oDbf:getStatus()
+   ::oDbf:goTop()
 
+   cCodigoOrden         := ::oDbf:cCodOrd   
+
+   ::oDbf:setStatus()
+
+Return ( cCodigoOrden )
+
+//---------------------------------------------------------------------------//

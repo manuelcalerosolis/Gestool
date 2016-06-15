@@ -10945,6 +10945,9 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       ( dbfTmpPgo )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfTmpPgo )->( ordCreate( cTmpPgo, "nNumFac", "cSerie + str( nNumFac ) + cSufFac + str( nNumRec ) + cTipRec", {|| Field->cSerie + str( Field->nNumFac ) + Field->cSufFac + str( Field->nNumRec ) + Field->cTipRec } ) )
 
+      ( dbfTmpPgo )->( ordCondSet( "!Deleted() .and. empty( cTipRec )", {|| !Deleted() .and.  empty( Field->cTipRec ) } ) )
+      ( dbfTmpPgo )->( ordCreate( cTmpPgo, "fNumFac", "cSerie + str( nNumFac ) + cSufFac + str( nNumRec )", {|| Field->cSerie + str( Field->nNumFac ) + Field->cSufFac + str( Field->nNumRec ) + Field->cTipRec } ) )
+
       ( dbfTmpPgo )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfTmpPgo )->( ordCreate( cTmpPgo, "cNumMtr", "Field->cNumMtr", {|| Field->cNumMtr } ) )
 
@@ -13158,6 +13161,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
    local aClo
    local nTotUnd                 := 0
    local hAtipica
+   local lBeforeAppendEvent
    local nPrecioPropiedades      := 0
    local oBrwProperties          := BrowseProperties():getInstance()
 
@@ -13201,22 +13205,30 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
    */
 
    if ( nMode == APPD_MODE ) .and. RetFld( aTmp[ _CREF ], D():Articulos( nView ), "lNumSer" ) .and. !( dbfTmpSer )->( dbSeek( str( aTmp[ _NNUMLIN ], 4 ) + aTmp[ _CREF ] ) )
-      MsgStop( "Tiene que introducir números de serie para este artículo." )
+      msgStop( "Tiene que introducir números de serie para este artículo." )
       if !empty( oBtnSer )
 	      oBtnSer:Click()
 	   end if 
       Return nil
    end if
 
-   /*if aTmp[ _NUNICAJA ] == 0
-      aTmp[ _NUNICAJA ] := 1
-   end if*/
+   // lanzamos los scripts-----------------------------------------------------
+
+   if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
+
+      lBeforeAppendEvent   := runEventScript( "FacturasClientes\Lineas\beforeAppend", aTmp, aTmpFac, nView, dbfTmpLin )
+
+      if isLogic( lBeforeAppendEvent ) .and. !lBeforeAppendEvent
+         Return nil
+      end if
+
+   end if
+
+   // fin de los script--------------------------------------------------------
 
    aClo     	:= aClone( aTmp )
 
-   /*
-   Modo de edición multiple los cambios afectan a todos los registros seleccionados
-   */
+   // Modo de edición multiple los cambios afectan a todos los registros seleccionados
 
    if nMode == MULT_MODE
 
