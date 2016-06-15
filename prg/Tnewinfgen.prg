@@ -4643,7 +4643,7 @@ METHOD SetNombreDesdeCategoria() CLASS TNewInfGen
       public cGrupoCategoriaNombreDesde  := ""
    end if
 
-Return ( cGrupoArticuloNombreDesde )
+Return ( cGrupoCategoriaNombreDesde )
 
 //---------------------------------------------------------------------------//
 

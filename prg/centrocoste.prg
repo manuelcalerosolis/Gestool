@@ -32,7 +32,7 @@ CLASS TCentroCoste FROM TMant
 
    METHOD loadValues()
 
-	METHOD validCodigo( oGet, cCodigo, nMode )					
+	METHOD validCodigo( oGet, cCodigo, nMode )
 
 	METHOD validName( cNombre )							INLINE ( iif( empty( cNombre ),;
 																	( msgStop( "La descripción del centro de coste no puede estar vacía." ), .f. ),;

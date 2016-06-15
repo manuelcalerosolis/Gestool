@@ -2878,11 +2878,13 @@ METHOD AddParteProduccion() CLASS TFastVentasArticulos
                      ::oDbf:cDesUbi    := RetFld( ::oProLin:cCodArt, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
                      ::oDbf:cCodEnv    := RetFld( ::oProLin:cCodArt, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
 
-                     ::oDbf:nUniArt    := ::oProLin:Unidades()
+                     ::oDbf:nBultos    := ::oProLin:nBultos
+                     ::oDbf:nCajas     := ::oProLin:nCajOrd
+                     ::oDbf:nUniArt    := ::oProLin:nUndOrd
                      ::oDbf:nPreArt    := ::oProLin:nImpOrd
 
-                     ::oDbf:nBrtArt    := ::oProLin:TotalImporte()
-                     ::oDbf:nTotArt    := ::oProLin:TotalImporte()
+                     ::oDbf:nBrtArt    := 0 //::oProLin:TotalImporte()
+                     ::oDbf:nTotArt    := 0 //::oProLin:TotalImporte()
 
                      ::oDbf:cCodPr1    := ::oProLin:cCodPr1
                      ::oDbf:cCodPr2    := ::oProLin:cCodPr2
@@ -2890,7 +2892,7 @@ METHOD AddParteProduccion() CLASS TFastVentasArticulos
                      ::oDbf:cValPr2    := ::oProLin:cValPr2
 
                      ::oDbf:cClsDoc    := PAR_PRO
-                     ::oDbf:cTipDoc    := "Parte producción"
+                     ::oDbf:cTipDoc    := "Producido"
 
                      ::oDbf:cSerDoc    := ::oProCab:cSerOrd
                      ::oDbf:cNumDoc    := Str( ::oProCab:nNumOrd )
@@ -2908,7 +2910,7 @@ METHOD AddParteProduccion() CLASS TFastVentasArticulos
 
                //end if
 
-               ::oPedPrvL:Skip()
+               ::oProLin:Skip()
 
             end while
 
