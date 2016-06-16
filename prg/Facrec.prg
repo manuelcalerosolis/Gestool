@@ -593,8 +593,10 @@ STATIC FUNCTION GenFacRec( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
          while ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == cNumFac .and. ( dbfFacCliP )->( !eof() )
 
-            aAdd( aImpVto, ( dbfFacCliP )->nImporte )
-            aAdd( aDatVto, if( Empty( ( dbfFacCliP )->dFecVto ), ( dbfFacCliP )->dPreCob,  ( dbfFacCliP )->dFecVto ) )
+            if empty( ( dbfFacCliP )->cRecDev )
+               aAdd( aImpVto, ( dbfFacCliP )->nImporte )
+               aAdd( aDatVto, if( Empty( ( dbfFacCliP )->dFecVto ), ( dbfFacCliP )->dPreCob,  ( dbfFacCliP )->dFecVto ) )
+            end if 
 
             ( dbfFacCliP )->( dbSkip() )
 

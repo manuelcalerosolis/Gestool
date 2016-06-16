@@ -3956,10 +3956,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       end with
 
       with object ( oBrwPgo:AddCol() )
-         :cHeader             := "Cobrado"
-         :bStrData            := {|| "" }
+         :cHeader             := "Estado"
+         :bStrData            := {|| cEstadoRecibo( dbfTmpPgo ) }
          :bBmpData            := {|| nEstadoRecibo( dbfTmpPgo ) }
-         :nWidth              := 46
+         :nWidth              := 90
          :AddResource( "Cnt16" )
          :AddResource( "Sel16" )
          :AddResource( "UndoRed16" )
@@ -20473,8 +20473,10 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
 
          while ( cFacCliP )->cSerie + str( ( cFacCliP )->nNumFac ) + ( cFacCliP )->cSufFac == cFactura .and. !( cFacCliP )->( eof() )
 
-            aAdd( aImpVto, ( cFacCliP )->nImporte )
-            aAdd( aDatVto, if( empty( ( cFacCliP )->dFecVto ), ( cFacCliP )->dPreCob,  ( cFacCliP )->dFecVto ) )
+            if empty( ( cFacCliP )->cRecDev )
+               aAdd( aImpVto, ( cFacCliP )->nImporte )
+               aAdd( aDatVto, if( empty( ( cFacCliP )->dFecVto ), ( cFacCliP )->dPreCob,  ( cFacCliP )->dFecVto ) )
+            end if 
 
             ( cFacCliP )->( dbSkip() )
 

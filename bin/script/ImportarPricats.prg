@@ -91,7 +91,6 @@ Static Function ProccessXml( cDocumentXml )
    aCodigoBarras        := {}
    hArticulo            := {=>}
    cDocumentXml         := __localDirectory + cDocumentXml
-   //cDocumentXml         := "C:\1\PRICAT_12e5ca69-6c66-4c24-aaca-a829a1b924d4.xml"
 
    oXmlDocument         := TXmlDocument():New( cDocumentXml )
 
@@ -134,21 +133,20 @@ Static Function ProccessNode( oXmlNode )
    local cNodeName   := cValtoChar( oXmlNode:cName )
 
    do case
-      case cNodeName == "ns0:Variants"
-         IteratorCodebarArticulo( oXmlNode )
-
-      case cNodeName == "ns0:Variant" 
+      case cNodeName == "cac:SellersItemIdentification" 
          IteratorCodigoArticulo( oXmlNode )       
 
-      case cNodeName == "ns0:ItemCatagorization"
-         IteratorTipoArticulo( oXmlNode )       
+      case cNodeName == "cac:Item"
+         IteratorNombreArticulo( oXmlNode )       
 
-      case cNodeName == "ns0:LocalPrice"
+      case cNodeName == "cac:Price"
          IteratorPrieceArticulo( oXmlNode )   
 
-      case cNodeName == "ns0:DeliveryPeriod"
+      case cNodeName == "cac:LineValidityPeriod"
          IteratorTemporadaArticulo( oXmlNode )
 
+      case cNodeName == "cac:CatalogueLine"
+         IteratorCodebarArticulo( oXmlNode )
 
    end case
  
@@ -162,37 +160,35 @@ Static Function IteratorCodigoArticulo( oXmlNode )
    local oNode
 
    oIter                := TXMLIteratorScan():New( oXmlNode )
-   oNode                := oIter:Find( "ns0:ItemNumberMaster" ) 
+   oNode                := oIter:Find( "cbc:ID" ) 
 
    if !Empty( oNode )
       hSet( hArticulo, "Codigo", oNode:cData )
    end if 
 
-   oNode                := oIter:Find( "ns0:ItemName" ) 
-
-   if !Empty( oNode )
-      hSet( hArticulo, "Nombre", Upper( oNode:cData ) )
-   end if 
-
-   oNode                := oIter:Find( "ns0:SubBrandName" ) 
-
-   if !Empty( oNode )
-      hSet( hArticulo, "Familia", Upper( oNode:cData ) )
-   end if 
-
-
 Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-Static Function IteratorTipoArticulo( oXmlNode )
+Static Function IteratorNombreArticulo( oXmlNode )
 
    local oIter
    local oNode
 
    oIter                := TXMLIteratorScan():New( oXmlNode ) 
+   oNode                := oIter:Find( "cbc:Description" ) 
 
-   oNode                := oIter:Find( "ns0:ProductGroupName" ) 
+   if !Empty( oNode )
+      hSet( hArticulo, "Nombre", Upper( oNode:cData ) )
+   end if 
+
+   oNode                := oIter:Find( "cbc:BrandName" ) 
+
+   if !Empty( oNode )
+      hSet( hArticulo, "Familia", Upper( oNode:cData ) )
+   end if 
+
+   oNode                := oIter:Find( "cbc:ModelName" ) 
 
    if !Empty( oNode )
       hSet( hArticulo, "Tipo", Upper( oNode:cData ) )
@@ -209,16 +205,20 @@ Static Function IteratorPrieceArticulo( oXmlNode )
    local nPrice
 
    oIter                := TXMLIteratorScan():New( oXmlNode )  
-   oNode                := oIter:Find( "ns0:GrossPriceAmount" ) 
+   oNode                := oIter:Find( "cbc:PriceAmount" ) 
 
    if !Empty( oNode ) 
-      hSet( hArticulo, "Costo", val( oNode:cData ) )
+      nPrice            := Val( oNode:cData )
+   end if 
+
+   oNode                := oIter:Find( "cbc:PriceTypeCode" ) 
+
+   if !Empty( oNode ) .and. ( oNode:cData == "GRP" )
+      hSet( hArticulo, "Costo", nPrice )
    end if
 
-   oNode                := oIter:Find( "ns0:RetailPriceAmount" ) 
-
-   if !Empty( oNode ) 
-      hSet( hArticulo, "Venta", val( oNode:cData ) )
+   if !Empty( oNode ) .and. ( oNode:cData == "SRP" )
+      hSet( hArticulo, "Venta", nPrice )
    end if
    
 Return ( nil )
@@ -231,7 +231,8 @@ Static Function IteratorTemporadaArticulo( oXmlNode )
    local oNode
 
    oIter                := TXMLIteratorScan():New( oXmlNode )
-   oNode                := oIter:Find( "ns0:PeriodName" ) 
+
+   oNode                := oIter:Find( "cbc:Description" ) 
 
    if !Empty( oNode )
       hSet( hArticulo, "Temporada", Upper( oNode:cData ) )
@@ -244,67 +245,75 @@ Return ( nil )
 Static Function IteratorCodebarArticulo( oXmlNode )
 
    local oId
-   local oNode
+   local oItem
    local oIter
    local oNumero
-   local oVariants
-   local oVariant
    local oSellersItemIdentification
-   local oPhysicalAttribute
+   local oItemAdditionalProperty
 
    hCodigoBarras                 := {=>}
 
-   while !empty( oXmlNode )
+   oItem                         := TXMLIteratorScan():New( oXmlNode ):Find( "cac:Item" )
 
-      oVariant                   := TXMLIteratorScan():New( oXmlNode ):Find( "ns0:Variant" )
+   if !Empty( oItem )
 
-      if !empty( oVariant ) 
+      // Propiedades del item--------------------------------------------------
 
-         oNode                   := TXMLIteratorScan():New( oVariant ):Find( "ns0:ItemNumber" ) 
-         if !empty( oNode )
-             hSet( hCodigoBarras, "Codigo", oNode:cData )
-         end if
+      oItemAdditionalProperty    := TXMLIteratorScan():New( oItem ):Find( "cac:AdditionalItemProperty" )
 
-         // PProhysicalAttributeiedades del item--------------------------------------------------
-               
-         oPhysicalAttribute      := TXMLIteratorScan():New( oVariant ):Find( "ns0:PhysicalAttribute" )
+      while !Empty( oItemAdditionalProperty )
 
-         if !empty(oPhysicalAttribute)
+         oName                   := TXMLIteratorScan():New( oItemAdditionalProperty ):Find( "cbc:Name" )
+         
+         if !Empty( oName )
 
-            oNode                := TXMLIteratorScan():New( oPhysicalAttribute ):Find( "ns0:Size" )
-            if !Empty( oNode )
+            if oName:cData == "Size"
+
+               oValue            := TXMLIteratorScan():New( oItemAdditionalProperty ):Find( "cbc:Value" )
+            
                if !hHasKey( hCodigoBarras, "Talla")
-                  hSet( hCodigoBarras, "Talla", oNode:cData )
+                  hSet( hCodigoBarras, "Talla", oValue:cData )
                end if 
+
             end if 
 
-            oNode                 := TXMLIteratorScan():New( oPhysicalAttribute ):Find( "ns0:MainColourName" )
-            if !Empty( oNode )
+            if oName:cData == "ColourName"
+            
+               oValue            := TXMLIteratorScan():New( oItemAdditionalProperty ):Find( "cbc:Value" )
+            
                if !hHasKey( hCodigoBarras, "Color")
-                  hSet( hCodigoBarras, "Color", oNode:cData )
+                  if At( "/", oValue:cData ) != 0
+                     hSet( hCodigoBarras, "Color", substr( oValue:cData, 1, At( "/", oValue:cData ) - 1 ) )
+                  else
+                     hSet( hCodigoBarras, "Color", oValue:cData )
+                  end if 
                end if 
-            end if 
 
-            oNode                 := TXMLIteratorScan():New( oPhysicalAttribute ):Find( "ns0:HexCode" )
-            if !Empty( oNode )
-               if !hHasKey( hCodigoBarras, "HexCode")
-                  hSet( hCodigoBarras, "HexCode", oNode:cData )
-               end if 
             end if 
 
          end if 
 
-         if !empty( hCodigoBarras )
-            aAdd( aCodigoBarras, hCodigoBarras )   
-         end if 
+         oItemAdditionalProperty := oItemAdditionalProperty:nextintree()
 
-         hCodigoBarras                 := {=>}
+      end while
+   
+      // Codigo del Item-------------------------------------------------------
+      
+      oSellersItemIdentification := TXMLIteratorScan():New( oItem ):Find( "cac:StandardItemIdentification" )
+
+      if !Empty( oSellersItemIdentification )
+
+         oId                     := TXMLIteratorScan():New( oSellersItemIdentification ):Find( "cbc:ID" ) 
+
+         if !Empty( oId )
+            hSet( hCodigoBarras, "Codigo", oId:cData )
+         end if
 
       end if 
 
-      oXmlNode                         := oXmlNode:nextInTree()
+   end if 
 
-   end while
+   aAdd( aCodigoBarras, hCodigoBarras )   
 
 Return ( nil )
 
@@ -316,6 +325,12 @@ Static Function ProccessArticulo()
    local lAppend
    local cCodigo
    local hCodigoBarras
+
+   debug( hArticulo )
+
+   if empty( hArticulo )
+      Return ( nil )
+   end if
 
    cCodigo                       := Padr( hGet( hArticulo, "Codigo"), 18 )
 
@@ -440,4 +455,4 @@ Return ( cCodigoTemporadaBestseller )
 
 //---------------------------------------------------------------------------//
   
-#include "BestsellerFtp.prg"
+#include "BestsellerFtp.prg" 

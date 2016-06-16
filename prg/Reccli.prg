@@ -2163,8 +2163,8 @@ function SynRecCli( cPath )
 
    DEFAULT cPath     := cPatEmp()
 
-   /*oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
    USE ( cPath + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacCliT", @cFacCliT ) ) EXCLUSIVE
    if !lAIS() ; ( cFacCliT )->( ordListAdd( cPath + "FACCLIT.CDX" ) ); else ; ordSetFocus( 1 ) ; end 
@@ -2341,13 +2341,13 @@ function SynRecCli( cPath )
 
    ( cFacCliP )->( ordSetFocus( 1 ) )
 
-   /*RECOVER USING oError
+   RECOVER USING oError
 
       msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
    CLOSE ( cFacCliT )
    CLOSE ( cFacCliL )
@@ -5795,8 +5795,8 @@ Return ( cEstadoRecibo )
 
 Function lReciboMatriz( cNumRec, uFacCliP )
    
-   DEFAULT uFacCliP        := D():FacturasClientesCobros( nView )
-   DEFAULT cNumRec         := ( D():FacturasClientesCobros( nView ) )->cSerie + str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac + str( ( D():FacturasClientesCobros( nView ) )->nNumRec ) + ( D():FacturasClientesCobros( nView ) )->cTipRec
+   DEFAULT uFacCliP     := D():FacturasClientesCobros( nView )
+   DEFAULT cNumRec      := ( D():FacturasClientesCobros( nView ) )->cSerie + str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac + str( ( D():FacturasClientesCobros( nView ) )->nNumRec ) + ( D():FacturasClientesCobros( nView ) )->cTipRec
 
    if dbSeekInOrd( cNumRec, "cNumMtr", uFacCliP )
       Return .t.
