@@ -92,6 +92,7 @@ Static Function ProccessXml( cDocumentXml )
    aCodigoBarras        := {}
    hArticulo            := {=>}
    cDocumentXml         := __localDirectory + cDocumentXml
+   cDocumentXml         := "C:\1\PRICAT_12e5ca69-6c66-4c24-aaca-a829a1b924d4.xml"
 
    oXmlDocument         := TXmlDocument():New( cDocumentXml )
 
@@ -134,7 +135,7 @@ Static Function ProccessNode( oXmlNode )
    local cNodeName   := cValtoChar( oXmlNode:cName )
 
    do case
-      case cNodeName == "cac:SellersItemIdentification" 
+      case cNodeName == "ns0:Variant" 
          IteratorCodigoArticulo( oXmlNode )       
 
       case cNodeName == "cac:Item"
@@ -161,10 +162,16 @@ Static Function IteratorCodigoArticulo( oXmlNode )
    local oNode
 
    oIter                := TXMLIteratorScan():New( oXmlNode )
-   oNode                := oIter:Find( "cbc:ID" ) 
+   oNode                := oIter:Find( "ns0:ItemNumberMaster" ) 
 
    if !Empty( oNode )
       hSet( hArticulo, "Codigo", oNode:cData )
+   end if 
+
+   oNode                := oIter:Find( "ns0:ItemName" ) 
+
+   if !Empty( oNode )
+      hSet( hArticulo, "Nombre", Upper( oNode:cData ) )
    end if 
 
 Return ( nil )
@@ -328,6 +335,10 @@ Static Function ProccessArticulo()
    local lAppend
    local cCodigo
    local hCodigoBarras
+
+   debug( hArticulo, "hArticulo" )
+
+   Return nil
 
    cCodigo                       := Padr( hGet( hArticulo, "Codigo"), 18 )
 

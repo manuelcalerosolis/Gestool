@@ -567,6 +567,8 @@ CLASS TInfGen
 
    METHOD SetValorGrupo( cNombre, cValor )
 
+   METHOD oDbfOrdSetFocus( cTag )            INLINE ( ::oDbf:OrdSetFocus( cTag ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -660,7 +662,7 @@ METHOD New( cSubTitle, aFields, aIndex, oMenuItem, oWnd, cHelp, xOthers ) CLASS 
       fErase( ::cFileIndx )
    end if
 
-   ::oDbf   := TDbf():New( ::cFileName, "InfMov", ( cLocalDriver() ), , ( cPatTmp() ) )
+   ::oDbf         := TDbf():New( ::cFileName, "InfMov", ( cLocalDriver() ), , ( cPatTmp() ) )
 
    for n := 1 to len( aFields )
 

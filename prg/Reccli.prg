@@ -5528,6 +5528,8 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
    Grabamos el recibo----------------------------------------------------------
    */
 
+   ? aTmp[ _CCTAREC ]
+
    WinGather( aTmp, aGet, cFacCliP, oBrw, nMode )
 
    /*
@@ -5867,7 +5869,7 @@ Function cCuentaEmpresaRecibo( uFacCliP )
 
    end case
 
-return ( cCuentaEmpresaRecibo )
+Return ( cCuentaEmpresaRecibo )
 
 //---------------------------------------------------------------------------//
 
@@ -5875,12 +5877,12 @@ static function lUpdateSubCta( aGet, aTmp )
 
    if !empty( aTmp[ _CCODPGO ] )
 
-      if !empty( aGet[ _CCTAREC ] )
+      if empty( aTmp[ _CCTAREC ] )
          aGet[ _CCTAREC ]:cText( RetFld( aTmp[ _CCODPGO ], D():FormasPago( nView ), "cCtaCobro" ) )
          aGet[ _CCTAREC ]:Refresh()
       end if
 
-      if !empty( aGet[ _CCTAGAS ] )
+      if empty( aTmp[ _CCTAGAS ] )
          aGet[ _CCTAGAS ]:cText( RetFld( aTmp[ _CCODPGO ], D():FormasPago( nView ), "cCtaGas" ) )
          aGet[ _CCTAGAS ]:Refresh()
       end if
