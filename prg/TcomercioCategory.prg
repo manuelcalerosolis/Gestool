@@ -45,7 +45,13 @@ METHOD buildCategory( id ) CLASS TComercioCategory
       Return .f.
    end if
 
+   ::oCategoryDatabase():getStatus()
+
    if ::oCategoryDatabase():SeekInOrd( id, "cCodFam" ) 
+
+      if !empty( ::oCategoryDatabase():cFamCmb )
+         ::buildCategory( ::oCategoryDatabase():cFamCmb )
+      end if
 
       aAdd( ::aCategoriesProduct,   {  "id"              => id,;
                                        "id_parent"       => alltrim( ::oCategoryDatabase():cFamCmb ),;
@@ -57,9 +63,7 @@ METHOD buildCategory( id ) CLASS TComercioCategory
 
    end if   
 
-   if !empty( ::oCategoryDatabase():cFamCmb )
-      ::buildCategory( ::oCategoryDatabase():cFamCmb )
-   end if
+   ::oCategoryDatabase():setStatus()
 
 Return ( Self )
 

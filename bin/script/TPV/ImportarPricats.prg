@@ -35,7 +35,9 @@ Function ImportaXmlBestseller()
 
    local cDocumentXml
 
-   BestsellerFtp():New()
+   if msgYesNo( "¿Desea descargar los ficheros del ftp?" )
+      BestsellerFtp():New()
+   end if 
 
    dbUseArea( .t., ( cDriver() ), ( cPatArt() + "Articulo.Dbf" ), ( cCheckArea( "Articulo", @dbfArticulo ) ), .t., .f. )
    if !lAIS() ; ordListAdd( ( cPatArt() + "Articulo.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
@@ -64,6 +66,7 @@ Function ImportaXmlBestseller()
    if !Empty( aXmlDocuments )
       for each cDocumentXml in aXmlDocuments
          proccessXml( cDocumentXml[ 1 ] ) 
+         moveXml( cDocumentXml[ 1 ] )
       next
    else
       msgStop( "No hay ficheros en el directorio")
@@ -91,7 +94,6 @@ Static Function ProccessXml( cDocumentXml )
    aCodigoBarras        := {}
    hArticulo            := {=>}
    cDocumentXml         := __localDirectory + cDocumentXml
-   //cDocumentXml         := "C:\1\PRICAT_12e5ca69-6c66-4c24-aaca-a829a1b924d4.xml"
 
    oXmlDocument         := TXmlDocument():New( cDocumentXml )
 
@@ -315,6 +317,10 @@ Static Function ProccessArticulo()
    local lAppend
    local cCodigo
    local hCodigoBarras
+
+   if empty( hArticulo )
+      Return ( nil )
+   end if
 
    cCodigo                       := Padr( hGet( hArticulo, "Codigo"), 18 )
 

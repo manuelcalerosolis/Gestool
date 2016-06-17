@@ -741,3 +741,44 @@ function GetFileDateTime( cFile )
 Return ( dtos( FileDate( cFile ) ) + FileTime( cFile ) ) 
 
 //---------------------------------------------------------------------------//
+
+function getFieldFromDatabase( id, uField, cDatabase, uOrder )
+
+   local workArea
+   local fieldFromDatabase       := ""
+
+   if empty( id )
+      Return ( fieldFromDatabase )
+   end if 
+
+   if empty( cDatabase )
+      Return ( fieldFromDatabase )
+   end if 
+
+   DEFAULT uField               := 2
+   DEFAULT uOrder               := 1   
+
+   dbUseArea( .t., cDriver(), cDatabase, cCheckArea( "workArea", @workArea ), .f. )
+   ( workArea )->( ordListAdd( cDatabase ) )
+
+   if ( workArea )->( used() )
+
+      ( workArea )->( ordsetfocus( uOrder ) )
+
+      if ( workArea )->( dbseek( id ) )
+         if ( isnum( uField ) )
+            fieldFromDatabase   := ( workArea )->( fieldget( uField ) )
+         else 
+            fieldFromDatabase   := ( workArea )->( fieldget( fieldpos( uField ) ) )
+         end if 
+      else
+         fieldFromDatabase      := "valor no encontrado"
+      end if 
+
+      ( workArea )->( dbclosearea() )
+
+   end if 
+
+return ( fieldFromDatabase )
+
+//--------------------------------------------------------------------------//

@@ -1083,7 +1083,7 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
       REDEFINE RADIO ::oRadTipoMovimiento ;
          VAR      ::oDbf:nTipMov ;
          ID       130, 131, 132, 133 ;
-         WHEN     ( nMode == APPD_MODE ) ; // .and. Empty( ::oDetMovimientos:oDbfVir:OrdKeyCount()
+         WHEN     ( nMode != ZOOM_MODE ) ; // WHEN     ( nMode == APPD_MODE ) ; // .and. Empty( ::oDetMovimientos:oDbfVir:OrdKeyCount()
          ON CHANGE( ::ShwAlm( oSay, oBtnImp ) ) ;
          OF       oDlg
 

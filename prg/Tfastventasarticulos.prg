@@ -174,7 +174,6 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD setFilterUserId()                     INLINE ( if( ::lApplyFilters,;
                                                          ::cExpresionHeader  += ' .and. ( Field->cCodUsr >= "' + ::oGrupoUsuario:Cargo:getDesde() + '" .and. Field->cCodUsr <= "' + ::oGrupoUsuario:Cargo:getHasta() + '" )', ) )
 
-
    METHOD DesdeHastaGrupoCliente()
 
    METHOD getTotalUnidadesGrupoCliente( cCodGrp, cCodArt )
@@ -317,9 +316,13 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       D():PedidosClientesLineas( ::nView )
 
+      D():ProveedorArticulo( ::nView )
+
       DATABASE NEW ::oArtImg  PATH ( cPatArt() ) CLASS "ArtImg"      FILE "ArtImg.Dbf"  VIA ( cDriver() ) SHARED INDEX "ArtImg.Cdx"
 
       DATABASE NEW ::oArtKit  PATH ( cPatArt() ) CLASS "ArtKit"      FILE "ArtKit.Dbf"  VIA ( cDriver() ) SHARED INDEX "ArtKit.Cdx"
+
+      DATABASE NEW ::oArtCod  PATH ( cPatArt() ) CLASS "ArtCodebar"  FILE "ArtCodebar.Dbf"  VIA ( cDriver() ) SHARED INDEX "ArtCodebar.Cdx"
 
       DATABASE NEW ::oArtCod  PATH ( cPatArt() ) CLASS "ArtCodebar"  FILE "ArtCodebar.Dbf"  VIA ( cDriver() ) SHARED INDEX "ArtCodebar.Cdx"
 
@@ -609,6 +612,8 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
          ::oCamposExtra:End()
       end if
 
+      D():DeleteView( ::nView )
+
    RECOVER
 
       msgStop( "Imposible cerrar todas las bases de datos" )
@@ -715,17 +720,17 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
 
    ::AddField( "cPrvHab",     "C", 12, 0, {|| "" },   "Proveedor habitual"                      )
 
-   ::AddField( "cCtrCoste",   "C",  9, 0, {|| "" },   "Código del centro de coste"             )
+   ::AddField( "cCtrCoste",   "C",  9, 0, {|| "" },   "Código del centro de coste"              )
 
-   ::AddField( "cDesUbi",     "C",200, 0, {|| "" },   "Unicación del artículo"                 )
+   ::AddField( "cDesUbi",     "C",200, 0, {|| "" },   "Unicación del artículo"                  )
 
    ::AddFieldCamposExtra()
 
-   ::AddTmpIndex( "cCodArt", "cCodArt" )
-   ::AddTmpIndex( "cCodCli", "cCodCli" )
-   ::AddTmpIndex( "cCodPrvArt", "cCodPrv + cCodArt" )
-   ::AddTmpIndex( "cPrvHab", "cPrvHab")
-   ::AddTmpIndex( "cCodAlm", "cCodArt + cCodAlm" )
+   ::AddTmpIndex( "cCodArt",     "cCodArt" )
+   ::AddTmpIndex( "cCodCli",     "cCodCli" )
+   ::AddTmpIndex( "cPrvHab",     "cPrvHab")
+   ::AddTmpIndex( "cCodAlm",     "cCodArt + cCodAlm" )
+   ::AddTmpIndex( "cCodPrvArt",  "cCodPrv + cCodArt" )
 
 RETURN ( Self )
 
@@ -887,6 +892,7 @@ Return ( Self )
 Method lValidRegister() CLASS TFastVentasArticulos
 
    if !empty( ::oDbf:cCodArt )                                                                                                                  .and.;
+      ( ::DesdeHastaGrupoCliente() )                                                                                                            .and.;
       ( ::oDbf:cCodArt     >= ::oGrupoArticulo:Cargo:getDesde()         .and. ::oDbf:cCodArt    <= ::oGrupoArticulo:Cargo:getHasta() )          .and.;
       ( ::oDbf:cGrpFam     >= ::oGrupoGFamilia:Cargo:getDesde()         .and. ::oDbf:cGrpFam    <= ::oGrupoGFamilia:Cargo:getHasta() )          .and.;
       ( ::oDbf:cCodFam     >= ::oGrupoFamilia:Cargo:getDesde()          .and. ::oDbf:cCodFam    <= ::oGrupoFamilia:Cargo:getHasta() )           .and.;
@@ -897,7 +903,6 @@ Method lValidRegister() CLASS TFastVentasArticulos
       ( ::oDbf:cCodTemp    >= ::oGrupoTemporada:Cargo:getDesde()        .and. ::oDbf:cCodTemp   <= ::oGrupoTemporada:Cargo:getHasta() )         .and.;
       ( ::oDbf:cCodFab     >= ::oGrupoFabricante:Cargo:getDesde()       .and. ::oDbf:cCodFab    <= ::oGrupoFabricante:Cargo:getHasta() )        .and.;
       ( ::oDbf:cCodCli     >= ::oGrupoCliente:Cargo:getDesde()          .and. ::oDbf:cCodCli    <= ::oGrupoCliente:Cargo:getHasta() )           .and.;
-      ( ::DesdeHastaGrupoCliente() )                                                                                                            .and.;
       ( ::oDbf:cCodPago    >= ::oGrupoFpago:Cargo:getDesde()            .and. ::oDbf:cCodPago   <= ::oGrupoFpago:Cargo:getHasta() )             .and.;
       ( ::oDbf:cCodRut     >= ::oGrupoRuta:Cargo:getDesde()             .and. ::oDbf:cCodRut    <= ::oGrupoRuta:Cargo:getHasta() )              .and.;
       ( ::oDbf:cCodAge     >= ::oGrupoAgente:Cargo:getDesde()           .and. ::oDbf:cCodAge    <= ::oGrupoAgente:Cargo:getHasta() )            .and.;
@@ -1401,7 +1406,14 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
                ::oDbf:lKitArt    := ::oSatCliL:lKitArt
                ::oDbf:lKitChl    := ::oSatCliL:lKitChl
 
+               if !empty( ::oSatCliL:cCodPrv ) 
+                  ::oDbf:cPrvHab := ::oSatCliL:cCodPrv
+               else
+                  ::oDbf:cPrvHab := getProveedorPorDefectoArticulo( ::oDbf:cCodArt, D():ProveedorArticulo( ::nView ) )
+               end if 
+
                ::InsertIfValid()
+
                ::loadValuesExtraFields()
 
                ::oSatCliL:Skip()
@@ -1487,111 +1499,113 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
 
             while !::lBreak .and. ( ::oPreCliT:cSerPre + Str( ::oPreCliT:nNumPre ) + ::oPreCliT:cSufPre == ::oPreCliL:cSerPre + Str( ::oPreCliL:nNumPre ) + ::oPreCliL:cSufPre )
 
-               //if !( ::lExcCero  .and. nTotNPreCli( ::oPreCliL:cAlias ) == 0 )  .and.;
-               //   !( ::lExcImp   .and. nImpLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
+               /*
+               AÃ±adimos un nuevo registro-----------------------------------
+               */
 
-                  /*
-                  AÃ±adimos un nuevo registro-----------------------------------
-                  */
+               ::oDbf:Blank()
 
-                  ::oDbf:Blank()
+               ::oDbf:cCodArt    := ::oPreCliL:cRef
+               ::oDbf:cNomArt    := ::oPreCliL:cDetalle
 
-                  ::oDbf:cCodArt    := ::oPreCliL:cRef
-                  ::oDbf:cNomArt    := ::oPreCliL:cDetalle
+               ::oDbf:cCodPr1    := ::oPreCliL:cCodPr1
+               ::oDbf:cCodPr2    := ::oPreCliL:cCodPr2
+               ::oDbf:cValPr1    := ::oPreCliL:cValPr1
+               ::oDbf:cValPr2    := ::oPreCliL:cValPr2
 
-                  ::oDbf:cCodPr1    := ::oPreCliL:cCodPr1
-                  ::oDbf:cCodPr2    := ::oPreCliL:cCodPr2
-                  ::oDbf:cValPr1    := ::oPreCliL:cValPr1
-                  ::oDbf:cValPr2    := ::oPreCliL:cValPr2
+               ::oDbf:cCodPrv    := ::oPreCliL:cCodPrv
+               ::oDbf:cNomPrv    := RetFld( ::oPreCliL:cCodPrv, ::oDbfPrv:cAlias )
 
-                  ::oDbf:cCodPrv    := ::oPreCliL:cCodPrv
-                  ::oDbf:cNomPrv    := RetFld( ::oPreCliL:cCodPrv, ::oDbfPrv:cAlias )
+               ::oDbf:cCodFam    := ::oPreCliL:cCodFam
+               ::oDbf:cGrpFam    := ::oPreCliL:cGrpFam
+               ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oPreCliL:nIva )
+               ::oDbf:cCodTip    := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
+               ::oDbf:cCodCate   := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
+               ::oDbf:cCodEst    := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
+               ::oDbf:cCodTemp   := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
+               ::oDbf:cCodFab    := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+               ::oDbf:cDesUbi    := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
 
-                  ::oDbf:cCodFam    := ::oPreCliL:cCodFam
-                  ::oDbf:cGrpFam    := ::oPreCliL:cGrpFam
-                  ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oPreCliL:nIva )
-                  ::oDbf:cCodTip    := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
-                  ::oDbf:cCodCate   := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
-                  ::oDbf:cCodEst    := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
-                  ::oDbf:cCodTemp   := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
-                  ::oDbf:cCodFab    := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
-                  ::oDbf:cDesUbi    := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
+               if ::oAtipicasCliente:Seek( ::oPreCliT:cCodCli + ::oPreCliL:cRef ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
+                  ::oDbf:cCodEnv    := ::oAtipicasCliente:cCodEnv
+               else
+                  ::oDbf:cCodEnv    := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
+               end if
 
-                  if ::oAtipicasCliente:Seek( ::oPreCliT:cCodCli + ::oPreCliL:cRef ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
-                     ::oDbf:cCodEnv    := ::oAtipicasCliente:cCodEnv
-                  else
-                     ::oDbf:cCodEnv    := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
-                  end if
+               ::oDbf:cCodAlm    := ::oPreCliL:cAlmLin
+               ::oDbf:cCodPago   := ::oPreCliT:cCodPgo
+               ::oDbf:cCodRut    := ::oPreCliT:cCodRut
+               ::oDbf:cCodAge    := ::oPreCliT:cCodAge
+               ::oDbf:cCodTrn    := ::oPreCliT:cCodTrn
+               ::oDbf:cCodUsr    := ::oPreCliT:cCodUsr
 
-                  ::oDbf:cCodAlm    := ::oPreCliL:cAlmLin
-                  ::oDbf:cCodPago   := ::oPreCliT:cCodPgo
-                  ::oDbf:cCodRut    := ::oPreCliT:cCodRut
-                  ::oDbf:cCodAge    := ::oPreCliT:cCodAge
-                  ::oDbf:cCodTrn    := ::oPreCliT:cCodTrn
-                  ::oDbf:cCodUsr    := ::oPreCliT:cCodUsr
+               ::oDbf:cCodCli    := ::oPreCliT:cCodCli
+               ::oDbf:cNomCli    := ::oPreCliT:cNomCli
+               ::oDbf:cPobCli    := ::oPreCliT:cPobCli
+               ::oDbf:cPrvCli    := ::oPreCliT:cPrvCli
+               ::oDbf:cPosCli    := ::oPreCliT:cPosCli
+               ::oDbf:cCodObr    := ::oPreCliL:cObrLin
+               ::oDbf:cCodGrp    := cGruCli( ::oPreCliT:cCodCli, ::oDbfCli )
 
-                  ::oDbf:cCodCli    := ::oPreCliT:cCodCli
-                  ::oDbf:cNomCli    := ::oPreCliT:cNomCli
-                  ::oDbf:cPobCli    := ::oPreCliT:cPobCli
-                  ::oDbf:cPrvCli    := ::oPreCliT:cPrvCli
-                  ::oDbf:cPosCli    := ::oPreCliT:cPosCli
-                  ::oDbf:cCodObr    := ::oPreCliL:cObrLin
-                  ::oDbf:cCodGrp    := cGruCli( ::oPreCliT:cCodCli, ::oDbfCli )
+               ::oDbf:nTotDto    := nDtoLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nTotPrm    := nPrmLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
-                  ::oDbf:nTotDto    := nDtoLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                  ::oDbf:nTotPrm    := nPrmLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nUniArt    := nTotNPreCli( ::oPreCliL:cAlias )
 
-                  ::oDbf:nUniArt    := nTotNPreCli( ::oPreCliL:cAlias )
+               ::oDbf:nDtoArt    := ::oPrecliL:nDto
+               ::oDbf:nLinArt    := ::oPrecliL:nDtoDiv
+               ::oDbf:nPrmArt    := ::oPrecliL:nDtoPrm
 
-                  ::oDbf:nDtoArt    := ::oPrecliL:nDto
-                  ::oDbf:nLinArt    := ::oPrecliL:nDtoDiv
-                  ::oDbf:nPrmArt    := ::oPrecliL:nDtoPrm
+               ::oDbf:nPreArt    := nImpUPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nValDiv )
+               ::oDbf:nTrnArt    := nTrnUPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nValDiv )
+               ::oDbf:nPntArt    := nPntLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nValDiv )
 
-                  ::oDbf:nPreArt    := nImpUPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nValDiv )
-                  ::oDbf:nTrnArt    := nTrnUPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nValDiv )
-                  ::oDbf:nPntArt    := nPntLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nValDiv )
+               ::oDbf:nBrtArt    := nBrtLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nImpArt    := nImpLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
+               ::oDbf:nIvaArt    := nIvaLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nImpEsp    := nTotIPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nTotArt    := nImpLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
+               ::oDbf:nTotArt    += nIvaLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
-                  ::oDbf:nBrtArt    := nBrtLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                  ::oDbf:nImpArt    := nImpLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
-                  ::oDbf:nIvaArt    := nIvaLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                  ::oDbf:nImpEsp    := nTotIPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                  ::oDbf:nTotArt    := nImpLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
-                  ::oDbf:nTotArt    += nIvaLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nComAge    := nComLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut )
 
-                  ::oDbf:nComAge    := nComLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut )
+               ::oDbf:nCosArt    := nTotCPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               if Empty( ::oDbf:nCosArt )
+                  ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+               end if 
 
-                  ::oDbf:nCosArt    := nTotCPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                  if Empty( ::oDbf:nCosArt )
-                     ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
-                  end if 
+               ::oDbf:cClsDoc    := PRE_CLI
+               ::oDbf:cTipDoc    := "Presupuesto cliente"
+               ::oDbf:cSerDoc    := ::oPreCliT:cSerPre
+               ::oDbf:cNumDoc    := Str( ::oPreCliT:nNumPre )
+               ::oDbf:cSufDoc    := ::oPreCliT:cSufPre
 
-                  ::oDbf:cClsDoc    := PRE_CLI
-                  ::oDbf:cTipDoc    := "Presupuesto cliente"
-                  ::oDbf:cSerDoc    := ::oPreCliT:cSerPre
-                  ::oDbf:cNumDoc    := Str( ::oPreCliT:nNumPre )
-                  ::oDbf:cSufDoc    := ::oPreCliT:cSufPre
+               ::oDbf:cIdeDoc    :=  ::idDocumento()
+               ::oDbf:nNumLin    :=  ::PreCliL:nNumLin
 
-                  ::oDbf:cIdeDoc    :=  ::idDocumento()
-                  ::oDbf:nNumLin    :=  ::PreCliL:nNumLin
+               ::oDbf:nAnoDoc    := Year( ::oPreCliT:dFecPre )
+               ::oDbf:nMesDoc    := Month( ::oPreCliT:dFecPre )
+               ::oDbf:dFecDoc    := ::oPreCliT:dFecPre
+               ::oDbf:cHorDoc    := SubStr( ::oPreCliT:cTimCre, 1, 2 )
+               ::oDbf:cMinDoc    := SubStr( ::oPreCliT:cTimCre, 4, 2 )
 
-                  ::oDbf:nAnoDoc    := Year( ::oPreCliT:dFecPre )
-                  ::oDbf:nMesDoc    := Month( ::oPreCliT:dFecPre )
-                  ::oDbf:dFecDoc    := ::oPreCliT:dFecPre
-                  ::oDbf:cHorDoc    := SubStr( ::oPreCliT:cTimCre, 1, 2 )
-                  ::oDbf:cMinDoc    := SubStr( ::oPreCliT:cTimCre, 4, 2 )
+               ::oDbf:nBultos    := ::oPreCliL:nBultos
+               ::oDbf:cFormato   := ::oPreCliL:cFormato
+               ::oDbf:nCajas     := ::oPreCliL:nCanPre
+               ::oDbf:nPeso      := nPesLPreCli( ::oPreCliL:cAlias )
 
-                  ::oDbf:nBultos    := ::oPreCliL:nBultos
-                  ::oDbf:cFormato   := ::oPreCliL:cFormato
-                  ::oDbf:nCajas     := ::oPreCliL:nCanPre
-                  ::oDbf:nPeso      := nPesLPreCli( ::oPreCliL:cAlias )
+               ::oDbf:lKitArt    := ::oPreCliL:lKitArt
+               ::oDbf:lKitChl    := ::oPreCliL:lKitChl
 
-                  ::oDbf:lKitArt    := ::oPreCliL:lKitArt
-                  ::oDbf:lKitChl    := ::oPreCliL:lKitChl
+               if !empty( ::oPreCliL:cCodPrv ) 
+                  ::oDbf:cPrvHab := ::oPreCliL:cCodPrv
+               else
+                  ::oDbf:cPrvHab := getProveedorPorDefectoArticulo( ::oDbf:cCodArt, D():ProveedorArticulo( ::nView ) )
+               end if
 
-                  ::InsertIfValid()
-                  ::loadValuesExtraFields()
-
-               //end if
+               ::InsertIfValid()
+               
+               ::loadValuesExtraFields()
 
                ::oPreCliL:Skip()
 
@@ -1771,6 +1785,12 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
                end if 
 
+               if !empty( ( aliasPedidosClientesLineas )->cCodPrv ) 
+                  ::oDbf:cPrvHab := ( aliasPedidosClientesLineas )->cCodPrv
+               else
+                  ::oDbf:cPrvHab := getProveedorPorDefectoArticulo( ::oDbf:cCodArt, D():ProveedorArticulo( ::nView ) )
+               end if
+
                ::InsertIfValid()
 
                ::loadValuesExtraFields()
@@ -1860,115 +1880,117 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
 
             while !::lBreak .and. ( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb == ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb )
 
-               //if !( ::lExcCero  .and. nTotNAlbCli( ::oAlbCliL:cAlias ) == 0 )  .and.;
-               //   !( ::lExcImp   .and. nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
+               ::oDbf:Blank()
 
-                  ::oDbf:Blank()
+               ::oDbf:cCodArt    := ::oAlbCliL:cRef
+               ::oDbf:cNomArt    := ::oAlbCliL:cDetalle
 
-                  ::oDbf:cCodArt    := ::oAlbCliL:cRef
-                  ::oDbf:cNomArt    := ::oAlbCliL:cDetalle
+               ::oDbf:cCodPrv    := ::oAlbCliL:cCodPrv
+               ::oDbf:cNomPrv    := RetFld( ::oAlbCliL:cCodPrv, ::oDbfPrv:cAlias )
 
-                  ::oDbf:cCodPrv    := ::oAlbCliL:cCodPrv
-                  ::oDbf:cNomPrv    := RetFld( ::oAlbCliL:cCodPrv, ::oDbfPrv:cAlias )
+               ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oAlbCliL:nIva )
+               ::oDbf:cCodGrp    := cGruCli( ::oAlbCliT:cCodCli, ::oDbfCli )
+               ::oDbf:cCodTip    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
+               ::oDbf:cCodCate   := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
+               ::oDbf:cCodEst    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
+               ::oDbf:cCodTemp   := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
+               ::oDbf:cCodFab    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+               ::oDbf:cDesUbi    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
 
-                  ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oAlbCliL:nIva )
-                  ::oDbf:cCodGrp    := cGruCli( ::oAlbCliT:cCodCli, ::oDbfCli )
-                  ::oDbf:cCodTip    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
-                  ::oDbf:cCodCate   := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
-                  ::oDbf:cCodEst    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
-                  ::oDbf:cCodTemp   := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
-                  ::oDbf:cCodFab    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
-                  ::oDbf:cDesUbi    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
+               if ::oAtipicasCliente:Seek( ::oAlbCliT:cCodCli + ::oAlbCliL:cRef ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
+                  ::oDbf:cCodEnv    := ::oAtipicasCliente:cCodEnv
+               else
+                  ::oDbf:cCodEnv    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
+               end if
 
-                  if ::oAtipicasCliente:Seek( ::oAlbCliT:cCodCli + ::oAlbCliL:cRef ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
-                     ::oDbf:cCodEnv    := ::oAtipicasCliente:cCodEnv
-                  else
-                     ::oDbf:cCodEnv    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
-                  end if
+               ::oDbf:cCodFam    := ::oAlbCliL:cCodFam
+               ::oDbf:cGrpFam    := ::oAlbCliL:cGrpFam
+               ::oDbf:cCodAlm    := ::oAlbCliL:cAlmLin
+               ::oDbf:cCodPago   := ::oAlbCliT:cCodPago
+               ::oDbf:cCodRut    := ::oAlbCliT:cCodRut
+               ::oDbf:cCodAge    := ::oAlbCliT:cCodAge
+               ::oDbf:cCodTrn    := ::oAlbCliT:cCodTrn
+               ::oDbf:cCodUsr    := ::oAlbCliT:cCodUsr
 
-                  ::oDbf:cCodFam    := ::oAlbCliL:cCodFam
-                  ::oDbf:cGrpFam    := ::oAlbCliL:cGrpFam
-                  ::oDbf:cCodAlm    := ::oAlbCliL:cAlmLin
-                  ::oDbf:cCodPago   := ::oAlbCliT:cCodPago
-                  ::oDbf:cCodRut    := ::oAlbCliT:cCodRut
-                  ::oDbf:cCodAge    := ::oAlbCliT:cCodAge
-                  ::oDbf:cCodTrn    := ::oAlbCliT:cCodTrn
-                  ::oDbf:cCodUsr    := ::oAlbCliT:cCodUsr
+               ::oDbf:cCodCli    := ::oAlbCliT:cCodCli
+               ::oDbf:cNomCli    := ::oAlbCliT:cNomCli
+               ::oDbf:cPobCli    := ::oAlbCliT:cPobCli
+               ::oDbf:cPrvCli    := ::oAlbCliT:cPrvCli
+               ::oDbf:cPosCli    := ::oAlbCliT:cPosCli
+               ::oDbf:cCodObr    := ::oAlbCliL:cObrLin
 
-                  ::oDbf:cCodCli    := ::oAlbCliT:cCodCli
-                  ::oDbf:cNomCli    := ::oAlbCliT:cNomCli
-                  ::oDbf:cPobCli    := ::oAlbCliT:cPobCli
-                  ::oDbf:cPrvCli    := ::oAlbCliT:cPrvCli
-                  ::oDbf:cPosCli    := ::oAlbCliT:cPosCli
-                  ::oDbf:cCodObr    := ::oAlbCliL:cObrLin
+               ::oDbf:nUniArt    := nTotNAlbCli( ::oAlbCliL:cAlias ) * if( ::lUnidadesNegativo, -1, 1 )
 
-                  ::oDbf:nUniArt    := nTotNAlbCli( ::oAlbCliL:cAlias ) * if( ::lUnidadesNegativo, -1, 1 )
+               ::oDbf:nDtoArt    := ::oAlbcliL:nDto
+               ::oDbf:nLinArt    := ::oAlbcliL:nDtoDiv
+               ::oDbf:nPrmArt    := ::oAlbcliL:nDtoPrm
 
-                  ::oDbf:nDtoArt    := ::oAlbcliL:nDto
-                  ::oDbf:nLinArt    := ::oAlbcliL:nDtoDiv
-                  ::oDbf:nPrmArt    := ::oAlbcliL:nDtoPrm
+               ::oDbf:nTotDto    := nDtoLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nTotPrm    := nPrmLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
-                  ::oDbf:nTotDto    := nDtoLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                  ::oDbf:nTotPrm    := nPrmLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nPreArt    := nImpUAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nValDiv )
+               ::oDbf:nTrnArt    := nTrnUAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nValDiv )
+               ::oDbf:nPntArt    := nPntLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nValDiv )
 
-                  ::oDbf:nPreArt    := nImpUAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nValDiv )
-                  ::oDbf:nTrnArt    := nTrnUAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nValDiv )
-                  ::oDbf:nPntArt    := nPntLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nValDiv )
+               ::oDbf:nBrtArt    := nBrtLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nImpArt    := nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
+               ::oDbf:nIvaArt    := nIvaLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nImpEsp    := nTotIAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
-                  ::oDbf:nBrtArt    := nBrtLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                  ::oDbf:nImpArt    := nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
-                  ::oDbf:nIvaArt    := nIvaLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                  ::oDbf:nImpEsp    := nTotIAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nTotArt    := nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
+               ::oDbf:nTotArt    += nIvaLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
-                  ::oDbf:nTotArt    := nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
-                  ::oDbf:nTotArt    += nIvaLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nComAge    := nComLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut )
 
-                  ::oDbf:nComAge    := nComLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut )
-
-                  ::oDbf:nCosArt    := nCosLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nCosArt    := nCosLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
 
-                  if Empty( ::oDbf:nCosArt )
-                     ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
-                  end if 
+               if Empty( ::oDbf:nCosArt )
+                  ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+               end if 
 
-                  ::oDbf:cCodPr1    := ::oAlbCliL:cCodPr1
-                  ::oDbf:cCodPr2    := ::oAlbCliL:cCodPr2
-                  ::oDbf:cValPr1    := ::oAlbCliL:cValPr1
-                  ::oDbf:cValPr2    := ::oAlbCliL:cValPr2
+               ::oDbf:cCodPr1    := ::oAlbCliL:cCodPr1
+               ::oDbf:cCodPr2    := ::oAlbCliL:cCodPr2
+               ::oDbf:cValPr1    := ::oAlbCliL:cValPr1
+               ::oDbf:cValPr2    := ::oAlbCliL:cValPr2
 
-                  ::oDbf:cLote      := ::oAlbCliL:cLote
-                  ::oDbf:dFecCad    := ::oAlbCliL:dFecCad
+               ::oDbf:cLote      := ::oAlbCliL:cLote
+               ::oDbf:dFecCad    := ::oAlbCliL:dFecCad
 
-                  ::oDbf:cClsDoc    := ALB_CLI
-                  ::oDbf:cTipDoc    := "Albarán cliente"
-                  ::oDbf:cSerDoc    := ::oAlbCliT:cSerAlb
-                  ::oDbf:cNumDoc    := Str( ::oAlbCliT:nNumAlb )
-                  ::oDbf:cSufDoc    := ::oAlbCliT:cSufAlb
+               ::oDbf:cClsDoc    := ALB_CLI
+               ::oDbf:cTipDoc    := "Albarán cliente"
+               ::oDbf:cSerDoc    := ::oAlbCliT:cSerAlb
+               ::oDbf:cNumDoc    := Str( ::oAlbCliT:nNumAlb )
+               ::oDbf:cSufDoc    := ::oAlbCliT:cSufAlb
 
-                  ::oDbf:cIdeDoc    :=  ::idDocumento()
-                  ::oDbf:nNumLin    :=  ::oAlbCliL:nNumLin
+               ::oDbf:cIdeDoc    :=  ::idDocumento()
+               ::oDbf:nNumLin    :=  ::oAlbCliL:nNumLin
 
-                  ::oDbf:nAnoDoc    := Year( ::oAlbCliT:dFecAlb )
-                  ::oDbf:nMesDoc    := Month( ::oAlbCliT:dFecAlb )
-                  ::oDbf:dFecDoc    := ::oAlbCliT:dFecAlb
-                  ::oDbf:cHorDoc    := SubStr( ::oAlbCliT:cTimCre, 1, 2 )
-                  ::oDbf:cMinDoc    := SubStr( ::oAlbCliT:cTimCre, 4, 2 )
+               ::oDbf:nAnoDoc    := Year( ::oAlbCliT:dFecAlb )
+               ::oDbf:nMesDoc    := Month( ::oAlbCliT:dFecAlb )
+               ::oDbf:dFecDoc    := ::oAlbCliT:dFecAlb
+               ::oDbf:cHorDoc    := SubStr( ::oAlbCliT:cTimCre, 1, 2 )
+               ::oDbf:cMinDoc    := SubStr( ::oAlbCliT:cTimCre, 4, 2 )
 
-                  ::oDbf:nBultos    := ::oAlbCliL:nBultos * if( ::lUnidadesNegativo, -1, 1 )
-                  ::oDbf:cFormato   := ::oAlbCliL:cFormato
-                  ::oDbf:nCajas     := ::oAlbCliL:nCanEnt * if( ::lUnidadesNegativo, -1, 1 )
-                  ::oDbf:nPeso      := nPesLAlbCli( ::oAlbCliL:cAlias )
+               ::oDbf:nBultos    := ::oAlbCliL:nBultos * if( ::lUnidadesNegativo, -1, 1 )
+               ::oDbf:cFormato   := ::oAlbCliL:cFormato
+               ::oDbf:nCajas     := ::oAlbCliL:nCanEnt * if( ::lUnidadesNegativo, -1, 1 )
+               ::oDbf:nPeso      := nPesLAlbCli( ::oAlbCliL:cAlias )
 
-                  ::oDbf:lKitArt    := ::oAlbCliL:lKitArt
-                  ::oDbf:lKitChl    := ::oAlbCliL:lKitChl
+               ::oDbf:lKitArt    := ::oAlbCliL:lKitArt
+               ::oDbf:lKitChl    := ::oAlbCliL:lKitChl
 
-                  ::oDbf:cCtrCoste  := ::oAlbCliL:cCtrCoste
+               ::oDbf:cCtrCoste  := ::oAlbCliL:cCtrCoste
 
-                  ::InsertIfValid()
-                  ::loadValuesExtraFields()
+               if !empty( ::oAlbCliL:cRef ) 
+                  ::oDbf:cPrvHab := ::oAlbCliL:cRef
+               else
+                  ::oDbf:cPrvHab := getProveedorPorDefectoArticulo( ::oDbf:cCodArt, D():ProveedorArticulo( ::nView ) )
+               end if
 
-               //end if
+               ::InsertIfValid()
+
+               ::loadValuesExtraFields()
 
                ::oAlbCliL:Skip()
 
@@ -2154,6 +2176,12 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
                   ::oDbf:lKitChl    := ::oFacCliL:lKitChl
 
                   ::oDbf:cCtrCoste  := ::oFacCliL:cCtrCoste
+               
+                  if !empty( ::oFacCliL:cCodPrv ) 
+                     ::oDbf:cPrvHab := ::oFacCliL:cCodPrv
+                  else
+                     ::oDbf:cPrvHab := getProveedorPorDefectoArticulo( ::oDbf:cCodArt, D():ProveedorArticulo( ::nView ) )
+                  end if 
 
                   ::InsertIfValid()
                   ::loadValuesExtraFields()
@@ -2345,6 +2373,12 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
 
                   ::oDbf:cCtrCoste  := ::oFacRecL:cCtrCoste
 
+                  if !empty( ::oFacRecL:cCodPrv ) 
+                     ::oDbf:cPrvHab := ::oFacRecL:cCodPrv
+                  else
+                     ::oDbf:cPrvHab := getProveedorPorDefectoArticulo( ::oDbf:cCodArt, D():ProveedorArticulo( ::nView ) )
+                  end if 
+
                   ::InsertIfValid()
                   ::loadValuesExtraFields()
 
@@ -2508,6 +2542,8 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:lKitArt    := ::oTikCliL:lKitArt
                ::oDbf:lKitChl    := ::oTikCliL:lKitChl
 
+               ::oDbf:cPrvHab    := getProveedorPorDefectoArticulo( ::oDbf:cCodArt, D():ProveedorArticulo( ::nView ) )
+
                // Añadimos un nuevo registro-----------------------------------
 
                ::InsertIfValid()
@@ -2591,6 +2627,8 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:dFecDoc    := ::oTikCliT:dFecTik
                ::oDbf:cHorDoc    := SubStr( ::oTikCliT:cHorTik, 1, 2 )
                ::oDbf:cMinDoc    := SubStr( ::oTikCliT:cHorTik, 4, 2 )
+
+               ::oDbf:cPrvHab    := getProveedorPorDefectoArticulo( ::oDbf:cCodArt, D():ProveedorArticulo( ::nView ) )
 
                ::InsertIfValid()
                ::loadValuesExtraFields()
@@ -3120,6 +3158,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:cCodPago   := ::oAlbPrvT:cCodPgo
                   ::oDbf:cCodRut    := ""
                   ::oDbf:cCodAge    := ""
+                  ::oDbf:cCodAge    := ""
                   ::oDbf:cCodTrn    := ""
                   ::oDbf:cCodUsr    := ::oAlbPrvT:cCodUsr
 
@@ -3270,6 +3309,8 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:cCodTrn    := ""
                   ::oDbf:cCodUsr    := ::oFacPrvT:cCodUsr
 
+                  ::oDbf:cPrvHab    := ::oFacPrvT:cCodPrv
+
                   ::oDbf:nPreArt    := nImpUFacPrv( ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nDerOut, ::nValDiv )
                   ::oDbf:nUniArt    := nTotNFacPrv( ::oFacPrvL:cAlias )
 
@@ -3413,6 +3454,8 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:cCodAge    := ::oRctPrvT:cCodAge
                   ::oDbf:cCodTrn    := ""
                   ::oDbf:cCodUsr    := ::oRctPrvT:cCodUsr
+
+                  ::oDbf:cPrvHab    := ::oRctPrvT:cCodPrv
 
                   ::oDbf:nPreArt    := nImpURctPrv( ::oRctPrvT:cAlias, ::oRctPrvL:cAlias, ::nDerOut, ::nValDiv )
                   ::oDbf:nUniArt    := nTotNRctPrv( ::oRctPrvL:cAlias )
