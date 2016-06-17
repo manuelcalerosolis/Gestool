@@ -859,8 +859,7 @@ METHOD BuildReportCorrespondences()
                                                                               ::AddTicket(),;
                                                                               ::AddAlbaranProveedor( .t. ),;
                                                                               ::AddFacturaProveedor(),;
-                                                                              ::AddRectificativaProveedor(),;
-                                                                              ::AddParteProduccion() },;
+                                                                              ::AddRectificativaProveedor() },;
                                                          "Variable" =>  {||   ::AddVariableLineasAlbaranCliente(),;
                                                                               ::AddVariableFacturaCliente(),;
                                                                               ::AddVariableLineasRectificativaCliente(),;
@@ -868,8 +867,7 @@ METHOD BuildReportCorrespondences()
                                                                               ::AddVariableLineasAlbaranProveedor(),;
                                                                               ::AddVariableLineasFacturaProveedor(),;
                                                                               ::AddVariableLineasRectificativaProveedor(),;
-                                                                              ::AddVariableStock(),;
-                                                                              ::AddVariableLineasParteProduccion },;
+                                                                              ::AddVariableStock() },;
                                                          "Data" =>      {||   ::FastReportAlbaranCliente(),;
                                                                               ::FastReportFacturaCliente(),;
                                                                               ::FastReportFacturaRectificativa(),;
@@ -877,8 +875,7 @@ METHOD BuildReportCorrespondences()
                                                                               ::FastReportPedidoProveedor(),;
                                                                               ::FastReportAlbaranProveedor(),;
                                                                               ::FastReportFacturaProveedor(),;
-                                                                              ::FastReportRectificativaProveedor(),;
-                                                                              ::FastReportParteProduccion() } },;
+                                                                              ::FastReportRectificativaProveedor() } },;
                      "Stocks" =>                      {  "Generate" =>  {||   ::AddArticulo() },;
                                                          "Variable" =>  {||   ::AddVariableStock() },;
                                                          "Data" =>      {||   nil } } }
@@ -2823,108 +2820,87 @@ RETURN ( Self )
 
 METHOD AddParteProduccion() CLASS TFastVentasArticulos
 
-   local cExpHead
    local cExpLine
-
-   ::oProCab:OrdSetFocus( "dFecOrd" )
-
-   cExpHead          := '( dFecOrd >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecOrd <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
-   cExpHead          += ' .and. ( cSerOrd >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )        + '" .and. cSerOrd <= "'   + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '" )'
-   cExpHead          += ' .and. ( nNumOrd >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )  + '" ) .and. nNumOrd <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" ) )'
-   cExpHead          += ' .and. ( cSufOrd >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )       + '" .and. cSufOrd <= "'   + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '" )'
-
-   ::oProCab:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oProCab:cFile ), ::oProCab:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:cText   := "Procesando partes de producción"
    
-   ::oMtrInf:SetTotal( ::oProCab:OrdKeyCount() )
+   ::oMtrInf:SetTotal( ::oProLin:OrdKeyCount() )
 
-   /*
-   Lineas de produccion----------------------------------------------------------
-   */
-
-   cExpLine          := ''
+   cExpLine          := '( dFecOrd >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecOrd <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
 
    if !::lAllArt
-      cExpLine       += 'cCodArt >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cCodArt <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
+      cExpLine       += '.and. cCodArt >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cCodArt <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
    end if
 
    ::oProLin:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oProLin:cFile ), ::oProLin:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
 
-   ::oProCab:GoTop()
-   while !::lBreak .and. !::oProCab:Eof()
+   if ::oProLin:Seek( ::oGrupoArticulo:Cargo:getDesde() )
 
-      if lChkSer( ::oProCab:cSerOrd, ::aSer )
+      while !::lBreak .and. !::oProLin:Eof()
 
-         if ::oProLin:Seek( ::oProCab:cSerOrd + Str( ::oProCab:nNumOrd, 9 ) + ::oProCab:cSufOrd )
+         if lChkSer( ::oProLin:cSerOrd, ::aSer )
 
-            while !::lBreak .and. ( ::oProLin:cSerOrd + Str( ::oProLin:nNumOrd, 9 ) + ::oProLin:cSufOrd == ::oProCab:cSerOrd + Str( ::oProCab:nNumOrd, 9 ) + ::oProCab:cSufOrd ) .and. !::oProLin:Eof()
+         //if !( ::lExcCero  .and. ::oProLin:Unidades() == 0 )  .and.;
+         //   !( ::lExcImp   .and. ::oProLin:TotalImporte() == 0 )
 
-               //if !( ::lExcCero  .and. ::oProLin:Unidades() == 0 )  .and.;
-               //   !( ::lExcImp   .and. ::oProLin:TotalImporte() == 0 )
+               ::oDbf:Blank()
 
-                     ::oDbf:Blank()
+               ::oDbf:cCodArt    := ::oProLin:cCodArt
+               MsgInfo( ::oDbf:cCodArt )
+               ::oDbf:cNomArt    := ::oProLin:cNomArt
 
-                     ::oDbf:cCodArt    := ::oProLin:cCodArt
-                     ::oDbf:cNomArt    := ::oProLin:cNomArt
+               ::oDbf:cCodFam    := ::oProLin:cCodFam
+               ::oDbf:cGrpFam    := ::oProLin:cGrpFam
+               ::oDbf:cCodTip    := ::oProLin:cCodTip
+               ::oDbf:cCodCate   := ::oProLin:cCodCat
+               ::oDbf:cCodTemp   := ::oProLin:cCodTmp
+               ::oDbf:cCodFab    := ::oProLin:cCodFab
+               ::oDbf:cCodAlm    := ::oProLin:cAlmOrd
+               ::oDbf:cDesUbi    := RetFld( ::oProLin:cCodArt, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
+               ::oDbf:cCodEnv    := RetFld( ::oProLin:cCodArt, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
 
-                     ::oDbf:cCodFam    := ::oProLin:cCodFam
-                     ::oDbf:cGrpFam    := ::oProLin:cGrpFam
-                     ::oDbf:cCodTip    := ::oProLin:cCodTip
-                     ::oDbf:cCodCate   := ::oProLin:cCodCat
-                     ::oDbf:cCodTemp   := ::oProLin:cCodTmp
-                     ::oDbf:cCodFab    := ::oProLin:cCodFab
-                     ::oDbf:cCodAlm    := ::oProLin:cAlmOrd
-                     ::oDbf:cDesUbi    := RetFld( ::oProLin:cCodArt, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
-                     ::oDbf:cCodEnv    := RetFld( ::oProLin:cCodArt, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
+               ::oDbf:nBultos    := ::oProLin:nBultos
+               ::oDbf:nCajas     := ::oProLin:nCajOrd
+               ::oDbf:nUniArt    := ::oProLin:nUndOrd
+               ::oDbf:nPreArt    := ::oProLin:nImpOrd
 
-                     ::oDbf:nBultos    := ::oProLin:nBultos
-                     ::oDbf:nCajas     := ::oProLin:nCajOrd
-                     ::oDbf:nUniArt    := ::oProLin:nUndOrd
-                     ::oDbf:nPreArt    := ::oProLin:nImpOrd
+               ::oDbf:nBrtArt    := 0 //::oProLin:TotalImporte()
+               ::oDbf:nTotArt    := 0 //::oProLin:TotalImporte()
 
-                     ::oDbf:nBrtArt    := 0 //::oProLin:TotalImporte()
-                     ::oDbf:nTotArt    := 0 //::oProLin:TotalImporte()
+               ::oDbf:cCodPr1    := ::oProLin:cCodPr1
+               ::oDbf:cCodPr2    := ::oProLin:cCodPr2
+               ::oDbf:cValPr1    := ::oProLin:cValPr1
+               ::oDbf:cValPr2    := ::oProLin:cValPr2
 
-                     ::oDbf:cCodPr1    := ::oProLin:cCodPr1
-                     ::oDbf:cCodPr2    := ::oProLin:cCodPr2
-                     ::oDbf:cValPr1    := ::oProLin:cValPr1
-                     ::oDbf:cValPr2    := ::oProLin:cValPr2
+               ::oDbf:cClsDoc    := PAR_PRO
+               ::oDbf:cTipDoc    := "Producido"
 
-                     ::oDbf:cClsDoc    := PAR_PRO
-                     ::oDbf:cTipDoc    := "Producido"
+               ::oDbf:cSerDoc    := ::oProLin:cSerOrd
+               ::oDbf:cNumDoc    := Str( ::oProLin:nNumOrd )
+               ::oDbf:cSufDoc    := ::oProLin:cSufOrd
 
-                     ::oDbf:cSerDoc    := ::oProCab:cSerOrd
-                     ::oDbf:cNumDoc    := Str( ::oProCab:nNumOrd )
-                     ::oDbf:cSufDoc    := ::oProCab:cSufOrd
+               ::oDbf:cIdeDoc    :=  ::oProLin:cSerOrd + Str( ::oProLin:nNumOrd ) + ::oProLin:cSufOrd
+               ::oDbf:nNumLin    :=  ::oProLin:nNumLin
 
-                     ::oDbf:cIdeDoc    :=  ::idDocumento()
-                     ::oDbf:nNumLin    :=  ::oProLin:nNumLin
+               ::oDbf:nAnoDoc    := Year( ::oProLin:dFecOrd )
+               ::oDbf:nMesDoc    := Month( ::oProLin:dFecOrd )
+               ::oDbf:dFecDoc    := ::oProLin:dFecOrd
 
-                     ::oDbf:nAnoDoc    := Year( ::oProCab:dFecOrd )
-                     ::oDbf:nMesDoc    := Month( ::oProCab:dFecOrd )
-                     ::oDbf:dFecDoc    := ::oProCab:dFecOrd
-
-                  ::InsertIfValid()
-                  ::loadValuesExtraFields()
-
-               //end if
-
-               ::oProLin:Skip()
-
-            end while
+            ::InsertIfValid( .t. )
+            ::loadValuesExtraFields()
 
          end if
 
-      end if
+         ::oProLin:Skip()
 
-      ::oProCab:Skip()
+         ::oProLin:Skip()
 
-      ::oMtrInf:AutoInc()
+         ::oMtrInf:AutoInc()
 
-   end while
+      end while
 
-   ::oProCab:IdxDelete( cCurUsr(), GetFileNoExt( ::oProCab:cFile ) )
+   end if
+
    ::oProLin:IdxDelete( cCurUsr(), GetFileNoExt( ::oProLin:cFile ) )
 
 RETURN ( Self )

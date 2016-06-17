@@ -383,7 +383,7 @@ METHOD lGenerate()
 
    while !::lBreak .and. !::oDbfArt:Eof()
 
-      if ( ::oDbfArt:nCtlStock != 3 )
+      if ( ::oDbfArt:nCtlStock == 1 )
 
          aStkActual  := ::oStock:aStockArticulo( ::oDbfArt:Codigo, , , , , ::dIniInf, ::dFinInf )
 

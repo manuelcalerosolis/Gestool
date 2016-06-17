@@ -180,7 +180,6 @@ Static Function IteratorCodigoArticulo( oXmlNode )
       hSet( hArticulo, "Familia", Upper( oNode:cData ) )
    end if 
 
-
 Return ( nil )
 
 //---------------------------------------------------------------------------//
