@@ -461,7 +461,9 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    METHOD lHideOptions()                                 INLINE ( if( !empty(::oBtnOptions), ::oBtnOptions:Hide(), ) )
    METHOD lShowOptions()                                 INLINE ( if( !empty(::oBtnOptions), ::oBtnOptions:Show(), ) )
-
+   
+   METHOD selectReportTree( cReportName )
+   
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -1546,7 +1548,10 @@ Method SaveReport( lSaveAs ) CLASS TFastReportInfGen
 
    // Recontruye el arbol------------------------------------------------------
 
-   ::ReBuildTree()
+   if lSaveAs
+      ::ReBuildTree()
+      ::selectReportTree( ::cReportName )
+   end if 
 
 RETURN ( .t. )
 
@@ -3733,4 +3738,26 @@ METHOD initVariables()
 Return ( self )
 
 //----------------------------------------------------------------------------//
+
+Method selectReportTree( cReportName )
+
+   local oItem
+
+   if empty(cReportName)
+      Return ( self )
+   end if 
+
+   oItem    := ::oTreeReporting:Scan( {|o| alltrim( o:cPrompt ) == alltrim( cReportName ) } )
+
+   if !empty(oItem)
+      ::oTreeReporting:select( oItem )
+   end if 
+
+Return ( self )
+
+//----------------------------------------------------------------------------//
+
+
+
+
 
