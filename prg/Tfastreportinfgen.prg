@@ -1546,7 +1546,7 @@ Method SaveReport( lSaveAs ) CLASS TFastReportInfGen
 
    // Recontruye el arbol------------------------------------------------------
 
-   ::ReBuildTree()
+   //::ReBuildTree()
 
 RETURN ( .t. )
 
