@@ -25,7 +25,7 @@ CLASS TDeleleteObsoletos
 
    DATA nBmp
 
-   DATA aArticulos      INIT { { .f., "", "" } }
+   DATA aArticulos      INIT { { .f., "", "", "", "" } }
 
    DATA dFechaInicial   INIT CtoD( "01/01/" + Str( Year( Date() ) ) )
    DATA dFechaFinal     INIT Date()
@@ -394,6 +394,20 @@ METHOD Resource()
       :nWidth           := 400
    end with
 
+   with object ( ::oBrwArticulos:AddCol() )
+      :cHeader          := "Cod. Fam."
+      :bStrData         := {|| ::aArticulos[ ::oBrwArticulos:nArrayAt, 4 ] }
+      :nWidth           := 80
+      :lHide            := .t.
+   end with
+
+   with object ( ::oBrwArticulos:AddCol() )
+      :cHeader          := "Familia"
+      :bStrData         := {|| ::aArticulos[ ::oBrwArticulos:nArrayAt, 5 ] }
+      :nWidth           := 400
+      :lHide            := .t.
+   end with
+
    REDEFINE BUTTON;
       ID       130 ;
       OF       ::oPages:aDialogs[ 2 ];
@@ -488,7 +502,7 @@ METHOD Search()
             ( ::oDbfArt:Familia >= ::cFamiliaOrigen .and. ::oDbfArt:Familia <= ::cFamiliaDestino )
 
             if ::lNoHayMovimientos()
-               aAdd( ::aArticulos, { .t., ::oDbfArt:Codigo, ::oDbfArt:Nombre } )
+               aAdd( ::aArticulos, { .t., ::oDbfArt:Codigo, ::oDbfArt:Nombre, ::oDbfArt:Familia, retFld( ::oDbfArt:Familia, ::oDbfFam:cAlias ) } )
             end if
 
          end if

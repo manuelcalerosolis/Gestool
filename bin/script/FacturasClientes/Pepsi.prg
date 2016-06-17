@@ -320,10 +320,23 @@ static function Exportacion()
                         nTotUniVen        := ( dbfFacCliL )->nUniCaja
                         nTotUniReg        := 0
                         nImpReg           := 0
+
                         if ( dbfFacCliL )->nDto != 0
-                           nImpDto        := ( dbfFacCliL )->nUniCaja * ( ( dbfFacCliL )->nPreUnit * ( dbfFacCliL )->nDto ) / 100
+                           
+                           if ( dbfArticulo )->( dbSeek( ( dbfFacCliL )->cRef ) )
+
+                              if !Empty( ( dbfArticulo )->cCodEdi )
+                                 nImpDto  := ( dbfFacCliL )->nUniCaja * ( ( dbfFacCliL )->nPreUnit * ( dbfFacCliL )->nDto ) / 100
+                              else
+                                 nImpDto  := ( dbfFacCliL )->nUniCaja * pCosto( dbfArticulo, .f., , dbfDiv ) * ( dbfFacCliL )->nDto ) / 100
+                              end if
+
+                           end if
+
                         else 
-                           nImpDto        := 0 
+
+                           nImpDto        := 0
+
                         end if
 
                      else
@@ -331,7 +344,7 @@ static function Exportacion()
                         nTotUniVen        := ( dbfFacCliL )->nUniCaja
                         nTotUniReg        := ( dbfFacCliL )->nUniCaja
                         if ( dbfArticulo )->( dbSeek( ( dbfFacCliL )->cRef ) )
-                           if Empty( ( dbfArticulo )->cCodEdi )
+                           if !Empty( ( dbfArticulo )->cCodEdi )
                               nImpReg     := ( dbfFacCliL )->nUniCaja * nRetPreArt( ( dbfFacCliL )->nTarLin, ( dbfFacCliT )->cDivFac, ( dbfFacCliT )->lIvaInc, dbfArticulo, dbfDiv, dbfKit, dbfIva )
                            else
                               nImpReg     := ( dbfFacCliL )->nUniCaja * pCosto( dbfArticulo, .f., , dbfDiv )

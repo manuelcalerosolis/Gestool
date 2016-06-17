@@ -5528,8 +5528,6 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
    Grabamos el recibo----------------------------------------------------------
    */
 
-   ? aTmp[ _CCTAREC ]
-
    WinGather( aTmp, aGet, cFacCliP, oBrw, nMode )
 
    /*
