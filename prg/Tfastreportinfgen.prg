@@ -3739,17 +3739,18 @@ Return ( self )
 
 //----------------------------------------------------------------------------//
 
-Method selectReportTree( cReportName )
+METHOD selectReportTree( cReportName )
 
    local oItem
 
-   if empty(cReportName)
+   if empty( cReportName )
       Return ( self )
    end if 
 
-   oItem    := ::oTreeReporting:Scan( {|o| alltrim( o:cPrompt ) == alltrim( cReportName ) } )
+   oItem       := ScanItemsBlock( ::oTreeReporting:aItems, {|o| alltrim( o:cPrompt ) == alltrim( cReportName ) } )
 
-   if !empty(oItem)
+   if !empty( oItem )
+      msgalert( oItem:cPrompt, "oItem:cPrompt" )
       ::oTreeReporting:select( oItem )
    end if 
 
@@ -3757,7 +3758,24 @@ Return ( self )
 
 //----------------------------------------------------------------------------//
 
+static function ScanItemsBlock( aItems, bAction ) 
 
+   local oItem, n := 1, oItemFound
 
+   while n <= Len( aItems ) .and. oItemFound == nil
+      oItem = aItems[ n ]
+      if Eval( bAction, oItem )
+         return oItem
+      else
+         if Len( oItem:aItems ) > 0
+            oItemFound = ScanItemsBlock( oItem:aItems, bAction )
+         endif      
+      endif
+      n++
+   end      
+
+return oItemFound
+
+//----------------------------------------------------------------------------//
 
 
