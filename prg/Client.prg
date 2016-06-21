@@ -2119,7 +2119,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       //---------------------------------------------------------------------------------------------------------
 
-      REDEFINE CHECKBOX aGet[ _LBLQCLI ] VAR aTmp[ _LBLQCLI ] ;
+      REDEFINE CHECKBOX aGet[ _LBLQCLI ] ;
+         VAR      aTmp[ _LBLQCLI ] ;
          ID       155 ;
          WHEN     ( oUser():lAdministrador() .and. nMode != ZOOM_MODE ) ;
          ON CHANGE( if( aTmp[ _LBLQCLI ], aGet[ _DFECBLQ ]:cText( GetSysDate() ), ( aGet[ _DFECBLQ ]:cText( Ctod("") ), aGet[ _CMOTBLQ ]:cText( Space(50) ) ) ) );
@@ -9726,7 +9727,7 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
 
    if aTmp[ _NTARCMB ] < 1 .or. aTmp[ _NTARCMB ] > 6
 
-      MsgStop( "La tarifa para combinar debe de estar entre 1 y 6" )
+      msgstop( "La tarifa para combinar debe de estar entre 1 y 6" )
 
       if !Empty( aGet[ _NTARCMB ] )
          aGet[ _NTARCMB ]:SetFocus()
@@ -9876,10 +9877,7 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
       aTmp[ _NTARIFA ]  := oGetTarifa:getTarifa()
    end if
 
-
-   /*
-   Borramos los posibles filtros de la tabla temporal de atipicas--------------
-   */
+   // Borramos los posibles filtros de la tabla temporal de atipicas--------------
 
    if !Empty( dbfTmpAtp )
       ( dbfTmpAtp )->( dbClearFilter() )
@@ -10040,9 +10038,7 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
 
    end if
 
-   /*
-   Limpiamos la tabla de incidencias-------------------------------------------
-   */
+   // Limpiamos la tabla de incidencias-------------------------------------------
 
    if !Empty( dbfTmpInc )
 
@@ -10081,9 +10077,7 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
 
    EndProgress()
 
-   /*
-   Habilitamos la ventana------------------------------------------------------
-   */
+   // Habilitamos la ventana------------------------------------------------------
 
    oDlg:Enable()
    oDlg:End( IDOK )

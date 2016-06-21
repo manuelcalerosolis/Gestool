@@ -2521,11 +2521,11 @@ Function setPropertiesTable( cCodArt, cCodPr1, cCodPr2, nPrecioCosto, oGetUnidad
    local nCol                    := 1
    local nTotalRow               := 0
    local nTotalCol               := 0
+   local aSizesTable             := {}
+   local aHeadersTable           := {}
+   local aJustifyTable           := {}
    local hValorPropiedad
    local aPropertiesTable        := {}
-   local aHeadersTable           := {}
-   local aSizesTable             := {}
-   local aJustifyTable           := {}
    local aPropiedadesArticulo1   
    local aPropiedadesArticulo2   
 
@@ -2555,7 +2555,7 @@ Function setPropertiesTable( cCodArt, cCodPr1, cCodPr2, nPrecioCosto, oGetUnidad
 
    if ( D():Propiedades( nView ) )->( dbSeek( cCodPr1 ) )
       aadd( aHeadersTable, ( D():Propiedades( nView ) )->cDesPro )
-      aadd( aSizesTable,   60 )
+      aadd( aSizesTable, 60 )
       aadd( aJustifyTable, .f. )
    end if
 
@@ -2581,7 +2581,7 @@ Function setPropertiesTable( cCodArt, cCodPr1, cCodPr2, nPrecioCosto, oGetUnidad
          nCol++
 
          aadd( aHeadersTable, hValorPropiedad[ "CabeceraPropiedad" ] )
-         aadd( aSizesTable,   60 )
+         aadd( aSizesTable, 60 )
          aadd( aJustifyTable, .t. )
 
          for n := 1 to nTotalRow
@@ -2712,6 +2712,36 @@ Function setPropertiesTable( cCodArt, cCodPr1, cCodPr2, nPrecioCosto, oGetUnidad
    end if
 
 Return ( aPropertiesTable )
+
+//---------------------------------------------------------------------------//
+
+Function setValuesPropertiesTable( dbfLines, oBrw )
+
+   local oProperties
+   local aProperties
+
+   msgAlert( "setValuesPropertiesTable")
+
+   for each aProperties in ( oBrw:Cargo )
+      
+      for each oProperties in aProperties
+
+         if alltrim( oProperties:cCodigoPropiedad1 ) == alltrim( ( dbfLines )->cCodPr1 )  .and.;
+            alltrim( oProperties:cValorPropiedad1 ) == alltrim( ( dbfLines )->cValPr1 )   .and.;
+            alltrim( oProperties:cCodigoPropiedad2 ) == alltrim( ( dbfLines )->cCodPr2 )  .and.;
+            alltrim( oProperties:cValorPropiedad2 ) == alltrim( ( dbfLines )->cValPr2 )  
+
+            oProperties:Value := ( dbfLines )->nUniCaja
+
+            debug( oProperties )
+
+         end if 
+      
+      next 
+   
+   next 
+
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 

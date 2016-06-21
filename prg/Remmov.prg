@@ -184,9 +184,11 @@ CLASS TRemMovAlm FROM TMasDet
    METHOD Resource( nMode )
    METHOD Activate()
 
-   METHOD AppendDet( oDlg )
+   METHOD AppendDetalleMovimiento( oDlg )
    METHOD EditDetalleMovimientos( oDlg )
    METHOD DeleteDet( oDlg )
+
+   METHOD assertMovimiento()
 
    METHOD lSave()
    METHOD RecalcularPrecios()                            INLINE   ( ::oDetMovimientos:RecalcularPrecios(), ::oBrwDet:Refresh() )
@@ -1165,7 +1167,7 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
 			ID 		500 ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE .and. !Empty( ::oDbf:cAlmDes ) ) ;
-         ACTION   ( ::AppendDet( oDlg ) )
+         ACTION   ( ::AppendDetalleMovimiento( oDlg ) )
 
       REDEFINE BUTTON ;
          ID       501 ;
@@ -1399,7 +1401,7 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
          ACTION   ( ::RecalcularPrecios() )
 
       if nMode != ZOOM_MODE
-         oDlg:AddFastKey( VK_F2, {|| ::AppendDet( oDlg ) } )
+         oDlg:AddFastKey( VK_F2, {|| ::AppendDetalleMovimiento( oDlg ) } )
          oDlg:AddFastKey( VK_F3, {|| ::EditDetalleMovimientos( oDlg ) } )
          oDlg:AddFastKey( VK_F4, {|| ::DeleteDet() } )
          oDlg:AddFastKey( VK_F5, {|| if( ::lSave( nMode ), ( ::EndResource( .t., nMode, oDlg ), oDlg:End( IDOK ) ), ) } )
@@ -2170,7 +2172,7 @@ RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
-METHOD AppendDet( oDlg ) CLASS TRemMovAlm 
+METHOD AppendDetalleMovimiento( oDlg ) CLASS TRemMovAlm 
 
    local nDetalle
 
@@ -2183,8 +2185,10 @@ METHOD AppendDet( oDlg ) CLASS TRemMovAlm
       do case
       case nDetalle == IDOK
 
+         ::assertMovimiento()
+
          ::oDetMovimientos:oDbfVir:Insert()
-         ::oDetMovimientos:AppendKit()
+         ::oDetMovimientos:appendKit()
 
          if !empty( ::oBrwDet )
             ::oBrwDet:Refresh()
@@ -2223,6 +2227,27 @@ METHOD AppendDet( oDlg ) CLASS TRemMovAlm
       end if
 
    end while
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD assertMovimiento() CLASS TRemMovAlm
+
+   local nArea    := ( ::oDetMovimientos:oDbfVir:nArea )
+   
+   ::oDetMovimientos:getStatus()
+
+   debug( ::oDetMovimientos:oDbfVir )   
+
+   ( nArea )->( dbgotop() )
+   while ( nArea )->( !eof() )
+
+      ( nArea )->( dbskip() )
+   
+   end while
+
+   ::oDetMovimientos:setStatus()
 
 RETURN ( Self )
 

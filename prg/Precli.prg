@@ -4222,21 +4222,25 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
       aGet[ _CDETALLE ]:show()
       aGet[ _MLNGDES  ]:hide()
 
-      if aTmp[ _LLOTE ]
-
-         if !Empty( aGet[ _CLOTE ] ) 
+      if !Empty( aGet[ _CLOTE ] ) 
+         if aTmp[ _LLOTE ]
             aGet[ _CLOTE ]:Show()
-         end if
-
-      else
-
-        if !Empty( aGet[ _CLOTE ] )
+         else
             aGet[ _CLOTE ]:Hide()
         end if
-
       end if
 
-      if !Empty( oStkAct )
+      // Edicion de las propiedades--------------------------------------------
+
+      if ( !empty( aTmp[ _CCODPR1 ] ) .or. !empty( aTmp[ _CCODPR2 ] ) ) .and. ( uFieldEmpresa( "lUseTbl" ) )
+         
+         setPropertiesTable( cCodArt, aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], 0, aGet[ _NUNICAJA ], oBrwProperties, nView )
+         
+         setValuesPropertiesTable( dbfTmpLin, oBrwProperties )
+
+      end if 
+
+      if !empty( oStkAct )
          oStock:nPutStockActual( cCodArt, aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct )
       end if
 
@@ -4464,9 +4468,11 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
    local i
    local aClo
    local nRec
-   local aXbyStr  := { 0, 0 }
+   local aXbyStr              := { 0, 0 }
    local hAtipica
    local nPrecioPropiedades   := 0
+   local nNumeroLinea         := 0
+   local nPosicionLinea       := 0
 
    /*
    Condiciones para guardar la linea-------------------------------------------
@@ -4491,10 +4497,6 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
       return nil
    end if
 
-   /*if aTmp[ _NUNICAJA ] == 0
-      aTmp[ _NUNICAJA ] := 1
-   end if */
-
    SysRefresh()
 
    // control de precios minimos-----------------------------------------------
@@ -4510,7 +4512,6 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
    nRec                          := ( dbfTmpLin )->( RecNo() )
 
    aTmp[ _NREQ ]                 := nPReq( dbfIva, aTmp[ _NIVA ] )
-
 
    if nMode == APPD_MODE
 
@@ -4528,12 +4529,20 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
 
                if isNum( oBrwProperties:Cargo[ n, i ]:Value ) .and. oBrwProperties:Cargo[ n, i ]:Value != 0
 
-                  aTmp[ _NNUMLIN ]     := nLastNum( dbfTmpLin )
-                  aTmp[ _NPOSPRINT ]   := nLastNum( dbfTmpLin, "nPosPrint" )
+                  if empty(nNumeroLinea)
+                     nNumeroLinea      := nLastNum( dbfTmpLin )
+                  end if 
+
+                  if empty(nPosicionLinea)
+                     nPosicionLinea    := nLastNum( dbfTmpLin, "nPosPrint" )
+                  end if 
+
+                  aTmp[ _NNUMLIN ]     := nNumeroLinea
+                  aTmp[ _NPOSPRINT ]   := nPosicionLinea
                   aTmp[ _NUNICAJA]     := oBrwProperties:Cargo[ n, i ]:Value
                   aTmp[ _CCODPR1 ]     := oBrwProperties:Cargo[ n, i ]:cCodigoPropiedad1
-                  aTmp[ _CVALPR1 ]     := oBrwProperties:Cargo[ n, i ]:cValorPropiedad1
                   aTmp[ _CCODPR2 ]     := oBrwProperties:Cargo[ n, i ]:cCodigoPropiedad2
+                  aTmp[ _CVALPR1 ]     := oBrwProperties:Cargo[ n, i ]:cValorPropiedad1
                   aTmp[ _CVALPR2 ]     := oBrwProperties:Cargo[ n, i ]:cValorPropiedad2
 
                   // Precio por propiedades --------------------------------------------------
@@ -4554,8 +4563,6 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
       else
 
          saveDetail( aTmp, aClo, aGet, aTmpPre, dbfTmpLin, oBrw, nMode )
-
-         //WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
 
       end if
 
@@ -5309,14 +5316,12 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
          aGet[ _MLNGDES ]:hide()
       end if
 
-      /*
-      Buscamos codificacion GS1-128--------------------------------------------
-      */
+      // Buscamos codificacion GS1-128-----------------------------------------
 
-      if Len( Alltrim( cCodArt ) ) > 18
+      if len( alltrim( cCodArt ) ) > 18
 
          hHas128                 := ReadCodeGS128( cCodArt )
-         if !Empty( hHas128 )
+         if !empty( hHas128 )
             cCodArt              := uGetCodigo( hHas128, "01" )
             cLote                := uGetCodigo( hHas128, "10" )
          end if 
@@ -5325,9 +5330,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
 
       cCodArt                    := cSeekCodebar( cCodArt, dbfCodebar, D():Articulos( nView ) )
 
-      /*
-      Ahora buscamos por el codigo interno-------------------------------------
-      */
+      // Ahora buscamos por el codigo interno----------------------------------
 
       if ( D():Articulos( nView ) )->( dbSeek( cCodArt ) ) .or. ( D():Articulos( nView ) )->( dbSeek( Upper( cCodArt ) ) )
 
@@ -5343,7 +5346,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
             aGet[ _CREF ]:cText( Padr( cCodArt, 200 ) )
             aTmp[ _CREF ]        := cCodArt
 
-            //Pasamos las referencias adicionales------------------------------
+            // Pasamos las referencias adicionales-----------------------------
 
             aTmp[ _CREFAUX ]     := ( D():Articulos( nView ) )->cRefAux
             aTmp[ _CREFAUX2 ]    := ( D():Articulos( nView ) )->cRefAux2
@@ -5352,43 +5355,39 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
                MsgStop( Trim( ( D():Articulos( nView ) )->mComent ) )
             end if
 
-            /*
-            Metemos el proveedor habitual--------------------------------------
-            */
+            // Metemos el proveedor habitual-----------------------------------
 
-            if !Empty( aGet[ _CCODPRV ] )
+            if !empty( aGet[ _CCODPRV ] )
                aGet[ _CCODPRV ]:cText( ( D():Articulos( nView ) )->cPrvHab )
                aGet[ _CCODPRV ]:lValid()
             else
                aTmp[ _CCODPRV ]  := ( D():Articulos( nView ) )->cPrvHab   
             end if
 
-            aTmp[ _CREFPRV ]  := Padr( cRefPrvArt( aTmp[ _CREF ], ( D():Articulos( nView ) )->cPrvHab , dbfArtPrv ), 18 )
+            aTmp[ _CREFPRV ]     := Padr( cRefPrvArt( aTmp[ _CREF ], ( D():Articulos( nView ) )->cPrvHab , dbfArtPrv ), 18 )
 
-            /*
-            Lotes--------------------------------------------------------------
-            */
+            // Lotes-----------------------------------------------------------
 
             if ( D():Articulos( nView ) )->lLote
 
-               if Empty( cLote )
+               if empty( cLote )
                   cLote          := ( D():Articulos( nView ) )->cLote
                end if 
 
                aTmp[ _LLOTE ]    := ( D():Articulos( nView ) )->lLote
 
-               if !Empty( aGet[ _CLOTE ] )
+               if !empty( aGet[ _CLOTE ] )
 
                   aGet[ _CLOTE ]:Show()
 
-                  if Empty( aGet[ _CLOTE ]:VarGet() )
+                  if empty( aGet[ _CLOTE ]:VarGet() )
                      aGet[ _CLOTE ]:cText( cLote )
                      aGet[ _CLOTE ]:lValid()
                   end if
 
                else
 
-                  if Empty( aTmp[ _CLOTE ] )
+                  if empty( aTmp[ _CLOTE ] )
                      aTmp[ _CLOTE ] := cLote 
                   end if
 
@@ -5396,11 +5395,11 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
 
             else
 
-               if !Empty( aGet[ _CLOTE ] )
+               if !empty( aGet[ _CLOTE ] )
                   aGet[ _CLOTE ]:Hide()
                end if
 
-               if !Empty( aGet[ _DFECCAD ] )
+               if !empty( aGet[ _DFECCAD ] )
                   aGet[ _DFECCAD ]:Hide()
                end if
 
@@ -5538,25 +5537,21 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
 
             end if
 
-            /*
-            Impuestos especiales--------------------------------------------------
-            */
+            // Impuestos especiales--------------------------------------------------
 
-            aTmp[ _CCODIMP ]     := ( D():Articulos( nView ) )->cCodImp
+            aTmp[ _CCODIMP ]        := ( D():Articulos( nView ) )->cCodImp
             oNewImp:setCodeAndValue( aTmp[ _CCODIMP ], aGet[ _NVALIMP ] )
 
             if !Empty( ( D():Articulos( nView ) )->cCodImp )
                aTmp[ _LVOLIMP ]     := RetFld( ( D():Articulos( nView ) )->cCodImp, oNewImp:oDbf:cAlias, "lIvaVol" )
             end if
 
-            /*
-            Buscamos la familia del articulo y anotamos las propiedades-----------
-            */
+            // Buscamos la familia del articulo y anotamos las propiedades-----------
 
             aTmp[ _CCODPR1 ]         := ( D():Articulos( nView ) )->cCodPrp1
             aTmp[ _CCODPR2 ]         := ( D():Articulos( nView ) )->cCodPrp2
 
-            if ( !Empty( aTmp[ _CCODPR1 ] ) .or. !Empty( aTmp[ _CCODPR2 ] ) ) .and. ( uFieldEmpresa( "lUseTbl" ) .and. ( nMode == APPD_MODE ) )
+            if ( !empty( aTmp[ _CCODPR1 ] ) .or. !empty( aTmp[ _CCODPR2 ] ) ) .and. ( uFieldEmpresa( "lUseTbl" ) ) .and. ( nMode == APPD_MODE ) 
 
                aGet[ _NCANPRE  ]:cText( 0 )
                aGet[ _NUNICAJA ]:cText( 0 )
@@ -5661,16 +5656,16 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
             end if
 
             if !Empty( aGet[ _CUNIDAD ] )
-                aGet[ _CUNIDAD ]:cText( ( D():Articulos( nView ) )->cUnidad )
-                aGet[ _CUNIDAD ]:lValid()
+               aGet[ _CUNIDAD ]:cText( ( D():Articulos( nView ) )->cUnidad )
+               aGet[ _CUNIDAD ]:lValid()
             else
-                aTmp[ _CUNIDAD ] := ( D():Articulos( nView ) )->cUnidad
+               aTmp[ _CUNIDAD ] := ( D():Articulos( nView ) )->cUnidad
             end if
 
             if !Empty( aGet[ _CVOLUMEN ] )
-                aGet[ _CVOLUMEN ]:cText( ( D():Articulos( nView ) )->cVolumen )
+               aGet[ _CVOLUMEN ]:cText( ( D():Articulos( nView ) )->cVolumen )
             else
-                aTmp[ _CVOLUMEN ]:= ( D():Articulos( nView ) )->cVolumen
+               aTmp[ _CVOLUMEN ]:= ( D():Articulos( nView ) )->cVolumen
             end if
 
             /*

@@ -10,6 +10,7 @@
 CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    DATA  nView
+   DATA  nView
 
    DATA  nSec
 
@@ -176,7 +177,6 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD DesdeHastaGrupoCliente()
 
    METHOD getTotalUnidadesGrupoCliente( cCodGrp, cCodArt )
-   METHOD getTotalCajasGrupoCliente( cCodGrp, cCodArt )
    METHOD ValidGrupoCliente( cCodGrp )
 
    METHOD summaryReport()
@@ -445,7 +445,7 @@ RETURN ( lOpen )
 
 METHOD CloseFiles() CLASS TFastVentasArticulos
 
-   local oBlock 
+   local oBlock   
 
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -612,11 +612,7 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
          ::oCamposExtra:End()
       end if
 
-      if !Empty( ::nView )
-         D():DeleteView( ::nView )
-      end if
-
-      ::nView     := nil
+      D():DeleteView( ::nView )
 
    RECOVER
 
@@ -4087,33 +4083,6 @@ METHOD getTotalUnidadesGrupoCliente( cCodGrp, cCodArt ) CLASS TFastVentasArticul
 
          if ::ValidGrupoCliente( cCodGrp )
             nTotal   += ::oDbf:nUniArt
-         end if
-
-         ::oDbf:Skip()
-
-      end while
-
-   end if
-
-   ::oDbf:OrdSetFocus( nOrdAnt )
-   ::oDbf:GoTo( nRec )
-
-Return nTotal
-
-//---------------------------------------------------------------------------//
-
-METHOD getTotalCajasGrupoCliente( cCodGrp, cCodArt ) CLASS TFastVentasArticulos
-   
-   local nRec     := ::oDbf:Recno()
-   local nOrdAnt  := ::oDbf:OrdSetFocus( "cCodArt" )
-   local nTotal   := 0
-
-   if ::oDbf:Seek( Padr( cCodArt, 18 ) ) 
-
-      while ::oDbf:cCodArt == Padr( cCodArt, 18 ) .and. !::oDbf:Eof()
-
-         if ::ValidGrupoCliente( cCodGrp )
-            nTotal   += ::oDbf:nCajas
          end if
 
          ::oDbf:Skip()
