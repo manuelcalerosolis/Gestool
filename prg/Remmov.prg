@@ -188,8 +188,6 @@ CLASS TRemMovAlm FROM TMasDet
    METHOD EditDetalleMovimientos( oDlg )
    METHOD DeleteDet( oDlg )
 
-   METHOD assertMovimiento()
-
    METHOD lSave()
    METHOD RecalcularPrecios()                            INLINE   ( ::oDetMovimientos:RecalcularPrecios(), ::oBrwDet:Refresh() )
 
@@ -241,7 +239,7 @@ CLASS TRemMovAlm FROM TMasDet
 
    METHOD cMostrarSerie() 
 
-   METHOD Report()            INLINE   TInfRemMov():New( "Remesas de movimientos", , , , , , { ::oDbf, ::oDetMovimientos:oDbf, ::oArt } ):Play()
+   METHOD Report()                           INLINE TInfRemMov():New( "Remesas de movimientos", , , , , , { ::oDbf, ::oDetMovimientos:oDbf, ::oArt } ):Play()
 
    METHOD ActualizaStockWeb( cNumDoc )
 
@@ -531,7 +529,7 @@ METHOD OpenFiles( lExclusive ) CLASS TRemMovAlm
 
    if !::lOpenFiles
 
-      if Empty( ::oDbf )
+      if empty( ::oDbf )
          ::DefineFiles()
       end if
 
@@ -776,63 +774,63 @@ METHOD CloseFiles() CLASS TRemMovAlm
       ::oRctPrvS:End()
    end if
 
-   if !Empty( ::oPedCliT ) .and. ::oPedCliT:Used()
+   if !empty( ::oPedCliT ) .and. ::oPedCliT:Used()
       ::oPedCliT:End()
    end if
 
-   if !Empty( ::oPedCliR ) .and. ::oPedCliR:Used()
+   if !empty( ::oPedCliR ) .and. ::oPedCliR:Used()
       ::oPedCliR:End()
    end if
 
-   if !Empty( ::oPedCliL ) .and. ::oPedCliL:Used()
+   if !empty( ::oPedCliL ) .and. ::oPedCliL:Used()
       ::oPedCliL:End()
    end if
 
-   if !Empty( ::oAlbCliT ) .and. ::oAlbCliT:Used()
+   if !empty( ::oAlbCliT ) .and. ::oAlbCliT:Used()
       ::oAlbCliT:End()
    end if
 
-   if !Empty( ::oAlbCliL ) .and. ::oAlbCliL:Used()
+   if !empty( ::oAlbCliL ) .and. ::oAlbCliL:Used()
       ::oAlbCliL:End()
    end if
 
-   if !Empty( ::oAlbCliS ) .and. ::oAlbCliS:Used()
+   if !empty( ::oAlbCliS ) .and. ::oAlbCliS:Used()
       ::oAlbCliS:End()
    end if
 
-   if !Empty( ::oFacCliT ) .and. ::oFacCliT:Used()
+   if !empty( ::oFacCliT ) .and. ::oFacCliT:Used()
       ::oFacCliT:End()
    end if
 
-   if !Empty( ::oFacCliL ) .and. ::oFacCliL:Used()
+   if !empty( ::oFacCliL ) .and. ::oFacCliL:Used()
       ::oFacCliL:End()
    end if
 
-   if !Empty( ::oFacCliS ) .and. ::oFacCliS:Used()
+   if !empty( ::oFacCliS ) .and. ::oFacCliS:Used()
       ::oFacCliS:End()
    end if
 
-   if !Empty( ::oFacRecT ) .and. ::oFacRecT:Used()
+   if !empty( ::oFacRecT ) .and. ::oFacRecT:Used()
       ::oFacRecT:End()
    end if
 
-   if !Empty( ::oFacRecL ) .and. ::oFacRecL:Used()
+   if !empty( ::oFacRecL ) .and. ::oFacRecL:Used()
       ::oFacRecL:End()
    end if
 
-   if !Empty( ::oTikCliT ) .and. ::oTikCliT:Used()
+   if !empty( ::oTikCliT ) .and. ::oTikCliT:Used()
       ::oTikCliT:End()
    end if
 
-   if !Empty( ::oTikCliL ) .and. ::oTikCliL:Used()
+   if !empty( ::oTikCliL ) .and. ::oTikCliL:Used()
       ::oTikCliL:End()
    end if
 
-   if !Empty( ::oTikCliS ) .and. ::oTikCliS:Used()
+   if !empty( ::oTikCliS ) .and. ::oTikCliS:Used()
       ::oTikCliS:End()
    end if
 
-   if !Empty( ::oHisMov ) .and. ::oHisMov:Used()
+   if !empty( ::oHisMov ) .and. ::oHisMov:Used()
       ::oHisMov:End()
    end if
 
@@ -958,7 +956,7 @@ METHOD OpenService( lExclusive, cPath ) CLASS TRemMovAlm
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      if Empty( ::oDbf )
+      if empty( ::oDbf )
          ::oDbf         := ::DefineFiles( cPath )
       end if
 
@@ -982,7 +980,7 @@ RETURN ( lOpen )
 
 METHOD CloseService() CLASS TRemMovAlm
 
-   if !Empty( ::oDbf ) .and. ::oDbf:Used()
+   if !empty( ::oDbf ) .and. ::oDbf:Used()
       ::oDbf:End()
    end if
 
@@ -994,7 +992,7 @@ RETURN ( .t. )
 
 METHOD CloseIndex() CLASS TRemMovAlm  
 
-   if !Empty( ::oDbf ) .and. ::oDbf:Used()
+   if !empty( ::oDbf ) .and. ::oDbf:Used()
       ::oDbf:OrdListClear()
    end if
 
@@ -1085,7 +1083,7 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
       REDEFINE RADIO ::oRadTipoMovimiento ;
          VAR      ::oDbf:nTipMov ;
          ID       130, 131, 132, 133 ;
-         WHEN     ( nMode != ZOOM_MODE ) ; // WHEN     ( nMode == APPD_MODE ) ; // .and. Empty( ::oDetMovimientos:oDbfVir:OrdKeyCount()
+         WHEN     ( nMode != ZOOM_MODE ) ; // WHEN     ( nMode == APPD_MODE ) ; // .and. empty( ::oDetMovimientos:oDbfVir:OrdKeyCount()
          ON CHANGE( ::ShwAlm( oSay, oBtnImp ) ) ;
          OF       oDlg
 
@@ -1166,19 +1164,19 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
 		REDEFINE BUTTON ;
 			ID 		500 ;
          OF       oDlg ;
-         WHEN     ( nMode != ZOOM_MODE .and. !Empty( ::oDbf:cAlmDes ) ) ;
+         WHEN     ( nMode != ZOOM_MODE .and. !empty( ::oDbf:cAlmDes ) ) ;
          ACTION   ( ::AppendDetalleMovimiento( oDlg ) )
 
       REDEFINE BUTTON ;
          ID       501 ;
          OF       oDlg ;
-         WHEN     ( nMode != ZOOM_MODE .and. !Empty( ::oDbf:cAlmDes ) ) ;
+         WHEN     ( nMode != ZOOM_MODE .and. !empty( ::oDbf:cAlmDes ) ) ;
          ACTION   ( ::EditDetalleMovimientos( oDlg ) )
 
 		REDEFINE BUTTON ;
 			ID 		502 ;
          OF       oDlg ;
-         WHEN     ( nMode != ZOOM_MODE .and. !Empty( ::oDbf:cAlmDes ) ) ;
+         WHEN     ( nMode != ZOOM_MODE .and. !empty( ::oDbf:cAlmDes ) ) ;
          ACTION   ( ::DeleteDet() )
 
       REDEFINE BUTTON ;
@@ -1218,7 +1216,7 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
       REDEFINE BUTTON oBtnImp ;
          ID       506 ;
          OF       oDlg ;
-         WHEN     ( nMode != ZOOM_MODE .and. !Empty( ::oDbf:cAlmDes ) ) ;
+         WHEN     ( nMode != ZOOM_MODE .and. !empty( ::oDbf:cAlmDes ) ) ;
          ACTION   ( ::ImportAlmacen( nMode, oDlg ) )
 
       ::oBrwDet               := IXBrowse():New( oDlg )
@@ -1473,7 +1471,7 @@ RETURN NIL
 
 METHOD lSave( nMode ) CLASS TRemMovAlm
 
-   if Empty( ::oDbf:cCodAge ) .and. lRecogerAgentes()
+   if empty( ::oDbf:cCodAge ) .and. lRecogerAgentes()
       MsgStop( "Código de agente no puede estar vacío." )
       ::oCodAge:SetFocus()
       Return .f.
@@ -1481,7 +1479,7 @@ METHOD lSave( nMode ) CLASS TRemMovAlm
 
    if ::oDbf:nTipMov == 1
 
-      if Empty( ::oDbf:cAlmOrg )
+      if empty( ::oDbf:cAlmOrg )
          MsgStop( "Almacén origen no puede estar vacío." )
          ::oAlmOrg:SetFocus()
          Return .f.
@@ -1495,7 +1493,7 @@ METHOD lSave( nMode ) CLASS TRemMovAlm
 
    else
 
-      if Empty( ::oDbf:cAlmDes )
+      if empty( ::oDbf:cAlmDes )
          MsgStop( "Almacén destino no puede estar vacío." )
          ::oAlmDes:SetFocus()
          Return .f.
@@ -1539,7 +1537,7 @@ METHOD GenRemMov( lPrinter, cCaption, cCodDoc, cPrinter, nCopies ) CLASS TRemMov
       return nil
    end if
 
-   if Empty( cCodDoc )
+   if empty( cCodDoc )
       cCodDoc           := "RM1"
    end if
 
@@ -1652,7 +1650,7 @@ METHOD lSelAll( lSel ) CLASS TRemMovAlm
 
    ::oDetMovimientos:oDbf:OrdSetFocus( nOrdAnt )
 
-   if !Empty( ::oWndBrw )
+   if !empty( ::oWndBrw )
       ::oWndBrw:Refresh()
    end if
 
@@ -1927,7 +1925,7 @@ METHOD Process() CLASS TRemMovAlm
             oRemMovTmp:oDbf:GoTop()
             while !oRemMovTmp:oDbf:Eof()
 
-               if Empty( oRemMovTmp:oDbf:cSufRem )
+               if empty( oRemMovTmp:oDbf:cSufRem )
                   oRemMovTmp:oDbf:FieldPutByName( "cSufRem", "00" )
                end if 
 
@@ -1938,7 +1936,7 @@ METHOD Process() CLASS TRemMovAlm
             oRemMovTmp:oDetMovimientos:oDbf:GoTop()
             while !oRemMovTmp:oDetMovimientos:oDbf:Eof()
 
-               if Empty( oRemMovTmp:oDetMovimientos:oDbf:cSufRem )
+               if empty( oRemMovTmp:oDetMovimientos:oDbf:cSufRem )
                   oRemMovTmp:oDetMovimientos:oDbf:FieldPutByName( "cSufRem", "00" )
                end if 
 
@@ -2072,7 +2070,7 @@ METHOD Process() CLASS TRemMovAlm
 
    next
 
-   if !Empty( oAlm ) .and. oAlm:Used()
+   if !empty( oAlm ) .and. oAlm:Used()
       oAlm:End()
    end if
 
@@ -2156,8 +2154,8 @@ RETURN ( bGen )
 
 METHOD Reindexa() CLASS TRemMovAlm
 
-   if Empty( ::oDbf )
-      ::oDbf      := ::DefineFiles()
+   if empty( ::oDbf )
+      ::oDbf   := ::DefineFiles()
    end if
 
    ::oDbf:IdxFDel()
@@ -2184,8 +2182,6 @@ METHOD AppendDetalleMovimiento( oDlg ) CLASS TRemMovAlm
 
       do case
       case nDetalle == IDOK
-
-         ::assertMovimiento()
 
          ::oDetMovimientos:oDbfVir:Insert()
          ::oDetMovimientos:appendKit()
@@ -2216,6 +2212,8 @@ METHOD AppendDetalleMovimiento( oDlg ) CLASS TRemMovAlm
 
       case nDetalle == IDCANCEL
 
+         msgAlert( nDetalle, "IDCANCEL" )
+
          ::oDetMovimientos:oDbfVir:Cancel()
 
          if !empty( ::oBrwDet )
@@ -2227,27 +2225,6 @@ METHOD AppendDetalleMovimiento( oDlg ) CLASS TRemMovAlm
       end if
 
    end while
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD assertMovimiento() CLASS TRemMovAlm
-
-   local nArea    := ( ::oDetMovimientos:oDbfVir:nArea )
-   
-   ::oDetMovimientos:getStatus()
-
-   debug( ::oDetMovimientos:oDbfVir )   
-
-   ( nArea )->( dbgotop() )
-   while ( nArea )->( !eof() )
-
-      ( nArea )->( dbskip() )
-   
-   end while
-
-   ::oDetMovimientos:setStatus()
 
 RETURN ( Self )
 
@@ -2310,7 +2287,7 @@ METHOD DeleteDet() CLASS TRemMovAlm
          ::oDetMovimientos:oDbfVir:GoTop()
 
          while !::oDetMovimientos:oDbfVir:Eof()
-            if !Empty( nNumLin ) .and. ( ::oDetMovimientos:oDbfVir:nNumLin == nNumLin )
+            if !empty( nNumLin ) .and. ( ::oDetMovimientos:oDbfVir:nNumLin == nNumLin )
                ::oDetMovimientos:oDbfVir:Delete(.f.)
             end if
             ::oDetMovimientos:oDbfVir:Skip()
@@ -2518,7 +2495,7 @@ METHOD loadAlmacen( nMode ) CLASS TRemMovAlm
                   ::oDetMovimientos:oDbfVir:cAliMov   := ::oDbf:cAlmDes
                   ::oDetMovimientos:oDbfVir:cAloMov   := Space( 16 )
 
-                  if !Empty( sStkAlm:cNumeroSerie )
+                  if !empty( sStkAlm:cNumeroSerie )
 
                      ::oDetSeriesMovimientos:oDbfVir:Append()
 
@@ -2635,14 +2612,14 @@ METHOD ShwAlm( oSay, oBtnImp ) CLASS TRemMovAlm
       ::oAlmOrg:Hide()
       oSay[ 1 ]:cText( Space(16) )
       ::oAlmOrg:cText( Space(16) )
-      if !Empty( oBtnImp )
+      if !empty( oBtnImp )
          oBtnImp:Show()
       end if
    else
       oSay[ 1 ]:Show()
       oSay[ 4 ]:Show()
       ::oAlmOrg:Show()
-      if !Empty( oBtnImp )
+      if !empty( oBtnImp )
          oBtnImp:Hide()
       end if
    end if
@@ -2658,7 +2635,7 @@ METHOD nTotRemMov( lPic ) CLASS TRemMovAlm
 
    local nTot     := 0
 
-   if !Empty( ::oDbf ) .and. ::oDbf:Used() .and. !Empty( ::oDetMovimientos ) .and. ::oDetMovimientos:oDbf:Used()
+   if !empty( ::oDbf ) .and. ::oDbf:Used() .and. !empty( ::oDetMovimientos ) .and. ::oDetMovimientos:oDbf:Used()
 
       if ::oDetMovimientos:oDbf:Seek( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem )
          while Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == Str( ::oDetMovimientos:oDbf:nNumRem, 9 ) + ::oDetMovimientos:oDbf:cSufRem .and. !::oDetMovimientos:oDbf:Eof()
@@ -2678,7 +2655,7 @@ FUNCTION RemMovAlm( oMenuItem, oWnd )
    DEFAULT  oMenuItem   := "01050"
    DEFAULT  oWnd        := oWnd()
 
-   if Empty( oRemesas )
+   if empty( oRemesas )
 
       /*
       Cerramos todas las ventanas
@@ -2695,7 +2672,7 @@ FUNCTION RemMovAlm( oMenuItem, oWnd )
       AddMnuNext( "Movimientos de almacén", ProcName() )
 
       oRemesas          := TRemMovAlm():New( cPatEmp(), cDriver(), oWnd, oMenuItem )
-      if !Empty( oRemesas )
+      if !empty( oRemesas )
          oRemesas:Play()
       end if
 
@@ -2751,7 +2728,7 @@ METHOD DataReport( oFr ) CLASS TRemMovAlm
    oFr:SetWorkArea(     "Movimiento", ::oDbf:nArea, .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    oFr:SetFieldAliases( "Movimiento", cObjectsToReport( ::oDbf ) )
 
-   if !Empty( ::oDetMovimientos )
+   if !empty( ::oDetMovimientos )
       oFr:SetWorkArea(     "Lineas de movimientos", ::oDetMovimientos:oDbf:nArea )
       oFr:SetFieldAliases( "Lineas de movimientos", cObjectsToReport( ::oDetMovimientos:oDbf ) )
    end if
@@ -2768,7 +2745,7 @@ METHOD DataReport( oFr ) CLASS TRemMovAlm
    oFr:SetWorkArea(     "Agentes", ::oDbfAge:nArea )
    oFr:SetFieldAliases( "Agentes", cItemsToReport( aItmAge() ) )
    
-   if !Empty( ::oDetMovimientos )
+   if !empty( ::oDetMovimientos )
       oFr:SetWorkArea(     "Artículos", ::oArt:nArea )
       oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
 
@@ -2786,7 +2763,7 @@ METHOD DataReport( oFr ) CLASS TRemMovAlm
    oFr:SetResyncPair(   "Movimiento",                 "Almacén destino" )
    oFr:SetResyncPair(   "Movimiento",                 "Agentes" )
 
-   if !Empty( ::oDetMovimientos )
+   if !empty( ::oDetMovimientos )
       oFr:SetResyncPair(   "Movimiento",              "Lineas de movimientos" )
       oFr:SetResyncPair(   "Lineas de movimientos",   "Artículos" )
    end if
@@ -2838,7 +2815,7 @@ METHOD DesignReportRemMov( oFr, dbfDoc ) CLASS TRemMovAlm
       Paginas y bandas---------------------------------------------------------
       */
 
-      if !Empty( ( dbfDoc )->mReport )
+      if !empty( ( dbfDoc )->mReport )
 
          oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
 
@@ -2938,7 +2915,7 @@ METHOD PrintReportRemMov( nDevice, nCopies, cPrinter, dbfDoc ) CLASS TRemMovAlm
    Cargar el informe-----------------------------------------------------------
    */
 
-   if !Empty( ( dbfDoc )->mReport )
+   if !empty( ( dbfDoc )->mReport )
 
       oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
 
@@ -3448,7 +3425,7 @@ Function SynRemMov( cPath )
    ( dbfRemMov )->( dbGoTop() )
    while !( dbfRemMov )->( eof() )
 
-      if Empty( ( dbfRemMov )->cSufRem )
+      if empty( ( dbfRemMov )->cSufRem )
          ( dbfRemMov )->cSufRem        := "00"
       end if
 
@@ -3466,19 +3443,19 @@ Function SynRemMov( cPath )
    ( dbfHisMov )->( dbGoTop() )
    while !( dbfHisMov )->( eof() )
 
-      if Empty( ( dbfHisMov )->cSufRem )
+      if empty( ( dbfHisMov )->cSufRem )
          ( dbfHisMov )->cSufRem        := "00"
       end if
 
-      if Empty( ( dbfHisMov )->cNomMov )
+      if empty( ( dbfHisMov )->cNomMov )
          ( dbfHisMov )->cNomMov        := RetArticulo( ( dbfHisMov )->cRefMov, dbfArticulo )
       end if 
 
-      if Empty( ( dbfHisMov )->dFecMov )
+      if empty( ( dbfHisMov )->dFecMov )
 
          dFecMov                       := RetFld( Str( ( dbfHisMov )->nNumRem ) + ( dbfHisMov )->cSufRem, dbfRemMov, "dFecRem", "cNumRem" )
 
-         if Empty( dFecMov )
+         if empty( dFecMov )
             dFecMov                    := CtoD( "01/01/" + Str( Year( Date() ) ) )
          end if
 
@@ -3486,11 +3463,11 @@ Function SynRemMov( cPath )
 
       end if
 
-      if Empty( ( dbfHisMov )->cTimMov )
+      if empty( ( dbfHisMov )->cTimMov )
          ( dbfHisMov )->cTimMov        := RetFld( Str( ( dbfHisMov )->nNumRem ) + ( dbfHisMov )->cSufRem, dbfRemMov, "cTimRem", "cNumRem" )
       end if
 
-      if Empty( ( dbfHisMov )->cRefMov )
+      if empty( ( dbfHisMov )->cRefMov )
 
          nOrdAnt                       := ( dbfArticulo )->( OrdSetFocus( "Nombre" ) )
 
@@ -3619,6 +3596,9 @@ CLASS TDetMovimientos FROM TDet
 
    DATA  oBtnSerie
 
+   DATA  lNumeroSerieIntroducido
+   DATA  lNumeroSerieNecesario            
+
    METHOD DefineFiles()
 
    METHOD OpenFiles( lExclusive )
@@ -3629,7 +3609,7 @@ CLASS TDetMovimientos FROM TDet
    METHOD Reindexa()
 
    METHOD Resource( nMode, lLiteral )
-   METHOD ValidResource( nMode, oDlg, oBtn )
+      METHOD ValidResource( nMode, oDlg, oBtn )
 
    METHOD RollBack()
 
@@ -3653,7 +3633,15 @@ CLASS TDetMovimientos FROM TDet
    METHOD nTotVolumenVir( lPic )
    METHOD nTotPesoVir( lPic )
 
-   METHOD RecalcularPrecios()
+   METHOD recalcularPrecios()
+
+   METHOD isNumeroSerieNecesario()
+
+   METHOD accumulatesStoreMovement()
+
+   METHOD alertControlStockUnderMin()
+
+   METHOD processPropertiesGrid()    
 
 END CLASS
 
@@ -3749,7 +3737,7 @@ METHOD OpenFiles( lExclusive) CLASS TDetMovimientos
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      if Empty( ::oDbf )
+      if empty( ::oDbf )
          ::oDbf            := ::defineFiles()
       end if
 
@@ -3786,7 +3774,7 @@ RETURN .t.
 
 METHOD Reindexa() CLASS TDetMovimientos
 
-   if Empty( ::oDbf )
+   if empty( ::oDbf )
       ::oDbf   := ::DefineFiles()
    end if
 
@@ -3861,7 +3849,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      ::oGetLote:bValid          := {|| if( !Empty( ::oDbfVir:cLote ), ::loadArticulo( nMode ), .t. ) }
+      ::oGetLote:bValid          := {|| if( !empty( ::oDbfVir:cLote ), ::loadArticulo( nMode ), .t. ) }
 
       // Browse de propiedades-------------------------------------------------
 
@@ -4157,21 +4145,12 @@ METHOD ValidResource( nMode, oDlg, oBtn ) CLASS TDetMovimientos
    local cAliMov
    local cAloMov
    local cCodMov
-   local lNowSer
-   local lNumSer
    local nPrecioCosto
    local lArticuloPropiedades    := .f.
 
    oBtn:SetFocus()
 
-   /*
-   if nMode == APPD_MODE .and. !::loadArticulo( .t., nMode )
-      ::oRefMov:SetFocus()
-      Return .f.
-   end if
-   */
-
-   if Empty( ::oDbfVir:cRefMov )
+   if empty( ::oDbfVir:cRefMov )
       msgstop( "Código de artículo vacío." )
       ::oRefMov:SetFocus()
       Return .f.
@@ -4179,178 +4158,41 @@ METHOD ValidResource( nMode, oDlg, oBtn ) CLASS TDetMovimientos
 
    // Control para numeros de serie--------------------------------------------
 
-   lNumSer                       := retfld( ::oDbfVir:cRefMov, ::oParent:oArt:cAlias, "lNumSer" )
-   lNowSer                       := ::oParent:oDetSeriesMovimientos:oDbfVir:SeekInOrd( Str( ::oDbfVir:nNumLin, 4 ) + ::oDbfVir:cRefMov, "nNumLin" )
+   ::lNumeroSerieNecesario          := retfld( ::oDbfVir:cRefMov, ::oParent:oArt:cAlias, "lNumSer" )
+   ::lNumeroSerieIntroducido        := ::oParent:oDetSeriesMovimientos:oDbfVir:SeekInOrd( Str( ::oDbfVir:nNumLin, 4 ) + ::oDbfVir:cRefMov, "nNumLin" )
 
-   if ( nMode == APPD_MODE )     .and.;
-      ( lNumSer )                .and.;
-      (!lNowSer )                .and.;
-      ( ::oParent:oDbf:nTipMov != 3 )
-
-      MsgStop( "Tiene que introducir números de serie para este artículo." )
-
-      ::oBtnSerie:Click()
-
+   if ( ::isNumeroSerieNecesario( nMode ) )
       Return .f.
-
    end if
 
    CursorWait()
 
-   lFound            := .f.
+   lFound                           := .f.
+
+   // Control para numeros de serie--------------------------------------------
 
    do case
-   case ( nMode == APPD_MODE .and. !lNumSer )
+   case ( nMode == APPD_MODE ) .and. ( empty( ::oBrwPrp:Cargo ) ) .and. ( !::lNumeroSerieNecesario )
 
-      cRefMov        := ::oDbfVir:cRefMov
-      nCajMov        := ::oDbfVir:nCajMov
-      nUndMov        := ::oDbfVir:nUndMov
-      cLote          := ::oDbfVir:cLote
-      cCodPr1        := ::oDbfVir:cCodPr1
-      cCodPr2        := ::oDbfVir:cCodPr2
-      cValPr1        := ::oDbfVir:cValPr1
-      cValPr2        := ::oDbfVir:cValPr2
-      nPrecioCosto   := ::oDbfVir:nPreDiv 
+      if ::accumulatesStoreMovement()
+         lFound                     := .t.
+      end if 
 
-      ::oDbfVir:GetStatus()
+   case ( nMode == APPD_MODE ) .and. ( !empty( ::oBrwPrp:Cargo ) ) .and. ( !::lNumeroSerieNecesario )
 
-      ::oDbfVir:GoTop()
-      while !::oDbfVir:Eof()
+      ::processPropertiesGrid()
+      
+      lArticuloPropiedades          := .t.
 
-         if !( lNowSer )                                    .and. ; // sin numeros de serie
-            ::oDbfVir:FieldGetName( "cRefMov" ) == cRefMov  .and. ;
-            ::oDbfVir:FieldGetName( "cLote"   ) == cLote    .and. ;
-            ::oDbfVir:FieldGetName( "cCodPr1" ) == cCodPr1  .and. ;
-            ::oDbfVir:FieldGetName( "cCodPr2" ) == cCodPr2  .and. ;
-            ::oDbfVir:FieldGetName( "cValPr1" ) == cValPr1  .and. ;
-            ::oDbfVir:FieldGetName( "cValPr2" ) == cValPr2  .and. ;
-            ::oDbfVir:FieldGetName( "nCajMov" ) == nCajMov  .and. ;
-            ::oDbfVir:FieldGetName( "nPrediv" ) == nPrecioCosto
+   case ( nMode == EDIT_MODE )
 
-            nCajMov  += ::oDbfVir:FieldGetName( "nCajMov" )
-            nUndMov  += ::oDbfVir:FieldGetName( "nUndMov" )
-
-            ::oDbfVir:FieldPutByName( "nCajMov", nCajMov )
-            ::oDbfVir:FieldPutByName( "nUndMov", nUndMov )
-            ::oDbfVir:FieldPutByName( "lSelDoc", .t. )
-
-            if ::oDbfVir:FieldGetName( "lKitArt" )
-               ::ActualizaKit( nMode )
-            end if
-
-
-            lFound   := .t.
-
-            exit
-
-         end if
-
-         ::oDbfVir:Skip()
-
-      end while
-
-      ::oDbfVir:SetStatus()
-
-   case nMode == EDIT_MODE
-
-      ::ActualizaKit( nMode )
+      ::actualizaKit( nMode )
 
    end case
 
-   /*
-   Control de stock solo para movimeintos entre almacenes----------------------
-   Avisamos en movimientos con stock bajo minimo-------------------------------
-   */
+   // Avisamos en movimientos con stock bajo minimo-------------------------------
 
-   if ( ::oDbf:nTipMov == 1 )
-
-      nTotUnd        := nTotNRemMov( ::oDbfVir )
-      nStkAct        := ::nStockActualAlmacen( ::oParent:oDbf:cAlmOrg )
-
-      if nTotUnd != 0 .and. oRetFld( ::oDbfVir:cRefMov, ::oParent:oArt, "lMsgMov" )
-
-         if ( nStkAct - nTotUnd ) < oRetFld( ::oDbfVir:cRefMov, ::oParent:oArt, "nMinimo" )
-
-            if !ApoloMsgNoYes( "El stock está por debajo del minimo.", "¿Desea continuar?" )
-               return nil
-            end if
-
-         end if
-
-      end if
-
-   end if
-
-   /*
-   Añadimos las lineas creadas por la rejilla de datos-------------------------
-   */
-
-   if !Empty( ::oBrwPrp:Cargo )
-
-      /*
-      Tomamos algunos datos----------------------------------------------------
-      */
-
-      dFecMov  := ::oDbfVir:dFecMov
-      cTimMov  := ::oDbfVir:cTimMov
-      nTipMov  := ::oDbfVir:nTipMov
-      cAliMov  := ::oDbfVir:cAliMov
-      cAloMov  := ::oDbfVir:cAloMov
-      cCodMov  := ::oDbfVir:cCodMov
-      cRefMov  := ::oDbfVir:cRefMov
-
-      /*
-      Metemos las lineas por propiedades---------------------------------------
-      */
-
-      for n := 1 to len( ::oBrwPrp:Cargo )
-
-         for i := 1 to len( ::oBrwPrp:Cargo[ n ] )
-
-            if IsNum( ::oBrwPrp:Cargo[ n, i ]:Value ) .and. ::oBrwPrp:Cargo[ n, i ]:Value != 0
-
-               ::oDbfVir:Append()
-
-               ::oDbfVir:dFecMov    := dFecMov
-               ::oDbfVir:cTimMov    := cTimMov
-               ::oDbfVir:nTipMov    := nTipMov
-               ::oDbfVir:cAliMov    := cAliMov
-               ::oDbfVir:cAloMov    := cAloMov
-               ::oDbfVir:cCodMov    := cCodMov
-               ::oDbfVir:cRefMov    := cRefMov
-               ::oDbfVir:cCodPr1    := ::oBrwPrp:Cargo[ n, i ]:cCodigoPropiedad1
-               ::oDbfVir:cCodPr2    := ::oBrwPrp:Cargo[ n, i ]:cCodigoPropiedad2
-               ::oDbfVir:cValPr1    := ::oBrwPrp:Cargo[ n, i ]:cValorPropiedad1
-               ::oDbfVir:cValPr2    := ::oBrwPrp:Cargo[ n, i ]:cValorPropiedad2
-               ::oDbfVir:nUndMov    := ::oBrwPrp:Cargo[ n, i ]:Value
-               ::oDbfVir:cCodUsr    := cCurUsr()
-               ::oDbfVir:cCodDlg    := oRetFld( cCurUsr(), ::oParent:oUsr, "cCodDlg" )
-               ::oDbfVir:nCajMov    := 1
-               ::oDbfVir:lSelDoc    := .t.
-               ::oDbfVir:lSndDoc    := .t.
-               ::oDbfVir:nNumLin    := nLastNum( ::oDbfVir:cAlias )
-               ::oDbfVir:nVolumen   := oRetFld( cRefMov, ::oParent:oArt, "" )
-               ::oDbfVir:cVolumen   := oRetFld( cRefMov, ::oParent:oArt, "" )
-               ::oDbfVir:nPesoKg    := oRetFld( cRefMov, ::oParent:oArt, "" )
-               ::oDbfVir:cPesoKg    := oRetFld( cRefMov, ::oParent:oArt, "" )
-
-               if ( ::oBrwPrp:Cargo[ n, i ]:nPrecioCompra != 0 )
-                  ::oDbfVir:nPreDiv := ::oBrwPrp:Cargo[ n, i ]:nPrecioCompra
-               else
-                  ::oDbfVir:nPreDiv := ::oDbfVir:nPreDiv 
-               end if 
-
-               ::oDbfVir:Save()
-
-            end if
-
-         next
-
-      next
-
-      lArticuloPropiedades          := .t.
-
-   end if
+   ::alertControlStockUnderMin()
 
    ::cOldCodArt                     := ""
    ::cOldValPr1                     := ""
@@ -4389,7 +4231,7 @@ METHOD RollBack() CLASS TDetMovimientos
 
          while ::oDbf:Seek( ::oParent:cFirstKey )
             ::oDbf:Delete()
-            if !Empty( ::oParent ) .and. !Empty( ::oParent:oMeter )
+            if !empty( ::oParent ) .and. !empty( ::oParent:oMeter )
                ::oParent:oMeter:AutoInc()
             end if
          end while
@@ -4535,7 +4377,7 @@ METHOD loadArticulo( nMode, lSilenceMode ) CLASS TDetMovimientos
          ::oDbfVir:cCodPr2       := ::oParent:oArt:cCodPrp2
 
          if ( !empty( ::oDbfVir:cCodPr1 ) .or. !empty( ::oDbfVir:cCodPr2 ) )     .and.;
-            ( !lEmptyProp( ::oDbfVir:cCodPr1, ::oParent:oTblPro:cAlias ) .or. !lEmptyProp( ::oDbfVir:cCodPr2, ::oParent:oTblPro:cAlias ) ) .and.;
+            ( !lemptyProp( ::oDbfVir:cCodPr1, ::oParent:oTblPro:cAlias ) .or. !lemptyProp( ::oDbfVir:cCodPr2, ::oParent:oTblPro:cAlias ) ) .and.;
             ( empty( ::oDbfVir:cValPr1 ) .or. empty( ::oDbfVir:cValPr2 ) )       .and.;
             ( uFieldEmpresa( "lUseTbl" )                                         .and.;
             ( nMode == APPD_MODE ) )
@@ -4550,7 +4392,7 @@ METHOD loadArticulo( nMode, lSilenceMode ) CLASS TDetMovimientos
             if( !empty(::oGetLote), ::oGetLote:Hide(),   )
 
             setPropertiesTable( ::oParent:oArt:Codigo, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, 0, ::oUndMov, ::oBrwPrp, ::oParent:nView )
-            
+
          else
 
             hidePropertiesTable( ::oBrwPrp )
@@ -4580,10 +4422,10 @@ METHOD loadArticulo( nMode, lSilenceMode ) CLASS TDetMovimientos
             // Posicionar el foco----------------------------------------------------
 
             do case
-               case !Empty( ::oDbfVir:cCodPr1 ) .and. Empty( ::oDbfVir:cValPr1 )
+               case !empty( ::oDbfVir:cCodPr1 ) .and. empty( ::oDbfVir:cValPr1 )
                   if( !empty(::oValPr1), ::oValPr1:SetFocus(), )
 
-               case !Empty( ::oDbfVir:cCodPr2 ) .and. Empty( ::oDbfVir:cValPr2 )
+               case !empty( ::oDbfVir:cCodPr2 ) .and. empty( ::oDbfVir:cValPr2 )
                   if( !empty(::oValPr2), ::oValPr2:SetFocus(), )
 
                case ::oDbfVir:lLote
@@ -4726,7 +4568,7 @@ METHOD SetDlgMode( nMode, oSayTotal, oSayPre ) CLASS TDetMovimientos
          ::oSayLote:Hide()
       end if
 
-      if !Empty( ::oDbfVir:cValPr1 )
+      if !empty( ::oDbfVir:cValPr1 )
          ::oSayPr1:Show()
          ::oSayVp1:Show()
          ::oValPr1:Show()
@@ -4738,7 +4580,7 @@ METHOD SetDlgMode( nMode, oSayTotal, oSayPre ) CLASS TDetMovimientos
          ::oSayVp1:Hide()
       end if
 
-      if !Empty( ::oDbfVir:cValPr2 )
+      if !empty( ::oDbfVir:cValPr2 )
          ::oSayPr2:Show()
          ::oSayVp2:Show()
          ::oValPr2:Show()
@@ -4767,15 +4609,15 @@ METHOD SetDlgMode( nMode, oSayTotal, oSayPre ) CLASS TDetMovimientos
    Ocultamos el costo si el usuario no tiene permisos para verlo---------------
    */
 
-   if !Empty( ::oPreDiv ) .and. oUser():lNotCostos()
+   if !empty( ::oPreDiv ) .and. oUser():lNotCostos()
       ::oPreDiv:Hide()
    end if
 
-   if !Empty( oSayTotal ) .and. oUser():lNotCostos()
+   if !empty( oSayTotal ) .and. oUser():lNotCostos()
       oSayTotal:Hide()
    end if
 
-   if !Empty( oSayPre ) .and. oUser():lNotCostos()
+   if !empty( oSayPre ) .and. oUser():lNotCostos()
       oSayPre:Hide()
    end if
 
@@ -4783,7 +4625,7 @@ METHOD SetDlgMode( nMode, oSayTotal, oSayPre ) CLASS TDetMovimientos
    Cargamos la configuracion de columnas---------------------------------------
    */
 
-   if Empty( ::oParent:oDbf:cAlmOrg )
+   if empty( ::oParent:oDbf:cAlmOrg )
       ::oGetAlmacenOrigen:Hide()
       ::oTxtAlmacenOrigen:Hide()
       ::oGetStockOrigen:Hide()
@@ -4914,7 +4756,7 @@ METHOD aStkArticulo() CLASS TDetMovimientos
 
    ::nStockActual       := 0
 
-   if !Empty( ::oDbfVir:cRefMov ) .and. oRetFld( ::oDbfVir:cRefMov, ::oParent:oArt, "nCtlStock" ) <= 1
+   if !empty( ::oDbfVir:cRefMov ) .and. oRetFld( ::oDbfVir:cRefMov, ::oParent:oArt, "nCtlStock" ) <= 1
 
       ::oParent:oStock:aStockArticulo( ::oDbfVir:cRefMov, , ::oBrwStock )
 
@@ -5239,6 +5081,201 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD isNumeroSerieNecesario( nMode ) CLASS TDetMovimientos
+
+   if ( nMode == APPD_MODE ) .and. ( ::lNumeroSerieNecesario ) .and. ( !::lNumeroSerieIntroducido ) .and. ( ::oParent:oDbf:nTipMov != 3 )
+
+      msgstop( "Tiene que introducir números de serie para este artículo." )
+
+      ::oBtnSerie:Click()
+
+      Return .t.
+
+   end if
+
+Return ( .f. )
+
+//---------------------------------------------------------------------------//
+
+METHOD alertControlStockUnderMin() CLASS TDetMovimientos
+
+   local nTotUnd
+   local nStkAct
+
+   if ( ::oDbf:nTipMov != 1 )
+      Return ( nil )
+   end if 
+
+   nTotUnd        := nTotNRemMov( ::oDbfVir )
+   nStkAct        := ::nStockActualAlmacen( ::oParent:oDbf:cAlmOrg )
+
+   if nTotUnd != 0 .and. oRetFld( ::oDbfVir:cRefMov, ::oParent:oArt, "lMsgMov" )
+
+      if ( nStkAct - nTotUnd ) < oRetFld( ::oDbfVir:cRefMov, ::oParent:oArt, "nMinimo" )
+
+         if !ApoloMsgNoYes( "El stock está por debajo del minimo.", "¿Desea continuar?" )
+            
+            Return nil
+         
+         end if
+
+      end if
+
+   end if
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD processPropertiesGrid() CLASS TDetMovimientos
+
+   // Tomamos algunos datos----------------------------------------------------
+
+   local n
+   local i
+   local dFecMov  := ::oDbfVir:dFecMov
+   local cTimMov  := ::oDbfVir:cTimMov
+   local nTipMov  := ::oDbfVir:nTipMov
+   local cAliMov  := ::oDbfVir:cAliMov
+   local cAloMov  := ::oDbfVir:cAloMov
+   local cCodMov  := ::oDbfVir:cCodMov
+   local cRefMov  := ::oDbfVir:cRefMov
+
+   // Metemos las lineas por propiedades---------------------------------------
+
+   for n := 1 to len( ::oBrwPrp:Cargo )
+
+      for i := 1 to len( ::oBrwPrp:Cargo[ n ] )
+
+         if IsNum( ::oBrwPrp:Cargo[ n, i ]:Value ) .and. ::oBrwPrp:Cargo[ n, i ]:Value != 0
+
+            ::oDbfVir:Append()
+
+            ::oDbfVir:dFecMov    := dFecMov
+            ::oDbfVir:cTimMov    := cTimMov
+            ::oDbfVir:nTipMov    := nTipMov
+            ::oDbfVir:cAliMov    := cAliMov
+            ::oDbfVir:cAloMov    := cAloMov
+            ::oDbfVir:cCodMov    := cCodMov
+            ::oDbfVir:cRefMov    := cRefMov
+            ::oDbfVir:cCodPr1    := ::oBrwPrp:Cargo[ n, i ]:cCodigoPropiedad1
+            ::oDbfVir:cCodPr2    := ::oBrwPrp:Cargo[ n, i ]:cCodigoPropiedad2
+            ::oDbfVir:cValPr1    := ::oBrwPrp:Cargo[ n, i ]:cValorPropiedad1
+            ::oDbfVir:cValPr2    := ::oBrwPrp:Cargo[ n, i ]:cValorPropiedad2
+            ::oDbfVir:nUndMov    := ::oBrwPrp:Cargo[ n, i ]:Value
+            ::oDbfVir:cCodUsr    := cCurUsr()
+            ::oDbfVir:cCodDlg    := oRetFld( cCurUsr(), ::oParent:oUsr, "cCodDlg" )
+            ::oDbfVir:nCajMov    := 1
+            ::oDbfVir:lSelDoc    := .t.
+            ::oDbfVir:lSndDoc    := .t.
+            ::oDbfVir:nNumLin    := nLastNum( ::oDbfVir:cAlias )
+            ::oDbfVir:nVolumen   := oRetFld( cRefMov, ::oParent:oArt, "" )
+            ::oDbfVir:cVolumen   := oRetFld( cRefMov, ::oParent:oArt, "" )
+            ::oDbfVir:nPesoKg    := oRetFld( cRefMov, ::oParent:oArt, "" )
+            ::oDbfVir:cPesoKg    := oRetFld( cRefMov, ::oParent:oArt, "" )
+
+            if ( ::oBrwPrp:Cargo[ n, i ]:nPrecioCompra != 0 )
+               ::oDbfVir:nPreDiv := ::oBrwPrp:Cargo[ n, i ]:nPrecioCompra
+            else
+               ::oDbfVir:nPreDiv := ::oDbfVir:nPreDiv 
+            end if 
+
+            if ::accumulatesStoreMovement()
+               ::oDbfVir:Cancel()
+            else 
+               ::oDbfVir:Save()
+            end if 
+
+         end if
+
+      next
+
+   next
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD accumulatesStoreMovement() CLASS TDetMovimientos
+
+   local lFound         := .f.
+   local cLote          := ::oDbfVir:cLote
+   local cRefMov        := ::oDbfVir:cRefMov
+   local nCajMov        := ::oDbfVir:nCajMov
+   local nUndMov        := ::oDbfVir:nUndMov
+   local cCodPr1        := ::oDbfVir:cCodPr1
+   local cCodPr2        := ::oDbfVir:cCodPr2
+   local cValPr1        := ::oDbfVir:cValPr1
+   local cValPr2        := ::oDbfVir:cValPr2
+   local nPrecioCosto   := ::oDbfVir:nPreDiv 
+
+   msgAlert( "accumulatesStoreMovement" )
+
+   if ( ::lNumeroSerieNecesario )
+      Return .f.
+   end if 
+
+   ::oDbfVir:GetStatus()
+
+   ::oDbfVir:GoTop()
+   while !( ::oDbfVir:eof() )
+
+      msgAlert( ::oDbfVir:fieldGetName( "cRefMov" ), "::oDbfVir:fieldGetName( RefMov )" )
+      msgAlert( cRefMov, "cRefMov" )
+      msgAlert( ::oDbfVir:fieldGetName( "cRefMov" ) == cRefMov ,     "::oDbfVir:fieldGetName( RefMov ) == cRefMov" )
+
+      msgAlert( ::oDbfVir:fieldGetName( "cLote"   ) == cLote   ,     "::oDbfVir:fieldGetName( Lote ) == cLote"     )
+      
+      msgAlert( alltrim( ::oDbfVir:fieldGetName( "cCodPr1" ) ) == alltrim( cCodPr1 ), "::oDbfVir:fieldGetName( CodPr1 ) == cCodPr1" )
+      msgAlert( ::oDbfVir:fieldGetName( "cCodPr1" ),     "::oDbfVir:fieldGetName( CodPr1 )" )
+      msgAlert( cCodPr1, "cCodPr1" )
+
+      msgAlert( alltrim( ::oDbfVir:fieldGetName( "cCodPr2" ) ) == alltrim( cCodPr2 ), "::oDbfVir:fieldGetName( CodPr2 ) == cCodPr2" )
+      msgAlert( alltrim( ::oDbfVir:fieldGetName( "cValPr1" ) ) == alltrim( cValPr1 ), "::oDbfVir:fieldGetName( ValPr1 ) == cValPr1" )
+      msgAlert( alltrim( ::oDbfVir:fieldGetName( "cValPr2" ) ) == alltrim( cValPr2 ), "::oDbfVir:fieldGetName( ValPr2 ) == cValPr2" )
+      msgAlert( ::oDbfVir:fieldGetName( "nCajMov" ) == nCajMov ,     "::oDbfVir:fieldGetName( CajMov ) == nCajMov" )
+      msgAlert( ::oDbfVir:fieldGetName( "nPrediv" ) == nPrecioCosto, "::oDbfVir:fieldGetName( Prediv ) == nPrecioCosto" )
+
+      if alltrim( ::oDbfVir:fieldGetName( "cRefMov" ) ) == alltrim( cRefMov ) .and. ;
+         alltrim( ::oDbfVir:fieldGetName( "cLote"   ) ) == alltrim( cLote   ) .and. ;
+         alltrim( ::oDbfVir:fieldGetName( "cCodPr1" ) ) == alltrim( cCodPr1 ) .and. ;
+         alltrim( ::oDbfVir:fieldGetName( "cCodPr2" ) ) == alltrim( cCodPr2 ) .and. ;
+         alltrim( ::oDbfVir:fieldGetName( "cValPr1" ) ) == alltrim( cValPr1 ) .and. ;
+         alltrim( ::oDbfVir:fieldGetName( "cValPr2" ) ) == alltrim( cValPr2 ) .and. ;
+         ::oDbfVir:fieldGetName( "nCajMov" ) == nCajMov                       .and. ;
+         ::oDbfVir:fieldGetName( "nPrediv" ) == nPrecioCosto
+
+         nCajMov  += ::oDbfVir:FieldGetName( "nCajMov" )
+         nUndMov  += ::oDbfVir:FieldGetName( "nUndMov" )
+
+         ::oDbfVir:fieldPutByName( "nCajMov", nCajMov )
+         ::oDbfVir:fieldPutByName( "nUndMov", nUndMov )
+         ::oDbfVir:fieldPutByName( "lSelDoc", .t. )
+
+         if ::oDbfVir:fieldGetName( "lKitArt" )
+            ::ActualizaKit( APPD_MODE )
+         end if
+
+         lFound         := .t.
+
+         exit
+
+      end if
+
+      ::oDbfVir:Skip()
+
+   end while
+
+   ::oDbfVir:SetStatus()
+
+   msgAlert( lFound, "salida de accumulatesStoreMovement")
+
+RETURN ( lFound )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -5311,7 +5348,7 @@ METHOD OpenFiles( lExclusive ) CLASS TDetSeriesMovimientos
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      if Empty( ::oDbf )
+      if empty( ::oDbf )
          ::oDbf            := ::DefineFiles()
       end if
 
@@ -5376,7 +5413,7 @@ METHOD Save() CLASS TDetSeriesMovimientos
 
       ( ::oDbfVir:nArea )->( dbSkip() )
 
-      if !Empty( ::oParent ) .and. !Empty( ::oParent:oMeter )
+      if !empty( ::oParent ) .and. !empty( ::oParent:oMeter )
          ::oParent:oMeter:AutoInc()
       end if
 
@@ -5384,7 +5421,7 @@ METHOD Save() CLASS TDetSeriesMovimientos
 
    ::Cancel()
 
-   if !Empty( ::oParent ) .and. !Empty( ::oParent:oMeter )
+   if !empty( ::oParent ) .and. !empty( ::oParent:oMeter )
       ::oParent:oMeter:Refresh()
    end if
 
@@ -5405,7 +5442,7 @@ METHOD RollBack() CLASS TDetSeriesMovimientos
             ( nArea )->( dbDelete() )     // ::oDbf:Delete( .f. )
          end if
 
-         if !Empty( ::oParent ) .and. !Empty( ::oParent:oMeter )
+         if !empty( ::oParent ) .and. !empty( ::oParent:oMeter )
             ::oParent:oMeter:AutoInc()
          end if
 
@@ -5455,7 +5492,7 @@ METHOD Load( lAppend )
 
    ::nRegisterLoaded := 0
 
-   if Empty( ::oDbfVir )
+   if empty( ::oDbfVir )
       ::oDbfVir      := ::DefineFiles( cPatTmp(), cLocalDriver(), .t. )
    end if
 
@@ -5469,7 +5506,7 @@ METHOD Load( lAppend )
 
       if ( lAppend ) .and. ::oDbf:Seek( ::oParent:cFirstKey )
 
-         while !Empty( ::oDbf:OrdKeyVal() ) .and. ( str( ::oDbf:nNumRem ) + ::oDbf:cSufRem == ::oParent:cFirstKey ) .and. !( ::oDbf:Eof() )
+         while !empty( ::oDbf:OrdKeyVal() ) .and. ( str( ::oDbf:nNumRem ) + ::oDbf:cSufRem == ::oParent:cFirstKey ) .and. !( ::oDbf:Eof() )
 
             if ::bOnPreLoad != nil
                Eval( ::bOnPreLoad, Self )
@@ -5727,11 +5764,11 @@ function nTotVMovAlm( cCodArt, dbfMovAlm, cCodAlm )
 
             else
 
-               if !Empty( ( dbfMovAlm )->cAliMov )
+               if !empty( ( dbfMovAlm )->cAliMov )
                   nTotVta  += nTotNMovAlm( dbfMovAlm )
                end if
 
-               if !Empty( ( dbfMovAlm )->cAloMov )
+               if !empty( ( dbfMovAlm )->cAloMov )
                   nTotVta  -= nTotNMovAlm( dbfMovAlm )
                end if
 
