@@ -108,6 +108,10 @@ CLASS TDbf
     METHOD  SetRecno()              INLINE ( ::nArea )->( DbGoTo( ::nRecno ) )
     METHOD  ReCall()
 
+    METHOD  fieldGetBuffer( cFld )          INLINE ( if( ::getBuffer(), ::aTField[ ::FieldPos( cFld ) ]:Val, nil ) )
+    METHOD  fieldPutBuffer( cFld, Val )     INLINE ( if( ::getBuffer(), ::aTField[ ::FieldPos( cFld ) ]:Val := Val, nil ) )
+
+
 //-- WORKAREA/DATABASE MANAGEMENT METHODS ------------------------------------//
 
     METHOD  Alias()             INLINE Alias( ::nArea )

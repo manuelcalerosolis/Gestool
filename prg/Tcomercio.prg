@@ -5809,11 +5809,15 @@ Return ( aStockProduct )
 
 METHOD updateWebProductStocks() CLASS TComercio
 
-   if !::TPrestashopConfig:isRealTimeConexion()
+   if !( ::TPrestashopConfig:isRealTimeConexion() )
       Return .f.
    end if 
 
-   if !::filesOpen()
+   if empty(::hProductsToUpdate)
+      Return .f.
+   end if
+
+   if !( ::filesOpen() )
       ::filesClose()
       Return .f.
    end if 

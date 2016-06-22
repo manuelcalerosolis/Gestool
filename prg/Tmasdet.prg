@@ -752,9 +752,6 @@ METHOD Del( lHead, lDetail ) CLASS TMasDet
    DEFAULT lHead     := .t.
    DEFAULT lDetail   := .t.
 
-   msgAlert( lHead, "lHead" )
-   msgAlert( lDetail, "lDetail" )
-
    if ::bOnPreDelete != nil
       lTrigger       := Eval( ::bOnPreDelete, Self )
       if IsLogic( lTrigger ) .and. !lTrigger
