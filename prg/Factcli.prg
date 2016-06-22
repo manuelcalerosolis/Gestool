@@ -6834,7 +6834,8 @@ STATIC FUNCTION cFacPrv( cFacPrv, aGet, aTmp, oBrw, nMode )
             if !( dbfFacPrvL )->lControl
 
                ( dbfTmpLin )->( dbAppend() )
-               ( dbfTmpLin )->nNumLin    	:= ( dbfFacPrvL )->nNumLin
+               ( dbfTmpLin )->nNumLin     := ( dbfFacPrvL )->nNumLin
+               ( dbfTmpLin )->nPosPrint   := ( dbfFacPrvL )->nPosPrint
                ( dbfTmpLin )->cRef       	:= ( dbfFacPrvL )->cRef
                ( dbfTmpLin )->cRefPrv    	:= ( dbfFacPrvL )->cRefPrv
                ( dbfTmpLin )->cDetalle   	:= ( dbfFacPrvL )->cDetalle
@@ -16442,6 +16443,7 @@ Static Function AppendDatosAtipicas( aTmpFac )
          ( dbfTmpLin )->( dbAppend() )
 
          ( dbfTmpLin )->nNumLin        := nLastNum( dbfTmpLin )
+         ( dbfTmpLin )->nPosPrint      := nLastNum( dbfTmpLin, "nPosPrint" )
          ( dbfTmpLin )->cRef           := ( D():Atipicas( nView ) )->cCodArt
          ( dbfTmpLin )->cCodPr1        := ( D():Atipicas( nView ) )->cCodPr1
          ( dbfTmpLin )->cCodPr2        := ( D():Atipicas( nView ) )->cCodPr2
