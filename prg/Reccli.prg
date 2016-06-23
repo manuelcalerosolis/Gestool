@@ -120,6 +120,8 @@ static oClienteCompensar
 
 static oMenu
 
+static oMailing
+
 static lExternal              := .f.
 static lOpenFiles             := .f.
 static cFiltroUsuario         := ""
@@ -207,10 +209,12 @@ STATIC FUNCTION OpenFiles( lExt )
       oCtaRem              := TCtaRem():Create( cPatCli() )
       oCtaRem:OpenFiles()
 
-      oCentroCoste            := TCentroCoste():Create( cPatDat() )
+      oCentroCoste         := TCentroCoste():Create( cPatDat() )
       if !oCentroCoste:OpenFiles()
-         lOpenFiles     := .f.
+         lOpenFiles        := .f.
       end if
+
+      oMailing             := TGenmailingDatabaseRecibosClientes():New( nView )
 
    RECOVER
 
@@ -620,11 +624,11 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
    DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
-      ACTION   ( ImpPago( nil, IS_MAIL ) ) ;
+      ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
       TOOLTIP  "Correo electrónico";
       LEVEL    ACC_IMPR
 
-      lGenRecCli( oWndBrw:oBrw, oMail, IS_MAIL )
+    //  lGenRecCli( oWndBrw:oBrw, oMail, IS_MAIL )
 
    DEFINE BTNSHELL RESOURCE "Money2_" OF oWndBrw GROUP ;
       NOBORDER ;
@@ -4213,14 +4217,31 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-static Function PrintReportRecCli( nDevice, nCopies, cPrinter )
+Function mailReportRecCli( cCodigoDocumento )
+
+Return ( PrintReportRecCli( IS_MAIL, 1, prnGetName(), cCodigoDocumento ) )
+
+//---------------------------------------------------------------------------//
+
+static Function PrintReportRecCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
 
    local oFr
-   local cFilePdf       := cPatTmp() + "RecibosCliente" + strTran( ( D():FacturasClientesCobros( nView ) )->cSerie + str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac, " ", "" ) + ".Pdf"
+   local cFilePdf             := cPatTmp() + "RecibosCliente" + strTran( ( D():FacturasClientesCobros( nView ) )->cSerie + str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac, " ", "" ) + ".Pdf"
 
-   DEFAULT nDevice      := IS_SCREEN
-   DEFAULT nCopies      := 1
-   DEFAULT cPrinter     := PrnGetName()
+   DEFAULT nDevice            := IS_SCREEN
+   DEFAULT nCopies            := 1
+   DEFAULT cPrinter           := PrnGetName()
+   DEFAULT cCodigoDocumento   := cFormatoRecibosClientes()
+
+   if empty( cCodigoDocumento )
+      msgStop( "El código del documento esta vacio" )
+      Return ( nil )
+   end if 
+
+   if !lMemoDocumento( cCodigoDocumento, D():Documentos( nView ) )
+      msgStop( "El formato " + cCodigoDocumento + " no se encuentra, o no es un formato visual." )
+      Return ( nil )
+   end if 
 
    SysRefresh()
 
@@ -4302,28 +4323,6 @@ static Function PrintReportRecCli( nDevice, nCopies, cPrinter )
             oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .f. )
             oFr:DoExport(     "PDFExport" )
 
-            if file( cFilePdf )
-
-               with object ( TGenMailing():New() )
-
-                  :SetTypeDocument( "nRecCli" )
-                  :SetAlias(        D():FacturasClientesCobros( nView ) )
-                  :SetItems(        aItmRecCli() )
-                  :SetAdjunto(      cFilePdf )
-                  :SetPara(         RetFld( ( D():FacturasClientesCobros( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )
-                  :SetAsunto(       "Envío de  recibo de cliente número " + strTran( ( D():FacturasClientesCobros( nView ) )->cSerie + "/" + str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac + "-" + str( ( D():FacturasClientesCobros( nView ) )->nNumRec ), " ", "" ) )
-                  :SetMensaje(      "Adjunto le remito nuestra factura de anticipo de cliente " + strTran( ( D():FacturasClientesCobros( nView ) )->cSerie + "/" + str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac + "-" + str( ( D():FacturasClientesCobros( nView ) )->nNumRec ), " ", "" ) + space( 1 ) )
-                  :SetMensaje(      "de fecha " + Dtoc( ( D():FacturasClientesCobros( nView ) )->dPreCob ) + space( 1 ) )
-                  :SetMensaje(      CRLF )
-                  :SetMensaje(      CRLF )
-                  :SetMensaje(      "Reciba un cordial saludo." )
-
-                  :lSend()
-
-               end with
-
-            end if
-
       end case
 
    end if
@@ -4334,7 +4333,7 @@ static Function PrintReportRecCli( nDevice, nCopies, cPrinter )
 
    oFr:DestroyFr()
 
-Return .t.
+Return ( cFilePdf )
 
 //---------------------------------------------------------------------------//
 
@@ -6238,5 +6237,21 @@ static function deleteRecibosFacturasClientes( cNumeroFactura, dbfFacCliP )
    end while
 
 Return nil
+
+//---------------------------------------------------------------------------//
+
+Static Function cFormatoRecibosClientes( cSerie )
+
+   local cFormato
+
+   DEFAULT cSerie    := ( D():FacturasClientesCobros( nView ) )->cSerie
+
+   cFormato          := cFormatoDocumento( cSerie, "nRecCli", D():Contadores( nView ) )
+
+   if empty( cFormato )
+      cFormato       := cFirstDoc( "RF", D():Documentos( nView ) )
+   end if
+
+Return ( cFormato )
 
 //---------------------------------------------------------------------------//
