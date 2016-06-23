@@ -2174,6 +2174,8 @@ METHOD DataReport( oFr ) CLASS TCobAge
    oFr:SetWorkArea(     "Liquidación", ::oDbf:nArea, .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    oFr:SetFieldAliases( "Liquidación", cObjectsToReport( ::oDbf ) )
 
+   msgalert( ( ::oDetCobAge:oDbf:nArea )->( ordsetfocus() ) )
+
    oFr:SetWorkArea(     "Lineas de liquidación", ::oDetCobAge:oDbf:nArea )
    oFr:SetFieldAliases( "Lineas de liquidación", cObjectsToReport( ::oDetCobAge:oDbf ) )
 
@@ -2664,7 +2666,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetCobAge
       INDEX TO ( cFileName )  TAG "cCodCli" ON "cCodCli"                                           NODELETED                  OF oDbf
       INDEX TO ( cFileName )  TAG "cNomCli" ON "cNomCli"                                           NODELETED                  OF oDbf
       INDEX TO ( cFileName )  TAG "cCodAge" ON "cCodAge"                                           NODELETED                  OF oDbf
-      INDEX TO ( cFileName )  TAG "xNumCob" ON "Str( nNumCob ) + cSufCob + cCodAge + cCodCli + cSerFac + Str( nNumFac, 9 ) + cSufFac" NODELETED OF oDbf
+      INDEX TO ( cFileName )  TAG "xNumCob" ON "Str( nNumCob ) + cSufCob + cCodAge + cNomCli + cSerFac + Str( nNumFac, 9 ) + cSufFac" NODELETED OF oDbf
 
    END DATABASE oDbf
 

@@ -167,6 +167,7 @@ CLASS TUser
    Method   MixPermisosGrupo()
 
    Method   OpenCajon( nView )         INLINE if( !Empty( ::oCajon ) .and. !::lNoOpenCajon(), ::oCajon:Open( nView ), )
+   Method   OpenCajonDirect( nView )   INLINE if( !Empty( ::oCajon ), ::oCajon:Open( nView ), )
    Method   OpenCajonTest()            INLINE if( !Empty( ::oCajon ) .and. !::lNoOpenCajon(), ::oCajon:Open(), )
 
    Method   lMasterLike()

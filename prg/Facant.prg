@@ -2803,7 +2803,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, nMode, nDec, nTotal, oDlg )
    */
 
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
-      oUser():OpenCajon( nView ) // OpnCaj()
+      oUser():OpenCajonDirect( nView ) // OpnCaj()
    end if
 
    oDlg:Enable()

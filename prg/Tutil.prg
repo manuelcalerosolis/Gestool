@@ -758,7 +758,7 @@ function getFieldFromDatabase( id, uField, cDatabase, uOrder )
    DEFAULT uField               := 2
    DEFAULT uOrder               := 1   
 
-   dbUseArea( .t., cDriver(), cDatabase, cCheckArea( "workArea", @workArea ), .f. )
+   dbUseArea( .t., cDriver(), cDatabase, cCheckArea( "workArea", @workArea ), .t. )
    ( workArea )->( ordListAdd( cDatabase ) )
 
    if ( workArea )->( used() )
@@ -778,6 +778,8 @@ function getFieldFromDatabase( id, uField, cDatabase, uOrder )
       ( workArea )->( dbclosearea() )
 
    end if 
+
+   msgAlert( fieldFromDatabase, "fieldFromDatabase")
 
 return ( fieldFromDatabase )
 

@@ -4384,7 +4384,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          setAutoTextDialog( 'Abriendo la caja' )
 
          if ( dbfTikT )->cTipTik != SAVALB
-            oUser():OpenCajon( nView )
+            oUser():OpenCajonDirect( nView )
          end if
 
          /*
@@ -5410,7 +5410,7 @@ Static Function EdtCobTik( oWndBrw, lBig )
 		*/
 
       if ( dbfTikT )->cTipTik != SAVALB
-         oUser():OpenCajon( nView )
+         oUser():OpenCajonDirect( nView )
       end if
 
       /*
@@ -18864,7 +18864,7 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
    Abrir la caja -----------------------------------------------------------
    */
 
-   oUser():OpenCajon( nView )
+   oUser():OpenCajonDirect( nView )
 
    /*
    Imprimir el registro-----------------------------------------------------

@@ -6,12 +6,12 @@
 
 CLASS TCajon
 
-   CLASSDATA   lCreated    AS LOGIC INIT .f.
+   CLASSDATA lCreated      AS LOGIC INIT .f.
 
    DATA  cPrinter
    DATA  cApertura                  INIT ""
 
-   Method Create()   CONSTRUCTOR
+   Method Create()                  CONSTRUCTOR
 
    Method New( cApertura, cPrinter )
 

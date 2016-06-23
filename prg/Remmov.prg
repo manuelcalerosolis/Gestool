@@ -121,6 +121,8 @@ CLASS TRemMovAlm FROM TMasDet
    DATA  cIniFile
    DATA  lSuccesfullSend
 
+   DATA  lEndCalculate                                   INIT .f.
+
    DATA  lReclculado                                     INIT .f.
 
    DATA  nNumberSend                                     INIT  0
@@ -163,6 +165,9 @@ CLASS TRemMovAlm FROM TMasDet
 
    DATA  memoInventario
    DATA  aInventarioErrors                               INIT  {}
+
+   DATA  buttonSaveResourceWithOutCalculate
+   DATA  buttonSaveResourceWithCalculate
 
    METHOD New( cPath, cDriver, oWndParent, oMenuItem )   CONSTRUCTOR
    METHOD Initiate( cText, oSender )                     CONSTRUCTOR
@@ -254,6 +259,10 @@ CLASS TRemMovAlm FROM TMasDet
 
    METHOD insertaArticuloRemesaMovimiento( cCodigo, nUnidades )
 
+   METHOD saveResourceWithCalculate( nMode, oDlg )
+
+   METHOD saveResourceWithOutCalculate( nMode, oDlg ) 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -340,6 +349,7 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TRemMovAlm
       FIELD NAME "nVdvDiv"             TYPE "N" LEN 13  DEC 6 PICTURE "@E 999,999.999999" HIDE                                               COMMENT "Cambio de la divisa"                   OF ::oDbf
       FIELD NAME "cComMov"             TYPE "C" LEN 100 DEC 0 PICTURE "@!"                                                                   COMMENT "Comentario"       COLSIZE 240          OF ::oDbf
       FIELD NAME "nTotRem"             TYPE "N" LEN 16  DEC 6 PICTURE "@E 999,999,999,999.99"   ALIGN RIGHT                                  COMMENT "Importe"          COLSIZE 100          OF ::oDbf
+      FIELD NAME "lWait"               TYPE "L" LEN  1  DEC 0                                                                                COMMENT ""                                HIDE  OF ::oDbf
 
       INDEX TO "RemMovT.Cdx" TAG "cNumRem"   ON "Str( nNumRem ) + cSufRem"   COMMENT "Número"   NODELETED OF ::oDbf
       INDEX TO "RemMovT.Cdx" TAG "dFecRem"   ON "Dtos( dFecRem ) + cTimRem"  COMMENT "Fecha"    NODELETED OF ::oDbf
@@ -1331,14 +1341,13 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
 
       with object ( ::oBrwDet:addCol() )
          :cHeader       := "Und. diferencia"
-         :bEditValue    := {|| nTotNMovAlm( ::oDetMovimientos:oDbfVir ) - nTotNMovOld( ::oDetMovimientos:oDbfVir ) }
+         :bEditValue    := {|| abs( nTotNMovAlm( ::oDetMovimientos:oDbfVir ) - nTotNMovOld( ::oDetMovimientos:oDbfVir ) ) }
          :cEditPicture  := ::cPicUnd
          :lHide         := .t.
          :nWidth        := 80
          :nDataStrAlign := 1
          :nHeadStrAlign := 1
       end with
-
       
    if !oUser():lNotCostos()
 
@@ -1391,12 +1400,17 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
       ::nMeter          := 0
       ::oMeter          := TApoloMeter():ReDefine( 400, { | u | if( pCount() == 0, ::nMeter, ::nMeter := u ) }, 10, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
-      REDEFINE BUTTON ;
+      REDEFINE BUTTON ::buttonSaveResourceWithOutCalculate;
+         ID       4 ;
+         OF       oDlg ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( ::saveResourceWithOutCalculate( nMode, oDlg ) )
+
+      REDEFINE BUTTON ::buttonSaveResourceWithCalculate;
          ID       IDOK ;
 			OF 		oDlg ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         ACTION   ( if  ( ::lSave( nMode ),;
-                        ( ::EndResource( .t., nMode, oDlg ), oDlg:End( IDOK ) ), ) )
+         ACTION   ( ::saveResourceWithCalculate( nMode, oDlg ) )
 
 		REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -1413,7 +1427,8 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
          oDlg:AddFastKey( VK_F2, {|| ::oDetMovimientos:AppendDetail() } )
          oDlg:AddFastKey( VK_F3, {|| ::EditDetalleMovimientos( oDlg ) } )
          oDlg:AddFastKey( VK_F4, {|| ::DeleteDet() } )
-         oDlg:AddFastKey( VK_F5, {|| if( ::lSave( nMode ), ( ::EndResource( .t., nMode, oDlg ), oDlg:End( IDOK ) ), ) } )
+         // oDlg:AddFastKey( VK_F5, {|| ::saveResourceWithCalculate( nMode, oDlg ) } )
+         // oDlg:AddFastKey( VK_F6, {|| ::saveResourceWithOutCalculate( nMode, oDlg ) } )
       end if
 
       oDlg:AddFastKey( VK_F1, {|| ChmHelp( "Movimientosalmacen" ) } )
@@ -1428,9 +1443,7 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
       ::EndResource( .f., nMode )
    end if
 
-   /*
-   Guardamos los datos del browse----------------------------------------------
-   */
+   // Guardamos los datos del browse----------------------------------------------
 
    ::oBrwDet:CloseData()
 
@@ -2575,6 +2588,14 @@ METHOD ShwAlm( oSay, oBtnImp ) CLASS TRemMovAlm
       end if
    end if
 
+   if ( ::oDbf:nTipMov != 3 ) // .or. ( ::nMode != APPD_MODE )
+      ::buttonSaveResourceWithOutCalculate:Hide()
+      ::buttonSaveResourceWithCalculate:Show()
+   else 
+      ::buttonSaveResourceWithOutCalculate:Show()
+      ::buttonSaveResourceWithCalculate:Hide()
+   end if 
+
 return .t.
 
 //---------------------------------------------------------------------------//
@@ -3145,6 +3166,38 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD saveResourceWithCalculate( nMode, oDlg ) CLASS TRemMovAlm
+
+   if ::lSave( nMode )
+
+      ::oDbf:lWait   := .t.
+
+      ::endResource( .t., nMode, oDlg )
+
+      oDlg:End( IDOK )
+
+   end if 
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD saveResourceWithOutCalculate( nMode, oDlg ) CLASS TRemMovAlm
+
+   if ::lSave( nMode )
+
+      ::oDbf:lWait   := .f.
+
+      ::endResource( .t., nMode, oDlg )
+
+      oDlg:End( IDOK )
+
+   end if 
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
 function cNombreArticuloMovimiento()
 
 Return ( RetFld( oThis:oDetMovimientos:oDbf:cRefMov, oThis:oArt:cAlias, "Nombre" ) )
@@ -3668,6 +3721,7 @@ METHOD DefineFiles( cPath, cDriver, lUniqueName, cFileName ) CLASS TDetMovimient
       FIELD NAME "cFormato"   TYPE "C" LEN 100 DEC 0 COMMENT "Formato de compra/venta"             OF oDbf
       FIELD NAME "lLabel"     TYPE "L" LEN   1 DEC 0 COMMENT "Lógico para imprimir etiqueta"       OF oDbf
       FIELD NAME "nLabel"     TYPE "N" LEN  16 DEC 6 COMMENT "Número de etiquetas a imprimir"      OF oDbf
+      FIELD NAME "lWait"      TYPE "L" LEN   1 DEC 0 COMMENT "Lógico para documento no finalizado" OF oDbf
 
       INDEX TO ( cFileName ) TAG "nNumRem"      ON "Str( nNumRem ) + cSufRem"               NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "dFecMov"      ON "Dtoc( dFecMov ) + cTimMov"              NODELETED                     OF oDbf
@@ -3678,11 +3732,11 @@ METHOD DefineFiles( cPath, cDriver, lUniqueName, cFileName ) CLASS TDetMovimient
       INDEX TO ( cFileName ) TAG "cRefAlm"      ON "cRefMov + cValPr1 + cValPr2 + cAliMov"  NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "cLote"        ON "cLote"                                  NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "nNumLin"      ON "Str( nNumLin )"                         NODELETED                     OF oDbf
-      INDEX TO ( cFileName ) TAG "lSndDoc"      ON "lSndDoc"                                NODELETED                              FOR "lSndDoc"        OF oDbf
-      INDEX TO ( cFileName ) TAG "nTipMov"      ON "cRefMov + Dtos( dFecMov )"              NODELETED                              FOR "nTipMov == 4"   OF oDbf
-      INDEX TO ( cFileName ) TAG "cStock"       ON "cRefMov + cAliMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote"  NODELETED  FOR "nTipMov == 4"   OF oDbf
-      INDEX TO ( cFileName ) TAG "cStkFastIn"   ON "cRefMov + cAliMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote"  NODELETED  OF oDbf
-      INDEX TO ( cFileName ) TAG "cStkFastOu"   ON "cRefMov + cAloMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote"  NODELETED  OF oDbf
+      INDEX TO ( cFileName ) TAG "lSndDoc"      ON "lSndDoc"                                NODELETED                              FOR "lSndDoc"         OF oDbf
+      INDEX TO ( cFileName ) TAG "nTipMov"      ON "cRefMov + Dtos( dFecMov )"              NODELETED                              FOR "nTipMov == 4"    OF oDbf
+      INDEX TO ( cFileName ) TAG "cStock"       ON "cRefMov + cAliMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote"  NODELETED  FOR "nTipMov == 4"    OF oDbf
+      INDEX TO ( cFileName ) TAG "cStkFastIn"   ON "cRefMov + cAliMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote"  NODELETED  FOR "!lWait"          OF oDbf
+      INDEX TO ( cFileName ) TAG "cStkFastOu"   ON "cRefMov + cAloMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote"  NODELETED  FOR "!lWait"          OF oDbf
       INDEX TO ( cFileName ) TAG "cRef"         ON "cRefMov"                                NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "cRefFec"      ON "cRefMov + cLote + dTos( dFecMov )"      NODELETED                     OF oDbf
 
@@ -4453,7 +4507,7 @@ METHOD loadArticulo( nMode, lSilenceMode ) CLASS TDetMovimientos
          SysRefresh()
 
          nPos                 := aScan( ::oParent:oStock:aStocks, {|o| o:cCodigo == ::oParent:oArt:Codigo .and. o:cCodigoAlmacen == ::oParent:oDbf:cAlmDes .and. o:cValorPropiedad1 == ::oDbfVir:cValPr1 .and. o:cValorPropiedad2 == ::oDbfVir:cValPr2 .and. o:cLote == ::oDbfVir:cLote .and. o:cNumeroSerie == ::oDbfVir:mNumSer } )
-         if ( nPos != 0 ) .and. isNum( ::oParent:oStock:aStocks[ nPos ]:nUnidades )
+         if ( nPos != 0 ) .and. ( isNum( ::oParent:oStock:aStocks[ nPos ]:nUnidades ) )
             ::oDbfVir:nUndAnt := ::oParent:oStock:aStocks[ nPos ]:nUnidades
          end if
 
@@ -4633,8 +4687,6 @@ METHOD AppendKit() CLASS TDetMovimientos
    local nNumLin  := ::oDbfVir:nNumLin
    local cCodArt  := ::oDbfVir:cRefMov
    local nTipMov  := ::oDbfVir:nTipMov
-   local cAliMov  := ::oParent:oDbf:cAlmDes
-   local cAloMov  := ::oParent:oDbf:cAlmOrg
    local cCodMov  := ::oDbfVir:cCodMov
    local nCajMov  := ::oDbfVir:nCajMov
    local nUndMov  := ::oDbfVir:nUndMov
@@ -4645,6 +4697,8 @@ METHOD AppendKit() CLASS TDetMovimientos
    local nTotUnd  := 0
    local nStkAct  := 0
    local nMinimo  := 0
+   local cAliMov  := ::oParent:oDbf:cAlmDes
+   local cAloMov  := ::oParent:oDbf:cAlmOrg
 
    if ::oParent:oArtKit:SeekInOrd( cCodArt, "cCodKit" )
 
@@ -4874,15 +4928,13 @@ METHOD Save() CLASS TDetMovimientos
       ::oDbfVir:GoTop()
       while !::oDbfVir:Eof()
 
-         if ::oDbfVir:lSelDoc
+         if ( ::oParent:oDbf:lWait ) // ::oDbfVir:lSelDoc
 
             ::oDbfVir:Load()
             ::Asigna()
 
             ::oDbfVir:lSelDoc := .f.
             ::oDbfVir:nUndMov := ( nTotNMovAlm( ::oDbfVir ) - nTotNMovOld( ::oDbfVir ) ) / NotCero( ::oDbfVir:nCajMov )
-            ::oDbfVir:nUndAnt := 0
-            ::oDbfVir:nCajAnt := 0
 
             ::oDbfVir:Save()
 
@@ -4945,6 +4997,7 @@ METHOD Asigna() CLASS TDetMovimientos
    ::oDbfVir:cAloMov    := ::oParent:oDbf:cAlmOrg
    ::oDbfVir:cCodUsr    := ::oParent:oDbf:cCodUsr
    ::oDbfVir:cCodDlg    := ::oParent:oDbf:cCodDlg
+   ::oDbfVir:lWait      := ::oParent:oDbf:lWait
    ::oDbfVir:lSndDoc    := .t.
 
 RETURN ( Self )
@@ -5147,11 +5200,11 @@ METHOD processPropertiesGrid() CLASS TDetMovimientos
    local dFecMov  := ::oDbfVir:dFecMov
    local cTimMov  := ::oDbfVir:cTimMov
    local nTipMov  := ::oDbfVir:nTipMov
-   local cAliMov  := ::oDbfVir:cAliMov
-   local cAloMov  := ::oDbfVir:cAloMov
    local cCodMov  := ::oDbfVir:cCodMov
    local nPreDiv  := ::oDbfVir:nPreDiv
    local nCajMov  := ::oDbfVir:nCajMov
+   local cAliMov  := ::oParent:oDbf:cAlmDes
+   local cAloMov  := ::oParent:oDbf:cAlmOrg
 
    // Metemos las lineas por propiedades---------------------------------------
 
@@ -5192,6 +5245,8 @@ METHOD processPropertiesGrid() CLASS TDetMovimientos
             else
                ::oDbfVir:nPreDiv := nPreDiv 
             end if 
+
+            ::oDbfVir:nUndAnt    := ::oParent:oStock:nStockAlmacen( ::oDbfVir:cRefMov, ::oDbfVir:cAliMov, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2 )
 
             if ::accumulatesStoreMovement()
                ::oDbfVir:Cancel()

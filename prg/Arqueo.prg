@@ -1820,7 +1820,7 @@ STATIC FUNCTION PrnArqueo( lPrev )
 	Apertura de Cajón-----------------------------------------------------------
 	*/
 
-   oUser():OpenCajon( nView ) //OpnCaj()
+   oUser():OpenCajonDirect( nView ) //OpnCaj()
 
    RECOVER USING oError
 

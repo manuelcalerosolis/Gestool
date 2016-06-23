@@ -908,7 +908,7 @@ Static Function SaveRec( aTmp, aGet, dbfEntT, oBrw, oDlg, nMode )
 
    WinGather( aTmp, aGet, dbfEntT, oBrw, nMode )
 
-   oUser():OpenCajon( nView ) //OpnCaj()
+   oUser():OpenCajonDirect( nView ) //OpnCaj()
 
 RETURN ( oDlg:end( IDOK ) )
 

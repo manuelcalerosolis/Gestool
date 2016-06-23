@@ -801,6 +801,7 @@ CLASS TpvTactil
    //------------------------------------------------------------------------//
 
    METHOD OpenCajon()               	INLINE ( oUser():OpenCajon( ::nView ) )
+   METHOD OpenCajonDirect()            INLINE ( oUser():OpenCajonDirect( ::nView ) )
 
    //------------------------------------------------------------------------//
 
@@ -2509,163 +2510,163 @@ METHOD StartResource() CLASS TpvTactil
 
    if ::l1024()
 
-   if Empty( ::oOfficeBar )
+      if Empty( ::oOfficeBar )
 
-      /*
-      Calculo la longitud para oGrpSalones
-      */
-
-      if uFieldEmpresa( "lLlevar" )
-         nLen                 += 60
-      end if
-
-      if uFieldEmpresa( "lRecoger" )
-         nLen                 += 60
-      end if
-
-      if uFieldEmpresa( "lEncargar" )
-         nLen                 += 60
-      end if
-
-      ::oOfficeBar            := TDotNetBar():New( 0, 0, 2020, 120, ::oDlg, 1 )
-
-      ::oOfficeBar:lPaintAll  := .f.
-      ::oOfficeBar:lDisenio   := .f.
-
-      ::oOfficeBar:SetStyle( 1 ) 
-
-      ::oDlg:oTop             := ::oOfficeBar
-
-      oCarpeta                := TCarpeta():New( ::oOfficeBar, "TPV táctil" )
-
-      /*
-      Hacemos un case para contemplar todas pas opciones que existen con las opciones de llevar, recoger y encargo
-      */
-
-      ::oGrpSalones           := TDotNetGroup():New( oCarpeta, nLen, "Salones", .f., , "Cup_32" )
-         ::oBtnSala           := TDotNetButton():New( 60, ::oGrpSalones, "Cup_32",                 "Mesas",             1, {|| ::OnClickSalaVenta() }, , , .f., .f., .f. )
-         ::oBtnGeneral        := TDotNetButton():New( 60, ::oGrpSalones, "Cashier_32",             "General",           2, {|| ::OnClickGeneral() }, , , .f., .f., .f. )
-
-         if uFieldEmpresa( "lRecoger" )
-            ::oBtnRecoger     := TDotNetButton():New( 60, ::oGrpSalones, "shoppingbasket_full_32", "Para recoger", nPos++, {|| ::OnClickParaRecoger() }, , , .f., .f., .f. )
-         end if
+         /*
+         Calculo la longitud para oGrpSalones
+         */
 
          if uFieldEmpresa( "lLlevar" )
-            ::oBtnLlevar      := TDotNetButton():New( 60, ::oGrpSalones, "Wheel_32",               "Para llevar",  nPos++, {|| ::OnClickParaLlevar() }, , , .f., .f., .f. )
+            nLen                 += 60
+         end if
+
+         if uFieldEmpresa( "lRecoger" )
+            nLen                 += 60
          end if
 
          if uFieldEmpresa( "lEncargar" )
-            ::oBtnEncargar    := TDotNetButton():New( 60, ::oGrpSalones, "address_book2_32",       "Encargar",     nPos++, {|| ::OnClickEncargar() }, , , .f., .f., .f. )
+            nLen                 += 60
          end if
 
-      oGrupo                  := TDotNetGroup():New( oCarpeta, 226, "Datos de cliente", .f., , "User1_32" )
-         ::oBtnCliente        := TDotNetButton():New( 220, oGrupo, "User1_16",                     "...",               1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
-         ::oBtnDireccion      := TDotNetButton():New( 220, oGrupo, "Home_16",                      "...",               1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
-         ::oBtnTelefono       := TDotNetButton():New( 220, oGrupo, "Mobilephone3_16",              "...",               1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
+         ::oOfficeBar            := TDotNetBar():New( 0, 0, 2020, 120, ::oDlg, 1 )
 
-      oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Guardar", .f., , "Disk_blue_32" )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Disk_blue_32",                  "Guardar y procesar",1, {|| ::OnClickGuardar() }, , , .f., .f., .f. )
+         ::oOfficeBar:lPaintAll  := .f.
+         ::oOfficeBar:lDisenio   := .f.
 
-      oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Nota", .f., , "Printer_32" )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Printer_32",                    "Entregar nota",     1, {|| ::OnClickEntregaNota() }, , , .f., .f., .f. )
+         ::oOfficeBar:SetStyle( 1 ) 
 
-      if uFieldEmpresa( "lAlbTct" )
+         ::oDlg:oTop             := ::oOfficeBar
 
-         oGrupo               := TDotNetGroup():New( oCarpeta, 126, "Cobrar", .f., , "Money2_32" )
-            oBoton            := TDotNetButton():New( 60, oGrupo, "document_plain_user1_32",       "Albarán",           1, {|| ::OnClickAlbaran() }, , , .f., .f., .f. )
-            oBoton            := TDotNetButton():New( 60, oGrupo, "Money2_32",                     "Cobrar",            2, {|| ::OnClickCobro() }, , , .f., .f., .f. )
+         oCarpeta                := TCarpeta():New( ::oOfficeBar, "TPV táctil" )
 
-      else
+         /*
+         Hacemos un case para contemplar todas pas opciones que existen con las opciones de llevar, recoger y encargo
+         */
 
-         oGrupo               := TDotNetGroup():New( oCarpeta, 66, "Cobrar", .f., , "Money2_32" )
-            oBoton            := TDotNetButton():New( 60, oGrupo, "Money2_32",                     "Cobrar",            1, {|| ::OnClickCobro() }, , , .f., .f., .f. )
+         ::oGrpSalones           := TDotNetGroup():New( oCarpeta, nLen, "Salones", .f., , "Cup_32" )
+            ::oBtnSala           := TDotNetButton():New( 60, ::oGrpSalones, "Cup_32",                 "Mesas",             1, {|| ::OnClickSalaVenta() }, , , .f., .f., .f. )
+            ::oBtnGeneral        := TDotNetButton():New( 60, ::oGrpSalones, "Cashier_32",             "General",           2, {|| ::OnClickGeneral() }, , , .f., .f., .f. )
 
-      end if         
+            if uFieldEmpresa( "lRecoger" )
+               ::oBtnRecoger     := TDotNetButton():New( 60, ::oGrpSalones, "shoppingbasket_full_32", "Para recoger", nPos++, {|| ::OnClickParaRecoger() }, , , .f., .f., .f. )
+            end if
 
-      oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Comanda", .f., , "Printer_comanda_32" )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Printer_comanda_32",            "Copia comanda",     1, {|| ::OnClickCopiaComanda( .t. ) }, , , .f., .f., .f. )
+            if uFieldEmpresa( "lLlevar" )
+               ::oBtnLlevar      := TDotNetButton():New( 60, ::oGrpSalones, "Wheel_32",               "Para llevar",  nPos++, {|| ::OnClickParaLlevar() }, , , .f., .f., .f. )
+            end if
 
-      oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Cajón", .f., , "Diskdrive_32" )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Diskdrive_32",                  "Abrir cajón",       1, {|| ::OpenCajon() }, , , .f., .f., .f. )
+            if uFieldEmpresa( "lEncargar" )
+               ::oBtnEncargar    := TDotNetButton():New( 60, ::oGrpSalones, "address_book2_32",       "Encargar",     nPos++, {|| ::OnClickEncargar() }, , , .f., .f., .f. )
+            end if
 
-      oGrupo                  := TDotNetGroup():New( oCarpeta, 186, "Mesas", .f., , "Users1_32" )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Users1_32",                     "Comensales",        1, {|| ::OnClickComensales() }, , , .f., .f., .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Media_stop_replace2_32",        "Cambiar ubicación", 2, {|| ::OnClickCambiaUbicacion() }, , , .f., .f., .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Note_cut_32",                   "Dividir o unir mesa",3,{|| ::OnClickDividirMesa() }, , , .f., .f., .f. )
+         oGrupo                  := TDotNetGroup():New( oCarpeta, 226, "Datos de cliente", .f., , "User1_32" )
+            ::oBtnCliente        := TDotNetButton():New( 220, oGrupo, "User1_16",                     "...",               1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
+            ::oBtnDireccion      := TDotNetButton():New( 220, oGrupo, "Home_16",                      "...",               1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
+            ::oBtnTelefono       := TDotNetButton():New( 220, oGrupo, "Mobilephone3_16",              "...",               1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
 
-      oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Tickets", .f., , "Index_32" )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Index_32",                      "Lista",             1, {|| ::OnClickLista() }, , , .f., .f., .f. )
+         oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Guardar", .f., , "Disk_blue_32" )
+            TDotNetButton():New( 60, oGrupo, "Disk_blue_32",                  "Guardar y procesar",1, {|| ::OnClickGuardar() }, , , .f., .f., .f. )
 
-      oGrupo                  := TDotNetGroup():New( oCarpeta, 126, "Invitaciones", .f., , "Masks_32" )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Percent_32",                    "Descuentos",        1, {|| ::OnClickDescuento() }, , , .f., .f., .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Masks_32",                      "Invitaciones",      2, {|| ::OnClickInvitacion() }, , , .f., .f., .f. )
+         oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Nota", .f., , "Printer_32" )
+            TDotNetButton():New( 60, oGrupo, "Printer_32",                    "Entregar nota",     1, {|| ::OnClickEntregaNota() }, , , .f., .f., .f. )
 
-      oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Usuario", .f., , "Security_Agent_32" )
-         ::oBtnUsuario        := TDotNetButton():New( 60, oGrupo, "Security_Agent_32",             Capitalize( Rtrim( oUser():cNombre() ) ), 1, {|| ::OnClickUsuarios() }, , , .f., .f., .f. )
+         if uFieldEmpresa( "lAlbTct" )
 
-      oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Otros", .f., , "Cashier_32" )
-         ::oBtnImportesExactos   := TDotNetButton():New( 60, oGrupo, "Gauge_32",                   "Cobros rapidos",    1, {|| ::OnClickImportesExactos() }, , , .f., .f., .f. )
+            oGrupo               := TDotNetGroup():New( oCarpeta, 126, "Cobrar", .f., , "Money2_32" )
+               TDotNetButton():New( 60, oGrupo, "document_plain_user1_32",       "Albarán",           1, {|| ::OnClickAlbaran() }, , , .f., .f., .f. )
+               TDotNetButton():New( 60, oGrupo, "Money2_32",                     "Cobrar",            2, {|| ::OnClickCobro() }, , , .f., .f., .f. )
 
-      oGrupo                  := TDotNetGroup():New( oCarpeta, 186, "Arqueos/Sesiones", .f., , "Stopwatch_stop_32" )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Stopwatch_refresh_32",          "Arqueo parcial [X]",1, {|| ::OnClickCloseTurno( .t. ) }, , , .f., .f., .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Stopwatch_stop_32",             "Arqueo total [Z]",  2, {|| ::OnClickCloseTurno( .f. ) }, , , .f., .f., .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Stopwatch_run_32",              "Iniciar sesión",    3, {|| ::OnClickIniciarSesion() }, , , .f., .f., .f. )
+         else
 
-      oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Salida", .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "End32",                         "Salida",            1, {|| ::oDlg:End() }, , , .f., .f., .f. )
- 
-      // Segunda pestaña de tpv tactil--------------------------------------------
-      
-      oCarpeta                := TCarpeta():New( ::oOfficeBar, "Más..." )
+            oGrupo               := TDotNetGroup():New( oCarpeta, 66, "Cobrar", .f., , "Money2_32" )
+               TDotNetButton():New( 60, oGrupo, "Money2_32",                     "Cobrar",            1, {|| ::OnClickCobro() }, , , .f., .f., .f. )
 
-      ::oGrpSeries            := TDotNetGroup():New( oCarpeta, 126, "Serie: ", .f. )
-         oBoton               := TDotNetButton():New( 60, ::oGrpSeries, "Up32",                    "Subir",             1, {|| ::CambiaSerie( .t. ) }, , , .f., .f., .f. )
-         oBoton               := TDotNetButton():New( 60, ::oGrpSeries, "Down32",                  "Bajar",             2, {|| ::CambiaSerie( .f. ) }, , , .f., .f., .f. )
+         end if         
 
-      oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Lote", .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Barcode_32",                    "Lote",              1, {|| ::AgregarLote() }, , , .f., .f., .f. )
+         oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Comanda", .f., , "Printer_comanda_32" )
+            TDotNetButton():New( 60, oGrupo, "Printer_comanda_32",            "Copia comanda",     1, {|| ::OnClickCopiaComanda( .t. ) }, , , .f., .f., .f. )
 
-      oGrupo                  := TDotNetGroup():New( oCarpeta, 126, "Tickets", .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Delete_32",                     "Eliminar",          1, {|| ::OnClickEliminarTicket() }, , , .f., .f., .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Recycle_32",                    "Reabrir",           2, {|| ::OnClickReabrirTicket() }, , , .f., .f., .f. )
+         oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Cajón", .f., , "Diskdrive_32" )
+            TDotNetButton():New( 60, oGrupo, "Diskdrive_32",                  "Abrir cajón",       1, {|| ::OpenCajon() }, , , .f., .f., .f. )
 
-      oGrupo                  := TDotNetGroup():New( oCarpeta, 126, "Cajas", .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Cashier_32",                    "Seleccionar",       1, {|| ::OnClickSeleccionarCajas() }, , , .f., .f., .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Cashier_32",                    "Propiedades",       2, {|| EdtCajas() }, , , .f., .f., .f. )
+         oGrupo                  := TDotNetGroup():New( oCarpeta, 186, "Mesas", .f., , "Users1_32" )
+            TDotNetButton():New( 60, oGrupo, "Users1_32",                     "Comensales",        1, {|| ::OnClickComensales() }, , , .f., .f., .f. )
+            TDotNetButton():New( 60, oGrupo, "Media_stop_replace2_32",        "Cambiar ubicación", 2, {|| ::OnClickCambiaUbicacion() }, , , .f., .f., .f. )
+            TDotNetButton():New( 60, oGrupo, "Note_cut_32",                   "Dividir o unir mesa",3,{|| ::OnClickDividirMesa() }, , , .f., .f., .f. )
 
-      oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Entradas", .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Cashier_replace_32",            "Entrada y salida",  1, {|| ::OnclickEntrdaSalida() }, , , .f., .f., .f. )
+         oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Tickets", .f., , "Index_32" )
+            TDotNetButton():New( 60, oGrupo, "Index_32",                      "Lista",             1, {|| ::OnClickLista() }, , , .f., .f., .f. )
 
-      oGrupo                     := TDotNetGroup():New( oCarpeta, 226, "Tarifas", .f., , "User1_32" )
-         ::oBtnTarifaSolo        := TDotNetButton():New( 220, oGrupo, "Money2_16",                 "",                  1, {|| nil }, , , .f., .f., .f. )
-         ::oBtnTarifaCombinado   := TDotNetButton():New( 220, oGrupo, "Money2_16",                 "",                  1, {|| nil }, , , .f., .f., .f. )
-                                    TDotNetButton():New( 220, oGrupo, "",                          "",                  1, {|| nil }, , , .f., .f., .f. )
+         oGrupo                  := TDotNetGroup():New( oCarpeta, 126, "Invitaciones", .f., , "Masks_32" )
+            TDotNetButton():New( 60, oGrupo, "Percent_32",                    "Descuentos",        1, {|| ::OnClickDescuento() }, , , .f., .f., .f. )
+            TDotNetButton():New( 60, oGrupo, "Masks_32",                      "Invitaciones",      2, {|| ::OnClickInvitacion() }, , , .f., .f., .f. )
 
-   end if 
+         oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Usuario", .f., , "Security_Agent_32" )
+            ::oBtnUsuario        := TDotNetButton():New( 60, oGrupo, "Security_Agent_32",             Capitalize( Rtrim( oUser():cNombre() ) ), 1, {|| ::OnClickUsuarios() }, , , .f., .f., .f. )
 
-   /*
-   Le damos al acciones al boon derecho de los botones
-   */
+         oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Otros", .f., , "Cashier_32" )
+            ::oBtnImportesExactos   := TDotNetButton():New( 60, oGrupo, "Gauge_32",                   "Cobros rapidos",    1, {|| ::OnClickImportesExactos() }, , , .f., .f., .f. )
 
-   if !Empty( ::oBtnGeneral )
-      ::oBtnGeneral:bRAction  := {|| ::OnClickSalaVenta( ubiGeneral ) }
-   end if
+         oGrupo                  := TDotNetGroup():New( oCarpeta, 186, "Arqueos/Sesiones", .f., , "Stopwatch_stop_32" )
+            TDotNetButton():New( 60, oGrupo, "Stopwatch_refresh_32",          "Arqueo parcial [X]",1, {|| ::OnClickCloseTurno( .t. ) }, , , .f., .f., .f. )
+            TDotNetButton():New( 60, oGrupo, "Stopwatch_stop_32",             "Arqueo total [Z]",  2, {|| ::OnClickCloseTurno( .f. ) }, , , .f., .f., .f. )
+            TDotNetButton():New( 60, oGrupo, "Stopwatch_run_32",              "Iniciar sesión",    3, {|| ::OnClickIniciarSesion() }, , , .f., .f., .f. )
 
-   if !Empty( ::oBtnLlevar )
-      ::oBtnLlevar:bRAction   := {|| ::OnClickSalaVenta( ubiLlevar ) }
-   end if
+         oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Salida", .f. )
+            TDotNetButton():New( 60, oGrupo, "End32",                         "Salida",            1, {|| ::oDlg:End() }, , , .f., .f., .f. )
+    
+         // Segunda pestaña de tpv tactil--------------------------------------------
+         
+         oCarpeta                := TCarpeta():New( ::oOfficeBar, "Más..." )
 
-   if !Empty( ::oBtnSala )
-      ::oBtnSala:bRAction     := {|| ::OnClickSalaVenta( ubiSala ) }
-   end if
+         ::oGrpSeries            := TDotNetGroup():New( oCarpeta, 126, "Serie: ", .f. )
+            TDotNetButton():New( 60, ::oGrpSeries, "Up32",                    "Subir",             1, {|| ::CambiaSerie( .t. ) }, , , .f., .f., .f. )
+            TDotNetButton():New( 60, ::oGrpSeries, "Down32",                  "Bajar",             2, {|| ::CambiaSerie( .f. ) }, , , .f., .f., .f. )
 
-   if !Empty( ::oBtnRecoger )
-      ::oBtnRecoger:bRAction  := {|| ::OnClickSalaVenta( ubiRecoger ) }
-   end if
+         oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Lote", .f. )
+            TDotNetButton():New( 60, oGrupo, "Barcode_32",                    "Lote",              1, {|| ::AgregarLote() }, , , .f., .f., .f. )
 
-   if !Empty( ::oBtnEncargar )
-      ::oBtnEncargar:bRAction := {|| ::OnClickSalaVenta( ubiEncargar ) }
-   end if
+         oGrupo                  := TDotNetGroup():New( oCarpeta, 126, "Tickets", .f. )
+            TDotNetButton():New( 60, oGrupo, "Delete_32",                     "Eliminar",          1, {|| ::OnClickEliminarTicket() }, , , .f., .f., .f. )
+            TDotNetButton():New( 60, oGrupo, "Recycle_32",                    "Reabrir",           2, {|| ::OnClickReabrirTicket() }, , , .f., .f., .f. )
+
+         oGrupo                  := TDotNetGroup():New( oCarpeta, 126, "Cajas", .f. )
+            TDotNetButton():New( 60, oGrupo, "Cashier_32",                    "Seleccionar",       1, {|| ::OnClickSeleccionarCajas() }, , , .f., .f., .f. )
+            TDotNetButton():New( 60, oGrupo, "Cashier_32",                    "Propiedades",       2, {|| EdtCajas() }, , , .f., .f., .f. )
+
+         oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Entradas", .f. )
+            TDotNetButton():New( 60, oGrupo, "Cashier_replace_32",            "Entrada y salida",  1, {|| ::OnclickEntrdaSalida() }, , , .f., .f., .f. )
+
+         oGrupo                     := TDotNetGroup():New( oCarpeta, 226, "Tarifas", .f., , "User1_32" )
+            ::oBtnTarifaSolo        := TDotNetButton():New( 220, oGrupo, "Money2_16",                 "",                  1, {|| nil }, , , .f., .f., .f. )
+            ::oBtnTarifaCombinado   := TDotNetButton():New( 220, oGrupo, "Money2_16",                 "",                  1, {|| nil }, , , .f., .f., .f. )
+                                       TDotNetButton():New( 220, oGrupo, "",                          "",                  1, {|| nil }, , , .f., .f., .f. )
+
+      end if 
+
+      /*
+      Le damos al acciones al boon derecho de los botones
+      */
+
+      if !Empty( ::oBtnGeneral )
+         ::oBtnGeneral:bRAction  := {|| ::OnClickSalaVenta( ubiGeneral ) }
+      end if
+
+      if !Empty( ::oBtnLlevar )
+         ::oBtnLlevar:bRAction   := {|| ::OnClickSalaVenta( ubiLlevar ) }
+      end if
+
+      if !Empty( ::oBtnSala )
+         ::oBtnSala:bRAction     := {|| ::OnClickSalaVenta( ubiSala ) }
+      end if
+
+      if !Empty( ::oBtnRecoger )
+         ::oBtnRecoger:bRAction  := {|| ::OnClickSalaVenta( ubiRecoger ) }
+      end if
+
+      if !Empty( ::oBtnEncargar )
+         ::oBtnEncargar:bRAction := {|| ::OnClickSalaVenta( ubiEncargar ) }
+      end if
 
    end if
 
@@ -6457,7 +6458,7 @@ METHOD OnClickCobro() CLASS TpvTactil
 
       // Abrimos el cajón portamonedas antes de imprimir-----------------------
 
-      ::OpenCajon()
+      ::OpenCajonDirect()
 
       // Imprimimos el documento-----------------------------------------------
 
@@ -6524,7 +6525,7 @@ METHOD OnClickAlbaran() CLASS TpvTactil
       */
 
       if ( ::oTpvCobros:Entregado() != 0 )
-         ::OpenCajon()
+         ::OpenCajonDirect()
       end if
 
       /*

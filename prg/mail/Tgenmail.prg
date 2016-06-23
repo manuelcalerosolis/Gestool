@@ -157,7 +157,6 @@ CLASS TGenMailing
    METHOD gotoRecord( nRecord )           INLINE ( ( ::getWorkArea() )->( dbgoto( nRecord ) ) )
 
    METHOD setDe( cText )                  INLINE ( ::cGetDe := padr( cText, 250 ) )
-   
 
    METHOD setCopia( cText )               INLINE ( ::cGetCopia := padr( cText, 250 ) )
    METHOD getCopia()                      INLINE ( alltrim( ::cGetCopia ) )
@@ -722,25 +721,38 @@ Return ( cExpresion )
 METHOD replaceExpresion( cDocument, cExpresion ) CLASS TGenMailing
 
    local nScan
+   local oError
+   local oBlock
    local cExpresionToSearch
 
-   cExpresionToSearch      := Alltrim( SubStr( cExpresion, 2, len( cExpresion ) - 2 ) )
+   oBlock                     := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
-   if ( "(" $ cExpresionToSearch .and. ")" $ cExpresionToSearch )
+      cExpresionToSearch      := Alltrim( SubStr( cExpresion, 2, len( cExpresion ) - 2 ) )
 
-      cDocument            := StrTran( cDocument, cExpresion, cValToText( eval( bChar2Block( cExpresionToSearch ) ) ) )
-      // cDocument            := StrTran( cDocument, cExpresion, cValToText( eval( &( "{| self | " + cExpresionToSearch + "}" ) ) ) )
+      if ( "(" $ cExpresionToSearch .and. ")" $ cExpresionToSearch )
 
-   else
+         // cDocument            := StrTran( cDocument, cExpresion, cValToText( eval( bChar2Block( cExpresionToSearch ) ) ) )
+         cDocument            := StrTran( cDocument, cExpresion, cValToText( eval( &( "{| Self | " + cExpresionToSearch + "}" ), Self ) ) )
 
-      nScan                := aScan( ::aItems, {|a| alltrim( a[ 5 ] ) == cExpresionToSearch .or. alltrim( a[ 5 ] ) == HtmlEntities( cExpresionToSearch ) } )
-      if nScan != 0
-         cDocument         := StrTran( cDocument, cExpresion, alltrim( cValToChar( ( ::getWorkArea() )->( eval( Compile( ::aItems[ nScan, 1 ] ) ) ) ) ) )
       else
-         cDocument         := StrTran( cDocument, cExpresion, "" )
+
+         nScan                := aScan( ::aItems, {|a| alltrim( a[ 5 ] ) == cExpresionToSearch .or. alltrim( a[ 5 ] ) == HtmlEntities( cExpresionToSearch ) } )
+         if nScan != 0
+            cDocument         := StrTran( cDocument, cExpresion, alltrim( cValToChar( ( ::getWorkArea() )->( eval( Compile( ::aItems[ nScan, 1 ] ) ) ) ) ) )
+         else
+            cDocument         := StrTran( cDocument, cExpresion, "" )
+         end if
+
       end if
 
-   end if
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), 'Error al evaluar las expresiones' )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
 Return ( Self )
 
