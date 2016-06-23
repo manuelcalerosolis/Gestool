@@ -686,6 +686,10 @@ Function getCustomExtraField( cFieldName, cDocumentType, Id )
    local cTipoDocumento    := ""
    local oDetCamposExtra
 
+   if Empty( Id )
+      Return cExtraField
+   end if
+
    oDetCamposExtra         := TDetCamposExtra():New()
    oDetCamposExtra:OpenFiles()
 

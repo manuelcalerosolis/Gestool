@@ -5653,7 +5653,7 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
             nOrdAnt  := ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( "nNumFac" ) )
 
             for each cRecibo in aRecibosRelacionados
-            
+
                if ( D():FacturasClientesCobros( nView ) )->( dbSeek( cRecibo ) )
 
                   if dbLock( D():FacturasClientesCobros( nView ) )
@@ -5663,6 +5663,22 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
                      ( D():FacturasClientesCobros( nView ) )->cNumMtr      := cNumRecTip
 
                      ( D():FacturasClientesCobros( nView ) )->( dbUnLock() )
+
+                     do case 
+                        case empty( ( D():FacturasClientesCobros( nView ) )->cTipRec )
+
+                           if ( D():FacturasClientes( nView ) )->( dbSeek( ( D():FacturasClientesCobros( nView ) )->cSerie + Str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac ) )
+                              ChkLqdFacCli( nil, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), cFacCliP, D():AnticiposClientes( nView ), D():TiposIva( nView ), D():Divisas( nView ), .f. )
+                           end if
+
+                        case ( D():FacturasClientesCobros( nView ) )->cTipRec == "R"
+
+                           if ( D():FacturasRectificativas( nView ) )->( dbSeek( ( D():FacturasClientesCobros( nView ) )->cSerie + Str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac ) )
+                              ChkLqdFacRec( nil, D():FacturasRectificativas( nView ), D():FacturasRectificativasLineas( nView ), cFacCliP, D():TiposIva( nView ), D():Divisas( nView ) )
+                           end if
+
+                     end case
+
                   end if
 
                end if

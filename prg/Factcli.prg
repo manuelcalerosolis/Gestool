@@ -23072,3 +23072,22 @@ function cNumeroPedidoFactura( cNumAlb )
 return cPedido
 
 //---------------------------------------------------------------------------//
+
+Function EnvaseArticuloFacturasClientesLineas( cCodCli, cCodArt )
+
+   local nRec     := ( D():Atipicas( nView ) )->( Recno() )
+   local nOrdAnt  := ( D():Atipicas( nView ) )->( OrdSetFocus( "cCliArt" ) )
+   local cCodEnv  := ""
+
+   if ( D():Atipicas( nView ) )->( dbSeek( Padr( cCodCli, 12 ) + Padr( cCodArt, 18 ) + Space( 80 ) ) ) .and. !Empty( ( D():Atipicas( nView ) )->cCodEnv )
+      cCodEnv  := ( D():Atipicas( nView ) )->cCodEnv
+   else
+      cCodEnv  := RetFld( Padr( cCodArt, 18 ), D():Articulos( nView ), "cCodFra", "Codigo" )                    
+   end if
+
+   ( D():Atipicas( nView ) )->( OrdSetFocus( nOrdAnt ) )
+   ( D():Atipicas( nView ) )->( dbGoTo( nRec ) )
+   
+Return ( cCodEnv )
+
+//---------------------------------------------------------------------------//
