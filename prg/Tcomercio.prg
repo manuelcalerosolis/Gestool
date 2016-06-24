@@ -4737,9 +4737,13 @@ METHOD insertStructureInformation() CLASS TComercio
 
       ::TComercioProduct:insertAditionalInformation()
 
+      ::MeterTotalText( "Subiendo la información de las categorias." )
+
       ::TComercioCategory:insertCategories()   
 
       ::TComercioCategory:updateCategoriesParent()
+
+      ::TComercioCategory:recalculatePositionsCategory()
 
       ::prestaShopDisConnect()
 

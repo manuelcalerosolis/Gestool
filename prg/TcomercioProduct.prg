@@ -1624,9 +1624,9 @@ METHOD insertTaxPrestashop( hTax ) CLASS TComercioProduct
                   "id_country, " + ;
                   "id_tax ) " + ;
                "VALUES ( " + ;
-                  "'" + str( idGroupWeb ) + "', " + ;       // id_tax_rules_group
-                  "'6', " + ;                               // id_country - 6 es el valor de España
-                  "'" + str( idTax ) + "' )"                // id_tax
+                  "'" + alltrim( str( idGroupWeb ) ) + "', " + ;        // id_tax_rules_group
+                  "'6', " + ;                                           // id_country - 6 es el valor de España
+                  "'" + alltrim( str( idTax ) ) + "' )"                 // id_tax
 
    if !::commandExecDirect( cCommand )
       ::writeTextError( hGet( hTax, "name" ), ::cPrefixTable( "tax_rule" ) )
@@ -1640,7 +1640,7 @@ METHOD insertTaxPrestashop( hTax ) CLASS TComercioProduct
                   "id_tax_rules_group, " + ;
                   "id_shop ) " + ;
                "VALUES ( " + ;
-                  "'" + str( idGroupWeb ) + "', " + ;
+                  "'" + alltrim( str( idGroupWeb ) ) + "', " + ;
                   "'1' )"
 
    if !::commandExecDirect( cCommand )
@@ -1902,10 +1902,20 @@ METHOD insertStockProduct( hStock ) CLASS TComercioProduct
    local attributeSecondProperty 
    local idProductAttribute      := 0
 
+   ::writeText( "idProduct " + cvaltochar( hget( hStock, "idProduct" ) ) )
+   ::writeText( "idFirstProperty " + cvaltochar( hget( hStock, "idFirstProperty" ) ) )
+   ::writeText( "valueFirstProperty " + cvaltochar( hget( hStock, "valueFirstProperty" ) ) )
+   ::writeText( "idSecondProperty " + cvaltochar( hget( hStock, "idSecondProperty" ) ) )
+   ::writeText( "valueSecondProperty " + cvaltochar( hget( hStock, "valueSecondProperty" ) ) )
+
    idProductPrestashop           := ::TPrestashopId():getValueProduct( hget( hStock, "idProduct" ), ::getCurrentWebName() )
    attributeFirstProperty        := ::TPrestashopId():getValueAttribute( hget( hStock, "idFirstProperty" ) + hget( hStock, "valueFirstProperty" ),     ::getCurrentWebName() )
    attributeSecondProperty       := ::TPrestashopId():getValueAttribute( hget( hStock, "idSecondProperty" ) + hget( hStock, "valueSecondProperty" ),   ::getCurrentWebName() ) 
    unitStock                     := hget( hStock, "unitStock" )
+
+   ::writeText( "idProductPrestashop " + cvaltochar( idProductPrestashop ) )
+   ::writeText( "attributeFirstProperty " + cvaltochar( attributeFirstProperty ) )
+   ::writeText( "attributeSecondProperty " + cvaltochar( attributeSecondProperty ) )
 
    if ( attributeFirstProperty != 0 ) .and. ( attributeSecondProperty != 0 )
       idProductAttribute         := ::getProductAttribute( idProductPrestashop, attributeFirstProperty, attributeSecondProperty ) 

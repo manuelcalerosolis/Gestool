@@ -26,6 +26,8 @@ CLASS TComercioCategory FROM TComercioConector
    METHOD updateCategoriesParent()
       METHOD updateCategoryParent( hCategory )
 
+   METHOD recalculatePositionsCategory()
+
    METHOD truncateAllTables() 
       
    METHOD cleanGestoolReferences()
@@ -483,3 +485,72 @@ METHOD getNodeParentCategory( idCategory ) CLASS TComercioCategory
 Return ( idNode )
 
 //---------------------------------------------------------------------------//
+
+METHOD recalculatePositionsCategory() CLASS TComercioCategory
+
+   local nPos              := 0
+   local nContador         := 2
+   local cQuery
+   local oQuery         
+   local cCommand
+   local nTotalCategory
+   local nLeft             := 0  
+   local nRight            := 0
+
+   /*
+   Recorremos el Query con la consulta-----------------------------------------
+   */
+
+   cQuery                  := 'SELECT * FROM ' + ::cPrefixTable( "category" )
+   oQuery                  := ::queryExecDirect( cQuery )
+   if !( oQuery:Open() )
+      ::meterProcesoText( "Error al ejecutar " + "SELECT * FROM " + ::cPrefixTable( "category" ) )
+      Return ( .f. )
+   end if
+
+   nTotalCategory          := oQuery:RecCount()
+
+   if nTotalCategory == 0
+      ::writeText( "No hay elementos en la categoría" )
+      Return ( .f. )
+   end if
+
+   oQuery:GoTop()
+   while !oQuery:Eof()
+
+      do case
+         case oQuery:FieldGet( 1 ) == 1
+
+            cCommand    := "UPDATE " + ::cPrefixTable( "category" ) + " SET nLeft = '1', nRight='" + alltrim( str( nTotalCategory * 2 ) ) + "' WHERE id_category = 1" 
+            if !::commandExecDirect( cCommand )
+               ::writeText( "Error al actualizar el grupo de familia en la tabla category", 3 )
+            end if
+
+         case oQuery:FieldGet( 1 ) == 2
+
+            cCommand    := "UPDATE " + ::cPrefixTable( "category" ) + " SET nLeft = '2', nRight='" + alltrim( str( ( nTotalCategory * 2 ) -1 ) ) + "' WHERE id_category = 2"
+            if !::commandExecDirect( cCommand )
+               ::writeText( "Error al actualizar el grupo de familia en la tabla category", 3 )
+            end if
+
+         otherwise
+
+            nLeft       := ++nContador
+            nRight      := ++nContador
+
+            cCommand    := "UPDATE " + ::cPrefixTable( "category" ) + " SET nLeft = '" + alltrim( str( nLeft ) ) + "', nRight='" + alltrim( str( nRight ) ) + "' WHERE id_category = " + alltrim( str( oQuery:FieldGet( 1 ) ) )
+            if !::commandExecDirect( cCommand )
+               ::writeText( "Error al actualizar el grupo de familia en la tabla category", 3 )
+            end if
+
+      end case               
+
+      oQuery:Skip()
+
+   end while
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+

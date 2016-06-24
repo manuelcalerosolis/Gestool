@@ -74,7 +74,7 @@ STATIC FUNCTION DialogDisable()
    CursorWait()
 
    Self:Cargo         := Self:bValid
-   Self:bValid        := {|| msgStop( "Intento salir"), .f. }
+   Self:bValid        := {|| .f. }
 
    for each oControl in Self:aControls
       if oControl:ClassName() <> "TSAY" .AND. oControl:ClassName() <> "TBITMAP"
