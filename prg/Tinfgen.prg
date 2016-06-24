@@ -567,7 +567,9 @@ CLASS TInfGen
 
    METHOD SetValorGrupo( cNombre, cValor )
 
-   METHOD oDbfOrdSetFocus( cTag )            INLINE ( ::oDbf:OrdSetFocus( cTag ) )
+   METHOD oDbfOrdSetFocus( cTag )         INLINE ( ::oDbf:OrdSetFocus( cTag ) )
+
+   METHOD oDbfSetFilter( cExp )           INLINE ( ( ::oDbf:nArea )->( dbsetfilter( c2Block( cExp ), cExp ) ) )
 
 END CLASS
 

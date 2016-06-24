@@ -768,6 +768,7 @@ return ( nil )
 
 METHOD datosDireccion( hDestinatario )
 
+   ::hPedidoLinea[ "Cajas" ]        := val( hDestinatario[ "unidadesEntrega" ] ) / Val( RetFld( "20006" + ::hPedidoLinea[ "Articulo" ], D():DetCamposExtras( ::nView ), "cValor", "cTotClave" ) )
    ::hPedidoLinea[ "Unidades" ]     := val( hDestinatario[ "unidadesEntrega" ] )
    ::hPedidoLinea[ "Direccion" ]    := ::codigoDireccion( hDestinatario[ "puntoEntrega" ], hDestinatario[ "departamentoEntrega" ] )
 
