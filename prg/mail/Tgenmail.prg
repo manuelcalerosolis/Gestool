@@ -725,8 +725,10 @@ METHOD replaceExpresion( cDocument, cExpresion ) CLASS TGenMailing
    local oBlock
    local cExpresionToSearch
 
+   /*
    oBlock                     := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
+   */
 
       cExpresionToSearch      := Alltrim( SubStr( cExpresion, 2, len( cExpresion ) - 2 ) )
 
@@ -746,13 +748,12 @@ METHOD replaceExpresion( cDocument, cExpresion ) CLASS TGenMailing
 
       end if
 
+   /*
    RECOVER USING oError
-
       msgStop( ErrorMessage( oError ), 'Error al evaluar las expresiones' )
-
    END SEQUENCE
-
    ErrorBlock( oBlock )
+   */
 
 Return ( Self )
 

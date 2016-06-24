@@ -779,8 +779,6 @@ function getFieldFromDatabase( id, uField, cDatabase, uOrder )
 
    end if 
 
-   msgAlert( fieldFromDatabase, "fieldFromDatabase")
-
 return ( fieldFromDatabase )
 
 //--------------------------------------------------------------------------//
