@@ -386,6 +386,8 @@ METHOD Create( uParam ) CLASS TFastVentasClientes
    ::AddField( "cSufRem",  "C",  2, 0, {|| "@!" },          "Sufijo de la remesa"            )
    ::AddField( "cEstado",  "C", 20, 0, {|| "" },            "Estado del recibo"              )
 
+   ::AddField( "nRieCli",  "N", 16, 0, {|| "" },            "Riesgo del cliente"             )
+
    ::AddTmpIndex( "cCodCli", "cCodCli" )
 
 RETURN ( self )
@@ -906,6 +908,8 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:nTotRet    := sTot:nTotalRetencion
             ::oDbf:nTotCob    := sTot:nTotalCobrado
 
+            ::oDbf:nRieCli    := oRetFld( ::oSatCliT:cCodCli, ::oDbfCli, "Riesgo", "COD" )
+
             /*
             Añadimos un nuevo registro--------------------------------------------
             */
@@ -1026,6 +1030,8 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:nTotRet    := sTot:nTotalRetencion
             ::oDbf:nTotCob    := sTot:nTotalCobrado
 
+            ::oDbf:nRieCli    := oRetFld( ::oPreCliT:cCodCli, ::oDbfCli, "Riesgo", "COD" )
+
             /*
             Añadimos un nuevo registro--------------------------------------------
             */
@@ -1143,6 +1149,8 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:nTotRnt    := sTot:nTotalRentabilidad
             ::oDbf:nTotRet    := sTot:nTotalRetencion
             ::oDbf:nTotCob    := sTot:nTotalCobrado
+
+            ::oDbf:nRieCli    := oRetFld( ::oPedCliT:cCodCli, ::oDbfCli, "Riesgo", "COD" )
 
             /*
             Añadimos un nuevo registro--------------------------------------------
@@ -1268,6 +1276,8 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
             ::oDbf:nTotRet    := sTot:nTotalRetencion
             ::oDbf:nTotCob    := sTot:nTotalCobrado
 
+            ::oDbf:nRieCli    := oRetFld( ::oAlbCliT:cCodCli, ::oDbfCli, "Riesgo", "COD" )
+
             /*
             Añadimos un nuevo registro--------------------------------------------
             */
@@ -1385,6 +1395,8 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:nTotRnt    := sTot:nTotalRentabilidad
             ::oDbf:nTotRet    := sTot:nTotalRetencion
             ::oDbf:nTotCob    := sTot:nTotalCobrado
+
+            ::oDbf:nRieCli    := oRetFld( ::oFacCliT:cCodCli, ::oDbfCli, "Riesgo", "COD" )
 
             /*
             Añadimos un nuevo registro--------------------------------------------
@@ -1505,6 +1517,8 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:nTotRet    := sTot:nTotalRetencion
             ::oDbf:nTotCob    := sTot:nTotalCobrado
 
+            ::oDbf:nRieCli    := oRetFld( ::oFacRecT:cCodCli, ::oDbfCli, "Riesgo", "COD" )
+
             /*
             Añadimos un nuevo registro--------------------------------------------
             */
@@ -1614,6 +1628,8 @@ METHOD AddTicket() CLASS TFastVentasClientes
             ::oDbf:nTotRnt    := sTot:nTotalRentabilidad
             ::oDbf:nTotCob    := sTot:nTotalCobrado
 
+            ::oDbf:nRieCli    := oRetFld( ::oTikCliT:cCliTik, ::oDbfCli, "Riesgo", "COD" )
+
             /*
             Añadimos un nuevo registro--------------------------------------------
             */
@@ -1719,6 +1735,8 @@ METHOD AddRecibosCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
          ::oDbf:cEstado    := cEstadoRecibo( ::oFacCliP:cAlias )
 
+         ::oDbf:nRieCli    := oRetFld( ::oFacCliP:cCodCli, ::oDbfCli, "Riesgo", "COD" )
+
          // Añadimos un nuevo registro--------------------------------------------
 
          if ::lValidRegister()
@@ -1813,6 +1831,8 @@ METHOD AddRecibosClienteCobro( cCodigoCliente ) CLASS TFastVentasClientes
          ::oDbf:nTotCob    := nTotCobCli( ::oFacCliP )
 
          ::oDbf:cEstado    := cEstadoRecibo( ::oFacCliP:cAlias )
+
+         ::oDbf:nRieCli    := oRetFld( ::oFacCliP:cCodCli, ::oDbfCli, "Riesgo", "COD" )
 
          // Añadimos un nuevo registro--------------------------------------------
 
@@ -1933,6 +1953,8 @@ METHOD insertFacturaCliente()
                   ::oDbf:nTotRnt    := sTot:nTotalRentabilidad
                   ::oDbf:nTotRet    := sTot:nTotalRetencion
                   ::oDbf:nTotCob    := sTot:nTotalCobrado
+
+                  ::oDbf:nRieCli    := oRetFld( ::oFacCliT:cCodCli, ::oDbfCli, "Riesgo", "COD" )
 
                   /*
                   Añadimos un nuevo registro--------------------------------------------
@@ -2064,6 +2086,8 @@ METHOD insertRectificativa()
                   ::oDbf:nTotRet    := sTot:nTotalRetencion
                   ::oDbf:nTotCob    := sTot:nTotalCobrado
 
+                  ::oDbf:nRieCli    := oRetFld( ::oFacRecT:cCodCli, ::oDbfCli, "Riesgo", "COD" )
+
                   /*
                   Añadimos un nuevo registro--------------------------------------------
                   */
@@ -2186,6 +2210,8 @@ METHOD insertTicketCliente()
                   ::oDbf:nTotRnt    := sTot:nTotalRentabilidad
                   ::oDbf:nTotCob    := sTot:nTotalCobrado
 
+                  ::oDbf:nRieCli    := oRetFld( ::oTikCliT:cCliTik, ::oDbfCli, "Riesgo", "COD" )
+
                   /*
                   Añadimos un nuevo registro--------------------------------------------
                   */
@@ -2250,6 +2276,7 @@ METHOD AddClientes() CLASS TFastVentasClientes
       ::oDbf:cCodUsr := ""
       ::oDbf:cCodObr := ""
       ::oDbf:cCodPos := ::oDbfCli:CodPostal
+      ::oDbf:nRieCli := ::oDbfCli:Riesgo
 
       if ::lValidRegister()
          ::oDbf:Insert()
