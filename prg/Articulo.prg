@@ -13653,6 +13653,9 @@ CLASS TArticuloLabelGenerator
    Data nCantidadLabels
    Data nUnidadesLabels
 
+   Data oAlmacen
+   Data cAlmacen
+
    Data oMtrLabel
    Data nMtrLabel
 
@@ -13867,6 +13870,17 @@ Method Create() CLASS TArticuloLabelGenerator
             WHEN     ( ::nCantidadLabels == 1 ) ;
             OF       ::fldGeneral
 
+         REDEFINE GET ::oAlmacen Var ::cAlmacen ;
+            ID       230 ;
+            IDTEXT   231 ;
+            PICTURE  "@!" ;
+            WHEN     ( ::nCantidadLabels == 2 ) ;
+            BITMAP   "LUPA" ;
+            OF       ::fldGeneral
+ 
+            ::oAlmacen:bValid    := { || cAlmacen( ::oAlmacen, , ::oAlmacen:oHelpText ) }
+            ::oAlmacen:bHelp     := { || BrwAlmacen( ::oAlmacen, ::oAlmacen:oHelpText ) }
+
          // Segunda caja de dialogo--------------------------------------------------
 
          REDEFINE GET oGetOrd ;
@@ -14052,9 +14066,9 @@ Method BotonSiguiente() CLASS TArticuloLabelGenerator
             ::oFld:GoNext()
             ::oBtnAnterior:Show()
 
-            if ::oCriterio:nAt != 1
+           // if ::oCriterio:nAt != 1
                ::SelectCriterioLabels()
-            end if
+           // end if
 
             SetWindowText( ::oBtnSiguiente:hWnd, "&Terminar" )
 
@@ -14151,7 +14165,7 @@ Method SelectCriterioLabels() CLASS TArticuloLabelGenerator
       if dbLock( D():Articulos( nView ) )
 
          do case
-            case ::oCriterio:nAt == 2
+            case ::oCriterio:nAt == 1 .or. ::oCriterio:nAt == 2
 
                ::PutStockLabels()
 
@@ -14201,6 +14215,17 @@ Method PutStockLabels() CLASS TArticuloLabelGenerator
 
    ( D():Articulos( nView ) )->lLabel     := .t.
 
+   /*
+   Limpiamos las etiquetas por propiedades-------------------------------
+   */
+
+   while ( dbfArtLbl )->( dbSeek( ( D():Articulos( nView ) )->Codigo ) ) .and. !( dbfArtLbl )->( eof() )
+      if dbLock( dbfArtLbl )
+         ( dbfArtLbl )->( dbDelete() )
+         ( dbfArtLbl )->( dbUnLock() )
+      end if
+   end while
+
    if ::nCantidadLabels == 1
 
       ( D():Articulos( nView ) )->nLabel  := ::nUnidadesLabels
@@ -14210,21 +14235,14 @@ Method PutStockLabels() CLASS TArticuloLabelGenerator
       if !Empty( ( D():Articulos( nView ) )->cCodPrp1 ) .or. !Empty( ( D():Articulos( nView ) )->cCodPrp2 )
 
          /*
-         Limpiamos las etiquetas por propiedades-------------------------------
-         */
-
-         while ( dbfArtLbl )->( dbSeek( ( D():Articulos( nView ) )->Codigo ) ) .and. !( dbfArtLbl )->( eof() )
-            if dbLock( dbfArtLbl )
-               ( dbfArtLbl )->( dbDelete() )
-               ( dbfArtLbl )->( dbUnLock() )
-            end if
-         end while
-
-         /*
          Calculo de stock------------------------------------------------------
          */
 
-         aStock                           := oStock:aStockArticulo( ( D():Articulos( nView ) )->Codigo, , , .f., .f. )
+         if !Empty( ::cAlmacen ) 
+            aStock                           := oStock:aStockArticulo( ( D():Articulos( nView ) )->Codigo, ::cAlmacen, , .f., .f. ) 
+         else 
+            aStock                           := oStock:aStockArticulo( ( D():Articulos( nView ) )->Codigo, , , .f., .f. ) 
+         end if
 
          for each o in aStock
 
@@ -14242,8 +14260,10 @@ Method PutStockLabels() CLASS TArticuloLabelGenerator
 
          next
 
-         ( D():Articulos( nView ) )->nLabel        := Max( nStock, 0 )
-
+         if ( D():Articulos( nView ) )->( dbRLock() )
+            ( D():Articulos( nView ) )->nLabel        := Max( nStock, 0 )
+            ( D():Articulos( nView ) )->( dbUnLock() )
+         end if
       else
 
          nStock                                    := oStock:nStockArticulo( ( D():Articulos( nView ) )->Codigo, , , .f., .f. )
