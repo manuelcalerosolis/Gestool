@@ -1340,26 +1340,32 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Código postal"
+         :cSortOrder       := "CodPostal"
          :bEditValue       := {|| alltrim( ( D():PedidosClientes( nView ) )->cPosCli ) }
-         :nWidth           := 80
+         :nWidth           := 60
          :lHide            := .t.
          :bLDClickData     := {|| oWndBrw:RecEdit() }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Población"
+         :cSortOrder       := "Poblacion"
          :bEditValue       := {|| alltrim( ( D():PedidosClientes( nView ) )->cPobCli ) }
          :nWidth           := 180
          :lHide            := .t.
          :bLDClickData     := {|| oWndBrw:RecEdit() }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Provincia"
+         :cSortOrder       := "Provincia"
          :bEditValue       := {|| alltrim( ( D():PedidosClientes( nView ) )->cPrvCli ) }
-         :nWidth           := 180
+         :nWidth           := 100
          :lHide            := .t.
          :bLDClickData     := {|| oWndBrw:RecEdit() }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -15493,6 +15499,16 @@ FUNCTION rxPedCli( cPath, cDriver )
 
       ( cPedCliT )->( ordCondSet( "!Deleted()", {||!Deleted()} ) )
       ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "cSufPed", "Field->cSufPed", {|| Field->cSufPed } ) )
+
+      ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliT.CDX", "Poblacion", "UPPER( Field->cPobCli )", {|| UPPER( Field->cPobCli ) } ) )
+
+      ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliT.CDX", "Provincia", "UPPER( Field->cPrvCli )", {|| UPPER( Field->cPrvCli ) } ) )
+
+      ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliT.CDX", "CodPostal", "Field->cPosCli", {|| Field->cPosCli } ) )
+
 
       ( cPedCliT )->( dbCloseArea() )
    else

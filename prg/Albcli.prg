@@ -748,6 +748,33 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       end with
 
       with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Codigo postal"
+         :cSortOrder       := "CodPostal"
+         :bEditValue       := {|| alltrim( ( D():Get( "AlbCliT", nView ) )->cPosCli ) }
+         :nWidth           := 60
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Población"
+         :cSortOrder       := "Poblacion"
+         :bEditValue       := {|| alltrim( ( D():Get( "AlbCliT", nView ) )->cPobCli ) }
+         :nWidth           := 180
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Provincia"
+         :cSortOrder       := "Provincia"
+         :bEditValue       := {|| alltrim( ( D():Get( "AlbCliT", nView ) )->cPrvCli ) }
+         :nWidth           := 100
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
          :cHeader          := "Agente"
          :cSortOrder       := "cCodAge"
          :bEditValue       := {|| ( D():Get( "AlbCliT", nView ) )->cCodAge }
@@ -16016,6 +16043,16 @@ FUNCTION rxAlbCli( cPath, cDriver )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "cCtrCoste", "cCtrCoste", {|| Field->cCtrCoste } ) )
+
+      ( cAlbCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "Poblacion", "UPPER( Field->cPobCli )", {|| UPPER( Field->cPobCli ) } ) )
+
+      ( cAlbCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "Provincia", "UPPER( Field->cPrvCli )", {|| UPPER( Field->cPrvCli ) } ) )
+
+      ( cAlbCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CodPostal", "Field->cPosCli", {|| Field->cPosCli } ) )
+
 
       // Albaranes no facturado------------------------------------------------
 

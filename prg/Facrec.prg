@@ -1697,9 +1697,29 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       end with
 
       with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Codigo postal"
+         :cSortOrder       := "CodPostal"
+         :bEditValue       := {|| alltrim( ( D():FacturasRectificativas( nView ) )->cPosCli ) }
+         :nWidth           := 60
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
          :cHeader          := "Población"
-         :bEditValue       := {|| AllTrim( ( D():FacturasRectificativas( nView ) )->cPobCli ) }
+         :cSortOrder       := "cPobCli"
+         :bEditValue       := {|| allTrim( ( D():FacturasRectificativas( nView ) )->cPobCli ) }
          :nWidth           := 180
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Provincia"
+         :cSortOrder       := "Provincia"
+         :bEditValue       := {|| alltrim( ( D():FacturasRectificativas( nView ) )->cPrvCli ) }
+         :nWidth           := 100
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t.
       end with
 
@@ -12575,12 +12595,20 @@ FUNCTION rxFacRec( cPath, oMeter )
       ( cFacRecT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( cFacRecT )->( ordCreate( cPath + "FacRecT.Cdx", "iNumFac", "'14' + cSerie + Str( nNumFac ) + Space( 1 ) + cSufFac", {|| '14' + Field->cSerie + Str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
 
-      ( CFacRecT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( CFacRecT )->( ordCreate( cPath + "FacRecT.Cdx", "cCtrCoste", "cCtrCoste", {|| Field->cCtrCoste } ) )
+      ( cFacRecT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.Cdx", "cCtrCoste", "cCtrCoste", {|| Field->cCtrCoste } ) )
 
-      ( CFacRecT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( CFacRecT )->( ordCreate( cPath + "FacRecT.Cdx", "nTotFac", "nTotFac", {|| Field->nTotFac } ) )
+      ( cFacRecT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.Cdx", "nTotFac", "nTotFac", {|| Field->nTotFac } ) )
 
+      ( cFacRecT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "Poblacion", "UPPER( Field->cPobCli )", {|| UPPER( Field->cPobCli ) } ) )
+
+      ( cFacRecT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "Provincia", "UPPER( Field->cPrvCli )", {|| UPPER( Field->cPrvCli ) } ) )
+
+      ( cFacRecT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "CodPostal", "Field->cPosCli", {|| Field->cPosCli } ) )
 
       ( cFacRecT )->( dbCloseArea() )
 

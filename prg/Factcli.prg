@@ -917,6 +917,15 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       end with
 
       with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Codigo postal"
+         :cSortOrder       := "CodPostal"
+         :bEditValue       := {|| alltrim( ( D():FacturasClientes( nView ) )->cPosCli ) }
+         :nWidth           := 60
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
          :cHeader          := "Población"
          :cSortOrder       := "cPobCli"
          :bEditValue       := {|| AllTrim( ( D():FacturasClientes( nView ) )->cPobCli ) }
@@ -924,6 +933,15 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t.
          :bLDClickData     := {|| oWndBrw:RecEdit() }
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Provincia"
+         :cSortOrder       := "Provincia"
+         :bEditValue       := {|| alltrim( ( D():FacturasClientes( nView ) )->cPrvCli ) }
+         :nWidth           := 100
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -19191,6 +19209,8 @@ FUNCTION rxFacCli( cPath, cDriver )
       ( cFacCliL )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( cFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "nPosPrint", "cSerie + str( nNumFac ) + cSufFac + Str( nPosPrint )", {|| Field->cSerie + str( Field->nNumFac ) + Field->cSufFac + str( Field->nPosPrint ) } ) )
 
+
+
       ( cFacCliL )->( dbCloseArea() )
 
    else
@@ -19299,6 +19319,15 @@ FUNCTION rxFacCli( cPath, cDriver )
 
       ( cFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
       ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "nTotFac", "nTotFac", {|| Field->nTotFac } ) )
+
+      ( cFacCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cFacCliT )->( ordCreate( cPath + "FacCliT.CDX", "Poblacion", "UPPER( Field->cPobCli )", {|| UPPER( Field->cPobCli ) } ) )
+
+      ( cFacCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cFacCliT )->( ordCreate( cPath + "FacCliT.CDX", "Provincia", "UPPER( Field->cPrvCli )", {|| UPPER( Field->cPrvCli ) } ) )
+
+      ( cFacCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cFacCliT )->( ordCreate( cPath + "FacCliT.CDX", "CodPostal", "Field->cPosCli", {|| Field->cPosCli } ) )
 
       ( cFacCliT )->( dbCloseArea() )
 

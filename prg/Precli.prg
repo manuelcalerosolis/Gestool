@@ -1459,6 +1459,33 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       end with
 
       with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Codigo postal"
+         :cSortOrder       := "CodPostal"
+         :bEditValue       := {|| alltrim( ( D():PresupuestosClientes( nView ) )->cPosCli ) }
+         :nWidth           := 60
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Población"
+         :cSortOrder       := "Poblacion"
+         :bEditValue       := {|| alltrim( ( D():PresupuestosClientes( nView ) )->cPobCli ) }
+         :nWidth           := 180
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Provincia"
+         :cSortOrder       := "Provincia"
+         :bEditValue       := {|| alltrim( ( D():PresupuestosClientes( nView ) )->cPrvCli ) }
+         :nWidth           := 100
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
          :cHeader          := "Agente"
          :cSortOrder       := "cCodAge"
          :bEditValue       := {|| ( D():PresupuestosClientes( nView ) )->cCodAge }
@@ -9959,6 +9986,16 @@ FUNCTION rxPreCli( cPath, cDriver )
 
       ( dbfPreCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "cCodWeb", "Str( Field->cCodWeb )", {|| Str( Field->cCodWeb ) } ) )
+
+      ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.CDX", "Poblacion", "UPPER( Field->cPobCli )", {|| UPPER( Field->cPobCli ) } ) )
+
+      ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.CDX", "Provincia", "UPPER( Field->cPrvCli )", {|| UPPER( Field->cPrvCli ) } ) )
+
+      ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.CDX", "CodPostal", "Field->cPosCli", {|| Field->cPosCli } ) )
+
 
       ( dbfPreCliT )->( dbCloseArea() )
 

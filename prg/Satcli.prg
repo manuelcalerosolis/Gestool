@@ -1354,6 +1354,33 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       end with
 
       with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Codigo postal"
+         :cSortOrder       := "CodPostal"
+         :bEditValue       := {|| alltrim( ( D():SatClientes( nView ) )->cPosCli ) }
+         :nWidth           := 60
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Población"
+         :cSortOrder       := "Poblacion"
+         :bEditValue       := {|| alltrim( ( D():SatClientes( nView ) )->cPobCli ) }
+         :nWidth           := 180
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Provincia"
+         :cSortOrder       := "Provincia"
+         :bEditValue       := {|| alltrim( ( D():SatClientes( nView ) )->cPrvCli ) }
+         :nWidth           := 100
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
          :cHeader          := "Agente"
          :cSortOrder       := "cCodAge"
          :bEditValue       := {|| ( D():SatClientes( nView ) )->cCodAge }
@@ -9956,6 +9983,15 @@ FUNCTION rxSatCli( cPath, cDriver )
 
       ( cSatCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
       ( cSatCliT )->( ordCreate( cPath + "SatCliT.Cdx", "cNumDes", "CSERSAT + STR( NNUMSAT ) + CSUFSAT", {|| Field->CSERSAT + STR(Field->NNUMSAT) + Field->CSUFSAT } ) )
+
+      ( cSatCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cSatCliT )->( ordCreate( cPath + "SatCliT.CDX", "Poblacion", "UPPER( Field->cPobCli )", {|| UPPER( Field->cPobCli ) } ) )
+
+      ( cSatCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cSatCliT )->( ordCreate( cPath + "SatCliT.CDX", "Provincia", "UPPER( Field->cPrvCli )", {|| UPPER( Field->cPrvCli ) } ) )
+
+      ( cSatCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cSatCliT )->( ordCreate( cPath + "SatCliT.CDX", "CodPostal", "Field->cPosCli", {|| Field->cPosCli } ) )
 
       ( cSatCliT )->( dbCloseArea() )
 
