@@ -174,8 +174,6 @@ METHOD Run( nView ) CLASS ImportarPedidosClientesEDI
       msgStop( "No hay ficheros en el directorio")
    end if 
 
-   msgStop( "proceso finalizado" )
-
 Return ( nil )
 
 //---------------------------------------------------------------------------//
@@ -546,8 +544,10 @@ METHOD codigoCliente()
       D():getStatusClientes( ::nView )
       D():setFocusClientes( "cCodEdi", ::nView )
 
-      if ( D():Clientes( ::nView ) )->( dbseek( ::hDocument[ "receptorFactura" ] ) )
+      //if ( D():Clientes( ::nView ) )->( dbseek( ::hDocument[ "receptorFactura" ] ) )  Daba mal el codigo del cliente
 
+      if ( D():Clientes( ::nView ) )->( dbseek( ::hDocument[ "comprador" ] + ::hDocument[ "departamento" ] ) )
+      
          ::hPedidoCabecera[ "Cliente" ]      := ( D():Clientes( ::nView ) )->Cod
 
       end if
