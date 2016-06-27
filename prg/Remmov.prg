@@ -518,7 +518,7 @@ METHOD Activate() CLASS TRemMovAlm
 
    else
 
-      msgStop( "Acceso no permitido." )
+      msgstop( "Acceso no permitido." )
 
    end if
 
@@ -681,7 +681,7 @@ METHOD OpenFiles( lExclusive ) CLASS TRemMovAlm
 
       ::lOpenFiles         := .f.
 
-      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
+      msgstop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
@@ -977,7 +977,7 @@ METHOD OpenService( lExclusive, cPath ) CLASS TRemMovAlm
 
       lOpen             := .f.
 
-      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de remesas de movimientos" )
+      msgstop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de remesas de movimientos" )
 
    END SEQUENCE
 
@@ -1065,7 +1065,7 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  ( ::oDbf:FieldByName( "cTimRem" ):cPict );
          VALID    ( iif(   !validTime( ::oDbf:cTimRem  ),;
-                           ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
+                           ( msgstop( "El formato de la hora no es correcto" ), .f. ),;
                            .t. ) );
          OF       oDlg
 
@@ -1427,8 +1427,8 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
          oDlg:AddFastKey( VK_F2, {|| ::oDetMovimientos:AppendDetail() } )
          oDlg:AddFastKey( VK_F3, {|| ::EditDetalleMovimientos( oDlg ) } )
          oDlg:AddFastKey( VK_F4, {|| ::DeleteDet() } )
-         // oDlg:AddFastKey( VK_F5, {|| ::saveResourceWithCalculate( nMode, oDlg ) } )
-         // oDlg:AddFastKey( VK_F6, {|| ::saveResourceWithOutCalculate( nMode, oDlg ) } )
+         oDlg:AddFastKey( VK_F5, {|| ::saveResourceWithCalculate( nMode, oDlg ) } )
+         oDlg:AddFastKey( VK_F6, {|| ::saveResourceWithOutCalculate( nMode, oDlg ) } )
       end if
 
       oDlg:AddFastKey( VK_F1, {|| ChmHelp( "Movimientosalmacen" ) } )
@@ -1440,7 +1440,7 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
    oBmpGeneral:End()
 
    if oDlg:nResult != IDOK
-      ::EndResource( .f., nMode )
+      ::endResource( .f., nMode )
    end if
 
    // Guardamos los datos del browse----------------------------------------------
@@ -1496,7 +1496,7 @@ RETURN NIL
 METHOD lSave( nMode ) CLASS TRemMovAlm
 
    if empty( ::oDbf:cCodAge ) .and. lRecogerAgentes()
-      MsgStop( "Código de agente no puede estar vacío." )
+      msgstop( "Código de agente no puede estar vacío." )
       ::oCodAge:SetFocus()
       Return .f.
    end if
@@ -1504,13 +1504,13 @@ METHOD lSave( nMode ) CLASS TRemMovAlm
    if ::oDbf:nTipMov == 1
 
       if empty( ::oDbf:cAlmOrg )
-         MsgStop( "Almacén origen no puede estar vacío." )
+         msgstop( "Almacén origen no puede estar vacío." )
          ::oAlmOrg:SetFocus()
          Return .f.
       end if
 
       if ::oDbf:cAlmDes == ::oDbf:cAlmOrg
-         MsgStop( "Almacén origen y destino no pueden ser iguales." )
+         msgstop( "Almacén origen y destino no pueden ser iguales." )
          ::oAlmOrg:SetFocus()
          Return .f.
       end if
@@ -1518,7 +1518,7 @@ METHOD lSave( nMode ) CLASS TRemMovAlm
    else
 
       if empty( ::oDbf:cAlmDes )
-         MsgStop( "Almacén destino no puede estar vacío." )
+         msgstop( "Almacén destino no puede estar vacío." )
          ::oAlmDes:SetFocus()
          Return .f.
       end if
@@ -1526,7 +1526,7 @@ METHOD lSave( nMode ) CLASS TRemMovAlm
    end if
 
    if !::oDetMovimientos:oDbfVir:LastRec() > 0
-      MsgStop( "No puede hacer un movimiento de almacén sin líneas." )
+      msgstop( "No puede hacer un movimiento de almacén sin líneas." )
       Return .f.
    end if
 
@@ -1589,7 +1589,7 @@ METHOD GenRemMov( lPrinter, cCaption, cCodDoc, cPrinter, nCopies ) CLASS TRemMov
 
    else
 
-      msgStop( "El documento " + cCodDoc + " no es un formato valido.", "Formato obsoleto" )
+      msgstop( "El documento " + cCodDoc + " no es un formato valido.", "Formato obsoleto" )
 
    end if
 
@@ -2138,7 +2138,7 @@ METHOD lGenRemMov( oBrw, oBtn, lImp ) CLASS TRemMovAlm
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT" OF ::oWndBrw ;
          NOBORDER ;
-         ACTION   ( msgStop( "No hay documentos predefinidos" ) );
+         ACTION   ( msgstop( "No hay documentos predefinidos" ) );
          TOOLTIP  "No hay documentos" ;
          HOTKEY   "N";
          FROM     oBtn ;
@@ -2590,10 +2590,8 @@ METHOD ShwAlm( oSay, oBtnImp ) CLASS TRemMovAlm
 
    if ( ::oDbf:nTipMov != 3 ) // .or. ( ::nMode != APPD_MODE )
       ::buttonSaveResourceWithOutCalculate:Hide()
-      ::buttonSaveResourceWithCalculate:Show()
    else 
       ::buttonSaveResourceWithOutCalculate:Show()
-      ::buttonSaveResourceWithCalculate:Hide()
    end if 
 
 return .t.
@@ -3092,7 +3090,7 @@ METHOD showInventarioErrors() CLASS TRemMovAlm
 
    if !empty( ::aInventarioErrors )
       aeval(::aInventarioErrors, {|cError| cErrorMessage += cError + CRLF } )   
-      msgStop( cErrorMessage, "Errores en la importación" )
+      msgstop( cErrorMessage, "Errores en la importación" )
    end if 
 
 Return ( Self )
@@ -3274,7 +3272,7 @@ FUNCTION rxRemMov( cPath, oMeter )
 
       ( dbfRemMovT )->( dbCloseArea() )
    else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
+      msgstop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
    end if
 
 RETURN NIL
@@ -3532,7 +3530,7 @@ Function SynRemMov( cPath )
 
    RECOVER USING oError
 
-      msgStop( "Imposible abrir todas las bases de datos de movimientos de almacén" + CRLF + ErrorMessage( oError ) )
+      msgstop( "Imposible abrir todas las bases de datos de movimientos de almacén" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
@@ -3764,7 +3762,7 @@ METHOD OpenFiles( lExclusive) CLASS TDetMovimientos
 
   RECOVER
 
-     msgStop( "Imposible abrir todas las bases de datos movimientos de almacen" )
+     msgstop( "Imposible abrir todas las bases de datos movimientos de almacen" )
      lOpen                := .f.
 
   END SEQUENCE
@@ -4320,7 +4318,7 @@ METHOD loadArticulo( nMode, lSilenceMode ) CLASS TDetMovimientos
    // Articulos con numeros de serie no podemos pasarlo en regularizacion por objetivos
 
    if ( ::oParent:oDbf:nTipMov == 3 ) .and. ( retFld( cCodArt, ::oParent:oArt:cAlias, "lNumSer" ) )
-      MsgStop( "Artículos con números de serie no pueden incluirse regularizaciones por objetivo." )
+      msgstop( "Artículos con números de serie no pueden incluirse regularizaciones por objetivo." )
       Return .f.
    end if
 
@@ -4525,7 +4523,7 @@ METHOD loadArticulo( nMode, lSilenceMode ) CLASS TDetMovimientos
    else
 
       if !lSilenceMode
-         MsgStop( "Artículo no encontrado." )
+         msgstop( "Artículo no encontrado." )
       end if 
 
       Return .f.
@@ -4765,7 +4763,7 @@ METHOD AppendKit() CLASS TDetMovimientos
 
                if ( ( nStkAct - nTotUnd ) < nMinimo )
 
-                  MsgStop( "El stock del componente " + AllTrim( ::oDbfVir:cRefMov ) + " - " + AllTrim( oRetFld( ::oDbfVir:cRefMov, ::oParent:oArt, "Nombre" ) ) + CRLF + ;
+                  msgstop( "El stock del componente " + AllTrim( ::oDbfVir:cRefMov ) + " - " + AllTrim( oRetFld( ::oDbfVir:cRefMov, ::oParent:oArt, "Nombre" ) ) + CRLF + ;
                            "está bajo minimo." + CRLF + ;
                            "Unidades a vender : " + AllTrim( Trans( nTotUnd, MasUnd() ) ) + CRLF + ;
                            "Stock actual : " + AllTrim( Trans( nStkAct, MasUnd() ) )      + CRLF + ;
@@ -5407,7 +5405,7 @@ METHOD OpenFiles( lExclusive ) CLASS TDetSeriesMovimientos
 
    RECOVER
 
-      msgStop( "Imposible abrir todas las bases de datos" )
+      msgstop( "Imposible abrir todas las bases de datos" )
       lOpen                := .f.
 
    END SEQUENCE

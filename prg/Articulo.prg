@@ -6595,7 +6595,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          PROMPT   "Precios",;
                   "Imágenes";
          DIALOGS  "PREDIV01",;
-                  "PREDIV02"
+                  "PREDIV02"     
 
       /*
       Primer Browse de propiedades--------------------------------------------
@@ -6605,7 +6605,6 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
 
       oBrwPrp1:bClrSel           := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwPrp1:bClrSelFocus      := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
 
       oBrwPrp1:nMarqueeStyle     := 5
       oBrwPrp1:lRecordSelector   := .f.
@@ -8130,6 +8129,14 @@ Static Function StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, 
          SetWindowText( oBtnCancel:hWnd, "Salir" )
       end if
 
+      if !Empty( oBrwPrp1 )
+         oBrwPrp1:Load()
+      end if
+
+      if !Empty( oBrwPrp2 )
+         oBrwPrp2:Load()
+      end if
+
    else
 
       if !Empty( oBtnOk )
@@ -8140,23 +8147,24 @@ Static Function StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, 
          SetWindowText( oBtnCancel:hWnd, "Cancelar" )
       end if
 
+      if !Empty( oBrwPrp1 )
+         oBrwPrp1:Disable()
+      end if
+
+      if !Empty( oBrwPrp2 )
+         oBrwPrp2:Disable()
+      end if
+
    end if
 
-   if !Empty( oBrwPrp1 )
-      oBrwPrp1:Load()
-   end if
-
-   if !Empty( oBrwPrp2 )
-      oBrwPrp2:Load()
-   end if
 
    if !Empty( oBrwPrp1 ) .and. !Empty( oTodasPrp1 ) .and. !Empty( oNingunaPrp1 )
 
       if nMode == EDIT_MODE
 
-         oBrwPrp1:Disable()
-         oTodasPrp1:Disable()
-         oNingunaPrp1:Disable()
+         oBrwPrp1:Hide()
+         oTodasPrp1:Hide()
+         oNingunaPrp1:Hide()
 
       end if
 

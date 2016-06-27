@@ -1577,7 +1577,7 @@ FUNCTION brwPrpAct( oGet, oSay, cPrp )
          :cHeader          := "Código"
          :cSortOrder       := "cCodTbl"
          :bEditValue       := {|| ( dbfTmpBrw )->cCodTbl }
-         :nWidth           := 80
+         :nWidth           := 180
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), eval( oCbxOrd:bChange ) }
       end with
 
@@ -1729,7 +1729,7 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
          :cHeader          := "Código"
          :cSortOrder       := "cCodTbl"
          :bEditValue       := {|| ( dbfProL )->cCodTbl }
-         :nWidth           := 80
+         :nWidth           := 180
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), eval( oCbxOrd:bChange ) }
       end with
 
@@ -2386,7 +2386,7 @@ FUNCTION brwSelectPropiedad( cPrp, cVal )
       with object ( oBrw:aCols[ 2 ] )
          :cHeader       := "Código"
          :bEditValue    := {|| aData[ oBrw:nArrayAt, 2 ] }
-         :nWidth        := 80
+         :nWidth        := 180
       end with
 
       with object ( oBrw:aCols[ 3 ] )

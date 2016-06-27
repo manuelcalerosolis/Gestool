@@ -641,7 +641,7 @@ METHOD filesOpen() CLASS TComercio
 
       DATABASE NEW ::oPreCliE PATH ( cPatEmp() ) FILE "PRECLIE.DBF"     VIA ( cDriver() ) SHARED INDEX "PRECLIE.CDX"
 
-      ::TPrestashopId         := TPrestashopId():New()
+      ::TPrestashopId         := TPrestashopId():New( Self )
       if !::TPrestashopId:OpenFiles()
          lOpen                := .f.
       end if

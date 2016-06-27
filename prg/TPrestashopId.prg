@@ -10,9 +10,11 @@
     
 CLASS TPrestaShopId FROM TMant
 
-   DATA lOpenFiles         INIT .f.      
+   DATA lOpenFiles                                             INIT .f.      
 
-   METHOD New( cPath, oWndParent, oMenuItem )                  CONSTRUCTOR
+   DATA TComercio 
+
+   METHOD New( TComercio )                                     CONSTRUCTOR
 
    METHOD DefineFiles()
 
@@ -90,15 +92,17 @@ CLASS TPrestaShopId FROM TMant
    METHOD setValueGestool( cTipoDocumento, cClave, cWeb, idWeb )
    METHOD isSeekGestool( cTipoDocumento, idWeb, cWeb )
 
+   METHOD writeText( cText )                                   INLINE ( ::TComercio:writeText( cText ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( cPath ) 
+METHOD New( TComercio ) 
 
-   DEFAULT cPath           := cPatEmp()
+   ::TComercio             := TComercio
 
-   ::cPath                 := cPath
+   ::cPath                 := cPatEmp()
    ::oDbf                  := nil
 
    ::bFirstKey             := {|| ::oDbf:cDocumento }
@@ -161,11 +165,14 @@ METHOD getValue( cTipoDocumento, cClave, cWeb, defaultValue )
    end if 
 
    if !::isValidParameters( cTipoDocumento, cClave, cWeb )
+      ::writeText( cTipoDocumento + ":" + cClave + ":" + cWeb + "parametros invalidos" )
       RETURN ( idWeb )
    end if 
 
    if ::isSeekValues( cTipoDocumento, cClave, cWeb )
       idWeb       := ::oDbf:idWeb
+   else 
+      ::writeText( cTipoDocumento + ":" + cClave + ":" + cWeb + ": NO encontrado : " + str( len( cTipoDocumento + cClave + cWeb ) ) )
    end if 
 
 RETURN ( idWeb )
@@ -224,14 +231,18 @@ RETURN ( .t. )
 
 METHOD isSeekValues( cTipoDocumento, cClave, cWeb )
 
-   cClave         := padr( cClave, 60 )
-   cWeb           := padr( cWeb, 80 )
+   cClave         := upper( padr( cClave, 60 ) )
+   cWeb           := upper( padr( cWeb, 80 ) )
 
 RETURN ( ::oDbf:seekInOrd( cTipoDocumento + cClave + cWeb, "cWeb" ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD setValueGestool( cTipoDocumento, cClave, cWeb, idWeb )
+
+   cClave         := upper( cClave )
+   cWeb           := upper( cWeb )
+   idWeb          := upper( idWeb )
 
    if !::isValidParameters( cTipoDocumento, cClave, cWeb, idWeb )
       RETURN ( .f. )

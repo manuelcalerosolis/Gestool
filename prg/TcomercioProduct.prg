@@ -836,7 +836,15 @@ Return ( nil )
 
 METHOD insertProductCategory( idProduct, idCategory ) CLASS TComercioProduct
 
-   local cCommand := "INSERT INTO " + ::cPrefixTable( "category_product" ) + " ( " + ;
+   local cCommand
+
+   cCommand       := "DELETE FROM " + ::cPrefixTable( "category_product" )             + " " + ;
+                     "WHERE id_category = " + alltrim( str( max( idCategory, 1 ) ) )   + " " + ;
+                     "AND id_product = " + alltrim( str( idProduct ) )
+
+   ::commandExecDirect( cCommand )
+
+   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_product" ) + " ( " + ;
                         "id_category, " + ;
                         "id_product ) " + ;
                      "VALUES ( " + ;
@@ -1046,21 +1054,32 @@ Return ( idProductAttribute )
 METHOD insertProductAttributeCombination( idFirstProperty, valueFirstProperty, idProperty ) CLASS TComercioProduct
 
    local cCommand
+   local idAttribute
 
    if !( ::oPropertiesLinesDatabase():seekInOrd( upper( idFirstProperty ) + upper( valueFirstProperty ), "cCodPro" ) )
       ::writeText( "Error al buscar en tabla de propiedades " + alltrim( idFirstProperty ) + " : " + alltrim( valueFirstProperty ), 3 )
       Return .f.
    end if 
 
-   cCommand := "INSERT INTO " +  ::cPrefixtable( "product_attribute_combination" ) + "( " + ;
-                  "id_attribute, "                                                        + ;
-                  "id_product_attribute ) "                                               + ;
-               "VALUES ("                                                                 + ;
-                  "'" + alltrim( str( ::TPrestashopId():getValueAttribute( idFirstProperty + valueFirstProperty, ::getCurrentWebName() ) ) ) + "', " + ;  //id_attribute
-                  "'" + alltrim( str( idProperty ) ) + "' )"                        //id_product_attribute
+   idAttribute := ::TPrestashopId():getValueAttribute( idFirstProperty + valueFirstProperty, ::getCurrentWebName() ) 
+
+   cCommand    := "DELETE FROM " +  ::cPrefixtable( "product_attribute_combination" ) + " "  + ;
+                     "WHERE id_attribute = " + alltrim( str( idAttribute ) ) + " "           + ;
+                     "AND id_product_attribute = " + alltrim( str( idProperty ) )
 
    if !::commandExecDirect( cCommand ) 
-      ::writeText( "Error al insertar la propiedad " + alltrim( ::oPropertiesLinesDatabase():cDesTbl ) + " en la tabla " + ::PrefixTable( "product_attribute_combination" ), 3 )
+      ::writeText( "Error al eliminar la propiedad " + ( idAttribute ) + " en la tabla " + ::cPrefixTable( "product_attribute_combination" ), 3 )
+   end if
+
+   cCommand    := "INSERT INTO " +  ::cPrefixtable( "product_attribute_combination" ) + "( " + ;
+                     "id_attribute, "                                                        + ;
+                     "id_product_attribute ) "                                               + ;
+                  "VALUES ("                                                                 + ;
+                     "'" + alltrim( str( idAttribute ) ) + "', "                             + ;   //id_attribute
+                     "'" + alltrim( str( idProperty ) ) + "' )"                                    //id_product_attribute
+
+   if !::commandExecDirect( cCommand ) 
+      ::writeText( "Error al insertar la propiedad " + alltrim( ::oPropertiesLinesDatabase():cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute_combination" ), 3 )
    end if
 
 Return ( .t. )
@@ -1105,9 +1124,9 @@ METHOD insertProductAttributeImage( hProduct, idProductAttribute ) CLASS TComerc
    local hImage
    local aImages
    local cCommand
-   local nIdProductImage
+   local idProductImage
 
-   aImages                 := hget( hProduct, "aImages" )
+   aImages              := hget( hProduct, "aImages" )
 
    if empty( aImages )
       Return ( self )
@@ -1115,14 +1134,22 @@ METHOD insertProductAttributeImage( hProduct, idProductAttribute ) CLASS TComerc
 
    for each hImage in aImages
 
-      nIdProductImage   := ::TPrestashopId():getValueImage( hGet( hProduct, "id" ) + str( hget( hImage, "id" ), 10 ), ::getCurrentWebName() )
+      idProductImage    := ::TPrestashopId():getValueImage( hGet( hProduct, "id" ) + str( hget( hImage, "id" ), 10 ), ::getCurrentWebName() )
+
+      cCommand          := "DELETE FROM " +  ::cPrefixtable( "product_attribute_image" ) + " "              + ;
+                              "WHERE id_product_attribute = " + alltrim( str( idProductAttribute ) ) + " "  + ;
+                              "AND id_image = " + alltrim( str( idProductImage ) )
+
+      if !::commandExecDirect( cCommand ) 
+         ::writeText( "Error al eliminar el artículo " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
+      end if
 
       cCommand          := "INSERT INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
                               "id_product_attribute, "                                          + ;
                               "id_image ) "                                                     + ;
                            "VALUES ( "                                                          + ;
                               "'" + alltrim( str( idProductAttribute ) ) + "', "                + ;   // id_product_attribute
-                              "'" + alltrim( str( nIdProductImage ) ) + "' )"                         // id_image
+                              "'" + alltrim( str( idProductImage ) ) + "' )"                         // id_image
 
       if !::commandExecDirect( cCommand )
          ::writeText( "Error al insertar el artículo " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
@@ -1901,12 +1928,20 @@ METHOD insertStockProduct( hStock ) CLASS TComercioProduct
    local attributeFirstProperty  
    local attributeSecondProperty 
    local idProductAttribute      := 0
+   local isStockByProperty       := .f.
 
    ::writeText( "idProduct " + cvaltochar( hget( hStock, "idProduct" ) ) )
    ::writeText( "idFirstProperty " + cvaltochar( hget( hStock, "idFirstProperty" ) ) )
+   ::writeText( "len idFirstProperty " + cvaltochar( len( hget( hStock, "idFirstProperty" ) ) ) )
    ::writeText( "valueFirstProperty " + cvaltochar( hget( hStock, "valueFirstProperty" ) ) )
+   ::writeText( "len valueFirstProperty " + cvaltochar( len( hget( hStock, "valueFirstProperty" ) ) ) )
    ::writeText( "idSecondProperty " + cvaltochar( hget( hStock, "idSecondProperty" ) ) )
    ::writeText( "valueSecondProperty " + cvaltochar( hget( hStock, "valueSecondProperty" ) ) )
+
+   isStockByProperty             := !empty( hget( hStock, "idFirstProperty" ) )     .or.;
+                                    !empty( hget( hStock, "valueFirstProperty" ) )  .or.;
+                                    !empty( hget( hStock, "idSecondProperty" ) )    .or.;
+                                    !empty( hget( hStock, "valueSecondProperty" ) )
 
    idProductPrestashop           := ::TPrestashopId():getValueProduct( hget( hStock, "idProduct" ), ::getCurrentWebName() )
    attributeFirstProperty        := ::TPrestashopId():getValueAttribute( hget( hStock, "idFirstProperty" ) + hget( hStock, "valueFirstProperty" ),     ::getCurrentWebName() )
@@ -1927,7 +1962,7 @@ METHOD insertStockProduct( hStock ) CLASS TComercioProduct
 
    ::commandExecDirect( cCommand )
 
-   if ( unitStock != 0 )
+   if ( unitStock != 0 ) 
 
       cCommand                   := "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( "                        + ;
                                        "id_product, "                                                                   + ;
@@ -1948,12 +1983,11 @@ METHOD insertStockProduct( hStock ) CLASS TComercioProduct
 
       ::commandExecDirect( cCommand )
 
+      ::writeText(   "Actualizando stock con propiedades : " + alltrim( str( attributeFirstProperty ) ) + " , " + ;
+                     alltrim( str( attributeSecondProperty ) ) + ", " + ;
+                     "cantidad : " + alltrim( str( unitStock ) ) )
+
    end if
-
-   cText       := "Actualizando stock con propiedades : " + alltrim( str( attributeFirstProperty ) ) + " , " + alltrim( str( attributeSecondProperty ) ) + ", "
-   cText       += "cantidad : " + alltrim( str( unitStock ) )
-
-   ::writeText( cText )
 
 Return .t.   
 
