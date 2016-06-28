@@ -4125,6 +4125,9 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    DEFAULT lNumeroSerie := !uFieldEmpresa( "lCalSer" )
    DEFAULT lNotPendiente:= .f.
 
+   cCodArt              := padr( cCodArt, 18 )
+   cCodAlm              := padr( cCodAlm, 16 )
+
    if ( !empty( ::cCodigoArticulo ) .and. cCodArt == ::cCodigoArticulo  ) .and.;
       ( !empty( ::cCodigoAlmacen )  .and. cCodAlm == ::cCodigoAlmacen   ) .and.;
       ( !empty( ::aStocks ) )

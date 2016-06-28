@@ -1394,12 +1394,12 @@ METHOD Save() CLASS TDetMovimientos
 
    case ::oParent:oDbf:nTipMov == 3
 
+      msgAlert( ::oParent:lTargetCalculate, "lTargetCalculate" ) 
+
       ::oDbfVir:GoTop()
       while !::oDbfVir:Eof()
 
          if ( ::oParent:lTargetCalculate ) 
-
-            msgAlert( "recalcula" )
 
             ::oDbfVir:Load()
             ::Asigna()
@@ -1583,7 +1583,7 @@ METHOD RecalcularPrecios() CLASS TDetMovimientos
 
    nKeyCount         := ::oDbfVir:ordKeyCount()
 
-   oWaitMeter        := TWaitMeter():New( "Guardando movimientos de almacén", "Espere por favor..." )
+   oWaitMeter        := TWaitMeter():New( "Recalculando precios y stock", "Espere por favor..." )
    oWaitMeter:Run()
    oWaitMeter:setTotal( nKeyCount )
 
@@ -1606,7 +1606,7 @@ METHOD RecalcularPrecios() CLASS TDetMovimientos
 
    ::oDbfVir:GoTo( nRecno )
 
-   ::oWaitMeter:end()
+   oWaitMeter:end()
 
    CursorWE()
 

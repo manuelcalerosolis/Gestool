@@ -2781,6 +2781,7 @@ METHOD DesignReportRemMov( oFr, dbfDoc ) CLASS TRemMovAlm
    if ::OpenFiles()
 
       private oThis        := Self
+
       public nTotMov       := ::nTotRemMov()
 
       /*
@@ -3205,6 +3206,12 @@ METHOD saveResourceWithOutCalculate( nMode, oDlg ) CLASS TRemMovAlm
    end if 
 
 Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+function oStockMovimiento( idArticulo, idAlmacen, valorPropiedad1, valorPropiedad2 )
+
+Return ( oThis:oStock:nStockAlmacen( idArticulo, idAlmacen, valorPropiedad1, valorPropiedad2 ) )
 
 //---------------------------------------------------------------------------//
 
