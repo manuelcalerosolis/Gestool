@@ -574,6 +574,9 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
                "Fecha",;
                "Código",;
                "Nombre",;
+               "Código postal",;
+               "Población",;
+               "Provincia",;
                "Dirección",;
                "Agente",;
                "Su albarán";
@@ -748,7 +751,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Codigo postal"
+         :cHeader          := "Código postal"
          :cSortOrder       := "CodPostal"
          :bEditValue       := {|| alltrim( ( D():Get( "AlbCliT", nView ) )->cPosCli ) }
          :nWidth           := 60

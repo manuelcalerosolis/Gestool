@@ -1309,6 +1309,9 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
                "Fecha",;
                "Código",;
                "Nombre",;
+               "Código postal",;
+               "Población",;
+               "Provincia",;
                "Dirección",;
                "Agente";
       MRU      "Notebook_user1_16";
@@ -1459,7 +1462,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Codigo postal"
+         :cHeader          := "Código postal"
          :cSortOrder       := "CodPostal"
          :bEditValue       := {|| alltrim( ( D():PresupuestosClientes( nView ) )->cPosCli ) }
          :nWidth           := 60

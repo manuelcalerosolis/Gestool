@@ -1531,6 +1531,9 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
                "Fecha",;
                "Código",;
                "Nombre",;
+               "Código postal",;
+               "Población",;
+               "Provincia",;
                "Dirección",;
                "Sesión",;
                "Agente",;
@@ -1697,7 +1700,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Codigo postal"
+         :cHeader          := "Código postal"
          :cSortOrder       := "CodPostal"
          :bEditValue       := {|| alltrim( ( D():FacturasRectificativas( nView ) )->cPosCli ) }
          :nWidth           := 60

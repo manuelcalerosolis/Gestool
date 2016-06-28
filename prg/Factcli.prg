@@ -670,7 +670,9 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
                "Fecha",;
                "Código",;
                "Nombre",;
+               "Código postal",;
                "Población",;
+               "Provincia",;
                "Dirección",;
                "Agente",;
                "Sesión",;
@@ -917,7 +919,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Codigo postal"
+         :cHeader          := "Código postal"
          :cSortOrder       := "CodPostal"
          :bEditValue       := {|| alltrim( ( D():FacturasClientes( nView ) )->cPosCli ) }
          :nWidth           := 60

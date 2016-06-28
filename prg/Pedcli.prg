@@ -1094,6 +1094,9 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
                "Fecha",;
                "Código",;
                "Nombre",;
+               "Código postal",;
+               "Población",;
+               "Provincia",;
                "Dirección",;
                "Agente",;
                "Entrada",;

@@ -1213,6 +1213,9 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
                "Fecha",;
                "Código",;
                "Nombre",;
+               "Código postal",;
+               "Población",;
+               "Provincia",;
                "Dirección",;
                "Agente",;
                "Operario",;
@@ -1354,7 +1357,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Codigo postal"
+         :cHeader          := "Código postal"
          :cSortOrder       := "CodPostal"
          :bEditValue       := {|| alltrim( ( D():SatClientes( nView ) )->cPosCli ) }
          :nWidth           := 60
