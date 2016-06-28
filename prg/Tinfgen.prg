@@ -5671,7 +5671,7 @@ METHOD Xml() // Excel()
                uValue      := DToC( uValue )
             endif
 
-            if !Empty( uValue )
+            if uValue != nil
                oSheet:Cells( nRow, ++nCol ):Value  := uValue
             end if
 

@@ -6373,6 +6373,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    local cCodCli
    local cCodEst
    local nOrdAnt
+   local lResultBeforeEndEvent
 
    if Empty( aTmp[ _CSERSAT ] )
       aTmp[ _CSERSAT ]  := "A"
@@ -6430,6 +6431,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    if ( dbfTmpLin )->( eof() )
       MsgStop( "No puede almacenar un documento sin lineas." )
       return .f.
+   end if
+
+   lResultBeforeEndEvent   := runEventScript( "SatClientes\beforeEndTrans", aGet, aTmp, nView, dbfTmpLin, nMode )
+
+   if !lResultBeforeEndEvent
+      Return .f.
    end if
 
    oDlg:Disable()
@@ -10023,6 +10030,9 @@ FUNCTION rxSatCli( cPath, cDriver )
 
       ( cSatCliT )->( ordCondSet("!Deleted() .and. NCTLSTK == 2", {||!Deleted() .and. Field->NCTLSTK == 2 }  ) )
       ( cSatCliT )->( ordCreate( cPath + "SatCliL.Cdx", "cCodCli", "cCodCli", {|| Field->cCodCli }, ) )
+
+      ( cSatCliT )->( ordCondSet("!Deleted() .and. NCTLSTK == 2", {||!Deleted() .and. Field->NCTLSTK == 2 }  ) )
+      ( cSatCliT )->( ordCreate( cPath + "SatCliL.Cdx", "cCliArt", "cCodCli + cRef", {|| Field->cCodCli + Field->cRef }, ) )
 
       ( cSatCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cSatCliT )->( ordCreate( cPath + "SatCliL.Cdx", "nPosPrint", "cSerSat + Str( nNumSat ) + cSufSat + Str( nPosPrint )", {|| Field->cSerSat + Str( Field->nNumSat ) + Field->cSufSat + Str( Field->nPosPrint ) } ) )

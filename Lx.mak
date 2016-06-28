@@ -1053,6 +1053,7 @@ Provincias.prg          \
 CamposExtra.prg         \
 DetCamposExtra.prg      \
 TScripts.prg            \
+TGenMailDatabaseRecibosClientes.prg \
 
 C               =       \
 Metafi32.c              \
@@ -2096,6 +2097,7 @@ Provincias.obj          \
 CamposExtra.obj         \
 DetCamposExtra.obj      \
 TScripts.obj            \
+TGenMailDatabaseRecibosClientes.obj \
 
 .PRG.OBJ:
    $(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -3145,6 +3147,7 @@ $(OBJ)\Provincias.obj            +
 $(OBJ)\CamposExtra.obj           +
 $(OBJ)\DetCamposExtra.obj        +
 $(OBJ)\TScripts.obj              +
+$(OBJ)\TGenMailDatabaseRecibosClientes.obj +
 $(OBJ)\EstadoSat.obj             
 $<,$*
 $(FWLIB)\FiveH.lib               +

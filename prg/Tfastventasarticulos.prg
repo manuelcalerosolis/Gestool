@@ -174,6 +174,9 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD setFilterUserId()                     INLINE ( if( ::lApplyFilters,;
                                                          ::cExpresionHeader  += ' .and. ( Field->cCodUsr >= "' + ::oGrupoUsuario:Cargo:getDesde() + '" .and. Field->cCodUsr <= "' + ::oGrupoUsuario:Cargo:getHasta() + '" )', ) )
 
+   METHOD setFilterOperarioId()                 INLINE ( if( ::lApplyFilters,;
+                                                         ::cExpresionHeader  += ' .and. ( Field->cCodOpe >= "' + ::oGrupoOperario:Cargo:getDesde() + '" .and. Field->cCodOpe <= "' + ::oGrupoOperario:Cargo:getHasta() + '" )', ) )
+
    METHOD DesdeHastaGrupoCliente()
 
    METHOD getTotalUnidadesGrupoCliente( cCodGrp, cCodArt )
@@ -288,6 +291,10 @@ METHOD lResource( cFld ) CLASS TFastVentasArticulos
 
    if !::lGrupoCentroCoste( .t. )
       return .f.
+   end if
+
+   if !::lGrupoOperario( .t. )
+      return .t.
    end if
 
    ::oFilter      := TFilterCreator():Init()
@@ -915,7 +922,8 @@ Method lValidRegister() CLASS TFastVentasArticulos
       ( ::oDbf:cCodUsr     >= ::oGrupoUsuario:Cargo:getDesde()          .and. ::oDbf:cCodUsr    <= ::oGrupoUsuario:Cargo:getHasta() )           .and.;
       ( ::oDbf:cCodCli     >= ::oGrupoProveedor:Cargo:getDesde()        .and. ::oDbf:cCodCli    <= ::oGrupoProveedor:Cargo:getHasta() )         .and.;
       ( ::oDbf:cCodAlm     >= ::oGrupoAlmacen:Cargo:getDesde()          .and. ::oDbf:cCodAlm    <= ::oGrupoAlmacen:Cargo:getHasta() )           .and.;
-      ( ::oDbf:cCtrCoste   >= ::oGrupoCentroCoste:Cargo:getDesde()      .and. ::oDbf:cCtrCoste  <= ::oGrupoCentroCoste:Cargo:getHasta() )
+      ( ::oDbf:cCtrCoste   >= ::oGrupoCentroCoste:Cargo:getDesde()      .and. ::oDbf:cCtrCoste  <= ::oGrupoCentroCoste:Cargo:getHasta() )       .and.;
+      ( ::oDbf:cCodOpe     >= ::oGrupoOperario:Cargo:getDesde()         .and. ::oDbf:cCodOpe  <= ::oGrupoOperario:Cargo:getHasta() )
 
       //::loadValuesExtraFields()
 
@@ -1272,6 +1280,8 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
    ::setFilterTransportId()
 
    ::setFilterUserId()
+
+   ::setFilterOperarioId()
 
    // filtros para las líneas-------------------------------------------------
 

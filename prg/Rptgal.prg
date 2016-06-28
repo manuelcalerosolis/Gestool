@@ -2426,9 +2426,6 @@ Return nil
 Function PageIniClient()
 Return nil
 
-Function ImportScript()
-Return nil
-
 Function TListViewItem()
 Return nil
 
@@ -2526,9 +2523,6 @@ Function TGenMailingDatabaseFacturaRectificativaCliente()
 Return nil
 
 Function TGenMailingDatabaseFacturaRectificativaProveedor()
-Return nil
-
-Function RunEventScript()
 Return nil
 
 Function OrderCustomer()
