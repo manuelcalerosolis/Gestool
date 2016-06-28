@@ -8162,7 +8162,7 @@ Static Function StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, 
 
       if nMode == EDIT_MODE
 
-         oBrwPrp1:Hide()
+         oBrwPrp1:Disable()
          oTodasPrp1:Hide()
          oNingunaPrp1:Hide()
 
