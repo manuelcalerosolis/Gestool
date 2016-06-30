@@ -720,7 +720,13 @@ METHOD CreaLinea( hLine, n )
    ::hPedidoLinea[ "Numero"   ]     := ::numeroPedido
    ::hPedidoLinea[ "Sufijo"   ]     := ::sufijoPedido
    ::datosArticulo( hLine[ "codigo" ] )
-   ::datosDireccion( hLine[ "destinatarios" ][n] )
+   
+   if Len( hLine[ "destinatarios" ] ) != 0
+      ::datosDireccion( hLine[ "destinatarios" ][n] )
+   else
+      ::hPedidoLinea[ "Unidades" ]     := hLine[ "unidadesPedidas" ] //val( hDestinatario[ "unidadesEntrega" ] )
+   end if
+
    ::hPedidoLinea[ "Almacen" ]      := oUser():cAlmacen()
 
    ::saveLinea()

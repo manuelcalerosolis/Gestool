@@ -21,6 +21,7 @@ CLASS TSpecialSearchArticulo
    DATA oGetCliente
    DATA oGetOperario
    DATA oGetRuta
+   DATA oGetCodigoCliente
 
    DATA aArticulo             INIT {}
    DATA aTipo                 INIT {}
@@ -28,6 +29,7 @@ CLASS TSpecialSearchArticulo
    DATA aCliente              INIT {}
    DATA aOperario             INIT {}
    DATA aRuta                 INIT {}
+   DATA aCodigoCliente        INIT {}
 
    DATA cGetArticulo
    DATA cGetTipo
@@ -35,6 +37,7 @@ CLASS TSpecialSearchArticulo
    DATA cGetCliente
    DATA cGetOperario
    DATA cGetRuta
+   DATA cGetCodigoCliente
 
    DATA oFecIni
    DATA oFecFin
@@ -58,6 +61,9 @@ CLASS TSpecialSearchArticulo
                                        "Ruta"            => "cabecerasat.cCodRut" }
    DATA cOrderBy              INIT "lineasSat.cRef"
 
+   DATA oExcObsoletos         INIT .t.
+   DATA lExcObsoletos         INIT .t.
+
    DATA oBrwArticulo
 
    DATA Resolucion
@@ -70,6 +76,7 @@ CLASS TSpecialSearchArticulo
    METHOD Resource()
 
    METHOD GetArraySelectNombreClienteSAT()
+   METHOD GetArraySelectCodigosCliente()
    METHOD GetArraySelectArticulo()
    METHOD GetArraySelectTipoArticulo()
    METHOD GetArraySelectEstadoArticulo()
@@ -166,6 +173,7 @@ METHOD OpenFiles() CLASS TSPECIALSEARCHARTICULO
 
       D():Ruta( ::nView )
 
+      ::GetArraySelectCodigosCliente()
       ::GetArraySelectNombreClienteSAT()
       ::GetArraySelectArticulo()
       ::GetArraySelectTipoArticulo()
@@ -245,12 +253,17 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
          SPINNER ;
          OF          ::oDlg
 
-      ::oGetArticulo := TAutoGet():ReDefine( 100, { | u | iif( pcount() == 0, ::cGetArticulo, ::cGetArticulo := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetArticulo",, ::aArticulo,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, self )} )
-      ::oGetTipo     := TAutoGet():ReDefine( 110, { | u | iif( pcount() == 0, ::cGetTipo, ::cGetTipo := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetTipo",, ::aTipo,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
-      ::oGetEstado   := TAutoGet():ReDefine( 120, { | u | iif( pcount() == 0, ::cGetEstado, ::cGetEstado := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetEstado",, ::aEstado,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
-      ::oGetCliente  := TAutoGet():ReDefine( 130, { | u | iif( pcount() == 0, ::cGetCliente, ::cGetCliente := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetCliente",, ::aCliente,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
-      ::oGetOperario := TAutoGet():ReDefine( 140, { | u | iif( pcount() == 0, ::cGetOperario, ::cGetOperario := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetOperario",, ::aOperario,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
-      ::oGetRuta     := TAutoGet():ReDefine( 190, { | u | iif( pcount() == 0, ::cGetRuta, ::cGetRuta := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetRuta",, ::aRuta,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
+      REDEFINE CHECKBOX ::oExcObsoletos VAR ::lExcObsoletos ;
+         ID       310 ;
+         OF       ::oDlg
+
+      ::oGetArticulo       := TAutoGet():ReDefine( 100, { | u | iif( pcount() == 0, ::cGetArticulo, ::cGetArticulo := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetArticulo",, ::aArticulo,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, self )} )
+      ::oGetTipo           := TAutoGet():ReDefine( 110, { | u | iif( pcount() == 0, ::cGetTipo, ::cGetTipo := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetTipo",, ::aTipo,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
+      ::oGetEstado         := TAutoGet():ReDefine( 120, { | u | iif( pcount() == 0, ::cGetEstado, ::cGetEstado := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetEstado",, ::aEstado,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
+      ::oGetCodigoCliente  := TAutoGet():ReDefine( 320, { | u | iif( pcount() == 0, ::cGetCodigoCliente, ::cGetCodigoCliente := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetCodigoCliente",, ::aCodigoCliente,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
+      ::oGetCliente        := TAutoGet():ReDefine( 130, { | u | iif( pcount() == 0, ::cGetCliente, ::cGetCliente := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetCliente",, ::aCliente,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
+      ::oGetOperario       := TAutoGet():ReDefine( 140, { | u | iif( pcount() == 0, ::cGetOperario, ::cGetOperario := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetOperario",, ::aOperario,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
+      ::oGetRuta           := TAutoGet():ReDefine( 190, { | u | iif( pcount() == 0, ::cGetRuta, ::cGetRuta := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetRuta",, ::aRuta,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
 
       REDEFINE BUTTON ::oBotonBuscar ;
          ID          200 ;
@@ -276,6 +289,11 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
       ::oBrwArticulo:lFooter         := .t.
       ::oBrwArticulo:lAutoSort       := .t.
       ::oBrwArticulo:nRowHeight      := 20
+
+      //::oBrwArticulo:bDragBegin      := {| nRow, nCol, nKeyFlags| MsgInfo( "bDragBegin" ) }
+      //::oBrwArticulo:bLButtonDown    := {| nRow, nCol, nFlags | ::oBrwArticulo:DragBegin( nRow, nCol ) }
+      //::oBrwArticulo:bLButtonUp      := {| nRow, nCol, nFlags, self |  }
+      //::oBrwArticulo:bDropOver       := {| uDropInfo, nRow, nCol, nKeyFlags| MsgInfo( "bDropOver" ), MsgInfo( nRow, "nRow" ), MsgInfo( nCol, "nCol" ) }
 
       ::oBrwArticulo:CreateFromResource( 300 )
 
@@ -316,6 +334,14 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
          :nBtnBmp             := 1
          :nHeadBmpAlign       := 1
          :AddResource( "Cube_Yellow_16" )
+      end with
+
+      with object ( ::oBrwArticulo:AddCol() )
+         :cHeader          := "Obsoleto"
+         :bEditValue       := {|| SelectArticulo->lObs }
+         :nWidth           := 20
+         :nHeadBmpNo       := 1
+         :SetCheck( { "DEL16", "Nil16" } )
       end with
 
       with object ( ::oBrwArticulo:AddCol() ) 
@@ -488,6 +514,18 @@ Return ::aCliente
 
 //---------------------------------------------------------------------------//
 
+METHOD GetArraySelectCodigosCliente( dbf, nPosNombre, nPosCodigo ) CLASS TSPECIALSEARCHARTICULO
+
+   ::aCodigoCliente       := {}
+
+   if TDataCenter():ExecuteSqlStatement( "SELECT Cod FROM " + cPatEmp() + "Client", "SelectArticulo" )
+      SelectArticulo->( dbeval( {|| aAdd( ::aCodigoCliente, { SelectArticulo->Cod, SelectArticulo->Cod } ) } ) )
+   end if
+
+Return ::aCodigoCliente
+
+//---------------------------------------------------------------------------//
+
 METHOD GetArraySelectArticulo() CLASS TSPECIALSEARCHARTICULO
 
    ::aArticulo       := {}
@@ -640,13 +678,15 @@ METHOD SelectArticulo( lDefault ) CLASS TSPECIALSEARCHARTICULO
    cSentencia        +=        "cabeceraSat.cCodRut, "
    cSentencia        +=        "cabeceraSat.cCodEst, "
    cSentencia        +=        "estadoSat.cNombre, "
-   cSentencia        +=        "estadoSat.nDisp "
+   cSentencia        +=        "estadoSat.nDisp, "
+   cSentencia        +=        "articulos.lObs "
    cSentencia        += "FROM " + cPatEmp() + "SatCliL lineasSat "
    cSentencia        += "JOIN ( SELECT cREF, Max( dFecSat ) AS dFecSat FROM " + cPatEmp() + "SatCliL GROUP BY cRef ) AS lineasSatFecha "
    cSentencia        += "ON lineasSatFecha.cRef = lineasSat.cRef and lineasSatFecha.dFecSat = lineasSat.dFecSat "
    cSentencia        += "INNER JOIN " + cPatEmp() + "SatCliT cabeceraSat "
    cSentencia        += "ON lineasSat.cSerSat = cabeceraSat.cSerSat and lineasSat.nNumSat = cabeceraSat.nNumSat and lineasSat.cSufSat = cabeceraSat.cSufSat "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "EstadoSat estadoSat on cabeceraSat.cCodEst = estadoSat.cCodigo "
+   cSentencia        += "LEFT JOIN " + cPatEmp() + "Articulo articulos on lineasSat.cRef = articulos.Codigo "
    cSentencia        += ::cGetWhereSentencia( lDefault )
    cSentencia        += ::cGetOrderBy()
 
@@ -707,6 +747,10 @@ METHOD cGetWhereSentencia( lDefault ) CLASS TSPECIALSEARCHARTICULO
       cSentencia     += if( !Empty( cSentencia ), " AND ", "" ) + "cabeceraSat.cCodEst='" + ::GetCodigoEstadoArticulo( ::cGetEstado ) + "'"
    end if
 
+   if !Empty( ::cGetCodigoCliente )
+      cSentencia     += if( !Empty( cSentencia ), " AND ", "" ) + "cabeceraSat.cCodCli='" + Padr( ::cGetCodigoCliente, 12 ) + "'" 
+   end if
+
    if !Empty( ::cGetCliente )
       cSentencia     += if( !Empty( cSentencia ), " AND ", "" ) + "cabeceraSat.cNomCli='" + Padr( ::cGetCliente, 80 ) + "'" 
    end if
@@ -726,6 +770,10 @@ METHOD cGetWhereSentencia( lDefault ) CLASS TSPECIALSEARCHARTICULO
 
    if !Empty( ::cGetRuta )
       cSentencia     += if( !Empty( cSentencia ), " AND ", "" ) + "cabeceraSat.cCodRut='" + ::GetCodigoRuta( ::cGetRuta ) + "'" 
+   end if
+
+   if ::lExcObsoletos
+      cSentencia     += if( !Empty( cSentencia ), " AND ", "" ) + "NOT articulos.lobs" 
    end if
 
    if !Empty( cSentencia )
@@ -752,15 +800,17 @@ Return ( cSentencia )
 
 METHOD ReiniciaValores() CLASS TSPECIALSEARCHARTICULO
 
-   ::cGetArticulo    := Space( 200 )
-   ::cGetTipo        := Space( 200 )
-   ::cGetCliente     := Space( 200 )
-   ::cGetEstado      := Space( 200 )
-   ::cGetOperario    := Space( 200 )
-   ::cGetRuta        := Space( 200 )
+   ::cGetArticulo       := Space( 200 )
+   ::cGetTipo           := Space( 200 )
+   ::cGetCliente        := Space( 200 )
+   ::cGetCodigoCliente  := Space( 200 )
+   ::cGetEstado         := Space( 200 )
+   ::cGetOperario       := Space( 200 )
+   ::cGetRuta           := Space( 200 )
 
    ::oGetArticulo:Refresh()
    ::oGetTipo:Refresh()
+   ::oGetCodigoCliente:Refresh()
    ::oGetCliente:Refresh()
    ::oGetEstado:Refresh()
    ::oGetOperario:Refresh()
@@ -771,6 +821,10 @@ METHOD ReiniciaValores() CLASS TSPECIALSEARCHARTICULO
 
    ::cEstadoMaquina  := "Todas"
    ::oEstadoMaquina:Refresh()
+
+   ::lExcObsoletos   := .t.
+   ::oExcObsoletos:Refresh()
+
 
    ::lRecargaFecha()
 

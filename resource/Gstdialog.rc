@@ -1566,7 +1566,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 190, "Edit", ES_MULTILINE|WS_BORDER, 198, 255, 290, 12
   CONTROL "", 200, "Edit", ES_MULTILINE|WS_BORDER, 198, 269, 290, 12
   CONTROL "", 210, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 417, 2, 70, 12
-  CONTROL "Caracteristicas técnicas", -1, "Button", BS_GROUPBOX, 44, 118, 448, 109
+  CONTROL "Caracteristicas técnicas (código HTML)", -1, "Button", BS_GROUPBOX, 44, 118, 448, 109
   CONTROL "Precios y ofertas para la web", -1, "Button", BS_GROUPBOX, 272, 31, 219, 83
   CONTROL "Código web", -1, "Static", WS_GROUP, 351, 6, 40, 8
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 3, 4, 34, 30
@@ -20385,30 +20385,33 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 160, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 162, 50, 120, 12
   CONTROL "", 170, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 283, 50, 120, 12
   CONTROL "", 180, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 405, 50, 120, 134
+  CONTROL "Excluir obsoletos", 310, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 529, 52, 118, 10
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 49, 77, 110, 12
   CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 162, 77, 120, 12
   CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 283, 77, 120, 12
-  CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 405, 77, 120, 12
-  CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 526, 77, 122, 12
-  CONTROL "", 190, "Edit", WS_BORDER|WS_TABSTOP, 49, 102, 110, 12
+  CONTROL "", 320, "Edit", WS_BORDER|WS_TABSTOP, 405, 77, 120, 12
+  CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 529, 77, 120, 12
+  CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 49, 102, 122, 12
+  CONTROL "", 190, "Edit", WS_BORDER|WS_TABSTOP, 162, 102, 110, 12
   CONTROL "", 300, "TXBrowse", WS_TABSTOP|0x00300000, 53, 132, 598, 214
   CONTROL "Buscar [F5]", 200, "Button", WS_TABSTOP, 488, 354, 50, 13
   CONTROL "Limpiar [F4]", 210, "Button", WS_TABSTOP, 543, 354, 50, 13
   CONTROL "&Salir", IDCANCEL, "Button", WS_TABSTOP, 598, 354, 50, 13
-  CONTROL "Código", -1, "Static", WS_GROUP, 49, 67, 37, 8
+  CONTROL "Código artículo", -1, "Static", WS_GROUP, 49, 67, 53, 8
   CONTROL "Tipo artículo", -1, "Static", WS_GROUP, 162, 67, 41, 8
   CONTROL "Estado", -1, "Static", WS_GROUP, 283, 67, 41, 8
   CONTROL "Búsqueda avanzada de artículo", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 287, 8
   CONTROL "Filtros", -1, "Button", BS_GROUPBOX, 43, 29, 610, 89
-  CONTROL "Cliente", -1, "Static", WS_GROUP, 405, 67, 41, 8
+  CONTROL "Nombre cliente", -1, "Static", WS_GROUP, 529, 67, 54, 8
   CONTROL "Resultado", -1, "Button", BS_GROUPBOX, 43, 121, 610, 230
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30, WS_EX_TRANSPARENT
   CONTROL "Fecha inicio", -1, "Static", WS_GROUP, 162, 38, 44, 8
   CONTROL "Fecha fin", -1, "Static", WS_GROUP, 283, 38, 35, 8
   CONTROL "Periodo", -1, "Static", WS_GROUP, 49, 38, 38, 8
   CONTROL "Disponibilidad", -1, "Static", WS_GROUP, 405, 38, 46, 8
-  CONTROL "Operario", -1, "Static", WS_GROUP, 526, 67, 41, 8
-  CONTROL "Ruta", -1, "Static", WS_GROUP, 49, 92, 37, 8
+  CONTROL "Operario", -1, "Static", WS_GROUP, 49, 92, 41, 8
+  CONTROL "Ruta", -1, "Static", WS_GROUP, 162, 92, 37, 8
+  CONTROL "Código cliente", -1, "Static", WS_GROUP, 405, 67, 54, 8
 }
 
 LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US
@@ -20466,30 +20469,33 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 160, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 131, 50, 60, 12
   CONTROL "", 170, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 193, 50, 60, 12
   CONTROL "", 180, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 255, 50, 66, 134
-  CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 49, 78, 130, 12
-  CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 181, 78, 130, 12
-  CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 313, 78, 130, 12
-  CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 445, 78, 130, 12
-  CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 577, 78, 130, 12
+  CONTROL "Excluir obsoletos", 310, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 328, 52, 69, 10
+  CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 49, 78, 111, 12
+  CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 163, 78, 110, 12
+  CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 276, 78, 110, 12
+  CONTROL "", 320, "Edit", WS_BORDER|WS_TABSTOP, 389, 78, 110, 12
+  CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 502, 78, 110, 12
+  CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 615, 78, 110, 12
   CONTROL "Buscar [F5]", 200, "Button", WS_TABSTOP, 677, 392, 50, 13
   CONTROL "Limpiar [F4]", 210, "Button", WS_TABSTOP, 732, 392, 50, 13
   CONTROL "", 300, "TXBrowse", WS_TABSTOP|0x00300000, 49, 111, 789, 271
   CONTROL "&Salir", IDCANCEL, "Button", WS_TABSTOP, 787, 392, 50, 13
-  CONTROL "Código", -1, "Static", WS_GROUP, 49, 68, 37, 8
-  CONTROL "Tipo artículo", -1, "Static", WS_GROUP, 181, 68, 41, 8
-  CONTROL "Estado", -1, "Static", WS_GROUP, 313, 68, 41, 8
-  CONTROL "Búsqueda avanzada de artículo", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 287, 8
+  CONTROL "Código artículo", -1, "Static", WS_GROUP, 49, 68, 53, 8
+  CONTROL "Tipo artículo", -1, "Static", WS_GROUP, 163, 68, 41, 8
+  CONTROL "Estado", -1, "Static", WS_GROUP, 276, 68, 41, 8
+  CONTROL "Búsqueda avanzada de artículo", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 799, 8
   CONTROL "Filtros", -1, "Button", BS_GROUPBOX, 43, 29, 801, 67
-  CONTROL "Cliente", -1, "Static", WS_GROUP, 445, 68, 41, 8
+  CONTROL "Nombre cliente", -1, "Static", WS_GROUP, 502, 68, 62, 8
   CONTROL "Resultado", -1, "Button", BS_GROUPBOX, 43, 99, 801, 288
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30, WS_EX_TRANSPARENT
   CONTROL "Fecha inicio", -1, "Static", WS_GROUP, 131, 40, 44, 8
   CONTROL "Fecha fin", -1, "Static", WS_GROUP, 193, 40, 35, 8
   CONTROL "Periodo", -1, "Static", WS_GROUP, 49, 40, 38, 8
   CONTROL "Disponibilidad", -1, "Static", WS_GROUP, 255, 40, 46, 8
-  CONTROL "Operario", -1, "Static", WS_GROUP, 577, 68, 41, 8
-  CONTROL "", 190, "Edit", WS_BORDER|WS_TABSTOP, 709, 78, 130, 12
-  CONTROL "Ruta", -1, "Static", WS_GROUP, 709, 69, 41, 8
+  CONTROL "Operario", -1, "Static", WS_GROUP, 615, 68, 41, 8
+  CONTROL "", 190, "Edit", WS_BORDER|WS_TABSTOP, 728, 78, 110, 12
+  CONTROL "Ruta", -1, "Static", WS_GROUP, 728, 69, 41, 8
+  CONTROL "Código cliente", 4002, "Static", WS_GROUP, 389, 68, 61, 8
 }
 
 HELPENTRYIMAGE DIALOG DISCARDABLE 141, -5, 600, 362

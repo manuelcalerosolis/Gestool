@@ -19199,7 +19199,9 @@ Return ( .t. )
 
 Static Function calculaPorcentajeDescuento( oPorcentajeDescuento, nPrecioVenta, nPrecioInternet )
 
-   oPorcentajeDescuento:cText( ( 1 - ( nPrecioInternet / nPrecioVenta ) ) * 100 )
+   if nPrecioVenta != 0
+      oPorcentajeDescuento:cText( ( 1 - ( nPrecioInternet / nPrecioVenta ) ) * 100 )
+   end if
 
 Return ( .t. )
 
