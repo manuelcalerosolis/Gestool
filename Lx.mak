@@ -1054,6 +1054,8 @@ CamposExtra.prg         \
 DetCamposExtra.prg      \
 TScripts.prg            \
 TGenMailDatabaseRecibosClientes.prg \
+TDetMovimientosAlmacen.prg \
+TDetSeriesMovimientos.prg \
 
 C               =       \
 Metafi32.c              \
@@ -2098,6 +2100,8 @@ CamposExtra.obj         \
 DetCamposExtra.obj      \
 TScripts.obj            \
 TGenMailDatabaseRecibosClientes.obj \
+TDetMovimientosAlmacen.obj \
+TDetSeriesMovimientos.obj \
 
 .PRG.OBJ:
    $(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -3148,6 +3152,8 @@ $(OBJ)\CamposExtra.obj           +
 $(OBJ)\DetCamposExtra.obj        +
 $(OBJ)\TScripts.obj              +
 $(OBJ)\TGenMailDatabaseRecibosClientes.obj +
+$(OBJ)\TDetMovimientosAlmacen.obj +
+$(OBJ)\TDetSeriesMovimientos.obj +
 $(OBJ)\EstadoSat.obj             
 $<,$*
 $(FWLIB)\FiveH.lib               +
