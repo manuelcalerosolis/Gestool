@@ -2062,12 +2062,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
 
       REDEFINE GET aGet[ _CNUMFAC ] VAR aTmp[ _CNUMFAC ] ;
 			ID 		130 ;
-         PICTURE  "@R A/#########/##" ;
          WHEN     ( nMode == APPD_MODE ) ;
          VALID    ( cFacPrv( aGet, oBrwLin, nMode, aTmp ), RecalculaTotal( aTmp ) ) ;
          ON HELP  ( brwFacPrv( aGet[ _CNUMFAC ], nView ) );
          BITMAP   "LUPA" ;
-			OF 		oFld:aDialogs[1]
+         OF       oFld:aDialogs[1]
+      // PICTURE  "@R A/#########/##" ;
 
       REDEFINE CHECKBOX aGet[ _LFACGAS ] VAR aTmp[ _LFACGAS ] ;
          ID       550;
@@ -6241,15 +6241,11 @@ STATIC FUNCTION cFacPrv( aGet, oBrw, nMode, aTmp )
 
       aGet[ _CNUMFAC ]:bWhen     := {|| .f. }
 
-   else
-
-      MsgStop( "Factura no encontrada." )
-
    end if
 
    nTotRctPrv( nil, D():FacturasRectificativasProveedores( nView ), dbfTmp, D():TiposIva( nView ), D():Divisas( nView ), D():FacturasProveedoresPagos( nView ), aTmp )
 
-RETURN lValid
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 

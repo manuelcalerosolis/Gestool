@@ -111,6 +111,7 @@ CLASS TDbf
     METHOD  fieldGetBuffer( cFld )          INLINE ( if( ::getBuffer(), ::aTField[ ::FieldPos( cFld ) ]:Val, nil ) )
     METHOD  fieldPutBuffer( cFld, Val )     INLINE ( if( ::getBuffer(), ::aTField[ ::FieldPos( cFld ) ]:Val := Val, nil ) )
 
+    METHOD  Say()
 
 //-- WORKAREA/DATABASE MANAGEMENT METHODS ------------------------------------//
 
@@ -2134,49 +2135,19 @@ Return ( aDbf )
 
 //---------------------------------------------------------------------------//
 
-METHOD CreateFromHash( hDefinition, cDriver, cPath )
-
-    local oDbf
-    local hField
-
-    if Empty( hDefinition )
-        Return ( nil )
-    end if 
-
-    DEFAULT cDriver     := cDriver()
-    DEFAULT cPath       := cPatEmp()
-
-        for each hField in hDefinition[ "Fields" ]
-            msgStop( valtoprg( hField ) )
-            // oDbf:AddField( hField[  ], "C", 01, 0,,,,, "Serie", .F.,, .F., {} )            
-        next
-
-/*
-
-   ::oDbf := DbfServer( "ProCab.Dbf", "ProCab" ):New( "ProCab.Dbf", "ProCab", ( cDriver ), "Partes de producci�n", ( cPath ) )
-
-      ::oDbf:AddField( "cSerOrd", "C", 01, 0,,,,, "Serie", .F.,, .F., {} )
-      ::oDbf:AddField( "nNumOrd", "N", 09, 0,,,,, "N�mero", .F.,, .F., {} )
-      ::oDbf:AddField( "cSufOrd", "C", 02, 0,,,,, "Sufijo", .F.,, .F., {} )
-      ::oDbf:AddField( "dFecOrd", "D", 08, 0,,,,, "Fecha inicio", .F.,, .F., {} )
-      ::oDbf:AddField( "dFecFin", "D", 08, 0,,,,, "Fecha fin", .F.,, .F., {} )
-      ::oDbf:AddField( "cCodDiv", "C", 03, 0,,,,, "Divisa", .F.,, .F., {} )
-      ::oDbf:AddField( "nVdvDiv", "N", 16, 6,,,,, "Valor divisa", .F.,, .F., {} )
-      ::oDbf:AddField( "cAlmOrd", "C", 03, 0,,,,, "Almac�n destino", .F.,, .F., {} )
-      ::oDbf:AddField( "cCodSec", "C", 03, 0,,,,, "Secci�n", .F.,, .F., {} )
-      ::oDbf:AddField( "cHorIni", "C", 05, 0, "@R 99:99",,,, "Hora de inicio", .F.,, .F., {} )
-      ::oDbf:AddField( "cHorFin", "C", 05, 0, "@R 99:99",,,, "Hora de fin", .F.,, .F., {} )
-      ::oDbf:AddField( "cCodOpe", "C", 03, 0,,,,, "Operaci�n", .F.,, .F., {} )
-      ::oDbf:AddField( "cAlmOrg", "C", 03, 0,,,,, "Almacen Origen", .F.,, .F., {} )
-
-      ::oDbf:AddIndex( "cNumOrd", "ProCab.Cdx", "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd",,, .F., .F., "N�mero",,, .T., .F. )
-      ::oDbf:AddIndex( "dFecOrd", "ProCab.Cdx", "dFecOrd",,, .F., .F., "Fecha inicio",,, .T., .F. )
-      ::oDbf:AddIndex( "cCodOpe", "ProCab.Cdx", "cCodOpe",,, .F., .F., "Operaci�n",,, .T., .F. )
-      ::oDbf:AddIndex( "cCodSec", "ProCab.Cdx", "cCodSec",,, .F., .F., "Secci�n",,, .T., .F. )
-      ::oDbf:AddIndex( "cAlmOrd", "ProCab.Cdx", "cAlmOrd",,, .F., .F., "Almac�n",,, .T., .F. )
-*/
+METHOD CreateFromHash( hDefinition, cDriver, cPath ) CLASS TDbf
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Say() CLASS TDbf
+
+    local say   := ""
+
+    ( ::nArea )->( aeval( ::aTField, { | oFld | say += cvaltochar( oFld:GetVal() ) + " : " } ) )
+
+Return ( say )        
 
 //----------------------------------------------------------------------------//
 //------ Funciones amigas ----------------------------------------------------//

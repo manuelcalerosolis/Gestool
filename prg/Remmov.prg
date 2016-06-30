@@ -195,7 +195,7 @@ CLASS TRemMovAlm FROM TMasDet
    METHOD DeleteDet( oDlg )
 
    METHOD lSave()
-   METHOD RecalcularPrecios()                            INLINE   ( ::oDetMovimientos:RecalcularPrecios(), ::oBrwDet:Refresh() )
+   METHOD RecalcularPrecios()                            INLINE   ( ::oDetMovimientos:RecalcularPrecios(), ::oBrwDet:goTop(), ::oBrwDet:Refresh() )
 
    METHOD ShwAlm( oSay, oBtnImp )
 
@@ -1027,7 +1027,6 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
    ::oDetMovimientos:oDbfVir:OrdSetFocus( "nNumLin" )
 
    if nMode == APPD_MODE
-      ::oDbf:lWait   := .t.
       ::oDbf:lSelDoc := .t.
       ::oDbf:cCodUsr := cCurUsr()
       ::oDbf:cCodDlg := oRetFld( cCurUsr(), ::oUsr, "cCodDlg" )
@@ -1273,7 +1272,7 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
          :cHeader       := "Código"
          :bStrData      := {|| ::oDetMovimientos:oDbfVir:FieldGetByName( "cRefMov" ) }
          :nWidth        := 100
-         :cSortOrder    := "cRefMov"
+         :cSortOrder    := "cRefAlm"
          :bLClickHeader := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
       end with
 

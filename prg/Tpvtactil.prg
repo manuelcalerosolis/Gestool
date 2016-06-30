@@ -181,6 +181,8 @@ CLASS TpvTactil
    DATA oBrwFamilias
    DATA oBrwLineas
 
+   DATA oDragCursor
+
    DATA oLstArticulos
    DATA oLstOrden
 
@@ -412,6 +414,9 @@ CLASS TpvTactil
    DATA cNumeroAlbaran              INIT ""
 
    DATA cCodigoOrdenComandaActual   INIT ""
+
+   DATA numeroLineaDragBegin
+   DATA numeroLineaDropOver
 
    METHOD New( oMenuItem, oWnd ) CONSTRUCTOR
 
@@ -882,6 +887,12 @@ CLASS TpvTactil
 
    METHOD setTextButtonOrdenComandaActual( textoOrdenComanda ) INLINE ( if( !empty( ::oBtnOrdenComandaActual ), ::oBtnOrdenComandaActual:setText( textoOrdenComanda ), ) )
 
+   METHOD browseLineasDragBegin()                              
+
+   METHOD browseLineasDropOver()
+
+   METHOD moveLine()
+
 END CLASS
 
 //--------------------------------------------------------------------------//
@@ -916,6 +927,8 @@ METHOD New( oMenuItem, oWnd ) CLASS TpvTactil
    ::lKillResource            := .f.
    ::lHideCalculadora         := .t.
    ::lCopiaComanda            := .f.
+
+   DEFINE CURSOR ::oDragCursor DRAG
 
    if ::l1024()
       ::cResource             := "TpvTactil"
@@ -1103,6 +1116,10 @@ METHOD End() CLASS TpvTactil
    ::oFntBrw         := nil
    ::oFntDlg         := nil
    ::oFntDto         := nil
+
+   if !empty( ::oDragCursor )
+      ::oDragCursor:end()
+   end if
 
    Self              := nil
 
@@ -2187,6 +2204,10 @@ METHOD Resource() CLASS TpvTactil
    ::oBrwLineas:bChange          := {|| ::CargaMenuSeleccionado() }
 
    ::oBrwLineas:SetFont( ::oFntBrw )
+
+   ::oBrwLineas:oDragCursor      := ::oDragCursor
+   ::oBrwLineas:bDragBegin       := { |r,c,f,o| ::browseLineasDragBegin( r, c, f, o ) }
+   ::oBrwLineas:bDropOver        := { |u,r,c,f| ::browseLineasDropOver( u, r, c, f ) }
 
    ::oTemporalLinea:SetBrowse( ::oBrwLineas )
 
@@ -10464,6 +10485,70 @@ METHOD AgregarArticulosInicio( cCodigoArticulo )
 
 Return ( .t. )
 
+//---------------------------------------------------------------------------//
+
+METHOD browseLineasDragBegin( r, c, f, o )                              
+
+   ::numeroLineaDragBegin  := ::oTemporalLinea:nNumLin
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD browseLineasDropOver( u, r, c, f )
+
+   ::oBrwLineas:LButtonDown( r, c )
+   ::oBrwLineas:LButtonUp()
+
+   ::numeroLineaDropOver   := ::oTemporalLinea:nNumLin
+
+   if ::numeroLineaDragBegin != ::numeroLineaDropOver
+      ::moveLine()
+   end if 
+
+   ::oBrwLineas:Refresh()
+
+   // msgalert( ::numeroLineaDragBegin, "nNumLin guardada" )
+   // msgalert( ::oTemporalLinea:nNumLin, "nNumLin actual" )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD moveLine()
+
+   local isUpLine    := ::numeroLineaDragBegin > ::numeroLineaDropOver // (9) (3)
+
+   ::oTemporalLinea:getStatus()
+
+   ::oTemporalLinea:ordsetfocus( 0 )
+
+   ::oTemporalLinea:goTop()
+   while ( ! ::oTemporalLinea:eof() )
+      
+      if ::oTemporalLinea:nNumLin >= ::numeroLineaDropOver .and. ::oTemporalLinea:nNumLin < ::numeroLineaDragBegin
+         ::oTemporalLinea:nNumLin++
+      elseif ::oTemporalLinea:nNumLin == ::numeroLineaDragBegin
+         ::oTemporalLinea:nNumLin := ::numeroLineaDropOver
+      end if 
+
+      ::oTemporalLinea:skip()
+
+   end while
+
+   ::oTemporalLinea:setStatus()
+
+   if isUpLine
+      ::oBrwLineas:GoUp()
+   else 
+      ::oBrwLineas:GoDown()
+   end if 
+
+   msgalert( ::oTemporalLinea:ordsetfocus() )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

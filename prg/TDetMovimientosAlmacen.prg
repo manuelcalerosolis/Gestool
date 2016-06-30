@@ -24,6 +24,7 @@ CLASS TDetMovimientos FROM TDet
    DATA  cOldLote          INIT  ""
    DATA  cOldValPr1        INIT  ""
    DATA  cOldValPr2        INIT  ""
+   DATA  cOldAliMov        INIT  ""
 
    DATA  nStockActual      INIT  0
    DATA  aStockActual
@@ -43,6 +44,7 @@ CLASS TDetMovimientos FROM TDet
    DATA  cSayCaj           INIT  ""
    DATA  oSayUnd
    DATA  cSayUnd           INIT  ""
+   DATA  cAliMov
    DATA  oSayLote
    DATA  oGetLote
    DATA  oGetDetalle
@@ -117,6 +119,10 @@ CLASS TDetMovimientos FROM TDet
    METHOD nTotPesoVir( lPic )
 
    METHOD recalcularPrecios()
+
+   METHOD putFieldValues()
+   METHOD isKeyFieldValues()
+   METHOD accumulatesFieldValues()   
 
    METHOD isNumeroSerieNecesario()
 
@@ -1340,6 +1346,8 @@ METHOD Save() CLASS TDetMovimientos
    local oWaitMeter
    local nKeyCount   := ::oDbfVir:ordKeyCount()
 
+
+
    oWaitMeter        := TWaitMeter():New( "Guardando movimientos de almacén", "Espere por favor..." )
    oWaitMeter:Run()
    oWaitMeter:setTotal( nKeyCount )
@@ -1393,8 +1401,6 @@ METHOD Save() CLASS TDetMovimientos
       end while
 
    case ::oParent:oDbf:nTipMov == 3
-
-      msgAlert( ::oParent:lTargetCalculate, "lTargetCalculate" ) 
 
       ::oDbfVir:GoTop()
       while !::oDbfVir:Eof()
@@ -1573,13 +1579,20 @@ RETURN ( if( lPic, Trans( nVolumen, MasUnd() ), nVolumen ) )
 
 METHOD RecalcularPrecios() CLASS TDetMovimientos
 
-   local nRecno
    local nKeyCount
    local oWaitMeter
 
    if !msgYesNo( "¿Desea recalcular los precios de costo y el stock actual?", "Confirme")
       Return .f.
    end if 
+
+   ::cOldCodArt      := ""
+   ::cOldAliMov      := ""
+   ::cOldValPr1      := ""
+   ::cOldValPr2      := ""
+
+   ::oDbfVir:getStatus()
+   ::oDbfVir:ordsetfocus( "cRefAlm" )
 
    nKeyCount         := ::oDbfVir:ordKeyCount()
 
@@ -1589,13 +1602,29 @@ METHOD RecalcularPrecios() CLASS TDetMovimientos
 
    CursorWait()
 
-   nRecno         := ::oDbfVir:Recno()
+   // acumulacion de lineas----------------------------------------------------
 
    ::oDbfVir:GoTop()
-   while !::oDbfVir:Eof()
+   while !( ::oDbfVir:eof() )
+
+      if ::isKeyFieldValues()
+         ::accumulatesFieldValues()
+      end if 
+
+      ::putFieldValues()
+
+      ::oDbfVir:Skip()
+
+   end while
+
+   // recalculo de precios ----------------------------------------------------
+
+   ::oDbfVir:GoTop()
+   while !( ::oDbfVir:eof() )
 
       ::oDbfVir:FieldPutByName( "nPreDiv", ::getPrecioCosto() )
-      ::oDbfVir:fieldPutByName( "nUndAnt", ::oParent:oStock:nStockAlmacen( ::oDbfVir:cRefMov, ::oDbfVir:cAliMov, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2 ) )
+
+      ::oDbfVir:fieldPutByName( "nUndAnt", ::oParent:oStock:nStockAlmacen( ::oDbfVir:cRefMov, ::oDbfVir:cAliMov, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, , , ::oParent:oDbf:dFecRem ) )
 
       oWaitMeter:setMessage( "Recalculando precios y stock " + alltrim( str( ::oDbfVir:OrdKeyNo() ) ) + " de " + alltrim( str( nKeyCount ) ) )
       oWaitMeter:AutoInc()
@@ -1604,13 +1633,57 @@ METHOD RecalcularPrecios() CLASS TDetMovimientos
 
    end while
 
-   ::oDbfVir:GoTo( nRecno )
+   ::oDbfVir:getStatus()
 
    oWaitMeter:end()
 
    CursorWE()
 
 Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD putFieldValues() CLASS TDetMovimientos
+
+   ::cOldCodArt        := ::oDbfVir:fieldGetByName( "cRefMov" )
+   ::cOldAliMov        := ::oDbfVir:fieldGetByName( "cAliMov" )
+   ::cOldValPr1        := ::oDbfVir:fieldGetByName( "cValPr1" )
+   ::cOldValPr2        := ::oDbfVir:fieldGetByName( "cValPr2" )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD isKeyFieldValues() CLASS TDetMovimientos
+
+Return ( ::oDbfVir:fieldGetByName( "cRefMov" ) == ::cOldCodArt .and. ; 
+         ::oDbfVir:fieldGetByName( "cAliMov" ) == ::cOldAliMov .and. ; 
+         ::oDbfVir:fieldGetByName( "cValPr1" ) == ::cOldValPr1 .and. ;
+         ::oDbfVir:fieldGetByName( "cValPr2" ) == ::cOldValPr2 )
+
+//---------------------------------------------------------------------------//
+
+METHOD accumulatesFieldValues() CLASS TDetMovimientos
+
+   local recno                := ::oDbfVir:recno() 
+   local cajasMovimiento      := ::oDbfVir:fieldGetByName( "nCajMov" )
+   local unidadesMovimiento   := ::oDbfVir:fieldGetByName( "nUndMov" )
+
+   ::oDbfVir:skip( -1 )
+
+   cajasMovimiento            += ::oDbfVir:fieldGetByName( "nCajMov" )
+   unidadesMovimiento         += ::oDbfVir:fieldGetByName( "nUndMov" )
+
+   ::oDbfVir:fieldPutByName( "nCajMov", cajasMovimiento )
+   ::oDbfVir:fieldPutByName( "nUndMov", unidadesMovimiento )
+
+   ::oDbfVir:skip( 1 )
+
+   ::oDbfVir:delete()
+
+   ::oDbfVir:goto( recno ) 
+
+Return ( self )
 
 //---------------------------------------------------------------------------//
 
