@@ -3772,7 +3772,7 @@ STATIC FUNCTION StartPrint( cCodDoc, nRad, dFecIni, dFecFin, cDocIni, cDocFin, c
 
             // Imprimir el documento
 
-            PrintReportRecCli( IS_PRINTER, nCopPrn, nil )
+            PrintReportRecCli( IS_PRINTER, nCopPrn, nil, cCodDoc )
 
          end if
 
@@ -3926,7 +3926,7 @@ STATIC FUNCTION ImpPago( cNumRec, nDevice, cCodDoc, cCaption, nCopies )
 
    if lVisualDocumento( cCodDoc, D():Documentos( nView ) )
 
-      PrintReportRecCli( nDevice, nCopies, cPrinter )
+      PrintReportRecCli( nDevice, nCopies, cPrinter, cCodDoc )
 
    else
 

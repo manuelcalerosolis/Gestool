@@ -6482,7 +6482,11 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
    local oNingunaPrp1
    local oTodasPrp2
    local oNingunaPrp2
-   local oBrwImg
+   local oBrwImg 
+   local oPrp1
+   local cPrp1
+   local oPrp2
+   local cPrp2 
 
    /*
    Comprobamos que existan valores en las propiedades--------------------------
@@ -6741,6 +6745,38 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ID       114 ;
 			OF 		oDlg ;
          ACTION   ( lSelAllPrp( aValPrp2, oBrwPrp2, .f. ) )
+
+   //----Controles de propiedades para poder modificar      
+
+      REDEFINE GET oPrp1;
+         VAR      aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr1" ) ) ];
+         ID       210 ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( brwPropiedadActual( oPrp1, oSayVp1, aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] ) );
+         OF       oDlg 
+      
+      REDEFINE SAY oSayPr1 VAR cSayPr1;
+         ID       211 ;
+         OF       oDlg
+
+      REDEFINE GET oSayVp1 VAR cSayVp1;
+         ID       212 ;
+         OF       oDlg
+
+      REDEFINE GET oPrp2;
+         VAR      aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr2" ) ) ];
+         ID       220 ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( brwPropiedadActual( oPrp2, oSayVp2, aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ] ) );
+         OF       oDlg
+
+      REDEFINE SAY oSayPr2 VAR cSayPr2;
+         ID       221 ;
+         OF       oDlg
+
+      REDEFINE GET oSayVp2 VAR cSayVp2;
+         ID       222 ;
+         OF       oDlg
 
       /*
       Montamos los controles para precios por propiedades----------------------
@@ -7206,6 +7242,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          PICTURE  cPouDiv ;
          OF       oFld:aDialogs[1]
 
+
       /*
       Segunda caja de diálogo--------------------------------------------------
       */
@@ -7267,7 +7304,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          CANCEL ;
 			ACTION 	( oDlg:end() )
 
-      oDlg:bStart := {|| StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, oNingunaPrp1, oTodasPrp2, oNingunaPrp2, oBtnOk, oBtnCancel, oSay ) }
+      oDlg:bStart := {|| StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, oNingunaPrp1, oTodasPrp2, oNingunaPrp2, oBtnOk, oBtnCancel, oSay, oPrp1, oSayPr1, oSayVp1, oPrp2, oSayPr2, oSayVp2 ) }
 
       if nMode != APPD_MODE
          oDlg:AddFastKey( VK_F5, {|| EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDlg, dbfTmpVta, nMode, oBrwPrp1, oBrwPrp2 ) } )
@@ -8117,7 +8154,7 @@ Return ( lSeek )
 
 //---------------------------------------------------------------------------//
 
-Static Function StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, oNingunaPrp1, oTodasPrp2, oNingunaPrp2, oBtnOk, oBtnCancel, oSay )
+Static Function StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, oNingunaPrp1, oTodasPrp2, oNingunaPrp2, oBtnOk, oBtnCancel, oSay, oPrp1, oSayPr1, oSayVp1, oPrp2, oSayPr2, oSayVp2 )
 
    if nMode == APPD_MODE
 
@@ -8155,6 +8192,18 @@ Static Function StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, 
          oBrwPrp2:Disable()
       end if
 
+      //mostramos las propiedades para poder modificar
+
+      oPrp1:show()
+      oSayPr1:show()
+      oSayPr1:SetText(retProp( '0001', dbfPro ))
+      oSayVp1:show()
+
+      oPrp2:show()
+      oSayPr2:show()
+      oSayPr2:SetText(retProp( '0002', dbfPro ))
+      oSayVp2:show()      
+
    end if
 
 
@@ -8162,7 +8211,7 @@ Static Function StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, 
 
       if nMode == EDIT_MODE
 
-         oBrwPrp1:Disable()
+         oBrwPrp1:Hide()
          oTodasPrp1:Hide()
          oNingunaPrp1:Hide()
 
@@ -8180,9 +8229,9 @@ Static Function StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, 
 
          if nMode == EDIT_MODE
 
-            oBrwPrp2:Disable()
-            oTodasPrp2:Disable()
-            oNingunaPrp2:Disable()
+            oBrwPrp2:Hide()
+            oTodasPrp2:Hide()
+            oNingunaPrp2:Hide()
 
          end if
 

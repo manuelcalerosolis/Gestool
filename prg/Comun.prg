@@ -1832,7 +1832,6 @@ Devuelve la descripción de una line de factura
 
 FUNCTION Descrip( cFacCliL, cFacCliS )
 
-   local nOrd
    local cKey
    local cReturn     := ""
 
@@ -1844,12 +1843,9 @@ FUNCTION Descrip( cFacCliL, cFacCliS )
 
    if !Empty( cFacCliS )
 
-      nOrd           := ( cFacCliL )->( OrdSetFocus( 1 ) )
-      cKey           := ( cFacCliL )->( OrdKeyVal() ) + Str( ( cFacCliL )->nNumLin, 4 )
+      ckey           := ( cFacCliL )->( fieldget( 1 ) ) + Str( ( cFacCliL )->( fieldget( 2 ) ) ) + ( cFacCliL )->( fieldget( 3 ) ) + Str( ( cFacCliL )->nNumLin, 4 ) 
 
       cReturn        += SerialDescrip( cKey, cFacCliS )
-
-      ( cFacCliL )->( OrdSetFocus( nOrd ) )
 
    end if
 
