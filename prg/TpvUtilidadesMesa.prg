@@ -186,20 +186,24 @@ METHOD DividirMesas() CLASS TpvUtilidadesMesa
 	  ID       120 ;
 	  OF       ::oDlg
 
-	::oBrwOriginal                        := IXBrowse():New( ::oDlg )
+	::oBrwOriginal                  := IXBrowse():New( ::oDlg )
 
 	::oBrwOriginal:bClrStd          := {|| ::oSender:ColorLinea( ::oSender:oTemporalDivisionOriginal ) }
-   	::oBrwOriginal:bClrSel          := {|| ::oSender:ColorLineaSeleccionada( ::oSender:oTemporalDivisionOriginal ) } 
-   	::oBrwOriginal:bClrSelFocus     := {|| ::oSender:ColorLineaFocus( ::oSender:oTemporalDivisionOriginal ) }
+   ::oBrwOriginal:bClrSel          := {|| ::oSender:ColorLineaSeleccionada( ::oSender:oTemporalDivisionOriginal ) } 
+   ::oBrwOriginal:bClrSelFocus     := {|| ::oSender:ColorLineaFocus( ::oSender:oTemporalDivisionOriginal ) }
 
-	::oBrwOriginal:lRecordSelector        := .f.
-	::oBrwOriginal:lHScroll               := .f. 
-	::oBrwOriginal:lVScroll               := .f.
+	::oBrwOriginal:lRecordSelector  := .f.
+	::oBrwOriginal:lHScroll         := .f. 
+	::oBrwOriginal:lVScroll         := .f.
 
-	::oBrwOriginal:nMarqueeStyle          := MARQSTYLE_HIGHLROW
-	::oBrwOriginal:nRowHeight             := 36
-	::oBrwOriginal:cName                  := "Tactil.Lineas.Originales" 
-	::oBrwOriginal:lFooter                := .t.
+	::oBrwOriginal:nMarqueeStyle    := MARQSTYLE_HIGHLROW
+	::oBrwOriginal:nRowHeight       := 36
+	::oBrwOriginal:cName            := "Tactil.Lineas.Originales" 
+	::oBrwOriginal:lFooter          := .t.
+
+   ::oBrwOriginal:oDragCursor      := ::oSender:oDragCursor
+   ::oBrwOriginal:bDragBegin       := { |r,c,f,o| ::addLinea( ::oOriginal(), ::oNuevo() ) }
+   // ::oBrwOriginal:bDropOver        := { |u,r,c,f| msgalert( "bDropOver" ) }
 
 	::oBrwOriginal:SetFont( ::oSender:oFntBrw )
 
@@ -231,7 +235,6 @@ METHOD DividirMesas() CLASS TpvUtilidadesMesa
 	  :nFootStrAlign := AL_RIGHT 
 	end with
 
-
 	TButtonBmp():ReDefine( 320, {|| ::oBrwOriginal:GoUp() }, ::oDlg, , , .f., , , , .f., "Navigate_up" )
 	TButtonBmp():ReDefine( 330, {|| ::oBrwOriginal:GoDown() }, ::oDlg, , , .f., , , , .f., "Navigate_down" ) 
 
@@ -240,9 +243,12 @@ METHOD DividirMesas() CLASS TpvUtilidadesMesa
 	TButtonBmp():ReDefine( 360, {|| ::AddAllLine( ::oOriginal(), ::oNuevo() ) }, ::oDlg, , , .f., , , , .f., "Navigate_right2" )
 	TButtonBmp():ReDefine( 370, {|| ::AddAllLine( ::oNuevo(), ::oOriginal() ) }, ::oDlg, , , .f., , , , .f., "Navigate_left2" ) 
 
-	//Browse de Lineas para el Nuevo Ticket---------------------------------------
+	// Browse de Lineas para el Nuevo Ticket------------------------------------
 
-	REDEFINE GROUP ::oGrupoNuevo ID 200 OF ::oDlg TRANSPARENT
+	REDEFINE GROUP ::oGrupoNuevo ;
+      ID       200 ;
+      OF       ::oDlg ;
+      TRANSPARENT
 	  
 	::oGrupoNuevo:SetFont( ::oSender:oFntFld )
 
@@ -258,23 +264,27 @@ METHOD DividirMesas() CLASS TpvUtilidadesMesa
 	  	ID       220 ;
 	  	OF       ::oDlg
 
-	::oBrwNuevoTicket                        := IXBrowse():New( ::oDlg )
+	::oBrwNuevoTicket                  := IXBrowse():New( ::oDlg )
 
-	::oBrwNuevoTicket:bClrStd          		 := {|| ::oSender:ColorLinea( ::oSender:oTemporalDivisionNuevoTicket ) }
-   	::oBrwNuevoTicket:bClrSel          		 := {|| ::oSender:ColorLineaSeleccionada( ::oSender:oTemporalDivisionNuevoTicket ) } 
-   	::oBrwNuevoTicket:bClrSelFocus     		 := {|| ::oSender:ColorLineaFocus( ::oSender:oTemporalDivisionNuevoTicket ) }
+	::oBrwNuevoTicket:bClrStd          := {|| ::oSender:ColorLinea( ::oSender:oTemporalDivisionNuevoTicket ) }
+   ::oBrwNuevoTicket:bClrSel          := {|| ::oSender:ColorLineaSeleccionada( ::oSender:oTemporalDivisionNuevoTicket ) } 
+   ::oBrwNuevoTicket:bClrSelFocus     := {|| ::oSender:ColorLineaFocus( ::oSender:oTemporalDivisionNuevoTicket ) }
 
-	::oBrwNuevoTicket:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-	::oBrwNuevoTicket:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+	::oBrwNuevoTicket:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+	::oBrwNuevoTicket:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-	::oBrwNuevoTicket:lRecordSelector        := .f.
-	::oBrwNuevoTicket:lHScroll               := .f.
-	::oBrwNuevoTicket:lVScroll               := .f.
+	::oBrwNuevoTicket:lRecordSelector  := .f.
+	::oBrwNuevoTicket:lHScroll         := .f.
+	::oBrwNuevoTicket:lVScroll         := .f.
 
-	::oBrwNuevoTicket:nMarqueeStyle          := MARQSTYLE_HIGHLROW
-	::oBrwNuevoTicket:nRowHeight             := 36
-	::oBrwNuevoTicket:cName                  := "Tactil.Lineas.NuevoTicket"
-	::oBrwNuevoTicket:lFooter                := .t.
+	::oBrwNuevoTicket:nMarqueeStyle    := MARQSTYLE_HIGHLROW
+	::oBrwNuevoTicket:nRowHeight       := 36
+	::oBrwNuevoTicket:cName            := "Tactil.Lineas.NuevoTicket"
+	::oBrwNuevoTicket:lFooter          := .t.
+
+   ::oBrwNuevoTicket:oDragCursor      := ::oSender:oDragCursor
+   ::oBrwNuevoTicket:bDragBegin       := { |r,c,f,o| ::addLinea( ::oNuevo(), ::oOriginal() ) }
+   // ::oBrwNuevoTicket:bDropOver        := { |u,r,c,f| msgalert( "bDropOver nuevo" ) }
 
 	::oBrwNuevoTicket:SetFont( ::oSender:oFntBrw )
 
@@ -683,17 +693,17 @@ METHOD AddLinea( oOrigen, oDestino ) class TpvUtilidadesMesa
 	local lMenu
 
 	if oOrigen:lDelTil
-		msgStop( "No se pueden pasar lineas eliminadas de una mesa a otra." )
+		msgStop( "No se pueden pasar líneas eliminadas de una mesa a otra." )
 		return ( Self )
 	end if   
 
 	if oOrigen:lKitChl
-		msgStop( "No se pueden pasar lineas pertenecientes a un escandallo." )
+		msgStop( "No se pueden pasar líneas pertenecientes a un escandallo." )
 		return ( Self )
 	end if 
 
 	if empty( oOrigen:RecCount() )
-		msgStop( "No hay lineas que pasar." )
+		msgStop( "No hay líneas que pasar." )
 		return ( Self )
 	end if
 
@@ -728,7 +738,7 @@ METHOD AddLinea( oOrigen, oDestino ) class TpvUtilidadesMesa
 		::BorraLinea( nNumeroLinea, oOrigen )
 	end if
 
-	oOrigen:GoTop()
+	// oOrigen:Skip( 0 )
 
 	::oBrwOriginal:Refresh()
 	::oBrwNuevoTicket:Refresh()
@@ -813,15 +823,15 @@ Return ( Self )
 
 METHOD AddAllLine( oOrigen, oDestino ) class TpvUtilidadesMesa
 
-	if empty( oOrigen:RecCount() )
-		msgStop( "No hay lineas que pasar." )
+	if empty( oOrigen:ordKeyCount() )
+		msgStop( "No hay líneas que pasar." )
 		return ( Self )
 	end if
 
-	oOrigen:GoTop()
-	while !oOrigen:Eof()
-		
-		::AddLinea( oOrigen, oDestino )
+	oOrigen:goTop()
+	while ( !empty( oOrigen:ordKeyCount() ) )
+
+		::addLinea( oOrigen, oDestino )
 
 	end while
 

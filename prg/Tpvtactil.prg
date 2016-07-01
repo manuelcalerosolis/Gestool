@@ -42,7 +42,7 @@
 
 #define calcDistance                240
 
-#define bottomNumber                9999
+#define __bottomNumber__            9999
 
 static aResources                   := {}   
 
@@ -537,7 +537,7 @@ CLASS TpvTactil
    //------------------------------------------------------------------------//
 
    METHOD SetLineaMenu( nLineaMenu )                                 INLINE ( ::nLineaMenu := nLineaMenu )
-   METHOD GetLineaMenu()                                             INLINE ( if( empty( ::nLineaMenu ), bottomNumber, ::nLineaMenu ) )
+   METHOD GetLineaMenu()                                             INLINE ( if( empty( ::nLineaMenu ), __bottomNumber__, ::nLineaMenu ) )
 
    //------------------------------------------------------------------------//
 
@@ -888,10 +888,10 @@ CLASS TpvTactil
    METHOD setTextButtonOrdenComandaActual( textoOrdenComanda ) INLINE ( if( !empty( ::oBtnOrdenComandaActual ), ::oBtnOrdenComandaActual:setText( textoOrdenComanda ), ) )
 
    METHOD browseLineasDragBegin()                              
-
    METHOD browseLineasDropOver()
-
-   METHOD moveLine()
+      
+   METHOD moveLineUp()
+   METHOD moveLineDown()
 
 END CLASS
 
@@ -2106,35 +2106,6 @@ METHOD Resource() CLASS TpvTactil
    end if
 
    /*
-   Botones para el orden de las comandas---------------------------------------
-
-   ::oLstOrden                   := C5ImageView():Redefine( 700, ::oDlg )
-   ::oLstOrden:nWItem            := 78 // ::nImageViewWItem
-   ::oLstOrden:nHItem            := 50 //::nImageViewHItem
-   ::oLstOrden:nVSep             := ::nImageViewVSep
-   ::oLstOrden:nHSep             := ::nImageViewHSep
-   ::oLstOrden:aTextMargin       := ::aImageViewTextMargin
-   ::oLstOrden:lTitle            := ::lImagenArticulos
-   ::oLstOrden:nHTitle           := ::nImageViewTitle
-   ::oLstOrden:lShowOption       := .f.
-   ::oLstOrden:lxVScroll         := .f.
-   ::oLstOrden:lxHScroll         := .f.
-   ::oLstOrden:lAdjust           := .f.
-   ::oLstOrden:nClrTextSel       := CLR_BLACK
-   ::oLstOrden:nClrPane          := CLR_WHITE
-   ::oLstOrden:nClrPaneSel       := rgb( 48, 48, 48 )
-   ::oLstOrden:nAlignText        := nOr( DT_TOP, DT_CENTER, DT_WORDBREAK )
-
-   ::oLstOrden:nOption           := 0
-   ::oLstOrden:bAction           := {|| ::SeleccionaOrden() } 
-
-   ::oLstOrden:AddItem( "", "Entrantes",  RGB(  45, 137, 239 ) )
-   ::oLstOrden:AddItem( "", "Primeros",   rgb( 255, 255, 255 ) )
-   ::oLstOrden:AddItem( "", "Segundos",   rgb( 255, 255, 255 ) )
-   ::oLstOrden:AddItem( "", "Psotres",    rgb( 255, 255, 255 ) )
-   */ 
-
-   /*
    Datos de la sala y del Usuario-------------------------------------------
    */
 
@@ -2312,11 +2283,6 @@ METHOD Resource() CLASS TpvTactil
    ::oBtnLineasEscandallos    := TButtonBmp():ReDefine( 124, {|| ::lShowEscandallos() },     ::oDlg, , , .f., , , , .f., "Text_code_32" ) 
 
    /*
-   TButtonBmp():ReDefine( 123, {|| ::OnClickDescuento() },                                  ::oDlg, , , .f., , , , .f., "Percent_32" )
-   TButtonBmp():ReDefine( 124, {|| ::OnClickInvitacion() },                                 ::oDlg, , , .f., , , , .f., "Masks_32" )
-   */
-
-   /*
    Get para las busquedas de códigos de barras------------------------------
    */
 
@@ -2484,7 +2450,6 @@ METHOD Resource() CLASS TpvTactil
       ::oBtnSSalon            := TButtonBmp():ReDefine( 506, {|| ::OnClickSalaVenta() },  ::oDlg, , , .f., , , , .f., "Cup_32" )
       ::oBtnSEntregar         := TButtonBmp():ReDefine( 507, {|| ::OnClickEntregaNota() },    ::oDlg, , , .f., , , , .f., "Printer_32" )
       ::oBtnSCobrar           := TButtonBmp():ReDefine( 508, {|| ::OnClickCobro() },      ::oDlg, , , .f., , , , .f., "Money2_32" )
-      //::oBtnPrecioUnidades    := TButtonBmp():ReDefine( 601, {|| ::CambiarUnidadesPrecio() }, ::oDlg, , , .f., , , , .f., "Paginator_32" )   
    end if
 
    /*
@@ -2503,9 +2468,7 @@ METHOD Resource() CLASS TpvTactil
 
    ::oDlg:bResized            := {|| ::ResizedResource() } // lTop, lBottom, lLeft, lRight )() }
 
-   // ::oDlg:bKeyChar            := {|| msgStop( "::oGetUnidades:SetFocus()" ) }
    ::oDlg:OnKeyDown           := {| o, nKey, nFlag | ::oDlgKeyDown( o, nKey, nFlag ) } // {|| msgStop( "OnKeyDown" ), ::oGetUnidades:SetFocus(), 1 }
-   // ::oDlg:bKeyDown            := {|| msgStop( "bKeyDown" ) }
 
    /*
    Activamos el diálogo------------------------------------------------------
@@ -3539,13 +3502,14 @@ METHOD GuardarAgregarLibre() CLASS TpvTactil
    CursorWait()
 
    ::oTemporalLinea:Blank()
+   ::oTemporalLinea:nLinMnu      := __bottomNumber__
+   ::oTemporalLinea:nNumLin      := nLastNum( ::oTemporalLinea )
    ::oTemporalLinea:cNomTil      := ::cDescripcionLibre
    ::oTemporalLinea:nUntTil      := ::nUnidadesLibre
    ::oTemporalLinea:nPvpTil      := ::nImporteLibre
    ::oTemporalLinea:nIvaTil      := ::nIvaLibre
    ::oTemporalLinea:cAlmLin      := oUser():cAlmacen()
    ::oTemporalLinea:cImpCom1     := ::cImpresoraLibre
-   ::oTemporalLinea:nNumLin      := nLastNum( ::oTemporalLinea )
    ::oTemporalLinea:cOrdOrd      := ::oOrdenComanda:cOrden( ::cOrdenComandaLibre ) 
    ::oTemporalLinea:Insert()
  
@@ -4452,7 +4416,7 @@ METHOD AgregarPrincipal( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
        
    ::oTemporalLinea:nNumLin      := ::nNumeroLinea
    ::oTemporalLinea:nPosPrint    := ::nPosPrint
-   ::oTemporalLinea:nLinMnu      := bottomNumber
+   ::oTemporalLinea:nLinMnu      := __bottomNumber__
 
    ::oTemporalLinea:nUntTil      := ::nUnidades
    ::oTemporalLinea:cCbaTil      := ::oArticulo:Codigo
@@ -4548,7 +4512,7 @@ METHOD AgregarAcompannamiento( cCodigoArticulo, nUnidadesMenu, cCodigoMenu, cCod
 
    // Comprobamos si este acompañamiento pertenece a un artículo de un menú
    if Empty( ::GetLineaMenu() )
-      ::oTemporalLinea:nLinMnu      := bottomNumber
+      ::oTemporalLinea:nLinMnu      := __bottomNumber__
    else
       ::oTemporalLinea:nLinMnu      := ::GetLineaMenu()
    end if
@@ -4640,10 +4604,11 @@ METHOD AgregarOrdenComanda( cOrdenComanda )
    ::oTemporalLinea:Append()
    ::oTemporalLinea:Blank()
        
+   ::oTemporalLinea:nLinMnu      := __bottomNumber__
    ::oTemporalLinea:nNumLin      := ::nNumeroLinea
    ::oTemporalLinea:nPosPrint    := ::nPosPrint
-   ::oTemporalLinea:nLinMnu      := bottomNumber
    ::oTemporalLinea:cNomTil      := "* * " + alltrim( cOrdenComanda ) + " * *"
+   ::oTemporalLinea:lControl     := .t.
 
    ::oTemporalLinea:Save()
 
@@ -4928,7 +4893,7 @@ METHOD AgregarKit( cCodigoArticulo, nUnidades, cTipoImpresora1, cTipoImpresora2,
    local aStatusArticulo   := ::oArticulo:GetStatus()
    local aStatusEscandallo := ::oArticulosEscandallos:GetStatus()
 
-   DEFAULT nLineaMenu      := bottomNumber
+   DEFAULT nLineaMenu      := __bottomNumber__
    
    lKitHijo                := !lKitAsociado( cCodigoArticulo, ::oArticulo )
    lKitPrecio              := lPreciosComponentes( cCodigoArticulo, ::oArticulo:cAlias )   // 1 Todos, 2 Compuesto, 3 Componentes
@@ -10106,7 +10071,7 @@ METHOD cTextoLinea( oDbf )
       cTexto      := Space( 3 ) + "<" + cTexto + ">"
    end if
 
-   if ( oDbf:nLinMnu != bottomNumber ) .and. !( oDbf:lMnuTil )
+   if ( oDbf:nLinMnu != __bottomNumber__ ) .and. !( oDbf:lMnuTil )
       cTexto      := Space( 3 ) + "<" + cTexto + ">"
    end if
 
@@ -10146,7 +10111,7 @@ METHOD cTextoLineaLeng( oDbf, oArticulosLenguajes )
       cTexto      := Space( 3 ) + "<" + cTexto + ">"
    end if
 
-   if ( oDbf:nLinMnu != bottomNumber ) .and. !( oDbf:lMnuTil )
+   if ( oDbf:nLinMnu != __bottomNumber__ ) .and. !( oDbf:lMnuTil )
       cTexto      := Space( 3 ) + "<" + cTexto + ">"
    end if
 
@@ -10174,7 +10139,7 @@ METHOD cTextoLineaDivision( oDbf )
       cTexto      := Space( 3 ) + "<" + cTexto + ">"
    end if
 
-   if ( oDbf:nLinMnu != bottomNumber ) .and. !( oDbf:lMnuTil )
+   if ( oDbf:nLinMnu != __bottomNumber__ ) .and. !( oDbf:lMnuTil )
       cTexto      := Space( 3 ) + "<" + cTexto + ">"
    end if
 
@@ -10502,22 +10467,20 @@ METHOD browseLineasDropOver( u, r, c, f )
 
    ::numeroLineaDropOver   := ::oTemporalLinea:nNumLin
 
-   if ::numeroLineaDragBegin != ::numeroLineaDropOver
-      ::moveLine()
+   do case
+      case ::numeroLineaDragBegin > ::numeroLineaDropOver
+         ::moveLineUp()
+      case ::numeroLineaDragBegin < ::numeroLineaDropOver
+         ::moveLineDown()
    end if 
 
    ::oBrwLineas:Refresh()
-
-   // msgalert( ::numeroLineaDragBegin, "nNumLin guardada" )
-   // msgalert( ::oTemporalLinea:nNumLin, "nNumLin actual" )
 
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD moveLine()
-
-   local isUpLine    := ::numeroLineaDragBegin > ::numeroLineaDropOver // (9) (3)
+METHOD moveLineUp()
 
    ::oTemporalLinea:getStatus()
 
@@ -10538,16 +10501,38 @@ METHOD moveLine()
 
    ::oTemporalLinea:setStatus()
 
-   if isUpLine
-      ::oBrwLineas:GoUp()
-   else 
-      ::oBrwLineas:GoDown()
-   end if 
-
-   msgalert( ::oTemporalLinea:ordsetfocus() )
+   ::oBrwLineas:GoUp()
 
 Return ( .t. )
 
+//---------------------------------------------------------------------------//
+
+METHOD moveLineDown()
+
+   ::oTemporalLinea:getStatus()
+
+   ::oTemporalLinea:ordsetfocus( 0 )
+
+   ::oTemporalLinea:goTop()
+   while ( ! ::oTemporalLinea:eof() )
+      
+      if ::oTemporalLinea:nNumLin == ::numeroLineaDragBegin
+         ::oTemporalLinea:nNumLin := ::numeroLineaDropOver
+      elseif ::oTemporalLinea:nNumLin > ::numeroLineaDragBegin .and. ::oTemporalLinea:nNumLin <= ::numeroLineaDropOver
+         ::oTemporalLinea:nNumLin--
+      end if 
+
+      ::oTemporalLinea:skip()
+
+   end while
+
+   ::oTemporalLinea:setStatus()
+
+   ::oBrwLineas:GoDown()
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
