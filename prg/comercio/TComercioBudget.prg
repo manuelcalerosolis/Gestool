@@ -46,7 +46,7 @@ CLASS TComercioDocument
    // facades------------------------------------------------------------------
 
    METHOD TPrestashopId()                                   INLINE ( ::TComercio:TPrestashopId )
-   METHOD TPrestashopConfig()                               INLINE ( ::TComercio:TPrestashopConfig )
+   METHOD TComercioConfig()                               INLINE ( ::TComercio:TComercioConfig )
    METHOD TComercioCustomer()                               INLINE ( ::TComercio:TComercioCustomer )
 
    METHOD getCurrentWebName()                               INLINE ( ::TComercio:getCurrentWebName() )
@@ -452,7 +452,7 @@ Return ( .f. )
 METHOD getCountersDocumentGestool( oQuery ) CLASS TComercioBudget
 
    ::idDocumentPrestashop  := oQuery:fieldGet( 1 )
-   ::cSerieDocument        := ::TPrestashopConfig():getBudgetSerie()
+   ::cSerieDocument        := ::TComercioConfig():getBudgetSerie()
    ::nNumeroDocument       := nNewDoc( ::cSerieDocument, ::oDocumentHeaderDatabase():cAlias, "nPreCli", , ::oCounterDatabase():cAlias )
    ::cSufijoDocument       := retSufEmp()
 
@@ -546,7 +546,7 @@ Return ( .f. )
 METHOD getCountersDocumentGestool( oQuery ) CLASS TComercioOrder
 
    ::idDocumentPrestashop  := oQuery:fieldGet( 1 )
-   ::cSerieDocument        := ::TPrestashopConfig():getBudgetSerie()
+   ::cSerieDocument        := ::TComercioConfig():getBudgetSerie()
    ::nNumeroDocument       := nNewDoc( ::cSerieDocument, ::oDocumentHeaderDatabase():cAlias, "nPedCli", , ::oCounterDatabase():cAlias )
    ::cSufijoDocument       := retSufEmp()
 

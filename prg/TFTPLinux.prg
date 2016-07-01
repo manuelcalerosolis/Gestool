@@ -20,7 +20,7 @@ CLASS TFtpLinux
 
    DATA lHasSSL                                 INIT .f.
 
-   DATA TPrestashopConfig
+   DATA TComercioConfig
 
    DATA cServer                                 
    DATA cUser              
@@ -30,7 +30,7 @@ CLASS TFtpLinux
    DATA lPassive                                INIT .f.
 
    METHOD new( cUser, cPassword, cServer, nPort )
-   METHOD newPrestashopConfig( TPrestashopConfig ) 
+   METHOD newPrestashopConfig( TComercioConfig ) 
 
    METHOD createConexion() 
    METHOD endConexion()
@@ -45,10 +45,10 @@ CLASS TFtpLinux
 
    METHOD createFile( cFile, cDirectory ) 
 
-   METHOD say()                                 INLINE ( msgInfo( "Server : "    + ::TPrestashopConfig:getFtpServer()   + CRLF + ;
-                                                                  "User : "      + ::TPrestashopConfig:getFtpUser()     + CRLF + ;
-                                                                  "Password : "  + ::TPrestashopConfig:getFtpPassword() + CRLF + ;
-                                                                  if( ::TPrestashopConfig:getFtpPassive(), "Passive", "No passive" ), ;
+   METHOD say()                                 INLINE ( msgInfo( "Server : "    + ::TComercioConfig:getFtpServer()   + CRLF + ;
+                                                                  "User : "      + ::TComercioConfig:getFtpUser()     + CRLF + ;
+                                                                  "Password : "  + ::TComercioConfig:getFtpPassword() + CRLF + ;
+                                                                  if( ::TComercioConfig:getFtpPassive(), "Passive", "No passive" ), ;
                                                                   "ClassName : " + ::ClassName() ) )
 
 END CLASS
@@ -68,11 +68,11 @@ Return ( Self )
 
 //----------------------------------------------------------------//
 
-METHOD NewPrestashopConfig( TPrestashopConfig ) CLASS TFtpLinux
+METHOD NewPrestashopConfig( TComercioConfig ) CLASS TFtpLinux
 
-   ::TPrestashopConfig  := TPrestashopConfig
+   ::TComercioConfig  := TComercioConfig
 
-   ::New( ::TPrestashopConfig:getFtpUser(), ::TPrestashopConfig:getFtpPassword(), ::TPrestashopConfig:getFtpServer(), ::TPrestashopConfig:getFtpPort() )
+   ::New( ::TComercioConfig:getFtpUser(), ::TComercioConfig:getFtpPassword(), ::TComercioConfig:getFtpServer(), ::TComercioConfig:getFtpPort() )
 
 Return ( Self )
 
@@ -85,7 +85,7 @@ METHOD CreateConexion() CLASS TFtpLinux
    local oUrl          
    local lOpen             := .f.
 
-   if !empty( ::TPrestashopConfig:getFtpServer() )
+   if !empty( ::TComercioConfig:getFtpServer() )
  
       cUrl                 := "ftp://" + ::cUser + ":" + ::cPassword + "@" + ::cServer
 

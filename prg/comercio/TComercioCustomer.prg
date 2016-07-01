@@ -33,7 +33,7 @@ CLASS TComercioCustomer
    // facades------------------------------------------------------------------
 
    METHOD TPrestashopId()                                   INLINE ( ::TComercio:TPrestashopId )
-   METHOD TPrestashopConfig()                               INLINE ( ::TComercio:TPrestashopConfig )
+   METHOD TComercioConfig()                               INLINE ( ::TComercio:TComercioConfig )
    METHOD getCurrentWebName()                               INLINE ( ::TComercio:getCurrentWebName() )
 
    METHOD writeText( cText )                                INLINE ( ::TComercio:writeText( cText ) )
@@ -141,7 +141,7 @@ METHOD appendCustomerInGestool( oQuery ) CLASS TComercioCustomer
    ::oCustomerDatabase():Append()
    ::oCustomerDatabase():Cod        := ::idCustomerGestool
    
-   if ::TPrestashopConfig():isInvertedNameFormat()
+   if ::TComercioConfig():isInvertedNameFormat()
       ::oCustomerDatabase():Titulo  := upper( oQuery:fieldGetbyName( "lastname" ) ) + ", " + upper( oQuery:fieldGetByName( "firstname" ) ) // Last Name - firstname
    else   
       ::oCustomerDatabase():Titulo  := upper( oQuery:fieldGetbyName( "firstname" ) ) + space( 1 ) + upper( oQuery:fieldGetByName( "lastname" ) ) //firstname - Last Name
@@ -149,14 +149,14 @@ METHOD appendCustomerInGestool( oQuery ) CLASS TComercioCustomer
    
    ::oCustomerDatabase():nTipCli    := 3
    ::oCustomerDatabase():CopiasF    := 1
-   ::oCustomerDatabase():Serie      := ::TPrestashopConfig():getOrderSerie()
+   ::oCustomerDatabase():Serie      := ::TComercioConfig():getOrderSerie()
    ::oCustomerDatabase():nRegIva    := 1
    ::oCustomerDatabase():nTarifa    := 1
    ::oCustomerDatabase():cMeiInt    := oQuery:fieldGetByName( "email" ) //email
    ::oCustomerDatabase():lChgPre    := .t.
    ::oCustomerDatabase():lSndInt    := .t.
    ::oCustomerDatabase():CodPago    := ::getPaymentGestool( oQuery:FieldGetByName( "module" ) )
-   ::oCustomerDatabase():cCodAlm    := ::TPrestashopConfig():getStore()
+   ::oCustomerDatabase():cCodAlm    := ::TComercioConfig():getStore()
    ::oCustomerDatabase():dFecChg    := GetSysDate()
    ::oCustomerDatabase():cTimChg    := Time()
    ::oCustomerDatabase():lWeb       := .t.

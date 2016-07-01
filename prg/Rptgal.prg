@@ -2549,7 +2549,7 @@ Return nil
 Function id_name()
 Return nil
 
-Function TPRESTASHOPCONFIG()
+Function TComercioConfig()
 Return nil
 
 Function TPRESTASHOPID()

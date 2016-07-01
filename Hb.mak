@@ -15,7 +15,7 @@ BORLANDLIB           = 	\Bcc582\lib
 IMG2PDFLIB           = 	\Img2Pdf
 
 OBJ                  = 	Obj1406
-SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
+SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\comercio;.\Prg\tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC 				   =	C
 PPO 					   = 	Ppo1406
 
@@ -47,8 +47,8 @@ TComercioBudget.prg 											\
 TComercioProduct.prg 										\
 TComercioConector.prg 										\
 TComercioCategory.prg 										\
-TPrestashopConfig.prg 										\
-TPrestashopId.prg 											\
+TComercioConfig.prg 										\
+TComercioId.prg 											\
 TFTPLinux.prg 													\
 Comun.prg               									\
 AccessCode.prg          									\
@@ -476,8 +476,8 @@ TComercioBudget.obj 											\
 TComercioProduct.obj 										\
 TComercioConector.obj 										\
 TComercioCategory.obj 										\
-TPrestashopConfig.obj 										\
-TPrestashopId.obj 											\
+TComercioConfig.obj 										\
+TComercioId.obj 											\
 TFTPLinux.obj 													\
 Comun.obj                                          \
 AccessCode.obj                                     \
@@ -939,8 +939,8 @@ $(OBJ)\TComercioBudget.obj                                	+
 $(OBJ)\TComercioProduct.obj                                	+
 $(OBJ)\TComercioConector.obj  										+
 $(OBJ)\TComercioCategory.obj  										+
-$(OBJ)\TPrestashopConfig.obj 											+
-$(OBJ)\TPrestashopId.obj 												+
+$(OBJ)\TComercioConfig.obj 											+
+$(OBJ)\TComercioId.obj 													+
 $(OBJ)\TFTPLinux.obj 													+
 $(OBJ)\Comun.obj                                            +
 $(OBJ)\AccessCode.obj                                       +

@@ -18,7 +18,7 @@ CLASS TComercioConector
    // facades------------------------------------------------------------------
 
    METHOD TPrestashopId()                                   INLINE ( ::TComercio:TPrestashopId )
-   METHOD TPrestashopConfig()                               INLINE ( ::TComercio:TPrestashopConfig )
+   METHOD TComercioConfig()                               INLINE ( ::TComercio:TComercioConfig )
 
    METHOD isSyncronizeAll()                                 INLINE ( ::TComercio:lSyncAll )
    METHOD getLanguage()                                     INLINE ( ::TComercio:nLanguage )

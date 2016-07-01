@@ -489,7 +489,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       oDetCamposExtra:setbId( {|| D():ArticulosId( nView ) } )
 
       if !IsReport()
-         TPrestashopConfig():getInstance():loadJSON()
+         TComercioConfig():getInstance():loadJSON()
       end if
 
       /*
@@ -755,7 +755,7 @@ STATIC FUNCTION CloseFiles( lDestroy )
    end if
 
    if !IsReport()
-      TPrestashopConfig():DestroyInstance()
+      TComercioConfig():DestroyInstance()
    end if
 
    dbfProv           := nil
@@ -4480,7 +4480,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
    REDEFINE COMBOBOX aGet[ ( D():Articulos( nView ) )->( fieldPos( "cWebShop" ) ) ] ;
       VAR         aTmp[ ( D():Articulos( nView ) )->( fieldPos( "cWebShop" ) ) ] ;
-      ITEMS       TPrestashopConfig():getInstance():getWebsNames() ;
+      ITEMS       TComercioConfig():getInstance():getWebsNames() ;
       ID          110 ;
       WHEN        ( nMode != ZOOM_MODE .and. aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lPubInt" ) ) ] ) ;
       OF          fldWeb
@@ -4741,7 +4741,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       oDlg:AddFastKey( VK_F8, {|| if( oFld:nOption < Len( oFld:aDialogs ), oFld:SetOption( oFld:nOption + 1 ), ) } )
       oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ] ) } )
 
-      if ( TPrestashopConfig():getInstance():isRealTimeConexion() )
+      if ( TComercioConfig():getInstance():isRealTimeConexion() )
          oDlg:AddFastKey( VK_F6, {|| oBtnAceptarActualizarWeb:Click() } )
       end if
 
@@ -5434,7 +5434,7 @@ Static Function StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, 
 
    // Tiendas en prestashop----------------------------------------------------
 
-   if TPrestashopConfig():getInstance():isRealTimeConexion()
+   if TComercioConfig():getInstance():isRealTimeConexion()
       oBtnAceptarActualizarWeb:Show()
    else   
       oBtnAceptarActualizarWeb:Hide()
@@ -6746,20 +6746,24 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
 			OF 		oDlg ;
          ACTION   ( lSelAllPrp( aValPrp2, oBrwPrp2, .f. ) )
 
-   //----Controles de propiedades para poder modificar      
+      // Controles de propiedades para poder modificar-------------------------
 
       REDEFINE GET oPrp1;
          VAR      aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr1" ) ) ];
          ID       210 ;
          BITMAP   "LUPA" ;
          ON HELP  ( brwPropiedadActual( oPrp1, oSayVp1, aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] ) );
+         VALID    ( lPrpAct( aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr1" ) ) ], oSayVp1, aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ], dbfTblPro ) );
          OF       oDlg 
       
-      REDEFINE SAY oSayPr1 VAR cSayPr1;
+      REDEFINE SAY oSayPr1 ; 
+         VAR      cSayPr1 ;
          ID       211 ;
          OF       oDlg
 
-      REDEFINE GET oSayVp1 VAR cSayVp1;
+      REDEFINE GET oSayVp1 ; 
+         VAR      cSayVp1 ;
+         WHEN     .f. ;
          ID       212 ;
          OF       oDlg
 
@@ -6768,13 +6772,17 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ID       220 ;
          BITMAP   "LUPA" ;
          ON HELP  ( brwPropiedadActual( oPrp2, oSayVp2, aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ] ) );
+         VALID    ( lPrpAct( aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr2" ) ) ], oSayVp2, aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ], dbfTblPro ) );
          OF       oDlg
 
-      REDEFINE SAY oSayPr2 VAR cSayPr2;
+      REDEFINE SAY oSayPr2 ;
+         VAR      cSayPr2 ;
          ID       221 ;
          OF       oDlg
 
-      REDEFINE GET oSayVp2 VAR cSayVp2;
+      REDEFINE GET oSayVp2 ; 
+         VAR      cSayVp2 ;
+         WHEN     .f. ;
          ID       222 ;
          OF       oDlg
 
@@ -8170,9 +8178,22 @@ Static Function StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, 
          oBrwPrp1:Load()
       end if
 
-      if !Empty( oBrwPrp2 )
-         oBrwPrp2:Load()
-      end if
+      if !empty( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ] )
+         
+         if !empty( oBrwPrp2 )
+            oBrwPrp2:Load()
+            oBrwPrp2:Show()
+         end if
+
+         if !empty( oTodasPrp2 ) 
+            oTodasPrp2:Show()
+         end if 
+      
+         if !empty( oNingunaPrp2 ) 
+            oNingunaPrp2:Show()
+         end if 
+
+      end if 
 
    else
 
@@ -8185,65 +8206,49 @@ Static Function StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, 
       end if
 
       if !Empty( oBrwPrp1 )
-         oBrwPrp1:Disable()
+         oBrwPrp1:Hide()
       end if
 
       if !Empty( oBrwPrp2 )
-         oBrwPrp2:Disable()
+         oBrwPrp2:Hide()
       end if
 
-      //mostramos las propiedades para poder modificar
+      if !empty( oTodasPrp1 ) 
+         oTodasPrp1:Hide()
+      end if 
+
+      if !empty( oNingunaPrp1 )
+         oNingunaPrp1:Hide()
+      end if 
+
+      if !empty( oTodasPrp2 ) 
+         oTodasPrp2:Hide()
+      end if 
+   
+      if !empty( oNingunaPrp2 ) 
+         oNingunaPrp2:Hide()
+      end if 
+
+      // mostramos las propiedades para poder modificar------------------------
 
       oPrp1:show()
       oSayPr1:show()
-      oSayPr1:SetText(retProp( '0001', dbfPro ))
+      oSayPr1:SetText( retProp( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ], dbfPro ) )
       oSayVp1:show()
 
-      oPrp2:show()
-      oSayPr2:show()
-      oSayPr2:SetText(retProp( '0002', dbfPro ))
-      oSayVp2:show()      
+      msgalert( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ], "cCodPrp2" )
+      msgalert( retProp( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ], dbfPro ) )
 
-   end if
-
-
-   if !Empty( oBrwPrp1 ) .and. !Empty( oTodasPrp1 ) .and. !Empty( oNingunaPrp1 )
-
-      if nMode == EDIT_MODE
-
-         oBrwPrp1:Hide()
-         oTodasPrp1:Hide()
-         oNingunaPrp1:Hide()
-
+      if !empty( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ] )
+         oPrp2:show()
+         oSayPr2:show()
+         oSayPr2:SetText( retProp( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ], dbfPro ) )
+         oSayVp2:show()      
       end if
 
    end if
 
-   if !Empty( oBrwPrp2 ) .and. !Empty( oTodasPrp2 ) .and. !Empty( oNingunaPrp2 )
-
-      if !Empty( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ] )
-
-         oBrwPrp2:Show()
-         oTodasPrp2:Show()
-         oNingunaPrp2:Show()
-
-         if nMode == EDIT_MODE
-
-            oBrwPrp2:Hide()
-            oTodasPrp2:Hide()
-            oNingunaPrp2:Hide()
-
-         end if
-
-      else
-
-         oBrwPrp2:Hide()
-         oTodasPrp2:Hide()
-         oNingunaPrp2:Hide()
-
-      end if
-
-   end if
+   // Textos de etiquetas------------------------------------------------------
 
    oSay[ 7 ]:SetText( uFieldEmpresa( "cTxtTar1", "Precio 1" ) )
 

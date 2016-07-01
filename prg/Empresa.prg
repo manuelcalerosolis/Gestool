@@ -3371,7 +3371,7 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
 
    oMsgText( 'Cargando configuración de prestashop' )
 
-   TPrestashopConfig():New( cCodEmp ):LoadJSON():getWebs()
+   TComercioConfig():New( cCodEmp ):LoadJSON():getWebs()
 
    /*
    Cerrando ficheros-----------------------------------------------------------
@@ -7540,7 +7540,7 @@ Static Function TestConexionDatabase()
       Return .f.
    end if 
 
-   if !( TComercio:TPrestashopConfig:setCurrentWebName( TComercio:getWebToExport() ) )
+   if !( TComercio:TComercioConfig:setCurrentWebName( TComercio:getWebToExport() ) )
       Return .f.
    end if 
 
@@ -7565,7 +7565,7 @@ Static Function TestConexionFTP()
       Return .f.
    end if 
 
-   if !( TComercio:TPrestashopConfig:setCurrentWebName( TComercio:getWebToExport() ) )
+   if !( TComercio:TComercioConfig:setCurrentWebName( TComercio:getWebToExport() ) )
       Return .f.
    end if 
 

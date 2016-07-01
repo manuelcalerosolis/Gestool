@@ -338,7 +338,7 @@ METHOD buildProduct( idProduct, lCleanProducts ) CLASS TComercioProduct
 
    aStockArticulo             := ::stockProduct( idProduct )
 
-   if !( ::TPrestashopConfig():isProcessWithoutStock() ) .and. ::isTotalStockZero( aStockArticulo )
+   if !( ::TComercioConfig():isProcessWithoutStock() ) .and. ::isTotalStockZero( aStockArticulo )
       ::writeText( "El artículo " + alltrim( idProduct ) + " no tiene stock en el almacen de la web")
       Return ( .f. )
    end if 
@@ -346,7 +346,7 @@ METHOD buildProduct( idProduct, lCleanProducts ) CLASS TComercioProduct
    // Recopilar info de imagenes-----------------------------------------
 
    aImagesArticulos           := ::imagesProduct( idProduct )
-   if !( ::TPrestashopConfig():isProcessWithoutImage() ) .and. empty( aImagesArticulos ) 
+   if !( ::TComercioConfig():isProcessWithoutImage() ) .and. empty( aImagesArticulos ) 
       ::writeText( "El artículo " + alltrim( idProduct ) + " no tiene imagenes")
       Return ( .f. )
    end if 
@@ -509,7 +509,7 @@ METHOD stockProduct( id ) CLASS TComercioProduct
    local sStock
    local nStock            := 0
    local aStockProduct     := {}
-   local aStockArticulo    := ::oStock():aStockArticulo( id, ::TPrestashopConfig():getStore() )
+   local aStockArticulo    := ::oStock():aStockArticulo( id, ::TComercioConfig():getStore() )
 
    for each sStock in aStockArticulo
 
@@ -1540,7 +1540,7 @@ METHOD insertAditionalInformation() CLASS TComercioProduct
 
    // Subimos fabricantes---------------------------------------------------
 
-   if ::TPrestashopConfig():getSyncronizeManufacturers()
+   if ::TComercioConfig():getSyncronizeManufacturers()
 
       ::meterProcesoSetTotal( len( ::aManufacturersProduct ) )
 

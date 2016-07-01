@@ -4,8 +4,8 @@
 #include "Ini.ch"
 #include "MesDbf.ch" 
 
-#define tipoProducto    1
-#define tipoCategoria   2     
+#define __tipoProducto__    1
+#define __tipoCategoria__   2     
 
 //---------------------------------------------------------------------------//
 
@@ -20,7 +20,7 @@ CLASS TComercio
    CLASSDATA oInstance
    CLASSDATA hProductsToUpdate      INIT {=>}
 
-   DATA  TPrestashopConfig  
+   DATA  TComercioConfig  
    DATA  TPrestashopId
 
    DATA  TComercioCustomer
@@ -369,7 +369,7 @@ CLASS TComercio
 
    // Datos para la recopilacion de informacion----------------------------
 
-   METHOD getCurrentWebName()                         INLINE ( ::TPrestashopConfig:getCurrentWebName() )
+   METHOD getCurrentWebName()                         INLINE ( ::TComercioConfig:getCurrentWebName() )
 
    METHOD ProductInCurrentWeb()                       INLINE ( ::oArt:lPubInt .and. alltrim( ::oArt:cWebShop ) == ::getCurrentWebName() )  // DE MOMENTO
 
@@ -462,8 +462,8 @@ CLASS TComercio
 
    // ftp y movimientos de ficheros
 
-   METHOD cDirectoryProduct()                INLINE ( ::TPrestashopConfig:getImagesDirectory() + "/p" )
-   METHOD cDirectoryCategories()             INLINE ( ::TPrestashopConfig:getImagesDirectory() + "/c" )
+   METHOD cDirectoryProduct()                INLINE ( ::TComercioConfig:getImagesDirectory() + "/p" )
+   METHOD cDirectoryCategories()             INLINE ( ::TComercioConfig:getImagesDirectory() + "/c" )
    METHOD getRecursiveFolderPrestashop( cCarpeta )
 
    METHOD resetStockProductData()            INLINE ( ::aStockProductData := {} )
@@ -479,7 +479,7 @@ CLASS TComercio
    METHOD insertOneProductToPrestashop( idProduct )
    METHOD insertAllProducts()
 
-   METHOD getLastInsertProduct( idProduct )  INLINE ( ::TPrestashopConfig():getFromCurrentWeb( "IdProduct", "" ) )
+   METHOD getLastInsertProduct( idProduct )  INLINE ( ::TComercioConfig():getFromCurrentWeb( "IdProduct", "" ) )
 
    METHOD saveLastInsertProduct( idProduct )
 
@@ -519,8 +519,8 @@ METHOD New( oMenuItem, oMeterTotal, oTextTotal ) CLASS TComercio
    ::lSyncAll              := .f.
    ::nTotMeter             := 0 
 
-   ::TPrestashopConfig     := TPrestashopConfig():New()
-   ::TPrestashopConfig:loadJSON()
+   ::TComercioConfig     := TComercioConfig():New()
+   ::TComercioConfig:loadJSON()
 
    ::TComercioCustomer     := TComercioCustomer():New( Self )
 
@@ -904,7 +904,7 @@ METHOD dialogCreateWebCombobox( id, oDlg ) CLASS TComercio
 
    REDEFINE COMBOBOX ::oComboWebToExport ;
       VAR         ::cWebToExport ;
-      ITEMS       ::TPrestashopConfig:getWebsNames() ;
+      ITEMS       ::TComercioConfig:getWebsNames() ;
       ID          id ;
       OF          oDlg
 
@@ -914,7 +914,7 @@ Return ( self )
 
 METHOD dialogStart() CLASS TComercio
 
-   if ::TPrestashopConfig:getHideExportButton()
+   if ::TComercioConfig:getHideExportButton()
       ::oBtnExportar:Hide()
    else
       ::oBtnExportar:Show()
@@ -1041,7 +1041,7 @@ METHOD loadOrders() CLASS TComercio
 
    local oQuery
    local cQuery
-   local dStar             := ::TPrestashopConfig():getDateStart()
+   local dStar             := ::TComercioConfig():getDateStart()
 
    ::nMeterProceso         := 0
 
@@ -1418,7 +1418,7 @@ METHOD buildImagenes() CLASS TComercio
       // Metemos primero la imagen que no lleva tipo------------------------------
 
       do case
-         case oImage:nTipoImagen == tipoProducto
+         case oImage:nTipoImagen == __tipoProducto__
 
             cNewImg                       := cPatTmp() + oImage:cPrefijoNombre + ".jpg"
 
@@ -1431,7 +1431,7 @@ METHOD buildImagenes() CLASS TComercio
 
             ::AddImagesArticulos( oImagenFinal )
 
-         case oImage:nTipoImagen == tipoCategoria
+         case oImage:nTipoImagen == __tipoCategoria__
 
             cNewImg                       := cPatTmp() + oImage:cPrefijoNombre + ".jpg"
 
@@ -1452,7 +1452,7 @@ METHOD buildImagenes() CLASS TComercio
       for each oTipoImage in ::aTypeImagesPrestashop
 
          do case
-            case oImage:nTipoImagen == tipoProducto .and. oTipoImage:lProducts
+            case oImage:nTipoImagen == __tipoProducto__ .and. oTipoImage:lProducts
 
                cNewImg                       := cPatTmp() + oImage:cPrefijoNombre + "-" + oTipoImage:cNombreTipo + ".jpg"
 
@@ -1465,7 +1465,7 @@ METHOD buildImagenes() CLASS TComercio
 
                ::AddImagesArticulos( oImagenFinal )
 
-            case oImage:nTipoImagen == tipoCategoria .and. oTipoImage:lCategories
+            case oImage:nTipoImagen == __tipoCategoria__ .and. oTipoImage:lCategories
 
                cNewImg                       := cPatTmp() + oImage:cPrefijoNombre + "-" + oTipoImage:cNombreTipo + ".jpg"
 
@@ -1629,7 +1629,7 @@ METHOD buildFilesProductImages( hProductImage ) CLASS TComercio
 
    for each oTipoImage in ::aTypeImagesPrestashop
 
-      if hget( hProductImage, "nTipoImagen" ) == tipoProducto .and. oTipoImage:lProducts
+      if hget( hProductImage, "nTipoImagen" ) == __tipoProducto__ .and. oTipoImage:lProducts
 
          typeImage           := cPatTmp() + hget( hProductImage, "cPrefijoNombre" ) + "-" + oTipoImage:cNombreTipo + ".jpg"
 
@@ -1839,7 +1839,7 @@ Return .t.
 
 METHOD cPreFixtable( cName ) Class TComercio
 
-Return ( ::TPrestashopConfig:getPrefixDatabase() + alltrim( cName ) )
+Return ( ::TComercioConfig:getPrefixDatabase() + alltrim( cName ) )
 
 //---------------------------------------------------------------------------//
 
@@ -1976,7 +1976,7 @@ METHOD AppendClientesToPrestashop() CLASS TComercio
                                                                                     "'" + ( cFirstName ) + "', " + ;                                     //"firstname, " + ;
                                                                                     "'" + ( cLastName ) + "', " + ;                                      //"lastname, " + ;
                                                                                     "'" + ::oCon:Escapestr( ::oCli:cMeiInt ) + "', " + ;                 //"email, " + ;
-                                                                                    "'" + hb_md5( alltrim( ::TPrestashopConfig:getCookieKey() ) + alltrim( ::oCli:cClave ) ) + "', " + ;   //"passwd, " + ;
+                                                                                    "'" + hb_md5( alltrim( ::TComercioConfig:getCookieKey() ) + alltrim( ::oCli:cClave ) ) + "', " + ;   //"passwd, " + ;
                                                                                     "'1', " + ;                                                          //"newletter, " + ;
                                                                                     "'" + hb_md5( alltrim( ::oCli:Cod ) ) + "', " + ;                    //"secure_key, " + ;
                                                                                     "'1', " + ;                                                          //"active, " + ;
@@ -2069,7 +2069,7 @@ METHOD AppendClientesToPrestashop() CLASS TComercio
                   if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "customer" ) + " SET firstname='" + alltrim( cFirstName ) + ;
                                                                                 "', lastname='" + alltrim( cLastName ) + ;
                                                                                 "', email='" + alltrim( ::oCli:cMeiInt ) + ;
-                                                                                "', passwd='" + hb_md5( alltrim( ::TPrestashopConfig:getCookieKey() ) + alltrim( ::oCli:cClave ) ) + ;
+                                                                                "', passwd='" + hb_md5( alltrim( ::TComercioConfig:getCookieKey() ) + alltrim( ::oCli:cClave ) ) + ;
                                                                                 "', secure_key='" + hb_md5( alltrim( ::oCli:Cod ) ) + ;
                                                                                 "', date_upd='" + dtos( GetSysDate() ) + ;
                                                                                 "' WHERE id_customer=" + alltrim( str( ::oCli:cCodWeb ) ) )
@@ -2163,7 +2163,7 @@ METHOD AppendClientPrestashop() CLASS TComercio
                ::oCli:Blank()
                ::oCli:Cod        := cCodCli
                
-               if ::TPrestashopConfig:getHideHideExportButton()
+               if ::TComercioConfig:getHideHideExportButton()
                   ::oCli:Titulo  := UPPER( oQuery:FieldGetbyName( "lastname" ) ) + ", " + UPPER( oQuery:FieldGetByName( "firstname" ) ) // Last Name - firstname
                else   
                   ::oCli:Titulo  := UPPER( oQuery:FieldGetbyName( "firstname" ) ) + Space( 1 ) + UPPER( oQuery:FieldGetByName( "lastname" ) ) //firstname - Last Name
@@ -2171,7 +2171,7 @@ METHOD AppendClientPrestashop() CLASS TComercio
                
                ::oCli:nTipCli    := 3
                ::oCli:CopiasF    := 1
-               ::oCli:Serie      := ::TPrestashopConfig:getOrderSerie()
+               ::oCli:Serie      := ::TComercioConfig:getOrderSerie()
                ::oCli:nRegIva    := 1
                ::oCli:nTarifa    := 1
                ::oCli:cMeiInt    := oQuery:FieldGetByName( "email" ) //email
@@ -2236,7 +2236,7 @@ METHOD AppendClientPrestashop() CLASS TComercio
                         ::oObras:cCodCli         := cCodCli
                         ::oObras:cCodObr         := "@" + alltrim( str( oQueryDirecciones:FieldGet( 1 ) ) ) //"id_address"
                         
-                        if ::TPrestashopConfig:getHideHideExportButton() 
+                        if ::TComercioConfig:getHideHideExportButton() 
                            ::oObras:cNomObr      := UPPER( oQuery:FieldGetbyName( "lastname" ) ) + ", " + UPPER( oQuery:FieldGetByName( "firstname" ) ) // Last Name - firstname
                         else   
                            ::oObras:cNomObr      := UPPER( oQuery:FieldGetbyName( "firstname" ) ) + Space( 1 ) + UPPER( oQuery:FieldGetByName( "lastname" ) ) //firstname - Last Name
@@ -2586,24 +2586,24 @@ METHOD prestaShopConnect()
    local oDb
    local lConnect     := .f.
 
-   if empty( ::TPrestashopConfig:getMySqlServer() )
+   if empty( ::TComercioConfig:getMySqlServer() )
       msgStop( "No se ha definido ningun servidor web" )
       Return ( lConnect )
    end if 
 
-   ::writeText( 'Intentando conectar con el servidor ' + '"' + ::TPrestashopConfig:getMySqlServer() + '"' + ', el usuario ' + '"' + ::TPrestashopConfig:getMySqlUser()  + '"' + ' y la base de datos ' + '"' + ::TPrestashopConfig:getMySqlDatabase() + '".' , 3 )
+   ::writeText( 'Intentando conectar con el servidor ' + '"' + ::TComercioConfig:getMySqlServer() + '"' + ', el usuario ' + '"' + ::TComercioConfig:getMySqlUser()  + '"' + ' y la base de datos ' + '"' + ::TComercioConfig:getMySqlDatabase() + '".' , 3 )
 
    ::oCon            := TMSConnect():New()
 
-   if !empty( ::TPrestashopConfig:getMySqlTimeOut() )
-      ::oCon:SetTimeOut( ::TPrestashopConfig:getMySqlTimeOut() )
+   if !empty( ::TComercioConfig:getMySqlTimeOut() )
+      ::oCon:SetTimeOut( ::TComercioConfig:getMySqlTimeOut() )
    end if 
 
-   if !::oCon:Connect(  ::TPrestashopConfig:getMySqlServer(),;
-                        ::TPrestashopConfig:getMySqlUser(),;
-                        ::TPrestashopConfig:getMySqlPassword(),;
-                        ::TPrestashopConfig:getMySqlDatabase(),;
-                        ::TPrestashopConfig:getMySqlPort() )
+   if !::oCon:Connect(  ::TComercioConfig:getMySqlServer(),;
+                        ::TComercioConfig:getMySqlUser(),;
+                        ::TComercioConfig:getMySqlPassword(),;
+                        ::TComercioConfig:getMySqlDatabase(),;
+                        ::TComercioConfig:getMySqlPort() )
 
       ::writeText( 'No se ha podido conectar con la base de datos.' )
 
@@ -2611,11 +2611,11 @@ METHOD prestaShopConnect()
 
       ::writeText( 'Se ha conectado con éxito a la base de datos.' , 3 )
 
-      oDb            := TMSDataBase():New( ::oCon, ::TPrestashopConfig:getMySqlDatabase() )
+      oDb            := TMSDataBase():New( ::oCon, ::TComercioConfig:getMySqlDatabase() )
 
       if empty( oDb )
 
-         ::writeText( 'La Base de datos: ' + ::TPrestashopConfig:getMySqlDatabase() + ' no esta activa.', 3 )
+         ::writeText( 'La Base de datos: ' + ::TComercioConfig:getMySqlDatabase() + ' no esta activa.', 3 )
 
       else
 
@@ -3017,7 +3017,7 @@ METHOD uploadAditionalInformationToPrestashop() CLASS TComercio
 
    // Subimos fabricantes---------------------------------------------------
 
-   if ::TPrestashopConfig:getSyncronizeManufacturers()
+   if ::TComercioConfig:getSyncronizeManufacturers()
 
       ::meterProcesoSetTotal( len(::aFabricantesData) )
 
@@ -3089,7 +3089,7 @@ METHOD uploadProductToPrestashop()
 
    local hProduct
    local nArticuloData     := len(::aProductData)
-   local nArticuloStart    := ::TPrestashopConfig:getStart()
+   local nArticuloStart    := ::TComercioConfig:getStart()
 
    // Subimos los artículos----------------------------------------------------
 
@@ -3460,7 +3460,7 @@ METHOD buildInsertCategoriesPrestashop( hFamiliaData ) CLASS TComercio
 
       oImagen                       := SImagen()
       oImagen:cNombreImagen         := hGet( hFamiliaData, "image" )
-      oImagen:nTipoImagen           := tipoCategoria
+      oImagen:nTipoImagen           := __tipoCategoria__
       oImagen:cPrefijoNombre        := alltrim( str( nCodigoWeb ) )
 
       ::addImages( oImagen )
@@ -3807,7 +3807,7 @@ METHOD buildInsertImageProductsPrestashop( hProduct, idProductPrestashop ) CLASS
 
          // Añadimos la imagen al array para subirla a prestashop--------------
 
-         hSet( hImage, "nTipoImagen", tipoProducto )
+         hSet( hImage, "nTipoImagen", __tipoProducto__ )
          hSet( hImage, "cCarpeta", alltrim( str( idImagenPrestashop ) ) )
          hSet( hImage, "cPrefijoNombre", alltrim( str( idImagenPrestashop ) ) )
          hSet( hImage, "aTypeImages", {} )
@@ -4645,12 +4645,12 @@ METHOD isAviableWebToExport() Class TComercio
       Return .f.
    end if 
 
-   if !( ::TPrestashopConfig:setCurrentWebName( ::getWebToExport() ) )
+   if !( ::TComercioConfig:setCurrentWebName( ::getWebToExport() ) )
       msgStop( "No se puede poner en uso la web " + ::getWebToExport() )
       Return .f.
    end if 
 
-   if !( ::TPrestashopConfig:isActive() )
+   if !( ::TComercioConfig:isActive() )
       msgStop( "Web " + ::getWebToExport() + " esta actualmente desactivada" )
       Return .f.
    end if 
@@ -4677,10 +4677,10 @@ METHOD controllerExportPrestashop( idProduct ) Class TComercio
    end if  
 
    ::disableDialog()
-
-   oBlock                     := ErrorBlock( { | oError | Break( oError ) } )
-   BEGIN SEQUENCE
-
+//
+//   oBlock                     := ErrorBlock( { | oError | Break( oError ) } )
+//   BEGIN SEQUENCE
+//
       if ::filesOpen()
 
          ::ftpConnect()
@@ -4703,10 +4703,10 @@ METHOD controllerExportPrestashop( idProduct ) Class TComercio
 
       end if
    
-   RECOVER USING oError
-      msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
-   END SEQUENCE
-   ErrorBlock( oBlock )
+//   RECOVER USING oError
+//      msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
+//   END SEQUENCE
+//   ErrorBlock( oBlock )
 
    ::EnableDialog()
 
@@ -4830,9 +4830,9 @@ METHOD saveLastInsertProduct( idProduct ) CLASS TComercio
 
    DEFAULT idProduct    := ""
 
-   ::TPrestashopConfig():setToCurrentWeb( "IdProduct", idProduct )
+   ::TComercioConfig():setToCurrentWeb( "IdProduct", idProduct )
 
-   ::TPrestashopConfig():saveJSON()
+   ::TComercioConfig():saveJSON()
    
 Return ( self )
 
@@ -5184,7 +5184,7 @@ METHOD buildAddInformacionStockProductPrestashop( hProduct ) CLASS tComercio
 
    // Recopilamos la información del Stock-------------------------------------
 
-   aStockArticulo             := ::oStock:aStockArticulo( idProduct, ::TPrestashopConfig:getStore() )
+   aStockArticulo             := ::oStock:aStockArticulo( idProduct, ::TComercioConfig:getStore() )
 
    // Recorremos el array con los stocks---------------------------------------
 
@@ -5614,12 +5614,12 @@ Return ( id  )
 METHOD buildFTP() CLASS TComercio
 
    do case
-      case ::TPrestashopConfig:getFtpService() == "Linux"
-         ::oFtp      := TFtpLinux():NewPrestashopConfig( ::TPrestashopConfig )
-      case ::TPrestashopConfig:getFtpService() == "Windows"
-         ::oFtp      := TFtpWindows():NewPrestashopConfig( ::TPrestashopConfig )
-      case ::TPrestashopConfig:getFtpService() == "Curl"
-         ::oFtp      := TFtpCurl():NewPrestashopConfig( ::TPrestashopConfig )
+      case ::TComercioConfig:getFtpService() == "Linux"
+         ::oFtp      := TFtpLinux():NewPrestashopConfig( ::TComercioConfig )
+      case ::TComercioConfig:getFtpService() == "Windows"
+         ::oFtp      := TFtpWindows():NewPrestashopConfig( ::TComercioConfig )
+      case ::TComercioConfig:getFtpService() == "Curl"
+         ::oFtp      := TFtpCurl():NewPrestashopConfig( ::TComercioConfig )
    end case 
 
 Return ( self )
@@ -5628,7 +5628,7 @@ Return ( self )
 
 METHOD writeText( cText ) CLASS TComercio
 
-   if !( ::TPrestashopConfig:isSilenceMode() )
+   if !( ::TComercioConfig:isSilenceMode() )
 
       if !empty( ::oTree )
          ::oTree:Select( ::oTree:Add( cText ) )
@@ -5777,7 +5777,7 @@ METHOD buildStockPrestashop( idProduct ) CLASS tComercio
    local sStock
    local nStock            := 0
    local aStockProduct     := {}
-   local aStockArticulo    := ::oStock:aStockArticulo( idProduct, ::TPrestashopConfig:getStore() )
+   local aStockArticulo    := ::oStock:aStockArticulo( idProduct, ::TComercioConfig:getStore() )
 
    for each sStock in aStockArticulo
 
@@ -5813,7 +5813,7 @@ Return ( aStockProduct )
 
 METHOD updateWebProductStocks() CLASS TComercio
 
-   if !( ::TPrestashopConfig:isRealTimeConexion() )
+   if !( ::TComercioConfig:isRealTimeConexion() )
       Return .f.
    end if 
 
@@ -5841,7 +5841,7 @@ Return ( ::hProductsToUpdate )
 
 METHOD updateProductStocks( cWebName, aProductsWeb ) CLASS TComercio
 
-   ::TPrestashopConfig:setCurrentWebName( cWebName )
+   ::TComercioConfig:setCurrentWebName( cWebName )
 
    if !::prestaShopConnect()
       Return .f.

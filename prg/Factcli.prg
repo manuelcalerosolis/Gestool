@@ -457,7 +457,6 @@ static dbfPromoT
 static dbfPromoL
 static dbfPromoC
 static dbfAlm
-static dbfPro
 static dbfCodebar
 static dbfTarPreT
 static dbfTarPreL
@@ -1587,6 +1586,8 @@ STATIC FUNCTION OpenFiles()
       D():FacturasClientesCobros( nView )
       ( D():FacturasClientesCobros( nView ) )->( ordsetfocus( "fNumFac" ) )
 
+      D():Propiedades( nView )
+
       D():PropiedadesLineas( nView )
 
       D():FormasPago( nView )
@@ -1747,8 +1748,6 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatArt() + "OFERTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @dbfOferta ) )
       SET ADSINDEX TO ( cPatArt() + "OFERTA.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "PRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRO", @dbfPro ) )
-      SET ADSINDEX TO ( cPatArt() + "PRO.CDX" ) ADDITIVE
 
       USE ( cPatCli() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
       SET ADSINDEX TO ( cPatCli() + "RUTA.CDX" ) ADDITIVE
@@ -2147,10 +2146,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfOferta  )->( dbCloseArea() )
    end if
 
-   if !empty( dbfPro )
-      ( dbfPro     )->( dbCloseArea() )
-   end if
-
    if !empty( dbfRuta )
       ( dbfRuta    )->( dbCloseArea() )
    end if
@@ -2355,7 +2350,6 @@ STATIC FUNCTION CloseFiles()
    oBandera    := nil
    dbfObrasT   := nil
    dbfOferta   := nil
-   dbfPro      := nil
    dbfRuta     := nil
    dbfArtDiv   := nil
    dbfCajT     := nil
@@ -11967,10 +11961,12 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
          aGet[ _CVALPR1 ]:Show()
          aGet[ _CVALPR1 ]:lValid()
       end if
+      
       if !empty( oSayPr1 )
          oSayPr1:Show()
-         oSayPr1:SetText( retProp( aTmp[ _CCODPR1 ], dbfPro ) )
+         oSayPr1:SetText( retProp( aTmp[ _CCODPR1 ], D():Propiedades( nView ) ) )
       end if
+      
       if !empty( oSayVp1 )
          oSayVp1:Show()
       end if
@@ -11978,11 +11974,13 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
    else
 
       if !empty( aGet[ _CVALPR1 ] )
-         aGet[_CVALPR1 ]:hide()
+         aGet[ _CVALPR1 ]:hide()
       end if
+      
       if !empty( oSayPr1 )
          oSayPr1:hide()
       end if
+      
       if !empty( oSayVp1 )
          oSayVp1:hide()
       end if
@@ -11997,7 +11995,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
       end if
       if !empty( oSayPr2 )
          oSayPr2:Show()
-         oSayPr2:SetText( retProp( aTmp[ _CCODPR2 ], dbfPro ) )
+         oSayPr2:SetText( retProp( aTmp[ _CCODPR2 ], D():Propiedades( nView ) ) )
       end if
       if !empty( oSayVp2 )
          oSayVp2:Show()
@@ -12254,8 +12252,8 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          oSayVp1:Hide()
       end if
 
-      if !empty( aGet[_CVALPR2 ] )
-         aGet[_CVALPR1 ]:Hide()
+      if !empty( aGet[ _CVALPR2 ] )
+         aGet[ _CVALPR1 ]:Hide()
       end if
 
       if !empty( oSayPr2 )
@@ -12631,7 +12629,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
                end if
 
                if oSayPr1 != nil
-                  oSayPr1:SetText( retProp( ( D():Articulos( nView ) )->cCodPrp1, dbfPro ) )
+                  oSayPr1:SetText( retProp( ( D():Articulos( nView ) )->cCodPrp1, D():Propiedades( nView ) ) )
                   oSayPr1:show()
                end if
 
@@ -12663,7 +12661,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
                end if
 
                if oSayPr2 != nil
-                  oSayPr2:SetText( retProp( ( D():Articulos( nView ) )->cCodPrp2, dbfPro ) )
+                  oSayPr2:SetText( retProp( ( D():Articulos( nView ) )->cCodPrp2, D():Propiedades( nView ) ) )
                   oSayPr2:show()
                end if
 
