@@ -254,6 +254,10 @@ static function CompruebaCliente( aGet, dbfTmpLin )
    local dMayorFecha          := ctod( "" )
    local cClienteMayorFecha   := ""
 
+   if AllTrim( cCodCli ) == "000000"
+      Return .t.
+   end if
+
    nRec     := ( D():SatClientesLineas( nView ) )->( Recno() )
    nOrdAnt  := ( D():SatClientesLineas( nView ) )->( OrdSetFocus( "cRef" ) )
 

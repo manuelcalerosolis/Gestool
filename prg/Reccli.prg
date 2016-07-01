@@ -5398,6 +5398,7 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
    local dFechaCobro
    local cRecibo
    local cTipoRecibo
+   local cSerie         := ""
 
    if empty( cFacCliP )
       cFacCliP          := D():FacturasClientesCobros( nView )
@@ -5410,8 +5411,9 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
       end if
 
       aTmp[ _CTIPREC ]  := "L"
-      aTmp[ _CSERIE  ]  := "A"
-      aTmp[ _NNUMFAC ]  := nNewDoc( "A", cFacCliP, "nRecCli", , D():Contadores( nView ) )
+      cSerie            := cNewSer( "nRecCli", D():Contadores( nView ) )
+      aTmp[ _CSERIE  ]  := cSerie
+      aTmp[ _NNUMFAC ]  := nNewDoc( cSerie, cFacCliP, "nRecCli", , D():Contadores( nView ) )
       aTmp[ _CSUFFAC ]  := RetSufEmp()
       aTmp[ _NNUMREC ]  := 1
 
