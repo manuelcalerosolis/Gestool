@@ -399,8 +399,17 @@ Return ( self )
 
 METHOD writeDatosComprador()
 
+   local cCodigo
    local cLine    := "NADBY" + __separator__
-   cLine          += AllTrim( getCustomExtraField( "025", "Clientes", ( D():FacturasClientes( ::nView ) )->cCodCli ) ) + __separator__    //Codigo EDI
+
+   cCodigo        := getCustomExtraField( "025", "Clientes", ( D():FacturasClientes( ::nView ) )->cCodCli )
+
+   if !Empty( cCodigo )
+      cLine       += AllTrim( cCodigo ) + __separator__    //Codigo EDI
+   else
+      cLine       += "" + __separator__    //Codigo EDI
+   end if
+
    cLine          += AllTrim( ( D():FacturasClientes( ::nView ) )->cNomCli ) + __separator__                                              //Nombre
 
    if ( D():Clientes( ::nView ) )->( dbSeek( ( D():FacturasClientes( ::nView ) )->cCodCli ) )
@@ -419,8 +428,17 @@ Return ( self )
 
 METHOD writeDatosCompradorLegal()
 
+   local cCodigo
    local cLine    := "NADBCO" + __separator__
-   cLine          += AllTrim( getCustomExtraField( "025", "Clientes", ( D():FacturasClientes( ::nView ) )->cCodCli ) ) + __separator__    //Codigo EDI
+
+   cCodigo        := AllTrim( getCustomExtraField( "025", "Clientes", ( D():FacturasClientes( ::nView ) )->cCodCli ) ) + __separator__    //Codigo EDI
+
+   if !Empty( cCodigo )
+      cLine       += AllTrim( cCodigo ) + __separator__    //Codigo EDI
+   else
+      cLine       += "" + __separator__    //Codigo EDI
+   end if
+
    cLine          += AllTrim( ( D():FacturasClientes( ::nView ) )->cNomCli ) + __separator__                                              //Nombre
 
    if ( D():Clientes( ::nView ) )->( dbSeek( ( D():FacturasClientes( ::nView ) )->cCodCli ) )
