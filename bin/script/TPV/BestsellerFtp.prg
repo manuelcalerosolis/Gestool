@@ -48,7 +48,7 @@ METHOD New()
 
    ::cFtpSite                 := "ftp.gestool.es"
    ::cUserName                := "bestseller"
-   ::cPassword                := "123Zx456"
+   ::cPassword                := "Qwm6p_94"
    ::cUrl                     := "ftp://" + ::cUserName + ":" + ::cPassword + "@" + ::cFtpSite
    ::lPassive                 := .t.
    ::cLocalDirectory          := __localDirectory

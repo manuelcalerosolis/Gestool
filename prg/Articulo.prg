@@ -8167,7 +8167,7 @@ Static Function StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, 
    if nMode == APPD_MODE
 
       if !Empty( oBtnOk )
-         SetWindowText( oBtnOk:hWnd, "Añadir" )
+         SetWindowText( oBtnOk:hWnd, "Añadir [F5]" )
       end if
 
       if !Empty( oBtnCancel )
@@ -8232,17 +8232,18 @@ Static Function StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, 
       // mostramos las propiedades para poder modificar------------------------
 
       oPrp1:show()
-      oSayPr1:show()
-      oSayPr1:SetText( retProp( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ], dbfPro ) )
-      oSayVp1:show()
+      oPrp1:lValid()
 
-      msgalert( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ], "cCodPrp2" )
-      msgalert( retProp( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ], dbfPro ) )
+      oSayPr1:show()
+      oSayPr1:setText( retProp( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ], dbfPro ) )
+      oSayVp1:show()
 
       if !empty( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ] )
          oPrp2:show()
+         oPrp2:lValid()
+
          oSayPr2:show()
-         oSayPr2:SetText( retProp( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ], dbfPro ) )
+         oSayPr2:setText( retProp( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ], dbfPro ) )
          oSayVp2:show()      
       end if
 
@@ -8320,20 +8321,20 @@ STATIC FUNCTION EdtKit( aTmp, aGet, dbfTmpKit, oBrw, bWhen, bValid, nMode, aTmpA
    local oBtnOk
 
    if nMode != APPD_MODE
-      nCos        := nCosto( aTmp[ ( dbfTmpKit )->( fieldpos( "CREFKIT" ) ) ], D():Articulos( nView ), dbfArtKit, )
+      nCos        := nCosto( aTmp[ ( dbfTmpKit )->( fieldpos( "cRefKit" ) ) ], D():Articulos( nView ), dbfArtKit, )
    end if
 
    DEFINE DIALOG oDlg RESOURCE "ARTKIT" TITLE LblTitle( nMode ) + "escandallos"
 
-      REDEFINE GET aGet[ ( dbfTmpKit )->( fieldpos( "CREFKIT" ) ) ] ;
-         VAR      aTmp[ ( dbfTmpKit )->( fieldpos( "CREFKIT" ) ) ];
+      REDEFINE GET aGet[ ( dbfTmpKit )->( fieldpos( "cRefKit" ) ) ] ;
+         VAR      aTmp[ ( dbfTmpKit )->( fieldpos( "cRefKit" ) ) ];
 			PICTURE	"@!" ;
 			WHEN 		( nMode == APPD_MODE ) ;
          VALID    ( ChkCodKit( aGet, oCos, dbfTmpKit ) ) ;
 			ID 		100 ;
 			COLOR 	CLR_GET ;
          BITMAP   "LUPA" ;
-         ON HELP  BrwSelArticulo( aGet[ ( dbfTmpKit )->( fieldpos( "CREFKIT" ) ) ], nil, .f., .f., .f. );
+         ON HELP  BrwSelArticulo( aGet[ ( dbfTmpKit )->( fieldpos( "cRefKit" ) ) ], nil, .f., .f., .f. );
          OF       oDlg
 
       REDEFINE GET aGet[ ( dbfTmpKit )->( fieldpos( "CDESKIT" ) ) ];
@@ -8398,15 +8399,15 @@ RETURN ( oDlg:nResult == IDOK )
 
 Function lPreSaveKit( aGet, aTmp, dbfTmpKit, dbfArt, oBrw, nMode, oDlg, aTmpArt, nCos )
 
-   if Empty( aTmp[ ( dbfTmpKit )->( fieldpos( "CREFKIT" ) ) ] )
+   if Empty( aTmp[ ( dbfTmpKit )->( fieldpos( "cRefKit" ) ) ] )
       msgstop( "El código no puede estar vacío" )
-      aGet[ ( dbfTmpKit )->( fieldpos( "CREFKIT" ) ) ]:SetFocus()
+      aGet[ ( dbfTmpKit )->( fieldpos( "cRefKit" ) ) ]:SetFocus()
       Return .f.
    end if
 
-   if aTmp[ ( dbfTmpKit )->( fieldpos( "CREFKIT" ) ) ] == aTmpArt[ ( dbfArt )->( FieldPos( "Codigo" ) ) ]
+   if aTmp[ ( dbfTmpKit )->( fieldpos( "cRefKit" ) ) ] == aTmpArt[ ( dbfArt )->( FieldPos( "Codigo" ) ) ]
       MsgStop( "El código es el mismo que el del escandallo", "No se puede introducir" )
-      aGet[ ( dbfTmpKit )->( fieldpos( "CREFKIT" ) ) ]:SetFocus()
+      aGet[ ( dbfTmpKit )->( fieldpos( "cRefKit" ) ) ]:SetFocus()
       Return .f.
    end if
 
@@ -15189,10 +15190,10 @@ FUNCTION rxArticulo( cPath, cDriver )
       ( dbfArt )->( ordCreate( cPath + "ARTKIT.CDX", "CCODKIT", "CCODKIT", {|| Field->CCODKIT } ) )
 
       ( dbfArt )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfArt )->( ordCreate( cPath + "ARTKIT.CDX", "CCODREF", "CCODKIT + CREFKIT", {|| Field->CCODKIT + Field->CREFKIT } ) )
+      ( dbfArt )->( ordCreate( cPath + "ARTKIT.CDX", "CCODREF", "CCODKIT + cRefKit", {|| Field->CCODKIT + Field->cRefKit } ) )
 
       ( dbfArt )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfArt )->( ordCreate( cPath + "ARTKIT.CDX", "CREFKIT", "CREFKIT", {|| Field->CREFKIT } ) )
+      ( dbfArt )->( ordCreate( cPath + "ARTKIT.CDX", "cRefKit", "cRefKit", {|| Field->cRefKit } ) )
 
       ( dbfArt )->( dbCloseArea() )
    else

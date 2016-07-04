@@ -2,14 +2,14 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 [Setup]
-AppName=Gestool 2Ktorce
-AppVerName=Gestool 2Ktorce
+AppName=Gestool 2K16
+AppVerName=Gestool 2K16
 AppPublisher=Gestool 
 AppPublisherURL=http://www.gestool.es
 AppSupportURL=http://www.gestool.es
 AppUpdatesURL=http://www.gestool.es
 DefaultDirName={pf}\Gestool
-DefaultGroupName=Gestool 2Ktorce
+DefaultGroupName=Gestool 2K16
 AllowNoIcons=yes
 OutputDir=c:\fw195\gestool\iss\exe\
 
@@ -135,8 +135,8 @@ Source: "c:\fw195\gestool\bin\jmail.dll";              DestDir: "{app}"; Flags: 
 
 Source: "c:\fw195\gestool\bin\aeatfact.dll";           DestDir: "{app}"; Flags: ignoreversion regserver
 
-Source: "c:\fw195\gestool\bin\adslocal.cfg";           DestDir: "{app}"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bin\ads.ini";                DestDir: "{app}"; Flags: ignoreversion
+; Source: "c:\fw195\gestool\bin\adslocal.cfg";           DestDir: "{app}"; Flags: ignoreversion
+; Source: "c:\fw195\gestool\bin\ads.ini";                DestDir: "{app}"; Flags: ignoreversion
 
 Source: "c:\fw195\gestool\bin\ansi.chr";               DestDir: "{app}"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bin\extend.chr";             DestDir: "{app}"; Flags: ignoreversion
@@ -158,18 +158,18 @@ Source: "c:\fw195\gestool\bmp\imgpedprv.bmp";         DestDir: "{app}\Bmp"; Flag
 Source: "c:\fw195\gestool\bmp\imgsndint.bmp";         DestDir: "{app}\Bmp"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bmp\imgpleasewait.bmp";     DestDir: "{app}\Bmp"; Flags: ignoreversion
 
-Source: "c:\fw195\actualiza\chkemp.nil";              DestDir: "{app}";           Flags: ignoreversion
-Source: "c:\fw195\actualiza\reporting\*.*";           DestDir: "{app}\Reporting"; Flags: ignoreversion onlyifdoesntexist recursesubdirs createallsubdirs
-Source: "c:\fw195\actualiza\in\*.*";                  DestDir: "{app}\In";        Flags: ignoreversion onlyifdoesntexist
-Source: "c:\fw195\actualiza\out\*.*";                 DestDir: "{app}\Out";       Flags: ignoreversion onlyifdoesntexist
-Source: "c:\fw195\actualiza\log\*.*";                 DestDir: "{app}\Log";       Flags: ignoreversion onlyifdoesntexist
-Source: "c:\fw195\actualiza\html\*.*";                DestDir: "{app}\Html";      Flags: ignoreversion onlyifdoesntexist
-Source: "c:\fw195\actualiza\tmp\*.*";                 DestDir: "{app}\Tmp";       Flags: ignoreversion onlyifdoesntexist
-Source: "c:\fw195\actualiza\emptmp\*.*";              DestDir: "{app}\Emptmp";    Flags: ignoreversion onlyifdoesntexist
-Source: "c:\fw195\actualiza\safe\*.*";                DestDir: "{app}\Safe";      Flags: ignoreversion onlyifdoesntexist
-Source: "c:\fw195\actualiza\emp00vg\*.*";             DestDir: "{app}\Emp00VG";   Flags: ignoreversion onlyifdoesntexist
-Source: "c:\fw195\actualiza\datos\*.*";               DestDir: "{app}\Datos";     Flags: ignoreversion onlyifdoesntexist
-Source: "c:\fw195\actualiza\psion\*.*";               DestDir: "{app}\Psion";     Flags: ignoreversion onlyifdoesntexist
+Source: "c:\fw195\gestool\actualiza\chkemp.nil";      DestDir: "{app}";           Flags: ignoreversion
+Source: "c:\fw195\gestool\actualiza\reporting\*.*";   DestDir: "{app}\Reporting"; Flags: ignoreversion onlyifdoesntexist recursesubdirs createallsubdirs
+Source: "c:\fw195\gestool\actualiza\in\*.*";          DestDir: "{app}\In";        Flags: ignoreversion onlyifdoesntexist
+Source: "c:\fw195\gestool\actualiza\out\*.*";         DestDir: "{app}\Out";       Flags: ignoreversion onlyifdoesntexist
+Source: "c:\fw195\gestool\actualiza\log\*.*";         DestDir: "{app}\Log";       Flags: ignoreversion onlyifdoesntexist
+Source: "c:\fw195\gestool\actualiza\html\*.*";        DestDir: "{app}\Html";      Flags: ignoreversion onlyifdoesntexist
+Source: "c:\fw195\gestool\actualiza\tmp\*.*";         DestDir: "{app}\Tmp";       Flags: ignoreversion onlyifdoesntexist
+Source: "c:\fw195\gestool\actualiza\emptmp\*.*";      DestDir: "{app}\Emptmp";    Flags: ignoreversion onlyifdoesntexist
+Source: "c:\fw195\gestool\actualiza\safe\*.*";        DestDir: "{app}\Safe";      Flags: ignoreversion onlyifdoesntexist
+Source: "c:\fw195\gestool\actualiza\emp00vg\*.*";     DestDir: "{app}\Emp00VG";   Flags: ignoreversion onlyifdoesntexist
+Source: "c:\fw195\gestool\actualiza\datos\*.*";       DestDir: "{app}\Datos";     Flags: ignoreversion onlyifdoesntexist
+Source: "c:\fw195\gestool\actualiza\psion\*.*";       DestDir: "{app}\Psion";     Flags: ignoreversion onlyifdoesntexist
 
 ; Scripts
 
@@ -183,31 +183,31 @@ Source: "c:\fw195\gestool\bin\firma\*.*";             DestDir: "{app}\Firma";   
 
 ; Fuentes
 
-Source: "c:\fw195\gestool\font\segoeui.ttf";      DestDir: "{fonts}";         FontInstall: "Segoe UI";          Flags: onlyifdoesntexist uninsneveruninstall
-Source: "c:\fw195\gestool\font\segoeuil.ttf";     DestDir: "{fonts}";         FontInstall: "Segoe UI Light";    Flags: onlyifdoesntexist uninsneveruninstall
-Source: "c:\fw195\gestool\font\segoeuii.ttf";     DestDir: "{fonts}";         FontInstall: "Segoe UI Cursiva";  Flags: onlyifdoesntexist uninsneveruninstall
-Source: "c:\fw195\gestool\font\segoeuib.ttf";     DestDir: "{fonts}";         FontInstall: "Segoe UI Negrita";  Flags: onlyifdoesntexist uninsneveruninstall
+Source: "c:\fw195\gestool\font\segoeui.ttf";          DestDir: "{fonts}";         FontInstall: "Segoe UI";          Flags: onlyifdoesntexist uninsneveruninstall
+Source: "c:\fw195\gestool\font\segoeuil.ttf";         DestDir: "{fonts}";         FontInstall: "Segoe UI Light";    Flags: onlyifdoesntexist uninsneveruninstall
+Source: "c:\fw195\gestool\font\segoeuii.ttf";         DestDir: "{fonts}";         FontInstall: "Segoe UI Cursiva";  Flags: onlyifdoesntexist uninsneveruninstall
+Source: "c:\fw195\gestool\font\segoeuib.ttf";         DestDir: "{fonts}";         FontInstall: "Segoe UI Negrita";  Flags: onlyifdoesntexist uninsneveruninstall
 
 ; Fichero de imagenes
 
-Source: "c:\fw195\actualiza\imagen\*.*";          DestDir: "{app}\Imagen";    Flags: ignoreversion onlyifdoesntexist recursesubdirs
+Source: "c:\fw195\gestool\actualiza\imagen\*.*";      DestDir: "{app}\Imagen";    Flags: ignoreversion onlyifdoesntexist recursesubdirs
 
 ; Asistencia remota
 
-Source: "c:\fw195\gestool\client\client.exe";     DestDir: "{app}\Client";    Flags: ignoreversion
+Source: "c:\fw195\gestool\client\client.exe";         DestDir: "{app}\Client";    Flags: ignoreversion
 
 ; Control de nueva versión
 
-Source: "c:\fw195\actualiza\chkemp.nil";          DestDir: "{app}";           Flags: ignoreversion
+Source: "c:\fw195\gestool\actualiza\chkemp.nil";      DestDir: "{app}";           Flags: ignoreversion
 
 [Icons]
-Name: "{group}\Gestool 2Ktorce";                  Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico"
-Name: "{group}\Gestool táctil 2Ktorce";           Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico" ; Parameters: "/TACTIL"
-Name: "{userdesktop}\Gestool 2Ktorce";            Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico"
-Name: "{userdesktop}\Gestool táctil 2Ktorce";     Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico" ; Parameters: "/TACTIL"
+Name: "{group}\Gestool 2K16";                         Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico"
+Name: "{group}\Gestool táctil 2K16";                  Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico" ; Parameters: "/TACTIL"
+Name: "{userdesktop}\Gestool 2K16";                   Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico"
+Name: "{userdesktop}\Gestool táctil 2K16";            Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico" ; Parameters: "/TACTIL"
 
 [Run]
-Filename: "{app}\Gestool.exe";                    Description: "Iniciar Gestool 2Ktorce"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\Gestool.exe";                        Description: "Iniciar Gestool 2K16"; Flags: nowait postinstall skipifsilent
 
 [Code]
 

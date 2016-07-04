@@ -2563,9 +2563,9 @@ Return nil
 
 #pragma BEGINDUMP
 
-#include <C:\bcc55\Include\windows.h>
-#include <C:\bcc55\Include\winuser.h>
-#include <C:\bcc55\Include\wingdi.h>
+#include <C:\bcc582\Include\windows.h>
+#include <C:\bcc582\Include\winuser.h>
+#include <C:\bcc582\Include\wingdi.h>
 #include "hbapi.h"
 
 HB_FUNC( SETWINDOWRGN )
