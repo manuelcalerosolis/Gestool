@@ -533,7 +533,6 @@ STATIC FUNCTION OpenFiles( lExt )
       oNumerosSerie:oStock    := oStock
 
       oMailing                := TGenmailingDatabaseFacturaProveedor():New( nView )
-
       
       /*
       Campos extras------------------------------------------------------------------------

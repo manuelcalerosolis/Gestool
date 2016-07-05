@@ -2627,7 +2627,7 @@ RETURN ( if( IsTrue( lPic ), Trans( nTot, ::cPirDiv ), nTot ) )
 
 //--------------------------------------------------------------------------//
 
-FUNCTION RemMovAlm( oMenuItem, oWnd ) 
+Function RemMovAlm( oMenuItem, oWnd ) 
 
    DEFAULT  oMenuItem   := "01050"
    DEFAULT  oWnd        := oWnd()
@@ -3208,25 +3208,25 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-function oStockMovimiento( idArticulo, idAlmacen, valorPropiedad1, valorPropiedad2 )
+Function oStockMovimiento( idArticulo, idAlmacen, valorPropiedad1, valorPropiedad2, fechaInicio, fechaFin )
 
-Return ( oThis:oStock:nStockAlmacen( idArticulo, idAlmacen, valorPropiedad1, valorPropiedad2 ) )
+Return ( oThis:oStock:nStockAlmacen( idArticulo, idAlmacen, valorPropiedad1, valorPropiedad2, fechaInicio, fechaFin ) )
 
 //---------------------------------------------------------------------------//
 
-function cNombreArticuloMovimiento()
+Function cNombreArticuloMovimiento()
 
 Return ( RetFld( oThis:oDetMovimientos:oDbf:cRefMov, oThis:oArt:cAlias, "Nombre" ) )
 
 //---------------------------------------------------------------------------//
 
-function nUnidadesLineaMovimiento()
+Function nUnidadesLineaMovimiento()
 
 Return nTotNMovAlm( oThis:oDetMovimientos:oDbf )
 
 //---------------------------------------------------------------------------//
 
-function nImporteLineaMovimiento()
+Function nImporteLineaMovimiento()
 
 Return nTotLMovAlm( oThis:oDetMovimientos:oDbf )
 
@@ -3263,7 +3263,7 @@ Return ( oRetFld( oThis:oParent:oDbf:cAlmDes, oThis:oParent:oAlm ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION rxRemMov( cPath, oMeter )
+Function rxRemMov( cPath, oMeter )
 
    local dbfRemMovT
 
@@ -3297,7 +3297,7 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-STATIC FUNCTION CreateFiles( cPath )
+STATIC Function CreateFiles( cPath )
 
    if !lExistTable( cPath + "RemMovT.Dbf" )
       dbCreate( cPath + "RemMovT.Dbf", aSqlStruct( aItmRemMov() ), cDriver() )
@@ -3331,7 +3331,7 @@ Return ( aBase )
 
 //---------------------------------------------------------------------------//
 /*
-FUNCTION IsRemMov( cPath )
+Function IsRemMov( cPath )
 
    DEFAULT cPath  := cPatEmp()
 
@@ -3355,7 +3355,7 @@ Return ( .t. )
 */
 //---------------------------------------------------------------------------//
 
-function nTotNRemMov( uDbf )
+Function nTotNRemMov( uDbf )
 
    local nTotUnd
 
@@ -3583,6 +3583,7 @@ return .t.
 
 //---------------------------------------------------------------------------//
 
+
 Function EditMovimientosAlmacen( cNumParte, oBrw )
 
    local oRemMovAlm
@@ -3610,7 +3611,7 @@ return .t.
 //---------------------------------------------------------------------------//
 /*funcion para hacer zoom un parte desde fuera de la clase*/
 
-function ZoomMovimientosAlmacen( cNumParte, oBrw )
+Function ZoomMovimientosAlmacen( cNumParte, oBrw )
 
    local oRemMovAlm
 
@@ -3637,7 +3638,7 @@ return .t.
 //---------------------------------------------------------------------------//
 /*funcion para eliminar un parte desde fuera de la clase*/
 
-function DelMovimientosAlmacen( cNumParte, oBrw )
+Function DelMovimientosAlmacen( cNumParte, oBrw )
 
    local oRemMovAlm
 
@@ -3666,7 +3667,7 @@ return .t.
 funcion para imprimir un parte desde fuera de la clase
 */
 
-function PrnMovimientosAlmacen( cNumParte )
+Function PrnMovimientosAlmacen( cNumParte )
 
    local oRemMovAlm
 
@@ -3695,7 +3696,7 @@ RETURN ( .t. )
 funcion para visualizar un parte desde fuera de la clase
 */
 
-function VisMovimientosAlmacen( cNumParte )
+Function VisMovimientosAlmacen( cNumParte )
 
    local oRemMovAlm
 
@@ -3767,7 +3768,7 @@ RETURN ( nTotUnd )
 
 //-------------------------------------------------------------------------//
 
-function nTotVMovAlm( cCodArt, dbfMovAlm, cCodAlm )
+Function nTotVMovAlm( cCodArt, dbfMovAlm, cCodAlm )
 
    local nTotVta  := 0
    local nOrd     := ( dbfMovAlm )->( OrdSetFocus( "cRefMov" ) )
@@ -3822,7 +3823,7 @@ Return ( { "Entre almacenes", "Regularización", "Objetivos", "Consolidación" }[ 
 
 //---------------------------------------------------------------------------//
 
-FUNCTION ZooMovAlm( nNumRec, oBrw )
+Function ZooMovAlm( nNumRec, oBrw )
 
 RETURN NIL
 
