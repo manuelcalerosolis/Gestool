@@ -2862,6 +2862,7 @@ Return .t.
 METHOD PrintReportRemMov( nDevice, nCopies, cPrinter, dbfDoc ) CLASS TRemMovAlm 
 
    local oFr
+   local oWaitMeter
 
    DEFAULT nDevice      := IS_SCREEN
    DEFAULT nCopies      := 1
@@ -2895,6 +2896,9 @@ METHOD PrintReportRemMov( nDevice, nCopies, cPrinter, dbfDoc ) CLASS TRemMovAlm
 
    if !empty( ( dbfDoc )->mReport )
 
+      oWaitMeter         := TWaitMeter():New( "Actualizando stocks", "Espere por favor..." )
+      oWaitMeter:Run()
+
       oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
 
       /*
@@ -2908,6 +2912,8 @@ METHOD PrintReportRemMov( nDevice, nCopies, cPrinter, dbfDoc ) CLASS TRemMovAlm
       */
 
       oFr:PrepareReport()
+
+      oWaitMeter:End()
 
       /*
       Imprimir el informe------------------------------------------------------
@@ -3208,9 +3214,9 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Function oStockMovimiento( idArticulo, idAlmacen, valorPropiedad1, valorPropiedad2, fechaInicio, fechaFin )
+Function oStockMovimientoFechaPrevia( idArticulo, idAlmacen, valorPropiedad1, valorPropiedad2, fechaFin )
 
-Return ( oThis:oStock:nStockAlmacen( idArticulo, idAlmacen, valorPropiedad1, valorPropiedad2, fechaInicio, fechaFin ) )
+Return ( oThis:oStock:nStockAlmacen( idArticulo, idAlmacen, valorPropiedad1, valorPropiedad2, nil, fechaFin - 1 ) )
 
 //---------------------------------------------------------------------------//
 
