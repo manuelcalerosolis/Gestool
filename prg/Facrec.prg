@@ -15239,3 +15239,9 @@ Function nombreSegundaPropiedadFacturasRectificativasLineas()
 Return ( nombrePropiedad( ( dbfFacRecL )->cCodPr2, ( dbfFacRecL )->cValPr2, nView ) )
 
 //---------------------------------------------------------------------------//
+
+Function FacturasRectificativasId()
+
+Return ( D():FacturasRectificativasId( nView ) )
+
+//---------------------------------------------------------------------------//

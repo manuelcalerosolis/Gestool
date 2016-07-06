@@ -1691,7 +1691,7 @@ FUNCTION cAgentes( oGet, dbfAge, oGet2, oGetPct )
 
    else
 
-      xValor         := RJustObj( oGet, "0" )
+      xValor         := RJustObj( oGet, "0", 3 )
 
    end if
 
