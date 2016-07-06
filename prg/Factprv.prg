@@ -3090,10 +3090,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
          OF       oDlg ;
          PROMPT   "&General",;
                   "&Precios",;
-                  "&Observaciones" ;
+                  "&Observaciones",;
+                  "&Centro coste" ;
          DIALOGS  "LFACPRV_7",;
                   "LALBPRV_2",;
-                  "LFACPRV_5"
+                  "LFACPRV_5",;
+                  "LCTRCOSTE"
 
       REDEFINE GET aGet[ _CREF ] VAR cCodArt ;
          ID       110 ;
@@ -3397,15 +3399,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
          WHEN     .F. ;
          ID       241 ;
          OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[ __CCENTROCOSTE ] VAR aTmp[ __CCENTROCOSTE ] ;
-         ID       410 ;
-         IDTEXT   411 ;
-         BITMAP   "LUPA" ;
-         VALID    ( oCentroCoste:Existe( aGet[ __CCENTROCOSTE ], aGet[ __CCENTROCOSTE ]:oHelpText, "cNombre" ) );
-         ON HELP  ( oCentroCoste:Buscar( aGet[ __CCENTROCOSTE ] ) ) ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]      
 
       /*
       Segunda caja de dialogo_________________________________________________
@@ -3745,6 +3738,19 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
          ID       100 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[3]
+
+      /*
+      Cuarta pestaña: centros de coste-----------------------------------------
+      */
+
+      REDEFINE GET aGet[ __CCENTROCOSTE ] VAR aTmp[ __CCENTROCOSTE ] ;
+         ID       410 ;
+         IDTEXT   411 ;
+         BITMAP   "LUPA" ;
+         VALID    ( oCentroCoste:Existe( aGet[ __CCENTROCOSTE ], aGet[ __CCENTROCOSTE ]:oHelpText, "cNombre" ) );
+         ON HELP  ( oCentroCoste:Buscar( aGet[ __CCENTROCOSTE ] ) ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[4]
 
       REDEFINE BUTTON oBtn;
          ID       IDOK ;
