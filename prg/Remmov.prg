@@ -2896,7 +2896,7 @@ METHOD PrintReportRemMov( nDevice, nCopies, cPrinter, dbfDoc ) CLASS TRemMovAlm
 
    if !empty( ( dbfDoc )->mReport )
 
-      oWaitMeter         := TWaitMeter():New( "Actualizando stocks", "Espere por favor..." )
+      oWaitMeter         := TWaitMeter():New( "Generando documento", "Espere por favor..." )
       oWaitMeter:Run()
 
       oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")

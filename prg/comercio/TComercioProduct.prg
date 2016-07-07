@@ -1068,7 +1068,7 @@ METHOD insertProductAttributeCombination( idFirstProperty, valueFirstProperty, i
                      "AND id_product_attribute = " + alltrim( str( idProperty ) )
 
    if !::commandExecDirect( cCommand ) 
-      ::writeText( "Error al eliminar la propiedad " + ( idAttribute ) + " en la tabla " + ::cPrefixTable( "product_attribute_combination" ), 3 )
+      ::writeText( "Error al eliminar la propiedad " + alltrim( str( idAttribute ) ) + " en la tabla " + ::cPrefixTable( "product_attribute_combination" ), 3 )
    end if
 
    cCommand    := "INSERT INTO " +  ::cPrefixtable( "product_attribute_combination" ) + "( " + ;
@@ -1468,6 +1468,14 @@ METHOD buildFilesProductImages( hProductImage ) CLASS TComercioProduct
    local fileImage         
    local oTipoImage
 
+   if !hhaskey( hProductImage, "cPrefijoNombre" )  .or.;
+      !hhaskey( hProductImage, "nTipoImagen" )     .or.;
+      !hhaskey( hProductImage, "aTypeImages" )     
+
+      Return ( nil )
+
+   end if 
+
    CursorWait()
 
    rootImage               := cPatTmp() + hget( hProductImage, "cPrefijoNombre" ) + ".jpg"
@@ -1499,6 +1507,10 @@ Return ( nil )
 METHOD ftpUploadFilesProductImages( hProductImage ) CLASS TComercioProduct
 
    local cTypeImage
+
+   if !hhaskey( hProductImage, "aTypeImages")
+      Return ( nil )
+   end if 
 
    for each cTypeImage in hget( hProductImage, "aTypeImages" )
 
