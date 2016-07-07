@@ -175,11 +175,11 @@ METHOD dialogSelectionDocument( oDlg )
    ::Super:dialogSelectionDocument( oDlg )
 
    with object ( ::oBrwDocuments:AddCol() )
-      :cHeader                      := "Pedido"
-      :Cargo                        := "getPedidoCliente"
-      :bEditValue                   := {|| ::getHeaderDocument():getValue( "PedidoCliente" ) }
-      :nWidth                       := 80
-      :bLClickHeader                := {| nMRow, nMCol, nFlags, oColumn | ::clickOnDocumentHeader( oColumn ) }   
+      :cHeader       := "Pedido"
+      :Cargo         := "getPedidoCliente"
+      :bEditValue    := {|| ::getHeaderDocument():getValue( "PedidoCliente" ) }
+      :nWidth        := 80
+      :bLClickHeader := {| nMRow, nMCol, nFlags, oColumn | ::clickOnDocumentHeader( oColumn ) }   
    end with
 
 RETURN ( Self )
@@ -256,8 +256,8 @@ METHOD loadLinesDocument()
    ::oStock:Reset()
 
    ( ::getHeaderAlias() )->( ordsetfocus( "dFecPed" ) )
-   ( ::getHeaderAlias() )->( dbGoTop() )
 
+   ( ::getHeaderAlias() )->( dbGoTop() )
    while ( ::getHeaderAlias() )->dFecPed <= ::oPeriodo:getFechaFin() .and. !::getHeaderEof() // 
 
       if ::isHeadersConditions() .and. ::seekLineId()
@@ -391,15 +391,13 @@ Return ( .t. )
 
 METHOD processLine( oLine )
 
-   local oClonedLine    := oClone( oLine )
+   local oDocument     := ClientDeliveryNoteDocumentHeader():newBuildDictionary( self ) 
 
    if D():gotoPedidoIdAlbaranesClientes( oLine:getDocumentId(), ::nView )
-      oClonedLine:setValue( "PedidoCliente", ( D():AlbaranesClientes( ::nView ) )->cNumPed )
-   else
-      oClonedLine:setValue( "PedidoCliente", '0' )
-   end if 
+      oDocument:setValue( "PedidoCliente", ( D():AlbaranesClientes( ::nView ) )->cNumPed )
+   end if
 
-   ::oDocumentHeaders:addLines( oClonedLine )
+   ::oDocumentHeaders:addLines( oDocument )
 
 Return ( .t. )
 

@@ -119,6 +119,10 @@ CLASS D
 
    // Albaranes de clientes----------------------------------------------------
 
+   METHOD AlbaranesClientesTableName()                      INLINE ( "AlbCliT" )
+
+   METHOD getHashFromAlbaranesClientes( nView )             INLINE ( D():getHashFromAlias( ::AlbaranesClientesTableName(), TDataCenter():scanDataTableInView( ::AlbaranesClientesTableName(), nView ) ) )
+
    METHOD AlbaranesClientes( nView )                        INLINE ( ::Get( "AlbCliT", nView ) )
       METHOD AlbaranesClientesFecha( nView )                INLINE ( ( ::Get( "AlbCliT", nView ) )->dFecAlb )
       METHOD AlbaranesClientesId( nView )                   INLINE ( ( ::Get( "AlbCliT", nView ) )->cSerAlb + str( ( ::Get( "AlbCliT", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliT", nView ) )->cSufAlb )

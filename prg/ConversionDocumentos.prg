@@ -612,7 +612,7 @@ METHOD DialogSelectionLines( oDlg )
       OF       oDlg ;
       ACTION   ( ::propertiesLine() )
 
-   // build creacion de browse de lineas
+   // build creacion de browse de lineas---------------------------------------
 
    ::buildBrowseLines( oDlg )
 
