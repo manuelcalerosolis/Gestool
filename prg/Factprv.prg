@@ -3769,7 +3769,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ; 
          OF       oFld:aDialogs[4]
 
-         oTipoCtrCoste:bChange   := {|| clearGet( aGet ), loadGet( aGet ) }
+         oTipoCtrCoste:bChange   := {|| clearGet( aGet[ _CTERCTR ] ), loadGet( aGet[ _CTERCTR ], cTipoCtrCoste ) }
 
       REDEFINE GET aGet[ _CTERCTR ] ;
          VAR      aTmp[ _CTERCTR ] ;
@@ -3809,7 +3809,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
    oDlg:AddFastKey ( VK_F1, {|| GoHelp() } )
 
    oDlg:bStart    := {|| SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oSayLote, oTotal, oBrwPrp ),;
-                         loadGet( aGet ), aGet[ _CTERCTR ]:lValid(),;
+                         loadGet( aGet[ _CTERCTR ], cTipoCtrCoste ), aGet[ _CTERCTR ]:lValid(),;
                          if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ) }
 
    ACTIVATE DIALOG oDlg ;
@@ -3953,7 +3953,7 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, 
 
       cTipoCtrCoste        := "Centro de coste"
       oTipoCtrCoste:Refresh()
-      clearGet( aGet )
+      clearGet( aGet[ _CTERCTR ] )
 
    case nMode != APPD_MODE .AND. empty( cCodArt )
 
@@ -13180,28 +13180,28 @@ Return ( getExtraField( cFieldName, oDetCamposExtra, D():FacturasProveedoresId( 
 
 //---------------------------------------------------------------------------//
 
-static function loadGet( aGet )
+function loadGet( oGet, cTipo )
 
    do case
-      case AllTrim( cTipoCtrCoste ) == "Centro de coste"
-         aGet[ _CTERCTR ]:bValid := {|| .t. }
-         aGet[ _CTERCTR ]:bHelp  := {|| nil }
-         aGet[ _CTERCTR ]:Disable()
+      case AllTrim( cTipo ) == "Centro de coste"
+         oGet:bValid := {|| .t. }
+         oGet:bHelp  := {|| nil }
+         oGet:Disable()
       
-      case AllTrim( cTipoCtrCoste ) == "Proveedor"
-         aGet[ _CTERCTR ]:bValid := {|| cProvee( aGet[ _CTERCTR ], , aGet[ _CTERCTR ]:oHelpText ) }
-         aGet[ _CTERCTR ]:bHelp  := {|| BrwProvee( aGet[ _CTERCTR ], aGet[ _CTERCTR ]:oHelpText ) }
-         aGet[ _CTERCTR ]:Enable()
+      case AllTrim( cTipo ) == "Proveedor"
+         oGet:bValid := {|| cProvee( oGet, , oGet:oHelpText ) }
+         oGet:bHelp  := {|| BrwProvee( oGet, oGet:oHelpText ) }
+         oGet:Enable()
 
-      case AllTrim( cTipoCtrCoste ) == "Agente"
-         aGet[ _CTERCTR ]:bValid := {|| cAgentes( aGet[ _CTERCTR ], , aGet[ _CTERCTR ]:oHelpText ) }
-         aGet[ _CTERCTR ]:bHelp  := {|| BrwAgentes( aGet[ _CTERCTR ], aGet[ _CTERCTR ]:oHelpText ) }
-         aGet[ _CTERCTR ]:Enable()
+      case AllTrim( cTipo ) == "Agente"
+         oGet:bValid := {|| cAgentes( oGet, , oGet:oHelpText ) }
+         oGet:bHelp  := {|| BrwAgentes( oGet, oGet:oHelpText ) }
+         oGet:Enable()
 
-      case AllTrim( cTipoCtrCoste ) == "Cliente"
-         aGet[ _CTERCTR ]:bValid := {|| cClient( aGet[ _CTERCTR ], , aGet[ _CTERCTR ]:oHelpText ) }
-         aGet[ _CTERCTR ]:bHelp  := {|| BrwClient( aGet[ _CTERCTR ], aGet[ _CTERCTR ]:oHelpText ) }
-         aGet[ _CTERCTR ]:Enable()
+      case AllTrim( cTipo ) == "Cliente"
+         oGet:bValid := {|| cClient( oGet, , oGet:oHelpText ) }
+         oGet:bHelp  := {|| BrwClient( oGet, oGet:oHelpText ) }
+         oGet:Enable()
 
    end case
 
@@ -13209,10 +13209,10 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-static function clearGet( aGet )
+function clearGet( oGet )
 
-   aGet[ _CTERCTR ]:cText( Space( 20 ) )
-   aGet[ _CTERCTR ]:oHelpText:cText( Space( 200 ) )
+   oGet:cText( Space( 20 ) )
+   oGet:oHelpText:cText( Space( 200 ) )
 
 Return .t.
 

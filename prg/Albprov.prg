@@ -210,6 +210,8 @@ Definici¢n de la base de datos de lineas de detalle
 #define _CREFAUX                 122
 #define _CREFAUX2                123
 #define _NPOSPRINT               124
+#define _CTIPCTR                 125
+#define _CTERCTR                 126
 
 /*
 Definici¢n de Array para impuestos
@@ -342,6 +344,10 @@ static oNumerosSerie
 static oBtnNumerosSerie
 
 static lIncidencia      := .f.
+
+static oTipoCtrCoste
+static cTipoCtrCoste
+static aTipoCtrCoste   := { "Centro de coste", "Proveedor", "Agente", "Cliente" }
 
 //----------------------------------------------------------------------------//
 
@@ -2756,6 +2762,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
 	Modificamos los valores por defecto
 	*/
 
+   cTipoCtrCoste           := AllTrim( aTmp[ _CTIPCTR ] )
+
    do case
    case nMode == APPD_MODE
 
@@ -2773,6 +2781,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
       if !Empty( cCodArtEnt )
          cCodArt           := cCodArtEnt
       end if
+
+      cTipoCtrCoste        := "Centro de coste"
 
    case nMode == EDIT_MODE
 
@@ -3505,13 +3515,30 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
       */
 
       REDEFINE GET aGet[ __CCENTROCOSTE ] VAR aTmp[ __CCENTROCOSTE ] ;
-         ID       270 ;
-         IDTEXT   271 ;
+         ID       410 ;
+         IDTEXT   411 ;
          BITMAP   "LUPA" ;
          VALID    ( oCentroCoste:Existe( aGet[ __CCENTROCOSTE ], aGet[ __CCENTROCOSTE ]:oHelpText, "cNombre" ) );
          ON HELP  ( oCentroCoste:Buscar( aGet[ __CCENTROCOSTE ] ) ) ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
+         OF       oFld:aDialogs[4]
+
+      REDEFINE COMBOBOX oTipoCtrCoste ;
+         VAR      cTipoCtrCoste ;
+         ITEMS    aTipoCtrCoste ;
+         ID       140 ;
+         WHEN     ( nMode != ZOOM_MODE ) ; 
+         OF       oFld:aDialogs[4]
+
+         oTipoCtrCoste:bChange   := {|| clearGet( aGet[ _CTERCTR ] ), loadGet( aGet[ _CTERCTR ], cTipoCtrCoste ) }
+
+      REDEFINE GET aGet[ _CTERCTR ] ;
+         VAR      aTmp[ _CTERCTR ] ;
+         ID       150 ;
+         IDTEXT   160 ;
+         BITMAP   "LUPA" ;
+         WHEN     ( nMode != ZOOM_MODE ) ; 
+         OF       oFld:aDialogs[4]
 
       REDEFINE BUTTON oBtn ;
          ID       IDOK ;
@@ -3543,6 +3570,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
       oDlg:AddFastKey ( VK_F1, {|| GoHelp() } )
 
       oDlg:bStart := {|| SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oBmp, oDlg, oSayLote, oTotal ),;
+                         loadGet( aGet[ _CTERCTR ], cTipoCtrCoste ), aGet[ _CTERCTR ]:lValid(),;
                          if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ) }
 
    ACTIVATE DIALOG oDlg ;
@@ -3635,6 +3663,10 @@ Static Function SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp
       if !empty( aGet[ __CCENTROCOSTE ] )
          aGet[ __CCENTROCOSTE ]:lValid()
       endif 
+
+      cTipoCtrCoste        := "Centro de coste"
+      oTipoCtrCoste:Refresh()
+      clearGet( aGet[ _CTERCTR ] )
 
    case nMode != APPD_MODE .AND. empty( cCodArt )
 
@@ -9274,6 +9306,8 @@ function aColAlbPrv()
    aAdd( aColAlbPrv, { "cRefAux",      "C", 18,  0, "Referencia auxiliar",                   "CodigoAuxiliar1",            "", "( cDbfCol )", nil } )
    aAdd( aColAlbPrv, { "cRefAux2",     "C", 18,  0, "Segunda referencia auxiliar",           "CodigoAuxiliar2",            "", "( cDbfCol )", nil } )
    aAdd( aColAlbPrv, { "nPosPrint",    "N",  4,  0, "Posición de impresión",                 "PosicionImpresion",          "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cTipCtr",      "C", 20,  0, "Tipo tercero centro de coste",          "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbPrv, { "cTerCtr",      "C", 20,  0, "Tercero centro de coste" ,              "",                           "", "( cDbfCol )", nil } )
 
 return ( aColAlbPrv )
 
@@ -11016,4 +11050,3 @@ Static Function calculateUnidadesPendientesRecepcion( oLine )
 Return ( oLine )
 
 //---------------------------------------------------------------------------//
-
