@@ -19,8 +19,8 @@ CLASS TConversionDocumentos
    DATA oTitle
    DATA cTitle 
 
-   DATA oBtnAnterior
-   DATA oBtnSiguiente
+   DATA buttonPrior
+   DATA buttonNext
    DATA oBtnSalir
 
    DATA nView
@@ -364,12 +364,12 @@ METHOD Dialog()
 
    // Botones -----------------------------------------------------------------
 
-   REDEFINE BUTTON ::oBtnAnterior;
+   REDEFINE BUTTON ::buttonPrior;
       ID          3 ;
       OF          ::oDlg ;
       ACTION      ( ::BotonAnterior() )
 
-   REDEFINE BUTTON ::oBtnSiguiente;
+   REDEFINE BUTTON ::buttonNext;
       ID          IDOK ;
       OF          ::oDlg ;
       ACTION      ( ::BotonSiguiente() )
@@ -463,7 +463,7 @@ METHOD DialogSelectionDocument( oDlg )
 
    // browse de documentos-----------------------------------------------------
 
-   ::oBrwDocuments                  := IXBrowse():New( ::oFld:aDialogs[2] )
+   ::oBrwDocuments                  := IXBrowse():New( oDlg )
 
    ::oBrwDocuments:lAutoSort        := .f.
    ::oBrwDocuments:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
@@ -641,7 +641,6 @@ METHOD buildBrowseLines( oDlg )
    ::oBrwLines:cName                := "Browse.Lineas." + ::ClassName()
 
    ::oBrwLines:lFooter              := .t.
-
 
    ::setBrowseLinesDocument()
 
@@ -1335,6 +1334,8 @@ METHOD loadLinesDocument( id )
    
    setStatus( ::getLineAlias(), aStatus ) 
 
+   ::oBrwLines:goTop()
+
 RETURN ( lLoadLines ) 
 
 //---------------------------------------------------------------------------//
@@ -1346,6 +1347,8 @@ METHOD setBrowseLinesDocument()
    ::oBrwLines:bSeek := {|c| ::seekLine( c ) }
 
    ::oBrwLines:makeTotals()
+
+   ::oBrwLines:goTop()
 
 RETURN ( .t. ) 
 
@@ -1466,6 +1469,8 @@ METHOD setValuesBrowseProperties( oLineSave )
    next
 
 Return ( .t. )
+
+//---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

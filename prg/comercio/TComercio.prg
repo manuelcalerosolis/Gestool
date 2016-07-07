@@ -1271,12 +1271,12 @@ METHOD InsertImageProductPrestashop( hProduct, hImage, idProductPrestashop, nIma
                                     "cover ) " + ;
                                  "VALUES ( " + ;
                                     "'" + alltrim( str( idProductPrestashop ) ) + "', " + ;
-                                    "'" + str( nImagePosition ) + "', " + ;
+                                    "'" + alltrim( str( nImagePosition ) ) + "', " + ;
                                     if( hGet( hImage, "lDefault" ), "'1'", "'0'" ) + " )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
       nIdImagePrestashop     := ::oCon:GetInsertId()
-      ::writeText( "Insertado la imagen " + hGet( hProduct, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "image" ), 3 )
+      ::writeText( "Imagen insertada " + hGet( hProduct, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "image" ), 3 )
    else
       ::writeText( "Error al insertar la imagen " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "image" ), 3 )
    end if
@@ -1303,7 +1303,7 @@ METHOD InsertImageProductPrestashopLang( hProduct, hImage, idImagenPrestashop )
                   "'" + ::oCon:Escapestr( hGet( hProduct, "name" ) ) + "' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( "Insertado la imagen " + hGet( hProduct, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
+      ::writeText( "Imagen insertada " + hGet( hProduct, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
    else
       ::writeText( "Error al insertar la imagen " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
    end if
@@ -1333,7 +1333,7 @@ METHOD InsertImageProductPrestashopShop( hProduct, hImage, idProductPrestashop, 
                               if( hGet( hImage, "lDefault" ), "'1'", "'0'" ) + ")"           // cover
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( "Insertado la imagen " + hGet( hProduct, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
+      ::writeText( "Imagen insertada " + hGet( hProduct, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
    else
       ::writeText( "Error al insertar la imagen " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
    end if

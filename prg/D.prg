@@ -128,6 +128,12 @@ CLASS D
       METHOD getHashAlbaranCliente( nView )                 INLINE ( ::getHashRecordById( ::AlbaranesClientesId( nView ), ::AlbaranesClientes( nView ), nView ) )
       METHOD getDefaultHashAlbaranCliente( nView )          INLINE ( ::getHashRecordDefaultValues( ::AlbaranesClientes( nView ), nView ) )
 
+      METHOD gotoIdAlbaranesClientes( id, nView )           INLINE ( ::seekInOrd( ::AlbaranesClientes( nView ), id, "cNumAlb" ) ) 
+      METHOD gotoPedidoIdAlbaranesClientes( id, nView )     INLINE ( ::seekInOrd( ::AlbaranesClientes( nView ), id, "cNumPed" ) ) 
+
+   METHOD getStatusAlbaranesClientes( nView )               INLINE ( ::aStatus := aGetStatus( ::AlbaranesClientes( nView ) ) )
+   METHOD setStatusAlbaranesClientes( nView )               INLINE ( SetStatus( ::AlbaranesClientes( nView ), ::aStatus ) )
+
    METHOD AlbaranesClientesLineas( nView )                  INLINE ( ::Get( "AlbCliL", nView ) )
       METHOD AlbaranesClientesLineasId( nView )             INLINE ( ( ::Get( "AlbCliL", nView ) )->cSerAlb + str( ( ::Get( "AlbCliL", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliL", nView ) )->cSufAlb )
       METHOD AlbaranesClientesLineasEof( nView )            INLINE ( ( ::AlbaranesClientesLineas( nView ) )->( eof() ) )
@@ -142,9 +148,6 @@ CLASS D
    METHOD setStatusAlbaranesClientesLineas( nView )         INLINE ( SetStatus( ::AlbaranesClientesLineas( nView ), ::aStatus ) )
 
    METHOD setFocusAlbaranesClientesLineas( cTag, nView )    INLINE ( ::cTag   := ( ::AlbaranesClientesLineas( nView ) )->( ordSetFocus( cTag ) ) )
-
-   METHOD getStatusAlbaranesClientes( nView )               INLINE ( ::aStatus := aGetStatus( ::AlbaranesClientes( nView ) ) )
-   METHOD setStatusAlbaranesClientes( nView )               INLINE ( SetStatus( ::AlbaranesClientes( nView ), ::aStatus ) )
 
    METHOD AlbaranesClientesSeries( nView )                  INLINE ( ::Get( "AlbCliS", nView ) )
       METHOD AlbaranesClientesSeriesId( nView )             INLINE ( ( ::Get( "AlbCliS", nView ) )->cSerAlb + str( ( ::Get( "AlbCliS", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliS", nView ) )->cSufAlb )

@@ -10,6 +10,8 @@ CLASS TGeneracionAlbaranesClientes FROM TConversionDocumentos
 
    DATA oAlmacen
 
+   DATA aDocuments
+
    METHOD Dialog()
 
    METHOD DialogSelectionCriteria( oDlg )
@@ -21,7 +23,7 @@ CLASS TGeneracionAlbaranesClientes FROM TConversionDocumentos
 
    METHOD startDialog()
       METHOD botonSiguiente()
-      METHOD botonAnterior()                       INLINE ( ::oFld:goPrev(), ::oBtnAnterior:Hide() )
+      METHOD botonAnterior()                       INLINE ( ::oFld:goPrev(), ::buttonPrior:Hide() )
 
    METHOD loadLinesDocument()
       METHOD scanStock( oDocumentLine )
@@ -32,6 +34,11 @@ CLASS TGeneracionAlbaranesClientes FROM TConversionDocumentos
       METHOD minusUnitsStock()
 
    METHOD columnsBrowseLines()
+
+   METHOD dialogSelectionDocument( oDlg )
+
+   METHOD processLines()
+      METHOD processLine()
 
 ENDCLASS
 
@@ -54,20 +61,23 @@ METHOD Dialog()
       ID          100 ;
       OF          ::oDlg ;
       DIALOGS     "ASS_CONVERSION_DOCUMENTO_5",;
-                  "ASS_CONVERSION_DOCUMENTO_3"
+                  "ASS_CONVERSION_DOCUMENTO_3",;
+                  "ASS_CONVERSION_DOCUMENTO_2"
 
    ::DialogSelectionCriteria( ::oFld:aDialogs[1] )
 
    ::DialogSelectionLines( ::oFld:aDialogs[2] )
+
+   ::DialogSelectionDocument( ::oFld:aDialogs[3] )
    
    // Botones -----------------------------------------------------------------
 
-   REDEFINE BUTTON ::oBtnAnterior;
+   REDEFINE BUTTON ::buttonPrior;
       ID          3 ;
       OF          ::oDlg ;
-      ACTION      ( ::BotonAnterior() )
+      ACTION      ( ::botonAnterior() )
 
-   REDEFINE BUTTON ::oBtnSiguiente;
+   REDEFINE BUTTON ::buttonNext;
       ID          IDOK ;
       OF          ::oDlg ;
       ACTION      ( ::botonSiguiente() )
@@ -123,7 +133,7 @@ METHOD startDialog()
 
    ::oBrwLines:Load()
 
-   ::oBtnAnterior:Hide()
+   ::buttonPrior:Hide()
 
 RETURN ( Self )
 
@@ -132,7 +142,7 @@ RETURN ( Self )
 METHOD validDialogSelectionCriteria()
 
    if empty( ::oAlmacen:Varget() )
-      msgStop( "Código de almcén no puede estar vacio.")
+      msgStop( "Código de almacén no puede estar vacio.")
       Return .f.
    end if 
 
@@ -145,15 +155,31 @@ METHOD columnsBrowseLines()
    ::Super:columnsBrowseLines()
 
    with object ( ::oBrwLines:AddCol() )
-      :cHeader                      := "Pendientes"
-      :Cargo                        := "getUnitsAwaitingProvided"
-      :bEditValue                   := {|| ::getLineDocument():getUnitsAwaitingProvided() } 
-      :cEditPicture                 := masUnd()
+      :cHeader       := "Pendientes"
+      :Cargo         := "getUnitsAwaitingProvided"
+      :bEditValue    := {|| ::getLineDocument():getUnitsAwaitingProvided() } 
+      :cEditPicture  := masUnd()
+      :nWidth        := 80
+      :nDataStrAlign := 1
+      :nHeadStrAlign := 1
+      :bLClickHeader := {|nMRow, nMCol, nFlags, oColumn| ::clickOnLineHeader( oColumn ) }         
+      :bLDClickData  := {|| ::toogleSelectLine() }
+   end with
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD dialogSelectionDocument( oDlg )
+
+   ::Super:dialogSelectionDocument( oDlg )
+
+   with object ( ::oBrwDocuments:AddCol() )
+      :cHeader                      := "Pedido"
+      :Cargo                        := "getPedidoCliente"
+      :bEditValue                   := {|| ::getHeaderDocument():getValue( "PedidoCliente" ) }
       :nWidth                       := 80
-      :nDataStrAlign                := 1
-      :nHeadStrAlign                := 1
-      :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clickOnLineHeader( oColumn ) }         
-      :bLDClickData                 := {|| ::toogleSelectLine() }
+      :bLClickHeader                := {| nMRow, nMCol, nFlags, oColumn | ::clickOnDocumentHeader( oColumn ) }   
    end with
 
 RETURN ( Self )
@@ -162,25 +188,30 @@ RETURN ( Self )
 
 METHOD botonSiguiente()
 
-   if ::notValidDialogSelectionCriteria()
-      Return .f.
-   end if 
+   do case
+      case ::oFld:nOption == 1
 
-   ::loadLinesDocument()
+         if ::notValidDialogSelectionCriteria()
+            Return .f.
+         end if 
 
-   ::setbrowseLinesDocument()
+         ::loadLinesDocument()
 
-   ::oFld:goNext()
+         ::setBrowseLinesDocument()
 
-   ::oBtnAnterior:Show()
+         ::oFld:goNext()
 
-   /*
-   if !::oDocumentLines:anySelect()
-      msgStop( "No hay líneas seleccionadas." )
-   else
-      ::oDlg:End( IDOK )
-   end if
-   */
+         ::buttonPrior:Show()
+
+      case ::oFld:nOption == 2
+
+         if !( ::oDocumentLines:anySelect() )
+            msgStop( "No hay líneas seleccionadas." )
+         else
+            ::processLines()
+         end if 
+
+   end case
 
 Return ( Self )
 
@@ -218,6 +249,7 @@ METHOD loadLinesDocument()
    local oDocumentLine
 
    autoMeterDialog( ::oDlg )
+
    setTotalAutoMeterDialog( ::getHeaderOrdKeyCount()  )
 
    ::oDocumentLines:Reset()
@@ -230,7 +262,7 @@ METHOD loadLinesDocument()
 
       if ::isHeadersConditions() .and. ::seekLineId()
 
-         while ::getHeaderId() == ::getLineId() .and. !( ::getLineAlias() )->( eof() ) 
+         while ( ::getHeaderId() == ::getLineId() ) .and. !( ::getLineAlias() )->( eof() ) 
 
             if ::isLineConditions()
 
@@ -285,7 +317,6 @@ METHOD assertCodeStock( oDocumentLine )
    nScan := ascan( ::oStock:aStocks, {|o| o:cCodigo == oDocumentLine:getCode() } )
    if nScan == 0
       ::oStock:aStockArticulo( oDocumentLine:getCode() )
-      // msgAlert( hb_valtoexp( ::oStock:aStocks ) )
    end if 
 
 RETURN ( .t. ) 
@@ -339,6 +370,38 @@ METHOD minusUnitsStock( oDocumentLine )
    end if 
 
 Return ( Self ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD processLines()
+
+   local oLine
+
+   ::aDocuments         := {}
+
+   for each oLine in ( ::oDocumentLines:getLines() )
+      if oLine:isSelectLine()
+         ::processLine( oLine )
+      end if 
+   next
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD processLine( oLine )
+
+   local oClonedLine    := oClone( oLine )
+
+   if D():gotoPedidoIdAlbaranesClientes( oLine:getDocumentId(), ::nView )
+      oClonedLine:setValue( "PedidoCliente", ( D():AlbaranesClientes( ::nView ) )->cNumPed )
+   else
+      oClonedLine:setValue( "PedidoCliente", '0' )
+   end if 
+
+   ::oDocumentHeaders:addLines( oClonedLine )
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
