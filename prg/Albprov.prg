@@ -2800,12 +2800,14 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          OF       oDlg ;
          PROMPT   "&General",;
                   "&Precios",;
-                  "&Observaciones" ;
+                  "&Observaciones",;
+                  "&Centro coste" ;
          DIALOGS  "LALBPRV_1",;
                   "LALBPRV_2",;
-                  "LALBPRV_4"  
+                  "LALBPRV_4",;
+                  "LCTRCOSTE"  
 
-      oFld:aEnable         := { .t., !Empty( aTmp[ _CREF ] ), .t. }
+      oFld:aEnable         := { .t., !Empty( aTmp[ _CREF ] ), .t., .t. }
 
       REDEFINE GET aGet[ _CREF ] VAR cCodArt ;
 			ID 		110 ;
@@ -3108,15 +3110,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( Self, aGet[ _CALMLIN ]:oHelpText ) ) ;
 			OF 		oFld:aDialogs[1]
-
-      REDEFINE GET aGet[ __CCENTROCOSTE ] VAR aTmp[ __CCENTROCOSTE ] ;
-         ID       270 ;
-         IDTEXT   271 ;
-         BITMAP   "LUPA" ;
-         VALID    ( oCentroCoste:Existe( aGet[ __CCENTROCOSTE ], aGet[ __CCENTROCOSTE ]:oHelpText, "cNombre" ) );
-         ON HELP  ( oCentroCoste:Buscar( aGet[ __CCENTROCOSTE ] ) ) ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
 
       REDEFINE GET oTotal VAR nTotal ;
 			ID 		210 ;
@@ -3506,6 +3499,19 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          ID       100 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[3]
+
+      /*
+      Cuarta caja de diálogo---------------------------------------------------
+      */
+
+      REDEFINE GET aGet[ __CCENTROCOSTE ] VAR aTmp[ __CCENTROCOSTE ] ;
+         ID       270 ;
+         IDTEXT   271 ;
+         BITMAP   "LUPA" ;
+         VALID    ( oCentroCoste:Existe( aGet[ __CCENTROCOSTE ], aGet[ __CCENTROCOSTE ]:oHelpText, "cNombre" ) );
+         ON HELP  ( oCentroCoste:Buscar( aGet[ __CCENTROCOSTE ] ) ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[1]
 
       REDEFINE BUTTON oBtn ;
          ID       IDOK ;
@@ -4600,7 +4606,7 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
                return .f.
             end if
 
-            oFld:aEnable         := { .t., .t., .t. }
+            oFld:aEnable         := { .t., .t., .t., .t. }
             oFld:Refresh()
 
             EliminarNumeroSerie( aTmp )
