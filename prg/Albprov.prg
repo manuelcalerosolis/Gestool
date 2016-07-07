@@ -3803,6 +3803,7 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet, aTm
    end if
 
    aTmp[ __CSUALB ]  := aTmpAlb[ _CSUALB ]
+   aTmp[ _CTIPCTR ]  := cTipoCtrCoste
 
    /*
    Comprobamos si tiene que introducir números de serie------------------------

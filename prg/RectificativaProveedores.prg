@@ -192,7 +192,9 @@ Lineas de Detalle
 #define __CCENTROCOSTE             95
 #define __CALMORIGEN               96
 #define _CREFAUX                   97 
-#define _CREFAUX2                  98 
+#define _CREFAUX2                  98
+#define _CTIPCTR                   99
+#define _CTERCTR                  100
 
 /*
 Definici¢n de Array para impuestos
@@ -363,6 +365,10 @@ static bEdtDet          := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aFac 
 static bEdtInc          := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin | EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static bEdtDoc          := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin | EdtDoc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static bEdtPgo          := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpFac | EdtPgo( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpFac ) }
+
+static oTipoCtrCoste
+static cTipoCtrCoste
+static aTipoCtrCoste    := { "Centro de coste", "Proveedor", "Agente", "Cliente" }
 
 // Declaración variables públicas-------------------------------------------
 
@@ -3207,6 +3213,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
    cOldCodArt              := aTmp[ _CREF    ]
    cOldPrpArt              := aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ]
    cOldUndMed              := aTmp[ _CUNIDAD ]
+   cTipoCtrCoste           := AllTrim( aTmp[ _CTIPCTR ] )
 
    do case
    case nMode == APPD_MODE
@@ -3219,6 +3226,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
       if !Empty( cCodArtEnt )
          cCodArt           := cCodArtEnt
       end if
+
+      cTipoCtrCoste        := "Centro de coste"
 
    case nMode == EDIT_MODE
 
@@ -3239,10 +3248,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
          OF       oDlg ;
          PROMPT   "&General",;
                   "&Stock",;
-                  "&Observaciones" ;
+                  "&Observaciones",;
+                  "&Centro coste" ;
          DIALOGS  "LFACPRV_7",;
                   "LALBPRV_3",;
-                  "LFACPRV_5"
+                  "LFACPRV_5",;
+                  "LCTRCOSTE"
 
       REDEFINE GET aGet[ _CREF ] VAR cCodArt ;
 			ID 		110 ;
@@ -3545,15 +3556,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
 			WHEN 		.F. ;
          ID       241 ;
 			OF 		oFld:aDialogs[1]
-
-      REDEFINE GET aGet[ __CCENTROCOSTE ] VAR  aTmp[ __CCENTROCOSTE ] ;
-           ID       410 ;
-           IDTEXT   411 ;
-           BITMAP   "LUPA" ;  
-           WHEN     ( nMode != ZOOM_MODE ) ;
-           VALID    ( oCentroCoste:Existe( aGet[ __CCENTROCOSTE ], aGet[ __CCENTROCOSTE ]:oHelpText, "cNombre" ) );
-           ON HELP  ( oCentroCoste:Buscar( aGet[ __CCENTROCOSTE ] ) ) ;
-           OF       oFld:aDialogs[ 1 ]
    
       /*
       Segunda caja de diálogo _________________________________________________
@@ -3586,6 +3588,36 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[3]
 
+      /*
+      Cuarta caja de diálogo---------------------------------------------------
+      */
+
+      REDEFINE GET aGet[ __CCENTROCOSTE ] VAR  aTmp[ __CCENTROCOSTE ] ;
+           ID       410 ;
+           IDTEXT   411 ;
+           BITMAP   "LUPA" ;  
+           WHEN     ( nMode != ZOOM_MODE ) ;
+           VALID    ( oCentroCoste:Existe( aGet[ __CCENTROCOSTE ], aGet[ __CCENTROCOSTE ]:oHelpText, "cNombre" ) );
+           ON HELP  ( oCentroCoste:Buscar( aGet[ __CCENTROCOSTE ] ) ) ;
+           OF       oFld:aDialogs[ 4 ]
+
+      REDEFINE COMBOBOX oTipoCtrCoste ;
+         VAR      cTipoCtrCoste ;
+         ITEMS    aTipoCtrCoste ;
+         ID       140 ;
+         WHEN     ( nMode != ZOOM_MODE ) ; 
+         OF       oFld:aDialogs[4]
+
+         oTipoCtrCoste:bChange   := {|| clearGet( aGet[ _CTERCTR ] ), loadGet( aGet[ _CTERCTR ], cTipoCtrCoste ) }
+
+      REDEFINE GET aGet[ _CTERCTR ] ;
+         VAR      aTmp[ _CTERCTR ] ;
+         ID       150 ;
+         IDTEXT   160 ;
+         BITMAP   "LUPA" ;
+         WHEN     ( nMode != ZOOM_MODE ) ; 
+         OF       oFld:aDialogs[4]
+
       REDEFINE BUTTON oBtn;
          ID       IDOK ;
          OF       oDlg ;
@@ -3616,6 +3648,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
    oDlg:AddFastKey( VK_F1, {|| GoHelp() } )
 
    oDlg:bStart    := {|| SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oTotal, oBrwPrp ),;
+                         loadGet( aGet[ _CTERCTR ], cTipoCtrCoste ), aGet[ _CTERCTR ]:lValid(),;
                          aGet[ _CUNIDAD ]:lValid() }
 
 	ACTIVATE DIALOG oDlg ;
@@ -3670,7 +3703,7 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, 
    Colocamos nuevamente los folders
    */
 
-   oFld:aEnable   := { .t., !Empty( aTmp[ _CREF ] ), .t. }
+   oFld:aEnable   := { .t., !Empty( aTmp[ _CREF ] ), .t., .t. }
    oFld:SetOption( 1 )
 
    do case
@@ -3695,6 +3728,10 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, 
       if !empty( aGet[ __CCENTROCOSTE ] )
          aGet[ __CCENTROCOSTE ]:lValid()
       endif
+
+      cTipoCtrCoste        := "Centro de coste"
+      oTipoCtrCoste:Refresh()
+      clearGet( aGet[ _CTERCTR ] )
 
    case nMode != APPD_MODE .AND. empty( cCodArt )
 
@@ -3842,8 +3879,9 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrw, oDlg2, nMode, oTotal, oFld, aTmpFac,
    Grabamos el registro--------------------------------------------------------
    */
 
-   cOldCodArt     := ""
-   cOldUndMed     := ""
+   cOldCodArt        := ""
+   cOldUndMed        := ""
+   aTmp[ _CTIPCTR ]  := cTipoCtrCoste
 
    if nMode == APPD_MODE
 
@@ -4862,7 +4900,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
 
             // habilitamos la segunda caja de dialogo
 
-            oFld:aEnable := { .t., .t., .t. }
+            oFld:aEnable := { .t., .t., .t., .t. }
             oFld:refresh()
 
             aGet[ _CREF     ]:cText( ( D():Articulos( nView ) )->Codigo )
@@ -10098,6 +10136,8 @@ function aColRctPrv()
    aAdd( aColFacPrv, { "cAlmOrigen" ,"C", 16, 0, "Almacén de origen de la mercancía", "",              "", "( cDbfCol )", nil } )
    aAdd( aColFacPrv, { "cRefAux"    ,"C", 18, 0, "Referencia auxiliar",          "",                   "", "( cDbfCol )" } )
    aAdd( aColFacPrv, { "cRefAux2"   ,"C", 18, 0, "Segunda referencia auxiliar",  "",                   "", "( cDbfCol )" } )
+   aAdd( aColFacPrv, { "cTipCtr"    ,"C", 20, 0, "Tipo tercero centro de coste", "",                   "", "( cDbfCol )", nil } )
+   aAdd( aColFacPrv, { "cTerCtr"    ,"C", 20, 0, "Tercero centro de coste" ,     "",                   "", "( cDbfCol )", nil } )
 
 Return ( aColFacPrv )
 
