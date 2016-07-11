@@ -52,7 +52,7 @@ METHOD OpenFiles( lExclusive, cPath )
 
       ::oDbf:Activate( .f., !lExclusive )
 
-      ::oDetComentarios := TDetComentarios():New( ::cPath, Self )
+      ::oDetComentarios := TDetComentarios():New( ::cPath, cDriver(), Self )
       ::AddDetail( ::oDetComentarios )
 
       ::OpenDetails()

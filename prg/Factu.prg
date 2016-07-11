@@ -1704,25 +1704,12 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Comentarios'
    oItem:cMessage       := 'Acceso a los comentarios de los artículos'
-   oItem:bAction        := {|| TComentarios():New( cPatArt(), oWnd, "04002" ):Activate() }
+   oItem:bAction        := {|| TComentarios():New( cPatArt(), cDriver(), oWnd, "04002" ):Activate() }
    oItem:cId            := "04002"
    oItem:cBmp           := "message_16"
    oItem:cBmpBig        := "message_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
-
-   /*
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Códigos barras'
-   oItem:cMessage       := 'Acceso a los códigos de barras de los artículos'
-   oItem:bAction        := {|| ArtCodebar( "01024", oWnd ) }
-   oItem:cId            := "01024"
-   oItem:cBmp           := "Remotecontrol_16"
-   oItem:cBmpBig        := "Remotecontrol_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .t.
-   */
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo

@@ -4056,10 +4056,10 @@ METHOD CreateTemporal() CLASS TpvTactil
    DEFINE DATABASE ::oTemporalComanda FILE ( ::cTemporalComanda ) CLASS "TikC" ALIAS "TikC" PATH ( cPatTmp() ) VIA ( cLocalDriver() ) COMMENT "Comandas ticket cliente"
 
       for each aFieldCol in aColTik()
-         ::oTemporalComanda:AddField( aFieldCol[ 1 ], aFieldCol[ 2 ], aFieldCol[ 3 ], aFieldCol[ 4 ], aFieldCol[ 6 ], , , , aFieldCol[ 5 ] )
+         ::oTemporalComanda:addField( aFieldCol[ 1 ], aFieldCol[ 2 ], aFieldCol[ 3 ], aFieldCol[ 4 ], aFieldCol[ 6 ], , , , aFieldCol[ 5 ] )
       next
 
-      INDEX TO ( ::cTemporalComanda ) TAG "TikC" ON Field->cSerTil + Field->cNumTil + Field->cSufTil + Str( Recno() )    COMMENT "Orden"   NODELETED OF ::oTemporalComanda
+      INDEX TO ( ::cTemporalComanda ) TAG "TikC" ON field->cNomOrd + str( field->nNumLin )   COMMENT "Orden"   NODELETED OF ::oTemporalComanda
 
    END DATABASE ::oTemporalComanda
 
@@ -8193,9 +8193,9 @@ RETURN ( Self )
 METHOD ImprimeComanda( cImpresora )
 
   ::cFormato        := cFormatoComandaEnCaja( oUser():cCaja(), cImpresora, ::oCajaCabecera:cAlias, ::oCajaLinea:cAlias )
-  ::cImpresora      := AllTrim( cNombreImpresoraComanda( oUser():cCaja(), cImpresora, ::oCajaLinea:cAlias ) )
+  ::cImpresora      := alltrim( cNombreImpresoraComanda( oUser():cCaja(), cImpresora, ::oCajaLinea:cAlias ) )
   ::nDispositivo    := IS_PRINTER
-  ::nCopias         := Max( nCopiasComandasEnCaja( oUser():cCaja(), ::oCajaCabecera:cAlias ), 1 )
+  ::nCopias         := max( nCopiasComandasEnCaja( oUser():cCaja(), ::oCajaCabecera:cAlias ), 1 )
   ::lComanda        := .t.
 
   ::ImprimeDocumento()
@@ -8357,6 +8357,7 @@ METHOD ProcesaComandas( lCopia )
    local cImp
    local aImp           := {}
    local cWav           := ""
+   local cOrden         := ""
    local lAppend        := .f.
 
    DEFAULT lCopia       := .f.
@@ -8375,9 +8376,13 @@ METHOD ProcesaComandas( lCopia )
 
          if !( ::oTiketLinea:lDelTil ) .and. ( lCopia .or. ( ::nUnidadesImpresas() < ::nUnidadesLinea() ) )
 
+            if ::oTiketLinea:lControl
+               cOrden   := ::oTiketLinea:cNomTil
+            end if 
+
             // Impresora Uno---------------------------------------------------
 
-            if !Empty( ::oTiketLinea:cImpCom1 ) .and. AllTrim( ::oTiketLinea:cImpCom1 ) != "No imprimir"
+            if ( !empty( ::oTiketLinea:cImpCom1 ) .and. alltrim( ::oTiketLinea:cImpCom1 ) != "No imprimir" )
 
                if aScan( aImp, ::oTiketLinea:cImpCom1 ) == 0
                   aAdd( aImp, ::oTiketLinea:cImpCom1 )
@@ -8389,7 +8394,7 @@ METHOD ProcesaComandas( lCopia )
 
             // Impresora Dos---------------------------------------------------
 
-            if !Empty( ::oTiketLinea:cImpCom2 ) .and. AllTrim( ::oTiketLinea:cImpCom2 ) != "No imprimir"
+            if ( !empty( ::oTiketLinea:cImpCom2 ) .and. AllTrim( ::oTiketLinea:cImpCom2 ) != "No imprimir" )
 
                if aScan( aImp, ::oTiketLinea:cImpCom2 ) == 0
                   aAdd( aImp, ::oTiketLinea:cImpCom2 )
@@ -8402,6 +8407,10 @@ METHOD ProcesaComandas( lCopia )
             // Añadimos esta linea al temporal de comandas---------------------
 
             if lAppend
+
+               if !empty( cOrden )
+                  ::oTemporalComanda:cNomOrd    := cOrden
+               end if 
 
                ::oTemporalComanda:AppendFromObject( ::oTiketLinea )
 
@@ -8431,7 +8440,7 @@ METHOD ProcesaComandas( lCopia )
 
       // Filtramos para que solo entren las comandas no impresas---------------
 
-      ::oTemporalComanda:SetFilter( "Rtrim( Field->cImpCom1 ) == '" + Rtrim( cImp ) + "' .or. Rtrim( Field->cImpCom2 ) == '" + Rtrim( cImp ) + "'" )
+      ::oTemporalComanda:SetFilter( "( Field->lControl ) .or. ( rtrim( Field->cImpCom1 ) == '" + Rtrim( cImp ) + "' )  .or. ( rtrim( Field->cImpCom2 ) == '" + Rtrim( cImp ) + "' )" )
       ::oTemporalComanda:GoTop()
 
       // Imprimimos la comanda por la impresora correspondiente-------------------
@@ -10287,7 +10296,7 @@ METHOD LoadTemporalImpresionLinea()
 
    if ::oTiketLinea:Seek( ::cNumeroTicket() )
 
-      while ::cNumeroTicketLinea() == ::cNumeroTicket() .and. !::oTiketLinea:Eof()
+      while ::cNumeroTicketLinea() == ::cNumeroTicket() .and. !::oTiketLinea:eof()
 
          if !::oTiketLinea:lDelTil
 
@@ -10298,11 +10307,10 @@ METHOD LoadTemporalImpresionLinea()
                   ::oTiketLinea:cCodPr1 == ::oTemporalImpresionLinea:cCodPr1  .and.;
                   ::oTiketLinea:cValPr1 == ::oTemporalImpresionLinea:cValPr1  .and.;
                   ::oTiketLinea:nDtoDiv == ::oTemporalImpresionLinea:nDtoDiv  .and.;
-                  ::oTiketLinea:cComent == ::oTemporalImpresionLinea:cComent
+                  ::oTiketLinea:cComent == ::oTemporalImpresionLinea:cComent  .and.;
+                  !::oTiketLinea:lControl
 
-                  ::oTemporalImpresionLinea:Load()
-                  ::oTemporalImpresionLinea:nUntTil   += ::oTiketLinea:nUntTil
-                  ::oTemporalImpresionLinea:Save()
+                  ::oTemporalImpresionLinea:fieldPutByName( 'nUntTil', ::oTiketLinea:nUntTil )
 
                else
 
