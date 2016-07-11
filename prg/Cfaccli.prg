@@ -35,6 +35,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
 	local n
 	local nIva
+   local nReq
    //local lIvaCEE
    local cCtaVent
    local nPos
@@ -45,11 +46,13 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 	local cSubCtaReq
    local cSubCtaIvm
    local cSubCtaTrn
+   local nImpBrt
    local nImpDet
    local nImpTrn
    local nImpPnt
    local nImpIvm
    local nImpIva
+   local nImpReq
    local cRuta
    local nDouDiv
    local nRouDiv
@@ -176,7 +179,9 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                ( !lExcCnt .and. ( dbfFacCliL )->nCtlStk == 2 ) )        // Articulos con contadores
 
                nIva           := ( dbfFacCliL )->nIva
+               nReq           := ( dbfFacCliL )->nReq
                nImpDet        := nTotLFacCli( dbfFacCliL, nDouDiv, nRouDiv, nil, .t., .f., .f. )
+               nImpBrt        := nBrtLFacCli( dbfFacCliL, nDouDiv, nRouDiv )
                nImpTrn        := nTrnLFacCli( dbfFacCliL, nDouDiv, nRouDiv )                 // Portes
 
                /*
@@ -189,7 +194,9 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                   nImpPnt     := 0
                end if 
 
+               
                nImpIva        := nIvaLFacCli( dbfFacCliL, nDouDiv, nRouDiv )
+               nImpReq        := nReqLFacCli( dbfFacCliL, nDouDiv, nRouDiv )
                nImpIvm        := nTotIFacCli( dbfFacCliL, nDouDiv, nRouDiv )
                cCtaVent       := RetCtaVta( ( dbfFacCliL )->cRef, dbfArt )
 
@@ -229,15 +236,23 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
                end if
 
-               nPos           := aScan( aIva, {|x| x[ 1 ] == nIva } )
+               nPos           := aScan( aIva, {|x| x[ 3 ] == nIva .and. x[ 10 ] == cSubCtaIva } )
 
                if nPos  == 0
 
-                  aAdd( aIva, { nIva, cSubCtaIva, cSubCtaReq, nImpDet, nImpPnt, nImpTrn, 0, 0, 0 } )
+                  //aAdd( aIva, { nIva, cSubCtaIva, cSubCtaReq, nImpDet, nImpPnt, nImpTrn, 0, 0, 0 } )
+
+                  aAdd( aIva, { nImpBrt, nImpDet, nIva, nReq, nImpPnt, nImpIvm, nImpTrn, ( ( nImpDet * nIva ) / 100 ), ( ( nImpDet * nReq ) / 100 ), cSubCtaIva, cSubCtaReq } )
+
                else
-                  aIva[ nPos, 4 ] += nImpDet
+                  aIva[ nPos, 1 ] += nImpBrt
+                  aIva[ nPos, 2 ] += nImpDet
                   aIva[ nPos, 5 ] += nImpPnt
-                  aIva[ nPos, 6 ] += nImpTrn
+                  aIva[ nPos, 6 ] += nImpIvm
+                  aIva[ nPos, 7 ] += nImpTrn
+                  aIva[ nPos, 8 ] := ( ( aIva[ nPos, 2 ] * nIva ) / 100 )
+                  aIva[ nPos, 9 ] := ( ( aIva[ nPos, 2 ] * nReq ) / 100 )
+                  
                end if
 
                /*
@@ -356,14 +371,20 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    if ( dbfFacCliT )->nManObr != 0
 
       nIva        := ( dbfFacCliT )->nIvaMan
-      cSubCtaIva  := cSubCuentaIva( nIva, ( dbfFacCliT )->lRecargo, cRuta, cCodEmp, dbfIva )
-      cSubCtaReq  := cSubCuentaRecargo( nIva, ( dbfFacCliT )->lRecargo, cRuta, cCodEmp, dbfIva )
+      //cSubCtaIva  := cSubCuentaIva( nIva, ( dbfFacCliT )->lRecargo, cRuta, cCodEmp, dbfIva )
+      //cSubCtaReq  := cSubCuentaRecargo( nIva, ( dbfFacCliT )->lRecargo, cRuta, cCodEmp, dbfIva )
+      cSubCtaIva  := cSubCuentaIva( nIva, .f., cRuta, cCodEmp, dbfIva )
+      cSubCtaReq  := cSubCuentaRecargo( nIva, .f., cRuta, cCodEmp, dbfIva )
 
-      nPos        := aScan( aIva, {|x| x[ 1 ] == nIva } )
+      nPos        := aScan( aIva, {|x| x[ 1 ] == nIva .and. x[ 2 ] == cSubCtaIva } )
       if nPos  == 0
-         aAdd( aIva, { nIva, cSubCtaIva, cSubCtaReq, ( dbfFacCliT )->nManObr, 0, 0, 0 } )
+         //aAdd( aIva, { nIva, cSubCtaIva, , ( dbfFacCliT )->nManObr, 0, 0, 0 } )
+         aAdd( aIva, { ( dbfFacCliT )->nManObr, ( dbfFacCliT )->nManObr, nIva, 0, 0, 0, 0, ( ( ( dbfFacCliT )->nManObr * nIva ) / 100 ), 0, cSubCtaIva, "" } )
+         
       else
+
          aIva[ nPos, 4 ] += ( dbfFacCliT )->nManObr
+
       end if
 
    end if
@@ -865,7 +886,11 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
       --------------------------------------------------------------------------
       */
 
-      for each uIva in newIva
+      MsgInfo( hb_valtoexp( newIva ), "newIva" )
+      MsgInfo( hb_valtoexp( aIva ), "uiva" )
+
+      for each uIva in aIva
+      //for each uIva in newIva
 
          if ( len( uIva ) >= 10 ) .and. ( uIva[ 8 ] != 0 .or. uFieldEmpresa( "lConIva" ) )
 
