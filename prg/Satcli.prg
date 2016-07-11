@@ -6373,7 +6373,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    local cCodCli
    local cCodEst
    local nOrdAnt
-   local lResultBeforeEndEvent
+   local lResultBeforeEndEvent := .t.
 
    if Empty( aTmp[ _CSERSAT ] )
       aTmp[ _CSERSAT ]  := "A"
@@ -6435,7 +6435,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
 
    lResultBeforeEndEvent   := runEventScript( "SatClientes\beforeEndTrans", aGet, aTmp, nView, dbfTmpLin, nMode )
 
-   if !lResultBeforeEndEvent
+   if IsLogic( lResultBeforeEndEvent ) .and. !lResultBeforeEndEvent
       Return .f.
    end if
 
