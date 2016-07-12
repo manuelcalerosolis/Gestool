@@ -338,6 +338,10 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       DATABASE NEW ::oSatCliL PATH ( cPatEmp() ) CLASS "SatCliL"     FILE "SatCliL.Dbf" VIA ( cDriver() ) SHARED INDEX "SatCliL.Cdx"
 
+      ::oPreCliT  := TDataCenter():oPreCliT()
+
+      DATABASE NEW ::oPreCliL PATH ( cPatEmp() ) CLASS "PreCliL"     FILE "PreCliL.Dbf" VIA ( cDriver() ) SHARED INDEX "PreCliL.Cdx"
+
       ::oAlbCliT := TDataCenter():oAlbCliT()
 
       DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) CLASS "ALBCLIL"     FILE "ALBCLIL.Dbf" VIA ( cDriver() ) SHARED INDEX "ALBCLIL.Cdx"
@@ -1596,7 +1600,7 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
                ::oDbf:cSufDoc    := ::oPreCliT:cSufPre
 
                ::oDbf:cIdeDoc    :=  ::idDocumento()
-               ::oDbf:nNumLin    :=  ::PreCliL:nNumLin
+               ::oDbf:nNumLin    :=  ::oPreCliL:nNumLin
 
                ::oDbf:nAnoDoc    := Year( ::oPreCliT:dFecPre )
                ::oDbf:nMesDoc    := Month( ::oPreCliT:dFecPre )
