@@ -2466,6 +2466,8 @@ Function cFormatoComandaEnCaja( cCodCaj, cTipImp, dbfCajT, dbfCajL )
 
    cTipImp        := Padr( Upper( cTipImp ), 50 )
 
+   msgalert( cCodCaj + cTipImp, "cCodCaj + cTipImp")
+
    if dbSeekInOrd( cCodCaj + cTipImp, "cCodCaj", dbfCajL )
       cFmt        := ( dbfCajL )->cPrnCom
    end if
