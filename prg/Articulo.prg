@@ -14228,7 +14228,7 @@ Method SelectCriterioLabels() CLASS TArticuloLabelGenerator
       if dbLock( D():Articulos( nView ) )
 
          do case
-            case ::oCriterio:nAt == 1 .or. ::oCriterio:nAt == 2
+            case ::oCriterio:nAt == 2
 
                ::PutStockLabels()
 

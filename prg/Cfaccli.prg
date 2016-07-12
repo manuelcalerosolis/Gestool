@@ -886,9 +886,6 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
       --------------------------------------------------------------------------
       */
 
-      MsgInfo( hb_valtoexp( newIva ), "newIva" )
-      MsgInfo( hb_valtoexp( aIva ), "uiva" )
-
       for each uIva in aIva
       //for each uIva in newIva
 
