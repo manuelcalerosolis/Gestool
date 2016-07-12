@@ -215,7 +215,7 @@ CLASS TRemMovAlm FROM TMasDet
 
    METHOD LoadAlmacen( nMode )
    METHOD ImportAlmacen( nMode, oDlg )
-
+   
    METHOD nClrText()
 
    METHOD ShowKit( lSet )
@@ -2410,12 +2410,14 @@ METHOD loadAlmacen( nMode ) CLASS TRemMovAlm
    local sStkAlm
    local aStkAlm
    local nNumLin
+   local cCodAlmOrg
 
    CursorWait()
 
    ::oDlgImport:Disable()
 
-   cCodAlm              := ::oDbf:cAlmDes
+   cCodAlm                 := ::oDbf:cAlmDes
+   cCodAlmOrg              := ::oDbf:cAlmOrg
 
    if ( nMode == APPD_MODE ) .and. ( ::oDbf:nTipMov >= 2 )
 
@@ -2520,6 +2522,109 @@ METHOD loadAlmacen( nMode ) CLASS TRemMovAlm
 
    end if
 
+   if ( nMode == APPD_MODE ) .and. ( ::oDbf:nTipMov == 1 )
+
+      ::oMtrStock:cText    := "Importando artículos "
+      ::oMtrStock:nTotal   := ::oArt:OrdKeyCount() 
+      
+      ::oMtrStock:Refresh()
+
+      ::oArt:GoTop()
+      while !::oArt:eof()
+
+      if ( ::lFamilia      .or. ( ::oArt:Familia >= ::cFamiliaInicio        .and. ::oArt:Familia <= ::cFamiliaFin ) )      .and.;
+         ( ::lTipoArticulo .or. ( ::oArt:cCodTip >= ::cTipoArticuloInicio   .and. ::oArt:cCodTip <= ::cTipoArticuloFin ) ) .and.;
+         ( ::lArticulo     .or. ( ::oArt:Codigo >= ::cArticuloInicio        .and. ::oArt:Codigo <= ::cArticuloFin ) )
+
+         aStkAlm           := ::oStock:aStockArticulo( ::oArt:Codigo, cCodAlmOrg )
+
+         for each sStkAlm in aStkAlm
+
+            if sStkAlm:nUnidades != 0
+
+               if  ::oDetMovimientos:oDbfVir:Append()
+   
+                  ::oDetMovimientos:oDbfVir:Blank()
+      
+                  ::oDetMovimientos:oDbfVir:lSelDoc   := .t.
+      
+                  ::oDetMovimientos:oDbfVir:cRefMov   := sStkAlm:cCodigo
+                  ::oDetMovimientos:oDbfVir:cNomMov   := RetArticulo( sStkAlm:cCodigo, ::oArt:cAlias )
+                  ::oDetMovimientos:oDbfVir:cCodPr1   := sStkAlm:cCodigoPropiedad1
+                  ::oDetMovimientos:oDbfVir:cCodPr2   := sStkAlm:cCodigoPropiedad2
+                  ::oDetMovimientos:oDbfVir:cValPr1   := sStkAlm:cValorPropiedad1
+                  ::oDetMovimientos:oDbfVir:cValPr2   := sStkAlm:cValorPropiedad2
+                  ::oDetMovimientos:oDbfVir:cLote     := sStkAlm:cLote
+                  ::oDetMovimientos:oDbfVir:nUndAnt   := sStkAlm:nUnidades
+      
+                  ::oDetMovimientos:oDbfVir:nNumRem   := ::oDbf:nNumRem
+                  ::oDetMovimientos:oDbfVir:cSufRem   := ::oDbf:cSufRem
+                  
+                  nNumLin                             := nLastNum( ::oDetMovimientos:oDbfVir:cAlias )
+                  ::oDetMovimientos:oDbfVir:nNumLin   := nNumLin
+      
+                  ::oDetMovimientos:oDbfVir:dFecMov   := ::oDbf:dFecRem
+                  ::oDetMovimientos:oDbfVir:cTimMov   := ::oDbf:cTimRem
+   
+                  ::oDetMovimientos:oDbfVir:nTipMov   := ::oDbf:nTipMov
+                  ::oDetMovimientos:oDbfVir:cCodMov   := ::oDbf:cCodMov
+                  ::oDetMovimientos:oDbfVir:cAliMov   := ::oDbf:cAlmDes
+                  ::oDetMovimientos:oDbfVir:cAloMov   := ::oDbf:cAlmOrg
+
+                  if !empty( sStkAlm:cNumeroSerie )
+
+                     ::oDetSeriesMovimientos:oDbfVir:Append()
+
+                     ::oDetSeriesMovimientos:oDbfVir:Blank()
+
+                     ::oDetSeriesMovimientos:oDbfVir:nNumRem   := ::oDbf:nNumRem
+                     ::oDetSeriesMovimientos:oDbfVir:cSufRem   := ::oDbf:cSufRem
+                     ::oDetSeriesMovimientos:oDbfVir:dFecRem   := ::oDbf:dFecRem
+                     ::oDetSeriesMovimientos:oDbfVir:nNumLin   := nNumLin
+                     ::oDetSeriesMovimientos:oDbfVir:cCodArt   := sStkAlm:cCodigo
+                     ::oDetSeriesMovimientos:oDbfVir:cAlmOrd   := ::oDbf:cAlmDes
+                     ::oDetSeriesMovimientos:oDbfVir:cNumSer   := sStkAlm:cNumeroSerie
+
+                     ::oDetSeriesMovimientos:oDbfVir:Save()
+
+                  end if
+
+                  ::oDetMovimientos:oDbfVir:nUndMov   := sStkAlm:nUnidades
+      
+                  if !uFieldEmpresa( "lCosAct" )
+      
+                     nPreMed                          := ::oStock:nPrecioMedioCompra( sStkAlm:cCodigo, cCodAlm, nil, GetSysDate() )
+      
+                     if nPreMed == 0
+                        nPreMed                       := nCosto( sStkAlm:cCodigo, ::oArt:cAlias, ::oArtKit:cAlias )
+                     end if
+      
+                  else
+      
+                     nPreMed                          := nCosto( sStkAlm:cCodigo, ::oArt:cAlias, ::oArtKit:cAlias )
+   
+                  end if
+      
+                  ::oDetMovimientos:oDbfVir:nPreDiv    := nPreMed
+      
+                  ::oDetMovimientos:oDbfVir:Save()
+      
+               end if
+            
+            end if
+
+         next
+      
+      end if
+   
+      ::oArt:Skip()
+   
+      ::oMtrStock:Set( ::oArt:OrdKeyNo() ) 
+   
+      end while
+
+   end if
+
    ::oDetMovimientos:oDbfVir:GoTop()
    
    ::oBrwDet:Refresh()
@@ -2583,16 +2688,10 @@ METHOD ShwAlm( oSay, oBtnImp ) CLASS TRemMovAlm
       ::oAlmOrg:Hide()
       oSay[ 1 ]:cText( Space(16) )
       ::oAlmOrg:cText( Space(16) )
-      if !empty( oBtnImp )
-         oBtnImp:Show()
-      end if
    else
       oSay[ 1 ]:Show()
       oSay[ 4 ]:Show()
       ::oAlmOrg:Show()
-      if !empty( oBtnImp )
-         oBtnImp:Hide()
-      end if
    end if
 
    if ( ::isResourceWithOutCalculate() )
