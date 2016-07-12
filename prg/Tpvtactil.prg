@@ -8192,13 +8192,13 @@ RETURN ( Self )
 
 METHOD ImprimeComanda( cImpresora )
 
-  ::cFormato        := cFormatoComandaEnCaja( oUser():cCaja(), cImpresora, ::oCajaCabecera:cAlias, ::oCajaLinea:cAlias )
-  ::cImpresora      := alltrim( cNombreImpresoraComanda( oUser():cCaja(), cImpresora, ::oCajaLinea:cAlias ) )
-  ::nDispositivo    := IS_PRINTER
-  ::nCopias         := max( nCopiasComandasEnCaja( oUser():cCaja(), ::oCajaCabecera:cAlias ), 1 )
-  ::lComanda        := .t.
+   ::cFormato        := cFormatoComandaEnCaja( oUser():cCaja(), cImpresora, ::oCajaCabecera:cAlias, ::oCajaLinea:cAlias )
+   ::cImpresora      := alltrim( cNombreImpresoraComanda( oUser():cCaja(), cImpresora, ::oCajaLinea:cAlias ) )
+   ::nDispositivo    := IS_PRINTER
+   ::nCopias         := max( nCopiasComandasEnCaja( oUser():cCaja(), ::oCajaCabecera:cAlias ), 1 )
+   ::lComanda        := .t.
 
-  ::ImprimeDocumento()
+   ::ImprimeDocumento()
 
 RETURN ( Self )  
 
@@ -8409,7 +8409,7 @@ METHOD ProcesaComandas( lCopia )
             if lAppend
 
                if !empty( cOrden )
-                  ::oTemporalComanda:cNomOrd    := cOrden
+                  ::oTemporalComanda:FieldPutByName( "cNomOrd", cOrden )
                end if 
 
                ::oTemporalComanda:AppendFromObject( ::oTiketLinea )
@@ -8440,7 +8440,7 @@ METHOD ProcesaComandas( lCopia )
 
       // Filtramos para que solo entren las comandas no impresas---------------
 
-      ::oTemporalComanda:SetFilter( "( Field->lControl ) .or. ( rtrim( Field->cImpCom1 ) == '" + Rtrim( cImp ) + "' )  .or. ( rtrim( Field->cImpCom2 ) == '" + Rtrim( cImp ) + "' )" )
+      ::oTemporalComanda:SetFilter( "rtrim( Field->cImpCom1 ) == '" + Rtrim( cImp ) + "' .or. rtrim( Field->cImpCom2 ) == '" + Rtrim( cImp ) + "'" )
       ::oTemporalComanda:GoTop()
 
       // Imprimimos la comanda por la impresora correspondiente-------------------
@@ -8562,7 +8562,8 @@ METHOD ProcesaAnulacion()
 
                ::oTemporalComanda:AppendFromObject( ::oTiketLinea )
 
-               //Quitamos la marca de impresa para que no se vuelva a imprimir-
+               // Quitamos la marca de impresa para que no se vuelva a imprimir-
+
                ::SetLineaImpresa( .f. )
 
             end if
@@ -8675,6 +8676,8 @@ METHOD BuildReport() CLASS TpvTactil
       Imprimir el informe------------------------------------------------------
       */
 
+      ::nDispositivo := IS_SCREEN
+
       do case
          case ::nDispositivo == IS_SCREEN
 
@@ -8718,7 +8721,6 @@ METHOD DataReport() CLASS TpvTactil
    ::oFastReport:SetWorkArea(       "Albaranes", ::oAlbaranClienteCabecera:nArea )
    ::oFastReport:SetFieldAliases(   "Albaranes", cItemsToReport( aItmAlbCli() ) )
 
-   //::oFastReport:SetWorkArea(       "Lineas de tickets", ::oTiketLinea:nArea )
    ::oFastReport:SetWorkArea(       "Lineas de tickets", ::oTemporalImpresionLinea:nArea )
    ::oFastReport:SetFieldAliases(   "Lineas de tickets", cItemsToReport( aColTik() ) )
 
@@ -8730,6 +8732,9 @@ METHOD DataReport() CLASS TpvTactil
 
    ::oFastReport:SetWorkArea(       "Lineas de facturas", ::oFacturaClienteLinea:nArea )
    ::oFastReport:SetFieldAliases(   "Lineas de facturas", cItemsToReport( aColFacCli() ) )
+
+   ::oFastReport:SetWorkArea(       "Pagos de facturas", ::oFacturaClientePago:nArea )
+   ::oFastReport:SetFieldAliases(   "Pagos de facturas", cItemsToReport( aItmRecCli() ) )
 
    ::oFastReport:SetWorkArea(       "Pagos de tickets", ::oTiketCobro:nArea )
    ::oFastReport:SetFieldAliases(   "Pagos de tickets", cItemsToReport( aPgoTik() ) )
@@ -8806,8 +8811,8 @@ METHOD DataReport() CLASS TpvTactil
    ::oFastReport:SetWorkArea(       "Series de lineas de albaranes", ::oAlbaranClienteSerie:nArea )
    ::oFastReport:SetFieldAliases(   "Series de lineas de albaranes", cItemsToReport( aSerAlbCli() ) )
 
-   // ::oFastReport:SetWorkArea(       "Propiedades", ::oPropiedadesLinea:nArea )
-   // ::oFastReport:SetFieldAliases(   "Propiedades", cItemsToReport( aItmPro() ) )
+   ::oFastReport:SetWorkArea(       "Propiedades", ::oPropiedadesLinea:nArea )
+   ::oFastReport:SetFieldAliases(   "Propiedades", cItemsToReport( aItmPro() ) )
 
    ::oFastReport:SetWorkArea(       "Impuestos especiales",  ::oNewImp:Select() )
    ::oFastReport:SetFieldAliases(   "Impuestos especiales",  cObjectsToReport( ::oNewImp:oDbf ) )
@@ -8875,9 +8880,9 @@ METHOD BuildRelationReport() CLASS TpvTactil
 
          ::oFastReport:SetMasterDetail( "Tickets", "Empresa",            {|| cCodigoEmpresaEnUso() } )
          ::oFastReport:SetMasterDetail( "Tickets", "Lineas de tickets",  {|| ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik } )
-         ::oFastReport:SetMasterDetail( "Tickets", "Lineas de comandas", {|| ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik } )
          ::oFastReport:SetMasterDetail( "Tickets", "Lineas de albaranes",{|| ::oTiketCabecera:cNumDoc } )
          ::oFastReport:SetMasterDetail( "Tickets", "Lineas de facturas", {|| ::oTiketCabecera:cNumDoc } )
+         // ::oFastReport:SetMasterDetail( "Tickets", "Lineas de comandas", {|| '' } )
          ::oFastReport:SetMasterDetail( "Tickets", "Pagos de tickets",   {|| ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik } )
          ::oFastReport:SetMasterDetail( "Tickets", "Clientes",           {|| ::oTiketCabecera:cCliTik } )
          ::oFastReport:SetMasterDetail( "Tickets", "Obras",              {|| ::oTiketCabecera:cCliTik + ::oTiketCabecera:cCodObr } )
@@ -8886,6 +8891,8 @@ METHOD BuildRelationReport() CLASS TpvTactil
          ::oFastReport:SetMasterDetail( "Tickets", "Agentes",            {|| ::oTiketCabecera:cCodAge } )
          ::oFastReport:SetMasterDetail( "Tickets", "Usuarios",           {|| ::oTiketCabecera:cCcjTik } )
          ::oFastReport:SetMasterDetail( "Tickets", "SalaVenta",          {|| ::oTiketCabecera:cCodSala } )
+
+         // ::oFastReport:SetMasterDetail( "Tickets", "Lineas de comandas", {|| ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik } )
 
          if ::lComanda
 
@@ -8897,8 +8904,8 @@ METHOD BuildRelationReport() CLASS TpvTactil
          ::oFastReport:SetMasterDetail( "Lineas de comandas", "Fabricantes",           {|| RetFld( ::oTemporalComanda:cCbaTil, ::oArticulo:cAlias, "cCodFab" ) } )
          ::oFastReport:SetMasterDetail( "Lineas de comandas", "Temporadas",            {|| RetFld( ::oTemporalComanda:cCbaTil, ::oArticulo:cAlias, "cCodTemp" ) } )
          ::oFastReport:SetMasterDetail( "Lineas de comandas", "Orden comanda",         {|| ::oTemporalComanda:cOrdOrd } )
-         //::oFastReport:SetMasterDetail( "Lineas de comandas", "Propiedades",           {|| ::oTemporalComanda:cCodPr1 + ::oTemporalComanda:cValPr1 } )
-         //::oFastReport:SetMasterDetail( "Lineas de comandas", "Impuestos especiales",  {|| ::oTemporalComanda:cCodImp } )
+         // ::oFastReport:SetMasterDetail( "Lineas de comandas", "Propiedades",           {|| ::oTemporalComanda:cCodPr1 } )
+         //:oFastReport:SetMasterDetail( "Lineas de comandas", "Impuestos especiales",  {|| ::oTemporalComanda:cCodImp } )
 
          else
 
