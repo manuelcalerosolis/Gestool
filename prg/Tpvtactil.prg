@@ -688,7 +688,7 @@ CLASS TpvTactil
    METHOD lLineaValida( lExcluirContadores )
 
    METHOD lLineaImpresa()                    INLINE ( ::oTiketLinea:FieldGetByName( "lImpCom" ) )
-      METHOD SetLineaImpresa( lImpresa)      INLINE ( if( lImpresa, ::oTiketLinea:FieldPutByName( "lImpCom", .t. ), ::oTiketLinea:FieldPutByName( "lImpCom", .f. ) ) )
+      METHOD SetLineaImpresa( lImpresa)      INLINE ( ::oTiketLinea:FieldPutByName( "lImpCom", lImpresa ) )
 
    METHOD nUnidadesLinea( uTmpL, lPicture )
    METHOD nUnidadesLineaTemp( uTmpL, lPicture )
@@ -4059,7 +4059,12 @@ METHOD CreateTemporal() CLASS TpvTactil
          ::oTemporalComanda:addField( aFieldCol[ 1 ], aFieldCol[ 2 ], aFieldCol[ 3 ], aFieldCol[ 4 ], aFieldCol[ 6 ], , , , aFieldCol[ 5 ] )
       next
 
-      INDEX TO ( ::cTemporalComanda ) TAG "TikC" ON field->cNomOrd + str( field->nNumLin )   COMMENT "Orden"   NODELETED OF ::oTemporalComanda
+      INDEX TO       ( ::cTemporalComanda ) ;
+         TAG         "TikC" ;
+         ON          field->cSerTil + field->cNumTil + field->cSufTil + field->cNomOrd + str( field->nNumLin ) ;
+         COMMENT     "Orden" ;
+         NODELETED ;
+         OF          ::oTemporalComanda
 
    END DATABASE ::oTemporalComanda
 
@@ -8374,11 +8379,11 @@ METHOD ProcesaComandas( lCopia )
 
          lAppend        := .f.
 
-         if !( ::oTiketLinea:lDelTil ) .and. ( lCopia .or. ( ::nUnidadesImpresas() < ::nUnidadesLinea() ) )
+         if ( ::oTiketLinea:lControl )
+            cOrden      := ::oTiketLinea:cNomTil
+         end if 
 
-            if ::oTiketLinea:lControl
-               cOrden   := ::oTiketLinea:cNomTil
-            end if 
+         if !( ::oTiketLinea:lDelTil ) .and. ( lCopia .or. ( ::nUnidadesImpresas() < ::nUnidadesLinea() ) )
 
             // Impresora Uno---------------------------------------------------
 
@@ -8408,11 +8413,11 @@ METHOD ProcesaComandas( lCopia )
 
             if lAppend
 
+               ::oTemporalComanda:AppendFromObject( ::oTiketLinea )
+
                if !empty( cOrden )
                   ::oTemporalComanda:FieldPutByName( "cNomOrd", cOrden )
                end if 
-
-               ::oTemporalComanda:AppendFromObject( ::oTiketLinea )
 
                if !lCopia
                   ::oTemporalComanda:FieldPutByName( "nUntTil", ( ::nUnidadesLinea() - ::nUnidadesImpresas() ) )
@@ -8676,8 +8681,6 @@ METHOD BuildReport() CLASS TpvTactil
       Imprimir el informe------------------------------------------------------
       */
 
-      ::nDispositivo := IS_SCREEN
-
       do case
          case ::nDispositivo == IS_SCREEN
 
@@ -8882,7 +8885,7 @@ METHOD BuildRelationReport() CLASS TpvTactil
          ::oFastReport:SetMasterDetail( "Tickets", "Lineas de tickets",  {|| ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik } )
          ::oFastReport:SetMasterDetail( "Tickets", "Lineas de albaranes",{|| ::oTiketCabecera:cNumDoc } )
          ::oFastReport:SetMasterDetail( "Tickets", "Lineas de facturas", {|| ::oTiketCabecera:cNumDoc } )
-         // ::oFastReport:SetMasterDetail( "Tickets", "Lineas de comandas", {|| '' } )
+         ::oFastReport:SetMasterDetail( "Tickets", "Lineas de comandas", {|| ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik } )
          ::oFastReport:SetMasterDetail( "Tickets", "Pagos de tickets",   {|| ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik } )
          ::oFastReport:SetMasterDetail( "Tickets", "Clientes",           {|| ::oTiketCabecera:cCliTik } )
          ::oFastReport:SetMasterDetail( "Tickets", "Obras",              {|| ::oTiketCabecera:cCliTik + ::oTiketCabecera:cCodObr } )
@@ -8891,8 +8894,6 @@ METHOD BuildRelationReport() CLASS TpvTactil
          ::oFastReport:SetMasterDetail( "Tickets", "Agentes",            {|| ::oTiketCabecera:cCodAge } )
          ::oFastReport:SetMasterDetail( "Tickets", "Usuarios",           {|| ::oTiketCabecera:cCcjTik } )
          ::oFastReport:SetMasterDetail( "Tickets", "SalaVenta",          {|| ::oTiketCabecera:cCodSala } )
-
-         // ::oFastReport:SetMasterDetail( "Tickets", "Lineas de comandas", {|| ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik } )
 
          if ::lComanda
 
@@ -9554,17 +9555,19 @@ Return( Self )
 
 METHOD ColorLinea( oDbf )
   
-  local aColor
+   local aColor
 
-  DEFAULT oDbf   := ::oTemporalLinea
+   DEFAULT oDbf   := ::oTemporalLinea
 
-  do case 
-     case oDbf:FieldGetByName( "lDelTil" )
-        aColor   := { CLR_BLACK, Rgb( 255, 0, 0 ) }
-     case oDbf:FieldGetByName( "lMnuTil" )
-        aColor   := { CLR_BLACK, Rgb( 34, 177, 76 ) }
-     otherwise
-        aColor   := { CLR_BLACK, Rgb( 255, 255, 255 ) }
+   do case 
+      case oDbf:FieldGetByName( "lDelTil" )
+         aColor   := { CLR_BLACK, Rgb( 255, 0, 0 ) }
+      case oDbf:FieldGetByName( "lControl" )
+         aColor   := { CLR_BLACK, Rgb( 248, 243, 53 ) }
+      case oDbf:FieldGetByName( "lMnuTil" )
+         aColor   := { CLR_BLACK, Rgb( 34, 177, 76 ) }
+      otherwise
+         aColor   := { CLR_BLACK, Rgb( 255, 255, 255 ) }
   end case 
 
 RETURN ( aColor )
@@ -9573,18 +9576,20 @@ RETURN ( aColor )
 
 METHOD ColorLineaSeleccionada( oDbf )
   
-  local aColor
+   local aColor
 
-  DEFAULT oDbf   := ::oTemporalLinea
+   DEFAULT oDbf   := ::oTemporalLinea
 
-  do case 
-     case oDbf:FieldGetByName( "lDelTil" )
-        aColor   := { CLR_BLACK, Rgb( 255, 0, 0 ) }
-     case oDbf:FieldGetByName( "lMnuTil" )
-        aColor   := { CLR_BLACK, Rgb( 124, 231, 156 ) }
-     otherwise
-        aColor   := { CLR_BLACK, Rgb( 229, 229, 229 ) }
-  end case 
+   do case 
+      case oDbf:FieldGetByName( "lDelTil" )
+         aColor   := { CLR_BLACK, Rgb( 255, 0, 0 ) }
+      case oDbf:FieldGetByName( "lControl" )
+         aColor   := { CLR_BLACK, Rgb( 248, 243, 53 ) }
+      case oDbf:FieldGetByName( "lMnuTil" )
+        aColor    := { CLR_BLACK, Rgb( 124, 231, 156 ) }
+      otherwise
+        aColor    := { CLR_BLACK, Rgb( 229, 229, 229 ) }
+   end case 
 
 RETURN ( aColor )
 
