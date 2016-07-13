@@ -20382,8 +20382,6 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
          nIvaGasto   := Round( nManObr * nIvaMan / 100, nRouDiv )
       end if 
 
-      debug( aIvaUno, "aIvaUno" )
-
       do case
       case _NPCTIVA1 == nil .or. _NPCTIVA1 == nIvaMan
          _NPCTIVA1   := nIvaMan

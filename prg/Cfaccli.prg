@@ -861,8 +861,6 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
       for each uIva in newIva
 
-         debug( uIva )
-
          if ( len( uIva ) >= 11 ) .and. ( uIva[ 8 ] != 0 .or. uFieldEmpresa( "lConIva" ) )
 
             if uFieldEmpresa( "lIvaImpEsp")
