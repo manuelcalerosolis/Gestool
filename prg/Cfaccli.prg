@@ -446,10 +446,9 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
             uIva[ 3 ]   := 0
             aAdd( uIva, cSubCtaIva )
          else
-            cSubCtaIva  := cSubCuentaIva( uIva[ 3 ],     ( dbfFacCliT )->lRecargo, cRuta, cCodEmp, dbfIva )
-            cSubCtaReq  := cSubCuentaRecargo( uIva[ 3 ], ( dbfFacCliT )->lRecargo, cRuta, cCodEmp, dbfIva )
-            aAdd( uIva, cSubCtaIva )
-            aAdd( uIva, cSubCtaReq )
+            aAdd( uIva, cSubCuentaIva( uIva[ 3 ], ( dbfFacCliT )->lRecargo, cRuta, cCodEmp, dbfIva ) )
+            aAdd( uIva, cSubCuentaRecargo( uIva[ 3 ], ( dbfFacCliT )->lRecargo, cRuta, cCodEmp, dbfIva ) )
+            aAdd( uIva, cSubCuentaIva( uIva[ 3 ], .f., cRuta, cCodEmp, dbfIva ) )
          end if
 
       end if 
@@ -487,13 +486,13 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
       if isNum( uIva[ 3 ] )
 
-         if !ChkSubcuenta( cRutCnt(), cCodEmp, uIva[ 10 ], , .f., .f. )
-            oTree:Select( oTree:Add( "Factura cliente : " + Rtrim( pFactura ) + " subcuenta " + uIva[ 10 ] + " no encontada.", 0 ) )
+         if !ChkSubcuenta( cRutCnt(), cCodEmp, uIva[ 11 ], , .f., .f. )
+            oTree:Select( oTree:Add( "Factura cliente : " + Rtrim( pFactura ) + " subcuenta " + uIva[ 11 ] + " no encontada.", 0 ) )
             lErrorFound := .t.
          end if
 
-         if lRecargo .and. !ChkSubcuenta( cRutCnt(), cCodEmp, uIva[ 11 ], , .f., .f. )
-            oTree:Select( oTree:Add( "Factura cliente : " + Rtrim( pFactura ) + " subcuenta " + uIva[ 11 ] + " no encontada.", 0 ) )
+         if lRecargo .and. !ChkSubcuenta( cRutCnt(), cCodEmp, uIva[ 12 ], , .f., .f. )
+            oTree:Select( oTree:Add( "Factura cliente : " + Rtrim( pFactura ) + " subcuenta " + uIva[ 12 ] + " no encontada.", 0 ) )
             lErrorFound := .t.
          end if
 
@@ -862,7 +861,9 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
       for each uIva in newIva
 
-         if ( len( uIva ) >= 10 ) .and. ( uIva[ 8 ] != 0 .or. uFieldEmpresa( "lConIva" ) )
+         debug( uIva )
+
+         if ( len( uIva ) >= 11 ) .and. ( uIva[ 8 ] != 0 .or. uFieldEmpresa( "lConIva" ) )
 
             if uFieldEmpresa( "lIvaImpEsp")
                nBaseImponible := uIva[2] + uIva[6]
@@ -873,11 +874,11 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
             aAdd( aSimula, MkAsiento(  nAsiento, ;                          
                                        cCodDiv, ;                          
                                        dFecha, ;                          
-                                       uIva[ 10 ],;                           // Cuenta de impuestos                          
+                                       uIva[ 11 ],;                           // Cuenta de impuestos                          
                                        cCtaCli,;                              // Contrapartida                          
                                        ,;                                     // Ptas. Debe                          
                                        cConcepto,;                          
-                                       uIva[ 8 ],;                            // Ptas. Haber                          
+                                       uIva[ 8 ] - uIva[ 10 ],;               // Ptas. Haber                          
                                        cFactura,;                          
                                        nBaseImponible,;                       // Base Imponible                          
                                        uIva[ 3 ],;                          
@@ -899,12 +900,12 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
          -------------------------------------------------------------------------
          */
 
-         if ( lRecargo .and. len( uIva ) >= 11 .and. uIva[ 9 ] != 0 )
+         if ( lRecargo .and. len( uIva ) >= 12 .and. uIva[ 9 ] != 0 )
 
             aadd( aSimula, MkAsiento(  nAsiento,;
                                        cCodDiv,;
                                        dFecha,;
-                                       uIva[ 11 ],;
+                                       uIva[ 12 ],;
                                        ,;
                                        ,;
                                        cConcepto,;
@@ -924,6 +925,40 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                                        cTerNom ) )
 
          end if 
+
+         /*
+         Asientos de Portes no soportan recargo
+         -------------------------------------------------------------------------
+         */
+
+         if ( lRecargo .and. len( uIva ) >= 13 .and. uIva[ 10 ] != 0 )
+
+            debug( uIva, "este hay q verlo")
+
+            aadd( aSimula, MkAsiento(  nAsiento,;
+                                       cCodDiv,;
+                                       dFecha,;
+                                       uIva[ 13 ],;
+                                       ,;
+                                       ,;
+                                       cConcepto,;
+                                       uIva[ 9 ],;
+                                       cFactura,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       cProyecto,;
+                                       cClave,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       lSimula,;
+                                       cTerNif,;
+                                       cTerNom ) )
+
+         end if 
+
 
       next
 

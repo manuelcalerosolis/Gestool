@@ -457,7 +457,6 @@ CLASS TpvTactil
    METHOD oDlgKeyDown( o, nKey, nFlag )
 
    METHOD CreateTemporal()
-
    METHOD DestroyTemporal()
 
    METHOD CargaValoresDefecto( nUbicacion )
@@ -10322,7 +10321,7 @@ METHOD LoadTemporalImpresionLinea()
                   ::oTiketLinea:cComent == ::oTemporalImpresionLinea:cComent  .and.;
                   !::oTiketLinea:lControl
 
-                  ::oTemporalImpresionLinea:fieldPutByName( 'nUntTil', ::oTiketLinea:nUntTil )
+                  ::oTemporalImpresionLinea:nUntTil   += ::oTiketLinea:nUntTil 
 
                else
 

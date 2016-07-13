@@ -265,7 +265,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _NPOSPRINT         102
 
 /*
-Definici¢n de Array para impuestos
+Definici¢n de Array para impuestos---------------------------------------------
 */
 
 #define _NBRTIVA1           aTotIva[ 1, 1 ]
@@ -277,6 +277,8 @@ Definici¢n de Array para impuestos
 #define _NTRNIVA1           aTotIva[ 1, 7 ]
 #define _NIMPIVA1           aTotIva[ 1, 8 ]
 #define _NIMPREQ1           aTotIva[ 1, 9 ]
+#define _NEXTIVA1           aTotIva[ 1, 10]
+
 #define _NBRTIVA2           aTotIva[ 2, 1 ]
 #define _NBASIVA2           aTotIva[ 2, 2 ]
 #define _NPCTIVA2           aTotIva[ 2, 3 ]
@@ -286,6 +288,8 @@ Definici¢n de Array para impuestos
 #define _NTRNIVA2           aTotIva[ 2, 7 ]
 #define _NIMPIVA2           aTotIva[ 2, 8 ]
 #define _NIMPREQ2           aTotIva[ 2, 9 ]
+#define _NEXTIVA2           aTotIva[ 2, 10]
+
 #define _NBRTIVA3           aTotIva[ 3, 1 ]
 #define _NBASIVA3           aTotIva[ 3, 2 ]
 #define _NPCTIVA3           aTotIva[ 3, 3 ]
@@ -295,6 +299,7 @@ Definici¢n de Array para impuestos
 #define _NTRNIVA3           aTotIva[ 3, 7 ]
 #define _NIMPIVA3           aTotIva[ 3, 8 ]
 #define _NIMPREQ3           aTotIva[ 3, 9 ]
+#define _NEXTIVA3           aTotIva[ 3, 10]
 
 memvar cDbf
 memvar cDbfCol
@@ -1931,7 +1936,7 @@ STATIC FUNCTION OpenFiles()
       public nTotCaj    := 0
       public nTotPctRnt := 0
 
-      public aTotIva    := { { 0,0,nil,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0 } }
+      public aTotIva    := { { 0,0,nil,0,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0,0 } }
       public aIvaUno    := aTotIva[ 1 ]
       public aIvaDos    := aTotIva[ 2 ]
       public aIvaTre    := aTotIva[ 3 ]
@@ -19825,7 +19830,7 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
    public nTotalDto  := 0
    public cCtaCli    := cClientCuenta( ( cFacCliT )->cCodCli )
 
-   public aTotIva    := { { 0,0,nil,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0 } }
+   public aTotIva    := { { 0,0,nil,0,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0,0 } }
    public aIvaUno    := aTotIva[ 1 ]
    public aIvaDos    := aTotIva[ 2 ]
    public aIvaTre    := aTotIva[ 3 ]
@@ -20377,21 +20382,26 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
          nIvaGasto   := Round( nManObr * nIvaMan / 100, nRouDiv )
       end if 
 
+      debug( aIvaUno, "aIvaUno" )
+
       do case
       case _NPCTIVA1 == nil .or. _NPCTIVA1 == nIvaMan
          _NPCTIVA1   := nIvaMan
          _NBASIVA1   += nBaseGasto
          _NIMPIVA1   += nIvaGasto
+         _NEXTIVA1   += nBaseGasto
 
       case _NPCTIVA2 == nil .or. _NPCTIVA2 == nIvaMan
          _NPCTIVA2   := nIvaMan
          _NBASIVA2   += nBaseGasto
          _NIMPIVA2   += nIvaGasto
+         _NEXTIVA3   += nBaseGasto
 
       case _NPCTIVA3 == nil .or. _NPCTIVA3 == nIvaMan
          _NPCTIVA3   := nIvaMan
          _NBASIVA3   += nBaseGasto
          _NIMPIVA3   += nIvaGasto
+         _NEXTIVA3   += nBaseGasto
 
       end case
 
@@ -20401,7 +20411,7 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
    Redondeo del neto de la factura---------------------------------------------
    */
 
-   nTotNet           	:= Round( _NBASIVA1 + _NBASIVA2 + _NBASIVA3, nRouDiv )
+   nTotNet           := Round( _NBASIVA1 + _NBASIVA2 + _NBASIVA3, nRouDiv )
 
    /*
    Sumamos los portes al final-------------------------------------------------
