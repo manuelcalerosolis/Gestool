@@ -217,6 +217,47 @@ Defines para ficheros INI
 #define STOCK_CONTADORES        2
 #define STOCK_NO_CONTROLAR      3
 
+/*
+Definici¢n de Array para impuestos---------------------------------------------
+*/
+
+#define _NBRTIVA1           aTotIva[ 1, 1 ]
+#define _NBASIVA1           aTotIva[ 1, 2 ]
+#define _NPCTIVA1           aTotIva[ 1, 3 ]
+#define _NPCTREQ1           aTotIva[ 1, 4 ]
+#define _NPNTVER1           aTotIva[ 1, 5 ]
+#define _NIVMIVA1           aTotIva[ 1, 6 ]
+#define _NTRNIVA1           aTotIva[ 1, 7 ]
+#define _NIMPIVA1           aTotIva[ 1, 8 ]
+#define _NIMPREQ1           aTotIva[ 1, 9 ]
+#define _NEXBIVA1           aTotIva[ 1, 10]
+#define _NEXIIVA1           aTotIva[ 1, 11]
+
+#define _NBRTIVA2           aTotIva[ 2, 1 ]
+#define _NBASIVA2           aTotIva[ 2, 2 ]
+#define _NPCTIVA2           aTotIva[ 2, 3 ]
+#define _NPCTREQ2           aTotIva[ 2, 4 ]
+#define _NPNTVER2           aTotIva[ 2, 5 ]
+#define _NIVMIVA2           aTotIva[ 2, 6 ]
+#define _NTRNIVA2           aTotIva[ 2, 7 ]
+#define _NIMPIVA2           aTotIva[ 2, 8 ]
+#define _NIMPREQ2           aTotIva[ 2, 9 ]
+#define _NEXBIVA2           aTotIva[ 2, 10]
+#define _NEXIIVA2           aTotIva[ 2, 11]
+
+#define _NBRTIVA3           aTotIva[ 3, 1 ]
+#define _NBASIVA3           aTotIva[ 3, 2 ]
+#define _NPCTIVA3           aTotIva[ 3, 3 ]
+#define _NPCTREQ3           aTotIva[ 3, 4 ]
+#define _NPNTVER3           aTotIva[ 3, 5 ]
+#define _NIVMIVA3           aTotIva[ 3, 6 ]
+#define _NTRNIVA3           aTotIva[ 3, 7 ]
+#define _NIMPIVA3           aTotIva[ 3, 8 ]
+#define _NIMPREQ3           aTotIva[ 3, 9 ]
+#define _NEXBIVA3           aTotIva[ 3, 10]
+#define _NEXIIVA3           aTotIva[ 3, 11]
+
+
 #define CLR_GET                 "N/W*"
 #define CLR_GET_GREEN           "G/W*"
 #define CLR_GET_BLUE            "B/W*"
@@ -230,27 +271,27 @@ Defines para ficheros INI
 #define F_ERROR                 (-1)
 #endif
 
-#define COLOR_SCROLLBAR         0
-#define COLOR_BACKGROUND        1
-#define COLOR_ACTIVECAPTION     2
-#define COLOR_INACTIVECAPTION   3
-#define COLOR_MENU              4
-#define COLOR_WINDOW            5
-#define COLOR_WINDOWFRAME       6
-#define COLOR_MENUTEXT          7
-#define COLOR_WINDOWTEXT        8
-#define COLOR_CAPTIONTEXT       9
-#define COLOR_ACTIVEBORDER      10
-#define COLOR_INACTIVEBORDER    11
-#define COLOR_APPWORKSPACE      12
-#define COLOR_HIGHLIGHT         13
-#define COLOR_HIGHLIGHTTEXT     14
-#define COLOR_BTNFACE           15
-#define COLOR_BTNSHADOW         16
-#define COLOR_GRAYTEXT          17
-#define COLOR_BTNTEXT           18
-#define COLOR_INACTIVECAPTIONTEXT 19
-#define COLOR_BTNHIGHLIGHT      20
+#define COLOR_SCROLLBAR                 0
+#define COLOR_BACKGROUND                1
+#define COLOR_ACTIVECAPTION             2
+#define COLOR_INACTIVECAPTION           3
+#define COLOR_MENU                      4
+#define COLOR_WINDOW                    5
+#define COLOR_WINDOWFRAME               6
+#define COLOR_MENUTEXT                  7
+#define COLOR_WINDOWTEXT                8
+#define COLOR_CAPTIONTEXT               9
+#define COLOR_ACTIVEBORDER              10
+#define COLOR_INACTIVEBORDER            11
+#define COLOR_APPWORKSPACE              12
+#define COLOR_HIGHLIGHT                 13
+#define COLOR_HIGHLIGHTTEXT             14
+#define COLOR_BTNFACE                   15
+#define COLOR_BTNSHADOW                 16
+#define COLOR_GRAYTEXT                  17
+#define COLOR_BTNTEXT                   18
+#define COLOR_INACTIVECAPTIONTEXT       19
+#define COLOR_BTNHIGHLIGHT              20
 
 #define RECTIFICATIVA_ITEMS     {       "01. Número factura",;
                                         "02. Serie factura",;
@@ -731,25 +772,5 @@ Meter autoinclemenatado
 #define EG_ZERODIV      5
 #endif
 
-#ifndef __C3__
-
-#define ZipClose                MyZipClose
-#define ZipNew                  MyZipNew
-#define ZipSetCompressLevel     MyZipSetCompressLevel
-#define ZipSetPassword          MyZipSetPassword
-#define ZipSetReadOnly          MyZipSetReadOnly
-#define ZipSetExtractPath       MyZipSetExtractPath
-#define ZipSetRootPath          MyZipSetRootPath
-#define ZipSetFilePath          MyZipSetFilePath
-#define ZipSetFiles             MyZipSetFiles
-#define ZipGetCompressLevel     MyZipGetCompressLevel
-#define ZipGetPassword          MyZipGetPassword
-#define ZipCreate               MyZipCreate
-#define ZipOpen                 MyZipOpen
-#define ZipAddFile              MyZipAddFile
-#define ZipAddFiles             MyZipAddFiles
-#define ZipExtractFiles         MyZipExtractFiles
-
-#endif
 
 #xtranslate MinMax( <xValue>, <nMin>, <nMax> ) => Min( Max( <xValue>, <nMin> ), <nMax> )

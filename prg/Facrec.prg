@@ -203,38 +203,6 @@ Definici¢n de la base de datos de lineas de detalle
 #define _CREFAUX2                84
 #define _NPOSPRINT         		85
 
-/*
-Definici¢n de Array para impuestos
-*/
-
-#define _NBRTIVA1                aTotIva[ 1, 1 ]
-#define _NBASIVA1                aTotIva[ 1, 2 ]
-#define _NPCTIVA1                aTotIva[ 1, 3 ]
-#define _NPCTREQ1                aTotIva[ 1, 4 ]
-#define _NPNTVER1                aTotIva[ 1, 5 ]
-#define _NIVMIVA1                aTotIva[ 1, 6 ]
-#define _NTRNIVA1                aTotIva[ 1, 7 ]
-#define _NIMPIVA1                aTotIva[ 1, 8 ]
-#define _NIMPREQ1                aTotIva[ 1, 9 ]
-#define _NBRTIVA2                aTotIva[ 2, 1 ]
-#define _NBASIVA2                aTotIva[ 2, 2 ]
-#define _NPCTIVA2                aTotIva[ 2, 3 ]
-#define _NPCTREQ2                aTotIva[ 2, 4 ]
-#define _NPNTVER2                aTotIva[ 2, 5 ]
-#define _NIVMIVA2                aTotIva[ 2, 6 ]
-#define _NTRNIVA2                aTotIva[ 2, 7 ]
-#define _NIMPIVA2                aTotIva[ 2, 8 ]
-#define _NIMPREQ2                aTotIva[ 2, 9 ]
-#define _NBRTIVA3                aTotIva[ 3, 1 ]
-#define _NBASIVA3                aTotIva[ 3, 2 ]
-#define _NPCTIVA3                aTotIva[ 3, 3 ]
-#define _NPCTREQ3                aTotIva[ 3, 4 ]
-#define _NPNTVER3                aTotIva[ 3, 5 ]
-#define _NIVMIVA3                aTotIva[ 3, 6 ]
-#define _NTRNIVA3                aTotIva[ 3, 7 ]
-#define _NIMPIVA3                aTotIva[ 3, 8 ]
-#define _NIMPREQ3                aTotIva[ 3, 9 ]
-
 memvar cDbf
 memvar cDbfCol
 memvar cDbfCob
@@ -1050,7 +1018,7 @@ STATIC FUNCTION OpenFiles( lExt )
       public nPctRnt    := 0
       public nTotDif    := 0
 
-      public aTotIva    := { { 0,0,nil,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0 } }
+      public aTotIva    := { { 0,0,nil,0,0,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0,0,0 } }
       public aIvaUno    := aTotIva[ 1 ]
       public aIvaDos    := aTotIva[ 2 ]
       public aIvaTre    := aTotIva[ 3 ]
@@ -11843,7 +11811,7 @@ FUNCTION nTotFacRec( cFactura, cFacRecT, cFacRecL, cIva, cDiv, aTmp, cDivRet, lP
    public nTotDif          := 0
    public cCtaCli          := cClientCuenta( ( cFacRecT )->cCodCli )
 
-   public aTotIva          := { { 0,0,nil,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0 } }
+   public aTotIva          := { { 0,0,nil,0,0,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0,0,0 } }
    public aIvaUno          := aTotIva[ 1 ]
    public aIvaDos          := aTotIva[ 2 ]
    public aIvaTre          := aTotIva[ 3 ]
@@ -12236,16 +12204,22 @@ FUNCTION nTotFacRec( cFactura, cFacRecT, cFacRecL, cIva, cDiv, aTmp, cDivRet, lP
          _NPCTIVA1   := nIvaMan
          _NBASIVA1   += nBaseGasto
          _NIMPIVA1   += nIvaGasto
+         _NEXBIVA1   += nBaseGasto
+         _NEXIIVA1   += nIvaGasto
 
       case _NPCTIVA2 == nil .or. _NPCTIVA2 == nIvaMan
          _NPCTIVA2   := nIvaMan
          _NBASIVA2   += nBaseGasto
          _NIMPIVA2   += nIvaGasto
+         _NEXBIVA2   += nBaseGasto
+         _NEXIIVA2   += nIvaGasto
 
       case _NPCTIVA3 == nil .or. _NPCTIVA3 == nIvaMan
          _NPCTIVA3   := nIvaMan
          _NBASIVA3   += nBaseGasto
          _NIMPIVA3   += nIvaGasto
+         _NEXBIVA3   += nBaseGasto
+         _NEXIIVA3   += nIvaGasto
 
       end case
 

@@ -31,11 +31,10 @@ Return ( ( dbfFactura )->nRegIva == 4 )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfAlbCliT, dbfCli, dbfDiv, dbfArt, dbfFPago, dbfIva, oNewImp, oBrw, cCodEmp, cCodPro )
+FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfCli, dbfDiv, dbfArt, dbfFPago, dbfIva, oNewImp, oBrw, cCodEmp, cCodPro )
 
    local n
    local nIva
-   //local lIvaCEE
    local cCtaVent
    local nPos
    local dFecha
@@ -61,7 +60,6 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    local nTotAnt     := 0
    local uIva
    local newIva
-   local aIva        := {}
    local aIvm        := {}
    local aTrn        := {}
    local nCalculo    := 0
@@ -72,16 +70,15 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    local cCtaCli     := cCliCta( ( dbfFacCliT )->cCodCli, dbfCli )
    local cCtaCliVta  := cCliCtaVta( ( dbfFacCliT )->cCodCli, dbfCli )
    local cCtaAnticipo:= cCtaAnt()
-   local nFactura    := ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac
-   local cFactura    := ( dbfFacCliT )->cSerie + Alltrim( Str( ( dbfFacCliT )->nNumFac ) )
-   local pFactura    := ( dbfFacCliT )->cSerie + "/" + Alltrim( Str( ( dbfFacCliT )->nNumFac ) ) + "/" + ( dbfFacCliT )->cSufFac
+   local nFactura    := ( dbfFacCliT )->cSerie + str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac
+   local cFactura    := ( dbfFacCliT )->cSerie + alltrim( str( ( dbfFacCliT )->nNumFac ) )
+   local pFactura    := ( dbfFacCliT )->cSerie + "/" + alltrim( str( ( dbfFacCliT )->nNumFac ) ) + "/" + ( dbfFacCliT )->cSufFac
    local lRecargo    := ( dbfFacCliT )->lRecargo
    local cTerNif     := ( dbfFacCliT )->cDniCli
    local cTerNom     := ( dbfFacCliT )->cNomCli
    local lErrorFound := .f.
    local cProyecto
    local cClave
-   local a
    local sTotFacCli
    local ptaDebe
    local ptaRet
@@ -95,7 +92,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    local nDtoDos     := 0
    local nPctDto     := 0
    local nPctIva     := 0
-   local nBaseImponible := 0
+   local nBaseImp    := 0
 
    DEFAULT lSimula   := .t.
    DEFAULT nAsiento  := 0
@@ -114,11 +111,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    nDtoDos           := ( dbfFacCliT )->nDtoDos
    nPctDto           := ( dbfFacCliT )->nPctDto
 
-   a                 := aTotFacCli( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, nil, nil, .f., lExcCnt  )
-   ptaDebe           := a[ 4 ]
-   ptaRet            := a[ 12 ]
-
-   sTotFacCli        := sTotFacCli( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, nil, nil, .f., lExcCnt  )
+   sTotFacCli        := sTotFacCli( ( dbfFacCliT )->cSerie + str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, nil, nil, .f., lExcCnt  )
    ptaDebe           := sTotFacCli:nTotalDocumento
    ptaRet            := sTotFacCli:nTotalRetencion
    newIva            := sTotFacCli:aTotalIva
@@ -131,7 +124,6 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    */
 
    cRuta             := cRutCnt()
-  // lIvaCEE           := ( ( dbfFacCliT )->nRegIva > 1 )
 
    if !chkEmpresaAsociada( cCodEmp )
       oTree:Select( oTree:Add( "Factura cliente : " + rtrim( pFactura ) + " no se definierón empresas asociadas.", 0 ) )
@@ -165,7 +157,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
    if ( dbfFacCliL )->( dbSeek( nFactura ) )
 
-      while ( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac == nFactura .and. !( dbfFacCliL )->( eof() ) )
+      while ( ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac == nFactura .and. !( dbfFacCliL )->( eof() ) )
 
          if !( dbfFacCliL )->lTotLin                           .and. ;
             lValLine( dbfFacCliL )                             .and. ;
@@ -224,20 +216,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                end if
 
                if uFieldEmpresa( "lIvaImpEsp" )
-
                   nImpDet     += nImpIvm
-
-               end if
-
-               nPos           := aScan( aIva, {|x| x[ 1 ] == nIva } )
-
-               if nPos  == 0
-
-                  aAdd( aIva, { nIva, cSubCtaIva, cSubCtaReq, nImpDet, nImpPnt, nImpTrn, 0, 0, 0 } )
-               else
-                  aIva[ nPos, 4 ] += nImpDet
-                  aIva[ nPos, 5 ] += nImpPnt
-                  aIva[ nPos, 6 ] += nImpTrn
                end if
 
                /*
@@ -337,99 +316,10 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    next
 
    /*
-   Descuentos sobres grupos de impuestos
-   ----------------------------------------------------------------------------
-   */
-
-   for n := 1 to Len( aIva )
-      nRestaDescuentoVenta( @aIva[ n, 4 ], nDtoEsp )
-      nRestaDescuentoVenta( @aIva[ n, 4 ], nDpp )
-      nRestaDescuentoVenta( @aIva[ n, 4 ], nDtoUno )      
-      nRestaDescuentoVenta( @aIva[ n, 4 ], nDtoDos )
-      nRestaDescuentoVenta( @aIva[ n, 4 ], nPctDto )
-   next
-
-   /*
-   Estudio Gasto despues de los descuentos-------------------------------------
-   */
-
-   if ( dbfFacCliT )->nManObr != 0
-
-      nIva        := ( dbfFacCliT )->nIvaMan
-      cSubCtaIva  := cSubCuentaIva( nIva, .f., cRuta, cCodEmp, dbfIva )
-      cSubCtaReq  := cSubCuentaRecargo( nIva, .f., cRuta, cCodEmp, dbfIva )
-
-      aAdd( aIva, { nIva, cSubCtaIva, cSubCtaReq, ( dbfFacCliT )->nManObr, 0, 0, 0 } )
-
-   end if
-
-   /*
-   Despues de aplicar los descuentos le sumamos el punto verde-----------------
-   */
-
-   for n := 1 to Len( aIva )
-      aIva[ n, 4 ]   += aIva[ n, 5 ]
-   next
-
-   /*
-   impuestos de los anticipos--------------------------------------------------------
-   */
-
-   n                 := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
-
-   if ( dbfAntCliT )->( dbSeek( nFactura ) )
-
-      while ( ( dbfAntCliT )->cNumDoc == nFactura .and. !( dbfAntCliT )->( eof() ) )
-
-         aTotAnt     := aTotAntCli( dbfAntCliT, dbfIva, dbfDiv )
-         nNetAnt     := aTotAnt[ 1 ]
-         nIvaAnt     := aTotAnt[ 2 ]
-         nTotAnt     := aTotAnt[ 5 ]
-         nAcuAnt     += nNetAnt
-
-         // Construimos las bases de los impuestosS
-
-         if ( dbfAntCliT )->nPctIva != 0
-
-            cSubCtaReq  := cSubCuentaRecargo( ( dbfAntCliT )->nPctIva, ( dbfAntCliT )->lRecargo, cRuta, cCodEmp, dbfIva )
-            cSubCtaIva  := cSubCuentaIva( ( dbfAntCliT )->nPctIva, ( dbfAntCliT )->lRecargo, cRuta, cCodEmp, dbfIva )
-
-            if lIvaInc
-
-               nPos     := aScan( aIva, {|x| x[ 1 ] == ( dbfAntCliT )->nPctIva } )
-               if nPos  == 0
-                  aAdd( aIva, { ( dbfAntCliT )->nPctIva, cSubCtaIva, cSubCtaReq, 0, 0, 0, - nTotAnt } )
-               else
-                  aIva[ nPos, 7 ] -= nTotAnt
-               end if
-
-            else
-
-               nPos     := aScan( aIva, {|x| x[ 1 ] == ( dbfAntCliT )->nPctIva } )
-               if nPos  == 0
-                  aAdd( aIva, { ( dbfAntCliT )->nPctIva, cSubCtaIva, cSubCtaReq, 0, 0, 0, - nNetAnt } )
-               else
-                  aIva[ nPos, 7 ] -= nNetAnt
-               end if
-
-            end if
-
-         end if
-
-         ( dbfAntCliT )->( dbSkip() )
-
-      end while
-
-   end if
-
-   ( dbfAntCliT )->( OrdSetFocus( n ) )
-
-   /*
    Ponemos la cuentas de IVA---------------------------------------------------
    */
 
    for each uIva in newIva
-   //for each uIva in aIva
 
       if isNum( uIva[ 3 ] )
 
@@ -486,13 +376,13 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
       if isNum( uIva[ 3 ] )
 
-         if !ChkSubcuenta( cRutCnt(), cCodEmp, uIva[ 11 ], , .f., .f. )
-            oTree:Select( oTree:Add( "Factura cliente : " + Rtrim( pFactura ) + " subcuenta " + uIva[ 11 ] + " no encontada.", 0 ) )
+         if !ChkSubcuenta( cRutCnt(), cCodEmp, uIva[ 12 ], , .f., .f. )
+            oTree:Select( oTree:Add( "Factura cliente : " + Rtrim( pFactura ) + " subcuenta " + uIva[ 12 ] + " no encontada.", 0 ) )
             lErrorFound := .t.
          end if
 
-         if lRecargo .and. !ChkSubcuenta( cRutCnt(), cCodEmp, uIva[ 12 ], , .f., .f. )
-            oTree:Select( oTree:Add( "Factura cliente : " + Rtrim( pFactura ) + " subcuenta " + uIva[ 12 ] + " no encontada.", 0 ) )
+         if lRecargo .and. !ChkSubcuenta( cRutCnt(), cCodEmp, uIva[ 13 ], , .f., .f. )
+            oTree:Select( oTree:Add( "Factura cliente : " + Rtrim( pFactura ) + " subcuenta " + uIva[ 13 ] + " no encontada.", 0 ) )
             lErrorFound := .t.
          end if
 
@@ -540,8 +430,8 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    --------------------------------------------------------------------------
    */
 
-   cConcepto      := "N/Fcta. N." + ( dbfFacCliT )->CSERIE + "/" + AllTrim( Str( (dbfFacCliT)->NNUMFAC ) + "/" + (dbfFacCliT)->CSUFFAC )
-   cPago          := "C/Fcta. N." + ( dbfFacCliT )->CSERIE + "/" + AllTrim( Str( (dbfFacCliT)->NNUMFAC ) + "/" + (dbfFacCliT)->CSUFFAC )
+   cConcepto      := "N/Fcta. N." + ( dbfFacCliT )->CSERIE + "/" + alltrim( str( (dbfFacCliT)->NNUMFAC ) + "/" + (dbfFacCliT)->CSUFFAC )
+   cPago          := "C/Fcta. N." + ( dbfFacCliT )->CSERIE + "/" + alltrim( str( (dbfFacCliT)->NNUMFAC ) + "/" + (dbfFacCliT)->CSUFFAC )
 
    /*
    Cuadre del apunte
@@ -861,24 +751,24 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
       for each uIva in newIva
 
-         if ( len( uIva ) >= 11 ) .and. ( uIva[ 8 ] != 0 .or. uFieldEmpresa( "lConIva" ) )
+         if ( len( uIva ) >= 12 ) .and. ( uIva[ 8 ] != 0 .or. uFieldEmpresa( "lConIva" ) )
+
+            nBaseImp    := uIva[ 2 ] - uIva[ 10 ] 
 
             if uFieldEmpresa( "lIvaImpEsp")
-               nBaseImponible := uIva[2] + uIva[6]
-            else
-               nBaseImponible := uIva[2]
+               nBaseImp += uIva[ 6 ]
             end if
 
             aAdd( aSimula, MkAsiento(  nAsiento, ;                          
                                        cCodDiv, ;                          
                                        dFecha, ;                          
-                                       uIva[ 11 ],;                           // Cuenta de impuestos                          
+                                       uIva[ 12 ],;                           // Cuenta de impuestos                          
                                        cCtaCli,;                              // Contrapartida                          
                                        ,;                                     // Ptas. Debe                          
                                        cConcepto,;                          
-                                       uIva[ 8 ] - uIva[ 10 ],;               // Ptas. Haber                          
+                                       uIva[ 8 ] - uIva[ 11 ],;               // Ptas. Haber                          
                                        cFactura,;                          
-                                       nBaseImponible,;                       // Base Imponible                          
+                                       nBaseImp,;                       // Base Imponible                          
                                        uIva[ 3 ],;                          
                                        if( lRecargo, uIva[ 4 ], 0 ),;         // Tipo de recargo                         
                                        ,;                          
@@ -898,12 +788,12 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
          -------------------------------------------------------------------------
          */
 
-         if ( lRecargo .and. len( uIva ) >= 12 .and. uIva[ 9 ] != 0 )
+         if ( lRecargo .and. len( uIva ) >= 13 .and. uIva[ 9 ] != 0 )
 
             aadd( aSimula, MkAsiento(  nAsiento,;
                                        cCodDiv,;
                                        dFecha,;
-                                       uIva[ 12 ],;
+                                       uIva[ 13 ],;
                                        ,;
                                        ,;
                                        cConcepto,;
@@ -925,25 +815,23 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
          end if 
 
          /*
-         Asientos de Portes no soportan recargo
+         Asientos de Portes exentos de recargo de equivalencia
          -------------------------------------------------------------------------
          */
 
-         if ( lRecargo .and. len( uIva ) >= 13 .and. uIva[ 10 ] != 0 )
-
-            debug( uIva, "este hay q verlo")
+         if ( len( uIva ) >= 14 .and. uIva[ 10 ] != 0 )
 
             aadd( aSimula, MkAsiento(  nAsiento,;
                                        cCodDiv,;
                                        dFecha,;
-                                       uIva[ 13 ],;
-                                       ,;
-                                       ,;
+                                       uIva[ 14 ],;      // Cuenta de impuestos
+                                       ,;                // Contrapartida                          
+                                       ,;                // Ptas. Debe                          
                                        cConcepto,;
-                                       uIva[ 9 ],;
+                                       uIva[ 11 ],;      // Ptas. Haber
                                        cFactura,;
-                                       ,;
-                                       ,;
+                                       uIva[ 10 ],;      // Base Imponible
+                                       uIva[ 3 ],;
                                        ,;
                                        ,;
                                        cProyecto,;
@@ -975,7 +863,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
    if lPago .and. !lErrorFound .and. ( dbfFacCliP )->( dbSeek( nFactura ) )
 
-      while ( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == nFactura ) .and. !( dbfFacCliP )->( eof() )
+      while ( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == nFactura ) .and. !( dbfFacCliP )->( eof() )
 
          ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, dbfFacCliP, dbfFPago, dbfCli, dbfDiv, .t., nAsiento )
 
@@ -1041,7 +929,7 @@ Static Function lCntFacCli( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacCl
    if lAplicacionA3()
       EnlaceA3():getInstance():WriteInfo( oTree, "Factura cliente : " + rtrim( pFactura ) + " asiento generado." )
    else
-      oTree:Select( oTree:Add( "Factura cliente : " + rtrim( pFactura ) + " asiento generado num. " + Alltrim( Str( nAsiento ) ), 1 ) )
+      oTree:Select( oTree:Add( "Factura cliente : " + rtrim( pFactura ) + " asiento generado num. " + alltrim( str( nAsiento ) ), 1 ) )
    end if 
 
    // Contabilizacion de recibos-----------------------------------------------
@@ -1050,7 +938,7 @@ Static Function lCntFacCli( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacCl
 
       if lPago .and. ( dbfFacCliP )->( dbSeek( nFactura ) )
 
-         while ( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == nFactura ) .and. !( dbfFacCliP )->( eof() )
+         while ( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == nFactura ) .and. !( dbfFacCliP )->( eof() )
 
             lContabilizaReciboCliente( nil, nil, .t., oTree, dbfFacCliP )
 
@@ -1098,7 +986,7 @@ Function DlgCntTicket( dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfD
    local oMtrInf
    local nMtrInf
    local lFechas     := .t.
-   local dDesde      := CtoD( "01/01/" + Str( Year( Date() ) ) )
+   local dDesde      := CtoD( "01/01/" + str( Year( Date() ) ) )
    local dHasta      := Date()
    local oTree
    local oImageList
@@ -1211,13 +1099,13 @@ Function DlgCntTicket( dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfD
       VAR      nMtrInf ;
       PROMPT   "Proceso" ;
       ID       200;
-      TOTAL    ( dbfTikT )->( LastRec() ) ;
+      TOTAL    ( dbfTikT )->( Lastrec() ) ;
       OF       oDlg
 
    REDEFINE BUTTON ;
       ID       IDOK ;
       OF       oDlg ;
-      ACTION   ( ContaSerieTiket( nRad, cSerIni + Str( nDocIni, 10 ) + cSufIni, cSerFin + Str( nDocFin, 10 ) + cSufFin, lFechas, dDesde, dHasta, lChk1, lChk2, oBrw, oMtrInf, oTree, oDlg, oBtnCancel, dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfDiv, oNewImp ) )
+      ACTION   ( ContaSerieTiket( nRad, cSerIni + str( nDocIni, 10 ) + cSufIni, cSerFin + str( nDocFin, 10 ) + cSufFin, lFechas, dDesde, dHasta, lChk1, lChk2, oBrw, oMtrInf, oTree, oDlg, oBtnCancel, dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfDiv, oNewImp ) )
 
    REDEFINE BUTTON oBtnCancel ;
       ID       IDCANCEL ;
@@ -1225,7 +1113,7 @@ Function DlgCntTicket( dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfD
       CANCEL ;
       ACTION   ( oDlg:end() )
 
-   oDlg:AddFastKey( VK_F5, {|| ContaSerieTiket( nRad, cSerIni + Str( nDocIni, 10 ) + cSufIni, cSerFin + Str( nDocFin, 10 ) + cSufFin, lFechas, dDesde, dHasta, lChk1, lChk2, oBrw, oMtrInf, oTree, oDlg, oBtnCancel, dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfDiv, oNewImp ) } )
+   oDlg:AddFastKey( VK_F5, {|| ContaSerieTiket( nRad, cSerIni + str( nDocIni, 10 ) + cSufIni, cSerFin + str( nDocFin, 10 ) + cSufFin, lFechas, dDesde, dHasta, lChk1, lChk2, oBrw, oMtrInf, oTree, oDlg, oBtnCancel, dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfDiv, oNewImp ) } )
 
    oDlg:bStart := {|| StartGetSelRec( oBrw, oRad, oChk1, oChk2, oSerIni, oSerFin, oDocIni, oDocFin, oSufIni, oSufFin ) }
 
@@ -1379,7 +1267,7 @@ Static Function ContaSerieTiket( nRad, cNumIni, cNumFin, lFechas, dDesde, dHasta
 
          end while
 
-         oMtrInf:Set( ( dbfTikT )->( LastRec() ) )
+         oMtrInf:Set( ( dbfTikT )->( Lastrec() ) )
 
       end if
 
@@ -1426,7 +1314,7 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
    local cCodPro     := ( dbfTikT )->cCodPro
    local cCtaCli     := cCliCta( ( dbfTikT )->cCliTik, dbfCli )
    local cNumTik     := ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik
-   local cTxtNumTik  := Rtrim( ( dbfTikT )->cSerTik + "/" + Alltrim( ( dbfTikT )->cNumTik ) + "/" + ( dbfTikT )->cSufTik )
+   local cTxtNumTik  := Rtrim( ( dbfTikT )->cSerTik + "/" + alltrim( ( dbfTikT )->cNumTik ) + "/" + ( dbfTikT )->cSufTik )
    local cCodDiv     := ( dbfTikT )->cDivTik
    local nDouDiv     := nDouDiv( ( dbfTikT )->cDivTik, dbfDiv )
    local nRouDiv     := nRouDiv( ( dbfTikT )->cDivTik, dbfDiv )
@@ -1436,7 +1324,7 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
    local cTerNif     := ( dbfTikT )->cDniCli
    local cTerNom     := ( dbfTikT )->cNomTik
    local lReturn
-   local nBaseImponible
+   local nBaseImp
 
    DEFAULT nAsiento  := 0
    DEFAULT aSimula   := {}
@@ -1874,9 +1762,9 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
          if aIva[ n, 4 ] != 0 .or. uFieldEmpresa( "lConIva" )
 
             if uFieldEmpresa( "lIvaImpEsp")
-               nBaseImponible := aIva[ n, 3 ] + aIva[ n, 5 ]
+               nBaseImp := aIva[ n, 3 ] + aIva[ n, 5 ]
             else
-               nBaseImponible := aIva[n, 3 ]
+               nBaseImp := aIva[n, 3 ]
             end if
 
             aAdd( aSimula, MkAsiento(  nAsiento, ;
@@ -1888,7 +1776,7 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
                                        cConcepto,;
                                        aIva[ n, 4 ],;    // Ptas. Haber
                                        cNumTik,;
-                                       nBaseImponible,;    // Base Imponible
+                                       nBaseImp,;    // Base Imponible
                                        aIva[ n, 2 ],;
                                        ,;
                                        ,;
@@ -2043,7 +1931,7 @@ Static Function lCntTiket( cNumTik, cTxtNumTik, nAsiento, lCobro, oTree, dbfTikT
 
    end if
 
-   oTree:Select( oTree:Add( "Tiket : " + cTxtNumTik + " asiento generado num. " + Alltrim( Str( nAsiento ) ), 1 ) )
+   oTree:Select( oTree:Add( "Tiket : " + cTxtNumTik + " asiento generado num. " + alltrim( str( nAsiento ) ), 1 ) )
 
 Return ( .t. )
 
@@ -2151,8 +2039,8 @@ FUNCTION CntAlbCli( lSimula, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfAlb
    local cCtaCli     := cCliCta( ( dbfAlbCliT )->cCodCli, dbfCli )
    local cCtaCliVta  := cCliCtaVta( ( dbfAlbCliT )->cCodCli, dbfCli )
    local cCtaAnticipo:= cCtaAnt()
-   local nAlbaran    := ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
-   local cAlbaran    := ( dbfAlbCliT )->cSerAlb + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) )
+   local nAlbaran    := ( dbfAlbCliT )->cSerAlb + str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
+   local cAlbaran    := ( dbfAlbCliT )->cSerAlb + alltrim( str( ( dbfAlbCliT )->nNumAlb ) )
    local lRecargo    := ( dbfAlbCliT )->lRecargo
    local lErrorFound := .f.
    local cTerNif     := ( dbfAlbCliT )->cDniCli
@@ -2209,7 +2097,7 @@ FUNCTION CntAlbCli( lSimula, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfAlb
 
    if ( dbfAlbCliL )->( dbSeek( nAlbaran ) )
 
-      while ( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb == nAlbaran .and. !( dbfAlbCliL )->( eof() ) )
+      while ( ( dbfAlbCliL )->cSerAlb + str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb == nAlbaran .and. !( dbfAlbCliL )->( eof() ) )
 
          if !( dbfAlbCliL )->lControl                          .and. ;
             !( dbfAlbCliL )->lTotLin                           .and. ;
@@ -2463,9 +2351,9 @@ FUNCTION CntAlbCli( lSimula, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfAlb
       */
 
       dFecha      := ( dbfAlbCliT )->dFecAlb
-      ptaDebe     := nTotAlbCli( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, nil, nil, .f., lExcCnt  )
-      cConcepto   := "N/Alb. N." + ( dbfAlbCliT )->cSerAlb + "/" + AllTrim( Str( ( dbfAlbCliT )->nNumAlb ) + "/" + ( dbfAlbCliT )->cSufAlb )
-      cPago       := "C/Alb. N." + ( dbfAlbCliT )->cSerAlb + "/" + AllTrim( Str( ( dbfAlbCliT )->nNumAlb ) + "/" + ( dbfAlbCliT )->cSufAlb )
+      ptaDebe     := nTotAlbCli( ( dbfAlbCliT )->cSerAlb + str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, nil, nil, .f., lExcCnt  )
+      cConcepto   := "N/Alb. N." + ( dbfAlbCliT )->cSerAlb + "/" + alltrim( str( ( dbfAlbCliT )->nNumAlb ) + "/" + ( dbfAlbCliT )->cSufAlb )
+      cPago       := "C/Alb. N." + ( dbfAlbCliT )->cSerAlb + "/" + alltrim( str( ( dbfAlbCliT )->nNumAlb ) + "/" + ( dbfAlbCliT )->cSufAlb )
 
       /*
       Realización de Asientos
@@ -2760,7 +2648,7 @@ FUNCTION CntAlbCli( lSimula, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfAlb
             ( dbfAlbCliT )->( dbUnLock() )
          end if
 
-         oTree:Select( oTree:Add( "Albaran cliente : " + rtrim( nAlbaran ) + " asiento generado num. " + Alltrim( Str( nAsiento ) ), 0 ) )
+         oTree:Select( oTree:Add( "Albaran cliente : " + rtrim( nAlbaran ) + " asiento generado num. " + alltrim( str( nAsiento ) ), 0 ) )
 
       else
 
@@ -2786,7 +2674,7 @@ RETURN ( lReturn )
 Realiza asientos en Contaplus, partiendo de la factura
 */
 
-FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfFacRecT, dbfFacRecL, dbfFacCliP, dbfCli, dbfDiv, dbfArt, dbfFPago, dbfIva, oNewImp, oBrw )
+FUNCTION CntFacRec2( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfFacRecT, dbfFacRecL, dbfFacCliP, dbfCli, dbfDiv, dbfArt, dbfFPago, dbfIva, oNewImp, oBrw )
 
    local n
    local nIva
@@ -2823,9 +2711,9 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    local cCtaCli     := cCliCta( ( dbfFacRecT )->cCodCli, dbfCli )
    local cCtaCliVta  := cCliCtaVta( ( dbfFacRecT )->cCodCli, dbfCli )
    local cCtaAnticipo:= cCtaAnt()
-   local nFactura    := ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac
-   local cFactura    := ( dbfFacRecT )->cSerie + Alltrim( Str( ( dbfFacRecT )->nNumFac ) )
-   local pFactura    := ( dbfFacRecT )->cSerie + "/" + Alltrim( Str( ( dbfFacRecT )->nNumFac ) ) + "/" + ( dbfFacRecT )->cSufFac
+   local nFactura    := ( dbfFacRecT )->cSerie + str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac
+   local cFactura    := ( dbfFacRecT )->cSerie + alltrim( str( ( dbfFacRecT )->nNumFac ) )
+   local pFactura    := ( dbfFacRecT )->cSerie + "/" + alltrim( str( ( dbfFacRecT )->nNumFac ) ) + "/" + ( dbfFacRecT )->cSufFac
    local lRecargo    := ( dbfFacRecT )->lRecargo
    local lErrorFound := .f.
    local cTerNif     := ( dbfFacRecT )->cDniCli
@@ -2898,7 +2786,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
    if ( dbfFacRecL )->( dbSeek( nFactura ) )
 
-      while ( ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac == nFactura .and. !( dbfFacRecL )->( eof() ) )
+      while ( ( dbfFacRecL )->cSerie + str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac == nFactura .and. !( dbfFacRecL )->( eof() ) )
 
          if !( dbfFacRecL )->lControl                             .and.;
             !( dbfFacRecL )->lTotLin                              .and.;
@@ -3165,8 +3053,8 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
       */
 
       dFecha      := ( dbfFacRecT )->dFecFac
-      ptaDebe     := nTotFacRec( ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, dbfFacRecT, dbfFacRecL, dbfIva, dbfDiv, nil, nil, .f., lExcCnt  )
-      cConcepto   := "N/Rect. N." + ( dbfFacRecT )->cSerie + "/" + AllTrim( Str( ( dbfFacRecT )->nNumFac ) + "/" + ( dbfFacRecT )->cSufFac )
+      ptaDebe     := nTotFacRec( ( dbfFacRecT )->cSerie + str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, dbfFacRecT, dbfFacRecL, dbfIva, dbfDiv, nil, nil, .f., lExcCnt  )
+      cConcepto   := "N/Rect. N." + ( dbfFacRecT )->cSerie + "/" + alltrim( str( ( dbfFacRecT )->nNumFac ) + "/" + ( dbfFacRecT )->cSufFac )
 
       /*
       Realización de Asientos
@@ -3490,7 +3378,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
    if lPago .and. ( dbfFacCliP )->( dbSeek( nFactura ) )
 
-      while ( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == nFactura ) .and. !( dbfFacCliP )->( eof() )
+      while ( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == nFactura ) .and. !( dbfFacCliP )->( eof() )
 
          lReturn  := ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacRecT, dbfFacCliP, dbfFPago, dbfCli, dbfDiv, .t., nAsiento )
 
@@ -3549,13 +3437,13 @@ Static Function lCntFacRec( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacRe
       ( dbfFacRecT )->( dbUnLock() )
    end if
 
-   oTree:Select( oTree:Add( "Factura rectificativa : " + rtrim( pFactura ) + " asiento generado num. " + Alltrim( Str( nAsiento ) ), 1 ) )
+   oTree:Select( oTree:Add( "Factura rectificativa : " + rtrim( pFactura ) + " asiento generado num. " + alltrim( str( nAsiento ) ), 1 ) )
 
    if !Empty( dbfFacCliP )
 
       if lPago .and. ( dbfFacCliP )->( dbSeek( nFactura ) )
 
-         while ( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == nFactura ) .and. !( dbfFacCliP )->( eof() )
+         while ( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == nFactura ) .and. !( dbfFacCliP )->( eof() )
 
             lContabilizaReciboCliente( nil, nil, .t., oTree, dbfFacCliP )
 
@@ -3601,8 +3489,8 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
    local cCodDiv     := ( dbfFacPrvT )->cDivFac
    local cCtaPrv     := cPrvCta( ( dbfFacPrvT )->cCodPrv, dbfPrv )
    local cCtaPrvVta  := cPrvCtaVta( ( dbfFacPrvT )->cCodPrv, dbfPrv )
-   local nFactura    := ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac
-   local cFactura    := ( dbfFacPrvT )->cSerFac + "/" + Ltrim( Str( ( dbfFacPrvT )->nNumFac ) ) + "/" + ( dbfFacPrvT )->cSufFac
+   local nFactura    := ( dbfFacPrvT )->cSerFac + str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac
+   local cFactura    := ( dbfFacPrvT )->cSerFac + "/" + Ltrim( str( ( dbfFacPrvT )->nNumFac ) ) + "/" + ( dbfFacPrvT )->cSufFac
    local nNumFac     := ( dbfFacPrvT )->nNumFac
    local cCodPro     := Left( ( dbfFacPrvT )->cCodPro, 3 )
    local cClave      := Right( ( dbfFacPrvT )->cCodPro, 6 )
@@ -3694,7 +3582,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
 
       if ( dbfFacPrvL )->( dbSeek( nFactura ) )
 
-         while ( ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac == nFactura .and. !( dbfFacPrvL )->( eof() ) )
+         while ( ( dbfFacPrvL )->cSerFac + str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac == nFactura .and. !( dbfFacPrvL )->( eof() ) )
 
             nImpDeta       := nTotLFacPrv( dbfFacPrvL, nDinDiv, nRinDiv ) // , ( dbfFacPrvT )->nVdvFac )
 
@@ -4129,7 +4017,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
 
          if ( dbfFacPrvP )->( dbSeek( nFactura ) )
 
-            while ( ( dbfFacPrvP )->cSerFac + Str( ( dbfFacPrvP )->nNumFac ) + ( dbfFacPrvP )->cSufFac = nFactura ) .and. !( dbfFacPrvP )->( eof() )
+            while ( ( dbfFacPrvP )->cSerFac + str( ( dbfFacPrvP )->nNumFac ) + ( dbfFacPrvP )->cSufFac = nFactura ) .and. !( dbfFacPrvP )->( eof() )
 
                lReturn  := CntRecPrv( lSimula, oTree, nAsiento, aSimula, .t., dbfFacPrvT, dbfFacPrvP, dbfPrv, dbfFPago, dbfDiv )
 
@@ -4164,7 +4052,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
             lReturn  := lCntFacPrv( .t., dbfFacPrvT )
 
             if lReturn .and. !Empty( oTree )
-               oTree:Select( oTree:Add( "Factura proveedor : " + Rtrim( cFactura ) + " asiento generado num. " + Alltrim( Str( nAsiento ) ), 1 ) )
+               oTree:Select( oTree:Add( "Factura proveedor : " + Rtrim( cFactura ) + " asiento generado num. " + alltrim( str( nAsiento ) ), 1 ) )
             end if
 
          end if
@@ -4218,8 +4106,8 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
    local cCodDiv     := ( dbfRctPrvT )->cDivFac
    local cCtaPrv     := cPrvCta( ( dbfRctPrvT )->cCodPrv, dbfPrv )
    local cCtaPrvVta  := cPrvCtaVta( ( dbfRctPrvT )->cCodPrv, dbfPrv )
-   local nFactura    := ( dbfRctPrvT )->cSerFac + Str( ( dbfRctPrvT )->nNumFac ) + ( dbfRctPrvT )->cSufFac
-   local cFactura    := ( dbfRctPrvT )->cSerFac + "/" + Ltrim( Str( ( dbfRctPrvT )->nNumFac ) ) + "/" + ( dbfRctPrvT )->cSufFac
+   local nFactura    := ( dbfRctPrvT )->cSerFac + str( ( dbfRctPrvT )->nNumFac ) + ( dbfRctPrvT )->cSufFac
+   local cFactura    := ( dbfRctPrvT )->cSerFac + "/" + Ltrim( str( ( dbfRctPrvT )->nNumFac ) ) + "/" + ( dbfRctPrvT )->cSufFac
    local nNumFac     := ( dbfRctPrvT )->nNumFac
    local cCodPro     := Left( ( dbfRctPrvT )->cCodPro, 3 )
    local cClave      := Right( ( dbfRctPrvT )->cCodPro, 6 )
@@ -4274,7 +4162,7 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
 
    if ( dbfRctPrvL )->( dbSeek( nFactura ) )
 
-      while ( ( dbfRctPrvL )->cSerFac + Str( ( dbfRctPrvL )->nNumFac ) + ( dbfRctPrvL )->cSufFac == nFactura .and. !( dbfRctPrvL )->( eof() ) )
+      while ( ( dbfRctPrvL )->cSerFac + str( ( dbfRctPrvL )->nNumFac ) + ( dbfRctPrvL )->cSufFac == nFactura .and. !( dbfRctPrvL )->( eof() ) )
 
          nImpDeta    := nTotLRctPrv( dbfRctPrvL, nDinDiv, nRinDiv, ( dbfRctPrvT )->nVdvFac )
 
@@ -4670,7 +4558,7 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
 
       if lPago .and. ( dbfFacPrvP )->( dbSeek( nFactura ) )
 
-         while ( ( dbfFacPrvP )->cSerFac + Str( ( dbfFacPrvP )->nNumFac ) + ( dbfFacPrvP )->cSufFac == nFactura ) .AND.;
+         while ( ( dbfFacPrvP )->cSerFac + str( ( dbfFacPrvP )->nNumFac ) + ( dbfFacPrvP )->cSufFac == nFactura ) .AND.;
                !( dbfFacPrvP )->( eof() )
 
             lReturn  := CntRecPrv( lSimula, oTree, nAsiento, aSimula, .t., dbfRctPrvT, dbfFacPrvP, dbfPrv, dbfFPago, dbfDiv )
@@ -4702,7 +4590,7 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
             lReturn  := lCntRctPrv( .t., dbfRctPrvT )
 
             if lReturn .and. !Empty( oTree )
-               oTree:Add( "Factura rectificativa proveedor : " + Rtrim( cFactura ) + " asiento generado num. " + Alltrim( Str( nAsiento ) ), 1 )
+               oTree:Add( "Factura rectificativa proveedor : " + Rtrim( cFactura ) + " asiento generado num. " + alltrim( str( nAsiento ) ), 1 )
             end if
 
          end if
@@ -4743,14 +4631,14 @@ Function CntRecPrv( lSimula, oTree, nAsiento, aSimula, lFromFactura, dbfFacPrvT,
    local nRecno      := ( dbfFacPrvP )->( Recno() )
    local cCodDiv     := ( dbfFacPrvP )->cDivPgo
    local cCodPgo     := ( dbfFacPrvP )->cCodPgo
-   local lConFac     := lConFacPrv( ( dbfFacPrvP )->cSerFac + Str( ( dbfFacPrvP )->nNumFac, 9 ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT )
-   local cCodPrv     := dPrvFacPrv( ( dbfFacPrvP )->cSerFac + Str( ( dbfFacPrvP )->nNumFac, 9 ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT )
-   local cCodPro     := cProFacPrv( ( dbfFacPrvP )->cSerFac + Str( ( dbfFacPrvP )->nNumFac, 9 ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT )
+   local lConFac     := lConFacPrv( ( dbfFacPrvP )->cSerFac + str( ( dbfFacPrvP )->nNumFac, 9 ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT )
+   local cCodPrv     := dPrvFacPrv( ( dbfFacPrvP )->cSerFac + str( ( dbfFacPrvP )->nNumFac, 9 ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT )
+   local cCodPro     := cProFacPrv( ( dbfFacPrvP )->cSerFac + str( ( dbfFacPrvP )->nNumFac, 9 ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT )
    local cCtaPrv     := cPrvCta( cCodPrv, dbfPrv )
-   local cFactura    := ( dbfFacPrvP )->cSerFac + "/" + Ltrim( Str( ( dbfFacPrvP )->nNumFac ) ) + "/" + ( dbfFacPrvP )->cSufFac
-   local nRecibo     := ( dbfFacPrvP )->cSerFac + Str( ( dbfFacPrvP )->nNumFac, 9 ) + ( dbfFacPrvP )->cSufFac + Str( ( dbfFacPrvP )->nNumRec )
-   local cRecibo     := ( dbfFacPrvP )->cSerFac + "/" + Ltrim( Str( ( dbfFacPrvP )->nNumFac, 9 ) ) + "/" + ( dbfFacPrvP )->cSufFac + "-" + Str( ( dbfFacPrvP )->nNumRec )
-   local cTerNif     := RetFld( ( dbfFacPrvP )->cSerFac + Str( ( dbfFacPrvP )->nNumFac, 9 ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT, "cDniPrv" )
+   local cFactura    := ( dbfFacPrvP )->cSerFac + "/" + Ltrim( str( ( dbfFacPrvP )->nNumFac ) ) + "/" + ( dbfFacPrvP )->cSufFac
+   local nRecibo     := ( dbfFacPrvP )->cSerFac + str( ( dbfFacPrvP )->nNumFac, 9 ) + ( dbfFacPrvP )->cSufFac + str( ( dbfFacPrvP )->nNumRec )
+   local cRecibo     := ( dbfFacPrvP )->cSerFac + "/" + Ltrim( str( ( dbfFacPrvP )->nNumFac, 9 ) ) + "/" + ( dbfFacPrvP )->cSufFac + "-" + str( ( dbfFacPrvP )->nNumRec )
+   local cTerNif     := RetFld( ( dbfFacPrvP )->cSerFac + str( ( dbfFacPrvP )->nNumFac, 9 ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT, "cDniPrv" )
    local cTerNom     := ( dbfFacPrvP )->cNomPrv
    local lRectif     := !Empty( ( dbfFacPrvP )->cTipRec )
    local lErrorFound := .f.
@@ -4821,7 +4709,7 @@ Function CntRecPrv( lSimula, oTree, nAsiento, aSimula, lFromFactura, dbfFacPrvT,
    */
 
    if Empty( cCodPgo )
-      cCodPgo        := cPgoFacPrv( ( dbfFacPrvP )->cSerFac + Str( ( dbfFacPrvP )->nNumFac, 9 ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT )
+      cCodPgo        := cPgoFacPrv( ( dbfFacPrvP )->cSerFac + str( ( dbfFacPrvP )->nNumFac, 9 ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT )
    end if
 
    cCtaPgo           := ( dbfFacPrvP )->cCtaRec
@@ -4863,7 +4751,7 @@ Function CntRecPrv( lSimula, oTree, nAsiento, aSimula, lFromFactura, dbfFacPrvT,
 
    dFecha            := ( dbfFacPrvP )->dEntrada
 
-   cConcepto         := "P/Recibo N." + Alltrim( Str( ( dbfFacPrvP )->nNumRec ) ) + Space( 1 )
+   cConcepto         := "P/Recibo N." + alltrim( str( ( dbfFacPrvP )->nNumRec ) ) + Space( 1 )
 
    if !Empty( ( dbfFacPrvT )->cSuPed )
 
@@ -4881,7 +4769,7 @@ Function CntRecPrv( lSimula, oTree, nAsiento, aSimula, lFromFactura, dbfFacPrvT,
 
    cConcepto         += Space( 1 ) + Rtrim( ( dbfFacPrvT )->cNomPrv )
    //cConcepto         := "P/Recibo " + cRecibo
-   //cPagoPrv          := "P/Recibo N." + Str( ( dbfFacPrvP )->nNumRec, 2 ) + Sapce( 1 ) + Rtrim( ( dbfFacPrvT )->cNomPrv ) + " N." + ( dbfFacPrvP )->cSerFac + "/" + Ltrim( Str( ( dbfFacPrvP )->nNumFac ) ) + "/" + ( dbfFacPrvP )->cSufFac + "/" +
+   //cPagoPrv          := "P/Recibo N." + str( ( dbfFacPrvP )->nNumRec, 2 ) + Sapce( 1 ) + Rtrim( ( dbfFacPrvT )->cNomPrv ) + " N." + ( dbfFacPrvP )->cSerFac + "/" + Ltrim( str( ( dbfFacPrvP )->nNumFac ) ) + "/" + ( dbfFacPrvP )->cSufFac + "/" +
 
    /*
    Realización de Asientos
@@ -4982,7 +4870,7 @@ Function lCntRecPrv( cRecibo, nAsiento, lFromFactura, oTree, dbfFacPrvP )
    end if
 
    if !lFromFactura
-      oTree:Select( oTree:Add( "Recibo proveedor : " + Rtrim( cRecibo ) + " asiento generado num. " + Alltrim( Str( nAsiento ) ), 1 ) )
+      oTree:Select( oTree:Add( "Recibo proveedor : " + Rtrim( cRecibo ) + " asiento generado num. " + alltrim( str( nAsiento ) ), 1 ) )
    end if
 
 RETURN ( lReturn )
@@ -5007,13 +4895,13 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
    local nImpRec        := nTotRecCli( dbfFacCliP, dbfDiv )
    local nImpCob        := nTotCobCli( dbfFacCliP, dbfDiv )
    local nImpGas        := nTotGasCli( dbfFacCliP, dbfDiv )
-   local lConFac        := lConFacCli( ( dbfFacCliP )->CSERIE + Str( ( dbfFacCliP )->NNUMFAC, 9 ) + ( dbfFacCliP )->CSUFFAC, dbfFacCliT )
-   local cCodCli        := cCliFacCli( ( dbfFacCliP )->CSERIE + Str( ( dbfFacCliP )->NNUMFAC, 9 ) + ( dbfFacCliP )->CSUFFAC, dbfFacCliT )
-   local cCodPgo        := cPgoFacCli( ( dbfFacCliP )->CSERIE + Str( ( dbfFacCliP )->NNUMFAC, 9 ) + ( dbfFacCliP )->CSUFFAC, dbfFacCliT )
-   local cCodPro        := cProFacCli( ( dbfFacCliP )->CSERIE + Str( ( dbfFacCliP )->NNUMFAC, 9 ) + ( dbfFacCliP )->CSUFFAC, dbfFacCliT )
-   local nRecibo        := ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->NNUMFAC, 9 ) + ( dbfFacCliP )->CSUFFAC + Str( ( dbfFacCliP )->NNUMREC )
-   local cRecibo        := ( dbfFacCliP )->cSerie + "/" + Ltrim( Str( ( dbfFacCliP )->NNUMFAC, 9 ) ) + "/" + ( dbfFacCliP )->CSUFFAC + "-" + Str( ( dbfFacCliP )->NNUMREC )
-   local cTerNif        := RetFld( ( dbfFacCliP )->CSERIE + Str( ( dbfFacCliP )->NNUMFAC, 9 ) + ( dbfFacCliP )->CSUFFAC, dbfFacCliT, "CDNICLI" )
+   local lConFac        := lConFacCli( ( dbfFacCliP )->CSERIE + str( ( dbfFacCliP )->NNUMFAC, 9 ) + ( dbfFacCliP )->CSUFFAC, dbfFacCliT )
+   local cCodCli        := cCliFacCli( ( dbfFacCliP )->CSERIE + str( ( dbfFacCliP )->NNUMFAC, 9 ) + ( dbfFacCliP )->CSUFFAC, dbfFacCliT )
+   local cCodPgo        := cPgoFacCli( ( dbfFacCliP )->CSERIE + str( ( dbfFacCliP )->NNUMFAC, 9 ) + ( dbfFacCliP )->CSUFFAC, dbfFacCliT )
+   local cCodPro        := cProFacCli( ( dbfFacCliP )->CSERIE + str( ( dbfFacCliP )->NNUMFAC, 9 ) + ( dbfFacCliP )->CSUFFAC, dbfFacCliT )
+   local nRecibo        := ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->NNUMFAC, 9 ) + ( dbfFacCliP )->CSUFFAC + str( ( dbfFacCliP )->NNUMREC )
+   local cRecibo        := ( dbfFacCliP )->cSerie + "/" + Ltrim( str( ( dbfFacCliP )->NNUMFAC, 9 ) ) + "/" + ( dbfFacCliP )->CSUFFAC + "-" + str( ( dbfFacCliP )->NNUMREC )
+   local cTerNif        := RetFld( ( dbfFacCliP )->CSERIE + str( ( dbfFacCliP )->NNUMFAC, 9 ) + ( dbfFacCliP )->CSUFFAC, dbfFacCliT, "CDNICLI" )
    local cNombreCliente := ( dbfFacCliP )->cNomCli
    local lErrorFound    := .f.
    local lRectif        := !Empty( ( dbfFacCliP )->cTipRec )
@@ -5049,34 +4937,34 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
    if lAplicacionContaplus()
 
       if !( ( dbfFacCliP )->lCobrado .or. ( dbfFacCliP )->lDevuelto ) 
-         oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no cobrado o no devuelto.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+         oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no cobrado o no devuelto.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
          lErrorFound       := .t.
       end if
 
       if ( dbfFacCliP )->lCobrado .and. !ChkFecha( , , ( dbfFacCliP )->dEntrada, .f. )
-         oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " de " + dtoc( ( dbfFacCliP )->dEntrada ) + " asiento fuera de fechas", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+         oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " de " + dtoc( ( dbfFacCliP )->dEntrada ) + " asiento fuera de fechas", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
          lErrorFound       := .t.
       end if
 
    end if
 
    if ( dbfFacCliP )->lConPgo
-      oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " ya contabilizado.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+      oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " ya contabilizado.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
       lErrorFound       := .t.
    end if
 
    if !Empty( ( dbfFacCliP )->nNumRem ) .and. !( dbfFacCliP )->lDevuelto
-      oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " pertenece a remesa.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+      oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " pertenece a remesa.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
       lErrorFound       := .t.
    end if
 
    /*if !lConFac .and. !lFromFactura
-      oTree:Select( oTree:Add( "Factura de recibo : " + rtrim( cRecibo ) + " no contabilizada.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+      oTree:Select( oTree:Add( "Factura de recibo : " + rtrim( cRecibo ) + " no contabilizada.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
       lErrorFound       := .t.
    end if*/
 
    if !ChkRuta( cRutCnt() )
-      oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " ruta no valida.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+      oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " ruta no valida.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
       lErrorFound       := .t.
    end if
 
@@ -5086,7 +4974,7 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
    */
 
    if Empty( cCodEmp )
-      oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no se definieron empresas asociadas.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+      oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no se definieron empresas asociadas.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
       lErrorFound       := .t.
    end if
 
@@ -5096,7 +4984,7 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
    */
 
    if Empty( cCodCli )
-      cCodCli           := cCliFacCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac, dbfFacCliT )
+      cCodCli           := cCliFacCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac, dbfFacCliT )
    end if
 
    cCtaCli              := cCliCta( cCodCli, dbfCli )
@@ -5106,7 +4994,7 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
    end if
 
    if !ChkSubcuenta( cRuta, cCodEmp, cCtaCli, , .f., .f. )
-      oTree:Select( oTree:Add( "Recibo : " + Rtrim( cRecibo ) + " subcuenta de cliente " + cCtaCli + " no encontada.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+      oTree:Select( oTree:Add( "Recibo : " + Rtrim( cRecibo ) + " subcuenta de cliente " + cCtaCli + " no encontada.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
       lErrorFound       := .t.
    end if
 
@@ -5134,14 +5022,14 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
       if lAplicacionContaplus()
 
          if Empty( cCtaPgo )
-            oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no existe cuenta de pago.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+            oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no existe cuenta de pago.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
             lErrorFound    := .t.
          end if
 
       end if 
 
       if !ChkSubcuenta( cRuta, cCodEmp, cCtaPgo, , .f., .f. )
-         oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " subcuenta " + rtrim( cCtaPgo ) + " no encontada.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+         oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " subcuenta " + rtrim( cCtaPgo ) + " no encontada.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
          lErrorFound    := .t.
       end if
 
@@ -5156,7 +5044,7 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
             nEjeCon        := nEjercicioContaplus( cRuta, cCodEmp, .f. )
 
             if Empty( nEjeCon )
-               oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " ejercicio no encontado.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+               oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " ejercicio no encontado.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
                lErrorFound := .t.
             end if
 
@@ -5177,12 +5065,12 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
          end if
 
          if Empty( cCtaGas )
-            oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no existe cuenta de gastos.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+            oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no existe cuenta de gastos.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
             lErrorFound := .t.
          end if
 
          if !ChkSubcuenta( cRuta, cCodEmp, cCtaGas, , .f., .f. )
-            oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " subcuenta " + rtrim( cCtaGas ) + " no encontada.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+            oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " subcuenta " + rtrim( cCtaGas ) + " no encontada.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
             lErrorFound := .t.
          end if
 
@@ -5405,9 +5293,903 @@ Function lContabilizaReciboCliente( cRecibo, nAsiento, lFromFactura, oTree, dbfF
    end if
 
    if !lFromFactura
-      oTree:Select( oTree:Add( "Recibo : " + Rtrim( cRecibo ) + " asiento generado num. " + Alltrim( Str( nAsiento ) ), 1, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+      oTree:Select( oTree:Add( "Recibo : " + Rtrim( cRecibo ) + " asiento generado num. " + alltrim( str( nAsiento ) ), 1, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
    end if
 
 RETURN ( .t. )
 
 //------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
+
+FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfFacRecT, dbfFacRecL, dbfFacCliP, dbfCli, dbfDiv, dbfArt, dbfFPago, dbfIva, oNewImp, oBrw, cCodEmp, cCodPro )
+
+   local n
+   local nIva
+   local cCtaVent
+   local nPos
+   local dFecha
+   local cConcepto
+   local cPago
+   local cSubCtaIva
+   local cSubCtaReq
+   local cSubCtaIvm
+   local cSubCtaTrn
+   local nImpDet
+   local nImpTrn
+   local nImpPnt
+   local nImpIvm
+   local nImpIva
+   local cRuta
+   local nDouDiv
+   local nRouDiv
+   local nDpvDiv
+   local aTotAnt
+   local nNetAnt
+   local nIvaAnt
+   local nAcuAnt     := 0
+   local nTotAnt     := 0
+   local uIva
+   local newIva
+   local aIva        := {}
+   local aIvm        := {}
+   local aTrn        := {}
+   local nCalculo    := 0
+   local nBase       := 0
+   local aVentas     := {}
+   local lIvaInc     := ( dbfFacRecT )->lIvaInc
+   local cCodDiv     := ( dbfFacRecT )->cDivFac
+   local cCtaCli     := cCliCta( ( dbfFacRecT )->cCodCli, dbfCli )
+   local cCtaCliVta  := cCliCtaVta( ( dbfFacRecT )->cCodCli, dbfCli )
+   local cCtaAnticipo:= cCtaAnt()
+   local nFactura    := ( dbfFacRecT )->cSerie + str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac
+   local cFactura    := ( dbfFacRecT )->cSerie + alltrim( str( ( dbfFacRecT )->nNumFac ) )
+   local pFactura    := ( dbfFacRecT )->cSerie + "/" + alltrim( str( ( dbfFacRecT )->nNumFac ) ) + "/" + ( dbfFacRecT )->cSufFac
+   local lRecargo    := ( dbfFacRecT )->lRecargo
+   local cTerNif     := ( dbfFacRecT )->cDniCli
+   local cTerNom     := ( dbfFacRecT )->cNomCli
+   local lErrorFound := .f.
+   local cProyecto
+   local cClave
+   local sTotFacRec
+   local ptaDebe
+   local ptaRet
+   local lReturn     := .t.
+   local lOpenDiario := lOpenDiario()
+   local nTotDebe    := 0
+   local nTotHaber   := 0
+   local nDtoEsp     := 0
+   local nDpp        := 0
+   local nDtoUno     := 0
+   local nDtoDos     := 0
+   local nPctIva     := 0
+   local nBaseImp    := 0
+
+   DEFAULT lSimula   := .t.
+   DEFAULT nAsiento  := 0
+   DEFAULT aSimula   := {}
+   DEFAULT cCodEmp   := cCodEmpCnt( ( dbfFacRecT )->cSerie )
+   DEFAULT cCodPro   := ( dbfFacRecT )->cCodPro
+
+   nDouDiv           := nDouDiv( ( dbfFacRecT )->cDivFac, dbfDiv )
+   nRouDiv           := nRouDiv( ( dbfFacRecT )->cDivFac, dbfDiv )
+   nDpvDiv           := nDpvDiv( ( dbfFacRecT )->cDivFac, dbfDiv )
+
+   dFecha            := ( dbfFacRecT )->dFecFac
+   nDtoEsp           := ( dbfFacRecT )->nDtoEsp
+   nDpp              := ( dbfFacRecT )->nDpp
+   nDtoUno           := ( dbfFacRecT )->nDtoUno
+   nDtoDos           := ( dbfFacRecT )->nDtoDos
+
+   sTotFacRec        := sTotFacRec( ( dbfFacRecT )->cSerie + str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, dbfFacRecT, dbfFacRecL, dbfIva, dbfDiv, dbfFacCliP )
+   ptaDebe           := sTotFacRec:nTotalDocumento
+   ptaRet            := sTotFacRec:nTotalRetencion
+   newIva            := sTotFacRec:aTotalIva
+
+   cProyecto         := Left( cCodPro, 3 )
+   cClave            := Right( cCodPro, 6 )
+
+   /*
+   Seleccionamos las empresa dependiendo de la serie de factura----------------
+   */
+
+   cRuta             := cRutCnt()
+
+   if !chkEmpresaAsociada( cCodEmp )
+      oTree:Select( oTree:Add( "Factura rectificativa cliente : " + rtrim( pFactura ) + " no se definierón empresas asociadas.", 0 ) )
+      lErrorFound    := .t.
+   end if
+
+   if !ChkRuta( cRutCnt() )
+      oTree:Select( oTree:Add(  "Factura rectificativa cliente : " + rtrim( pFactura ) + " ruta no valida.", 0 ) )
+      lErrorFound    := .t.
+   end if
+
+   if !ChkFecha( cRuta, cCodEmp, ( dbfFacRecT )->dFecFac, .f., oTree, "Factura rectificativa cliente : " + Rtrim( pFactura ) )
+      lErrorFound    := .t.
+   end if
+
+   /*
+   Preparamos los apuntes de cliente-------------------------------------------
+   */
+
+   if Empty( cCtaCli )
+      cCtaCli        := cCtaSin()
+   end if
+
+   if Empty( cCtaCliVta )
+      cCtaCliVta     := cCtaCli()
+   end if
+
+   /*
+   Estudio de los Articulos de una factura-------------------------------------
+   */
+
+   if ( dbfFacRecL )->( dbSeek( nFactura ) )
+
+      while ( ( dbfFacRecL )->cSerie + str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac == nFactura .and. !( dbfFacRecL )->( eof() ) )
+
+         if !( dbfFacRecL )->lTotLin                           .and. ;
+            lValLine( dbfFacRecL )                             .and. ;
+            nTotLFacRec( dbfFacRecL, nDouDiv, nRouDiv, nil, .t., .t., .t. ) != 0
+
+            if ( lExcCnt == nil                                .or.;    // Entran todos
+               ( lExcCnt .and. ( dbfFacRecL )->nCtlStk != 2 )  .or.;    // Articulos sin contadores
+               ( !lExcCnt .and. ( dbfFacRecL )->nCtlStk == 2 ) )        // Articulos con contadores
+
+               nIva           := ( dbfFacRecL )->nIva
+               nImpDet        := nTotLFacRec( dbfFacRecL, nDouDiv, nRouDiv, nil, .t., .f., .f. )
+               nImpTrn        := nTrnLFacRec( dbfFacRecL, nDouDiv, nRouDiv )                 // Portes
+
+               /*
+               Si en la factura nos piden q operemeos con punto verde----------
+               */
+
+               if ( dbfFacRecT )->lOperPV
+                  nImpPnt     := nPntLFacRec( dbfFacRecL, nDpvDiv )
+               else
+                  nImpPnt     := 0
+               end if 
+
+               nImpIva        := nIvaLFacRec( dbfFacRecL, nDouDiv, nRouDiv )
+               nImpIvm        := nTotIFacRec( dbfFacRecL, nDouDiv, nRouDiv )
+               cCtaVent       := RetCtaVta( ( dbfFacRecL )->cRef, dbfArt )
+
+               if Empty( cCtaVent )
+                  cCtaVent    := cCtaCliVta + RetGrpVta( ( dbfFacRecL )->cRef, cRuta, cCodEmp, dbfArt, nIva )
+               end if
+
+               /*
+               Cuentas de ventas--------------------------------------------------
+               */
+
+               nPos           := aScan( aVentas, {|x| x[ 1 ] == cCtaVent .and. x[ 2 ] == nIva } )
+               if nPos == 0
+                  aAdd( aVentas, { cCtaVent, nIva, nImpDet, nImpPnt, nImpTrn, nImpIva } )
+               else
+                  aVentas[ nPos, 3 ]   += nImpDet
+                  aVentas[ nPos, 4 ]   += nImpPnt
+                  aVentas[ nPos, 5 ]   += nImpTrn
+                  aVentas[ nPos, 6 ]   += nImpIva
+               end if
+
+               /*
+               Construimos las bases de los impuestos-----------------------------
+               */
+
+               if isIVAComunidadEconomicaEuropea( dbfFacRecT )
+                  cSubCtaIva  := uFieldEmpresa( "cCtaCeeRpt" )
+                  cSubCtaReq  := uFieldEmpresa( "cCtaCeeSpt" )
+               else
+                  cSubCtaIva  := cSubCuentaIva( nIva, ( dbfFacRecT )->lRecargo, cRuta, cCodEmp, dbfIva )
+                  cSubCtaReq  := cSubCuentaRecargo( nIva, ( dbfFacRecT )->lRecargo, cRuta, cCodEmp, dbfIva )
+               end if
+
+               if uFieldEmpresa( "lIvaImpEsp" )
+                  nImpDet     += nImpIvm
+               end if
+
+               nPos           := aScan( aIva, {|x| x[ 1 ] == nIva } )
+               if nPos  == 0
+                  aAdd( aIva, { nIva, cSubCtaIva, cSubCtaReq, nImpDet, nImpPnt, nImpTrn, 0, 0, 0 } )
+               else
+                  aIva[ nPos, 4 ] += nImpDet
+                  aIva[ nPos, 5 ] += nImpPnt
+                  aIva[ nPos, 6 ] += nImpTrn
+               end if
+
+               /*
+               transportes--------------------------------------------------------
+               */
+
+               if nImpTrn != 0
+
+                  cSubCtaTrn  := RetCtaTrn( ( dbfFacRecL )->cRef, dbfArt )
+
+                  nPos        := aScan( aTrn, {|x| x[1] == cSubCtaTrn } )
+                  if nPos == 0
+                     aAdd( aTrn, { cSubCtaTrn, nImpTrn } )
+                  else
+                     aTrn[ nPos, 2 ] += nImpTrn
+                  end if
+
+               end if
+
+               /*
+               impuesto especiales---------------------------------------------------
+               */
+
+               nImpIvm        := nTotIFacRec( dbfFacRecL, nDouDiv, nRouDiv )
+
+               if nImpIvm != 0
+
+                  cSubCtaIvm  := oNewImp:cCtaImp( oNewImp:nValImp( ( dbfFacRecL )->cCodImp ) )
+
+                  if !Empty( cSubCtaIvm )
+
+                     nPos     := aScan( aIvm, {|x| x[1] == cSubCtaIvm } )
+                     if nPos == 0
+                        aAdd( aIvm, { cSubCtaIvm, nImpIvm } )
+                     else
+                        aIvm[ nPos, 2 ] += nImpIvm
+                     end if
+
+                  end if
+
+               end if
+
+            end if
+
+         end if
+
+         SysRefresh()
+
+         ( dbfFacRecL )->( dbSkip() )
+
+      end while
+
+   else
+
+      oTree:Select( oTree:Add( "Factura rectificativa cliente : " + rtrim( pFactura ) + " factura sin artículos.", 0 ) )
+
+      lErrorFound := .t.
+
+   end if
+
+   /*
+   Descuentos sobres grupos de Venta
+   --------------------------------------------------------------------------
+   */
+
+   for n := 1 to Len( aVentas )
+      nRestaDescuentoVenta( @aVentas[ n, 3 ], nDtoEsp )
+      nRestaDescuentoVenta( @aVentas[ n, 3 ], nDpp )
+      nRestaDescuentoVenta( @aVentas[ n, 3 ], nDtoUno )
+      nRestaDescuentoVenta( @aVentas[ n, 3 ], nDtoDos )
+   next
+
+   /*
+   Gastos se lo sumamos a la base----------------------------------------------
+   */
+
+   if ( dbfFacRecT )->nManObr != 0
+
+      cSubCtaTrn     := uFieldEmpresa( "cCtaGas")
+
+      nPos           := aScan( aVentas, {|x| x[ 1 ] == cSubCtaTrn .and. x[ 2 ] == ( dbfFacRecT )->nIvaMan } )
+      if nPos == 0
+         aAdd( aVentas, { cSubCtaTrn, ( dbfFacRecT )->nIvaMan, ( dbfFacRecT )->nManObr, 0, 0, 0 } )
+      else
+         aVentas[ nPos, 3 ]   += ( dbfFacRecT )->nManObr
+      end if
+
+   end if 
+
+   /*
+   Despues de aplicar los descuentos le sumamos el punto verde-----------------
+   */
+
+   for n := 1 to Len( aVentas )
+      aVentas[ n, 3 ]   += aVentas[ n, 4 ]
+   next
+
+   /*
+   Ponemos la cuentas de IVA---------------------------------------------------
+   */
+
+   for each uIva in newIva
+
+      if isNum( uIva[ 3 ] )
+
+         /*
+         Construimos las bases de los impuestos--------------------------------
+         */
+
+         if isIVAComunidadEconomicaEuropea( dbfFacRecT )
+            cSubCtaIva  := cCuentaVentaIVARepercutidoUE()
+            uIva[ 3 ]   := 0
+            aAdd( uIva, cSubCtaIva )
+         elseif isIVAExportacionFueraUE( dbfFacRecT )
+            cSubCtaIva  := cCuentaVentaIVARepercutidoFueraUE()
+            uIva[ 3 ]   := 0
+            aAdd( uIva, cSubCtaIva )
+         else
+            aAdd( uIva, cSubCuentaIva( uIva[ 3 ], ( dbfFacRecT )->lRecargo, cRuta, cCodEmp, dbfIva ) )
+            aAdd( uIva, cSubCuentaRecargo( uIva[ 3 ], ( dbfFacRecT )->lRecargo, cRuta, cCodEmp, dbfIva ) )
+            aAdd( uIva, cSubCuentaIva( uIva[ 3 ], .f., cRuta, cCodEmp, dbfIva ) )
+         end if
+
+      end if 
+
+   next 
+
+   /*
+   Chequando antes de pasar a Contaplus
+   --------------------------------------------------------------------------
+   */
+
+   if ( dbfFacRecT )->lContab
+      oTree:Select( oTree:Add( "Factura rectificativa cliente : " + rtrim( pFactura ) + " contabilizada.", 0 ) )
+      lErrorFound    := .t.
+   end if
+
+   if !ChkSubcuenta( cRuta, cCodEmp, cCtaCli, , .f., .f. )
+      oTree:Select( oTree:Add( "Factura rectificativa cliente : " + rtrim( pFactura ) + " subcuenta " + cCtaCli + " no encontada.", 0 ) )
+      lErrorFound    := .t.
+   end if
+
+   if ptaRet != 0
+      if !ChkSubcuenta( cRuta, cCodEmp, cCtaRet(), , .f., .f. )
+         oTree:Select( oTree:Add( "Factura rectificativa cliente : " + Rtrim( cFactura ) + " subcuenta " + cCtaRet() + " no encontada.", 0 ) )
+         lErrorFound := .t.
+      end if
+   end if
+
+   /*
+   Creacion y chequeo de Cuentas de impuestos
+   --------------------------------------------------------------------------
+   */
+
+   for each uIva in newIva 
+
+      if isNum( uIva[ 3 ] )
+
+         if !ChkSubcuenta( cRutCnt(), cCodEmp, uIva[ 12 ], , .f., .f. )
+            oTree:Select( oTree:Add( "Factura rectificativa cliente : " + Rtrim( pFactura ) + " subcuenta " + uIva[ 12 ] + " no encontada.", 0 ) )
+            lErrorFound := .t.
+         end if
+
+         if lRecargo .and. !ChkSubcuenta( cRutCnt(), cCodEmp, uIva[ 13 ], , .f., .f. )
+            oTree:Select( oTree:Add( "Factura rectificativa cliente : " + Rtrim( pFactura ) + " subcuenta " + uIva[ 13 ] + " no encontada.", 0 ) )
+            lErrorFound := .t.
+         end if
+
+      end if 
+
+   next
+
+   for n := 1 to len( aVentas )
+      if !ChkSubcuenta( cRuta, cCodEmp, aVentas[ n, 1 ], , .f., .f. )
+         oTree:Select( oTree:Add( "Factura rectificativa cliente : " + rtrim( pFactura ) + " subcuenta " + aVentas[ n, 1 ] + " no encontada.", 0 ) )
+         lErrorFound := .t.
+      end if
+   next
+
+   for n := 1 to len( aIvm )
+      if !lSimula .and. !ChkSubcuenta( cRuta, cCodEmp, aIvm[ n, 1 ], , .f., .f. )
+         oTree:Add( "Factura rectificativa cliente : " + rtrim( nFactura ) + " subcuenta " + aIvm[ n, 1 ] + " no encontada.", 0 )
+         lErrorFound := .t.
+      end if
+   next
+
+   /*
+   Chequeo de Cuentas de Transportes
+   --------------------------------------------------------------------------
+   */
+
+   for n := 1 to len( aTrn )
+      if !ChkSubcuenta( cRuta, cCodEmp, aTrn[ n, 1 ], , .f., .f. )
+         oTree:Select( oTree:Add( "Factura rectificativa cliente : " + rtrim( pFactura ) + " subcuenta " + aTrn[ n, 1 ] + " no encontada.", 0 ) )
+         lErrorFound := .t.
+      end if
+   next
+
+   /*
+   Chequeamos los anticipos-------------------------------------------------
+   */
+
+   if nTotAnt != 0 .and. !ChkSubcuenta( cRuta, cCodEmp, cCtaAnticipo, , .f., .f. )
+      oTree:Select( oTree:Add( "Factura rectificativa cliente : " + rtrim( pFactura ) + " subcuenta de anticipo " + cCtaAnticipo + " no encontada.", 0 ) )
+      lErrorFound := .t.
+   end if
+
+   /*
+   Datos comunes a todos los Asientos
+   --------------------------------------------------------------------------
+   */
+
+   cConcepto      := "N/Rect. N." + pFactura
+   cPago          := "C/Rect. N." + pFactura
+
+   /*
+   Cuadre del apunte
+   -------------------------------------------------------------------------
+   */
+
+   nTotDebe          += Round( ptaDebe, nRouDiv )
+
+   for n := 1 to len( aVentas )
+
+      if lIvaInc
+
+         nCalculo    := Round( aVentas[ n, 3 ], nRouDiv )
+
+         if aVentas[ n, 2 ] != 0
+            nCalculo -= Round( aVentas[ n, 3 ] / ( 100 / aVentas[ n, 2 ] + 1 ), nRouDiv )
+         end if
+
+      else
+
+         nCalculo    := Round( aVentas[ n, 3 ], nRouDiv )
+
+      end if
+
+      nTotHaber      += nCalculo
+
+   next
+
+   nTotDebe          += ptaRet
+   nTotDebe          += nAcuAnt
+
+   for n := 1 to Len( aIvm )
+      nTotHaber      += Round( aIvm[ n, 2 ], nRouDiv )
+   next
+
+   for n := 1 to Len( aTrn )
+      nTotHaber      += Round( aTrn[ n, 2 ], nRouDiv )
+   next
+
+   for each uIva in newIva 
+
+      if isNum( uIva[ 8 ] )
+         nTotHaber   += uIva[ 8 ]
+      end if 
+
+      if lRecargo .and. isNum( uIva[ 9 ] )
+         nTotHaber   += uIva[ 9 ]
+      end if 
+
+   next
+
+   nTotDebe          := Round( nTotDebe, nRouDiv )
+   nTotHaber         := Round( nTotHaber, nRouDiv )
+
+   /*
+   Realización de Asientos
+   --------------------------------------------------------------------------
+   */
+
+   if lSimula .or. !lErrorFound
+
+      if lOpenDiario .or. OpenDiario( , cCodEmp )
+         nAsiento    := RetLastAsi()
+      else
+         oTree:Select( oTree:Add( "Factura rectificativa cliente : " + Rtrim( pFactura ) + " imposible abrir ficheros de contaplus.", 0 ) )
+         Return .f.
+      end if
+
+      setAsientoIntraComunitario( isIVAComunidadEconomicaEuropea( dbfFacRecT ) )
+
+      /*
+      Asiento de cliente----------------------------------------------------------
+      */
+
+      if lAplicacionContaplus()
+
+         aadd( aSimula, MkAsiento(  nAsiento, ;
+                                    cCodDiv,;
+                                    dFecha,;
+                                    cCtaCli,;
+                                    ,;
+                                    Round( ptaDebe, nRouDiv ),;
+                                    cConcepto,;
+                                    ,;
+                                    cFactura,;
+                                    ,;
+                                    ,;
+                                    ,;
+                                    ,;
+                                    cProyecto,;
+                                    cClave,;
+                                    ,;
+                                    ,;
+                                    ,;
+                                    lSimula,;
+                                    cTerNif,;
+                                    cTerNom ) )
+
+      else 
+
+         EnlaceA3():getInstance():Add( {  "Empresa"               => cEmpCnt( ( dbfFacRecT )->cSerie ),;
+                                          "Fecha"                 => dFecha ,;
+                                          "TipoRegistro"          => '1',; // Facturas
+                                          "Cuenta"                => cCtaCli,;
+                                          "DescripcionCuenta"     => cTerNom,;
+                                          "TipoFactura"           => '1',; // Ventas
+                                          "NumeroFactura"         => cFactura,;
+                                          "DescripcionApunte"     => cConcepto,;
+                                          "Importe"               => Round( ptaDebe, nRouDiv ),;
+                                          "Nif"                   => cTerNif,;
+                                          "NombreCliente"         => cTerNom,;
+                                          "CodigoPostal"          => ( dbfFacRecT )->cPosCli,;
+                                          "FechaOperacion"        => dFecha,;
+                                          "FechaFactura"          => dFecha,;
+                                          "Moneda"                => 'E',; // Euros
+                                          "Render"                => 'CabeceraFactura' } )
+
+      end if 
+
+      /*
+      Asientos de Ventas
+      -------------------------------------------------------------------------
+      */
+
+      for n := 1 to Len( aVentas )
+
+         nCalculo       := Round( aVentas[ n, 3 ], nRouDiv )
+
+         if lIvaInc
+
+            nPctIva     := aVentas[ n, 2 ]
+            if lRecargo
+               nPctIva  += nPReq( dbfIva, aVentas[ n, 2 ] )
+            end if             
+
+            if aVentas[ n, 2 ] != 0
+               nCalculo -= Round( aVentas[ n, 3 ] / ( 100 / nPctIva + 1 ), nRouDiv )
+            end if
+
+         end if 
+
+         if lAplicacionContaplus()
+
+            aadd( aSimula, MkAsiento(  nAsiento, ;
+                                       cCodDiv, ;
+                                       dFecha, ;
+                                       aVentas[ n, 1 ],;
+                                       ,;
+                                       ,;
+                                       cConcepto,;
+                                       nCalculo,;
+                                       cFactura,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       cProyecto,;
+                                       cClave,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       lSimula,;
+                                       cTerNif,;
+                                       cTerNom ) )
+
+         else 
+
+            EnlaceA3():getInstance():Add( {  "Empresa"               => cEmpCnt( ( dbfFacRecT )->cSerie ),;
+                                             "Fecha"                 => dFecha ,;
+                                             "TipoRegistro"          => '9',; // Facturas
+                                             "Cuenta"                => aVentas[ n, 1 ],;
+                                             "DescripcionCuenta"     => '',;
+                                             "TipoImporte"           => 'C',;
+                                             "NumeroFactura"         => cFactura,;
+                                             "DescripcionApunte"     => cConcepto,;
+                                             "SubtipoFactura"        => if( isIVAComunidadEconomicaEuropea( dbfFacRecT ), '02', '01' ),; // Ventas
+                                             "BaseImponible"         => nCalculo,;
+                                             "PorcentajeIVA"         => aVentas[ n, 2 ],;
+                                             "PorcentajeRecargo"     => if( ( dbfFacRecT )->lRecargo, nPReq( dbfIva, aVentas[ n, 2 ] ), 0 ),;
+                                             "PorcentajeRetencion"   => 0,;
+                                             "Impreso"               => '01',; // 347
+                                             "SujetaIVA"             => if( aVentas[ n, 2 ] != 0, 'S', 'N' ),;
+                                             "Modelo415"             => ' ',;
+                                             "Analitico"             => ' ',;
+                                             "Moneda"                => 'E',; // Euros
+                                             "Render"                => 'VentaFactura' } )
+
+         end if 
+
+      next
+
+      /*
+      Asientos del retenciones________________________________________________________
+      */
+
+      if lAplicacionContaplus() .and. ptaRet != 0
+
+         aadd( aSimula, MkAsiento(  nAsiento,;
+                                    cCodDiv,;
+                                    dFecha,;
+                                    cCtaRet(),;   // Cuenta de retencion
+                                    ,;
+                                    ptaRet,;
+                                    cConcepto,;
+                                    ,;
+                                    cFactura,;
+                                    ,;
+                                    ,;
+                                    ,;
+                                    ,;
+                                    cProyecto,;
+                                    cClave,;
+                                    ,;
+                                    ,;
+                                    ,;
+                                    lSimula,;
+                                    cTerNif,;
+                                    cTerNom ) )
+
+      end if
+
+      /*
+      Asientos de anticipo
+      -------------------------------------------------------------------------
+      */
+
+      if lAplicacionContaplus() .and. nTotAnt != 0
+
+         aadd( aSimula, MkAsiento(  nAsiento,;
+                                    cCodDiv,;
+                                    dFecha,;
+                                    cCtaAnticipo,;
+                                    ,;
+                                    nAcuAnt,;
+                                    cConcepto,;
+                                    ,;
+                                    cFactura,;
+                                    ,;
+                                    ,;
+                                    ,;
+                                    ,;
+                                    cProyecto,;
+                                    cClave,;
+                                    ,;
+                                    ,;
+                                    ,;
+                                    lSimula,;
+                                    cTerNif,;
+                                    cTerNom ) )
+
+      end if
+
+      /*
+      Asientos de IVM
+      -------------------------------------------------------------------------
+      */
+
+      for n := 1 to Len( aIvm )
+
+         aadd( aSimula, MkAsiento(  nAsiento, ;
+                                    cCodDiv, ;
+                                    dFecha, ;
+                                    aIvm[ n, 1 ],;
+                                    ,;
+                                    ,;
+                                    cConcepto,;
+                                    Round( aIvm[ n, 2 ], nRouDiv ),;
+                                    cFactura,;
+                                    ,;
+                                    ,;
+                                    ,;
+                                    ,;
+                                    cProyecto,;
+                                    cClave,;
+                                    ,;
+                                    ,;
+                                    ,;
+                                    lSimula ) )
+
+      next
+
+      /*
+      Asientos de transporte
+      -------------------------------------------------------------------------
+      */
+
+      for n := 1 to Len( aTrn )
+
+         aadd( aSimula, MkAsiento(  nAsiento, ;
+                                    cCodDiv, ;
+                                    dFecha, ;
+                                    aTrn[ n, 1 ],;
+                                    ,;
+                                    ,;
+                                    cConcepto,;
+                                    Round( aTrn[ n, 2 ], nRouDiv ),;
+                                    cFactura,;
+                                    ,;
+                                    ,;
+                                    ,;
+                                    ,;
+                                    cProyecto,;
+                                    cClave,;
+                                    ,;
+                                    ,;
+                                    ,;
+                                    lSimula,;
+                                    cTerNif,;
+                                    cTerNom ) )
+
+      next
+
+      /*
+      Asientos de impuestos
+      --------------------------------------------------------------------------
+      */
+
+      for each uIva in newIva
+
+         if ( len( uIva ) >= 12 ) .and. ( uIva[ 8 ] != 0 .or. uFieldEmpresa( "lConIva" ) )
+
+            nBaseImp    := uIva[ 2 ] - uIva[ 10 ] 
+
+            if uFieldEmpresa( "lIvaImpEsp")
+               nBaseImp += uIva[ 6 ]
+            end if
+
+            aAdd( aSimula, MkAsiento(  nAsiento, ;                          
+                                       cCodDiv, ;                          
+                                       dFecha, ;                          
+                                       uIva[ 12 ],;                           // Cuenta de impuestos                          
+                                       cCtaCli,;                              // Contrapartida                          
+                                       ,;                                     // Ptas. Debe                          
+                                       cConcepto,;                          
+                                       uIva[ 8 ] - uIva[ 11 ],;               // Ptas. Haber                          
+                                       cFactura,;                          
+                                       nBaseImp,;                       // Base Imponible                          
+                                       uIva[ 3 ],;                          
+                                       if( lRecargo, uIva[ 4 ], 0 ),;         // Tipo de recargo                         
+                                       ,;                          
+                                       cProyecto,;                          
+                                       cClave,;                          
+                                       ,;                          
+                                       ,;                          
+                                       ,;                          
+                                       lSimula,;                          
+                                       cTerNif,;                          
+                                       cTerNom ) )                          
+
+         end if
+
+         /*
+         Asientos del Recargo
+         -------------------------------------------------------------------------
+         */
+
+         if ( lRecargo .and. len( uIva ) >= 13 .and. uIva[ 9 ] != 0 )
+
+            aadd( aSimula, MkAsiento(  nAsiento,;
+                                       cCodDiv,;
+                                       dFecha,;
+                                       uIva[ 13 ],;
+                                       ,;
+                                       ,;
+                                       cConcepto,;
+                                       uIva[ 9 ],;
+                                       cFactura,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       cProyecto,;
+                                       cClave,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       lSimula,;
+                                       cTerNif,;
+                                       cTerNom ) )
+
+         end if 
+
+         /*
+         Asientos de Portes exentos de recargo de equivalencia
+         -------------------------------------------------------------------------
+         */
+
+         if ( len( uIva ) >= 14 .and. uIva[ 10 ] != 0 )
+
+            aadd( aSimula, MkAsiento(  nAsiento,;
+                                       cCodDiv,;
+                                       dFecha,;
+                                       uIva[ 14 ],;      // Cuenta de impuestos
+                                       ,;                // Contrapartida                          
+                                       ,;                // Ptas. Debe                          
+                                       cConcepto,;
+                                       uIva[ 11 ],;      // Ptas. Haber
+                                       cFactura,;
+                                       uIva[ 10 ],;      // Base Imponible
+                                       uIva[ 3 ],;
+                                       ,;
+                                       ,;
+                                       cProyecto,;
+                                       cClave,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       lSimula,;
+                                       cTerNif,;
+                                       cTerNom ) )
+
+         end if 
+
+
+      next
+
+   end if
+
+   // Contabilizamos desde aki A3---------------------------------------------
+
+   // if lAplicacionA3()
+   //    oEnlaceContable:Render()
+   // end if 
+
+   /*
+   Contabilizamos los pagos
+   ----------------------------------------------------------------------------
+   */
+
+   if lPago .and. !lErrorFound .and. ( dbfFacCliP )->( dbSeek( nFactura ) )
+
+      while ( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == nFactura ) .and. !( dbfFacCliP )->( eof() )
+
+         ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacRecT, dbfFacCliP, dbfFPago, dbfCli, dbfDiv, .t., nAsiento )
+
+         ( dbfFacCliP )->( dbSkip() )
+
+      end while
+
+   end if
+
+   /*
+   Ponemos la factura como Contabilizada---------------------------------------
+   */
+
+   if lSimula
+
+      if lMessage
+         lReturn  := msgTblCon( aSimula, cCodDiv, dbfDiv, !lErrorFound, pFactura, {|| aWriteAsiento( aSimula, cCodDiv, lMessage, oTree, pFactura, nAsiento ), lCntFacRec( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacRecT, dbfFacCliP ) } )
+      end if
+
+   else
+
+      if !lErrorFound
+         lReturn  := lCntFacRec( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacRecT )
+      end if
+
+   end if
+
+   /*
+   Cerramos las tablas de contaplus--------------------------------------------
+   */
+
+   if !lOpenDiario
+      CloseDiario()
+   end if
+
+   setAsientoIntraComunitario( .f. )
+
+   if !Empty( oBrw )
+      oBrw:Refresh()
+   end if
+
+RETURN ( lReturn )
+
+//---------------------------------------------------------------------------//
+
+
+
