@@ -1162,8 +1162,11 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Atipicas de clientes",          ::oAtipicasCliente:nArea )
    ::oFastReport:SetFieldAliases(   "Atipicas de clientes",          cItemsToReport( aItmAtp() ) )
 
-   ::oFastReport:SetWorkArea(       "Tipo envases",               ::oFraPub:Select() )
-   ::oFastReport:SetFieldAliases(   "Tipo envases",               cObjectsToReport( ::oFraPub:oDbf ) )
+   ::oFastReport:SetWorkArea(       "Tipo envases",                  ::oFraPub:Select() )
+   ::oFastReport:SetFieldAliases(   "Tipo envases",                  cObjectsToReport( ::oFraPub:oDbf ) )
+
+   ::oFastReport:SetWorkArea(       "Transportistas",                ::oDbfTrn:Select() )
+   ::oFastReport:SetFieldAliases(   "Transportistas",                cObjectsToReport( ::oDbfTrn:oDbf ) )
 
    // Relaciones entre tablas-----------------------------------------------------
 
@@ -1190,6 +1193,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetMasterDetail(   "Informe", "Grupos familias",                   {|| ::oDbf:cGrpFam } )
    ::oFastReport:SetMasterDetail(   "Informe", "Agentes",                           {|| ::oDbf:cCodAge } )
    ::oFastReport:SetMasterDetail(   "Informe", "Tipo envases",                      {|| ::oDbf:cCodEnv } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Transportistas",                    {|| ::oDbf:cCodTrn } )
 
    ::oFastReport:SetMasterDetail(   "Informe", "Atipicas de clientes",              {|| ::oDbf:cCodCli + ::oDbf:cCodArt } )
 
@@ -1230,6 +1234,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetResyncPair(     "Informe", "Grupos familias" )
    ::oFastReport:SetResyncPair(     "Informe", "Agentes" )
    ::oFastReport:SetResyncPair(     "Informe", "Tipo envases" )
+   ::oFastReport:SetResyncPair(     "Informe", "Transportistas" )
 
    ::oFastReport:SetResyncPair(     "Informe", "Artículos.Informe" )
    ::oFastReport:SetResyncPair(     "Informe", "Imagenes" )

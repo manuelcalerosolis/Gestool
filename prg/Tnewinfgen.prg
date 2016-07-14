@@ -44,6 +44,10 @@ memvar cGrupoArticuloNombreDesde
 memvar cGrupoArticuloNombreHasta
 memvar cGrupoClienteNombreDesde
 memvar cGrupoClienteNombreHasta
+memvar cGrupoTransportistaDesde
+memvar cGrupoTransportistaHasta
+memvar cGrupoTransportistaNombreDesde
+memvar cGrupoTransportistaNombreHasta
 
 //---------------------------------------------------------------------------//
 
@@ -299,6 +303,9 @@ CLASS TNewInfGen FROM TInfGen
 
    METHOD SetNombreDesdeCategoria()
    METHOD SetNombreHastaCategoria()
+
+   METHOD SetNombreDesdeTransportista()
+   METHOD SetNombreHastaTransportista()
 
 END CLASS
 
@@ -2003,8 +2010,8 @@ METHOD lGrupoTransportista( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoTransportista:Cargo:cPicHasta  := "@!"
    ::oGrupoTransportista:Cargo:HelpDesde  := {|| ::oDbfTrn:Buscar( ::oDesde ) }
    ::oGrupoTransportista:Cargo:HelpHasta  := {|| ::oDbfTrn:Buscar( ::oHasta ) }
-   ::oGrupoTransportista:Cargo:TextDesde  := {|| oRetFld( ::oGrupoTransportista:Cargo:Desde, ::oDbfTrn:oDbf, "cNomTrn", "cCodTrn" ) }
-   ::oGrupoTransportista:Cargo:TextHasta  := {|| oRetFld( ::oGrupoTransportista:Cargo:Hasta, ::oDbfTrn:oDbf, "cNomTrn", "cCodTrn" ) }
+   ::oGrupoTransportista:Cargo:TextDesde  := {|| ::SetNombreDesdeTransportista() }
+   ::oGrupoTransportista:Cargo:TextHasta  := {|| ::SetNombreHastaTransportista() }
    ::oGrupoTransportista:Cargo:ValidDesde := {|oGet| if( ::oDbfTrn:Existe( if( !Empty( oGet ), oGet, ::oDesde ), ::oSayDesde, "cNomTrn" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoTransportista:Cargo:ValidHasta := {|oGet| if( ::oDbfTrn:Existe( if( !Empty( oGet ), oGet, ::oHasta ), ::oSayHasta, "cNomTrn" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoTransportista:Cargo:lImprimir  := lImp
@@ -4357,6 +4364,16 @@ Method AddVariable() CLASS TNewInfGen
    end if
 
    if !Empty( ::oGrupoTransportista )
+
+      public cGrupoTransportistaDesde  := ::oGrupoTransportista:Cargo:Desde
+      public cGrupoTransportistaHasta  := ::oGrupoTransportista:Cargo:Hasta
+      
+      ::oFastReport:AddVariable(       "Informe", "Desde código transportista",        "GetHbVar('cGrupoTransportistaDesde')" )
+      ::oFastReport:AddVariable(       "Informe", "Hasta código transportista",        "GetHbVar('cGrupoTransportistaHasta')" )
+
+      ::oFastReport:AddVariable(       "Informe", "Desde nombre transportista",        "GetHbVar('cGrupoTransportistaNombreDesde')" )
+      ::oFastReport:AddVariable(       "Informe", "Hasta nombre transportista",        "GetHbVar('cGrupoTransportistaNombreHasta')" )
+
    end if
 
    if !Empty( ::oGrupoGCliente )
@@ -4656,5 +4673,29 @@ METHOD SetNombreHastaCategoria() CLASS TNewInfGen
    end if
 
 Return ( cGrupoCategoriaNombreHasta )
+
+//---------------------------------------------------------------------------//
+
+METHOD SetNombreDesdeTransportista() CLASS TNewInfGen
+   
+   if !Empty( ::oGrupoTransportista:Cargo:Desde )
+      public cGrupoTransportistaNombreDesde  := oRetFld( ::oGrupoTransportista:Cargo:Desde, ::oDbfTrn:oDbf, "cNomTrn", "cCodTrn" )
+   else
+      public cGrupoTransportistaNombreDesde  := ""
+   end if
+
+Return ( cGrupoTransportistaNombreDesde )
+
+//---------------------------------------------------------------------------//
+
+METHOD SetNombreHastaTransportista() CLASS TNewInfGen
+
+   if !Empty( ::oGrupoTransportista:Cargo:Hasta )
+      public cGrupoTransportistaNombreHasta  := oRetFld( ::oGrupoTransportista:Cargo:Hasta, ::oDbfTrn:oDbf, "cNomTrn", "cCodTrn" )
+   else
+      public cGrupoTransportistaNombreHasta  := ""
+   end if
+
+Return ( cGrupoTransportistaNombreHasta )
 
 //---------------------------------------------------------------------------//
