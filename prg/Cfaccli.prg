@@ -195,7 +195,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
                nPos           := aScan( aVentas, {|x| x[ 1 ] == cCtaVent .and. x[ 2 ] == nIva } )
                if nPos == 0
-                  aAdd( aVentas, { cCtaVent, nIva, nImpDet, nImpPnt, nImpTrn, nImpIva } )
+                  aAdd( aVentas, { cCtaVent, nIva, nImpDet, nImpPnt, nImpTrn, nImpIva, .t. } )
                else
                   aVentas[ nPos, 3 ]   += nImpDet
                   aVentas[ nPos, 4 ]   += nImpPnt
@@ -294,13 +294,13 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    Gastos se lo sumamos a la base----------------------------------------------
    */
 
-   if ( dbfFacCliT )->nManObr != 0
+   if ( ( dbfFacCliT )->nManObr != 0 )
 
       cSubCtaTrn     := uFieldEmpresa( "cCtaGas")
 
       nPos           := aScan( aVentas, {|x| x[ 1 ] == cSubCtaTrn .and. x[ 2 ] == ( dbfFacCliT )->nIvaMan } )
       if nPos == 0
-         aAdd( aVentas, { cSubCtaTrn, ( dbfFacCliT )->nIvaMan, ( dbfFacCliT )->nManObr, 0, 0, 0 } )
+         aAdd( aVentas, { cSubCtaTrn, ( dbfFacCliT )->nIvaMan, ( dbfFacCliT )->nManObr, 0, 0, 0, .f. } )
       else
          aVentas[ nPos, 3 ]   += ( dbfFacCliT )->nManObr
       end if
@@ -563,7 +563,8 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
          if lIvaInc
 
             nPctIva     := aVentas[ n, 2 ]
-            if lRecargo
+        
+            if ( lRecargo .and. aVentas[ n, 7 ] )
                nPctIva  += nPReq( dbfIva, aVentas[ n, 2 ] )
             end if             
 
@@ -5469,7 +5470,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
                nPos           := aScan( aVentas, {|x| x[ 1 ] == cCtaVent .and. x[ 2 ] == nIva } )
                if nPos == 0
-                  aAdd( aVentas, { cCtaVent, nIva, nImpDet, nImpPnt, nImpTrn, nImpIva } )
+                  aAdd( aVentas, { cCtaVent, nIva, nImpDet, nImpPnt, nImpTrn, nImpIva, .f. } )
                else
                   aVentas[ nPos, 3 ]   += nImpDet
                   aVentas[ nPos, 4 ]   += nImpPnt
@@ -5576,13 +5577,13 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    Gastos se lo sumamos a la base----------------------------------------------
    */
 
-   if ( dbfFacRecT )->nManObr != 0
+   if ( ( dbfFacRecT )->nManObr != 0 )
 
       cSubCtaTrn     := uFieldEmpresa( "cCtaGas")
 
       nPos           := aScan( aVentas, {|x| x[ 1 ] == cSubCtaTrn .and. x[ 2 ] == ( dbfFacRecT )->nIvaMan } )
       if nPos == 0
-         aAdd( aVentas, { cSubCtaTrn, ( dbfFacRecT )->nIvaMan, ( dbfFacRecT )->nManObr, 0, 0, 0 } )
+         aAdd( aVentas, { cSubCtaTrn, ( dbfFacRecT )->nIvaMan, ( dbfFacRecT )->nManObr, 0, 0, 0, .f. } )
       else
          aVentas[ nPos, 3 ]   += ( dbfFacRecT )->nManObr
       end if
@@ -5845,7 +5846,8 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
          if lIvaInc
 
             nPctIva     := aVentas[ n, 2 ]
-            if lRecargo
+
+            if ( lRecargo .and. aVentas[ n, 7 ] )
                nPctIva  += nPReq( dbfIva, aVentas[ n, 2 ] )
             end if             
 

@@ -1477,7 +1477,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
    DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( TArticuloLabelGenerator():Create() ) ;
+      ACTION   ( TArticuloLabelGenerator():New():Dialog() ) ;
       TOOLTIP  "Eti(q)uetas" ;
       HOTKEY   "Q";
       LEVEL    ACC_IMPR
@@ -13734,35 +13734,34 @@ CLASS TArticuloLabelGenerator
 
    Data aSearch
 
-   Method Create()
+   Data nRecno
+
+   Method New()
+   Method Dialog()
+      Method StartSelectPropertiesLabels()
    Method End()
 
-   Method lDefault()
-
    Method BotonAnterior()
-
    Method BotonSiguiente()
 
    Method PutLabel()
 
    Method SelectAllLabels()
+      Method SelectAllLabelsDbf()
+      Method SelectAllLabelsADS()
 
    Method SelectPropertiesLabels()
 
-   Method StartSelectPropertiesLabels()
-
-   Method SavePropertiesLabels()
-
    Method LoadPropertiesLabels()
+   Method SavePropertiesLabels()
 
    Method SelectCriterioLabels()
 
-   Method PutStockLabels()
+   Method putStockLabels()
+   Method cleanPropertiesLabels()
 
    Method AddLabel()
-
    Method DelLabel()
-
    Method EditLabel()
 
    Method ChangeCriterio()
@@ -13772,9 +13771,7 @@ CLASS TArticuloLabelGenerator
    Method InitLabel( oLabel )
 
    Method lCreateTemporal()
-
    Method PrepareTemporal()
-
    Method DestroyTemporal()
 
    Method SelectColumn( oCombo )
@@ -13783,28 +13780,17 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-Method lDefault() CLASS TArticuloLabelGenerator
-
-   local oError
-   local oBlock
-   local lError         := .f.
-
-   oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+Method New() CLASS TArticuloLabelGenerator
 
    ::cCriterio          := "Ningún criterio"
    ::aCriterio          := { "Ningún criterio", "Todos los registros", "Familia", "Fecha modificación" }
 
-   ::cFamiliaInicio    := ( D():Articulos( nView ) )->Familia
-   ::cFamiliaFin       := ( D():Articulos( nView ) )->Familia
+   ::nRecno             := ( D():Articulos( nView ) )->( recno() )
+   ::cFamiliaInicio     := ( D():Articulos( nView ) )->Familia
+   ::cFamiliaFin        := ( D():Articulos( nView ) )->Familia
 
    ::dFechaInicio       := Ctod( "01/" + Str( Month( Date() ), 2 ) + "/" + Str( Year( Date() ), 4 ) )
    ::dFechaFin          := GetSysDate()
-
-   ::cFormatoLabel      := GetPvProfString( "Etiquetas", "Articulo", Space( 3 ), cPatEmp() + "Empresa.Ini" )
-   if len( ::cFormatoLabel ) < 3
-      ::cFormatoLabel   := Space( 3 )
-   end if
 
    ::nMtrLabel          := 0
 
@@ -13816,20 +13802,16 @@ Method lDefault() CLASS TArticuloLabelGenerator
 
    ::aSearch            := { "Código", "Nombre" }
 
-   RECOVER USING oError
+   ::cFormatoLabel      := GetPvProfString( "Etiquetas", "Articulo", Space( 3 ), cPatEmp() + "Empresa.Ini" )
+   if len( ::cFormatoLabel ) < 3
+      ::cFormatoLabel   := Space( 3 )
+   end if
 
-      lError            := .t.
-
-      msgStop( "Error en la creación de generador de etiquetas" + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-   ErrorBlock( oBlock )
-
-Return ( !lError )
+Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method Create() CLASS TArticuloLabelGenerator 
+Method Dialog() CLASS TArticuloLabelGenerator 
 
    local oGetOrd
    local cGetOrd     := Space( 100 )
@@ -13837,267 +13819,263 @@ Method Create() CLASS TArticuloLabelGenerator
    local cCbxOrd     := "Código"
    local aCbxOrd     := { "Código", "Nombre" }
 
-   if ::lDefault()
+   DEFINE DIALOG ::oDlg RESOURCE "SelectLabels_0"
 
-      DEFINE DIALOG ::oDlg RESOURCE "SelectLabels_0"
+      REDEFINE PAGES ::oFld ;
+         ID       10;
+         OF       ::oDlg ;
+         DIALOGS  "SelectLabels_3",;
+                  "SelectLabels_2"
 
-         REDEFINE PAGES ::oFld ;
-            ID       10;
-            OF       ::oDlg ;
-            DIALOGS  "SelectLabels_3",;
-                     "SelectLabels_2"
+      // Bitmap-------------------------------------------------------------------
 
-         // Bitmap-------------------------------------------------------------------
+      REDEFINE BITMAP ;
+         RESOURCE "EnvioEtiquetas" ;
+         ID       500 ;
+         OF       ::oDlg ;
 
-         REDEFINE BITMAP ;
-            RESOURCE "EnvioEtiquetas" ;
-            ID       500 ;
-            OF       ::oDlg ;
+      REDEFINE COMBOBOX ::oCriterio VAR ::cCriterio ;
+         ITEMS    ::aCriterio ;
+         ID       90 ;
+         OF       ::fldGeneral
 
-         REDEFINE COMBOBOX ::oCriterio VAR ::cCriterio ;
-            ITEMS    ::aCriterio ;
-            ID       90 ;
-            OF       ::fldGeneral
+      ::oCriterio:bChange        := {|| ::ChangeCriterio() }
 
-         ::oCriterio:bChange        := {|| ::ChangeCriterio() }
+      REDEFINE GET ::oFamiliaInicio VAR ::cFamiliaInicio ;
+         ID       100 ;
+         IDTEXT   101 ;
+         BITMAP   "LUPA" ;
+         OF       ::fldGeneral
 
-         REDEFINE GET ::oFamiliaInicio VAR ::cFamiliaInicio ;
-            ID       100 ;
-            IDTEXT   101 ;
-            BITMAP   "LUPA" ;
-            OF       ::fldGeneral
+      ::oFamiliaInicio:bValid    := {|| cFamilia( ::oFamiliaInicio, D():Familias( nView ), ::oFamiliaInicio:oHelpText ), .t. }
+      ::oFamiliaInicio:bHelp     := {|| BrwFamilia( ::oFamiliaInicio, ::oFamiliaInicio:oHelpText ) }
 
-         ::oFamiliaInicio:bValid    := {|| cFamilia( ::oFamiliaInicio, D():Familias( nView ), ::oFamiliaInicio:oHelpText ), .t. }
-         ::oFamiliaInicio:bHelp     := {|| BrwFamilia( ::oFamiliaInicio, ::oFamiliaInicio:oHelpText ) }
+      REDEFINE SAY ::oInicio ;
+         ID       102 ;
+         OF       ::fldGeneral
 
-         REDEFINE SAY ::oInicio ;
-            ID       102 ;
-            OF       ::fldGeneral
+      REDEFINE GET ::oFamiliaFin VAR ::cFamiliaFin ;
+         ID       110 ;
+         IDTEXT   111 ;
+         BITMAP   "LUPA" ;
+         OF       ::fldGeneral
 
-         REDEFINE GET ::oFamiliaFin VAR ::cFamiliaFin ;
-            ID       110 ;
-            IDTEXT   111 ;
-            BITMAP   "LUPA" ;
-            OF       ::fldGeneral
+      ::oFamiliaFin:bValid       := {|| cFamilia( ::oFamiliaFin, D():Familias( nView ), ::oFamiliaFin:oHelpText ), .t. }
+      ::oFamiliaFin:bHelp        := {|| BrwFamilia( ::oFamiliaFin, ::oFamiliaFin:oHelpText ) }
 
-         ::oFamiliaFin:bValid       := {|| cFamilia( ::oFamiliaFin, D():Familias( nView ), ::oFamiliaFin:oHelpText ), .t. }
-         ::oFamiliaFin:bHelp        := {|| BrwFamilia( ::oFamiliaFin, ::oFamiliaFin:oHelpText ) }
+      REDEFINE SAY ::oFin ;
+         ID       112 ;
+         OF       ::fldGeneral
 
-         REDEFINE SAY ::oFin ;
-            ID       112 ;
-            OF       ::fldGeneral
+      REDEFINE GET ::oFechaInicio VAR ::dFechaInicio ;
+         SPINNER ;
+         ID       120 ;
+         OF       ::fldGeneral
 
-         REDEFINE GET ::oFechaInicio VAR ::dFechaInicio ;
-            SPINNER ;
-            ID       120 ;
-            OF       ::fldGeneral
+      REDEFINE GET ::oFechaFin VAR ::dFechaFin ;
+         SPINNER ;
+         ID       130 ;
+         OF       ::fldGeneral
 
-         REDEFINE GET ::oFechaFin VAR ::dFechaFin ;
-            SPINNER ;
-            ID       130 ;
-            OF       ::fldGeneral
+      REDEFINE GET ::oFormatoLabel VAR ::cFormatoLabel ;
+         ID       160 ;
+         IDTEXT   161 ;
+         BITMAP   "LUPA" ;
+         OF       ::fldGeneral
 
-         REDEFINE GET ::oFormatoLabel VAR ::cFormatoLabel ;
-            ID       160 ;
-            IDTEXT   161 ;
-            BITMAP   "LUPA" ;
-            OF       ::fldGeneral
+         ::oFormatoLabel:bValid  := {|| cDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, dbfDoc, "AR" ) }
+         ::oFormatoLabel:bHelp   := {|| BrwDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, "AR" ) }
 
-            ::oFormatoLabel:bValid  := {|| cDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, dbfDoc, "AR" ) }
-            ::oFormatoLabel:bHelp   := {|| BrwDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, "AR" ) }
+      TBtnBmp():ReDefine( 220, "Printer_pencil_16",,,,,{|| EdtDocumento( ::cFormatoLabel ) }, ::fldGeneral, .f., , .f., "Modificar formato de etiquetas" )
 
-         TBtnBmp():ReDefine( 220, "Printer_pencil_16",,,,,{|| EdtDocumento( ::cFormatoLabel ) }, ::fldGeneral, .f., , .f., "Modificar formato de etiquetas" )
+      REDEFINE GET ::nFilaInicio ;
+         ID       180 ;
+         PICTURE  "999" ;
+         SPINNER ;
+         OF       ::fldGeneral
 
-         REDEFINE GET ::nFilaInicio ;
-            ID       180 ;
-            PICTURE  "999" ;
-            SPINNER ;
-            OF       ::fldGeneral
+      REDEFINE GET ::nColumnaInicio ;
+         ID       190 ;
+         PICTURE  "999" ;
+         SPINNER ;
+         OF       ::fldGeneral
 
-         REDEFINE GET ::nColumnaInicio ;
-            ID       190 ;
-            PICTURE  "999" ;
-            SPINNER ;
-            OF       ::fldGeneral
+      REDEFINE RADIO ::nCantidadLabels ;
+         ID       200, 201 ;
+         OF       ::fldGeneral
 
-         REDEFINE RADIO ::nCantidadLabels ;
-            ID       200, 201 ;
-            OF       ::fldGeneral
+      REDEFINE GET ::nUnidadesLabels ;
+         ID       210 ;
+         PICTURE  "99999" ;
+         SPINNER ;
+         MIN      1 ;
+         MAX      99999 ;
+         WHEN     ( ::nCantidadLabels == 1 ) ;
+         OF       ::fldGeneral
 
-         REDEFINE GET ::nUnidadesLabels ;
-            ID       210 ;
-            PICTURE  "99999" ;
-            SPINNER ;
-            MIN      1 ;
-            MAX      99999 ;
-            WHEN     ( ::nCantidadLabels == 1 ) ;
-            OF       ::fldGeneral
+      REDEFINE GET ::oAlmacen Var ::cAlmacen ;
+         ID       230 ;
+         IDTEXT   231 ;
+         PICTURE  "@!" ;
+         WHEN     ( ::nCantidadLabels == 2 ) ;
+         BITMAP   "LUPA" ;
+         OF       ::fldGeneral
 
-         REDEFINE GET ::oAlmacen Var ::cAlmacen ;
-            ID       230 ;
-            IDTEXT   231 ;
-            PICTURE  "@!" ;
-            WHEN     ( ::nCantidadLabels == 2 ) ;
-            BITMAP   "LUPA" ;
-            OF       ::fldGeneral
- 
-            ::oAlmacen:bValid    := { || cAlmacen( ::oAlmacen, , ::oAlmacen:oHelpText ) }
-            ::oAlmacen:bHelp     := { || BrwAlmacen( ::oAlmacen, ::oAlmacen:oHelpText ) }
+         ::oAlmacen:bValid    := { || cAlmacen( ::oAlmacen, , ::oAlmacen:oHelpText ) }
+         ::oAlmacen:bHelp     := { || BrwAlmacen( ::oAlmacen, ::oAlmacen:oHelpText ) }
 
-         // Segunda caja de dialogo--------------------------------------------------
+      // Segunda caja de dialogo--------------------------------------------------
 
-         REDEFINE GET oGetOrd ;
-            VAR      cGetOrd;
-            ID       200 ;
-            BITMAP   "FIND" ;
-            OF       ::fldPrecios
+      REDEFINE GET oGetOrd ;
+         VAR      cGetOrd;
+         ID       200 ;
+         BITMAP   "FIND" ;
+         OF       ::fldPrecios
 
-         oGetOrd:bChange   := {| nKey, nFlags, oGet | AutoSeek( nKey, nFlags, oGet, ::oBrwLabel, D():Articulos( nView ) ) }
-         oGetOrd:bValid    := {|| ( D():Articulos( nView ) )->( OrdScope( 0, nil ) ), ( D():Articulos( nView ) )->( OrdScope( 1, nil ) ), ::oBrwLabel:Refresh(), .t. }
+      oGetOrd:bChange   := {| nKey, nFlags, oGet | AutoSeek( nKey, nFlags, oGet, ::oBrwLabel, D():Articulos( nView ) ) }
+      oGetOrd:bValid    := {|| ( D():Articulos( nView ) )->( OrdScope( 0, nil ) ), ( D():Articulos( nView ) )->( OrdScope( 1, nil ) ), ::oBrwLabel:Refresh(), .t. }
 
-         REDEFINE COMBOBOX oCbxOrd ;
-            VAR      cCbxOrd ;
-            ID       210 ;
-            ITEMS    aCbxOrd ;
-            OF       ::fldPrecios
+      REDEFINE COMBOBOX oCbxOrd ;
+         VAR      cCbxOrd ;
+         ID       210 ;
+         ITEMS    aCbxOrd ;
+         OF       ::fldPrecios
 
-         oCbxOrd:bChange   := {|| ::SelectColumn( oCbxOrd ) }
+      oCbxOrd:bChange   := {|| ::SelectColumn( oCbxOrd ) }
 
-         REDEFINE BUTTON ;
-            ID       100 ;
-            OF       ::fldPrecios ;
-            ACTION   ( ::PutLabel() )
+      REDEFINE BUTTON ;
+         ID       100 ;
+         OF       ::fldPrecios ;
+         ACTION   ( ::PutLabel() )
 
-         REDEFINE BUTTON ;
-            ID       110 ;
-            OF       ::fldPrecios ;
-            ACTION   ( ::SelectAllLabels( .t. ) )
+      REDEFINE BUTTON ;
+         ID       110 ;
+         OF       ::fldPrecios ;
+         ACTION   ( ::SelectAllLabels( .t. ) )
 
-         REDEFINE BUTTON ;
-            ID       120 ;
-            OF       ::fldPrecios ;
-            ACTION   ( ::SelectAllLabels( .f. ) )
+      REDEFINE BUTTON ;
+         ID       120 ;
+         OF       ::fldPrecios ;
+         ACTION   ( ::SelectAllLabels( .f. ) )
 
-         REDEFINE BUTTON ;
-            ID       220 ;
-            OF       ::fldPrecios ;
-            ACTION   ( ::SelectPropertiesLabels( .f. ) )
+      REDEFINE BUTTON ;
+         ID       220 ;
+         OF       ::fldPrecios ;
+         ACTION   ( ::SelectPropertiesLabels( .f. ) )
 
-         REDEFINE BUTTON ;
-            ID       130 ;
-            OF       ::fldPrecios ;
-            ACTION   ( ::AddLabel() )
+      REDEFINE BUTTON ;
+         ID       130 ;
+         OF       ::fldPrecios ;
+         ACTION   ( ::AddLabel() )
 
-         REDEFINE BUTTON ;
-            ID       140 ;
-            OF       ::fldPrecios ;
-            ACTION   ( ::DelLabel() )
+      REDEFINE BUTTON ;
+         ID       140 ;
+         OF       ::fldPrecios ;
+         ACTION   ( ::DelLabel() )
 
-         REDEFINE BUTTON ;
-            ID       150 ;
-            OF       ::fldPrecios ;
-            ACTION   ( ::EditLabel() )
+      REDEFINE BUTTON ;
+         ID       150 ;
+         OF       ::fldPrecios ;
+         ACTION   ( ::EditLabel() )
 
-         REDEFINE BUTTON ;
-            ID       160 ;
-            OF       ::fldPrecios ;
-            ACTION   ( WinEdtRec( ::oBrwLabel, bEdit, D():Articulos( nView ) ) )
+      REDEFINE BUTTON ;
+         ID       160 ;
+         OF       ::fldPrecios ;
+         ACTION   ( WinEdtRec( ::oBrwLabel, bEdit, D():Articulos( nView ) ) )
 
-         REDEFINE BUTTON ;
-            ID       165 ;
-            OF       ::fldPrecios ;
-            ACTION   ( WinZooRec( ::oBrwLabel, bEdit, D():Articulos( nView ) ) )
+      REDEFINE BUTTON ;
+         ID       165 ;
+         OF       ::fldPrecios ;
+         ACTION   ( WinZooRec( ::oBrwLabel, bEdit, D():Articulos( nView ) ) )
 
-         ::oBrwLabel                 := IXBrowse():New( ::fldPrecios )
+      ::oBrwLabel                 := IXBrowse():New( ::fldPrecios )
 
-         ::oBrwLabel:nMarqueeStyle   := 5
-         ::oBrwLabel:nColSel         := 2
+      ::oBrwLabel:nMarqueeStyle   := 5
+      ::oBrwLabel:nColSel         := 2
 
-         ::oBrwLabel:lHScroll        := .f.
-         ::oBrwLabel:cAlias          := D():Articulos( nView )
+      ::oBrwLabel:lHScroll        := .f.
+      ::oBrwLabel:cAlias          := D():Articulos( nView )
 
-         ::oBrwLabel:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-         ::oBrwLabel:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-         ::oBrwLabel:bLDblClick      := {|| ::PutLabel() }
+      ::oBrwLabel:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      ::oBrwLabel:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      ::oBrwLabel:bLDblClick      := {|| ::PutLabel() }
 
-         ::oBrwLabel:CreateFromResource( 180 )
+      ::oBrwLabel:CreateFromResource( 180 )
 
-         with object ( ::oBrwLabel:AddCol() )
-            :cHeader          := "Sl. Seleccionada"
-            :bEditValue       := {|| ( D():Articulos( nView ) )->lLabel }
-            :nWidth           := 20
-            :SetCheck( { "Sel16", "Nil16" } )
-         end with
+      with object ( ::oBrwLabel:AddCol() )
+         :cHeader          := "Sl. Seleccionada"
+         :bEditValue       := {|| ( D():Articulos( nView ) )->lLabel }
+         :nWidth           := 20
+         :SetCheck( { "Sel16", "Nil16" } )
+      end with
 
-         with object ( ::oBrwLabel:AddCol() )
-            :cHeader          := "Código"
-            :bEditValue       := {|| ( D():Articulos( nView ) )->Codigo }
-            :nWidth           := 80
-            :cSortOrder       := "Codigo"
-            :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-         end with
+      with object ( ::oBrwLabel:AddCol() )
+         :cHeader          := "Código"
+         :bEditValue       := {|| ( D():Articulos( nView ) )->Codigo }
+         :nWidth           := 80
+         :cSortOrder       := "Codigo"
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
 
-         with object ( ::oBrwLabel:AddCol() )
-            :cHeader          := "Nombre"
-            :bEditValue       := {|| ( D():Articulos( nView ) )->Nombre }
-            :nWidth           := 280
-            :cSortOrder       := "Nombre"
-            :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-         end with
+      with object ( ::oBrwLabel:AddCol() )
+         :cHeader          := "Nombre"
+         :bEditValue       := {|| ( D():Articulos( nView ) )->Nombre }
+         :nWidth           := 280
+         :cSortOrder       := "Nombre"
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
 
-         with object ( ::oBrwLabel:AddCol() )
-            :cHeader          := "N. etiquetas"
-            :bEditValue       := {|| ( D():Articulos( nView ) )->nLabel }
-            :cEditPicture     := "@E 99,999"
-            :nWidth           := 80
-            :nDataStrAlign    := 1
-            :nHeadStrAlign    := 1
-            :nEditType        := 1
-            :bOnPostEdit      := {|o,x| if( dbDialogLock( D():Articulos( nView ) ), ( ( D():Articulos( nView ) )->nLabel := x, ( D():Articulos( nView ) )->( dbUnlock() ) ), ) }
-         end with
+      with object ( ::oBrwLabel:AddCol() )
+         :cHeader          := "N. etiquetas"
+         :bEditValue       := {|| ( D():Articulos( nView ) )->nLabel }
+         :cEditPicture     := "@E 99,999"
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :nEditType        := 1
+         :bOnPostEdit      := {|o,x| if( dbDialogLock( D():Articulos( nView ) ), ( ( D():Articulos( nView ) )->nLabel := x, ( D():Articulos( nView ) )->( dbUnlock() ) ), ) }
+      end with
 
-         REDEFINE METER ::oMtrLabel ;
-            VAR      ::nMtrLabel ;
-            PROMPT   "" ;
-            ID       190 ;
-            OF       ::fldPrecios ;
-            TOTAL    ( D():Articulos( nView ) )->( lastrec() )
+      REDEFINE METER ::oMtrLabel ;
+         VAR      ::nMtrLabel ;
+         PROMPT   "" ;
+         ID       190 ;
+         OF       ::fldPrecios ;
+         TOTAL    ( D():Articulos( nView ) )->( lastrec() )
 
-         ::oMtrLabel:nClrText   := rgb( 128,255,0 )
-         ::oMtrLabel:nClrBar    := rgb( 128,255,0 )
-         ::oMtrLabel:nClrBText  := rgb( 128,255,0 )
+      ::oMtrLabel:nClrText   := rgb( 128,255,0 )
+      ::oMtrLabel:nClrBar    := rgb( 128,255,0 )
+      ::oMtrLabel:nClrBText  := rgb( 128,255,0 )
 
-         /*
-         Botones generales--------------------------------------------------------
-         */
+      /*
+      Botones generales--------------------------------------------------------
+      */
 
-         REDEFINE BUTTON ::oBtnListado ;          // Boton listado
-            ID       40 ;
-            OF       ::oDlg ;
-            ACTION   ( TInfArtFam():New( "Listado de artículos seleccionados para etiquetas" ):Play( .t., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva, D():Familias( nView ), oStock, oWndBrw ) )
+      REDEFINE BUTTON ::oBtnListado ;          // Boton listado
+         ID       40 ;
+         OF       ::oDlg ;
+         ACTION   ( TInfArtFam():New( "Listado de artículos seleccionados para etiquetas" ):Play( .t., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva, D():Familias( nView ), oStock, oWndBrw ) )
 
-         REDEFINE BUTTON ::oBtnAnterior ;          // Boton anterior
-            ID       20 ;
-            OF       ::oDlg ;
-            ACTION   ( ::BotonAnterior() )
+      REDEFINE BUTTON ::oBtnAnterior ;          // Boton anterior
+         ID       20 ;
+         OF       ::oDlg ;
+         ACTION   ( ::BotonAnterior() )
 
-         REDEFINE BUTTON ::oBtnSiguiente ;         // Boton de Siguiente
-            ID       30 ;
-            OF       ::oDlg ;
-            ACTION   ( ::BotonSiguiente() )
+      REDEFINE BUTTON ::oBtnSiguiente ;         // Boton de Siguiente
+         ID       30 ;
+         OF       ::oDlg ;
+         ACTION   ( ::BotonSiguiente() )
 
-         REDEFINE BUTTON ::oBtnCancel ;            // Boton de Siguiente
-            ID       IDCANCEL ;
-            OF       ::oDlg ;
-            ACTION   ( ::oDlg:End() )
+      REDEFINE BUTTON ::oBtnCancel ;            // Boton de Siguiente
+         ID       IDCANCEL ;
+         OF       ::oDlg ;
+         ACTION   ( ::oDlg:End() )
 
-      ::oDlg:bStart  := {|| ::oBtnAnterior:Hide(), ::ChangeCriterio(), ::oFormatoLabel:lValid() }
+   ::oDlg:bStart  := {|| ::oBtnAnterior:Hide(), ::ChangeCriterio(), ::oFormatoLabel:lValid() }
 
-      ACTIVATE DIALOG ::oDlg CENTER
+   ACTIVATE DIALOG ::oDlg CENTER
 
-      ::End()
-
-   end if
+   ::End()
 
 Return ( Self )
 
@@ -14129,9 +14107,7 @@ Method BotonSiguiente() CLASS TArticuloLabelGenerator
             ::oFld:GoNext()
             ::oBtnAnterior:Show()
 
-           // if ::oCriterio:nAt != 1
-               ::SelectCriterioLabels()
-           // end if
+            ::SelectCriterioLabels()
 
             SetWindowText( ::oBtnSiguiente:hWnd, "&Terminar" )
 
@@ -14155,6 +14131,8 @@ Method End() CLASS TArticuloLabelGenerator
 
    WritePProString( "Etiquetas", "Articulo", ::cFormatoLabel, cPatEmp() + "Empresa.Ini" )
 
+   ( D():Articulos( nView ) )->( dbgoto( ::nRecno ) )
+
 Return ( Self )
 
 //--------------------------------------------------------------------------//
@@ -14175,12 +14153,33 @@ Return ( Self )
 
 Method SelectAllLabels( lSelect ) CLASS TArticuloLabelGenerator
 
-	local n			:= 0
-   local nRecno   := ( D():Articulos( nView ) )->( Recno() )
-
 	CursorWait()
 
    ::oDlg:Disable()
+
+   if lAIS()
+      ::SelectAllLabelsADS( lSelect )
+   else 
+      ::SelectAllLabelsDbf( lSelect )
+   end if 
+
+   ::oBrwLabel:Refresh()
+
+   ::oMtrLabel:Set( 0 )
+   ::oMtrLabel:Refresh()
+
+   ::oDlg:Enable()
+
+   CursorArrow()
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+Method SelectAllLabelsDbf( lSelect )
+
+   local n        := 0
+   local nRecno   := ( D():Articulos( nView ) )->( Recno() )
 
    ( D():Articulos( nView ) )->( dbGoTop() )
    while !( D():Articulos( nView ) )->( eof() )
@@ -14202,14 +14201,14 @@ Method SelectAllLabels( lSelect ) CLASS TArticuloLabelGenerator
 
    ( D():Articulos( nView ) )->( dbGoTo( nRecno ) )
 
-   ::oBrwLabel:Refresh()
+Return ( Self )
 
-   ::oMtrLabel:Set( 0 )
-   ::oMtrLabel:Refresh()
+//--------------------------------------------------------------------------//
 
-   ::oDlg:Enable()
+Method SelectAllLabelsADS( lSelect )
 
-   CursorArrow()
+   TDataCenter():ExecuteSqlStatement(  "UPDATE " + cPatEmp() + "Articulo " + ;
+                                          "SET lLabel = " + if( lSelect, "True", "False" ) )
 
 Return ( Self )
 
@@ -14218,33 +14217,34 @@ Return ( Self )
 Method SelectCriterioLabels() CLASS TArticuloLabelGenerator
 
 	local n			:= 0
-   local nRecno   := ( D():Articulos( nView ) )->( Recno() )
 
 	CursorWait()
+
+   ::oDlg:Disable()
 
    ( D():Articulos( nView ) )->( dbGoTop() )
    while !( D():Articulos( nView ) )->( eof() )
 
+      ::cleanPropertiesLabels()
+
       if dbLock( D():Articulos( nView ) )
 
-         do case
-            case ::oCriterio:nAt <= 2
+         ::putStockLabels()
 
-               ::PutStockLabels()
+         do case
+            case ::oCriterio:nAt == 1
+               ( D():Articulos( nView ) )->lLabel    := .f.
+
+            case ::oCriterio:nAt == 2
+               ( D():Articulos( nView ) )->lLabel    := .t.
 
             case ::oCriterio:nAt == 3 .and. ( D():Articulos( nView ) )->Familia >= ::cFamiliaInicio .and. ( D():Articulos( nView ) )->Familia <= ::cFamiliaFin
-
-               ::PutStockLabels()
+               ( D():Articulos( nView ) )->lLabel    := .t.
 
             case ::oCriterio:nAt == 4 .and. ( D():Articulos( nView ) )->LastChg >= ::dFechaInicio .and. ( D():Articulos( nView ) )->LastChg <= ::dFechaFin
-
-               ::PutStockLabels()
+               ( D():Articulos( nView ) )->lLabel    := .t.
 
             otherwise
-
-               ( D():Articulos( nView ) )->lLabel    := .f.
-               ( D():Articulos( nView ) )->nLabel    := 1
-
          end case
 
          ( D():Articulos( nView ) )->( dbUnLock() )
@@ -14262,9 +14262,27 @@ Method SelectCriterioLabels() CLASS TArticuloLabelGenerator
    ::oMtrLabel:Set( 0 )
    ::oMtrLabel:Refresh()
 
-   ( D():Articulos( nView ) )->( dbGoTo( nRecno ) )
+   ( D():Articulos( nView ) )->( dbGoTop() )
+
+   ::oDlg:Enable()
 
 	CursorArrow()
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+/*
+Limpiamos las etiquetas por propiedades
+*/
+
+Method cleanPropertiesLabels() CLASS TArticuloLabelGenerator
+
+   while ( dbfArtLbl )->( dbSeek( ( D():Articulos( nView ) )->Codigo ) ) .and. !( dbfArtLbl )->( eof() )
+      if dbLock( dbfArtLbl )
+         ( dbfArtLbl )->( dbDelete() )
+         ( dbfArtLbl )->( dbUnLock() )
+      end if
+   end while
 
 Return ( Self )
 
@@ -14275,19 +14293,6 @@ Method PutStockLabels() CLASS TArticuloLabelGenerator
    local o
    local aStock
    local nStock                           := 0
-
-   ( D():Articulos( nView ) )->lLabel     := .t.
-
-   /*
-   Limpiamos las etiquetas por propiedades-------------------------------
-   */
-
-   while ( dbfArtLbl )->( dbSeek( ( D():Articulos( nView ) )->Codigo ) ) .and. !( dbfArtLbl )->( eof() )
-      if dbLock( dbfArtLbl )
-         ( dbfArtLbl )->( dbDelete() )
-         ( dbfArtLbl )->( dbUnLock() )
-      end if
-   end while
 
    if ::nCantidadLabels == 1
 
@@ -14302,9 +14307,9 @@ Method PutStockLabels() CLASS TArticuloLabelGenerator
          */
 
          if !Empty( ::cAlmacen ) 
-            aStock                           := oStock:aStockArticulo( ( D():Articulos( nView ) )->Codigo, ::cAlmacen, , .f., .f. ) 
+            aStock                        := oStock:aStockArticulo( ( D():Articulos( nView ) )->Codigo, ::cAlmacen, , .f., .f. ) 
          else 
-            aStock                           := oStock:aStockArticulo( ( D():Articulos( nView ) )->Codigo, , , .f., .f. ) 
+            aStock                        := oStock:aStockArticulo( ( D():Articulos( nView ) )->Codigo, , , .f., .f. ) 
          end if
 
          for each o in aStock
@@ -14327,6 +14332,7 @@ Method PutStockLabels() CLASS TArticuloLabelGenerator
             ( D():Articulos( nView ) )->nLabel        := Max( nStock, 0 )
             ( D():Articulos( nView ) )->( dbUnLock() )
          end if
+
       else
 
          nStock                                    := oStock:nStockArticulo( ( D():Articulos( nView ) )->Codigo, , , .f., .f. )
