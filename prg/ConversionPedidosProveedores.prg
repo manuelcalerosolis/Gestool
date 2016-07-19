@@ -82,8 +82,8 @@ METHOD startDialog()
 
    ::setDocumentPedidosProveedores()
 
-   ::oBtnAnterior:Hide()
-   ::oBtnSiguiente:setText( "&Importar")
+   ::buttonPrior:Hide()
+   ::buttonNext:setText( "&Importar")
 
    ::oBrwLines:Load()
 
