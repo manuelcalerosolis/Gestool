@@ -393,8 +393,11 @@ METHOD processLine( oLine )
 
    local oDocument     := ClientDeliveryNoteDocumentHeader():newBuildDictionary( self ) 
 
-   if D():gotoPedidoIdAlbaranesClientes( oLine:getDocumentId(), ::nView )
-      oDocument:setValue( "PedidoCliente", ( D():AlbaranesClientes( ::nView ) )->cNumPed )
+   debug( oLine, "oLine" )
+   debug( oDocument, "oDocument" )
+
+   if D():gotoPedidoIdAlbaranesClientes( oLine:getDocumentId(), ::nWiew )
+      oDocument:setValue( "PedidoCliente", ( D():AlbaranesClientes( ::nWiew ) )->cNumPed )
    end if
 
    ::oDocumentHeaders:addLines( oDocument )
