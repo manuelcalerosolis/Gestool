@@ -418,7 +418,9 @@ CLASS TpvTactil
    DATA numeroLineaDragBegin
    DATA numeroLineaDropOver
 
-   METHOD New( oMenuItem, oWnd ) CONSTRUCTOR
+   //------------------------------------------------------------------------//
+
+   METHOD New( oMenuItem, oWnd )    CONSTRUCTOR
 
    METHOD Activate( lAlone )
 
@@ -427,25 +429,23 @@ CLASS TpvTactil
    METHOD OpenFiles()
    METHOD CloseFiles()
 
-   //------------------------------------------------------------------------//
-
    METHOD Resource()
       METHOD ResizedResource()
       METHOD StartResource()
       METHOD EndResource()
       METHOD PaintResource()
 
-      METHOD DisableDialog()           INLINE ( CursorWait(),;
-                                                ::lValidResource := .f.,;
-                                                aEval( ::oDlg:aControls, { |o| if( o:ClassName != "TSAY" .and. o:ClassName != "TBITMAP", o:Disable(), ) } ),;
-                                                SysRefresh() )
+   METHOD DisableDialog()           INLINE ( CursorWait(),;
+                                             ::lValidResource := .f.,;
+                                             aEval( ::oDlg:aControls, { |o| if( o:ClassName != "TSAY" .and. o:ClassName != "TBITMAP", o:Disable(), ) } ),;
+                                             SysRefresh() )
 
-      METHOD EnableDialog()            INLINE ( ::lValidResource := .t.,;
-                                                aEval( ::oDlg:aControls, { |o| if( o:ClassName != "TSAY" .and. o:ClassName != "TBITMAP", o:Enable(), ) } ),;
-                                                CursorWE(),;
-                                                SysRefresh() )
+   METHOD EnableDialog()            INLINE ( ::lValidResource := .t.,;
+                                             aEval( ::oDlg:aControls, { |o| if( o:ClassName != "TSAY" .and. o:ClassName != "TBITMAP", o:Enable(), ) } ),;
+                                             CursorWE(),;
+                                             SysRefresh() )
 
-   METHOD l1024()                      INLINE ( ::nScreenHorzRes >= 1024 )
+   METHOD l1024()                   INLINE ( ::nScreenHorzRes >= 1024 )
 
    METHOD CargaBrowseFamilias()
 
@@ -469,7 +469,6 @@ CLASS TpvTactil
    METHOD ActionListArticulo()
 
    METHOD cFileBmpName( cFile, lEmptyImage )
-
    METHOD lFileBmpName( cFile )        INLINE ( File( ::cFileBmpName( cFile ) ) )
 
    METHOD CargaArticulosFamilia( cCodFam )
@@ -725,7 +724,7 @@ CLASS TpvTactil
 
    METHOD GuardaCobros()               INLINE ( ::oTpvCobros:ArchivaCobros() )
 
-   // Documentos------------------------------------------------------------------
+   // Documentos---------------------------------------------------------------
 
    METHOD GuardaDocumento( lZap, nSave )
 
@@ -892,6 +891,8 @@ CLASS TpvTactil
       
    METHOD moveLineUp()
    METHOD moveLineDown()
+
+   METHOD isLineaValidaComanda( lCopia )
 
 END CLASS
 
@@ -6403,6 +6404,11 @@ METHOD OnClickCobro() CLASS TpvTactil
       Return .f.
    end if
 
+   if oUser():lNotCobrarTPV()
+      MsgStop( "El usuario no esta autorizado para cobrar tickes." )
+      Return .f.
+   end if
+
    if ::isArticulosSinPeso()
       msgStop( "Existen artículos por peso sin valor." )
       Return .f.
@@ -6745,50 +6751,47 @@ Return .t.
 
 METHOD OnClickEntregaNota() CLASS TpvTactil
 
-   /*
-   Si el documento es nuevo y no tiene lineas no lo guardo---------------------
-   */
+   // Si el documento es nuevo y no tiene lineas no lo guardo------------------
 
    if ::lEmptyDocumento()
-      Return ( .t. )
+      Return ( .f. )
    end if
 
-   /*
-   Vamos a detectar si estoy en un General-------------------------------------
-   */
+   // Permiso de usuario para entregar nota-------------------------------------
+
+   if oUser():lNotNotasTPV()
+      MsgStop( "El usuario no esta autorizado para entregar notas." )
+      Return ( .f. )
+   end if
+
+   // Vamos a detectar si estoy en un General----------------------------------
 
    if ::lEmptyAlias() .and. !::SetAliasDocumento()
-      Return ( .t. )
+      Return ( .f. )
    end if
 
    // Articulos sin peso-------------------------------------------------------
 
    if ::isArticulosSinPeso()
       msgStop( "Existen artículos por peso sin valor." )
-      Return .f.
+      Return ( .f. )
    end if 
 
    ::DisableDialog()
 
-   /*
-   Guarda documento------------------------------------------------------------
-   */
+   // Guarda documento---------------------------------------------------------
 
    ::GuardaDocumentoCerrado( .f. )
 
-   /*
-   Imprimimos el documento-----------------------------------------------------
-   */
+   // Imprimimos el documento--------------------------------------------------
 
    ::ImprimeEntrega()
 
-   /*
-   Recoger usuario-------------------------------------------------------
-   */
+   // Recoger usuario----------------------------------------------------------
 
    ::GetUsuario()
 
-   // Volver a la sala de venta---------------------------------------------
+   // Volver a la sala de venta------------------------------------------------
 
    ::GetUbicacion()
 
@@ -8386,7 +8389,7 @@ METHOD ProcesaComandas( lCopia )
             cOrden      := ::oTiketLinea:cNomTil
          end if 
 
-         if !( ::oTiketLinea:lDelTil ) .and. ( lCopia .or. ( ::nUnidadesImpresas() < ::nUnidadesLinea() ) )
+         if ::isLineaValidaComanda( lCopia )
 
             // Impresora Uno---------------------------------------------------
 
@@ -10058,7 +10061,7 @@ METHOD initOrdenComanda()
       ::setCodigoOrdenComandaActual( idOrdenComanda ) 
 
       // ::setTextButtonOrdenComandaActual( idOrdenComanda )
-      
+
    end if 
 
 RETURN ( "" )
@@ -10562,6 +10565,23 @@ METHOD moveLineDown()
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
+
+METHOD isLineaValidaComanda( lCopia ) 
+
+   if ( ::oTiketLinea:lDelTil )
+      Return .f.
+   end if
+
+   if ( lCopia )
+      Return .f.
+   end if 
+
+   if ( ::oTiketLinea:lPeso .and. ::nUnidadesLinea() == 0 )
+      Return .f.
+   end if 
+
+Return (  ::nUnidadesImpresas() < ::nUnidadesLinea() ) 
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
