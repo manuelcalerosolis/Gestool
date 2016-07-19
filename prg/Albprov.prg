@@ -213,35 +213,6 @@ Definici¢n de la base de datos de lineas de detalle
 #define _CTIPCTR                 125
 #define _CTERCTR                 126
 
-/*
-Definici¢n de Array para impuestos
-*/
-
-#define _NBRTIVA1                aTotIva[ 1, 1 ]
-#define _NBASIVA1                aTotIva[ 1, 2 ]
-#define _NPCTIVA1                aTotIva[ 1, 3 ]
-#define _NPCTREQ1                aTotIva[ 1, 4 ]
-#define _NIMPIVA1                aTotIva[ 1, 5 ]
-#define _NIMPREQ1                aTotIva[ 1, 6 ]
-#define _NPNTVER1                aTotIva[ 1, 7 ]
-#define _NIVMIVA1                aTotIva[ 1, 8 ]
-#define _NBRTIVA2                aTotIva[ 2, 1 ]
-#define _NBASIVA2                aTotIva[ 2, 2 ]
-#define _NPCTIVA2                aTotIva[ 2, 3 ]
-#define _NPCTREQ2                aTotIva[ 2, 4 ]
-#define _NIMPIVA2                aTotIva[ 2, 5 ]
-#define _NIMPREQ2                aTotIva[ 2, 6 ]
-#define _NPNTVER2                aTotIva[ 2, 7 ]
-#define _NIVMIVA2                aTotIva[ 2, 8 ]
-#define _NBRTIVA3                aTotIva[ 3, 1 ]
-#define _NBASIVA3                aTotIva[ 3, 2 ]
-#define _NPCTIVA3                aTotIva[ 3, 3 ]
-#define _NPCTREQ3                aTotIva[ 3, 4 ]
-#define _NIMPIVA3                aTotIva[ 3, 5 ]
-#define _NIMPREQ3                aTotIva[ 3, 6 ]
-#define _NPNTVER3                aTotIva[ 3, 7 ]
-#define _NIVMIVA3                aTotIva[ 3, 8 ]
-
 memvar cDbf
 memvar cDbfCol
 memvar cDbfPrv
@@ -362,7 +333,7 @@ Static Function initPublics()
    public nTotReq       := 0
    public nTotImp       := 0
    public nTotIvm       := 0
-   public aTotIva       := { { 0,0,nil,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0 } }
+   public aTotIva       := { { 0,0,nil,0,0,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0,0,0 } }
    public aIvaUno       := aTotIva[ 1 ]
    public aIvaDos       := aTotIva[ 2 ]
    public aIvaTre       := aTotIva[ 3 ]
@@ -1811,74 +1782,69 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
       oBrwIva:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwIva:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrwIva:SetArray( aTotIva )
+      oBrwIva:SetArray( aTotIva, , , .f. )
 
       oBrwIva:lHScroll               := .f.
       oBrwIva:lVScroll               := .f.
-      oBrwIva:nMarqueeStyle          := 5
       oBrwIva:lRecordSelector        := .f.
+      oBrwIva:nMarqueeStyle          := 5
 
       oBrwIva:CreateFromResource( 490 )
 
-      with object ( oBrwIva:aCols[ 1 ] )
-         :cHeader       := "Bruto"
-         :bStrData      := {|| if( !Empty( aTotIva[ oBrwIva:nArrayAt, 1 ] ), Trans( aTotIva[ oBrwIva:nArrayAt, 2 ], cPirDiv ), "" ) }
-         :nWidth        := 96
-         :nDataStrAlign := 1
-         :nHeadStrAlign := 1
-         :nFootStrAlign := 1
+      with object ( oBrwIva:AddCol() )
+         :cHeader          := "Base"
+         :bStrData         := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 2 ], cPirDiv ), "" ) }
+         :nWidth           := 76
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
       end with
 
-      with object ( oBrwIva:aCols[ 2 ] )
-         :cHeader       := "Base"
-         :bStrData      := {|| if( !Empty( aTotIva[ oBrwIva:nArrayAt, 2 ] ), Trans( aTotIva[ oBrwIva:nArrayAt, 2 ], cPirDiv ), "" ) }
-         :nWidth        := 96
-         :cEditPicture  := cPirDiv
-         :nDataStrAlign := 1
-         :nHeadStrAlign := 1
-         :nFootStrAlign := 1
+      with object ( oBrwIva:AddCol() )
+         :cHeader          := "Imp. esp."
+         :bStrData         := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 6 ], cPirDiv ), "" ) }
+         :nWidth           := 76
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
       end with
 
-      with object ( oBrwIva:aCols[ 3 ] )
-         :cHeader       := "%" + cImp()
-         :bStrData      := {|| if( !IsNil( aTotIva[ oBrwIva:nArrayAt, 3 ] ), aTotIva[ oBrwIva:nArrayAt, 3 ], "" ) }
-         :bEditValue    := {|| aTotIva[ oBrwIva:nArrayAt, 3 ] }
-         :nWidth        := 50
-         :cEditPicture  := "@E 999.99"
-         :nDataStrAlign := 1
-         :nHeadStrAlign := 1
-         :nFootStrAlign := 1
-         :nEditType     := 1
-         :bEditWhen     := {|| !IsNil( aTotIva[ oBrwIva:nArrayAt, 3 ] ) }
-         :bOnPostEdit   := {|o,x| EdtIva( o, x, aTotIva[ oBrwIva:nArrayAt, 3 ], dbfTmp, D():TiposIva( nView ), oBrwLin ), RecalculaTotal( aTmp ) }
+      with object ( oBrwIva:AddCol() )
+         :cHeader          := "%" + cImp()
+         :bStrData         := {|| if( !IsNil( aTotIva[ oBrwIva:nArrayAt, 3 ] ), aTotIva[ oBrwIva:nArrayAt, 3 ], "" ) }
+         :bEditValue       := {|| aTotIva[ oBrwIva:nArrayAt, 3 ] }
+         :nWidth           := 44
+         :cEditPicture     := "@E 999.99"
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :nFootStrAlign    := 1
+         :nEditType        := 1
+         :bEditWhen        := {|| !IsNil( aTotIva[ oBrwIva:nArrayAt, 3 ] ) }
+         :bOnPostEdit      := {|o,x| EdtIva( o, x, aTotIva[ oBrwIva:nArrayAt, 3 ], dbfTmp, D():TiposIva( nView ), oBrwLin ), RecalculaTotal( aTmp ) }
       end with
 
-      with object ( oBrwIva:aCols[ 4 ] )
-         :cHeader       := "%R.E."
-         :bStrData      := {|| if( !Empty( aTotIva[ oBrwIva:nArrayAt, 4 ] ) .and. aTmp[ _LRECARGO ], Trans( aTotIva[ oBrwIva:nArrayAt, 4 ], "@E 99.9" ), "" ) }
-         :nWidth        := 50
-         :nDataStrAlign := 1
-         :nHeadStrAlign := 1
-         :nFootStrAlign := 1
+      with object ( oBrwIva:AddCol() )
+         :cHeader          := cImp()
+         :bStrData         := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 8 ], cPirDiv ), "" ) }
+         :nWidth           := 76
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
       end with
 
-      with object ( oBrwIva:aCols[ 5 ] )
-         :cHeader       := cImp()
-         :bStrData      := {|| if( !Empty( aTotIva[ oBrwIva:nArrayAt, 5 ] ), Trans( aTotIva[ oBrwIva:nArrayAt, 5 ], cPirDiv ), "" ) }
-         :nWidth        := 80
-         :nDataStrAlign := 1
-         :nHeadStrAlign := 1
-         :nFootStrAlign := 1
+      with object ( oBrwIva:AddCol() )
+         :cHeader          := "% R.E."
+         :bStrData         := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil .and. aTmp[ _LRECARGO ],  Trans( aTotIva[ oBrwIva:nArrayAt, 4 ], "@E 999.99"), "" ) }
+         :nWidth           := 44
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
       end with
 
-      with object ( oBrwIva:aCols[ 6 ] )
-         :cHeader       := "R.E."
-         :bStrData      := {|| if( !Empty( aTotIva[ oBrwIva:nArrayAt, 6 ] ) .and. aTmp[ _LRECARGO ], Trans( aTotIva[ oBrwIva:nArrayAt, 6 ], cPirDiv ), "" ) }
-         :nWidth        := 80
-         :cEditPicture  := cPirDiv
-         :nDataStrAlign := 1
-         :nHeadStrAlign := 1
+      with object ( oBrwIva:AddCol() )
+         :cHeader          := "R.E."
+         :bStrData         := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil .and. aTmp[ _LRECARGO ],  Trans( aTotIva[ oBrwIva:nArrayAt, 9 ], cPirDiv ), "" ) }
+         :nWidth           := 76
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
       end with
+
 
 		/*
 		Cajas de Totales

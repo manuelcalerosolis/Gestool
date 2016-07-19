@@ -826,7 +826,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                                        cCodDiv,;
                                        dFecha,;
                                        uIva[ 14 ],;      // Cuenta de impuestos
-                                       ,;                // Contrapartida                          
+                                       cCtaCli,;         // Contrapartida                          
                                        ,;                // Ptas. Debe                          
                                        cConcepto,;
                                        uIva[ 11 ],;      // Ptas. Haber
@@ -6052,7 +6052,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                                        cConcepto,;                          
                                        uIva[ 8 ] - uIva[ 11 ],;               // Ptas. Haber                          
                                        cFactura,;                          
-                                       nBaseImp,;                       // Base Imponible                          
+                                       nBaseImp,;                             // Base Imponible                          
                                        uIva[ 3 ],;                          
                                        if( lRecargo, uIva[ 4 ], 0 ),;         // Tipo de recargo                         
                                        ,;                          
@@ -6109,7 +6109,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                                        cCodDiv,;
                                        dFecha,;
                                        uIva[ 14 ],;      // Cuenta de impuestos
-                                       ,;                // Contrapartida                          
+                                       cCtaCli,;         // Contrapartida                          
                                        ,;                // Ptas. Debe                          
                                        cConcepto,;
                                        uIva[ 11 ],;      // Ptas. Haber
@@ -6129,16 +6129,9 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
          end if 
 
-
       next
 
    end if
-
-   // Contabilizamos desde aki A3---------------------------------------------
-
-   // if lAplicacionA3()
-   //    oEnlaceContable:Render()
-   // end if 
 
    /*
    Contabilizamos los pagos

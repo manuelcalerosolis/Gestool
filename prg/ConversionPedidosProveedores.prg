@@ -51,12 +51,12 @@ METHOD Dialog()
    
    // Botones -----------------------------------------------------------------
 
-   REDEFINE BUTTON ::oBtnAnterior;
+   REDEFINE BUTTON ::buttonPrior;
       ID          3 ;
       OF          ::oDlg ;
-      ACTION      ( ::BotonAnterior() )
+      ACTION      ( ::botonAnterior() )
 
-   REDEFINE BUTTON ::oBtnSiguiente;
+   REDEFINE BUTTON ::buttonNext;
       ID          IDOK ;
       OF          ::oDlg ;
       ACTION      ( ::botonSiguiente() )

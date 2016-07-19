@@ -460,6 +460,7 @@ CLASS TpvTactil
    METHOD DestroyTemporal()
 
    METHOD CargaValoresDefecto( nUbicacion )
+   METHOD initValoresDefecto()
 
    METHOD CargaContador()
 
@@ -2086,7 +2087,7 @@ METHOD Resource() CLASS TpvTactil
 
    // ::oBtnOrdenComandaActual            := TButtonBmp():ReDefine( 505, {|| ::SelectorOrdenComanda() },    ::oDlg, , , .f., , , "TEXTO", .f., "Sort_az_descending_32" ) //
 
-   ::oBtnOrdenComandaActual      := TButton():ReDefine( 505, {|| ::SelectorOrdenComanda() }, ::oDlg, , , .f., , , "" )
+   ::oBtnOrdenComandaActual      := TButton():ReDefine( 505, {|| ::SelectorOrdenComanda() }, ::oDlg, , , .f., , , "Orden comanda" )
    ::oBtnOrdenComandaActual:setFont( ::oFntNum )
    
    ::oGetCambiarOrden            := TGetHlp():ReDefine( 506, {|u| if( pcount () == 0, ::cOrdenComanda, ::cOrdenComanda := u ) }, ::oDlg )
@@ -4570,25 +4571,25 @@ METHOD AgregarCombinado()
 
    ::oTemporalLinea:Load()
 
-      ::oTemporalLinea:cComTil      := ::oArticulo:Codigo
-      ::oTemporalLinea:cNcmTil      := ::cNombreArticulo()
-      ::oTemporalLinea:cFcmTil      := ::oArticulo:Familia
-      ::oTemporalLinea:nPcmTil      := cRetPreArt( ::oArticulo:Codigo,        ::nTarifaCombinado, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
-      ::oTemporalLinea:nPvpTil      := cRetPreArt( ::oTemporalLinea:cCbaTil,  ::nTarifaCombinado, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
-      ::oTemporalLinea:nCosTil      := ::oArticulo:pCosto
-      ::oTemporalLinea:nComStk      := ::oArticulo:nCtlStock
+   ::oTemporalLinea:cComTil      := ::oArticulo:Codigo
+   ::oTemporalLinea:cNcmTil      := ::cNombreArticulo()
+   ::oTemporalLinea:cFcmTil      := ::oArticulo:Familia
+   ::oTemporalLinea:nPcmTil      := cRetPreArt( ::oArticulo:Codigo,        ::nTarifaCombinado, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
+   ::oTemporalLinea:nPvpTil      := cRetPreArt( ::oTemporalLinea:cCbaTil,  ::nTarifaCombinado, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
+   ::oTemporalLinea:nCosTil      := ::oArticulo:pCosto
+   ::oTemporalLinea:nComStk      := ::oArticulo:nCtlStock
 
-      if ( ::oArticulo:lFacCnv )
-         ::oTemporalLinea:nFcmCnv   := NotCero( ::oArticulo:nFacCnv )
-      end if
+   if ( ::oArticulo:lFacCnv )
+      ::oTemporalLinea:nFcmCnv   := NotCero( ::oArticulo:nFacCnv )
+   end if
 
    ::oTemporalLinea:Save()
 
    // Agregamos kits si los tiene----------------------------------------------
 
-   ::AgregarKit( ::oArticulo:Codigo, ::nUnidades, ::oArticulo:cTipImp1, ::oArticulo:cTipImp2 )
+   ::agregarKit( ::oArticulo:Codigo, ::nUnidades, ::oArticulo:cTipImp1, ::oArticulo:cTipImp2 )
    
-   ::SetCombinando( .f. )
+   ::setCombinando( .f. )
 
    CursorWE()
 
@@ -5773,7 +5774,8 @@ METHOD SelecionaCliente() CLASS TpvTactil
          // Comprobamos que han cambiado la tarifa del cliente-----------------
 
          if ( ::oTemporalLinea:RecCount() != 0 ) .and. ;
-            ApoloMsgNoYes( "La tarifa del cliente ha cambiado, ¿desea actualizar los precios de todas las líneas?", "Confirmación", .t. )
+            ApoloMsgNoYes( "La tarifa del cliente ha cambiado, ¿desea actualizar los precios de todas las líneas?",;
+                           "Confirmación", .t. )
 
             ::ActualizaTarifaCliente()
 
@@ -7416,23 +7418,25 @@ METHOD CargaValoresDefecto( nUbicacion, lInit ) CLASS TpvTactil
       ::oTiketCabecera:nUbiTik   := nUbicacion
    end if
 
-   if lInit
-
-      ::oTiketCabecera:lAbierto  := .t.
-      ::oTiketCabecera:lCloTik   := .f.
-      ::oTiketCabecera:lSndDoc   := .t.
-
-      if !Empty( cDefCli() )
-         ::SetTarifaSolo(        Max( oRetFld( cDefCli(), ::oCliente, "nTarifa" ), 1 ) )
-         ::SetTarifaCombinado(   Max( oRetFld( cDefCli(), ::oCliente, "nTarCmb" ), 1 ) )
-      end if
-
-   end if
-
    if !Empty( ::sTotal )
       ::oTiketCabecera:nTotNet   := ::sTotal:TotalBase()
       ::oTiketCabecera:nTotIva   := ::sTotal:TotalIva()
       ::oTiketCabecera:nTotTik   := ::sTotal:TotalDocumento()
+   end if
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD initValoresDefecto() CLASS TpvTactil
+
+   ::oTiketCabecera:lAbierto  := .t.
+   ::oTiketCabecera:lCloTik   := .f.
+   ::oTiketCabecera:lSndDoc   := .t.
+
+   if !empty( cDefCli() )
+      ::SetTarifaSolo(        Max( oRetFld( cDefCli(), ::oCliente, "nTarifa" ), 1 ) )
+      ::SetTarifaCombinado(   Max( oRetFld( cDefCli(), ::oCliente, "nTarCmb" ), 1 ) )
    end if
 
 Return ( Self )
@@ -9650,7 +9654,9 @@ METHOD InitDocumento( nUbicacion )
 
    // Cargamos los valores por defecto--------------------------------------
 
-   ::CargaValoresDefecto( nUbicacion, .t. )
+   ::CargaValoresDefecto( nUbicacion )
+
+   ::initValoresDefecto()
 
    CursorWE()
 
@@ -10033,7 +10039,8 @@ METHOD SelectorOrdenComanda()
 
       textoOrdenComanda          := ::oOrdenComanda:cNombre( idOrdenComanda )   
       
-      ::setTextButtonOrdenComandaActual( textoOrdenComanda )
+      // ::setTextButtonOrdenComandaActual( textoOrdenComanda )
+
       ::agregarOrdenComanda( textoOrdenComanda )
 
    end if 
@@ -10047,8 +10054,11 @@ METHOD initOrdenComanda()
    local idOrdenComanda           := ::oOrdenComanda:getFirstOrderId()
 
    if !empty( idOrdenComanda ) 
+      
       ::setCodigoOrdenComandaActual( idOrdenComanda ) 
-      ::setTextButtonOrdenComandaActual( idOrdenComanda )
+
+      // ::setTextButtonOrdenComandaActual( idOrdenComanda )
+      
    end if 
 
 RETURN ( "" )

@@ -21,7 +21,6 @@ CLASS TConversionDocumentos
 
    DATA buttonPrior
    DATA buttonNext
-   DATA oBtnSalir
 
    DATA nView
    DATA lOpenFiles
