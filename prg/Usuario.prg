@@ -46,7 +46,9 @@ REQUEST DBFCDX
 #define _CTIPINCI                35      //   C      3      0 
 #define _CCODSALA                36      
 #define _CSERDEF                 37      //   C      1      0
-#define _LNOTUNI                 38      //   C      1      0
+#define _LNOTUNI                 38      //   L      1      0
+#define _LNOTCOB                 39      //   L      1      0
+#define _LNOTNOT                 40      //   L      1      0
 
 //----------------------------------------------------------------------------//
 //Comenzamos la parte de código que se compila para el ejecutable normal
@@ -601,6 +603,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
 
       REDEFINE CHECKBOX aGet[ _LNOTUNI ] VAR aTmp[ _LNOTUNI ] ;
          ID       410 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg  
+
+      REDEFINE CHECKBOX aGet[ _LNOTCOB ] VAR aTmp[ _LNOTCOB ] ;
+         ID       420 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg  
+
+      REDEFINE CHECKBOX aGet[ _LNOTNOT ] VAR aTmp[ _LNOTNOT ] ;
+         ID       430 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg   
 
@@ -2855,8 +2867,9 @@ Function aItmUsuario()
                      { "cTipInci",  "C",  3,  0, "Tipo de incidencia por defecto" },;
                      { "cCodSala",  "C",  3,  0, "Código de sala por defecto para este usuario" },;
                      { "cSerDef",   "C",  1,  0, "Serie de facturación por defecto" },;
-                     { "lNotUni",   "L",  1,  0, "Lógico para no modificar las unidades" } }
-
+                     { "lNotUni",   "L",  1,  0, "Lógico para no modificar las unidades" },;
+                     { "lNotCob",   "L",  1,  0, "Lógico no permitir cobros" },;
+                     { "lNotNot",   "L",  1,  0, "Lógico no permitir entregar notas" } }
 
 Return ( aBase )
 
