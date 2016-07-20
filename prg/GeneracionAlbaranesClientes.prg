@@ -396,8 +396,8 @@ METHOD processLine( oLine )
    debug( oLine, "oLine" )
    debug( oDocument, "oDocument" )
 
-   if D():gotoPedidoIdAlbaranesClientes( oLine:getDocumentId(), ::nWiew )
-      oDocument:setValue( "PedidoCliente", ( D():AlbaranesClientes( ::nWiew ) )->cNumPed )
+   if D():gotoPedidoIdAlbaranesClientes( oLine:getDocumentId(), ::nView )
+      oDocument:setValue( "PedidoCliente", ( D():AlbaranesClientes( ::nView ) )->cNumPed )
    end if
 
    ::oDocumentHeaders:addLines( oDocument )

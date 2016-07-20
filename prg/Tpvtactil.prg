@@ -10577,7 +10577,7 @@ METHOD isLineaValidaComanda( lCopia )
    end if 
 
    if ( ::oTiketLinea:lPeso .and. ::nUnidadesLinea() == 0 )
-      Return .f.
+      Return .t.
    end if 
 
 Return (  ::nUnidadesImpresas() < ::nUnidadesLinea() ) 
