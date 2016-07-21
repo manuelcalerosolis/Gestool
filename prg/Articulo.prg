@@ -2188,7 +2188,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE );
          OF       fldGeneral
 
-   bmpImage             := TImage():ReDefine( 500,, cFileBmpName( cImgArticulo ( aTmp ) ), oDlg, , , .f., .t., , , .f. )
+   bmpImage             := TImage():ReDefine( 500,, cFileBmpName( cImgArticulo( aTmp ) ), oDlg, , , .f., .t., , , .f. )
 
    bmpImage:SetColor( , GetSysColor( 15 ) )
    bmpImage:bLClicked   := {|| ShowImage( bmpImage ) }
@@ -4952,29 +4952,29 @@ static function ImportaImagenes( aTmp, oBrwImg )
    local lDefault       := .f.
    local cDirectorio    := cDirectorioImagenes()
    local cPrefix        := cDirectorio + AllTrim( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "codigo" ) ) ] )
-   local nOrdAnt        := ( dbfTmpImg )->( OrdSetFocus( "cImgArt" ) )
 
    /*
    Cogemos las imágenes que hayan en el directorio para este artículo----------
    */
 
-   aImagenes            := Directory( cPrefix + "*.*" )
+   aImagenes            := directory( cPrefix + "*.*" )
    
    for each aImg in aImagenes
       
-      cImage := Upper( Padr( cDirectorio + aImg[ 1 ], 230 ) )
+      cImage            := alltrim( upper( cDirectorio + aImg[ 1 ] ) )
 
       /*
       Buscamos para ver si ya está introducida ésta imagen, para que no se repitan
       */
 
-      if !( dbfTmpImg )->( dbSeek( cImage ) )
+      ( dbfTmpImg )->( __dbLocate( { || alltrim( upper( ( dbfImg )->cImgArt ) == cImage ) } ) )
+      if !( dbfTmpImg )->( found() )
 
          ( dbfTmpImg )->( dbAppend() )
          
-         ( dbfTmpImg )->cCodArt  := AllTrim( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "codigo" ) ) ] )
+         ( dbfTmpImg )->cCodArt  := alltrim( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "codigo" ) ) ] )
+         ( dbfTmpImg )->cNbrArt  := alltrim( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nombre" ) ) ] )
          ( dbfTmpImg )->cImgArt  := cImage
-         ( dbfTmpImg )->cNbrArt  := AllTrim( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nombre" ) ) ] )
 
          ( dbfTmpImg )->( dbUnLock() )
 
@@ -4986,44 +4986,35 @@ static function ImportaImagenes( aTmp, oBrwImg )
    Comprobamos si hay alguna imagen por defecto, si no es así marcamos la primera
    */
 
-   lDefault       := .f.
-
-   ( dbfTmpImg )->( dbGoTop() )
-
-   while !( dbfTmpImg )->( Eof() )
+   ( dbfTmpImg )->( dbgotop() )
+   while !( dbfTmpImg )->( eof() )
 
       if ( dbfTmpImg )->lDefImg
-         lDefault := .t.
+         lDefault    := .t.
       end if
 
-      ( dbfTmpImg )->( dbSkip() )
+      ( dbfTmpImg )->( dbskip() )
 
    end while
 
    if !lDefault
 
-      ( dbfTmpImg )->( dbGoTop() )         
+      ( dbfTmpImg )->( dbgotop() )         
 
       if dbLock( dbfTmpImg )
          ( dbfTmpImg )->lDefImg  := .t.
-         ( dbfTmpImg )->( dbUnLock() )
+         ( dbfTmpImg )->( dbunlock() )
       end if 
 
    end if
 
-   /*
-   Volvemos al orden que traiamos----------------------------------------------
-   */
-
-   ( dbfTmpImg )->( OrdSetFocus( nOrdAnt ) )
-
-   ( dbfTmpImg )->( dbGoTop() )
+   ( dbfTmpImg )->( dbgotop() )
 
    /*
    Refrescamos el browse antes de salir----------------------------------------
    */
    
-   if !Empty( oBrwImg )
+   if !empty( oBrwImg )
       oBrwImg:Refresh()
    end if
 
@@ -5567,13 +5558,13 @@ Static Function BeginTrans( aTmp, nMode )
    dbUseArea( .t., cLocalDriver(), filTmpVta, cCheckArea( "VtaArt", @dbfTmpVta ), .f. )
 
    ( dbfTmpVta )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
-   ( dbfTmpVta )->( OrdCreate( filTmpVta, "cCodArt", "cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2", {|| Field->cCodArt + Field->cCodPr1 + Field->cCodPr2 + Field->cValPr1 + Field->cValPr2 } ) )
+   ( dbfTmpVta )->( OrdCreate( filTmpVta, "cCodArt", "cCodArt + cCodPr1 + cCodPr2 + cValpr1 + cValPr2", {|| Field->cCodArt + Field->cCodPr1 + Field->cCodPr2 + Field->cValpr1 + Field->cValPr2 } ) )
 
    ( dbfTmpVta )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-   ( dbfTmpVta )->( ordCreate( filTmpVta, "cValPr1", "cCodArt + CVALPR1", {|| Field->cCodArt + Field->CVALPR1 } ) )
+   ( dbfTmpVta )->( ordCreate( filTmpVta, "cValPr1", "cCodArt + cValPr1", {|| Field->cCodArt + Field->cValPr1 } ) )
 
    ( dbfTmpVta )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-   ( dbfTmpVta )->( ordCreate( filTmpVta, "cValPr2", "cCodArt + CVALPR2", {|| Field->cCodArt + Field->CVALPR2 } ) )
+   ( dbfTmpVta )->( ordCreate( filTmpVta, "cValPr2", "cCodArt + cValPr2", {|| Field->cCodArt + Field->cValPr2 } ) )
    
    if nMode != APPD_MODE .and. ( dbfArtVta )->( dbSeek( cCodArt ) )
       while ( dbfArtVta )->cCodArt == cCodArt .and. !( dbfArtVta )->( eof() )
@@ -5632,9 +5623,6 @@ Static Function BeginTrans( aTmp, nMode )
 
    ( dbfTmpImg )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
    ( dbfTmpImg )->( OrdCreate( filTmpImg, "cCodArt", "cCodArt", {|| Field->cCodArt } ) )
-
-   ( dbfTmpImg )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
-   ( dbfTmpImg )->( OrdCreate( filTmpImg, "cImgArt", "cImgArt", {|| Field->cImgArt } ) )
 
    aImgsArticulo  := {}
 
@@ -5727,6 +5715,7 @@ Return ( lErrors )
 Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpComanda1, oImpComanda2, aImpComanda, lActualizaWeb )
 
    local i
+   local cImage
    local nIdImagen         := 0
    local cCod
    local cWebShop
@@ -5793,53 +5782,56 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LastChg" ) ) ] := GetSysDate()
 
       /*
-      -------------------------------------------------------------------------
       Añadimos la imágen del táctil a la tabla de imágenes---------------------
-      -------------------------------------------------------------------------
       */
 
-      if !Empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cImagen" ) ) ] )
+      cImage         := alltrim( upper( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cImagen" ) ) ] ) )
 
-         if !dbSeekInOrd( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cImagen" ) ) ], "cImgArt", dbfTmpImg )
+      if !empty( cImage )
 
-            lDefault                 := ( dbfTmpImg )->( LastRec() ) == 0
+         ( dbfTmpImg )->( __dbLocate( {|| cImage == alltrim( upper( ( dbfTmpImg )->cImgArt ) ) } ) )
+         if !( dbfTmpImg )->( found() )
 
-            ( dbfTmpImg )->( dbAppend() )
+            lDefault                := ( dbfTmpImg )->( lastrec() ) == 0
+
+            ( dbfTmpImg )->( dbappend() )
             ( dbfTmpImg )->cCodArt  := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ]
-            ( dbfTmpImg )->cImgArt  := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cImagen" ) ) ]
+            ( dbfTmpImg )->cImgArt  := cImage
             ( dbfTmpImg )->lDefImg  := lDefault
-
-            ( dbfTmpImg )->( dbUnLock() )            
+            ( dbfTmpImg )->( dbunlock() )            
 
          end if
              
       end if
 
       /*
-      -------------------------------------------------------------------------
       Añadimos las imágenes de las propiedades---------------------------------
-      -------------------------------------------------------------------------
       */
 
-      nRec  := ( dbfTmpVta )->( Recno() )
+      nRec        := ( dbfTmpVta )->( Recno() )
 
       ( dbfTmpVta )->( dbGoTop() )
-
       while !( dbfTmpVta )->( Eof() )
 
-         if !Empty( ( dbfTmpVta )->cImgWeb )                      .and.;
-            !dbSeekInOrd( AllTrim( Upper( ( dbfTmpVta )->cImgWeb ) ), "cImgArt", dbfTmpImg )
+         cImage   := alltrim( upper( ( dbfTmpVta )->cImgWeb ) )
 
-            lDefault                 := ( dbfTmpImg )->( LastRec() ) == 0
+         if !empty( cImage )
 
-            ( dbfTmpImg )->( dbAppend() )
-            ( dbfTmpImg )->cCodArt   := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ]
-            ( dbfTmpImg )->cImgArt   := AllTrim( Upper( ( dbfTmpVta )->cImgWeb ) )
-            ( dbfTmpImg )->lDefImg   := lDefault
+            ( dbfTmpImg )->( __dbLocate( {|| cImage == alltrim( upper( ( dbfTmpImg )->cImgArt ) ) } ) )
+            if !( dbfTmpImg )->( found() )
 
-            ( dbfTmpImg )->( dbUnLock() )            
+               lDefault                 := ( dbfTmpImg )->( lastrec() ) == 0
 
-         end if   
+               ( dbfTmpImg )->( dbappend() )
+               ( dbfTmpImg )->cCodArt   := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ]
+               ( dbfTmpImg )->cImgArt   := cImage
+               ( dbfTmpImg )->lDefImg   := lDefault
+
+               ( dbfTmpImg )->( dbunlock() )            
+
+            end if   
+
+         end if 
 
          ( dbfTmpVta )->( dbSkip() )
              
@@ -5848,15 +5840,12 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       ( dbfTmpVta )->( dbGoTo( nRec ) )
 
       /*
-      -------------------------------------------------------------------------
       Dejamos almenos una imágen por defecto-----------------------------------
-      -------------------------------------------------------------------------
       */
 
       lDefault       := .f.
 
       ( dbfTmpImg )->( dbGoTop() )
-
       while !( dbfTmpImg )->( eof() )
 
          if ( dbfTmpImg )->lDefImg
@@ -7669,7 +7658,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
                      if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodArt" ) ) ] + aVal1:cCodPrp + Space( 40 ) + aVal1:cValPrp + Space( 40 ) ) )
 
                         aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] := aVal1:cCodPrp
-                        aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
+                        aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr1" ) ) ] := aVal1:cValPrp
                         aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
                         WinGather( aTmp, , dbfTmpVta, oBrw, EDIT_MODE, , .f. )
@@ -7679,7 +7668,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
                      else
 
                         aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] := aVal1:cCodPrp
-                        aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
+                        aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr1" ) ) ] := aVal1:cValPrp
                         aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ] := mSer2Mem()
 
                         WinGather( aTmp, , dbfTmpVta, oBrw, APPD_MODE, , .f. )
@@ -7697,7 +7686,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
                if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodArt" ) ) ] + aValPrp1[ oBrwPrp1:nArrayAt ]:cCodPrp + Space( 20 ) + aValPrp1[oBrwPrp1:nArrayAt]:cValPrp + Space( 20 ) ) )
 
                   aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
-                  aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
+                  aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
                   aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
                   WinGather( aTmp, , dbfTmpVta, oBrw, EDIT_MODE, , .f. )
@@ -7707,7 +7696,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
                else
 
                   aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
-                  aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
+                  aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
                   aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
                   WinGather( aTmp, , dbfTmpVta, oBrw, APPD_MODE, , .f. )
@@ -7752,9 +7741,9 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
                            if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodArt" ) ) ] + aVal1:cCodPrp + aVal2:cCodPrp + aVal1:cValPrp + aVal2:cValPrp ) )
 
                               aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] := aVal1:cCodPrp
-                              aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
+                              aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr1" ) ) ] := aVal1:cValPrp
                               aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ] := aVal2:cCodPrp
-                              aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aVal2:cValPrp
+                              aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr2" ) ) ] := aVal2:cValPrp
                               aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
                               WinGather( aTmp, , dbfTmpVta, oBrw, EDIT_MODE, , .f. )
@@ -7764,9 +7753,9 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
                            else
 
                               aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] := aVal1:cCodPrp
-                              aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
+                              aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr1" ) ) ] := aVal1:cValPrp
                               aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ] := aVal2:cCodPrp
-                              aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aVal2:cValPrp
+                              aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr2" ) ) ] := aVal2:cValPrp
                               aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
                               WinGather( aTmp, , dbfTmpVta, oBrw, APPD_MODE, , .f. )
@@ -7794,9 +7783,9 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
                         if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodArt" ) ) ] + aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp + aVal2:cCodPrp + aValPrp1[oBrwPrp1:nArrayAt]:cValPrp + aVal2:cValPrp ) )
 
                            aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
-                           aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ] := aVal2:cCodPrp
-                           aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aVal2:cValPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr2" ) ) ] := aVal2:cValPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
                            WinGather( aTmp, , dbfTmpVta, oBrw, EDIT_MODE, , .f. )
@@ -7806,9 +7795,9 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
                         else
 
                            aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
-                           aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ] := aVal2:cCodPrp
-                           aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aVal2:cValPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr2" ) ) ] := aVal2:cValPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
                            WinGather( aTmp, , dbfTmpVta, oBrw, APPD_MODE, , .f. )
@@ -7834,9 +7823,9 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
                         if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodArt" ) ) ] + aVal1:cCodPrp + aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp + aVal1:cValPrp + aValPrp2[oBrwPrp2:nArrayAt]:cValPrp ) )
 
                            aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] := aVal1:cCodPrp
-                           aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr1" ) ) ] := aVal1:cValPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp
-                           aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cValPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cValPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
                            WinGather( aTmp, , dbfTmpVta, oBrw, EDIT_MODE, , .f. )
@@ -7846,9 +7835,9 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
                         else
 
                            aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] := aVal1:cCodPrp
-                           aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr1" ) ) ] := aVal1:cValPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp
-                           aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cValPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cValPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
                            WinGather( aTmp, , dbfTmpVta, oBrw, APPD_MODE, , .f. )
@@ -7870,9 +7859,9 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
                   if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "cCodArt" ) ) ] + aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp + aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp + aValPrp1[oBrwPrp1:nArrayAt]:cValPrp + aValPrp2[oBrwPrp2:nArrayAt]:cValPrp ) )
 
                      aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
-                     aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
+                     aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
                      aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp
-                     aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cValPrp
+                     aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cValPrp
                      aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
                      WinGather( aTmp, , dbfTmpVta, oBrw, EDIT_MODE, , .f. )
@@ -7882,9 +7871,9 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
                   else
 
                      aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
-                     aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
+                     aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
                      aTmp[ ( dbfTmpVta )->( FieldPos( "cCodPr2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp
-                     aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cValPrp
+                     aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cValPrp
                      aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
                      WinGather( aTmp, , dbfTmpVta, oBrw, APPD_MODE, , .f. )
@@ -12385,7 +12374,7 @@ function SynArt( cPath )
 
          if !empty( ( dbfArt )->cImagenWeb )
 
-            ( dbfImg )->( __dbLocate( { || Rtrim( ( dbfImg )->cImgArt ) == Rtrim( ( dbfArt )->cImagenWeb ) } ) )
+            ( dbfImg )->( __dbLocate( { || alltrim( upper( ( dbfArt )->cImagenWeb ) ) == alltrim( upper( ( dbfImg )->cImgArt ) ) } ) )
             if !( dbfImg )->( found() )
 
                ( dbfImg )->( dbAppend() )
@@ -13220,7 +13209,7 @@ Method Process()
             ( tmpArtDiv )->( dbgotop() )
             while !( tmpArtDiv )->( eof() )
 
-               if ( dbfArtVta )->( dbSeek( ( tmpArtDiv )->cCodArt + ( tmpArtDiv )->cCodPr1 + ( tmpArtDiv )->cCodPr2 + ( tmpArtDiv )->CVALPR1 + ( tmpArtDiv )->CVALPR2 ) )
+               if ( dbfArtVta )->( dbSeek( ( tmpArtDiv )->cCodArt + ( tmpArtDiv )->cCodPr1 + ( tmpArtDiv )->cCodPr2 + ( tmpArtDiv )->cVAlpR1 + ( tmpArtDiv )->cValPr2 ) )
                   if !::oSender:lServer
                      dbPass( tmpArtDiv, dbfArtVta )
                   end if
@@ -15171,10 +15160,10 @@ FUNCTION rxArticulo( cPath, cDriver )
       ( dbfArt )->( __dbPack() )
 
       ( dbfArt )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfArt )->( ordCreate( cPath + "ArtDiv.Cdx", "cCodArt", "cCodArt + cCodPr1 + cCodPr2 + CVALPR1 + CVALPR2", {|| Field->cCodArt + Field->cCodPr1 + Field->cCodPr2 + Field->CVALPR1 + Field->CVALPR2 } ) )
+      ( dbfArt )->( ordCreate( cPath + "ArtDiv.Cdx", "cCodArt", "cCodArt + cCodPr1 + cCodPr2 + cVAlpR1 + cValPr2", {|| Field->cCodArt + Field->cCodPr1 + Field->cCodPr2 + Field->cVAlpR1 + Field->cValPr2 } ) )
 
       ( dbfArt )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfArt )->( ordCreate( cPath + "ArtDiv.Cdx", "cValPrp", "cCodArt + CVALPR1 + CVALPR2", {|| Field->cCodArt + Field->CVALPR1 + Field->CVALPR2 } ) )
+      ( dbfArt )->( ordCreate( cPath + "ArtDiv.Cdx", "cValPrp", "cCodArt + cVAlpR1 + cValPr2", {|| Field->cCodArt + Field->cVAlpR1 + Field->cValPr2 } ) )
 
       ( dbfArt )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( dbfArt )->( ordCreate( cPath + "ArtDiv.Cdx", "cCodigo", "cCodArt", {|| Field->cCodArt } ) )
@@ -15246,7 +15235,7 @@ FUNCTION rxArticulo( cPath, cDriver )
       ( dbfArt )->( __dbPack() )
 
       ( dbfArt )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfArt )->( ordCreate( cPath + "ArtLbl.Cdx", "cCodArt", "cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2", {|| Field->cCodArt + Field->cCodPr1 + Field->cCodPr2 + Field->cValPr1 + Field->cValPr2 } ) )
+      ( dbfArt )->( ordCreate( cPath + "ArtLbl.Cdx", "cCodArt", "cCodArt + cCodPr1 + cCodPr2 + cValpr1 + cValPr2", {|| Field->cCodArt + Field->cCodPr1 + Field->cCodPr2 + Field->cValpr1 + Field->cValPr2 } ) )
 
       ( dbfArt )->( dbCloseArea() )
    else
@@ -15267,9 +15256,6 @@ FUNCTION rxArticulo( cPath, cDriver )
 
       ( dbfArt )->( ordCondSet( "!Deleted() .and. lDefImg", {|| !Deleted() .and. Field->lDefImg } ) )
       ( dbfArt )->( ordCreate( cPath + "ArtImg.Cdx", "lDefImg", "cCodArt", {|| Field->cCodArt } ) )
-
-      ( dbfArt )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfArt )->( ordCreate( cPath + "ArtImg.Cdx", "cImgArt", "cImgArt", {|| Field->cImgArt } ) )
 
       ( dbfArt )->( dbCloseArea() )
    else
@@ -18948,25 +18934,24 @@ Function cArticulo( aGet, dbfArt, aGet2, lCodeBar )
 RETURN lValid
 
 //---------------------------------------------------------------------------//
+/*
+Metemos las imágenes en un array para las propiedades-----------------
+*/
 
 static function lCargaImagenes()
 
    local oTemporal
 
-   aImgsArticulo      := {}
+   aImgsArticulo              := {}
 
    ( dbfTmpImg )->( dbGoTop() )
 
    while !( dbfTmpImg )->( Eof() )
 
-         /*
-         Metemos las imágenes en un array para las propiedades-----------------
-         */
-
-         oTemporal                     := SImagenes()
-         oTemporal:lSelect             := .f.
-         oTemporal:Ruta                := ( dbfTmpImg )->cImgArt
-         oTemporal:ToolTip             := ( dbfTmpImg )->cNbrArt
+         oTemporal            := SImagenes()
+         oTemporal:lSelect    := .f.
+         oTemporal:Ruta       := ( dbfTmpImg )->cImgArt
+         oTemporal:ToolTip    := ( dbfTmpImg )->cNbrArt
 
          aAdd( aImgsArticulo, oTemporal )
 
