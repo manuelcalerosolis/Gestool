@@ -726,7 +726,7 @@ CLASS TpvTactil
 
    // Documentos---------------------------------------------------------------
 
-   METHOD GuardaDocumento( lZap, nSave )
+   METHOD GuardaDocumento( lZap )
 
    METHOD GuardaDocumentoAlbaran()
 
@@ -2683,9 +2683,7 @@ METHOD StartResource() CLASS TpvTactil
    ::nDialogWidth          := ::oDlg:nWidth()
    ::nDialogHeight         := ::oDlg:nHeight()
  
-   /*
-   Cargamos las columnas del browse--------------------------------------------
-   */
+   // Cargamos las columnas del browse--------------------------------------------
 
    ::oBrwLineas:Load()
 
@@ -4102,7 +4100,7 @@ METHOD CreateTemporal() CLASS TpvTactil
          ::oTemporalCobro:AddField( aFieldCol[ 1 ], aFieldCol[ 2 ], aFieldCol[ 3 ], aFieldCol[ 4 ], "", , , , aFieldCol[ 5 ] )
       next
 
-      INDEX TO ( ::cTemporalCobro ) TAG "TikP" ON Str( Recno() )                             COMMENT "Orden"   NODELETED OF ::oTemporalCobro
+      INDEX TO ( ::cTemporalCobro ) TAG "TikP" ON Str( Recno() ) COMMENT "Orden" NODELETED OF ::oTemporalCobro
 
    END DATABASE ::oTemporalCobro
 
@@ -6879,7 +6877,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
+METHOD GuardaDocumento( lZap ) CLASS TpvTactil
 
    local oError
    local oBlock
@@ -6888,7 +6886,6 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
    // ::DisableDialog()
 
    DEFAULT lZap                     := .t.
-   DEFAULT nSave                    := SAVTIK
 
    ::CargaValoresDefecto()
 
@@ -6897,7 +6894,7 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
 
       BeginTransaction()
 
-      // Si el numero de ticket esta vacio debemos tomar un nuevo numero----------
+      // Si el numero de ticket esta vacio debemos tomar un nuevo numero-------
 
       if ::lBlankTicket()
 
@@ -6907,17 +6904,17 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
 
       else
          
-         if !lZap
-            
-            // Solo salvar pq continuo editando--------------------------------
-            
-            ::oTiketCabecera:SaveFields()
-
-         else 
+         if lZap
             
             // Salvar y desbloquear pq finalizao la edición--------------------
             
             ::oTiketCabecera:SaveUnLock()
+
+         else 
+            
+            // Solo salvar pq continuo editando--------------------------------
+            
+            ::oTiketCabecera:SaveFields()
             
          end if
 
@@ -6931,7 +6928,7 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
          end while
       end if
 
-      // Guarda las lineas del ticket---------------------------------------------
+      // Guarda las lineas del ticket------------------------------------------
 
       ::oTemporalLinea:GetStatus()
       ::oTemporalLinea:OrdSetFocus( "lRecNum" )
@@ -6958,10 +6955,6 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
 
       ::oTemporalLinea:SetStatus()
 
-      // Cargamos valores por defecto------------------------------------------
-
-      // ::CargaValoresDefecto()
-
       // Vaciamos las lineas si estamos en un nuevo ticket---------------------
 
       if lZap
@@ -6978,14 +6971,41 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
 
       CommitTransaction()
 
-      // Barra de progreso vuelve a su estado-------------------------------------
+      // Barra de progreso vuelve a su estado----------------------------------
 
       ::oProgressBar:Set( 0 )
       ::oProgressBar:Refresh()
 
-      // Encendemos el flag para cargar de nuevo el usuario-----------------------
+      // Encendemos el flag para cargar de nuevo el usuario--------------------
 
       ::lGetUsuario                 := .t.
+
+      // Cargamos valores por defecto------------------------------------------
+
+      if lZap
+
+         // Inicializa los valores para el documento---------------------------
+
+         ::InitDocumento( ubiGeneral )
+
+         // Cargamos las tarifas-----------------------------------------------
+
+         ::SetTarifaSolo(        Max( uFieldEmpresa( "nPreTPro" ), 1 ) )
+         ::SetTarifaCombinado(   Max( uFieldEmpresa( "nPreTCmb" ), 1 ) )
+         
+         // Pintamos la información de la zona donde nos encontramos-----------
+
+         ::SetUbicacion()
+
+         // Datos del documento------------------------------------------------
+
+         ::SetInfo()
+
+         // Ponemos el total---------------------------------------------------
+
+         ::SetTotal()
+
+      end if 
 
    RECOVER USING oError
 
@@ -7285,9 +7305,7 @@ Return ( lElimina )
 
 //---------------------------------------------------------------------------//
 
-METHOD CargaValoresDefecto( nUbicacion, lInit ) CLASS TpvTactil
-
-   DEFAULT lInit                 := .f.
+METHOD CargaValoresDefecto( nUbicacion ) CLASS TpvTactil
 
    /*
    Tipo del ticket-------------------------------------------------------------
@@ -7477,12 +7495,12 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
 
    /*
    Si el docmuento no es nuevo y no tiene lineas lo tengo q borrar-------------
-   */
 
    if ::lEmptyLineas()
       ::EliminarDocumento( ::cNumeroTicket() )
       lGuardaDocumento     := .f.
    end if
+   */
 
    ::DisableDialog()
 
@@ -7609,12 +7627,12 @@ METHOD OnClickGeneral() CLASS TpvTactil
 
    /*
    Si el docmuento no es nuevo y no tiene lineas lo tengo q borrar-------------
-   */
 
    if ::lEmptyLineas()
       ::EliminarDocumento( ::cNumeroTicket() )
       lGuardaDocumento     := .f.
    end if
+   */
 
    ::DisableDialog()
 
@@ -7697,12 +7715,12 @@ METHOD OnClickParaRecoger() CLASS TpvTactil
 
    /*
    Si el docmuento no es nuevo y no tiene lineas lo tengo q borrar-------------
-   */
 
    if ::lEmptyLineas()
       ::EliminarDocumento( ::cNumeroTicket() )
       lGuardaDocumento     := .f.
    end if
+   */
 
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -7789,12 +7807,12 @@ METHOD OnClickParaLlevar() CLASS TpvTactil
 
    /*
    Si el docmuento no es nuevo y no tiene lineas lo tengo q borrar-------------
-   */
 
    if ::lEmptyLineas()
       ::EliminarDocumento( ::cNumeroTicket() )
       lGuardaDocumento     := .f.
    end if
+   */
 
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -7887,12 +7905,12 @@ METHOD OnClickEncargar() CLASS TpvTactil
 
    /*
    Si el docmuento no es nuevo y no tiene lineas lo tengo q borrar-------------
-   */
 
    if ::lEmptyLineas()
       ::EliminarDocumento( ::cNumeroTicket() )
       lGuardaDocumento     := .f.
    end if
+   */
 
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -9314,7 +9332,7 @@ METHOD GeneraVale() CLASS TpvTactil
       Ahora metemos una linea-----------------------------------------------------
       */
 
-      while ( ::oTiketLinea:Seek( ::cNumeroTicket() ) .and. !::oTiketLinea:eof() )
+      while ::oTiketLinea:Seek( ::cNumeroTicket() ) .and. !::oTiketLinea:eof() 
          ::oTiketLinea:Delete(.f.)
       end while
 
@@ -9657,7 +9675,7 @@ METHOD InitDocumento( nUbicacion )
 
    // Cargamos los valores por defecto--------------------------------------
 
-   ::CargaValoresDefecto( nUbicacion )
+   ::cargaValoresDefecto( nUbicacion )
 
    ::initValoresDefecto()
 
@@ -10396,7 +10414,7 @@ METHOD OnClickEliminarTicket()
 
    ::OnClickGeneral()
 
-   //
+   // habilitamos el dialogo---------------------------------------------------
 
    ::enableDialog()
 
