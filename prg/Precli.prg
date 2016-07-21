@@ -189,38 +189,6 @@ Definici¢n de la base de datos de lineas de detalle
 #define _CREFAUX2                 87
 #define _NPOSPRINT                88
 
-/*
-Array para impuestos
-*/
-
-#define _NBRTIVA1                aTotIva[ 1, 1 ]
-#define _NBASIVA1                aTotIva[ 1, 2 ]
-#define _NPCTIVA1                aTotIva[ 1, 3 ]
-#define _NPCTREQ1                aTotIva[ 1, 4 ]
-#define _NPNTVER1                aTotIva[ 1, 5 ]
-#define _NIVMIVA1                aTotIva[ 1, 6 ]
-#define _NTRNIVA1                aTotIva[ 1, 7 ]
-#define _NIMPIVA1                aTotIva[ 1, 8 ]
-#define _NIMPREQ1                aTotIva[ 1, 9 ]
-#define _NBRTIVA2                aTotIva[ 2, 1 ]
-#define _NBASIVA2                aTotIva[ 2, 2 ]
-#define _NPCTIVA2                aTotIva[ 2, 3 ]
-#define _NPCTREQ2                aTotIva[ 2, 4 ]
-#define _NPNTVER2                aTotIva[ 2, 5 ]
-#define _NIVMIVA2                aTotIva[ 2, 6 ]
-#define _NTRNIVA2                aTotIva[ 2, 7 ]
-#define _NIMPIVA2                aTotIva[ 2, 8 ]
-#define _NIMPREQ2                aTotIva[ 2, 9 ]
-#define _NBRTIVA3                aTotIva[ 3, 1 ]
-#define _NBASIVA3                aTotIva[ 3, 2 ]
-#define _NPCTIVA3                aTotIva[ 3, 3 ]
-#define _NPCTREQ3                aTotIva[ 3, 4 ]
-#define _NPNTVER3                aTotIva[ 3, 5 ]
-#define _NIVMIVA3                aTotIva[ 3, 6 ]
-#define _NTRNIVA3                aTotIva[ 3, 7 ]
-#define _NIMPIVA3                aTotIva[ 3, 8 ]
-#define _NIMPREQ3                aTotIva[ 3, 9 ]
-
 memvar cDbf
 memvar cDbfCol
 memvar cDetalle
@@ -882,7 +850,7 @@ STATIC FUNCTION OpenFiles( lExt )
       public nTotDif    := 0
       public nTotUnd    := 0
 
-      public aTotIva    := { { 0,0,nil,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0 } }
+      public aTotIva    := { { 0,0,nil,0,0,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0,0,0 } }
       public aIvaUno    := aTotIva[ 1 ]
       public aIvaDos    := aTotIva[ 2 ]
       public aIvaTre    := aTotIva[ 3 ]

@@ -197,32 +197,6 @@ Lineas de Detalle
 #define _CTERCTR                  100
 
 /*
-Definici¢n de Array para impuestos
-*/
-
-#define _NBRTIVA1                aTotIva[ 1, 1 ]
-#define _NBASIVA1                aTotIva[ 1, 2 ]
-#define _NPCTIVA1                aTotIva[ 1, 3 ]
-#define _NPCTREQ1                aTotIva[ 1, 4 ]
-#define _NIMPIVA1                aTotIva[ 1, 5 ]
-#define _NIMPREQ1                aTotIva[ 1, 6 ]
-#define _NIVMIVA1                aTotIva[ 1, 7 ]
-#define _NBRTIVA2                aTotIva[ 2, 1 ]
-#define _NBASIVA2                aTotIva[ 2, 2 ]
-#define _NPCTIVA2                aTotIva[ 2, 3 ]
-#define _NPCTREQ2                aTotIva[ 2, 4 ]
-#define _NIMPIVA2                aTotIva[ 2, 5 ]
-#define _NIMPREQ2                aTotIva[ 2, 6 ]
-#define _NIVMIVA2                aTotIva[ 2, 7 ]
-#define _NBRTIVA3                aTotIva[ 3, 1 ]
-#define _NBASIVA3                aTotIva[ 3, 2 ]
-#define _NPCTIVA3                aTotIva[ 3, 3 ]
-#define _NPCTREQ3                aTotIva[ 3, 4 ]
-#define _NIMPIVA3                aTotIva[ 3, 5 ]
-#define _NIMPREQ3                aTotIva[ 3, 6 ]
-#define _NIVMIVA3                aTotIva[ 3, 7 ]
-
-/*
 Variables memvar para todo el .prg logico no!
 */
 
@@ -390,7 +364,7 @@ Static Function initPublics()
    public nPagFac    := 0
    public nTipRet    := 0
    public nTotIvm    := 0 
-   public aTotIva    := { { 0,0,nil,0,0,0,0 }, { 0,0,nil,0,0,0,0 }, { 0,0,nil,0,0,0,0 } }
+   public aTotIva    := { { 0,0,nil,0,0,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0,0,0 } }
    public aIvaUno    := aTotIva[ 1 ]
    public aIvaDos    := aTotIva[ 2 ]
    public aIvaTre    := aTotIva[ 3 ]
