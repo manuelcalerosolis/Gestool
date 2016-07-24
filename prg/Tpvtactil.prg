@@ -626,6 +626,8 @@ CLASS TpvTactil
    METHOD OnClickGuardar()
    METHOD OnClickCloseTurno( lParcial )
 
+   METHOD gotoUbicacionGeneral()
+
    METHOD EditArticulo( nRow, nCol )
 
    //------------------------------------------------------------------------//
@@ -639,7 +641,8 @@ CLASS TpvTactil
    METHOD CambiarPrecio()
    METHOD nGetUnidades( lUnaUnidad )
 
-   METHOD nGetPrecio()                    INLINE ( val( ::cGetUnidades ) )
+   METHOD valUnidades()                   INLINE ( val( ::cGetUnidades ) )                                     
+   METHOD valUnidadesPrecios()            INLINE ( val( ::cGetUnidades ) )
    METHOD cTipoDocumento()
 
    METHOD OnClickIniciarSesion()
@@ -713,7 +716,7 @@ CLASS TpvTactil
    METHOD sTotalTiket()
 
    METHOD nUnidadesLineaComanda()      INLINE ( ::nUnidadesLinea( ::oTemporalComanda ) )
-   METHOD nUnidadesImpresasComanda()   INLINE ( if( !Empty( ::oTemporalComanda ), ( ::oTemporalComanda:nImpCom ), 0 ) )
+   METHOD nUnidadesImpresasComanda()   INLINE ( ::nUnidadesImpresas( ::oTemporalComanda ) )
    METHOD cDescripcionComanda( uTmpL )
 
    //-----------------------------------------------------------------------//
@@ -2966,19 +2969,23 @@ METHOD DestroyFastReport()
 
 METHOD CambiarPrecio()
 
-  if ( ::oTemporalLinea:ordKeyCount() != 0 ) .and. ( Val( ::cGetUnidades ) != 0 )
+   if ( ::oTemporalLinea:ordKeyCount() == 0 )
+      Return ( Self )
+   end if 
 
-     if ( ::oTemporalLinea:nPvpTil == 0 ) .or. ( ApoloMsgNoYes( "¿Desea cambiar el precio del artículo seleccionado?", "Confirme", .t. ) )
+   if ( ::valUnidadesPrecios() != 0 )
 
-        ::oTemporalLinea:nPvpTil   := ::nGetUnidades()
+      if ( ::oTemporalLinea:nPvpTil == 0 ) .or. ( ApoloMsgNoYes( "¿Desea cambiar el precio del artículo seleccionado?", "Confirme", .t. ) )
 
-        ::oBrwLineas:Refresh()
+         ::oTemporalLinea:nPvpTil   := ::nGetUnidades()
 
-     end if
+         ::oBrwLineas:Refresh()
 
-  end if
+      end if
 
-  RETURN ( Self )
+   end if
+
+RETURN ( Self ) 
 
 //------------------------------------------------------------------------//
 
@@ -2988,7 +2995,7 @@ METHOD nGetUnidades( lUnaUnidad )
 
    DEFAULT lUnaUnidad   := .f.
 
-   nUnidades            := Val( ::cGetUnidades )
+   nUnidades            := ::valUnidadesPrecios()
 
    if ( ( lUnaUnidad .and. nUnidades == 0 ) .or. ::lGetPrecio )
       nUnidades         := 1 // Max( nUnidades, 1 )
@@ -2999,7 +3006,6 @@ METHOD nGetUnidades( lUnaUnidad )
    end if 
 
 RETURN ( nUnidades )
-
 
 //------------------------------------------------------------------------//
 
@@ -3030,6 +3036,8 @@ METHOD GuardaDocumentoPendiente()
   ::GuardaDocumento()
 
   ::ProcesaDocumentosInternos()
+
+  ::gotoUbicacionGeneral()
 
 RETURN ( .t. )
 
@@ -3071,15 +3079,11 @@ RETURN ( Self )
 
 METHOD GuardaDocumentoCerrado()
 
-   if ::oTiketCabecera:nUbiTik == ubiLlevar
-      ::oTiketCabecera:lAbierto  := .t.
-   else
-      ::oTiketCabecera:lAbierto  := .f.
-   end if
+   ::oTiketCabecera:lAbierto  := ( ::oTiketCabecera:nUbiTik == ubiLlevar )
 
-   ::GuardaDocumento( .f. )
+   ::guardaDocumento( .f. )
 
-   ::ProcesaDocumentosInternos()
+   ::procesaDocumentosInternos()
 
 RETURN ( Self )
 
@@ -4732,7 +4736,7 @@ METHOD nPrecioArticulo( cCodigoArticulo, cCodigoMenu, cCodigoOrden ) CLASS TpvTa
 
    if ::lGetPrecio
       
-      nPrecio           := ::nGetPrecio()
+      nPrecio           := ::valUnidadesPrecios()
 
       if !Empty( nPrecio ) 
          Return ( nPrecio )
@@ -5055,7 +5059,7 @@ METHOD IncrementarUnidades() CLASS TpvTactil
       Return ( .t. )
    end if
 
-   nUnidadesActuales                      := Val( ::cGetUnidades )
+   nUnidadesActuales                      := ::valUnidadesPrecios()
 
    if !Empty( nUnidadesActuales )
 
@@ -6333,11 +6337,9 @@ RETURN ( Round( nCalculo, ::nDecimalesTotal ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD cDescripcionComanda( uTmpL ) CLASS TpvTactil
+METHOD cDescripcionComanda() CLASS TpvTactil
 
    local cReturn     := ""
-
-   DEFAULT uTmpL     := ::oTemporalComanda
 
    if Empty( ::oTemporalComanda )
       Return ( cReturn )
@@ -6779,7 +6781,7 @@ METHOD OnClickEntregaNota() CLASS TpvTactil
 
    // Guarda documento---------------------------------------------------------
 
-   ::GuardaDocumentoCerrado( .f. )
+   ::GuardaDocumentoCerrado()
 
    // Imprimimos el documento--------------------------------------------------
 
@@ -6979,33 +6981,6 @@ METHOD GuardaDocumento( lZap ) CLASS TpvTactil
       // Encendemos el flag para cargar de nuevo el usuario--------------------
 
       ::lGetUsuario                 := .t.
-
-      // Cargamos valores por defecto------------------------------------------
-
-      if lZap
-
-         // Inicializa los valores para el documento---------------------------
-
-         ::InitDocumento( ubiGeneral )
-
-         // Cargamos las tarifas-----------------------------------------------
-
-         ::SetTarifaSolo(        Max( uFieldEmpresa( "nPreTPro" ), 1 ) )
-         ::SetTarifaCombinado(   Max( uFieldEmpresa( "nPreTCmb" ), 1 ) )
-         
-         // Pintamos la información de la zona donde nos encontramos-----------
-
-         ::SetUbicacion()
-
-         // Datos del documento------------------------------------------------
-
-         ::SetInfo()
-
-         // Ponemos el total---------------------------------------------------
-
-         ::SetTotal()
-
-      end if 
 
    RECOVER USING oError
 
@@ -7647,26 +7622,7 @@ METHOD OnClickGeneral() CLASS TpvTactil
 
       if ::GetUsuario()
 
-         // Inicializa los valores para el documento---------------------------
-
-         ::InitDocumento( ubiGeneral )
-
-         // Cargamos las tarifas-----------------------------------------------
-
-         ::SetTarifaSolo(        Max( uFieldEmpresa( "nPreTPro" ), 1 ) )
-         ::SetTarifaCombinado(   Max( uFieldEmpresa( "nPreTCmb" ), 1 ) )
-         
-         // Pintamos la información de la zona donde nos encontramos-----------
-
-         ::SetUbicacion()
-
-         // Datos del documento------------------------------------------------
-
-         ::SetInfo()
-
-         // Ponemos el total---------------------------------------------------
-
-         ::SetTotal()
+         ::gotoUbicacionGeneral()
 
       end if
 
@@ -7683,6 +7639,33 @@ METHOD OnClickGeneral() CLASS TpvTactil
    ::EnableDialog()
 
 Return ( lReturn )
+
+//---------------------------------------------------------------------------//
+
+METHOD gotoUbicacionGeneral() CLASS TpvTactil
+
+   // Inicializa los valores para el documento---------------------------
+
+   ::InitDocumento( ubiGeneral )
+
+   // Cargamos las tarifas-----------------------------------------------
+
+   ::SetTarifaSolo(        Max( uFieldEmpresa( "nPreTPro" ), 1 ) )
+   ::SetTarifaCombinado(   Max( uFieldEmpresa( "nPreTCmb" ), 1 ) )
+   
+   // Pintamos la información de la zona donde nos encontramos-----------
+
+   ::SetUbicacion()
+
+   // Datos del documento------------------------------------------------
+
+   ::SetInfo()
+
+   // Ponemos el total---------------------------------------------------
+
+   ::SetTotal()
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -8104,7 +8087,7 @@ METHOD SetCalculadora() CLASS TpvTactil
       ::oBtnFamiliasDown:Move(      nBtnFamiliasTop + calcDistance, , , , .t. )
 
       ::oBtnCalculadora:Move(       nBtnFamiliasTop + calcDistance, , , , .t. )
-      ::oBtnBalanza:Move(       nBtnFamiliasTop + calcDistance, , , , .t. )
+      ::oBtnBalanza:Move(           nBtnFamiliasTop + calcDistance, , , , .t. )
 
       if !Empty( ::oBtnSSalir )
          ::oBtnSSalir:Move(         nBtnFamiliasTop + calcDistance, , , , .t. )
@@ -8124,7 +8107,7 @@ METHOD SetCalculadora() CLASS TpvTactil
       ::oBtnFamiliasDown:Move(      nBtnFamiliasTop - calcDistance, , , , .t. )
 
       ::oBtnCalculadora:Move(       nBtnFamiliasTop - calcDistance, , , , .t. )
-      ::oBtnBalanza:Move(       nBtnFamiliasTop - calcDistance, , , , .t. )
+      ::oBtnBalanza:Move(           nBtnFamiliasTop - calcDistance, , , , .t. )
 
       if !Empty( ::oBtnSSalir )
          ::oBtnSSalir:Move(         nBtnFamiliasTop - calcDistance, , , , .t. )
@@ -8500,8 +8483,15 @@ METHOD ProcesaLineas()
 
    if ::oTiketLinea:Seek( ::cNumeroTicket() )
       while ( ::cNumeroTicketLinea() == ::cNumeroTicket() ) .and. !( ::oTiketLinea:Eof() )
-         ::oTiketLinea:FieldPutByName( "nImpCom", ::nUnidadesLinea() )
+
+         if ::oTiketLinea:lPeso
+            ::oTiketLinea:fieldPutByName( "nImpCom", -1 )
+         else 
+            ::oTiketLinea:fieldPutByName( "nImpCom", ::nUnidadesLinea() )
+         end if 
+      
          ::oTiketLinea:Skip()
+      
       end while
    end if
 
@@ -8510,10 +8500,17 @@ METHOD ProcesaLineas()
 
    ::oTemporalLinea:GetStatus()
 
-   ::oTemporalLinea:GoTop()
-   while !::oTemporalLinea:Eof()
-      ::oTemporalLinea:FieldPutByName( "nImpCom", ::nUnidadesLinea( ::oTemporalLinea ) )
+   ::oTemporalLinea:goTop()
+   while !::oTemporalLinea:eof()
+      
+      if ::oTemporalLinea:lPeso
+         ::oTemporalLinea:fieldPutByName( "nImpCom", -1 )
+      else 
+         ::oTemporalLinea:fieldPutByName( "nImpCom", ::nUnidadesLinea( ::oTemporalLinea ) )
+      end if 
+
       ::oTemporalLinea:Skip()
+
    end while
 
    ::oTemporalLinea:SetStatus()
@@ -8704,6 +8701,8 @@ METHOD BuildReport() CLASS TpvTactil
       /*
       Imprimir el informe------------------------------------------------------
       */
+
+      ::nDispositivo := IS_SCREEN
 
       do case
          case ::nDispositivo == IS_SCREEN
@@ -10594,11 +10593,15 @@ METHOD isLineaValidaComanda( lCopia )
       Return .f.
    end if 
 
+   if ( ::oTiketLinea:lPeso .and. ::nUnidadesImpresas() == -1 )
+      Return .f.
+   end if
+
    if ( ::oTiketLinea:lPeso .and. ::nUnidadesLinea() == 0 )
       Return .t.
    end if 
 
-Return (  ::nUnidadesImpresas() < ::nUnidadesLinea() ) 
+Return ( ::nUnidadesImpresas() < ::nUnidadesLinea() ) 
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
