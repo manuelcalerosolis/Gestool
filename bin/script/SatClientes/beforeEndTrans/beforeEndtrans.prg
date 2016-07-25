@@ -189,7 +189,7 @@ static cCodigoMaquina
 
 function InicioHRB( aGet, aTmp, nVista, dbfTmpLin, nMode )
 
-   if nMode != 1
+   /*if nMode != 1
       return .t.
    end if
 
@@ -203,7 +203,7 @@ function InicioHRB( aGet, aTmp, nVista, dbfTmpLin, nMode )
 
    if !CompruebaCliente( aGet, dbfTmpLin )
       Return .f.
-   end if
+   end if*/
 
 return .t.
 

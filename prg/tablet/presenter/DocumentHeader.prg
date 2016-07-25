@@ -58,7 +58,7 @@ END CLASS
 
 METHOD newBuildDictionary( oSender ) CLASS ClientDeliveryNoteDocumentHeader
 
-   ::setDictionary( D():getHashFromAlbaranesClientes( ::nView ) )
+   ::setDictionary( D():getHashFromAlbaranesClientes() )
 
 Return ( Self )
 

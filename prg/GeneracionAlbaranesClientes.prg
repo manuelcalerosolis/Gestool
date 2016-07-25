@@ -89,6 +89,8 @@ METHOD Dialog()
 
    ::oDlg:bStart  := {|| ::startDialog() }
 
+   ::oDlg:addFastKey( VK_F5, {|| ::botonSiguiente() } )   
+
    ACTIVATE DIALOG ::oDlg CENTER
 
    ::CloseFiles()
@@ -392,6 +394,9 @@ Return ( .t. )
 METHOD processLine( oLine )
 
    local oDocument     := ClientDeliveryNoteDocumentHeader():newBuildDictionary( self ) 
+
+   debug( oLine, "oLine" )
+   debug( oDocument, "oDocument" )
 
    if D():gotoPedidoIdAlbaranesClientes( oLine:getDocumentId(), ::nView )
       oDocument:setValue( "PedidoCliente", ( D():AlbaranesClientes( ::nView ) )->cNumPed )

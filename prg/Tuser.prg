@@ -156,6 +156,12 @@ CLASS TUser
    Method   lNotUnidades( lNewVal )    INLINE if( lNewVal != nil, ::_lNotUnidades := lNewVal, ::_lNotUnidades )
    Method   lModificaUnidades()        INLINE ( ::lMaster() .or. !::lNotUnidades() )
 
+   Data     _lNotCobrarTPV             INIT .f.
+   Method   lNotCobrarTPV( lNewVal )   INLINE if( lNewVal != nil, ::_lNotCobrarTPV := lNewVal, ::_lNotCobrarTPV )
+
+   Data     _lNotNotasTPV              INIT .f.
+   Method   lNotNotasTPV( lNewVal )    INLINE if( lNewVal != nil, ::_lNotNotasTPV := lNewVal, ::_lNotNotasTPV )
+
    /*
    Puede cambiar empresa si el codigo de empresa esta vacio--------------------
    */
@@ -298,6 +304,8 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
          ::DelegacionUsuario( ( ::oDbf )->cCodDlg )
          ::SerieDefecto(      ( ::oDbf )->cSerDef )
          ::lNotUnidades(      ( ::oDbf )->lNotUni )
+         ::lNotNotasTPV(      ( ::oDbf )->lNotNot )
+         ::lNotCobrarTPV(     ( ::oDbf )->lNotCob )
 
          /*
          Si el usuario tiene una empresa fija la colocamos caso contrario la ultima en usarse

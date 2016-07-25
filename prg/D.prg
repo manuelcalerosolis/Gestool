@@ -121,7 +121,7 @@ CLASS D
 
    METHOD AlbaranesClientesTableName()                      INLINE ( "AlbCliT" )
 
-   METHOD getHashFromAlbaranesClientes( nView )             INLINE ( D():getHashFromAlias( ::AlbaranesClientesTableName(), TDataCenter():scanDataTableInView( ::AlbaranesClientesTableName(), nView ) ) )
+   METHOD getHashFromAlbaranesClientes( nView )             INLINE ( D():getHashFromAlias( ::AlbaranesClientesTableName(), TDataCenter():getDictionary( ::AlbaranesClientesTableName() ) ) )
 
    METHOD AlbaranesClientes( nView )                        INLINE ( ::Get( "AlbCliT", nView ) )
       METHOD AlbaranesClientesFecha( nView )                INLINE ( ( ::Get( "AlbCliT", nView ) )->dFecAlb )
@@ -1019,10 +1019,17 @@ METHOD getHashFromAlias( cAlias, aDictionary ) CLASS D
 
    local hash        := {=>}
 
-   if isHash( aDictionary ) .and. !empty( cAlias )
+   msgalert( cAlias, "cAlias" )
+   debug( aDictionary, "aDictionary")
+   msgalert( !empty( cAlias ) )
+   msgalert( isHash( aDictionary ) )
+
+   if !empty( cAlias ) .and. isHash( aDictionary )
       hEval( aDictionary, {|key,value| hSet( hash, key, ( cAlias )->( fieldget( ( cAlias )->( fieldPos( value ) ) ) ) ) } )
       hSet( hash, 'lineSelected', .f. )
    end if 
+
+   debug( hash, "hash de salida" )
 
 RETURN ( hash )
 

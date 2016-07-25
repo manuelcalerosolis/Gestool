@@ -899,9 +899,20 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "TPV" )
 
-      // Script afterOpenFiles------------------------------------------------
+      //Script afterOpenFiles--------------------------------------------------------------
+
+      
+
+
 
       runEventScript( "TPV\afterOpenFiles", nView, dbfTikT )
+
+      //msgDbfInfo( dbfTikT, "Titulo" )
+
+      //MsgInfo( ( dbfTikT )->( dbInfo( DBI_DBFILTER ) ), "Filtro" )
+
+
+
 
       EnableAcceso()
 

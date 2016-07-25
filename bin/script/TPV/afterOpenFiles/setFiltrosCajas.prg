@@ -6,9 +6,11 @@
 
 Function Inicio( nView, dbfTikT )
 
-   if ( oUser():cCodigo != '000' )
+   msginfo( "entro a poner el filtro" )
+
+   //if ( oUser():cCodigo != '000' )
    	( dbfTikT )->( dbSetFilter( {|| Field->cNcjTik == oUser():cCaja() }, "cNcjTik == oUser():cCaja()" ) )
-   end if
+   //end if
 
 Return ( nil )
 

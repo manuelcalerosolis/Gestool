@@ -68,6 +68,8 @@ METHOD Dialog()
 
    ::oDlg:bStart  := {|| ::startDialog() }
 
+   ::oDlg:addFastKey( VK_F5, {|| ::botonSiguiente() } )   
+
    ACTIVATE DIALOG ::oDlg CENTER
 
    ::CloseFiles()
