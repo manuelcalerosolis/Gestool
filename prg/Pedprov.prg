@@ -7697,7 +7697,7 @@ function aItmPedPrv()
                      { "cCodPrv",   "C", 12,   0, "Codigo del proveedor",                                        "Cliente",                    "", "( cDbf )", nil },;
                      { "cCodAlm",   "C", 16,   0, "Código de almacen",                                           "Almacen",                    "", "( cDbf )", nil },;
                      { "cCodCaj",   "C",  3,   0, "Código de caja",                                              "Caja",                       "", "( cDbf )", nil },;
-                     { "cNomPrv",   "C", 30,   0, "Nombre del proveedor",                                        "NombreCliente",              "", "( cDbf )", nil },;
+                     { "cNomPrv",   "C",150,   0, "Nombre del proveedor",                                        "NombreCliente",              "", "( cDbf )", nil },;
                      { "cDirPrv",   "C",200,   0, "Domicilio del proveedor",                                     "DomicilioCliente",           "", "( cDbf )", nil },;
                      { "cPobPrv",   "C",200,   0, "Población del proveedor",                                     "PoblacionCliente",           "", "( cDbf )", nil },;
                      { "cProPrv",   "C",100,   0, "Provincia del proveedor",                                     "ProvinciaCliente",           "", "( cDbf )", nil },;
