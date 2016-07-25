@@ -14852,7 +14852,7 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
 
                if ( D():FacturasClientes( nView ) )->lRecargo
                   oTax:nEquivalenceSurcharge       := ( D():FacturasClientesLineas( nView ) )->nReq
-                  oTax:nEquivalenceSurchargeAmount := nReqLFacCli( D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), nDouDiv, nRouDiv, , .f., .f., .f. )
+                  oTax:nEquivalenceSurchargeAmount := nReqLFacCli( D():FacturasClientesLineas( nView ), nDouDiv, nRouDiv, , .f., .f., .f. )
                end if
 
                oItemLine:addTax( oTax )
