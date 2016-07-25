@@ -107,6 +107,7 @@ CLASS TImpFactu
    DATA oDbfCnt
    DATA oDbfDiv
    DATA oDbfStocks
+   DATA oDbfCodBarGst
 
    DATA oDbfRutGst
    DATA oDbfRutFac
@@ -158,13 +159,14 @@ METHOD OpenFiles()
       ::aChkIndices[ 1 ]:Click( .f. ):Refresh()
       msgStop( "No existe fichero de articulos", ::cPathFac + "ARTICULO.DBF" )
    else
-      DATABASE NEW ::oDbfArtGst     PATH ( cPatArt() )  FILE "ARTICULO.DBF" VIA ( cDriver() ) CLASS "ARTGST" SHARED INDEX "ARTICULO.CDX"
-      DATABASE NEW ::oDbfArtFac     PATH ( ::cPathFac ) FILE "ARTICULO.DBF" VIA ( cLocalDriver() ) CLASS "ARTFAC"
-      DATABASE NEW ::oDbfArcFac     PATH ( ::cPathFac ) FILE "ARTCOM.DBF"   VIA ( cLocalDriver() ) CLASS "ARTCOM"
-      DATABASE NEW ::oDbfPrePrvGst  PATH ( cPatArt() )  FILE "ProvArt.DBF"  VIA ( cDriver() ) CLASS "PROPRVGST" SHARED INDEX "ProvArt.CDX"
-      DATABASE NEW ::oDbfPrePrvFac  PATH ( ::cPathFac ) FILE "PrecProv.DBF" VIA ( cLocalDriver() ) CLASS "PROPRVFAC"
-      DATABASE NEW ::oDbfProGst     PATH ( cPatEmp() )  FILE "PRO.DBF"      VIA ( cDriver() ) CLASS "PROGST" SHARED INDEX "PRO.CDX"
-      DATABASE NEW ::oDbfProFac     PATH ( ::cPathFac ) FILE "Prop.DBF"     VIA ( cLocalDriver() ) CLASS "PROPFAC"
+      DATABASE NEW ::oDbfArtGst     PATH ( cPatArt() )  FILE "ARTICULO.DBF"   VIA ( cDriver() ) CLASS "ARTGST" SHARED INDEX "ARTICULO.CDX"
+      DATABASE NEW ::oDbfArtFac     PATH ( ::cPathFac ) FILE "ARTICULO.DBF"   VIA ( cLocalDriver() ) CLASS "ARTFAC"
+      DATABASE NEW ::oDbfArcFac     PATH ( ::cPathFac ) FILE "ARTCOM.DBF"     VIA ( cLocalDriver() ) CLASS "ARTCOM"
+      DATABASE NEW ::oDbfPrePrvGst  PATH ( cPatArt() )  FILE "ProvArt.DBF"    VIA ( cDriver() ) CLASS "PROPRVGST" SHARED INDEX "ProvArt.CDX"
+      DATABASE NEW ::oDbfPrePrvFac  PATH ( ::cPathFac ) FILE "PrecProv.DBF"   VIA ( cLocalDriver() ) CLASS "PROPRVFAC"
+      DATABASE NEW ::oDbfProGst     PATH ( cPatEmp() )  FILE "PRO.DBF"        VIA ( cDriver() ) CLASS "PROGST" SHARED INDEX "PRO.CDX"
+      DATABASE NEW ::oDbfProFac     PATH ( ::cPathFac ) FILE "Prop.DBF"       VIA ( cLocalDriver() ) CLASS "PROPFAC"
+      DATABASE NEW ::oDbfCodBarGst  PATH ( cPatArt() )  FILE "ARTCODEBAR.DBF" VIA ( cDriver() ) CLASS "CODBARGST" SHARED INDEX "ARTCODEBAR.CDX"
 
    end if
 
@@ -427,6 +429,12 @@ METHOD CloseFiles()
       ::oDbfProFac:End()
    else
       ::oDbfProFac := nil
+   end if
+
+   if !Empty( ::oDbfCodBarGst )
+      ::oDbfCodBarGst:End()
+   else
+      ::oDbfCodBarGst := nil
    end if
 
    if !Empty( ::oDbfArCFac )
@@ -1139,6 +1147,21 @@ METHOD Importar()
             ::oDbfArtGst:mComEnt    := cComentarioArticulo
 
             ::oDbfArtGst:Save()
+
+
+            //guardamos los códigos de barras 
+
+            if !Empty( ::oDbfArtFac:cCodeBar )
+
+               ::oDbfCodBarGst:Append()
+
+               ::oDbfCodBarGst:cCodArt      := ::oDbfArtFac:cRef
+               ::oDbfCodBarGst:cCodBar      := ::oDbfArtFac:cCodeBar               
+               ::oDbfCodBarGst:lDefBar      := .t.               
+
+               ::oDbfCodBarGst:Save() 
+
+            end if 
 
             ::aMtrIndices[ 1 ]:Set( ::oDbfArtFac:Recno() )
 
