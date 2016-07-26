@@ -517,7 +517,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oDlg, lActualizaWeb )
 
    DEFAULT lActualizaWeb   := .f.
 
-   //Controla que no metan una propiedad con el código o el nombre en blanco
+   // Controla que no metan una propiedad con el código o el nombre en blanco
 
    if nMode == APPD_MODE
 
@@ -958,7 +958,7 @@ Function cBarPrp( cCodPrp, cValPrp, dbfTblPro )
    local cBarPro  := ""
 
    if dbSeekInOrd( cCodPrp + cValPrp, "cCodPro", dbfTblPro )
-      cBarPro     := AllTrim( ( dbfTblPro )->nBarTbl )
+      cBarPro     := alltrim( ( dbfTblPro )->nBarTbl )
    end if
 
 return ( cBarPro )
@@ -1796,7 +1796,6 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
 RETURN ( lRet )
 
 //---------------------------------------------------------------------------//
-
 
 STATIC FUNCTION OpenFiles()
 
@@ -2866,3 +2865,369 @@ RETURN ( cNombrePropiedad )
 
 //---------------------------------------------------------------------------//
 
+CLASS TPropiedadesSenderReciver FROM TSenderReciverItem
+
+   Method CreateData()
+
+   Method RestoreData()
+
+   Method SendData()
+
+   Method ReciveData()
+
+   Method Process()
+
+   Method CleanRelation( cCodArt )
+
+END CLASS
+
+//----------------------------------------------------------------------------//
+
+Method CreateData()
+
+   local oBlock
+   local oError
+   local tmpProT
+   local tmpProL
+   local lSnd        := .f.
+   local cFileName   := ::getFileNameToSend( "Pro" )
+
+   if !OpenFiles( .f. )
+      return nil
+   end if
+
+   ::oSender:SetText( 'Seleccionando propiedades' )
+
+   /*
+   Creamos todas las bases de datos relacionadas con Articulos
+   */
+
+   mkPro( cPatSnd() )
+
+   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   USE ( cPatSnd() + "PRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRO", @tmpProT ) )
+   SET ADSINDEX TO ( cPatSnd() + "PRO.CDX" ) ADDITIVE
+
+   USE ( cPatSnd() + "TBLPRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLPRO", @tmpProL ) )
+   SET ADSINDEX TO ( cPatSnd() + "TBLPRO.CDX" ) ADDITIVE
+
+   if !empty( ::oSender:oMtr )
+      ::oSender:oMtr:nTotal := ( dbfProT )->( lastrec() )
+   end if
+
+   ( dbfProT )->( dbGoTop() )
+   while !( dbfProT )->( eof() )
+
+      if ( dbfProT )->lSndDoc
+
+         ::oSender:SetText( alltrim( ( dbfProT )->cCodPro ) + "; " + alltrim( ( dbfProT )->cDesPro ) )
+         
+         lSnd     := .t.
+
+         dbPass( dbfProT, tmpProT, .t. )
+
+         /*
+         lineas de propiedades-------------------------------------------------
+         */
+
+         if ( dbfProL )->( dbSeek( ( dbfProT )->cCodPro ) )
+            while ( dbfProL )->cCodTbl == ( dbfProT )->cCodPro .and. !( dbfProL )->( eof() )
+               dbPass( dbfProL, tmpProL, .t. )
+               ( dbfProL )->( dbSkip() )
+            end while
+         end if
+
+      end if
+
+      ( dbfProT )->( dbSkip() )
+
+      if !empty( ::oSender:oMtr )
+         ::oSender:oMtr:Set( ( dbfProT )->( ordkeyno() ) )
+      end if
+
+      SysRefresh()
+
+   end while
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos de propiedades" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   CLOSE ( tmpProT )
+   CLOSE ( tmpProL )
+
+   CloseFiles()
+
+   /*
+   Comprimir los archivos------------------------------------------------------
+   */
+
+   if lSnd
+
+      ::oSender:SetText( "Comprimiendo propiedades : " + cFileName )
+
+      if ::oSender:lZipData( cFileName )
+         ::oSender:SetText( "Ficheros comprimidos" )
+      else
+         ::oSender:SetText( "ERROR al crear fichero comprimido" )
+      end if
+
+   else
+
+      ::oSender:SetText( "No hay propiedades para enviar" )
+
+   end if
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+Method RestoreData()
+
+   local oBlock
+   local oError
+   local dbfProT
+   local dbfProL
+
+   if !( ::lSuccesfullSend )
+      return nil
+   end if
+
+   if !OpenFiles( .f. )
+      return nil
+   end if
+
+   /*
+   Sintuacion despues del envio---------------------------------------------
+   */
+
+   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      while !( dbfProT )->( Eof() )
+
+         if ( dbfProT )->lSndDoc .and. ( dbfProT )->( dbRLock() )
+            ( dbfProT )->lSndDoc   := .f.
+            ( dbfProT )->( dbRUnlock() )
+         end if
+
+         ( dbfProT )->( dbSkip() )
+
+      end while
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos de propiedades" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   CloseFiles()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+Method SendData()
+
+   local cFileName   := ::getFileNameToSend( "Pro" )
+
+   if !file( cPatOut() + cFileName )
+      Return ( Self )
+   end if 
+
+   if ::oSender:SendFiles( cPatOut() + cFileName, cFileName )
+      ::IncNumberToSend()
+      ::lSuccesfullSend := .t.
+      ::oSender:SetText( "Ficheros de propiedades enviados " + cFileName )
+   else
+      ::oSender:SetText( "ERROR fichero de propiedades no enviado" )
+   end if
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+Method ReciveData()
+
+   local cExt
+   local aExt
+
+   if ::oSender:lServer
+      aExt              := aRetDlgEmp()
+   else
+      aExt              := { "All" }
+   end if
+
+   ::oSender:SetText( "Recibiendo propiedades" )
+
+   for each cExt in aExt 
+      ::oSender:GetFiles( "Pro*." + cExt, cPatIn() )
+   next
+
+   ::oSender:SetText( "Propiedades recibidas" )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+Method Process()
+
+   local cFile
+   local aFiles
+   local tmpProT
+   local tmpProL
+   local oBlock
+   local oError
+
+   /*
+   Procesamos los ficheros recibidos-------------------------------------------
+   */
+
+   aFiles                     := Directory( cPatIn() + "Proº*.*" )
+
+   for each cFile in aFiles 
+
+      oBlock                  := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE
+
+      /*
+      Descomprimimos el fichero recibido------------------------------------
+      */
+
+      if ::oSender:lUnZipData( cPatIn() + cFile[ 1 ] )
+
+         if lExistTable( cPatSnd() + "Pro.Dbf", cLocalDriver() )     .and. ;
+            lExistTable( cPatSnd() + "TblPro.Dbf", cLocalDriver() )  .and. ;
+            OpenFiles( .f. )
+
+            USE ( cPatSnd() + "Pro.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRO", @tmpProT ) )
+            SET ADSINDEX TO ( cPatSnd() + "Pro.Cdx" ) ADDITIVE
+
+            USE ( cPatSnd() + "TblPro.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLPRO", @tmpProL ) )
+            SET ADSINDEX TO ( cPatSnd() + "TblPro.Cdx" ) ADDITIVE
+
+            ::oSender:SetText( "Total de registros recibidos " + alltrim( str( ( tmpProT )->( lastrec() ) ) ) )
+
+            if !Empty( ::oSender:oMtr )
+               ::oSender:oMtr:nTotal := ( tmpProT )->( lastrec() )
+            end if
+
+            ( tmpProT )->( ordsetfocus( 0 ) )
+            ( tmpProT )->( dbgotop() )
+            while !( tmpProT )->( eof() )
+
+               if ( dbfProT )->( dbSeek( ( tmpProT )->cCodTbl ) )
+                  if !::oSender:lServer
+                     ::cleanRelation( ( tmpProT )->cCodTbl )
+                     dbPass( tmpProT, dbfProT )
+                     ::oSender:SetText( "Reemplazado : " + alltrim( ( dbfProT )->cCodPro ) + "; " + alltrim( ( dbfProT )->cDesPro ) )
+                  else
+                     ::oSender:SetText( "Desestimado : " + alltrim( ( dbfProT )->cCodPro ) + "; " + alltrim( ( dbfProT )->cDesPro ) )
+                  end if
+               else
+                  ::CleanRelation( ( tmpProT )->cCodTbl )
+                  dbPass( tmpProT, dbfProT, .t. )
+                  ::oSender:SetText( "Añadido : " + alltrim( ( dbfProT )->cCodPro ) + "; " + alltrim( ( dbfProT )->cDesPro ) )
+               end if
+
+               ( tmpProT )->( dbSkip() )
+
+               if !Empty( ::oSender:oMtr )
+                  ::oSender:oMtr:Set( ( tmpProT )->( OrdKeyNo() ) )
+               end if
+
+               SysRefresh()
+
+            end while
+
+            if !Empty( ::oSender:oMtr )
+               ::oSender:oMtr:nTotal := ( tmpProL )->( LastRec() )
+            end if
+
+            ( tmpProL )->( ordsetfocus( 0 ) )
+            ( tmpProL )->( dbgotop() )
+
+            while !( tmpProL )->( eof() )
+
+               if ( dbfProL )->( dbSeek( ( tmpProL )->cCodArt ) )
+                  if !::oSender:lServer
+                     dbPass( tmpProL, dbfProL )
+                  end if
+               else
+                  dbPass( tmpProL, dbfProL, .t. )
+               end if
+
+               ( tmpProL )->( dbSkip() )
+
+               if !Empty( ::oSender:oMtr )
+                  ::oSender:oMtr:Set( ( tmpProL )->( recno() ) )
+               end if
+
+               SysRefresh()
+
+            end while
+
+            CLOSE ( tmpProT )
+            CLOSE ( tmpProL )
+
+            CloseFiles()
+
+            ::oSender:AppendFileRecive( cFile[ 1 ] )
+
+         else
+
+            ::oSender:SetText( "Faltan ficheros" )
+
+            if !lExistTable( cPatSnd() + "Pro.Dbf"   )
+               ::oSender:SetText( "Falta" + cPatSnd() + "Pro.Dbf" )
+            end if
+
+            if !lExistTable( cPatSnd() + "TblPro.Dbf"    )
+               ::oSender:SetText( "Falta" + cPatSnd() + "TblPro.Dbf" )
+            end if
+
+         end if
+
+      else
+
+         ::oSender:SetText( "Error en el fichero comprimido" )
+
+      end if
+
+      RECOVER USING oError
+
+         CLOSE ( tmpProT )
+         CLOSE ( tmpProL )
+
+         ::oSender:SetText( "Error procesando fichero " + cFile[ 1 ] )
+         ::oSender:SetText( ErrorMessage( oError ) )
+
+      END SEQUENCE
+
+      ErrorBlock( oBlock )
+
+   next
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+Method CleanRelation( idPropiedad )
+
+   while ( dbfProL )->( dbSeek( idPropiedad ) )
+      dbDel( dbfProL )
+   end while
+
+   SysRefresh()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//

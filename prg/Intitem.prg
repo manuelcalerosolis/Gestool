@@ -45,6 +45,8 @@ CLASS TSenderReciverItem
 
    Method IncNumberToSend()   INLINE   WritePProString( "Numero", ::cText, cValToChar( ++::nNumberSend ), ::cIniFile )
 
+   METHOD GetFileNameToSend( cPrefixFile )
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -83,6 +85,20 @@ Method nGetNumberToSend()
    ::nNumberSend     := GetPvProfInt( "Numero", ::cText, ::nNumberSend, ::cIniFile )
 
 Return ( ::nNumberSend )
+
+//----------------------------------------------------------------------------//
+
+METHOD GetFileNameToSend( cPrefixFile )
+
+   local cFileName   := cPrefixFile + strzero( ::nGetNumberToSend(), 6 )
+
+   if ::oSender:lServer
+      cFileName      += ".All"
+   else
+      cFileName      += "." + retSufEmp()
+   end if
+
+Return ( cFileName )
 
 //----------------------------------------------------------------------------//
 

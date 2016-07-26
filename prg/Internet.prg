@@ -181,6 +181,7 @@ METHOD Init() CLASS TSndRecInf
    aAdd( ::aSend, TArticuloSenderReciver():New(             "Artículos",               Self ) )
    aAdd( ::aSend, TFamiliaSenderReciver():New(              "Familias",                Self ) )
    aAdd( ::aSend, TTipArt():Initiate(                       "Tipos de artículos",      Self ) )
+   aAdd( ::aSend, TPropiedadesSenderReciver():New(          "Propiedades",             Self ) )
    aAdd( ::aSend, TClienteSenderReciver():New(              "Clientes",                Self ) )
    aAdd( ::aSend, TProveedorSenderReciver():New(            "Proveedor",               Self ) )
    aAdd( ::aSend, TPedidosProveedorSenderReciver():New(     "Pedidos de proveedor",    Self ) )
