@@ -169,6 +169,7 @@ CLASS TFacturaElectronica
    METHOD AdministrativeCentresXml( oAdministrativeCentre )
 
    METHOD ShowInWeb()
+      METHOD startInWeb( oActiveX, oDlg )
 
    METHOD Firma()
    METHOD VerificaFirma()
@@ -1344,11 +1345,25 @@ METHOD ShowInWeb()
 
    REDEFINE BUTTON            ID IDCANCEL OF oDlg  ACTION ( oDlg:End() )
 
-   oDlg:bStart                := {|| oActiveX:Do( "Navigate", ::cFicheroOrigen ), SysRefresh() }
+   oDlg:bStart                := {|| ::startInWeb( oActiveX, oDlg ) }
 
    ACTIVATE DIALOG oDlg CENTERED
 
-return nil
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD startInWeb( oActiveX, oDlg )
+
+   if file( ::cFicheroDestino )
+      oActiveX:Do( "Navigate", ::cFicheroDestino )
+   else
+      oActiveX:Do( "Navigate", ::cFicheroOrigen )
+   end if 
+
+   sysRefresh()
+
+Return ( self )
 
 //---------------------------------------------------------------------------//
 // Estructuras y clases auxiliares-------------------------------------------//
