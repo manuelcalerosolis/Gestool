@@ -10156,10 +10156,10 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
          aGet[ _CLOTE ]:hide()
       end if
 
-      /*if !empty( aGet[ __CCENTROCOSTE ] )
-         aGet[ __CCENTROCOSTE ]:cText( aTmpFac[ _CCENTROCOSTE ] )
+      if !empty( aGet[ __CCENTROCOSTE ] )
+         //aGet[ __CCENTROCOSTE ]:cText( aTmpFac[ _CCENTROCOSTE ] )
          aGet[ __CCENTROCOSTE ]:lValid()
-      endif*/
+      endif
 
       cTipoCtrCoste        := "Centro de coste"
       oTipoCtrCoste:Refresh()
