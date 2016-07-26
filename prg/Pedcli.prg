@@ -217,6 +217,9 @@ Definici¢n de la base de datos de lineas de detalle
 #define _CREFAUX                  99
 #define _CREFAUX2                100
 #define _NPOSPRINT               101
+#define __CCENTROCOSTE           102
+#define _CTIPCTR                 103
+#define _CTERCTR                 104
 
 /*
 Array para impuestos
@@ -453,6 +456,12 @@ static aEstadoPedido       := { "Pendiente", "Parcial", "Entregado" }
 static oMailing
 
 static oBrwProperties
+
+static oTipoCtrCoste
+static cTipoCtrCoste
+static aTipoCtrCoste       := { "Centro de coste", "Proveedor", "Agente", "Cliente" }
+
+static oCentroCoste
 
 //---------------------------------------------------------------------------//
 //Comenzamos la parte de código que se compila para el ejecutable normal
@@ -918,6 +927,11 @@ STATIC FUNCTION OpenFiles( lExt )
 
       oGrpFam           := TGrpFam():Create( cPatArt() )
       if !oGrpFam:OpenFiles()
+         lOpenFiles     := .f.
+      end if
+
+      oCentroCoste        := TCentroCoste():Create( cPatDat() )
+      if !oCentroCoste:OpenFiles()
          lOpenFiles     := .f.
       end if
 
@@ -4271,6 +4285,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
    local idPedidoCliente   := ""
    local idArticulo        := "" 
 
+   cTipoCtrCoste           := AllTrim( aTmp[ _CTIPCTR ] )
+
    do case
    case nMode == APPD_MODE
 
@@ -4292,6 +4308,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
       if !Empty( cCodArtEnt )
          cCodArt        	:= Padr( cCodArtEnt, 200 )
       end if
+
+      cTipoCtrCoste           := "Centro de coste"
 
    case nMode == EDIT_MODE
 
@@ -4373,14 +4391,16 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
                   "Reser&vas",;
                   "Entre&gas",;
                   "&Anular",;
-                  "&Observaciones" ;
+                  "&Observaciones",;
+                  "&Centro coste";
          DIALOGS  "LFACCLI_1",;
                   "LPEDCLI_2",;
                   "LPEDCLI_6",;
                   "LPEDCLI_4",;
                   "LPEDCLI_5",;
                   "LPEDCLI_3",;
-                  "LFACCLI_3"
+                  "LFACCLI_3",;
+                  "LCTRCOSTE"
 
       REDEFINE GET aGet[ _CREF ] VAR cCodArt;
 			ID 		100 ;
@@ -5377,6 +5397,36 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
          bmpImage:SetColor( , GetSysColor( 15 ) )
 
       /*
+      Octaba caja de diálogo---------------------------------------------------
+      */
+
+      REDEFINE GET aGet[ __CCENTROCOSTE ] VAR  aTmp[ __CCENTROCOSTE ] ;
+         ID       410 ;
+         IDTEXT   411 ;
+         BITMAP   "LUPA" ;  
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( oCentroCoste:Existe( aGet[ __CCENTROCOSTE ], aGet[ __CCENTROCOSTE ]:oHelpText, "cNombre" ) );
+         ON HELP  ( oCentroCoste:Buscar( aGet[ __CCENTROCOSTE ] ) ) ;
+         OF       oFld:aDialogs[8]
+
+      REDEFINE COMBOBOX oTipoCtrCoste ;
+         VAR      cTipoCtrCoste ;
+         ITEMS    aTipoCtrCoste ;
+         ID       140 ;
+         WHEN     ( nMode != ZOOM_MODE ) ; 
+         OF       oFld:aDialogs[8]
+
+         oTipoCtrCoste:bChange   := {|| clearGet( aGet[ _CTERCTR ] ), loadGet( aGet[ _CTERCTR ], cTipoCtrCoste ) }
+
+      REDEFINE GET aGet[ _CTERCTR ] ;
+         VAR      aTmp[ _CTERCTR ] ;
+         ID       150 ;
+         IDTEXT   160 ;
+         BITMAP   "LUPA" ;
+         WHEN     ( nMode != ZOOM_MODE ) ; 
+         OF       oFld:aDialogs[8]
+
+      /*
       Botones comunes----------------------------------------------------------
       */
 
@@ -5421,6 +5471,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
       oDlg:bStart := {||   SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpPed, oFld, oRentLin, oBrwAlbCli, oBrwAlbPrv, oBrwFacCli ),;
                            if( !Empty( oBtnSer ), oBtnSer:Hide(), ),;
                            if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ),;
+                           loadGet( aGet[ _CTERCTR ], cTipoCtrCoste ), aGet[ _CTERCTR ]:lValid(),;
                            aGet[ _CUNIDAD ]:lValid(), aGet[ _CCODPRV ]:lValid(), aGet[ _COBRLIN ]:lValid() }
 
    ACTIVATE DIALOG oDlg ; 
@@ -8722,6 +8773,7 @@ STATIC FUNCTION CloseFiles()
    if( !Empty( oTipArt    ), oTipArt:end(), )
    if( !Empty( oFabricante), oFabricante:end(), )
    if( !Empty( oGrpFam    ), oGrpFam:end(), )
+   if( !Empty( oCentroCoste), oCentroCoste:end(), )
 
    if !Empty( oUndMedicion )
       oUndMedicion:end()
@@ -8792,6 +8844,8 @@ STATIC FUNCTION CloseFiles()
    oTipArt        := nil
    oFabricante    := nil
    oGrpFam        := nil
+
+   oCentroCoste   := nil
 
    lOpenFiles     := .f.
 
@@ -10102,6 +10156,15 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
          aGet[ _CLOTE ]:hide()
       end if
 
+      /*if !empty( aGet[ __CCENTROCOSTE ] )
+         aGet[ __CCENTROCOSTE ]:cText( aTmpFac[ _CCENTROCOSTE ] )
+         aGet[ __CCENTROCOSTE ]:lValid()
+      endif*/
+
+      cTipoCtrCoste        := "Centro de coste"
+      oTipoCtrCoste:Refresh()
+      clearGet( aGet[ _CTERCTR ] )
+
    case nMode != APPD_MODE .AND. empty( cCodArt )
 
       aGet[ _CREF     ]:hide()
@@ -10139,6 +10202,10 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
       end if
 
    end case
+
+   if !empty( aGet[ __CCENTROCOSTE ] )
+      aGet[ __CCENTROCOSTE ]:lValid()
+   endif
 
    if !Empty( oStkAct )
 
@@ -10412,6 +10479,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
 
    CursorWait()
 
+   aTmp[ _CTIPCTR ]              := cTipoCtrCoste
    aClo                          := aClone( aTmp )
    nRec                          := ( dbfTmpLin )->( RecNo() )
 
@@ -15846,7 +15914,10 @@ function aColPedCli()
    aAdd( aColPedCli, { "cObrLin",   "C",   10,  0, "Dirección de la linea",                           "Direccion",                  "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "cRefAux",   "C",   18,  0, "Referencia auxiliar",                             "ReferenciaAuxiliar",         "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "cRefAux2",  "C",   18,  0, "Segunda referencia auxiliar",                     "ReferenciaAuxiliar2",        "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "nPosPrint", "N",    4,  0, "Posición de impresión",                           "PosicionImpresion",      "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nPosPrint", "N",    4,  0, "Posición de impresión",                           "PosicionImpresion",          "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "cCtrCoste", "C",    9,  0, "Código del centro de coste",                      "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "cTipCtr",   "C",   20,  0, "Tipo tercero centro de coste",                    "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "cTerCtr",   "C",   20,  0, "Tercero centro de coste",                         "",                           "", "( cDbfCol )", nil } )
 
 return ( aColPedCli )
 
