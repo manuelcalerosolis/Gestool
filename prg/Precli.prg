@@ -98,6 +98,7 @@ Definici¢n de la base de datos de presupuestos a clientes
 #define _LWEB                     83
 #define _LINTERNET                84
 #define _MFIRMA                   85
+#define _CCENTROCOSTE             86
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -2880,6 +2881,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 			COLOR 	CLR_GET ;
          OF       oFld:aDialogs[2]
 
+      REDEFINE GET aGet[ _CCENTROCOSTE ] VAR aTmp[ _CCENTROCOSTE ] ;
+         ID       350 ;
+         IDTEXT   351 ;
+         BITMAP   "LUPA" ;
+         VALID    ( oCentroCoste:Existe( aGet[ _CCENTROCOSTE ], aGet[ _CCENTROCOSTE ]:oHelpText, "cNombre" ) );
+         ON HELP  ( oCentroCoste:Buscar( aGet[ _CCENTROCOSTE ] ) ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[2]
+
      REDEFINE GET aGet[_NBULTOS] VAR aTmp[_NBULTOS];
          ID       128 ;
 			SPINNER;
@@ -4254,7 +4264,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
       end if
 
       if !empty( aGet[ __CCENTROCOSTE ] )
-         //aGet[ __CCENTROCOSTE ]:cText( aTmpFac[ _CCENTROCOSTE ] )
+         aGet[ __CCENTROCOSTE ]:cText( aTmpPre[ _CCENTROCOSTE ] )
          aGet[ __CCENTROCOSTE ]:lValid()
       endif
 
@@ -10560,6 +10570,7 @@ function aItmPreCli()
    aAdd( aItmPreCli, { "lWeb",      "L",  1,  0, "Lógico de recibido por web" ,                       "",                              "", "( cDbf )", nil } )
    aAdd( aItmPreCli, { "lInternet", "L",  1,  0, "Pedido desde internet" ,                            "",                              "", "( cDbf )", nil } )
    aAdd( aItmPreCli, { "mFirma",    "M", 10,  2, "Firma",                                             "Firma",                         "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "cCtrCoste", "C",  9,  0, "Código del centro de coste" ,                       "CentroCoste",                   "", "( cDbf )", nil } )
 
 return ( aItmPreCli )
 

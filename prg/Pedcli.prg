@@ -114,6 +114,7 @@ Definici¢n de la base de datos de pedidos a clientes
 #define _LPRODUC                  99
 #define _NDTOTARIFA              100
 #define _MFIRMA                  101
+#define _CCENTROCOSTE            102
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -3089,6 +3090,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          ID       166 ;
          WHEN     .f. ;
 			COLOR 	CLR_GET ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ _CCENTROCOSTE ] VAR aTmp[ _CCENTROCOSTE ] ;
+         ID       350 ;
+         IDTEXT   351 ;
+         BITMAP   "LUPA" ;
+         VALID    ( oCentroCoste:Existe( aGet[ _CCENTROCOSTE ], aGet[ _CCENTROCOSTE ]:oHelpText, "cNombre" ) );
+         ON HELP  ( oCentroCoste:Buscar( aGet[ _CCENTROCOSTE ] ) ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CRETPOR ] VAR aTmp[ _CRETPOR ] ;
@@ -10157,7 +10167,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
       end if
 
       if !empty( aGet[ __CCENTROCOSTE ] )
-         //aGet[ __CCENTROCOSTE ]:cText( aTmpFac[ _CCENTROCOSTE ] )
+         aGet[ __CCENTROCOSTE ]:cText( aTmpPed[ _CCENTROCOSTE ] )
          aGet[ __CCENTROCOSTE ]:lValid()
       endif
 
@@ -15805,6 +15815,7 @@ function aItmPedCli()
    aAdd( aItmPedCli, { "lProduc",  "L",   1,  0, "Lógico para incluir en producción" ,                      "IncluirEnProduccion",     "", "( cDbf )", {|| .t. } } )
    aAdd( aItmPedCli, { "nDtoTarifa","N",  6,  2, "Descuentos de tarifa", 			                           "DescuentoTarifa", 	      "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "mFirma",   "M",  10,  2, "Firma",                                                   "Firma",                   "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "cCtrCoste","C",   9,  0, "Código del centro de coste" ,                             "CentroCoste",             "", "( cDbf )", nil } )
 
 return ( aItmPedCli )
 
