@@ -6240,6 +6240,9 @@ STATIC FUNCTION cFacPrv( aGet, oBrw, nMode, aTmp )
             ( dbfTmp )->cCodFam     := ( D():FacturasProveedoresLineas( nView ) )->cCodFam
             ( dbfTmp )->cRefAux     := ( D():FacturasProveedoresLineas( nView ) )->cRefAux
             ( dbfTmp )->cRefAux2    := ( D():FacturasProveedoresLineas( nView ) )->cRefAux2
+            ( dbfTmp )->cCtrCoste   := ( D():FacturasProveedoresLineas( nView ) )->cCtrCoste
+            ( dbfTmp )->cTipCtr     := ( D():FacturasProveedoresLineas( nView ) )->cTipCtr
+            ( dbfTmp )->cTerCtr     := ( D():FacturasProveedoresLineas( nView ) )->cTerCtr
 
             ( D():FacturasProveedoresLineas( nView ) )->( dbSkip() )
 

@@ -8633,6 +8633,9 @@ Function AddLineasAlbaranProveedor( cAlbaran, lNewLin )
             ( dbfTmp )->cCodFam     := ( D():AlbaranesProveedoresLineas( nView ) )->cCodFam
             ( dbfTmp )->cRefAux     := ( D():AlbaranesProveedoresLineas( nView ) )->cRefAux
             ( dbfTmp )->cRefAux2    := ( D():AlbaranesProveedoresLineas( nView ) )->cRefAux2
+            ( dbfTmp )->cCtrCoste   := ( D():AlbaranesProveedoresLineas( nView ) )->cCtrCoste
+            ( dbfTmp )->cTipCtr     := ( D():AlbaranesProveedoresLineas( nView ) )->cTipCtr
+            ( dbfTmp )->cTerCtr     := ( D():AlbaranesProveedoresLineas( nView ) )->cTerCtr
 
             ( dbfTmp )->iNumAlb     := D():AlbaranesProveedoresLineasNumero( nView )
 

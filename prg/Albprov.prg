@@ -5136,6 +5136,9 @@ Static Function cPedPrv( aGet, aTmp, oBrw, nMode )
                   (dbfTmp)->cRefAux    := ( D():PedidosProveedoresLineas( nView ) )->cRefAux
                   (dbfTmp)->cRefAux2   := ( D():PedidosProveedoresLineas( nView ) )->cRefAux2
                   (dbfTmp)->nPosPrint  := ( D():PedidosProveedoresLineas( nView ) )->nPosPrint
+                  (dbfTmp)->cCtrCoste  := ( D():PedidosProveedoresLineas( nView ) )->cCtrCoste
+                  (dbfTmp)->cTipCtr    := ( D():PedidosProveedoresLineas( nView ) )->cTipCtr
+                  (dbfTmp)->cTerCtr    := ( D():PedidosProveedoresLineas( nView ) )->cTerCtr
 
                  /*
                   Comprobamos si hay calculos por cajas
@@ -6417,6 +6420,9 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw, nMode )
                      (dbfTmp)->nValImp    := ( D():PedidosProveedoresLineas( nView ) )->nValImp
                      (dbfTmp)->cRefAux    := ( D():PedidosProveedoresLineas( nView ) )->cRefAux
                      (dbfTmp)->cRefAux2   := ( D():PedidosProveedoresLineas( nView ) )->cRefAux2
+                     (dbfTmp)->cCtrCoste  := ( D():PedidosProveedoresLineas( nView ) )->cCtrCoste
+                     (dbfTmp)->cTipCtr    := ( D():PedidosProveedoresLineas( nView ) )->cTipCtr
+                     (dbfTmp)->cTerCtr    := ( D():PedidosProveedoresLineas( nView ) )->cTerCtr
 
                      (dbfTmp)->cCodPed    := aAlbaranes[ nItem, 3 ]
                      (dbfTmp)->cNumPed    := aAlbaranes[ nItem, 7 ]
@@ -6561,6 +6567,9 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw, nMode )
                   (dbfTmp)->nValImp    := ( D():PedidosProveedoresLineas( nView ) )->nValImp
                   (dbfTmp)->cRefAux    := ( D():PedidosProveedoresLineas( nView ) )->cRefAux
                   (dbfTmp)->cRefAux2   := ( D():PedidosProveedoresLineas( nView ) )->cRefAux2
+                  (dbfTmp)->cCtrCoste  := ( D():PedidosProveedoresLineas( nView ) )->cCtrCoste
+                  (dbfTmp)->cTipCtr    := ( D():PedidosProveedoresLineas( nView ) )->cTipCtr
+                  (dbfTmp)->cTerCtr    := ( D():PedidosProveedoresLineas( nView ) )->cTerCtr
 
                   (dbfTmp)->cCodPed    := aAlbaranes[ nItem, 3 ]
                   (dbfTmp)->cNumPed    := aAlbaranes[ nItem, 7 ]
