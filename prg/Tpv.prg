@@ -17642,6 +17642,13 @@ FUNCTION nTotTik( cNumTik, cTikT, cTikL, cDiv, aTmp, cDivRet, lPic, lExcCnt )
    nTotTik           -= nTotDpp
 
    /*
+   Sumamos los impuestos especiales--------------------------------------------
+   */
+
+   nTotTik           := nTotTik + nTotIvm
+   
+
+   /*
    Total por persona-----------------------------------------------------------
    */
 
@@ -19994,7 +20001,11 @@ Static Function lValidaLote( aTmp, aGet )
       nOrdAnt           := ( dbfAlbPrvL )->( OrdSetFocus( "cArtLote" ) )
                                        
       if ( dbfAlbPrvL )->( dbSeek( aTmp[ _CCBATIL ] + aTmp[ _CLOTE ] ) )
-         aGet[ _DFECCAD ]:cText( ( dbfAlbPrvL )->dFecCad )
+         if !Empty( aGet[ _DFECCAD ] )
+            aGet[ _DFECCAD ]:cText( ( dbfAlbPrvL )->dFecCad )
+         else
+            aTmp[ _DFECCAD ]  := ( dbfAlbPrvL )->dFecCad
+         end if
       end if
       
       ( dbfAlbPrvL )->( OrdSetFocus( nOrdAnt ) )

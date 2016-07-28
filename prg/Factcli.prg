@@ -12570,7 +12570,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          */
 
          aTmp[ _CCODIMP ]     := ( D():Articulos( nView ) )->cCodImp
-            oNewImp:setCodeAndValue( aTmp[ _CCODIMP ], aGet[ _NVALIMP ] )
+         oNewImp:setCodeAndValue( aTmp[ _CCODIMP ], aGet[ _NVALIMP ] )
 
          if !empty( ( D():Articulos( nView ) )->cCodImp )
             aTmp[ _LVOLIMP ]     := RetFld( ( D():Articulos( nView ) )->cCodImp, oNewImp:oDbf:cAlias, "lIvaVol" )
