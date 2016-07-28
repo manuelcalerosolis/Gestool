@@ -49,6 +49,7 @@ REQUEST DBFCDX
 #define _LNOTUNI                 38      //   L      1      0
 #define _LNOTCOB                 39      //   L      1      0
 #define _LNOTNOT                 40      //   L      1      0
+#define _LNOTCOM                 41      //   L      1      0
 
 //----------------------------------------------------------------------------//
 //Comenzamos la parte de código que se compila para el ejecutable normal
@@ -613,6 +614,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
 
       REDEFINE CHECKBOX aGet[ _LNOTNOT ] VAR aTmp[ _LNOTNOT ] ;
          ID       430 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg   
+
+      REDEFINE CHECKBOX aGet[ _LNOTCOM ] VAR aTmp[ _LNOTCOM ] ;
+         ID       440 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg   
 
@@ -2869,7 +2875,8 @@ Function aItmUsuario()
                      { "cSerDef",   "C",  1,  0, "Serie de facturación por defecto" },;
                      { "lNotUni",   "L",  1,  0, "Lógico para no modificar las unidades" },;
                      { "lNotCob",   "L",  1,  0, "Lógico no permitir cobros" },;
-                     { "lNotNot",   "L",  1,  0, "Lógico no permitir entregar notas" } }
+                     { "lNotNot",   "L",  1,  0, "Lógico no permitir entregar notas" },;
+                     { "lNotCom",   "L",  1,  0, "Lógico no permitir imprimir comandas" } }
 
 Return ( aBase )
 

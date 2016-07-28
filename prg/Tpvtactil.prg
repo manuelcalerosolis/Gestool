@@ -8374,6 +8374,10 @@ METHOD ProcesaComandas( lCopia )
 
    DEFAULT lCopia       := .f.
 
+   if oUser():lNotImprimirComandas()
+      Return ( Self )
+   end if 
+
    // Matamos la temporal------------------------------------------------------
 
    ::oTemporalComanda:Zap()

@@ -4,6 +4,7 @@
 #include "DbInfo.ch"
 #include "Factu.ch" 
 #include "Ads.ch"
+#include "RichEdit.ch" 
 
 #define HB_FF_AUTOINC         0x0008 /* Column is autoincrementing */
 
@@ -3803,12 +3804,29 @@ Function CaptureSignature( cFile )
    local nBottom     := 0
    local aCoord
    local nColor      := CLR_WHITE
+   local oRichEdit
+   local cConditions := "Por favor cumplimente el fichero Conditions.txt, en el directorio Config de su empresa"
 
    oBrush            := TBrush():New( , nColor )
+
+   if file( cPatConfig() + cCodEmp() + "\conditions.txt" )
+      cConditions    := memoread( cPatConfig() + cCodEmp() + "\conditions.txt" )
+   end if 
 
    DEFINE DIALOG oDlg TITLE "Firma" PIXEL RESOURCE "DLG_SIGNATURE"
 
    DEFINE PEN oPenSig WIDTH nPenWidth COLOR CLR_BLACK
+
+   oRichEdit         := GetRichEdit():ReDefine( 600, oDlg )
+
+   oRichEdit:oRTF:setText( cConditions )
+
+/*
+   REDEFINE GET cConditions ;
+      MEMO ;
+      ID             220 ;
+      OF             oDlg
+*/
 
    REDEFINE CHECKBOX lSig ;
       ID             210 ;
@@ -3819,8 +3837,8 @@ Function CaptureSignature( cFile )
       PROMPT         "" ;
       OF             oDlg
       
-      oSig:nClrPane     := nRgb( 255,255,255 )
-      oSig:oBrush       := oBrush
+   oSig:nClrPane     := nRgb( 255,255,255 )
+   oSig:oBrush       := oBrush
    
    REDEFINE BUTTON ;
       ID             100 ;
@@ -3849,8 +3867,7 @@ Function CaptureSignature( cFile )
    
    // Added limits to Top and Bottom in case users draw off canvas
    
-   oSig:bMMoved      := { | y, x, z | ( if( y >= nBottom .or. y <= nTop , lReset := .t., lReset := .f. ), ;
-                                          DoDraw( hDC, x, y , lPaint, lReset, oPenSig ) ) }
+   oSig:bMMoved      := { | y, x, z | lReset := ( y >= nBottom .or. y <= nTop ), DoDraw( hDC, x, y , lPaint, lReset, oPenSig ) }
    oSig:bLClicked    := { | y, x, z | DoDraw( hDC, x, y, lPaint := .t., .t., oPenSig  ) }
    
    // if button released when not on Signature area
@@ -3880,7 +3897,7 @@ Static Function DoDraw( hDc, x, y, lPaint, lReset, oPen )
 
 Return nil
 
-Function signatureToMemo( )
+Function signatureToMemo()
 
    local hBmp
    local cMemo
@@ -3894,10 +3911,6 @@ Function signatureToMemo( )
       end if 
 
       deleteObject( hBmp )
-   
-   else 
-   
-      msgStop( "Error al guardar la firma.")
    
    end if 
 

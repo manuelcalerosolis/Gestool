@@ -162,6 +162,9 @@ CLASS TUser
    Data     _lNotNotasTPV              INIT .f.
    Method   lNotNotasTPV( lNewVal )    INLINE if( lNewVal != nil, ::_lNotNotasTPV := lNewVal, ::_lNotNotasTPV )
 
+   Data     _lNotImprimirComandas            INIT .f.
+   Method   lNotImprimirComandas( lNewVal )  INLINE if( lNewVal != nil, ::lNotImprimirComandas := lNewVal, ::lNotImprimirComandas )
+
    /*
    Puede cambiar empresa si el codigo de empresa esta vacio--------------------
    */
@@ -306,15 +309,16 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
          ::lNotUnidades(      ( ::oDbf )->lNotUni )
          ::lNotNotasTPV(      ( ::oDbf )->lNotNot )
          ::lNotCobrarTPV(     ( ::oDbf )->lNotCob )
+         ::lNotImprimirComandas( ( ::oDbf )->lNotCom ) 
 
          /*
          Si el usuario tiene una empresa fija la colocamos caso contrario la ultima en usarse
          */
 
          if !Empty( ( ::oDbf )->cCodEmp )
-            ::cEmpresa(       ( ::oDbf )->cCodEmp )
+            ::cEmpresa( ( ::oDbf )->cCodEmp )
          else
-            ::cEmpresa(       ( ::oDbf )->cEmpUse )
+            ::cEmpresa( ( ::oDbf )->cEmpUse )
          end if
 
          /*
