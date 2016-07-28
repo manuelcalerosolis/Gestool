@@ -13056,6 +13056,9 @@ STATIC FUNCTION cPreCli( aTmp, aGet, oBrw, nMode )
                (dbfTmpLin)->cObrLin    := (dbfPreCliL)->cObrLin
                (dbfTmpLin)->cRefAux    := (dbfPreCliL)->cRefAux
                (dbfTmpLin)->cRefAux2   := (dbfPreCliL)->cRefAux2
+               (dbfTmpLin)->cCtrCoste  := (dbfPreCliL)->cCtrCoste
+               (dbfTmpLin)->cTipCtr    := (dbfPreCliL)->cTipCtr
+               (dbfTmpLin)->cTerCtr    := (dbfPreCliL)->cTerCtr
 
                (dbfPreCliL)->( dbSkip() )
 

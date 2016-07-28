@@ -1482,6 +1482,9 @@ METHOD appendLineasAlbaran( oItem ) CLASS GeneraFacturasClientes
             ( D():FacturasClientesLineas( ::nView ) )->cLote      := ( D():AlbaranesClientesLineas( ::nView ) )->cLote
             ( D():FacturasClientesLineas( ::nView ) )->dFecCad    := ( D():AlbaranesClientesLineas( ::nView ) )->dFecCad
             ( D():FacturasClientesLineas( ::nView ) )->cNumPed    := ( D():AlbaranesClientesLineas( ::nView ) )->cNumPed
+            ( D():FacturasClientesLineas( ::nView ) )->cCtrCoste  := ( D():AlbaranesClientesLineas( ::nView ) )->cCtrCoste
+            ( D():FacturasClientesLineas( ::nView ) )->cTipCtr    := ( D():AlbaranesClientesLineas( ::nView ) )->cTipCtr
+            ( D():FacturasClientesLineas( ::nView ) )->cTerCtr    := ( D():AlbaranesClientesLineas( ::nView ) )->cTerCtr
 
             ( D():FacturasClientesLineas( ::nView ) )->cCodAlb    := hGet( oItem:Cargo, "id" )
             ( D():FacturasClientesLineas( ::nView ) )->dFecAlb    := hGet( oItem:Cargo, "fecha" )

@@ -9650,6 +9650,9 @@ STATIC FUNCTION cFacCli( aGet, aTmp, oBrw, oBrwiva, nMode )
                   ( dbfTmpLin )->cCtrCoste  := ( dbfFacCliL )->cCtrCoste
                   ( dbfTmpLin )->nTarLin 	  := ( dbfFacCliL )->nTarLin
                   ( dbfTmpLin )->cObrLin    := ( dbfFacCliL )->cCodObr
+                  ( dbfTmpLin )->cCtrCoste  := ( dbfFacCliL )->cCtrCoste
+                  ( dbfTmpLin )->cTipCtr    := ( dbfFacCliL )->cTipCtr
+                  ( dbfTmpLin )->cTerCtr    := ( dbfFacCliL )->cTerCtr
 
                end if
 

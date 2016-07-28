@@ -7847,6 +7847,9 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                (dbfTmpLin)->cCodObr    := (dbfPedCliL)->cObrLin
                (dbfTmpLin)->cRefAux    := (dbfPedCliL)->cRefAux
                (dbfTmpLin)->cRefAux2   := (dbfPedCliL)->cRefAux2
+               (dbfTmpLin)->cCtrCoste  := (dbfPedCliL)->cCtrCoste
+               (dbfTmpLin)->cTipCtr    := (dbfPedCliL)->cTipCtr
+               (dbfTmpLin)->cTerCtr    := (dbfPedCliL)->cTerCtr
 
                /*
                Vamos a ver si se estan llavando cajas
@@ -8235,6 +8238,9 @@ STATIC FUNCTION cPreCli( aGet, aTmp, oBrw, nMode )
                (dbfTmpLin)->cCodObr    := (dbfPedCliT)->cCodObr
                (dbfTmpLin)->cRefAux    := (dbfPreCliL)->cRefAux
                (dbfTmpLin)->cRefAux2   := (dbfPreCliL)->cRefAux2
+               (dbfTmpLin)->cCtrCoste  := (dbfPreCliL)->cCtrCoste
+               (dbfTmpLin)->cTipCtr    := (dbfPreCliL)->cTipCtr
+               (dbfTmpLin)->cTerCtr    := (dbfPreCliL)->cTerCtr
 
                (dbfPreCliL)->( dbSkip() )
 
@@ -16208,6 +16214,9 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
                (dbfTmpLin)->cCodObr    := (dbfSatCliL)->cObrLin
                (dbfTmpLin)->cRefAux    := (dbfSatCliL)->cRefAux
                (dbfTmpLin)->cRefAux2   := (dbfSatCliL)->cRefAux2
+               (dbfTmpLin)->cCtrCoste  := (dbfSatCliL)->cCtrCoste
+               (dbfTmpLin)->cTipCtr    := (dbfSatCliL)->cTipCtr
+               (dbfTmpLin)->cTerCtr    := (dbfSatCliL)->cTerCtr
 
                (dbfSatCliL)->( dbSkip() )
 

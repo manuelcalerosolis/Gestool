@@ -5754,6 +5754,9 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                   (dbfTmpLin)->cObrLin    := (dbfPedCliL)->cObrLin
                   (dbfTmpLin)->cRefAux    := (dbfPedCliL)->cRefAux
                   (dbfTmpLin)->cRefAux2   := (dbfPedCliL)->cRefAux2
+                  (dbfTmpLin)->cCtrCoste  := (dbfPedCliL)->cCtrCoste
+                  (dbfTmpLin)->cTipCtr    := (dbfPedCliL)->cTipCtr
+                  (dbfTmpLin)->cTerCtr    := (dbfPedCliL)->cTerCtr
 
                   if !( dbfPedCliL )->lKitArt
 
@@ -6341,6 +6344,9 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                      (dbfTmpLin)->cObrLin    := (dbfPedCliL)->cObrLin
                      (dbfTmpLin)->cRefAux    := (dbfPedCliL)->cRefAux
                      (dbfTmpLin)->cRefAux2   := (dbfPedCliL)->cRefAux2
+                     (dbfTmpLin)->cCtrCoste  := (dbfPedCliL)->cCtrCoste
+                     (dbfTmpLin)->cTipCtr    := (dbfPedCliL)->cTipCtr
+                     (dbfTmpLin)->cTerCtr    := (dbfPedCliL)->cTerCtr
 
                      if lCalCaj()
                         if nTotRec != 0
@@ -6432,8 +6438,11 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                   ( dbfTmpLin )->nIncPnt     := ( dbfPedCliL )->nIncPnt
                   ( dbfTmpLin )->lLinOfe     := ( dbfPedCliL )->lLinOfe
                   ( dbfTmpLin )->cObrLin     := ( dbfPedCliL )->cObrLin
-                  ( dbfTmpLin )->cRefAux     := (dbfPedCliL)->cRefAux
-                  ( dbfTmpLin )->cRefAux2    := (dbfPedCliL)->cRefAux2
+                  ( dbfTmpLin )->cRefAux     := ( dbfPedCliL )->cRefAux
+                  ( dbfTmpLin )->cRefAux2    := ( dbfPedCliL )->cRefAux2
+                  ( dbfTmpLin )->cCtrCoste   := ( dbfPedCliL )->cCtrCoste
+                  ( dbfTmpLin )->cTipCtr     := ( dbfPedCliL )->cTipCtr
+                  ( dbfTmpLin )->cTerCtr     := ( dbfPedCliL )->cTerCtr
 
                end if
 
@@ -12432,6 +12441,9 @@ STATIC FUNCTION cPreCli( aGet, aTmp, oBrw, nMode )
                (dbfTmpLin)->cFormato   := (dbfPreCliL)->cFormato
                (dbfTmpLin)->cRefAux    := (dbfPreCliL)->cRefAux
                (dbfTmpLin)->cRefAux2   := (dbfPreCliL)->cRefAux2
+               (dbfTmpLin)->cCtrCoste  := (dbfPreCliL)->cCtrCoste
+               (dbfTmpLin)->cTipCtr    := (dbfPreCliL)->cTipCtr
+               (dbfTmpLin)->cTerCtr    := (dbfPreCliL)->cTerCtr
 
                (dbfPreCliL)->( dbSkip() )
 
@@ -12683,6 +12695,9 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
                ( dbfTmpLin )->cFormato   := ( D():SatClientesLineas( nView ) )->cFormato
                ( dbfTmpLin )->cRefAux    := ( D():SatClientesLineas( nView ) )->cRefAux
                ( dbfTmpLin )->cRefAux2   := ( D():SatClientesLineas( nView ) )->cRefAux2
+               ( dbfTmpLin )->cCtrCoste  := ( D():SatClientesLineas( nView ) )->cCtrCoste
+               ( dbfTmpLin )->cTipCtr    := ( D():SatClientesLineas( nView ) )->cTipCtr
+               ( dbfTmpLin )->cTerCtr    := ( D():SatClientesLineas( nView ) )->cTerCtr
 
                ( D():SatClientesLineas( nView ) )->( dbSkip() )
 
