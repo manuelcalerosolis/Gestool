@@ -789,8 +789,10 @@ RETURN ( oMeter )
 
 Function EndAutoMeterDialog( oDialog )
 
-   oMeter:Hide()
-   oMeter:End()
+   if !empty( oMeter )    
+      oMeter:Hide()
+      oMeter:End()
+   end if 
 
    oMeter   := nil
 

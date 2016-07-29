@@ -4842,9 +4842,26 @@ METHOD lAcumulaArticulo( cCodigoMenu, cCodigoOrden ) CLASS TpvTactil
 
          // Comprobamos que el codigo y el precio sean iguales y que no sean ofertas-
 
-         if Empty( ::oTemporalLinea:cComTil )                              .and. ;
-            Empty( ::oTemporalLinea:cComent )                              .and. ;
-            Rtrim( ::oTemporalLinea:cNomTil ) == ::cNombreArticulo()       .and. ;
+         // msgalert( empty( ::oTemporalLinea:cComTil )                           , "empty( ::oTemporalLinea:cComTil )                          "  )
+         // msgalert( empty( ::oTemporalLinea:cComent )                           , "empty( ::oTemporalLinea:cComent )                          "  )
+         // msgalert( rtrim( ::oTemporalLinea:cNomTil ) == ::cNombreArticulo()    , "rtrim( ::oTemporalLinea:cNomTil ) == ::cNombreArticulo()   "  )
+         // msgalert( !::oTemporalLinea:lKitChl                                   , "!::oTemporalLinea:lKitChl                                  "  )
+         // msgalert( !::oTemporalLinea:lDelTil                                   , "!::oTemporalLinea:lDelTil                                  "  )
+         // msgalert( ::oTemporalLinea:nPvpTil == nPrecioLinea                    , "::oTemporalLinea:nPvpTil == nPrecioLinea                   "  )
+         // msgalert( ::oTemporalLinea:nDtoLin == 0                               , "::oTemporalLinea:nDtoLin == 0                              "  )
+         // msgalert( ::oTemporalLinea:cOrdOrd == cCodigoOrden                    , "::oTemporalLinea:cOrdOrd == cCodigoOrden                   "  )
+         // msgalert( ::oTemporalLinea:nUntTil > 0                                , "::oTemporalLinea:nUntTil > 0                               "  )
+         // msgalert( ::oTemporalLinea:nLinMnu == ::GetLineaMenu()                , "::oTemporalLinea:nLinMnu == ::GetLineaMenu()               "  )
+         // msgalert( ::oTemporalLinea:cCodPr1 == ::GetCodigoPropiedadArticulo1() , "::oTemporalLinea:cCodPr1 == ::GetCodigoPropiedadArticulo1()"  )
+         // msgalert( ::oTemporalLinea:cValPr1 == ::GetValorPropiedadArticulo1()  , "::oTemporalLinea:cValPr1 == ::GetValorPropiedadArticulo1() "  )
+         // msgalert( ::oTemporalLinea:cCodPr2 == ::GetCodigoPropiedadArticulo2() , "::oTemporalLinea:cCodPr2 == ::GetCodigoPropiedadArticulo2()"  )
+         // msgalert( ::oTemporalLinea:cValPr2 == ::GetValorPropiedadArticulo2()  , "::oTemporalLinea:cValPr2 == ::GetValorPropiedadArticulo2() "  )
+         // msgalert( ::nUnidades > 0, "nUnidades > 0" )
+         // msgalert( !::oTemporalLinea:lSave                                     , "!::oTemporalLinea:lSave                                    "  )
+
+         if empty( ::oTemporalLinea:cComTil )                              .and. ;
+            empty( ::oTemporalLinea:cComent )                              .and. ;
+            rtrim( ::oTemporalLinea:cNomTil ) == ::cNombreArticulo()       .and. ;
             !::oTemporalLinea:lKitChl                                      .and. ;
             !::oTemporalLinea:lDelTil                                      .and. ;
             !::oTemporalLinea:lSave                                        .and. ;
@@ -4858,6 +4875,7 @@ METHOD lAcumulaArticulo( cCodigoMenu, cCodigoOrden ) CLASS TpvTactil
             ::oTemporalLinea:cCodPr2 == ::GetCodigoPropiedadArticulo2()    .and. ;
             ::oTemporalLinea:cValPr2 == ::GetValorPropiedadArticulo2()     .and. ;
             ::nUnidades > 0
+
 
             /*
             Sumamos------------------------------------------------------------
@@ -5074,9 +5092,9 @@ METHOD IncrementarUnidades() CLASS TpvTactil
 
             ::oTemporalLinea:nUntTil      := ( ::oTemporalLinea:nUntTil / nUnidadesAnterior ) * ( nUnidadesActuales ) 
 
-            if !uFieldEmpresa( "lAddCut")
-               ::oTemporalLinea:nUntTil   += nUnidadesAnterior 
-            end if 
+            // if !uFieldEmpresa( "lAddCut")
+            //    ::oTemporalLinea:nUntTil   += nUnidadesAnterior 
+            // end if 
 
             ::oTemporalLinea:Skip()
 

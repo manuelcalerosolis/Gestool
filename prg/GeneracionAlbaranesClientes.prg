@@ -207,10 +207,16 @@ METHOD botonSiguiente()
 
       case ::oFld:nOption == 2
 
-         if !( ::oDocumentLines:anySelect() )
-            msgStop( "No hay líneas seleccionadas." )
-         else
+         if ( ::oDocumentLines:anySelect() )
+            
             ::processLines()
+            
+            ::oFld:goNext()
+
+         else
+            
+            msgStop( "No hay líneas seleccionadas." )
+
          end if 
 
    end case
@@ -393,16 +399,23 @@ Return ( .t. )
 
 METHOD processLine( oLine )
 
-   local oDocument     := ClientDeliveryNoteDocumentHeader():newBuildDictionary( self ) 
-
-   debug( oLine, "oLine" )
-   debug( oDocument, "oDocument" )
+   local oDocument     
 
    if D():gotoPedidoIdAlbaranesClientes( oLine:getDocumentId(), ::nView )
+
+      oDocument         := ClientDeliveryNoteDocumentHeader():newRecordDictionary( self ) 
       oDocument:setValue( "PedidoCliente", ( D():AlbaranesClientes( ::nView ) )->cNumPed )
+
+   else 
+
+      oDocument         := ClientDeliveryNoteDocumentHeader():newBlankDictionary( self ) 
+      oDocument:setValue( "PedidoCliente", space( 13 ) )
+
    end if
 
    ::oDocumentHeaders:addLines( oDocument )
+
+   debug( ::oDocumentHeaders:aLines, "aLines" )
 
 Return ( .t. )
 

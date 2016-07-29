@@ -52,13 +52,16 @@ CLASS ClientDeliveryNoteDocumentHeader FROM DocumentHeader
 
    METHOD newBuildDictionary( oSender )
 
+   METHOD newBlankDictionary( oSender )   INLINE ( ::new( oSender ), ::setDictionary( D():getHashFromBlank( oSender:getLineAlias(), oSender:getLineDictionary() ) ) )
+   METHOD newRecordDictionary( oSender )  INLINE ( ::new( oSender ), ::setDictionary( D():getHashFromAlias( oSender:getLineAlias(), oSender:getLineDictionary() ) ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD newBuildDictionary( oSender ) CLASS ClientDeliveryNoteDocumentHeader
 
-   ::setDictionary( D():getHashFromAlbaranesClientes() )
+   ::setDictionary( D():getHashRecordAlbaranesClientes() )
 
 Return ( Self )
 

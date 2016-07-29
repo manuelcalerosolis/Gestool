@@ -163,7 +163,7 @@ CLASS TUser
    Method   lNotNotasTPV( lNewVal )    INLINE if( lNewVal != nil, ::_lNotNotasTPV := lNewVal, ::_lNotNotasTPV )
 
    Data     _lNotImprimirComandas            INIT .f.
-   Method   lNotImprimirComandas( lNewVal )  INLINE if( lNewVal != nil, ::lNotImprimirComandas := lNewVal, ::lNotImprimirComandas )
+   Method   lNotImprimirComandas( lNewVal )  INLINE if( lNewVal != nil, ::_lNotImprimirComandas := lNewVal, ::_lNotImprimirComandas )
 
    /*
    Puede cambiar empresa si el codigo de empresa esta vacio--------------------
