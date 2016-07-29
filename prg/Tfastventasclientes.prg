@@ -1448,12 +1448,12 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
 
    // filtros para la cabecera------------------------------------------------
    
-      ::cExpresionHeader          := 'Field->dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      ::cExpresionHeader          += ' .and. Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+      ::cExpresionHeader          := '( Field->dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
+      ::cExpresionHeader          += ' .and. ( Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '" )'
       
       ::setFilterClientIdHeader()
 
-      ::setFilterPaymentId()
+      ::setFilterPaymentInvoiceId()
 
       ::setFilterRouteId()
 
@@ -1465,6 +1465,8 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
 
       ::oMtrInf:cText   := "Procesando facturas rectificativas"
       
+      msgInfo( ::cExpresionHeader, "cExpresionHeader" )
+
       ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
       ::oMtrInf:SetTotal( ::oFacRecT:OrdKeyCount() )
@@ -1473,65 +1475,61 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
 
       while !::lBreak .and. !::oFacRecT:Eof()
 
-         if lChkSer( ::oFacRecT:cSerie, ::aSer )
+         sTot              := sTotFacRec( ::oFacRecT:cSerie + Str( ::oFacRecT:nNumFac ) + ::oFacRecT:cSufFac, ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::oFacCliP:cAlias )
 
-            sTot              := sTotFacRec( ::oFacRecT:cSerie + Str( ::oFacRecT:nNumFac ) + ::oFacRecT:cSufFac, ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::oFacCliP:cAlias )
+         ::oDbf:Blank()
 
-            ::oDbf:Blank()
+         ::oDbf:cCodCli    := ::oFacRecT:cCodCli            
+         ::oDbf:cNomCli    := ::oFacRecT:cNomCli
+         ::oDbf:cCodAge    := ::oFacRecT:cCodAge
+         ::oDbf:cCodPgo    := ::oFacRecT:cCodPago
+         ::oDbf:cCodRut    := ::oFacRecT:cCodRut
+         ::oDbf:cCodUsr    := ::oFacRecT:cCodUsr
+         ::oDbf:cCodObr    := ::oFacRecT:cCodObr
 
-            ::oDbf:cCodCli    := ::oFacRecT:cCodCli            
-            ::oDbf:cNomCli    := ::oFacRecT:cNomCli
-            ::oDbf:cCodAge    := ::oFacRecT:cCodAge
-            ::oDbf:cCodPgo    := ::oFacRecT:cCodPago
-            ::oDbf:cCodRut    := ::oFacRecT:cCodRut
-            ::oDbf:cCodUsr    := ::oFacRecT:cCodUsr
-            ::oDbf:cCodObr    := ::oFacRecT:cCodObr
+         ::oDbf:cCodPos    := ::oFacRecT:cPosCli
 
-            ::oDbf:cCodPos    := ::oFacRecT:cPosCli
+         ::oDbf:cCodGrp    := cGruCli( ::oFacRecT:cCodCli, ::oDbfCli )
 
-            ::oDbf:cCodGrp    := cGruCli( ::oFacRecT:cCodCli, ::oDbfCli )
+         ::oDbf:cTipDoc    := "Factura rectificativa"
+         ::oDbf:cClsDoc    := FAC_REC
+         ::oDbf:cSerDoc    := ::oFacRecT:cSerie
+         ::oDbf:cNumDoc    := Str( ::oFacRecT:nNumFac )
+         ::oDbf:cSufDoc    := ::oFacRecT:cSufFac
+         ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
 
-            ::oDbf:cTipDoc    := "Factura rectificativa"
-            ::oDbf:cClsDoc    := FAC_REC
-            ::oDbf:cSerDoc    := ::oFacRecT:cSerie
-            ::oDbf:cNumDoc    := Str( ::oFacRecT:nNumFac )
-            ::oDbf:cSufDoc    := ::oFacRecT:cSufFac
-            ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+         ::oDbf:nAnoDoc    := Year( ::oFacRecT:dFecFac )
+         ::oDbf:nMesDoc    := Month( ::oFacRecT:dFecFac )
+         ::oDbf:dFecDoc    := ::oFacRecT:dFecFac
+         ::oDbf:cHorDoc    := SubStr( ::oFacRecT:cTimCre, 1, 2 )
+         ::oDbf:cMinDoc    := SubStr( ::oFacRecT:cTimCre, 4, 2 )
 
-            ::oDbf:nAnoDoc    := Year( ::oFacRecT:dFecFac )
-            ::oDbf:nMesDoc    := Month( ::oFacRecT:dFecFac )
-            ::oDbf:dFecDoc    := ::oFacRecT:dFecFac
-            ::oDbf:cHorDoc    := SubStr( ::oFacRecT:cTimCre, 1, 2 )
-            ::oDbf:cMinDoc    := SubStr( ::oFacRecT:cTimCre, 4, 2 )
+         ::oDbf:nTotNet    := sTot:nTotalNeto
+         ::oDbf:nTotIva    := sTot:nTotalIva
+         ::oDbf:nTotReq    := sTot:nTotalRecargoEquivalencia
+         ::oDbf:nTotDoc    := sTot:nTotalDocumento
+         ::oDbf:nTotPnt    := sTot:nTotalPuntoVerde
+         ::oDbf:nTotTrn    := sTot:nTotalTransporte
+         ::oDbf:nTotAge    := sTot:nTotalAgente
+         ::oDbf:nTotCos    := sTot:nTotalCosto
+         ::oDbf:nTotIvm    := sTot:nTotalImpuestoHidrocarburos
+         ::oDbf:nTotRnt    := sTot:nTotalRentabilidad
+         ::oDbf:nTotRet    := sTot:nTotalRetencion
+         ::oDbf:nTotCob    := sTot:nTotalCobrado
 
-            ::oDbf:nTotNet    := sTot:nTotalNeto
-            ::oDbf:nTotIva    := sTot:nTotalIva
-            ::oDbf:nTotReq    := sTot:nTotalRecargoEquivalencia
-            ::oDbf:nTotDoc    := sTot:nTotalDocumento
-            ::oDbf:nTotPnt    := sTot:nTotalPuntoVerde
-            ::oDbf:nTotTrn    := sTot:nTotalTransporte
-            ::oDbf:nTotAge    := sTot:nTotalAgente
-            ::oDbf:nTotCos    := sTot:nTotalCosto
-            ::oDbf:nTotIvm    := sTot:nTotalImpuestoHidrocarburos
-            ::oDbf:nTotRnt    := sTot:nTotalRentabilidad
-            ::oDbf:nTotRet    := sTot:nTotalRetencion
-            ::oDbf:nTotCob    := sTot:nTotalCobrado
+         ::oDbf:nRieCli    := oRetFld( ::oFacRecT:cCodCli, ::oDbfCli, "Riesgo", "COD" )
 
-            ::oDbf:nRieCli    := oRetFld( ::oFacRecT:cCodCli, ::oDbfCli, "Riesgo", "COD" )
+         /*
+         Añadimos un nuevo registro--------------------------------------------
+         */
 
-            /*
-            Añadimos un nuevo registro--------------------------------------------
-            */
-
-            if ::lValidRegister()
-               ::oDbf:Insert()
-            else
-               ::oDbf:Cancel()
-            end if
-
-            ::addFacturasRectificativasClientes()
-
+         if ::lValidRegister()
+            ::oDbf:Insert()
+         else
+            ::oDbf:Cancel()
          end if
+
+         ::addFacturasRectificativasClientes()
 
          ::oFacRecT:Skip()
 
