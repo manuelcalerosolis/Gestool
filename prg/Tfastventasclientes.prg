@@ -384,7 +384,7 @@ METHOD Create( uParam ) CLASS TFastVentasClientes
 
    ::AddField( "nNumRem",  "N",  9, 0, {|| "999999999" },   "Número de la remesa"            )
    ::AddField( "cSufRem",  "C",  2, 0, {|| "@!" },          "Sufijo de la remesa"            )
-   ::AddField( "cEstado",  "C", 20, 0, {|| "" },            "Estado del recibo"              )
+   ::AddField( "cEstado",  "C", 20, 0, {|| "" },            "Estado del documento"           )
 
    ::AddField( "nRieCli",  "N", 16, 0, {|| "" },            "Riesgo del cliente"             )
 
@@ -910,6 +910,12 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
             ::oDbf:nRieCli    := oRetFld( ::oSatCliT:cCodCli, ::oDbfCli, "Riesgo", "COD" )
 
+            if ::oSatCliT:lEstado
+               ::oDbf:cEstado    := "Pendiente"
+            else
+               ::oDbf:cEstado    := "Finalizado"
+            end if
+
             /*
             Añadimos un nuevo registro--------------------------------------------
             */
@@ -1032,6 +1038,12 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
             ::oDbf:nRieCli    := oRetFld( ::oPreCliT:cCodCli, ::oDbfCli, "Riesgo", "COD" )
 
+            if ::oPreCliT:lEstado
+               ::oDbf:cEstado    := "Pendiente"
+            else
+               ::oDbf:cEstado    := "Finalizado"
+            end if
+
             /*
             Añadimos un nuevo registro--------------------------------------------
             */
@@ -1151,6 +1163,18 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:nTotCob    := sTot:nTotalCobrado
 
             ::oDbf:nRieCli    := oRetFld( ::oPedCliT:cCodCli, ::oDbfCli, "Riesgo", "COD" )
+
+            do case
+               case ::oPedCliT:nEstado <= 1
+                  ::oDbf:cEstado    := "Pendiente"
+
+               case ::oPedCliT:nEstado == 2
+                  ::oDbf:cEstado    := "Parcialmente"
+
+               case ::oPedCliT:nEstado == 3
+                  ::oDbf:cEstado    := "Finalizado"
+
+            end case
 
             /*
             Añadimos un nuevo registro--------------------------------------------
@@ -1278,6 +1302,18 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
 
             ::oDbf:nRieCli    := oRetFld( ::oAlbCliT:cCodCli, ::oDbfCli, "Riesgo", "COD" )
 
+            do case
+               case ::oAlbCliT:nFacturado <= 1
+                  ::oDbf:cEstado    := "Pendiente"
+
+               case ::oAlbCliT:nFacturado == 2
+                  ::oDbf:cEstado    := "Parcialmente"
+
+               case ::oAlbCliT:nFacturado == 3
+                  ::oDbf:cEstado    := "Finalizado"
+
+            end case
+
             /*
             Añadimos un nuevo registro--------------------------------------------
             */
@@ -1397,6 +1433,8 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:nTotCob    := sTot:nTotalCobrado
 
             ::oDbf:nRieCli    := oRetFld( ::oFacCliT:cCodCli, ::oDbfCli, "Riesgo", "COD" )
+
+            ::oDbf:cEstado    := cChkPagFacCli( ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc, ::oFacCliT:cAlias, ::oFacCliP:cAlias )
 
             /*
             Añadimos un nuevo registro--------------------------------------------
