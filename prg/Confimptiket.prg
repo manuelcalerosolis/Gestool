@@ -1,6 +1,8 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 #include "MesDbf.ch"
+#include "HbCom.ch"
+
 
 #define NOPARITY            0
 #define ODDPARITY           1
@@ -539,12 +541,14 @@ Static Function TestBalanza( cBitsSec, cBitsDatos, cBitsPara, cBitsPari, cPuerto
    LOCAL nResult
    LOCAL nPort := 1
 
+   local oPrn
+
    /*
    Empezamos a hacer el test con harbour---------------------------------------
    */
 
    //IF ! Empty( cPuerto )
-      hb_comSetDevice( nPort, "COM3" )
+      hb_comSetDevice( nPort, "COM5" )
       ?nPort
    //ENDIF
    IF ! hb_comOpen( nPort )
@@ -556,19 +560,20 @@ Static Function TestBalanza( cBitsSec, cBitsDatos, cBitsPara, cBitsPari, cPuerto
          ? "Cannot initialize port to: 9600:N:8:1", ;
            "error: " + hb_ntos( hb_comGetError( nPort ) )
       ELSE
-         nResult := hb_comSend( nPort, cString )//, hb_BLen( cString ), nTimeOut )
+         /*nResult := hb_comSend( nPort, cString )//, hb_BLen( cString ), nTimeOut )
          IF nResult != hb_BLen( cString )
             ? "SEND() failed,", nResult, "bytes sent in", nTimeOut / 1000, ;
               "sec., expected:", hb_BLen( cString ), "bytes."
             ? "error: " + hb_ntos( hb_comGetError( nPort ) )
          ELSE
             ? "SEND() succeeded."
-         ENDIF
+         ENDIF*/
 
          //WAIT "Press any key to begin reading..."
+
          cString := Space( 250 )
-         //nTimeOut := 1000 // 500 milliseconds = 0.5 sec.
-         nResult := hb_comRecv( nPort, @cString )//, hb_BLen( cString ), nTimeOut )
+         nTimeOut := 500 // milliseconds = 0.5 sec.
+         nResult := hb_comRecv( nPort, @cString, hb_BLen( cString ), nTimeOut )//, hb_BLen( cString ), nTimeOut )
          msginfo( nResult, "nResult" )
          IF nResult == -1
             ? "RECV() failed,", ;
@@ -576,12 +581,15 @@ Static Function TestBalanza( cBitsSec, cBitsDatos, cBitsPara, cBitsPari, cPuerto
          ELSE
             ? nResult, "bytes read in", nTimeOut / 1000, "sec."
          ENDIF
+
       ENDIF
+
       ? "CLOSE:", hb_comClose( nPort )
+
    ENDIF
 
-  /*
-
+  
+/*
   // Creamos el puerto---------------------------------------------------------
 
   oPrn   := TCommPort():New( cPuerto, cBitsSec, cBitsPara, cBitsDatos, cBitsPari, lOpenToRead )
@@ -600,7 +608,7 @@ Static Function TestBalanza( cBitsSec, cBitsDatos, cBitsPara, cBitsPari, cPuerto
                   "Dato    : " + cBitsDatos                     + CRLF +;
                   "Paridad : " + cBitsPari                      + CRLF +;
                   "Handle  : " + AllTrim( Str( oPrn:nHComm ) )  + CRLF +;
-/8                  "Peso    : " + oPrn:cPeso(),;
+                  "Peso    : " + oPrn:cPeso(),;
                   "Puerto creado" )
 
          oPrn:End()
@@ -909,6 +917,13 @@ METHOD New( cPort, nBitsSec, nBitsParada, nBitsDatos, cBitsParidad, lOpenToRead 
    ::lCreated           := .t.
    ::lOpenToRead        := lOpenToRead
 
+   msginfo( cPort, "cPort" )
+   msginfo( nBitsSec, "nBitsSec" )
+   msginfo( nBitsParada, "nBitsParada" )
+   msginfo( nBitsDatos, "nBitsDatos" )
+   msginfo( cBitsParidad, "cBitsParidad" )
+   msginfo( lOpenToRead, "lOpenToRead" )
+
    /*
    Puerto----------------------------------------------------------------------
    */
@@ -946,6 +961,8 @@ METHOD New( cPort, nBitsSec, nBitsParada, nBitsDatos, cBitsParidad, lOpenToRead 
    if !::lOpenToRead
       ::lCreated        := ::lBuild()
    end if
+
+   msginfo( "salgo del new" )
 
 RETURN Self
 
