@@ -47,6 +47,10 @@ Function ImportaXmlBestseller()
 
    local cDocumentXml
 
+   if msgYesNo( "¿Desea descargar los ficheros del ftp?" )
+      BestsellerFtp():New()
+   end if 
+
    dbUseArea( .t., ( cDriver() ), ( cPatEmp() + "FACPRVT.DBF" ), ( cCheckArea( "FACPRVT", @dbfFacPrvT ) ), .t., .f. ) 
    if !lAIS() ; ordListAdd( ( cPatEmp() + "FACPRVT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
 
@@ -97,7 +101,12 @@ Function ImportaXmlBestseller()
 
    if !empty( aXmlDocuments )
       for each cDocumentXml in aXmlDocuments
-         ProccessXml( cDocumentXml[ 1 ] )
+         if msgyesno( "procesando fichero " + alltrim( str( hb_enumindex())) + " de " + alltrim( str( len( aXmlDocuments))), "¿Desea continuar?" )
+            proccessXml( cDocumentXml[ 1 ] )
+            moveXml( cDocumentXml[ 1 ] )
+         else
+            exit
+         end if 
       next
    else
       msgStop( "No hay ficheros en el directorio")
@@ -134,7 +143,10 @@ Static Function ProccessXml( cDocumentXml )
 
    aFacturaLinea        := {}
    hFacturaCabecera     := {=>}
-   cDocumentXml         := __localDirectory + "\" + cDocumentXml
+   
+   cDocumentXml         := __localDirectory + cDocumentXml
+
+   // return ( msgAlert( cDocumentXml ) )
 
    oXmlDocument         := TXmlDocument():New( cDocumentXml )
 
@@ -163,13 +175,22 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
+Static Function moveXml( cDocumentXml )
+
+   __copyFile( __localDirectory + cDocumentXml, __localDirectoryPorcessed + cDocumentXml )
+   ferase( __localDirectory + cDocumentXml )
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
 Static Function ProccessNode( oXmlNode ) 
 
    local cNodeName   := cValtoChar( oXmlNode:cName )
 
    do case
       case cNodeName == "Invoice"
-         msgwait("invoice","invoice",__timeWait) 
+         msgwait( "invoice", "invoice", __timeWait ) 
          IteratorInvoice( oXmlNode )   
 
       case cNodeName == "cac:InvoiceLine"

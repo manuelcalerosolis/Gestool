@@ -33,69 +33,11 @@ static dbfTemporadaArticulo
 
 Function ImportaXmlBestseller()
 
+   local cDocumentXml
+
    if msgYesNo( "¿Desea descargar los ficheros del ftp?" )
       BestsellerFtp():New()
    end if 
-
-   openFiles()
-
-   proccessPricats()
-
-   closeFiles()
-
-   msgStop( "Proceso finalizado :)")
-
-Return ( nil )
-
-//---------------------------------------------------------------------------//
-
-Static Function proccessPricats()
-
-   local cDocumentXml
-
-   aXmlDocuments        := directory( __localDirectory + "PRICAT_*.*" )
-
-   if empty( aXmlDocuments )
-      msgStop( "No hay ficheros en el directorio")
-      Return ( nil )
-   end if 
-   
-   for each cDocumentXml in aXmlDocuments
-
-      if validateFile( cDocumentXml[ 1 ] )
-
-        proccessXml( cDocumentXml[ 1 ] ) 
-
-        moveXml( cDocumentXml[ 1 ] )
-
-      else
-
-         exit
-
-      end if 
-
-   next
-
-Return ( nil )
-
-//---------------------------------------------------------------------------//
-
-Static Function validateFile( cDocumentXml )
-
-   if file( __localDirectoryPorcessed + cDocumentXml )
-      msgStop( "Fichero " + __localDirectoryPorcessed + cDocumentXml + " ya ha sido procesado." )
-      Return .f.
-   endif
-          
-   if !msgyesno( "Procesando fichero " + alltrim( cDocumentXml ) + " : " + alltrim( str( hb_enumindex() ) ) + " de " + alltrim( str( len( aXmlDocuments ) ) ), "¿Desea continuar?" )
-      Return .f.
-   end if
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
-Static Function openFiles()
 
    dbUseArea( .t., ( cDriver() ), ( cPatArt() + "Articulo.Dbf" ), ( cCheckArea( "Articulo", @dbfArticulo ) ), .t., .f. )
    if !lAIS() ; ordListAdd( ( cPatArt() + "Articulo.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
@@ -119,11 +61,20 @@ Static Function openFiles()
    dbUseArea( .t., ( cDriver() ), cPatArt() + "Temporadas.Dbf", cCheckArea( "Temporadas", @dbfTemporadaArticulo ), .t., .f. )
    if !lAIS() ; ordListAdd( ( cPatArt() + "Temporadas.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
 
-Return ( nil )
+   aXmlDocuments        := directory( __localDirectory + "PRICAT_*.*" )
 
-//---------------------------------------------------------------------------//
-
-Static Function closeFiles()
+   if !Empty( aXmlDocuments )
+      for each cDocumentXml in aXmlDocuments
+         if msgyesno( "procesando fichero " + alltrim( str( hb_enumindex())) + " de " + alltrim( str( len( aXmlDocuments))), "¿Desea continuar?" )
+	        proccessXml( cDocumentXml[ 1 ] ) 
+	        moveXml( cDocumentXml[ 1 ] )
+         else
+            exit
+         end if 
+      next
+   else
+      msgStop( "No hay ficheros en el directorio")
+   end if 
 
    ( dbfArticulo           )->( dbCloseArea() )
    ( dbfCodebar            )->( dbCloseArea() )
@@ -132,6 +83,8 @@ Static Function closeFiles()
    ( dbfCategorias         )->( dbCloseArea() )
    ( dbfTipoArticulo       )->( dbCloseArea() )
    ( dbfTemporadaArticulo  )->( dbCloseArea() ) 
+
+   msgStop( "Proceso finalizado :)")
 
 Return ( nil )
 
