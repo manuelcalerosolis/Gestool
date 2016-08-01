@@ -911,9 +911,9 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:nRieCli    := oRetFld( ::oSatCliT:cCodCli, ::oDbfCli, "Riesgo", "COD" )
 
             if ::oSatCliT:lEstado
-               ::oDbf:cEstado    := "Pendiente"
+               ::oDbf:cEstado := "Pendiente"
             else
-               ::oDbf:cEstado    := "Finalizado"
+               ::oDbf:cEstado := "Finalizado"
             end if
 
             /*
