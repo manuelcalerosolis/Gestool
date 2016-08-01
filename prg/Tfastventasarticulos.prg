@@ -737,6 +737,9 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddField( "cPrvHab",     "C", 12, 0, {|| "" },   "Proveedor habitual"                      )
 
    ::AddField( "cCtrCoste",   "C",  9, 0, {|| "" },   "Código del centro de coste"              )
+   ::AddField( "cTipCtr",     "C", 20, 0, {|| "" },   "Tipo tercero centro de coste"            )
+   ::AddField( "cCodTerCtr",  "C", 20, 0, {|| "" },   "Código tercero centro de coste"          )
+   ::AddField( "cNomTerCtr",  "C",100, 0, {|| "" },   "Nombre tercero centro de coste"          )
 
    ::AddField( "cDesUbi",     "C",200, 0, {|| "" },   "Unicación del artículo"                  )
 
@@ -897,6 +900,39 @@ METHOD BuildReportCorrespondences()
                                                                               ::FastReportAlbaranProveedor(),;
                                                                               ::FastReportFacturaProveedor(),;
                                                                               ::FastReportRectificativaProveedor() } },;
+                     "General" =>                     {  "Generate" =>  {||   ::AddSATClientes(),;
+                                                                              ::AddPresupuestoClientes(),;
+                                                                              ::AddPedidoClientes(),;
+                                                                              ::AddAlbaranCliente( .t. ),;
+                                                                              ::AddFacturaCliente(),;
+                                                                              ::AddFacturaRectificativa(),;
+                                                                              ::AddTicket(),;
+                                                                              ::AddPedidoProveedor(),;
+                                                                              ::AddAlbaranProveedor( .t. ),;
+                                                                              ::AddFacturaProveedor(),;
+                                                                              ::AddRectificativaProveedor() },;
+                                                         "Variable" =>  {||   ::AddVariableLineasSATCliente(),;
+                                                                              ::AddVariableLineasPresupuestoCliente(),;
+                                                                              ::AddVariableLineasPedidoCliente(),;
+                                                                              ::AddVariableLineasAlbaranCliente(),;
+                                                                              ::AddVariableFacturaCliente(),;
+                                                                              ::AddVariableLineasRectificativaCliente(),;
+                                                                              ::AddVariableLineasTicketCliente(),;
+                                                                              ::AddVariableLineasPedidoProveedor(),;
+                                                                              ::AddVariableLineasAlbaranProveedor(),;
+                                                                              ::AddVariableLineasFacturaProveedor(),;
+                                                                              ::AddVariableLineasRectificativaProveedor() },;
+                                                         "Data" =>      {||   ::FastReportSATCliente(),;
+                                                                              ::FastReportPresupuestoCliente(),;
+                                                                              ::FastReportPedidoCliente(),;
+                                                                              ::FastReportAlbaranCliente(),;
+                                                                              ::FastReportFacturaCliente(),;
+                                                                              ::FastReportFacturaRectificativa(),;
+                                                                              ::FastReportTicket( .t. ),;
+                                                                              ::FastReportPedidoProveedor(),;
+                                                                              ::FastReportAlbaranProveedor(),;
+                                                                              ::FastReportFacturaProveedor(),;
+                                                                              ::FastReportRectificativaProveedor() } },;                                                         
                      "Stocks" =>                      {  "Generate" =>  {||   ::AddArticulo() },;
                                                          "Variable" =>  {||   ::AddVariableStock() },;
                                                          "Data" =>      {||   nil } } }
@@ -927,7 +963,7 @@ Method lValidRegister() CLASS TFastVentasArticulos
       ( ::oDbf:cCodCli     >= ::oGrupoProveedor:Cargo:getDesde()        .and. ::oDbf:cCodCli    <= ::oGrupoProveedor:Cargo:getHasta() )         .and.;
       ( ::oDbf:cCodAlm     >= ::oGrupoAlmacen:Cargo:getDesde()          .and. ::oDbf:cCodAlm    <= ::oGrupoAlmacen:Cargo:getHasta() )           .and.;
       ( ::oDbf:cCtrCoste   >= ::oGrupoCentroCoste:Cargo:getDesde()      .and. ::oDbf:cCtrCoste  <= ::oGrupoCentroCoste:Cargo:getHasta() )       .and.;
-      ( ::oDbf:cCodOpe     >= ::oGrupoOperario:Cargo:getDesde()         .and. ::oDbf:cCodOpe  <= ::oGrupoOperario:Cargo:getHasta() )
+      ( ::oDbf:cCodOpe     >= ::oGrupoOperario:Cargo:getDesde()         .and. ::oDbf:cCodOpe    <= ::oGrupoOperario:Cargo:getHasta() )
 
       //::loadValuesExtraFields()
 
@@ -961,6 +997,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
    DEFAULT lLoadFile       := .t. 
 
    aReports := {  {  "Title" => "Listado",                        "Image" => 0,  "Type" => "Listado",                      "Directory" => "Articulos\Listado",                            "File" => "Listado.fr3"  },;
+                  {  "Title" => "General",                        "Image" => 24, "Type" => "General",                      "Directory" => "Articulos\General",                            "File" => "Movimientos generales.fr3"  },;
                   {  "Title" => "Compras/Ventas/Producción",      "Image" => 24, "Type" => "Todos los movimientos",        "Directory" => "Articulos\Movimientos",                        "File" => "Todos los movimientos.fr3"  },;
                   {  "Title" => "Ventas",                         "Image" => 11, "Subnode" =>;
                   { ;
@@ -1430,6 +1467,11 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
                ::oDbf:lKitArt    := ::oSatCliL:lKitArt
                ::oDbf:lKitChl    := ::oSatCliL:lKitChl
 
+               ::oDbf:cCtrCoste  := ::oSatCliL:cCtrCoste
+               ::oDbf:cTipCtr    := ::oSatCliL:cTipCtr
+               ::oDbf:cCodTerCtr := ::oSatCliL:cTerCtr
+               //::oDbf:cNomTerCtr := ::oSatCliL:cCtrCoste
+
                if !empty( ::oSatCliL:cCodPrv ) 
                   ::oDbf:cPrvHab := ::oSatCliL:cCodPrv
                else
@@ -1620,6 +1662,11 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
 
                ::oDbf:lKitArt    := ::oPreCliL:lKitArt
                ::oDbf:lKitChl    := ::oPreCliL:lKitChl
+
+               ::oDbf:cCtrCoste  := ::oPreCliL:cCtrCoste
+               ::oDbf:cTipCtr    := ::oPreCliL:cTipCtr
+               ::oDbf:cCodTerCtr := ::oPreCliL:cTerCtr
+               //::oDbf:cNomTerCtr := ::oPrecliL:cCtrCoste
 
                if !empty( ::oPreCliL:cCodPrv ) 
                   ::oDbf:cPrvHab := ::oPreCliL:cCodPrv
@@ -1815,6 +1862,11 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cPrvHab := getProveedorPorDefectoArticulo( ::oDbf:cCodArt, D():ProveedorArticulo( ::nView ) )
                end if
 
+               ::oDbf:cCtrCoste  := ( aliasPedidosClientesLineas )->cCtrCoste
+               ::oDbf:cTipCtr    := ( aliasPedidosClientesLineas )->cTipCtr
+               ::oDbf:cCodTerCtr := ( aliasPedidosClientesLineas )->cTerCtr
+               //::oDbf:cNomTerCtr := ( aliasPedidosClientesLineas )->cCtrCoste
+
                ::InsertIfValid()
 
                ::loadValuesExtraFields()
@@ -2005,6 +2057,10 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
                ::oDbf:lKitChl    := ::oAlbCliL:lKitChl
 
                ::oDbf:cCtrCoste  := ::oAlbCliL:cCtrCoste
+
+               ::oDbf:cTipCtr    := ::oAlbCliL:cTipCtr
+               ::oDbf:cCodTerCtr := ::oAlbCliL:cTerCtr
+               //::oDbf:cNomTerCtr := ::oAlbCliL:cCtrCoste
 
                if !empty( ::oAlbCliL:cRef ) 
                   ::oDbf:cPrvHab := ::oAlbCliL:cRef
@@ -2200,6 +2256,9 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
                   ::oDbf:lKitChl    := ::oFacCliL:lKitChl
 
                   ::oDbf:cCtrCoste  := ::oFacCliL:cCtrCoste
+                  ::oDbf:cTipCtr    := ::oFacCliL:cTipCtr
+                  ::oDbf:cCodTerCtr := ::oFacCliL:cTerCtr
+                  //::oDbf:cNomTerCtr := ::oFacCliL:cCtrCoste
                
                   if !empty( ::oFacCliL:cCodPrv ) 
                      ::oDbf:cPrvHab := ::oFacCliL:cCodPrv
@@ -2396,6 +2455,9 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
                   ::oDbf:lKitChl    := ::oFacRecL:lKitChl
 
                   ::oDbf:cCtrCoste  := ::oFacRecL:cCtrCoste
+                  ::oDbf:cTipCtr    := ::oFacRecL:cTipCtr
+                  ::oDbf:cCodTerCtr := ::oFacRecL:cTerCtr
+                  //::oDbf:cNomTerCtr := ::oFacRecL:cCtrCoste
 
                   if !empty( ::oFacRecL:cCodPrv ) 
                      ::oDbf:cPrvHab := ::oFacRecL:cCodPrv
@@ -3081,6 +3143,11 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
                      ::oDbf:cFormaTo   := ::oPedPrvL:cFormato
                      ::oDbf:nCajas     := ::oPedPrvL:nCanPed
 
+                     ::oDbf:cCtrCoste  := ::oPedPrvL:cCtrCoste
+                     ::oDbf:cTipCtr    := ::oPedPrvL:cTipCtr
+                     ::oDbf:cCodTerCtr := ::oPedPrvL:cTerCtr
+                     //::oDbf:cNomTerCtr := ::oPedPrvL:cCtrCoste
+
                   ::InsertIfValid()
                   ::loadValuesExtraFields()
 
@@ -3235,6 +3302,9 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
                   ::oDBf:nCajas     := ::oAlbPrvL:nCanEnt
 
                   ::oDBf:cCtrCoste  := ::oAlbPrvL:cCtrCoste
+                  ::oDbf:cTipCtr    := ::oAlbPrvL:cTipCtr
+                  ::oDbf:cCodTerCtr := ::oAlbPrvL:cTerCtr
+                  //::oDbf:cNomTerCtr := ::oAlbPrvL:cCtrCoste
 
                   ::InsertIfValid()
                   ::loadValuesExtraFields()
@@ -3381,6 +3451,9 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:nCajas     := ::oFacPrvL:nCanEnt
 
                   ::oDbf:cCtrCoste  := ::oFacPrvL:cCtrCoste
+                  ::oDbf:cTipCtr    := ::oFacPrvL:cTipCtr
+                  ::oDbf:cCodTerCtr := ::oFacPrvL:cTerCtr
+                  //::oDbf:cNomTerCtr := ::oFacPrvL:cCtrCoste
 
                   ::InsertIfValid()
                   ::loadValuesExtraFields()
@@ -3526,6 +3599,9 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:nCajas     := ::oRctPrvL:nCanEnt
 
                   ::oDbf:cCtrCoste  := ::oRctPrvL:cCtrCoste
+                  ::oDbf:cTipCtr    := ::oRctPrvL:cTipCtr
+                  ::oDbf:cCodTerCtr := ::oRctPrvL:cTerCtr
+                  //::oDbf:cNomTerCtr := ::oRctPrvL:cCtrCoste
 
                   ::InsertIfValid()
                   ::loadValuesExtraFields()
