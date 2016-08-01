@@ -1286,7 +1286,7 @@ METHOD FirmaJava()
       logwrite(   "java -jar " + fullcurdir() + "firma\firma.jar " + ::cFicheroOrigen + space(1) + ::cFicheroDestino + space( 1 ) + "Explorer 0" )
       waitRun(    "java -jar " + fullcurdir() + "firma\firma.jar " + ::cFicheroOrigen + space(1) + ::cFicheroDestino + space( 1 ) + "Explorer 0", 6 )
 
-      ::oTree:Add( "Firma digital realizada satisfactoriamente.", 1 )
+      ::oTree:Add( "Proceso de firma digital iniciado.", 1 )
 
    RECOVER USING oError
 
