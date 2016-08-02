@@ -6246,7 +6246,7 @@ Return ( cFormato )
 
 //---------------------------------------------------------------------------//
 
-Static Function actualizarEstadoFactura( cTipoRecibo, cNumFac )
+Static Function actualizarEstadoFactura( cTipoRecibo, cNumeroFactura )
 
    if !( lActualizarEstadoFactura )
       Return ( .f. )
@@ -6255,13 +6255,13 @@ Static Function actualizarEstadoFactura( cTipoRecibo, cNumFac )
    do case 
       case empty( cTipoRecibo )
 
-         if ( D():FacturasClientes( nView ) )->( dbSeek( cNumFac ) )
+         if ( D():FacturasClientes( nView ) )->( dbSeek( cNumeroFactura ) )
             ChkLqdFacCli( nil, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), cFacCliP, D():AnticiposClientes( nView ), D():TiposIva( nView ), D():Divisas( nView ), .f. )
          end if
 
       case cTipoRecibo == "R"
 
-         if ( D():FacturasRectificativas( nView ) )->( dbSeek( cNumFac ) )
+         if ( D():FacturasRectificativas( nView ) )->( dbSeek( cNumeroFactura ) )
             ChkLqdFacRec( nil, D():FacturasRectificativas( nView ), D():FacturasRectificativasLineas( nView ), cFacCliP, D():TiposIva( nView ), D():Divisas( nView ) )
          end if
 
