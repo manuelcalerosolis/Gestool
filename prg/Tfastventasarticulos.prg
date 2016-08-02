@@ -320,6 +320,12 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       ::nView                          := D():CreateView()
 
+      D():Clientes( ::nView )
+
+      D():Proveedores( ::nView ) 
+
+      D():Agentes( ::nView )
+
       D():PedidosClientes( ::nView )
 
       D():PedidosClientesLineas( ::nView )
@@ -1470,7 +1476,7 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
                ::oDbf:cCtrCoste  := ::oSatCliL:cCtrCoste
                ::oDbf:cTipCtr    := ::oSatCliL:cTipCtr
                ::oDbf:cCodTerCtr := ::oSatCliL:cTerCtr
-               //::oDbf:cNomTerCtr := ::oSatCliL:cCtrCoste
+               ::oDbf:cNomTerCtr := NombreTerceroCentroCoste( ::oSatCliL:cTipCtr, ::oSatCliL:cTerCtr, ::nView )
 
                if !empty( ::oSatCliL:cCodPrv ) 
                   ::oDbf:cPrvHab := ::oSatCliL:cCodPrv
@@ -1666,7 +1672,7 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
                ::oDbf:cCtrCoste  := ::oPreCliL:cCtrCoste
                ::oDbf:cTipCtr    := ::oPreCliL:cTipCtr
                ::oDbf:cCodTerCtr := ::oPreCliL:cTerCtr
-               //::oDbf:cNomTerCtr := ::oPrecliL:cCtrCoste
+               ::oDbf:cNomTerCtr := NombreTerceroCentroCoste( ::oPreCliL:cTipCtr, ::oPreCliL:cTerCtr, ::nView )
 
                if !empty( ::oPreCliL:cCodPrv ) 
                   ::oDbf:cPrvHab := ::oPreCliL:cCodPrv
@@ -1865,7 +1871,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                ::oDbf:cCtrCoste  := ( aliasPedidosClientesLineas )->cCtrCoste
                ::oDbf:cTipCtr    := ( aliasPedidosClientesLineas )->cTipCtr
                ::oDbf:cCodTerCtr := ( aliasPedidosClientesLineas )->cTerCtr
-               //::oDbf:cNomTerCtr := ( aliasPedidosClientesLineas )->cCtrCoste
+               ::oDbf:cNomTerCtr := NombreTerceroCentroCoste( ( aliasPedidosClientesLineas )->cTipCtr, ( aliasPedidosClientesLineas )->cTerCtr, ::nView )
 
                ::InsertIfValid()
 
@@ -2060,7 +2066,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
 
                ::oDbf:cTipCtr    := ::oAlbCliL:cTipCtr
                ::oDbf:cCodTerCtr := ::oAlbCliL:cTerCtr
-               //::oDbf:cNomTerCtr := ::oAlbCliL:cCtrCoste
+               ::oDbf:cNomTerCtr := NombreTerceroCentroCoste( ::oAlbCliL:cTipCtr, ::oAlbCliL:cTerCtr, ::nView )
 
                if !empty( ::oAlbCliL:cRef ) 
                   ::oDbf:cPrvHab := ::oAlbCliL:cRef
@@ -2258,7 +2264,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
                   ::oDbf:cCtrCoste  := ::oFacCliL:cCtrCoste
                   ::oDbf:cTipCtr    := ::oFacCliL:cTipCtr
                   ::oDbf:cCodTerCtr := ::oFacCliL:cTerCtr
-                  //::oDbf:cNomTerCtr := ::oFacCliL:cCtrCoste
+                  ::oDbf:cNomTerCtr := NombreTerceroCentroCoste( ::oFacCliL:cTipCtr, ::oFacCliL:cTerCtr, ::nView )
                
                   if !empty( ::oFacCliL:cCodPrv ) 
                      ::oDbf:cPrvHab := ::oFacCliL:cCodPrv
@@ -2457,7 +2463,7 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
                   ::oDbf:cCtrCoste  := ::oFacRecL:cCtrCoste
                   ::oDbf:cTipCtr    := ::oFacRecL:cTipCtr
                   ::oDbf:cCodTerCtr := ::oFacRecL:cTerCtr
-                  //::oDbf:cNomTerCtr := ::oFacRecL:cCtrCoste
+                  ::oDbf:cNomTerCtr := NombreTerceroCentroCoste( ::oFacRecL:cTipCtr, ::oFacRecL:cTerCtr, ::nView )
 
                   if !empty( ::oFacRecL:cCodPrv ) 
                      ::oDbf:cPrvHab := ::oFacRecL:cCodPrv
@@ -3117,7 +3123,7 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
                      //::oDbf:nImpEsp    := nImpEspLPedPrv(::oPedPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                      ::oDbf:nTotArt    := nImpLPedPrv( ::oPedPrvT:cAlias, ::oPedPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
                      ::oDbf:nTotArt    += nIvaLPedPrv(::oPedPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                     ::oDbf:nCosArt    := 0
+                     ::oDbf:nCosArt    := nImpLPedPrv( ::oPedPrvT:cAlias, ::oPedPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
 
                      ::oDbf:cCodPr1    := ::oPedPrvL:cCodPr1
                      ::oDbf:cCodPr2    := ::oPedPrvL:cCodPr2
@@ -3146,7 +3152,7 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
                      ::oDbf:cCtrCoste  := ::oPedPrvL:cCtrCoste
                      ::oDbf:cTipCtr    := ::oPedPrvL:cTipCtr
                      ::oDbf:cCodTerCtr := ::oPedPrvL:cTerCtr
-                     //::oDbf:cNomTerCtr := ::oPedPrvL:cCtrCoste
+                     ::oDbf:cNomTerCtr := NombreTerceroCentroCoste( ::oPedPrvL:cTipCtr, ::oPedPrvL:cTerCtr, ::nView )
 
                   ::InsertIfValid()
                   ::loadValuesExtraFields()
@@ -3272,7 +3278,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
                   //::oDbf:nImpEsp    := nImpEspLAlbPrv( ::oAlbPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                   ::oDbf:nTotArt    := nImpLAlbPrv( ::oAlbPrvT:cAlias, ::oAlbPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
                   ::oDbf:nTotArt    += nIvaLAlbPrv( ::oAlbPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                  ::oDbf:nCosArt    := 0
+                  ::oDbf:nCosArt    := nImpLAlbPrv( ::oAlbPrvT:cAlias, ::oAlbPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
 
                   ::oDbf:cCodPr1    := ::oAlbPrvL:cCodPr1
                   ::oDbf:cCodPr2    := ::oAlbPrvL:cCodPr2
@@ -3304,7 +3310,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
                   ::oDBf:cCtrCoste  := ::oAlbPrvL:cCtrCoste
                   ::oDbf:cTipCtr    := ::oAlbPrvL:cTipCtr
                   ::oDbf:cCodTerCtr := ::oAlbPrvL:cTerCtr
-                  //::oDbf:cNomTerCtr := ::oAlbPrvL:cCtrCoste
+                  ::oDbf:cNomTerCtr := NombreTerceroCentroCoste( ::oAlbPrvL:cTipCtr, ::oAlbPrvL:cTerCtr, ::nView )
 
                   ::InsertIfValid()
                   ::loadValuesExtraFields()
@@ -3421,7 +3427,7 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   //::oDbf:nImpEsp    := nImpEspLFacPrv( ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                   ::oDbf:nTotArt    := nImpLFacPrv( ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
                   ::oDbf:nTotArt    += nIvaLFacPrv( ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                  ::oDbf:nCosArt    := 0
+                  ::oDbf:nCosArt    := nImpLFacPrv( ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
 
                   ::oDbf:cCodPr1    := ::oFacPrvL:cCodPr1
                   ::oDbf:cCodPr2    := ::oFacPrvL:cCodPr2
@@ -3453,7 +3459,7 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:cCtrCoste  := ::oFacPrvL:cCtrCoste
                   ::oDbf:cTipCtr    := ::oFacPrvL:cTipCtr
                   ::oDbf:cCodTerCtr := ::oFacPrvL:cTerCtr
-                  //::oDbf:cNomTerCtr := ::oFacPrvL:cCtrCoste
+                  ::oDbf:cNomTerCtr := NombreTerceroCentroCoste( ::oFacPrvL:cTipCtr, ::oFacPrvL:cTerCtr, ::nView )
 
                   ::InsertIfValid()
                   ::loadValuesExtraFields()
@@ -3569,7 +3575,7 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   //::oDbf:nImpEsp    := nImpEspLRctPrv( ::oRctPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                   ::oDbf:nTotArt    := nImpLRctPrv( ::oRctPrvT:cAlias, ::oRctPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
                   ::oDbf:nTotArt    += nIvaLRctPrv( ::oRctPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                  ::oDbf:nCosArt    := 0
+                  ::oDbf:nCosArt    := nImpLRctPrv( ::oRctPrvT:cAlias, ::oRctPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
 
                   ::oDbf:cCodPr1    := ::oRctPrvL:cCodPr1
                   ::oDbf:cCodPr2    := ::oRctPrvL:cCodPr2
@@ -3601,7 +3607,7 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:cCtrCoste  := ::oRctPrvL:cCtrCoste
                   ::oDbf:cTipCtr    := ::oRctPrvL:cTipCtr
                   ::oDbf:cCodTerCtr := ::oRctPrvL:cTerCtr
-                  //::oDbf:cNomTerCtr := ::oRctPrvL:cCtrCoste
+                  ::oDbf:cNomTerCtr := NombreTerceroCentroCoste( ::oRctPrvL:cTipCtr, ::oRctPrvL:cTerCtr, ::nView )
 
                   ::InsertIfValid()
                   ::loadValuesExtraFields()
@@ -4240,4 +4246,22 @@ Return lValid
 
 //---------------------------------------------------------------------------//
 
+Function NombreTerceroCentroCoste( cTipCtr, cTerCtr, nView )
 
+   local cNombre := ""
+
+   do case
+      case AllTrim( cTipCtr ) == "Proveedor"
+         cNombre  := RetFld( Padr( cTerCtr, 12 ), D():Proveedores( nView ) )
+
+      case AllTrim( cTipCtr ) == "Agente"
+         cNombre  := cNbrAgent( Padr( cTerCtr, 3 ), D():Agentes( nView ) )
+
+      case AllTrim( cTipCtr ) == "Cliente"
+         cNombre  := RetFld( Padr( cTerCtr, 12 ), D():Clientes( nView ) )
+
+   end case
+
+Return cNombre
+
+//---------------------------------------------------------------------------//

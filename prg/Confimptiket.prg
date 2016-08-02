@@ -536,21 +536,20 @@ Test de la impresora de tickets
 Static Function TestBalanza( cBitsSec, cBitsDatos, cBitsPara, cBitsPari, cPuerto, lOpenToRead )
 
    //LOCAL cString := "ATE0" + Chr( 13 ) + "ATI3" + Chr( 13 )
-   LOCAL cString := "98000001" + Chr( 13 ) + Chr( 10 ) + Chr( 13 ) + Chr( 10 )
-   LOCAL nTimeOut := 3000 // 3000 miliseconds = 3 sec.
+   LOCAL cString  := Space( 250 )
+   LOCAL nTimeOut := 500 // 3000 miliseconds = 3 sec.
    LOCAL nResult
-   LOCAL nPort := 1
-
-   local oPrn
+   LOCAL nPort    := 1
 
    /*
    Empezamos a hacer el test con harbour---------------------------------------
    */
 
-   //IF ! Empty( cPuerto )
-      hb_comSetDevice( nPort, "COM5" )
+   IF ! Empty( cPuerto )
+      hb_comSetDevice( nPort, cPuerto )
       ?nPort
-   //ENDIF
+   ENDIF
+
    IF ! hb_comOpen( nPort )
       ? "Cannot open port:", nPort, hb_comGetDevice( nPort ), ;
         "error: " + hb_ntos( hb_comGetError( nPort ) )
@@ -572,7 +571,6 @@ Static Function TestBalanza( cBitsSec, cBitsDatos, cBitsPara, cBitsPari, cPuerto
          //WAIT "Press any key to begin reading..."
 
          cString := Space( 250 )
-         nTimeOut := 500 // milliseconds = 0.5 sec.
          nResult := hb_comRecv( nPort, @cString, hb_BLen( cString ), nTimeOut )//, hb_BLen( cString ), nTimeOut )
          msginfo( nResult, "nResult" )
          IF nResult == -1
@@ -580,6 +578,7 @@ Static Function TestBalanza( cBitsSec, cBitsDatos, cBitsPara, cBitsPari, cPuerto
               "error: " + hb_ntos( hb_comGetError( nPort ) )
          ELSE
             ? nResult, "bytes read in", nTimeOut / 1000, "sec."
+            ?cString
          ENDIF
 
       ENDIF
