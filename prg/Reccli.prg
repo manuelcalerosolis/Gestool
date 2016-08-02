@@ -155,8 +155,6 @@ STATIC FUNCTION OpenFiles()
       Return ( .f. )
    end if
 
-   DEFAULT lExt         := .f.
-
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
@@ -6256,13 +6254,13 @@ Static Function actualizarEstadoFactura( cTipoRecibo, cNumeroFactura )
       case empty( cTipoRecibo )
 
          if ( D():FacturasClientes( nView ) )->( dbSeek( cNumeroFactura ) )
-            ChkLqdFacCli( nil, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), cFacCliP, D():AnticiposClientes( nView ), D():TiposIva( nView ), D():Divisas( nView ), .f. )
+            ChkLqdFacCli( nil, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), D():AnticiposClientes( nView ), D():TiposIva( nView ), D():Divisas( nView ), .f. )
          end if
 
       case cTipoRecibo == "R"
 
          if ( D():FacturasRectificativas( nView ) )->( dbSeek( cNumeroFactura ) )
-            ChkLqdFacRec( nil, D():FacturasRectificativas( nView ), D():FacturasRectificativasLineas( nView ), cFacCliP, D():TiposIva( nView ), D():Divisas( nView ) )
+            ChkLqdFacRec( nil, D():FacturasRectificativas( nView ), D():FacturasRectificativasLineas( nView ), D():FacturasClientesCobros( nView ), D():TiposIva( nView ), D():Divisas( nView ) )
          end if
 
    end case
