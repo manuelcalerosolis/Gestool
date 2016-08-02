@@ -111,10 +111,10 @@ static lPgdOld
 static nImpOld
 
 static oTotalRelacionados
-static nTotalRelacionados     := 0
+static nTotalRelacionados        := 0
 
-static aRecibosRelacionados   := {}
-static aRecibosMatriz         := {}
+static aRecibosRelacionados      := {}
+static aRecibosMatriz            := {}
 
 static oClienteCompensar
 
@@ -122,29 +122,30 @@ static oMenu
 
 static oMailing
 
-static lExternal              := .f.
-static lOpenFiles             := .f.
-static cFiltroUsuario         := ""
+static lOpenFiles                := .f.
+static cFiltroUsuario            := ""
 
-static cOldCodCli             := ""
+static cOldCodCli                := ""
 
-static lOldDevuelto           := .f.
+static lOldDevuelto              := .f.
+
+static lActualizarEstadoFactura  := .t.
 
 static dbfMatriz
 
-static bEdit                  := { |aTmp, aGet, dbf, oBrw, lRectificativa, nSpecialMode, nMode, aTmpFac| EdtCob( aTmp, aGet, dbf, oBrw, lRectificativa, nSpecialMode, nMode, aTmpFac ) }
+static bEdit                     := { |aTmp, aGet, dbf, oBrw, lRectificativa, nSpecialMode, nMode, aTmpFac| EdtCob( aTmp, aGet, dbf, oBrw, lRectificativa, nSpecialMode, nMode, aTmpFac ) }
 
-static hEstadoRecibo          := {  "Pendiente"             => "bCancel",;
-                                    "Cobrado"               => "bSel",;
-                                    "Devuelto"              => "bAlert",;
-                                    "Remesado"              => "folder_ok_16",;
-                                    "Espera documentación"  => "bClock" }
+static hEstadoRecibo             := {  "Pendiente"             => "bCancel",;
+                                       "Cobrado"               => "bSel",;
+                                       "Devuelto"              => "bAlert",;
+                                       "Remesado"              => "folder_ok_16",;
+                                       "Espera documentación"  => "bClock" }
 
 //----------------------------------------------------------------------------//
 //Funciones del programa
 //----------------------------------------------------------------------------//
 
-STATIC FUNCTION OpenFiles( lExt )
+STATIC FUNCTION OpenFiles()
 
    local oError
    local oBlock
@@ -156,9 +157,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
    DEFAULT lExt         := .f.
 
-   lExternal            := lExt
-
-   oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
       lOpenFiles        := .t.
@@ -3483,21 +3482,24 @@ Return .t.
 
 FUNCTION ExtEdtRecCli( cFacCliP, nVista, lRectificativa, oCta, oCtrCoste )
 
-   local nLevel            := nLevelUsr( _MENUITEM_ )
+   local nLevel               := nLevelUsr( _MENUITEM_ )
 
-   DEFAULT lRectificativa  := .f.
+   lActualizarEstadoFactura   := .f.
+
+   nView                      := nVista
+   oCtaRem                    := oCta
+   oCentroCoste               := oCtrCoste
+
+   DEFAULT lRectificativa     := .f.
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
 
-   oCentroCoste            := oCtrCoste
-   oCtaRem                 := oCta
-
-   nView                   := nVista
-
    WinEdtRec( nil, bEdit, cFacCliP, lRectificativa )
+
+   lActualizarEstadoFactura   := .t.
 
 Return .t.
 
@@ -5630,67 +5632,37 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
       Comprobamos el estado de la factura-----------------------------------------
       */
 
-      do case 
-         case empty( cTipoRecibo )
-
-            if ( D():FacturasClientes( nView ) )->( dbSeek( cNumFac ) )
-               ChkLqdFacCli( nil, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), cFacCliP, D():AnticiposClientes( nView ), D():TiposIva( nView ), D():Divisas( nView ), .f. )
-            end if
-
-         case cTipoRecibo == "R"
-
-            if ( D():FacturasRectificativas( nView ) )->( dbSeek( cNumFac ) )
-               ChkLqdFacRec( nil, D():FacturasRectificativas( nView ), D():FacturasRectificativasLineas( nView ), cFacCliP, D():TiposIva( nView ), D():Divisas( nView ) )
-            end if
-
-      end case
+      actualizarEstadoFactura( cTipoRecibo, cNumFac )
 
    else
 
       if isArray( aRecibosRelacionados ) .and. Len( aRecibosRelacionados ) > 0
 
-         if Len( aRecibosRelacionados ) > 0
+         nRec     := ( D():FacturasClientesCobros( nView ) )->( Recno() )
+         nOrdAnt  := ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( "nNumFac" ) )
 
-            nRec     := ( D():FacturasClientesCobros( nView ) )->( Recno() )
-            nOrdAnt  := ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( "nNumFac" ) )
+         for each cRecibo in aRecibosRelacionados
 
-            for each cRecibo in aRecibosRelacionados
+            if ( D():FacturasClientesCobros( nView ) )->( dbSeek( cRecibo ) )
 
-               if ( D():FacturasClientesCobros( nView ) )->( dbSeek( cRecibo ) )
+               if dbLock( D():FacturasClientesCobros( nView ) )
 
-                  if dbLock( D():FacturasClientesCobros( nView ) )
+                  ( D():FacturasClientesCobros( nView ) )->lCobrado     := .t.
+                  ( D():FacturasClientesCobros( nView ) )->dEntrada     := GetSysDate()
+                  ( D():FacturasClientesCobros( nView ) )->cNumMtr      := cNumRecTip
 
-                     ( D():FacturasClientesCobros( nView ) )->lCobrado     := .t.
-                     ( D():FacturasClientesCobros( nView ) )->dEntrada     := GetSysDate()
-                     ( D():FacturasClientesCobros( nView ) )->cNumMtr      := cNumRecTip
+                  ( D():FacturasClientesCobros( nView ) )->( dbUnLock() )
 
-                     ( D():FacturasClientesCobros( nView ) )->( dbUnLock() )
-
-                     do case 
-                        case empty( ( D():FacturasClientesCobros( nView ) )->cTipRec )
-
-                           if ( D():FacturasClientes( nView ) )->( dbSeek( ( D():FacturasClientesCobros( nView ) )->cSerie + Str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac ) )
-                              ChkLqdFacCli( nil, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), cFacCliP, D():AnticiposClientes( nView ), D():TiposIva( nView ), D():Divisas( nView ), .f. )
-                           end if
-
-                        case ( D():FacturasClientesCobros( nView ) )->cTipRec == "R"
-
-                           if ( D():FacturasRectificativas( nView ) )->( dbSeek( ( D():FacturasClientesCobros( nView ) )->cSerie + Str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac ) )
-                              ChkLqdFacRec( nil, D():FacturasRectificativas( nView ), D():FacturasRectificativasLineas( nView ), cFacCliP, D():TiposIva( nView ), D():Divisas( nView ) )
-                           end if
-
-                     end case
-
-                  end if
+                  actualizarEstadoFactura( ( D():FacturasClientesCobros( nView ) )->cTipRec, ( D():FacturasClientesCobros( nView ) )->cSerie + Str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac )
 
                end if
 
-            next
+            end if
 
-            ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( nOrdAnt ) )
-            ( D():FacturasClientesCobros( nView ) )->( dbGoTo( nRec ) )
+         next
 
-         end if
+         ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( nOrdAnt ) )
+         ( D():FacturasClientesCobros( nView ) )->( dbGoTo( nRec ) )
 
       end if
 
@@ -6271,5 +6243,30 @@ Static Function cFormatoRecibosClientes( cSerie )
    end if
 
 Return ( cFormato )
+
+//---------------------------------------------------------------------------//
+
+Static Function actualizarEstadoFactura( cTipoRecibo, cNumFac )
+
+   if !( lActualizarEstadoFactura )
+      Return ( .f. )
+   end if 
+
+   do case 
+      case empty( cTipoRecibo )
+
+         if ( D():FacturasClientes( nView ) )->( dbSeek( cNumFac ) )
+            ChkLqdFacCli( nil, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), cFacCliP, D():AnticiposClientes( nView ), D():TiposIva( nView ), D():Divisas( nView ), .f. )
+         end if
+
+      case cTipoRecibo == "R"
+
+         if ( D():FacturasRectificativas( nView ) )->( dbSeek( cNumFac ) )
+            ChkLqdFacRec( nil, D():FacturasRectificativas( nView ), D():FacturasRectificativasLineas( nView ), cFacCliP, D():TiposIva( nView ), D():Divisas( nView ) )
+         end if
+
+   end case
+
+Return nil
 
 //---------------------------------------------------------------------------//

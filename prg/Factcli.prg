@@ -4654,9 +4654,7 @@ Static Function CancelEdtRec( nMode, aGet )
 
       CursorWait()
 
-   	/*
-   	rollback de los Facturas facturados-------------------------------------
-   	*/
+   	// Rollback de los albaranes facturados----------------------------------
 
       if len( aNumAlb ) > 0
          for each cNumDoc in aNumAlb 

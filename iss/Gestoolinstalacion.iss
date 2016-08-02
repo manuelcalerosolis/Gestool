@@ -2,14 +2,14 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 [Setup]
-AppName=Gestool 2K16
-AppVerName=Gestool 2K16
+AppName=Gestool 2016
+AppVerName=Gestool 2016
 AppPublisher=Gestool 
 AppPublisherURL=http://www.gestool.es
 AppSupportURL=http://www.gestool.es
 AppUpdatesURL=http://www.gestool.es
 DefaultDirName={pf}\Gestool
-DefaultGroupName=Gestool 2K16
+DefaultGroupName=Gestool 2016
 AllowNoIcons=yes
 OutputDir=c:\fw195\gestool\iss\exe\
 
@@ -201,13 +201,13 @@ Source: "c:\fw195\gestool\client\client.exe";         DestDir: "{app}\Client";  
 Source: "c:\fw195\gestool\actualiza\chkemp.nil";      DestDir: "{app}";           Flags: ignoreversion
 
 [Icons]
-Name: "{group}\Gestool 2K16";                         Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico"
-Name: "{group}\Gestool táctil 2K16";                  Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico" ; Parameters: "/TACTIL"
-Name: "{userdesktop}\Gestool 2K16";                   Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico"
-Name: "{userdesktop}\Gestool táctil 2K16";            Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico" ; Parameters: "/TACTIL"
+Name: "{group}\Gestool 2016";                         Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico"
+Name: "{group}\Gestool táctil 2016";                  Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico" ; Parameters: "/TACTIL"
+Name: "{userdesktop}\Gestool 2016";                   Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico"
+Name: "{userdesktop}\Gestool táctil 2016";            Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico" ; Parameters: "/TACTIL"
 
 [Run]
-Filename: "{app}\Gestool.exe";                        Description: "Iniciar Gestool 2K16"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\Gestool.exe";                        Description: "Iniciar Gestool 2016"; Flags: nowait postinstall skipifsilent
 
 [Code]
 
