@@ -203,6 +203,7 @@ static oMailing
 
 static dbfClient
 static oStock
+static oNewImp
 static oGetNet
 static oGetIva
 static oGetIvm
@@ -351,8 +352,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():GetObject( "UnidadMedicion", nView )
 
-      D():ImpuestosEspeciales( nView )
-
       oDetCamposExtra      := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Pedidos a proveedores" )
@@ -361,6 +360,11 @@ STATIC FUNCTION OpenFiles( lExt )
       oCentroCoste            := TCentroCoste():Create( cPatDat() )
       if !oCentroCoste:OpenFiles()
          lOpenFiles           := .f.
+      end if
+
+      oNewImp           := TNewImp():Create( cPatEmp() )
+      if !oNewImp:OpenFiles()
+         lOpenFiles     := .f.
       end if
 
       D():ArticuloLenguaje( nView )
@@ -426,12 +430,17 @@ STATIC FUNCTION CloseFiles()
       oCentroCoste:CloseFiles()
    end if
 
+   if !empty( oNewImp )
+      oNewImp:end()
+   end if
+
    CodigosPostales():GetInstance():CloseFiles()
 
    D():DeleteView( nView )
 
    oStock      := nil
    oBandera    := nil
+   oNewImp     := nil
 
    lOpenFiles  := .f.
 
@@ -2733,7 +2742,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  cPinDiv ;
          ON CHANGE( lCalcDeta( aTmp, oTotal ) );
-         ON HELP  ( D():ImpuestosEspeciales( nView ):nBrwImp( aGet[ _NVALIMP ] ) );
          OF       oFld:aDialogs[1]
 
       // Bultos y cajas---------------------------------------------------------
@@ -3270,7 +3278,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, o
 
             aTmp[ _CCODIMP ]  := ( D():Articulos( nView ) )->cCodImp
 
-            D():ImpuestosEspeciales( nView ):setCodeAndValue( aTmp[ _CCODIMP ], aGet[ _NVALIMP ] )
+            oNewImp:setCodeAndValue( aTmp[ _CCODIMP ], aGet[ _NVALIMP ] )
 
             // Preguntamos si el regimen de " + cImp() + " es distinto de Exento
 
@@ -5661,8 +5669,8 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Clientes", ( D():Clientes( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Clientes", cItemsToReport( aItmCli() ) )
 
-   oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( nView ):Select() )
-   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( nView ):oDbf ) )
+   oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
+   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
 
    oFr:SetMasterDetail( "Pedidos", "Lineas de pedidos",        {|| ( D():PedidosProveedores( nView ) )->cSerPed + Str( ( D():PedidosProveedores( nView ) )->nNumPed ) + ( D():PedidosProveedores( nView ) )->cSufPed } )
    oFr:SetMasterDetail( "Pedidos", "Incidencias de pedidos",   {|| ( D():PedidosProveedores( nView ) )->cSerPed + Str( ( D():PedidosProveedores( nView ) )->nNumPed ) + ( D():PedidosProveedores( nView ) )->cSufPed } )

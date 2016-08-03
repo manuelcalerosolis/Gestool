@@ -277,6 +277,7 @@ static dbfDiv
 
 static oBandera
 static oStock
+static oNewImp
 static cNewFile
 static cPicEur
 static cPicUnd
@@ -473,14 +474,17 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():GetObject( "Bancos", nView )
 
-      D():ImpuestosEspeciales( nView )
-
       D():ArticuloLenguaje( nView )
 
       oStock            := TStock():Create( cPatGrp() )
       if !oStock:lOpenFiles()
          lOpenFiles     := .f.
       end if 
+
+      oNewImp           := TNewImp():Create( cPatEmp() )
+      if !oNewImp:OpenFiles()
+         lOpenFiles     := .f.
+      end if
       
       oBandera          := TBandera():New()
 
@@ -561,12 +565,17 @@ Static Function CloseFiles()
       oCentroCoste:CloseFiles()
    end if
 
+   if !empty( oNewImp )
+      oNewImp:end()
+   end if
+
    D():DeleteView( nView )
 
    CodigosPostales():GetInstance():CloseFiles()
 
    oBandera    := nil
    oStock      := nil
+   oNewImp     := nil
 
    lOpenFiles  := .f.
 
@@ -3288,7 +3297,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  cPinDiv ;
          ON CHANGE( lCalcDeta( aTmp, aTmpFac, aGet, oTotal ) );
-         ON HELP  ( D():ImpuestosEspeciales( nView ):nBrwImp( aGet[ _NVALIMP ] ) );
          OF       oFld:aDialogs[1]
 
       /*
@@ -4905,7 +4913,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
 
             aTmp[ _CCODIMP ]  := ( D():Articulos( nView ) )->cCodImp
 
-            D():ImpuestosEspeciales( nView ):setCodeAndValue( aTmp[ _CCODIMP ], aGet[ _NVALIMP ] )
+            oNewImp:setCodeAndValue( aTmp[ _CCODIMP ], aGet[ _NVALIMP ] )
 
             // Comentarios
 
@@ -7635,8 +7643,8 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Bancos", ( D():BancosProveedores( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Bancos", cItemsToReport( aPrvBnc() ) )
 
-   oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( nView ):Select() )
-   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( nView ):oDbf ) )
+   oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
+   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
 
    oFr:SetMasterDetail( "Facturas rectificativas", "Lineas de facturas rectificativas",      {|| ( D():FacturasRectificativasProveedores( nView ) )->cSerFac + Str( ( D():FacturasRectificativasProveedores( nView ) )->nNumFac ) + ( D():FacturasRectificativasProveedores( nView ) )->cSufFac } )
    oFr:SetMasterDetail( "Facturas rectificativas", "Incidencias de facturas rectificativas", {|| ( D():FacturasRectificativasProveedores( nView ) )->cSerFac + Str( ( D():FacturasRectificativasProveedores( nView ) )->nNumFac ) + ( D():FacturasRectificativasProveedores( nView ) )->cSufFac } )
