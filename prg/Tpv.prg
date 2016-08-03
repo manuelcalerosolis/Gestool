@@ -7732,7 +7732,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                      DEFAULT  ;
                      OF       oDlgDet
 
-      // oDlgDet:AddFastKey( VK_F11, {|| GetPesoBalanza( aGet, oBtn ) } )
+      oDlgDet:AddFastKey( VK_F11, {|| GetPesoBalanza( aGet, oBtn ) } )
 
       oDlgDet:bKeyDown        := {| nKey | EdtDetKeyDown( nKey, aGet, oDlgDet, oBtn ) }
       oDlgDet:bStart          := {|| if( !empty( cCodArt ), ( Eval( aGet[ _CCBATIL ]:bLostFocus ), aGet[ _CCBATIL ]:lValid() ), ), SetDlgMode( oDlgDet, aTmp, aGet, nMode, oBrw, oBtn ) }
@@ -15453,7 +15453,7 @@ Static Function GetPesoBalanza( aGet, oBtn )
 
    oBal   := TCommPort():Create( cBalanzaEnCaja( oUser():cCaja(), dbfCajT ) )
 
-   if oBal:lCreated
+   if oBal:OpenPort()
 
       aGet[ _NUNTTIL ]:cText( oBal:nPeso() )
 
@@ -15465,6 +15465,7 @@ Static Function GetPesoBalanza( aGet, oBtn )
          oBtn:Click()
       end if
 
+      oBal:ClosePort()
       oBal:End()
       
    else

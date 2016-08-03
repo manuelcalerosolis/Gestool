@@ -2468,7 +2468,7 @@ METHOD Resource() CLASS TpvTactil
 
    ::oDlg:bStart              := {|| ::StartResource() }
 
-   ::oDlg:AddFastKey( VK_F11, {|| ::GetPesoBalanza() } )
+   //::oDlg:AddFastKey( VK_F11, {|| ::GetPesoBalanza() } )
 
    ::oDlg:bResized            := {|| ::ResizedResource() } // lTop, lBottom, lLeft, lRight )() }
 
@@ -9426,7 +9426,7 @@ METHOD GetPesoBalanza() CLASS TpvTactil
 
       oBalanza             := TCommPort():Create( cBalanza )
 
-      if oBalanza:lCreated
+      if oBalanza:OpenPort()
 
          ::oTemporalLinea:GetStatus()
 
@@ -9438,6 +9438,7 @@ METHOD GetPesoBalanza() CLASS TpvTactil
 
          ::oBrwLineas:Refresh()
 
+         oBalanza:ClosePort()
          oBalanza:End()
          
       else  
