@@ -2330,7 +2330,7 @@ FONT 8, "MS Sans Serif"
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN
 
-BALANZA DIALOG DISCARDABLE 61, -26, 218, 206
+BALANZA DIALOG DISCARDABLE 61, -26, 218, 209
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Configuración balanza"
 FONT 8, "MS Sans Serif"
@@ -2345,10 +2345,11 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Test", 552, "Button", WS_TABSTOP, 160, 46, 50, 14
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 78, 134, 132, 12
   CONTROL "", 210, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 78, 147, 45, 12
-  CONTROL "Abrir puerto para cada lectura", 220, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 162, 107, 10
-  CONTROL "&Defecto", 553, "Button", WS_TABSTOP, 2, 185, 50, 14
-  CONTROL "&Aceptar [F5]", 500, "Button", WS_TABSTOP, 111, 185, 50, 14
-  CONTROL "&Cancelar", 550, "Button", WS_TABSTOP, 166, 185, 50, 14
+  CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 78, 160, 45, 12
+  CONTROL "Abrir puerto para cada lectura", 220, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 175, 107, 10
+  CONTROL "&Defecto", 553, "Button", WS_TABSTOP, 2, 193, 50, 14
+  CONTROL "&Aceptar [F5]", 500, "Button", WS_TABSTOP, 111, 193, 50, 14
+  CONTROL "&Cancelar", 550, "Button", WS_TABSTOP, 166, 193, 50, 14
   CONTROL "Inicialización", -1, "Static", WS_GROUP, 8, 137, 54, 8
   CONTROL "Retardo ", -1, "Static", WS_GROUP, 8, 150, 65, 8
   CONTROL "Puerto", -1, "Static", WS_GROUP, 8, 51, 24, 8
@@ -2356,11 +2357,12 @@ FONT 8, "MS Sans Serif"
   CONTROL "Bits / parada", -1, "Static", WS_GROUP, 8, 79, 44, 8
   CONTROL "Bits / datos", -1, "Static", WS_GROUP, 8, 94, 44, 8
   CONTROL "Paridad", -1, "Static", WS_GROUP, 8, 107, 26, 8
-  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 2, 125, 214, 52
+  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 2, 125, 214, 65
   CONTROL "Salida", -1, "Button", BS_GROUPBOX, 2, 38, 214, 84
   CONTROL "General", -1, "Button", BS_GROUPBOX, 2, 1, 214, 36
   CONTROL "Código", -1, "Static", WS_GROUP, 8, 13, 31, 8
   CONTROL "Nombre", -1, "Static", WS_GROUP, 8, 25, 27, 8
+  CONTROL "Entubamiento", -1, "Static", WS_GROUP, 8, 163, 46, 8
 }
 
 BANCO DIALOG DISCARDABLE 51, -26, 288, 166

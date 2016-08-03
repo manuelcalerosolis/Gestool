@@ -281,6 +281,7 @@ static cUsr
 static nOldEst
 static oBrwIva
 static oStock
+static oNewImp
 static oFont
 static oMenu
 static oDetCamposExtra
@@ -980,8 +981,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():GetObject( "UnidadMedicion", nView )
 
-      D():ImpuestosEspeciales( nView )
-
       D():ArticuloLenguaje( nView )
 
       /*
@@ -1014,6 +1013,11 @@ STATIC FUNCTION OpenFiles( lExt )
       */
       oCentroCoste      := TCentroCoste():Create( cPatDat() )
       if !oCentroCoste:OpenFiles()
+         lOpenFiles     := .f.
+      end if
+
+      oNewImp           := TNewImp():Create( cPatEmp() )
+      if !oNewImp:OpenFiles()
          lOpenFiles     := .f.
       end if
 
@@ -1092,6 +1096,10 @@ STATIC FUNCTION CloseFiles()
       oCentroCoste:end()
    end if
 
+   if !empty( oNewImp )
+      oNewImp:end()
+   end if
+
    D():DeleteView( nView )
 
    CodigosPostales():GetInstance():CloseFiles()
@@ -1104,6 +1112,8 @@ STATIC FUNCTION CloseFiles()
    lOpenFiles  := .f.
 
    oWndBrw     := nil
+
+   oNewImp     := nil
 
    EnableAcceso()
 
@@ -2844,7 +2854,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  cPinDiv ;
          ON CHANGE( lCalcDeta( aTmp, aTmpAlb, aGet, oTotal ) );
-         ON HELP  ( D():ImpuestosEspeciales( nView ):nBrwImp( aGet[ _NVALIMP ] ) );
          OF       oFld:aDialogs[1]
 
       /*
@@ -4642,7 +4651,7 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
 
             aTmp[ _CCODIMP ]     := ( D():Articulos( nView ) )->cCodImp
 
-            D():ImpuestosEspeciales( nView ):setCodeAndValue( aTmp[ _CCODIMP ], aGet[ _NVALIMP ] )
+            oNewImp:setCodeAndValue( aTmp[ _CCODIMP ], aGet[ _NVALIMP ] )
 
             if ( D():Articulos( nView ) )->nCajEnt != 0
                aGet[ _NCANENT ]:cText( ( D():Articulos( nView ) )->nCajEnt )

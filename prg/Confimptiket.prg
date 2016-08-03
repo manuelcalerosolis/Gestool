@@ -312,7 +312,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfImpTik, oBrw, bWhen, bValid, nMode )
          ID       552;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( TestBalanza( cBitsSec, cBitsDatos, cBitsParada, cBitsParidad, cPort, aTmp[ ( dbfImpTik )->( FieldPos( "lOpenRead" ) ) ] ) )
+         ACTION   ( TestBalanza( cBitsSec, cBitsDatos, cBitsParada, cBitsParidad, cPort, aTmp[ ( dbfImpTik )->( FieldPos( "cEntub" ) ) ] ) )
 
       /*
       Grupo propiedades de la impresora
@@ -337,6 +337,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfImpTik, oBrw, bWhen, bValid, nMode )
       REDEFINE CHECKBOX aGet[ ( dbfImpTik )->( FieldPos( "lOpenRead" ) ) ] ;
          VAR      aTmp[ ( dbfImpTik )->( FieldPos( "lOpenRead" ) ) ] ;
          ID       220 ;
+         OF       oDlg
+
+      REDEFINE GET aGet[ ( dbfImpTik )->( FieldPos( "cEntub" ) ) ];
+         VAR      aTmp[ ( dbfImpTik )->( FieldPos( "cEntub" ) ) ];
+         ID       230;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
       // Boton defecto---------------------------------------------------------
@@ -454,6 +460,7 @@ FUNCTION mkImpTik( cPath, lAppend, cPathOld, oMeter )
       FIELD NAME "CCORTE"        TYPE "C" LEN 50  DEC 0 COMMENT "Corte del papel"                        OF oImpTik
       FIELD NAME "NRETARDO"      TYPE "N" LEN  4  DEC 2 COMMENT "Tiempo de retardo" PICTURE "@E 9.99"    OF oImpTik
       FIELD NAME "LOPENREAD"     TYPE "L" LEN  1  DEC 0 COMMENT "Lógico abrir el puerto cada lectura"    OF oImpTik
+      FIELD NAME "CENTUB"        TYPE "C" LEN  1  DEC 0 COMMENT "Entubamiento"                           OF oImpTik
 
       INDEX TO "IMPTIK.CDX" TAG CCODIMP ON CCODIMP NODELETED OF oImpTik
 
@@ -533,83 +540,27 @@ Return .t.
 Test de la impresora de tickets
 */
 
-Static Function TestBalanza( cBitsSec, cBitsDatos, cBitsPara, cBitsPari, cPuerto, lOpenToRead )
+Static Function TestBalanza( cBitsSec, cBitsDatos, cBitsPara, cBitsPari, cPuerto, cEntub )
 
-   //LOCAL cString := "ATE0" + Chr( 13 ) + "ATI3" + Chr( 13 )
-   LOCAL cString  := Space( 250 )
-   LOCAL nTimeOut := 500 // 3000 miliseconds = 3 sec.
-   LOCAL nResult
-   LOCAL nPort    := 1
+   local oPrn
+   
+   // Creamos el puerto---------------------------------------------------------
 
-   /*
-   Empezamos a hacer el test con harbour---------------------------------------
-   */
+   oPrn   := TCommPort():New( cPuerto, cBitsSec, cBitsPara, cBitsDatos, cBitsPari, cEntub )
 
-   IF ! Empty( cPuerto )
-      hb_comSetDevice( nPort, cPuerto )
-      ?nPort
-   ENDIF
+   if oPrn != nil
 
-   IF ! hb_comOpen( nPort )
-      ? "Cannot open port:", nPort, hb_comGetDevice( nPort ), ;
-        "error: " + hb_ntos( hb_comGetError( nPort ) )
-   ELSE
-      ? "port:", hb_comGetDevice( nPort ), "opened"
-      IF ! hb_comInit( nPort, 9600, "N", 8, 1 )
-         ? "Cannot initialize port to: 9600:N:8:1", ;
-           "error: " + hb_ntos( hb_comGetError( nPort ) )
-      ELSE
-         /*nResult := hb_comSend( nPort, cString )//, hb_BLen( cString ), nTimeOut )
-         IF nResult != hb_BLen( cString )
-            ? "SEND() failed,", nResult, "bytes sent in", nTimeOut / 1000, ;
-              "sec., expected:", hb_BLen( cString ), "bytes."
-            ? "error: " + hb_ntos( hb_comGetError( nPort ) )
-         ELSE
-            ? "SEND() succeeded."
-         ENDIF*/
-
-         //WAIT "Press any key to begin reading..."
-
-         cString := Space( 250 )
-         nResult := hb_comRecv( nPort, @cString, hb_BLen( cString ), nTimeOut )//, hb_BLen( cString ), nTimeOut )
-         msginfo( nResult, "nResult" )
-         IF nResult == -1
-            ? "RECV() failed,", ;
-              "error: " + hb_ntos( hb_comGetError( nPort ) )
-         ELSE
-            ? nResult, "bytes read in", nTimeOut / 1000, "sec."
-            ?cString
-         ENDIF
-
-      ENDIF
-
-      ? "CLOSE:", hb_comClose( nPort )
-
-   ENDIF
-
-  
-/*
-  // Creamos el puerto---------------------------------------------------------
-
-  oPrn   := TCommPort():New( cPuerto, cBitsSec, cBitsPara, cBitsDatos, cBitsPari, lOpenToRead )
-
-  // Comprobamos si se ha creado el puerto-------------------------------------
-
-  if oPrn:lCreated
-
-      // Informamos de los valores que nos han pasado y con los que hemos creado el puerto
-
-      if oPrn != nil // .and. oPrn:nHComm > 0
+      if oPrn:OpenPort()
 
          msgInfo( "Puerto  : " + cPuerto                        + CRLF +;
                   "Bit     : " + cBitsSec                       + CRLF +;
                   "Parada  : " + cBitsPara                      + CRLF +;
                   "Dato    : " + cBitsDatos                     + CRLF +;
                   "Paridad : " + cBitsPari                      + CRLF +;
-                  "Handle  : " + AllTrim( Str( oPrn:nHComm ) )  + CRLF +;
-                  "Peso    : " + oPrn:cPeso(),;
+                  "Peso    : " + oPrn:Read(),;
                   "Puerto creado" )
 
+         oPrn:ClosePort()
          oPrn:End()
 
       end if
@@ -621,10 +572,9 @@ Static Function TestBalanza( cBitsSec, cBitsDatos, cBitsPara, cBitsPari, cPuerto
               "Parada  : " + cBitsPara             + CRLF +;
               "Dato    : " + cBitsDatos            + CRLF +;
               "Paridad : " + cBitsPari             + CRLF +;
-              "Handle  : " + AllTrim( Str( oPrn:nHComm ) ),;
               "Puerto no creado" )
 
-   end if*/
+   end if
 
 Return .t.
 
@@ -855,8 +805,10 @@ return ( .t. )
 
 CLASS TCommPort
 
+   DATA  nPort
    DATA  cPort
-   DATA  lCreated       AS LOGIC    INIT .t.
+   DATA  lCreated       AS LOGIC    INIT .f.
+   DATA  lOpen          AS LOGIC    INIT .f.
    DATA  nHComm         AS NUMERIC
    DATA  cLastError
    DATA  nBitsSec
@@ -864,6 +816,8 @@ CLASS TCommPort
    DATA  nBitsDatos
    DATA  nBitsParidad
    DATA  lOpenToRead    AS LOGIC    INIT .f.
+   DATA  nTimeOut
+   DATA  cEntubamiento
 
    DATA  cBuffer
 
@@ -871,7 +825,11 @@ CLASS TCommPort
 
    METHOD Create( cCodBalanaza )
 
-   METHOD lBuild()
+   METHOD OpenPort()
+
+   METHOD ClosePort()
+
+   //METHOD lBuild()
 
    METHOD OpenCommError()
 
@@ -891,37 +849,33 @@ CLASS TCommPort
    METHOD SetBitsParada( nBitsParada )
    METHOD SetBitsDatos( nBitsDatos )
    METHOD SetBitsParidad( cBitsParidad )
+   METHOD SetEntubamiento( cEntubamiento )
 
    METHOD Inicializa()
 
    METHOD nKilos()
    METHOD nGramos()
    METHOD cPeso()
-   METHOD nPeso()       INLINE ( Val( ::cPeso() ) )
+   METHOD nPeso()       INLINE ( Val( ::Read() ) )
+
+   METHOD ClearString( cString )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( cPort, nBitsSec, nBitsParada, nBitsDatos, cBitsParidad, lOpenToRead ) CLASS TCommPort
+METHOD New( cPort, nBitsSec, nBitsParada, nBitsDatos, cBitsParidad, cEntubamiento ) CLASS TCommPort
 
-   DEFAULT cPort        := "COM1"
-   DEFAULT nBitsSec     := "9600"
-   DEFAULT nBitsParada  := "0"
-   DEFAULT nBitsDatos   := "8"
-   DEFAULT cBitsParidad := "Sin paridad"
-   DEFAULT lOpenToRead  := .f.
+   DEFAULT cPort           := "COM1"
+   DEFAULT nBitsSec        := "9600"
+   DEFAULT nBitsParada     := "1"
+   DEFAULT nBitsDatos      := "8"
+   DEFAULT cBitsParidad    := "Sin paridad"
+   DEFAULT cEntubamiento   := ""
 
+   ::nTimeOut           := 1000
    ::cBuffer            := Space( BUFFER )
    ::lCreated           := .t.
-   ::lOpenToRead        := lOpenToRead
-
-   msginfo( cPort, "cPort" )
-   msginfo( nBitsSec, "nBitsSec" )
-   msginfo( nBitsParada, "nBitsParada" )
-   msginfo( nBitsDatos, "nBitsDatos" )
-   msginfo( cBitsParidad, "cBitsParidad" )
-   msginfo( lOpenToRead, "lOpenToRead" )
 
    /*
    Puerto----------------------------------------------------------------------
@@ -954,14 +908,10 @@ METHOD New( cPort, nBitsSec, nBitsParada, nBitsDatos, cBitsParidad, lOpenToRead 
    ::SetBitsParidad( cBitsParidad )
 
    /*
-   Abrimos las comunicaciones--------------------------------------------------
+   Entubamiento----------------------------------------------------------------
    */
 
-   if !::lOpenToRead
-      ::lCreated        := ::lBuild()
-   end if
-
-   msginfo( "salgo del new" )
+   ::SetEntubamiento( cEntubamiento )
 
 RETURN Self
 
@@ -983,12 +933,12 @@ METHOD Create( cCodBalanza ) CLASS TCommPort
       if !Empty( cCodBalanza ) .and. ( dbfImpTik )->( dbSeek( cCodBalanza ) )
 
          ::cPort              := Rtrim( ( dbfImpTik )->cPort )
-         ::lOpenToRead        := ( dbfImpTik )->lOpenRead
 
          ::SetBitsSec(        ( dbfImpTik )->nBitsSec )
          ::SetBitsParada(     ( dbfImpTik )->nBitsPara )
          ::SetBitsDatos(      ( dbfImpTik )->nBitsDatos )
          ::SetBitsParidad(    ( dbfImpTik )->cBitsPari )
+         ::SetEntubamiento(   ( dbfImpTik )->cEntub )
 
       else
 
@@ -1019,7 +969,43 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD lBuild( lMessage ) CLASS TCommPort
+METHOD OpenPort() CLASS TCommPort
+
+   ::lCreated    := .t.
+   ::lOpen       := .t.
+   ::nPort       := 1
+
+   if ! Empty( ::cPort )
+      hb_comSetDevice( ::nPort, ::cPort )
+   end if
+
+   if ! hb_comOpen( ::nPort )
+      
+      ::lCreated    := .f.
+
+   else
+
+      if ! hb_comInit( ::nPort, ::nBitsSec, ::nBitsParidad, ::nBitsDatos, ::nBitsParada )
+
+         ::lOpen    := .f.
+
+      end if
+
+   end if
+
+Return ( ::lCreated .and. ::lOpen )
+
+//---------------------------------------------------------------------------//
+
+METHOD ClosePort() CLASS TCommPort
+
+   hb_comClose( ::nPort )
+
+Return Self
+
+//---------------------------------------------------------------------------//
+
+/*METHOD lBuild( lMessage ) CLASS TCommPort
 
    local cDCB
    local lBuild         := .t.
@@ -1071,7 +1057,7 @@ METHOD lBuild( lMessage ) CLASS TCommPort
 
    end if
 
-RETURN ( lBuild )
+RETURN ( lBuild )*/
 
 //----------------------------------------------------------------------------//
 
@@ -1123,7 +1109,7 @@ return ( nWrite )
 
 //---------------------------------------------------------------------------//
 
-METHOD Read( nRetardo ) CLASS TCommPort
+/*METHOD Read( nRetardo ) CLASS TCommPort
 
    local oWnd
    local nRead
@@ -1169,9 +1155,57 @@ METHOD Read( nRetardo ) CLASS TCommPort
 
    SysRefresh()
 
-RETURN ( ::cBuffer )
+RETURN ( ::cBuffer )*/
 
 //---------------------------------------------------------------------------//
+
+METHOD Read() CLASS TCommPort
+   
+   local cString     := Space( 250 )
+   local nResult
+
+   MsgWait( "Obteniendo peso", "", 0.2 )
+
+   hb_comRecv( ::nPort, @cString, hb_BLen( cString ), ::nTimeOut )
+
+   if !Empty( ::cEntubamiento )
+      cString        := ::ClearString( cString )
+   end if
+
+Return cString
+
+//---------------------------------------------------------------------------//
+
+METHOD ClearString( cString ) CLASS TCommPort
+
+   local nPos           := 0
+   local cClearString   := ""
+
+   /*
+   Comprobamos que el primer caracter no sea el entubamiento-------------------
+   */
+
+   if SubStr( cString, 1, 1 ) == ::cEntubamiento
+      cClearString      := SubStr( cString, 2 )
+   else
+      cClearString      := cString
+   end if
+
+   /*
+   Comprobamos que no exista ningún entubamiento más---------------------------
+   */
+
+   nPos                 :=  At( ::cEntubamiento, cClearString )
+
+   if nPos != 0
+      cClearString      := SubStr( cString, 1, nPos )
+   end if
+
+return cClearString
+
+//---------------------------------------------------------------------------//
+
+
 
 METHOD Flush() CLASS TCommPort
 
@@ -1197,10 +1231,8 @@ RETURN ( Self )
 
 METHOD SetBitsSec( nBitsSec )
 
-   if ValType( nBitsSec ) == "N"
-      ::nBitsSec        := Alltrim( Str( nBitsSec ) )
-   else
-      ::nBitsSec        := Alltrim( nBitsSec )
+   if ValType( nBitsSec ) != "N"
+      ::nBitsSec        := Val( nBitsSec )
    end if
 
 RETURN ( ::nBitsSec )
@@ -1209,10 +1241,8 @@ RETURN ( ::nBitsSec )
 
 METHOD SetBitsParada( nBitsParada )
 
-   if ValType( nBitsParada ) == "N"
-      ::nBitsParada     := Alltrim( Str( nBitsParada ) )
-   else
-      ::nBitsParada     := Alltrim( nBitsParada )
+   if ValType( nBitsParada ) != "N"
+      ::nBitsParada     := Val( nBitsParada )
    end if
 
 RETURN ( ::nBitsParada )
@@ -1221,10 +1251,8 @@ RETURN ( ::nBitsParada )
 
 METHOD SetBitsDatos( nBitsDatos )
 
-   if ValType( nBitsDatos ) == "N"
-      ::nBitsDatos      := Alltrim( Str( nBitsDatos ) )
-   else
-      ::nBitsDatos      := Alltrim( nBitsDatos )
+   if ValType( nBitsDatos ) != "N"
+      ::nBitsDatos      := Val( nBitsDatos )
    end if
 
 RETURN ( ::nBitsDatos )
@@ -1243,6 +1271,16 @@ METHOD SetBitsParidad( cBitsParidad )
    end do
 
 RETURN ( ::nBitsParidad )
+
+//------------------------------------------------------------------------//
+
+METHOD SetEntubamiento( cEntub )
+
+   if !Empty( cEntub )
+      ::cEntubamiento   := cEntub
+   end if
+
+RETURN ( ::cEntubamiento )
 
 //------------------------------------------------------------------------//
 
@@ -1388,3 +1426,62 @@ Local cPuerto, cVelocidad,cParidad,cDatos,cParada
 
 Return nPesoBascula
  */
+
+ //-----------------*********************------------------------//
+ /*CODIGO BUENO PARA CONECTAR CON LAS BALANZAS
+ //LOCAL cString := "ATE0" + Chr( 13 ) + "ATI3" + Chr( 13 )
+   LOCAL cString  := Space( 250 )
+   LOCAL nTimeOut := 500 // 3000 miliseconds = 3 sec.
+   LOCAL nResult
+   LOCAL nPort    := 1*/
+
+   /*
+   Empezamos a hacer el test con harbour---------------------------------------
+   */
+
+   /*IF ! Empty( cPuerto )
+      hb_comSetDevice( nPort, cPuerto )
+      ?nPort
+   ENDIF
+
+   MsgInfo( cBitsSec, "cBitsSec" )
+   MsgInfo( cBitsDatos, "cBitsDatos" )
+   MsgInfo( cBitsPara, "cBitsPara" )
+   MsgInfo( cBitsPari, "cBitsPari" )
+
+   IF ! hb_comOpen( nPort )
+      ? "Cannot open port:", nPort, hb_comGetDevice( nPort ), ;
+        "error: " + hb_ntos( hb_comGetError( nPort ) )
+   ELSE
+      ? "port:", hb_comGetDevice( nPort ), "opened"
+      IF ! hb_comInit( nPort, 9600, "N", 8, 1 )
+         ? "Cannot initialize port to: 9600:N:8:1", ;
+           "error: " + hb_ntos( hb_comGetError( nPort ) )
+      ELSE
+         /*nResult := hb_comSend( nPort, cString )//, hb_BLen( cString ), nTimeOut )
+         IF nResult != hb_BLen( cString )
+            ? "SEND() failed,", nResult, "bytes sent in", nTimeOut / 1000, ;
+              "sec., expected:", hb_BLen( cString ), "bytes."
+            ? "error: " + hb_ntos( hb_comGetError( nPort ) )
+         ELSE
+            ? "SEND() succeeded."
+         ENDIF*/
+
+         //WAIT "Press any key to begin reading..."
+
+/*         cString := Space( 250 )
+         nResult := hb_comRecv( nPort, @cString, hb_BLen( cString ), nTimeOut )//, hb_BLen( cString ), nTimeOut )
+         msginfo( nResult, "nResult" )
+         IF nResult == -1
+            ? "RECV() failed,", ;
+              "error: " + hb_ntos( hb_comGetError( nPort ) )
+         ELSE
+            ? nResult, "bytes read in", nTimeOut / 1000, "sec."
+            ?cString
+         ENDIF
+
+      ENDIF
+
+      ? "CLOSE:", hb_comClose( nPort )
+
+   ENDIF*/
