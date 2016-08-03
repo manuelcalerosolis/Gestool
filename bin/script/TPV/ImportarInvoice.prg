@@ -101,7 +101,7 @@ Function ImportaXmlBestseller()
 
    if !empty( aXmlDocuments )
       for each cDocumentXml in aXmlDocuments
-         if msgyesno( "procesando fichero " + alltrim( str( hb_enumindex())) + " de " + alltrim( str( len( aXmlDocuments))), "¿Desea continuar?" )
+         if msgyesno( "procesando fichero " + alltrim( cDocumentXml[ 1 ] ) + ":" + alltrim( str( hb_enumindex() ) ) + " de " + alltrim( str( len( aXmlDocuments) ) ), "¿Desea continuar?" )
             proccessXml( cDocumentXml[ 1 ] )
             moveXml( cDocumentXml[ 1 ] )
          else

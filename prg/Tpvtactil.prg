@@ -8724,7 +8724,7 @@ METHOD BuildReport() CLASS TpvTactil
       Imprimir el informe------------------------------------------------------
       */
 
-      //::nDispositivo := IS_SCREEN
+      ::nDispositivo := IS_SCREEN
 
       do case
          case ::nDispositivo == IS_SCREEN
