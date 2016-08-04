@@ -1166,6 +1166,9 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Proveedores",                ::oDbfPrv:nArea )
    ::oFastReport:SetFieldAliases(   "Proveedores",                cItemsToReport( aItmPrv() ) )
 
+   ::oFastReport:SetWorkArea(       "Proveedores habituales",     ::oDbfPrv:nArea )
+   ::oFastReport:SetFieldAliases(   "Proveedores habituales",     cItemsToReport( aItmPrv() ) )
+
    ::oFastReport:SetWorkArea(       "Almacenes",                  ::oDbfAlm:nArea )
    ::oFastReport:SetFieldAliases(   "Almacenes",                  cItemsToReport( aItmAlm() ) )
 
@@ -1222,6 +1225,8 @@ METHOD DataReport() CLASS TFastVentasArticulos
 
    ::oFastReport:SetMasterDetail(   "Escandallos", "Artículos.Escandallos",         {|| ::oArtKit:cRefKit } )
    
+   ::oFastReport:SetMasterDetail(   "Codificación de proveedores", "Proveedores habituales",   {|| ::oArtPrv:cCodPrv } )
+   
    ::oFastReport:SetMasterDetail(   "Informe", "Empresa",                           {|| cCodEmp() } )
    ::oFastReport:SetMasterDetail(   "Informe", "Clientes",                          {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Grupo clientes",                    {|| ::oDbf:cCodGrp } )
@@ -1252,6 +1257,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetMasterDetail(   "Informe", "Propiedades 1",                     {|| ::oDbf:cCodPr1 + ::oDbf:cValPr1 } )   
    ::oFastReport:SetMasterDetail(   "Informe", "Propiedades 2",                     {|| ::oDbf:cCodPr2 + ::oDbf:cValPr2 } )   
 
+
    // Resincronizar con los movimientos-------------------------------------------
 
    ::oFastReport:SetResyncPair(     "Artículos.Informe", "Familias" )
@@ -1262,6 +1268,8 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetResyncPair(     "Artículos.Informe", "Tipos de " + cImp() )
    
    ::oFastReport:SetResyncPair(     "Escandallos", "Artículos.Escandallos" )
+   
+   ::oFastReport:SetResyncPair(     "Codificación de proveedores", "Proveedores habituales" )   
 
    ::oFastReport:SetResyncPair(     "Informe", "Clientes" )
    ::oFastReport:SetResyncPair(     "Informe", "Grupo clientes" )
@@ -1290,6 +1298,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
 
    ::oFastReport:SetResyncPair(     "Informe", "Propiedades 1" )   
    ::oFastReport:SetResyncPair(     "Informe", "Propiedades 2" )   
+
 
    ::SetDataReport()
 

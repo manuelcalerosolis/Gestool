@@ -9575,7 +9575,7 @@ FUNCTION AppendReferenciaProveedor( cRefPrv, cCodPrv, cCodArt, nDtoPrv, nDtoPrm,
    end if
 
    // Ponemos el proveedor por defecto-----------------------------------------
-
+/*
    if isTrue( lSetDefault )
       if ( dbfArtPrv )->( dbSeek( cCodArt ) )
          while ( dbfArtPrv )->cCodArt == cCodArt .and. !( dbfArtPrv )->( eof() )
@@ -9587,7 +9587,7 @@ FUNCTION AppendReferenciaProveedor( cRefPrv, cCodPrv, cCodArt, nDtoPrv, nDtoPrm,
          end while
       end if
    end if
-
+*/
    ( dbfArtPrv )->( OrdSetFocus( nOrdAnt ) )
 
 Return nil
