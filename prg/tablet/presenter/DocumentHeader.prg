@@ -52,8 +52,9 @@ CLASS ClientDeliveryNoteDocumentHeader FROM DocumentHeader
 
    METHOD newBuildDictionary( oSender )
 
-   METHOD newBlankDictionary( oSender )   INLINE ( ::new( oSender ), ::setDictionary( D():getHashFromBlank( oSender:getLineAlias(), oSender:getLineDictionary() ) ) )
-   METHOD newRecordDictionary( oSender )  INLINE ( ::new( oSender ), ::setDictionary( D():getHashFromAlias( oSender:getLineAlias(), oSender:getLineDictionary() ) ) )
+   METHOD newBlankDictionary( oSender )   
+
+   METHOD newRecordDictionary( oSender )  
 
 END CLASS
 
@@ -67,4 +68,22 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD newBlankDictionary( oSender )
 
+   ::new( oSender )
+
+   ::setDictionary( D():getHashFromBlank( oSender:getLineAlias(), oSender:getLineDictionary() ) )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD newRecordDictionary( oSender )
+
+  ::new( oSender )
+
+  ::setDictionary( D():getHashFromAlias( oSender:getLineAlias(), oSender:getLineDictionary() ) ) 
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//

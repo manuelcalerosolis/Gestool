@@ -12,11 +12,20 @@ CLASS TGeneracionAlbaranesClientes FROM TConversionDocumentos
 
    DATA aDocuments
 
+   DATA dialogCustomerOrderLines
+
+   DATA dialogDeliveryNoteLines 
+
+   METHOD New()
+
    METHOD Dialog()
 
-   METHOD DialogSelectionCriteria( oDlg )
+   METHOD buildDialogSelectionCriteria( oDlg )
       METHOD validDialogSelectionCriteria()
       METHOD notValidDialogSelectionCriteria()     INLINE ( !::validDialogSelectionCriteria() )
+
+   METHOD buildDialogCustomerOrderLines()
+   METHOD buildDialogDeliveryNoteLines()
 
    METHOD isHeadersConditions()
    METHOD isLineConditions()
@@ -33,14 +42,29 @@ CLASS TGeneracionAlbaranesClientes FROM TConversionDocumentos
       METHOD getUnitsInStock()
       METHOD minusUnitsStock()
 
-   METHOD columnsBrowseLines()
-
    METHOD dialogSelectionDocument( oDlg )
 
    METHOD processLines()
       METHOD processLine()
+         METHOD appendCurrentClientDeliveryNote()
+         METHOD appendBlankClientDeliveryNote()
+
+   METHOD getCustomerOrderLines()                  INLINE ( ::dialogCustomerOrderLines:oDocumentLines )
+   METHOD getCustomerOrderLine( nPosition )        INLINE ( ::dialogCustomerOrderLines:getDocumentLine( nPosition ) )
 
 ENDCLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD New()
+
+   ::Super:New()
+
+   ::dialogCustomerOrderLines     := TBrowseLineConversionDocumentos():New( Self )
+
+   ::dialogDeliveryNoteLines     := TBrowseLineConversionDocumentos():New( Self )
+
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -64,10 +88,10 @@ METHOD Dialog()
                   "ASS_CONVERSION_DOCUMENTO_3",;
                   "ASS_CONVERSION_DOCUMENTO_2"
 
-   ::DialogSelectionCriteria( ::oFld:aDialogs[1] )
+   ::buildDialogSelectionCriteria()
 
-   ::DialogSelectionLines( ::oFld:aDialogs[2] )
-
+   ::buildDialogCustomerOrderLines()
+   
    ::DialogSelectionDocument( ::oFld:aDialogs[3] )
    
    // Botones -----------------------------------------------------------------
@@ -101,25 +125,25 @@ RETURN ( ::oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-METHOD DialogSelectionCriteria( oDlg )
+METHOD buildDialogSelectionCriteria()
 
    ::oPeriodo     := GetPeriodo()
       ::oPeriodo:New( 110, 120, 130 )
-      ::oPeriodo:Resource( oDlg )
+      ::oPeriodo:Resource( ::oFld:aDialogs[1] )
 
    ::oCliente     := GetCliente()
       ::oCliente:New( 140, 141, 142 )
-      ::oCliente:Resource( oDlg )
+      ::oCliente:Resource( ::oFld:aDialogs[1] )
       ::oCliente:setView( ::nView )
 
    ::oArticulo    := GetArticulo()
       ::oArticulo:New( 200, 201, 202 )
-      ::oArticulo:Resource( oDlg )
+      ::oArticulo:Resource( ::oFld:aDialogs[1] )
       ::oArticulo:setView( ::nView )
 
    ::oAlmacen     := GetAlmacen()
       ::oAlmacen:New( 210, 211, 212 )
-      ::oAlmacen:Resource( oDlg )
+      ::oAlmacen:Resource( ::oFld:aDialogs[1] )
       ::oAlmacen:setView( ::nView )
 
 RETURN ( Self )
@@ -133,7 +157,9 @@ METHOD startDialog()
 
    ::setDocumentPedidosClientes()
 
-   ::oBrwLines:Load()
+   ::dialogCustomerOrderLines:Load()
+
+   ::dialogDeliveryNoteLines:Load()
 
    ::buttonPrior:Hide()
 
@@ -152,37 +178,39 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD columnsBrowseLines()
+METHOD buildDialogCustomerOrderLines()
 
-   ::Super:columnsBrowseLines()
+   ::dialogCustomerOrderLines:Dialog( ::oFld:aDialogs[ 2 ] )
 
-   with object ( ::oBrwLines:AddCol() )
+   with object ( ::dialogCustomerOrderLines:AddCol() )
       :cHeader       := "Pendientes"
       :Cargo         := "getUnitsAwaitingProvided"
-      :bEditValue    := {|| ::getLineDocument():getUnitsAwaitingProvided() } 
+      :bEditValue    := {|| ::getCustomerOrderLine():getUnitsAwaitingProvided() } 
       :cEditPicture  := masUnd()
       :nWidth        := 80
       :nDataStrAlign := 1
       :nHeadStrAlign := 1
       :bLClickHeader := {|nMRow, nMCol, nFlags, oColumn| ::clickOnLineHeader( oColumn ) }         
-      :bLDClickData  := {|| ::toogleSelectLine() }
+      :bLDClickData  := {|| ::dialogCustomerOrderLines:toogleSelectLine() }
    end with
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD dialogSelectionDocument( oDlg )
+METHOD buildDialogDeliveryNoteLines( oDlg )
 
-   ::Super:dialogSelectionDocument( oDlg )
+   ::dialogDeliveryNoteLines:Dialog( ::oFld:aDialogs[ 3 ] )
 
-   with object ( ::oBrwDocuments:AddCol() )
+/*
+   with object ( ::dialogDeliveryNoteLines:AddCol() )
       :cHeader       := "Pedido"
       :Cargo         := "getPedidoCliente"
       :bEditValue    := {|| ::getHeaderDocument():getValue( "PedidoCliente" ) }
       :nWidth        := 80
       :bLClickHeader := {| nMRow, nMCol, nFlags, oColumn | ::clickOnDocumentHeader( oColumn ) }   
    end with
+*/
 
 RETURN ( Self )
 
@@ -199,15 +227,13 @@ METHOD botonSiguiente()
 
          ::loadLinesDocument()
 
-         ::setBrowseLinesDocument()
-
          ::oFld:goNext()
 
          ::buttonPrior:Show()
 
       case ::oFld:nOption == 2
 
-         if ( ::oDocumentLines:anySelect() )
+         if ( ::getCustomerOrderLines():anySelect() )
             
             ::processLines()
             
@@ -260,7 +286,7 @@ METHOD loadLinesDocument()
 
    setTotalAutoMeterDialog( ::getHeaderOrdKeyCount()  )
 
-   ::oDocumentLines:Reset()
+   ::getCustomerOrderLines():Reset()
    ::oStock:Reset()
 
    ( ::getHeaderAlias() )->( ordsetfocus( "dFecPed" ) )
@@ -274,10 +300,10 @@ METHOD loadLinesDocument()
 
             if ::isLineConditions()
 
-               oDocumentLine     := ClientDeliveryNoteDocumentLine():newBuildDictionary( self ) 
+               oDocumentLine     := CustomerOrderDocumentLine():newBuildDictionary( self ) 
 
                if oDocumentLine:getUnitsAwaitingProvided() > 0
-                  ::oDocumentLines:addLines( oDocumentLine )
+                  ::getCustomerOrderLines():addLines( oDocumentLine )
                end if 
 
                ::assignStock( oDocumentLine )
@@ -297,6 +323,8 @@ METHOD loadLinesDocument()
    end while
 
    endAutoMeterDialog( ::oDlg )
+
+   ::dialogCustomerOrderLines:setBrowseLinesDocument()
 
 RETURN ( .t. ) 
 
@@ -387,7 +415,7 @@ METHOD processLines()
 
    ::aDocuments         := {}
 
-   for each oLine in ( ::oDocumentLines:getLines() )
+   for each oLine in ( ::getCustomerOrderLines():getLines() )
       if oLine:isSelectLine()
          ::processLine( oLine )
       end if 
@@ -399,25 +427,51 @@ Return ( .t. )
 
 METHOD processLine( oLine )
 
-   local oDocument     
-
    if D():gotoPedidoIdAlbaranesClientes( oLine:getDocumentId(), ::nView )
-
-      oDocument         := ClientDeliveryNoteDocumentHeader():newRecordDictionary( self ) 
-      oDocument:setValue( "PedidoCliente", ( D():AlbaranesClientes( ::nView ) )->cNumPed )
-
+      ::appendCurrentClientDeliveryNote( oLine )
    else 
-
-      oDocument         := ClientDeliveryNoteDocumentHeader():newBlankDictionary( self ) 
-      oDocument:setValue( "PedidoCliente", space( 13 ) )
-
+      ::appendBlankClientDeliveryNote( oLine )
    end if
+
+   ::oBrwDocuments:Refresh()
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD appendCurrentClientDeliveryNote( oLine )
+
+   local oDocument
+
+   msgalert( valtype( oLine ), "appendCurrentClientDeliveryNote" )
+   debug( oLine, "oLine" )
+
+   oDocument         := ClientDeliveryNoteDocumentHeader():newRecordDictionary( self ) 
+   oDocument:setValue( "PedidoCliente", ( D():AlbaranesClientes( ::nView ) )->cNumPed )
 
    ::oDocumentHeaders:addLines( oDocument )
 
-   debug( ::oDocumentHeaders:aLines, "aLines" )
+Return ( nil )
 
-Return ( .t. )
+//---------------------------------------------------------------------------//
+
+METHOD appendBlankClientDeliveryNote( oLine )
+
+   local oDocument
+
+   msgalert( valtype( oLine ), "valtype")
+   debug( oLine:getHeaderClient(), "getHeaderClient" )
+   debug( oLine:getHeaderClientName(), "getHeaderClientName" )
+   debug( oLine:getHeaderDate(), "getHeaderDate" )
+
+   oDocument         := ClientDeliveryNoteDocumentHeader():newBlankDictionary( self ) 
+   oDocument:setValue( "PedidoCliente", space( 13 ) )
+   oDocument:setClient( oLine:getHeaderClient() )
+   oDocument:setClientName( oLine:getHeaderClientName() )
+
+   ::oDocumentHeaders:addLines( oDocument )
+
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 

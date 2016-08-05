@@ -11917,8 +11917,6 @@ Function nTotalizer( cNumTik, cTikT, cTikL, cTikP, cAlbCliT, cAlbCliL, cFacCliT,
 
          uTotal         := nTotTik( cNumTik, cTikT, cTikL, cDiv, nil, cCodDiv, lPic )
 
-         // nTotVal        := nTotValTik( cNumTik, cTikT, cTikL, cDiv, cCodDiv )
-
    end case
 
 return ( uTotal )

@@ -232,9 +232,7 @@ METHOD New()
 
    ::oDocumentHeaders   := DocumentLines():New( Self )
 
-   ::oDocumentLines     := DocumentLines():New( Self ) // AliasDocumentLine():New( Self )   
-
-   // ::setDocumentPedidosProveedores()
+   ::oDocumentLines     := DocumentLines():New( Self ) 
 
 RETURN ( Self )
 

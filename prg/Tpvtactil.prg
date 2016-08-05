@@ -2553,16 +2553,16 @@ METHOD StartResource() CLASS TpvTactil
             ::oBtnTelefono       := TDotNetButton():New( 220, oGrupo, "Mobilephone3_16",              "...",               1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
 
          oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Guardar", .f., , "Disk_blue_32" )
-            TDotNetButton():New( 60, oGrupo, "Disk_blue_32",                  "Guardar y procesar",1, {|| ::OnClickGuardar() }, , , .f., .f., .f. )
+            TDotNetButton():New( 60, oGrupo, "Disk_blue_32", "Guardar y procesar", 1, {|| ::OnClickGuardar() }, , , .f., .f., .f. )
 
          oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Nota", .f., , "Printer_32" )
-            TDotNetButton():New( 60, oGrupo, "Printer_32",                    "Entregar nota",     1, {|| ::OnClickEntregaNota() }, , , .f., .f., .f. )
+            TDotNetButton():New( 60, oGrupo, "Printer_32", "Entregar nota", 1, {|| ::OnClickEntregaNota() }, , , .f., .f., .f. )
 
          if uFieldEmpresa( "lAlbTct" )
 
             oGrupo               := TDotNetGroup():New( oCarpeta, 126, "Cobrar", .f., , "Money2_32" )
-               TDotNetButton():New( 60, oGrupo, "document_plain_user1_32",       "Albarán",           1, {|| ::OnClickAlbaran() }, , , .f., .f., .f. )
-               TDotNetButton():New( 60, oGrupo, "Money2_32",                     "Cobrar",            2, {|| ::OnClickCobro() }, , , .f., .f., .f. )
+               TDotNetButton():New( 60, oGrupo, "document_plain_user1_32", "Albarán", 1, {|| ::OnClickAlbaran() }, , , .f., .f., .f. )
+               TDotNetButton():New( 60, oGrupo, "Money2_32", "Cobrar", 2, {|| ::OnClickCobro() }, , , .f., .f., .f. )
 
          else
 
@@ -6795,6 +6795,8 @@ METHOD OnClickEntregaNota() CLASS TpvTactil
       Return ( .f. )
    end if 
 
+   ::SetTotal()
+
    ::DisableDialog()
 
    // Guarda documento---------------------------------------------------------
@@ -8724,7 +8726,7 @@ METHOD BuildReport() CLASS TpvTactil
       Imprimir el informe------------------------------------------------------
       */
 
-      ::nDispositivo := IS_SCREEN
+      // ::nDispositivo := IS_SCREEN
 
       do case
          case ::nDispositivo == IS_SCREEN

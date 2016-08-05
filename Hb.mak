@@ -377,6 +377,7 @@ TDetFacAutomatica.prg   	\
 TComandas.prg           	\
 THisFacAutomatica.prg   	\
 ConversionDocumentos.prg            	\
+BrowseLineConversionDocumentos.prg     \
 ConversionPedidosProveedores.prg    	\
 GeneracionAlbaranesClientes.prg     	\
 TFacturaElectronica.prg 					\
@@ -828,6 +829,7 @@ TDetFacAutomatica.obj   									\
 TComandas.obj           									\
 THisFacAutomatica.obj   									\
 ConversionDocumentos.obj            					\
+BrowseLineConversionDocumentos.obj     				\
 ConversionPedidosProveedores.obj    					\
 GeneracionAlbaranesClientes.obj     					\
 TFacturaElectronica.obj 									\
@@ -1268,6 +1270,7 @@ $(OBJ)\TDetFacAutomatica.obj    		+
 $(OBJ)\TComandas.obj            		+
 $(OBJ)\THisFacAutomatica.obj    		+
 $(OBJ)\ConversionDocumentos.obj           	+
+$(OBJ)\BrowseLineConversionDocumentos.obj    +
 $(OBJ)\ConversionPedidosProveedores.obj   	+
 $(OBJ)\GeneracionAlbaranesClientes.obj    	+
 $(OBJ)\TFacturaElectronica.obj  					+

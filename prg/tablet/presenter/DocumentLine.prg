@@ -177,6 +177,7 @@ Return ( specialTax )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 CLASS SupplierDeliveryNoteDocumentLine FROM DocumentLine
 
@@ -206,7 +207,7 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ClientDeliveryNoteDocumentLine FROM DocumentLine
+CLASS CustomerOrderDocumentLine FROM DocumentLine
 
    METHOD newBuildDictionary( oSender )
 
@@ -217,8 +218,21 @@ CLASS ClientDeliveryNoteDocumentLine FROM DocumentLine
 END CLASS
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-METHOD newBuildDictionary( oSender ) CLASS ClientDeliveryNoteDocumentLine
+CLASS DeliveryNoreDocumentLine FROM DocumentLine
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD newBuildDictionary( oSender ) CLASS CustomerOrderDocumentLine
 
    ::Super():newBuildDictionary( oSender )
 
@@ -228,7 +242,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD setUnitsProvided()
+METHOD setUnitsProvided() CLASS CustomerOrderDocumentLine
 
    local nUnitsProvided    := nUnidadesRecibidasAlbaranesClientesNoFacturados( ::getDocumentId(), ::getCode(), ::getCodeFirstProperty(), ::getCodeSecondProperty(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():AlbaranesClientesLineas( ::getView() ) )
    nUnitsProvided          += nUnidadesRecibidasFacturasClientes( ::getDocumentId(), ::getCode(), ::getCodeFirstProperty(), ::getCodeSecondProperty(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():FacturasClientesLineas( ::getView() ) )
