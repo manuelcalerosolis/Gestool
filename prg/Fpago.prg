@@ -334,7 +334,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      REDEFINE GET aTmp[ ( dbfFormasPago )->( fieldPos( "nTipPgo" ) ) ];
+      REDEFINE GET aTmp[ ( dbfFormasPago )->( fieldPos( "nPctCom" ) ) ];
          ID       120 ;
 			SPINNER ;
          WHEN     ( nMode != ZOOM_MODE .AND. aTmp[ ( dbfFormasPago )->( fieldPos( "nTipPgo" ) ) ] == 3 ) ;
