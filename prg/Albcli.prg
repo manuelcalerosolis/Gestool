@@ -4067,7 +4067,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
    end if
 
-   oDlg:SetControlFastKey( "AlbaranesClientesLineas", nView, aGet, dbfTmpLin )
+   oDlg:SetControlFastKey( "AlbaranesClientesLineas", nView, aGet, dbfTmpLin, oBrwLin, dbfTblPro )
 
    oDlg:bStart       := {|| StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin,  ) }
 
