@@ -14,11 +14,17 @@
 function sortInvoiceLine( nView, aGet, dbfTmpLin, oBrwLin, dbfTblPro )
 
    local ordenAnterior        := ( dbfTmpLin )->( ordsetfocus() )
+   local nVol
 
    ( dbfTmpLin )->( dbgotop() )
    while !( dbfTmpLin )->( eof() )
-      ( dbfTmpLin )->nVolumen := retFld( ( dbfTmpLin )->cCodPr1 + ( dbfTmpLin )->cValPr1, dbfTblPro, "nOrdTbl", "cCodPro" )
-      ( dbfTmpLin )->nBultos  := retFld( ( dbfTmpLin )->cCodPr2 + ( dbfTmpLin )->cValPr2, dbfTblPro, "nOrdTbl", "cCodPro" )
+
+      nVol                    := retFld( ( dbfTmpLin )->cCodPr1 + ( dbfTmpLin )->cValPr1, dbfTblPro, "nOrdTbl", "cCodPro" )
+      ( dbfTmpLin )->nVolumen := if( Valtype( nVol ) != "N", 0, nVol )
+
+      nVol                    := retFld( ( dbfTmpLin )->cCodPr2 + ( dbfTmpLin )->cValPr1, dbfTblPro, "nOrdTbl", "cCodPro" )
+      ( dbfTmpLin )->nBultos  := if( Valtype( nVol ) != "N", 0, nVol )
+
       ( dbfTmpLin )->( dbskip() )
    end while
 

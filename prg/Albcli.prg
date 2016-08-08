@@ -10503,9 +10503,9 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
             // Comprobamos que tenga valores las propiedades----------------------
 
-            if ( !empty( aGet ) )                                                                                                                  .and.;
-               ( !empty( aTmp[ _CCODPR1 ] ) .and. empty( aTmp[ _CVALPR1 ] ) ) .or. ( !empty( aTmp[ _CCODPR2 ] ) .and. empty( aTmp[ _CVALPR2 ] ) )  .and.;
-               ( uFieldEmpresa( "lUseTbl" ) )                                                                                                      .and.;
+            if ( !empty( aGet ) )                                                                                                                       .and.;
+               ( ( !empty( aTmp[ _CCODPR1 ] ) .and. empty( aTmp[ _CVALPR1 ] ) ) .or. ( !empty( aTmp[ _CCODPR2 ] ) .and. empty( aTmp[ _CVALPR2 ] ) ) )   .and.;
+               ( uFieldEmpresa( "lUseTbl" ) )                                                                                                           .and.;
                ( nMode == APPD_MODE ) 
 
                aGet[ _NCANENT  ]:cText( 0 )
