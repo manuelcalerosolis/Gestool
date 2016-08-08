@@ -717,6 +717,9 @@ CLASS TpvTactil
 
    METHOD nUnidadesLineaComanda()      INLINE ( ::nUnidadesLinea( ::oTemporalComanda ) )
    METHOD nUnidadesImpresasComanda()   INLINE ( ::nUnidadesImpresas( ::oTemporalComanda ) )
+
+   METHOD cDetalleComanda( uTmpL )
+   METHOD cComentarioComanda( uTmpL )
    METHOD cDescripcionComanda( uTmpL )
 
    //-----------------------------------------------------------------------//
@@ -6355,6 +6358,12 @@ RETURN ( Round( nCalculo, ::nDecimalesTotal ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD cDetalleComanda() CLASS TpvTactil
+
+Return ( ::cDescripcionComanda() + ::cComentarioComanda() )
+
+//---------------------------------------------------------------------------//
+
 METHOD cDescripcionComanda() CLASS TpvTactil
 
    local cReturn     := ""
@@ -6372,6 +6381,14 @@ METHOD cDescripcionComanda() CLASS TpvTactil
    if !Empty( ::oTemporalComanda:cNcmTil )
       cReturn        += " con " + alltrim( ::oTemporalComanda:cNcmTil )
    end if
+
+RETURN ( cReturn )
+
+//---------------------------------------------------------------------------//
+
+METHOD cComentarioComanda() CLASS TpvTactil
+
+   local cReturn     := ""
 
    if !Empty( ::oTemporalComanda:cComent )
       cReturn        += "[*]" + space( 1 ) + alltrim( ::oTemporalComanda:cComent )
@@ -9249,7 +9266,10 @@ METHOD VariableReport() CLASS TpvTactil
 
          ::oFastReport:AddVariable(     "Lineas de comandas",  "Total unidades en comanda",                    "CallHbFunc( 'oTpvTactil', [ 'nUnidadesLineaComanda()' ] )" )
          ::oFastReport:AddVariable(     "Lineas de comandas",  "Total unidades impresas en comanda",           "CallHbFunc( 'oTpvTactil', [ 'nUnidadesImpresasComanda()' ] )" )
-         ::oFastReport:AddVariable(     "Lineas de comandas",  "Detalle del artículo en comanda",              "CallHbFunc( 'oTpvTactil', [ 'cDescripcionComanda()' ] )" )
+
+         ::oFastReport:AddVariable(     "Lineas de comandas",  "Detalle del artículo en comanda",              "CallHbFunc( 'oTpvTactil', [ 'cDetalleComanda()' ] )" )
+         ::oFastReport:AddVariable(     "Lineas de comandas",  "Descripción del artículo en comanda",          "CallHbFunc( 'oTpvTactil', [ 'cDescripcionComanda()' ] )" )
+         ::oFastReport:AddVariable(     "Lineas de comandas",  "Comentario del artículo en comanda",           "CallHbFunc( 'oTpvTactil', [ 'cComentarioComanda()' ] )" )
 
          ::oFastReport:AddVariable(     "Lineas de albaranes", "Detalle del artículo del albarán",             "CallHbFunc('cTpvDesAlbCli')"  )
          ::oFastReport:AddVariable(     "Lineas de albaranes", "Detalle del albarán en distinto idioma",       "CallHbFunc('cTpvDesAlbCliLeng')"  )

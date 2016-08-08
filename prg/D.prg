@@ -81,7 +81,6 @@ CLASS D
                                                             INLINE ( ( ::Get( "PreCliT", nView ) )->cSerPre + "/" + alltrim( str( ( ::Get( "PreCliT", nView ) )->nNumPre, 9 ) ) )
       METHOD PresupuestosClientesIdText( nView ) ;
                                                             INLINE ( ::PresupuestosClientesIdTextShort( nView ) + "/" + ( ::Get( "PreCliT", nView ) )->cSufPre )
-
    METHOD PresupuestosClientesLineas( nView )               INLINE ( ::Get( "PreCliL", nView ) )
       METHOD PresupuestosClientesLineasId( nView )          INLINE ( ( ::Get( "PreCliL", nView ) )->cSerPre + str( ( ::Get( "PreCliL", nView ) )->nNumPre, 9 ) + ( ::Get( "PreCliL", nView ) )->cSufPre )
 

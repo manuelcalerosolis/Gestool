@@ -8188,6 +8188,14 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
    end if
 
    /*
+   Caso de q las porpiedades no existan en la ficha del articulo--------------
+   */
+
+   if isPropertiesInProduct( aTmp, nMode )
+      return .f.
+   end if
+
+   /*
    Casos especiles para combustibles-------------------------------------------
    */
 
@@ -8355,6 +8363,8 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
             AppendKit( aClo, aTik )
 
          end if
+
+
 
       else
 
@@ -20170,7 +20180,15 @@ Function nombreSegundaPropiedadTicketsLineas( dbfTmpL )
 Return ( nombrePropiedad( ( dbfTmpL )->cCodPr2, ( dbfTmpL )->cValPr2, nView ) )
 
 //---------------------------------------------------------------------------//
+/*
+Caso de q las porpiedades no existan en la ficha del articulo--------------
+*/
 
+Function isPropertiesInProduct( aTmp, nMode )
+
+Return .t.
+
+//---------------------------------------------------------------------------//
 
 /*
       if ( lValePromocion ) .and. ( nValePromocion > 0 )

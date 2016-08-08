@@ -211,13 +211,22 @@ CLASS CustomerOrderDocumentLine FROM DocumentLine
 
    METHOD newBuildDictionary( oSender )
 
-   METHOD setUnitsProvided()            
-   METHOD getUnitsProvided()           INLINE ( ::getValue( "UnitsProvided" ) )
-   METHOD getUnitsAwaitingProvided()   INLINE ( ::getTotalUnits() - ::getUnitsProvided() )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
+
+METHOD newBuildDictionary( oSender ) CLASS CustomerOrderDocumentLine
+
+   ::new( oSender )
+
+   ::setDictionary( D():getHashFromAlias( oSender:getLineAlias(), oSender:getLineDictionary() ) )
+
+   ::oDocumentHeader    := DocumentHeader():newBuildDictionary( oSender )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -227,12 +236,16 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 CLASS DeliveryNoreDocumentLine FROM DocumentLine
+   
+   METHOD newBuildDictionary( oSender )
+   
+   METHOD setUnitsProvided()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD newBuildDictionary( oSender ) CLASS CustomerOrderDocumentLine
+METHOD newBuildDictionary( oSender ) CLASS DeliveryNoreDocumentLine
 
    ::Super():newBuildDictionary( oSender )
 
@@ -242,7 +255,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD setUnitsProvided() CLASS CustomerOrderDocumentLine
+METHOD setUnitsProvided() CLASS DeliveryNoreDocumentLine
 
    local nUnitsProvided    := nUnidadesRecibidasAlbaranesClientesNoFacturados( ::getDocumentId(), ::getCode(), ::getCodeFirstProperty(), ::getCodeSecondProperty(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():AlbaranesClientesLineas( ::getView() ) )
    nUnitsProvided          += nUnidadesRecibidasFacturasClientes( ::getDocumentId(), ::getCode(), ::getCodeFirstProperty(), ::getCodeSecondProperty(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():FacturasClientesLineas( ::getView() ) )
