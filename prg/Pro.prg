@@ -2933,7 +2933,7 @@ Method CreateData()
          */
 
          if ( dbfProL )->( dbSeek( ( dbfProT )->cCodPro ) )
-            while ( dbfProL )->cCodTbl == ( dbfProT )->cCodPro .and. !( dbfProL )->( eof() )
+            while ( dbfProL )->cCodPro == ( dbfProT )->cCodPro .and. !( dbfProL )->( eof() )
                dbPass( dbfProL, tmpProL, .t. )
                ( dbfProL )->( dbSkip() )
             end while
@@ -3091,7 +3091,7 @@ Method Process()
    Procesamos los ficheros recibidos-------------------------------------------
    */
 
-   aFiles                     := Directory( cPatIn() + "Proº*.*" )
+   aFiles                     := Directory( cPatIn() + "Pro*.*" )
 
    for each cFile in aFiles 
 

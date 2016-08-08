@@ -15160,10 +15160,10 @@ FUNCTION rxArticulo( cPath, cDriver )
       ( dbfArt )->( __dbPack() )
 
       ( dbfArt )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfArt )->( ordCreate( cPath + "ArtDiv.Cdx", "cCodArt", "cCodArt + cCodPr1 + cCodPr2 + cVAlpR1 + cValPr2", {|| Field->cCodArt + Field->cCodPr1 + Field->cCodPr2 + Field->cVAlpR1 + Field->cValPr2 } ) )
+      ( dbfArt )->( ordCreate( cPath + "ArtDiv.Cdx", "cCodArt", "cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2", {|| Field->cCodArt + Field->cCodPr1 + Field->cCodPr2 + Field->cValPr1 + Field->cValPr2 } ) )
 
       ( dbfArt )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfArt )->( ordCreate( cPath + "ArtDiv.Cdx", "cValPrp", "cCodArt + cVAlpR1 + cValPr2", {|| Field->cCodArt + Field->cVAlpR1 + Field->cValPr2 } ) )
+      ( dbfArt )->( ordCreate( cPath + "ArtDiv.Cdx", "cValPrp", "cCodArt + cValPr1 + cValPr2", {|| Field->cCodArt + Field->cValPr1 + Field->cValPr2 } ) )
 
       ( dbfArt )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( dbfArt )->( ordCreate( cPath + "ArtDiv.Cdx", "cCodigo", "cCodArt", {|| Field->cCodArt } ) )

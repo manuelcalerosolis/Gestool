@@ -13222,7 +13222,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
 
    if lPrecioMinimo( aTmp[ _CREF ], aTmp[ _NPREUNIT ], nMode, D():Articulos( nView ) )
       msgStop( "El precio de venta es inferior al precio mínimo.")
-      return nil
+      return .f.
    end if 
 
    /*
@@ -13234,19 +13234,15 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
       if !empty( oBtnSer )
 	      oBtnSer:Click()
 	   end if 
-      Return nil
+      Return .f.
    end if
 
    // lanzamos los scripts-----------------------------------------------------
 
-   if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
-
-      lBeforeAppendEvent   := runEventScript( "FacturasClientes\Lineas\beforeAppend", aTmp, aTmpFac, nView, dbfTmpLin )
-
-      if isLogic( lBeforeAppendEvent ) .and. !lBeforeAppendEvent
-         Return nil
+   if isAppendOrDuplicateMode( nMode )
+      if isfalse( runEventScript( "FacturasClientes\Lineas\beforeAppend", aTmp, aTmpFac, nView, dbfTmpLin ) )
+         Return .f.
       end if
-
    end if
 
    aTmp[ _CTIPCTR ]  := cTipoCtrCoste
@@ -13967,8 +13963,22 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
    // Ejecutamos script del evento before append-------------------------------
 
-   if nMode == APPD_MODE
+   if isAppendOrDuplicateMode( nMode )
+      if isfalse( runEventScript( "FacturasClientes\beforeAppend", aTmp ) )
+         return .f.
+      end if 
    end if
+
+   if isEditMode( nMode )
+      if isfalse( runEventScript( "FacturasClientes\beforeEdit", aTmp ) )
+         return .f.
+      end if 
+   end if
+
+   aTmp[ _DFECCRE ]        := Date()
+   aTmp[ _CTIMCRE ]        := Time()
+   aTmp[ _NTARIFA ]        := oGetTarifa:getTarifa()
+   aTmp[ _LALQUILER ]      := ( !empty( oTipFac ) .and. oTipFac:nAt == 2 )
 
    oDlg:Disable()
 
@@ -13985,18 +13995,9 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
       ( dbfTmpLin )->( dbClearFilter() )
 
-      // Primero hacer el RollBack---------------------------------------------------
-
-      aTmp[ _DFECCRE ]        := Date()
-      aTmp[ _CTIMCRE ]        := Time()
-      aTmp[ _NTARIFA ]        := oGetTarifa:getTarifa()
-      aTmp[ _LALQUILER ]      := ( !empty( oTipFac ) .and. oTipFac:nAt == 2 )
-
       // Nuevo registro-------------------------------------------------------------
 
-      if nMode == APPD_MODE .or. nMode == DUPL_MODE
-
-         runEventScript( "FacturasClientes\beforeAppend", aTmp )
+      if isAppendOrDuplicateMode( nMode )
 
          oMsgText( "Obteniendo nuevo contador" )
          if( !empty( oMeter ), oMeter:Set( 2 ), )
@@ -14011,12 +14012,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
       BeginTransaction()
 
-      if nMode == EDIT_MODE
-
-         runEventScript( "FacturasClientes\beforeEdit", aTmp )
-
-         RollBackFacCli( cSerFac + str( nNumFac ) + cSufFac )
-
+      if isEditMode( nMode )
+         rollBackFacCli( cSerFac + str( nNumFac ) + cSufFac )
       end if
 
       /*
@@ -15870,7 +15867,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpFac, dbfOferta, dbfDiv, d
 
       nTotalLinea       := lCalcDeta( aTmp, aTmpFac, .t. )
 
-      sOfeArt           := sOfertaArticulo( cCodArt, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], , aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmp[ _CDIVFAC ], aTmp[ _NCANENT ], nTotalLinea )
+      sOfeArt           := sOfertaArticulo( cCodArt, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], aTmpFac[ _LIVAINC ], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmp[ _CDIVFAC ], aTmp[ _NCANENT ], nTotalLinea )
 
       if !empty( sOfeArt ) 
          if ( sOfeArt:nPrecio != 0 )

@@ -4067,7 +4067,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
    end if
 
-   oDlg:SetControlFastKey( "AlbaranesClientesLineas", nView, aGet, dbfTmpLin )
+   oDlg:SetControlFastKey( "AlbaranesClientesLineas", nView, aGet, dbfTmpLin, oBrwLin, dbfTblPro )
 
    oDlg:bStart       := {|| StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin,  ) }
 
@@ -10503,9 +10503,9 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
             // Comprobamos que tenga valores las propiedades----------------------
 
-            if ( !empty( aGet ) )                                                                                                                  .and.;
-               ( !empty( aTmp[ _CCODPR1 ] ) .and. empty( aTmp[ _CVALPR1 ] ) ) .or. ( !empty( aTmp[ _CCODPR2 ] ) .and. empty( aTmp[ _CVALPR2 ] ) )  .and.;
-               ( uFieldEmpresa( "lUseTbl" ) )                                                                                                      .and.;
+            if ( !empty( aGet ) )                                                                                                                       .and.;
+               ( ( !empty( aTmp[ _CCODPR1 ] ) .and. empty( aTmp[ _CVALPR1 ] ) ) .or. ( !empty( aTmp[ _CCODPR2 ] ) .and. empty( aTmp[ _CVALPR2 ] ) ) )   .and.;
+               ( uFieldEmpresa( "lUseTbl" ) )                                                                                                           .and.;
                ( nMode == APPD_MODE ) 
 
                aGet[ _NCANENT  ]:cText( 0 )
@@ -11026,10 +11026,8 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
 
    if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
 
-      lBeforeAppendEvent   := runEventScript( "AlbaranesClientes\Lineas\beforeAppend", aTmp, aTmpAlb, nView, dbfTmpLin )
-
-      if isLogic( lBeforeAppendEvent ) .and. !lBeforeAppendEvent
-         Return nil
+      if isfalse( runEventScript( "AlbaranesClientes\Lineas\beforeAppend", aTmp, aTmpAlb, nView, dbfTmpLin ) )
+         Return .f.
       end if
 
    end if
@@ -11632,7 +11630,15 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    end if
 
    if nTotDif < 0
-      MsgStop( "La carga excede la capacidad del medio de transporte." )
+      msgInfo( "La carga excede la capacidad del medio de transporte." )
+   end if
+
+   // Ejecutamos script del evento before append-------------------------------
+
+   if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
+      if isfalse( runEventScript( "AlbaranesClientes\beforeAppend", aTmp, nView ) )
+         Return .f.
+      end if 
    end if
 
    CursorWait()
@@ -11641,11 +11647,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
 
    oMsgText( "Archivando" )
 
-   // Ejecutamos script del evento before append-------------------------------
-
-   if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
-      runEventScript( "AlbaranesClientes\beforeAppend", aTmp, nView )
-   end if
 
    oBlock                  := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -11949,7 +11950,7 @@ Static Function lBuscaOferta( cCodArt, aGet, aTmp, aTmpAlb, dbfKit )
 
       nTotalLinea := lCalcDeta( aTmp, aTmpAlb, nDouDiv, , , aTmpAlb[ _CDIVALB ], .t. )
 
-      sOfeArt     := sOfertaArticulo( cCodArt, aTmpAlb[ _CCODCLI ], aTmpAlb[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpAlb[ _DFECALB ], dbfOferta, aTmp[ _NTARLIN ], , aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmp[ _CDIVALB ], aTmp[ _NCANENT ], nTotalLinea )
+      sOfeArt     := sOfertaArticulo( cCodArt, aTmpAlb[ _CCODCLI ], aTmpAlb[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpAlb[ _DFECALB ], dbfOferta, aTmp[ _NTARLIN ], aTmpAlb[ _LIVAINC ], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmp[ _CDIVALB ], aTmp[ _NCANENT ], nTotalLinea )
 
       if !empty( sOfeArt ) 
          if ( sOfeArt:nPrecio != 0 )

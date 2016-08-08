@@ -8191,7 +8191,7 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
    Caso de q las porpiedades no existan en la ficha del articulo--------------
    */
 
-   if isPropertiesInProduct( aTmp, nMode )
+   if !( isPropertiesInProduct( aTmp, nMode ) )
       return .f.
    end if
 
@@ -11767,6 +11767,11 @@ Function SavTik2Alb( aTik, aGet, nMode, nSave )
       ( dbfAlbCliL )->lIvaLin    := .t.
       ( dbfAlbCliL )->nNumLin    := ( dbfTmpL    )->nNumLin
       ( dbfAlbCliL )->nPosPrint  := ( dbfTmpL    )->nPosPrint
+
+      if !Empty( ( dbfTmpL )->cLote )
+         ( dbfAlbCliL )->cLote   := ( dbfTmpL )->cLote
+         ( dbfAlbCliL )->lLote   := .t.
+      end if
       ( dbfAlbCliL )->( dbUnLock() )
 
       TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpL )->cCbaTil, ( dbfTmpL )->cCodPr1, ( dbfTmpL )->cValPr1, ( dbfTmpL )->cCodPr2, ( dbfTmpL )->cValPr2, nView )
@@ -20186,7 +20191,19 @@ Caso de q las porpiedades no existan en la ficha del articulo--------------
 
 Function isPropertiesInProduct( aTmp, nMode )
 
-Return .t.
+   local cCode := padr( aTmp[ _CCBATIL ], 18 )
+   cCode       += padr( aTmp[ _CVALPR1 ], 20 )
+   cCode       += padr( aTmp[ _CVALPR2 ], 20 )
+
+   if dbSeekInOrd( cCode, "cValPrp", dbfArtDiv )
+      return .t.
+   end if 
+
+   if msgBeepYesNo( "Estas propiedades no estan definidas en la ficha del artículo", "¿Desea continuar?")
+      return .t.
+   end if 
+
+Return .f.
 
 //---------------------------------------------------------------------------//
 

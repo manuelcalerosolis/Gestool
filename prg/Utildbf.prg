@@ -4013,3 +4013,15 @@ Function dbCustomKeyCount()
 Return ( ( select() )->( ordkeycount() ) )
 
 //----------------------------------------------------------------------------//
+
+Function isAppendOrDuplicateMode( nMode )
+ 
+Return ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
+
+//----------------------------------------------------------------------------//
+
+Function isEditMode( nMode )
+ 
+Return ( nMode == EDIT_MODE )
+
+//----------------------------------------------------------------------------//

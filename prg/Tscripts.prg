@@ -562,15 +562,21 @@ Return ( aDirectory )
 Function runEventScript( cDirectory, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
 
    local aFile
-   local aDirectory
+   local aFiles
    local uReturn   
    
-   aDirectory     := aDirectoryEventScript( cDirectory ) 
+   aFiles         := aDirectoryEventScript( cDirectory ) 
 
-   if !empty( aDirectory )
+   if !empty( aFiles )
 
-      for each aFile in aDirectory
+      for each aFile in aFiles
+
          uReturn  := TScripts():CompilarEjecutarFicheroScript( aFile[ 1 ], uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
+
+         if isfalse( uReturn )
+            exit
+         end if 
+
       next 
 
    end if 

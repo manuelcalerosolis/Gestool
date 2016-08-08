@@ -1937,14 +1937,6 @@ METHOD insertStockProduct( hStock ) CLASS TComercioProduct
    local idProductAttribute      := 0
    local isStockByProperty       := .f.
 
-   ::writeText( "idProduct " + cvaltochar( hget( hStock, "idProduct" ) ) )
-   ::writeText( "idFirstProperty " + cvaltochar( hget( hStock, "idFirstProperty" ) ) )
-   ::writeText( "len idFirstProperty " + cvaltochar( len( hget( hStock, "idFirstProperty" ) ) ) )
-   ::writeText( "valueFirstProperty " + cvaltochar( hget( hStock, "valueFirstProperty" ) ) )
-   ::writeText( "len valueFirstProperty " + cvaltochar( len( hget( hStock, "valueFirstProperty" ) ) ) )
-   ::writeText( "idSecondProperty " + cvaltochar( hget( hStock, "idSecondProperty" ) ) )
-   ::writeText( "valueSecondProperty " + cvaltochar( hget( hStock, "valueSecondProperty" ) ) )
-
    isStockByProperty             := !empty( hget( hStock, "idFirstProperty" ) )     .or.;
                                     !empty( hget( hStock, "valueFirstProperty" ) )  .or.;
                                     !empty( hget( hStock, "idSecondProperty" ) )    .or.;
@@ -1954,10 +1946,6 @@ METHOD insertStockProduct( hStock ) CLASS TComercioProduct
    attributeFirstProperty        := ::TPrestashopId():getValueAttribute( hget( hStock, "idFirstProperty" ) + hget( hStock, "valueFirstProperty" ),     ::getCurrentWebName() )
    attributeSecondProperty       := ::TPrestashopId():getValueAttribute( hget( hStock, "idSecondProperty" ) + hget( hStock, "valueSecondProperty" ),   ::getCurrentWebName() ) 
    unitStock                     := hget( hStock, "unitStock" )
-
-   ::writeText( "idProductPrestashop " + cvaltochar( idProductPrestashop ) )
-   ::writeText( "attributeFirstProperty " + cvaltochar( attributeFirstProperty ) )
-   ::writeText( "attributeSecondProperty " + cvaltochar( attributeSecondProperty ) )
 
    if ( attributeFirstProperty != 0 ) .and. ( attributeSecondProperty != 0 )
       idProductAttribute         := ::getProductAttribute( idProductPrestashop, attributeFirstProperty, attributeSecondProperty ) 

@@ -1854,7 +1854,7 @@ METHOD GetLanguagePrestashop() CLASS TComercio
    local oQuery
    local cCodLanguage
 
-   oQuery               := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "lang" ) +  ' WHERE active = 1' )
+   oQuery               := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "lang" ) + ' WHERE active = 1' )
 
    if oQuery:Open() .and. oQuery:RecCount() > 0
       cCodLanguage   := oQuery:FieldGet( 1 )
