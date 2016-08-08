@@ -42,7 +42,7 @@ CLASS TGeneracionAlbaranesClientes FROM TConversionDocumentos
       METHOD getUnitsInStock()
       METHOD minusUnitsStock()
 
-   METHOD dialogSelectionDocument( oDlg )
+   //METHOD dialogSelectionDocument( oDlg )
 
    METHOD processLines()
       METHOD processLine()
@@ -92,7 +92,7 @@ METHOD Dialog()
 
    ::buildDialogCustomerOrderLines()
    
-   ::DialogSelectionDocument( ::oFld:aDialogs[3] )
+   //::DialogSelectionDocument( ::oFld:aDialogs[3] )
    
    // Botones -----------------------------------------------------------------
 
