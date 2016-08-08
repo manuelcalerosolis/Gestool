@@ -7128,7 +7128,12 @@ METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
       ::oAlbaranClienteLinea:cAlmLin      := oUser():cAlmacen()
       ::oAlbaranClienteLinea:lIvaLin      := .t.
       ::oAlbaranClienteLinea:nNumLin      := ::oTemporalLinea:nNumLin
-      ::oAlbaranClienteLinea:nPosPrint    := ::oTemporalLinea:nPosPrint
+      
+      if !Empty( ::oTemporalLinea:cLote )
+         ::oAlbaranClienteLinea:cLote     := ::oTemporalLinea:cLote
+         ::oAlbaranClienteLinea:lLote     := .t.
+      end if
+
       ::oAlbaranClienteLinea:Save()
 
       ::oTemporalLinea:Skip()
@@ -7137,6 +7142,7 @@ METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
 
    /*
    Guardamos los cobros--------------------------------------------------------
+
    */
 
    if Len( ::oTpvCobros:aCobros ) != 0

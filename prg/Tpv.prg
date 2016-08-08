@@ -11757,6 +11757,11 @@ Function SavTik2Alb( aTik, aGet, nMode, nSave )
       ( dbfAlbCliL )->lIvaLin    := .t.
       ( dbfAlbCliL )->nNumLin    := ( dbfTmpL    )->nNumLin
       ( dbfAlbCliL )->nPosPrint  := ( dbfTmpL    )->nPosPrint
+
+      if !Empty( ( dbfTmpL )->cLote )
+         ( dbfAlbCliL )->cLote   := ( dbfTmpL )->cLote
+         ( dbfAlbCliL )->lLote   := .t.
+      end if
       ( dbfAlbCliL )->( dbUnLock() )
 
       TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpL )->cCbaTil, ( dbfTmpL )->cCodPr1, ( dbfTmpL )->cValPr1, ( dbfTmpL )->cCodPr2, ( dbfTmpL )->cValPr2, nView )
