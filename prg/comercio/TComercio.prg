@@ -264,6 +264,7 @@ CLASS TComercio
       METHOD controllerExportOneProductToPrestashop( idProduct )
       METHOD controllerOrderPrestashop()
       METHOD controllerUpdateStockPrestashop()
+      METHOD controllerDeleteOneProductToPrestashop( idProduct )
 
    METHOD AppendIvaPrestashop()
    METHOD InsertIvaPrestashop()
@@ -478,6 +479,8 @@ CLASS TComercio
    METHOD insertStructureInformation()
    METHOD insertOneProductToPrestashop( idProduct )
    METHOD insertAllProducts()
+
+   METHOD deleteOneProductToPrestashop( idProduct )   
 
    METHOD getLastInsertProduct( idProduct )  INLINE ( ::TComercioConfig():getFromCurrentWeb( "IdProduct", "" ) )
 
@@ -4825,6 +4828,48 @@ METHOD insertAllProducts( idProduct ) CLASS TComercio
 Return ( self )
 
 //---------------------------------------------------------------------------//
+
+METHOD controllerDeleteOneProductToPrestashop( idProduct ) Class TComercio
+
+   if !( ::isAviableWebToExport() )
+      Return .f.
+   end if 
+
+   ::oWaitMeter         := TWaitMeter():New( "Actualizando articulos", "Espere por favor..." )
+   ::oWaitMeter:Run()
+
+   if ::filesOpen()
+
+      ::deleteOneProductToPrestashop( idProduct )
+         
+      ::filesClose()
+
+   end if
+
+   ::oWaitMeter:End()
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteOneProductToPrestashop( idProduct ) Class TComercio
+
+   if !( ::TComercioProduct:buildDeleteProduct( idProduct, .t. ) )
+      Return .f.
+   end if 
+
+   if ::prestaShopConnect()
+
+      ::TComercioProduct:deleteProducts()
+
+      ::prestaShopDisConnect()
+
+   end if 
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
 
 METHOD saveLastInsertProduct( idProduct ) CLASS TComercio
 

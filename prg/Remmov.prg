@@ -2437,6 +2437,8 @@ METHOD loadAlmacen( nMode ) CLASS TRemMovAlm
 
          for each sStkAlm in aStkAlm
 
+            debug( sStkAlm, "aStkAlm" )
+
             if sStkAlm:nUnidades != 0
 
                if  ::oDetMovimientos:oDbfVir:Append()
@@ -2605,7 +2607,7 @@ METHOD loadAlmacen( nMode ) CLASS TRemMovAlm
    
                   end if
       
-                  ::oDetMovimientos:oDbfVir:nPreDiv    := nPreMed
+                  ::oDetMovimientos:oDbfVir:nPreDiv   := nPreMed
       
                   ::oDetMovimientos:oDbfVir:Save()
       

@@ -34,10 +34,10 @@ CLASS TBrowseLineConversionDocumentos
       METHOD buildColumnsBrowse()
       METHOD buildOrdersColumns()                  
 
-      METHOD load()                                INLINE ( ::oBrwLines:Load() )
-      METHOD addCol()                              INLINE ( ::oBrwLines:addCol() )
+      METHOD load()                                INLINE ( if( !empty( ::oBrwLines ), ::oBrwLines:Load(), ) )
+      METHOD addCol()                              INLINE ( if( !empty( ::oBrwLines ), ::oBrwLines:addCol(), ) )
 
-      METHOD changeSearchLines()                   INLINE ( ::oBrwLines:Seek( alltrim( ::cSearchLines ) ) )
+      METHOD changeSearchLines()                   INLINE ( if( !empty( ::oBrwLines ), ::oBrwLines:Seek( alltrim( ::cSearchLines ) ), ) )
 
       METHOD getDocument()                         INLINE ( alltrim( ::cDocument ) )
 

@@ -356,7 +356,7 @@ METHOD SaveResource( oGet, oGetNombre, oDlg )
          Return .f.
       end if
 
-      ::oDbf:cCodTip := RJust( ::oDbf:cCodTip, "0" )
+      // ::oDbf:cCodTip := RJust( ::oDbf:cCodTip, "0" )
 
       if ::oDbf:SeekInOrd( ::oDbf:cCodTip, "cCodTip" )
          MsgStop( "Código ya existe " + Rtrim( ::oDbf:cCodTip ) )
@@ -415,22 +415,26 @@ RETURN ( Self )
 
 METHOD lValid( oGet, oSay )
 
-   local cCodArt
+   local cCodArt  := oGet:VarGet()
 
-   if Empty( oGet:VarGet() )
+   if empty( cCodArt )
       return .t.
    end if
 
-   cCodArt        := RJustObj( oGet, "0" )
+   if ::oDbf:SeekInOrd( cCodArt, "cCodTip" )
 
-   if ::oDbf:Seek( cCodArt )
       oGet:cText( cCodArt )
+
       if oSay != nil
          oSay:cText( ::oDbf:cNomTip )
       end if
+
    else
-      msgStop( "Código no encontrado" )
+
+      msgStop( "Código de tipo de artículo no encontrado" )
+
       return .f.
+
    end if
 
 RETURN .t.

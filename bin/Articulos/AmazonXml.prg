@@ -19,7 +19,7 @@
 #define DoubleFourDecimalPicture "999999999.9999"
 #define DoubleSixDecimalPicture  "999999999.999999"
 
-CLASS TFacturaElectronica
+CLASS TAmazonXml
 
    DATA  oXml
    DATA  oXmlNode

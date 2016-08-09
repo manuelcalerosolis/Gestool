@@ -207,7 +207,7 @@ METHOD DefineFiles( cPath, cDriver, lUniqueName, cFileName ) CLASS TDetMovimient
       INDEX TO ( cFileName ) TAG "nNumLin"      ON "Str( nNumLin )"                         NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "lSndDoc"      ON "lSndDoc"                                NODELETED                              FOR "lSndDoc"         OF oDbf
       INDEX TO ( cFileName ) TAG "nTipMov"      ON "cRefMov + Dtos( dFecMov )"              NODELETED                              FOR "nTipMov == 4"    OF oDbf
-      INDEX TO ( cFileName ) TAG "cStock"       ON "cRefMov + cAliMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote"  NODELETED  FOR "nTipMov == 4"    OF oDbf
+      INDEX TO ( cFileName ) TAG "cStock"       ON "cRefMov + cAliMov + cValPr1 + cValPr2 + cLote"  NODELETED                      FOR "nTipMov == 4"    OF oDbf
       INDEX TO ( cFileName ) TAG "cStkFastIn"   ON "cRefMov + cAliMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote"  NODELETED  FOR "!lWait"          OF oDbf
       INDEX TO ( cFileName ) TAG "cStkFastOu"   ON "cRefMov + cAloMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote"  NODELETED  FOR "!lWait"          OF oDbf
       INDEX TO ( cFileName ) TAG "cRef"         ON "cRefMov"                                NODELETED                     OF oDbf

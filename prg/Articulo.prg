@@ -5753,10 +5753,10 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       return nil
    end if
 
-   if lActualizaWeb .and. !lPublishProductInPrestashop( aTmp )
-      msgStop( "El artículo que desea exportar debe marcarse para publicar en la web y tener una web asignada." )
-      return nil
-   end if
+   // if lActualizaWeb .and. !lPublishProductInPrestashop( aTmp )
+   //    msgStop( "El artículo que desea exportar debe marcarse para publicar en la web y tener una web asignada." )
+   //    return nil
+   // end if
 
    DisableAcceso()
 
@@ -6103,25 +6103,25 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
 
       CommitTransaction()
 
-      /*
-      Actualizamos los datos de la web para tiempo real------------------------
-      */
-
-      if lActualizaWeb
-         BuildWeb( cCod, cWebShop )
-      end if
-
-      // Ejecutamos script del evento after append--------------------------------
-
-      if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
-         runEventScript( "Articulos\afterAppend", aTmp, nView )
-      end if
-
    RECOVER USING oError
       RollBackTransaction()
       msgStop( "Imposible actualizar bases de datos" + CRLF + ErrorMessage( oError ) )
    END SEQUENCE
    ErrorBlock( oBlock )
+
+   /*
+   Actualizamos los datos de la web para tiempo real------------------------
+   */
+
+   if lActualizaWeb
+      BuildWeb( cCod, cWebShop )
+   end if
+
+   // Ejecutamos script del evento after append--------------------------------
+
+   if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
+      runEventScript( "Articulos\afterAppend", aTmp, nView )
+   end if
 
    /*
    Cerramos el dialogo---------------------------------------------------------
@@ -18432,18 +18432,32 @@ Static Function BuildWeb( idProduct, idShop )
 
    local TComercio   := TComercio():New()
 
-   TComercio:setWebToExport( idShop ) 
-   TComercio:controllerExportOneProductToPrestashop( idProduct )
+   if lPublishProductInPrestashop()
+      TComercio:setWebToExport( idShop ) 
+      TComercio:controllerExportOneProductToPrestashop( idProduct )
+   end if 
+
+   if lDeleteProductInPrestashop()
+      TComercio:setWebToExport( idShop ) 
+      TComercio:controllerDeleteOneProductToPrestashop( idProduct )
+   end if 
 
 Return .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function lPublishProductInPrestashop( aTmp )
+Static Function lPublishProductInPrestashop()
 
-Return ( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lPubInt" ) ) ] .and. !empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cWebShop" ) ) ] ) )
+Return ( ( D():Articulos( nView ) )->lPubInt .and. !empty( ( D():Articulos( nView ) )->cWebShop ) )
 
 //---------------------------------------------------------------------------//
+
+Static Function lDeleteProductInPrestashop()
+
+Return ( !( D():Articulos( nView ) )->lPubInt .and. !empty( ( D():Articulos( nView ) )->cWebShop ) ) 
+
+//---------------------------------------------------------------------------//
+
 
 Static Function lValidImporteBase( oGet, uValue, nKey, hFields )
 

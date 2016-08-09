@@ -20197,15 +20197,19 @@ Caso de q las porpiedades no existan en la ficha del articulo--------------
 
 Function isPropertiesInProduct( aTmp, nMode )
 
-   local cCode := padr( aTmp[ _CCBATIL ], 18 )
-   cCode       += padr( aTmp[ _CVALPR1 ], 20 )
-   cCode       += padr( aTmp[ _CVALPR2 ], 20 )
+   local cCode       := padr( aTmp[ _CCBATIL ], 18 )
+   local cProperties := padr( aTmp[ _CVALPR1 ], 20 )
+   cProperties       += padr( aTmp[ _CVALPR2 ], 20 )
 
-   if dbSeekInOrd( cCode, "cValPrp", dbfArtDiv )
+   if !( dbSeekInOrd( cCode, "cValPrp", dbfArtDiv ) )
       return .t.
    end if 
 
-   if msgBeepYesNo( "Estas propiedades no estan definidas en la ficha del artículo", "¿Desea continuar?")
+   if dbSeekInOrd( cCode + cProperties, "cValPrp", dbfArtDiv )
+      return .t.
+   end if 
+
+   if msgBeepYesNo( "Estas propiedades no estan definidas en la ficha del artículo", "¿Desea continuar?" )
       return .t.
    end if 
 

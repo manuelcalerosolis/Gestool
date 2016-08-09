@@ -211,6 +211,10 @@ CLASS CustomerOrderDocumentLine FROM DocumentLine
 
    METHOD newBuildDictionary( oSender )
 
+   // METHOD setUnitsProvided()            
+   METHOD getUnitsProvided()           INLINE ( ::getValue( "UnitsProvided" ) )
+   METHOD getUnitsAwaitingProvided()   INLINE ( ::getTotalUnits() - ::getUnitsProvided() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -226,7 +230,6 @@ METHOD newBuildDictionary( oSender ) CLASS CustomerOrderDocumentLine
 Return ( Self )
 
 //---------------------------------------------------------------------------//
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

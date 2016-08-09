@@ -24,14 +24,18 @@ CLASS TComercioProduct FROM TComercioConector
    DATA  idManufacturer    
 
    METHOD isProductInDatabase( idProduct )                         
-   METHOD isProductInCurrentWeb()                           
+   METHOD isProductActiveInCurrentWeb()    
+   METHOD isProductDeleteInCurrentWeb()                       
 
    METHOD buildAllProductInformation()
    METHOD buildProductInformation( idProduct )
       METHOD buildIvaProducts( id )  
       METHOD buildManufacturerProduct( id )
       METHOD buildPropertyProduct( id )
+      
       METHOD buildProduct( id )
+      METHOD buildDeleteProduct( idProduct, lCleanProducts )
+      METHOD buildHashProduct( idProduct, aImagesArticulos, aStockArticulo )      
 
       METHOD getPrice()
       METHOD getPriceReduction()
@@ -66,6 +70,8 @@ CLASS TComercioProduct FROM TComercioConector
       METHOD insertPropertiesHeader( hPropertiesHeaderProduct ) 
       METHOD insertPropertiesLineProduct( hPropertiesLineProduct )
 
+   METHOD deleteProducts()
+
    METHOD insertProductCategory( idProduct, idCategory )
 
    METHOD insertAditionalInformation()
@@ -94,6 +100,9 @@ CLASS TComercioProduct FROM TComercioConector
       METHOD insertStockProduct( hStock ) 
 
    METHOD getProductAttribute( idProductPrestashop, cCodWebValPr1, cCodWebValPr2 )
+
+   METHOD getIdProductImage( id, cImgToken )
+   METHOD getDefaultProductImage( id, cImgToken ) 
 
 END CLASS
 
@@ -127,7 +136,7 @@ METHOD buildProductInformation( idProduct ) CLASS TComercioProduct
       Return .f.
    end if 
 
-   if !( ::isProductInCurrentWeb( idProduct ) )
+   if !( ::isProductActiveInCurrentWeb( idProduct ) )
       Return ( .f. )
    end if 
 
@@ -156,10 +165,26 @@ Return ( .t. )
                                                                            
 //---------------------------------------------------------------------------//
 
-METHOD isProductInCurrentWeb( idProduct ) CLASS TComercioProduct
+METHOD isProductActiveInCurrentWeb( idProduct ) CLASS TComercioProduct
 
    if !( ::oProductDatabase():lPubInt )
       ::writeText( "Artículo " + alltrim( idProduct ) + " no seleccionado para web" ) 
+      Return .f.
+   end if 
+
+   if ( alltrim( ::oProductDatabase():cWebShop ) != ::getCurrentWebName() ) 
+      ::writeText( "Artículo " + alltrim( idProduct ) + " no pertence a la web seleccionada" )
+      Return .f.
+   end if 
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD isProductDeleteInCurrentWeb( idProduct ) CLASS TComercioProduct
+
+   if ( ::oProductDatabase():lPubInt )
+      ::writeText( "Artículo " + alltrim( idProduct ) + " no eliminado de la web" ) 
       Return .f.
    end if 
 
@@ -330,7 +355,7 @@ METHOD buildProduct( idProduct, lCleanProducts ) CLASS TComercioProduct
       Return ( .f. )
    end if 
 
-   if !( ::isProductInCurrentWeb( idProduct ) )
+   if !( ::isProductActiveInCurrentWeb( idProduct ) )
       Return ( .f. )
    end if 
 
@@ -343,7 +368,7 @@ METHOD buildProduct( idProduct, lCleanProducts ) CLASS TComercioProduct
       Return ( .f. )
    end if 
 
-   // Recopilar info de imagenes-----------------------------------------
+   // Recopilar info de imagenes-----------------------------------------" )
 
    aImagesArticulos           := ::imagesProduct( idProduct )
    if !( ::TComercioConfig():isProcessWithoutImage() ) .and. empty( aImagesArticulos ) 
@@ -351,6 +376,45 @@ METHOD buildProduct( idProduct, lCleanProducts ) CLASS TComercioProduct
       Return ( .f. )
    end if 
 
+   // Contruimos el hash con toda la informacion del producto------------------
+
+   ::buildHashProduct( idProduct, aImagesArticulos, aStockArticulo )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildDeleteProduct( idProduct, lCleanProducts ) CLASS TComercioProduct
+
+   DEFAULT lCleanProducts     := .f.
+
+   if lCleanProducts
+      ::aProducts             := {}
+   else
+      if aScan( ::aProducts, {|h| hGet( h, "id" ) == idProduct } ) != 0
+         Return ( .f. )
+      end if 
+   end if 
+
+   if !( ::isProductInDatabase( idProduct ) )
+      Return ( .f. )
+   end if 
+
+   if !( ::isProductDeleteInCurrentWeb( idProduct ) )
+      Return ( .f. )
+   end if 
+
+   ::buildHashProduct( idProduct )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildHashProduct( idProduct, aImagesArticulos, aStockArticulo ) CLASS TComercioProduct
+
+   DEFAULT aImagesArticulos   := {}
+   DEFAULT aStockArticulo     := {}
+   
    // Rellenamos el Hash-------------------------------------------------
 
    aAdd( ::aProducts,   {  "id"                    => idProduct,;
@@ -375,9 +439,10 @@ METHOD buildProduct( idProduct, lCleanProducts ) CLASS TComercioProduct
                            "aImages"               => aImagesArticulos,;
                            "aStock"                => aStockArticulo } )
 
-Return ( .t. )
+Return ( ::aProducts )
 
 //---------------------------------------------------------------------------//
+
 
 METHOD getPrice() CLASS TComercioProduct
 
@@ -436,9 +501,10 @@ METHOD imagesProduct( id ) CLASS TComercioProduct
    local nOrdAntImg
    local nOrdAntDiv     
 
-   // Pasamos las imágenes de los artículos por propiedades-----------------------
+   // Pasamos las imágenes de los artículos por propiedades-----------------------" )
 
    nOrdAntDiv           := ::oPropertyProductDatabase():OrdSetFocus( "cCodigo" )
+
    if ::oPropertyProductDatabase():Seek( id )
 
       while ::oPropertyProductDatabase():cCodArt == id .and. !::oPropertyProductDatabase():Eof()
@@ -451,8 +517,8 @@ METHOD imagesProduct( id ) CLASS TComercioProduct
 
                if file( cImgToken ) .and. ascan( aImages, {|a| hGet( a, "name" ) == cImgToken } ) == 0
                   aadd( aImages, {  "name"      => cImgToken,;
-                                    "id"        => oRetFld( cImgToken, ::oImageProductDatabase(), "nId", "cImgArt" ),;
-                                    "lDefault"  => oRetFld( cImgToken, ::oImageProductDatabase(), "lDefImg", "cImgArt" ) } )
+                                    "id"        => ::getIdProductImage( id, cImgToken ),;
+                                    "lDefault"  => ::getDefaultProductImage( id, cImgToken ) } )
                end if 
 
             next
@@ -467,7 +533,7 @@ METHOD imagesProduct( id ) CLASS TComercioProduct
 
    ::oPropertyProductDatabase():OrdSetFocus( nOrdAntDiv )
 
-   // Pasamos las imágenes de la tabla de artículos-------------------------------
+   // Pasamos las imágenes de la tabla de artículos-------------------------------" )
 
    if empty( aImages )
 
@@ -494,7 +560,7 @@ METHOD imagesProduct( id ) CLASS TComercioProduct
 
    end if
 
-   // Nos aseguramos de que por lo menos una imágen sea por defecto------------
+   // Nos aseguramos de que por lo menos una imágen sea por defecto------------" )
 
    if !empty( aImages ) .and. ascan( aImages, {|a| hGet( a, "lDefault" ) == .t. } ) == 0
       hSet( aImages[ 1 ], "lDefault", .t. )
@@ -641,6 +707,26 @@ METHOD insertProducts() CLASS TComercioProduct
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD deleteProducts() CLASS TComercioProduct
+
+   local hProduct
+   local nProducts   := len( ::aProducts )
+
+   ::meterProcesoSetTotal( nProducts )
+   
+   for each hProduct in ::aProducts
+
+      ::meterProcesoText( "Eliminando artículo anterior " + alltrim( str( hb_enumindex() ) ) + " de " + alltrim( str( nProducts ) ) ) 
+
+      ::deleteProduct( hProduct )
+   
+   next
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD insertProduct( hProduct ) CLASS TComercioProduct
 
@@ -2083,5 +2169,42 @@ Return ( idProductAttribute )
 
 //---------------------------------------------------------------------------//
 
+METHOD getIdProductImage( id, cImgToken ) CLASS TComercioProduct
 
+   if ::oImageProductDatabase():seek( id )
 
+      while ::oImageProductDatabase():cCodArt == id .and. !( ::oImageProductDatabase():eof() )
+
+         if alltrim( ::oImageProductDatabase():cImgArt ) == alltrim( cImgToken )
+            Return ( ::oImageProductDatabase():nId )
+         end if 
+
+         ::oImageProductDatabase():skip()
+
+      end while 
+
+   end if 
+
+Return ( 0 )
+
+//---------------------------------------------------------------------------//
+
+METHOD getDefaultProductImage( id, cImgToken ) CLASS TComercioProduct
+
+   if ::oImageProductDatabase():seek( id )
+
+      while ::oImageProductDatabase():cCodArt == id .and. !( ::oImageProductDatabase():eof() )
+
+         if alltrim( ::oImageProductDatabase():cImgArt ) == alltrim( cImgToken )
+            Return ( ::oImageProductDatabase():lDefImg )
+         end if 
+
+         ::oImageProductDatabase():skip()
+
+      end while 
+
+   end if 
+
+Return ( .f. )
+
+//---------------------------------------------------------------------------//
