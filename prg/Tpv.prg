@@ -3359,7 +3359,13 @@ static function cPreCli( aTmp, aGet, cNumPre, oBrwLin )
             ( dbfTmpL )->( dbAppend() )
 
             ( dbfTmpL )->cCbaTil    := ( dbfPreCliL )->cRef
-            ( dbfTmpL )->cNomTil    := ( dbfPreCliL )->cDetalle
+            
+            if !Empty( ( dbfPreCliL )->cDetalle )
+               ( dbfTmpL )->cNomTil    := ( dbfPreCliL )->cDetalle
+            else
+               ( dbfTmpL )->cNomTil    := ( dbfPreCliL )->mLngDes
+            end if
+
             if ( dbfAlbCliT )->lIvaInc
                ( dbfTmpL )->nPvpTil := ( dbfPreCliL )->nPreDiv
             else

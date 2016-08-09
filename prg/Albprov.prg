@@ -6114,7 +6114,7 @@ Static Function QuiAlbPrv( lDetail )
             ( D():PedidosProveedores( nView ) )->( dbUnLock() )
          end if
 
-         oStock:SetPedPrv( ( D():PedidosProveedores( nView ) )->cSerPed + Str( ( D():PedidosProveedores( nView ) )->nNumPed ) + ( D():PedidosProveedores( nView ) )->cSufPed )
+         //oStock:SetPedPrv( ( D():PedidosProveedores( nView ) )->cSerPed + Str( ( D():PedidosProveedores( nView ) )->nNumPed ) + ( D():PedidosProveedores( nView ) )->cSufPed )
 
          ( D():PedidosProveedores( nView ) )->( dbSkip() )
 
