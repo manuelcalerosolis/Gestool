@@ -7145,6 +7145,7 @@ METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
       ::oAlbaranClienteLinea:cAlmLin      := oUser():cAlmacen()
       ::oAlbaranClienteLinea:lIvaLin      := .t.
       ::oAlbaranClienteLinea:nNumLin      := ::oTemporalLinea:nNumLin
+      ::oAlbaranClienteLinea:nPosPrint    := ::oTemporalLinea:nPosPrint
       
       if !Empty( ::oTemporalLinea:cLote )
          ::oAlbaranClienteLinea:cLote     := ::oTemporalLinea:cLote
