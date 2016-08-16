@@ -7771,7 +7771,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
 
                nTotRet                 := ( dbfPedCliL )->nUniCaja
                nTotRet                 -= nUnidadesRecibidasAlbCli( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cCodPr1, ( dbfPedCliL )->cCodPr2, ( dbfPedCliL )->cValPr1, ( dbfPedCliL )->cValPr2, dbfAlbCliL )
-               nTotRet                 -= nUnidadesRecibidasFacturasClientes( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cCodPr1, ( dbfPedCliL )->cCodPr2, ( dbfPedCliL )->cValPr1, ( dbfPedCliL )->cValPr2, D():FacturasClientesLineas( nView ) )
+               nTotRet                 -= nUnidadesRecibidasFacturasClientes( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cValPr1, ( dbfPedCliL )->cValPr2, D():FacturasClientesLineas( nView ) )
 
                (dbfTmpLin)->( dbAppend() )
 
@@ -17706,20 +17706,18 @@ return ( nTot )
 
 //---------------------------------------------------------------------------//
 
-function nUnidadesRecibidasFacturasClientes( cNumPed, cCodArt, cCodPr1, cCodPr2, cValPr1, cValPr2, cFacCliL )
+function nUnidadesRecibidasFacturasClientes( cNumPed, cCodArt, cValPr1, cValPr2, cFacCliL )
 
    local nTot        := 0
    local aStaLin     := aGetStatus( cFacCliL, .f. )
 
-   DEFAULT cCodPr1   := Space( 20 )
-   DEFAULT cCodPr2   := Space( 20 )
    DEFAULT cValPr1   := Space( 20 )
    DEFAULT cValPr2   := Space( 20 )
 
    ( cFacCliL )->( OrdSetFocus( "cNumPedRef" ) )
 
-   if ( cFacCliL )->( dbSeek( cNumPed + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) )
-      while ( cFacCliL )->cNumPed + ( cFacCliL )->cRef + ( cFacCliL )->cCodPr1 + ( cFacCliL )->cCodPr2 + ( cFacCliL )->cValPr1 + ( cFacCliL )->cValPr2 == cNumPed + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 .and. !( cFacCliL )->( eof() )
+   if ( cFacCliL )->( dbSeek( cNumPed + cCodArt + cValPr1 + cValPr2 ) )
+      while ( cFacCliL )->cNumPed + ( cFacCliL )->cRef + ( cFacCliL )->cValPr1 + ( cFacCliL )->cValPr2 == cNumPed + cCodArt + cValPr1 + cValPr2 .and. !( cFacCliL )->( eof() )
          nTot        += nTotNFacCli( cFacCliL )
          ( cFacCliL )->( dbSkip() )
       end while

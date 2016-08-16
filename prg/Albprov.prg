@@ -9327,8 +9327,8 @@ function nUnidadesRecibidasPedCli( cPedCli, cCodArt, cValPr1, cValPr2, cRefPrv, 
    local nOrd
    local nTot        := 0
 
-   DEFAULT cValPr1   := Space( 40 )
-   DEFAULT cValPr2   := Space( 40 )
+   DEFAULT cValPr1   := Space( 20 )
+   DEFAULT cValPr2   := Space( 20 )
 
    nRec              := ( cAlbPrvL )->( Recno() )
    nOrd              := ( cAlbPrvL )->( OrdSetFocus( "cPedCliRef" ) )

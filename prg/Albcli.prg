@@ -3492,6 +3492,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          WHEN     ( nMode == APPD_MODE .and. empty( aTmp[ _CNUMPED ] ) ) ;
          ACTION   ( GrpPed( aGet, aTmp, oBrwLin  ) )
 
+      REDEFINE BUTTON ;
+         ID       513 ;
+         OF       oFld:aDialogs[1] ;
+         ACTION   ( importarLineasPedidosClientes( aTmp, aGet, oBrwLin )  )
+
       REDEFINE GET aGet[ _CNUMPED ] VAR aTmp[ _CNUMPED ] ;
          ID       150 ;
          PICTURE  "@R #/#########/##" ;
@@ -5675,7 +5680,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
 
                nTotRet                 := ( dbfPedCliL )->nUniCaja
                nTotRet                 -= nUnidadesRecibidasAlbCli( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cCodPr1, ( dbfPedCliL )->cCodPr2, ( dbfPedCliL )->cValPr1, ( dbfPedCliL )->cValPr2, D():Get( "AlbCliL", nView ) )
-               nTotRet                 -= nUnidadesRecibidasFacturasClientes( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cCodPr1, ( dbfPedCliL )->cCodPr2, ( dbfPedCliL )->cValPr1, ( dbfPedCliL )->cValPr2, D():Get( "FacCliL", nView ) )
+               nTotRet                 -= nUnidadesRecibidasFacturasClientes( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cValPr1, ( dbfPedCliL )->cValPr2, D():Get( "FacCliL", nView ) )
 
                //if ( nTotNPedCli( dbfPedCliL ) == 0 .or. nTotRet > 0 ) para meter lineas en negativo
 
@@ -15563,20 +15568,18 @@ return ( nTot )
 
 //---------------------------------------------------------------------------//
 
-function nUnidadesRecibidasAlbaranesClientesNoFacturados( cNumPed, cCodArt, cCodPr1, cCodPr2, cValPr1, cValPr2, cAlbCliL )
+function nUnidadesRecibidasAlbaranesClientesNoFacturados( cNumPed, cCodArt, cValPr1, cValPr2, cAlbCliL )
 
    local nTot        := 0
    local aStaLin     := aGetStatus( cAlbCliL, .f. )
 
-   DEFAULT cCodPr1   := Space( 20 )
-   DEFAULT cCodPr2   := Space( 20 )
    DEFAULT cValPr1   := Space( 20 )
    DEFAULT cValPr2   := Space( 20 )
 
    ( cAlbCliL )->( ordsetfocus( "cRefNoFac" ) )
-   if ( cAlbCliL )->( dbseek( cNumPed + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) )
+   if ( cAlbCliL )->( dbseek( cNumPed + cCodArt + cValPr1 + cValPr2 ) )
       
-      while ( cAlbCliL )->cNumPed + ( cAlbCliL )->cRef + ( cAlbCliL )->cCodPr1 + ( cAlbCliL )->cCodPr2 + ( cAlbCliL )->cValPr1 + ( cAlbCliL )->cValPr2 == cNumPed + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 .and. !( cAlbCliL )->( eof() )
+      while ( cAlbCliL )->cNumPed + ( cAlbCliL )->cRef + ( cAlbCliL )->cValPr1 + ( cAlbCliL )->cValPr2 == cNumPed + cCodArt + cValPr1 + cValPr2 .and. !( cAlbCliL )->( eof() )
          nTot        += nTotNAlbCli( cAlbCliL )
          ( cAlbCliL )->( dbskip() )
       end while
@@ -16368,10 +16371,10 @@ FUNCTION rxAlbCli( cPath, cDriver )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumPed", "cNumPed", {|| Field->cNumPed } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumPedRef", "cNumPed + cRef + cCodPr1 + cCodPr2 + cValPr1 + cValPr2", {|| Field->cNumPed + Field->cRef + Field->cCodPr1 + Field->cCodPr2 + Field->cValPr1 + Field->cValPr2 } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumPedRef", "cNumPed + cRef + cValPr1 + cValPr2", {|| Field->cNumPed + Field->cRef + Field->cValPr1 + Field->cValPr2 } ) )
       
       ( cAlbCliT )->( ordCondSet( "!Deleted() .and. !lFacturado", {|| !Deleted() .and. !Field->lFacturado } ) )
-      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cRefNoFac", "cNumPed + cRef + cCodPr1 + cCodPr2 + cValPr1 + cValPr2", {|| Field->cNumPed + Field->cRef + Field->cCodPr1 + Field->cCodPr2 + Field->cValPr1 + Field->cValPr2 } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cRefNoFac", "cNumPed + cRef + cValPr1 + cValPr2", {|| Field->cNumPed + Field->cRef + Field->cValPr1 + Field->cValPr2 } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumPedDet", "cNumPed + cRef + cCodPr1 + cCodPr2 + cRefPrv", {|| Field->cNumPed + Field->cRef + Field->cCodPr1 + Field->cCodPr2 + Field->cRefPrv } ) ) // + cDetalle
@@ -16716,11 +16719,11 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "lLabel",    "L",  1, 0, "Lógico para marca de etiqueta",                   "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "nLabel",    "N",  6, 0, "Unidades de etiquetas a imprimir",                "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cObrLin",   "C", 10, 0, "Dirección de la linea",                           "Direccion",                     "", "( cDbfCol )", nil } )
-   aAdd( aColAlbCli, { "cRefAux",   "C",  18, 0, "Referencia auxiliar",                            "ReferenciaAuxiliar",            "", "( cDbfCol )", nil } )
-   aAdd( aColAlbCli, { "cRefAux2",  "C",  18, 0, "Segunda referencia auxiliar",                    "ReferenciaAuxiliar2",           "", "( cDbfCol )", nil } )
-   aAdd( aColAlbCli, { "nPosPrint", "N",   4, 0, "Posición de impresión",                          "PosicionImpresion",             "", "( cDbfCol )", nil } )
-   aAdd( aColAlbCli, { "cTipCtr",   "C",  20, 0, "Tipo tercero centro de coste",                   "",                              "", "( cDbfCol )", nil } )
-   aAdd( aColAlbCli, { "cTerCtr",   "C",  20, 0, "Tercero centro de coste",                        "",                              "", "( cDbfCol )", nil } )
+   aAdd( aColAlbCli, { "cRefAux",   "C", 18, 0, "Referencia auxiliar",                             "ReferenciaAuxiliar",            "", "( cDbfCol )", nil } )
+   aAdd( aColAlbCli, { "cRefAux2",  "C", 18, 0, "Segunda referencia auxiliar",                     "ReferenciaAuxiliar2",           "", "( cDbfCol )", nil } )
+   aAdd( aColAlbCli, { "nPosPrint", "N",  4, 0, "Posición de impresión",                           "PosicionImpresion",             "", "( cDbfCol )", nil } )
+   aAdd( aColAlbCli, { "cTipCtr",   "C", 20, 0, "Tipo tercero centro de coste",                    "",                              "", "( cDbfCol )", nil } )
+   aAdd( aColAlbCli, { "cTerCtr",   "C", 20, 0, "Tercero centro de coste",                         "",                              "", "( cDbfCol )", nil } )
 
 Return ( aColAlbCli )
 
@@ -18428,3 +18431,61 @@ Return ( cCodEnv )
 
 //---------------------------------------------------------------------------//
 
+Static Function importarLineasPedidosClientes( aTmp, aGet, oBrwLin )
+
+   local oLine
+   local cCodigoCliente
+   local cNombreCliente
+   local oConversionPedidosClientes
+
+   cCodigoCliente                 := aGet[ _CCODCLI ]:varGet()
+   cNombreCliente                 := aGet[ _CNOMCLI ]:varGet() 
+
+   if empty( cCodigoCliente )
+      msgStop( "Es necesario codificar un cliente.", "Importar pedidos" )
+      return .t.
+   end if
+
+   oConversionPedidosClientes    := TConversionPedidosClientes():New()
+
+   if empty( oConversionPedidosClientes )
+      Return .f.
+   end if 
+
+   oConversionPedidosClientes:setCodigoCliente( cCodigoCliente ) 
+   oConversionPedidosClientes:setTitle( "Importando pedidos de " + alltrim( cCodigoCliente ) + " - " + alltrim( cNombreCliente ) )
+   if oConversionPedidosClientes:Dialog()
+      appendLineasPedidosCliente( oConversionPedidosClientes:oDocumentLines:aLines, oBrwLin )
+   end if 
+
+   recalculaTotal( aTmp )
+
+   oBrwLin:refresh()
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Static Function appendLineasPedidosCliente( aLines )
+
+   local oLine
+
+   for each oLine in aLines
+
+      if oLine:isSelectLine()
+
+         // calculateUnidadesPendientesRecepcion( oLine )
+
+         // oLine:setValue( "NumeroPedidoCliente",    oLine:getDocumentId() )
+         oLine:setValue( "NumeroLinea",            nLastNum( dbfTmpLin ) )
+         oLine:setValue( "PosicionImpresion",      nLastNum( dbfTmpLin, "nPosPrint" ) )
+         
+         D():appendHashRecordInWorkarea( oLine:hDictionary, "AlbCliL", dbfTmpLin )
+
+      end if 
+
+   next 
+
+Return .t.
+
+//---------------------------------------------------------------------------//

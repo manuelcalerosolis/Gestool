@@ -1001,8 +1001,8 @@ METHOD SetEstadoPedCli( cNumPed ) CLASS TStock
 
             nTotalUnidadesPedidas      += nLineasUnidadesPedidas
 
-            nLineasUnidadesRecibidas   := nUnidadesRecibidasAlbaranesClientesNoFacturados( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cCodPr1, ( ::cPedCliL )->cCodPr2, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cAlbCliL )
-            nLineasUnidadesRecibidas   += nUnidadesRecibidasFacturasClientes( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cCodPr1, ( ::cPedCliL )->cCodPr2, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cFacCliL )
+            nLineasUnidadesRecibidas   := nUnidadesRecibidasAlbaranesClientesNoFacturados( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cAlbCliL )
+            nLineasUnidadesRecibidas   += nUnidadesRecibidasFacturasClientes( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cFacCliL )
             nLineasUnidadesRecibidas   := Min( nLineasUnidadesRecibidas, nLineasUnidadesPedidas )     
 
             nTotalUnidadesRecibidas    += nLineasUnidadesRecibidas
@@ -2075,8 +2075,8 @@ RETURN nil
 METHOD InsertStockPedidoClientes()
 
    local nPendientesEntregar  := nTotNPedCli( ::cPedCliL )
-   local nUnidadesRecibidas   := nUnidadesRecibidasAlbaranesClientesNoFacturados( ( ::cPedCliL )->cSerPed + str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cCodPr1, ( ::cPedCliL )->cCodPr2, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cAlbCliL )
-   nUnidadesRecibidas         += nUnidadesRecibidasFacturasClientes( ( ::cPedCliL )->cSerPed + str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cCodPr1, ( ::cPedCliL )->cCodPr2, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cFacCliL )
+   local nUnidadesRecibidas   := nUnidadesRecibidasAlbaranesClientesNoFacturados( ( ::cPedCliL )->cSerPed + str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cAlbCliL )
+   nUnidadesRecibidas         += nUnidadesRecibidasFacturasClientes( ( ::cPedCliL )->cSerPed + str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cFacCliL )
 
    nPendientesEntregar        -= nUnidadesRecibidas
 

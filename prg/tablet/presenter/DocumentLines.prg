@@ -18,7 +18,7 @@ CLASS DocumentLines
    METHOD getLines()                                        INLINE ( ::aLines )
       METHOD getCloneLine()                                 INLINE ( oClone( ::getLine() ) )
 
-   METHOD getLine( nPosition )                              INLINE ( ::aLines[ nPosition  ] )
+   METHOD getLine( nPosition )                              INLINE ( if( !empty( ::aLines ), ::aLines[ nPosition ], nil ) )
    METHOD getLineDetail( nPosition )                        INLINE ( ::getLine( nPosition  ) )
       METHOD getCloneLineDetail( nPosition )                INLINE ( oClone( ::getLineDetail( nPosition  ) ) )
       

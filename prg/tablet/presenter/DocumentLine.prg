@@ -1,5 +1,5 @@
-#include "FiveWin.Ch"
 #include "Factu.ch" 
+#include "Fivewin.ch"
  
 CLASS DocumentLine FROM DocumentBase
 
@@ -211,9 +211,9 @@ CLASS CustomerOrderDocumentLine FROM DocumentLine
 
    METHOD newBuildDictionary( oSender )
 
-   // METHOD setUnitsProvided()            
-   METHOD getUnitsProvided()           INLINE ( ::getValue( "UnitsProvided" ) )
-   METHOD getUnitsAwaitingProvided()   INLINE ( ::getTotalUnits() - ::getUnitsProvided() )
+   METHOD setUnitsReceived()
+   METHOD getUnitsReceived()                                   INLINE ( ::getValue( "UnitsReceived" ) )
+   METHOD getUnitsAwaitingReception()                          INLINE ( ::getTotalUnits() - ::getUnitsReceived() )
 
 END CLASS
 
@@ -223,9 +223,22 @@ METHOD newBuildDictionary( oSender ) CLASS CustomerOrderDocumentLine
 
    ::new( oSender )
 
+   ::oDocumentHeader    := DocumentHeader():newBuildDictionary( oSender )
+
    ::setDictionary( D():getHashFromAlias( oSender:getLineAlias(), oSender:getLineDictionary() ) )
 
-   ::oDocumentHeader    := DocumentHeader():newBuildDictionary( oSender )
+   ::setUnitsReceived()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setUnitsReceived() CLASS CustomerOrderDocumentLine
+
+   local nUnitsRecived    := nUnidadesRecibidasAlbaranesClientesNoFacturados( ::getDocumentId(), ::getCode(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():AlbaranesClientesLineas( ::getView() ) )
+   nUnitsRecived          += nUnidadesRecibidasFacturasClientes( ::getDocumentId(), ::getCode(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():FacturasClientesLineas( ::getView() ) )
+
+   ::setValue( "UnitsReceived", nUnitsRecived )
 
 Return ( Self )
 
@@ -236,9 +249,8 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
-CLASS DeliveryNoreDocumentLine FROM DocumentLine
+CLASS DeliveryNoteDocumentLine FROM DocumentLine
    
    METHOD newBuildDictionary( oSender )
    
@@ -248,7 +260,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD newBuildDictionary( oSender ) CLASS DeliveryNoreDocumentLine
+METHOD newBuildDictionary( oSender ) CLASS DeliveryNoteDocumentLine
 
    ::Super():newBuildDictionary( oSender )
 
@@ -258,10 +270,10 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD setUnitsProvided() CLASS DeliveryNoreDocumentLine
+METHOD setUnitsProvided() CLASS DeliveryNoteDocumentLine
 
-   local nUnitsProvided    := nUnidadesRecibidasAlbaranesClientesNoFacturados( ::getDocumentId(), ::getCode(), ::getCodeFirstProperty(), ::getCodeSecondProperty(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():AlbaranesClientesLineas( ::getView() ) )
-   nUnitsProvided          += nUnidadesRecibidasFacturasClientes( ::getDocumentId(), ::getCode(), ::getCodeFirstProperty(), ::getCodeSecondProperty(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():FacturasClientesLineas( ::getView() ) )
+   local nUnitsProvided    := nUnidadesRecibidasAlbaranesClientesNoFacturados( ::getDocumentId(), ::getCode(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():AlbaranesClientesLineas( ::getView() ) )
+   nUnitsProvided          += nUnidadesRecibidasFacturasClientes( ::getDocumentId(), ::getCode(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():FacturasClientesLineas( ::getView() ) )
 
    ::setValue( "UnitsProvided", nUnitsProvided )
 

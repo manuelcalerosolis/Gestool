@@ -4344,7 +4344,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
 
    dFecRes              	:= dTmpPdtRec( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTmpRes )
    nTotRes              	:= nUnidadesRecibidasAlbaranesClientesNoFacturados( cNumPed, aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfAlbCliL )
-   nTotRes              	+= nUnidadesRecibidasFacturasClientes( cNumPed, aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfFacCliL )
+   nTotRes              	+= nUnidadesRecibidasFacturasClientes( cNumPed, aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfFacCliL )
 
    if nTotRes > nTotNPedCli( aTmp )
       nTotRes           	:= nTotNPedCli( aTmp )

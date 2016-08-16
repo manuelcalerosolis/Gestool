@@ -1042,11 +1042,9 @@ RETURN ( Self )
 
 METHOD ScanDataTableInView( cDataTable, nView )
 
-   local oDataTable
+   local oDataTable  := ::ScanDataTable( cDataTable )
 
-   oDataTable  := ::ScanDataTable( cDataTable )
-
-   if !empty(oDatatable)
+   if !empty( oDataTable )
       oDataTable:setAlias( D():get( cDataTable, nView ) )    
    end if 
 
