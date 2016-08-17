@@ -334,10 +334,6 @@ METHOD AppendDetail() CLASS TDetMovimientos
 
    end while
 
-   // Avisamos en movimientos con stock bajo minimo-------------------------------
-
-   ::alertControlStockUnderMin()
-
 /*
       if nResult == IDOK
 
@@ -720,6 +716,13 @@ METHOD ValidResource( nMode, oDlg, oBtn ) CLASS TDetMovimientos
       Return .f.
    end if
 
+   if empty( ::oBrwPrp:Cargo )
+      if !::alertControlStockUnderMin()
+         ::oRefMov:SetFocus()
+         Return .f.
+      end if
+   end if
+
    // Control para numeros de serie--------------------------------------------
 
    if ( ::isNumeroSerieNecesario( nMode ) )
@@ -969,11 +972,11 @@ METHOD loadArticulo( nMode, lSilenceMode ) CLASS TDetMovimientos
 
          // Stock actual-------------------------------------------------------
 
-         if !empty(::oGetStockOrigen)
+         if !empty( ::oGetStockOrigen )
             ::oParent:oStock:lPutStockActual( ::oDbfVir:cRefMov, ::oParent:oDbf:cAlmOrg, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote, .f., ::oParent:oArt:nCtlStock, ::oGetStockOrigen )
          end if 
 
-         if !empty(::oGetStockDestino)
+         if !empty( ::oGetStockDestino )
             ::oParent:oStock:lPutStockActual( ::oDbfVir:cRefMov, ::oParent:oDbf:cAlmDes, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote, .f., ::oParent:oArt:nCtlStock, ::oGetStockDestino )
          end if 
 
@@ -1036,10 +1039,12 @@ METHOD nStockActualAlmacen( cCodAlm ) CLASS TDetMovimientos
    local aStock      := {}
    local nTotStock   := 0
 
+   MsgInfo( hb_valtoExp( ::aStockActual ), "aStockActual" )
+
    for each aStock in ::aStockActual
 
-      if aStock[1] == cCodAlm
-         nTotStock   += aStock[6]
+      if aStock[ 1 ] == cCodAlm
+         nTotStock   += aStock[ 6 ]
       end if
 
    next
@@ -1720,25 +1725,37 @@ Return ( .f. )
 
 //---------------------------------------------------------------------------//
 
-METHOD alertControlStockUnderMin() CLASS TDetMovimientos
+METHOD alertControlStockUnderMin( nStock ) CLASS TDetMovimientos
 
    local nTotUnd
    local nStkAct
+   local lReturn     := .t.
+   local cText       := ""
 
-   if ( ::oDbf:nTipMov != 1 )
-      Return ( nil )
+   if ( ::oDbf:nTipMov > 1 )
+      Return ( lReturn )
    end if 
 
-   nTotUnd        := nTotNRemMov( ::oDbfVir )
-   nStkAct        := ::nStockActualAlmacen( ::oParent:oDbf:cAlmOrg )
+   if !Empty( nStock )
+      nStkAct        := nStock
+   else
+      nStkAct        := ::oGetStockOrigen:VarGet()
+   end if
+
+   nTotUnd           := nTotNRemMov( ::oDbfVir )
 
    if nTotUnd != 0 .and. oRetFld( ::oDbfVir:cRefMov, ::oParent:oArt, "lMsgMov" )
 
       if ( nStkAct - nTotUnd ) < oRetFld( ::oDbfVir:cRefMov, ::oParent:oArt, "nMinimo" )
 
-         if !ApoloMsgNoYes( "El stock está por debajo del minimo.", "¿Desea continuar?" )
+         cText       := " ( propiedad 1: " + AllTrim( ::oDbfVir:cValPr1 )
+         cText       += " propiedad 2: " + AllTrim( ::oDbfVir:cValPr2 ) + " )" + CRLF
+         cText       += " Stock actual: " + AllTrim( Trans( nStkAct, MasUnd() ) ) + CRLF
+         cText       += " Unidades a mover: " + AllTrim( Trans( nTotUnd, MasUnd() ) )
+   
+         if !ApoloMsgNoYes( "El stock está por debajo del minimo." + CRLF + cText, "¿Desea continuar?" )
             
-            Return nil
+            lReturn  := .f.
          
          end if
 
@@ -1746,7 +1763,7 @@ METHOD alertControlStockUnderMin() CLASS TDetMovimientos
 
    end if
 
-Return ( nil )
+Return ( lReturn )
 
 //---------------------------------------------------------------------------//
 
@@ -1809,11 +1826,17 @@ METHOD processPropertiesGrid() CLASS TDetMovimientos
 
             ::oDbfVir:nUndAnt    := ::oParent:oStock:nStockAlmacen( ::oDbfVir:cRefMov, ::oDbfVir:cAliMov, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2 )
 
-            if ::accumulatesStoreMovement()
-               ::oDbfVir:Cancel()
-            else 
-               ::oDbfVir:Insert()
-            end if 
+            if ::alertControlStockUnderMin( ::oParent:oStock:nStockAlmacen( ::oDbfVir:cRefMov, ::oDbfVir:cAloMov, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2 ) )
+
+               if ::accumulatesStoreMovement()
+                  ::oDbfVir:Cancel()
+               else 
+                  ::oDbfVir:Insert()
+               end if
+
+            ::oDbfVir:Cancel()
+
+            end if
 
          end if
 
