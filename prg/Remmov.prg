@@ -2437,8 +2437,6 @@ METHOD loadAlmacen( nMode ) CLASS TRemMovAlm
 
          for each sStkAlm in aStkAlm
 
-            debug( sStkAlm, "aStkAlm" )
-
             if sStkAlm:nUnidades != 0
 
                if  ::oDetMovimientos:oDbfVir:Append()
