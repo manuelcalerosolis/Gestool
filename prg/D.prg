@@ -531,6 +531,7 @@ CLASS D
       METHOD ArticuloPrecioPropiedades( nView )                   INLINE ( ::Get( "ArtDiv", nView ) )
       METHOD ArticuloStockAlmacenes( nView )                      INLINE ( ::Get( "ArtAlm", nView ) )
       METHOD ArticuloStockAlmacenesId( nView )                    INLINE ( ( ::Get( "ArtAlm", nView ) )->cCodArt ) 
+      METHOD ArticuloTipos( nView )                               INLINE ( ::Get( "TipArt", nView ) )
 
    METHOD Ofertas( nView )                                        INLINE ( ::Get( "Oferta", nView ) )
       METHOD getStatusOfertas( nView )                            INLINE ( ::aStatus := aGetStatus( ::Ofertas( nView ) ) )
