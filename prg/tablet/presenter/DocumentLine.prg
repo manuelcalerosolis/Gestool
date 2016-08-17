@@ -223,9 +223,13 @@ METHOD newBuildDictionary( oSender ) CLASS CustomerOrderDocumentLine
 
    ::new( oSender )
 
-   ::oDocumentHeader    := DocumentHeader():newBuildDictionary( oSender )
+   debug( oSender:getLineAlias(), "getLineAlias" )
+   debug( oSender:getLineDictionary(), "getLineDictionary" )
+   debug( D():getHashFromAlias( oSender:getLineAlias(), oSender:getLineDictionary() ), "getHashFromAlias" )
 
    ::setDictionary( D():getHashFromAlias( oSender:getLineAlias(), oSender:getLineDictionary() ) )
+
+   ::oDocumentHeader    := DocumentHeader():newBuildDictionary( oSender )
 
    ::setUnitsReceived()
 
