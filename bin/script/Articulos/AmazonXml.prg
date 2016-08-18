@@ -12,6 +12,8 @@ Function AmazonXml( nView )
 
    TProductAmazonXml():New( nView ):Controller()
    TStockAmazonXml():New( nView ):Controller()
+   TPriceAmazonXml():New( nView ):Controller()
+   TImagesAmazonXml():New( nView ):Controller()
 
 Return nil
 
@@ -19,3 +21,6 @@ Return nil
 
 #include "ProductAmazonXml.prg"
 #include "StockAmazonXml.prg"
+#include "PriceAmazonXml.prg"
+#include "ImagesAmazonXml.prg"
+
