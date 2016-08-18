@@ -14,7 +14,7 @@ Function AmazonXml( nView )
    TStockAmazonXml():New( nView ):Controller()
    TPriceAmazonXml():New( nView ):Controller()
    TImagesAmazonXml():New( nView ):Controller()
-
+   
 Return nil
 
 //---------------------------------------------------------------------------//

@@ -52,13 +52,13 @@ ENDCLASS
 METHOD New( nView )
 
    ::nView                    := nView
-               
-   ::cXmlFileProductImage          := alltrim( ( D():Articulos( ::nView ) )->Codigo ) + "_image.xml"
-            
+
+   ::cXmlFileProductImage     := alltrim( ( D():Articulos( ::nView ) )->Codigo ) + "_image.xml"
+
    ::MessageID                := alltrim( ( D():Articulos( ::nView ) )->Codigo )
    ::Skuparent                := alltrim( ( D():Articulos( ::nView ) )->Codigo )
    ::ImageType                := ""
-   ::ImageLocation            := alltrim( ( D():Articulos( ::nView ) )->cImagen )
+   ::ImageLocation            := "" 
 
 Return ( self )
 
@@ -98,7 +98,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD createMessageNode()
+ METHOD createMessageNode()
 
    ::oNodeMessage     := TXmlNode():new( , 'Message' )
       ::oNodeMessage:addBelow( TXmlNode():new( , 'MessageID', , ::MessageID ) )
@@ -111,7 +111,7 @@ METHOD createMessageNode()
 Return ( self )
 
 //---------------------------------------------------------------------------//
-
+   
 METHOD createProductImageNode()
 
    ::oNodeProductImage     := TXmlNode():new( , 'ProductImage' )
@@ -123,7 +123,7 @@ METHOD createProductImageNode()
    ::oNodeMessage:addBelow( ::oNodeProductImage )
 
 Return ( self )
-
+   
 //---------------------------------------------------------------------------//
 
 /*
