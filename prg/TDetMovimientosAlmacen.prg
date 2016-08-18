@@ -1376,9 +1376,7 @@ METHOD Save() CLASS TDetMovimientos
       ::oDbfVir:GoTop()
       while !::oDbfVir:Eof()
 
-         ::oDbfVir:Load()
          ::Asigna()
-         ::oDbfVir:Save()
 
          ::oDbf:AppendFromObject( ::oDbfVir )
 
@@ -1396,9 +1394,7 @@ METHOD Save() CLASS TDetMovimientos
       ::oDbfVir:GoTop()
       while !::oDbfVir:Eof()
 
-         ::oDbfVir:Load()
          ::Asigna()
-         ::oDbfVir:Save()
 
          ::oDbf:AppendFromObject( ::oDbfVir )
 
@@ -1418,21 +1414,16 @@ METHOD Save() CLASS TDetMovimientos
 
          if ( ::oParent:lTargetCalculate ) 
 
-            ::oDbfVir:Load()
             ::Asigna()
 
-            ::oDbfVir:lSelDoc := .f.
-            ::oDbfVir:nUndMov := ( nTotNMovAlm( ::oDbfVir ) - nTotNMovOld( ::oDbfVir ) ) / NotCero( ::oDbfVir:nCajMov )
-
-            ::oDbfVir:Save()
+            ::oDbfVir:fieldPutByName( "lSelDoc", .f. )
+            ::oDbfVir:fieldPutByName( "nUndMov", ( nTotNMovAlm( ::oDbfVir ) - nTotNMovOld( ::oDbfVir ) ) / NotCero( ::oDbfVir:nCajMov ) )
 
             ::oDbf:AppendFromObject( ::oDbfVir )
 
          else
             
-            ::oDbfVir:Load()
             ::Asigna()
-            ::oDbfVir:Save()
 
             ::oDbf:AppendFromObject( ::oDbfVir )
 
@@ -1477,20 +1468,18 @@ Return .t.
 
 METHOD Asigna() CLASS TDetMovimientos
 
-   ?"Paso por asigna"
-
-   ::oDbfVir:nNumRem    := ::oParent:oDbf:nNumRem
-   ::oDbfVir:cSufRem    := ::oParent:oDbf:cSufRem
-   ::oDbfVir:dFecMov    := ::oParent:oDbf:dFecRem
-   ::oDbfVir:cTimMov    := ::oParent:oDbf:cTimRem
-   ::oDbfVir:nTipMov    := ::oParent:oDbf:nTipMov
-   ::oDbfVir:cCodMov    := ::oParent:oDbf:cCodMov
-   ::oDbfVir:cAliMov    := ::oParent:oDbf:cAlmDes
-   ::oDbfVir:cAloMov    := ::oParent:oDbf:cAlmOrg
-   ::oDbfVir:cCodUsr    := ::oParent:oDbf:cCodUsr
-   ::oDbfVir:cCodDlg    := ::oParent:oDbf:cCodDlg
-   ::oDbfVir:lWait      := ::oParent:oDbf:lWait
-   ::oDbfVir:lSndDoc    := .t.
+   ::oDbfVir:fieldPutByName( "nNumRem",   ::oParent:oDbf:nNumRem )
+   ::oDbfVir:fieldPutByName( "cSufRem",   ::oParent:oDbf:cSufRem )
+   ::oDbfVir:fieldPutByName( "dFecMov",   ::oParent:oDbf:dFecRem )
+   ::oDbfVir:fieldPutByName( "cTimMov",   ::oParent:oDbf:cTimRem )
+   ::oDbfVir:fieldPutByName( "nTipMov",   ::oParent:oDbf:nTipMov )
+   ::oDbfVir:fieldPutByName( "cCodMov",   ::oParent:oDbf:cCodMov )
+   ::oDbfVir:fieldPutByName( "cAliMov",   ::oParent:oDbf:cAlmDes )
+   ::oDbfVir:fieldPutByName( "cAloMov",   ::oParent:oDbf:cAlmOrg )
+   ::oDbfVir:fieldPutByName( "cCodUsr",   ::oParent:oDbf:cCodUsr )
+   ::oDbfVir:fieldPutByName( "cCodDlg",   ::oParent:oDbf:cCodDlg )
+   ::oDbfVir:fieldPutByName( "lWait",     ::oParent:oDbf:lWait   )
+   ::oDbfVir:fieldPutByName( "lSndDoc",   .t. )
 
 RETURN ( Self )
 
