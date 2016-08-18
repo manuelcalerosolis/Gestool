@@ -1351,7 +1351,7 @@ METHOD Save() CLASS TDetMovimientos
    local oWaitMeter
    local nKeyCount   := ::oDbfVir:ordKeyCount()
 
-
+   ?"Entro en el Save"
 
    oWaitMeter        := TWaitMeter():New( "Guardando movimientos de almacén", "Espere por favor..." )
    oWaitMeter:Run()
@@ -1371,6 +1371,8 @@ METHOD Save() CLASS TDetMovimientos
    do case
    case ::oParent:oDbf:nTipMov == 1
 
+      ?"Caso 1"
+
       ::oDbfVir:GoTop()
       while !::oDbfVir:Eof()
 
@@ -1389,6 +1391,8 @@ METHOD Save() CLASS TDetMovimientos
 
    case ::oParent:oDbf:nTipMov == 2
 
+      ?"Caso 2"
+
       ::oDbfVir:GoTop()
       while !::oDbfVir:Eof()
 
@@ -1406,6 +1410,8 @@ METHOD Save() CLASS TDetMovimientos
       end while
 
    case ::oParent:oDbf:nTipMov == 3
+
+      ?"Caso 3"
 
       ::oDbfVir:GoTop()
       while !::oDbfVir:Eof()
@@ -1441,6 +1447,8 @@ METHOD Save() CLASS TDetMovimientos
 
    case ::oParent:oDbf:nTipMov == 4
 
+      ?"Caso 4"
+
       ::oDbfVir:GoTop()
       while !::oDbfVir:Eof()
 
@@ -1468,6 +1476,8 @@ Return .t.
 //---------------------------------------------------------------------------//
 
 METHOD Asigna() CLASS TDetMovimientos
+
+   ?"Paso por asigna"
 
    ::oDbfVir:nNumRem    := ::oParent:oDbf:nNumRem
    ::oDbfVir:cSufRem    := ::oParent:oDbf:cSufRem

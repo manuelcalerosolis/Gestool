@@ -383,6 +383,8 @@ METHOD SaveDetails() CLASS TMasDet
    do case
       case IsObject( ::oDbfDet )
 
+         ?"Caso objetos"
+
          nOrd     := ::oDbfVir:OrdSetFocus( 0 )
 
          ::oDbfVir:GoTop()
@@ -403,6 +405,8 @@ METHOD SaveDetails() CLASS TMasDet
          end while
 
       case IsArray( ::oDbfDet )
+
+         ?"Caso Array"
 
          aSend( ::oDbfDet, "Save()" )
 
