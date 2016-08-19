@@ -135,7 +135,8 @@ METHOD loadLinesDocument()
 
                oDocumentLine     := CustomerOrderDocumentLine():newFromDictionary( self )
 
-               debug( oDocumentLine:hDictionary, "hDictionary" )
+               debug( oDocumentLine:classname(), "classname" )
+               debug( oDocumentLine:getDictionary(), "hDictionary" )
 
                if oDocumentLine:getUnitsAwaitingReception() > 0
                   ::oDocumentLines:addLines( oDocumentLine )
