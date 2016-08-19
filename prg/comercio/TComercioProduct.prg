@@ -206,7 +206,7 @@ METHOD buildIvaProducts( id ) CLASS TComercioProduct
    if aScan( ::aTaxProducts, {|h| hGet( h, "id" ) == id } ) != 0
       Return .f. 
    end if 
-   
+
    if ::TPrestashopId():getValueTax( id, ::getCurrentWebName() ) == 0
       if ::oIvaDatabase():seekInOrd( id, "Tipo" )
          aadd( ::aTaxProducts,   {  "id"     => id,;
@@ -1770,6 +1770,7 @@ METHOD insertTaxPrestashop( hTax ) CLASS TComercioProduct
    // Guardo referencia a la web-----------------------------------------------
 
    ::TPrestashopId():setValueTax(           hGet( hTax, "id" ), ::getCurrentWebName(), idTax )
+
    ::TPrestashopId():setValueTaxRuleGroup(  hGet( hTax, "id" ), ::getCurrentWebName(), idTax )
 
 Return ( idTax )
