@@ -53,7 +53,7 @@ METHOD New( nView )
 
    ::nView                    := nView
                
-   ::cXmlFileStock          := alltrim( ( D():Articulos( ::nView ) )->Codigo ) + "_stock.xml"
+   ::cXmlFileStock            := alltrim( ( D():Articulos( ::nView ) )->Codigo ) + "_stock.xml"
             
    ::MessageID                := alltrim( ( D():Articulos( ::nView ) )->Codigo )
    ::Skuparent                := alltrim( ( D():Articulos( ::nView ) )->Codigo )

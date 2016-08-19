@@ -57,7 +57,7 @@ METHOD New( nView )
 
    ::nView                    := nView
                
-   ::cXmlFilePrice          := alltrim( ( D():Articulos( ::nView ) )->Codigo ) + "_price.xml"
+   ::cXmlFilePrice            := alltrim( ( D():Articulos( ::nView ) )->Codigo ) + "_price.xml"
             
    ::MessageID                := alltrim( ( D():Articulos( ::nView ) )->Codigo )
    ::Skuparent                := alltrim( ( D():Articulos( ::nView ) )->Codigo )
@@ -123,7 +123,7 @@ METHOD createPriceNode()
 
    ::oNodePrice     := TXmlNode():new( , 'Price' )
       ::oNodePrice:addBelow( TXmlNode():new( , 'SKU', , ::Skuparent ) )
-      ::oNodePrice:addBelow( TXmlNode():new( , 'StandardPrice', , ::StandardPrice ) )
+      ::oNodePrice:addBelow( TXmlNode():new( , 'StandardPrice currency="EUR"', , ::StandardPrice ) )
 
 
    ::oNodeMessage:addBelow( ::oNodePrice )
@@ -137,7 +137,7 @@ METHOD createSaleNode()
    ::oNodeSale     := TXmlNode():new( , 'Sale' )
       ::oNodeSale:addBelow( TXmlNode():new( , 'StartDate', , ::StartDate ) )
       ::oNodeSale:addBelow( TXmlNode():new( , 'EndDate', , ::EndDate ) )
-      ::oNodeSale:addBelow( TXmlNode():new( , 'SalePrice', , ::SalePrice ) )
+      ::oNodeSale:addBelow( TXmlNode():new( , 'SalePrice currency="EUR"', , ::SalePrice ) )
 
    ::oNodeMessage:addBelow( ::oNodeSale )
 

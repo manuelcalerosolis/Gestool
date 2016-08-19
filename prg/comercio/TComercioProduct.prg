@@ -206,7 +206,7 @@ METHOD buildIvaProducts( id ) CLASS TComercioProduct
    if aScan( ::aTaxProducts, {|h| hGet( h, "id" ) == id } ) != 0
       Return .f. 
    end if 
-   
+
    if ::TPrestashopId():getValueTax( id, ::getCurrentWebName() ) == 0
       if ::oIvaDatabase():seekInOrd( id, "Tipo" )
          aadd( ::aTaxProducts,   {  "id"     => id,;
@@ -1598,7 +1598,9 @@ METHOD ftpUploadFilesProductImages( hProductImage ) CLASS TComercioProduct
       ::meterProcesoText( "Subiendo imagen " + cTypeImage + " en directorio " + ::cDirectoryProduct() + "/" + ::getRecursiveFolderPrestashop( hget( hProductImage, "cCarpeta" ) ) )
 
       ::oFtp():CreateFile( cTypeImage, ::cDirectoryProduct() + "/" + ::getRecursiveFolderPrestashop( hget( hProductImage, "cCarpeta" ) ) )
- 
+
+      msgalert( "http://" + ::TComercioConfig():getMySqlServer() + "/" + ::cDirectoryProduct() + "/" + ::getRecursiveFolderPrestashop( hget( hProductImage, "cCarpeta" ) ) + cNoPath( cTypeImage ), "Subida fotos" )
+
       SysRefresh()
 
       ferase( cTypeImage )
@@ -1698,9 +1700,7 @@ METHOD insertTaxPrestashop( hTax ) CLASS TComercioProduct
       Return .f.
    end if
 
-   /*
-   Insertamos un tipo de IVA nuevo en la tabla tax_lang------------------------
-   */
+   // Insertamos un tipo de IVA nuevo en la tabla tax_lang------------------------
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "tax_lang" ) + "( " +;
                   "id_tax, " + ;
@@ -1717,9 +1717,7 @@ METHOD insertTaxPrestashop( hTax ) CLASS TComercioProduct
       ::writeTextError( hGet( hTax, "name" ), ::cPrefixTable( "tax_lang" ) )
    end if
 
-   /*
-   Insertamos un tipo de IVA nuevo en la tabla tax_rule_group------------------
-   */
+   // Insertamos un tipo de IVA nuevo en la tabla tax_rule_group------------------
 
    cCommand := "INSERT INTO "+ ::cPrefixTable( "tax_rules_group" ) + "( " + ;
                   "name, " + ;
@@ -1735,9 +1733,7 @@ METHOD insertTaxPrestashop( hTax ) CLASS TComercioProduct
       ::writeTextError( hGet( hTax, "name" ), ::cPrefixTable( "tax_rule_group" ) )
    end if
 
-   /*
-   Insertamos un tipo de IVA nuevo en la tabla tax_rule------------------------
-   */
+   // Insertamos un tipo de IVA nuevo en la tabla tax_rule------------------------
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "tax_rule" ) + "( " +;
                   "id_tax_rules_group, " + ;
@@ -1770,6 +1766,7 @@ METHOD insertTaxPrestashop( hTax ) CLASS TComercioProduct
    // Guardo referencia a la web-----------------------------------------------
 
    ::TPrestashopId():setValueTax(           hGet( hTax, "id" ), ::getCurrentWebName(), idTax )
+
    ::TPrestashopId():setValueTaxRuleGroup(  hGet( hTax, "id" ), ::getCurrentWebName(), idTax )
 
 Return ( idTax )

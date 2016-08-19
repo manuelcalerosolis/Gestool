@@ -57,7 +57,7 @@ METHOD New( nView )
 
    ::MessageID                := alltrim( ( D():Articulos( ::nView ) )->Codigo )
    ::Skuparent                := alltrim( ( D():Articulos( ::nView ) )->Codigo )
-   ::ImageType                := ""
+   ::ImageType                := "Main"
    ::ImageLocation            := "" 
 
 Return ( self )

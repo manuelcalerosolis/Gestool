@@ -198,6 +198,9 @@ RETURN ( .t. )
 
 METHOD deleteDocumentValues( cTipoDocumento, cWeb )
 
+   cTipoDocumento    := upper( cTipoDocumento )
+   cWeb              := upper( cWeb )
+
    while ::oDbf:seekInOrd( cTipoDocumento + cWeb, "cDocuWeb" )
       ::oDbf:Delete()
    end while

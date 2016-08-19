@@ -163,7 +163,7 @@ CLASS TConversionDocumentos
 
    METHOD setLineTable( cTableName )               INLINE ( ::oLineTable := TDataCenter():scanDataTableInView( cTableName, ::nView ) )
    METHOD getLineAlias()                           INLINE ( ::oLineTable:getAlias() )
-   METHOD getLineDictionary()                      INLINE ( debug( ::oLineTable:getDictionary(), "::oLineTable:getDictionary()" ), ::oLineTable:getDictionary() )
+   METHOD getLineDictionary()                      INLINE ( ::oLineTable:getDictionary() )
    METHOD getLineIndex()                           INLINE ( ::oLineTable:getIndex() )
    METHOD getLineId()                              INLINE ( D():getFieldFromAliasDictionary( "Serie", ::getLineAlias(), ::getLineDictionary() ) + ;
                                                             str( D():getFieldFromAliasDictionary( "Numero", ::getLineAlias(), ::getLineDictionary() ) ) + ;

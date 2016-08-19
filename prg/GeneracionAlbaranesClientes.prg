@@ -60,7 +60,7 @@ METHOD New()
 
    ::Super:New()
 
-   ::dialogCustomerOrderLines     := TBrowseLineConversionDocumentos():New( Self )
+   ::dialogCustomerOrderLines    := TBrowseLineConversionDocumentos():New( Self )
 
    ::dialogDeliveryNoteLines     := TBrowseLineConversionDocumentos():New( Self )
 
@@ -282,6 +282,8 @@ METHOD loadLinesDocument()
 
    local oDocumentLine
 
+   msgStop( "loadLinesDocumentoooooooooooooooooooooooooooo" )
+
    autoMeterDialog( ::oDlg )
 
    setTotalAutoMeterDialog( ::getHeaderOrdKeyCount()  )
@@ -300,7 +302,11 @@ METHOD loadLinesDocument()
 
             if ::isLineConditions()
 
+               msgStop( "LLAMADA CustomerOrderDocumentLine():newBuildDictionary( self )", "LLAMADA" )
+
                oDocumentLine     := CustomerOrderDocumentLine():newBuildDictionary( self ) 
+
+               msgalert( oDocumentLine:classname(), "oDocumentLine:classname()" )
 
                if oDocumentLine:getUnitsAwaitingProvided() > 0
                   ::getCustomerOrderLines():addLines( oDocumentLine )
