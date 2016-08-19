@@ -1698,9 +1698,7 @@ METHOD insertTaxPrestashop( hTax ) CLASS TComercioProduct
       Return .f.
    end if
 
-   /*
-   Insertamos un tipo de IVA nuevo en la tabla tax_lang------------------------
-   */
+   // Insertamos un tipo de IVA nuevo en la tabla tax_lang------------------------
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "tax_lang" ) + "( " +;
                   "id_tax, " + ;
@@ -1717,9 +1715,7 @@ METHOD insertTaxPrestashop( hTax ) CLASS TComercioProduct
       ::writeTextError( hGet( hTax, "name" ), ::cPrefixTable( "tax_lang" ) )
    end if
 
-   /*
-   Insertamos un tipo de IVA nuevo en la tabla tax_rule_group------------------
-   */
+   // Insertamos un tipo de IVA nuevo en la tabla tax_rule_group------------------
 
    cCommand := "INSERT INTO "+ ::cPrefixTable( "tax_rules_group" ) + "( " + ;
                   "name, " + ;
@@ -1735,9 +1731,7 @@ METHOD insertTaxPrestashop( hTax ) CLASS TComercioProduct
       ::writeTextError( hGet( hTax, "name" ), ::cPrefixTable( "tax_rule_group" ) )
    end if
 
-   /*
-   Insertamos un tipo de IVA nuevo en la tabla tax_rule------------------------
-   */
+   // Insertamos un tipo de IVA nuevo en la tabla tax_rule------------------------
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "tax_rule" ) + "( " +;
                   "id_tax_rules_group, " + ;

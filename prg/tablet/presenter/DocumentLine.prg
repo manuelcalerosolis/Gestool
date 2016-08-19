@@ -92,7 +92,13 @@ Return ( Self )
 
 METHOD getTotalUnits() CLASS DocumentLine
 
-   local totalUnidades  := notCaja( ::getBoxes() )
+   local totalUnidades  := 0
+
+   if empty( ::getDictionary() )
+      Return ( totalUnidades )
+   end if 
+
+   totalUnidades        := notCaja( ::getBoxes() )
    totalUnidades        *= notCero( ::getUnidades() )
    totalUnidades        *= notCero( ::getValue( "UnidadesKit" ) )
    totalUnidades        *= notCero( ::getValue( "Medicion1" ) )
@@ -105,7 +111,13 @@ Return ( totalUnidades )
 
 METHOD getBruto() CLASS DocumentLine
 
-   local Bruto       := ::getNetPrice() * ::getTotalUnits()
+   local Bruto       := 0
+
+   if empty( ::getDictionary() )
+      Return ( Bruto )
+   end if 
+
+   Bruto             := ::getNetPrice() * ::getTotalUnits()
 
    if ::getPortes() != 0
       Bruto          += ::getPortes() * ::getTotalUnits()
@@ -125,7 +137,13 @@ Return ( Bruto )
 
 METHOD getNetPrice() CLASS DocumentLine
 
-   local Price       := ::getPrice()
+   local Price       := 0
+
+   if empty( ::getDictionary() )
+      Return ( Price )
+   end if 
+
+   Price             := ::getPrice()
 
    Price             -= ::getMonetaryDiscount()
 
@@ -143,7 +161,13 @@ Return ( Price )
 
 METHOD getBase() CLASS DocumentLine
 
-   local Base        := ::getNetPrice()
+   local Base        := 0
+
+   if empty( ::getDictionary() )
+      Return ( Base )
+   end if 
+
+   Base              := ::getNetPrice()
 
    if !empty( ::oSender ) .and. ( ::oSender:hGetMaster( "PorcentajeDescuento1" ) != 0 )
       Base           -= Base * ::oSender:hGetMaster( "PorcentajeDescuento1" ) / 100
@@ -158,6 +182,10 @@ Return ( Base )
 METHOD getTotalSpecialTax() CLASS DocumentLine
    
    Local specialTax  := 0
+
+   if empty( ::getDictionary() )
+      Return ( specialTax )
+   end if 
 
    if ::isSpecialTaxInclude()
       Return ( specialTax )
@@ -209,25 +237,27 @@ Return ( Self )
 
 CLASS CustomerOrderDocumentLine FROM DocumentLine
 
-   METHOD newBuildDictionary( oSender )
+   METHOD newBuildDictionaryoooooo( oSender )   CONSTRUCTOR
 
    METHOD setUnitsReceived()
-   METHOD getUnitsReceived()                                   INLINE ( ::getValue( "UnitsReceived" ) )
-   METHOD getUnitsAwaitingReception()                          INLINE ( ::getTotalUnits() - ::getUnitsReceived() )
+   METHOD getUnitsReceived()
+   METHOD getUnitsAwaitingReception()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD newBuildDictionary( oSender ) CLASS CustomerOrderDocumentLine
+METHOD newBuildDictionaryoooooo( oSender ) CLASS CustomerOrderDocumentLine
+
+   local hDictionary
+
+   msgAlert( "newBuildDictionaryoooooo( oSender ) CLASS CustomerOrderDocumentLine", "CONSTRUCTOR" )
 
    ::new( oSender )
 
-   debug( oSender:getLineAlias(), "getLineAlias" )
-   debug( oSender:getLineDictionary(), "getLineDictionary" )
-   debug( D():getHashFromAlias( oSender:getLineAlias(), oSender:getLineDictionary() ), "getHashFromAlias" )
-
-   ::setDictionary( D():getHashFromAlias( oSender:getLineAlias(), oSender:getLineDictionary() ) )
+   hDictionary          := D():getHashFromAlias( oSender:getLineAlias(), oSender:getLineDictionary() )
+   
+   ::setDictionary( hDictionary )
 
    ::oDocumentHeader    := DocumentHeader():newBuildDictionary( oSender )
 
@@ -237,14 +267,48 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD getUnitsReceived() CLASS CustomerOrderDocumentLine
+
+   local unitsReceived  := 0
+
+   if empty(::getDictionary() )
+      Return ( unitsReceived )
+   end if 
+
+   unitsReceived        := ::getValue( "UnitsReceived" )
+
+Return ( unitsReceived )
+
+//---------------------------------------------------------------------------//
+
+METHOD getUnitsAwaitingReception() CLASS CustomerOrderDocumentLine
+
+   local unitsAwaitingReception  := 0
+
+   if empty(::getDictionary() )
+      Return ( unitsAwaitingReception )
+   end if 
+
+   unitsAwaitingReception        := ::getTotalUnits() - ::getUnitsReceived()
+
+Return ( unitsAwaitingReception )
+
+//---------------------------------------------------------------------------//
+
 METHOD setUnitsReceived() CLASS CustomerOrderDocumentLine
 
-   local nUnitsRecived    := nUnidadesRecibidasAlbaranesClientesNoFacturados( ::getDocumentId(), ::getCode(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():AlbaranesClientesLineas( ::getView() ) )
-   nUnitsRecived          += nUnidadesRecibidasFacturasClientes( ::getDocumentId(), ::getCode(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():FacturasClientesLineas( ::getView() ) )
+   local nUnitsRecived     := 0
+
+   if empty(::getDictionary() )
+      Return ( nUnitsRecived )
+   end if 
+
+   nUnitsRecived           += nUnidadesRecibidasAlbaranesClientesNoFacturados( ::getDocumentId(), ::getCode(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():AlbaranesClientesLineas( ::getView() ) )
+   nUnitsRecived           += nUnidadesRecibidasFacturasClientes( ::getDocumentId(), ::getCode(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():FacturasClientesLineas( ::getView() ) )
 
    ::setValue( "UnitsReceived", nUnitsRecived )
 
-Return ( Self )
+Return ( nUnitsRecived )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -121,6 +121,8 @@ METHOD loadLinesDocument()
       Return .f.
    end if 
 
+   msgalert( "loadLinesDocument" )
+
    ::oDocumentLines:reset()
 
    ( ::getHeaderAlias() )->( ordsetfocus( "cCodCli" ) )
@@ -133,10 +135,9 @@ METHOD loadLinesDocument()
 
             while ::getHeaderId() == ::aliasDocumentLine:getDocumentId() .and. ! ( ::getLineAlias() )->( eof() )
 
-               oDocumentLine     := CustomerOrderDocumentLine():newFromDictionary( self )
+               msgalert( "CustomerOrderDocumentLine():newFromDictionary( self )" )
 
-               debug( oDocumentLine:classname(), "classname" )
-               debug( oDocumentLine:getDictionary(), "hDictionary" )
+               oDocumentLine     := CustomerOrderDocumentLine():newFromDictionary( self )
 
                if oDocumentLine:getUnitsAwaitingReception() > 0
                   ::oDocumentLines:addLines( oDocumentLine )
