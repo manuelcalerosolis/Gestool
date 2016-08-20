@@ -237,7 +237,7 @@ Return ( Self )
 
 CLASS CustomerOrderDocumentLine FROM DocumentLine
 
-   METHOD newBuildDictionaryoooooo( oSender )   CONSTRUCTOR
+   METHOD new( oSender )   CONSTRUCTOR
 
    METHOD setUnitsReceived()
    METHOD getUnitsReceived()
@@ -247,13 +247,11 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD newBuildDictionaryoooooo( oSender ) CLASS CustomerOrderDocumentLine
+METHOD new( oSender ) CLASS CustomerOrderDocumentLine
 
    local hDictionary
 
-   msgAlert( "newBuildDictionaryoooooo( oSender ) CLASS CustomerOrderDocumentLine", "CONSTRUCTOR" )
-
-   ::new( oSender )
+   ::Super:new( oSender )
 
    hDictionary          := D():getHashFromAlias( oSender:getLineAlias(), oSender:getLineDictionary() )
    
