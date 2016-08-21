@@ -243,6 +243,8 @@ CLASS CustomerOrderDocumentLine FROM DocumentLine
    METHOD getUnitsReceived()
    METHOD getUnitsAwaitingReception()
 
+   METHOD setCustomerNumberId()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -255,11 +257,13 @@ METHOD new( oSender ) CLASS CustomerOrderDocumentLine
 
    hDictionary          := D():getHashFromAlias( oSender:getLineAlias(), oSender:getLineDictionary() )
    
-   ::setDictionary( hDictionary )
-
    ::oDocumentHeader    := DocumentHeader():newBuildDictionary( oSender )
 
+   ::setDictionary( hDictionary )
+
    ::setUnitsReceived()
+
+   ::setCustomerNumberId()
 
 Return ( Self )
 
@@ -267,46 +271,32 @@ Return ( Self )
 
 METHOD getUnitsReceived() CLASS CustomerOrderDocumentLine
 
-   local unitsReceived  := 0
-
-   if empty(::getDictionary() )
-      Return ( unitsReceived )
-   end if 
-
-   unitsReceived        := ::getValue( "UnitsReceived" )
-
-Return ( unitsReceived )
+Return ( ::getValue( "UnitsReceived" ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD getUnitsAwaitingReception() CLASS CustomerOrderDocumentLine
 
-   local unitsAwaitingReception  := 0
-
-   if empty(::getDictionary() )
-      Return ( unitsAwaitingReception )
-   end if 
-
-   unitsAwaitingReception        := ::getTotalUnits() - ::getUnitsReceived()
-
-Return ( unitsAwaitingReception )
+Return ( ::getTotalUnits() - ::getUnitsReceived() )
 
 //---------------------------------------------------------------------------//
 
 METHOD setUnitsReceived() CLASS CustomerOrderDocumentLine
 
-   local nUnitsRecived     := 0
-
-   if empty(::getDictionary() )
-      Return ( nUnitsRecived )
-   end if 
-
-   nUnitsRecived           += nUnidadesRecibidasAlbaranesClientesNoFacturados( ::getDocumentId(), ::getCode(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():AlbaranesClientesLineas( ::getView() ) )
+   local nUnitsRecived     := nUnidadesRecibidasAlbaranesClientesNoFacturados( ::getDocumentId(), ::getCode(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():AlbaranesClientesLineas( ::getView() ) )
    nUnitsRecived           += nUnidadesRecibidasFacturasClientes( ::getDocumentId(), ::getCode(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():FacturasClientesLineas( ::getView() ) )
 
    ::setValue( "UnitsReceived", nUnitsRecived )
 
 Return ( nUnitsRecived )
+
+//---------------------------------------------------------------------------//
+
+METHOD setCustomerNumberId() CLASS CustomerOrderDocumentLine
+
+   ::setValue( "NumeroPedido", ::getDocumentId() )
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

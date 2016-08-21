@@ -1037,11 +1037,13 @@ METHOD BotonSiguiente()
          end if
 
       case ::oFld:nOption == 2
+
          if ::showDocumentsLines()
             ::oFld:goNext()
          end if
 
       case ::oFld:nOption == 3
+      
          ::oFld:goNext()
 
    end case

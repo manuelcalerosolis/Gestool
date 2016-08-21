@@ -993,7 +993,7 @@ METHOD insertImage( idProduct, hProduct, hImage, nImagePosition )
                "VALUES ( " + ;
                   "'" + alltrim( str( idProduct ) ) + "', " + ;
                   "'" + alltrim( str( nImagePosition ) ) + "', " + ;
-                  if( hGet( hImage, "lDefault" ), "'1'", "null" ) + " )"
+                  if( hGet( hImage, "lDefault" ), "'1'", "'0'" ) + " )"
 
    if ::commandExecDirect( cCommand )
       idImagePrestashop       := ::oConexionMySQLDatabase():GetInsertId()
@@ -1046,7 +1046,7 @@ METHOD insertImageShop( idProduct, hProduct, hImage, idImagePrestashop )
                   if( ::lProductIdColumnImageShop(), "'" + alltrim( str( idProduct ) ) + "', ", "" )  + ;  // id_product
                   "'" + alltrim( str( idImagePrestashop ) ) + "', "                                   + ;  // id_image
                   "'1', "                                                                             + ;  // id_shop
-                  if( hGet( hImage, "lDefault" ), "'1'", "null" ) + ")"                                    // cover
+                  if( hGet( hImage, "lDefault" ), "'1'", "'0'" ) + ")"                                    // cover
 
    if ::commandExecDirect( cCommand )
       ::writeText( "Insertada la imagen " + hGet( hProduct, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
@@ -1599,7 +1599,7 @@ METHOD ftpUploadFilesProductImages( hProductImage ) CLASS TComercioProduct
 
       ::oFtp():CreateFile( cTypeImage, ::cDirectoryProduct() + "/" + ::getRecursiveFolderPrestashop( hget( hProductImage, "cCarpeta" ) ) )
 
-      msgalert( "http://" + ::TComercioConfig():getMySqlServer() + "/" + ::cDirectoryProduct() + "/" + ::getRecursiveFolderPrestashop( hget( hProductImage, "cCarpeta" ) ) + cNoPath( cTypeImage ), "Subida fotos" )
+      // msgalert( "http://" + ::TComercioConfig():getMySqlServer() + "/" + ::cDirectoryProduct() + "/" + ::getRecursiveFolderPrestashop( hget( hProductImage, "cCarpeta" ) ) + cNoPath( cTypeImage ), "Subida fotos" )
 
       SysRefresh()
 
