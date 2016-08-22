@@ -81,10 +81,10 @@ METHOD New( nView )
    ::Description              := alltrim( ( D():Articulos( ::nView ) )->mDesTec )
    ::Manufacturer             := alltrim( retFamilia( ( D():Articulos( ::nView ) )->Familia, D():Familias( ::nView ) ) )
    ::SearchTerms              := alltrim( ( D():Articulos( ::nView ) )->cKeySeo )
-   ::RecommendedBrowseNode    := str( getCustomExtraField( '000', 'Artículos', ( D():Articulos( ::nView ) )->Codigo ) )
+   ::RecommendedBrowseNode    := getCustomExtraField( '000', 'Artículos', ( D():Articulos( ::nView ) )->Codigo )
    ::ClothingType             := allTrim( retFld( ( D():Articulos( ::nView ) )->cCodTip, D():ArticuloTipos( ::nView ) ) )
-   ::Parentage                := ""                   
-   ::VariationTheme           := ""
+   ::Parentage                := "Parent/Child"                   
+   ::VariationTheme           := "Size/Color"
    ::CountryOfOrigin          := "ES"      
 
 Return ( self )

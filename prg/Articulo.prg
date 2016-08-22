@@ -15654,11 +15654,12 @@ Function aItmImg()
 
    aAdd( aBase, { "cCodArt",  "C",  18, 0, "Código del artículo",                     "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nId",      "N",  10, 0, "Identificador de la imagen",              "",                  "", "( cDbfArt )", 0 } )
-   aAdd( aBase, { "cImgArt",  "C", 230, 0, "Imagen del artículo",                     "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cImgArt",  "C", 230, 0, "Imagen del artículo en local",            "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cNbrArt",  "C", 230, 0, "Nombre de la imagen",                     "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cHtmArt",  "M",  10, 0, "HTML de la imagen",                       "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cCodWeb",  "N",  11, 0, "Código de artículo para la web",          "",                  "", "( cDbfArt )", 0 } )
    aAdd( aBase, { "lDefImg",  "L",   1, 0, "Lógico para imágen por defecto",          "",                  "", "( cDbfArt )", .f. } )
+   aAdd( aBase, { "cRmtArt",  "C", 230, 0, "Imagen del artículo en remoto",           "",                  "", "( cDbfArt )", nil } )
 
 Return ( aBase )
 
@@ -18205,6 +18206,12 @@ Static Function EdtImg( aTmp, aGet, dbfTmpImg, oBrw, aArt, bValid, nMode )
          BITMAP   "Lupa" ;
          ON HELP  ( GetBmp( oImgArt, oImgBmp ) ) ;
          ON CHANGE( ChgBmp( oImgArt, oImgBmp ) ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldGeneral
+
+      REDEFINE GET oImgArt ;
+         VAR      aTmp[ ( dbfTmpImg )->( FieldPos( "cRmtArt" ) ) ] ;
+         ID       140 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
 
