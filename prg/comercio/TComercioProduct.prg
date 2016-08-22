@@ -2219,7 +2219,7 @@ Return ( .f. )
 //---------------------------------------------------------------------------//
 
 METHOD putFileRootProductImage( hProductImage ) CLASS TComercioProduct
-
+/*
    local rootImage      
    local cNameImage        := hget( hProductImage, "name" )
    local aRemoteImages     := hget( hProductImage, "aRemoteImages" )
@@ -2230,7 +2230,6 @@ METHOD putFileRootProductImage( hProductImage ) CLASS TComercioProduct
    if empty( cNameImage )
       Return .f.
    end if 
-
 
    if empty( aRemoteImages )
       Return .f.
@@ -2246,17 +2245,18 @@ METHOD putFileRootProductImage( hProductImage ) CLASS TComercioProduct
 
    if ::oImageProductDatabase():seekInOrd( idProductGestool, "cCodArt" )
 
-      while ::oImageProductDatabase():cCodArt == idProductGestool .and. !( ::oImageProductDatabase():eof() )
+      while ( ::oImageProductDatabase():cCodArt == idProductGestool ) .and. !( ::oImageProductDatabase():eof() )
 
-         if 
-
+         if alltrim( ::oImageProductDatabase():cImgArt ) == cNameImage
+            ::oImageProductDatabase():fieldputbyname( "cRmtArt", rootImage )
+         end if 
 
          ::oImageProductDatabase():skip()
 
       end if 
    
    end if
-
+*/
 Return ( .f. )
 
 //---------------------------------------------------------------------------//
