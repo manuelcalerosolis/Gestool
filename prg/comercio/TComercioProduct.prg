@@ -495,7 +495,7 @@ Return ( priceReduction )
 
 //---------------------------------------------------------------------------//
 
-METHOD imagesProduct( id ) CLASS TComercioProduct
+METHOD imagesProduct( idProduct ) CLASS TComercioProduct
 
    local cImagen
    local aImages        := {}
@@ -506,11 +506,11 @@ METHOD imagesProduct( id ) CLASS TComercioProduct
 
    // Pasamos las imágenes de los artículos por propiedades-----------------------" )
 
-   nOrdAntDiv           := ::oPropertyProductDatabase():OrdSetFocus( "cCodigo" )
+   nOrdAntDiv           := ::oPropertyProductDatabase():ordsetfocus( "cCodigo" )
 
-   if ::oPropertyProductDatabase():Seek( id )
+   if ::oPropertyProductDatabase():Seek( idProduct )
 
-      while ::oPropertyProductDatabase():cCodArt == id .and. !::oPropertyProductDatabase():Eof()
+      while ::oPropertyProductDatabase():cCodArt == idProduct .and. !::oPropertyProductDatabase():Eof()
 
          if !empty( ::oPropertyProductDatabase():mImgWeb )
 
@@ -520,9 +520,9 @@ METHOD imagesProduct( id ) CLASS TComercioProduct
 
                if file( cImgToken ) .and. ascan( aImages, {|a| hGet( a, "name" ) == cImgToken } ) == 0
                   aadd( aImages, {  "name"               => cImgToken,;
-                                    "idProductGestool"   => ::oPropertyProductDatabase():cCodArt,;
-                                    "id"                 => ::getIdProductImage( id, cImgToken ),;
-                                    "lDefault"           => ::getDefaultProductImage( id, cImgToken ) } )
+                                    "idProductGestool"   => idProduct,;
+                                    "id"                 => ::getIdProductImage( idProduct, cImgToken ),;
+                                    "lDefault"           => ::getDefaultProductImage( idProduct, cImgToken ) } )
                end if 
 
             next
@@ -535,23 +535,25 @@ METHOD imagesProduct( id ) CLASS TComercioProduct
 
    end if
 
-   ::oPropertyProductDatabase():OrdSetFocus( nOrdAntDiv )
+   ::oPropertyProductDatabase():ordsetfocus( nOrdAntDiv )
 
    // Pasamos las imágenes de la tabla de artículos-------------------------------" )
 
    if empty( aImages )
 
-      nOrdAntImg     := ::oImageProductDatabase():OrdSetFocus( "cCodArt" )
-      if ::oImageProductDatabase():Seek( id )
+      nOrdAntImg     := ::oImageProductDatabase():ordsetfocus( "cCodArt" )
 
-         while ::oImageProductDatabase():cCodArt == id .and. !::oImageProductDatabase():Eof()
+      if ::oImageProductDatabase():Seek( idProduct )
+
+         while ::oImageProductDatabase():cCodArt == idProduct .and. !::oImageProductDatabase():Eof()
 
             cImagen  := alltrim( ::oImageProductDatabase():cImgArt )
 
             if file( cImagen ) .and. ascan( aImages, {|a| hGet( a, "name" ) == cImagen } ) == 0
-               aadd( aImages, {  "name"      => cImagen,;
-                                 "id"        => ::oImageProductDatabase():nId,;
-                                 "lDefault"  => ::oImageProductDatabase():lDefImg } )
+               aadd( aImages, {  "name"               => cImagen,;
+                                 "idProductGestool"   => idProduct,;
+                                 "id"                 => ::oImageProductDatabase():nId,;
+                                 "lDefault"           => ::oImageProductDatabase():lDefImg } )
             end if 
 
             ::oImageProductDatabase():Skip()
@@ -2219,19 +2221,21 @@ Return ( .f. )
 //---------------------------------------------------------------------------//
 
 METHOD putFileRootProductImage( hProductImage ) CLASS TComercioProduct
-/*
-   local rootImage      
-   local cNameImage        := hget( hProductImage, "name" )
-   local aRemoteImages     := hget( hProductImage, "aRemoteImages" )
-   local idProductGestool  := hget( hProductImage, "idProductGestool" )
 
-   debug( hProductImage, "hProductImage" )
+   local rootImage      
+   local cNameImage        
+   local aRemoteImages     
+   local idProductGestool  
+
+   cNameImage              := hget( hProductImage, "name" )
+   aRemoteImages           := hget( hProductImage, "aRemoteImages" )
+   idProductGestool        := hget( hProductImage, "idProductGestool" )
 
    if empty( cNameImage )
       Return .f.
    end if 
 
-   if empty( aRemoteImages )
+   if empty( aRemoteImages ) 
       Return .f.
    end if 
 
@@ -2241,22 +2245,20 @@ METHOD putFileRootProductImage( hProductImage ) CLASS TComercioProduct
 
    rootImage               := aRemoteImages[ 1 ]
 
-   debug( rootImage, "rootImage" )
+   if ::oImageProductDatabase():seek( idProductGestool )
 
-   if ::oImageProductDatabase():seekInOrd( idProductGestool, "cCodArt" )
+      while ( alltrim( ::oImageProductDatabase():cCodArt ) == alltrim( idProductGestool ) ) .and. !( ::oImageProductDatabase():eof() )
 
-      while ( ::oImageProductDatabase():cCodArt == idProductGestool ) .and. !( ::oImageProductDatabase():eof() )
-
-         if alltrim( ::oImageProductDatabase():cImgArt ) == cNameImage
+         if alltrim( ::oImageProductDatabase():cImgArt ) == alltrim( cNameImage )
             ::oImageProductDatabase():fieldputbyname( "cRmtArt", rootImage )
          end if 
 
          ::oImageProductDatabase():skip()
 
       end if 
-   
+
    end if
-*/
+
 Return ( .f. )
 
 //---------------------------------------------------------------------------//
