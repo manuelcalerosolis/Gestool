@@ -60,6 +60,8 @@ METHOD New( nView )
    ::ImageType                := "Main"
    ::ImageLocation            := "" 
 
+  // "http://" + ::TComercioConfig():getMySqlServer() + "/" + ::cDirectoryProduct() + "/" + ::getRecursiveFolderPrestashop( hget( hProductImage, "cCarpeta" ) ) + cNoPath( cTypeImage ) 
+
 Return ( self )
 
 //---------------------------------------------------------------------------//
