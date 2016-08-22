@@ -248,7 +248,7 @@ METHOD lGenerate() CLASS TInfCPed
                   ::AddPed( .f. )
                   
                   ::oDbf:Load()
-                  ::oDbf:nUniEnt    := nUnidadesRecibidasAlbCli( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliL:cRef, ::oPedCliL:cCodPr1, ::oPedCliL:cCodPr2, ::oPedCliL:cValPr1, ::oPedCliL:cValPr2, ::oAlbCliL:cAlias )
+                  ::oDbf:nUniEnt    := nUnidadesRecibidasAlbaranesClientes( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliL:cRef, ::oPedCliL:cValPr1, ::oPedCliL:cValPr2, ::oAlbCliL:cAlias )
                   ::oDbf:nUniPnt    := ::oDbf:nNumUni - ::oDbf:nUniEnt
                   ::oDbf:nImpTot    := (::oDbf:nNumUni - ::oDbf:nUniEnt) * ::oDbf:nImpArt
                   ::oDbf:nIvaTot    := Round( ::oDbf:nImpTot * ::oPedCliL:nIva / 100, ::nDecOut )

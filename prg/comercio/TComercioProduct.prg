@@ -104,6 +104,9 @@ CLASS TComercioProduct FROM TComercioConector
    METHOD getIdProductImage( id, cImgToken )
    METHOD getDefaultProductImage( id, cImgToken ) 
 
+   METHOD getRootImage( hProductImage )                        INLINE ( cPatTmp() + hget( hProductImage, "cPrefijoNombre" ) + ".jpg" )
+   METHOD putFileRootProductImage( hProductImage )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -516,9 +519,10 @@ METHOD imagesProduct( id ) CLASS TComercioProduct
             for each cImgToken in aImgToken
 
                if file( cImgToken ) .and. ascan( aImages, {|a| hGet( a, "name" ) == cImgToken } ) == 0
-                  aadd( aImages, {  "name"      => cImgToken,;
-                                    "id"        => ::getIdProductImage( id, cImgToken ),;
-                                    "lDefault"  => ::getDefaultProductImage( id, cImgToken ) } )
+                  aadd( aImages, {  "name"               => cImgToken,;
+                                    "idProductGestool"   => ::oPropertyProductDatabase():cCodArt,;
+                                    "id"                 => ::getIdProductImage( id, cImgToken ),;
+                                    "lDefault"           => ::getDefaultProductImage( id, cImgToken ) } )
                end if 
 
             next
@@ -970,6 +974,7 @@ METHOD processImageProducts( idProduct, hProduct ) CLASS TComercioProduct
          hSet( hImage, "cCarpeta", alltrim( str( idImagePrestashop ) ) )
          hSet( hImage, "cPrefijoNombre", alltrim( str( idImagePrestashop ) ) )
          hSet( hImage, "aTypeImages", {} )
+         hSet( hImage, "aRemoteImages", {} )
 
       end if 
 
@@ -1535,6 +1540,8 @@ METHOD uploadImageToPrestashop( hProduct ) CLASS TComercioProduct
 
       ::ftpUploadFilesProductImages( hProductImage )
 
+      ::putFileRootProductImage( hProductImage )
+
    next
 
    CursorWe()
@@ -1559,9 +1566,11 @@ METHOD buildFilesProductImages( hProductImage ) CLASS TComercioProduct
 
    CursorWait()
 
-   rootImage               := cPatTmp() + hget( hProductImage, "cPrefijoNombre" ) + ".jpg"
+   rootImage               := ::getRootImage( hProductImage )
 
    saveImage( hget( hProductImage, "name" ), rootImage )
+
+   aadd( hget( hProductImage, "aTypeImages" ), rootImage )
 
    for each oTipoImage in ::aTypeImagesPrestashop()
 
@@ -1588,6 +1597,7 @@ Return ( nil )
 METHOD ftpUploadFilesProductImages( hProductImage ) CLASS TComercioProduct
 
    local cTypeImage
+   local cRemoteImage
 
    if !hhaskey( hProductImage, "aTypeImages")
       Return ( nil )
@@ -1599,7 +1609,9 @@ METHOD ftpUploadFilesProductImages( hProductImage ) CLASS TComercioProduct
 
       ::oFtp():CreateFile( cTypeImage, ::cDirectoryProduct() + "/" + ::getRecursiveFolderPrestashop( hget( hProductImage, "cCarpeta" ) ) )
 
-      // msgalert( "http://" + ::TComercioConfig():getMySqlServer() + "/" + ::cDirectoryProduct() + "/" + ::getRecursiveFolderPrestashop( hget( hProductImage, "cCarpeta" ) ) + cNoPath( cTypeImage ), "Subida fotos" )
+      cRemoteImage      := "http://" + ::TComercioConfig():getMySqlServer() + "/" + ::cDirectoryProduct() + "/" + ::getRecursiveFolderPrestashop( hget( hProductImage, "cCarpeta" ) ) + cNoPath( cTypeImage ) 
+
+      aadd( hget( hProductImage, "aRemoteImages" ), cRemoteImage )
 
       SysRefresh()
 
@@ -2205,3 +2217,47 @@ METHOD getDefaultProductImage( id, cImgToken ) CLASS TComercioProduct
 Return ( .f. )
 
 //---------------------------------------------------------------------------//
+
+METHOD putFileRootProductImage( hProductImage ) CLASS TComercioProduct
+
+   local rootImage      
+   local cNameImage        := hget( hProductImage, "name" )
+   local aRemoteImages     := hget( hProductImage, "aRemoteImages" )
+   local idProductGestool  := hget( hProductImage, "idProductGestool" )
+
+   debug( hProductImage, "hProductImage" )
+
+   if empty( cNameImage )
+      Return .f.
+   end if 
+
+
+   if empty( aRemoteImages )
+      Return .f.
+   end if 
+
+   if empty( idProductGestool )
+      Return .f.
+   end if 
+
+   rootImage               := aRemoteImages[ 1 ]
+
+   debug( rootImage, "rootImage" )
+
+   if ::oImageProductDatabase():seekInOrd( idProductGestool, "cCodArt" )
+
+      while ::oImageProductDatabase():cCodArt == idProductGestool .and. !( ::oImageProductDatabase():eof() )
+
+         if 
+
+
+         ::oImageProductDatabase():skip()
+
+      end if 
+   
+   end if
+
+Return ( .f. )
+
+//---------------------------------------------------------------------------//
+

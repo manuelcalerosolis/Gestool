@@ -2561,7 +2561,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Entregado"
-         :bEditValue          := {|| nUnidadesRecibidasAlbCli( ( dbfTmpLin )->cSerPed + Str( ( dbfTmpLin )->nNumPed ) + ( dbfTmpLin )->cSufPed, ( dbfTmpLin )->cRef, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, dbfAlbCliL ) }
+         :bEditValue          := {|| nUnidadesRecibidasAlbaranesClientes( ( dbfTmpLin )->cSerPed + Str( ( dbfTmpLin )->nNumPed ) + ( dbfTmpLin )->cSufPed, ( dbfTmpLin )->cRef, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, dbfAlbCliL ) }
          :cEditPicture        := cPicUnd
          :nWidth              := 60
          :nDataStrAlign       := 1
@@ -4294,6 +4294,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
    local cEstadoProduccion
    local idPedidoCliente   := ""
    local idArticulo        := "" 
+   local idShortArticulo   := ""
 
    cTipoCtrCoste           := AllTrim( aTmp[ _CTIPCTR ] )
 
@@ -4328,6 +4329,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
    end case
 
    idPedidoCliente         := aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ]
+   idShortArticulo         := aTmp[ _CREF ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ]
    idArticulo              := aTmp[ _CREF ] + aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ]
 
    /*
@@ -4337,8 +4339,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
    cOldCodArt           	:= aTmp[ _CREF    ]
    cOldUndMed           	:= aTmp[ _CUNIDAD ]
    cOldPrpArt              := aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ]
-
-
 
    nOrdPedPrv           	:= ( D():PedidosProveedoresLineas( nView ) )->( OrdSetFocus( "cPedCliRef" ) )
 
@@ -4366,8 +4366,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
 
    nOrdAnt              	:= ( dbfAlbCliL )->( OrdSetFocus( "cNumPedRef" ) )
 
-   ( dbfAlbCliL )->( OrdScope( 0, idPedidoCliente + idArticulo ) )
-   ( dbfAlbCliL )->( OrdScope( 1, idPedidoCliente + idArticulo ) )
+   ( dbfAlbCliL )->( OrdScope( 0, idPedidoCliente + idShortArticulo ) )
+   ( dbfAlbCliL )->( OrdScope( 1, idPedidoCliente + idShortArticulo ) )
    ( dbfAlbCliL )->( dbGoTop() )
 
    nOrdFacCliL          	:= ( dbfFacCliL )->( OrdSetFocus( "cNumPedRef" ) )
@@ -5102,14 +5102,14 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
          OF       oFld:aDialogs[4]
 
       REDEFINE SAY oTot[ 5 ] ;
-         PROMPT   nUnidadesRecibidasAlbCli( cNumPed, aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfAlbCliL ) ;
+         PROMPT   nUnidadesRecibidasAlbaranesClientes( cNumPed, aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfAlbCliL ) ;
          ID       200 ;
          COLOR    "G/W*" ;
 			PICTURE 	cPicUnd ;
          OF       oFld:aDialogs[4]
 
       REDEFINE SAY oTot[ 6 ] ;
-         PROMPT   NotMinus( nTotRPedCli( , aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTmpRes ) - nUnidadesRecibidasAlbCli( cNumPed, aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfAlbCliL ) ) ;
+         PROMPT   NotMinus( nTotRPedCli( , aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTmpRes ) - nUnidadesRecibidasAlbaranesClientes( cNumPed, aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfAlbCliL ) ) ;
          ID       210 ;
          COLOR    "R/W*" ;
 			PICTURE 	cPicUnd ;
@@ -15407,7 +15407,7 @@ FUNCTION mkPedCli( cPath, lAppend, cPathOld, oMeter, bFor )
                   //if nTotNPedCli( oldPedCliL ) > 0
                   dbCopy( oldPedCliL, dbfPedCliL, .t. )
                   ( dbfPedCliL )->nUniCaja   := nTotNPedCli( oldPedCliL )
-                  ( dbfPedCliL )->nUniCaja   -= nUnidadesRecibidasAlbCli( ( oldPedCliL )->cSerPed + Str( ( oldPedCliL )->nNumPed ) + ( oldPedCliL )->cSufPed, ( oldPedCliL )->cRef, ( oldPedCliL )->cCodPr1, ( oldPedCliL )->cCodPr2, ( oldPedCliL )->cValPr1, ( oldPedCliL )->cValPr2, oldAlbCliL )
+                  ( dbfPedCliL )->nUniCaja   -= nUnidadesRecibidasAlbaranesClientes( ( oldPedCliL )->cSerPed + Str( ( oldPedCliL )->nNumPed ) + ( oldPedCliL )->cSufPed, ( oldPedCliL )->cRef, ( oldPedCliL )->cValPr1, ( oldPedCliL )->cValPr2, oldAlbCliL )
                   ( dbfPedCliL )->nUniEnt    := 0
                   //end if
 
@@ -16049,7 +16049,7 @@ Return ( nombrePropiedad( ( D():PedidosClientesLineas( nView ) )->cCodPr2, ( D()
 
 Function unidadesRecibidasPedidosClientesLineas()
 
-Return ( nUnidadesRecibidasAlbCli( D():PedidosClientesLineasId( nView ), ( D():PedidosClientesLineas( nView ) )->cRef, ( D():PedidosClientesLineas( nView ) )->cCodPr1, ( D():PedidosClientesLineas( nView ) )->cCodPr2, ( D():PedidosClientesLineas( nView ) )->cValPr1, ( D():PedidosClientesLineas( nView ) )->cValPr2, D():AlbaranesClientesLineas( nView ) ) )
+Return ( nUnidadesRecibidasAlbaranesClientes( D():PedidosClientesLineasId( nView ), ( D():PedidosClientesLineas( nView ) )->cRef, ( D():PedidosClientesLineas( nView ) )->cValPr1, ( D():PedidosClientesLineas( nView ) )->cValPr2, D():AlbaranesClientesLineas( nView ) ) )
 
 //---------------------------------------------------------------------------//
 //

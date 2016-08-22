@@ -2980,7 +2980,7 @@ Function nTotEStk( cCodArt, dbfPedCliT, dbfPedCliR, dbfAlbCliT, dbfAlbCliL, nYea
             
                dFecRes  := ( dbfPedCliR )->dFecRes
                nTotRes  := nTotRPedCli( ( dbfPedCliR )->cSerPed + Str( ( dbfPedCliR )->nNumPed ) + ( dbfPedCliR )->cSufPed, ( dbfPedCliR )->cRef, , , dbfPedCliR )
-               nTotAlb  := nUnidadesRecibidasAlbCli( ( dbfPedCliR )->cSerPed + Str( ( dbfPedCliR )->nNumPed ) + ( dbfPedCliR )->cSufPed, ( dbfPedCliR )->cRef, , , , , dbfAlbCliL )
+               nTotAlb  := nUnidadesRecibidasAlbaranesClientes( ( dbfPedCliR )->cSerPed + Str( ( dbfPedCliR )->nNumPed ) + ( dbfPedCliR )->cSufPed, ( dbfPedCliR )->cRef, , , dbfAlbCliL )
                nTotEnt  += Min( nTotRes, nTotAlb )
             
             end if

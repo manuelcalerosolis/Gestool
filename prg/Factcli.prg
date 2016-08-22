@@ -7770,7 +7770,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
             while ( ( dbfPedCliL )->cSerPed + str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed == cPedido )
 
                nTotRet                 := ( dbfPedCliL )->nUniCaja
-               nTotRet                 -= nUnidadesRecibidasAlbCli( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cCodPr1, ( dbfPedCliL )->cCodPr2, ( dbfPedCliL )->cValPr1, ( dbfPedCliL )->cValPr2, dbfAlbCliL )
+               nTotRet                 -= nUnidadesRecibidasAlbaranesClientes( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cValPr1, ( dbfPedCliL )->cValPr2, dbfAlbCliL )
                nTotRet                 -= nUnidadesRecibidasFacturasClientes( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cValPr1, ( dbfPedCliL )->cValPr2, D():FacturasClientesLineas( nView ) )
 
                (dbfTmpLin)->( dbAppend() )
