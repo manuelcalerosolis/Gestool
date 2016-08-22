@@ -281,6 +281,8 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       D():Familias( nView )
 
+      D():ArticuloImagenes( nView )
+
       D():MovimientosAlmacenLineas( nView )
       ( D():MovimientosAlmacenLineas( nView ) )->( OrdSetFocus( "cRefMov" ) )
 

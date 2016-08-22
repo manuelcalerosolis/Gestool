@@ -2254,6 +2254,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "ArtImg"
    oDataTable:cName        := cPatEmp() + "ArtImg"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ArtImg.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ArtImg.Cdx"

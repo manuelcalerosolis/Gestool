@@ -58,7 +58,7 @@ METHOD New( nView )
    ::MessageID                := alltrim( ( D():Articulos( ::nView ) )->Codigo )
    ::Skuparent                := alltrim( ( D():Articulos( ::nView ) )->Codigo )
    ::ImageType                := "Main"
-   ::ImageLocation            := "" 
+   ::ImageLocation            := alltrim( ( D():ArticuloImagenes( ::nView ) )->cRmtArt )
 
   // "http://" + ::TComercioConfig():getMySqlServer() + "/" + ::cDirectoryProduct() + "/" + ::getRecursiveFolderPrestashop( hget( hProductImage, "cCarpeta" ) ) + cNoPath( cTypeImage ) 
 
