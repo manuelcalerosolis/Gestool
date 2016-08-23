@@ -58,9 +58,10 @@ METHOD New( nView )
    ::MessageID                := alltrim( ( D():Articulos( ::nView ) )->Codigo )
    ::Skuparent                := alltrim( ( D():Articulos( ::nView ) )->Codigo )
    ::ImageType                := "Main"
-   ::ImageLocation            := alltrim( ( D():ArticuloImagenes( ::nView ) )->cRmtArt )
-
-  // "http://" + ::TComercioConfig():getMySqlServer() + "/" + ::cDirectoryProduct() + "/" + ::getRecursiveFolderPrestashop( hget( hProductImage, "cCarpeta" ) ) + cNoPath( cTypeImage ) 
+   
+if ( D():ArticuloImagenes( ::nView ) )->( dbSeek( ( D():Articulos( ::nView ) )->Codigo ) )
+   ::ImageLocation            := alltrim ( ( D():ArticuloImagenes( ::nView ) )->cRmtArt )
+end if
 
 Return ( self )
 
