@@ -17714,12 +17714,12 @@ function nUnidadesRecibidasFacturasClientes( cNumPed, cCodArt, cValPr1, cValPr2,
    DEFAULT cValPr1   := Space( 20 )
    DEFAULT cValPr2   := Space( 20 )
 
-   ( cFacCliL )->( OrdSetFocus( "cNumPedRef" ) )
+   ( cFacCliL )->( ordsetfocus( "cNumPedRef" ) )
 
-   if ( cFacCliL )->( dbSeek( cNumPed + cCodArt + cValPr1 + cValPr2 ) )
+   if ( cFacCliL )->( dbseek( cNumPed + cCodArt + cValPr1 + cValPr2 ) )
       while ( cFacCliL )->cNumPed + ( cFacCliL )->cRef + ( cFacCliL )->cValPr1 + ( cFacCliL )->cValPr2 == cNumPed + cCodArt + cValPr1 + cValPr2 .and. !( cFacCliL )->( eof() )
          nTot        += nTotNFacCli( cFacCliL )
-         ( cFacCliL )->( dbSkip() )
+         ( cFacCliL )->( dbskip() )
       end while
    end if
 
@@ -19193,7 +19193,7 @@ FUNCTION rxFacCli( cPath, cDriver )
       ( cFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "cNumRef", "cSerie + str( nNumFac ) + cSufFac + cRef", {|| Field->cSerie + str( Field->nNumFac ) + Field->cSufFac + Field->cRef } ) )
 
       ( cFacCliL )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( cFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "cNumPedRef", "cNumPed + cRef + cCodPr1 + cCodPr2 + cValPr1 + cValPr2", {|| Field->cNumPed + Field->cRef + Field->cCodPr1 + Field->cCodPr2 + Field->cValPr1 + Field->cValPr2 } ) )
+      ( cFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "cNumPedRef", "cNumPed + cRef + cValPr1 + cValPr2", {|| Field->cNumPed + Field->cRef + Field->cValPr1 + Field->cValPr2 } ) )
 
       ( cFacCliL )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( cFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "cNumPed", "cNumPed", {|| Field->cNumPed } ) )

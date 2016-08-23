@@ -653,17 +653,11 @@ METHOD ArrayIncrSeek( cSeek, nGoTo ) CLASS IXBrowse
       return ::ArrayIncrFilter( cSeek, @nGoTo )
    endif
 
-   msgAlert( "paso 0")
-
    if ( nBrwCol := AScan( ::aCols, { |o| !Empty( o:cOrder ) } ) ) > 0
 
-      msgAlert( nBrwCol, "paso 1")
-
       nSortCol := ::aCols[ nBrwCol ]:cSortOrder
-      msgAlert( nSortCol, "nSortCol" )
 
       if !empty( nSortCol := ::aCols[ nBrwCol ]:cSortOrder ) .and. valtype( nSortCol ) == 'N'
-      msgAlert( "llego a paso 2")
          if ! ::aCols[ nBrwCol ]:lCaseSensitive
             cSeek    := Upper( cSeek )
          endif

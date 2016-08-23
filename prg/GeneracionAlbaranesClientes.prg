@@ -306,8 +306,6 @@ METHOD loadLinesDocument()
 
                oDocumentLine     := CustomerOrderDocumentLine():newBuildDictionary( self ) 
 
-               msgalert( oDocumentLine:classname(), "oDocumentLine:classname()" )
-
                if oDocumentLine:getUnitsAwaitingProvided() > 0
                   ::getCustomerOrderLines():addLines( oDocumentLine )
                end if 
@@ -448,9 +446,6 @@ Return ( .t. )
 METHOD appendCurrentClientDeliveryNote( oLine )
 
    local oDocument
-
-   msgalert( valtype( oLine ), "appendCurrentClientDeliveryNote" )
-   debug( oLine, "oLine" )
 
    oDocument         := ClientDeliveryNoteDocumentHeader():newRecordDictionary( self ) 
    oDocument:setValue( "PedidoCliente", ( D():AlbaranesClientes( ::nView ) )->cNumPed )

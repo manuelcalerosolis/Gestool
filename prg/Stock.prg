@@ -973,7 +973,7 @@ return self
 
 METHOD SetEstadoPedCli( cNumPed ) CLASS TStock
 
-   local nEstPed                    := 1
+   local nEstadoPedido              := 1
    local nTotalUnidadesPedidas      := 0
    local nLineasUnidadesRecibidas   := 0
    local nLineasUnidadesPedidas     := 0
@@ -987,50 +987,50 @@ METHOD SetEstadoPedCli( cNumPed ) CLASS TStock
    Comprobamos como esta el pedido------------------------------------------
    */
 
-   if ( ::cPedCliL )->( dbSeek( cNumPed ) )
+   if !( ::cPedCliL )->( dbSeek( cNumPed ) )
+      return .f.
+   end if
+   
+   while ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed == cNumPed .and.;
+         !( ::cPedCliL )->( eof() )
 
-      while ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed == cNumPed .and.;
-            !( ::cPedCliL )->( eof() )
+      if !( ::cPedCliL )->lAnulado
 
-         if !( ::cPedCliL )->lAnulado
+         //se cuenta la linea actual, para evitar que de como valido, pedir 5 de un producto y 5 de otro
+         //pero al recibir 2 de uno y 8 del otro
 
-            //se cuenta la linea actual, para evitar que de como valido, pedir 5 de un producto y 5 de otro
-            //pero al recibir 2 de uno y 8 del otro
+         nLineasUnidadesPedidas     := nTotNPedCli( ::cPedCliL )
 
-            nLineasUnidadesPedidas     := nTotNPedCli( ::cPedCliL )
+         nTotalUnidadesPedidas      += nLineasUnidadesPedidas
 
-            nTotalUnidadesPedidas      += nLineasUnidadesPedidas
+         nLineasUnidadesRecibidas   := nUnidadesRecibidasAlbaranesClientesNoFacturados( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cAlbCliL )
+         nLineasUnidadesRecibidas   += nUnidadesRecibidasFacturasClientes( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cFacCliL )
+         nLineasUnidadesRecibidas   := Min( nLineasUnidadesRecibidas, nLineasUnidadesPedidas )     
 
-            nLineasUnidadesRecibidas   := nUnidadesRecibidasAlbaranesClientesNoFacturados( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cAlbCliL )
-            nLineasUnidadesRecibidas   += nUnidadesRecibidasFacturasClientes( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cFacCliL )
-            nLineasUnidadesRecibidas   := Min( nLineasUnidadesRecibidas, nLineasUnidadesPedidas )     
+         nTotalUnidadesRecibidas    += nLineasUnidadesRecibidas
 
-            nTotalUnidadesRecibidas    += nLineasUnidadesRecibidas
-
-         end if
-
-         ( ::cPedCliL )->( dbSkip() )
-
-      end do
-
-      /*
-      En funcion de lo recibido colocamos los pedidos
-      */
-
-      do case
-         case nTotalUnidadesRecibidas == 0
-            nEstPed     := 1
-         case nTotalUnidadesPedidas > nTotalUnidadesRecibidas
-            nEstPed     := 2
-         case nTotalUnidadesRecibidas >= nTotalUnidadesPedidas
-            nEstPed     := 3
-      end case
-
-      if ( ::cPedCliT )->( dbSeek( cNumPed ) ) .and. dbLock( ::cPedCliT )
-         ( ::cPedCliT )->nEstado := nEstPed
-         ( ::cPedCliT )->( dbUnlock() )
       end if
 
+      ( ::cPedCliL )->( dbSkip() )
+
+   end do
+
+   /*
+   En funcion de lo recibido colocamos los pedidos
+   */
+
+   do case
+      case nTotalUnidadesRecibidas == 0
+         nEstadoPedido        := 1
+      case nTotalUnidadesPedidas > nTotalUnidadesRecibidas
+         nEstadoPedido        := 2
+      case nTotalUnidadesRecibidas >= nTotalUnidadesPedidas
+         nEstadoPedido        := 3
+   end case
+
+   if ( ::cPedCliT )->( dbSeek( cNumPed ) ) .and. dbLock( ::cPedCliT )
+      ( ::cPedCliT )->nEstado := nEstadoPedido
+      ( ::cPedCliT )->( dbUnlock() )
    end if
 
 Return .t.

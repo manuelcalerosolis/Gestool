@@ -225,8 +225,6 @@ Method CheckDefault( cCod, lNew )
       ::oDbf:lBitmap    := .f.
       ::oDbf:Save()
 
-      msgAlert( "bOnPreSaveDetail" )
-
       ::oDbf:Append()
       ::oDbf:cCodigo    := cCod
       ::oDbf:nNumero    := 8

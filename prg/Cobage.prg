@@ -2174,8 +2174,6 @@ METHOD DataReport( oFr ) CLASS TCobAge
    oFr:SetWorkArea(     "Liquidación", ::oDbf:nArea, .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    oFr:SetFieldAliases( "Liquidación", cObjectsToReport( ::oDbf ) )
 
-   msgalert( ( ::oDetCobAge:oDbf:nArea )->( ordsetfocus() ) )
-
    oFr:SetWorkArea(     "Lineas de liquidación", ::oDetCobAge:oDbf:nArea )
    oFr:SetFieldAliases( "Lineas de liquidación", cObjectsToReport( ::oDetCobAge:oDbf ) )
 

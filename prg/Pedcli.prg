@@ -4343,6 +4343,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
    nOrdPedPrv           	:= ( D():PedidosProveedoresLineas( nView ) )->( OrdSetFocus( "cPedCliRef" ) )
 
    dFecRes              	:= dTmpPdtRec( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTmpRes )
+
    nTotRes              	:= nUnidadesRecibidasAlbaranesClientesNoFacturados( cNumPed, aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfAlbCliL )
    nTotRes              	+= nUnidadesRecibidasFacturasClientes( cNumPed, aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfFacCliL )
 
@@ -4372,8 +4373,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
 
    nOrdFacCliL          	:= ( dbfFacCliL )->( OrdSetFocus( "cNumPedRef" ) )
 
-   ( dbfFacCliL )->( OrdScope( 0, idPedidoCliente + idArticulo ) )
-   ( dbfFacCliL )->( OrdScope( 1, idPedidoCliente + idArticulo ) )
+   ( dbfFacCliL )->( OrdScope( 0, idPedidoCliente + idShortArticulo ) )
+   ( dbfFacCliL )->( OrdScope( 1, idPedidoCliente + idShortArticulo ) )
    ( dbfFacCliL )->( dbGoTop() )
 
    nOrdAlbPrv           	:= ( dbfAlbPrvL )->( OrdSetFocus( "cPedCliRef" ) )
@@ -9151,7 +9152,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
    Ahora escribimos en el fichero definitivo de entregas a cuenta--------------
 	*/
 
-   ( dbfTmpPgo )->( dbGoTop() )
+   ( dbfTmpPgo )->( dbgotop() )
    while ( dbfTmpPgo )->( !eof() )
       dbPass( dbfTmpPgo, D():PedidosClientesPagos( nView ), .t., cSerPed, nNumPed, cSufPed )
       ( dbfTmpPgo )->( dbSkip() )
@@ -9161,7 +9162,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
    Fichero de las reservas
    */
 
-   ( dbfTmpRes )->( DbGoTop() )
+   ( dbfTmpRes )->( dbgotop() )
    while ( dbfTmpRes )->( !eof() )
       dbPass( dbfTmpRes, dbfPedCliR, .t., cSerPed, nNumPed, cSufPed )
       ( dbfTmpRes )->( dbSkip() )
@@ -9171,11 +9172,11 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
    Escribimos en el fichero definitivo (Situaciones)
    */
 
-    ( dbfTmpEst )->( DbGoTop() )
-   	while ( dbfTmpEst )->( !eof() )
-      	dbPass( dbfTmpEst, D():PedidosClientesSituaciones( nView ), .t., cSerPed, nNumPed, cSufPed ) 
-      	( dbfTmpEst )->( dbSkip() )
-   	end while
+   ( dbfTmpEst )->( dbgotop() )
+   while ( dbfTmpEst )->( !eof() )
+     	dbPass( dbfTmpEst, D():PedidosClientesSituaciones( nView ), .t., cSerPed, nNumPed, cSufPed ) 
+     	( dbfTmpEst )->( dbSkip() )
+   end while
 
    /*
    Si el pedido está cancelado ponemos el estado a 3---------------------------

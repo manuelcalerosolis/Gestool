@@ -2484,7 +2484,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          WHEN     ( lWhen .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
 
-      /*REDEFINE GET aGet[ _NTARIFA ] VAR aTmp[ _NTARIFA ];
+      /*
+      REDEFINE GET aGet[ _NTARIFA ] VAR aTmp[ _NTARIFA ];
          ID       172 ;
          SPINNER ;
          MIN      1 ;
@@ -2492,11 +2493,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          PICTURE  "9" ;
          VALID    ( ChangeTarifaCabecera( aTmp[ _NTARIFA ], dbfTmpLin, oBrwLin ) ) ;
          WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
-         OF       oFld:aDialogs[1]*/
+         OF       oFld:aDialogs[1]
+      */
 
       /*
-         --------------Combox tarifa
-         */
+      Combox tarifa
+      */
 
       oGetTarifa  := comboTarifa():Build( { "idCombo" => 172, "uValue" => aTmp[ _NTARIFA ] } )
       oGetTarifa:Resource( oFld:aDialogs[1] )
@@ -18451,7 +18453,9 @@ Static Function importarLineasPedidosClientes( aTmp, aGet, oBrwLin )
    end if 
 
    oConversionPedidosClientes:setCodigoCliente( cCodigoCliente ) 
+   
    oConversionPedidosClientes:setTitle( "Importando pedidos de " + alltrim( cCodigoCliente ) + " - " + alltrim( cNombreCliente ) )
+   
    if oConversionPedidosClientes:Dialog()
       appendLineasPedidosCliente( oConversionPedidosClientes:oDocumentLines:aLines, oBrwLin )
    end if 
@@ -18472,13 +18476,14 @@ Static Function appendLineasPedidosCliente( aLines )
 
       if oLine:isSelectLine()
 
-         // calculateUnidadesPendientesRecepcion( oLine )
-
-         // oLine:setValue( "NumeroPedidoCliente",    oLine:getDocumentId() )
          oLine:setValue( "NumeroLinea",            nLastNum( dbfTmpLin ) )
          oLine:setValue( "PosicionImpresion",      nLastNum( dbfTmpLin, "nPosPrint" ) )
          
          D():appendHashRecordInWorkarea( oLine:hDictionary, "AlbCliL", dbfTmpLin )
+
+         if aScan( aNumPed, oLine:getvalue( "NumeroPedido" ) ) == 0
+            aAdd( aNumPed, oLine:getvalue( "NumeroPedido" ) )
+         end if      
 
       end if 
 
