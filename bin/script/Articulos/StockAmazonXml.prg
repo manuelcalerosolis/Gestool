@@ -58,7 +58,7 @@ METHOD New( nView )
    ::MessageID                := alltrim( ( D():Articulos( ::nView ) )->Codigo )
    ::Skuparent                := alltrim( ( D():Articulos( ::nView ) )->Codigo )
    ::Quantity                 := ""
-   ::FulfillmentLatency       := ""   
+   ::FulfillmentLatency       := "Days to Delivery"   
 
 Return ( self )
 
