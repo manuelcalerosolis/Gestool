@@ -17708,8 +17708,8 @@ return ( nTot )
 
 function nUnidadesRecibidasFacturasClientes( cNumPed, cCodArt, cValPr1, cValPr2, cFacCliL )
 
-   local nTot        := 0
-   local aStaLin     := aGetStatus( cFacCliL, .f. )
+   local nUnidades   := 0
+   local aStatus     := aGetStatus( cFacCliL, .f. )
 
    DEFAULT cValPr1   := Space( 20 )
    DEFAULT cValPr2   := Space( 20 )
@@ -17718,14 +17718,14 @@ function nUnidadesRecibidasFacturasClientes( cNumPed, cCodArt, cValPr1, cValPr2,
 
    if ( cFacCliL )->( dbseek( cNumPed + cCodArt + cValPr1 + cValPr2 ) )
       while ( cFacCliL )->cNumPed + ( cFacCliL )->cRef + ( cFacCliL )->cValPr1 + ( cFacCliL )->cValPr2 == cNumPed + cCodArt + cValPr1 + cValPr2 .and. !( cFacCliL )->( eof() )
-         nTot        += nTotNFacCli( cFacCliL )
+         nUnidades        += nTotNFacCli( cFacCliL )
          ( cFacCliL )->( dbskip() )
       end while
    end if
 
-   SetStatus( cFacCliL, aStaLin )
+   SetStatus( cFacCliL, aStatus )
 
-return ( nTot )
+return ( nUnidades )
 
 //---------------------------------------------------------------------------//
 

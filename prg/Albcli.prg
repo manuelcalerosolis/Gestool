@@ -18476,8 +18476,8 @@ Static Function appendLineasPedidosCliente( aLines )
 
       if oLine:isSelectLine()
 
-         oLine:setValue( "NumeroLinea",            nLastNum( dbfTmpLin ) )
-         oLine:setValue( "PosicionImpresion",      nLastNum( dbfTmpLin, "nPosPrint" ) )
+         oLine:setValue( "NumeroLinea",         nLastNum( dbfTmpLin ) )
+         oLine:setValue( "PosicionImpresion",   nLastNum( dbfTmpLin, "nPosPrint" ) )
          
          D():appendHashRecordInWorkarea( oLine:hDictionary, "AlbCliL", dbfTmpLin )
 
