@@ -195,13 +195,16 @@ CLASS TShell FROM TMdiChild
 
    METHOD lCloseArea    INLINE ( .t. ) // ::oBrw:lCloseArea() )
 
-   METHOD Refresh()     INLINE ( if( !Empty( ::oBtnMain ), ::oBtnBar:Select( ::oBtnMain ), ), if( !Empty( ::oBrw ) .and. ( ::oBrw:lActive ), ::oBrw:Refresh(), ), if( !Empty( ::oBtnTop ), ::oBtnTop:Refresh(), ), ::Super:Refresh() )
-   METHOD UpStable()    INLINE ( if( !Empty( ::oBtnMain ), ::oBtnBar:Select( ::oBtnMain ), ), if( !Empty( ::oBrw ) .and. ( ::oBrw:lActive ), ::oBrw:Refresh(), ) )
+   METHOD Refresh()     INLINE ( if( !empty( ::oBtnMain ), ::oBtnBar:Select( ::oBtnMain ), ),;
+                                 if( !empty( ::oBrw ) .and. ( ::oBrw:lActive ), ::oBrw:Refresh(), ),;
+                                 if( !empty( ::oBtnTop ), ::oBtnTop:Refresh(), ), ::Super:Refresh() )
+   METHOD UpStable()    INLINE ( if( !empty( ::oBtnMain ), ::oBtnBar:Select( ::oBtnMain ), ),;
+                                 if( !empty( ::oBrw ) .and. ( ::oBrw:lActive ), ::oBrw:Refresh(), ) )
    METHOD GoUp()        INLINE ( ::oBrw:GoUp() )
    METHOD GoDown()      INLINE ( ::oBrw:GoDown() )
 
-   METHOD Select()      INLINE ( if( !Empty( ::oBrw ) .and. ( ::oBrw:lActive ), ( ::oBrw:Refresh(), ::oBrw:Select() ), ) )
-   METHOD SelectOne()   INLINE ( if( !Empty( ::oBrw ) .and. ( ::oBrw:lActive ), ( ::oBrw:SelectOne() ), ) )
+   METHOD Select()      INLINE ( if( !empty( ::oBrw ) .and. ( ::oBrw:lActive ), ( ::oBrw:Refresh(), ::oBrw:Select() ), ) )
+   METHOD SelectOne()   INLINE ( if( !empty( ::oBrw ) .and. ( ::oBrw:lActive ), ( ::oBrw:SelectOne() ), ) )
 
    METHOD SetFocus()    
    METHOD putFocus()    INLINE ( ::setWindowsBar(), ::SetFocus() )
@@ -257,20 +260,20 @@ CLASS TShell FROM TMdiChild
 
    METHOD AddGoTo( cCaption, bAction )
 
-   METHOD SearchSetFocus()                   INLINE ( if( !Empty( ::oWndBar ), ::oWndBar:SetGetFocus(), ) )
-   METHOD SetYearComboBoxChange( bBlock )    INLINE ( if( !Empty( ::oWndBar ), ::oWndBar:SetYearComboBoxChange( bBlock ), ) )
+   METHOD SearchSetFocus()                   INLINE ( if( !empty( ::oWndBar ), ::oWndBar:SetGetFocus(), ) )
+   METHOD SetYearComboBoxChange( bBlock )    INLINE ( if( !empty( ::oWndBar ), ::oWndBar:SetYearComboBoxChange( bBlock ), ) )
 
-   METHOD SetKillFilter( bBlock )            INLINE ( if( !Empty( ::oWndBar ), ::oWndBar:SetKillFilter( bBlock ), ) )
+   METHOD SetKillFilter( bBlock )            INLINE ( if( !empty( ::oWndBar ), ::oWndBar:SetKillFilter( bBlock ), ) )
 
    METHOD AddImageList( cImage )
 
    METHOD ClickTree()
 
-   METHOD BarDisable()                       INLINE ( if( !Empty( ::oWndBar ), ::oWndBar:Disable(), ) )
-   METHOD BarEnable()                        INLINE ( if( !Empty( ::oWndBar ), ::oWndBar:Enable(), ) )
+   METHOD BarDisable()                       INLINE ( if( !empty( ::oWndBar ), ::oWndBar:Disable(), ) )
+   METHOD BarEnable()                        INLINE ( if( !empty( ::oWndBar ), ::oWndBar:Enable(), ) )
 
-   METHOD BrwDisable()                       INLINE ( if( !Empty( ::oBrw ), ::oBrw:Disable(), ) )
-   METHOD BrwEnable()                        INLINE ( if( !Empty( ::oBrw ), ::oBrw:Enable(), ) ) //( ::oBrw:Enable(), ::oBrw:SetFocus() ), ) ) //
+   METHOD BrwDisable()                       INLINE ( if( !empty( ::oBrw ), ::oBrw:Disable(), ) )
+   METHOD BrwEnable()                        INLINE ( if( !empty( ::oBrw ), ::oBrw:Enable(), ) ) //( ::oBrw:Enable(), ::oBrw:SetFocus() ), ) ) //
 
    METHOD SetOnProcess()                     INLINE ( ::BrwDisable(), ::BarDisable(), ::lOnProcess := .t., ::CheckExtendInfo() )
    METHOD KillProcess()                      INLINE ( ::lOnProcess := .f., ::BarEnable(), ::BrwEnable() )
@@ -285,9 +288,9 @@ CLASS TShell FROM TMdiChild
    METHOD ShowEditButtonFilter()             INLINE ( ::oWndBar:ShowEditButtonFilter() )
    METHOD HideEditButtonFilter()             INLINE ( ::oWndBar:HideEditButtonFilter() )
 
-   METHOD AddFilter()                        INLINE ( if(   !Empty( ::oActiveFilter ),;
+   METHOD AddFilter()                        INLINE ( if(   !empty( ::oActiveFilter ),;
                                                             ( ::oActiveFilter:AddFilter(), ::EnableComboFilter( ::oActiveFilter:FiltersName() ) ), ) )
-   METHOD EditFilter()                       INLINE ( if(   !Empty( ::oActiveFilter ) .and. !Empty( ::oWndBar ),;
+   METHOD EditFilter()                       INLINE ( if(   !empty( ::oActiveFilter ) .and. !empty( ::oWndBar ),;
                                                             ( ::oActiveFilter:EditFilter( ::oWndBar:GetComboFilter() ), ::ChgFilter() ), ) )
    METHOD KillFilter()                       
 
@@ -503,7 +506,7 @@ METHOD Activate(  cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
 
    CursorWait()
 
-   if Empty( bValid )
+   if empty( bValid )
       bValid         := {|| ::oBrw:Hide() }
    end if
 
@@ -529,7 +532,7 @@ METHOD Activate(  cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
 
    // Seleccion de oden de la columna------------------------------------------
 
-   if ( ::xAlias )->( Used() ) .and. !Empty( ::oBrw )
+   if ( ::xAlias )->( Used() ) .and. !empty( ::oBrw )
       aEval( ::oBrw:aCols, {|oCol| if( oCol:cSortOrder == ( ::xAlias )->( OrdSetFocus() ), ( oCol:SetOrder(), oCol:Adjust() ), ) } )
    end if
 
@@ -626,7 +629,7 @@ METHOD NewAt( cResName1, cResName2, cMsg, bAction, cToolTip, cKey, cPrompt, bMen
       return nil
    end if
 
-   if !Empty( cResName1 )
+   if !empty( cResName1 )
       if ::lBigStyle
          cResName1   += "32"
       else
@@ -637,14 +640,14 @@ METHOD NewAt( cResName1, cResName2, cMsg, bAction, cToolTip, cKey, cPrompt, bMen
    cToolTip          := StrTran( cToolTip, "(", "" )
    cToolTip          := StrTran( cToolTip, ")", ""  )
 
-   if Empty( oGroup )
+   if empty( oGroup )
       if ::lBigStyle
          oBtn        := ::oBtnBar:Add( cTooltip, ::AddImageList( cResName1 ), bAction )
       else
          oBtn        := ::oBtnMain:Add( cTooltip, ::AddImageList( cResName1 ), bAction )
       end if
    else
-      if Empty( cResName1 )
+      if empty( cResName1 )
          oBtn        := oGroup:Add( cTooltip, nil, bAction )
       else
          oBtn        := oGroup:Add( cTooltip, ::AddImageList( cResName1 ), bAction )
@@ -760,7 +763,7 @@ METHOD End( lForceExit ) CLASS TShell
 
    CursorWait()
 
-   if !Empty( ::oDialogTip )
+   if !empty( ::oDialogTip )
       ::oDialogTip:End()
    end if
 
@@ -778,7 +781,7 @@ METHOD End( lForceExit ) CLASS TShell
          ::nRec               := ( ::xAlias )->( recno() )
       end if 
 
-      if !::lBigStyle .and. !Empty( ::oWndBar )
+      if !::lBigStyle .and. !empty( ::oWndBar )
          ::nTab               := ::oWndBar:GetComboBoxAt( .t. )
       end if
 
@@ -792,7 +795,7 @@ METHOD End( lForceExit ) CLASS TShell
 
    // Barra de busqueda--------------------------------------------------------
 
-   if !::lBigStyle .and. !Empty( ::oWndBar )
+   if !::lBigStyle .and. !empty( ::oWndBar )
 
       ::oWndBar:DisableGet()
 
@@ -812,7 +815,7 @@ METHOD End( lForceExit ) CLASS TShell
 
    // Cerramos el browse ------------------------------------------------------
 
-   if !Empty( ::oBrw )
+   if !empty( ::oBrw )
       ::oBrw:End()
       ::oBrw   := nil
    end if
@@ -874,7 +877,7 @@ METHOD ChgIndex( oIndice ) CLASS TShell
       ( ::xAlias )->( OrdSetFocus( oIndice:nAt ) )
    end if
 
-   if !Empty( ::oWndBar )
+   if !empty( ::oWndBar )
       ::oWndBar:SetComboBoxSelect( oIndice:nAt )
    end if
 
@@ -882,7 +885,7 @@ METHOD ChgIndex( oIndice ) CLASS TShell
 
    // Evento de cambio de indices----------------------------------------------
 
-   if !Empty( ::bChgIndex )
+   if !empty( ::bChgIndex )
       Eval( ::bChgIndex )
    end if
 
@@ -913,7 +916,7 @@ METHOD ChangeSeek( oIndice ) CLASS TShell
 
    oIndice:Set( nOrd )
 
-   if !Empty( ::oWndBar )
+   if !empty( ::oWndBar )
       ::oWndBar:SetComboBoxSelect( nOrd )
    end if
 
@@ -951,7 +954,7 @@ METHOD FastSeek() CLASS TShell
 
    cAlias            := ::xAlias
 
-   if Empty( cAlias ) .or. !( cAlias )->( Used() )
+   if empty( cAlias ) .or. !( cAlias )->( Used() )
       Return .f.
    end if
 
@@ -1095,7 +1098,7 @@ METHOD RButtonDown( nRow, nCol, nFlags ) CLASS TShell
 
    oMenu:end() 
 
-   if !Empty( ::oBrw )
+   if !empty( ::oBrw )
       ::oBrw:SetFocus()
    end if
 
@@ -1111,7 +1114,7 @@ return {|| iif( oCol:lHide, oCol:Show(), oCol:Hide() ) }
 
 METHOD AddMru() CLASS TShell
 
-   if Empty( ( ::xAlias )->( OrdSetFocus() ) )
+   if empty( ( ::xAlias )->( OrdSetFocus() ) )
       MsgInfo( LoadString( GetResources(), 15 ) )
       Return nil
    end if
@@ -1122,7 +1125,7 @@ RETURN NIL
 
 METHOD RecDel() CLASS TShell
 
-   if nAnd( ::nLevel, ACC_DELE ) != 0 .and. !Empty( ::bDel )
+   if nAnd( ::nLevel, ACC_DELE ) != 0 .and. !empty( ::bDel )
 
       ::SetOnProcess()
 
@@ -1142,13 +1145,15 @@ RETURN NIL
 
 METHOD RecAdd() CLASS TShell
 
-   if nAnd( ::nLevel, ACC_APPD ) != 0 .and. !Empty( ::bAdd )
+   if nAnd( ::nLevel, ACC_APPD ) != 0 .and. !empty( ::bAdd )
 
-      ::SetOnProcess()
+      ::killScope()
 
-      Eval( ::bAdd )
+      ::setOnProcess()
 
-      ::QuitOnProcess()
+      eval( ::bAdd )
+
+      ::quitOnProcess()
 
       ::Refresh()
 
@@ -1166,9 +1171,11 @@ RETURN NIL
 
 METHOD RecEdit()
 
-   if nAnd( ::nLevel, ACC_EDIT ) != 0 .and. !Empty( ::bEdit )
+   if nAnd( ::nLevel, ACC_EDIT ) != 0 .and. !empty( ::bEdit )
 
-      ::SetOnProcess()
+      ::killScope()
+
+      ::setOnProcess()
 
       eval( ::bEdit )
 
@@ -1192,7 +1199,9 @@ RETURN NIL
 
 METHOD RecDup()
 
-   if nAnd( ::nLevel, ACC_APPD ) != 0 .and. !Empty( ::bDup )
+   if nAnd( ::nLevel, ACC_APPD ) != 0 .and. !empty( ::bDup )
+
+      ::killScope()
 
       ::SetOnProcess()
 
@@ -1216,7 +1225,9 @@ RETURN NIL
 
 METHOD RecZoom()
 
-   if nAnd( ::nLevel, ACC_ZOOM ) != 0 .AND. !Empty( ::bZoo )
+   if nAnd( ::nLevel, ACC_ZOOM ) != 0 .AND. !empty( ::bZoo )
+
+      ::killScope()
 
       ::SetOnProcess()
 
@@ -1418,7 +1429,7 @@ METHOD GralButtons( oParent ) CLASS TShell
 
       ::AddSeaBar()
 
-   if !Empty( ::bAdd )
+   if !empty( ::bAdd )
 
    DEFINE BTNSHELL RESOURCE "NEW" OF Self ;
       NOBORDER ;
@@ -1431,7 +1442,7 @@ METHOD GralButtons( oParent ) CLASS TShell
 
    end if
 
-   if !Empty( ::bDup )
+   if !empty( ::bDup )
 
    DEFINE BTNSHELL RESOURCE "DUP" OF Self ;
       NOBORDER ;
@@ -1442,7 +1453,7 @@ METHOD GralButtons( oParent ) CLASS TShell
 
    end if
 
-   if !Empty( ::bEdit )
+   if !empty( ::bEdit )
 
    DEFINE BTNSHELL RESOURCE "EDIT" OF Self ;
       NOBORDER ;
@@ -1453,7 +1464,7 @@ METHOD GralButtons( oParent ) CLASS TShell
 
    end if
 
-   if !Empty( ::bZoo )
+   if !empty( ::bZoo )
 
    DEFINE BTNSHELL RESOURCE "ZOOM" OF Self ;
       NOBORDER ;
@@ -1739,7 +1750,7 @@ METHOD ChgTabs( nTab ) CLASS TShell
 
    // Evento de cambio de indices----------------------------------------------
 
-   if !Empty( ::bChgIndex )
+   if !empty( ::bChgIndex )
       Eval( ::bChgIndex )
    end if
 
@@ -1761,31 +1772,31 @@ METHOD ChgCombo( nTab ) CLASS TShell
    local oCol
    local cOrd                 := ""
 
-   if Empty( nTab ) .and. !Empty( ::oWndBar )
+   if empty( nTab ) .and. !empty( ::oWndBar )
       nTab                    := ::oWndBar:GetComboBoxAt( .t. )
    end if
 
    nTab                       := Max( nTab, 1 )
 
-   if !Empty( ::oWndBar )
+   if !empty( ::oWndBar )
       ::oWndBar:SetComboBoxSelect( nTab )
    end if
 
    // Evento de cambio de indices----------------------------------------------
 
-   if !Empty( ::bChgIndex )
+   if !empty( ::bChgIndex )
       Eval( ::bChgIndex )
    end if
 
    // Orden actual ------------------------------------------------------------
 
-   if !Empty( ::oWndBar )
+   if !empty( ::oWndBar )
       cOrd                    := ::oWndBar:GetComboBox()
    end if
 
    // Refresco-----------------------------------------------------------------
 
-   if !Empty( ::oBrw ) .and. !Empty( cOrd )
+   if !empty( ::oBrw ) .and. !empty( cOrd )
 
       with object ::oBrw
 
@@ -1827,7 +1838,7 @@ METHOD addSeaBar( cSearchType, nLenSearchType ) CLASS TShell
    ::cSearchType           := cSearchType
    ::nLenSearchType        := nLenSearchType
 
-   if !Empty( ::oWndBar )
+   if !empty( ::oWndBar )
 
       ::oWndBar:SetComboBoxChange(     {|| ::ChgCombo() } )
       ::oWndBar:SetComboFilterChange(  {|| ::ChgFilter() } )
@@ -1855,7 +1866,7 @@ METHOD SetIndex( nOrd ) CLASS TShell
       ( ::xAlias )->( dbSetOrder( nOrd ) )
    end if 
 
-   if !Empty( ::oWndBar )
+   if !empty( ::oWndBar )
       ::oWndBar:SetComboBoxSelect( nOrd )
    end if
 
@@ -1871,7 +1882,7 @@ METHOD NextTabOption() CLASS TShell
 
    local nOpt
 
-   if !Empty( ::oWndBar )
+   if !empty( ::oWndBar )
 
       nOpt        := ::oWndBar:GetComboBoxAt( .t. )
 
@@ -1890,7 +1901,7 @@ METHOD PrevTabOption() CLASS TShell
 
    local nOpt
 
-   if !Empty( ::oWndBar )
+   if !empty( ::oWndBar )
 
       nOpt  := ::oWndBar:GetComboBoxAt( .t. )
 
@@ -1937,7 +1948,7 @@ METHOD ClickOnHeader( oCol ) CLASS TShell
 
    ::killScope()
 
-   if !Empty( oCol )
+   if !empty( oCol )
       if aScan( ::aPrompt, oCol:cHeader ) != 0
          ::oWndBar:SetComboBoxSet( oCol:cHeader )
       end if
@@ -1951,7 +1962,7 @@ RETURN ( Self )
 
 METHOD HelpTopic() CLASS TShell
 
-   if !Empty( ::cHtmlHelp )
+   if !empty( ::cHtmlHelp )
       HtmlHelp( ::cHtmlHelp )
    end if
 
@@ -1972,7 +1983,7 @@ METHOD AddImageList( cImage )
    local oImage
    local nImageList     := 0
 
-   if !Empty( cImage )
+   if !empty( cImage )
       oImage            := TBitmap():Define( cImage )
       oImage:cResName   := cImage
       ::oImageList:AddMasked( oImage, Rgb( 255, 0, 255 ) )
@@ -1987,7 +1998,7 @@ METHOD ClickTree()
 
    local oItem       := ::oBtnBar:GetSelected()
 
-   if !Empty( oItem ) .and. oItem:ClassName() == "TTVITEM" .and. Valtype( oItem:bAction ) == "B"
+   if !empty( oItem ) .and. oItem:ClassName() == "TTVITEM" .and. Valtype( oItem:bAction ) == "B"
 
       if !::lOnProcess
 
@@ -2006,7 +2017,7 @@ METHOD ClickTree()
       end if
 
       if !( oItem:cPrompt $ "Buscar" )
-         if !Empty( ::oBrw )
+         if !empty( ::oBrw )
             ::oBrw:SetFocus()
          end if
       end if
@@ -2197,7 +2208,7 @@ METHOD SaveData( lSaveBrowseState )
 
    // Datos del browse --------------------------------------------------------
 
-   if !Empty( ::dbfUsr ) .and. ( ::dbfUsr )->( Used() )
+   if !empty( ::dbfUsr ) .and. ( ::dbfUsr )->( Used() )
 
       if ( ::dbfUsr )->( dbSeek( ::cCodigoUsuario + ::cWinName ) )
 
@@ -2281,11 +2292,11 @@ RETURN ( Self )
 
 METHOD CloseData() CLASS TShell
 
-   if !Empty( ::dbfUsr ) .and. ( ::dbfUsr )->( Used() )
+   if !empty( ::dbfUsr ) .and. ( ::dbfUsr )->( Used() )
       ( ::dbfUsr )->( dbCloseArea() )
    end if
 
-   if !Empty( ::dbfCol ) .and. ( ::dbfCol )->( Used() )
+   if !empty( ::dbfCol ) .and. ( ::dbfCol )->( Used() )
       ( ::dbfCol )->( dbCloseArea() )
    end if
 
@@ -2393,7 +2404,7 @@ METHOD CreateXFromCode()
    // Insertamos el action por columnas----------------------------------------
 
    for each oCol in ::oBrw:aCols
-      if Empty( oCol:bLDClickData ) .and. !( oCol:lEditable )
+      if empty( oCol:bLDClickData ) .and. !( oCol:lEditable )
          oCol:bLDClickData    := {|| ::RecEdit() }
       end if 
    next
@@ -2429,7 +2440,7 @@ METHOD CreateXFromCode()
 
    // Restaura el estado-------------------------------------------------------
 
-   if !Empty( ::cCfg )
+   if !empty( ::cCfg )
       ::oBrw:RestoreState( ::cCfg )
    end if
 
@@ -2443,16 +2454,16 @@ Return ( Self )
 
 METHOD CheckExtendInfo()
 
-   if Empty( ::bToolTip )
+   if empty( ::bToolTip )
       Return ( Self )
    endif
 
-   if !Empty( ::oDialogTip )
+   if !empty( ::oDialogTip )
       ::oDialogTip:End()
       ::oDialogTip  := nil
    endif
 
-   if !Empty( ::oTimer )
+   if !empty( ::oTimer )
       ::oTimer:End()
       ::oTimer    := nil
    endif
@@ -2497,7 +2508,7 @@ METHOD ShowExtendInfo()
          ::oBrw:SetFocus()
          ::oBrw:Select()
 
-         if !Empty( ::oTimer )
+         if !empty( ::oTimer )
             ::oTimer:End()
             ::oTimer := nil
          endif
@@ -2518,7 +2529,7 @@ return nil
 
 METHOD DestroyToolTip()
 
-  if !Empty( ::oDialogTip )
+  if !empty( ::oDialogTip )
 
      ::oDialogTip:End()
      ::oDialogTip  	:= nil
@@ -2535,13 +2546,13 @@ return nil
 
 METHOD SetAutoFilter( cFilter )
 
-   if Empty( ::bFilter ) .and. !Empty( cFilter )
+   if empty( ::bFilter ) .and. !empty( cFilter )
 
       if ( ::xAlias )->( Used() )
          select( ::xAlias )->( Used() )
       end case
 
-      if Empty( cFilter ) .or. At( Type( cFilter ), "UEUI" ) != 0
+      if empty( cFilter ) .or. At( Type( cFilter ), "UEUI" ) != 0
          ::bFilter   := nil
       else
          ::bFilter   := Compile( cFilter )
@@ -2594,8 +2605,6 @@ METHOD chgFilter() CLASS TShell
 
       end if 
 
-      ::Refresh() 
-
    end if
 
    ::Refresh() 
@@ -2622,7 +2631,7 @@ Return ( Self )
 
 METHOD AplyFilter()
 
-   if !Empty( ::oActiveFilter )
+   if !empty( ::oActiveFilter )
       ::ChgFilter()
    end if
 
@@ -2641,11 +2650,11 @@ METHOD SetFocus()
       end if
    end if  
 
-   if !Empty( ::oBtnMain )
+   if !empty( ::oBtnMain )
       ::oBtnBar:Select( ::oBtnMain )
    end if 
 
-   if !Empty( ::oBrw )
+   if !empty( ::oBrw )
       ::oBrw:SetFocus()
       ::oBrw:Select( 0 )
       ::oBrw:Select( 1 )
@@ -2889,7 +2898,7 @@ Function _aFld( aFields, aColSel )
    local aFld  := {}
 
    for nFor := 1 to nLen
-      if aColSel[ nFor ] .and. !Empty( aFields[ nFor ] )
+      if aColSel[ nFor ] .and. !empty( aFields[ nFor ] )
          aAdd( aFld, Eval( aFields[ nFor ] ) )
       end if
    next
@@ -2929,7 +2938,7 @@ return .f.
 
 Function oFontLittelTitle()
 
-   if Empty( oFontLittelTitle )
+   if empty( oFontLittelTitle )
       oFontLittelTitle  := TFont():New( "Ms Sans Serif", 6, 12, .f. )
    end if
 
@@ -2939,7 +2948,7 @@ Return ( oFontLittelTitle )
 
 Function oFontBigTitle()
 
-   if Empty( oFontBigTitle )
+   if empty( oFontBigTitle )
       oFontBigTitle     := TFont():New( "Segoe UI Light", 0, -48, .f., .f. )
    end if
 
@@ -2949,7 +2958,7 @@ Return ( oFontBigTitle )
 
 Function oFontTotal()
 
-   if Empty( oFontTotal )
+   if empty( oFontTotal )
       oFontTotal        := TFont():New( "Arial", 8, 26, .f., .t. )
    end if
 

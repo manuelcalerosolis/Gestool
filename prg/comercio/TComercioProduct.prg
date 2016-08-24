@@ -107,6 +107,8 @@ CLASS TComercioProduct FROM TComercioConector
    METHOD getRootImage( hProductImage )                        INLINE ( cPatTmp() + hget( hProductImage, "cPrefijoNombre" ) + ".jpg" )
    METHOD putFileRootProductImage( hProductImage )
 
+   METHOD getCoverValue( lValue )                              
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -1000,7 +1002,7 @@ METHOD insertImage( idProduct, hProduct, hImage, nImagePosition )
                "VALUES ( " + ;
                   "'" + alltrim( str( idProduct ) ) + "', " + ;
                   "'" + alltrim( str( nImagePosition ) ) + "', " + ;
-                  if( hGet( hImage, "lDefault" ), "'1'", "'0'" ) + " )"
+                  "'" + ::getCoverValue( hGet( hImage, "lDefault" ) ) + "' )"
 
    if ::commandExecDirect( cCommand )
       idImagePrestashop       := ::oConexionMySQLDatabase():GetInsertId()
@@ -1050,10 +1052,10 @@ METHOD insertImageShop( idProduct, hProduct, hImage, idImagePrestashop )
                   "id_shop, "                                                                         + ;
                   "cover ) "                                                                          + ;
                "VALUES ( "                                                                            + ;
-                  if( ::lProductIdColumnImageShop(), "'" + alltrim( str( idProduct ) ) + "', ", "" )  + ;  // id_product
-                  "'" + alltrim( str( idImagePrestashop ) ) + "', "                                   + ;  // id_image
-                  "'1', "                                                                             + ;  // id_shop
-                  if( hGet( hImage, "lDefault" ), "'1'", "'0'" ) + ")"                                    // cover
+                  if( ::lProductIdColumnImageShop(), "'" + alltrim( str( idProduct ) ) + "', ", "" )  + ;   // id_product
+                  "'" + alltrim( str( idImagePrestashop ) ) + "', "                                   + ;   // id_image
+                  "'1', "                                                                             + ;   // id_shop
+                  "'" + ::getCoverValue( hGet( hImage, "lDefault" ) ) + "' )"                               // cover
 
    if ::commandExecDirect( cCommand )
       ::writeText( "Insertada la imagen " + hGet( hProduct, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
@@ -2245,6 +2247,8 @@ METHOD putFileRootProductImage( hProductImage ) CLASS TComercioProduct
 
    rootImage               := aRemoteImages[ 1 ]
 
+   ::meterProcesoText( "Guardando imagen " + alltrim( rootImage ) + " en la base de datos" )
+
    if ::oImageProductDatabase():seek( idProductGestool )
 
       while ( alltrim( ::oImageProductDatabase():cCodArt ) == alltrim( idProductGestool ) ) .and. !( ::oImageProductDatabase():eof() )
@@ -2260,6 +2264,20 @@ METHOD putFileRootProductImage( hProductImage ) CLASS TComercioProduct
    end if
 
 Return ( .f. )
+
+//---------------------------------------------------------------------------//
+
+METHOD getCoverValue( lValue )
+
+   if lValue
+      Return '1'
+   end if 
+
+   if ::TComercioConfig():isCoverValueNull()
+      Return 'null'
+   end if 
+
+Return '0'
 
 //---------------------------------------------------------------------------//
 

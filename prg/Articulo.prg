@@ -1441,21 +1441,6 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          CLOSED ;
          LEVEL    ACC_DELE
 
-   /*
-	DEFINE BTNSHELL oBtnEur RESOURCE "BAL_EURO" OF oWndBrw ;
-		NOBORDER ;
-		ACTION 	( SetPtsEur( oWndBrw, oBtnEur ) ) ;
-      TOOLTIP  "Mo(n)eda";
-      HOTKEY   "N"
-
-   DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( TSqlStock():New( nView ):CalculateStock( ( D():Articulos( nView ) )->Codigo ) ) ;
-      TOOLTIP  "Nuevo stock" ;
-      HOTKEY   "k" ;
-      LEVEL    ACC_ZOOM
-   */
-
    DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
 		NOBORDER ;
       ACTION   ( BrwVtaComArt( ( D():Articulos( nView ) )->Codigo, ( D():Articulos( nView ) )->Nombre ) ) ;
@@ -15661,7 +15646,7 @@ Function aItmImg()
    aAdd( aBase, { "cHtmArt",  "M",  10, 0, "HTML de la imagen",                       "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cCodWeb",  "N",  11, 0, "Código de artículo para la web",          "",                  "", "( cDbfArt )", 0 } )
    aAdd( aBase, { "lDefImg",  "L",   1, 0, "Lógico para imágen por defecto",          "",                  "", "( cDbfArt )", .f. } )
-   aAdd( aBase, { "cRmtArt",  "C", 230, 0, "Imagen del artículo en remoto",           "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cRmtArt",  "M",  10, 0, "Memo imagen del artículo en remoto",      "",                  "", "( cDbfArt )", nil } )
 
 Return ( aBase )
 
@@ -18214,6 +18199,7 @@ Static Function EdtImg( aTmp, aGet, dbfTmpImg, oBrw, aArt, bValid, nMode )
       REDEFINE GET   aTmp[ ( dbfTmpImg )->( FieldPos( "cRmtArt" ) ) ] ;
          ID          140 ;
          WHEN        ( nMode != ZOOM_MODE ) ;
+         MEMO ;
          OF          fldGeneral
 
       REDEFINE GET   aTmp[ ( dbfTmpImg )->( FieldPos( "cNbrArt" ) ) ] ;

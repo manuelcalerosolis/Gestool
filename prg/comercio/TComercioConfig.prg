@@ -80,6 +80,8 @@ CLASS TComercioConfig
    METHOD getHideExportButton()        INLINE ( if( hhaskey( ::hConfig, "HideExportButton" ), hget( ::hConfig, "HideExportButton" ), .f. ) )
    METHOD getHideHideExportButton()    INLINE ( if( hhaskey( ::hConfig, "HideExportButton" ), hget( ::hConfig, "HideExportButton" ), .f. ) )
 
+   METHOD isCoverValueNull()           INLINE ( if( hhaskey( ::hConfig, "CoverValueNull" ), hget( ::hConfig, "CoverValueNull" ), .f. ) )
+
    METHOD getFullFileName()            INLINE ( cPatConfig() + ::idEmpresa + "\prestashop.json" )
 
 END CLASS
