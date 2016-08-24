@@ -6937,7 +6937,7 @@ FUNCTION aItmBnc()
 
    local aBase := {}
 
-   aAdd( aBase, { "cCodEmp",     "C",  2, 0, "Código de empresa",                "",                   "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cCodEmp",     "C",  4, 0, "Código de empresa",                "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cEntBnc",     "C",  4, 0, "Entidad bancaria",                 "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cSucBnc",     "C",  4, 0, "Sucursal bancaria",                "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cDigBnc",     "C",  2, 0, "Dígito control",                   "",                   "", "( cDbfBnc )" } )

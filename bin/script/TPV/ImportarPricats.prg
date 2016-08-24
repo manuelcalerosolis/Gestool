@@ -283,7 +283,7 @@ Static Function IteratorCodebarArticulo( oXmlNode )
                end if 
             end if 
 
-            oNode                 := TXMLIteratorScan():New( oPhysicalAttribute ):Find( "ns0:MainColourName" )
+            oNode                 := TXMLIteratorScan():New( oPhysicalAttribute ):Find( "ns0:ColourName" )
             if !Empty( oNode )
                if !hHasKey( hCodigoBarras, "Color")
                   hSet( hCodigoBarras, "Color", oNode:cData )

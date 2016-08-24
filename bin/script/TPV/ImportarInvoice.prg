@@ -10,7 +10,7 @@
 
 #define __localDirectory            "c:\Bestseller\"
 #define __localDirectoryPorcessed   "c:\Bestseller\Processed\"
-#define __timeWait                  1
+#define __timeWait                  0.05
 
 //---------------------------------------------------------------------------//
 
@@ -386,7 +386,7 @@ Return ( nil )
 Static Function CodigoPropiedadesLineas( hLinea )
 
    local lReturn 					:= .f.
-   local cCodigo                    := alltrim( hGet( hLinea, "Codigo" ) )
+   local cCodigo              := alltrim( hGet( hLinea, "Codigo" ) )
    local nOrd 						:= ( dbfCodebar )->( ordsetfocus( "cCodBar" ) )
 
    if ( dbfCodebar )->( dbSeek( cCodigo ) )

@@ -1541,7 +1541,7 @@ CLASS Account FROM Address
    DATA     cBankCode               INIT ''
    DATA     cBranchCode             INIT ''
 
-   ACCESS   IBAN                    INLINE ( 'ES88' + alltrim( Left( ::cIBAN, 30 ) ) )
+   ACCESS   IBAN                    INLINE ( alltrim( Left( ::cIBAN, 30 ) ) )
    ACCESS   BankCode                INLINE ( alltrim( Left( ::cBankCode, 60 ) ) )
    ACCESS   BranchCode              INLINE ( alltrim( Left( ::cBranchCode, 60 ) ) )
 

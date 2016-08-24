@@ -15,7 +15,7 @@
   
 CLASS BestsellerFtp
 
-   DATA  cFtpSite
+   DATA  cFtpSite   
    DATA  cUserName
    DATA  cPassword
    DATA  cUrl
@@ -106,7 +106,7 @@ Return ( Self )
 METHOD ftpGetFiles()
 
    local cFile
-   local aFiles         := ::oFTP:listFiles()  
+   local aFiles            := ::oFTP:listFiles()  
 
    for each cFile in aFiles 
 

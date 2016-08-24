@@ -1568,6 +1568,8 @@ STATIC FUNCTION OpenFiles()
 
       D():AnticiposClientes( nView )
 
+      D():EmpresaBancos( nView )
+
       USE ( cPatEmp() + "FACCLII.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLII", @dbfFacCliI ) )
       SET ADSINDEX TO ( cPatEmp() + "FACCLII.CDX" ) ADDITIVE
 
@@ -11212,7 +11214,7 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento, lShowInc )
       if nMode == APPD_MODE
 
          aTmp[ _NREGIVA ]  := ( D():Clientes( nView ) )->nRegIva
-
+         
          lChangeRegIva( aTmp )
 
          // Si estamos añadiendo cargamos todos los datos del cliente
@@ -14929,23 +14931,54 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
                   Recibo domiciliado rellenamos con los datos bancarios del cliente
                   */
 
-                  if oInstallment:cPaymentMeans == "02"
+                  do case
 
-                     if lBancoDefecto( ( D():FacturasClientes( nView ) )->cCodCli, dbfCliBnc )
+                     case oInstallment:cPaymentMeans == "02"
 
-                        oInstallment:oAccountToBeCredited               := Account()
-                        oInstallment:oAccountToBeCredited:cIBAN         := ( dbfCliBnc )->cCtaBnc
-                        oInstallment:oAccountToBeCredited:cBankCode     := Left( ( dbfCliBnc )->cCtaBnc, 4 )
-                        oInstallment:oAccountToBeCredited:cBranchCode   := Substr( ( dbfCliBnc )->cCtaBnc, 4, 4 )
-                        oInstallment:oAccountToBeCredited:cAddress      := ( dbfCliBnc )->cDirBnc
-                        oInstallment:oAccountToBeCredited:cPostCode     := ( dbfCliBnc )->cCpBnc
-                        oInstallment:oAccountToBeCredited:cTown         := ( dbfCliBnc )->cPobBnc
-                        oInstallment:oAccountToBeCredited:cProvince     := ( dbfCliBnc )->cProBnc
-                        oInstallment:oAccountToBeCredited:cCountryCode  := "ESP"
+                        if lBancoDefecto( ( D():FacturasClientes( nView ) )->cCodCli, dbfCliBnc )
 
-                     end if
+                           oInstallment:oAccountToBeCredited               := Account()
+                           oInstallment:oAccountToBeCredited:cIBAN         := ( dbfCliBnc )->cCtaBnc
+                           oInstallment:oAccountToBeCredited:cBankCode     := Left( ( dbfCliBnc )->cCtaBnc, 4 )
+                           oInstallment:oAccountToBeCredited:cBranchCode   := Substr( ( dbfCliBnc )->cCtaBnc, 4, 4 )
+                           oInstallment:oAccountToBeCredited:cAddress      := ( dbfCliBnc )->cDirBnc
+                           oInstallment:oAccountToBeCredited:cPostCode     := ( dbfCliBnc )->cCpBnc
+                           oInstallment:oAccountToBeCredited:cTown         := ( dbfCliBnc )->cPobBnc
+                           oInstallment:oAccountToBeCredited:cProvince     := ( dbfCliBnc )->cProBnc
+                           oInstallment:oAccountToBeCredited:cCountryCode  := "ESP"
 
-                  end if
+                        end if
+
+                     case oInstallment:cPaymentMeans == "04"
+
+                        if ( D():FormasPago( nView ) )->( dbSeek( ( D():FacturasClientesCobros( nView ) )->cCodPgo ) )
+                           
+                           oInstallment:oAccountToBeCredited               := Account()
+                           oInstallment:oAccountToBeCredited:cIBAN         := ( D():FormasPago( nView ) )->cPaisIBAN + ( D():FormasPago( nView ) )->cCtrlIBAN + ( D():FormasPago( nView ) )->cEntBnc + ( D():FormasPago( nView ) )->cSucBnc + ( D():FormasPago( nView ) )->cDigBnc + ( D():FormasPago( nView ) )->cCtaBnc
+                           oInstallment:oAccountToBeCredited:cBankCode     := ( D():FormasPago( nView ) )->cEntBnc
+                           oInstallment:oAccountToBeCredited:cBranchCode   := ( D():FormasPago( nView ) )->cSucBnc
+
+                           MsgInfo( ( D():FormasPago( nView ) )->cBanco, "banco" )
+                           MsgInfo( cCodEmp() + ( D():FormasPago( nView ) )->cBanco, len( cCodEmp() + ( D():FormasPago( nView ) )->cBanco ) )
+
+                           if !Empty( ( D():FormasPago( nView ) )->cBanco ) .and.;
+                              ( D():EmpresaBancos( nView ) )->( dbSeek( cCodEmp() + ( D():FormasPago( nView ) )->cBanco ) )
+
+                              Msginfo( "Veo los datos bancarios" )
+
+                              oInstallment:oAccountToBeCredited:cAddress   := ( D():EmpresaBancos( nView ) )->cDirBnc
+                              oInstallment:oAccountToBeCredited:cPostCode  := ( D():EmpresaBancos( nView ) )->cCPBnc
+                              oInstallment:oAccountToBeCredited:cTown      := ( D():EmpresaBancos( nView ) )->cPobBnc
+                              oInstallment:oAccountToBeCredited:cProvince  := ( D():EmpresaBancos( nView ) )->cProBnc
+
+                           end if
+
+                           oInstallment:oAccountToBeCredited:cCountryCode  := "ESP"
+
+                        end if
+
+                  end case
+
 
                   :addInstallment( oInstallment )
 

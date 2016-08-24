@@ -17662,13 +17662,6 @@ FUNCTION nTotTik( cNumTik, cTikT, cTikL, cDiv, aTmp, cDivRet, lPic, lExcCnt )
    nTotTik           -= nTotDpp
 
    /*
-   Sumamos los impuestos especiales--------------------------------------------
-   */
-
-   nTotTik           := nTotTik + nTotIvm
-   
-
-   /*
    Total por persona-----------------------------------------------------------
    */
 
