@@ -18195,32 +18195,31 @@ Static Function EdtImg( aTmp, aGet, dbfTmpImg, oBrw, aArt, bValid, nMode )
    DEFINE DIALOG oDlg RESOURCE "Imagenes" TITLE LblTitle( nMode ) + "imagenes de artículos"
 
       REDEFINE FOLDER oFld;
-         ID       100 ;
-         OF       oDlg ;
-         PROMPT   "&Principal",;
-                  "&HTML" ;
-         DIALOGS  "Imagenes_1",;
-                  "Imagenes_2"
+         ID          100 ;
+         OF          oDlg ;
+         PROMPT      "&Principal",;
+                     "&HTML" ;
+         DIALOGS     "Imagenes_1",;
+                     "Imagenes_2"
 
-      REDEFINE GET oImgArt ;
-         VAR      aTmp[ ( dbfTmpImg )->( FieldPos( "cImgArt" ) ) ] ;
-         ID       100 ;
-         BITMAP   "Lupa" ;
-         ON HELP  ( GetBmp( oImgArt, oImgBmp ) ) ;
-         ON CHANGE( ChgBmp( oImgArt, oImgBmp ) ) ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldGeneral
+      REDEFINE GET   oImgArt ;
+         VAR         aTmp[ ( dbfTmpImg )->( FieldPos( "cImgArt" ) ) ] ;
+         ID          100 ;
+         BITMAP      "Lupa" ;
+         ON HELP     ( GetBmp( oImgArt, oImgBmp ) ) ;
+         ON CHANGE   ( ChgBmp( oImgArt, oImgBmp ) ) ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          fldGeneral
 
-      REDEFINE GET oImgArt ;
-         VAR      aTmp[ ( dbfTmpImg )->( FieldPos( "cRmtArt" ) ) ] ;
-         ID       140 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldGeneral
+      REDEFINE GET   aTmp[ ( dbfTmpImg )->( FieldPos( "cRmtArt" ) ) ] ;
+         ID          140 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          fldGeneral
 
-      REDEFINE GET aTmp[ ( dbfTmpImg )->( FieldPos( "cNbrArt" ) ) ] ;
-         ID       120 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldGeneral
+      REDEFINE GET   aTmp[ ( dbfTmpImg )->( FieldPos( "cNbrArt" ) ) ] ;
+         ID          120 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          fldGeneral
 
       REDEFINE CHECKBOX aTmp[ ( dbfTmpImg )->( fieldpos( "lDefImg" ) ) ] ;
          ID       130 ;
