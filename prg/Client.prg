@@ -13119,6 +13119,10 @@ function aplicaEntidadCliente( cCodCli, nView, dbfTmpEntidades )
    local aEntidades     := {}
    local hEntidad
   
+   if Empty( ( D():ClientesEntidad( nView ) )->mMemo )
+      Return ( .t. )
+   end if
+
    aEntidades           := hb_deserialize( ( D():ClientesEntidad( nView ) )->mMemo )
 
    for each hEntidad in aEntidades
