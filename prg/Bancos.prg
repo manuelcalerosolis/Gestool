@@ -501,8 +501,9 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TCuentasBancarias
       FIELD NAME "cPaiBnc"   TYPE "C"     LEN  4  DEC 0 COMMENT "Pais"                 PICTURE "@!"      COLSIZE 120 OF oDbf
       FIELD NAME "nSalIni"   TYPE "N"     LEN 16  DEC 0 COMMENT "Saldo inicial"        HIDE                          OF oDbf
 
-      INDEX TO "EmpBnc.Cdx" TAG "cCodBnc" ON "cCodBnc"                                                   COMMENT "Código"  NODELETED   OF oDbf
-      INDEX TO "EmpBnc.Cdx" TAG "cCtaBnc" ON "cPaisIBAN + cCtrlIBAN + cEntBnc + cSucBnc + cDigBnc + cCtaBnc" COMMENT "Cuenta"  NODELETED   OF oDbf
+      INDEX TO "EmpBnc.Cdx" TAG "cCodBnc" ON "cCodBnc"                                                         COMMENT "Código" NODELETED   OF oDbf
+      INDEX TO "EmpBnc.Cdx" TAG "cNomBnc" ON "cNomBnc"                                                         COMMENT "Nombre" NODELETED   OF oDbf
+      INDEX TO "EmpBnc.Cdx" TAG "cCtaBnc" ON "cPaisIBAN + cCtrlIBAN + cEntBnc + cSucBnc + cDigBnc + cCtaBnc"   COMMENT "Cuenta" NODELETED   OF oDbf
 
    END DATABASE oDbf
 

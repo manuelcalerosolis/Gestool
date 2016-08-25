@@ -14648,6 +14648,7 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
    local oInstallment
    local cCodigoEntidad
    local oAdministrativeCentres
+   local nOrdAnt
 
    nNumero              := ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac
    cNumero              := ( D():FacturasClientes( nView ) )->cSerie + Alltrim( str( ( D():FacturasClientes( nView ) )->nNumFac ) ) + Rtrim( ( D():FacturasClientes( nView ) )->cSufFac )
@@ -14931,7 +14932,37 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
                   Recibo domiciliado rellenamos con los datos bancarios del cliente
                   */
 
-                  do case
+                  if !Empty( ( D():FormasPago( nView ) )->cCtaBnc )
+
+                     if ( D():FormasPago( nView ) )->( dbSeek( ( D():FacturasClientesCobros( nView ) )->cCodPgo ) )
+                           
+                           oInstallment:oAccountToBeCredited               := Account()
+                           oInstallment:oAccountToBeCredited:cIBAN         := ( D():FormasPago( nView ) )->cPaisIBAN + ( D():FormasPago( nView ) )->cCtrlIBAN + ( D():FormasPago( nView ) )->cEntBnc + ( D():FormasPago( nView ) )->cSucBnc + ( D():FormasPago( nView ) )->cDigBnc + ( D():FormasPago( nView ) )->cCtaBnc
+                           oInstallment:oAccountToBeCredited:cBankCode     := ( D():FormasPago( nView ) )->cEntBnc
+                           oInstallment:oAccountToBeCredited:cBranchCode   := ( D():FormasPago( nView ) )->cSucBnc
+
+                           if !Empty( ( D():FormasPago( nView ) )->cBanco )
+
+                              nOrdAnt     :=  ( D():EmpresaBancos( nView ) )->( OrdSetFocus( "cNomBnc" ) )
+                            
+                              if ( D():EmpresaBancos( nView ) )->( dbSeek( ( D():FormasPago( nView ) )->cBanco ) )
+
+                                 oInstallment:oAccountToBeCredited:cAddress   := ( D():EmpresaBancos( nView ) )->cDirBnc
+                                 oInstallment:oAccountToBeCredited:cPostCode  := ( D():EmpresaBancos( nView ) )->cCPBnc
+                                 oInstallment:oAccountToBeCredited:cTown      := ( D():EmpresaBancos( nView ) )->cPobBnc
+                                 oInstallment:oAccountToBeCredited:cProvince  := ( D():EmpresaBancos( nView ) )->cProBnc
+
+                              end if
+
+                           end if
+
+                           oInstallment:oAccountToBeCredited:cCountryCode  := "ESP"
+
+                        end if
+
+                  end if
+
+                  /*do case
 
                      case oInstallment:cPaymentMeans == "02"
 
@@ -14958,18 +14989,18 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
                            oInstallment:oAccountToBeCredited:cBankCode     := ( D():FormasPago( nView ) )->cEntBnc
                            oInstallment:oAccountToBeCredited:cBranchCode   := ( D():FormasPago( nView ) )->cSucBnc
 
-                           MsgInfo( ( D():FormasPago( nView ) )->cBanco, "banco" )
-                           MsgInfo( cCodEmp() + ( D():FormasPago( nView ) )->cBanco, len( cCodEmp() + ( D():FormasPago( nView ) )->cBanco ) )
+                           if !Empty( ( D():FormasPago( nView ) )->cBanco )
 
-                           if !Empty( ( D():FormasPago( nView ) )->cBanco ) .and.;
-                              ( D():EmpresaBancos( nView ) )->( dbSeek( cCodEmp() + ( D():FormasPago( nView ) )->cBanco ) )
+                              nOrdAnt     :=  ( D():EmpresaBancos( nView ) )->( OrdSetFocus( "cNomBnc" ) )
+                            
+                              if ( D():EmpresaBancos( nView ) )->( dbSeek( ( D():FormasPago( nView ) )->cBanco ) )
 
-                              Msginfo( "Veo los datos bancarios" )
+                                 oInstallment:oAccountToBeCredited:cAddress   := ( D():EmpresaBancos( nView ) )->cDirBnc
+                                 oInstallment:oAccountToBeCredited:cPostCode  := ( D():EmpresaBancos( nView ) )->cCPBnc
+                                 oInstallment:oAccountToBeCredited:cTown      := ( D():EmpresaBancos( nView ) )->cPobBnc
+                                 oInstallment:oAccountToBeCredited:cProvince  := ( D():EmpresaBancos( nView ) )->cProBnc
 
-                              oInstallment:oAccountToBeCredited:cAddress   := ( D():EmpresaBancos( nView ) )->cDirBnc
-                              oInstallment:oAccountToBeCredited:cPostCode  := ( D():EmpresaBancos( nView ) )->cCPBnc
-                              oInstallment:oAccountToBeCredited:cTown      := ( D():EmpresaBancos( nView ) )->cPobBnc
-                              oInstallment:oAccountToBeCredited:cProvince  := ( D():EmpresaBancos( nView ) )->cProBnc
+                              end if
 
                            end if
 
@@ -14977,8 +15008,7 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
 
                         end if
 
-                  end case
-
+                  end case*/
 
                   :addInstallment( oInstallment )
 
