@@ -68,6 +68,8 @@ CLASS TComercioConfig
    METHOD getStore()                   INLINE ( ::getFromCurrentWeb( "Store", "000" ) )
    METHOD getSyncronizeManufacturers() INLINE ( ::getFromCurrentWeb( "SyncronizeManufacturers", .t. ) )
    
+   METHOD isCoverValueNull()           INLINE ( ::getFromCurrentWeb( "CoverValueNull", .f. ) )
+
    METHOD getOrderSerie()              INLINE ( ::getFromCurrentWeb( "OrderSerie" ) )
    METHOD getBudgetSerie()             INLINE ( ::getFromCurrentWeb( "BudgetSerie" ) )
 
@@ -79,8 +81,6 @@ CLASS TComercioConfig
    METHOD isRealTimeConexion()         INLINE ( if( hhaskey( ::hConfig, "RealTimeConexion" ), hget( ::hConfig, "RealTimeConexion" ), .f. ) )
    METHOD getHideExportButton()        INLINE ( if( hhaskey( ::hConfig, "HideExportButton" ), hget( ::hConfig, "HideExportButton" ), .f. ) )
    METHOD getHideHideExportButton()    INLINE ( if( hhaskey( ::hConfig, "HideExportButton" ), hget( ::hConfig, "HideExportButton" ), .f. ) )
-
-   METHOD isCoverValueNull()           INLINE ( if( hhaskey( ::hConfig, "CoverValueNull" ), hget( ::hConfig, "CoverValueNull" ), .f. ) )
 
    METHOD getFullFileName()            INLINE ( cPatConfig() + ::idEmpresa + "\prestashop.json" )
 

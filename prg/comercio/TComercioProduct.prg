@@ -1002,7 +1002,7 @@ METHOD insertImage( idProduct, hProduct, hImage, nImagePosition )
                "VALUES ( " + ;
                   "'" + alltrim( str( idProduct ) ) + "', " + ;
                   "'" + alltrim( str( nImagePosition ) ) + "', " + ;
-                  "'" + ::getCoverValue( hGet( hImage, "lDefault" ) ) + "' )"
+                  ::getCoverValue( hGet( hImage, "lDefault" ) ) + " )"
 
    if ::commandExecDirect( cCommand )
       idImagePrestashop       := ::oConexionMySQLDatabase():GetInsertId()
@@ -1055,7 +1055,7 @@ METHOD insertImageShop( idProduct, hProduct, hImage, idImagePrestashop )
                   if( ::lProductIdColumnImageShop(), "'" + alltrim( str( idProduct ) ) + "', ", "" )  + ;   // id_product
                   "'" + alltrim( str( idImagePrestashop ) ) + "', "                                   + ;   // id_image
                   "'1', "                                                                             + ;   // id_shop
-                  "'" + ::getCoverValue( hGet( hImage, "lDefault" ) ) + "' )"                               // cover
+                  ::getCoverValue( hGet( hImage, "lDefault" ) ) + " )"                                      // cover
 
    if ::commandExecDirect( cCommand )
       ::writeText( "Insertada la imagen " + hGet( hProduct, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
@@ -1518,9 +1518,12 @@ METHOD uploadImagesToPrestashop() CLASS TComercioProduct
    
    next
 
+   sysrefresh()
+
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+// Subimos los ficheros de imagenes
 
 METHOD uploadImageToPrestashop( hProduct ) CLASS TComercioProduct
 
@@ -1533,8 +1536,6 @@ METHOD uploadImageToPrestashop( hProduct ) CLASS TComercioProduct
    end if 
 
    CursorWait()
-
-   // Subimos los ficheros de imagenes-----------------------------------
 
    ::meterProcesoSetTotal( len( aProductsImages ) )
 
@@ -2259,7 +2260,7 @@ METHOD putFileRootProductImage( hProductImage ) CLASS TComercioProduct
 
          ::oImageProductDatabase():skip()
 
-      end if 
+      end while
 
    end if
 

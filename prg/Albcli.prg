@@ -1968,6 +1968,8 @@ STATIC FUNCTION CloseFiles()
    oCentroCoste   := nil
    oFraPub        := nil
 
+   nView          := nil
+
    lOpenFiles     := .f.
 
    oWndBrw        := nil

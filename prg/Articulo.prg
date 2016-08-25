@@ -18208,42 +18208,42 @@ Static Function EdtImg( aTmp, aGet, dbfTmpImg, oBrw, aArt, bValid, nMode )
          OF          fldGeneral
 
       REDEFINE CHECKBOX aTmp[ ( dbfTmpImg )->( fieldpos( "lDefImg" ) ) ] ;
-         ID       130 ;
-         WHEN     ( nMode != ZOOM_MODE .and. !aTmp[ ( dbfTmpImg )->( FieldPos( "lDefImg" ) ) ] ) ;
-         OF       fldGeneral
+         ID          130 ;
+         WHEN        ( nMode != ZOOM_MODE .and. !aTmp[ ( dbfTmpImg )->( FieldPos( "lDefImg" ) ) ] ) ;
+         OF          fldGeneral
 
       REDEFINE IMAGE oImgBmp ADJUST ;
-         ID       110 ;
-         OF       fldGeneral ;
-         FILE     cFileBmpName( aTmp[ ( dbfTmpImg )->( FieldPos( "cImgArt" ) ) ] )
+         ID          110 ;
+         OF          fldGeneral ;
+         FILE        cFileBmpName( aTmp[ ( dbfTmpImg )->( FieldPos( "cImgArt" ) ) ] )
 
       oImgBmp:SetColor( , GetSysColor( 15 ) )
       oImgBmp:bLClicked := {|| ShowImage( oImgBmp ) }
       oImgBmp:bRClicked := {|| ShowImage( oImgBmp ) }
 
       REDEFINE BUTTON ;
-         ID       3 ;
-         OF       fldGeneral ;
-         ACTION   ( ShowImage( oImgBmp ) )
+         ID          3 ;
+         OF          fldGeneral ;
+         ACTION      ( ShowImage( oImgBmp ) )
 
       REDEFINE GET aTmp[ ( dbfTmpImg )->( FieldPos( "cHtmArt" ) ) ] ;
-         ID       100 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldPrecios
+         ID          100 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          fldPrecios
 
       REDEFINE BUTTON ;
-         ID       IDOK ;
-         OF       oDlg ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( EndEdtImg( aTmp, dbfTmpImg, oBrw, nMode, oDlg ) )
+         ID          IDOK ;
+         OF          oDlg ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         ACTION      ( EndEdtImg( aTmp, dbfTmpImg, oBrw, nMode, oDlg ) )
 
       REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-         OF       oDlg ;
+         ID          IDCANCEL ;
+         OF          oDlg ;
          CANCEL ;
-         ACTION   ( oDlg:end() )
+         ACTION      ( oDlg:end() )
 
-      oDlg:bStart := {|| oImgArt:SetFocus() }
+      oDlg:bStart    := {|| oImgArt:SetFocus() }
 
    if nMode != ZOOM_MODE
       oDlg:AddFastKey( VK_F5, {|| EndEdtImg( aTmp, dbfTmpImg, oBrw, nMode, oDlg ) } )

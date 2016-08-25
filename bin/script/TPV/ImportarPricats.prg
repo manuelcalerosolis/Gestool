@@ -24,10 +24,10 @@ static hCodigoBarras
 static dbfArticulo
 static dbfCodebar
 static dbfFamilia
-static dbfPropieades
 static dbfCategorias
 static dbfTipoArticulo
 static dbfTemporadaArticulo
+static dbfPropiedades
 
 //---------------------------------------------------------------------------//
 
@@ -46,11 +46,11 @@ Function ImportaXmlBestseller()
    if !lAIS() ; ordListAdd( ( cPatArt() + "ArtCodebar.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
    ( dbfCodebar )->( ordSetFocus( "cArtBar" ) )
 
+   dbUseArea( .t., ( cDriver() ), ( cPatArt() + "ArtDiv.Dbf" ), ( cCheckArea( "ArtDiv", @dbfPropiedades ) ), .t., .f. )
+   if !lAIS() ; ordListAdd( ( cPatArt() + "ArtDiv.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
    dbUseArea( .t., ( cDriver() ), ( cPatArt() + "Familias.Dbf" ), ( cCheckArea( "Familias", @dbfFamilia ) ), .t., .f. )
    if !lAIS() ; ordListAdd( ( cPatArt() + "Familias.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., ( cDriver() ), cPatArt() + "Pro.Dbf", cCheckArea( "Pro", @dbfPropieades ), .t., .f. )
-   if !lAIS() ; ordListAdd( ( cPatArt() + "Pro.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., ( cDriver() ), cPatArt() + "Categorias.Dbf", cCheckArea( "Categorias", @dbfCategorias ), .t., .f. )
    if !lAIS() ; ordListAdd( ( cPatArt() + "Categorias.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
@@ -66,8 +66,8 @@ Function ImportaXmlBestseller()
    if !Empty( aXmlDocuments )
       for each cDocumentXml in aXmlDocuments
          if msgyesno( "procesando fichero " + alltrim( str( hb_enumindex())) + " de " + alltrim( str( len( aXmlDocuments))), "¿Desea continuar?" )
-	        proccessXml( cDocumentXml[ 1 ] ) 
-	        moveXml( cDocumentXml[ 1 ] )
+           proccessXml( cDocumentXml[ 1 ] ) 
+           moveXml( cDocumentXml[ 1 ] )
          else
             exit
          end if 
@@ -79,10 +79,10 @@ Function ImportaXmlBestseller()
    ( dbfArticulo           )->( dbCloseArea() )
    ( dbfCodebar            )->( dbCloseArea() )
    ( dbfFamilia            )->( dbCloseArea() )
-   ( dbfPropieades         )->( dbCloseArea() )
    ( dbfCategorias         )->( dbCloseArea() )
    ( dbfTipoArticulo       )->( dbCloseArea() )
    ( dbfTemporadaArticulo  )->( dbCloseArea() ) 
+   ( dbfPropiedades        )->( dbCloseArea() )
 
    msgStop( "Proceso finalizado :)")
 
@@ -286,7 +286,7 @@ Static Function IteratorCodebarArticulo( oXmlNode )
             oNode                 := TXMLIteratorScan():New( oPhysicalAttribute ):Find( "ns0:ColourName" )
             if !Empty( oNode )
                if !hHasKey( hCodigoBarras, "Color")
-                  hSet( hCodigoBarras, "Color", oNode:cData )
+                  hSet( hCodigoBarras, "Color", upper( oNode:cData ) )
                end if 
             end if 
 
@@ -317,16 +317,29 @@ Return ( nil )
 
 Static Function ProccessArticulo()
 
-   local n
-   local lAppend
    local cCodigo
-   local hCodigoBarras
 
    if empty( hArticulo )
       Return ( nil )
    end if
 
    cCodigo                       := Padr( hGet( hArticulo, "Codigo"), 18 )
+
+   processMain( cCodigo )
+
+   processCodigoBarras( cCodigo)
+
+   processProperties( cCodigo )
+
+   edtArticulo( cCodigo )
+
+Return ( nil )   
+
+//---------------------------------------------------------------------------//
+
+Static Function processMain( cCodigo )
+
+   local lAppend
 
    lAppend                       := !( dbfArticulo )->( dbSeek( cCodigo ) )
 
@@ -356,6 +369,15 @@ Static Function ProccessArticulo()
    
    end if
 
+Return ( nil )   
+
+//---------------------------------------------------------------------------//
+
+Function processCodigoBarras( cCodigo)
+
+   local lAppend
+   local hCodigoBarras
+
    for each hCodigoBarras in aCodigoBarras
 
       lAppend                    := !( dbfCodebar )->( dbSeek( cCodigo + hGet( hCodigoBarras, "Codigo" ) ) )
@@ -366,8 +388,8 @@ Static Function ProccessArticulo()
          ( dbfCodebar )->cCodBar := hGet( hCodigoBarras, "Codigo" )
          ( dbfCodebar )->cCodPr1 := "001"
          ( dbfCodebar )->cCodPr2 := "003"
-         ( dbfCodebar )->cValPr1 := hGet( hCodigoBarras, "Talla" )
-         ( dbfCodebar )->cValPr2 := hGet( hCodigoBarras, "Color" )
+         ( dbfCodebar )->cValPr1 := upper( hGet( hCodigoBarras, "Talla" ) )
+         ( dbfCodebar )->cValPr2 := upper( hGet( hCodigoBarras, "Color" ) )
  
          ( dbfCodebar )->( dbUnlock() )
 
@@ -375,7 +397,34 @@ Static Function ProccessArticulo()
 
    next 
 
-   edtArticulo( cCodigo )
+Return ( nil )   
+
+//---------------------------------------------------------------------------//
+
+Function processProperties( cCodigo )
+
+   local hCodigoBarras
+
+   while ( dbfPropiedades )->( dbSeek( cCodigo ) ) .and. !( dbfPropiedades )->( eof() )
+      ( dbfPropiedades )->( dbdelete() )
+   end while
+
+  for each hCodigoBarras in aCodigoBarras
+
+      if dbDialogLock( dbfPropiedades, .t. )
+
+         ( dbfPropiedades )->cCodArt := hGet( hArticulo, "Codigo" )
+         ( dbfPropiedades )->cCodBar := hGet( hCodigoBarras, "Codigo" )
+         ( dbfPropiedades )->cCodPr1 := "001"
+         ( dbfPropiedades )->cCodPr2 := "003"
+         ( dbfPropiedades )->cValPr1 := upper( hGet( hCodigoBarras, "Talla" ) )
+         ( dbfPropiedades )->cValPr2 := upper( hGet( hCodigoBarras, "Color" ) )
+ 
+         ( dbfPropiedades )->( dbUnlock() )
+
+      end if 
+
+   next 
 
 Return ( nil )   
 
