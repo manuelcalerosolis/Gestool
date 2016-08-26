@@ -190,184 +190,188 @@ RETURN NIL
 
 //----------------------------------------------------------------------------//
 
-STATIC FUNCTION EdtRec( aTmp, aGet, dbfProT, oWndBrw, bWhen, bValid, nMode )
+STATIC FUNCTION EdtRec( aTmp, aGet, dbfProT, oWndBrw, cPrp, cKey, nMode )
 
    local oDlg
    local oBrw
 
-   if BeginTrans( aTmp, nMode, ( dbfProT )->cCodPro )
+   if !( BeginTrans( aTmp, nMode, ( dbfProT )->cCodPro ) )
+      Return .f.
+   end if 
 
-      DEFINE DIALOG oDlg RESOURCE "PROP" TITLE LblTitle( nMode ) + "propiedades"
+   DEFINE DIALOG oDlg RESOURCE "PROP" TITLE LblTitle( nMode ) + "propiedades"
 
-         REDEFINE GET aGet[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ] ;
-            VAR      aTmp[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ] ;
-            UPDATE ;
-            ID       100 ;
-            WHEN     ( nMode == APPD_MODE ) ;
-            VALID    ( !Empty( aTmp[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ] ) .and. NotValid( aGet[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ], dbfProT ) ) ;
-            PICTURE  "@!" ;
-            OF       oDlg
+      REDEFINE GET   aGet[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ] ;
+         VAR         aTmp[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ] ;
+         UPDATE ;
+         ID          100 ;
+         WHEN        ( nMode == APPD_MODE ) ;
+         VALID       ( !Empty( aTmp[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ] ) .and. NotValid( aGet[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ], dbfProT ) ) ;
+         PICTURE     "@!" ;
+         OF          oDlg
 
-         REDEFINE GET aGet[ ( dbfProT )->( FieldPos( "cDesPro" ) ) ] ;
-            VAR      aTmp[ ( dbfProT )->( FieldPos( "cDesPro" ) ) ] ;
-            UPDATE ;
-            ID       110 ;
-            WHEN     ( nMode != ZOOM_MODE ) ;
-            OF       oDlg
+      REDEFINE GET   aGet[ ( dbfProT )->( FieldPos( "cDesPro" ) ) ] ;
+         VAR         aTmp[ ( dbfProT )->( FieldPos( "cDesPro" ) ) ] ;
+         UPDATE ;
+         ID          110 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          oDlg
 
-         REDEFINE GET aGet[ ( dbfProT )->( FieldPos( "cNomInt" ) ) ] ;
-            VAR      aTmp[ ( dbfProT )->( FieldPos( "cNomInt" ) ) ] ;
-            UPDATE ;
-            ID       160 ;
-            WHEN     ( nMode != ZOOM_MODE ) ;
-            OF       oDlg
+      REDEFINE GET   aGet[ ( dbfProT )->( FieldPos( "cNomInt" ) ) ] ;
+         VAR         aTmp[ ( dbfProT )->( FieldPos( "cNomInt" ) ) ] ;
+         UPDATE ;
+         ID          160 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          oDlg
 
-         REDEFINE CHECKBOX aTmp[ ( dbfProT )->( FieldPos( "lPubInt" ) ) ] ;
-            ID       150 ;
-            WHEN     ( nMode != ZOOM_MODE ) ;
-            ON CHANGE( ChangePublicar( aTmp ) ) ;
-            OF       oDlg
+      REDEFINE CHECKBOX aTmp[ ( dbfProT )->( FieldPos( "lPubInt" ) ) ] ;
+         ID       150 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ON CHANGE( ChangePublicar( aTmp ) ) ;
+         OF       oDlg
 
-         REDEFINE CHECKBOX aTmp[ ( dbfProT )->( FieldPos( "lColor" ) ) ] ;
-            ID       200 ;
-            WHEN     ( nMode != ZOOM_MODE ) ;
-            OF       oDlg
+      REDEFINE CHECKBOX aTmp[ ( dbfProT )->( FieldPos( "lColor" ) ) ] ;
+         ID       200 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
 
-         oBrw                 := IXBrowse():New( oDlg )
+      oBrw                 := IXBrowse():New( oDlg )
 
-         oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-         oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-         oBrw:cAlias          := dbfTmpProL
-         oBrw:nMarqueeStyle   := 5
+      oBrw:cAlias          := dbfTmpProL
+      oBrw:nMarqueeStyle   := 5
 
-         with object ( oBrw:AddCol() )
-            :cHeader          := "Código"
-            :cSortOrder       := "cCodTbl"
-            :bEditValue       := {|| ( dbfTmpProL )->cCodTbl }
-            :nWidth           := 160
-         end with
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCodTbl"
+         :bEditValue       := {|| ( dbfTmpProL )->cCodTbl }
+         :nWidth           := 160
+      end with
 
-         with object ( oBrw:AddCol() )
-            :cHeader          := "Nombre"
-            :cSortOrder       := "cDesTbl"
-            :bEditValue       := {|| ( dbfTmpProL )->cDesTbl }
-            :nWidth           := 250
-         end with
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cDesTbl"
+         :bEditValue       := {|| ( dbfTmpProL )->cDesTbl }
+         :nWidth           := 250
+      end with
 
-         with object ( oBrw:AddCol() )
-            :cHeader          := "Orden"
-            :cSortOrder       := "nOrdTbl"
-            :bEditValue       := {|| ( dbfTmpProL )->nOrdTbl }
-            :cEditPicture     := "9999"
-            :nWidth           := 50
-            :nDataStrAlign    := AL_RIGHT
-            :nHeadStrAlign    := AL_RIGHT
-         end with
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Orden"
+         :cSortOrder       := "nOrdTbl"
+         :bEditValue       := {|| ( dbfTmpProL )->nOrdTbl }
+         :cEditPicture     := "9999"
+         :nWidth           := 50
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+      end with
 
-         with object ( oBrw:AddCol() )
-            :cHeader          := "CB"
-            :cSortOrder       := "nBarTbl"
-            :bEditValue       := {|| ( dbfTmpProL )->nBarTbl }
-            :cEditPicture     := "9999"
-            :nWidth           := 50
-            :nDataStrAlign    := AL_RIGHT
-            :nHeadStrAlign    := AL_RIGHT
-            :lHide            := .t.
-         end with
+      with object ( oBrw:AddCol() )
+         :cHeader          := "CB"
+         :cSortOrder       := "nBarTbl"
+         :bEditValue       := {|| ( dbfTmpProL )->nBarTbl }
+         :cEditPicture     := "9999"
+         :nWidth           := 50
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+         :lHide            := .t.
+      end with
 
-         with object ( oBrw:AddCol() )
-            :cHeader          := "Web"
-            :cSortOrder       := "cCodWeb"
-            :bEditValue       := {|| ( dbfTmpProL )->cCodWeb }
-            :cEditPicture     := "9999"
-            :nWidth           := 50
-            :nDataStrAlign    := AL_RIGHT
-            :nHeadStrAlign    := AL_RIGHT
-            :lHide            := .t.
-         end with
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Web"
+         :cSortOrder       := "cCodWeb"
+         :bEditValue       := {|| ( dbfTmpProL )->cCodWeb }
+         :cEditPicture     := "9999"
+         :nWidth           := 50
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+         :lHide            := .t.
+      end with
 
+      oBrw:CreateFromResource( 120 )
 
-         oBrw:CreateFromResource( 120 )
+      oBrw:bLDblClick      := {|| WinEdtRec( oBrw, bEdtDet, dbfTmpProL, aTmp ) } 
+      oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
 
-         oBrw:bLDblClick      := {|| WinEdtRec( oBrw, bEdtDet, dbfTmpProL, aTmp ) }
-         oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
+      REDEFINE BUTTON;
+         ID       500 ;
+         OF       oDlg ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( WinAppRec( oBrw, bEdtDet, dbfTmpProL, aTmp ) )
 
-         REDEFINE BUTTON;
-            ID       500 ;
-            OF       oDlg ;
-            WHEN     ( nMode != ZOOM_MODE ) ;
-            ACTION   ( WinAppRec( oBrw, bEdtDet, dbfTmpProL, aTmp ) )
+      REDEFINE BUTTON;
+         ID       501 ;
+         OF       oDlg ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( WinEdtRec( oBrw, bEdtDet, dbfTmpProL, aTmp ) )
 
-         REDEFINE BUTTON;
-            ID       501 ;
-            OF       oDlg ;
-            WHEN     ( nMode != ZOOM_MODE ) ;
-            ACTION   ( WinEdtRec( oBrw, bEdtDet, dbfTmpProL, aTmp ) )
+      REDEFINE BUTTON;
+         ID       502 ;
+         OF       oDlg ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( DeleteLinea( oBrw ) )
 
-         REDEFINE BUTTON;
-            ID       502 ;
-            OF       oDlg ;
-            WHEN     ( nMode != ZOOM_MODE ) ;
-            ACTION   ( DeleteLinea( oBrw ) )
+      REDEFINE BUTTON;
+         ID       503 ;
+         OF       oDlg ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( UpDet( oBrw ) )
 
-         REDEFINE BUTTON;
-            ID       503 ;
-            OF       oDlg ;
-            WHEN     ( nMode != ZOOM_MODE ) ;
-            ACTION   ( UpDet( oBrw ) )
+      REDEFINE BUTTON;
+         ID       504 ;
+         OF       oDlg ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( DownDet( oBrw ) )
 
-         REDEFINE BUTTON;
-            ID       504 ;
-            OF       oDlg ;
-            WHEN     ( nMode != ZOOM_MODE ) ;
-            ACTION   ( DownDet( oBrw ) )
+      REDEFINE BUTTON oBtnAceptarActualizarWeb ;
+         ID       505 ;
+         OF       oDlg ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( EndTrans( aTmp, aGet, nMode, oDlg, .t. ) )
 
-         REDEFINE BUTTON oBtnAceptarActualizarWeb ;
-            ID       505 ;
-            OF       oDlg ;
-            WHEN     ( nMode != ZOOM_MODE ) ;
-            ACTION   ( EndTrans( aTmp, aGet, nMode, oDlg, .t. ) )
+      REDEFINE BUTTON;
+         ID       IDOK ;
+         OF       oDlg ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( EndTrans( aTmp, aGet, nMode, oDlg ) )
 
-         REDEFINE BUTTON;
-            ID       IDOK ;
-            OF       oDlg ;
-            WHEN     ( nMode != ZOOM_MODE ) ;
-            ACTION   ( EndTrans( aTmp, aGet, nMode, oDlg ) )
+      REDEFINE BUTTON ;
+         ID       IDCANCEL ;
+         OF       oDlg ;
+         CANCEL ;
+         ACTION   ( oDlg:end() )
 
-         REDEFINE BUTTON ;
-            ID       IDCANCEL ;
-            OF       oDlg ;
-            CANCEL ;
-            ACTION   ( oDlg:end() )
+      if nMode != ZOOM_MODE
 
-         if nMode != ZOOM_MODE
-            oDlg:AddFastKey( VK_F2, {|| WinAppRec( oBrw, bEdtDet, dbfTmpProL, aTmp ) } )
-            oDlg:AddFastKey( VK_F3, {|| WinEdtRec( oBrw, bEdtDet, dbfTmpProL, aTmp ) } )
-            oDlg:AddFastKey( VK_F4, {|| DelDet( oBrw ) } )
-            oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, nMode, oDlg ) } )
-            
-            if uFieldEmpresa( "lRealWeb" )
-               oDlg:AddFastKey( VK_F6, {|| EndTrans( aTmp, aGet, nMode, oDlg, .t. ) } )
-            end if
-
+         oDlg:AddFastKey( VK_F2, {|| WinAppRec( oBrw, bEdtDet, dbfTmpProL, aTmp ) } )
+         oDlg:AddFastKey( VK_F3, {|| WinEdtRec( oBrw, bEdtDet, dbfTmpProL, aTmp ) } )
+         oDlg:AddFastKey( VK_F4, {|| DelDet( oBrw ) } )
+         oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, nMode, oDlg ) } )
+         
+         if uFieldEmpresa( "lRealWeb" )
+            oDlg:AddFastKey( VK_F6, {|| EndTrans( aTmp, aGet, nMode, oDlg, .t. ) } )
          end if
 
-         oDlg:AddFastKey ( VK_F1, {|| ChmHelp( "Propiedades_de_articulos" ) } )
+      end if
 
-         oDlg:bStart := {|| StartEdtRec( aGet ) }
+      oDlg:AddFastKey ( VK_F1, {|| ChmHelp( "Propiedades_de_articulos" ) } )
 
-      ACTIVATE DIALOG oDlg CENTER
+      oDlg:bStart := {|| StartEdtRec( aGet, cPrp, cKey ) }
 
-      KillTrans()
+   ACTIVATE DIALOG oDlg CENTER
 
-   end if
+   KillTrans()
 
 RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-Static Function StartEdtRec( aGet )
+Static Function StartEdtRec( aGet, cPrp, cKey )
+
+   if !empty( cKey )
+      dbseekinord( cKey, "cCodTbl", dbfTmpProL ) 
+   end if
 
    aGet[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ]:SetFocus() 
 
@@ -460,29 +464,33 @@ STATIC FUNCTION BeginTrans( aTmp, nMode, cCodPro )
    if !( dbfTmpProL )->( neterr() )
 
       ( dbfTmpProL )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
-      ( dbfTmpProL )->( OrdCreate( cTmpProLin, "nOrdTbl", "Str( Field->nOrdTbl )", {|| Str( Field->nOrdTbl ) } ) )
-
-      ( dbfTmpProL )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpProL )->( OrdCreate( cTmpProLin, "cCodTbl", "Field->cCodTbl", {|| Field->cCodTbl } ) )
 
       ( dbfTmpProL )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpProL )->( OrdCreate( cTmpProLin, "cDesTbl", "Field->cDesTbl", {|| Field->cDesTbl } ) )
 
       ( dbfTmpProL )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpProL )->( OrdCreate( cTmpProLin, "nOrdTbl", "Str( Field->nOrdTbl )", {|| Str( Field->nOrdTbl ) } ) )
+
+      ( dbfTmpProL )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpProL )->( OrdCreate( cTmpProLin, "nBarTbl", "Field->nBarTbl", {|| Field->nBarTbl } ) )
 
-      ( dbfTmpProL )->( OrdSetFocus( "nOrdTbl" ) )
+      ( dbfTmpProL )->( OrdSetFocus( "cCodTbl" ) )
 
-      nOrdAnt           := ( dbfProL )->( OrdSetFocus( 1 ) )
+      nOrdAnt        := ( dbfProL )->( OrdSetFocus( 1 ) )
 
       if nMode != APPD_MODE .and. ( dbfProL )->( dbSeek( cCodPro ) )
 
          while ( dbfProL )->cCodPro == cCodPro .and. !( dbfProL )->( eof() )
+
             dbPass( dbfProL, dbfTmpProL, .t. )
-            if Empty( ( dbfTmpProL )->nOrdTbl )
+         
+            if empty( ( dbfTmpProL )->nOrdTbl )
                ( dbfTmpProL )->nOrdTbl := ( dbfTmpProL )->( Recno() )
             end if
+         
            ( dbfProL )->( dbSkip() )
+         
          end while
 
       end if
@@ -1658,6 +1666,7 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
    local oDlg
    local oBrw
    local lRet        := .f.
+   local cKey        
    local oBlock
    local oError
    local cTitle      := ""
@@ -1688,6 +1697,7 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
 
    // Titulo del dialogo-------------------------------------------------------
 
+   cKey              := oGet:varget()
    cTitle            := "Seleccionar propiedad : " + retProp( cPrp, dbfProT )
 
    // Creacion de una dbf temporal---------------------------------------------
@@ -1695,6 +1705,10 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
    ( dbfProL )->( ordScope( 0, cPrp ) )
    ( dbfProL )->( ordScope( 1, cPrp ) )
    ( dbfProL )->( dbGoTop() )
+
+   // Posicionamiento----------------------------------------------------------
+
+   ( dbfProL )->( dbseek( alltrim( cPrp + cKey ), .t. ) )
 
    // Mostramos el dialogo-----------------------------------------------------
 
@@ -1754,7 +1768,7 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
       REDEFINE BUTTON ;
          ID       501 ;
          OF       oDlg ;
-         ACTION   ( WinEdtRec( oBrw, bEdit, dbfProT ) )
+         ACTION   ( WinEdtRec( oBrw, bEdit, dbfProT, cPrp, cKey ) )
 
       REDEFINE BUTTON ;
          ID       IDOK ;
@@ -1766,7 +1780,7 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
          OF       oDlg ;
          ACTION   ( oDlg:end() )
 
-      oDlg:AddFastKey( VK_F3,       {|| WinEdtRec( oBrw, bEdit, dbfProT ) } )
+      oDlg:AddFastKey( VK_F3,       {|| WinEdtRec( oBrw, bEdit, dbfProT, cPrp, cKey ) } )
       oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
       oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
 
@@ -2472,7 +2486,7 @@ Static Function Actualizaweb( cCodPrp, lActualizaweb )
 
       if lPubPrp()
 
-         with object ( TComercio():New())    
+         with object ( TComercio():New() )    
             :ActualizaPropiedadesPrestashop( cCodPrp, nTipoActualizacionLineas )
          end with  
 
@@ -2719,8 +2733,6 @@ Function setValuesPropertiesTable( dbfLines, oBrw )
    local oProperties
    local aProperties
 
-   msgAlert( "setValuesPropertiesTable")
-
    for each aProperties in ( oBrw:Cargo )
       
       for each oProperties in aProperties
@@ -2731,8 +2743,6 @@ Function setValuesPropertiesTable( dbfLines, oBrw )
             alltrim( oProperties:cValorPropiedad2 ) == alltrim( ( dbfLines )->cValPr2 )  
 
             oProperties:Value := ( dbfLines )->nUniCaja
-
-            debug( oProperties )
 
          end if 
       
