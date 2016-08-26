@@ -61,10 +61,18 @@ METHOD New( nView )
             
    ::MessageID                := alltrim( ( D():Articulos( ::nView ) )->Codigo )
    ::Skuparent                := alltrim( ( D():Articulos( ::nView ) )->Codigo )
-   ::StandardPrice            := ""
+
+/* msgalert( ( D():Articulos( ::nView ) )->( dbSeek( ( D():Articulos( ::nView ) )->Codigo ) ), "Busqueda" )
+msgalert( ( dbSeek( ( D():Articulos( ::nView ) )->Codigo ) ), "dbSeek" )
+msgalert( ( D():Articulos( ::nView ) )->nImpIva1, "D():" )
+
+if ( D():Articulos( ::nView ) )->( dbSeek( ( D():Articulos( ::nView ) )->Codigo ) )
+   ::StandardPrice            := ( D():Articulos( ::nView ) )->nImpIva1 
+end if
+*/
    ::StartDate                := ""  
    ::EndDate                  := "" 
-   ::SalePrice                := ""
+   ::SalePrice                := "" 
 
 Return ( self )
 

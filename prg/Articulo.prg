@@ -4954,7 +4954,7 @@ static function ImportaImagenes( aTmp, oBrwImg )
       Buscamos para ver si ya está introducida ésta imagen, para que no se repitan
       */
 
-      ( dbfTmpImg )->( __dbLocate( { || alltrim( upper( ( dbfImg )->cImgArt ) == cImage ) } ) )
+      ( dbfTmpImg )->( __dbLocate( { || alltrim( upper( ( D():ArticuloImagenes( nView ) )->cImgArt ) == cImage ) } ) )
       if !( dbfTmpImg )->( found() )
 
          ( dbfTmpImg )->( dbAppend() )
@@ -5615,7 +5615,7 @@ Static Function BeginTrans( aTmp, nMode )
 
    if nMode != APPD_MODE .and. ( dbfImg )->( dbSeek( cCodArt ) )
       
-      while ( dbfImg )->cCodArt == cCodArt .and. !( dbfImg )->( eof() )
+      while ( D():ArticuloImagenes( nView ) )->cCodArt == cCodArt .and. !( D():ArticuloImagenes( nView ) )->( eof() )
          
          /*
          Metemos las imágenes en un array para las propiedades-----------------
@@ -5623,8 +5623,8 @@ Static Function BeginTrans( aTmp, nMode )
 
          oTemporal                     := SImagenes()
          oTemporal:lSelect             := .f.
-         oTemporal:Ruta                := ( dbfImg )->cImgArt
-         oTemporal:ToolTip             := ( dbfImg )->cNbrArt
+         oTemporal:Ruta                := ( D():ArticuloImagenes( nView ) )->cImgArt
+         oTemporal:ToolTip             := ( D():ArticuloImagenes( nView ) )->cNbrArt
 
          aAdd( aImgsArticulo, oTemporal )
 
@@ -8772,7 +8772,7 @@ Function cImgArticulo( aTmp )
    if !Empty ( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cImagen" ) ) ] )
       cImagenArt  := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cImagen" ) ) ]
    else
-      cImagenArt  := cFirstImage( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ], dbfImg )
+      cImagenArt  := cFirstImage( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ], D():ArticuloImagenes( nView ) )
    end if
 
    if Empty( GetPath( cImagenArt ) )
@@ -12363,7 +12363,7 @@ function SynArt( cPath )
 
          if !empty( ( dbfArt )->cImagenWeb )
 
-            ( dbfImg )->( __dbLocate( { || alltrim( upper( ( dbfArt )->cImagenWeb ) ) == alltrim( upper( ( dbfImg )->cImgArt ) ) } ) )
+            ( dbfImg )->( __dbLocate( { || alltrim( upper( ( dbfArt )->cImagenWeb ) ) == alltrim( upper( ( D():ArticuloImagenes( nView ) )->cImgArt ) ) } ) )
             if !( dbfImg )->( found() )
 
                ( dbfImg )->( dbAppend() )
