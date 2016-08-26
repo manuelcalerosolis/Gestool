@@ -739,7 +739,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
 
    DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( TLabelGeneratorAlbaranProveedores():New( nView ):Dialog() ) ;
+         ACTION   ( TLabelGeneratorAlbaranProveedores():New( nView, oNewImp ):Dialog() ) ;
          TOOLTIP  "Eti(q)uetas" ;
          HOTKEY   "Q";
          LEVEL    ACC_IMPR
@@ -1114,6 +1114,8 @@ STATIC FUNCTION CloseFiles()
    oWndBrw     := nil
 
    oNewImp     := nil
+
+   nView       := nil
 
    EnableAcceso()
 
@@ -10366,7 +10368,7 @@ Function DesignLabelAlbaranProveedor( oFr, cDbfDoc )
       Return .f.
    endif
 
-   oLabel            := TLabelGeneratorAlbaranProveedores():New( nView )
+   oLabel            := TLabelGeneratorAlbaranProveedores():New( nView, oNewImp )
 
    // Zona de datos---------------------------------------------------------
    

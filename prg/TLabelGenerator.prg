@@ -2284,7 +2284,9 @@ Return ( nil )
 
 CLASS TLabelGeneratorAlbaranProveedores FROM TLabelGenerator
 
-   METHOD New( nView )
+   data newImp
+
+   METHOD New( nView, oNewImp )
 
    METHOD loadTempLabelEdition() 
    
@@ -2294,7 +2296,7 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( nView ) CLASS TLabelGeneratorAlbaranProveedores
+METHOD New( nView, oNewImp ) CLASS TLabelGeneratorAlbaranProveedores
 
    ::cSerieInicio       := ( D():AlbaranesProveedores( nView ) )->cSerAlb
    ::cSerieFin          := ( D():AlbaranesProveedores( nView ) )->cSerAlb
@@ -2317,6 +2319,8 @@ METHOD New( nView ) CLASS TLabelGeneratorAlbaranProveedores
    ::aStructureField    := aSqlStruct( aColAlbPrv() )
 
    ::nView              := nView 
+
+   ::newImp             := oNewImp
 
    ::Super:New() 
 
@@ -2435,8 +2439,8 @@ METHOD dataLabel( oFr ) CLASS TLabelGeneratorAlbaranProveedores
    oFr:SetWorkArea(     "Unidades de medición",  D():GetObject( "UnidadMedicion", ::nView ):Select() )
    oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( D():GetObject( "UnidadMedicion", ::nView ):oDbf) )
 
-   oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( ::nView ):Select() )
-   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( ::nView ):oDbf) )
+   oFr:SetWorkArea(     "Impuestos especiales",  ::newImp:Select() )
+   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( ::newImp:oDbf ) )
    
    oFr:SetMasterDetail( "Lineas de albaranes", "Albaranes",                  {|| ( ::tmpLabelReport )->cSerAlb + Str( ( ::tmpLabelReport )->nNumAlb ) + ( ::tmpLabelReport )->cSufAlb } )
    oFr:SetMasterDetail( "Lineas de albaranes", "Artículos",                  {|| ( ::tmpLabelReport )->cRef } )
@@ -2479,6 +2483,8 @@ Return nil
 
 CLASS TLabelGeneratorFacturaProveedores FROM TLabelGenerator
 
+   data newImp 
+
    METHOD New( nView )
 
    METHOD loadTempLabelEdition() 
@@ -2489,7 +2495,7 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( nView ) CLASS TLabelGeneratorFacturaProveedores
+METHOD New( nView, oNewImp ) CLASS TLabelGeneratorFacturaProveedores
 
    ::cSerieInicio       := ( D():FacturasProveedores( nView ) )->cSerFac
    ::cSerieFin          := ( D():FacturasProveedores( nView ) )->cSerFac
@@ -2511,7 +2517,8 @@ METHOD New( nView ) CLASS TLabelGeneratorFacturaProveedores
 
    ::aStructureField    := aSqlStruct( aColFacPrv() )
 
-   ::nView              := nView 
+   ::nView              := nView
+   ::newImp             := oNewImp
 
    ::Super:New() 
 
@@ -2630,8 +2637,11 @@ METHOD dataLabel( oFr ) CLASS TLabelGeneratorFacturaProveedores
    oFr:SetWorkArea(     "Unidades de medición",  D():GetObject( "UnidadMedicion", ::nView ):Select() )
    oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( D():GetObject( "UnidadMedicion", ::nView ):oDbf) )
 
-   oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( ::nView ):Select() )
-   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( ::nView ):oDbf) )
+   //oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( ::nView ):Select() )
+   //oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( ::nView ):oDbf) )
+
+   oFr:SetWorkArea(     "Impuestos especiales",  ::newImp:Select() )
+   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( ::newImp:oDbf ) )
    
    oFr:SetMasterDetail( "Lineas de facturas", "Facturas",                  {|| ( ::tmpLabelReport )->cSerFac + Str( ( ::tmpLabelReport )->nNumFac ) + ( ::tmpLabelReport )->cSufFac } )
    oFr:SetMasterDetail( "Lineas de facturas", "Artículos",                 {|| ( ::tmpLabelReport )->cRef } )

@@ -604,8 +604,9 @@ Static Function CloseFiles()
       oCentroCoste:CloseFiles()
    end if
 
-
    TComercio():endInstance()
+
+   nView       := nil
 
    EnableAcceso()
 
@@ -1042,7 +1043,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
 
    DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( TLabelGeneratorFacturaProveedores():New( nView ):Dialog() ) ;
+      ACTION   ( TLabelGeneratorFacturaProveedores():New( nView, oNewImp ):Dialog() ) ;
       TOOLTIP  "Eti(q)uetas" ;
       HOTKEY   "Q";
       LEVEL    ACC_IMPR
@@ -12277,7 +12278,7 @@ Function DesignLabelFacturaProveedor( oFr, cDbfDoc )
       Return .f.
    endif
 
-   oLabel            := TLabelGeneratorFacturaProveedores():New( nView )
+   oLabel            := TLabelGeneratorFacturaProveedores():New( nView, oNewImp )
 
    // Zona de datos---------------------------------------------------------
    
