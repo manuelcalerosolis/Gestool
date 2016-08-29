@@ -161,6 +161,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
       INDEX TO ( cFileName )  TAG "cCodTmp"  ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd + cCodTmp"           NODELETED OF oDbf       
       INDEX TO ( cFileName )  TAG "cCodFab"  ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd + cCodFab"           NODELETED OF oDbf       
       INDEX TO ( cFileName )  TAG "nTipArt"  ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd + Str( nTipArt, 1 )" NODELETED OF oDbf
+      INDEX TO ( cFileName )  TAG "iNumOrd"  ON "'07' + cSerOrd + Str( nNumOrd, 9 ) + cSufOrd"              NODELETED OF oDbf
       INDEX TO ( cFileName )  TAG "cStkFast" ON "cCodArt + cAlmOrd + dtos( dFecOrd ) + cHorIni + cValPr1 + cValPr2 + cLote";
                                                                                                             NODELETED DESCENDING OF oDbf
 
