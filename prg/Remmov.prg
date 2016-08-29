@@ -2360,8 +2360,8 @@ METHOD ImportAlmacen( nMode, oDlg ) CLASS TRemMovAlm
          WHEN     ( !::lArticulo ) ;
          OF       ::oDlgImport ;
 
-      ::oArticuloInicio:bValid    := {|| cArticulo( ::oArticuloInicio, ::oArt:cAlias, ::oArticuloInicio:oHelpText ) }
-      ::oArticuloInicio:bHelp     := {|| brwArticulo( ::oArticuloInicio, ::oArticuloInicio:oHelpText ) }
+      ::oArticuloInicio:bValid         := {|| cArticulo( ::oArticuloInicio, ::oArt:cAlias, ::oArticuloInicio:oHelpText ) }
+      ::oArticuloInicio:bHelp          := {|| brwArticulo( ::oArticuloInicio, ::oArticuloInicio:oHelpText ) }
 
       REDEFINE GET ::oArticuloFin VAR ::cArticuloFin ;
          ID       330 ;
@@ -2370,8 +2370,8 @@ METHOD ImportAlmacen( nMode, oDlg ) CLASS TRemMovAlm
          WHEN     ( !::lArticulo ) ;
          OF       ::oDlgImport ;
 
-      ::oArticuloFin:bValid       := {|| cArticulo( ::oArticuloFin, ::oArt:cAlias, ::oArticuloFin:oHelpText ) }
-      ::oArticuloFin:bHelp        := {|| brwArticulo( ::oArticuloFin, ::oArticuloFin:oHelpText ) }
+      ::oArticuloFin:bValid            := {|| cArticulo( ::oArticuloFin, ::oArt:cAlias, ::oArticuloFin:oHelpText ) }
+      ::oArticuloFin:bHelp             := {|| brwArticulo( ::oArticuloFin, ::oArticuloFin:oHelpText ) }
 
       REDEFINE APOLOMETER ::oMtrStock ;
          VAR      ::nMtrStock ;
@@ -2446,7 +2446,7 @@ METHOD loadAlmacen( nMode ) CLASS TRemMovAlm
                   ::oDetMovimientos:oDbfVir:lSelDoc   := .t.
       
                   ::oDetMovimientos:oDbfVir:cRefMov   := sStkAlm:cCodigo
-                  ::oDetMovimientos:oDbfVir:cNomMov   := RetArticulo( sStkAlm:cCodigo, ::oArt:cAlias )
+                  ::oDetMovimientos:oDbfVir:cNomMov   := retArticulo( sStkAlm:cCodigo, ::oArt:cAlias )
                   ::oDetMovimientos:oDbfVir:cCodPr1   := sStkAlm:cCodigoPropiedad1
                   ::oDetMovimientos:oDbfVir:cCodPr2   := sStkAlm:cCodigoPropiedad2
                   ::oDetMovimientos:oDbfVir:cValPr1   := sStkAlm:cValorPropiedad1
