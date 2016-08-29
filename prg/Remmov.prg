@@ -252,12 +252,11 @@ CLASS TRemMovAlm FROM TMasDet
    METHOD GenerarEtiquetas()
 
    METHOD importarInventario()
+      METHOD porcesarInventario()
+      METHOD showInventarioErrors()
+      METHOD procesarArticuloInventario( cInventario )
 
-   METHOD porcesarInventario()
-
-   METHOD showInventarioErrors()
-
-   METHOD procesarArticuloInventario( cInventario )
+   METHOD allreadyInclude( sStkAlm )
 
    METHOD insertaArticuloRemesaMovimiento( cCodigo, nUnidades )
 
@@ -2437,7 +2436,7 @@ METHOD loadAlmacen( nMode ) CLASS TRemMovAlm
 
          for each sStkAlm in aStkAlm
 
-            if sStkAlm:nUnidades != 0
+            if ::allreadyInclude( sStkAlm ) //  .t. //  sStkAlm:nUnidades != 0
 
                if  ::oDetMovimientos:oDbfVir:Append()
    
@@ -2491,7 +2490,7 @@ METHOD loadAlmacen( nMode ) CLASS TRemMovAlm
                   if !uFieldEmpresa( "lCosAct" )
       
                      nPreMed                          := ::oStock:nPrecioMedioCompra( sStkAlm:cCodigo, cCodAlm, nil, GetSysDate() )
-      
+
                      if nPreMed == 0
                         nPreMed                       := nCosto( sStkAlm:cCodigo, ::oArt:cAlias, ::oArtKit:cAlias )
                      end if
@@ -2635,6 +2634,26 @@ METHOD loadAlmacen( nMode ) CLASS TRemMovAlm
    ::oDlgImport:End()
 
    CursorWE()
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD allreadyInclude( sStkAlm ) CLASS TRemMovAlm
+
+   local aStatus  := ::oDetMovimientos:oDbfVir:getStatus()
+
+   ::oDetMovimientos:oDbfVir:dbgotop()
+
+   while ( !::oDetMovimientos:oDbfVir:eof() )
+
+      if ::oDetMovimientos:oDbfVir:cRefMov  == sStkAlm:cCodigo
+         ::oDetMovimientos:oDbfVir:cCodPr1  == sStkAlm:cCodigoPropiedad1
+         ::oDetMovimientos:oDbfVir:cCodPr2  == sStkAlm:cCodigoPropiedad2
+         ::oDetMovimientos:oDbfVir:cValPr1  == sStkAlm:cValorPropiedad1
+         ::oDetMovimientos:oDbfVir:cValPr2  == sStkAlm:cValorPropiedad2
+         ::oDetMovimientos:oDbfVir:cLote    == sStkAlm:cLote
+
 
 RETURN ( .t. )
 
@@ -3150,7 +3169,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD importarInventario( ) CLASS TRemMovAlm
+METHOD importarInventario() CLASS TRemMovAlm
 
    local oDlg
 
