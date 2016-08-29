@@ -256,7 +256,7 @@ CLASS TRemMovAlm FROM TMasDet
       METHOD showInventarioErrors()
       METHOD procesarArticuloInventario( cInventario )
 
-   METHOD allreadyInclude( sStkAlm )
+   METHOD alreadyInclude( sStkAlm )
 
    METHOD insertaArticuloRemesaMovimiento( cCodigo, nUnidades )
 
@@ -2436,7 +2436,7 @@ METHOD loadAlmacen( nMode ) CLASS TRemMovAlm
 
          for each sStkAlm in aStkAlm
 
-            if ::allreadyInclude( sStkAlm ) //  .t. //  sStkAlm:nUnidades != 0
+            if !( ::alreadyInclude( sStkAlm ) ) //  .t. //  sStkAlm:nUnidades != 0
 
                if  ::oDetMovimientos:oDbfVir:Append()
    
@@ -2639,12 +2639,12 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD allreadyInclude( sStkAlm ) CLASS TRemMovAlm
+METHOD alreadyInclude( sStkAlm ) CLASS TRemMovAlm
 
-   local allreadyInclude   := .f.
-   local aStatus           := ::oDetMovimientos:oDbfVir:getStatus()
+   local alreadyInclude := .f.
+   local aStatus        := ::oDetMovimientos:oDbfVir:getStatus()
 
-   ::oDetMovimientos:oDbfVir:dbgotop()
+   ::oDetMovimientos:oDbfVir:gotop()
 
    while ( !::oDetMovimientos:oDbfVir:eof() )
 
@@ -2655,21 +2655,21 @@ METHOD allreadyInclude( sStkAlm ) CLASS TRemMovAlm
          ::oDetMovimientos:oDbfVir:cValPr2  == sStkAlm:cValorPropiedad2    .and.;
          ::oDetMovimientos:oDbfVir:cLote    == sStkAlm:cLote
 
-         allreadyInclude   := .t.
+         alreadyInclude := .t.
 
          exit
 
       end if 
 
-      ::oDetMovimientos:oDbfVir:Skip()
+      ::oDetMovimientos:oDbfVir:skip()
 
    end while
 
    ::oDetMovimientos:oDbfVir:setStatus( aStatus )
 
-   msgalert( allreadyInclude, "allreadyInclude" )
+   msgalert( alreadyInclude, "alreadyInclude" )
 
-RETURN ( allreadyInclude )
+RETURN ( alreadyInclude )
 
 //---------------------------------------------------------------------------//
 
