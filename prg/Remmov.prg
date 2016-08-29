@@ -2641,21 +2641,35 @@ RETURN ( .t. )
 
 METHOD allreadyInclude( sStkAlm ) CLASS TRemMovAlm
 
-   local aStatus  := ::oDetMovimientos:oDbfVir:getStatus()
+   local allreadyInclude   := .f.
+   local aStatus           := ::oDetMovimientos:oDbfVir:getStatus()
 
    ::oDetMovimientos:oDbfVir:dbgotop()
 
    while ( !::oDetMovimientos:oDbfVir:eof() )
 
-      if ::oDetMovimientos:oDbfVir:cRefMov  == sStkAlm:cCodigo
-         ::oDetMovimientos:oDbfVir:cCodPr1  == sStkAlm:cCodigoPropiedad1
-         ::oDetMovimientos:oDbfVir:cCodPr2  == sStkAlm:cCodigoPropiedad2
-         ::oDetMovimientos:oDbfVir:cValPr1  == sStkAlm:cValorPropiedad1
-         ::oDetMovimientos:oDbfVir:cValPr2  == sStkAlm:cValorPropiedad2
+      if ::oDetMovimientos:oDbfVir:cRefMov  == sStkAlm:cCodigo             .and.;
+         ::oDetMovimientos:oDbfVir:cCodPr1  == sStkAlm:cCodigoPropiedad1   .and.;
+         ::oDetMovimientos:oDbfVir:cCodPr2  == sStkAlm:cCodigoPropiedad2   .and.;
+         ::oDetMovimientos:oDbfVir:cValPr1  == sStkAlm:cValorPropiedad1    .and.;
+         ::oDetMovimientos:oDbfVir:cValPr2  == sStkAlm:cValorPropiedad2    .and.;
          ::oDetMovimientos:oDbfVir:cLote    == sStkAlm:cLote
 
+         allreadyInclude   := .t.
 
-RETURN ( .t. )
+         exit
+
+      end if 
+
+      ::oDetMovimientos:oDbfVir:Skip()
+
+   end while
+
+   ::oDetMovimientos:oDbfVir:setStatus( aStatus )
+
+   msgalert( allreadyInclude, "allreadyInclude" )
+
+RETURN ( allreadyInclude )
 
 //---------------------------------------------------------------------------//
 
