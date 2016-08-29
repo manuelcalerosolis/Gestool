@@ -2436,7 +2436,7 @@ METHOD loadAlmacen( nMode ) CLASS TRemMovAlm
 
          for each sStkAlm in aStkAlm
 
-            if !( ::alreadyInclude( sStkAlm ) ) //  .t. //  sStkAlm:nUnidades != 0
+            if !( ::alreadyInclude( sStkAlm ) ) 
 
                if  ::oDetMovimientos:oDbfVir:Append()
    
@@ -2501,7 +2501,7 @@ METHOD loadAlmacen( nMode ) CLASS TRemMovAlm
    
                   end if
       
-                  ::oDetMovimientos:oDbfVir:nPreDiv    := nPreMed
+                  ::oDetMovimientos:oDbfVir:nPreDiv   := nPreMed
       
                   ::oDetMovimientos:oDbfVir:Save()
       
@@ -2667,20 +2667,16 @@ METHOD alreadyInclude( sStkAlm ) CLASS TRemMovAlm
 
    ::oDetMovimientos:oDbfVir:setStatus( aStatus )
 
-   msgalert( alreadyInclude, "alreadyInclude" )
-
 RETURN ( alreadyInclude )
 
 //---------------------------------------------------------------------------//
 
 METHOD nClrText() CLASS TRemMovAlm 
 
-   local cClr
+   local cClr  := CLR_BLACK
 
    if ::oDbfVir:lKitEsc
       cClr     := CLR_GRAY
-   else
-      cClr     := CLR_BLACK
    end if
 
 RETURN cClr
