@@ -1563,7 +1563,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       ACTION   ( oScript:Expand() ) ;
       TOOLTIP  "Scripts" ;
 
-      ImportScript( oWndBrw, oScript, "Articulos", nView )  
+      ImportScript( oWndBrw, oScript, "Articulos", nView, oStock )  
 
    DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
       NOBORDER ;

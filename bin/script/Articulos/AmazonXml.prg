@@ -8,10 +8,10 @@
 
 //---------------------------------------------------------------------------//
 
-Function AmazonXml( nView )
+Function AmazonXml( nView, oStock )
 
    TProductAmazonXml():New( nView ):Controller()
-   TStockAmazonXml():New( nView ):Controller()
+   TStockAmazonXml():New( nView, oStock ):Controller()
    TPriceAmazonXml():New( nView ):Controller()
    TImagesAmazonXml():New( nView ):Controller()
   	
