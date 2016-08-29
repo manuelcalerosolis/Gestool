@@ -147,7 +147,6 @@ static dbfArtKit
 static dbfArtLbl
 static dbfDiv
 static dbfIva
-static dbfImg
 
 static dbfAlbPrvT
 static dbfAlbPrvL
@@ -333,9 +332,6 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       USE ( cPatArt() + "ArtLbl.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ArtLbl", @dbfArtLbl ) )
       SET ADSINDEX TO ( cPatArt() + "ArtLbl.Cdx" ) ADDITIVE
-
-      USE ( cPatArt() + "ArtImg.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ArtImg", @dbfImg ) )
-      SET ADSINDEX TO ( cPatArt() + "ArtImg.Cdx" ) ADDITIVE
 
       USE ( cPatDat() + "DIVISAS.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
       SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
@@ -604,10 +600,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
       ( dbfOfe )->( dbCloseArea() )
    end if
 
-   if dbfImg != nil
-      ( dbfImg )->( dbCloseArea() )
-   end if
-
    if dbfDiv != nil
       ( dbfDiv )->( dbCloseArea() )
    end if
@@ -771,7 +763,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
    dbfTarPreL        := nil
    dbfTarPreS        := nil
    dbfOfe            := nil
-   dbfImg            := nil
    dbfDiv            := nil
    dbfArtVta         := nil
    oBandera          := nil
@@ -1572,7 +1563,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       ACTION   ( oScript:Expand() ) ;
       TOOLTIP  "Scripts" ;
 
-      ImportScript( oWndBrw, oScript, "Articulos", nView )  
+      ImportScript( oWndBrw, oScript, "Articulos", nView, oStock )  
 
    DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
       NOBORDER ;
@@ -4954,7 +4945,7 @@ static function ImportaImagenes( aTmp, oBrwImg )
       Buscamos para ver si ya está introducida ésta imagen, para que no se repitan
       */
 
-      ( dbfTmpImg )->( __dbLocate( { || alltrim( upper( ( dbfImg )->cImgArt ) == cImage ) } ) )
+      ( dbfTmpImg )->( __dbLocate( { || alltrim( upper( ( D():ArticuloImagenes( nView ) )->cImgArt ) == cImage ) } ) )
       if !( dbfTmpImg )->( found() )
 
          ( dbfTmpImg )->( dbAppend() )
@@ -5613,9 +5604,9 @@ Static Function BeginTrans( aTmp, nMode )
 
    aImgsArticulo  := {}
 
-   if nMode != APPD_MODE .and. ( dbfImg )->( dbSeek( cCodArt ) )
+   if nMode != APPD_MODE .and. ( D():ArticuloImagenes( nView ) )->( dbSeek( cCodArt ) )
       
-      while ( dbfImg )->cCodArt == cCodArt .and. !( dbfImg )->( eof() )
+      while ( D():ArticuloImagenes( nView ) )->cCodArt == cCodArt .and. !( D():ArticuloImagenes( nView ) )->( eof() )
          
          /*
          Metemos las imágenes en un array para las propiedades-----------------
@@ -5623,14 +5614,14 @@ Static Function BeginTrans( aTmp, nMode )
 
          oTemporal                     := SImagenes()
          oTemporal:lSelect             := .f.
-         oTemporal:Ruta                := ( dbfImg )->cImgArt
-         oTemporal:ToolTip             := ( dbfImg )->cNbrArt
+         oTemporal:Ruta                := ( D():ArticuloImagenes( nView ) )->cImgArt
+         oTemporal:ToolTip             := ( D():ArticuloImagenes( nView ) )->cNbrArt
 
          aAdd( aImgsArticulo, oTemporal )
 
-         dbPass( dbfImg, dbfTmpImg, .t. )
+         dbPass( D():ArticuloImagenes( nView ), dbfTmpImg, .t. )
          
-         ( dbfImg )->( dbSkip() )
+         ( D():ArticuloImagenes( nView ) )->( dbSkip() )
 
       end while
 
@@ -5902,10 +5893,10 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
             end if
          end while
 
-         while ( dbfImg )->( dbSeek( cCod ) ) .and. !( dbfImg )->( eof() )
-            if dbLock( dbfImg )
-               ( dbfImg )->( dbDelete() )
-               ( dbfImg )->( dbUnLock() )
+         while ( D():ArticuloImagenes( nView ) )->( dbSeek( cCod ) ) .and. !( D():ArticuloImagenes( nView ) )->( eof() )
+            if dbLock( D():ArticuloImagenes( nView ) )
+               ( D():ArticuloImagenes( nView ) )->( dbDelete() )
+               ( D():ArticuloImagenes( nView ) )->( dbUnLock() )
             end if
          end while
 
@@ -5989,7 +5980,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       while !( dbfTmpImg )->( eof() )
          ( dbfTmpImg )->cCodArt  := cCod
          ( dbfTmpImg )->nId      := ++nIdImagen
-         dbPass( dbfTmpImg, dbfImg, .t. )
+         dbPass( dbfTmpImg, D():ArticuloImagenes( nView ), .t. )
          ( dbfTmpImg )->( dbSkip() )
       end while
 
@@ -8772,7 +8763,7 @@ Function cImgArticulo( aTmp )
    if !Empty ( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cImagen" ) ) ] )
       cImagenArt  := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cImagen" ) ) ]
    else
-      cImagenArt  := cFirstImage( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ], dbfImg )
+      cImagenArt  := cFirstImage( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ], D():ArticuloImagenes( nView ) )
    end if
 
    if Empty( GetPath( cImagenArt ) )
@@ -9441,10 +9432,10 @@ STATIC FUNCTION DelDetalle( cCodArt )
    Eliminamos las imágenes-----------------------------------------------------
    */
 
-   while ( dbfImg )->( dbSeek( cCodArt ) )
-      if dbLock( dbfImg )
-         ( dbfImg )->( dbDelete() )
-         ( dbfImg )->( dbUnLock() )
+   while ( D():ArticuloImagenes( nView ) )->( dbSeek( cCodArt ) )
+      if dbLock( D():ArticuloImagenes( nView ) )
+         ( D():ArticuloImagenes( nView ) )->( dbDelete() )
+         ( D():ArticuloImagenes( nView ) )->( dbUnLock() )
       end if
    end while
 
@@ -12150,6 +12141,7 @@ function SynArt( cPath )
    local nOrdAnt
    local dbfArt
    local dbfFamilia
+   local dbfImg
 
    DEFAULT cPath        := cPatArt()
 
@@ -12363,7 +12355,7 @@ function SynArt( cPath )
 
          if !empty( ( dbfArt )->cImagenWeb )
 
-            ( dbfImg )->( __dbLocate( { || alltrim( upper( ( dbfArt )->cImagenWeb ) ) == alltrim( upper( ( dbfImg )->cImgArt ) ) } ) )
+            ( dbfImg )->( __dbLocate( { || alltrim( upper( ( dbfArt )->cImagenWeb ) ) == alltrim( upper( ( D():ArticuloImagenes( nView ) )->cImgArt ) ) } ) )
             if !( dbfImg )->( found() )
 
                ( dbfImg )->( dbAppend() )
@@ -12915,10 +12907,10 @@ Method CreateData()
          Imagenes de articulos
          */
 
-         if ( dbfImg )->( dbSeek( ( D():Articulos( nView ) )->Codigo ) )
-            while ( dbfImg )->cCodArt == ( D():Articulos( nView ) )->Codigo .and. !( dbfImg )->( eof() )
-               dbPass( dbfImg, tmpImg, .t. )
-               ( dbfImg )->( dbSkip( 1 ) )
+         if ( D():ArticuloImagenes( nView ) )->( dbSeek( ( D():Articulos( nView ) )->Codigo ) )
+            while ( D():ArticuloImagenes( nView ) )->cCodArt == ( D():Articulos( nView ) )->Codigo .and. !( D():ArticuloImagenes( nView ) )->( eof() )
+               dbPass( D():ArticuloImagenes( nView ), tmpImg, .t. )
+               ( D():ArticuloImagenes( nView ) )->( dbSkip( 1 ) )
             end while
          end if
 

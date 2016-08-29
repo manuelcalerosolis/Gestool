@@ -61,10 +61,10 @@ METHOD New( nView )
             
    ::MessageID                := alltrim( ( D():Articulos( ::nView ) )->Codigo )
    ::Skuparent                := alltrim( ( D():Articulos( ::nView ) )->Codigo )
-   ::StandardPrice            := ""
+   ::StandardPrice            := alltrim( str( ( D():Articulos( ::nView ) )->nImpIva1 ) )
    ::StartDate                := ""  
    ::EndDate                  := "" 
-   ::SalePrice                := ""
+   ::SalePrice                := "" 
 
 Return ( self )
 

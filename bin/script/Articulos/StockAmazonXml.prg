@@ -49,16 +49,20 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( nView )
+METHOD New( nView, oStock )
 
    ::nView                    := nView
-               
+
    ::cXmlFileStock            := alltrim( ( D():Articulos( ::nView ) )->Codigo ) + "_stock.xml"
             
    ::MessageID                := alltrim( ( D():Articulos( ::nView ) )->Codigo )
    ::Skuparent                := alltrim( ( D():Articulos( ::nView ) )->Codigo )
-   ::Quantity                 := ""
-   ::FulfillmentLatency       := "Days to Delivery"   
+
+   msgalert( hb_valtoexp( oStock:aStockArticulo( ( D():Articulos( ::nView ) )->Codigo, , , .f., .f. ) ) , "array2")
+
+   ::Quantity                 := oStock:aStockArticulo( ( D():Articulos( ::nView ) )->Codigo, , , .f., .f. ) 
+                                                         //cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFecFin, lNotPendiente
+   ::FulfillmentLatency       := "2"   
 
 Return ( self )
 
