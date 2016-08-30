@@ -92,6 +92,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    METHOD AddProducido()
    METHOD AddConsumido()
+   METHOD AddMovimientoAlmacen()
 
    METHOD AddPedidoProveedor()
    METHOD AddAlbaranProveedor()
@@ -890,7 +891,8 @@ METHOD BuildReportCorrespondences()
                                                                               ::AddFacturaProveedor(),;
                                                                               ::AddRectificativaProveedor(),;
                                                                               ::AddProducido(),;
-                                                                              ::AddConsumido() },;
+                                                                              ::AddConsumido(),;
+                                                                              ::AddMovimientoAlmacen() },;
                                                          "Variable" =>  {||   ::AddVariableLineasAlbaranCliente(),;
                                                                               ::AddVariableFacturaCliente(),;
                                                                               ::AddVariableLineasRectificativaCliente(),;
@@ -2965,19 +2967,19 @@ RETURN ( Self )
 
 METHOD AddProducido() CLASS TFastVentasArticulos
 
-   ::oMtrInf:cText   := "Procesando partes de producción"
+   ::oMtrInf:cText            := "Procesando partes de producción"
    
    ::oMtrInf:SetTotal( ::oProLin:OrdKeyCount() )
 
-   ::cExpresionLine  := '( dFecOrd >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecOrd <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
+   ::cExpresionLine           := '( dFecOrd >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecOrd <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
 
    if !::lAllArt
-      ::cExpresionLine       += ' .and. ( cCodArt >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cCodArt <= "' + ::oGrupoArticulo:Cargo:getHasta() + '")'
+      ::cExpresionLine        += ' .and. ( cCodArt >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cCodArt <= "' + ::oGrupoArticulo:Cargo:getHasta() + '")'
    end if
 
-   MsgInfo( ::cExpresionLine )
-
    ::oProLin:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oProLin:cFile ), ::oProLin:OrdKey(), cAllTrimer( ::cExpresionLine ), , , , , , , , .t. )
+
+   ::oProLin:GoTop()
 
    while !::lBreak .and. !::oProLin:Eof()
 
@@ -3048,26 +3050,23 @@ METHOD AddConsumido() CLASS TFastVentasArticulos
 
    ::oMtrInf:cText   := "Procesando partes de producción"
    
-   /*::oMtrInf:SetTotal( ::oProMat:OrdKeyCount() )
+   ::oMtrInf:SetTotal( ::oProMat:OrdKeyCount() )
 
    cExpLine          := '( dFecOrd >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecOrd <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
 
-   /*if !::lAllArt
+   if !::lAllArt
       cExpLine       += ' .and. ( cCodArt >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cCodArt <= "' + ::oGrupoArticulo:Cargo:getHasta() + '")'
-   end if*/
+   end if
 
-   //::oProMat:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oProMat:cFile ), ::oProMat:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+   ::oProMat:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oProMat:cFile ), ::oProMat:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
 
-   //MsgInfo( cExpLine, "indice" )
+   ::oProMat:GoTop()
 
    while !::lBreak .and. !::oProMat:Eof()
 
-      if ( ::oProMat:dFecOrd >= ::dIniInf .and. ::oProMat:dFecOrd <= ::dFinInf ) .and.; 
-         lChkSer( ::oProMat:cSerOrd, ::aSer )
+      if lChkSer( ::oProMat:cSerOrd, ::aSer )
 
          ::oDbf:Blank()
-
-         //MsgInfo( ::oProMat:cCodArt + CRLF + ::oProMat:cSerOrd + Str( ::oProMat:nNumOrd ) + ::oProMat:cSufOrd + CRLF + Dtoc( ::oProMat:dFecOrd ) )
 
          ::oDbf:cCodArt    := ::oProMat:cCodArt
          ::oDbf:cNomArt    := ::oProMat:cNomArt
@@ -3109,8 +3108,7 @@ METHOD AddConsumido() CLASS TFastVentasArticulos
          ::oDbf:nMesDoc    := Month( ::oProMat:dFecOrd )
          ::oDbf:dFecDoc    := ::oProMat:dFecOrd
 
-         //::InsertIfValid( .t. )
-         ::oDbf:Insert()
+         ::InsertIfValid( .t. )
          ::loadValuesExtraFields()
 
       end if
@@ -3121,7 +3119,82 @@ METHOD AddConsumido() CLASS TFastVentasArticulos
 
    end while
 
-   //::oProMat:IdxDelete( cCurUsr(), GetFileNoExt( ::oProMat:cFile ) )
+   ::oProMat:IdxDelete( cCurUsr(), GetFileNoExt( ::oProMat:cFile ) )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddMovimientoAlmacen() CLASS TFastVentasArticulos
+
+   ::oMtrInf:cText            := "Procesando movimientos de almacén"
+   
+   ::oMtrInf:SetTotal( ::oHisMov:OrdKeyCount() )
+
+   ::cExpresionLine           := '( dFecMov >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecMov <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
+
+   if !::lAllArt
+      ::cExpresionLine        += ' .and. ( cRefMov >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cRefMov <= "' + ::oGrupoArticulo:Cargo:getHasta() + '")'
+   end if
+
+   ::oHisMov:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oHisMov:cFile ), ::oHisMov:OrdKey(), cAllTrimer( ::cExpresionLine ), , , , , , , , .t. )
+
+   ::oHisMov:GoTop()
+
+   while !::lBreak .and. !::oHisMov:Eof()
+
+      ::oDbf:Blank()
+
+      ::oDbf:cCodArt    := ::oHisMov:cRefMov
+      ::oDbf:cNomArt    := ::oHisMov:cNomMov
+
+      ::oDbf:cCodFam    := RetFld( ::oHisMov:cRefMov, ::oDbfArt:cAlias, "Familia", "Codigo" )
+      ::oDbf:cCodTip    := RetFld( ::oHisMov:cRefMov, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
+      ::oDbf:cCodCate   := RetFld( ::oHisMov:cRefMov, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
+      ::oDbf:cCodTemp   := RetFld( ::oHisMov:cRefMov, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
+      ::oDbf:cCodFab    := RetFld( ::oHisMov:cRefMov, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+      ::oDbf:cCodAlm    := ::oHismov:cAliMov
+      ::oDbf:cDesUbi    := RetFld( ::oHisMov:cRefMov, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
+      ::oDbf:cCodEnv    := RetFld( ::oHisMov:cRefMov, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
+
+      ::oDbf:nBultos    := ::oHisMov:nBultos
+      ::oDbf:nCajas     := ::oHisMov:nCajMov
+      ::oDbf:nUniArt    := ::oHisMov:nUndMov
+      ::oDbf:nPreArt    := ::oHisMov:nPreDiv
+
+      ::oDbf:nBrtArt    := 0
+      ::oDbf:nTotArt    := 0
+
+      ::oDbf:cCodPr1    := ::oHisMov:cCodPr1
+      ::oDbf:cCodPr2    := ::oHisMov:cCodPr2
+      ::oDbf:cValPr1    := ::oHisMov:cValPr1
+      ::oDbf:cValPr2    := ::oHisMov:cValPr2
+
+      ::oDbf:cClsDoc    := MOV_ALM
+      ::oDbf:cTipDoc    := "Movimiento"
+
+      ::oDbf:cSerDoc    := ""
+      ::oDbf:cNumDoc    := Str( ::oHisMov:nNumRem )
+      ::oDbf:cSufDoc    := ::oHisMov:cSufRem
+
+      ::oDbf:cIdeDoc    := Str( ::oHisMov:nNumRem ) + ::oHisMov:cSufRem
+      ::oDbf:nNumLin    := ::oHisMov:nNumLin
+
+      ::oDbf:nAnoDoc    := Year( ::oHisMov:dFecMov )
+      ::oDbf:nMesDoc    := Month( ::oHisMov:dFecMov )
+      ::oDbf:dFecDoc    := ::oHisMov:dFecMov
+
+      //::InsertIfValid( .t. )
+
+      ::oDbf:Insert()
+
+      ::oHisMov:Skip()
+      
+      ::oMtrInf:AutoInc()
+
+   end while
+
+   ::oHisMov:IdxDelete( cCurUsr(), GetFileNoExt( ::oHisMov:cFile ) )
 
 RETURN ( Self )
 

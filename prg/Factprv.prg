@@ -1447,8 +1447,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
          OF       oFld:aDialogs[1]
 
       REDEFINE GET oGet[ 7 ] VAR cGet[ 7 ] ;
-         WHEN     .F. ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          ID       341 ;
+         BITMAP   "Bot" ;
+         ON HELP  ( ExpAlmacenOrigen( aTmp[ _CALMORIGEN ], dbfTmp, oBrwLin ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CCODPAGO ] VAR aTmp[ _CCODPAGO ];
@@ -1755,9 +1757,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
          end with
 
          with object ( oBrwLin:AddCol() )
-            :cHeader          := "Almacen"
+            :cHeader          := "Almacén destino"
             :bEditValue       := {|| ( dbfTmp )->cAlmLin }
             :nWidth           := 65
+         end with
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader          := "Almacén origen"
+            :bEditValue       := {|| ( dbfTmp )->cAlmOrigen }
+            :nWidth           := 65
+            :lHide            := .t.
          end with
 
          with object ( oBrwLin:AddCol() )
@@ -13204,5 +13213,28 @@ function clearGet( oGet )
    oGet:oHelpText:cText( Space( 200 ) )
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+
+Function ExpAlmacenOrigen( cCodAlm, dbfTmpLin, oBrw )
+
+   local nRec  := ( dbfTmpLin )->( Recno() )
+
+   ( dbfTmpLin )->( dbGoTop() )
+   while !( dbfTmpLin )->( eof() )
+
+      if ( dbfTmpLin )->cAlmOrigen != cCodAlm
+         ( dbfTmpLin )->cAlmOrigen := cCodAlm
+      end if
+
+      ( dbfTmpLin )->( dbSkip() )
+
+   end while
+
+   ( dbfTmpLin )->( dbGoTo( nRec ) )
+
+   oBrw:Refresh()
+
+Return nil
 
 //---------------------------------------------------------------------------//
