@@ -121,13 +121,13 @@ CLASS D
    // Albaranes de clientes----------------------------------------------------
 
    METHOD AlbaranesClientesTableName()                      INLINE ( "AlbCliT" )
+   METHOD AlbaranesClientes( nView )                        INLINE ( ::Get( ::AlbaranesClientesTableName(), nView ) )
 
-   METHOD getHashBlankAlbaranesClientes( nView )            INLINE ( ::getHashRecordBlank( ::AlbaranesClientes( nView ), TDataCenter():getDictionary( ::AlbaranesClientesTableName() ) ) )
+   METHOD getHashBlankAlbaranesClientes( nView )            INLINE ( ::getHashFromBlank( ::AlbaranesClientes( nView ), TDataCenter():getDictionary( ::AlbaranesClientesTableName() ) ) )
    METHOD getHashRecordAlbaranesClientes( nView )           INLINE ( ::getHashFromAlias( ::AlbaranesClientes( nView ), TDataCenter():getDictionary( ::AlbaranesClientesTableName() ) ) )
 
-   METHOD AlbaranesClientes( nView )                        INLINE ( ::Get( "AlbCliT", nView ) )
-      METHOD AlbaranesClientesFecha( nView )                INLINE ( ( ::Get( "AlbCliT", nView ) )->dFecAlb )
-      METHOD AlbaranesClientesId( nView )                   INLINE ( ( ::Get( "AlbCliT", nView ) )->cSerAlb + str( ( ::Get( "AlbCliT", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliT", nView ) )->cSufAlb )
+      METHOD AlbaranesClientesFecha( nView )                INLINE ( ( ::Get( ::AlbaranesClientesTableName(), nView ) )->dFecAlb )
+      METHOD AlbaranesClientesId( nView )                   INLINE ( ( ::Get( ::AlbaranesClientesTableName(), nView ) )->cSerAlb + str( ( ::Get( ::AlbaranesClientesTableName(), nView ) )->nNumAlb, 9 ) + ( ::Get( ::AlbaranesClientesTableName(), nView ) )->cSufAlb )
       METHOD AlbaranesClientesIdTextShort( nView );
                                                             INLINE ( ::Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( ::Get( "AlbCliT", nView ) )->nNumAlb ) )
       METHOD AlbaranesClientesIdText( nView )               INLINE ( ::AlbaranesClientesIdTextShort( nView ) + "/" + ( ::Get( "AlbCliT", nView ) )->cSufAlb ) 

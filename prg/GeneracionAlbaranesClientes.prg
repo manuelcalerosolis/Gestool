@@ -52,6 +52,9 @@ CLASS TGeneracionAlbaranesClientes FROM TConversionDocumentos
    METHOD getCustomerOrderLines()                  INLINE ( ::dialogCustomerOrderLines:oDocumentLines )
    METHOD getCustomerOrderLine( nPosition )        INLINE ( ::dialogCustomerOrderLines:getDocumentLine( nPosition ) )
 
+   METHOD getDeliveryNoteLines()                   INLINE ( ::dialogDeliveryNoteLines:oDocumentLines )
+   METHOD getDeliveryNoteLine( nPosition )         INLINE ( ::dialogDeliveryNoteLines:getDocumentLine( nPosition ) )
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -86,13 +89,13 @@ METHOD Dialog()
       OF          ::oDlg ;
       DIALOGS     "ASS_CONVERSION_DOCUMENTO_5",;
                   "ASS_CONVERSION_DOCUMENTO_3",;
-                  "ASS_CONVERSION_DOCUMENTO_2"
+                  "ASS_CONVERSION_DOCUMENTO_3"
 
    ::buildDialogSelectionCriteria()
 
    ::buildDialogCustomerOrderLines()
-   
-   // ::DialogSelectionDocument( ::oFld:aDialogs[3] )
+
+   ::buildDialogDeliveryNoteLines()
    
    // Botones -----------------------------------------------------------------
 
@@ -282,8 +285,6 @@ METHOD loadLinesDocument()
 
    local oDocumentLine
 
-   msgStop( "loadLinesDocumentoooooooooooooooooooooooooooo" )
-
    autoMeterDialog( ::oDlg )
 
    setTotalAutoMeterDialog( ::getHeaderOrdKeyCount()  )
@@ -302,11 +303,9 @@ METHOD loadLinesDocument()
 
             if ::isLineConditions()
 
-               msgStop( "LLAMADA CustomerOrderDocumentLine():newBuildDictionary( self )", "LLAMADA" )
+               oDocumentLine     := CustomerOrderDocumentLine():new( self ) 
 
-               oDocumentLine     := CustomerOrderDocumentLine():newBuildDictionary( self ) 
-
-               if oDocumentLine:getUnitsAwaitingProvided() > 0
+               if oDocumentLine:getUnitsAwaitingReception() > 0
                   ::getCustomerOrderLines():addLines( oDocumentLine )
                end if 
 
@@ -370,8 +369,6 @@ METHOD scanStock( oDocumentLine )
 
    nScan := ascan( ::oStock:aStocks,   {|o|  rtrim( o:cCodigo ) == rtrim( oDocumentLine:getCode() ) .and.;
                                              rtrim( o:cCodigoAlmacen ) == rtrim( oDocumentLine:getAlmacen() ) .and.;
-                                             rtrim( o:cCodigoPropiedad1 ) == rtrim( oDocumentLine:getCodeFirstProperty() ) .and.;
-                                             rtrim( o:cCodigoPropiedad2 ) == rtrim( oDocumentLine:getCodeSecondProperty() ) .and.;
                                              rtrim( o:cValorPropiedad1 ) == rtrim( oDocumentLine:getValueFirstProperty() ) .and.;
                                              rtrim( o:cValorPropiedad2 ) == rtrim( oDocumentLine:getValueSecondProperty() ) } )
    if nScan != 0
@@ -437,8 +434,6 @@ METHOD processLine( oLine )
       ::appendBlankClientDeliveryNote( oLine )
    end if
 
-   ::oBrwDocuments:Refresh()
-
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -449,8 +444,10 @@ METHOD appendCurrentClientDeliveryNote( oLine )
 
    oDocument         := ClientDeliveryNoteDocumentHeader():newRecordDictionary( self ) 
    oDocument:setValue( "PedidoCliente", ( D():AlbaranesClientes( ::nView ) )->cNumPed )
+   oDocument:setClient( oLine:getHeaderClient() )
+   oDocument:setClientName( oLine:getHeaderClientName() )
 
-   ::oDocumentHeaders:addLines( oDocument )
+   ::getDeliveryNoteLines():addLines( oDocument )
 
 Return ( nil )
 
@@ -470,7 +467,7 @@ METHOD appendBlankClientDeliveryNote( oLine )
    oDocument:setClient( oLine:getHeaderClient() )
    oDocument:setClientName( oLine:getHeaderClientName() )
 
-   ::oDocumentHeaders:addLines( oDocument )
+   ::getDeliveryNoteLines():addLines( oDocument )
 
 Return ( nil )
 

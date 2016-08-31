@@ -4989,7 +4989,19 @@ Return ( by( nRow ) )
 //---------------------------------------------------------------------------//
 
 Function Test()
+
 /*
+   local oDlg
+   local rgb   := rgb( hb_hextonum( "00" ), hb_hextonum( "74" ), hb_hextonum( "A8" ) )
+
+   msgalert( hb_hextonum( "#0074A8" ), "#0074A8" )
+   msgalert( hb_hextonum( "0074A8" ), "0074A8" )
+   msgalert( rgb, "rgb" )
+
+   DEFINE DIALOG oDlg TITLE "FiveWin" FROM 5, 5 TO 25, 49 COLORS 255, rgb
+
+   ACTIVATE DIALOG oDlg CENTERED
+
    local dbfMatriz
 
    USE ( cPatEmp() + "FacCliP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliP", @dbfMatriz ) )

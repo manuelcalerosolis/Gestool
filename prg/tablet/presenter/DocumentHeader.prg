@@ -72,7 +72,7 @@ METHOD newBlankDictionary( oSender )
 
    ::new( oSender )
 
-   ::setDictionary( D():getHashFromBlank( oSender:getLineAlias(), oSender:getLineDictionary() ) )
+   ::setDictionary( D():getHashBlankAlbaranesClientes( oSender:nView ) ) 
 
 Return ( Self )
 
@@ -82,7 +82,7 @@ METHOD newRecordDictionary( oSender )
 
   ::new( oSender )
 
-  ::setDictionary( D():getHashFromAlias( oSender:getLineAlias(), oSender:getLineDictionary() ) ) 
+  ::setDictionary( D():getHashRecordAlbaranesClientes( oSender:nView ) ) 
 
 Return ( Self )
 

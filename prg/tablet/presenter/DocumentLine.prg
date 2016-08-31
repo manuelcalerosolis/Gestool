@@ -255,9 +255,9 @@ METHOD new( oSender ) CLASS CustomerOrderDocumentLine
 
    ::Super:new( oSender )
 
-   hDictionary          := D():getHashFromAlias( oSender:getLineAlias(), oSender:getLineDictionary() )
-   
    ::oDocumentHeader    := DocumentHeader():newBuildDictionary( oSender )
+   
+   hDictionary          := D():getHashFromAlias( oSender:getLineAlias(), oSender:getLineDictionary() )
 
    ::setDictionary( hDictionary )
 
