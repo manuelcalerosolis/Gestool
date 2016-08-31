@@ -5,15 +5,15 @@
 #include "Fileio.ch"
 
 #include "Factu.ch" 
-
+      
 //---------------------------------------------------------------------------//
 
-Function AmazonXml( nView, oStock )
-
-   TProductAmazonXml():New( nView ):Controller()
+Function AmazonXml( nView, oStock )                	 
+	      
+   TProductAmazonXml():New( nView, oStock ):Controller()
    TStockAmazonXml():New( nView, oStock ):Controller()
-   TPriceAmazonXml():New( nView ):Controller()
-   TImagesAmazonXml():New( nView ):Controller()
+   TPriceAmazonXml():New( nView ):Controller() 
+   TImagesAmazonXml():New( nView ):Controller() 
   	
 Return nil
 
@@ -24,3 +24,4 @@ Return nil
 #include "PriceAmazonXml.prg"
 #include "ImagesAmazonXml.prg"
 
+ 
