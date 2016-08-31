@@ -665,6 +665,7 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddField( "cCodFab",     "C",  3, 0, {|| "@!" }, "Código fabricante"                       )
    ::AddField( "cCodGrp",     "C", 12, 0, {|| "@!" }, "Código grupo de cliente"                 )
    ::AddField( "cCodAlm",     "C", 16, 0, {|| "@!" }, "Código del almacén"                      )
+   ::AddField( "cAlmOrg",     "C", 16, 0, {|| "@!" }, "Almacén origen"                          )
    ::AddField( "cCodPago",    "C",  2, 0, {|| "@!" }, "Código de la forma de pago"              )
    ::AddField( "cCodRut",     "C", 12, 0, {|| "@!" }, "Código de la ruta"                       )
    ::AddField( "cCodAge",     "C", 12, 0, {|| "@!" }, "Código del agente"                       )
@@ -3154,6 +3155,7 @@ METHOD AddMovimientoAlmacen() CLASS TFastVentasArticulos
       ::oDbf:cCodTemp   := RetFld( ::oHisMov:cRefMov, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
       ::oDbf:cCodFab    := RetFld( ::oHisMov:cRefMov, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
       ::oDbf:cCodAlm    := ::oHismov:cAliMov
+      ::oDbf:cAlmOrg    := ::oHismov:cAloMov
       ::oDbf:cDesUbi    := RetFld( ::oHisMov:cRefMov, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
       ::oDbf:cCodEnv    := RetFld( ::oHisMov:cRefMov, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
 
@@ -3171,7 +3173,21 @@ METHOD AddMovimientoAlmacen() CLASS TFastVentasArticulos
       ::oDbf:cValPr2    := ::oHisMov:cValPr2
 
       ::oDbf:cClsDoc    := MOV_ALM
-      ::oDbf:cTipDoc    := "Movimiento"
+      
+      do case
+         case ::oHisMov:nTipMov <= 1
+            ::oDbf:cTipDoc    := "Movimiento entre almacenes"
+
+         case ::oHisMov:nTipMov == 2
+            ::oDbf:cTipDoc    := "Movimiento regularización"
+
+         case ::oHisMov:nTipMov == 3
+            ::oDbf:cTipDoc    := "Movimiento por objetivo"
+
+         case ::oHismov:nTipMov == 4
+            ::oDbf:cTipDoc    := "Movimiento consolidación"
+
+      end case
 
       ::oDbf:cSerDoc    := ""
       ::oDbf:cNumDoc    := Str( ::oHisMov:nNumRem )

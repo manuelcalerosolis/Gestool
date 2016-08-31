@@ -369,7 +369,7 @@ Static Function processMain( cCodigo )
    
    end if
 
-Return ( nil )   
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 
