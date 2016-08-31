@@ -28,6 +28,7 @@ static dbfCategorias
 static dbfTipoArticulo
 static dbfTemporadaArticulo
 static dbfPropiedades
+static dbfTblPropiedades
 
 //---------------------------------------------------------------------------//
 
@@ -61,6 +62,9 @@ Function ImportaXmlBestseller()
    dbUseArea( .t., ( cDriver() ), cPatArt() + "Temporadas.Dbf", cCheckArea( "Temporadas", @dbfTemporadaArticulo ), .t., .f. )
    if !lAIS() ; ordListAdd( ( cPatArt() + "Temporadas.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
 
+   dbUseArea( .t., ( cDriver() ), cPatArt() + "TblPro.Dbf", cCheckArea( "TblPro", @dbfTblPropiedades ), .t., .f. )
+   if !lAIS() ; ordListAdd( ( cPatArt() + "TblPro.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
    aXmlDocuments        := directory( __localDirectory + "PRICAT_*.*" )
 
    if !Empty( aXmlDocuments )
@@ -83,6 +87,7 @@ Function ImportaXmlBestseller()
    ( dbfTipoArticulo       )->( dbCloseArea() )
    ( dbfTemporadaArticulo  )->( dbCloseArea() ) 
    ( dbfPropiedades        )->( dbCloseArea() )
+   ( dbfTblPropiedades     )->( dbCloseArea() )
 
    msgStop( "Proceso finalizado :)")
 
@@ -328,6 +333,11 @@ Static Function ProccessArticulo()
    processMain( cCodigo )
 
    processCodigoBarras( cCodigo)
+   
+   CreateColorIfNotExist()
+
+   msgalert( len( aCodigoBarras ), "longitud")
+   msgalert( hb_valtoexp( aCodigoBarras ), "hCodigoBarras")
 
    processProperties( cCodigo )
 
@@ -408,13 +418,13 @@ Function processProperties( cCodigo )
    while ( dbfPropiedades )->( dbSeek( cCodigo ) ) .and. !( dbfPropiedades )->( eof() )
       ( dbfPropiedades )->( dbdelete() )
    end while
-
+    
   for each hCodigoBarras in aCodigoBarras
 
       if dbDialogLock( dbfPropiedades, .t. )
 
          ( dbfPropiedades )->cCodArt := hGet( hArticulo, "Codigo" )
-         ( dbfPropiedades )->cCodBar := hGet( hCodigoBarras, "Codigo" )
+         ( dbfCodebar     )->cCodBar := hGet( hCodigoBarras, "Codigo" )
          ( dbfPropiedades )->cCodPr1 := "001"
          ( dbfPropiedades )->cCodPr2 := "003"
          ( dbfPropiedades )->cValPr1 := upper( hGet( hCodigoBarras, "Talla" ) )
@@ -495,6 +505,41 @@ Function cCodigoTemporadaBestseller( cCodigoTemporada )
    end if
 
 Return ( cCodigoTemporadaBestseller )
+
+//---------------------------------------------------------------------------//
+
+Function CreateColorIfNotExist()
+
+   local hCodigoBarras
+   local lExist
+
+   for each hCodigoBarras in aCodigoBarras 
+
+      lExist     := ( dbfTblPropiedades )->( dbSeek( padr( "003", 20 ) + upper( hGet( hCodigoBarras, "Color" ) ) ) )
+
+      if !( lExist )
+
+         if dbDialogLock( dbfTblPropiedades, .t. )
+
+            debug( upper( hGet( hCodigoBarras, "Color" ) ), "creadndo color" )
+            debug( upper( hGet( hCodigoBarras, "HexCode" ) ), "creadndo HexCode" )
+            debug( hb_hextonum( hGet( hCodigoBarras, "HexCode" ) ), "hb_hextonum" )
+
+
+            ( dbfTblPropiedades )->cCodPro   := "003"
+            ( dbfTblPropiedades )->cCodTbl   := upper( hGet( hCodigoBarras, "Color" ) )
+            ( dbfTblPropiedades )->cDesTbl   := upper( hGet( hCodigoBarras, "Color" ) )
+            ( dbfTblPropiedades )->nColor    := hb_hextonum( hGet( hCodigoBarras, "HexCode" ) ) 
+
+            ( dbfTblPropiedades )->( dbUnlock() )
+
+         end if 
+
+      end if 
+
+   next 
+
+Return ( nil )   
 
 //---------------------------------------------------------------------------//
   
