@@ -22,8 +22,11 @@ CLASS TProductAmazonXml
    DATA  RecommendedBrowseNode
    DATA  ClothingType
    DATA  Parentage
+   DATA  ParentageChildren
    DATA  VariationTheme
    DATA  CountryOfOrigin
+   DATA  Quantity
+   DATA  Relations
 
    DATA  oXml
    DATA  oNodeAmazonEnvelope
@@ -32,9 +35,10 @@ CLASS TProductAmazonXml
    DATA  oNodeProduct
    DATA  oNodeDescriptionData
    DATA  oNodeProductData
-   DATA  oNodeShoes
+   DATA  oNodeClothingType
    DATA  oNodeVariationData
    DATA  oNodeClassificationData
+   DATA  oNodeChildren
 
    DATA  hDC
    DATA  cXmlFileProduct
@@ -52,26 +56,36 @@ CLASS TProductAmazonXml
    METHOD createMessageTypeNode()      INLINE   (  ::oNodeAmazonEnvelope:addBelow( TXmlNode():new( , 'MessageType', , 'Product' ) ) )
    METHOD createPurgeAndReplace()      INLINE   (  ::oNodeAmazonEnvelope:addBelow( TXmlNode():new( , 'PurgeAndReplace', , 'false' ) ) )
 
-   METHOD createMessageNode()
-   METHOD createProductNode()
+   METHOD createParentMessageNode()
+   METHOD createProductParentNode()
    METHOD createDescriptionDataNode()
    METHOD createProductDataNode()
-   METHOD createShoesNode()
+   METHOD createClothingTypeNode()
    METHOD createVariationDataNode()
    METHOD createClassificationDataNode()
+
+   METHOD createChildrenNodes()
+   METHOD createProductChildrenNode()
+   METHOD createDescriptionDataChildrenNode()
+   METHOD createProductDataChildrenNode()
+   METHOD createClothingTypeChildrenNode()
+   METHOD createVariationDataChildrenNode()
+   METHOD createClassificationDataChildrenNode()
 
    METHOD addBelowAmazonEnvelopeNode() INLINE   ( ::oXml:oRoot:addBelow( ::oNodeAmazonEnvelope ) )
 
    METHOD writeFileProduct()
 
+   METHOD ProcessStockProperties()
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( nView )
+METHOD New( nView, oStock )
 
    ::nView                    := nView
-               
+
    ::cXmlFileProduct          := alltrim( ( D():Articulos( ::nView ) )->Codigo ) + "_product.xml"
             
    ::MessageID                := alltrim( ( D():Articulos( ::nView ) )->Codigo )
@@ -83,9 +97,14 @@ METHOD New( nView )
    ::SearchTerms              := alltrim( ( D():Articulos( ::nView ) )->cKeySeo )
    ::RecommendedBrowseNode    := getCustomExtraField( '000', 'Artículos', ( D():Articulos( ::nView ) )->Codigo )
    ::ClothingType             := allTrim( retFld( ( D():Articulos( ::nView ) )->cCodTip, D():ArticuloTipos( ::nView ) ) )
-   ::Parentage                := "Parent/Child"                   
+   ::Parentage                := "Parent" 
+   ::ParentageChildren        := "Children"
    ::VariationTheme           := "Size/Color"
-   ::CountryOfOrigin          := "ES"      
+   ::CountryOfOrigin          := "ES"  
+   ::Quantity                 := oStock:aStockArticulo( ( D():Articulos( ::nView ) )->Codigo, , , .f., .f. )     
+   ::Relations                := {}
+
+   ::ProcessStockProperties()
 
 Return ( self )
 
@@ -93,23 +112,21 @@ Return ( self )
 
 METHOD Controller()
 
-   ::createRootNode()
+   ::createRootNode() 
 
    ::createAmazonEnvelopeNode() 
-
-   ::createHeaderNode()
+   
+   ::createHeaderNode() 
 
    ::createMessageTypeNode()
 
    ::createPurgeAndReplace()
+   
+   ::createParentMessageNode()
 
-   ::createMessageNode()
+   ::createChildrenNodes()
 
-   // Nodo final---------------------------------------------------------------
-
-   ::addBelowAmazonEnvelopeNode()  
-
-
+   ::addBelowAmazonEnvelopeNode() 
 
    ::writeFileProduct()
 
@@ -129,13 +146,13 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD createMessageNode()
+METHOD createParentMessageNode()
 
    ::oNodeMessage     := TXmlNode():new( , 'Message' )
       ::oNodeMessage:addBelow( TXmlNode():new( , 'MessageID', , ::MessageID ) )
       ::oNodeMessage:addBelow( TXmlNode():new( , 'OperationType', , 'Update' ) )
 
-      ::createProductNode()
+      ::createProductParentNode()
 
    ::oNodeAmazonEnvelope:addBelow( ::oNodeMessage )
 
@@ -143,7 +160,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD createProductNode()
+METHOD createProductParentNode()
 
    ::oNodeProduct     := TXmlNode():new( , 'Product' )
       ::oNodeProduct:addBelow( TXmlNode():new( , 'SKU', , ::Skuparent ) )
@@ -178,7 +195,7 @@ METHOD createProductDataNode()
 
    ::oNodeProductData     := TXmlNode():new( , 'ProductData' )
       
-      ::createShoesNode()
+      ::createClothingTypeNode()
 
    ::oNodeProduct:addBelow( ::oNodeProductData )
 
@@ -186,16 +203,16 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD createShoesNode()
+METHOD createClothingTypeNode()
 
-   ::oNodeShoes     := TXmlNode():new( , 'Shoes' )
-      ::oNodeShoes:addBelow( TXmlNode():new( , 'ClothingType', , ::ClothingType ) )
+   ::oNodeClothingType     := TXmlNode():new( , 'ClothingType' )
+      ::oNodeClothingType:addBelow( TXmlNode():new( , 'ClothingType', , ::ClothingType ) )
       
       ::createVariationDataNode()
       
       ::createClassificationDataNode()
 
-   ::oNodeProductData:addBelow( ::oNodeShoes )
+   ::oNodeProductData:addBelow( ::oNodeClothingType )
 
 Return ( self )
 
@@ -207,7 +224,7 @@ METHOD createVariationDataNode()
       ::oNodeVariationData:addBelow( TXmlNode():new( , 'Parentage', , ::Parentage ) )
       ::oNodeVariationData:addBelow( TXmlNode():new( , 'VariationTheme', , ::VariationTheme ) )
 
-   ::oNodeShoes:addBelow( ::oNodeVariationData )
+   ::oNodeClothingType:addBelow( ::oNodeVariationData )
 
 Return ( self )
 
@@ -218,7 +235,130 @@ METHOD createClassificationDataNode()
    ::oNodeClassificationData     := TXmlNode():new( , 'ClassificationData' )
       ::oNodeClassificationData:addBelow( TXmlNode():new( , 'CountryOfOrigin', , ::CountryOfOrigin ) )
 
-   ::oNodeShoes:addBelow( ::oNodeClassificationData )
+   ::oNodeClothingType:addBelow( ::oNodeClassificationData )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ProcessStockProperties()
+
+   local Quantity
+   local MessageIncrementator    := 0
+
+   for each Quantity in ::Quantity
+
+      MessageIncrementator++
+
+      aAdd( ::Relations, { "MessageID" => ::MessageID + "_" + alltrim( str( MessageIncrementator ) ),;
+                           "Size"      => alltrim( Quantity:cValorPropiedad1 ),;
+                           "Color"     => alltrim( Quantity:cValorPropiedad2 ),;
+                           "Quantity"  => alltrim( str( Quantity:nUnidades ) ) } ) 
+   next 
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD createChildrenNodes()
+
+local Relations
+
+   for each Relations in ::Relations
+
+      ::oNodeMessage     := TXmlNode():new( , 'Message' )
+         ::oNodeMessage:addBelow( TXmlNode():new( , 'MessageID', , hget( Relations, "MessageID" ) ) )
+         ::oNodeMessage:addBelow( TXmlNode():new( , 'OperationType', , 'Update' ) )
+         
+         ::createProductChildrenNode()
+         
+         ::oNodeMessage:addBelow( TXmlNode():new( , 'Size', , hget( Relations, "Size" ) ) )
+         ::oNodeMessage:addBelow( TXmlNode():new( , 'Color', , hget( Relations, "Color" ) ) )
+         ::oNodeMessage:addBelow( TXmlNode():new( , 'Quantity', , hget( Relations, "Quantity" ) ) )
+      ::oNodeAmazonEnvelope:addBelow( ::oNodeMessage )     
+   
+   next
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD createProductChildrenNode()
+
+   ::oNodeProduct     := TXmlNode():new( , 'Product' )
+      ::oNodeProduct:addBelow( TXmlNode():new( , 'SKU', , ::Skuparent ) )
+
+      ::createDescriptionDataChildrenNode()
+
+      ::createProductDataChildrenNode()
+
+   ::oNodeMessage:addBelow( ::oNodeProduct )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD createDescriptionDataChildrenNode()
+
+   ::oNodeDescriptionData     := TXmlNode():new( , 'DescriptionData' )
+      ::oNodeDescriptionData:addBelow( TXmlNode():new( , 'Title', , ::Title ) )
+      ::oNodeDescriptionData:addBelow( TXmlNode():new( , 'Brand', , ::Brand ) )
+      ::oNodeDescriptionData:addBelow( TXmlNode():new( , 'Description', , ::Description ) )
+      ::oNodeDescriptionData:addBelow( TXmlNode():new( , 'Manufacturer', , ::Manufacturer ) )
+      ::oNodeDescriptionData:addBelow( TXmlNode():new( , 'SearchTerms', , ::SearchTerms ) )
+      ::oNodeDescriptionData:addBelow( TXmlNode():new( , 'RecommendedBrowseNode', , ::RecommendedBrowseNode ) )
+
+   ::oNodeProduct:addBelow( ::oNodeDescriptionData )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD createProductDataChildrenNode()
+
+   ::oNodeProductData     := TXmlNode():new( , 'ProductData' )
+      
+      ::createClothingTypeChildrenNode()
+
+   ::oNodeProduct:addBelow( ::oNodeProductData )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD createClothingTypeChildrenNode()
+
+   ::oNodeClothingType     := TXmlNode():new( , 'ClothingType' )
+      ::oNodeClothingType:addBelow( TXmlNode():new( , 'ClothingType', , ::ClothingType ) )
+      
+      ::createVariationDataChildrenNode()
+      
+      ::createClassificationDataChildrenNode()
+
+   ::oNodeProductData:addBelow( ::oNodeClothingType )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD createVariationDataChildrenNode()
+
+   ::oNodeVariationData     := TXmlNode():new( , 'VariationData' )
+      ::oNodeVariationData:addBelow( TXmlNode():new( , 'Parentage', , ::ParentageChildren ) )
+      ::oNodeVariationData:addBelow( TXmlNode():new( , 'VariationTheme', , ::VariationTheme ) )
+
+   ::oNodeClothingType:addBelow( ::oNodeVariationData )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD createClassificationDataChildrenNode()
+
+   ::oNodeClassificationData     := TXmlNode():new( , 'ClassificationData' )
+      ::oNodeClassificationData:addBelow( TXmlNode():new( , 'CountryOfOrigin', , ::CountryOfOrigin ) )
+
+   ::oNodeClothingType:addBelow( ::oNodeClassificationData )
 
 Return ( self )
 

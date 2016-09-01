@@ -334,10 +334,7 @@ Static Function ProccessArticulo()
 
    processCodigoBarras( cCodigo)
    
-   CreateColorIfNotExist()
-
-   msgalert( len( aCodigoBarras ), "longitud")
-   msgalert( hb_valtoexp( aCodigoBarras ), "hCodigoBarras")
+   createColorIfNotExist()
 
    processProperties( cCodigo )
 
@@ -416,15 +413,15 @@ Function processProperties( cCodigo )
    local hCodigoBarras
 
    while ( dbfPropiedades )->( dbSeek( cCodigo ) ) .and. !( dbfPropiedades )->( eof() )
-      ( dbfPropiedades )->( dbdelete() )
+      dbLockDelete( dbfPropiedades )
    end while
     
-  for each hCodigoBarras in aCodigoBarras
+   for each hCodigoBarras in aCodigoBarras
 
       if dbDialogLock( dbfPropiedades, .t. )
 
-         ( dbfPropiedades )->cCodArt := hGet( hArticulo, "Codigo" )
-         ( dbfCodebar     )->cCodBar := hGet( hCodigoBarras, "Codigo" )
+         ( dbfPropiedades )->cCodArt := cCodigo
+         ( dbfPropiedades )->cCodDiv := "EUR"
          ( dbfPropiedades )->cCodPr1 := "001"
          ( dbfPropiedades )->cCodPr2 := "003"
          ( dbfPropiedades )->cValPr1 := upper( hGet( hCodigoBarras, "Talla" ) )
@@ -521,12 +518,10 @@ Function CreateColorIfNotExist()
 
          if dbDialogLock( dbfTblPropiedades, .t. )
 
-            debug( upper( hGet( hCodigoBarras, "Color" ) ), "creadndo color" )
-
             ( dbfTblPropiedades )->cCodPro   := "003"
             ( dbfTblPropiedades )->cCodTbl   := upper( hGet( hCodigoBarras, "Color" ) )
             ( dbfTblPropiedades )->cDesTbl   := upper( hGet( hCodigoBarras, "Color" ) )
-            ( dbfTblPropiedades )->nColor    := getRgbColor( hGet( hCodigoBarras, "HexCode" ) ) )
+            ( dbfTblPropiedades )->nColor    := getRgbColor( hGet( hCodigoBarras, "HexCode" ) ) 
 
             ( dbfTblPropiedades )->( dbUnlock() )
 
@@ -542,9 +537,9 @@ Return ( nil )
   
 Static Function getRgbColor( hexCode )
 
-   local red   := substr( hexCode, 2, 2 )
-   local green := substr( hexCode, 5, 2 )
-   local blue  := substr( hexCode, 7, 2 )
+   local red   := hb_hextonum( substr( hexCode, 2, 2 ) )
+   local green := hb_hextonum( substr( hexCode, 5, 2 ) )
+   local blue  := hb_hextonum( substr( hexCode, 7, 2 ) )
    local rgb   := rgb( red, green, blue )
 
 Return ( rgb )
