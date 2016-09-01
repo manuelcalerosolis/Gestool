@@ -305,7 +305,9 @@ Static Function IteratorCodebarArticulo( oXmlNode )
          end if 
 
          if !empty( hCodigoBarras )
-            aAdd( aCodigoBarras, hCodigoBarras )   
+            if ascan( aCodigoBarras, {| h | hget( h, "Talla") == hget( hCodigoBarras, "Talla" ) .and. hget( h, "Color") == hget( hCodigoBarras, "Color" ) }) == 0
+               aadd( aCodigoBarras, hCodigoBarras )   
+            end if 
          end if 
 
          hCodigoBarras                 := {=>}
@@ -385,13 +387,17 @@ Function processCodigoBarras( cCodigo)
    local lAppend
    local hCodigoBarras
 
+   while ( dbfCodebar )->( dbSeek( cCodigo ) ) .and. !( dbfCodebar )->( eof() )
+      dbLockDelete( dbfCodebar )
+   end while
+
    for each hCodigoBarras in aCodigoBarras
 
       lAppend                    := !( dbfCodebar )->( dbSeek( cCodigo + hGet( hCodigoBarras, "Codigo" ) ) )
 
       if dbDialogLock( dbfCodebar, lAppend )
 
-         ( dbfCodebar )->cCodArt := hGet( hArticulo, "Codigo" )
+         ( dbfCodebar )->cCodArt := cCodigo
          ( dbfCodebar )->cCodBar := hGet( hCodigoBarras, "Codigo" )
          ( dbfCodebar )->cCodPr1 := "001"
          ( dbfCodebar )->cCodPr2 := "003"
