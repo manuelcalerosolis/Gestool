@@ -10184,6 +10184,16 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
       oTipoCtrCoste:Refresh()
       clearGet( aGet[ _CTERCTR ] )
 
+      if aTmpPed[ _NREGIVA ] <= 2
+         if !empty( aGet[ _NIVA ] )
+            aGet[ _NIVA ]:cText( nIva( D():TiposIva( nView ), cDefIva() ) )
+         else
+            aTmp[ _NIVA ]  := nIva( D():TiposIva( nView ), cDefIva() )
+         end if   
+
+         aTmp[ _NREQ ]     := nReq( D():TiposIva( nView ), cDefIva() )
+      end if
+
    case nMode != APPD_MODE .AND. empty( cCodArt )
 
       aGet[ _CREF     ]:hide()

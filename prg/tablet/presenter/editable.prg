@@ -265,6 +265,7 @@ METHOD AppendDetail() CLASS Editable
 
       if ::onPreSaveAppendDetail()
          ::saveAppendDetail()
+         ::onPostSaveAppendDetail()
       end if 
 
       if lEntCon()

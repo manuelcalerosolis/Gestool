@@ -4260,7 +4260,13 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
       end if
 
       if aTmpPre[ _NREGIVA ] <= 2
-         aGet[ _NIVA ]:cText( nIva( dbfIva, cDefIva() ) )
+         if !empty( aGet[ _NIVA ] )
+            aGet[ _NIVA ]:cText( nIva( dbfIva, cDefIva() ) )
+         else
+            aTmp[ _NIVA ]  := nIva( dbfIva, cDefIva() )
+         end if   
+
+         aTmp[ _NREQ ]     := nReq( dbfIva, cDefIva() )
       end if
 
       if !empty( aGet[ __CCENTROCOSTE ] )

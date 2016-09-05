@@ -61,6 +61,7 @@ CLASS LinesDocumentsSales FROM Editable
    METHOD setPrecioRecomendado( nPrecio )                   INLINE ( ::hSetDetail( "PrecioVentaRecomendado", nPrecio ) )
    METHOD setPuntoVerde( nPuntoVerde )                      INLINE ( ::hSetDetail( "PuntoVerde", nPuntoVerde ) )
    METHOD setUnidadMedicion( cUnidad )                      INLINE ( ::hSetDetail( "UnidadMedicion", cUnidad ) )
+   METHOD setLineaEscandallo( lLineaEscandallo )            INLINE ( ::hSetDetail( "LineaEscandallo", lLineaEscandallo ) )
 
    METHOD setTarifa()                                       INLINE ( ::hSetDetail( "NumeroTarifa", ::hGetMaster( "NumeroTarifa" ) ) ) 
    METHOD setPrecioCosto( nCosto )                          INLINE ( ::hSetDetail( "PrecioCosto", nCosto ) )
@@ -119,7 +120,11 @@ CLASS LinesDocumentsSales FROM Editable
 
    METHOD onPreSaveAppendDetail()                           INLINE ( .t. )
 
+   METHOD onPostSaveAppendDetail()
+
    METHOD lValidResourceDetail()
+
+//---------------------------------------------------------------------------//
 
 END CLASS
 
@@ -309,6 +314,8 @@ METHOD setLineFromArticulo() CLASS LinesDocumentsSales
 
    end if
 
+   ::setLineaEscandallo( ( D():Articulos( ::getView() ) )->lKitArt )
+
 Return ( self )
 
 //---------------------------------------------------------------------------//
@@ -473,8 +480,40 @@ METHOD lValidResourceDetail() CLASS LinesDocumentsSales
 
    end if
 
-   ?"Antes de guardar el artículo"
-
 Return ( lReturn  )
+
+//---------------------------------------------------------------------------//
+
+METHOD onPostSaveAppendDetail() CLASS LinesDocumentsSales
+
+   local nRec
+   local nOrdAnt
+   local cCodArt
+
+   MsgInfo( "Creamos los registros de los escandallos" )
+
+   cCodArt     := hGet( ::oSender:oDocumentLineTemporal:hDictionary, "Articulo" )
+   nRec        := ( D():Kit( ::getView() ) )->( Recno() )
+   nOrdAnt     := ( D():Kit( ::getView() ) )->( OrdSetFocus( "cCodKit" ) )
+
+   if ( D():Kit( ::getView() ) )->( dbSeek( cCodArt ) )
+
+      while ( D():Kit( ::getView() ) )->cCodKit == cCodArt .and. !( D():Kit( ::getView() ) )->( Eof() )
+
+
+            MsgInfo( ( D():Kit( ::getView() ) )->cCodKit, "cCodKit" )
+            MsgInfo( ( D():Kit( ::getView() ) )->cRefKit, "cRefKit" )
+
+
+         ( D():Kit( ::getView() ) )->( dbSkip() )
+
+      end while
+
+   end if
+
+   ( D():Kit( ::getView() ) )->( OrdSetFocus( nOrdAnt ) )
+   ( D():Kit( ::getView() ) )->( dbGoTo( nRec ) )
+
+Return ( nil )
 
 //---------------------------------------------------------------------------//

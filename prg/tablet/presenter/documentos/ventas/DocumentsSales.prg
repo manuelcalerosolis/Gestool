@@ -123,7 +123,8 @@ CLASS DocumentsSales FROM Documents
    METHOD saveAppendDocumento()
 
    METHOD onPreSaveAppend()
-      METHOD onPreSaveAppendDetail()                  
+      METHOD onPreSaveAppendDetail() 
+      METHOD onPostSaveAppendDetail()
 
    METHOD onPostGetDocumento()                              INLINE ( ::oldSerie  := ::getSerie() ) 
    METHOD onPreSaveEdit()                                   
@@ -904,6 +905,14 @@ METHOD onPreSaveAppendDetail() CLASS DocumentsSales
    local cDescripcionArticulo    := alltrim( ::hGetDetail( "DescripcionArticulo" ) )
 
    oDocumentLine:setValue( "DescripcionAmpliada", cDescripcionArticulo )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD onPostSaveAppendDetail() CLASS DocumentsSales
+
+   ::oLinesDocumentsSales:onPostSaveAppendDetail()
 
 Return ( .t. )
 
