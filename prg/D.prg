@@ -140,8 +140,13 @@ CLASS D
    METHOD getStatusAlbaranesClientes( nView )               INLINE ( ::aStatus := aGetStatus( ::AlbaranesClientes( nView ) ) )
    METHOD setStatusAlbaranesClientes( nView )               INLINE ( SetStatus( ::AlbaranesClientes( nView ), ::aStatus ) )
 
-   METHOD AlbaranesClientesLineas( nView )                  INLINE ( ::Get( "AlbCliL", nView ) )
-      METHOD AlbaranesClientesLineasId( nView )             INLINE ( ( ::Get( "AlbCliL", nView ) )->cSerAlb + str( ( ::Get( "AlbCliL", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliL", nView ) )->cSufAlb )
+   METHOD AlbaranesClientesLineasTableName()                INLINE ( "AlbCliL" )
+   METHOD AlbaranesClientesLineas( nView )                  INLINE ( ::Get( ::AlbaranesClientesLineasTableName(), nView ) )
+
+      METHOD getHashBlankAlbaranesClientesLineas( nView )   INLINE ( ::getHashFromBlank( ::AlbaranesClientesLineas( nView ), TDataCenter():getDictionary( ::AlbaranesClientesLineasTableName() ) ) )
+      METHOD getHashRecordAlbaranesClientesLineas( nView )  INLINE ( ::getHashFromAlias( ::AlbaranesClientesLineas( nView ), TDataCenter():getDictionary( ::AlbaranesClientesLineasTableName() ) ) )
+
+      METHOD AlbaranesClientesLineasId( nView )             INLINE ( ( ::AlbaranesClientesLineas( nView ) )->cSerAlb + str( ( ::Get( "AlbCliL", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliL", nView ) )->cSufAlb )
       METHOD AlbaranesClientesLineasEof( nView )            INLINE ( ( ::AlbaranesClientesLineas( nView ) )->( eof() ) )
       METHOD AlbaranesClientesLineasNotEof( nView )         INLINE (!( ::AlbaranesClientesLineasEof( nView ) ) ) 
 

@@ -194,7 +194,7 @@ METHOD buildColumnsBrowse()
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Cliente"
       :Cargo                        := "getHeaderClient"
-      :bEditValue                   := {|| ::getDocumentLine():getHeaderClient() }
+      :bEditValue                   := {|| "Fulano" } // ::getDocumentLine():getHeaderClient() }
       :nWidth                       := 80
       :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clickOnHeader( oColumn ) }         
       :bLDClickData                 := {|| ::toogleSelectLine() }

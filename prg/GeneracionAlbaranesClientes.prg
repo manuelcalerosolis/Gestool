@@ -434,6 +434,8 @@ METHOD processLine( oLine )
       ::appendBlankClientDeliveryNote( oLine )
    end if
 
+   ::dialogDeliveryNoteLines:Refresh()
+
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -442,7 +444,7 @@ METHOD appendCurrentClientDeliveryNote( oLine )
 
    local oDocument
 
-   oDocument         := ClientDeliveryNoteDocumentHeader():newRecordDictionary( self ) 
+   oDocument         := DeliveryNoteDocumentLine():new( self ) 
    oDocument:setValue( "PedidoCliente", ( D():AlbaranesClientes( ::nView ) )->cNumPed )
    oDocument:setClient( oLine:getHeaderClient() )
    oDocument:setClientName( oLine:getHeaderClientName() )
@@ -457,17 +459,15 @@ METHOD appendBlankClientDeliveryNote( oLine )
 
    local oDocument
 
-   msgalert( valtype( oLine ), "valtype")
-   debug( oLine:getHeaderClient(), "getHeaderClient" )
-   debug( oLine:getHeaderClientName(), "getHeaderClientName" )
-   debug( oLine:getHeaderDate(), "getHeaderDate" )
-
-   oDocument         := ClientDeliveryNoteDocumentHeader():newBlankDictionary( self ) 
+   oDocument         := DeliveryNoteDocumentLine():new( self ) 
    oDocument:setValue( "PedidoCliente", space( 13 ) )
    oDocument:setClient( oLine:getHeaderClient() )
    oDocument:setClientName( oLine:getHeaderClientName() )
 
    ::getDeliveryNoteLines():addLines( oDocument )
+
+   debug( valtype( ::getDeliveryNoteLines():aLines ), "valtype" )
+   msgAlert( hb_valtoexp( ::getDeliveryNoteLines():aLines[1]:getCode() ), "getCode" )
 
 Return ( nil )
 

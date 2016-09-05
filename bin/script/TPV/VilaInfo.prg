@@ -87,7 +87,7 @@ METHOD Dialog() CLASS JackJonesInformation
    local oBtn
    local getFechaFin
 
-   oDlg 						:= TDialog():New( 5, 5, 15, 40, "Exportacion semanal información" )
+   oDlg 						:= TDialog():New( 5, 5, 15, 40, "Exportación semanal información : VILA" )
 
    TSay():New( 1, 1, {|| "Desde" }, oDlg )      
 

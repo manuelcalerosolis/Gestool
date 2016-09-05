@@ -308,7 +308,7 @@ Return ( Self )
 
 CLASS DeliveryNoteDocumentLine FROM DocumentLine
    
-   METHOD newBuildDictionary( oSender )
+   METHOD new( oSender )
    
    METHOD setUnitsProvided()
 
@@ -316,9 +316,17 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD newBuildDictionary( oSender ) CLASS DeliveryNoteDocumentLine
+METHOD new( oSender ) CLASS DeliveryNoteDocumentLine
 
-   ::Super():newBuildDictionary( oSender )
+   local hDictionary
+
+   ::Super:new( oSender )
+
+   ::oDocumentHeader    := DocumentHeader():newBuildDictionary( oSender )
+   
+   hDictionary          := D():getHashBlankAlbaranesClientesLineas( oSender:getLineAlias(), oSender:getLineDictionary() )
+
+   ::setDictionary( hDictionary )
 
    ::setUnitsProvided()
 
