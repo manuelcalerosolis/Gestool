@@ -19,6 +19,9 @@ CLASS TBrowseLineConversionDocumentos
    DATA cSortLines                                 INIT ""
    DATA aSortLines                                 INIT {}
 
+   DATA oTitle 
+   DATA cTitle 
+
    DATA oBrwLines
 
    DATA oColumnNumeroDocumento
@@ -34,8 +37,19 @@ CLASS TBrowseLineConversionDocumentos
       METHOD buildColumnsBrowse()
       METHOD buildOrdersColumns()                  
 
+      METHOD setTitle( cTitle )                    INLINE ( ::cTitle := cTitle )
+
+      METHOD setName( cName )                      INLINE ( if( !empty( ::oBrwLines ), ::oBrwLines:cName := cName, ) )
       METHOD load()                                INLINE ( if( !empty( ::oBrwLines ), ::oBrwLines:Load(), ) )
       METHOD addCol()                              INLINE ( if( !empty( ::oBrwLines ), ::oBrwLines:addCol(), ) )
+      METHOD insCol( nPos )                        INLINE ( if( !empty( ::oBrwLines ), ::oBrwLines:insCol( nPos ), ) )
+
+      METHOD goTop()                               INLINE ( if( !empty( ::oBrwLines ), ::oBrwLines:goTop(), ) )
+      METHOD Refresh()                             INLINE ( if( !empty( ::oBrwLines ), ::oBrwLines:Refresh(), ) )
+
+      METHOD setArray()                            INLINE ( if( !empty( ::oBrwLines ), ::oBrwLines:setArray( ::oDocumentLines:getLines(), .t., , .f. ), ) )
+
+      METHOD Reset()                               
 
       METHOD changeSearchLines()                   INLINE ( if( !empty( ::oBrwLines ), ::oBrwLines:Seek( alltrim( ::cSearchLines ) ), ) )
 
@@ -48,6 +62,7 @@ CLASS TBrowseLineConversionDocumentos
    METHOD selectAllLine()                          INLINE ( ::oDocumentLines:selectAll(),       ::oBrwLines:Refresh() )
    METHOD unselectAllLine()                        INLINE ( ::oDocumentLines:unSelectAll(),     ::oBrwLines:Refresh() )
    METHOD propertiesLine()
+
 
    METHOD changeUnits( oColumn, uValue, nKey )
 
@@ -80,6 +95,11 @@ RETURN ( Self )
 //----------------------------------------------------------------------------//
 
 METHOD Dialog( oDlg )
+
+   REDEFINE SAY   ::oTitle ;
+      PROMPT      ::cTitle ;
+      ID          300 ;
+      OF          oDlg
 
    REDEFINE GET   ::oSearchLines ;
       VAR         ::cSearchLines ;
@@ -194,7 +214,7 @@ METHOD buildColumnsBrowse()
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Cliente"
       :Cargo                        := "getHeaderClient"
-      :bEditValue                   := {|| "Fulano" } // ::getDocumentLine():getHeaderClient() }
+      :bEditValue                   := {|| ::getDocumentLine():getHeaderClient() }
       :nWidth                       := 80
       :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clickOnHeader( oColumn ) }         
       :bLDClickData                 := {|| ::toogleSelectLine() }
@@ -648,3 +668,20 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD Reset()
+
+   if empty( ::oDocumentLines )
+      Return ( .f. )
+   end if 
+
+   if empty( ::oBrwLines )
+      Return ( .f. )
+   end if 
+
+   ::oDocumentLines:Reset()
+
+   ::oBrwLines:setArray( ::oDocumentLines:getLines(), .t., , .f. )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//

@@ -7,10 +7,15 @@ CLASS DocumentLine FROM DocumentBase
 
    METHOD newBuildDictionary( oSender )
 
+   METHOD getClone()                                           INLINE ( oClone( Self ) )
+
    METHOD setSerieMaster( hDictionary )                        INLINE ( ::setValueFromDictionary( hDictionary, "Serie" ) )
    METHOD setNumeroMaster( hDictionary )                       INLINE ( ::setValueFromDictionary( hDictionary, "Numero" ) )
    METHOD setSufijoMaster( hDictionary )                       INLINE ( ::setValueFromDictionary( hDictionary, "Sufijo" ) )
    METHOD setAlmacenMaster( hDictionary )                      INLINE ( ::setValueFromDictionary( hDictionary, "Almacen" ) )
+
+   METHOD setClient( Client )                                  INLINE ( ::setValue( "Cliente", Client ) )
+   METHOD getClient()                                          INLINE ( ::getValue( "Cliente" ) )
 
    METHOD getNumeroLinea()                                     INLINE ( ::getValue( "NumeroLinea" ) )
    METHOD setNumeroLinea( NumeroLinea )                        INLINE ( ::setValue( "NumeroLinea", NumeroLinea ) )
@@ -324,7 +329,7 @@ METHOD new( oSender ) CLASS DeliveryNoteDocumentLine
 
    ::oDocumentHeader    := DocumentHeader():newBuildDictionary( oSender )
    
-   hDictionary          := D():getHashBlankAlbaranesClientesLineas( oSender:getLineAlias(), oSender:getLineDictionary() )
+   hDictionary          := D():getHashBlankAlbaranesClientesLineas( oSender:nView )
 
    ::setDictionary( hDictionary )
 

@@ -64,7 +64,7 @@ Return ( Self )
 METHOD addLines( oLine ) CLASS DocumentLines
 
    aAdd( ::aLines, oLine )
-  
+
 Return ( Self )
 
 //---------------------------------------------------------------------------//

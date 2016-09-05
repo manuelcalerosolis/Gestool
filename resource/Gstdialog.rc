@@ -2063,15 +2063,15 @@ FONT 8, "MS Sans Serif"
 
 ASS_CONVERSION_DOCUMENTO DIALOG DISCARDABLE -157, -139, 675, 435
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
-CAPTION "Asistente para importar documentos"
+CAPTION "Asistente para la conversión documentos"
 FONT 8, "MS Sans Serif"
 {
   CONTROL "", 100, "TPages", WS_TABSTOP, 44, 29, 628, 384
-  CONTROL "< Anterior", 3, "Button", WS_TABSTOP, 515, 417, 50, 14
-  CONTROL "Siguiente >", IDOK, "Button", WS_TABSTOP, 569, 417, 50, 14
-  CONTROL "Cancelar", IDCANCEL, "Button", WS_TABSTOP, 622, 417, 50, 14
+  CONTROL "< Anterior", 3, "Button", WS_TABSTOP, 485, 417, 61, 14
+  CONTROL "[F5] Siguiente >", IDOK, "Button", WS_TABSTOP, 548, 417, 61, 14
+  CONTROL "Cancelar", IDCANCEL, "Button", WS_TABSTOP, 611, 417, 60, 14
   CONTROL "", 500, "TBitmap", 0x0000020e, 4, 3, 34, 30, 0x00000020
-  CONTROL "Texto general de la importación de documento", 510, "Static", SS_LEFTNOWORDWRAP, 44, 3, 627, 8
+  CONTROL "Asistente para la conversión de documentos", 510, "Static", SS_LEFTNOWORDWRAP, 44, 3, 627, 8
 }
 
 ASS_CONVERSION_DOCUMENTO_2 DIALOG DISCARDABLE 99, 64, 626, 384
@@ -20812,13 +20812,13 @@ STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
   CONTROL "", 100, "TXBrowse", WS_TABSTOP|0x00300000, 6, 44, 613, 335
-  CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 60, 15, 458, 12
+  CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 59, 15, 459, 12
   CONTROL "", 210, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 520, 15, 99, 138
   CONTROL "&Seleccionar", 500, "Button", WS_TABSTOP, 6, 29, 50, 14
   CONTROL "&Deseleccionar", 510, "Button", WS_TABSTOP, 59, 29, 50, 14
   CONTROL "&Todos", 520, "Button", WS_TABSTOP, 112, 29, 50, 14
   CONTROL "&Ninguno", 530, "Button", WS_TABSTOP, 165, 29, 50, 14
-  CONTROL "Seleccionar líneas documento", -1, "Button", BS_GROUPBOX, 1, 2, 622, 380
+  CONTROL "Seleccionar líneas documento", 300, "Button", BS_GROUPBOX, 1, 2, 622, 380
   CONTROL "Buscar por", -1, "Static", WS_GROUP, 7, 18, 40, 8
   CONTROL "&Propiedades", 540, "Button", WS_TABSTOP, 569, 29, 50, 14
 }

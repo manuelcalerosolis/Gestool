@@ -689,7 +689,7 @@ METHOD columnsBrowseLines()
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Nombre cliente"
       :Cargo                        := "getHeaderClientName"
-      :bEditValue                   := {|| "Fulano" } // ::getLineDocument():getHeaderClientName() }
+      :bEditValue                   := {|| ::getLineDocument():getHeaderClientName() }
       :nWidth                       := 280
       :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clickOnLineHeader( oColumn ) }         
       :bLDClickData                 := {|| ::toogleSelectLine() }
@@ -1477,11 +1477,10 @@ METHOD setValuesBrowseProperties( oLineSave )
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//--------------------------------------------------------------------------- //
+//---------------------------------------------------------------------------//
 

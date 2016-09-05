@@ -32,7 +32,7 @@ CLASS TGeneracionAlbaranesClientes FROM TConversionDocumentos
 
    METHOD startDialog()
       METHOD botonSiguiente()
-      METHOD botonAnterior()                       INLINE ( ::oFld:goPrev(), ::buttonPrior:Hide() )
+      METHOD botonAnterior()                       INLINE ( ::oFld:goPrev(), if( ::oFld:nOption == 1, ::buttonPrior:Hide(), ) )
 
    METHOD loadLinesDocument()
       METHOD scanStock( oDocumentLine )
@@ -46,8 +46,10 @@ CLASS TGeneracionAlbaranesClientes FROM TConversionDocumentos
 
    METHOD processLines()
       METHOD processLine()
-         METHOD appendCurrentClientDeliveryNote()
-         METHOD appendBlankClientDeliveryNote()
+         METHOD appendDeliveryNoteLines()
+
+   METHOD processDeliveryNoteLines()
+      METHOD processDeliveryNoteLine( oLine )
 
    METHOD getCustomerOrderLines()                  INLINE ( ::dialogCustomerOrderLines:oDocumentLines )
    METHOD getCustomerOrderLine( nPosition )        INLINE ( ::dialogCustomerOrderLines:getDocumentLine( nPosition ) )
@@ -172,8 +174,13 @@ RETURN ( Self )
 
 METHOD validDialogSelectionCriteria()
 
-   if empty( ::oAlmacen:Varget() )
-      msgStop( "Código de almacén no puede estar vacio.")
+   if empty( ::oAlmacen:varget() )
+      msgStop( "Código de almacén no puede estar vacio." )
+      Return .f.
+   end if 
+
+   if empty( ::oCliente:varget() ) .and. empty( ::oArticulo:varget() )
+      msgStop( "Código de cliente o código de artículo deben cumplimentarse." )
       Return .f.
    end if 
 
@@ -183,7 +190,11 @@ Return .t.
 
 METHOD buildDialogCustomerOrderLines()
 
+   ::dialogCustomerOrderLines:setTitle( "Seleccione líneas de pedidos de clientes" )
+
    ::dialogCustomerOrderLines:Dialog( ::oFld:aDialogs[ 2 ] )
+
+   ::dialogCustomerOrderLines:setName( "CustomerOrderLines" )
 
    with object ( ::dialogCustomerOrderLines:AddCol() )
       :cHeader       := "Pendientes"
@@ -193,7 +204,7 @@ METHOD buildDialogCustomerOrderLines()
       :nWidth        := 80
       :nDataStrAlign := 1
       :nHeadStrAlign := 1
-      :bLClickHeader := {|nMRow, nMCol, nFlags, oColumn| ::clickOnLineHeader( oColumn ) }         
+      :bLClickHeader := {|nMRow, nMCol, nFlags, oColumn| ::dialogCustomerOrderLines:clickOnHeader( oColumn ) }         
       :bLDClickData  := {|| ::dialogCustomerOrderLines:toogleSelectLine() }
    end with
 
@@ -203,17 +214,20 @@ RETURN ( Self )
 
 METHOD buildDialogDeliveryNoteLines( oDlg )
 
+   ::dialogCustomerOrderLines:setTitle( "Seleccione líneas de albaranes de clientes" )
+
    ::dialogDeliveryNoteLines:Dialog( ::oFld:aDialogs[ 3 ] )
 
-/*
-   with object ( ::dialogDeliveryNoteLines:AddCol() )
-      :cHeader       := "Pedido"
-      :Cargo         := "getPedidoCliente"
-      :bEditValue    := {|| ::getHeaderDocument():getValue( "PedidoCliente" ) }
+   ::dialogDeliveryNoteLines:setName( "DeliveryNoteLines" )
+
+   with object ( ::dialogDeliveryNoteLines:InsCol( 1 ) )
+      :cHeader       := "Albaran"
+      :Cargo         := "getAlbaranCliente"
+      :bEditValue    := {|| if( empty(::getDeliveryNoteLine():getValue( "AlbaranCliente" ) ), "Nuevo", ::getDeliveryNoteLine():getValue( "AlbaranCliente" ) ) }
       :nWidth        := 80
-      :bLClickHeader := {| nMRow, nMCol, nFlags, oColumn | ::clickOnDocumentHeader( oColumn ) }   
+      :bLClickHeader := {|nMRow, nMCol, nFlags, oColumn| ::dialogDeliveryNoteLines:clickOnHeader( oColumn ) }         
+      :bLDClickData  := {|| ::dialogDeliveryNoteLines:toogleSelectLine() }
    end with
-*/
 
 RETURN ( Self )
 
@@ -236,17 +250,27 @@ METHOD botonSiguiente()
 
       case ::oFld:nOption == 2
 
+         ::getDeliveryNoteLines():Reset()
+
          if ( ::getCustomerOrderLines():anySelect() )
             
             ::processLines()
-            
+
             ::oFld:goNext()
-
-         else
             
-            msgStop( "No hay líneas seleccionadas." )
+         else
 
+            msgStop( "No hay líneas seleccionadas." )
+            
          end if 
+
+         ::dialogDeliveryNoteLines:setBrowseLinesDocument()
+
+      case ::oFld:nOption == 3
+
+         ::processDeliveryNoteLines()
+
+         ::oFld:goNext()
 
    end case
 
@@ -414,8 +438,6 @@ METHOD processLines()
 
    local oLine
 
-   ::aDocuments         := {}
-
    for each oLine in ( ::getCustomerOrderLines():getLines() )
       if oLine:isSelectLine()
          ::processLine( oLine )
@@ -429,47 +451,48 @@ Return ( .t. )
 METHOD processLine( oLine )
 
    if D():gotoPedidoIdAlbaranesClientes( oLine:getDocumentId(), ::nView )
-      ::appendCurrentClientDeliveryNote( oLine )
+      ::appendDeliveryNoteLines( oLine:getClone(), D():AlbaranesClientesId( ::nView ) )
    else 
-      ::appendBlankClientDeliveryNote( oLine )
+      ::appendDeliveryNoteLines( oLine:getClone() )
    end if
 
-   ::dialogDeliveryNoteLines:Refresh()
+   ::dialogDeliveryNoteLines:setBrowseLinesDocument()
 
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD appendCurrentClientDeliveryNote( oLine )
+METHOD appendDeliveryNoteLines( oLine, cNumeroAlbaran )
 
-   local oDocument
+   if !empty( cNumeroAlbaran )
+      oLine:setValue( "AlbaranCliente", cNumeroAlbaran )
+   end if 
 
-   oDocument         := DeliveryNoteDocumentLine():new( self ) 
-   oDocument:setValue( "PedidoCliente", ( D():AlbaranesClientes( ::nView ) )->cNumPed )
-   oDocument:setClient( oLine:getHeaderClient() )
-   oDocument:setClientName( oLine:getHeaderClientName() )
-
-   ::getDeliveryNoteLines():addLines( oDocument )
+   ::getDeliveryNoteLines():addLines( oLine )
 
 Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD appendBlankClientDeliveryNote( oLine )
+METHOD processDeliveryNoteLines()
 
-   local oDocument
+   local oLine
 
-   oDocument         := DeliveryNoteDocumentLine():new( self ) 
-   oDocument:setValue( "PedidoCliente", space( 13 ) )
-   oDocument:setClient( oLine:getHeaderClient() )
-   oDocument:setClientName( oLine:getHeaderClientName() )
+   for each oLine in ( ::getDeliveryNoteLines():getLines() )
+      if oLine:isSelectLine()
+         ::processDeliveryNoteLine( oLine )
+      end if 
+   next
 
-   ::getDeliveryNoteLines():addLines( oDocument )
+Return ( .t. )
 
-   debug( valtype( ::getDeliveryNoteLines():aLines ), "valtype" )
-   msgAlert( hb_valtoexp( ::getDeliveryNoteLines():aLines[1]:getCode() ), "getCode" )
+//---------------------------------------------------------------------------//
 
-Return ( nil )
+METHOD processDeliveryNoteLine( oLine )
+
+   debug( oLine, "oLine" )
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
