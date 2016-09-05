@@ -473,6 +473,8 @@ METHOD lValidResourceDetail() CLASS LinesDocumentsSales
 
    end if
 
+   ?"Antes de guardar el artículo"
+
 Return ( lReturn  )
 
 //---------------------------------------------------------------------------//
