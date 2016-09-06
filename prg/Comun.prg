@@ -357,11 +357,7 @@ Return nil
 
 Function cDriver()
 
-   if lAds()
-      Return ( 'ADS' )
-   end if
-
-   if lAIS()
+   if lAIS() .or. lAds()
       Return ( 'ADS' )
    end if
 
@@ -372,6 +368,14 @@ Return ( 'DBFCDX' )
 Function cADSDriver()
 
 Return ( 'ADS' )
+
+//---------------------------------------------------------------------------//
+
+Function isADSDriver( cDriver )
+
+  DEFAULT cDriver   := cDriver()
+
+Return ( cDriver == 'ADS' )
 
 //---------------------------------------------------------------------------//
 
@@ -401,15 +405,21 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
+Function cPathDatos()
+
+Return ( "Datos" )
+
+//---------------------------------------------------------------------------//
+
 Function cPatDat( lFull )
 
    DEFAULT lFull  := .f.
 
    if lAIS() 
-      Return ( if( lFull, cAdsUNC() + "Datos\", "Datos" ) )
+      Return ( if( lFull, cAdsUNC() + cPathDatos() + "\", cPathDatos() ) )
    end if
 
-Return ( FullCurDir() + "Datos\" )
+Return ( FullCurDir() + cPathDatos() + "\" )
 
 //----------------------------------------------------------------------------//
 
@@ -418,10 +428,10 @@ Function cPathDatosLocal( lFull )
    DEFAULT lFull  := .f.
 
    if lAIS()
-      Return ( if( lFull, cAdsLocal() + "Datos\", "Datos\" ) )
+      Return ( if( lFull, cAdsLocal() + cPathDatos() + "\", cPathDatos() + "\" ) )
    end if
 
-Return ( FullCurDir() + "Datos\" )
+Return ( FullCurDir() + cPathDatos() + "\" )
 
 //----------------------------------------------------------------------------//
 
@@ -2209,6 +2219,12 @@ Return ( if( dSysDate != nil, dSysDate, Date() ) )
 //---------------------------------------------------------------------------//
 
 Function aEmp() ; Return ( aEmpresa )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cPathEmpresa()
+
+Return ( cPatEmp )
 
 //---------------------------------------------------------------------------//
 

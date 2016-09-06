@@ -53,13 +53,13 @@ METHOD OpenFiles( lExclusive )
 
       ::oDbf:Activate( .f., !lExclusive )
 
-      ::oSeccion     := TSeccion():Create( ::cPath )
+      ::oSeccion     := TSeccion():Create( ::cPath, ::cDriver )
       ::oSeccion:OpenFiles()
 
-      ::oHoras       := THoras():Create( ::cPath )
+      ::oHoras       := THoras():Create( ::cPath, ::cDriver )
       ::oHoras:OpenFiles()
 
-      ::oDetHoras    := TDetHoras():New( ::cPath, Self )
+      ::oDetHoras    := TDetHoras():New( ::cPath, ::cDriver, Self )
       ::AddDetail( ::oDetHoras )
 
       ::OpenDetails()
@@ -156,7 +156,7 @@ METHOD DefineFiles( cPath, cDriver )
    local oDbf
 
    DEFAULT cPath        := ::cPath
-   DEFAULT cDriver      := cDriver()
+   DEFAULT cDriver      := ::cDriver
 
    DEFINE TABLE oDbf FILE "OpeT.Dbf" CLASS "Operario" ALIAS "Operario" PATH ( cPath ) VIA ( cDriver ) COMMENT "Operarios"
 

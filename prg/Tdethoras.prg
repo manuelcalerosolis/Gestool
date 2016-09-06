@@ -8,9 +8,7 @@
 
 CLASS TDetHoras FROM TDet
 
-   METHOD New( cPath, oParent )
-
-   METHOD Create( cPath )
+   METHOD New( cPath, cDriver, oParent )
 
    METHOD DefineFiles()
 
@@ -28,11 +26,13 @@ END CLASS
 
 //--------------------------------------------------------------------------//
 
-METHOD New( cPath, oParent ) 
+METHOD New( cPath, cDriver, oParent ) 
 
    DEFAULT cPath        := cPatEmp()
+   DEFAULT cDriver      := cDriver()
 
    ::cPath              := cPath
+   ::cDriver            := cDriver
    ::oParent            := oParent
 
    ::bOnPreSaveDetail   := {|| ::SaveDetails() }
@@ -41,20 +41,20 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
+METHOD DefineFiles( cPath, cDriver, lUniqueName, cFileName )
 
    local oDbf
 
    DEFAULT cPath        := ::cPath
+   DEFAULT cDriver      := ::cDriver
    DEFAULT lUniqueName  := .f.
    DEFAULT cFileName    := "OpeL"
-   DEFAULT cVia         := cDriver()
 
    if lUniqueName
       cFileName         := cGetNewFileName( cFileName, , , cPath )
    end if
 
-   DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia ) COMMENT "Operarios y horas"
+   DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cDriver ) COMMENT "Operarios y horas"
 
       FIELD NAME "cCodTra"    TYPE "C" LEN  5  DEC 0 COMMENT "Cód. Trabajador"   COLSIZE 60                                   OF oDbf
       FIELD NAME "cCodHra"    TYPE "C" LEN  3  DEC 0 COMMENT "Cód. Hora"         COLSIZE 100                                  OF oDbf
@@ -70,16 +70,6 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
 RETURN ( oDbf )
 
 //--------------------------------------------------------------------------//
-
-METHOD Create( cPath )
-
-   DEFAULT cPath        := cPatEmp()
-
-   ::cPath              := cPath
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
 
 METHOD OpenFiles( lExclusive, cPath )
 

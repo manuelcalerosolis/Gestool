@@ -9,6 +9,8 @@
 
 CLASS TFastReportInfGen FROM TNewInfGen
 
+   DATA  cDriver
+
    DATA  aInitGroup
 
    DATA  oPages

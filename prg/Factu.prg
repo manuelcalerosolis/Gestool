@@ -1781,7 +1781,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Envasado"
    oItem:cMessage       := 'Acceso al fichero de envasado'
-   oItem:bAction        := {|| TFrasesPublicitarias():New( , oWnd(), "01129" ):Activate() }
+   oItem:bAction        := {|| TFrasesPublicitarias():New():Activate() }
    oItem:cId            := "01129"
    oItem:cBmp           := "box_white_16"
    oItem:cBmpBig        := "box_white_32"

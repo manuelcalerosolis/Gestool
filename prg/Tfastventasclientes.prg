@@ -1503,8 +1503,6 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
 
       ::oMtrInf:cText   := "Procesando facturas rectificativas"
       
-      msgInfo( ::cExpresionHeader, "cExpresionHeader" )
-
       ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
       ::oMtrInf:SetTotal( ::oFacRecT:OrdKeyCount() )

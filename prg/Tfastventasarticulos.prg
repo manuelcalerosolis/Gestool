@@ -311,16 +311,19 @@ RETURN .t.
 
 METHOD OpenFiles() CLASS TFastVentasArticulos
 
-   local lOpen    := .t.
+   local lOpen          := .t.
    local oError
    local oBlock   
 
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::lApplyFilters                  := lAIS()
+      ::lApplyFilters   := lAIS()
+      ::cDriver         := cLocalDriver()
 
-      ::nView                          := D():CreateView()
+      ::nView           := D():CreateView( ::cDriver )
+
+      msgalert( D():getDriver( ::nView ), "getDriver" )
 
       D():Clientes( ::nView )
 
@@ -334,116 +337,112 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       D():ProveedorArticulo( ::nView )
 
-      DATABASE NEW ::oArtImg  PATH ( cPatArt() ) CLASS "ArtImg"      FILE "ArtImg.Dbf"  VIA ( cDriver() ) SHARED INDEX "ArtImg.Cdx"
+      DATABASE NEW ::oArtImg  PATH ( cPatArt() ) CLASS "ArtImg"      FILE "ArtImg.Dbf"  VIA ( ::cDriver ) SHARED INDEX "ArtImg.Cdx"
 
-      DATABASE NEW ::oArtKit  PATH ( cPatArt() ) CLASS "ArtKit"      FILE "ArtKit.Dbf"  VIA ( cDriver() ) SHARED INDEX "ArtKit.Cdx"
+      DATABASE NEW ::oArtKit  PATH ( cPatArt() ) CLASS "ArtKit"      FILE "ArtKit.Dbf"  VIA ( ::cDriver ) SHARED INDEX "ArtKit.Cdx"
 
-      DATABASE NEW ::oArtCod  PATH ( cPatArt() ) CLASS "ArtCodebar"  FILE "ArtCodebar.Dbf"  VIA ( cDriver() ) SHARED INDEX "ArtCodebar.Cdx"
+      DATABASE NEW ::oArtCod  PATH ( cPatArt() ) CLASS "ArtCodebar"  FILE "ArtCodebar.Dbf"  VIA ( ::cDriver ) SHARED INDEX "ArtCodebar.Cdx"
 
-      DATABASE NEW ::oArtCod  PATH ( cPatArt() ) CLASS "ArtCodebar"  FILE "ArtCodebar.Dbf"  VIA ( cDriver() ) SHARED INDEX "ArtCodebar.Cdx"
+      DATABASE NEW ::oArtCod  PATH ( cPatArt() ) CLASS "ArtCodebar"  FILE "ArtCodebar.Dbf"  VIA ( ::cDriver ) SHARED INDEX "ArtCodebar.Cdx"
 
       ::oSatCliT  := TDataCenter():oSatCliT()
 
-      DATABASE NEW ::oSatCliL PATH ( cPatEmp() ) CLASS "SatCliL"     FILE "SatCliL.Dbf" VIA ( cDriver() ) SHARED INDEX "SatCliL.Cdx"
+      DATABASE NEW ::oSatCliL PATH ( cPatEmp() ) CLASS "SatCliL"     FILE "SatCliL.Dbf" VIA ( ::cDriver ) SHARED INDEX "SatCliL.Cdx"
 
       ::oPreCliT  := TDataCenter():oPreCliT()
 
-      DATABASE NEW ::oPreCliL PATH ( cPatEmp() ) CLASS "PreCliL"     FILE "PreCliL.Dbf" VIA ( cDriver() ) SHARED INDEX "PreCliL.Cdx"
+      DATABASE NEW ::oPreCliL PATH ( cPatEmp() ) CLASS "PreCliL"     FILE "PreCliL.Dbf" VIA ( ::cDriver ) SHARED INDEX "PreCliL.Cdx"
 
       ::oAlbCliT := TDataCenter():oAlbCliT()
 
-      DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) CLASS "ALBCLIL"     FILE "ALBCLIL.Dbf" VIA ( cDriver() ) SHARED INDEX "ALBCLIL.Cdx"
+      DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) CLASS "ALBCLIL"     FILE "ALBCLIL.Dbf" VIA ( ::cDriver ) SHARED INDEX "ALBCLIL.Cdx"
 
       ::oFacCliT  := TDataCenter():oFacCliT()  
 
-      DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) CLASS "FACCLIL"     FILE "FACCLIL.Dbf"   VIA ( cDriver() ) SHARED INDEX "FACCLIL.Cdx"
+      DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) CLASS "FACCLIL"     FILE "FACCLIL.Dbf"   VIA ( ::cDriver ) SHARED INDEX "FACCLIL.Cdx"
 
-      DATABASE NEW ::oFacRecT PATH ( cPatEmp() ) CLASS "FACRECT"     FILE "FACRECT.Dbf"   VIA ( cDriver() ) SHARED INDEX "FACRECT.Cdx"
+      DATABASE NEW ::oFacRecT PATH ( cPatEmp() ) CLASS "FACRECT"     FILE "FACRECT.Dbf"   VIA ( ::cDriver ) SHARED INDEX "FACRECT.Cdx"
 
-      DATABASE NEW ::oFacRecL PATH ( cPatEmp() ) CLASS "FACRECL"     FILE "FACRECL.Dbf"   VIA ( cDriver() ) SHARED INDEX "FACRECL.Cdx"
+      DATABASE NEW ::oFacRecL PATH ( cPatEmp() ) CLASS "FACRECL"     FILE "FACRECL.Dbf"   VIA ( ::cDriver ) SHARED INDEX "FACRECL.Cdx"
 
-      DATABASE NEW ::oTikCliT PATH ( cPatEmp() ) CLASS "TIKET"       FILE "TIKET.Dbf"     VIA ( cDriver() ) SHARED INDEX "TIKET.Cdx"
+      DATABASE NEW ::oTikCliT PATH ( cPatEmp() ) CLASS "TIKET"       FILE "TIKET.Dbf"     VIA ( ::cDriver ) SHARED INDEX "TIKET.Cdx"
 
-      DATABASE NEW ::oTikCliL PATH ( cPatEmp() ) CLASS "TIKEL"       FILE "TIKEL.Dbf"     VIA ( cDriver() ) SHARED INDEX "TIKEL.Cdx"
+      DATABASE NEW ::oTikCliL PATH ( cPatEmp() ) CLASS "TIKEL"       FILE "TIKEL.Dbf"     VIA ( ::cDriver ) SHARED INDEX "TIKEL.Cdx"
 
-      DATABASE NEW ::oPedPrvT PATH ( cPatEmp() ) CLASS "PedPrvT"     FILE "PedProvT.Dbf"  VIA ( cDriver() ) SHARED INDEX "PedProvT.Cdx"
+      DATABASE NEW ::oPedPrvT PATH ( cPatEmp() ) CLASS "PedPrvT"     FILE "PedProvT.Dbf"  VIA ( ::cDriver ) SHARED INDEX "PedProvT.Cdx"
 
-      DATABASE NEW ::oPedPrvL PATH ( cPatEmp() ) CLASS "PedPrvL"     FILE "PedProvL.Dbf"  VIA ( cDriver() ) SHARED INDEX "PedProvL.Cdx"
+      DATABASE NEW ::oPedPrvL PATH ( cPatEmp() ) CLASS "PedPrvL"     FILE "PedProvL.Dbf"  VIA ( ::cDriver ) SHARED INDEX "PedProvL.Cdx"
 
-      DATABASE NEW ::oAlbPrvT PATH ( cPatEmp() ) CLASS "AlbPrvT"     FILE "AlbProvT.Dbf"  VIA ( cDriver() ) SHARED INDEX "AlbProvT.Cdx"
+      DATABASE NEW ::oAlbPrvT PATH ( cPatEmp() ) CLASS "AlbPrvT"     FILE "AlbProvT.Dbf"  VIA ( ::cDriver ) SHARED INDEX "AlbProvT.Cdx"
 
-      DATABASE NEW ::oAlbPrvL PATH ( cPatEmp() ) CLASS "AlbPrvL"     FILE "AlbProvL.Dbf"  VIA ( cDriver() ) SHARED INDEX "AlbProvL.Cdx"
+      DATABASE NEW ::oAlbPrvL PATH ( cPatEmp() ) CLASS "AlbPrvL"     FILE "AlbProvL.Dbf"  VIA ( ::cDriver ) SHARED INDEX "AlbProvL.Cdx"
 
-      DATABASE NEW ::oFacPrvT PATH ( CPATEMP() ) CLASS "FacPrvT"     FILE "FacPrvT.Dbf"   VIA ( cDriver() ) SHARED INDEX "FacPrvT.Cdx"
+      DATABASE NEW ::oFacPrvT PATH ( CPATEMP() ) CLASS "FacPrvT"     FILE "FacPrvT.Dbf"   VIA ( ::cDriver ) SHARED INDEX "FacPrvT.Cdx"
 
-      DATABASE NEW ::oFacPrvL PATH ( cPatEmp() ) CLASS "FacPrvL"     FILE "FacPrvL.Dbf"   VIA ( cDriver() ) SHARED INDEX "FacPrvL.Cdx"
+      DATABASE NEW ::oFacPrvL PATH ( cPatEmp() ) CLASS "FacPrvL"     FILE "FacPrvL.Dbf"   VIA ( ::cDriver ) SHARED INDEX "FacPrvL.Cdx"
 
-      DATABASE NEW ::oRctPrvT PATH ( cPatEmp() ) CLASS "RctPrvT"     FILE "RctPrvT.Dbf"   VIA ( cDriver() ) SHARED INDEX "RctPrvT.Cdx"
+      DATABASE NEW ::oRctPrvT PATH ( cPatEmp() ) CLASS "RctPrvT"     FILE "RctPrvT.Dbf"   VIA ( ::cDriver ) SHARED INDEX "RctPrvT.Cdx"
 
-      DATABASE NEW ::oRctPrvL PATH ( cPatEmp() ) CLASS "RctPrvL"     FILE "RctPrvL.Dbf"   VIA ( cDriver() ) SHARED INDEX "RctPrvL.Cdx"
+      DATABASE NEW ::oRctPrvL PATH ( cPatEmp() ) CLASS "RctPrvL"     FILE "RctPrvL.Dbf"   VIA ( ::cDriver ) SHARED INDEX "RctPrvL.Cdx"
 
-      DATABASE NEW ::oProLin  PATH ( cPatEmp() ) CLASS "ProLin"      FILE "ProLin.Dbf"    VIA ( cDriver() ) SHARED INDEX "ProLin.Cdx"
+      DATABASE NEW ::oProLin  PATH ( cPatEmp() ) CLASS "ProLin"      FILE "ProLin.Dbf"    VIA ( ::cDriver ) SHARED INDEX "ProLin.Cdx"
 
-      DATABASE NEW ::oProMat  PATH ( cPatEmp() ) CLASS "ProMat"      FILE "ProMat.Dbf"    VIA ( cDriver() ) SHARED INDEX "ProMat.Cdx"
+      DATABASE NEW ::oProMat  PATH ( cPatEmp() ) CLASS "ProMat"      FILE "ProMat.Dbf"    VIA ( ::cDriver ) SHARED INDEX "ProMat.Cdx"
 
-      DATABASE NEW ::oHisMov  PATH ( cPatEmp() ) CLASS "HisMov"      FILE "HisMov.Dbf"    VIA ( cDriver() ) SHARED INDEX "HisMov.Cdx"
+      DATABASE NEW ::oHisMov  PATH ( cPatEmp() ) CLASS "HisMov"      FILE "HisMov.Dbf"    VIA ( ::cDriver ) SHARED INDEX "HisMov.Cdx"
 
-      DATABASE NEW ::oArtPrv  PATH ( cPatEmp() ) CLASS "ArtPrv"      FILE "ProvArt.Dbf"   VIA ( cDriver() ) SHARED INDEX "ProvArt.Cdx"
+      DATABASE NEW ::oArtPrv  PATH ( cPatEmp() ) CLASS "ArtPrv"      FILE "ProvArt.Dbf"   VIA ( ::cDriver ) SHARED INDEX "ProvArt.Cdx"
 
-      DATABASE NEW ::oArtAlm  PATH ( cPatEmp() ) CLASS "ArtAlm"      FILE "ArtAlm.Dbf"    VIA ( cDriver() ) SHARED INDEX "ArtAlm.Cdx"
+      DATABASE NEW ::oArtAlm  PATH ( cPatEmp() ) CLASS "ArtAlm"      FILE "ArtAlm.Dbf"    VIA ( ::cDriver ) SHARED INDEX "ArtAlm.Cdx"
 
-      DATABASE NEW ::oObras   PATH ( cPatCli() ) CLASS "ObrasT"      FILE "ObrasT.Dbf"    VIA ( cDriver() ) SHARED INDEX "ObrasT.Cdx"
+      DATABASE NEW ::oObras   PATH ( cPatCli() ) CLASS "ObrasT"      FILE "ObrasT.Dbf"    VIA ( ::cDriver ) SHARED INDEX "ObrasT.Cdx"
 
-      DATABASE NEW ::oPrp1    PATH ( cPatArt() ) CLASS "TblPro1"     FILE "TblPro.Dbf"    VIA ( cDriver() ) SHARED INDEX "TblPro.Cdx" 
+      DATABASE NEW ::oPrp1    PATH ( cPatArt() ) CLASS "TblPro1"     FILE "TblPro.Dbf"    VIA ( ::cDriver ) SHARED INDEX "TblPro.Cdx" 
 
-      DATABASE NEW ::oPrp2    PATH ( cPatArt() ) CLASS "TblPro2"     FILE "TblPro.Dbf"    VIA ( cDriver() ) SHARED INDEX "TblPro.Cdx"
+      DATABASE NEW ::oPrp2    PATH ( cPatArt() ) CLASS "TblPro2"     FILE "TblPro.Dbf"    VIA ( ::cDriver ) SHARED INDEX "TblPro.Cdx"
 
-      DATABASE NEW ::oTarPreL PATH ( cPatEmp() ) CLASS "TARPREL"     FILE "TARPREL.DBF"   VIA ( cDriver() ) SHARED INDEX "TARPREL.CDX"
+      DATABASE NEW ::oTarPreL PATH ( cPatEmp() ) CLASS "TARPREL"     FILE "TARPREL.DBF"   VIA ( ::cDriver ) SHARED INDEX "TARPREL.CDX"
 
-      DATABASE NEW ::oAtipicasCliente PATH ( cPatEmp() ) CLASS "CliAtp" FILE "CliAtp.Dbf" VIA ( cDriver() ) SHARED INDEX "CliAtp.CDX"
+      DATABASE NEW ::oAtipicasCliente PATH ( cPatEmp() ) CLASS "CliAtp" FILE "CliAtp.Dbf" VIA ( ::cDriver ) SHARED INDEX "CliAtp.CDX"
       ::oAtipicasCliente:ordsetfocus( "cCliArt" )
 
-      ::oFraPub           := TFrasesPublicitarias():Create( cPatArt() )
+      ::oFraPub   := TFrasesPublicitarias():Create( cPatArt(), ::cDriver )
       if !::oFraPub:OpenFiles()
          lOpen    := .f.
       end if
 
-      ::oProCab   := TDataCenter():oProCab()
+      ::oProCab   := TDataCenter():oProCab( cPatEmp(), ::cDriver )
 
-      ::oCnfFlt   := TDataCenter():oCnfFlt()
+      ::oCnfFlt   := TDataCenter():oCnfFlt( cPatEmp(), ::cDriver )
 
       /*
       Stocks de articulos------------------------------------------------------
       */
 
-      ::oStock    := TStock():Create( cPatGrp() )
+      ::oStock    := TStock():Create( cPatGrp(), ::cDriver )
       if !::oStock:lOpenFiles()
-         
          lOpen    := .f.
-
       else 
-
          ::oStock:CreateTemporalFiles()
-
       end if
 
-      ::oCtrCoste    := TCentroCoste():Create( cPatDat() )
+      ::oCtrCoste    := TCentroCoste():Create( cPatDat(), ::cDriver )
       if !::oCtrCoste:OpenFiles()
          lOpen       := .f.
       endif
 
-      ::oOperario    := TOperarios():Create()
+      ::oOperario    := TOperarios():Create( cPatEmp(), ::cDriver )
       if !::oOperario:OpenFiles()
          lOpen       := .f.
       end if
 
-      ::oCamposExtra      := TDetCamposExtra():New()
+      ::oCamposExtra := TDetCamposExtra():New( cPatEmp(), ::cDriver )
       if !::oCamposExtra:OpenFiles()
          lOpen       := .f.
+      else 
+         ::oCamposExtra:setTipoDocumento( "Artículos" )
+         ::aExtraFields := ::oCamposExtra:aExtraFields()
       end if
-
-      ::oCamposExtra:setTipoDocumento( "Artículos" )
-      ::aExtraFields := ::oCamposExtra:aExtraFields()
 
    RECOVER USING oError
 

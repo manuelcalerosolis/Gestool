@@ -57,7 +57,7 @@ METHOD DefineFiles( cPath, cDriver )
    local oDbf
 
    DEFAULT cPath        := ::cPath
-   DEFAULT cDriver      := cDriver()
+   DEFAULT cDriver      := ::cDriver
 
    DEFINE TABLE oDbf FILE "Seccion.Dbf" CLASS "Seccion" ALIAS "Seccion" PATH ( cPath ) VIA ( cDriver ) COMMENT "Secciones"
 

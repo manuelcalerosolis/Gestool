@@ -72,7 +72,7 @@ METHOD DefineFiles( cPath, cDriver )
    local oDbf
 
    DEFAULT cPath        := ::cPath
-   DEFAULT cDriver      := cDriver()
+   DEFAULT cDriver      := ::cDriver
 
    DEFINE TABLE oDbf FILE "Horas.Dbf" CLASS "Horas" ALIAS "Horas" PATH ( cPath ) VIA ( cDriver ) COMMENT "Tipos de horas"
 

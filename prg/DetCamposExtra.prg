@@ -84,9 +84,10 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( cPath, oWndParent, oMenuItem ) CLASS TDetCamposExtra
+METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS TDetCamposExtra
 
    DEFAULT cPath           := cPatEmp()
+   DEFAULT cDriver         := cDriver()
    DEFAULT oWndParent      := oWnd()
    DEFAULT oMenuItem       := "01124"
 
@@ -116,7 +117,7 @@ RETURN ( Self )
 METHOD DefineFiles( cPath, cDriver ) CLASS TDetCamposExtra
 
    DEFAULT cPath        := ::cPath
-   DEFAULT cDriver      := cDriver()
+   DEFAULT cDriver      := ::cDriver
 
    DEFINE DATABASE ::oDbf FILE "DETCEXTRA.DBF" CLASS "DETCEXTRA" ALIAS "DETCEXTRA" PATH ( cPath ) VIA ( cDriver ) COMMENT "Detalle campos extra"
       
@@ -156,9 +157,7 @@ METHOD OpenFiles( lExclusive ) CLASS TDetCamposExtra
 
       ::lLoadDivisa()
 
-      ::lOpenFiles         := .t.
-
-      ::oCamposExtra       := TCamposExtra():New()
+      ::oCamposExtra       := TCamposExtra():New( ::cPath, ::cDriver )
       ::lOpenFiles         := ::oCamposExtra:OpenFiles()
 
    end if

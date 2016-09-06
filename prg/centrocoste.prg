@@ -45,9 +45,9 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New( cPath )
+METHOD New( cPath, cDriver )
 
-   ::Super:New( cPath )
+   ::Super:New( cPath, cDriver )
 
    ::Default()
 
@@ -55,9 +55,9 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Create( cPath )
+METHOD Create( cPath, cDriver )
 
-   ::Super:Create( cPath )
+   ::Super:Create( cPath, cDriver )
 
    ::Default()
 

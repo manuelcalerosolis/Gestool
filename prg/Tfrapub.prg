@@ -47,19 +47,18 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New( cPath, oWndParent, oMenuItem )
+METHOD New( cPath, cDriver, oWndParent, oMenuItem )
 
    DEFAULT cPath        := cPatArt()
+   DEFAULT cDriver      := cDriver()
    DEFAULT oWndParent   := GetWndFrame()
-
-   if oMenuItem != nil
-      ::nLevel          := nLevelUsr( oMenuItem )
-   else
-      ::nLevel          := nLevelUsr( "01129" )
-   end if
+   DEFAULT oMenuItem    := "01129"
 
    ::cPath              := cPath
+   ::cDriver            := cDriver   
    ::oWndParent         := oWndParent
+   ::nLevel             := nLevelUsr( oMenuItem )
+
    ::oDbf               := nil
    ::cMru               := "box_white_16"
 
@@ -214,7 +213,7 @@ RETURN ( .t. )
 METHOD DefineFiles( cPath, cDriver )
 
    DEFAULT cPath        := ::cPath
-   DEFAULT cDriver      := cDriver()
+   DEFAULT cDriver      := ::cDriver
 
    DEFINE DATABASE ::oDbf FILE "FraPub.Dbf" CLASS "FraPub" ALIAS "FraPub" PATH ( cPath ) VIA ( cDriver ) COMMENT "Envasado"
 

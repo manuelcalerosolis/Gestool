@@ -18,16 +18,17 @@ CLASS D
 
    CLASSDATA   hashTiposIncidencias          INIT {=>}
 
-   METHOD CreateView()                       INLINE   ( HSet( ::hViews, ++::nView, {=>} ), ::nView )
+   METHOD CreateView()                       
    METHOD DeleteView( nView )
 
-   METHOD InfoView()                         INLINE   ( MsgStop( valtoprg( hGet( ::hViews, ::nView ) ), "Vista : " + alltrim( str( ::nView ) ) ) )
+   METHOD InfoView()                         INLINE   ( msgStop( valtoprg( hGet( ::hViews, ::nView ) ), "Vista : " + alltrim( str( ::nView ) ) ) )
 
    METHOD AssertView()
 
    METHOD Get( cDatabase, nView )
       METHOD AddView( cDatabase, cHandle )
       METHOD GetView( cDatabase )
+      METHOD GetDriver( nView ) 
       METHOD OpenDataBase( cDataTable, nView )
 
    // Temporales---------------------------------------------------------------
@@ -640,7 +641,21 @@ CLASS D
 
 ENDCLASS
 
-   //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+   METHOD CreateView( cDriver ) CLASS D
+
+   local hView
+
+   DEFAULT cDriver   := cDriver()
+
+   hView             := { "Driver" => cDriver }
+
+   hset( ::hViews, ++::nView, hView )
+
+Return ( ::nView )
+
+//---------------------------------------------------------------------------//
 
    METHOD AssertView( nView ) CLASS D
 
@@ -726,13 +741,31 @@ ENDCLASS
       if ::AssertView( nView )
          hView          := hGet( ::hViews, nView )
          if hb_ishash( hView ) 
-            if hHasKey( hView, Upper( cDatabase ) )
+            if hhaskey( hView, Upper( cDatabase ) )
                cHandle  := hGet( hView, Upper( cDatabase ) )
             end if 
          end if 
       end if 
 
    RETURN ( cHandle )
+
+   //---------------------------------------------------------------------------//
+
+   METHOD GetDriver( nView ) CLASS D
+
+      local hView
+      local cDriver     := cDriver()
+
+      if ::AssertView( nView )
+         hView          := hGet( ::hViews, nView )
+         if hb_ishash( hView ) 
+            if hhaskey( hView, "Driver" )
+               cDriver  := hGet( hView, "Driver" )
+            end if 
+         end if 
+      end if 
+
+   RETURN ( cDriver )
 
    //---------------------------------------------------------------------------//
 
@@ -827,22 +860,31 @@ ENDCLASS
       local lOpen
       local oError
       local oBlock
+      local cDriver
       local uHandle        := .f.
       local oDataTable
 
-      oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-      BEGIN SEQUENCE
+      // oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+      // BEGIN SEQUENCE
+
+         cDriver           := ::GetDriver( nView )
 
          oDataTable        := TDataCenter():ScanDataTable( cDataTable )
 
          if !empty( oDataTable )
 
-            dbUseArea( .t., ( cDriver() ), ( oDataTable:cAreaName() ), ( cCheckArea( oDataTable:cArea, @dbf ) ), .t., .f. ) // oDataTable:cFileName()
-            iif( !lAIS(), ordListAdd( ( oDataTable:cIndexFile ) ), ordSetFocus( 1 ) )
+            dbUseArea( .t., ( cDriver ), ( oDataTable:getDataFile( cDriver ) ), ( cCheckArea( oDataTable:cArea, @dbf ) ), .t., .f. ) 
+            
+            if isADSDriver( cDriver )
+               ordSetFocus( 1 )
+            else 
+               msgAlert( oDataTable:cFullCdxIndexFile )
+               ordListAdd( ( oDataTable:cFullCdxIndexFile ) )
+            end if 
 
             if !neterr()
 
-               ::AddView( oDataTable:cArea, dbf, nView )
+               ::addView( oDataTable:cArea, dbf, nView )
 
                uHandle     := ::GetView( cDataTable, nView ) 
 
@@ -854,13 +896,13 @@ ENDCLASS
 
          end if
 
-      RECOVER USING oError
+      // RECOVER USING oError
 
-         msgStop( "Imposible abrir todas la base de datos" + CRLF + ErrorMessage( oError ) )
+      //    msgStop( "Imposible abrir todas la base de datos" + CRLF + ErrorMessage( oError ) )
 
-      END SEQUENCE
+      // END SEQUENCE
 
-      ErrorBlock( oBlock )
+      // ErrorBlock( oBlock )
 
    Return ( uHandle )
 
