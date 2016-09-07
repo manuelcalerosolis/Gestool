@@ -1,3 +1,5 @@
+cCodigoCliente    := aTmp[ ( D():PedidosClientes( nView ) )->( fieldpos( "cCodCli" ) ) ]
+
 #include "HbXml.ch"
 #include "TDbfDbf.ch"
 #include "FiveWin.Ch"

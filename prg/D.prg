@@ -267,7 +267,7 @@ CLASS D
       METHOD setFocusTiketsLineas( cTag, nView )            INLINE ( ::cTag   := ( ::TiketsLineas( nView ) )->( ordSetFocus( cTag ) ) )
 
       METHOD TiketsLineasEof( nView )                       INLINE ( ( ::TiketsLineas( nView ) )->( eof() ) )
-      METHOD TiketsLineasNotEof( nView )                    INLINE (!( ::TiketsLineasEof( nView ) ) ) 
+      METHOD TiketsLineasNotEof( nView )                    INLINE ( ! ( ::TiketsLineasEof( nView ) ) ) 
 
    METHOD getStatusTiketsLineas( nView )                    INLINE ( ::aStatus := aGetStatus( ::TiketsLineas( nView ) ) )
    METHOD setStatusTiketsLineas( nView )                    INLINE ( SetStatus( ::TiketsLineas( nView ), ::aStatus ) )
@@ -293,6 +293,9 @@ CLASS D
 
    METHOD PedidosClientesLineasTableName()                  INLINE ( "PedCliL" )
    METHOD PedidosClientesLineas( nView )                    INLINE ( ::Get( "PedCliL", nView ) )
+   METHOD gotoIdPedidosClientesLineas( id, nView )          INLINE ( ::seekInOrd( ::PedidosClientesLineas( nView ), id, "nNumPed" ) ) 
+   METHOD PedidosClientesLineasNotEof( nView )              INLINE ( ! ( ::PedidosClientesLineas( nView ) )->( eof() ) ) 
+
       METHOD PedidosClientesLineasId( nView )               INLINE ( ( ::Get( "PedCliL", nView ) )->cSerPed + str( ( ::Get( "PedCliL", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliL", nView ) )->cSufPed )
       METHOD GetPedidoClienteLineasHash( nView )            INLINE ( ::getHashRecord( ::PedidosClientesLineas( nView ), nView ) )
       METHOD GetPedidoClienteLineas( nView )                INLINE ( ::getArrayRecordById( ::PedidosClientesId( nView ), ::PedidosClientesLineas( nView ), nView ) )
@@ -864,8 +867,8 @@ Return ( ::nView )
       local uHandle        := .f.
       local oDataTable
 
-      // oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-      // BEGIN SEQUENCE
+      oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE
 
          cDriver           := ::GetDriver( nView )
 
@@ -878,13 +881,12 @@ Return ( ::nView )
             if isADSDriver( cDriver )
                ordSetFocus( 1 )
             else 
-               msgAlert( oDataTable:cFullCdxIndexFile )
                ordListAdd( ( oDataTable:cFullCdxIndexFile ) )
             end if 
 
             if !neterr()
 
-               ::addView( oDataTable:cArea, dbf, nView )
+               ::addView( cDataTable, dbf, nView )
 
                uHandle     := ::GetView( cDataTable, nView ) 
 
@@ -896,13 +898,11 @@ Return ( ::nView )
 
          end if
 
-      // RECOVER USING oError
-
-      //    msgStop( "Imposible abrir todas la base de datos" + CRLF + ErrorMessage( oError ) )
-
-      // END SEQUENCE
-
-      // ErrorBlock( oBlock )
+      RECOVER USING oError
+         msgStop( "Imposible abrir todas la base de datos" + CRLF + ErrorMessage( oError ) )
+      END SEQUENCE
+      
+      ErrorBlock( oBlock )
 
    Return ( uHandle )
 

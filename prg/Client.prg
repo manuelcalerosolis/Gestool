@@ -149,6 +149,7 @@
 #define _LINACLI                 139
 #define _DFECINA                 140
 #define _CMOTINA                 141
+#define _DALTA                   142
 
 #define _aCCODCLI                  1      //   C     12     0
 #define _aCCODGRP                  2      //   C     12     0
@@ -1633,16 +1634,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
 
-         /*
-         --------------Combox tarifa
-         */
+      // Combox tarifa---------------------------------------------------------
 
       oGetTarifa  := comboTarifa():Build( { "idCombo" => 100, "uValue" => aTmp[ _NTARIFA ] } )
       oGetTarifa:Resource( fldGeneral )
-
-         /*
-         --------------
-         */
 
       REDEFINE GET aGet[ _NTARCMB ] VAR aTmp[ _NTARCMB ] ;
          ID       102 ;
@@ -1826,48 +1821,55 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          OF       fldGeneral
 
       REDEFINE GET aTmp[ _COPIASF ] ;
-         ID       270 ;
+         ID          270 ;
          SPINNER ;
-         MIN      0;
-         MAX      9;
-         COLOR    CLR_GET ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         PICTURE  "9" ;
-         OF       fldGeneral
+         MIN         0;
+         MAX         9;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         PICTURE     "9" ;
+         OF          fldGeneral
 
       REDEFINE CHECKBOX aTmp[ _LPNTVER ] ;
-         ID       157 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldGeneral
+         ID          157 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          fldGeneral
 
       REDEFINE CHECKBOX aTmp[ _LTOTALB ] ;
-         ID       156 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldGeneral
+         ID          156 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          fldGeneral
 
       REDEFINE CHECKBOX aTmp[ _LMODDAT ] ;
-         ID       158 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldGeneral
+         ID          158 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          fldGeneral
 
       REDEFINE CHECKBOX aTmp[ _LMAIL ] ;
-         ID       159 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldGeneral
+         ID          159 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          fldGeneral
 
       /*
       Transportistas-----------------------------------------------------------
       */
 
-      REDEFINE GET aGet[ _CCODTRN ] VAR aTmp[ _CCODTRN ] ;
-         ID       315 ;
-         IDTEXT   316 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         BITMAP   "Lupa" ;
-         OF       fldGeneral
+      REDEFINE GET   aGet[ _CCODTRN ] ;
+         VAR         aTmp[ _CCODTRN ] ;
+         ID          315 ;
+         IDTEXT      316 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         BITMAP      "Lupa" ;
+         OF          fldGeneral
 
       aGet[ _CCODTRN ]:bValid := {|| oTrans:Existe( aGet[ _CCODTRN ], aGet[ _CCODTRN ]:oHelpText ) }
       aGet[ _CCODTRN ]:bHelp  := {|| oTrans:Buscar( aGet[ _CCODTRN ] ) }
+
+      REDEFINE GET   aGet[ _DALTA ] ;
+         VAR         aTmp[ _DALTA ] ;
+         ID          350 ;
+         SPINNER ;
+         WHEN        ( nMode != ZOOM_MODE );
+         OF          fldGeneral   
 
       /*
       Segunda Caja de Dialogo--------------------------------------------------
@@ -9051,6 +9053,7 @@ FUNCTION aItmCli()
    aAdd( aBase, { "lInaCli",   "L",  1, 0, "Lógico para cliente inactivo",                  "",                      "", "( cDbfCli )", nil } )
    aAdd( aBase, { "dFecIna",   "D",  8, 0, "Fecha de inactividad del cliente",              "",                      "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cMotIna",   "C",250, 0, "Motivo de inactividad del cliente",             "",                      "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "dAlta",     "D",  8, 0, "Fecha de alta del cliente",                     "",                      "", "( cDbfCli )", nil } )
 
 RETURN ( aBase )
 

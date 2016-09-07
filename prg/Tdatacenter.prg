@@ -894,11 +894,13 @@ METHOD StartAdministratorTask()
       // Eliminamos todas las tablas del diccionario de datos------------------
 
       ::oMsg:SetText( "Eliminando tablas anteriores de diccionario de datos" )
+      
       ::DeleteAllTable()
       
       // Construimos la base de datos de estructura----------------------------
 
-      ::oMsg:SetText( "Creando arbol de tablas datos generales aplicación" )
+      ::oMsg:SetText( "Creando árbol de tablas de datos generales" )
+
       ::BuildData()
 
       ::CreateDataTable()
@@ -1659,15 +1661,15 @@ METHOD AddTable( oTable, lSilent )
 
       if file( oTable:cDataFile ) .and. file( oTable:cIndexFile )
 
-         if !AdsDDaddTable( oTable:cName, oTable:cDataFile, oTable:cIndexFile )
+         if !AdsDDaddTable( oTable:cName, oTable:cFullAdsDataFile, oTable:cFullAdsIndexFile )
+
+         // if !AdsDDaddTable( oTable:cName, oTable:cDataFile, oTable:cIndexFile )
 
             lAddTable   := .f.
 
-            msgStop(    "Name  : " + Alltrim( oTable:cName )      + CRLF + ;
-                        "Table : " + Alltrim( oTable:cDataFile )  + CRLF + ;
-                        "Index : " + Alltrim( oTable:cIndexFile ) + CRLF + ;
-                        "Descripción de error " + cValToChar( adsGetLastError( @cError ) ),;
-                        "Error adding table" )
+            msgStop( "Descripción de error " + cValToChar( adsGetLastError( @cError ) ) + CRLF + ;
+                     oTable:Say(),;
+                     "Error adding table" )
 
          end if
 
@@ -1735,7 +1737,7 @@ METHOD BuildData()
    oDataTable:aStruct      := aItmMapaUsuario()  
    ::AddDataTable( oDataTable )
 
-   oDataTable              := TDataTable():New( "Mapas", cPathDatos() )
+   oDataTable              := TDataTable():New( "Cajas", cPathDatos() )
    // oDataTable:cArea        := "Cajas"
    // oDataTable:cName        := cPatDat() + "Cajas"
    oDataTable:cDataFile    := cPatDat( .t. ) + "Cajas.Dbf"
@@ -1837,7 +1839,6 @@ METHOD BuildData()
    oDataTable              := TDataTable():New( "Divisas", cPathDatos() )
    // oDataTable:cArea        := "Divisas"
    // oDataTable:cPath        := cPatDat()
-   oDataTable:cName        := cPatDat() + "Divisas"
    oDataTable:cDataFile    := cPatDat( .t. ) + "Divisas.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Divisas.Cdx"
    oDataTable:cDescription := "Divisas"
@@ -4441,37 +4442,19 @@ METHOD ReindexTable( oTable )
    local oError
    local oBlock
 
-    oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-    BEGIN SEQUENCE
+   oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
-/*
-      if !empty( oTable:bCreateIndex )
-         eval( oTable:bCreateIndex )
-
-         msgAlert( hb_valtoexp( oTable ) )
-         dbusearea( .t., cDriver(), ( oTable:cName + ".Dbf" ), "Table", .f. )
-         if !neterr() .and. ( "Table" )->( used() )
-            msgAlert( adsDDRemoveIndexFile( oTable:cName, oTable:cIndexFile, 1 ), "intento de borrado" )
-            ( "Table" )->( dbclosearea() )
-            eval( oTable:bCreateIndex )
-            msgAlert( adsDDAddIndexFile( oTable:cName, oTable:cIndexFile ), "intento de añadirlo" )
-         end if 
-
-      else
-*/
-
-         dbusearea( .t., cDriver(), ( oTable:cName + ".Dbf" ), "Table", .f. )
-         if !neterr() .and. ( "Table" )->( used() )
-            ( "Table" )->( ordsetfocus( 1 ) )
-            ( "Table" )->( adsReindex() )
-            ( "Table" )->( dbclosearea() )
-         end if 
-
-/*      end if */
+      dbusearea( .t., ( cDriver() ), ( oTable:cName ), "Table", .f. )
+      if !neterr() .and. ( "Table" )->( used() )
+         ( "Table" )->( ordsetfocus( 1 ) )
+         ( "Table" )->( adsReindex() )
+         ( "Table" )->( dbclosearea() )
+      end if 
 
    RECOVER USING oError
 
-      msgStop( ErrorMessage( oError ), 'Imposible regenerar indices' )
+      msgStop( ErrorMessage( oError ) + CRLF + oTable:Say(), 'Imposible regenerar indices' )
 
    END SEQUENCE
 
@@ -4946,7 +4929,7 @@ CLASS TDataTable
    METHOD NameTable()         INLINE ( ::cArea + ".Dbf" )
    METHOD NameIndex()         INLINE ( ::cArea + ".Cdx" )
 
-   METHOD cFileName()         INLINE ( Upper( cNoPath( ::cName ) ) )
+   METHOD cFileName()         INLINE ( Upper( ::cArea ) )
    METHOD getDataFile( cDriver )
             
 
@@ -4970,7 +4953,7 @@ CLASS TDataTable
    METHOD getDictionary()     INLINE ( ::aDictionary )
    METHOD getIndex()          INLINE ( ::hIndex )
 
-   METHOD checkArea( area )  INLINE ( cCheckArea( ::cArea, @area ) )
+   METHOD checkArea( area )   INLINE ( cCheckArea( ::cArea, @area ) )
 
 END CLASS
 
@@ -4982,7 +4965,7 @@ END CLASS
 
       ::cArea                 := cArea
       ::cPath                 := cPath
-      ::cName                 := cPath + cArea
+      ::cName                 := Upper( cPath + cArea )
 
       ::cShortDataFile        := cPath + "\" + ::NameTable()
       ::cShortIndexFile       := cPath + "\" + ::NameIndex()
