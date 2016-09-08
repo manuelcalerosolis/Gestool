@@ -876,7 +876,7 @@ Return ( ::nView )
 
          if !empty( oDataTable )
 
-            dbUseArea( .t., ( cDriver ), ( oDataTable:getDataFile( cDriver ) ), ( cCheckArea( oDataTable:cArea, @dbf ) ), .t., .f. ) 
+            dbUseArea( .t., ( cDriver ), ( oDataTable:getDataBase( cDriver ) ), ( cCheckArea( oDataTable:cArea, @dbf ) ), .t., .f. ) 
             
             if isADSDriver( cDriver )
                ordSetFocus( 1 )
@@ -920,12 +920,12 @@ Return ( ::nView )
       oDataTable        := TDataCenter():ScanDataTable( cDataTable )
 
       if empty( oDataTable )
-         msgStop( "No puedo encontrar la tabla " + cDataTable )   
+         msgStop( "No puedo encontrar la tabla " + cDataTable, "Creado temporales" )   
          Return ( .f. )
       end if 
 
       if empty( oDataTable:aStruct )
-         msgStop( "La tabla " + cDataTable + " no contiene estructura." )   
+         msgStop( "La tabla " + cDataTable + " no contiene estructura.", "Creado temporales" )   
          Return ( .f. )
       end if 
 

@@ -202,8 +202,8 @@ CLASS TDataCenter
    METHOD getDeFaultValue( cDataTable )  
    METHOD getIndexFromArea( cArea )
 
-   METHOD DataName( cDatabase )              INLINE   ( if( lAIS(), upper( cPatDat() + cDatabase ), upper( cDatabase ) ) )
-   METHOD EmpresaName( cDatabase )           INLINE   ( if( lAIS(), upper( cPatEmp() + cDatabase ), upper( cDatabase ) ) )
+   METHOD DatosName( cDatabase )             INLINE   ( upper( cPathDatos() + cDatabase ) )
+   METHOD EmpresaName( cDatabase )           INLINE   ( upper( cPathEmpresa() + cDatabase ) )
 
    //---------------------------------------------------------------------------//
 
@@ -282,31 +282,31 @@ METHOD oFacCliP() CLASS TDataCenter
 
 METHOD OpenFacCliP( dbf ) CLASS TDataCenter
 
-      local lOpen
-      local cFilter
+   local lOpen
+   local cFilter
 
-      USE ( cPatEmp() + "FacCliP.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIP", @dbf ) )
-      SET ADSINDEX TO ( cPatEmp() + "FacCliP.Cdx" ) ADDITIVE
+   USE ( cPatEmp() + "FacCliP.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIP", @dbf ) )
+   SET ADSINDEX TO ( cPatEmp() + "FacCliP.Cdx" ) ADDITIVE
 
-      lOpen             := !neterr()
-      if lOpen
+   lOpen             := !neterr()
+   if lOpen
 
-         /*
-         Limitaciones de cajero y cajas----------------------------------------
-         */
+      /*
+      Limitaciones de cajero y cajas----------------------------------------
+      */
 
-         if lAIS() .and. !oUser():lAdministrador()
-      
-            cFilter     := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-            if oUser():lFiltroVentas()         
-               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
-            end if 
+      if lAIS() .and. !oUser():lAdministrador()
+   
+         cFilter     := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         if oUser():lFiltroVentas()         
+            cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+         end if 
 
-            ( dbf )->( AdsSetAOF( cFilter ) )
+         ( dbf )->( AdsSetAOF( cFilter ) )
 
-         end if
+      end if
 
-      end if 
+   end if 
 
 Return ( lOpen )   
 
@@ -314,25 +314,25 @@ Return ( lOpen )
 
 METHOD oAlbCliT() CLASS TDataCenter
 
-      local cFilter
-      local oAlbCliT
+   local cFilter
+   local oAlbCliT
 
-      DATABASE NEW oAlbCliT PATH ( cPatEmp() ) FILE "AlbCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "AlbCliT.Cdx"
+   DATABASE NEW oAlbCliT PATH ( cPatEmp() ) FILE "AlbCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "AlbCliT.Cdx"
 
-         if lAIS() .and. !oUser():lAdministrador()
-      
-            cFilter     := "Field->cSufAlb == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-            if oUser():lFiltroVentas()         
-               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
-            end if 
+      if lAIS() .and. !oUser():lAdministrador()
+   
+         cFilter     := "Field->cSufAlb == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         if oUser():lFiltroVentas()         
+            cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+         end if 
 
-            ( oAlbCliT:cAlias )->( AdsSetAOF( cFilter ) )
+         ( oAlbCliT:cAlias )->( AdsSetAOF( cFilter ) )
 
-         end if
+      end if
 
-      Return ( oAlbCliT )   
+Return ( oAlbCliT )   
 
-   //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 METHOD OpenAlbCliT( dbf ) CLASS TDataCenter
 
@@ -1063,19 +1063,22 @@ RETURN ( oDataTable )
 METHOD ScanDataTable( cDataTable ) CLASS TDataCenter
 
    local nScan
+   local cDataName
 
-   nScan    := aScan( ::aDataTables, {|o| o:cFileName() == ::DataName( cDataTable ) } )   
+   cDataName   := ::DatosName( cDataTable )
+
+   nScan       := aScan( ::aDataTables, {|o| o:getName() == cDataName } )   
    if nScan != 0
       Return ( ::aDataTables[ nScan ] )
    end if 
 
-   if nScan == 0
-      nScan    := aScan( ::aEmpresaTables, {|o| o:cFileName() == ::EmpresaName( cDataTable ) } )   
-      if nScan != 0
-         Return ( ::aEmpresaTables[ nScan ] )
-      end if 
-   end if
- 
+   cDataName   := ::EmpresaName( cDataTable )
+
+   nScan       := aScan( ::aEmpresaTables, {|o| o:getName() == cDataName } )   
+   if nScan != 0
+      Return ( ::aEmpresaTables[ nScan ] )
+   end if 
+
 Return ( nil )
 
 //---------------------------------------------------------------------------//
@@ -1104,7 +1107,7 @@ METHOD ScanDataTmp( cDataTable ) CLASS TDataCenter
 
    local nScan
 
-   nScan    := aScan( ::aDataTmp, {|o| o:cFileName() == ::DataName( cDataTable ) } )   
+   nScan    := aScan( ::aDataTmp, {|o| o:cFileName() == ::DatosName( cDataTable ) } )   
    if nScan != 0
       Return ( ::aDataTmp[ nScan ] )
    end if 
@@ -4930,8 +4933,8 @@ CLASS TDataTable
    METHOD NameIndex()         INLINE ( ::cArea + ".Cdx" )
 
    METHOD cFileName()         INLINE ( Upper( ::cArea ) )
-   METHOD getDataFile( cDriver )
-            
+
+   METHOD getDataBase( cDriver )
 
    METHOD msgInfo()           INLINE ( msgInfo( ::Say() ) )
 
@@ -4954,6 +4957,8 @@ CLASS TDataTable
    METHOD getIndex()          INLINE ( ::hIndex )
 
    METHOD checkArea( area )   INLINE ( cCheckArea( ::cArea, @area ) )
+
+   METHOD getName()           INLINE ( ::cName )
 
 END CLASS
 
@@ -4980,10 +4985,10 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-   METHOD getDataFile( cDriver ) CLASS TDataTable
+   METHOD getDataBase( cDriver ) CLASS TDataTable
 
       if isADSDriver( cDriver )
-         Return ( ::cFileName() + ".Dbf" )
+         Return ( ::cName )
       end if 
 
    Return ( ::cFullCdxDataFile ) 
