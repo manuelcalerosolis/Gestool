@@ -1931,7 +1931,7 @@ FUNCTION TpvDelRec()
 
    // Limpiamos el array de articulos a actualizar-----------------------------
 
-   TComercio():getInstance():resetProductsToUpadateStocks()
+   TComercio():getInstance():resetProductsToUpdateStocks()
 
    // Cambiamos el estado del albarán del que proviene-------------------------
 
@@ -6461,7 +6461,7 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   TComercio():getInstance():resetProductsToUpadateStocks()
+   TComercio():getInstance():resetProductsToUpdateStocks()
 
    if empty( aTmp[ _CDIVTIK ] )
       aTmp[ _CDIVTIK ]  := cDivEmp()

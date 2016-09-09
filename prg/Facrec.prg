@@ -7656,7 +7656,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
    if lPasNil() .and. ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
 
-    TComercio():getInstance():resetProductsToUpadateStocks()
+    TComercio():getInstance():resetProductsToUpdateStocks()
 
       ( dbfTmpLin )->( dbGoTop() )
       while !( dbfTmpLin )->( eof() )
@@ -8120,7 +8120,7 @@ static function QuiFacRec()
    Eliminamos las lineas-------------------------------------------------------
    */
 
-   TComercio():getInstance():resetProductsToUpadateStocks()
+   TComercio():getInstance():resetProductsToUpdateStocks()
 
    nOrdAnt     := ( dbfFacRecL )->( OrdSetFocus( "nNumFac" ) )
    while ( dbfFacRecL )->( dbSeek( cSerDoc + Str( nNumDoc ) + cSufDoc ) ) .and. !( dbfFacRecL )->( eof() )

@@ -319,11 +319,9 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
    BEGIN SEQUENCE
 
       ::lApplyFilters   := lAIS()
-      ::cDriver         := cLocalDriver()
+      ::cDriver         := cDriver()
 
       ::nView           := D():CreateView( ::cDriver )
-
-      msgalert( D():getDriver( ::nView ), "getDriver" )
 
       D():Clientes( ::nView )
 
@@ -355,7 +353,7 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       ::oAlbCliT := TDataCenter():oAlbCliT()
 
-      DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) CLASS "ALBCLIL"     FILE "ALBCLIL.Dbf" VIA ( ::cDriver ) SHARED INDEX "ALBCLIL.Cdx"
+      DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) CLASS "AlbCliL"     FILE "AlbCliL.Dbf" VIA ( ::cDriver ) SHARED INDEX "AlbCliL.Cdx"
 
       ::oFacCliT  := TDataCenter():oFacCliT()  
 
@@ -1794,17 +1792,17 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
                ::oDbf:cClsDoc    := PED_CLI
                ::oDbf:cTipDoc    := "Pedido cliente"
-               ::oDbf:cSerDoc    := ( D():PedidosClientes( ::nView ) )->cSerPed
-               ::oDbf:cNumDoc    := str( ( D():PedidosClientes( ::nView ) )->nNumPed )
-               ::oDbf:cSufDoc    := ( D():PedidosClientes( ::nView ) )->cSufPed
+               ::oDbf:cSerDoc    := ( aliasPedidosClientes )->cSerPed
+               ::oDbf:cNumDoc    := str( ( aliasPedidosClientes )->nNumPed )
+               ::oDbf:cSufDoc    := ( aliasPedidosClientes )->cSufPed
 
                ::oDbf:cIdeDoc    := ::idDocumento()
 
-               ::oDbf:nAnoDoc    := Year( ( D():PedidosClientes( ::nView ) )->dFecPed )
-               ::oDbf:nMesDoc    := Month( ( D():PedidosClientes( ::nView ) )->dFecPed )
-               ::oDbf:dFecDoc    := ( D():PedidosClientes( ::nView ) )->dFecPed
-               ::oDbf:cHorDoc    := SubStr( ( D():PedidosClientes( ::nView ) )->cTimCre, 1, 2 )
-               ::oDbf:cMinDoc    := SubStr( ( D():PedidosClientes( ::nView ) )->cTimCre, 4, 2 )
+               ::oDbf:nAnoDoc    := Year( ( aliasPedidosClientes )->dFecPed )
+               ::oDbf:nMesDoc    := Month( ( aliasPedidosClientes )->dFecPed )
+               ::oDbf:dFecDoc    := ( aliasPedidosClientes )->dFecPed
+               ::oDbf:cHorDoc    := SubStr( ( aliasPedidosClientes )->cTimCre, 1, 2 )
+               ::oDbf:cMinDoc    := SubStr( ( aliasPedidosClientes )->cTimCre, 4, 2 )
 
                ::oDbf:nNumLin    := ( aliasPedidosClientesLineas )->nNumLin
                ::oDbf:cCodArt    := ( aliasPedidosClientesLineas )->cRef
@@ -4426,7 +4424,7 @@ Return lValid
 
 Function NombreTerceroCentroCoste( cTipCtr, cTerCtr, nView )
 
-   local cNombre := ""
+   local cNombre  := ""
 
    do case
       case AllTrim( cTipCtr ) == "Proveedor"

@@ -5361,7 +5361,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      TComercio():getInstance():resetProductsToUpadateStocks()
+      TComercio():getInstance():resetProductsToUpdateStocks()
 
       CursorWait()
 
@@ -6027,7 +6027,7 @@ Static Function QuiAlbPrv( lDetail )
    Detalle---------------------------------------------------------------------
    */
 
-   TComercio():getInstance():resetProductsToUpadateStocks()
+   TComercio():getInstance():resetProductsToUpdateStocks()
 
    while ( D():AlbaranesProveedoresLineas( nView ) )->( dbSeek( ( D():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) + ( D():AlbaranesProveedores( nView ) )->cSufAlb ) ) .and. !( D():AlbaranesProveedoresLineas( nView ) )->( eof() )
 

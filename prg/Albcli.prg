@@ -5426,7 +5426,7 @@ Static Function QuiAlbCli()
    nOrdDoc        := ( D():Get( "AlbCliD", nView ) )->( OrdSetFocus( "nNumAlb" ) )
    nOrdSer        := ( D():Get( "AlbCliS", nView ) )->( OrdSetFocus( "nNumAlb" ) )
 
-   TComercio():getInstance():resetProductsToUpadateStocks()
+   TComercio():getInstance():resetProductsToUpdateStocks()
 
    // Eliminamos las entregas-----------------------------------------------------
 
@@ -9065,7 +9065,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      TComercio():getInstance():resetProductsToUpadateStocks()
+      TComercio():getInstance():resetProductsToUpdateStocks()
 
       aNumPed        := {}
 

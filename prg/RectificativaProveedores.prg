@@ -6613,10 +6613,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
          end if
       end while
 
-      while ( D():FacturasRectificativasProveedoresDocumentos( nView ) )->( dbSeek( cSerFac + Str( nNumFac ) + cSufFac ) )
-         if dbLock( D():FacturasRectificativasProveedoresDocumentos( nView ) )
-            ( D():FacturasRectificativasProveedoresDocumentos( nView ) )->( dbDelete() )
-            ( D():FacturasRectificativasProveedoresDocumentos( nView ) )->( dbUnLock() )
+      while ( D():FacturasRectificativasProveedoresSeries( nView ) )->( dbSeek( cSerFac + Str( nNumFac ) + cSufFac ) )
+         if dbLock( D():FacturasRectificativasProveedoresSeries( nView ) )
+            ( D():FacturasRectificativasProveedoresSeries( nView ) )->( dbDelete() )
+            ( D():FacturasRectificativasProveedoresSeries( nView ) )->( dbUnLock() )
          end if
       end while
 
@@ -6635,7 +6635,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
    Ahora escribimos en el fichero definitivo-----------------------------------
 	*/
 
-   TComercio():getInstance():resetProductsToUpadateStocks()
+   TComercio():getInstance():resetProductsToUpdateStocks()
 
    ( dbfTmp )->( dbGoTop() )
    while !( dbfTmp )->( eof() )
@@ -6683,7 +6683,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
 
    ( dbfTmpSer )->( dbGoTop() )
    while ( dbfTmpSer )->( !eof() )
-      dbPass( dbfTmpSer, D():FacturasRectificativasProveedoresDocumentos( nView ), .t., cSerFac, nNumFac, cSufFac )
+      dbPass( dbfTmpSer, D():FacturasRectificativasProveedoresSeries( nView ), .t., cSerFac, nNumFac, cSufFac )
       ( dbfTmpSer )->( dbSkip() )
    end while
 
@@ -7186,12 +7186,7 @@ return bGen
 
 //---------------------------------------------------------------------------//
 
-static function QuiRctPrv( lDetail, lSetCnt )
-
-   local nOrdAnt
-
-   DEFAULT lDetail   := .t.
-   DEFAULT lSetCnt   := .t.
+static function QuiRctPrv()
 
    if ( D():FacturasRectificativasProveedores( nView ) )->lCloFac .and. !oUser():lAdministrador()
       msgStop( "Solo puede eliminar facturas cerradas los administradores." )
@@ -7200,35 +7195,23 @@ static function QuiRctPrv( lDetail, lSetCnt )
 
    CursorWait()
 
-   if lDetail
-      DelDetalle()
-   end if
+   DeleteRelacionRectificativasProveedores()
 
-   nOrdAnt        := ( D():AlbaranesProveedores( nView ) )->( OrdSetFocus( "cNumFac" ) )
-
-      while ( D():AlbaranesProveedores( nView ) )->( dbSeek( ( D():FacturasRectificativasProveedores( nView ) )->cSerFac + Str( ( D():FacturasRectificativasProveedores( nView ) )->nNumFac ) + ( D():FacturasRectificativasProveedores( nView ) )->cSufFac ) )
-         
-         SetFacturadoAlbaranProveedor( .f., nView ) 
-
-      end while
-     
-   ( D():AlbaranesProveedores( nView ) )->( OrdSetFocus( nOrdAnt ) )
-
-   if uFieldEmpresa( "LRECNUMFAC" )
-      nPutDoc( ( D():FacturasRectificativasProveedores( nView ) )->cSerFac, ( D():FacturasRectificativasProveedores( nView ) )->nNumFac, ( D():FacturasRectificativasProveedores( nView ) )->cSufFac, D():FacturasRectificativasProveedores( nView ), "nRctPrv" )
+   if uFieldEmpresa( "lRecNumFac" )
+      nPutDoc( ( D():FacturasRectificativasProveedores( nView ) )->cSerFac, ( D():FacturasRectificativasProveedores( nView ) )->nNumFac, ( D():FacturasRectificativasProveedores( nView ) )->cSufFac, D():FacturasRectificativasProveedores( nView ), "nRctPrv", , D():Contadores( nView ) )
    end if
 
    CursorWE()
 
-return .t.
+Return .t.
 
 //----------------------------------------------------------------------------//
 
-STATIC FUNCTION DelDetalle( cFactura )
+STATIC FUNCTION DeleteRelacionRectificativasProveedores( cFactura )
 
    local nOrdAnt
 
-   DEFAULT cFactura  := ( D():FacturasRectificativasProveedores( nView ) )->cSerFac + Str( ( D():FacturasRectificativasProveedores( nView ) )->nNumFac ) + ( D():FacturasRectificativasProveedores( nView ) )->cSufFac
+   DEFAULT cFactura  := D():FacturasRectificativasProveedoresId( nView ) 
 
    CursorWait()
 
@@ -7236,80 +7219,49 @@ STATIC FUNCTION DelDetalle( cFactura )
    Eliminamos los apuntes de stocks--------------------------------------------
    */
 
-   TComercio():getInstance():resetProductsToUpadateStocks()
+   TComercio():getInstance():resetProductsToUpdateStocks()
 
    while ( D():FacturasRectificativasProveedoresLineas( nView ) )->( dbSeek( cFactura ) ) .and. !( D():FacturasRectificativasProveedoresLineas( nView ) )->( eof() )
 
-      TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasRectificativasProveedoresLineas( nView ) )->cRef, ( D():FacturasRectificativasProveedoresLineas( nView ) )->cCodPr1, , ( D():FacturasRectificativasProveedoresLineas( nView ) )->cValPr1, ( D():FacturasRectificativasProveedoresLineas( nView ) )->cCodPr2, ( D():FacturasRectificativasProveedoresLineas( nView ) )->cValPr2, nView )
+      TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasRectificativasProveedoresLineas( nView ) )->cRef, ( D():FacturasRectificativasProveedoresLineas( nView ) )->cCodPr1, ( D():FacturasRectificativasProveedoresLineas( nView ) )->cValPr1, ( D():FacturasRectificativasProveedoresLineas( nView ) )->cCodPr2, ( D():FacturasRectificativasProveedoresLineas( nView ) )->cValPr2, nView )
 
-      if dbLock( D():FacturasRectificativasProveedoresLineas( nView ) )
-         ( D():FacturasRectificativasProveedoresLineas( nView ) )->( dbDelete() )
-         ( D():FacturasRectificativasProveedoresLineas( nView ) )->( dbUnLock() )
-      end if
+      dbLockDelete( D():FacturasRectificativasProveedoresLineas( nView ) )
+
    end while
-
-   // actualiza el stock de prestashop-----------------------------------------
-
-   TComercio():getInstance():updateWebProductStocks()
 
    /*
    Eliminamos los pagos--------------------------------------------------------
    */
 
    while ( D():FacturasProveedoresPagos( nView ) )->( dbSeek( cFactura ) ) .and. !( D():FacturasProveedoresPagos( nView ) )->( eof() )
-      if dbLock( D():FacturasProveedoresPagos( nView ) )
-         ( D():FacturasProveedoresPagos( nView ) )->( dbDelete() )
-         ( D():FacturasProveedoresPagos( nView ) )->( dbUnLock() )
-      end if
+      dbLockDelete( D():FacturasProveedoresPagos( nView ) )
    end while
 
    while ( D():FacturasRectificativasProveedoresIncidencias( nView ) )->( dbSeek( cFactura ) .and. !( D():FacturasRectificativasProveedoresIncidencias( nView ) )->( eof() ) )
-      if dbLock( D():FacturasRectificativasProveedoresIncidencias( nView ) )
-         ( D():FacturasRectificativasProveedoresIncidencias( nView ) )->( dbDelete() )
-         ( D():FacturasRectificativasProveedoresIncidencias( nView ) )->( dbUnLock() )
-      end if
+      dbLockDelete( D():FacturasRectificativasProveedoresIncidencias( nView ) )
    end while
 
    while ( D():FacturasRectificativasProveedoresDocumentos( nView ) )->( dbSeek( cFactura ) .and. !( D():FacturasRectificativasProveedoresDocumentos( nView ) )->( eof() ) )
-      if dbLock( D():FacturasRectificativasProveedoresDocumentos( nView ) )
-         ( D():FacturasRectificativasProveedoresDocumentos( nView ) )->( dbDelete() )
-         ( D():FacturasRectificativasProveedoresDocumentos( nView ) )->( dbUnLock() )
-      end if
+      dbLockDelete( D():FacturasRectificativasProveedoresDocumentos( nView ) )
    end while
 
-   while ( D():FacturasRectificativasProveedoresDocumentos( nView ) )->( dbSeek( cFactura ) .and. !( D():FacturasRectificativasProveedoresDocumentos( nView ) )->( eof() ) )
-      if dbLock( D():FacturasRectificativasProveedoresDocumentos( nView ) )
-         ( D():FacturasRectificativasProveedoresDocumentos( nView ) )->( dbDelete() )
-         ( D():FacturasRectificativasProveedoresDocumentos( nView ) )->( dbUnLock() )
-      end if
+   while ( D():FacturasRectificativasProveedoresSeries( nView ) )->( dbSeek( cFactura ) .and. !( D():FacturasRectificativasProveedoresSeries( nView ) )->( eof() ) )
+      dbLockDelete( D():FacturasRectificativasProveedoresSeries( nView ) )
    end while
 
-	/*
-   Restaura los Albaranes caso de estar facturados-----------------------------
-	*/
+   // actualiza el stock de prestashop-----------------------------------------
 
-   nOrdAnt           := ( D():AlbaranesProveedores( nView ) )->( OrdSetFocus( "cNumFac" ) )
-
-   if ( D():AlbaranesProveedores( nView ) )->( dbSeek( cFactura ) )
-      while ( D():AlbaranesProveedores( nView ) )->cNumFac == cFactura .and. !( D():AlbaranesProveedores( nView ) )->( eof() )
-
-         SetFacturadoAlbaranProveedor( .f., nView )
-
-         ( D():AlbaranesProveedores( nView ) )->( dbSkip() )
-      end while
-   end if
-
-   ( D():AlbaranesProveedores( nView ) )->( OrdSetFocus( nOrdAnt ) )
+   TComercio():getInstance():updateWebProductStocks()
 
    CursorWe()
 
-RETURN NIL
+Return .t.
 
 //--------------------------------------------------------------------------//
 
 Static Function lLiquida( oBrw, cFactura, cDivFac )
 
-   DEFAULT cFactura  := ( D():FacturasRectificativasProveedores( nView ) )->cSerFac + Str( ( D():FacturasRectificativasProveedores( nView ) )->nNumFac ) + ( D():FacturasRectificativasProveedores( nView ) )->cSufFac
+   DEFAULT cFactura  := D():FacturasRectificativasProveedoresId( nView ) 
    DEFAULT cDivFac   := ( D():FacturasRectificativasProveedores( nView ) )->cDivFac
 
    if ( D():FacturasRectificativasProveedores( nView ) )->lLiquidada
@@ -7625,6 +7577,9 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Documentos de facturas rectificativas", ( D():FacturasRectificativasProveedoresDocumentos( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Documentos de facturas rectificativas", cItemsToReport( aFacPrvDoc() ) )
 
+   oFr:SetWorkArea(     "Series de facturas rectificativas", ( D():FacturasRectificativasProveedoresSeries( nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "Series de facturas rectificativas", cItemsToReport( aSerRctPrv() ) )
+
    oFr:SetWorkArea(     "Empresa", ( D():Empresa( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
 
@@ -7649,6 +7604,7 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Facturas rectificativas", "Lineas de facturas rectificativas",      {|| ( D():FacturasRectificativasProveedores( nView ) )->cSerFac + Str( ( D():FacturasRectificativasProveedores( nView ) )->nNumFac ) + ( D():FacturasRectificativasProveedores( nView ) )->cSufFac } )
    oFr:SetMasterDetail( "Facturas rectificativas", "Incidencias de facturas rectificativas", {|| ( D():FacturasRectificativasProveedores( nView ) )->cSerFac + Str( ( D():FacturasRectificativasProveedores( nView ) )->nNumFac ) + ( D():FacturasRectificativasProveedores( nView ) )->cSufFac } )
    oFr:SetMasterDetail( "Facturas rectificativas", "Documentos de facturas rectificativas",  {|| ( D():FacturasRectificativasProveedores( nView ) )->cSerFac + Str( ( D():FacturasRectificativasProveedores( nView ) )->nNumFac ) + ( D():FacturasRectificativasProveedores( nView ) )->cSufFac } )
+   oFr:SetMasterDetail( "Facturas rectificativas", "Series de facturas rectificativas",      {|| ( D():FacturasRectificativasProveedores( nView ) )->cSerFac + Str( ( D():FacturasRectificativasProveedores( nView ) )->nNumFac ) + ( D():FacturasRectificativasProveedores( nView ) )->cSufFac } )
    oFr:SetMasterDetail( "Facturas rectificativas", "Proveedores",                            {|| ( D():FacturasRectificativasProveedores( nView ) )->cCodPrv } )
    oFr:SetMasterDetail( "Facturas rectificativas", "Almacenes",                              {|| ( D():FacturasRectificativasProveedores( nView ) )->cCodAlm } )
    oFr:SetMasterDetail( "Facturas rectificativas", "Formas de pago",                         {|| ( D():FacturasRectificativasProveedores( nView ) )->cCodPago} )
@@ -7661,6 +7617,7 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Facturas rectificativas", "Lineas de facturas rectificativas" )
    oFr:SetResyncPair(   "Facturas rectificativas", "Incidencias de facturas rectificativas" )
    oFr:SetResyncPair(   "Facturas rectificativas", "Documentos de facturas rectificativas" )
+   oFr:SetResyncPair(   "Facturas rectificativas", "Series de facturas rectificativas" )
    oFr:SetResyncPair(   "Facturas rectificativas", "Proveedores" )
    oFr:SetResyncPair(   "Facturas rectificativas", "Almacenes" )
    oFr:SetResyncPair(   "Facturas rectificativas", "Formas de pago" )

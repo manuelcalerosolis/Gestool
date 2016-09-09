@@ -407,121 +407,121 @@ METHOD lOpenFiles() CLASS TStock
       ::nDecIn          := nDinDiv()
       ::nDerIn          := nRinDiv()
 
-      USE ( cPatEmp() + "SatCliT.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cSatCliT )
+      USE ( cPatEmp() + "SatCliT.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cSatCliT )
       SET ADSINDEX TO ( cPatEmp() + "SatCliT.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "SatCliL.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cSatCliL )
+      USE ( cPatEmp() + "SatCliL.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cSatCliL )
       SET ADSINDEX TO ( cPatEmp() + "SatCliL.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "PedCliT.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cPedCliT )
+      USE ( cPatEmp() + "PedCliT.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cPedCliT )
       SET ADSINDEX TO ( cPatEmp() + "PedCliT.Cdx" ) ADDITIVE
 
-      USE ( cPatEmp() + "PedCliL.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cPedCliL )
+      USE ( cPatEmp() + "PedCliL.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cPedCliL )
       SET ADSINDEX TO ( cPatEmp() + "PedCliL.Cdx" ) ADDITIVE
 
-      USE ( cPatEmp() + "PedCliR.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cPedCliR )
+      USE ( cPatEmp() + "PedCliR.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cPedCliR )
       SET ADSINDEX TO ( cPatEmp() + "PedCliR.Cdx" ) ADDITIVE
 
-      USE ( cPatEmp() + "AlbCliT.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cAlbCliT )
+      USE ( cPatEmp() + "AlbCliT.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cAlbCliT )
       SET ADSINDEX TO ( cPatEmp() + "AlbCliT.Cdx" ) ADDITIVE
 
-      USE ( cPatEmp() + "AlbCliL.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cAlbCliL )
+      USE ( cPatEmp() + "AlbCliL.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cAlbCliL )
       SET ADSINDEX TO ( cPatEmp() + "AlbCliL.Cdx" ) ADDITIVE
 
-      USE ( cPatEmp() + "AlbCliS.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cAlbCliS )
+      USE ( cPatEmp() + "AlbCliS.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cAlbCliS )
       SET ADSINDEX TO ( cPatEmp() + "AlbCliS.Cdx" ) ADDITIVE
 
-      USE ( cPatEmp() + "FacCliT.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cFacCliT )
+      USE ( cPatEmp() + "FacCliT.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cFacCliT )
       SET ADSINDEX TO ( cPatEmp() + "FacCliT.Cdx" ) ADDITIVE
 
-      USE ( cPatEmp() + "FacCliL.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cFacCliL )
+      USE ( cPatEmp() + "FacCliL.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cFacCliL )
       SET ADSINDEX TO ( cPatEmp() + "FacCliL.Cdx" ) ADDITIVE
 
-      USE ( cPatEmp() + "FacCliS.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cFacCliS )
+      USE ( cPatEmp() + "FacCliS.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cFacCliS )
       SET ADSINDEX TO ( cPatEmp() + "FacCliS.Cdx" ) ADDITIVE
 
-      USE ( cPatEmp() + "FacCliP.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cFacCliP )
+      USE ( cPatEmp() + "FacCliP.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cFacCliP )
       SET ADSINDEX TO ( cPatEmp() + "FacCliP.Cdx" ) ADDITIVE
 
-      USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cAntCliT ) 
+      USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cAntCliT ) 
       SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "FacRecT.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cFacRecT )
+      USE ( cPatEmp() + "FacRecT.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cFacRecT )
       SET ADSINDEX TO ( cPatEmp() + "FacRecT.Cdx" ) ADDITIVE
 
-      USE ( cPatEmp() + "FacRecL.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cFacRecL )
+      USE ( cPatEmp() + "FacRecL.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cFacRecL )
       SET ADSINDEX TO ( cPatEmp() + "FacRecL.Cdx" ) ADDITIVE
 
-      USE ( cPatEmp() + "FacRecS.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cFacRecS )
+      USE ( cPatEmp() + "FacRecS.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cFacRecS )
       SET ADSINDEX TO ( cPatEmp() + "FacRecS.Cdx" ) ADDITIVE
 
-      USE ( cPatEmp() + "TikeT.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cTikT ) 
+      USE ( cPatEmp() + "TikeT.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cTikT ) 
       SET ADSINDEX TO ( cPatEmp() + "TikeT.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "TikeL.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cTikL ) 
+      USE ( cPatEmp() + "TikeL.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cTikL ) 
       SET ADSINDEX TO ( cPatEmp() + "TikeL.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "TikeS.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cTikS ) 
+      USE ( cPatEmp() + "TikeS.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cTikS ) 
       SET ADSINDEX TO ( cPatEmp() + "TikeS.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "PedProvT.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cPedPrvT ) 
+      USE ( cPatEmp() + "PedProvT.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cPedPrvT ) 
       SET ADSINDEX TO ( cPatEmp() + "PedProvT.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "PedProvL.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cPedPrvL ) 
+      USE ( cPatEmp() + "PedProvL.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cPedPrvL ) 
       SET ADSINDEX TO ( cPatEmp() + "PedProvL.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "AlbProvL.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cAlbPrvL )
+      USE ( cPatEmp() + "AlbProvL.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cAlbPrvL )
       SET ADSINDEX TO ( cPatEmp() + "AlbProvL.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "AlbPrvS.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cAlbPrvS ) 
+      USE ( cPatEmp() + "AlbPrvS.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cAlbPrvS ) 
       SET ADSINDEX TO ( cPatEmp() + "AlbPrvS.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "FacPrvL.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cFacPrvL )
+      USE ( cPatEmp() + "FacPrvL.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cFacPrvL )
       SET ADSINDEX TO ( cPatEmp() + "FacPrvL.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "FacPrvS.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cFacPrvS ) 
+      USE ( cPatEmp() + "FacPrvS.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cFacPrvS ) 
       SET ADSINDEX TO ( cPatEmp() + "FacPrvS.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "RctPrvL.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cRctPrvL )
+      USE ( cPatEmp() + "RctPrvL.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cRctPrvL )
       SET ADSINDEX TO ( cPatEmp() + "RctPrvL.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "RctPrvS.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cRctPrvS ) 
+      USE ( cPatEmp() + "RctPrvS.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cRctPrvS ) 
       SET ADSINDEX TO ( cPatEmp() + "RctPrvS.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "ProLin.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cProducL ) 
+      USE ( cPatEmp() + "ProLin.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cProducL ) 
       SET ADSINDEX TO ( cPatEmp() + "ProLin.Cdx" ) ADDITIVE
 
-      USE ( cPatEmp() + "ProMat.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cProducM )
+      USE ( cPatEmp() + "ProMat.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cProducM )
       SET ADSINDEX TO ( cPatEmp() + "ProMat.Cdx" ) ADDITIVE
 
-      USE ( cPatEmp() + "ProSer.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cProducS )
+      USE ( cPatEmp() + "ProSer.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cProducS )
       SET ADSINDEX TO ( cPatEmp() + "ProSer.Cdx" ) ADDITIVE
 
-      USE ( cPatEmp() + "MatSer.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cProducP )
+      USE ( cPatEmp() + "MatSer.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cProducP )
       SET ADSINDEX TO ( cPatEmp() + "MatSer.Cdx" ) ADDITIVE
 
-      USE ( cPatEmp() + "HisMov.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cHisMovT )
+      USE ( cPatEmp() + "HisMov.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cHisMovT )
       SET ADSINDEX TO ( cPatEmp() + "HisMov.Cdx" ) ADDITIVE
 
-      USE ( cPatEmp() + "MovSer.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cHisMovS )
+      USE ( cPatEmp() + "MovSer.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cHisMovS )
       SET ADSINDEX TO ( cPatEmp() + "MovSer.Cdx" ) ADDITIVE
 
-      USE ( cPatArt() + "Articulo.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cArticulo ) 
+      USE ( cPatArt() + "Articulo.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cArticulo ) 
       SET ADSINDEX TO ( cPatArt() + "Articulo.Cdx" ) ADDITIVE
 
-      USE ( cPatArt() + "ArtKit.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cKit ) 
+      USE ( cPatArt() + "ArtKit.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cKit ) 
       SET ADSINDEX TO ( cPatArt() + "ArtKit.Cdx" ) ADDITIVE
 
-      USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cAlm ) 
+      USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cAlm ) 
       SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cDbfDiv )
+      USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cDbfDiv )
       SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cDbfIva )
+      USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cDbfIva )
       SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 
-      USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cDbfFPago )
+      USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( ::cDbfFPago )
       SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
 
       // Cargamos los almacenes------------------------------------------------
@@ -1516,7 +1516,7 @@ METHOD Duplicados( oMeter, aMsg, cPath ) CLASS TStock
    DEFAULT cPath        := ::cPath
    DEFAULT aMsg         := {}
 
-   USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbf ) )
+   USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "ARTICULO", @dbf ) )
    SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
 
    if oMeter != NIL
@@ -1547,7 +1547,7 @@ METHOD Duplicados( oMeter, aMsg, cPath ) CLASS TStock
    Procesamos pedidos de proveedores-----------------------------------------
    */
 
-   USE ( cPath + "PEDPROVT.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @dbf ) )
+   USE ( cPath + "PEDPROVT.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "PEDPROVT", @dbf ) )
    SET ADSINDEX TO ( cPath + "PEDPROVT.CDX" ) ADDITIVE
 
    if oMeter != NIL
@@ -1576,7 +1576,7 @@ METHOD Duplicados( oMeter, aMsg, cPath ) CLASS TStock
    Procesamos albaranes de proveedores-----------------------------------------
    *<</
 
-   USE ( cPath + "ALBPROVT.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "ALBPROVT", @dbf ) )
+   USE ( cPath + "ALBPROVT.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "ALBPROVT", @dbf ) )
    SET ADSINDEX TO ( cPath + "ALBPROVT.CDX" ) ADDITIVE
 
    if oMeter != NIL
@@ -1605,7 +1605,7 @@ METHOD Duplicados( oMeter, aMsg, cPath ) CLASS TStock
    Procesamos facturas de proveedores------------------------------------------
    */
 
-   USE ( cPath + "FACPRVT.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "FACPROVT", @dbf ) )
+   USE ( cPath + "FACPRVT.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "FACPROVT", @dbf ) )
    SET ADSINDEX TO ( cPath + "FACPRVT.CDX" ) ADDITIVE
 
    if oMeter != NIL
@@ -1634,7 +1634,7 @@ METHOD Duplicados( oMeter, aMsg, cPath ) CLASS TStock
    Procesamos facturas rectificativa de proveedores------------------------------------------
    */
 
-   USE ( cPath + "RctPrvT.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "RctPrvT", @dbf ) )
+   USE ( cPath + "RctPrvT.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "RctPrvT", @dbf ) )
    SET ADSINDEX TO ( cPath + "RctPrvT.CDX" ) ADDITIVE
 
    if oMeter != NIL
@@ -1664,7 +1664,7 @@ METHOD Duplicados( oMeter, aMsg, cPath ) CLASS TStock
    Procesamos pedidos de clientes----------------------------------------------
    */
 
-   USE ( cPath + "PEDCLIT.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "PEDCLIT", @dbf ) )
+   USE ( cPath + "PEDCLIT.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "PEDCLIT", @dbf ) )
    SET ADSINDEX TO ( cPath + "PEDCLIT.CDX" ) ADDITIVE
 
    if oMeter != NIL
@@ -1695,7 +1695,7 @@ METHOD Duplicados( oMeter, aMsg, cPath ) CLASS TStock
    Procesamos albaranes de Clientes--------------------------------------------
    */
 
-   USE ( cPath + "ALBCLIT.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbf ) )
+   USE ( cPath + "ALBCLIT.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "ALBCLIT", @dbf ) )
    SET ADSINDEX TO ( cPath + "ALBCLIT.CDX" ) ADDITIVE
 
    if oMeter != NIL
@@ -1724,7 +1724,7 @@ METHOD Duplicados( oMeter, aMsg, cPath ) CLASS TStock
    Procesamos facturas de clientes------------------------------------------
    */
 
-   USE ( cPath + "FACCLIT.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbf ) )
+   USE ( cPath + "FACCLIT.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "FACCLIT", @dbf ) )
    SET ADSINDEX TO ( cPath + "FACCLIT.CDX" ) ADDITIVE
 
    if oMeter != NIL
@@ -1753,7 +1753,7 @@ METHOD Duplicados( oMeter, aMsg, cPath ) CLASS TStock
    Procesamos tikets de clientes-----------------------------------------------
    */
 
-   USE ( cPath + "TIKET.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "TIKET", @dbf ) )
+   USE ( cPath + "TIKET.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "TIKET", @dbf ) )
    SET ADSINDEX TO ( cPath + "TIKET.CDX" ) ADDITIVE
 
    if oMeter != NIL
@@ -2474,55 +2474,55 @@ METHOD StockInit( cPath, cPathOld, oMsg, nCalcCosto ) CLASS TStock
       ::lAlbPrv      := .t.
       ::lAlbCli      := .t.
 
-      USE ( cPath + "HisMov.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "HISMOV", @dbfHisMov ) )
+      USE ( cPath + "HisMov.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "HISMOV", @dbfHisMov ) )
       SET ADSINDEX TO ( cPath + "HisMov.Cdx" ) ADDITIVE
 
-      USE ( cPath + "RemMovT.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "REMMOVT", @dbfRemMov ) )
+      USE ( cPath + "RemMovT.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "REMMOVT", @dbfRemMov ) )
       SET ADSINDEX TO ( cPath + "RemMovT.Cdx" ) ADDITIVE
 
-      USE ( cPath + "NCount.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "NCount", @dbfCnt ) )
+      USE ( cPath + "NCount.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "NCount", @dbfCnt ) )
       SET ADSINDEX TO ( cPath + "NCount.Cdx" ) ADDITIVE
 
-      USE ( cPatAlm() + "Almacen.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlm ) )
+      USE ( cPatAlm() + "Almacen.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "ALMACEN", @dbfAlm ) )
       SET ADSINDEX TO ( cPatAlm() + "Almacen.Cdx" ) ADDITIVE
 
-      USE ( cPathOld + "HisMov.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "HISMOV", @oldHisMov ) )
+      USE ( cPathOld + "HisMov.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "HISMOV", @oldHisMov ) )
       SET ADSINDEX TO ( cPathOld + "HisMov.Cdx" ) ADDITIVE
 
-      USE ( cPathOld + "Articulo.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "ARTICULO", @oldArt ) )
+      USE ( cPathOld + "Articulo.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "ARTICULO", @oldArt ) )
       SET ADSINDEX TO ( cPathOld + "ARTICULO.CDX" ) ADDITIVE
 
-      USE ( cPathOld + "PEDPROVL.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "PedPrvL", @oldPedPrvL ) )
+      USE ( cPathOld + "PEDPROVL.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "PedPrvL", @oldPedPrvL ) )
       SET ADSINDEX TO ( cPathOld + "PEDPROVL.CDX" ) ADDITIVE
 
-      USE ( cPathOld + "ALBPROVL.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "ALBPRVL", @oldAlbPrvL ) )
+      USE ( cPathOld + "ALBPROVL.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "ALBPRVL", @oldAlbPrvL ) )
       SET ADSINDEX TO ( cPathOld + "ALBPROVL.CDX" ) ADDITIVE
 
-      USE ( cPathOld + "FACPRVL.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "FACPRVL", @oldFacPrvL ) )
+      USE ( cPathOld + "FACPRVL.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "FACPRVL", @oldFacPrvL ) )
       SET ADSINDEX TO ( cPathOld + "FACPRVL.CDX" ) ADDITIVE
 
-      USE ( cPathOld + "RctPrvL.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "RctPrvL", @oldRctPrvL ) )
+      USE ( cPathOld + "RctPrvL.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "RctPrvL", @oldRctPrvL ) )
       SET ADSINDEX TO ( cPathOld + "RctPrvL.CDX" ) ADDITIVE
 
-      USE ( cPathOld + "PEDCLIL.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "PedCliL", @oldPedCliL ) )
+      USE ( cPathOld + "PEDCLIL.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "PedCliL", @oldPedCliL ) )
       SET ADSINDEX TO ( cPathOld + "PEDCLIL.CDX" ) ADDITIVE
 
-      USE ( cPathOld + "ALBCLIL.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @oldAlbCliL ) )
+      USE ( cPathOld + "ALBCLIL.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "ALBCLIL", @oldAlbCliL ) )
       SET ADSINDEX TO ( cPathOld + "ALBCLIL.CDX" ) ADDITIVE
 
-      USE ( cPathOld + "FACCLIL.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "FACCliL", @oldFacCliL ) )
+      USE ( cPathOld + "FACCLIL.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "FACCliL", @oldFacCliL ) )
       SET ADSINDEX TO ( cPathOld + "FACCliL.CDX" ) ADDITIVE
 
-      USE ( cPathOld + "FACRECL.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "FACRECL", @oldFacRecL ) )
+      USE ( cPathOld + "FACRECL.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "FACRECL", @oldFacRecL ) )
       SET ADSINDEX TO ( cPathOld + "FACRECL.CDX" ) ADDITIVE
 
-      USE ( cPathOld + "TIKEL.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "TIKEL", @oldTikL ) )
+      USE ( cPathOld + "TIKEL.Dbf" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "TIKEL", @oldTikL ) )
       SET ADSINDEX TO ( cPathOld + "TIKEL.CDX" ) ADDITIVE
 
-      USE ( cPathOld + "PROLIN.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "PROLIN", @oldProLin ) )
+      USE ( cPathOld + "PROLIN.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "PROLIN", @oldProLin ) )
       SET ADSINDEX TO ( cPathOld + "PROLIN.CDX" ) ADDITIVE
 
-      USE ( cPathOld + "PROMAT.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "PROMAT", @oldProMat ) )
+      USE ( cPathOld + "PROMAT.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "PROMAT", @oldProMat ) )
       SET ADSINDEX TO ( cPathOld + "PROMAT.CDX" ) ADDITIVE
 
       ::cPedPrvL                             := oldPedPrvL
@@ -2746,10 +2746,10 @@ METHOD nTotAlbPrv( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
          else
 
-            USE ( cPatStk( cCodEmp ) + "ALBPROVT.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "ALBPROVT", @cAlbEmpT ) )
+            USE ( cPatStk( cCodEmp ) + "ALBPROVT.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "ALBPROVT", @cAlbEmpT ) )
             SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBPROVT.CDX" ) ADDITIVE
 
-            USE ( cPatStk( cCodEmp ) + "ALBPROVL.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "ALBPROVL", @cAlbEmpL ) )
+            USE ( cPatStk( cCodEmp ) + "ALBPROVL.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "ALBPROVL", @cAlbEmpL ) )
             SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBPROVL.CDX" ) ADDITIVE
             ( cAlbEmpL )->( ordsetfocus( "cRef" ) )
 
@@ -2840,10 +2840,10 @@ METHOD nTotFacPrv( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
          else
 
-            USE ( cPatStk( cCodEmp ) + "FACPRVT.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "FACPRVT", @cFacEmpT ) )
+            USE ( cPatStk( cCodEmp ) + "FACPRVT.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "FACPRVT", @cFacEmpT ) )
             SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACPRVT.CDX" ) ADDITIVE
 
-            USE ( cPatStk( cCodEmp ) + "FACPRVL.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "FACPRVL", @cFacEmpL ) )
+            USE ( cPatStk( cCodEmp ) + "FACPRVL.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "FACPRVL", @cFacEmpL ) )
             SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACPRVL.CDX" ) ADDITIVE
             ( cFacEmpL )->( ordsetfocus( "cRef" ) )
 
@@ -2933,10 +2933,10 @@ METHOD nTotRctPrv( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
          else
 
-            USE ( cPatStk( cCodEmp ) + "RctPrvT.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "RctPrvT", @cFacEmpT ) )
+            USE ( cPatStk( cCodEmp ) + "RctPrvT.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "RctPrvT", @cFacEmpT ) )
             SET ADSINDEX TO ( cPatStk( cCodEmp ) + "RctPrvT.CDX" ) ADDITIVE
 
-            USE ( cPatStk( cCodEmp ) + "RctPrvL.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "RctPrvL", @cFacEmpL ) )
+            USE ( cPatStk( cCodEmp ) + "RctPrvL.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "RctPrvL", @cFacEmpL ) )
             SET ADSINDEX TO ( cPatStk( cCodEmp ) + "RctPrvL.CDX" ) ADDITIVE
             ( cFacEmpL )->( ordsetfocus( "cRef" ) )
 
@@ -3024,10 +3024,10 @@ METHOD nTotAlbCli( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
          else
 
-            USE ( cPatStk( cCodEmp ) + "ALBCLIT.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @cAlbEmpT ) )
+            USE ( cPatStk( cCodEmp ) + "ALBCLIT.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "ALBCLIT", @cAlbEmpT ) )
             SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBCLIT.CDX" ) ADDITIVE
 
-            USE ( cPatStk( cCodEmp ) + "ALBCLIL.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @cAlbEmpL ) )
+            USE ( cPatStk( cCodEmp ) + "ALBCLIL.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "ALBCLIL", @cAlbEmpL ) )
             SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBCLIL.CDX" ) ADDITIVE
             ( cAlbEmpL )->( ordsetfocus( "cRef" ) )
 
@@ -3117,10 +3117,10 @@ METHOD nTotFacCli( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
          else
 
-            USE ( cPatStk( cCodEmp ) + "FACCLIT.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "FACCLIT", @cFacEmpT ) )
+            USE ( cPatStk( cCodEmp ) + "FACCLIT.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "FACCLIT", @cFacEmpT ) )
             SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACCLIT.CDX" ) ADDITIVE
 
-            USE ( cPatStk( cCodEmp ) + "FACCLIL.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "FACCLIL", @cFacEmpL ) )
+            USE ( cPatStk( cCodEmp ) + "FACCLIL.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "FACCLIL", @cFacEmpL ) )
             SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACCLIL.CDX" ) ADDITIVE
             ( cFacEmpL )->( ordsetfocus( "cRef" ) )
 
@@ -3208,10 +3208,10 @@ METHOD nTotFacRec( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
          else
 
-            USE ( cPatStk( cCodEmp ) + "FACRECT.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "FACRECT", @cFacRecEmpT ) )
+            USE ( cPatStk( cCodEmp ) + "FACRECT.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "FACRECT", @cFacRecEmpT ) )
             SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACRECT.CDX" ) ADDITIVE
 
-            USE ( cPatStk( cCodEmp ) + "FACRECL.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "FACRECL", @cFacRecEmpL ) )
+            USE ( cPatStk( cCodEmp ) + "FACRECL.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "FACRECL", @cFacRecEmpL ) )
             SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACRECL.CDX" ) ADDITIVE
             ( cFacRecEmpL )->( ordsetfocus( "cRef" ) )
 
@@ -3325,10 +3325,10 @@ METHOD nTotTikCli( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
          else
 
-            USE ( cPatStk( cCodEmp ) + "TIKET.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "TIKET", @cTikEmpT ) )
+            USE ( cPatStk( cCodEmp ) + "TIKET.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "TIKET", @cTikEmpT ) )
             SET ADSINDEX TO ( cPatStk( cCodEmp ) + "TIKET.CDX" ) ADDITIVE
 
-            USE ( cPatStk( cCodEmp ) + "TIKEL.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "TIKEL", @cTikEmpL ) )
+            USE ( cPatStk( cCodEmp ) + "TIKEL.DBF" ) NEW VIA ( ::cDriver ) SHARED READONLY ALIAS ( cCheckArea( "TIKEL", @cTikEmpL ) )
             SET ADSINDEX TO ( cPatStk( cCodEmp ) + "TIKEL.CDX" ) ADDITIVE
             ( cTikEmpL )->( ordsetfocus( "cCbaTil" ) )
 
@@ -6958,7 +6958,7 @@ METHOD Zap() CLASS TStock
 
    if ( ::oDbf )->( Used() )
 
-      if !( ::oDbf )->( IsShared() )
+      if !( ::oDbf )->( isShared() )
          ( ::oDbf )->( __dbZap() )
       else
 

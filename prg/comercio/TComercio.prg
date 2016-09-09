@@ -469,7 +469,7 @@ CLASS TComercio
 
    METHOD resetStockProductData()            INLINE ( ::aStockProductData := {} )
 
-   METHOD resetProductsToUpadateStocks()     INLINE ( ::hProductsToUpdate := {=>} )
+   METHOD resetProductsToUpdateStocks()     INLINE ( ::hProductsToUpdate := {=>} )
    METHOD getProductsToUpadateStocks()       INLINE ( ::hProductsToUpdate )
    METHOD appendProductsToUpadateStocks( idProduct )
 

@@ -4896,12 +4896,12 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
    local nImpRec        := nTotRecCli( dbfFacCliP, dbfDiv )
    local nImpCob        := nTotCobCli( dbfFacCliP, dbfDiv )
    local nImpGas        := nTotGasCli( dbfFacCliP, dbfDiv )
+   local nRecibo        := ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec )
+   local cRecibo        := ( dbfFacCliP )->cSerie + "/" + Ltrim( str( ( dbfFacCliP )->NNUMFAC, 9 ) ) + "/" + ( dbfFacCliP )->CSUFFAC + "-" + str( ( dbfFacCliP )->NNUMREC )
    local lConFac        := lConFacCli( ( dbfFacCliP )->CSERIE + str( ( dbfFacCliP )->NNUMFAC, 9 ) + ( dbfFacCliP )->CSUFFAC, dbfFacCliT )
    local cCodCli        := cCliFacCli( ( dbfFacCliP )->CSERIE + str( ( dbfFacCliP )->NNUMFAC, 9 ) + ( dbfFacCliP )->CSUFFAC, dbfFacCliT )
    local cCodPgo        := cPgoFacCli( ( dbfFacCliP )->CSERIE + str( ( dbfFacCliP )->NNUMFAC, 9 ) + ( dbfFacCliP )->CSUFFAC, dbfFacCliT )
    local cCodPro        := cProFacCli( ( dbfFacCliP )->CSERIE + str( ( dbfFacCliP )->NNUMFAC, 9 ) + ( dbfFacCliP )->CSUFFAC, dbfFacCliT )
-   local nRecibo        := ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->NNUMFAC, 9 ) + ( dbfFacCliP )->CSUFFAC + str( ( dbfFacCliP )->NNUMREC )
-   local cRecibo        := ( dbfFacCliP )->cSerie + "/" + Ltrim( str( ( dbfFacCliP )->NNUMFAC, 9 ) ) + "/" + ( dbfFacCliP )->CSUFFAC + "-" + str( ( dbfFacCliP )->NNUMREC )
    local cTerNif        := RetFld( ( dbfFacCliP )->CSERIE + str( ( dbfFacCliP )->NNUMFAC, 9 ) + ( dbfFacCliP )->CSUFFAC, dbfFacCliT, "CDNICLI" )
    local cNombreCliente := ( dbfFacCliP )->cNomCli
    local lErrorFound    := .f.
@@ -4938,34 +4938,34 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
    if lAplicacionContaplus()
 
       if !( ( dbfFacCliP )->lCobrado .or. ( dbfFacCliP )->lDevuelto ) 
-         oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no cobrado o no devuelto.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+         oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no cobrado o no devuelto.", 0, bGenEdtRecCli( nRecibo, lFromFactura ) ) )
          lErrorFound       := .t.
       end if
 
       if ( dbfFacCliP )->lCobrado .and. !ChkFecha( , , ( dbfFacCliP )->dEntrada, .f. )
-         oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " de " + dtoc( ( dbfFacCliP )->dEntrada ) + " asiento fuera de fechas", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+         oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " de " + dtoc( ( dbfFacCliP )->dEntrada ) + " asiento fuera de fechas", 0, bGenEdtRecCli( nRecibo, lFromFactura ) ) )
          lErrorFound       := .t.
       end if
 
    end if
 
    if ( dbfFacCliP )->lConPgo
-      oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " ya contabilizado.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+      oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " ya contabilizado.", 0, bGenEdtRecCli( nRecibo, lFromFactura ) ) )
       lErrorFound       := .t.
    end if
 
    if !Empty( ( dbfFacCliP )->nNumRem ) .and. !( dbfFacCliP )->lDevuelto
-      oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " pertenece a remesa.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+      oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " pertenece a remesa.", 0, bGenEdtRecCli( nRecibo, lFromFactura ) ) )
       lErrorFound       := .t.
    end if
 
-   /*if !lConFac .and. !lFromFactura
-      oTree:Select( oTree:Add( "Factura de recibo : " + rtrim( cRecibo ) + " no contabilizada.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+   if !lConFac .and. !lFromFactura
+      oTree:Select( oTree:Add( "Factura de recibo : " + rtrim( cRecibo ) + " no contabilizada.", 0, bGenEdtRecCli( nRecibo, lFromFactura ) ) )
       lErrorFound       := .t.
-   end if*/
+   end if
 
    if !ChkRuta( cRutCnt() )
-      oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " ruta no valida.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+      oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " ruta no valida.", 0, bGenEdtRecCli( nRecibo, lFromFactura ) ) )
       lErrorFound       := .t.
    end if
 
@@ -4975,7 +4975,7 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
    */
 
    if Empty( cCodEmp )
-      oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no se definieron empresas asociadas.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+      oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no se definieron empresas asociadas.", 0, bGenEdtRecCli( nRecibo, lFromFactura ) ) )
       lErrorFound       := .t.
    end if
 
@@ -4995,7 +4995,7 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
    end if
 
    if !ChkSubcuenta( cRuta, cCodEmp, cCtaCli, , .f., .f. )
-      oTree:Select( oTree:Add( "Recibo : " + Rtrim( cRecibo ) + " subcuenta de cliente " + cCtaCli + " no encontada.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+      oTree:Select( oTree:Add( "Recibo : " + Rtrim( cRecibo ) + " subcuenta de cliente " + cCtaCli + " no encontada.", 0, bGenEdtRecCli( nRecibo, lFromFactura ) ) )
       lErrorFound       := .t.
    end if
 
@@ -5023,14 +5023,14 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
       if lAplicacionContaplus()
 
          if Empty( cCtaPgo )
-            oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no existe cuenta de pago.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+            oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no existe cuenta de pago.", 0, bGenEdtRecCli( nRecibo, lFromFactura ) ) )
             lErrorFound    := .t.
          end if
 
       end if 
 
       if !ChkSubcuenta( cRuta, cCodEmp, cCtaPgo, , .f., .f. )
-         oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " subcuenta " + rtrim( cCtaPgo ) + " no encontada.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+         oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " subcuenta " + rtrim( cCtaPgo ) + " no encontada.", 0, bGenEdtRecCli( nRecibo, lFromFactura ) ) )
          lErrorFound    := .t.
       end if
 
@@ -5045,7 +5045,7 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
             nEjeCon        := nEjercicioContaplus( cRuta, cCodEmp, .f. )
 
             if Empty( nEjeCon )
-               oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " ejercicio no encontado.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+               oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " ejercicio no encontado.", 0, bGenEdtRecCli( nRecibo, lFromFactura ) ) )
                lErrorFound := .t.
             end if
 
@@ -5066,12 +5066,12 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
          end if
 
          if Empty( cCtaGas )
-            oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no existe cuenta de gastos.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+            oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no existe cuenta de gastos.", 0, bGenEdtRecCli( nRecibo, lFromFactura ) ) )
             lErrorFound := .t.
          end if
 
          if !ChkSubcuenta( cRuta, cCodEmp, cCtaGas, , .f., .f. )
-            oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " subcuenta " + rtrim( cCtaGas ) + " no encontada.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+            oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " subcuenta " + rtrim( cCtaGas ) + " no encontada.", 0, bGenEdtRecCli( nRecibo, lFromFactura ) ) )
             lErrorFound := .t.
          end if
 
@@ -5294,7 +5294,7 @@ Function lContabilizaReciboCliente( cRecibo, nAsiento, lFromFactura, oTree, dbfF
    end if
 
    if !lFromFactura
-      oTree:Select( oTree:Add( "Recibo : " + Rtrim( cRecibo ) + " asiento generado num. " + alltrim( str( nAsiento ) ), 1, bGenEdtRecCli( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+      oTree:Select( oTree:Add( "Recibo : " + Rtrim( cRecibo ) + " asiento generado num. " + alltrim( str( nAsiento ) ), 1, bGenEdtRecCli( nRecibo, lFromFactura ) ) )
    end if
 
 RETURN ( .t. )

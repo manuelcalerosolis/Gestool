@@ -7032,7 +7032,7 @@ static function QuiFacCli()
 
    nOrdAnt           := ( D():FacturasClientesLineas( nView ) )->( OrdSetFocus( "nNumFac" ) )
 
-   TComercio():getInstance():resetProductsToUpadateStocks()
+   TComercio():getInstance():resetProductsToUpdateStocks()
 
    while ( D():FacturasClientesLineas( nView ) )->( dbSeek( cSerDoc + str( nNumDoc ) + cSufDoc ) ) .and. !( D():FacturasClientesLineas( nView ) )->( eof() )
       
@@ -10812,7 +10812,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-	TComercio():getInstance():resetProductsToUpadateStocks()
+	TComercio():getInstance():resetProductsToUpdateStocks()
    
    /*
    Inicialización de variables-------------------------------------------------

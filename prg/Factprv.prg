@@ -6934,7 +6934,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      TComercio():getInstance():resetProductsToUpadateStocks()
+      TComercio():getInstance():resetProductsToUpdateStocks()
 
       CursorWait()
 
@@ -7916,9 +7916,7 @@ Static Function QuiFacPrv( lDetail )
       DelDetalle( cFactura )
    end if
 
-   /*
-   Restaura los Albaranes caso de estar facturados-----------------------------
-   */
+   // Restaura los Albaranes caso de estar facturados-----------------------------
 
    nOrdAnt           := ( D():AlbaranesProveedores( nView ) )->( OrdSetFocus( "cNumFac" ) )
 
@@ -7939,7 +7937,7 @@ Static Function QuiFacPrv( lDetail )
    ( D():AlbaranesProveedores( nView ) )->( OrdSetFocus( nOrdAnt ) )
 
    if uFieldEmpresa( "lRecNumFac" )
-      nPutDoc( ( D():FacturasProveedores( nView ) )->cSerFac, ( D():FacturasProveedores( nView ) )->nNumFac, ( D():FacturasProveedores( nView ) )->cSufFac, D():FacturasProveedores( nView ), "nFacPrv" )
+      nPutDoc( ( D():FacturasProveedores( nView ) )->cSerFac, ( D():FacturasProveedores( nView ) )->nNumFac, ( D():FacturasProveedores( nView ) )->cSufFac, D():FacturasProveedores( nView ), "nFacPrv", , D():Contadores( nView ) )
    end if
 
    CursorWE()
@@ -7956,7 +7954,7 @@ Static Function delDetalle( cFactura )
 
    CursorWait()
    
-   TComercio():getInstance():resetProductsToUpadateStocks()
+   TComercio():getInstance():resetProductsToUpdateStocks()
    
    nOrdAnt           := ( D():FacturasProveedoresLineas( nView ) )->( OrdSetFocus( "nNumFac" ) )
 

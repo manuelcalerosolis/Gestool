@@ -790,7 +790,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
             if !empty( oClienteCompensar )
 
                aTmp[ _CDESCRIP ]       := "Recibo matriz para compensar"
-               aTmp[ _CCODCLI ]        := oClienteCompensar:VarGet()
+               aTmp[ _CCODCLI  ]       := oClienteCompensar:VarGet()
                aTmp[ _NIMPORTE ]       := nTotalRelacionados
 
                if ( D():Clientes( nView ) )->( dbSeek( aTmp[ _CCODCLI ] ) )
@@ -5410,8 +5410,9 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
          Return .f.
       end if
 
-      aTmp[ _CTIPREC ]  := "L"
       cSerie            := cNewSer( "nRecCli", D():Contadores( nView ) )
+      
+      aTmp[ _CTIPREC ]  := "L"
       aTmp[ _CSERIE  ]  := cSerie
       aTmp[ _NNUMFAC ]  := nNewDoc( cSerie, cFacCliP, "nRecCli", , D():Contadores( nView ) )
       aTmp[ _CSUFFAC ]  := RetSufEmp()
