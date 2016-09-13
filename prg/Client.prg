@@ -11259,17 +11259,17 @@ Static Function DataReport( oFr, lTemporal )
    oFr:SetWorkArea(     "Incidencias",       ( D():ClientesIncidencias( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Incidencias",       cItemsToReport( aCliInc() ) )
 
-   oFr:SetWorkArea(     "País", oPais:Select() )   
-   oFr:SetFieldAliases( "País", cObjectsToReport( oPais:oDbf ) )
+   oFr:SetWorkArea(     "País",              oPais:Select() )   
+   oFr:SetFieldAliases( "País",              cObjectsToReport( oPais:oDbf ) )
 
-   oFr:SetWorkArea(     "Rutas", ( dbfRuta )->( Select() ) )
-   oFr:SetFieldAliases( "Rutas", cItemsToReport( aItmRut() ) )
+   oFr:SetWorkArea(     "Rutas",             ( dbfRuta )->( Select() ) )
+   oFr:SetFieldAliases( "Rutas",             cItemsToReport( aItmRut() ) )
 
-   oFr:SetWorkArea(     "Agentes", ( cAgente )->( Select() ) )
-   oFr:SetFieldAliases( "Agentes", cItemsToReport( aItmAge() ) )
+   oFr:SetWorkArea(     "Agentes",           ( cAgente )->( Select() ) )
+   oFr:SetFieldAliases( "Agentes",           cItemsToReport( aItmAge() ) )
 
-   oFr:SetWorkArea(     "Formas de pago", ( dbfFPago )->( Select() ) )
-   oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
+   oFr:SetWorkArea(     "Formas de pago",    ( dbfFPago )->( Select() ) )
+   oFr:SetFieldAliases( "Formas de pago",    cItemsToReport( aItmFPago() ) )
 
    if lTemporal
       oFr:SetMasterDetail( "Clientes",       "Documentos",        {|| ( tmpClient )->Cod } )

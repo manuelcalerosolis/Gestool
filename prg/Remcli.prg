@@ -2193,13 +2193,15 @@ METHOD InitSepaXML19( oDlg )
       // Recibos------------------------------------------------------------------
       
       if ::oDbfDet:Seek( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem )
-         while str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == str( ::oDbfDet:nNumRem, 9 ) + ::oDbfDet:cSufRem .and. !::oDbfDet:eof()
+
+         while ( str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == str( ::oDbfDet:nNumRem, 9 ) + ::oDbfDet:cSufRem ) .and. !( ::oDbfDet:eof() )
 
             ::InsertDeudorXml()
 
             ::oDbfDet:Skip()
             
          end while
+
       end if
 
       // Generacion------------------------------------------------------------
@@ -2331,26 +2333,23 @@ METHOD InsertDeudorXml()
    end if 
 
    if empty( ::oCtaRem:dFechaFirma( ::oDbf:cCodRem ) )
-      ::oCuaderno:addError( "Fecha de firma esta vacía" )
+      ::oCuaderno:addError( "Fecha de firma esta vacía en cuenta de remesa" )
       RETURN ( Self )
    end if 
 
-   oDebtor           := SepaDebitActor():New( ::oCuaderno, "Dbtr" )
+   oDebtor              := SepaDebitActor():New( ::oCuaderno, "Dbtr" )
+   oDebtor:nEntity      := ENTIDAD_JURIDICA
+   oDebtor:Nm           := ::oClientes:Titulo 
+   oDebtor:Id           := ::oClientes:Nif
+   oDebtor:InstdAmt     := ::ImporteDocumento()                               // Importe
+   oDebtor:ReqdColltnDt := sDate( ::oDbf:dExport )                            // Fecha de cobro (Vencimiento)
+   oDebtor:IBAN         := ::GetValidCuentaCliente()
+   oDebtor:BICOrBEI     := ::GetBICClient()
+   oDebtor:MndtId       := ::oClientes:Nif                                    // hb_md5( ::oCuaderno:oCreditor:Id + :id )  // Identificación del mandato, idea: Utilizar NIF Acreedor + NIF Deudor 
+   oDebtor:DtOfSgntr    := sDate( ::oCtaRem:dFechaFirma( ::oDbf:cCodRem ) )   // Fecha de firma 
+   oDebtor:EndToEndId   := "Recibo " + ::TextoDocumento()
 
-   with object ( oDebtor )
-      :nEntity       := ENTIDAD_JURIDICA
-      :Nm            := ::oClientes:Titulo 
-      :Id            := ::oClientes:Nif
-      :InstdAmt      := ::ImporteDocumento()                               // Importe
-      :ReqdColltnDt  := sDate( ::oDbf:dExport )                            // Fecha de cobro (Vencimiento)
-      :IBAN          := ::GetValidCuentaCliente()
-      :BICOrBEI      := ::GetBICClient()
-      :MndtId        := ::oClientes:Nif                                    // hb_md5( ::oCuaderno:oCreditor:Id + :id )  // Identificación del mandato, idea: Utilizar NIF Acreedor + NIF Deudor 
-      :DtOfSgntr     := sDate( ::oCtaRem:dFechaFirma( ::oDbf:cCodRem ) )   // Fecha de firma 
-      :EndToEndId    := "Recibo " + ::TextoDocumento()
-   endwith
-
-   ::oCuaderno:DebtorAdd( oDebtor )
+   ::oCuaderno:addDebtor( oDebtor )
 
 RETURN ( Self )
 

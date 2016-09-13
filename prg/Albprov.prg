@@ -983,6 +983,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():ArticuloLenguaje( nView )
 
+      D():ImpuestosEspeciales( nView )
+
       /*
       Almacenes----------------------------------------------------------------
       */

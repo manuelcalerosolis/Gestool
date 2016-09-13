@@ -825,7 +825,8 @@ METHOD BuildReportCorrespondences()
                                                          "Variable" =>  {||   ::AddVariableLineasAlbaranCliente(),;
                                                                               ::AddVariableLineasFacturaCliente(),;
                                                                               ::AddVariableLineasRectificativaCliente(),;
-                                                                              ::AddVariableLineasTicketCliente() },;
+                                                                              ::AddVariableLineasTicketCliente(),;
+                                                                              ::AddVariableStock() },;
                                                          "Data" =>      {||   ::FastReportAlbaranCliente(),;
                                                                               ::FastReportFacturaCliente(),;
                                                                               ::FastReportFacturaRectificativa(),;

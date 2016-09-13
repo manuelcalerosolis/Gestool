@@ -13728,6 +13728,8 @@ CLASS TArticuloLabelGenerator
    Method SelectCriterioLabels()
 
    Method putStockLabels()
+   Method selectLabelSelecction()
+
    Method cleanPropertiesLabels()
 
    Method AddLabel()
@@ -14197,29 +14199,9 @@ Method SelectCriterioLabels() CLASS TArticuloLabelGenerator
 
       ::cleanPropertiesLabels()
 
-      if dbLock( D():Articulos( nView ) )
+      ::putStockLabels()
 
-         ::putStockLabels()
-
-         do case
-            case ::oCriterio:nAt == 1
-               ( D():Articulos( nView ) )->lLabel    := .f.
-
-            case ::oCriterio:nAt == 2
-               ( D():Articulos( nView ) )->lLabel    := .t.
-
-            case ::oCriterio:nAt == 3 .and. ( D():Articulos( nView ) )->Familia >= ::cFamiliaInicio .and. ( D():Articulos( nView ) )->Familia <= ::cFamiliaFin
-               ( D():Articulos( nView ) )->lLabel    := .t.
-
-            case ::oCriterio:nAt == 4 .and. ( D():Articulos( nView ) )->LastChg >= ::dFechaInicio .and. ( D():Articulos( nView ) )->LastChg <= ::dFechaFin
-               ( D():Articulos( nView ) )->lLabel    := .t.
-
-            otherwise
-         end case
-
-         ( D():Articulos( nView ) )->( dbUnLock() )
-
-      end if
+      ::selectLabelSelecction()
 
       ( D():Articulos( nView ) )->( dbSkip() )
 
@@ -14262,55 +14244,94 @@ Method PutStockLabels() CLASS TArticuloLabelGenerator
 
    local o
    local aStock
-   local nStock                           := 0
+   local nStock                              := 0
 
    if ::nCantidadLabels == 1
 
-      ( D():Articulos( nView ) )->nLabel  := ::nUnidadesLabels
+      if ( ( D():Articulos( nView ) )->nLabel != ::nUnidadesLabels ) .and. ;
+         ( D():Articulos( nView ) )->( dbrlock() )
+         ( D():Articulos( nView ) )->nLabel  := ::nUnidadesLabels
+         ( D():Articulos( nView ) )->( dbunlock() )
+      end if 
+
+      Return ( Self )
+
+   end if 
+
+   /*
+   Calculo de stock------------------------------------------------------------
+   */
+
+   if !empty( ( D():Articulos( nView ) )->cCodPrp1 ) .or. !empty( ( D():Articulos( nView ) )->cCodPrp2 )
+
+      if !empty( ::cAlmacen ) 
+         aStock                        := oStock:aStockArticulo( ( D():Articulos( nView ) )->Codigo, ::cAlmacen, , .f., .f. ) 
+      else 
+         aStock                        := oStock:aStockArticulo( ( D():Articulos( nView ) )->Codigo, , , .f., .f. ) 
+      end if
+
+      for each o in aStock
+
+         if dbAppe( dbfArtLbl )
+            ( dbfArtLbl )->cCodArt     := o:cCodigo
+            ( dbfArtLbl )->cCodPr1     := o:cCodigoPropiedad1
+            ( dbfArtLbl )->cCodPr2     := o:cCodigoPropiedad2
+            ( dbfArtLbl )->cValPr1     := o:cValorPropiedad1
+            ( dbfArtLbl )->cValPr2     := o:cValorPropiedad2
+            ( dbfArtLbl )->nUndLbl     := o:nUnidades
+            ( dbfArtLbl )->( dbUnLock() )
+         end if
+
+         nStock                        += o:nUnidades
+
+      next
 
    else
 
-      if !Empty( ( D():Articulos( nView ) )->cCodPrp1 ) .or. !Empty( ( D():Articulos( nView ) )->cCodPrp2 )
+      nStock                           := oStock:nStockArticulo( ( D():Articulos( nView ) )->Codigo, , , .f., .f. )
 
-         /*
-         Calculo de stock------------------------------------------------------
-         */
+   end if
 
-         if !Empty( ::cAlmacen ) 
-            aStock                        := oStock:aStockArticulo( ( D():Articulos( nView ) )->Codigo, ::cAlmacen, , .f., .f. ) 
-         else 
-            aStock                        := oStock:aStockArticulo( ( D():Articulos( nView ) )->Codigo, , , .f., .f. ) 
-         end if
+   nStock                              := max( nStock, 0 )
 
-         for each o in aStock
+   if ( D():Articulos( nView ) )->nLabel != nStock .and. ;
+      ( D():Articulos( nView ) )->( dbRLock() )
+      ( D():Articulos( nView ) )->nLabel  := nStock
+      ( D():Articulos( nView ) )->( dbUnLock() )
+   end if
 
-            if dbAppe( dbfArtLbl )
-               ( dbfArtLbl )->cCodArt     := o:cCodigo
-               ( dbfArtLbl )->cCodPr1     := o:cCodigoPropiedad1
-               ( dbfArtLbl )->cCodPr2     := o:cCodigoPropiedad2
-               ( dbfArtLbl )->cValPr1     := o:cValorPropiedad1
-               ( dbfArtLbl )->cValPr2     := o:cValorPropiedad2
-               ( dbfArtLbl )->nUndLbl     := o:nUnidades
-               ( dbfArtLbl )->( dbUnLock() )
-            end if
+Return ( Self )
 
-            nStock                        += o:nUnidades
+//--------------------------------------------------------------------------//
 
-         next
+Method selectLabelSelecction() CLASS TArticuloLabelGenerator
 
-         if ( D():Articulos( nView ) )->( dbRLock() )
-            ( D():Articulos( nView ) )->nLabel        := Max( nStock, 0 )
-            ( D():Articulos( nView ) )->( dbUnLock() )
-         end if
+   local lLabel   := .f.
 
-      else
+   do case
+      case ::oCriterio:nAt == 1
+      
+         lLabel   := .f.
 
-         nStock                                    := oStock:nStockArticulo( ( D():Articulos( nView ) )->Codigo, , , .f., .f. )
+      case ::oCriterio:nAt == 2
 
-         ( D():Articulos( nView ) )->nLabel        := Max( nStock, 0 )
+         lLabel   := .t.
+      
+      case ::oCriterio:nAt == 3 .and. ( D():Articulos( nView ) )->Familia >= ::cFamiliaInicio .and. ( D():Articulos( nView ) )->Familia <= ::cFamiliaFin
 
-      end if
+         lLabel   := .t.
 
+      case ::oCriterio:nAt == 4 .and. ( D():Articulos( nView ) )->LastChg >= ::dFechaInicio .and. ( D():Articulos( nView ) )->LastChg <= ::dFechaFin 
+
+         lLabel   := .t.
+
+      otherwise
+   end case
+
+   if ( D():Articulos( nView ) )->lLabel != lLabel .and. ;
+      ( D():Articulos( nView ) )->( dbRLock() )
+      ( D():Articulos( nView ) )->lLabel    := lLabel
+      ( D():Articulos( nView ) )->( dbUnLock() )
    end if
 
 Return ( Self )

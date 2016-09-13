@@ -732,6 +732,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():FormasPago( nView )
 
+      D():ImpuestosEspeciales( nView )
+
       USE ( cPatEmp() + "PEDCLIR.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIR", @dbfPedCliR ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIR.CDX" ) ADDITIVE
 
@@ -9017,23 +9019,18 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
    BeginTransaction()
 
    /*
-   Quitamos los filtros
+   Quitamos los filtros--------------------------------------------------------
    */
 
    ( dbfTmpLin )->( dbClearFilter() )
 
 	/*
-	Primero hacer el RollBack
+	Primero hacer el RollBack---------------------------------------------------
 	*/
 
    aTmp[ _DFECCRE ]     := Date()
    aTmp[ _CTIMCRE ]     := Time()
    aTmp[ _NTARIFA ]		:= oGetTarifa:getTarifa()
-
-   /*
-   Guardamos el tipo para alquileres
-   */
-
    aTmp[ _LALQUILER ]   := .f.
 
    do case
@@ -9092,8 +9089,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
 
 	/*
 	Ahora escribimos en el fichero definitivo----------------------------------
-    Controlando que no metan lineas con unidades a 0 por el tema---------------
-    de la importacion de las atipicas------------------------------------------
+   Controlando que no metan lineas con unidades a 0 por el tema---------------
+   de la importacion de las atipicas------------------------------------------
 	*/
 
    ( dbfTmpLin )->( dbGoTop() )
@@ -14090,9 +14087,9 @@ Method Process() CLASS TPedidosClientesSenderReciver
    local cSufijo
 
    if !::oSender:lFranquiciado
-      aFiles      := Directory( cPatIn() + "PedCli*.*" )
+      aFiles         := Directory( cPatIn() + "PedCli*.*" )
    else
-      aFiles      := Directory( cPatIn() + "PedPrv*.*" )
+      aFiles         := Directory( cPatIn() + "PedPrv*.*" )
    end if
 
    for m := 1 to len( aFiles )
@@ -14130,23 +14127,39 @@ Method Process() CLASS TPedidosClientesSenderReciver
 
                   while ( tmpPedCliT )->( !eof() )
 
-                  	if lValidaOperacion( ( tmpPedCliT )->dFecPed, .f. ) .and. ;
-                  		!( dbfPedCliT )->( dbSeek( ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed ) )
+                  	if validateRecepcion( tmpPedCliT, dbfPedCliT )
+
+                        // Eliminamos datos anteriores-------------------------
+
+                        while ( dbfPedCliT )->( dbseek( ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed ) )
+                           dbLockDelete( dbfPedCliT )
+                        end if 
+
+                        while ( dbfPedCliL )->( dbseek( ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed ) )
+                           dbLockDelete( dbfPedCliL )
+                        end if 
+
+                        while ( dbfPedCliI )->( dbseek( ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed ) )
+                           dbLockDelete( dbfPedCliI )
+                        end if 
+
+                        // Traspaso de nuevos datos----------------------------
 
                   		dbPass( tmpPedCliT, dbfPedCliT, .t. )
+
                   		::oSender:SetText( "Añadido     : " + ( tmpPedCliL )->cSerPed + "/" + AllTrim( Str( ( tmpPedCliL )->nNumPed ) ) + "/" + AllTrim( ( tmpPedCliL )->cSufPed ) + "; " + Dtoc( ( tmpPedCliT )->dFecPed ) + "; " + AllTrim( ( tmpPedCliT )->cCodCli ) + "; " + ( tmpPedCliT )->cNomCli )
 
                   		if ( tmpPedCliL )->( dbSeek( ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed ) )
-                     		do while ( tmpPedCliL )->cSerPed + Str( ( tmpPedCliL )->nNumPed ) + ( tmpPedCliL )->cSufPed == ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed .and. !( tmpPedCliL )->( eof() )
-                        			dbPass( tmpPedCliL, dbfPedCliL, .t. )
-                        			( tmpPedCliL )->( dbSkip() )
+                     		while ( tmpPedCliL )->cSerPed + Str( ( tmpPedCliL )->nNumPed ) + ( tmpPedCliL )->cSufPed == ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed .and. !( tmpPedCliL )->( eof() )
+                     			dbPass( tmpPedCliL, dbfPedCliL, .t. )
+                     			( tmpPedCliL )->( dbSkip() )
                      		end do
                   		end if
 
                   		if ( tmpPedCliI )->( dbSeek( ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed ) )
-                     		do while ( tmpPedCliI )->cSerPed + Str( ( tmpPedCliI )->nNumPed ) + ( tmpPedCliI )->cSufPed == ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed .and. !( tmpPedCliI )->( eof() )
-                        			dbPass( tmpPedCliI, dbfPedCliI, .t. )
-                        			( tmpPedCliI )->( dbSkip() )
+                     		while ( tmpPedCliI )->cSerPed + Str( ( tmpPedCliI )->nNumPed ) + ( tmpPedCliI )->cSufPed == ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed .and. !( tmpPedCliI )->( eof() )
+                     			dbPass( tmpPedCliI, dbfPedCliI, .t. )
+                     			( tmpPedCliI )->( dbSkip() )
                      		end do
                   		end if
 
@@ -14203,12 +14216,12 @@ Method Process() CLASS TPedidosClientesSenderReciver
             		while ( tmpPedCliT )->( !eof() )
 
                		/*
-               		Comprobamos que no exista la factura en la base de datos---
+               		Comprobamos que no exista la factura en la base de datos--
                		*/
 
                		( dbfPedCliT )->( OrdSetFocus( "cSuPed" ) )
 
-               		if !( dbfPedCliT )->( dbSeek( ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed ) )
+               		if validateRecepcion( tmpPedCliT, dbfPedCliT )
 
                      	/*
                   		Pasamos las cabeceras----------------------------------
@@ -14381,6 +14394,24 @@ Method Process() CLASS TPedidosClientesSenderReciver
    next
 
 Return Self
+
+//---------------------------------------------------------------------------//
+
+static function validateRecepcion( tmpPedCliT, dbfPedCliT )
+
+   if !( lValidaOperacion( ( tmpPedCliT )->dFecPed, .f. ) )
+      Return .f. 
+   end if 
+
+   if !( ( dbfPedCliT )->( dbSeek( ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed ) ) )
+      Return .t.
+   end if 
+
+   if dtos( ( tmpPedCliT )->dFecCre ) + ( tmpPedCliT )->cTimCre > dtos( ( dbfPedCliT )->dFecCre ) + ( dbfPedCliT )->cTimCre 
+      Return .t.
+   end if
+
+Return ( .f. )
 
 //---------------------------------------------------------------------------//
 
@@ -15798,9 +15829,9 @@ function aItmPedCli()
    aAdd( aItmPedCli, { "cRetMat", "C",   20,  0, "Matricula",                                               "Matricula",               "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "cRetPor", "C",   20,  0, "Retirado por",                                            "RetiradoPor",             "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "nPedProV","N",    1,  0, "",                                                        "NumeroPedidoProveedor",   "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "nMonTajE","N",    6 , 2, "Horas de montaje",                                        "Montaje",                 "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "nMonTaje","N",    6 , 2, "Horas de montaje",                                        "Montaje",                 "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "cCodGrp", "C",    4,  0, "Código de grupo de cliente",                              "GrupoCliente",            "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "lImpRimIDO","L",  1,  0, "Lógico de imprimido",                                     "Imprimido",               "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "lImpRimido","L",  1,  0, "Lógico de imprimido",                                     "Imprimido",               "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "dFecImp", "D",    8,  0, "Última fecha de impresión",                               "FechaImpresion",          "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "cHorImp", "C",    5,  0, "Hora de la última impresión",                             "HoraImpresion",           "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "cCodDlg", "C",    2,  0, "Código delegación" ,                                      "Delegacion",              "", "( cDbf )", {|| oUser():cDelegacion() } } )

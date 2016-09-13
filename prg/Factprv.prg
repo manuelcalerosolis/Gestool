@@ -490,6 +490,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():GetObject( "Bancos", nView )
 
+      D():ImpuestosEspeciales( nView )
+
       D():ArticuloLenguaje( nView )
 
       oStock            := TStock():Create( cPatGrp() )

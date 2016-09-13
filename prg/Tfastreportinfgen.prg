@@ -27,10 +27,10 @@ CLASS TFastReportInfGen FROM TNewInfGen
    DATA  aliasPedidosClientes
    DATA  aliasPedidosClientesLineas
 
-   DATA  nUnidadesTiempo   INIT 1
+   DATA  nUnidadesTiempo                        INIT 1
    DATA  oUnidadesTiempo
-   DATA  cUnidadesTiempo   INIT "Semana(s)"
-   DATA  aUnidadesTiempo   INIT { "Dia(s)", "Semana(s)", "Mes(es)", "Año(s)" }
+   DATA  cUnidadesTiempo                        INIT "Semana(s)"
+   DATA  aUnidadesTiempo                        INIT { "Dia(s)", "Semana(s)", "Mes(es)", "Año(s)" }
 
    DATA  oTreeReporting
    DATA  oTreeImageList
@@ -38,21 +38,21 @@ CLASS TFastReportInfGen FROM TNewInfGen
    DATA  oColDesde
    DATA  oColHasta
 
-   DATA  lPersonalizado    INIT .f.
-   DATA  lSummary          INIT .f.
+   DATA  lPersonalizado                         INIT .f.
+   DATA  lSummary                               INIT .f.
 
    DATA  oDbfPersonalizado
 
-   DATA  cResource         INIT "ReportingDialog"
+   DATA  cResource                              INIT "ReportingDialog"
 
    DATA  oReportTree
-   DATA  cReportType       INIT ""
-   DATA  cReportName       INIT ""
-   DATA  cReportFile       INIT ""
-   DATA  cReportDirectory  INIT ""
+   DATA  cReportType                            INIT ""
+   DATA  cReportName                            INIT ""
+   DATA  cReportFile                            INIT ""
+   DATA  cReportDirectory                       INIT ""
    DATA  hReportOptions 
 
-   DATA  lUserDefine       INIT .f.
+   DATA  lUserDefine                            INIT .f.
 
    DATA  oBtnPrevisualizar
    DATA  oBtnImprimir
@@ -1794,10 +1794,10 @@ METHOD Eliminar() CLASS TFastReportInfGen
 
    if !::lLoadInfo()
       msgStop( "No se ha podido cargar el nombre del informe." )
-      Return ( Self )
+      Return ( .f. )
    end if
 
-   if ::lUserDefine .and. ApoloMsgNoYes( "¿Desea eliminar el informe " + ::cReportName + "?", "Confirme supresión" )
+   if ApoloMsgNoYes( "¿Desea eliminar el informe " + ::cReportName + "?", "Confirme supresión" )
 
       // Elimina el fichero----------------------------------------------------
 
@@ -1806,10 +1806,6 @@ METHOD Eliminar() CLASS TFastReportInfGen
       // Elimina rama del arbol------------------------------------------------
 
       ::oReportTree:End()
-
-   else
-      
-      msgStop( "Solo puede eliminar informes definidos por el usuario." )
 
    end if
 
@@ -3759,7 +3755,6 @@ METHOD selectReportTree( cReportName )
    oItem       := ScanItemsBlock( ::oTreeReporting:aItems, {|o| alltrim( o:cPrompt ) == alltrim( cReportName ) } )
 
    if !empty( oItem )
-      msgalert( oItem:cPrompt, "oItem:cPrompt" )
       ::oTreeReporting:select( oItem )
    end if 
 

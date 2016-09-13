@@ -352,6 +352,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():GetObject( "UnidadMedicion", nView )
 
+      D():ImpuestosEspeciales( nView )
+
       oDetCamposExtra      := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Pedidos a proveedores" )

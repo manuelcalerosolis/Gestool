@@ -86,7 +86,7 @@ CLASS SepaXml
    METHOD SaveDocumentXML()
    METHOD trimDocumentXML()
 
-   METHOD DebtorAdd( oDebtor )                                    INLINE aadd( ::aDebtors, oDebtor )
+   METHOD addDebtor( oDebtor )                                    INLINE ( aadd( ::aDebtors, oDebtor ) )
 
    METHOD GroupHeader()
    METHOD InfoPayment()
@@ -95,8 +95,8 @@ CLASS SepaXml
    METHOD SetLanguage()
    METHOD Activate()
 
-   METHOD resetErrors()                         INLINE ( ::aErrors := {} )
-   METHOD addError( cError )                    INLINE ( aadd( ::aErrors, cError ) )
+   METHOD resetErrors()                                           INLINE ( ::aErrors := {} )
+   METHOD addError( cError )                                      INLINE ( aadd( ::aErrors, cError ) )
 
 ENDCLASS
 
@@ -229,8 +229,6 @@ METHOD Activate() CLASS SepaXml
 
    ::SetLanguage()
 
-   ::ResetErrors()
-
    ::CalculateOperationsNumber()
 
    ::CreateDocumentXML()
@@ -301,6 +299,8 @@ Return nil
 METHOD CalculateOperationsNumber()
 
    local oDebtor
+
+   debug( ::aDebtors, "CalculateOperationsNumber" )
 
    for each oDebtor in ::aDebtors
       ::NbOfTxs         += 1

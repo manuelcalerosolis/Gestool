@@ -830,6 +830,7 @@ Return ( ::nView )
       if ::AssertView( nView )
 
          hView    := hGet( ::hViews, nView )
+
          if hb_ishash( hView )
             hSet( hView, Upper( cDatabase ), cHandle )
          end if 
@@ -987,6 +988,7 @@ Return ( ::nView )
       local oObject     := TDataCenter():ScanObject( cObject )
 
       if !empty( oObject )
+
          lOpen          := oObject:OpenService()
 
          if lOpen
@@ -996,6 +998,7 @@ Return ( ::nView )
       else 
 
          msgStop( "No puedo encontrar el objeto " + cObject )   
+
          Return ( .f. )
 
       end if

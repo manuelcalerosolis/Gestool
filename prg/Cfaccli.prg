@@ -5294,7 +5294,7 @@ Function lContabilizaReciboCliente( cRecibo, nAsiento, lFromFactura, oTree, dbfF
    end if
 
    if !lFromFactura
-      oTree:Select( oTree:Add( "Recibo : " + Rtrim( cRecibo ) + " asiento generado num. " + alltrim( str( nAsiento ) ), 1, bGenEdtRecCli( nRecibo, lFromFactura ) ) )
+      oTree:Select( oTree:Add( "Recibo : " + Rtrim( cRecibo ) + " asiento generado num. " + alltrim( str( nAsiento ) ), 1 ) )
    end if
 
 RETURN ( .t. )

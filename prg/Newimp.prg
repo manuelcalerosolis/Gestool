@@ -53,15 +53,12 @@ METHOD New( cPath, oWndParent, oMenuItem )
 
    DEFAULT cPath        := cPatEmp()
    DEFAULT oWndParent   := GetWndFrame()
-
-   if oMenuItem != nil
-      ::nLevel          := nLevelUsr( oMenuItem )
-   else
-      ::nLevel          := nLevelUsr( "01037" )
-   end if
+   DEFAULT oMenuItem    := "01037"
 
    ::cPath              := cPath
    ::oWndParent         := oWndParent
+   ::nLevel             := nLevelUsr( oMenuItem )
+
    ::oDbf               := nil
 
    ::cPouDiv            := cPouDiv( cDivEmp() )

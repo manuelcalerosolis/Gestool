@@ -17,11 +17,13 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
    DATA  oCliInc
    DATA  oTipInc
 
+   DATA  oPais
+
    DATA  oStock
 
-   DATA cExpresionHeader
+   DATA  cExpresionHeader
 
-   DATA lApplyFilters                     INIT .t.
+   DATA  lApplyFilters                    INIT .t.
 
    METHOD lResource()
 
@@ -81,7 +83,6 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
 
    METHOD setFilterUserId()               INLINE ( if( ::lApplyFilters,;
                                                    ::cExpresionHeader  += ' .and. ( Field->cCodUsr >= "' + ::oGrupoUsuario:Cargo:Desde + '" .and. Field->cCodUsr <= "' + ::oGrupoUsuario:Cargo:Hasta + '" )', ) )
-
 
 END CLASS
 
@@ -207,6 +208,11 @@ METHOD OpenFiles() CLASS TFastVentasClientes
 
       ::oCnfFlt               := TDataCenter():oCnfFlt()
 
+      ::oPais                 := TPais():Create( cPatDat() )
+      if !::oPais:OpenFiles()
+         lOpen                := .f.
+      end if
+
       /*
       Stocks de articulos------------------------------------------------------
       */
@@ -324,6 +330,10 @@ METHOD CloseFiles() CLASS TFastVentasClientes
 
    if !Empty( ::oCnfFlt ) .and. ( ::oCnfFlt:Used() )
       ::oCnfFlt:end()
+   end if
+
+   if !empty( ::oPais )
+      ::oPais:end()
    end if
 
    if !Empty( ::oStock )
@@ -461,6 +471,9 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetWorkArea(       "Clientes",                         ::oDbfCli:nArea )
    ::oFastReport:SetFieldAliases(   "Clientes",                         cItemsToReport( aItmCli() ) )
 
+   ::oFastReport:SetWorkArea(       "País",                             ::oPais:Select() )   
+   ::oFastReport:SetFieldAliases(   "País",                             cObjectsToReport( ::oPais:oDbf ) )
+
    ::oFastReport:SetWorkArea(       "Agentes",                          ::oDbfAge:nArea )
    ::oFastReport:SetFieldAliases(   "Agentes",                          cItemsToReport( aItmAge() ) )
 
@@ -510,6 +523,7 @@ METHOD DataReport() CLASS TFastVentasClientes
    
    ::oFastReport:SetMasterDetail(   "Clientes", "Grupos de cliente",    {|| ::oDbfCli:cCodGrp } )
    ::oFastReport:SetMasterDetail(   "Clientes", "Formas de pago",       {|| ::oDbfCli:CodPago } )
+   ::oFastReport:SetMasterDetail(   "Clientes", "País",                 {|| ::oDbfCli:cCodPai } )
 
    ::oFastReport:SetMasterDetail(   "Incidencias", "Tipos de incidencias", {|| ::oCliInc:cCodTip } )
 
@@ -536,10 +550,9 @@ METHOD DataReport() CLASS TFastVentasClientes
    
    ::oFastReport:SetResyncPair(     "Clientes", "Grupos de cliente" )
    ::oFastReport:SetResyncPair(     "Clientes", "Formas de pago" )  
+   ::oFastReport:SetResyncPair(     "Clientes", "País" )
 
    ::oFastReport:SetResyncPair(     "Incidencias", "Tipos de incidencias" ) 
-
-   
 
    do case
       case ::cReportType == "SAT de clientes"
