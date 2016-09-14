@@ -300,8 +300,6 @@ METHOD CalculateOperationsNumber()
 
    local oDebtor
 
-   debug( ::aDebtors, "CalculateOperationsNumber" )
-
    for each oDebtor in ::aDebtors
       ::NbOfTxs         += 1
       ::CtrlSum         += oDebtor:InstdAmt

@@ -13852,6 +13852,8 @@ Return nil
 
 CLASS TPedidosClientesSenderReciver FROM TSenderReciverItem
 
+   DATA cLastError         INIT ""
+
    Method CreateData()
 
    Method RestoreData()
@@ -13861,6 +13863,8 @@ CLASS TPedidosClientesSenderReciver FROM TSenderReciverItem
    Method ReciveData()
 
    Method Process()
+
+   Method validateRecepcion()
 
 END CLASS
 
@@ -14105,7 +14109,9 @@ Method Process() CLASS TPedidosClientesSenderReciver
 
             	// Ficheros temporales------------------------------------------
 
-            	if file( cPatSnd() + "PedCliT.DBF" ) .and. file( cPatSnd() + "PedCliL.DBF" ) .and. file( cPatSnd() + "PedCliI.DBF" )
+            	if file( cPatSnd() + "PedCliT.DBF" ) .and. ;
+                  file( cPatSnd() + "PedCliL.DBF" ) .and. ;
+                  file( cPatSnd() + "PedCliI.DBF" )
 
                   USE ( cPatSnd() + "PedCliT.DBF" ) NEW VIA ( cLocalDriver() ) READONLY ALIAS ( cCheckArea( "PedCliT", @tmpPedCliT ) )
                   SET INDEX TO ( cPatSnd() + "PedCliT.CDX" ) ADDITIVE
@@ -14125,9 +14131,10 @@ Method Process() CLASS TPedidosClientesSenderReciver
                   USE ( cPatEmp() + "PedCliI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliI", @dbfPedCliI ) )
                   SET ADSINDEX TO ( cPatEmp() + "PedCliI.CDX" ) ADDITIVE
 
+                  ( tmpPedCliT )->( dbgotop() )
                   while ( tmpPedCliT )->( !eof() )
 
-                  	if validateRecepcion( tmpPedCliT, dbfPedCliT )
+                  	if ::validateRecepcion( tmpPedCliT, dbfPedCliT )
 
                         // Eliminamos datos anteriores-------------------------
 
@@ -14147,7 +14154,7 @@ Method Process() CLASS TPedidosClientesSenderReciver
 
                   		dbPass( tmpPedCliT, dbfPedCliT, .t. )
 
-                  		::oSender:SetText( "Añadido     : " + ( tmpPedCliL )->cSerPed + "/" + AllTrim( Str( ( tmpPedCliL )->nNumPed ) ) + "/" + AllTrim( ( tmpPedCliL )->cSufPed ) + "; " + Dtoc( ( tmpPedCliT )->dFecPed ) + "; " + AllTrim( ( tmpPedCliT )->cCodCli ) + "; " + ( tmpPedCliT )->cNomCli )
+                  		::oSender:SetText( "Añadido : " + ( tmpPedCliT )->cSerPed + "/" + AllTrim( Str( ( tmpPedCliT )->nNumPed ) ) + "/" + AllTrim( ( tmpPedCliT )->cSufPed ) + "; " + Dtoc( ( tmpPedCliT )->dFecPed ) + "; " + AllTrim( ( tmpPedCliT )->cCodCli ) + "; " + ( tmpPedCliT )->cNomCli )
 
                   		if ( tmpPedCliL )->( dbSeek( ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed ) )
                      		while ( tmpPedCliL )->cSerPed + Str( ( tmpPedCliL )->nNumPed ) + ( tmpPedCliL )->cSufPed == ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed .and. !( tmpPedCliL )->( eof() )
@@ -14165,7 +14172,7 @@ Method Process() CLASS TPedidosClientesSenderReciver
 
                   	else
 
-                  		::oSender:SetText( "Desestimado : " + ( tmpPedCliL )->cSerPed + "/" + AllTrim( Str( ( tmpPedCliL )->nNumPed ) ) + "/" + AllTrim( ( tmpPedCliL )->cSufPed ) + "; " + Dtoc( ( tmpPedCliT )->dFecPed ) + "; " + AllTrim( ( tmpPedCliT )->cCodCli ) + "; " + ( tmpPedCliT )->cNomCli )
+                  		::oSender:SetText( "Desestimado : " + ( tmpPedCliT )->cSerPed + "/" + AllTrim( Str( ( tmpPedCliT )->nNumPed ) ) + "/" + AllTrim( ( tmpPedCliT )->cSufPed ) + "; " + Dtoc( ( tmpPedCliT )->dFecPed ) + "; " + AllTrim( ( tmpPedCliT )->cCodCli ) + "; " + ( tmpPedCliT )->cNomCli )
 
                   	end if
 
@@ -14221,7 +14228,7 @@ Method Process() CLASS TPedidosClientesSenderReciver
 
                		( dbfPedCliT )->( OrdSetFocus( "cSuPed" ) )
 
-               		if validateRecepcion( tmpPedCliT, dbfPedCliT )
+               		if ::validateRecepcion( tmpPedCliT, dbfPedCliT )
 
                      	/*
                   		Pasamos las cabeceras----------------------------------
@@ -14397,7 +14404,8 @@ Return Self
 
 //---------------------------------------------------------------------------//
 
-static function validateRecepcion( tmpPedCliT, dbfPedCliT )
+Method validateRecepcion( tmpPedCliT, dbfPedCliT ) CLASS TPedidosClientesSenderReciver
+
 
    if !( lValidaOperacion( ( tmpPedCliT )->dFecPed, .f. ) )
       Return .f. 
