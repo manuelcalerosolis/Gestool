@@ -1400,15 +1400,13 @@ METHOD CreateColumnTriggerUpdate( oTable, cTrigger )
 
    for n := 1 to Table->( fCount() )
 
-      if Table->( FieldType( n ) ) != "M" // nField < 150 .and.
-
+      if ( n < 100 ) .and. ( Table->( fieldType( n ) ) != "M" ) 
          cTrigger += 'IF ( @co."' + Table->( FieldName( n ) ) + '" <> @cn."' + Table->( FieldName( n ) ) + '" )' + CRLF
          cTrigger +=  'THEN' + CRLF
          cTrigger += 'INSERT INTO SqlColumnLog ( OPERATIONID, COLUMNNAME, USERNAME, APPNAME, TABLENAME, OLDVALUE, NEWVALUE )' + CRLF
          cTrigger += 'VALUES ( @id, ' + "'" + Table->( FieldName( n ) ) + "'" + ", @userName, @appName, " + "'" + Alltrim( oTable:cName ) + "'" + ", cast( @co." + '"' + Table->( FieldName( n ) ) + '"' + " as sql_varchar ), " + "cast( @cn." + '"' + Table->( FieldName( n ) ) + '"' + " as sql_varchar ) );" + CRLF
          cTrigger += 'END IF;' + CRLF
          cTrigger += CRLF
-
       end if
 
    next
@@ -4719,12 +4717,16 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
       dbSelectArea( 0 )
 
       ::CloseArea( cSqlStatement )
+
+
    
       lOk               := ADSCreateSQLStatement( cSqlStatement, hStatement )
       if lOk
    
          lOk            := ADSExecuteSQLDirect( cSql )
          if !lOk
+            msgalert( cSql, "cSql" )
+            logwrite( cSql, "sql.log" )
             nError      := AdsGetLastError( @cErrorAds )
             msgStop( "Error : " + Str( nError) + "[" + cErrorAds + "]", 'ERROR en AdsExecuteSqlDirect' )
          endif
@@ -4749,11 +4751,6 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
 
    ErrorBlock( oBlock )
 
-/*
-   if Select( cSqlStatement ) > 0
-      ( cSqlStatement )->( dbCloseArea() )
-   endif
-*/
    CursorWE()
 
 RETURN ( lOk )

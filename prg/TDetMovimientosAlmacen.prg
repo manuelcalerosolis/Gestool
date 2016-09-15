@@ -104,6 +104,8 @@ CLASS TDetMovimientos FROM TDet
    METHOD Save()
    METHOD Asigna()
 
+   METHOD updateStockInWeb()                       INLINE ( TComercio():getInstance():appendProductsToUpadateStocks( ::oDbfVir:cRefMov, ::oDbfVir:cCodPr1, ::oDbfVir:cValPr1, ::oDbfVir:cCodPr2, ::oDbfVir:cValPr2, ::oParent:nView ) )
+
    METHOD AppendKit()
    METHOD ActualizaKit( nMode )
 
@@ -1355,6 +1357,8 @@ METHOD Save() CLASS TDetMovimientos
    oWaitMeter:Run()
    oWaitMeter:setTotal( nKeyCount )
 
+   TComercio():getInstance():resetProductsToUpdateStocks()
+
    /*
    Guardamos todo de manera definitiva-----------------------------------------
    */
@@ -1374,6 +1378,8 @@ METHOD Save() CLASS TDetMovimientos
 
          ::Asigna()
 
+         ::updateStockInWeb()
+
          ::oDbf:AppendFromObject( ::oDbfVir )
 
          ::oDbfVir:Skip()
@@ -1389,6 +1395,8 @@ METHOD Save() CLASS TDetMovimientos
       while !::oDbfVir:Eof()
 
          ::Asigna()
+
+         ::updateStockInWeb()
 
          ::oDbf:AppendFromObject( ::oDbfVir )
 
@@ -1408,6 +1416,8 @@ METHOD Save() CLASS TDetMovimientos
 
             ::Asigna()
 
+            ::updateStockInWeb()
+
             ::oDbfVir:fieldPutByName( "lSelDoc", .f. )
             ::oDbfVir:fieldPutByName( "nUndMov", ( nTotNMovAlm( ::oDbfVir ) - nTotNMovOld( ::oDbfVir ) ) / NotCero( ::oDbfVir:nCajMov ) )
 
@@ -1416,6 +1426,8 @@ METHOD Save() CLASS TDetMovimientos
          else
             
             ::Asigna()
+
+            ::updateStockInWeb()
 
             ::oDbf:AppendFromObject( ::oDbfVir )
 
@@ -1435,6 +1447,8 @@ METHOD Save() CLASS TDetMovimientos
 
          ::Asigna()
 
+         ::updateStockInWeb()
+
          ::oDbf:AppendFromObject( ::oDbfVir )
 
          ::oDbfVir:Skip()
@@ -1449,6 +1463,8 @@ METHOD Save() CLASS TDetMovimientos
    ::oDbfVir:SetStatus()
 
    oWaitMeter:end()
+
+   TComercio():getInstance():updateWebProductStocks()
 
    CursorWE()
 

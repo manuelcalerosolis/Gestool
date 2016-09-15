@@ -19203,7 +19203,6 @@ Static Function generateMatrizCodigoBarras( getCodigoMatriz )
    local aStatus  := aGetStatus( D():Articulos( nView ), .t. )
 
    ( D():Articulos( nView ) )->( ordsetfocus( "Matriz" ) )
-
    ( D():Articulos( nView ) )->( dbgobottom() )
 
    nValue         := val( ( D():Articulos( nView ) )->( ordkeyval() ) ) + 1

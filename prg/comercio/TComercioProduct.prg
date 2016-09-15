@@ -1835,7 +1835,7 @@ METHOD insertManufacturersPrestashop( hFabricantesData ) CLASS TComercioProduct
                   "id_lang ) " + ;
                "VALUES ( " + ;
                   "'" + alltrim( str( nCodigoWeb ) ) + "', " + ;     // id_manufacturer
-                  "'" + str( ::nLanguage ) + "' )"                   // id_lang
+                  "'" + str( ::TComercio:nLanguage ) + "' )"         // id_lang
 
    if !::commandExecDirect( cCommand )
       ::writeText( "Error al insertar el fabricante " + hGet( hFabricantesData, "name" ) + " en la tabla" + ::cPreFixtable( "manufacturer_lang" ), 3 )

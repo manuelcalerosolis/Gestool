@@ -247,8 +247,6 @@ CLASS TRemMovAlm FROM TMasDet
 
    METHOD Report()                                       INLINE TInfRemMov():New( "Remesas de movimientos", , , , , , { ::oDbf, ::oDetMovimientos:oDbf, ::oArt } ):Play()
 
-   METHOD ActualizaStockWeb( cNumDoc )
-
    METHOD GenerarEtiquetas()
 
    METHOD importarInventario()
@@ -550,33 +548,33 @@ METHOD OpenFiles( lExclusive ) CLASS TRemMovAlm
 
       ::OpenDetails()
 
-      DATABASE NEW ::oDelega     PATH ( cPatDat() ) FILE "Delega.Dbf"      VIA ( cDriver() ) SHARED INDEX "Delega.Cdx"
+      DATABASE NEW ::oDelega           FILE "Delega.Dbf"    PATH ( cPatDat() )      VIA ( cDriver() ) SHARED INDEX "Delega.Cdx"
 
-      DATABASE NEW ::oUsr        PATH ( cPatDat() ) FILE "Users.Dbf"       VIA ( cDriver() ) SHARED INDEX "Users.Cdx"
+      DATABASE NEW ::oUsr              FILE "Users.Dbf"     PATH ( cPatDat() )       VIA ( cDriver() ) SHARED INDEX "Users.Cdx"
 
-      DATABASE NEW ::oTMov       PATH ( cPatDat() ) FILE "TMOV.DBF"        VIA ( cDriver() ) SHARED INDEX "TMov.Cdx"
+      DATABASE NEW ::oTMov             FILE "TMOV.DBF"      PATH ( cPatDat() )        VIA ( cDriver() ) SHARED INDEX "TMov.Cdx"
 
       DATABASE NEW ::oAlmacenOrigen    FILE "ALMACEN.DBF"   ALIAS "ALMACEN"   PATH ( cPatAlm() )   VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
 
       DATABASE NEW ::oAlmacenDestino   FILE "ALMACEN.DBF"   ALIAS "ALMACEN"   PATH ( cPatAlm() )   VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
 
-      DATABASE NEW ::oArtCom     FILE "ARTDIV.DBF"    ALIAS "ARTDIV"    PATH ( cPatArt() ) VIA ( cDriver() ) SHARED INDEX "ARTDIV.CDX"
+      DATABASE NEW ::oArtCom           FILE "ARTDIV.DBF"    ALIAS "ARTDIV"    PATH ( cPatArt() ) VIA ( cDriver() ) SHARED INDEX "ARTDIV.CDX"
 
-      DATABASE NEW ::oPro        FILE "PRO.DBF"       ALIAS "PRO"       PATH ( cPatArt() ) VIA ( cDriver() ) SHARED INDEX "PRO.CDX"
+      DATABASE NEW ::oPro              FILE "PRO.DBF"       ALIAS "PRO"       PATH ( cPatArt() ) VIA ( cDriver() ) SHARED INDEX "PRO.CDX"
 
-      DATABASE NEW ::oTblPro     FILE "TBLPRO.DBF"    ALIAS "TBLPRO"    PATH ( cPatArt() ) VIA ( cDriver() ) SHARED INDEX "TBLPRO.CDX"
+      DATABASE NEW ::oTblPro           FILE "TBLPRO.DBF"    ALIAS "TBLPRO"    PATH ( cPatArt() ) VIA ( cDriver() ) SHARED INDEX "TBLPRO.CDX"
 
-      DATABASE NEW ::oFam        FILE "FAMILIAS.DBF"  ALIAS "FAMILIAS"  PATH ( cPatArt() ) VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
+      DATABASE NEW ::oFam              FILE "FAMILIAS.DBF"  ALIAS "FAMILIAS"  PATH ( cPatArt() ) VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
-      DATABASE NEW ::oArt        FILE "ARTICULO.DBF"  ALIAS "ARTICULO"  PATH ( cPatArt() ) VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+      DATABASE NEW ::oArt              FILE "ARTICULO.DBF"  ALIAS "ARTICULO"  PATH ( cPatArt() ) VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-      DATABASE NEW ::oArtKit     FILE "ARTKIT.DBF"    ALIAS "ARTKIT"    PATH ( cPatArt() ) VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
+      DATABASE NEW ::oArtKit           FILE "ARTKIT.DBF"    ALIAS "ARTKIT"    PATH ( cPatArt() ) VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
 
-      DATABASE NEW ::oDbfAge     FILE "AGENTES.DBF"  PATH ( cPatCli() )   VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
+      DATABASE NEW ::oDbfAge           FILE "AGENTES.DBF"  PATH ( cPatCli() )   VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
 
-      DATABASE NEW ::oPedPrvT    FILE "PEDPROVT.DBF" PATH ( cPatEmp() ) VIA ( cDriver() ) SHARED INDEX "PEDPROVT.CDX"
+      DATABASE NEW ::oPedPrvT          FILE "PEDPROVT.DBF" PATH ( cPatEmp() ) VIA ( cDriver() ) SHARED INDEX "PEDPROVT.CDX"
 
-      DATABASE NEW ::oPedPrvL    FILE "PEDPROVL.DBF" PATH ( cPatEmp() ) VIA ( cDriver() ) SHARED INDEX "PEDPROVL.CDX"
+      DATABASE NEW ::oPedPrvL          FILE "PEDPROVL.DBF" PATH ( cPatEmp() ) VIA ( cDriver() ) SHARED INDEX "PEDPROVL.CDX"
       ::oPedPrvL:SetOrder( "cRef" )
 
       DATABASE NEW ::oAlbPrvT    FILE "ALBPROVT.DBF" PATH ( cPatEmp() ) VIA ( cDriver() ) SHARED INDEX "ALBPROVT.CDX"
@@ -3074,49 +3072,6 @@ METHOD PrintReportRemMov( nDevice, nCopies, cPrinter, dbfDoc ) CLASS TRemMovAlm
    oFr:DestroyFr()
 
 Return .t.
-
-//---------------------------------------------------------------------------//
-
-METHOD ActualizaStockWeb( cNumDoc ) CLASS TRemMovAlm
-
-   local nRec
-   local nOrdAnt
-
-   if uFieldEmpresa( "lRealWeb" )
-
-      /*
-      Materiales producidos----------------------------------------------------
-      */
-
-      nRec     := ::oDetMovimientos:oDbf:Recno()
-      nOrdAnt  := ::oDetMovimientos:oDbf:OrdSetFocus( "nNumRem" )
-
-      with object ( TComercio():New())
-
-         if ::oDetMovimientos:oDbf:Seek( cNumDoc )
-
-            while Str( ::oDetMovimientos:oDbf:nNumRem ) + ::oDetMovimientos:oDbf:cSufRem == cNumDoc .and. !::oDetMovimientos:oDbf:Eof()
-
-               if oRetfld( ::oDetMovimientos:oDbf:cRefMov, ::oArt, "lPubInt", "Codigo" )
-
-                  :ActualizaStockProductsPrestashop( ::oDetMovimientos:oDbf:cRefMov, ::oDetMovimientos:oDbf:cCodPr1, ::oDetMovimientos:oDbf:cCodPr2, ::oDetMovimientos:oDbf:cValPr1, ::oDetMovimientos:oDbf:cValPr2 )
-
-               end if                  
-
-               ::oDetMovimientos:oDbf:Skip()
-
-            end while
-
-        end if
-        
-      end with
-
-      ::oDetMovimientos:oDbf:OrdSetFocus( nOrdAnt )
-      ::oDetMovimientos:oDbf:GoTo( nRec )
-   
-   end if 
-
-Return .f.   
 
 //---------------------------------------------------------------------------//
 
