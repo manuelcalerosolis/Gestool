@@ -1906,13 +1906,13 @@ FUNCTION dbDialogLock( cAlias, lAppend )
 
    DEFAULT lAppend   := .f.
 
-   if DBLock( cAlias, If( lAppend, MODE_APPEND, MODE_RECORD ) )
+   if DBLock( cAlias, if( lAppend, MODE_APPEND, MODE_RECORD ) )
       return .t.
 	endif
 
    while ApoloMsgNoYes( "Registro bloqueado," + CRLF + "¿ Reintentar ?" )
 
-		if DBLock( cAlias, If( lAppend, MODE_APPEND, MODE_RECORD ) )
+		if DBLock( cAlias, if( lAppend, MODE_APPEND, MODE_RECORD ) )
          return .t.
 		else
 			loop

@@ -501,7 +501,7 @@ METHOD lGenerate()
                      ::oDbf:cDocMov := alltrim( ::oTikCliT:cSerTik ) + "/" + alltrim( ::oTikCliT:cNumTik ) + "/" + alltrim( ::oTikCliT:cSufTik )
 
                      ::oDbf:cSerDoc := ::oTikCliT:cSerTik
-                     ::oDbf:nNumDoc := ::oTikCliT:cNumTik
+                     ::oDbf:nNumDoc := val( ::oTikCliT:cNumTik )
                      ::oDbf:cSufDoc := ::oTikCliT:cSufTik 
 
                      ::oDbf:cCodCli := ::oTikCliT:cCliTik
