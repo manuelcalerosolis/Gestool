@@ -2558,17 +2558,11 @@ Return nil
 Function TFastReportOptions()
 Return nil
 
-<<<<<<< HEAD
 Function TFtpCUrl()
 Return nil
 
 Function TConversionPedidosClientes()
 Return nil
-
-=======
-Function TConversionPedidosClientes()
-Return nil
->>>>>>> origin/master
 
 //------------------------------------------------------------------//
 
