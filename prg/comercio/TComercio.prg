@@ -663,7 +663,6 @@ METHOD filesOpen() CLASS TComercio
       ::filesClose()
 
    END SEQUENCE
-
    ErrorBlock( oBlock )
 
 RETURN ( lOpen )
@@ -1002,8 +1001,8 @@ METHOD controllerOrderPrestashop() CLASS TComercio
 
    ::disableDialog()
 
-   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
-   BEGIN SEQUENCE
+   // oBlock            := ErrorBlock( { | oError | Break( oError ) } )
+   // BEGIN SEQUENCE
 
    if ::filesOpen()
 
@@ -1027,12 +1026,12 @@ METHOD controllerOrderPrestashop() CLASS TComercio
 
    end if 
 
-   RECOVER USING oError
+   // RECOVER USING oError
    
-      msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
+   //    msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
    
-   END SEQUENCE
-   ErrorBlock( oBlock )
+   // END SEQUENCE
+   // ErrorBlock( oBlock )
 
    ::EnableDialog()
 

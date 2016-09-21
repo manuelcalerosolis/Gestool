@@ -2537,7 +2537,7 @@ Return nil
 Function SepaXml()
 Return nil
 
-Function Id_File()
+Function id_File()
 Return nil
 
 Function SepaDebitactor()
@@ -2552,18 +2552,23 @@ Return nil
 Function TComercioConfig()
 Return nil
 
-Function TPRESTASHOPID()
+Function TPrestashopId()
 Return nil
 
 Function TFastReportOptions()
 Return nil
 
+<<<<<<< HEAD
 Function TFtpCUrl()
 Return nil
 
 Function TConversionPedidosClientes()
 Return nil
 
+=======
+Function TConversionPedidosClientes()
+Return nil
+>>>>>>> origin/master
 
 //------------------------------------------------------------------//
 

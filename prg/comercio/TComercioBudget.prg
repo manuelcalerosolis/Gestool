@@ -46,7 +46,7 @@ CLASS TComercioDocument
    // facades------------------------------------------------------------------
 
    METHOD TPrestashopId()                                   INLINE ( ::TComercio:TPrestashopId )
-   METHOD TComercioConfig()                               INLINE ( ::TComercio:TComercioConfig )
+   METHOD TComercioConfig()                                 INLINE ( ::TComercio:TComercioConfig )
    METHOD TComercioCustomer()                               INLINE ( ::TComercio:TComercioCustomer )
 
    METHOD getCurrentWebName()                               INLINE ( ::TComercio:getCurrentWebName() )

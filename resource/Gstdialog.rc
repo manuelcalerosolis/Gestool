@@ -148,7 +148,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 500, "TApoloMeter", 0x00000000, 48, 311, 566, 6
   CONTROL "", 510, "TApoloMeter", 0x00000000, 48, 318, 566, 6
   CONTROL "Actualizar bases de datos", 600, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 48, 260, 94, 10
-  CONTROL "Crear triggers para tablas auxiliares", 610, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 48, 273, 122, 10
+  CONTROL "Crear servicio de auditoria", 610, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 48, 273, 122, 10
   CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 43, 250, 574, 36
 }
 
