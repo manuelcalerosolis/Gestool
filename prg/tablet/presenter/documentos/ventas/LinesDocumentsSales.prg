@@ -405,7 +405,7 @@ Return ( lResult )
 
 METHOD StartResourceDetail() CLASS LinesDocumentsSales
 
-   ::cargaArticulo()
+   ::setOldCodigoArticulo()
 
    ::cargaAlmacen()
 
@@ -499,11 +499,13 @@ METHOD onPostSaveAppendDetail() CLASS LinesDocumentsSales
    local nUnidadesArticulo
    local lLineaPertencienteEscandallo
 
+   Return ( nil )
+
    D():getStatusKit( ::getView() )
 
    cCodigoArticulo               := hGet( ::oSender:oDocumentLineTemporal:hDictionary, "Articulo" )
    nUnidadesArticulo             := hGet( ::oSender:oDocumentLineTemporal:hDictionary, "Unidades" )
-   lLineaPertencienteEscandallo  := lKitAsociado( cCodigoArticulo, D():Articulos( nView ) )
+   lLineaPertencienteEscandallo  := lKitAsociado( cCodigoArticulo, D():Articulos( ::getView() ) )
 
    ( D():Kit( ::getView() ) )->( ordsetfocus( "cCodKit" ) )
    if ( D():Kit( ::getView() ) )->( dbSeek( cCodigoArticulo ) )

@@ -13700,10 +13700,6 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpFac )
                ( dbfTmpLin )->nDtoDiv  := nDtoDiv
             end if
 
-            if ( D():Articulos( nView ) )->lKitArt
-               AppendKit( dbfTmpLin, aTmpFac )
-            end if
-
             /*
             Avisaremos del stock bajo minimo--------------------------------------
             */
@@ -13733,6 +13729,14 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpFac )
 
                end case
 
+            end if
+
+            /*
+            Si el kit posee un nuevo kit---------------------------------------
+            */
+
+            if ( D():Articulos( nView ) )->lKitArt
+               AppendKit( dbfTmpLin, aTmpFac )
             end if
 
          end if

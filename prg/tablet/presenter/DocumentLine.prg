@@ -12,7 +12,7 @@ CLASS DocumentLine FROM DocumentBase
    METHOD setSerieMaster( hDictionary )                        INLINE ( ::setValueFromDictionary( hDictionary, "Serie" ) )
    METHOD setNumeroMaster( hDictionary )                       INLINE ( ::setValueFromDictionary( hDictionary, "Numero" ) )
    METHOD setSufijoMaster( hDictionary )                       INLINE ( ::setValueFromDictionary( hDictionary, "Sufijo" ) )
-   METHOD setAlmacenMaster( hDictionary )                      INLINE ( ::setValueFromDictionary( hDictionary, "Almacen" ) )
+   METHOD setAlmacenMaster( hDictionary )                      
 
    METHOD setClient( Client )                                  INLINE ( ::setValue( "Cliente", Client ) )
    METHOD getClient()                                          INLINE ( ::getValue( "Cliente" ) )
@@ -203,6 +203,16 @@ METHOD getTotalSpecialTax() CLASS DocumentLine
    end if
 
 Return ( specialTax )
+
+//---------------------------------------------------------------------------//
+
+METHOD setAlmacenMaster( hDictionary )
+
+   if empty( ::getValueFromDictionary( hDictionary, "Almacen" ) )
+      Return ( ::setValueFromDictionary( hDictionary, "Almacen" ) )
+   end if 
+
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

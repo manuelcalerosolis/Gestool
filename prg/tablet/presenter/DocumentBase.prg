@@ -52,7 +52,12 @@ CLASS DocumentBase
    METHOD getValue( key, uDefault )                            INLINE ( hGetDefault( ::hDictionary, key, uDefault ) )
    METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
 
-   METHOD setValueFromDictionary( hDictionary, cKey )          INLINE ( if( hHaskey( hDictionary, cKey ), ::setValue( cKey, hGet( hDictionary, cKey ) ), ) )
+   METHOD getValueFromDictionary( hDictionary, cKey )          INLINE ( if ( hHaskey( hDictionary, cKey ),;
+                                                                           ::getValue( cKey, hGet( hDictionary, cKey ) ),;
+                                                                           ) )
+   METHOD setValueFromDictionary( hDictionary, cKey )          INLINE ( if ( hHaskey( hDictionary, cKey ),;
+                                                                           ::setValue( cKey, hGet( hDictionary, cKey ) ),;
+                                                                           ) )
 
    METHOD selectLine()                                         INLINE ( ::select := .t. )                           
    METHOD unSelectLine()                                       INLINE ( ::select := .f. )                           
