@@ -2558,6 +2558,12 @@ Return nil
 Function TFastReportOptions()
 Return nil
 
+Function TFtpCUrl()
+Return nil
+
+Function TConversionPedidosClientes()
+Return nil
+
 
 //------------------------------------------------------------------//
 

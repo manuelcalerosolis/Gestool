@@ -651,7 +651,8 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
                "Sesión",;
                "NFC",;
                "Pago",;
-               "Envio";
+               "Envio",;
+               "Su albarán";
       MRU      "Document_user1_16";
       BITMAP   clrTopVentas ;
       ALIAS    ( D():FacturasClientes( nView ) );
@@ -1039,8 +1040,10 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Su albarán"
+         :cSortOrder       := "cSuAlb"
          :bEditValue       := {|| ( D():FacturasClientes( nView ) )->cSuAlb }
          :nWidth           := 100
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t.
       end with
 
@@ -2483,6 +2486,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       aTmp[ _LSNDDOC    ]  := .t.
       aTmp[ _LMAIL      ]  := .t.
       aTmp[ _LRECC      ]	:= lRECCEmpresa()
+      aTmp[ _CCODUSR    ]  := cCurUsr()
 
    case nMode == EDIT_MODE
 
@@ -19406,6 +19410,9 @@ FUNCTION rxFacCli( cPath, cDriver )
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cFacCliT )->( ordCreate( cPath + "FacCliT.CDX", "CodPostal", "Field->cPosCli", {|| Field->cPosCli } ) )
+
+      ( cFacCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cFacCliT )->( ordCreate( cPath + "FacCliT.CDX", "cSuAlb", "Field->cSuAlb", {|| Field->cSuAlb } ) )
 
       ( cFacCliT )->( dbCloseArea() )
 

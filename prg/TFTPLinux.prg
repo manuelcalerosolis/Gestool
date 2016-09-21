@@ -353,7 +353,9 @@ Return ( !empty( ::idCurl ) )
 METHOD createFile( cFile, cDirectory ) CLASS TFTPCurl
 
    local cURL
-   local createFile  := .f.
+   local createFile     := .f.
+
+   DEFAULT cDirectory   := ""
 
    if empty( ::idCurl )
       Return .f.
@@ -364,9 +366,13 @@ METHOD createFile( cFile, cDirectory ) CLASS TFTPCurl
       Return .f.
    endif 
 
-   cDirectory        := cLeftPath( cDirectory )
+   if !Empty( cDirectory )
+      cDirectory     := cLeftPath( cDirectory )
+   end if
 
    cURL              := "ftp://" + ::cUser + ":" + ::cPassword + "@" + ::cServer + "/" + cDirectory + cNoPath( cFile )
+
+   MsgInfo( cUrl )
 
    curl_easy_setopt( ::idCurl, HB_CURLOPT_UPLOAD )
    curl_easy_setopt( ::idCurl, HB_CURLOPT_URL, cURL )

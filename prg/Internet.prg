@@ -1087,15 +1087,16 @@ METHOD FtpConexion() CLASS TSndRecInf
 
    local cUrl
    local nRetry            := 0
-   local ftpSit            := cFirstPath( Rtrim( cSitFtp() ) )
+   local ftpSit            := Rtrim( cSitFtp() )    //cFirstPath( Rtrim( cSitFtp() ) )
    local ftpDir            := cNoPathLeft( Rtrim( cSitFtp() ) )
    local nbrUsr            := Rtrim( cUsrFtp() )
    local accUsr            := Rtrim( cPswFtp() )
+   local nPuerto           := 21
    local pasInt            := uFieldEmpresa( "lPasEnvio" )
 
    if nTipConInt() == 2
 
-      while !::lFtpValido .and. nRetry < 3
+      /*while !::lFtpValido .and. nRetry < 3
 
          ::SetText( '> Conectando con el sitio ' + Rtrim( ftpSit ) + '...', 1 )
 
@@ -1132,11 +1133,30 @@ METHOD FtpConexion() CLASS TSndRecInf
 
          end if
 
-      end while
+      end while*/
+
+      /*
+      Nueva conexion-----------------------------------------------------------
+      */
+
+      MsgInfo( ftpSit )
+      MsgInfo( cSitFtp() )
+
+      ::oFtp     := TFtpCurl():New( nbrUsr, accUsr, ftpSit, nPuerto )
+
+      if ::oFtp:CreateConexion()
+
+         ::lFtpValido         := .t.
+
+      else
+
+         msgStop( "Imposible conectar al sitio ftp " + ::oFtp:cServer )
+
+      end if
 
    else
 
-      ::lFtpValido           := .t.
+      ::lFtpValido            := .t.
 
    end if
 
@@ -1147,7 +1167,7 @@ Return ( Self )
 METHOD CloseConexion() CLASS TSndRecInf
 
    if !Empty( ::oFtp )
-      ::oFtp:Close()
+      ::oFtp:EndConexion()
    end if
 
 Return ( Self )
@@ -1468,7 +1488,14 @@ METHOD lFtpSendFiles( aSource, aTarget, cDirectory ) CLASS TSndRecInf
 
       LogWrite( aSource[ n ] )
 
-      if isFalse( ::oFtp:UploadFile( aSource[ n ] ) )
+      /*if isFalse( ::oFtp:UploadFile( aSource[ n ] ) )
+         lRet  := .f.
+      end if*/
+
+
+      MsgInfo( aSource[ n ], "lFtpSendFiles" )
+
+      if isFalse( ::oFtp:createFile( aSource[ n ] ) )
          lRet  := .f.
       end if
 

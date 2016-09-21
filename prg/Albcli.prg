@@ -2293,6 +2293,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          aTmp[ _CNUMPED   ]   := ""
          aTmp[ _LCLOALB   ]   := .f.
          aTmp[ _NFACTURADO]   := 1
+         aTmp[ _CCODUSR   ]   := cCurUsr()
 
       case nMode == EDIT_MODE
 

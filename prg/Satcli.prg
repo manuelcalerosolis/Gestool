@@ -1829,6 +1829,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
       aTmp[ _CTURSAT ]  := cCurSesion()
       aTmp[ _LESTADO ]  := .f.
       aTmp[ _LCLOSAT ]  := .f.
+      aTmp[ _CCODUSR ]  := cCurUsr()
 
    end case
 

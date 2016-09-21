@@ -2137,6 +2137,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       aTmp[ _LCLOFAC  ]    := .f.
       aTmp[ _LCONTAB  ]    := .f.
       aTmp[ _LSNDDOC  ]    := .t.
+      aTmp[ _CCODUSR    ]  := cCurUsr()
 
    case nMode == EDIT_MODE
 
