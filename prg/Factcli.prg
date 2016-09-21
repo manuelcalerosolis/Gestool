@@ -13206,7 +13206,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
     end if	
 
    if !aGet[ _CREF ]:lValid()
-      return nil
+      return .f.
    end if
 
    /*
@@ -13214,19 +13214,17 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
    */
 
    if !lMoreIva( aTmp[_NIVA] )
-      return nil
+      return .f.
    end if
 
    if empty( aTmp[ _CALMLIN ] ) .and. !empty( aGet[ _CALMLIN ] )
       MsgStop( "Código de almacen no puede estar vacio" )
 	  	aGet[ _CALMLIN ]:SetFocus()
-      Return nil
+      return .f.
    end if
 
-	if !empty( aGet[ _CALMLIN ] )
-		if !cAlmacen( aGet[ _CALMLIN ], dbfAlm )
-   		Return nil
-		end if
+	if !empty( aGet[ _CALMLIN ] ) .and. !cAlmacen( aGet[ _CALMLIN ], dbfAlm )
+      return .f.
 	end if	
 
    // control de precios minimos-----------------------------------------------
@@ -13245,14 +13243,14 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
       if !empty( oBtnSer )
 	      oBtnSer:Click()
 	   end if 
-      Return .f.
+      return .f.
    end if
 
    // lanzamos los scripts-----------------------------------------------------
 
    if isAppendOrDuplicateMode( nMode )
       if isfalse( runEventScript( "FacturasClientes\Lineas\beforeAppend", aTmp, aTmpFac, nView, dbfTmpLin ) )
-         Return .f.
+         return .f.
       end if
    end if
 

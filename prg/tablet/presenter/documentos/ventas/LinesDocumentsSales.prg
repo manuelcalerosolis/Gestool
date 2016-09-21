@@ -62,6 +62,12 @@ CLASS LinesDocumentsSales FROM Editable
    METHOD setPuntoVerde( nPuntoVerde )                      INLINE ( ::hSetDetail( "PuntoVerde", nPuntoVerde ) )
    METHOD setUnidadMedicion( cUnidad )                      INLINE ( ::hSetDetail( "UnidadMedicion", cUnidad ) )
    METHOD setLineaEscandallo( lLineaEscandallo )            INLINE ( ::hSetDetail( "LineaEscandallo", lLineaEscandallo ) )
+   METHOD setLineaPerteneceEscandallo( LineaPerteneceEscandallo ) ;
+                                                            INLINE ( ::hSetDetail( "LineaPerteneceEscandallo", LineaPerteneceEscandallo ) )
+
+   METHOD getUnidadesKit( nUnidadesArticulo )               INLINE ( if (  ( D():Kit( ::getView() ) )->nUndKit != 0,;
+                                                                           nUnidadesArticulo * ( D():Kit( ::getView() ) )->nUndKit,;
+                                                                           nUnidadesArticulo ) )
 
    METHOD setTarifa()                                       INLINE ( ::hSetDetail( "NumeroTarifa", ::hGetMaster( "NumeroTarifa" ) ) ) 
    METHOD setPrecioCosto( nCosto )                          INLINE ( ::hSetDetail( "PrecioCosto", nCosto ) )
@@ -121,6 +127,8 @@ CLASS LinesDocumentsSales FROM Editable
    METHOD onPreSaveAppendDetail()                           INLINE ( .t. )
 
    METHOD onPostSaveAppendDetail()
+      
+   METHOD insertKit( cCodigoArticulo ) 
 
    METHOD lValidResourceDetail()
 
@@ -138,15 +146,17 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD lSeekArticulo() CLASS LinesDocumentsSales
+METHOD lSeekArticulo( cCodigoArticulo ) CLASS LinesDocumentsSales
 
-   local cCodigoArticulo     := ::oViewEditDetail:oGetArticulo:varGet()   //::hGetDetail( "Articulo" )
+   if empty( cCodigoArticulo )
+      cCodigoArticulo         := ::oViewEditDetail:oGetArticulo:varGet()   //::hGetDetail( "Articulo" )
+   end if 
 
    if empty( cCodigoArticulo )
       Return .f.
    end if
 
-   cCodigoArticulo           := cSeekCodebarView( cCodigoArticulo, ::getView() )
+   cCodigoArticulo            := cSeekCodebarView( cCodigoArticulo, ::getView() )
 
 Return ( dbSeekArticuloUpperLower( cCodigoArticulo, ::getView() ) )
 
@@ -265,13 +275,12 @@ METHOD setLineFromArticulo() CLASS LinesDocumentsSales
    ::setTipoArticulo( ( D():Articulos( ::getView() ) )->cCodTip ) 
 
    ::setCajas( ( D():Articulos( ::getView() ) )->nCajEnt )
+
    ::setUnidades( ( D():Articulos( ::getView() ) )->nUniCaja )
 
    ::setImpuestoEspecial( ( D():Articulos( ::getView() ) )->cCodImp )
 
    ::setImporteImpuestoEspecial( ::getValorImpuestoEspecial() )
-
-   // ::setVolumenImpuestosEspeciales( retFld( ( D():Articulos( ::getView() ) )->cCodImp, D():ImpuestosEspeciales( ::getView() ):Select(), "lIvaVol" ) )
 
    if ::hGetMaster( "TipoImpuesto" ) <= 1
       ::setPorcentajeImpuesto( nIva( D():TiposIva( ::getView() ), ( D():Articulos( ::getView() ) )->TipoIva ) )
@@ -320,19 +329,21 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD CargaArticulo() CLASS LinesDocumentsSales
+METHOD CargaArticulo( cCodigoArticulo ) CLASS LinesDocumentsSales
 
-   local cCodArt  := hGet( ::oSender:oDocumentLineTemporal:hDictionary, "Articulo" )
+   if empty( cCodigoArticulo )
+      cCodigoArticulo   := hGet( ::oSender:oDocumentLineTemporal:hDictionary, "Articulo" )
+   end if
 
-   if Empty( cCodArt )
+   if empty( cCodigoArticulo )
       Return .f.
    end if
 
-   if ( cCodArt == ::cOldCodigoArticulo )
+   if ( cCodigoArticulo == ::cOldCodigoArticulo )
       Return .t.
    end if
 
-   if !::lSeekArticulo()
+   if !::lSeekArticulo( cCodigoArticulo )
       apoloMsgStop( "Artículo no encontrado" )
       Return .f.
    end if
@@ -342,8 +353,6 @@ METHOD CargaArticulo() CLASS LinesDocumentsSales
    end if
 
    ::oViewEditDetail:disableDialog()
-
-   ::resetDescuentoLineal()
 
    ::setLineFromArticulo()
 
@@ -357,7 +366,7 @@ METHOD CargaArticulo() CLASS LinesDocumentsSales
 
    ::oViewEditDetail:enableDialog()
 
-   ::oViewEditDetail:RefreshDialog()
+   ::oViewEditDetail:refreshDialog()
 
 Return ( .t. )
 
@@ -486,24 +495,22 @@ Return ( lReturn  )
 
 METHOD onPostSaveAppendDetail() CLASS LinesDocumentsSales
 
-   local nRec
-   local nOrdAnt
-   local cCodArt
+   local cCodigoArticulo
+   local nUnidadesArticulo
+   local lLineaPertencienteEscandallo
 
-   MsgInfo( "Creamos los registros de los escandallos" )
+   D():getStatusKit( ::getView() )
 
-   cCodArt     := hGet( ::oSender:oDocumentLineTemporal:hDictionary, "Articulo" )
-   nRec        := ( D():Kit( ::getView() ) )->( Recno() )
-   nOrdAnt     := ( D():Kit( ::getView() ) )->( OrdSetFocus( "cCodKit" ) )
+   cCodigoArticulo               := hGet( ::oSender:oDocumentLineTemporal:hDictionary, "Articulo" )
+   nUnidadesArticulo             := hGet( ::oSender:oDocumentLineTemporal:hDictionary, "Unidades" )
+   lLineaPertencienteEscandallo  := lKitAsociado( cCodigoArticulo, D():Articulos( nView ) )
 
-   if ( D():Kit( ::getView() ) )->( dbSeek( cCodArt ) )
+   ( D():Kit( ::getView() ) )->( ordsetfocus( "cCodKit" ) )
+   if ( D():Kit( ::getView() ) )->( dbSeek( cCodigoArticulo ) )
 
-      while ( D():Kit( ::getView() ) )->cCodKit == cCodArt .and. !( D():Kit( ::getView() ) )->( Eof() )
+      while ( D():Kit( ::getView() ) )->cCodKit == cCodigoArticulo .and. !( D():Kit( ::getView() ) )->( eof() )
 
-
-            MsgInfo( ( D():Kit( ::getView() ) )->cCodKit, "cCodKit" )
-            MsgInfo( ( D():Kit( ::getView() ) )->cRefKit, "cRefKit" )
-
+         ::insertKit( nUnidadesArticulo, lLineaPertencienteEscandallo )
 
          ( D():Kit( ::getView() ) )->( dbSkip() )
 
@@ -511,9 +518,37 @@ METHOD onPostSaveAppendDetail() CLASS LinesDocumentsSales
 
    end if
 
-   ( D():Kit( ::getView() ) )->( OrdSetFocus( nOrdAnt ) )
-   ( D():Kit( ::getView() ) )->( dbGoTo( nRec ) )
+   D():setStatusKit( ::getView() )
 
 Return ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD insertKit( nUnidadesArticulo, lLineaPertencienteEscandallo ) CLASS LinesDocumentsSales
+
+   if !::lSeekArticulo( ( D():Kit( ::getView() ) )->cRefKit )
+      Return .f.
+   end if
+
+   ::oSender:getAppendDetail()
+
+   ::resetDescuentoLineal()
+
+   ::setLineFromArticulo()
+
+   ::setComisionFromMaster()
+
+   ::setDescuentoPorcentualFromCliente()
+
+   ::setAtipicasCliente()
+
+   ::setLineaPerteneceEscandallo( lLineaPertencienteEscandallo )
+
+   ::setUnidades( ::getUnidadesKit( nUnidadesArticulo ) )
+
+   ::oSender:saveAppendDetail()
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
