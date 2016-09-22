@@ -4990,6 +4990,8 @@ Return ( by( nRow ) )
 
 Function Test()
 
+   // TStock():validateDateTime( ctod( "22/09/2016" ), "000001", dFecIni, dFecFin, tHorIni, tHorFin ) CLASS TStock
+
 /*
    local oDlg
    local rgb   := rgb( hb_hextonum( "00" ), hb_hextonum( "74" ), hb_hextonum( "A8" ) )

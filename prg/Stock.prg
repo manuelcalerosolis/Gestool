@@ -16,6 +16,8 @@ CLASS TStock
    DATA cPath
    DATA cDriver
 
+   DATA lNotPendiente               INIT .f.
+
    DATA lStockInit                  INIT .f.
 
    DATA uCodigoAlmacen  
@@ -127,6 +129,9 @@ CLASS TStock
    METHOD End()                              INLINE ( if( !empty( ::oTree ), ::oTree:End(), ), ::CloseFiles() )
 
    METHOD Reset()                            INLINE ( ::aStocks := {} )
+
+   METHOD setNotPendiente( lNotPendiente)    INLINE ( ::lNotPendiente := lNotPendiente )
+   METHOD getNotPendiente()                  INLINE ( ::lNotPendiente )
 
    METHOD lOpenFiles( )
    METHOD CloseFiles()
@@ -301,6 +306,8 @@ CLASS TStock
    METHOD lCodigoAlmacen( cCodigoAlmacen )
 
    METHOD getFechaHoraConsolidacion()        INLINE ( dtos( ( ::cHisMovT )->dFecMov ) + ( ::cHisMovT )->cTimMov )
+
+   METHOD validateDateTime( dFecMov, tTimMov, dFecIni, dFecFin, tHorIni, tHorFin )
 
 END CLASS
 
@@ -4112,7 +4119,7 @@ RETURN ( ::aAlmacenes )
 
 //---------------------------------------------------------------------------//
 
-METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFecFin, lNotPendiente ) CLASS TStock
+METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin ) CLASS TStock
 
    local nRec
    local oBlock
@@ -4127,7 +4134,6 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    DEFAULT lLote        := !uFieldEmpresa( "lCalLot" )
    DEFAULT lNumeroSerie := !uFieldEmpresa( "lCalSer" )
-   DEFAULT lNotPendiente:= .f.
 
    cCodArt              := padr( cCodArt, 18 )
    cCodAlm              := padr( cCodAlm, 16 )
@@ -4186,7 +4192,9 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
       // Movimientos de almacén------------------------------------------------" )
 
-      ::aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
+      msgAlert( dFecIni, "dFecIni" )
+
+      ::aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin )
       SysRefresh()
 
       // Albaranes de proveedor------------------------------------------------------" )
@@ -4245,7 +4253,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
       // Stock pendiente de entregar-------------------------------------------" )
 
-      if !lNotPendiente
+      if !( ::getNotPendiente() )
          ::aStockPendiente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
          SysRefresh()
       end if 
@@ -4301,11 +4309,11 @@ Return ( ::aStocks )
 
 //---------------------------------------------------------------------------//
 
-METHOD nStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFecFin ) CLASS TStock
+METHOD nStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin ) CLASS TStock
 
    local nStockArticulo := 0
 
-   ::aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFecFin )
+   ::aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin )
 
    aEval( ::aStocks, {|o| nStockArticulo += o:nUnidades } )
 
@@ -4325,16 +4333,16 @@ Return ( nBultosArticulo )
 
 //---------------------------------------------------------------------------//
 
-METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecIni, dFecFin ) CLASS TStock
+METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecIni, dFecFin, tHorIni, tHorFin ) CLASS TStock
 
    local nStockArticulo := 0
 
-   ::aStockArticulo( cCodArt, cCodAlm, , , , dFecIni, dFecFin )
+   ::aStockArticulo( cCodArt, cCodAlm, nil, nil, nil, dFecIni, dFecFin, tHorIni, tHorFin )
 
    aEval( ::aStocks, {|o| if( ( empty( cCodAlm ) .or. alltrim( cCodAlm ) == alltrim( o:cCodigoAlmacen ) )   .and.;
                               ( empty( cValPr1 ) .or. alltrim( cValPr1 ) == alltrim( o:cValorPropiedad1 ) ) .and.;
                               ( empty( cValPr2 ) .or. alltrim( cValPr2 ) == alltrim( o:cValorPropiedad2 ) ) .and.;                  
-                              ( empty( cLote   ) .or. alltrim( cLote )   == alltrim( o:cLote )   ),;
+                              ( empty( cLote   ) .or. alltrim( cLote   ) == alltrim( o:cLote )   ),;
                               nStockArticulo += o:nUnidades, ) } )
 
 Return ( nStockArticulo )
@@ -5734,7 +5742,7 @@ Return ( aScan( ::uCodigoAlmacen, cCodigoAlmacen ) != 0 )
 // Movimientos de almacén------------------------------------------------------
 //
 
-METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
+METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin )
 
    local nOrdHisMov  := ( ::cHisMovT )->( ordsetfocus( "cStkFastIn" ) )
 
@@ -5744,7 +5752,9 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni,
 
       while ( ::cHisMovT )->cRefMov == cCodArt .and. ( ::cHisMovT )->cAliMov == cCodAlm .and. !( ::cHisMovT )->( Eof() )
 
-         if ( empty( dFecIni ) .or. ( ::cHisMovT )->dFecMov >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cHisMovT)->dFecMov <= dFecFin )
+         if ::validateDateTime( ( ::cHisMovT )->dFecMov, ( ::cHisMovT )->cTimMov, dFecIni, dFecFin, tHorIni, tHorFin )
+
+         // if ( empty( dFecIni ) .or. ( ::cHisMovT )->dFecMov >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cHisMovT)->dFecMov <= dFecFin )
 
             if ::lCheckConsolidacion( ( ::cHisMovT )->cRefMov, ( ::cHisMovT )->cAliMov, ( ::cHisMovT )->cCodPr1, ( ::cHisMovT )->cCodPr2, ( ::cHisMovT )->cValPr1, ( ::cHisMovT )->cValPr2, ( ::cHisMovT )->cLote, ( ::cHisMovT )->dFecMov, ( ::cHisMovT )->cTimMov ) 
 
@@ -6989,4 +6999,35 @@ METHOD Zap() CLASS TStock
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD validateDateTime( dFecMov, tTimMov, dFecIni, dFecFin, tHorIni, tHorFin ) CLASS TStock
+
+   if !empty( dFecIni ) .and. dFecMov < dFecIni
+      Return .f.
+   end if 
+
+   if !empty( tHorIni ) .and. dtos( dFecMov ) + tTimMov < dtos( dFecIni ) + tHorIni
+      Return .f.
+   end if 
+
+   if !empty( dFecFin ) .and. dFecMov > dFecFin
+      Return .f.
+   end if 
+
+   msgalert( dtos( dFecMov ) + tTimMov, "dtos( dFecMov ) + tTimMov" )
+   msgalert( dtos( dFecFin ) + tHorFin, "dtos( dFecFin ) + tHorFin" )
+   msgalert( dtos( dFecMov ) + tTimMov < dtos( dFecFin ) + tHorFin, dtos( dFecMov ) + tTimMov + ">" + dtos( dFecFin ) + tHorFin )
+
+   if !empty( tHorFin ) .and. dtos( dFecMov ) + tTimMov > dtos( dFecFin ) + tHorFin
+      Return .f.
+   end if 
+
+//         if ( empty( dFecIni ) .or. ( ::cHisMovT )->dFecMov >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cHisMovT)->dFecMov <= dFecFin )
+
+Return .t.
+
+
+
+
+
 

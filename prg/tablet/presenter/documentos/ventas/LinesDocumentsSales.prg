@@ -495,13 +495,12 @@ Return ( lReturn  )
 
 METHOD onPostSaveAppendDetail() CLASS LinesDocumentsSales
 
+   local aStatusKit
    local cCodigoArticulo
    local nUnidadesArticulo
    local lLineaPertencienteEscandallo
 
-   Return ( nil )
-
-   D():getStatusKit( ::getView() )
+   aStatusKit                    := D():getStatusKit( ::getView() )
 
    cCodigoArticulo               := hGet( ::oSender:oDocumentLineTemporal:hDictionary, "Articulo" )
    nUnidadesArticulo             := hGet( ::oSender:oDocumentLineTemporal:hDictionary, "Unidades" )
@@ -520,7 +519,7 @@ METHOD onPostSaveAppendDetail() CLASS LinesDocumentsSales
 
    end if
 
-   D():setStatusKit( ::getView() )
+   D():setStatusKit( aStatusKit, ::getView() )
 
 Return ( nil )
 

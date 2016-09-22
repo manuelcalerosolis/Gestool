@@ -3297,9 +3297,21 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Function oStockMovimientoFechaPrevia( idArticulo, idAlmacen, valorPropiedad1, valorPropiedad2, fechaFin )
+Function oStockMovimientoFechaPrevia( idArticulo, idAlmacen, valorPropiedad1, valorPropiedad2, fechaFin, horaFin )
 
-Return ( oThis:oStock:nStockAlmacen( idArticulo, idAlmacen, valorPropiedad1, valorPropiedad2, nil, fechaFin - 1 ) )
+   if empty( horaFin )
+      horaFin  := "000000"
+   end if 
+
+   if horaFin == "000000"
+      fechaFin := fechaFin - 1 
+      horaFin  := "235959"
+   else 
+      horaFin  := priorSecond( horaFin )
+      // horaFin  := strzero( val( horaFin ) - 1, 6, 0 )
+   end if 
+
+Return ( oThis:oStock:nStockAlmacen( idArticulo, idAlmacen, valorPropiedad1, valorPropiedad2, nil, nil, fechaFin, nil, horaFin ) )
 
 //---------------------------------------------------------------------------//
 

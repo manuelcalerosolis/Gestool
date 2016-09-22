@@ -1741,7 +1741,11 @@ METHOD alertControlStockUnderMin( nStock ) CLASS TDetMovimientos
       Return ( lReturn )
    end if 
 
-   if !Empty( nStock )
+   if empty( ::oDbfVir )
+      Return ( lReturn )
+   end if 
+
+   if !empty( nStock )
       nStkAct        := nStock
    else
       nStkAct        := ::oGetStockOrigen:VarGet()

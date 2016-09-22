@@ -4025,3 +4025,13 @@ Function isEditMode( nMode )
 Return ( nMode == EDIT_MODE )
 
 //----------------------------------------------------------------------------//
+
+Function priorSecond( time )
+
+   time  := ( substr( time, 1, 2 ) + ":" + substr( time, 3, 2 ) + ":" + substr( time, 5, 2 ) )
+   time  := secToTime( timeToSec( time ) - 1 )  
+   time  := strtran( time, ":", "" )
+
+Return ( time )
+
+//----------------------------------------------------------------------------//
