@@ -175,8 +175,6 @@ CLASS TStock
 
    METHOD Recalcula( oMeter, cPath )
 
-   METHOD Duplicados( oMeter, aMsg, cPath )
-
    METHOD StockInit( cPath, cPathOld, oMsg, lGrupo )
 
    METHOD nStockReservado( cCodArt, cValPr1, cValPr2 )
@@ -295,9 +293,6 @@ CLASS TStock
    METHOD InsertStockMateriasPrimas( lNumeroSerie )
    METHOD InsertStockPendiente()
 
-   METHOD SaveStockArticulo( cCodArt, cAlmcenOrigen, cAlmacenDestino, dFechaInicio, dFechaFin )
-   METHOD SaveAllStockArticulo( cCodArt, cAlmcenOrigen, cAlmacenDestino, dFechaInicio, dFechaFin )
-   
    METHOD nUnidadesInStock()  
    METHOD nPendientesRecibirInStock()  
    METHOD nPendientesEntregarInStock()  
@@ -1522,282 +1517,6 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Duplicados( oMeter, aMsg, cPath ) CLASS TStock
-
-   local lDup           := .f.
-   local dbf
-   local cCodAnt
-
-   DEFAULT cPath        := ::cPath
-   DEFAULT aMsg         := {}
-
-   USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbf ) )
-   SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
-
-   if oMeter != NIL
-      oMeter:nTotal := ( dbf )->( LastRec() )
-      oMeter:cText  := "Artículos"
-   end if
-
-   while !( dbf )->( eof() )
-
-      cCodAnt  := ( dbf )->Codigo
-      ( dbf )->( dbSkip() )
-      if cCodAnt == ( dbf )->Codigo .and. !(dbf)->(eof())
-         aAdd( aMsg, { .t., "Artículo duplicado : " + cCodAnt } )
-         lDup  := .t.
-      end if
-
-      if oMeter != NIL .and. Mod( ( dbf )->( OrdKeyNo() ), int( oMeter:nTotal / 10 ) ) == 0
-         oMeter:Set( ( dbf )->( OrdKeyNo() ) )
-      else
-         SysRefresh()
-      end if
-
-   end do
-
-   CLOSE ( dbf )
-
-   /*
-   Procesamos pedidos de proveedores-----------------------------------------
-   */
-
-   USE ( cPath + "PEDPROVT.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @dbf ) )
-   SET ADSINDEX TO ( cPath + "PEDPROVT.CDX" ) ADDITIVE
-
-   if oMeter != NIL
-      oMeter:nTotal := ( dbf )->( LastRec() )
-      oMeter:cText  := "Ped. Prv."
-   end if
-
-   while !( dbf )->( eof() )
-
-      cCodAnt  := ( dbf )->CSERPED + Str( ( dbf )->NNUMPED ) + ( dbf )->CSUFPED
-      ( dbf )->( dbSkip() )
-      if cCodAnt  == ( dbf )->CSERPED + Str( ( dbf )->NNUMPED ) + ( dbf )->CSUFPED .and. !(dbf)->(eof())
-         aAdd( aMsg, { .t., "Pedido a proveedor duplicado : " + cCodAnt } )
-         lDup  := .t.
-      end if
-
-      if oMeter != NIL .and. Mod( ( dbf )->( OrdKeyNo() ), int( oMeter:nTotal / 10 ) ) == 0
-         oMeter:Set( ( dbf )->( OrdKeyNo() ) )
-      end if
-
-   end do
-
-   CLOSE ( dbf )
-
-   /*
-   Procesamos albaranes de proveedores-----------------------------------------
-   *<</
-
-   USE ( cPath + "ALBPROVT.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "ALBPROVT", @dbf ) )
-   SET ADSINDEX TO ( cPath + "ALBPROVT.CDX" ) ADDITIVE
-
-   if oMeter != NIL
-      oMeter:nTotal := ( dbf )->( LastRec() )
-      oMeter:cText  := "Alb. Prv."
-   end if
-
-   while !( dbf )->( eof() )
-
-      cCodAnt  := (dbf)->CSERALB + Str( (dbf)->NNUMALB ) + (dbf)->CSUFALB
-      ( dbf )->( dbSkip() )
-      if cCodAnt  == (dbf)->CSERALB + Str( (dbf)->NNUMALB ) + (dbf)->CSUFALB .and. !(dbf)->(eof())
-         aAdd( aMsg, { .t., "Albaran de proveedor duplicado : " + cCodAnt } )
-         lDup  := .t.
-      end if
-
-      if oMeter != NIL .and. Mod( ( dbf )->( OrdKeyNo() ), int( oMeter:nTotal / 10 ) ) == 0
-         oMeter:Set( ( dbf )->( OrdKeyNo() ) )
-      end if
-
-   end do
-
-   CLOSE ( dbf )
-
-   /*
-   Procesamos facturas de proveedores------------------------------------------
-   */
-
-   USE ( cPath + "FACPRVT.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "FACPROVT", @dbf ) )
-   SET ADSINDEX TO ( cPath + "FACPRVT.CDX" ) ADDITIVE
-
-   if oMeter != NIL
-      oMeter:nTotal := ( dbf )->( LastRec() )
-      oMeter:cText  := "Fac. Prv."
-   end if
-
-   while !( dbf )->( eof() )
-
-      cCodAnt  := ( dbf )->cSerFac + Str( (dbf)->NNUMFAC ) + (dbf)->CSUFFAC
-      ( dbf )->( dbSkip() )
-      if cCodAnt  == ( dbf )->cSerFac + Str( (dbf)->NNUMFAC ) + (dbf)->CSUFFAC .and. !(dbf)->(eof())
-         aAdd( aMsg, { .t., "Factura de proveedor duplicado : " + cCodAnt } )
-         lDup  := .t.
-      end if
-
-      if oMeter != NIL .and. Mod( ( dbf )->( OrdKeyNo() ), int( oMeter:nTotal / 10 ) ) == 0
-         oMeter:Set( ( dbf )->( OrdKeyNo() ) )
-      end if
-
-   end do
-
-   CLOSE ( dbf )
-
-   /*
-   Procesamos facturas rectificativa de proveedores------------------------------------------
-   */
-
-   USE ( cPath + "RctPrvT.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "RctPrvT", @dbf ) )
-   SET ADSINDEX TO ( cPath + "RctPrvT.CDX" ) ADDITIVE
-
-   if oMeter != NIL
-      oMeter:nTotal  := ( dbf )->( LastRec() )
-      oMeter:cText   := "Rct. Prv."
-   end if
-
-   while !( dbf )->( eof() )
-
-      cCodAnt        := ( dbf )->cSerFac + Str( ( dbf )->nNumFac ) + ( dbf )->cSufFac
-      ( dbf )->( dbSkip() )
-
-      if cCodAnt  == ( dbf )->cSerFac + Str( ( dbf )->nNumFac ) + ( dbf )->cSufFac .and. !( dbf )->( eof() )
-         aAdd( aMsg, { .t., "Factura rectificativa de proveedor duplicado : " + cCodAnt } )
-         lDup  := .t.
-      end if
-
-      if oMeter != NIL .and. Mod( ( dbf )->( OrdKeyNo() ), int( oMeter:nTotal / 10 ) ) == 0
-         oMeter:Set( ( dbf )->( OrdKeyNo() ) )
-      end if
-
-   end do
-
-   CLOSE ( dbf )
-
-   /*
-   Procesamos pedidos de clientes----------------------------------------------
-   */
-
-   USE ( cPath + "PEDCLIT.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "PEDCLIT", @dbf ) )
-   SET ADSINDEX TO ( cPath + "PEDCLIT.CDX" ) ADDITIVE
-
-   if oMeter != NIL
-      oMeter:nTotal := ( dbf )->( LastRec() )
-      oMeter:cText  := "Ped. Prv."
-   end if
-
-   while !( dbf )->( eof() )
-
-      cCodAnt  := (dbf)->CSERPED + Str( (dbf)->NNUMPED ) + (dbf)->CSUFPED
-      ( dbf )->( dbSkip() )
-      if cCodAnt  == (dbf)->CSERPED + Str( (dbf)->NNUMPED ) + (dbf)->CSUFPED .and. !(dbf)->(eof())
-         aAdd( aMsg, { .t., "Pedido de cliente duplicado : " + cCodAnt } )
-         lDup  := .t.
-      end if
-
-      if oMeter != NIL .and. Mod( ( dbf )->( OrdKeyNo() ), int( oMeter:nTotal / 10 ) ) == 0
-         oMeter:Set( ( dbf )->( OrdKeyNo() ) )
-      else
-         SysRefresh()
-      end if
-
-   end do
-
-   CLOSE ( dbf )
-
-   /*
-   Procesamos albaranes de Clientes--------------------------------------------
-   */
-
-   USE ( cPath + "ALBCLIT.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbf ) )
-   SET ADSINDEX TO ( cPath + "ALBCLIT.CDX" ) ADDITIVE
-
-   if oMeter != NIL
-      oMeter:nTotal := ( dbf )->( LastRec() )
-      oMeter:cText  := "Alb. Cli."
-   end if
-
-   while !( dbf )->( eof() )
-
-      cCodAnt  := (dbf)->CSERALB + Str( (dbf)->NNUMALB ) + (dbf)->CSUFALB
-      ( dbf )->( dbSkip() )
-      if cCodAnt  == (dbf)->CSERALB + Str( (dbf)->NNUMALB ) + (dbf)->CSUFALB .and. !(dbf)->(eof())
-         aAdd( aMsg, { .t., "Albaran de cliente duplicado : " + cCodAnt } )
-         lDup  := .t.
-      end if
-
-      if oMeter != NIL .and. Mod( ( dbf )->( OrdKeyNo() ), int( oMeter:nTotal / 10 ) ) == 0
-         oMeter:Set( ( dbf )->( OrdKeyNo() ) )
-      end if
-
-   end do
-
-   CLOSE ( dbf )
-
-   /*
-   Procesamos facturas de clientes------------------------------------------
-   */
-
-   USE ( cPath + "FACCLIT.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbf ) )
-   SET ADSINDEX TO ( cPath + "FACCLIT.CDX" ) ADDITIVE
-
-   if oMeter != NIL
-      oMeter:nTotal := ( dbf )->( LastRec() )
-      oMeter:cText  := "Fac. Cli."
-   end if
-
-   while !( dbf )->( eof() )
-
-      cCodAnt  := ( dbf )->cSerie + Str( ( dbf )->nNumFac ) + ( dbf )->cSufFac
-      ( dbf )->( dbSkip() )
-      if cCodAnt  == ( dbf )->cSerie + Str( ( dbf )->nNumFac ) + ( dbf )->cSufFac .and. !(dbf)->(eof())
-         aAdd( aMsg, { .t., "Factura de cliente duplicado : " + cCodAnt } )
-         lDup  := .t.
-      end if
-
-      if oMeter != NIL .and. Mod( ( dbf )->( OrdKeyNo() ), int( oMeter:nTotal / 10 ) ) == 0
-         oMeter:Set( ( dbf )->( OrdKeyNo() ) )
-      end if
-
-   end do
-
-   CLOSE ( dbf )
-
-   /*
-   Procesamos tikets de clientes-----------------------------------------------
-   */
-
-   USE ( cPath + "TIKET.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "TIKET", @dbf ) )
-   SET ADSINDEX TO ( cPath + "TIKET.CDX" ) ADDITIVE
-
-   if oMeter != NIL
-      oMeter:nTotal := ( dbf )->( LastRec() )
-      oMeter:cText  := "Tik. Cli."
-   end if
-
-   while !( dbf )->( eof() )
-
-      cCodAnt  := (dbf)->CSERTIK + (dbf)->CNUMTIK + (dbf)->CSUFTIK
-      ( dbf )->( dbSkip() )
-
-      if cCodAnt == (dbf)->CSERTIK + (dbf)->CNUMTIK + (dbf)->CSUFTIK .and. !(dbf)->(eof())
-         aAdd( aMsg, { .t., "Ticket de cliente duplicado : " + cCodAnt } )
-         lDup  := .t.
-      end if
-
-      if oMeter != NIL .and. Mod( ( dbf )->( OrdKeyNo() ), int( oMeter:nTotal / 10 ) ) == 0
-         oMeter:Set( ( dbf )->( OrdKeyNo() ) )
-      end if
-
-   end do
-
-   CLOSE ( dbf )
-
-RETURN ( lDup )
-
-//---------------------------------------------------------------------------//
-
 METHOD InsertStockMovimientosAlmacen( lNumeroSerie, lDestino )
 
    local nUnidades         := nTotNMovAlm( ::cHisMovT )
@@ -2373,44 +2092,6 @@ METHOD InsertStockMateriasPrimas( lNumeroSerie )
    RETURN nil
 
 //---------------------------------------------------------------------------//
-
-METHOD SaveStockArticulo( cCodArt, cAlmcenOrigen, cAlmacenDestino, dFechaInicio, dFechaFin )
-
-   local aStock
-
-   for each aStock in ::aStockArticulo( cCodArt, , , , , dFechaInicio, dFechaFin ) 
-
-      if ( empty( cAlmcenOrigen )     .or. rtrim( aStock:cCodigoAlmacen ) >= rtrim( cAlmcenOrigen )   ) .and. ;
-         ( empty( cAlmacenDestino )   .or. rtrim( aStock:cCodigoAlmacen ) <= rtrim( cAlmacenDestino ) ) .and. ;
-         ( aStock:nUnidades != 0 )
-
-         aStock:Save( ::oDbfStock )
-      
-      end if 
-   
-   next 
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD SaveAllStockArticulo( cCodArt, cAlmcenOrigen, cAlmacenDestino, dFechaInicio, dFechaFin )
-
-   local aStock
-
-   for each aStock in ::aStockArticulo( cCodArt, , , , , dFechaInicio, dFechaFin ) 
-
-      if ( empty( cAlmcenOrigen )     .or. rtrim( aStock:cCodigoAlmacen ) >= rtrim( cAlmcenOrigen )   ) .and. ;
-         ( empty( cAlmacenDestino )   .or. rtrim( aStock:cCodigoAlmacen ) <= rtrim( cAlmacenDestino ) ) 
-
-         aStock:Save( ::oDbfStock )
-      
-      end if 
-   
-   next 
-
-RETURN ( Self )
-
 
 METHOD nUnidadesInStock()  
       
@@ -4108,8 +3789,8 @@ METHOD Almacenes()
    ( ::cAlm )->( dbGoTop() )
    while !( ::cAlm )->( eof() )
 
-      if aScan( ::aAlmacenes, ( ::cAlm )->cCodAlm ) == 0
-         aAdd( ::aAlmacenes, ( ::cAlm )->cCodAlm )
+      if ascan( ::aAlmacenes, ( ::cAlm )->cCodAlm ) == 0
+         aadd( ::aAlmacenes, ( ::cAlm )->cCodAlm )
       end if 
 
       ( ::cAlm )->( dbSkip() )
@@ -4137,6 +3818,16 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    cCodArt              := padr( cCodArt, 18 )
    cCodAlm              := padr( cCodAlm, 16 )
+
+   // msgalert( cCodArt, "cCodArt" )
+   // msgalert( cCodAlm, "cCodAlm, " )
+   // msgalert( oBrw, "oBrw, " )
+   // msgalert( lLote, "lLote, " )
+   // msgalert( lNumeroSerie, "lNumeroSerie, " )
+   // msgalert( dFecIni, "dFecIni, " )
+   // msgalert( dFecFin, "dFecFin, " )
+   // msgalert( tHorIni, "tHorIni, " )
+   // msgalert( tHorFin, "tHorFin )" )
 
    if ( !empty( ::cCodigoArticulo ) .and. cCodArt == ::cCodigoArticulo  ) .and.;
       ( !empty( ::cCodigoAlmacen )  .and. cCodAlm == ::cCodigoAlmacen   ) .and.;
@@ -4192,63 +3883,61 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
       // Movimientos de almacén------------------------------------------------" )
 
-      msgAlert( dFecIni, "dFecIni" )
-
       ::aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin )
       SysRefresh()
 
       // Albaranes de proveedor------------------------------------------------------" )
 
       if IsTrue( ::lAlbPrv ) 
-         ::aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
+         ::aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin )
          SysRefresh()
       end if 
 
       // Facturas proveedor----------------------------------------------------" )
 
-      ::aStockFacturaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
+      ::aStockFacturaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin )
       SysRefresh()
 
       // Rectificativas de provedor--------------------------------------------" )
 
-      ::aStockRectificativaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
+      ::aStockRectificativaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin )
       SysRefresh()
 
       // Pedidos de clientes-------------------------------------------------" )
 
       if ::lCalculateUnidadesPendientesRecibir
-         ::aStockPedidoCliente( cCodArt, cCodAlm, lLote, dFecIni, dFecFin )
+         ::aStockPedidoCliente( cCodArt, cCodAlm, lLote, dFecIni, dFecFin, tHorIni, tHorFin )
          SysRefresh()
       end if 
 
       // Albaranes de clientes-------------------------------------------------" )
 
-      ::aStockAlbaranCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
+      ::aStockAlbaranCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin )
       SysRefresh()
 
       // Factura de clientes--------------------------------------------------" )
 
-      ::aStockFacturaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
+      ::aStockFacturaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin )
       SysRefresh()
 
       // Rectificativas de clientes--------------------------------------------" )
 
-      ::aStockRectificativaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
+      ::aStockRectificativaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin )
       SysRefresh()
 
       // Tickets de clientes---------------------------------------------------" )
 
-      ::aStockTicketsCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
+      ::aStockTicketsCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin )
       SysRefresh()
 
       // Produccion------------------------------------------------------------" )
 
-      ::aStockProduccion( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
+      ::aStockProduccion( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin )
       SysRefresh()
 
       // Materia prima---------------------------------------------------------" )
 
-      ::aStockMateriaPrima( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
+      ::aStockMateriaPrima( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin )
       SysRefresh()
 
       // Stock pendiente de entregar-------------------------------------------" )
@@ -4321,11 +4010,11 @@ Return ( nStockArticulo )
 
 //---------------------------------------------------------------------------//
 
-METHOD nBultosArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFecFin ) CLASS TStock
+METHOD nBultosArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin ) CLASS TStock
 
    local nBultosArticulo := 0
 
-   ::aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFecFin )
+   ::aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin )
 
    aEval( ::aStocks, {|o| nBultosArticulo += o:nBultos } )
 
@@ -5754,8 +5443,6 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni,
 
          if ::validateDateTime( ( ::cHisMovT )->dFecMov, ( ::cHisMovT )->cTimMov, dFecIni, dFecFin, tHorIni, tHorFin )
 
-         // if ( empty( dFecIni ) .or. ( ::cHisMovT )->dFecMov >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cHisMovT)->dFecMov <= dFecFin )
-
             if ::lCheckConsolidacion( ( ::cHisMovT )->cRefMov, ( ::cHisMovT )->cAliMov, ( ::cHisMovT )->cCodPr1, ( ::cHisMovT )->cCodPr2, ( ::cHisMovT )->cValPr1, ( ::cHisMovT )->cValPr2, ( ::cHisMovT )->cLote, ( ::cHisMovT )->dFecMov, ( ::cHisMovT )->cTimMov ) 
 
                // Buscamos el numero de serie----------------------------------------
@@ -5792,7 +5479,7 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni,
 
       while ( ::cHisMovT )->cRefMov == cCodArt .and. ( ::cHisMovT )->cAloMov == cCodAlm .and. !( ::cHisMovT )->( Eof() )
 
-         if ( empty( dFecIni ) .or. ( ::cHisMovT )->dFecMov >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cHisMovT)->dFecMov <= dFecFin )
+         if ::validateDateTime( ( ::cHisMovT )->dFecMov, ( ::cHisMovT )->cTimMov, dFecIni, dFecFin, tHorIni, tHorFin )
 
             if ::lCheckConsolidacion( ( ::cHisMovT )->cRefMov, ( ::cHisMovT)->cAloMov, ( ::cHisMovT )->cCodPr1, ( ::cHisMovT )->cCodPr2, ( ::cHisMovT )->cValPr1, ( ::cHisMovT )->cValPr2, ( ::cHisMovT )->cLote, ( ::cHisMovT )->dFecMov, ( ::cHisMovT )->cTimMov ) 
 
@@ -5833,7 +5520,7 @@ Return ( nil )
 // Albaran Proveedores---------------------------------------------------------
 //
 
-METHOD aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
+METHOD aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin )
 
    local cCodigoArticulo      := ""
    local nOrdAlbPrvL          := ( ::cAlbPrvL )->( ordsetfocus( "cStkFastIn" ) )
@@ -5847,8 +5534,8 @@ METHOD aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, d
 
             if ( ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmLin, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb, ( ::cAlbPrvL )->tFecAlb ) ) 
 
-               if ( empty( dFecIni ) .or. ( ::cAlbPrvL )->dFecAlb >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cAlbPrvL )->dFecAlb <= dFecFin ) 
-
+               if ::validateDateTime( ( ::cAlbPrvL )->dFecAlb, ( ::cAlbPrvL )->tFecAlb, dFecIni, dFecFin, tHorIni, tHorFin )
+               
                   // Buscamos el numero de serie----------------------------------------
 
                   if lNumeroSerie .and. ( ::cAlbPrvS )->( dbSeek( ( ::cAlbPrvL )->cSerAlb + Str( ( ::cAlbPrvL )->nNumAlb ) + ( ::cAlbPrvL )->cSufAlb + Str( ( ::cAlbPrvL )->nNumLin ) ) )
@@ -5897,7 +5584,7 @@ METHOD aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, d
 
             if ( ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmOrigen, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb, ( ::cAlbPrvL )->tFecAlb ) ) 
 
-               if ( empty( dFecIni ) .or. ( ::cAlbPrvL )->dFecAlb >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cAlbPrvL )->dFecAlb <= dFecFin ) 
+               if ::validateDateTime( ( ::cAlbPrvL )->dFecAlb, ( ::cAlbPrvL )->tFecAlb, dFecIni, dFecFin, tHorIni, tHorFin )
 
                   // Buscamos el numero de serie----------------------------------------
 
@@ -5940,7 +5627,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD aStockFacturaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
+METHOD aStockFacturaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin )
 
    local cCodigoArticulo      := ""
    local nOrdFacPrvL          := ( ::cFacPrvL )->( ordsetfocus( "cStkFast" ) )
@@ -5954,7 +5641,7 @@ METHOD aStockFacturaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, d
 
             if ( ::lCheckConsolidacion( ( ::cFacPrvL )->cRef, ( ::cFacPrvL )->cAlmLin, ( ::cFacPrvL )->cCodPr1, ( ::cFacPrvL )->cCodPr2, ( ::cFacPrvL )->cValPr1, ( ::cFacPrvL )->cValPr2, ( ::cFacPrvL )->cLote, ( ::cFacPrvL )->dFecFac, ( ::cFacPrvL )->tFecFac ) )
 
-               if ( empty( dFecIni ) .or. ( ::cFacPrvL )->dFecFac >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cFacPrvL )->dFecFac <= dFecFin )
+               if ::validateDateTime( ( ::cFacPrvL )->dFecFac, ( ::cFacPrvL )->tFecFac, dFecIni, dFecFin, tHorIni, tHorFin )
                   
                   // Buscamos el numero de serie----------------------------------
 
@@ -6004,7 +5691,7 @@ METHOD aStockFacturaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, d
 
             if ( ::lCheckConsolidacion( ( ::cFacPrvL )->cRef, ( ::cFacPrvL )->cAlmOrigen, ( ::cFacPrvL )->cCodPr1, ( ::cFacPrvL )->cCodPr2, ( ::cFacPrvL )->cValPr1, ( ::cFacPrvL )->cValPr2, ( ::cFacPrvL )->cLote, ( ::cFacPrvL )->dFecFac, ( ::cFacPrvL )->tFecFac ) )
 
-               if ( empty( dFecIni ) .or. ( ::cFacPrvL )->dFecFac >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cFacPrvL )->dFecFac <= dFecFin )
+               if ::validateDateTime( ( ::cFacPrvL )->dFecFac, ( ::cFacPrvL )->tFecFac, dFecIni, dFecFin, tHorIni, tHorFin )
                   
                   // Buscamos el numero de serie----------------------------------
 
@@ -6047,7 +5734,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD aStockRectificativaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
+METHOD aStockRectificativaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin )
 
    local cCodigoArticulo      := ""
    local nOrdRctPrvL          := ( ::cRctPrvL )->( ordsetfocus( "cStkFast" ) )
@@ -6061,7 +5748,7 @@ METHOD aStockRectificativaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFec
 
             if ::lCheckConsolidacion( ( ::cRctPrvL )->cRef, ( ::cRctPrvL )->cAlmLin, ( ::cRctPrvL )->cCodPr1, ( ::cRctPrvL )->cCodPr2, ( ::cRctPrvL )->cValPr1, ( ::cRctPrvL )->cValPr2, ( ::cRctPrvL )->cLote, ( ::cRctPrvL )->dFecFac, ( ::cRctPrvL )->tFecFac ) 
 
-               if ( empty( dFecIni ) .or. ( ::cRctPrvL )->dFecFac >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cRctPrvL )->dFecFac <= dFecFin ) 
+               if ::validateDateTime( ( ::cRctPrvL )->dFecFac, ( ::cRctPrvL )->tFecFac, dFecIni, dFecFin, tHorIni, tHorFin )
 
                   // Buscamos el numero de serie-------------------------------------
 
@@ -6111,7 +5798,7 @@ METHOD aStockRectificativaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFec
 
             if ::lCheckConsolidacion( ( ::cRctPrvL )->cRef, ( ::cRctPrvL )->cAlmOrigen, ( ::cRctPrvL )->cCodPr1, ( ::cRctPrvL )->cCodPr2, ( ::cRctPrvL )->cValPr1, ( ::cRctPrvL )->cValPr2, ( ::cRctPrvL )->cLote, ( ::cRctPrvL )->dFecFac, ( ::cRctPrvL )->tFecFac ) 
 
-               if ( empty( dFecIni ) .or. ( ::cRctPrvL )->dFecFac >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cRctPrvL )->dFecFac <= dFecFin ) 
+               if ::validateDateTime( ( ::cRctPrvL )->dFecFac, ( ::cRctPrvL )->tFecFac, dFecIni, dFecFin, tHorIni, tHorFin )
 
                   // Buscamos el numero de serie-------------------------------------
 
@@ -6165,13 +5852,6 @@ METHOD aStockPedidoCliente( cCodArt, cCodAlm, lLote, dFecIni, dFecFin )
 
          if ( ::cPedCliT )->( dbseek( ( ::cPedCliL )->cSerPed + str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed ) )
 
-            // if ( ::cPedCliT )->nNumPed == 138
-            // msgAlert( ( ( ::cPedCliL )->cSerPed + str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed ), "pedido" )
-            // msgAlert( ( ::cPedCliT )->nEstado, "nEstado" )
-            // msgAlert( ( ::cPedCliT )->lCancel, "lCancel" )
-            // msgAlert( ( ( ::cPedCliT )->nEstado != 3 .and. !( ::cPedCliT )->lCancel ) .and. ( ( empty( dFecIni ) .or. ( ::cPedCliT )->dFecPed >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cPedCliT )->dFecPed <= dFecFin ) ), "condicion" )
-            // end if 
-
             if ( ( ::cPedCliT )->nEstado != 3 .and. !( ::cPedCliT )->lCancel ) .and.;
                ( ( empty( dFecIni ) .or. ( ::cPedCliT )->dFecPed >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cPedCliT )->dFecPed <= dFecFin ) )  
 
@@ -6194,7 +5874,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD aStockAlbaranCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
+METHOD aStockAlbaranCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin )
 
    local cCodigoArticulo      := ""
    local nOrdAlbCliL          := ( ::cAlbCliL )->( ordsetfocus( "cStkFast" ) )
@@ -6208,7 +5888,7 @@ METHOD aStockAlbaranCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFe
 
             if ::lCheckConsolidacion( ( ::cAlbCliL )->cRef, ( ::cAlbCliL )->cAlmLin, ( ::cAlbCliL )->cCodPr1, ( ::cAlbCliL )->cCodPr2, ( ::cAlbCliL )->cValPr1, ( ::cAlbCliL )->cValPr2, ( ::cAlbCliL )->cLote, ( ::cAlbCliL )->dFecAlb, ( ::cAlbCliL )->tFecAlb ) 
 
-               if ( empty( dFecIni ) .or. ( ::cAlbCliL )->dFecAlb >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cAlbCliL )->dFecAlb <= dFecFin )  
+               if ::validateDateTime( ( ::cAlbCliL )->dFecAlb, ( ::cAlbCliL )->tFecAlb, dFecIni, dFecFin, tHorIni, tHorFin )
 
                   if lNumeroSerie .and. ( ::cAlbCliS )->( dbSeek( ( ::cAlbCliL )->cSerAlb + Str( ( ::cAlbCliL )->nNumAlb ) + ( ::cAlbCliL )->cSufAlb + Str( ( ::cAlbCliL )->nNumLin ) ) )
 
@@ -6249,7 +5929,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD aStockFacturaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
+METHOD aStockFacturaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin )
 
    local cCodigoArticulo      := ""
    local nOrdFacCliL          := ( ::cFacCliL )->( ordsetfocus( "cStkFast" ) )
@@ -6263,7 +5943,7 @@ METHOD aStockFacturaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFe
 
             if ::lCheckConsolidacion( ( ::cFacCliL )->cRef, ( ::cFacCliL )->cAlmLin, ( ::cFacCliL )->cCodPr1, ( ::cFacCliL )->cCodPr2, ( ::cFacCliL )->cValPr1, ( ::cFacCliL )->cValPr2, ( ::cFacCliL )->cLote, ( ::cFacCliL )->dFecFac, ( ::cFacCliL )->tFecFac ) 
          
-               if ( empty( dFecIni ) .or. ( ::cFacCliL )->dFecFac >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cFacCliL )->dFecFac <= dFecFin )
+               if ::validateDateTime( ( ::cFacCliL )->dFecFac, ( ::cFacCliL )->tFecFac, dFecIni, dFecFin, tHorIni, tHorFin )
 
                   if lNumeroSerie .and. ( ::cFacCliS )->( dbSeek( ( ::cFacCliL )->cSerie + Str( ( ::cFacCliL )->nNumFac ) + ( ::cFacCliL )->cSufFac + Str( ( ::cFacCliL )->nNumLin ) ) )
 
@@ -6304,7 +5984,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD aStockRectificativaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
+METHOD aStockRectificativaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin )
 
    local cCodigoArticulo      := ""
    local nOrdFacRecL          := ( ::cFacRecL )->( ordsetfocus( "cStkFast" ) )
@@ -6318,7 +5998,7 @@ METHOD aStockRectificativaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIn
 
             if ::lCheckConsolidacion( ( ::cFacRecL )->cRef, ( ::cFacRecL )->cAlmLin, ( ::cFacRecL )->cCodPr1, ( ::cFacRecL )->cCodPr2, ( ::cFacRecL )->cValPr1, ( ::cFacRecL )->cValPr2, ( ::cFacRecL )->cLote, ( ::cFacRecL )->dFecFac, ( ::cFacRecL )->tFecFac )
 
-               if ( empty( dFecIni ) .or. ( ::cFacRecL )->dFecFac >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cFacRecL )->dFecFac <= dFecFin )
+               if ::validateDateTime( ( ::cFacRecL )->dFecFac, ( ::cFacRecL )->tFecFac, dFecIni, dFecFin, tHorIni, tHorFin )
 
                   if lNumeroSerie .and. ( ::cFacRecS )->( dbSeek( ( ::cFacRecL )->cSerie + Str( ( ::cFacRecL )->nNumFac ) + ( ::cFacRecL )->cSufFac + Str( ( ::cFacRecL )->nNumLin ) ) )
 
@@ -6359,7 +6039,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD aStockTicketsCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
+METHOD aStockTicketsCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin )
 
    local cCodigoArticulo   := ""
    local nOrdTikL          := ( ::cTikL )->( ordsetfocus( "cStkFast" ) )
@@ -6373,7 +6053,7 @@ METHOD aStockTicketsCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFe
 
             if ::lCheckConsolidacion( ( ::cTikL )->cCbaTil, ( ::cTikL )->cAlmLin, ( ::cTikL )->cCodPr1, ( ::cTikL )->cCodPr2, ( ::cTikL )->cValPr1, ( ::cTikL )->cValPr2, ( ::cTikL )->cLote, ( ::cTikL )->dFecTik, ( ::cTikL )->tFecTik ) 
 
-               if ( empty( dFecIni ) .or. ( ::cTikL )->dFecTik >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cTikL )->dFecTik <= dFecFin ) 
+               if ::validateDateTime( ( ::cTikL )->dFecTik, ( ::cTikL )->tFecTik, dFecIni, dFecFin, tHorIni, tHorFin )
 
                   if lNumeroSerie .and. ( ::cTikS )->( dbSeek( ( ::cTikL )->cSerTil + ( ::cTikL )->cNumTil + ( ::cTikL )->cSufTil + Str( ( ::cTikl )->nNumLin ) ) )
 
@@ -6421,7 +6101,7 @@ METHOD aStockTicketsCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFe
 
             if ::lCheckConsolidacion( ( ::cTikL )->cComTil, ( ::cTikL )->cAlmLin, ( ::cTikL )->cCodPr1, ( ::cTikL )->cCodPr2, ( ::cTikL )->cValPr1, ( ::cTikL )->cValPr2, ( ::cTikL )->cLote, ( ::cTikL )->dFecTik, ( ::cTikL )->tFecTik ) 
 
-               if ( empty( dFecIni ) .or. ( ::cTikL )->dFecTik >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cTikL )->dFecTik <= dFecFin ) 
+               if ::validateDateTime( ( ::cTikL )->dFecTik, ( ::cTikL )->tFecTik, dFecIni, dFecFin, tHorIni, tHorFin )
 
                   ::InsertStockTiketsClientes( .f. , .t. )
 
@@ -6448,7 +6128,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD aStockProduccion( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
+METHOD aStockProduccion( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin )
 
    local cCodigoArticulo   := ""
    local nOrdProL          := ( ::cProducL )->( ordsetfocus( "cStkFast" ) )
@@ -6462,7 +6142,7 @@ METHOD aStockProduccion( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin
 
             if ::lCheckConsolidacion( ( ::cProducL )->cCodArt, ( ::cProducL )->cAlmOrd, ( ::cProducL )->cCodPr1, ( ::cProducL )->cCodPr2, ( ::cProducL )->cValPr1, ( ::cProducL )->cValPr2, ( ::cProducL )->cLote, ( ::cProducL )->dFecOrd, ( ::cProducL )->cHorIni )
 
-               if ( empty( dFecIni ) .or. ( ::cProducL )->dFecOrd >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cProducL )->dFecOrd <= dFecFin )
+               if ::validateDateTime( ( ::cProducL )->dFecOrd, ( ::cProducL )->cHorIni, dFecIni, dFecFin, tHorIni, tHorFin )
 
                   if lNumeroSerie .and. ( ::cProducS )->( dbSeek( ( ::cProducL )->cSerOrd + Str( ( ::cProducL )->nNumOrd ) + ( ::cProducL )->cSufOrd + Str( ( ::cProducL )->nNumLin ) ) )
 
@@ -6503,7 +6183,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD aStockMateriaPrima( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
+METHOD aStockMateriaPrima( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin )
 
    local cCodigoArticulo   := ""
    local nOrdProM          := ( ::cProducM )->( ordsetfocus( "cStkFast" ) )
@@ -6517,7 +6197,7 @@ METHOD aStockMateriaPrima( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecF
 
             if ::lCheckConsolidacion( ( ::cProducM )->cCodArt, ( ::cProducM )->cAlmOrd, ( ::cProducM )->cCodPr1, ( ::cProducM )->cCodPr2, ( ::cProducM )->cValPr1, ( ::cProducM )->cValPr2, ( ::cProducM )->cLote, ( ::cProducM )->dFecOrd, ( ::cProducM )->cHorIni ) 
 
-               if ( empty( dFecIni ) .or. ( ::cProducM )->dFecOrd >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cProducM )->dFecOrd <= dFecFin )
+               if ::validateDateTime( ( ::cProducM )->dFecOrd, ( ::cProducM )->cHorIni, dFecIni, dFecFin, tHorIni, tHorFin )
 
                   if lNumeroSerie .and. ( ::cProducP )->( dbSeek( ( ::cProducM )->cSerOrd + Str( ( ::cProducM )->nNumOrd ) + ( ::cProducM )->cSufOrd + Str( ( ::cProducM )->nNumLin ) ) )
 
@@ -7006,7 +6686,7 @@ METHOD validateDateTime( dFecMov, tTimMov, dFecIni, dFecFin, tHorIni, tHorFin ) 
       Return .f.
    end if 
 
-   if !empty( tHorIni ) .and. dtos( dFecMov ) + tTimMov < dtos( dFecIni ) + tHorIni
+   if !empty( dFecIni ) .and. !empty( tHorIni ) .and. dtos( dFecMov ) + tTimMov < dtos( dFecIni ) + tHorIni
       Return .f.
    end if 
 
@@ -7014,20 +6694,10 @@ METHOD validateDateTime( dFecMov, tTimMov, dFecIni, dFecFin, tHorIni, tHorFin ) 
       Return .f.
    end if 
 
-   msgalert( dtos( dFecMov ) + tTimMov, "dtos( dFecMov ) + tTimMov" )
-   msgalert( dtos( dFecFin ) + tHorFin, "dtos( dFecFin ) + tHorFin" )
-   msgalert( dtos( dFecMov ) + tTimMov < dtos( dFecFin ) + tHorFin, dtos( dFecMov ) + tTimMov + ">" + dtos( dFecFin ) + tHorFin )
-
-   if !empty( tHorFin ) .and. dtos( dFecMov ) + tTimMov > dtos( dFecFin ) + tHorFin
+   if !empty( dFecFin ) .and. !empty( tHorFin ) .and. dtos( dFecMov ) + tTimMov > dtos( dFecFin ) + tHorFin
       Return .f.
    end if 
 
-//         if ( empty( dFecIni ) .or. ( ::cHisMovT )->dFecMov >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cHisMovT)->dFecMov <= dFecFin )
-
 Return .t.
 
-
-
-
-
-
+//---------------------------------------------------------------------------//

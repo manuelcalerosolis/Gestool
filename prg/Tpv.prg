@@ -6666,8 +6666,8 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
       aTmp[ _CSUFTIK    ]              := RetSufEmp()
       aTmp[ _DFECCRE    ]              := Date()
       aTmp[ _CTIMCRE    ]              := SubStr( Time(), 1, 5 )
-      aTmp[ _DFECTIK    ]              := GetSysDate()
-      aTmp[ _TFECTIK    ]              := strtran( time(), ":", "" )
+      aTmp[ _DFECTIK    ]              := getSysDate()
+      aTmp[ _TFECTIK    ]              := getSysTime()
       aTmp[ _CALIASTIK  ]              := ""
       aTmp[ _CCODSALA   ]              := ""
       aTmp[ _CPNTVENTA  ]              := ""
@@ -12083,9 +12083,9 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
 
    if nMode == DUPL_MODE
       aTik[ _CNUMTIK ]           := Str( nNewDoc( aTik[ _CSERTIK ], dbfTikT, "NTIKCLI", 10, dbfCount ), 10 )
-      aTik[ _CSUFTIK ]           := RetSufEmp()
-      aTik[ _DFECTIK ]           := GetSysDate()
-      aTik[ _TFECTIK ]           := strtran( time(), ":", "" )
+      aTik[ _CSUFTIK ]           := retSufEmp()
+      aTik[ _DFECTIK ]           := getSysDate()
+      aTik[ _TFECTIK ]           := getSysTime()
       aTik[ _LSNDDOC ]           := .t.
       aTik[ _LCLOTIK ]           := .f.
    end if
