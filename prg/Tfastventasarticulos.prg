@@ -1920,9 +1920,6 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
 
    ::InitAlbaranesClientes()
 
-   ::oAlbCliT:OrdSetFocus( "dFecAlb" )
-   ::oAlbCliL:OrdSetFocus( "nNumAlb" )
-   
    // filtros para la cabecera-------------------------------------------------
 
    ::cExpresionHeader      := '( Field->dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
@@ -2121,9 +2118,6 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
 
    ::InitFacturasClientes()
 
-   ::oFacCliT:OrdSetFocus( "dFecFac" )
-   ::oFacCliL:OrdSetFocus( "nNumFac" )
-
    // filtros para la cabecera-------------------------------------------------
    
    ::cExpresionHeader      := '( Field->dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
@@ -2309,9 +2303,6 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
-
-   ::oFacRecT:OrdSetFocus( "dFecFac" )
-   ::oFacRecL:OrdSetFocus( "nNumFac" )
 
    // filtros para la cabecera-------------------------------------------------
 
@@ -3349,9 +3340,6 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
 
    DEFAULT lFacturados  := .f.
 
-   ::oAlbPrvT:OrdSetFocus( "dFecAlb" )
-   ::oAlbPrvL:OrdSetFocus( "nNumAlb" )
-
    ::cExpresionHeader      := '( Field->dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
    ::cExpresionHeader      += ' .and. ( Field->cSerAlb >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerAlb <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '" )'
    ::cExpresionHeader      += ' .and. ( Field->nNumAlb >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumAlb <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" ) )'
@@ -3481,9 +3469,6 @@ RETURN ( Self )
 
 METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
 
-   ::oFacPrvT:OrdSetFocus( "dFecFac" )
-   ::oFacPrvL:OrdSetFocus( "nNumFac" )
-
    ::cExpresionHeader      := '( Field->dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
    ::cExpresionHeader      += ' .and. ( Field->cSerFac >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() ) + '" .and. Field->cSerFac <= "'    + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '" )'
    ::cExpresionHeader      += ' .and. ( Field->nNumFac >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumFac <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" ) )'
@@ -3611,10 +3596,6 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
-
-   ::oRctPrvT:OrdSetFocus( "dFecFac" )
-   ::oRctPrvL:OrdSetFocus( "nNumFac" )
-
 
    ::cExpresionHeader      := '( Field->dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
    ::cExpresionHeader      += ' .and. ( Field->cSerFac >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() ) + '" .and. Field->cSerFac <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '" )'

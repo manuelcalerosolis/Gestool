@@ -252,7 +252,7 @@ METHOD Resource( nMode ) CLASS TDetProduccion
    */
 
    if !uFieldEmpresa( "lNStkAct" )
-      ::nStkAct         := ::oParent:oStock:nStockActual( ::oDbfVir:cCodArt, ::oDbfVir:cAlmOrd )
+      ::nStkAct         := ::oParent:oStock:nStockAlmacen( ::oDbfVir:cCodArt, ::oDbfVir:cAlmOrd )
    else
       ::nStkAct         := 0
    end if
@@ -666,7 +666,7 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre ) CLASS TDetProduccion
          cCodArt                 := ::oParent:oArt:Codigo
 
          if !uFieldEmpresa( "lNStkAct" )
-            ::oStkAct:cText( ::oParent:oStock:nStockActual( cCodArt, ::oDbfVir:cAlmOrd ) )
+            ::oStkAct:cText( ::oParent:oStock:nStockAlmacen( cCodArt, ::oDbfVir:cAlmOrd ) )
          end if
 
          if lChgCodArt
@@ -1069,7 +1069,7 @@ RETURN ::oDlg:end( IDOK )
 
 METHOD lStkAct() CLASS TDetProduccion
 
-RETURN ( if ( !uFieldEmpresa( "lNStkAct" ), ::oStkAct:cText( ::oParent:oStock:nStockActual( ::oDbfVir:cCodArt, ::oDbfVir:cAlmOrd ) ), ), .t. )
+RETURN ( if ( !uFieldEmpresa( "lNStkAct" ), ::oStkAct:cText( ::oParent:oStock:nStockAlmacen( ::oDbfVir:cCodArt, ::oDbfVir:cAlmOrd ) ), ), .t. )
 
 //---------------------------------------------------------------------------//
 

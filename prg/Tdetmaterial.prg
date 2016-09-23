@@ -232,7 +232,7 @@ METHOD Resource( nMode )
    end if
 
    if !uFieldEmpresa( "lNStkAct" )
-      ::nStkAct         := ::oParent:oStock:nStockActual( ::oDbfVir:cCodArt, ::oDbfVir:cAlmOrd )
+      ::nStkAct         := ::oParent:oStock:nStockAlmacen( ::oDbfVir:cCodArt, ::oDbfVir:cAlmOrd )
    else
       ::nStkAct         := 0
    end if
@@ -863,7 +863,7 @@ RETURN ( ::oGetTotVol:cText( ::nTotVolumen( oDbf ) ), .t. )
 
 METHOD lStkAct()
 
-RETURN ( if( !uFieldEmpresa( "lNStkAct" ), ::oStkAct:cText( ::oParent:oStock:nStockActual( ::oDbfVir:cCodArt, ::oDbfVir:cAlmOrd ) ), ), .t. )
+RETURN ( if( !uFieldEmpresa( "lNStkAct" ), ::oStkAct:cText( ::oParent:oStock:nStockAlmacen( ::oDbfVir:cCodArt, ::oDbfVir:cAlmOrd ) ), ), .t. )
 
 //---------------------------------------------------------------------------//
 
