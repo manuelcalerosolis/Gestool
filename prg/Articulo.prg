@@ -9301,10 +9301,10 @@ Static Function SeekFamilia( oCbxOrd, oBrw )
    ( D():Articulos( nView ) )->( OrdScope( 0, nil ) )
    ( D():Articulos( nView ) )->( OrdScope( 1, nil ) )
 
-   if !Empty( ( D():Familia( nView ) )->cCodFam ) .and. ( D():Articulos( nView ) )->( dbSeek( ( D():Familia( nView ) )->cCodFam ) )
+   if !Empty( ( D():Familias( nView ) )->cCodFam ) .and. ( D():Articulos( nView ) )->( dbSeek( ( D():Familias( nView ) )->cCodFam ) )
 
-      ( D():Articulos( nView ) )->( OrdScope( 0, ( D():Familia( nView ) )->cCodFam ) )
-      ( D():Articulos( nView ) )->( OrdScope( 1, ( D():Familia( nView ) )->cCodFam ) )
+      ( D():Articulos( nView ) )->( OrdScope( 0, ( D():Familias( nView ) )->cCodFam ) )
+      ( D():Articulos( nView ) )->( OrdScope( 1, ( D():Familias( nView ) )->cCodFam ) )
 
    end if
 
