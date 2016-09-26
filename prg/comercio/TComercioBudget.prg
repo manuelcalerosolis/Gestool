@@ -98,15 +98,13 @@ Return ( Self )
 
 METHOD insertDocumentGestool( oQuery ) CLASS TComercioDocument
 
-   msgalert( "insertDocumentGestool")
-
    ::TComercioCustomer():insertCustomerInGestoolIfNotExist( oQuery )
 
    ::getCountersDocumentGestool(      oQuery )
    ::insertHeaderDocumentGestool(     oQuery )
    ::insertLinesDocumentGestool(      oQuery )
    ::insertMessageDocument(           oQuery )
-   ::insertStateDocumentPrestashop(   oQuery )  
+   ::insertStateDocumentPrestashop(   oQuery )
 
    ::setPrestashopIdDocument()
    
