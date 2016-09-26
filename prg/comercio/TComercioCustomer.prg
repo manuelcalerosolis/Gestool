@@ -17,7 +17,7 @@ CLASS TComercioCustomer
    METHOD isCustomerInGestool( oQueryCustomer )
    METHOD isAddressInGestool( idAddress )                   
 
-   METHOD insertCustomerInGestoolIfNotExist( idCustomer ) 
+   METHOD insertCustomerInGestoolIfNotExist( oQuery ) 
 
    METHOD getCustomerFromPrestashop()
       METHOD appendCustomerInGestool()
@@ -64,10 +64,12 @@ METHOD isCustomerInGestool( oQuery ) CLASS TComercioCustomer
       idCustomer           := oQuery:fieldGetByName( 'id_customer' )
       email                := oQuery:fieldGetByName( 'email' )
 
+      msgalert( email, "email del cliente" )
+
       ::idCustomerGestool  := ::TPrestashopId():getGestoolCustomer( idCustomer, ::getCurrentWebName() )
 
       if !empty( ::idCustomerGestool )
-         if ::oCustomerDatabase():seekInOrd( email, "Nif")
+         if ::oCustomerDatabase():seekInOrd( upper( email ), "cMeiInt")
             Return ( .t. )
          end if 
       end if 
@@ -99,6 +101,8 @@ METHOD insertCustomerInGestoolIfNotExist( oQuery ) CLASS TComercioCustomer
    local idAddressInvoice     := oQuery:FieldGetByName( "id_address_invoice" ) 
 
    local oQueryCustomer       := ::getCustomerFromPrestashop( idCustomer )      
+
+   msgalert( "insertCustomerInGestoolIfNotExist" )
 
    if !( ::isCustomerInGestool( oQueryCustomer ) )
       ::appendCustomerInGestool( oQueryCustomer )

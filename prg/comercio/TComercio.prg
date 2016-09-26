@@ -522,7 +522,7 @@ METHOD New( oMenuItem, oMeterTotal, oTextTotal ) CLASS TComercio
    ::lSyncAll              := .f.
    ::nTotMeter             := 0 
 
-   ::TComercioConfig     := TComercioConfig():New()
+   ::TComercioConfig       := TComercioConfig():New()
    ::TComercioConfig:loadJSON()
 
    ::TComercioCustomer     := TComercioCustomer():New( Self )

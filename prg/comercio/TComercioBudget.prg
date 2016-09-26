@@ -98,6 +98,8 @@ Return ( Self )
 
 METHOD insertDocumentGestool( oQuery ) CLASS TComercioDocument
 
+   msgalert( "insertDocumentGestool")
+
    ::TComercioCustomer():insertCustomerInGestoolIfNotExist( oQuery )
 
    ::getCountersDocumentGestool(      oQuery )
@@ -156,7 +158,7 @@ Return ( .t. )
 
    local cCodigocli                          := ::TPrestashopId:getGestoolCustomer( oQuery:FieldGetByName( "id_customer" ), ::getCurrentWebName() )
 
-   if ::oCustomerDatabase():SeekInOrd( cCodigocli , "Cod")
+   if ::oCustomerDatabase():SeekInOrd( cCodigocli, "Cod")
 
       ::oDocumentHeaderDatabase():cCodCli    := ::oCustomerDatabase():Cod
       ::oDocumentHeaderDatabase():cNomCli    := ::oCustomerDatabase():Titulo
