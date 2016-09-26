@@ -6694,17 +6694,10 @@ METHOD validateDateTime( dFecMov, tTimMov, dFecIni, dFecFin, tHorIni, tHorFin ) 
       Return .f.
    end if 
 
-<<<<<<< HEAD
-   if !empty( tHorFin ) .and. dtos( dFecMov ) + tTimMov > dtos( dFecFin ) + tHorFin
-=======
    if !empty( dFecFin ) .and. !empty( tHorFin ) .and. dtos( dFecMov ) + tTimMov > dtos( dFecFin ) + tHorFin
->>>>>>> origin/master
       Return .f.
    end if 
 
 Return .t.
-<<<<<<< HEAD
-=======
 
 //---------------------------------------------------------------------------//
->>>>>>> origin/master
