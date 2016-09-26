@@ -4192,8 +4192,6 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
       // Movimientos de almacén------------------------------------------------" )
 
-      msgAlert( dFecIni, "dFecIni" )
-
       ::aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin )
       SysRefresh()
 
@@ -7014,10 +7012,6 @@ METHOD validateDateTime( dFecMov, tTimMov, dFecIni, dFecFin, tHorIni, tHorFin ) 
       Return .f.
    end if 
 
-   msgalert( dtos( dFecMov ) + tTimMov, "dtos( dFecMov ) + tTimMov" )
-   msgalert( dtos( dFecFin ) + tHorFin, "dtos( dFecFin ) + tHorFin" )
-   msgalert( dtos( dFecMov ) + tTimMov < dtos( dFecFin ) + tHorFin, dtos( dFecMov ) + tTimMov + ">" + dtos( dFecFin ) + tHorFin )
-
    if !empty( tHorFin ) .and. dtos( dFecMov ) + tTimMov > dtos( dFecFin ) + tHorFin
       Return .f.
    end if 
@@ -7025,9 +7019,3 @@ METHOD validateDateTime( dFecMov, tTimMov, dFecIni, dFecFin, tHorIni, tHorFin ) 
 //         if ( empty( dFecIni ) .or. ( ::cHisMovT )->dFecMov >= dFecIni ) .and. ( empty( dFecFin ) .or. ( ::cHisMovT)->dFecMov <= dFecFin )
 
 Return .t.
-
-
-
-
-
-
