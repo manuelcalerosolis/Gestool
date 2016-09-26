@@ -40,7 +40,7 @@ Definici¢n de la base de datos de pedidos a clientes
 #define _MCOMENT                  25      //"MCOMENT"
 #define _MOBSERV                  26      //"MOBSERV"
 #define _LMAYOR                   27      //"LMAYOR",
-#define _NTARIFA                  28      //"NTARIFA"
+#define _NTARIFA                  28      //"NTARIFA" 
 #define _CDTOESP                  29      //"CDTOESP"
 #define _NDTOESP                  30      //"NDTOESP"
 #define _CDPP                     31      //"CDPP",
