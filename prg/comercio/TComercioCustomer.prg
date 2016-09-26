@@ -80,7 +80,11 @@ Return ( .f. )
 
 METHOD isAddressInGestool( idAddress ) CLASS TComercioCustomer                  
 
-   local idAddressInGestool   := ::TPrestashopId():getGestoolAddress( idAddress, ::getCurrentWebName() )
+   local idAddressInGestool   
+
+   msgalert( idAddress, "idAddress" )
+
+   idAddressInGestool         := ::TPrestashopId():getGestoolAddress( idAddress, ::getCurrentWebName() )
 
    if !empty( idAddressInGestool )
       if ::oAddressDatabase():seekInOrd( idAddressInGestool, "cCodCli" )      
@@ -190,9 +194,7 @@ METHOD createAddressInGestool( idAddress ) CLASS TComercioCustomer
    end if 
 
    if oQuery:recCount() > 0 
-   
       ::appendAddressInGestool( oQuery )
-      
       ::assertAddressInGestoolCustomer( oQuery )
    end if 
 
@@ -254,24 +256,25 @@ Return ( .t. )
 
 METHOD assertAddressInGestoolCustomer ( oQuery ) class TComercioCustomer
 
-   if ::oCustomerDatabase():seekInOrd(::idCustomerGestool, "Cod")
+   if !( ::oCustomerDatabase():seekInOrd(::idCustomerGestool, "Cod" ) )
+      ::writeText( "Cliente con el código " + alltrim( ::idCustomerGestool ) + " no encontrado, imposible asignar dirección." )
+      Return ( .f. )
+   end if 
 
-      if empty(::oCustomerDatabase():fieldGetbyName( "Domicilio" ) )
+   if empty(::oCustomerDatabase():fieldGetbyName( "Domicilio" ) )
 
-         ::oCustomerDatabase():load()
-         ::oCustomerDatabase():Domicilio     := oQuery:fieldGetByName( "address1" ) + " " + oQuery:fieldGetByName( "address2" )  
-         ::oCustomerDatabase():Poblacion     := oQuery:fieldGetByName( "city" )           
-         ::oCustomerDatabase():CodPostal     := oQuery:fieldGetByName( "postcode" ) 
-         ::oCustomerDatabase():Provincia     := ::getState( oQuery:fieldGetbyName( "id_state" ) )  
-         ::oCustomerDatabase():Telefono      := oQuery:fieldGetByName( "phone" )  
-         ::oCustomerDatabase():Movil         := oQuery:fieldGetByName( "phone_mobile" )          
-         ::oCustomerDatabase():save()
-
-      end if 
+      ::oCustomerDatabase():load()
+      ::oCustomerDatabase():Domicilio     := oQuery:fieldGetByName( "address1" ) + " " + oQuery:fieldGetByName( "address2" )  
+      ::oCustomerDatabase():Poblacion     := oQuery:fieldGetByName( "city" )           
+      ::oCustomerDatabase():CodPostal     := oQuery:fieldGetByName( "postcode" ) 
+      ::oCustomerDatabase():Provincia     := ::getState( oQuery:fieldGetbyName( "id_state" ) )  
+      ::oCustomerDatabase():Telefono      := oQuery:fieldGetByName( "phone" )  
+      ::oCustomerDatabase():Movil         := oQuery:fieldGetByName( "phone_mobile" )          
+      ::oCustomerDatabase():save()
 
    end if 
-    
-Return(.t.)
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
