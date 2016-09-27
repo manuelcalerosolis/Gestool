@@ -23,6 +23,14 @@ CLASS TPrestaShopId FROM TMant
    METHOD deleteValue( cTipoDocumento, cClave, cWeb )
    METHOD deleteDocumentValues( cTipoDocumento, cWeb )
 
+   METHOD isValidParameters( cTipoDocumento, cClave, cWeb, idWeb ) 
+   METHOD isSeekValues( cTipoDocumento, cClave, cWeb )
+
+   METHOD getValueGestool( cTipoDocumento, idWeb, cWeb, defaultValue )
+   METHOD setValueGestool( cTipoDocumento, cClave, cWeb, idWeb )
+   METHOD isSeekGestool( cTipoDocumento, idWeb, cWeb )
+
+
    METHOD setValueProduct( cClave, cWeb, idWeb )               INLINE ::setValue( "01", cClave, cWeb, idWeb )
    METHOD getValueProduct( cClave, cWeb, defaultValue )        INLINE ::getValue( "01", cClave, cWeb, defaultValue )
    METHOD getGestoolProduct( idWeb, cWeb, defaultValue )       INLINE ::getValueGestool( "01", idWeb, cWeb, defaultValue )
@@ -60,10 +68,10 @@ CLASS TPrestaShopId FROM TMant
    METHOD deleteValueImage( cClave, cWeb )                     INLINE ::deleteValue( "10", cClave, cWeb )
    METHOD deleteDocumentValuesImage( cWeb )                    INLINE ::deleteDocumentValues( "10", cWeb )
 
-   METHOD setValueCustomer( cClave, cWeb, idWeb )              INLINE ::setValue( "12", cClave, cWeb, idWeb )
-   METHOD getGestoolCustomer( idWeb, cWeb, defaultValue )      INLINE ::getValueGestool( "12", idWeb, cWeb, defaultValue )
-   METHOD deleteValueCustomer( cClave, cWeb )                  INLINE ::deleteValue( "12", cClave, cWeb )
-   METHOD deleteDocumentValuesCustomer( cWeb )                 INLINE ::deleteDocumentValues( "12", cWeb )
+   METHOD setValueCustomer( cClave, cWeb, idWeb )              INLINE ( ::setValue( "12", cClave, cWeb, idWeb ) )
+   METHOD getGestoolCustomer( idWeb, cWeb, defaultValue )      INLINE ( padr( ::getValueGestool( "12", idWeb, cWeb, defaultValue ), 12 ) )
+   METHOD deleteValueCustomer( cClave, cWeb )                  INLINE ( ::deleteValue( "12", cClave, cWeb ) )
+   METHOD deleteDocumentValuesCustomer( cWeb )                 INLINE ( ::deleteDocumentValues( "12", cWeb ) )
 
    METHOD setValueAddress( cClave, cWeb, idWeb )               INLINE ::setValue( "13", cClave, cWeb, idWeb )
    METHOD getGestoolAddress( idWeb, cWeb, defaultValue )       INLINE ::getValueGestool( "13", idWeb, cWeb, defaultValue )
@@ -79,13 +87,6 @@ CLASS TPrestaShopId FROM TMant
    METHOD getGestoolOrder( idWeb, cWeb, defaultValue )         INLINE ::getValueGestool( "15", idWeb, cWeb, defaultValue )
    METHOD deleteValueOrder( cClave, cWeb )                     INLINE ::deleteValue( "15", cClave, cWeb )
    METHOD deleteDocumentValuesOrder( cWeb )                    INLINE ::deleteDocumentValues( "15", cWeb )
-
-   METHOD isValidParameters( cTipoDocumento, cClave, cWeb, idWeb ) 
-   METHOD isSeekValues( cTipoDocumento, cClave, cWeb )
-
-   METHOD getValueGestool( cTipoDocumento, idWeb, cWeb, defaultValue )
-   METHOD setValueGestool( cTipoDocumento, cClave, cWeb, idWeb )
-   METHOD isSeekGestool( cTipoDocumento, idWeb, cWeb )
 
    METHOD writeText( cText )                                   INLINE ( ::TComercio:writeText( cText ) )
 
@@ -154,6 +155,30 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD setValueGestool( cTipoDocumento, cClave, cWeb, idWeb )
+
+   cClave         := upper( cClave )
+   cWeb           := upper( cWeb )
+
+   if !::isValidParameters( cTipoDocumento, cClave, cWeb, idWeb )
+      RETURN ( .f. )
+   end if 
+
+   if ::isSeekGestool( cTipoDocumento, idWeb, cWeb )
+      ::oDbf:fieldPutByName( "idWeb", idWeb )
+   else
+      ::oDbf:Append()
+      ::oDbf:cDocumento    := cTipoDocumento
+      ::oDbf:cClave        := cClave
+      ::oDbf:cWeb          := cWeb
+      ::oDbf:idWeb         := idWeb
+      ::oDbf:Save()
+   end if 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
 METHOD getValue( cTipoDocumento, cClave, cWeb, defaultValue )
 
    local idWeb    := 0
@@ -174,6 +199,26 @@ METHOD getValue( cTipoDocumento, cClave, cWeb, defaultValue )
    end if 
 
 RETURN ( idWeb )
+
+//---------------------------------------------------------------------------//
+
+METHOD getValueGestool( cTipoDocumento, idWeb, cWeb, defaultValue )
+
+   local cClave   := ""
+
+   if !empty( defaultValue )
+      cClave      := defaultValue
+   end if 
+
+   if !::isValidParameters( cTipoDocumento, idWeb, cWeb )
+      RETURN ( cClave )
+   end if 
+
+   if ::isSeekGestool( cTipoDocumento, idWeb, cWeb )
+      cClave      := alltrim( ::oDbf:cClave )
+   end if 
+
+RETURN ( cClave )
 
 //---------------------------------------------------------------------------//
 
@@ -236,50 +281,6 @@ METHOD isSeekValues( cTipoDocumento, cClave, cWeb )
    cWeb           := upper( padr( cWeb, 80 ) )
 
 RETURN ( ::oDbf:seekInOrd( cTipoDocumento + cClave + cWeb, "cWeb" ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD setValueGestool( cTipoDocumento, cClave, cWeb, idWeb )
-
-   cClave         := upper( cClave )
-   cWeb           := upper( cWeb )
-
-   if !::isValidParameters( cTipoDocumento, cClave, cWeb, idWeb )
-      RETURN ( .f. )
-   end if 
-
-   if ::isSeekGestool( cTipoDocumento, idWeb, cWeb )
-      ::oDbf:fieldPutByName( "idWeb", idWeb )
-   else
-      ::oDbf:Append()
-      ::oDbf:cDocumento    := cTipoDocumento
-      ::oDbf:cClave        := cClave
-      ::oDbf:cWeb          := cWeb
-      ::oDbf:idWeb         := idWeb
-      ::oDbf:Save()
-   end if 
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD getValueGestool( cTipoDocumento, idWeb, cWeb, defaultValue )
-
-   local cClave   := ""
-
-   if !empty(defaultValue)
-      cClave      := defaultValue
-   end if 
-
-   if !::isValidParameters( cTipoDocumento, idWeb, cWeb )
-      RETURN ( cClave )
-   end if 
-
-   if ::isSeekGestool( cTipoDocumento, idWeb, cWeb )
-      cClave      := alltrim( ::oDbf:cClave )
-   end if 
-
-RETURN ( cClave )
 
 //---------------------------------------------------------------------------//
 

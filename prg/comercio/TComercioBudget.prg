@@ -100,6 +100,11 @@ METHOD insertDocumentGestool( oQuery ) CLASS TComercioDocument
 
    ::TComercioCustomer():insertCustomerInGestoolIfNotExist( oQuery )
 
+   if empty( ::TComercioCustomer():getCustomerGestool() )
+      ::writeText( "Cliente no encontrado, imposible añadir documento" )
+      Return ( .f. )
+   end if 
+
    ::getCountersDocumentGestool(      oQuery )
    ::insertHeaderDocumentGestool(     oQuery )
    ::insertLinesDocumentGestool(      oQuery )
@@ -108,7 +113,7 @@ METHOD insertDocumentGestool( oQuery ) CLASS TComercioDocument
 
    ::setPrestashopIdDocument()
    
-Return ( .f. )
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -154,23 +159,24 @@ Return ( .t. )
 
  METHOD setCustomerInDocument( oQuery ) CLASS TComercioDocument
 
-   local cCodigocli                          := ::TPrestashopId:getGestoolCustomer( oQuery:FieldGetByName( "id_customer" ), ::getCurrentWebName() )
+   local idCustomerGestool                := ::TComercioCustomer():getCustomerGestool()
 
-   if ::oCustomerDatabase():SeekInOrd( cCodigocli, "Cod")
+   if !( ::oCustomerDatabase():SeekInOrd( idCustomerGestool, "Cod" ) )
+      ::writeText( "Código de cliente " + alltrim( idCustomerGestool ) + " no encontrado", 3 )
+      Return ( .f. )
+   end if 
 
-      ::oDocumentHeaderDatabase():cCodCli    := ::oCustomerDatabase():Cod
-      ::oDocumentHeaderDatabase():cNomCli    := ::oCustomerDatabase():Titulo
-      ::oDocumentHeaderDatabase():cDirCli    := ::oCustomerDatabase():Domicilio
-      ::oDocumentHeaderDatabase():cPobCli    := ::oCustomerDatabase():Poblacion
-      ::oDocumentHeaderDatabase():cPrvCli    := ::oCustomerDatabase():Provincia
-      ::oDocumentHeaderDatabase():cPosCli    := ::oCustomerDatabase():CodPostal
-      ::oDocumentHeaderDatabase():cDniCli    := ::oCustomerDatabase():Nif
-      ::oDocumentHeaderDatabase():lModCli    := .t.
-      ::oDocumentHeaderDatabase():cTlfCli    := ::oCustomerDatabase():Telefono
-      ::oDocumentHeaderDatabase():cCodGrp    := ::oCustomerDatabase():cCodGrp
-      ::oDocumentHeaderDatabase():nRegIva    := ::oCustomerDatabase():nRegIva
-
-   end if
+   ::oDocumentHeaderDatabase():cCodCli    := ::oCustomerDatabase():Cod
+   ::oDocumentHeaderDatabase():cNomCli    := ::oCustomerDatabase():Titulo
+   ::oDocumentHeaderDatabase():cDirCli    := ::oCustomerDatabase():Domicilio
+   ::oDocumentHeaderDatabase():cPobCli    := ::oCustomerDatabase():Poblacion
+   ::oDocumentHeaderDatabase():cPrvCli    := ::oCustomerDatabase():Provincia
+   ::oDocumentHeaderDatabase():cPosCli    := ::oCustomerDatabase():CodPostal
+   ::oDocumentHeaderDatabase():cDniCli    := ::oCustomerDatabase():Nif
+   ::oDocumentHeaderDatabase():cTlfCli    := ::oCustomerDatabase():Telefono
+   ::oDocumentHeaderDatabase():cCodGrp    := ::oCustomerDatabase():cCodGrp
+   ::oDocumentHeaderDatabase():nRegIva    := ::oCustomerDatabase():nRegIva
+   ::oDocumentHeaderDatabase():lModCli    := .t.
 
 Return ( .t. )
 

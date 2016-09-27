@@ -229,6 +229,7 @@ CLASS TComercio
 
    METHOD MeterTotal( oMeterTotal)     INLINE ( iif( oMeterTotal != nil, ::oMeterTotal := oMeterTotal, ::oMeterTotal ) )
    METHOD setMeterTotal( nTotal )      INLINE ( ::nTotMeter := nTotal, ( if( !empty( ::oMeterProceso ), ::oMeterProceso:SetTotal( ::nTotMeter ), ) ) )
+   METHOD getMeterTotal()              INLINE ( ::nTotMeter )
 
    DATA  oTextTotal
    DATA  cTextTotal
@@ -960,14 +961,16 @@ METHOD meterProcesoText( cText ) Class TComercio
 
    DEFAULT cText     := ""
 
+   ++::nMeterProceso
+
    ::writeText( cText )
 
    if !empty( ::oMeterProceso )
-      ::oMeterProceso:Set( ++::nMeterProceso )
+      ::oMeterProceso:Set( ::nMeterProceso )
    end if
 
    if !empty( ::oWaitMeter )
-      ::oWaitMeter:setMeter( ++::nMeterProceso )
+      ::oWaitMeter:setMeter( ::nMeterProceso )
    end if
 
 RETURN ( Self )
@@ -1045,7 +1048,7 @@ METHOD loadOrders() CLASS TComercio
    local cQuery
    local dStar             := ::TComercioConfig():getDateStart()
 
-   ::nMeterProceso         := 0
+   ::nMeterProceso         := 1
 
    cQuery                  := 'SELECT * FROM ' + ::cPrefixTable( "orders" ) + " "
    if !empty( dStar )
@@ -1059,8 +1062,8 @@ METHOD loadOrders() CLASS TComercio
 
       ::writeText( "Descargando pedidos desde la web", 2 )
 
-      oQuery:GoTop()
-      while !oQuery:Eof()
+      oQuery:gotop()
+      while !( oQuery:eof() )
 
          ::processOrder( oQuery )
 
@@ -1088,13 +1091,13 @@ METHOD processOrder( oQuery ) CLASS TComercio
 
    if ::isRecivedDocumentAsBudget( oQuery:FieldGetByName( "module" ) )
 
-      ::meterProcesoText( "Descargando presupuesto " + alltrim( str( ++::nMeterProceso ) ) + " de "  + alltrim( str( ::nTotMeter ) ) )
+      ::meterProcesoText( "Descargando presupuesto " + alltrim( str( ::nMeterProceso ) ) + " de "  + alltrim( str( ::getMeterTotal() ) ) )
 
       ::TComercioBudget:insertDocumentInGestoolIfNotExist( oQuery )
       
    else
 
-      ::meterProcesoText( "Descargando pedido " + alltrim( str( ++::nMeterProceso ) ) + " de "  + alltrim( str( ::nTotMeter ) ) )
+      ::meterProcesoText( "Descargando pedido " + alltrim( str( ::nMeterProceso ) ) + " de "  + alltrim( str( ::getMeterTotal() ) ) )
 
       ::TComercioOrder:insertDocumentInGestoolIfNotExist( oQuery )
 
@@ -2139,13 +2142,13 @@ METHOD AppendClientPrestashop() CLASS TComercio
       Cargamos los valores para el meter------------------------------------------
       */
 
-      ::nTotMeter    := oQuery:RecCount()
+      ::nTotMeter                := oQuery:RecCount()
 
       if !empty( ::oMeterProceso )
          ::oMeterProceso:SetTotal( ::nTotMeter )
       end if
 
-      ::nMeterProceso := 1
+      ::nMeterProceso            := 1
 
       if oQuery:RecCount() > 0
 
