@@ -1013,20 +1013,20 @@ Function aSeekProp( cCodBar, cCodPr1, cCodPr2, dbfArticulo, dbfTblPro )
 
    else
 
-      n              := At( ".", cCodBar )
+      n              := at( ".", cCodBar )
 
       if n != 0
 
-         cCodArt     := SubStr( cCodBar, 1, n - 1 )
-         cCodBar     := SubStr( cCodBar, n + 1 )
+         cCodArt     := substr( cCodBar, 1, n - 1 )
+         cCodBar     := substr( cCodBar, n + 1 )
 
-         n           := At( ".", cCodBar )
+         n           := at( ".", cCodBar )
 
          if n != 0
-            cCodPr1  := SubStr( cCodBar, 1, n - 1 )
-            cCodPr2  := SubStr( cCodBar, n + 1 )
+            cCodPr1  := substr( cCodBar, 1, n - 1 )
+            cCodPr2  := substr( cCodBar, n + 1 )
          else
-            cCodPr1  := Rtrim( cCodBar )
+            cCodPr1  := rtrim( cCodBar )
          end if
 
       end if
@@ -1034,8 +1034,8 @@ Function aSeekProp( cCodBar, cCodPr1, cCodPr2, dbfArticulo, dbfTblPro )
       if ( dbfArticulo )->( dbSeek( cCodArt ) )
 
          cCodBar     := ( dbfArticulo )->Codigo
-         cCodPr1     := Padr( cCodPr1, 5 )
-         cCodPr2     := Padr( cCodPr2, 5 )
+         cCodPr1     := padr( cCodPr1, 20 )
+         cCodPr2     := padr( cCodPr2, 20 )
 
          Return ( .t. )
 

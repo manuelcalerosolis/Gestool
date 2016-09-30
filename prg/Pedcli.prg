@@ -13728,97 +13728,98 @@ Function SynPedCli( cPath )
    ( dbfPedCliT )->( ordSetFocus( 1 ) )
  	( dbfPedCliT )->( dbGoTop() )
 
-    while !( dbfPedCliT )->( eof() )
+   while !( dbfPedCliT )->( eof() )
 
-        /*
-        Rellenamos los campos de totales--------------------------------------
-        */
+      /*
+      Rellenamos los campos de totales--------------------------------------
+      */
 
-        if ( dbfPedCliT )->nTotPed == 0 .and. dbLock( dbfPedCliT )
+      if ( dbfPedCliT )->nTotPed == 0 .and. dbLock( dbfPedCliT )
 
-           	aTotPed                 := aTotPedCli( ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed, dbfPedCliT, dbfPedCliL, cdbfIva, cdbfDiv, cDbfPago, ( dbfPedCliT )->cDivPed )
+         aTotPed                 := aTotPedCli( ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed, dbfPedCliT, dbfPedCliL, cdbfIva, cdbfDiv, cDbfPago, ( dbfPedCliT )->cDivPed )
 
-            ( dbfPedCliT )->nTotNet := aTotPed[ 1 ]
-            ( dbfPedCliT )->nTotIva := aTotPed[ 2 ]
-            ( dbfPedCliT )->nTotReq := aTotPed[ 3 ]
-            ( dbfPedCliT )->nTotPed := aTotPed[ 4 ]
+         ( dbfPedCliT )->nTotNet := aTotPed[ 1 ]
+         ( dbfPedCliT )->nTotIva := aTotPed[ 2 ]
+         ( dbfPedCliT )->nTotReq := aTotPed[ 3 ]
+         ( dbfPedCliT )->nTotPed := aTotPed[ 4 ]
 
-            ( dbfPedCliT )->( dbUnLock() )
+         ( dbfPedCliT )->( dbUnLock() )
 
-        end if
+      end if
 
-         ( dbfPedCliT )->( dbSkip() )
+      ( dbfPedCliT )->( dbSkip() )
 
-    end while
+   end while
 
+   // Lineas -----------------------------------------------------------------
 
-    // Lineas -----------------------------------------------------------------
+   ( dbfPedCliL )->( ordSetFocus( 0 ) )
+   ( dbfPedCliL )->( dbGoTop() )
 
-   	( dbfPedCliL )->( ordSetFocus( 0 ) )
-   	( dbfPedCliL )->( dbGoTop() )
+   while !( dbfPedCliL )->( eof() )
 
-    while !( dbfPedCliL )->( eof() )
+      if Empty( ( dbfPedCliL )->cSufPed )
+         ( dbfPedCliL )->cSufPed := "00"
+      end if
 
-        if Empty( ( dbfPedCliL )->cSufPed )
-              ( dbfPedCliL )->cSufPed := "00"
-        end if
+      if Empty( ( dbfPedCliL )->cLote ) .and. !Empty( ( dbfPedCliL )->nLote )
+         ( dbfPedCliL )->cLote   := AllTrim( Str( ( dbfPedCliL )->nLote ) )
+      end if
 
-        if Empty( ( dbfPedCliL )->cLote ) .and. !Empty( ( dbfPedCliL )->nLote )
-              ( dbfPedCliL )->cLote   := AllTrim( Str( ( dbfPedCliL )->nLote ) )
-        end if
+      if ( dbfPedCliL )->lIvaLin != RetFld( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT, "lIvaInc" )
+         ( dbfPedCliL )->lIvaLin := RetFld( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT, "lIvaInc" )
+      end if
 
-        if ( dbfPedCliL )->lIvaLin != RetFld( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT, "lIvaInc" )
-              ( dbfPedCliL )->lIvaLin := RetFld( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT, "lIvaInc" )
-        end if
+      if ( dbfPedCliL )->cCodTip != retFld( ( dbfPedCliL )->cRef, dbfArticulo, "cCodTip", "Codigo" )      
+         ( dbfPedCliL )->cCodTip := retFld( ( dbfPedCliL )->cRef, dbfArticulo, "cCodTip", "Codigo" )      
+      end if 
 
-        if Empty( ( dbfPedCliL )->cAlmLin )
-              ( dbfPedCliL )->cAlmLin := RetFld( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT, "cCodAlm" )
-        end if
+      if Empty( ( dbfPedCliL )->cAlmLin )
+         ( dbfPedCliL )->cAlmLin := RetFld( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT, "cCodAlm" )
+      end if
 
-        if !Empty( ( dbfPedCliL )->cRef ) .and. Empty( ( dbfPedCliL )->cCodFam )
-              ( dbfPedCliL )->cCodFam := RetFamArt( ( dbfPedCliL )->cRef, dbfArticulo )
-        end if
+      if !Empty( ( dbfPedCliL )->cRef ) .and. Empty( ( dbfPedCliL )->cCodFam )
+         ( dbfPedCliL )->cCodFam := RetFamArt( ( dbfPedCliL )->cRef, dbfArticulo )
+      end if
 
-        if !Empty( ( dbfPedCliL )->cRef ) .and. !Empty( ( dbfPedCliL )->cGrpFam )
-              ( dbfPedCliL )->cGrpFam := cGruFam( ( dbfPedCliL )->cCodFam, dbfFamilia )
-        end if
+      if !Empty( ( dbfPedCliL )->cRef ) .and. !Empty( ( dbfPedCliL )->cGrpFam )
+         ( dbfPedCliL )->cGrpFam := cGruFam( ( dbfPedCliL )->cCodFam, dbfFamilia )
+      end if
 
-        if Empty( ( dbfPedCliL )->nReq )
-              ( dbfPedCliL )->nReq    := nPReq( cdbfIva, ( dbfPedCliL )->nIva )
-        end if
+      if Empty( ( dbfPedCliL )->nReq )
+         ( dbfPedCliL )->nReq    := nPReq( cdbfIva, ( dbfPedCliL )->nIva )
+      end if
 
-        if Empty( ( dbfPedCliL )->nPosPrint )
-              ( dbfPedCliL )->nPosPrint    := ( dbfPedCliL )->nNumLin
-        end if
+      if Empty( ( dbfPedCliL )->nPosPrint )
+         ( dbfPedCliL )->nPosPrint    := ( dbfPedCliL )->nNumLin
+      end if
 
-        ( dbfPedCliL )->( dbSkip() )
+      ( dbfPedCliL )->( dbSkip() )
 
-        SysRefresh()
+      SysRefresh()
 
-    end while
+   end while
 
+	( dbfPedCliL )->( ordSetFocus( 1 ) )
 
-   	( dbfPedCliL )->( ordSetFocus( 1 ) )
+   // Incidencias ----------------------------------------------------------
 
-    // Incidencias ----------------------------------------------------------
-
-   	( dbfPedCliI )->( ordSetFocus( 0 ) )
+   ( dbfPedCliI )->( ordSetFocus( 0 ) )
 	( dbfPedCliI )->( dbGoTop() )
 
-    while !( dbfPedCliI )->( eof() )
+   while !( dbfPedCliI )->( eof() )
 
-        if Empty( ( dbfPedCliI )->cSufPed )
-              ( dbfPedCliI )->cSufPed := "00"
-        end if
+      if Empty( ( dbfPedCliI )->cSufPed )
+         ( dbfPedCliI )->cSufPed := "00"
+      end if
 
-        ( dbfPedCliI )->( dbSkip() )
+      ( dbfPedCliI )->( dbSkip() )
 
-        SysRefresh()
+      SysRefresh()
 
-    end while
+   end while
 
-
-   	( dbfPedCliI )->( ordSetFocus( 1 ) )
+ 	( dbfPedCliI )->( ordSetFocus( 1 ) )
 
    RECOVER USING oError
 

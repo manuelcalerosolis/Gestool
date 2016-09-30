@@ -8538,7 +8538,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
    if aSeekProp( @cCodArt, @cValPr1, @cValPr2, dbfArticulo, dbfTblPro )
 
       if ( dbfArticulo )->lObs
-         MsgStop( "Artículo catalogado como obsoleto" )
+         msgstop( "Artículo catalogado como obsoleto" )
          return .f.
       end if
 

@@ -1722,7 +1722,7 @@ METHOD AddRecibosCliente( cCodigoCliente ) CLASS TFastVentasClientes
    
       ::oFacCliP:OrdSetFocus( "dPreCob" )
 
-   // filtros para la cabecera------------------------------------------------
+      // filtros para la cabecera------------------------------------------------
 
       ::cExpresionHeader          := 'Field->dPreCob >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dPreCob <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
       ::cExpresionHeader          += ' .and. Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerie <= "' + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
@@ -1735,16 +1735,15 @@ METHOD AddRecibosCliente( cCodigoCliente ) CLASS TFastVentasClientes
       
       ::setFilterUserId()
 
-   // Procesando recibos------------------------------------------------------
+      // Procesando recibos------------------------------------------------------
 
       ::oMtrInf:cText   := "Procesando recibos"
-      
+
       ::oFacCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
       ::oMtrInf:SetTotal( ::oFacCliP:OrdKeyCount() )
 
       ::oFacCliP:GoTop()
-
       while !::lBreak .and. !::oFacCliP:Eof()
 
          ::oDbf:Blank()
