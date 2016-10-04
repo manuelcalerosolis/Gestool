@@ -4990,6 +4990,14 @@ Return ( by( nRow ) )
 
 Function Test()
 
+   /*MsgInfo( "Antes" )
+
+   //URLDownloadToFile(0,"http://motosdasilva.com/t/img/p/9827-12142.jpg","c:\ficheros\",0,0 )
+
+   DOWNLOADFILE( "http://motosdasilva.com/t/img/p/9827-12142.jpg", "c:\ficheros\9827-12142.jpg" )
+
+   MsgInfo( "Despues" )*/
+
    // TStock():validateDateTime( ctod( "22/09/2016" ), "000001", dFecIni, dFecFin, tHorIni, tHorFin ) CLASS TStock
 
 /*

@@ -3235,6 +3235,12 @@ Return ( uFieldEmpresa( "cIniJor" ) + "00")
 
 //--------------------------------------------------------------------------//
 
+Function DownLoadFileToUrl( cUrl, cName )
+
+Return DOWNLOADFILE( cUrl, cName )
+
+//---------------------------------------------------------------------------//
+
 Function trimNif( cNif )
 
    cNif   := strtran( cNif, " ", "" )
@@ -3338,12 +3344,14 @@ PISCA_EXE()   // Vai Piscar o Seu EXE na Barra do Windows
 
 #include "windows.h"
 #include "shlobj.h"
-#include "hbapi.h"
+#include "hbapi.h" 
 #include "math.h"
 #include "hbvm.h"
 #include "hbstack.h"
 #include "hbapiitm.h"
 #include "hbapigt.h"
+#include "hbstack.h"
+#include "urlmon.h"
 
 HB_FUNC ( SHOWTASKBAR ) //Habilita o botao INICIAR
 {
@@ -3383,6 +3391,16 @@ HB_FUNC ( ENABLECLOSEWINDOWS ) // HABILITA O X da janela
 HMENU MenuH = GetSystemMenu(GetForegroundWindow(),TRUE);
 
 EnableMenuItem(MenuH,SC_CLOSE,MF_GRAYED);
+}
+
+HB_FUNC( DOWNLOADFILE )
+
+{
+   HRESULT hr;
+
+   hr = URLDownloadToFileA( NULL, hb_parc( 1 ), hb_parc( 2 ), 0, NULL );
+  
+   hb_retnl( hr ) ;
 }
 
 #pragma ENDDUMP
