@@ -24,6 +24,8 @@ static aFacturaLinea
 static hFacturaCabecera
 static hFacturaLinea
 
+static cError
+
 static dbfFacPrvT
 static dbfFacPrvL
 static dbfFacPrvI
@@ -99,9 +101,6 @@ Function ImportaXmlBestseller()
 
    aXmlDocuments        := Directory( __localDirectory + "INVOIC_*.*" )
 
-   msgalert( __localDirectory + "INVOIC_*.*" ) 
-   msgalert( hb_valtoexp( aXmlDocuments ) )
-
    if !empty( aXmlDocuments )
       for each cDocumentXml in aXmlDocuments
          if msgyesno( "procesando fichero " + alltrim( cDocumentXml[ 1 ] ) + ":" + alltrim( str( hb_enumindex() ) ) + " de " + alltrim( str( len( aXmlDocuments) ) ), "¿Desea continuar?" )
@@ -140,10 +139,11 @@ Return ( nil )
 Static Function ProccessXml( cDocumentXml )
 
    local cXml
-   local oXmlDocument
    local oXmlIter
    local oTagActual
+   local oXmlDocument
 
+   cError               := ""
    aFacturaLinea        := {}
    hFacturaCabecera     := {=>}
    
@@ -230,9 +230,9 @@ Static Function IteratorInvoiceLine( oXmlNode )
 
    local oId
    local oItem
-   local oQuantity
-   local oPrice
    local oNode
+   local oPrice
+   local oQuantity
    local oStandard
    local oDescription
 
@@ -257,8 +257,6 @@ Static Function IteratorInvoiceLine( oXmlNode )
       if !Empty( oStandard )
 
          oId            := TXMLIteratorScan():New( oStandard ):Find( "cbc:ID" )
-
-         msgalert( oId:cData, "oId:cData" )
 
          if !Empty( oId )
             msgwait( oId:cData, "Codigo encontrado", __timeWait )
@@ -290,6 +288,8 @@ Static Function IteratorInvoiceLine( oXmlNode )
       end if 
 
    end if 
+
+   msgalert( hb_valtoexp( hFacturaLinea ) )
 
    aAdd( aFacturaLinea, hFacturaLinea )
 
@@ -346,7 +346,7 @@ Static Function ProccessFactura()
 
    for each hLinea in aFacturaLinea
 
-      if CodigoPropiedadesLineas( hLinea )
+      if codigoPropiedadesLineas( hLinea )
 
          if dbDialogLock( dbfFacPrvL, .t. )
 
@@ -370,15 +370,18 @@ Static Function ProccessFactura()
             ( dbfFacPrvL )->( dbUnlock() )
 
          else  
+            
             msgWait("no puedo bloquear", "stop", __timeWait )
+         
          end if 
-
-      else  
-         msgWait("no CodigoPropiedadesLineas", "stop", __timeWait )
 
       end if 
 
    next
+
+   if !Empty( cError )
+      msgstop( cError, "¡LA FACTURA NO ES VALIDA!" )
+   end if 
 
    EdtFacPrv( cNumero )
 
@@ -404,7 +407,7 @@ Static Function CodigoPropiedadesLineas( hLinea )
 
    else
 
-      msgWait( "Codigo de barras " + Alltrim( cCodigo ) + " no encontrado.", "Atención", __timeWait )
+      cError                  += "Codigo de barras " + alltrim( cCodigo ) + " no encontrado." + CRLF
 
    end if 
 
