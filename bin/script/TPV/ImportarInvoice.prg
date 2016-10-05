@@ -8,7 +8,7 @@
 #include "Report.ch"
 #include "Print.ch"
 
-#define __localDirectory            "c:\Bestseller\"
+#define __localDirectory            "c:\Bestseller\toProcess\"
 #define __localDirectoryPorcessed   "c:\Bestseller\Processed\"
 #define __timeWait                  0.05
 
@@ -98,6 +98,9 @@ Function ImportaXmlBestseller()
    if !lAIS() ; ordListAdd( ( cPatArt() + "Temporadas.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
 
    aXmlDocuments        := Directory( __localDirectory + "INVOIC_*.*" )
+
+   msgalert( __localDirectory + "INVOIC_*.*" ) 
+   msgalert( hb_valtoexp( aXmlDocuments ) )
 
    if !empty( aXmlDocuments )
       for each cDocumentXml in aXmlDocuments
@@ -237,7 +240,7 @@ Static Function IteratorInvoiceLine( oXmlNode )
 
    // Unidades-----------------------------------------------------------------
 
-   oQuantity            := TXMLIteratorScan():New( oXmlNode ):Find( "cbc:InvoicedQuantity" ) 
+   oQuantity            := TXMLIteratorScan():New( oXmlNode ):Find( "cbc:InvoicedQuantity" )
 
    if !Empty( oQuantity )
       hSet( hFacturaLinea, "Unidades", Val( oQuantity:cData ) )
@@ -254,6 +257,8 @@ Static Function IteratorInvoiceLine( oXmlNode )
       if !Empty( oStandard )
 
          oId            := TXMLIteratorScan():New( oStandard ):Find( "cbc:ID" )
+
+         msgalert( oId:cData, "oId:cData" )
 
          if !Empty( oId )
             msgwait( oId:cData, "Codigo encontrado", __timeWait )
@@ -281,9 +286,7 @@ Static Function IteratorInvoiceLine( oXmlNode )
       oPrice            := TXMLIteratorScan():New( oItem ):Find( "cbc:PriceAmount" )
 
       if !Empty( oPrice )
-
          hSet( hFacturaLinea, "Precio", Val( oPrice:cData ) )
-
       end if 
 
    end if 
