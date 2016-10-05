@@ -5890,11 +5890,11 @@ METHOD updateProductStocks( cWebName, aProductsWeb ) CLASS TComercio
 
    ::TComercioConfig:setCurrentWebName( cWebName )
 
-   if !::prestaShopConnect()
-      Return .f.
-   end if 
-
    ::buildInformationStockProductArray( aProductsWeb )
+
+   if !::prestaShopConnect()
+      Return ( .f. )
+   end if 
 
    ::proccessStockPrestashop()
 

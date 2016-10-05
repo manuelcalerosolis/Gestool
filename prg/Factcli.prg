@@ -21661,6 +21661,60 @@ Return ( if( dUltimaFactura > dUltimoAlbaran, dUltimaFactura, dUltimoAlbaran ) )
 
 //---------------------------------------------------------------------------//
 
+Function dPrimeraVentaCliente( cCodCli, nView )
+
+   local dPrimeraVentaCliente    := ctod( "" )
+
+   CursorWait()
+
+   D():getStatusPedidosClientes( nView )
+   D():setFocusPedidosClientes( "cCodCli", nView )
+
+   if ( D():PedidosClientes( nView ) )->( dbseek( cCodCli ) )
+      while ( D():PedidosClientes( nView ) )->cCodCli == cCodCli .and. !( D():PedidosClientes( nView ) )->( eof() )
+         if empty( dPrimeraVentaCliente ) .or. ( ( D():PedidosClientes( nView ) )->dFecPed < dPrimeraVentaCliente )
+            dPrimeraVentaCliente := ( D():PedidosClientes( nView ) )->dFecPed
+         end if 
+         ( D():PedidosClientes( nView ) )->( dbskip() )
+      end while
+   end if
+
+   D():setStatusPedidosClientes( nView )
+
+   D():getStatusAlbaranesClientes( nView )
+   D():setFocusAlbaranesClientes( "cCodCli", nView )
+
+   if ( D():AlbaranesClientes( nView ) )->( dbseek( cCodCli ) )
+      while ( D():AlbaranesClientes( nView ) )->cCodCli == cCodCli .and. !( D():AlbaranesClientes( nView ) )->( eof() )
+         if empty( dPrimeraVentaCliente ) .or. ( ( D():AlbaranesClientes( nView ) )->dFecAlb < dPrimeraVentaCliente )
+            dPrimeraVentaCliente := ( D():AlbaranesClientes( nView ) )->dFecAlb
+         end if 
+         ( D():AlbaranesClientes( nView ) )->( dbskip() )
+      end while
+   end if
+
+   D():setStatusFacturasClientes( nView )
+
+   D():getStatusFacturasClientes( nView )
+   D():setFocusFacturasClientes( "cCodCli", nView )
+
+   if ( D():FacturasClientes( nView ) )->( dbseek( cCodCli ) )
+      while ( D():FacturasClientes( nView ) )->cCodCli == cCodCli .and. !( D():FacturasClientes( nView ) )->( eof() )
+         if empty( dPrimeraVentaCliente ) .or. ( ( D():FacturasClientes( nView ) )->dFecFac < dPrimeraVentaCliente )
+            dPrimeraVentaCliente := ( D():FacturasClientes( nView ) )->dFecFac
+         end if 
+         ( D():FacturasClientes( nView ) )->( dbskip() )
+      end while
+   end if
+
+   D():setStatusFacturasClientes( nView )
+
+   CursorWE()
+
+Return ( dPrimeraVentaCliente )
+
+//---------------------------------------------------------------------------//
+
 Function FacturaClienteLineaOrdSetFocus( cOrd )
 
 	( D():FacturasClientesLineas( nView ) )->( OrdSetFocus( cOrd ) )

@@ -627,6 +627,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
    local oDel
    local nLevel
    local oRotor
+   local oScript
 
    DEFAULT  oMenuItem   := "01032"
    DEFAULT  oWnd        := oWnd()
@@ -1073,6 +1074,13 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          HOTKEY   "G";
          LEVEL    ACC_APPD
 
+      DEFINE BTNSHELL oScript RESOURCE "Folder_document_" GROUP OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( oScript:Expand() ) ;
+         TOOLTIP  "Scripts" ;
+
+      ImportScript( oWndBrw, oScript, "Clientes", nView )  
+
       DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
          NOBORDER ;
          ACTION   ( oRotor:Expand() ) ;
@@ -1395,7 +1403,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
    Abrimos las bases de datos temporales si no estan abiertas------------------
    */
 
-   if BeginTrans( aTmp, nMode )
+   if beginTrans( aTmp, nMode )
       Return .f.
    end if
 
@@ -1409,13 +1417,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          aTmp[ _NLABEL  ]  := 1
          aTmp[ _NTARCMB ]  := 1
          aTmp[ _DLLACLI ]  := ctod( "" )
+         aTmp[ _DALTA   ]  := getSysDate()
 
       case nMode == DUPL_MODE
 
-         aTmp[ _COD ]      := NextKey( aTmp[ _COD ], ( D():Clientes( nView ) ), "0", RetNumCodCliEmp() )
+         aTmp[ _COD     ]  := NextKey( aTmp[ _COD ], ( D():Clientes( nView ) ), "0", RetNumCodCliEmp() )
          aTmp[ _DLLACLI ]  := ctod( "" )
+         aTmp[ _DALTA   ]  := getSysDate()
 
       otherwise
+
          nImpRie           := oStock:nRiesgo( aTmp[ _COD ] )
 
    end case

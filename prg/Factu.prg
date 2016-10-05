@@ -4990,6 +4990,7 @@ Return ( by( nRow ) )
 
 Function Test()
 
+<<<<<<< HEAD
    /*local oFtp
    local lFtpValido        := .f.
    local cUrl
@@ -5008,26 +5009,48 @@ Function Test()
 
    oFtp     := TFtpCurl():New( "gestool", "tG42kp7?", "ayives.com", 21 )
    oFtp:setPassive( .f. )
+=======
+   local oFtp
+
+   // Conexion ayives
+
+   MsgInfo( "Prueba ayives.com" )
+
+   oFtp     := TFtpCurl():New( "gestool", "tG42kp7?", "193.42.143.133", 21 )
+   oFtp:setPassive( .t. )
+>>>>>>> origin/master
 
    if oFtp:CreateConexion()
-      lFtpValido         := .t.
+      oFtp:createFile( "C:\Composer.json", "ficheros/" )
    else
       msgStop( "Imposible conectar al sitio ftp " + oFtp:cServer )
    end if
 
-   MsgInfo( "Conectado" )
-
-   //Creamos el fichero
-
-   oFtp:createFile( cFichero )
-
-   //Fin conexion
-
-   if lFtpValido .and. !Empty( oFtp )
+   if !empty( oFtp )
       oFtp:EndConexion()
    end if
 
+   // Conexion ayives
+
+   MsgInfo( "Prueba hostalia.com" )
+
+   oFtp     := TFtpCurl():New( "f181337.iron", "123Zx456Ab!", "176.28.103.205", 21 )
+   oFtp:setPassive( .f. )
+
+   if oFtp:CreateConexion()
+      oFtp:createFile( "C:\Composer.json", "webspace/httpdocs/arguelles/" )
+   else
+      msgStop( "Imposible conectar al sitio ftp " + oFtp:cServer )
+   end if
+
+   if !empty( oFtp )
+      oFtp:EndConexion()
+   end if
+
+<<<<<<< HEAD
    MsgInfo( "Salgo" )*/
+=======
+>>>>>>> origin/master
 
 Return ( nil )
 
