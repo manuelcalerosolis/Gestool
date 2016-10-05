@@ -4990,7 +4990,7 @@ Return ( by( nRow ) )
 
 Function Test()
 
-   local oFtp
+   /*local oFtp
    local lFtpValido        := .f.
    local cUrl
    local nRetry            := 0
@@ -5027,7 +5027,7 @@ Function Test()
       oFtp:EndConexion()
    end if
 
-   MsgInfo( "Salgo" )
+   MsgInfo( "Salgo" )*/
 
 Return ( nil )
 
