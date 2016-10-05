@@ -141,6 +141,8 @@ CLASS D
    METHOD getStatusAlbaranesClientes( nView )               INLINE ( ::aStatus := aGetStatus( ::AlbaranesClientes( nView ) ) )
    METHOD setStatusAlbaranesClientes( nView )               INLINE ( SetStatus( ::AlbaranesClientes( nView ), ::aStatus ) )
 
+   METHOD setFocusAlbaranesClientes( cTag, nView )          INLINE ( ::cTag   := ( ::AlbaranesClientes( nView )  )->( ordSetFocus( cTag ) ) )
+
    METHOD AlbaranesClientesLineasTableName()                INLINE ( "AlbCliL" )
    METHOD AlbaranesClientesLineas( nView )                  INLINE ( ::Get( ::AlbaranesClientesLineasTableName(), nView ) )
 
@@ -190,6 +192,8 @@ CLASS D
 
       METHOD getStatusFacturasClientes( nView )             INLINE ( ::aStatus := aGetStatus( ::FacturasClientes( nView ) ) )
       METHOD setStatusFacturasClientes( nView )             INLINE ( SetStatus( ::FacturasClientes( nView ), ::aStatus ) ) 
+
+      METHOD setFocusFacturasClientes( cTag, nView )        INLINE ( ::cTag   := ( ::FacturasClientes( nView ) )->( ordSetFocus( cTag ) ) )
 
       METHOD lockFacturasClientes( nView )                  INLINE ( dbLock( ::Get( "FacCliT", nView ) ) )
       METHOD unlockFacturasClientes( nView )                INLINE ( ( ::Get( "FacCliT", nView ) )->( dbUnLock() ) ) 

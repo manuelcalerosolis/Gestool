@@ -22,12 +22,19 @@ CLASS TCalculoComisionesAgentes
    DATA nView
 
    DATA cCodigoCliente
+   DATA cCodigoAgente
    DATA dAltaCliente
    DATA cNumeroPedido
+   
+   DATA porcentajeComisionAgente
 
    METHOD New()
    METHOD Run()
+   
    METHOD isClienteComisionable()
+   
+   METHOD calculaPorcentajeComisionAgente()
+
    METHOD procesarLineasPedidoCliente()
       METHOD procesarLineaPedidoCliente()
 
@@ -41,6 +48,8 @@ METHOD New( aTmp, nView )
    ::nView           := nView
 
    ::cCodigoCliente  := aTmp[ ( D():PedidosClientes( nView ) )->( fieldpos( "cCodCli" ) ) ]
+   ::cCodigoAgente   := aTmp[ ( D():PedidosClientes( nView ) )->( fieldpos( "cCodAge" ) ) ]
+
    ::cNumeroPedido   := aTmp[ ( D():PedidosClientes( nView ) )->( fieldpos( "cSerPed" ) ) ]
    ::cNumeroPedido   += str( aTmp[ ( D():PedidosClientes( nView ) )->( fieldpos( "nNumPed" ) ) ], 9 )
    ::cNumeroPedido   += aTmp[ ( D():PedidosClientes( nView ) )->( fieldpos( "cSufPed" ) ) ]
@@ -63,6 +72,8 @@ METHOD Run()
       Return ( .f. )
    end if 
 
+   ::calculaPorcentajeComisionAgente()
+
    ::procesarLineasPedidoCliente()
 
 Return ( .t. )
@@ -72,6 +83,25 @@ Return ( .t. )
 METHOD isClienteComisionable()
 
 Return ( ::dAltaCliente > ctod( "01/01/2017" ) .and. ::dAltaCliente <= ctod( "30/06/2017" ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD calculaPorcentajeComisionAgente()
+
+   if ::cCodigoAgente == "005" .or. ;
+      ::cCodigoAgente == "006" .or. ;
+      ::cCodigoAgente == "010" .or. ;
+      ::cCodigoAgente == "011"
+
+      ::porcentajeComisionAgente    := 0.3
+
+   else
+
+      ::porcentajeComisionAgente    := 2.0
+
+   end if 
+
+Return ( ::porcentajeComisionAgente )
 
 //----------------------------------------------------------------------------//
 

@@ -3868,8 +3868,8 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    // Proceso------------------------------------------------------------------
 
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   // oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   // BEGIN SEQUENCE
 
    for each cCodAlm in aAlmacenes
 
@@ -3986,11 +3986,10 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    // Control de erroress-------------------------------------------------------
 
-   RECOVER USING oError
-      msgStop( ErrorMessage( oError ), "Calculo de stock" )
-   END SEQUENCE
-   
-   ErrorBlock( oBlock )
+//   RECOVER USING oError
+//      msgStop( ErrorMessage( oError ), "Calculo de stock" )
+//   END SEQUENCE
+//   ErrorBlock( oBlock )
 
 Return ( ::aStocks )
 
@@ -5366,7 +5365,7 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
 
          else
 
-            if ::getFechaHoraConsolidacion() > ::dConsolidacion
+            if !empty( ::getFechaHoraConsolidacion() ) .and. ( ::getFechaHoraConsolidacion() > ::dConsolidacion )
                ::dConsolidacion  := ::getFechaHoraConsolidacion()
             end if
 
@@ -6675,6 +6674,9 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD validateDateTime( dFecMov, tTimMov ) CLASS TStock
+
+   // msgalert( dFecMov, "dFecMov" )
+   // msgalert( tTimMov, "tTimMov" )
 
    if !empty( ::dFechaInicio ) .and. dFecMov < ::dFechaInicio
       Return .f.
