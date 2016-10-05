@@ -23,6 +23,7 @@ CLASS ImportaArticulos
    DATA cFileImagenes
    DATA cFilePropiedades
    DATA cFileLineasPropiedades
+   DATA cFilePropiedadesArticulos
 
    DATA cUrlPsImagen
    DATA cUrlDwImagen
@@ -38,6 +39,7 @@ CLASS ImportaArticulos
    METHOD ImpImagenes()
    METHOD ImpPropiedades()
    METHOD ImpLineasPropiedades()
+   METHOD ImpPropiedadesArticulos()
 
 ENDCLASS
 
@@ -45,20 +47,21 @@ ENDCLASS
 
 METHOD New( nView ) CLASS ImportaArticulos
 
-   ::nView                    := nView
-   ::cFileArticulo            := "c:\ficheros\product.csv"
-   ::cFileFamilia             := "c:\ficheros\category.csv"
-   ::cFileFabricante          := "c:\ficheros\manufacturer.csv"
-   ::cFileCliente             := "c:\ficheros\customer.csv"
-   ::cFileDirecciones         := "c:\ficheros\address.csv"
-   ::cFileImagenes            := "c:\ficheros\image.csv"
-   ::cFilePropiedades         := "c:\ficheros\propiedades.csv"
-   ::cFileLineasPropiedades   := "c:\ficheros\lineaspropiedades.csv"
+   ::nView                       := nView
+   ::cFileArticulo               := "c:\ficheros\product.csv"
+   ::cFileFamilia                := "c:\ficheros\category.csv"
+   ::cFileFabricante             := "c:\ficheros\manufacturer.csv"
+   ::cFileCliente                := "c:\ficheros\customer.csv"
+   ::cFileDirecciones            := "c:\ficheros\address.csv"
+   ::cFileImagenes               := "c:\ficheros\image.csv"
+   ::cFilePropiedades            := "c:\ficheros\propiedades.csv"
+   ::cFileLineasPropiedades      := "c:\ficheros\lineaspropiedades.csv"
+   ::cFilePropiedadesArticulos   := "c:\ficheros\propiedadesarticulos.csv"
 
-   ::cUrlPsImagen             := "http://motosdasilva.com/t/img/p/"
-   ::cUrlDwImagen             := "c:\ficheros\images\"
+   ::cUrlPsImagen                := "http://motosdasilva.com/t/img/p/"
+   ::cUrlDwImagen                := "c:\ficheros\images\"
 
-   ::aDownloadImagenes        := {}
+   ::aDownloadImagenes           := {}
 
    if msgYesNo( "¿Desea importar productos?" )
       ::ImpArticulos()
@@ -90,6 +93,10 @@ METHOD New( nView ) CLASS ImportaArticulos
 
    if msgYesNo( "¿Desea importar lineas propiedades?" )
       ::ImpLineasPropiedades()
+   end if
+
+   if msgYesNo( "¿Desea importar lineas propiedades de artículos?" )
+      ::ImpPropiedadesArticulos()
    end if
 
 Return ( Self )
@@ -448,6 +455,64 @@ METHOD ImpLineasPropiedades() CLASS ImportaArticulos
    next
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD ImpPropiedadesArticulos() CLASS ImportaArticulos
+
+   local cMemoRead
+   local aLineas
+   local line
+   local aRegistro
+   local nOrdAnt     := ( D():PropiedadesLineas( ::nView ) )->( OrdSetFocus( "CCODTBL" ) )
+
+   if !File( ::cFilePropiedadesArticulos )
+      Return .f.
+   end if
+
+   alineas           := hb_aTokens( MemoRead( ::cFilePropiedadesArticulos ), CRLF )
+
+   for each line in alineas
+
+      aRegistro := hb_aTokens( line, "," )
+
+      if len( aRegistro ) != 0
+
+         msgWait( "Añadiendo " + formatText( AllTrim( aRegistro[1] ) ), "Atención", 0.05 )
+
+         if ( D():PropiedadesLineas( ::nView ) )->( dbSeek( formatText( AllTrim( aRegistro[2] ) ) ) )
+
+            ( D():ArticuloPrecioPropiedades( ::nView ) )->( dbAppend() )
+
+            ( D():ArticuloPrecioPropiedades( ::nView ) )->cCodArt    := formatText( AllTrim( aRegistro[1] ) )
+            ( D():ArticuloPrecioPropiedades( ::nView ) )->cCodDiv    := "EUR"
+            ( D():ArticuloPrecioPropiedades( ::nView ) )->cCodPr1    := ( D():PropiedadesLineas( ::nView ) )->cCodPro
+            ( D():ArticuloPrecioPropiedades( ::nView ) )->cValPr1    := formatText( AllTrim( aRegistro[2] ) )
+
+            ( D():ArticuloPrecioPropiedades( ::nView ) )->( dbUnlock() )
+
+            if ( D():Articulos( ::nView ) )->( dbSeek( formatText( AllTrim( aRegistro[1] ) ) ) )
+
+               if dbLock( D():Articulos( ::nView ) )
+
+                  ( D():Articulos( ::nView ) )->cCodPrp1             := ( D():PropiedadesLineas( ::nView ) )->cCodPro
+
+                  ( D():Articulos( ::nView ) )->( dbUnlock() )
+
+               end if
+
+            end if
+
+         end if
+
+      end if
+
+   next
+
+   ( D():PropiedadesLineas( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
+
+Return .t.
+
 
 //---------------------------------------------------------------------------//
 

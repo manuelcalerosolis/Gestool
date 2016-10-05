@@ -2032,6 +2032,9 @@ Function rxPro( cPath, oMeter )
          ( dbfPro )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
          ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "CCODWEB", "Str( Field->cCodWeb, 11 )", {|| Str( Field->cCodWeb, 11 ) } ) )
 
+         ( dbfPro )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+         ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "CCODTBL", "Field->cCodTbl", {|| Field->cCodTbl } ) )
+
          ( dbfPro )->( dbCloseArea() )
       else
          msgStop( "Imposible abrir en modo exclusivo la tabla de lineas de propiedades" )

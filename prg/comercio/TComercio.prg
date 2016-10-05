@@ -5860,8 +5860,6 @@ Return ( aStockProduct )
 
 METHOD updateWebProductStocks() CLASS TComercio
 
-   msgAlert( "updateWebProductStocks" )
-
    if !( ::TComercioConfig:isRealTimeConexion() )
       Return .f.
    end if 
@@ -5877,9 +5875,6 @@ METHOD updateWebProductStocks() CLASS TComercio
 
    ::oWaitMeter         := TWaitMeter():New( "Actualizando stocks", "Espere por favor..." )
    ::oWaitMeter:Run()
-
-   msgAlert( "hProductsToUpdate" )
-   msgAlert( hb_valtoexp( ::hProductsToUpdate ), "hProductsToUpdate" )
 
    heval( ::hProductsToUpdate, {|cWebName, aProductsWeb| ::updateProductStocks( cWebName, aProductsWeb ) } )
 

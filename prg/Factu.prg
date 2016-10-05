@@ -4990,42 +4990,44 @@ Return ( by( nRow ) )
 
 Function Test()
 
-   /*MsgInfo( "Antes" )
+   local oFtp
+   local lFtpValido        := .f.
+   local cUrl
+   local nRetry            := 0
+   local ftpSit            := Rtrim( cSitFtp() )    //cFirstPath( Rtrim( cSitFtp() ) )
+   local ftpDir            := cNoPathLeft( Rtrim( cSitFtp() ) )
+   local nbrUsr            := Rtrim( cUsrFtp() )
+   local accUsr            := Rtrim( cPswFtp() )
+   local nPuerto           := 21
+   local pasInt            := uFieldEmpresa( "lPasEnvio" )
+   local cFichero          := "C:\ficheros\image.csv"
 
-   //URLDownloadToFile(0,"http://motosdasilva.com/t/img/p/9827-12142.jpg","c:\ficheros\",0,0 )
+   //Conexion
 
-   DOWNLOADFILE( "http://motosdasilva.com/t/img/p/9827-12142.jpg", "c:\ficheros\9827-12142.jpg" )
+   MsgInfo( "Entro" )
 
-   MsgInfo( "Despues" )*/
+   oFtp     := TFtpCurl():New( "gestool", "tG42kp7?", "ayives.com", 21 )
+   oFtp:setPassive( .f. )
 
-   // TStock():validateDateTime( ctod( "22/09/2016" ), "000001", dFecIni, dFecFin, tHorIni, tHorFin ) CLASS TStock
-
-/*
-   local oDlg
-   local rgb   := rgb( hb_hextonum( "00" ), hb_hextonum( "74" ), hb_hextonum( "A8" ) )
-
-   msgalert( hb_hextonum( "#0074A8" ), "#0074A8" )
-   msgalert( hb_hextonum( "0074A8" ), "0074A8" )
-   msgalert( rgb, "rgb" )
-
-   DEFINE DIALOG oDlg TITLE "FiveWin" FROM 5, 5 TO 25, 49 COLORS 255, rgb
-
-   ACTIVATE DIALOG oDlg CENTERED
-
-   local dbfMatriz
-
-   USE ( cPatEmp() + "FacCliP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliP", @dbfMatriz ) )
-   SET ADSINDEX TO ( cPatEmp() + "FacCliP.CDX" ) ADDITIVE
-   SET TAG TO "nImporte"
-
-   if ( dbfMatriz )->( dbseek( 103, .t. ) )
-      msgStop( "Encontrado 103.14")
+   if oFtp:CreateConexion()
+      lFtpValido         := .t.
    else
-      msgStop( "NO Encontrado 103.14")
-   end if 
+      msgStop( "Imposible conectar al sitio ftp " + oFtp:cServer )
+   end if
 
-   CLOSE ( dbfMatriz )
-*/
+   MsgInfo( "Conectado" )
+
+   //Creamos el fichero
+
+   oFtp:createFile( cFichero )
+
+   //Fin conexion
+
+   if lFtpValido .and. !Empty( oFtp )
+      oFtp:EndConexion()
+   end if
+
+   MsgInfo( "Salgo" )
 
 Return ( nil )
 

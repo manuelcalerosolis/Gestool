@@ -1140,9 +1140,9 @@ METHOD FtpConexion() CLASS TSndRecInf
       */
 
       MsgInfo( ftpSit )
-      MsgInfo( cSitFtp() )
 
       ::oFtp     := TFtpCurl():New( nbrUsr, accUsr, ftpSit, nPuerto )
+      ::oFtp:setPassive( pasInt )
 
       if ::oFtp:CreateConexion()
 
@@ -1159,6 +1159,8 @@ METHOD FtpConexion() CLASS TSndRecInf
       ::lFtpValido            := .t.
 
    end if
+
+   MsgInfo( ::lFtpValido, "lFtpValido" )
 
 Return ( Self )
 
@@ -1496,6 +1498,7 @@ METHOD lFtpSendFiles( aSource, aTarget, cDirectory ) CLASS TSndRecInf
       MsgInfo( aSource[ n ], "lFtpSendFiles" )
 
       if isFalse( ::oFtp:createFile( aSource[ n ] ) )
+         MsgInfo( "Falso" )
          lRet  := .f.
       end if
 
