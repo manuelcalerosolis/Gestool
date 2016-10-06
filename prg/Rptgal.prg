@@ -2327,7 +2327,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Function TFastVentasProveedores()
+Function TFastComprasProveedores()
 
 Return nil
 

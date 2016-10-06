@@ -8,7 +8,7 @@
 #include "Report.ch"
 #include "Print.ch"
 
-#define __localDirectory            "c:\Bestseller\toProcess\"
+#define __localDirectory            "c:\Bestseller\"
 #define __localDirectoryPorcessed   "c:\Bestseller\Processed\"
 #define __timeWait                  0.05
 

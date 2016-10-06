@@ -3248,7 +3248,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Proveedores'
    oItem:cMessage       := 'Informes realacionados con proveedores'
-   oItem:bAction        := {|| TFastVentasProveedores():New():Play() }
+   oItem:bAction        := {|| TFastComprasProveedores():New():Play() }
    oItem:cId            := "01121"
    oItem:cBmp           := "businessman_chart_16"
    oItem:cBmpBig        := "businessman_chart_32"

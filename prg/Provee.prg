@@ -5475,7 +5475,7 @@ Return ( cText )
 
 static Function ReportingClient()
 
-   oReporting  := TFastVentasProveedores():New()
+   oReporting  := TFastComprasProveedores():New()
    oReporting:Play()
 
 Return( oReporting )
