@@ -116,6 +116,8 @@ function Main( ParamsMain, ParamsSecond )
 
    DialogExtend() 
 
+   mainTest()
+
    // Chequeamos la existencia del fichero de configuracion--------------------
 
    if !File( cIniAplication() ) .and. File( FullCurDir() + "Gestion.Ini" )
@@ -4985,6 +4987,12 @@ Function nextRow( nRow )
    nRow := nRow + 3
 
 Return ( by( nRow ) )
+
+//---------------------------------------------------------------------------//
+
+Function mainTest()
+
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 
