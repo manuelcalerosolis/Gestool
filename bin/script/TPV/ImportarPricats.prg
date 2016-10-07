@@ -288,6 +288,13 @@ Static Function IteratorCodebarArticulo( oXmlNode )
                end if 
             end if 
 
+            oNode                := TXMLIteratorScan():New( oPhysicalAttribute ):Find( "ns0:Length" )
+            if !Empty( oNode )
+               if !hHasKey( hCodigoBarras, "Length")
+                  hSet( hCodigoBarras, "Length", oNode:cData )
+               end if 
+            end if 
+
             oNode                 := TXMLIteratorScan():New( oPhysicalAttribute ):Find( "ns0:ColourName" )
             if !Empty( oNode )
                if !hHasKey( hCodigoBarras, "Color")
@@ -305,7 +312,7 @@ Static Function IteratorCodebarArticulo( oXmlNode )
          end if 
 
          if !empty( hCodigoBarras )
-            if ascan( aCodigoBarras, {| h | hget( h, "Talla") == hget( hCodigoBarras, "Talla" ) .and. hget( h, "Color") == hget( hCodigoBarras, "Color" ) }) == 0
+            if ascan( aCodigoBarras, {| h | existCodigoBarras( h, hCodigoBarras ) } ) == 0
                aadd( aCodigoBarras, hCodigoBarras )   
             end if 
          end if 
@@ -401,7 +408,7 @@ Function processCodigoBarras( cCodigo)
          ( dbfCodebar )->cCodBar := hGet( hCodigoBarras, "Codigo" )
          ( dbfCodebar )->cCodPr1 := "001"
          ( dbfCodebar )->cCodPr2 := "003"
-         ( dbfCodebar )->cValPr1 := upper( hGet( hCodigoBarras, "Talla" ) )
+         ( dbfCodebar )->cValPr1 := upper( hGet( hCodigoBarras, "Talla" ) ) + if( hhaskey( hCodigoBarras, "Length" ), + "-" + hget( hCodigoBarras, "Length" ), "" )
          ( dbfCodebar )->cValPr2 := upper( hGet( hCodigoBarras, "Color" ) )
  
          ( dbfCodebar )->( dbUnlock() )
@@ -430,7 +437,7 @@ Function processProperties( cCodigo )
          ( dbfPropiedades )->cCodDiv := "EUR"
          ( dbfPropiedades )->cCodPr1 := "001"
          ( dbfPropiedades )->cCodPr2 := "003"
-         ( dbfPropiedades )->cValPr1 := upper( hGet( hCodigoBarras, "Talla" ) )
+         ( dbfPropiedades )->cValPr1 := upper( hGet( hCodigoBarras, "Talla" ) ) + if( hhaskey( hCodigoBarras, "Length" ), + "-" + hget( hCodigoBarras, "Length" ), "" )
          ( dbfPropiedades )->cValPr2 := upper( hGet( hCodigoBarras, "Color" ) )
  
          ( dbfPropiedades )->( dbUnlock() )
@@ -549,6 +556,26 @@ Static Function getRgbColor( hexCode )
    local rgb   := rgb( red, green, blue )
 
 Return ( rgb )
+
+//---------------------------------------------------------------------------//
+
+Static Function existCodigoBarras( h, hCodigoBarras )
+
+   if hget( h, "Talla") != hget( hCodigoBarras, "Talla" )
+      Return .f.
+   end if 
+
+   if hget( h, "Color") != hget( hCodigoBarras, "Color" )
+      Return .f.
+   end if 
+
+   if hhaskey( h, "Length" )                                   .and. ;
+      hhaskey( hCodigoBarras, "Length" )                       .and. ;
+      hget( h, "Length") != hget( hCodigoBarras, "Length" )
+      Return .f.
+   end if 
+
+Return .t.
 
 //---------------------------------------------------------------------------//
 

@@ -407,77 +407,82 @@ METHOD AddFacturaProveedor( cCodigoProveedor ) CLASS TFastComprasProveedores
 
    local sTot
 
-      ::InitFacturasProveedores()
+   ::InitFacturasProveedores()
 
-      ::oFacPrvT:OrdSetFocus( "dFecFac" )
+   ::oFacPrvT:OrdSetFocus( "dFecFac" )
 
    // filtros para la cabecera------------------------------------------------
 
-      ::cExpresionHeader             := 'Field->dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      
-      ::setFilterPaymentInvoiceId()
-      
-      ::setFilterProviderId()
+   ::cExpresionHeader             := 'Field->dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+   
+   ::setFilterPaymentInvoiceId()
+   
+   ::setFilterProviderId()
 
    // Procesando facturas-----------------------------------------------------
 
-      ::oMtrInf:cText      := "Procesando facturas"
-      
-      ::oFacPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacPrvT:cFile ), ::oFacPrvT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+   ::oMtrInf:cText      := "Procesando facturas"
+   
+   ::oFacPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacPrvT:cFile ), ::oFacPrvT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
-      ::oMtrInf:SetTotal( ::oFacPrvT:OrdKeyCount() )
+   ::oMtrInf:SetTotal( ::oFacPrvT:OrdKeyCount() )
 
-      ::oFacPrvT:GoTop()
-      while !::lBreak .and. !::oFacPrvT:Eof()
+   ::oFacPrvT:GoTop()
+   while !::lBreak .and. !::oFacPrvT:Eof()
 
-         if lChkSer( ::oFacPrvT:cSerFac, ::aSer )
+      if lChkSer( ::oFacPrvT:cSerFac, ::aSer )
 
-            sTot           := sTotFacPrv( ::oFacPrvT:cSerFac + Str( ::oFacPrvT:nNumFac ) + ::oFacPrvT:cSufFac, ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::oFacPrvP:cAlias )
-           
-            ::oDbf:Blank()
+         sTot           := sTotFacPrv( ::oFacPrvT:cSerFac + Str( ::oFacPrvT:nNumFac ) + ::oFacPrvT:cSufFac, ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::oFacPrvP:cAlias )
 
-            ::oDbf:cTipDoc := "Factura proveedor"
-            ::oDbf:cClsDoc := FAC_PRV
+         // msgalert( sTot:nTotalNeto )
+         // msgalert( sTot:nTotalIva )
+         // msgalert( sTot:nTotalRecargoEquivalencia )
+         // msgalert( sTot:nTotalDocumento )
+        
+         ::oDbf:Blank()
 
-            ::oDbf:cSerDoc := ::oFacPrvT:cSerFac
-            ::oDbf:cNumDoc := Str( ::oFacPrvT:nNumFac )
-            ::oDbf:cSufDoc := ::oFacPrvT:cSufFac
+         ::oDbf:cTipDoc := "Factura proveedor"
+         ::oDbf:cClsDoc := FAC_PRV
 
-            ::oDbf:cIdeDoc := ::idDocumento()                                
+         ::oDbf:cSerDoc := ::oFacPrvT:cSerFac
+         ::oDbf:cNumDoc := Str( ::oFacPrvT:nNumFac )
+         ::oDbf:cSufDoc := ::oFacPrvT:cSufFac
 
-            ::oDbf:cCodPrv := ::oFacPrvT:cCodPrv
-            ::oDbf:cNomPrv := ::oFacPrvT:cNomPrv
-            ::oDbf:cCodGrp := oRetFld( ::oFacPrvT:cCodPrv, ::oDbfPrv, "cCodGrp" )
-            ::oDbf:cCodPgo := ::oFacPrvT:cCodPago
+         ::oDbf:cIdeDoc := ::idDocumento()                                
 
-            ::oDbf:nAnoDoc := Year( ::oFacPrvT:dFecFac )
-            ::oDbf:nMesDoc := Month( ::oFacPrvT:dFecFac )
-            ::oDbf:dFecDoc := ::oFacPrvT:dFecFac
-            ::oDbf:cHorDoc := SubStr( ::oFacPrvT:cTimChg, 1, 2 )
-            ::oDbf:cMinDoc := SubStr( ::oFacPrvT:cTimChg, 3, 2 )
+         ::oDbf:cCodPrv := ::oFacPrvT:cCodPrv
+         ::oDbf:cNomPrv := ::oFacPrvT:cNomPrv
+         ::oDbf:cCodGrp := oRetFld( ::oFacPrvT:cCodPrv, ::oDbfPrv, "cCodGrp" )
+         ::oDbf:cCodPgo := ::oFacPrvT:cCodPago
 
-            ::oDbf:nTotNet := sTot:nTotalNeto
-            ::oDbf:nTotIva := sTot:nTotalIva
-            ::oDbf:nTotReq := sTot:nTotalRecargoEquivalencia
-            ::oDbf:nTotDoc := sTot:nTotalDocumento
+         ::oDbf:nAnoDoc := Year( ::oFacPrvT:dFecFac )
+         ::oDbf:nMesDoc := Month( ::oFacPrvT:dFecFac )
+         ::oDbf:dFecDoc := ::oFacPrvT:dFecFac
+         ::oDbf:cHorDoc := SubStr( ::oFacPrvT:cTimChg, 1, 2 )
+         ::oDbf:cMinDoc := SubStr( ::oFacPrvT:cTimChg, 3, 2 )
 
-            if ::lValidRegister()
-               ::oDbf:Insert()
-            else
-               ::oDbf:Cancel()
-            end if                
+         ::oDbf:nTotNet := sTot:nTotalNeto
+         ::oDbf:nTotIva := sTot:nTotalIva
+         ::oDbf:nTotReq := sTot:nTotalRecargoEquivalencia
+         ::oDbf:nTotDoc := sTot:nTotalDocumento
 
-            ::AddFacturasProveedores()
+         if ::lValidRegister()
+            ::oDbf:Insert()
+         else
+            ::oDbf:Cancel()
+         end if                
 
-         end if
+         ::AddFacturasProveedores()
 
-         ::oFacPrvT:Skip()
+      end if
 
-         ::oMtrInf:AutoInc()
+      ::oFacPrvT:Skip()
 
-      end while
+      ::oMtrInf:AutoInc()
 
-      ::oFacPrvT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacPrvT:cFile ) )
+   end while
+
+   ::oFacPrvT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacPrvT:cFile ) )
 
 RETURN ( Self )
 
@@ -684,6 +689,8 @@ METHOD DataReport( oFr ) CLASS TFastComprasProveedores
 
          ::FastReportFacturaProveedor()
 
+         ::FastReportRectificativaProveedor()
+
       case ::cReportType == "Rectificativas de proveedores"
 
          ::FastReportRectificativaProveedor()
@@ -728,6 +735,10 @@ METHOD AddVariable() CLASS TFastComprasProveedores
          ::AddVariableFacturaProveedor()
 
          ::AddVariableLineasFacturaProveedor()
+
+         ::AddVariableRectificativaProveedor()
+
+         ::AddVariableLineasRectificativaProveedor()
 
       case ::cReportType == "Rectificativas de proveedores"
 
@@ -775,6 +786,8 @@ METHOD lGenerate() CLASS TFastComprasProveedores
       case ::cReportType == "Facturas de proveedores"
 
          ::AddFacturaProveedor()
+
+         ::AddFacturaRectificativa()
 
       case ::cReportType == "Rectificativas de proveedores"
       

@@ -1861,7 +1861,7 @@ METHOD accumulatesStoreMovement() CLASS TDetMovimientos
 
    local lFound         := .f.
 
-   if !empty(::oDbfVir)
+   if empty( ::oDbfVir )
       RETURN ( lFound )
    end if 
 

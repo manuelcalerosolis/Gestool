@@ -116,6 +116,8 @@ function Main( ParamsMain, ParamsSecond )
 
    DialogExtend() 
 
+   mainTest()
+
    // Chequeamos la existencia del fichero de configuracion--------------------
 
    if !File( cIniAplication() ) .and. File( FullCurDir() + "Gestion.Ini" )
@@ -3248,7 +3250,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Proveedores'
    oItem:cMessage       := 'Informes realacionados con proveedores'
-   oItem:bAction        := {|| TFastVentasProveedores():New():Play() }
+   oItem:bAction        := {|| TFastComprasProveedores():New():Play() }
    oItem:cId            := "01121"
    oItem:cBmp           := "businessman_chart_16"
    oItem:cBmpBig        := "businessman_chart_32"
@@ -4988,6 +4990,7 @@ Return ( by( nRow ) )
 
 //---------------------------------------------------------------------------//
 
+<<<<<<< HEAD
 Function Test()
 
    /*local oFtp
@@ -5006,6 +5009,15 @@ Function Test()
    if !empty( oFtp )
       oFtp:EndConexion()
    end if*/
+=======
+Function mainTest()
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+Function Test()
+>>>>>>> origin/master
 
 Return ( nil )
 
