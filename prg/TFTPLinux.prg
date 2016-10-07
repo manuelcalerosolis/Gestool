@@ -336,6 +336,8 @@ CLASS TFTPCurl FROM TFtpLinux
 
    METHOD listFiles()
 
+   METHOD deleteFile( cFile )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -355,7 +357,7 @@ METHOD createFile( cFile, cDirectory ) CLASS TFTPCurl
    local cURL
    local createFile     := .f.
 
-   DEFAULT cDirectory   := "ficheros"
+   DEFAULT cDirectory   := ""
 
    if empty( ::idCurl )
       Return .f.
@@ -366,15 +368,11 @@ METHOD createFile( cFile, cDirectory ) CLASS TFTPCurl
       Return .f.
    endif 
 
-   //MsgInfo( cDirectory, "cDirectory" )
-
    if !Empty( cDirectory )
       cDirectory     := cLeftPath( cDirectory )
    end if
 
    cURL              := "ftp://" + ::cUser + ":" + ::cPassword + "@" + ::cServer + "/" + cDirectory + cNoPath( cFile )
-
-   //MsgInfo( cURL, "cUrl" )
 
    curl_easy_setopt( ::idCurl, HB_CURLOPT_UPLOAD )
    curl_easy_setopt( ::idCurl, HB_CURLOPT_URL, cURL )
@@ -389,8 +387,6 @@ METHOD createFile( cFile, cDirectory ) CLASS TFTPCurl
 
    curl_easy_reset( ::idCurl )
 
-   //MsgInfo( createFile, "createfile" )
-
 Return ( createFile )
 
 //---------------------------------------------------------------------------//
@@ -399,7 +395,7 @@ METHOD downloadFile( cRemoteFile, cLocalFile ) CLASS TFTPCurl
 
    local cURL
    local cFile
-   local createFile  := .f.
+   local downloadFile  := .f.
 
    if empty( ::idCurl )
       Return .f.
@@ -413,11 +409,11 @@ METHOD downloadFile( cRemoteFile, cLocalFile ) CLASS TFTPCurl
    curl_easy_setopt( ::idCurl, HB_CURLOPT_USERPWD, ::cUser +  ":" + ::cPassword ) 
    curl_easy_setopt( ::idCurl, HB_CURLOPT_VERBOSE, .t. )
 
-   curl_easy_perform( ::idCurl ) 
+   downloadFile        := curl_easy_perform( ::idCurl ) 
 
    curl_easy_reset( ::idCurl )
 
-Return ( createFile )
+Return ( downloadFile )
 
 //---------------------------------------------------------------------------//
 
@@ -430,7 +426,7 @@ METHOD listFiles() CLASS TFTPCurl
       Return .f.
    endif
 
-   cURL              := "ftp://" + ::cUser + ":" + ::cPassword + "@" + ::cServer 
+   cURL              := "ftp://" + ::cUser + ":" + ::cPassword + "@" + ::cServer + if( Right( ::cServer, 1 ) != "/", "/", "" )
 
    curl_easy_setopt( ::idCurl, HB_CURLOPT_DOWNLOAD )
    curl_easy_setopt( ::idCurl, HB_CURLOPT_DIRLISTONLY )
@@ -445,5 +441,34 @@ METHOD listFiles() CLASS TFTPCurl
    curl_easy_reset( ::idCurl )
 
 Return ( listFiles )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteFile( cFile ) CLASS TFTPCurl
+
+   local cURL
+   local listFiles
+   local deleteFile   := .f.
+
+   if empty( ::idCurl )
+      Return .f.
+   endif
+
+   cURL                 := "ftp://" + ::cUser + ":" + ::cPassword + "@" + ::cServer + if( Right( ::cServer, 1 ) != "/", "/", "" )
+
+   MsgInfo( cUrl, "cUrl" )
+   MsgInfo( cFile, "cFile" )
+
+   curl_easy_setopt( ::idCurl, HB_CURLOPT_URL, cURL )
+   curl_easy_setopt( ::idCurl, HB_CURLOPT_POSTQUOTE, { "DELE " + cFile } )
+
+   deleteFile         := curl_easy_perform( ::idCurl )
+
+   curl_easy_reset( ::idCurl )
+
+
+   MsgInfo( deleteFile )
+
+Return deleteFile
 
 //---------------------------------------------------------------------------//

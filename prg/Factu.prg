@@ -4990,47 +4990,7 @@ Return ( by( nRow ) )
 
 Function Test()
 
-<<<<<<< HEAD
    /*local oFtp
-   local lFtpValido        := .f.
-   local cUrl
-   local nRetry            := 0
-   local ftpSit            := Rtrim( cSitFtp() )    //cFirstPath( Rtrim( cSitFtp() ) )
-   local ftpDir            := cNoPathLeft( Rtrim( cSitFtp() ) )
-   local nbrUsr            := Rtrim( cUsrFtp() )
-   local accUsr            := Rtrim( cPswFtp() )
-   local nPuerto           := 21
-   local pasInt            := uFieldEmpresa( "lPasEnvio" )
-   local cFichero          := "C:\ficheros\image.csv"
-
-   //Conexion
-
-   MsgInfo( "Entro" )
-
-   oFtp     := TFtpCurl():New( "gestool", "tG42kp7?", "ayives.com", 21 )
-   oFtp:setPassive( .f. )
-=======
-   local oFtp
-
-   // Conexion ayives
-
-   MsgInfo( "Prueba ayives.com" )
-
-   oFtp     := TFtpCurl():New( "gestool", "tG42kp7?", "193.42.143.133", 21 )
-   oFtp:setPassive( .t. )
->>>>>>> origin/master
-
-   if oFtp:CreateConexion()
-      oFtp:createFile( "C:\Composer.json", "ficheros/" )
-   else
-      msgStop( "Imposible conectar al sitio ftp " + oFtp:cServer )
-   end if
-
-   if !empty( oFtp )
-      oFtp:EndConexion()
-   end if
-
-   // Conexion ayives
 
    MsgInfo( "Prueba hostalia.com" )
 
@@ -5038,19 +4998,14 @@ Function Test()
    oFtp:setPassive( .f. )
 
    if oFtp:CreateConexion()
-      oFtp:createFile( "C:\Composer.json", "webspace/httpdocs/arguelles/" )
+      oFtp:createFile( "C:\ficheros\image.csv", "webspace/httpdocs/arguelles/" )
    else
       msgStop( "Imposible conectar al sitio ftp " + oFtp:cServer )
    end if
 
    if !empty( oFtp )
       oFtp:EndConexion()
-   end if
-
-<<<<<<< HEAD
-   MsgInfo( "Salgo" )*/
-=======
->>>>>>> origin/master
+   end if*/
 
 Return ( nil )
 

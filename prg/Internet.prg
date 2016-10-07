@@ -1096,51 +1096,6 @@ METHOD FtpConexion() CLASS TSndRecInf
 
    if nTipConInt() == 2
 
-      /*while !::lFtpValido .and. nRetry < 3
-
-         ::SetText( '> Conectando con el sitio ' + Rtrim( ftpSit ) + '...', 1 )
-
-         cUrl                 := "ftp://" + nbrUsr + ":" + accUsr + "@" + ftpSit
-
-         ::oInt               := TUrl():New( cUrl )
-         ::oFTP               := TIPClientFTP():New( ::oInt, .t. )
-
-         //::oInt         := TInternet():New()
-         //::oFtp         := TFtp():New( ftpSit, ::oInt, nbrUsr, accUsr, pasInt )
-
-         ::oFTP:nConnTimeout  := 20000
-         ::oFTP:bUsePasv      := pasInt
-
-         if !::oFTP:Open( cUrl )
-
-            ::SetText( "Imposible conectar con el sitio ftp " + Alltrim( ftpSit ), 1 )
-
-            ::lFtpValido      := .f.
-
-            ++nRetry
-            ::SetText( "Reintento " + Alltrim( Str( nRetry ) ) + " de 3, en 10 segundos", 1 )
-
-            DlgWait( 10 )
-
-         else
-
-            if !Empty( ftpDir )
-               ::oFtp:Cwd( ftpDir )
-               ::oFtp:Pwd()
-            end if
-
-            ::lFtpValido   := .t.
-
-         end if
-
-      end while*/
-
-      /*
-      Nueva conexion-----------------------------------------------------------
-      */
-
-      MsgInfo( ftpSit )
-
       ::oFtp     := TFtpCurl():New( nbrUsr, accUsr, ftpSit, nPuerto )
       ::oFtp:setPassive( pasInt )
 
@@ -1159,8 +1114,6 @@ METHOD FtpConexion() CLASS TSndRecInf
       ::lFtpValido            := .t.
 
    end if
-
-   MsgInfo( ::lFtpValido, "lFtpValido" )
 
 Return ( Self )
 
@@ -1383,27 +1336,24 @@ METHOD lFtpGetFiles( aSource, cTarget )
    local aFiles            := {}
    local lResult           := .t.
    local lValido           := .t.
+   local cFile
 
    for n := 1 to Len( aSource )
 
-      //aFiles             := TrimFileName( ::oFTP:listFiles( aSource[ n ] ) )
+      aFiles                  := aFileSource( ::oFTP:listFiles(), aSource[ n ] )
+   
+      for each cFile in aFiles
 
-      aFiles               := ::oFTP:listFiles( aSource[ n ] )
-
-      ::oFtp:oUrl:cPath    := "."
-
-      for i := 1 to Len( aFiles )
-
-         if ::lFileProcesed( aFiles[ i, 1 ] )
-            ::SetText( "INFORMACIÓN fichero " + cValToChar( aFiles[ i, 1 ] ) + " ya procesado." )
+         if ::lFileProcesed( cFile )
+            ::SetText( "INFORMACIÓN fichero " + cValToChar( cFile ) + " ya procesado." )
             lValido     := .f.
             if !::lGetProcesados
                loop
             end if
          end if
 
-         if !::lFileRecive( aFiles[ i, 1 ] ) .and. !::lPriorFileRecive( aFiles[ i, 1 ] )
-            ::SetText( "INFORMACIÓN fichero " + cValToChar( aFiles[ i, 1 ] ) + " fuera de secuencia." )
+         if !::lFileRecive( cFile ) .and. !::lPriorFileRecive( cFile )
+            ::SetText( "INFORMACIÓN fichero " + cValToChar( cFile ) + " fuera de secuencia." )
             lValido     := .f.
             if !::lGetFueraSecuencia
                loop
@@ -1411,10 +1361,10 @@ METHOD lFtpGetFiles( aSource, cTarget )
          end if
 
          if lValido 
-            ::SetText( "INFORMACIÓN fichero " + cValToChar( aFiles[ i, 1 ] ) + " para procesar." )
+            ::SetText( "INFORMACIÓN fichero " + cValToChar( cFile ) + " para procesar." )
          end if
 
-         if isFalse( ::oFtp:DownLoadFile( cTarget + aFiles[ i, 1 ], aFiles[ i, 1 ] ) )
+         if ::oFtp:downloadFile( cFile, cTarget + cFile ) != 0
             lResult        := .f.
          end if
 
@@ -1489,13 +1439,6 @@ METHOD lFtpSendFiles( aSource, aTarget, cDirectory ) CLASS TSndRecInf
    for n := 1 to Len( aSource )
 
       LogWrite( aSource[ n ] )
-
-      /*if isFalse( ::oFtp:UploadFile( aSource[ n ] ) )
-         lRet  := .f.
-      end if*/
-
-
-      MsgInfo( aSource[ n ], "lFtpSendFiles" )
 
       if isFalse( ::oFtp:createFile( aSource[ n ] ) )
          MsgInfo( "Falso" )
@@ -2192,7 +2135,7 @@ Function ftpEraseFile( cFile, oSender, lDisco )
       fErase( oSender:getPathComunication() + cFile )
    else
       if oFtp != nil
-         oFtp:Dele( cFile )
+         oFtp:DeleteFile( cFile )
       end if
    end if
 
@@ -2237,3 +2180,41 @@ Static Function GetTop( cText, nFor, nLines )
 Return nFor
 
 //----------------------------------------------------------------------------//
+
+Static Function aFileSource( aFiles, cSource )
+
+   local cFile
+   local aFileSource    := {}
+
+   for each cFile in aFiles
+
+      if lValidSourdeFile( cFile, cSource )
+
+         aAdd( aFileSource, cFile ) 
+
+      end if
+
+   next
+
+Return aFileSource
+
+//---------------------------------------------------------------------------//
+
+Static function lValidSourdeFile( cFile, cSource )
+
+   local lReturn  := .f.
+
+   if Empty( cFile )
+      Return .f.
+   end if
+
+   if SubStr( cFile, 1, 3 ) == SubStr( cSource, 1, 3 ) .and.;
+      Right( cFile, 3 ) == Right( cSource, 3 )
+
+      lReturn     := .t.
+
+   end if
+
+Return lReturn
+
+//---------------------------------------------------------------------------//
