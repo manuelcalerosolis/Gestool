@@ -4990,26 +4990,6 @@ Return ( by( nRow ) )
 
 //---------------------------------------------------------------------------//
 
-<<<<<<< HEAD
-Function Test()
-
-   /*local oFtp
-
-   MsgInfo( "Prueba hostalia.com" )
-
-   oFtp     := TFtpCurl():New( "f181337.iron", "123Zx456Ab!", "176.28.103.205", 21 )
-   oFtp:setPassive( .f. )
-
-   if oFtp:CreateConexion()
-      oFtp:createFile( "C:\ficheros\image.csv", "webspace/httpdocs/arguelles/" )
-   else
-      msgStop( "Imposible conectar al sitio ftp " + oFtp:cServer )
-   end if
-
-   if !empty( oFtp )
-      oFtp:EndConexion()
-   end if*/
-=======
 Function mainTest()
 
 Return ( nil )
@@ -5017,7 +4997,6 @@ Return ( nil )
 //---------------------------------------------------------------------------//
 
 Function Test()
->>>>>>> origin/master
 
 Return ( nil )
 

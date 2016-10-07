@@ -1771,13 +1771,8 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
    
    ::oMtrInf:cText            := "Procesando pedidos"
 
-<<<<<<< HEAD
-   //( D():PedidosClientes( ::nView )        )->( ordsetfocus( "nNumPed" ) )
-   //( D():PedidosClientesLineas( ::nView )  )->( ordsetfocus( "nNumPed" ) )
-=======
    ( D():PedidosClientes( ::nView )        )->( ordsetfocus( "nNumPed" ) )
    ( D():PedidosClientesLineas( ::nView )  )->( ordsetfocus( "nNumPed" ) )
->>>>>>> origin/master
 
    ( D():PedidosClientes( ::nView )        )->( setCustomFilter( ::cExpresionHeader ) )
    ( D():PedidosClientesLineas( ::nView )  )->( setCustomFilter( ::cExpresionLine ) )

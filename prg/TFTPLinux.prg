@@ -456,18 +456,12 @@ METHOD deleteFile( cFile ) CLASS TFTPCurl
 
    cURL                 := "ftp://" + ::cUser + ":" + ::cPassword + "@" + ::cServer + if( Right( ::cServer, 1 ) != "/", "/", "" )
 
-   MsgInfo( cUrl, "cUrl" )
-   MsgInfo( cFile, "cFile" )
-
    curl_easy_setopt( ::idCurl, HB_CURLOPT_URL, cURL )
    curl_easy_setopt( ::idCurl, HB_CURLOPT_POSTQUOTE, { "DELE " + cFile } )
 
    deleteFile         := curl_easy_perform( ::idCurl )
 
    curl_easy_reset( ::idCurl )
-
-
-   MsgInfo( deleteFile )
 
 Return deleteFile
 
