@@ -2564,6 +2564,9 @@ Return nil
 Function TConversionPedidosClientes()
 Return nil
 
+Function URLDownloadToFileA()
+Return nil
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP

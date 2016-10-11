@@ -4959,9 +4959,13 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
       lErrorFound       := .t.
    end if
 
-   if !lConFac .and. !lFromFactura
-      oTree:Select( oTree:Add( "Factura de recibo : " + rtrim( cRecibo ) + " no contabilizada.", 0, bGenEdtRecCli( nRecibo, lFromFactura ) ) )
-      lErrorFound       := .t.
+   if !uFieldEmpresa( "LCONTREC" )
+
+      if !lConFac .and. !lFromFactura
+         oTree:Select( oTree:Add( "Factura de recibo : " + rtrim( cRecibo ) + " no contabilizada.", 0, bGenEdtRecCli( nRecibo, lFromFactura ) ) )
+         lErrorFound       := .t.
+      end if
+
    end if
 
    if !ChkRuta( cRutCnt() )

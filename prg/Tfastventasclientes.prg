@@ -397,6 +397,7 @@ METHOD Create( uParam ) CLASS TFastVentasClientes
    ::AddField( "cEstado",  "C", 20, 0, {|| "" },            "Estado del documento"           )
 
    ::AddField( "nRieCli",  "N", 16, 0, {|| "" },            "Riesgo del cliente"             )
+   ::AddField( "dFecVto",  "D",  8, 0, {|| "" },            "Vencimiento del recibo"         )
 
    ::AddTmpIndex( "cCodCli", "cCodCli" )
 
@@ -1779,6 +1780,8 @@ METHOD AddRecibosCliente( cCodigoCliente ) CLASS TFastVentasClientes
          ::oDbf:nNumRem    := ::oFacCliP:nNumRem
          ::oDbf:cSufRem    := ::oFacCliP:cSufRem
 
+         ::oDbf:dFecVto    := ::oFacCliP:dFecVto
+
          ::oDbf:cEstado    := cEstadoRecibo( ::oFacCliP:cAlias )
 
          ::oDbf:nRieCli    := oRetFld( ::oFacCliP:cCodCli, ::oDbfCli, "Riesgo", "COD" )
@@ -1875,6 +1878,8 @@ METHOD AddRecibosClienteCobro( cCodigoCliente ) CLASS TFastVentasClientes
 
          ::oDbf:nTotNet    := nTotRecCli( ::oFacCliP )
          ::oDbf:nTotCob    := nTotCobCli( ::oFacCliP )
+
+         ::oDbf:dFecVto    := ::oFacCliP:dFecVto
 
          ::oDbf:cEstado    := cEstadoRecibo( ::oFacCliP:cAlias )
 
