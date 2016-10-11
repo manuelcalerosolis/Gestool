@@ -2717,17 +2717,17 @@ Static Function DlgExportDocument( oWndBrw )
 
       REDEFINE BUTTON ;
          ID       IDOK ;
-			OF 		oDlg ;
+         OF 	oDlg ;
          ACTION   ( oDlg:Disable(), ExportDocument( cGetFile ), oDlg:Enable() )
 
-		REDEFINE BUTTON ;
+	REDEFINE BUTTON ;
          ID       IDCANCEL ;
-			OF 		oDlg ;
-			ACTION 	( oDlg:end() )
+         OF 	oDlg ;
+	   ACTION 	( oDlg:end() )
 
-   oDlg:AddFastKey( VK_F5, {|| oDlg:Disable(), if( ExportDocument( cGetFile ), oDlg:Enable():End(), oDlg:Enable() ) } )
+   oDlg:AddFastKey( VK_F5, {|| oDlg:Disable(), ExportDocument( cGetFile ), oDlg:Enable() } )
 
-	ACTIVATE DIALOG oDlg CENTER
+   ACTIVATE DIALOG oDlg CENTER
 
 Return ( nil )
 

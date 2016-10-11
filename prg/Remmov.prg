@@ -1573,31 +1573,32 @@ METHOD GenRemMov( lPrinter, cCaption, cCodDoc, cPrinter, nCopies ) CLASS TRemMov
       return nil
    end if
 
+   if !lVisualDocumento( cCodDoc, D():Documentos( ::nView ) )
+      msgstop( "El documento " + cCodDoc + " no es un formato valido.", "Formato obsoleto" )
+      return nil
+   end if
+
    nNumRem              := Str( ::oDbf:nNumRem ) + ::oDbf:cSufRem
 
    private oThis        := Self
 
-   ::oDbf:GetStatus( .t. )
+   ::oDbf:getStatus( .t. )
+   ::oDbf:seek( nNumRem )
 
-   ::oDbf:Seek( nNumRem )
+   ::oDetMovimientos:oDbf:getStatus()
+   ::oDetMovimientos:oDbf:ordsetfocus( "nNumRef" )
    ::oDetMovimientos:oDbf:Seek( nNumRem )
+
    ::oDetSeriesMovimientos:oDbf:Seek( nNumRem )
 
    ::oDbfAge:Seek( ::oDbf:cCodAge )
 
-   if lVisualDocumento( cCodDoc, D():Documentos( ::nView ) )
+   public nTotMov       := ::nTotRemMov( .t. )
 
-      public nTotMov       := ::nTotRemMov( .t. )
+   ::PrintReportRemMov( if( lPrinter, IS_PRINTER, IS_SCREEN ), nCopies, cPrinter, D():Documentos( ::nView ) )
 
-      ::PrintReportRemMov( if( lPrinter, IS_PRINTER, IS_SCREEN ), nCopies, cPrinter, D():Documentos( ::nView ) )
-
-   else
-
-      msgstop( "El documento " + cCodDoc + " no es un formato valido.", "Formato obsoleto" )
-
-   end if
-
-   ::oDbf:SetStatus()
+   ::oDbf:setStatus()
+   ::oDetMovimientos:oDbf:setStatus()
 
 Return Nil
 

@@ -198,15 +198,16 @@ METHOD DefineFiles( cPath, cDriver, lUniqueName, cFileName ) CLASS TDetMovimient
       FIELD NAME "nLabel"     TYPE "N" LEN  16 DEC 6 COMMENT "Número de etiquetas a imprimir"      OF oDbf
       FIELD NAME "lWait"      TYPE "L" LEN   1 DEC 0 COMMENT "Lógico para documento no finalizado" OF oDbf
 
-      INDEX TO ( cFileName ) TAG "nNumRem"      ON "Str( nNumRem ) + cSufRem"               NODELETED                     OF oDbf
+      INDEX TO ( cFileName ) TAG "nNumRem"      ON "str( nNumRem ) + cSufRem"               NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "dFecMov"      ON "Dtoc( dFecMov ) + cTimMov"              NODELETED                     OF oDbf
+      INDEX TO ( cFileName ) TAG "nNumRef"      ON "str( nNumRem ) + cSufRem + cRefMov + cValPr1 + cValPr2 + cLote "      NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "cRefMov"      ON "cRefMov + cValPr1 + cValPr2 + cLote"    NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "cNomMov"      ON "cNomMov"                                NODELETED                     OF oDbf 
       INDEX TO ( cFileName ) TAG "cAloMov"      ON "cAloMov"                                NODELETED                     OF oDbf 
       INDEX TO ( cFileName ) TAG "cAliMov"      ON "cAliMov"                                NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "cRefAlm"      ON "cRefMov + cValPr1 + cValPr2 + cAliMov"  NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "cLote"        ON "cLote"                                  NODELETED                     OF oDbf
-      INDEX TO ( cFileName ) TAG "nNumLin"      ON "Str( nNumLin )"                         NODELETED                     OF oDbf
+      INDEX TO ( cFileName ) TAG "nNumLin"      ON "str( nNumLin )"                         NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "lSndDoc"      ON "lSndDoc"                                NODELETED                              FOR "lSndDoc"      OF oDbf
       INDEX TO ( cFileName ) TAG "nTipMov"      ON "cRefMov + Dtos( dFecMov )"              NODELETED                              FOR "nTipMov == 4" OF oDbf
       INDEX TO ( cFileName ) TAG "cStock"       ON "cRefMov + cAliMov + cValPr1 + cValPr2 + cLote"  NODELETED                      FOR "nTipMov == 4" OF oDbf

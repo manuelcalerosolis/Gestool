@@ -78,6 +78,10 @@ METHOD lResource( cFld ) CLASS TFastComprasProveedores
       return .f.
    end if
 
+   if !::lGrupoSerie( .t. )
+      return .f.
+   end if
+
    if !::lGrupoIva( .t. )
       return .t.
    end if
@@ -246,7 +250,8 @@ METHOD AddPedidoProveedor( cCodigoProveedor ) CLASS TFastComprasProveedores
 
    // filtros para la cabecera------------------------------------------------
 
-      ::cExpresionHeader                := 'Field->dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      ::cExpresionHeader      := 'Field->dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      ::cExpresionHeader      += ' .and. Field->cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerPed <= "' + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
       
       ::setFilterPaymentId()
       
@@ -329,10 +334,11 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastComprasProveedores
    // filtros para la cabecera------------------------------------------------
 
       if lFacturados
-         ::cExpresionHeader          := '!lFacturado .and. Field->dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+         ::cExpresionHeader   := '!lFacturado .and. Field->dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
       else
-         ::cExpresionHeader          := 'Field->dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+         ::cExpresionHeader   := 'Field->dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
       end if
+      ::cExpresionHeader      += ' .and. Field->cSerAlb >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerAlb <= "' + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
 
       ::setFilterPaymentId()
       
@@ -340,7 +346,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastComprasProveedores
 
    // Procesando albaranes----------------------------------------------------
 
-      ::oMtrInf:cText      := "Procesando albaranes" 
+      ::oMtrInf:cText         := "Procesando albaranes" 
       
       ::oAlbPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbPrvT:cFile ), ::oAlbPrvT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
@@ -413,7 +419,8 @@ METHOD AddFacturaProveedor( cCodigoProveedor ) CLASS TFastComprasProveedores
 
    // filtros para la cabecera------------------------------------------------
 
-   ::cExpresionHeader             := 'Field->dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+   ::cExpresionHeader   := 'Field->dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+   ::cExpresionHeader   += ' .and. Field->cSerFac >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerFac <= "' + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
    
    ::setFilterPaymentInvoiceId()
    
@@ -492,13 +499,14 @@ METHOD AddFacturaRectificativa() CLASS TFastComprasProveedores
 
    local sTot
 
-      ::InitFacturasRectificativasProveedores()
+   ::InitFacturasRectificativasProveedores()
 
-      ::oRctPrvT:OrdSetFocus( "dFecFac" )
+   ::oRctPrvT:OrdSetFocus( "dFecFac" )
 
    // filtros para la cabecera------------------------------------------------
 
-      ::cExpresionHeader             := 'Field->dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+   ::cExpresionHeader      := 'Field->dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+   ::cExpresionHeader      += ' .and. Field->cSerFac >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerFac <= "' + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
       
       ::setFilterPaymentInvoiceId()
       
