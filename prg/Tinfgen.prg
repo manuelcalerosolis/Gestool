@@ -571,6 +571,12 @@ CLASS TInfGen
 
    METHOD oDbfSetFilter( cExp )           INLINE ( ( ::oDbf:nArea )->( dbsetfilter( c2Block( cExp ), cExp ) ) )
 
+   METHOD oTiketSetFilter( cExp )         INLINE ( ( ::oTikCliT:nArea )->( dbsetfilter( c2Block( cExp ), cExp ) ) )
+   METHOD oTiketQuitFilter()              INLINE ( ( ::oTikCliT:nArea )->( dbclearfilter() ) )
+
+   METHOD oTiketLineaSetFilter( cExp )    INLINE ( ( ::oTikCliL:nArea )->( dbsetfilter( c2Block( cExp ), cExp ) ) )
+   METHOD oTiketLineaQuitFilter()         INLINE ( ( ::oTikCliL:nArea )->( dbclearfilter() ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

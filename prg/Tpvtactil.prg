@@ -5567,6 +5567,12 @@ METHOD EndInvitacion( oDlg ) CLASS TpvTactil
    Si no selecionamos la invitacion aparece este mensaje, si lo hacemos vamos al else
    */
 
+   if Empty( ::cCodigoInvitacion )
+      msgStop( "Debe seleccionar un código de invitación." )
+      return nil
+   end if 
+
+
    if Empty( ::cTextoInvitacion )
       msgStop( "Debe seleccionar un motivo o texto valido." )
       return nil
