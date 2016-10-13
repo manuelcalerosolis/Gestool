@@ -753,6 +753,9 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddField( "cNomTerCtr",  "C",100, 0, {|| "" },   "Nombre tercero centro de coste"          )
 
    ::AddField( "cDesUbi",     "C",200, 0, {|| "" },   "Unicación del artículo"                  )
+   ::AddField( "cEstado",     "C", 20, 0, {|| "" },   "Estado del documento"                    )
+
+   ::AddField( "nCargo",      "N", 16, 6, {|| "" },   "Cargo numerico"                          )
 
    ::AddFieldCamposExtra()
 
@@ -1501,6 +1504,12 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
                ::oDbf:cCodTerCtr := ::oSatCliL:cTerCtr
                ::oDbf:cNomTerCtr := NombreTerceroCentroCoste( ::oSatCliL:cTipCtr, ::oSatCliL:cTerCtr, ::nView )
 
+               if ::oSatCliT:lEstado
+                  ::oDbf:cEstado := "Pendiente"
+               else
+                  ::oDbf:cEstado := "Finalizado"
+               end if
+
                if !empty( ::oSatCliL:cCodPrv ) 
                   ::oDbf:cPrvHab := ::oSatCliL:cCodPrv
                else
@@ -1703,6 +1712,12 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cPrvHab := getProveedorPorDefectoArticulo( ::oDbf:cCodArt, D():ProveedorArticulo( ::nView ) )
                end if
 
+               if ::oPreCliT:lEstado
+                  ::oDbf:cEstado    := "Pendiente"
+               else
+                  ::oDbf:cEstado    := "Finalizado"
+               end if
+
                ::InsertIfValid()
                
                ::loadValuesExtraFields()
@@ -1729,6 +1744,8 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD AddPedidoClientes() CLASS TFastVentasArticulos
+
+   local nUndRecibidas        := 0
 
    // filtros para la cabecera------------------------------------------------
 
@@ -1891,6 +1908,14 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
             ::oDbf:cPrvHab    := ( D():PedidosClientesLineas( ::nView ) )->cCodPrv
          else
             ::oDbf:cPrvHab    := getProveedorPorDefectoArticulo( ::oDbf:cCodArt, D():ProveedorArticulo( ::nView ) )
+         end if
+
+         ::oDbf:nCargo        := nUnidadesRecibidasAlbaranesClientes( D():PedidosClientesLineasId( ::nView ), ( D():PedidosClientesLineas( ::nView ) )->cRef, ( D():PedidosClientesLineas( ::nView ) )->cValPr1, ( D():PedidosClientesLineas( ::nView ) )->cValPr2, D():AlbaranesClientesLineas( ::nView ) )
+         
+         if ::oDbf:nUniArt == ::oDbf:nCargo
+            ::oDbf:cEstado    := "Finalizado"
+         else
+            ::oDbf:cEstado    := "Pendiente"
          end if
 
          ::insertIfValid()
@@ -2088,6 +2113,17 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
          ::oDbf:cHorDoc    := SubStr( ::oAlbCliT:cTimCre, 1, 2 )
          ::oDbf:cMinDoc    := SubStr( ::oAlbCliT:cTimCre, 4, 2 )
 
+         do case
+            case ::oAlbCliT:nFacturado <= 1
+               ::oDbf:cEstado    := "Pendiente"
+
+            case ::oAlbCliT:nFacturado == 2
+               ::oDbf:cEstado    := "Parcialmente"
+
+            case ::oAlbCliT:nFacturado == 3
+               ::oDbf:cEstado    := "Finalizado"
+         end case
+
       end if
 
       ::InsertIfValid()
@@ -2276,6 +2312,8 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
          ::oDbf:dFecDoc    := ::oFacCliT:dFecFac
          ::oDbf:cHorDoc    := SubStr( ::oFacCliT:cTimCre, 1, 2 )
          ::oDbf:cMinDoc    := SubStr( ::oFacCliT:cTimCre, 4, 2 )
+
+         ::oDbf:cEstado    := cChkPagFacCli( ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc, ::oFacCliT:cAlias, ::oFacCliP:cAlias )
 
       end if
 
@@ -2466,6 +2504,8 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
          ::oDbf:dFecDoc    := ::oFacRecT:dFecFac
          ::oDbf:cHorDoc    := SubStr( ::oFacRecT:cTimCre, 1, 2 )
          ::oDbf:cMinDoc    := SubStr( ::oFacRecT:cTimCre, 4, 2 )
+
+         ::oDbf:cEstado    := cChkPagFacRec( ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc, ::oFacRecT:cAlias, ::oFacCliP:cAlias )
 
       end if
 

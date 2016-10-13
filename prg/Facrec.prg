@@ -14314,6 +14314,27 @@ RETURN nBitmap
 
 //---------------------------------------------------------------------------//
 
+FUNCTION cChkPagFacRec( cFacRec, cFacRecT, dbfFacCliP )
+
+   local cChkPag        := ""
+   local nChkPag        := nChkPagFacRec( cFacRec, cFacRecT, dbfFacCliP )
+
+   do case
+      case nChkPag == 1
+         cChkPag        := "Cobrado"
+
+      case nChkPag == 2
+         cChkPag        := "Parcialmente"
+
+      case nChkPag == 3
+         cChkPag        := "Pendiente"
+
+   end case
+
+RETURN ( cChkPag )
+
+//---------------------------------------------------------------------------//
+
 FUNCTION ChkLqdFacRec( aTmp, cFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv )
 
    local nTotal

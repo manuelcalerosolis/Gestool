@@ -1321,8 +1321,38 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
          :lHide         := .t.
       end with
 
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader       := "Bultos"
+         :bEditValue    := {|| ::oDetMovimientos:oDbfVir:FieldGetByName( "nBultos" ) }
+         :cEditPicture  := MasUnd()
+         :nWidth        := 60
+         :nDataStrAlign := 1
+         :nHeadStrAlign := 1
+         :lHide         := .t.
+      end with
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader       := cNombreCajas()
+         :bEditValue    := {|| ::oDetMovimientos:oDbfVir:FieldGetByName( "nCajMov" ) }
+         :cEditPicture  := MasUnd()
+         :nWidth        := 60
+         :nDataStrAlign := 1
+         :nHeadStrAlign := 1
+         :lHide         := .t.
+      end with
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader       := cNombreUnidades()
+         :bEditValue    := {|| ::oDetMovimientos:oDbfVir:FieldGetByName( "nUndMov" ) }
+         :cEditPicture  := MasUnd()
+         :nWidth        := 60
+         :nDataStrAlign := 1
+         :nHeadStrAlign := 1
+         :lHide         := .t.
+      end with
+
       with object ( ::oBrwDet:addCol() )
-         :cHeader       := "Unidades"
+         :cHeader       := "Total " + cNombreUnidades()
          :bEditValue    := {|| nTotNMovAlm( ::oDetMovimientos:oDbfVir ) }
          :bFooter       := {|| ::oDetMovimientos:nTotUnidadesVir( .t. ) }
          :cEditPicture  := ::cPicUnd

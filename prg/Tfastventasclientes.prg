@@ -2218,62 +2218,65 @@ METHOD insertTicketCliente()
 
             sTot              := sTotTikCli( ::oTikCliT:cSerTik + ::oTikCliT:cNumTik + ::oTikCliT:cSufTik, ::oTikCliT:cAlias, ::oTikCliL:cAlias, ::oDbfDiv:cAlias )
 
-            for nPosIva := 1 to 3
+            for nPosIva := 1 to len( sTot:aIvaTik )
 
-               if sTot:aTotalIva[ nPosIva ] != 0       .and.;
-                  ( cCodigoIva( ::oDbfIva:cAlias, sTot:aIvaTik[ nPosIva ] ) >= ::oGrupoIva:Cargo:Desde .and. cCodigoIva( ::oDbfIva:cAlias, sTot:aIvaTik[ nPosIva ] ) <= ::oGrupoIva:Cargo:Hasta )
-
-                  ::oDbf:Blank()
-
-                  ::oDbf:cCodCli    := ::oTikCliT:cCliTik
-                  ::oDbf:cNomCli    := ::oTikCliT:cNomTik
-                  ::oDbf:cCodAge    := ::oTikCliT:cCodAge
-                  ::oDbf:cCodPgo    := ::oTikCliT:cFpgTik
-                  ::oDbf:cCodRut    := ::oTikCliT:cCodRut
-                  ::oDbf:cCodUsr    := ::oTikCliT:cCcjTik
-                  ::oDbf:cCodObr    := ::oTikCliT:cCodObr
-
-                  ::oDbf:cCodPos    := ::oTikCliT:cPosCli
-
-                  ::oDbf:cCodGrp    := cGruCli( ::oTikCliT:cCliTik, ::oDbfCli )
-
-                  ::oDbf:cTipDoc    := "Tickets clientes"
-                  ::oDbf:cClsDoc    := TIK_CLI          
-                  ::oDbf:cSerDoc    := ::oTikCliT:cSerTik
-                  ::oDbf:cNumDoc    := ::oTikCliT:cNumTik
-                  ::oDbf:cSufDoc    := ::oTikCliT:cSufTik
-                  ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+               if !Empty( sTot:aIvaTik[ nPosIva ] )
                   
-                  ::oDbf:nAnoDoc    := Year( ::oTikCliT:dFecTik )
-                  ::oDbf:nMesDoc    := Month( ::oTikCliT:dFecTik )
-                  ::oDbf:dFecDoc    := ::oTikCliT:dFecTik
-                  ::oDbf:cHorDoc    := SubStr( ::oTikCliT:cTimCre, 1, 2 )
-                  ::oDbf:cMinDoc    := SubStr( ::oTikCliT:cTimCre, 4, 2 )
+                  if ( cCodigoIva( ::oDbfIva:cAlias, sTot:aIvaTik[ nPosIva ] ) >= ::oGrupoIva:Cargo:Desde .and. cCodigoIva( ::oDbfIva:cAlias, sTot:aIvaTik[ nPosIva ] ) <= ::oGrupoIva:Cargo:Hasta )
 
-                  ::oDbf:nIva       := sTot:aIvaTik[ nPosIva ]
-                  ::oDbf:nReq       := 0
-                  ::oDbf:nTotNet    := sTot:aBasTik[ nPosIva ]
-                  ::oDbf:nTotIva    := sTot:aTotalIva[ nPosIva ]
-                  ::oDbf:nTotDoc    := sTot:nTotalDocumento
-                  ::oDbf:nTotAge    := sTot:nTotalAgente
-                  ::oDbf:nTotCos    := sTot:nTotalCosto
-                  ::oDbf:nTotIvm    := sTot:aIvmTik[ nPosIva ]
-                  ::oDbf:nTotRnt    := sTot:nTotalRentabilidad
-                  ::oDbf:nTotCob    := sTot:nTotalCobrado
+                     ::oDbf:Blank()
 
-                  ::oDbf:nRieCli    := oRetFld( ::oTikCliT:cCliTik, ::oDbfCli, "Riesgo", "COD" )
+                     ::oDbf:cCodCli    := ::oTikCliT:cCliTik
+                     ::oDbf:cNomCli    := ::oTikCliT:cNomTik
+                     ::oDbf:cCodAge    := ::oTikCliT:cCodAge
+                     ::oDbf:cCodPgo    := ::oTikCliT:cFpgTik
+                     ::oDbf:cCodRut    := ::oTikCliT:cCodRut
+                     ::oDbf:cCodUsr    := ::oTikCliT:cCcjTik
+                     ::oDbf:cCodObr    := ::oTikCliT:cCodObr
 
-                  /*
-                  Añadimos un nuevo registro--------------------------------------------
-                  */
+                     ::oDbf:cCodPos    := ::oTikCliT:cPosCli
 
-                  if ::lValidRegister()
-                     ::oDbf:Insert()
-                  else
-                     ::oDbf:Cancel()
+                     ::oDbf:cCodGrp    := cGruCli( ::oTikCliT:cCliTik, ::oDbfCli )
+
+                     ::oDbf:cTipDoc    := "Tickets clientes"
+                     ::oDbf:cClsDoc    := TIK_CLI          
+                     ::oDbf:cSerDoc    := ::oTikCliT:cSerTik
+                     ::oDbf:cNumDoc    := ::oTikCliT:cNumTik
+                     ::oDbf:cSufDoc    := ::oTikCliT:cSufTik
+                     ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+                     
+                     ::oDbf:nAnoDoc    := Year( ::oTikCliT:dFecTik )
+                     ::oDbf:nMesDoc    := Month( ::oTikCliT:dFecTik )
+                     ::oDbf:dFecDoc    := ::oTikCliT:dFecTik
+                     ::oDbf:cHorDoc    := SubStr( ::oTikCliT:cTimCre, 1, 2 )
+                     ::oDbf:cMinDoc    := SubStr( ::oTikCliT:cTimCre, 4, 2 )
+
+                     ::oDbf:nIva       := sTot:aIvaTik[ nPosIva ]
+                     ::oDbf:nReq       := 0
+                     ::oDbf:nTotNet    := sTot:aBasTik[ nPosIva ]
+                     ::oDbf:nTotIva    := sTot:aTotalIva[ nPosIva ]
+                     ::oDbf:nTotDoc    := sTot:nTotalDocumento
+                     ::oDbf:nTotAge    := sTot:nTotalAgente
+                     ::oDbf:nTotCos    := sTot:nTotalCosto
+                     ::oDbf:nTotIvm    := sTot:aIvmTik[ nPosIva ]
+                     ::oDbf:nTotRnt    := sTot:nTotalRentabilidad
+                     ::oDbf:nTotCob    := sTot:nTotalCobrado
+
+                     ::oDbf:nRieCli    := oRetFld( ::oTikCliT:cCliTik, ::oDbfCli, "Riesgo", "COD" )
+
+                     /*
+                     Añadimos un nuevo registro--------------------------------------------
+                     */
+
+                     if ::lValidRegister()
+                        ::oDbf:Insert()
+                     else
+                        ::oDbf:Cancel()
+                     end if
+
+                     ::addTicketsClientes()
+
                   end if
-
-                  ::addTicketsClientes()
 
                end if
 

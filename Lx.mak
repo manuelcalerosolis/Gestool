@@ -3203,6 +3203,7 @@ $(BORLANDLIB)\psdk\msimg32.lib   +
 $(BORLANDLIB)\psdk\psapi.lib     + 
 $(BORLANDLIB)\psdk\rasapi32.lib  +
 $(BORLANDLIB)\psdk\gdiplus.lib   +
+$(BORLANDLIB)\psdk\urlmon.lib    +
 $(BORLANDLIB)\psdk\shell32.lib,
 $(RESOURCE)\RptApolo.Res         +
 $(RESOURCE)\GstImage1.Res        +
