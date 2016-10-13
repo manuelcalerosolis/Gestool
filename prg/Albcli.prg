@@ -7151,6 +7151,8 @@ CLASS TAlbaranesClientesSenderReciver FROM TSenderReciverItem
 
    Method Process()
 
+   METHOD validateRecepcion()
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -7405,7 +7407,7 @@ Method Process()
       oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
       BEGIN SEQUENCE
 
-         if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
+         if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ], .f. )
 
             /*
             Ficheros temporales
@@ -7435,8 +7437,7 @@ Method Process()
 
                while ( tmpAlbCliT )->( !eof() )
 
-                  if lValidaOperacion( ( tmpAlbCliT )->dFecAlb, .f. ) .and. ;
-                     !( cAlbCliT )->( dbSeek( ( tmpAlbCliT )->cSerAlb + Str( ( tmpAlbCliT )->nNumAlb ) + ( tmpAlbCliT )->cSufAlb ) )
+                  if ::validateRecepcion( tmpAlbCliT, dbfAlbCliT )
 
                      dbPass( tmpAlbCliT, cAlbCliT, .t. )
 
@@ -7468,7 +7469,7 @@ Method Process()
 
                   else
 
-                     ::oSender:SetText( "Desestimado : " + ( tmpAlbCliT )->cSerAlb + "/" + AllTrim( Str( ( tmpAlbCliT )->nNumAlb ) ) + "/" + AllTrim( ( tmpAlbCliT )->cSufAlb ) + "; " + Dtoc( ( tmpAlbCliT )->dFecAlb ) + "; " + AllTrim( ( tmpAlbCliT )->cCodCli ) + "; " + ( tmpAlbCliT )->cNomCli )
+                     ::oSender:SetText( ::cErrorRecepcion  )
 
                   end if
 
@@ -7535,6 +7536,28 @@ Method Process()
 Return Self
 
 //----------------------------------------------------------------------------//
+
+METHOD validateRecepcion( tmpAlbCliT, dbfAlbCliT ) CLASS TAlbaranesClientesSenderReciver
+
+   ::cErrorRecepcion       := "Pocesando albaran de cliente número " + ( dbfAlbCliT )->cSerAlb + "/" + alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + "/" + alltrim( ( dbfAlbCliT )->cSufAlb ) + " "
+
+   if !( lValidaOperacion( ( tmpAlbCliT )->dFecAlb, .f. ) )
+      ::cErrorRecepcion    += "la fecha " + dtoc( ( tmpAlbCliT )->dFecAlb ) + " no es valida en esta empresa"
+      Return .f. 
+   end if 
+
+   if !( ( dbfAlbCliT )->( dbSeek( ( tmpAlbCliT )->cSerAlb + Str( ( tmpAlbCliT )->nNumAlb ) + ( tmpAlbCliT )->cSufAlb ) ) )
+      Return .t.
+   end if 
+
+   if dtos( ( dbfAlbCliT )->dFecCre ) + ( dbfAlbCliT )->cTimCre > dtos( ( tmpAlbCliT )->dFecCre ) + ( tmpAlbCliT )->cTimCre 
+      ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfAlbCliT )->dFecCre ) + " " + ( dbfAlbCliT )->cTimCre + " es más reciente que la recepción " + dtoc( ( tmpAlbCliT )->dFecCre ) + " " + ( tmpAlbCliT )->cTimCre 
+      Return .f.
+   end if
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
 
 STATIC FUNCTION DelSerie( oWndBrw )
 

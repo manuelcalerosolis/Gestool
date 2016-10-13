@@ -23,6 +23,8 @@ CLASS TSenderReciverItem
 
    DATA  lSuccesfullSend
 
+   DATA  cErrorRecepcion   INIT ""
+
    Method New()
 
    Method CreateData()     VIRTUAL

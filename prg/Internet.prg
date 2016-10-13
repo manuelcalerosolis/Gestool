@@ -1566,14 +1566,13 @@ Return ( lZip )
 
 //----------------------------------------------------------------------------//
 
-METHOD lUnZipData( cFileName ) CLASS TSndRecInf
+METHOD lUnZipData( cFileName, lInfo ) CLASS TSndRecInf
 
    local aDir
-   local nZip
    local lUnZip   := .t.
 
-   aDir           := hb_GetFilesInZip( cFileName )
-   lUnZip         := hb_UnZipFile( cFileName, { | cName, nPos | ::SetText( "Descomprimiendo " + lower( cName ) ) }, , , cPatSnd(), aDir )
+   aDir           := hb_getfilesinzip( cFileName )
+   lUnZip         := hb_unzipfile( cFileName, {|cName| if( istrue( lInfo), ::SetText( "Descomprimiendo " + lower( cName ) ), ) }, , , cPatSnd(), aDir )
    hb_gcAll()
 
 Return ( lUnZip )
@@ -1604,7 +1603,7 @@ RETURN ( Self )
 
 METHOD lFileRecive( cFile ) CLASS TSndRecInf
 
-   local lFileRecive    := .f.
+   local lFileRecive := .f.
 
    if !Empty( cFile ) .and. IsChar( cFile )
       lFileRecive    := ::oDbfFilesReciver:Seek( Rtrim( cFile ) )

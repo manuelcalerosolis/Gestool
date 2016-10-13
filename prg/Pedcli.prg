@@ -1496,7 +1496,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Su Pedido"
+         :cHeader          := "Su pedido"
          :bEditValue       := {|| ( D():PedidosClientes( nView ) )->cSuPed }
          :nWidth           := 100
          :lHide            := .t.
@@ -1506,6 +1506,13 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :cHeader          := "Condición"
          :bEditValue       := {|| AllTrim( ( D():PedidosClientes( nView ) )->cCondEnt ) }
          :nWidth           := 200
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Creación/Modificación"
+         :bEditValue       := {|| ctod( ( D():PedidosClientes( nView ) )->dFecCre ) + space( 1 ) + ( D():PedidosClientes( nView ) )->cTimCre }
+         :nWidth           := 160
          :lHide            := .t.
       end with
 
@@ -13853,25 +13860,23 @@ Return nil
 
 CLASS TPedidosClientesSenderReciver FROM TSenderReciverItem
 
-   DATA cLastError         INIT ""
+   METHOD CreateData()
 
-   Method CreateData()
+   METHOD RestoreData()
 
-   Method RestoreData()
+   METHOD SendData()
 
-   Method SendData()
+   METHOD ReciveData()
 
-   Method ReciveData()
+   METHOD Process()
 
-   Method Process()
-
-   Method validateRecepcion()
+   METHOD validateRecepcion()
 
 END CLASS
 
 //----------------------------------------------------------------------------//
 
-Method CreateData() CLASS TPedidosClientesSenderReciver
+METHOD CreateData() CLASS TPedidosClientesSenderReciver
 
    local lSnd              := .f.
    local cPedCliT
@@ -13980,7 +13985,7 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method RestoreData() CLASS TPedidosClientesSenderReciver
+METHOD RestoreData() CLASS TPedidosClientesSenderReciver
 
    local cPedCliT
 
@@ -14008,7 +14013,7 @@ Method RestoreData() CLASS TPedidosClientesSenderReciver
 Return ( Self )
 //----------------------------------------------------------------------------//
 
-Method SendData() CLASS TPedidosClientesSenderReciver
+METHOD SendData() CLASS TPedidosClientesSenderReciver
 
    local cFileName
 
@@ -14037,7 +14042,7 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method ReciveData() CLASS TPedidosClientesSenderReciver
+METHOD ReciveData() CLASS TPedidosClientesSenderReciver
 
    	local n
    	local aExt
@@ -14074,11 +14079,15 @@ Return Self
 
 //----------------------------------------------------------------------------//
 
-Method Process() CLASS TPedidosClientesSenderReciver
+METHOD Process() CLASS TPedidosClientesSenderReciver
 
    local m
    local oBlock
    local oError
+   local aFiles
+   local cSerie
+   local nNumero
+   local cSufijo
    local dbfCount
    local dbfPedCliT
    local dbfPedCliL
@@ -14086,10 +14095,6 @@ Method Process() CLASS TPedidosClientesSenderReciver
    local tmpPedCliT
    local tmpPedCliL
    local tmpPedCliI
-   local aFiles
-   local cSerie
-   local nNumero
-   local cSufijo
 
    aFiles            := directory( cPatIn() + "PedCli*.*" )
 
@@ -14100,7 +14105,7 @@ Method Process() CLASS TPedidosClientesSenderReciver
       oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
       BEGIN SEQUENCE
 
-        if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
+         if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ], .f. )
 
          	// Ficheros temporales------------------------------------------
 
@@ -14167,7 +14172,7 @@ Method Process() CLASS TPedidosClientesSenderReciver
 
                	else
 
-               		::oSender:SetText( "Desestimado : " + ( tmpPedCliT )->cSerPed + "/" + AllTrim( Str( ( tmpPedCliT )->nNumPed ) ) + "/" + AllTrim( ( tmpPedCliT )->cSufPed ) + "; " + Dtoc( ( tmpPedCliT )->dFecPed ) + "; " + AllTrim( ( tmpPedCliT )->cCodCli ) + "; " + ( tmpPedCliT )->cNomCli )
+               		::oSender:SetText( ::cErrorRecepcion  )
 
                	end if
 
@@ -14186,11 +14191,23 @@ Method Process() CLASS TPedidosClientesSenderReciver
 
             	::oSender:SetText( "Faltan ficheros" )
 
+               if !file( cPatSnd() + "PedCliT.Dbf" )
+                  ::oSender:SetText( "Falta" + cPatSnd() + "PedCliT.Dbf" )
+               end if
+
+               if !file( cPatSnd() + "PedCliL.Dbf" )
+                  ::oSender:SetText( "Falta" + cPatSnd() + "PedCliL.Dbf" )
+               end if
+
+               if !file( cPatSnd() + "PedCliI.Dbf" )
+                  ::oSender:SetText( "Falta" + cPatSnd() + "PedCliI.Dbf" )
+               end if
+
          	end if
 
-         	fErase( cPatSnd() + "PedCliT.DBF" )
-         	fErase( cPatSnd() + "PedCliL.DBF" )
-         	fErase( cPatSnd() + "PedCliI.DBF" )
+         	fErase( cPatSnd() + "PedCliT.Dbf" )
+         	fErase( cPatSnd() + "PedCliL.Dbf" )
+         	fErase( cPatSnd() + "PedCliI.Dbf" )
 
          else
 
@@ -14222,10 +14239,12 @@ Return Self
 
 //---------------------------------------------------------------------------//
 
-Method validateRecepcion( tmpPedCliT, dbfPedCliT ) CLASS TPedidosClientesSenderReciver
+METHOD validateRecepcion( tmpPedCliT, dbfPedCliT ) CLASS TPedidosClientesSenderReciver
 
+   ::cErrorRecepcion       := "Pocesando pedido de cliente número " + ( dbfPedCliT )->cSerPed + "/" + alltrim( Str( ( dbfPedCliT )->nNumPed ) ) + "/" + alltrim( ( dbfPedCliT )->cSufPed ) + " "
 
    if !( lValidaOperacion( ( tmpPedCliT )->dFecPed, .f. ) )
+      ::cErrorRecepcion    += "la fecha " + dtoc( ( tmpPedCliT )->dFecPed ) + " no es valida en esta empresa"
       Return .f. 
    end if 
 
@@ -14233,11 +14252,12 @@ Method validateRecepcion( tmpPedCliT, dbfPedCliT ) CLASS TPedidosClientesSenderR
       Return .t.
    end if 
 
-   if dtos( ( tmpPedCliT )->dFecCre ) + ( tmpPedCliT )->cTimCre > dtos( ( dbfPedCliT )->dFecCre ) + ( dbfPedCliT )->cTimCre 
-      Return .t.
+   if dtos( ( dbfPedCliT )->dFecCre ) + ( dbfPedCliT )->cTimCre > dtos( ( tmpPedCliT )->dFecCre ) + ( tmpPedCliT )->cTimCre 
+      ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfPedCliT )->dFecCre ) + " " + ( dbfPedCliT )->cTimCre + " es más reciente que la recepción " + dtoc( ( tmpPedCliT )->dFecCre ) + " " + ( tmpPedCliT )->cTimCre 
+      Return .f.
    end if
 
-Return ( .f. )
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
