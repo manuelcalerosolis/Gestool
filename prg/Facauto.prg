@@ -28,18 +28,18 @@
 #define _CSERFACT             22
 #define _CCODPAGO             23
 
-#define _NBRTIVA1             ::aTotIva[ 1, 1 ]
-#define _NBASIVA1             ::aTotIva[ 1, 2 ]
-#define _NPCTIVA1             ::aTotIva[ 1, 3 ]
-#define _NIMPIVA1             ::aTotIva[ 1, 4 ]
-#define _NBRTIVA2             ::aTotIva[ 2, 1 ]
-#define _NBASIVA2             ::aTotIva[ 2, 2 ]
-#define _NPCTIVA2             ::aTotIva[ 2, 3 ]
-#define _NIMPIVA2             ::aTotIva[ 2, 4 ]
-#define _NBRTIVA3             ::aTotIva[ 3, 1 ]
-#define _NBASIVA3             ::aTotIva[ 3, 2 ]
-#define _NPCTIVA3             ::aTotIva[ 3, 3 ]
-#define _NIMPIVA3             ::aTotIva[ 3, 4 ]
+#define __NBRTIVA1__          ::aTotIva[ 1, 1 ]
+#define __NBASIVA1__          ::aTotIva[ 1, 2 ]
+#define __NPCTIVA1__          ::aTotIva[ 1, 3 ]
+#define __NIMPIVA1__          ::aTotIva[ 1, 4 ]
+#define __NBRTIVA2__          ::aTotIva[ 2, 1 ]
+#define __NBASIVA2__          ::aTotIva[ 2, 2 ]
+#define __NPCTIVA2__          ::aTotIva[ 2, 3 ]
+#define __NIMPIVA2__          ::aTotIva[ 2, 4 ]
+#define __NBRTIVA3__          ::aTotIva[ 3, 1 ]
+#define __NBASIVA3__          ::aTotIva[ 3, 2 ]
+#define __NPCTIVA3__          ::aTotIva[ 3, 3 ]
+#define __NIMPIVA3__          ::aTotIva[ 3, 4 ]
 
 //---------------------------------------------------------------------------//
 
@@ -1267,20 +1267,20 @@ METHOD nCalculoTotal( lExt ) CLASS TFacAutomatica
          ( oDbfDet:lKitChl .and. oDbfDet:lKitPrc )
 
          do case
-            case _NPCTIVA1 == nil .OR. _NPCTIVA1 == oDbfDet:nIva
+            case __NPCTIVA1__ == nil .OR. __NPCTIVA1__ == oDbfDet:nIva
 
-               _NPCTIVA1   := oDbfDet:nIva
-               _NBRTIVA1   += ::oDetFacAutomatica:nTotLFacAut( oDbfDet )
+               __NPCTIVA1__   := oDbfDet:nIva
+               __NBRTIVA1__   += ::oDetFacAutomatica:nTotLFacAut( oDbfDet )
 
-            case _NPCTIVA2 == nil .OR. _NPCTIVA2 == oDbfDet:nIva
+            case __NPCTIVA2__ == nil .OR. __NPCTIVA2__ == oDbfDet:nIva
 
-               _NPCTIVA2   := oDbfDet:nIva
-               _NBRTIVA2   += ::oDetFacAutomatica:nTotLFacAut( oDbfDet )
+               __NPCTIVA2__   := oDbfDet:nIva
+               __NBRTIVA2__   += ::oDetFacAutomatica:nTotLFacAut( oDbfDet )
 
-            case _NPCTIVA3 == nil .OR. _NPCTIVA3 == oDbfDet:nIva
+            case __NPCTIVA3__ == nil .OR. __NPCTIVA3__ == oDbfDet:nIva
 
-               _NPCTIVA3   := oDbfDet:nIva
-               _NBRTIVA3   += ::oDetFacAutomatica:nTotLFacAut( oDbfDet )
+               __NPCTIVA3__   := oDbfDet:nIva
+               __NBRTIVA3__   += ::oDetFacAutomatica:nTotLFacAut( oDbfDet )
 
          end case
 
@@ -1298,9 +1298,9 @@ METHOD nCalculoTotal( lExt ) CLASS TFacAutomatica
 
    ::aTotIva         := aSort( ::aTotIva,,, {|x,y| if( x[3] != nil, x[3], -1 ) > if( y[3] != nil, y[3], -1 )  } )
 
-   _NBASIVA1         := Round( _NBRTIVA1, ::nRouDiv )
-   _NBASIVA2         := Round( _NBRTIVA2, ::nRouDiv )
-   _NBASIVA3         := Round( _NBRTIVA3, ::nRouDiv )
+   __NBASIVA1__         := Round( __NBRTIVA1__, ::nRouDiv )
+   __NBASIVA2__         := Round( __NBRTIVA2__, ::nRouDiv )
+   __NBASIVA3__         := Round( __NBRTIVA3__, ::nRouDiv )
 
    /*
    Descuento especial----------------------------------------------------------
@@ -1308,9 +1308,9 @@ METHOD nCalculoTotal( lExt ) CLASS TFacAutomatica
 
    if ::oDbf:nDtoEsp  != 0
 
-      _NBASIVA1      -= Round( _NBASIVA1 * ::oDbf:nDtoEsp / 100, ::nRouDiv )
-      _NBASIVA2      -= Round( _NBASIVA2 * ::oDbf:nDtoEsp / 100, ::nRouDiv )
-      _NBASIVA3      -= Round( _NBASIVA3 * ::oDbf:nDtoEsp / 100, ::nRouDiv )
+      __NBASIVA1__      -= Round( __NBASIVA1__ * ::oDbf:nDtoEsp / 100, ::nRouDiv )
+      __NBASIVA2__      -= Round( __NBASIVA2__ * ::oDbf:nDtoEsp / 100, ::nRouDiv )
+      __NBASIVA3__      -= Round( __NBASIVA3__ * ::oDbf:nDtoEsp / 100, ::nRouDiv )
 
    end if
 
@@ -1320,9 +1320,9 @@ METHOD nCalculoTotal( lExt ) CLASS TFacAutomatica
 
    if ::oDbf:nDpp  != 0
 
-      _NBASIVA1      -= Round( _NBASIVA1 * ::oDbf:nDpp / 100, ::nRouDiv )
-      _NBASIVA2      -= Round( _NBASIVA2 * ::oDbf:nDpp / 100, ::nRouDiv )
-      _NBASIVA3      -= Round( _NBASIVA3 * ::oDbf:nDpp / 100, ::nRouDiv )
+      __NBASIVA1__      -= Round( __NBASIVA1__ * ::oDbf:nDpp / 100, ::nRouDiv )
+      __NBASIVA2__      -= Round( __NBASIVA2__ * ::oDbf:nDpp / 100, ::nRouDiv )
+      __NBASIVA3__      -= Round( __NBASIVA3__ * ::oDbf:nDpp / 100, ::nRouDiv )
 
    end if
 
@@ -1332,9 +1332,9 @@ METHOD nCalculoTotal( lExt ) CLASS TFacAutomatica
 
    if ::oDbf:nDtoUno  != 0
 
-      _NBASIVA1      -= Round( _NBASIVA1 * ::oDbf:nDtoUno / 100, ::nRouDiv )
-      _NBASIVA2      -= Round( _NBASIVA2 * ::oDbf:nDtoUno / 100, ::nRouDiv )
-      _NBASIVA3      -= Round( _NBASIVA3 * ::oDbf:nDtoUno / 100, ::nRouDiv )
+      __NBASIVA1__      -= Round( __NBASIVA1__ * ::oDbf:nDtoUno / 100, ::nRouDiv )
+      __NBASIVA2__      -= Round( __NBASIVA2__ * ::oDbf:nDtoUno / 100, ::nRouDiv )
+      __NBASIVA3__      -= Round( __NBASIVA3__ * ::oDbf:nDtoUno / 100, ::nRouDiv )
 
    end if
 
@@ -1344,9 +1344,9 @@ METHOD nCalculoTotal( lExt ) CLASS TFacAutomatica
 
    if ::oDbf:nDtoDos  != 0
 
-      _NBASIVA1      -= Round( _NBASIVA1 * ::oDbf:nDtoDos / 100, ::nRouDiv )
-      _NBASIVA2      -= Round( _NBASIVA2 * ::oDbf:nDtoDos / 100, ::nRouDiv )
-      _NBASIVA3      -= Round( _NBASIVA3 * ::oDbf:nDtoDos / 100, ::nRouDiv )
+      __NBASIVA1__      -= Round( __NBASIVA1__ * ::oDbf:nDtoDos / 100, ::nRouDiv )
+      __NBASIVA2__      -= Round( __NBASIVA2__ * ::oDbf:nDtoDos / 100, ::nRouDiv )
+      __NBASIVA3__      -= Round( __NBASIVA3__ * ::oDbf:nDtoDos / 100, ::nRouDiv )
 
    end if
 
@@ -1357,20 +1357,20 @@ METHOD nCalculoTotal( lExt ) CLASS TFacAutomatica
    if ::oDbf:nManObr != 0
 
       do case
-         case _NPCTIVA1 == nil .or. _NPCTIVA1 == ::oDbf:nIvaMan
+         case __NPCTIVA1__ == nil .or. __NPCTIVA1__ == ::oDbf:nIvaMan
 
-         _NPCTIVA1   := ::oDbf:nIvaMan
-         _NBASIVA1   += ::oDbf:nManObr
+         __NPCTIVA1__   := ::oDbf:nIvaMan
+         __NBASIVA1__   += ::oDbf:nManObr
 
-      case _NPCTIVA2 == nil .or. _NPCTIVA2 == ::oDbf:nIvaMan
+      case __NPCTIVA2__ == nil .or. __NPCTIVA2__ == ::oDbf:nIvaMan
 
-         _NPCTIVA2   := ::oDbf:nIvaMan
-         _NBASIVA2   += ::oDbf:nManObr
+         __NPCTIVA2__   := ::oDbf:nIvaMan
+         __NBASIVA2__   += ::oDbf:nManObr
 
-      case _NPCTIVA3 == nil .or. _NPCTIVA3 == ::oDbf:nIvaMan
+      case __NPCTIVA3__ == nil .or. __NPCTIVA3__ == ::oDbf:nIvaMan
 
-         _NPCTIVA3   := ::oDbf:nIvaMan
-         _NBASIVA3   += ::oDbf:nManObr
+         __NPCTIVA3__   := ::oDbf:nIvaMan
+         __NBASIVA3__   += ::oDbf:nManObr
 
       end case
 
@@ -1380,15 +1380,15 @@ METHOD nCalculoTotal( lExt ) CLASS TFacAutomatica
    Calculo de los impuestoss---------------------------------------------------------
    */
 
-   _NIMPIVA1      := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTIVA1 / 100, ::nRouDiv ), 0 )
-   _NIMPIVA2      := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTIVA2 / 100, ::nRouDiv ), 0 )
-   _NIMPIVA3      := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTIVA3 / 100, ::nRouDiv ), 0 )
+   __NIMPIVA1__      := if( __NPCTIVA1__ != NIL, Round( __NBASIVA1__ * __NPCTIVA1__ / 100, ::nRouDiv ), 0 )
+   __NIMPIVA2__      := if( __NPCTIVA2__ != NIL, Round( __NBASIVA2__ * __NPCTIVA2__ / 100, ::nRouDiv ), 0 )
+   __NIMPIVA3__      := if( __NPCTIVA3__ != NIL, Round( __NBASIVA3__ * __NPCTIVA3__ / 100, ::nRouDiv ), 0 )
 
    /*
    Total bruto-----------------------------------------------------------------
    */
 
-   ::nTotBrt      := _NBRTIVA1 + _NBRTIVA2 + _NBRTIVA3
+   ::nTotBrt      := __NBRTIVA1__ + __NBRTIVA2__ + __NBRTIVA3__
 
    if !Empty( ::oGetBrt )
       ::oGetBrt:SetText( ::nTotBrt )
@@ -1398,7 +1398,7 @@ METHOD nCalculoTotal( lExt ) CLASS TFacAutomatica
    Total Neto------------------------------------------------------------------
    */
 
-   ::nTotNet      := Round( _NBASIVA1 + _NBASIVA2 + _NBASIVA3, ::nRouDiv )
+   ::nTotNet      := Round( __NBASIVA1__ + __NBASIVA2__ + __NBASIVA3__, ::nRouDiv )
 
    if !Empty( ::oGetNet )
       ::oGetNet:SetText( ::nTotNet )
@@ -1408,7 +1408,7 @@ METHOD nCalculoTotal( lExt ) CLASS TFacAutomatica
    Total impuestos-------------------------------------------------------------------
    */
 
-   ::nTotIva      := Round( _NIMPIVA1 + _NIMPIVA2 + _NIMPIVA3, ::nRouDiv )
+   ::nTotIva      := Round( __NIMPIVA1__ + __NIMPIVA2__ + __NIMPIVA3__, ::nRouDiv )
 
    if !Empty( ::oGetIva )
       ::oGetIva:SetText( ::nTotIva )
@@ -2380,6 +2380,7 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
    ::oAlbCliT:nManObr      := ::oFacAutT:oDbf:nManObr
    ::oAlbCliT:cManObr      := ::oFacAutT:oDbf:cManObr
    ::oAlbCliT:lRecargo     := ::oDbfCli:lReq
+   ::oAlbCliT:nFacturado   := 1
 
    hValue[ "cCodigoCliente"    ] := ::oDbfCli:Cod
    hValue[ "dFecha"            ] := ::dFecDocumento

@@ -2218,9 +2218,9 @@ METHOD insertTicketCliente()
 
             sTot              := sTotTikCli( ::oTikCliT:cSerTik + ::oTikCliT:cNumTik + ::oTikCliT:cSufTik, ::oTikCliT:cAlias, ::oTikCliL:cAlias, ::oDbfDiv:cAlias )
 
-            for nPosIva := 1 to len( sTot:aIvaTik )
+            for nPosIva := 1 to 3
 
-               if !Empty( sTot:aIvaTik[ nPosIva ] )
+               if sTot:aIvaTik[ nPosIva ] != nil
                   
                   if ( cCodigoIva( ::oDbfIva:cAlias, sTot:aIvaTik[ nPosIva ] ) >= ::oGrupoIva:Cargo:Desde .and. cCodigoIva( ::oDbfIva:cAlias, sTot:aIvaTik[ nPosIva ] ) <= ::oGrupoIva:Cargo:Hasta )
 
@@ -2254,7 +2254,7 @@ METHOD insertTicketCliente()
                      ::oDbf:nIva       := sTot:aIvaTik[ nPosIva ]
                      ::oDbf:nReq       := 0
                      ::oDbf:nTotNet    := sTot:aBasTik[ nPosIva ]
-                     ::oDbf:nTotIva    := sTot:aTotalIva[ nPosIva ]
+                     ::oDbf:nTotIva    := sTot:nTotalIva
                      ::oDbf:nTotDoc    := sTot:nTotalDocumento
                      ::oDbf:nTotAge    := sTot:nTotalAgente
                      ::oDbf:nTotCos    := sTot:nTotalCosto
