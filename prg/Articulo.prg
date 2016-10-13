@@ -9552,22 +9552,6 @@ FUNCTION AppendReferenciaProveedor( cRefPrv, cCodPrv, cCodArt, nDtoPrv, nDtoPrm,
    
    end if
 
-   // Ponemos el proveedor por defecto-----------------------------------------
-   //Comentado para actualizar a Arguelles 
-   //pone siempre proveedor por defecto el último al que se le ha comprado
-/*
-   if isTrue( lSetDefault )
-      if ( dbfArtPrv )->( dbSeek( cCodArt ) )
-         while ( dbfArtPrv )->cCodArt == cCodArt .and. !( dbfArtPrv )->( eof() )
-            if dbLock( dbfArtPrv )
-               ( dbfArtPrv )->lDefPrv  := ( rtrim( ( dbfArtPrv )->cCodArt ) == rtrim( cCodArt ) .and. rtrim( ( dbfArtPrv )->cCodPrv ) == rtrim( cCodPrv ) .and. rtrim( ( dbfArtPrv )->cRefPrv ) == rtrim( cRefPrv ) )
-               ( dbfArtPrv )->( dbUnLock() )
-            end if 
-            ( dbfArtPrv )->( dbSkip() )
-         end while
-      end if
-   end if
-*/
    ( dbfArtPrv )->( OrdSetFocus( nOrdAnt ) )
 
 Return nil
