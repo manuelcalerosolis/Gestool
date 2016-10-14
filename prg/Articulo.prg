@@ -9558,7 +9558,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
- Function nPrecioReferenciaProveedor( cCodPrv, cCodArt, dbfPrvArt )
+Function nPrecioReferenciaProveedor( cCodPrv, cCodArt, dbfPrvArt )
 
    local nPreCom  := 0
    local nRec     := ( dbfPrvArt )->( Recno() )
