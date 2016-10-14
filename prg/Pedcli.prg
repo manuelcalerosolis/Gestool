@@ -1511,12 +1511,12 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Creación/Modificación"
-         :bEditValue       := {|| ctod( ( D():PedidosClientes( nView ) )->dFecCre ) + space( 1 ) + ( D():PedidosClientes( nView ) )->cTimCre }
-         :nWidth           := 160
+         :bEditValue       := {|| dtoc( ( D():PedidosClientes( nView ) )->dFecCre ) + space( 1 ) + ( D():PedidosClientes( nView ) )->cTimCre }
+         :nWidth           := 120
          :lHide            := .t.
       end with
 
-   	oDetCamposExtra:addCamposExtra( oWndBrw )
+      oDetCamposExtra:addCamposExtra( oWndBrw )
 
    	oWndBrw:cHtmlHelp    := "Pedidos a clientes"
     
