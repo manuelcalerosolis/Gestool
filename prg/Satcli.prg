@@ -2039,9 +2039,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          WHEN     ( nMode != ZOOM_MODE .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
 
-		/*
-		Tarifa_________________________________________________________________
-		*/
+      /*
+      Tarifa_________________________________________________________________
+      */
 
       REDEFINE GET aGet[_CCODTAR] VAR aTmp[_CCODTAR] ;
          ID       140 ;
@@ -2873,9 +2873,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 
      REDEFINE GET aGet[ _NBULTOS ] VAR aTmp[ _NBULTOS ];
          ID       128 ;
-			SPINNER;
+         SPINNER;
          PICTURE  "99999" ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
       /*
@@ -2909,10 +2909,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
-		REDEFINE GET aGet[ _MOBSERV ] VAR aTmp[ _MOBSERV ] MEMO ;
+      REDEFINE GET aGet[ _MOBSERV ] VAR aTmp[ _MOBSERV ] MEMO ;
          ID       240 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-			OF 		oFld:aDialogs[2]
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[2]
 
       /*
       Impresión ( informa de si está impreimido o no y de cuando se imprimió )-
@@ -10969,11 +10969,13 @@ CLASS TSATClientesSenderReciver FROM TSenderReciverItem
 
    Method Process()
 
+   METHOD validateRecepcion()
+
 END CLASS
 
 //----------------------------------------------------------------------------//
 
-Method CreateData()
+Method CreateData() CLASS TSATClientesSenderReciver
 
    local oBlock
    local oError
@@ -11086,7 +11088,7 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method RestoreData()
+Method RestoreData() CLASS TSATClientesSenderReciver
 
    local oBlock
    local oError
@@ -11125,7 +11127,7 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method SendData()
+Method SendData() CLASS TSATClientesSenderReciver
 
    local cFileName         := "SatCli" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
 
@@ -11149,7 +11151,7 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method ReciveData()
+Method ReciveData() CLASS TSATClientesSenderReciver
 
    local n
    local aExt        := aRetDlgEmp()
@@ -11170,7 +11172,7 @@ Return Self
 
 //----------------------------------------------------------------------------//
 
-Method Process()
+Method Process() CLASS TSATClientesSenderReciver
 
    local m
    local oBlock
@@ -11227,9 +11229,7 @@ Method Process()
 
                while !( tmpSatCliT )->( eof() )
 
-                  if ( Empty( cOperario ) .or. ( tmpSatCliT )->cCodOpe == cOperario )  .and.;
-                     lValidaOperacion( ( tmpSatCliT )->dFecSat, .f. )                  .and. ;
-                     !( cSatCliT )->( dbSeek( ( tmpSatCliT )->cSerSat + Str( ( tmpSatCliT )->nNumSat ) + ( tmpSatCliT )->cSufSat ) )
+                  if ::validateRecepcion( tmpSatCliT, cSatCliT, cOperario )
 
                      dbPass( tmpSatCliT, cSatCliT, .t. )
                      ::oSender:SetText( "Añadido     : " + ( tmpSatCliL )->cSerSat + "/" + AllTrim( Str( ( tmpSatCliL )->nNumSat ) ) + "/" + AllTrim( ( tmpSatCliL )->cSufSat ) + "; " + Dtoc( ( tmpSatCliT )->dFecSat ) + "; " + AllTrim( ( tmpSatCliT )->cCodCli ) + "; " + ( tmpSatCliT )->cNomCli )
@@ -11333,6 +11333,33 @@ Method Process()
 Return Self
 
 //----------------------------------------------------------------------------//
+
+METHOD validateRecepcion( tmpSatCliT, dbfSatCliT, cOperario ) CLASS TSATClientesSenderReciver
+
+   ::cErrorRecepcion       := "Pocesando S.A.T. de cliente número " + ( dbfSatCliT )->cSerSat + "/" + alltrim( Str( ( dbfSatCliT )->nNumSat ) ) + "/" + alltrim( ( dbfSatCliT )->cSufSat ) + " "
+
+   if !( lValidaOperacion( ( tmpSatCliT )->dFecSat, .f. ) )
+      ::cErrorRecepcion    += "la fecha " + dtoc( ( tmpSatCliT )->dFecSat ) + " no es valida en esta empresa"
+      Return .f. 
+   end if 
+
+   if !empty( cOperario ) .and. ( tmpSatCliT )->cCodOpe != cOperario )
+      ::cErrorRecepcion    += "el operario " + cOperario + " no coincide"
+      Return .f. 
+   end if 
+
+   if !( ( dbfSatCliT )->( dbSeek( ( tmpSatCliT )->cSerSat + Str( ( tmpSatCliT )->nNumSat ) + ( tmpSatCliT )->cSufSat ) ) )
+      Return .t.
+   end if 
+
+   if dtos( ( dbfSatCliT )->dFecCre ) + ( dbfSatCliT )->cTimCre > dtos( ( tmpSatCliT )->dFecCre ) + ( tmpSatCliT )->cTimCre 
+      ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfSatCliT )->dFecCre ) + " " + ( dbfSatCliT )->cTimCre + " es más reciente que la recepción " + dtoc( ( tmpSatCliT )->dFecCre ) + " " + ( tmpSatCliT )->cTimCre 
+      Return .f.
+   end if
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
 
 Function AppSatCli( cCodCli, cCodArt, lOpenBrowse )
 
