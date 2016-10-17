@@ -4655,17 +4655,10 @@ Static Function CancelEdtRec( nMode, aGet )
 
       // Rollback de los albaranes facturados----------------------------------
 
-<<<<<<< HEAD
-      if len( aNumFac ) > 0
-         for each cNumDoc in aNumFac 
-            if ( dbfFacCliT )->( dbSeek( cNumDoc ) )
-               SetFacturadoAlbaranCliente( .f., , dbfFacCliT, dbfFacCliL, dbfFacCliS )
-=======
       if len( aNumAlb ) > 0
          for each cNumDoc in aNumAlb 
             if ( dbfAlbCliT )->( dbSeek( cNumDoc ) )
                SetFacturadoAlbaranCliente( .f., , dbfAlbCliT, dbfAlbCliL, dbfAlbCliS )
->>>>>>> b8ddc7f8ad4c730d36d271c52d547355c189d77f
             end if
          next
       end if
@@ -7183,13 +7176,8 @@ static function QuiFacCli()
 
    nOrdAnt  := ( dbfAlbCliT )->( OrdSetFocus( "cNumFac" ) )
 
-<<<<<<< HEAD
-   while ( dbfFacCliT )->( dbSeek( cSerDoc + str( nNumDoc, 9 ) + cSufDoc ) ) .and. !( dbfFacCliT )->( eof() )
-      SetFacturadoAlbaranCliente( .f., , dbfFacCliT, dbfFacCliL, dbfFacCliS )
-=======
    while ( dbfAlbCliT )->( dbSeek( cSerDoc + str( nNumDoc, 9 ) + cSufDoc ) ) .and. !( dbfAlbCliT )->( eof() )
       SetFacturadoAlbaranCliente( .f., , dbfAlbCliT, dbfAlbCliL, dbfAlbCliS )
->>>>>>> b8ddc7f8ad4c730d36d271c52d547355c189d77f
    end while
 
    ( dbfAlbCliT )->( OrdSetFocus( nOrdAnt ) )
@@ -9004,13 +8992,8 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw, nMode )
 
       for nItem := 1 to Len( aFacturas )
          if ( aFacturas[ nItem, 1 ] )
-<<<<<<< HEAD
-            if ( dbfFacCliT )->( dbSeek( aFacturas[ nItem, 2] ) )
-               SetFacturadoAlbaranCliente( .t., , dbfFacCliT, dbfFacCliL, dbfFacCliS )
-=======
             if ( dbfAlbCliT )->( dbSeek( aFacturas[ nItem, 2] ) )
                SetFacturadoAlbaranCliente( .t., , dbfAlbCliT, dbfAlbCliL, dbfAlbCliS )
->>>>>>> b8ddc7f8ad4c730d36d271c52d547355c189d77f
             end if
             aAdd( aNumAlb, aFacturas[ nItem, 2 ] )
          end if
@@ -13928,17 +13911,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
          oMeter:Set( 5 )
       end if   
 
-<<<<<<< HEAD
-      if len( aNumFac ) > 0
-         for n := 1 to len( aNumFac )
-            if ( dbfFacCliT )->( dbSeek( aNumFac[ n ] ) )
-               SetFacturadoAlbaranCliente( .t., , dbfFacCliT, dbfFacCliL, dbfFacCliS, cSerFac + str( nNumFac ) + cSufFac )
-=======
       if len( aNumAlb ) > 0
          for n := 1 to len( aNumAlb )
             if ( dbfAlbCliT )->( dbSeek( aNumAlb[ n ] ) )
                SetFacturadoAlbaranCliente( .t., , dbfAlbCliT, dbfAlbCliL, dbfAlbCliS, cSerFac + str( nNumFac ) + cSufFac )
->>>>>>> b8ddc7f8ad4c730d36d271c52d547355c189d77f
             end if
          next
       end if
@@ -21379,20 +21355,6 @@ return ( lRectificada )
 
 //---------------------------------------------------------------------------//
 
-<<<<<<< HEAD
-Function dFechaUltimaVenta( cCodCli, cCodArt, cFacCliL, dbfFacCliL, dbfTikL )
-
-   local dUltimaFactura    := ctod( "" )
-   local dUltimoFacaran    := ctod( "" )
-   //local nRecFacL 			:= ( dbfFacCliL )->( Recno() )
-   //local nRecFacL 			:= ( dbfFacCliL )->( Recno() )
-	//local nOrdFacL				:= ( dbfFacCliL )->( OrdSetFocus( "cRefFec" ) )
-	//local nOrdFacL				:= ( dbfFacCliL )->( OrdSetFocus( "cRefFec" ) )
-	
-	
-
-//	CursorWait()
-=======
 Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL )
 
    local nRecAlbL          := ( dbfAlbCliL )->( Recno() )
@@ -21403,56 +21365,11 @@ Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL )
    local dUltimoAlbaran    := ctod( "" )
 
    CursorWait()
->>>>>>> b8ddc7f8ad4c730d36d271c52d547355c189d77f
-
-   /*
-   Buscamos por los Facturas no facturados-----------------------------------
-   */
-
-<<<<<<< HEAD
-/*	if ( dbfFacCliL )->( dbSeek( cCodArt + cCodCli ) )
-		dUltimoFacaran 		:= ( dbfFacCliL )->dFecFac 
-	end if
-=======
-   if ( dbfAlbCliL )->( dbSeek( cCodArt + cCodCli ) )
-      dUltimoAlbaran       := ( dbfAlbCliL )->dFecAlb 
-   end if
->>>>>>> b8ddc7f8ad4c730d36d271c52d547355c189d77f
-
-   /*
-   Buscamos ahora por loas facturas--------------------------------------------
-   */
-/*
-   if ( D():FacturasClientesLineas( nView ) )->( dbSeek( cCodArt + cCodCli ) )
-      dUltimaFactura       := ( D():FacturasClientesLineas( nView ) )->dFecFac
-   end if
-*/
-<<<<<<< HEAD
-	
-/*	if ( dbfFacCliL )->( dbSeek( cCodArt + cCodCli ) )
-		dUltimaFactura 		:= ( dbfFacCliL )->dFecFac
-	end if
-=======
-   
-   if ( dbfFacCliL )->( dbSeek( cCodArt + cCodCli ) )
-      dUltimaFactura       := ( dbfFacCliL )->dFecFac
-   end if
->>>>>>> b8ddc7f8ad4c730d36d271c52d547355c189d77f
 
    /*
    Dejamos las tablas como estaban------------------------------------------
    */
 
-<<<<<<< HEAD
-/*	( dbfFacCliL )->( OrdSetFocus( nOrdFacL ) )
-//	( D():FacturasClientesLineas( nView ) )->( OrdSetFocus( nOrdFacL ) )
-	( dbfFacCliL )->( OrdSetFocus( nOrdFacL ) )
-	( dbfFacCliL )->( dbGoTo( nRecFacL ) )
-//	( D():FacturasClientesLineas( nView ) )->( dbGoTo( nRecFacL ) )
-	( dbfFacCliL )->( dbGoTo( nRecFacL ) )
-
-	CursorWE()*/
-=======
    ( dbfAlbCliL )->( OrdSetFocus( nOrdAlbL ) )
 // ( D():FacturasClientesLineas( nView ) )->( OrdSetFocus( nOrdFacL ) )
    ( dbfFacCliL )->( OrdSetFocus( nOrdFacL ) )
@@ -21461,27 +21378,11 @@ Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL )
    ( dbfFacCliL )->( dbGoTo( nRecFacL ) )
 
    CursorWE()
->>>>>>> b8ddc7f8ad4c730d36d271c52d547355c189d77f
 
 Return ( if( dUltimaFactura > dUltimoAlbaran, dUltimaFactura, dUltimoAlbaran ) )
 
 //---------------------------------------------------------------------------//
 
-<<<<<<< HEAD
-Function nUnidadesUltimaVenta( cCodCli, cCodArt, cFacCliL, dbfFacCliL, dbfTikL )
-
-   local nUnidades 		:= 0
-   local dUltimaFactura := ctod( "" )
-   local dUltimoFacaran := ctod( "" )
-
-/*	local nRecFacL 		:= ( dbfFacCliL )->( Recno() )
-	local nRecFacL 		:= ( dbfFacCliL )->( Recno() )
-	local nOrdFacL			:= ( dbfFacCliL )->( OrdSetFocus( "cRefFec" ) )
-	local nOrdFacL			:= ( dbfFacCliL )->( OrdSetFocus( "cRefFec" ) )
-*/	
-
-//	CursorWait()
-=======
 Function nUnidadesUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL )
 
    local nUnidades      := 0
@@ -21493,39 +21394,24 @@ Function nUnidadesUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL
    local dUltimoAlbaran := ctod( "" )
 
    CursorWait()
->>>>>>> b8ddc7f8ad4c730d36d271c52d547355c189d77f
 
    /*
    Buscamos por los Facturas no facturados-----------------------------------
    */
 
-<<<<<<< HEAD
-/*	if ( dbfFacCliL )->( dbSeek( cCodArt + cCodCli ) )
-		dUltimoFacaran     := ( dbfFacCliL )->dFecFac 
-	end if*/
-=======
    if ( dbfAlbCliL )->( dbSeek( cCodArt + cCodCli ) )
       dUltimoAlbaran     := ( dbfAlbCliL )->dFecAlb 
    end if
->>>>>>> b8ddc7f8ad4c730d36d271c52d547355c189d77f
 
    /*
    Buscamos ahora por loas facturas--------------------------------------------
    */
 
-<<<<<<< HEAD
-	/*if ( dbfFacCliL )->( dbSeek( cCodArt + cCodCli ) )
-		dUltimaFactura     := ( dbfFacCliL )->dFecFac
-	end if*/
-
-	/*if !empty(dUltimaFactura) .or. !empty(dUltimoFacaran)
-=======
    if ( dbfFacCliL )->( dbSeek( cCodArt + cCodCli ) )
       dUltimaFactura     := ( dbfFacCliL )->dFecFac
    end if
 
    if !empty(dUltimaFactura) .or. !empty(dUltimoAlbaran)
->>>>>>> b8ddc7f8ad4c730d36d271c52d547355c189d77f
 
       if ( dUltimaFactura > dUltimoAlbaran )
          nUnidades      := nTotNFacCli( dbfFacCliL )
@@ -21533,48 +21419,23 @@ Function nUnidadesUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL
          nUnidades      := nTotNAlbCli( dbfAlbCliL )
       end if
 
-<<<<<<< HEAD
-	end if*/
-=======
    end if
->>>>>>> b8ddc7f8ad4c730d36d271c52d547355c189d77f
 
    /*
    Dejamos las tablas como estaban------------------------------------------
    */
 
-<<<<<<< HEAD
-	/*( dbfFacCliL )->( OrdSetFocus( nOrdFacL ) )
-	( dbfFacCliL )->( OrdSetFocus( nOrdFacL ) )
-	( dbfFacCliL )->( dbGoTo( nRecFacL ) )
-	( dbfFacCliL )->( dbGoTo( nRecFacL ) )
-
-	CursorWE()*/
-=======
    ( dbfAlbCliL )->( OrdSetFocus( nOrdAlbL ) )
    ( dbfFacCliL )->( OrdSetFocus( nOrdFacL ) )
    ( dbfAlbCliL )->( dbGoTo( nRecAlbL ) )
    ( dbfFacCliL )->( dbGoTo( nRecFacL ) )
 
    CursorWE()
->>>>>>> b8ddc7f8ad4c730d36d271c52d547355c189d77f
 
 Return ( nUnidades )
 
 //---------------------------------------------------------------------------//
 
-<<<<<<< HEAD
-Function dUltimaVentaCliente( cCodCli, cFacCliT, dbfFacCliT, dbfTikT )
-
-	local dUltimaFactura		:= ctod( "" )
-	local dUltimoFacaran 	:= ctod( "" )
-   /*local nRecFacT          := ( dbfFacCliT )->( Recno() )
-   local nRecFacT          := ( dbfFacCliT )->( Recno() )
-   local nOrdFacT          := ( dbfFacCliT )->( OrdSetFocus( "cCliFec" ) )
-   local nOrdFacT          := ( dbfFacCliT )->( OrdSetFocus( "cCliFec" ) )*/
-
-	//CursorWait()
-=======
 Function dUltimaVentaCliente( cCodCli, dbfAlbCliT, dbfFacCliT, dbfTikT )
 
    local nRecAlbT          := ( dbfAlbCliT )->( Recno() )
@@ -21585,55 +21446,33 @@ Function dUltimaVentaCliente( cCodCli, dbfAlbCliT, dbfFacCliT, dbfTikT )
    local dUltimoAlbaran    := ctod( "" )
 
    CursorWait()
->>>>>>> b8ddc7f8ad4c730d36d271c52d547355c189d77f
 
    /*
    Buscamos por los Facturas no facturados-----------------------------------
    */
 
-<<<<<<< HEAD
-	/*if ( dbfFacCliT )->( dbSeek( cCodCli ) )
-		dUltimoFacaran 		:= ( dbfFacCliT )->dFecFac 
-	end if*/
-=======
    if ( dbfAlbCliT )->( dbSeek( cCodCli ) )
       dUltimoAlbaran       := ( dbfAlbCliT )->dFecAlb 
    end if
->>>>>>> b8ddc7f8ad4c730d36d271c52d547355c189d77f
 
    /*
    Buscamos ahora por loas facturas--------------------------------------------
    */
 
-<<<<<<< HEAD
-	/*if ( dbfFacCliT )->( dbSeek( cCodCli ) )
-		dUltimaFactura 		:= ( dbfFacCliT )->dFecFac
-	end if*/
-=======
    if ( dbfFacCliT )->( dbSeek( cCodCli ) )
       dUltimaFactura       := ( dbfFacCliT )->dFecFac
    end if
->>>>>>> b8ddc7f8ad4c730d36d271c52d547355c189d77f
 
    /*
    Dejamos las tablas como estaban------------------------------------------
    */
 
-<<<<<<< HEAD
-	/*( dbfFacCliT )->( OrdSetFocus( nOrdFacT ) )
-	( dbfFacCliT )->( OrdSetFocus( nOrdFacT ) )
-	( dbfFacCliT )->( dbGoTo( nRecFacT ) )
-	( dbfFacCliT )->( dbGoTo( nRecFacT ) )
-
-	CursorWE()*/
-=======
    ( dbfAlbCliT )->( OrdSetFocus( nOrdAlbT ) )
    ( dbfFacCliT )->( OrdSetFocus( nOrdFacT ) )
    ( dbfAlbCliT )->( dbGoTo( nRecAlbT ) )
    ( dbfFacCliT )->( dbGoTo( nRecFacT ) )
 
    CursorWE()
->>>>>>> b8ddc7f8ad4c730d36d271c52d547355c189d77f
 
 Return ( if( dUltimaFactura > dUltimoAlbaran, dUltimaFactura, dUltimoAlbaran ) )
 
