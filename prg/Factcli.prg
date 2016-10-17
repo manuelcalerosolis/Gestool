@@ -389,6 +389,14 @@ static dbfPreCliL
 static dbfPreCliI
 static dbfPreCliD
 
+static dbfFacCliI
+static dbfFacCliD
+static dbfFacCliS
+
+static dbfFacPrvL
+static dbfFacPrvS
+
+
 static dbfSatCliT
 static dbfSatCliL
 static dbfSatCliI
