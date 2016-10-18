@@ -3708,6 +3708,8 @@ Static Function EndBrwApartados( oDlg )
 
 Return ( .t. )
 
+//---------------------------------------------------------------------------//
+
 /*
 Esta funcion graba el tiket despues de pedir el importe por pantalla-----------
 */
@@ -4292,6 +4294,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Guardamos el tipo como albaranes-----------------------------------------
          */
 
+
          do case
             case nMode == DUPL_MODE
 
@@ -4311,6 +4314,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
                SavTik2Tik( aTmp, aGet, nMode, nSave )
 
          end case
+
 
          /*
          Actualizamos el stock en la web------------------------------------------
@@ -12508,10 +12512,12 @@ Static Function SavTik2Tik( aTmp, aGet, nMode, nSave, nNumDev )
    Calculo de cobros totales---------------------------------------------------
    */
 
-   aTotal            := nTotCobTik( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], dbfTikP, dbfDiv )
-   aTotal            += nTotValTik( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], dbfTikT, dbfTikL, dbfDiv )
+   //aTotal            := nTotCobTik( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], dbfTikP, dbfDiv )
+   //aTotal            += nTotValTik( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], dbfTikT, dbfTikL, dbfDiv )
 
-   aTmp[ _NCOBTIK ]  := aTotal
+   //aTmp[ _NCOBTIK ]  := aTotal
+
+   aTmp[ _NCOBTIK ]  += nTotValTik( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], dbfTikT, dbfTikL, dbfDiv )
 
    /*
    Rellenamos los campos de totales--------------------------------------------

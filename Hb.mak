@@ -22,12 +22,12 @@ PPO 					   = 	Ppo1406
 EXE 					   = 	Bin\Gestool.exe
 
 .path.prg      		=	.\$(SOURCEPRG)
-.path.c       			=	.\$(SOURCEC)
+.path.c       		=	.\$(SOURCEC)
 .path.obj      		=	.\$(OBJ)
 
 PRG            		=    									\
 Factu.prg               									\
-DialogExtend.prg           								\
+DialogExtend.prg           									\
 C5Lib.prg               									\
 RpreviewC3.prg          									\
 ReportC3.prg            									\
@@ -86,8 +86,6 @@ TTemplatesHTML.prg                                 \
 Tiva.prg                                           \
 Fpago.prg                                          \
 Pedprov.prg                                        \
-Depage.prg                                         \
-Extage.prg                                         \
 Lqdalm.prg                                         \
 Pedcli.prg                                         \
 Precli.prg                                         \
@@ -521,8 +519,6 @@ TTemplatesHTML.obj                                 \
 Tiva.obj                                           \
 Fpago.obj                                          \
 Pedprov.obj                                        \
-Depage.obj                                         \
-Extage.obj                                         \
 Lqdalm.obj                                         \
 Pedcli.obj                                         \
 Precli.obj                                         \
@@ -985,8 +981,6 @@ $(OBJ)\TTemplatesHTML.obj                                   +
 $(OBJ)\Tiva.obj                                             +
 $(OBJ)\Fpago.obj                                            +
 $(OBJ)\Pedprov.obj                                          +
-$(OBJ)\Depage.obj                                           +
-$(OBJ)\Extage.obj                                           +
 $(OBJ)\Lqdalm.obj                                           +
 $(OBJ)\Pedcli.obj                                           +
 $(OBJ)\Precli.obj                                           +

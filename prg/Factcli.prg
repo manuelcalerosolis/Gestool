@@ -369,11 +369,6 @@ static dbfTikT
 static dbfTikL
 static dbfTikS
 static dbfInci
-static dbfFacCliT
-static dbfFacCliL
-static dbfFacCliI
-static dbfFacCliD
-static dbfFacCliS
 static dbfPedCliE
 static dbfFacRecT
 static dbfFacRecL
@@ -393,6 +388,14 @@ static dbfPreCliT
 static dbfPreCliL
 static dbfPreCliI
 static dbfPreCliD
+
+static dbfFacCliI
+static dbfFacCliD
+static dbfFacCliS
+
+static dbfFacPrvL
+static dbfFacPrvS
+
 
 static dbfSatCliT
 static dbfSatCliL
@@ -446,8 +449,6 @@ static dbfAgeCom
 static dbfEmp
 static dbfTblCnv
 static dbfFacPrvT
-static dbfFacPrvL
-static dbfFacPrvS
 static dbfRctPrvL
 static dbfRctPrvS
 static dbfProLin
@@ -21372,27 +21373,6 @@ Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL )
    local dUltimoAlbaran    := ctod( "" )
 
    CursorWait()
-
-   /*
-   Buscamos por los Facturas no facturados-----------------------------------
-   */
-
-   if ( dbfAlbCliL )->( dbSeek( cCodArt + cCodCli ) )
-      dUltimoAlbaran       := ( dbfAlbCliL )->dFecAlb 
-   end if
-
-   /*
-   Buscamos ahora por loas facturas--------------------------------------------
-   */
-/*
-   if ( D():FacturasClientesLineas( nView ) )->( dbSeek( cCodArt + cCodCli ) )
-      dUltimaFactura       := ( D():FacturasClientesLineas( nView ) )->dFecFac
-   end if
-*/
-   
-   if ( dbfFacCliL )->( dbSeek( cCodArt + cCodCli ) )
-      dUltimaFactura       := ( dbfFacCliL )->dFecFac
-   end if
 
    /*
    Dejamos las tablas como estaban------------------------------------------
