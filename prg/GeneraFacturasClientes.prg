@@ -1333,6 +1333,7 @@ METHOD AppendFacturaCabecera( oItem ) CLASS GeneraFacturasClientes
       ( D():FacturasClientes( ::nView ) )->lOperPv       := ( D():Clientes( ::nView ) )->lPntVer
       ( D():FacturasClientes( ::nView ) )->cCodRut       := ( D():Clientes( ::nView ) )->cCodRut
       ( D():FacturasClientes( ::nView ) )->nTarifa       := max( ( D():Clientes( ::nView ) )->nTarifa, 1 )
+      ( D():FacturasClientes( ::nView ) )->nRegIva       := ( D():Clientes( ::nView ) )->nRegIva
 
       if lBancoDefecto( cCodCli, D():ClientesBancos( ::nView ) )
 
