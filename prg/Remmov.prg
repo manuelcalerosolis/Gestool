@@ -1501,7 +1501,7 @@ METHOD Search() CLASS TRemMovAlm
       ID          100 ;
       OF          oDlg
       
-      oCadena:bChange   := {|| oCadena:Assign(), ::oDetMovimientos:oDbfVir:Seek( Rtrim( xCadena ), .t. ), ::oBrwDet:Refresh() }
+      oCadena:bChange   := {|| oCadena:Assign(), ::oDetMovimientos:oDbfVir:Seek( UPPER( Rtrim( xCadena ) ), .t. ), ::oBrwDet:Refresh() }
 
 	REDEFINE COMBOBOX oIndice ;
       VAR         cIndice ;
@@ -3884,8 +3884,8 @@ Function nTotLMovAlm( uDbf )
    case ValType( uDbf ) == "C"
       nTotUnd     := NotCaja( ( uDbf )->nCajMov ) * ( uDbf )->nUndMov * ( uDbf )->nPreDiv
    case ValType( uDbf ) == "O"
-      nTotUnd     := NotCaja( uDbf:nCajMov ) * uDbf:nUndMov * uDbf:nPreDiv
-      // nTotUnd     := NotCaja( uDbf:FieldGetByName( "nCajMov" ) ) * uDbf:FieldGetByName( "nUndMov" ) * uDbf:FieldGetByName( "nPreDiv" )
+      //nTotUnd     := NotCaja( uDbf:nCajMov ) * uDbf:nUndMov * uDbf:nPreDiv
+      nTotUnd     := NotCaja( uDbf:FieldGetByName( "nCajMov" ) ) * uDbf:FieldGetByName( "nUndMov" ) * uDbf:FieldGetByName( "nPreDiv" )
    end case
 
 RETURN ( nTotUnd )
@@ -3900,7 +3900,8 @@ Function nTotNMovAlm( uDbf )
    case ValType( uDbf ) == "C"
       nTotUnd     := NotCaja( ( uDbf )->nCajMov ) * ( uDbf )->nUndMov
    case ValType( uDbf ) == "O"
-      nTotUnd     := NotCaja( uDbf:nCajMov ) * uDbf:nUndMov
+      //nTotUnd     := NotCaja( uDbf:nCajMov ) * uDbf:nUndMov
+      nTotUnd     := NotCaja( uDbf:FieldGetByName( "nCajMov" ) ) * uDbf:FieldGetByName( "nUndMov" )
    end case
 
 RETURN ( nTotUnd )
