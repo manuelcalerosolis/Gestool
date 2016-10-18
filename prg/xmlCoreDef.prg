@@ -32,7 +32,7 @@
 
 #define ENTIDAD_JURIDICA   0
 #define ENTIDAD_FISICA     1
-#define ENTIDAD_OTRA    2
+#define ENTIDAD_OTRA       2
 
 static aItems := {}
 static aData  := {=>}

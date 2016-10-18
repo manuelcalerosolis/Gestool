@@ -634,6 +634,13 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
          :lHide            := .t.
       end with
 
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Creación/Modificación"
+         :bEditValue       := {|| dtoc( ( D():AlbaranesProveedores( nView ) )->dFecCre ) + space( 1 ) + ( D():AlbaranesProveedores( nView ) )->cTimCre }
+         :nWidth           := 120
+         :lHide            := .t.
+      end with
+
       oDetCamposExtra:addCamposExtra( oWndBrw )
 
       oWndBrw:cHtmlHelp    := "Albaran de proveedor"
@@ -10651,11 +10658,13 @@ CLASS TAlbaranesProveedorSenderReciver FROM TSenderReciverItem
 
    Method Process()
 
+   METHOD validateRecepcion()
+
 END CLASS
 
 //----------------------------------------------------------------------------//
 
-Method CreateData()
+Method CreateData() CLASS TAlbaranesProveedorSenderReciver
 
    local oBlock
    local oError
@@ -10770,7 +10779,7 @@ Return ( Self )
 Retorna el valor anterior
 */
 
-Method RestoreData()
+Method RestoreData() CLASS TAlbaranesProveedorSenderReciver
 
    local oBlock
    local oError
@@ -10805,7 +10814,7 @@ Return ( Self )
 Enviarlos a internet
 */
 
-Method SendData()
+Method SendData() CLASS TAlbaranesProveedorSenderReciver
 
    if file( cPatOut() + ::cFileName )
 
@@ -10827,7 +10836,7 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method ReciveData()
+Method ReciveData() CLASS TAlbaranesProveedorSenderReciver
 
    local n
    local aExt
@@ -10854,7 +10863,7 @@ Return Self
 
 //----------------------------------------------------------------------------//
 
-Method Process()
+Method Process() CLASS TAlbaranesProveedorSenderReciver
 
    local m
    local dbfAlbPrvT
@@ -10890,8 +10899,7 @@ Method Process()
 
             // Comprobamos que no exista el pedido en la base de datos
 
-            if lValidaOperacion( ( tmpAlbPrvT )->dFecAlb, .f. ) .and. ;
-               !( dbfAlbPrvT )->( dbSeek( ( tmpAlbPrvT )->cSerAlb + Str( ( tmpAlbPrvT )->nNumAlb ) + ( tmpAlbPrvT )->cSufAlb ) )
+            if ::validateRecepcion( tmpAlbPrvT, dbfAlbPrvT )
 
                dbPass( tmpAlbPrvT, dbfAlbPrvT, .t. )
                
@@ -10905,10 +10913,6 @@ Method Process()
                   end do
 
                end if
-
-            else
-
-               ::oSender:SetText( "Desestimado : " + ( tmpAlbPrvT )->cSerAlb + "/" + AllTrim( Str( ( tmpAlbPrvT )->nNumAlb ) ) + "/" + AllTrim( ( tmpAlbPrvT )->cSufAlb ) + "; " + Dtoc( ( tmpAlbPrvT )->dFecAlb ) + "; " + AllTrim( ( dbfAlbPrvT )->cCodPrv ) + "; " + ( dbfAlbPrvT )->cNomPrv )
 
             end if
 
@@ -10942,6 +10946,28 @@ Method Process()
    next
 
 Return Self
+
+//---------------------------------------------------------------------------//
+
+METHOD validateRecepcion( tmpAlbPrvT, dbfAlbPrvT ) CLASS TAlbaranesProveedorSenderReciver
+
+   ::cErrorRecepcion       := "Pocesando albaran de proveedor número " + ( dbfAlbPrvT )->cSerPed + "/" + alltrim( Str( ( dbfAlbPrvT )->nNumPed ) ) + "/" + alltrim( ( dbfAlbPrvT )->cSufPed ) + " "
+
+   if !( lValidaOperacion( ( tmpAlbPrvT )->dFecPed, .f. ) )
+      ::cErrorRecepcion    += "la fecha " + dtoc( ( tmpAlbPrvT )->dFecPed ) + " no es valida en esta empresa"
+      Return .f. 
+   end if 
+
+   if !( ( dbfAlbPrvT )->( dbSeek( ( tmpAlbPrvT )->cSerPed + Str( ( tmpAlbPrvT )->nNumPed ) + ( tmpAlbPrvT )->cSufPed ) ) )
+      Return .t.
+   end if 
+
+   if dtos( ( dbfAlbPrvT )->dFecCre ) + ( dbfAlbPrvT )->cTimCre > dtos( ( tmpAlbPrvT )->dFecCre ) + ( tmpAlbPrvT )->cTimCre 
+      ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfAlbPrvT )->dFecCre ) + " " + ( dbfAlbPrvT )->cTimCre + " es más reciente que la recepción " + dtoc( ( tmpAlbPrvT )->dFecCre ) + " " + ( tmpAlbPrvT )->cTimCre 
+      Return .f.
+   end if
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 

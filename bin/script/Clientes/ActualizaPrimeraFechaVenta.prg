@@ -41,6 +41,7 @@ METHOD Run()
    local dPrimeraVentaCliente
 
    D():getStatusClientes( ::nView )
+
    ( D():Clientes( ::nView ) )->( dbgotop() )
 
    while !( D():Clientes( ::nView ) )->( eof() )

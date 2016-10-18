@@ -13808,6 +13808,8 @@ CLASS TTiketsClientesSenderReciver FROM TSenderReciverItem
 
    Method Process()
 
+   METHOD validateRecepcion( tmpTikT, dbfTikT )
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -14047,7 +14049,7 @@ Method Process() CLASS TTiketsClientesSenderReciver
       BEGIN SEQUENCE
 
       /*
-      descomprimimos el fichero------------------------------------------------
+      Descomprimimos el fichero------------------------------------------------
       */
 
       if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
@@ -14088,55 +14090,31 @@ Method Process() CLASS TTiketsClientesSenderReciver
 
             while !( tmpTikT )->( eof() )
 
-               if lValidaOperacion( ( tmpTikT )->dFecTik, .f. )
+               if ::validateRecepcion( tmpTikT, dbfTikT )
+
+                  dbPass( tmpTikT, dbfTikT, .f. )
+
+                  ::oSender:SetText( "Reemplazado : " + ( dbfTikT )->cSerTik + "/" + AllTrim( ( dbfTikT )->cNumTik ) + "/" + AllTrim( ( dbfTikT )->cSufTik ) + "; " + Dtoc( ( dbfTikT )->dFecTik ) + "; " + AllTrim( ( dbfTikT )->cCliTik ) + "; " + ( dbfTikT )->cNomTik )
 
                   /*
-                  Si existe el tiket lo reemplazamos------------------------------
-                  */
-
-                  if ( dbfTikT )->( dbSeek( ( tmpTikT )->cSerTik + ( tmpTikT )->cNumTik + ( tmpTikT )->cSufTik ) )
-
-                     dbPass( tmpTikT, dbfTikT, .f. )
-
-                     ::oSender:SetText( "Reemplazado : " + ( dbfTikT )->cSerTik + "/" + AllTrim( ( dbfTikT )->cNumTik ) + "/" + AllTrim( ( dbfTikT )->cSufTik ) + "; " + Dtoc( ( dbfTikT )->dFecTik ) + "; " + AllTrim( ( dbfTikT )->cCliTik ) + "; " + ( dbfTikT )->cNomTik )
-
-                     /*
-                     Eliminamos las lineas----------------------------------------
-                     */
-
-                     while ( dbfTikL )->( dbSeek( ( tmpTikT )->cSerTik + ( tmpTikT )->cNumTik + ( tmpTikT )->cSufTik ) )
-                        if dbLock( dbfTikL )
-                           ( dbfTikL )->( dbDelete() )
-                           ( dbfTikL )->( dbUnLock() )
-                        end if
-                     end while
-
-                     /*
-                     Borramos los pagos----------------------------------------------------
-                     */
-
-                     while ( dbfTikP )->( dbSeek( ( tmpTikT )->cSerTik + ( tmpTikT )->cNumTik + ( tmpTikT )->cSufTik ) )
-
-                        if dbLock( dbfTikP )
-                           ( dbfTikP )->( dbDelete() )
-                           ( dbfTikP )->( dbUnLock() )
-                        end if
-                     end while
-
-                  else
-
-                     dbPass( tmpTikT, dbfTikT, .t. )
-                     ::oSender:SetText( "Añadido : " + ( dbfTikT )->cSerTik + "/" + AllTrim( ( dbfTikT )->cNumTik ) + "/" + AllTrim( ( dbfTikT )->cSufTik ) + "; " + Dtoc( ( dbfTikT )->dFecTik ) + "; " + AllTrim( ( dbfTikT )->cCliTik ) + "; " + ( dbfTikT )->cNomTik )
-
-                  end if
-
-                  /*
-                  Ahora vamos a borrar las lineas
+                  Eliminamos las lineas----------------------------------------
                   */
 
                   while ( dbfTikL )->( dbSeek( ( tmpTikT )->cSerTik + ( tmpTikT )->cNumTik + ( tmpTikT )->cSufTik ) )
-                     if ( dbfTikL )->( dbRLock() )
+                     if dbLock( dbfTikL )
                         ( dbfTikL )->( dbDelete() )
+                        ( dbfTikL )->( dbUnLock() )
+                     end if
+                  end while
+
+                  /*
+                  Borramos los pagos----------------------------------------------------
+                  */
+
+                  while ( dbfTikP )->( dbSeek( ( tmpTikT )->cSerTik + ( tmpTikT )->cNumTik + ( tmpTikT )->cSufTik ) )
+                     if dbLock( dbfTikP )
+                        ( dbfTikP )->( dbDelete() )
+                        ( dbfTikP )->( dbUnLock() )
                      end if
                   end while
 
@@ -14150,16 +14128,6 @@ Method Process() CLASS TTiketsClientesSenderReciver
                         ( tmpTikL )->( dbSkip() )
                      end do
                   end if
-
-                  /*
-                  Comprobamos si existen pago y los eliminamos
-                  */
-
-                  while ( dbfTikP )->( dbSeek( ( tmpTikT )->cSerTik + ( tmpTikT )->cNumTik + ( tmpTikT )->cSufTik ) )
-                     if ( dbfTikP )->( dbRLock() )
-                        ( dbfTikP )->( dbDelete() )
-                     end if
-                  end while
 
                   /*
                   Trasbase de nuevos pagos
@@ -14251,6 +14219,28 @@ Method Process() CLASS TTiketsClientesSenderReciver
 Return Self
 
 //----------------------------------------------------------------------------//
+
+METHOD validateRecepcion( tmpTikT, dbfTikT ) CLASS TTiketsClientesSenderReciver
+
+   ::cErrorRecepcion       := "Pocesando tickets de cliente número " + ( dbfTikT )->cSerTik + "/" + alltrim( ( dbfTikT )->nNumTik ) + "/" + alltrim( ( dbfTikT )->cSufTik ) + " "
+
+   if !( lValidaOperacion( ( tmpTikT )->dFecTik, .f. ) )
+      ::cErrorRecepcion    += "la fecha " + dtoc( ( tmpTikT )->dFecTik ) + " no es valida en esta empresa"
+      Return .f. 
+   end if 
+
+   if !( dbfTikT )->( dbSeek( ( tmpTikT )->cSerTik + ( tmpTikT )->cNumTik + ( tmpTikT )->cSufTik ) )
+      Return .t.
+   end if 
+
+   if dtos( ( dbfTikT )->dFecCre ) + ( dbfTikT )->cTimCre > dtos( ( tmpTikT )->dFecCre ) + ( tmpTikT )->cTimCre 
+      ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfTikT )->dFecCre ) + " " + ( dbfTikT )->cTimCre + " es más reciente que la recepción " + dtoc( ( tmpTikT )->dFecCre ) + " " + ( tmpTikT )->cTimCre 
+      Return .f.
+   end if
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
 
 Static Function GenTikCli( nDevice, cCaption, cCodDoc, cPrinter )
 

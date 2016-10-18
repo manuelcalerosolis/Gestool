@@ -897,9 +897,23 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Cod. Web"
-          :bEditValue       := {|| AllTrim( Str( ( D():Clientes( nView ) )->cCodWeb ) ) }
+          :bEditValue       := {|| alltrim( str( ( D():Clientes( nView ) )->cCodWeb ) ) }
          :nWidth           := 200
          :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddCol() )
+         :cHeader          := "Alta"
+         :cEditPicture     := "@D"
+         :bEditValue       := {|| ( D():Clientes( nView ) )->dAlta }
+         :nWidth           := 80
+         :lHide            := .t.
+         :nEditType        := 1
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :bOnPostEdit      := {|oCol, uNewValue| if(  dbDialogLock( D():Clientes( nView ) ),;
+                                                      ( ( D():Clientes( nView ) )->dAlta := uNewValue, ( D():Clientes( nView ) )->( dbUnlock() ) ),;
+                                                      ) }
       end with
 
       oWndBrw:cHtmlHelp    := "Clientes"

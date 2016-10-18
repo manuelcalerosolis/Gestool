@@ -943,6 +943,13 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
          :lHide            := .t.
       end with
       
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Creación/Modificación"
+         :bEditValue       := {|| dtoc( ( D():FacturasProveedores( nView ) )->dFecCre ) + space( 1 ) + ( D():FacturasProveedores( nView ) )->cTimCre }
+         :nWidth           := 120
+         :lHide            := .t.
+      end with
+
       oDetCamposExtra:addCamposExtra( oWndBrw )
 
       oWndBrw:lAutoSeek    := .f.
@@ -11035,6 +11042,8 @@ CLASS TFacturasProveedorSenderReciver FROM TSenderReciverItem
 
    Method Process()
 
+   METHOD validateRecepcion( tmpFacPrvT, dbfFacPrvT )
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -11350,10 +11359,10 @@ Method Process() CLASS TFacturasProveedorSenderReciver
                   Comprobamos que no exista el Facido en la base de datos
                   */
 
-                  if lValidaOperacion( ( tmpFacPrvT )->dFecFac, .f. ) .and. ;
-                     !( cFacPrvT )->( dbSeek( ( tmpFacPrvT )->cSerFac + Str( ( tmpFacPrvT )->nNumFac ) + ( tmpFacPrvT )->cSufFac ) )
+                  if ::validateRecepcion( tmpFacPrvT, cFacPrvT )
 
                      dbPass( tmpFacPrvT, cFacPrvT, .t. )
+
                      ::oSender:SetText( "Añadido     : " + ( tmpFacPrvT )->cSerFac + "/" + AllTrim( Str( ( tmpFacPrvT )->nNumFac ) ) +"/" + AllTrim( ( tmpFacPrvT )->cSufFac ) + "; " + Dtoc( ( tmpFacPrvT )->dFecFac ) + "; " + AllTrim( ( tmpFacPrvT )->cCodPrv ) + ( tmpFacPrvT )->cNomPrv )
 
                      if ( tmpFacPrvL )->( dbSeek( ( tmpFacPrvT )->cSerFac + Str( ( tmpFacPrvT )->nNumFac ) + ( tmpFacPrvT )->cSufFac ) )
@@ -11373,10 +11382,6 @@ Method Process() CLASS TFacturasProveedorSenderReciver
                            ( tmpFacPrvP )->( dbSkip() )
                         end do
                      end if
-
-                  else
-
-                     ::oSender:SetText( "Desestimado : " + ( tmpFacPrvT )->cSerFac + "/" + AllTrim( Str( ( tmpFacPrvT )->nNumFac ) ) +"/" + AllTrim( ( tmpFacPrvT )->cSufFac ) + "; " + Dtoc( ( tmpFacPrvT )->dFecFac ) + "; " + AllTrim( ( tmpFacPrvT )->cCodPrv ) + ( tmpFacPrvT )->cNomPrv )
 
                   end if
 
@@ -11670,6 +11675,29 @@ Method Process() CLASS TFacturasProveedorSenderReciver
 Return Self
 
 //----------------------------------------------------------------------------//
+
+METHOD validateRecepcion( tmpFacPrvT, dbfFacPrvT ) CLASS TFacturasProveedorSenderReciver
+
+   ::cErrorRecepcion       := "Pocesando factura de proveedor número " + ( dbfFacPrvT )->cSerPed + "/" + alltrim( Str( ( dbfFacPrvT )->nNumPed ) ) + "/" + alltrim( ( dbfFacPrvT )->cSufPed ) + " "
+
+   if !( lValidaOperacion( ( tmpFacPrvT )->dFecPed, .f. ) )
+      ::cErrorRecepcion    += "la fecha " + dtoc( ( tmpFacPrvT )->dFecPed ) + " no es valida en esta empresa"
+      Return .f. 
+   end if 
+
+   if !( ( dbfFacPrvT )->( dbSeek( ( tmpFacPrvT )->cSerPed + Str( ( tmpFacPrvT )->nNumPed ) + ( tmpFacPrvT )->cSufPed ) ) )
+      Return .t.
+   end if 
+
+   if dtos( ( dbfFacPrvT )->dFecCre ) + ( dbfFacPrvT )->cTimCre > dtos( ( tmpFacPrvT )->dFecCre ) + ( tmpFacPrvT )->cTimCre 
+      ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfFacPrvT )->dFecCre ) + " " + ( dbfFacPrvT )->cTimCre + " es más reciente que la recepción " + dtoc( ( tmpFacPrvT )->dFecCre ) + " " + ( tmpFacPrvT )->cTimCre 
+      Return .f.
+   end if
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
 
 FUNCTION aEtqFacPrv( dbfDocFld, dbfDocCol )
 

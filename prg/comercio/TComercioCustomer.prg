@@ -218,8 +218,7 @@ Return ( Self )
 
 METHOD getAddressFromPrestashop( idAddress ) CLASS TComercioCustomer
 
-   local cQuery   := "SELECT * FROM " + ::TComercio:cPrefixTable( "address" ) + " " +;
-                     "WHERE id_address = " + alltrim( str( idAddress ) ) 
+   local cQuery   := "SELECT * FROM " + ::TComercio:cPrefixTable( "address" ) + " WHERE id_address = " + alltrim( str( idAddress ) ) 
    local oQuery   := TMSQuery():New( ::TComercio:oCon, cQuery )
 
    if oQuery:Open() 
@@ -268,6 +267,7 @@ METHOD assertAddressInGestoolCustomer ( oQuery ) class TComercioCustomer
 
    if empty( ::oCustomerDatabase():fieldGetbyName( "Domicilio" ) )
       ::oCustomerDatabase():load()
+      ::oCustomerDatabase():Nif           := oQuery:FieldGetByName( "dni" ) 
       ::oCustomerDatabase():Domicilio     := oQuery:fieldGetByName( "address1" ) + " " + oQuery:fieldGetByName( "address2" )  
       ::oCustomerDatabase():Poblacion     := oQuery:fieldGetByName( "city" )           
       ::oCustomerDatabase():CodPostal     := oQuery:fieldGetByName( "postcode" ) 

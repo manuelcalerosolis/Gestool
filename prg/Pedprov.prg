@@ -734,6 +734,13 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
          :lHide            := .t.
       end with
 
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Creación/Modificación"
+         :bEditValue       := {|| dtoc( ( D():PedidosProveedores( nView ) )->dFecCre ) + space( 1 ) + ( D():PedidosProveedores( nView ) )->cTimCre }
+         :nWidth           := 120
+         :lHide            := .t.
+      end with
+
       oDetCamposExtra:addCamposExtra( oWndBrw )
 
       oWndBrw:cHtmlHelp    := "Pedido a proveedor"
@@ -8301,20 +8308,22 @@ CLASS TPedidosProveedorSenderReciver FROM TSenderReciverItem
 
    Method Process()
 
+   METHOD validateRecepcion()
+
 END CLASS
 
 //----------------------------------------------------------------------------//
 
-Method CreateData()
+Method CreateData() CLASS TPedidosProveedorSenderReciver
 
    local oBlock
    local oError
    local lSnd        := .f.
+   local cFileName
    local dbfPedPrvT
    local dbfPedPrvL
    local tmpPedPrvT
    local tmpPedPrvL
-   local cFileName
 
    if ::oSender:lServer
       cFileName         := "PedPrv" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
@@ -8413,8 +8422,11 @@ Method CreateData()
 Return ( Self )
 
 //----------------------------------------------------------------------------//
+/*
+Retorna el valor anterior
+*/
 
-Method RestoreData()
+Method RestoreData() CLASS TPedidosProveedorSenderReciver
 
    local oBlock
    local oError
@@ -8422,27 +8434,24 @@ Method RestoreData()
 
    if ::lSuccesfullSend
 
-      /*
-      Retorna el valor anterior
-      */
 
       oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
       BEGIN SEQUENCE
 
-      USE ( cPatEmp() + "PedProvT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @cPedPrvT ) )
-      SET ADSINDEX TO ( cPatEmp() + "PedProvT.Cdx" ) ADDITIVE
+         USE ( cPatEmp() + "PedProvT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @cPedPrvT ) )
+         SET ADSINDEX TO ( cPatEmp() + "PedProvT.Cdx" ) ADDITIVE
 
          lSelectAll( nil, cPedPrvT, "lSndDoc", .f., .t., .f. )
 
-   RECOVER USING oError
+      RECOVER USING oError
 
-      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
+         msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
 
-   END SEQUENCE
+      END SEQUENCE
 
-   ErrorBlock( oBlock )
+      ErrorBlock( oBlock )
 
-      CLOSE ( cPedPrvT )
+         CLOSE ( cPedPrvT )
 
    end if
 
@@ -8450,7 +8459,7 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method SendData()
+Method SendData() CLASS TPedidosProveedorSenderReciver
 
    local cFileName
 
@@ -8476,7 +8485,7 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method ReciveData()
+Method ReciveData() CLASS TPedidosProveedorSenderReciver
 
    local n
    local aExt
@@ -8501,7 +8510,7 @@ Return Self
 
 //----------------------------------------------------------------------------//
 
-Method Process()
+Method Process() CLASS TPedidosProveedorSenderReciver
 
    local m
    local oBlock
@@ -8540,7 +8549,7 @@ Method Process()
          ( tmpPedPrvT )->( dbGoTop() )
          while !( tmpPedPrvT )->( eof() )
 
-            if lValidaOperacion( ( tmpPedPrvT )->dFecPed, .f. ) .and. !( dbfPedPrvT )->( dbSeek( ( tmpPedPrvT )->cSerPed + Str( ( tmpPedPrvT )->nNumPed ) + ( tmpPedPrvT )->cSufPed ) )
+            if ::validateRecepcion( tmpPedPrvT, dbfPedPrvT )
 
                dbPass( tmpPedPrvT, dbfPedPrvT, .t. )
 
@@ -8596,6 +8605,28 @@ Method Process()
 Return Self
 
 //----------------------------------------------------------------------------//
+
+METHOD validateRecepcion( tmpPedPrvT, dbfPedPrvT ) CLASS TPedidosProveedorSenderReciver
+
+   ::cErrorRecepcion       := "Pocesando pedido de proveedor número " + ( dbfPedPrvT )->cSerPed + "/" + alltrim( Str( ( dbfPedPrvT )->nNumPed ) ) + "/" + alltrim( ( dbfPedPrvT )->cSufPed ) + " "
+
+   if !( lValidaOperacion( ( tmpPedPrvT )->dFecPed, .f. ) )
+      ::cErrorRecepcion    += "la fecha " + dtoc( ( tmpPedPrvT )->dFecPed ) + " no es valida en esta empresa"
+      Return .f. 
+   end if 
+
+   if !( ( dbfPedPrvT )->( dbSeek( ( tmpPedPrvT )->cSerPed + Str( ( tmpPedPrvT )->nNumPed ) + ( tmpPedPrvT )->cSufPed ) ) )
+      Return .t.
+   end if 
+
+   if dtos( ( dbfPedPrvT )->dFecCre ) + ( dbfPedPrvT )->cTimCre > dtos( ( tmpPedPrvT )->dFecCre ) + ( tmpPedPrvT )->cTimCre 
+      ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfPedPrvT )->dFecCre ) + " " + ( dbfPedPrvT )->cTimCre + " es más reciente que la recepción " + dtoc( ( tmpPedPrvT )->dFecCre ) + " " + ( tmpPedPrvT )->cTimCre 
+      Return .f.
+   end if
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
 
 /*
 Selecciona todos los registros
