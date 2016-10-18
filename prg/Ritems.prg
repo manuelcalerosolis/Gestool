@@ -4150,12 +4150,6 @@ Static Function VisualEdtDocs( dbfDoc )
       case cTipo == "RP"
          DesignReportRecPrv( oFr, dbfDoc )
 
-      case cTipo == "DA"
-         DesignReportDepAge( oFr, dbfDoc )
-
-      case cTipo == "EX"
-         DesignReportExtAge( oFr, dbfDoc )
-
       case cTipo == "EP"
          DesignReportEntPedCli( oFr, dbfDoc )
 

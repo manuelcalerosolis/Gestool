@@ -3941,16 +3941,6 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
 		*/
 
       if oMsg != nil
-         oMsg:SetText( "Creando deposito a agentes" )
-      end if
-      mkDepAge( cPath, .f., cPathOld  )                                 ; sysrefresh()
-
-      if oMsg != nil
-         oMsg:SetText( "Creando deposito a agentes" )
-      end if
-      mkExtAge( cPath, .f., cPathOld  )                                 ; sysrefresh()
-
-      if oMsg != nil
          oMsg:SetText( "Creando presupuesto a clientes" )
       end if
       mkPreCli( cPath, aImportacion:lPreCli, cPathOld, nil, {| dbf | !( dbf )->lEstado } ) ; sysrefresh()

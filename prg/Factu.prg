@@ -2281,42 +2281,6 @@ Function CreateAcceso( oWnd )
    oItem:cBmpBig        := "Pencil_Package_32"
    oItem:lShow          := .f.
 
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 3
-   oGrupo:cPrompt       := 'Depósitos'
-   oGrupo:cLittleBitmap := "Pencil_Package_16"
-   oGrupo:cBigBitmap    := "Pencil_Package_32"
-
-   oItem                := oItemAlmacen:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Introducción depósitos'
-   oItem:cMessage       := 'Acceso a la introducción de depósitos de almacén'
-   oItem:bAction        := {|| DepAge( "01052", oWnd ) }
-   oItem:cId            := "01052"
-   oItem:cBmp           := "Package_add_16"
-   oItem:cBmpBig        := "Package_add_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemAlmacen:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Estado depósitos'
-   oItem:cMessage       := 'Acceso a los estados de depósitos de almacén'
-   oItem:bAction        := {|| ExtAge( "01053", oWnd ) }
-   oItem:cId            := "01053"
-   oItem:cBmp           := "Package_ok_16"
-   oItem:cBmpBig        := "Package_ok_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemAlmacen:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Liquidación depósitos'
-   oItem:cMessage       := 'Acceso a las liquidaciones de depósitos de almacén'
-   oItem:bAction        := {|| LqdAlm( "01054", oWnd ) }
-   oItem:cId            := "01054"
-   oItem:cBmp           := "Package_preferences_16"
-   oItem:cBmpBig        := "Package_preferences_32"
-   oItem:lShow          := .f.
-
    end if
 
    // Producción---------------------------------------------------------------

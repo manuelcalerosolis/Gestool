@@ -11343,11 +11343,7 @@ METHOD validateRecepcion( tmpSatCliT, dbfSatCliT, cOperario ) CLASS TSATClientes
       Return .f. 
    end if 
 
-<<<<<<< HEAD
-   if !empty( cOperario ) .and. ( tmpSatCliT )->cCodOpe != cOperario 
-=======
    if !empty( cOperario ) .and. ( ( tmpSatCliT )->cCodOpe != cOperario )
->>>>>>> origin/master
       ::cErrorRecepcion    += "el operario " + cOperario + " no coincide"
       Return .f. 
    end if 

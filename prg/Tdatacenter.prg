@@ -2558,21 +2558,6 @@ METHOD BuildEmpresa()
    oDataTable:cDescription := "Configuración"
    ::AddEmpresaTable( oDataTable )
 
-   oDataTable              := TDataTable():New( "DepAgeT" )
-   oDataTable:cDataFile    := cPatEmp( , .t. ) + "DepAgeT.Dbf"
-   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "DepAgeT.Cdx"
-   oDataTable:bSyncFile    := {|| SynRctPrv( cPatEmp() ) }
-   oDataTable:cDescription := "Depósitos de agentes"
-   oDataTable:bCreateFile  := {| cPath | mkDepAge( cPath ) }
-   oDataTable:bCreateIndex := {| cPath | rxDepAge( cPath ) }
-   ::AddEmpresaTable( oDataTable )
-
-   oDataTable              := TDataTable():New( "DepAgeL" )
-   oDataTable:cDataFile    := cPatEmp( , .t. ) + "DepAgeL.Dbf"
-   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "DepAgeL.Cdx"
-   oDataTable:cDescription := "Depósitos de agentes"
-   ::AddEmpresaTable( oDataTable )
-
    oDataTable              := TDataTable():New( "MovSer" )
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "MovSer.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "MovSer.Cdx"
@@ -3382,20 +3367,6 @@ METHOD BuildEmpresa()
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "TipOpera.Cdx"
    oDataTable:cDescription := "Producción"
    oDataTable:bCreateFile  := {| cPath | TTipOpera():buildfiles(cPath ) }
-   ::AddEmpresaTable( oDataTable )
-
-   oDataTable              := TDataTable():New( "ExtAgeT" )
-   oDataTable:cDataFile    := cPatEmp( , .t. ) + "ExtAgeT.Dbf"
-   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ExtAgeT.Cdx"
-   oDataTable:cDescription := "Estado depósitos"
-   oDataTable:bCreateFile  := {| cPath | mkExtAge( cPath ) }
-   oDataTable:bCreateIndex := {| cPath | rxExtAge( cPath ) }
-   ::AddEmpresaTable( oDataTable )
-
-   oDataTable              := TDataTable():New( "ExtAgeL" )
-   oDataTable:cDataFile    := cPatEmp( , .t. ) + "ExtAgeL.Dbf"
-   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ExtAgeL.Cdx"
-   oDataTable:cDescription := "Estado depósitos"
    ::AddEmpresaTable( oDataTable )
 
    /*
