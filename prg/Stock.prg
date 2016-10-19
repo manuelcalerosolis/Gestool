@@ -309,6 +309,12 @@ CLASS TStock
 
    METHOD validateDateTime( dFecMov, tTimMov )
 
+   METHOD nFacturacionPendiente( cCodigoCliente )
+
+   METHOD nPagadoCliente( cCodigoCliente )
+
+   METHOD nFacturacionCliente( cCodigoCliente )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -5130,6 +5136,144 @@ Method nOperacionesCliente( cCodigoCliente, lRiesgo )
    ErrorBlock( oBlock )
 
 Return ( nRiesgo )
+
+//---------------------------------------------------------------------------//
+
+Method nFacturacionPendiente( cCodigoCliente )
+
+   local nRec
+   local nOrd
+   local oBlock
+   local nTotal     := 0
+
+   if empty( cCodigoCliente )
+      Return ( nTotal )
+   end if
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   // Pagos no cobrados en facturas--------------------------------------------
+
+   nRec              := ( ::cFacCliP )->( Recno() )
+   nOrd              := ( ::cFacCliP )->( ordsetfocus( "cCodCli" ) )
+
+   if ( ::cFacCliP )->( dbSeek( cCodigoCliente ) )
+
+      while ( alltrim( ( ::cFacCliP )->cCodCli ) == alltrim( cCodigoCliente ) ) .and. !( ::cFacCliP )->( Eof() )
+
+         if !( ::cFacCliP )->lCobrado
+            nTotal  += ( ::cFacCliP )->nImporte
+         end if
+
+         ( ::cFacCliP )->( dbSkip() )
+
+         SysRefresh()
+
+      end while
+
+   end if
+
+   ( ::cFacCliP )->( ordsetfocus( nOrd ) )
+   ( ::cFacCliP )->( dbGoTo( nRec ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+Return ( nTotal )
+
+//---------------------------------------------------------------------------//
+
+METHOD nPagadoCliente( cCodigoCliente )
+
+   local nRec
+   local nOrd
+   local oBlock
+   local nTotal     := 0
+
+   if empty( cCodigoCliente )
+      Return ( nTotal )
+   end if
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   // Pagos no cobrados en facturas--------------------------------------------
+
+   nRec              := ( ::cFacCliP )->( Recno() )
+   nOrd              := ( ::cFacCliP )->( ordsetfocus( "cCodCli" ) )
+
+   if ( ::cFacCliP )->( dbSeek( cCodigoCliente ) )
+
+      while ( alltrim( ( ::cFacCliP )->cCodCli ) == alltrim( cCodigoCliente ) ) .and. !( ::cFacCliP )->( Eof() )
+
+         if ( ::cFacCliP )->lCobrado
+
+            nTotal  += ( ::cFacCliP )->nImporte
+
+         end if
+
+         ( ::cFacCliP )->( dbSkip() )
+
+         SysRefresh()
+
+      end while
+
+   end if
+
+   ( ::cFacCliP )->( ordsetfocus( nOrd ) )
+   ( ::cFacCliP )->( dbGoTo( nRec ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+Return ( nTotal )
+
+//---------------------------------------------------------------------------//
+
+METHOD nFacturacionCliente( cCodigoCliente )
+
+   local nRec
+   local nOrd
+   local oBlock
+   local nTotal     := 0
+
+   if empty( cCodigoCliente )
+      Return ( nTotal )
+   end if
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   // Pagos no cobrados en facturas--------------------------------------------
+
+   nRec              := ( ::cFacCliT )->( Recno() )
+   nOrd              := ( ::cFacCliT )->( ordsetfocus( "cCodCli" ) )
+
+   if ( ::cFacCliT )->( dbSeek( cCodigoCliente ) )
+
+      while ( alltrim( ( ::cFacCliT )->cCodCli ) == alltrim( cCodigoCliente ) ) .and. !( ::cFacCliT )->( Eof() )
+
+         nTotal  += ( ::cFacCliT )->nTotFac
+
+         ( ::cFacCliT )->( dbSkip() )
+
+         SysRefresh()
+
+      end while
+
+   end if
+
+   ( ::cFacCliT )->( ordsetfocus( nOrd ) )
+   ( ::cFacCliT )->( dbGoTo( nRec ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+Return ( nTotal )
 
 //---------------------------------------------------------------------------//
 

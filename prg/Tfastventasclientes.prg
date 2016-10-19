@@ -64,7 +64,10 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
 
    METHOD RiesgoAlcanzado()               INLINE ( ::oStock:nRiesgo( ::oDbf:cCodCli ) )
    METHOD TotalFacturado()                INLINE ( ::oStock:nFacturado( ::oDbf:cCodCli ) )
+   METHOD nFacturacionCliente()           INLINE ( ::oStock:nFacturacionCliente( ::oDbf:cCodCli ) )
+   METHOD TotalPendiente()                INLINE ( ::oStock:nFacturacionPendiente( ::oDbf:cCodCli ) )
    METHOD nPedidoCliente()                INLINE ( ::oStock:nPedidoCliente( ::oDbf:cCodCli ) )
+   METHOD nPagadoCliente()                INLINE ( ::oStock:nPagadoCliente( ::oDbf:cCodCli ) )
    
    METHOD setFilterClientIdHeader()       INLINE ( if( ::lApplyFilters,;
                                                    ::cExpresionHeader   += ' .and. ( alltrim( Field->cCodCli ) >= "' + alltrim( ::oGrupoCliente:Cargo:Desde ) + '" .and. alltrim( Field->cCodCli ) <= "' + alltrim( ::oGrupoCliente:Cargo:Hasta ) + '" )', ) )
@@ -719,15 +722,18 @@ METHOD AddVariable() CLASS TFastVentasClientes
          
          ::AddVariableLineasFacturaCliente()
          
-         ::AddVariableLineasRectificativaCliente() 
+         ::AddVariableLineasRectificativaCliente()
 
          ::AddVariableLineasTicketCliente()
 
    end case
 
    ::oFastReport:AddVariable(    "Clientes",    "Riesgo alcanzado",   "CallHbFunc( 'oTinfGen', ['RiesgoAlcanzado'])" )
-   ::oFastReport:AddVariable(    "Clientes",    "Total facturado",    "CallHbFunc( 'oTinfGen', ['TotalFacturado'])" )
+   ::oFastReport:AddVariable(    "Clientes",    "Total movimientos",  "CallHbFunc( 'oTinfGen', ['TotalFacturado'])" )
+   ::oFastReport:AddVariable(    "Clientes",    "Total pendiente",    "CallHbFunc( 'oTinfGen', ['TotalPendiente'])" )
+   ::oFastReport:AddVariable(    "Clientes",    "Total pagado",       "CallHbFunc( 'oTinfGen', ['nPagadoCliente'])" )
    ::oFastReport:AddVariable(    "Clientes",    "Total pedido",       "CallHbFunc( 'oTinfGen', ['nPedidoCliente'])" )
+   ::oFastReport:AddVariable(    "Clientes",    "Total facturado",    "CallHbFunc( 'oTinfGen', ['nFacturacionCliente'])" )
 
 Return ( ::Super:AddVariable() )
 

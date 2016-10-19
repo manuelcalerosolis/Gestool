@@ -1438,11 +1438,20 @@ METHOD lFtpSendFiles( aSource, aTarget, cDirectory ) CLASS TSndRecInf
 
    for n := 1 to Len( aSource )
 
-      LogWrite( aSource[ n ] )
+      if file( aSource[ n ] )
 
-      if isFalse( ::oFtp:createFile( aSource[ n ] ) )
-         MsgInfo( "Falso" )
-         lRet  := .f.
+         LogWrite( aSource[ n ] )
+
+         ::SetText( "El fichero " + aSource[ n ] + " exite." )      
+
+         if isFalse( ::oFtp:createFile( aSource[ n ] ) )
+            lRet  := .f.
+         end if
+
+      else
+
+         ::SetText( "El fichero " + aSource[ n ] + " no exite." )
+
       end if
 
    next
