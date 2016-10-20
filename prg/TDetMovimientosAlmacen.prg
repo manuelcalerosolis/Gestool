@@ -1783,16 +1783,29 @@ METHOD processPropertiesGrid() CLASS TDetMovimientos
 
    local n
    local i
-   local cRefMov  := ::oDbfVir:cRefMov
-   local cNomMov  := ::oDbfVir:cNomMov
-   local dFecMov  := ::oDbfVir:dFecMov
-   local cTimMov  := ::oDbfVir:cTimMov
-   local nTipMov  := ::oDbfVir:nTipMov
-   local cCodMov  := ::oDbfVir:cCodMov
-   local nPreDiv  := ::oDbfVir:nPreDiv
-   local nCajMov  := ::oDbfVir:nCajMov
+   local cRefMov
+   local cNomMov
+   local dFecMov
+   local cTimMov
+   local nTipMov
+   local cCodMov
+   local nPreDiv
+   local nCajMov
    local cAliMov  := ::oParent:oDbf:cAlmDes
    local cAloMov  := ::oParent:oDbf:cAlmOrg
+
+   if Empty( ::oDbfVir )
+      Return nil
+   end if
+
+   cRefMov  := ::oDbfVir:cRefMov
+   cNomMov  := ::oDbfVir:cNomMov
+   dFecMov  := ::oDbfVir:dFecMov
+   cTimMov  := ::oDbfVir:cTimMov
+   nTipMov  := ::oDbfVir:nTipMov
+   cCodMov  := ::oDbfVir:cCodMov
+   nPreDiv  := ::oDbfVir:nPreDiv
+   nCajMov  := ::oDbfVir:nCajMov
 
    // Metemos las lineas por propiedades---------------------------------------
 
@@ -1841,9 +1854,7 @@ METHOD processPropertiesGrid() CLASS TDetMovimientos
                if ::accumulatesStoreMovement()
                   ::oDbfVir:Cancel()
                else 
-                  if !Empty( ::oDbfVir )
                      ::oDbfVir:Insert()
-                  end if
                end if
 
             ::oDbfVir:Cancel()
