@@ -402,37 +402,37 @@ CLASS SepaDebitActor
 
    DATA nEntity
 
-   DATA Nm                                   // Nombre
-   DATA Ctry                                    // Pais
-   DATA AdrLine1                                // Dirección en texto libre
-   DATA AdrLine2                                // Se permiten 2 etiquetas para direccion
-   DATA IBAN                                    // IBAN
-   DATA BIC                                  // BIC
-   DATA BICOrBEI                                // BIC o BEI 
-   DATA BirthDt                                 // Fecha de nacimiento 
-   DATA PrvcOfBirth                             // Provincia de nacimiento
-   DATA CityOfBirth                             // Ciudad de nacimiento 
-   DATA CtryOfBirth                             // País de nacimiento
-   DATA Id                                      // Identificación 
-   DATA Issr                                    // Emisor 
-   DATA Cd                                   // Codigo
-   DATA Prtry           AS CHARACTER INIT "SEPA"  // Propietario
+   DATA Nm                                                  // Nombre
+   DATA Ctry                                                   // Pais
+   DATA AdrLine1                                               // Dirección en texto libre
+   DATA AdrLine2                                               // Se permiten 2 etiquetas para direccion
+   DATA IBAN                                                   // IBAN
+   DATA BIC                                                 // BIC
+   DATA BICOrBEI                                               // BIC o BEI 
+   DATA BirthDt                                                // Fecha de nacimiento 
+   DATA PrvcOfBirth                                            // Provincia de nacimiento
+   DATA CityOfBirth                                            // Ciudad de nacimiento 
+   DATA CtryOfBirth                                            // País de nacimiento
+   DATA Id                                                     // Identificación 
+   DATA Issr                                                   // Emisor 
+   DATA Cd                                                  // Codigo
+   DATA Prtry           AS CHARACTER INIT "SEPA"            // Propietario
 
-   DATA PmtInfId                                // Identificación de la información del pago 
-   DATA BtchBookg       AS CHARACTER INIT "false"         // Indicador de apunte en cuenta (1)
-   DATA ReqdColltnDt                               // Fecha de cobro (Vencimiento)
-   DATA Ustrd                                    // Informacion no estructurada, p.e., concepto del cobro
-   DATA NbOfTxs         AS NUMERIC INIT 0             // Número de operaciones 
-   DATA CtrlSum         AS NUMERIC INIT 0.00             // Control de suma 
+   DATA PmtInfId                                            // Identificación de la información del pago 
+   DATA BtchBookg       AS CHARACTER INIT "false"           // Indicador de apunte en cuenta (1)
+   DATA ReqdColltnDt                                        // Fecha de cobro (Vencimiento)
+   DATA Ustrd                                               // Informacion no estructurada, p.e., concepto del cobro
+   DATA NbOfTxs         AS NUMERIC INIT 0                   // Número de operaciones 
+   DATA CtrlSum         AS NUMERIC INIT 0.00                   // Control de suma 
    DATA PmtMtd          AS CHARACTER INIT "DD"   READONLY   // Método de pago Regla de uso: Solamente se admite el código ‘DD’
    DATA ChrgBr          AS CHARACTER INIT "SLEV" READONLY   // Cláusula de gastos (4)
-   DATA InstrId                                 // Identificación de la instrucción
-   DATA EndToEndId                              // Identificación de extremo a extremo 
-   DATA InstdAmt        AS NUMERIC INIT 0.00             // Importe ordenado 
-   DATA MndtId                                     // Identificación del mandato 
-   DATA DtOfSgntr                                  // Fecha de firma 
-   DATA AmdmntInd       AS CHARACTER INIT "false"  // Indicador de modificación 
-   DATA OrgnlMndtId                                // Identificación del mandato original 
+   DATA InstrId                                             // Identificación de la instrucción
+   DATA EndToEndId                                          // Identificación de extremo a extremo 
+   DATA InstdAmt        AS NUMERIC INIT 0.00                // Importe ordenado 
+   DATA MndtId                                              // Identificación del mandato 
+   DATA DtOfSgntr                                           // Fecha de firma 
+   DATA AmdmntInd       AS CHARACTER INIT "false"           // Indicador de modificación 
+   DATA OrgnlMndtId                                         // Identificación del mandato original 
 
    DATA oXmlActor
    DATA oXmlId

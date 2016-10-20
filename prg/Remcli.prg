@@ -1326,7 +1326,7 @@ METHOD SaveModelo()
    local oComboEsquema
 
    if ::oDbf:Recno() == 0
-      RETURN ( Self )
+      Return ( Self )
    end if
 
    ::cFicheroExportacion   := ::getFicheroExportacion() 
@@ -2490,7 +2490,7 @@ RETURN ( Self )
 
 METHOD setEstadoFactura()
 
-   local nNumFac  := ""   
+   local nNumFac     
    local nOrdFac
    local nRecFac
    local nRecRec
