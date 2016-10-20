@@ -1841,7 +1841,9 @@ METHOD processPropertiesGrid() CLASS TDetMovimientos
                if ::accumulatesStoreMovement()
                   ::oDbfVir:Cancel()
                else 
-                  ::oDbfVir:Insert()
+                  if !Empty( ::oDbfVir )
+                     ::oDbfVir:Insert()
+                  end if
                end if
 
             ::oDbfVir:Cancel()
