@@ -373,7 +373,7 @@ METHOD Resource() CLASS GeneraFacturasClientes
       VALID    ( ::cSerieFactura >= "A" .and. ::cSerieFactura <= "Z"  );
       OF       ::oPag:aDialogs[ 1 ]      
 
-      ::oSerieFactura:bWhen := {|| ( ::nTipoSerie == 3 ) }
+   ::oSerieFactura:bWhen := {|| ( ::nTipoSerie == 3 ) }
 
    ::oAgruparCliente:Resource( ::oPag:aDialogs[ 1 ] )
 
@@ -546,7 +546,7 @@ METHOD PrevPage() CLASS GeneraFacturasClientes
       SetWindowText( ::oBtnNxt:hWnd, "&Siguiente >" )
       ::oBtnPrv:Hide()
       ::oPag:GoPrev()
-   end
+   end if
 
 Return ( self )
 
@@ -1008,6 +1008,10 @@ METHOD cClaveAlbaran() CLASS GeneraFacturasClientes
 
    cClave         += transform( ( D():AlbaranesClientes( ::nView ) )->nIvaMan, "99.99" )
 
+   if !::isFechaFacturaActual()
+      cClave      += dtoc( ( D():AlbaranesClientes( ::nView ) )->dFecAlb )
+   end if
+    
    if ::oAgruparDireccion:Value()
       cClave      += ( D():AlbaranesClientes( ::nView ) )->cCodCli + ( D():AlbaranesClientes( ::nView ) )->cCodObr
    else
@@ -1021,10 +1025,6 @@ METHOD cClaveAlbaran() CLASS GeneraFacturasClientes
    if ::oUnificarPago:Value()
       cClave      += ( D():AlbaranesClientes( ::nView ) )->cCodPago
    end if
-
-   if !::isFechaFacturaActual()
-      cClave      += dtoc( ( D():AlbaranesClientes( ::nView ) )->dFecAlb )
-   end if 
 
    if ::oAgruparDescuentos:Value()
       cClave      += str( ( D():AlbaranesClientes( ::nView ) )->nDtoEsp )
