@@ -7319,7 +7319,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
       aTmp[ _NIVATIL ]     := nIva( dbfIva, cDefIva() )
 
       if ( dbfTmpL )->( eof() )
-         nTop              := ( ( oBrw:nRowSel - 1 ) * oBrw:nRowHeight ) + oBrw:HeaderHeight() - 1
+         nTop              := ( max( ( oBrw:nRowSel - 1 ), 0 ) * oBrw:nRowHeight ) + oBrw:HeaderHeight() - 1
       else
          nTop              := ( ( oBrw:nRowSel ) * oBrw:nRowHeight ) + oBrw:HeaderHeight() - 1
       end if
@@ -7330,7 +7330,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
 
    else
 
-      nTop                 := ( ( oBrw:nRowSel - 1 ) * oBrw:nRowHeight ) + oBrw:HeaderHeight() - 1
+      nTop                 := ( max( ( oBrw:nRowSel - 1 ), 0 ) * oBrw:nRowHeight ) + oBrw:HeaderHeight() - 1
 
    end if
 
@@ -7745,17 +7745,40 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
       oDlgDet:AddFastKey( VK_F11, {|| GetPesoBalanza( aGet, oBtn ) } )
 
       oDlgDet:bKeyDown        := {| nKey | EdtDetKeyDown( nKey, aGet, oDlgDet, oBtn ) }
-      oDlgDet:bStart          := {|| if( !empty( cCodArt ), ( Eval( aGet[ _CCBATIL ]:bLostFocus ), aGet[ _CCBATIL ]:lValid() ), ), SetDlgMode( oDlgDet, aTmp, aGet, nMode, oBrw, oBtn ) }
+      oDlgDet:bStart          := {|| dlgStart( cCodArt, aTmp, nMode, aGet, oBrw, oBtn, oDlgDet ) }
       oDlgDet:bLostFocus      := {|| dlgLostFocus( nMode, aTmp ) }
       
       setLostFocusOff()
 
-   oDlgDet:Activate( , , , .f., , .t. )
+   oDlgDet:Activate( {|nRow, nCol| dlgClick( nRow, nCol, oDlgDet ) }, , , .f., , .f. )
 
    oBrw:setFocus()
    oBrw:Refresh()
 
 RETURN ( oDlgDet:nResult == IDOK )
+
+//-------------------------------------------------------------------------//
+
+Static Function dlgStart( cCodArt, aTmp, nMode, aGet, oBrw, oBtn, oDlg )
+
+   if !empty( cCodArt )
+      eval( aGet[ _CCBATIL ]:bLostFocus )
+      aGet[ _CCBATIL ]:lValid() 
+   end if 
+
+   setDlgMode( oDlg, aTmp, aGet, nMode, oBrw, oBtn )
+
+Return ( nil )
+
+//-------------------------------------------------------------------------//
+
+Static Function dlgClick( nRow, nCol, oDlg )
+
+   if nRow < 0 .or. nCol < 0 .or. nRow > oDlg:nHeight .or. nCol > oDlg:nWidth
+      oDlg:end()
+   end if 
+
+Return ( nil )
 
 //-------------------------------------------------------------------------//
 
@@ -7772,16 +7795,13 @@ Static Function SetDlgMode( oDlg, aTmp, aGet, nMode, oBrw, oBtn ) // , nTop, nLe
    // oDlg:Move( nTop, nLeft, nWidth + nHeight, nHeight )
 
    for n := 1 to len( oDlg:aControls ) - 1
-
-      nRow        := 3 //( ( oBrw:nRowSel - 1 ) * oBrw:nRowHeight ) // + oBrw:HeaderHeight() + 4
+      nRow        := 3
       nCol        := oBrw:aCols[ n ]:nDisplayCol - 25
       nWidth      := oBrw:aCols[ n ]:nWidth - 2
       nHeight     := oBrw:nRowHeight - 4
-
       nGWidth     += oBrw:aCols[ n ]:nWidth - 1
 
       oDlg:aControls[ n ]:Move( nRow, nCol, nWidth, nHeight, .t. )
-
    next
 
    oBtn:Move( nRow, nGWidth, nHeight + 4, nHeight + 4, .t. )
@@ -7840,7 +7860,7 @@ Static Function SetDlgMode( oDlg, aTmp, aGet, nMode, oBrw, oBtn ) // , nTop, nLe
 
    next
 
-return .t.
+Return .t.
 
 //------------------------------------------------------------------------//
 /*

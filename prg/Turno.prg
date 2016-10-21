@@ -11631,11 +11631,9 @@ Return ( lCajaOpen )
 
 Function ChkTurno( oMenuItem, oWnd )
 
-   local oTurno
+   local oTurno   := TTurno():New( cPatEmp(), cDriver(), oWnd, oMenuItem )   
 
-   oTurno         := TTurno():New( cPatEmp(), cDriver(), oWnd, oMenuItem )   
-
-   if !Empty( oTurno )
+   if !empty( oTurno )
 
       if oTurno:OpenFiles()
 

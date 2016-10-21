@@ -205,7 +205,7 @@ FUNCTION Cajas( oMenuItem, oWnd )
 
       DEFINE BTNSHELL RESOURCE "SEL" OF oWndBrw ;
 			NOBORDER ;
-         ACTION   ( lChgCaja( ( dbfCajT )->cCodCaj, , oWndBrw ) ) ;
+         ACTION   ( lChgCaja( ( dbfCajT )->cCodCaj, , oWndBrw ), chkTurno( , oWndBrw ) ) ;
          TOOLTIP  "Sele(c)cionar";
          HOTKEY   "C"
 
@@ -2230,8 +2230,6 @@ Function lSetCaja( cCajUsr, cCodUsr, oWndBrw )
       oWndBrw        := nil
    end if
 
-   chkTurno()
-
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -3177,7 +3175,7 @@ Function SelCajTactil( oWnd, lInicio )
 
       oImgCaj     := TImageList():New( 48, 48 )
 
-      oLstCaj     := TListView():Redefine( 100, oDlg, {| nOpt | SelBrwBigCaj( nOpt, oLstCaj, oDlg, dbfCaj ) }, 1 )
+      oLstCaj     := TListView():Redefine( 100, oDlg, {| nOpt | SelBrwBigCaj( nOpt, oLstCaj, oDlg, dbfCaj ), chkTurno() }, 1 )
 
       REDEFINE BUTTONBMP ;
          BITMAP   "Delete_32" ;
@@ -3227,8 +3225,10 @@ Static Function SelBrwBigCaj( nOpt, oLstCaj, oDlg, dbfCaj )
       Return nil
    end if
 
+   // Cambia la caja del usuario-----------------------------------------------
+
    if ( dbfCaj )->( OrdKeyGoTo( nOpt ) )
-      //Cambia la caja del usuario
+      
       lChgCaja( ( dbfCaj )->cCodCaj, oUser():cCodigo() )
       oDlg:end( IDOK )
    else

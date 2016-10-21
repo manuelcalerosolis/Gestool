@@ -329,7 +329,9 @@ FUNCTION Empresa( oMenuItem, oWnd )
       oWndBrw:lAutoPos              := .f.
 
       if oUser():lCambiarEmpresa 
-         oWndBrw:oBrw:bLDblClick    := {|| SetEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser, nil, oWnd ), if( !Empty( oWndBrw ), oWndBrw:End( .t. ), ) }
+         oWndBrw:oBrw:bLDblClick    := {||   setEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser, nil, oWnd ),;
+                                             chkTurno( , oWnd ),;
+                                             if( !Empty( oWndBrw ), oWndBrw:End( .t. ), ) }
       else
          oWndBrw:oBrw:bLDblClick    := {|| nil }
       end if
@@ -510,6 +512,8 @@ Static Function initialProccesBuildEmpresa()
 
    setEmpresa( cCodigoEmpresa, , , , , oWnd(), .t. )
 
+   chkTurno( , oWnd() )
+
    /*
    Reindexamos--------------------------------------------------------------
    */
@@ -529,7 +533,8 @@ RETURN ( nil )
 Static Function WinEdtEmp()
 
    if WinEdtRec( oWndBrw, bEdit, dbfEmp )
-      SetEmpresa( ( dbfEmp )->CodEmp, , , , , oWnd() )
+      setEmpresa( ( dbfEmp )->CodEmp, , , , , oWnd() )
+      chkTurno( , oWnd() )
    end if
 
 RETURN ( nil )
@@ -1219,7 +1224,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
    // Seleccionamos la empresa ------------------------------------------------
 
-   SetEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser, oBrw, oWnd(), .t. )
+   setEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser, oBrw, oWnd(), .t. )
 
    // Control de errores-------------------------------------------------------
 
@@ -2504,7 +2509,8 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
    KillTrans()
 
    if oDlg:nResult == IDOK
-      SetEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser, oBrw, oWnd(), .t. )
+      setEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser, oBrw, oWnd(), .t. )
+      chkTurno( , oWnd() )
    end if
 
    // Reanudamos los servicios ---------------------------------------------------
@@ -3287,8 +3293,6 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
 
    TDataCenter():BuildData()
 
-   // TDataCenter():CheckEmpresa()
-
    /*
    Ponemos el titulo de la empresa---------------------------------------------
    */
@@ -3360,15 +3364,6 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
       oMsgText( 'Comprobando contadores' )
       IsCount()
 
-   end if
-
-   /*
-   Chequeo del turno-----------------------------------------------------------
-   */
-
-   if !lSoft
-      oMsgText( 'Seleccionado sesión actual' )
-      ChkTurno( , oWnd )
    end if
 
    // Chequeo del turno--------------------------------------------------------
@@ -6080,7 +6075,9 @@ Function NextEmpresa()
             ( dbfEmp )->( dbSkip() )
          end if
 
-         SetEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser, , , .t. )
+         setEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser )
+
+         chkTurno()
 
          msgInfo( "Nueva empresa activa : " + ( dbfEmp )->CodEmp + " - " + Rtrim( ( dbfEmp )->cNombre ), "Cambio de empresa" )
 
@@ -6134,7 +6131,9 @@ Function PriorEmpresa()
             ( dbfEmp )->( dbSkip( -1 ) )
          end if
 
-         SetEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser )
+         setEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser )
+
+         chkTurno()
 
          msgInfo( "Nueva empresa activa : " + ( dbfEmp )->CodEmp + " - " + Rtrim( ( dbfEmp )->cNombre ), "Cambio de empresa" )
 

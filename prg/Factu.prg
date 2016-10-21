@@ -346,7 +346,7 @@ Static Function CreateMainWindow( oIconApp )
 
    oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : " + Rtrim( oUser():cDelegacion() ), 200,,,, .t., {|| if( oUser():lCambiarEmpresa, SelectDelegacion( oMsgDelegacion ), ) } )
 
-   oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  + oUser():cCaja(), 100,,,, .t., {|| SelectCajas() } )
+   oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  + oUser():cCaja(), 100,,,, .t., {|| SelectCajas(), chkTurno() } )
 
    oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : " + Rtrim( oUser():cAlmacen() ), 100,,,, .t., {|| SelectAlmacen() } )
 
@@ -766,7 +766,7 @@ Function lEnviarCorreoCliente( cSay, oDlg )
       :cGetMensaje           := "Su petición de registro está siendo procesada. En breve nos pondremos en contacto con usted "
       :cGetMensaje           += "para finalizar el proceso de registro." + "<br>"
       :cGetMensaje           += "Puede ponerse en contacto con nosotros mediante email en registro@gestool.es; o en el teléfono 902 930 252" + "<br>"
-      :cGetMensaje           += "de 09:00 a 14:00 y de 17:00 a 21:00"
+      :cGetMensaje           += "de 09:00 a 15:00"
 
       /*
       Mandamos el Mail---------------------------------------------------------
@@ -975,11 +975,11 @@ FUNCTION lInitCheck( oMessage, oProgress )
       oProgress:AutoInc()
    end if
 
-   SetEmpresa( , , , , , oWnd )
+   setEmpresa( , , , , , oWnd )
 
    // Eventos del inicio---------------------------------
 
-   // runEventScript( "IniciarAplicacion" )
+   runEventScript( "IniciarAplicacion" )
 
    if !Empty( oMessage )
       oMessage:SetText( 'Comprobaciones finalizadas' )
@@ -1052,6 +1052,8 @@ Function lStartCheck()
    runEventScript( "IniciarAplicacion" )
 
    // Colocamos la sesion actual-----------------------------------------------
+
+   chkTurno( , oWnd )
  
    if !empty( oMsgSesion() )
       oMsgSesion():setText( "Sesión : " + Transform( cCurSesion(), "######" ) )
