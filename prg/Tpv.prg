@@ -1313,7 +1313,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Fecha"
-         :cSortOrder       := "dFecTik"
+         :cSortOrder       := "dDesFec"
          :bEditValue       := {|| dtoc( ( dbfTikT )->dFecTik ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
@@ -16986,7 +16986,7 @@ FUNCTION rxTpv( cPath, cDriver )
       ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "CNUMTIK", "CSERTIK + CNUMTIK + CSUFTIK", {|| Field->cSerTik + Field->cNumTik + Field->cSufTik } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfTikT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "dFecTik", "dFecTik", {|| Field->dFecTik } ) )
 
       ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
@@ -17066,6 +17066,9 @@ FUNCTION rxTpv( cPath, cDriver )
 
       ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( dbfTikT )->( ordCreate( cPath + "TikeT.Cdx", "cCodObr", "cCodObr + dtos( dFecTik )", {|| Field->cCodObr + dtos( Field->dFecTik ) } ) )
+
+      ( dbfTikT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
+      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "dDesFec", "dFecTik", {|| Field->dFecTik } ) )
 
       ( dbfTikT )->( dbCloseArea() )
    else
