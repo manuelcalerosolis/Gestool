@@ -1406,7 +1406,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Fecha"
-         :cSortOrder       := "dFecPre"
+         :cSortOrder       := "dDesFec"
          :bEditValue       := {|| Dtoc( ( D():PresupuestosClientes( nView ) )->dFecPre ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
@@ -10061,6 +10061,8 @@ FUNCTION rxPreCli( cPath, cDriver )
       ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.CDX", "CodPostal", "Field->cPosCli", {|| Field->cPosCli } ) )
 
+      ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}, , , , , , , , , .t. ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PRECLIT.CDX", "DDESFEC", "DFECPRE", {|| Field->DFECPRE } ) )
 
       ( dbfPreCliT )->( dbCloseArea() )
 

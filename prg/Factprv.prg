@@ -839,7 +839,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Fecha"
-         :cSortOrder       := "dFecFac"
+         :cSortOrder       := "dDesFec"
          :bEditValue       := {|| Dtoc( ( D():FacturasProveedores( nView ) )->dFecFac ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
@@ -9660,6 +9660,9 @@ FUNCTION rxFacPrv( cPath, cDriver )
 
       ( cFacPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cFacPrvT )->( ordCreate( cPath + "FACPRVT.CDX", "cCtrCoste", "cCtrCoste", {|| Field->cCtrCoste } ) )
+
+      ( cFacPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}, , , , , , , , , .t.  ) )
+      ( cFacPrvT )->( ordCreate( cPath + "FACPRVT.CDX", "DDESFEC", "DFECFAC", {|| Field->DFECFAC } ) )
       
       ( cFacPrvT )->( dbCloseArea() )
    else

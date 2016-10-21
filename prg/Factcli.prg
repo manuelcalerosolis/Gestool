@@ -847,7 +847,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Fecha"
-         :cSortOrder       := "dFecFac"
+         :cSortOrder       := "dFecDes"
          :bEditValue       := {|| Dtoc( ( D():FacturasClientes( nView ) )->dFecFac ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }

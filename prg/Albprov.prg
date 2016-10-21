@@ -521,7 +521,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Fecha"
-         :cSortOrder       := "dFecAlb"
+         :cSortOrder       := "dDesFec"
          :bEditValue       := {|| Dtoc( ( D():AlbaranesProveedores( nView ) )->dFecAlb ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
@@ -8515,6 +8515,9 @@ FUNCTION rxAlbPrv( cPath, cDriver )
 
       ( cAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cAlbPrvT)->( ordCreate( cPath + "AlbProvT.Cdx", "cCtrCoste", "cCtrCoste", {|| Field->cCtrCoste } ) )
+
+      ( cAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}, , , , , , , , , .t.  ) )
+      ( cAlbPrvT)->( ordCreate( cPath + "AlbProvT.Cdx", "DDESFEC", "DFECALB", {|| Field->DFECALB } ) )
 
       ( cAlbPrvT )->( dbCloseArea() )
 

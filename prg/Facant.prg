@@ -776,7 +776,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Fecha"
-         :cSortOrder       := "dFecAnt"
+         :cSortOrder       := "dDesFec"
          :bEditValue       := {|| Dtoc( ( dbfAntCliT )->dFecAnt ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
@@ -5558,6 +5558,9 @@ FUNCTION rxAntCli( cPath, cDriver )
 
       ( dbfAntCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( dbfAntCliT )->( ordCreate( cPath + "AntCliT.Cdx", "cCtrCoste", "cCtrCoste", {|| Field->cCtrCoste } ) )
+
+      ( dbfAntCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
+      ( dbfAntCliT )->( ordCreate( cPath + "AntCliT.CDX", "dDesFec", "dFecAnt", {|| Field->dFecAnt } ) )
 
       ( dbfAntCliT )->( dbCloseArea() )
 

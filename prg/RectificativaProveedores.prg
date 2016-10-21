@@ -766,7 +766,7 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Fecha"
-         :cSortOrder       := "dFecFac"
+         :cSortOrder       := "dDesFec"
          :bEditValue       := {|| Dtoc( ( D():FacturasRectificativasProveedores( nView ) )->dFecFac ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
@@ -9146,6 +9146,9 @@ FUNCTION rxRctPrv( cPath, oMeter )
 
       ( cRctPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cRctPrvT )->( ordCreate( cPath + "RctPrvT.CDX", "iNumRct", "'04' + CSERFAC + STR( NNUMFAC ) + CSUFFAC", {|| '04' + Field->CSERFAC + STR( Field->NNUMFAC ) + Field->CSUFFAC } ) )
+
+      ( cRctPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cRctPrvT )->( ordCreate( cPath + "RctPrvT.CDX", "DDESFEC", "DFECFAC", {|| Field->DFECFAC } ) )
 
       ( cRctPrvT )->( dbCloseArea() )
    else

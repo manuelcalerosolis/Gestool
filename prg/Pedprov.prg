@@ -605,7 +605,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Fecha"
-         :cSortOrder       := "dFecPed"
+         :cSortOrder       := "dDesPed"
          :bEditValue       := {|| Dtoc( ( D():PedidosProveedores( nView ) )->dFecPed ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
@@ -7769,22 +7769,23 @@ Function aIndexPedidoProveedor()
 
    local aIndex   := {}
 
-   aAdd( aIndex, { "Id",                  "nNumPed",     "cSerPed + str( nNumPed ) + cSufPed",                          {|| Field->cSerPed + str( Field->nNumPed ) + Field->cSufPed } } )
-   aAdd( aIndex, { "Fecha",               "dFecPed",     "dFecPed",                                                     {|| Field->dFecPed } } )
-   aAdd( aIndex, { "FechaEntrada",        "dFecEnt",     "dFecEnt",                                                     {|| Field->dFecEnt } } )
-   aAdd( aIndex, { "CodigoEntidad",       "cCodPrv",     "cCodPrv",                                                     {|| Field->cCodPrv } } )
-   aAdd( aIndex, { "NombreEntidad",       "cNomPrv",     "Upper( cNomPrv )",                                            {|| Upper( Field->cNomPrv ) } } )
-   aAdd( aIndex, { "AnnoId",              "nNumPedYea",  "str( Year( dFecPed ) ) + cSerPed + str( nNumPed ) + cSufPed", {|| str( Year( Field->dFecPed ) ) + Field->cSerPed + str( Field->nNumPed ) + Field->cSufPed } } )
-   aAdd( aIndex, { "AnnoFecha",           "dFecPedYea",  "str( Year( dFecPed ) ) + Dtoc( dFecPed )",                    {|| str( Year( Field->dFecPed ) ) + Dtoc( Field->dFecPed ) } } )
-   aAdd( aIndex, { "AnnoFechaEntrada",    "dFecEntYea",  "str( Year( dFecPed ) ) + Dtoc( dFecEnt )",                    {|| str( Year( Field->dFecPed ) ) + Dtoc( Field->dFecEnt ) } } )
-   aAdd( aIndex, { "AnnoEntidad",         "cCodPrvYea",  "str( Year( dFecPed ) ) + cCodPrv",                            {|| str( Year( Field->dFecPed ) ) + Field->cCodPrv } } )
-   aAdd( aIndex, { "AnnoNombreEntidad",   "cNomPrvYea",  "str( Year( dFecPed ) ) + Upper( cNomPrv )",                   {|| str( Year( Field->dFecPed ) ) + Upper( Field->cNomPrv ) } } )
-   aAdd( aIndex, { "Estado",              "nEstado",     "nEstado",                                                     {|| Field->nEstado } } )
-   aAdd( aIndex, { "Turno",               "cTurPed",     "cTurPed + cSufPed + cCodCaj",                                 {|| Field->cTurPed + Field->cSufPed + Field->cCodCaj } } )
-   aAdd( aIndex, { "IdPedidoCliente",     "cPedCli",     "cNumPedCli",                                                  {|| Field->cNumPedCli } } )
-   aAdd( aIndex, { "IdUsuario",           "cCodUsr",     "cCodUsr + Dtos( dFecChg ) + cTimChg",                         {|| Field->cCodUsr + Dtos( Field->dFecChg ) + Field->cTimChg } } )
-   aAdd( aIndex, { "IdAlbaranProveedor",  "cNumAlb",     "cNumAlb",                                                     {|| Field->cNumAlb } } )
-   aAdd( aIndex, { "IdInforme",           "iNumPed",     "'01' + cSerPed + str( nNumPed ) + Space(1) + cSufPed",        {|| '01' + Field->cSerPed + str( Field->nNumPed ) + Space(1) + Field->cSufPed } } )
+   aAdd( aIndex, { "Id",                  "nNumPed",     "cSerPed + str( nNumPed ) + cSufPed",                          {|| Field->cSerPed + str( Field->nNumPed ) + Field->cSufPed }, .f. } )
+   aAdd( aIndex, { "Fecha",               "dFecPed",     "dFecPed",                                                     {|| Field->dFecPed }, .f. } )
+   aAdd( aIndex, { "FechaEntrada",        "dFecEnt",     "dFecEnt",                                                     {|| Field->dFecEnt }, .f. } )
+   aAdd( aIndex, { "CodigoEntidad",       "cCodPrv",     "cCodPrv",                                                     {|| Field->cCodPrv }, .f. } )
+   aAdd( aIndex, { "NombreEntidad",       "cNomPrv",     "Upper( cNomPrv )",                                            {|| Upper( Field->cNomPrv ) }, .f. } )
+   aAdd( aIndex, { "AnnoId",              "nNumPedYea",  "str( Year( dFecPed ) ) + cSerPed + str( nNumPed ) + cSufPed", {|| str( Year( Field->dFecPed ) ) + Field->cSerPed + str( Field->nNumPed ) + Field->cSufPed }, .f. } )
+   aAdd( aIndex, { "AnnoFecha",           "dFecPedYea",  "str( Year( dFecPed ) ) + Dtoc( dFecPed )",                    {|| str( Year( Field->dFecPed ) ) + Dtoc( Field->dFecPed ) }, .f. } )
+   aAdd( aIndex, { "AnnoFechaEntrada",    "dFecEntYea",  "str( Year( dFecPed ) ) + Dtoc( dFecEnt )",                    {|| str( Year( Field->dFecPed ) ) + Dtoc( Field->dFecEnt ) }, .f. } )
+   aAdd( aIndex, { "AnnoEntidad",         "cCodPrvYea",  "str( Year( dFecPed ) ) + cCodPrv",                            {|| str( Year( Field->dFecPed ) ) + Field->cCodPrv }, .f. } )
+   aAdd( aIndex, { "AnnoNombreEntidad",   "cNomPrvYea",  "str( Year( dFecPed ) ) + Upper( cNomPrv )",                   {|| str( Year( Field->dFecPed ) ) + Upper( Field->cNomPrv ) }, .f. } )
+   aAdd( aIndex, { "Estado",              "nEstado",     "nEstado",                                                     {|| Field->nEstado }, .f. } )
+   aAdd( aIndex, { "Turno",               "cTurPed",     "cTurPed + cSufPed + cCodCaj",                                 {|| Field->cTurPed + Field->cSufPed + Field->cCodCaj }, .f. } )
+   aAdd( aIndex, { "IdPedidoCliente",     "cPedCli",     "cNumPedCli",                                                  {|| Field->cNumPedCli }, .f. } )
+   aAdd( aIndex, { "IdUsuario",           "cCodUsr",     "cCodUsr + Dtos( dFecChg ) + cTimChg",                         {|| Field->cCodUsr + Dtos( Field->dFecChg ) + Field->cTimChg }, .f. } )
+   aAdd( aIndex, { "IdAlbaranProveedor",  "cNumAlb",     "cNumAlb",                                                     {|| Field->cNumAlb }, .f. } )
+   aAdd( aIndex, { "IdInforme",           "iNumPed",     "'01' + cSerPed + str( nNumPed ) + Space(1) + cSufPed",        {|| '01' + Field->cSerPed + str( Field->nNumPed ) + Space(1) + Field->cSufPed }, .f. } )
+   aAdd( aIndex, { "FechaDescendente",    "dDesPed",     "dFecPed",                                                     {|| Field->dFecPed }, .t. } )
 
 Return ( aIndex )
 

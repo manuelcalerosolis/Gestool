@@ -1630,7 +1630,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Fecha"
-         :cSortOrder       := "dFecFac"
+         :cSortOrder       := "dDesFec"
          :bEditValue       := {|| Dtoc( ( D():FacturasRectificativas( nView ) )->dFecFac ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
@@ -12626,6 +12626,9 @@ FUNCTION rxFacRec( cPath, oMeter )
 
       ( cFacRecT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "CodPostal", "Field->cPosCli", {|| Field->cPosCli } ) )
+
+      ( cFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "dDesFec", "dFecFac", {|| Field->dFecFac } ) )
 
       ( cFacRecT )->( dbCloseArea() )
 

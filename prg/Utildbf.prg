@@ -1458,7 +1458,7 @@ Function buildIndex( cDataBase, cDriver, aIndex )
       ( cAlias)->( __dbPack() )
 
       for each aCurrent in aIndex
-         ( cAlias )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+         ( cAlias )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , aCurrent[ 5 ] ) )
          ( cAlias )->( ordCreate( databaseFileIndex( cDataBase ), aCurrent[ 2 ], aCurrent[ 3 ], aCurrent[ 4 ] ) )
       next 
 

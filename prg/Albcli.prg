@@ -671,7 +671,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       with object ( oWndBrw:AddXCol() )   
          :cHeader          := "Fecha"
-         :cSortOrder       := "dFecAlb"
+         :cSortOrder       := "dDesFec"
          :bEditValue       := {|| Dtoc( ( D():Get( "AlbCliT", nView ) )->dFecAlb ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
@@ -16379,6 +16379,9 @@ FUNCTION rxAlbCli( cPath, cDriver )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , , , .t. ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "nTotAlb", "nTotAlb", {|| Field->nTotAlb }, ) )
+
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t.  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "dDesFec", "dFecAlb", {|| Field->dFecAlb } ) )
 
       ( cAlbCliT )->( dbCloseArea() )
    else

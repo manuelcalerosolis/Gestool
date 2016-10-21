@@ -1286,7 +1286,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Fecha"
-         :cSortOrder       := "dFecPed"
+         :cSortOrder       := "dFecDes"
          :bEditValue       := {|| Dtoc( ( D():PedidosClientes( nView ) )->dFecPed ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
@@ -15461,7 +15461,6 @@ FUNCTION rxPedCli( cPath, cDriver )
 
       ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cPedCliT )->( ordCreate( cPath + "PedCliT.CDX", "CodPostal", "Field->cPosCli", {|| Field->cPosCli } ) )
-
 
       ( cPedCliT )->( dbCloseArea() )
    else

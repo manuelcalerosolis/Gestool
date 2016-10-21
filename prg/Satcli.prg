@@ -1308,7 +1308,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Fecha"
-         :cSortOrder       := "dFecSat"
+         :cSortOrder       := "dDesFec"
          :bEditValue       := {|| Dtoc( ( D():SatClientes( nView ) )->dFecSat ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
@@ -10058,6 +10058,9 @@ FUNCTION rxSatCli( cPath, cDriver )
 
       ( cSatCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cSatCliT )->( ordCreate( cPath + "SatCliT.CDX", "CodPostal", "Field->cPosCli", {|| Field->cPosCli } ) )
+
+      ( cSatCliT )->( ordCondSet("!Deleted()", {||!Deleted()}, , , , , , , , , .t.  ) )
+      ( cSatCliT )->( ordCreate( cPath + "SATCLIT.CDX", "DDESFEC", "DFECSAT", {|| Field->DFECSAT } ) )
 
       ( cSatCliT )->( dbCloseArea() )
 
