@@ -11187,7 +11187,7 @@ Method Process() CLASS TSATClientesSenderReciver
    local tmpSatCliI
    local tmpSatCliD
    local aFiles      := Directory( cPatIn() + "SatCli*.*" )
-   local cOperario   := GetPvProfString(  "Envioyrecepcion", "Operario",     "",   cIniAplication() )
+   local cOperario   := GetPvProfString(  "Envioyrecepcion", "Operario", "",   cIniAplication() )
 
    for m := 1 to len( aFiles )
 
