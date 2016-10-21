@@ -4494,6 +4494,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
       aGet[ _CREF ]:bLostFocus   := {|| lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) }
 
       REDEFINE GET aGet[ _CDETALLE ] VAR aTmp[ _CDETALLE ] ;
+         MEMO ;
          ID       110 ;
          WHEN     ( ( lModDes() .or. empty( aTmp[ _CDETALLE ] ) ) .and. nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 1 ]

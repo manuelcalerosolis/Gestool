@@ -3142,6 +3142,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[_CDETALLE] VAR aTmp[_CDETALLE] ;
+         MEMO ;
          ID       120 ;
          WHEN     ( ( lModDes() .or. Empty( aTmp[ _CDETALLE ] ) ) .AND. nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]

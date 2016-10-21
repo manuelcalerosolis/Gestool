@@ -416,7 +416,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
       ::oRefMov:bHelp      := {|| BrwArticulo( ::oRefMov, ::oGetDetalle , , , , ::oGetLote, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oValPr1, ::oValPr2  ) }
 
       REDEFINE GET ::oGetDetalle VAR ::oDbfVir:cNomMov ;
-			ID 		110 ;
+         ID 		110 ;
          WHEN     ( .f. ) ;
          OF       oDlg
 

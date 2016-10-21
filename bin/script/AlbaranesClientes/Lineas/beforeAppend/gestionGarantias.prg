@@ -9,7 +9,9 @@
 
 Function gestionGarantias( aLine, aHeader, nView, dbfTmpLin )
 
-Return ( TGestionGarantias():New( aLine, aHeader, nView, dbfTmpLin ):Run() )
+//Return ( TGestionGarantias():New( aLine, aHeader, nView, dbfTmpLin ):Run() )
+
+Return nil
 
 //---------------------------------------------------------------------------//
 

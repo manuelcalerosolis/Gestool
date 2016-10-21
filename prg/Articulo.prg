@@ -1937,10 +1937,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
    REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "Nombre" ) ) ] ;
          VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Nombre" ) ) ];
-			ID 		130 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-			ON CHANGE( ActTitle( nKey, nFlags, Self, nMode, oDlg ) );
+			MEMO ;
+         ID       130 ;
+         ON CHANGE( ActTitle( nKey, nFlags, Self, nMode, oDlg ) );
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
+
 
    /*
    Codigos de barras___________________________________________________________
@@ -6280,7 +6282,6 @@ RETURN ( lIvaInc .and. nMode != ZOOM_MODE )
 
 STATIC FUNCTION ActTitle( nKey, nFlags, aGet, nMode, oDlg )
 
-	aGet:assign()
    oDlg:cTitle( LblTitle( nMode ) + " artículo : " + rtrim( aGet:varget() ) ) // + Chr( nKey ) )
 
 RETURN NIL

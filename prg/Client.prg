@@ -9326,7 +9326,6 @@ RETURN lValid
 
 STATIC FUNCTION ActTitle( nKey, nFlags, oGet, nMode, oDlg, cCodCli )
 
-   oGet:Assign()
    oDlg:cTitle( LblTitle( nMode ) + " Cliente : " + Rtrim( cCodCli ) + "-" + Rtrim( oGet:varGet() ) ) // + Chr( nKey )
 
 RETURN NIL
