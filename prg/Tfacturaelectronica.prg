@@ -1448,7 +1448,7 @@ CLASS ItemLine
    ACCESS   UnitOfMeasure                 INLINE ( ::cUnitOfMeasure )
    ACCESS   Quantity                      INLINE ( Alltrim( Trans( ::nQuantity,                          DoubleTwoDecimalPicture ) ) )
    ACCESS   UnitPriceWithoutTax           INLINE ( Alltrim( Trans( ::nUnitPriceWithoutTax,               DoubleSixDecimalPicture ) ) )
-   ACCESS   TotalCost                     INLINE ( Alltrim( Trans( ::nQuantity * ::nUnitPriceWithoutTax, DoubleSixDecimalPicture ) ) )
+   ACCESS   TotalCost                     INLINE ( Alltrim( Trans( ::nQuantity * ::nUnitPriceWithoutTax, DoubleTwoDecimalPicture ) ) )
 
    //------------------------------------------------------------------------//
 
@@ -1497,7 +1497,7 @@ METHOD GrossAmount() CLASS ItemLine
       ::nGrossAmount    -= oDiscount:nDiscountAmount
    next
 
-RETURN ( Alltrim( Trans( ::nGrossAmount, DoubleSixDecimalPicture ) ) )
+RETURN ( Alltrim( Trans( ::nGrossAmount, DoubleTwoDecimalPicture ) ) )
 
 //---------------------------------------------------------------------------//
 
