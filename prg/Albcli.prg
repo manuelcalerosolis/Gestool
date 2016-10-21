@@ -7279,7 +7279,7 @@ METHOD CreateData()
       ::oSender:SetText( "Comprimiendo albaranes de clientes" )
 
       if ::oSender:lZipData( cFileName )
-         ::oSender:SetText( "Ficheros comprimidos" )
+         ::oSender:SetText( "Ficheros comprimidos en " + cFileName )
       else
          ::oSender:SetText( "ERROR al crear fichero comprimido" )
       end if
@@ -7350,16 +7350,17 @@ METHOD SendData()
    Enviarlos a internet--------------------------------------------------------
    */
 
-   if File( cPatOut() + cFileName )
+   if !file( cPatOut() + cFileName )
+      ::oSender:SetText( "El fichero " + cPatOut() + cFileName + "no existe" )
+      Return ( Self )
+   end if 
 
-      if ::oSender:SendFiles( cPatOut() + cFileName, cFileName )
-         ::IncNumberToSend()
-         ::lSuccesfullSend := .t.
-         ::oSender:SetText( "Fichero enviado " + cFileName )
-      else
-         ::oSender:SetText( "ERROR al enviar fichero" )
-      end if
-
+   if ::oSender:SendFiles( cPatOut() + cFileName, cFileName )
+      ::IncNumberToSend()
+      ::lSuccesfullSend := .t.
+      ::oSender:SetText( "Fichero enviado " + cFileName )
+   else
+      ::oSender:SetText( "ERROR al enviar fichero" + cFileName )
    end if
 
 Return ( Self )
