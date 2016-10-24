@@ -4832,7 +4832,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
          OF       fldGeneral
 
       REDEFINE GET aGet[ _CDETALLE ] VAR aTmp[ _CDETALLE ] ;
-         MEMO ;
          ID       110 ;
          WHEN     ( ( lModDes() .or. empty( aTmp[ _CDETALLE ] ) ) .AND. nMode != ZOOM_MODE .AND. nMode != MULT_MODE ) ;
          OF       fldGeneral
@@ -21579,6 +21578,8 @@ CLASS TFacturasClientesSenderReciver FROM TSenderReciverItem
 
    Method validateRecepcion()
 
+   Method validateRecepcionRecibo( tmpFacCliP, dbfFacCliPT )
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -21984,6 +21985,8 @@ Method Process() CLASS TFacturasClientesSenderReciver
 
    local cNumeroFactura
    local cTextoFactura
+   local cNumeroRecibo
+   local cTextoRecibo
 
    for m := 1 to len( aFiles )
 
@@ -22035,43 +22038,35 @@ Method Process() CLASS TFacturasClientesSenderReciver
                   cNumeroFactura    := ( tmpFacCliT )->cSerie + str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac
                   cTextoFactura     := ( tmpFacCliT )->cSerie + "/" + AllTrim( str( ( tmpFacCliT )->nNumFac ) ) + "/" + AllTrim( ( tmpFacCliT )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli
 
+                  while ( dbfFacCliT )->( dbseek( cNumeroFactura ) )
+                     dbLockDelete( dbfFacCliT )
+                  end if 
+
+                  while ( dbfFacCliL )->( dbseek( cNumeroFactura ) )
+                     dbLockDelete( dbfFacCliL )
+                  end if 
+
                   // Comprobamos que no exista la factura en la base de datos
 
-                  if !( dbfFacCliT )->( dbSeek( cNumeroFactura ) )
+                  dbPass( tmpFacCliT, dbfFacCliT, .t. )
 
-                     dbPass( tmpFacCliT, dbfFacCliT, .t. )
-
-                     if lClient .and. dbLock( dbfFacCliT )
-                        ( dbfFacCliT )->lSndDoc := .f.
-                        ( dbfFacCliT )->( dbUnLock() )
-                     end if
-
-                     ::oSender:SetText( "Añadida factura : " + cTextoFactura )
-
-                  else
-
-                     ::oSender:SetText( "Desestimada factura : " + cTextoFactura )
-
+                  if lClient .and. dbLock( dbfFacCliT )
+                     ( dbfFacCliT )->lSndDoc := .f.
+                     ( dbfFacCliT )->( dbUnLock() )
                   end if
+
+                  ::oSender:SetText( "Añadida factura : " + cTextoFactura )
 
                   // Pasamos las lineas----------------------------------------
 
-                  if ( dbfFacCliL )->( dbSeek( cNumeroFactura ) )
+                  if ( tmpFacCliL )->( dbSeek( cNumeroFactura ) )
+                     while ( tmpFacCliL )->cSerie + str( ( tmpFacCliL )->nNumFac ) + ( tmpFacCliL )->cSufFac == cNumeroFactura .and. !( tmpFacCliL )->( eof() )
+                        dbPass( tmpFacCliL, dbfFacCliL, .t. )
+                        ( tmpFacCliL )->( dbSkip() )
+                     end do
+                  end if
 
-                     ::oSender:setText( "Desestimada lineas de facturas : " + cTextoFactura )
-                  
-                  else 
-
-                     if ( tmpFacCliL )->( dbSeek( cNumeroFactura ) )
-                        while ( tmpFacCliL )->cSerie + str( ( tmpFacCliL )->nNumFac ) + ( tmpFacCliL )->cSufFac == cNumeroFactura .and. !( tmpFacCliL )->( eof() )
-                           dbPass( tmpFacCliL, dbfFacCliL, .t. )
-                           ( tmpFacCliL )->( dbSkip() )
-                        end do
-                     end if
-
-                     ::oSender:setText( "Añadidas lineas de facturas : " + cTextoFactura )
-
-                  end if 
+                  ::oSender:setText( "Añadidas lineas de facturas : " + cTextoFactura )
 
                else
 
@@ -22089,14 +22084,17 @@ Method Process() CLASS TFacturasClientesSenderReciver
 
             while ( tmpFacCliP )->( !eof() )
 
-               if !( dbfFacCliP )->( dbSeek( ( tmpFacCliP )->cSerie + str( ( tmpFacCliP )->nNumFac ) + ( tmpFacCliP )->cSufFac + str( ( tmpFacCliP )->nNumRec ) ) )
+               if ::validateRecepcionRecibo( tmpFacCliP, dbfFacCliP )
+
+                  cNumeroRecibo    := ( tmpFacCliP )->cSerie + str( ( tmpFacCliP )->nNumFac ) + ( tmpFacCliP )->cSufFac + Str( ( tmpFacCliP )->nNumRec )
+                  cTextoRecibo     := ( tmpFacCliP )->cSerie + "/" + AllTrim( str( ( tmpFacCliP )->nNumFac ) ) + "/" + AllTrim( ( tmpFacCliT )->cSufFac ) + "-" + AllTrim( str( ( tmpFacCliP )->nNumRec ) ) + "; " + Dtoc( ( tmpFacCliP )->dEntrada ) + "; " + AllTrim( ( tmpFacCliP )->cCodCli )
+
+                  while ( dbfFacCliP )->( dbseek( cNumeroFactura ) )
+                     dbLockDelete( dbfFacCliP )
+                  end if
 
                   dbPass( tmpFacCliP, dbfFacCliP, .t. )
-                  ::oSender:SetText( "Añadido recibo : " + ( tmpFacCliP )->cSerie + "/" + AllTrim( str( ( tmpFacCliP )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliP )->cSufFac ) + "-" + str( ( tmpFacCliP )->nNumRec ) + "; " + Dtoc( ( tmpFacCliP )->dEntrada ) + "; " + AllTrim( ( tmpFacCliP )->cCodCli ) + "; " + RetClient( ( tmpFacCliP )->cCodCli, dbfCliente ) )
-
-               else
-
-                  ::oSender:SetText( "Desestimado recibo : " + ( tmpFacCliP )->cSerie + "/" + AllTrim( str( ( tmpFacCliP )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliP )->cSufFac ) + "-" + str( ( tmpFacCliP )->nNumRec ) + "; " + Dtoc( ( tmpFacCliP )->dEntrada ) + "; " + AllTrim( ( tmpFacCliP )->cCodCli ) + "; " + RetClient( ( tmpFacCliP )->cCodCli, dbfCliente ) )
+                  ::oSender:SetText( "Añadido recibo : " + cTextoRecibo )
 
                end if
 
@@ -22396,14 +22394,14 @@ Return Self
 
 METHOD validateRecepcion( tmpFacCliT, dbfFacCliT ) CLASS TFacturasClientesSenderReciver
 
-   ::cErrorRecepcion       := "Pocesando factura de cliente número " + ( dbfFacCliT )->cSerFac + "/" + alltrim( Str( ( dbfFacCliT )->nNumFac ) ) + "/" + alltrim( ( dbfFacCliT )->cSufFac ) + " "
+   ::cErrorRecepcion       := "Pocesando factura de cliente número " + ( dbfFacCliT )->cSerie + "/" + alltrim( Str( ( dbfFacCliT )->nNumFac ) ) + "/" + alltrim( ( dbfFacCliT )->cSufFac ) + " "
 
    if !( lValidaOperacion( ( tmpFacCliT )->dFecFac, .f. ) )
       ::cErrorRecepcion    += "la fecha " + dtoc( ( tmpFacCliT )->dFecFac ) + " no es valida en esta empresa"
       Return .f. 
    end if 
 
-   if !( ( dbfFacCliT )->( dbSeek( ( tmpFacCliT )->cSerFac + Str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac ) ) )
+   if !( ( dbfFacCliT )->( dbSeek( ( tmpFacCliT )->cSerie + Str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac ) ) )
       Return .t.
    end if 
 
@@ -22416,6 +22414,28 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
+
+METHOD validateRecepcionRecibo( tmpFacCliP, dbfFacCliP ) CLASS TFacturasClientesSenderReciver
+
+   ::cErrorRecepcion       := "Pocesando recibo de cliente número " + ( dbfFacCliP )->cSerie + "/" + alltrim( Str( ( dbfFacCliP )->nNumFac ) ) + "/" + alltrim( ( dbfFacCliP )->cSufFac ) + alltrim( Str( ( dbfFacCliP )->nNumRec ) ) + " "
+
+   if !( lValidaOperacion( ( tmpFacCliP )->dEntrada, .f. ) )
+      ::cErrorRecepcion    += "la fecha " + dtoc( ( tmpFacCliP )->dEntrada ) + " no es valida en esta empresa"
+      Return .f. 
+   end if 
+
+   if !( ( dbfFacCliP )->( dbSeek( ( tmpFacCliP )->cSerie + Str( ( tmpFacCliP )->nNumFac ) + ( tmpFacCliP )->cSufFac + Str( ( tmpFacCliP )->nNumRec ) ) ) )
+      Return .t.
+   end if 
+
+   if dtos( ( dbfFacCliP )->dFecCre ) + ( dbfFacCliP )->cHorCre > dtos( ( tmpFacCliP )->dFecCre ) + ( tmpFacCliP )->cHorCre 
+      ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfFacCliP )->dFecCre ) + " " + ( dbfFacCliP )->cHorCre + " es más reciente que la recepción " + dtoc( ( tmpFacCliP )->dFecCre ) + " " + ( tmpFacCliP )->cHorCre
+      Return .f.
+   end if
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
 
 
 FUNCTION EdmFacCli( cCodRut, cPathTo, oStru, aSucces )

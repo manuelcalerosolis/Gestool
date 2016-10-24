@@ -14118,7 +14118,11 @@ Method Process() CLASS TTiketsClientesSenderReciver
 
                if ::validateRecepcion( tmpTikT, dbfTikT )
 
-                  dbPass( tmpTikT, dbfTikT, .f. )
+                  while ( dbfTikT )->( dbseek( ( tmpTikT )->cSerTik + ( tmpTikT )->cNumTik + ( tmpTikT )->cSufTik ) )
+                     dbLockDelete( dbfTikT )
+                  end if 
+
+                  dbPass( tmpTikT, dbfTikT, .t. )
 
                   ::oSender:SetText( "Reemplazado : " + ( dbfTikT )->cSerTik + "/" + AllTrim( ( dbfTikT )->cNumTik ) + "/" + AllTrim( ( dbfTikT )->cSufTik ) + "; " + Dtoc( ( dbfTikT )->dFecTik ) + "; " + AllTrim( ( dbfTikT )->cCliTik ) + "; " + ( dbfTikT )->cNomTik )
 
@@ -14248,7 +14252,7 @@ Return Self
 
 METHOD validateRecepcion( tmpTikT, dbfTikT ) CLASS TTiketsClientesSenderReciver
 
-   ::cErrorRecepcion       := "Pocesando tickets de cliente número " + ( dbfTikT )->cSerTik + "/" + alltrim( ( dbfTikT )->nNumTik ) + "/" + alltrim( ( dbfTikT )->cSufTik ) + " "
+   ::cErrorRecepcion       := "Pocesando tickets de cliente número " + ( dbfTikT )->cSerTik + "/" + alltrim( ( dbfTikT )->cNumTik ) + "/" + alltrim( ( dbfTikT )->cSufTik ) + " "
 
    if !( lValidaOperacion( ( tmpTikT )->dFecTik, .f. ) )
       ::cErrorRecepcion    += "la fecha " + dtoc( ( tmpTikT )->dFecTik ) + " no es valida en esta empresa"
