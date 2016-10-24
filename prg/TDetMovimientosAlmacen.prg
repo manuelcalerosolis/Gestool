@@ -50,6 +50,15 @@ CLASS TDetMovimientos FROM TDet
    DATA  oGetDetalle
    DATA  cGetDetalle       INIT  ""
 
+   DATA  cRefMov
+   DATA  cNomMov
+   DATA  dFecMov
+   DATA  cTimMov
+   DATA  nTipMov
+   DATA  cCodMov
+   DATA  nPreDiv
+   DATA  nCajMov
+
    DATA  oCajMov
    DATA  oUndMov
 
@@ -131,6 +140,8 @@ CLASS TDetMovimientos FROM TDet
    METHOD accumulatesStoreMovement()
 
    METHOD alertControlStockUnderMin()
+
+   METHOD setPropertiesData()
 
    METHOD processPropertiesGrid()
 
@@ -312,10 +323,12 @@ METHOD AppendDetail() CLASS TDetMovimientos
 
          else 
 
-            ::processPropertiesGrid()
+            ::setPropertiesData()
 
             ::oDbfVir:Cancel()
-         
+
+            ::processPropertiesGrid()
+
          end if
 
          ::refreshDetail()
@@ -331,46 +344,13 @@ METHOD AppendDetail() CLASS TDetMovimientos
 
       else 
 
-         exit
-
-      end if
-
-   end while
-
-/*
-      if nResult == IDOK
-
-
-         ::oDetMovimientos:oDbfVir:Insert()
-         ::oDetMovimientos:appendKit()
-
-         if lEntCon()
-            loop
-         else
-            exit
-         end if
-
-      case nDetalle == IDFOUND
-
-         ::oDetMovimientos:oDbfVir:Cancel()
-
-         if lEntCon()
-            loop
-         else
-            exit
-         end if
-
-      case nDetalle == IDCANCEL
-
-         ::oDetMovimientos:oDbfVir:Cancel()
+         ::oDbfVir:Cancel()
 
          exit
 
       end if
 
-   
    end while
-*/
 
 RETURN ( Self )
 
@@ -1777,35 +1757,38 @@ Return ( lReturn )
 
 //---------------------------------------------------------------------------//
 
-METHOD processPropertiesGrid() CLASS TDetMovimientos
+METHOD setPropertiesData() CLASS TDetMovimientos
 
-   // Tomamos algunos datos----------------------------------------------------
+   ::cRefMov   := ::oDbfVir:cRefMov
+   ::cNomMov   := ::oDbfVir:cNomMov
+   ::dFecMov   := ::oDbfVir:dFecMov
+   ::cTimMov   := ::oDbfVir:cTimMov
+   ::nTipMov   := ::oDbfVir:nTipMov
+   ::cCodMov   := ::oDbfVir:cCodMov
+   ::nPreDiv   := ::oDbfVir:nPreDiv
+   ::nCajMov   := ::oDbfVir:nCajMov
+
+Return ( .f. )
+
+//---------------------------------------------------------------------------//
+
+METHOD processPropertiesGrid() CLASS TDetMovimientos
 
    local n
    local i
-   local cRefMov
-   local cNomMov
-   local dFecMov
-   local cTimMov
-   local nTipMov
-   local cCodMov
-   local nPreDiv
-   local nCajMov
-   local cAliMov  := ::oParent:oDbf:cAlmDes
-   local cAloMov  := ::oParent:oDbf:cAlmOrg
+   local cAliMov  
+   local cAloMov  
 
-   if Empty( ::oDbfVir )
+   if empty( ::oDbfVir )
       Return nil
    end if
 
-   cRefMov  := ::oDbfVir:cRefMov
-   cNomMov  := ::oDbfVir:cNomMov
-   dFecMov  := ::oDbfVir:dFecMov
-   cTimMov  := ::oDbfVir:cTimMov
-   nTipMov  := ::oDbfVir:nTipMov
-   cCodMov  := ::oDbfVir:cCodMov
-   nPreDiv  := ::oDbfVir:nPreDiv
-   nCajMov  := ::oDbfVir:nCajMov
+   if empty( ::oParent )
+      Return nil
+   end if 
+
+   cAliMov                       := ::oParent:oDbf:cAlmDes
+   cAloMov                       := ::oParent:oDbf:cAlmOrg
 
    // Metemos las lineas por propiedades---------------------------------------
 
@@ -1813,19 +1796,21 @@ METHOD processPropertiesGrid() CLASS TDetMovimientos
 
       for i := 1 to len( ::oBrwPrp:Cargo[ n ] )
 
-         if IsNum( ::oBrwPrp:Cargo[ n, i ]:Value ) .and. ::oBrwPrp:Cargo[ n, i ]:Value != 0
+         if isNum( ::oBrwPrp:Cargo[ n, i ]:Value ) .and. ( ::oBrwPrp:Cargo[ n, i ]:Value != 0 )
 
             ::oDbfVir:Blank()
 
-            ::oDbfVir:cRefMov    := cRefMov
-            ::oDbfVir:cNomMov    := cNomMov 
-            ::oDbfVir:dFecMov    := dFecMov
-            ::oDbfVir:cTimMov    := cTimMov
-            ::oDbfVir:nTipMov    := nTipMov
+            ::oDbfVir:cRefMov    := ::cRefMov
+            ::oDbfVir:cNomMov    := ::cNomMov 
+            ::oDbfVir:dFecMov    := ::dFecMov
+            ::oDbfVir:cTimMov    := ::cTimMov
+            ::oDbfVir:nTipMov    := ::nTipMov
+            ::oDbfVir:cCodMov    := ::cCodMov
+            ::oDbfVir:nCajMov    := ::nCajMov
+
             ::oDbfVir:cAliMov    := cAliMov
             ::oDbfVir:cAloMov    := cAloMov
-            ::oDbfVir:cCodMov    := cCodMov
-            ::oDbfVir:nCajMov    := nCajMov
+
             ::oDbfVir:cCodPr1    := ::oBrwPrp:Cargo[ n, i ]:cCodigoPropiedad1
             ::oDbfVir:cCodPr2    := ::oBrwPrp:Cargo[ n, i ]:cCodigoPropiedad2
             ::oDbfVir:cValPr1    := ::oBrwPrp:Cargo[ n, i ]:cValorPropiedad1
@@ -1836,30 +1821,28 @@ METHOD processPropertiesGrid() CLASS TDetMovimientos
             ::oDbfVir:lSelDoc    := .t.
             ::oDbfVir:lSndDoc    := .t.
             ::oDbfVir:nNumLin    := nLastNum( ::oDbfVir:cAlias )
-            ::oDbfVir:nVolumen   := oRetFld( cRefMov, ::oParent:oArt, "" )
-            ::oDbfVir:cVolumen   := oRetFld( cRefMov, ::oParent:oArt, "" )
-            ::oDbfVir:nPesoKg    := oRetFld( cRefMov, ::oParent:oArt, "" )
-            ::oDbfVir:cPesoKg    := oRetFld( cRefMov, ::oParent:oArt, "" )
+            ::oDbfVir:nVolumen   := oRetFld( ::cRefMov, ::oParent:oArt, "" )
+            ::oDbfVir:cVolumen   := oRetFld( ::cRefMov, ::oParent:oArt, "" )
+            ::oDbfVir:nPesoKg    := oRetFld( ::cRefMov, ::oParent:oArt, "" )
+            ::oDbfVir:cPesoKg    := oRetFld( ::cRefMov, ::oParent:oArt, "" )
 
             if ( ::oBrwPrp:Cargo[ n, i ]:nPrecioCompra != 0 )
                ::oDbfVir:nPreDiv := ::oBrwPrp:Cargo[ n, i ]:nPrecioCompra
             else
-               ::oDbfVir:nPreDiv := nPreDiv 
+               ::oDbfVir:nPreDiv := ::nPreDiv 
             end if 
 
-            ::oDbfVir:nUndAnt    := ::oParent:oStock:nStockAlmacen( ::oDbfVir:cRefMov, ::oDbfVir:cAliMov, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2 )
+//            ::oDbfVir:nUndAnt    := ::oParent:oStock:nStockAlmacen( ::cRefMov, ::cAliMov, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2 )
 
-            if ::alertControlStockUnderMin( ::oParent:oStock:nStockAlmacen( ::oDbfVir:cRefMov, ::oDbfVir:cAloMov, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2 ) )
+//            if ::alertControlStockUnderMin( ::oParent:oStock:nStockAlmacen( ::oDbfVir:cRefMov, ::oDbfVir:cAloMov, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2 ) )
 
-               if ::accumulatesStoreMovement()
-                  ::oDbfVir:Cancel()
-               else 
-                     ::oDbfVir:Insert()
-               end if
+//               if ::accumulatesStoreMovement()
+//                  ::oDbfVir:Cancel()
+//               else 
+                  ::oDbfVir:Insert()
+//               end if
 
-            ::oDbfVir:Cancel()
-
-            end if
+//            end if
 
          end if
 
@@ -1876,32 +1859,17 @@ METHOD accumulatesStoreMovement() CLASS TDetMovimientos
    local lFound         := .f.
 
    if empty( ::oDbfVir )
-      RETURN ( lFound )
+      Return ( lFound )
+   end if 
+
+   if !( ::oDbfVir:getBuffer() )
+      Return ( lFound )
    end if 
 
    ::oDbfVir:GetStatus()
 
    ::oDbfVir:GoTop()
    while !( ::oDbfVir:eof() )
-
-      /*
-      if alltrim( ::oDbfVir:fieldGetName( "cRefMov" ) ) == alltrim( ::oDbfVir:fieldGetBuffer( "cRefMov" ) ) 
-         msgAlert( alltrim( ::oDbfVir:fieldGetName( "cLote"   ) ) == alltrim( ::oDbfVir:fieldGetBuffer( "cLote"   ) ) )
-         msgAlert( alltrim( ::oDbfVir:fieldGetName( "cCodPr1" ) ) == alltrim( ::oDbfVir:fieldGetBuffer( "cCodPr1" ) ) )
-         msgAlert( alltrim( ::oDbfVir:fieldGetName( "cCodPr2" ) ) == alltrim( ::oDbfVir:fieldGetBuffer( "cCodPr2" ) ) )
-
-         msgAlert( alltrim( ::oDbfVir:fieldGetName( "cValPr1" ) ) == alltrim( ::oDbfVir:fieldGetBuffer( "cValPr1" ) ) )
-         msgAlert( alltrim( ::oDbfVir:fieldGetName( "cValPr1" ) ), "cValPr1 field" )
-         msgAlert( alltrim( ::oDbfVir:fieldGetBuffer( "cValPr1" ) ), "cValPr1 buffer" )
-         
-         msgAlert( alltrim( ::oDbfVir:fieldGetName( "cValPr2" ) ) == alltrim( ::oDbfVir:fieldGetBuffer( "cValPr2" ) ) )
-         msgAlert( alltrim( ::oDbfVir:fieldGetName( "cValPr2" ) ), "cValPr2 field" )
-         msgAlert( alltrim( ::oDbfVir:fieldGetBuffer( "cValPr2" ) ), "cValPr2 buffer" )
-
-         msgAlert( ::oDbfVir:fieldGetName( "nCajMov" ) == ::oDbfVir:fieldGetBuffer( "nCajMov" )                       )
-         msgAlert( ::oDbfVir:fieldGetName( "nPrediv" ) == ::oDbfVir:fieldGetBuffer( "nPreDiv" )                       )
-      end if 
-      */
       
       if alltrim( ::oDbfVir:fieldGetName( "cRefMov" ) ) == alltrim( ::oDbfVir:fieldGetBuffer( "cRefMov" ) ) .and. ;
          alltrim( ::oDbfVir:fieldGetName( "cLote"   ) ) == alltrim( ::oDbfVir:fieldGetBuffer( "cLote"   ) ) .and. ;
@@ -1932,7 +1900,7 @@ METHOD accumulatesStoreMovement() CLASS TDetMovimientos
 
    ::oDbfVir:SetStatus()
 
-RETURN ( lFound )
+Return ( lFound )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

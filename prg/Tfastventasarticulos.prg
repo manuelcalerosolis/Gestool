@@ -366,6 +366,8 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) CLASS "FACCLIL"     FILE "FACCLIL.Dbf"   VIA ( ::cDriver ) SHARED INDEX "FACCLIL.Cdx"
 
+      DATABASE NEW ::oFacCliP PATH ( cPatEmp() ) CLASS "FACCLIP"     FILE "FACCLIP.Dbf"   VIA ( ::cDriver ) SHARED INDEX "FACCLIP.Cdx"
+
       DATABASE NEW ::oFacRecT PATH ( cPatEmp() ) CLASS "FACRECT"     FILE "FACRECT.Dbf"   VIA ( ::cDriver ) SHARED INDEX "FACRECT.Cdx"
 
       DATABASE NEW ::oFacRecL PATH ( cPatEmp() ) CLASS "FACRECL"     FILE "FACRECL.Dbf"   VIA ( ::cDriver ) SHARED INDEX "FACRECL.Cdx"
@@ -518,6 +520,10 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
 
       if !Empty( ::oFacCliT ) .and. ( ::oFacCliT:Used() )
          ::oFacCliT:end()
+      end if
+
+      if !Empty( ::oFacCliP ) .and. ( ::oFacCliP:Used() )
+         ::oFacCliP:end()
       end if
 
       if !Empty( ::oFacRecL ) .and. ( ::oFacRecL:Used() )

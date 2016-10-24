@@ -195,41 +195,41 @@ CLASS TDbf
 //-- FILTER METHODS ----------------------------------------------------------//
 
     METHOD  SetFilter( coFlt )
-    METHOD  KillFilter()    INLINE ::SetFilter()
+    METHOD  KillFilter()        INLINE ::SetFilter()
 
 //-- NETWORK OPERATION METHODS -----------------------------------------------//
 
-    METHOD  Lock()          INLINE ( ::nArea )->( FLock() )
+    METHOD  Lock()              INLINE ( ::nArea )->( FLock() )
     METHOD  RecLock()
-    METHOD  UnLock()        INLINE ( ( ::nArea )->( DBUnLock() ), Self )
+    METHOD  UnLock()            INLINE ( ( ::nArea )->( DBUnLock() ), Self )
 
 //-- MISCELLANEOUS AND NEWS METHODS ------------------------------------------//
 
     METHOD  Protec( nAcction )
-    METHOD  Used()          INLINE ( ::nArea )->( Used() )
+    METHOD  Used()              INLINE ( ::nArea )->( Used() )
 
     METHOD  aField()
     METHOD  Blank()
-    METHOD  Insert()        INLINE if( ::Append(), ::Save(), .f. )
-    
-    METHOD  LoadLock()      INLINE if( ::RecLock(), ::Load(), .f. )
+    METHOD  Insert( lMessage )  
+
+    METHOD  LoadLock()          INLINE ( if( ::RecLock(), ::Load(), .f. ) )
     METHOD  Load()
-    METHOD  Cancel()        INLINE ::RollBack()     // mcs like VB does
+    METHOD  Cancel( lMessage )  INLINE ( ::RollBack(), if( !empty( lMessage ), msgInfo("Cancel"), ) )     // mcs like VB does
     METHOD  RollBack()
 
     METHOD  Save()
     METHOD  SaveFields()    
-    METHOD  SaveUnLock()    INLINE ( ::SaveFields(), ::UnLock(), ::lAppend := .f. )
-    METHOD  Update()        INLINE ::Save()
+    METHOD  SaveUnLock()        INLINE ( ::SaveFields(), ::UnLock(), ::lAppend := .f. )
+    METHOD  Update()            INLINE ::Save()
 
     METHOD  Valid()
-    METHOD  Commit()        INLINE ( ::nArea )->( DBCommit() )
+    METHOD  Commit()            INLINE ( ::nArea )->( DBCommit() )
 
     METHOD  SetCalField( cName, bSetGet, cPic, cComment  )
     METHOD  SetFieldEmpresa( nCount )
     METHOD  SetDefault()
     METHOD  SetBrowse( oBrw, lLoad )
-    METHOD  SetFocus()  INLINE DbSelectArea( ::nArea ), Self
+    METHOD  SetFocus()          INLINE DbSelectArea( ::nArea ), Self
     METHOD  SetDeleted()
 
     METHOD  FieldByName( cName )
@@ -1575,15 +1575,34 @@ return( Self )
 //----------------------------------------------------------------------------//
 //  Inicializa el array con valores vacios
 
-METHOD Blank() CLASS TDbf
+METHOD Blank( lMessage ) CLASS TDbf
 
     ::putBuffer()
 
-    // ::aBuffer  := {}
-    // ( ::nArea )->( AEval(::aTField, {|oFld| AAdd( ::aBuffer, oFld:Blank() ) } ) )
     ( ::nArea )->( aeval( ::aTField, {|oFld| oFld:Blank() } ) )
 
+    if !empty(lMessage)
+        msgInfo("Blank")
+    end if 
+
 return( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD Insert( lMessage )
+
+    local lInsert   := .f.
+
+    if ::Append()
+        ::Save()
+        lInsert     := .t.
+    end if 
+
+    if !empty( lMessage )
+        msgInfo("Insert")
+    end if 
+
+return( lInsert )
 
 //----------------------------------------------------------------------------//
 //  Inicializa el array con valores por defecto
