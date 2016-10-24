@@ -1446,9 +1446,9 @@ CLASS ItemLine
 
    ACCESS   ItemDescription               INLINE ( hb_StrToUTF8( rtrim( ::cItemDescription ) ) )
    ACCESS   UnitOfMeasure                 INLINE ( ::cUnitOfMeasure )
-   ACCESS   Quantity                      INLINE ( Alltrim( Trans( ::nQuantity,                          DoubleTwoDecimalPicture ) ) )
-   ACCESS   UnitPriceWithoutTax           INLINE ( Alltrim( Trans( ::nUnitPriceWithoutTax,               DoubleSixDecimalPicture ) ) )
-   ACCESS   TotalCost                     INLINE ( Alltrim( Trans( ::nQuantity * ::nUnitPriceWithoutTax, DoubleTwoDecimalPicture ) ) )
+   ACCESS   Quantity                      INLINE ( Alltrim( Trans( ::nQuantity,                                      DoubleTwoDecimalPicture ) ) )
+   ACCESS   UnitPriceWithoutTax           INLINE ( Alltrim( Trans( ::nUnitPriceWithoutTax,                           DoubleSixDecimalPicture ) ) )
+   ACCESS   TotalCost                     INLINE ( Alltrim( Trans( Round( ::nQuantity * ::nUnitPriceWithoutTax, 2 ), DoubleSixDecimalPicture ) ) )
 
    //------------------------------------------------------------------------//
 
@@ -1497,7 +1497,9 @@ METHOD GrossAmount() CLASS ItemLine
       ::nGrossAmount    -= oDiscount:nDiscountAmount
    next
 
-RETURN ( Alltrim( Trans( ::nGrossAmount, DoubleTwoDecimalPicture ) ) )
+   ::nGrossAmount       := Round( ::nGrossAmount, 2 )
+
+RETURN ( Alltrim( Trans( ::nGrossAmount, DoubleSixDecimalPicture ) ) )
 
 //---------------------------------------------------------------------------//
 
