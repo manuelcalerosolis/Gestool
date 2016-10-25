@@ -1487,7 +1487,7 @@ Static Function actualizaWeb( cCodFam )
       with object ( TComercio():New() )
          :MeterTotal( getAutoMeterDialog() )
          :TextTotal( getAutoTextDialog() )
-         :ActualizaCategoriesPrestashop( cCodFam )
+         :TComercioCategory:buildCategory( cCodFam )
       end with
 
    end if   
