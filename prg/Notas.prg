@@ -1003,8 +1003,13 @@ RETURN NIL
 
 FUNCTION SetNotas()
 
-   if !File( cPatDat() + "AgendaUsr.dbf" ) .or. !File( cPatDat() + "AgendaUsr.cdx" )
-      msgStop( "Las notas están desabilitadas" + CRLF + "Regenere indices, en cuanto le sea posible" )
+   if !file( cPatDat() + "AgendaUsr.dbf" )
+      msgStop( "El fichero " + ( cPatDat() + "AgendaUsr.dbf" ) + " no existe." )
+      return nil
+   end if 
+
+   if !file( cPatDat() + "AgendaUsr.cdx" )
+      msgStop( "El fichero " + ( cPatDat() + "AgendaUsr.cdx" ) + " no existe." )
       return nil
    end if
 

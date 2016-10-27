@@ -35,7 +35,13 @@ CLASS TImportarExcel
    METHOD New()
 
    METHOD Run()
-   
+
+   METHOD getCampoClave()        INLINE ( alltrim( str( int( ::getExcelValue( ::cColumnaCampoClave ) ) ) ) )
+
+   METHOD openExcel()
+
+   METHOD closeExcel()
+
    METHOD procesaFicheroExcel()
 
    METHOD filaValida()
@@ -44,7 +50,7 @@ CLASS TImportarExcel
 
    METHOD getExcelValue()
 
-   METHOD existeRegistro()       INLINE ( D():gotoArticulos( ::getExcelValue( ::cColumnaCampoClave ), ::nView ) )
+   METHOD existeRegistro()       INLINE ( D():gotoArticulos( ::getCampoClave(), ::nView ) )
 
    METHOD appendRegistro()       INLINE ( ( D():Articulos( ::nView ) )->( dbappend() ) )
 
@@ -116,7 +122,7 @@ Return ( .t. )
 
 //----------------------------------------------------------------------------//
 
-METHOD procesaFicheroExcel()
+METHOD openExcel()
 
    ::oExcel                        := TOleExcel():New( "Importando hoja de excel", "Conectando...", .f. )
 
@@ -124,6 +130,24 @@ METHOD procesaFicheroExcel()
    ::oExcel:oExcel:DisplayAlerts   := .f.
    ::oExcel:oExcel:WorkBooks:Open( ::cFicheroExcel )
    ::oExcel:oExcel:WorkSheets( 1 ):Activate()
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD closeExcel()
+
+   ::oExcel:oExcel:Quit()
+   ::oExcel:oExcel:DisplayAlerts := .t.
+   ::oExcel:End()
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD procesaFicheroExcel()
+
+   ::openExcel()
 
    while ( ::filaValida() )
 
@@ -145,9 +169,7 @@ METHOD procesaFicheroExcel()
 
    end if
 
-   ::oExcel:oExcel:Quit()
-   ::oExcel:oExcel:DisplayAlerts := .t.
-   ::oExcel:End()
+   ::closeExcel()
 
 Return nil
 
@@ -155,10 +177,7 @@ Return nil
 
 METHOD importarCampos()
 
-   local cCodigo                          := ::getExcelValue( ::cColumnaCampoClave )
-   cCodigo                                := alltrim( str( int( cCodigo ) ) )
-
-   ( D():Articulos( ::nView ) )->Codigo   := cCodigo
+   ( D():Articulos( ::nView ) )->Codigo   := ::getCampoClave()
    ( D():Articulos( ::nView ) )->Nombre   := ::getExcelValue( "D" )
    ( D():Articulos( ::nView ) )->TipoIva  := left( ::getExcelValue( "J" ), 1 )
    ( D():Articulos( ::nView ) )->lObs     := ( ::getExcelValue( "L" ) != "NULL" )

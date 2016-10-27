@@ -146,7 +146,6 @@ static dbfArtVta
 static dbfArtKit
 static dbfArtLbl
 static dbfDiv
-static dbfIva
 
 static dbfAlbPrvT
 static dbfAlbPrvL
@@ -285,7 +284,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       D():MovimientosAlmacenLineas( nView )
       ( D():MovimientosAlmacenLineas( nView ) )->( OrdSetFocus( "cRefMov" ) )
 
-      CacheRecords( D():Articulos( nView ) )
+      D():TiposIva( nView )
 
       USE ( cPatArt() + "ArtCodebar.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @dbfCodebar ) )
       SET ADSINDEX TO ( cPatArt() + "ArtCodebar.Cdx" ) ADDITIVE
@@ -304,9 +303,6 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       USE ( cPatArt() + "Temporadas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TEMPORADA", @dbfTemporada ) )
       SET ADSINDEX TO ( cPatArt() + "Temporadas.Cdx" ) ADDITIVE
-
-      USE ( cPatDat() + "TIVA.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
-      SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 
       USE ( cPatArt() + "FamPrv.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMPRV", @dbfFamPrv ) )
       SET ADSINDEX TO ( cPatArt() + "FamPrv.Cdx" ) ADDITIVE
@@ -564,10 +560,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
       ( dbfTemporada )->( dbCloseArea() )
    end if
 
-   if dbfIva != nil
-      ( dbfIva )->( dbCloseArea() )
-   end if
-
    if dbfFamPrv != nil
       ( dbfFamPrv )->( dbCloseArea() )
    end if
@@ -754,7 +746,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
 
    dbfProv           := nil
    dbfCatalogo       := nil
-   dbfIva            := nil
    dbfFamPrv         := nil
    dbfArtPrv         := nil
    oStock            := nil
@@ -1441,7 +1432,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
    DEFINE BTNSHELL RESOURCE "IMP" GROUP OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( TInfArtFam():New( "Listado de artículos" ):Play( .f., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva, D():Familias( nView ), oStock, oWndBrw ) );
+      ACTION   ( TInfArtFam():New( "Listado de artículos" ):Play( .f., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ), D():Familias( nView ), oStock, oWndBrw ) );
       TOOLTIP  "Lis(t)ado";
       HOTKEY   "T" ;
       LEVEL    ACC_IMPR
@@ -2331,7 +2322,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       ID       800;
       PICTURE  "@!" ;
       WHEN     ( nMode != ZOOM_MODE ) ;
-      VALID    (  cTiva(   aGet[ ( D():Articulos( nView ) )->( fieldpos( "TipoIva" ) ) ], dbfIva, oSay[2] ),;
+      VALID    (  cTiva(   aGet[ ( D():Articulos( nView ) )->( fieldpos( "TipoIva" ) ) ], D():TiposIva( nView ), oSay[2] ),;
                            aGet[ ( D():Articulos( nView ) )->( fieldpos( "pVenta1" ) ) ]:lValid(),;
                            aGet[ ( D():Articulos( nView ) )->( fieldpos( "pVenta2" ) ) ]:lValid(),;
                            aGet[ ( D():Articulos( nView ) )->( fieldpos( "pVenta3" ) ) ]:lValid(),;
@@ -2909,7 +2900,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "NPNTVER1" ) ) ] ;
          ID       390 ;
          WHEN     ( stdCol( !aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LIVAPVER" ) ) ], nMode ) ) ;
-         VALID    ( aGet[ ( D():Articulos( nView ) )->( fieldpos( "NPNVIVA1" ) ) ]:cText( ( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "NPNTVER1" ) ) ] * nIva( dbfIva, aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TIPOIVA" ) )] ) / 100 ) + aTmp[ ( D():Articulos( nView ) )->( fieldpos( "NPNTVER1" ) ) ] ), .t. ) ;
+         VALID    ( aGet[ ( D():Articulos( nView ) )->( fieldpos( "NPNVIVA1" ) ) ]:cText( ( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "NPNTVER1" ) ) ] * nIva( D():TiposIva( nView ), aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TIPOIVA" ) )] ) / 100 ) + aTmp[ ( D():Articulos( nView ) )->( fieldpos( "NPNTVER1" ) ) ] ), .t. ) ;
          PICTURE  cPpvDiv ;
          OF       fldPrecios
 
@@ -2917,7 +2908,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "NPNVIVA1" ) ) ] ;
          ID       400 ;
          WHEN     ( stdCol( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LIVAPVER" ) ) ], nMode ) ) ;
-         VALID    ( aGet[ ( D():Articulos( nView ) )->( fieldpos( "NPNTVER1" ) ) ]:cText( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "NPNVIVA1" ) ) ] / ( 1 + nIva( dbfIva, aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TIPOIVA" ) )] ) / 100 ) ), .t. ) ;
+         VALID    ( aGet[ ( D():Articulos( nView ) )->( fieldpos( "NPNTVER1" ) ) ]:cText( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "NPNVIVA1" ) ) ] / ( 1 + nIva( D():TiposIva( nView ), aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TIPOIVA" ) )] ) / 100 ) ), .t. ) ;
          PICTURE  cPpvDiv ;
          OF       fldPrecios
 
@@ -8499,7 +8490,7 @@ STATIC FUNCTION GetDisk()
       REDEFINE GET oTipIva VAR cTipIva ;
 			ID 		120 ;
 			PICTURE	"@!" ;
-         VALID    ( cTiva( oTipIva, dbfIva, oIvaName ) );
+         VALID    ( cTiva( oTipIva, D():TiposIva( nView ), oIvaName ) );
          BITMAP   "LUPA" ;
          ON HELP  ( BrwIva( oTipIva, nil , oIvaName ) ) ;
 			OF 		oDlg
@@ -8574,7 +8565,7 @@ Static Function ImpTarifa( cFileName, nPctBnf1, nPctBnf2, nPctBnf3, nPctBnf4, nP
 
       USE ( cFileName ) NEW VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "EXTFIL", @dbfExt ) )
 
-      nPctIva        := nIva( dbfIva, cTipIva )
+      nPctIva        := nIva( D():TiposIva( nView ), cTipIva )
       oPrc:nTotal    := ( dbfExt )->( LastRec() + 1 )
 
       while !( dbfExt )->( Eof() )
@@ -8704,7 +8695,7 @@ Function CalPre( lSobreCoste, nCosto, lBnf, nBnf, uTipIva, oGetPrePts, oGetIvaPt
    if lBnf .and. nCosto != 0
 
       if ValType( uTipIva ) == "C"
-         nIvaPct  := nIva( dbfIva, uTipIva )
+         nIvaPct  := nIva( D():TiposIva( nView ), uTipIva )
       else
          nIvaPct  := uTipIva
       end if
@@ -8817,7 +8808,7 @@ Function CalBnfPts( lSobreCoste, lIvaInc, nCosto, nPrePts, oBnf, uTipIva, oGetIv
    */
 
    if ValType( uTipIva ) == "C"
-      nIvaPct     := nIva( dbfIva, uTipIva )
+      nIvaPct     := nIva( D():TiposIva( nView ), uTipIva )
    else
       nIvaPct     := uTipIva
    end if
@@ -8879,7 +8870,7 @@ Function CalBnfIva( lSobreCoste, lIvaInc, nCosto, uPrecioIva, oBnf, uTipIva, oGe
    end if
 
    if IsChar( uTipIva )
-      nIvaPct     := nIva( dbfIva, uTipIva )
+      nIvaPct     := nIva( D():TiposIva( nView ), uTipIva )
    else
       nIvaPct     := uTipIva
    end if
@@ -8980,7 +8971,7 @@ Static Function CalculaDescuentoWeb( aGet, aTmp )
          nImpWeb     -= aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVtaWeb"  ) ) ] * aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nDtoInt1" ) ) ] / 100 
 
          aGet[ ( D():Articulos( nView ) )->( fieldpos( "nImpInt1" ) ) ]:cText( nImpWeb )
-         aGet[ ( D():Articulos( nView ) )->( fieldpos( "nImpIva1" ) ) ]:cText( ( nImpWeb * nIva( dbfIva, aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TipoIva"  ) ) ] ) / 100 ) + nImpWeb )
+         aGet[ ( D():Articulos( nView ) )->( fieldpos( "nImpIva1" ) ) ]:cText( ( nImpWeb * nIva( D():TiposIva( nView ), aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TipoIva"  ) ) ] ) / 100 ) + nImpWeb )
 
       else
       
@@ -9117,7 +9108,7 @@ FUNCTION BrwFamiliaArticulo( oGet, oGet2, lCodeBar, lAppend )
 
       with object ( oBrw:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" )
-         :bStrData         := {|| TransPrecio( nRetPreArt( 1, nil, .f., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+         :bStrData         := {|| TransPrecio( nRetPreArt( 1, nil, .f., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ) ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -9125,7 +9116,7 @@ FUNCTION BrwFamiliaArticulo( oGet, oGet2, lCodeBar, lAppend )
 
       with object ( oBrw:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" ) + cImp() + " inc."
-         :bStrData         := {|| TransPrecio( nRetPreArt( 1, nil, .t., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+         :bStrData         := {|| TransPrecio( nRetPreArt( 1, nil, .t., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ) ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -9133,7 +9124,7 @@ FUNCTION BrwFamiliaArticulo( oGet, oGet2, lCodeBar, lAppend )
 
       with object ( oBrw:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" )
-         :bStrData         := {|| TransPrecio( nRetPreArt( 2, nil, .f., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+         :bStrData         := {|| TransPrecio( nRetPreArt( 2, nil, .f., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ) ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -9142,7 +9133,7 @@ FUNCTION BrwFamiliaArticulo( oGet, oGet2, lCodeBar, lAppend )
 
       with object ( oBrw:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" ) + cImp() + " inc."
-         :bStrData         := {|| TransPrecio( nRetPreArt( 2, nil, .t., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+         :bStrData         := {|| TransPrecio( nRetPreArt( 2, nil, .t., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ) ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -9151,7 +9142,7 @@ FUNCTION BrwFamiliaArticulo( oGet, oGet2, lCodeBar, lAppend )
 
       with object ( oBrw:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" )
-         :bStrData         := {|| TransPrecio( nRetPreArt( 3, nil, .f., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+         :bStrData         := {|| TransPrecio( nRetPreArt( 3, nil, .f., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ) ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -9160,7 +9151,7 @@ FUNCTION BrwFamiliaArticulo( oGet, oGet2, lCodeBar, lAppend )
 
       with object ( oBrw:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" ) + cImp() + " inc."
-         :bStrData         := {|| TransPrecio( nRetPreArt( 3, nil, .t., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+         :bStrData         := {|| TransPrecio( nRetPreArt( 3, nil, .t., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ) ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -9169,7 +9160,7 @@ FUNCTION BrwFamiliaArticulo( oGet, oGet2, lCodeBar, lAppend )
 
       with object ( oBrw:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" )
-         :bStrData         := {|| TransPrecio( nRetPreArt( 4, nil, .f., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+         :bStrData         := {|| TransPrecio( nRetPreArt( 4, nil, .f., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ) ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -9178,7 +9169,7 @@ FUNCTION BrwFamiliaArticulo( oGet, oGet2, lCodeBar, lAppend )
 
       with object ( oBrw:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" ) + cImp() + " inc."
-         :bStrData         := {|| TransPrecio( nRetPreArt( 4, nil, .t., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+         :bStrData         := {|| TransPrecio( nRetPreArt( 4, nil, .t., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ) ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -9187,7 +9178,7 @@ FUNCTION BrwFamiliaArticulo( oGet, oGet2, lCodeBar, lAppend )
 
       with object ( oBrw:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" )
-         :bStrData         := {|| TransPrecio( nRetPreArt( 5, nil, .f., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+         :bStrData         := {|| TransPrecio( nRetPreArt( 5, nil, .f., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ) ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -9196,7 +9187,7 @@ FUNCTION BrwFamiliaArticulo( oGet, oGet2, lCodeBar, lAppend )
 
       with object ( oBrw:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" ) + cImp() + " inc."
-         :bStrData         := {|| TransPrecio( nRetPreArt( 5, nil, .t., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+         :bStrData         := {|| TransPrecio( nRetPreArt( 5, nil, .t., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ) ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -9205,7 +9196,7 @@ FUNCTION BrwFamiliaArticulo( oGet, oGet2, lCodeBar, lAppend )
 
       with object ( oBrw:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" )
-         :bStrData         := {|| TransPrecio( nRetPreArt( 6, nil, .f., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+         :bStrData         := {|| TransPrecio( nRetPreArt( 6, nil, .f., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ) ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -9214,7 +9205,7 @@ FUNCTION BrwFamiliaArticulo( oGet, oGet2, lCodeBar, lAppend )
 
       with object ( oBrw:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" ) + cImp() + " inc."
-         :bStrData         := {|| TransPrecio( nRetPreArt( 6, nil, .t., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+         :bStrData         := {|| TransPrecio( nRetPreArt( 6, nil, .t., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ) ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -9820,7 +9811,7 @@ STATIC FUNCTION ChgPrc( oWndBrw )
 	REDEFINE GET oTipIva VAR cTipIva ;
 		ID 		120 ;
       PICTURE  "@!" ;
-      VALID    ( cTiva( oTipIva, dbfIva, oTxtIva ) );
+      VALID    ( cTiva( oTipIva, D():TiposIva( nView ), oTxtIva ) );
       BITMAP   "LUPA" ;
       ON HELP  ( BrwIva( oTipIva, nil, oTxtIva ) );
 		OF 		oDlg
@@ -9993,7 +9984,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
             Valores para los calculos en todo el proceso-----------------------
             */
 
-            nIva                                      := nIva( dbfIva, ( D():Articulos( nView ) )->TipoIva ) / 100
+            nIva                                      := nIva( D():TiposIva( nView ), ( D():Articulos( nView ) )->TipoIva ) / 100
 
             /*
             Vemos si cumplimos las condiciones de familia y tipo de impuestos--------
@@ -10187,7 +10178,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                         ( D():Articulos( nView ) )->pVenta1      := Round( ( ( D():Articulos( nView ) )->pCosto / ( 1 - ( ( D():Articulos( nView ) )->Benef1 / 100 ) ) ), nDec )
                      end if
 
-                     ( D():Articulos( nView ) )->pVtaIva1        := ( ( D():Articulos( nView ) )->pVenta1 * nIva( dbfIva, ( D():Articulos( nView ) )->TipoIva ) / 100 ) + ( D():Articulos( nView ) )->pVenta1
+                     ( D():Articulos( nView ) )->pVtaIva1        := ( ( D():Articulos( nView ) )->pVenta1 * nIva( D():TiposIva( nView ), ( D():Articulos( nView ) )->TipoIva ) / 100 ) + ( D():Articulos( nView ) )->pVenta1
 
                      ( D():Articulos( nView ) )->lBnf1           := .f.
 
@@ -10313,7 +10304,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                         ( D():Articulos( nView ) )->pVenta2      := Round( ( ( D():Articulos( nView ) )->pCosto / ( 1 - ( ( D():Articulos( nView ) )->Benef2 / 100 ) ) ), nDec )
                      end if
 
-                     ( D():Articulos( nView ) )->pVtaIva2        := ( ( D():Articulos( nView ) )->pVenta2 * nIva( dbfIva, ( D():Articulos( nView ) )->TipoIva ) / 100 ) + ( D():Articulos( nView ) )->pVenta2
+                     ( D():Articulos( nView ) )->pVtaIva2        := ( ( D():Articulos( nView ) )->pVenta2 * nIva( D():TiposIva( nView ), ( D():Articulos( nView ) )->TipoIva ) / 100 ) + ( D():Articulos( nView ) )->pVenta2
 
                      ( D():Articulos( nView ) )->lBnf2           := .f.
 
@@ -10439,7 +10430,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                         ( D():Articulos( nView ) )->pVenta3      := Round( ( ( D():Articulos( nView ) )->pCosto / ( 1 - ( ( D():Articulos( nView ) )->Benef3 / 100 ) ) ), nDec )
                      end if
 
-                     ( D():Articulos( nView ) )->pVtaIva3        := ( ( D():Articulos( nView ) )->pVenta3 * nIva( dbfIva, ( D():Articulos( nView ) )->TipoIva ) / 100 ) + ( D():Articulos( nView ) )->pVenta3
+                     ( D():Articulos( nView ) )->pVtaIva3        := ( ( D():Articulos( nView ) )->pVenta3 * nIva( D():TiposIva( nView ), ( D():Articulos( nView ) )->TipoIva ) / 100 ) + ( D():Articulos( nView ) )->pVenta3
 
                      ( D():Articulos( nView ) )->lBnf3           := .f.
 
@@ -10561,7 +10552,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                         ( D():Articulos( nView ) )->pVenta4      := Round( ( ( D():Articulos( nView ) )->pCosto / ( 1 - ( ( D():Articulos( nView ) )->Benef4 / 100 ) ) ), nDec )
                      end if
 
-                     ( D():Articulos( nView ) )->pVtaIva4        := ( ( D():Articulos( nView ) )->pVenta4 * nIva( dbfIva, ( D():Articulos( nView ) )->TipoIva ) / 100 ) + ( D():Articulos( nView ) )->pVenta4
+                     ( D():Articulos( nView ) )->pVtaIva4        := ( ( D():Articulos( nView ) )->pVenta4 * nIva( D():TiposIva( nView ), ( D():Articulos( nView ) )->TipoIva ) / 100 ) + ( D():Articulos( nView ) )->pVenta4
 
                      ( D():Articulos( nView ) )->lBnf4           := .f.
 
@@ -10687,7 +10678,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                         ( D():Articulos( nView ) )->pVenta5      := Round( ( ( D():Articulos( nView ) )->pCosto / ( 1 - ( ( D():Articulos( nView ) )->Benef5 / 100 ) ) ), nDec )
                      end if
 
-                     ( D():Articulos( nView ) )->pVtaIva5        := ( ( D():Articulos( nView ) )->pVenta5 * nIva( dbfIva, ( D():Articulos( nView ) )->TipoIva ) / 100 ) + ( D():Articulos( nView ) )->pVenta5
+                     ( D():Articulos( nView ) )->pVtaIva5        := ( ( D():Articulos( nView ) )->pVenta5 * nIva( D():TiposIva( nView ), ( D():Articulos( nView ) )->TipoIva ) / 100 ) + ( D():Articulos( nView ) )->pVenta5
 
                      ( D():Articulos( nView ) )->lBnf5           := .f.
 
@@ -10813,7 +10804,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                         ( D():Articulos( nView ) )->pVenta6      := Round( ( ( D():Articulos( nView ) )->pCosto / ( 1 - ( ( D():Articulos( nView ) )->Benef6 / 100 ) ) ), nDec )
                      end if
 
-                     ( D():Articulos( nView ) )->pVtaIva6        := ( ( D():Articulos( nView ) )->pVenta6 * nIva( dbfIva, ( D():Articulos( nView ) )->TipoIva ) / 100 ) + ( D():Articulos( nView ) )->pVenta6
+                     ( D():Articulos( nView ) )->pVtaIva6        := ( ( D():Articulos( nView ) )->pVenta6 * nIva( D():TiposIva( nView ), ( D():Articulos( nView ) )->TipoIva ) / 100 ) + ( D():Articulos( nView ) )->pVenta6
 
                      ( D():Articulos( nView ) )->lBnf6           := .f.
 
@@ -12127,6 +12118,7 @@ function SynArt( cPath )
    local dbfArt
    local dbfFamilia
    local dbfImg
+   local dbfIva
 
    DEFAULT cPath        := cPatArt()
 
@@ -12161,6 +12153,9 @@ function SynArt( cPath )
    USE ( cPatEmp() + "FACPRVL.Dbf" ) NEW VIA ( cDriver() )     SHARED ALIAS ( cCheckArea( "FACPRVL", @dbfFacPrvL ) )
    SET ADSINDEX TO ( cPatEmp() + "FACPRVL.CDX" ) ADDITIVE
    SET TAG TO "cRefFec"
+
+   USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
+   SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 
    oNewImp              := TNewImp():Create( cPatEmp() )
    if oNewImp:OpenFiles()
@@ -12499,6 +12494,7 @@ function SynArt( cPath )
    CLOSE ( dbfOfe     )
    CLOSE ( dbfAlbPrvL )
    CLOSE ( dbfFacPrvL )
+   CLOSE ( dbfIva     )
 
    if !Empty( oNewImp )
       oNewImp:End()
@@ -12559,7 +12555,7 @@ Static Function EndTrans2( aTmp, aGet, oSay, oDlg, nMode )
                                                                      nDecDiv,;
                                                                      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ],;
                                                                      oNewImp,;
-                                                                     dbfIva )[1]
+                                                                     D():TiposIva( nView ) )[1]
 
    aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVtaIva1") ) ] := aCalPrePnt( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr1" ) ) ] <= 1,;
                                                                      nPunt2Euro( aTmp, D():Articulos( nView ) ),;
@@ -12569,7 +12565,7 @@ Static Function EndTrans2( aTmp, aGet, oSay, oDlg, nMode )
                                                                      nDecDiv,;
                                                                      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ],;
                                                                      oNewImp,;
-                                                                     dbfIva )[2]
+                                                                     D():TiposIva( nView ) )[2]
 
    aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVenta2" ) ) ] := aCalPrePnt( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr2" ) ) ] <= 1,;
                                                                      nPunt2Euro( aTmp, D():Articulos( nView ) ),;
@@ -12579,7 +12575,7 @@ Static Function EndTrans2( aTmp, aGet, oSay, oDlg, nMode )
                                                                      nDecDiv,;
                                                                      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ],;
                                                                      oNewImp,;
-                                                                     dbfIva )[1]
+                                                                     D():TiposIva( nView ) )[1]
 
    aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVtaIva2") ) ] := aCalPrePnt( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr2" ) ) ] <= 1,;
                                                                      nPunt2Euro( aTmp, D():Articulos( nView ) ),;
@@ -12589,7 +12585,7 @@ Static Function EndTrans2( aTmp, aGet, oSay, oDlg, nMode )
                                                                      nDecDiv,;
                                                                      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ],;
                                                                      oNewImp,;
-                                                                     dbfIva )[2]
+                                                                     D():TiposIva( nView ) )[2]
 
    aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVenta3" ) ) ] := aCalPrePnt( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr3" ) ) ] <= 1,;
                                                                      nPunt2Euro( aTmp, D():Articulos( nView ) ),;
@@ -12599,7 +12595,7 @@ Static Function EndTrans2( aTmp, aGet, oSay, oDlg, nMode )
                                                                      nDecDiv,;
                                                                      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ],;
                                                                      oNewImp,;
-                                                                     dbfIva )[1]
+                                                                     D():TiposIva( nView ) )[1]
 
    aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVtaIva3") ) ] := aCalPrePnt( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr3" ) ) ] <= 1,;
                                                                      nPunt2Euro( aTmp, D():Articulos( nView ) ),;
@@ -12609,7 +12605,7 @@ Static Function EndTrans2( aTmp, aGet, oSay, oDlg, nMode )
                                                                      nDecDiv,;
                                                                      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ],;
                                                                      oNewImp,;
-                                                                     dbfIva )[2]
+                                                                     D():TiposIva( nView ) )[2]
 
    aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVenta4" ) ) ] := aCalPrePnt( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr4" ) ) ] <= 1,;
                                                                      nPunt2Euro( aTmp, D():Articulos( nView ) ),;
@@ -12619,7 +12615,7 @@ Static Function EndTrans2( aTmp, aGet, oSay, oDlg, nMode )
                                                                      nDecDiv,;
                                                                      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ],;
                                                                      oNewImp,;
-                                                                     dbfIva )[1]
+                                                                     D():TiposIva( nView ) )[1]
 
    aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVtaIva4") ) ] := aCalPrePnt( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr4" ) ) ] <= 1,;
                                                                      nPunt2Euro( aTmp, D():Articulos( nView ) ),;
@@ -12629,7 +12625,7 @@ Static Function EndTrans2( aTmp, aGet, oSay, oDlg, nMode )
                                                                      nDecDiv,;
                                                                      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ],;
                                                                      oNewImp,;
-                                                                     dbfIva )[2]
+                                                                     D():TiposIva( nView ) )[2]
 
    aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVenta5" ) ) ] := aCalPrePnt( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr5" ) ) ] <= 1,;
                                                                      nPunt2Euro( aTmp, D():Articulos( nView ) ),;
@@ -12639,7 +12635,7 @@ Static Function EndTrans2( aTmp, aGet, oSay, oDlg, nMode )
                                                                      nDecDiv,;
                                                                      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ],;
                                                                      oNewImp,;
-                                                                     dbfIva )[1]
+                                                                     D():TiposIva( nView ) )[1]
 
    aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVtaIva5") ) ] := aCalPrePnt( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr5" ) ) ] <= 1,;
                                                                      nPunt2Euro( aTmp, D():Articulos( nView ) ),;
@@ -12649,7 +12645,7 @@ Static Function EndTrans2( aTmp, aGet, oSay, oDlg, nMode )
                                                                      nDecDiv,;
                                                                      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ],;
                                                                      oNewImp,;
-                                                                     dbfIva )[2]
+                                                                     D():TiposIva( nView ) )[2]
 
    aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVenta6" ) ) ] := aCalPrePnt( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr6" ) ) ] <= 1,;
                                                                      nPunt2Euro( aTmp, D():Articulos( nView ) ),;
@@ -12659,7 +12655,7 @@ Static Function EndTrans2( aTmp, aGet, oSay, oDlg, nMode )
                                                                      nDecDiv,;
                                                                      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ],;
                                                                      oNewImp,;
-                                                                     dbfIva )[1]
+                                                                     D():TiposIva( nView ) )[1]
 
    aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVtaIva6") ) ] := aCalPrePnt( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr6" ) ) ] <= 1,;
                                                                      nPunt2Euro( aTmp, D():Articulos( nView ) ),;
@@ -12669,7 +12665,7 @@ Static Function EndTrans2( aTmp, aGet, oSay, oDlg, nMode )
                                                                      nDecDiv,;
                                                                      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ],;
                                                                      oNewImp,;
-                                                                     dbfIva )[2]
+                                                                     D():TiposIva( nView ) )[2]
 
    if !Empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cPrvHab" ) ) ] )
 
@@ -13420,7 +13416,7 @@ Static Function EdtRecMenu( aTmp, aGet, oSay, oDlg, oFld, aBar, cSay, nMode )
             MENUITEM "&2. Informe de artículo en escandallo";
             MESSAGE  "Muestra el informe del artículo en escandallo" ;
             RESOURCE "info16" ;
-            ACTION   ( BrwVtaComArt( ( dbfTmpKit )->cRefKit, ( dbfTmpKit )->cDesKit, dbfDiv, dbfIva, dbfAlmT, D():Articulos( nView ) ) )
+            ACTION   ( BrwVtaComArt( ( dbfTmpKit )->cRefKit, ( dbfTmpKit )->cDesKit, dbfDiv, D():TiposIva( nView ), dbfAlmT, D():Articulos( nView ) ) )
 
          ENDMENU
 
@@ -14011,7 +14007,7 @@ Method Dialog() CLASS TArticuloLabelGenerator
       REDEFINE BUTTON ::oBtnListado ;          // Boton listado
          ID       40 ;
          OF       ::oDlg ;
-         ACTION   ( TInfArtFam():New( "Listado de artículos seleccionados para etiquetas" ):Play( .t., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva, D():Familias( nView ), oStock, oWndBrw ) )
+         ACTION   ( TInfArtFam():New( "Listado de artículos seleccionados para etiquetas" ):Play( .t., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ), D():Familias( nView ), oStock, oWndBrw ) )
 
       REDEFINE BUTTON ::oBtnAnterior ;          // Boton anterior
          ID       20 ;
@@ -16305,7 +16301,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
       with object ( oBrw:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" )
-         :bStrData         := {|| TransPrecio( nRetPreArt( 1, nil, .f., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+         :bStrData         := {|| TransPrecio( nRetPreArt( 1, nil, .f., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ) ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -16313,7 +16309,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
       with object ( oBrw:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" ) + " " + cImp() + " inc."
-         :bStrData         := {|| TransPrecio( nRetPreArt( 1, nil, .t., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+         :bStrData         := {|| TransPrecio( nRetPreArt( 1, nil, .t., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ) ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -16321,7 +16317,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
       with object ( oBrw:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" )
-         :bStrData         := {|| TransPrecio( nRetPreArt( 2, nil, .f., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+         :bStrData         := {|| TransPrecio( nRetPreArt( 2, nil, .f., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ) ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -16330,7 +16326,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
       with object ( oBrw:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" ) + " " + cImp() + " inc."
-         :bStrData         := {|| TransPrecio( nRetPreArt( 2, nil, .t., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+         :bStrData         := {|| TransPrecio( nRetPreArt( 2, nil, .t., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ) ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -16339,7 +16335,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
       with object ( oBrw:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" )
-         :bStrData         := {|| TransPrecio( nRetPreArt( 3, nil, .f., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+         :bStrData         := {|| TransPrecio( nRetPreArt( 3, nil, .f., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ) ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -16348,7 +16344,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
       with object ( oBrw:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" ) + " " + cImp() + " inc."
-         :bStrData         := {|| TransPrecio( nRetPreArt( 3, nil, .t., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+         :bStrData         := {|| TransPrecio( nRetPreArt( 3, nil, .t., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ) ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -16357,7 +16353,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
       with object ( oBrw:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" )
-         :bStrData         := {|| TransPrecio( nRetPreArt( 4, nil, .f., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+         :bStrData         := {|| TransPrecio( nRetPreArt( 4, nil, .f., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ) ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -16366,7 +16362,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
       with object ( oBrw:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" ) + " " + cImp() + " inc."
-         :bStrData         := {|| TransPrecio( nRetPreArt( 4, nil, .t., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+         :bStrData         := {|| TransPrecio( nRetPreArt( 4, nil, .t., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ) ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -16375,7 +16371,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
       with object ( oBrw:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" )
-         :bStrData         := {|| TransPrecio( nRetPreArt( 5, nil, .f., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+         :bStrData         := {|| TransPrecio( nRetPreArt( 5, nil, .f., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ) ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -16384,7 +16380,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
       with object ( oBrw:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" ) + " " + cImp() + " inc."
-         :bStrData         := {|| TransPrecio( nRetPreArt( 5, nil, .t., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+         :bStrData         := {|| TransPrecio( nRetPreArt( 5, nil, .t., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ) ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -16393,7 +16389,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
       with object ( oBrw:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" )
-         :bStrData         := {|| TransPrecio( nRetPreArt( 6, nil, .f., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+         :bStrData         := {|| TransPrecio( nRetPreArt( 6, nil, .f., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ) ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -16402,7 +16398,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
       with object ( oBrw:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" ) + " " + cImp() + " inc."
-         :bStrData         := {|| TransPrecio( nRetPreArt( 6, nil, .t., D():Articulos( nView ), dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+         :bStrData         := {|| TransPrecio( nRetPreArt( 6, nil, .t., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ) ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -18463,7 +18459,7 @@ Static Function lValidImporteBase( oGet, uValue, nKey, hFields )
       Return .f.
    end if 
 
-   nPorcentajeIva                := nIva( dbfIva, ( D():Articulos( nView ) )->TipoIva )
+   nPorcentajeIva                := nIva( D():TiposIva( nView ), ( D():Articulos( nView ) )->TipoIva )
 
    nPrecioBase                   := uValue
 
@@ -18516,7 +18512,7 @@ Static Function lValidImporteIva( oGet, uValue, nKey, hFields ) // { "Base" => "
       Return .f.
    end if 
 
-   nPorcentajeIva                := nIva( dbfIva, ( D():Articulos( nView ) )->TipoIva )
+   nPorcentajeIva                := nIva( D():TiposIva( nView ), ( D():Articulos( nView ) )->TipoIva )
 
    /*
    Margen de ajuste------------------------------------------------------------ 
