@@ -8689,7 +8689,7 @@ Function CalPre( lSobreCoste, nCosto, lBnf, nBnf, uTipIva, oGetPrePts, oGetIvaPt
    if lBnf .and. nCosto != 0
 
       if ValType( uTipIva ) == "C"
-         nIvaPct  := nIva( D():TiposIva( nView ), uTipIva )
+         nIvaPct  := nIva( , uTipIva )
       else
          nIvaPct  := uTipIva
       end if
@@ -12117,8 +12117,8 @@ function SynArt( cPath )
 
    DEFAULT cPath        := cPatArt()
 
-   /*oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
    USE ( cPatArt() + "ARTICULO.Dbf" ) NEW VIA ( cDriver() )    EXCLUSIVE ALIAS ( cCheckArea( "ARTICULO", @dbfArt ) )
    SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
@@ -12152,11 +12152,8 @@ function SynArt( cPath )
    USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() )        SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
    SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 
-   MsgInfo( "1" )
    oNewImp              := TNewImp():Create( cPatEmp() )
    if oNewImp:OpenFiles()
-
-      MsgInfo( "2" )
 
       ( dbfArt )->( dbGoTop() )
 
@@ -12471,13 +12468,13 @@ function SynArt( cPath )
 
    end if
 
-   /*RECOVER USING oError
+   RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de articulos." )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
    /*
    Cerramos todas las tablas---------------------------------------------------
