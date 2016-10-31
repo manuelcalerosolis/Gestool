@@ -1438,8 +1438,11 @@ CLASS ItemLine
    DATA     cItemDescription              INIT ''
    DATA     nQuantity                     INIT 0.00
    DATA     cUnitOfMeasure                INIT '01'
+   DATA     nUnitPriceWithTax             INIT 0.000000
    DATA     nUnitPriceWithoutTax          INIT 0.000000
    DATA     nTotalCost                    INIT 0.00
+   DATA     nIva                          INIT 0
+   DATA     lIvaInc                       INIT .f.
    DATA     aDiscount                     INIT {}
    DATA     nGrossAmount                  INIT 0.00
    DATA     aTax                          INIT {}
@@ -1448,7 +1451,7 @@ CLASS ItemLine
    ACCESS   UnitOfMeasure                 INLINE ( ::cUnitOfMeasure )
    ACCESS   Quantity                      INLINE ( Alltrim( Trans( ::nQuantity,                                      DoubleTwoDecimalPicture ) ) )
    ACCESS   UnitPriceWithoutTax           INLINE ( Alltrim( Trans( ::nUnitPriceWithoutTax,                           DoubleSixDecimalPicture ) ) )
-   ACCESS   TotalCost                     INLINE ( Alltrim( Trans( Round( ::nQuantity * Round( ::nUnitPriceWithoutTax, 2 ), 2 ), DoubleSixDecimalPicture ) ) )
+   //ACCESS   TotalCost                     INLINE ( Alltrim( Trans( Round( ::nQuantity * Round( ::nUnitPriceWithoutTax, 2 ), 2 ), DoubleSixDecimalPicture ) ) )
 
    //------------------------------------------------------------------------//
 
@@ -1456,6 +1459,8 @@ CLASS ItemLine
 
    METHOD addDiscount( oDiscount )
    METHOD GrossAmount()
+
+   METHOD TotalCost()
 
    METHOD addTax( oTax )                  INLINE aAdd( ::aTax, oTax )
 
@@ -1491,24 +1496,49 @@ METHOD GrossAmount() CLASS ItemLine
 
    local oDiscount
 
-   MsgInfo( ::nQuantity, "nQuantity" )
-   MsgInfo( Round( ::nUnitPriceWithoutTax, 2 ), "nUnitPriceWithoutTax" )
-
-   ::nGrossAmount       := ::nQuantity * ::nUnitPriceWithoutTax
+   ::nGrossAmount       := ::nQuantity * ::nUnitPriceWithTax
 
    for each oDiscount in ::aDiscount
       ::nGrossAmount    -= oDiscount:nDiscountAmount
    next
 
-   MsgInfo( ::nGrossAmount, "nGrossAmount antes" )
-
    ::nGrossAmount       := Round( ::nGrossAmount, 2 )
 
-   MsgInfo( ::nGrossAmount, "nGrossAmount despues" )
+   if ::lIvaInc
+
+      ::nGrossAmount    := ::nGrossAmount / ( 1 + ( ::nIva / 100 ) )
+      ::nGrossAmount    := Round( ::nGrossAmount, 2 )
+
+   end if 
 
 RETURN ( Alltrim( Trans( ::nGrossAmount, DoubleSixDecimalPicture ) ) )
 
 //---------------------------------------------------------------------------//
+
+METHOD TotalCost() CLASS ItemLine
+
+   local oDiscount
+   local nTotal         := 0
+
+   nTotal       := ::nQuantity * ::nUnitPriceWithTax
+
+   for each oDiscount in ::aDiscount
+      nTotal    -= oDiscount:nDiscountAmount
+   next
+
+   nTotal       := Round( nTotal, 2 )
+
+   if ::lIvaInc
+
+      nTotal    := nTotal / ( 1 + ( ::nIva / 100 ) )
+      nTotal    := Round( nTotal, 2 )
+
+   end if 
+
+RETURN ( Alltrim( Trans( nTotal, DoubleSixDecimalPicture ) ) )
+
+//---------------------------------------------------------------------------//
+//ACCESS   TotalCost                     INLINE ( Alltrim( Trans( Round( ::nQuantity * Round( ::nUnitPriceWithoutTax, 2 ), 2 ), DoubleSixDecimalPicture ) ) )
 
 CLASS Installment
 

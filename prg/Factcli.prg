@@ -14710,6 +14710,10 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
                oItemLine:cItemDescription          := Descrip( D():FacturasClientesLineas( nView ) )
                oItemLine:nQuantity                 := nTotNFacCli( D():FacturasClientesLineas( nView ) )
                oItemLine:nUnitPriceWithoutTax      := nNetUFacCli( D():FacturasClientesLineas( nView ), nDouDiv ) 
+               oItemLine:nUnitPriceWithTax         := nTotUFacCli( D():FacturasClientesLineas( nView ), nDouDiv )
+
+               oItemLine:nIva                      := ( D():FacturasClientesLineas( nView ) )->nIva
+               oItemLine:lIvaInc                   := ( D():FacturasClientes( nView ) )->lIvaInc
 
                // Descuento lineal
 
