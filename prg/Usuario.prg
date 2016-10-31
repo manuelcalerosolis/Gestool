@@ -2950,7 +2950,11 @@ function nLevelUsr( uHelpId )
 
       if !( dbfMapa )->( neterr() )
 
-         ( dbfMapa )->( ordListAdd( cPatDat() + "MAPAS.CDX" ) )
+         if !lAIS() 
+            ( dbfMapa )->( ordListAdd( cPatDat() + "MAPAS.CDX" ) )
+         else
+            ( dbfMapa )->( ordSetFocus( 1 ) )
+         end if 
 
          if !Empty( cCurGrp() )
             if ( dbfMapa )->( dbSeek( cCurGrp() + cLevOpc ) )
@@ -2968,7 +2972,7 @@ function nLevelUsr( uHelpId )
 
    RECOVER USING oError
 
-      // msgStop( "Imposible abrir los mapas de usuarios" + CRLF + ErrorMessage( oError )  )
+      msgStop( "Imposible abrir los mapas de usuarios" + CRLF + ErrorMessage( oError )  )
 
       if !Empty( dbfMapa )
          ( dbfMapa )->( dbCloseArea() )

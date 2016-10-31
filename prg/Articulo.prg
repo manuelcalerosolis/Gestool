@@ -821,6 +821,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    */
 
    nLevel            := nLevelUsr( oMenuItem )
+   
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       return .f.

@@ -1003,14 +1003,18 @@ RETURN NIL
 
 FUNCTION SetNotas()
 
-   if !file( cPatDat() + "AgendaUsr.dbf" )
-      msgStop( "El fichero " + ( cPatDat() + "AgendaUsr.dbf" ) + " no existe." )
-      return nil
-   end if 
+   if !lAIS()
 
-   if !file( cPatDat() + "AgendaUsr.cdx" )
-      msgStop( "El fichero " + ( cPatDat() + "AgendaUsr.cdx" ) + " no existe." )
-      return nil
+      if !file( cPatDat() + "AgendaUsr.dbf" )
+         msgStop( "El fichero " + ( cPatDat() + "AgendaUsr.dbf" ) + " no existe." )
+         return nil
+      end if 
+
+      if !file( cPatDat() + "AgendaUsr.cdx" )
+         msgStop( "El fichero " + ( cPatDat() + "AgendaUsr.cdx" ) + " no existe." )
+         return nil
+      end if
+
    end if
 
    USE ( cPatDat() + "AgendaUsr.dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NOTAS", @dbfNotas ) )

@@ -868,9 +868,16 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Ruta"
          :cSortOrder       := "cCodRut"
-         :bEditValue       := {|| ( D():Clientes( nView ) )->cCodRut  + if( !Empty( ( D():Clientes( nView ) )->cCodRut ), " - ", "" ) + RetFld( ( D():Clientes( nView ) )->cCodRut, dbfRuta ) }
+         :bEditValue       := {|| ( D():Clientes( nView ) )->cCodRut + if( !Empty( ( D():Clientes( nView ) )->cCodRut ), " - ", "" ) + RetFld( ( D():Clientes( nView ) )->cCodRut, dbfRuta ) }
          :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Pago"
+         :bEditValue       := {|| ( D():Clientes( nView ) )->CodPago + if( !Empty( ( D():Clientes( nView ) )->CodPago ), " - " , "" ) + RetFld( ( D():Clientes( nView ) )->CodPago, dbfFPago, "" ) }
+         :nWidth           := 200
          :lHide            := .t.
       end with
 
