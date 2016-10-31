@@ -12152,8 +12152,11 @@ function SynArt( cPath )
    USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() )        SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
    SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 
+   MsgInfo( "1" )
    oNewImp              := TNewImp():Create( cPatEmp() )
    if oNewImp:OpenFiles()
+
+      MsgInfo( "2" )
 
       ( dbfArt )->( dbGoTop() )
 
