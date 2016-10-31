@@ -8,7 +8,7 @@
       
 //---------------------------------------------------------------------------//
 
-Function ImportarExcel( nView )                	 
+Function ImportarExcelArguelles( nView )                	 
 	      
    local oImportarExcel    := TImportarExcel():New( nView )
 
@@ -18,7 +18,7 @@ Return nil
 
 //---------------------------------------------------------------------------// 
 
-CLASS TImportarExcel
+CLASS TImportarExcelArguelles FROM TImportarExcel
 
    DATA hUnidadesMedicion     
    
@@ -44,6 +44,8 @@ CLASS TImportarExcel
                                           ( D():Articulos( ::nView ) )->( dbunlock() ) )
 
    METHOD importarCampos()
+
+   METHOD importarReferenciaProveedor()
 
    METHOD getCodigoUnidadMedicion( textoUnidadMedicion )
 
@@ -71,7 +73,7 @@ METHOD New( nView )
    Columna de campo clave
    */
 
-   ::cColumnaCampoClave       := 'B'
+   ::cColumnaCampoClave       := 'A'
 
    ::hUnidadesMedicion        := {  "KILO"      => "01",;
                                     "ESTUCHE"   => "02",;
@@ -124,6 +126,8 @@ METHOD procesaFicheroExcel()
 
          ::desbloqueaRegistro()
 
+         ::importarReferenciaProveedor()
+
       endif
 
       ::siguienteLinea()
@@ -139,10 +143,90 @@ Return nil
 METHOD importarCampos()
 
    ( D():Articulos( ::nView ) )->Codigo   := ::getCampoClave()
-   ( D():Articulos( ::nView ) )->Nombre   := ::getExcelValue( "D" )
-   ( D():Articulos( ::nView ) )->TipoIva  := left( ::getExcelValue( "J" ), 1 )
-   ( D():Articulos( ::nView ) )->lObs     := ( ::getExcelValue( "L" ) != "NULL" )
-   ( D():Articulos( ::nView ) )->cUnidad  := ::getCodigoUnidadMedicion( ::getExcelValue( "R" ) )
+
+   if !empty( ::getExcelNumeric("B") )
+      ( D():Articulos( ::nView ) )->Nombre   := ::getExcelString( "B" )
+   end if 
+
+   if !empty( ::getExcelNumeric("C") )
+      ( D():Articulos( ::nView ) )->Familia  := ::getExcelString( "C" )
+   end if 
+
+   if !empty( ::getExcelNumeric("D") )
+      ( D():Articulos( ::nView ) )->CodeBar  := ::getExcelString( "D" )   
+   end if 
+
+   if !empty( ::getExcelNumeric("E") )
+      ( D():Articulos( ::nView ) )->pCosto   := ::getExcelNumeric( "E" )   
+   end if 
+
+   ( D():Articulos( ::nView ) )->TipoIva  := "G"
+
+   if !empty( ::getExcelNumeric("F") )
+      ( D():Articulos( ::nView ) )->pVenta1  := ::getExcelNumeric( "F" )   
+      ( D():Articulos( ::nView ) )->pVtaIva1 := ( ::getExcelNumeric( "F" ) * 0.21 ) + ::getExcelNumeric( "F" )
+   end if 
+
+   if !empty( ::getExcelNumeric("G") )
+      ( D():Articulos( ::nView ) )->pVenta2  := ::getExcelNumeric( "G" )   
+      ( D():Articulos( ::nView ) )->pVtaIva2 := ( ::getExcelNumeric( "G" ) * 0.21 ) + ::getExcelNumeric( "G" )
+   end if 
+
+   if !empty( ::getExcelNumeric("H") )
+      ( D():Articulos( ::nView ) )->pVenta3  := ::getExcelNumeric( "H" )   
+      ( D():Articulos( ::nView ) )->pVtaIva3 := ( ::getExcelNumeric( "H" ) * 0.21 ) + ::getExcelNumeric( "H" )
+   end if 
+
+   if !empty( ::getExcelNumeric("I") )
+      ( D():Articulos( ::nView ) )->pVenta4  := ::getExcelNumeric( "I" )   
+      ( D():Articulos( ::nView ) )->pVtaIva4 := ( ::getExcelNumeric( "I" ) * 0.21 ) + ::getExcelNumeric( "I" )
+   end if 
+
+   if !empty( ::getExcelNumeric("J") )
+      ( D():Articulos( ::nView ) )->pVenta5  := ::getExcelNumeric( "J" )   
+      ( D():Articulos( ::nView ) )->pVtaIva5 := ( ::getExcelNumeric( "J" ) * 0.21 ) + ::getExcelNumeric( "J" )
+   end if 
+
+   if !empty( ::getExcelNumeric("K") )
+      ( D():Articulos( ::nView ) )->pVenta6  := ::getExcelNumeric( "K" )   
+      ( D():Articulos( ::nView ) )->pVtaIva6 := ( ::getExcelNumeric( "K" ) * 0.21 ) + ::getExcelNumeric( "K" )
+   end if 
+
+   if !empty( ::getExcelString("L") )
+      ( D():Articulos( ::nView ) )->lPubInt  := ::getExcelLogic( "L" )   
+   end if 
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+METHOD importarReferenciaProveedor()
+
+   local idArticulo           := ( D():Articulos( ::nView ) )->Codigo // cCodArt + cCodPrv + cRefPrv
+   local idProveedor          := padr( ::getExcelNumeric("M"), 12 )
+   local referenciaProveedor  := padr( ::getExcelNumeric("L"), 60 )
+   local ordenAnterior        := ( D():ProveedorArticulo( ::nView ) )->( ordsetfocus( "cRefArt" ) )
+
+   if !empty( referenciaProveedor )
+
+      if ( D():ProveedorArticulo( ::nView ) )->( dbseek( idArticulo + idProveedor + referenciaProveedor ) )
+         ( ( D():ProveedorArticulo( ::nView ) )->( dbrlock() ) )
+      else
+         ( ( D():ProveedorArticulo( ::nView ) )->( dbappend() ) )
+      end if 
+
+      if !( neterr() )
+         ( D():ProveedorArticulo( ::nView ) )->cCodArt   := idArticulo
+         ( D():ProveedorArticulo( ::nView ) )->cCodPrv   := idProveedor
+         ( D():ProveedorArticulo( ::nView ) )->cRefPrv   := referenciaProveedor
+      end if 
+
+      ( D():ProveedorArticulo() )->( dbcommit() )
+      ( D():ProveedorArticulo() )->( dbunlock() )
+
+   end if 
+
+   ( D():ProveedorArticulo( ::nView ) )->( ordsetfocus( ordenAnterior ) )
 
 Return nil
 
@@ -400,5 +484,12 @@ Campos a importar--------------------------------------------------------------
    aAdd( aBase, { "cWebShop",  "C",100, 0, "Tienda web donde se publica el producto",  "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "lIvaWeb",   "L",  1, 0, "Iva incluido para precio web" ,            "",                  "", "( cDbfArt )", nil } )
 
+   aAdd( aBase, { "cCodArt",   "C", 18, 0, "Código del artículo referenciado"  , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodPrv",   "C", 12, 0, "Código del proveedor"              , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cRefPrv",   "C", 60, 0, "Referencia del proveedor al artículo" , "",               "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nDtoPrv",   "N",  6, 2, "Descuento del proveedor"           , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nDtoPrm",   "N",  6, 2, "Descuento por promoción"           , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cDivPrv",   "C",  3, 0, "Código de la divisa"               , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nImpPrv",   "N", 19, 6, "Importe de compra"                 , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lDefPrv",   "L",  1, 0, "Lógico de proveedor por defecto"   , "",                  "", "( cDbfArt )", nil } )
 */
-

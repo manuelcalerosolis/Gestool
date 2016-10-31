@@ -48,7 +48,7 @@ CLASS SepaXml
    DATA CtrlSum            AS NUMERIC     INIT 0.00            // Control de suma
 
    DATA ServiceLevel       AS CHARACTER   INIT "SEPA"          // Código Nivel de servicio (7)
-   DATA SeqTp              AS CHARACTER   INIT "RCUR"          // Tipo de secuencia (2)
+   DATA SeqTp              AS CHARACTER   INIT "OOFF"          // Tipo de secuencia (2) RCUR es la alternativa da problemas BSCH
    DATA PurposeCd                                              // Código categoria proposito
    DATA PurposePrtry                                           // Propietario categoria proposito
 

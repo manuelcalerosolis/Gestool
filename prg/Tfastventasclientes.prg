@@ -47,8 +47,9 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
    METHOD AddFacturaCliente()
    METHOD AddFacturaRectificativa()
    METHOD AddTicket()
-   METHOD AddRecibosCliente( cCodigoCliente )
-   METHOD AddRecibosClienteCobro( cCodigoCliente )
+   METHOD AddRecibosCliente( cFieldOrder )
+   METHOD AddRecibosClienteCobro()        INLINE ( ::addRecibosCliente( 'dEntrada' ) )
+   METHOD AddRecibosClienteVencimiento()  INLINE ( ::addRecibosCliente( 'dFecVto' ) )
 
    METHOD insertFacturaCliente()
    METHOD insertRectificativa()
@@ -441,11 +442,12 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasClientes
                      { "Title" => "Tickets de clientes",          "Image" =>10, "Type" => "Tickets de clientes",           "Directory" => "Clientes\Ventas\Tickets de clientes",          "File" => "Tickets de clientes.fr3" },;
                      { "Title" => "Facturación de clientes",      "Image" => 8, "Type" => "Facturación de clientes",       "Directory" => "Clientes\Ventas\Facturación de clientes",      "File" => "Facturación de clientes.fr3" },;
                      { "Title" => "Ventas",                       "Image" =>11, "Type" => "Ventas",                        "Directory" => "Clientes\Ventas\Ventas",                       "File" => "Ventas.fr3" },;
-                     { "Title" => "Recibos",                      "Image" =>21, "Type" => "Recibos",                       "Directory" => "Clientes\Ventas\Recibos",                      "File" => "Recibos de clientes.fr3" },;
-                     { "Title" => "Recibos fecha de cobro",       "Image" =>21, "Type" => "Recibos cobro",                 "Directory" => "Clientes\Ventas\Recibos fecha de cobro",       "File" => "Recibos de clientes fecha de cobro.fr3" },;
+                     { "Title" => "Recibos fecha de emisión",     "Image" =>21, "Type" => "Recibos emisión",               "Directory" => "Clientes\Ventas\Recibos",                      "File" => "Recibos de clientes.fr3" },;
+                     { "Title" => "Recibos fecha de cobro",       "Image" =>21, "Type" => "Recibos cobro",                 "Directory" => "Clientes\Ventas\RecibosCobro",                 "File" => "Recibos de clientes fecha de cobro.fr3" },;
+                     { "Title" => "Recibos fecha de vencimiento", "Image" =>21, "Type" => "Recibos vencimiento",           "Directory" => "Clientes\Ventas\RecibosVencimiento",           "File" => "Recibos de clientes fecha de vencimiento.fr3" },;
                   } ;
                   },;
-                  {  "Title" => "Tipo de impuesto",               "Image" =>23, "Type" => "Tipo de impuesto",             "Directory" => "Clientes\TipoImpuesto",                        "File" => "Ventas por tipo de impuesto.fr3"  } }
+                  {  "Title" => "Tipo de impuesto",               "Image" =>23, "Type" => "Tipo de impuesto",             "Directory" => "Clientes\TipoImpuesto",                         "File" => "Ventas por tipo de impuesto.fr3"  } }
 
    ::BuildNode( aReports, oTree, lLoadFile ) 
 
@@ -605,11 +607,7 @@ METHOD DataReport() CLASS TFastVentasClientes
 
          ::FastReportTicket( .t. )
 
-      case ::cReportType == "Recibos"
-
-         ::FastReportRecibosCliente() 
-
-      case ::cReportType == "Recibos cobro"
+      case ( "Recibos" $ ::cReportType )
 
          ::FastReportRecibosCliente() 
 
@@ -710,11 +708,7 @@ METHOD AddVariable() CLASS TFastVentasClientes
 
          ::AddVariableLineasTicketCliente()
 
-      case ::cReportType == "Recibos"
-
-         ::AddVariableRecibosCliente()
-
-      case ::cReportType == "Recibos cobro"
+      case ( "Recibos" $ ::cReportType )
 
          ::AddVariableRecibosCliente()
 
@@ -798,13 +792,17 @@ METHOD lGenerate() CLASS TFastVentasClientes
 
          ::AddClientes()
 
-      case ::cReportType == "Recibos"
+      case ::cReportType == "Recibos emisión"
 
          ::AddRecibosCliente()   
 
       case ::cReportType == "Recibos cobro"
 
          ::AddRecibosClienteCobro()   
+
+      case ::cReportType == "Recibos vencimiento"
+
+         ::AddRecibosClienteVencimiento()   
 
       case ::cReportType == "Tipo de impuesto"
 
@@ -1718,20 +1716,22 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD AddRecibosCliente( cCodigoCliente ) CLASS TFastVentasClientes
+METHOD AddRecibosCliente( cFieldOrder ) CLASS TFastVentasClientes
 
    local sTot
    local oError
    local oBlock
    
+   DEFAULT cFieldOrder  := 'dPreCob'
+
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    
-      ::oFacCliP:OrdSetFocus( "dPreCob" )
+      ::oFacCliP:OrdSetFocus( cFieldOrder )
 
       // filtros para la cabecera------------------------------------------------
 
-      ::cExpresionHeader          := 'Field->dPreCob >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dPreCob <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      ::cExpresionHeader          := 'Field->' + cFieldOrder + ' >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->' + cFieldOrder + ' <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
       ::cExpresionHeader          += ' .and. Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerie <= "' + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
 
       ::setFilterClientIdHeader()
@@ -1785,105 +1785,6 @@ METHOD AddRecibosCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
          ::oDbf:nNumRem    := ::oFacCliP:nNumRem
          ::oDbf:cSufRem    := ::oFacCliP:cSufRem
-
-         ::oDbf:dFecVto    := ::oFacCliP:dFecVto
-
-         ::oDbf:cEstado    := cEstadoRecibo( ::oFacCliP:cAlias )
-
-         ::oDbf:nRieCli    := oRetFld( ::oFacCliP:cCodCli, ::oDbfCli, "Riesgo", "COD" )
-
-         // Añadimos un nuevo registro--------------------------------------------
-
-         if ::lValidRegister()
-            ::oDbf:Insert()
-         else
-            ::oDbf:Cancel()
-         end if
-
-         ::oFacCliP:Skip()
-
-         ::oMtrInf:AutoInc()
-
-      end while
-
-      ::oFacCliP:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ) )
-   
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Imposible añadir recibos de clientes" )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-   
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD AddRecibosClienteCobro( cCodigoCliente ) CLASS TFastVentasClientes
-
-   local sTot
-   local oError
-   local oBlock
-   
-   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-   
-      ::oFacCliP:OrdSetFocus( "dEntrada" )
-
-      // filtros para la cabecera------------------------------------------------
-
-      ::cExpresionHeader   := 'Field->dEntrada >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dEntrada <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      ::cExpresionHeader   += ' .and. Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
-
-      ::setFilterClientIdHeader()
-
-      ::setFilterPaymentId()
-
-      ::setFilterAgentId()
-      
-      ::setFilterUserId()
-
-      // Procesando recibos------------------------------------------------------
-      
-      ::oMtrInf:cText      := "Procesando recibos"
-      
-      ::oFacCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
-
-      ::oMtrInf:SetTotal( ::oFacCliP:OrdKeyCount() )
-
-      ::oFacCliP:GoTop()
-
-      while !::lBreak .and. !::oFacCliP:Eof()
-
-         ::oDbf:Blank()
-
-         ::oDbf:cCodCli    := ::oFacCliP:cCodCli
-         ::oDbf:cNomCli    := ::oFacCliP:cNomCli
-         ::oDbf:cCodAge    := ::oFacCliP:cCodAge
-         ::oDbf:cCodPgo    := ::oFacCliP:cCodPgo
-         ::oDbf:cCodUsr    := ::oFacCliP:cCodUsr
-
-         ::oDbf:cCodRut    := oRetFld( ::oFacCliP:cCodCli, ::oDbfCli, 'cCodRut' )
-         ::oDbf:cCodPos    := oRetFld( ::oFacCliP:cCodCli, ::oDbfCli, 'cCodPos' )
-         ::oDbf:cCodGrp    := cGruCli( ::oFacCliP:cCodCli, ::oDbfCli )
-
-         ::oDbf:cTipDoc    := "Recibos clientes"
-         ::oDbf:cClsDoc    := REC_CLI          
-         ::oDbf:cSerDoc    := ::oFacCliP:cSerie
-         ::oDbf:cNumDoc    := Str( ::oFacCliP:nNumFac )
-         ::oDbf:cSufDoc    := ::oFacCliP:cSufFac
-         ::oDbf:cNumRec    := Str( ::oFacCliP:nNumRec )
-         ::oDbf:cIdeDoc    := Upper( ::oDbf:cClsDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
-
-         ::oDbf:nAnoDoc    := Year( ::oFacCliP:dEntrada )
-         ::oDbf:nMesDoc    := Month( ::oFacCliP:dEntrada )
-         ::oDbf:dFecDoc    := ::oFacCliP:dEntrada
-         ::oDbf:cHorDoc    := SubStr( ::oFacCliP:cHorCre, 1, 2 )
-         ::oDbf:cMinDoc    := SubStr( ::oFacCliP:cHorCre, 4, 2 )
-
-         ::oDbf:nTotNet    := nTotRecCli( ::oFacCliP )
-         ::oDbf:nTotCob    := nTotCobCli( ::oFacCliP )
 
          ::oDbf:dFecVto    := ::oFacCliP:dFecVto
 
@@ -2398,8 +2299,21 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasRecibos
    DEFAULT oTree     := ::oTreeReporting
    DEFAULT lLoadFile := .t.
 
-   aReports          := {  { "Title" => "Recibos",                "Image" =>21, "Type" => "Recibos",        "Directory" => "Clientes\Ventas\Recibos",                "File" => "Recibos de clientes.fr3" },;
-                           { "Title" => "Recibos fecha de cobro", "Image" =>21, "Type" => "Recibos cobro",  "Directory" => "Clientes\Ventas\Recibos fecha de cobro", "File" => "Recibos de clientes fecha de cobro.fr3" } }
+   aReports          := {  {  "Title" => "Recibos fecha de emisión",;                
+                                 "Image" =>21,; 
+                                 "Type" => "Recibos emisión",;              
+                                 "Directory" => "Clientes\Ventas\Recibos",;                      
+                                 "File" => "Recibos de clientes.fr3" },;
+                           {  "Title" => "Recibos fecha de cobro",; 
+                                 "Image" =>21,; 
+                                 "Type" => "Recibos cobro",;        
+                                 "Directory" => "Clientes\Ventas\RecibosCobro",;      
+                                 "File" => "Recibos de clientes fecha de cobro.fr3" },;
+                           { "Title" => "Recibos fecha de vencimiento",;
+                                 "Image" =>21,; 
+                                 "Type" => "Recibos vencimiento",;  
+                                 "Directory" => "Clientes\Ventas\RecibosVencimiento",; 
+                                 "File" => "Recibos de clientes fecha de vencimiento.fr3" } }
 
    ::BuildNode( aReports, oTree, lLoadFile ) 
 

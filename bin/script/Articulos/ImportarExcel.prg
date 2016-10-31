@@ -40,6 +40,16 @@ CLASS TImportarExcel
 
    METHOD getExcelValue()
 
+   METHOD getExcelString()
+
+   METHOD getExcelNumeric( columna, fila )
+   
+   METHOD getExcelLogic( columna, fila )
+
+   METHOD openExcel()
+
+   METHOD closeExcel()  
+
    METHOD existeRegistro()       INLINE ( D():gotoArticulos( ::getExcelValue( ::cColumnaCampoClave ), ::nView ) )
 
    METHOD appendRegistro()       INLINE ( ( D():Articulos( ::nView ) )->( dbappend() ) )
@@ -95,6 +105,29 @@ METHOD Run()
    msginfo( "Proceso finalizado" )
 
 Return ( .t. )
+
+//----------------------------------------------------------------------------//
+
+METHOD openExcel()
+
+   ::oExcel                        := TOleExcel():New( "Importando hoja de excel", "Conectando...", .f. )
+
+   ::oExcel:oExcel:Visible         := .t.
+   ::oExcel:oExcel:DisplayAlerts   := .f.
+   ::oExcel:oExcel:WorkBooks:Open( ::cFicheroExcel )
+   ::oExcel:oExcel:WorkSheets( 1 ):Activate()
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD closeExcel()
+
+   ::oExcel:oExcel:Quit()
+   ::oExcel:oExcel:DisplayAlerts := .t.
+   ::oExcel:End()
+
+Return ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -155,11 +188,22 @@ Return ( !empty( ::getExcelValue( ::cColumnaCampoClave ) ) )
 
 METHOD getExcelValue( columna, fila, valorPorDefecto )
 
+   local oBlock
+   local oError
    local excelValue  
 
    DEFAULT fila         := ::nFilaInicioImportacion
 
+   oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
    excelValue           := ::oExcel:oExcel:ActiveSheet:Range( columna + ltrim( str( fila ) ) ):Value
+
+   RECOVER USING oError
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
    if empty( excelValue )
       Return ( valorPorDefecto )
@@ -168,6 +212,73 @@ METHOD getExcelValue( columna, fila, valorPorDefecto )
 Return ( excelValue )   
 
 //---------------------------------------------------------------------------//
+
+METHOD getExcelString( columna, fila )
+
+   local excelValue  
+   local valorPorDefecto      := ""
+
+   DEFAULT fila               := ::nFilaInicioImportacion
+
+   excelValue                 := ::getExcelValue( columna, fila, valorPorDefecto )
+
+   if valtype( excelValue ) != "C" 
+      excelValue              := cvaltochar( excelValue )
+   end if 
+
+   if empty( excelValue ) 
+      Return ( valorPorDefecto )
+   end if 
+
+Return ( excelValue )   
+
+//---------------------------------------------------------------------------//
+
+METHOD getExcelNumeric( columna, fila )
+
+   local excelValue  
+   local valorPorDefecto      := 0
+
+   DEFAULT fila               := ::nFilaInicioImportacion
+
+   excelValue                 := ::getExcelValue( columna, fila, valorPorDefecto )
+
+   if valtype( excelValue ) != "N" 
+      excelValue              := val( excelValue )
+   end if 
+
+   if empty( excelValue )
+      Return ( valorPorDefecto )
+   end if 
+
+Return ( excelValue )   
+
+//---------------------------------------------------------------------------// 
+
+METHOD getExcelLogic( columna, fila )
+
+   local excelValue  
+   local valorPorDefecto      := 0
+
+   DEFAULT fila               := ::nFilaInicioImportacion
+
+   excelValue                 := ::getExcelValue( columna, fila, valorPorDefecto )
+
+   if valtype( excelValue ) == "C" 
+      excelValue              := ( upper( excelValue ) == "SI" )
+   end if 
+
+   if valtype( excelValue ) == "N" 
+      excelValue              := ( upper( excelValue ) == 1 )
+   end if 
+
+   if empty( excelValue )
+      Return ( valorPorDefecto )
+   end if 
+
+Return ( excelValue )   
+
+//---------------------------------------------------------------------------// 
 
 /*
 Campos a importar--------------------------------------------------------------

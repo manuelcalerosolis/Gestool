@@ -5275,11 +5275,12 @@ Function DelCobCli( oBrw, cFacCliP )
       return .f.
    end if
 
+/*
    if !empty( ( cFacCliP )->lCobrado )
       msgStop( "Este recibo está liquidado", "Imposible eliminar" )
       return .f.
    end if
-
+*/
    WinDelRec( oBrw, cFacCliP, {|| QuiRecCli( cFacCliP ) } )
 
 return .t.

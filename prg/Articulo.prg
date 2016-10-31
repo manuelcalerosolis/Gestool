@@ -141,7 +141,6 @@ static filArticulo
 static tmpArticulo
 
 static dbfCodebar
-static dbfArtPrv
 static dbfArtVta
 static dbfArtKit
 static dbfArtLbl
@@ -286,11 +285,10 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       D():TiposIva( nView )
 
+      D():ProveedorArticulo( nView )
+
       USE ( cPatArt() + "ArtCodebar.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @dbfCodebar ) )
       SET ADSINDEX TO ( cPatArt() + "ArtCodebar.Cdx" ) ADDITIVE
-
-      USE ( cPatArt() + "ProvArt.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) )
-      SET ADSINDEX TO ( cPatArt() + "PROVART.CDX" ) ADDITIVE
 
       USE ( cPatPrv() + "PROVEE.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProv ) )
       SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
@@ -568,10 +566,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
       ( dbfTMov )->( dbCloseArea() )
    end if
 
-   if dbfArtPrv != nil
-      ( dbfArtPrv )->( dbCloseArea() )
-   end if
-
    if dbfArtLbl != nil
       ( dbfArtLbl )->( dbCloseArea() )
    end if
@@ -747,7 +741,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
    dbfProv           := nil
    dbfCatalogo       := nil
    dbfFamPrv         := nil
-   dbfArtPrv         := nil
    oStock            := nil
    dbfTMov           := nil
    dbfTarPreT        := nil
@@ -1311,7 +1304,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
    with object ( oWndBrw:AddXCol() )
       :cHeader          := "Referencia de proveedor"
-      :bStrData         := {|| cRefArtPrv( ( D():Articulos( nView ) )->Codigo, ( D():Articulos( nView ) )->cPrvHab, dbfArtPrv ) }
+      :bStrData         := {|| cRefArtPrv( ( D():Articulos( nView ) )->Codigo, ( D():Articulos( nView ) )->cPrvHab, D():ProveedorArticulo( nView ) ) }
       :nWidth           := 100
       :lHide            := .t.
    end with
@@ -5469,10 +5462,10 @@ Static Function BeginTrans( aTmp, nMode )
       ( dbfTmpPrv )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
       ( dbfTmpPrv )->( OrdCreate( filTmpPrv, "cRefPrv", "cCodPrv + cRefPrv", {|| Field->cCodPrv + Field->cRefPrv } ) )
 
-      if nMode != APPD_MODE .and. ( dbfArtPrv )->( dbSeek( cCodArt ) )
-         while ( dbfArtPrv )->cCodArt == cCodArt .and. !( dbfArtPrv )->( eof() )
-            dbPass( dbfArtPrv, dbfTmpPrv, .t. )
-            ( dbfArtPrv )->( dbSkip() )
+      if nMode != APPD_MODE .and. ( D():ProveedorArticulo( nView ) )->( dbSeek( cCodArt ) )
+         while ( D():ProveedorArticulo( nView ) )->cCodArt == cCodArt .and. !( D():ProveedorArticulo( nView ) )->( eof() )
+            dbPass( D():ProveedorArticulo( nView ), dbfTmpPrv, .t. )
+            ( D():ProveedorArticulo( nView ) )->( dbSkip() )
          end while
          ( dbfTmpPrv )->( dbGoTop() )
       end if
@@ -5845,10 +5838,10 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
 
       if nMode == EDIT_MODE
 
-         while ( dbfArtPrv )->( dbSeek( cCod ) ) .and. !( dbfArtPrv )->( eof() )
-            if dbLock( dbfArtPrv )
-               ( dbfArtPrv )->( dbDelete() )
-               ( dbfArtPrv )->( dbUnLock() )
+         while ( D():ProveedorArticulo( nView ) )->( dbSeek( cCod ) ) .and. !( D():ProveedorArticulo( nView ) )->( eof() )
+            if dbLock( D():ProveedorArticulo( nView ) )
+               ( D():ProveedorArticulo( nView ) )->( dbDelete() )
+               ( D():ProveedorArticulo( nView ) )->( dbUnLock() )
             end if
          end while
 
@@ -5924,7 +5917,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
             cProvHab             := ( dbfTmpPrv )->cCodPrv
          end if
 
-         dbPass( dbfTmpPrv, dbfArtPrv, .t. )
+         dbPass( dbfTmpPrv, D():ProveedorArticulo( nView ), .t. )
          ( dbfTmpPrv )->( dbSkip() )
       end while
 
@@ -8551,9 +8544,9 @@ Static Function ImpTarifa( cFileName, nPctBnf1, nPctBnf2, nPctBnf3, nPctBnf4, nP
    local cCodArt  := ""
    local cNomArt  := ""
    local aStaArt  := aGetStatus( D():Articulos( nView ), .t. )
-   local aStaPrv  := aGetStatus( dbfArtPrv )
+   local aStaPrv  := aGetStatus( D():ProveedorArticulo( nView ) )
 
-   ( dbfArtPrv )->( OrdSetFocus( "cRefPrv" ) )
+   ( D():ProveedorArticulo( nView ) )->( OrdSetFocus( "cRefPrv" ) )
 
 	CursorWait()
 
@@ -8627,18 +8620,18 @@ Static Function ImpTarifa( cFileName, nPctBnf1, nPctBnf2, nPctBnf3, nPctBnf4, nP
          Referencia de los proveedores--------------------------------------
          */
 
-         if !( dbfArtPrv )->( dbSeek( cProvee + ( dbfExt )->Codigo ) )
-            ( dbfArtPrv )->( dbAppend() )
+         if !( D():ProveedorArticulo( nView ) )->( dbSeek( cProvee + ( dbfExt )->Codigo ) )
+            ( D():ProveedorArticulo( nView ) )->( dbAppend() )
          else
-            ( dbfArtPrv )->( dbRLock() )
+            ( D():ProveedorArticulo( nView ) )->( dbRLock() )
          end if
 
-         ( dbfArtPrv )->cCodArt  := cCodArt
-         ( dbfArtPrv )->cCodPrv  := cProvee
-         ( dbfArtPrv )->cRefPrv  := ( dbfExt )->Codigo
-         ( dbfArtPrv )->cDivPrv  := cDivEmp()
+         ( D():ProveedorArticulo( nView ) )->cCodArt  := cCodArt
+         ( D():ProveedorArticulo( nView ) )->cCodPrv  := cProvee
+         ( D():ProveedorArticulo( nView ) )->cRefPrv  := ( dbfExt )->Codigo
+         ( D():ProveedorArticulo( nView ) )->cDivPrv  := cDivEmp()
 
-         ( dbfArtPrv )->( dbUnLock() )
+         ( D():ProveedorArticulo( nView ) )->( dbUnLock() )
 
          ( dbfExt )->( dbSkip() )
 
@@ -8665,7 +8658,7 @@ Static Function ImpTarifa( cFileName, nPctBnf1, nPctBnf2, nPctBnf3, nPctBnf4, nP
    end if
 
    SetStatus( D():Articulos( nView ), aStaArt )
-   SetStatus( dbfArtPrv,   aStaPrv )
+   SetStatus( D():ProveedorArticulo( nView ),   aStaPrv )
 
    CursorWE()
 
@@ -9350,7 +9343,7 @@ RETURN lReturn
 
 STATIC FUNCTION DelDetalle( cCodArt )
 
-   local nOrdAnt  := ( dbfArtPrv )->( OrdSetFocus( 1 ) )
+   local nOrdAnt  := ( D():ProveedorArticulo( nView ) )->( OrdSetFocus( 1 ) )
 
    InitWait()
 
@@ -9358,22 +9351,22 @@ STATIC FUNCTION DelDetalle( cCodArt )
    Referencia artículo proveedor
    */
 
-   if ( dbfArtPrv )->( dbSeek( cCodArt ) )
+   if ( D():ProveedorArticulo( nView ) )->( dbSeek( cCodArt ) )
 
-      while ( ( dbfArtPrv )->cCodArt == cCodArt )
+      while ( ( D():ProveedorArticulo( nView ) )->cCodArt == cCodArt )
 
-         if dbLock( dbfArtPrv )
-            ( dbfArtPrv )->( dbDelete() )
-            ( dbfArtPrv )->( dbUnLock() )
+         if dbLock( D():ProveedorArticulo( nView ) )
+            ( D():ProveedorArticulo( nView ) )->( dbDelete() )
+            ( D():ProveedorArticulo( nView ) )->( dbUnLock() )
          end if
 
-         ( dbfArtPrv )->( dbSkip( 1 ) )
+         ( D():ProveedorArticulo( nView ) )->( dbSkip( 1 ) )
 
       end while
 
    end if
 
-   ( dbfArtPrv )->( OrdSetFocus( nOrdAnt ) )
+   ( D():ProveedorArticulo( nView ) )->( OrdSetFocus( nOrdAnt ) )
 
 
    /*
@@ -11430,7 +11423,7 @@ Static Function buscarExtendido()
 
    local nSea     := 1
 	local oDlg
-   local nOrd     := ( dbfArtPrv )->( OrdSetFocus( "cRefPrv" ) )
+   local nOrd     := ( D():ProveedorArticulo( nView ) )->( OrdSetFocus( "cRefPrv" ) )
    local oGetPrv
    local cGetPrv  := dbFirst( dbfProv )
    local oSayPrv
@@ -11486,7 +11479,7 @@ Static Function buscarExtendido()
 
    ACTIVATE DIALOG oDlg CENTER
 
-   ( dbfArtPrv )->( OrdSetFocus( nOrd ) )
+   ( D():ProveedorArticulo( nView ) )->( OrdSetFocus( nOrd ) )
 
 RETURN NIL
 
@@ -11515,11 +11508,11 @@ Static Function PosProveedor( nSea, cGetPrv, cGetArt, cGetBar )
 
    else
 
-      if ( dbfArtPrv )->( dbSeek( cGetPrv + cGetArt ) )
-         if dbSeekInOrd( ( dbfArtPrv )->cCodArt, "Codigo", D():Articulos( nView ) ) 
+      if ( D():ProveedorArticulo( nView ) )->( dbSeek( cGetPrv + cGetArt ) )
+         if dbSeekInOrd( ( D():ProveedorArticulo( nView ) )->cCodArt, "Codigo", D():Articulos( nView ) ) 
             oWndBrw:SetFocus()
          else
-            msgStop( "Artículo " + Rtrim( ( dbfArtPrv )->cCodArt ) + " no encontrado." )
+            msgStop( "Artículo " + Rtrim( ( D():ProveedorArticulo( nView ) )->cCodArt ) + " no encontrado." )
          end if
       end if
 
@@ -12117,9 +12110,10 @@ function SynArt( cPath )
    local idImagen
    local nOrdAnt
    local dbfArt
-   local dbfFamilia
    local dbfImg
    local dbfIva
+   local dbfArtPrv
+   local dbfFamilia
 
    DEFAULT cPath        := cPatArt()
 
@@ -12155,7 +12149,7 @@ function SynArt( cPath )
    SET ADSINDEX TO ( cPatEmp() + "FACPRVL.CDX" ) ADDITIVE
    SET TAG TO "cRefFec"
 
-   USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
+   USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() )        SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
    SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 
    oNewImp              := TNewImp():Create( cPatEmp() )
@@ -12312,7 +12306,7 @@ function SynArt( cPath )
 
          if Empty( ( dbfArt )->Codebar )
 
-            nOrdAnt                          := ( dbfCodebar )->( OrdSetFocus( "cCodArt" ) )
+            nOrdAnt                     := ( dbfCodebar )->( OrdSetFocus( "cCodArt" ) )
 
             if ( dbfCodebar )->( dbSeek( ( dbfArt )->Codigo ) )
                ( dbfArt )->CodeBar      := ( dbfCodebar )->cCodBar
@@ -12670,12 +12664,12 @@ Static Function EndTrans2( aTmp, aGet, oSay, oDlg, nMode )
 
    if !Empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cPrvHab" ) ) ] )
 
-      ( dbfArtPrv )->( dbAppend() )
-      ( dbfArtPrv )->cCodArt        := cCod
-      ( dbfArtPrv )->cCodPrv        := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cPrvHab" ) ) ]
-      ( dbfArtPrv )->cRefPrv        := oSay[3]:varGet()
-      ( dbfArtPrv )->lDefPrv        := .t.
-      ( dbfArtPrv )->( dbUnlock() )
+      ( D():ProveedorArticulo( nView ) )->( dbAppend() )
+      ( D():ProveedorArticulo( nView ) )->cCodArt        := cCod
+      ( D():ProveedorArticulo( nView ) )->cCodPrv        := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cPrvHab" ) ) ]
+      ( D():ProveedorArticulo( nView ) )->cRefPrv        := oSay[3]:varGet()
+      ( D():ProveedorArticulo( nView ) )->lDefPrv        := .t.
+      ( D():ProveedorArticulo( nView ) )->( dbUnlock() )
 
    end if
 
@@ -12845,10 +12839,10 @@ Method CreateData()
          referencias de proveedores
          */
 
-         if ( dbfArtPrv )->( dbSeek( ( D():Articulos( nView ) )->Codigo ) )
-            while ( dbfArtPrv )->cCodArt == ( D():Articulos( nView ) )->Codigo .and. !( dbfArtPrv )->( eof() )
-               dbPass( dbfArtPrv, tmpArtPrv, .t. )
-               ( dbfArtPrv )->( dbSkip( 1 ) )
+         if ( D():ProveedorArticulo( nView ) )->( dbSeek( ( D():Articulos( nView ) )->Codigo ) )
+            while ( D():ProveedorArticulo( nView ) )->cCodArt == ( D():Articulos( nView ) )->Codigo .and. !( D():ProveedorArticulo( nView ) )->( eof() )
+               dbPass( D():ProveedorArticulo( nView ), tmpArtPrv, .t. )
+               ( D():ProveedorArticulo( nView ) )->( dbSkip( 1 ) )
             end while
          end if
 
@@ -13146,12 +13140,12 @@ Method Process()
             ( tmpArtPrv )->( dbgotop() )
             while !( tmpArtPrv )->( eof() )
 
-               if ( dbfArtPrv )->( dbSeek( ( tmpArtPrv )->cCodArt ) )
+               if ( D():ProveedorArticulo( nView ) )->( dbSeek( ( tmpArtPrv )->cCodArt ) )
                   if !::oSender:lServer
-                     dbPass( tmpArtPrv, dbfArtPrv )
+                     dbPass( tmpArtPrv, D():ProveedorArticulo( nView ) )
                   end if
                else
-                  dbPass( tmpArtPrv, dbfArtPrv, .t. )
+                  dbPass( tmpArtPrv, D():ProveedorArticulo( nView ), .t. )
                end if
 
                ( tmpArtPrv )->( dbSkip() )
@@ -13367,8 +13361,8 @@ Return ( Self )
 
 Method CleanRelation( cCodArt )
 
-   while ( dbfArtPrv )->( dbSeek( cCodArt ) )
-      dbDel( dbfArtPrv )
+   while ( D():ProveedorArticulo( nView ) )->( dbSeek( cCodArt ) )
+      dbDel( D():ProveedorArticulo( nView ) )
    end while
 
    SysRefresh()

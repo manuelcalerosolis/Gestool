@@ -333,6 +333,7 @@ CLASS D
       METHOD ClientesId( nView )                      INLINE ( ( ::Get( "Client", nView ) )->Cod )
       METHOD ClientesNombre( nView )                  INLINE ( ( ::Get( "Client", nView ) )->Titulo )
       METHOD getClientesField( nView, cField )        INLINE ( ( ::Get( "Client", nView ) )->( fieldget( fieldpos( cField ) ) ) )
+      METHOD gotoCliente( id, nView )                 INLINE ( ::SeekInOrd( ::Clientes( nView ), id, "Cod" ) ) 
       METHOD gotoIdClientes( id, nView )              INLINE ( ::SeekInOrd( ::Clientes( nView ), id, "Cod" ) ) 
       METHOD getStatusClientes( nView )               INLINE ( ::aStatus := aGetStatus( ::Clientes( nView ) ) )
       METHOD setStatusClientes( nView )               INLINE ( SetStatus( ::Get( "Client", nView ), ::aStatus ) ) 

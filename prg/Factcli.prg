@@ -21369,24 +21369,45 @@ return ( lRectificada )
 
 Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL )
 
-   local nRecAlbL          := ( dbfAlbCliL )->( Recno() )
-   local nRecFacL          := ( dbfFacCliL )->( Recno() )
-   local nOrdAlbL          := ( dbfAlbCliL )->( OrdSetFocus( "cRefFec" ) )
-   local nOrdFacL          := ( dbfFacCliL )->( OrdSetFocus( "cRefFec" ) )
-   local dUltimaFactura    := ctod( "" )
-   local dUltimoAlbaran    := ctod( "" )
+   local nRecAlbL          
+   local nRecFacL          
+   local nOrdAlbL          
+   local nOrdFacL          
+   local dUltimaFactura    
+   local dUltimoAlbaran    
 
    CursorWait()
 
+   nRecAlbL                := ( dbfAlbCliL )->( Recno() )
+   nRecFacL                := ( dbfFacCliL )->( Recno() )
+   nOrdAlbL                := ( dbfAlbCliL )->( OrdSetFocus( "cRefFec" ) )
+   nOrdFacL                := ( dbfFacCliL )->( OrdSetFocus( "cRefFec" ) )
+   dUltimaFactura          := ctod( "" )
+   dUltimoAlbaran          := ctod( "" )
+
    /*
-   Dejamos las tablas como estaban------------------------------------------
+   Buscamos por los albaranes no facturados-----------------------------------
+   */
+
+   if ( dbfAlbCliL )->( dbSeek( cCodArt + cCodCli ) )
+      dUltimoAlbaran       := ( dbfAlbCliL )->dFecAlb 
+   end if
+
+   /*
+   Buscamos ahora por las facturas---------------------------------------------
+   */
+   
+   if ( dbfFacCliL )->( dbSeek( cCodArt + cCodCli ) )
+      dUltimaFactura       := ( dbfFacCliL )->dFecFac
+   end if
+
+   /*
+   Dejamos las tablas como estaban---------------------------------------------
    */
 
    ( dbfAlbCliL )->( OrdSetFocus( nOrdAlbL ) )
-// ( D():FacturasClientesLineas( nView ) )->( OrdSetFocus( nOrdFacL ) )
    ( dbfFacCliL )->( OrdSetFocus( nOrdFacL ) )
    ( dbfAlbCliL )->( dbGoTo( nRecAlbL ) )
-// ( D():FacturasClientesLineas( nView ) )->( dbGoTo( nRecFacL ) )
    ( dbfFacCliL )->( dbGoTo( nRecFacL ) )
 
    CursorWE()
@@ -22093,7 +22114,7 @@ Method Process() CLASS TFacturasClientesSenderReciver
                   cNumeroRecibo    := ( tmpFacCliP )->cSerie + str( ( tmpFacCliP )->nNumFac ) + ( tmpFacCliP )->cSufFac + Str( ( tmpFacCliP )->nNumRec )
                   cTextoRecibo     := ( tmpFacCliP )->cSerie + "/" + AllTrim( str( ( tmpFacCliP )->nNumFac ) ) + "/" + AllTrim( ( tmpFacCliT )->cSufFac ) + "-" + AllTrim( str( ( tmpFacCliP )->nNumRec ) ) + "; " + Dtoc( ( tmpFacCliP )->dEntrada ) + "; " + AllTrim( ( tmpFacCliP )->cCodCli )
 
-                  while ( dbfFacCliP )->( dbseek( cNumeroFactura ) )
+                  while ( dbfFacCliP )->( dbseek( cNumeroRecibo ) )
                      dbLockDelete( dbfFacCliP )
                   end if
 

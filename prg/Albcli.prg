@@ -7405,14 +7405,15 @@ METHOD Process()
    local tmpAlbCliI
    local oBlock
    local oError
-   local aFiles      := Directory( cPatIn() + "AlbCli*.*" )
-   local lClient     := ::oSender:lServer
+   local cNumeroAlbaran
+   local aFiles            := directory( cPatIn() + "AlbCli*.*" )
+   local lClient           := ::oSender:lServer
 
    for m := 1 to len( aFiles )
 
       ::oSender:SetText( "Procesando fichero : " + aFiles[ m, 1 ] )
 
-      oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+      oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
       BEGIN SEQUENCE
 
          if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ], .f. )
@@ -7447,29 +7448,43 @@ METHOD Process()
 
                   if ::validateRecepcion( tmpAlbCliT, dbfAlbCliT )
 
+                     cNumeroAlbaran    := ( tmpAlbCliT )->cSerAlb + Str( ( tmpAlbCliT )->nNumAlb ) + ( tmpAlbCliT )->cSufAlb
+
+                     while ( dbfAlbCliT )->( dbseek( cNumeroAlbaran ) )
+                        dbLockDelete( dbfAlbCliT )
+                     end if 
+
+                     while ( dbfAlbCliL )->( dbseek( cNumeroAlbaran ) )
+                        dbLockDelete( dbfAlbCliL )
+                     end if 
+
                      dbPass( tmpAlbCliT, cAlbCliT, .t. )
 
-                     if lClient .and. dbLock( cAlbCliT )
-                        ( cAlbCliT )->lSndDoc := .f.
-                        ( cAlbCliT )->( dbUnLock() )
-                     end if
+                     if dbLock( cAlbCliT )
 
-                     if uFieldempresa( "lRecEnt" ) .and. dbLock( cAlbCliT )
-                        ( cAlbCliT )->lEntregado := .t.
+                        if lClient
+                           ( cAlbCliT )->lSndDoc      := .f.
+                        end if 
+
+                        if uFieldempresa( "lRecEnt" )
+                           ( cAlbCliT )->lEntregado   := .t.
+                        end if 
+
                         ( cAlbCliT )->( dbUnLock() )
+
                      end if
 
                      ::oSender:SetText( "Añadido : " + ( tmpAlbCliT )->cSerAlb + "/" + AllTrim( Str( ( tmpAlbCliT )->nNumAlb ) ) + "/" + AllTrim( ( tmpAlbCliT )->cSufAlb ) + "; " + Dtoc( ( tmpAlbCliT )->dFecAlb ) + "; " + AllTrim( ( tmpAlbCliT )->cCodCli ) + "; " + ( tmpAlbCliT )->cNomCli )
 
-                     if ( tmpAlbCliL )->( dbSeek( ( tmpAlbCliT )->cSerAlb + Str( ( tmpAlbCliT )->nNumAlb ) + ( tmpAlbCliT )->cSufAlb ) )
-                        while ( tmpAlbCliL )->cSerAlb + Str( ( tmpAlbCliL )->nNumAlb ) + ( tmpAlbCliL )->cSufAlb == ( tmpAlbCliT )->cSerAlb + Str( ( tmpAlbCliT )->nNumAlb ) + ( tmpAlbCliT )->cSufAlb .and. !( tmpAlbCliL )->( eof() )
+                     if ( tmpAlbCliL )->( dbSeek( cNumeroAlbaran ) )
+                        while ( tmpAlbCliL )->cSerAlb + Str( ( tmpAlbCliL )->nNumAlb ) + ( tmpAlbCliL )->cSufAlb == cNumeroAlbaran .and. !( tmpAlbCliL )->( eof() )
                            dbPass( tmpAlbCliL, cAlbCliL, .t. )
                            ( tmpAlbCliL )->( dbSkip() )
                         end do
                      end if
 
-                     if ( tmpAlbCliI )->( dbSeek( ( tmpAlbCliT )->cSerAlb + Str( ( tmpAlbCliT )->nNumAlb ) + ( tmpAlbCliT )->cSufAlb ) )
-                        while ( tmpAlbCliI )->cSerAlb + Str( ( tmpAlbCliI )->nNumAlb ) + ( tmpAlbCliI )->cSufAlb == ( tmpAlbCliT )->cSerAlb + Str( ( tmpAlbCliT )->nNumAlb ) + ( tmpAlbCliT )->cSufAlb .and. !( tmpAlbCliI )->( eof() )
+                     if ( tmpAlbCliI )->( dbSeek( cNumeroAlbaran ) )
+                        while ( tmpAlbCliI )->cSerAlb + Str( ( tmpAlbCliI )->nNumAlb ) + ( tmpAlbCliI )->cSufAlb == cNumeroAlbaran .and. !( tmpAlbCliI )->( eof() )
                            dbPass( tmpAlbCliI, cAlbCliI, .t. )
                            ( tmpAlbCliI )->( dbSkip() )
                         end do
@@ -7558,7 +7573,7 @@ METHOD validateRecepcion( tmpAlbCliT, dbfAlbCliT ) CLASS TAlbaranesClientesSende
       Return .t.
    end if 
 
-   if dtos( ( dbfAlbCliT )->dFecCre ) + ( dbfAlbCliT )->cTimCre > dtos( ( tmpAlbCliT )->dFecCre ) + ( tmpAlbCliT )->cTimCre 
+   if dtos( ( tmpAlbCliT )->dFecCre ) + ( tmpAlbCliT )->cTimCre > dtos( ( dbfAlbCliT )->dFecCre ) + ( dbfAlbCliT )->cTimCre 
       ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfAlbCliT )->dFecCre ) + " " + ( dbfAlbCliT )->cTimCre + " es más reciente que la recepción " + dtoc( ( tmpAlbCliT )->dFecCre ) + " " + ( tmpAlbCliT )->cTimCre 
       Return .f.
    end if
