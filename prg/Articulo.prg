@@ -12123,8 +12123,8 @@ function SynArt( cPath )
 
    DEFAULT cPath        := cPatArt()
 
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   /*oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE*/
 
    USE ( cPatArt() + "ARTICULO.Dbf" ) NEW VIA ( cDriver() )    EXCLUSIVE ALIAS ( cCheckArea( "ARTICULO", @dbfArt ) )
    SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
@@ -12474,13 +12474,13 @@ function SynArt( cPath )
 
    end if
 
-   RECOVER USING oError
+   /*RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de articulos." )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
 
    /*
    Cerramos todas las tablas---------------------------------------------------
