@@ -211,7 +211,7 @@ METHOD getExcelValue( columna, fila, valorPorDefecto )
 
 Return ( excelValue )   
 
-//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------// 
 
 METHOD getExcelString( columna, fila )
 
@@ -219,8 +219,12 @@ METHOD getExcelString( columna, fila )
    local valorPorDefecto      := ""
 
    DEFAULT fila               := ::nFilaInicioImportacion
-
+ 
    excelValue                 := ::getExcelValue( columna, fila, valorPorDefecto )
+
+   if valtype( excelValue ) == "N" 
+      excelValue              := int( excelValue )
+   end if 
 
    if valtype( excelValue ) != "C" 
       excelValue              := cvaltochar( excelValue )
@@ -248,7 +252,7 @@ METHOD getExcelNumeric( columna, fila )
    end if 
 
    if empty( excelValue )
-      Return ( valorPorDefecto )
+      Return ( valorPorDefecto ) 
    end if 
 
 Return ( excelValue )   
@@ -258,7 +262,7 @@ Return ( excelValue )
 METHOD getExcelLogic( columna, fila )
 
    local excelValue  
-   local valorPorDefecto      := 0
+   local valorPorDefecto      := .f. 
 
    DEFAULT fila               := ::nFilaInicioImportacion
 
@@ -269,14 +273,14 @@ METHOD getExcelLogic( columna, fila )
    end if 
 
    if valtype( excelValue ) == "N" 
-      excelValue              := ( upper( excelValue ) == 1 )
+      excelValue              := ( excelValue == 1 )
    end if 
 
    if empty( excelValue )
       Return ( valorPorDefecto )
    end if 
 
-Return ( excelValue )   
+Return ( excelValue )    
 
 //---------------------------------------------------------------------------// 
 

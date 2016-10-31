@@ -468,9 +468,10 @@ CLASS TComercio
    METHOD cDirectoryCategories()             INLINE ( ::TComercioConfig:getImagesDirectory() + "/c" )
    METHOD getRecursiveFolderPrestashop( cCarpeta )
 
-   METHOD resetStockProductData()            INLINE ( ::aStockProductData := {} )
+   METHOD resetStockProductData()            INLINE ( ::aStockProductData  := {} )
+   METHOD resetProductData()                 INLINE ( ::aProductData       := {} )
 
-   METHOD resetProductsToUpdateStocks()     INLINE ( ::hProductsToUpdate := {=>} )
+   METHOD resetProductsToUpdateStocks()      INLINE ( ::hProductsToUpdate := {=>} )
    METHOD getProductsToUpadateStocks()       INLINE ( ::hProductsToUpdate )
    METHOD appendProductsToUpadateStocks( idProduct )
 
@@ -3140,12 +3141,12 @@ METHOD buildProductInformation( idProduct ) CLASS TComercio
 
    ::buildInitData()
 
-   // Elabora la inormacion para uno o varios articulos---------------------
+   // Elabora la informacion para uno o varios articulos-----------------------
 
    if empty( idProduct )
 
-      ::oArt:goTop()
-      while !::oArt:Eof()
+      ::oArt:gotop()
+      while !::oArt:eof()
 
          if ::productInCurrentWeb()
             ::buildGlobalProductInformation()
@@ -5287,24 +5288,24 @@ return .t.
 
 METHOD proccessStockPrestashop() CLASS TComercio
 
-   local hStockProductData
+   local hProductData
 
    ::meterProcesoSetTotal( len( ::aStockProductData ) )
 
-   for each hStockProductData in ::aStockProductData
-      ::buildInsertStockPrestashop( hStockProductData )
+   for each hProductData in ::aStockProductData
+      ::buildInsertStockPrestashop( hProductData )
    next
 
 Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD uploadStockToPrestashop( aStockProductData )
+METHOD uploadStockToPrestashop( aProductData )
 
-   local hStockProductData
+   local hProductData
 
-   for each hStockProductData in aStockProductData
-      ::buildInsertStockPrestashop( hStockProductData )
+   for each hProductData in aProductData
+      ::buildInsertStockPrestashop( hProductData )
    next
 
 Return .t.
@@ -5321,6 +5322,8 @@ METHOD buildInsertStockPrestashop( hStockProductData ) CLASS TComercio
    local attributeSecondProperty 
    local idProductAttribute      := 0
 
+   msgalert( hb_valtoexp( hStockProductData ) )
+
    idProductPrestashop           := ::TPrestashopId:getValueProduct( hget( hStockProductData, "idProduct" ), ::getCurrentWebName() )
    attributeFirstProperty        := ::TPrestashopId:getValueAttribute( hget( hStockProductData, "idFirstProperty" ) + hget( hStockProductData, "valueFirstProperty" ),     ::getCurrentWebName() )
    attributeSecondProperty       := ::TPrestashopId:getValueAttribute( hget( hStockProductData, "idSecondProperty" ) + hget( hStockProductData, "valueSecondProperty" ),   ::getCurrentWebName() ) 
@@ -5331,8 +5334,8 @@ METHOD buildInsertStockPrestashop( hStockProductData ) CLASS TComercio
    end if 
 
    cCommand                      := "DELETE FROM " + ::cPrefixTable( "stock_available" ) + " "                          + ;
-                                    "WHERE id_product = " + alltrim( str( idProductPrestashop ) ) + " "                 + ;
-                                    "AND id_product_attribute = " + alltrim( str( idProductAttribute ) )
+                                       "WHERE id_product = " + alltrim( str( idProductPrestashop ) ) + " "              + ;
+                                       "AND id_product_attribute = " + alltrim( str( idProductAttribute ) )
 
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
@@ -5847,6 +5850,8 @@ METHOD buildStockPrestashop( idProduct ) CLASS tComercio
                            "valueFirstProperty"    => space( 20 ) ,;
                            "valueSecondProperty"   => space( 20 ) ,;
                            "unitStock"             => nStock } )
+
+   aadd( ::aStockProductData, aStockProduct )
 
 Return ( aStockProduct )
 

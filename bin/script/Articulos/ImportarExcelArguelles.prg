@@ -10,13 +10,13 @@
 
 Function ImportarExcelArguelles( nView )                	 
 	      
-   local oImportarExcel    := TImportarExcel():New( nView )
+   local oImportarExcel    := TImportarExcelArguelles():New( nView )
 
    oImportarExcel:Run()
 
 Return nil
 
-//---------------------------------------------------------------------------// 
+//---------------------------------------------------------------------------//  
 
 CLASS TImportarExcelArguelles FROM TImportarExcel
 
@@ -26,7 +26,7 @@ CLASS TImportarExcelArguelles FROM TImportarExcel
 
    METHOD Run()
 
-   METHOD getCampoClave()        INLINE ( alltrim( str( int( ::getExcelValue( ::cColumnaCampoClave ) ) ) ) )
+   METHOD getCampoClave()        INLINE ( alltrim( ::getExcelString( ::cColumnaCampoClave ) ) )
 
    METHOD procesaFicheroExcel()
 
@@ -58,22 +58,26 @@ METHOD New( nView )
    ::nView                    := nView
 
    /*
-   Cambiar el nombre del fichero
+   Cambiar el nombre del fichero-----------------------------------------------
    */
 
-   ::cFicheroExcel            := "C:\Users\calero\Desktop\productos_marpicon.csv"
+   ::cFicheroExcel            := "C:\Users\calero\Desktop\plantilla_alta_modificacion_producto_gestool.xlsx"
 
    /*
-   Cambiar la fila de cominezo de la importacion
+   Cambiar la fila de cominezo de la importacion-------------------------------
    */
 
    ::nFilaInicioImportacion   := 2
 
    /*
-   Columna de campo clave
+   Columna de campo clave------------------------------------------------------
    */
 
    ::cColumnaCampoClave       := 'A'
+
+   /*
+   Tabla de unidades medidion solo para marpicon-------------------------------
+   */
 
    ::hUnidadesMedicion        := {  "KILO"      => "01",;
                                     "ESTUCHE"   => "02",;
@@ -144,15 +148,15 @@ METHOD importarCampos()
 
    ( D():Articulos( ::nView ) )->Codigo   := ::getCampoClave()
 
-   if !empty( ::getExcelNumeric("B") )
+   if !empty( ::getExcelString("B") )
       ( D():Articulos( ::nView ) )->Nombre   := ::getExcelString( "B" )
    end if 
 
-   if !empty( ::getExcelNumeric("C") )
+   if !empty( ::getExcelString("C") )
       ( D():Articulos( ::nView ) )->Familia  := ::getExcelString( "C" )
    end if 
 
-   if !empty( ::getExcelNumeric("D") )
+   if !empty( ::getExcelString("D") )
       ( D():Articulos( ::nView ) )->CodeBar  := ::getExcelString( "D" )   
    end if 
 
@@ -196,16 +200,22 @@ METHOD importarCampos()
       ( D():Articulos( ::nView ) )->lPubInt  := ::getExcelLogic( "L" )   
    end if 
 
+   if !empty( ::getExcelNumeric("O") )
+      ( D():Articulos( ::nView ) )->nPesoKg  := ::getExcelNumeric( "O" )   
+   end if 
+
 Return nil
 
-//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------// 
 
 METHOD importarReferenciaProveedor()
 
    local idArticulo           := ( D():Articulos( ::nView ) )->Codigo // cCodArt + cCodPrv + cRefPrv
-   local idProveedor          := padr( ::getExcelNumeric("M"), 12 )
-   local referenciaProveedor  := padr( ::getExcelNumeric("L"), 60 )
+   local idProveedor          := padr( ::getExcelString("M"), 12 ) 
+   local referenciaProveedor  := padr( ::getExcelString("L"), 60 ) 
    local ordenAnterior        := ( D():ProveedorArticulo( ::nView ) )->( ordsetfocus( "cRefArt" ) )
+
+   msgalert( idArticulo + idProveedor + referenciaProveedor )
 
    if !empty( referenciaProveedor )
 
@@ -221,8 +231,8 @@ METHOD importarReferenciaProveedor()
          ( D():ProveedorArticulo( ::nView ) )->cRefPrv   := referenciaProveedor
       end if 
 
-      ( D():ProveedorArticulo() )->( dbcommit() )
-      ( D():ProveedorArticulo() )->( dbunlock() )
+      ( D():ProveedorArticulo( ::nView ) )->( dbcommit() )
+      ( D():ProveedorArticulo( ::nView ) )->( dbunlock() )
 
    end if 
 

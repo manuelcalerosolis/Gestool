@@ -13085,7 +13085,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
    */
 
    if ( nMode == APPD_MODE ) .and. RetFld( aTmp[ _CREF ], D():Articulos( nView ), "lNumSer" ) .and. !( dbfTmpSer )->( dbSeek( str( aTmp[ _NNUMLIN ], 4 ) + aTmp[ _CREF ] ) )
-      msgStop( "Tiene que introducir Números de serie para este artículo." )
+      msgStop( "Tiene que introducir números de serie para este artículo." )
       if !empty( oBtnSer )
          oBtnSer:Click()
       end if 
