@@ -70,6 +70,9 @@ CLASS TRemesas FROM TMasDet
    DATA nRecAnterior
    DATA cOrdenAnterior
 
+   DATA oSer                           INIT Array( 26 )
+   DATA aSer                           INIT Afill( Array( 26 ), .t. )
+
    DATA  oMeter            AS OBJECT
    DATA  nMeter            AS NUMERIC  INIT  0
    DATA  bmpConta
@@ -1194,6 +1197,41 @@ METHOD ImportResource( nMode )
          ID       260 ;
          OF       oDlg
 
+      /*
+      Filtros de series--------------------------------------------------------
+      */
+
+      TWebBtn():Redefine( 1170,,,,, {|This| ( aEval( ::oSer, {|o| Eval( o:bSetGet, .T. ), o:refresh() } ) ) }, oDlg,,,,, "LEFT",,,,, ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ), ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ) ):SetTransparent()
+
+      TWebBtn():Redefine( 1180,,,,, {|This| ( aEval( ::oSer, {|o| Eval( o:bSetGet, .F. ), o:refresh() } ) ) }, oDlg,,,,, "LEFT",,,,, ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ), ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ) ):SetTransparent()
+
+      REDEFINE CHECKBOX ::oSer[  1 ] VAR ::aSer[  1 ] ID 1190 OF oDlg //A
+      REDEFINE CHECKBOX ::oSer[  2 ] VAR ::aSer[  2 ] ID 1200 OF oDlg //B
+      REDEFINE CHECKBOX ::oSer[  3 ] VAR ::aSer[  3 ] ID 1210 OF oDlg //C
+      REDEFINE CHECKBOX ::oSer[  4 ] VAR ::aSer[  4 ] ID 1220 OF oDlg //D
+      REDEFINE CHECKBOX ::oSer[  5 ] VAR ::aSer[  5 ] ID 1230 OF oDlg //E
+      REDEFINE CHECKBOX ::oSer[  6 ] VAR ::aSer[  6 ] ID 1240 OF oDlg //F
+      REDEFINE CHECKBOX ::oSer[  7 ] VAR ::aSer[  7 ] ID 1250 OF oDlg //G
+      REDEFINE CHECKBOX ::oSer[  8 ] VAR ::aSer[  8 ] ID 1260 OF oDlg //H
+      REDEFINE CHECKBOX ::oSer[  9 ] VAR ::aSer[  9 ] ID 1270 OF oDlg //I
+      REDEFINE CHECKBOX ::oSer[ 10 ] VAR ::aSer[ 10 ] ID 1280 OF oDlg //J
+      REDEFINE CHECKBOX ::oSer[ 11 ] VAR ::aSer[ 11 ] ID 1290 OF oDlg //K
+      REDEFINE CHECKBOX ::oSer[ 12 ] VAR ::aSer[ 12 ] ID 1300 OF oDlg //L
+      REDEFINE CHECKBOX ::oSer[ 13 ] VAR ::aSer[ 13 ] ID 1310 OF oDlg //M
+      REDEFINE CHECKBOX ::oSer[ 14 ] VAR ::aSer[ 14 ] ID 1320 OF oDlg //N
+      REDEFINE CHECKBOX ::oSer[ 15 ] VAR ::aSer[ 15 ] ID 1330 OF oDlg //O
+      REDEFINE CHECKBOX ::oSer[ 16 ] VAR ::aSer[ 16 ] ID 1340 OF oDlg //P
+      REDEFINE CHECKBOX ::oSer[ 17 ] VAR ::aSer[ 17 ] ID 1350 OF oDlg //Q
+      REDEFINE CHECKBOX ::oSer[ 18 ] VAR ::aSer[ 18 ] ID 1360 OF oDlg //R
+      REDEFINE CHECKBOX ::oSer[ 19 ] VAR ::aSer[ 19 ] ID 1370 OF oDlg //S
+      REDEFINE CHECKBOX ::oSer[ 20 ] VAR ::aSer[ 20 ] ID 1380 OF oDlg //T
+      REDEFINE CHECKBOX ::oSer[ 21 ] VAR ::aSer[ 21 ] ID 1390 OF oDlg //U
+      REDEFINE CHECKBOX ::oSer[ 22 ] VAR ::aSer[ 22 ] ID 1400 OF oDlg //V
+      REDEFINE CHECKBOX ::oSer[ 23 ] VAR ::aSer[ 23 ] ID 1410 OF oDlg //W
+      REDEFINE CHECKBOX ::oSer[ 24 ] VAR ::aSer[ 24 ] ID 1420 OF oDlg //X
+      REDEFINE CHECKBOX ::oSer[ 25 ] VAR ::aSer[ 25 ] ID 1430 OF oDlg //Y
+      REDEFINE CHECKBOX ::oSer[ 26 ] VAR ::aSer[ 26 ] ID 1440 OF oDlg //Z
+
       ::oMeter    := TApoloMeter():ReDefine( 140, { | u | if( pCount() == 0, ::nMeter, ::nMeter := u ) }, 140, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
       /*
@@ -1447,6 +1485,7 @@ METHOD GetRecCli( oDlg, nMode )
          if ::oDbfDet:cSerie >= ::cSerieInicio .and. ::oDbfDet:cSerie <= ::cSerieFin                                    .and.;
             ::oDbfDet:nNumFac >= ::nNumeroInicio .and. ::oDbfDet:nNumFac <= ::nNumeroFin                                .and.;
             ::oDbfDet:cSufFac >= ::cSufijoInicio .and. ::oDbfDet:cSufFac <= ::cSufijoFin                                .and.;
+            lChkSer( ::oDbfDet:cSerie, ::aSer )                                                                         .and.;
             !::lNowExist( ::oDbfDet:cSerie + Str( ::oDbfDet:nNumFac ) + ::oDbfDet:cSufFac + Str( ::oDbfDet:nNumRec ) )  .and.;
             !::oDbfDet:lCobrado                                                                                         .and.;
             !Empty( ::oDbfDet:dPreCob )                                                                                 .and.;
