@@ -7446,16 +7446,16 @@ METHOD Process()
 
                while ( tmpAlbCliT )->( !eof() )
 
-                  if ::validateRecepcion( tmpAlbCliT, dbfAlbCliT )
+                  if ::validateRecepcion( tmpAlbCliT, cAlbCliT )
 
                      cNumeroAlbaran    := ( tmpAlbCliT )->cSerAlb + Str( ( tmpAlbCliT )->nNumAlb ) + ( tmpAlbCliT )->cSufAlb
 
-                     while ( dbfAlbCliT )->( dbseek( cNumeroAlbaran ) )
-                        dbLockDelete( dbfAlbCliT )
+                     while ( cAlbCliT )->( dbseek( cNumeroAlbaran ) )
+                        dbLockDelete( cAlbCliT )
                      end if 
 
-                     while ( dbfAlbCliL )->( dbseek( cNumeroAlbaran ) )
-                        dbLockDelete( dbfAlbCliL )
+                     while ( cAlbCliL )->( dbseek( cNumeroAlbaran ) )
+                        dbLockDelete( cAlbCliL )
                      end if 
 
                      dbPass( tmpAlbCliT, cAlbCliT, .t. )
