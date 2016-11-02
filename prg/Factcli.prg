@@ -26,6 +26,7 @@
 #define fldEntidades          oFld:aDialogs[5]
 #define fldSituaciones        oFld:aDialogs[6]
 #define fldRecibos            oFld:aDialogs[7]
+#define fldAnticipos          oFld:aDialogs[8]
 
 #define _CSERIE              1      //,"C",  1, 0, "Serie de la factura A o B" },;
 #define _NNUMFAC             2      //,"N",  9, 0, "Numero de la factura" },;
@@ -2415,7 +2416,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                  { "Resource" => "Information_48_alpha",      "Dialog" => 3 },;
                                  { "Resource" => "Address_book2_alpha_48",    "Dialog" => 4 },;
                                  { "Resource" => "form_blue_48",              "Dialog" => 5 },;
-                                 { "Resource" => "document_attachment_48",    "Dialog" => 6 } }
+                                 { "Resource" => "document_attachment_48",    "Dialog" => 6 },;
+                                 { "Resource" => "Money_Alpha_48",            "Dialog" => 7 },;
+                                 { "Resource" => "anticipo_cliente_48_alpha", "Dialog" => 8 } }
    
    /*
    Este valor los guaradamos para detectar los posibles cambios----------------
@@ -2604,14 +2607,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                   "D&ocumentos",;
                   "&Entidades",;
                   "&Situaciones",;
-                  "&Cobros";
+                  "&Cobros",;
+                  "&Anticipos";
          DIALOGS  "FACCLI_1",;
                   "FACCLI_2",;
                   "PEDCLI_3",;
                   "PEDCLI_4",;
                   "VIEW_FACTURAS_ENTIDADES",;
                   "PEDCLI_5",;
-                  "FACTURAS_CLIENTES_RECIBOS"
+                  "FACTURAS_CLIENTES_RECIBOS",;
+                  "FACTURAS_CLIENTES_ANTICIPOS"
 
       /*
       Datos del cliente--------------------------------------------------------
@@ -4055,7 +4060,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       -------------------------------------------------------------------------
       */
 
-      oBrwAnt                 := IXBrowse():New( fldData )
+      oBrwAnt                 := IXBrowse():New( fldAnticipos )
 
       oBrwAnt:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwAnt:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -4111,19 +4116,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       REDEFINE BUTTON ;
          ID       270 ;
-         OF       fldData ;
+         OF       fldAnticipos ;
          WHEN     ( lWhen ) ;
          ACTION   ( BrwAntCli( , D():AnticiposClientes( nView ), dbfIva, dbfDiv, dbfTmpAnt, oBrwAnt ), RecalculaTotal( aTmp ) )
 
       REDEFINE BUTTON ;
          ID       400 ;
-         OF       fldData ;
+         OF       fldAnticipos ;
          WHEN     ( lWhen ) ;
          ACTION   ( BrwAntCli( aTmp[ _CCODCLI ], D():AnticiposClientes( nView ), dbfIva, dbfDiv, dbfTmpAnt, oBrwAnt ) )
 
       REDEFINE BUTTON ;
          ID       280 ;
-         OF       fldData ;
+         OF       fldAnticipos ;
          WHEN     ( lWhen ) ;
          ACTION   ( delRecno( dbfTmpAnt, oBrwAnt ), RecalculaTotal( aTmp ) )
 
