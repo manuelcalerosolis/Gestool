@@ -47,8 +47,9 @@ TComercioBudget.prg 											\
 TComercioProduct.prg 										\
 TComercioConector.prg 										\
 TComercioCategory.prg 										\
-TComercioConfig.prg 										\
-TComercioId.prg 											\
+TComercioConfig.prg 											\
+TComercioId.prg 												\
+TComercioStock.prg 											\
 TFTPLinux.prg 													\
 Comun.prg               									\
 AccessCode.prg          									\
@@ -476,8 +477,9 @@ TComercioBudget.obj 											\
 TComercioProduct.obj 										\
 TComercioConector.obj 										\
 TComercioCategory.obj 										\
-TComercioConfig.obj 										\
-TComercioId.obj 											\
+TComercioConfig.obj 											\
+TComercioId.obj 												\
+TComercioStock.obj 											\
 TFTPLinux.obj 													\
 Comun.obj                                          \
 AccessCode.obj                                     \
@@ -941,6 +943,7 @@ $(OBJ)\TComercioConector.obj  										+
 $(OBJ)\TComercioCategory.obj  										+
 $(OBJ)\TComercioConfig.obj 											+
 $(OBJ)\TComercioId.obj 													+
+$(OBJ)\TComercioStock.obj 												+
 $(OBJ)\TFTPLinux.obj 													+
 $(OBJ)\Comun.obj                                            +
 $(OBJ)\AccessCode.obj                                       +

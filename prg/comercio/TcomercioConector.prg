@@ -18,7 +18,7 @@ CLASS TComercioConector
    // facades------------------------------------------------------------------
 
    METHOD TPrestashopId()                                   INLINE ( ::TComercio:TPrestashopId )
-   METHOD TComercioConfig()                               INLINE ( ::TComercio:TComercioConfig )
+   METHOD TComercioConfig()                                 INLINE ( ::TComercio:TComercioConfig )
 
    METHOD isSyncronizeAll()                                 INLINE ( ::TComercio:lSyncAll )
    METHOD getLanguage()                                     INLINE ( ::TComercio:nLanguage )
@@ -74,6 +74,12 @@ CLASS TComercioConector
 
    METHOD truncateTable( cTable )   
 
+   METHOD prestaShopConnect()                               INLINE ( ::TComercio:prestaShopConnect() )
+   METHOD prestaShopDisConnect()                            INLINE ( ::TComercio:prestaShopDisConnect() )
+
+   METHOD filesOpen()                                       INLINE ( ::TComercio:filesOpen() )
+   METHOD filesClose()                                      INLINE ( ::TComercio:filesClose() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -97,3 +103,4 @@ METHOD truncateTable( cTable ) CLASS TComercioConector
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+ 
