@@ -5486,32 +5486,15 @@ Return ( cFolder )
 
 METHOD controllerUpdateStockPrestashop() Class TComercio
 
-   local oBlock
-   local oError
-
    if !( ::isAviableWebToExport() )
       Return .f.
    end if 
 
    ::disableDialog()
 
-   oBlock                     := ErrorBlock( { | oError | Break( oError ) } )
-   BEGIN SEQUENCE
+   ::TComercioStock:controllerUpdateAllProductStocks()   
 
-      if ::filesOpen()
-
-         ::insertAllStocks()
-
-         ::filesClose()
-
-      end if
-   
-   RECOVER USING oError
-      msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
-   END SEQUENCE
-   ErrorBlock( oBlock )
-
-   ::EnableDialog()
+   ::enableDialog()
 
 Return .t.
 

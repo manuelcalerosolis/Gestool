@@ -4,9 +4,6 @@
 #include "Ini.ch"
 #include "MesDbf.ch" 
 
-#define __tipoProducto__      1
-#define __tipoCategoria__     2     
-
 //---------------------------------------------------------------------------//
 
 CLASS TComercioStock FROM TComercioConector
@@ -23,9 +20,14 @@ CLASS TComercioStock FROM TComercioConector
 
    // External methods---------------------------------------------------------
 
+   METHOD controllerUpdateAllProductStocks()
+
+   METHOD updateAllProductStocks()
+
    METHOD resetStockProductData()            INLINE ( ::aStockProductData := {} )
 
    METHOD appendProductsToUpadateStocks()
+      METHOD insertProductsToUpadateStocks() 
 
    METHOD updateWebProductStocks() 
 
@@ -39,15 +41,63 @@ CLASS TComercioStock FROM TComercioConector
 
    METHOD idProductAttribute( idProductPrestashop, cCodWebValPr1, cCodWebValPr2 )
 
+   METHOD evalProductsToStock()              
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD controllerUpdateAllProductStocks()
+
+   ::writeText( 'Recopilando artículos a actualizar' )
+
+   if ::filesOpen() 
+
+      ::updateAllProductStocks()
+
+      ::evalProductsToStock()
+
+      ::filesClose()
+
+   end if 
+
+   ::writeText( 'Proceso finalizado' )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD updateAllProductStocks()
+
+   ::resetProductsToUpdateStocks()
+
+   ::oProductDatabase():ordsetfocus( "lWebShop" )
+   
+   if ::oProductDatabase():seek( ::getCurrentWebName() )
+
+      while ( alltrim( ::oProductDatabase():cWebShop ) == ::getCurrentWebName() ) .and. !( ::oProductDatabase():eof() )
+
+         ::writeText( alltrim( ::oProductDatabase():Codigo ) + space( 1 ) + alltrim( ::oProductDatabase():Nombre ) )
+
+         ::insertProductsToUpadateStocks( ::oProductDatabase():Codigo, ::getCurrentWebName() ) 
+
+         ::oProductDatabase():Skip()
+
+      end while
+
+   else 
+
+      msgalert( ::getCurrentWebName(), 'no encontrado' )
+
+   end if 
+
+Return ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD appendProductsToUpadateStocks( idProduct, idFirstProperty, valueFirstProperty, idSecondProperty, valueSecondProperty, nView ) 
 
-   local nScan
    local cWebShop
-   local hProduct
 
    if !( D():gotoArticulos( idProduct, nView ) )
       Return ( .f. )
@@ -58,6 +108,15 @@ METHOD appendProductsToUpadateStocks( idProduct, idFirstProperty, valueFirstProp
    end if 
 
    cWebShop          := alltrim( ( D():Articulos( nView ) )->cWebShop )
+   
+Return ( ::insertProductsToUpadateStocks(idProduct, cWebShop, idFirstProperty, valueFirstProperty, idSecondProperty, valueSecondProperty ) )   
+
+//---------------------------------------------------------------------------//
+
+METHOD insertProductsToUpadateStocks( idProduct, cWebShop, idFirstProperty, valueFirstProperty, idSecondProperty, valueSecondProperty ) 
+
+   local nScan
+   local hProduct
 
    hProduct          := {  "id"                    => idProduct,;
                            "idFirstProperty"       => idFirstProperty,;
@@ -73,7 +132,7 @@ METHOD appendProductsToUpadateStocks( idProduct, idFirstProperty, valueFirstProp
          aadd( ::hProductsToUpdate[ cWebShop ], hProduct )
       end if 
    end if 
-   
+
 Return ( ::hProductsToUpdate )   
 
 //---------------------------------------------------------------------------//
@@ -92,7 +151,7 @@ METHOD updateWebProductStocks()
 
       ::oWaitMeter         := TWaitMeter():New( "Actualizando stocks", "Espere por favor..." ):Run()
 
-      heval( ::hProductsToUpdate, {|cWebName, aProductsWeb| ::updateProductStocks( cWebName, aProductsWeb ) } )
+      ::evalProductsToStock()
 
       ::oWaitMeter:End()
 
@@ -212,13 +271,20 @@ METHOD setStockPrestashop( hStockProductData )
    local cCommand
    local unitStock               
    local idProductPrestashop     
-   local attributeFirstProperty  
-   local attributeSecondProperty 
+   local attributeFirstProperty  := 0  
+   local attributeSecondProperty := 0 
    local idProductAttribute      := 0
 
    idProductPrestashop           := ::TPrestashopId():getValueProduct( hget( hStockProductData, "idProduct" ), ::getCurrentWebName() )
-   attributeFirstProperty        := ::TPrestashopId():getValueAttribute( hget( hStockProductData, "idFirstProperty" ) + hget( hStockProductData, "valueFirstProperty" ),     ::getCurrentWebName() )
-   attributeSecondProperty       := ::TPrestashopId():getValueAttribute( hget( hStockProductData, "idSecondProperty" ) + hget( hStockProductData, "valueSecondProperty" ),   ::getCurrentWebName() ) 
+
+   if !empty( hget( hStockProductData, "valueFirstProperty" ) )
+      attributeFirstProperty     := ::TPrestashopId():getValueAttribute( hget( hStockProductData, "idFirstProperty" ) + hget( hStockProductData, "valueFirstProperty" ), ::getCurrentWebName() )
+   end if 
+
+   if !empty( hget( hStockProductData, "valueSecondProperty" ) )
+      attributeSecondProperty    := ::TPrestashopId():getValueAttribute( hget( hStockProductData, "idSecondProperty" ) + hget( hStockProductData, "valueSecondProperty" ), ::getCurrentWebName() ) 
+   end if 
+
    unitStock                     := hget( hStockProductData, "unitStock" )
 
    if ( attributeFirstProperty != 0 ) .and. ( attributeSecondProperty != 0 )
@@ -355,5 +421,11 @@ METHOD idProductAttribute( idProductPrestashop, cCodWebValPr1, cCodWebValPr2 )
    end case
 
 Return idProductAttribute
+
+//---------------------------------------------------------------------------//
+
+METHOD evalProductsToStock()
+
+Return ( heval( ::hProductsToUpdate, {|cWebName, aProductsWeb| ::updateProductStocks( cWebName, aProductsWeb ) } ) )
 
 //---------------------------------------------------------------------------//

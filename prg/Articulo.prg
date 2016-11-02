@@ -15152,7 +15152,7 @@ FUNCTION rxArticulo( cPath, cDriver )
    end if
 
 	/*
-   Articulos Kit______________________________________________________________________________________________
+   Articulos Kit_______________________________________________________________
    */
 
    dbUseArea( .t., cDriver, cPath + "ARTKIT.Dbf", cCheckArea( "ARTKIT", @dbfArt ), .f. )
@@ -15241,7 +15241,7 @@ FUNCTION rxArticulo( cPath, cDriver )
    end if
 
    /*
-   Articulos Kit______________________________________________________________________________________________
+   Articulos Kit_______________________________________________________________
    */
 
    dbUseArea( .t., cDriver, cPath + "ArtAlm.Dbf", cCheckArea( "ArtAlm", @dbfArt ), .f. )
