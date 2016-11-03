@@ -195,7 +195,7 @@ METHOD getValue( cTipoDocumento, cClave, cWeb, defaultValue )
    if ::isSeekValues( cTipoDocumento, cClave, cWeb )
       idWeb       := ::oDbf:idWeb
    else 
-      ::writeText( cTipoDocumento + ":" + cClave + ":" + cWeb + ": NO encontrado : " + str( len( cTipoDocumento + cClave + cWeb ) ) )
+      ::writeText( cTipoDocumento + ":" + cClave + ":" + cWeb + ": No encontrado : " + str( len( cTipoDocumento + cClave + cWeb ) ) )
    end if 
 
 RETURN ( idWeb )

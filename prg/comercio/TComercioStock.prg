@@ -201,7 +201,6 @@ METHOD buildAddInformacionStockProductPrestashop( hProduct )
 
    local sStock
    local nTotalStock          := 0
-   local nUnidadesStock       := 0
    local aStockArticulo
    local idProduct            := hget( hProduct, "id" )
    local idFirstProperty      := hget( hProduct, "idFirstProperty" )
@@ -209,7 +208,7 @@ METHOD buildAddInformacionStockProductPrestashop( hProduct )
    local idSecondProperty     := hget( hProduct, "idSecondProperty" )
    local valueSecondProperty  := hget( hProduct, "valueSecondProperty" )
 
-   ::writeText( "Recopilando información del artículo " + alltrim( idProduct ) )
+   ::writeText( 'Calculando stocks ' + alltrim( idProduct ) )
 
    // Recopilamos la información del Stock-------------------------------------
 
@@ -219,13 +218,18 @@ METHOD buildAddInformacionStockProductPrestashop( hProduct )
 
    for each sStock in aStockArticulo
 
-      if sStock:cCodigo             == idProduct            .and.;
-         sStock:cCodigoPropiedad1   == idFirstProperty      .and.;
-         sStock:cValorPropiedad1    == valueFirstProperty   .and.;
-         sStock:cCodigoPropiedad2   == idSecondProperty     .and.;
-         sStock:cValorPropiedad2    == valueSecondProperty
+      if ( sStock:cCodigo == idProduct )                                                           .and.;
+         ( empty( idFirstProperty )       .or. ( sStock:cCodigoPropiedad1 == idFirstProperty ) )   .and.;
+         ( empty( valueFirstProperty )    .or. ( sStock:cValorPropiedad1 == valueFirstProperty ) ) .and.;
+         ( empty( idSecondProperty )      .or. ( sStock:cCodigoPropiedad2 == idSecondProperty ) )  .and.;
+         ( empty( valueSecondProperty )   .or. ( sStock:cValorPropiedad2 == valueSecondProperty ) )
 
-         nUnidadesStock       := sStock:nUnidades
+         aAdd( ::aStockProductData, {  "idProduct"             => idProduct,;
+                                       "idFirstProperty"       => sStock:cCodigoPropiedad1,;
+                                       "idSecondProperty"      => sStock:cCodigoPropiedad2,;
+                                       "valueFirstProperty"    => sStock:cValorPropiedad1,;
+                                       "valueSecondProperty"   => sStock:cValorPropiedad2,;
+                                       "unitStock"             => sStock:nUnidades } )
 
       end if  
 
@@ -233,14 +237,7 @@ METHOD buildAddInformacionStockProductPrestashop( hProduct )
 
    next
 
-   aAdd( ::aStockProductData, {  "idProduct"             => idProduct ,;
-                                 "idFirstProperty"       => idFirstProperty ,;
-                                 "idSecondProperty"      => idSecondProperty ,;
-                                 "valueFirstProperty"    => valueFirstProperty ,;
-                                 "valueSecondProperty"   => valueSecondProperty ,;
-                                 "unitStock"             => nUnidadesStock } )
-
-   aAdd( ::aStockProductData, {  "idProduct"             => idProduct ,;
+   aadd( ::aStockProductData, {  "idProduct"             => idProduct ,;
                                  "idFirstProperty"       => space( 20 ) ,;
                                  "idSecondProperty"      => space( 20 ) ,;
                                  "valueFirstProperty"    => space( 20 ) ,;
@@ -320,8 +317,10 @@ METHOD setStockPrestashop( hStockProductData )
 
    end if
 
-   cText       := "Actualizando stock con propiedades : " + alltrim( str( attributeFirstProperty ) ) + " , " + alltrim( str( attributeSecondProperty ) ) + ", "
-   cText       += "cantidad : " + alltrim( str( unitStock ) )
+   cText       := 'Actualizando stock con propiedades ' + alltrim( str( idProductPrestashop ) ) + ', ' 
+   cText       += alltrim( str( attributeFirstProperty ) ) + ', ' 
+   cText       += alltrim( str( attributeSecondProperty ) ) + ', '
+   cText       += 'cantidad : ' + alltrim( str( unitStock ) )
 
    ::writeText( cText )
 
