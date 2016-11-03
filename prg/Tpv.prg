@@ -19181,7 +19181,6 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-
 Static Function dFecMaxVale( cNumTik, cTikT  )
 
    local dFecMaxVale    := Ctod( "" )
@@ -19201,8 +19200,16 @@ Static Function dFecMaxVale( cNumTik, cTikT  )
 
       while ( cTikT )->cValDoc == cNumTik .and. !( cTikT )->( Eof() )
 
-         if ( cTikT )->dFecTik > dFecMaxVale
+         if dFecMaxVale == Ctod( "" )
+
             dFecMaxVale := ( cTikT )->dFecTik
+
+         else
+
+            if ( cTikT )->dFecTik < dFecMaxVale
+               dFecMaxVale := ( cTikT )->dFecTik
+            end if
+
          end if
 
       ( cTikT )->( dbSkip() )
@@ -20089,6 +20096,7 @@ Static Function generateVale( nValeDiferencia )
 
    local aTmp
    local aTbl
+   local cNumTik
 
    /*
    Obtenemos el nuevo numero del vale---------------------------------
@@ -20096,9 +20104,11 @@ Static Function generateVale( nValeDiferencia )
 
    aTmp              := dbScatter( dbfTikT )
 
+   cNumTik           := aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ]
+
    aTmp[ _CNUMTIK ]  := Str( nNewDoc( aTmp[ _CSERTIK ], dbfTikT, "nTikCli", 10, dbfCount ), 10 )
    aTmp[ _CSUFTIK ]  := RetSufEmp()
-   aTmp[ _DFECTIK ]  := dFecMaxVale( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], dbfTikT  )
+   aTmp[ _DFECTIK ]  := dFecMaxVale( cNumTik, dbfTikT  )
    aTmp[ _CHORTIK ]  := Substr( Time(), 1, 5 )
    aTmp[ _DFECCRE ]  := Date()
    aTmp[ _CTIMCRE ]  := SubStr( Time(), 1, 5 )

@@ -257,6 +257,9 @@ METHOD Resource( nMode )
 			PICTURE 	"@!" ;
 			OF 		oDlg
 
+         oGet:bHelp           := {|| oGet:cText( NextKey( ::oDbf:cCodTip, ::oDbf, , 4 ) ) }
+         oGet:cBmp            := "BOT"
+
       REDEFINE GET oGetNombre VAR ::oDbf:cNomTip UPDATE;
 			ID 		110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
