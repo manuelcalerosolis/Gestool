@@ -13,14 +13,13 @@ CLASS TComercioStock FROM TComercioConector
    DATA  oWaitMeter
 
    DATA  hProductsToUpdate                   INIT {=>}
+   
    DATA  aStockProductData                   INIT {}
 
    METHOD resetProductsToUpdateStocks()      INLINE ( ::hProductsToUpdate := {=>} )
    METHOD getProductsToUpadateStocks()       INLINE ( ::hProductsToUpdate )
 
    // External methods---------------------------------------------------------
-
-   METHOD controllerUpdateAllProductStocks()
 
    METHOD updateAllProductStocks()
 
@@ -39,7 +38,7 @@ CLASS TComercioStock FROM TComercioConector
       METHOD proccessStockPrestashop() 
          METHOD setStockPrestashop( hStockProductData )
 
-   METHOD idProductAttribute( idProductPrestashop, cCodWebValPr1, cCodWebValPr2 )
+   METHOD idProductAttribute( idProductPrestashop, attributeFirstProperty, attributeSecondProperty )
 
    METHOD evalProductsToStock()              
 
@@ -47,44 +46,13 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD controllerUpdateAllProductStocks()
-
-   local lastInsertProduct
-   local restoreLastInsert
-
-   lastInsertProduct          := ::getLastInsertStock()
-   if !empty( lastInsertProduct )
-      restoreLastInsert       :=  msgYesNo(  "La última sincronización con la web no finalizo correctamente" + CRLF + ;
-                                             "¿Desea continuar desde el último artículo insertado?" )
-   end if  
-
-   // aki----------------------------------------------------------------------
-
-   ::writeText( 'Recopilando artículos a actualizar' )
-
-   if ::filesOpen() 
-
-      ::updateAllProductStocks()
-
-      ::evalProductsToStock()
-
-      ::filesClose()
-
-   end if 
-
-   ::writeText( 'Proceso finalizado' )
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD updateAllProductStocks()
+METHOD updateAllProductStocks( startIdProduct )
 
    ::resetProductsToUpdateStocks()
 
    ::oProductDatabase():ordsetfocus( "lWebShop" )
    
-   if ::oProductDatabase():seek( ::getCurrentWebName() )
+   if ::oProductDatabase():seek( startIdProduct )
 
       while ( alltrim( ::oProductDatabase():cWebShop ) == ::getCurrentWebName() ) .and. !( ::oProductDatabase():eof() )
 
@@ -201,7 +169,11 @@ METHOD buildInformationStockProductArray( aProducts )
    ::resetStockProductData()
 
    for each hProduct in aProducts
+      
       ::buildAddInformacionStockProductPrestashop( hProduct )
+      
+      ::meterProcesoText()
+
    next
 
 Return .t.
@@ -266,8 +238,16 @@ METHOD proccessStockPrestashop()
    ::meterProcesoSetTotal( len( ::aStockProductData ) )
 
    for each hStockProductData in ::aStockProductData
-      ::setStockPrestashop( hStockProductData )
+
+      if ::setStockPrestashop( hStockProductData )
+         ::saveLastInsertStock( hget( hStockProductData, "idProduct" ) )
+      end if 
+
+      ::meterProcesoText()
+
    next
+
+   ::saveLastInsertStock()
 
 Return .t.
 
@@ -335,13 +315,11 @@ METHOD setStockPrestashop( hStockProductData )
 
    ::writeText( cText )
 
-   ::saveLastInsertStock()
-
 Return .t.   
 
 //---------------------------------------------------------------------------//
 
-METHOD idProductAttribute( idProductPrestashop, cCodWebValPr1, cCodWebValPr2 )
+METHOD idProductAttribute( idProductPrestashop, attributeFirstProperty, attributeSecondProperty )
 
    local oQuery
    local oQuery2
@@ -351,7 +329,7 @@ METHOD idProductAttribute( idProductPrestashop, cCodWebValPr1, cCodWebValPr2 )
    local idProductAttribute   := 0
 
    do case
-      case !empty( cCodWebValPr1 ) .and. empty( cCodWebValPr2 )
+      case !empty( attributeFirstProperty ) .and. empty( attributeSecondProperty )
 
          cCommand             := "SELECT * FROM " + ::cPrefixTable( "product_attribute" ) + " WHERE id_product = " + alltrim( str( idProductPrestashop ) )
 
@@ -366,7 +344,7 @@ METHOD idProductAttribute( idProductPrestashop, cCodWebValPr1, cCodWebValPr2 )
 
                oQuery2        := TMSQuery():New( ::oConexionMySQLDatabase(), cCommand )
 
-                  if oQuery2:Open() .and. oQuery2:recCount() == 1 .and. oQuery2:FieldGet( 1 ) == cCodWebValPr1
+                  if oQuery2:Open() .and. oQuery2:recCount() == 1 .and. oQuery2:FieldGet( 1 ) == attributeFirstProperty
                      idProductAttribute     := oQuery:FieldGet( 1 )
                   end if   
 
@@ -376,7 +354,7 @@ METHOD idProductAttribute( idProductPrestashop, cCodWebValPr1, cCodWebValPr2 )
 
          end if
 
-      case !empty( cCodWebValPr1 ) .and. !empty( cCodWebValPr2 )
+      case !empty( attributeFirstProperty ) .and. !empty( attributeSecondProperty )
 
          cCommand                := "SELECT * FROM " + ::cPrefixTable( "product_attribute" ) + " WHERE id_product = " + alltrim( str( idProductPrestashop ) )
 
@@ -397,7 +375,7 @@ METHOD idProductAttribute( idProductPrestashop, cCodWebValPr1, cCodWebValPr2 )
                      while !oQuery2:Eof()
 
                         if !lPrp1
-                           lPrp1 := ( oQuery2:FieldGet( 1 ) == cCodWebValPr1 )
+                           lPrp1 := ( oQuery2:FieldGet( 1 ) == attributeFirstProperty )
                         end if
 
                         oQuery2:Skip()
@@ -408,7 +386,7 @@ METHOD idProductAttribute( idProductPrestashop, cCodWebValPr1, cCodWebValPr2 )
                      while !oQuery2:Eof()
 
                         if !lPrp2
-                           lPrp2 := ( oQuery2:FieldGet( 1 ) == cCodWebValPr2 )
+                           lPrp2 := ( oQuery2:FieldGet( 1 ) == attributeSecondProperty )
                         end if
 
                         oQuery2:Skip()
@@ -432,8 +410,6 @@ METHOD idProductAttribute( idProductPrestashop, cCodWebValPr1, cCodWebValPr2 )
 
    end case
 
-//   idProductPrestashop, cCodWebValPr1, cCodWebValPr2, idProductAttribute
-
 Return idProductAttribute
 
 //---------------------------------------------------------------------------//
@@ -443,3 +419,4 @@ METHOD evalProductsToStock()
 Return ( heval( ::hProductsToUpdate, {|cWebName, aProductsWeb| ::updateProductStocks( cWebName, aProductsWeb ) } ) )
 
 //---------------------------------------------------------------------------//
+

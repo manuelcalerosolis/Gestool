@@ -967,7 +967,9 @@ METHOD meterProcesoText( cText ) Class TComercio
 
    ++::nMeterProceso
 
-   ::writeText( cText )
+   if !empty( cText )
+      ::writeText( cText )
+   end if 
 
    if !empty( ::oMeterProceso )
       ::oMeterProceso:Set( ::nMeterProceso )
@@ -5498,17 +5500,43 @@ Return ( cFolder )
 
 METHOD controllerUpdateStockPrestashop() Class TComercio
 
+   local lastInsertProduct
+   local restoreLastInsert
+
    if !( ::isAviableWebToExport() )
       Return .f.
    end if 
 
    ::disableDialog()
 
-   ::TComercioStock:controllerUpdateAllProductStocks()   
+   lastInsertProduct          := ::getLastInsertStock()
+
+   if !empty( lastInsertProduct ) .and. ;
+      !msgYesNo(  "La última sincronización con la web no finalizo correctamente" + CRLF + "¿Desea continuar desde el último artículo insertado?" )
+
+      lastInsertProduct       := nil
+
+   end if  
+
+   // aki----------------------------------------------------------------------
+
+   ::writeText( 'Recopilando artículos a actualizar' )
+
+   if ::filesOpen() 
+
+      ::TComercioStock:updateAllProductStocks( ::getStartId( lastInsertProduct ) )
+
+      ::TComercioStock:evalProductsToStock()
+
+      ::filesClose()
+
+   end if 
+
+   ::writeText( 'Proceso finalizado' )
 
    ::enableDialog()
 
-Return .t.
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 
