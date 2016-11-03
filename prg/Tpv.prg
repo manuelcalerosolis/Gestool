@@ -604,6 +604,30 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       USE ( cPatEmp + "TIKES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKES", @dbfTikS ) )
       SET ADSINDEX TO ( cPatEmp + "TIKES.CDX" ) ADDITIVE
 
+      USE ( cPatEmp + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
+      SET ADSINDEX TO ( cPatEmp + "ALBCLIT.CDX" ) ADDITIVE
+
+      USE ( cPatEmp + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
+      SET ADSINDEX TO ( cPatEmp + "ALBCLIL.CDX" ) ADDITIVE
+
+      USE ( cPatEmp + "ALBCLIS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIS", @dbfAlbClis ) )
+      SET ADSINDEX TO ( cPatEmp + "ALBCLIS.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "ALBCLIP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIP", @dbfAlbCliP ) )
+      SET ADSINDEX TO ( cPatEmp() + "ALBCLIP.CDX" ) ADDITIVE
+
+      USE ( cPatEmp + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbfFacCliT ) )
+      SET ADSINDEX TO ( cPatEmp + "FACCLIT.CDX" ) ADDITIVE
+
+      USE ( cPatEmp + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
+      SET ADSINDEX TO ( cPatEmp + "FACCLIL.CDX" ) ADDITIVE
+
+      USE ( cPatEmp + "FACCLIS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIS", @dbfFacCliS ) )
+      SET ADSINDEX TO ( cPatEmp + "FACCLIS.CDX" ) ADDITIVE
+
+      USE ( cPatEmp + "FACCLIP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIP", @dbfFacCliP ) )
+      SET ADSINDEX TO ( cPatEmp + "FACCLIP.CDX" ) ADDITIVE
+
       USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
       SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
 
@@ -636,30 +660,6 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
 
       USE ( cPatGrp() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
       SET ADSINDEX TO ( cPatGrp() + "FAMILIAS.CDX" ) ADDITIVE
-
-      USE ( cPatEmp + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
-      SET ADSINDEX TO ( cPatEmp + "ALBCLIT.CDX" ) ADDITIVE
-
-      USE ( cPatEmp + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
-      SET ADSINDEX TO ( cPatEmp + "ALBCLIL.CDX" ) ADDITIVE
-
-      USE ( cPatEmp + "ALBCLIS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIS", @dbfAlbClis ) )
-      SET ADSINDEX TO ( cPatEmp + "ALBCLIS.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "ALBCLIP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIP", @dbfAlbCliP ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIP.CDX" ) ADDITIVE
-
-      USE ( cPatEmp + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbfFacCliT ) )
-      SET ADSINDEX TO ( cPatEmp + "FACCLIT.CDX" ) ADDITIVE
-
-      USE ( cPatEmp + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
-      SET ADSINDEX TO ( cPatEmp + "FACCLIL.CDX" ) ADDITIVE
-
-      USE ( cPatEmp + "FACCLIS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIS", @dbfFacCliS ) )
-      SET ADSINDEX TO ( cPatEmp + "FACCLIS.CDX" ) ADDITIVE
-
-      USE ( cPatEmp + "FACCLIP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIP", @dbfFacCliP ) )
-      SET ADSINDEX TO ( cPatEmp + "FACCLIP.CDX" ) ADDITIVE
 
       USE ( cPatEmp + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
       SET ADSINDEX TO ( cPatEmp + "AntCliT.CDX" ) ADDITIVE
@@ -8210,6 +8210,16 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
    */
 
    lStdChange( aTmp, aGet )
+
+   // lanzamos los scripts-----------------------------------------------------
+
+   if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
+
+      if isfalse( runEventScript( "TPV\Lineas\beforeAppend", aTmp, aTik, nView, dbfTmpL ) )
+         Return .f.
+      end if
+
+   end if
 
    /*
    Imprimo en el visor el nombre y precio del artículo-------------------------

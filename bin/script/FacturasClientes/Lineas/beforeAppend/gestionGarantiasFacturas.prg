@@ -7,13 +7,13 @@
 
 //---------------------------------------------------------------------------//
 
-Function gestionGarantias( aLine, aHeader, nView, dbfTmpLin )
+Function gestionGarantiasFacturas( aLine, aHeader, nView, dbfTmpLin )
 
-Return ( TGestionGarantias():New( aLine, aHeader, nView, dbfTmpLin ):Run() )
+Return ( TGestionGarantiasFacturas():New( aLine, aHeader, nView, dbfTmpLin ):Run() )
 
 //---------------------------------------------------------------------------//
 
-CREATE CLASS TGestionGarantias
+CREATE CLASS TGestionGarantiasFacturas
 
    DATA aLine
    DATA aHeader
@@ -87,7 +87,7 @@ CREATE CLASS TGestionGarantias
 
    METHOD excedMaxiumnUnitsToReturnByClient()         INLINE ( ::getAbsUnitsInActualLine() > ::getMaxiumnUnitsToReturnByClient() )
 
-   METHOD setPriceUnit()                              INLINE ( ::aLine[ ( D():AlbaranesClientesLineas( ::nView ) )->( fieldpos( "nPreUnit" ) ) ] := ::priceSale )
+   METHOD setPriceUnit()                              INLINE ( ::aLine[ ( D():FacturasClientesLineas( ::nView ) )->( fieldpos( "nPreUnit" ) ) ] := ::priceSale )
 
 ENDCLASS
 
@@ -200,19 +200,19 @@ METHOD loadProductInformation()
 
    ::priceSale          := 0
 
-   ::idProduct          := ::aLine[ ( D():AlbaranesClientesLineas( ::nView ) )->( fieldpos( "cRef" ) ) ]
-   ::nameProduct        := ::aLine[ ( D():AlbaranesClientesLineas( ::nView ) )->( fieldpos( "cDetalle" ) ) ]
-   ::idFamily           := ::aLine[ ( D():AlbaranesClientesLineas( ::nView ) )->( fieldpos( "cCodFam" ) ) ]
-   ::unitsInActualLine  := ::aLine[ ( D():AlbaranesClientesLineas( ::nView ) )->( fieldpos( "nUniCaja" ) ) ]
+   ::idProduct          := ::aLine[ ( D():FacturasClientesLineas( ::nView ) )->( fieldpos( "cRef" ) ) ]
+   ::nameProduct        := ::aLine[ ( D():FacturasClientesLineas( ::nView ) )->( fieldpos( "cDetalle" ) ) ]
+   ::idFamily           := ::aLine[ ( D():FacturasClientesLineas( ::nView ) )->( fieldpos( "cCodFam" ) ) ]
+   ::unitsInActualLine  := ::aLine[ ( D():FacturasClientesLineas( ::nView ) )->( fieldpos( "nUniCaja" ) ) ]
 
-   ::dateAlbaran        := ::aHeader[ ( D():AlbaranesClientes( ::nView ) )->( fieldpos( "dFecAlb" ) ) ]
-   ::idClient           := ::aHeader[ ( D():AlbaranesClientes( ::nView ) )->( fieldpos( "cCodCli" ) ) ]
+   ::dateAlbaran        := ::aHeader[ ( D():FacturasClientes( ::nView ) )->( fieldpos( "dFecFac" ) ) ]
+   ::idClient           := ::aHeader[ ( D():FacturasClientes( ::nView ) )->( fieldpos( "cCodCli" ) ) ]
 
    ::warrantyDays       := retFld( ::idFamily, D():Familias( ::nView ), "nDiaGrt" )
 
    if ::warrantyDays == 0
       ::warrantyDays    := __default_warranty_days__
-   end if 
+   end if
 
    ::dateWarranty       := ::dateAlbaran - ::warrantyDays
 
@@ -436,6 +436,9 @@ METHOD validateUnitsToReturn( lInfo )
 Return ( ::getMaxiumnUnitsToReturnByClient() >= abs( ::getUnitsInActualLine() ) )
 
 //---------------------------------------------------------------------------//
+
+
+
 
 
 

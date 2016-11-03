@@ -80,6 +80,9 @@ CLASS TComercioConector
    METHOD filesOpen()                                       INLINE ( ::TComercio:filesOpen() )
    METHOD filesClose()                                      INLINE ( ::TComercio:filesClose() )
 
+   METHOD saveLastInsertStock( idProduct )                  INLINE ( ::TComercio:saveLastInsertStock( idProduct ) )
+   METHOD getLastInsertstock()                              INLINE ( ::TComercio:getLastInsertstock() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

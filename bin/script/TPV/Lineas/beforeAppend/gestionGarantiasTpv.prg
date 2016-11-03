@@ -7,13 +7,13 @@
 
 //---------------------------------------------------------------------------//
 
-Function gestionGarantiasAlbaranes( aLine, aHeader, nView, dbfTmpLin )
+Function gestionGarantiasTPV( aLine, aHeader, nView, dbfTmpLin )
 
-Return ( TGestionGarantiasAlbaranes():New( aLine, aHeader, nView, dbfTmpLin ):Run() )
+Return ( TGestionGarantiasTPV():New( aLine, aHeader, nView, dbfTmpLin ):Run() )
 
 //---------------------------------------------------------------------------//
 
-CREATE CLASS TGestionGarantiasAlbaranes
+CREATE CLASS TGestionGarantiasTPV
 
    DATA aLine
    DATA aHeader
@@ -24,7 +24,7 @@ CREATE CLASS TGestionGarantiasAlbaranes
 
    DATA idFamily
 
-   DATA dateAlbaran
+   DATA dateDocument
    
    DATA warrantyDays
 
@@ -67,7 +67,7 @@ CREATE CLASS TGestionGarantiasAlbaranes
 
    METHOD isEmptyDateInWarrantyPeriod( lInfo )        INLINE ( if( istrue( lInfo ), msgalert( "Ultima fecha de venta : " + cvaltochar(::lastDateSale ), "isEmptyDateInWarrantyPeriod" ), ),;
                                                                empty( ::lastDateSale ) ) 
-   METHOD isDateOutOfWarrantyPeriod()                 INLINE ( ::isEmptyDateInWarrantyPeriod() .or. ( ::dateAlbaran - ::lastDateSale ) > ::warrantyDays )
+   METHOD isDateOutOfWarrantyPeriod()                 INLINE ( ::isEmptyDateInWarrantyPeriod() .or. ( ::dateDocument - ::lastDateSale ) > ::warrantyDays )
    METHOD isDateInWarrantyPeriod()                    INLINE (!( ::isDateOutOfWarrantyPeriod() ) )
 
    METHOD searchLastSaleAlbaranesClientes()
@@ -87,7 +87,7 @@ CREATE CLASS TGestionGarantiasAlbaranes
 
    METHOD excedMaxiumnUnitsToReturnByClient()         INLINE ( ::getAbsUnitsInActualLine() > ::getMaxiumnUnitsToReturnByClient() )
 
-   METHOD setPriceUnit()                              INLINE ( ::aLine[ ( D():AlbaranesClientesLineas( ::nView ) )->( fieldpos( "nPreUnit" ) ) ] := ::priceSale )
+   METHOD setPriceUnit()                              INLINE ( ::aLine[ ( D():TiketsLineas( ::nView ) )->( fieldpos( "nPvpTil" ) ) ] := ::priceSale )
 
 ENDCLASS
 
@@ -200,21 +200,21 @@ METHOD loadProductInformation()
 
    ::priceSale          := 0
 
-   ::idProduct          := ::aLine[ ( D():AlbaranesClientesLineas( ::nView ) )->( fieldpos( "cRef" ) ) ]
-   ::nameProduct        := ::aLine[ ( D():AlbaranesClientesLineas( ::nView ) )->( fieldpos( "cDetalle" ) ) ]
-   ::idFamily           := ::aLine[ ( D():AlbaranesClientesLineas( ::nView ) )->( fieldpos( "cCodFam" ) ) ]
-   ::unitsInActualLine  := ::aLine[ ( D():AlbaranesClientesLineas( ::nView ) )->( fieldpos( "nUniCaja" ) ) ]
+   ::idProduct          := ::aLine[ ( D():TiketsLineas( ::nView ) )->( fieldpos( "cCbaTil" ) ) ]
+   ::nameProduct        := ::aLine[ ( D():TiketsLineas( ::nView ) )->( fieldpos( "cNomTil" ) ) ]
+   ::idFamily           := ::aLine[ ( D():TiketsLineas( ::nView ) )->( fieldpos( "cFamTil" ) ) ]
+   ::unitsInActualLine  := ::aLine[ ( D():TiketsLineas( ::nView ) )->( fieldpos( "nUntTil" ) ) ]
 
-   ::dateAlbaran        := ::aHeader[ ( D():AlbaranesClientes( ::nView ) )->( fieldpos( "dFecAlb" ) ) ]
-   ::idClient           := ::aHeader[ ( D():AlbaranesClientes( ::nView ) )->( fieldpos( "cCodCli" ) ) ]
+   ::dateDocument        := ::aHeader[ ( D():Tikets( ::nView ) )->( fieldpos( "dFecTik" ) ) ]
+   ::idClient           := ::aHeader[ ( D():Tikets( ::nView ) )->( fieldpos( "cCliTik" ) ) ]
 
    ::warrantyDays       := retFld( ::idFamily, D():Familias( ::nView ), "nDiaGrt" )
 
    if ::warrantyDays == 0
       ::warrantyDays    := __default_warranty_days__
-   end if 
+   end if
 
-   ::dateWarranty       := ::dateAlbaran - ::warrantyDays
+   ::dateWarranty       := ::dateDocument - ::warrantyDays
 
 Return ( Self )
 
@@ -295,10 +295,6 @@ METHOD searchLastSaleAlbaranesClientes( idClient, dateWarranty, lInfo )
 
             // Tenemos q probar esto ------------------------------------------
 
-            // if ( !empty( dateWarranty ) )
-            //   ::unitsToReturn   := max( ::unitsToReturn, 0 )
-            // end if 
-
             if ( ( D():AlbaranesClientesLineas( ::nView ) )->nUniCaja > 0 ) .and. ;
                ( empty( ::lastDateSale ) .or. ( D():AlbaranesClientesLineas( ::nView ) )->dFecAlb > ::lastDateSale )
                
@@ -309,7 +305,8 @@ METHOD searchLastSaleAlbaranesClientes( idClient, dateWarranty, lInfo )
                ::lastDateSale    := ( D():AlbaranesClientesLineas( ::nView ) )->dFecAlb  
                
                if !empty(idClient)
-                  ::priceSale    := ( D():AlbaranesClientesLineas( ::nView ) )->nPreUnit
+                  ::priceSale    := ( D():AlbaranesClientesLineas( ::nView ) )->nPreUnit 
+                  ::priceSale    += ( D():AlbaranesClientesLineas( ::nView ) )->nPreUnit * ( D():AlbaranesClientesLineas( ::nView ) )->nIva / 100
                end if 
 
             end if 
@@ -355,6 +352,7 @@ METHOD searchLastSaleFacturasClientes( idClient, dateWarranty )
                
                if !empty(idClient)
                   ::priceSale := ( D():FacturasClientesLineas( ::nView ) )->nPreUnit
+                  ::priceSale += ( D():FacturasClientesLineas( ::nView ) )->nPreUnit * ( D():FacturasClientesLineas( ::nView ) )->nIva / 100
                end if 
 
             end if
@@ -401,7 +399,7 @@ METHOD searchLastSaleTicketsClientes( idClient, dateWarranty )
                      ::lastDateSale := ( D():Tikets( ::nView ) )->dFecTik  
                      
                      if !empty(idClient)
-                        ::priceSale := nBasUTpv( ( D():TiketsLineas( ::nView ) ) )
+                        ::priceSale := ( D():TiketsLineas( ::nView ) )->nPvpTil 
                      end if 
 
                   end if
@@ -436,6 +434,9 @@ METHOD validateUnitsToReturn( lInfo )
 Return ( ::getMaxiumnUnitsToReturnByClient() >= abs( ::getUnitsInActualLine() ) )
 
 //---------------------------------------------------------------------------//
+
+
+
 
 
 

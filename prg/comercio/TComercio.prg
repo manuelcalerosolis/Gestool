@@ -485,12 +485,13 @@ CLASS TComercio
 
    METHOD deleteOneProductToPrestashop( idProduct )   
 
-   METHOD getLastInsertProduct( idProduct )  INLINE ( ::TComercioConfig():getFromCurrentWeb( "IdProduct", "" ) )
-
+   METHOD getLastInsertProduct()                      INLINE ( ::TComercioConfig():getFromCurrentWeb( "IdProduct", "" ) )
    METHOD saveLastInsertProduct( idProduct )
 
-   METHOD getStartId( idProduct )            INLINE ( padr( ::getCurrentWebName(), 100 ) + ( if( !empty( idProduct ), padr( idProduct, 18 ), "" ) ) )
+   METHOD getLastInsertStock()                        INLINE ( ::TComercioConfig():getFromCurrentWeb( "IdStock", "" ) )
+   METHOD saveLastInsertStock( idProduct ) 
 
+   METHOD getStartId( idProduct )                     INLINE ( padr( ::getCurrentWebName(), 100 ) + ( if( !empty( idProduct ), padr( idProduct, 18 ), "" ) ) )
 
 END CLASS
 
@@ -4782,12 +4783,23 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-
 METHOD saveLastInsertProduct( idProduct ) CLASS TComercio
 
    DEFAULT idProduct    := ""
 
    ::TComercioConfig():setToCurrentWeb( "IdProduct", idProduct )
+
+   ::TComercioConfig():saveJSON()
+   
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD saveLastInsertStock( idProduct ) CLASS TComercio
+
+   DEFAULT idProduct    := ""
+
+   ::TComercioConfig():setToCurrentWeb( "IdStock", idProduct )
 
    ::TComercioConfig():saveJSON()
    

@@ -145,8 +145,6 @@ METHOD buildProductInformation( idProduct ) CLASS TComercioProduct
       Return ( .f. )
    end if 
 
-   // ::writeText( alltrim( ::oProductDatabase():Codigo ) + " - " + alltrim( ::oProductDatabase():Nombre ) )
-
    ::buildIvaProducts( ::oProductDatabase():TipoIva )
 
    ::buildManufacturerProduct( ::oProductDatabase():cCodFab )

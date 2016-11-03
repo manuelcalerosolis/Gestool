@@ -49,6 +49,17 @@ END CLASS
 
 METHOD controllerUpdateAllProductStocks()
 
+   local lastInsertProduct
+   local restoreLastInsert
+
+   lastInsertProduct          := ::getLastInsertStock()
+   if !empty( lastInsertProduct )
+      restoreLastInsert       :=  msgYesNo(  "La última sincronización con la web no finalizo correctamente" + CRLF + ;
+                                             "¿Desea continuar desde el último artículo insertado?" )
+   end if  
+
+   // aki----------------------------------------------------------------------
+
    ::writeText( 'Recopilando artículos a actualizar' )
 
    if ::filesOpen() 
@@ -324,6 +335,8 @@ METHOD setStockPrestashop( hStockProductData )
 
    ::writeText( cText )
 
+   ::saveLastInsertStock()
+
 Return .t.   
 
 //---------------------------------------------------------------------------//
@@ -418,6 +431,8 @@ METHOD idProductAttribute( idProductPrestashop, cCodWebValPr1, cCodWebValPr2 )
          end if
 
    end case
+
+//   idProductPrestashop, cCodWebValPr1, cCodWebValPr2, idProductAttribute
 
 Return idProductAttribute
 
