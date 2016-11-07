@@ -58,6 +58,13 @@ METHOD New( nView )
 
    ::nFilaInicioImportacion   := 2
 
+   /*
+   Columna de campo clave
+   */
+
+   ::cColumnaCampoClave       := "B"
+
+
 Return ( Self )
 
 //----------------------------------------------------------------------------// 
@@ -68,19 +75,19 @@ METHOD procesaFicheroExcel()
 
    while ( ::filaValida() )
 
-//      if ::existeRegistro()
-//        ::bloqueaRegistro()
-//      else
-//         ::appendRegistro()
-//      end if 
+      if ::existeRegistro()
+        ::bloqueaRegistro()
+      else
+         ::appendRegistro()
+      end if 
 
-//      if !( neterr() )      
+      if !( neterr() )      
 
          ::importarCampos()
 
-//         ::desbloqueaRegistro()
+         ::desbloqueaRegistro()
 
-//      endif
+      endif
 
       ::siguienteLinea()
 
@@ -94,12 +101,11 @@ Return nil
 
 METHOD importarCampos()
 
-   msgwait( ::getCampoClave(), ::getExcelValue( "B" ), 1 )
-
-//   ( D():Clientes( ::nView ) )->Cod    := ::getCampoClave()
-//   ( D():Clientes( ::nView ) )->Titulo := ::getExcelValue( "C" )
-//   ( D():Clientes( ::nView ) )->Nif    := ::getExcelString( "D" )  
-//   ( D():Clientes( ::nView ) )->Riesgo := ::getExcelNumeric( "G" )
+   ( D():Clientes( ::nView ) )->Cod       := ::getCampoClave()
+   ( D():Clientes( ::nView ) )->Titulo    := ::getExcelValue( "C" )
+   ( D():Clientes( ::nView ) )->Nif       := ::getExcelString( "D" )  
+   ( D():Clientes( ::nView ) )->Riesgo    := ::getExcelNumeric( "G" )
+   ( D():Clientes( ::nView ) )->cCodWeb   := ::getExcelNumeric( "A" )
 
 Return nil
 

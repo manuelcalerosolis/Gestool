@@ -21,6 +21,14 @@ Return nil
 CLASS TImportarExcelArguelles FROM TImportarExcel
 
    DATA hUnidadesMedicion     
+
+   DATA idArticulo
+
+   DATA idProveedor
+
+   DATA referenciaProveedor
+
+   DATA proveedorDefecto
    
    METHOD New()
 
@@ -47,6 +55,8 @@ CLASS TImportarExcelArguelles FROM TImportarExcel
 
    METHOD importarReferenciaProveedor()
 
+   METHOD importarCodigoBarras()
+
    METHOD getCodigoUnidadMedicion( textoUnidadMedicion )
 
 END CLASS
@@ -61,7 +71,7 @@ METHOD New( nView )
    Cambiar el nombre del fichero-----------------------------------------------
    */
 
-   ::cFicheroExcel            := "C:\Users\calero\Desktop\plantilla_alta_modificacion_producto_gestool.xlsx"
+   ::cFicheroExcel            := "C:\importar\alta.xlsx"
 
    /*
    Cambiar la fila de cominezo de la importacion-------------------------------
@@ -132,6 +142,8 @@ METHOD procesaFicheroExcel()
 
          ::importarReferenciaProveedor()
 
+         ::importarCodigoBarras()
+
       endif
 
       ::siguienteLinea()
@@ -146,62 +158,78 @@ Return nil
 
 METHOD importarCampos()
 
-   ( D():Articulos( ::nView ) )->Codigo   := ::getCampoClave()
+   ::idArticulo                                 := ::getCampoClave()
+
+   ( D():Articulos( ::nView ) )->Codigo         := ::idArticulo
 
    if !empty( ::getExcelString("B") )
-      ( D():Articulos( ::nView ) )->Nombre   := ::getExcelString( "B" )
+      ( D():Articulos( ::nView ) )->Nombre      := ::getExcelString( "B" )
    end if 
 
    if !empty( ::getExcelString("C") )
-      ( D():Articulos( ::nView ) )->Familia  := ::getExcelString( "C" )
-   end if 
-
-   if !empty( ::getExcelString("D") )
-      ( D():Articulos( ::nView ) )->CodeBar  := ::getExcelString( "D" )   
+      ( D():Articulos( ::nView ) )->Familia     := ::getExcelString( "C" )
    end if 
 
    if !empty( ::getExcelNumeric("E") )
-      ( D():Articulos( ::nView ) )->pCosto   := ::getExcelNumeric( "E" )   
+      ( D():Articulos( ::nView ) )->pCosto      := ::getExcelNumeric( "E" )   
    end if 
 
-   ( D():Articulos( ::nView ) )->TipoIva  := "G"
+   ( D():Articulos( ::nView ) )->TipoIva        := "G"
 
    if !empty( ::getExcelNumeric("F") )
-      ( D():Articulos( ::nView ) )->pVenta1  := ::getExcelNumeric( "F" )   
-      ( D():Articulos( ::nView ) )->pVtaIva1 := ( ::getExcelNumeric( "F" ) * 0.21 ) + ::getExcelNumeric( "F" )
+      ( D():Articulos( ::nView ) )->pVenta1     := ::getExcelNumeric( "F" )   
+      ( D():Articulos( ::nView ) )->pVtaIva1    := ( ::getExcelNumeric( "F" ) * 0.21 ) + ::getExcelNumeric( "F" )
    end if 
 
    if !empty( ::getExcelNumeric("G") )
-      ( D():Articulos( ::nView ) )->pVenta2  := ::getExcelNumeric( "G" )   
-      ( D():Articulos( ::nView ) )->pVtaIva2 := ( ::getExcelNumeric( "G" ) * 0.21 ) + ::getExcelNumeric( "G" )
+      ( D():Articulos( ::nView ) )->pVenta2     := ::getExcelNumeric( "G" )   
+      ( D():Articulos( ::nView ) )->pVtaIva2    := ( ::getExcelNumeric( "G" ) * 0.21 ) + ::getExcelNumeric( "G" )
    end if 
 
    if !empty( ::getExcelNumeric("H") )
-      ( D():Articulos( ::nView ) )->pVenta3  := ::getExcelNumeric( "H" )   
-      ( D():Articulos( ::nView ) )->pVtaIva3 := ( ::getExcelNumeric( "H" ) * 0.21 ) + ::getExcelNumeric( "H" )
+      ( D():Articulos( ::nView ) )->pVenta3     := ::getExcelNumeric( "H" )   
+      ( D():Articulos( ::nView ) )->pVtaIva3    := ( ::getExcelNumeric( "H" ) * 0.21 ) + ::getExcelNumeric( "H" )
    end if 
 
    if !empty( ::getExcelNumeric("I") )
-      ( D():Articulos( ::nView ) )->pVenta4  := ::getExcelNumeric( "I" )   
-      ( D():Articulos( ::nView ) )->pVtaIva4 := ( ::getExcelNumeric( "I" ) * 0.21 ) + ::getExcelNumeric( "I" )
+      ( D():Articulos( ::nView ) )->pVenta4     := ::getExcelNumeric( "I" )   
+      ( D():Articulos( ::nView ) )->pVtaIva4    := ( ::getExcelNumeric( "I" ) * 0.21 ) + ::getExcelNumeric( "I" )
    end if 
 
    if !empty( ::getExcelNumeric("J") )
-      ( D():Articulos( ::nView ) )->pVenta5  := ::getExcelNumeric( "J" )   
-      ( D():Articulos( ::nView ) )->pVtaIva5 := ( ::getExcelNumeric( "J" ) * 0.21 ) + ::getExcelNumeric( "J" )
+      ( D():Articulos( ::nView ) )->pVenta5     := ::getExcelNumeric( "J" )   
+      ( D():Articulos( ::nView ) )->pVtaIva5    := ( ::getExcelNumeric( "J" ) * 0.21 ) + ::getExcelNumeric( "J" )
    end if 
 
    if !empty( ::getExcelNumeric("K") )
-      ( D():Articulos( ::nView ) )->pVenta6  := ::getExcelNumeric( "K" )   
-      ( D():Articulos( ::nView ) )->pVtaIva6 := ( ::getExcelNumeric( "K" ) * 0.21 ) + ::getExcelNumeric( "K" )
+      ( D():Articulos( ::nView ) )->pVenta6     := ::getExcelNumeric( "K" )   
+      ( D():Articulos( ::nView ) )->pVtaIva6    := ( ::getExcelNumeric( "K" ) * 0.21 ) + ::getExcelNumeric( "K" )
    end if 
 
-   if !empty( ::getExcelString("L") )
-      ( D():Articulos( ::nView ) )->lPubInt  := ::getExcelLogic( "L" )   
+   if !empty( ::getExcelString("N") )
+      ( D():Articulos( ::nView ) )->lPubInt     := ::getExcelLogic( "N" )
    end if 
 
    if !empty( ::getExcelNumeric("O") )
-      ( D():Articulos( ::nView ) )->nPesoKg  := ::getExcelNumeric( "O" )   
+      ( D():Articulos( ::nView ) )->nPesoKg     := ::getExcelNumeric( "O" )   
+   end if
+
+   if !empty( ::getExcelString("P") )
+      ( D():Articulos( ::nView ) )->cUnidad     := ::getExcelString( "P" )
+   end if
+
+   if ( D():Articulos( ::nView ) )->nCtlStock == 0 
+      ( D():Articulos( ::nView ) )->nCtlStock   := 1
+   end if 
+
+   ::idProveedor                                := padr( ::getExcelString("L"), 12 )
+
+   ::referenciaProveedor                        := padr( ::getExcelString("M"), 60 )
+
+   ::proveedorDefecto                           := ::getExcelLogic( "Q" )
+
+   if ( ::proveedorDefecto )
+      ( D():Articulos( ::nView ) )->cPrvHab  := ::idProveedor
    end if 
 
 Return nil
@@ -210,26 +238,22 @@ Return nil
 
 METHOD importarReferenciaProveedor()
 
-   local idArticulo           := ( D():Articulos( ::nView ) )->Codigo // cCodArt + cCodPrv + cRefPrv
-   local idProveedor          := padr( ::getExcelString("M"), 12 ) 
-   local referenciaProveedor  := padr( ::getExcelString("L"), 60 ) 
    local ordenAnterior        := ( D():ProveedorArticulo( ::nView ) )->( ordsetfocus( "cRefArt" ) )
 
-   msgalert( idArticulo + idProveedor + referenciaProveedor )
+   if !empty( ::referenciaProveedor )
 
-   if !empty( referenciaProveedor )
-
-      if ( D():ProveedorArticulo( ::nView ) )->( dbseek( idArticulo + idProveedor + referenciaProveedor ) )
+      if ( D():ProveedorArticulo( ::nView ) )->( dbseek( ::idArticulo + ::idProveedor + ::referenciaProveedor ) )
          ( ( D():ProveedorArticulo( ::nView ) )->( dbrlock() ) )
       else
          ( ( D():ProveedorArticulo( ::nView ) )->( dbappend() ) )
       end if 
 
       if !( neterr() )
-         ( D():ProveedorArticulo( ::nView ) )->cCodArt   := idArticulo
-         ( D():ProveedorArticulo( ::nView ) )->cCodPrv   := idProveedor
-         ( D():ProveedorArticulo( ::nView ) )->cRefPrv   := referenciaProveedor
-      end if 
+         ( D():ProveedorArticulo( ::nView ) )->cCodArt   := ::idArticulo
+         ( D():ProveedorArticulo( ::nView ) )->cCodPrv   := ::idProveedor
+         ( D():ProveedorArticulo( ::nView ) )->cRefPrv   := ::referenciaProveedor
+         ( D():ProveedorArticulo( ::nView ) )->lDefPrv   := ::proveedorDefecto
+      end if
 
       ( D():ProveedorArticulo( ::nView ) )->( dbcommit() )
       ( D():ProveedorArticulo( ::nView ) )->( dbunlock() )
@@ -241,6 +265,38 @@ METHOD importarReferenciaProveedor()
 Return nil
 
 //---------------------------------------------------------------------------//
+
+METHOD importarCodigoBarras()
+
+   local idArticulo           := ( D():Articulos( ::nView ) )->Codigo // cCodArt + cCodPrv + cRefPrv
+   local codigoBarra          := ::getExcelString("D")
+
+   local ordenAnterior        := ( D():ArticulosCodigosBarras( ::nView ) )->( ordsetfocus( "cArtBar" ) )
+
+   if !empty( codigoBarra )
+
+      if ( D():ArticulosCodigosBarras( ::nView ) )->( dbseek( idArticulo + codigoBarra ) )
+         ( ( D():ArticulosCodigosBarras( ::nView ) )->( dbrlock() ) )
+      else
+         ( ( D():ArticulosCodigosBarras( ::nView ) )->( dbappend() ) )
+      end if
+
+      if !( neterr() )
+         ( D():ArticulosCodigosBarras( ::nView ) )->cCodArt   := idArticulo
+         ( D():ArticulosCodigosBarras( ::nView ) )->cCodBar   := codigoBarra
+      end if
+
+      ( D():ArticulosCodigosBarras( ::nView ) )->( dbcommit() )
+      ( D():ArticulosCodigosBarras( ::nView ) )->( dbunlock() )
+
+   end if
+
+   ( D():ArticulosCodigosBarras( ::nView ) )->( ordsetfocus( ordenAnterior ) )
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
 
 METHOD getCodigoUnidadMedicion( textoUnidadMedicion )
 
@@ -272,17 +328,17 @@ Return ( !empty( ::getExcelValue( ::cColumnaCampoClave ) ) )
 /*
 Campos a importar--------------------------------------------------------------
 
-   aAdd( aBase, { "Codigo",    "C", 18, 0, "Código del artículo" ,                    "'@!'",               "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "Nombre",    "C",100, 0, "Nombre del artículo",                     "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cDesTik",   "C", 20, 0, "Descripción para el tiket" ,              "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "Codigo",    "C", 18, 0, "Cï¿½digo del artï¿½culo" ,                    "'@!'",               "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "Nombre",    "C",100, 0, "Nombre del artï¿½culo",                     "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cDesTik",   "C", 20, 0, "Descripciï¿½n para el tiket" ,              "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "pCosto",    "N", 15, 6, "Precio de costo" ,                        "PicIn()",            "", "( cDbfArt )", nil } )
    aAdd( aBase, { "PvpRec",    "N", 15, 6, "Precio venta recomendado" ,               "PicOut()",           "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lBnf1",     "L",  1, 0, "Lógico aplicar porcentaje de beneficio 1","",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LBNF2",     "L",  1, 0, "Lógico aplicar porcentaje de beneficio 2","",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LBNF3",     "L",  1, 0, "Lógico aplicar porcentaje de beneficio 3","",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LBNF4",     "L",  1, 0, "Lógico aplicar porcentaje de beneficio 4","",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LBNF5",     "L",  1, 0, "Lógico aplicar porcentaje de beneficio 5","",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LBNF6",     "L",  1, 0, "Lógico aplicar porcentaje de beneficio 6","",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lBnf1",     "L",  1, 0, "Lï¿½gico aplicar porcentaje de beneficio 1","",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LBNF2",     "L",  1, 0, "Lï¿½gico aplicar porcentaje de beneficio 2","",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LBNF3",     "L",  1, 0, "Lï¿½gico aplicar porcentaje de beneficio 3","",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LBNF4",     "L",  1, 0, "Lï¿½gico aplicar porcentaje de beneficio 4","",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LBNF5",     "L",  1, 0, "Lï¿½gico aplicar porcentaje de beneficio 5","",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LBNF6",     "L",  1, 0, "Lï¿½gico aplicar porcentaje de beneficio 6","",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "BENEF1",    "N",  6, 2, "Porcentaje de beneficio precio 1" ,       "'@EZ 99.99'",        "", "( cDbfArt )", nil } )
    aAdd( aBase, { "BENEF2",    "N",  6, 2, "Porcentaje de beneficio precio 2" ,       "'@EZ 99.99'",        "", "( cDbfArt )", nil } )
    aAdd( aBase, { "BENEF3",    "N",  6, 2, "Porcentaje de beneficio precio 3" ,       "'@EZ 99.99'",        "", "( cDbfArt )", nil } )
@@ -319,72 +375,72 @@ Campos a importar--------------------------------------------------------------
    aAdd( aBase, { "PALQIVA4",  "N", 15, 6, "Precio de alquiler precio 4 " + cImp() + " incluido" ,    "PicOut()",        "", "( cDbfArt )", nil } )
    aAdd( aBase, { "PALQIVA5",  "N", 15, 6, "Precio de alquiler precio 5 " + cImp() + " incluido" ,    "PicOut()",        "", "( cDbfArt )", nil } )
    aAdd( aBase, { "PALQIVA6",  "N", 15, 6, "Precio de alquiler precio 6 " + cImp() + " incluido" ,    "PicOut()",        "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NPNTVER1",  "N", 15, 6, "Contribución punto verde" ,                               "PicOut()",        "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NPNVIVA1",  "N", 15, 6, "Contribución punto verde " + cImp() + " inc.",            "PicOut()",        "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NACTUAL",   "N", 15, 6, "Número de artículos" ,                    "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NCAJENT",   "N", 15, 6, "Número de cajas por defecto" ,            "MasUnd()",           "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NUNICAJA",  "N", 15, 6, "Número de unidades por defecto" ,         "MasUnd()",           "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NMINIMO",   "N", 15, 6, "Número de stock mínimo" ,                 "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NMAXIMO",   "N", 15, 6, "Número de stock maximo" ,                 "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NCNTACT",   "N", 15, 6, "Número del contador" ,                    "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NPNTVER1",  "N", 15, 6, "Contribuciï¿½n punto verde" ,                               "PicOut()",        "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NPNVIVA1",  "N", 15, 6, "Contribuciï¿½n punto verde " + cImp() + " inc.",            "PicOut()",        "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NACTUAL",   "N", 15, 6, "Nï¿½mero de artï¿½culos" ,                    "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NCAJENT",   "N", 15, 6, "Nï¿½mero de cajas por defecto" ,            "MasUnd()",           "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NUNICAJA",  "N", 15, 6, "Nï¿½mero de unidades por defecto" ,         "MasUnd()",           "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NMINIMO",   "N", 15, 6, "Nï¿½mero de stock mï¿½nimo" ,                 "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NMAXIMO",   "N", 15, 6, "Nï¿½mero de stock maximo" ,                 "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NCNTACT",   "N", 15, 6, "Nï¿½mero del contador" ,                    "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "LASTIN",    "D",  8, 0, "Fecha ultima entrada" ,                   "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LASTCHG",   "D",  8, 0, "Fecha de creación" ,                      "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LASTCHG",   "D",  8, 0, "Fecha de creaciï¿½n" ,                      "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "LASTOUT",   "D",  8, 0, "Fecha ultima salida" ,                    "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "TIPOIVA",   "C",  1, 0, "Código tipo de " + cImp(),                "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LIVAINC",   "L",  1, 0, "Lógico " + cImp() + " incluido (S/N)" ,   "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "FAMILIA",   "C", 16, 0, "Código de la familia del artículo" ,      "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CSUBFAM",   "C",  8, 0, "Código de la subfamilia del artículo" ,   "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "GRPVENT",   "C",  9, 0, "Código del grupo de ventas" ,             "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCTAVTA",   "C", 12, 0, "Código de la cuenta de ventas" ,          "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCTACOM",   "C", 12, 0, "Código de la cuenta de compras" ,         "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCTATRN",   "C", 12, 0, "Código de la cuenta de portes" ,          "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CODEBAR",   "C", 20, 0, "Código de barras" ,                       "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NTIPBAR",   "N",  2, 0, "Tipo de código de barras" ,               "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "DESCRIP",   "M", 10, 0, "Descripción larga" ,                      "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LLABEL",    "L",  1, 0, "Lógico de selección de etiqueta",         "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NLABEL",    "N",  5, 0, "Número de etiquetas a imprimir",          "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "TIPOIVA",   "C",  1, 0, "Cï¿½digo tipo de " + cImp(),                "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LIVAINC",   "L",  1, 0, "Lï¿½gico " + cImp() + " incluido (S/N)" ,   "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "FAMILIA",   "C", 16, 0, "Cï¿½digo de la familia del artï¿½culo" ,      "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CSUBFAM",   "C",  8, 0, "Cï¿½digo de la subfamilia del artï¿½culo" ,   "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "GRPVENT",   "C",  9, 0, "Cï¿½digo del grupo de ventas" ,             "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCTAVTA",   "C", 12, 0, "Cï¿½digo de la cuenta de ventas" ,          "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCTACOM",   "C", 12, 0, "Cï¿½digo de la cuenta de compras" ,         "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCTATRN",   "C", 12, 0, "Cï¿½digo de la cuenta de portes" ,          "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CODEBAR",   "C", 20, 0, "Cï¿½digo de barras" ,                       "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NTIPBAR",   "N",  2, 0, "Tipo de cï¿½digo de barras" ,               "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "DESCRIP",   "M", 10, 0, "Descripciï¿½n larga" ,                      "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LLABEL",    "L",  1, 0, "Lï¿½gico de selecciï¿½n de etiqueta",         "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NLABEL",    "N",  5, 0, "Nï¿½mero de etiquetas a imprimir",          "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NCTLSTOCK", "N",  1, 0, "Control de stock (1/2/3)",                "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "LSELPRE",   "L",  1, 0, "",                                        "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NSELPRE",   "N",  5, 0, "",                                        "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NTIPPRE",   "N",  1, 0, "",                                        "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NPESOKG",   "N", 16, 6, "Peso del artículo" ,                      "'@E 999,999.999999'","", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CUNIDAD",   "C",  2, 0, "Unidad de medición del peso" ,            "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NVOLUMEN",  "N", 16, 6, "Volumen del artículo" ,                   "'@E 999,999.999999'","", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CVOLUMEN",  "C",  2, 0, "Unidad de medición del volumen" ,         "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NLNGART",   "N", 16, 6, "Largo del artículo" ,                     "'@E 999,999.999999'","", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NALTART",   "N", 16, 6, "Alto del artículo" ,                      "'@E 999,999.999999'","", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NANCART",   "N", 16, 6, "Ancho del artículo" ,                     "'@E 999,999.999999'","", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CUNDDIM",   "C",  2, 0, "Unidad de medición de las longitudes" ,   "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NPESOKG",   "N", 16, 6, "Peso del artï¿½culo" ,                      "'@E 999,999.999999'","", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CUNIDAD",   "C",  2, 0, "Unidad de mediciï¿½n del peso" ,            "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NVOLUMEN",  "N", 16, 6, "Volumen del artï¿½culo" ,                   "'@E 999,999.999999'","", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CVOLUMEN",  "C",  2, 0, "Unidad de mediciï¿½n del volumen" ,         "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NLNGART",   "N", 16, 6, "Largo del artï¿½culo" ,                     "'@E 999,999.999999'","", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NALTART",   "N", 16, 6, "Alto del artï¿½culo" ,                      "'@E 999,999.999999'","", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NANCART",   "N", 16, 6, "Ancho del artï¿½culo" ,                     "'@E 999,999.999999'","", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CUNDDIM",   "C",  2, 0, "Unidad de mediciï¿½n de las longitudes" ,   "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPPES",   "N", 15, 6, "Importe de peso/volumen del articulo" ,   "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "CIMAGEN",   "C",250, 0, "Fichero de imagen" ,                      "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lSndDoc",   "L",  1, 0, "Lógico para envios" ,                     "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodUsr",   "C",  3, 0, "Código de usuario que realiza el cambio" ,"",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lSndDoc",   "L",  1, 0, "Lï¿½gico para envios" ,                     "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodUsr",   "C",  3, 0, "Cï¿½digo de usuario que realiza el cambio" ,"",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "dFecChg",   "D",  8, 0, "Fecha de cambio" ,                        "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cTimChg",   "C",  5, 0, "Hora de cambio" ,                         "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lKitArt",   "L",  1, 0, "Lógico de escandallos" ,                  "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lKitAsc",   "L",  1, 0, "Lógico de asociado" ,                     "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lKitArt",   "L",  1, 0, "Lï¿½gico de escandallos" ,                  "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lKitAsc",   "L",  1, 0, "Lï¿½gico de asociado" ,                     "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nKitImp",   "N",  1, 0, "" ,                                       "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nKitStk",   "N",  1, 0, "" ,                                       "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nKitPrc",   "N",  1, 0, "" ,                                       "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lAutSer",   "L",  1, 0, "Lógico de autoserializar" ,               "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LOBS",      "L",  1, 0, "Lógico de obsoleto" ,                     "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LNUMSER",   "L",  1, 0, "Lógico solicitar numero de serie" ,       "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lAutSer",   "L",  1, 0, "Lï¿½gico de autoserializar" ,               "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LOBS",      "L",  1, 0, "Lï¿½gico de obsoleto" ,                     "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LNUMSER",   "L",  1, 0, "Lï¿½gico solicitar numero de serie" ,       "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "CPRVHAB",   "C", 12, 0, "Proveedor habitual" ,                     "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LFACCNV",   "L",  1, 0, "Usar factor de conversión" ,              "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CFACCNV",   "C",  2, 0, "Código del factor de conversión" ,        "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCODTNK",   "C",  3, 0, "Código del tanque de combustible" ,       "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCODTIP",   "C",  4, 0, "Código del tipo de artículo" ,            "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LTIPACC",   "L",  1, 0, "Lógico de acceso por unidades o importe", "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LCOMBUS",   "L",  1, 0, "Lógico si el artículo es del tipo combustible", "",             "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCODIMP",   "C",  3, 0, "Código del impuesto especiales",          "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LMSGVTA",   "L",  1, 0, "Lógico para avisar en venta sin stock",   "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LNOTVTA",   "L",  1, 0, "Lógico para no permitir venta sin stock", "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LFACCNV",   "L",  1, 0, "Usar factor de conversiï¿½n" ,              "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CFACCNV",   "C",  2, 0, "Cï¿½digo del factor de conversiï¿½n" ,        "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCODTNK",   "C",  3, 0, "Cï¿½digo del tanque de combustible" ,       "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCODTIP",   "C",  4, 0, "Cï¿½digo del tipo de artï¿½culo" ,            "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LTIPACC",   "L",  1, 0, "Lï¿½gico de acceso por unidades o importe", "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LCOMBUS",   "L",  1, 0, "Lï¿½gico si el artï¿½culo es del tipo combustible", "",             "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCODIMP",   "C",  3, 0, "Cï¿½digo del impuesto especiales",          "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LMSGVTA",   "L",  1, 0, "Lï¿½gico para avisar en venta sin stock",   "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LNOTVTA",   "L",  1, 0, "Lï¿½gico para no permitir venta sin stock", "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NLOTE",     "N",  9, 0, "",                                        "'999999999'",        "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cLote",     "C", 14, 0, "Número de lote",                          "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cLote",     "C", 14, 0, "Nï¿½mero de lote",                          "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "LLOTE",     "L",  1, 0, "Lote (S/N)",                              "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LPUBINT",   "L",  1, 0, "Lógico para publicar en internet (S/N)",  "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LPUBOFE",   "L",  1, 0, "Lógico para publicar como oferta (S/N)",  "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LPUBPOR",   "L",  1, 0, "Lógico para publicar como artículo destacado (S/N)",  "",       "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LPUBINT",   "L",  1, 0, "Lï¿½gico para publicar en internet (S/N)",  "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LPUBOFE",   "L",  1, 0, "Lï¿½gico para publicar como oferta (S/N)",  "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LPUBPOR",   "L",  1, 0, "Lï¿½gico para publicar como artï¿½culo destacado (S/N)",  "",       "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NDTOINT1",  "N", 10, 6, "Descuento de oferta para tienda web 1",   "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPINT1",  "N", 15, 6, "Precio del producto en oferta 1",         "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPIVA1",  "N", 15, 6, "Precio del producto en oferta con " + cImp() + " 1", "",        "", "( cDbfArt )", nil } )
@@ -403,48 +459,48 @@ Campos a importar--------------------------------------------------------------
    aAdd( aBase, { "NDTOINT6",  "N", 10, 6, "Descuento de oferta para tienda web 6",   "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPINT6",  "N", 15, 6, "Precio del producto en oferta 6",         "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPIVA6",  "N", 15, 6, "Precio del producto en oferta con " + cImp() + " 6", "",        "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "MDESTEC",   "M", 10, 0, "Descripción técnica del artículo",        "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "MDESTEC",   "M", 10, 0, "Descripciï¿½n tï¿½cnica del artï¿½culo",        "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NLNGCAJ",   "N", 16, 6, "Largo de la caja" ,                       "'@E 999,999.999999'","", "( cDbfArt )", nil } )
    aAdd( aBase, { "NALTCAJ",   "N", 16, 6, "Alto de la caja" ,                        "'@E 999,999.999999'","", "( cDbfArt )", nil } )
    aAdd( aBase, { "NANCCAJ",   "N", 16, 6, "Ancho de la caja" ,                       "'@E 999,999.999999'","", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CUNDCAJ",   "C",  2, 0, "Unidad de medición de la caja" ,          "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CUNDCAJ",   "C",  2, 0, "Unidad de mediciï¿½n de la caja" ,          "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NPESCAJ",   "N", 16, 6, "Peso de la caja" ,                        "'@E 999,999.999999'","", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCAJPES",   "C",  2, 0, "Unidad de medición del peso de la caja" , "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCAJPES",   "C",  2, 0, "Unidad de mediciï¿½n del peso de la caja" , "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NVOLCAJ",   "N", 16, 6, "Volumen de la caja" ,                     "'@E 999,999.999999'","", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCAJVOL",   "C",  2, 0, "Unidad de medición del volumen de la caja","",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NCAJPLT",   "N", 16, 6, "Número de cajas por palets" ,             "'@E 999,999.999999'","", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCAJVOL",   "C",  2, 0, "Unidad de mediciï¿½n del volumen de la caja","",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NCAJPLT",   "N", 16, 6, "Nï¿½mero de cajas por palets" ,             "'@E 999,999.999999'","", "( cDbfArt )", nil } )
    aAdd( aBase, { "NBASPLT",   "N", 16, 6, "Base del palet" ,                         "'@E 999,999.999999'","", "( cDbfArt )", nil } )
    aAdd( aBase, { "NALTPLT",   "N", 16, 6, "Altura del palet" ,                       "'@E 999,999.999999'","", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CUNDPLT",   "C",  2, 0, "Unidad de medición de la altura del palet","",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LINCTCL",   "L",  1, 0, "Incluir en pantalla táctil",               "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CDESTCL",   "C", 20, 0, "Descripción en pantalla táctil",           "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CDESCMD",   "M", 10, 0, "Descripción para comanda",                 "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NPOSTCL",   "N", 16, 6, "Posición en pantalla táctil",              "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCODCAT",   "C",  4, 0, "Código del catálogo del artículo" ,        "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CUNDPLT",   "C",  2, 0, "Unidad de mediciï¿½n de la altura del palet","",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LINCTCL",   "L",  1, 0, "Incluir en pantalla tï¿½ctil",               "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CDESTCL",   "C", 20, 0, "Descripciï¿½n en pantalla tï¿½ctil",           "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CDESCMD",   "M", 10, 0, "Descripciï¿½n para comanda",                 "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NPOSTCL",   "N", 16, 6, "Posiciï¿½n en pantalla tï¿½ctil",              "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCODCAT",   "C",  4, 0, "Cï¿½digo del catï¿½logo del artï¿½culo" ,        "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NPUNTOS",   "N", 16, 6, "Puntos del catalogo" ,                     "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NDTOPNT",   "N",  6, 2, "Dto. del catalogo" ,                       "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NRENMIN",   "N",  6, 2, "Rentabilidad mínima" ,                     "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCODCATE",  "C", 10, 0, "Código de categoría",                      "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCODTEMP",  "C", 10, 0, "Código de la temporada",                   "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LECOTASA",  "L",  1, 0, "Lógico para usar ECOTASA",                 "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LMOSCOM",   "L",  1, 0, "Lógico mostrar comentario" ,               "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NRENMIN",   "N",  6, 2, "Rentabilidad mï¿½nima" ,                     "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCODCATE",  "C", 10, 0, "Cï¿½digo de categorï¿½a",                      "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCODTEMP",  "C", 10, 0, "Cï¿½digo de la temporada",                   "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LECOTASA",  "L",  1, 0, "Lï¿½gico para usar ECOTASA",                 "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LMOSCOM",   "L",  1, 0, "Lï¿½gico mostrar comentario" ,               "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "MCOMENT",   "M", 10, 0, "Comentario a mostrar" ,                    "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LPUNTO",    "L",  1, 0, "Lógico para trabajar con puntos" ,         "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCODPRP1",  "C", 20, 0, "Código de la primera propiedad" ,          "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCODPRP2",  "C", 20, 0, "Código de la segunda propiedad" ,          "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LPUNTO",    "L",  1, 0, "Lï¿½gico para trabajar con puntos" ,         "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCODPRP1",  "C", 20, 0, "Cï¿½digo de la primera propiedad" ,          "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCODPRP2",  "C", 20, 0, "Cï¿½digo de la segunda propiedad" ,          "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "lCodPrp",   "L",  1, 0, "" ,                                        "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodFra",   "C",  3, 0, "Código de frases publiciarias",            "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodWeb",   "N", 11, 0, "Código del producto en la web",            "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nPosTpv",   "N", 10, 2, "Posición para mostrar en TPV táctil",      "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nDuracion", "N",  3, 0, "Duración del producto",                    "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nTipDur",   "N",  1, 0, "Tipo duración (dia, mes, año)",            "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodFab",   "C",  3, 0, "Código del fabricante",                    "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodFra",   "C",  3, 0, "Cï¿½digo de frases publiciarias",            "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodWeb",   "N", 11, 0, "Cï¿½digo del producto en la web",            "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nPosTpv",   "N", 10, 2, "Posiciï¿½n para mostrar en TPV tï¿½ctil",      "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nDuracion", "N",  3, 0, "Duraciï¿½n del producto",                    "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nTipDur",   "N",  1, 0, "Tipo duraciï¿½n (dia, mes, aï¿½o)",            "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodFab",   "C",  3, 0, "Cï¿½digo del fabricante",                    "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nImpCom1",  "N",  1, 0, "Impresora de comanda 1",                   "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nImpCom2",  "N",  1, 0, "Impresora de comanda 2",                   "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lMsgMov",   "L",  1, 0, "Lógico para avisar en movimientos sin stock","",                "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lMsgMov",   "L",  1, 0, "Lï¿½gico para avisar en movimientos sin stock","",                "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cImagenWeb","C",250, 0, "Imagen para la web",                       "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cChgBar",   "D",  8, 0, "Fecha de cambio de código de barras",      "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cDesUbi",   "C",200, 0, "Ubicación",                                "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cChgBar",   "D",  8, 0, "Fecha de cambio de cï¿½digo de barras",      "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cDesUbi",   "C",200, 0, "Ubicaciï¿½n",                                "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "dFecVta",   "D",  8, 0, "Fecha de puesta a la venta",               "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "dFinVta",   "D",  8, 0, "Fecha de fin de la venta",                 "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "lMsgSer",   "L",  1, 0, "Avisar en ventas por series sin stock",    "",                  "", "( cDbfArt )", nil } )
@@ -453,37 +509,37 @@ Campos a importar--------------------------------------------------------------
    aAdd( aBase, { "mValPrp1",  "M", 10, 0, "Valores seleccionables de la primera propiedad", "",            "", "( cDbfArt )", nil } )
    aAdd( aBase, { "mValPrp2",  "M", 10, 0, "Valores seleccionables de la segunda propiedad", "",            "", "( cDbfArt )", nil } )
    aAdd( aBase, { "dChgBar",   "D",  8, 0, "Fecha de cambio de codigos de barras",     "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodSus",   "C", 18, 0, "Código del artículo al que se sustituye" , "'@!'",              "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodPor",   "C", 18, 0, "Código del artículo por el que es sustituido" , "'@!'",         "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nDtoArt1",  "N",  6, 2, "Primer descuento de artículo",             "@EZ 99.99",         "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nDtoArt2",  "N",  6, 2, "Segundo descuento de artículo",            "@EZ 99.99",         "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nDtoArt3",  "N",  6, 2, "Tercer descuento de artículo",             "@EZ 99.99",         "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nDtoArt4",  "N",  6, 2, "Cuarto descuento de artículo",             "@EZ 99.99",         "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nDtoArt5",  "N",  6, 2, "Quinto descuento de artículo",             "@EZ 99.99",         "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nDtoArt6",  "N",  6, 2, "Sexto descuento de artículo",              "@EZ 99.99",         "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lMarAju",   "L",  1, 0, "Lógico para utilizar el margen de ajuste", "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodSus",   "C", 18, 0, "Cï¿½digo del artï¿½culo al que se sustituye" , "'@!'",              "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodPor",   "C", 18, 0, "Cï¿½digo del artï¿½culo por el que es sustituido" , "'@!'",         "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nDtoArt1",  "N",  6, 2, "Primer descuento de artï¿½culo",             "@EZ 99.99",         "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nDtoArt2",  "N",  6, 2, "Segundo descuento de artï¿½culo",            "@EZ 99.99",         "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nDtoArt3",  "N",  6, 2, "Tercer descuento de artï¿½culo",             "@EZ 99.99",         "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nDtoArt4",  "N",  6, 2, "Cuarto descuento de artï¿½culo",             "@EZ 99.99",         "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nDtoArt5",  "N",  6, 2, "Quinto descuento de artï¿½culo",             "@EZ 99.99",         "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nDtoArt6",  "N",  6, 2, "Sexto descuento de artï¿½culo",              "@EZ 99.99",         "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lMarAju",   "L",  1, 0, "Lï¿½gico para utilizar el margen de ajuste", "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cMarAju",   "C",  5, 0, "Cadena descriptiva del margen de ajuste",  "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nTarWeb",   "N",  1, 0, "Tarifa a aplicar en la Web" ,              "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "pVtaWeb",   "N", 16, 6, "Precio venta en la Web",                   "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cTipImp1",  "C", 50, 0, "Tipo impresora comanda 1",                 "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cTipImp2",  "C", 50, 0, "Tipo impresora comanda 2",                 "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cRefPrv",   "C", 18, 0, "Referencia del proveedor al artículo" ,    "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodSec",   "C",  3, 0, "Código de la sección para producción" ,    "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nFacCnv",   "N", 16, 6, "Factor de conversión" ,                    "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lSbrInt",   "L",  1, 0, "Lógico precio libre internet" ,            "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nColBtn",   "N", 10, 0, "Color para táctil" ,                       "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cRefPrv",   "C", 18, 0, "Referencia del proveedor al artï¿½culo" ,    "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodSec",   "C",  3, 0, "Cï¿½digo de la secciï¿½n para producciï¿½n" ,    "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nFacCnv",   "N", 16, 6, "Factor de conversiï¿½n" ,                    "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lSbrInt",   "L",  1, 0, "Lï¿½gico precio libre internet" ,            "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nColBtn",   "N", 10, 0, "Color para tï¿½ctil" ,                       "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cOrdOrd",   "C",  2, 0, "Orden de comanda" ,                        "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lTerminado","L",  1, 0, "Lógico de producto terminado (producción)" , "",                "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lPeso",     "L",  1, 0, "Lógico de producto por peso",              "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cMenu",     "C",  3, 0, "Código del menú de acompañamiento",        "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cTitSeo",   "C", 70, 0, "Meta-título",                              "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lTerminado","L",  1, 0, "Lï¿½gico de producto terminado (producciï¿½n)" , "",                "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lPeso",     "L",  1, 0, "Lï¿½gico de producto por peso",              "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cMenu",     "C",  3, 0, "Cï¿½digo del menï¿½ de acompaï¿½amiento",        "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cTitSeo",   "C", 70, 0, "Meta-tï¿½tulo",                              "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cDesSeo",   "C",160, 0, "Meta-descripcion",                         "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cKeySeo",   "C",160, 0, "Meta-keywords",                            "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodEst",   "C",  3, 0, "Estado del artículo",                      "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodEdi",   "C", 20, 0, "Código normalizado del artículo",          "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodEst",   "C",  3, 0, "Estado del artï¿½culo",                      "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodEdi",   "C", 20, 0, "Cï¿½digo normalizado del artï¿½culo",          "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cRefAux",   "C", 18, 0, "Referencia auxiliar",                      "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cRefAux2",  "C", 18, 0, "Referencia auxiliar 2",                    "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "Matriz",    "C", 18, 0, "Matriz para código de barras" ,            "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "Matriz",    "C", 18, 0, "Matriz para cï¿½digo de barras" ,            "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nStkCal",   "N", 16, 6, "Stock calculado" ,                         "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "lIvaInc2",  "L",  1, 0, "Iva incluido para el precio 2" ,           "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "lIvaInc3",  "L",  1, 0, "Iva incluido para el precio 3" ,           "",                  "", "( cDbfArt )", nil } )
@@ -494,12 +550,12 @@ Campos a importar--------------------------------------------------------------
    aAdd( aBase, { "cWebShop",  "C",100, 0, "Tienda web donde se publica el producto",  "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "lIvaWeb",   "L",  1, 0, "Iva incluido para precio web" ,            "",                  "", "( cDbfArt )", nil } )
 
-   aAdd( aBase, { "cCodArt",   "C", 18, 0, "Código del artículo referenciado"  , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodPrv",   "C", 12, 0, "Código del proveedor"              , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cRefPrv",   "C", 60, 0, "Referencia del proveedor al artículo" , "",               "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodArt",   "C", 18, 0, "Cï¿½digo del artï¿½culo referenciado"  , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodPrv",   "C", 12, 0, "Cï¿½digo del proveedor"              , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cRefPrv",   "C", 60, 0, "Referencia del proveedor al artï¿½culo" , "",               "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nDtoPrv",   "N",  6, 2, "Descuento del proveedor"           , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nDtoPrm",   "N",  6, 2, "Descuento por promoción"           , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cDivPrv",   "C",  3, 0, "Código de la divisa"               , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nDtoPrm",   "N",  6, 2, "Descuento por promociï¿½n"           , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cDivPrv",   "C",  3, 0, "Cï¿½digo de la divisa"               , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nImpPrv",   "N", 19, 6, "Importe de compra"                 , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lDefPrv",   "L",  1, 0, "Lógico de proveedor por defecto"   , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lDefPrv",   "L",  1, 0, "Lï¿½gico de proveedor por defecto"   , "",                  "", "( cDbfArt )", nil } )
 */

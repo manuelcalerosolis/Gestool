@@ -355,8 +355,7 @@ CLASS D
       METHOD getStatusClientesDirecciones( nView )       INLINE ( ::aStatus := aGetStatus( ::ClientesDirecciones( nView ) ) )
       METHOD setStatusClientesDirecciones( nView )       INLINE ( SetStatus( ::Get( "ObrasT", nView ), ::aStatus ) ) 
       METHOD setFocusClientesDirecciones( cTag, nView )  INLINE ( ::cTag   := ( ::ClientesDirecciones( nView )  )->( ordSetFocus( cTag ) ) )
-      METHOD gotoIdClientesDirecciones( id, nView );
-                                                         INLINE ( ::seek( ::ClientesDirecciones( nView ), id ) ) 
+      METHOD gotoIdClientesDirecciones( id, nView )      INLINE ( ::seek( ::ClientesDirecciones( nView ), id ) ) 
 
    METHOD TiposIncidencias( nView )                      INLINE ( ::Get( "TipInci", nView ) )
       METHOD TiposIncidenciasId( nView )                 INLINE ( ( ::Get( "TipInci", nView ) )->cCodInci )

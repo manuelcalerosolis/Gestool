@@ -1772,27 +1772,25 @@ Abre el Fichero de Empresas
 STATIC FUNCTION OpnEmpresa( cRuta, lMessage )
 
    local oBlock
-   local lOpen       := .t.
 
    DEFAULT lMessage  := .f.
    DEFAULT lMessage  := .f.
    DEFAULT cRuta     := cRutCnt()
 
    if Empty( cRuta )
-      return .f.
+      return ( nil )
    end if
 
    cRuta             := cPath( cRuta )
 
    if !File( cRuta + "Emp\Empresa.Dbf" ) .or. !File( cRuta + "Emp\Empresa.Cdx" )
       if lMessage
-         MsgStop( "Fichero de empresa de Contaplus ® " +  cRuta + "Emp\Empresa.Dbf, no enContrapartidado", "Abriendo fichero de empresas" )
+         MsgStop( "Fichero de empresa de Contaplus ® " +  cRuta + "Emp\Empresa.Dbf, no encontrado", "Abriendo fichero de empresas" )
       end if
-      Return .f.
+      Return ( nil )
    end if
 
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-
    BEGIN SEQUENCE
 
       USE ( cRuta + "EMP\EMPRESA.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @cEmpresa ) )
@@ -1800,7 +1798,7 @@ STATIC FUNCTION OpnEmpresa( cRuta, lMessage )
 
    RECOVER
 
-      lOpen          := .f.
+      cEmpresa       := nil
 
    END SEQUENCE
 

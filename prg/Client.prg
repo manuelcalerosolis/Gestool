@@ -6901,7 +6901,7 @@ Function BrwCliTactil( oGet, dbfCli, oGet2, lReturnCliente, cText, cBitmap )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Código"
-         :cSortOrder       := "CodBig"
+         :cSortOrder       := "Cod"
          :bEditValue       := {|| AllTrim( ( dbfCli )->Cod ) }
          :nWidth           := 110
       end with
@@ -8568,7 +8568,7 @@ FUNCTION rxClient( cPath, cDriver )
       ( dbfCli )->( __dbPack() )
 
       ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "COD", "Field->COD", {|| Field->COD } ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "COD", "Upper( Field->COD )", {|| Upper( Field->COD ) } ) )
 
       ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "TITULO", "UPPER( Field->TITULO )", {|| UPPER( Field->TITULO ) }, ) )
@@ -8608,9 +8608,6 @@ FUNCTION rxClient( cPath, cDriver )
 
       ( dbfCli )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( dbfCli )->( ordCreate( cPath + "Client.Cdx", "cCodUsr", "Field->cCodUsr + Dtos( Field->dFecChg ) + Field->cTimChg", {|| Field->cCodUsr + Dtos( Field->dFecChg ) + Field->cTimChg } ) )
-
-      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "CODBIG", "UPPER( Field->COD )", {|| UPPER( Field->COD ) } ) )
 
       ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "cCodWeb", "Str( Field->cCodWeb, 11 )", {|| Str( Field->cCodWeb, 11 ) } ) )

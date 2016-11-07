@@ -359,7 +359,7 @@ Static Function CreateMainWindow( oIconApp )
       ON PAINT    ( WndPaint( hDC, oWnd, oBmp ) ); 
       ON RESIZE   ( WndResize( oWnd ) );
       ON INIT     ( lStartCheck() );
-      VALID       ( EndApp() ) // , FinishAplication(), .f. )
+      VALID       ( EndApp() ) 
 
    SysRefresh()
 
@@ -3419,7 +3419,11 @@ Static Function InitMainTactilWindow()
 
    lDemoMode( .f. )
 
-   SelCajTactil( , .t. )
+   selCajTactil( , .t. )
+
+   // Colocamos la sesion actual-----------------------------------------------
+
+   chkTurno( , oWnd )
 
    TpvTactil():New():Activate( .t. )
 

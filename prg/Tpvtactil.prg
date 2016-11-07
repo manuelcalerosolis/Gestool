@@ -2087,15 +2087,19 @@ METHOD Resource() CLASS TpvTactil
       ::oLstArticulos:nAlphaLevel   := 150
    end if
 
-   // Botones para acciones de los articulos--------------------------------------
+   // Botones para acciones de los articulos-----------------------------------
 
    ::oBtnArticulosPageUp         := TButtonBmp():ReDefine( 500, {|| if( !Empty( ::oLstArticulos ), ::oLstArticulos:PageUp(), ) },    ::oDlg, , , .f., , , , .f., "Navigate_up2" )
    ::oBtnArticulosPageDown       := TButtonBmp():ReDefine( 501, {|| if( !Empty( ::oLstArticulos ), ::oLstArticulos:PageDown(), ) },  ::oDlg, , , .f., , , , .f., "Navigate_down2" )
 
-   // ::oBtnOrdenComandaActual            := TButtonBmp():ReDefine( 505, {|| ::SelectorOrdenComanda() },    ::oDlg, , , .f., , , "TEXTO", .f., "Sort_az_descending_32" ) //
+   // Boton de orden de comanda------------------------------------------------
 
-   ::oBtnOrdenComandaActual      := TButton():ReDefine( 505, {|| ::SelectorOrdenComanda() }, ::oDlg, , , .f., , , "Orden comanda" )
-   ::oBtnOrdenComandaActual:setFont( ::oFntNum )
+   if ::l1024()
+      ::oBtnOrdenComandaActual   := TButtonBmp():ReDefine( 505, {|| ::SelectorOrdenComanda() }, ::oDlg, , , .f., , , "", .f., "Sort_az_descending_32" ) //
+   else
+      ::oBtnOrdenComandaActual   := TButton():ReDefine( 505, {|| ::SelectorOrdenComanda() }, ::oDlg, , , .f., , , "Orden comanda" )
+      ::oBtnOrdenComandaActual:setFont( ::oFntNum )
+   end if 
    
    ::oGetCambiarOrden            := TGetHlp():ReDefine( 506, {|u| if( pcount () == 0, ::cOrdenComanda, ::cOrdenComanda := u ) }, ::oDlg )
    ::oGetCambiarOrden:bWhen      := {|| .f. }
@@ -2454,9 +2458,9 @@ METHOD Resource() CLASS TpvTactil
    */
 
    if !::l1024()
-      ::oBtnSSalon            := TButtonBmp():ReDefine( 506, {|| ::OnClickSalaVenta() },  ::oDlg, , , .f., , , , .f., "Cup_32" )
-      ::oBtnSEntregar         := TButtonBmp():ReDefine( 507, {|| ::OnClickEntregaNota() },    ::oDlg, , , .f., , , , .f., "Printer_32" )
-      ::oBtnSCobrar           := TButtonBmp():ReDefine( 508, {|| ::OnClickCobro() },      ::oDlg, , , .f., , , , .f., "Money2_32" )
+      ::oBtnSSalon            := TButtonBmp():ReDefine( 506, {|| ::OnClickSalaVenta() }, ::oDlg, , , .f., , , , .f., "Cup_32" )
+      ::oBtnSEntregar         := TButtonBmp():ReDefine( 507, {|| ::OnClickEntregaNota() }, ::oDlg, , , .f., , , , .f., "Printer_32" )
+      ::oBtnSCobrar           := TButtonBmp():ReDefine( 508, {|| ::OnClickCobro() }, ::oDlg, , , .f., , , , .f., "Money2_32" )
    end if
 
    /*
@@ -2800,9 +2804,14 @@ METHOD ResizedResource() CLASS TpvTactil
    ::oBtnArticulosPageUp:Move( ::oBtnArticulosPageUp:nTop + nDialogHeight, , , , .f. )
    ::oBtnArticulosPageDown:Move( ::oBtnArticulosPageDown:nTop + nDialogHeight, , , , .f. )
 
-   ::oBtnOrdenComandaActual:Move( ::oBtnOrdenComandaActual:nTop + nDialogHeight, ::oBtnOrdenComandaActual:nLeft + nDialogWidth -100, 262, , .f. )
+   if ::l1024()
+      ::oBtnOrdenComandaActual:Move( ::oBtnOrdenComandaActual:nTop + nDialogHeight, ::oBtnOrdenComandaActual:nLeft + nDialogWidth -100, 262, , .f. )
+   else     
+      ::oBtnOrdenComandaActual:Move( ::oBtnOrdenComandaActual:nTop + nDialogHeight, ::oBtnOrdenComandaActual:nLeft + nDialogWidth -100, 200, , .f. )
+   end if 
 
    // ::oGetCambiarOrden:Move( ::oGetCambiarOrden:nTop + nDialogHeight, ::oGetCambiarOrden:nLeft + nDialogWidth - 100, 200, , .f. )
+
    ::oGetCambiarOrden:Hide()
 
    ::oBtnAgregarLibre:Move( ::oBtnAgregarLibre:nTop + nDialogHeight, ::oBtnAgregarLibre:nLeft + nDialogWidth, , , .f. )

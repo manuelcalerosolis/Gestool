@@ -1,22 +1,14 @@
-#ifndef __PDA__
-   #include "FiveWin.Ch"
-   #include "Font.ch"
-   #include "Report.ch"
-#else
-   #include "FWCE.ch"
-   REQUEST DBFCDX
-#endif
-
+#include "FiveWin.Ch"
+#include "Font.ch"
+#include "Report.ch"
 #include "Factu.ch" 
-
-#ifndef __PDA__
-   static bEdit      := {| aBlank, aoGet, dbfObrasT, oBrw, bWhen, bValid, nMode, cCodCli | EdtRec( aBlank, aoGet, dbfObrasT, oBrw, bWhen, bValid, nMode, cCodCli ) }
-#endif
 
 static oWndBrw
 static dbfObrasT
 
-#ifndef __PDA__
+static bEdit         := {| aBlank, aoGet, dbfObrasT, oBrw, bWhen, bValid, nMode, cCodCli | EdtRec( aBlank, aoGet, dbfObrasT, oBrw, bWhen, bValid, nMode, cCodCli ) }
+
+static aTipoObra     := { "Defecto", "Envio", "Factura", "Otras" }
 
 //--------------------------------------------------------------------------//
 //Funciones del programa
@@ -45,49 +37,41 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfObrasT, oBrw, bWhen, bValid, nMode, cC
 			ID 		130 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
 			PICTURE 	"@!" ;
-			COLOR 	CLR_GET ;
 			OF 		oDlg
 
       REDEFINE GET aBlank[ ( dbfObrasT )->( FieldPos( "CDIROBR" ) ) ] ;
 			ID 		140 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
 			OF 		oDlg
 
 		REDEFINE GET aBlank[ (dbfObrasT)->( FieldPos( "CPOBOBR" ) ) ] ;
 			ID 		150 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
 			OF 		oDlg
 
 		REDEFINE GET aBlank[ (dbfObrasT)->( FieldPos( "CPRVOBR" ) ) ] ;
 			ID 		160 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
 			OF 		oDlg
 
 		REDEFINE GET aBlank[ (dbfObrasT)->( FieldPos( "CPOSOBR" ) ) ] ;
 			ID 		170 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
 			OF 		oDlg
 
 		REDEFINE GET aBlank[ (dbfObrasT)->( FieldPos( "CTELOBR" ) ) ] ;
 			ID 		180 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
 			OF 		oDlg
 
 		REDEFINE GET aBlank[ (dbfObrasT)->( FieldPos( "CFAXOBR" ) ) ] ;
 			ID 		190 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
 			OF 		oDlg
 
       REDEFINE GET aBlank[ (dbfObrasT)->( FieldPos( "CCODEDI" ) ) ] ;
          ID       230 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         COLOR    CLR_GET ;
          OF       oDlg
 
       REDEFINE GET aBlank[ (dbfObrasT)->( FieldPos( "CDEPARTA" ) ) ] ;
@@ -113,7 +97,6 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfObrasT, oBrw, bWhen, bValid, nMode, cC
       REDEFINE GET aBlank[ (dbfObrasT)->( FieldPos( "CESTOBR" ) ) ] ;
          ID       240 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         COLOR    CLR_GET ;
          OF       oDlg
 
       REDEFINE CHECKBOX aBlank[ (dbfObrasT)->( FieldPos( "LDEFOBR" ) ) ] ;
@@ -124,13 +107,11 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfObrasT, oBrw, bWhen, bValid, nMode, cC
       REDEFINE GET aBlank[ ( dbfObrasT )->( FieldPos( "CCNTOBR" ) ) ] ;
          ID       200 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
 			OF 		oDlg
 
       REDEFINE GET aBlank[ ( dbfObrasT )->( FieldPos( "CMOVOBR" ) ) ] ;
          ID       210 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
 			OF 		oDlg
 
       REDEFINE GET aBlank[ ( dbfObrasT )->( FieldPos( "cCodPos" ) ) ] ;
@@ -167,6 +148,13 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfObrasT, oBrw, bWhen, bValid, nMode, cC
          ID       350 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg   
+
+      REDEFINE COMBOBOX aoGet[ ( dbfObrasT )->( FieldPos( "cTipo" ) ) ] ;
+         VAR      aBlank[ ( dbfObrasT )->( FieldPos( "cTipo" ) ) ] ;
+         ID       360 ;
+         ITEMS    aTipoObra ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
 
       REDEFINE BUTTON ;
          ID       IDOK ;
@@ -543,215 +531,6 @@ Return ( aCalObrCli )
 
 //---------------------------------------------------------------------------//
 
-#else
-
-//---------------------------------------------------------------------------//
-//Funciones solo de PDA
-//---------------------------------------------------------------------------//
-
-FUNCTION pdaBrwObras( oGet, oGet2, cCodCli, dbfObrasT )
-
-	local oDlg
-	local oBrw
-   local oFont
-   local oBtn
-	local oGet1
-	local cGet1
-   local nOrd        := GetBrwOpt( "BrwObras" )
-	local oCbxOrd
-   local aCbxOrd     := { "Código", "Nombre" }
-   local cCbxOrd     := "Código"
-   local nLevel      := nLevelUsr( "01032" )
-   local lClose      := .f.
-   local oSayText
-   local cSayText    := "Listado de obras"
-
-   nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
-   cCbxOrd           := aCbxOrd[ nOrd ]
-
-   if Empty( cCodCli )
-		MsgStop( "Es necesario codificar un cliente" )
-      return .t.
-   end if
-
-   if !lExistTable( cPatCli() + "ObrasT.Dbf" )
-      MsgStop( 'No existe el fichero de obras' )
-      Return .f.
-   end if
-
-   if Empty( dbfObrasT )
-      USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
-      SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
-      lClose      := .t.
-   END IF
-
-   ( dbfObrasT )->( ordSetFocus( nOrd ) )
-
-   ( dbfObrasT )->( OrdScope( 0, cCodCli ) )
-   ( dbfObrasT )->( OrdScope( 1, cCodCli ) )
-   ( dbfObrasT )->( dbGoTop() )
-
-#ifndef __PDA__
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY"      TITLE "Seleccionar direcciones"
-#else
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY_PDA"  TITLE "Seleccionar direcciones"
-
-   DEFINE FONT oFont NAME "Verdana" SIZE 0, -14
-
-      REDEFINE SAY oSayTit ;
-         VAR      "Buscando direcciones" ;
-         ID       110 ;
-         COLOR    "N/W*" ;
-         FONT     oFont ;
-         OF       oDlg
-
-      REDEFINE BTNBMP oBtn ;
-         ID       100 ;
-         OF       oDlg ;
-         FILE     ( cPatBmp() + "brickwall.bmp" ) ;
-         NOBORDER ;
-         ACTION      ( nil )
-
-      oBtn:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-#endif
-
-      REDEFINE GET oGet1 VAR cGet1;
-         ID       104 ;
-         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfObrasT, nil, cCodCli ) );
-         BITMAP   "FIND" ;
-         OF       oDlg
-
-		REDEFINE COMBOBOX oCbxOrd ;
-			VAR 		cCbxOrd ;
-			ID 		102 ;
-         ITEMS    aCbxOrd ;
-         ON CHANGE(  ( dbfObrasT )->( OrdSetFocus( oCbxOrd:nAt ) ),;
-                     ( dbfObrasT )->( OrdScope( 0, cCodCli ) ),;
-                     ( dbfObrasT )->( OrdScope( 1, cCodCli ) ),;
-                     oBrw:Refresh(),;
-                     oCbxOrd:Refresh(),;
-                     oGet1:SetFocus() );
-			OF 		oDlg
-
-		REDEFINE LISTBOX oBrw ;
-			FIELDS ;
-                  ( dbfObrasT )->cCodObr + CRLF + ( dbfObrasT )->cNomObr;
-         HEAD ;
-                  "Código" + CRLF + "Nombre";
-         SIZES ;
-                  180;
-         ALIAS    ( dbfObrasT ) ;
-         ID       105 ;
-         OF       oDlg
-
-      oBrw:aActions    := {| nCol | lPressCol( nCol, oBrw, oCbxOrd, aCbxOrd, dbfObrasT ) }
-      oBrw:bLDblClick  := {|| oDlg:end( IDOK ) }
-
-#ifndef __PDA__
-
-      if ( "PDA" $ cParamsMain() )
-
-      REDEFINE SAY oSayText VAR cSayText ;
-         ID       100 ;
-         OF       oDlg
-
-      end if
-
-		REDEFINE BUTTON ;
-         ID       IDOK ;
-         OF       oDlg ;
-         ACTION   ( oDlg:end(IDOK) )
-
-		REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-         OF       oDlg ;
-         ACTION   ( oDlg:end() )
-
-      if !( "PDA" $ cParamsMain() )
-
-		REDEFINE BUTTON ;
-         ID       500 ;
-         OF       oDlg ;
-         WHEN     ( nAnd( nLevel, ACC_APPD ) != 0 .and. !IsReport() );
-         ACTION   ( WinAppRec( oBrw, bEdit, dbfObrasT, nil, nil, cCodCli ) )
-
-		REDEFINE BUTTON ;
-         ID       501 ;
-         OF       oDlg ;
-         WHEN     ( nAnd( nLevel, ACC_EDIT ) != 0 .and. !IsReport() );
-         ACTION   ( WinEdtRec( oBrw, bEdit, dbfObrasT, nil, nil, cCodCli ) )
-
-      if !IsReport()
-         oDlg:AddFastKey( VK_F2,    {|| if( nAnd( nLevel, ACC_APPD ) != 0, WinAppRec( oBrw, bEdit, dbfObrasT, nil, nil, cCodCli ), ) } )
-         oDlg:AddFastKey( VK_F3,    {|| if( nAnd( nLevel, ACC_EDIT ) != 0, WinEdtRec( oBrw, bEdit, dbfObrasT, nil, nil, cCodCli ), ) } )
-      end if
-
-      end if
-
-   oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
-   oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
-
-   ACTIVATE DIALOG oDlg CENTER
-
-#else
-
-   ACTIVATE DIALOG oDlg ;
-      ON INIT ( pdaMenuEdtRec( oDlg ) )
-
-#endif
-
-   if oDlg:nResult == IDOK
-      oGet:cText( ( dbfObrasT )->CCODOBR )
-
-      if oGet2 != NIL
-         oGet2:cText( ( dbfObrasT )->CNOMOBR )
-      end if
-   end if
-
-   DestroyFastFilter( dbfObrasT )
-
-   SetBrwOpt( "BrwObras", ( dbfObrasT )->( OrdNumber() ) )
-
-   if lClose
-      ( dbfObrasT )->( dbCloseArea() )
-   else
-      ( dbfObrasT )->( OrdSetFocus( nOrd ) )
-      ( dbfObrasT )->( OrdScope( 0, nil ) )
-      ( dbfObrasT )->( OrdScope( 1, nil ) )
-   end if
-
-	oGet:setFocus()
-
-RETURN ( oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-
-static function pdaMenuEdtRec( oDlg )
-
-   local oMenu
-
-   DEFINE MENU oMenu ;
-      RESOURCE 100 ;
-      BITMAPS  10 ; // bitmaps resoruces ID
-      IMAGES   3     // number of images in the bitmap
-
-      REDEFINE MENUITEM ID 110 OF oMenu ACTION ( oDlg:End( IDOK ) )
-
-      REDEFINE MENUITEM ID 120 OF oMenu ACTION ( oDlg:End( IDCANCEL ) )
-
-   oDlg:SetMenu( oMenu )
-
-Return oMenu
-
-//---------------------------------------------------------------------------//
-
-#endif
-
-//--------------------------------------------------------------------------//
-//Funciones comunes del programa y pda
-//--------------------------------------------------------------------------//
-
 FUNCTION aItmObr()
 
    local aItmObr  := {}
@@ -781,12 +560,11 @@ FUNCTION aItmObr()
    aAdd( aItmObr, { "cProvee",   "C",   50,    0, "Código de proveedor" ,              "",                  "", "( cDbfObr )" } )
    aAdd( aItmObr, { "cCodBic",   "C",   50,    0, "Código Bic" ,                       "",                  "", "( cDbfObr )" } )
    aAdd( aItmObr, { "cHorario",  "C",   50,    0, "Horario" ,                          "",                  "", "( cDbfObr )" } )
+   aAdd( aItmObr, { "cTipo",     "C",   50,    0, "Tipo de obra" ,                     "",                  "", "( cDbfObr )" } )
 
 RETURN ( aItmObr )
 
 //---------------------------------------------------------------------------//
-
-#ifndef __PDA__
 
 FUNCTION BrwObras( oGet, oGet2, cCodCli, dbfObrasT )
 
@@ -926,8 +704,6 @@ FUNCTION BrwObras( oGet, oGet2, cCodCli, dbfObrasT )
 	oGet:setFocus()
 
 RETURN ( oDlg:nResult == IDOK )
-
-#endif
 
 //---------------------------------------------------------------------------//
 
