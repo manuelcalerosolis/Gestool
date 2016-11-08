@@ -260,9 +260,9 @@ CLASS D
 
    // Tikets de clientes-------------------------------------------------------
 
-   METHOD Tikets( nView )                                   INLINE ( ::Get( "TikeT", nView ) )
-      METHOD TiketsId( nView )                              INLINE ( ( ::Tikets( nView ) )->cSerTik + ( ::Tikets( nView ) )->cNumTik + ( ::Tikets( nView ) )->cSufTik )
-      METHOD gotoIdTikets( id, nView )                      INLINE ( ::seekInOrd( ::Tikets( nView ), id, "cNumTik" ) ) 
+   METHOD Tikets( nView, cSelect )                             INLINE ( if( lAIS(), ::TiketsSQL( cSelect, nView ), ::Get( "TikeT", nView ) ) )
+      METHOD TiketsId( nView )                                 INLINE ( ( ::Tikets( nView ) )->cSerTik + ( ::Tikets( nView ) )->cNumTik + ( ::Tikets( nView ) )->cSufTik )
+      METHOD gotoIdTikets( id, nView )                         INLINE ( ::seekInOrd( ::Tikets( nView ), id, "cNumTik" ) ) 
 
    METHOD TiketsLineas( nView )                             INLINE ( ::Get( "TikeL", nView ) )
       METHOD TiketsLineasId( nView )                        INLINE ( ( ::TiketsLineas( nView ) )->cSerTil + ( ::TiketsLineas( nView ) )->cNumTil + ( ::TiketsLineas( nView ) )->cSufTil )
@@ -647,6 +647,13 @@ CLASS D
    METHOD Bottom( cDatabase, nView )         INLINE ( dbLast( ::Get( cDatabase, nView ) ) )
 
    METHOD OpenObject( oDataTable )
+
+   METHOD TiketsSQL( cSelect, nView )
+
+   METHOD getSQL( cDataTable, cSelect, nView )   
+
+   METHOD openSQL( cDataTable, cSelect, nView )
+
 
 ENDCLASS
 
@@ -1088,6 +1095,41 @@ RETURN ( hash )
 
 //---------------------------------------------------------------------------//
 
+METHOD TiketsSQL( cSelect, nView ) CLASS D
+
+Return ( ::getSQL( "TiketSQL", cSelect, nView ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSQL( cDataTable, cSelect, nView ) CLASS D
+
+   local cHandle     := ::GetView( cDataTable, nView )
+
+   if empty(cHandle)
+      cHandle        := ::openSQL( cDataTable, cSelect, nView )
+   end if 
+
+Return ( cHandle )
+
+//---------------------------------------------------------------------------//
+
+METHOD openSQL( cDataTable, cSelect, nView ) CLASS D
+
+   local cSql     := "cSql"
+   local uHandle 
+
+   if TDataCenter():ExecuteSqlStatement( cSelect, @cSql )
+      ( cSql )->( dbgotop() )
+   end if
+
+   ::addView( cDataTable, cSql, nView )  
+   
+    uHandle     := ::GetView( cDataTable, nView ) 
+
+Return ( uHandle )
+
+//---------------------------------------------------------------------------//
+
 METHOD getHashFromBlank( cAlias, aDictionary ) CLASS D
 
    local hash
@@ -1105,7 +1147,6 @@ METHOD getHashFromBlank( cAlias, aDictionary ) CLASS D
 RETURN ( hash ) 
 
 //---------------------------------------------------------------------------//
-
 
 METHOD getFieldDictionary( cField, cDataTable, nView ) CLASS D
 
@@ -1490,5 +1531,3 @@ METHOD setArticuloTablaPropiedades( id, idCodigoPrimeraPropiedad, idCodigoSegund
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
-
-
