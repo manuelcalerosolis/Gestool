@@ -8620,7 +8620,7 @@ METHOD validateRecepcion( tmpPedPrvT, dbfPedPrvT ) CLASS TPedidosProveedorSender
       Return .t.
    end if 
 
-   if dtos( ( dbfPedPrvT )->dFecCre ) + ( dbfPedPrvT )->cTimCre > dtos( ( tmpPedPrvT )->dFecCre ) + ( tmpPedPrvT )->cTimCre 
+   if dtos( ( dbfPedPrvT )->dFecCre ) + ( dbfPedPrvT )->cTimCre >= dtos( ( tmpPedPrvT )->dFecCre ) + ( tmpPedPrvT )->cTimCre 
       ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfPedPrvT )->dFecCre ) + " " + ( dbfPedPrvT )->cTimCre + " es más reciente que la recepción " + dtoc( ( tmpPedPrvT )->dFecCre ) + " " + ( tmpPedPrvT )->cTimCre 
       Return .f.
    end if

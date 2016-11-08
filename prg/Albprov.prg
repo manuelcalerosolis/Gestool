@@ -10965,7 +10965,7 @@ METHOD validateRecepcion( tmpAlbPrvT, dbfAlbPrvT ) CLASS TAlbaranesProveedorSend
       Return .t.
    end if 
 
-   if dtos( ( dbfAlbPrvT )->dFecCre ) + ( dbfAlbPrvT )->cTimCre > dtos( ( tmpAlbPrvT )->dFecCre ) + ( tmpAlbPrvT )->cTimCre 
+   if dtos( ( dbfAlbPrvT )->dFecCre ) + ( dbfAlbPrvT )->cTimCre >= dtos( ( tmpAlbPrvT )->dFecCre ) + ( tmpAlbPrvT )->cTimCre 
       ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfAlbPrvT )->dFecCre ) + " " + ( dbfAlbPrvT )->cTimCre + " es más reciente que la recepción " + dtoc( ( tmpAlbPrvT )->dFecCre ) + " " + ( tmpAlbPrvT )->cTimCre 
       Return .f.
    end if

@@ -11355,7 +11355,7 @@ METHOD validateRecepcion( tmpSatCliT, dbfSatCliT, cOperario ) CLASS TSATClientes
       Return .t.
    end if 
 
-   if dtos( ( dbfSatCliT )->dFecCre ) + ( dbfSatCliT )->cTimCre > dtos( ( tmpSatCliT )->dFecCre ) + ( tmpSatCliT )->cTimCre 
+   if dtos( ( dbfSatCliT )->dFecCre ) + ( dbfSatCliT )->cTimCre >= dtos( ( tmpSatCliT )->dFecCre ) + ( tmpSatCliT )->cTimCre 
       ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfSatCliT )->dFecCre ) + " " + ( dbfSatCliT )->cTimCre + " es más reciente que la recepción " + dtoc( ( tmpSatCliT )->dFecCre ) + " " + ( tmpSatCliT )->cTimCre 
       Return .f.
    end if
