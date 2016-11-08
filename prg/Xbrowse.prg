@@ -10770,6 +10770,10 @@ METHOD HeaderLButtonUp( nMRow, nMCol, nFlags ) CLASS TXBrwColumn
 
    if !lDragged
 
+      if empty( nMRow ) .or. empty( nMCol )
+        return .f.
+      end if 
+
       if nMRow <= ::oBrw:nHeaderHeight  ;
          .and. nMCol <= ( ::nWidth + ::nDisplayCol )
 

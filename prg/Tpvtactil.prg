@@ -446,6 +446,7 @@ CLASS TpvTactil
                                              SysRefresh() )
 
    METHOD l1024()                   INLINE ( ::nScreenHorzRes >= 1024 )
+   METHOD l1280()                   INLINE ( ::nScreenHorzRes >= 1280 )
 
    METHOD CargaBrowseFamilias()
 
@@ -890,7 +891,8 @@ CLASS TpvTactil
    METHOD setCodigoOrdenComandaActual( idOrdenComanda )        INLINE ( ::cCodigoOrdenComandaActual := idOrdenComanda )
    METHOD getCodigoOrdenComandaActual()                        INLINE ( ::cCodigoOrdenComandaActual )
 
-   METHOD setTextButtonOrdenComandaActual( textoOrdenComanda ) INLINE ( if( !empty( ::oBtnOrdenComandaActual ), ::oBtnOrdenComandaActual:setText( textoOrdenComanda ), ) )
+   METHOD setTextButtonOrdenComandaActual( textoOrdenComanda ) INLINE ( if (  !empty( ::oBtnOrdenComandaActual ) .and. ::l1280(),;
+                                                                              ::oBtnOrdenComandaActual:setText( textoOrdenComanda ), ) )
 
    METHOD browseLineasDragBegin()                              
    METHOD browseLineasDropOver()
@@ -2094,11 +2096,11 @@ METHOD Resource() CLASS TpvTactil
 
    // Boton de orden de comanda------------------------------------------------
 
-   if ::l1024()
-      ::oBtnOrdenComandaActual   := TButtonBmp():ReDefine( 505, {|| ::SelectorOrdenComanda() }, ::oDlg, , , .f., , , "", .f., "Sort_az_descending_32" ) //
-   else
+   if ::l1280()
       ::oBtnOrdenComandaActual   := TButton():ReDefine( 505, {|| ::SelectorOrdenComanda() }, ::oDlg, , , .f., , , "Orden comanda" )
       ::oBtnOrdenComandaActual:setFont( ::oFntNum )
+   else
+      ::oBtnOrdenComandaActual   := TButtonBmp():ReDefine( 505, {|| ::SelectorOrdenComanda() }, ::oDlg, , , .f., , , "", .f., "Sort_az_descending_32" ) //
    end if 
    
    ::oGetCambiarOrden            := TGetHlp():ReDefine( 506, {|u| if( pcount () == 0, ::cOrdenComanda, ::cOrdenComanda := u ) }, ::oDlg )
@@ -2458,7 +2460,6 @@ METHOD Resource() CLASS TpvTactil
    */
 
    if !::l1024()
-      ::oBtnSSalon            := TButtonBmp():ReDefine( 506, {|| ::OnClickSalaVenta() }, ::oDlg, , , .f., , , , .f., "Cup_32" )
       ::oBtnSEntregar         := TButtonBmp():ReDefine( 507, {|| ::OnClickEntregaNota() }, ::oDlg, , , .f., , , , .f., "Printer_32" )
       ::oBtnSCobrar           := TButtonBmp():ReDefine( 508, {|| ::OnClickCobro() }, ::oDlg, , , .f., , , , .f., "Money2_32" )
    end if
@@ -2804,10 +2805,10 @@ METHOD ResizedResource() CLASS TpvTactil
    ::oBtnArticulosPageUp:Move( ::oBtnArticulosPageUp:nTop + nDialogHeight, , , , .f. )
    ::oBtnArticulosPageDown:Move( ::oBtnArticulosPageDown:nTop + nDialogHeight, , , , .f. )
 
-   if ::l1024()
+   if ::l1280()
       ::oBtnOrdenComandaActual:Move( ::oBtnOrdenComandaActual:nTop + nDialogHeight, ::oBtnOrdenComandaActual:nLeft + nDialogWidth -100, 262, , .f. )
    else     
-      ::oBtnOrdenComandaActual:Move( ::oBtnOrdenComandaActual:nTop + nDialogHeight, ::oBtnOrdenComandaActual:nLeft + nDialogWidth -100, 200, , .f. )
+      ::oBtnOrdenComandaActual:Move( ::oBtnOrdenComandaActual:nTop + nDialogHeight, ::oBtnOrdenComandaActual:nLeft + nDialogWidth, , , .f. )
    end if 
 
    // ::oGetCambiarOrden:Move( ::oGetCambiarOrden:nTop + nDialogHeight, ::oGetCambiarOrden:nLeft + nDialogWidth - 100, 200, , .f. )
@@ -10126,7 +10127,7 @@ METHOD SelectorOrdenComanda()
 
       textoOrdenComanda          := ::oOrdenComanda:cNombre( idOrdenComanda )   
       
-      // ::setTextButtonOrdenComandaActual( textoOrdenComanda )
+      ::setTextButtonOrdenComandaActual( textoOrdenComanda )
 
       ::agregarOrdenComanda( textoOrdenComanda )
 
@@ -10144,7 +10145,7 @@ METHOD initOrdenComanda()
       
       ::setCodigoOrdenComandaActual( idOrdenComanda ) 
 
-      // ::setTextButtonOrdenComandaActual( idOrdenComanda )
+      ::setTextButtonOrdenComandaActual( idOrdenComanda )
 
    end if 
 
@@ -10317,7 +10318,7 @@ METHOD ResizedCol( nSize )
 
    local nResize := 24
 
-   if !::l1024 .and. nSize > nResize
+   if !::l1024() .and. nSize > nResize
 
       nSize -= nResize
 
@@ -10331,7 +10332,7 @@ METHOD ResizedFont( nSize )
 
    local nResize := 25 //es un porcentaje
 
-   if !::l1024
+   if !::l1024()
 
       nSize -= ( nSize * nResize ) / 100
 

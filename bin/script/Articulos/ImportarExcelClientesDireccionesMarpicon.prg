@@ -36,7 +36,7 @@ CLASS TImportarExcelClientesMarpicon FROM TImportarExcel
 
    METHOD getAutoIncremental()   INLINE ( strzero( ::nAutoIncremental, 4 ) )
 
-   METHOD existeRegistro()       INLINE ( D():gotoIdClientesDirecciones( ::idClient + ::getAutoIncremental(), ::nView ) )
+   METHOD existeRegistro()       
 
    METHOD appendRegistro()       INLINE ( ( D():ClientesDirecciones( ::nView ) )->( dbappend() ) )
 
@@ -103,12 +103,21 @@ METHOD procesaFicheroExcel()
       ::addAutoIncremental()
 
       if ::existeRegistro()
+
+         // msgalert( "existeRegistro" )
+
         ::bloqueaRegistro()
       else
+         
+         // msgalert( "appendRegistro" )
+
          ::appendRegistro()
+
       end if 
 
       if !( neterr() )      
+
+         // msgalert( "importarCampos")
 
          ::importarCampos()
 
@@ -123,6 +132,12 @@ METHOD procesaFicheroExcel()
    ::closeExcel()
 
 Return nil
+
+//---------------------------------------------------------------------------//
+
+METHOD existeRegistro()
+
+Return ( D():gotoIdClientesDirecciones( ::idClient + ::getAutoIncremental(), ::nView ) )
 
 //---------------------------------------------------------------------------//
 

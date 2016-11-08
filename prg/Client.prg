@@ -9521,7 +9521,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       ( dbfTmpDoc )->( dbGoTop() )
 
       /*
-      Añadimos desde el fichero de documentos----------------------------------
+      Añadimos desde el fichero de entidades----------------------------------
       */
 
       if D():gotoIdClientesEntidad( cCodCli, nView ) 
@@ -9534,7 +9534,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       ( dbfTmpFacturae )->( dbGoTop() )
 
       /*
-      AÂ¤adimos desde el fichero de Obras
+      AÂ¤adimos desde el fichero de Obras--------------------------------------
       */
 
       if D():gotoIdClientesDirecciones( cCodCli, nView )
