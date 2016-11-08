@@ -62,7 +62,7 @@ METHOD New( nView )
    Columna de campo clave
    */
 
-   ::cColumnaCampoClave       := "B"
+   ::cColumnaCampoClave       := "C"
 
 
 Return ( Self )
@@ -102,10 +102,10 @@ Return nil
 METHOD importarCampos()
 
    ( D():Clientes( ::nView ) )->Cod       := ::getCampoClave()
-   ( D():Clientes( ::nView ) )->Titulo    := ::getExcelValue( "C" )
-   ( D():Clientes( ::nView ) )->Nif       := ::getExcelString( "D" )  
+   ( D():Clientes( ::nView ) )->Titulo    := ::getExcelValue( "D" )
+   ( D():Clientes( ::nView ) )->Nif       := ::getExcelString( "P" )  
    ( D():Clientes( ::nView ) )->Riesgo    := ::getExcelNumeric( "G" )
-   ( D():Clientes( ::nView ) )->cCodWeb   := ::getExcelNumeric( "A" )
+   ( D():Clientes( ::nView ) )->cCodWeb   := ::getExcelNumeric( "AB" )
 
 Return nil
 

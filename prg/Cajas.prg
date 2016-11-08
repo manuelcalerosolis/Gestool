@@ -1081,6 +1081,23 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
       TBtnBmp():ReDefine( 331, "Cut_16",,,,,{|| PrintEscCode( aTmp[ ( dbfCajT )->( FieldPos( "cCodCut" ) ) ], aTmp[ ( dbfCajT )->( FieldPos( "cWinTik" ) ) ] ) }, oFld:aDialogs[2], .f., , .f., "Test de código" )
 
       /*
+      Formato para crote
+      -------------------------------------------------------------------------
+      */
+
+      REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "cPrnCut" ) ) ] ;
+         VAR      aTmp[ ( dbfCajT )->( FieldPos( "cPrnCut" ) ) ] ;
+         ID       360 ;
+         IDTEXT   361 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( cDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnCut" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnCut" ) ) ]:oHelpText, dbfDoc ) );
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnCut" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnCut" ) ) ]:oHelpText, "TK" ) );
+         OF       oFld:aDialogs[2]
+
+      TBtnBmp():ReDefine( 362, "Printer_pencil_16",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnCut" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
+
+      /*
       Botones de la caja de diálogo
       -------------------------------------------------------------------------
       */
@@ -1135,6 +1152,7 @@ Static Function StartRec( aGet, aTmp )
    aGet[ ( dbfCajT )->( FieldPos( "cPrnReg" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfCajT )->( FieldPos( "cPrnReg" ) ) ], dbfDoc, "cDescrip" ) )
    aGet[ ( dbfCajT )->( FieldPos( "cPrnApt" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfCajT )->( FieldPos( "cPrnApt" ) ) ], dbfDoc, "cDescrip" ) )
    aGet[ ( dbfCajT )->( FieldPos( "cPrnEna" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfCajT )->( FieldPos( "cPrnEna" ) ) ], dbfDoc, "cDescrip" ) )
+   aGet[ ( dbfCajT )->( FieldPos( "cPrnCut" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfCajT )->( FieldPos( "cPrnCut" ) ) ], dbfDoc, "cDescrip" ) )
    aGet[ ( dbfCajT )->( FieldPos( "cCajPrt" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfCajT )->( FieldPos( "cCajPrt" ) ) ], dbfCajT ) )
 
 Return .t.
@@ -2335,6 +2353,7 @@ Function aItmCaja()
    aAdd( aBase, { "cPrnNota",  "C",  250, 0, "Impresora de entregas de notas" } )
    aAdd( aBase, { "cNumTur",   "C",  6,   0, "Número del turno" } )
    aAdd( aBase, { "cCajPrt",   "C",  3,   0, "Caja padre" } )
+   aAdd( aBase, { "cPrnCut",   "C",  3,   0, "Formato corte" } )
 
 Return ( aBase )
 
@@ -2455,6 +2474,12 @@ Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnChk", Space( 3 ) ) )
 Function cFormatoEntregasCuentaEnCaja( cCodCaj, dbfCajT )
 
 Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnEna", Space( 3 ) ) )
+
+//---------------------------------------------------------------------------//
+
+Function cFormatoCorteEnCaja( cCodCaj, dbfCajT )
+
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnCut", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 

@@ -30,7 +30,7 @@ CLASS TImportarExcelClientesMarpicon FROM TImportarExcel
 
    METHOD importarCampos()   
 
-   METHOD getCampoClave()        
+   METHOD getCampoClave()        INLINE ( padr( strzero( ::getExcelNumeric( ::cColumnaCampoClave ), 6 ), 12 ) )
 
    METHOD addAutoIncremental()   INLINE ( ++::nAutoIncremental )
 
@@ -76,22 +76,6 @@ Return ( Self )
 
 //----------------------------------------------------------------------------// 
 
-METHOD getCampoClave()
-
-   local keyClient            := str( int( ::getExcelNumeric( ::cColumnaCampoClave ) ), 11 )
-
-   ::idClient                 := nil
-
-   if !empty( keyClient )
-      if ( D():SeekInOrd( D():Clientes( ::nView ), keyClient, "cCodWeb" ) ) 
-         ::idClient           := D():ClientesId( ::nView )
-      end if 
-   end if 
-
-Return ( ::idClient )
-
-//----------------------------------------------------------------------------// 
-
 METHOD procesaFicheroExcel()
 
    ::openExcel()
@@ -104,12 +88,12 @@ METHOD procesaFicheroExcel()
 
       if ::existeRegistro()
 
-         // msgalert( "existeRegistro" )
+//         msgwait( "existeRegistro", , .1  )
 
         ::bloqueaRegistro()
       else
          
-         // msgalert( "appendRegistro" )
+//         msgwait( "appendRegistro", , .1  )
 
          ::appendRegistro()
 
@@ -117,7 +101,7 @@ METHOD procesaFicheroExcel()
 
       if !( neterr() )      
 
-         // msgalert( "importarCampos")
+//         msgwait( "importarCampos", , .1 )
 
          ::importarCampos()
 
@@ -137,18 +121,30 @@ Return nil
 
 METHOD existeRegistro()
 
-Return ( D():gotoIdClientesDirecciones( ::idClient + ::getAutoIncremental(), ::nView ) )
+Return ( D():gotoIdClientesDirecciones( ::getCampoClave() + ::getAutoIncremental(), ::nView ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD importarCampos()
 
-   ( D():ClientesDirecciones( ::nView ) )->cCodCli    := ::idClient
+   ( D():ClientesDirecciones( ::nView ) )->cCodCli    := ::getCampoClave()
    ( D():ClientesDirecciones( ::nView ) )->cCodObr    := ::getAutoIncremental()
 
    ( D():ClientesDirecciones( ::nView ) )->cTipo      := ::getExcelString( "D" )
    ( D():ClientesDirecciones( ::nView ) )->cNomObr    := ::getExcelString( "E" )  
-   ( D():ClientesDirecciones( ::nView ) )->cDirObr    := ::getExcelString( "F" )  
+   ( D():ClientesDirecciones( ::nView ) )->cDirObr    := ::getExcelString( "F" )   
+   ( D():ClientesDirecciones( ::nView ) )->cPobObr    := ::getExcelString( "J" )   
+   ( D():ClientesDirecciones( ::nView ) )->cPosObr    := ::getExcelString( "K" )   
+   ( D():ClientesDirecciones( ::nView ) )->cTelObr    := ::getExcelString( "O" )   
+   ( D():ClientesDirecciones( ::nView ) )->cCntObr    := ::getExcelString( "W" ) 
+
+   if ( "21" $ ::getExcelString( "L" ) )
+      ( D():ClientesDirecciones( ::nView ) )->cPrvObr := "Huelva"  
+   end if       
+
+   if ( "41" $ ::getExcelString( "L" ) )
+      ( D():ClientesDirecciones( ::nView ) )->cPrvObr := "Sevilla"  
+   end if       
 
 Return nil
 

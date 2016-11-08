@@ -8494,7 +8494,7 @@ METHOD ProcesaComandas( lCopia )
                   ::oTemporalComanda:FieldPutByName( "nUntTil", ( ::nUnidadesLinea() - ::nUnidadesImpresas() ) )
                end if
 
-               // Marcamos la linea como ya impresa en anulacion---------------------
+               // Marcamos la linea como ya impresa en anulacion---------------
 
                ::SetLineaImpresa( .t. )
 
@@ -10658,7 +10658,7 @@ METHOD isLineaValidaComanda( lCopia )
    end if
 
    if ( lCopia )
-      Return .f.
+      Return .t.
    end if 
 
    if ( ::oTiketLinea:lPeso .and. ::nUnidadesImpresas() == -1 )

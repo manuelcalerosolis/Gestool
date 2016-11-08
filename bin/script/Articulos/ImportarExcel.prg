@@ -234,7 +234,7 @@ METHOD getExcelString( columna, fila )
       Return ( valorPorDefecto )
    end if 
 
-Return ( excelValue )   
+Return ( alltrim( excelValue ) )
 
 //---------------------------------------------------------------------------//
 

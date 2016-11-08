@@ -2798,7 +2798,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Caja padre", -1, "Static", WS_GROUP, 50, 79, 62, 8
 }
 
-CAJAS_02 DIALOG DISCARDABLE 51, 46, 407, 331
+CAJAS_02 DIALOG DISCARDABLE 51, 46, 407, 337
 STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
@@ -2892,13 +2892,17 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 321, "Edit", WS_BORDER, 221, 291, 176, 12
   CONTROL "", 330, "Edit", WS_BORDER, 190, 304, 193, 12
   CONTROL "", 331, "TBtnBmp", 0x00000000, 385, 304, 12, 11
-  CONTROL "Otros dispositivos", -1, "Button", BS_GROUPBOX, 44, 256, 356, 63
+  CONTROL "Otros dispositivos", -1, "Button", BS_GROUPBOX, 44, 256, 356, 77
   CONTROL "Cajón portamonedas", -1, "Static", WS_GROUP, 48, 281, 66, 8
   CONTROL "Balanza", -1, "Static", WS_GROUP, 48, 294, 66, 8
   CONTROL "Código para corte de papel", -1, "Static", WS_GROUP, 48, 307, 91, 8
   CONTROL "Visor", -1, "Static", WS_GROUP, 48, 268, 21, 8
   CONTROL "", 800, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Selección de formatos y otros dispositivos", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 355, 8
+  CONTROL "", 360, "Edit", WS_BORDER|WS_TABSTOP, 190, 318, 30, 12
+  CONTROL "", 361, "Edit", WS_BORDER, 222, 318, 161, 12
+  CONTROL "", 362, "TBtnBmp", 0x00000000, 385, 318, 12, 11
+  CONTROL "Documento para corte", -1, "Static", WS_GROUP, 48, 321, 84, 8
 }
 
 CAJERO DIALOG DISCARDABLE 51, 39, 222, 157
@@ -14677,6 +14681,7 @@ FONT 8, "MS Sans Serif"
 {
   CONTROL "", 120, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 77, 11, 50, 12
   CONTROL "", 130, "Edit", ES_AUTOHSCROLL|WS_HSCROLL|WS_BORDER|WS_TABSTOP, 77, 24, 243, 12
+  CONTROL "", 310, "Edit", WS_BORDER|WS_TABSTOP, 77, 37, 80, 12
   CONTROL "", 140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 77, 50, 243, 12
   CONTROL "", 150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 77, 63, 243, 12
   CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 77, 76, 50, 12
@@ -14710,7 +14715,6 @@ FONT 8, "MS Sans Serif"
   CONTROL "", -1, "Button", BS_GROUPBOX, 4, 285, 320, 24
   CONTROL "Nº operacional", -1, "Static", WS_GROUP, 10, 296, 52, 8
   CONTROL "Departamento", -1, "Static", WS_GROUP, 10, 132, 49, 8
-  CONTROL "", 310, "Edit", WS_BORDER|WS_TABSTOP, 77, 37, 80, 12
   CONTROL "N.I.F. / C.I.F.", -1, "Static", WS_GROUP, 10, 41, 42, 8
   CONTROL "", 320, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 77, 200, 243, 11
   CONTROL "", 330, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 77, 213, 243, 11
