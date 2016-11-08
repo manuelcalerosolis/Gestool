@@ -6280,7 +6280,7 @@ Function nTotValTik( cNumTik, cTikT, cTikL, cDiv, cDivRet, lPic )
 
       while ( cTikT )->cValDoc == cNumTik .and. !( cTikT )->( eof() )
 
-         nTotal      += nTotTik( ( cTikT )->cSerTik + ( cTikT )->cNumTik + ( cTikT )->cSufTik )
+         nTotal      += nTotTik( ( cTikT )->cSerTik + ( cTikT )->cNumTik + ( cTikT )->cSufTik, cTikT, cTikL )
 
          ( cTikT )->( dbSkip() )
 

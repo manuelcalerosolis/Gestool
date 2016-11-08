@@ -11692,7 +11692,7 @@ METHOD validateRecepcion( tmpFacPrvT, dbfFacPrvT ) CLASS TFacturasProveedorSende
       Return .t.
    end if 
 
-   if dtos( ( dbfFacPrvT )->dFecCre ) + ( dbfFacPrvT )->cTimCre > dtos( ( tmpFacPrvT )->dFecCre ) + ( tmpFacPrvT )->cTimCre 
+   if dtos( ( dbfFacPrvT )->dFecCre ) + ( dbfFacPrvT )->cTimCre >= dtos( ( tmpFacPrvT )->dFecCre ) + ( tmpFacPrvT )->cTimCre 
       ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfFacPrvT )->dFecCre ) + " " + ( dbfFacPrvT )->cTimCre + " es más reciente que la recepción " + dtoc( ( tmpFacPrvT )->dFecCre ) + " " + ( tmpFacPrvT )->cTimCre 
       Return .f.
    end if

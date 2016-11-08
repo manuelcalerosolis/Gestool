@@ -22014,9 +22014,9 @@ Method Process() CLASS TFacturasClientesSenderReciver
    local cSufijo
 
    local cNumeroFactura
-   local cTextoFactura
+   local cTextoFactura  := ""
    local cNumeroRecibo
-   local cTextoRecibo
+   local cTextoRecibo   := ""
 
    for m := 1 to len( aFiles )
 
@@ -22435,7 +22435,7 @@ METHOD validateRecepcion( tmpFacCliT, dbfFacCliT ) CLASS TFacturasClientesSender
       Return .t.
    end if 
 
-   if dtos( ( dbfFacCliT )->dFecCre ) + ( dbfFacCliT )->cTimCre > dtos( ( tmpFacCliT )->dFecCre ) + ( tmpFacCliT )->cTimCre 
+   if dtos( ( dbfFacCliT )->dFecCre ) + ( dbfFacCliT )->cTimCre >= dtos( ( tmpFacCliT )->dFecCre ) + ( tmpFacCliT )->cTimCre 
       ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfFacCliT )->dFecCre ) + " " + ( dbfFacCliT )->cTimCre + " es más reciente que la recepción " + dtoc( ( tmpFacCliT )->dFecCre ) + " " + ( tmpFacCliT )->cTimCre 
       Return .f.
    end if
@@ -22458,7 +22458,7 @@ METHOD validateRecepcionRecibo( tmpFacCliP, dbfFacCliP ) CLASS TFacturasClientes
       Return .t.
    end if 
 
-   if dtos( ( dbfFacCliP )->dFecCre ) + ( dbfFacCliP )->cHorCre > dtos( ( tmpFacCliP )->dFecCre ) + ( tmpFacCliP )->cHorCre 
+   if dtos( ( dbfFacCliP )->dFecCre ) + ( dbfFacCliP )->cHorCre >= dtos( ( tmpFacCliP )->dFecCre ) + ( tmpFacCliP )->cHorCre 
       ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfFacCliP )->dFecCre ) + " " + ( dbfFacCliP )->cHorCre + " es más reciente que la recepción " + dtoc( ( tmpFacCliP )->dFecCre ) + " " + ( tmpFacCliP )->cHorCre
       Return .f.
    end if
