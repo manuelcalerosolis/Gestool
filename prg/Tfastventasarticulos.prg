@@ -1237,6 +1237,9 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Transportistas",                ::oDbfTrn:Select() )
    ::oFastReport:SetFieldAliases(   "Transportistas",                cObjectsToReport( ::oDbfTrn:oDbf ) )
 
+   ::oFastReport:SetWorkArea(       "Formas de pago",                   ::oDbfFpg:nArea )
+   ::oFastReport:SetFieldAliases(   "Formas de pago",                   cItemsToReport( aItmFPago() ) )
+
    // Relaciones entre tablas-----------------------------------------------------
 
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Familias",                {|| ::oDbfArt:Familia } )
@@ -1253,6 +1256,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetMasterDetail(   "Informe", "Empresa",                           {|| cCodEmp() } )
    ::oFastReport:SetMasterDetail(   "Informe", "Clientes",                          {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Grupo clientes",                    {|| ::oDbf:cCodGrp } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Formas de pago",                    {|| ::oDbf:cCodPago } )
    
    ::oFastReport:SetMasterDetail(   "Informe", "Proveedores",                       {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Usuarios",                          {|| ::oDbf:cCodUsr } )
@@ -1297,6 +1301,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetResyncPair(     "Informe", "Clientes" )
    ::oFastReport:SetResyncPair(     "Informe", "Grupo clientes" )
    ::oFastReport:SetResyncPair(     "Informe", "Proveedores" )
+   ::oFastReport:SetResyncPair(     "Informe", "Formas de pago" )
    ::oFastReport:SetResyncPair(     "Informe", "Empresa" )
    ::oFastReport:SetResyncPair(     "Informe", "Usuarios" )
    ::oFastReport:SetResyncPair(     "Informe", "Almacenes" )

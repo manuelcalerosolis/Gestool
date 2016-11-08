@@ -426,7 +426,7 @@ static lExternal           := .t.
 static nNumBtnFam          := NUM_BTN_FAM
 static nNumBtnArt          := NUM_BTN_ART
 static aTipDoc             := { "Tiket", "Albarán", "Factura", "Devolución", "Apartado", "Vale", "Pda", "Cheque regalo" }
-static bEditT              := { |aTmp, aGet, dbfTikT, oBrw, cTot, nTot, nMode, aNumDoc    | EdtRec( aTmp, aGet, dbfTikT, oBrw, cTot, nTot, nMode, aNumDoc ) }
+static bEditT              := { |aTmp, aGet, cTikT, oBrw, cTot, nTot, nMode, aNumDoc    | EdtRec( aTmp, aGet, cTikT, oBrw, cTot, nTot, nMode, aNumDoc ) }
 static bEditL              := { |aTmp, aGet, dbfTikL, oBrw, bWhen, bValid, nMode, cNumTik | EdtDet( aTmp, aGet, dbfTikL, oBrw, bWhen, bValid, nMode, cNumTik ) }
 static bEditP              := { |aTmp, aGet, dbfTikP, oBrw, bWhen, bValid, nMode, aTmpTik | EdtCob( aTmp, aGet, dbfTikP, oBrw, bWhen, bValid, nMode, aTmpTik ) }
 static bEditE              := { |aTmp, aGet, dbfTmpE, oBrw, bWhen, bValid, nMode, aTmpTik | EdtEnt( aTmp, aGet, dbfTmpE, oBrw, bWhen, bValid, nMode, aTmpTik ) }
@@ -458,7 +458,6 @@ static nCambioCli
 
 #endif
 
-static dbfTikT
 static dbfTikL
 static dbfTikP
 static dbfTikM
@@ -525,11 +524,11 @@ static lTwoLin             := .f.
 static nScreenHorzRes
 static nScreenVertRes
 
-static hTextoUbicacion     := {  ubiSala => {|| Rtrim( ( dbfTikT )->cPntVenta ) },;
-                                 ubiGeneral => {|| "General: "  + Rtrim( ( dbfTikT )->cAliasTik ) },;
-                                 ubiRecoger => {|| "Para recoger: " + Rtrim( ( dbfTikT )->cAliasTik ) },;
-                                 ubiLlevar => {|| "Para llevar: " + Rtrim( ( dbfTikT )->cNomTik ) },;
-                                 ubiEncargar => {|| "Encargo: " + Rtrim( ( dbfTikT )->cNomTik ) } }
+static hTextoUbicacion     := {  ubiSala => {|| Rtrim( ( D():tikets( nView ) )->cPntVenta ) },;
+                                 ubiGeneral => {|| "General: "  + Rtrim( ( D():tikets( nView ) )->cAliasTik ) },;
+                                 ubiRecoger => {|| "Para recoger: " + Rtrim( ( D():tikets( nView ) )->cAliasTik ) },;
+                                 ubiLlevar => {|| "Para llevar: " + Rtrim( ( D():tikets( nView ) )->cNomTik ) },;
+                                 ubiEncargar => {|| "Encargo: " + Rtrim( ( D():tikets( nView ) )->cNomTik ) } }
 
 static oDetCamposExtra
 
@@ -588,9 +587,8 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       D():ArticuloLenguaje( nView )
 
       D():PropiedadesLineas( nView )
-
-      USE ( cPatEmp + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @dbfTikT ) )
-      SET ADSINDEX TO ( cPatEmp + "TIKET.CDX" ) ADDITIVE
+      
+      D():Tikets( nView, cOpenStatement() )
 
       USE ( cPatEmp + "TIKEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEL", @dbfTikL ) )
       SET ADSINDEX TO ( cPatEmp + "TikeL.Cdx" ) ADDITIVE
@@ -878,20 +876,6 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       nScreenVertRes       := GetSysMetrics( 1 )
 
       /*
-      Limitaciones de cajero y cajas--------------------------------------------------------
-      */
-
-      if lAIS() .and. !oUser():lAdministrador()
-      
-         cFiltro           := "Field->cSufTik == '" + oUser():cDelegacion() + "' .and. Field->cNcjTik == '" + oUser():cCaja() + "'"
-         if oUser():lFiltroVentas()         
-            cFiltro        += " .and. Field->cCcjTik == '" + oUser():cCodigo() + "'"
-         end if 
-
-         ( dbfTikT )->( AdsSetAOF( cFiltro ) )
-      end if
-
-      /*
       Campos extras------------------------------------------------------------------------
       */
 
@@ -900,19 +884,6 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       oDetCamposExtra:SetTipoDocumento( "TPV" )
 
       //Script afterOpenFiles--------------------------------------------------------------
-
-      
-
-
-
-      runEventScript( "TPV\afterOpenFiles", nView, dbfTikT )
-
-      //msgDbfInfo( dbfTikT, "Titulo" )
-
-      //MsgInfo( ( dbfTikT )->( dbInfo( DBI_DBFILTER ) ), "Filtro" )
-
-
-
 
       EnableAcceso()
 
@@ -936,13 +907,32 @@ RETURN ( lOpenFiles )
 
 //----------------------------------------------------------------------------//
 
+Static Function cOpenStatement()
+
+   local cStatement     := ""
+
+   if lAIS() .and. !oUser():lAdministrador()
+
+      cStatement        := "SELECT * FROM " + cPatEmp() + "TikeT WHERE cSufTik='" + oUser():cDelegacion() + "' AND cNcjTik='" + oUser():cCaja() + "'"
+
+      if oUser():lFiltroVentas()         
+         cStatement     += " AND cCcjTik='" + oUser():cCodigo() + "'"
+      end if 
+         
+   end if
+
+   if Empty( cStatement )
+      cStatement        := "SELECT * FROM " + cPatEmp() + "TikeT"
+   end if
+
+return cStatement
+
+//----------------------------------------------------------------------------//
+
 STATIC FUNCTION CloseFiles()
 
    DisableAcceso()
 
-   DestroyFastFilter( dbfTikT, .t., .t. )
-
-   CLOSE ( dbfTikT     )
    CLOSE ( dbfTikL     )
    CLOSE ( dbfTikP     )
    CLOSE ( dbfTikM     )
@@ -1066,7 +1056,6 @@ STATIC FUNCTION CloseFiles()
 
    D():DeleteView( nView )
 
-   dbfTikT           := nil
    dbfTikL           := nil
    dbfTikM           := nil
    dbfTikS           := nil
@@ -1223,11 +1212,11 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
                "Delegación" ;
       MRU      "Cashier_user1_16";
       BITMAP   clrTopTPV ;
-      ALIAS    ( dbfTikT );
-      APPEND   ( TpvAppRec( oWndBrw:oBrw, bEditT, dbfTikT, oWnd, cCodCli, cCodArt, aNumDoc ) );
-      DELETE   ( WinDelRec( oWndBrw:oBrw, dbfTikT, {|| TpvDelRec() } ) );
-      ZOOM     ( WinZooRec( oWndBrw:oBrw, bEditT, dbfTikT ) );
-      EDIT     ( WinEdtRec( oWndBrw:oBrw, bEditT, dbfTikT ) );
+      ALIAS    ( D():Tikets( nView ) );
+      APPEND   ( TpvAppRec( oWndBrw:oBrw, bEditT, D():Tikets( nView ), oWnd, cCodCli, cCodArt, aNumDoc ) );
+      DELETE   ( WinDelRec( oWndBrw:oBrw, D():Tikets( nView ), {|| TpvDelRec() } ) );
+      ZOOM     ( WinZooRec( oWndBrw:oBrw, bEditT, D():Tikets( nView ) ) );
+      EDIT     ( WinEdtRec( oWndBrw:oBrw, bEditT, D():Tikets( nView ) ) );
       LEVEL    nLevel ;
       OF       oWnd
 
@@ -1240,7 +1229,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
          :cHeader          := "Sesión cerrada"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfTikT )->lCloTik }
+         :bEditValue       := {|| ( D():Tikets( nView ) )->lCloTik }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "Zoom16" )
@@ -1250,7 +1239,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
          :cHeader          := "Cobrado"
          :nHeadBmpNo       := 4
          :bStrData         := {|| "" }
-         :bBmpData         := {|| nChkalizer( ( dbfTikT)->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikT, dbfTikL, dbfTikP, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, if( lEur, cDivChg(), cDivEmp() ) ) }
+         :bBmpData         := {|| nChkalizer( ( D():Tikets( nView ))->cSerTik + ( D():Tikets( nView ) )->cNumTik + ( D():Tikets( nView ) )->cSufTik, D():Tikets( nView ), dbfTikL, dbfTikP, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, if( lEur, cDivChg(), cDivEmp() ) ) }
          :nWidth           := 20
          :AddResource( "Bullet_Square_Green_16" )
          :AddResource( "Bullet_Square_Yellow_16" )
@@ -1262,7 +1251,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
          :cHeader          := "Contabilizado"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfTikT )->lConTik }
+         :bEditValue       := {|| ( D():Tikets( nView ) )->lConTik }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "BmpConta16" )
@@ -1272,7 +1261,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
          :cHeader          := "Envio"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfTikT )->lSndDoc }
+         :bEditValue       := {|| ( D():Tikets( nView ) )->lSndDoc }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "Lbl16" )
@@ -1287,7 +1276,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Número"
          :cSortOrder       := "cNumTik"
-         :bEditValue       := {|| ( dbfTikT )->cSerTik + "/" + lTrim( ( dbfTikT )->cNumTik ) }
+         :bEditValue       := {|| ( D():Tikets( nView ) )->cSerTik + "/" + lTrim( ( D():Tikets( nView ) )->cNumTik ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -1295,7 +1284,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Delegación"
          :cSortOrder       := "cSufTik"
-         :bEditValue       := {|| ( dbfTikT )->cSufTik } // ( dbfTikT )->cCodDlg }
+         :bEditValue       := {|| ( D():Tikets( nView ) )->cSufTik } // ( D():Tikets( nView ) )->cCodDlg }
          :nWidth           := 40
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -1303,7 +1292,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Sesión"
          :cSortOrder       := "cTurTik"
-         :bEditValue       := {|| Trans( ( dbfTikT )->cTurTik, "######" ) }
+         :bEditValue       := {|| Trans( ( D():Tikets( nView ) )->cTurTik, "######" ) }
          :nWidth           := 40
          :lHide            := .t.
          :nDataStrAlign    := 1
@@ -1314,21 +1303,21 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Fecha"
          :cSortOrder       := "dDesFec"
-         :bEditValue       := {|| dtoc( ( dbfTikT )->dFecTik ) }
+         :bEditValue       := {|| dtoc( ( D():Tikets( nView ) )->dFecTik ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Hora"
-         :bEditValue       := {|| ( dbfTikT )->cHorTik }
+         :bEditValue       := {|| ( D():Tikets( nView ) )->cHorTik }
          :nWidth           := 40
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Caja"
          :cSortOrder       := "cNcjTik"
-         :bEditValue       := {|| ( dbfTikT )->cNcjTik }
+         :bEditValue       := {|| ( D():Tikets( nView ) )->cNcjTik }
          :nWidth           := 40
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -1336,7 +1325,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Cajero"
          :cSortOrder       := "cCcjTik"
-         :bEditValue       := {|| ( dbfTikT )->cCcjTik }
+         :bEditValue       := {|| ( D():Tikets( nView ) )->cCcjTik }
          :nWidth           := 40
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -1344,7 +1333,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Código"
          :cSortOrder       := "cCliTik"
-         :bEditValue       := {|| AllTrim( ( dbfTikT )->cCliTik ) }
+         :bEditValue       := {|| AllTrim( ( D():Tikets( nView ) )->cCliTik ) }
          :nWidth           := 70
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -1352,7 +1341,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Nombre"
          :cSortOrder       := "cNomTik"
-         :bEditValue       := {|| AllTrim( ( dbfTikT )->cNomTik ) }
+         :bEditValue       := {|| AllTrim( ( D():Tikets( nView ) )->cNomTik ) }
          :nWidth           := 180
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -1360,7 +1349,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Almacén"
          :cSortOrder       := "cAlmTik"
-         :bEditValue       := {|| ( dbfTikT )->cAlmTik }
+         :bEditValue       := {|| ( D():Tikets( nView ) )->cAlmTik }
          :nWidth           := 60
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -1368,7 +1357,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Dirección"
          :cSortOrder       := "cCodObr"
-         :bEditValue       := {|| ( dbfTikT )->cCodObr }
+         :bEditValue       := {|| ( D():Tikets( nView ) )->cCodObr }
          :nWidth           := 40
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t.
@@ -1376,8 +1365,8 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Base"
-         :bEditValue       := {|| ( dbfTikT )->nTotNet }
-         :cEditPicture     := cPorDiv( ( dbfTikT )->cDivTik, dbfDiv )
+         :bEditValue       := {|| ( D():Tikets( nView ) )->nTotNet }
+         :cEditPicture     := cPorDiv( ( D():Tikets( nView ) )->cDivTik, dbfDiv )
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1386,8 +1375,8 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := cImp()
-         :bEditValue       := {|| ( dbfTikT )->nTotIva }
-         :cEditPicture     := cPorDiv( ( dbfTikT )->cDivTik, dbfDiv )
+         :bEditValue       := {|| ( D():Tikets( nView ) )->nTotIva }
+         :cEditPicture     := cPorDiv( ( D():Tikets( nView ) )->cDivTik, dbfDiv )
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1396,8 +1385,8 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Total"
-         :bEditValue       := {|| ( dbfTikT )->nTotTik }
-         :cEditPicture     := cPorDiv( ( dbfTikT )->cDivTik, dbfDiv )
+         :bEditValue       := {|| ( D():Tikets( nView ) )->nTotTik }
+         :cEditPicture     := cPorDiv( ( D():Tikets( nView ) )->cDivTik, dbfDiv )
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1405,7 +1394,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Cobrado"
-         :bEditValue       := {|| nCobalizer( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikT, dbfTikL, dbfTikP, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, if( lEur, cDivChg(), cDivEmp() ), .t. ) }
+         :bEditValue       := {|| nCobalizer( ( D():Tikets( nView ) )->cSerTik + ( D():Tikets( nView ) )->cNumTik + ( D():Tikets( nView ) )->cSufTik, D():Tikets( nView ), dbfTikL, dbfTikP, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, if( lEur, cDivChg(), cDivEmp() ), .t. ) }
          :nWidth           := 80
          :lHide            := .t.
          :nDataStrAlign    := 1
@@ -1414,7 +1403,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Vales"
-         :bEditValue       := {|| nTotValTik( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikT, dbfTikL, dbfDiv, if( lEur, cDivChg(), cDivEmp() ), .t. ) }
+         :bEditValue       := {|| nTotValTik( ( D():Tikets( nView ) )->cSerTik + ( D():Tikets( nView ) )->cNumTik + ( D():Tikets( nView ) )->cSufTik, D():Tikets( nView ), dbfTikL, dbfDiv, if( lEur, cDivChg(), cDivEmp() ), .t. ) }
          :nWidth           := 80
          :lHide            := .t.
          :nDataStrAlign    := 1
@@ -1423,7 +1412,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Anticipos"
-         :bEditValue       := {|| nTotAntFacCli( ( dbfTikT )->cNumDoc, dbfAntCliT, dbfIva, dbfDiv, if( lEur, cDivChg(), cDivEmp() ), .t. ) }
+         :bEditValue       := {|| nTotAntFacCli( ( D():Tikets( nView ) )->cNumDoc, dbfAntCliT, dbfIva, dbfDiv, if( lEur, cDivChg(), cDivEmp() ), .t. ) }
          :nWidth           := 80
          :lHide            := .t.
          :nDataStrAlign    := 1
@@ -1432,7 +1421,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Diferencias"
-         :bEditValue       := {|| nDifalizer( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikT, dbfTikL, dbfTikP, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfIva, dbfDiv, if( lEur, cDivChg(), cDivEmp() ), .t. ) }
+         :bEditValue       := {|| nDifalizer( ( D():Tikets( nView ) )->cSerTik + ( D():Tikets( nView ) )->cNumTik + ( D():Tikets( nView ) )->cSufTik, D():Tikets( nView ), dbfTikL, dbfTikP, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfIva, dbfDiv, if( lEur, cDivChg(), cDivEmp() ), .t. ) }
          :nWidth           := 80
          :lHide            := .t.
          :nDataStrAlign    := 1
@@ -1441,13 +1430,13 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Div."
-         :bEditValue       := {|| cSimDiv( if( lEur, cDivChg(), ( dbfTikT )->cDivTik ), dbfDiv ) }
+         :bEditValue       := {|| cSimDiv( if( lEur, cDivChg(), ( D():Tikets( nView ) )->cDivTik ), dbfDiv ) }
          :nWidth           := 30
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Documento"
-         :bEditValue       := {|| ( dbfTikT )->cNumDoc }
+         :bEditValue       := {|| ( D():Tikets( nView ) )->cNumDoc }
          :nWidth           := 120
          :lHide            := .t.
       end with
@@ -1554,14 +1543,14 @@ else
 
    DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( WinDupRec( oWndBrw:oBrw, bEditT, dbfTikT ) );
+      ACTION   ( WinDupRec( oWndBrw:oBrw, bEditT, D():Tikets( nView ) ) );
       TOOLTIP  "Ti(k)et a factura";
       HOTKEY   "K";
       LEVEL    ACC_APPD
 
    DEFINE BTNSHELL RESOURCE "BMPCONTA" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( DlgCntTicket( dbfTikT, dbfTikL, dbfTikP, dbfClient, dbfArticulo, dbfFPago, dbfDiv, oWndBrw, oNewImp ) );
+      ACTION   ( DlgCntTicket( D():Tikets( nView ), dbfTikL, dbfTikP, dbfClient, dbfArticulo, dbfFPago, dbfDiv, oWndBrw, oNewImp ) );
       TOOLTIP  "Co(n)tabilizar" ;
       HOTKEY   "N";
       LEVEL    ACC_EDIT
@@ -1570,7 +1559,7 @@ else
 
       DEFINE BTNSHELL RESOURCE "CHGSTATE" OF oWndBrw GROUP;
          NOBORDER ;
-         ACTION   ContTpv( dbfTikT, oWndBrw:oBrw );
+         ACTION   ContTpv( D():Tikets( nView ), oWndBrw:oBrw );
          TOOLTIP  "Cambiar esta(d)o" ;
          HOTKEY   "D";
          LEVEL    ACC_EDIT
@@ -1580,14 +1569,14 @@ else
    DEFINE BTNSHELL oSnd RESOURCE "LBL" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
-      ACTION   lSnd( oWndBrw, dbfTikT ) ;
+      ACTION   lSnd( oWndBrw, D():Tikets( nView ) ) ;
       TOOLTIP  "En(v)iar" ;
       HOTKEY   "V";
       LEVEL    ACC_EDIT
 
       DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, dbfTikT, "lSndDoc", .t., .t., .t. ) );
+         ACTION   ( lSelectAll( oWndBrw, D():Tikets( nView ), "lSndDoc", .t., .t., .t. ) );
          TOOLTIP  "Todos" ;
          FROM     oSnd ;
          CLOSED ;
@@ -1595,7 +1584,7 @@ else
 
       DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, dbfTikT, "lSndDoc", .f., .t., .t. ) );
+         ACTION   ( lSelectAll( oWndBrw, D():Tikets( nView ), "lSndDoc", .f., .t., .t. ) );
          TOOLTIP  "Ninguno" ;
          FROM     oSnd ;
          CLOSED ;
@@ -1603,7 +1592,7 @@ else
 
       DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, dbfTikT, "lSndDoc", .t., .f., .t. ) );
+         ACTION   ( lSelectAll( oWndBrw, D():Tikets( nView ), "lSndDoc", .t., .f., .t. ) );
          TOOLTIP  "Abajo" ;
          FROM     oSnd ;
          CLOSED ;
@@ -1627,7 +1616,7 @@ else
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;
          MENU     This:Toggle() ;
-         ACTION   ( ReplaceCreator( oWndBrw, dbfTikT, aItmTik(), TIK_CLI ) );
+         ACTION   ( ReplaceCreator( oWndBrw, D():Tikets( nView ), aItmTik(), TIK_CLI ) );
          TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_EDIT
 
@@ -1643,7 +1632,7 @@ else
 
    DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( TTrazaDocumento():Activate( TIK_CLI, ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik ) ) ;
+      ACTION   ( TTrazaDocumento():Activate( TIK_CLI, ( D():Tikets( nView ) )->cSerTik + ( D():Tikets( nView ) )->cNumTik + ( D():Tikets( nView ) )->cSufTik ) ) ;
       TOOLTIP  "I(n)forme documento" ;
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
@@ -1663,28 +1652,28 @@ else
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( Tik2AlbFac( ( dbfTikT )->cTipTik, ( dbfTikT )->cNumDoc ) );
+         ACTION   ( Tik2AlbFac( ( D():Tikets( nView ) )->cTipTik, ( D():Tikets( nView ) )->cNumDoc ) );
          TOOLTIP  "Visualizar documento" ;
          FROM     oRotor ;
          CLOSED ;
 
       DEFINE BTNSHELL RESOURCE "USER1_" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( EdtCli( ( dbfTikT )->cCliTik ) );
+         ACTION   ( EdtCli( ( D():Tikets( nView ) )->cCliTik ) );
          TOOLTIP  "Modificar cliente" ;
          FROM     oRotor ;
          CLOSED ;
 
       DEFINE BTNSHELL RESOURCE "INFO" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( InfCliente( ( dbfTikT )->cCliTik ) );
+         ACTION   ( InfCliente( ( D():Tikets( nView ) )->cCliTik ) );
          TOOLTIP  "Informe cliente" ;
          FROM     oRotor ;
          CLOSED ;
 
       DEFINE BTNSHELL RESOURCE "WORKER" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( EdtObras( ( dbfTikT )->cCliTik, ( dbfTikT )->cCodObr, dbfObrasT ) );
+         ACTION   ( EdtObras( ( D():Tikets( nView ) )->cCliTik, ( D():Tikets( nView ) )->cCodObr, dbfObrasT ) );
          TOOLTIP  "Modificar obras" ;
          FROM     oRotor ;
          CLOSED ;
@@ -1728,9 +1717,9 @@ Return .t.
 
 //----------------------------------------------------------------------------//
 
-Static Function TpvAppRec( oWndBrw, bEditT, dbfTikT, oWnd, cCodCli, cCodArt, aNumDoc )
+Static Function TpvAppRec( oWndBrw, bEditT, cTikT, oWnd, cCodCli, cCodArt, aNumDoc )
 
-   while ( WinAppRec( oWndBrw, bEditT, dbfTikT, cCodCli, cCodArt, aNumDoc ) )
+   while ( WinAppRec( oWndBrw, bEditT, cTikT, cCodCli, cCodArt, aNumDoc ) )
 
       if lStopEntCont
 
@@ -1740,7 +1729,7 @@ Static Function TpvAppRec( oWndBrw, bEditT, dbfTikT, oWnd, cCodCli, cCodArt, aNu
 
    end while
 
-   // ( dbfTikT )->( dbGoBottom() )
+   // ( cTikT )->( dbGoBottom() )
 
    oWndBrw:Select( 0 )
    oWndBrw:Select( 1 )
@@ -1763,7 +1752,7 @@ Static Function ImpTiket( nDevice, lEntrega, lImpMenu, dbfImp, oDatos )
       oDatos            := TFormatosImpresion():Load( dbfCajT )
    end if
 
-   nCopClient           := Max( Retfld( ( dbfTikT )->cCliTik, dbfClient, "CopiasF" ), 1 )
+   nCopClient           := Max( Retfld( ( D():Tikets( nView ) )->cCliTik, dbfClient, "CopiasF" ), 1 )
 
    /*
    Obtenemos el numero de copias que vamos a imprimir
@@ -1778,7 +1767,7 @@ Static Function ImpTiket( nDevice, lEntrega, lImpMenu, dbfImp, oDatos )
 
       if lCopTik
 
-         nCopTik        := nCopiasTipoTicket( ( dbfTikT )->cTipTik, lEntrega, dbfCajT )
+         nCopTik        := nCopiasTipoTicket( ( D():Tikets( nView ) )->cTipTik, lEntrega, dbfCajT )
 
          if lImpMenu .and. nCopTik == 0
             nCopTik     := 1
@@ -1794,7 +1783,7 @@ Static Function ImpTiket( nDevice, lEntrega, lImpMenu, dbfImp, oDatos )
    */
 
    do case
-      case ( dbfTikT )->cTipTik == SAVTIK
+      case ( D():Tikets( nView ) )->cTipTik == SAVTIK
 
          do case
             case ( lRegalo )
@@ -1813,9 +1802,9 @@ Static Function ImpTiket( nDevice, lEntrega, lImpMenu, dbfImp, oDatos )
 
          end case
 
-      case ( dbfTikT )->cTipTik == SAVVAL
+      case ( D():Tikets( nView ) )->cTipTik == SAVVAL
 
-         if ( dbfTikT )->lFreTik
+         if ( D():Tikets( nView ) )->lFreTik
 
             nGenTikCli( nDevice, "Imprimiendo cheques regalo", oDatos:cFmtTikChk, oDatos:cPrinterTikChk )
 
@@ -1825,39 +1814,39 @@ Static Function ImpTiket( nDevice, lEntrega, lImpMenu, dbfImp, oDatos )
 
          end if
 
-      case ( dbfTikT )->cTipTik == SAVDEV
+      case ( D():Tikets( nView ) )->cTipTik == SAVDEV
 
          nGenTikCli( nDevice, "Imprimiendo devoluciones", oDatos:cFmtTikDev, oDatos:cPrinterDev )
 
-      case ( dbfTikT )->cTipTik == SAVALB
+      case ( D():Tikets( nView ) )->cTipTik == SAVALB
 
-         if lImpAlbaranesEnImpresora( ( dbfTikT )->cNcjTik, dbfCajT )
+         if lImpAlbaranesEnImpresora( ( D():Tikets( nView ) )->cNcjTik, dbfCajT )
 
             if nDevice == IS_SCREEN
-               VisAlbCli( ( dbfTikT )->cNumDoc, .f., "Imprimiendo albaranes", oDatos:cFmtAlbCaj, oDatos:cPrinterAlbCaj )
+               VisAlbCli( ( D():Tikets( nView ) )->cNumDoc, .f., "Imprimiendo albaranes", oDatos:cFmtAlbCaj, oDatos:cPrinterAlbCaj )
             else
-               PrnAlbCli( ( dbfTikT )->cNumDoc, .f., "Imprimiendo albaranes", oDatos:cFmtAlbCaj, oDatos:cPrinterAlbCaj )
+               PrnAlbCli( ( D():Tikets( nView ) )->cNumDoc, .f., "Imprimiendo albaranes", oDatos:cFmtAlbCaj, oDatos:cPrinterAlbCaj )
             end if
 
          else
             nGenTikCli( nDevice, "Imprimiendo albaranes", oDatos:cFmtAlb, oDatos:cPrinterAlb )
          end if
 
-      case ( dbfTikT )->cTipTik == SAVFAC
+      case ( D():Tikets( nView ) )->cTipTik == SAVFAC
 
-         if lImpFacturasEnImpresora( ( dbfTikT )->cNcjTik, dbfCajT )
+         if lImpFacturasEnImpresora( ( D():Tikets( nView ) )->cNcjTik, dbfCajT )
 
             if nDevice == IS_SCREEN
-               VisFacCli( ( dbfTikT )->cNumDoc, .f., "Imprimiendo facturas", oDatos:cFmtFacCaj, oDatos:cPrinterFacCaj )
+               VisFacCli( ( D():Tikets( nView ) )->cNumDoc, .f., "Imprimiendo facturas", oDatos:cFmtFacCaj, oDatos:cPrinterFacCaj )
             else
-               PrnFacCli( ( dbfTikT )->cNumDoc, .f., "Imprimiendo facturas", oDatos:cFmtFacCaj, oDatos:cPrinterFacCaj )
+               PrnFacCli( ( D():Tikets( nView ) )->cNumDoc, .f., "Imprimiendo facturas", oDatos:cFmtFacCaj, oDatos:cPrinterFacCaj )
             end if
 
          else
             nGenTikCli( nDevice, "Imprimiendo facturas", oDatos:cFmtFac, oDatos:cPrinterFac )
          end if
 
-      case ( dbfTikT )->cTipTik == SAVPDA
+      case ( D():Tikets( nView ) )->cTipTik == SAVPDA
 
          if lEntrega
             nGenTikCli( nDevice, "Imprimiendo tickets", oDatos:cFmtEntCaj, oDatos:cPrinterEntCaj )
@@ -1865,7 +1854,7 @@ Static Function ImpTiket( nDevice, lEntrega, lImpMenu, dbfImp, oDatos )
             nGenTikCli( nDevice, "Imprimiendo tickets", oDatos:cFormatoTiket, oDatos:cPrinterTik )
          end if
 
-      case ( dbfTikT )->cTipTik == SAVAPT
+      case ( D():Tikets( nView ) )->cTipTik == SAVAPT
 
          nGenTikCli( nDevice, "Imprimiendo apartados", oDatos:cFmtApt, oDatos:cPrinterApt )
 
@@ -1900,13 +1889,13 @@ Return nil
 
 //----------------------------------------------------------------------------//
 
-Static Function TpvEdtRec( oWndBrw, bEdit, dbfTikT, oWnd )
+Static Function TpvEdtRec( oWndBrw, bEdit, cTikT, oWnd )
 
-   pdaLockSemaphore( dbfTikT )
+   pdaLockSemaphore( cTikT )
 
-   WinEdtRec( oWndBrw, bEdit, dbfTikT, , , oWnd )
+   WinEdtRec( oWndBrw, bEdit, cTikT, , , oWnd )
 
-   pdaUnLockSemaphore( dbfTikT )
+   pdaUnLockSemaphore( cTikT )
 
    oWndBrw:Select( 0 )
    oWndBrw:Select( 1 )
@@ -1923,9 +1912,9 @@ FUNCTION TpvDelRec()
    local nOrdAlb
    local nRecAnt
    local nOrdAnt
-   local cTipDoc        := ( dbfTikT )->cTipTik
-   local cNumDoc        := ( dbfTikT )->cNumDoc
-   local cNumTik        := ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik
+   local cTipDoc        := ( D():Tikets( nView ) )->cTipTik
+   local cNumDoc        := ( D():Tikets( nView ) )->cNumDoc
+   local cNumTik        := ( D():Tikets( nView ) )->cSerTik + ( D():Tikets( nView ) )->cNumTik + ( D():Tikets( nView ) )->cSufTik
 
    CursorWait()
 
@@ -1935,9 +1924,9 @@ FUNCTION TpvDelRec()
 
    // Cambiamos el estado del albarán del que proviene-------------------------
 
-   if !empty( ( dbfTikT )->cAlbTik )
+   if !empty( ( D():Tikets( nView ) )->cAlbTik )
 
-      if dbSeekInOrd( ( dbfTikT )->cAlbTik, "nNumAlb", dbfAlbCliT )
+      if dbSeekInOrd( ( D():Tikets( nView ) )->cAlbTik, "nNumAlb", dbfAlbCliT )
 
          if dbLock( dbfAlbCliT )
             ( dbfAlbCliT )->lFacturado    := .f.
@@ -1954,9 +1943,9 @@ FUNCTION TpvDelRec()
 
       nOrdAlb           := ( dbfAlbCliL )->( OrdSetFocus( "nNumAlb" ) )
 
-      if ( dbfAlbCliL )->( dbSeek( ( dbfTikT )->cAlbTik ) )
+      if ( dbfAlbCliL )->( dbSeek( ( D():Tikets( nView ) )->cAlbTik ) )
 
-         while ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb == ( dbfTikT )->cAlbTik .and. !( dbfAlbCliL )->( Eof() )
+         while ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb == ( D():Tikets( nView ) )->cAlbTik .and. !( dbfAlbCliL )->( Eof() )
 
             if dbLock( dbfAlbCliL )
                ( dbfAlbCliL )->lFacturado    := .f.
@@ -1982,9 +1971,9 @@ FUNCTION TpvDelRec()
    Cambiamos el estado del pedido del que proviene----------------------------
    */
 
-   if !empty( ( dbfTikT )->cPedTik )
+   if !empty( ( D():Tikets( nView ) )->cPedTik )
 
-      if dbSeekInOrd( ( dbfTikT )->cPedTik, "nNumPed", dbfPedCliT )
+      if dbSeekInOrd( ( D():Tikets( nView ) )->cPedTik, "nNumPed", dbfPedCliT )
 
          if dbLock( dbfPedCliT )
             ( dbfPedCliT )->nEstado       := 1
@@ -1994,9 +1983,9 @@ FUNCTION TpvDelRec()
 
       end if
 
-      if dbSeekInOrd( ( dbfTikT )->cPedTik, "nNumPed", dbfPedCliP )
+      if dbSeekInOrd( ( D():Tikets( nView ) )->cPedTik, "nNumPed", dbfPedCliP )
 
-         while ( dbfPedCliP )->cSerPed + Str( ( dbfPedCliP )->nNumPed ) + ( dbfPedCliP )->cSufPed == ( dbfTikT )->cPedTik .and. !( dbfPedCliP )->( eof() )
+         while ( dbfPedCliP )->cSerPed + Str( ( dbfPedCliP )->nNumPed ) + ( dbfPedCliP )->cSufPed == ( D():Tikets( nView ) )->cPedTik .and. !( dbfPedCliP )->( eof() )
 
             if dbLock( dbfPedCliP )
                ( dbfPedCliP )->lPasado    := .f.
@@ -2015,9 +2004,9 @@ FUNCTION TpvDelRec()
    Cambiamos el estado del presupuestos del que proviene----------------------------
    */
 
-   if !empty( ( dbfTikT )->cPreTik )
+   if !empty( ( D():Tikets( nView ) )->cPreTik )
 
-      if dbSeekInOrd( ( dbfTikT )->cPreTik, "nNumPre", dbfPreCliT )
+      if dbSeekInOrd( ( D():Tikets( nView ) )->cPreTik, "nNumPre", dbfPreCliT )
 
          if dbLock( dbfPreCliT )
             ( dbfPreCliT )->lEstado       := .f.
@@ -2050,24 +2039,24 @@ FUNCTION TpvDelRec()
    Eliminamos los vales-----------------------------------------------------
    */
 
-   nRecAnt                       := ( dbfTikT )->( Recno() )
-   nOrdAnt                       := ( dbfTikT )->( OrdSetFocus( "cDocVal" ) )
+   nRecAnt                       := ( D():Tikets( nView ) )->( Recno() )
+   nOrdAnt                       := ( D():Tikets( nView ) )->( OrdSetFocus( "cDocVal" ) )
 
-   if ( dbfTikT )->( dbSeek( cNumTik ) )
-      while ( dbfTikT )->cValDoc == cNumTik .and. !( dbfTikT )->( eof() )
-         if dbLock( dbfTikT )
-            ( dbfTikT )->lLiqTik := .f.
-            ( dbfTikT )->lSndDoc := .t.
-            ( dbfTikT )->cTurVal := ""
-            ( dbfTikT )->cValDoc := ""
-            ( dbfTikT )->( dbUnLock() )
+   if ( D():Tikets( nView ) )->( dbSeek( cNumTik ) )
+      while ( D():Tikets( nView ) )->cValDoc == cNumTik .and. !( D():Tikets( nView ) )->( eof() )
+         if dbLock( D():Tikets( nView ) )
+            ( D():Tikets( nView ) )->lLiqTik := .f.
+            ( D():Tikets( nView ) )->lSndDoc := .t.
+            ( D():Tikets( nView ) )->cTurVal := ""
+            ( D():Tikets( nView ) )->cValDoc := ""
+            ( D():Tikets( nView ) )->( dbUnLock() )
          end if
-         ( dbfTikT )->( dbSkip() )
+         ( D():Tikets( nView ) )->( dbSkip() )
       end while
    end if
 
-   ( dbfTikT )->( dbGoTo( nRecAnt ) )
-   ( dbfTikT )->( OrdSetFocus( nOrdAnt ) )
+   ( D():Tikets( nView ) )->( dbGoTo( nRecAnt ) )
+   ( D():Tikets( nView ) )->( OrdSetFocus( nOrdAnt ) )
 
    /*
    Borramos el doc. asociados-----------------------------------------------
@@ -2151,7 +2140,7 @@ Return ( .t. )
 
 //----------------------------------------------------------------------------//
 
-STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode, aNumDoc )
+STATIC FUNCTION EdtRec( aTmp, aGet, cTikT, oBrw, cCodCli, cCodArt, nMode, aNumDoc )
 
    local nOrd
    local oBmpDiv
@@ -2249,7 +2238,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode, aNum
    Orden actual----------------------------------------------------------------
    */
 
-   nOrd                    := ( dbfTikT )->( ordSetFocus( 1 ) )
+   nOrd                    := ( D():Tikets( nView ) )->( ordSetFocus( 1 ) )
 
    /*
    Comenzamos las transacciones------------------------------------------------
@@ -2746,12 +2735,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode, aNum
 
    KillTrans()
 
-   if Select( dbfTikT ) != 0
-      ( dbfTikT )->( ordSetFocus( nOrd ) )
+   if Select( D():Tikets( nView ) ) != 0
+      ( D():Tikets( nView ) )->( ordSetFocus( nOrd ) )
    end if
 
 RETURN ( oDlgTpv:nResult == IDOK )
-
 
 //--------------------------------------------------------------------------//
 
@@ -3452,20 +3440,20 @@ Static function GuardaApartado( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet, o
 
       cSelApartado      := BrwApartados()
 
-      nRec              := ( dbfTikT )->( Recno() )
-      nOrdAnt           := ( dbfTikT )->( OrdSetFocus( "CNUMTIK" ) )
+      nRec              := ( D():Tikets( nView ) )->( Recno() )
+      nOrdAnt           := ( D():Tikets( nView ) )->( OrdSetFocus( "CNUMTIK" ) )
 
       if !empty( cSelApartado )                 .and.;
-         ( dbfTikT )->( dbSeek( cSelApartado ) )
+         ( D():Tikets( nView ) )->( dbSeek( cSelApartado ) )
 
-         /*oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-         BEGIN SEQUENCE*/
+         oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+         BEGIN SEQUENCE
 
          /*
          Abrimos el ticket seleccionado-------------------------------------------
          */
 
-         aScatter( dbfTikT, aTmp )
+         aScatter( D():Tikets( nView ), aTmp )
 
          BeginTrans( aTmp, aGet, EDIT_MODE, .f. )
 
@@ -3504,18 +3492,18 @@ Static function GuardaApartado( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet, o
             aGet[ _CCLITIK ]:lValid()
          end if
 
-         /*RECOVER USING oError
+         RECOVER USING oError
    
          msgStop( ErrorMessage( oError ), "Error al cambiar de ticket" )
    
          END SEQUENCE
    
-         ErrorBlock( oBlock )*/
+         ErrorBlock( oBlock )
 
       end if 
 
-      ( dbfTikT )->( OrdSetFocus( nOrdAnt ) )
-      ( dbfTikT )->( dbGoTo( nRec ) )
+      ( D():Tikets( nView ) )->( OrdSetFocus( nOrdAnt ) )
+      ( D():Tikets( nView ) )->( dbGoTo( nRec ) )
 
    else
 
@@ -3537,21 +3525,21 @@ static function BrwApartados()
    local oCbxOrd
    local cCbxOrd
    local aCbxOrd                 := { "Número", "Fecha", "Código cliente", "Nombre cliente" }
-   local nRecAnt                 := ( dbfTikT )->( RecNo() )
+   local nRecAnt                 := ( D():Tikets( nView ) )->( RecNo() )
    local cApartadoSeleccionado   := ""
 
    nOrd                          := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd                       := aCbxOrd[ nOrd ]
 
-   nOrd                          := ( dbfTikT )->( OrdSetFocus( nOrd ) )
+   nOrd                          := ( D():Tikets( nView ) )->( OrdSetFocus( nOrd ) )
 
    /*
    Posicinamiento--------------------------------------------------------------
    */
 
-   ( dbfTikT )->( dbGoTop() )
+   ( D():Tikets( nView ) )->( dbGoTop() )
 
-   if ( dbfTikT )->( Eof() )
+   if ( D():Tikets( nView ) )->( Eof() )
 
       MsgStop( "No existen apartados para seleccionar." )
 
@@ -3561,7 +3549,7 @@ static function BrwApartados()
 
          REDEFINE GET oGet1 VAR cGet1;
             ID       104 ;
-            ON CHANGE AutoSeek( nKey, nFlags, Self, oBrw, dbfTikT );
+            ON CHANGE AutoSeek( nKey, nFlags, Self, oBrw, D():Tikets( nView ) );
             BITMAP   "FIND" ;
             OF       oDlg
 
@@ -3569,7 +3557,7 @@ static function BrwApartados()
             VAR      cCbxOrd ;
             ID       102 ;
             ITEMS    aCbxOrd ;
-            ON CHANGE( ( dbfTikT )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() );
+            ON CHANGE( ( D():Tikets( nView ) )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() );
             OF       oDlg
 
          oBrw                    := IXBrowse():New( oDlg )
@@ -3577,7 +3565,7 @@ static function BrwApartados()
          oBrw:bClrSel            := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
          oBrw:bClrSelFocus       := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-         oBrw:cAlias             := dbfTikT
+         oBrw:cAlias             := D():Tikets( nView )
          oBrw:cName              := "Ticket cliente"
          oBrw:bLDblClick         := {|| oDlg:End( IDOK ) }
 
@@ -3586,7 +3574,7 @@ static function BrwApartados()
          with object ( oBrw:AddCol() )
             :cHeader             := "Número"
             :cSortOrder          := "cNumTik"
-            :bEditValue          := {|| ( dbfTikT )->cSerTik + "/" + AllTrim( ( dbfTikT )->cNumTik ) + "/" + ( dbfTikT )->cSufTik }
+            :bEditValue          := {|| ( D():Tikets( nView ) )->cSerTik + "/" + AllTrim( ( D():Tikets( nView ) )->cNumTik ) + "/" + ( D():Tikets( nView ) )->cSufTik }
             :nWidth              := 70
             :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
          end with
@@ -3594,27 +3582,27 @@ static function BrwApartados()
          with object ( oBrw:AddCol() )
             :cHeader             := "Fecha"
             :cSortOrder          := "dFecTik"
-            :bEditValue          := {|| dtoc( ( dbfTikT )->dFecTik ) }
+            :bEditValue          := {|| dtoc( ( D():Tikets( nView ) )->dFecTik ) }
             :nWidth              := 80
             :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
          end with
 
          with object ( oBrw:AddCol() )
             :cHeader             := "Hora"
-            :bEditValue          := {|| ( dbfTikT )->cHorTik }
+            :bEditValue          := {|| ( D():Tikets( nView ) )->cHorTik }
             :nWidth              := 80
          end with
 
          with object ( oBrw:AddCol() )
             :cHeader             := "Sesión"
-            :bEditValue          := {|| ( dbfTikT )->cTurTik + "/" + ( dbfTikT )->cSufTik }
+            :bEditValue          := {|| ( D():Tikets( nView ) )->cTurTik + "/" + ( D():Tikets( nView ) )->cSufTik }
             :nWidth              := 80
             :lHide               := .t.
          end with
 
          with object ( oBrw:AddCol() )
             :cHeader             := "Código cliente"
-            :bEditValue          := {|| Rtrim( ( dbfTikT )->cCliTik ) }
+            :bEditValue          := {|| Rtrim( ( D():Tikets( nView ) )->cCliTik ) }
             :cSortOrder          := "cCliTik"
             :nWidth              := 100
             :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
@@ -3622,7 +3610,7 @@ static function BrwApartados()
 
          with object ( oBrw:AddCol() )
             :cHeader             := "Nombre cliente"
-            :bEditValue          := {|| AllTrim( ( dbfTikT )->cNomTik ) }
+            :bEditValue          := {|| AllTrim( ( D():Tikets( nView ) )->cNomTik ) }
             :cSortOrder          := "cNomTik"
             :nWidth              := 350
             :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
@@ -3630,7 +3618,7 @@ static function BrwApartados()
 
          with object ( oBrw:AddCol() )
             :cHeader             := "Importe "
-            :bEditValue          := {|| nTotalizer( ( dbfTikT)->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikT, dbfTikL, dbfTikP, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, cDivEmp(), .t. ) }
+            :bEditValue          := {|| nTotalizer( ( D():Tikets( nView ) )->cSerTik + ( D():Tikets( nView ) )->cNumTik + ( D():Tikets( nView ) )->cSufTik, D():Tikets( nView ), dbfTikL, dbfTikP, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, cDivEmp(), .t. ) }
             :nWidth              := 85
             :nDataStrAlign       := 1
             :nHeadStrAlign       := 1
@@ -3673,15 +3661,15 @@ static function BrwApartados()
       */
 
       if oDlg:nResult == IDOK
-         cApartadoSeleccionado   := ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik
+         cApartadoSeleccionado   := ( D():Tikets( nView ) )->cSerTik + ( D():Tikets( nView ) )->cNumTik + ( D():Tikets( nView ) )->cSufTik
       end if
 
-      SetBrwOpt( "BrwTikCli", ( dbfTikT )->( OrdNumber() ) )
+      SetBrwOpt( "BrwTikCli", ( D():Tikets( nView ) )->( OrdNumber() ) )
 
    end if   
 
-   ( dbfTikT )->( OrdSetFocus( nOrd ) )
-   ( dbfTikT )->( dbGoTo( nRecAnt ) )
+   ( D():Tikets( nView ) )->( OrdSetFocus( nOrd ) )
+   ( D():Tikets( nView ) )->( dbGoTo( nRecAnt ) )
 
 RETURN ( cApartadoSeleccionado )
 
@@ -3689,17 +3677,17 @@ RETURN ( cApartadoSeleccionado )
 
 Static Function EndBrwApartados( oDlg )
 
-   if ( dbfTikT )->cTipTik == "5"
+   if ( D():Tikets( nView ) )->cTipTik == "5"
       msgStop( "El tipo de documento no es un apartado." )
       Return .f.
    end if       
    
-   if ( dbfTikT )->cCcjTik == oUser():cCodigo()
+   if ( D():Tikets( nView ) )->cCcjTik == oUser():cCodigo()
       msgStop( "El usuario que realizo el docuemnto no coincide." )
       Return .f.
    end if       
 
-   if ( dbfTikT )->cNcjTik == oUser():cCaja() 
+   if ( D():Tikets( nView ) )->cNcjTik == oUser():cCaja() 
       msgStop( "El documento no se realizo en esta caja." )
       Return .f.
    end if
@@ -4005,7 +3993,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
    oTotDiv              := TotalesTPV():Init()
 
-   nTotTik              := nTotTik( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], dbfTikT, dbfTmpL, dbfDiv, aTmp, nil, .f. )
+   nTotTik              := nTotTik( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], D():Tikets( nView ), dbfTmpL, dbfDiv, aTmp, nil, .f. )
 
    aTmp[ _NCAMTIK ]     := 0
    aTmp[ _NCOBTIK ]     := nTotTik
@@ -4077,7 +4065,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
             setAutoTextDialog( 'Obtenemos el nuevo número' )
 
-            aTmp[ _CNUMTIK ]  := Str( nNewDoc( aTmp[ _CSERTIK ], dbfTikT, "nTikCli", 10, dbfCount ), 10 )
+            aTmp[ _CNUMTIK ]  := Str( nNewDoc( aTmp[ _CSERTIK ], D():Tikets( nView ), "nTikCli", 10, dbfCount ), 10 )
             aTmp[ _CSUFTIK ]  := RetSufEmp()
             nNumTik           := aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ]
 
@@ -4127,21 +4115,21 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
             setAutoTextDialog( 'Eliminando vales' )
 
-            nOrd  := ( dbfTikT )->( OrdSetFocus( "cDocVal" ) )
-            nRec  := ( dbfTikT )->( Recno() )
+            nOrd  := ( D():Tikets( nView ) )->( OrdSetFocus( "cDocVal" ) )
+            nRec  := ( D():Tikets( nView ) )->( Recno() )
 
-            while ( dbfTikT )->( dbSeek( nNumTik ) ) .and. !( dbfTikT )->( eof() )
-               if dbLock( dbfTikT )
-                  ( dbfTikT )->lLiqTik       := .f.
-                  ( dbfTikT )->lSndDoc       := .t.
-                  ( dbfTikT )->cValDoc       := ""
-                  ( dbfTikT )->cTurVal       := ""
-                  ( dbfTikT )->( dbUnLock() )
+            while ( D():Tikets( nView ) )->( dbSeek( nNumTik ) ) .and. !( D():Tikets( nView ) )->( eof() )
+               if dbLock( D():Tikets( nView ) )
+                  ( D():Tikets( nView ) )->lLiqTik       := .f.
+                  ( D():Tikets( nView ) )->lSndDoc       := .t.
+                  ( D():Tikets( nView ) )->cValDoc       := ""
+                  ( D():Tikets( nView ) )->cTurVal       := ""
+                  ( D():Tikets( nView ) )->( dbUnLock() )
                end if
             end while
 
-            ( dbfTikT )->( OrdSetFocus( nOrd ) )
-            ( dbfTikT )->( dbGoTo( nRec ) )
+            ( D():Tikets( nView ) )->( OrdSetFocus( nOrd ) )
+            ( D():Tikets( nView ) )->( dbGoTo( nRec ) )
 
             /*
             Quitamos las marcas desde el fichero de Tiket----------------------
@@ -4328,23 +4316,23 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
          setAutoTextDialog( 'Archivando vales' )
 
-         nRec                          := ( dbfTikT )->( Recno() )
+         nRec                          := ( D():Tikets( nView ) )->( Recno() )
 
          ( dbfTmpV )->( dbGoTop() )
          while !( dbfTmpV )->( eof() )
-            if ( dbfTikT )->( dbSeek( ( dbfTmpV )->cSerTik + ( dbfTmpV )->cNumTik + ( dbfTmpV )->cSufTik ) )
-               if dbLock( dbfTikT )
-                  ( dbfTikT )->lLiqTik := .t.
-                  ( dbfTikT )->lSndDoc := .t.
-                  ( dbfTikT )->cValDoc := nNumTik
-                  ( dbfTikT )->cTurVal := cCurSesion()
-                  ( dbfTikT )->( dbUnLock() )
+            if ( D():Tikets( nView ) )->( dbSeek( ( dbfTmpV )->cSerTik + ( dbfTmpV )->cNumTik + ( dbfTmpV )->cSufTik ) )
+               if dbLock( D():Tikets( nView ) )
+                  ( D():Tikets( nView ) )->lLiqTik := .t.
+                  ( D():Tikets( nView ) )->lSndDoc := .t.
+                  ( D():Tikets( nView ) )->cValDoc := nNumTik
+                  ( D():Tikets( nView ) )->cTurVal := cCurSesion()
+                  ( D():Tikets( nView ) )->( dbUnLock() )
                end if
             end if
             ( dbfTmpV )->( dbSkip() )
          end while
 
-         ( dbfTikT )->( dbGoTo( nRec ) )
+         ( D():Tikets( nView ) )->( dbGoTo( nRec ) )
 
          /*
          Ahora escribimos en el fichero definitivo los anticipos------------------
@@ -4377,7 +4365,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Chequeo de los pago------------------------------------------------------
          */
 
-         if ( dbfTikT )->cTipTik == SAVFAC
+         if ( D():Tikets( nView ) )->cTipTik == SAVFAC
 
             if dbLock( dbfFacCliT )
                ( dbfFacCliT )->lSndDoc       := .t.
@@ -4404,7 +4392,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
          setAutoTextDialog( 'Abriendo la caja' )
 
-         if ( dbfTikT )->cTipTik != SAVALB
+         if ( D():Tikets( nView ) )->cTipTik != SAVALB
             oUser():OpenCajonDirect( nView )
          end if
 
@@ -4647,7 +4635,7 @@ Function nImpUTpv( uTikT, uTikL, nDec, nVdv, cPouDiv, nPrc )
    local nDtoEsp     := 0
    local nDtoPP      := 0
 
-   DEFAULT uTikT     := dbfTikT
+   DEFAULT uTikT     := if( !Empty( nView ), D():Tikets( nView ), )
    DEFAULT uTikL     := dbfTikL
    DEFAULT nDec      := nDouDiv()
    DEFAULT nVdv      := 1
@@ -4814,7 +4802,7 @@ Function nBrtLTpv( uTikT, uTikL, nDec, nVdv, cPouDiv, nPrc )
 
    local nCalculo
 
-   DEFAULT uTikT     := dbfTikT
+   DEFAULT uTikT     := if( !Empty( nView ), D():Tikets( nView ), )
    DEFAULT uTikL     := dbfTikL
    DEFAULT nDec      := nDouDiv()
    DEFAULT nVdv      := 1
@@ -4912,7 +4900,7 @@ Function nIvaLTpv( cTikT, cTikL, nDec, nRou, nVdv, nPrc )
 
    local nCalculo       := 0
 
-   DEFAULT cTikT        := dbfTikT
+   DEFAULT cTikT        := if( !Empty( nView ), D():Tikets( nView ), )
    DEFAULT cTikL        := dbfTikL
    DEFAULT nDec         := nDouDiv()
    DEFAULT nRou         := nRouDiv()
@@ -5014,7 +5002,7 @@ Static Function EdtCobTik( oWndBrw, lBig )
 
    DEFAULT lBig      := .f.
 
-   if ( ( dbfTikT )->cTipTik == SAVAPT )
+   if ( ( D():Tikets( nView ) )->cTipTik == SAVAPT )
       msgStop( "No se pueden realizar cobros sobre tickets apartados.")
       return nil      
    end if 
@@ -5022,12 +5010,12 @@ Static Function EdtCobTik( oWndBrw, lBig )
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   aTmp              := dbScatter( dbfTikT )
-   aGet              := Array( ( dbfTikT )->( fCount() ) )
-   cNumTik           := ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik
-   cCodCli           := ( dbfTikT )->cCliTik
-   cNumDoc           := ( dbfTikT )->cNumDoc
-   nOrdAnt           := ( dbfTikT )->( OrdSetFocus( "cNumTik" ) )
+   aTmp              := dbScatter( D():Tikets( nView ) )
+   aGet              := Array( ( D():Tikets( nView ) )->( fCount() ) )
+   cNumTik           := ( D():Tikets( nView ) )->cSerTik + ( D():Tikets( nView ) )->cNumTik + ( D():Tikets( nView ) )->cSufTik
+   cCodCli           := ( D():Tikets( nView ) )->cCliTik
+   cNumDoc           := ( D():Tikets( nView ) )->cNumDoc
+   nOrdAnt           := ( D():Tikets( nView ) )->( OrdSetFocus( "cNumTik" ) )
 
    nCopTik           := nCopiasTicketsEnCaja( oUser():cCaja(), dbfCajT )
 
@@ -5070,7 +5058,7 @@ Static Function EdtCobTik( oWndBrw, lBig )
    dbUseArea( .t., cLocalDriver(), cNewFilE, cCheckArea( "TikE", @dbfTmpE ), .f. )
 
    do case
-   case ( dbfTikT )->cTipTik == SAVALB // Como albaran
+   case ( D():Tikets( nView ) )->cTipTik == SAVALB // Como albaran
 
       aTmp[ _NCOBTIK ]  := nTotAlbCli( cNumDoc, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, nil, nil, .f. )
 
@@ -5081,7 +5069,7 @@ Static Function EdtCobTik( oWndBrw, lBig )
       nRec              := ( dbfAlbCliP )->( Recno() )
       nOrd              := ( dbfAlbCliP )->( OrdSetFocus( "NNUMALB" ) )
 
-      if ( dbfAlbCliP )->( dbSeek( ( dbfTikT )->cNumDoc ) )
+      if ( dbfAlbCliP )->( dbSeek( ( D():Tikets( nView ) )->cNumDoc ) )
          while ( ( dbfAlbCliP )->cSerAlb + Str( ( dbfAlbCliP )->nNumAlb ) + ( dbfAlbCliP )->cSufAlb ) == cNumDoc .and. !( dbfAlbCliP )->( eof() )
             dbPass( dbfAlbCliP, dbfTmpE, .t. )
             ( dbfAlbCliP )->( dbSkip() )
@@ -5092,7 +5080,7 @@ Static Function EdtCobTik( oWndBrw, lBig )
       ( dbfAlbCliP )->( OrdSetFocus( nOrd ) )
       ( dbfAlbCliP )->( dbGoTo( nRec ) )
 
-   case ( dbfTikT )->cTipTik == SAVFAC // Como factura
+   case ( D():Tikets( nView ) )->cTipTik == SAVFAC // Como factura
 
       aTmp[ _NCOBTIK ]  := nTotFacCli( cNumDoc, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, nil, nil, nil, .f. )
 
@@ -5140,7 +5128,7 @@ Static Function EdtCobTik( oWndBrw, lBig )
 
    otherwise
 
-      aTmp[ _NCOBTIK ]  := nTotTik( cNumTik, dbfTikT, dbfTikL, dbfDiv, nil, nil, .f. )
+      aTmp[ _NCOBTIK ]  := nTotTik( cNumTik, D():Tikets( nView ), dbfTikL, dbfDiv, nil, nil, .f. )
 
       /*
       A¤adimos desde el fichero de PAGOS---------------------------------------
@@ -5159,18 +5147,18 @@ Static Function EdtCobTik( oWndBrw, lBig )
       Añadimos desde los vales----------------------------------------------
       */
 
-      nRec     := ( dbfTikT )->( Recno() )
-      nOrd     := ( dbfTikT )->( OrdSetFocus( "cDocVal" ) )
+      nRec     := ( D():Tikets( nView ) )->( Recno() )
+      nOrd     := ( D():Tikets( nView ) )->( OrdSetFocus( "cDocVal" ) )
 
-      if ( dbfTikT )->( dbSeek( cNumTik ) )
-         while ( dbfTikT )->cValDoc == cNumTik .and. !( dbfTikT )->( eof() )
-            dbPass( dbfTikT, dbfTmpV, .t. )
-            ( dbfTikT )->( dbSkip() )
+      if ( D():Tikets( nView ) )->( dbSeek( cNumTik ) )
+         while ( D():Tikets( nView ) )->cValDoc == cNumTik .and. !( D():Tikets( nView ) )->( eof() )
+            dbPass( D():Tikets( nView ), dbfTmpV, .t. )
+            ( D():Tikets( nView ) )->( dbSkip() )
          end while
       end if
 
-      ( dbfTikT )->( dbGoTo( nRec ) )
-      ( dbfTikT )->( OrdSetFocus( nOrd ) )
+      ( D():Tikets( nView ) )->( dbGoTo( nRec ) )
+      ( D():Tikets( nView ) )->( OrdSetFocus( nOrd ) )
 
       ( dbfTmpV )->( dbGoTop() )
 
@@ -5213,7 +5201,7 @@ Static Function EdtCobTik( oWndBrw, lBig )
       end if
 
       do case
-      case ( dbfTikT )->cTipTik == SAVTIK .or. ( dbfTikT )->cTipTik == SAVDEV .or. ( dbfTikT )->cTipTik == SAVAPT // Como tiket
+      case ( D():Tikets( nView ) )->cTipTik == SAVTIK .or. ( D():Tikets( nView ) )->cTipTik == SAVDEV .or. ( D():Tikets( nView ) )->cTipTik == SAVAPT // Como tiket
 
          /*
          Eliminamos los pagos--------------------------------------------------
@@ -5240,45 +5228,45 @@ Static Function EdtCobTik( oWndBrw, lBig )
          Eliminamos los vales ----------------------------------------------------')
          */
 
-         nOrd  := ( dbfTikT )->( OrdSetFocus( "cDocVal" ) )
-         nRec  := ( dbfTikT )->( Recno() )
+         nOrd  := ( D():Tikets( nView ) )->( OrdSetFocus( "cDocVal" ) )
+         nRec  := ( D():Tikets( nView ) )->( Recno() )
 
-         while ( dbfTikT )->( dbSeek( cNumTik ) ) .and. !( dbfTikT )->( eof() )
-            if dbLock( dbfTikT )
-               ( dbfTikT )->lLiqTik := .f.
-               ( dbfTikT )->lSndDoc := .t.
-               ( dbfTikT )->cValDoc := ""
-               ( dbfTikT )->cTurVal := ""
-               ( dbfTikT )->( dbUnLock() )
+         while ( D():Tikets( nView ) )->( dbSeek( cNumTik ) ) .and. !( D():Tikets( nView ) )->( eof() )
+            if dbLock( D():Tikets( nView ) )
+               ( D():Tikets( nView ) )->lLiqTik := .f.
+               ( D():Tikets( nView ) )->lSndDoc := .t.
+               ( D():Tikets( nView ) )->cValDoc := ""
+               ( D():Tikets( nView ) )->cTurVal := ""
+               ( D():Tikets( nView ) )->( dbUnLock() )
             end if
          end while
 
-         ( dbfTikT )->( OrdSetFocus( nOrd ) )
-         ( dbfTikT )->( dbGoTo( nRec ) )
+         ( D():Tikets( nView ) )->( OrdSetFocus( nOrd ) )
+         ( D():Tikets( nView ) )->( dbGoTo( nRec ) )
 
          /*
          Anotamos los vales ------------------------------------------------------
          */
 
-         nRec  := ( dbfTikT )->( Recno() )
+         nRec  := ( D():Tikets( nView ) )->( Recno() )
 
          ( dbfTmpV )->( dbGoTop() )
          while !( dbfTmpV )->( eof() )
-            if ( dbfTikT )->( dbSeek( ( dbfTmpV )->cSerTik + ( dbfTmpV )->cNumTik + ( dbfTmpV )->cSufTik ) )
-               if dbLock( dbfTikT )
-                  ( dbfTikT )->lLiqTik := .t.
-                  ( dbfTikT )->lSndDoc := .t.
-                  ( dbfTikT )->cValDoc := cNumTik
-                  ( dbfTikT )->cTurVal := cCurSesion()
-                  ( dbfTikT )->( dbUnLock() )
+            if ( D():Tikets( nView ) )->( dbSeek( ( dbfTmpV )->cSerTik + ( dbfTmpV )->cNumTik + ( dbfTmpV )->cSufTik ) )
+               if dbLock( D():Tikets( nView ) )
+                  ( D():Tikets( nView ) )->lLiqTik := .t.
+                  ( D():Tikets( nView ) )->lSndDoc := .t.
+                  ( D():Tikets( nView ) )->cValDoc := cNumTik
+                  ( D():Tikets( nView ) )->cTurVal := cCurSesion()
+                  ( D():Tikets( nView ) )->( dbUnLock() )
                end if
             end if
             ( dbfTmpV )->( dbSkip() )
          end while
 
-         ( dbfTikT )->( dbGoTo( nRec ) )
+         ( D():Tikets( nView ) )->( dbGoTo( nRec ) )
 
-      case ( dbfTikT )->cTipTik == SAVFAC // Como factura
+      case ( D():Tikets( nView ) )->cTipTik == SAVFAC // Como factura
 
          cSerAlb     := SubStr( cNumDoc, 1, 1 )
          cNumAlb     := Val( SubStr( cNumDoc, 2, 9 ) )
@@ -5373,7 +5361,7 @@ Static Function EdtCobTik( oWndBrw, lBig )
 
          ChkLqdFacCli( nil, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfIva, dbfDiv )
 
-      case ( dbfTikT )->cTipTik == SAVALB // Como albaran
+      case ( D():Tikets( nView ) )->cTipTik == SAVALB // Como albaran
 
          cSerAlb     := SubStr( cNumDoc, 1, 1 )
          cNumAlb     := Val( SubStr( cNumDoc, 2, 9 ) )
@@ -5430,7 +5418,7 @@ Static Function EdtCobTik( oWndBrw, lBig )
       Apertura de la caja------------------------------------------------------------
 		*/
 
-      if ( dbfTikT )->cTipTik != SAVALB
+      if ( D():Tikets( nView ) )->cTipTik != SAVALB
          oUser():OpenCajonDirect( nView )
       end if
 
@@ -5438,11 +5426,11 @@ Static Function EdtCobTik( oWndBrw, lBig )
       Guardamos los cambios en la cabercera del tiket--------------------------------
       */
 
-      dbGather( aTmp, dbfTikT )
+      dbGather( aTmp, D():Tikets( nView ) )
 
    end if
 
-   ( dbfTikT )->( OrdSetFocus( nOrdAnt ) )
+   ( D():Tikets( nView ) )->( OrdSetFocus( nOrdAnt ) )
 
    RECOVER USING oError
 
@@ -5575,7 +5563,7 @@ Static Function TmpTiket( aTmp, aGet, nMode, lClean, lImprimirComanda, lLiberarM
    Inicializamos las variables de importe---------------------------------------
    */
 
-   nTotTik                 := nTotTik( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], dbfTikT, dbfTmpL, dbfDiv, aTmp, nil, .f. )
+   nTotTik                 := nTotTik( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], D():Tikets( nView ), dbfTmpL, dbfDiv, aTmp, nil, .f. )
    nTotPax                 := nTotTik / NotCero( aTmp[ _NNUMCOM ] )
 
    aTmp[ _NCAMTIK ]        := 0
@@ -5606,7 +5594,7 @@ Static Function TmpTiket( aTmp, aGet, nMode, lClean, lImprimirComanda, lLiberarM
             oMetMsg:Refresh()
          end if
 
-         aTmp[ _CNUMTIK ]           := Str( nNewDoc( aTmp[ _CSERTIK ], dbfTikT, "nTikCli", 10, dbfCount ), 10 )
+         aTmp[ _CNUMTIK ]           := Str( nNewDoc( aTmp[ _CSERTIK ], D():Tikets( nView ), "nTikCli", 10, dbfCount ), 10 )
          aTmp[ _CSUFTIK ]           := RetSufEmp()
          nNumTik                    := aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ]
 
@@ -5626,7 +5614,7 @@ Static Function TmpTiket( aTmp, aGet, nMode, lClean, lImprimirComanda, lLiberarM
          Nos posicionamos en el registro a guardar-----------------------------
          */
 
-         if !( dbfTikT )->( dbSeek( nNumTik ) )
+         if !( D():Tikets( nView ) )->( dbSeek( nNumTik ) )
             if !empty( oMetMsg )
                oMetMsg:cText  := 'Ticket no encontrado'
                oMetMsg:Refresh()
@@ -5687,7 +5675,7 @@ Static Function TmpTiket( aTmp, aGet, nMode, lClean, lImprimirComanda, lLiberarM
          oMetMsg:Refresh()
       end if
 
-      WinGather( aTmp, aGet, dbfTikT, nil, nMode, nil, lClean )
+      WinGather( aTmp, aGet, D():Tikets( nView ), nil, nMode, nil, lClean )
 
       /*
       Escribe los datos pendientes---------------------------------------------
@@ -5729,18 +5717,18 @@ Static Function DlgPrnTicket( oBrw )
    local oDlg
    local oSelTik
    local nSelTik     := 1
-   local nOrdAnt     := ( dbfTikT )->( OrdSetFocus( 1 ) )
-   local nRecAnt     := ( dbfTikT )->( RecNo() )
+   local nOrdAnt     := ( D():Tikets( nView ) )->( OrdSetFocus( 1 ) )
+   local nRecAnt     := ( D():Tikets( nView ) )->( RecNo() )
    local oSerDes
-   local cSerDes     := ( dbfTikT )->cSerTik
-   local cNumDes     := Val( ( dbfTikT )->cNumTik )
-   local cSufDes     := ( dbfTikT )->cSufTik
+   local cSerDes     := ( D():Tikets( nView ) )->cSerTik
+   local cNumDes     := Val( ( D():Tikets( nView ) )->cNumTik )
+   local cSufDes     := ( D():Tikets( nView ) )->cSufTik
    local oSerHas
-   local cSerHas     := ( dbfTikT )->cSerTik
-   local cNumHas     := Val( ( dbfTikT )->cNumTik )
-   local cSufHas     := ( dbfTikT )->cSufTik
-   local dFecDes     := ( dbfTikT )->dFecTik
-   local dFecHas     := ( dbfTikT )->dFecTik
+   local cSerHas     := ( D():Tikets( nView ) )->cSerTik
+   local cNumHas     := Val( ( D():Tikets( nView ) )->cNumTik )
+   local cSufHas     := ( D():Tikets( nView ) )->cSufTik
+   local dFecDes     := ( D():Tikets( nView ) )->dFecTik
+   local dFecHas     := ( D():Tikets( nView ) )->dFecTik
    local lInvOrden   := .f.
 
    local oDatos      := TFormatosImpresion():Load( dbfCajT )
@@ -5749,7 +5737,7 @@ Static Function DlgPrnTicket( oBrw )
 
 		REDEFINE RADIO oSelTik VAR nSelTik ;
 			ID 		101, 102 ;
-			ON CHANGE( ( dbfTikT )->( OrdSetFocus( nSelTik ) ) );
+			ON CHANGE( ( D():Tikets( nView ) )->( OrdSetFocus( nSelTik ) ) );
 			OF 		oDlg
 
       REDEFINE GET oSerDes VAR cSerDes;
@@ -5928,8 +5916,8 @@ Static Function DlgPrnTicket( oBrw )
 
    ACTIVATE DIALOG oDlg CENTER
 
-	( dbfTikT )->( OrdSetFocus( nOrdAnt ) )
-	( dbfTikT )->( dbGoTo( nRecAnt ) )
+	( D():Tikets( nView ) )->( OrdSetFocus( nOrdAnt ) )
+	( D():Tikets( nView ) )->( dbGoTo( nRecAnt ) )
 
 	oBrw:refresh()
 
@@ -5953,18 +5941,18 @@ Static Function PrnSerTik( nSelTik, cNumDes, cNumHas, dFecDes, dFecHas, oDlg, lI
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   nRecAnt           := ( dbfTikT )->( RecNo() )
+   nRecAnt           := ( D():Tikets( nView ) )->( RecNo() )
 
    DEFAULT nSelTik   := 1
-   DEFAULT cNumDes   := ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik
-   DEFAULT cNumHas   := ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik
+   DEFAULT cNumDes   := ( D():Tikets( nView ) )->cSerTik + ( D():Tikets( nView ) )->cNumTik + ( D():Tikets( nView ) )->cSufTik
+   DEFAULT cNumHas   := ( D():Tikets( nView ) )->cSerTik + ( D():Tikets( nView ) )->cNumTik + ( D():Tikets( nView ) )->cSufTik
 
    if nSelTik == 1
-      nOrdAnt        := ( dbfTikT )->( OrdSetFocus( "cNumTik" ) )
+      nOrdAnt        := ( D():Tikets( nView ) )->( OrdSetFocus( "cNumTik" ) )
       uNumDes        := cNumDes
       uNumHas        := cNumHas
    else
-      nOrdAnt        := ( dbfTikT )->( OrdSetFocus( "dFecTik" ) )
+      nOrdAnt        := ( D():Tikets( nView ) )->( OrdSetFocus( "dFecTik" ) )
       uNumDes        := dFecDes
       uNumHas        := dFecHas
    end if
@@ -5975,15 +5963,15 @@ Static Function PrnSerTik( nSelTik, cNumDes, cNumHas, dFecDes, dFecHas, oDlg, lI
 
    if !lInvOrden
 
-      if ( dbfTikT )->( dbSeek( uNumDes, .t. ) )
+      if ( D():Tikets( nView ) )->( dbSeek( uNumDes, .t. ) )
 
-         while !( dbfTikT )->( eof())                    .AND.;
-               ( dbfTikT )->( OrdKeyVal() ) >= uNumDes   .AND.;
-               ( dbfTikT )->( OrdKeyVal() ) <= uNumHas
+         while !( D():Tikets( nView ) )->( eof())                    .AND.;
+               ( D():Tikets( nView ) )->( OrdKeyVal() ) >= uNumDes   .AND.;
+               ( D():Tikets( nView ) )->( OrdKeyVal() ) <= uNumHas
 
             ImpTiket( IS_PRINTER, , .t., , oDatos )
 
-            ( dbfTikT )->( dbSkip() )
+            ( D():Tikets( nView ) )->( dbSkip() )
 
          end while
 
@@ -5991,15 +5979,15 @@ Static Function PrnSerTik( nSelTik, cNumDes, cNumHas, dFecDes, dFecHas, oDlg, lI
 
    else
 
-      if ( dbfTikT )->( dbSeek( uNumHas ) )
+      if ( D():Tikets( nView ) )->( dbSeek( uNumHas ) )
 
-         while ( dbfTikT )->( OrdKeyVal() ) >= uNumDes   .and.;
-               ( dbfTikT )->( OrdKeyVal() ) <= uNumHas   .and.;
-               !( dbfTikT )->( Bof() )
+         while ( D():Tikets( nView ) )->( OrdKeyVal() ) >= uNumDes   .and.;
+               ( D():Tikets( nView ) )->( OrdKeyVal() ) <= uNumHas   .and.;
+               !( D():Tikets( nView ) )->( Bof() )
 
             impTiket( IS_PRINTER, , .t., , oDatos )
 
-            ( dbfTikT )->( dbSkip( -1 ) )
+            ( D():Tikets( nView ) )->( dbSkip( -1 ) )
 
          end while
 
@@ -6011,8 +5999,8 @@ Static Function PrnSerTik( nSelTik, cNumDes, cNumHas, dFecDes, dFecHas, oDlg, lI
       oDlg:Enable()
    end if
 
-   ( dbfTikT )->( dbGoTo( nRecAnt ) )
-   ( dbfTikT )->( OrdSetFocus( nOrdAnt ) )
+   ( D():Tikets( nView ) )->( dbGoTo( nRecAnt ) )
+   ( D():Tikets( nView ) )->( OrdSetFocus( nOrdAnt ) )
 
    RECOVER USING oError
 
@@ -6026,7 +6014,7 @@ Return nil
 
 //----------------------------------------------------------------------------//
 
-FUNCTION nTotComTik( cNumTik, dbfTikT, dbfTikL, nDouDiv, nDorDiv )
+FUNCTION nTotComTik( cNumTik, cTikT, dbfTikL, nDouDiv, nDorDiv )
 
    local nTotal      := 0
    local nRecno      := ( dbfTikL )->( RecNo() )
@@ -6035,9 +6023,9 @@ FUNCTION nTotComTik( cNumTik, dbfTikT, dbfTikL, nDouDiv, nDorDiv )
 
       while ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil == cNumTik .AND. !( dbfTikL )->( eof() )
 
-         if !( dbfTikL )->lFreTil .or. ( dbfTikT )->cTipTik == SAVDEV
+         if !( dbfTikL )->lFreTil .or. ( cTikT )->cTipTik == SAVDEV
 
-            nTotal   += nTotLTpv( dbfTikL, nDouDiv, nDorDiv ) * ( dbfTikT )->nComAge
+            nTotal   += nTotLTpv( dbfTikL, nDouDiv, nDorDiv ) * ( cTikT )->nComAge
 
          end if
 
@@ -6059,9 +6047,9 @@ Return ( nTotal )
 
 //----------------------------------------------------------------------------//
 
-Function aTotTik( cNumTik, dbfTikT, dbfTikL, dbfDiv, aTmp, cDivRet, lPic, lExcCnt )
+Function aTotTik( cNumTik, cTikT, dbfTikL, dbfDiv, aTmp, cDivRet, lPic, lExcCnt )
 
-   nTotTik( cNumTik, dbfTikT, dbfTikL, dbfDiv, aTmp, cDivRet, lPic, lExcCnt )
+   nTotTik( cNumTik, cTikT, dbfTikL, dbfDiv, aTmp, cDivRet, lPic, lExcCnt )
 
 Return ( { nTotNet, nTotIva, nTotTik, nTotIvm, aIvaTik, aBasTik, aImpTik, aIvmTik } )
 
@@ -6136,7 +6124,7 @@ Function nImpValTik( cNumTik, cTikT, cTikL, cDiv, cDivRet )
    local nLinAnt
    local nTotTik      := 0
 
-   DEFAULT cTikT     := dbfTikT
+   DEFAULT cTikT     := if( !Empty( nView ), D():tikets( nView ), )
    DEFAULT cDiv      := dbfDiv
    DEFAULT cNumTik   := ( cTikT )->cSerTik + ( cTikT )->cNumTik + ( cTikT )->cSufTik
 
@@ -6206,7 +6194,7 @@ Function nImpValCli( cCliTik, cTikT, cTikL, cDiv, cDivRet )
    local nLinAnt
    local nTotTik      := 0
 
-   DEFAULT cTikT     := dbfTikT
+   DEFAULT cTikT     := if( !Empty( nView ), D():tikets( nView ), )
    DEFAULT cDiv      := dbfDiv
    DEFAULT cCliTik   := ( cTikT )->cCliTik
 
@@ -6274,7 +6262,7 @@ Function nTotValTik( cNumTik, cTikT, cTikL, cDiv, cDivRet, lPic )
    local nRecAnt
    local nTotal      := 0
 
-   DEFAULT cTikT     := dbfTikT
+   DEFAULT cTikT     := if( !Empty( nView ), D():tikets( nView ), )
    DEFAULT cTikL     := dbfTikL
    DEFAULT cDiv      := dbfDiv
    DEFAULT lPic      := .f.
@@ -6336,7 +6324,7 @@ Function nTotValTikInfo( cNumTik, cTikT, cDiv, cDivRet, lPic )
    local nTotal      := 0
    local dbfTmpTikL
 
-   DEFAULT cTikT     := dbfTikT
+   DEFAULT cTikT     := if( !Empty( nView ), D():tikets( nView ), )
    DEFAULT cDiv      := dbfDiv
    DEFAULT lPic      := .f.
    DEFAULT cNumTik   := ( cTikT )->cSerTik + ( cTikT )->cNumTik + ( cTikT )->cSufTik
@@ -6408,7 +6396,7 @@ Function nTmpValTik( cTikT, cTikL, cDiv, cDivRet, lPic )
    local cCodDiv     := ( cTikT )->cDivTik
    local nRecAnt     := ( cTikT )->( Recno() )
 
-   DEFAULT cTikT     := dbfTikT
+   DEFAULT cTikT     := if( !Empty( nView ), D():tikets( nView ), )
    DEFAULT cTikL     := dbfTikL
    DEFAULT cDiv      := dbfDiv
    DEFAULT lPic      := .f.
@@ -6839,7 +6827,7 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
 
       aTmp[ _LSNDDOC ]                 := .t.
 
-      if ( dbfTikT )->cTipTik == SAVALB
+      if ( D():Tikets( nView ) )->cTipTik == SAVALB
 
          LoaAlb2Tik()
 
@@ -6850,8 +6838,8 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
          nRecAnt  := ( dbfAlbCliP )->( Recno() )
          nOrdAnt  := ( dbfAlbCliP )->( OrdSetFocus( "NNUMALB" ) )
 
-         if ( dbfAlbCliP )->( dbSeek( ( dbfTikT )->cNumDoc ) )
-            while ( ( dbfAlbCliP )->cSerAlb + Str( ( dbfAlbCliP )->nNumAlb ) + ( dbfAlbCliP )->cSufAlb ) == ( dbfTikT )->cNumDoc .and. !( dbfAlbCliP )->( eof() )
+         if ( dbfAlbCliP )->( dbSeek( ( D():Tikets( nView ) )->cNumDoc ) )
+            while ( ( dbfAlbCliP )->cSerAlb + Str( ( dbfAlbCliP )->nNumAlb ) + ( dbfAlbCliP )->cSufAlb ) == ( D():Tikets( nView ) )->cNumDoc .and. !( dbfAlbCliP )->( eof() )
                dbPass( dbfAlbCliP, dbfTmpE, .t. )
                ( dbfAlbCliP )->( dbSkip() )
             end while
@@ -6861,11 +6849,11 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
          ( dbfAlbCliP )->( OrdSetFocus( nOrdAnt ) )
          ( dbfAlbCliP )->( dbGoTo( nRecAnt ) )
 
-      elseif ( dbfTikT )->cTipTik == SAVFAC
+      elseif ( D():Tikets( nView ) )->cTipTik == SAVFAC
 
-         if ( dbfFacCliL )->( dbSeek( ( dbfTikT )->cNumDoc ) )
+         if ( dbfFacCliL )->( dbSeek( ( D():Tikets( nView ) )->cNumDoc ) )
 
-            while ( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac == ( dbfTikT )->cNumDoc .and. !( dbfFacCliL )->( eof() ) )
+            while ( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac == ( D():Tikets( nView ) )->cNumDoc .and. !( dbfFacCliL )->( eof() ) )
 
                ( dbfTmpL )->( dbAppend() )
                ( dbfTmpL )->cCbaTil    := ( dbfFacCliL )->cRef
@@ -6896,9 +6884,9 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
          Importamos los pagos--------------------------------------------------------
          */
 
-         if ( dbfFacCliP )->( dbSeek( ( dbfTikT )->cNumDoc ) )
+         if ( dbfFacCliP )->( dbSeek( ( D():Tikets( nView ) )->cNumDoc ) )
 
-            while ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == ( dbfTikT )->cNumDoc .and. !( dbfFacCliP )->( eof() )
+            while ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == ( D():Tikets( nView ) )->cNumDoc .and. !( dbfFacCliP )->( eof() )
 
                if ( dbfFacCliP )->lCobrado
                   ( dbfTmpP )->( dbAppend() )
@@ -6926,8 +6914,8 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
          nRecAnt  := ( dbfAntCliT )->( Recno() )
          nOrdAnt  := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
 
-         if ( dbfAntCliT )->( dbSeek( ( dbfTikT )->cNumDoc ) )
-            while ( dbfAntCliT )->cNumDoc == ( dbfTikT )->cNumDoc .and. !( dbfAntCliT )->( eof() )
+         if ( dbfAntCliT )->( dbSeek( ( D():Tikets( nView ) )->cNumDoc ) )
+            while ( dbfAntCliT )->cNumDoc == ( D():Tikets( nView ) )->cNumDoc .and. !( dbfAntCliT )->( eof() )
                dbPass( dbfAntCliT, dbfTmpA, .t. )
                ( dbfAntCliT )->( dbSkip() )
             end while
@@ -6976,18 +6964,18 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
          Añadimos desde los vales----------------------------------------------
          */
 
-         nRecAnt     := ( dbfTikT )->( Recno() )
-         nOrdAnt     := ( dbfTikT )->( OrdSetFocus( "cDocVal" ) )
+         nRecAnt     := ( D():Tikets( nView ) )->( Recno() )
+         nOrdAnt     := ( D():Tikets( nView ) )->( OrdSetFocus( "cDocVal" ) )
 
-         if ( dbfTikT )->( dbSeek( cNumTik ) )
-            while ( dbfTikT )->cValDoc == cNumTik .and. !( dbfTikT )->( eof() )
-               dbPass( dbfTikT, dbfTmpV, .t. )
-               ( dbfTikT )->( dbSkip() )
+         if ( D():Tikets( nView ) )->( dbSeek( cNumTik ) )
+            while ( D():Tikets( nView ) )->cValDoc == cNumTik .and. !( D():Tikets( nView ) )->( eof() )
+               dbPass( D():Tikets( nView ), dbfTmpV, .t. )
+               ( D():Tikets( nView ) )->( dbSkip() )
             end while
          end if
 
-         ( dbfTikT )->( dbGoTo( nRecAnt ) )
-         ( dbfTikT )->( OrdSetFocus( nOrdAnt ) )
+         ( D():Tikets( nView ) )->( dbGoTo( nRecAnt ) )
+         ( D():Tikets( nView ) )->( OrdSetFocus( nOrdAnt ) )
 
          ( dbfTmpV )->( dbGoTop() )
 
@@ -9702,7 +9690,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
          ID       320 ;
          OF       oDlg;
          WHEN     ( lWhen ) ;
-         ACTION   ( BrwVale( dbfTikT, dbfTikL, dbfIva, dbfDiv, dbfTmpV, oBrwVal, .f., aTmp ), CalImpCob( aTmp ) )
+         ACTION   ( BrwVale( D():Tikets( nView ), dbfTikL, dbfIva, dbfDiv, dbfTmpV, oBrwVal, .f., aTmp ), CalImpCob( aTmp ) )
 
       REDEFINE BUTTON aBtnCob[ 5 ];
          ID       321 ;
@@ -9720,7 +9708,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
          ID       323 ;
          OF       oDlg ;
          WHEN     ( lWhen ) ;
-         ACTION   ( BrwVale( dbfTikT, dbfTikL, dbfIva, dbfDiv, dbfTmpV, oBrwVal, .t., aTmp ), CalImpCob( aTmp ) )
+         ACTION   ( BrwVale( D():Tikets( nView ), dbfTikL, dbfIva, dbfDiv, dbfTmpV, oBrwVal, .t., aTmp ), CalImpCob( aTmp ) )
 
       oBrwVal                 := IXBrowse():New( oDlg )
 
@@ -9780,7 +9768,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
 
       with object ( oBrwVal:AddCol() )
          :cHeader          := "Importe"
-         :bEditValue       := {|| nTotalizer( ( dbfTmpV )->cSerTik + ( dbfTmpV )->cNumTik + ( dbfTmpV )->cSufTik, dbfTikT, dbfTikL, dbfTikP, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, cDivEmp(), .t. ) }
+         :bEditValue       := {|| nTotalizer( ( dbfTmpV )->cSerTik + ( dbfTmpV )->cNumTik + ( dbfTmpV )->cSufTik, D():Tikets( nView ), dbfTikL, dbfTikP, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, cDivEmp(), .t. ) }
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -10286,7 +10274,7 @@ Return Nil
 
 //--------------------------------------------------------------------------//
 
-Static Function BrwVale( dbfTikT, dbfTikL, dbfIva, dbfDiv, dbfTmpV, oBrwVal, lCliente, aTmp )
+Static Function BrwVale( cTikT, dbfTikL, dbfIva, dbfDiv, dbfTmpV, oBrwVal, lCliente, aTmp )
 
    local oDlg
 	local oBrw
@@ -10304,8 +10292,8 @@ Static Function BrwVale( dbfTikT, dbfTikL, dbfIva, dbfDiv, dbfTmpV, oBrwVal, lCl
    local aCbxOrd        := { 'Número', 'Código cliente', 'Nombre cliente' }
    local cCodCliente    := aTmp[ _CCLITIK ]
    local cText          := ""
-   local nRecAnt        := ( dbfTikT )->( RecNo() )
-   local nOrdAnt        := ( dbfTikT )->( OrdSetFocus( "cCliVal" ) )
+   local nRecAnt        := ( D():Tikets( nView ) )->( RecNo() )
+   local nOrdAnt        := ( D():Tikets( nView ) )->( OrdSetFocus( "cCliVal" ) )
 
    DEFAULT lCliente     := .f.
 
@@ -10333,21 +10321,21 @@ Static Function BrwVale( dbfTikT, dbfTikL, dbfIva, dbfDiv, dbfTmpV, oBrwVal, lCl
    Pasamos los datos a la temporal---------------------------------------------
    */
 
-   ( dbfTikT )->( dbGoTop() )
+   ( D():Tikets( nView ) )->( dbGoTop() )
 
    if !lCliente
 
-      while !( dbfTikT )->( eof() )
-         dbPass( dbfTikT, dbfVal, .t. )
-         ( dbfTikT )->( dbSkip() )
+      while !( D():Tikets( nView ) )->( eof() )
+         dbPass( D():Tikets( nView ), dbfVal, .t. )
+         ( D():Tikets( nView ) )->( dbSkip() )
       end while
 
    else
 
-      if ( dbfTikT )->( dbSeek( cCodCliente ) )
-         while ( dbfTikT )->cCliTik == cCodCliente .and. !( dbfTikT )->( eof() )
-            dbPass( dbfTikT, dbfVal, .t. )
-            ( dbfTikT )->( dbSkip() )
+      if ( D():Tikets( nView ) )->( dbSeek( cCodCliente ) )
+         while ( D():Tikets( nView ) )->cCliTik == cCodCliente .and. !( D():Tikets( nView ) )->( eof() )
+            dbPass( D():Tikets( nView ), dbfVal, .t. )
+            ( D():Tikets( nView ) )->( dbSkip() )
          end while
       end if
 
@@ -10571,8 +10559,8 @@ Static Function BrwVale( dbfTikT, dbfTikL, dbfIva, dbfDiv, dbfTmpV, oBrwVal, lCl
       ( cNewFil )->( dbCloseArea() )
    end if
 
-   ( dbfTikT )->( OrdSetFocus( nOrdAnt ) )
-   ( dbfTikT )->( dbGoTo( nRecAnt ) )
+   ( D():Tikets( nView ) )->( OrdSetFocus( nOrdAnt ) )
+   ( D():Tikets( nView ) )->( dbGoTo( nRecAnt ) )
 
    dbfErase( cNewFil )
 
@@ -10584,19 +10572,19 @@ RETURN ( oDlg:nResult == IDOK )
 
 //-------------------------------------------------------------------------//
 
-STATIC FUNCTION CambiarOrd( oBrw, oCbx, dbfTikT )
+STATIC FUNCTION CambiarOrd( oBrw, oCbx, cTikT )
 
    local nOrd  := oCbx:nAt
 
    do case
       case ( nOrd == 1 )
-         ( dbfTikT )->( OrdSetFocus( "cLiqVal" ) )
+         ( D():Tikets( nView ) )->( OrdSetFocus( "cLiqVal" ) )
 
       case ( nOrd == 2 )
-         ( dbfTikT )->( OrdSetFocus( "cCliVal" ) )
+         ( D():Tikets( nView ) )->( OrdSetFocus( "cCliVal" ) )
 
       case ( nOrd == 3 )
-         ( dbfTikT )->( OrdSetFocus( "cNomVal" ) )
+         ( D():Tikets( nView ) )->( OrdSetFocus( "cNomVal" ) )
 
    end case
 
@@ -11036,36 +11024,36 @@ RETURN ( nCalculo )
 // Devuelve el total de la venta en Facturas de un clientes determinado
 //
 
-function nVtaTik( cCodCli, dDesde, dHasta, dbfTikT, dbfTikL, dbfIva, dbfDiv, nYear )
+function nVtaTik( cCodCli, dDesde, dHasta, cTikT, dbfTikL, dbfIva, dbfDiv, nYear )
 
    local nCon     := 0
-   local aSta     := aGetStatus( dbfTikT )
+   local aSta     := aGetStatus( cTikT )
 
    /*
    Facturas a Clientes -------------------------------------------------------
    */
 
-   if ( dbfTikT )->( dbSeek( cCodCli ) )
+   if ( cTikT )->( dbSeek( cCodCli ) )
 
-      while ( dbfTikT )->cCliTik = cCodCli .and. !( dbfTikT )->( Eof() )
+      while ( cTikT )->cCliTik = cCodCli .and. !( cTikT )->( Eof() )
 
-         if ( dDesde == nil .or. ( dbfTikT )->dFecTik >= dDesde ) .and.;
-            ( dHasta == nil .or. ( dbfTikT )->dFecTik <= dHasta ) .and.;
-            ( nYear == nil .or. Year( ( dbfTikT )->dFecTik ) == nYear )
+         if ( dDesde == nil .or. ( cTikT )->dFecTik >= dDesde ) .and.;
+            ( dHasta == nil .or. ( cTikT )->dFecTik <= dHasta ) .and.;
+            ( nYear == nil .or. Year( ( cTikT )->dFecTik ) == nYear )
 
-            if ( dbfTikT )->cTipTik == SAVTIK
+            if ( cTikT )->cTipTik == SAVTIK
 
-               nCon  += nTotTik( ( dbfTikT )->cSerTik + (dbfTikT)->cNumTik + (dbfTikT)->cSufTik, dbfTikT, dbfTikL, dbfDiv, nil, cDivEmp(), .f. )
+               nCon  += nTotTik( ( cTikT )->cSerTik + (cTikT)->cNumTik + (cTikT)->cSufTik, cTikT, dbfTikL, dbfDiv, nil, cDivEmp(), .f. )
 
-            elseif ( dbfTikT )->cTipTik == SAVDEV
+            elseif ( cTikT )->cTipTik == SAVDEV
 
-               nCon  -= nTotTik( ( dbfTikT )->cSerTik + (dbfTikT)->cNumTik + (dbfTikT)->cSufTik, dbfTikT, dbfTikL, dbfDiv, nil, cDivEmp(), .f. )
+               nCon  -= nTotTik( ( cTikT )->cSerTik + (cTikT)->cNumTik + (cTikT)->cSufTik, cTikT, dbfTikL, dbfDiv, nil, cDivEmp(), .f. )
 
             end if
 
          end if
 
-         ( dbfTikT )->( dbSkip() )
+         ( cTikT )->( dbSkip() )
 
          SysRefresh()
 
@@ -11073,44 +11061,44 @@ function nVtaTik( cCodCli, dDesde, dHasta, dbfTikT, dbfTikL, dbfIva, dbfDiv, nYe
 
    end if
 
-   SetStatus( dbfTikT, aSta )
+   SetStatus( cTikT, aSta )
 
 return nCon
 
 //----------------------------------------------------------------------------//
 
-function nPdtTik( cCodCli, dDesde, dHasta, dbfTikT, dbfTikL, dbfTikP, dbfIva, dbfDiv )
+function nPdtTik( cCodCli, dDesde, dHasta, cTikT, dbfTikL, dbfTikP, dbfIva, dbfDiv )
 
    local nCon     := 0
-   local aSta     := aGetStatus( dbfTikT )
+   local aSta     := aGetStatus( cTikT )
 
    /*
    Facturas a Clientes -------------------------------------------------------
    */
 
-   if ( dbfTikT )->( dbSeek( cCodCli ) )
+   if ( cTikT )->( dbSeek( cCodCli ) )
 
-      while ( dbfTikT )->cCliTik = cCodCli .and. !( dbfTikT )->( Eof() )
+      while ( cTikT )->cCliTik = cCodCli .and. !( cTikT )->( Eof() )
 
-         if !( dbfTikT )->lLiqTik                                 .and.;
-            ( dDesde == nil .or. ( dbfTikT )->dFecTik >= dDesde ) .and.;
-            ( dHasta == nil .or. ( dbfTikT )->dFecTik <= dHasta )
+         if !( cTikT )->lLiqTik                                 .and.;
+            ( dDesde == nil .or. ( cTikT )->dFecTik >= dDesde ) .and.;
+            ( dHasta == nil .or. ( cTikT )->dFecTik <= dHasta )
 
-            if ( dbfTikT )->cTipTik == SAVTIK
+            if ( cTikT )->cTipTik == SAVTIK
 
-               nCon  += nTotTik( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikT, dbfTikL, dbfDiv, nil, cDivEmp(), .f. )
-               nCon  -= nTotCobTik( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikP, dbfDiv, cDivEmp() )
+               nCon  += nTotTik( ( cTikT )->cSerTik + ( cTikT )->cNumTik + ( cTikT )->cSufTik, cTikT, dbfTikL, dbfDiv, nil, cDivEmp(), .f. )
+               nCon  -= nTotCobTik( ( cTikT )->cSerTik + ( cTikT )->cNumTik + ( cTikT )->cSufTik, dbfTikP, dbfDiv, cDivEmp() )
 
-            elseif ( dbfTikT )->cTipTik == SAVDEV
+            elseif ( cTikT )->cTipTik == SAVDEV
 
-               nCon  -= nTotTik( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikT, dbfTikL, dbfDiv, nil, cDivEmp(), .f. )
-               nCon  += nTotCobTik( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikP, dbfDiv, cDivEmp() )
+               nCon  -= nTotTik( ( cTikT )->cSerTik + ( cTikT )->cNumTik + ( cTikT )->cSufTik, cTikT, dbfTikL, dbfDiv, nil, cDivEmp(), .f. )
+               nCon  += nTotCobTik( ( cTikT )->cSerTik + ( cTikT )->cNumTik + ( cTikT )->cSufTik, dbfTikP, dbfDiv, cDivEmp() )
 
             end if
 
          end if
 
-         ( dbfTikT )->( dbSkip() )
+         ( cTikT )->( dbSkip() )
 
          SysRefresh()
 
@@ -11118,7 +11106,7 @@ function nPdtTik( cCodCli, dDesde, dHasta, dbfTikT, dbfTikL, dbfTikP, dbfIva, db
 
    end if
 
-   SetStatus( dbfTikT, aSta )
+   SetStatus( cTikT, aSta )
 
 return nCon
 
@@ -11127,38 +11115,38 @@ return nCon
 // Devuelve el total de cobros en tickets de un clientes determinado
 //
 
-function nCobTik( cCodCli, dDesde, dHasta, dbfTikT, dbfTikP, dbfIva, dbfDiv, nYear )
+function nCobTik( cCodCli, dDesde, dHasta, cTikT, dbfTikP, dbfIva, dbfDiv, nYear )
 
    local nCon     := 0
-   local aSta     := aGetStatus( dbfTikT )
+   local aSta     := aGetStatus( cTikT )
 
-   ( dbfTikT )->( OrdSetFocus( "CCLITIK" ) )
+   ( cTikT )->( OrdSetFocus( "CCLITIK" ) )
 
    /*
    Facturas a Clientes -------------------------------------------------------
    */
 
-   if ( dbfTikT )->( dbSeek( cCodCli ) )
+   if ( cTikT )->( dbSeek( cCodCli ) )
 
-      while ( dbfTikT )->cCliTik = cCodCli .and. !( dbfTikT )->( Eof() )
+      while ( cTikT )->cCliTik = cCodCli .and. !( cTikT )->( Eof() )
 
-         if ( dDesde == nil .or. ( dbfTikT )->dFecTik >= dDesde ) .and.;
-            ( dHasta == nil .or. ( dbfTikT )->dFecTik <= dHasta ) .and.;
-            ( nYear == nil .or. Year( ( dbfTikT )->dFecTik ) == nYear )
+         if ( dDesde == nil .or. ( cTikT )->dFecTik >= dDesde ) .and.;
+            ( dHasta == nil .or. ( cTikT )->dFecTik <= dHasta ) .and.;
+            ( nYear == nil .or. Year( ( cTikT )->dFecTik ) == nYear )
 
-            if ( dbfTikT )->cTipTik == SAVTIK
+            if ( cTikT )->cTipTik == SAVTIK
 
-               nCon  += nTotCobTik( ( dbfTikT )->cSerTik + (dbfTikT)->cNumTik + (dbfTikT)->cSufTik, dbfTikP, dbfDiv, cDivEmp() )
+               nCon  += nTotCobTik( ( cTikT )->cSerTik + (cTikT)->cNumTik + (cTikT)->cSufTik, dbfTikP, dbfDiv, cDivEmp() )
 
-            elseif ( dbfTikT )->cTipTik == SAVDEV
+            elseif ( cTikT )->cTipTik == SAVDEV
 
-               nCon  -= nTotCobTik( ( dbfTikT )->cSerTik + (dbfTikT)->cNumTik + (dbfTikT)->cSufTik, dbfTikP, dbfDiv, cDivEmp() )
+               nCon  -= nTotCobTik( ( cTikT )->cSerTik + (cTikT)->cNumTik + (cTikT)->cSufTik, dbfTikP, dbfDiv, cDivEmp() )
 
             end if
 
          end if
 
-         ( dbfTikT )->( dbSkip() )
+         ( cTikT )->( dbSkip() )
 
          SysRefresh()
 
@@ -11166,38 +11154,38 @@ function nCobTik( cCodCli, dDesde, dHasta, dbfTikT, dbfTikP, dbfIva, dbfDiv, nYe
 
    end if
 
-   SetStatus( dbfTikT, aSta )
+   SetStatus( cTikT, aSta )
 
 return nCon
 
 //----------------------------------------------------------------------------//
 
-Function nValTik( cCodCli, dDesde, dHasta, dbfTikT, dbfTikL, dbfDiv, nYear )
+Function nValTik( cCodCli, dDesde, dHasta, cTikT, dbfTikL, dbfDiv, nYear )
 
    local nCon     := 0
-   local aSta     := aGetStatus( dbfTikT )
+   local aSta     := aGetStatus( cTikT )
 
-   ( dbfTikT )->( OrdSetFocus( "cCliVal" ) )
+   ( cTikT )->( OrdSetFocus( "cCliVal" ) )
 
-   if ( dbfTikT )->( dbSeek( cCodCli ) )
+   if ( cTikT )->( dbSeek( cCodCli ) )
 
-      while ( dbfTikT )->cCliTik == cCodCli .and. !( dbfTikT )->( eof() )
+      while ( cTikT )->cCliTik == cCodCli .and. !( cTikT )->( eof() )
 
-         if ( dDesde == nil .or. ( dbfTikT )->dFecTik >= dDesde ) .and.;
-            ( dHasta == nil .or. ( dbfTikT )->dFecTik <= dHasta ) .and.;
-            ( nYear == nil .or. Year( ( dbfTikT )->dFecTik ) == nYear )
+         if ( dDesde == nil .or. ( cTikT )->dFecTik >= dDesde ) .and.;
+            ( dHasta == nil .or. ( cTikT )->dFecTik <= dHasta ) .and.;
+            ( nYear == nil .or. Year( ( cTikT )->dFecTik ) == nYear )
 
-            nCon  += nTotTik( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikT, dbfTikL, dbfDiv, , , .f. )
+            nCon  += nTotTik( ( cTikT )->cSerTik + ( cTikT )->cNumTik + ( cTikT )->cSufTik, cTikT, dbfTikL, dbfDiv, , , .f. )
 
          end if
 
-         ( dbfTikT )->( dbSkip() )
+         ( cTikT )->( dbSkip() )
 
       end while
 
    end if
 
-   SetStatus( dbfTikT, aSta )
+   SetStatus( cTikT, aSta )
 
 return nCon
 
@@ -11240,7 +11228,7 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-Static Function EdtCob( aTmp, aGet, dbfTikP, oBrw, bWhen, bValid, nMode, aTmpTik )
+Static Function EdtCob( aTmp, aGet, cTikP, oBrw, bWhen, bValid, nMode, aTmpTik )
 
 	local oDlg
    local oSay
@@ -11871,7 +11859,7 @@ Function SavTik2Alb( aTik, aGet, nMode, nSave )
    Escribimos definitivamente en el disco--------------------------------------
    */
 
-   WinGather( aTik, aGet, dbfTikT, oBrwDet, nMode, nil, .t. )
+   WinGather( aTik, aGet, D():Tikets( nView ), oBrwDet, nMode, nil, .t. )
 
 return ( nNewAlbCli )
 
@@ -11882,7 +11870,7 @@ Function nTotalizer( cNumTik, cTikT, cTikL, cTikP, cAlbCliT, cAlbCliL, cFacCliT,
    local uTotal         := 0
    local aTotal         := {}
 
-   DEFAULT cTikT        := dbfTikT
+   DEFAULT cTikT        := if( !Empty( nView ), D():Tikets( nView ), )
    DEFAULT cTikL        := dbfTikL
    DEFAULT cTikP        := dbfTikP
    DEFAULT cAlbCliT     := dbfAlbCliT
@@ -11958,39 +11946,39 @@ return ( uTotal )
 
 //----------------------------------------------------------------------------//
 
-Static Function nChkalizer( cNumTik, dbfTikT, dbfTikL, dbfTikP, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, cCodDiv )
+Static Function nChkalizer( cNumTik, cTikT, dbfTikL, dbfTikP, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, cCodDiv )
 
    local nPgo     := 1
-   local aStatus  := aGetStatus( dbfTikT, .t. )
+   local aStatus  := aGetStatus( D():Tikets( nView ), .t. )
    local nRec     := ( dbfFacCliT )->( RecNo() )
    local nOrdAnt  := ( dbfFacCliT )->( OrdSetFocus( "nNumFac" ) )
 
-   if ( dbfTikT )->( dbSeek( cNumTik ) )
+   if ( D():Tikets( nView ) )->( dbSeek( cNumTik ) )
 
       do case
-      case ( dbfTikT )->cTipTik == SAVALB // Como albaran
+      case ( D():Tikets( nView ) )->cTipTik == SAVALB // Como albaran
 
-         if RetFld( ( dbfTikT )->cNumDoc, dbfAlbCliT, "lFacturado" )
+         if RetFld( ( D():Tikets( nView ) )->cNumDoc, dbfAlbCliT, "lFacturado" )
             nPgo  := 1
          else
             nPgo  := 3
          end if
 
-      case ( dbfTikT )->cTipTik == SAVFAC // Como factura
+      case ( D():Tikets( nView ) )->cTipTik == SAVFAC // Como factura
 
-         if ( dbfFacCliT )->( dbSeek( ( dbfTikT )->cNumDoc ) )
-            nPgo  := nChkPagFacCli( ( dbfTikT )->cNumDoc, dbfFacCliT, dbfFacCliP )
+         if ( dbfFacCliT )->( dbSeek( ( D():Tikets( nView ) )->cNumDoc ) )
+            nPgo  := nChkPagFacCli( ( D():Tikets( nView ) )->cNumDoc, dbfFacCliT, dbfFacCliP )
          else
             nPgo  := 3
          end if
 
-      case ( dbfTikT )->cTipTik == SAVVAL // Como Vale
+      case ( D():Tikets( nView ) )->cTipTik == SAVVAL // Como Vale
 
-         nPgo     := if( ( dbfTikT )->lLiqTik, 1, 3 )
+         nPgo     := if( ( D():Tikets( nView ) )->lLiqTik, 1, 3 )
 
       otherwise
 
-         nPgo     := nChkPagTik( cNumTik, dbfTikT, dbfTikL, dbfTikP, dbfIva, dbfDiv )
+         nPgo     := nChkPagTik( cNumTik, D():Tikets( nView ), dbfTikL, dbfTikP, dbfIva, dbfDiv )
 
       end case
 
@@ -11999,48 +11987,48 @@ Static Function nChkalizer( cNumTik, dbfTikT, dbfTikL, dbfTikP, dbfFacCliT, dbfF
    ( dbfFacCliT )->( OrdSetFocus( nOrdAnt ) )
    ( dbfFacCliT )->( dbGoTo( nRec ) )
 
-   SetStatus( dbfTikT, aStatus )
+   SetStatus( D():Tikets( nView ), aStatus )
 
 Return ( nPgo )
 
 //----------------------------------------------------------------------------//
 
-Function nCobalizer( cNumTik, dbfTikT, dbfTikL, dbfTikP, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, cCodDiv, lPic )
+Function nCobalizer( cNumTik, cTikT, dbfTikL, dbfTikP, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, cCodDiv, lPic )
 
    local nPgo     := if( lPic, "", 0 )
-   local aStatus  := aGetStatus( dbfTikT, .t. )
+   local aStatus  := aGetStatus( cTikT, .t. )
 
-   If ( dbfTikT )->( dbSeek( cNumTik ) )
+   If ( cTikT )->( dbSeek( cNumTik ) )
 
       Do Case
-      Case ( dbfTikT )->cTipTik == SAVFAC // Como factura
+      Case ( cTikT )->cTipTik == SAVFAC // Como factura
 
-         nPgo     := nPagFacCli( ( dbfTikT )->cNumDoc, dbfFacCliT, dbfFacCliP, dbfIva, dbfDiv, cCodDiv, .t., lPic )
+         nPgo     := nPagFacCli( ( cTikT )->cNumDoc, dbfFacCliT, dbfFacCliP, dbfIva, dbfDiv, cCodDiv, .t., lPic )
 
-      Case  ( dbfTikT )->cTipTik == SAVTIK .or.;
-            ( dbfTikT )->cTipTik == SAVDEV .or.;
-            ( dbfTikT )->cTipTik == SAVAPT .or.;
-            ( dbfTikT )->cTipTik == SAVVAL
+      Case  ( cTikT )->cTipTik == SAVTIK .or.;
+            ( cTikT )->cTipTik == SAVDEV .or.;
+            ( cTikT )->cTipTik == SAVAPT .or.;
+            ( cTikT )->cTipTik == SAVVAL
 
-         nPgo     := nTotCobTik( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikP, dbfDiv, cCodDiv, lPic )
+         nPgo     := nTotCobTik( ( cTikT )->cSerTik + ( cTikT )->cNumTik + ( cTikT )->cSufTik, dbfTikP, dbfDiv, cCodDiv, lPic )
 
       End Case
 
    End if
 
-   SetStatus( dbfTikT, aStatus )
+   SetStatus( cTikT, aStatus )
 
 Return ( nPgo )
 
 //----------------------------------------------------------------------------//
 
-Function nDifalizer( cNumTik, dbfTikT, dbfTikL, dbfTikP, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfIva, dbfDiv, cCodDiv, lPic )
+Function nDifalizer( cNumTik, cTikT, dbfTikL, dbfTikP, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfIva, dbfDiv, cCodDiv, lPic )
 
    local cPorDiv  := cPorDiv( cCodDiv, dbfDiv ) // Picture de la divisa redondeada
-   local nTot     := nTotalizer( cNumTik, dbfTikT, dbfTikL, dbfTikP, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, cCodDiv, .f. )
-   nTot           -= nCobalizer( cNumTik, dbfTikT, dbfTikL, dbfTikP, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, cCodDiv, .f. )
-   nTot           -= nTotValTik( cNumTik, dbfTikT, dbfTikL, dbfDiv, cCodDiv, .f. )
-   nTot           -= nTotAntFacCli( ( dbfTikT )->cNumDoc, dbfAntCliT, dbfIva, dbfDiv, cCodDiv, .f. )
+   local nTot     := nTotalizer( cNumTik, cTikT, dbfTikL, dbfTikP, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, cCodDiv, .f. )
+   nTot           -= nCobalizer( cNumTik, cTikT, dbfTikL, dbfTikP, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, cCodDiv, .f. )
+   nTot           -= nTotValTik( cNumTik, cTikT, dbfTikL, dbfDiv, cCodDiv, .f. )
+   nTot           -= nTotAntFacCli( ( cTikT )->cNumDoc, dbfAntCliT, dbfIva, dbfDiv, cCodDiv, .f. )
 
 Return ( if( lPic, Trans( nTot, cPorDiv ), nTot ) )
 
@@ -12048,8 +12036,8 @@ Return ( if( lPic, Trans( nTot, cPorDiv ), nTot ) )
 
 static function LoaAlb2Tik()
 
-   if ( dbfAlbCliL )->( DbSeek( ( dbfTikT )->cNumDoc ) )
-      while ( ( dbfAlbCliL )->CSERALB + Str( ( dbfAlbCliL )->NNUMALB ) + ( dbfAlbCliL )->CSUFALB == ( dbfTikT )->cNumDoc .and. !( dbfAlbCliL )->( eof() ) )
+   if ( dbfAlbCliL )->( DbSeek( ( D():tikets( nView ) )->cNumDoc ) )
+      while ( ( dbfAlbCliL )->CSERALB + Str( ( dbfAlbCliL )->NNUMALB ) + ( dbfAlbCliL )->CSUFALB == ( D():tikets( nView ) )->cNumDoc .and. !( dbfAlbCliL )->( eof() ) )
 
          ( dbfTmpL )->( dbAppend() )
          ( dbfTmpL )->cCbaTil    := ( dbfAlbCliL )->CREF
@@ -12096,7 +12084,7 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
    local tFecFacCli              := ""
 
    if nMode == DUPL_MODE
-      aTik[ _CNUMTIK ]           := Str( nNewDoc( aTik[ _CSERTIK ], dbfTikT, "NTIKCLI", 10, dbfCount ), 10 )
+      aTik[ _CNUMTIK ]           := Str( nNewDoc( aTik[ _CSERTIK ], D():tikets( nView ), "NTIKCLI", 10, dbfCount ), 10 )
       aTik[ _CSUFTIK ]           := retSufEmp()
       aTik[ _DFECTIK ]           := getSysDate()
       aTik[ _TFECTIK ]           := getSysTime()
@@ -12348,7 +12336,7 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
    Escribimos definitivamente en el disco--------------------------------------
    */
 
-   WinGather( aTik, aGet, dbfTikT, oBrwDet, nMode, nil, .t. )
+   WinGather( aTik, aGet, D():tikets( nView ), oBrwDet, nMode, nil, .t. )
 
 return ( nNewFacCli )
 
@@ -12364,19 +12352,19 @@ Static Function SavTik2Neg( aTmp, aGet, nMode, nSave )
    Marca para que no se pueda volver a convertir-------------------------------
    */
 
-   if dbDialogLock( dbfTikT )
-      ( dbfTikT )->lCnvTik := .t.
-      ( dbfTikT )->lSndDoc := .t.
-      ( dbfTikT )->( dbUnLock() )
+   if dbDialogLock( D():Tikets( nView ) )
+      ( D():Tikets( nView ) )->lCnvTik := .t.
+      ( D():Tikets( nView ) )->lSndDoc := .t.
+      ( D():Tikets( nView ) )->( dbUnLock() )
    end if
 
    /*
    Vamos a copiar el registro actual-------------------------------------------
    */
 
-   aTbl                    := dbScatter( dbfTikT )
+   aTbl                    := dbScatter( D():Tikets( nView ) )
    cSerTik                 := aTbl[ _CSERTIK ]
-   cNumTik                 := Str( nNewDoc( aTbl[ _CSERTIK ], dbfTikT, "nTikCli", 10, dbfCount ), 10 )
+   cNumTik                 := Str( nNewDoc( aTbl[ _CSERTIK ], D():Tikets( nView ), "nTikCli", 10, dbfCount ), 10 )
    aTbl[ _CTURTIK ]        := cCurSesion()
    aTbl[ _CNUMTIK ]        := cNumTik
    aTbl[ _CSUFTIK ]        := RetSufEmp()
@@ -12388,7 +12376,7 @@ Static Function SavTik2Neg( aTmp, aGet, nMode, nSave )
    aTbl[ _NTOTIVA ]        := - aTbl[ _NTOTIVA ]
    aTbl[ _NTOTTIK ]        := - aTbl[ _NTOTTIK ]
 
-   dbGather( aTbl, dbfTikT, .t. )
+   dbGather( aTbl, D():Tikets( nView ), .t. )
 
    /*
    Guardamos las lineas del tiket----------------------------------------------
@@ -12523,17 +12511,17 @@ Static Function SavTik2Tik( aTmp, aGet, nMode, nSave, nNumDev )
    */
 
    //aTotal            := nTotCobTik( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], dbfTikP, dbfDiv )
-   //aTotal            += nTotValTik( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], dbfTikT, dbfTikL, dbfDiv )
+   //aTotal            += nTotValTik( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], D():Tikets( nView ), dbfTikL, dbfDiv )
 
    //aTmp[ _NCOBTIK ]  := aTotal
 
-   aTmp[ _NCOBTIK ]  += nTotValTik( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], dbfTikT, dbfTikL, dbfDiv )
+   aTmp[ _NCOBTIK ]  += nTotValTik( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], D():Tikets( nView ), dbfTikL, dbfDiv )
 
    /*
    Rellenamos los campos de totales--------------------------------------------
    */
 
-   aTotal            := aTotTik( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], dbfTikT, dbfTmpL, dbfDiv, aTmp, nil, .f. )
+   aTotal            := aTotTik( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], D():Tikets( nView ), dbfTmpL, dbfDiv, aTmp, nil, .f. )
 
    aTmp[ _NTOTNET ]  := aTotal[1]
    aTmp[ _NTOTIVA ]  := aTotal[2]
@@ -12543,7 +12531,7 @@ Static Function SavTik2Tik( aTmp, aGet, nMode, nSave, nNumDev )
    Guardamos el registro definitivamente---------------------------------------
    */
 
-   WinGather( aTmp, nil, dbfTikT, nil, nMode )
+   WinGather( aTmp, nil, D():Tikets( nView ), nil, nMode )
 
 Return nil
 
@@ -12553,15 +12541,15 @@ Return nil
 Selecciona los tikets para su envio
 */
 
-FUNCTION SndTikCli( lMark, dbfTikT, dbfFacCliT, dbfAlbCliT )
+FUNCTION SndTikCli( lMark, cTikT, dbfFacCliT, dbfAlbCliT )
 
    /*
    Marcamos el tiket
    */
 
-   if dbDialogLock( dbfTikT )
-      ( dbfTikT )->lSndDoc := lMark
-      ( dbfTikT )->( dbRUnLock() )
+   if dbDialogLock( cTikT )
+      ( cTikT )->lSndDoc := lMark
+      ( cTikT )->( dbRUnLock() )
    end if
 
    /*
@@ -12569,9 +12557,9 @@ FUNCTION SndTikCli( lMark, dbfTikT, dbfFacCliT, dbfAlbCliT )
    */
 
    do case
-   case ( dbfTikT )->cTipTik == SAVFAC
+   case ( cTikT )->cTipTik == SAVFAC
 
-      if ( dbfFacCliT )->( dbSeek( ( dbfTikT )->cNumDoc ) )
+      if ( dbfFacCliT )->( dbSeek( ( cTikT )->cNumDoc ) )
 
          if dbDialogLock( dbfFacCliT )
             ( dbfFacCliT )->lSndDoc := lMark
@@ -12580,9 +12568,9 @@ FUNCTION SndTikCli( lMark, dbfTikT, dbfFacCliT, dbfAlbCliT )
 
       end if
 
-   case ( dbfTikT )->cTipTik == SAVALB
+   case ( cTikT )->cTipTik == SAVALB
 
-      if ( dbfAlbCliT )->( dbSeek( ( dbfTikT )->cNumDoc ) )
+      if ( dbfAlbCliT )->( dbSeek( ( cTikT )->cNumDoc ) )
 
          if dbDialogLock( dbfAlbCliT )
             ( dbfAlbCliT )->lSndDoc := lMark
@@ -12597,16 +12585,16 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Static Function nChkPagTik( cNumTik, dbfTikT, dbfTikL, dbfTikP, dbfIva, dbfDiv )
+Static Function nChkPagTik( cNumTik, cTikT, dbfTikL, dbfTikP, dbfIva, dbfDiv )
 
    local nTot
    local nCob
    local nBmp     := 1
 
-   if !( dbfTikT )->lPgdTik
+   if !( D():Tikets( nView ) )->lPgdTik
 
-      nTot        := ( dbfTikT )->nTotTik
-      nCob        := ( dbfTikT )->nCobTik 
+      nTot        := ( D():Tikets( nView ) )->nTotTik
+      nCob        := ( D():Tikets( nView ) )->nCobTik 
 
       do case
       case !lMayorIgual( nTot, nCob )
@@ -12645,39 +12633,39 @@ return ( cTipTik )
 
 //--------------------------------------------------------------------------//
 
-function nTotDTikCli( cCodArt, dbfTikCliT, dbfTikCliL, cCodAlm )
+function nTotDTikCli( cCodArt, cTikCliT, cTikCliL, cCodAlm )
 
    local nTotVta  := 0
-   local nRecno   := ( dbfTikCliL )->( Recno() )
-   local cTipTik  := cTipTik( ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + ( dbfTikCliL )->cSufTil, dbfTikCliT )
+   local nRecno   := ( cTikCliL )->( Recno() )
+   local cTipTik  := cTipTik( ( cTikCliL )->cSerTil + ( cTikCliL )->cNumTil + ( cTikCliL )->cSufTil, cTikCliT )
 
-   if ( dbfTikCliL )->( dbSeek( cCodArt ) )
+   if ( cTikCliL )->( dbSeek( cCodArt ) )
 
-      while ( dbfTikCliL )->cCbaTil == cCodArt .and. !( dbfTikCliL )->( eof() )
+      while ( cTikCliL )->cCbaTil == cCodArt .and. !( cTikCliL )->( eof() )
 
          if cCodAlm != nil
-            if ( dbfTikCliT )->cAlmTik == cCodAlm
+            if ( cTikCliT )->cAlmTik == cCodAlm
                if cTipTik == SAVTIK
-                  nTotVta  += ( dbfTikCliL )->nUntTil
+                  nTotVta  += ( cTikCliL )->nUntTil
                elseif cTipTik == SAVDEV
-                  nTotVta  -= ( dbfTikCliL )->nUntTil
+                  nTotVta  -= ( cTikCliL )->nUntTil
                end if
             end if
          else
             if cTipTik == SAVTIK
-               nTotVta  += ( dbfTikCliL )->nUntTil
+               nTotVta  += ( cTikCliL )->nUntTil
             elseif cTipTik == SAVDEV
-               nTotVta  -= ( dbfTikCliL )->nUntTil
+               nTotVta  -= ( cTikCliL )->nUntTil
             end if
          end if
 
-         ( dbfTikCliL )->( dbSkip() )
+         ( cTikCliL )->( dbSkip() )
 
       end while
 
    end if
 
-   ( dbfTikCliL )->( dbGoTo( nRecno ) )
+   ( cTikCliL )->( dbGoTo( nRecno ) )
 
 return ( nTotVta )
 
@@ -12686,11 +12674,11 @@ return ( nTotVta )
 // Devuelve el total de la venta en albaranes de clientes de un articulo
 //
 
-function nTotVTikCli( cCodArt, dbfTikCliT, dbfTikCliL, nDec, nDor )
+function nTotVTikCli( cCodArt, cTikCliT, dbfTikCliL, nDec, nDor )
 
    local nTotVta  := 0
    local nRecno   := ( dbfTikCliL )->( Recno() )
-   local cTipTik  := cTipTik( ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + ( dbfTikCliL )->cSufTil, dbfTikCliT )
+   local cTipTik  := cTipTik( ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + ( dbfTikCliL )->cSufTil, cTikCliT )
 
    if ( dbfTikCliL )->( dbSeek( cCodArt ) )
 
@@ -12775,7 +12763,7 @@ Function aTipTik( uTikT )
 
    local nTipTik
 
-   DEFAULT uTikT        := dbfTikT
+   DEFAULT uTikT        := if( !Empty( nView ), D():Tikets( nView ), )
 
    do case
       case Valtype( uTikT ) == "C"
@@ -12873,19 +12861,19 @@ return nil
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION ContTpv( dbfTikT, oBrw )
+STATIC FUNCTION ContTpv( cTikT, oBrw )
 
    local oDlg
    local oSerIni
    local oSerFin
-   local nRecno      := ( dbfTikT )->( recno() )
-   local nOrdAnt     := ( dbfTikT )->( OrdSetFocus(1) )
-   local cSerIni     := ( dbfTikT )->cSerTik
-   local cSerFin     := ( dbfTikT )->cSerTik
-   local nDocIni     := Val( ( dbfTikT )->cNumTik )
-   local nDocFin     := Val( ( dbfTikT )->cNumTik )
-   local cSufIni     := ( dbfTikT )->cSufTik
-   local cSufFin     := ( dbfTikT )->cSufTik
+   local nRecno      := ( D():Tikets( nView ) )->( recno() )
+   local nOrdAnt     := ( D():Tikets( nView ) )->( OrdSetFocus(1) )
+   local cSerIni     := ( D():Tikets( nView ) )->cSerTik
+   local cSerFin     := ( D():Tikets( nView ) )->cSerTik
+   local nDocIni     := Val( ( D():Tikets( nView ) )->cNumTik )
+   local nDocFin     := Val( ( D():Tikets( nView ) )->cNumTik )
+   local cSufIni     := ( D():Tikets( nView ) )->cSufTik
+   local cSufFin     := ( D():Tikets( nView ) )->cSufTik
    local oChk1
    local lChk1       := .t.
 
@@ -12959,37 +12947,37 @@ STATIC FUNCTION ContTpv( dbfTikT, oBrw )
 
    if oDlg:nResult == IDOK
 
-      ( dbfTikT )->( dbGoTop())
-      ( dbfTikT )->( ordSetFocus( 1 ) )
+      ( D():Tikets( nView ) )->( dbGoTop())
+      ( D():Tikets( nView ) )->( ordSetFocus( 1 ) )
 
-      ( dbfTikT )->( dbSeek( cSerIni + Str( nDocIni, 10 ) + cSufIni, .t. ) )
+      ( D():Tikets( nView ) )->( dbSeek( cSerIni + Str( nDocIni, 10 ) + cSufIni, .t. ) )
 
-      while (dbfTikT)->cSerTik + (dbfTikT)->cNumTik + (dbfTikT)->cSufTik <= cSerFin + Str( nDocFin, 10 ) + cSufFin .and. !(dbfTikT)->( eof() )
+      while (D():Tikets( nView ))->cSerTik + (D():Tikets( nView ))->cNumTik + (D():Tikets( nView ))->cSufTik <= cSerFin + Str( nDocFin, 10 ) + cSufFin .and. !(D():Tikets( nView ))->( eof() )
 
          if lChk1
 
-            if ( dbfTikT )->( dbRLock() )
-               ( dbfTikT )->lConTik := .t.
-               ( dbfTikT )->( dbUnlock() )
+            if ( D():Tikets( nView ) )->( dbRLock() )
+               ( D():Tikets( nView ) )->lConTik := .t.
+               ( D():Tikets( nView ) )->( dbUnlock() )
             end if
 
          else
 
-            if ( dbfTikT )->( dbRLock() )
-               ( dbfTikT )->lConTik := .f.
-               ( dbfTikT )->( dbUnlock() )
+            if ( D():Tikets( nView ) )->( dbRLock() )
+               ( D():Tikets( nView ) )->lConTik := .f.
+               ( D():Tikets( nView ) )->( dbUnlock() )
             end if
 
          end if
 
-      ( dbfTikT )->( dbSkip() )
+      ( D():Tikets( nView ) )->( dbSkip() )
 
       end while
 
    end if
 
-   ( dbfTikT )->( ordSetFocus( nOrdAnt ) )
-   ( dbfTikT )->( dbGoTo( nRecNo ) )
+   ( D():Tikets( nView ) )->( ordSetFocus( nOrdAnt ) )
+   ( D():Tikets( nView ) )->( dbGoTo( nRecNo ) )
 
    oBrw:Refresh()
 
@@ -13061,9 +13049,9 @@ STATIC FUNCTION DelSerie( oWndBrw )
    local oSerFin
    local oTxtDel
    local nTxtDel     := 0
-   local nRecno      := ( dbfTikT )->( Recno() )
-   local nOrdAnt     := ( dbfTikT )->( OrdSetFocus( 1 ) )
-   local oDesde      := TDesdeHasta():Init( ( dbfTikT )->cSerTik, Val( ( dbfTikT )->cNumTik ), ( dbfTikT )->cSufTik, GetSysDate() )
+   local nRecno      := ( D():Tikets( nView ) )->( Recno() )
+   local nOrdAnt     := ( D():Tikets( nView ) )->( OrdSetFocus( 1 ) )
+   local oDesde      := TDesdeHasta():Init( ( D():Tikets( nView ) )->cSerTik, Val( ( D():Tikets( nView ) )->cNumTik ), ( D():Tikets( nView ) )->cSufTik, GetSysDate() )
    local lCancel     := .f.
    local oBtnAceptar
    local oBtnCancel
@@ -13151,13 +13139,13 @@ STATIC FUNCTION DelSerie( oWndBrw )
  REDEFINE APOLOMETER oTxtDel VAR nTxtDel ;
       ID       160 ;
       NOPERCENTAGE ;
-      TOTAL    ( dbfTikT )->( OrdKeyCount() ) ;
+      TOTAL    ( D():Tikets( nView ) )->( OrdKeyCount() ) ;
       OF       oDlg
 
    ACTIVATE DIALOG oDlg CENTER VALID ( lCancel )
 
-   ( dbfTikT )->( dbGoTo( nRecNo ) )
-   ( dbfTikT )->( ordSetFocus( nOrdAnt ) )
+   ( D():Tikets( nView ) )->( dbGoTo( nRecNo ) )
+   ( D():Tikets( nView ) )->( ordSetFocus( nOrdAnt ) )
 
    oWndBrw:SetFocus()
    oWndBrw:Refresh()
@@ -13177,27 +13165,27 @@ STATIC FUNCTION DelStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDel, lCance
 
    if oDesde:nRadio == 1
 
-      nOrd              := ( dbfTikT )->( OrdSetFocus( "nNumTik" ) )
+      nOrd              := ( D():Tikets( nView ) )->( OrdSetFocus( "nNumTik" ) )
 
-      ( dbfTikT )->( dbSeek( oDesde:cNumeroInicio(), .t. ) )
-      while !lCancel .and. !( dbfTikT )->( eof() )
+      ( D():Tikets( nView ) )->( dbSeek( oDesde:cNumeroInicio(), .t. ) )
+      while !lCancel .and. !( D():Tikets( nView ) )->( eof() )
 
-         if ( dbfTikT )->cSerTik >= oDesde:cSerieInicio              .and.;
-            ( dbfTikT )->cSerTik <= oDesde:cSerieFin                 .and.;
-            ( dbfTikT )->cNumTik >= Str( oDesde:nNumeroInicio, 10 )  .and.;
-            ( dbfTikT )->cNumTik <= Str( oDesde:nNumeroFin, 10 )     .and.;
-            ( dbfTikT )->cSufTik >= oDesde:cSufijoInicio             .and.;
-            ( dbfTikT )->cSufTik <= oDesde:cSufijoFin
+         if ( D():Tikets( nView ) )->cSerTik >= oDesde:cSerieInicio              .and.;
+            ( D():Tikets( nView ) )->cSerTik <= oDesde:cSerieFin                 .and.;
+            ( D():Tikets( nView ) )->cNumTik >= Str( oDesde:nNumeroInicio, 10 )  .and.;
+            ( D():Tikets( nView ) )->cNumTik <= Str( oDesde:nNumeroFin, 10 )     .and.;
+            ( D():Tikets( nView ) )->cSufTik >= oDesde:cSufijoInicio             .and.;
+            ( D():Tikets( nView ) )->cSufTik <= oDesde:cSufijoFin
 
             ++nDeleted
 
-            oTxtDel:cText  := "Eliminando : " + ( dbfTikT )->cSerTik + "/" + Alltrim( ( dbfTikT )->cNumTik ) + "/" + ( dbfTikT )->cSufTik
+            oTxtDel:cText  := "Eliminando : " + ( D():Tikets( nView ) )->cSerTik + "/" + Alltrim( ( D():Tikets( nView ) )->cNumTik ) + "/" + ( D():Tikets( nView ) )->cSufTik
 
-            WinDelRec( , dbfTikT, {|| TpvDelRec() } )
+            WinDelRec( , D():Tikets( nView ), {|| TpvDelRec() } )
 
          else
 
-            ( dbfTikT )->( dbSkip() )
+            ( D():Tikets( nView ) )->( dbSkip() )
 
          end if
 
@@ -13207,27 +13195,27 @@ STATIC FUNCTION DelStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDel, lCance
 
       end do
 
-      ( dbfTikT )->( OrdSetFocus( nOrd ) )
+      ( D():Tikets( nView ) )->( OrdSetFocus( nOrd ) )
 
    else
 
-      nOrd                 := ( dbfTikT )->( OrdSetFocus( "dFecTik" ) )
+      nOrd                 := ( D():Tikets( nView ) )->( OrdSetFocus( "dFecTik" ) )
 
-      ( dbfTikT )->( dbSeek( oDesde:dFechaInicio, .t. ) )
-      while !lCancel .and. ( dbfTikT )->dFecTik <= oDesde:dFechaFin .and. !( dbfTikT )->( eof() )
+      ( D():Tikets( nView ) )->( dbSeek( oDesde:dFechaInicio, .t. ) )
+      while !lCancel .and. ( D():Tikets( nView ) )->dFecTik <= oDesde:dFechaFin .and. !( D():Tikets( nView ) )->( eof() )
 
-         if ( dbfTikT )->dFecTik >= oDesde:dFechaInicio  .and.;
-            ( dbfTikT )->dFecTik <= oDesde:dFechaFin
+         if ( D():Tikets( nView ) )->dFecTik >= oDesde:dFechaInicio  .and.;
+            ( D():Tikets( nView ) )->dFecTik <= oDesde:dFechaFin
 
             ++nDeleted
 
-            oTxtDel:cText  := "Eliminando : " + ( dbfTikT )->cSerTik + "/" + Alltrim( ( dbfTikT )->cNumTik ) + "/" + ( dbfTikT )->cSufTik
+            oTxtDel:cText  := "Eliminando : " + ( D():Tikets( nView ) )->cSerTik + "/" + Alltrim( ( D():Tikets( nView ) )->cNumTik ) + "/" + ( D():Tikets( nView ) )->cSufTik
 
-            WinDelRec( , dbfTikT, {|| TpvDelRec() } )
+            WinDelRec( , D():Tikets( nView ), {|| TpvDelRec() } )
 
          else
 
-            ( dbfTikT )->( dbSkip() )
+            ( D():Tikets( nView ) )->( dbSkip() )
 
          end if
 
@@ -13237,7 +13225,7 @@ STATIC FUNCTION DelStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDel, lCance
 
       end do
 
-      ( dbfTikT )->( OrdSetFocus( nOrd ) )
+      ( D():Tikets( nView ) )->( OrdSetFocus( nOrd ) )
 
    end if
 
@@ -13257,13 +13245,13 @@ RETURN ( oDlg:End() )
 
 STATIC FUNCTION LqdVale( oWndBrw )
 
-   if ( dbfTikT )->cTipTik == SAVVAL
+   if ( D():Tikets( nView ) )->cTipTik == SAVVAL
 
-      if !( dbfTikT )->lLiqTik
+      if !( D():Tikets( nView ) )->lLiqTik
 
-         if dbLock( dbfTikT )
-            ( dbfTikT )->lLiqTik := .t.
-            ( dbfTikT )->( dbUnLock() )
+         if dbLock( D():Tikets( nView ) )
+            ( D():Tikets( nView ) )->lLiqTik := .t.
+            ( D():Tikets( nView ) )->( dbUnLock() )
          end if
 
       else
@@ -13305,7 +13293,7 @@ FUNCTION AppTikCli( cCodCli, cCodArt, lOpenBrowse )
    else
 
       if OpenFiles( nil, .t. )
-         WinAppRec( nil, bEditT, dbfTikT, cCodCli, cCodArt )
+         WinAppRec( nil, bEditT, D():Tikets( nView ), cCodCli, cCodArt )
          CloseFiles()
       end if
 
@@ -13324,9 +13312,9 @@ FUNCTION InitTikCli( nNumTik )
       return .t.
    end if
 
-   if dbSeekInOrd( nNumTik, "cNumTik", dbfTikT )
+   if dbSeekInOrd( nNumTik, "cNumTik", D():Tikets( nView ) )
       nTotTik()
-      WinEdtRec( nil, bEditT, dbfTikT )
+      WinEdtRec( nil, bEditT, D():Tikets( nView ) )
    else
       MsgStop( "No se encuentra ticket" )
    end if
@@ -13352,7 +13340,7 @@ FUNCTION EdtTikCli( nNumTik, lOpenBrowse )
    if lOpenBrowse
 
       if FrontTpv( , , , , .f. )
-         if dbSeekInOrd( nNumTik, "cNumTik", dbfTikT )
+         if dbSeekInOrd( nNumTik, "cNumTik", D():Tikets( nView ) )
             oWndBrw:RecEdit()
          else
             MsgStop( "No se encuentra ticket" )
@@ -13363,11 +13351,11 @@ FUNCTION EdtTikCli( nNumTik, lOpenBrowse )
 
       if OpenFiles( nil, .t. )
 
-         if dbSeekInOrd( nNumTik, "cNumTik", dbfTikT )
+         if dbSeekInOrd( nNumTik, "cNumTik", D():Tikets( nView ) )
 
             nTotTik()
 
-            WinEdtRec( nil, bEditT, dbfTikT )
+            WinEdtRec( nil, bEditT, D():Tikets( nView ) )
          else
             MsgStop( "No se encuentra ticket" )
          end if
@@ -13399,7 +13387,7 @@ FUNCTION ZooTikCli( nNumTik, lOpenBrowse  )
    if lOpenBrowse
 
       if FrontTpv( , , , , .f. )
-         if dbSeekInOrd( nNumTik, "cNumTik", dbfTikT )
+         if dbSeekInOrd( nNumTik, "cNumTik", D():Tikets( nView ) )
             oWndBrw:RecZoom()
          else
             MsgStop( "No se encuentra ticket" )
@@ -13409,9 +13397,9 @@ FUNCTION ZooTikCli( nNumTik, lOpenBrowse  )
    else
 
       if OpenFiles( nil, .t. )
-         if dbSeekInOrd( nNumTik, "cNumTik", dbfTikT )
+         if dbSeekInOrd( nNumTik, "cNumTik", D():Tikets( nView ) )
             nTotTik()
-            WinZooRec( nil, bEditT, dbfTikT )
+            WinZooRec( nil, bEditT, D():Tikets( nView ) )
          else
             MsgStop( "No se encuentra ticket" )
          end if
@@ -13441,8 +13429,8 @@ FUNCTION DelTikCli( nNumTik, lOpenBrowse )
    if lOpenBrowse
 
       if FrontTpv( , , , , .f. )
-         if dbSeekInOrd( nNumTik, "cNumTik", dbfTikT )
-            WinDelRec( oWndBrw, dbfTikT, {|| TpvDelRec() } )
+         if dbSeekInOrd( nNumTik, "cNumTik", D():Tikets( nView ) )
+            WinDelRec( oWndBrw, D():Tikets( nView ), {|| TpvDelRec() } )
          else
             MsgStop( "No se encuentra ticket" )
          end if
@@ -13451,9 +13439,9 @@ FUNCTION DelTikCli( nNumTik, lOpenBrowse )
    else
 
       if OpenFiles( nil, .t. )
-         if dbSeekInOrd( nNumTik, "cNumTik", dbfTikT )
+         if dbSeekInOrd( nNumTik, "cNumTik", D():Tikets( nView ) )
             nTotTik()
-            WinDelRec( oWndBrw, dbfTikT, {|| TpvDelRec() } )
+            WinDelRec( oWndBrw, D():Tikets( nView ), {|| TpvDelRec() } )
          else
             MsgStop( "No se encuentra ticket" )
          end if
@@ -13483,7 +13471,7 @@ FUNCTION PrnTikCli( nNumTik, lOpenBrowse  )
    if lOpenBrowse
 
       if FrontTpv( , , , , .f. )
-         if dbSeekInOrd( nNumTik, "cNumTik", dbfTikT )
+         if dbSeekInOrd( nNumTik, "cNumTik", D():Tikets( nView ) )
             ImpTiket( IS_PRINTER )
          else
             MsgStop( "No se encuentra ticket" )
@@ -13493,7 +13481,7 @@ FUNCTION PrnTikCli( nNumTik, lOpenBrowse  )
    else
 
       if OpenFiles( nil, .t. )
-         if dbSeekInOrd( nNumTik, "cNumTik", dbfTikT )
+         if dbSeekInOrd( nNumTik, "cNumTik", D():Tikets( nView ) )
             nTotTik()
             ImpTiket( IS_PRINTER )
          else
@@ -13525,7 +13513,7 @@ FUNCTION VisTikCli( nNumTik, lOpenBrowse  )
    if lOpenBrowse
 
       if FrontTpv( , , , , .f. )
-         if dbSeekInOrd( nNumTik, "cNumTik", dbfTikT )
+         if dbSeekInOrd( nNumTik, "cNumTik", D():Tikets( nView ) )
             ImpTiket( IS_SCREEN )
          else
             MsgStop( "No se encuentra ticket" )
@@ -13535,7 +13523,7 @@ FUNCTION VisTikCli( nNumTik, lOpenBrowse  )
    else
 
       if OpenFiles( nil, .t. )
-         if dbSeekInOrd( nNumTik, "cNumTik", dbfTikT )
+         if dbSeekInOrd( nNumTik, "cNumTik", D():Tikets( nView ) )
             nTotTik()
             ImpTiket( IS_SCREEN )
          else
@@ -13564,7 +13552,7 @@ Function EdtCobTikCli( nNumTik, lOpenBrowse )
    Sysrefresh()
 
    if OpenFiles( nil, .t. )
-      if dbSeekInOrd( nNumTik, "cNumTik", dbfTikT )
+      if dbSeekInOrd( nNumTik, "cNumTik", D():Tikets( nView ) )
          EdtCobTik()
       else
          MsgStop( "No se encuentra ticket" )
@@ -13580,9 +13568,9 @@ Return .t.
 
 static function lFacturaAlbaran()
 
-   if ( dbfTikT )->cTipTik == SAVALB
-      if !RetFld( ( dbfTikT )->cNumDoc, dbfAlbCliT, "lFacturado" )
-         FactCli( nil, nil, { "Albaran" => ( dbfTikT )->cNumDoc } )
+   if ( D():Tikets( nView ) )->cTipTik == SAVALB
+      if !RetFld( ( D():Tikets( nView ) )->cNumDoc, dbfAlbCliT, "lFacturado" )
+         FactCli( nil, nil, { "Albaran" => ( D():Tikets( nView ) )->cNumDoc } )
       else
          msgStop( "El albarán ya ha sido facturado" )
       end if
@@ -13742,14 +13730,14 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nTotValLiq( cNumTik, dbfTikT, dbfTikL, dbfDiv, aTmp, cDivRet, lPic, lExcCnt )
+FUNCTION nTotValLiq( cNumTik, cTikT, dbfTikL, dbfDiv, aTmp, cDivRet, lPic, lExcCnt )
 
-   local nRec  := ( dbfTikT )->( Recno() )
+   local nRec  := ( cTikT )->( Recno() )
 
-   local nTik  := nTotTik( cNumTik, dbfTikT, dbfTikL, dbfDiv, aTmp, cDivRet, lPic, lExcCnt )
-   local nVal  := nTotTik( ( dbfTikT )->cValDoc, dbfTikT, dbfTikL, dbfDiv, aTmp, cDivRet, lPic, lExcCnt )
+   local nTik  := nTotTik( cNumTik, cTikT, dbfTikL, dbfDiv, aTmp, cDivRet, lPic, lExcCnt )
+   local nVal  := nTotTik( ( cTikT )->cValDoc, cTikT, dbfTikL, dbfDiv, aTmp, cDivRet, lPic, lExcCnt )
 
-   ( dbfTikT )->( dbGoTo( nRec ) )
+   ( cTikT )->( dbGoTo( nRec ) )
 
 Return ( Min( nTik, nVal ) )
 
@@ -13824,7 +13812,7 @@ CLASS TTiketsClientesSenderReciver FROM TSenderReciverItem
 
    Method Process()
 
-   METHOD validateRecepcion( tmpTikT, dbfTikT )
+   METHOD validateRecepcion( tmpTikT, cdbfTikT )
 
 END CLASS
 
@@ -13833,7 +13821,7 @@ END CLASS
 Method CreateData() CLASS TTiketsClientesSenderReciver
 
    local lSnd        := .f.
-   local dbfTikT
+   local cdbfTikT
    local dbfTikL
    local dbfTikP
    local tmpTikT
@@ -13849,7 +13837,7 @@ Method CreateData() CLASS TTiketsClientesSenderReciver
 
    ::oSender:SetText( "Enviando tikets de clientes" )
 
-   USE ( cPatEmp() + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @dbfTikT ) )
+   USE ( cPatEmp() + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @cdbfTikT ) )
    SET ADSINDEX TO ( cPatEmp() + "TIKET.CDX" ) ADDITIVE
    SET TAG TO "lSndDoc"
 
@@ -13875,24 +13863,24 @@ Method CreateData() CLASS TTiketsClientesSenderReciver
    SET INDEX TO ( cPatSnd() + "TIKEP.CDX" ) ADDITIVE
 
    if !empty( ::oSender:oMtr )
-      ::oSender:oMtr:nTotal := ( dbfTikT )->( OrdKeyCount() )
+      ::oSender:oMtr:nTotal := ( cdbfTikT )->( OrdKeyCount() )
    end if
 
-   if ( dbfTikT )->( dbSeek( .t. ) )
+   if ( cdbfTikT )->( dbSeek( .t. ) )
 
-      while ( dbfTikT )->lSndDoc .and. !( dbfTikT )->( eof() )
+      while ( cdbfTikT )->lSndDoc .and. !( cdbfTikT )->( eof() )
 
          lSnd  := .t.
 
-         dbPass( dbfTikT, tmpTikT, .t. )
-         ::oSender:SetText( ( dbfTikT )->cSerTik + "/" + AllTrim( ( dbfTikT )->cNumTik ) + "/" + AllTrim( ( dbfTikT )->cSufTik ) + "; " + Dtoc( ( dbfTikT )->dFecTik ) + "; " + AllTrim( ( dbfTikT )->cCliTik ) + "; " + ( dbfTikT )->cNomTik )
+         dbPass( cdbfTikT, tmpTikT, .t. )
+         ::oSender:SetText( ( cdbfTikT )->cSerTik + "/" + AllTrim( ( cdbfTikT )->cNumTik ) + "/" + AllTrim( ( cdbfTikT )->cSufTik ) + "; " + Dtoc( ( cdbfTikT )->dFecTik ) + "; " + AllTrim( ( cdbfTikT )->cCliTik ) + "; " + ( cdbfTikT )->cNomTik )
 
          /*
          Lineas de detalle
          */
 
-         if ( dbfTikL )->( dbSeek( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik ) )
-            while ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik == ( dbfTikL )->CSERTIL + ( dbfTikL )->CNUMTIL + ( dbfTikL )->CSUFTIL .AND. !( dbfTikL )->( eof() )
+         if ( dbfTikL )->( dbSeek( ( cdbfTikT )->cSerTik + ( cdbfTikT )->cNumTik + ( cdbfTikT )->cSufTik ) )
+            while ( cdbfTikT )->cSerTik + ( cdbfTikT )->cNumTik + ( cdbfTikT )->cSufTik == ( dbfTikL )->CSERTIL + ( dbfTikL )->CNUMTIL + ( dbfTikL )->CSUFTIL .AND. !( dbfTikL )->( eof() )
                dbPass( dbfTikL, tmpTikL, .t. )
                ( dbfTikL )->( dbSkip() )
             end do
@@ -13902,17 +13890,17 @@ Method CreateData() CLASS TTiketsClientesSenderReciver
          Lineas de pago
          */
 
-         if ( dbfTikP )->( dbSeek( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik ) )
-            while ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik == ( dbfTikP )->cSerTik + ( dbfTikP )->cNumTik + ( dbfTikP )->cSufTik .AND. !( dbfTikP )->( eof() )
+         if ( dbfTikP )->( dbSeek( ( cdbfTikT )->cSerTik + ( cdbfTikT )->cNumTik + ( cdbfTikT )->cSufTik ) )
+            while ( cdbfTikT )->cSerTik + ( cdbfTikT )->cNumTik + ( cdbfTikT )->cSufTik == ( dbfTikP )->cSerTik + ( dbfTikP )->cNumTik + ( dbfTikP )->cSufTik .AND. !( dbfTikP )->( eof() )
                dbPass( dbfTikP, tmpTikP, .t. )
                ( dbfTikP )->( dbSkip() )
             end do
          end if
 
-         ( dbfTikT )->( dbSkip() )
+         ( cdbfTikT )->( dbSkip() )
 
          if !empty( ::oSender:oMtr )
-            ::oSender:oMtr:Set( ( dbfTikT )->( OrdKeyNo() ) )
+            ::oSender:oMtr:Set( ( cdbfTikT )->( OrdKeyNo() ) )
          end if
 
       end do
@@ -13926,7 +13914,7 @@ Method CreateData() CLASS TTiketsClientesSenderReciver
    CLOSE ( tmpTikT )
    CLOSE ( tmpTikL )
    CLOSE ( tmpTikP )
-   CLOSE ( dbfTikT )
+   CLOSE ( cdbfTikT )
    CLOSE ( dbfTikL )
    CLOSE ( dbfTikP )
 
@@ -13952,7 +13940,7 @@ Return ( Self )
 
 Method RestoreData() CLASS TTiketsClientesSenderReciver
 
-   local dbfTikT
+   local cdbfTikT
 
    if ::lSuccesfullSend
 
@@ -13960,18 +13948,18 @@ Method RestoreData() CLASS TTiketsClientesSenderReciver
       Retorna el valor anterior---------------------------------------------------
       */
 
-      USE ( cPatEmp() + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @dbfTikT ) )
+      USE ( cPatEmp() + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @cdbfTikT ) )
       SET ADSINDEX TO ( cPatEmp() + "TIKET.CDX" ) ADDITIVE
-      ( dbfTikT )->( OrdSetFocus( "lSndDoc" ) )
+      ( cdbfTikT )->( OrdSetFocus( "lSndDoc" ) )
 
-      while ( dbfTikT )->( dbSeek( .t. ) ) .and. !( dbfTikT )->( eof() )
-         if ( dbfTikT )->( dbRLock() )
-            ( dbfTikT )->lSndDoc := .f.
-            ( dbfTikT )->( dbRUnlock() )
+      while ( cdbfTikT )->( dbSeek( .t. ) ) .and. !( cdbfTikT )->( eof() )
+         if ( cdbfTikT )->( dbRLock() )
+            ( cdbfTikT )->lSndDoc := .f.
+            ( cdbfTikT )->( dbRUnlock() )
          end if
       end do
 
-      CLOSE ( dbfTikT )
+      CLOSE ( cdbfTikT )
 
    end if
 
@@ -14040,7 +14028,7 @@ Method Process() CLASS TTiketsClientesSenderReciver
    local tmpTikL
    local tmpTikP
    local dbfDiv
-   local dbfTikT
+   local cdbfTikT
    local dbfTikL
    local dbfTikP
    local dbfClient
@@ -14078,7 +14066,7 @@ Method Process() CLASS TTiketsClientesSenderReciver
             lExistTable( cPatSnd() + "TIKEL.DBF", cLocalDriver() ) .and.;
             lExistTable( cPatSnd() + "TIKEP.DBF", cLocalDriver() )
 
-            USE ( cPatEmp() + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @dbfTikT ) )
+            USE ( cPatEmp() + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @cdbfTikT ) )
             SET ADSINDEX TO ( cPatEmp() + "TIKET.CDX" ) ADDITIVE
 
             USE ( cPatEmp() + "TIKEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEL", @dbfTikL ) )
@@ -14097,7 +14085,7 @@ Method Process() CLASS TTiketsClientesSenderReciver
             SET INDEX TO ( cPatSnd() + "TIKEP.CDX" ) ADDITIVE
 
             oStock            := TStock():New()
-            oStock:cTikT      := dbfTikT
+            oStock:cTikT      := cdbfTikT
             oStock:cTikL      := dbfTikL
 
             if !empty( ::oSender:oMtr )
@@ -14106,15 +14094,15 @@ Method Process() CLASS TTiketsClientesSenderReciver
 
             while !( tmpTikT )->( eof() )
 
-               if ::validateRecepcion( tmpTikT, dbfTikT )
+               if ::validateRecepcion( tmpTikT, cdbfTikT )
 
-                  while ( dbfTikT )->( dbseek( ( tmpTikT )->cSerTik + ( tmpTikT )->cNumTik + ( tmpTikT )->cSufTik ) )
-                     dbLockDelete( dbfTikT )
+                  while ( cdbfTikT )->( dbseek( ( tmpTikT )->cSerTik + ( tmpTikT )->cNumTik + ( tmpTikT )->cSufTik ) )
+                     dbLockDelete( cdbfTikT )
                   end if 
 
-                  dbPass( tmpTikT, dbfTikT, .t. )
+                  dbPass( tmpTikT, cdbfTikT, .t. )
 
-                  ::oSender:SetText( "Reemplazado : " + ( dbfTikT )->cSerTik + "/" + AllTrim( ( dbfTikT )->cNumTik ) + "/" + AllTrim( ( dbfTikT )->cSufTik ) + "; " + Dtoc( ( dbfTikT )->dFecTik ) + "; " + AllTrim( ( dbfTikT )->cCliTik ) + "; " + ( dbfTikT )->cNomTik )
+                  ::oSender:SetText( "Reemplazado : " + ( cdbfTikT )->cSerTik + "/" + AllTrim( ( cdbfTikT )->cNumTik ) + "/" + AllTrim( ( cdbfTikT )->cSufTik ) + "; " + Dtoc( ( cdbfTikT )->dFecTik ) + "; " + AllTrim( ( cdbfTikT )->cCliTik ) + "; " + ( cdbfTikT )->cNomTik )
 
                   /*
                   Eliminamos las lineas----------------------------------------
@@ -14180,7 +14168,7 @@ Method Process() CLASS TTiketsClientesSenderReciver
             Finalizando--------------------------------------------------------------
             */
 
-            CLOSE ( dbfTikT   )
+            CLOSE ( cdbfTikT   )
             CLOSE ( dbfTikL   )
             CLOSE ( dbfTikP   )
             CLOSE ( dbfDiv    )
@@ -14218,7 +14206,7 @@ Method Process() CLASS TTiketsClientesSenderReciver
 
       RECOVER USING oError
 
-         CLOSE ( dbfTikT   )
+         CLOSE ( cdbfTikT   )
          CLOSE ( dbfTikL   )
          CLOSE ( dbfTikP   )
          CLOSE ( dbfClient )
@@ -14240,21 +14228,21 @@ Return Self
 
 //----------------------------------------------------------------------------//
 
-METHOD validateRecepcion( tmpTikT, dbfTikT ) CLASS TTiketsClientesSenderReciver
+METHOD validateRecepcion( tmpTikT, cdbfTikT ) CLASS TTiketsClientesSenderReciver
 
-   ::cErrorRecepcion       := "Pocesando tickets de cliente número " + ( dbfTikT )->cSerTik + "/" + alltrim( ( dbfTikT )->cNumTik ) + "/" + alltrim( ( dbfTikT )->cSufTik ) + " "
+   ::cErrorRecepcion       := "Pocesando tickets de cliente número " + ( cdbfTikT )->cSerTik + "/" + alltrim( ( cdbfTikT )->cNumTik ) + "/" + alltrim( ( cdbfTikT )->cSufTik ) + " "
 
    if !( lValidaOperacion( ( tmpTikT )->dFecTik, .f. ) )
       ::cErrorRecepcion    += "la fecha " + dtoc( ( tmpTikT )->dFecTik ) + " no es valida en esta empresa"
       Return .f. 
    end if 
 
-   if !( dbfTikT )->( dbSeek( ( tmpTikT )->cSerTik + ( tmpTikT )->cNumTik + ( tmpTikT )->cSufTik ) )
+   if !( cdbfTikT )->( dbSeek( ( tmpTikT )->cSerTik + ( tmpTikT )->cNumTik + ( tmpTikT )->cSufTik ) )
       Return .t.
    end if 
 
-   if dtos( ( dbfTikT )->dFecCre ) + ( dbfTikT )->cTimCre > dtos( ( tmpTikT )->dFecCre ) + ( tmpTikT )->cTimCre 
-      ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfTikT )->dFecCre ) + " " + ( dbfTikT )->cTimCre + " es más reciente que la recepción " + dtoc( ( tmpTikT )->dFecCre ) + " " + ( tmpTikT )->cTimCre 
+   if dtos( ( cdbfTikT )->dFecCre ) + ( cdbfTikT )->cTimCre > dtos( ( tmpTikT )->dFecCre ) + ( tmpTikT )->cTimCre 
+      ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( cdbfTikT )->dFecCre ) + " " + ( cdbfTikT )->cTimCre + " es más reciente que la recepción " + dtoc( ( tmpTikT )->dFecCre ) + " " + ( tmpTikT )->cTimCre 
       Return .f.
    end if
 
@@ -14266,7 +14254,7 @@ Static Function GenTikCli( nDevice, cCaption, cCodDoc, cPrinter )
 
    local oDevice
 
-   if ( dbfTikT )->( ordKeyCount() ) == 0
+   if ( D():tikets( nView ) )->( ordKeyCount() ) == 0
       return nil
    end if
 
@@ -14327,7 +14315,7 @@ Static Function DataReport( oFr )
 
    oFr:ClearDataSets()
 
-   oFr:SetWorkArea(     "Tickets", ( dbfTikT )->( Select() ) )
+   oFr:SetWorkArea(     "Tickets", ( D():tikets( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Tickets", cItemsToReport( aItmTik() ) )
 
    oFr:SetWorkArea(     "Lineas de tickets", ( dbfTikL )->( Select() ) )
@@ -14408,22 +14396,22 @@ Return nil
 
 Static Function BuildRelationReport( oFr )
 
-   oFr:SetWorkArea(     "Tickets", ( dbfTikT )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
+   oFr:SetWorkArea(     "Tickets", ( D():tikets( nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
 
-   oFr:SetMasterDetail( "Tickets", "Lineas de tickets",              {|| ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik } )
-   oFr:SetMasterDetail( "Tickets", "Lineas de comandas",             {|| ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik } )
-   oFr:SetMasterDetail( "Tickets", "Lineas de albaranes",            {|| ( dbfTikT )->cNumDoc } )
-   oFr:SetMasterDetail( "Tickets", "Lineas de facturas",             {|| ( dbfTikT )->cNumDoc } )
-   oFr:SetMasterDetail( "Tickets", "Pagos de tickets",               {|| ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik } )
+   oFr:SetMasterDetail( "Tickets", "Lineas de tickets",              {|| ( D():tikets( nView ) )->cSerTik + ( D():tikets( nView ) )->cNumTik + ( D():tikets( nView ) )->cSufTik } )
+   oFr:SetMasterDetail( "Tickets", "Lineas de comandas",             {|| ( D():tikets( nView ) )->cSerTik + ( D():tikets( nView ) )->cNumTik + ( D():tikets( nView ) )->cSufTik } )
+   oFr:SetMasterDetail( "Tickets", "Lineas de albaranes",            {|| ( D():tikets( nView ) )->cNumDoc } )
+   oFr:SetMasterDetail( "Tickets", "Lineas de facturas",             {|| ( D():tikets( nView ) )->cNumDoc } )
+   oFr:SetMasterDetail( "Tickets", "Pagos de tickets",               {|| ( D():tikets( nView ) )->cSerTik + ( D():tikets( nView ) )->cNumTik + ( D():tikets( nView ) )->cSufTik } )
    oFr:SetMasterDetail( "Tickets", "Empresa",                        {|| cCodigoEmpresaEnUso() } )
-   oFr:SetMasterDetail( "Tickets", "Clientes",                       {|| ( dbfTikT )->cCliTik } )
-   oFr:SetMasterDetail( "Tickets", "Obras",                          {|| ( dbfTikT )->cCliTik + ( dbfTikT )->cCodObr } )
-   oFr:SetMasterDetail( "Tickets", "Almacen",                        {|| ( dbfTikT )->cAlmTik } )
-   oFr:SetMasterDetail( "Tickets", "Rutas",                          {|| ( dbfTikT )->cCodRut } )
-   oFr:SetMasterDetail( "Tickets", "Agentes",                        {|| ( dbfTikT )->cCodAge } )
-   oFr:SetMasterDetail( "Tickets", "Usuarios",                       {|| ( dbfTikT )->cCcjTik } )
-   oFr:SetMasterDetail( "Tickets", "SalaVenta",                      {|| ( dbfTikT )->cCodSala } )
-   oFr:SetMasterDetail( "Tickets", "Pagos de facturas",              {|| ( dbfTikT )->cNumDoc } )
+   oFr:SetMasterDetail( "Tickets", "Clientes",                       {|| ( D():tikets( nView ) )->cCliTik } )
+   oFr:SetMasterDetail( "Tickets", "Obras",                          {|| ( D():tikets( nView ) )->cCliTik + ( D():tikets( nView ) )->cCodObr } )
+   oFr:SetMasterDetail( "Tickets", "Almacen",                        {|| ( D():tikets( nView ) )->cAlmTik } )
+   oFr:SetMasterDetail( "Tickets", "Rutas",                          {|| ( D():tikets( nView ) )->cCodRut } )
+   oFr:SetMasterDetail( "Tickets", "Agentes",                        {|| ( D():tikets( nView ) )->cCodAge } )
+   oFr:SetMasterDetail( "Tickets", "Usuarios",                       {|| ( D():tikets( nView ) )->cCcjTik } )
+   oFr:SetMasterDetail( "Tickets", "SalaVenta",                      {|| ( D():tikets( nView ) )->cCodSala } )
+   oFr:SetMasterDetail( "Tickets", "Pagos de facturas",              {|| ( D():tikets( nView ) )->cNumDoc } )
 
    oFr:SetMasterDetail( "Lineas de tickets", "Artículos",            {|| ( dbfTikL )->cCbaTil } )
    oFr:SetMasterDetail( "Lineas de tickets", "Familia",              {|| ( dbfTikL )->cFamTil } )
@@ -14606,9 +14594,9 @@ Function cTxtUbicacion( cTikT )
 
    local cUbicacion  := ""
 
-   DEFAULT cTikT     := dbfTikT
+   DEFAULT cTikT     := if( !Empty( nView ), D():tikets( nView ), )
 
-   cUbicacion        := Eval( hGet( hTextoUbicacion, ( dbfTikT )->nUbiTik ) )
+   cUbicacion        := Eval( hGet( hTextoUbicacion, ( cTikT )->nUbiTik ) )
 
 RETURN ( cUbicacion )
 
@@ -15094,7 +15082,7 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpE, oBrw, bWhen, bValid, nMode, aTmpTik
    local oBmpDiv
    local cPorDiv
 
-   DEFAULT aTmpTik   := dbScatter( dbfTikT )
+   DEFAULT aTmpTik   := dbScatter( D():tikets( nView ) )
 
    do case
       case nMode == APPD_MODE
@@ -15514,13 +15502,14 @@ Function SynTikCli( cPath )
    local aTotTik
    local aTotAlb
    local aTotFac
+   local cTikT
 
    DEFAULT cPath     := cPatEmp()
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPath + "TIKET.DBF" )         NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "TIKET", @dbfTikT ) ) EXCLUSIVE
+   USE ( cPath + "TIKET.DBF" )         NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "TIKET", @cTikT ) ) EXCLUSIVE
    SET ADSINDEX TO ( cPath + "TIKET.CDX" ) ADDITIVE
 
    USE ( cPath + "TIKEL.DBF" )         NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "TIKEL", @dbfTikL ) ) EXCLUSIVE
@@ -15569,46 +15558,46 @@ Function SynTikCli( cPath )
    Cabeceras-------------------------------------------------------------------
    */
 
-   ( dbfTikT )->( OrdSetFocus( 0 ) )
-   ( dbfTikT )->( dbGoTop() )
+   ( cTikT )->( OrdSetFocus( 0 ) )
+   ( cTikT )->( dbGoTop() )
 
-   while !( dbfTikT )->( eof() )
+   while !( cTikT )->( eof() )
 
-      if empty( ( dbfTikT )->cSufTik )
-         ( dbfTikT )->cSufTik := "00"
+      if empty( ( cTikT )->cSufTik )
+         ( cTikT )->cSufTik := "00"
       end if
 
-      if !empty( ( dbfTikT )->cNumDoc ) .and. Len( AllTrim( ( dbfTikT )->cNumDoc ) ) != 12
-         ( dbfTikT )->cNumDoc := AllTrim( ( dbfTikT )->cNumDoc ) + "00"
+      if !empty( ( cTikT )->cNumDoc ) .and. Len( AllTrim( ( cTikT )->cNumDoc ) ) != 12
+         ( cTikT )->cNumDoc := AllTrim( ( cTikT )->cNumDoc ) + "00"
       end if
 
-      if !empty( ( dbfTikT )->cAlbTik ) .and. Len( AllTrim( ( dbfTikT )->cAlbTik ) ) != 12
-         ( dbfTikT )->cAlbTik := AllTrim( ( dbfTikT )->cAlbTik ) + "00"
+      if !empty( ( cTikT )->cAlbTik ) .and. Len( AllTrim( ( cTikT )->cAlbTik ) ) != 12
+         ( cTikT )->cAlbTik := AllTrim( ( cTikT )->cAlbTik ) + "00"
       end if
 
-      if !empty( ( dbfTikT )->cPedTik ) .and. Len( AllTrim( ( dbfTikT )->cPedTik ) ) != 12
-         ( dbfTikT )->cPedTik := AllTrim( ( dbfTikT )->cPedTik ) + "00"
+      if !empty( ( cTikT )->cPedTik ) .and. Len( AllTrim( ( cTikT )->cPedTik ) ) != 12
+         ( cTikT )->cPedTik := AllTrim( ( cTikT )->cPedTik ) + "00"
       end if
 
-      if !empty( ( dbfTikT )->cPreTik ) .and. Len( AllTrim( ( dbfTikT )->cPreTik ) ) != 12
-         ( dbfTikT )->cPreTik := AllTrim( ( dbfTikT )->cPreTik ) + "00"
+      if !empty( ( cTikT )->cPreTik ) .and. Len( AllTrim( ( cTikT )->cPreTik ) ) != 12
+         ( cTikT )->cPreTik := AllTrim( ( cTikT )->cPreTik ) + "00"
       end if
 
-      if !empty( ( dbfTikT )->cTikVal ) .and. Len( AllTrim( ( dbfTikT )->cTikVal ) ) != 13
-         ( dbfTikT )->cTikVal := AllTrim( ( dbfTikT )->cTikVal ) + "00"
+      if !empty( ( cTikT )->cTikVal ) .and. Len( AllTrim( ( cTikT )->cTikVal ) ) != 13
+         ( cTikT )->cTikVal := AllTrim( ( cTikT )->cTikVal ) + "00"
       end if
 
-      if empty( ( dbfTikT )->cNcjTik )
-         ( dbfTikT )->cNcjTik := "000"
+      if empty( ( cTikT )->cNcjTik )
+         ( cTikT )->cNcjTik := "000"
       end if
 
-      ( dbfTikT )->( dbSkip() )
+      ( cTikT )->( dbSkip() )
 
       SysRefresh()
 
    end while
 
-   ( dbfTikT )->( OrdSetFocus( 1 ) )
+   ( cTikT )->( OrdSetFocus( 1 ) )
 
    /*
    Pagos-------------------------------------------------------------------
@@ -15633,7 +15622,7 @@ Function SynTikCli( cPath )
 
    end while
 
-   ( dbfTikT )->( OrdSetFocus( 1 ) )
+   ( cTikT )->( OrdSetFocus( 1 ) )
 
    /*
    Lineas-------------------------------------------------------------------
@@ -15664,16 +15653,16 @@ Function SynTikCli( cPath )
          ( dbfTikL )->cLote   := AllTrim( Str( ( dbfTikL )->nLote ) )
       end if
 
-      if empty( ( dbfTikL )->cAlmLin ) .or. ( dbfTikL )->cAlmLin != ( dbfTikT )->cAlmTik
-         ( dbfTikL )->cAlmLin := RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT, "cAlmTik" )
+      if empty( ( dbfTikL )->cAlmLin ) .or. ( dbfTikL )->cAlmLin != ( cTikT )->cAlmTik
+         ( dbfTikL )->cAlmLin := RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, cTikT, "cAlmTik" )
       end if
 
-      if ( dbfTikL )->cTipTil != RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT, "cTipTik" )
-         ( dbfTikL )->cTipTil := RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT, "cTipTik" )
+      if ( dbfTikL )->cTipTil != RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, cTikT, "cTipTik" )
+         ( dbfTikL )->cTipTil := RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, cTikT, "cTipTik" )
       end if
 
-      if ( dbfTikL )->dFecTik != RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT, "dFecTik" )
-         ( dbfTikL )->dFecTik := RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT, "dFecTik" )
+      if ( dbfTikL )->dFecTik != RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, cTikT, "dFecTik" )
+         ( dbfTikL )->dFecTik := RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, cTikT, "dFecTik" )
       end if
 
       if empty( ( dbfTikL )->nPosPrint ) 
@@ -15699,8 +15688,8 @@ Function SynTikCli( cPath )
          ( dbfTikS )->cSufTik := "00"
       end if
 
-      if ( dbfTikS )->dFecTik != RetFld( ( dbfTikS )->cSerTik + ( dbfTikS )->cNumTik + ( dbfTikS )->cSufTik, dbfTikT, "dFecTik" )
-         ( dbfTikS )->dFecTik := RetFld( ( dbfTikS )->cSerTik + ( dbfTikS )->cNumTik + ( dbfTikS )->cSufTik, dbfTikT, "dFecTik" )
+      if ( dbfTikS )->dFecTik != RetFld( ( dbfTikS )->cSerTik + ( dbfTikS )->cNumTik + ( dbfTikS )->cSufTik, cTikT, "dFecTik" )
+         ( dbfTikS )->dFecTik := RetFld( ( dbfTikS )->cSerTik + ( dbfTikS )->cNumTik + ( dbfTikS )->cSufTik, cTikT, "dFecTik" )
       end if
 
       ( dbfTikS )->( dbSkip() )
@@ -15715,38 +15704,38 @@ Function SynTikCli( cPath )
    Repasamos los totales para que tengas valores---------------------------
    */
 
-   ( dbfTikT )->( dbGoTop() )
+   ( cTikT )->( dbGoTop() )
 
-   while !( dbfTikT )->( eof() )
+   while !( cTikT )->( eof() )
 
       do case
-         case ( dbfTikT )->cTipTik == SAVALB
+         case ( cTikT )->cTipTik == SAVALB
 
-            if dbSeekInOrd( ( dbfTikT )->cNumDoc, "nNumAlb", dbfAlbCliT )
+            if dbSeekInOrd( ( cTikT )->cNumDoc, "nNumAlb", dbfAlbCliT )
 
                aTotAlb  := aTotAlbCli( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, ( dbfAlbCliT )->cDivAlb )
 
-               if ( ( dbfTikT )->nTotNet != aTotAlb[1] .or. ( dbfTikT )->nTotIva != aTotAlb[2] .or. ( dbfTikT )->nTotTik != aTotAlb[4] )
+               if ( ( cTikT )->nTotNet != aTotAlb[1] .or. ( cTikT )->nTotIva != aTotAlb[2] .or. ( cTikT )->nTotTik != aTotAlb[4] )
 
-                  ( dbfTikT )->nTotNet := aTotAlb[1]
-                  ( dbfTikT )->nTotIva := aTotAlb[2]
-                  ( dbfTikT )->nTotTik := aTotAlb[4]
+                  ( cTikT )->nTotNet := aTotAlb[1]
+                  ( cTikT )->nTotIva := aTotAlb[2]
+                  ( cTikT )->nTotTik := aTotAlb[4]
 
                end if
 
             end if
 
-         case ( dbfTikT )->cTipTik == SAVFAC
+         case ( cTikT )->cTipTik == SAVFAC
 
-            if dbSeekInOrd( ( dbfTikT )->cNumDoc, "nNumFac", dbfFacCliT )
+            if dbSeekInOrd( ( cTikT )->cNumDoc, "nNumFac", dbfFacCliT )
 
                aTotFac  := aTotFacCli( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, ( dbfFacCliT )->cDivFac )
 
-               if ( dbfTikT )->nTotNet != aTotFac[1] .or. ( dbfTikT )->nTotIva != aTotFac[2] .or. ( dbfTikT )->nTotTik != aTotFac[4]
+               if ( cTikT )->nTotNet != aTotFac[1] .or. ( cTikT )->nTotIva != aTotFac[2] .or. ( cTikT )->nTotTik != aTotFac[4]
 
-                  ( dbfTikT )->nTotNet := aTotFac[1]
-                  ( dbfTikT )->nTotIva := aTotFac[2]
-                  ( dbfTikT )->nTotTik := aTotFac[4]
+                  ( cTikT )->nTotNet := aTotFac[1]
+                  ( cTikT )->nTotIva := aTotFac[2]
+                  ( cTikT )->nTotTik := aTotFac[4]
 
                end if
 
@@ -15754,26 +15743,26 @@ Function SynTikCli( cPath )
 
          otherwise
 
-            aTotTik     := aTotTik( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikT, dbfTikL, dbfDiv, , ( dbfTikT )->cDivTik )
+            aTotTik     := aTotTik( ( cTikT )->cSerTik + ( cTikT )->cNumTik + ( cTikT )->cSufTik, cTikT, dbfTikL, dbfDiv, , ( cTikT )->cDivTik )
 
-            if ( dbfTikT )->nTotNet != aTotTik[1] .or. ( dbfTikT )->nTotIva != aTotTik[2] .or. ( dbfTikT )->nTotTik != aTotTik[3]
+            if ( cTikT )->nTotNet != aTotTik[1] .or. ( cTikT )->nTotIva != aTotTik[2] .or. ( cTikT )->nTotTik != aTotTik[3]
 
-               ( dbfTikT )->nTotNet    := aTotTik[1]
-               ( dbfTikT )->nTotIva    := aTotTik[2]
-               ( dbfTikT )->nTotTik    := aTotTik[3]
+               ( cTikT )->nTotNet    := aTotTik[1]
+               ( cTikT )->nTotIva    := aTotTik[2]
+               ( cTikT )->nTotTik    := aTotTik[3]
 
             end if
 
-            aTotTik     := nTotCobTik( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikP, dbfDiv )
-            aTotTik     += nTotValTik( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikT, dbfTikL, dbfDiv )
+            aTotTik     := nTotCobTik( ( cTikT )->cSerTik + ( cTikT )->cNumTik + ( cTikT )->cSufTik, dbfTikP, dbfDiv )
+            aTotTik     += nTotValTik( ( cTikT )->cSerTik + ( cTikT )->cNumTik + ( cTikT )->cSufTik, cTikT, dbfTikL, dbfDiv )
 
-            if ( dbfTikT )->nCobTik != aTotTik
-               ( dbfTikT )->nCobTik    := aTotTik
+            if ( cTikT )->nCobTik != aTotTik
+               ( cTikT )->nCobTik    := aTotTik
             end if
 
       end case
 
-      ( dbfTikT )->( dbSkip() )
+      ( cTikT )->( dbSkip() )
 
       SysRefresh()
 
@@ -15787,8 +15776,8 @@ Function SynTikCli( cPath )
 
    ErrorBlock( oBlock )
 
-   if !empty( dbfTikT ) .and. ( dbfTikT )->( Used() )
-      ( dbfTikT )->( dbCloseArea() )
+   if !empty( cTikT ) .and. ( cTikT )->( Used() )
+      ( cTikT )->( dbCloseArea() )
    end if
 
    if !empty( dbfTikL ) .and. ( dbfTikL )->( Used() )
@@ -16202,14 +16191,14 @@ Static Function lCambiaTicket( lSubir, aTmp, aGet, nMode )
 
    if lSubir
 
-      if ( dbfTikT )->( OrdKeyno() ) == 1
+      if ( D():tikets( nView ) )->( OrdKeyno() ) == 1
          MsgStop( "Ya estas en el primer registro" )
          return nil
       end if
 
    else
 
-      if ( dbfTikT )->( OrdKeyno() ) == ( dbfTikT )->( OrdKeyCount() )
+      if ( D():tikets( nView ) )->( OrdKeyno() ) == ( D():tikets( nView ) )->( OrdKeyCount() )
          MsgStop( "Ya estas en el último registro" )
          return nil
       end if
@@ -16226,16 +16215,16 @@ Static Function lCambiaTicket( lSubir, aTmp, aGet, nMode )
    */
 
    if lSubir
-      ( dbfTikT )->( dbSkip( -1 ) )
+      ( D():tikets( nView ) )->( dbSkip( -1 ) )
    else
-      ( dbfTikT )->( dbSkip() )
+      ( D():tikets( nView ) )->( dbSkip() )
    end if
 
    /*
    Abrimos el ticket seleccionado-------------------------------------------
    */
 
-   aScatter( dbfTikT, aTmp )
+   aScatter( D():tikets( nView ), aTmp )
 
    BeginTrans( aTmp, aGet, nMode, .f. )
 
@@ -16685,7 +16674,7 @@ Static Function pdaEntregando( nValor, aTmp )
 
       cNumEnt     += nValor
 
-      nTotal      := nTotTik( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], dbfTikT, dbfTmpL, dbfDiv, aTmp, nil, .f. )
+      nTotal      := nTotTik( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], D():tikets( nView ), dbfTmpL, dbfDiv, aTmp, nil, .f. )
 
       nCambio     := Val( cNumEnt ) + nEntCli  - nTotal
 
@@ -16778,7 +16767,7 @@ return nil
 
 FUNCTION mkTpv( cPath, lAppend, cPathOld, oMeter )
 
-	local dbfTikT
+	local cTikT
 	local dbfTikL
    local dbfTikP
    local dbfTikC
@@ -16831,9 +16820,9 @@ FUNCTION mkTpv( cPath, lAppend, cPathOld, oMeter )
 
    if lAppend .and. lIsDir( cPathOld )
 
-      dbUseArea( .t., cDriver(), cPath + "TikeT.Dbf", cCheckArea( "TIKET",  @dbfTikT ), .f. )
-      ( dbfTikT )->( ordListAdd( cPath + "TikeT.Cdx" ) )
-      ( dbfTikT )->( ordSetFocus( "cLiqVal" ) )
+      dbUseArea( .t., cDriver(), cPath + "TikeT.Dbf", cCheckArea( "TIKET",  @cTikT ), .f. )
+      ( cTikT )->( ordListAdd( cPath + "TikeT.Cdx" ) )
+      ( cTikT )->( ordSetFocus( "cLiqVal" ) )
 
       dbUseArea( .t., cDriver(), cPath + "TikeL.Dbf", cCheckArea( "TIKETL", @dbfTikL ), .f. )
       ( dbfTikL )->( ordListAdd( cPath + "TikeL.Cdx" ) )
@@ -16869,7 +16858,7 @@ FUNCTION mkTpv( cPath, lAppend, cPathOld, oMeter )
       ( oldTikT )->( dbGoTop() )
       while !( oldTikT )->( eof() )
 
-         dbCopy( oldTikT, dbfTikT, .t. )
+         dbCopy( oldTikT, cTikT, .t. )
 
          if ( oldTikL )->( dbSeek( ( oldTikT )->cSerTik + ( oldTikT )->cNumTik + ( oldTikT )->cSufTik ) )
             while ( oldTikL )->cSerTil + ( oldTikL )->cNumTil + ( oldTikL )->cSufTil == ( oldTikT )->cSerTik + ( oldTikT )->cNumTik + ( oldTikT )->cSufTik .and. !( oldTikL )->( eof() )
@@ -16913,13 +16902,13 @@ FUNCTION mkTpv( cPath, lAppend, cPathOld, oMeter )
       Reemplaza la antigua sesion----------------------------------------------
       */
 
-      ( dbfTikT )->( dbEval( {|| ( dbfTikT )->cTurTik := Space( 6 ) },,,,, .f. ) )
+      ( cTikT )->( dbEval( {|| ( cTikT )->cTurTik := Space( 6 ) },,,,, .f. ) )
 
       /*
       Cerramos las bases de datos----------------------------------------------
       */
 
-      CLOSE( dbfTikT  )
+      CLOSE( cTikT  )
       CLOSE( dbfTikL  )
       CLOSE( dbfTikP  )
       CLOSE( dbfTikC  )
@@ -16941,7 +16930,7 @@ Return nil
 
 FUNCTION rxTpv( cPath, cDriver )
 
-	local dbfTikT
+	local cTikT
 	local dbfTikL
    local dbfTikP
    local dbfTikC
@@ -16992,99 +16981,99 @@ FUNCTION rxTpv( cPath, cDriver )
    Apertura de ficheros--------------------------------------------------------
    */
 
-   dbUseArea( .t., cDriver, cPath + "TIKET.DBF", cCheckArea( "TIKET", @dbfTikT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "TIKET.DBF", cCheckArea( "TIKET", @cTikT ), .f. )
 
-   if !( dbfTikT )->( neterr() )
-      ( dbfTikT )->( __dbPack() )
+   if !( cTikT )->( neterr() )
+      ( cTikT )->( __dbPack() )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "CNUMTIK", "CSERTIK + CNUMTIK + CSUFTIK", {|| Field->cSerTik + Field->cNumTik + Field->cSufTik } ) )
+      ( cTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cTikT )->( ordCreate( cPath + "TIKET.CDX", "CNUMTIK", "CSERTIK + CNUMTIK + CSUFTIK", {|| Field->cSerTik + Field->cNumTik + Field->cSufTik } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "dFecTik", "dFecTik", {|| Field->dFecTik } ) )
+      ( cTikT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cTikT )->( ordCreate( cPath + "TIKET.CDX", "dFecTik", "dFecTik", {|| Field->dFecTik } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "CCLITIK", "CCLITIK", {|| Field->CCLITIK } ) )
+      ( cTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cTikT )->( ordCreate( cPath + "TIKET.CDX", "CCLITIK", "CCLITIK", {|| Field->CCLITIK } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "CNOMTIK", "CNOMTIK", {|| Field->CNOMTIK } ) )
+      ( cTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cTikT )->( ordCreate( cPath + "TIKET.CDX", "CNOMTIK", "CNOMTIK", {|| Field->CNOMTIK } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "CNCJTIK", "CCCJTIK", {|| Field->CNCJTIK } ) )
+      ( cTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cTikT )->( ordCreate( cPath + "TIKET.CDX", "CNCJTIK", "CCCJTIK", {|| Field->CNCJTIK } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "CCCJTIK", "CCCJTIK", {|| Field->CCCJTIK } ) )
+      ( cTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cTikT )->( ordCreate( cPath + "TIKET.CDX", "CCCJTIK", "CCCJTIK", {|| Field->CCCJTIK } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "CRETMAT", "CRETMAT", {|| Field->CRETMAT } ) )
+      ( cTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cTikT )->( ordCreate( cPath + "TIKET.CDX", "CRETMAT", "CRETMAT", {|| Field->CRETMAT } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted() .and. !empty( cTurTik )", {||!Deleted() .and. !empty( Field->cTurTik ) }  ) )
-      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "CTURTIK", "CTURTIK + CSUFTIK + CNCJTIK", {|| Field->CTURTIK + Field->cSufTik + Field->CNCJTIK } ) )
+      ( cTikT )->( ordCondSet( "!Deleted() .and. !empty( cTurTik )", {||!Deleted() .and. !empty( Field->cTurTik ) }  ) )
+      ( cTikT )->( ordCreate( cPath + "TIKET.CDX", "CTURTIK", "CTURTIK + CSUFTIK + CNCJTIK", {|| Field->CTURTIK + Field->cSufTik + Field->CNCJTIK } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "cAlmTik", "CALMTIK", {|| Field->CALMTIK } ) )
+      ( cTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cTikT )->( ordCreate( cPath + "TIKET.CDX", "cAlmTik", "CALMTIK", {|| Field->CALMTIK } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "cSufTik", "cSufTik", {|| Field->cSufTik } ) )
+      ( cTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cTikT )->( ordCreate( cPath + "TIKET.CDX", "cSufTik", "cSufTik", {|| Field->cSufTik } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted() }  ) )
-      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "CNUMDOC", "CNUMDOC", {|| Field->CNUMDOC } ) )
+      ( cTikT )->( ordCondSet( "!Deleted()", {||!Deleted() }  ) )
+      ( cTikT )->( ordCreate( cPath + "TIKET.CDX", "CNUMDOC", "CNUMDOC", {|| Field->CNUMDOC } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted() }  ) )
-      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "LSNDDOC", "LSNDDOC", {|| Field->LSNDDOC } ) )
+      ( cTikT )->( ordCondSet( "!Deleted()", {||!Deleted() }  ) )
+      ( cTikT )->( ordCreate( cPath + "TIKET.CDX", "LSNDDOC", "LSNDDOC", {|| Field->LSNDDOC } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted() }  ) )
-      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "cCodUsr", "cCcjTik + Dtos( dFecCre ) + cTimCre", {|| Field->cCcjTik + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
+      ( cTikT )->( ordCondSet( "!Deleted()", {||!Deleted() }  ) )
+      ( cTikT )->( ordCreate( cPath + "TIKET.CDX", "cCodUsr", "cCcjTik + Dtos( dFecCre ) + cTimCre", {|| Field->cCcjTik + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted() .and. cTipTik == '6'", {||!Deleted() .and. Field->cTipTik == '6' }  ) )
-      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "cDocVal", "cValDoc", {|| Field->cValDoc } ) )
+      ( cTikT )->( ordCondSet( "!Deleted() .and. cTipTik == '6'", {||!Deleted() .and. Field->cTipTik == '6' }  ) )
+      ( cTikT )->( ordCreate( cPath + "TIKET.CDX", "cDocVal", "cValDoc", {|| Field->cValDoc } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted() .and. cTipTik == '6'", {||!Deleted() .and. Field->cTipTik == '6' }  ) )
-      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "cNumVal", "cSerTik + cNumTik + cSufTik", {|| Field->cSerTik + Field->cNumTik + Field->cSufTik } ) )
+      ( cTikT )->( ordCondSet( "!Deleted() .and. cTipTik == '6'", {||!Deleted() .and. Field->cTipTik == '6' }  ) )
+      ( cTikT )->( ordCreate( cPath + "TIKET.CDX", "cNumVal", "cSerTik + cNumTik + cSufTik", {|| Field->cSerTik + Field->cNumTik + Field->cSufTik } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted() .and. cTipTik == '6' .and. !lLiqTik", {||!Deleted() .and. Field->cTipTik == '6' .and. !Field->lLiqTik }  ) )
-      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "cLiqVal", "cSerTik + cNumTik + cSufTik", {|| Field->cSerTik + Field->cNumTik + Field->cSufTik } ) )
+      ( cTikT )->( ordCondSet( "!Deleted() .and. cTipTik == '6' .and. !lLiqTik", {||!Deleted() .and. Field->cTipTik == '6' .and. !Field->lLiqTik }  ) )
+      ( cTikT )->( ordCreate( cPath + "TIKET.CDX", "cLiqVal", "cSerTik + cNumTik + cSufTik", {|| Field->cSerTik + Field->cNumTik + Field->cSufTik } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted() .and. lLiqTik", {|| !Deleted() .and. Field->lLiqTik }  ) )
-      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "cTurVal", "cTurVal + cSufTik + cNcjTik", {|| Field->cTurVal + Field->cSufTik + Field->cNcjTik } ) )
+      ( cTikT )->( ordCondSet( "!Deleted() .and. lLiqTik", {|| !Deleted() .and. Field->lLiqTik }  ) )
+      ( cTikT )->( ordCreate( cPath + "TIKET.CDX", "cTurVal", "cTurVal + cSufTik + cNcjTik", {|| Field->cTurVal + Field->cSufTik + Field->cNcjTik } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted() .and. ( cTipTik == '1' .or. cTipTik == '7' ) .and. !lPgdTik .and. !lCloTik", {|| !Deleted() .and. Field->cTipTik == '1' .and. !Field->lPgdTik .and. !Field->lCloTik } ) )
-      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "cCodSal", "cCodSala + cPntVenta", {|| Field->cCodSala + Field->cPntVenta } ) )
+      ( cTikT )->( ordCondSet( "!Deleted() .and. ( cTipTik == '1' .or. cTipTik == '7' ) .and. !lPgdTik .and. !lCloTik", {|| !Deleted() .and. Field->cTipTik == '1' .and. !Field->lPgdTik .and. !Field->lCloTik } ) )
+      ( cTikT )->( ordCreate( cPath + "TIKET.CDX", "cCodSal", "cCodSala + cPntVenta", {|| Field->cCodSala + Field->cPntVenta } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted().and. cTipTik == '6' .and. !lLiqTik", {|| !Deleted() .and. Field->cTipTik == '6' .and. !Field->lLiqTik }  ) )
-      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "cCliVal", "cCliTik", {|| Field->cCliTik } ) )
+      ( cTikT )->( ordCondSet( "!Deleted().and. cTipTik == '6' .and. !lLiqTik", {|| !Deleted() .and. Field->cTipTik == '6' .and. !Field->lLiqTik }  ) )
+      ( cTikT )->( ordCreate( cPath + "TIKET.CDX", "cCliVal", "cCliTik", {|| Field->cCliTik } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted().and. cTipTik == '6' .and. !lLiqTik", {|| !Deleted() .and. Field->cTipTik == '6' .and. !Field->lLiqTik }  ) )
-      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "cNomVal", "cNomTik", {|| Field->cNomTik } ) )
+      ( cTikT )->( ordCondSet( "!Deleted().and. cTipTik == '6' .and. !lLiqTik", {|| !Deleted() .and. Field->cTipTik == '6' .and. !Field->lLiqTik }  ) )
+      ( cTikT )->( ordCreate( cPath + "TIKET.CDX", "cNomVal", "cNomTik", {|| Field->cNomTik } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted() .and. cTipTik == '6' .and. !lLiqTik", {|| !Deleted() .and. Field->cTipTik == '6' .and. !Field->lLiqTik }  ) )
-      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "cTikVal", "cTikVal", {|| Field->cTikVal } ) )
+      ( cTikT )->( ordCondSet( "!Deleted() .and. cTipTik == '6' .and. !lLiqTik", {|| !Deleted() .and. Field->cTipTik == '6' .and. !Field->lLiqTik }  ) )
+      ( cTikT )->( ordCreate( cPath + "TIKET.CDX", "cTikVal", "cTikVal", {|| Field->cTikVal } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted() .and. !Field->lLiqTik .and. ( cTipTik == '1' .or. cTipTik == '7' )", {||!Deleted() .and. !Field->lLiqTik .and. ( Field->cTipTik == '1' .or. Field->cTipTik == '7' ) }  ) )
-      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "lCliTik", "cCliTik", {|| Field->cCliTik } ) )
+      ( cTikT )->( ordCondSet( "!Deleted() .and. !Field->lLiqTik .and. ( cTipTik == '1' .or. cTipTik == '7' )", {||!Deleted() .and. !Field->lLiqTik .and. ( Field->cTipTik == '1' .or. Field->cTipTik == '7' ) }  ) )
+      ( cTikT )->( ordCreate( cPath + "TIKET.CDX", "lCliTik", "cCliTik", {|| Field->cCliTik } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "cValTik", "cTikVal", {|| Field->cTikVal } ) )
+      ( cTikT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( cTikT )->( ordCreate( cPath + "TIKET.CDX", "cValTik", "cTikVal", {|| Field->cTikVal } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted() .and. lAbierto", {|| !Deleted() .and. Field->lAbierto } ) )
-      ( dbfTikT )->( ordCreate( cPath + "TikeT.Cdx", "lCloTik", "cSerTik + cNumTik + cSufTik", {|| Field->cSerTik + Field->cNumTik + Field->cSufTik } ) )
+      ( cTikT )->( ordCondSet( "!Deleted() .and. lAbierto", {|| !Deleted() .and. Field->lAbierto } ) )
+      ( cTikT )->( ordCreate( cPath + "TikeT.Cdx", "lCloTik", "cSerTik + cNumTik + cSufTik", {|| Field->cSerTik + Field->cNumTik + Field->cSufTik } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted() .and. lAbierto", {|| !Deleted() .and. Field->lAbierto } ) )
-      ( dbfTikT )->( ordCreate( cPath + "TikeT.Cdx", "nUbiTik", "Str( nUbiTik )", {|| Str( Field->nUbiTik ) } ) )
+      ( cTikT )->( ordCondSet( "!Deleted() .and. lAbierto", {|| !Deleted() .and. Field->lAbierto } ) )
+      ( cTikT )->( ordCreate( cPath + "TikeT.Cdx", "nUbiTik", "Str( nUbiTik )", {|| Str( Field->nUbiTik ) } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted() .and. !lCloTik .and. !lPgdTik", {|| !Deleted() .and. !Field->lCloTik .and. !Field->lPgdTik } ) )
-      ( dbfTikT )->( ordCreate( cPath + "TikeT.Cdx", "lCloUbiTik", "Str( nUbiTik ) + cSerTik + cNumTik + cSufTik", {|| Str( Field->nUbiTik ) + Field->cSerTik + Field->cNumTik + Field->cSufTik } ) )
+      ( cTikT )->( ordCondSet( "!Deleted() .and. !lCloTik .and. !lPgdTik", {|| !Deleted() .and. !Field->lCloTik .and. !Field->lPgdTik } ) )
+      ( cTikT )->( ordCreate( cPath + "TikeT.Cdx", "lCloUbiTik", "Str( nUbiTik ) + cSerTik + cNumTik + cSufTik", {|| Str( Field->nUbiTik ) + Field->cSerTik + Field->cNumTik + Field->cSufTik } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfTikT )->( ordCreate( cPath + "TikeT.Cdx", "iNumTik", "'12' + CSERTIK + CNUMTIK + CSUFTIK", {|| '12' + Field->cSerTik + Field->cNumTik + Field->cSufTik } ) )
+      ( cTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cTikT )->( ordCreate( cPath + "TikeT.Cdx", "iNumTik", "'12' + CSERTIK + CNUMTIK + CSUFTIK", {|| '12' + Field->cSerTik + Field->cNumTik + Field->cSufTik } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfTikT )->( ordCreate( cPath + "TikeT.Cdx", "cCodObr", "cCodObr + dtos( dFecTik )", {|| Field->cCodObr + dtos( Field->dFecTik ) } ) )
+      ( cTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cTikT )->( ordCreate( cPath + "TikeT.Cdx", "cCodObr", "cCodObr + dtos( dFecTik )", {|| Field->cCodObr + dtos( Field->dFecTik ) } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
-      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "dDesFec", "dFecTik", {|| Field->dFecTik } ) )
+      ( cTikT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
+      ( cTikT )->( ordCreate( cPath + "TIKET.CDX", "dDesFec", "dFecTik", {|| Field->dFecTik } ) )
 
-      ( dbfTikT )->( dbCloseArea() )
+      ( cTikT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de tikets" )
    end if
@@ -17528,10 +17517,10 @@ FUNCTION nTotTik( cNumTik, cTikT, cTikL, cDiv, aTmp, cDivRet, lPic, lExcCnt )
    local nDescuentoEsp  := 0
    local nDescuentoPp   := 0
 
-   DEFAULT cTikT        := dbfTikT
+   DEFAULT cTikT        := if( !Empty( nView ), D():tikets( nView ), )
    DEFAULT cTikL        := dbfTikL
    DEFAULT cDiv         := dbfDiv
-   DEFAULT cNumTik      := ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik
+   DEFAULT cNumTik      := ( cTikT )->cSerTik + ( cTikT )->cNumTik + ( cTikT )->cSufTik
    DEFAULT lPic         := .f.
 
    public nTotTik       := 0
@@ -18024,7 +18013,7 @@ STATIC FUNCTION lRecTotal( aTmp, lRefreshTotal )
 
    DEFAULT lRefreshTotal   := .t.
 
-   nTotal                  := nTotTik( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], dbfTikT, dbfTmpL, dbfDiv, aTmp, nil, .f. )
+   nTotal                  := nTotTik( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], D():tikets( nView ), dbfTmpL, dbfDiv, aTmp, nil, .f. )
 
    if oTotEsp != nil
       oTotEsp:Refresh()
@@ -18204,14 +18193,14 @@ return ( nil )
 Static Function YearComboBoxChange()
 
     if oWndBrw:oWndBar:lAllYearComboBox()
-      DestroyFastFilter( dbfTikT )
-      CreateUserFilter( "", dbfTikT, .f., , , "all" )
+      DestroyFastFilter( D():tikets( nView ) )
+      CreateUserFilter( "", D():tikets( nView ), .f., , , "all" )
 	 else
-		DestroyFastFilter( dbfTikT )
-      CreateUserFilter( "Year( Field->dFecTik ) == " + oWndBrw:oWndBar:cYearComboBox(), dbfTikT, .f., , , "Year( Field->dFecTik ) == " + oWndBrw:oWndBar:cYearComboBox() )
+		DestroyFastFilter( D():tikets( nView ) )
+      CreateUserFilter( "Year( Field->dFecTik ) == " + oWndBrw:oWndBar:cYearComboBox(), D():tikets( nView ), .f., , , "Year( Field->dFecTik ) == " + oWndBrw:oWndBar:cYearComboBox() )
 	 end if
 
-	 ( dbfTikT )->( dbGoTop() )
+	 ( D():tikets( nView ) )->( dbGoTop() )
 
 	 oWndBrw:Refresh()
 
@@ -18331,9 +18320,9 @@ Static Function GetVale( oBrwVal, aTmp )
    local lError   := .f.
    local cGet     := Space( 13 )
    local cCodCli  := aTmp[ _CCLITIK ]
-   local nRecAnt  := ( dbfTikT )->( RecNo() )
-   local nOrdAnt  := ( dbfTikT )->( OrdSetFocus( "cLiqVal" ) )
-   local cTyp     := ( dbfTikT )->( dbOrderInfo( DBOI_KEYTYPE ) )
+   local nRecAnt  := ( D():tikets( nView ) )->( RecNo() )
+   local nOrdAnt  := ( D():tikets( nView ) )->( OrdSetFocus( "cLiqVal" ) )
+   local cTyp     := ( D():tikets( nView ) )->( dbOrderInfo( DBOI_KEYTYPE ) )
    local nRec     := ( dbfTmpV )->( RecNo() )
 
    DEFINE DIALOG oDlg RESOURCE "GetVale"
@@ -18352,33 +18341,33 @@ Static Function GetVale( oBrwVal, aTmp )
 
    if oDlg:nResult == IDOK
 
-      if lBigSeek( nil, Upper( cGet ), dbfTikT )
+      if lBigSeek( nil, Upper( cGet ), D():tikets( nView ) )
 
          /*
          Comprobamos q no este incluida en la tabla de vales-------------------
          */
 
-         ( dbfTmpV )->( __dbLocate( {|| ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik == ( dbfTmpV )->cSerTik + ( dbfTmpV )->cNumTik + ( dbfTmpV )->cSufTik } ) )
+         ( dbfTmpV )->( __dbLocate( {|| ( D():tikets( nView ) )->cSerTik + ( D():tikets( nView ) )->cNumTik + ( D():tikets( nView ) )->cSufTik == ( dbfTmpV )->cSerTik + ( dbfTmpV )->cNumTik + ( dbfTmpV )->cSufTik } ) )
 
          if !( dbfTmpV )->( Found() )
 
-            if ( dbfTikT )->dFecTik + uFieldEmpresa( "nDiaVale" ) > GetSysDate()
+            if ( D():tikets( nView ) )->dFecTik + uFieldEmpresa( "nDiaVale" ) > GetSysDate()
                lError   := .t.
                MsgStop( "El vale introducido no han alcanzado la fecha para su liquidación." )
             end if
 
-            if ( dbfTikT )->cCliTik != cCodCli
+            if ( D():tikets( nView ) )->cCliTik != cCodCli
                lError   := .t.
                MsgStop( "El vale introducido pertenece a otro cliente." )
             end if
 
             if !lError
 
-               dbPass( dbfTikT, dbfTmpV, .t. )
+               dbPass( D():tikets( nView ), dbfTmpV, .t. )
 
-               if dbLock( dbfTikT )
-                  ( dbfTikT )->lSelDoc := .f.
-                  ( dbfTikT )->( dbUnLock() )
+               if dbLock( D():tikets( nView ) )
+                  ( D():tikets( nView ) )->lSelDoc := .f.
+                  ( D():tikets( nView ) )->( dbUnLock() )
                end if
 
             end if
@@ -18401,8 +18390,8 @@ Static Function GetVale( oBrwVal, aTmp )
    Repos-----------------------------------------------------------------------
    */
 
-   ( dbfTikT )->( OrdSetFocus( nOrdAnt ) )
-   ( dbfTikT )->( dbGoTo( nRecAnt ) )
+   ( D():tikets( nView ) )->( OrdSetFocus( nOrdAnt ) )
+   ( D():tikets( nView ) )->( dbGoTo( nRecAnt ) )
 
    ( dbfTmpV )->( dbGoTo( nRec ) )
 
@@ -18664,44 +18653,44 @@ Static Function ValidaDevolucionTiket( oNumero, oBrwDev, aTmp, aGet, oDlg, dbfTm
    oDlg:Disable()
 
    lErr           := .f.
-   nRecAnt        := ( dbfTikT )->( RecNo() )
-   nOrdAnt        := ( dbfTikT )->( OrdSetFocus( "cNumTik" ) )
+   nRecAnt        := ( D():tikets( nView ) )->( RecNo() )
+   nOrdAnt        := ( D():tikets( nView ) )->( OrdSetFocus( "cNumTik" ) )
 
-   if !lBigSeek( nil, cNumero, dbfTikT, nil, nil, nil, 11 )
+   if !lBigSeek( nil, cNumero, D():tikets( nView ), nil, nil, nil, 11 )
 
       lErr        := .t.
       msgStop( "Documento " + alltrim( cNumero ) + " no encontrado." )
 
    else
 
-      if ( dbfTikT )->cTipTik != SAVTIK
+      if ( D():tikets( nView ) )->cTipTik != SAVTIK
 
          lErr     := .t.
          msgStop( "Documento " + alltrim( cNumero ) + " no es un ticket." )
 
       else
 
-         oNumero:cText( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik )
+         oNumero:cText( ( D():tikets( nView ) )->cSerTik + ( D():tikets( nView ) )->cNumTik + ( D():tikets( nView ) )->cSufTik )
 
          /*
          Los datos del cliente lo asignamos---------------------------------------
          */
 
-         aTmp[ _CCLITIK ]     := ( dbfTikT )->cCliTik
-         aTmp[ _CNOMTIK ]     := ( dbfTikT )->cNomTik
-         aTmp[ _CDNICLI ]     := ( dbfTikT )->cDniCli
-         aTmp[ _CDIRCLI ]     := ( dbfTikT )->cDirCli
-         aTmp[ _CPOBCLI ]     := ( dbfTikT )->cPobCli
-         aTmp[ _CPRVCLI ]     := ( dbfTikT )->cPrvCli
-         aTmp[ _CPOSCLI ]     := ( dbfTikT )->cPosCli
+         aTmp[ _CCLITIK ]     := ( D():tikets( nView ) )->cCliTik
+         aTmp[ _CNOMTIK ]     := ( D():tikets( nView ) )->cNomTik
+         aTmp[ _CDNICLI ]     := ( D():tikets( nView ) )->cDniCli
+         aTmp[ _CDIRCLI ]     := ( D():tikets( nView ) )->cDirCli
+         aTmp[ _CPOBCLI ]     := ( D():tikets( nView ) )->cPobCli
+         aTmp[ _CPRVCLI ]     := ( D():tikets( nView ) )->cPrvCli
+         aTmp[ _CPOSCLI ]     := ( D():tikets( nView ) )->cPosCli
 
          /*
          Vamos a comprobar q tenga lineas, si es asi tenemos q ver si el codigo del articulo esta en el tiket
          */
 
-         if ( dbfTikL )->( dbSeek( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik ) )
+         if ( dbfTikL )->( dbSeek( ( D():tikets( nView ) )->cSerTik + ( D():tikets( nView ) )->cNumTik + ( D():tikets( nView ) )->cSufTik ) )
 
-            while ( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil == ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik .and. !( dbfTikL )->( eof() ) )
+            while ( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil == ( D():tikets( nView ) )->cSerTik + ( D():tikets( nView ) )->cNumTik + ( D():tikets( nView ) )->cSufTik .and. !( dbfTikL )->( eof() ) )
 
                dbPass( dbfTikL, dbfTmp, .t. )
 
@@ -18709,13 +18698,13 @@ Static Function ValidaDevolucionTiket( oNumero, oBrwDev, aTmp, aGet, oDlg, dbfTm
                Unidades q ya hemos devuelto------------------------------------
                */
 
-               ( dbfTmp )->nUntTil  -= nDevNTpv( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikL )
+               ( dbfTmp )->nUntTil  -= nDevNTpv( ( D():tikets( nView ) )->cSerTik + ( D():tikets( nView ) )->cNumTik + ( D():tikets( nView ) )->cSufTik, dbfTikL )
 
                /*
                Guardamos la referencia al ticket del q venimos-----------------
                */
 
-               ( dbfTmp )->cNumDev  := ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik
+               ( dbfTmp )->cNumDev  := ( D():tikets( nView ) )->cSerTik + ( D():tikets( nView ) )->cNumTik + ( D():tikets( nView ) )->cSufTik
 
                /*
                Saltamos al siguiente registro----------------------------------
@@ -18736,10 +18725,10 @@ Static Function ValidaDevolucionTiket( oNumero, oBrwDev, aTmp, aGet, oDlg, dbfTm
 
    end if
 
-   ( dbfTikT )->( OrdScope( 0, nil ) )
-   ( dbfTikT )->( OrdScope( 1, nil ) )
-   ( dbfTikT )->( OrdSetFocus( nOrdAnt ) )
-   ( dbfTikT )->( dbGoTo( nRecAnt ) )
+   ( D():tikets( nView ) )->( OrdScope( 0, nil ) )
+   ( D():tikets( nView ) )->( OrdScope( 1, nil ) )
+   ( D():tikets( nView ) )->( OrdSetFocus( nOrdAnt ) )
+   ( D():tikets( nView ) )->( dbGoTo( nRecAnt ) )
 
    oDlg:Enable()
 
@@ -18786,7 +18775,7 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
 
    cNumeroTicket        := alltrim( oNumero:VarGet() )
    cSerieTicket         := aTmp[ _CSERTIK ]
-   nNumeroTicket        := str( nNewDoc( aTmp[ _CSERTIK ], dbfTikT, "nTikCli", 10, dbfCount ), 10 )
+   nNumeroTicket        := str( nNewDoc( aTmp[ _CSERTIK ], D():tikets( nView ), "nTikCli", 10, dbfCount ), 10 )
    cSufijoTicket        := retSufEmp()
 
    if !empty(oBtn)
@@ -18823,7 +18812,7 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
    Salvamos a disco el array de las cabeceras-------------------------------
    */
 
-   winGather( aTmp, nil, dbfTikT, nil, APPD_MODE, nil, .f. )
+   winGather( aTmp, nil, D():tikets( nView ), nil, APPD_MODE, nil, .f. )
 
    /*
    Añade las líneas seleccionadas-------------------------------------------
@@ -18838,27 +18827,27 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
    Calculamos el total del vale o devolucion--------------------------------
    */
 
-   nRec                       := ( dbfTikT )->( recno() )
-   nOrd                       := ( dbfTikT )->( ordsetfocus( "cNumTik" ) )
+   nRec                       := ( D():tikets( nView ) )->( recno() )
+   nOrd                       := ( D():tikets( nView ) )->( ordsetfocus( "cNumTik" ) )
 
-   if ( dbfTikT )->( dbSeek( cSerieTicket + nNumeroTicket + cSufijoTicket ) )
+   if ( D():tikets( nView ) )->( dbSeek( cSerieTicket + nNumeroTicket + cSufijoTicket ) )
 
-      aTotalTicket            := aTotTik( cSerieTicket + nNumeroTicket + cSufijoTicket, dbfTikT, dbfTikL, dbfDiv, nil, nil, .f. )
+      aTotalTicket            := aTotTik( cSerieTicket + nNumeroTicket + cSufijoTicket, D():tikets( nView ), dbfTikL, dbfDiv, nil, nil, .f. )
 
-      if dbLock( dbfTikT )
+      if dbLock( D():tikets( nView ) )
 
-         ( dbfTikT )->nTotNet := aTotalTicket[ 1 ]
-         ( dbfTikT )->nTotIva := aTotalTicket[ 2 ]
-         ( dbfTikT )->nTotTik := aTotalTicket[ 3 ]
+         ( D():tikets( nView ) )->nTotNet := aTotalTicket[ 1 ]
+         ( D():tikets( nView ) )->nTotIva := aTotalTicket[ 2 ]
+         ( D():tikets( nView ) )->nTotTik := aTotalTicket[ 3 ]
 
-         ( dbfTikT )->( dbUnLock() )
+         ( D():tikets( nView ) )->( dbUnLock() )
 
       endif
 
    end if
 
-   ( dbfTikT )->( ordsetfocus( nOrd ) )
-   ( dbfTikT )->( dbgoto( nRec ) )
+   ( D():tikets( nView ) )->( ordsetfocus( nOrd ) )
+   ( D():tikets( nView ) )->( dbgoto( nRec ) )
 
 
    /*
@@ -18888,21 +18877,21 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
    Resto el total de vale cuando realizo una devolución---------------------
    */
 
-   nRec                       := ( dbfTikT )->( recno() )
-   nOrd                       := ( dbfTikT )->( ordsetfocus( "cTikVal" ) )
+   nRec                       := ( D():tikets( nView ) )->( recno() )
+   nOrd                       := ( D():tikets( nView ) )->( ordsetfocus( "cTikVal" ) )
 
-   if ( dbfTikT )->( dbSeek( cNumeroTicket ) ) 
+   if ( D():tikets( nView ) )->( dbSeek( cNumeroTicket ) ) 
 
-      if dbLock( dbfTikT )
-         ( dbfTikT )->lLiqTik := .t.
-         ( dbfTikT )->lLiqDev := .t.
-         ( dbfTikT )->( dbUnLock() )
+      if dbLock( D():tikets( nView ) )
+         ( D():tikets( nView ) )->lLiqTik := .t.
+         ( D():tikets( nView ) )->lLiqDev := .t.
+         ( D():tikets( nView ) )->( dbUnLock() )
       endif
 
    end if
 
-   ( dbfTikT )->( ordsetfocus( nOrd ) )
-   ( dbfTikT )->( dbgoto( nRec ) )
+   ( D():tikets( nView ) )->( ordsetfocus( nOrd ) )
+   ( D():tikets( nView ) )->( dbgoto( nRec ) )
 
    /*
    Abrir la caja -----------------------------------------------------------
@@ -18920,13 +18909,13 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
    Tomamos el total de devoluciones de un ticket----------------------------
    */
 
-   nTotalDevolucion           := nTotalDevoluciones( Padr( cNumeroTicket, 13 ), dbfTikT, dbfTikL )
+   nTotalDevolucion           := nTotalDevoluciones( Padr( cNumeroTicket, 13 ), D():tikets( nView ), dbfTikL )
 
    /*
    Tomamos los valores para generar el vale regalo--------------------------
    */
 
-   if dbSeekInOrd( cNumeroTicket, "cNumTik", dbfTikT ) .and. dbSeekInOrd( cNumeroTicket, "cNumTil", dbfTikL )
+   if dbSeekInOrd( cNumeroTicket, "cNumTik", D():tikets( nView ) ) .and. dbSeekInOrd( cNumeroTicket, "cNumTil", dbfTikL )
 
       nTotTicketOriginal      := nTotTik()
       nTotTicketResultado     := nTotTicketOriginal - nTotalDevolucion
@@ -18941,7 +18930,7 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
       Vemos si cumple las condiciones para la promoción---------------------
       */
 
-      lValePromocion          := ( !retfld( ( dbfTikT )->cCliTik, dbfClient, "lExcFid" ) .and. ( nPorcentajeFidelizacion != 0 ) )
+      lValePromocion          := ( !retfld( ( D():tikets( nView ) )->cCliTik, dbfClient, "lExcFid" ) .and. ( nPorcentajeFidelizacion != 0 ) )
       if lValePromocion
          nValePromocion       := nTotTicketResultado * nPorcentajeFidelizacion / 100
       end if
@@ -18969,9 +18958,9 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
             oMetMsg:Refresh()
          end if
 
-         aBlankT                 := dbScatter( dbfTikT )
+         aBlankT                 := dbScatter( D():tikets( nView ) )
 
-         aBlankT[ _CNUMTIK ]     := Str( nNewDoc( aTmp[ _CSERTIK ], dbfTikT, "nTikCli", 10, dbfCount ), 10 )
+         aBlankT[ _CNUMTIK ]     := Str( nNewDoc( aTmp[ _CSERTIK ], D():tikets( nView ), "nTikCli", 10, dbfCount ), 10 )
          aBlankT[ _CSUFTIK ]     := RetSufEmp()
          aBlankT[ _CHORTIK ]     := Substr( Time(), 1, 5 )
          aBlankT[ _DFECCRE ]     := Date()
@@ -18982,7 +18971,7 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
          aBlankT[ _NTOTNET ]     := nValePromocion
          aBlankT[ _NTOTTIK ]     := nValePromocion
 
-         dbGather( aBlankT, dbfTikT, .t. )
+         dbGather( aBlankT, D():tikets( nView ), .t. )
 
          aBlankL                 := dbBlankRec( dbfTmpL )
 
@@ -19108,18 +19097,18 @@ Static Function cInformeDevolucionTpv( dbfTmp )
 
    if ( dbfTikL )->( dbSeek( ( dbfTmp )->cSerTil + ( dbfTmp )->cNumTil + ( dbfTmp )->cSufTil + Str( ( dbfTmp )->nNumLin ) ) )
       aAdd( aInf, { "Número",       ( dbfTikL )->cSerTil + "/" + Alltrim( ( dbfTikL )->cNumTil ) + "/" + Alltrim( ( dbfTikL )->cSufTil ) } )
-      aAdd( aInf, { "Fecha",        Dtoc( RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,   "dFecTik" ) ) } )
-      aAdd( aInf, { "Hora",         RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,         "cHorTik" ) } )
-      aAdd( aInf, { "Usuario",      RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,         "cCcjTik" ) } )
-      aAdd( aInf, { "Caja",         RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,         "cNcjTik" ) } )
-      aAdd( aInf, { "Almacen",      RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,         "cAlmTik" ) } )
-      aAdd( aInf, { "Sesión",       Alltrim( RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,"cTurTik" ) ) } )
-      aAdd( aInf, { "Cliente",      RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,         "cNomTik" ) } )
-      aAdd( aInf, { "Dirección",    RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,         "cDirCli" ) } )
-      aAdd( aInf, { "Cod. postal",  RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,         "cPosCli" ) } )
-      aAdd( aInf, { "Población",    RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,         "cPobCli" ) } )
-      aAdd( aInf, { "Provincia",    RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,         "cPrvCli" ) } )
-      aAdd( aInf, { "Teléfono",     RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,         "cTlfCli" ) } )
+      aAdd( aInf, { "Fecha",        Dtoc( RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, D():tikets( nView ),   "dFecTik" ) ) } )
+      aAdd( aInf, { "Hora",         RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, D():tikets( nView ),         "cHorTik" ) } )
+      aAdd( aInf, { "Usuario",      RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, D():tikets( nView ),         "cCcjTik" ) } )
+      aAdd( aInf, { "Caja",         RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, D():tikets( nView ),         "cNcjTik" ) } )
+      aAdd( aInf, { "Almacen",      RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, D():tikets( nView ),         "cAlmTik" ) } )
+      aAdd( aInf, { "Sesión",       Alltrim( RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, D():tikets( nView ),"cTurTik" ) ) } )
+      aAdd( aInf, { "Cliente",      RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, D():tikets( nView ),         "cNomTik" ) } )
+      aAdd( aInf, { "Dirección",    RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, D():tikets( nView ),         "cDirCli" ) } )
+      aAdd( aInf, { "Cod. postal",  RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, D():tikets( nView ),         "cPosCli" ) } )
+      aAdd( aInf, { "Población",    RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, D():tikets( nView ),         "cPobCli" ) } )
+      aAdd( aInf, { "Provincia",    RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, D():tikets( nView ),         "cPrvCli" ) } )
+      aAdd( aInf, { "Teléfono",     RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, D():tikets( nView ),         "cTlfCli" ) } )
       aAdd( aInf, { "Unidades",     AllTrim( nTotNTpv( dbfTikL, cPicUnd ) ) } )
       aAdd( aInf, { "Importe",      AllTrim( Trans( nTotLTpv( dbfTikL, nDouDiv, nDorDiv ), cPorDiv ) ) } )
    end if
@@ -19187,7 +19176,7 @@ Static Function dFecMaxVale( cNumTik, cTikT  )
    local nRec
    local nOrdAnt
 
-   DEFAULT cTikT        := dbfTikT
+   DEFAULT cTikT        := if( !Empty( nView ), D():tikets( nView ), )
 
    /*
    Guardamos los la posición y el orden de la tabla----------------------------
@@ -19251,10 +19240,10 @@ Static Function BrwTikCli( oGet )
    nOrd                 := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd              := aCbxOrd[ nOrd ]
 
-   nRec                 := ( dbfTikT )->( RecNo() )
-   nOrd                 := ( dbfTikT )->( OrdSetFocus( nOrd ) )
+   nRec                 := ( D():tikets( nView ) )->( RecNo() )
+   nOrd                 := ( D():tikets( nView ) )->( OrdSetFocus( nOrd ) )
 
-   ( dbfTikT )->( dbGoTop() )
+   ( D():tikets( nView ) )->( dbGoTop() )
 
    // Dialog-------------------------------------------------------------------
 
@@ -19262,7 +19251,7 @@ Static Function BrwTikCli( oGet )
 
       REDEFINE GET oGet1 VAR cGet1;
 			ID 		104 ;
-         ON CHANGE AutoSeek( nKey, nFlags, Self, oBrw, dbfTikT, , , , , , 11 );
+         ON CHANGE AutoSeek( nKey, nFlags, Self, oBrw, D():tikets( nView ), , , , , , 11 );
          BITMAP   "FIND" ;
          OF       oDlg
 
@@ -19270,7 +19259,7 @@ Static Function BrwTikCli( oGet )
 			VAR 		cCbxOrd ;
 			ID 		102 ;
          ITEMS    aCbxOrd ;
-         ON CHANGE( ( dbfTikT )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() );
+         ON CHANGE( ( D():tikets( nView ) )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() );
          OF       oDlg
 
       oBrw                    := IXBrowse():New( oDlg )
@@ -19278,7 +19267,7 @@ Static Function BrwTikCli( oGet )
       oBrw:bClrSel            := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrw:bClrSelFocus       := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrw:cAlias             := dbfTikT
+      oBrw:cAlias             := D():tikets( nView )
       oBrw:cName              := "Ticket cliente"
       oBrw:bLDblClick         := {|| EndBrwTikCli( oGet, oDlg ) }
 
@@ -19287,7 +19276,7 @@ Static Function BrwTikCli( oGet )
       with object ( oBrw:AddCol() )
          :cHeader             := "Número"
          :cSortOrder          := "cNumTik"
-         :bEditValue          := {|| ( dbfTikT )->cSerTik + "/" + AllTrim( ( dbfTikT )->cNumTik ) + "/" + ( dbfTikT )->cSufTik }
+         :bEditValue          := {|| ( D():tikets( nView ) )->cSerTik + "/" + AllTrim( ( D():tikets( nView ) )->cNumTik ) + "/" + ( D():tikets( nView ) )->cSufTik }
          :nWidth              := 70
          :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
@@ -19295,14 +19284,14 @@ Static Function BrwTikCli( oGet )
       with object ( oBrw:AddCol() )
          :cHeader             := "Fecha"
          :cSortOrder          := "dFecTik"
-         :bEditValue          := {|| Dtoc( ( dbfTikT )->dFecTik ) }
+         :bEditValue          := {|| Dtoc( ( D():tikets( nView ) )->dFecTik ) }
          :nWidth              := 70
          :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader             := "Código cliente"
-         :bEditValue          := {|| Rtrim( ( dbfTikT )->cCliTik ) }
+         :bEditValue          := {|| Rtrim( ( D():tikets( nView ) )->cCliTik ) }
          :cSortOrder          := "cCliTik"
          :nWidth              := 75
          :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
@@ -19310,7 +19299,7 @@ Static Function BrwTikCli( oGet )
 
       with object ( oBrw:AddCol() )
          :cHeader             := "Nombre cliente"
-         :bEditValue          := {|| AllTrim( ( dbfTikT )->cNomTik ) }
+         :bEditValue          := {|| AllTrim( ( D():tikets( nView ) )->cNomTik ) }
          :cSortOrder          := "cNomTik"
          :nWidth              := 300
          :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
@@ -19318,7 +19307,7 @@ Static Function BrwTikCli( oGet )
 
       with object ( oBrw:AddCol() )
          :cHeader             := "Importe "
-         :bEditValue          := {|| nTotalizer( ( dbfTikT)->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikT, dbfTikL, dbfTikP, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, cDivEmp(), .t. ) }
+         :bEditValue          := {|| nTotalizer( ( D():tikets( nView ))->cSerTik + ( D():tikets( nView ) )->cNumTik + ( D():tikets( nView ) )->cSufTik, D():tikets( nView ), dbfTikL, dbfTikP, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, cDivEmp(), .t. ) }
          :nWidth              := 85
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
@@ -19326,7 +19315,7 @@ Static Function BrwTikCli( oGet )
 
       with object ( oBrw:AddCol() )
          :cHeader             := "Div."
-         :bEditValue          := {|| cSimDiv( ( dbfTikT )->cDivTik, dbfDiv ) }
+         :bEditValue          := {|| cSimDiv( ( D():tikets( nView ) )->cDivTik, dbfDiv ) }
          :nWidth              := 30
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
@@ -19334,35 +19323,35 @@ Static Function BrwTikCli( oGet )
 
       with object ( oBrw:AddCol() )
          :cHeader             := "Sesión"
-         :bEditValue          := {|| ( dbfTikT )->cTurTik + "/" + ( dbfTikT )->cSufTik }
+         :bEditValue          := {|| ( D():tikets( nView ) )->cTurTik + "/" + ( D():tikets( nView ) )->cSufTik }
          :nWidth              := 80
          :lHide               := .t.
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader             := "Hora"
-         :bEditValue          := {|| ( dbfTikT )->cHorTik }
+         :bEditValue          := {|| ( D():tikets( nView ) )->cHorTik }
          :nWidth              := 80
          :lHide               := .t.
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader             := "Caja"
-         :bEditValue          := {|| ( dbfTikT )->cNcjTik }
+         :bEditValue          := {|| ( D():tikets( nView ) )->cNcjTik }
          :nWidth              := 80
          :lHide               := .t.
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader             := "Cajero"
-         :bEditValue          := {|| ( dbfTikT )->cCcjTik }
+         :bEditValue          := {|| ( D():tikets( nView ) )->cCcjTik }
          :nWidth              := 80
          :lHide               := .t.
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader             := "Almacén"
-         :bEditValue          := {|| ( dbfTikT )->cAlmTik }
+         :bEditValue          := {|| ( D():tikets( nView ) )->cAlmTik }
          :nWidth              := 80
          :lHide               := .t.
       end with
@@ -19389,7 +19378,7 @@ Static Function BrwTikCli( oGet )
 
    // Guardamos los vales en el array------------------------------------------
 
-   SetBrwOpt( "BrwTikCli", ( dbfTikT )->( OrdNumber() ) )
+   SetBrwOpt( "BrwTikCli", ( D():tikets( nView ) )->( OrdNumber() ) )
 
    CursorWE()
 
@@ -19399,8 +19388,8 @@ Static Function BrwTikCli( oGet )
    Repos-----------------------------------------------------------------------
    */
 
-   ( dbfTikT )->( OrdSetFocus( nOrd ) )
-   ( dbfTikT )->( dbGoTo( nRec ) )
+   ( D():tikets( nView ) )->( OrdSetFocus( nOrd ) )
+   ( D():tikets( nView ) )->( dbGoTo( nRec ) )
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -19408,7 +19397,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 Static Function EndBrwTikCli( oGet, oDlg )
 
-   if ( dbfTikT )->cTipTik != SAVTIK
+   if ( D():tikets( nView ) )->cTipTik != SAVTIK
       MsgStop( "El tipo de documento seleccionado debe ser un ticket" )
       Return .f.
    end if 
@@ -19416,7 +19405,7 @@ Static Function EndBrwTikCli( oGet, oDlg )
    if !empty( oGet )
 
 
-      oGet:cText( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik )
+      oGet:cText( ( D():tikets( nView ) )->cSerTik + ( D():tikets( nView ) )->cNumTik + ( D():tikets( nView ) )->cSufTik )
    end if
 
    oDlg:end( IDOK )
@@ -19427,7 +19416,7 @@ RETURN ( .t. )
 
 Function nTotalEntregado( cNumDoc, cTikT, cAlbCliP, cDiv )
 
-   DEFAULT cTikT     := dbfTikT
+   DEFAULT cTikT     := if( !Empty( nView ), D():tikets( nView ), )
    DEFAULT cDiv      := dbfDiv
    DEFAULT cAlbCliP  := dbfAlbCliP
    DEFAULT cNumDoc   := ( cTikT )->cNumDoc
@@ -19674,7 +19663,7 @@ Function ImpresionAnulaciones( cNumTik )
       Imprimimos la comanda por la impresora correspondiente-------------------
       */
 
-      if dbSeekInOrd( cNumTik, "cNumTik", dbfTikT )
+      if dbSeekInOrd( cNumTik, "cNumTik", D():tikets( nView ) )
 
          cPrinter := cNombreImpresoraComanda( oUser():cCaja(), aImp[ nPos ], dbfCajL )
          cFormato := cFormatoAnulacionEnCaja( oUser():cCaja(), aImp[ nPos ], dbfCajT, dbfCajL )
@@ -20102,13 +20091,13 @@ Static Function generateVale( nValeDiferencia )
    Obtenemos el nuevo numero del vale---------------------------------
    */
 
-   aTmp              := dbScatter( dbfTikT )
+   aTmp              := dbScatter( D():tikets( nView ) )
 
    cNumTik           := aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ]
 
-   aTmp[ _CNUMTIK ]  := Str( nNewDoc( aTmp[ _CSERTIK ], dbfTikT, "nTikCli", 10, dbfCount ), 10 )
+   aTmp[ _CNUMTIK ]  := Str( nNewDoc( aTmp[ _CSERTIK ], D():tikets( nView ), "nTikCli", 10, dbfCount ), 10 )
    aTmp[ _CSUFTIK ]  := RetSufEmp()
-   aTmp[ _DFECTIK ]  := dFecMaxVale( cNumTik, dbfTikT  )
+   aTmp[ _DFECTIK ]  := dFecMaxVale( cNumTik, D():tikets( nView )  )
    aTmp[ _CHORTIK ]  := Substr( Time(), 1, 5 )
    aTmp[ _DFECCRE ]  := Date()
    aTmp[ _CTIMCRE ]  := SubStr( Time(), 1, 5 )
@@ -20116,7 +20105,7 @@ Static Function generateVale( nValeDiferencia )
    aTmp[ _NTOTNET ]  := nValeDiferencia
    aTmp[ _NTOTTIK ]  := nValeDiferencia
 
-   dbGather( aTmp, dbfTikT, .t. )
+   dbGather( aTmp, D():tikets( nView ), .t. )
 
    /*
    Guardamos las lineas del tiket----------------------------------------
@@ -20151,9 +20140,9 @@ Static Function generatePromocion( nValePromocion, nSave )
    Obtenemos el nuevo numero del vale------------------------------
    */
 
-   aTmp                 := dbScatter( dbfTikT )
+   aTmp                 := dbScatter( D():tikets( nView ) )
 
-   aTmp[ _CNUMTIK ]     := Str( nNewDoc( aTmp[ _CSERTIK ], dbfTikT, "nTikCli", 10, dbfCount ), 10 )
+   aTmp[ _CNUMTIK ]     := Str( nNewDoc( aTmp[ _CSERTIK ], D():tikets( nView ), "nTikCli", 10, dbfCount ), 10 )
    aTmp[ _CSUFTIK ]     := RetSufEmp()
    aTmp[ _CHORTIK ]     := Substr( Time(), 1, 5 )
    aTmp[ _DFECCRE ]     := Date()
@@ -20164,7 +20153,7 @@ Static Function generatePromocion( nValePromocion, nSave )
    aTmp[ _NTOTNET ]     := nValePromocion
    aTmp[ _NTOTTIK ]     := nValePromocion
 
-   dbGather( aTmp, dbfTikT, .t. )
+   dbGather( aTmp, D():tikets( nView ), .t. )
 
    /*
    Guardamos las lineas del tiket----------------------------------------
@@ -20243,9 +20232,9 @@ Return .f.
 
          // Obtenemos el nuevo numero del vale------------------------------------
 
-         aBlankT                 := dbScatter( dbfTikT )
+         aBlankT                 := dbScatter( D():tikets( nView ) )
 
-         aBlankT[ _CNUMTIK ]     := Str( nNewDoc( aTmp[ _CSERTIK ], dbfTikT, "nTikCli", 10, dbfCount ), 10 )
+         aBlankT[ _CNUMTIK ]     := Str( nNewDoc( aTmp[ _CSERTIK ], D():tikets( nView ), "nTikCli", 10, dbfCount ), 10 )
          aBlankT[ _CSUFTIK ]     := RetSufEmp()
          aBlankT[ _CHORTIK ]     := Substr( Time(), 1, 5 )
          aBlankT[ _DFECCRE ]     := Date()
@@ -20256,7 +20245,7 @@ Return .f.
          aBlankT[ _NTOTNET ]     := nValePromocion
          aBlankT[ _NTOTTIK ]     := nValePromocion
 
-         dbGather( aBlankT, dbfTikT, .t. )
+         dbGather( aBlankT, D():tikets( nView ), .t. )
 
          // Guardamos las lineas del tiket----------------------------------------
 
