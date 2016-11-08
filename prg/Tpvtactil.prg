@@ -2113,7 +2113,7 @@ METHOD Resource() CLASS TpvTactil
    if !::l1024() 
       ::oBtnSSalir               := TButtonBmp():ReDefine( 509, {|| ::oDlg:End },                  ::oDlg, , , .f., , , , .f., "End32" )
    else
-      ::oBtnBalanza              := TButtonBmp():ReDefine( 510, {|| ::GetPesoBalanza() },          ::oDlg, , , .f., , , , .f., "scales_32" )
+      ::oBtnBalanza              := TButtonBmp():ReDefine( 510, {|| ::GetPesoBalanza() },          ::oDlg, , , .f., , , , .f., "Scales_32" )
    end if
 
    /*
