@@ -19,9 +19,11 @@
 #define _LSNDENT                 9      //   L      1     0
 #define _CCODDIV                10      //   C      3     0
 #define _NVDVDIV                11      //   N     10     4
-#define _CHORA                  12      //   C      5     0
-#define _CCODUSR                13      //   C      3     0
-#define _CRUTDOC                14      //   C    250     0
+#define _DFECCRE                12      //   D      8     0 
+#define _CTIMCRE                13      //   C      5     0
+#define _CCODUSR                14      //   C      3     0
+#define _CRUTDOC                15      //   C    250     0
+#define _NNUMENT                16      //   N      9     0 
 
 static oWndBrw
 
@@ -34,6 +36,7 @@ static cPorDiv
 static oBandera
 static dbfUser
 static dbfCaj
+static dbfCount
 static bBmp
 static bBmpSnd
 static bEdit      := { |aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode ) }
@@ -46,7 +49,7 @@ function aItmEntSal()
    local aItmEntSal  := {}
 
    aAdd( aItmEntSal, { "DFECENT",   "D",  8,  0, "Fecha de la entrada/salida" ,           "",   "", "( cDbf )"} )
-   aAdd( aItmEntSal, { "CTURENT",   "C",  6,  0, "Sesión de la entrada/salida" ,           "",   "", "( cDbf )"} )
+   aAdd( aItmEntSal, { "CTURENT",   "C",  6,  0, "Sesión de la entrada/salida" ,          "",   "", "( cDbf )"} )
    aAdd( aItmEntSal, { "CSUFENT",   "C",  2,  0, "Sufijo de la entrada/salida" ,          "",   "", "( cDbf )"} )
    aAdd( aItmEntSal, { "CCODCAJ",   "C",  3,  0, "Código de la caja" ,                    "",   "", "( cDbf )"} )
    aAdd( aItmEntSal, { "NTIPENT",   "N",  1,  0, "Tipo de entrada/salida(1-Ent 2-Sal)" ,  "",   "", "( cDbf )"} )
@@ -56,9 +59,11 @@ function aItmEntSal()
    aAdd( aItmEntSal, { "LSNDENT",   "L",  1,  0, "Lógico de envio" ,                      "",   "", "( cDbf )"} )
    aAdd( aItmEntSal, { "CCODDIV",   "C",  3,  0, "Código divisa" ,                        "",   "", "( cDbf )"} )
    aAdd( aItmEntSal, { "NVDVDIV",   "N", 10,  4, "Valor divisa" ,                         "",   "", "( cDbf )"} )
-   aAdd( aItmEntSal, { "CHORA"  ,   "C",  5,  0, "Hora de creación de la entrada",        "",   "", "( cDbf )"} )
+   aAdd( aItmEntSal, { "DFECCRE",   "D",  8,  0, "Fecha de creación de la entrada",       "",   "", "( cDbf )"} )
+   aAdd( aItmEntSal, { "CTIMCRE",   "C",  5,  0, "Hora de creación de la entrada",        "",   "", "( cDbf )"} )
    aAdd( aItmEntSal, { "CCODUSR",   "C",  3,  0, "Código de usuario",                     "",   "", "( cDbf )"} )
    aAdd( aItmEntSal, { "CRUTDOC",   "C",250,  0, "Documento adjunto",                     "",   "", "( cDbf )"} )
+   aAdd( aItmEntSal, { "NNUMENT",   "N",  9,  0, "Número de la entrada de caja",          "",   "", "( cDbf )"} )
 
 return ( aItmEntSal )
 
@@ -141,6 +146,14 @@ FUNCTION EntSal( oMenuItem, oWnd )
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :AddResource( "Sel16" )
          :AddResource( "Cnt16" )
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Número"
+         :cSortOrder       := "nNumEnt"
+         :bEditValue       := {|| ( dbfEntT )->nNumEnt }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -345,6 +358,9 @@ STATIC FUNCTION OpenFiles()
    USE ( cPatDat() + "CAJAS.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "CAJAS", @dbfCaj ) )
    SET ADSINDEX TO ( cPatDat() + "CAJAS.CDX" ) ADDITIVE
 
+   USE ( cPatEmp() + "NCOUNT.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
+   SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
+
    cPorDiv        := cPorDiv( cDivEmp(), dbfDivisa ) // Picture de la divisa redondeada
 
    oBandera       := TBandera():New
@@ -372,6 +388,7 @@ STATIC FUNCTION CloseFiles()
    CLOSE ( dbfDivisa )
    CLOSE ( dbfUser   )
    CLOSE ( dbfCaj    )
+   CLOSE ( dbfCount  )
 
    D():DeleteView( nView )
 
@@ -379,6 +396,7 @@ STATIC FUNCTION CloseFiles()
    dbfDivisa   := nil
    dbfUser     := nil
    dbfCaj      := nil
+   dbfCount    := nil   
 
    oWndBrw     := nil
 
@@ -410,7 +428,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
       aTmp[ _CSUFENT ]  := RetSufEmp()
       aTmp[ _CCODDIV ]  := cDivEmp()
       aTmp[ _NVDVDIV ]  := 1
-      aTmp[ _CHORA   ]  := SubStr( Time(), 1, 5 )
+      aTmp[ _LSNDENT ]  := .t.
+      aTmp[ _DFECCRE ]  := GetSysDate()
+      aTmp[ _CTIMCRE ]  := SubStr( Time(), 1, 5 )
       aTmp[ _CCODUSR ]  := cCurUsr()
 
    case nMode == DUPL_MODE
@@ -422,7 +442,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
 
       aTmp[ _CTURENT ]  := cCurSesion()
       aTmp[ _CCODCAJ ]  := oUser():cCaja()
+      aTmp[ _DFECCRE ]  := GetSysDate()
       aTmp[ _CSUFENT ]  := RetSufEmp()
+      aTmp[ _LSNDENT ]  := .t.
 
    case nMode == EDIT_MODE
 
@@ -455,8 +477,18 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       500 ;
-         RESOURCE "Money_Alpha_48" ;
+         RESOURCE "Money_48" ;
          TRANSPARENT ;
+         OF       oDlg
+
+      REDEFINE GET aGet[ _NNUMENT ] VAR aTmp[ _NNUMENT ] ;
+         ID       300 ;
+         WHEN     .f. ;
+         OF       oDlg
+
+      REDEFINE GET aGet[ _CSUFENT ] VAR aTmp[ _CSUFENT ] ;
+         ID       310 ;
+         WHEN     .f. ;
          OF       oDlg
 
       REDEFINE RADIO aGet[ _NTIPENT ] VAR aTmp[ _NTIPENT ] ;
@@ -470,31 +502,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
 			SPINNER ;
 			COLOR 	CLR_GET ;
 			OF 		oDlg
-
-      /*
-      REDEFINE GET aGet[ _CHORA ] VAR aTmp[ _CHORA ];
-         ID       170 ;
-         WHEN     ( .f. ) ;
-			COLOR 	CLR_GET ;
-         OF       oDlg
-      */
-
-      /*
-      Usuarios_________________________________________________________________
-
-      REDEFINE GET aGet[ _CCODUSR ] VAR aTmp[ _CCODUSR ];
-         WHEN     ( lUsrMaster() .and. nMode != ZOOM_MODE ) ;
-         VALID    ( cUser( aGet[ _CCODUSR ], dbfUser, oSayUsr ) ) ;
-         ID       160 ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwUser( aGet[ _CCODUSR ], dbfUser, oSayUsr ) ) ;
-         OF       oDlg
-
-      REDEFINE GET oSayUsr VAR cSayUsr ;
-         ID       161 ;
-         WHEN     .f. ;
-         OF       oDlg
-      */
 
       /*
 		Cajas____________________________________________________________________
@@ -551,7 +558,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
       REDEFINE GET aGet[ _CTURENT ] VAR aTmp[ _CTURENT ];
          ID       170 ;
          SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         WHEN     ( .f. ) ;
 			OF 		oDlg
 
 		REDEFINE BUTTON ;
@@ -613,7 +620,7 @@ STATIC FUNCTION EdtRecTct( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
       aTmp[ _CCODDIV ]  := cDivEmp()
       aTmp[ _NVDVDIV ]  := 1
       aTmp[ _NTIPENT ]  := 1
-      aTmp[ _CHORA   ]  := SubStr( Time(), 1, 5 )
+      aTmp[ _CTIMCRE ]  := SubStr( Time(), 1, 5 )
       aTmp[ _CCODUSR ]  := cCurUsr()
 
    case nMode == DUPL_MODE
@@ -661,7 +668,7 @@ STATIC FUNCTION EdtRecTct( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
          WHEN     ( .f. ) ;
 			OF 		oDlg
 
-      REDEFINE GET aGet[ _CHORA ] VAR aTmp[ _CHORA ];
+      REDEFINE GET aGet[ _CTIMCRE ] VAR aTmp[ _CTIMCRE ];
          ID       120 ;
          WHEN     ( .f. ) ;
          OF       oDlg
@@ -906,6 +913,10 @@ Static Function SaveRec( aTmp, aGet, dbfEntT, oBrw, oDlg, nMode )
       Return .f.
    end if
 
+   if nMode == APPD_MODE .or. nMode == DUPL_MODE
+      aTmp[ _NNUMENT ]     := nNewDoc( , dbfEntT, "NENTSAL", , dbfCount )
+   end if
+
    WinGather( aTmp, aGet, dbfEntT, oBrw, nMode )
 
    oUser():OpenCajonDirect( nView ) //OpnCaj()
@@ -951,10 +962,16 @@ FUNCTION rxEntSal( cPath, oMeter )
       ( dbfEntT )->( __dbPack() )
 
       ( dbfEntT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfEntT )->( ordCreate( cPath + "ENTSAL.CDX", "CNUMENT", "Str( Field->nNumEnt ) + Field->cSufEnt", {|| Str( Field->nNumEnt ) + Field->cSufEnt } ) )
+
+      ( dbfEntT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfEntT )->( ordCreate( cPath + "ENTSAL.CDX", "DFECENT", "Field->dFecEnt", {|| Field->dFecEnt } ) )
 
       ( dbfEntT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfEntT )->( ordCreate( cPath + "ENTSAL.CDX", "CTURENT", "Field->cTurEnt + Field->cSufEnt + Field->cCodCaj", {|| Field->cTurEnt + Field->cSufEnt + Field->cCodCaj } ) )
+
+      ( dbfEntT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfEntT )->( ordCreate( cPath + "ENTSAL.CDX", "LSNDENT", "Field->lSndEnt", {|| Field->lSndEnt } ) )
 
       ( dbfEntT )->( dbCloseArea() )
    else
@@ -1064,3 +1081,394 @@ Function EdtEntSal( nRecEntradaSalida )
 Return .t.
 
 //----------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+/*CLASS TEntradasSalidasSenderReciver FROM TSenderReciverItem
+
+   Data lSuccesfullSendEntSal
+
+   Data nEntSalNumberSend
+
+   Method CreateData()
+
+   Method RestoreData()
+
+   Method SendData()
+
+   Method ReciveData()
+
+   Method Process()
+
+   Method nGetEntSalNumberToSend()    INLINE ( ::nEntSalNumberSend     := GetPvProfInt( "Numero", "Entradas y salidas", ::nEntSalNumberSend, ::cIniFile ) )
+
+   Method IncEntSalNumberToSend()     INLINE ( WritePProString( "Numero", "Entradas y salidas",    cValToChar( ++::nEntSalNumberSend ),  ::cIniFile ) )
+
+   METHOD validateRecepcion( tmpEntSal, dbfEntSal )
+
+END CLASS
+
+//----------------------------------------------------------------------------//
+
+Method CreateData() CLASS TRectificativasProveedorSenderReciver
+
+   local oBlock
+   local oError
+   local nOrd
+   local lSnd        := .f.
+   local dbfEntSal
+   local tmpEntSal
+   local cFileName
+
+   if ::oSender:lServer
+      cFileName      := "EntSal" + StrZero( ::nGetEntSalNumberToSend(), 6 ) + ".All"
+   else
+      cFileName      := "EntSal" + StrZero( ::nGetEntSalNumberToSend(), 6 ) + "." + RetSufEmp()
+   end if
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   USE ( cPatEmp() + "ENTSAL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ENTSAL", @dbfEntSal ) )
+   SET ADSINDEX TO ( cPatEmp() + "ENTSAL.CDX" ) ADDITIVE
+
+   mkRctPrv( cPatSnd(), , cLocalDriver() )
+
+   USE ( cPatSnd() + "EntSal.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "EntSal", @tmpEntSal ) )
+   SET INDEX TO ( cPatSnd() + "EntSal.CDX" ) ADDITIVE
+
+   if !Empty( ::oSender:oMtr )
+      ::oSender:oMtr:nTotal := ( dbfEntSal )->( LastRec() )
+   end if
+
+   ::oSender:SetText( "Enviando entradas y salidas de caja" )
+
+   nOrd  := ( dbfEntSal )->( OrdSetFocus( "lSndEnt" ) )
+
+   if ( dbfEntSal )->( dbSeek( .t. ) )
+
+      while ( dbfEndSal )->lSndDoc .and. !( dbfEntSal )->( eof() )
+
+         lSnd  := .t.
+
+         dbPass( dbfEntSal, tmpEntSal, .t. )
+
+         ::oSender:SetText( ( dbfRctPrvT )->cSerFac + "/" + AllTrim( Str( ( dbfRctPrvT )->nNumFac ) ) + "/" + AllTrim( ( dbfRctPrvT )->cSufFac ) + "; " + Dtoc( ( dbfRctPrvT )->dFecFac ) + "; " + AllTrim( ( dbfRctPrvT )->cCodPrv ) + "; " + ( dbfRctPrvT )->cNomPrv )
+
+         ( dbfRctPrvT )->( dbSkip() )
+
+         if !Empty( ::oSender:oMtr )
+            ::oSender:oMtr:Set( ( dbfEntSal )->( OrdKeyNo() ) )
+         end if
+
+      end while
+
+   end if
+
+   ( dbfEntSal )->( OrdSetFocus( nOrd ) )
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   CLOSE ( dbfEntSal )
+   CLOSE ( tmpEntSal )
+
+   if lSnd
+
+      /*
+      Comprimir los archivos---------------------------------------------------
+
+      ::oSender:SetText( "Comprimiendo facturas de proveedores" )
+
+      if ::oSender:lZipData( cFileName )
+         ::oSender:SetText( "Ficheros comprimidos" )
+      else
+         ::oSender:SetText( "ERROR al crear fichero comprimido" )
+      end if
+
+   else
+
+      ::oSender:SetText( "No hay facturas de proveedores para enviar" )
+
+   end if
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+Method RestoreData() CLASS TRectificativasProveedorSenderReciver
+
+   local oBlock
+   local oError
+   local dbfRctPrvT
+
+   if ::lSuccesfullSend
+
+      oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE
+
+      USE ( cPatEmp() + "RctPrvT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacPrvT", @dbfRctPrvT ) )
+      SET ADSINDEX TO ( cPatEmp() + "RctPrvT.CDX" ) ADDITIVE
+
+      ( dbfRctPrvT )->( OrdSetFocus( "lSndDoc" ) )
+
+      while ( dbfRctPrvT )->( dbSeek( .t. ) ) .and. !( dbfRctPrvT )->( eof() )
+         if ( dbfRctPrvT )->( dbRLock() )
+            ( dbfRctPrvT )->lSndDoc := .f.
+            ( dbfRctPrvT )->( dbRUnlock() )
+         end if
+      end do
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+      CLOSE ( dbfRctPrvT )
+
+   end if
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+Method SendData() CLASS TRectificativasProveedorSenderReciver
+
+   local cFileName
+   local cDirectory           := ""
+
+   if ::oSender:lServer
+      cFileName               := "RectPrv" + StrZero( ::nGetFacturaNumberToSend(), 6 ) + ".All"
+   else
+      cFileName               := "RectPrv" + StrZero( ::nGetFacturaNumberToSend(), 6 ) + "." + RetSufEmp()
+   end if
+
+   ::lSuccesfullSend  := .f.
+
+   if File( cPatOut() + cFileName )
+
+      /*
+      Enviarlos a internet
+
+      if ::oSender:SendFiles( cPatOut() + cFileName, cDirectory + cFileName, cDirectory  )
+         ::lSuccesfullSend := .t.
+         ::oSender:SetText( "Fichero enviado " + cFileName )
+      else
+         ::oSender:SetText( "ERROR al enviar fichero" )
+      end if
+
+   end if
+
+   /*
+   Enviarlos a internet--------------------------------------------------------
+
+   if ::lSuccesfullSend
+      ::IncFacturaNumberToSend()
+   end if
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+Method ReciveData() CLASS TRectificativasProveedorSenderReciver
+
+   local n
+   local aExt
+
+   if ::oSender:lServer
+      aExt  := aRetDlgEmp()
+   else
+      aExt  := { "All" }
+   end if
+
+   /*
+   Recibirlo de internet
+
+   ::oSender:SetText( "Recibiendo rectificativas de proveedores" )
+
+   for n := 1 to len( aExt )
+      ::oSender:GetFiles( "RectPrv*." + aExt[ n ], cPatIn() )
+   next
+
+   ::oSender:SetText( "Facturas rectificativas de proveedores recibidas" )
+
+Return Self
+
+//----------------------------------------------------------------------------//
+
+Method Process() CLASS TRectificativasProveedorSenderReciver
+
+   local m
+   local dbfRctPrvT
+   local dbfRctPrvL
+   local aFiles         := Directory( cPatIn() + "RectPrv*.*" )
+   local lClient        := ::oSender:lServer
+   local oBlock
+   local oError
+   local cNumeroFactura
+   local cTextoFactura  := ""
+
+   /*
+   Recibirlo de internet
+
+   ::oSender:SetText( "Recibiendo facturas rectificativas de proveedores" )
+
+   for m := 1 to len( aFiles )
+
+      ::oSender:SetText( "Procesando fichero : " + aFiles[ m, 1 ] )
+
+      oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE
+
+      /*
+      descomprimimos el fichero
+
+      if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
+
+         /*
+         Ficheros temporales
+
+         if file( cPatSnd() + "RctPrvT.DBF" ) .and.;
+            file( cPatSnd() + "RctPrvL.DBF" )
+
+            USE ( cPatSnd() + "RctPrvT.DBF" ) NEW VIA ( cLocalDriver() )   SHARED ALIAS ( cCheckArea( "RctPrvT", @tmpRctPrvT ) )
+
+            USE ( cPatSnd() + "RctPrvL.DBF" ) NEW VIA ( cLocalDriver() )   SHARED ALIAS ( cCheckArea( "RctPrvT", @tmpRctPrvL ) )
+            SET INDEX TO ( cPatSnd() + "RctPrvL.CDX" ) ADDITIVE
+
+            USE ( cPatEmp() + "RctPrvT.DBF" ) NEW VIA ( cDriver() )        SHARED ALIAS ( cCheckArea( "RctPrvT", @dbfRctPrvT ) )
+            SET ADSINDEX TO ( cPatEmp() + "RctPrvT.CDX" ) ADDITIVE
+
+            USE ( cPatEmp() + "RctPrvL.DBF" ) NEW VIA ( cDriver() )        SHARED ALIAS ( cCheckArea( "RctPrvT", @dbfRctPrvL ) )
+            SET ADSINDEX TO ( cPatEmp() + "RctPrvL.CDX" ) ADDITIVE
+
+            while ( tmpRctPrvT )->( !eof() )
+
+               /*
+               Comprobamos que no exista el Facido en la base de datos
+
+               if ::validateRecepcion( tmpRctPrvT, dbfRctPrvT )
+
+                  cNumeroFactura    := ( tmpRctPrvT )->cSerFac + str( ( tmpRctPrvT )->nNumFac ) + ( tmpRctPrvT )->cSufFac
+                  cTextoFactura     := ( tmpRctPrvT )->cSerFac + "/" + AllTrim( str( ( tmpRctPrvT )->nNumFac ) ) + "/" + AllTrim( ( tmpRctPrvT )->cSufFac ) + "; " + Dtoc( ( tmpRctPrvT )->dFecFac ) + "; " + AllTrim( ( tmpRctPrvT )->cCodPrv ) + "; " + ( tmpRctPrvT )->cNomPrv
+
+                  while ( dbfRctPrvT )->( dbseek( cNumeroFactura ) )
+                     dbLockDelete( dbfRctPrvT )
+                  end if 
+
+                  while ( dbfRctPrvL )->( dbseek( cNumeroFactura ) )
+                     dbLockDelete( dbfRctPrvL )
+                  end if
+
+                  dbPass( tmpRctPrvT, dbfRctPrvT, .t. )
+                  
+                  if lClient .and. dbLock( dbfRctPrvT )
+                     ( dbfRctPrvT )->lSndDoc := .f.
+                     ( dbfRctPrvT )->( dbUnLock() )
+                  end if
+
+                  ::oSender:SetText( "Añadido rectificativa proveedor : " + cTextoFactura )
+
+                  if ( tmpRctPrvL )->( dbSeek( ( tmpRctPrvT )->cSerFac + Str( ( tmpRctPrvT )->nNumFac ) + ( tmpRctPrvT )->cSufFac ) )
+                     while ( tmpRctPrvL )->cSerFac + Str( ( tmpRctPrvL )->nNumFac ) + ( tmpRctPrvL )->cSufFac == ( tmpRctPrvT )->cSerFac + Str( ( tmpRctPrvT )->nNumFac ) + ( tmpRctPrvT )->cSufFac .and. !( tmpRctPrvL )->( eof() )
+                        dbPass( tmpRctPrvL, dbfRctPrvL, .t. )
+                        ( tmpRctPrvL )->( dbSkip() )
+                     end do
+                  end if
+
+                  ::oSender:SetText( "Añadido lineas de rectificativa proveedor : " + cTextoFactura )
+
+               else
+
+                  ::oSender:SetText( "Factura fecha invalida" + cTextoFactura )
+
+               end if
+
+               ( tmpRctPrvT )->( dbSkip() )
+
+            end do
+
+            CLOSE ( dbfRctPrvT )
+            CLOSE ( dbfRctPrvL )
+            CLOSE ( tmpRctPrvT )
+            CLOSE ( tmpRctPrvL )
+
+            ::oSender:AppendFileRecive( aFiles[ m, 1 ] )
+
+         else
+
+            ::oSender:SetText( "Faltan ficheros" )
+
+            if !file( cPatSnd() + "RctPrvT.Dbf" )
+               ::oSender:SetText( "Falta" + cPatSnd() + "RctPrvT.Dbf" )
+            end if
+
+            if !file( cPatSnd() + "RctPrvL.Dbf" )
+               ::oSender:SetText( "Falta" + cPatSnd() + "RctPrvL.Dbf" )
+            end if  
+
+         end if
+
+      else
+      
+          ::oSender:SetText( "Error al descomprimir los ficheros" )  
+
+      end if
+
+      RECOVER USING oError
+
+         CLOSE ( dbfRctPrvT )
+         CLOSE ( dbfRctPrvL )
+         CLOSE ( tmpRctPrvT )
+         CLOSE ( tmpRctPrvL )
+
+         ::oSender:SetText( "Error procesando fichero " + aFiles[ m, 1 ] )
+         ::oSender:SetText( ErrorMessage( oError ) )
+
+      END SEQUENCE
+
+      ErrorBlock( oBlock )
+
+   next
+
+Return Self
+
+//---------------------------------------------------------------------------//
+
+METHOD validateRecepcion( tmpRctPrvT, dbfRctPrvT ) CLASS TRectificativasProveedorSenderReciver
+
+   ::cErrorRecepcion       := "Pocesando rectificativa de cliente número " + ( dbfRctPrvT )->cSerFac + "/" + alltrim( Str( ( dbfRctPrvT )->nNumFac ) ) + "/" + alltrim( ( dbfRctPrvT )->cSufFac ) + " "
+
+   if !( lValidaOperacion( ( tmpRctPrvT )->dFecFac, .f. ) )
+      ::cErrorRecepcion    += "la fecha " + dtoc( ( tmpRctPrvT )->dFecFac ) + " no es valida en esta empresa"
+      Return .f. 
+   end if 
+
+   if !( ( dbfRctPrvT )->( dbSeek( ( tmpRctPrvT )->cSerFac + Str( ( tmpRctPrvT )->nNumFac ) + ( tmpRctPrvT )->cSufFac ) ) )
+      Return .t.
+   end if 
+
+   if dtos( ( dbfRctPrvT )->dFecCre ) + ( dbfRctPrvT )->cTimCre >= dtos( ( tmpRctPrvT )->dFecCre ) + ( tmpRctPrvT )->cTimCre 
+      ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfRctPrvT )->dFecCre ) + " " + ( dbfRctPrvT )->cTimCre + " es más reciente que la recepción " + dtoc( ( tmpRctPrvT )->dFecCre ) + " " + ( tmpRctPrvT )->cTimCre 
+      Return .f.
+   end if
+
+Return ( .t. )*/
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
