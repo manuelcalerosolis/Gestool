@@ -178,24 +178,26 @@ METHOD Init() CLASS TSndRecInf
 
    ::setPathComunication( cRutConInt() )
 
-   aAdd( ::aSend, TArticuloSenderReciver():New(             "Artículos",               Self ) )
-   aAdd( ::aSend, TFamiliaSenderReciver():New(              "Familias",                Self ) )
-   aAdd( ::aSend, TTipArt():Initiate(                       "Tipos de artículos",      Self ) )
-   aAdd( ::aSend, TPropiedadesSenderReciver():New(          "Propiedades",             Self ) )
-   aAdd( ::aSend, TClienteSenderReciver():New(              "Clientes",                Self ) )
-   aAdd( ::aSend, TProveedorSenderReciver():New(            "Proveedor",               Self ) )
-   aAdd( ::aSend, TPedidosProveedorSenderReciver():New(     "Pedidos de proveedor",    Self ) )
-   aAdd( ::aSend, TAlbaranesProveedorSenderReciver():New(   "Albaranes de proveedor",  Self ) )
-   aAdd( ::aSend, TFacturasProveedorSenderReciver():New(    "Facturas de proveedor",   Self ) )
-   aAdd( ::aSend, TSATClientesSenderReciver():New(          "SAT de clientes",         Self ) )
-   aAdd( ::aSend, TPresupuestosClientesSenderReciver():New( "Presupuestos clientes",   Self ) )
-   aAdd( ::aSend, TPedidosClientesSenderReciver():New(      "Pedidos clientes",        Self ) )
-   aAdd( ::aSend, TAlbaranesClientesSenderReciver():New(    "Albaranes clientes",      Self ) )
-   aAdd( ::aSend, TFacturasClientesSenderReciver():New(     "Facturas clientes",       Self ) )
-   aAdd( ::aSend, TTiketsClientesSenderReciver():New(       "Tickets clientes",        Self ) )
-   aAdd( ::aSend, TTurno():Initiate(                        "Sesiones",                Self ) )
-   aAdd( ::aSend, TRemMovAlm():Initiate(                    "Movimientos de almacen",  Self ) )
-   aAdd( ::aSend, TUsuarioSenderReciver():New(              "Usuarios",                Self ) )
+   aAdd( ::aSend, TArticuloSenderReciver():New(                "Artículos",                  Self ) )
+   aAdd( ::aSend, TFamiliaSenderReciver():New(                 "Familias",                   Self ) )
+   aAdd( ::aSend, TTipArt():Initiate(                          "Tipos de artículos",         Self ) )
+   aAdd( ::aSend, TPropiedadesSenderReciver():New(             "Propiedades",                Self ) )
+   aAdd( ::aSend, TClienteSenderReciver():New(                 "Clientes",                   Self ) )
+   aAdd( ::aSend, TProveedorSenderReciver():New(               "Proveedor",                  Self ) )
+   aAdd( ::aSend, TPedidosProveedorSenderReciver():New(        "Pedidos de proveedor",       Self ) )
+   aAdd( ::aSend, TAlbaranesProveedorSenderReciver():New(      "Albaranes de proveedor",     Self ) )
+   aAdd( ::aSend, TFacturasProveedorSenderReciver():New(       "Facturas de proveedor",      Self ) )
+   aAdd( ::aSend, TRectificativasProveedorSenderReciver():New( "Rectificativas proveedor",   Self ) )
+   aAdd( ::aSend, TSATClientesSenderReciver():New(             "SAT de clientes",            Self ) )
+   aAdd( ::aSend, TPresupuestosClientesSenderReciver():New(    "Presupuestos clientes",      Self ) )
+   aAdd( ::aSend, TPedidosClientesSenderReciver():New(         "Pedidos clientes",           Self ) )
+   aAdd( ::aSend, TAlbaranesClientesSenderReciver():New(       "Albaranes clientes",         Self ) )
+   aAdd( ::aSend, TFacturasClientesSenderReciver():New(        "Facturas clientes",          Self ) )
+   aAdd( ::aSend, TFacturasRectificativasSenderReciver():New(  "Rectificativas clientes",    Self ) )
+   aAdd( ::aSend, TTiketsClientesSenderReciver():New(          "Tickets clientes",           Self ) )
+   aAdd( ::aSend, TTurno():Initiate(                           "Sesiones",                   Self ) )
+   aAdd( ::aSend, TRemMovAlm():Initiate(                       "Movimientos de almacen",     Self ) )
+   aAdd( ::aSend, TUsuarioSenderReciver():New(                 "Usuarios",                   Self ) )
 
    ::DefineFiles()
 
@@ -1948,8 +1950,6 @@ function ftpGetFiles( aSource, cTarget, oSender, lDisco )
    local oFtp           := oSender:oFtp
    local oMeter         := oSender:oMtr
    local lSuccess       := .f.
-
-   ?"Entro a bajar el fichero"
 
    DEFAULT lDisco       := ( nTipConInt() == 1 )
 

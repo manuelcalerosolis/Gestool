@@ -57,7 +57,9 @@ METHOD New( cText, oSender )
 
    ::cText           := cText
    ::oSender         := oSender
-   ::cIniFile        := cPatEmp() + "Empresa.Ini"
+   
+   ::cIniFile        := cFullPathEmpresa() + "Empresa.Ini"
+
    ::lSuccesfullSend := .f.
 
 RETURN ( Self )

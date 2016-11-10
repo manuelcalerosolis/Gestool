@@ -8015,32 +8015,32 @@ STATIC FUNCTION CreateFiles( cPath, lReindex )
 
    DEFAULT lReindex  := .t.
 
-   if !lExistTable( cPath + "FacRecT.DBF" )
-      dbCreate( cPath + "FacRecT.DBF", aSqlStruct( aItmFacRec() ), cDriver() )
+   if !lExistTable( cPath + "FacRecT.DBF", cLocalDriver() )
+      dbCreate( cPath + "FacRecT.DBF", aSqlStruct( aItmFacRec() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "FacRecL.DBF" )
-      dbCreate( cPath + "FacRecL.DBF", aSqlStruct( aColFacRec() ), cDriver() )
+   if !lExistTable( cPath + "FacRecL.DBF", cLocalDriver() )
+      dbCreate( cPath + "FacRecL.DBF", aSqlStruct( aColFacRec() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "FacRecI.DBF" )
-      dbCreate( cPath + "FacRecI.DBF", aSqlStruct( aIncFacRec() ), cDriver() )
+   if !lExistTable( cPath + "FacRecI.DBF", cLocalDriver() )
+      dbCreate( cPath + "FacRecI.DBF", aSqlStruct( aIncFacRec() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "FacRecD.DBF" )
-      dbCreate( cPath + "FacRecD.DBF", aSqlStruct( aFacRecDoc() ), cDriver() )
+   if !lExistTable( cPath + "FacRecD.DBF", cLocalDriver() )
+      dbCreate( cPath + "FacRecD.DBF", aSqlStruct( aFacRecDoc() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "FacRecS.Dbf" )
-      dbCreate( cPath + "FacRecS.Dbf", aSqlStruct( aSerFacRec() ), cDriver() )
+   if !lExistTable( cPath + "FacRecS.Dbf", cLocalDriver() )
+      dbCreate( cPath + "FacRecS.Dbf", aSqlStruct( aSerFacRec() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "FacRecE.Dbf" )
-      dbCreate( cPath + "FacRecE.Dbf", aSqlStruct( aFacRecEst() ), cDriver() )
+   if !lExistTable( cPath + "FacRecE.Dbf", cLocalDriver() )
+      dbCreate( cPath + "FacRecE.Dbf", aSqlStruct( aFacRecEst() ), cLocalDriver() )
    end if
 
    if lReindex
-      rxFacRec( cPath )
+      rxFacRec( cPath, , cLocalDriver() )
    end if
 
 RETURN NIL
@@ -8972,398 +8972,6 @@ static function RecFacRec( aTmpFac )
    ( dbfTmpLin )->( dbGoTo( nRecno ) )
 
 return nil
-
-//---------------------------------------------------------------------------//
-
-/*CLASS TFacturasRectificativasSenderReciver FROM TSenderReciverItem
-
-   Data lSuccesfullSendFacturas
-   Data lSuccesfullSendAnticipos
-
-   Data nFacturaNumberSend
-   Data nAnticipoNumberSend
-
-   Method CreateData()
-
-   Method RestoreData()
-
-   Method SendData()
-
-   Method ReciveData()
-
-   Method Process()
-
-   Method nGetFacturaNumberToSend()    INLINE ( ::nFacturaNumberSend     := GetPvProfInt( "Numero", "Facturas clientes", ::nFacturaNumberSend, ::cIniFile ) )
-   Method nGetAnticipoNumberToSend()   INLINE ( ::nAnticipoNumberSend    := GetPvProfInt( "Numero", "Anticipos clientes", ::nAnticipoNumberSend, ::cIniFile ) )
-
-   Method IncFacturaNumberToSend()     INLINE ( WritePProString( "Numero", "Facturas clientes",    cValToChar( ++::nFacturaNumberSend ),  ::cIniFile ) )
-   Method IncAnticipoNumberToSend()    INLINE ( WritePProString( "Numero", "Anticipos clientes",   cValToChar( ++::nAnticipoNumberSend ), ::cIniFile ) )
-
-END CLASS*/
-
-//----------------------------------------------------------------------------//
-
-/*Method CreateData()
-
-   local oBlock
-   local oError
-   local nOrd
-   local D():FacturasRectificativas( nView )
-   local dbfFacRecL
-   local dbfFacRecI
-   local tmpFacRecT
-   local tmpFacRecL
-   local tmpFacRecI
-   local lSndFacRec           := .f.
-   local cFileNameFacturas
-
-   if ::oSender:lServer
-      cFileNameFacturas       := "FacRec" + StrZero( ::nGetFacturaNumberToSend(), 6 ) + ".All"
-   else
-      cFileNameFacturas       := "FacRec" + StrZero( ::nGetFacturaNumberToSend(), 6 ) + "." + RetSufEmp()
-   end if
-
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   USE ( cPatEmp() + "FacRecT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecT", @D():FacturasRectificativas( nView ) ) )
-   SET ADSINDEX TO ( cPatEmp() + "FacRecT.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "FacRecL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecL", @dbfFacRecL ) )
-   SET ADSINDEX TO ( cPatEmp() + "FacRecL.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "FacRecI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecI", @dbfFacRecI ) )
-   SET ADSINDEX TO ( cPatEmp() + "FacRecI.CDX" ) ADDITIVE
-
-   /*
-   Creamos todas las bases de datos relacionadas con Articulos
-
-   mkFacRec( cPatSnd() )
-   mkRecCli( cPatSnd() )
-
-   USE ( cPatSnd() + "FacRecT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecT", @tmpFacRecT ) )
-   SET ADSINDEX TO ( cPatSnd() + "FacRecT.CDX" ) ADDITIVE
-
-   USE ( cPatSnd() + "FacRecL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecL", @tmpFacRecL ) )
-   SET ADSINDEX TO ( cPatSnd() + "FacRecL.CDX" ) ADDITIVE
-
-   USE ( cPatSnd() + "FacRecI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecI", @tmpFacRecI ) )
-   SET ADSINDEX TO ( cPatSnd() + "FacRecI.CDX" ) ADDITIVE
-
-   if !Empty( ::oSender:oMtr )
-      ::oSender:oMtr:nTotal := ( D():FacturasRectificativas( nView ) )->( LastRec() )
-   end if
-
-   ::oSender:SetText( "Enviando facturas rectificativas de clientes" )
-
-   nOrd  := ( D():FacturasRectificativas( nView ) )->( OrdSetFocus( "lSndDoc" ) )
-
-   if ( D():FacturasRectificativas( nView ) )->( dbSeek( .t. ) )
-      while !( D():FacturasRectificativas( nView ) )->( eof() )
-
-         if ( D():FacturasRectificativas( nView ) )->lSndDoc
-
-            lSndFacRec  := .t.
-
-            dbPass( D():FacturasRectificativas( nView ), tmpFacRecT, .t. )
-            ::oSender:SetText( ( D():FacturasRectificativas( nView ) )->cSerie + "/" + AllTrim( Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) ) + "/" + AllTrim( ( D():FacturasRectificativas( nView ) )->cSufFac ) + "; " + Dtoc( ( D():FacturasRectificativas( nView ) )->dFecFac ) + ";" + AllTrim( ( D():FacturasRectificativas( nView ) )->cCodCli ) + "; " + ( D():FacturasRectificativas( nView ) )->cNomCli )
-
-            if ( dbfFacRecL )->( dbSeek( ( D():FacturasRectificativas( nView ) )->cSerie + Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) + ( D():FacturasRectificativas( nView ) )->cSufFac ) )
-               while ( ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac ) == ( ( D():FacturasRectificativas( nView ) )->cSerie + Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) + ( D():FacturasRectificativas( nView ) )->cSufFac ) .AND. !( dbfFacRecL )->( eof() )
-                  dbPass( dbfFacRecL, tmpFacRecL, .t. )
-                  ( dbfFacRecL )->( dbSkip() )
-               end do
-            end if
-
-            if ( dbfFacRecI )->( dbSeek( ( D():FacturasRectificativas( nView ) )->cSerie + Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) + ( D():FacturasRectificativas( nView ) )->cSufFac ) )
-               while ( ( dbfFacRecI )->cSerie + Str( ( dbfFacRecI )->nNumFac ) + ( dbfFacRecI )->cSufFac ) == ( ( D():FacturasRectificativas( nView ) )->cSerie + Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) + ( D():FacturasRectificativas( nView ) )->cSufFac ) .AND. !( dbfFacRecI )->( eof() )
-                  dbPass( dbfFacRecI, tmpFacRecI, .t. )
-                  ( dbfFacRecI )->( dbSkip() )
-               end do
-            end if
-
-         end if
-
-         ( D():FacturasRectificativas( nView ) )->( dbSkip() )
-
-         if !Empty( ::oSender:oMtr )
-            ::oSender:oMtr:Set( ( D():FacturasRectificativas( nView ) )->( OrdKeyNo() ) )
-         end if
-
-      end do
-   end if
-
-   ( D():FacturasRectificativas( nView ) )->( OrdSetFocus( nOrd ) )
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases " + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   CLOSE ( D():FacturasRectificativas( nView ) )
-   CLOSE ( dbfFacRecL )
-   CLOSE ( dbfFacRecI )
-   CLOSE ( tmpFacRecT )
-   CLOSE ( tmpFacRecL )
-   CLOSE ( tmpFacRecI )
-
-   if lSndFacRec
-
-      /*
-      Comprimir los archivos---------------------------------------------------
-
-      ::oSender:SetText( "Comprimiendo facturas rectificativas" )
-
-      if ::oSender:lZipData( cFileNameFacturas )
-         ::oSender:SetText( "Ficheros comprimidos" )
-      else
-         ::oSender:SetText( "ERROR al crear fichero comprimido" )
-      end if
-
-   else
-
-      ::oSender:SetText( "No hay facturas rectificativas de clientes para enviar" )
-
-   end if
-
-   /*
-   Anticipos de clientes-------------------------------------------------------
-
-   ::oSender:SetText( "Enviando anticipos de clientes" )
-
-Return ( Self )*/
-
-//----------------------------------------------------------------------------//
-
-/*Method RestoreData()
-
-   local D():FacturasRectificativas( nView )
-
-   if ::lSuccesfullSendFacturas
-
-      USE ( cPatEmp() + "FacRecT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecT", @D():FacturasRectificativas( nView ) ) )
-      SET ADSINDEX TO ( cPatEmp() + "FacRecT.CDX" ) ADDITIVE
-      ( D():FacturasRectificativas( nView ) )->( OrdSetFocus( "lSndDoc" ) )
-
-      while ( D():FacturasRectificativas( nView ) )->( dbSeek( .t. ) ) .and. !( D():FacturasRectificativas( nView ) )->( eof() )
-         if ( D():FacturasRectificativas( nView ) )->( dbRLock() )
-            ( D():FacturasRectificativas( nView ) )->lSndDoc := .f.
-            ( D():FacturasRectificativas( nView ) )->( dbRUnlock() )
-         end if
-      end do
-
-
-      CLOSE ( D():FacturasRectificativas( nView ) )
-
-   end if
-
-Return ( Self )*/
-
-//----------------------------------------------------------------------------//
-
-/*Method SendData()
-
-   local cFileNameFacturas
-
-   if ::oSender:lServer
-      cFileNameFacturas       := "FacRec" + StrZero( ::nGetFacturaNumberToSend(), 6 ) + ".All"
-   else
-      cFileNameFacturas       := "FacRec" + StrZero( ::nGetFacturaNumberToSend(), 6 ) + "." + RetSufEmp()
-   end if
-
-   ::lSuccesfullSendFacturas  := .f.
-   ::lSuccesfullSendAnticipos := .f.
-
-   /*
-   Enviarlos a internet--------------------------------------------------------
-
-   if File( cPatOut() + cFileNameFacturas )
-
-      if ftpSndFile( cPatOut() + cFileNameFacturas, cFileNameFacturas, ::oSender )
-         ::lSuccesfullSendFacturas  := .t.
-         ::oSender:SetText( "Fichero facturas rectificativas enviados " + cFileNameFacturas )
-      else
-         ::oSender:SetText( "ERROR al enviar fichero de facturas rectificativas" )
-      end if
-
-   end if
-
-   /*
-   Enviarlos a internet--------------------------------------------------------
-
-   if ::lSuccesfullSendFacturas
-      ::IncFacturaNumberToSend()
-   end if
-
-Return ( Self )
-
-//----------------------------------------------------------------------------//
-
-Method ReciveData()
-
-   local n
-   local aExt
-
-   if ::oSender:lServer
-      aExt  := aRetDlgEmp()
-   else
-      aExt  := { "All" }
-   end if
-
-   /*
-   Recibirlo de internet
-
-
-   ::oSender:SetText( "Recibiendo facturas rectificativas de clientes" )
-
-   for n := 1 to len( aExt )
-      ftpGetFiles( "FacRec*." + aExt[ n ], cPatIn(), ::oSender )
-      ftpGetFiles( "AntCli*." + aExt[ n ], cPatIn(), ::oSender )
-   next
-
-   ::oSender:SetText( "Facturas rectificativas de clientes recibidos" )
-
-Return Self
-
-//----------------------------------------------------------------------------//
-
-Method Process()
-
-   local m
-   local oStock
-   local D():FacturasRectificativas( nView )
-   local dbfFacRecL
-   local tmpFacRecT
-   local tmpFacRecL
-   local oBlock
-   local oError
-   local lClient     := ::oSender:lServer
-   local aFiles      := Directory( cPatIn() + "FacRec*.*" )
-
-   for m := 1 to len( aFiles )
-
-      ::oSender:SetText( "Procesando fichero : " + aFiles[ m, 1 ] )
-
-      oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-
-      BEGIN SEQUENCE
-
-      /*
-      descomprimimos el fichero
-
-      if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
-
-         /*
-         Ficheros temporales
-
-         if file( cPatSnd() + "FacRecT.Dbf" ) .and.;
-            file( cPatSnd() + "FacRecL.Dbf" )
-
-            USE ( cPatSnd() + "FacRecT.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "FacRecT", @tmpFacRecT ) )
-            SET ADSINDEX TO ( cPatSnd() + "FacRecT.CDX" ) ADDITIVE
-
-            USE ( cPatSnd() + "FacRecL.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "FacRecL", @tmpFacRecL ) )
-            SET ADSINDEX TO ( cPatSnd() + "FacRecL.CDX" ) ADDITIVE
-
-            USE ( cPatEmp() + "FacRecT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecT", @D():FacturasRectificativas( nView ) ) )
-            SET ADSINDEX TO ( cPatEmp() + "FacRecT.CDX" ) ADDITIVE
-
-            USE ( cPatEmp() + "FacRecL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecL", @dbfFacRecL ) )
-            SET ADSINDEX TO ( cPatEmp() + "FacRecL.CDX" ) ADDITIVE
-
-            USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @D():Clientes( nView ) ) )
-            SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-
-            oStock            := TStock():New()
-            oStock:cFacRecT   := D():FacturasRectificativas( nView )
-            oStock:cFacRecL   := dbfFacRecL
-
-            while ( tmpFacRecT )->( !eof() )
-
-               /*
-               Comprobamos que no exista la factura en la base de datos
-
-               if lValidaOperacion( ( tmpFacRecT )->dFecFac, .f. ) .and. ;
-                  !( D():FacturasRectificativas( nView ) )->( dbSeek( ( tmpFacRecT )->cSerie + Str( ( tmpFacRecT )->nNumFac ) + ( tmpFacRecT )->cSufFac ) )
-
-                  dbPass( tmpFacRecT, D():FacturasRectificativas( nView ), .t. )
-
-                  if lClient .and. dbLock( D():FacturasRectificativas( nView ) )
-                     ( D():FacturasRectificativas( nView ) )->lSndDoc := .f.
-                     ( D():FacturasRectificativas( nView ) )->( dbUnLock() )
-                  end if
-
-                  ::oSender:SetText( "Añadida factura     : " + ( tmpFacRecL )->cSerie + "/" + AllTrim( Str( ( tmpFacRecL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacRecL )->cSufFac ) + "; " + Dtoc( ( tmpFacRecT )->dFecFac ) + "; " + AllTrim( ( tmpFacRecT )->cCodCli ) + "; " + ( tmpFacRecT )->cNomCli )
-
-                  if ( tmpFacRecL )->( dbSeek( ( tmpFacRecT )->cSerie + Str( ( tmpFacRecT )->nNumFac ) + ( tmpFacRecT )->cSufFac ) )
-                     while ( tmpFacRecL )->cSerie + Str( ( tmpFacRecL )->nNumFac ) + ( tmpFacRecL )->cSufFac == ( tmpFacRecT )->cSerie + Str( ( tmpFacRecT )->nNumFac ) + ( tmpFacRecT )->cSufFac .and. !( tmpFacRecL )->( eof() )
-                        dbPass( tmpFacRecL, dbfFacRecL, .t. )
-                        ( tmpFacRecL )->( dbSkip() )
-                     end do
-                  end if
-
-                  /*
-                  oStock:FacRec( ( D():FacturasRectificativas( nView ) )->cSerie + Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) + ( D():FacturasRectificativas( nView ) )->cSufFac, ( D():FacturasRectificativas( nView ) )->cCodAlm, .f., .f. )
-
-               else
-
-                  ::oSender:SetText( "Desestimada factura : " + ( tmpFacRecL )->cSerie + "/" + AllTrim( Str( ( tmpFacRecL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacRecL )->cSufFac ) + "; " + Dtoc( ( tmpFacRecT )->dFecFac ) + "; " + AllTrim( ( tmpFacRecT )->cCodCli ) + "; " + ( tmpFacRecT )->cNomCli )
-
-               end if
-
-               ( tmpFacRecT )->( dbSkip() )
-
-            end do
-
-            CLOSE ( D():FacturasRectificativas( nView ) )
-            CLOSE ( dbfFacRecL )
-            CLOSE ( tmpFacRecT )
-            CLOSE ( tmpFacRecL )
-
-            oStock:end()
-
-            ::oSender:AppendFileRecive( aFiles[ m, 1 ] )
-
-         else
-
-            ::oSender:SetText( "Faltan ficheros" )
-
-            if !file( cPatSnd() + "FacRecT.Dbf" )
-               ::oSender:SetText( "Falta" + cPatSnd() + "FacRecT.Dbf" )
-            end if
-
-            if !file( cPatSnd() + "FacRecL.Dbf" )
-               ::oSender:SetText( "Falta" + cPatSnd() + "FacRecL.Dbf" )
-            end if
-
-         end if
-
-      else
-
-         ::oSender:SetText( "Error al descomprimir los ficheros" )
-
-      end if
-
-      RECOVER USING oError
-
-         CLOSE ( D():FacturasRectificativas( nView ) )
-         CLOSE ( dbfFacRecL )
-         CLOSE ( tmpFacRecT )
-         CLOSE ( tmpFacRecL )
-
-         ::oSender:SetText( "Error procesando fichero " + aFiles[ m, 1 ] )
-         ::oSender:SetText( ErrorMessage( oError ) )
-
-      END SEQUENCE
-
-      ErrorBlock( oBlock )
-
-   next
-
-Return Self*/
 
 //----------------------------------------------------------------------------//
 
@@ -12460,14 +12068,17 @@ RETURN NIL
 Regenera indices
 */
 
-FUNCTION rxFacRec( cPath, oMeter )
+FUNCTION rxFacRec( cPath, oMeter, cDriver )
 
    local cFacRecT
    local dbfFacRecL
    local dbfFacRecI
    local dbfFacRecD
+   local dbfFacRecS
+   local dbfFacRecE
 
-   DEFAULT cPath  := cPatEmp()
+   DEFAULT cPath     := cPatEmp()
+   DEFAULT cDriver   := cDriver()
 
    /*
    Crea los ficheros si no existen
@@ -12479,8 +12090,7 @@ FUNCTION rxFacRec( cPath, oMeter )
       !lExistTable( cPath + "FacRecD.Dbf" )   .or.;
       !lExistTable( cPath + "FacRecS.Dbf" )   .or.;
       !lExistTable( cPath + "FacRecE.Dbf" )
-
-      CreateFiles( cPath, .f. )
+      mkfacrec( cPath, nil, .f. )
    end if
 
    fEraseIndex( cPath + "FacRecT.Cdx" )
@@ -12490,7 +12100,7 @@ FUNCTION rxFacRec( cPath, oMeter )
    fEraseIndex( cPath + "FacRecS.Cdx" )
    fEraseIndex( cPath + "FacRecE.Cdx" )
 
-   dbUseArea( .t., cDriver(), cPath + "FacRecL.DBF", cCheckArea( "FacRecL", @dbfFacRecL ), .f. )
+   dbUseArea( .t., cDriver, cPath + "FacRecL.DBF", cCheckArea( "FacRecL", @dbfFacRecL ), .f. )
    if !( dbfFacRecL )->( neterr() )
       ( dbfFacRecL )->( __dbPack() )
 
@@ -12520,7 +12130,7 @@ FUNCTION rxFacRec( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas rectificativas de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "FacRecI.DBF", cCheckArea( "FacRecI", @dbfFacRecI ), .f. )
+   dbUseArea( .t., cDriver, cPath + "FacRecI.DBF", cCheckArea( "FacRecI", @dbfFacRecI ), .f. )
    if !( dbfFacRecI )->( neterr() )
       ( dbfFacRecI )->( __dbPack() )
 
@@ -12535,7 +12145,7 @@ FUNCTION rxFacRec( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas rectificativas de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "FacRecD.DBF", cCheckArea( "FacRecD", @dbfFacRecD ), .f. )
+   dbUseArea( .t., cDriver, cPath + "FacRecD.DBF", cCheckArea( "FacRecD", @dbfFacRecD ), .f. )
    if !( dbfFacRecD )->( neterr() )
       ( dbfFacRecD )->( __dbPack() )
 
@@ -12550,7 +12160,7 @@ FUNCTION rxFacRec( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas rectificativas de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "FacRecT.DBF", cCheckArea( "FacRecT", @cFacRecT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "FacRecT.DBF", cCheckArea( "FacRecT", @cFacRecT ), .f. )
    if !( cFacRecT )->( neterr() )
       ( cFacRecT )->( __dbPack() )
 
@@ -12635,43 +12245,43 @@ FUNCTION rxFacRec( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas rectificativas de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "FacRecS.Dbf", cCheckArea( "FacRecS", @cFacRecT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "FacRecS.Dbf", cCheckArea( "FacRecS", @dbfFacRecS ), .f. )
 
-   if !( cFacRecT )->( neterr() )
-      ( cFacRecT )->( __dbPack() )
+   if !( dbfFacRecS )->( neterr() )
+      ( dbfFacRecS )->( __dbPack() )
 
-      ( cFacRecT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( cFacRecT )->( ordCreate( cPath + "FacRecS.Cdx", "nNumFac", "cSerFac + Str( nNumFac ) + cSufFac + Str( nNumLin )", {|| Field->cSerFac + Str( Field->nNumFac ) + Field->cSufFac + Str( Field->nNumLin ) } ) )
+      ( dbfFacRecS )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfFacRecS )->( ordCreate( cPath + "FacRecS.Cdx", "nNumFac", "cSerFac + Str( nNumFac ) + cSufFac + Str( nNumLin )", {|| Field->cSerFac + Str( Field->nNumFac ) + Field->cSufFac + Str( Field->nNumLin ) } ) )
 
-      ( cFacRecT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( cFacRecT )->( ordCreate( cPath + "FacRecS.Cdx", "cRefSer", "cRef + cAlmLin + cNumSer", {|| Field->cRef + Field->cAlmLin + Field->cNumSer } ) )
+      ( dbfFacRecS )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfFacRecS )->( ordCreate( cPath + "FacRecS.Cdx", "cRefSer", "cRef + cAlmLin + cNumSer", {|| Field->cRef + Field->cAlmLin + Field->cNumSer } ) )
 
-      ( cFacRecT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( cFacRecT )->( ordCreate( cPath + "FacRecS.CDX", "cNumSer", "cNumSer", {|| Field->cNumSer } ) )
+      ( dbfFacRecS )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfFacRecS )->( ordCreate( cPath + "FacRecS.CDX", "cNumSer", "cNumSer", {|| Field->cNumSer } ) )
 
-      ( cFacRecT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( cFacRecT )->( ordCreate( cPath + "FacRecS.Cdx", "iNumFac", "'14' + cSerFac + Str( nNumFac ) + Space( 1 ) + cSufFac", {|| '14' + Field->cSerFac + Str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
+      ( dbfFacRecS )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfFacRecS )->( ordCreate( cPath + "FacRecS.Cdx", "iNumFac", "'14' + cSerFac + Str( nNumFac ) + Space( 1 ) + cSufFac", {|| '14' + Field->cSerFac + Str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
 
-      ( cFacRecT )->( dbCloseArea() )
+      ( dbfFacRecS )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de números de series de facturas rectificativas de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "FacRecE.Dbf", cCheckArea( "FacRecE", @cFacRecT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "FacRecE.Dbf", cCheckArea( "FacRecE", @dbfFacrecE ), .f. )
 
-   if !( cFacRecT )->( neterr() )
-      ( cFacRecT )->( __dbPack() )
+   if !( dbfFacrecE )->( neterr() )
+      ( dbfFacrecE )->( __dbPack() )
 
-      ( cFacRecT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( cFacRecT )->( ordCreate( cPath + "FacRecE.Cdx", "nNumFac", "cSerFac + str( nNumFac ) + cSufFac", {|| Field->cSerFac + str( Field->nNumFac ) + Field->cSufFac } ) )
+      ( dbfFacrecE )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfFacrecE )->( ordCreate( cPath + "FacRecE.Cdx", "nNumFac", "cSerFac + str( nNumFac ) + cSufFac", {|| Field->cSerFac + str( Field->nNumFac ) + Field->cSufFac } ) )
 
-      ( cFacRecT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( cFacRecT )->( ordCreate( cPath + "FacRecE.Cdx", "cSitua", "cSitua", {|| Field->cSitua } ) )
+      ( dbfFacrecE )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfFacrecE )->( ordCreate( cPath + "FacRecE.Cdx", "cSitua", "cSitua", {|| Field->cSitua } ) )
 
-      ( cFacRecT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( cFacRecT )->( ordCreate( cPath + "FacRecE.Cdx", "idPs", "str( idPs )", {|| str( Field->idPs ) } ) )
+      ( dbfFacrecE )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfFacrecE )->( ordCreate( cPath + "FacRecE.Cdx", "idPs", "str( idPs )", {|| str( Field->idPs ) } ) )
 
-      ( cFacRecT )->( dbCloseArea() )
+      ( dbfFacrecE )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de entidades de facturas de clientes" )
    end if
@@ -15282,5 +14892,418 @@ Return ( nombrePropiedad( ( dbfFacRecL )->cCodPr2, ( dbfFacRecL )->cValPr2, nVie
 Function FacturasRectificativasId()
 
 Return ( D():FacturasRectificativasId( nView ) )
+
+//---------------------------------------------------------------------------//
+
+CLASS TFacturasRectificativasSenderReciver FROM TSenderReciverItem
+
+   Data lSuccesfullSendFacturas
+
+   Data nFacturaNumberSend
+
+   Method CreateData()
+
+   Method RestoreData()
+
+   Method SendData()
+
+   Method ReciveData()
+
+   Method Process()
+
+   Method nGetFacturaNumberToSend()    INLINE ( ::nFacturaNumberSend     := GetPvProfInt( "Numero", "Facturas rectificativas", ::nFacturaNumberSend, ::cIniFile ) )
+
+   Method IncFacturaNumberToSend()     INLINE ( WritePProString( "Numero", "Facturas rectificativas",    cValToChar( ++::nFacturaNumberSend ),  ::cIniFile ) )
+
+   Method validateRecepcion( tmpFacRecT, cFacRecT )
+
+END CLASS
+
+//----------------------------------------------------------------------------//
+
+Method CreateData() CLASS TFacturasRectificativasSenderReciver
+
+   local oBlock
+   local oError
+   local nOrd
+   local cFacRecT
+   local dbfFacRecL
+   local dbfFacRecI
+   local tmpFacRecT
+   local tmpFacRecL
+   local tmpFacRecI
+   local lSndFacRec           := .f.
+   local cFileNameFacturas
+
+   if ::oSender:lServer
+      cFileNameFacturas       := "FacRec" + StrZero( ::nGetFacturaNumberToSend(), 6 ) + ".All"
+   else
+      cFileNameFacturas       := "FacRec" + StrZero( ::nGetFacturaNumberToSend(), 6 ) + "." + RetSufEmp()
+   end if
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   USE ( cPatEmp() + "FacRecT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecT", @cFacRecT ) )
+   SET ADSINDEX TO ( cPatEmp() + "FacRecT.CDX" ) ADDITIVE
+
+   USE ( cPatEmp() + "FacRecL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecL", @dbfFacRecL ) )
+   SET ADSINDEX TO ( cPatEmp() + "FacRecL.CDX" ) ADDITIVE
+
+   USE ( cPatEmp() + "FacRecI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecI", @dbfFacRecI ) )
+   SET ADSINDEX TO ( cPatEmp() + "FacRecI.CDX" ) ADDITIVE
+
+   /*
+   Creamos todas las bases de datos relacionadas
+   */
+
+   mkFacRec( cPatSnd() )
+
+   USE ( cPatSnd() + "FacRecT.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "FacRecT", @tmpFacRecT ) )
+   SET INDEX TO ( cPatSnd() + "FacRecT.CDX" ) ADDITIVE
+
+   USE ( cPatSnd() + "FacRecL.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "FacRecL", @tmpFacRecL ) )
+   SET INDEX TO ( cPatSnd() + "FacRecL.CDX" ) ADDITIVE
+
+   USE ( cPatSnd() + "FacRecI.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "FacRecI", @tmpFacRecI ) )
+   SET INDEX TO ( cPatSnd() + "FacRecI.CDX" ) ADDITIVE
+
+   if !Empty( ::oSender:oMtr )
+      ::oSender:oMtr:nTotal := ( cFacRecT )->( LastRec() )
+   end if
+
+   ::oSender:SetText( "Enviando facturas rectificativas de clientes" )
+
+   nOrd  := ( cFacRecT )->( OrdSetFocus( "lSndDoc" ) )
+
+   if ( cFacRecT )->( dbSeek( .t. ) )
+      while !( cFacRecT )->( eof() )
+
+         if ( cFacRecT )->lSndDoc
+
+            lSndFacRec  := .t.
+
+            dbPass( cFacRecT, tmpFacRecT, .t. )
+            ::oSender:SetText( ( cFacRecT )->cSerie + "/" + AllTrim( Str( ( cFacRecT )->nNumFac ) ) + "/" + AllTrim( ( cFacRecT )->cSufFac ) + "; " + Dtoc( ( cFacRecT )->dFecFac ) + ";" + AllTrim( ( cFacRecT )->cCodCli ) + "; " + ( cFacRecT )->cNomCli )
+
+            if ( dbfFacRecL )->( dbSeek( ( cFacRecT )->cSerie + Str( ( cFacRecT )->nNumFac ) + ( cFacRecT )->cSufFac ) )
+               while ( ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac ) == ( ( cFacRecT )->cSerie + Str( ( cFacRecT )->nNumFac ) + ( cFacRecT )->cSufFac ) .AND. !( dbfFacRecL )->( eof() )
+                  dbPass( dbfFacRecL, tmpFacRecL, .t. )
+                  ( dbfFacRecL )->( dbSkip() )
+               end do
+            end if
+
+            if ( dbfFacRecI )->( dbSeek( ( cFacRecT )->cSerie + Str( ( cFacRecT )->nNumFac ) + ( cFacRecT )->cSufFac ) )
+               while ( ( dbfFacRecI )->cSerie + Str( ( dbfFacRecI )->nNumFac ) + ( dbfFacRecI )->cSufFac ) == ( ( cFacRecT )->cSerie + Str( ( cFacRecT )->nNumFac ) + ( cFacRecT )->cSufFac ) .AND. !( dbfFacRecI )->( eof() )
+                  dbPass( dbfFacRecI, tmpFacRecI, .t. )
+                  ( dbfFacRecI )->( dbSkip() )
+               end do
+            end if
+
+         end if
+
+         ( cFacRecT )->( dbSkip() )
+
+         if !Empty( ::oSender:oMtr )
+            ::oSender:oMtr:Set( ( cFacRecT )->( OrdKeyNo() ) )
+         end if
+
+      end do
+   end if
+
+   ( cFacRecT )->( OrdSetFocus( nOrd ) )
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases " + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   CLOSE ( cFacRecT )
+   CLOSE ( dbfFacRecL )
+   CLOSE ( dbfFacRecI )
+   CLOSE ( tmpFacRecT )
+   CLOSE ( tmpFacRecL )
+   CLOSE ( tmpFacRecI )
+
+   if lSndFacRec
+
+      /*
+      Comprimir los archivos---------------------------------------------------
+      */
+
+      ::oSender:SetText( "Comprimiendo facturas rectificativas" )
+
+      if ::oSender:lZipData( cFileNameFacturas )
+         ::oSender:SetText( "Ficheros comprimidos" )
+      else
+         ::oSender:SetText( "ERROR al crear fichero comprimido" )
+      end if
+
+   else
+
+      ::oSender:SetText( "No hay facturas rectificativas de clientes para enviar" )
+
+   end if
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+Method RestoreData() CLASS TFacturasRectificativasSenderReciver
+
+   local cFacRecT
+
+   if ::lSuccesfullSendFacturas
+
+      USE ( cPatEmp() + "FacRecT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecT", @cFacRecT ) )
+      SET ADSINDEX TO ( cPatEmp() + "FacRecT.CDX" ) ADDITIVE
+      ( cFacRecT )->( OrdSetFocus( "lSndDoc" ) )
+
+      while ( cFacRecT )->( dbSeek( .t. ) ) .and. !( cFacRecT )->( eof() )
+         if ( cFacRecT )->( dbRLock() )
+            ( cFacRecT )->lSndDoc := .f.
+            ( cFacRecT )->( dbRUnlock() )
+         end if
+      end do
+
+
+      CLOSE ( cFacRecT )
+
+   end if
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+Method SendData() CLASS TFacturasRectificativasSenderReciver
+
+   local cFileNameFacturas
+   local cDirectory           := ""
+
+   if ::oSender:lServer
+      cFileNameFacturas       := "FacRec" + StrZero( ::nGetFacturaNumberToSend(), 6 ) + ".All"
+   else
+      cFileNameFacturas       := "FacRec" + StrZero( ::nGetFacturaNumberToSend(), 6 ) + "." + RetSufEmp()
+   end if
+
+   ::lSuccesfullSendFacturas  := .f.
+
+   /*
+   Enviarlos a internet--------------------------------------------------------
+   */
+
+   if File( cPatOut() + cFileNameFacturas )
+
+      if ::oSender:SendFiles( cPatOut() + cFileNameFacturas, cDirectory + cFileNameFacturas, cDirectory )
+         ::lSuccesfullSendFacturas  := .t.
+         ::oSender:SetText( "Fichero facturas rectificativas enviados " + cFileNameFacturas )
+      else
+         ::oSender:SetText( "ERROR al enviar fichero de facturas rectificativas" )
+      end if
+
+   end if
+
+   /*
+   Enviarlos a internet--------------------------------------------------------
+   */
+
+   if ::lSuccesfullSendFacturas
+      ::IncFacturaNumberToSend()
+   end if
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+Method ReciveData() CLASS TFacturasRectificativasSenderReciver
+
+   local n
+   local aExt
+
+   if ::oSender:lServer
+      aExt  := aRetDlgEmp()
+   else
+      aExt  := { "All" }
+   end if
+
+   /*
+   Recibirlo de internet
+   */
+
+   ::oSender:SetText( "Recibiendo facturas rectificativas de clientes" )
+
+   for n := 1 to len( aExt )
+      ::oSender:GetFiles( "FacRec*." + aExt[ n ], cPatIn() )
+   next
+
+   ::oSender:SetText( "Facturas rectificativas de clientes recibidos" )
+
+Return Self
+
+//----------------------------------------------------------------------------//
+
+Method Process() CLASS TFacturasRectificativasSenderReciver
+
+   local m
+   local cFacRecT
+   local dbfFacRecL
+   local tmpFacRecT
+   local tmpFacRecL
+   local oBlock
+   local oError
+   local lClient        := ::oSender:lServer
+   local aFiles         := Directory( cPatIn() + "FacRec*.*" )
+   local cNumeroFactura
+   local cTextoFactura  := ""
+
+   for m := 1 to len( aFiles )
+
+      ::oSender:SetText( "Procesando fichero : " + aFiles[ m, 1 ] )
+
+      oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE
+
+      /*
+      descomprimimos el fichero
+      */
+
+      if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
+
+         /*
+         Ficheros temporales
+         */
+
+         if file( cPatSnd() + "FacRecT.Dbf" ) .and.;
+            file( cPatSnd() + "FacRecL.Dbf" )
+
+            USE ( cPatSnd() + "FacRecT.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "FacRecT", @tmpFacRecT ) )
+
+            USE ( cPatSnd() + "FacRecL.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "FacRecL", @tmpFacRecL ) )
+            SET INDEX TO ( cPatSnd() + "FacRecL.CDX" ) ADDITIVE
+
+            USE ( cPatEmp() + "FacRecT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecT", @cFacRecT ) )
+            SET ADSINDEX TO ( cPatEmp() + "FacRecT.CDX" ) ADDITIVE
+
+            USE ( cPatEmp() + "FacRecL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecL", @dbfFacRecL ) )
+            SET ADSINDEX TO ( cPatEmp() + "FacRecL.CDX" ) ADDITIVE
+
+            ( tmpFacRecT )->( dbGoTop() )
+
+            while ( tmpFacRecT )->( !eof() )
+
+               /*
+               Comprobamos que no exista la factura en la base de datos
+               */
+
+               if ::validateRecepcion( tmpFacRecT, cFacRecT )
+
+                  cNumeroFactura    := ( tmpFacRecT )->cSerie + str( ( tmpFacRecT )->nNumFac ) + ( tmpFacRecT )->cSufFac
+                  cTextoFactura     := ( tmpFacRecT )->cSerie + "/" + AllTrim( str( ( tmpFacRecT )->nNumFac ) ) + "/" + AllTrim( ( tmpFacRecT )->cSufFac ) + "; " + Dtoc( ( tmpFacRecT )->dFecFac ) + "; " + AllTrim( ( tmpFacRecT )->cCodCli ) + "; " + ( tmpFacRecT )->cNomCli
+
+                  while ( cFacRecT )->( dbseek( cNumeroFactura ) )
+                     dbLockDelete( cFacRecT )
+                  end if 
+
+                  while ( dbfFacRecL )->( dbseek( cNumeroFactura ) )
+                     dbLockDelete( dbfFacRecL )
+                  end if
+
+                  dbPass( tmpFacRecT, cFacRecT, .t. )
+
+                  if lClient .and. dbLock( cFacRecT )
+                     ( cFacRecT )->lSndDoc := .f.
+                     ( cFacRecT )->( dbUnLock() )
+                  end if
+
+                  ::oSender:SetText( "Añadida rectificativa : " + cTextoFactura )
+
+                  if ( tmpFacRecL )->( dbSeek( ( tmpFacRecT )->cSerie + Str( ( tmpFacRecT )->nNumFac ) + ( tmpFacRecT )->cSufFac ) )
+                     while ( tmpFacRecL )->cSerie + Str( ( tmpFacRecL )->nNumFac ) + ( tmpFacRecL )->cSufFac == cNumeroFactura .and. !( tmpFacRecL )->( eof() )
+                        dbPass( tmpFacRecL, dbfFacRecL, .t. )
+                        ( tmpFacRecL )->( dbSkip() )
+                     end do
+                  end if
+
+                  ::oSender:setText( "Añadidas lineas de rectificativa : " + cTextoFactura )
+
+               else
+
+                  ::oSender:SetText( "Factura fecha invalida : " + cTextoFactura )
+
+               end if
+
+               ( tmpFacRecT )->( dbSkip() )
+
+            end while
+
+            CLOSE ( cFacRecT )
+            CLOSE ( dbfFacRecL )
+            CLOSE ( tmpFacRecT )
+            CLOSE ( tmpFacRecL )
+            
+            ::oSender:AppendFileRecive( aFiles[ m, 1 ] )
+
+         else
+
+            ::oSender:SetText( "Faltan ficheros" )
+
+            if !file( cPatSnd() + "FacRecT.Dbf" )
+               ::oSender:SetText( "Falta" + cPatSnd() + "FacRecT.Dbf" )
+            end if
+
+            if !file( cPatSnd() + "FacRecL.Dbf" )
+               ::oSender:SetText( "Falta" + cPatSnd() + "FacRecL.Dbf" )
+            end if
+
+         end if
+
+      else
+
+         ::oSender:SetText( "Error al descomprimir los ficheros" )
+
+      end if
+
+      RECOVER USING oError
+
+         CLOSE ( cFacRecT )
+         CLOSE ( dbfFacRecL )
+         CLOSE ( tmpFacRecT )
+         CLOSE ( tmpFacRecL )
+
+         ::oSender:SetText( "Error procesando fichero " + aFiles[ m, 1 ] )
+         ::oSender:SetText( ErrorMessage( oError ) )
+
+      END SEQUENCE
+
+      ErrorBlock( oBlock )
+
+   next
+
+Return Self
+
+//---------------------------------------------------------------------------//
+
+METHOD validateRecepcion( tmpFacRecT, cFacRecT ) CLASS TFacturasRectificativasSenderReciver
+
+   ::cErrorRecepcion       := "Pocesando rectificativa de cliente número " + ( cFacRecT )->cSerie + "/" + alltrim( Str( ( cFacRecT )->nNumFac ) ) + "/" + alltrim( ( cFacRecT )->cSufFac ) + " "
+
+   if !( lValidaOperacion( ( tmpFacRecT )->dFecFac, .f. ) )
+      ::cErrorRecepcion    += "la fecha " + dtoc( ( tmpFacRecT )->dFecFac ) + " no es valida en esta empresa"
+      Return .f. 
+   end if 
+
+   if !( ( cFacRecT )->( dbSeek( ( tmpFacRecT )->cSerie + Str( ( tmpFacRecT )->nNumFac ) + ( tmpFacRecT )->cSufFac ) ) )
+      Return .t.
+   end if 
+
+   if dtos( ( cFacRecT )->dFecCre ) + ( cFacRecT )->cTimCre >= dtos( ( tmpFacRecT )->dFecCre ) + ( tmpFacRecT )->cTimCre 
+      ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( cFacRecT )->dFecCre ) + " " + ( cFacRecT )->cTimCre + " es más reciente que la recepción " + dtoc( ( tmpFacRecT )->dFecCre ) + " " + ( tmpFacRecT )->cTimCre 
+      Return .f.
+   end if
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
