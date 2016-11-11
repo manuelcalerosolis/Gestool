@@ -3064,19 +3064,6 @@ Function nCopiasEntregasCuentaEnCaja( cCodCaj, dbfCajT )
 Return ( NotCero( nCop ) )
 
 //---------------------------------------------------------------------------//
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*
 Devuelve el código de la impresora de tickets que usa esta caja
 */

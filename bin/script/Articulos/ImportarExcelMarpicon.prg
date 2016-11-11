@@ -8,7 +8,7 @@
       
 //---------------------------------------------------------------------------//
 
-Function ImportarExcel( nView )                	 
+Function ImportarExcelMarpicon( nView )                	 
 	      
    local oImportarExcel    := TImportarExcel():New( nView )
 
@@ -172,8 +172,6 @@ METHOD filaValida()
 Return ( !empty( ::getExcelValue( ::cColumnaCampoClave ) ) )
 
 //---------------------------------------------------------------------------//
-
-#include "ImportarExcel.prg"
 
 /*
 Campos a importar--------------------------------------------------------------

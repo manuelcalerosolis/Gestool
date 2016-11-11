@@ -8585,6 +8585,10 @@ Return ( Self )
 
 METHOD OnClickCopiaComanda() CLASS TpvTactil
 
+   if !( apoloMsgNoYes( "¿Desea enviar de nuevo la comanda completa?", "Confirme envio", .t. ) )
+      Return ( Self )
+   end if 
+
    ::DisableDialog()
 
    // Comprobamos si tenemos que imprimir la comanda---------------------------

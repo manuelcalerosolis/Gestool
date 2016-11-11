@@ -28,7 +28,9 @@ CLASS TImportarExcelClientesMarpicon FROM TImportarExcel
 
    METHOD procesaFicheroExcel()
 
-   METHOD importarCampos()   
+   METHOD importarCampos()  
+
+   METHOD actualizaDireccionCliente()
 
    METHOD getCampoClave()        INLINE ( padr( strzero( ::getExcelNumeric( ::cColumnaCampoClave ), 6 ), 12 ) )
 
@@ -105,6 +107,8 @@ METHOD procesaFicheroExcel()
 
          ::importarCampos()
 
+         ::actualizaDireccionCliente()
+
          ::desbloqueaRegistro()
 
       endif
@@ -145,6 +149,59 @@ METHOD importarCampos()
    if ( "41" $ ::getExcelString( "L" ) )
       ( D():ClientesDirecciones( ::nView ) )->cPrvObr := "Sevilla"  
    end if       
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+METHOD actualizaDireccionCliente()
+
+   logwrite( 'proceso ' + ::getCampoClave() )
+
+   if D():gotoCliente( ::getCampoClave(), ::nView ) .and. ( ( D():Clientes( ::nView ) )->( dbrlock() ) )
+
+      logwrite( 'encontrado ' + ::getCampoClave() )
+
+      if empty( ( D():Clientes( ::nView ) )->Domicilio )
+         ( D():Clientes( ::nView ) )->Domicilio    := ::getExcelString( "F" )
+      end if 
+      
+      if empty( ( D():Clientes( ::nView ) )->Poblacion )
+         ( D():Clientes( ::nView ) )->Poblacion    := ::getExcelString( "J" )
+      end if 
+      
+      if empty( ( D():Clientes( ::nView ) )->CodPostal )
+         ( D():Clientes( ::nView ) )->CodPostal    := ::getExcelString( "K" )
+      end if 
+
+      if empty( ( D():Clientes( ::nView ) )->Telefono )
+         ( D():Clientes( ::nView ) )->Telefono     := ::getExcelString( "O" )
+      end if 
+
+      if empty( ( D():Clientes( ::nView ) )->cPerCto )
+         ( D():Clientes( ::nView ) )->cPerCto      := ::getExcelString( "W" )
+      end if 
+
+      if empty( ( D():Clientes( ::nView ) )->cCodRut )
+         ( D():Clientes( ::nView ) )->cCodRut      := ::getExcelString( "X" )
+      end if 
+
+      if ( empty( ( D():Clientes( ::nView ) )->Provincia ) .and. "21" $ ::getExcelString( "L" ) )
+         ( D():Clientes( ::nView ) )->Provincia    := "Huelva"  
+      end if       
+
+      if ( empty( ( D():Clientes( ::nView ) )->Provincia ) .and. "41" $ ::getExcelString( "L" ) )
+         ( D():Clientes( ::nView ) )->Provincia    := "Sevilla"  
+      end if       
+
+      ( D():Clientes( ::nView ) )->( dbcommit() )
+      ( D():Clientes( ::nView ) )->( dbunlock() ) 
+
+   else 
+
+      logwrite( 'no encontrado ' + ::getCampoClave())
+
+   end if 
 
 Return nil
 

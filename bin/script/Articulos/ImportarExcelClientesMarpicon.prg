@@ -30,9 +30,9 @@ CLASS TImportarExcelClientesMarpicon FROM TImportarExcel
 
    METHOD existeRegistro()       INLINE ( D():gotoCliente( ::getCampoClave(), ::nView ) )
 
-   METHOD appendRegistro()       INLINE ( ( D():Clientes( ::nView ) )->( dbappend() ) )
+   METHOD appendRegistro()       INLINE ( ( D():Clientes( ::nView ) )->( dbappend() ), logwrite( 'appendRegistro' + ::getCampoClave() ) )
 
-   METHOD bloqueaRegistro()      INLINE ( ( D():Clientes( ::nView ) )->( dbrlock() ) )
+   METHOD bloqueaRegistro()      INLINE ( ( D():Clientes( ::nView ) )->( dbrlock() ), logwrite( 'bloqueaRegistro' + ::getCampoClave() ) )
 
    METHOD desbloqueaRegistro()   INLINE ( ( D():Clientes( ::nView ) )->( dbcommit() ),;
                                           ( D():Clientes( ::nView ) )->( dbunlock() ) )

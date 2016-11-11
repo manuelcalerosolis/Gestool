@@ -4035,3 +4035,38 @@ Function priorSecond( time )
 Return ( time )
 
 //----------------------------------------------------------------------------//
+
+Function dialogArticulosScaner() 
+
+   local oDlg
+   local memoArticulos
+
+   DEFINE DIALOG oDlg RESOURCE "IMPORTAR_INVENTARIO" 
+
+      REDEFINE GET memoArticulos ;
+         MEMO ;
+         ID       110 ;
+         OF       oDlg
+
+      REDEFINE BUTTON ;
+         ID       IDOK ;
+         OF       oDlg ;
+         ACTION   ( oDlg:end( IDOK ) )
+
+      REDEFINE BUTTON ;
+         ID       IDCANCEL ;
+         OF       oDlg ;
+         CANCEL ;
+         ACTION   ( oDlg:end() )
+
+   oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   if oDlg:nResult == IDOK
+      Return ( alltrim( memoArticulos ) )
+   end if 
+
+Return ( nil )
+
+//----------------------------------------------------------------------------//

@@ -8,51 +8,33 @@
       
 //---------------------------------------------------------------------------//
 
-Function ImportarExcel( nView )                	 
+Function ImportarExcelArticulosMarpicon( nView )                	 
 	      
-   TImportarExcel():New( nView ):Run()
+   local oImportarExcel    := TImportarExcelArticulos():New( nView )
+
+   oImportarExcel:Run()
 
 Return nil
 
-//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------// 
 
-CLASS TImportarExcel
+CLASS TImportarExcelArticulos FROM TImportarExcel
 
-   DATA nView
-
-   DATA oExcel
-
-   DATA cFicheroExcel
-
-   DATA nFilaInicioImportacion
-
-   DATA cColumnaCampoClave
+   DATA hUnidadesMedicion     
    
    METHOD New()
 
    METHOD Run()
-   
+
+   METHOD getCampoClave()        INLINE ( alltrim( str( int( ::getExcelValue( ::cColumnaCampoClave ) ) ) ) )
+
    METHOD procesaFicheroExcel()
 
    METHOD filaValida()
    
    METHOD siguienteLinea()       INLINE ( ++::nFilaInicioImportacion )
 
-   METHOD getExcelValue()
-
-   METHOD getExcelString()
-
-   METHOD getExcelNumeric( columna, fila )
-   
-   METHOD getExcelLogic( columna, fila )
-
-   METHOD openExcel()
-
-   METHOD closeExcel()  
-
-   METHOD seekOrAppend()         INLINE ( if( ::existeRegistro(), ::bloqueaRegistro(), ::appendRegistro() ), ( !neterr() ) )
-
-   METHOD existeRegistro()       INLINE ( D():gotoArticulos( ::getExcelValue( ::cColumnaCampoClave ), ::nView ) )
+   METHOD existeRegistro()       INLINE ( D():gotoArticulos( ::getCampoClave(), ::nView ) )
 
    METHOD appendRegistro()       INLINE ( ( D():Articulos( ::nView ) )->( dbappend() ) )
 
@@ -62,6 +44,8 @@ CLASS TImportarExcel
                                           ( D():Articulos( ::nView ) )->( dbunlock() ) )
 
    METHOD importarCampos()
+
+   METHOD getCodigoUnidadMedicion( textoUnidadMedicion )
 
 END CLASS
 
@@ -75,19 +59,33 @@ METHOD New( nView )
    Cambiar el nombre del fichero
    */
 
-   ::cFicheroExcel            := "C:\Users\calero\Desktop\Importar.xlsx"
+   ::cFicheroExcel            := "C:\Users\calero\Desktop\productos_marpicon.csv"
 
    /*
    Cambiar la fila de cominezo de la importacion
    */
 
-   ::nFilaInicioImportacion   := 7
+   ::nFilaInicioImportacion   := 2
 
    /*
    Columna de campo clave
    */
 
-   ::cColumnaCampoClave       := 'A'
+   ::cColumnaCampoClave       := 'B'
+
+   ::hUnidadesMedicion        := {  "KILO"      => "01",;
+                                    "ESTUCHE"   => "02",;
+                                    "CAJA"      => "03",;
+                                    "BOTE"      => "04",;
+                                    "CUBO"      => "05",;
+                                    "ROLLO"     => "06",;
+                                    "BOBINA"    => "07",;
+                                    "UDS"       => "08",;
+                                    "UNIDAD"    => "08",;
+                                    "LITRO"     => "09",;
+                                    "METRO"     => "10",;
+                                    "SOBRE"     => "11",;
+                                    "LATA"      => "12" }
 
 Return ( Self )
 
@@ -100,9 +98,7 @@ METHOD Run()
       Return ( .f. )
    end if 
 
-   msgrun(  "Procesando fichero " + ::cFicheroExcel,;
-            "Espere por favor...",;
-            {|| ::procesaFicheroExcel() } )
+   msgrun( "Procesando fichero " + ::cFicheroExcel, "Espere por favor...",  {|| ::procesaFicheroExcel() } )
 
    msginfo( "Proceso finalizado" )
 
@@ -110,45 +106,13 @@ Return ( .t. )
 
 //----------------------------------------------------------------------------//
 
-METHOD openExcel()
-
-   ::oExcel                        := TOleExcel():New( "Importando hoja de excel", "Conectando...", .f. )
-
-   ::oExcel:oExcel:Visible         := .t.
-   ::oExcel:oExcel:DisplayAlerts   := .f.
-   ::oExcel:oExcel:WorkBooks:Open( ::cFicheroExcel )
-   ::oExcel:oExcel:WorkSheets( 1 ):Activate()
-
-Return ( Self )
-
-//----------------------------------------------------------------------------//
-
-METHOD closeExcel()
-
-   if empty( ::oExcel )
-      Return ( Self )
-   end if 
-
-   ::oExcel:oExcel:Quit()
-   ::oExcel:oExcel:DisplayAlerts := .t.
-   ::oExcel:End()
-
-Return ( Self )
-
-//----------------------------------------------------------------------------//
-
 METHOD procesaFicheroExcel()
 
-   ::oExcel                        := TOleExcel():New( "Importando hoja de excel", "Conectando...", .f. )
-
-   ::oExcel:oExcel:Visible         := .t.
-   ::oExcel:oExcel:DisplayAlerts   := .f.
-   ::oExcel:oExcel:WorkBooks:Open( ::cFicheroExcel )
-   ::oExcel:oExcel:WorkSheets( 1 ):Activate()
+   ::openExcel()
 
    while ( ::filaValida() )
 
-      if ::seekOrAppend()
+      if::seekOrAppend()
 
          ::importarCampos()
 
@@ -160,23 +124,40 @@ METHOD procesaFicheroExcel()
 
    end if
 
-   ::oExcel:oExcel:Quit()
-   ::oExcel:oExcel:DisplayAlerts := .t.
-   ::oExcel:End()
+   ::closeExcel()
 
 Return nil
 
 //---------------------------------------------------------------------------//
-/*
-Campos que voy a importar------------------------------------------------------
-*/
 
 METHOD importarCampos()
 
-   ( D():Articulos( ::nView ) )->Codigo   := ::getExcelValue( "A" )
-   ( D():Articulos( ::nView ) )->Nombre   := ::getExcelValue( "B" )
+   ( D():Articulos( ::nView ) )->Codigo   := ::getCampoClave()
+   ( D():Articulos( ::nView ) )->Nombre   := ::getExcelValue( "D" )
+   ( D():Articulos( ::nView ) )->TipoIva  := left( ::getExcelValue( "J" ), 1 )
+   ( D():Articulos( ::nView ) )->lObs     := ( ::getExcelValue( "L" ) != "NULL" )
+   ( D():Articulos( ::nView ) )->cUnidad  := ::getCodigoUnidadMedicion( ::getExcelValue( "R" ) )
 
 Return nil
+
+//---------------------------------------------------------------------------//
+
+METHOD getCodigoUnidadMedicion( textoUnidadMedicion )
+
+   if empty( textoUnidadMedicion ) 
+      Return ""
+   end if 
+
+   if valtype( textoUnidadMedicion ) == "N"
+      Return ""
+   end if 
+
+   nScan    := hScan( ::hUnidadesMedicion, {|k,v| ( k $ upper( textoUnidadMedicion ) ) } )
+   if nScan != 0
+      Return ( hgetvalueat( ::hUnidadesMedicion, nScan ) )
+   end if 
+
+Return ( "" )
 
 //---------------------------------------------------------------------------//
 
@@ -186,103 +167,7 @@ Return ( !empty( ::getExcelValue( ::cColumnaCampoClave ) ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getExcelValue( columna, fila, valorPorDefecto )
-
-   local oBlock
-   local oError
-   local excelValue  
-
-   DEFAULT fila         := ::nFilaInicioImportacion
-
-   oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   excelValue           := ::oExcel:oExcel:ActiveSheet:Range( columna + ltrim( str( fila ) ) ):Value
-
-   RECOVER USING oError
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if empty( excelValue )
-      Return ( valorPorDefecto )
-   end if 
-
-Return ( excelValue )   
-
-//---------------------------------------------------------------------------// 
-
-METHOD getExcelString( columna, fila )
-
-   local excelValue  
-   local valorPorDefecto      := ""
-
-   DEFAULT fila               := ::nFilaInicioImportacion
- 
-   excelValue                 := ::getExcelValue( columna, fila, valorPorDefecto )
-
-   if valtype( excelValue ) == "N" 
-      excelValue              := int( excelValue )
-   end if 
-
-   if valtype( excelValue ) != "C" 
-      excelValue              := cvaltochar( excelValue )
-   end if 
-
-   if empty( excelValue ) 
-      Return ( valorPorDefecto )
-   end if 
-
-Return ( alltrim( excelValue ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD getExcelNumeric( columna, fila )
-
-   local excelValue  
-   local valorPorDefecto      := 0
-
-   DEFAULT fila               := ::nFilaInicioImportacion
-
-   excelValue                 := ::getExcelValue( columna, fila, valorPorDefecto )
-
-   if valtype( excelValue ) != "N" 
-      excelValue              := val( excelValue )
-   end if 
-
-   if empty( excelValue )
-      Return ( valorPorDefecto ) 
-   end if 
-
-Return ( excelValue )   
-
-//---------------------------------------------------------------------------// 
-
-METHOD getExcelLogic( columna, fila )
-
-   local excelValue  
-   local valorPorDefecto      := .f. 
-
-   DEFAULT fila               := ::nFilaInicioImportacion
-
-   excelValue                 := ::getExcelValue( columna, fila, valorPorDefecto )
-
-   if valtype( excelValue ) == "C" 
-      excelValue              := ( upper( excelValue ) == "SI" )
-   end if 
-
-   if valtype( excelValue ) == "N" 
-      excelValue              := ( excelValue == 1 )
-   end if 
-
-   if empty( excelValue )
-      Return ( valorPorDefecto )
-   end if 
-
-Return ( excelValue )    
-
-//---------------------------------------------------------------------------// 
+#include "importarExcel.prg"
 
 /*
 Campos a importar--------------------------------------------------------------
