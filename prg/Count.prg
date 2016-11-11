@@ -26,7 +26,8 @@ static aDoc          := {  {"NPEDPRV", "Pedido a proveedores"                   
                            {"NEXPEDI", "Expedientes"                             , .t., .t., .t., .f. },;
                            {"NCOBAGE", "Liquidación de agentes"                  , .f., .t., .t., .f. },;
                            {"NENTPED", "Entrega a cuenta pedido"                 , .f., .t., .f., .f. },;
-                           {"NENTALB", "Entrega a cuenta albarán"                , .f., .t., .f., .f. } }
+                           {"NENTALB", "Entrega a cuenta albarán"                , .f., .t., .f., .f. },;
+                           {"NENTSAL", "Entradas y salidas"                      , .f., .f., .t., .f. } }
 
 
 //--------------------------------------------------------------------------//

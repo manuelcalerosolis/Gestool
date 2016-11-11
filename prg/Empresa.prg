@@ -180,7 +180,8 @@ STATIC FUNCTION OpenFiles( lCount )
                         "Recibos de clientes",;
                         "Liquidación de agentes",;
                         "Entrega a cuenta pedido",;
-                        "Entrega a cuenta albarán" }
+                        "Entrega a cuenta albarán",;
+                        "Entradas y salidas" }
 
       aImagenes   := {  "Clipboard_empty_businessman_16",;
                         "Document_plain_businessman_16",;
@@ -207,7 +208,8 @@ STATIC FUNCTION OpenFiles( lCount )
                         "Briefcase_user1_16",;
                         "Briefcase_security_agent_16",;
                         "Clipboard_Empty_Moneybag_16",;
-                        "Document_Plain_Moneybag_16" }
+                        "Document_Plain_Moneybag_16",;
+                        "Cashier_replace_16" }
 
    RECOVER USING oError
 

@@ -922,7 +922,7 @@ FUNCTION nNewDoc( cSerie, dbf, cTipDoc, nLen, dbfCount )
 
          ++nRetry
 
-      end while      
+      end while
    
       if dbLock( dbfCount )
          ( dbfCount )->( fieldPut( nPos, nDoc + 1 ) )

@@ -411,6 +411,19 @@ Return ( "Datos" )
 
 //---------------------------------------------------------------------------//
 
+Function cFullPathEmpresa()
+
+  local cCodigoEmpresa  := ""
+
+  cCodigoEmpresa        += FullCurDir()
+  cCodigoEmpresa        += "Emp"
+  cCodigoEmpresa        += aEmp()[ _CODEMP ]
+  cCodigoEmpresa        += "\"
+  
+Return ( cCodigoEmpresa )
+
+//---------------------------------------------------------------------------//
+
 Function cPatDat( lFull )
 
    DEFAULT lFull  := .f.
