@@ -5697,52 +5697,42 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
 
    DEFAULT lActualizaWeb   := .f.
 
-   if !Empty( oGetTarWeb )
+   if !empty( oGetTarWeb )
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nTarWeb" ) ) ]  := oGetTarWeb:getTarifa()
    end if
 
-   /*
-   Tomamos los valores de los códigos de barra---------------------------------
-   */
-
-   cCod                    := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ]
-   cWebShop                := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cWebShop" ) ) ]
-
-   if Empty( cCod ) .and. ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
-      MsgStop( "Código no puede estar vacio" )
+   if empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ] ) .and. ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
+      msgStop( "Código no puede estar vacio" )
       return nil
    end if
 
-   if dbSeekInOrd( cCod, "Codigo", D():Articulos( nView ) ) .and. ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
+   if dbSeekInOrd( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ], "Codigo", D():Articulos( nView ) ) .and. ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
       msgStop( "Código ya existe" )
       return nil
    end if
 
-   // if lActualizaWeb .and. !lPublishProductInPrestashop( aTmp )
-   //    msgStop( "El artículo que desea exportar debe marcarse para publicar en la web y tener una web asignada." )
-   //    return nil
-   // end if
-
-   DisableAcceso()
+   disableAcceso()
 
    // Ejecutamos script del evento before append-------------------------------
 
    if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
-      
       lResultBeforeAppendEvent   := runEventScript( "Articulos\beforeAppend", aGet, aTmp, nView )
-
       if IsLogic( lResultBeforeAppendEvent ) .and. !lResultBeforeAppendEvent
-         Return nil
+         return nil
       end if
-
    end if
+
+   // Tomamos los valores para porcesos posteriores----------------------------
+
+   cCod                    := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ]
+   cWebShop                := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cWebShop" ) ) ]
 
    // Notificaciones en pantalla-----------------------------------------------
 
-   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   oBlock                  := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    
-      BeginTransaction()
+      beginTransaction()
 
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LastChg" ) ) ] := GetSysDate()
 
@@ -5750,14 +5740,14 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       Añadimos la imágen del táctil a la tabla de imágenes---------------------
       */
 
-      cImage         := alltrim( upper( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cImagen" ) ) ] ) )
+      cImage               := alltrim( upper( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cImagen" ) ) ] ) )
 
       if !empty( cImage )
 
          ( dbfTmpImg )->( __dbLocate( {|| cImage == alltrim( upper( ( dbfTmpImg )->cImgArt ) ) } ) )
          if !( dbfTmpImg )->( found() )
 
-            lDefault                := ( dbfTmpImg )->( lastrec() ) == 0
+            lDefault       := ( dbfTmpImg )->( lastrec() ) == 0
 
             ( dbfTmpImg )->( dbappend() )
             ( dbfTmpImg )->cCodArt  := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ]
@@ -5912,11 +5902,9 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       ( dbfTmpPrv )->( dbGoTop() )
       while !( dbfTmpPrv )->( eof() )
          ( dbfTmpPrv )->cCodArt  := cCod
-
          if ( dbfTmpPrv )->lDefPrv
             cProvHab             := ( dbfTmpPrv )->cCodPrv
          end if
-
          dbPass( dbfTmpPrv, D():ProveedorArticulo( nView ), .t. )
          ( dbfTmpPrv )->( dbSkip() )
       end while
