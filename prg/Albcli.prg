@@ -3402,6 +3402,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          WHEN     ( lWhen ) ;
          ACTION   ( masiveAppendLines( aTmp, nMode ) )
 
+      REDEFINE BUTTON ;
+         ID       529 ;
+         OF       oFld:aDialogs[1] ;
+         ACTION   ( importarArticulosScaner() )
+
       REDEFINE GET aGet[ _CSERALB ] VAR aTmp[ _CSERALB ] ;
          ID       100 ;
          SPINNER ;
@@ -18542,5 +18547,19 @@ Static Function appendLineasPedidosCliente( aLines )
    next 
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+
+Static Function importarArticulosScaner()
+
+   local memoArticulos
+
+   memoArticulos  := dialogArticulosScaner()
+   
+   if memoArticulos != nil
+      msgalert( memoArticulos, "procesar")
+   end if
+
+Return nil       
 
 //---------------------------------------------------------------------------//

@@ -2654,6 +2654,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
 			OF 		oFld:aDialogs[1] ;
          	ACTION   ( ShowKit( D():FacturasRectificativas( nView ), dbfTmpLin, oBrwLin, .t. ) )
 
+		REDEFINE BUTTON ;
+            ID       527 ;
+            OF       oFld:aDialogs[1] ;
+            ACTION   ( importarArticulosScaner() )
+
       /*
       Detalle___________________________________________________________________________
       */
@@ -15305,5 +15310,19 @@ METHOD validateRecepcion( tmpFacRecT, cFacRecT ) CLASS TFacturasRectificativasSe
    end if
 
 Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Static Function importarArticulosScaner()
+
+   local memoArticulos
+
+   memoArticulos  := dialogArticulosScaner()
+   
+   if memoArticulos != nil
+      msgalert( memoArticulos, "procesar")
+   end if
+
+Return nil       
 
 //---------------------------------------------------------------------------//

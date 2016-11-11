@@ -2982,6 +2982,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          OF       fldGeneral ;
          ACTION   ( CargaAtipicasCliente( aTmp, oBrwLin, oDlg ) )
 
+	  REDEFINE BUTTON ;
+         ID       528 ;
+         OF       oFld:aDialogs[1] ;
+         ACTION   ( importarArticulosScaner() )
+
       /*
       Detalle------------------------------------------------------------------
       */
@@ -23172,3 +23177,16 @@ Return ( cCodEnv )
 
 //---------------------------------------------------------------------------//
 
+Static Function importarArticulosScaner()
+
+   local memoArticulos
+
+   memoArticulos  := dialogArticulosScaner()
+   
+   if memoArticulos != nil
+      msgalert( memoArticulos, "procesar")
+   end if
+
+Return nil       
+
+//---------------------------------------------------------------------------//

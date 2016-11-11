@@ -2953,6 +2953,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
         ID       	527 ;
         OF       	oFld:aDialogs[1] ;
         ACTION   	( CargaAtipicasCliente( aTmp, oBrwLin, oDlg ) )
+	
+	  REDEFINE BUTTON ;
+        ID          528 ;
+        OF          oFld:aDialogs[1] ;
+        ACTION      ( importarArticulosScaner() )
 
       REDEFINE GET aGet[_CSERPED] VAR aTmp[_CSERPED] ;
          ID       90 ;
@@ -18154,5 +18159,19 @@ Function lEntregadoPedidoCliente( cNumeroPedido, cPedCliT )
    end if 
 
 Return ( lEntregadoPedidoCliente )   
+
+//---------------------------------------------------------------------------//
+
+Static Function importarArticulosScaner()
+
+   local memoArticulos
+
+   memoArticulos  := dialogArticulosScaner()
+   
+   if memoArticulos != nil
+      msgalert( memoArticulos, "procesar")
+   end if
+
+Return nil       
 
 //---------------------------------------------------------------------------//

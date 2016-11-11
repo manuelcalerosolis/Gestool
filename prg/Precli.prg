@@ -2745,6 +2745,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 			OF 		oFld:aDialogs[1] ;
          ACTION   ( ShowKit( D():PresupuestosClientes( nView ), dbfTmpLin, oBrwLin ) )
 
+      REDEFINE BUTTON ;
+         ID       527 ;
+         OF       oFld:aDialogs[1] ;
+         ACTION   ( importarArticulosScaner() )
+
       REDEFINE GET aGet[_CSERPRE] VAR aTmp[_CSERPRE] ;
          ID       90 ;
          PICTURE  "@!" ;
@@ -12588,5 +12593,19 @@ Static Function lChangeRegIva( aTmp )
    end if
 
 return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Static Function importarArticulosScaner()
+
+   local memoArticulos
+
+   memoArticulos  := dialogArticulosScaner()
+   
+   if memoArticulos != nil
+      msgalert( memoArticulos, "procesar")
+   end if
+
+Return nil       
 
 //---------------------------------------------------------------------------//
