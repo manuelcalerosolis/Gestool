@@ -1080,15 +1080,15 @@ Function EdtEntSal( nRecEntradaSalida )
 
 Return .t.
 
-//----------------------------------------------------------------------------//
-//------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-/*CLASS TEntradasSalidasSenderReciver FROM TSenderReciverItem
+CLASS TEntradasSalidasSenderReciver FROM TSenderReciverItem
 
    Data lSuccesfullSendEntSal
 
@@ -1100,9 +1100,9 @@ Return .t.
 
    Method SendData()
 
-   Method ReciveData()
+   /*Method ReciveData()
 
-   Method Process()
+   Method Process()*/
 
    Method nGetEntSalNumberToSend()    INLINE ( ::nEntSalNumberSend     := GetPvProfInt( "Numero", "Entradas y salidas", ::nEntSalNumberSend, ::cIniFile ) )
 
@@ -1114,7 +1114,7 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-Method CreateData() CLASS TRectificativasProveedorSenderReciver
+Method CreateData() CLASS TEntradasSalidasSenderReciver
 
    local oBlock
    local oError
@@ -1151,15 +1151,15 @@ Method CreateData() CLASS TRectificativasProveedorSenderReciver
 
    if ( dbfEntSal )->( dbSeek( .t. ) )
 
-      while ( dbfEndSal )->lSndDoc .and. !( dbfEntSal )->( eof() )
+      while ( dbfEntSal )->lSndDoc .and. !( dbfEntSal )->( eof() )
 
          lSnd  := .t.
 
          dbPass( dbfEntSal, tmpEntSal, .t. )
 
-         ::oSender:SetText( ( dbfRctPrvT )->cSerFac + "/" + AllTrim( Str( ( dbfRctPrvT )->nNumFac ) ) + "/" + AllTrim( ( dbfRctPrvT )->cSufFac ) + "; " + Dtoc( ( dbfRctPrvT )->dFecFac ) + "; " + AllTrim( ( dbfRctPrvT )->cCodPrv ) + "; " + ( dbfRctPrvT )->cNomPrv )
+         ::oSender:SetText( AllTrim( Str( ( dbfEntSal )->nNumEnt ) ) + "/" + AllTrim( ( dbfEntSal )->cSufEnt ) + "; " + Dtoc( ( dbfEntSal )->dFecEnt ) + "; " + AllTrim( ( dbfEntSal )->cDesEnt ) )
 
-         ( dbfRctPrvT )->( dbSkip() )
+         ( dbfEntSal )->( dbSkip() )
 
          if !Empty( ::oSender:oMtr )
             ::oSender:oMtr:Set( ( dbfEntSal )->( OrdKeyNo() ) )
@@ -1186,8 +1186,9 @@ Method CreateData() CLASS TRectificativasProveedorSenderReciver
 
       /*
       Comprimir los archivos---------------------------------------------------
+      */
 
-      ::oSender:SetText( "Comprimiendo facturas de proveedores" )
+      ::oSender:SetText( "Comprimiendo entradas y salidas" )
 
       if ::oSender:lZipData( cFileName )
          ::oSender:SetText( "Ficheros comprimidos" )
@@ -1197,7 +1198,7 @@ Method CreateData() CLASS TRectificativasProveedorSenderReciver
 
    else
 
-      ::oSender:SetText( "No hay facturas de proveedores para enviar" )
+      ::oSender:SetText( "No hay entradas y salidas para enviar" )
 
    end if
 
@@ -1205,26 +1206,26 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method RestoreData() CLASS TRectificativasProveedorSenderReciver
+Method RestoreData() CLASS TEntradasSalidasSenderReciver
 
    local oBlock
    local oError
-   local dbfRctPrvT
+   local dbfEntSal
 
    if ::lSuccesfullSend
 
       oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
       BEGIN SEQUENCE
 
-      USE ( cPatEmp() + "RctPrvT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacPrvT", @dbfRctPrvT ) )
-      SET ADSINDEX TO ( cPatEmp() + "RctPrvT.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "ENTSAL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ENTSAL", @dbfEntSal ) )
+      SET ADSINDEX TO ( cPatEmp() + "ENTSAL.CDX" ) ADDITIVE
 
-      ( dbfRctPrvT )->( OrdSetFocus( "lSndDoc" ) )
+      ( dbfEntSal )->( OrdSetFocus( "lSndDoc" ) )
 
-      while ( dbfRctPrvT )->( dbSeek( .t. ) ) .and. !( dbfRctPrvT )->( eof() )
-         if ( dbfRctPrvT )->( dbRLock() )
-            ( dbfRctPrvT )->lSndDoc := .f.
-            ( dbfRctPrvT )->( dbRUnlock() )
+      while ( dbfEntSal )->( dbSeek( .t. ) ) .and. !( dbfEntSal )->( eof() )
+         if ( dbfEntSal )->( dbRLock() )
+            ( dbfEntSal )->lSndDoc := .f.
+            ( dbfEntSal )->( dbRUnlock() )
          end if
       end do
 
@@ -1236,7 +1237,7 @@ Method RestoreData() CLASS TRectificativasProveedorSenderReciver
 
    ErrorBlock( oBlock )
 
-      CLOSE ( dbfRctPrvT )
+      CLOSE ( dbfEntSal )
 
    end if
 
@@ -1244,15 +1245,15 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method SendData() CLASS TRectificativasProveedorSenderReciver
+Method SendData() CLASS TEntradasSalidasSenderReciver
 
    local cFileName
    local cDirectory           := ""
 
    if ::oSender:lServer
-      cFileName               := "RectPrv" + StrZero( ::nGetFacturaNumberToSend(), 6 ) + ".All"
+      cFileName               := "EntSal" + StrZero( ::nGetEntSalNumberToSend(), 6 ) + ".All"
    else
-      cFileName               := "RectPrv" + StrZero( ::nGetFacturaNumberToSend(), 6 ) + "." + RetSufEmp()
+      cFileName               := "EntSal" + StrZero( ::nGetEntSalNumberToSend(), 6 ) + "." + RetSufEmp()
    end if
 
    ::lSuccesfullSend  := .f.
@@ -1261,6 +1262,7 @@ Method SendData() CLASS TRectificativasProveedorSenderReciver
 
       /*
       Enviarlos a internet
+      */
 
       if ::oSender:SendFiles( cPatOut() + cFileName, cDirectory + cFileName, cDirectory  )
          ::lSuccesfullSend := .t.
@@ -1273,16 +1275,17 @@ Method SendData() CLASS TRectificativasProveedorSenderReciver
 
    /*
    Enviarlos a internet--------------------------------------------------------
+   */
 
    if ::lSuccesfullSend
-      ::IncFacturaNumberToSend()
+      ::IncEntSalNumberToSend()
    end if
 
 Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method ReciveData() CLASS TRectificativasProveedorSenderReciver
+/*Method ReciveData() CLASS TEntradasSalidasSenderReciver
 
    local n
    local aExt
@@ -1308,7 +1311,7 @@ Return Self
 
 //----------------------------------------------------------------------------//
 
-Method Process() CLASS TRectificativasProveedorSenderReciver
+Method Process() CLASS TEntradasSalidasSenderReciver
 
    local m
    local dbfRctPrvT
@@ -1447,7 +1450,7 @@ Return Self
 
 //---------------------------------------------------------------------------//
 
-METHOD validateRecepcion( tmpRctPrvT, dbfRctPrvT ) CLASS TRectificativasProveedorSenderReciver
+METHOD validateRecepcion( tmpRctPrvT, dbfRctPrvT ) CLASS TEntradasSalidasSenderReciver
 
    ::cErrorRecepcion       := "Pocesando rectificativa de cliente número " + ( dbfRctPrvT )->cSerFac + "/" + alltrim( Str( ( dbfRctPrvT )->nNumFac ) ) + "/" + alltrim( ( dbfRctPrvT )->cSufFac ) + " "
 
