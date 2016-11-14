@@ -925,38 +925,40 @@ RETURN ( oDlg:end( IDOK ) )
 
 //--------------------------------------------------------------------------//
 
-FUNCTION mkEntSal( cPath, oMeter )
+FUNCTION mkEntSal( cPath, oMeter, cDriver )
 
    DEFAULT cPath     := cPatEmp()
+   DEFAULT cDriver   := cDriver()
 
    if oMeter != nil
 		oMeter:cText	:= "Generando Bases"
 		sysrefresh()
    end if
 
-   if !lExistTable( cPath + "ENTSAL.DBF" )
-      dbCreate( cPath + "ENTSAL.DBF", aSqlStruct( aItmEntSal() ), cDriver() )
+   if !lExistTable( cPath + "ENTSAL.DBF", cDriver )
+      dbCreate( cPath + "ENTSAL.DBF", aSqlStruct( aItmEntSal() ), cDriver )
    end if
 
-	rxEntSal( cPath, oMeter )
+	rxEntSal( cPath, oMeter, cDriver )
 
 RETURN nil
 
 //--------------------------------------------------------------------------//
 
-FUNCTION rxEntSal( cPath, oMeter )
+FUNCTION rxEntSal( cPath, oMeter, cDriver )
 
 	local dbfEntT
 
-   DEFAULT cPath  := cPatEmp()
+   DEFAULT cPath     := cPatEmp()
+   DEFAULT cDriver   := cDriver()
 
    if !lExistTable( cPath + "ENTSAL.DBF" )
-      dbCreate( cPath + "ENTSAL.DBF", aSqlStruct( aItmEntSal() ), cDriver() )
+      dbCreate( cPath + "ENTSAL.DBF", aSqlStruct( aItmEntSal() ), cDriver )
 	end if
 
    fEraseIndex( cPath + "ENTSAL.CDX" )
 
-   dbUseArea( .t., cDriver(), cPath + "ENTSAL.DBF", cCheckArea( "ENTSAL", @dbfEntT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "ENTSAL.DBF", cCheckArea( "ENTSAL", @dbfEntT ), .f. )
 
    if !( dbfEntT )->( neterr() )
       ( dbfEntT )->( __dbPack() )
@@ -1100,9 +1102,9 @@ CLASS TEntradasSalidasSenderReciver FROM TSenderReciverItem
 
    Method SendData()
 
-   /*Method ReciveData()
+   Method ReciveData()
 
-   Method Process()*/
+   Method Process()
 
    Method nGetEntSalNumberToSend()    INLINE ( ::nEntSalNumberSend     := GetPvProfInt( "Numero", "Entradas y salidas", ::nEntSalNumberSend, ::cIniFile ) )
 
@@ -1136,7 +1138,7 @@ Method CreateData() CLASS TEntradasSalidasSenderReciver
    USE ( cPatEmp() + "ENTSAL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ENTSAL", @dbfEntSal ) )
    SET ADSINDEX TO ( cPatEmp() + "ENTSAL.CDX" ) ADDITIVE
 
-   mkRctPrv( cPatSnd(), , cLocalDriver() )
+   mkEntSal( cPatSnd(), , cLocalDriver() )
 
    USE ( cPatSnd() + "EntSal.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "EntSal", @tmpEntSal ) )
    SET INDEX TO ( cPatSnd() + "EntSal.CDX" ) ADDITIVE
@@ -1151,7 +1153,7 @@ Method CreateData() CLASS TEntradasSalidasSenderReciver
 
    if ( dbfEntSal )->( dbSeek( .t. ) )
 
-      while ( dbfEntSal )->lSndDoc .and. !( dbfEntSal )->( eof() )
+      while ( dbfEntSal )->lSndEnt .and. !( dbfEntSal )->( eof() )
 
          lSnd  := .t.
 
@@ -1220,11 +1222,11 @@ Method RestoreData() CLASS TEntradasSalidasSenderReciver
       USE ( cPatEmp() + "ENTSAL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ENTSAL", @dbfEntSal ) )
       SET ADSINDEX TO ( cPatEmp() + "ENTSAL.CDX" ) ADDITIVE
 
-      ( dbfEntSal )->( OrdSetFocus( "lSndDoc" ) )
+      ( dbfEntSal )->( OrdSetFocus( "lSndEnt" ) )
 
       while ( dbfEntSal )->( dbSeek( .t. ) ) .and. !( dbfEntSal )->( eof() )
          if ( dbfEntSal )->( dbRLock() )
-            ( dbfEntSal )->lSndDoc := .f.
+            ( dbfEntSal )->lSndEnt := .f.
             ( dbfEntSal )->( dbRUnlock() )
          end if
       end do
@@ -1285,7 +1287,7 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-/*Method ReciveData() CLASS TEntradasSalidasSenderReciver
+Method ReciveData() CLASS TEntradasSalidasSenderReciver
 
    local n
    local aExt
@@ -1298,14 +1300,15 @@ Return ( Self )
 
    /*
    Recibirlo de internet
+   */
 
-   ::oSender:SetText( "Recibiendo rectificativas de proveedores" )
+   ::oSender:SetText( "Recibiendo entradas y salidas de caja" )
 
    for n := 1 to len( aExt )
-      ::oSender:GetFiles( "RectPrv*." + aExt[ n ], cPatIn() )
+      ::oSender:GetFiles( "EntSal*." + aExt[ n ], cPatIn() )
    next
 
-   ::oSender:SetText( "Facturas rectificativas de proveedores recibidas" )
+   ::oSender:SetText( "Entradas y salidas de caja recibidas" )
 
 Return Self
 
@@ -1314,19 +1317,20 @@ Return Self
 Method Process() CLASS TEntradasSalidasSenderReciver
 
    local m
-   local dbfRctPrvT
-   local dbfRctPrvL
-   local aFiles         := Directory( cPatIn() + "RectPrv*.*" )
+   local cDbfEntSal
+   local tmpEntSal
+   local aFiles         := Directory( cPatIn() + "EntSal*.*" )
    local lClient        := ::oSender:lServer
    local oBlock
    local oError
-   local cNumeroFactura
-   local cTextoFactura  := ""
+   local cNumeroEntrada
+   local cTextoEntrada  := ""
 
    /*
    Recibirlo de internet
+   */
 
-   ::oSender:SetText( "Recibiendo facturas rectificativas de proveedores" )
+   ::oSender:SetText( "Entradas y salidas de proveedores" )
 
    for m := 1 to len( aFiles )
 
@@ -1337,76 +1341,57 @@ Method Process() CLASS TEntradasSalidasSenderReciver
 
       /*
       descomprimimos el fichero
+      */
 
       if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
 
          /*
          Ficheros temporales
+         */
 
-         if file( cPatSnd() + "RctPrvT.DBF" ) .and.;
-            file( cPatSnd() + "RctPrvL.DBF" )
+         if file( cPatSnd() + "EntSal.dbf" )
 
-            USE ( cPatSnd() + "RctPrvT.DBF" ) NEW VIA ( cLocalDriver() )   SHARED ALIAS ( cCheckArea( "RctPrvT", @tmpRctPrvT ) )
+            USE ( cPatSnd() + "EntSal.DBF" ) NEW VIA ( cLocalDriver() )   SHARED ALIAS ( cCheckArea( "EntSal", @tmpEntSal ) )
 
-            USE ( cPatSnd() + "RctPrvL.DBF" ) NEW VIA ( cLocalDriver() )   SHARED ALIAS ( cCheckArea( "RctPrvT", @tmpRctPrvL ) )
-            SET INDEX TO ( cPatSnd() + "RctPrvL.CDX" ) ADDITIVE
+            USE ( cPatEmp() + "EntSal.DBF" ) NEW VIA ( cDriver() )       SHARED ALIAS ( cCheckArea( "EntSal", @cDbfEntSal ) )
+            SET ADSINDEX TO ( cPatEmp() + "EntSal.CDX" ) ADDITIVE
 
-            USE ( cPatEmp() + "RctPrvT.DBF" ) NEW VIA ( cDriver() )        SHARED ALIAS ( cCheckArea( "RctPrvT", @dbfRctPrvT ) )
-            SET ADSINDEX TO ( cPatEmp() + "RctPrvT.CDX" ) ADDITIVE
-
-            USE ( cPatEmp() + "RctPrvL.DBF" ) NEW VIA ( cDriver() )        SHARED ALIAS ( cCheckArea( "RctPrvT", @dbfRctPrvL ) )
-            SET ADSINDEX TO ( cPatEmp() + "RctPrvL.CDX" ) ADDITIVE
-
-            while ( tmpRctPrvT )->( !eof() )
+            while ( tmpEntSal )->( !eof() )
 
                /*
                Comprobamos que no exista el Facido en la base de datos
+               */
 
-               if ::validateRecepcion( tmpRctPrvT, dbfRctPrvT )
+               if ::validateRecepcion( tmpEntSal, cDbfEntSal )
 
-                  cNumeroFactura    := ( tmpRctPrvT )->cSerFac + str( ( tmpRctPrvT )->nNumFac ) + ( tmpRctPrvT )->cSufFac
-                  cTextoFactura     := ( tmpRctPrvT )->cSerFac + "/" + AllTrim( str( ( tmpRctPrvT )->nNumFac ) ) + "/" + AllTrim( ( tmpRctPrvT )->cSufFac ) + "; " + Dtoc( ( tmpRctPrvT )->dFecFac ) + "; " + AllTrim( ( tmpRctPrvT )->cCodPrv ) + "; " + ( tmpRctPrvT )->cNomPrv
+                  cNumeroEntrada    := str( ( tmpEntSal )->nNumEnt ) + ( tmpEntSal )->cSufEnt
+                  cTextoEntrada     := AllTrim( str( ( tmpEntSal )->nNumEnt ) ) + "/" + AllTrim( ( tmpEntSal )->cSufEnt ) + "; " + Dtoc( ( tmpEntSal )->dFecEnt )
 
-                  while ( dbfRctPrvT )->( dbseek( cNumeroFactura ) )
-                     dbLockDelete( dbfRctPrvT )
+                  while ( cDbfEntSal )->( dbseek( cNumeroEntrada ) )
+                     dbLockDelete( cDbfEntSal )
                   end if 
 
-                  while ( dbfRctPrvL )->( dbseek( cNumeroFactura ) )
-                     dbLockDelete( dbfRctPrvL )
-                  end if
-
-                  dbPass( tmpRctPrvT, dbfRctPrvT, .t. )
+                  dbPass( tmpEntSal, cDbfEntSal, .t. )
                   
-                  if lClient .and. dbLock( dbfRctPrvT )
-                     ( dbfRctPrvT )->lSndDoc := .f.
-                     ( dbfRctPrvT )->( dbUnLock() )
+                  if lClient .and. dbLock( cDbfEntSal )
+                     ( cDbfEntSal )->lSndEnt := .f.
+                     ( cDbfEntSal )->( dbUnLock() )
                   end if
 
-                  ::oSender:SetText( "Añadido rectificativa proveedor : " + cTextoFactura )
-
-                  if ( tmpRctPrvL )->( dbSeek( ( tmpRctPrvT )->cSerFac + Str( ( tmpRctPrvT )->nNumFac ) + ( tmpRctPrvT )->cSufFac ) )
-                     while ( tmpRctPrvL )->cSerFac + Str( ( tmpRctPrvL )->nNumFac ) + ( tmpRctPrvL )->cSufFac == ( tmpRctPrvT )->cSerFac + Str( ( tmpRctPrvT )->nNumFac ) + ( tmpRctPrvT )->cSufFac .and. !( tmpRctPrvL )->( eof() )
-                        dbPass( tmpRctPrvL, dbfRctPrvL, .t. )
-                        ( tmpRctPrvL )->( dbSkip() )
-                     end do
-                  end if
-
-                  ::oSender:SetText( "Añadido lineas de rectificativa proveedor : " + cTextoFactura )
+                  ::oSender:SetText( "Añadido entrada y salida : " + cTextoEntrada )
 
                else
 
-                  ::oSender:SetText( "Factura fecha invalida" + cTextoFactura )
+                  ::oSender:SetText( "Entrada fecha invalida" + cTextoEntrada )
 
                end if
 
-               ( tmpRctPrvT )->( dbSkip() )
+               ( tmpEntSal )->( dbSkip() )
 
             end do
 
-            CLOSE ( dbfRctPrvT )
-            CLOSE ( dbfRctPrvL )
-            CLOSE ( tmpRctPrvT )
-            CLOSE ( tmpRctPrvL )
+            CLOSE ( cDbfEntSal )
+            CLOSE ( tmpEntSal )
 
             ::oSender:AppendFileRecive( aFiles[ m, 1 ] )
 
@@ -1414,13 +1399,9 @@ Method Process() CLASS TEntradasSalidasSenderReciver
 
             ::oSender:SetText( "Faltan ficheros" )
 
-            if !file( cPatSnd() + "RctPrvT.Dbf" )
-               ::oSender:SetText( "Falta" + cPatSnd() + "RctPrvT.Dbf" )
+            if !file( cPatSnd() + "EntSal.Dbf" )
+               ::oSender:SetText( "Falta" + cPatSnd() + "EntSal.Dbf" )
             end if
-
-            if !file( cPatSnd() + "RctPrvL.Dbf" )
-               ::oSender:SetText( "Falta" + cPatSnd() + "RctPrvL.Dbf" )
-            end if  
 
          end if
 
@@ -1432,10 +1413,8 @@ Method Process() CLASS TEntradasSalidasSenderReciver
 
       RECOVER USING oError
 
-         CLOSE ( dbfRctPrvT )
-         CLOSE ( dbfRctPrvL )
-         CLOSE ( tmpRctPrvT )
-         CLOSE ( tmpRctPrvL )
+         CLOSE ( cDbfEntSal )
+         CLOSE ( tmpEntSal )
 
          ::oSender:SetText( "Error procesando fichero " + aFiles[ m, 1 ] )
          ::oSender:SetText( ErrorMessage( oError ) )
@@ -1450,25 +1429,25 @@ Return Self
 
 //---------------------------------------------------------------------------//
 
-METHOD validateRecepcion( tmpRctPrvT, dbfRctPrvT ) CLASS TEntradasSalidasSenderReciver
+METHOD validateRecepcion( tmpEntSal, dbfEntSal ) CLASS TEntradasSalidasSenderReciver
 
-   ::cErrorRecepcion       := "Pocesando rectificativa de cliente número " + ( dbfRctPrvT )->cSerFac + "/" + alltrim( Str( ( dbfRctPrvT )->nNumFac ) ) + "/" + alltrim( ( dbfRctPrvT )->cSufFac ) + " "
+   ::cErrorRecepcion       := "Pocesando entrada en caja número " + alltrim( Str( ( dbfEntSal )->nNumEnt ) ) + "/" + alltrim( ( dbfEntSal )->cSufEnt ) + " "
 
-   if !( lValidaOperacion( ( tmpRctPrvT )->dFecFac, .f. ) )
-      ::cErrorRecepcion    += "la fecha " + dtoc( ( tmpRctPrvT )->dFecFac ) + " no es valida en esta empresa"
+   if !( lValidaOperacion( ( tmpEntSal )->dFecEnt, .f. ) )
+      ::cErrorRecepcion    += "la fecha " + dtoc( ( tmpEntSal )->dFecEnt ) + " no es valida en esta empresa"
       Return .f. 
    end if 
 
-   if !( ( dbfRctPrvT )->( dbSeek( ( tmpRctPrvT )->cSerFac + Str( ( tmpRctPrvT )->nNumFac ) + ( tmpRctPrvT )->cSufFac ) ) )
+   if !( ( dbfEntSal )->( dbSeek( Str( ( tmpEntSal )->nNumEnt ) + ( tmpEntSal )->cSufEnt ) ) )
       Return .t.
    end if 
 
-   if dtos( ( dbfRctPrvT )->dFecCre ) + ( dbfRctPrvT )->cTimCre >= dtos( ( tmpRctPrvT )->dFecCre ) + ( tmpRctPrvT )->cTimCre 
-      ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfRctPrvT )->dFecCre ) + " " + ( dbfRctPrvT )->cTimCre + " es más reciente que la recepción " + dtoc( ( tmpRctPrvT )->dFecCre ) + " " + ( tmpRctPrvT )->cTimCre 
+   if dtos( ( dbfEntSal )->dFecCre ) + ( dbfEntSal )->cTimCre >= dtos( ( tmpEntSal )->dFecCre ) + ( tmpEntSal )->cTimCre 
+      ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfEntSal )->dFecEnt ) + " " + ( dbfEntSal )->cTimCre + " es más reciente que la recepción " + dtoc( ( tmpEntSal )->dFecCre ) + " " + ( tmpEntSal )->cTimCre 
       Return .f.
    end if
 
-Return ( .t. )*/
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
