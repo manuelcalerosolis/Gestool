@@ -91,7 +91,7 @@ METHOD defineAceptarCancelar() CLASS DailySummarySalesView
                            "nLeft"     => {|| GridWidth( 10.5, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_check_64",;
+                           "cResName"  => "gc_ok_64",;
                            "bLClicked" => {|| ::oDlg:End() },;
                            "oWnd"      => ::oDlg } )
 

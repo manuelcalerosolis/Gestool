@@ -83,7 +83,7 @@ METHOD defineAceptarCancelar() CLASS ViewEdit
                            "nLeft"     => {|| GridWidth( 9.0, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_del_64",;
+                           "cResName"  => "gc_error_64",;
                            "bLClicked" => {|| ::oSender:onViewCancel() },;
                            "oWnd"      => ::oDlg } )
 
@@ -91,7 +91,7 @@ METHOD defineAceptarCancelar() CLASS ViewEdit
                            "nLeft"     => {|| GridWidth( 10.5, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_check_64",;
+                           "cResName"  => "gc_ok_64",;
                            "bLClicked" => {|| ::oSender:onViewSave() },;
                            "oWnd"      => ::oDlg } )
 
@@ -169,7 +169,7 @@ METHOD defineRuta( nRow ) CLASS ViewEdit
                            "nLeft"     => {|| GridWidth( 10, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_left_64",;
+                           "cResName"  => "gc_navigate_left_56",;
                            "bLClicked" => {|| ::oSender:priorClient() },;
                            "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
                            "oWnd"      => ::oDlg } )
@@ -178,7 +178,7 @@ METHOD defineRuta( nRow ) CLASS ViewEdit
                            "nLeft"     => {|| GridWidth( 11, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_right_64",;
+                           "cResName"  => "gc_navigate_right_56",;
                            "bLClicked" => {|| ::oSender:nextClient() },;
                            "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
                            "oWnd"      => ::oDlg } )
@@ -225,7 +225,7 @@ METHOD defineCliente( nRow ) CLASS ViewEdit
                            "nLeft"     => {|| GridWidth( 10, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "edit_56",;
+                           "cResName"  => "gc_edit_48",;
                            "bLClicked" => {|| ::oSender:onClickClientEdit() },;
                            "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
                            "oWnd"      => ::oDlg } )
@@ -234,7 +234,7 @@ METHOD defineCliente( nRow ) CLASS ViewEdit
                            "nLeft"     => {|| GridWidth( 11, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "view_56",;
+                           "cResName"  => "gc_magnifying_glass_48",;
                            "bLClicked" => {|| ::oSender:onClickClientSales() },;
                            "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
                            "oWnd"      => ::oDlg } )
@@ -286,7 +286,7 @@ METHOD defineBotonesAcciones() CLASS ViewEdit
                            "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_add_64",;
+                           "cResName"  => "gc_plus_64",;
                            "bLClicked" => {|| ::oSender:appendDetail(), ::RefreshBrowse() },;
                            "bWhen"     => {|| ::oSender:appendButtonMode() },;                           
                            "oWnd"      => ::oDlg } )
@@ -295,7 +295,7 @@ METHOD defineBotonesAcciones() CLASS ViewEdit
                            "nLeft"     => {|| GridWidth( 2, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_edit_64",;
+                           "cResName"  => "gc_pencil_64",;
                            "bWhen"     => {|| ::oSender:editButtonMode() },;                           
                            "bLClicked" => {|| ::oSender:EditDetail( ::oBrowse:nArrayAt ), ::RefreshBrowse() },;
                            "oWnd"      => ::oDlg } )
@@ -304,7 +304,7 @@ METHOD defineBotonesAcciones() CLASS ViewEdit
                            "nLeft"     => {|| GridWidth( 3.5, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_minus_64",;
+                           "cResName"  => "gc_delete_64",;
                            "bWhen"     => {|| ::oSender:deleteButtonMode() },;                           
                            "bLClicked" => {|| ::oSender:DeleteDetail( ::oBrowse:nArrayAt ), ::RefreshBrowse()},;
                            "oWnd"      => ::oDlg } )
@@ -319,7 +319,7 @@ METHOD defineBotonesMovimiento() CLASS ViewEdit
                            "nLeft"     => {|| GridWidth( 7.5, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_page_up_64",;
+                           "cResName"  => "gc_navigate_up2_64",;
                            "bLClicked" => {|| ::oBrowse:PageUp(), ::oBrowse:Select( 0 ), ::oBrowse:Select( 1 ), ::oBrowse:Refresh()  },;
                            "oWnd"      => ::oDlg } )
 
@@ -327,7 +327,7 @@ METHOD defineBotonesMovimiento() CLASS ViewEdit
                            "nLeft"     => {|| GridWidth( 8.5, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_up_64",;
+                           "cResName"  => "gc_navigate_up_64",;
                            "bLClicked" => {|| ::oBrowse:GoUp(), ::oBrowse:Select( 0 ), ::oBrowse:Select( 1 ), ::oBrowse:Refresh()  },;
                            "oWnd"      => ::oDlg } )
 
@@ -335,7 +335,7 @@ METHOD defineBotonesMovimiento() CLASS ViewEdit
                            "nLeft"     => {|| GridWidth( 9.5, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_down_64",;
+                           "cResName"  => "gc_navigate_down_64",;
                            "bLClicked" => {|| ::oBrowse:GoDown(), ::oBrowse:Select( 0 ), ::oBrowse:Select( 1 ), ::oBrowse:Refresh() },;
                            "oWnd"      => ::oDlg } )
 
@@ -343,7 +343,7 @@ METHOD defineBotonesMovimiento() CLASS ViewEdit
                            "nLeft"     => {|| GridWidth( 10.5, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_page_down_64",;
+                           "cResName"  => "gc_navigate_down2_64",;
                            "bLClicked" => {|| ::oBrowse:PageDown(), ::oBrowse:Select( 0 ), ::oBrowse:Select( 1 ), ::oBrowse:Refresh() },;
                            "oWnd"      => ::oDlg } )
 

@@ -102,7 +102,7 @@ METHOD defineBotonesGenerales() CLASS ViewEditResumen
                            "nLeft"     => {|| GridWidth( 7.5, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_del_64",;
+                           "cResName"  => "gc_error_64",;
                            "bLClicked" => {|| ::oDlg:End() },;
                            "oWnd"      => ::oDlg } )
 
@@ -110,7 +110,7 @@ METHOD defineBotonesGenerales() CLASS ViewEditResumen
                            "nLeft"     => {|| GridWidth( 9, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_printer_64",;
+                           "cResName"  => "gc_printer_64",;
                            "bLClicked" => {|| ::oSender:setFormatToPrint( ::cCbxImpresora ), ::oDlg:End( IDOK ) },;
                            "oWnd"      => ::oDlg } )
 
@@ -118,7 +118,7 @@ METHOD defineBotonesGenerales() CLASS ViewEditResumen
                            "nLeft"     => {|| GridWidth( 10.5, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_check_64",;
+                           "cResName"  => "gc_ok_64",;
                            "bLClicked" => {|| ::oDlg:End( IDOK ) },;
                            "oWnd"      => ::oDlg } )
 
