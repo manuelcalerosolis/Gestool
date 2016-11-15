@@ -4790,7 +4790,7 @@ Function MainTablet()
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "user1_64",;
+                           "cResName"  => "gc_user_64",;
                            "bLClicked" => {|| Customer():New():runNavigatorCustomer() },;
                            "oWnd"      => oDlg } )
 
@@ -4811,7 +4811,7 @@ Function MainTablet()
                            "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_End_64",;
+                           "cResName"  => "gc_door_open_64",;
                            "bLClicked" => {|| oDlg:End() },;
                            "oWnd"      => oDlg } )
 /*
@@ -4833,7 +4833,7 @@ Function MainTablet()
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_clipboard_empty_user1_64",;
+                           "cResName"  => "gc_clipboard_empty_user_64",;
                            "bLClicked" => {|| OrderCustomer():New():Play() },;
                            "oWnd"      => oDlg } )
 
@@ -4856,7 +4856,7 @@ Function MainTablet()
                            "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_about_64",;
+                           "cResName"  => "gc_speech_balloon_answer_64",;
                            "bLClicked" => {|| DailySummarySales():New():Play() },;
                            "oWnd"      => oDlg } )
 
@@ -4868,7 +4868,7 @@ Function MainTablet()
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "document_plain_user1_64",;
+                           "cResName"  => "gc_document_empty_user_64",;
                            "bLClicked" => {|| DeliveryNoteCustomer():New():Play() },;
                            "oWnd"      => oDlg } )
 
@@ -4889,7 +4889,7 @@ Function MainTablet()
                      		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                      		"nWidth"    => 64,;
                      		"nHeight"   => 64,;
-                     		"cResName"  => "flat_document_64",;
+                     		"cResName"  => "gc_document_text_user_64",;
                      		"bLClicked" => {|| InvoiceCustomer():New():play() },;     // FacCliTablet()
                      		"oWnd"      => oDlg } )
 
@@ -4904,17 +4904,38 @@ Function MainTablet()
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| InvoiceCustomer():New():play() } } )        //FacCliTablet()
 
-   //----------------Envio y recepcion
-
+   //----------------Recibos---------------------------------------------------
+   
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 15 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_config_64",;
-                           "bLClicked" => {|| TSndRecInf():New():ActivateTablet() },;
+                           "cResName"  => "gc_briefcase2_user_64",;
+                           "bLClicked" => {|| Msginfo( "Recibos" ) },;
                            "oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 15 ) },;
+                           "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
+                           "cURL"      => "Recibos de clientes",;
+                           "oWnd"      => oDlg,;
+                           "oFont"     => oGridFont(),;
+                           "lPixel"    => .t.,;
+                           "nClrInit"  => nGridColor(),;
+                           "nClrOver"  => nGridColor(),;
+                           "nClrVisit" => nGridColor(),;
+                           "bAction"   => {|| Msginfo( "Recibos" ) } } )
+
+   //----------------Envio y recepcion
+
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 18 ) },;
+                           "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "gc_satellite_dish_64",;
+                           "bLClicked" => {|| TSndRecInf():New():ActivateTablet() },;
+                           "oWnd"      => oDlg } )
+
+   TGridUrllink():Build({  "nTop"      => {|| GridRow( 18 ) },;
                            "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
                            "cURL"      => "Envío y recepción",;
                            "oWnd"      => oDlg,;
@@ -4928,7 +4949,7 @@ Function MainTablet()
    //----------------Informacion empresa
 
    oGridTree   := TGridTreeView():Build( ;
-                        {  "nTop"      => {|| GridRow( 9 ) },;
+                        {  "nTop"      => {|| GridRow( 10 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "oWnd"      => oDlg,;
                            "lPixel"    => .t.,;

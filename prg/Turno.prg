@@ -2943,6 +2943,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
    local oBtnRetirado
    local oBtnCalculadora
    local oBtnEfectivo
+   local nOrdAnt
 
    DEFAULT lZoom        := .f.
    DEFAULT lParcial     := .f.
@@ -3003,6 +3004,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
    // Si estamos con las cajas desincorizadas el scope es por caja-------------
 
    ::oDbf:GetStatus()
+   ::oDbf:OrdSetFocus( "cNumTur" )
    ::oDbf:Seek( ::GetFullTurno() )
 
    ::oDbfDet:OrdScope( ::GetFullTurno() )
