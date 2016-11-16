@@ -2605,8 +2605,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los albaranes de clientes'
    oItem:bAction        := {|| AlbCli( "01057", oWnd ) }
    oItem:cId            := "01057"
-   oItem:cBmp           := "Document_plain_user1_16"
-   oItem:cBmpBig        := "Document_plain_user1_32"
+   oItem:cBmp           := "gc_document_empty_16"
+   oItem:cBmpBig        := "gc_document_empty_32"
    oItem:lShow          := .t.
 
    oItem                := oItemVentas:Add()
