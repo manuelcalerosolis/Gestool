@@ -683,7 +683,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
                   "Cliente web" ,;
                   "Ruta" ;
          ALIAS    ( D():Clientes( nView ) );
-         MRU      "User1_16";
+         MRU      "gc_user_16";
          APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, D():Clientes( nView ) ) );
          DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, D():Clientes( nView ) ) );
          EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, D():Clientes( nView ) ) ) ;

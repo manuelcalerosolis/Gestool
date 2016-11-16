@@ -2499,8 +2499,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a las rutas de clientes'
    oItem:bAction        := {|| Ruta( "01031", oWnd ) }
    oItem:cId            := "01031"
-   oItem:cBmp           := "Signpost_16"
-   oItem:cBmpBig        := "Signpost_32"
+   oItem:cBmp           := "gc_signpost2_16"
+   oItem:cBmpBig        := "gc_signpost2_32"
    oItem:lShow          := .f.
 
    oItem                := oItemVentas:Add()
@@ -2509,8 +2509,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a las rutas de clientes'
    oItem:bAction        := {|| Client( "01032", oWnd ) }
    oItem:cId            := "01032"
-   oItem:cBmp           := "User1_16"
-   oItem:cBmpBig        := "User1_32"
+   oItem:cBmp           := "gc_user_16"
+   oItem:cBmpBig        := "gc_user_32"
    oItem:lShow          := .t.
 
    oItem                := oItemVentas:Add()

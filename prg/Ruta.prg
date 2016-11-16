@@ -106,7 +106,7 @@ FUNCTION Ruta( oMenuItem, oWnd )
 		TITLE 	"Rutas" ;
       PROMPT   "Código",;
 					"Nombre";
-      MRU      "Signpost_16";
+      MRU      "gc_signpost2_16";
 		ALIAS		( dbfRuta ) ;
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfRuta ) );
       DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdit, dbfRuta ) );
