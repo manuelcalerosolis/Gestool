@@ -727,3 +727,29 @@ static function FindTag( cFld, nOrder )
 return cTag
 
 //------------------------------------------------------------------//
+
+CLASS TOkButton FROM TBtnBmp
+
+   METHOD ReDefine( nId, cResName1, cResName2, cBmpFile1, cBmpFile2, cMsg, bAction, oBar, lAdjust, bWhen, lUpdate, cToolTip, cPrompt, oFont, cResName3, cBmpFile3, lBorder, cLayout, l2007, cResName4, cBmpFile4, lTransparent, lRound, bGradColors ) 
+
+END CLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD ReDefine( nId, cResName1, cResName2, cBmpFile1, cBmpFile2, cMsg, bAction, oBar, lAdjust, bWhen, lUpdate, cToolTip, cPrompt, oFont, cResName3, cBmpFile3, lBorder, cLayout, l2007, cResName4, cBmpFile4, lTransparent, lRound, bGradColors ) CLASS TOkButton
+
+   bGradColors    := { | lInvert | if( lInvert, ;
+                                       { { 1/3, nRGB( 0, 0, 0 ), nRGB( 255, 231, 151 ) }, ;
+                                         { 2/3, nRGB( 255, 215,  84 ), nRGB( 255, 233, 162 ) }  ;
+                                       }, ;
+                                       { { 1/2, nRGB( 219, 230, 244 ), nRGB( 207-50, 221-25, 255 ) }, ;
+                                         { 1/2, nRGB( 201-50, 217-25, 255 ), nRGB( 231, 242, 255 ) }  ;
+                                       } ) }
+
+   ::Super:ReDefine( nId, cResName1, cResName2, cBmpFile1, cBmpFile2, cMsg, bAction, oBar, lAdjust, bWhen, lUpdate, cToolTip, cPrompt, oFont, cResName3, cBmpFile3, lBorder, cLayout, l2007, cResName4, cBmpFile4, lTransparent, lRound, bGradColors )
+
+   // ::setColor( rgb( 0, 0, 0 ), rgb( 118, 216, 38 ) )
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//

@@ -766,6 +766,35 @@ Meter autoinclemenatado
               <nTotal>, <oWnd>, <.update.>, <oFont>, <cPrompt>, <.lNoPercentage.>, ;
               <nClrPane>, <nClrText>, <nClrBar>, <nClrBText> )
 
+#xcommand REDEFINE OKBUTTON [<oBtn>] ;
+             [ ID <nId> ] ;
+             [ <bar: OF, BUTTONBAR > <oBar> ] ;
+             [ <resource: NAME, RESNAME, RESOURCE> <cResName1> ;
+                [,<cResName2>[,<cResName3>[,<cResName4>] ] ] ];
+             [ <file: FILE, FILENAME, DISK> <cBmpFile1> ;
+               [,<cBmpFile2>[,<cBmpFile3>[,<cBmpFile4>] ] ] ] ;
+             [ <action:ACTION,EXEC,ON CLICK> <uAction,...> ] ;
+             [ MESSAGE <cMsg> ] ;
+             [ <adjust: ADJUST > ] ;
+             [ WHEN <uWhen> ] ;
+             [ <lUpdate: UPDATE> ] ;
+             [ TOOLTIP <cToolTip> ] ;
+             [ PROMPT <cPrompt> ] ;
+             [ FONT <oFont> ] ;
+             [ <lNoBorder: NOBORDER> ] ;
+             [ <layout: CENTER, TOP, LEFT, BOTTOM, RIGHT> ] ;
+             [ <l2007: 2007> ] ;
+             [ <lTrans: TRANSPARENT> ] ;
+             [ <lNoRound: NOROUND> ];
+             [ GRADIENT <bGradColors> ];
+      => ;
+         [ <oBtn> := ] TBtnBmp():ReDefine( <nId>, <cResName1>, <cResName2>,;
+            <cBmpFile1>, <cBmpFile2>, <cMsg>, [{|Self|<uAction>}],;
+            <oBar>, <.adjust.>, <{uWhen}>, <.lUpdate.>, <cToolTip>,;
+            <cPrompt>, <oFont>, [<cResName3>], [<cBmpFile3>], [!<.lNoBorder.>],;
+            [ Upper(<(layout)>) ], <.l2007.>,[<cResName4>], [<cBmpFile4>], <.lTrans.>,;
+            !<.lNoRound.>, <bGradColors> )
+
 /* Generic error codes (oError:genCode) */
 
 #ifndef EG_ZERODIV

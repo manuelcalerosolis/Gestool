@@ -315,14 +315,26 @@ CLASS TGetDialog
    DATA  oGet
    DATA  cGet
 
+   DATA  oGetRelacion
+   DATA  cGetRelacion
+
    DATA  oBitmap
-   DATA  cBitmap        INIT  "LogoGestool_48"
+   DATA  cBitmap              INIT  "LogoGestool_48"
+
+   DATA  aErrors              INIT  {}
 
    DATA  bAction 
 
    METHOD New()
    METHOD Run()
+   METHOD Action()
    METHOD End()
+
+   METHOD cleanGet()          INLINE ( ::oGet:cText( space( 200 ) ), ::oGet:setFocus() )
+   METHOD cleanGetRelacion()  INLINE ( ::oGetRelacion:cText( "" ), ::oGetRelacion:setFocus() )
+
+   METHOD cleanErrors()       INLINE ( ::aErrors := {} )
+   METHOD showErrors()
 
 ENDCLASS
 
@@ -348,11 +360,25 @@ METHOD Run() CLASS TGetDialog
 
    ::oGet               := TGet():ReDefine( 100, { | u | if( pcount() == 0, ::cGet, ::cGet := u ) }, ::oDlg, , "",,,,,,, .f.,,, .f., .f. )
 
-   TButton():ReDefine( IDOK, {|| eval( ::bAction, self ) }, ::oDlg, , , .f. )
+   ::oGetRelacion       := TMultiGet():ReDefine( 110, { | u | if( pcount() == 0, ::cGetRelacion, ::cGetRelacion := u ) }, ::oDlg,,,,,,, .f.,, .f. )
+
+   TButton():ReDefine( IDOK, {|| ::Action() }, ::oDlg, , , .f. )
     
    TButton():ReDefine( IDCANCEL, {|| ::oDlg:end() }, ::oDlg, , , .f. )
 
-   ::oDlg:Activate( , , , .t., ,.f. )
+   ::oDlg:AddFastKey( VK_F5, {|| ::Action() } )
+
+   ::oDlg:Activate( , , , .t., ,.t. )
+
+RETURN ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD Action()
+
+   eval( ::bAction, self ) 
+
+   ::showErrors()
 
 RETURN ( Self )
 
@@ -364,10 +390,27 @@ METHOD End() CLASS TGetDialog
 
    ::oDlg:End()
 
-   ::oDlg               := nil
+   ::oDlg            := nil
 
    SysRefresh()
 
 RETURN ( nil )
+
+//--------------------------------------------------------------------------//
+
+METHOD showErrors() CLASS TGetDialog
+
+   local cError
+   local cErrorText  := ""
+
+   for each cError in ::aErrors
+      cErrorText     += cError + CRLF
+   next
+
+   if !empty( cErrorText )
+      msgStop( cErrorText, "Error de importación" )
+   end if 
+
+Return ( cErrorText )
 
 //--------------------------------------------------------------------------//

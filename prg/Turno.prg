@@ -3703,7 +3703,8 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          ID       721;
          OF       ::oFldTurno:aDialogs[ 4 ]
 
-      REDEFINE CHECKBOX ::oChkEnviarMail VAR ::lEnviarMail ;
+      REDEFINE CHECKBOX ::oChkEnviarMail ;
+         VAR      ::lEnviarMail ;
          WHEN     lUsrMaster() .and. !::lArqueoParcial ;
          ID       720 ;
          OF       ::oFldTurno:aDialogs[ 4 ]
@@ -3714,7 +3715,8 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          ID       730 ;
          OF       ::oFldTurno:aDialogs[ 4 ]
 
-      REDEFINE CHECKBOX ::oChkActualizaStockWeb VAR ::lChkActualizaStockWeb ;
+      REDEFINE CHECKBOX ::oChkActualizaStockWeb ;
+         VAR      ::lChkActualizaStockWeb ;
          WHEN     lUsrMaster() .and. !::lArqueoParcial ;
          ID       740 ;
          OF       ::oFldTurno:aDialogs[ 4 ]   
@@ -11174,9 +11176,9 @@ Return ( Self )
 
 Method ActualizaStockWeb()
 
-   with object ( TComercio():New() )
-      :buildActualizaStockProductPrestashop()        
-   end with
+//   with object ( TComercio():New() )
+//      :buildActualizaStockProductPrestashop()        
+//   end with
 
 Return ( self )
 

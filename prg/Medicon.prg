@@ -14,15 +14,20 @@ static nMeter  := 0
 static oText
 static cText   := ""
 
-static hRoles  := { "Fiscal" => "01",;
-                    "Receptor" => "02",;
-                    "Tercero" => "03",;
-                    "Comprador" => "04",;
-                    "Cobrador" => "05",;
-                    "Vendedor" => "06",;
-                    "Receptor del pago" => "07",;
-                    "Receptor del cobro" => "08",;
-                    "Emisor" => "09" }
+static hRoles  := { "Fiscal"                => "01",;
+                    "Oficina contable"      => "01",;
+                    "Receptor"              => "02",;
+                    "Organo gestor"         => "02",;
+                    "Tercero"               => "03",;
+                    "Pagador"               => "03",;
+                    "Unidad tramitadora"    => "03",;
+                    "Comprador"             => "04",;
+                    "Organo proponente"     => "04",;
+                    "Cobrador"              => "05",;
+                    "Vendedor"              => "06",;
+                    "Receptor del pago"     => "07",;
+                    "Receptor del cobro"    => "08",;
+                    "Emisor"                => "09" }
 
 static hPaises := { "Afganistán" => "AFG",;
                     "Albania" => "ALB",;

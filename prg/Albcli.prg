@@ -3400,12 +3400,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       528 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( masiveAppendLines( aTmp, nMode ) )
-
-      REDEFINE BUTTON ;
-         ID       529 ;
-         OF       oFld:aDialogs[1] ;
-         ACTION   ( importarArticulosScaner() )
+         ACTION   ( TGetDialog():New( {|getDialog| runMasiveAppendLines( getDialog, aTmp ) } ):Run() )
 
       REDEFINE GET aGet[ _CSERALB ] VAR aTmp[ _CSERALB ] ;
          ID       100 ;
@@ -4024,7 +4019,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE BUTTON ;
          ID        503 ;
          OF       oFld:aDialogs[ 5 ] ;
-         ACTION   ( WinZooRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
+         ACTION   ( WinZooRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) ) 
 
       /*
       Botones comunes a la caja de dialogo____________________________________
@@ -4064,7 +4059,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       oFld:aDialogs[1]:AddFastKey( VK_F2, {|| AppDeta( oBrwLin, bEdtDet, aTmp, .f., nMode ) } )
       oFld:aDialogs[1]:AddFastKey( VK_F3, {|| EdtDeta( oBrwLin, bEdtDet, aTmp, .f., nMode ) } )
       oFld:aDialogs[1]:AddFastKey( VK_F4, {|| WinDelRec( oBrwLin, dbfTmpLin, {|| delDeta() }, {|| RecalculaTotal( aTmp ) } ) } )
-      oFld:aDialogs[1]:AddFastKey( VK_F8, {|| masiveAppendLines( aTmp, nMode ) } )
+      oFld:aDialogs[1]:AddFastKey( VK_F8, {|| TGetDialog():New( {|getDialog| runMasiveAppendLines( getDialog, aTmp ) } ):Run() } )
 
       oFld:aDialogs[2]:AddFastKey( VK_F2, {|| WinAppRec( oBrwPgo, bEdtPgo, dbfTmpPgo, nil, nil, aTmp ), RecalculaTotal( aTmp ) } )
       oFld:aDialogs[2]:AddFastKey( VK_F3, {|| WinEdtRec( oBrwPgo, bEdtPgo, dbfTmpPgo, nil, nil, aTmp ), RecalculaTotal( aTmp ) } )
@@ -5141,29 +5136,66 @@ RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-Static Function masiveAppendLines( aCabeceraAlbaran )
+Static Function runMasiveAppendLines( oDialog, aCabeceraAlbaran )
 
-   local oDlg  := TGetDialog():New( {|getDialog| runMasiveAppendLines( getDialog, aCabeceraAlbaran ) } )
-   
-   oDlg:Run()
+   oDialog:cleanErrors()
+
+   if !empty( oDialog:cGet )
+      oneAppendLine( aCabeceraAlbaran, oDialog:cGet )
+      oDialog:cleanGet()
+   end if 
+
+   if !empty( oDialog:cGetRelacion )
+      masiveAppendLines( aCabeceraAlbaran, oDialog )
+      oDialog:cleanGet()
+   end if 
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Static Function runMasiveAppendLines( getDialog, aCabeceraAlbaran )
+Static Function masiveAppendLines( aCabeceraAlbaran, oDialog )
 
-   local aLineasAlbaranes  
+   local aArticulo 
+   local aRelacion
+   local aArticulos
+   local aRelaciones  
+   local cRelaciones       := oDialog:cGetRelacion
 
-   if empty( getDialog:cGet )
-      Return .f.
-   end if 
+   oDialog:cleanErrors()
 
-   aLineasAlbaranes        := dbBlankRec( dbfAlbCliL )
+   aRelaciones             := hb_atokens( cRelaciones, CRLF )
+
+   for each aRelacion in aRelaciones
+
+      aArticulo           := hb_atokens( aRelacion, "," )
+
+      if isArray( aArticulo ) .and. len( aArticulo ) >= 2 .and. !empty( aArticulo[1] ) .and. !empty( aArticulo[2] ) 
+         if !( oneAppendLine( aCabeceraAlbaran, aArticulo[1], val( aArticulo[2] ) ) )
+            msgalert("- Error al añadir el artículo " + alltrim( aArticulo[1] ) )
+            aadd( oDialog:aErrors, "- Error al añadir el artículo " + alltrim( aArticulo[1] ) )
+         end if 
+      end if
+
+   next 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+Static Function oneAppendLine( aCabeceraAlbaran, cCodigoArticulo, nUnidadesArticulos )
+
+   local aLineasAlbaranes
+
+   DEFAULT nUnidadesArticulos    := 1
+
+   aLineasAlbaranes              := dbBlankRec( dbfAlbCliL )
 
    setDlgMode( aLineasAlbaranes, aCabeceraAlbaran, APPD_MODE )
 
-   if loaArt( getDialog:cGet, aLineasAlbaranes, nil, aCabeceraAlbaran )
+   aLineasAlbaranes[ _NUNICAJA ] := nUnidadesArticulos
+
+   if loaArt( cCodigoArticulo, aLineasAlbaranes, nil, aCabeceraAlbaran )
 
       saveDeta( aLineasAlbaranes, aCabeceraAlbaran, , , , , , APPD_MODE )
 
@@ -5172,13 +5204,12 @@ Static Function runMasiveAppendLines( getDialog, aCabeceraAlbaran )
       end if
 
       recalculaTotal( aCabeceraAlbaran )
-   
+
+      return ( .t. )
+
    end if 
 
-   getDialog:oGet:cText( space( 200 ) ) 
-   getDialog:oGet:setFocus()
-
-RETURN ( nil )
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 
@@ -10259,7 +10290,9 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
    if empty( cCodArt )
 
       if lRetCodArt()
-         MsgStop( "No se pueden añadir líneas sin codificar" )
+         if !empty( aGet )
+            msgstop( "No se pueden añadir líneas sin codificar" )
+         end if 
          return .f.
       end if
 
@@ -10305,7 +10338,9 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
       if aSeekProp( @cCodArt, @cValPr1, @cValPr2, D():Articulos( nView ), dbfTblPro )
 
          if ( D():Articulos( nView ) )->lObs
-            MsgStop( "Artículo catalogado como obsoleto" )
+            if !empty( aGet )
+               msgstop( "Artículo catalogado como obsoleto" )
+            end if
             return .f.
          end if
 
@@ -10324,7 +10359,9 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             aTmp[ _CREFAUX2 ]    := ( D():Articulos( nView ) )->cRefAux2
 
             if ( D():Articulos( nView ) )->lMosCom .and. !empty( ( D():Articulos( nView ) )->mComent )
-               msgstop( trim( ( D():Articulos( nView ) )->mComent ) )
+               if !empty( aGet )
+                  msgstop( trim( ( D():Articulos( nView ) )->mComent ) )
+               end if 
             end if
 
             // Metemos el proveedor habitual--------------------------------------
@@ -10496,11 +10533,13 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             
             aTmp[ _CCODIMP ]     := ( D():Articulos( nView ) )->cCodImp
 
-            oNewImp:setCodeAndValue( aTmp[ _CCODIMP ], aGet[ _NVALIMP ] ) 
-
-            /*if !empty(aGet)
+            if !empty(aGet)
+               oNewImp:setCodeAndValue( aTmp[ _CCODIMP ], aGet[ _NVALIMP ] ) 
                aGet[ _NVALIMP ]:cText( aTmp[ _NVALIMP ] )
-            end if */
+            else 
+               oNewImp:setCodeAndValue( aTmp[ _CCODIMP ] ) 
+               aTmp[ _NVALIMP ]  := aTmp[ _NVALIMP ] 
+            end if 
 
             if !empty( ( D():Articulos( nView ) )->cCodImp )
                aTmp[ _LVOLIMP ]  := RetFld( ( D():Articulos( nView ) )->cCodImp, oNewImp:oDbf:cAlias, "lIvaVol" )
@@ -10515,7 +10554,9 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
                end if 
             end if
 
-            if ( D():Articulos( nView ) )->nUniCaja != 0
+            msgalert( aTmp[ _NUNICAJA ], "nUniCaja")
+
+            if ( D():Articulos( nView ) )->nUniCaja != 0 .and. aTmp[ _NUNICAJA ] == 0
                aTmp[ _NUNICAJA ]    := ( D():Articulos( nView ) )->nUniCaja 
                if !empty(aGet)
                   aGet[ _NUNICAJA ]:cText( aTmp[ _NUNICAJA ] )
@@ -10973,11 +11014,11 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
          end if 
 
-         // Buscamos si hay ofertas-----------------------------------------------
+         // Buscamos si hay ofertas--------------------------------------------
 
          lBuscaOferta( aTmp[ _CREF ], aGet, aTmp, aTmpAlb, dbfKit )
 
-         // Cargamos los valores para los cambios---------------------------------
+         // Cargamos los valores para los cambios------------------------------
 
          cOldPrpArt     := cPrpArt
          cOldCodArt     := cCodArt
@@ -11005,8 +11046,10 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
          end if 
 
       else
-
-         msgStop( "Artículo no encontrado." )
+         
+         if !empty( aGet )
+            msgStop( "Artículo no encontrado." )
+         end if 
          
          Return ( .f. )
 
@@ -11014,7 +11057,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
    end if
 
-RETURN ( .t. )
+Return ( .t. )
 
 //--------------------------------------------------------------------------//
 

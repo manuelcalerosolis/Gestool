@@ -551,7 +551,7 @@ if nLen > 0
 
           cText      := oItem:cText
 
-          if Empty( cText )
+          if Empty( cText ) .and. !empty( oItem:cImage )
             cText    := cFileName( oItem:cImage )
           endif
 
