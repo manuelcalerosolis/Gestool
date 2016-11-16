@@ -2489,8 +2489,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los grupos de clientes'
    oItem:bAction        := {|| TGrpCli():New( cPatCli(), cDriver(), oWnd, "01030" ):Activate() }
    oItem:cId            := "01030"
-   oItem:cBmp           := "Users2_16"
-   oItem:cBmpBig        := "Users2_32"
+   oItem:cBmp           := "gc_users3_16"
+   oItem:cBmpBig        := "gc_users3_32"
    oItem:lShow          := .f.
 
    oItem                := oItemVentas:Add()

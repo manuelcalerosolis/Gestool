@@ -37,3 +37,6 @@ GC_EDIT_48 BITMAP "..\\bmp\\gc_edit_48.bmp"
 GC_MAGNIFYING_GLASS_48 BITMAP "..\\bmp\\gc_magnifying_glass_48.bmp"
 GC_DOCUMENT_EMPTY_32 BITMAP "..\\bmp\\gc_document_empty_32.bmp"
 GC_DOCUMENT_EMPTY_16 BITMAP "..\\bmp\\gc_document_empty_16.bmp"
+GC_USERS3_16 BITMAP "..\\bmp\\gc_users3_16.bmp"
+GC_USERS3_32 BITMAP "..\\bmp\\gc_users3_32.bmp"
+
