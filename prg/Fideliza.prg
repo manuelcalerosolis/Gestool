@@ -21,7 +21,7 @@ Return nil
 
 CLASS TFideliza FROM TMasDet
 
-   DATA  cMru     INIT "Cli"
+   DATA  cMru     INIT "gc_id_card_16"
    DATA  cBitmap  INIT clrTopArchivos
    DATA  aData    INIT {}
 

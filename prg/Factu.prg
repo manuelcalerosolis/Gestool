@@ -2519,8 +2519,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los agentes'
    oItem:bAction        := {|| Agentes( "01033", oWnd ) }
    oItem:cId            := "01033"
-   oItem:cBmp           := "Security_Agent_16"
-   oItem:cBmpBig        := "Security_Agent_32"
+   oItem:cBmp           := "gc_businessman2_16"
+   oItem:cBmpBig        := "gc_businessman2_32"
    oItem:lShow          := .f.
 
    if IsProfesional()
@@ -2531,8 +2531,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso al programa de fidelización'
    oItem:bAction        := {|| StartTFideliza() }
    oItem:cId            := "04006"
-   oItem:cBmp           := "Cli"
-   oItem:cBmpBig        := "Id_Card_32"
+   oItem:cBmp           := "gc_id_card_16"
+   oItem:cBmpBig        := "gc_id_card_32"
    oItem:lShow          := .f.
 
    oItem                := oItemVentas:Add()
@@ -2541,8 +2541,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a grupos de plantillas automáticas'
    oItem:bAction        := {|| TGrpFacturasAutomaticas():New( cPatCli(), oWnd, "04018" ):Activate() }
    oItem:cId            := "04018"
-   oItem:cBmp           := "folder_gear_16"
-   oItem:cBmpBig        := "folder_gear_32"
+   oItem:cBmp           := "gc_folder_gear_16"
+   oItem:cBmpBig        := "gc_folder_gear_32"
    oItem:lShow          := .f.
 
    oItem                := oItemVentas:Add()

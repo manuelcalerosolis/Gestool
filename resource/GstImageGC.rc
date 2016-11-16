@@ -43,5 +43,9 @@ GC_SIGNPOST2_16 BITMAP "..\\bmp\\gc_signpost2_16.bmp"
 GC_SIGNPOST2_32 BITMAP "..\\bmp\\gc_signpost2_32.bmp"
 GC_USER_16 BITMAP "..\\bmp\\gc_user_16.bmp"
 GC_USER_32 BITMAP "..\\bmp\\gc_user_32.bmp"
-
-
+GC_BUSINESSMAN2_16 BITMAP "..\\bmp\\gc_businessman2_16.bmp"
+GC_BUSINESSMAN2_32 BITMAP "..\\bmp\\gc_businessman2_32.bmp"
+GC_ID_CARD_16 BITMAP "..\\bmp\\gc_id_card_16.bmp"
+GC_ID_CARD_32 BITMAP "..\\bmp\\gc_id_card_32.bmp"
+GC_FOLDER_GEAR_16 BITMAP "..\\bmp\\gc_folder_gear_16.bmp"
+GC_FOLDER_GEAR_32 BITMAP "..\\bmp\\gc_folder_gear_32.bmp"
