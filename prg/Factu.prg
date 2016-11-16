@@ -4911,7 +4911,7 @@ Function MainTablet()
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "gc_briefcase2_user_64",;
-                           "bLClicked" => {|| Msginfo( "Recibos" ) },;
+                           "bLClicked" => {|| ReceiptInvoiceCustomer():New():play() },;
                            "oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 15 ) },;
@@ -4923,7 +4923,7 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| Msginfo( "Recibos" ) } } )
+                           "bAction"   => {|| ReceiptInvoiceCustomer():New():play() } } )
 
    //----------------Envio y recepcion
 
