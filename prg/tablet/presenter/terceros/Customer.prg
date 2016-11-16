@@ -35,7 +35,7 @@ CLASS Customer FROM Editable
    METHOD onPreEnd()                   INLINE ( .t. )
 
    METHOD onPostGetDocumento()
-   METHOD onPreSaveDocumento()
+   METHOD onPreSaveAppend()
 
    METHOD editCustomer( Codigo ) 
    METHOD salesCustomer( Codigo )
@@ -161,7 +161,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD onPreSaveDocumento() CLASS Customer
+METHOD onPreSaveAppend() CLASS Customer
 
    local nScan
    local nTipoCliente      := 1

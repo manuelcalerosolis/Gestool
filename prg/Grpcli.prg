@@ -8,7 +8,7 @@ CLASS TGrpCli FROM TMasDet
 
    DATA  cName                                           INIT "GruposClientes"
 
-   DATA  cMru                                            INIT "Users2_16"
+   DATA  cMru                                            INIT "gc_users3_16"
 
    DATA  cParentSelect                                   INIT Space( 4 )
 

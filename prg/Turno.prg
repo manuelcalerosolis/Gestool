@@ -178,6 +178,7 @@ CLASS TTurno FROM TMasDet
    DATA  oPedCliL
    DATA  oPedCliP
    DATA  oPedPrvT
+   DATA  oDbfCount
    DATA  oIvaImp
    DATA  oImpTik
    DATA  oArticulo
@@ -825,6 +826,8 @@ METHOD OpenFiles( lExclusive )
       ::oDbfDet:Activate(     .f., !( lExclusive ) )
 
       DATABASE NEW ::oDbfDiv     PATH ( cPatDat() ) FILE "DIVISAS.DBF"        VIA ( cDriver() ) SHARED INDEX "DIVISAS.CDX"
+
+      DATABASE NEW ::oDbfCount   PATH ( cPatEmp() ) FILE "NCOUNT.DBF"         VIA ( cDriver() ) SHARED INDEX "NCOUNT.CDX"
 
       DATABASE NEW ::oUser       PATH ( cPatDat() ) FILE "USERS.DBF"          VIA ( cDriver() ) SHARED INDEX "USERS.CDX"
 
@@ -1489,6 +1492,10 @@ METHOD CloseFiles()
 
    if !Empty( ::oLogPorta ) .and. ::oLogPorta:Used()
       ::oLogPorta:End()
+   end if
+
+   if !Empty( ::oDbfCount ) .and. ::oDbfCount:Used()
+      ::oDbfCount:End()
    end if
 
    if !Empty( ::oDbfTemporal )
@@ -2233,11 +2240,13 @@ METHOD CreateEntradaTurno()
    if !Empty( ::nImporteTurno )
 
       ::oEntSal:Blank()
+      ::oEntSal:nNumEnt := nNewDoc( , ::oEntSal:cAlias, "NENTSAL", , ::oDbfCount:cAlias )
       ::oEntSal:cTurEnt := ::cNumeroCurrentTurno()
       ::oEntSal:cSufEnt := ::cSufijoCurrentTurno()
       ::oEntSal:cCodCaj := ::GetCurrentCaja()
       ::oEntSal:dFecEnt := ::dOpenTurno
-      ::oEntSal:cHora   := ::cHoraTurno
+      ::oEntSal:dFecCre := GetSysDate()
+      ::oEntSal:cTimCre := ::cHoraTurno
       ::oEntSal:cCodUsr := ::cCajeroTurno
       ::oEntSal:cDesEnt := ::cDescripcionTurno
       ::oEntSal:nImpEnt := ::nImporteTurno
@@ -2934,6 +2943,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
    local oBtnRetirado
    local oBtnCalculadora
    local oBtnEfectivo
+   local nOrdAnt
 
    DEFAULT lZoom        := .f.
    DEFAULT lParcial     := .f.
@@ -2994,6 +3004,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
    // Si estamos con las cajas desincorizadas el scope es por caja-------------
 
    ::oDbf:GetStatus()
+   ::oDbf:OrdSetFocus( "cNumTur" )
    ::oDbf:Seek( ::GetFullTurno() )
 
    ::oDbfDet:OrdScope( ::GetFullTurno() )

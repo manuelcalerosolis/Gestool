@@ -2489,8 +2489,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los grupos de clientes'
    oItem:bAction        := {|| TGrpCli():New( cPatCli(), cDriver(), oWnd, "01030" ):Activate() }
    oItem:cId            := "01030"
-   oItem:cBmp           := "Users2_16"
-   oItem:cBmpBig        := "Users2_32"
+   oItem:cBmp           := "gc_users3_16"
+   oItem:cBmpBig        := "gc_users3_32"
    oItem:lShow          := .f.
 
    oItem                := oItemVentas:Add()
@@ -2499,8 +2499,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a las rutas de clientes'
    oItem:bAction        := {|| Ruta( "01031", oWnd ) }
    oItem:cId            := "01031"
-   oItem:cBmp           := "Signpost_16"
-   oItem:cBmpBig        := "Signpost_32"
+   oItem:cBmp           := "gc_signpost2_16"
+   oItem:cBmpBig        := "gc_signpost2_32"
    oItem:lShow          := .f.
 
    oItem                := oItemVentas:Add()
@@ -2509,8 +2509,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a las rutas de clientes'
    oItem:bAction        := {|| Client( "01032", oWnd ) }
    oItem:cId            := "01032"
-   oItem:cBmp           := "User1_16"
-   oItem:cBmpBig        := "User1_32"
+   oItem:cBmp           := "gc_user_16"
+   oItem:cBmpBig        := "gc_user_32"
    oItem:lShow          := .t.
 
    oItem                := oItemVentas:Add()
@@ -2605,8 +2605,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los albaranes de clientes'
    oItem:bAction        := {|| AlbCli( "01057", oWnd ) }
    oItem:cId            := "01057"
-   oItem:cBmp           := "Document_plain_user1_16"
-   oItem:cBmpBig        := "Document_plain_user1_32"
+   oItem:cBmp           := "gc_document_empty_16"
+   oItem:cBmpBig        := "gc_document_empty_32"
    oItem:lShow          := .t.
 
    oItem                := oItemVentas:Add()
@@ -4790,7 +4790,7 @@ Function MainTablet()
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "user1_64",;
+                           "cResName"  => "gc_user_64",;
                            "bLClicked" => {|| Customer():New():runNavigatorCustomer() },;
                            "oWnd"      => oDlg } )
 
@@ -4811,7 +4811,7 @@ Function MainTablet()
                            "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_End_64",;
+                           "cResName"  => "gc_door_open_64",;
                            "bLClicked" => {|| oDlg:End() },;
                            "oWnd"      => oDlg } )
 /*
@@ -4833,7 +4833,7 @@ Function MainTablet()
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_clipboard_empty_user1_64",;
+                           "cResName"  => "gc_clipboard_empty_user_64",;
                            "bLClicked" => {|| OrderCustomer():New():Play() },;
                            "oWnd"      => oDlg } )
 
@@ -4856,7 +4856,7 @@ Function MainTablet()
                            "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_about_64",;
+                           "cResName"  => "gc_speech_balloon_answer_64",;
                            "bLClicked" => {|| DailySummarySales():New():Play() },;
                            "oWnd"      => oDlg } )
 
@@ -4868,7 +4868,7 @@ Function MainTablet()
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "document_plain_user1_64",;
+                           "cResName"  => "gc_document_empty_user_64",;
                            "bLClicked" => {|| DeliveryNoteCustomer():New():Play() },;
                            "oWnd"      => oDlg } )
 
@@ -4889,7 +4889,7 @@ Function MainTablet()
                      		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                      		"nWidth"    => 64,;
                      		"nHeight"   => 64,;
-                     		"cResName"  => "flat_document_64",;
+                     		"cResName"  => "gc_document_text_user_64",;
                      		"bLClicked" => {|| InvoiceCustomer():New():play() },;     // FacCliTablet()
                      		"oWnd"      => oDlg } )
 
@@ -4904,17 +4904,38 @@ Function MainTablet()
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| InvoiceCustomer():New():play() } } )        //FacCliTablet()
 
-   //----------------Envio y recepcion
-
+   //----------------Recibos---------------------------------------------------
+   
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 15 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_config_64",;
-                           "bLClicked" => {|| TSndRecInf():New():ActivateTablet() },;
+                           "cResName"  => "gc_briefcase2_user_64",;
+                           "bLClicked" => {|| Msginfo( "Recibos" ) },;
                            "oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 15 ) },;
+                           "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
+                           "cURL"      => "Recibos de clientes",;
+                           "oWnd"      => oDlg,;
+                           "oFont"     => oGridFont(),;
+                           "lPixel"    => .t.,;
+                           "nClrInit"  => nGridColor(),;
+                           "nClrOver"  => nGridColor(),;
+                           "nClrVisit" => nGridColor(),;
+                           "bAction"   => {|| Msginfo( "Recibos" ) } } )
+
+   //----------------Envio y recepcion
+
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 18 ) },;
+                           "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "gc_satellite_dish_64",;
+                           "bLClicked" => {|| TSndRecInf():New():ActivateTablet() },;
+                           "oWnd"      => oDlg } )
+
+   TGridUrllink():Build({  "nTop"      => {|| GridRow( 18 ) },;
                            "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
                            "cURL"      => "Envío y recepción",;
                            "oWnd"      => oDlg,;
@@ -4928,7 +4949,7 @@ Function MainTablet()
    //----------------Informacion empresa
 
    oGridTree   := TGridTreeView():Build( ;
-                        {  "nTop"      => {|| GridRow( 9 ) },;
+                        {  "nTop"      => {|| GridRow( 10 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "oWnd"      => oDlg,;
                            "lPixel"    => .t.,;

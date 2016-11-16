@@ -21,9 +21,12 @@ CLASS CustomerIncidence FROM Editable
    METHOD Resource()             INLINE ( ::oViewEdit:Resource() )   
 
    METHOD onPostGetDocumento()
-   METHOD onPreSaveDocumento()   
+   METHOD onPreSaveAppend()   
 
    METHOD startDialog()          INLINE ( msgAlert( ::oViewEdit:getTitleDocumento() ) )
+
+   METHOD onPreSaveEdit()        INLINE ( .t. )
+   METHOD onPreEnd()             INLINE ( .t. )
 
 ENDCLASS
 
@@ -73,7 +76,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD onPreSaveDocumento() CLASS CustomerIncidence
+METHOD onPreSaveAppend() CLASS CustomerIncidence
 
    local cTipo := ""
 

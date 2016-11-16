@@ -13,6 +13,7 @@
 \vce\bin\rc /r /v /w /d__FLAT__ /d__MK__ /i\bcc582\include Resource\GstImage10.Rc
 \vce\bin\rc /r /v /w /d__FLAT__ /d__MK__ /i\bcc582\include Resource\GstImage11.Rc
 \vce\bin\rc /r /v /w /d__FLAT__ /d__MK__ /i\bcc582\include Resource\GstImage12.Rc
+\vce\bin\rc /r /v /w /d__FLAT__ /d__MK__ /i\bcc582\include Resource\GstImageGC.Rc
 \vce\bin\rc /r /v /w /d__FLAT__ /d__MK__ /i\bcc582\include Resource\GstPda.Rc
 \vce\bin\rc /r /v /w /d__FLAT__ /d__MK__ /i\bcc582\include Resource\MenuPda.Rc
 

@@ -195,6 +195,7 @@ METHOD Init() CLASS TSndRecInf
    aAdd( ::aSend, TFacturasClientesSenderReciver():New(        "Facturas clientes",          Self ) )
    aAdd( ::aSend, TFacturasRectificativasSenderReciver():New(  "Rectificativas clientes",    Self ) )
    aAdd( ::aSend, TTiketsClientesSenderReciver():New(          "Tickets clientes",           Self ) )
+   aAdd( ::aSend, TEntradasSalidasSenderReciver():New(         "Entradas y salidas",         Self ) )
    aAdd( ::aSend, TTurno():Initiate(                           "Sesiones",                   Self ) )
    aAdd( ::aSend, TRemMovAlm():Initiate(                       "Movimientos de almacen",     Self ) )
    aAdd( ::aSend, TUsuarioSenderReciver():New(                 "Usuarios",                   Self ) )
@@ -1691,7 +1692,7 @@ METHOD ActivateTablet() CLASS TSndRecInf
                                                    "nLeft"     => {|| GridWidth( 9.0, oDlg ) },;
                                                    "nWidth"    => 64,;
                                                    "nHeight"   => 64,;
-                                                   "cResName"  => "flat_check_64",;
+                                                   "cResName"  => "gc_ok_64",;
                                                    "bLClicked" => {|| oBtnAceptar:Hide(), oBtnSalir:Disable(), ::Execute(), oBtnSalir:Enable() },;
                                                    "oWnd"      => oDlg } )
 
@@ -1699,7 +1700,7 @@ METHOD ActivateTablet() CLASS TSndRecInf
                                                    "nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
                                                    "nWidth"    => 64,;
                                                    "nHeight"   => 64,;
-                                                   "cResName"  => "flat_del_64",;
+                                                   "cResName"  => "gc_error_64",;
                                                    "bLClicked" => {|| oDlg:End() },;
                                                    "oWnd"      => oDlg } )
 

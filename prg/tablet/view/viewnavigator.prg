@@ -71,7 +71,7 @@ METHOD BotonesAcciones() CLASS ViewNavigator
                            "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_add_64",;
+                           "cResName"  => "gc_plus_64",;
                            "bLClicked" => {|| if( ::oSender:Append(), ::refreshBrowse(), ) },;
                            "oWnd"      => ::oDlg } )
 
@@ -81,7 +81,7 @@ METHOD BotonesAcciones() CLASS ViewNavigator
                            "nLeft"     => {|| GridWidth( 2, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_edit_64",;
+                           "cResName"  => "gc_pencil_64",;
                            "bLClicked" => {|| if( ::oSender:Edit(), ::refreshBrowse(), ) },;
                            "oWnd"      => ::oDlg } )
 
@@ -89,7 +89,7 @@ METHOD BotonesAcciones() CLASS ViewNavigator
                            "nLeft"     => {|| GridWidth( 3.5, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_minus_64",;
+                           "cResName"  => "gc_delete_64",;
                            "bLClicked" => {|| if( ::oSender:Delete(), ::refreshBrowse(), ) },;
                            "oWnd"      => ::oDlg } )
 
@@ -99,7 +99,7 @@ METHOD BotonesAcciones() CLASS ViewNavigator
                            "nLeft"     => {|| GridWidth( 2, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "find_64",;
+                           "cResName"  => "gc_binocular_64",;
                            "bLClicked" => {|| if( ::oSender:Zoom(), ::refreshBrowse(), ) },;
                            "oWnd"      => ::oDlg } )
 
@@ -115,7 +115,7 @@ METHOD BotonesMovimientoBrowse() CLASS ViewNavigator
                            "nLeft"     => {|| GridWidth( 7.5, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_page_up_64",;
+                           "cResName"  => "gc_navigate_up2_64",;
                            "bLClicked" => {|| ::oBrowse:PageUp(), ::refreshBrowse()  },;
                            "oWnd"      => ::oDlg } )
 
@@ -123,7 +123,7 @@ METHOD BotonesMovimientoBrowse() CLASS ViewNavigator
                            "nLeft"     => {|| GridWidth( 8.5, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_up_64",;
+                           "cResName"  => "gc_navigate_up_64",;
                            "bLClicked" => {|| ::oBrowse:GoUp(), ::refreshBrowse()  },;
                            "oWnd"      => ::oDlg } )
 
@@ -131,7 +131,7 @@ METHOD BotonesMovimientoBrowse() CLASS ViewNavigator
                            "nLeft"     => {|| GridWidth( 9.5, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_down_64",;
+                           "cResName"  => "gc_navigate_down_64",;
                            "bLClicked" => {|| ::oBrowse:GoDown(), ::refreshBrowse() },;
                            "oWnd"      => ::oDlg } )
 
@@ -139,7 +139,7 @@ METHOD BotonesMovimientoBrowse() CLASS ViewNavigator
                            "nLeft"     => {|| GridWidth( 10.5, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_page_down_64",;
+                           "cResName"  => "gc_navigate_down2_64",;
                            "bLClicked" => {|| ::oBrowse:PageDown(), ::refreshBrowse() },;
                            "oWnd"      => ::oDlg } )
 

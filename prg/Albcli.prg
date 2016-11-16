@@ -554,7 +554,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
                "Dirección",;
                "Agente",;
                "Su albarán";
-      MRU      "Document_plain_user1_16";
+      MRU      "gc_document_empty_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( D():Get( "AlbCliT", nView ) );
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, D():Get( "AlbCliT", nView ), hHash ) );

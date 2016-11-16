@@ -106,6 +106,8 @@ CLASS Editable
    METHOD setFormatToPrint( cFormat )           INLINE ( ::cFormatToPrint := cFormat )
    METHOD resetFormatToPrint( cFormat )         INLINE ( ::cFormatToPrint := "" )
 
+   METHOD onPreSaveEdit()                       INLINE ( .t. )
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//

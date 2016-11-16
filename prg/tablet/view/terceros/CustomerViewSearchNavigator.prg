@@ -24,7 +24,7 @@ METHOD botonesAcciones() CLASS CustomerViewSearchNavigator
                            "nLeft"     => {|| GridWidth( 5, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_about_64",;
+                           "cResName"  => "gc_speech_balloon_answer_64",;
                            "bLClicked" => {|| ::oSender:showIncidencia() },;
                            "oWnd"      => ::oDlg } )
 
