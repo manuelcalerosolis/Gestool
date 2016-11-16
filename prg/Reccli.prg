@@ -296,7 +296,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
    DEFINE SHELL oWndBrw FROM 2, 10 TO 18, 70;
       XBROWSE ;
       TITLE    "Recibos de facturas de clientes" ;
-      MRU      "Briefcase_user1_16" ;
+      MRU      "gc_briefcase2_user_16" ;
       BITMAP   clrTopArchivos ;
       ALIAS    ( D():FacturasClientesCobros( nView ) );
       PROMPTS  "Número",;

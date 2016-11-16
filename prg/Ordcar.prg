@@ -47,7 +47,7 @@ CLASS TOrdCarga FROM TMasDet
    DATA  oBmp
    DATA  aDbfVir        AS ARRAY    INIT { { .f., "", 0, "", Ctod( "" ), "", "",  "", 0 } }
    DATA  oBrwDet
-   DATA  cMru                       INIT "Truck_blue_document_16"
+   DATA  cMru                       INIT "gc_small_truck_user_16"
    DATA  cBitmap                    INIT clrTopArchivos
 
    DATA  oFecAlb

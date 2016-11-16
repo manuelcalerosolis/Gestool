@@ -209,7 +209,7 @@ METHOD Activate() CLASS TFacAutomatica
       PROMPT   "Código",;
                "Nombre",;
                "Grupo";
-      MRU      "Document_gear_16";
+      MRU      "gc_document_text_gear_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( ::oDbf ) ;
       APPEND   ::Append() ;

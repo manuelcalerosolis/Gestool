@@ -80,7 +80,7 @@ CLASS TRemesas FROM TMasDet
    DATA  lAgruparRecibos               INIT  .f.
    DATA  lUsarVencimiento              INIT  .f.
    DATA  lUsarSEPA                     INIT  .t.
-   DATA  cMru                          INIT "Briefcase_document_16"
+   DATA  cMru                          INIT "gc_briefcase2_document_16"
    DATA  cBitmap                       INIT clrTopArchivos
    DATA  oMenu
    DATA  oGetCuentaRemesa

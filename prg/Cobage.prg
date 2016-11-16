@@ -257,7 +257,7 @@ METHOD Activate() CLASS TCobAge
       return nil
    end if
 
-   ::cMru            := "Briefcase_security_agent_16"
+   ::cMru            := "gc_briefcase2_agent_16"
 
    ::CreateShell( ::nLevel )
 

@@ -673,7 +673,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
                "Código",;
                "Nombre",;
                "Dirección";
-      MRU      "Document_money2_16";
+      MRU      "gc_document_text_money2_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( dbfAntCliT );
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, dbfAntCliT, cCodCli ) );
