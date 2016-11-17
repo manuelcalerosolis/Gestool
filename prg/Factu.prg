@@ -3060,8 +3060,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Imp. factuplus®'
    oItem:bAction        := {|| ImpFactu( "01080", oWnd ) }
    oItem:cId            := "01080"
-   oItem:cBmp           := "Import16"
-   oItem:cBmpBig        := "Import32"
+   oItem:cBmp           := "gc_inbox_into_16"
+   oItem:cBmpBig        := "gc_inbox_into_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
@@ -3071,8 +3071,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Imp. factucont®'
    oItem:bAction        := {|| ImpFacCom( "01100", oWnd ) }
    oItem:cId            := "01100"
-   oItem:cBmp           := "Import16"
-   oItem:cBmpBig        := "Import32"
+   oItem:cBmp           := "gc_inbox_into_16"
+   oItem:cBmpBig        := "gc_inbox_into_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
@@ -3082,8 +3082,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Importa tarifa de artículos desde Excel'
    oItem:bAction        := {|| TImpEstudio():New( "01102", oWnd ):Activate() }
    oItem:cId            := "01102"
-   oItem:cBmp           := "Import16"
-   oItem:cBmpBig        := "Import32"
+   oItem:cBmp           := "gc_inbox_into_16"
+   oItem:cBmpBig        := "gc_inbox_into_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
@@ -3094,8 +3094,8 @@ Function CreateAcceso( oWnd )
    oGrupo:nBigItems++
 
    oGrupo:cPrompt       := 'Extras'
-   oGrupo:cLittleBitmap := "Magic_16"
-   oGrupo:cBigBitmap    := "Magic_32"
+   oGrupo:cLittleBitmap := "gc_magic_wand_16"
+   oGrupo:cBigBitmap    := "gc_magic_wand_32"
 
    if IsProfesional()
 
@@ -3105,8 +3105,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Sincronizamos preventa'
    oItem:bAction        := {|| SincronizaPreventa():Activate( "04016", oWnd ) }
    oItem:cId            := "04016"
-   oItem:cBmp           := "pda_write_16"
-   oItem:cBmpBig        := "pda_write_32"
+   oItem:cBmp           := "gc_pda_write_16"
+   oItem:cBmpBig        := "gc_pda_write_32"
    oItem:lShow          := .f.
 
    end if
@@ -3117,8 +3117,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Actualizar precios de tarifas'
    oItem:bAction        := {|| ChgTarifa( "01081", oWnd ) }
    oItem:cId            := "01081"
-   oItem:cBmp           := "Table_replace_16"
-   oItem:cBmpBig        := "Table_replace_32"
+   oItem:cBmp           := "gc_table_selection_column_16"
+   oItem:cBmpBig        := "gc_table_selection_column_32"
    oItem:lShow          := .f.
 
    oItem                := oItemHerramientas:Add()
@@ -3127,8 +3127,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Configurar barra de botones'
    oItem:bAction        := {|| oWndBar:EditButtonBar( oWnd, "01085" ) }
    oItem:cId            := "01085"
-   oItem:cBmp           := "Magic_16"
-   oItem:cBmpBig        := "Magic_32"
+   oItem:cBmp           := "gc_magic_wand_16"
+   oItem:cBmpBig        := "gc_magic_wand_32"
    oItem:lShow          := .f.
    oItem:lHide          := .t.
 
@@ -3138,8 +3138,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Ejecuta la calculadora de windows'
    oItem:bAction        := {|| WinExec( "Calc" ) }
    oItem:cId            := "01083"
-   oItem:cBmp           := "Calculator_16"
-   oItem:cBmpBig        := "Calculator_32"
+   oItem:cBmp           := "gc_calculator_16"
+   oItem:cBmpBig        := "gc_calculator_32"
    oItem:lShow          := .f.
 
    oItem                := oItemHerramientas:Add()
@@ -3148,8 +3148,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Selecciona la fecha de trabajo'
    oItem:bAction        := {|| SelSysDate( "01084" ) }
    oItem:cId            := "01084"
-   oItem:cBmp           := "Calendar_16"
-   oItem:cBmpBig        := "Calendar_32"
+   oItem:cBmp           := "gc_calendar_16"
+   oItem:cBmpBig        := "gc_calendar_32"
    oItem:lShow          := .f.
 
    oItem                := oItemHerramientas:Add()
@@ -3158,8 +3158,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := "Conversión documentos"
    oItem:bAction        := {|| TConversionDocumentos():New():Dialog() }
    oItem:cId            := "01038"
-   oItem:cBmp           := "Currency_Euro_16"
-   oItem:cBmpBig        := "Currency_Euro_32"
+   oItem:cBmp           := "gc_currency_euro_16"
+   oItem:cBmpBig        := "gc_currency_euro_32"
    oItem:lShow          := .f.
 
    // Reporting----------------------------------------------------------------
@@ -3173,8 +3173,8 @@ Function CreateAcceso( oWnd )
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 1
    oGrupo:cPrompt       := 'Informes'
-   oGrupo:cLittleBitmap := "Lifebelt_16"
-   oGrupo:cBigBitmap    := "Lifebelt_32"
+   oGrupo:cLittleBitmap := "gc_lifebelt_16"
+   oGrupo:cBigBitmap    := "gc_lifebelt_32"
 
    oItem                := oItemReporting:Add()
    oItem:oGroup         := oGrupo
@@ -3189,8 +3189,8 @@ Function CreateAcceso( oWnd )
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 4
    oGrupo:cPrompt       := 'Informes personalizables'
-   oGrupo:cLittleBitmap := "Lifebelt_16"
-   oGrupo:cBigBitmap    := "Lifebelt_32"
+   oGrupo:cLittleBitmap := "gc_lifebelt_16"
+   oGrupo:cBigBitmap    := "gc_lifebelt_32"
 
    oItem                := oItemReporting:Add()
    oItem:oGroup         := oGrupo
@@ -3237,8 +3237,8 @@ Function CreateAcceso( oWnd )
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 1
    oGrupo:cPrompt       := 'Auditor'
-   oGrupo:cLittleBitmap := "Lifebelt_16"
-   oGrupo:cBigBitmap    := "Lifebelt_32"
+   oGrupo:cLittleBitmap := "gc_lifebelt_16"
+   oGrupo:cBigBitmap    := "gc_lifebelt_32"
 
    oItem                := oItemReporting:Add()
    oItem:oGroup         := oGrupo
@@ -3256,16 +3256,16 @@ Function CreateAcceso( oWnd )
 
    oItemAyudas          := oAcceso:Add()
    oItemAyudas:cPrompt  := 'AYUDAS'
-   oItemAyudas:cBmp     := "Folder16"
-   oItemAyudas:cBmpBig  := "Folder_32"
+   oItemAyudas:cBmp     := "gc_lifebelt_16"
+   oItemAyudas:cBmpBig  := "gc_lifebelt_32"
    oItemAyudas:lShow    := .t.
 
    oGrupo               := TGrupoAcceso()
 
    oGrupo:nBigItems     := 4
    oGrupo:cPrompt       := 'Ayudas'
-   oGrupo:cLittleBitmap := "Lifebelt_16"
-   oGrupo:cBigBitmap    := "Lifebelt_32"
+   oGrupo:cLittleBitmap := "gc_lifebelt_16"
+   oGrupo:cBigBitmap    := "gc_lifebelt_32"
 
    oItem                := oItemAyudas:Add()
    oItem:oGroup         := oGrupo
@@ -3273,8 +3273,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Ayuda de la aplicación'
    oItem:bAction        := {|| goWeb( __GSTHELP__ ) }
    oItem:cId            := "01093"
-   oItem:cBmp           := "Lifebelt_16"
-   oItem:cBmpBig        := "Lifebelt_32"
+   oItem:cBmp           := "gc_lifebelt_16"
+   oItem:cBmpBig        := "gc_lifebelt_32"
    oItem:lShow          := .f.
 
    oItem                := oItemAyudas:Add()
@@ -3283,8 +3283,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Visitar web'
    oItem:bAction        := {|| goWeb( __GSTWEB__ ) }
    oItem:cId            := "01094"
-   oItem:cBmp           := "SndInt16"
-   oItem:cBmpBig        := "SndInt32"
+   oItem:cBmp           := "gc_earth_16"
+   oItem:cBmpBig        := "gc_earth_32"
    oItem:lShow          := .f.
 
    oItem                := oItemAyudas:Add()
@@ -3293,8 +3293,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Datos sobre el autor'
    oItem:bAction        := {|| About() }
    oItem:cId            := "01096"
-   oItem:cBmp           := "Help_16"
-   oItem:cBmpBig        := "Help_32"
+   oItem:cBmp           := "gc_question_16"
+   oItem:cBmpBig        := "gc_question_32"
    oItem:lShow          := .f.
 
    oItem                := oItemAyudas:Add()
@@ -3303,8 +3303,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Solicitar asistencia remota'
    oItem:bAction        := {|| RunAsistenciaRemota() }
    oItem:cId            := "01095"
-   oItem:cBmp           := "Doctor_16"
-   oItem:cBmpBig        := "Doctor_32"
+   oItem:cBmp           := "gc_user_headset_16"
+   oItem:cBmpBig        := "gc_user_headset_32"
    oItem:lShow          := .f.
 
 Return ( oAcceso )
