@@ -441,6 +441,7 @@ Product.prg                            \
 Payment.prg                            \
 Store.prg                              \
 DocumentSalesViewSearchNavigator.prg   \
+ReceiptDocumentSalesViewSearchNavigator.prg  \
 CustomerSalesViewSearchNavigator.prg   \
 CustomerViewSearchNavigator.prg        \
 ProductViewSearchNavigator.prg         \
@@ -891,6 +892,7 @@ LinesDeliveryNoteCustomer.obj          				\
 LinesInvoiceCustomer.obj               				\
 ViewSearchNavigator.obj                				\
 DocumentSalesViewSearchNavigator.obj   				\
+ReceiptDocumentSalesViewSearchNavigator.obj        \
 CustomerSalesViewSearchNavigator.obj   				\
 CustomerViewSearchNavigator.obj        				\
 ProductViewSearchNavigator.obj         				\
@@ -1328,6 +1330,7 @@ $(OBJ)\LinesDeliveryNoteCustomer.obj         +
 $(OBJ)\LinesInvoiceCustomer.obj              +
 $(OBJ)\ViewSearchNavigator.obj               +
 $(OBJ)\DocumentSalesViewSearchNavigator.obj  +
+$(OBJ)\ReceiptDocumentSalesViewSearchNavigator.obj    +
 $(OBJ)\CustomerSalesViewSearchNavigator.obj  +
 $(OBJ)\CustomerViewSearchNavigator.obj       +
 $(OBJ)\ProductViewSearchNavigator.obj        +
