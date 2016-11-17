@@ -24,6 +24,7 @@ METHOD setColumns() CLASS ReceiptDocumentSalesViewSearchNavigator
    ( ::getDataTable() )->( Browse() )
 
    MsgInfo( ::getField( "Serie" ) )
+   MsgInfo( ::getField( "Numero" ) )
 
    ::setBrowseConfigurationName( "grid_recibos" )
 

@@ -3080,6 +3080,8 @@ METHOD BuildEmpresa()
    oDataTable:bCreateIndex := {| cPath | rxRecCli( cPath ) }
    oDataTable:bCreateFile  := {| cPath | mkRecCli( cPath ) }
    oDataTable:bSyncFile    := {|| SynRecCli( cPatEmp() ) }
+   oDatatable:aDictionary  := hashDictionary( aItmRecCli() )
+   //oDatatable:aDefaultValue:= hashDefaultValue( aItmRecCli() )
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable():New( "FacCliG" )
