@@ -3008,8 +3008,8 @@ Function CreateAcceso( oWnd )
    oGrupo:nBigItems     := 1
    oGrupo:nLittleItems  := 2
    oGrupo:cPrompt       := 'Exportaciones e importaciones'
-   oGrupo:cLittleBitmap := "Satellite_dish_16"
-   oGrupo:cBigBitmap    := "Satellite_dish_32"
+   oGrupo:cLittleBitmap := "gc_satellite_dish2_16"
+   oGrupo:cBigBitmap    := "gc_satellite_dish2_32"
 
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo
@@ -3017,8 +3017,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Envío y recepción de información a las delegaciones'
    oItem:bAction        := {|| TSndRecInf():New( "01078", oWnd ):Activate() }
    oItem:cId            := "01078"
-   oItem:cBmp           := "Satellite_dish_16"
-   oItem:cBmpBig        := "Satellite_dish_32"
+   oItem:cBmp           := "gc_satellite_dish2_16"
+   oItem:cBmpBig        := "gc_satellite_dish2_32"
    oItem:lShow          := .f.
 
    oItem                := oItemHerramientas:Add()
@@ -3027,8 +3027,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Exportar e importar datos a terminales'
    oItem:bAction        := {|| TEdm():Activate( "01079", oWnd ) }
    oItem:cId            := "01079"
-   oItem:cBmp           := "Pda_16"
-   oItem:cBmpBig        := "Pda_32"
+   oItem:cBmp           := "gc_pda_16"
+   oItem:cBmpBig        := "gc_pda_16"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
@@ -3038,8 +3038,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Exp. ventas'
    oItem:bAction        := {|| TExportaTarifas():New( "01111", oWnd ):Play() }
    oItem:cId            := "01113"
-   oItem:cBmp           := "Export16"
-   oItem:cBmpBig        := "Export32"
+   oItem:cBmp           := "gc_inbox_out_16"
+   oItem:cBmpBig        := "gc_inbox_out_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
@@ -3049,8 +3049,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Exp. compras'
    oItem:bAction        := {|| TExportaCompras():New( "01112", oWnd ):Play() }
    oItem:cId            := "01112"
-   oItem:cBmp           := "Export16"
-   oItem:cBmpBig        := "Export32"
+   oItem:cBmp           := "gc_inbox_out_16"
+   oItem:cBmpBig        := "gc_inbox_out_16"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
