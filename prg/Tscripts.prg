@@ -6,7 +6,7 @@
 
 CLASS TScripts FROM TMant
 
-   DATA     cMru           INIT "text_code_colored_16"
+   DATA     cMru           INIT "gc_code_line_16"
    DATA     cBitmap        INIT "WebTopBlack"
    DATA     oBtnEjecutar
    DATA     oBtnCompilar

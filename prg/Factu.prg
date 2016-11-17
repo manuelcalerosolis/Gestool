@@ -2873,8 +2873,8 @@ Function CreateAcceso( oWnd )
    end case
 
    oGrupo:cPrompt       := 'Herramientas'
-   oGrupo:cLittleBitmap := "Recycle_16"
-   oGrupo:cBigBitmap    := "Recycle_32"
+   oGrupo:cLittleBitmap := "gc_recycle_16"
+   oGrupo:cBigBitmap    := "gc_recycle_32"
 
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo
@@ -2923,8 +2923,8 @@ Function CreateAcceso( oWnd )
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 5
    oGrupo:cPrompt       := 'Útiles'
-   oGrupo:cLittleBitmap := "Note_16"
-   oGrupo:cBigBitmap    := "Note_32"
+   oGrupo:cLittleBitmap := "gc_notebook2_16"
+   oGrupo:cBigBitmap    := "gc_notebook2_32"
 
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo
@@ -2942,8 +2942,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los campos extra'
    oItem:bAction        := {|| CamposExtra( "01127", oWnd ) }
    oItem:cId            := "01127"
-   oItem:cBmp           := "form_green_add_16"
-   oItem:cBmpBig        := "form_green_add_32"
+   oItem:cBmp           := "gc_form_plus2_16"
+   oItem:cBmpBig        := "gc_form_plus2_32"
    oItem:lShow          := .f.
 
    oItem                := oItemHerramientas:Add()
@@ -2952,8 +2952,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a la agenda del usuario'
    oItem:bAction        := {|| TNotas():New( cPatDat(), , oWnd, "01075" ):Activate() }
    oItem:cId            := "01075"
-   oItem:cBmp           := "Note_16"
-   oItem:cBmpBig        := "Note_32"
+   oItem:cBmp           := "gc_notebook2_16"
+   oItem:cBmpBig        := "gc_notebook2_32"
    oItem:lShow          := .f.
 
    oItem                := oItemHerramientas:Add()
@@ -2962,8 +2962,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso al listín telefónico'
    oItem:bAction        := {|| TAgenda():New( cPatDat(), , oWnd, "01076" ):Activate() }
    oItem:cId            := "01076"
-   oItem:cBmp           := "Telephone_16"
-   oItem:cBmpBig        := "Telephone_32"
+   oItem:cBmp           := "gc_telephone_16"
+   oItem:cBmpBig        := "gc_telephone_32"
    oItem:lShow          := .f.
 
    oItem                := oItemHerramientas:Add()
@@ -2972,15 +2972,15 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Ejecutar scripts'
    oItem:bAction        := {|| TScripts():New( cPatEmp(), , oWnd, "01117" ):Activate() }
    oItem:cId            := "01117"
-   oItem:cBmp           := "Text_code_colored_16"
-   oItem:cBmpBig        := "Text_code_colored_32"
+   oItem:cBmp           := "gc_code_line_16"
+   oItem:cBmpBig        := "gc_code_line_32"
    oItem:lShow          := .f.
 
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 2
    oGrupo:cPrompt       := 'Archivos'
-   oGrupo:cLittleBitmap := "Shield_16"
-   oGrupo:cBigBitmap    := "Shield_32"
+   oGrupo:cLittleBitmap := "gc_shield_16"
+   oGrupo:cBigBitmap    := "gc_shield_32"
 
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo
@@ -2988,8 +2988,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Regenerar índices'
    oItem:bAction        := {|| Reindexa() }
    oItem:cId            := "01067"
-   oItem:cBmp           := "Recycle_16"
-   oItem:cBmpBig        := "Recycle_32"
+   oItem:cBmp           := "gc_recycle_16"
+   oItem:cBmpBig        := "gc_recycle_32"
    oItem:lShow          := .t.
 
    oItem                := oItemHerramientas:Add()
@@ -2998,8 +2998,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Copia seguridad'
    oItem:bAction        := {|| TBackup():New( "01077", oWnd ) }
    oItem:cId            := "01077"
-   oItem:cBmp           := "Shield_16"
-   oItem:cBmpBig        := "Shield_32"
+   oItem:cBmp           := "gc_shield_16"
+   oItem:cBmpBig        := "gc_shield_32"
    oItem:lShow          := .t.
 
    if isProfesional()

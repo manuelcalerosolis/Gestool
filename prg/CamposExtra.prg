@@ -11,7 +11,7 @@ static oCamposExtra
     
 CLASS TCamposExtra FROM TMant
 
-   DATA cMru               INIT  "form_green_add_16"
+   DATA cMru               INIT  "gc_form_plus2_16"
    DATA cBitmap            INIT  Rgb( 128, 57, 123 )
 
    DATA oDlg
