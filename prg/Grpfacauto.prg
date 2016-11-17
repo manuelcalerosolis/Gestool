@@ -6,7 +6,7 @@
 
 CLASS TGrpFacturasAutomaticas FROM TMant
 
-   DATA  cMru                                   INIT "Folder_gear_16"
+   DATA  cMru                                   INIT "gc_folder_gear_16"
 
    DATA  cParentSelect                          INIT Space( 4 )
 

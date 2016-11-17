@@ -2480,8 +2480,8 @@ Function CreateAcceso( oWnd )
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := If( IsProfesional(), 7, 4 )
    oGrupo:cPrompt       := 'Clientes'
-   oGrupo:cLittleBitmap := "User1_16"
-   oGrupo:cBigBitmap    := "User1_32"
+   oGrupo:cLittleBitmap := "gc_user_16"
+   oGrupo:cBigBitmap    := "gc_user_32"
 
    oItem                := oItemVentas:Add()
    oItem:oGroup         := oGrupo
@@ -2519,8 +2519,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los agentes'
    oItem:bAction        := {|| Agentes( "01033", oWnd ) }
    oItem:cId            := "01033"
-   oItem:cBmp           := "Security_Agent_16"
-   oItem:cBmpBig        := "Security_Agent_32"
+   oItem:cBmp           := "gc_businessman2_16"
+   oItem:cBmpBig        := "gc_businessman2_32"
    oItem:lShow          := .f.
 
    if IsProfesional()
@@ -2531,8 +2531,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso al programa de fidelización'
    oItem:bAction        := {|| StartTFideliza() }
    oItem:cId            := "04006"
-   oItem:cBmp           := "Cli"
-   oItem:cBmpBig        := "Id_Card_32"
+   oItem:cBmp           := "gc_id_card_16"
+   oItem:cBmpBig        := "gc_id_card_32"
    oItem:lShow          := .f.
 
    oItem                := oItemVentas:Add()
@@ -2541,8 +2541,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a grupos de plantillas automáticas'
    oItem:bAction        := {|| TGrpFacturasAutomaticas():New( cPatCli(), oWnd, "04018" ):Activate() }
    oItem:cId            := "04018"
-   oItem:cBmp           := "folder_gear_16"
-   oItem:cBmpBig        := "folder_gear_32"
+   oItem:cBmp           := "gc_folder_gear_16"
+   oItem:cBmpBig        := "gc_folder_gear_32"
    oItem:lShow          := .f.
 
    oItem                := oItemVentas:Add()
@@ -2551,8 +2551,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a plantillas de ventas automáticas'
    oItem:bAction        := {|| StartTFacAutomatica() }
    oItem:cId            := "04017"
-   oItem:cBmp           := "document_gear_16"
-   oItem:cBmpBig        := "document_gear_32" 
+   oItem:cBmp           := "gc_document_text_gear_16"
+   oItem:cBmpBig        := "gc_document_text_gear_32" 
    oItem:lShow          := .f.
 
    end if
@@ -2562,8 +2562,8 @@ Function CreateAcceso( oWnd )
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 8
    oGrupo:cPrompt       := 'Ventas'
-   oGrupo:cLittleBitmap := "Document_user1_16"
-   oGrupo:cBigBitmap    := "Document_user1_32"
+   oGrupo:cLittleBitmap := "gc_notebook_user_16"
+   oGrupo:cBigBitmap    := "gc_notebook_user_32"
 
    if IsStandard()
 
@@ -2573,8 +2573,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso al S.A.T. de clientes'
    oItem:bAction        := {|| SatCli( "01098", oWnd ) }
    oItem:cId            := "01098"
-   oItem:cBmp           := "Power-drill_user1_16"
-   oItem:cBmpBig        := "Power-drill_user1_32"
+   oItem:cBmp           := "gc_power_drill_sat_user_16"
+   oItem:cBmpBig        := "gc_power_drill_sat_user_32"
    oItem:lShow          := .f.
 
    oItem                := oItemVentas:Add()
@@ -2583,8 +2583,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los presupuestos de clientes'
    oItem:bAction        := {|| PreCli( "01055", oWnd ) }
    oItem:cId            := "01055"
-   oItem:cBmp           := "Notebook_user1_16"
-   oItem:cBmpBig        := "Notebook_user1_32"
+   oItem:cBmp           := "gc_notebook_user_16"
+   oItem:cBmpBig        := "gc_notebook_user_32"
    oItem:lShow          := .f.
 
    oItem                := oItemVentas:Add()
@@ -2593,8 +2593,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los pedidos de clientes'
    oItem:bAction        := {|| PedCli( "01056", oWnd ) }
    oItem:cId            := "01056"
-   oItem:cBmp           := "Clipboard_empty_user1_16"
-   oItem:cBmpBig        := "Clipboard_empty_user1_32"
+   oItem:cBmp           := "gc_clipboard_empty_user_16"
+   oItem:cBmpBig        := "gc_clipboard_empty_user_32"
    oItem:lShow          := .f.
 
    end if
@@ -2615,8 +2615,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a las facturas de clientes'
    oItem:bAction        := {|| FactCli( "01058", oWnd ) }
    oItem:cId            := "01058"
-   oItem:cBmp           := "Document_user1_16"
-   oItem:cBmpBig        := "Document_user1_32"
+   oItem:cBmp           := "gc_document_text_user_16"
+   oItem:cBmpBig        := "gc_document_text_user_32"
    oItem:lShow          := .t.
 
    if IsStandard()
@@ -2627,8 +2627,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a las facturas de anticipos de clientes'
    oItem:bAction        := {|| FacAntCli( "01181", oWnd ) }
    oItem:cId            := "01181"
-   oItem:cBmp           := "Document_money2_16"
-   oItem:cBmpBig        := "Document_money2_32"
+   oItem:cBmp           := "gc_document_text_money2_16"
+   oItem:cBmpBig        := "gc_document_text_money2_32"
    oItem:lShow          := .f.
 
    oItem                := oItemVentas:Add()
@@ -2637,8 +2637,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a las facturas rectificativas de clientes'
    oItem:bAction        := {|| FacRec( "01182", oWnd ) }
    oItem:cId            := "01182"
-   oItem:cBmp           := "Document_Delete_16"
-   oItem:cBmpBig        := "Document_Delete_32"
+   oItem:cBmp           := "gc_document_text_delete_16"
+   oItem:cBmpBig        := "gc_document_text_delete_32"
    oItem:lShow          := .f.
 
    oItem                := oItemVentas:Add()
@@ -2647,15 +2647,15 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a las ordenes de carga'
    oItem:bAction        := {|| TOrdCarga():New( cPatEmp(), "01062", oWnd ):Activate() }
    oItem:cId            := "01062"
-   oItem:cBmp           := "Truck_blue_document_16"
-   oItem:cBmpBig        := "Truck_blue_document_32"
+   oItem:cBmp           := "gc_small_truck_user_16"
+   oItem:cBmpBig        := "gc_small_truck_user_32"
    oItem:lShow          := .f.
 
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 3
    oGrupo:cPrompt       := 'Cobros'
-   oGrupo:cLittleBitmap := "Briefcase_user1_16"
-   oGrupo:cBigBitmap    := "Briefcase_user1_32"
+   oGrupo:cLittleBitmap := "gc_briefcase2_user_16"
+   oGrupo:cBigBitmap    := "gc_briefcase2_user_32"
 
    oItem                := oItemVentas:Add()
    oItem:oGroup         := oGrupo
@@ -2663,8 +2663,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los recibos de clientes'
    oItem:bAction        := {|| RecCli( "01059", oWnd ) }
    oItem:cId            := "01059"
-   oItem:cBmp           := "Briefcase_user1_16"
-   oItem:cBmpBig        := "Briefcase_user1_32"
+   oItem:cBmp           := "gc_briefcase2_user_16"
+   oItem:cBmpBig        := "gc_briefcase2_user_32"
    oItem:lShow          := .t.
 
    oItem                := oItemVentas:Add()
@@ -2673,8 +2673,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a las remesas bancarias'
    oItem:bAction        := {|| TRemesas():New( cPatEmp(), "01060", oWnd ):Activate() }
    oItem:cId            := "01060"
-   oItem:cBmp           := "Briefcase_document_16"
-   oItem:cBmpBig        := "Briefcase_document_32"
+   oItem:cBmp           := "gc_briefcase2_document_16"
+   oItem:cBmpBig        := "gc_briefcase2_document_32"
    oItem:lShow          := .f.
 
    oItem                := oItemVentas:Add()
@@ -2683,8 +2683,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a las liquidaciones de agentes'
    oItem:bAction        := {|| StartTCobAge() }
    oItem:cId            := "01061"
-   oItem:cBmp           := "Briefcase_security_agent_16"
-   oItem:cBmpBig        := "Briefcase_security_agent_32"
+   oItem:cBmp           := "gc_briefcase2_agent_16"
+   oItem:cBmpBig        := "gc_briefcase2_agent_32"
    oItem:lShow          := .t.
 
    end if
@@ -2694,8 +2694,8 @@ Function CreateAcceso( oWnd )
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 2
    oGrupo:cPrompt       := 'Comercio electrónico'
-   oGrupo:cLittleBitmap := "ComercioElectronico_16"
-   oGrupo:cBigBitmap    := "ComercioElectronico_32"
+   oGrupo:cLittleBitmap := "gc_earth_money_16"
+   oGrupo:cBigBitmap    := "gc_earth_money_32"
 
    oItem                := oItemVentas:Add()
    oItem:oGroup         := oGrupo
@@ -2703,8 +2703,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Comercio electrónico'
    oItem:bAction        := {|| TComercio():New( "01108", oWnd ):dialogActivate() }
    oItem:cId            := "01108"
-   oItem:cBmp           := "ComercioElectronico_16"
-   oItem:cBmpBig        := "ComercioElectronico_32"
+   oItem:cBmp           := "gc_earth_money_16"
+   oItem:cBmpBig        := "gc_earth_money_32"
    oItem:lShow          := .f.
 
    oItem                := oItemVentas:Add()
@@ -2713,8 +2713,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Pedidos de clientes recibidos de comercio electrónico'
    oItem:bAction        := {|| PedCli( "01056", oWnd, , , , .t. ) }
    oItem:cId            := "01109"
-   oItem:cBmp           := "Clipboard_Empty_Earth_16"
-   oItem:cBmpBig        := "Clipboard_Empty_Earth_32"
+   oItem:cBmp           := "gc_clipboard_empty_earth_16"
+   oItem:cBmpBig        := "gc_clipboard_empty_earth_32"
    oItem:lShow          := .f.
 
    end if
@@ -4911,7 +4911,7 @@ Function MainTablet()
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "gc_briefcase2_user_64",;
-                           "bLClicked" => {|| Msginfo( "Recibos" ) },;
+                           "bLClicked" => {|| ReceiptInvoiceCustomer():New():play() },;
                            "oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 15 ) },;
@@ -4923,7 +4923,7 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| Msginfo( "Recibos" ) } } )
+                           "bAction"   => {|| ReceiptInvoiceCustomer():New():play() } } )
 
    //----------------Envio y recepcion
 

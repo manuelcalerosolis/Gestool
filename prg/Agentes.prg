@@ -108,7 +108,7 @@ FUNCTION Agentes( oMenuItem, oWnd )
       PROMPT   "Código",;
 					"Apellidos" ,;
 					"Nombre";
-      MRU      "Security_Agent_16";
+      MRU      "gc_businessman2_16";
       ALIAS    ( dbfAge ) ;
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfAge ) );
       DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdit, dbfAge ) );

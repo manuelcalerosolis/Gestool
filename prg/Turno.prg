@@ -716,9 +716,9 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem )
 
    ::cMru                     := "Stopwatch_16"
 
-   if !empty( cPatEmp() )
-      ::cIniFile              := cPatEmp() + "Empresa.Ini"
-      ::oIniArqueo            := TIni():New( cPatEmp() + "Empresa.Ini" )
+   if !empty( cFullPathEmpresa() )
+      ::cIniFile              := cFullPathEmpresa() + "Empresa.Ini"
+      ::oIniArqueo            := TIni():New( cFullPathEmpresa() + "Empresa.Ini" )
    end if 
 
    ::oTotales                 := TTotalTurno():New( Self )

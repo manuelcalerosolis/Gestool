@@ -1512,7 +1512,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
                "Sesión",;
                "Agente",;
                "Pago";
-      MRU      "Document_delete_16";
+      MRU      "gc_document_text_delete_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( D():FacturasRectificativas( nView ) );
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, D():FacturasRectificativas( nView ), cCodCli, cCodArt, aNumDoc ) ) ;

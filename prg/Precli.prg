@@ -1302,7 +1302,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
                "Provincia",;
                "Dirección",;
                "Agente";
-      MRU      "Notebook_user1_16";
+      MRU      "gc_notebook_user_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( D():PresupuestosClientes( nView ) );
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, D():PresupuestosClientes( nView ), cCodCli, cCodArt ) );

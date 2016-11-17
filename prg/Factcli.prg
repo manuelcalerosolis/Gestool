@@ -655,7 +655,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
                "Pago",;
                "Envio",;
                "Su albarán";
-      MRU      "Document_user1_16";
+      MRU      "gc_document_text_user_16";
       BITMAP   clrTopVentas ;
       ALIAS    ( D():FacturasClientes( nView ) );
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, D():FacturasClientes( nView ), hHash ) );

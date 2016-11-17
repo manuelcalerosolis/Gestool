@@ -1209,7 +1209,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
                "Operario",;
                "Estado artículo",;
                "Situación";
-      MRU      "Power-drill_user1_16";
+      MRU      "gc_power_drill_sat_user_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( D():SatClientes( nView ) );
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, D():SatClientes( nView ), cCodCli, cCodArt ) );
