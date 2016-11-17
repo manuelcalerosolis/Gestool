@@ -134,7 +134,6 @@ METHOD Resource( nMode )
       REDEFINE GET oGet VAR ::oDbf:CCODPAI UPDATE;
 			ID 		100 ;
          WHEN     ( nMode == APPD_MODE ) ;
-         VALID    ( RJustObj( oGet, "0" ), .t. ) ;
 			PICTURE 	"@!" ;
 			OF 		oDlg
 

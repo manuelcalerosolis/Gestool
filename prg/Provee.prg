@@ -828,12 +828,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_CCODPAI] VAR aTmp[_CCODPAI] ;
+      REDEFINE GET aGet[ _CCODPAI ] ;
+         VAR      aTmp[ _CCODPAI ] ;
          ID       171 ;
-         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( oPais:Existe( aGet[_CCODPAI], oSay[ 2 ], "cNomPai", .t., .t., "0" ) );
-         ON HELP  ( oPais:Buscar( aGet[_CCODPAI] ) ) ;
+         VALID    ( oPais:GetPais( aTmp[ _CCODPAI ], oSay[ 2 ], oBmpDiv ) ) ;
+         ON HELP  ( oPais:Buscar( aGet[ _CCODPAI ] ) ) ;
          BITMAP   "LUPA" ;
          OF       oFld:aDialogs[1]
 
@@ -3039,7 +3039,7 @@ Static Function EdtBnc( aTmp, aGet, dbfTmpBnc, oBrw, bWhen, bValid, nMode, cCodP
          ID       300 ;
          COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( oPais:Existe( aGet[ ( dbfTmpBnc )->( FieldPos( "cPaiBnc" ) ) ], oSayPai, "cNomPai", .t., .t., "0" ) );
+         VALID    ( oPais:GetPais( aTmp[ ( dbfTmpBnc )->( FieldPos( "cPaiBnc" ) ) ], oSayPai, oBmpDiv ) ) ;
          ON HELP  ( oPais:Buscar( aGet[ ( dbfTmpBnc )->( FieldPos( "cPaiBnc" ) ) ] ) ) ;
          BITMAP   "LUPA" ;
          OF       oDlg
