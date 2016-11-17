@@ -2789,8 +2789,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los comentarios de los artículos'
    oItem:bAction        := {|| TOrdenComanda():New( cPatArt(), oWnd, "01093" ):Activate() }
    oItem:cId            := "01093"
-   oItem:cBmp           := "Sort_az_descending_alpha_16"
-   oItem:cBmpBig        := "Sort_az_descending_32"
+   oItem:cBmp           := "gc_sort_az_descending_16"
+   oItem:cBmpBig        := "gc_sort_az_descending_32"
    oItem:lShow          := .f.
 
    oItem                := oItemTPV:Add()
@@ -2799,16 +2799,16 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los menús'
    oItem:bAction        := {|| TpvMenu():New( cPatEmp(), oWnd ):Activate() }
    oItem:cId            := "01200"
-   oItem:cBmp           := "Clipboard_empty_16"
-   oItem:cBmpBig        := "Clipboard_empty_32"
+   oItem:cBmp           := "gc_clipboard_empty_16"
+   oItem:cBmpBig        := "gc_clipboard_empty_32"
    oItem:lShow          := .f.
 
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 1
    oGrupo:nLittleItems  := 1
    oGrupo:cPrompt       := 'Útiles'
-   oGrupo:cLittleBitmap := "Window_edit_16"
-   oGrupo:cBigBitmap    := "Window_edit_32"
+   oGrupo:cLittleBitmap := "gc_window_pencil_16"
+   oGrupo:cBigBitmap    := "gc_window_pencil_32"
 
    oItem                := oItemTPV:Add()
    oItem:oGroup         := oGrupo
@@ -2816,8 +2816,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Capturas T.P.V.'
    oItem:bAction        := {|| TCaptura():New( cPatDat(), oWnd, "01083" ):Activate() }
    oItem:cId            := "01083"
-   oItem:cBmp           := "Window_edit_16"
-   oItem:cBmpBig        := "Window_edit_32"
+   oItem:cBmp           := "gc_window_pencil_16"
+   oItem:cBmpBig        := "gc_window_pencil_32"
    oItem:lShow          := .f.
 
    oItem                := oItemTPV:Add()
@@ -2826,8 +2826,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Balanzas'
    oItem:bAction        := {|| ConfImpTiket( "01090", oWnd ) }
    oItem:cId            := "01090"
-   oItem:cBmp           := "Gauge_16"
-   oItem:cBmpBig        := "Gauge_32"
+   oItem:cBmp           := "gc_balance_16"
+   oItem:cBmpBig        := "gc_balance_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
@@ -2837,8 +2837,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Configurar visor'
    oItem:bAction        := {|| ConfVisor( "01092", oWnd ) }
    oItem:cId            := "01092"
-   oItem:cBmp           := "Console_network_16"
-   oItem:cBmpBig        := "Console_network_32"
+   oItem:cBmp           := "gc_odometer_screw_16"
+   oItem:cBmpBig        := "gc_odometer_screw_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
@@ -2848,8 +2848,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Cajón portamonedas'
    oItem:bAction        := {|| ConfCajPorta( "01091", oWnd ) }
    oItem:cId            := "01091"
-   oItem:cBmp           := "Harddisk_16"
-   oItem:cBmpBig        := "Harddisk_32"
+   oItem:cBmp           := "gc_modem_screw_16"
+   oItem:cBmpBig        := "gc_modem_screw_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 

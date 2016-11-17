@@ -95,7 +95,7 @@ FUNCTION ConfVisor ( oMenuItem, oWnd )
      TITLE    "Configurar visor" ;
      PROMPT   "Código",;
               "Descripción";
-     MRU      "Console_network_16";
+     MRU      "gc_odometer_screw_16";
      BITMAP   "WebTopGreen" ;
      ALIAS    ( dbfVisor ) ;
      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfVisor ) ) ;
