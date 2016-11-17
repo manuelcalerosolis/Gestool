@@ -2882,8 +2882,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los usuarios del programa'
    oItem:bAction        := {|| Usuarios( "01074", oWnd ) }
    oItem:cId            := "01074"
-   oItem:cBmp           := "Businessmen_16"
-   oItem:cBmpBig        := "Businessmen_32"
+   oItem:cBmp           := "gc_businesspeople_16"
+   oItem:cBmpBig        := "gc_businesspeople_32"
    oItem:lShow          := .f.
 
    oItem                := oItemHerramientas:Add()
@@ -2892,8 +2892,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Configurar documentos y etiquetas'
    oItem:bAction        := {|| CfgDocs( "01068", oWnd ) }
    oItem:cId            := "01068"
-   oItem:cBmp           := "Document_edit_16"
-   oItem:cBmpBig        := "Document_edit_32"
+   oItem:cBmp           := "gc_document_text_screw_16"
+   oItem:cBmpBig        := "gc_document_text_screw_32"
    oItem:lShow          := .f.
 
    oItem                := oItemHerramientas:Add()
@@ -2902,8 +2902,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Especificar impresora por defecto'
    oItem:bAction        := {|| PrinterSetup() }
    oItem:cId            := "01082"
-   oItem:cBmp           := "Printer_preferences_16"
-   oItem:cBmpBig        := "Printer_preferences_32"
+   oItem:cBmp           := "gc_printer2_check_16"
+   oItem:cBmpBig        := "gc_printer2_check_32"
    oItem:lShow          := .f.
 
    if IsProfesional()
@@ -2914,8 +2914,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Centro de contabilización'
    oItem:bAction        := {|| TTurno():Build( cPatEmp(), cDriver(), oWnd, "01086" ) }
    oItem:cId            := "01086"
-   oItem:cBmp           := "BmpConta16"
-   oItem:cBmpBig        := "BmpConta32"
+   oItem:cBmp           := "gc_folders2_16"
+   oItem:cBmpBig        := "gc_folders2_32"
    oItem:lShow          := .f.
 
    end if
@@ -2932,8 +2932,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Cambiar códigos'
    oItem:bAction        := {|| TChgCode():New( "01073", oWnd ):Resource() }
    oItem:cId            := "01073"
-   oItem:cBmp           := "Replace_16"
-   oItem:cBmpBig        := "Replace_32"
+   oItem:cBmp           := "gc_find_replace_16"
+   oItem:cBmpBig        := "gc_find_replace_32"
    oItem:lShow          := .f.
 
    oItem                := oItemHerramientas:Add()
