@@ -1210,7 +1210,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
                "Sesión",;
                "Almacén",;
                "Delegación" ;
-      MRU      "Cashier_user1_16";
+      MRU      "gc_cash_register_user_16";
       BITMAP   clrTopTPV ;
       ALIAS    ( D():Tikets( nView ) );
       APPEND   ( TpvAppRec( oWndBrw:oBrw, bEditT, D():Tikets( nView ), oWnd, cCodCli, cCodArt, aNumDoc ) );

@@ -2730,8 +2730,8 @@ Function CreateAcceso( oWnd )
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 7
    oGrupo:cPrompt       := 'T.P.V.'
-   oGrupo:cLittleBitmap := "Cashier_user1_16"
-   oGrupo:cBigBitmap    := "Cashier_user1_32"
+   oGrupo:cLittleBitmap := "gc_cash_register_user_16"
+   oGrupo:cBigBitmap    := "gc_cash_register_user_32"
 
    oItem                := oItemTpv:Add()
    oItem:oGroup         := oGrupo
@@ -2739,8 +2739,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a terminal punto de venta'
    oItem:bAction        := {|| FrontTpv( "01063", oWnd ) }
    oItem:cId            := "01063"
-   oItem:cBmp           := "Cashier_user1_16"
-   oItem:cBmpBig        := "Cashier_user1_32"
+   oItem:cBmp           := "gc_cash_register_user_16"
+   oItem:cBmpBig        := "gc_cash_register_user_32"
    oItem:lShow          := .t.
 
    oItem                := oItemTpv:Add()
@@ -2749,8 +2749,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a terminal punto de venta táctil'
    oItem:bAction        := {|| TpvTactil():New():Activate() } // TactilTpv( "01064", oWnd ) }  // {|| TpvTactil():New( oWnd, "01116" ):Activate() } //
    oItem:cId            := "01064"
-   oItem:cBmp           := "Cashier_hand_point_16"
-   oItem:cBmpBig        := "Cashier_hand_point_32"
+   oItem:cBmp           := "gc_cash_register_touch_16"
+   oItem:cBmpBig        := "gc_cash_register_touch_32"
    oItem:lShow          := .f.
 
    oItem                := oItemTpv:Add()
@@ -2759,8 +2759,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a las entradas y salidas de caja'
    oItem:bAction        := {|| EntSal( "01065", oWnd ) }
    oItem:cId            := "01065"
-   oItem:cBmp           := "Cashier_replace_16"
-   oItem:cBmpBig        := "Cashier_replace_32"
+   oItem:cBmp           := "gc_cash_register_refresh_16"
+   oItem:cBmpBig        := "gc_cash_register_refresh_32"
    oItem:lShow          := .f.
 
    oItem                := oItemTpv:Add()

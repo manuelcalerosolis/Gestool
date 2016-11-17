@@ -108,7 +108,7 @@ FUNCTION EntSal( oMenuItem, oWnd )
       XBROWSE ;
       TITLE    "Entradas y salidas de caja" ;
       PROMPT   "Fecha";
-      MRU      "Cashier_replace_16" ;
+      MRU      "gc_cash_register_refresh_16" ;
       BITMAP   clrTopArchivos ;
       ALIAS    ( dbfEntT ) ;
 		APPEND	( WinAppRec( oWndBrw:oBrw, bEdit, dbfEntT ) );
