@@ -2769,8 +2769,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Sala de ventas'
    oItem:bAction        := {|| TTpvRestaurante():New( cPatEmp(), cDriver(), oWnd, "01105" ):Activate() }
    oItem:cId            := "01105"
-   oItem:cBmp           := "Cup_16"
-   oItem:cBmpBig        := "Cup_32"
+   oItem:cBmp           := "gc_cup_16"
+   oItem:cBmpBig        := "gc_cup_32"
    oItem:lShow          := .f.
 
    oItem                := oItemTpv:Add()
@@ -2779,8 +2779,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los tipos de invitaciones'
    oItem:bAction        := {|| TInvitacion():New( cPatGrp(), oWnd, "01107" ):Activate() }
    oItem:cId            := "01107"
-   oItem:cBmp           := "Masks_16"
-   oItem:cBmpBig        := "Masks_32"
+   oItem:cBmp           := "gc_masks_16"
+   oItem:cBmpBig        := "gc_masks_32"
    oItem:lShow          := .f.
 
    oItem                := oItemTPV:Add()
