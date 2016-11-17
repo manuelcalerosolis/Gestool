@@ -7,7 +7,7 @@ CLASS ReceiptDocumentSalesViewSearchNavigator FROM ViewSearchNavigator
 
    METHOD getView()                       INLINE ( ::oSender:nView )
 
-   METHOD setItemsBusqueda()              INLINE ( ::hashItemsSearch := { "NÃºmero" => 1, "CÃ³digo" => "cCodCli", "Nombre" => "cNomCli" } )   
+   METHOD setItemsBusqueda()              INLINE ( ::hashItemsSearch := { "Número" => 1, "Código" => "cCodCli", "Nombre" => "cNomCli" } )   
 
    METHOD setColumns()
 
@@ -18,6 +18,12 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD setColumns() CLASS ReceiptDocumentSalesViewSearchNavigator
+
+   MsgInfo( ::getDataTable() )
+   
+   ( ::getDataTable() )->( Browse() )
+
+   MsgInfo( ::getField( "Serie" ) )
 
    ::setBrowseConfigurationName( "grid_recibos" )
 

@@ -116,7 +116,6 @@ Return ( .t. )
 METHOD onPreRunNavigator() CLASS ReceiptInvoiceCustomer
 
    if empty( ::getWorkArea() )
-      ?"Me voy"
       Return .t.
    end if 
 
