@@ -40,7 +40,7 @@ END CLASS
 
 METHOD Create( cPath, cDriver ) CLASS Provincias
 
-   DEFAULT cPath     := cPatArt()
+   DEFAULT cPath     := cPatDat()
    DEFAULT cDriver   := cDriver()
 
    ::cPath           := cPath

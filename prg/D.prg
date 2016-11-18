@@ -508,7 +508,8 @@ CLASS D
    // Proveedores--------------------------------------------------------------
 
    METHOD Proveedores( nView )                                       INLINE ( ::Get( "Provee", nView ) )
-      METHOD ProveedoresId( nView )                                  INLINE ( ( ::Get( "Provee", nView ) )->COD )
+      METHOD gotoProveedores( id, nView )                            INLINE ( ::SeekInOrd( ::Proveedores( nView ), id, "Cod" ) ) 
+      METHOD ProveedoresId( nView )                                  INLINE ( ( ::Proveedores( nView ) )->Cod )
       METHOD GruposProveedores( nView )                              INLINE ( ::GetObject( "GruposProveedores", nView ) )
       METHOD BancosProveedores( nView )                              INLINE ( ::Get( "PrvBnc", nView ) )
 
@@ -595,6 +596,9 @@ CLASS D
 
    METHOD Empresa( nView )                   INLINE ( ::Get( "Empresa", nView ) )
    METHOD EmpresaBancos( nView )             INLINE ( ::Get( "EmpBnc", nView ) )
+
+   METHOD CodigosPostales( nView )           INLINE ( ::Get( "CodPostal", nView ) )
+   METHOD Provincias( nView )                INLINE ( ::Get( "Provincia", nView ) )
 
    METHOD Atipicas( nView )                  INLINE ( ::Get( "CliAtp", nView ) )
       METHOD gotoIdAtipicasAgentes( idAgente, idArticulo, nView ) ;

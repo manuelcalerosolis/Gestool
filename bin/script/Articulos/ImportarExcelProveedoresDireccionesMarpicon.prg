@@ -8,9 +8,9 @@
       
 //---------------------------------------------------------------------------//
 
-Function ImportarExcelClientesMarpicon( nView )                	 
+Function ImportarExcelProveedoresMarpicon( nView )                	 
 	      
-   local oImportarExcel    := TImportarExcelClientesMarpicon():New( nView )
+   local oImportarExcel    := TImportarExcelProveedoresMarpicon():New( nView )
 
    oImportarExcel:Run()
 
@@ -18,7 +18,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-CLASS TImportarExcelClientesMarpicon FROM TImportarExcel
+CLASS TImportarExcelProveedoresMarpicon FROM TImportarExcel
 
    DATA idClient
 
@@ -40,12 +40,12 @@ CLASS TImportarExcelClientesMarpicon FROM TImportarExcel
 
    METHOD existeRegistro()       
 
-   METHOD appendRegistro()       INLINE ( ( D():ClientesDirecciones( ::nView ) )->( dbappend() ) )
+   METHOD appendRegistro()       INLINE ( ( D():Proveedores( ::nView ) )->( dbappend() ) )
 
-   METHOD bloqueaRegistro()      INLINE ( ( D():ClientesDirecciones( ::nView ) )->( dbrlock() ) )
+   METHOD bloqueaRegistro()      INLINE ( ( D():Proveedores( ::nView ) )->( dbrlock() ) )
 
-   METHOD desbloqueaRegistro()   INLINE ( ( D():ClientesDirecciones( ::nView ) )->( dbcommit() ),;
-                                          ( D():ClientesDirecciones( ::nView ) )->( dbunlock() ) )
+   METHOD desbloqueaRegistro()   INLINE ( ( D():Proveedores( ::nView ) )->( dbcommit() ),;
+                                          ( D():Proveedores( ::nView ) )->( dbunlock() ) )
 
 
 END CLASS
@@ -60,7 +60,7 @@ METHOD New( nView )
    Cambiar el nombre del fichero
    */
 
-   ::cFicheroExcel            := "C:\Users\calero\Desktop\clientes_direcciones_marpicon.csv"
+   ::cFicheroExcel            := "C:\Users\calero\Desktop\Proveedores_direcciones_marpicon.csv"
 
    /*
    Cambiar la fila de cominezo de la importacion
@@ -110,30 +110,11 @@ Return nil
 
 METHOD existeRegistro()
 
-Return ( D():gotoIdClientesDirecciones( ::getCampoClave() + ::getAutoIncremental(), ::nView ) )
+Return ( D():gotoProveedores( ::getCampoClave() + ::getAutoIncremental(), ::nView ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD importarCampos()
-
-   ( D():ClientesDirecciones( ::nView ) )->cCodCli    := ::getCampoClave()
-   ( D():ClientesDirecciones( ::nView ) )->cCodObr    := ::getAutoIncremental()
-
-   ( D():ClientesDirecciones( ::nView ) )->cTipo      := ::getExcelString( "D" )
-   ( D():ClientesDirecciones( ::nView ) )->cNomObr    := ::getExcelString( "E" )  
-   ( D():ClientesDirecciones( ::nView ) )->cDirObr    := ::getExcelString( "F" )   
-   ( D():ClientesDirecciones( ::nView ) )->cPobObr    := ::getExcelString( "J" )   
-   ( D():ClientesDirecciones( ::nView ) )->cPosObr    := ::getExcelString( "K" )   
-   ( D():ClientesDirecciones( ::nView ) )->cTelObr    := ::getExcelString( "O" )   
-   ( D():ClientesDirecciones( ::nView ) )->cCntObr    := ::getExcelString( "W" ) 
-
-   if ( "21" $ ::getExcelString( "L" ) )
-      ( D():ClientesDirecciones( ::nView ) )->cPrvObr := "Huelva"  
-   end if       
-
-   if ( "41" $ ::getExcelString( "L" ) )
-      ( D():ClientesDirecciones( ::nView ) )->cPrvObr := "Sevilla"  
-   end if       
 
 Return nil
 
@@ -141,44 +122,30 @@ Return nil
 
 METHOD actualizaDireccionCliente()
 
-   if D():gotoCliente( ::getCampoClave(), ::nView ) .and. ( ( D():Clientes( ::nView ) )->( dbrlock() ) )
+   if D():gotoProveedores( ::getCampoClave(), ::nView ) .and. ( ( D():Proveedores( ::nView ) )->( dbrlock() ) )
 
-      logwrite( 'encontrado ' + ::getCampoClave() )
-
-      if empty( ( D():Clientes( ::nView ) )->Domicilio )
-         ( D():Clientes( ::nView ) )->Domicilio    := ::getExcelString( "F" )
+      if empty( ( D():Proveedores( ::nView ) )->Domicilio )
+         ( D():Proveedores( ::nView ) )->Domicilio    := ::getExcelString( "F" ) + space( 1 ) + ::getExcelString( "G" )
       end if 
       
-      if empty( ( D():Clientes( ::nView ) )->Poblacion )
-         ( D():Clientes( ::nView ) )->Poblacion    := ::getExcelString( "J" )
+      if empty( ( D():Proveedores( ::nView ) )->Poblacion )
+         ( D():Proveedores( ::nView ) )->Poblacion    := ::getExcelString( "J" )
       end if 
       
-      if empty( ( D():Clientes( ::nView ) )->CodPostal )
-         ( D():Clientes( ::nView ) )->CodPostal    := ::getExcelString( "K" )
+      if empty( ( D():Proveedores( ::nView ) )->CodPostal )
+         ( D():Proveedores( ::nView ) )->CodPostal    := ::getExcelString( "K" )
       end if 
 
-      if empty( ( D():Clientes( ::nView ) )->Telefono )
-         ( D():Clientes( ::nView ) )->Telefono     := ::getExcelString( "O" )
+      if empty( ( D():Proveedores( ::nView ) )->Telefono )
+         ( D():Proveedores( ::nView ) )->Telefono     := ::getExcelString( "O" )
       end if 
 
-      if empty( ( D():Clientes( ::nView ) )->cPerCto )
-         ( D():Clientes( ::nView ) )->cPerCto      := ::getExcelString( "W" )
+      if empty( ( D():Proveedores( ::nView ) )->cMeiInt )
+         ( D():Proveedores( ::nView ) )->cMeiInt      := ::getExcelString( "S" )
       end if 
 
-      if empty( ( D():Clientes( ::nView ) )->cCodRut )
-         ( D():Clientes( ::nView ) )->cCodRut      := ::getExcelString( "X" )
-      end if 
-
-      if ( empty( ( D():Clientes( ::nView ) )->Provincia ) .and. "21" $ ::getExcelString( "L" ) )
-         ( D():Clientes( ::nView ) )->Provincia    := "Huelva"  
-      end if       
-
-      if ( empty( ( D():Clientes( ::nView ) )->Provincia ) .and. "41" $ ::getExcelString( "L" ) )
-         ( D():Clientes( ::nView ) )->Provincia    := "Sevilla"  
-      end if       
-
-      ( D():Clientes( ::nView ) )->( dbcommit() )
-      ( D():Clientes( ::nView ) )->( dbunlock() ) 
+      ( D():Proveedores( ::nView ) )->( dbcommit() )
+      ( D():Proveedores( ::nView ) )->( dbunlock() ) 
 
    else 
 
