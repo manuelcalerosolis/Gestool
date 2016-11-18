@@ -3182,15 +3182,15 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Galería de informes'
    oItem:bAction        := {|| RunReportGalery() }
    oItem:cId            := "01119"
-   oItem:cBmp           := "Document_Chart_16"
-   oItem:cBmpBig        := "Document_Chart_32"
+   oItem:cBmp           := "gc_printer2_16"
+   oItem:cBmpBig        := "gc_printer2_32"
    oItem:lShow          := .f.
 
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 4
    oGrupo:cPrompt       := 'Informes personalizables'
-   oGrupo:cLittleBitmap := "gc_lifebelt_16"
-   oGrupo:cBigBitmap    := "gc_lifebelt_32"
+   oGrupo:cLittleBitmap := "gc_object_cube_print_16"
+   oGrupo:cBigBitmap    := "gc_object_cube_print_32"
 
    oItem                := oItemReporting:Add()
    oItem:oGroup         := oGrupo
@@ -3198,8 +3198,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Informes realacionados con articulos'
    oItem:bAction        := {|| TFastVentasArticulos():New():Play() }
    oItem:cId            := "01118"
-   oItem:cBmp           := "cube_yellow_chart_16"
-   oItem:cBmpBig        := "cube_yellow_chart_32"
+   oItem:cBmp           := "gc_object_cube_print_16"
+   oItem:cBmpBig        := "gc_object_cube_print_32"
    oItem:lShow          := .f.
 
    oItem                := oItemReporting:Add()
@@ -3208,8 +3208,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Informes realacionados con clientes'
    oItem:bAction        := {|| TFastVentasClientes():New():Play() }
    oItem:cId            := "01120"
-   oItem:cBmp           := "user1_chart_16"
-   oItem:cBmpBig        := "user1_chart_32"
+   oItem:cBmp           := "gc_user_print_16"
+   oItem:cBmpBig        := "gc_user_print_32"
    oItem:lShow          := .f.
 
    oItem                := oItemReporting:Add()
@@ -3218,8 +3218,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Informes realacionados con proveedores'
    oItem:bAction        := {|| TFastComprasProveedores():New():Play() }
    oItem:cId            := "01121"
-   oItem:cBmp           := "businessman_chart_16"
-   oItem:cBmpBig        := "businessman_chart_32"
+   oItem:cBmp           := "gc_businessman_print_16"
+   oItem:cBmpBig        := "gc_businessman_print_32"
    oItem:lShow          := .f.
 
    oItem                := oItemReporting:Add()
@@ -3228,8 +3228,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Informes realacionados con la producción'
    oItem:bAction        := {|| TFastProduccion():New():Play() }
    oItem:cId            := "01123"
-   oItem:cBmp           := "Worker2_Form_Red_16"
-   oItem:cBmpBig        := "Worker2_Form_Red_32"
+   oItem:cBmp           := "gc_worker2_print_16"
+   oItem:cBmpBig        := "gc_worker2_print_32"
    oItem:lShow          := .f.
 
    if lAIS()
