@@ -83,7 +83,7 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem )
 
    ::oDbf               := nil
 
-   ::cMru               := "Cubes_Blue_16"
+   ::cMru               := "gc_objects_16"
 
    ::cBitmap            := clrTopArchivos
    

@@ -1721,8 +1721,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a las propiedades los artículos'
    oItem:bAction        := {|| Prop( "01015", oWnd ) }
    oItem:cId            := "01015"
-   oItem:cBmp           := "Die_Gold_16"
-   oItem:cBmpBig        := "Die_Gold_32"
+   oItem:cBmp           := "gc_coathanger_16"
+   oItem:cBmpBig        := "gc_coathanger_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
@@ -1732,8 +1732,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los factores de conversion de los artículos'
    oItem:bAction        := {|| TblCnv( "01016", oWnd ) }
    oItem:cId            := "01016"
-   oItem:cBmp           := "Tape_Measure2_16"
-   oItem:cBmpBig        := "Tape_Measure2_32"
+   oItem:cBmp           := "gc_objects_transform_16"
+   oItem:cBmpBig        := "gc_objects_transform_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
@@ -1743,8 +1743,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Unidades de medición'
    oItem:bAction        := {|| UniMedicion():New( cPatGrp(), oWnd, "01103" ):Activate() }
    oItem:cId            := "01103"
-   oItem:cBmp           := "Tape_Measure1_16"
-   oItem:cBmpBig        := "Tape_Measure1_32"
+   oItem:cBmp           := "gc_tape_measure2_16"
+   oItem:cBmpBig        := "gc_tape_measure2_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
@@ -1754,8 +1754,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Clasificación de artículos por tipos'
    oItem:bAction        := {|| TTipArt():New( cPatArt(), cDriver(), oWnd, "01013" ):Activate() }
    oItem:cId            := "01013"
-   oItem:cBmp           := "Cubes_Blue_16"
-   oItem:cBmpBig        := "Cubes_Blue_32"
+   oItem:cBmp           := "gc_objects_16"
+   oItem:cBmpBig        := "gc_objects_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
@@ -1765,8 +1765,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso al fichero de ' + getTraslation( 'categorías' )
    oItem:bAction        := {|| Categoria( "01101", oWnd() ) }
    oItem:cId            := "01101"
-   oItem:cBmp           := "Colors_16"
-   oItem:cBmpBig        := "Colors_32"
+   oItem:cBmp           := "gc_photographic_filters_16"
+   oItem:cBmpBig        := "gc_photographic_filters_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
@@ -1776,8 +1776,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso al fichero de ' + getTraslation( 'temporadas' )
    oItem:bAction        := {|| Temporada( "01114", oWnd() ) }
    oItem:cId            := "01114"
-   oItem:cBmp           := "Sun_and_cloud_16"
-   oItem:cBmpBig        := "Colors_32"
+   oItem:cBmp           := "gc_cloud_sun_16"
+   oItem:cBmpBig        := "gc_cloud_sun_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 

@@ -215,7 +215,7 @@ FUNCTION Categoria( oMenuItem, oWnd )
       PROMPT   "Código",;
                "Nombre";
       ALIAS    ( dbfCategoria ) ;
-      MRU      "Colors_16" ;
+      MRU      "gc_photographic_filters_16" ;
       BITMAP   clrTopArchivos ;
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfCategoria ) );
       DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdit, dbfCategoria ) );
