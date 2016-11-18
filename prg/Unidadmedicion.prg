@@ -15,7 +15,7 @@ CLASS UniMedicion FROM TMant
 
    DATA  cName             INIT "UnidadMedicion"
 
-   DATA  cMru              INIT "Worker_Folder_Blue_16"
+   DATA  cMru              INIT "gc_tape_measure2_16"
 
    DATA  oGetDimension
 

@@ -1577,8 +1577,8 @@ Function CreateAcceso( oWnd )
    oGrupo:nBigItems     := 2
    oGrupo:nLittleItems  := 1
    oGrupo:cPrompt       := 'Inicio'
-   oGrupo:cLittleBitmap := "Home_16"
-   oGrupo:cBigBitmap    := "Home_32"
+   oGrupo:cLittleBitmap := "gc_clock_16"
+   oGrupo:cBigBitmap    := "gc_clock_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
@@ -1586,8 +1586,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Gestión de cartera'
    oItem:bAction        := {|| PageIni( "01004", oWnd() ) }
    oItem:cId            := "01004"
-   oItem:cBmp           := "briefcase2_column-chart_16"
-   oItem:cBmpBig        := "briefcase2_column-chart_32"
+   oItem:cBmp           := "gc_briefcase_16"
+   oItem:cBmpBig        := "gc_briefcase_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
@@ -1595,8 +1595,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Inicia una nueva sesión de trabajo'
    oItem:bAction        := {|| ChkTurno( "01000", oWnd() ) }
    oItem:cId            := "01000"
-   oItem:cBmp           := "clock_run_16"
-   oItem:cBmpBig        := "clock_run"
+   oItem:cBmp           := "gc_clock_play_16"
+   oItem:cBmpBig        := "gc_clock_play_32"
    oItem:lLittle        := .t.
 
    oItem                := oItemArchivo:Add()
@@ -1605,8 +1605,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Inicia una nueva sesión de trabajo'
    oItem:bAction        := {|| CloseTurno( "01001", oWnd(), .t. ) }
    oItem:cId            := "01001"
-   oItem:cBmp           := "Stopwatch_Refresh_16"
-   oItem:cBmpBig        := "Stopwatch_Refresh_32"
+   oItem:cBmp           := "gc_clock_refresh_16"
+   oItem:cBmpBig        := "gc_clock_refresh_32"
    oItem:lLittle        := .t.
 
    oItem                := oItemArchivo:Add()
@@ -1615,8 +1615,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Cierra la sesión de trabajo actual'
    oItem:bAction        := {|| CloseTurno( "01006", oWnd() ) }
    oItem:cId            := "01006"
-   oItem:cBmp           := "clock_stop_16"
-   oItem:cBmpBig        := "clock_stop"
+   oItem:cBmp           := "gc_clock_stop_16"
+   oItem:cBmpBig        := "gc_clock_stop_32"
    oItem:lLittle        := .t.
 
    oItem                := oItemArchivo:Add()
@@ -1625,14 +1625,14 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Sesiones de trabajo'
    oItem:bAction        := {|| Turnos( "01002", oWnd() ) }
    oItem:cId            := "01002"
-   oItem:cBmp           := "bClock"
-   oItem:cBmpBig        := "clock"
+   oItem:cBmp           := "gc_clock_16"
+   oItem:cBmpBig        := "gc_clock_32"
 
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 2
    oGrupo:cPrompt       := 'Empresa'
-   oGrupo:cLittleBitmap := "Office_Building_16"
-   oGrupo:cBigBitmap    := "Office_Building_32"
+   oGrupo:cLittleBitmap := "gc_factory_16"
+   oGrupo:cBigBitmap    := "gc_factory_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
@@ -1640,8 +1640,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso al fichero de empresas'
    oItem:bAction        := {|| Empresa() }
    oItem:cId            := "01003"
-   oItem:cBmp           := "Office_Building_16"
-   oItem:cBmpBig        := "Office_Building_32"
+   oItem:cBmp           := "gc_factory_16"
+   oItem:cBmpBig        := "gc_factory_32"
    oItem:lShow          := .t.
 
    oItem                := oItemArchivo:Add()
@@ -1650,8 +1650,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Configurar empresa en curso'
    oItem:bAction        := {|| ConfEmpresa( oWnd() ) }
    oItem:cId            := "01005"
-   oItem:cBmp           := "CnfCli16"
-   oItem:cBmpBig        := "CnfCli32"
+   oItem:cBmp           := "gc_wrench_16"
+   oItem:cBmpBig        := "gc_wrench_32"
    oItem:lShow          := .t.
 
    // Articulos----------------------------------------------------------------
@@ -1660,8 +1660,8 @@ Function CreateAcceso( oWnd )
    oGrupo:nBigItems     := 3
    oGrupo:nLittleItems  := 3
    oGrupo:cPrompt       := 'Artículos'
-   oGrupo:cLittleBitmap := "Cube_Yellow_16"
-   oGrupo:cBigBitmap    := "Cube_Yellow_32"
+   oGrupo:cLittleBitmap := "gc_object_cube_16"
+   oGrupo:cBigBitmap    := "gc_object_cube_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
@@ -1669,8 +1669,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso al fichero de grupos de familias'
    oItem:bAction        := {|| TGrpFam():New( cPatArt(), oWnd(), "01011" ):Play() }
    oItem:cId            := "01011"
-   oItem:cBmp           := "Folder_Cubes_Color_16"
-   oItem:cBmpBig        := "Folder_Cubes_Color_32"
+   oItem:cBmp           := "gc_folder_cubes_16"
+   oItem:cBmpBig        := "gc_folder_cubes_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()
@@ -1679,8 +1679,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso al fichero de familias'
    oItem:bAction        := {|| Familia( "01012", oWnd() ) }
    oItem:cId            := "01012"
-   oItem:cBmp           := "Cubes_16"
-   oItem:cBmpBig        := "Cubes_32"
+   oItem:cBmp           := "gc_cubes_16"
+   oItem:cBmpBig        := "gc_cubes_32"
    oItem:lShow          := .t.
 
    oItem                := oItemArchivo:Add()
@@ -1689,8 +1689,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso al fichero de artículo'
    oItem:bAction        := {|| Articulo( "01014", oWnd ) }
    oItem:cId            := "01014"
-   oItem:cBmp           := "Cube_Yellow_16"
-   oItem:cBmpBig        := "Cube_Yellow_32"
+   oItem:cBmp           := "gc_object_cube_16"
+   oItem:cBmpBig        := "gc_object_cube_32"
    oItem:lShow          := .t.
 
    oItem                := oItemArchivo:Add()
@@ -1699,8 +1699,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Clasificación de artículos por fabricantes'
    oItem:bAction        := {|| TFabricantes():New( cPatArt(), oWnd, "01070" ):Activate() }
    oItem:cId            := "01070"
-   oItem:cBmp           := "Nut_and_bolt_16"
-   oItem:cBmpBig        := "Nut_and_bolt_32"
+   oItem:cBmp           := "gc_bolt_16"
+   oItem:cBmpBig        := "gc_bolt_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
@@ -1710,8 +1710,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los comentarios de los artículos'
    oItem:bAction        := {|| TComentarios():New( cPatArt(), cDriver(), oWnd, "04002" ):Activate() }
    oItem:cId            := "04002"
-   oItem:cBmp           := "message_16"
-   oItem:cBmpBig        := "message_32"
+   oItem:cBmp           := "gc_message_16"
+   oItem:cBmpBig        := "gc_message_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
@@ -1721,8 +1721,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a las propiedades los artículos'
    oItem:bAction        := {|| Prop( "01015", oWnd ) }
    oItem:cId            := "01015"
-   oItem:cBmp           := "Die_Gold_16"
-   oItem:cBmpBig        := "Die_Gold_32"
+   oItem:cBmp           := "gc_coathanger_16"
+   oItem:cBmpBig        := "gc_coathanger_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
@@ -1732,8 +1732,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los factores de conversion de los artículos'
    oItem:bAction        := {|| TblCnv( "01016", oWnd ) }
    oItem:cId            := "01016"
-   oItem:cBmp           := "Tape_Measure2_16"
-   oItem:cBmpBig        := "Tape_Measure2_32"
+   oItem:cBmp           := "gc_objects_transform_16"
+   oItem:cBmpBig        := "gc_objects_transform_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
@@ -1743,8 +1743,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Unidades de medición'
    oItem:bAction        := {|| UniMedicion():New( cPatGrp(), oWnd, "01103" ):Activate() }
    oItem:cId            := "01103"
-   oItem:cBmp           := "Tape_Measure1_16"
-   oItem:cBmpBig        := "Tape_Measure1_32"
+   oItem:cBmp           := "gc_tape_measure2_16"
+   oItem:cBmpBig        := "gc_tape_measure2_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
@@ -1754,8 +1754,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Clasificación de artículos por tipos'
    oItem:bAction        := {|| TTipArt():New( cPatArt(), cDriver(), oWnd, "01013" ):Activate() }
    oItem:cId            := "01013"
-   oItem:cBmp           := "Cubes_Blue_16"
-   oItem:cBmpBig        := "Cubes_Blue_32"
+   oItem:cBmp           := "gc_objects_16"
+   oItem:cBmpBig        := "gc_objects_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
@@ -1765,8 +1765,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso al fichero de ' + getTraslation( 'categorías' )
    oItem:bAction        := {|| Categoria( "01101", oWnd() ) }
    oItem:cId            := "01101"
-   oItem:cBmp           := "Colors_16"
-   oItem:cBmpBig        := "Colors_32"
+   oItem:cBmp           := "gc_photographic_filters_16"
+   oItem:cBmpBig        := "gc_photographic_filters_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
@@ -1776,8 +1776,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso al fichero de ' + getTraslation( 'temporadas' )
    oItem:bAction        := {|| Temporada( "01114", oWnd() ) }
    oItem:cId            := "01114"
-   oItem:cBmp           := "Sun_and_cloud_16"
-   oItem:cBmpBig        := "Colors_32"
+   oItem:cBmp           := "gc_cloud_sun_16"
+   oItem:cBmpBig        := "gc_cloud_sun_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 

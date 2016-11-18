@@ -63,7 +63,7 @@ FUNCTION Prop( oMenuItem, oWnd )
    DEFINE SHELL oWndBrw FROM 2, 10 TO 18, 70 ;
       XBROWSE ;
       TITLE    "Propiedades de artículos" ;
-      MRU      "Die_Gold_16";
+      MRU      "gc_coathanger_16";
       PROMPT   "Código",;
                "Nombre" ;
       BITMAP   clrTopArchivos ;

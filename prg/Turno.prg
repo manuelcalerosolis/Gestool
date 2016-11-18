@@ -714,7 +714,7 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem )
 
    ::aTipIva                  := {}
 
-   ::cMru                     := "Stopwatch_16"
+   ::cMru                     := "gc_clock_16"
 
    if !empty( cFullPathEmpresa() )
       ::cIniFile              := cFullPathEmpresa() + "Empresa.Ini"

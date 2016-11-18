@@ -319,7 +319,7 @@ FUNCTION Empresa( oMenuItem, oWnd )
          ALIAS    ( dbfEmp );
          PROMPTS  "Código",;
 						"Nombre";
-         MRU      "Office_Building_16";
+         MRU      "gc_factory_16";
          BITMAP   clrTopArchivos ;
          APPEND   ( if( oUser():lCambiarEmpresa, WinAppEmp(), ) );
          EDIT     ( if( oUser():lCambiarEmpresa, WinEdtEmp(), ) ) ;
