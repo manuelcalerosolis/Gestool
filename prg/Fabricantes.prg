@@ -79,7 +79,7 @@ METHOD New( cPath, oWndParent, oMenuItem )
 
    ::oDbf               := nil
 
-   ::cMru               := "Nut_and_bolt_16"
+   ::cMru               := "gc_bolt_16"
 
    ::cBitmap            := clrTopArchivos
 

@@ -862,7 +862,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
                "Publicar" ,;
                "Web",;
                getTraslation( "Ubicacion" ) ;
-      MRU      "Cube_Yellow_16";
+      MRU      "gc_object_cube_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( D():Articulos( nView ) ) ;
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, D():Articulos( nView ) ) ) ;

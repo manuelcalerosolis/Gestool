@@ -84,7 +84,7 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TGrpFam
 
    ::lCreateShell       := .f.
 
-   ::cMru               := "Folder_Cubes_Color_16"
+   ::cMru               := "gc_folder_cubes_16"
 
    ::cBitmap            := clrTopArchivos
 

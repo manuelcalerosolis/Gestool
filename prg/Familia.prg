@@ -492,7 +492,7 @@ FUNCTION Familia( oMenuItem, oWnd )
       PROMPT   "Código",;
                "Nombre",;
                "Posición" ;
-      MRU      "Cubes_16" ;
+      MRU      "gc_cubes_16" ;
       BITMAP   clrTopArchivos ;
 		ALIAS		( dbfFamilia ) ;
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfFamilia ) );

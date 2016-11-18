@@ -6,7 +6,7 @@
 
 CLASS TComentarios FROM TMasDet
 
-   DATA  cMru              INIT "Message_16"
+   DATA  cMru              INIT "gc_message_16"
 
    DATA  cBitmap           INIT clrTopArchivos
 
