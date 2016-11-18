@@ -222,6 +222,7 @@ CLASS D
    METHOD FacturasClientesCobros( nView )                   INLINE ( ::Get( "FacCliP", nView ) )
       METHOD FacturasClientesCobrosIdShort( nView )         INLINE ( ( ::Get( "FacCliP", nView ) )->cSerie + Str( ( ::Get( "FacCliP", nView ) )->nNumFac ) +  ( ::Get( "FacCliP", nView ) )->cSufFac )
       METHOD FacturasClientesCobrosId( nView )              INLINE ( ::FacturasClientesCobrosIdShort( nView ) + Str( ( ::Get( "FacCliP", nView ) )->nNumRec ) )
+      METHOD getFacturaClienteCobros( nView )               INLINE ( ::getHashRecordById( ::FacturasClientesCobrosId( nView ), ::FacturasClientesCobros( nView ), nView ) )
 
    METHOD FacturasClientesEntidades( nView )                INLINE ( ::Get( "FacCliE", nView ) )
       METHOD FacturasClientesEntidadesId( nView )           INLINE ( ( ::FacturasClientesEntidades(nView) ) )->cSerFac + Str( ( ::FacturasClientesEntidades(nView) )->nNumFac ) + ( ( ::FacturasClientesEntidades(nView) )->cSufFac )

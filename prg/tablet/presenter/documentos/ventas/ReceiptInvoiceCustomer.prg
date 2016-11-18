@@ -6,29 +6,19 @@ CLASS ReceiptInvoiceCustomer FROM DocumentsSales
   
    METHOD New()
 
-   METHOD getAppendDocumento()
-
    METHOD getEditDocumento()
 
-   /*METHOD getLinesDocument( id )
-   METHOD getDocumentLine()
+   METHOD onPreEnd()                      INLINE ( .t. )
 
-   METHOD getLines()                      INLINE ( ::oDocumentLines:getLines() )
-   METHOD getLineDetail()                 INLINE ( ::oDocumentLines:getLineDetail( ::nPosDetail ) )
+   METHOD onViewSave()
 
-   METHOD getAppendDetail()
-   METHOD deleteLinesDocument()
+   METHOD onPreSaveEdit()                 INLINE ( .t. )
 
-   METHOD printDocument()                 INLINE ( imprimeFacturaCliente( ::getID(), ::cFormatToPrint ), .t. )
+   METHOD deleteLinesDocument()           INLINE ( .t. )
 
-   METHOD onPostSaveAppend()              INLINE ( generatePagosFacturaCliente( ::getId(), ::nView ),;
-                                                   checkPagosFacturaCliente( ::getId(), ::nView ) )
+   METHOD assignLinesDocument()           INLINE ( .t. )
 
-   METHOD appendButtonMode()              INLINE ( ::lAppendMode() .or. ( ::lEditMode() .and. accessCode():lInvoiceModify ) )
-   METHOD editButtonMode()                INLINE ( ::appendButtonMode() )
-   METHOD deleteButtonMode()              INLINE ( ::appendButtonMode() )*/
-
-   METHOD onPreRunNavigator
+   METHOD setLinesDocument()              INLINE ( .t. )
 
 END CLASS
 
@@ -45,29 +35,8 @@ METHOD New() CLASS ReceiptInvoiceCustomer
    ::oViewSearchNavigator  := ReceiptDocumentSalesViewSearchNavigator():New( self )
    ::oViewSearchNavigator:setTitleDocumento( "Recibos de clientes" )  
 
-   ::oViewEdit             := DocumentSalesViewEdit():New( self )
+   ::oViewEdit             := ReceiptDocumentSalesViewEdit():New( self )
    ::oViewEdit:setTitleDocumento( "Recibo cliente" )  
-
-   ::oViewEditResumen      := ViewEditResumen():New( self )
-   ::oViewEditResumen:setTitleDocumento( "Resumen recibo" )
-
-   //::oCliente              := Customer():init( self )  
-
-   //::oProduct              := Product():init( self )
-
-   //::oStore                := Store():init( self )
-
-   //::oPayment              := Payment():init( self )
-
-   //::oDirections           := Directions():init( self )
-
-   //::oDocumentLines        := DocumentLines():New( self )
-
-   //::oLinesDocumentsSales  := LinesDocumentsSales():New( self )
-
-   //::oTotalDocument        := TotalDocument():New( self )
-
-   // Tipos--------------------------------------------------------------------
 
    ::setTypePrintDocuments( "RF" )
 
@@ -81,111 +50,28 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD GetAppendDocumento() CLASS ReceiptInvoiceCustomer
-
-   //::hDictionaryMaster      := D():getDefaultHashFacturaCliente( ::nView )
-
-   MsgInfo( "Append" )
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
 METHOD getEditDocumento() CLASS ReceiptInvoiceCustomer
 
-   MsgInfo( "Edit" )
-
-   /*local id                := D():FacturasClientesId( ::nView )
+   local id                := D():FacturasClientesCobrosId( ::nView )
 
    if Empty( id )
       Return .f.
    end if
 
-   ::hDictionaryMaster     := D():getFacturaCliente( ::nView )
+   ::hDictionaryMaster     := D():getFacturaClienteCobros( ::nView )
 
    if empty( ::hDictionaryMaster )
       Return .f.
    end if 
 
-   ::getLinesDocument( id )*/
-
 Return ( .t. )
 
 //----------------------------------------------------------------------------//
 
-METHOD onPreRunNavigator() CLASS ReceiptInvoiceCustomer
+METHOD onViewSave() CLASS ReceiptInvoiceCustomer
 
-   if empty( ::getWorkArea() )
-      Return .t.
-   end if 
-   
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-//
-// Convierte las lineas del albaran en objetos
-//
-
-/*METHOD getLinesDocument( id ) CLASS ReceiptInvoiceCustomer
-
-   ::oDocumentLines:reset()
-
-   D():getStatusFacturasClientesLineas( ::nView )
-
-   ( D():FacturasClientesLineas( ::nView ) )->( ordSetFocus( 1 ) )
-
-   if ( D():FacturasClientesLineas( ::nView ) )->( dbSeek( id ) )  
-
-      while ( D():FacturasClientesLineasId( ::nView ) == id ) .and. !( D():FacturasClientesLineas( ::nView ) )->( eof() ) 
-
-         ::addDocumentLine()
-      
-         ( D():FacturasClientesLineas( ::nView ) )->( dbSkip() ) 
-      
-      end while
-
-   end if 
-   
-   D():setStatusFacturasClientesLineas( ::nView ) 
-
-RETURN ( self ) 
-
-//---------------------------------------------------------------------------//
-
-METHOD getDocumentLine() CLASS ReceiptInvoiceCustomer
-
-   local hLine    := D():GetFacturaClienteLineasHash( ::nView )
-
-   if empty( hLine )
-      Return ( nil )
-   end if 
-
-Return ( DictionaryDocumentLine():New( self, hLine ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD getAppendDetail() CLASS ReceiptInvoiceCustomer
-
-   local hLine             := D():GetFacturaClienteLineaDefaultValues( ::nView )
-
-   ::oDocumentLineTemporal := DictionaryDocumentLine():New( self, hLine )
+   ::oViewEdit:oDlg:end( IDOK )
 
 Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD deleteLinesDocument() CLASS ReceiptInvoiceCustomer
-
-   D():getStatusFacturasClientesLineas( ::nView )
-
-   ( D():FacturasClientesLineas( ::nView ) )->( ordSetFocus( 1 ) )
-
-   while ( D():FacturasClientesLineas( ::nView ) )->( dbSeek( ::getID() ) ) 
-      ::delDocumentLine()
-   end while
-
-   D():setStatusFacturasClientesLineas( ::nView ) 
-
-Return ( Self )*/
 
 //---------------------------------------------------------------------------//

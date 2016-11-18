@@ -4502,6 +4502,9 @@ Function rxRecCli( cPath, cDriver )
       ( cFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( cFacCliT )->( ordCreate( cPath + "FacCliP.Cdx", "iNumFac", "'18' + cSerie + str( nNumFac ) + space( 1 ) + cSufFac + str( nNumRec )", {|| '18' + Field->cSerie + str( Field->nNumFac ) + space( 1 ) + Field->cSufFac + str( Field->nNumRec ) } ) )
 
+      ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
+      ( cFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "dFecDes", "dPreCob", {|| Field->dPreCob } ) )
+
       ( cFacCliT )->( dbCloseArea() )
 
    else

@@ -449,6 +449,7 @@ PaymentViewSearchNavigator.prg         \
 CustomerIncidenceViewNavigator.prg     \
 StoreViewSearchNavigator.prg           \
 DocumentSalesViewEdit.prg              \
+ReceiptDocumentSalesViewEdit.prg       \
 GeneraFacturasClientes.prg             \
 CamposExtra.prg                        \
 DetCamposExtra.prg                     \
@@ -901,6 +902,7 @@ StoreViewSearchNavigator.obj           				\
 CustomerIncidence.obj                  				\
 CustomerIncidenceView.obj              				\
 CustomerIncidenceViewNavigator.obj     				\
+ReceiptDocumentSalesViewEdit.obj                   \
 Product.obj                            				\
 Payment.obj                            				\
 Store.obj                              				\
@@ -1339,6 +1341,7 @@ $(OBJ)\StoreViewSearchNavigator.obj          +
 $(OBJ)\CustomerIncidence.obj                 +
 $(OBJ)\CustomerIncidenceView.obj             +
 $(OBJ)\CustomerIncidenceViewNavigator.obj    +
+$(OBJ)\ReceiptDocumentSalesViewEdit.obj      +
 $(OBJ)\Product.obj                           +
 $(OBJ)\Payment.obj                           +
 $(OBJ)\Store.obj                             +

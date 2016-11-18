@@ -7,7 +7,7 @@ CLASS ReceiptDocumentSalesViewSearchNavigator FROM ViewSearchNavigator
 
    METHOD getView()                       INLINE ( ::oSender:nView )
 
-   METHOD setItemsBusqueda()              INLINE ( ::hashItemsSearch := { "Número" => 1, "Código" => "cCodCli", "Nombre" => "cNomCli" } )   
+   METHOD setItemsBusqueda()              INLINE ( ::hashItemsSearch := { "Fecha" => "dFecDes", "Número" => 1, "Código" => "cCodCli", "Nombre" => "cNomCli", "Importe" => "nImporte" } )   
 
    METHOD setColumns()
 
@@ -26,19 +26,19 @@ METHOD setColumns() CLASS ReceiptDocumentSalesViewSearchNavigator
    with object ( ::addColumn() )
       :cHeader           := "Id"
       :bEditValue        := {|| ::getField( "Serie" ) + "/" + alltrim( str( ::getField( "Numero" ) ) ) + "-" + alltrim( str( ::getField( "NumeroRecibo" ) ) ) }
-      :nWidth            := 180
+      :nWidth            := 150
    end with
 
    with object ( ::addColumn() )
       :cHeader           := "Exp./Vto."
       :bEditValue        := {|| dtoc( ::getField( "FechaExpedicion" ) ) + CRLF + dtoc( ::getField( "FechaVencimiento" ) ) }
-      :nWidth            := 170
+      :nWidth            := 160
    end with
 
    with object ( ::addColumn() )
       :cHeader           := "Cliente"
       :bEditValue        := {|| alltrim( ::getField( "Cliente" ) ) + CRLF + alltrim( ::getField( "NombreCliente" ) ) }
-      :nWidth            := 320
+      :nWidth            := 200
    end with
 
    with object ( ::addColumn() )
@@ -63,7 +63,7 @@ METHOD BotonesAcciones() CLASS ReceiptDocumentSalesViewSearchNavigator
                               "nWidth"    => 64,;
                               "nHeight"   => 64,;
                               "cResName"  => "gc_pencil_64",;
-                              "bLClicked" => {|| if( ::oSender:Edit(), ::refreshBrowse(), ) },;
+                              "bLClicked" => {|| ::oSender:Edit() },;
                               "oWnd"      => ::oDlg } )
 
    end if 
