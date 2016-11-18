@@ -118,10 +118,7 @@ METHOD onPreRunNavigator() CLASS ReceiptInvoiceCustomer
    if empty( ::getWorkArea() )
       Return .t.
    end if 
-
-   MsgInfo( ::getWorkArea(), "GetWorkArea" )
-   MsgInfo( ( ::getWorkArea() )->( ordsetfocus() ), "OrdSetFocus" )
-
+   
 Return ( .t. )
 
 //---------------------------------------------------------------------------//

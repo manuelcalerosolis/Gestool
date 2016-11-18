@@ -13,78 +13,60 @@ CLASS ReceiptDocumentSalesViewSearchNavigator FROM ViewSearchNavigator
 
    METHOD getField( cField )              INLINE ( D():getFieldDictionary( cField, ::getDataTable(), ::getView() ) )
 
+   METHOD BotonesAcciones()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD setColumns() CLASS ReceiptDocumentSalesViewSearchNavigator
 
-   MsgInfo( ::getDataTable() )
-   
-   ( ::getDataTable() )->( Browse() )
-
-   MsgInfo( ::getField( "Serie" ) )
-   MsgInfo( ::getField( "Numero" ) )
-
    ::setBrowseConfigurationName( "grid_recibos" )
 
    with object ( ::addColumn() )
       :cHeader           := "Id"
-      :bEditValue        := {|| ::getField( "Serie" ) + "/" + alltrim( str( ::getField( "Numero" ) ) ) + CRLF + dtoc( ::getField( "Fecha" ) ) }
-      :nWidth            := 165
+      :bEditValue        := {|| ::getField( "Serie" ) + "/" + alltrim( str( ::getField( "Numero" ) ) ) + "-" + alltrim( str( ::getField( "NumeroRecibo" ) ) ) }
+      :nWidth            := 180
    end with
 
-   /*with object ( ::addColumn() )
+   with object ( ::addColumn() )
+      :cHeader           := "Exp./Vto."
+      :bEditValue        := {|| dtoc( ::getField( "FechaExpedicion" ) ) + CRLF + dtoc( ::getField( "FechaVencimiento" ) ) }
+      :nWidth            := 170
+   end with
+
+   with object ( ::addColumn() )
       :cHeader           := "Cliente"
       :bEditValue        := {|| alltrim( ::getField( "Cliente" ) ) + CRLF + alltrim( ::getField( "NombreCliente" ) ) }
-      :nWidth            := 310
+      :nWidth            := 320
    end with
 
    with object ( ::addColumn() )
-      :cHeader           := "Agente"
-      :bEditValue        := {|| ::getField( "Agente" ) }
-      :nWidth            := 100
-      :lHide             := .t.
-   end with
-
-   with object ( ::addColumn() )
-      :cHeader           := "Base"
-      :bEditValue        := {|| ::getField( "TotalNeto" ) }
-      :cEditPicture      := cPorDiv()
-      :nWidth            := 100
-      :nDataStrAlign     := 1
-      :nHeadStrAlign     := 1
-      :lHide             := .t.
-   end with
-
-   with object ( ::addColumn() )
-      :cHeader           := cImp()
-      :bEditValue        := {|| ::getField( "TotalImpuesto" ) }
-      :cEditPicture      := cPorDiv()
-      :nWidth            := 100
-      :nDataStrAlign     := 1
-      :nHeadStrAlign     := 1
-      :lHide             := .t.
-   end with
-
-   with object ( ::addColumn() )
-      :cHeader           := "R.E."
-      :bEditValue        := {|| ::getField( "TotalRecargo" ) }
-      :cEditPicture      := cPorDiv()
-      :nWidth            := 100
-      :nDataStrAlign     := 1
-      :nHeadStrAlign     := 1
-      :lHide             := .t.
-   end with
-
-   with object ( ::addColumn() )
-      :cHeader           := "Total"
+      :cHeader           := "Importe"
       :bEditValue        := {|| ::getField( "TotalDocumento" ) }
       :cEditPicture      := cPorDiv()
       :nWidth            := 155
       :nDataStrAlign     := 1
       :nHeadStrAlign     := 1
-   end with*/
+   end with
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD BotonesAcciones() CLASS ReceiptDocumentSalesViewSearchNavigator
+
+   if ::oSender:lAlowEdit
+
+      TGridImage():Build(  {  "nTop"      => 75,;
+                              "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
+                              "nWidth"    => 64,;
+                              "nHeight"   => 64,;
+                              "cResName"  => "gc_pencil_64",;
+                              "bLClicked" => {|| if( ::oSender:Edit(), ::refreshBrowse(), ) },;
+                              "oWnd"      => ::oDlg } )
+
+   end if 
 
 Return ( self )
 
