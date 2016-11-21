@@ -1968,7 +1968,7 @@ Function CreateAcceso( oWnd )
    // Otros--------------------------------------------------------------------
 
    oGrupo               := TGrupoAcceso() 
-   oGrupo:nBigItems     := 13
+   oGrupo:nBigItems     := 12
    oGrupo:cPrompt       := 'Global'
    oGrupo:cLittleBitmap := "gc_folder2_16"
    oGrupo:cBigBitmap    := "gc_folder2_32"
@@ -1991,16 +1991,6 @@ Function CreateAcceso( oWnd )
    oItem:cId            := "01018"
    oItem:cBmp           := "gc_magazine_folder_16"
    oItem:cBmpBig        := "gc_magazine_folder_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := GetTraslation( 'Proyectos' )
-   oItem:cMessage       := GetTraslation( 'Proyectos' )
-   oItem:bAction        := {|| TProyecto():New( cPatArt(), oWnd ):Activate() }
-   oItem:cId            := "01104"
-   oItem:cBmp           := "Led_Red_16"
-   oItem:cBmpBig        := "Led_Red_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()
