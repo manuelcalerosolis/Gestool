@@ -71,7 +71,7 @@ FUNCTION Promocion( oMenuItem, oWnd )
       PROMPT   "Promoción",;
 					"Tarifa",;
                "Artículo";
-      MRU      "Star_Blue_16";
+      MRU      "gc_star2_blue_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( dbfPromoT ) ;
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit1, dbfPromoT ) );

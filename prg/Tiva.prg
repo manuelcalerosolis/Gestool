@@ -117,7 +117,7 @@ FUNCTION TIva( oMenuItem, oWnd )
          PROMPT   "Código",;
                   "Nombre",;
                   "%" + cImp() ;
-         MRU      "Moneybag_16" ;
+         MRU      "gc_moneybag_16" ;
          BITMAP   clrTopArchivos ;
 			ALIAS		( dbfTIva ) ;
          APPEND   WinAppRec( oWndBrw:oBrw, bEdit, dbfTIva ) ;

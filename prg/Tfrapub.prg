@@ -60,7 +60,7 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem )
    ::nLevel             := nLevelUsr( oMenuItem )
 
    ::oDbf               := nil
-   ::cMru               := "box_white_16"
+   ::cMru               := "gc_box_closed_16"
 
    ::lAutoButtons       := .t.
    ::lCreateShell       := .f.

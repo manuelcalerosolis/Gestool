@@ -1787,8 +1787,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso al fichero de envasado'
    oItem:bAction        := {|| TFrasesPublicitarias():New():Activate() }
    oItem:cId            := "01129"
-   oItem:cBmp           := "box_white_16"
-   oItem:cBmpBig        := "box_white_32"
+   oItem:cBmp           := "gc_box_closed_16"
+   oItem:cBmpBig        := "gc_box_closed_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
@@ -1797,8 +1797,8 @@ Function CreateAcceso( oWnd )
    oGrupo               := TGrupoAcceso()
    oGrupo:nLittleItems  := 1
    oGrupo:cPrompt       := 'Tarifas'
-   oGrupo:cLittleBitmap := "Percent_16"
-   oGrupo:cBigBitmap    := "Percent_32"
+   oGrupo:cLittleBitmap := "gc_symbol_percent_16"
+   oGrupo:cBigBitmap    := "gc_symbol_percent_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
@@ -1806,8 +1806,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a las tarifas de precios'
    oItem:bAction        := {|| Tarifa( "01019", oWnd ) }
    oItem:cId            := "01019"
-   oItem:cBmp           := "Percent_16"
-   oItem:cBmpBig        := "Percent_32"
+   oItem:cBmp           := "gc_symbol_percent_16"
+   oItem:cBmpBig        := "gc_symbol_percent_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
@@ -1817,8 +1817,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a las ofertas de artículos'
    oItem:bAction        := {|| Oferta( "01020", oWnd ) }
    oItem:cId            := "01020"
-   oItem:cBmp           := "Star_Red_16"
-   oItem:cBmpBig        := "Star_Red_32"
+   oItem:cBmp           := "gc_star2_16"
+   oItem:cBmpBig        := "gc_star2_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
@@ -1828,8 +1828,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a las promociones comerciales'
    oItem:bAction        := {|| Promocion( "01021", oWnd ) }
    oItem:cId            := "01021"
-   oItem:cBmp           := "Star_Blue_16"
-   oItem:cBmpBig        := "Star_Blue_32"
+   oItem:cBmp           := "gc_star2_blue_16"
+   oItem:cBmpBig        := "gc_star2_blue_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
@@ -1838,8 +1838,8 @@ Function CreateAcceso( oWnd )
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := if( lAIS(), 3, 2 )
    oGrupo:cPrompt       := 'Búsquedas'
-   oGrupo:cLittleBitmap := "Package_Find_16"
-   oGrupo:cBigBitmap    := "Package_Find_32"
+   oGrupo:cLittleBitmap := "gc_package_binocular_16"
+   oGrupo:cBigBitmap    := "gc_package_binocular_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
@@ -1847,8 +1847,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Búsqueda por series'
    oItem:bAction        := {|| TSeaNumSer():Activate( "01022", oWnd ) }
    oItem:cId            := "01022"
-   oItem:cBmp           := "Package_Find_16"
-   oItem:cBmpBig        := "Package_Find_32"
+   oItem:cBmp           := "gc_package_binocular_16"
+   oItem:cBmpBig        := "gc_package_binocular_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .f.
 
@@ -1858,8 +1858,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Búsqueda por lotes'
    oItem:bAction        := {|| TTrazarLote():Activate( "01023", oWnd ) }
    oItem:cId            := "01023"
-   oItem:cBmp           := "Package_View_16"
-   oItem:cBmpBig        := "Package_View_32"
+   oItem:cBmp           := "gc_package_lupa_16"
+   oItem:cBmpBig        := "gc_package_lupa_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .f.
 
@@ -1884,8 +1884,8 @@ Function CreateAcceso( oWnd )
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 2
    oGrupo:cPrompt       := 'Impuestos'
-   oGrupo:cLittleBitmap := "Moneybag_16"
-   oGrupo:cBigBitmap    := "Moneybag_32"
+   oGrupo:cLittleBitmap := "gc_moneybag_16"
+   oGrupo:cBigBitmap    := "gc_moneybag_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
@@ -1893,8 +1893,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := "Acceso a los tipos de " + cImp()
    oItem:bAction        := {|| Tiva( "01036", oWnd ) }
    oItem:cId            := "01036"
-   oItem:cBmp           := "Moneybag_16"
-   oItem:cBmpBig        := "Moneybag_32"
+   oItem:cBmp           := "gc_moneybag_16"
+   oItem:cBmpBig        := "gc_moneybag_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()
@@ -1903,8 +1903,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := "Impuestos especiales"
    oItem:bAction        := {|| NewImp( "01037", oWnd ) }
    oItem:cId            := "01037"
-   oItem:cBmp           := "Moneybag_Dollar_16"
-   oItem:cBmpBig        := "Moneybag_Dollar_32"
+   oItem:cBmp           := "gc_moneybag_euro_16"
+   oItem:cBmpBig        := "gc_moneybag_euro_32"
    oItem:lShow          := .f.
 
    // Impuestos----------------------------------------------------------------
@@ -1912,8 +1912,8 @@ Function CreateAcceso( oWnd )
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 5
    oGrupo:cPrompt       := 'Pagos'
-   oGrupo:cLittleBitmap := "Currency_Euro_16"
-   oGrupo:cBigBitmap    := "Currency_Euro_32"
+   oGrupo:cLittleBitmap := "gc_currency_euro_16"
+   oGrupo:cBigBitmap    := "gc_currency_euro_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
@@ -1921,8 +1921,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := "Acceso a divisas monetarias"
    oItem:bAction        := {|| Divisas( "01038", oWnd ) }
    oItem:cId            := "01038"
-   oItem:cBmp           := "Currency_Euro_16"
-   oItem:cBmpBig        := "Currency_Euro_32"
+   oItem:cBmp           := "gc_currency_euro_16"
+   oItem:cBmpBig        := "gc_currency_euro_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()
@@ -1931,8 +1931,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a las entidades bancarias'
    oItem:bAction        := {|| TBancos():New( cPatGrp(), oWnd, "01106" ):Activate() }
    oItem:cId            := "01106"
-   oItem:cBmp           := "Banc_16"
-   oItem:cBmpBig        := "Banc_32"
+   oItem:cBmp           := "gc_central_bank_euro_16"
+   oItem:cBmpBig        := "gc_central_bank_euro_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()
@@ -1941,8 +1941,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a las cuentas bancarias'
    oItem:bAction        := {|| TCuentasBancarias():New( cPatGrp(), oWnd, "01106" ):Activate() }
    oItem:cId            := "01106"
-   oItem:cBmp           := "office-building_address_book_16"
-   oItem:cBmpBig        := "office-building_address_book_32"
+   oItem:cBmp           := "gc_central_bank_euro_text_16"
+   oItem:cBmpBig        := "gc_central_bank_euro_text_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()
@@ -1951,8 +1951,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := "Acceso a formas de pago"
    oItem:bAction        := {|| Fpago( "01039", oWnd ) }
    oItem:cId            := "01039"
-   oItem:cBmp           := "Creditcards_16"
-   oItem:cBmpBig        := "Creditcards_32"
+   oItem:cBmp           := "gc_credit_cards_16"
+   oItem:cBmpBig        := "gc_credit_cards_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()
@@ -1961,8 +1961,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := "Acceso a las cuentas de remesas"
    oItem:bAction        := {|| TCtaRem():New( cPatCli(), cDriver(), oWnd, "01044" ):Activate() }
    oItem:cId            := "01044"
-   oItem:cBmp           := "Address_book2_16"
-   oItem:cBmpBig        := "Address_book2_32"
+   oItem:cBmp           := "gc_portfolio_folder_16"
+   oItem:cBmpBig        := "gc_portfolio_folder_32"
    oItem:lShow          := .f.
 
    // Otros--------------------------------------------------------------------
