@@ -351,7 +351,7 @@ FUNCTION Provee( oMenuItem, oWnd )
                "Correo electrónico",;
                "Contacto",;
                "Establecimiento" ;
-      MRU      "Businessman_16";
+      MRU      "gc_businessman_16";
       BITMAP   ( clrTopCompras ) ;
       ALIAS    ( dbfProvee ) ;
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfProvee ) );

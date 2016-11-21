@@ -10,7 +10,7 @@ CLASS TSituaciones FROM TMant
 
    CLASSDATA aSituaciones
 
-   DATA  cMru                                   INIT "Document_Attachment_16"
+   DATA  cMru                                   INIT "gc_document_attachment_16"
    DATA  oComercio
    DATA  lenguajePrestashop
 

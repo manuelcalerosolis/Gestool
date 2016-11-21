@@ -6,7 +6,7 @@
 
 CLASS THoras FROM TMANT
 
-   DATA  cMru     INIT "Worker2_Clock_16"
+   DATA  cMru     INIT "gc_worker2_clock_16"
    DATA  cBitmap  INIT clrTopProduccion
 
    METHOD OpenFiles( lExclusive )

@@ -89,7 +89,7 @@ FUNCTION Almacen( oMenuItem, oWnd )
       TITLE    "Almacén" ;
       PROMPT   "Código",;
 					"Nombre";
-      MRU      "Package_16";
+      MRU      "gc_package_16";
       BITMAP   clrTopAlmacenes ;
 		ALIAS		( dbfAlmT ) ;
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfAlmT ) );

@@ -645,7 +645,7 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
                "Proveedor",;
                "Número documento",;
                "Pago";
-      MRU      "Document_navigate_cross_16";
+      MRU      "gc_document_text_delete2_16";
       BITMAP   Rgb( 0, 114, 198 ) ;
       ALIAS    ( D():FacturasRectificativasProveedores( nView ) );
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, D():FacturasRectificativasProveedores( nView ), cCodPrv, cCodArt, cNumFac ) );

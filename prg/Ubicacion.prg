@@ -108,7 +108,7 @@ FUNCTION Ubicacion( oMenuItem, oWnd )
    DEFINE SHELL oWndBrw FROM 2, 10 TO 18, 70 ;
       XBROWSE ;
       TITLE    "Ubicaciones de almacenes" ;
-      MRU      "Forklifter_16";
+      MRU      "gc_forklift_16";
       BITMAP   clrTopAlmacenes ;
       ALIAS    ( dbfUbicaT ) ;
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfUbicaT ) ) ;

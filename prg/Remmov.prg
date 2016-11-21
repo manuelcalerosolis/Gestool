@@ -55,7 +55,7 @@ CLASS TRemMovAlm FROM TMasDet
    DATA  oDbfCnt
    DATA  oDelega
    DATA  aCal
-   DATA  cMru              INIT  "Pencil_Package_16"
+   DATA  cMru              INIT  "gc_pencil_package_16"
    DATA  cBitmap           INIT  Rgb( 128, 57, 123 )
    DATA  oAlmacenOrigen
    DATA  oAlmacenDestino

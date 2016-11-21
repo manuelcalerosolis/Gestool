@@ -507,7 +507,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
                "Entrada",;
                "Código",;
                "Nombre proveedor";
-      MRU      "Clipboard_empty_businessman_16";
+      MRU      "gc_clipboard_empty_businessman_16";
       BITMAP   Rgb( 0, 114, 198 ) ;
       ALIAS    ( D():PedidosProveedores( nView ) );
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, D():PedidosProveedores( nView ), cCodPrv, cCodArt ) );

@@ -402,7 +402,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
                "Código",;
                "Nombre proveedor",;
                "Su albarán";
-      MRU      "Document_plain_businessman_16";
+      MRU      "gc_document_empty_businessman_16";
       BITMAP   Rgb( 0, 114, 198 ) ;
       ALIAS    ( D():AlbaranesProveedores( nView ) );
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, D():AlbaranesProveedores( nView ), cCodPrv, cCodArt, cCodPed ) );

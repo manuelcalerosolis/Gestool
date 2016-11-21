@@ -213,7 +213,7 @@ FUNCTION EstadoSat( oMenuItem, oWnd )
       PROMPT   "Código",;
                "Nombre";
       ALIAS    ( dbfEstadoSat ) ;
-      MRU      "bookmarks_preferences_16" ;
+      MRU      "gc_bookmarks_16" ;
       BITMAP   clrTopArchivos ;
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfEstadoSat ) );
       DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdit, dbfEstadoSat ) );

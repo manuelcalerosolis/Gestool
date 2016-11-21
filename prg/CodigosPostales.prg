@@ -83,7 +83,7 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS CodigosPostales
    ::oWndParent         := oWndParent
 
    ::lCreateShell       := .f.
-   ::cMru               := "Flag_spain_16"
+   ::cMru               := "gc_postage_stamp_16"
    ::cBitmap            := clrTopArchivos
 
 RETURN ( Self )

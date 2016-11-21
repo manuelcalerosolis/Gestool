@@ -109,7 +109,7 @@ FUNCTION TipInci( oMenuItem, oWnd )
       TITLE    "Tipos de incidencias" ;
       PROMPT   "Código",;
                "Nombre";
-      MRU      "Camera_16";
+      MRU      "gc_camera_16";
       ALIAS    ( dbfInci ) ;
       BITMAP   clrTopArchivos ;
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfInci ) ) ;
