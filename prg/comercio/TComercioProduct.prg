@@ -83,6 +83,7 @@ CLASS TComercioProduct FROM TComercioConector
 
    METHOD deleteProduct( hProduct )
    METHOD deleteImages( idProductPrestashop )
+   METHOD inactivateProduct( idProduct ) 
 
    METHOD cleanGestoolReferences()
 
@@ -1452,6 +1453,29 @@ METHOD deleteProduct( hProduct ) CLASS TComercioProduct
    ::writeText( "Eliminando referencias en gestool" )
 
    ::TPrestashopId():deleteDocumentValuesProduct( idProductGestool, ::getCurrentWebName() )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD inactivateProduct( idProduct ) CLASS TComercioProduct
+
+   local cCommand
+   local idProductPrestashop 
+
+   idProductPrestashop  := alltrim( str( ::TPrestashopId():getValueProduct( idProduct, ::getCurrentWebName() ) ) )
+
+   if empty( idProductPrestashop )
+      Return ( Self )
+   end if
+
+   ::writeText( "Desactivando artículo " + alltrim( idProduct ) + " de prestashop" )
+
+   cCommand             := "UPDATE " + ::cPrefixTable( "product" ) + ;
+                              " SET active = 0" + ;
+                              " WHERE id_product = '" + idProductPrestashop + "'"
+
+   ::commandExecDirect( cCommand )
 
 Return ( Self )
 

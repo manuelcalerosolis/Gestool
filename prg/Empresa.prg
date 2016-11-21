@@ -3826,12 +3826,6 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando proyectos" )
       end if
 
-      if cPathOld != nil .and. aImportacion:lArticulos
-         TProyecto():Create( cPath ):CheckFiles( cPathOld + "Proyecto.Dbf" )  ; SysRefresh()
-      else
-         TProyecto():Create( cPath ):CheckFiles()                             ; SysRefresh()
-      end if
-
       if oMsg != nil
          oMsg:SetText( "Creando atípicas de clientes y grupos" )
       end if
@@ -4635,9 +4629,6 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp, lSinc
 
          oMsg:SetText( "Añadiendo tipos de artículos" )
          TTipArt():Create():SyncAllDbf()
-
-         oMsg:SetText( "Añadiendo proyectos" )
-         TProyecto():Create():SyncAllDbf()
 
          oMsg:SetText( "Añadiendo catálogos de artículos" )
          TCatalogo():Create():SyncAllDbf()

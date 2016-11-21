@@ -133,7 +133,13 @@ METHOD actualizaDireccionCliente()
       end if 
       
       if empty( ( D():Proveedores( ::nView ) )->CodPostal )
-         ( D():Proveedores( ::nView ) )->CodPostal    := ::getExcelString( "K" )
+         ( D():Proveedores( ::nView ) )->CodPostal    := rjust( ::getExcelString( "K" ), "0", 5 )
+      end if 
+
+      if empty( ( D():Proveedores( ::nView ) )->Provincia )
+         if D():gotoProvincias( left( ( D():Proveedores( ::nView ) )->CodPostal, 2 ), ::nView )
+            ( D():Proveedores( ::nView ) )->Provincia := ( D():Provincias( ::nView ) )->cNomPrv
+         end if 
       end if 
 
       if empty( ( D():Proveedores( ::nView ) )->Telefono )

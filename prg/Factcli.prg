@@ -1863,10 +1863,6 @@ STATIC FUNCTION OpenFiles()
          lOpenFiles     := .f.
       end if
 
-      if !TProyecto():GetInstance():Openfiles()
-         lOpenFiles     := .f.
-      end if
-
       oEntidades        := TEntidades():Create()
       if !oEntidades:OpenFiles()
          lOpenFiles     := .f.
@@ -2286,11 +2282,6 @@ STATIC FUNCTION CloseFiles()
    if empty( oCentroCoste )
       oCentroCoste:End()
    end if
-
-   TProyecto():GetInstance():CloseFiles()
-   if !empty( TProyecto():GetInstance() )
-      TProyecto():GetInstance():CloseFiles()
-   end if 
 
    dbfIva      := nil
    dbfFacCliD  := nil

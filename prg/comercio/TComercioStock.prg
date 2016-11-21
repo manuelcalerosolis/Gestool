@@ -14,7 +14,8 @@ CLASS TComercioStock FROM TComercioConector
 
    DATA  hProductsToUpdate                   INIT {=>}
    
-   DATA  aStockProductData                   INIT {}
+   DATA  aStockProducts                      INIT {}
+   DATA  aInactiveProducts                   INIT {}
 
    METHOD resetProductsToUpdateStocks()      INLINE ( ::hProductsToUpdate := {=>} )
    METHOD getProductsToUpadateStocks()       INLINE ( ::hProductsToUpdate )
@@ -23,12 +24,15 @@ CLASS TComercioStock FROM TComercioConector
 
    METHOD updateAllProductStocks()
 
-   METHOD resetStockProductData()            INLINE ( ::aStockProductData := {} )
+   METHOD resetStockProducts()               INLINE ( ::aStockProducts := {} )
+   METHOD resetInactiveProduct()             INLINE ( ::aInactiveProducts := {} )
 
    METHOD appendProductsToUpadateStocks()
       METHOD insertProductsToUpadateStocks() 
 
    METHOD updateWebProductStocks() 
+
+   METHOD proccessInactivePrestashop()
 
    // Internal methods---------------------------------------------------------
 
@@ -66,7 +70,7 @@ METHOD updateAllProductStocks( startIdProduct )
 
    else 
 
-      msgalert( ::getCurrentWebName(), 'no encontrado' )
+      msgStop( ::getCurrentWebName(), 'no encontrado' )
 
    end if 
 
@@ -101,7 +105,8 @@ METHOD insertProductsToUpadateStocks( idProduct, cWebShop, idFirstProperty, valu
                            "idFirstProperty"       => idFirstProperty,;
                            "valueFirstProperty"    => valueFirstProperty,;
                            "idSecondProperty"      => idSecondProperty,;
-                           "valueSecondProperty"   => valueSecondProperty }
+                           "valueSecondProperty"   => valueSecondProperty,;
+                           "totalStock"            => 0 }
 
    nScan             := hscan( ::hProductsToUpdate, {|k,v| k == cWebShop } )
    if nScan == 0
@@ -149,6 +154,10 @@ METHOD updateProductStocks( cWebName, aProductsWeb )
    ::buildInformationStockProductArray( aProductsWeb )
 
    if ::prestaShopConnect()
+
+      if ::TComercioConfig():isProcessWithoutStock()
+         ::proccessInactivePrestashop()
+      end if 
       
       ::proccessStockPrestashop()
       
@@ -166,7 +175,9 @@ METHOD buildInformationStockProductArray( aProducts )
 
    ::meterProcesoSetTotal( len( aProducts ) )
 
-   ::resetStockProductData()
+   ::resetStockProducts()
+
+   ::resetInactiveProduct()
 
    for each hProduct in aProducts
       
@@ -207,12 +218,12 @@ METHOD buildAddInformacionStockProductPrestashop( hProduct )
          ( empty( idSecondProperty )      .or. ( sStock:cCodigoPropiedad2 == idSecondProperty ) )  .and.;
          ( empty( valueSecondProperty )   .or. ( sStock:cValorPropiedad2 == valueSecondProperty ) )
 
-         aAdd( ::aStockProductData, {  "idProduct"             => idProduct,;
-                                       "idFirstProperty"       => sStock:cCodigoPropiedad1,;
-                                       "idSecondProperty"      => sStock:cCodigoPropiedad2,;
-                                       "valueFirstProperty"    => sStock:cValorPropiedad1,;
-                                       "valueSecondProperty"   => sStock:cValorPropiedad2,;
-                                       "unitStock"             => sStock:nUnidades } )
+         aAdd( ::aStockProducts, {  "idProduct"             => idProduct,;
+                                    "idFirstProperty"       => sStock:cCodigoPropiedad1,;
+                                    "idSecondProperty"      => sStock:cCodigoPropiedad2,;
+                                    "valueFirstProperty"    => sStock:cValorPropiedad1,;
+                                    "valueSecondProperty"   => sStock:cValorPropiedad2,;
+                                    "unitStock"             => sStock:nUnidades } )
 
       end if  
 
@@ -220,12 +231,36 @@ METHOD buildAddInformacionStockProductPrestashop( hProduct )
 
    next
 
-   aadd( ::aStockProductData, {  "idProduct"             => idProduct ,;
-                                 "idFirstProperty"       => space( 20 ) ,;
-                                 "idSecondProperty"      => space( 20 ) ,;
-                                 "valueFirstProperty"    => space( 20 ) ,;
-                                 "valueSecondProperty"   => space( 20 ) ,;
-                                 "unitStock"             => nTotalStock } )
+   aadd( ::aStockProducts, {  "idProduct"             => idProduct ,;
+                              "idFirstProperty"       => space( 20 ) ,;
+                              "idSecondProperty"      => space( 20 ) ,;
+                              "valueFirstProperty"    => space( 20 ) ,;
+                              "valueSecondProperty"   => space( 20 ) ,;
+                              "unitStock"             => nTotalStock } )
+
+   // Productos sin stock hay q borrarlos-------------------------------------
+
+   if nTotalStock <= 0
+      aadd( ::aInactiveProducts, idProduct )
+   end if 
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD proccessInactivePrestashop() 
+
+   local idProduct
+
+   ::meterProcesoSetTotal( len( ::aInactiveProducts ) )
+
+   for each idProduct in ::aInactiveProducts
+
+      ::TComercioProduct():inactivateProduct( idProduct )
+
+      ::meterProcesoText()
+
+   next
 
 Return .t.
 
@@ -235,9 +270,9 @@ METHOD proccessStockPrestashop()
 
    local hStockProductData
 
-   ::meterProcesoSetTotal( len( ::aStockProductData ) )
+   ::meterProcesoSetTotal( len( ::aStockProducts ) )
 
-   for each hStockProductData in ::aStockProductData
+   for each hStockProductData in ::aStockProducts
 
       if ::setStockPrestashop( hStockProductData )
          ::saveLastInsertStock( hget( hStockProductData, "idProduct" ) )

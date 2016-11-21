@@ -598,7 +598,9 @@ CLASS D
    METHOD EmpresaBancos( nView )             INLINE ( ::Get( "EmpBnc", nView ) )
 
    METHOD CodigosPostales( nView )           INLINE ( ::Get( "CodPostal", nView ) )
+
    METHOD Provincias( nView )                INLINE ( ::Get( "Provincia", nView ) )
+   METHOD gotoProvincias( id, nView )        INLINE ( ::seekInOrd( ::Provincias( nView ), id, "cCodPrv" ) )
 
    METHOD Atipicas( nView )                  INLINE ( ::Get( "CliAtp", nView ) )
       METHOD gotoIdAtipicasAgentes( idAgente, idArticulo, nView ) ;
