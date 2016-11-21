@@ -1970,8 +1970,8 @@ Function CreateAcceso( oWnd )
    oGrupo               := TGrupoAcceso() 
    oGrupo:nBigItems     := 13
    oGrupo:cPrompt       := 'Global'
-   oGrupo:cLittleBitmap := "Folder2_Red_16"
-   oGrupo:cBigBitmap    := "Folder2_Red_32"
+   oGrupo:cLittleBitmap := "gc_folder2_16"
+   oGrupo:cBigBitmap    := "gc_folder2_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
@@ -1979,8 +1979,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := "Acceso a las cajas"
    oItem:bAction        := {|| Cajas( "01040", oWnd ) }
    oItem:cId            := "01040"
-   oItem:cBmp           := "Cashier_16"
-   oItem:cBmpBig        := "Cashier_32"
+   oItem:cBmp           := "gc_cash_register_16"
+   oItem:cBmpBig        := "gc_cash_register_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()
@@ -1989,8 +1989,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los grupos de ventas de contabilidad'
    oItem:bAction        := {|| GrpVenta( "01018", oWnd ) }
    oItem:cId            := "01018"
-   oItem:cBmp           := "Index_16"
-   oItem:cBmpBig        := "Index_32"
+   oItem:cBmp           := "gc_magazine_folder_16"
+   oItem:cBmpBig        := "gc_magazine_folder_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()

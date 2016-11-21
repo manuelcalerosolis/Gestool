@@ -154,7 +154,7 @@ FUNCTION Cajas( oMenuItem, oWnd )
 			TITLE 	"Cajas" ;
          PROMPT   "Código",;
 						"Nombre" ;
-         MRU      "Cashier_16";
+         MRU      "gc_cash_register_16";
 			ALIAS		( dbfCajT ) ;
          BITMAP   clrTopArchivos ;
          APPEND   WinAppRec( oWndBrw:oBrw, bEdit, dbfCajT ) ;

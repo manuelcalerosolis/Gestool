@@ -113,7 +113,7 @@ Function GrpVenta( oMenuItem, oWnd )
       TITLE    "Grupos de ventas de contabilidad" ;
       PROMPT   "Código",;
 					"Nombre";
-      MRU      "Index_16";
+      MRU      "gc_magazine_folder_16";
 		ALIAS		( dbfGrpVenta ) ;
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfGrpVenta ) );
       DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdit, dbfGrpVenta ) );
