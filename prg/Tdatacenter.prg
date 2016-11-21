@@ -2206,12 +2206,14 @@ METHOD BuildEmpresa()
    oDataTable:bCreateFile  := {| cPath | TTipArt():BuildFiles( cPath ) }
    ::AddEmpresaTable( oDataTable )
 
+/*
    oDataTable              := TDataTable():New( "Proyecto" )
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Proyecto.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Proyecto.Cdx"
    oDataTable:cDescription := "Proyectos"
    oDataTable:bCreateFile  := {| cPath | TProyecto():BuildFiles( cPath ) }
    ::AddEmpresaTable( oDataTable )
+*/
 
    oDataTable              := TDataTable():New( "Fabricantes" )
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Fabricantes.Dbf"
@@ -2862,7 +2864,7 @@ METHOD BuildEmpresa()
    oDataTable:lTrigger     := ::lTriggerAuxiliares   
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "PedCliT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PedCliT.Cdx"
-   oDataTable:cDescription := "Pedidos de clientes"
+   oDataTable:cDescription := getTraslation("Pedidos de clientes")
    oDataTable:bCreateFile  := {| cPath | mkPedCli( cPath ) }
    oDataTable:bCreateIndex := {| cPath | rxPedCli( cPath ) }
    oDataTable:bSyncFile    := {|| SynPedCli( cPatEmp() ) }
@@ -2902,7 +2904,7 @@ METHOD BuildEmpresa()
    oDataTable              := TDataTable():New( "PedCliR" )
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "PedCliR.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PedCliR.Cdx"
-   oDataTable:cDescription := "Pedidos de clientes"
+   oDataTable:cDescription := getTraslation("Pedidos de clientes")
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable():New( "PedCliE" )

@@ -4829,7 +4829,7 @@ Function MainTablet()
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 6 ) },;
                            "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
-                           "cURL"      => "Pedidos de clientes",;
+                           "cURL"      => getTraslation("Pedidos de clientes"),;
                            "oWnd"      => oDlg,;
                            "oFont"     => oGridFont(),;
                            "lPixel"    => .t.,;

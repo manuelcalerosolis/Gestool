@@ -4502,7 +4502,7 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp, lSinc
          ActDbf( cEmpOld, cEmpTmp, "PreCliI",   "incidencias de presupuestos a clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "PreCliD",   "documentos de presupuestos a clientes", oMet, oMsg, aMsg )
 
-         ActDbf( cEmpOld, cEmpTmp, "PedCliT",   "pedidos de clientes", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "PedCliT",   getTraslation("Pedidos de clientes"), oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "PedCliL",   "líneas de pedidos de clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "PedCliR",   "reservas de pedidos de clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "PedCliI",   "incidencias de pedidos de clientes", oMet, oMsg, aMsg )

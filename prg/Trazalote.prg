@@ -386,7 +386,7 @@ METHOD Activate( oMenuItem, oWnd )
                               Space( 6 ) + "Facturas de proveedores",;
                               Space( 3 ) + "Ventas",;
                               Space( 6 ) + "Presupuestos de clientes",;
-                              Space( 6 ) + "Pedidos de clientes",;
+                              Space( 6 ) + getTraslation("Pedidos de clientes"),;
                               Space( 6 ) + "Albaranes de clientes",;
                               Space( 6 ) + "Facturas de clientes",;
                               Space( 6 ) + "Facturas rectificativas de clientes",;
@@ -1268,7 +1268,7 @@ METHOD Filtrar()
          ::oDbfTmp:GoTop()
          ::oBrw:Refresh()
 
-      case Alltrim( ::cFiltro ) == "Pedidos de clientes"
+      case Alltrim( ::cFiltro ) == getTraslation("Pedidos de clientes")
          ::oDbfTmp:OrdSetFocus( "cTipDoc" )
          ::oDbfTmp:OrdScope( "Pedido de cliente" )
          ::oDbfTmp:GoTop()

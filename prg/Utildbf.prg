@@ -3427,10 +3427,14 @@ function DbDialog( cTitle )
 RETURN NIL
 
 //---------------------------------------------------------------------------//
-
+/*
 Function getTraslation( cText )
 
    local cTraslation    := ""
+
+   if empty(hTraslations)
+
+   end if 
 
    if HHasKey( hTraslations, cText )
       cTraslation       := HGet( hTraslations, cText )
@@ -3442,7 +3446,7 @@ Function getTraslation( cText )
    end if 
 
 return ( if( !empty( cTraslation ), cTraslation, cText ) )   
-
+*/
 //---------------------------------------------------------------------------//
 
 Function ValToMoney( cMoney )

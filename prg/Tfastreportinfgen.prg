@@ -2378,18 +2378,18 @@ METHOD FastReportPedidoCliente()
       
    ::oPedCliT:OrdSetFocus( "iNumPed" )
       
-   ::oFastReport:SetWorkArea(       "Pedidos de clientes", ::oPedCliT:nArea )
-   ::oFastReport:SetFieldAliases(   "Pedidos de clientes", cItemsToReport( aItmPedCli() ) )
+   ::oFastReport:SetWorkArea(       getTraslation("Pedidos de clientes"), ::oPedCliT:nArea )
+   ::oFastReport:SetFieldAliases(   getTraslation("Pedidos de clientes"), cItemsToReport( aItmPedCli() ) )
       
    ::oPedCliL:OrdSetFocus( "iNumPed" )
       
    ::oFastReport:SetWorkArea(       "Lineas pedidos de clientes", ::oPedCliL:nArea ) 
    ::oFastReport:SetFieldAliases(   "Lineas pedidos de clientes", cItemsToReport( aColPedCli() ) )
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Pedidos de clientes",         {|| ::idDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", getTraslation("Pedidos de clientes"),         {|| ::idDocumento() } )
    ::oFastReport:SetMasterDetail(   "Informe", "Lineas pedidos de clientes",  {|| ::IdDocumentoLinea() } )
 
-   ::oFastReport:SetResyncPair(     "Informe", "Pedidos de clientes" )
+   ::oFastReport:SetResyncPair(     "Informe", getTraslation("Pedidos de clientes") )
    ::oFastReport:SetResyncPair(     "Informe", "Lineas pedidos de clientes" )
 
 RETURN ( Self )

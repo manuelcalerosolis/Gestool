@@ -1078,7 +1078,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
    DEFINE SHELL oWndBrw FROM 0, 0 TO 22, 80 ;
       XBROWSE ;
-      TITLE    "Pedidos de clientes" ;
+      TITLE    getTraslation("Pedidos de clientes") ;
       PROMPT   "Número",;
                "Fecha",;
                "Código",;
@@ -2025,7 +2025,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
    Comienza el dialogo---------------------------------------------------------
    */
 
-   DEFINE DIALOG oDlg RESOURCE "PEDCLI" TITLE LblTitle( nMode ) + "pedidos de clientes"
+   DEFINE DIALOG oDlg RESOURCE "PEDCLI" TITLE LblTitle( nMode ) + getTraslation("Pedidos de clientes")
 
       REDEFINE FOLDER oFld;
          ID       200 ;
@@ -12639,7 +12639,7 @@ FUNCTION BrwPedCli( oGet, cPedCliT, cPedCliL, cdbfIva, cdbfDiv, dbfFPago, oIva )
    ( cPedCliT )->( dbSetFilter( {|| Field->nEstado <= 2 }, "nEstado <= 2" ) )
    ( cPedCliT )->( dbGoTop() )
 
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Pedidos de clientes"
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE getTraslation("Pedidos de clientes")
 
 		REDEFINE GET oGet1 VAR cGet1;
          ID       104 ;

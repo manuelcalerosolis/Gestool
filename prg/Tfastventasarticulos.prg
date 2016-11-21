@@ -811,7 +811,7 @@ METHOD BuildReportCorrespondences()
                                                                               ::processAllClients() },;
                                                          "Variable" =>  {||   ::AddVariableLineasPresupuestoCliente() },;
                                                          "Data" =>      {||   ::FastReportPresupuestoCliente() } },;
-                     "Pedidos de clientes" =>         {  "Generate" =>  {||   ::AddPedidoClientes(),;
+                     getTraslation("Pedidos de clientes") =>         {  "Generate" =>  {||   ::AddPedidoClientes(),;
                                                                               ::processAllClients() },;
                                                          "Variable" =>  {||   ::AddVariableLineasPedidoCliente() },;
                                                          "Data" =>      {||   ::FastReportPedidoCliente() } },;
@@ -1044,9 +1044,9 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
                        "File"       => "Presupuestos de clientes.fr3" ,;     
                        "Options"    => {  "Incluir clientes sin ventas" => {  "Options"   => .f.,;
                                                                               "Value"     => .f. } } },;
-                     { "Title"      => "Pedidos de clientes",;          
+                     { "Title"      => getTraslation("Pedidos de clientes"),;          
                        "Image"      => 6,; 
-                       "Type"       => "Pedidos de clientes",;           
+                       "Type"       => getTraslation("Pedidos de clientes"),;           
                        "Directory"  => "Articulos\Ventas\Pedidos de clientes",;         
                        "File"       => "Pedidos de clientes.fr3" ,;          
                        "Options"    => {  "Incluir clientes sin ventas" => {  "Options"   => .f.,;
@@ -4000,16 +4000,16 @@ METHOD FastReportPedidoCliente()
    ( D():PedidosClientes( ::nView ) )->( OrdSetFocus( "iNumPed" ) )
    ( D():PedidosClientesLineas( ::nView ) )->( OrdSetFocus( "iNumPed" ) )
 
-   ::oFastReport:SetWorkArea(       "Pedidos de clientes", ( D():PedidosClientes( ::nView ) )->( Select() ) )
-   ::oFastReport:SetFieldAliases(   "Pedidos de clientes", cItemsToReport( aItmPedCli() ) )
+   ::oFastReport:SetWorkArea(       getTraslation("Pedidos de clientes"), ( D():PedidosClientes( ::nView ) )->( Select() ) )
+   ::oFastReport:SetFieldAliases(   getTraslation("Pedidos de clientes"), cItemsToReport( aItmPedCli() ) )
 
    ::oFastReport:SetWorkArea(       "Lineas pedidos de clientes", ( D():PedidosClientesLineas( ::nView ) )->( Select() ) )
    ::oFastReport:SetFieldAliases(   "Lineas pedidos de clientes", cItemsToReport( aColPedCli() ) )
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Pedidos de clientes",               {|| ::idDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", getTraslation("Pedidos de clientes"),               {|| ::idDocumento() } )
    ::oFastReport:SetMasterDetail(   "Informe", "Lineas pedidos de clientes",        {|| ::IdDocumentoLinea() } )
 
-   ::oFastReport:SetResyncPair(     "Informe", "Pedidos de clientes" )
+   ::oFastReport:SetResyncPair(     "Informe", getTraslation("Pedidos de clientes") )
    ::oFastReport:SetResyncPair(     "Informe", "Lineas pedidos de clientes" )
 
 RETURN ( Self )

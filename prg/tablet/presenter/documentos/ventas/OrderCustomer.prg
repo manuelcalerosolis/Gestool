@@ -27,7 +27,7 @@ METHOD New() CLASS OrderCustomer
 
    ::super:New( self )
 
-   ::hTextDocuments                    := {  "textMain"     => "Pedidos de clientes",;
+   ::hTextDocuments                    := {  "textMain"     => getTraslation("Pedidos de clientes"),;
                                              "textShort"    => "Pedido",;
                                              "textTitle"    => "lineas de pedidos",;
                                              "textSummary"  => "Resumen pedido",;
@@ -35,7 +35,7 @@ METHOD New() CLASS OrderCustomer
 
    // Vistas--------------------------------------------------------------------
 
-   ::oViewSearchNavigator:setTitleDocumento( "Pedidos de clientes" )
+   ::oViewSearchNavigator:setTitleDocumento( getTraslation("Pedidos de clientes") )
 
    ::oViewEdit:setTitleDocumento( "Pedido" )  
 

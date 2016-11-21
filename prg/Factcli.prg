@@ -18357,7 +18357,7 @@ function SynFacCli( cPath )
             cCodFam                    := RetFamArt( ( D():FacturasClientesLineas( nView ) )->cRef, D():Articulos( nView ) )
             if !empty( cCodFam )
                if ( D():FacturasClientesLineas( nView ) )->( dbRLock() )
-                    ( D():FacturasClientesLineas( nView ) )->cCodFam := cCodFam
+                  ( D():FacturasClientesLineas( nView ) )->cCodFam := cCodFam
                   ( D():FacturasClientesLineas( nView ) )->( dbUnLock() )
                end if
             end if
@@ -18367,8 +18367,8 @@ function SynFacCli( cPath )
             cCodTip                    := RetFld( ( D():FacturasClientesLineas( nView ) )->cRef, D():Articulos( nView ), "cCodTip" )
             if !empty( cCodTip )
                if ( D():FacturasClientesLineas( nView ) )->( dbRLock() )
-                    ( D():FacturasClientesLineas( nView ) )->cCodTip := cCodTip
-              ( D():FacturasClientesLineas( nView ) )->( dbUnLock() )
+                  ( D():FacturasClientesLineas( nView ) )->cCodTip := cCodTip
+                  ( D():FacturasClientesLineas( nView ) )->( dbUnLock() )
                end if
             end if
          end if
