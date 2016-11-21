@@ -124,7 +124,7 @@ FUNCTION ConfImpTiket( oMenuItem, oWnd )
       TITLE    "Balanzas" ;
       PROMPT   "Código",;
                "Descripción";
-      MRU      "Gauge_16";
+      MRU      "gc_balance_16";
       BITMAP   "WebTopGreen" ;
       ALIAS    ( dbfImpTik ) ;
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfImpTik ) ) ;

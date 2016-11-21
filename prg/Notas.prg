@@ -11,7 +11,7 @@ Static lOnProcess       := .f.
 
 CLASS TNotas FROM TMant
 
-   DATA cMru            INIT  "Note_16"
+   DATA cMru            INIT  "gc_notebook2_16"
    DATA cBitmap         INIT  "WebTopGreen"
    DATA oMenu
    DATA oBmpAlr

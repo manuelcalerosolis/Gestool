@@ -141,7 +141,7 @@ FUNCTION Tarifa( oMenuItem, oWnd )
       TITLE    "Tarifa de precios" ;
       PROMPT   "Código",;
 					"Nombre";
-      MRU      "Percent_16";
+      MRU      "gc_symbol_percent_16";
       BITMAP   clrTopArchivos ;
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfTarPreT ) );
       DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdit, dbfTarPreT ) );

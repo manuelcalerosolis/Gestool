@@ -132,7 +132,7 @@ function TblCnv( oMenuItem, oWnd )
          EDIT     WinEdtRec( oWndBrw, bEdit, dbfTblCnv ) ;
          DELETE   WinDelRec( oWndBrw, dbfTblCnv ) ;
          DUPLICAT WinDupRec( oWndBrw, bEdit, dbfTblCnv ) ;
-         MRU      "Tape_Measure2_16" ;
+         MRU      "gc_objects_transform_16" ;
          LEVEL    nLevel ;
          OF       oWnd
 

@@ -197,7 +197,7 @@ FUNCTION Temporada( oMenuItem, oWnd )
       PROMPT   "Código",;
                "Nombre";
       ALIAS    ( dbfTemporada ) ;
-      MRU      "Sun_and_cloud_16" ;
+      MRU      "gc_cloud_sun_16" ;
       BITMAP   clrTopArchivos ;
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfTemporada ) );
       DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdit, dbfTemporada ) );

@@ -6,6 +6,8 @@
 
 CLASS TAgenda FROM TMant 
 
+   DATA cMru            INIT  "gc_telephone_16"
+   
    METHOD Create( cPath, cDriver )
 
    METHOD OpenFiles()

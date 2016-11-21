@@ -391,7 +391,7 @@ FUNCTION CfgDocs( oMenuItem, oWnd )
 	TITLE      "Documentos" ;
       PROMPT      "Código" ,;
                   "Documento" ;
-      MRU         "Document_edit_16" ;
+      MRU         "gc_document_text_screw_16" ;
       BITMAP      clrTopHerramientas ;
 	ALIAS		( dbfDoc ) ;
 	APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit0, dbfDoc, , {|oGet| NotValid( oGet, dbfDoc ) } ) );

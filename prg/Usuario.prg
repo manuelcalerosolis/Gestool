@@ -214,7 +214,7 @@ FUNCTION Usuarios( oMenuItem, oWnd )
 		TITLE 	"Usuarios" ;
       PROMPT   "Código",;
                "Nombre";
-      MRU      "Businessmen_16";
+      MRU      "gc_businesspeople_16";
       BITMAP   "WebTopGreen" ;
 		ALIAS		( dbfUser ) ;
       LEVEL    nLevel ;

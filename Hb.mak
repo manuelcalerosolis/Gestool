@@ -441,6 +441,7 @@ Product.prg                            \
 Payment.prg                            \
 Store.prg                              \
 DocumentSalesViewSearchNavigator.prg   \
+ReceiptDocumentSalesViewSearchNavigator.prg  \
 CustomerSalesViewSearchNavigator.prg   \
 CustomerViewSearchNavigator.prg        \
 ProductViewSearchNavigator.prg         \
@@ -448,6 +449,7 @@ PaymentViewSearchNavigator.prg         \
 CustomerIncidenceViewNavigator.prg     \
 StoreViewSearchNavigator.prg           \
 DocumentSalesViewEdit.prg              \
+ReceiptDocumentSalesViewEdit.prg       \
 GeneraFacturasClientes.prg             \
 CamposExtra.prg                        \
 DetCamposExtra.prg                     \
@@ -891,6 +893,7 @@ LinesDeliveryNoteCustomer.obj          				\
 LinesInvoiceCustomer.obj               				\
 ViewSearchNavigator.obj                				\
 DocumentSalesViewSearchNavigator.obj   				\
+ReceiptDocumentSalesViewSearchNavigator.obj        \
 CustomerSalesViewSearchNavigator.obj   				\
 CustomerViewSearchNavigator.obj        				\
 ProductViewSearchNavigator.obj         				\
@@ -899,6 +902,7 @@ StoreViewSearchNavigator.obj           				\
 CustomerIncidence.obj                  				\
 CustomerIncidenceView.obj              				\
 CustomerIncidenceViewNavigator.obj     				\
+ReceiptDocumentSalesViewEdit.obj                   \
 Product.obj                            				\
 Payment.obj                            				\
 Store.obj                              				\
@@ -1328,6 +1332,7 @@ $(OBJ)\LinesDeliveryNoteCustomer.obj         +
 $(OBJ)\LinesInvoiceCustomer.obj              +
 $(OBJ)\ViewSearchNavigator.obj               +
 $(OBJ)\DocumentSalesViewSearchNavigator.obj  +
+$(OBJ)\ReceiptDocumentSalesViewSearchNavigator.obj    +
 $(OBJ)\CustomerSalesViewSearchNavigator.obj  +
 $(OBJ)\CustomerViewSearchNavigator.obj       +
 $(OBJ)\ProductViewSearchNavigator.obj        +
@@ -1336,6 +1341,7 @@ $(OBJ)\StoreViewSearchNavigator.obj          +
 $(OBJ)\CustomerIncidence.obj                 +
 $(OBJ)\CustomerIncidenceView.obj             +
 $(OBJ)\CustomerIncidenceViewNavigator.obj    +
+$(OBJ)\ReceiptDocumentSalesViewEdit.obj      +
 $(OBJ)\Product.obj                           +
 $(OBJ)\Payment.obj                           +
 $(OBJ)\Store.obj                             +

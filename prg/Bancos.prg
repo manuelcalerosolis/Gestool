@@ -8,7 +8,7 @@ CLASS TBancos FROM TMant
 
    DATA  cName          INIT "Bancos"  
 
-   DATA  cMru           INIT "Banc_16"
+   DATA  cMru           INIT "gc_central_bank_euro_16"
 
    DATA  cBitmap        INIT clrTopArchivos
 
@@ -263,7 +263,7 @@ RETURN .t.
 
 CLASS TCuentasBancarias FROM TMant
 
-   DATA  cMru              INIT "office-building_address_book_16"
+   DATA  cMru              INIT "gc_central_bank_euro_text_16"
 
    DATA  oPais
    DATA  oBanco

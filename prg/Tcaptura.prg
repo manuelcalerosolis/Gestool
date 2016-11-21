@@ -16,7 +16,7 @@ CLASS TCaptura FROM TMasDet
    DATA oAncho
    DATA oChkBitmap
 
-   DATA cMru            INIT "Window_edit_16"
+   DATA cMru            INIT "gc_window_pencil_16"
    DATA cBitmap         INIT "WebTopGreen"
 
    Method New( cPath, oWndParent, oMenuItem )

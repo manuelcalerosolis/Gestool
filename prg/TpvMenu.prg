@@ -13,7 +13,7 @@ CLASS TpvMenu FROM TMasDet
 
    CLASSDATA oInstance
 
-   DATA  cMru                                   INIT "clipboard_empty_16"
+   DATA  cMru                                   INIT "gc_clipboard_empty_16"
 
    DATA  oGetCodigo
    DATA  oGetNombre

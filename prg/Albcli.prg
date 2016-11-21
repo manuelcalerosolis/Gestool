@@ -10554,8 +10554,6 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
                end if 
             end if
 
-            msgalert( aTmp[ _NUNICAJA ], "nUniCaja")
-
             if ( D():Articulos( nView ) )->nUniCaja != 0 .and. aTmp[ _NUNICAJA ] == 0
                aTmp[ _NUNICAJA ]    := ( D():Articulos( nView ) )->nUniCaja 
                if !empty(aGet)

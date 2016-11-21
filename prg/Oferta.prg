@@ -468,7 +468,7 @@ FUNCTION Oferta( oMenuItem, oWnd )
                   "Nombre",;
                   "Fecha inicio",;
                   "Fecha fin";
-         MRU      "Star_Red_16";
+         MRU      "gc_star2_16";
          BITMAP   clrTopArchivos ;
          APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfOferta, .f., cDefIva() ) );
          DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdit, dbfOferta, .f., cDefIva() ) );

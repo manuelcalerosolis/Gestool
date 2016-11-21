@@ -6,7 +6,7 @@
 
 CLASS TInvitacion FROM TMANT
 
-   DATA  cMru INIT "Masks_16"
+   DATA  cMru INIT "gc_masks_16"
 
    CLASSDATA aResource  AS ARRAY    INIT {   "COCKTAIL_16"        ,;
                                              "DUDE3_16"           ,;

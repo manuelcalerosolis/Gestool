@@ -111,7 +111,7 @@ FUNCTION FPago( oMenuItem, oWnd )
          PROMPT   "Código",;
                   "Nombre",;
                   "Posición" ;
-         MRU      "Creditcards_16";
+         MRU      "gc_credit_cards_16";
          BITMAP   clrTopArchivos ;
          ALIAS    ( D():FormasPago( nView ) ) ;
          APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, D():FormasPago( nView ) ) );

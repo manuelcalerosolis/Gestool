@@ -6,7 +6,7 @@
 
 CLASS TCtaRem FROM TMant
 
-   DATA  cMru                       INIT "Address_book2_16"
+   DATA  cMru                       INIT "gc_portfolio_folder_16"
 
    DATA  cBitmap                    INIT clrTopArchivos
 

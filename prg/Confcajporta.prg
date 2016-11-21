@@ -109,7 +109,7 @@ FUNCTION ConfCajPorta( oMenuItem, oWnd )
          TITLE    "Configurar cajón portamonedas" ;
          PROMPT   "Código",;
                   "Descripción";
-         MRU      "Harddisk_16";
+         MRU      "gc_modem_screw_16";
          BITMAP   "WebTopGreen" ;
          ALIAS    ( dbfCajPorta ) ;
          APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfCajPorta ) ) ;

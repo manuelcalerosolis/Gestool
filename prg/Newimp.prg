@@ -11,7 +11,7 @@ CLASS TNewImp FROM TMant
 
    DATA  cPouDiv
 
-   DATA  cMru           INIT "Moneybag_Dollar_16"
+   DATA  cMru           INIT "gc_moneybag_euro_16"
 
    METHOD Create( cPath )
 
