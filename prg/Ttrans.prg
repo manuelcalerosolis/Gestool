@@ -15,7 +15,7 @@ CLASS TTrans FROM TMANT
 
    DATA  cPouDiv
 
-   DATA  cMru                          INIT "Truck_Blue_16"
+   DATA  cMru                          INIT "gc_small_truck_16"
 
    DATA  cBitmap                       INIT clrTopArchivos
 

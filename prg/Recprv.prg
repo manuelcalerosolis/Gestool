@@ -250,7 +250,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
       XBROWSE ;
       TITLE    "Pagos de facturas de proveedores" ;
       ALIAS    ( D():FacturasProveedoresPagos( nView ) );
-      MRU      "Money2_businessman_16";
+      MRU      "gc_briefcase2_businessman_16";
       BITMAP   Rgb( 0, 114, 198 ) ;
       PROMPTS  "Número",;
                "Código",;

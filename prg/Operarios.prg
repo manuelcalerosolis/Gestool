@@ -6,7 +6,7 @@
 
 CLASS TOperarios FROM TMasDet
 
-   DATA  cMru        INIT "Worker2_16"
+   DATA  cMru        INIT "gc_worker2_16"
    DATA  cBitmap     INIT clrTopProduccion
    DATA  oSeccion
    DATA  oHoras

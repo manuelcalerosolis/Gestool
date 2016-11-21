@@ -1999,8 +1999,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := "Acceso al centro de coste"
    oItem:bAction        := {|| TCentroCoste():New( cPatDat(), oWnd, "01128" ):Activate() }
    oItem:cId            := "01128"
-   oItem:cBmp           := "centro_coste_16"
-   oItem:cBmpBig        := "centro_coste_32"
+   oItem:cBmp           := "gc_folder_open_money_16"
+   oItem:cBmpBig        := "gc_folder_open_money_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()
@@ -2009,8 +2009,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso al fichero de codigos postales'
    oItem:bAction        := {|| CodigosPostales():New( cPatDat(), cDriver(), oWnd, "01011" ):Activate() }
    oItem:cId            := "01041"
-   oItem:cBmp           := "Flag_spain_16"
-   oItem:cBmpBig        := "Flag_spain_32"
+   oItem:cBmp           := "gc_postage_stamp_16"
+   oItem:cBmpBig        := "gc_postage_stamp_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()
@@ -2019,8 +2019,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso al fichero de grupos de provincias'
    oItem:bAction        := {|| Provincias():New( cPatDat(), cDriver(), oWnd, "01011" ):Activate() }
    oItem:cId            := "01041"
-   oItem:cBmp           := "Flag_spain_16"
-   oItem:cBmpBig        := "Flag_spain_32"
+   oItem:cBmp           := "gc_flag_spain_16"
+   oItem:cBmpBig        := "gc_flag_spain_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()
@@ -2029,8 +2029,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := "Acceso a los paises"
    oItem:bAction        := {|| TPais():New( cPatDat(), cDriver(), oWnd, "01041" ):Activate() }
    oItem:cId            := "01041"
-   oItem:cBmp           := "Flag_spain_16"
-   oItem:cBmpBig        := "Flag_spain_32"
+   oItem:cBmp           := "gc_globe_16"
+   oItem:cBmpBig        := "gc_globe_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()
@@ -2039,8 +2039,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := "Acceso a los lenguajes"
    oItem:bAction        := {|| TLenguaje():New( cPatDat(), oWnd, "01041" ):Activate() }
    oItem:cId            := "01125"
-   oItem:cBmp           := "user1_message_16"
-   oItem:cBmpBig        := "user1_message_32"
+   oItem:cBmp           := "gc_user_message_16"
+   oItem:cBmpBig        := "gc_user_message_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()
@@ -2049,8 +2049,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := "Acceso a los tipos de ventas"
    oItem:bAction        := {|| TVta( "01043", oWnd ) }
    oItem:cId            := "01043"
-   oItem:cBmp           := "Wallet_closed_16"
-   oItem:cBmpBig        := "Wallet_closed_32"
+   oItem:cBmp           := "gc_wallet_16"
+   oItem:cBmpBig        := "gc_wallet_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()
@@ -2059,8 +2059,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := "Acceso a los transportistas"
    oItem:bAction        := {|| TTrans():New( cPatCli(), oWnd, "01045" ):Activate() }
    oItem:cId            := "01045"
-   oItem:cBmp           := "Truck_Blue_16"
-   oItem:cBmpBig        := "Truck_Blue_32"
+   oItem:cBmp           := "gc_small_truck_16"
+   oItem:cBmpBig        := "gc_small_truck_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()
@@ -2069,8 +2069,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := "Acceso a los tipos de incidencias"
    oItem:bAction        := {|| TipInci( "01089", oWnd ) }
    oItem:cId            := "01089"
-   oItem:cBmp           := "Camera_16"
-   oItem:cBmpBig        := "Camera_32"
+   oItem:cBmp           := "gc_camera_16"
+   oItem:cBmpBig        := "gc_camera_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()
@@ -2079,8 +2079,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := "Acceso a los tipos de situaciones"
    oItem:bAction        := {|| TSituaciones():New( cPatDat(), oWnd ):Play() }
    oItem:cId            := "01096"
-   oItem:cBmp           := "Document_Attachment_16"
-   oItem:cBmpBig        := "Document_Attachment_32"
+   oItem:cBmp           := "gc_document_attachment_16"
+   oItem:cBmpBig        := "gc_document_attachment_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()
@@ -2089,8 +2089,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso al fichero de ' + getTraslation( 'categorías' )
    oItem:bAction        := {|| EstadoSat( "01126", oWnd() ) }
    oItem:cId            := "01126"
-   oItem:cBmp           := "bookmarks_preferences_16"
-   oItem:cBmpBig        := "bookmarks_preferences_32"
+   oItem:cBmp           := "gc_bookmarks_16"
+   oItem:cBmpBig        := "gc_bookmarks_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()
@@ -2128,8 +2128,8 @@ Function CreateAcceso( oWnd )
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 2
    oGrupo:cPrompt       := 'Proveedores'
-   oGrupo:cLittleBitmap := "Businessman_16"
-   oGrupo:cBigBitmap    := "Businessman_32"
+   oGrupo:cLittleBitmap := "gc_businessmen2_16"
+   oGrupo:cBigBitmap    := "gc_businessmen2_32"
 
    oItem                := oItemCompras:Add()
    oItem:oGroup         := oGrupo
@@ -2137,8 +2137,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los grupos de proveedores'
    oItem:bAction        := {|| TGrpPrv():New( cPatPrv(), oWnd, "01110" ):Activate() }
    oItem:cId            := "01110"
-   oItem:cBmp           := "GrpPrv_16"
-   oItem:cBmpBig        := "GrpPrv_32"
+   oItem:cBmp           := "gc_businessmen2_16"
+   oItem:cBmpBig        := "gc_businessmen2_32"
    oItem:lShow          := .f.
 
    oItem                := oItemCompras:Add()
@@ -2147,8 +2147,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los proveedores'
    oItem:bAction        := {|| Provee( "01034", oWnd ) }
    oItem:cId            := "01034"
-   oItem:cBmp           := "Businessman_16"
-   oItem:cBmpBig        := "Businessman_32"
+   oItem:cBmp           := "gc_businessman_16"
+   oItem:cBmpBig        := "gc_businessman_32"
    oItem:lShow          := .t.
 
    // Compras------------------------------------------------------------------
@@ -2156,8 +2156,8 @@ Function CreateAcceso( oWnd )
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 5
    oGrupo:cPrompt       := 'Compras'
-   oGrupo:cLittleBitmap := "Document_businessman_16"
-   oGrupo:cBigBitmap    := "Document_businessman_32"
+   oGrupo:cLittleBitmap := "gc_document_text_businessman_16"
+   oGrupo:cBigBitmap    := "gc_document_text_businessman_32"
 
    oItem                := oItemCompras:Add()
    oItem:oGroup         := oGrupo
@@ -2165,8 +2165,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los pedidos de proveedores'
    oItem:bAction        := {|| PedPrv( "01046", oWnd ) }
    oItem:cId            := "01046"
-   oItem:cBmp           := "Clipboard_empty_businessman_16"
-   oItem:cBmpBig        := "Clipboard_empty_businessman_32"
+   oItem:cBmp           := "gc_clipboard_empty_businessman_16"
+   oItem:cBmpBig        := "gc_clipboard_empty_businessman_32"
    oItem:lShow          := .f.
 
    oItem                := oItemCompras:Add()
@@ -2175,8 +2175,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los albaranes de proveedores'
    oItem:bAction        := {|| AlbPrv( "01047", oWnd ) }
    oItem:cId            := "01047"
-   oItem:cBmp           := "Document_plain_businessman_16"
-   oItem:cBmpBig        := "Document_plain_businessman_32"
+   oItem:cBmp           := "gc_document_empty_businessman_16"
+   oItem:cBmpBig        := "gc_document_empty_businessman_32"
    oItem:lShow          := .f.
 
    oItem                := oItemCompras:Add()
@@ -2185,8 +2185,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a las facturas de proveedores'
    oItem:bAction        := {|| FacPrv( "01048", oWnd ) }
    oItem:cId            := "01048"
-   oItem:cBmp           := "Document_businessman_16"
-   oItem:cBmpBig        := "Document_businessman_32"
+   oItem:cBmp           := "gc_document_text_businessman_16"
+   oItem:cBmpBig        := "gc_document_text_businessman_32"
    oItem:lShow          := .t.
 
    oItem                := oItemCompras:Add()
@@ -2195,8 +2195,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a las facturas rectificativas de proveedores'
    oItem:bAction        := {|| RctPrv( "01099", oWnd ) }
    oItem:cId            := "01099"
-   oItem:cBmp           := "Document_navigate_cross_16"
-   oItem:cBmpBig        := "Document_navigate_cross_32"
+   oItem:cBmp           := "gc_document_text_delete2_16"
+   oItem:cBmpBig        := "gc_document_text_delete2_32"
    oItem:lShow          := .f.
 
    oItem                := oItemCompras:Add()
@@ -2205,16 +2205,16 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los pagos a proveedores'
    oItem:bAction        := {|| RecPrv( "01049", oWnd ) }
    oItem:cId            := "01049"
-   oItem:cBmp           := "Money2_businessman_16"
-   oItem:cBmpBig        := "Money2_businessman_32"
+   oItem:cBmp           := "gc_briefcase2_businessman_16"
+   oItem:cBmpBig        := "gc_briefcase2_businessman_32"
    oItem:lShow          := .t.
 
    // Almacenes--------------------------------------------------------------
 
    oItemAlmacen         := oAcceso:Add()
    oItemAlmacen:cPrompt := 'ALMACENES'
-   oItemAlmacen:cBmp    := "Folder16"
-   oItemAlmacen:cBmpBig := "Folder_32"
+   oItemAlmacen:cBmp    := "gc_package_16"
+   oItemAlmacen:cBmpBig := "gc_package_32"
    oItemAlmacen:lShow   := .t.
 
    // Almacenes----------------------------------------------------------------
@@ -2222,8 +2222,8 @@ Function CreateAcceso( oWnd )
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 4
    oGrupo:cPrompt       := 'Almacenes'
-   oGrupo:cLittleBitmap := "Package_16"
-   oGrupo:cBigBitmap    := "Package_32"
+   oGrupo:cLittleBitmap := "gc_package_16"
+   oGrupo:cBigBitmap    := "gc_package_16"
 
    oItem                := oItemAlmacen:Add()
    oItem:oGroup         := oGrupo
@@ -2231,8 +2231,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los almacenes'
    oItem:bAction        := {|| Almacen( "01035", oWnd ) }
    oItem:cId            := "01035"
-   oItem:cBmp           := "Package_16"
-   oItem:cBmpBig        := "Package_32"
+   oItem:cBmp           := "gc_package_16"
+   oItem:cBmpBig        := "gc_package_32"
    oItem:lShow          := .f.
 
    oItem                := oItemAlmacen:Add()
@@ -2241,8 +2241,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := "Acceso a los tipos de movimientos de almacén"
    oItem:bAction        := {|| TMov( "01042", oWnd ) }
    oItem:cId            := "01042"
-   oItem:cBmp           := "Package_replace2_16"
-   oItem:cBmpBig        := "Package_replace2_32"
+   oItem:cBmp           := "gc_package_circle_16"
+   oItem:cBmpBig        := "gc_package_circle_32"
    oItem:lShow          := .f.
 
    oItem                := oItemAlmacen:Add()
@@ -2251,16 +2251,16 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a las ubicaciones de almacenes'
    oItem:bAction        := {|| Ubicacion( "01088", oWnd ) }
    oItem:cId            := "01088"
-   oItem:cBmp           := "Forklifter_16"
-   oItem:cBmpBig        := "Forklifter_32"
+   oItem:cBmp           := "gc_forklift_16"
+   oItem:cBmpBig        := "gc_forklift_32"
    oItem:lShow          := .f.
 
    /*
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 2
    oGrupo:cPrompt       := 'Movimientos almacén'
-   oGrupo:cLittleBitmap := "Pencil_Package_16"
-   oGrupo:cBigBitmap    := "Pencil_Package_32"
+   oGrupo:cLittleBitmap := "gc_pencil_package_16"
+   oGrupo:cBigBitmap    := "gc_pencil_package_32"
    */
 
    oItem                := oItemAlmacen:Add()
@@ -2269,8 +2269,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los movimientos de almacén'
    oItem:bAction        := {|| RemMovAlm( "01050", oWnd ) }
    oItem:cId            := "01050"
-   oItem:cBmp           := "Pencil_Package_16"
-   oItem:cBmpBig        := "Pencil_Package_32"
+   oItem:cBmp           := "gc_pencil_package_16"
+   oItem:cBmpBig        := "gc_pencil_package_32"
    oItem:lShow          := .f.
 
    end if
@@ -2288,8 +2288,8 @@ Function CreateAcceso( oWnd )
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 7
    oGrupo:cPrompt       := 'Estructura'
-   oGrupo:cLittleBitmap := "Package_16"
-   oGrupo:cBigBitmap    := "Package_32"
+   oGrupo:cLittleBitmap := "gc_worker_group_16"
+   oGrupo:cBigBitmap    := "gc_worker_group_32"
 
    oItem                := oItemProduccion:Add()
    oItem:oGroup         := oGrupo
@@ -2297,8 +2297,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a las secciones de producción'
    oItem:bAction        := {|| TSeccion():New( cPatEmp(), cDriver(), oWnd, "04001" ):Activate() }
    oItem:cId            := "04001"
-   oItem:cBmp           := "Group_Worker2_16"
-   oItem:cBmpBig        := "Group_Worker2_32"
+   oItem:cBmp           := "gc_worker_group_16"
+   oItem:cBmpBig        := "gc_worker_group_32"
    oItem:lShow          := .f.
 
    oItem                := oItemProduccion:Add()
@@ -2307,8 +2307,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los operarios'
    oItem:bAction        := {|| TOperarios():New( cPatEmp(), cDriver(), oWnd, "04002" ):Activate() }
    oItem:cId            := "04002"
-   oItem:cBmp           := "Worker2_16"
-   oItem:cBmpBig        := "Worker2_32"
+   oItem:cBmp           := "gc_worker2_16"
+   oItem:cBmpBig        := "gc_worker2_32"
    oItem:lShow          := .f.
 
    oItem                := oItemProduccion:Add()
@@ -2317,8 +2317,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a tipos de horas de producción'
    oItem:bAction        := {|| THoras():New( cPatEmp(), cDriver(), oWnd, "04003" ):Activate() }
    oItem:cId            := "04003"
-   oItem:cBmp           := "Worker2_Clock_16"
-   oItem:cBmpBig        := "Worker2_Clock_32"
+   oItem:cBmp           := "gc_worker2_clock_16"
+   oItem:cBmpBig        := "gc_worker2_clock_32"
    oItem:lShow          := .f.
 
    oItem                := oItemProduccion:Add()

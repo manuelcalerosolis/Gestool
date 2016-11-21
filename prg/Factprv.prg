@@ -689,7 +689,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
                "Número documento",;
                "Pago",;
                "NFC";
-      MRU      "Document_businessman_16";
+      MRU      "gc_document_text_businessman_16";
       BITMAP   ( clrTopCompras ) ;
       ALIAS    ( D():FacturasProveedores( nView ) );
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, D():FacturasProveedores( nView ), cCodPrv, cCodArt, cNumAlb ) );

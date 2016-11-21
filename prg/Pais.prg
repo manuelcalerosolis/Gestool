@@ -8,7 +8,7 @@ CLASS TPais FROM TMant
 
    DATA oBan                  AS OBJECT
 
-   DATA cMru                  INIT "Flag_spain_16"
+   DATA cMru                  INIT "gc_globe_16"
 
    DATA  cBitmap              INIT clrTopArchivos
 

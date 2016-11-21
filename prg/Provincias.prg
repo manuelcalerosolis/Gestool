@@ -72,7 +72,7 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS Provincias
    
    ::lCreateShell       := .f.
 
-   ::cMru               := "Flag_spain_16"
+   ::cMru               := "gc_flag_spain_16"
 
    ::cBitmap            := clrTopArchivos
 

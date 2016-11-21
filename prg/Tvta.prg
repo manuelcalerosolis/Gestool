@@ -78,7 +78,7 @@ FUNCTION TVta( oMenuItem, oWnd )
          TITLE    "Tipos de venta" ;
          PROMPT   "Código",;
 						"Nombre";
-         MRU      "Wallet_closed_16";
+         MRU      "gc_wallet_16";
          BITMAP   clrTopArchivos ;
 			ALIAS		( dbfTVta ) ;
          APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfTVta ) );
