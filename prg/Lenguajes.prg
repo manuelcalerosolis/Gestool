@@ -6,7 +6,7 @@
 
 CLASS TLenguaje FROM TMant
 
-   DATA cMru                  INIT "user1_message_16"
+   DATA cMru                  INIT "gc_user_message_16"
 
    METHOD DefineFiles()
 

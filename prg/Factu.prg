@@ -2037,7 +2037,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Lenguajes"
    oItem:cMessage       := "Acceso a los lenguajes"
-   oItem:bAction        := {|| TLenguaje():New( cPatDat(), oWnd, "01041" ):Activate() }
+   oItem:bAction        := {|| TLenguaje():New( cPatDat(), cDriver(), oWnd, "01125" ):Activate() }
    oItem:cId            := "01125"
    oItem:cBmp           := "gc_user_message_16"
    oItem:cBmpBig        := "gc_user_message_32"
@@ -3902,16 +3902,16 @@ Function TctCreateButtonBar()
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 1
    oGrupo:cPrompt       := 'Salir'
-   oGrupo:cLittleBitmap := "Exit_16"
-   oGrupo:cBigBitmap    := "Exit_32"
+   oGrupo:cLittleBitmap := "gc_door_open2_16"
+   oGrupo:cBigBitmap    := "gc_door_open2_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Salir"
    oItem:cMessage       := "Finalizar el programa"
    oItem:bAction        := {|| oWnd:End() }
-   oItem:cBmp           := "Exit_16"
-   oItem:cBmpBig        := "Exit_32"
+   oItem:cBmp           := "gc_door_open2_16"
+   oItem:cBmpBig        := "gc_door_open2_32"
 
 Return ( oAcceso )
 
@@ -4201,16 +4201,16 @@ Function TPVCreateButtonBar()
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 1
    oGrupo:cPrompt       := 'Salir'
-   oGrupo:cLittleBitmap := "Exit_16"
-   oGrupo:cBigBitmap    := "Exit_32"
+   oGrupo:cLittleBitmap := "gc_door_open2_16"
+   oGrupo:cBigBitmap    := "gc_door_open2_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Salir"
    oItem:cMessage       := "Finalizar el programa"
    oItem:bAction        := {|| oWnd:End() }
-   oItem:cBmp           := "Exit_16"
-   oItem:cBmpBig        := "Exit_32"
+   oItem:cBmp           := "gc_door_open2_16"
+   oItem:cBmpBig        := "gc_door_open2_32"
 
 Return ( oAcceso )
 
