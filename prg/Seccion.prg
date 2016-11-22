@@ -6,7 +6,7 @@
 
 CLASS TSeccion FROM TMant
 
-   DATA  cMru     INIT "Group_Worker2_16"
+   DATA  cMru     INIT "gc_worker_group_16"
    DATA  cBitmap  INIT clrTopProduccion
 
    METHOD OpenFiles( lExclusive )

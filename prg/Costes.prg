@@ -6,7 +6,7 @@
 
 CLASS TCosMaq FROM TMant
 
-   DATA  cMru     INIT "Robot_Money2_16"
+   DATA  cMru     INIT "gc_industrial_robot_money_16"
    DATA  cBitmap  INIT clrTopProduccion
 
    METHOD OpenFiles( lExclusive )

@@ -6,7 +6,7 @@
 
 CLASS TColaboradores FROM TMant
 
-   DATA   cMru       INIT "Teacher_16"
+   DATA   cMru       INIT "gc_users_relation_16"
    DATA   cBitmap    INIT Rgb( 197, 227, 9 )
 
    METHOD OpenFiles( lExclusive )

@@ -6,7 +6,7 @@
 
 CLASS TTipOpera FROM TMant
 
-   DATA   cMru       INIT "Worker_Folder_Blue_16"
+   DATA   cMru       INIT "gc_folder_open_worker_16"
    DATA   cBitmap    INIT clrTopProduccion
 
    METHOD OpenFiles( lExclusive )

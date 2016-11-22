@@ -1092,7 +1092,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
                "Comercio electrónico",;
                "Situación",;
                "Delegación";
-      MRU      "gc_clipboard_empty_earth_16";
+      MRU      "gc_clipboard_empty_user_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( D():PedidosClientes( nView ) );
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, D():PedidosClientes( nView ), cCodCli, cCodArt, cCodPre ) ) ;

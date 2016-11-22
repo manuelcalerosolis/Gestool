@@ -8,7 +8,7 @@ CLASS TGrpPrv FROM TMant
 
    DATA  cName          INIT "GruposProveedores"
 
-   DATA  cMru           INIT "Users2_16"
+   DATA  cMru           INIT "gc_businessmen2_16"
 
    DATA  cParentSelect  INIT Space( 4 )
 

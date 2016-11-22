@@ -47,7 +47,7 @@ CLASS TProduccion FROM TMasDet
 
    CLASSDATA hDefinition
 
-   DATA cMru                 INIT "Worker2_Form_Red_16"
+   DATA cMru                 INIT "gc_document_text_worker_16"
 
    DATA oDlg
    DATA oFld
@@ -417,7 +417,7 @@ METHOD Activate( cDriver )
                "Operación",;
                "Sección",;
                "Almacén" ;
-      MRU      "Worker2_Form_Red_16";
+      MRU      "gc_document_text_worker_16";
       BITMAP   clrTopProduccion ;
       ALIAS    ( ::oDbf ) ;
       APPEND   ::Append() ;
