@@ -5,12 +5,13 @@
 CLASS ReceiptInvoiceCustomer FROM DocumentsSales  
   
    DATA nImporteAnterior                  INIT 0
+   DATA nOrdenAnterior
 
    METHOD New()
 
    METHOD getEditDocumento()
 
-   METHOD onPreEnd()                      INLINE ( .t. )
+   METHOD onPreEnd()
 
    METHOD onPostGetDocumento()
 
@@ -23,6 +24,10 @@ CLASS ReceiptInvoiceCustomer FROM DocumentsSales
    METHOD assignLinesDocument()           INLINE ( .t. )
 
    METHOD setLinesDocument()              INLINE ( .t. )
+
+   METHOD onPreEditDocumento()
+
+   METHOD addReciboDiferencia()
 
 END CLASS
 
@@ -82,7 +87,8 @@ Return ( self )
 
 METHOD onPreSaveEdit() CLASS ReceiptInvoiceCustomer
 
-   local lNuevoImporte
+   local nNuevoImporte        := 0
+   local nImporteReciboNuevo  := 0
 
    /*
    Convertimos el estado a Lógico----------------------------------------------
@@ -94,8 +100,14 @@ METHOD onPreSaveEdit() CLASS ReceiptInvoiceCustomer
    Vemos si hay que generar un nuevo recibo------------------------------------
    */
 
-   if hGet( ::oSender:hDictionaryMaster, "TotalDocumento" ) != ::nImporteAnterior
-      MsgInfo( "Me Creo un recibo nuevo por la diferencia" )
+   nNuevoImporte  := hGet( ::oSender:hDictionaryMaster, "TotalDocumento" )
+
+   if nNuevoImporte != ::nImporteAnterior
+      
+      nImporteReciboNuevo     := ( ::nImporteAnterior - nNuevoImporte ) * if( ::nImporteAnterior < 0, - 1 , 1 )
+
+      ::addReciboDiferencia( nImporteReciboNuevo )
+
    end if
 
 Return ( .t. )
@@ -105,7 +117,77 @@ Return ( .t. )
 METHOD onPostGetDocumento() CLASS ReceiptInvoiceCustomer
 
    ::oldSerie           := ::getSerie()   
+
    ::nImporteAnterior   := hGet( ::oSender:hDictionaryMaster, "TotalDocumento" )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD onPreEditDocumento() CLASS ReceiptInvoiceCustomer
+
+   ::nOrdenAnterior     := ( ::getDataTable() )->( OrdSetFocus() )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD onPreEnd() CLASS ReceiptInvoiceCustomer
+
+   ( ::getDataTable() )->( OrdSetFocus( ::nOrdenAnterior ) )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD addReciboDiferencia( nImporteRecibo ) CLASS ReceiptInvoiceCustomer
+
+   local nRec        := ( ::getDataTable() )->( Recno() )
+   local aTabla
+   local nCount
+   local cNumRec     := ""
+
+   aTabla            := dbScatter( ::getDataTable() )
+
+   cNumRec           += aTabla[ ( ::getDataTable() )->( fieldpos( "cSerie" ) ) ]
+   cNumRec           += Str( aTabla[ ( ::getDataTable() )->( fieldpos( "nNumFac" ) ) ] )
+   cNumRec           += aTabla[ ( ::getDataTable() )->( fieldpos( "cSufFac" ) ) ]
+
+   nCount            := nNewReciboCliente( cNumRec, aTabla[ ( ::getDataTable() )->( fieldpos( "cTipRec" ) ) ], ::getDataTable() )
+
+   /*
+   Añadimos el nuevo recibo-------------------------------------------------
+   */
+
+   ( ::getDataTable() )->( dbAppend() )
+
+   ( ::getDataTable() )->cTurRec    := cCurSesion()
+   ( ::getDataTable() )->cTipRec    := aTabla[ ( ::getDataTable() )->( fieldpos( "cTipRec" ) ) ]
+   ( ::getDataTable() )->cSerie     := aTabla[ ( ::getDataTable() )->( fieldpos( "cSerie" ) ) ]
+   ( ::getDataTable() )->nNumFac    := aTabla[ ( ::getDataTable() )->( fieldpos( "nNumFac" ) ) ]
+   ( ::getDataTable() )->cSufFac    := aTabla[ ( ::getDataTable() )->( fieldpos( "cSufFac" ) ) ]
+   ( ::getDataTable() )->nNumRec    := nCount
+   ( ::getDataTable() )->cCodCaj    := aTabla[ ( ::getDataTable() )->( fieldpos( "cCodCaj" ) ) ]
+   ( ::getDataTable() )->cCodCli    := aTabla[ ( ::getDataTable() )->( fieldpos( "cCodCli" ) ) ]
+   ( ::getDataTable() )->cNomCli    := aTabla[ ( ::getDataTable() )->( fieldpos( "cNomCli" ) ) ]
+   ( ::getDataTable() )->cCodAge    := aTabla[ ( ::getDataTable() )->( fieldpos( "cCodAge" ) ) ] 
+   ( ::getDataTable() )->dEntrada   := Ctod( "" )
+   ( ::getDataTable() )->nImporte   := nImporteRecibo
+   ( ::getDataTable() )->nImpCob    := nImporteRecibo
+   ( ::getDataTable() )->cDescrip   := "Recibo nº" + AllTrim( str( nCount ) ) + " de factura " + if( !empty( aTabla[ ( ::getDataTable() )->( fieldpos( "cTipRec" ) ) ] ), "rectificativa ", "" ) + aTabla[ ( ::getDataTable() )->( fieldpos( "cSerie" ) ) ] + '/' + AllTrim( str( aTabla[ ( ::getDataTable() )->( fieldpos( "nNumFac" ) ) ] ) ) + '/' + aTabla[ ( ::getDataTable() )->( fieldpos( "cSufFac" ) ) ]
+   ( ::getDataTable() )->dPreCob    := dFecFacCli( cNumRec, D():FacturasClientes( ::nView ) )
+   ( ::getDataTable() )->cPgdoPor   := ""
+   ( ::getDataTable() )->lCobrado   := .f.
+   ( ::getDataTable() )->cDivPgo    := aTabla[ ( ::getDataTable() )->( fieldpos( "cDivPgo" ) ) ]
+   ( ::getDataTable() )->nVdvPgo    := aTabla[ ( ::getDataTable() )->( fieldpos( "nVdvPgo" ) ) ]
+   ( ::getDataTable() )->cCodPgo    := aTabla[ ( ::getDataTable() )->( fieldpos( "cCodPgo" ) ) ]
+   ( ::getDataTable() )->lConPgo    := .f.
+   ( ::getDataTable() )->dFecCre    := GetSysDate()
+   ( ::getDataTable() )->cHorCre    := Substr( Time(), 1, 5 )
+
+   ( ::getDataTable() )->( dbUnLock() )
+
+   ( ::getDataTable() )->( dbGoTo( nRec ) )
 
 Return ( .t. )
 

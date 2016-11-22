@@ -257,9 +257,9 @@ METHOD searchLastSale( idClient, dateWarranty )
 
    if ::warrantyDays > 0
 
-      ::searchLastSaleAlbaranesClientes( idClient, dateWarranty, .t. )
+      ::searchLastSaleAlbaranesClientes( idClient, dateWarranty, .f. )
 
-      ::searchLastSaleFacturasClientes( idClient, dateWarranty, .t. )
+      ::searchLastSaleFacturasClientes( idClient, dateWarranty, .f. )
 
       ::searchLastSaleTicketsClientes( idClient, dateWarranty )
 
@@ -303,9 +303,6 @@ METHOD searchLastSaleAlbaranesClientes( idClient, dateWarranty, lInfo )
             // if ( !empty( dateWarranty ) )
             //   ::unitsToReturn   := max( ::unitsToReturn, 0 )
             // end if 
-
-            msgAlert( ( ( D():AlbaranesClientesLineas( ::nView ) )->nUniCaja > 0 ), "( ( D():AlbaranesClientesLineas( ::nView ) )->nUniCaja > 0 )" )
-            msgAlert( ( empty( ::lastDateSale ) .or. ( D():AlbaranesClientesLineas( ::nView ) )->dFecAlb > ::lastDateSale ), "( empty( ::lastDateSale ) .or. ( D():AlbaranesClientesLineas( ::nView ) )->dFecAlb > ::lastDateSale )" )
 
             if ( ( D():AlbaranesClientesLineas( ::nView ) )->nUniCaja > 0 ) .and. ;
                ( empty( ::lastDateSale ) .or. ( D():AlbaranesClientesLineas( ::nView ) )->dFecAlb > ::lastDateSale )

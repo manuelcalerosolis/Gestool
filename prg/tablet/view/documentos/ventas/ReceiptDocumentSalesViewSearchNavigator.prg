@@ -23,6 +23,10 @@ METHOD setColumns() CLASS ReceiptDocumentSalesViewSearchNavigator
 
    ::setBrowseConfigurationName( "grid_recibos" )
 
+   ::oBrowse:bClrSel         := {|| { if( !::getField( "LogicoCobrado" ), Rgb( 255, 0, 0 ), CLR_BLACK ), Rgb( 229, 229, 229 ) } }
+   ::oBrowse:bClrSelFocus    := {|| { if( !::getField( "LogicoCobrado" ), Rgb( 255, 0, 0 ), CLR_BLACK ), Rgb( 167, 205, 240 ) } }
+   ::oBrowse:bClrStd         := {|| { if( !::getField( "LogicoCobrado" ), Rgb( 255, 0, 0 ), CLR_BLACK ), GetSysColor( COLOR_WINDOW ) } }
+
    with object ( ::addColumn() )
       :cHeader           := "Id"
       :bEditValue        := {|| ::getField( "Serie" ) + "/" + alltrim( str( ::getField( "Numero" ) ) ) + "-" + alltrim( str( ::getField( "NumeroRecibo" ) ) ) }

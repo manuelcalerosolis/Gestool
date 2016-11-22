@@ -392,10 +392,16 @@ METHOD searchLastSaleTicketsClientes( idClient, dateWarranty )
 
                if ( empty( dateWarranty ) .or. ( D():Tikets( ::nView ) )->dFecTik >= dateWarranty )
 
+                  // msgalert( ( D():Tikets( ::nView ) )->dFecTik, "fecha tiket")
+
                   ::unitsToReturn   += ( D():TiketsLineas( ::nView ) )->nUntTil
+
+                  // msgalert( ::unitsToReturn, "unitsToReturn" )
 
                   if ( ( D():TiketsLineas( ::nView ) )->nUntTil > 0 ) .and. ;
                      ( empty( ::lastDateSale ) .or. ( D():Tikets( ::nView ) )->dFecTik > ::lastDateSale )
+
+                     // msgalert( ( D():Tikets( ::nView ) )->dFecTik, "fecha tiket" )
 
                      ::typeSale     := "Ticket de cliente"
                      ::clientSale   := ( D():Tikets( ::nView ) )->cCliTik
@@ -416,6 +422,8 @@ METHOD searchLastSaleTicketsClientes( idClient, dateWarranty )
          end if 
 
          ( D():TiketsLineas( ::nView ) )->( dbskip() )
+
+         sysrefresh()
 
       end while
 
