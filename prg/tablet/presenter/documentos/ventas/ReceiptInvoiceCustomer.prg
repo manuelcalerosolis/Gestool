@@ -4,15 +4,19 @@
 
 CLASS ReceiptInvoiceCustomer FROM DocumentsSales  
   
+   DATA nImporteAnterior                  INIT 0
+
    METHOD New()
 
    METHOD getEditDocumento()
 
    METHOD onPreEnd()                      INLINE ( .t. )
 
+   METHOD onPostGetDocumento()
+
    METHOD onViewSave()
 
-   METHOD onPreSaveEdit()                 INLINE ( .t. )
+   METHOD onPreSaveEdit()
 
    METHOD deleteLinesDocument()           INLINE ( .t. )
 
@@ -73,5 +77,36 @@ METHOD onViewSave() CLASS ReceiptInvoiceCustomer
    ::oViewEdit:oDlg:end( IDOK )
 
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD onPreSaveEdit() CLASS ReceiptInvoiceCustomer
+
+   local lNuevoImporte
+
+   /*
+   Convertimos el estado a Lógico----------------------------------------------
+   */
+
+   hSet( ::oSender:hDictionaryMaster, "LogicoCobrado", ( ::oViewEdit:cCbxEstado == "Cobrado" ) )
+
+   /*
+   Vemos si hay que generar un nuevo recibo------------------------------------
+   */
+
+   if hGet( ::oSender:hDictionaryMaster, "TotalDocumento" ) != ::nImporteAnterior
+      MsgInfo( "Me Creo un recibo nuevo por la diferencia" )
+   end if
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD onPostGetDocumento() CLASS ReceiptInvoiceCustomer
+
+   ::oldSerie           := ::getSerie()   
+   ::nImporteAnterior   := hGet( ::oSender:hDictionaryMaster, "TotalDocumento" )
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//

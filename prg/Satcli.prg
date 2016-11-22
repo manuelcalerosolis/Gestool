@@ -10825,6 +10825,30 @@ Function SynSatCli( cPath )
             ( cSatCliT )->cCodRut := RetFld( ( cSatCliT )->cCodCli, dbfClient, "cCodRut" )
          end if
 
+         if Empty( ( cSatCliT )->cNomCli )
+            ( cSatCliT )->cNomCli := RetFld( ( cSatCliT )->cCodCli, dbfClient, "Titulo" )
+         end if
+
+         if Empty( ( cSatCliT )->cDirCli )
+            ( cSatCliT )->cDirCli := RetFld( ( cSatCliT )->cCodCli, dbfClient, "Domicilio" )
+         end if
+
+         if Empty( ( cSatCliT )->cPobCli )
+            ( cSatCliT )->cPobCli := RetFld( ( cSatCliT )->cCodCli, dbfClient, "Poblacion" )
+         end if
+
+         if Empty( ( cSatCliT )->cPrvCli )
+            ( cSatCliT )->cPrvCli := RetFld( ( cSatCliT )->cCodCli, dbfClient, "Provincia" )
+         end if
+
+         if Empty( ( cSatCliT )->cPosCli )
+            ( cSatCliT )->cPosCli := RetFld( ( cSatCliT )->cCodCli, dbfClient, "CodPostal" )
+         end if
+
+         if Empty( ( cSatCliT )->cDniCli )
+            ( cSatCliT )->cDniCli := RetFld( ( cSatCliT )->cCodCli, dbfClient, "Nif" )
+         end if
+
          /*
          Rellenamos los campos de totales
          */
