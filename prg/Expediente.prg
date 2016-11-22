@@ -50,7 +50,7 @@ Return nil
 
 CLASS TExpediente FROM TMasDet
 
-   DATA  cMru                 INIT "Folder_document_16"
+   DATA  cMru                 INIT "gc_folder_document_16"
    DATA  cBitmap              INIT clrTopExpedientes
 
    DATA  oArt
@@ -269,7 +269,7 @@ METHOD Activate()
                "Operario",;
                "Entidad",;
                "Colaborador";
-      MRU      "Folder_document_16";
+      MRU      "gc_folder_document_16";
       BITMAP   Rgb( 197, 227, 9 ) ;
       ALIAS    ( ::oDbf ) ;
       APPEND   ::Append() ;

@@ -6,7 +6,7 @@
 
 CLASS TActuaciones FROM TMant
 
-   DATA   cMru       INIT "Power_Drill_16"
+   DATA   cMru       INIT "gc_power_drill2_16"
    DATA   cBitmap    INIT Rgb( 197, 227, 9 )
 
    METHOD OpenFiles( lExclusive )

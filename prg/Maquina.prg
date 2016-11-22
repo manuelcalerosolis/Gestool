@@ -19,7 +19,7 @@ Return nil
 
 CLASS TMaquina FROM TMASDET
 
-   DATA  cMru           INIT "Robot_16"
+   DATA  cMru           INIT "gc_industrial_robot_16"
    DATA  cBitmap        INIT clrTopProduccion
 
    DATA  oMaquina

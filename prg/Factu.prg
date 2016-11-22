@@ -2327,8 +2327,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a las operaciones'
    oItem:bAction        := {|| TOperacion():New( cPatEmp(), cDriver(), oWnd, "04004" ):Activate() }
    oItem:cId            := "04004"
-   oItem:cBmp           := "Worker2_Hammer2_16"
-   oItem:cBmpBig        := "Worker2_Hammer2_32"
+   oItem:cBmp           := "gc_worker2_hammer_16"
+   oItem:cBmpBig        := "gc_worker2_hammer_32"
    oItem:lShow          := .f.
 
    oItem                := oItemProduccion:Add()
@@ -2337,8 +2337,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a tipos de operaciones'
    oItem:bAction        := {|| TTipOpera():New( cPatEmp(), cDriver(), oWnd, "04005" ):Activate() }
    oItem:cId            := "04005"
-   oItem:cBmp           := "Worker_Folder_Blue_16"
-   oItem:cBmpBig        := "Worker_Folder_Blue_32"
+   oItem:cBmp           := "gc_folder_open_worker_16"
+   oItem:cBmpBig        := "gc_folder_open_worker_32"
    oItem:lShow          := .f.
 
    oItem                := oItemProduccion:Add()
@@ -2347,8 +2347,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a la maquinaria'
    oItem:bAction        := {|| StartTMaquina() }
    oItem:cId            := "04006"
-   oItem:cBmp           := "Robot_16"
-   oItem:cBmpBig        := "Robot_32"
+   oItem:cBmp           := "gc_industrial_robot_16"
+   oItem:cBmpBig        := "gc_industrial_robot_32"
    oItem:lShow          := .f.
 
    oItem                := oItemProduccion:Add()
@@ -2357,15 +2357,15 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los costes de la maquinaria'
    oItem:bAction        := {|| TCosMaq():New( cPatEmp(), cDriver(), oWnd, "04007" ):Activate() }
    oItem:cId            := "04007"
-   oItem:cBmp           := "Robot_Money2_16"
-   oItem:cBmpBig        := "Robot_Money2_32"
+   oItem:cBmp           := "gc_industrial_robot_money_16"
+   oItem:cBmpBig        := "gc_industrial_robot_money_32"
    oItem:lShow          := .f.
 
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 2
    oGrupo:cPrompt       := 'Producción'
-   oGrupo:cLittleBitmap := "Worker2_Form_Red_16"
-   oGrupo:cBigBitmap    := "Worker2_Form_Red_32"
+   oGrupo:cLittleBitmap := "gc_document_text_worker_16"
+   oGrupo:cBigBitmap    := "gc_document_text_worker_32"
 
    oItem                := oItemProduccion:Add()
    oItem:oGroup         := oGrupo
@@ -2373,8 +2373,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los partes de producción'
    oItem:bAction        := {|| StartTProduccion( cDriver()) }
    oItem:cId            := "04008"
-   oItem:cBmp           := "Worker2_Form_Red_16"
-   oItem:cBmpBig        := "Worker2_Form_Red_32"
+   oItem:cBmp           := "gc_document_text_worker_16"
+   oItem:cBmpBig        := "gc_document_text_worker_32"
    oItem:lShow          := .f.
 
    oItem                := oItemProduccion:Add()
@@ -2383,8 +2383,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Actualiza costos de mano de obra'
    oItem:bAction        := {|| ActualizaCosto():Activate( "04009", oWnd ) }
    oItem:cId            := "04009"
-   oItem:cBmp           := "Worker2_Money_16"
-   oItem:cBmpBig        := "Worker2_Money_32"
+   oItem:cBmp           := "gc_worker2_money_16"
+   oItem:cBmpBig        := "gc_worker2_money_32"
    oItem:lShow          := .f.
 
    end if
@@ -2402,8 +2402,8 @@ Function CreateAcceso( oWnd )
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 5
    oGrupo:cPrompt       := 'Expedientes'
-   oGrupo:cLittleBitmap := "Folder_document_16"
-   oGrupo:cBigBitmap    := "Folder_document_32"
+   oGrupo:cLittleBitmap := "gc_folder_document_16"
+   oGrupo:cBigBitmap    := "gc_folder_document_32"
 
    oItem                := oItemExpediente:Add()
    oItem:oGroup         := oGrupo
@@ -2411,8 +2411,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los tipos de expedientes'
    oItem:bAction        := {|| StartTTipoExpediente() }
    oItem:cId            := "04011"
-   oItem:cBmp           := "Folders_16"
-   oItem:cBmpBig        := "Folders_32"
+   oItem:cBmp           := "gc_folders_16"
+   oItem:cBmpBig        := "gc_folders_32"
    oItem:lShow          := .f.
 
    oItem                := oItemExpediente:Add()
@@ -2421,8 +2421,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a las distintas entidades'
    oItem:bAction        := {|| TEntidades():New( cPatEmp(), cDriver(), oWnd, "04012" ):Activate() }
    oItem:cId            := "04012"
-   oItem:cBmp           := "School_16"
-   oItem:cBmpBig        := "School_32"
+   oItem:cBmp           := "gc_office_building2_16"
+   oItem:cBmpBig        := "gc_office_building2_32"
    oItem:lShow          := .f.
 
    oItem                := oItemExpediente:Add()
@@ -2431,8 +2431,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a la tabla de colaboradores'
    oItem:bAction        := {|| TColaboradores():New( cPatEmp(), cDriver(), oWnd, "04013" ):Activate() }
    oItem:cId            := "04013"
-   oItem:cBmp           := "Teacher_16"
-   oItem:cBmpBig        := "Teacher_32"
+   oItem:cBmp           := "gc_users_relation_16"
+   oItem:cBmpBig        := "gc_users_relation_32"
    oItem:lShow          := .f.
 
    oItem                := oItemExpediente:Add()
@@ -2441,8 +2441,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a la tabla de actuaciones'
    oItem:bAction        := {|| TActuaciones():New( cPatEmp(), cDriver(), oWnd, "04014" ):Activate() }
    oItem:cId            := "04014"
-   oItem:cBmp           := "Power_Drill_16"
-   oItem:cBmpBig        := "Power_Drill_32"
+   oItem:cBmp           := "gc_power_drill2_16"
+   oItem:cBmpBig        := "gc_power_drill2_32"
    oItem:lShow          := .f.
 
    oItem                := oItemExpediente:Add()
@@ -2451,8 +2451,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los expedientes'
    oItem:bAction        := {|| StartTExpediente() }
    oItem:cId            := "04010"
-   oItem:cBmp           := "Folder_document_16"
-   oItem:cBmpBig        := "Folder_document_32"
+   oItem:cBmp           := "gc_folder_document_16"
+   oItem:cBmpBig        := "gc_folder_document_32"
    oItem:lShow          := .f.
 
    end if
@@ -2863,8 +2863,8 @@ Function CreateAcceso( oWnd )
    end case
 
    oGrupo:cPrompt       := 'Herramientas'
-   oGrupo:cLittleBitmap := "gc_recycle_16"
-   oGrupo:cBigBitmap    := "gc_recycle_32"
+   oGrupo:cLittleBitmap := "gc_document_text_screw_16"
+   oGrupo:cBigBitmap    := "gc_document_text_screw_32"
 
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo

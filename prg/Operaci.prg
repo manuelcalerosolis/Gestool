@@ -6,7 +6,7 @@
 
 CLASS TOperacion FROM TMant
 
-   DATA      cMru       INIT "Worker2_Hammer2_16"
+   DATA      cMru       INIT "gc_worker2_hammer_16"
    DATA      cBitmap    INIT clrTopProduccion
    DATA      oTipOpera
 

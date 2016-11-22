@@ -21,7 +21,7 @@ Return nil
 
 CLASS TTipoExpediente FROM TMasDet
 
-   DATA  cMru     INIT "Folders_16"
+   DATA  cMru     INIT "gc_folders_16"
    DATA  cBitmap  INIT Rgb( 197, 227, 9 )
 
    DATA  oSubTipoExpediente

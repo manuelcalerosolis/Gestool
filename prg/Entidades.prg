@@ -6,7 +6,7 @@
 
 CLASS TEntidades FROM TMant
 
-   DATA   cMru       INIT "School_16"
+   DATA   cMru       INIT "gc_office_building2_16"
    DATA   cBitmap    INIT clrTopExpedientes
 
    METHOD OpenFiles( lExclusive )
