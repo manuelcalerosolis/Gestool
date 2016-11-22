@@ -1024,9 +1024,9 @@ Method CreateFavoritosOfficeBar()
 
    next
 
-   oGrupo   := TDotNetGroup():New( ::oFavoritosBar, 66, "Salir", .f., , "End32" )
+   oGrupo   := TDotNetGroup():New( ::oFavoritosBar, 66, "Salir", .f., , "gc_door_open2_32" )
    
-   oBoton   := TDotNetButton():New( 60, oGrupo, "End32", "Salir", 1, {|| if ( !empty( oWnd() ), oWnd():End(), ) }, , , .f., .f., .f. )
+   oBoton   := TDotNetButton():New( 60, oGrupo, "gc_door_open2_32", "Salir", 1, {|| if ( !empty( oWnd() ), oWnd():End(), ) }, , , .f., .f., .f. )
 
 Return ( Self )
 
