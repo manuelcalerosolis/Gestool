@@ -2213,13 +2213,8 @@ Function CreateAcceso( oWnd )
 
    oItemAlmacen         := oAcceso:Add()
    oItemAlmacen:cPrompt := 'ALMACENES'
-<<<<<<< HEAD
    oItemAlmacen:cBmp    := "gc_folder_open_16"
    oItemAlmacen:cBmpBig := "gc_folder_open_32"
-=======
-   oItemAlmacen:cBmp    := "Folder16"
-   oItemAlmacen:cBmpBig := "Folder_32"
->>>>>>> origin/master
    oItemAlmacen:lShow   := .t.
 
    // Almacenes----------------------------------------------------------------
@@ -3251,13 +3246,8 @@ Function CreateAcceso( oWnd )
 
    oItemAyudas          := oAcceso:Add()
    oItemAyudas:cPrompt  := 'AYUDAS'
-<<<<<<< HEAD
    oItemAyudas:cBmp     := "gc_folder_open_16"
    oItemAyudas:cBmpBig  := "gc_folder_open_32"
-=======
-   oItemAyudas:cBmp     := "Folder16"
-   oItemAyudas:cBmpBig  := "Folder_32"
->>>>>>> origin/master
    oItemAyudas:lShow    := .t.
 
    oGrupo               := TGrupoAcceso()
