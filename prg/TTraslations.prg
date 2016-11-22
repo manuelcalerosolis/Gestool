@@ -44,6 +44,8 @@ METHOD New( idEmpresa ) CLASS TTraslations
 
    ::idEmpresa          := idEmpresa
 
+   ::LoadJSON()
+
 Return ( Self )
 
 //----------------------------------------------------------------//

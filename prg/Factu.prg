@@ -2037,7 +2037,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Lenguajes"
    oItem:cMessage       := "Acceso a los lenguajes"
-   oItem:bAction        := {|| TLenguaje():New( cPatDat(), oWnd, "01041" ):Activate() }
+   oItem:bAction        := {|| TLenguaje():New( cPatDat(), cDriver(), oWnd, "01125" ):Activate() }
    oItem:cId            := "01125"
    oItem:cBmp           := "gc_user_message_16"
    oItem:cBmpBig        := "gc_user_message_32"
