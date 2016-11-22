@@ -1569,8 +1569,8 @@ Function CreateAcceso( oWnd )
 
    oItemArchivo         := oAcceso:Add()
    oItemArchivo:cPrompt := 'ARCHIVOS'
-   oItemArchivo:cBmp    := "Folder16"
-   oItemArchivo:cBmpBig := "Folder_32"
+   oItemArchivo:cBmp    := "gc_folder_open_16"
+   oItemArchivo:cBmpBig := "gc_folder_open_32"
    oItemArchivo:lShow   := .t.
 
    oGrupo               := TGrupoAcceso()
@@ -2119,8 +2119,8 @@ Function CreateAcceso( oWnd )
 
    oItemCompras         := oAcceso:Add()
    oItemCompras:cPrompt := 'COMPRAS'
-   oItemCompras:cBmp    := "Folder16"
-   oItemCompras:cBmpBig := "Folder_32"
+   oItemCompras:cBmp    := "gc_folder_open_16"
+   oItemCompras:cBmpBig := "gc_folder_open_32"
    oItemCompras:lShow   := .t.
 
    // Proveedores--------------------------------------------------------------
@@ -2213,8 +2213,8 @@ Function CreateAcceso( oWnd )
 
    oItemAlmacen         := oAcceso:Add()
    oItemAlmacen:cPrompt := 'ALMACENES'
-   oItemAlmacen:cBmp    := "gc_package_16"
-   oItemAlmacen:cBmpBig := "gc_package_32"
+   oItemAlmacen:cBmp    := "gc_folder_open_16"
+   oItemAlmacen:cBmpBig := "gc_folder_open_32"
    oItemAlmacen:lShow   := .t.
 
    // Almacenes----------------------------------------------------------------
@@ -2241,8 +2241,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := "Acceso a los tipos de movimientos de almacén"
    oItem:bAction        := {|| TMov( "01042", oWnd ) }
    oItem:cId            := "01042"
-   oItem:cBmp           := "gc_package_circle_16"
-   oItem:cBmpBig        := "gc_package_circle_32"
+   oItem:cBmp           := "gc_package_refresh_16"
+   oItem:cBmpBig        := "gc_package_refresh_32"
    oItem:lShow          := .f.
 
    oItem                := oItemAlmacen:Add()
@@ -2281,8 +2281,8 @@ Function CreateAcceso( oWnd )
 
    oItemProduccion            := oAcceso:Add()
    oItemProduccion:cPrompt    := 'PRODUCCIÓN' 
-   oItemProduccion:cBmp       := "Folder16"
-   oItemProduccion:cBmpBig    := "Folder_32"
+   oItemProduccion:cBmp       := "gc_folder_open_16"
+   oItemProduccion:cBmpBig    := "gc_folder_open_32"
    oItemProduccion:lShow      := .t. 
 
    oGrupo               := TGrupoAcceso()
@@ -2395,8 +2395,8 @@ Function CreateAcceso( oWnd )
 
    oItemExpediente            := oAcceso:Add()
    oItemExpediente:cPrompt    := 'EXPEDIENTES'
-   oItemExpediente:cBmp       := "Folder16"
-   oItemExpediente:cBmpBig    := "Folder_32"
+   oItemExpediente:cBmp       := "gc_folder_open_16"
+   oItemExpediente:cBmpBig    := "gc_folder_open_32"
    oItemExpediente:lShow      := .t.
 
    oGrupo               := TGrupoAcceso()
@@ -2461,8 +2461,8 @@ Function CreateAcceso( oWnd )
 
    oItemVentas          := oAcceso:Add()
    oItemVentas:cPrompt  := 'VENTAS'
-   oItemVentas:cBmp     := "Folder16"
-   oItemVentas:cBmpBig  := "Folder_32"
+   oItemVentas:cBmp     := "gc_folder_open_16"
+   oItemVentas:cBmpBig  := "gc_folder_open_32"
    oItemVentas:lShow    := .t.
 
    // Clientes----------------------------------------------------------------
@@ -2713,8 +2713,8 @@ Function CreateAcceso( oWnd )
 
    oItemTpv             := oAcceso:Add()
    oItemTpv:cPrompt     := 'T.P.V.'
-   oItemTpv:cBmp        := "Folder16"
-   oItemTpv:cBmpBig     := "Folder_32"
+   oItemTpv:cBmp        := "gc_folder_open_16"
+   oItemTpv:cBmpBig     := "gc_folder_open_32"
    oItemTpv:lShow       := .t.
 
    oGrupo               := TGrupoAcceso()
@@ -2847,8 +2847,8 @@ Function CreateAcceso( oWnd )
 
    oItemHerramientas          := oAcceso:Add()
    oItemHerramientas:cPrompt  := 'HERRAMIENTAS'
-   oItemHerramientas:cBmp     := "Folder16"
-   oItemHerramientas:cBmpBig  := "Folder_32"
+   oItemHerramientas:cBmp     := "gc_folder_open_16"
+   oItemHerramientas:cBmpBig  := "gc_folder_open_32"
    oItemHerramientas:lShow    := .t.
 
    oGrupo               := TGrupoAcceso()
@@ -3107,8 +3107,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Actualizar precios de tarifas'
    oItem:bAction        := {|| ChgTarifa( "01081", oWnd ) }
    oItem:cId            := "01081"
-   oItem:cBmp           := "gc_table_selection_column_16"
-   oItem:cBmpBig        := "gc_table_selection_column_32"
+   oItem:cBmp           := "gc_table_selection_column_refresh_16"
+   oItem:cBmpBig        := "gc_table_selection_column_refresh_32"
    oItem:lShow          := .f.
 
    oItem                := oItemHerramientas:Add()
@@ -3156,8 +3156,8 @@ Function CreateAcceso( oWnd )
 
    oItemReporting          := oAcceso:Add()
    oItemReporting:cPrompt  := 'INFORMES'
-   oItemReporting:cBmp     := "Folder16"
-   oItemReporting:cBmpBig  := "Folder_32"
+   oItemReporting:cBmp     := "gc_folder_open_16"
+   oItemReporting:cBmpBig  := "gc_folder_open_32"
    oItemReporting:lShow    := .t.
 
    oGrupo               := TGrupoAcceso()
@@ -3246,8 +3246,8 @@ Function CreateAcceso( oWnd )
 
    oItemAyudas          := oAcceso:Add()
    oItemAyudas:cPrompt  := 'AYUDAS'
-   oItemAyudas:cBmp     := "gc_lifebelt_16"
-   oItemAyudas:cBmpBig  := "gc_lifebelt_32"
+   oItemAyudas:cBmp     := "gc_folder_open_16"
+   oItemAyudas:cBmpBig  := "gc_folder_open_32"
    oItemAyudas:lShow    := .t.
 
    oGrupo               := TGrupoAcceso()
@@ -4201,8 +4201,8 @@ Function TPVCreateButtonBar()
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 1
    oGrupo:cPrompt       := 'Salir'
-   oGrupo:cLittleBitmap := "gc_door_open2_16"
-   oGrupo:cBigBitmap    := "gc_door_open2_32"
+   oGrupo:cLittleBitmap := "Folder16"
+   oGrupo:cBigBitmap    := "Folder_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo

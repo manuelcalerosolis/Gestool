@@ -125,7 +125,7 @@ FUNCTION TMov( oMenuItem, oWnd )
       TITLE    "Tipos de movimientos de almacén" ;
       PROMPT   "Codigo",;
 					"Nombre";
-      MRU      "gc_package_circle_16";
+      MRU      "gc_package_refresh_16";
       BITMAP   clrTopAlmacenes ;
       ALIAS    ( dbfTMov ) ;
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfTMov ) );
