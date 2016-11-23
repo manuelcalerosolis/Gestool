@@ -297,3 +297,5 @@ GC_DOOR_OPEN2_16 BITMAP "..\\bmp\\gc_door_open2_16.bmp"
 GC_DOOR_OPEN2_32 BITMAP "..\\bmp\\gc_door_open2_32.bmp"
 GC_FOLDER_OPEN_16 BITMAP "..\\bmp\\gc_folder_open_16.bmp"
 GC_FOLDER_OPEN_32 BITMAP "..\\bmp\\gc_folder_open_32.bmp"
+GC_FUNNEL_64 BITMAP "..\\bmp\\gc_funnel_64.bmp"
+
