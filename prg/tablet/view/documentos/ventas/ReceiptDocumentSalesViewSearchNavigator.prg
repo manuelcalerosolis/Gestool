@@ -3,6 +3,8 @@
 
 CLASS ReceiptDocumentSalesViewSearchNavigator FROM ViewSearchNavigator
 
+   DATA oSayFilter
+
    METHOD getDataTable()                  INLINE ( ::oSender:getDataTable() )
 
    METHOD getView()                       INLINE ( ::oSender:nView )
@@ -14,6 +16,8 @@ CLASS ReceiptDocumentSalesViewSearchNavigator FROM ViewSearchNavigator
    METHOD getField( cField )              INLINE ( D():getFieldDictionary( cField, ::getDataTable(), ::getView() ) )
 
    METHOD BotonesAcciones()
+
+   METHOD ChangeFilter()
 
 END CLASS
 
@@ -70,8 +74,52 @@ METHOD BotonesAcciones() CLASS ReceiptDocumentSalesViewSearchNavigator
                               "bLClicked" => {|| ::oSender:Edit() },;
                               "oWnd"      => ::oDlg } )
 
+      TGridImage():Build(  {  "nTop"      => 75,;
+                              "nLeft"     => {|| GridWidth( 1.5, ::oDlg ) },;
+                              "nWidth"    => 64,;
+                              "nHeight"   => 64,;
+                              "cResName"  => "gc_pencil_64",;
+                              "bLClicked" => {|| ::ChangeFilter() },;
+                              "oWnd"      => ::oDlg } )
+
+      ::oSayFilter  := TGridSay():Build(  {  "nRow"      => 75,;
+                                             "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                                             "bText"     => {|| "" },;
+                                             "oWnd"      => ::oDlg,;
+                                             "oFont"     => oGridFont(),;
+                                             "lPixels"   => .t.,;
+                                             "nClrText"  => Rgb( 0, 0, 0 ),;
+                                             "nClrBack"  => Rgb( 255, 255, 255 ),;
+                                             "nWidth"    => {|| GridWidth( 1.5, ::oDlg ) },;
+                                             "nHeight"   => 23,;
+                                             "lDesign"   => .f. } )
+
    end if 
 
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ChangeFilter() CLASS ReceiptDocumentSalesViewSearchNavigator
+
+   do case
+      case ::oSayFilter:VarGet() == ""
+         ?"1"
+         ::oSayFilter:SetText( "Pendientes" )
+         ::oSayFilter:Refresh()
+
+      case ::oSayFilter:VarGet() == "Cobrados"
+         ?"2"
+         ::oSayFilter:SetText( "Pendientes" )
+         ::oSayFilter:Refresh()
+
+      case ::oSayFilter:VarGet() == "Pendientes"
+         ?"3"
+         ::oSayFilter:SetText( "Cobrados" )
+         ::oSayFilter:Refresh()
+
+   end case
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
