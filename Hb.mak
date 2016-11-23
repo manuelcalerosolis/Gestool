@@ -450,6 +450,7 @@ CustomerIncidenceViewNavigator.prg     				\
 StoreViewSearchNavigator.prg           				\
 DocumentSalesViewEdit.prg              				\
 ReceiptDocumentSalesViewEdit.prg       				\
+InvoiceDocumentSalesViewEdit.prg                   \
 GeneraFacturasClientes.prg             				\
 CamposExtra.prg                        				\
 DetCamposExtra.prg                     				\
@@ -904,6 +905,7 @@ CustomerIncidence.obj                  				\
 CustomerIncidenceView.obj              				\
 CustomerIncidenceViewNavigator.obj     				\
 ReceiptDocumentSalesViewEdit.obj                   \
+InvoiceDocumentSalesViewEdit.obj                   \
 Product.obj                            				\
 Payment.obj                            				\
 Store.obj                              				\
@@ -1344,6 +1346,7 @@ $(OBJ)\CustomerIncidence.obj                 +
 $(OBJ)\CustomerIncidenceView.obj             +
 $(OBJ)\CustomerIncidenceViewNavigator.obj    +
 $(OBJ)\ReceiptDocumentSalesViewEdit.obj      +
+$(OBJ)\InvoiceDocumentSalesViewEdit.obj      +
 $(OBJ)\Product.obj                           +
 $(OBJ)\Payment.obj                           +
 $(OBJ)\Store.obj                             +

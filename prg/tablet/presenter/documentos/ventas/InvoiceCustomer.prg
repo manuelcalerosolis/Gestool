@@ -34,9 +34,35 @@ END CLASS
 
 METHOD New() CLASS InvoiceCustomer
 
-   ::super:New( self )
+   ::super:oSender         := self
 
-   ::lAlowEdit          := accessCode():lInvoiceModify
+   if !::openFiles()
+      return ( self )
+   end if 
+
+   ::oViewSearchNavigator  := DocumentSalesViewSearchNavigator():New( self )
+
+   ::oViewEdit             := InvoiceDocumentSalesViewEdit():New( self )
+
+   ::oViewEditResumen      := ViewEditResumen():New( self )
+
+   ::oCliente              := Customer():init( self )  
+
+   ::oProduct              := Product():init( self )
+
+   ::oStore                := Store():init( self )
+
+   ::oPayment              := Payment():init( self )
+
+   ::oDirections           := Directions():init( self )
+
+   ::oDocumentLines        := DocumentLines():New( self )
+
+   ::oLinesDocumentsSales  := LinesDocumentsSales():New( self )
+
+   ::oTotalDocument        := TotalDocument():New( self )
+
+   ::lAlowEdit             := accessCode():lInvoiceModify
 
    // Vistas--------------------------------------------------------------------
 
