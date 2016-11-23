@@ -134,6 +134,16 @@ Return ( .t. )
 
 METHOD onPreEnd() CLASS ReceiptInvoiceCustomer
 
+   local cNumeroFactura    := ( ::getDataTable() )->cSerie + Str( ( ::getDataTable() )->nNumFac ) + ( ::getDataTable() )->cSufFac
+
+   /*
+   Chequeamos el estado de la factura antes de terminar------------------------
+   */
+
+   if ( D():FacturasClientes( ::nView ) )->( dbSeek( cNumeroFactura ) )
+      ChkLqdFacCli( nil, D():FacturasClientes( ::nView ), D():FacturasClientesLineas( ::nView ), D():FacturasClientesCobros( ::nView ), D():AnticiposClientes( ::nView ), D():TiposIva( ::nView ), D():Divisas( ::nView ), .f. )
+   end if
+
    ( ::getDataTable() )->( OrdSetFocus( ::nOrdenAnterior ) )
 
 Return ( .t. )
