@@ -78,7 +78,7 @@ METHOD BotonesAcciones() CLASS ReceiptDocumentSalesViewSearchNavigator
                               "nLeft"     => {|| GridWidth( 1.5, ::oDlg ) },;
                               "nWidth"    => 64,;
                               "nHeight"   => 64,;
-                              "cResName"  => "gc_pencil_64",;
+                              "cResName"  => "gc_funnel_64",;
                               "bLClicked" => {|| ::ChangeFilter() },;
                               "oWnd"      => ::oDlg } )
 
