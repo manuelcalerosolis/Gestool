@@ -11875,7 +11875,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    Ahora escribimos en el fichero definitivo-----------------------------------
    */
 
-   ( dbfTmpPgo )->( dbGoTop() )
+   ( dbfTmpPgo )->( dbgotop() )
    while ( dbfTmpPgo )->( !eof() )
       dbPass( dbfTmpPgo, D():Get( "AlbCliP", nView ), .t., cSerAlb, nNumAlb, cSufAlb )
       ( dbfTmpPgo )->( dbSkip() )
@@ -11885,7 +11885,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    Ahora escribimos en el fichero definitivo-----------------------------------
    */
 
-   ( dbfTmpInc )->( dbGoTop() ) 
+   ( dbfTmpInc )->( dbgotop() ) 
    while ( dbfTmpInc )->( !eof() )
       dbPass( dbfTmpInc, D():Get( "AlbCliI", nView ), .t., cSerAlb, nNumAlb, cSufAlb )
       ( dbfTmpInc )->( dbSkip() )
@@ -11895,7 +11895,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    Ahora escribimos en el fichero definitivo-----------------------------------
    */
 
-   ( dbfTmpDoc )->( dbGoTop() )
+   ( dbfTmpDoc )->( dbgotop() )
    while ( dbfTmpDoc )->( !eof() )
       dbPass( dbfTmpDoc, D():Get( "AlbCliD", nView ), .t., cSerAlb, nNumAlb, cSufAlb )
       ( dbfTmpDoc )->( dbSkip() )
@@ -11905,7 +11905,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    Ahora escribimos en el fichero definitivo-----------------------------------
    */
 
-   ( dbfTmpSer )->( dbGoTop() )
+   ( dbfTmpSer )->( dbgotop() )
    while ( dbfTmpSer )->( !eof() )
       dbPass( dbfTmpSer, D():Get( "AlbCliS", nView ), .t., cSerAlb, nNumAlb, cSufAlb, dFecAlb )
       ( dbfTmpSer )->( dbSkip() )
@@ -11915,11 +11915,11 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    Escribimos en el fichero definitivo (Situaciones)
    */
 
-    ( dbfTmpEst )->( DbGoTop() )
-      while ( dbfTmpEst )->( !eof() )
-         dbPass( dbfTmpEst, D():AlbaranesClientesSituaciones( nView ), .t., cSerAlb, nNumAlb, cSufAlb ) 
-         ( dbfTmpEst )->( dbSkip() )
-      end while
+   ( dbfTmpEst )->( dbgotop() )
+   while ( dbfTmpEst )->( !eof() )
+      dbPass( dbfTmpEst, D():AlbaranesClientesSituaciones( nView ), .t., cSerAlb, nNumAlb, cSufAlb ) 
+      ( dbfTmpEst )->( dbSkip() )
+   end while
 
    /*
    Estado del pedido-----------------------------------------------------------
@@ -12012,7 +12012,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    ErrorBlock( oBlock )
 
    oMsgText()
-   EndProgress()
+   endProgress()
 
    oDlg:Enable()
    oDlg:End( IDOK )

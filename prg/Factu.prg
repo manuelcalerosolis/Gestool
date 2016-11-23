@@ -1947,7 +1947,7 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := "Formas"
+   oItem:cPrompt        := "Formas de pago"
    oItem:cMessage       := "Acceso a formas de pago"
    oItem:bAction        := {|| Fpago( "01039", oWnd ) }
    oItem:cId            := "01039"

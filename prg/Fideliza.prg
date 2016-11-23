@@ -9,7 +9,7 @@ Function StartTFideliza()
 
    local oFideliza
 
-   oFideliza      := TFideliza():New( cPatArt(), oWnd(), "04006" )
+   oFideliza      := TFideliza():New( cPatArt(), cDriver(), oWnd(), "04006" )
 
    if !Empty( oFideliza )
       oFideliza:Activate()
@@ -21,9 +21,9 @@ Return nil
 
 CLASS TFideliza FROM TMasDet
 
-   DATA  cMru     INIT "gc_id_card_16"
-   DATA  cBitmap  INIT clrTopArchivos
-   DATA  aData    INIT {}
+   DATA  cMru                 INIT "gc_id_card_16"
+   DATA  cBitmap              INIT clrTopArchivos
+   DATA  aData                INIT {}
 
    DATA  oDetFideliza
 
@@ -44,7 +44,7 @@ CLASS TFideliza FROM TMasDet
    DATA  oBtnSelectAll
    DATA  oBtnSelectNone
 
-   METHOD New( cPath, oWndParent, oMenuItem )
+   METHOD New()
    METHOD CreateInit( cPath )
    METHOD Create( cPath )
 
@@ -62,7 +62,7 @@ CLASS TFideliza FROM TMasDet
    METHOD InitResource()
 
    METHOD TreeChanged()
-   METHOD TreeLostFocus() VIRTUAL
+   METHOD TreeLostFocus()     VIRTUAL
 
    METHOD BrowseDblClick()
 
@@ -88,10 +88,13 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New( cPath, oWndParent, oMenuItem )
+METHOD New( cPath, cDriver, oWndParent, oMenuItem )
 
    DEFAULT cPath        := cPatArt()
+   DEFAULT cDriver      := cDriver()
    DEFAULT oWndParent   := GetWndFrame()
+
+   ::cDriver            := cDriver
 
    if oMenuItem != nil .and. ::nLevel == nil
       ::nLevel          := nLevelUsr( oMenuItem )
@@ -109,33 +112,38 @@ METHOD New( cPath, oWndParent, oMenuItem )
 
    ::bFirstKey          := {|| ::oDbf:cCodigo }
 
-   ::oDetFideliza       := TDetFideliza():New( cPath, Self )
+   ::oDetFideliza       := TDetFideliza():New( cPath, cDriver, Self )
    ::AddDetail( ::oDetFideliza )
 
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD CreateInit( cPath )
+METHOD CreateInit( cPath, cDriver )
 
    DEFAULT cPath        := cPatArt()
+   DEFAULT cDriver      := cDriver()
 
    ::cPath              := cPath
+   ::cDriver            := cDriver
 
    ::bFirstKey          := {|| ::oDbf:cCodigo }
 
-   ::oDetFideliza       := TDetFideliza():New( cPath, Self )
-   ::AddDetail( ::oDetFideliza )
+   ::oDetFideliza       := TDetFideliza():New( cPath, cDriver, Self )
+   ::addDetail( ::oDetFideliza )
 
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD Create( cPath )
+METHOD Create( cPath, cDriver )
 
    DEFAULT cPath        := cPatArt()
+   DEFAULT cDriver      := cDriver()
 
    ::cPath              := cPath
+   ::cDriver            := cDriver
+
    ::oDbf               := nil
 
 RETURN ( Self )
