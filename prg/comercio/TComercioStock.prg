@@ -13,22 +13,29 @@ CLASS TComercioStock FROM TComercioConector
    DATA  oWaitMeter
 
    DATA  hProductsToUpdate                   INIT {=>}
-   
-   DATA  aStockProducts                      INIT {}
-   DATA  aInactiveProducts                   INIT {}
-
    METHOD resetProductsToUpdateStocks()      INLINE ( ::hProductsToUpdate := {=>} )
+   
+   DATA  aInactiveProducts                   INIT {}
+   METHOD resetInactiveProduct()             INLINE ( ::aInactiveProducts := {} )
+
    METHOD getProductsToUpadateStocks()       INLINE ( ::hProductsToUpdate )
 
    // External methods---------------------------------------------------------
 
-   METHOD updateAllProductStocks()
+   METHOD buildListProductToUpdate()
 
-   METHOD resetStockProducts()               INLINE ( ::aStockProducts := {} )
-   METHOD resetInactiveProduct()             INLINE ( ::aInactiveProducts := {} )
+   METHOD calculateStocksProductsToUpdate()   
+      METHOD calculateStocksProductToUpdate()
+         METHOD addStockProductToUpdate( hProduct ) 
 
-   METHOD appendProductsToUpadateStocks()
-      METHOD insertProductsToUpadateStocks() 
+   METHOD setIdAttributeProductsToUpdate() 
+      METHOD setIdAttributeProductToUpdate()    
+         METHOD setIdAttributeProductStockToUpdate( hStockProductData )
+
+   METHOD createCommandProductsToUpdate()
+      METHOD getCommandProductToUpdate( cWebName, aProducts )
+
+   METHOD insertProductsToUpadateStocks() 
 
    METHOD updateWebProductStocks() 
 
@@ -36,23 +43,32 @@ CLASS TComercioStock FROM TComercioConector
 
    // Internal methods---------------------------------------------------------
 
+   METHOD getIdAttributeProductStock( idProductPrestashop, idFirstProperty, valueFirstProperty, idSecondProperty, valueSecondProperty )
+
    METHOD updateProductStocks( cWebName, aProductsWeb )
-   METHOD buildInformationStockProductArray( aProducts )
-   METHOD buildAddInformacionStockProductPrestashop( hProduct ) 
-      METHOD proccessStockPrestashop() 
-         METHOD setStockPrestashop( hStockProductData )
 
    METHOD idProductAttribute( idProductPrestashop, attributeFirstProperty, attributeSecondProperty )
 
-   METHOD evalProductsToStock()              
+   METHOD evalProductsToStock()        
+
+   // METHOD executeCommandProductToUpdate() 
+
+   METHOD getIdProductPrestashop()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD updateAllProductStocks( startIdProduct )
+METHOD buildListProductToUpdate( startIdProduct )
+
+   local idProductAttribute
+   local idProductPrestashop
 
    ::resetProductsToUpdateStocks()
+
+   ::resetMegaCommand()
+
+   ::resetInactiveProduct()
 
    ::oProductDatabase():ordsetfocus( "lWebShop" )
    
@@ -60,9 +76,17 @@ METHOD updateAllProductStocks( startIdProduct )
 
       while ( alltrim( ::oProductDatabase():cWebShop ) == ::getCurrentWebName() ) .and. !( ::oProductDatabase():eof() )
 
+         if alltrim( ::oProductDatabase():Codigo ) == "10003068"
+
          ::writeText( alltrim( ::oProductDatabase():Codigo ) + space( 1 ) + alltrim( ::oProductDatabase():Nombre ) )
 
-         ::insertProductsToUpadateStocks( ::oProductDatabase():Codigo, ::getCurrentWebName() ) 
+         idProductPrestashop     := ::getIdProductPrestashop( ::oProductDatabase():Codigo )
+
+         if idProductPrestashop != 0 
+            ::insertProductsToUpadateStocks( ::oProductDatabase():Codigo, idProductPrestashop, ::getCurrentWebName() ) 
+         end if 
+
+         end if 
 
          ::oProductDatabase():Skip()
 
@@ -78,30 +102,13 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD appendProductsToUpadateStocks( idProduct, idFirstProperty, valueFirstProperty, idSecondProperty, valueSecondProperty, nView ) 
-
-   local cWebShop
-
-   if !( D():gotoArticulos( idProduct, nView ) )
-      Return ( .f. )
-   end if 
-
-   if !( D():Articulos( nView ) )->lPubInt
-      Return ( .f. )
-   end if 
-
-   cWebShop          := alltrim( ( D():Articulos( nView ) )->cWebShop )
-   
-Return ( ::insertProductsToUpadateStocks(idProduct, cWebShop, idFirstProperty, valueFirstProperty, idSecondProperty, valueSecondProperty ) )   
-
-//---------------------------------------------------------------------------//
-
-METHOD insertProductsToUpadateStocks( idProduct, cWebShop, idFirstProperty, valueFirstProperty, idSecondProperty, valueSecondProperty ) 
+METHOD insertProductsToUpadateStocks( idProduct, idProductPrestashop, cWebShop, idFirstProperty, valueFirstProperty, idSecondProperty, valueSecondProperty ) 
 
    local nScan
    local hProduct
 
    hProduct          := {  "id"                    => idProduct,;
+                           "idProductPrestashop"   => idProductPrestashop,;
                            "idFirstProperty"       => idFirstProperty,;
                            "valueFirstProperty"    => valueFirstProperty,;
                            "idSecondProperty"      => idSecondProperty,;
@@ -151,38 +158,30 @@ METHOD updateProductStocks( cWebName, aProductsWeb )
 
    ::TComercioConfig():setCurrentWebName( cWebName )
 
-   ::buildInformationStockProductArray( aProductsWeb )
+   ::calculateStocksProductToUpdate( aProductsWeb )
 
-   if ::prestaShopConnect()
-
-      if ::TComercioConfig():isProcessWithoutStock()
-         ::proccessInactivePrestashop()
-      end if 
-      
-      ::proccessStockPrestashop()
-      
-      ::prestaShopDisConnect()  
-
+   if !( ::TComercioConfig():isProcessWithoutStock() )
+      ::proccessInactivePrestashop()
    end if 
-
+   
+   ::setIdAttributeProductsToUpdate()
+      
 Return ( Self )   
 
 //---------------------------------------------------------------------------//
 
-METHOD buildInformationStockProductArray( aProducts )
+METHOD calculateStocksProductToUpdate( cWebName, aProducts )
 
    local hProduct
 
+   ::TComercioConfig():setCurrentWebName( cWebName )
+
    ::meterProcesoSetTotal( len( aProducts ) )
-
-   ::resetStockProducts()
-
-   ::resetInactiveProduct()
 
    for each hProduct in aProducts
       
-      ::buildAddInformacionStockProductPrestashop( hProduct )
-      
+      ::addStockProductToUpdate( hProduct )
+         
       ::meterProcesoText()
 
    next
@@ -191,22 +190,25 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD buildAddInformacionStockProductPrestashop( hProduct ) 
-
+METHOD addStockProductToUpdate( hProduct ) 
+   
    local sStock
-   local nTotalStock          := 0
+   local nTotalStock             := 0
    local aStockArticulo
-   local idProduct            := hget( hProduct, "id" )
-   local idFirstProperty      := hget( hProduct, "idFirstProperty" )
-   local valueFirstProperty   := hget( hProduct, "valueFirstProperty" )
-   local idSecondProperty     := hget( hProduct, "idSecondProperty" )
-   local valueSecondProperty  := hget( hProduct, "valueSecondProperty" )
+   local idProductAttribute
+   local aStockProducts          := {}
+   local idProduct               := hget( hProduct, "id" )
+   local idProductPrestashop     := hget( hProduct, "idProductPrestashop" )
+   local idFirstProperty         := hget( hProduct, "idFirstProperty" )
+   local valueFirstProperty      := hget( hProduct, "valueFirstProperty" )
+   local idSecondProperty        := hget( hProduct, "idSecondProperty" )
+   local valueSecondProperty     := hget( hProduct, "valueSecondProperty" )
 
    ::writeText( 'Calculando stocks ' + alltrim( idProduct ) )
 
    // Recopilamos la información del Stock-------------------------------------
 
-   aStockArticulo             := ::oStock():aStockArticulo( idProduct, ::TComercioConfig():getStore() )
+   aStockArticulo                := ::oStock():aStockArticulo( idProduct, ::TComercioConfig():getStore() )
 
    // Recorremos el array con los stocks---------------------------------------
 
@@ -218,25 +220,43 @@ METHOD buildAddInformacionStockProductPrestashop( hProduct )
          ( empty( idSecondProperty )      .or. ( sStock:cCodigoPropiedad2 == idSecondProperty ) )  .and.;
          ( empty( valueSecondProperty )   .or. ( sStock:cValorPropiedad2 == valueSecondProperty ) )
 
-         aAdd( ::aStockProducts, {  "idProduct"             => idProduct,;
-                                    "idFirstProperty"       => sStock:cCodigoPropiedad1,;
-                                    "idSecondProperty"      => sStock:cCodigoPropiedad2,;
-                                    "valueFirstProperty"    => sStock:cValorPropiedad1,;
-                                    "valueSecondProperty"   => sStock:cValorPropiedad2,;
-                                    "unitStock"             => sStock:nUnidades } )
+         idProductAttribute      := ::getIdAttributeProductStock( idProductPrestashop, sStock:cCodigoPropiedad1, sStock:cValorPropiedad1, sStock:cCodigoPropiedad2, sStock:cValorPropiedad2 )
+
+         if sStock:nUnidades > 0
+
+            nTotalStock          += sStock:nUnidades 
+
+            if ( idProductAttribute != 0 ) .or. ( empty( sStock:cValorPropiedad1 ) .and. empty( sStock:cValorPropiedad2 ) )
+
+               aadd( aStockProducts,   {  "idProduct"             => idProduct,;
+                                          "idProductAttribute"    => idProductAttribute,;
+                                          "idFirstProperty"       => sStock:cCodigoPropiedad1,;
+                                          "idSecondProperty"      => sStock:cCodigoPropiedad2,;
+                                          "valueFirstProperty"    => sStock:cValorPropiedad1,;
+                                          "valueSecondProperty"   => sStock:cValorPropiedad2,;
+                                          "unitStock"             => sStock:nUnidades } )
+
+            end if 
+
+         end if 
 
       end if  
 
-      nTotalStock             += sStock:nUnidades 
-
    next
 
-   aadd( ::aStockProducts, {  "idProduct"             => idProduct ,;
-                              "idFirstProperty"       => space( 20 ) ,;
-                              "idSecondProperty"      => space( 20 ) ,;
-                              "valueFirstProperty"    => space( 20 ) ,;
-                              "valueSecondProperty"   => space( 20 ) ,;
-                              "unitStock"             => nTotalStock } )
+   // Apunte resumen necesario para prestahop----------------------------------
+
+   idProductAttribute            := 0
+
+   aadd( aStockProducts,         {  "idProduct"             => idProduct ,;
+                                    "idProductAttribute"    => idProductAttribute,;
+                                    "idFirstProperty"       => space( 20 ) ,;
+                                    "idSecondProperty"      => space( 20 ) ,;
+                                    "valueFirstProperty"    => space( 20 ) ,;
+                                    "valueSecondProperty"   => space( 20 ) ,;
+                                    "unitStock"             => nTotalStock } )
+
+   hset( hProduct, "stocks", aStockProducts )
 
    // Productos sin stock hay q borrarlos-------------------------------------
 
@@ -266,91 +286,155 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD proccessStockPrestashop() 
+METHOD setIdAttributeProductsToUpdate() 
 
-   local hStockProductData
+   local hProductsToUpdate
 
-   ::meterProcesoSetTotal( len( ::aStockProducts ) )
+   ::meterProcesoSetTotal( len( ::hProductsToUpdate ) )
 
-   for each hStockProductData in ::aStockProducts
+   if ::prestaShopConnect()
 
-      if ::setStockPrestashop( hStockProductData )
-         ::saveLastInsertStock( hget( hStockProductData, "idProduct" ) )
-      end if 
+      for each hProductsToUpdate in ::hProductsToUpdate
 
-      ::meterProcesoText()
+         ::setIdAttributeProductToUpdate( hProductsToUpdate )
 
-   next
+         ::meterProcesoText()
 
-   ::saveLastInsertStock()
+      next 
+
+      ::prestaShopDisConnect()
+
+   end if 
 
 Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD setStockPrestashop( hStockProductData )
+METHOD setIdAttributeProductToUpdate( hProductsToUpdate )
 
-   local cText
-   local cCommand
-   local unitStock               
-   local idProductPrestashop     
+   aeval( hget( hProductsToUpdate, "stocks" ), {|hStock| ::setIdAttributeProductStockToUpdate( hProductsToUpdate, @hStock ) } ) 
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD setIdAttributeProductStockToUpdate( hProduct, hStock )
+
+   local idProductAttribute      := 0
    local attributeFirstProperty  := 0  
    local attributeSecondProperty := 0 
+
+   if !empty( hget( hStock, "valueFirstProperty" ) )
+      attributeFirstProperty     := ::TPrestashopId():getValueAttribute( hget( hStock, "idFirstProperty" ) + hget( hStock, "valueFirstProperty" ), ::getCurrentWebName() )
+   end if 
+
+   if !empty( hget( hStock, "valueSecondProperty" ) )
+      attributeSecondProperty    := ::TPrestashopId():getValueAttribute( hget( hStock, "idSecondProperty" ) + hget( hStock, "valueSecondProperty" ), ::getCurrentWebName() ) 
+   end if 
+
+   if ( attributeFirstProperty != 0 ) .and. ( attributeSecondProperty != 0 )
+      idProductAttribute         := ::idProductAttribute( hget( hProduct, "idProductPrestashop" ), attributeFirstProperty, attributeSecondProperty ) 
+   end if 
+
+Return ( idProductAttribute )
+
+//---------------------------------------------------------------------------//
+
+METHOD getIdAttributeProductStock( idProductPrestashop, idFirstProperty, valueFirstProperty, idSecondProperty, valueSecondProperty )
+
    local idProductAttribute      := 0
+   local attributeFirstProperty  := 0  
+   local attributeSecondProperty := 0
 
-   idProductPrestashop           := ::TPrestashopId():getValueProduct( hget( hStockProductData, "idProduct" ), ::getCurrentWebName() )
+   DEFAULT idFirstProperty       := space( 20 )
+   DEFAULT valueFirstProperty    := space( 20 )
+   DEFAULT idSecondProperty      := space( 20 )
+   DEFAULT valueSecondProperty   := space( 20 )
 
-   if !empty( hget( hStockProductData, "valueFirstProperty" ) )
-      attributeFirstProperty     := ::TPrestashopId():getValueAttribute( hget( hStockProductData, "idFirstProperty" ) + hget( hStockProductData, "valueFirstProperty" ), ::getCurrentWebName() )
+   if !empty( valueFirstProperty )
+      attributeFirstProperty     := ::TPrestashopId():getValueAttribute( idFirstProperty + valueFirstProperty, ::getCurrentWebName() )
    end if 
 
-   if !empty( hget( hStockProductData, "valueSecondProperty" ) )
-      attributeSecondProperty    := ::TPrestashopId():getValueAttribute( hget( hStockProductData, "idSecondProperty" ) + hget( hStockProductData, "valueSecondProperty" ), ::getCurrentWebName() ) 
+   if !empty( valueSecondProperty ) 
+      attributeSecondProperty    := ::TPrestashopId():getValueAttribute( idSecondProperty + valueSecondProperty, ::getCurrentWebName() ) 
    end if 
-
-   unitStock                     := hget( hStockProductData, "unitStock" )
 
    if ( attributeFirstProperty != 0 ) .and. ( attributeSecondProperty != 0 )
       idProductAttribute         := ::idProductAttribute( idProductPrestashop, attributeFirstProperty, attributeSecondProperty ) 
    end if 
 
-   cCommand                      := "DELETE FROM " + ::cPrefixTable( "stock_available" ) + " "                          + ;
-                                       "WHERE id_product = " + alltrim( str( idProductPrestashop ) ) + " "              + ;
-                                       "AND id_product_attribute = " + alltrim( str( idProductAttribute ) )
+Return ( idProductAttribute )
 
-   TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand )
+//---------------------------------------------------------------------------//
 
-   if ( unitStock != 0 )
+METHOD createCommandProductsToUpdate()
 
-      cCommand                   := "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( "                        + ;
-                                       "id_product, "                                                                   + ;
-                                       "id_product_attribute, "                                                         + ;
-                                       "id_shop, "                                                                      + ;
-                                       "id_shop_group, "                                                                + ;
-                                       "quantity, "                                                                     + ;
-                                       "depends_on_stock, "                                                             + ;
-                                       "out_of_stock ) "                                                                + ;
-                                    "VALUES ( "                                                                         + ;
-                                       "'" + alltrim( str( idProductPrestashop ) ) + "', "                              + ;
-                                       "'" + alltrim( str( idProductAttribute ) ) + "', "                               + ;   
-                                       "'1', "                                                                          + ;
-                                       "'0', "                                                                          + ;
-                                       "'" + alltrim( str( unitStock ) ) + "', "                                        + ;
-                                       "'0', "                                                                          + ;
-                                       "'2' )"
+   local cCommand
+   local hProductsToUpdate
 
-      TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand )
+   for each hProductsToUpdate in ::hProductsToUpdate
+      cCommand    := ::getCommandProductToUpdate( hProductsToUpdate )
+   next
 
-   end if
-
-   cText       := 'Actualizando stock con propiedades ' + alltrim( str( idProductPrestashop ) ) + ', ' 
-   cText       += alltrim( str( attributeFirstProperty ) ) + ', ' 
-   cText       += alltrim( str( attributeSecondProperty ) ) + ', '
-   cText       += 'cantidad : ' + alltrim( str( unitStock ) )
-
-   ::writeText( cText )
+   msgalert( cCommand, "megaCommand" )
 
 Return .t.   
+
+//---------------------------------------------------------------------------//
+
+METHOD getCommandProductToUpdate( aProducts )
+
+   local cText
+   local hStock
+   local hProduct
+   local cCommand    := ""
+
+   for each hProduct in aProducts
+
+      cCommand       += "DELETE FROM " + ::cPrefixTable( "stock_available" ) + " "                             + ;
+                           "WHERE id_product = " + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) )   + ";" + CRLF
+                        // "AND id_product_attribute = " + alltrim( str( idProductAttribute ) )
+
+      ::addMegaCommand( cCommand )
+
+      for each hStock in hget( hProduct, "stocks" )
+
+         if hget( hStock, "unitStock" ) > 0 
+
+            cCommand += "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( "                           + ;
+                           "id_product, "                                                                      + ;
+                           "id_product_attribute, "                                                            + ;
+                           "id_shop, "                                                                         + ;
+                           "id_shop_group, "                                                                   + ;
+                           "quantity, "                                                                        + ;
+                           "depends_on_stock, "                                                                + ;
+                           "out_of_stock ) "                                                                   + ;
+                        "VALUES ( "                                                                            + ;
+                           "'" + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) ) + "', "             + ;
+                           "'" + alltrim( str( hget( hStock, "idProductAttribute" ) ) ) + "', "                + ;   
+                           "'1', "                                                                             + ;
+                           "'0', "                                                                             + ;
+                           "'" + alltrim( str( hget( hStock, "unitStock" ) ) ) + "', "                         + ;
+                           "'0', "                                                                             + ;
+                           "'2' )"                                                                             + ";" + CRLF
+
+            ::addMegaCommand( cCommand )
+
+         end if
+
+         cText       := 'Actualizando stock con propiedades '                       
+         cText       += alltrim( str( hget( hProduct, "idProductPrestashop" ) ) )   + ', ' 
+         cText       += alltrim( hget( hStock, "valueFirstProperty"  ) )            + ', ' 
+         cText       += alltrim( hget( hStock, "valueSecondProperty" ) )            + ', '
+         cText       += 'cantidad : ' + alltrim( str( hget( hStock, "unitStock" ) ) )
+
+         ::writeText( cText )
+
+      next 
+
+   next       
+
+Return ( cCommand )   
 
 //---------------------------------------------------------------------------//
 
@@ -449,9 +533,59 @@ Return idProductAttribute
 
 //---------------------------------------------------------------------------//
 
+METHOD calculateStocksProductsToUpdate()   
+
+   if ::prestaShopConnect()
+
+      heval( ::hProductsToUpdate, {|cWebName, aProductsWeb| ::calculateStocksProductToUpdate( cWebName, aProductsWeb ) } )
+
+      logwrite( hb_valtoexp( ::hProductsToUpdate ) )
+
+      ::prestaShopDisConnect()
+
+   end if 
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
 METHOD evalProductsToStock()
 
-Return ( heval( ::hProductsToUpdate, {|cWebName, aProductsWeb| ::updateProductStocks( cWebName, aProductsWeb ) } ) )
+   if ::prestaShopConnect()
+
+      heval( ::hProductsToUpdate, {|cWebName, aProductsWeb| ::updateProductStocks( cWebName, aProductsWeb ) } ) 
+
+      ::prestaShopDisConnect()
+
+   end if 
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+   logwrite( ::megaCommand )
+
+   if ::prestaShopConnect()
+
+      TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( ::megaCommand )
+
+      ::prestaShopDisConnect()
+
+   end if 
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getIdProductPrestashop( idProductGestool )
+
+   local idProductPrestashop     := ::TPrestashopId():getValueProduct( idProductGestool, ::getCurrentWebName() )
+
+   if ( idProductPrestashop == 0 )
+      ::writeText( "Producto " + alltrim( idProductGestool ) + " no encontrado en la web " + alltrim( ::getCurrentWebName() ) )
+   end if
+
+Return ( idProductPrestashop)
 
 //---------------------------------------------------------------------------//
 

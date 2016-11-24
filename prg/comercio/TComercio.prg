@@ -5524,9 +5524,13 @@ METHOD controllerUpdateStockPrestashop() Class TComercio
 
    if ::filesOpen() 
 
-      ::TComercioStock:updateAllProductStocks( ::getStartId( lastInsertProduct ) )
+      ::TComercioStock:buildListProductToUpdate( ::getStartId( lastInsertProduct ) )
 
-      ::TComercioStock:evalProductsToStock()
+      ::TComercioStock:calculateStocksProductsToUpdate()
+
+      ::TComercioStock:createCommandProductsToUpdate()
+
+      // ::TComercioStock:executeCommandProductToUpdate()
 
       ::filesClose()
 

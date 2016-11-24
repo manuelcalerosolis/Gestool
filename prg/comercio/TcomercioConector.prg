@@ -11,7 +11,9 @@
 
 CLASS TComercioConector
 
-   DATA  TComercio
+   DATA        TComercio
+
+   CLASSDATA   megaCommand                                  INIT ""
 
    METHOD New( TComercio )                                  CONSTRUCTOR
 
@@ -83,6 +85,9 @@ CLASS TComercioConector
    METHOD saveLastInsertStock( idProduct )                  INLINE ( ::TComercio:saveLastInsertStock( idProduct ) )
    METHOD getLastInsertstock()                              INLINE ( ::TComercio:getLastInsertstock() )
 
+   METHOD resetMegaCommand()                                INLINE ( ::megaCommand := "" )
+   METHOD addMegaCommand( cCommand ) 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -107,3 +112,19 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
  
+METHOD addMegaCommand( cCommand ) CLASS TComercioConector
+
+   if ( cCommand $ ::megaCommand )
+      Return ( Self )
+   end if 
+
+   ::megaCommand  += cCommand + ";"
+   ::megaCommand  += CRLF
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+
+
+

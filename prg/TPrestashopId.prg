@@ -168,14 +168,14 @@ METHOD getValue( cTipoDocumento, cClave, cWeb, defaultValue )
    end if 
 
    if !::isValidParameters( cTipoDocumento, cClave, cWeb )
-      ::writeText( cTipoDocumento + ":" + cClave + ":" + cWeb + "parametros invalidos" )
+      ::writeText( alltrim( cTipoDocumento ) + ":" + alltrim( cClave ) + ":" + alltrim( cWeb ) + " parametros invalidos" )
       RETURN ( idWeb )
    end if 
 
    if ::isSeekValues( cTipoDocumento, cClave, cWeb )
       idWeb       := ::oDbf:idWeb
    else 
-      ::writeText( cTipoDocumento + ":" + cClave + ":" + cWeb + ": NO encontrado : " + str( len( cTipoDocumento + cClave + cWeb ) ) )
+      ::writeText( alltrim( cTipoDocumento ) + ":" + alltrim( cClave ) + ":" + alltrim( cWeb ) + ": no encontrado : " + alltrim( str( len( cTipoDocumento + cClave + cWeb ) ) ) )
    end if 
 
 RETURN ( idWeb )
