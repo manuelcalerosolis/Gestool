@@ -4267,8 +4267,8 @@ RETURN ( ::oHoraFin )
 
 Method AddVariable() CLASS TNewInfGen
 
-   public dFechaInicio                 := Dtoc( ::dIniInf )
-   public dFechaFin                    := Dtoc( ::dFinInf )
+   public dFechaInicio                 := Dtos( ::dIniInf )
+   public dFechaFin                    := Dtos( ::dFinInf )
 
    ::oFastReport:AddVariable(          "Informe",  "Desde fecha",                   "GetHbVar('dFechaInicio')" )
    ::oFastReport:AddVariable(          "Informe",  "Hasta fecha",                   "GetHbVar('dFechaFin')" )

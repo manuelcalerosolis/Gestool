@@ -430,6 +430,7 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
       if !::oStock:lOpenFiles()
          lOpen    := .f.
       else 
+         ::oStock:lCalculateUnidadesPendientesRecibir    := .t.
          ::oStock:CreateTemporalFiles()
       end if
 
@@ -696,6 +697,7 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
 
    ::AddField( "nPdtRec",     "N", 16, 6, {|| "" },   "Unidades pendientes de recibir"          )
    ::AddField( "nPdtEnt",     "N", 16, 6, {|| "" },   "Unidades pendientes de entregar"         )
+   ::AddField( "nEntreg",     "N", 16, 6, {|| "" },   "Unidades entregadas"                     )
 
    ::AddField( "nDtoArt",     "N",  6, 2, {|| "" },   "Descuento porcentual artículo"           ) 
    ::AddField( "nLinArt",     "N", 16, 6, {|| "" },   "Descuento lineal artículo"               ) 
@@ -2930,7 +2932,8 @@ METHOD appendStockArticulo( aStockArticulo )
          ::oDbf:nBultos    := sStock:nBultos
          ::oDbf:nCajas     := sStock:nCajas
          ::oDbf:nPdtRec    := sStock:nPendientesRecibir    
-         ::oDbf:nPdtEnt    := sStock:nPendientesEntregar   
+         ::oDbf:nPdtEnt    := sStock:nPendientesEntregar 
+         ::oDbf:nEntreg    := sStock:nUnidadesEntregadas
          ::oDbf:cNumDoc    := sStock:cNumeroDocumento      
          ::oDbf:cTipDoc    := sStock:cTipoDocumento
 
