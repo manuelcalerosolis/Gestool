@@ -1475,7 +1475,9 @@ METHOD inactivateProduct( idProduct ) CLASS TComercioProduct
                               " SET active = 0" + ;
                               " WHERE id_product = '" + idProductPrestashop + "'"
 
-   ::commandExecDirect( cCommand )
+   // ::commandExecDirect( cCommand )
+
+   ::addMegaCommand( cCommand )
 
 Return ( Self )
 

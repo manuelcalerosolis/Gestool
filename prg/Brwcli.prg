@@ -339,7 +339,7 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
    Codigo de cliente-----------------------------------------------------------
    */
 
-   if !( dbfClient )->( dbSeek( cCodCli ) )
+   if !( dbfClient )->( dbSeek( upper( cCodCli ) ) )
       CloseFiles()
       msgStop( "Cliente " + alltrim( cCodCli ) + " no encontrado." )
       Return ( nil )
