@@ -88,6 +88,7 @@ CLASS TRemesas FROM TMasDet
    DATA  oExportado
 
    DATA  cEsquema                      INIT "CORE"
+   DATA  cSequencia                    INIT "OOFF"
 
    DATA  oCuaderno
 
@@ -1362,6 +1363,7 @@ METHOD SaveModelo()
    local oGetFicheroExportacion
    local oBmpGeneral
    local oComboEsquema
+   local oComboSequencia
 
    if ::oDbf:Recno() == 0
       Return ( Self )
@@ -1396,15 +1398,16 @@ METHOD SaveModelo()
          WHEN     ( ::oDbf:nTipRem != 2 ) ;
          OF       oDlg
 
-      REDEFINE CHECKBOX ::lUsarSEPA ;
-         ID       110 ;
-         WHEN     ( ::oDbf:nTipRem != 2 ) ;
-         OF       oDlg
-
       REDEFINE COMBOBOX oComboEsquema ;
          VAR      ::cEsquema ;
          ID       160 ;
          ITEMS    { "CORE", "COR1" } ;
+         OF       oDlg
+
+      REDEFINE COMBOBOX oComboSequencia ;
+         VAR      ::cSequencia ;
+         ID       170 ;
+         ITEMS    { "OOFF", "RCUR" } ;
          OF       oDlg
 
       ::oTreeIncidencias   := TTreeView():Redefine( 150, oDlg )
@@ -1438,12 +1441,11 @@ METHOD RunModelo( oDlg )
    if ::oDbf:nTipRem == 2 
       ::InitMod58( oDlg ) 
    else
-      if ::lUsarSEPA
-         // ::InitSepa19( oDlg )
+//      if ::lUsarSEPA
          ::InitSepaXML19( oDlg )
-      else 
-         ::InitMod19( oDlg )
-      end if 
+//      else 
+//         ::InitMod19( oDlg )
+//      end if 
    end if
 
    ::oDbf:FieldPutByName( "lExport", .t. )
@@ -2217,6 +2219,7 @@ METHOD InitSepaXML19( oDlg )
       ::oCuaderno             := SepaXml():New( ::getFicheroExportacionXml() )
 
       ::oCuaderno:setScheme( ::cEsquema )
+      ::oCuaderno:setSeqTp( ::cSequencia )
       ::oCuaderno:setOriginalMessageIdentification( id_File( 'REMESA' + str( ::oDbf:nNumRem ) ) )
       ::oCuaderno:setPaymentInformationIdentification( ::oCtaRem:oDbf:cNifPre + ttos( datetime() ) )
       ::oCuaderno:setRequestedCollectionDate( sDate( ::getIngreso() ) )                  // Fecha de cobro (Vencimiento)

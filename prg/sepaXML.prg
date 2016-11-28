@@ -65,6 +65,7 @@ CLASS SepaXml
    METHOD New()
    METHOD setFinancialMessage( nFinancialMessage )
    METHOD setScheme( nScheme )
+   METHOD setSeqTp( SeqTp )                                       INLINE ( ::SeqTp := SeqTp )
    METHOD setPaymentInformationIdentification( informationId )    INLINE ( ::PmtInfId := informationId )
    METHOD setOriginalMessageIdentification( messageId )           INLINE ( ::MsgId := messageId )
 

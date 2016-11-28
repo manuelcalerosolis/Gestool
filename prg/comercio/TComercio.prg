@@ -2525,6 +2525,8 @@ METHOD prestaShopConnect()
 
    else
 
+      ::oCon:setMultiStatement(.t.)
+
       ::writeText( 'Se ha conectado con éxito a la base de datos.' , 3 )
 
       oDb            := TMSDataBase():New( ::oCon, ::TComercioConfig:getMySqlDatabase() )
@@ -5530,7 +5532,7 @@ METHOD controllerUpdateStockPrestashop() Class TComercio
 
       ::TComercioStock:createCommandProductsToUpdate()
 
-      // ::TComercioStock:executeCommandProductToUpdate()
+      ::TComercioStock:executeCommandProductsToUpdate()
 
       ::filesClose()
 
