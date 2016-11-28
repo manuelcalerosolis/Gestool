@@ -676,8 +676,8 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :bStrData         := {|| if( ( D():FacturasClientes( nView ) )->lCloFac, "Cerrada", "Abierta" ) }
          :bEditValue       := {|| ( D():FacturasClientes( nView ) )->lCloFac }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Zoom16" )
+         :SetCheck( { "gc_lock2_12" , "Nil16" } )
+         :AddResource( "zoom16" )
          :bLDClickData     := {|| oWndBrw:RecEdit() }
       end with
 
