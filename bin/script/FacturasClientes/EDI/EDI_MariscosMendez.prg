@@ -1,8 +1,8 @@
-ï»¿#include "Factu.ch" 
+#include "Factu.ch" 
 #include "FiveWin.ch"
 
-#define __localDirectory__       "c:\eDiversa\send\Planos\"
-//#define __localDirectory__       "c:\ficheros\voxel\"
+//#define __localDirectory__       "c:\eDiversa\send\Planos\"
+#define __localDirectory__       "c:\ficheros\"
 #define __separator__            "|"
 
 //---------------------------------------------------------------------------//
@@ -14,12 +14,12 @@ DTM|20151209
 PAI|60
 RFF|DQ|1600710
 RFF|ON|530957173
-NADSU|8437003477959|MARISCOS MENDEZ  SL|R.M.Huelva,Tomo269 Gral.Lb.96 Secc.1Âº,Fol.96, Hoja H-1925 Inscr.1Âº|POLIGONO PESQUERO NORTE S/N|HUELVA|21002     |B21173786
-NADSCO|8437003477959|MARISCOS MENDEZ  SL|R.M.Huelva,Tomo269 Gral.Lb.96 Secc.1Âº,Fol.96, Hoja H-1925 Inscr.1Âº|POLIGONO PESQUERO NORTE S/N|HUELVA|21002     |B21173786
+NADSU|8437003477959|MARISCOS MENDEZ  SL|R.M.Huelva,Tomo269 Gral.Lb.96 Secc.1º,Fol.96, Hoja H-1925 Inscr.1º|POLIGONO PESQUERO NORTE S/N|HUELVA|21002     |B21173786
+NADSCO|8437003477959|MARISCOS MENDEZ  SL|R.M.Huelva,Tomo269 Gral.Lb.96 Secc.1º,Fol.96, Hoja H-1925 Inscr.1º|POLIGONO PESQUERO NORTE S/N|HUELVA|21002     |B21173786
 NADBY|8480015009007|CENTROS COMERCIALES CARREFOUR, S.A.SEVIL|P. I. DE LA ISLA C/TORRE DE LOS HEBREROS|DOS HERMANAS|41700     |A28425270|
 NADBCO|8480015009007|CENTROS COMERCIALES CARREFOUR, S.A.SEVIL|P. I. DE LA ISLA C/TORRE DE LOS HEBREROS|DOS HERMANAS|41700     |A28425270
 NADII|8437003477959|MARISCOS MENDEZ  SL|POLIGONO PESQUERO NORTE S/N|HUELVA|21002     |B21173786
-NADIV| 8480015111113            |CENTROS COMERCIALES CARREFOUR, S.A.SEVIL|EDIFICIO CARREFOUR C/ CAMPEZO NÂº16|POL. INDUSTRIAL LAS MERCEDES|28022     |A28425270
+NADIV| 8480015111113            |CENTROS COMERCIALES CARREFOUR, S.A.SEVIL|EDIFICIO CARREFOUR C/ CAMPEZO Nº16|POL. INDUSTRIAL LAS MERCEDES|28022     |A28425270
 NADPR|8480015111113
 NADDP|8480015102036
 CUX|EUR|4
@@ -49,12 +49,12 @@ DTM|20151210
 PAI|60
 RFF|DQ|1600715
 RFF|ON|530957287
-NADSU|8437003477959|MARISCOS MENDEZ  SL|R.M.Huelva,Tomo269 Gral.Lb.96 Secc.1Âº,Fol.96, Hoja H-1925 Inscr.1Âº|POLIGONO PESQUERO NORTE S/N|HUELVA|21002     |B21173786
-NADSCO|8437003477959|MARISCOS MENDEZ  SL|R.M.Huelva,Tomo269 Gral.Lb.96 Secc.1Âº,Fol.96, Hoja H-1925 Inscr.1Âº|POLIGONO PESQUERO NORTE S/N|HUELVA|21002     |B21173786
+NADSU|8437003477959|MARISCOS MENDEZ  SL|R.M.Huelva,Tomo269 Gral.Lb.96 Secc.1º,Fol.96, Hoja H-1925 Inscr.1º|POLIGONO PESQUERO NORTE S/N|HUELVA|21002     |B21173786
+NADSCO|8437003477959|MARISCOS MENDEZ  SL|R.M.Huelva,Tomo269 Gral.Lb.96 Secc.1º,Fol.96, Hoja H-1925 Inscr.1º|POLIGONO PESQUERO NORTE S/N|HUELVA|21002     |B21173786
 NADBY|8480015009007|CENTROS COMERCIALES CARREFOUR, S.A.SEVIL|P. I. DE LA ISLA C/TORRE DE LOS HEBREROS|DOS HERMANAS|41700     |A28425270|
 NADBCO|8480015009007|CENTROS COMERCIALES CARREFOUR, S.A.SEVIL|P. I. DE LA ISLA C/TORRE DE LOS HEBREROS|DOS HERMANAS|41700     |A28425270
 NADII|8437003477959|MARISCOS MENDEZ  SL|POLIGONO PESQUERO NORTE S/N|HUELVA|21002     |B21173786
-NADIV|             |CENTROS COMERCIALES CARREFOUR, S.A.SEVIL|EDIFICIO CARREFOUR C/ CAMPEZO NÂº16|POL. INDUSTRIAL LAS MERCEDES|28022     |A28425270
+NADIV|             |CENTROS COMERCIALES CARREFOUR, S.A.SEVIL|EDIFICIO CARREFOUR C/ CAMPEZO Nº16|POL. INDUSTRIAL LAS MERCEDES|28022     |A28425270
 NADPR|8480015102036
 NADDP|8480015102036
 CUX|EUR|4
@@ -176,6 +176,10 @@ CLASS TEdiExporarFacturas
 
    DATA sTotalFactura
 
+   DATA cCodigoNormalizado
+   DATA oCodigoNormalizado
+   DATA aCodigoNormalizado
+
    METHOD New( lNoExportados, oTree, nView )
    METHOD Run()
 
@@ -232,6 +236,10 @@ CLASS TEdiExporarFacturas
 
    METHOD setFacturaClienteGeneradaEDI()
 
+   METHOD seleccionaCodigoNormalizado()   INLINE ( MsgCombo( "Seleccione una opción", "Códigos", ::aCodigoNormalizado, @::cCodigoNormalizado ) )
+
+   METHOD GetCodigoNormalizado
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -241,6 +249,9 @@ METHOD New( lNoExportados, oTree, nView )
    ::lNoExportados            := lNoExportados
    ::oTree                    := oTree
    ::nView                    := nView
+
+   ::cCodigoNormalizado       := "Normalizado"
+   ::aCodigoNormalizado       := { "Código normalizado", "Código normalizado carrefour" }
 
 Return ( self )
 
@@ -253,6 +264,8 @@ METHOD Run()
    if ::isFacturaProcesada()
       Return ( self )
    end if
+
+   ::seleccionaCodigoNormalizado()
    
    ::infoFacturaEnProceso()
 
@@ -389,9 +402,9 @@ Return ( self )
 
 METHOD writeDatosProveedor()
 
-::oFileEDI:add( "NADSU|" + AllTrim( uFieldEmpresa( "cCodEdi" ) ) + "|MARISCOS MENDEZ  SL|R.M.Huelva,Tomo269 Gral.Lb.96 Secc.1Âº,Fol.96, Hoja H-1925 Inscr.1Âº|POLIGONO PESQUERO NORTE S/N|HUELVA|21002     |B21173786" )
+::oFileEDI:add( "NADSU|" + AllTrim( uFieldEmpresa( "cCodEdi" ) ) + "|MARISCOS MENDEZ  SL|R.M.Huelva,Tomo269 Gral.Lb.96 Secc.1º,Fol.96, Hoja H-1925 Inscr.1º|POLIGONO PESQUERO NORTE S/N|HUELVA|21002     |B21173786" )
 
-::oFileEDI:add( "NADSCO|" + AllTrim( uFieldEmpresa( "cCodEdi" ) ) + "|MARISCOS MENDEZ  SL|R.M.Huelva,Tomo269 Gral.Lb.96 Secc.1Âº,Fol.96, Hoja H-1925 Inscr.1Âº|POLIGONO PESQUERO NORTE S/N|HUELVA|21002     |B21173786" )
+::oFileEDI:add( "NADSCO|" + AllTrim( uFieldEmpresa( "cCodEdi" ) ) + "|MARISCOS MENDEZ  SL|R.M.Huelva,Tomo269 Gral.Lb.96 Secc.1º,Fol.96, Hoja H-1925 Inscr.1º|POLIGONO PESQUERO NORTE S/N|HUELVA|21002     |B21173786" )
 
 Return ( self )
 
@@ -461,8 +474,8 @@ METHOD writeEmisorFactura()
    cLine          += AllTrim( uFieldEmpresa( "cCodEdi" ) ) + __separator__    //Codigo EDI
    cLine          += "MARISCOS MENDEZ  SL" + __separator__                    //Nombre
    cLine          += "POLIGONO PESQUERO NORTE S/N" + __separator__            //Domicilio
-   cLine          += "HUELVA" + __separator__                                 //PoblaciÃ³n
-   cLine          += "21002     " + __separator__                             //CÃ³digo postal
+   cLine          += "HUELVA" + __separator__                                 //Población
+   cLine          += "21002     " + __separator__                             //Código postal
    cLine          += "B21173786" + __separator__                              //CIF
    cLine          += "ES"                                                     //Pais
 
@@ -645,7 +658,8 @@ METHOD writeCabeceraLinea()
    local cLine    := ""
 
    cLine          += "LIN" + __separator__
-   cLine          += AllTrim( ( D():Articulos( ::nView ) )->cCodEdi ) + __separator__
+   //cLine          += AllTrim( ( D():Articulos( ::nView ) )->cCodEdi ) + __separator__
+   cLine          += AllTrim( ::GetCodigoNormalizado() ) + __separator__
    cLine          += "EN" 
 
    ::oFileEDI:add( cLine )
@@ -747,5 +761,22 @@ METHOD setFacturaClienteGeneradaEDI()
    end if 
 
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD GetCodigoNormalizado()
+
+   local cCodigo  := ""
+
+   do case
+      case ::cCodigoNormalizado == "Código normalizado"
+         cCodigo  := ( D():Articulos( ::nView ) )->cCodEdi
+
+      case ::cCodigoNormalizado == "Código normalizado carrefour"
+         cCodigo  := getCustomExtraField( "036", "Artículos", ( D():Articulos( ::nView ) )->Codigo )
+
+   end case
+
+Return ( cCodigo )
 
 //---------------------------------------------------------------------------//
