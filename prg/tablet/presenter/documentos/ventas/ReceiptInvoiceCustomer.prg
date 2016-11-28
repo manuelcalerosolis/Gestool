@@ -4,10 +4,15 @@
 
 CLASS ReceiptInvoiceCustomer FROM DocumentsSales  
   
+   DATA cNumeroFactura                    INIT ""
    DATA nImporteAnterior                  INIT 0
    DATA nOrdenAnterior
+   DATA lShowFilterCobrado                INIT .t.
+   DATA lCloseFiles                       INIT .t.
 
    METHOD New()
+
+   METHOD Play()
 
    METHOD getEditDocumento()
 
@@ -29,17 +34,32 @@ CLASS ReceiptInvoiceCustomer FROM DocumentsSales
 
    METHOD addReciboDiferencia()
 
+   METHOD FilterTable()
+
+   METHOD onPreRunNavigator()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS ReceiptInvoiceCustomer
+METHOD New( oInvoice ) CLASS ReceiptInvoiceCustomer
 
-   ::super:oSender        := self
+   ::super:oSender         := self
 
-   if !::openFiles()
-      return ( self )
-   end if 
+   if Empty( oInvoice )
+
+      if !::openFiles()
+         return ( self )
+      end if 
+
+   else
+
+      ::lCloseFiles           := .f.
+      ::nView                 := oInvoice:nView
+      ::cNumeroFactura        := oInvoice:GetId()
+      ::lShowFilterCobrado    := Empty( oInvoice:GetId() )
+
+   end if
 
    ::oViewSearchNavigator  := ReceiptDocumentSalesViewSearchNavigator():New( self )
    ::oViewSearchNavigator:setTitleDocumento( "Recibos de clientes" )  
@@ -56,6 +76,20 @@ METHOD New() CLASS ReceiptInvoiceCustomer
    ::setDataTable( "FacCliP" )
 
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD play() CLASS ReceiptInvoiceCustomer
+
+   if ::onPreRunNavigator()
+      ::runNavigator()
+   end if 
+
+   if ::lCloseFiles
+      ::closeFiles()
+   end if
+
+return ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -198,6 +232,65 @@ METHOD addReciboDiferencia( nImporteRecibo ) CLASS ReceiptInvoiceCustomer
    ( ::getDataTable() )->( dbUnLock() )
 
    ( ::getDataTable() )->( dbGoTo( nRec ) )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD FilterTable( cTextFilter ) CLASS ReceiptInvoiceCustomer
+
+   do case
+      case cTextFilter == "Todos"
+         ( ::getDataTable() )->( dbClearFilter() )
+      case cTextFilter == "Pendientes"
+         ( ::getDataTable() )->( dbSetFilter( {|| !Field->lCobrado }, "!lCobrado" ) )
+      case cTextFilter == "Cobrados"
+         ( ::getDataTable() )->( dbSetFilter( {|| Field->lCobrado }, "lCobrado" ) )
+   end case
+
+   ( ::getDataTable() )->( dbGoTop() )
+
+   ::oViewSearchNavigator:oBrowse:Refresh()
+
+return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD onPreRunNavigator() CLASS ReceiptInvoiceCustomer
+
+   if empty( ::getWorkArea() )
+      Return .t.
+   end if 
+
+   if !Empty( ::cNumeroFactura )
+      
+      if !( D():FacturasClientes( ::nView ) )->( dbSeek( ::cNumeroFactura ) )
+         Return ( .f. )
+      end if
+
+   end if
+
+   ( ::getWorkArea() )->( ordsetfocus( "dFecDes" ) )
+   ( ::getWorkArea() )->( dbgotop() ) 
+
+   if !Empty( ::cNumeroFactura )
+
+      ( ::getWorkArea() )->( dbsetfilter( {|| Field->cSerie + Str( Field->nNumFac ) + Field->cSufFac == ::cNumeroFactura }, "Field->cSerie + Str( Field->nNumFac ) + Field->cSufFac == '" + ::cNumeroFactura + "'" ) )
+      ( ::getWorkArea() )->( dbgotop() )
+
+   else
+
+      if ( accessCode():lFilterByAgent ) .and. !empty( accessCode():cAgente )
+      
+         ( ::getWorkArea() )->( dbsetfilter( {|| Field->cCodAge == accessCode():cAgente }, "Field->cCodAge == '" + accessCode():cAgente + "'" ) )
+         ( ::getWorkArea() )->( dbgotop() )
+
+         ( D():Clientes( ::nView ) )->( dbsetfilter( {|| Field->cAgente == accessCode():cAgente }, "Field->cCodAge == '" + accessCode():cAgente + "'" ) )
+         ( D():Clientes( ::nView ) )->( dbgotop() )
+
+      end if 
+
+   end if
 
 Return ( .t. )
 

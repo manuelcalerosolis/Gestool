@@ -413,7 +413,7 @@ Static Function PageIniCobros()
 
       REDEFINE BITMAP oBmpCobros ;
          ID          500 ;
-         RESOURCE    "SAFE_INTO_ALPHA_48" ;
+         RESOURCE    "gc_safe_into_48" ;
          TRANSPARENT ;
          OF          oFld:aDialogs[ nFolder ]
 
@@ -537,7 +537,7 @@ Static Function PageIniPagos()
 
       REDEFINE BITMAP oBmpCobros ;
          ID          500 ;
-         RESOURCE    "SAFE_OUT_ALPHA_48" ;
+         RESOURCE    "gc_safe_out_48" ;
          TRANSPARENT ;
          OF          oFld:aDialogs[ nFolder ]
 

@@ -1056,6 +1056,7 @@ TScripts.prg            \
 TGenMailDatabaseRecibosClientes.prg \
 TDetMovimientosAlmacen.prg \
 TDetSeriesMovimientos.prg \
+TTraslations.prg        \
 
 C               =       \
 Metafi32.c              \
@@ -2102,6 +2103,7 @@ TScripts.obj            \
 TGenMailDatabaseRecibosClientes.obj \
 TDetMovimientosAlmacen.obj \
 TDetSeriesMovimientos.obj \
+TTraslations.obj        \
 
 .PRG.OBJ:
    $(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -3154,6 +3156,7 @@ $(OBJ)\TScripts.obj              +
 $(OBJ)\TGenMailDatabaseRecibosClientes.obj +
 $(OBJ)\TDetMovimientosAlmacen.obj +
 $(OBJ)\TDetSeriesMovimientos.obj +
+$(OBJ)\TTraslations.obj          +
 $(OBJ)\EstadoSat.obj             
 $<,$*
 $(FWLIB)\FiveH.lib               +

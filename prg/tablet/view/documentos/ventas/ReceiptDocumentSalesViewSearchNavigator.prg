@@ -3,6 +3,8 @@
 
 CLASS ReceiptDocumentSalesViewSearchNavigator FROM ViewSearchNavigator
 
+   DATA oSayFilter
+
    METHOD getDataTable()                  INLINE ( ::oSender:getDataTable() )
 
    METHOD getView()                       INLINE ( ::oSender:nView )
@@ -14,6 +16,8 @@ CLASS ReceiptDocumentSalesViewSearchNavigator FROM ViewSearchNavigator
    METHOD getField( cField )              INLINE ( D():getFieldDictionary( cField, ::getDataTable(), ::getView() ) )
 
    METHOD BotonesAcciones()
+
+   METHOD ChangeFilter()
 
 END CLASS
 
@@ -70,8 +74,67 @@ METHOD BotonesAcciones() CLASS ReceiptDocumentSalesViewSearchNavigator
                               "bLClicked" => {|| ::oSender:Edit() },;
                               "oWnd"      => ::oDlg } )
 
+      if ::oSender:lShowFilterCobrado
+
+         TGridImage():Build(  {  "nTop"      => 75,;
+                                 "nLeft"     => {|| GridWidth( 1.5, ::oDlg ) },;
+                                 "nWidth"    => 64,;
+                                 "nHeight"   => 64,;
+                                 "cResName"  => "gc_funnel_64",;
+                                 "bLClicked" => {|| ::ChangeFilter() },;
+                                 "oWnd"      => ::oDlg } )
+
+         ::oSayFilter  := TGridSay():Build(  {  "nRow"      => 75,;
+                                                "nCol"      => {|| GridWidth( 3, ::oDlg ) },;
+                                                "bText"     => {|| "" },;
+                                                "oWnd"      => ::oDlg,;
+                                                "oFont"     => oGridFont(),;
+                                                "lPixels"   => .t.,;
+                                                "nClrText"  => Rgb( 0, 0, 0 ),;
+                                                "nClrBack"  => Rgb( 255, 255, 255 ),;
+                                                "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
+                                                "nHeight"   => 23,;
+                                                "lDesign"   => .f. } )
+
+      end if
+
    end if 
 
+   ::oDlg:bStart     := {|| ::ChangeFilter() }
+
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ChangeFilter() CLASS ReceiptDocumentSalesViewSearchNavigator
+
+   local cText    := ""
+
+   if ::oSender:lShowFilterCobrado
+
+      do case
+         case ::oSayFilter:cCaption == ""
+            cText    := "Pendientes"
+
+         case ::oSayFilter:cCaption == "Cobrados"
+            cText    := "Todos"
+
+         case ::oSayFilter:cCaption == "Pendientes"
+            cText    := "Cobrados"
+
+         case ::oSayFilter:cCaption == "Todos"
+            cText    := "Pendientes"
+
+      end case
+
+      ::oSayFilter:VarPut( cText )
+      ::oSayFilter:Refresh()   
+
+      ::oSender:FilterTable( ::oSayFilter:cCaption )
+
+   end if
+
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//

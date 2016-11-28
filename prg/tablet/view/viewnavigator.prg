@@ -39,7 +39,6 @@ METHOD New( oSender ) CLASS ViewNavigator
    ::oSender               := oSender
 
 Return ( self )
-Return ( self )
 
 //---------------------------------------------------------------------------//
 

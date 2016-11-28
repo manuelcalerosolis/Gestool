@@ -1816,10 +1816,10 @@ RETURN nil
 METHOD InsertStockPedidoClientes()
 
    local nPendientesEntregar  := nTotNPedCli( ::cPedCliL )
-   local nUnidadesRecibidas   := nUnidadesRecibidasAlbaranesClientesNoFacturados( ( ::cPedCliL )->cSerPed + str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cAlbCliL )
-   nUnidadesRecibidas         += nUnidadesRecibidasFacturasClientes( ( ::cPedCliL )->cSerPed + str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cFacCliL )
+   local nUnidadesEntregadas  := nUnidadesRecibidasAlbaranesClientesNoFacturados( ( ::cPedCliL )->cSerPed + str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cAlbCliL )
+   nUnidadesEntregadas        += nUnidadesRecibidasFacturasClientes( ( ::cPedCliL )->cSerPed + str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cFacCliL )
 
-   nPendientesEntregar        -= nUnidadesRecibidas
+   nPendientesEntregar        -= nUnidadesEntregadas
 
    with object ( SStock():New() )
    
@@ -1837,8 +1837,8 @@ METHOD InsertStockPedidoClientes()
       :cValorPropiedad2       := ( ::cPedCliL )->cValPr2
       :cLote                  := ( ::cPedCliL )->cLote
       :dFechaCaducidad        := ( ::cPedCliL )->dFecCad
-
       :nPendientesEntregar    := nPendientesEntregar
+      :nUnidadesEntregadas    := nUnidadesEntregadas
       
       ::Integra( hb_QWith() )
 
@@ -3874,8 +3874,8 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    // Proceso------------------------------------------------------------------
 
-   // oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   // BEGIN SEQUENCE
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
    for each cCodAlm in aAlmacenes
 
@@ -3992,10 +3992,10 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    // Control de erroress-------------------------------------------------------
 
-//   RECOVER USING oError
-//      msgStop( ErrorMessage( oError ), "Calculo de stock" )
-//   END SEQUENCE
-//   ErrorBlock( oBlock )
+   RECOVER USING oError
+      msgStop( ErrorMessage( oError ), "Calculo de stock" )
+   END SEQUENCE
+   ErrorBlock( oBlock )
 
 Return ( ::aStocks )
 
@@ -4805,6 +4805,7 @@ Method Integra( sStocks ) CLASS TStock
          ::aStocks[ nPos ]:nCajas                  += sStocks:nCajas
          ::aStocks[ nPos ]:nPendientesRecibir      += sStocks:nPendientesRecibir
          ::aStocks[ nPos ]:nPendientesEntregar     += sStocks:nPendientesEntregar
+         ::aStocks[ nPos ]:nUnidadesEntregadas     += sStocks:nUnidadesEntregadas
       else
          aAdd( ::aStocks, oClone( sStocks ) )
       end if
@@ -6565,6 +6566,7 @@ CLASS SStock
    DATA cTipoDocumento        INIT ""
    DATA nBultos               INIT 0
    DATA nCajas                INIT 0
+   DATA nUnidadesEntregadas   INIT 0
 
    //------------------------------------------------------------------------//
    
@@ -6603,6 +6605,7 @@ METHOD New() CLASS SStock
    ::cTipoDocumento        := ""
    ::nBultos               := 0
    ::nCajas                := 0
+   ::nUnidadesEntregadas   := 0
 
 RETURN ( Self )
 
@@ -6646,6 +6649,7 @@ METHOD Save( oDbfStock ) CLASS SStock
    oDbfStock:nUnd       := ::nUnidades             
    oDbfStock:nPdtRec    := ::nPendientesRecibir    
    oDbfStock:nPdtEnt    := ::nPendientesEntregar   
+   oDbfStock:nEntreg    := ::nUnidadesEntregadas   
    oDbfStock:cNumDoc    := ::cNumeroDocumento      
    oDbfStock:cTipDoc    := ::cTipoDocumento        
 
@@ -6760,6 +6764,7 @@ METHOD CreateTemporalFiles( cPath ) CLASS TStock
    FIELD NAME "nUnd"       TYPE "N" LEN 16 DEC 6 COMMENT "Total unidades"                        OF ::oDbfStock
    FIELD NAME "nPdtRec"    TYPE "N" LEN 16 DEC 6 COMMENT "Total unidades pendientes de recibir"  OF ::oDbfStock
    FIELD NAME "nPdtEnt"    TYPE "N" LEN 16 DEC 6 COMMENT "Total unidades pendientes de entregar" OF ::oDbfStock
+   FIELD NAME "nEntreg"    TYPE "N" LEN 16 DEC 6 COMMENT "Total unidades entregadas"             OF ::oDbfStock
    FIELD NAME "cNumDoc"    TYPE "C" LEN 13 DEC 0 COMMENT "Número del documento lote"             OF ::oDbfStock
    FIELD NAME "cTipDoc"    TYPE "C" LEN 12 DEC 0 COMMENT "Tipo del documento"                    OF ::oDbfStock
 
