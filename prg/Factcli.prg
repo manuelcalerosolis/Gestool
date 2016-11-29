@@ -687,9 +687,9 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :bStrData         := {|| cChkPagFacCli( ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac, D():FacturasClientes( nView ), D():FacturasClientesCobros( nView ) ) }
          :bBmpData         := {|| nChkPagFacCli( ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac, D():FacturasClientes( nView ), D():FacturasClientesCobros( nView ) ) }
          :nWidth           := 20
-         :AddResource( "Bullet_Square_Green_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Red_16" )
+         :AddResource( "GC_CHECK_12" )
+         :AddResource( "GC_SHAPE_SQUARE_12" )
+         :AddResource( "GC_DELETE_12" )
          :AddResource( "ChgPre16" )
          :bLDClickData     := {|| oWndBrw:RecEdit() }
       end with
@@ -700,8 +700,8 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :bStrData         := {|| if( ( D():FacturasClientes( nView ) )->lContab, "Contabilizado", "Pendiente" ) }
          :bEditValue       := {|| ( D():FacturasClientes( nView ) )->lContab }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "BmpConta16" )
+         :SetCheck( { "gc_folder2_12", "Nil16" } )
+         :AddResource( "gc_folder2_16" )
          :bLDClickData     := {|| oWndBrw:RecEdit() }
       end with
 
@@ -712,8 +712,8 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :bStrData         := {|| if( ( D():FacturasClientes( nView ) )->lSndDoc, "Enviado", "No enviado" ) }
          :bEditValue       := {|| ( D():FacturasClientes( nView ) )->lSndDoc }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Lbl16" )
+         :SetCheck( { "gc_mail2_12", "Nil16" } )
+         :AddResource( "GC_MAIL2_16" )
          :bLDClickData     := {|| oWndBrw:RecEdit() }
       end with
 
@@ -723,8 +723,8 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :bStrData         := {|| "" }
          :bEditValue       := {|| !empty( ( D():FacturasClientes( nView ) )->dFecEnt ) }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "hand_paper_16" )
+         :SetCheck( { "GC_HAND_PAPER_12", "Nil16" } )
+         :AddResource( "GC_HAND_PAPER_16" )
          :bLDClickData     := {|| oWndBrw:RecEdit() }
       end with
 
@@ -735,8 +735,8 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :bEditValue       := {|| ( D():FacturasClientes( nView ) )->lExpEdi }
          :nWidth           := 20
          :lHide            := .t.
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Text_Code_16" )
+         :SetCheck( { "gc_edi_16", "Nil16" } )
+         :AddResource( "gc_edi_16" )
          :bLDClickData     := {|| oWndBrw:RecEdit() }
       end with
 
@@ -747,8 +747,8 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :bEditValue       := {|| ( D():FacturasClientes( nView ) )->lExpFac }
          :nWidth           := 20
          :lHide            := .t.
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Document_plain_earth_16" )
+         :SetCheck( { "gc_document_empty_world_16", "Nil16" } )
+         :AddResource( "gc_document_empty_world_16" )
          :bLDClickData     := {|| oWndBrw:RecEdit() }
       end with
 
@@ -759,10 +759,10 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :bBmpData         := {|| nEstadoIncidencia( ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac ) }
          :nWidth           := 20
          :lHide            := .t.
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
-         :AddResource( "informacion_16" )
+         :AddResource( "GC_DELETE_12" )
+         :AddResource( "GC_SHAPE_SQUARE_12" )
+         :AddResource( "GC_CHECK_12" )
+         :AddResource( "gc_document_information_16" )
          :bLDClickData     := {|| oWndBrw:RecEdit() }
       end with
 
@@ -773,8 +773,8 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :bEditValue       := {|| lRectificadaCli( ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac, D():FacturasClientes( nView ), dbfFacRecT ) }
          :nWidth           := 20
          :lHide            := .t.
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Document_delete_16" )
+         :SetCheck( { "gc_document_text_delete_12", "Nil16" } )
+         :AddResource( "gc_document_text_delete_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -784,8 +784,8 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :bEditValue       := {|| ( D():FacturasClientes( nView ) )->lImprimido }
          :nWidth           := 20
          :lHide            := .t.
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Imp16" )
+         :SetCheck( { "GC_PRINTER2_12", "Nil16" } )
+         :AddResource( "GC_PRINTER2_16" )
          :bLDClickData     := {|| oWndBrw:RecEdit() }
       end with
 
@@ -796,16 +796,8 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :bEditValue       := {|| ( D():FacturasClientes( nView ) )->lMail }
          :nWidth           := 20
          :lHide            := .t.
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Imp16" )
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Tipo"
-         :bEditValue       := {|| aTipFac[ if( ( D():FacturasClientes( nView ) )->lAlquiler, 2, 1 ) ] }
-         :nWidth           := 50
-         :lHide            := .t.
-         :bLDClickData     := {|| oWndBrw:RecEdit() }
+         :SetCheck( { "gc_mail_earth_12", "Nil16" } )
+         :AddResource( "gc_mail_earth_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -18402,14 +18394,14 @@ function SynFacCli( cPath )
          Esto es para la jaca para que las líneas tengan la misma Comisión de agente que la cabecera
          */
          
-         nPorCabecera      := RetFld( ( D():FacturasClientesLineas( nView ) )->cSerie + str( ( D():FacturasClientesLineas( nView ) )->nNumFac ) + ( D():FacturasClientesLineas( nView ) )->cSufFac, D():FacturasClientes( nView ), "nPctComAge" )
+         /*nPorCabecera      := RetFld( ( D():FacturasClientesLineas( nView ) )->cSerie + str( ( D():FacturasClientesLineas( nView ) )->nNumFac ) + ( D():FacturasClientesLineas( nView ) )->cSufFac, D():FacturasClientes( nView ), "nPctComAge" )
 
          if ( D():FacturasClientesLineas( nView ) )->nComAge != nPorCabecera
             if ( D():FacturasClientesLineas( nView ) )->( dbRLock() )
                ( D():FacturasClientesLineas( nView ) )->nComAge    := nPorCabecera
                ( D():FacturasClientesLineas( nView ) )->( dbUnLock() )
             end if
-         end if
+         end if*/
 
          // Valor de stock toma la fecha de los Facturas----------------------
 

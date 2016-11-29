@@ -367,8 +367,8 @@ FUNCTION Provee( oMenuItem, oWnd )
       :bStrData         := {|| "" }
       :bEditValue       := {|| ( dbfProvee )->lBlqPrv }
       :nWidth           := 20
-      :SetCheck( { "Sel16", "Nil16" } )
-      :AddResource( "stop_16" )
+      :SetCheck( { "gc_sign_stop_12", "Nil16" } )
+      :AddResource( "gc_sign_stop_16" )
    end with
 
    with object ( oWndBrw:AddXCol() )
@@ -377,8 +377,8 @@ FUNCTION Provee( oMenuItem, oWnd )
       :bStrData         := {|| "" }
       :bEditValue       := {|| ( dbfProvee )->lSndInt }
       :nWidth           := 20
-      :SetCheck( { "Sel16", "Nil16" } )
-      :AddResource( "Lbl16" )
+      :SetCheck( { "GC_MAIL2_12", "Nil16" } )
+      :AddResource( "GC_MAIL2_16" )
    end with
 
    with object ( oWndBrw:AddXCol() )
