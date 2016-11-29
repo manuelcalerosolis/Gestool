@@ -1134,9 +1134,9 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :bStrData         := {|| cEstadoPedido( ( D():PedidosClientes( nView ) )->nEstado ) }
          :bBmpData         := {|| ( D():PedidosClientes( nView ) )->nEstado }
          :nWidth           := 20
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
+         :AddResource( "gc_delete_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_check_12" )
          :AddResource( "Trafficlight_on_16" )
       end with
 
@@ -1157,9 +1157,9 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :bBmpData         := {|| nEstadoIncidencia( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) }
          :nWidth           := 20
          :lHide            := .t.
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
+         :AddResource( "gc_delete_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_check_12" )
          :AddResource( "informacion_16" )
       end with
 
@@ -1170,9 +1170,9 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :bBmpData         := {|| nEstadoProduccion( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) }
          :nWidth           := 20
          :lHide            := .t.
-         :AddResource( "Bullet_Square_Green_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Red_16" )
+         :AddResource( "gc_check_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_delete_12" )
          :AddResource( "Worker2_16" )
       end with
 
@@ -2386,9 +2386,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          :bStrData            := {|| "" }
          :bBmpData            := {|| if( nTotNPedCli( dbfTmpLin ) == 0, 3, nEstadoRecPedCli( D():PedidosProveedoresLineas( nView ), dbfAlbPrvL, dbfTmpLin ) ) }
          :nWidth              := 20
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
+         :AddResource( "gc_delete_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_check_12" )
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -2396,9 +2396,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          :bStrData            := {|| "" }
          :bBmpData            := {|| Min( Max( ( dbfTmpLin )->nProduc + 1, 1 ), 3 ) }
          :nWidth              := 20
-         :AddResource( "Bullet_Square_Green_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Red_16" )
+         :AddResource( "gc_check_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_delete_12" )
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -12674,7 +12674,7 @@ FUNCTION BrwPedCli( oGet, cPedCliT, cPedCliL, cdbfIva, cdbfDiv, dbfFPago, oIva )
          :bEditValue       := {|| ( ( cPedCliT )->nEstado == 1 ) }
          :nWidth           := 20
          :lHide            := .t.
-         :SetCheck( { "Bullet_Square_Yellow_16", "Bullet_Square_Red_16" } )
+         :SetCheck( { "gc_shape_square_12", "gc_delete_12" } )
       end with
 
       with object ( oBrw:AddCol() )
@@ -17476,7 +17476,7 @@ Function MuestraPedidosWeb( oBtnPedidos, lGoPedCli )
          :bEditValue       := {|| ( ( dbfPedCliT )->nEstado == 1 ) }
          :nWidth           := 20
          :lHide            := .t.
-         :SetCheck( { "Bullet_Square_Yellow_16", "Bullet_Square_Red_16" } )
+         :SetCheck( { "gc_shape_square_12", "gc_delete_12" } )
       end with
 
       with object ( oBrwPedidosWeb:AddCol() )

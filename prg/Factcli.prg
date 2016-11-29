@@ -759,9 +759,9 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :bBmpData         := {|| nEstadoIncidencia( ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac ) }
          :nWidth           := 20
          :lHide            := .t.
-         :AddResource( "GC_DELETE_12" )
-         :AddResource( "GC_SHAPE_SQUARE_12" )
-         :AddResource( "GC_CHECK_12" )
+         :AddResource( "gc_delete_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_check_12" )
          :AddResource( "gc_document_information_16" )
          :bLDClickData     := {|| oWndBrw:RecEdit() }
       end with
@@ -784,8 +784,8 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :bEditValue       := {|| ( D():FacturasClientes( nView ) )->lImprimido }
          :nWidth           := 20
          :lHide            := .t.
-         :SetCheck( { "GC_PRINTER2_12", "Nil16" } )
-         :AddResource( "GC_PRINTER2_16" )
+         :SetCheck( { "gc_printer2_12", "Nil16" } )
+         :AddResource( "gc_printer2_16" )
          :bLDClickData     := {|| oWndBrw:RecEdit() }
       end with
 
@@ -7313,8 +7313,8 @@ STATIC FUNCTION aGetSelRec( oBrw, bAction, cTitle, lHide1, cTitle1, lHide2, cTit
    DEFAULT cTitle2   := ""
 
    oImageList        := TImageList():New( 16, 16 )
-   oImageList:AddMasked( TBitmap():Define( "Bullet_Square_Red_16" ),    Rgb( 255, 0, 255 ) )
-   oImageList:AddMasked( TBitmap():Define( "Bullet_Square_Green_16" ),  Rgb( 255, 0, 255 ) )
+   oImageList:AddMasked( TBitmap():Define( "gc_delete_12" ),    Rgb( 255, 0, 255 ) )
+   oImageList:AddMasked( TBitmap():Define( "gc_check_12" ),  Rgb( 255, 0, 255 ) )
 
    DEFINE DIALOG oDlg RESOURCE "SelectRango" TITLE cTitle
 

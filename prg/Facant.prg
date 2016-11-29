@@ -741,9 +741,9 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
          :nWidth           := 20
          :lHide            := .t.
          :bLDClickData     := {|| oWndBrw:RecEdit() }
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
+         :AddResource( "gc_delete_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_check_12" )
          :AddResource( "informacion_16" )
       end with
 
@@ -3606,8 +3606,8 @@ STATIC FUNCTION aGetSelRec( oBrw, bAction, cTitle, lHide1, cTitle1, lHide2, cTit
    DEFAULT cTitle2   := ""
 
    oImageList        := TImageList():New( 16, 16 )
-   oImageList:AddMasked( TBitmap():Define( "Bullet_Square_Red_16" ),    Rgb( 255, 0, 255 ) )
-   oImageList:AddMasked( TBitmap():Define( "Bullet_Square_Green_16" ),  Rgb( 255, 0, 255 ) )
+   oImageList:AddMasked( TBitmap():Define( "gc_delete_12" ),    Rgb( 255, 0, 255 ) )
+   oImageList:AddMasked( TBitmap():Define( "gc_check_12" ),  Rgb( 255, 0, 255 ) )
 
    DEFINE DIALOG oDlg RESOURCE "SelectRango" TITLE cTitle
 

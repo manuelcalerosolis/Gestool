@@ -1241,9 +1241,9 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
          :bStrData         := {|| "" }
          :bBmpData         := {|| nChkalizer( ( D():Tikets( nView ))->cSerTik + ( D():Tikets( nView ) )->cNumTik + ( D():Tikets( nView ) )->cSufTik, D():Tikets( nView ), dbfTikL, dbfTikP, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, if( lEur, cDivChg(), cDivEmp() ) ) }
          :nWidth           := 20
-         :AddResource( "Bullet_Square_Green_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Red_16" )
+         :AddResource( "gc_check_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_delete_12" )
          :AddResource( "ChgPre16" )
       end with
 

@@ -585,9 +585,9 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :bStrData         := {|| "" }
          :bBmpData         := {|| ( D():Get( "AlbCliT", nView ) )->nFacturado }
          :nWidth           := 20
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
+         :AddResource( "gc_delete_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_check_12" )
          :AddResource( "trafficlight_on_16" )
       end with
 
@@ -621,9 +621,9 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :bBmpData         := {|| nEstadoIncidencia( ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb ) }
          :nWidth           := 20
          :lHide            := .t.
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
+         :AddResource( "gc_delete_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_check_12" )
          :AddResource( "informacion_16" )
       end with
 
@@ -6160,7 +6160,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( aPedidos[ oBrwLin:nArrayAt, 2 ] == 2 ) }
          :nWidth           := 20
-         :SetCheck( { "Bullet_Square_Yellow_16", "Bullet_Square_Red_16" } )
+         :SetCheck( { "gc_shape_square_12", "gc_delete_12" } )
       end with
 
       with object ( oBrwLin:AddCol() )

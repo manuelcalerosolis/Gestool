@@ -1334,7 +1334,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():PresupuestosClientes( nView ) )->lEstado }
          :nWidth           := 20
-         :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
+         :SetCheck( { "gc_check_12", "gc_delete_12" } )
          :AddResource( "trafficlight_on_16" )
       end with
 
@@ -1356,9 +1356,9 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :bBmpData         := {|| nEstadoIncidencia( ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre ) }
          :nWidth           := 20
          :lHide            := .t.
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
+         :AddResource( "gc_delete_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_check_12" )
          :AddResource( "informacion_16" )
       end with
 

@@ -787,9 +787,9 @@ Function aBmpTipoTemporada()
                            LoadBitmap( GetResources(), "BULLET_BALL_GLASS_RED_16" ),;
                            LoadBitmap( GetResources(), "BULLET_BALL_GLASS_YELLOW_16" ),;
                            LoadBitmap( GetResources(), "BULLET_SQUARE_BLUE_16" ),;
-                           LoadBitmap( GetResources(), "BULLET_SQUARE_GREEN_16" ),;
-                           LoadBitmap( GetResources(), "BULLET_SQUARE_RED_16" ),;
-                           LoadBitmap( GetResources(), "BULLET_SQUARE_YELLOW_16" ),;
+                           LoadBitmap( GetResources(), "gc_check_12" ),;
+                           LoadBitmap( GetResources(), "gc_delete_12" ),;
+                           LoadBitmap( GetResources(), "gc_shape_square_12" ),;
                            LoadBitmap( GetResources(), "BULLET_TRIANGLE_BLUE_16" ),;
                            LoadBitmap( GetResources(), "BULLET_TRIANGLE_GREEN_16" ),;
                            LoadBitmap( GetResources(), "BULLET_TRIANGLE_RED_16" ),;

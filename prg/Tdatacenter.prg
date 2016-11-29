@@ -758,7 +758,7 @@ METHOD dialogEmpresas()
       :nWidth           := 20
       :bEditValue       := {|| ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 6 ] }
       :bLClickHeader    := {|| aeval( ::aEmpresas, {|a| a[6] := !a[6] } ), ::oBrwEmpresas:Refresh() }
-      :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
+      :SetCheck( { "gc_check_12", "gc_delete_12" } )
    end with 
 
    with object ( ::oBrwEmpresas:AddCol() )
@@ -766,7 +766,7 @@ METHOD dialogEmpresas()
       :bStrData         := {|| "" }
       :nWidth           := 20
       :bEditValue       := {|| ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 4 ] }
-      :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
+      :SetCheck( { "gc_check_12", "gc_delete_12" } )
    end with 
 
    with object ( ::oBrwEmpresas:AddCol() )
@@ -774,7 +774,7 @@ METHOD dialogEmpresas()
       :bStrData         := {|| "" }
       :nWidth           := 20
       :bEditValue       := {|| ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 5 ] }
-      :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
+      :SetCheck( { "gc_check_12", "gc_delete_12" } )
    end with
 
    with object ( ::oBrwEmpresas:AddCol() )

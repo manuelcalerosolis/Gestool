@@ -446,7 +446,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():AlbaranesProveedores( nView ) )->lFacturado }
          :nWidth           := 20
-         :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
+         :SetCheck( { "gc_check_12", "gc_delete_12" } )
          :AddResource( "Trafficlight_on_16" )
       end with*/
 
@@ -456,9 +456,9 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
          :bStrData         := {|| "" }
          :bBmpData         := {|| ( D():AlbaranesProveedores( nView ) )->nFacturado }
          :nWidth           := 20
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
+         :AddResource( "gc_delete_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_check_12" )
          :AddResource( "Trafficlight_on_16" )
       end with
 
@@ -469,9 +469,9 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
          :bBmpData         := {|| nEstadoIncidencia( ( D():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) + ( D():AlbaranesProveedores( nView ) )->cSufAlb ) }
          :nWidth           := 20
          :lHide            := .t.
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
+         :AddResource( "gc_delete_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_check_12" )
          :AddResource( "Informacion_16" )
       end with
 
@@ -1480,7 +1480,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
             :bStrData            := {|| "" }
             :bEditValue          := {|| ( dbfTmp )->lFacturado }
             :nWidth              := 20
-            :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
+            :SetCheck( { "gc_check_12", "gc_delete_12" } )
          end with
 
          with object ( oBrwLin:AddCol() )
@@ -6258,9 +6258,9 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw, nMode )
          :bStrData                  := {|| "" }
          :bBmpData                  := {|| aAlbaranes[ oBrwLin:nArrayAt, 2 ] }
          :nWidth                    := 20
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
+         :AddResource( "gc_delete_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_check_12" )
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -8237,9 +8237,9 @@ FUNCTION BrwAlbPrv( oGetNum, cAlbPrvT, cAlbPrvL, cIva, cDiv )
          :bStrData         := {|| "" }
          :bBmpData         := {|| ( cAlbPrvT )->nFacturado }
          :nWidth           := 20
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
+         :AddResource( "gc_delete_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_check_12" )
       end with
 
       with object ( oBrw:AddCol() )

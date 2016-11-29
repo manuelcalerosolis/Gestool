@@ -300,9 +300,9 @@ METHOD Activate()
          :bStrData         := {|| "" }
          :bBmpData         := {|| ::nEstado( ::oDbf:FieldGetByName( "cSerExp" ) + Str( ::oDbf:FieldGetByName( "nNumExp" ) ) + ::oDbf:FieldGetByName( "cSufExp" ) ) }
          :nWidth           := 20
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
+         :AddResource( "gc_delete_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_check_12" )
          :AddResource( "trafficlight_on_16" )
       end with
 

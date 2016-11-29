@@ -873,9 +873,9 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon )
          :bStrData         := {|| "" }
          :bBmpData         := {|| nChkalizer( ( dbfTikT)->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikT, dbfTikL, dbfTikP, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, if( lEur, cDivChg(), cDivEmp() ) ) }
          :nWidth           := 20
-         :AddResource( "Bullet_Square_Green_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Red_16" )
+         :AddResource( "gc_check_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_delete_12" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -8208,9 +8208,9 @@ FUNCTION TactilTpv( oMenuItem, oWnd, lTactil )
          :bStrData         := {|| "" }
          :bBmpData         := {|| if( ( dbfTikT )->lAbierto, 1, if( !( dbfTikT )->lPgdTik, 2, 3 ) ) }
          :nWidth           := 24
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
+         :AddResource( "gc_delete_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_check_12" )
       end with
 
       with object ( oWndBig:AddXCol() )

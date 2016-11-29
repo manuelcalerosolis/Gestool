@@ -1542,9 +1542,9 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
          :bStrData         := {|| "" }
          :bBmpData         := {|| nChkPagFacRec( ( D():FacturasRectificativas( nView ) )->cSerie + Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) + ( D():FacturasRectificativas( nView ) )->cSufFac, D():FacturasRectificativas( nView ), dbfFacCliP ) }
          :nWidth           := 20
-         :AddResource( "Bullet_Square_Green_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Red_16" )
+         :AddResource( "gc_check_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_delete_12" )
          :AddResource( "ChgPre16" )
       end with
 
@@ -1585,9 +1585,9 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
          :bBmpData         := {|| nEstadoIncidencia( ( D():FacturasRectificativas( nView ) )->cSerie + Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) + ( D():FacturasRectificativas( nView ) )->cSufFac ) }
          :nWidth           := 20
          :lHide            := .t.
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
+         :AddResource( "gc_delete_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_check_12" )
          :AddResource( "informacion_16" )
       end with
 
@@ -8282,8 +8282,8 @@ STATIC FUNCTION aGetSelRec( oBrw, bAction, cTitle, lHide1, cTitle1, lHide2, cTit
    DEFAULT cTitle2   := ""
 
    oImageList        := TImageList():New( 16, 16 )
-   oImageList:AddMasked( TBitmap():Define( "Bullet_Square_Red_16" ),    Rgb( 255, 0, 255 ) )
-   oImageList:AddMasked( TBitmap():Define( "Bullet_Square_Green_16" ),  Rgb( 255, 0, 255 ) )
+   oImageList:AddMasked( TBitmap():Define( "gc_delete_12" ),    Rgb( 255, 0, 255 ) )
+   oImageList:AddMasked( TBitmap():Define( "gc_check_12" ),  Rgb( 255, 0, 255 ) )
 
    DEFINE DIALOG oDlg RESOURCE "SelectRango" TITLE cTitle
 
@@ -10775,9 +10775,9 @@ Static Function OldEditarNumeroSerie( aTmp, oStock, nMode )
          :bStrData            := {|| "" }
          :bBmpData            := {|| if( aValSer[ oBrwSer:nArrayAt ], 3, 1 ) }
          :nWidth              := 20
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
+         :AddResource( "gc_delete_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_check_12" )
          :AddResource( "Informacion_16" )
       end with
 

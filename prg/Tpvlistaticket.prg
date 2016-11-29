@@ -254,9 +254,9 @@ METHOD lResource() CLASS TpvListaTicket
          :bStrData         := {|| ::aTextEstado[ ::nEstadoTickets() ] }
          :bBmpData         := {|| ::nEstadoTickets() }
          :nWidth           := 24
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
+         :AddResource( "gc_delete_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_check_12" )
          :AddResource( "TrafficLight_on_16" )
       end with
 

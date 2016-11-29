@@ -529,7 +529,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
          :bEditValue       := {|| ( D():PedidosProveedores( nView ) )->lCloPed }
          :nWidth           := 20
          :lHide            := .t.
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_lock2_12", "Nil16" } )
          :AddResource( "Zoom16" )
       end with
 
@@ -539,8 +539,8 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():PedidosProveedores( nView ) )->lSndDoc }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Lbl16" )
+         :SetCheck( { "gc_mail2_12", "Nil16" } )
+         :AddResource( "gc_mail2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -549,9 +549,9 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
          :bStrData         := {|| "" }
          :bBmpData         := {|| Max( ( D():PedidosProveedores( nView ) )->nEstado, 1 ) }
          :nWidth           := 20
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
+         :AddResource( "gc_delete_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_check_12" )
          :AddResource( "trafficlight_on_16" )
       end with
 
@@ -562,9 +562,9 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
          :bBmpData         := {|| nEstadoIncidencia( ( D():PedidosProveedores( nView ) )->cSerPed + Str( ( D():PedidosProveedores( nView ) )->nNumPed ) + ( D():PedidosProveedores( nView ) )->cSufPed ) }
          :nWidth           := 20
          :lHide            := .t.
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
+         :AddResource( "gc_delete_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_check_12" )
          :AddResource( "Informacion_16" )
       end with
 
@@ -1315,9 +1315,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
             :bStrData         := {|| "" }
             :bBmpData         := {|| nTotRecibido( dbfTmpLin, D():AlbaranesProveedoresLineas( nView ) ) }
             :nWidth           := 20
-            :AddResource( "Bullet_Square_Red_16" )
-            :AddResource( "Bullet_Square_Yellow_16" )
-            :AddResource( "Bullet_Square_Green_16" )
+            :AddResource( "gc_delete_12" )
+            :AddResource( "gc_shape_square_12" )
+            :AddResource( "gc_check_12" )
          end with
 
          with object ( oBrwLin:AddCol() )
@@ -6581,9 +6581,9 @@ FUNCTION BrwPedPrv( oGetNum, cPedPrvT, cPedPrvL, cIva, cDiv, cFPago )
          :bStrData         := {|| "" }
          :bBmpData         := {|| ( cPedPrvT )->nEstado }
          :nWidth           := 20
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
+         :AddResource( "gc_delete_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_check_12" )
       end with
 
       with object ( oBrw:AddCol() )

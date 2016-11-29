@@ -362,9 +362,9 @@ Method InitSelector( lPuntosPendientes, lLlevar, dbfTikT ) CLASS TSalon
       oBoton                  := TDotNetButton():New( 60, oGrupo, "End32", "Salir",  1, {|| ::oSelectedPunto := nil, ::Close( IDCANCEL ) }, , , .f., .f., .f. )
 
    oGrupo                     := TDotNetGroup():New( oCarpeta, 126, "Leyenda", .f., , "" )
-      oBoton                  := TDotNetButton():New( 120, oGrupo, "Bullet_Square_Green_16",    "Libre",             1, nil, , , .f., .f., .f. )
-      oBoton                  := TDotNetButton():New( 120, oGrupo, "Bullet_Square_Yellow_16",   "Ocupada",           1, nil, , , .f., .f., .f. )
-      oBoton                  := TDotNetButton():New( 120, oGrupo, "Bullet_Square_Red_16",      "Ticket entregado",  1, nil, , , .f., .f., .f. )
+      oBoton                  := TDotNetButton():New( 120, oGrupo, "gc_check_12",    "Libre",             1, nil, , , .f., .f., .f. )
+      oBoton                  := TDotNetButton():New( 120, oGrupo, "gc_shape_square_12",   "Ocupada",           1, nil, , , .f., .f., .f. )
+      oBoton                  := TDotNetButton():New( 120, oGrupo, "gc_delete_12",      "Ticket entregado",  1, nil, , , .f., .f., .f. )
 
    ::oWnd:oClient             := TPanelEx():New()
 
@@ -834,9 +834,9 @@ METHOD New() CLASS TSalon
    ::aMesas                      := {}
 
    if Empty( ::aBitmapsState )
-      ::AddResource( "Bullet_Square_Green_16" )
-      ::AddResource( "Bullet_Square_Yellow_16" )
-      ::AddResource( "Bullet_Square_Red_16" )
+      ::AddResource( "gc_check_12" )
+      ::AddResource( "gc_shape_square_12" )
+      ::AddResource( "gc_delete_12" )
    end if
 
 Return ( Self )
@@ -2311,9 +2311,9 @@ Return nColor
 
 #pragma BEGINDUMP
 
-#include <C:\bcc55\Include\windows.h>
-#include <C:\bcc55\Include\winuser.h>
-#include <C:\bcc55\Include\wingdi.h>
+#include <C:\bcc582\Include\windows.h>
+#include <C:\bcc582\Include\winuser.h>
+#include <C:\bcc582\Include\wingdi.h>
 #include "hbapi.h"
 
 //HRGN BitmapToRegion (HBITMAP hBmp, COLORREF cTransparentColor = 0, COLORREF cTolerance = 0x101010)

@@ -1243,7 +1243,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():SatClientes( nView ) )->lEstado }
          :nWidth           := 20
-         :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
+         :SetCheck( { "gc_check_12", "gc_delete_12" } )
          :AddResource( "Trafficlight_on_16" )
       end with
 
@@ -1265,9 +1265,9 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :bBmpData         := {|| nEstadoIncidencia( ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat ) }
          :nWidth           := 20
          :lHide            := .t.
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
+         :AddResource( "gc_delete_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_check_12" )
          :AddResource( "informacion_16" )
       end with
 

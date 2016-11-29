@@ -807,7 +807,7 @@ METHOD Importacion( cText ) CLASS TPlantillaXML
    end if
 
    ::oImageImportacion                       := TImageList():New( 16, 16 )
-   ::oImageImportacion:AddMasked( TBitmap():Define( "Bullet_Square_Green_16" ),  Rgb( 255, 0, 255 ) )
+   ::oImageImportacion:AddMasked( TBitmap():Define( "gc_check_12" ),  Rgb( 255, 0, 255 ) )
    ::oImageImportacion:AddMasked( TBitmap():Define( "Flash_16" ),                Rgb( 255, 0, 255 ) )
 
    DEFINE DIALOG oDlg RESOURCE "ImportarPlantillaXML"

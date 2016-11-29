@@ -579,9 +579,9 @@ Static Function InitBrwPrv( cCodPrv, dbfDiv, dbfIva, oTree, oDlg, oGraph, nYear,
    oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_businessman_16" ),  Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_businessman_16" ),   Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Document_businessman_16" ),         Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Bullet_Square_Red_16" ),            Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Bullet_Square_Yellow_16" ),         Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Bullet_Square_Green_16" ),          Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_delete_12" ),            Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_shape_square_12" ),         Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_check_12" ),          Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Document_navigate_cross_16" ),      Rgb( 255, 0, 255 ) )
 
    oTree:SetImageList( oTreeImageList )
