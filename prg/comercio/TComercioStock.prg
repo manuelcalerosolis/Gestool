@@ -56,7 +56,6 @@ CLASS TComercioStock FROM TComercioConector
 
    METHOD evalProductsToStock()        
 
-
    METHOD getIdProductPrestashop()
 
 END CLASS
@@ -69,8 +68,6 @@ METHOD buildListProductToUpdate( startIdProduct )
    local idProductPrestashop
 
    ::resetProductsToUpdateStocks()
-
-   ::resetMegaCommand()
 
    ::oProductDatabase():ordsetfocus( "lWebShop" )
    
@@ -333,10 +330,14 @@ METHOD createCommandProductsToUpdate()
       
       for each hProduct in aProductsToUpdate
 
-         cCommand    := ::getCommandProductToUpdate( hProduct )
-      
-         if !empty(cCommand)
-            hset( hProduct, "commandSQL", cCommand )
+         if !empty( hProduct )
+
+            cCommand    := ::getCommandProductToUpdate( hProduct )
+         
+            if !empty(cCommand)
+               hset( hProduct, "commandSQL", cCommand )
+            end if 
+
          end if 
       
       next 
@@ -353,6 +354,10 @@ METHOD getCommandProductToUpdate( hProduct )
    local hStock
    local cCommand    := ""
    local nTotalStock := 0
+
+   if !( hhaskey( hProduct, "stocks" ) )
+      Return ( cCommand )
+   end if 
 
    cCommand          += "DELETE FROM " + ::cPrefixTable( "stock_available" ) + " "                             + ;
                            "WHERE id_product = " + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) )   + ";"
@@ -395,9 +400,9 @@ METHOD getCommandProductToUpdate( hProduct )
 
    if ( nTotalStock <= 0 ) .and. !( TComercioConfig():isProcessWithoutStock() )
 
-      cCommand       := "UPDATE " + ::cPrefixTable( "product" ) + ;
+      cCommand       += "UPDATE " + ::cPrefixTable( "product" ) + ;
                            " SET active = 0" + ;
-                           " WHERE id_product = '" + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) ) + "'"
+                           " WHERE id_product = '" + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) ) + "';"
 
       ::writeText( 'Desactivando artículo ' + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) ) + ' de prestashop' )
 
@@ -530,9 +535,11 @@ METHOD calculateStocksProductToUpdate( cWebName, aProducts )
 
       ::prestaShopDisConnect()
 
+      Return .t.
+
    end if 
 
-Return .t.
+Return .f.
 
 //---------------------------------------------------------------------------//
 
@@ -562,6 +569,7 @@ METHOD executeCommandProductToUpdate( cWebName, aProducts )
 
    local hProduct
    local cCommand
+   local aCommand
 
    ::TComercioConfig():setCurrentWebName( cWebName )
 
@@ -571,12 +579,16 @@ METHOD executeCommandProductToUpdate( cWebName, aProducts )
 
       for each hProduct in aProducts
          
-         cCommand    := hget( hProduct, "commandSQL" )
+         aCommand    := hb_atokens( hget( hProduct, "commandSQL" ), ";")
 
-         if !empty( cCommand )
-            ::commandExecDirect( cCommand )
-         end if 
+         for each cCommand in aCommand
+
+            if !empty( cCommand )
+               ::commandExecDirect( cCommand )
+            end if 
             
+         next 
+         
          ::meterProcesoText()
 
       next
