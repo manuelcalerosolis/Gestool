@@ -245,7 +245,7 @@ METHOD lResource() CLASS TpvListaTicket
          :bEditValue       := {|| ::oSender:oTiketCabecera:lCloTik }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Zoom16" )
+         :AddResource( "gc_lock2_16" )
       end with
 
       with object ( ::oBrwListaTicket:AddCol() )

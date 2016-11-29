@@ -193,7 +193,7 @@ METHOD DefineFiles( cPath, cDriver )
 
    DEFINE DATABASE oDbf FILE "ORDCARP.DBF" CLASS "ORDCARP" ALIAS "ORDCARP" PATH ( cPath ) VIA ( cDriver ) COMMENT  "Ordenes de carga"
 
-   FIELD CALCULATE NAME "bSndInt"   LEN  14 DEC  0                      COMMENT { "Enviar", "Lbl16" , 3 }        VAL {|| oDbf:lSndInt } BITMAPS "Sel16", "Nil16"          COLSIZE 20       OF oDbf
+   FIELD CALCULATE NAME "bSndInt"   LEN  14 DEC  0                      COMMENT { "Enviar", "gc_mail2_16" , 3 }        VAL {|| oDbf:lSndInt } BITMAPS "Sel16", "Nil16"          COLSIZE 20       OF oDbf
    FIELD NAME "nNumOrd"    TYPE "N" LEN   9 DEC  0 PICTURE "999999999"  COMMENT ""                                                                                     HIDE OF oDbf
    FIELD NAME "cSufOrd"    TYPE "C" LEN   2 DEC  0 PICTURE "@!"         COMMENT ""                                                                                     HIDE OF oDbf
    FIELD CALCULATE NAME "cNumOrd"   LEN  12 DEC  0                      COMMENT "Número"        VAL ( Str( oDbf:nNumOrd ) + "/" + oDbf:cSufOrd )           COLSIZE  80      OF oDbf

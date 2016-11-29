@@ -283,7 +283,7 @@ METHOD DefineFiles( cPath, cDriver )
    DEFINE DATABASE ::oDbf FILE "REMCLIT.DBF" CLASS "REMCLI" ALIAS "REMCLI" PATH ( cPath ) VIA ( cDriver ) COMMENT "Remesas bancarias"
 
       FIELD NAME "lConta"              TYPE "L" LEN  1  DEC 0                             DEFAULT  .f.                                                                                 HIDE            OF ::oDbf
-      FIELD CALCULATE NAME "bmpConta"           LEN  1  DEC 0                             VAL {|| ::oDbf:lConta }  BITMAPS "Sel16", "Nil16"  COMMENT { "Contabilizado", "bmpConta16", 3 } COLSIZE 20   OF ::oDbf
+      FIELD CALCULATE NAME "bmpConta"           LEN  1  DEC 0                             VAL {|| ::oDbf:lConta }  BITMAPS "Sel16", "Nil16"  COMMENT { "Contabilizado", "gc_folder2_16", 3 } COLSIZE 20   OF ::oDbf
       FIELD NAME "lExport"             TYPE "L" LEN  1  DEC 0                             DEFAULT  .f.                                                                                 HIDE            OF ::oDbf
       FIELD CALCULATE NAME "bmpExport"          LEN  1  DEC 0                             VAL {|| ::oDbf:lExport } BITMAPS "Sel16", "Nil16"  COMMENT { "Exportado", "bmpExptar16", 3 }     COLSIZE 20  OF ::oDbf
       FIELD NAME "nNumRem"             TYPE "N" LEN  9  DEC 0 PICTURE "999999999"                                                            COMMENT "Número"              ALIGN RIGHT     COLSIZE 80  OF ::oDbf

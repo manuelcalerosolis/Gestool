@@ -1020,10 +1020,10 @@ METHOD DefineFiles( cPath, cDriver )
    DEFINE DATABASE ::oDbf FILE "TURNO.DBF" CLASS "TurnoT" ALIAS "TurnoT" PATH ( cPath ) VIA ( cDriver ) COMMENT  "Sesiones"
 
       FIELD NAME "lSndTur" TYPE "L"  LEN  1  DEC 0 COMMENT ""                                                                    HIDE                     OF ::oDbf
-      FIELD CALCULATE NAME "bSndTur" LEN 14  DEC 0 COMMENT { "Envio", "Lbl16" , 3 }   VAL {|| ::oDbf:lSndTur } BITMAPS "Sel16", "Nil16"       COLSIZE 20  OF ::oDbf
+      FIELD CALCULATE NAME "bSndTur" LEN 14  DEC 0 COMMENT { "Envio", "gc_mail2_16" , 3 }   VAL {|| ::oDbf:lSndTur } BITMAPS "Sel16", "Nil16"       COLSIZE 20  OF ::oDbf
       FIELD NAME "lCloTur" TYPE "L"  LEN  1  DEC 0 COMMENT ""                                                                    HIDE                     OF ::oDbf
       FIELD NAME "lConTur" TYPE "L"  LEN  1  DEC 0 COMMENT "Cn"                                                                  HIDE                     OF ::oDbf
-      FIELD CALCULATE NAME "bCloTur" LEN 14  DEC 0 COMMENT { "Contabilizado", "BmpConta16" , 3 } ;
+      FIELD CALCULATE NAME "bCloTur" LEN 14  DEC 0 COMMENT { "Contabilizado", "gc_folder2_16" , 3 } ;
                                                    VAL {|| ::oDbf:lConTur } BITMAPS "Sel16", "Nil16"                             COLSIZE 20               OF ::oDbf
       FIELD CALCULATE NAME "cStaTur" LEN 20  DEC 0 COMMENT "Estado" VAL {|| ::cEstadoSesion() }                                  COLSIZE 60               OF ::oDbf
 

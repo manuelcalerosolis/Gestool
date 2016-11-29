@@ -660,7 +660,7 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
       REDEFINE BTNBMP ;
          ID       108 ;
          OF       oFld:aDialogs[ 3 ] ;
-         RESOURCE "Imp16" ;
+         RESOURCE "gc_printer2_16" ;
          NOBORDER ;
          TOOLTIP  "Imprimir el gráfico" ;
          ACTION   ( GetPrtCoors( oGraph ) )

@@ -146,7 +146,7 @@ METHOD DefineFiles( cPath, cDriver )
 
    DEFINE DATABASE ::oDbf FILE "Tipart.Dbf" CLASS "Tipart" ALIAS "Tipart" PATH ( cPath ) VIA ( cDriver ) COMMENT "Tipos de artículos"
 
-      FIELD CALCULATE NAME "bSndDoc"   LEN  14  DEC 0 COMMENT { "Enviar", "Lbl16", 3 }       VAL {|| ::oDbf:FieldGetByName( "lSelect" ) } ;
+      FIELD CALCULATE NAME "bSndDoc"   LEN  14  DEC 0 COMMENT { "Enviar", "gc_mail2_16", 3 }       VAL {|| ::oDbf:FieldGetByName( "lSelect" ) } ;
             BITMAPS "Sel16", "Nil16" COLSIZE 20                                                             OF ::oDbf
 
       FIELD CALCULATE NAME "bPubInt"   LEN  14  DEC 0 COMMENT { "Publicar", "SndInt16", 3 }  VAL {|| ::oDbf:FieldGetByName( "lPubInt" ) } ;

@@ -279,7 +279,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
       :nWidth           := 20
       :lHide            := .t.
       :SetCheck( { "Sel16", "Nil16" } )
-      :AddResource( "Zoom16" )
+      :AddResource( "gc_lock2_16" )
    end with
 
    with object ( oWndBrw:AddXCol() )
@@ -301,7 +301,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
       :bEditValue       := {|| ( D():FacturasProveedoresPagos( nView ) )->lConPgo }
       :nWidth           := 20
       :SetCheck( { "Sel16", "Nil16" } )
-      :AddResource( "BmpConta16" )
+      :AddResource( "gc_folder2_16" )
    end with
 
    with object ( oWndBrw:AddXCol() )
@@ -312,7 +312,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
       :nWidth           := 20
       :lHide            := .t.
       :SetCheck( { "Sel16", "Nil16" } )
-      :AddResource( "Imp16" )
+      :AddResource( "gc_printer2_16" )
    end with
 
    with object ( oWndBrw:AddXCol() )

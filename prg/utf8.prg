@@ -675,7 +675,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :bEditValue       := {|| ( D():FacturasClientes( nView ) )->lCloFac }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Zoom16" )
+         :AddResource( "gc_lock2_16" )
          :bLDClickData     := {|| oWndBrw:RecEdit() }
       end with
 
@@ -699,7 +699,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :bEditValue       := {|| ( D():FacturasClientes( nView ) )->lContab }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "BmpConta16" )
+         :AddResource( "gc_folder2_16" )
          :bLDClickData     := {|| oWndBrw:RecEdit() }
       end with
 
@@ -711,7 +711,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :bEditValue       := {|| ( D():FacturasClientes( nView ) )->lSndDoc }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Lbl16" )
+         :AddResource( "gc_mail2_16" )
          :bLDClickData     := {|| oWndBrw:RecEdit() }
       end with
 
@@ -760,7 +760,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :AddResource( "gc_delete_12" )
          :AddResource( "gc_shape_square_12" )
          :AddResource( "gc_check_12" )
-         :AddResource( "informacion_16" )
+         :AddResource( "gc_document_information_16" )
          :bLDClickData     := {|| oWndBrw:RecEdit() }
       end with
 
@@ -783,7 +783,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :nWidth           := 20
          :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Imp16" )
+         :AddResource( "gc_printer2_16" )
          :bLDClickData     := {|| oWndBrw:RecEdit() }
       end with
 
@@ -795,7 +795,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :nWidth           := 20
          :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Imp16" )
+         :AddResource( "gc_printer2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -3293,7 +3293,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :bEditValue          := {||( dbfTmpLin )->lImpLin }
          :nWidth              := 20
          :lHide               := .t.
-         :SetCheck( { "Lbl16", "Nil16" } )
+         :SetCheck( { "gc_mail2_16", "Nil16" } )
       end with
 
       with object ( oBrwLin:AddCol() )

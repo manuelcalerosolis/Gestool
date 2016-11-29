@@ -82,7 +82,7 @@ FUNCTION Prop( oMenuItem, oWnd )
          :bEditValue       := {|| ( dbfProT )->lSndDoc }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Lbl16" )
+         :AddResource( "gc_mail2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )

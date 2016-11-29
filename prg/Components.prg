@@ -2097,7 +2097,7 @@ END CLASS
          ID       ( id ) ;
          WHEN     ( .t. ) ;
          OF       oDlg ;
-         RESOURCE "IMP16" ;
+         RESOURCE "gc_printer2_16" ;
          NOBORDER ;
          TOOLTIP  "Imprimir" ;
 

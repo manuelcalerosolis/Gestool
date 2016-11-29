@@ -199,7 +199,7 @@ METHOD DefineFiles( cPath, cDriver )
 
    DEFINE DATABASE ::oDbf FILE "Fabricantes.Dbf" CLASS "Fabricantes" ALIAS "Fabrican" PATH ( cPath ) VIA ( cDriver ) COMMENT "Fabricantes o marcas"
 
-      FIELD CALCULATE NAME "bSndDoc"            LEN  14  DEC 0 COMMENT { "Envio", "Lbl16", 3 }        VAL {|| ::oDbf:lSndDoc }   BITMAPS "Sel16", "Nil16" COLSIZE 20 OF ::oDbf
+      FIELD CALCULATE NAME "bSndDoc"            LEN  14  DEC 0 COMMENT { "Envio", "gc_mail2_16", 3 }        VAL {|| ::oDbf:lSndDoc }   BITMAPS "Sel16", "Nil16" COLSIZE 20 OF ::oDbf
       FIELD CALCULATE NAME "bPubInt"            LEN  14  DEC 0 COMMENT { "Publicar", "SndInt16", 3 }  VAL {|| ::oDbf:lPubInt}    BITMAPS "Sel16", "Nil16" COLSIZE 20 OF ::oDbf
       FIELD NAME "cCodFab"             TYPE "C" LEN   3  DEC 0 COMMENT "Código"         PICTURE "@!"  COLSIZE 60   OF ::oDbf
       FIELD NAME "cNomFab"             TYPE "C" LEN  35  DEC 0 COMMENT "Nombre"                       COLSIZE 200  OF ::oDbf

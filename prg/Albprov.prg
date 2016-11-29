@@ -427,7 +427,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
          :nWidth           := 20
          :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Zoom16" )
+         :AddResource( "gc_lock2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -436,19 +436,9 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():AlbaranesProveedores( nView ) )->lSndDoc }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Lbl16" )
+         :SetCheck( { "gc_mail2_12", "Nil16" } )
+         :AddResource( "gc_mail2_16" )
       end with
-
-      /*with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Facturado"
-         :nHeadBmpNo       := 3
-         :bStrData         := {|| "" }
-         :bEditValue       := {|| ( D():AlbaranesProveedores( nView ) )->lFacturado }
-         :nWidth           := 20
-         :SetCheck( { "gc_check_12", "gc_delete_12" } )
-         :AddResource( "gc_trafficlight_on_16" )
-      end with*/
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Facturado"
@@ -472,7 +462,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
          :AddResource( "gc_delete_12" )
          :AddResource( "gc_shape_square_12" )
          :AddResource( "gc_check_12" )
-         :AddResource( "Informacion_16" )
+         :AddResource( "gc_document_information_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -482,8 +472,8 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
          :bEditValue       := {|| ( D():AlbaranesProveedores( nView ) )->lImprimido }
          :nWidth           := 20
          :lHide            := .t.
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "IMP16" )
+         :SetCheck( { "gc_printer2_12", "Nil16" } )
+         :AddResource( "gc_printer2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
