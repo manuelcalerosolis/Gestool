@@ -15,9 +15,6 @@ CLASS TComercioStock FROM TComercioConector
    DATA  hProductsToUpdate                   INIT {=>}
    METHOD resetProductsToUpdateStocks()      INLINE ( ::hProductsToUpdate := {=>} )
    
-   DATA  aInactiveProducts                   INIT {}
-   METHOD resetInactiveProduct()             INLINE ( ::aInactiveProducts := {} )
-
    METHOD getProductsToUpadateStocks()       INLINE ( ::hProductsToUpdate )
 
    // External methods---------------------------------------------------------
@@ -41,8 +38,6 @@ CLASS TComercioStock FROM TComercioConector
    METHOD insertProductsToUpadateStocks() 
 
    METHOD updateWebProductStocks() 
-
-   METHOD proccessInactivePrestashop()
 
    // Service methods----------------------------------------------------------
 
@@ -76,8 +71,6 @@ METHOD buildListProductToUpdate( startIdProduct )
    ::resetProductsToUpdateStocks()
 
    ::resetMegaCommand()
-
-   ::resetInactiveProduct()
 
    ::oProductDatabase():ordsetfocus( "lWebShop" )
    
@@ -168,11 +161,7 @@ METHOD updateProductStocks( cWebName, aProductsWeb )
    ::TComercioConfig():setCurrentWebName( cWebName )
 
    ::calculateStocksProductToUpdate( aProductsWeb )
-
-   if !( ::TComercioConfig():isProcessWithoutStock() )
-      ::proccessInactivePrestashop()
-   end if 
-   
+ 
    ::setIdAttributeProductsToUpdate()
       
 Return ( Self )   
@@ -248,28 +237,6 @@ METHOD addStockProductToUpdate( hProduct )
    hset( hProduct, "stocks", aStockProducts )
 
    // Productos sin stock hay q borrarlos-------------------------------------
-
-   if nTotalStock <= 0
-      aadd( ::aInactiveProducts, idProduct )
-   end if 
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
-METHOD proccessInactivePrestashop() 
-
-   local idProduct
-
-   ::meterProcesoSetTotal( len( ::aInactiveProducts ) )
-
-   for each idProduct in ::aInactiveProducts
-
-      ::TComercioProduct():inactivateProduct( idProduct )
-
-      ::meterProcesoText()
-
-   next
 
 Return .t.
 
@@ -384,44 +351,57 @@ METHOD getCommandProductToUpdate( hProduct )
 
    local cText
    local hStock
-   local cCommand := ""
+   local cCommand    := ""
+   local nTotalStock := 0
 
-   cCommand       += "DELETE FROM " + ::cPrefixTable( "stock_available" ) + " "                             + ;
-                        "WHERE id_product = " + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) )   + ";"
-                     // "AND id_product_attribute = " + alltrim( str( idProductAttribute ) )
+   cCommand          += "DELETE FROM " + ::cPrefixTable( "stock_available" ) + " "                             + ;
+                           "WHERE id_product = " + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) )   + ";"
+                        // "AND id_product_attribute = " + alltrim( str( idProductAttribute ) )
 
    for each hStock in hget( hProduct, "stocks" )
 
       if hget( hStock, "unitStock" ) > 0 
 
-         cCommand += "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( "                           + ;
-                        "id_product, "                                                                      + ;
-                        "id_product_attribute, "                                                            + ;
-                        "id_shop, "                                                                         + ;
-                        "id_shop_group, "                                                                   + ;
-                        "quantity, "                                                                        + ;
-                        "depends_on_stock, "                                                                + ;
-                        "out_of_stock ) "                                                                   + ;
-                     "VALUES ( "                                                                            + ;
-                        "'" + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) ) + "', "             + ;
-                        "'" + alltrim( str( hget( hStock, "idProductAttribute" ) ) ) + "', "                + ;   
-                        "'1', "                                                                             + ;
-                        "'0', "                                                                             + ;
-                        "'" + alltrim( str( hget( hStock, "unitStock" ) ) ) + "', "                         + ;
-                        "'0', "                                                                             + ;
-                        "'2' )"                                                                             + ";"
+         cCommand    += "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( "                           + ;
+                           "id_product, "                                                                      + ;
+                           "id_product_attribute, "                                                            + ;
+                           "id_shop, "                                                                         + ;
+                           "id_shop_group, "                                                                   + ;
+                           "quantity, "                                                                        + ;
+                           "depends_on_stock, "                                                                + ;
+                           "out_of_stock ) "                                                                   + ;
+                        "VALUES ( "                                                                            + ;
+                           "'" + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) ) + "', "             + ;
+                           "'" + alltrim( str( hget( hStock, "idProductAttribute" ) ) ) + "', "                + ;   
+                           "'1', "                                                                             + ;
+                           "'0', "                                                                             + ;
+                           "'" + alltrim( str( hget( hStock, "unitStock" ) ) ) + "', "                         + ;
+                           "'0', "                                                                             + ;
+                           "'2' )"                                                                             + ";"
+
+         nTotalStock += hget( hStock, "unitStock" )                                                                            
 
       end if
 
-      cText       := 'Actualizando stock con propiedades '                       
-      cText       += alltrim( str( hget( hProduct, "idProductPrestashop" ) ) )                              + ', ' 
-      cText       += alltrim( hget( hStock, "valueFirstProperty"  ) )                                       + ', ' 
-      cText       += alltrim( hget( hStock, "valueSecondProperty" ) )                                       + ', '
-      cText       += 'cantidad : ' + alltrim( str( hget( hStock, "unitStock" ) ) )
+      cText          := 'Actualizando stock con propiedades '                       
+      cText          += alltrim( str( hget( hProduct, "idProductPrestashop" ) ) )                              + ', ' 
+      cText          += alltrim( hget( hStock, "valueFirstProperty"  ) )                                       + ', ' 
+      cText          += alltrim( hget( hStock, "valueSecondProperty" ) )                                       + ', '
+      cText          += 'cantidad : ' + alltrim( str( hget( hStock, "unitStock" ) ) )
 
       ::writeText( cText )
 
    next 
+
+   if ( nTotalStock <= 0 ) .and. !( TComercioConfig():isProcessWithoutStock() )
+
+      cCommand       := "UPDATE " + ::cPrefixTable( "product" ) + ;
+                           " SET active = 0" + ;
+                           " WHERE id_product = '" + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) ) + "'"
+
+      ::writeText( 'Desactivando artículo ' + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) ) + ' de prestashop' )
+
+   end if 
 
 Return ( cCommand )   
 

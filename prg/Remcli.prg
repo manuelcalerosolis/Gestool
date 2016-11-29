@@ -1438,15 +1438,16 @@ METHOD RunModelo( oDlg )
 
    oDlg:Disable()
 
-   if ::oDbf:nTipRem == 2 
-      ::InitMod58( oDlg ) 
-   else
+   ::InitSepaXML19( oDlg )
+
+//   if ::oDbf:nTipRem == 2 
+//      ::InitMod58( oDlg ) 
+//   else
 //      if ::lUsarSEPA
-         ::InitSepaXML19( oDlg )
 //      else 
 //         ::InitMod19( oDlg )
 //      end if 
-   end if
+//   end if
 
    ::oDbf:FieldPutByName( "lExport", .t. )
    ::oDbf:FieldPutByName( "dExport",  GetSysDate() )
