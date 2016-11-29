@@ -1244,7 +1244,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :bEditValue       := {|| ( D():SatClientes( nView ) )->lEstado }
          :nWidth           := 20
          :SetCheck( { "gc_check_12", "gc_delete_12" } )
-         :AddResource( "Trafficlight_on_16" )
+         :AddResource( "gc_trafficlight_on_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )

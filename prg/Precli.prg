@@ -1335,7 +1335,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :bEditValue       := {|| ( D():PresupuestosClientes( nView ) )->lEstado }
          :nWidth           := 20
          :SetCheck( { "gc_check_12", "gc_delete_12" } )
-         :AddResource( "trafficlight_on_16" )
+         :AddResource( "gc_trafficlight_on_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )

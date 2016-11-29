@@ -314,7 +314,7 @@ PROCESAR32 BITMAP "..\\bmp\\gears_run.bmp"
 
 TEXT_CODE_16 BITMAP "..\\bmp\\text_code_16.bmp"
 
-TRAFFICLIGHT_ON_16 BITMAP "..\\bmp\\trafficlight_on_16.bmp"
+gc_trafficlight_on_16 BITMAP "..\\bmp\\gc_trafficlight_on_16.bmp"
 
 DRAWING_UTENSILS_32 BITMAP "..\\bmp\\Drawing_utensils_32.bmp"
 

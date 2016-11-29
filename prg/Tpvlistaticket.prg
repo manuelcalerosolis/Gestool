@@ -257,7 +257,7 @@ METHOD lResource() CLASS TpvListaTicket
          :AddResource( "gc_delete_12" )
          :AddResource( "gc_shape_square_12" )
          :AddResource( "gc_check_12" )
-         :AddResource( "TrafficLight_on_16" )
+         :AddResource( "gc_trafficlight_on_16" )
       end with
 
       //:bStrData         := {|| if( ::oSender:oTiketCabecera:lAbierto, "Abierto", if( !::oSender:oTiketCabecera:lPgdTik, "Pendiente", "Cobrado" ) ) }

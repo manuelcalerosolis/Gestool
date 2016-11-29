@@ -447,7 +447,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
          :bEditValue       := {|| ( D():AlbaranesProveedores( nView ) )->lFacturado }
          :nWidth           := 20
          :SetCheck( { "gc_check_12", "gc_delete_12" } )
-         :AddResource( "Trafficlight_on_16" )
+         :AddResource( "gc_trafficlight_on_16" )
       end with*/
 
       with object ( oWndBrw:AddXCol() )
@@ -459,7 +459,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
          :AddResource( "gc_delete_12" )
          :AddResource( "gc_shape_square_12" )
          :AddResource( "gc_check_12" )
-         :AddResource( "Trafficlight_on_16" )
+         :AddResource( "gc_trafficlight_on_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )

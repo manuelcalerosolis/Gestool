@@ -1137,7 +1137,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :AddResource( "gc_delete_12" )
          :AddResource( "gc_shape_square_12" )
          :AddResource( "gc_check_12" )
-         :AddResource( "Trafficlight_on_16" )
+         :AddResource( "gc_trafficlight_on_16" )
       end with
 
      with object ( oWndBrw:AddXCol() )
