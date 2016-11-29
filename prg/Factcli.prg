@@ -18402,14 +18402,14 @@ function SynFacCli( cPath )
          Esto es para la jaca para que las líneas tengan la misma Comisión de agente que la cabecera
          */
          
-         nPorCabecera      := RetFld( ( D():FacturasClientesLineas( nView ) )->cSerie + str( ( D():FacturasClientesLineas( nView ) )->nNumFac ) + ( D():FacturasClientesLineas( nView ) )->cSufFac, D():FacturasClientes( nView ), "nPctComAge" )
+         /*nPorCabecera      := RetFld( ( D():FacturasClientesLineas( nView ) )->cSerie + str( ( D():FacturasClientesLineas( nView ) )->nNumFac ) + ( D():FacturasClientesLineas( nView ) )->cSufFac, D():FacturasClientes( nView ), "nPctComAge" )
 
          if ( D():FacturasClientesLineas( nView ) )->nComAge != nPorCabecera
             if ( D():FacturasClientesLineas( nView ) )->( dbRLock() )
                ( D():FacturasClientesLineas( nView ) )->nComAge    := nPorCabecera
                ( D():FacturasClientesLineas( nView ) )->( dbUnLock() )
             end if
-         end if
+         end if*/
 
          // Valor de stock toma la fecha de los Facturas----------------------
 
