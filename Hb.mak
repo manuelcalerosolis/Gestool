@@ -1436,5 +1436,6 @@ $(RESOURCE)\GstImage9.Res        +
 $(RESOURCE)\GstImage10.Res       +
 $(RESOURCE)\GstImage11.Res       +
 $(RESOURCE)\GstImage12.Res       +
-$(RESOURCE)\GstImageGC.Res       +
+$(RESOURCE)\GstImageGC1.Res      +
+$(RESOURCE)\GstImageGC2.Res      +
 |
