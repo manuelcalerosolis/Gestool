@@ -291,7 +291,7 @@ METHOD Activate()
          :bEditValue       := {|| ::oDbf:FieldGetByName( "lExpEnd" ) }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "folder_ok_16" )
+         :AddResource( "gc_folder_open_check_16" )
       end with
 
       with object ( ::oWndBrw:AddXCol() )
