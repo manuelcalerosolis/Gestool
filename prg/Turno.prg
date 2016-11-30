@@ -262,7 +262,7 @@ CLASS TTurno FROM TMasDet
    DATA  oCmbReport
    DATA  cCmbReport                                INIT "Visualizar"
    DATA  aCmbReport                                INIT { "Visualizar", "Imprimir",    "Adobe PDF",   "Excel",    "HTML" }
-   DATA  aBmpReport                                INIT { "Prev116",    "ImpButton",   "DocLock",     "Table",    "SndInt16" }
+   DATA  aBmpReport                                INIT { "Prev116",    "ImpButton",   "DocLock",     "Table",    "gc_earth_16" }
    DATA  aBmpReportTactil                          INIT { "Prev124",    "ImpButton24", "DocLock24",   "Table24",  "SndInt24" }
    DATA  nCmbReport                                INIT 1
 
@@ -1213,7 +1213,7 @@ METHOD Activate()
       HOTKEY   "F";
       LEVEL    ACC_APPD
 
-   DEFINE BTNSHELL RESOURCE "END1" GROUP OF ::oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "END" GROUP OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::End() ) ;
       TOOLTIP  "(S)alir" ;

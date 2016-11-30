@@ -91,8 +91,8 @@ FUNCTION Prop( oMenuItem, oWnd )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( dbfProT )->lPubInt }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "SNDINT16" )
+         :SetCheck( { "gc_earth_12", "Nil16" } )
+         :AddResource( "gc_earth_16" )
       end with
 
 

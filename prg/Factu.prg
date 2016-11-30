@@ -3875,7 +3875,7 @@ Function TctCreateButtonBar()
    oItem:cMessage       := 'Visitar web'
    oItem:bAction        := {|| goWeb( __GSTWEB__ ) }
    oItem:cId            := "01094"
-   oItem:cBmp           := "SndInt16"
+   oItem:cBmp           := "gc_earth_16"
    oItem:cBmpBig        := "SndInt32"
    oItem:lShow          := .f.
 
@@ -3990,7 +3990,7 @@ Function BuildTctMenu()
          MENUITEM    "&2. Visitar web";
             MESSAGE  "Visitar web" ;
             ACTION   ( goWeb( __GSTWEB__ ) ) ;
-            RESOURCE "SndInt16"
+            RESOURCE "gc_earth_16"
 
          MENUITEM    "&3. Acerca de...";
             MESSAGE  "Datos sobre el autor" ;
@@ -4174,7 +4174,7 @@ Function TPVCreateButtonBar()
    oItem:cPrompt        := 'Visitar web'
    oItem:cMessage       := 'Visitar web'
    oItem:bAction        := {|| goWeb( __GSTWEB__ ) }
-   oItem:cBmp           := "SndInt16"
+   oItem:cBmp           := "gc_earth_16"
    oItem:cBmpBig        := "SndInt32"
    oItem:lShow          := .f.
 
@@ -4289,7 +4289,7 @@ Function BuildTpvMenu()
          MENUITEM    "&2. Visitar web";
             MESSAGE  "Visitar web" ;
             ACTION   ( goWeb( __GSTWEB__ ) ) ;
-            RESOURCE "SndInt16"
+            RESOURCE "gc_earth_16"
 
          MENUITEM    "&3. Acerca de...";
             MESSAGE  "Datos sobre el autor" ;

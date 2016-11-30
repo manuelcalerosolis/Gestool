@@ -149,7 +149,7 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD CALCULATE NAME "bSndDoc"   LEN  14  DEC 0 COMMENT { "Enviar", "gc_mail2_16", 3 }       VAL {|| ::oDbf:FieldGetByName( "lSelect" ) } ;
             BITMAPS "Sel16", "Nil16" COLSIZE 20                                                             OF ::oDbf
 
-      FIELD CALCULATE NAME "bPubInt"   LEN  14  DEC 0 COMMENT { "Publicar", "SndInt16", 3 }  VAL {|| ::oDbf:FieldGetByName( "lPubInt" ) } ;
+      FIELD CALCULATE NAME "bPubInt"   LEN  14  DEC 0 COMMENT { "Publicar", "gc_earth_16", 3 }  VAL {|| ::oDbf:FieldGetByName( "lPubInt" ) } ;
             BITMAPS "Sel16", "Nil16" COLSIZE 20                                                             OF ::oDbf
 
       FIELD NAME "cCodTip" TYPE "C"    LEN   4  DEC 0 COMMENT "Código"         PICTURE "@!"  COLSIZE 60     OF ::oDbf
