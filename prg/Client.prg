@@ -730,8 +730,8 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():Atipicas( nView ) )->( dbSeek( ( D():Clientes( nView ) )->Cod ) ) }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "PERCENT_16" )
+         :SetCheck( { "gc_symbol_percent_12", "Nil16" } )
+         :AddResource( "gc_symbol_percent_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -740,8 +740,8 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():Clientes( nView ) )->nTipCli == 2 }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "CLIPOT" )
+         :SetCheck( { "gc_id_card_hint_12", "Nil16" } )
+         :AddResource( "gc_id_card_hint_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )

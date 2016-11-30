@@ -575,7 +575,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():Get( "AlbCliT", nView ) )->lCloAlb }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_lock2_12", "Nil16" } )
          :AddResource( "gc_lock2_16" )
       end with
 
@@ -597,7 +597,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():Get( "AlbCliT", nView ) )->lSndDoc }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_mail2_12", "Nil16" } )
          :AddResource( "gc_mail2_16" )
       end with
 
