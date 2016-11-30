@@ -10548,17 +10548,11 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             // Cajas y unidades------------------------------------------------
 
             if ( D():Articulos( nView ) )->nCajEnt != 0
-               aTmp[ _NCANENT ]  := ( D():Articulos( nView ) )->nCajEnt 
-               if !empty(aGet)
-                  aGet[ _NCANENT ]:cText( aTmp[ _NCANENT ] )
-               end if 
+               aGet[ _NCANENT ]:cText( ( D():Articulos( nView ) )->nCajEnt  )
             end if
 
-            if ( D():Articulos( nView ) )->nUniCaja != 0 .and. aTmp[ _NUNICAJA ] == 0
-               aTmp[ _NUNICAJA ]    := ( D():Articulos( nView ) )->nUniCaja 
-               if !empty(aGet)
-                  aGet[ _NUNICAJA ]:cText( aTmp[ _NUNICAJA ] )
-               end if 
+            if ( D():Articulos( nView ) )->nUniCaja != 0
+               aGet[ _NUNICAJA ]:cText( ( D():Articulos( nView ) )->nUniCaja  )
             end if
 
             // Si la comisi¢n del articulo hacia el agente es distinto de cero----
