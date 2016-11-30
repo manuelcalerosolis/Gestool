@@ -698,6 +698,7 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddField( "nPdtRec",     "N", 16, 6, {|| "" },   "Unidades pendientes de recibir"          )
    ::AddField( "nPdtEnt",     "N", 16, 6, {|| "" },   "Unidades pendientes de entregar"         )
    ::AddField( "nEntreg",     "N", 16, 6, {|| "" },   "Unidades entregadas"                     )
+   ::AddField( "nRecibi",     "N", 16, 6, {|| "" },   "Unidades recibidas"                      )
 
    ::AddField( "nDtoArt",     "N",  6, 2, {|| "" },   "Descuento porcentual artículo"           ) 
    ::AddField( "nLinArt",     "N", 16, 6, {|| "" },   "Descuento lineal artículo"               ) 
@@ -2934,6 +2935,7 @@ METHOD appendStockArticulo( aStockArticulo )
          ::oDbf:nPdtRec    := sStock:nPendientesRecibir    
          ::oDbf:nPdtEnt    := sStock:nPendientesEntregar 
          ::oDbf:nEntreg    := sStock:nUnidadesEntregadas
+         ::oDbf:nRecibi    := sStock:nUnidadesRecibidas
          ::oDbf:cNumDoc    := sStock:cNumeroDocumento      
          ::oDbf:cTipDoc    := sStock:cTipoDocumento
 
