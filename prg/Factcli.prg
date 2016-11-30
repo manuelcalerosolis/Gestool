@@ -35,7 +35,7 @@
 #define _DFECFAC             5      //,"D",  8, 0, "Fecha de la factura" },;
 #define _CCODCLI             6      //,"C", 12, 0, "Codigo del cliente" },;
 #define _CCODALM             7      //,"C", 16, 0, "Codigo de almacen" },;
-#define _CCODCAJ             8      //,"C",  3, 0, "Codigo de almacen" },;
+#define _CCODCAJ             8      //,"C",  3, 0, "Codigo de almacen" },;Tcome
 #define _CNOMCLI             9      //,"C", 50, 0, "Nombre del cliente" },;
 #define _CDIRCLI            10      //,"C", 60, 0, "Dirección del cliente" },;
 #define _CPOBCLI            11      //,"C", 25, 0, "Población del cliente" },;
@@ -1869,7 +1869,7 @@ STATIC FUNCTION OpenFiles()
 
       oMailingFacturasClientes      := TGenmailingDatabaseFacturasClientes():New( nView )
 
-      TComercio():getInstance()
+      TComercio():getInstanceOpenFiles()
 
       /*
       Declaramos variables p-blicas--------------------------------------------
@@ -2352,7 +2352,7 @@ STATIC FUNCTION CloseFiles()
 
    lOpenFiles  := .f.
 
-   TComercio():endInstance()
+   TComercio():endInstanceCloseFiles()
 
    EnableAcceso()
 
@@ -7024,17 +7024,16 @@ static function QuiFacCli()
    cNumSat           := ( D():FacturasClientes( nView ) )->cNumSat 
    cNumPre           := ( D():FacturasClientes( nView ) )->cNumPre
 
+   TComercio():getInstance():resetProductsToUpdateStocks()
+
    /*
    Eliminamos las lineas-------------------------------------------------------
    */
 
    nOrdAnt           := ( D():FacturasClientesLineas( nView ) )->( OrdSetFocus( "nNumFac" ) )
-
-   TComercio():getInstance():resetProductsToUpdateStocks()
-
    while ( D():FacturasClientesLineas( nView ) )->( dbSeek( cSerDoc + str( nNumDoc ) + cSufDoc ) ) .and. !( D():FacturasClientesLineas( nView ) )->( eof() )
       
-      TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasClientesLineas( nView ) )->cRef, ( D():FacturasClientesLineas( nView ) )->cCodPr1, ( D():FacturasClientesLineas( nView ) )->cValPr1, ( D():FacturasClientesLineas( nView ) )->cCodPr2, ( D():FacturasClientesLineas( nView ) )->cValPr2, nView )
+      TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasClientesLineas( nView ) )->cRef, nView )
 
       if dbLock( D():FacturasClientesLineas( nView ) )
          ( D():FacturasClientesLineas( nView ) )->( dbDelete() )
@@ -7047,7 +7046,6 @@ static function QuiFacCli()
 
    // actualiza el stock de prestashop-----------------------------------------
 
-   TComercio():getInstance():updateWebProductStocks()
 
    ( D():FacturasClientesLineas( nView ) )->( OrdSetFocus( nOrdAnt ) )
 
@@ -7268,7 +7266,13 @@ static function QuiFacCli()
       nPutDoc( cSerDoc, nNumDoc, cSufDoc, D():FacturasClientes( nView ), "nFacCli", , D():Contadores( nView ) )
    end if
 
-return .t.
+   /*
+   Actualiza los stocks--------------------------------------------------------
+   */
+
+   TComercio():getInstance():updateWebProductStocks()
+
+Return .t.
 
 //--------------------------------------------------------------------------//
 
@@ -10654,9 +10658,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
-   TComercio():getInstance():resetProductsToUpdateStocks()
-   
+ 
    /*
    Inicializaci-n de variables-------------------------------------------------
    */
@@ -13172,10 +13174,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
    
    if !( "TABLET" $ cParamsMain() )
    
-     // Anotamos para modificar este articulo------------------------------------
-
-      TComercio():getInstance():appendProductsToUpadateStocks( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], nView )
-
       if nMode == APPD_MODE
 
          if aTmp[ _LLOTE ]
@@ -13659,10 +13657,6 @@ STATIC FUNCTION DelDeta()
    
    CursorWait()
 
-   // Anotamos para modificar este articulo------------------------------------
-
-   TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr2, nView )
-
    while ( dbfTmpSer )->( dbSeek( str( ( dbfTmpLin )->nNumLin, 4 ) ) )
       ( dbfTmpSer )->( dbDelete() )
    end while
@@ -13834,6 +13828,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
    oDlg:Disable()
 
+   TComercio():getInstance():resetProductsToUpdateStocks()
+
    oBlock      := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
@@ -13992,17 +13988,9 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       Escribe los datos pendientes------------------------------------------------
       */
 
-      oMsgText( "Escritura definitiva" )
-
-      dbCommitAll()
-
       oMsgText( "Finalizamos la transacción" )
 
       CommitTransaction()
-
-      // actualiza el stock de prestashop-----------------------------------------
-
-        TComercio():getInstance():updateWebProductStocks()
 
       // Generar los pagos de las facturas-------------------------------------------
 
@@ -14044,6 +14032,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    if !empty( oMeter )
       oMeter:Set( 10 )
    end if   
+
+   TComercio():getInstance():updateWebProductStocks()
 
    oDlg:Enable()
    oDlg:End( IDOK )
@@ -16241,42 +16231,6 @@ Function cFacturaClienteDireccionSAT()
    CLOSE ( dbfObras )
 
 Return ( cDireccion )
-
-//---------------------------------------------------------------------------//
-
-static Function ActualizaStockWeb( cNumDoc )
-
-   local nRec     := ( D():FacturasClientesLineas( nView ) )->( Recno() )
-   local nOrdAnt  := ( D():FacturasClientesLineas( nView ) )->( OrdSetFocus( "nNumFac" ) )
-
-   if uFieldEmpresa( "lRealWeb" )
-
-      with object ( TComercio():New())
-
-         if ( D():FacturasClientesLineas( nView ) )->( dbSeek( cNumDoc ) )
-
-            while ( D():FacturasClientesLineas( nView ) )->cSerie + str( ( D():FacturasClientesLineas( nView ) )->nNumFac ) + ( D():FacturasClientesLineas( nView ) )->cSufFac == cNumDoc .and. !( D():FacturasClientesLineas( nView ) )->( Eof() )
-
-               if Retfld( ( D():FacturasClientesLineas( nView ) )->cRef, D():Articulos( nView ), "lPubInt", "Codigo" )
-
-                  :ActualizaStockProductsPrestashop( ( D():FacturasClientesLineas( nView ) )->cRef, ( D():FacturasClientesLineas( nView ) )->cCodPr1, ( D():FacturasClientesLineas( nView ) )->cCodPr2, ( D():FacturasClientesLineas( nView ) )->cValPr1, ( D():FacturasClientesLineas( nView ) )->cValPr2 )
-
-               end if   
-
-               ( D():FacturasClientesLineas( nView ) )->( dbSkip() )
-
-            end while
-
-        end if
-        
-      end with
-
-   end if 
-
-   ( D():FacturasClientesLineas( nView ) )->( OrdSetFocus( nOrdAnt ) )
-   ( D():FacturasClientesLineas( nView ) )->( dbGoTo( nRec ) )  
-
-Return .t.
 
 //---------------------------------------------------------------------------//
 
@@ -22671,11 +22625,16 @@ Static Function RollBackFacCli( cNumeroDocumento )
    */
 
    while ( D():FacturasClientesLineas( nView ) )->( dbSeek( cNumeroDocumento ) ) .and. !( D():FacturasClientesLineas( nView ) )->( eof() ) 
+
+      TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasClientesLineas( nView ) )->cRef, nView )
+
       if dbLock( D():FacturasClientesLineas( nView ) )
          ( D():FacturasClientesLineas( nView ) )->( dbDelete() )
          ( D():FacturasClientesLineas( nView ) )->( dbUnLock() )
       end if
+
       SysRefresh()
+
    end while
    
    /*
@@ -22781,6 +22740,8 @@ Static Function GuardaTemporalesFacCli( cSerFac, nNumFac, cSufFac, dFecFac, tFec
          if empty( (dbfTmpLin)->tFecFac )
             ( dbfTmpLin )->tFecFac  := tFecFac 
          end if 
+
+         TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpLin )->cRef, nView )
 
          dbPass( dbfTmpLin, D():FacturasClientesLineas( nView ), .t., cSerFac, nNumFac, cSufFac )
 

@@ -7946,10 +7946,6 @@ Static Function QuiFacPrv( lDetail )
       nPutDoc( ( D():FacturasProveedores( nView ) )->cSerFac, ( D():FacturasProveedores( nView ) )->nNumFac, ( D():FacturasProveedores( nView ) )->cSufFac, D():FacturasProveedores( nView ), "nFacPrv", , D():Contadores( nView ) )
    end if
 
-   if lDetail
-      TComercio():getInstance():updateWebProductStocks()
-   end if 
-
    CursorWE()
 
 Return .t.
@@ -7972,7 +7968,7 @@ Static Function delDetalle( cFactura )
    
       TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasProveedoresLineas( nView ) )->cRef, nView )
    
-      aNumAlb:Add( getNumeroAlbaranProveedorLinea( nView ) )
+      aNumAlb:add( getNumeroAlbaranProveedorLinea( nView ) )
 
       setNoFacturadoAlbaranProveedorLinea( nView )
       
@@ -7982,10 +7978,6 @@ Static Function delDetalle( cFactura )
    
    ( D():FacturasProveedoresLineas( nView ) )->( OrdSetFocus( nOrdAnt ) )
 
-   // actualiza el stock de prestashop-----------------------------------------
-   
-   TComercio():getInstance():updateWebProductStocks()
-   
    while ( D():FacturasProveedoresPagos( nView ) )->( dbSeek( cFactura ) ) .and. !( D():FacturasProveedoresPagos( nView ) )->( eof() )
       dbLockDelete( D():FacturasProveedoresPagos( nView ) )
    end do
@@ -8002,7 +7994,11 @@ Static Function delDetalle( cFactura )
       dbLockDelete( D():FacturasProveedoresSeries( nView ) )
    end while
 
-   aEval( aNumAlb:Get(), {|cNumAlb| setEstadoAlbaranProveedor( cNumAlb, nView ) } )
+   aEval( aNumAlb:get(), {|cNumAlb| setEstadoAlbaranProveedor( cNumAlb, nView ) } )
+
+   // actualiza el stock de prestashop-----------------------------------------
+   
+   TComercio():getInstance():updateWebProductStocks()
 
    CursorWe()
 

@@ -468,8 +468,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():BancosProveedores( nView )
 
-      // Unidades de medicion
-
       D():GetObject( "UnidadMedicion", nView )
 
       D():GetObject( "Bancos", nView )
@@ -489,6 +487,8 @@ STATIC FUNCTION OpenFiles( lExt )
       oBandera          := TBandera():New()
 
       CodigosPostales():GetInstance():OpenFiles()
+
+      TComercio():getInstanceOpenFiles()
 
       oFntTot           := TFont():New( "Arial", 8, 26, .F., .T. )// Font del total
 
@@ -541,7 +541,6 @@ STATIC FUNCTION OpenFiles( lExt )
       CloseFiles()
    end if
 
-TComercio():getInstance()
 
 Return ( lOpenFiles )
 
@@ -6482,10 +6481,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
    nNumFac              := aTmp[ _NNUMFAC ]
    cSufFac              := aTmp[ _CSUFFAC ]
 
-   /*
-   Comprobamos la fecha del documento
-   */
-
    if !lValidaOperacion( aTmp[ _DFECFAC ] )
       Return .f.
    end if
@@ -6493,10 +6488,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
    if !lValidaSerie( aTmp[ _CSERFAC ] )
       Return .f.
    end if
-
-   /*
-   Estos campos no pueden estar vacios
-   */
 
    if Empty( aTmp[ _CCODPRV ] )
       msgStop( "Proveedor no puede estar vacío." )
@@ -6557,39 +6548,33 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
 
    oMsgText( "Archivando" )
 
+   TComercio():getInstance():resetProductsToUpdateStocks()
+
    oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
-   //BeginTransaction()
-
-   /*
-	Primero hacer el RollBack
-	*/
 
    aTmp[ _DFECCHG ]  := GetSysDate()
    aTmp[ _CTIMCHG ]  := Time()
 
-	/*
-	RollBack en edici¢n de registros
-	*/
-
    do case
    case nMode == APPD_MODE .or. nMode == DUPL_MODE
 
-      // Nuevo numero de la factura
+      // Nuevo numero de la factura--------------------------------------------
 
       nNumFac           := nNewDoc( cSerFac, D():FacturasRectificativasProveedores( nView ), "nRctPrv", , D():Contadores( nView ) )
       aTmp[ _NNUMFAC ]  := nNumFac
 
    case nMode == EDIT_MODE
 
-      // oStock:RctPrv( cSerFac + Str( nNumFac ) + cSufFac, ( D():FacturasRectificativasProveedores( nView ) )->cCodAlm, .t., .f. )
-
       while ( D():FacturasRectificativasProveedoresLineas( nView ) )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) .and. !( D():FacturasRectificativasProveedoresLineas( nView ) )->( eof() ) )
+
+         TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasRectificativasProveedoresLineas( nView ) )->cRef, nView )
+
          if dbLock( D():FacturasRectificativasProveedoresLineas( nView ) )
             ( D():FacturasRectificativasProveedoresLineas( nView ) )->( dbDelete() )
             ( D():FacturasRectificativasProveedoresLineas( nView ) )->( dbUnLock() )
          end if
+
       end while
 
       while ( D():FacturasRectificativasProveedoresIncidencias( nView ) )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) .and. !( D():FacturasRectificativasProveedoresIncidencias( nView ) )->( eof() ) )
@@ -6623,7 +6608,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
    end case
 
    /*
-   Quitamos los filtros
+   Quitamos los filtros--------------------------------------------------------
    */
 
    ( dbfTmp )->( dbClearFilter() )
@@ -6634,8 +6619,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
 	/*
    Ahora escribimos en el fichero definitivo-----------------------------------
 	*/
-
-   TComercio():getInstance():resetProductsToUpdateStocks()
 
    ( dbfTmp )->( dbGoTop() )
    while !( dbfTmp )->( eof() )
@@ -6649,7 +6632,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
 
       dbGather( aTbl, D():FacturasRectificativasProveedoresLineas( nView ), .t. )
 
-      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmp )->cRef, ( dbfTmp )->cCodPr1, ( dbfTmp )->cValPr1, ( dbfTmp )->cCodPr2, ( dbfTmp )->cValPr2, nView )
+      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmp )->cRef, nView )
 
       ( dbfTmp )->( dbSkip() )
 
@@ -6739,12 +6722,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
    WinGather( aTmp, , D():FacturasRectificativasProveedores( nView ), , nMode )
 
    /*
-   Actualizamos el stock en la web------------------------------------------
-   */
-
-   //ActualizaStockWeb( cSerFac + Str( nNumFac ) + cSufFac )
-
-   /*
    Generar los pagos de las facturas
    */
 
@@ -6755,10 +6732,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
    */
 
    dbCommitAll()
-
-   // actualiza el stock de prestashop-----------------------------------------
-
-   TComercio():getInstance():updateWebProductStocks()
 
    //------------------------------------------------------------------------//
 
@@ -6773,6 +6746,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
 
    oMsgText()
    EndProgress()
+
+   // actualiza el stock de prestashop-----------------------------------------
+
+   TComercio():getInstance():updateWebProductStocks()
 
    oDlg:Enable()
    oDlg:End( IDOK )
@@ -7223,7 +7200,7 @@ STATIC FUNCTION DeleteRelacionRectificativasProveedores( cFactura )
 
    while ( D():FacturasRectificativasProveedoresLineas( nView ) )->( dbSeek( cFactura ) ) .and. !( D():FacturasRectificativasProveedoresLineas( nView ) )->( eof() )
 
-      TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasRectificativasProveedoresLineas( nView ) )->cRef, ( D():FacturasRectificativasProveedoresLineas( nView ) )->cCodPr1, ( D():FacturasRectificativasProveedoresLineas( nView ) )->cValPr1, ( D():FacturasRectificativasProveedoresLineas( nView ) )->cCodPr2, ( D():FacturasRectificativasProveedoresLineas( nView ) )->cValPr2, nView )
+      TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasRectificativasProveedoresLineas( nView ) )->cRef, nView )
 
       dbLockDelete( D():FacturasRectificativasProveedoresLineas( nView ) )
 

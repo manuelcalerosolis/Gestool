@@ -997,7 +997,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       oMailing          := TGenmailingDatabaseFacturaRectificativaCliente():New( nView )
 
-	  TComercio():getInstance()
+	  TComercio():getInstanceOpenFiles()
 
       /*
       Declaración de variables publicas----------------------------------------
@@ -1379,7 +1379,7 @@ STATIC FUNCTION CloseFiles()
       oCentroCoste:End()
    end if
 
-   TComercio():endInstance()
+   TComercio():endInstanceCloseFiles()
 
    D():DeleteView( nView )
 
@@ -7567,10 +7567,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    cSufFac              := aTmp[ _CSUFFAC ]
    dFecFac              := aTmp[ _DFECFAC ]
 
-   /*
-   Comprobamos la fecha del documento
-   */
-
    if !lValidaOperacion( aTmp[ _DFECFAC ] )
       Return .f.
    end if
@@ -7578,10 +7574,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    if !lValidaSerie( aTmp[ _CSERIE ] )
       Return .f.
    end if
-
-   /*
-   Estos campos no pueden estar vacios
-   */
 
    if ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) .and. Empty( aTmp[ _CNUMFAC ] )
       MsgStop( "Debe de indicar la factura que quiere rectificar." )
@@ -7660,9 +7652,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       return .f.
    end if
 
-   if lPasNil() .and. ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
 
-    TComercio():getInstance():resetProductsToUpdateStocks()
+   if lPasNil() .and. ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
 
       ( dbfTmpLin )->( dbGoTop() )
       while !( dbfTmpLin )->( eof() )
@@ -7672,8 +7663,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
                return .f.
             end if
          end if
-
-         TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr2, nView )
 
          ( dbfTmpLin )->( dbSkip() )
 
@@ -7691,13 +7680,13 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
    oMsgText( "Archivando" )
 
+   BeginTransaction()
+
    aTmp[ _DFECCRE ]     := GetSysDate()
    aTmp[ _CTIMCRE ]     := Time()
-   aTmp[ _NTARIFA ] 	:= oGetTarifa:getTarifa()
+   aTmp[ _NTARIFA ] 	   := oGetTarifa:getTarifa()
 
-   /*
-   Quitamos los filtros
-   */
+   TComercio():getInstance():resetProductsToUpdateStocks()
 
    ( dbfTmpLin )->( dbClearFilter() )
 
@@ -7718,17 +7707,15 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
    case ( nMode == EDIT_MODE )
 
-      /*
-      Rollback de todos los articulos si la factura no se importo de albaranes-
-
-      oStock:FacRec( cSerFac + Str( nNumFac ) + cSufFac, ( D():FacturasRectificativas( nView ) )->cCodAlm, .t., .t. )
-      */
-
       while ( dbfFacRecL )->( dbSeek( cSerFac + Str( nNumFac ) + cSufFac ) ) .and. !( dbfFacRecL )->( eof() )
+
+         TComercio():getInstance():appendProductsToUpadateStocks( ( dbfFacRecL )->cRef, nView )
+
          if dbLock( dbfFacRecL )
             ( dbfFacRecL )->( dbDelete() )
             ( dbfFacRecL )->( dbUnLock() )
          end if
+
       end while
 
       /*
@@ -7806,6 +7793,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
          ( dbfTmpLin )->dFecFac := aTmp[ _DFECFAC ]
       end if
 
+      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpLin )->cRef, nView )
+
       dbPass( dbfTmpLin, dbfFacRecL, .t., cSerFac, nNumFac, cSufFac )
 
       ( dbfTmpLin )->( dbSkip() )
@@ -7874,12 +7863,11 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    Escribimos en el fichero definitivo de Situaciones-------------------------
    */
 
-    ( dbfTmpEst )->( DbGoTop() )
-   	while ( dbfTmpEst )->( !eof() )
-      	dbPass( dbfTmpEst, D():FacturasRectificativasSituaciones( nView ), .t., cSerFac, nNumFac, cSufFac ) 
-      	( dbfTmpEst )->( dbSkip() )
-   	end while
-
+   ( dbfTmpEst )->( dbgotop() )
+	while ( dbfTmpEst )->( !eof() )
+      dbPass( dbfTmpEst, D():FacturasRectificativasSituaciones( nView ), .t., cSerFac, nNumFac, cSufFac ) 
+      ( dbfTmpEst )->( dbSkip() )
+   end while
 
    /*
    Rellenamos  los campos de los totales---------------------------------------
@@ -7897,12 +7885,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    WinGather( aTmp, , D():FacturasRectificativas( nView ), , nMode )
 
    /*
-   Actualizamos el stock en la web------------------------------------------
-   */
-
-   //ActualizaStockWeb( cSerFac + Str( nNumFac ) + cSufFac )
-
-   /*
    Actualizamos el estado de los albaranes de clientes-------------------------
    */
 
@@ -7914,17 +7896,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
                ( dbfAlbCliT )->lFacturado := .t.
                ( dbfAlbCliT )->cNumFac    := cSerFac + Str( nNumFac ) + cSufFac
                ( dbfAlbCliT )->( dbUnlock() )
-               //oStock:AlbCli( aNumAlb[ n ], ( dbfAlbCliT )->cCodAlm, .f., .t., .t., nil, .f. )
             end if
          end if
       next
    end if
 
-   /*
-   Rollback de articulos si no esta importado desde albaranes
-
-   oStock:FacRec( cSerFac + Str( nNumFac ) + cSufFac, ( D():FacturasRectificativas( nView ) )->cCodAlm, .f., .f. )
-   */
+   CommitTransaction()
 
    /*
    Generar los pagos de las facturas-------------------------------------------
@@ -7939,22 +7916,16 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    ChkLqdFacRec( nil, D():FacturasRectificativas( nView ), dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv )
 
    /*
-   Escribe los datos pendientes------------------------------------------------
-   */
-
-   dbCommitAll()
-
-   // actualiza el stock de prestashop-----------------------------------------
-
-   TComercio():getInstance():updateWebProductStocks()
-
-   /*
    Cerramos el dialogo---------------------------------------------------------
    */
 
    oMsgText()
 
    EndProgress()
+
+   // actualiza el stock de prestashop-----------------------------------------
+
+   TComercio():getInstance():updateWebProductStocks()
 
    oDlg:Enable()
    oDlg:end( IDOK )
