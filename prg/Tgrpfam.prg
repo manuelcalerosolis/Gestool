@@ -139,8 +139,8 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TGrpFam
 
    DEFINE DATABASE ::oDbf FILE "GRPFAM.DBF" CLASS "GRPFAM" ALIAS "GRPFAM" PATH ( cPath ) VIA ( cDriver ) COMMENT "Grupos de familias"
 
-      FIELD CALCULATE NAME "bSndDoc"      LEN 14  DEC 0  COMMENT { "Enviar", "Lbl16" , 3 }      VAL {|| ::oDbf:lSndDoc} BITMAPS "Sel16", "Nil16" COLSIZE 20 OF ::oDbf
-      FIELD CALCULATE NAME "bPubInt"      LEN 14  DEC 0  COMMENT { "Publicar", "SndInt16" , 3 } VAL {|| ::oDbf:lPubInt} BITMAPS "Sel16", "Nil16" COLSIZE 20 OF ::oDbf
+      FIELD CALCULATE NAME "bSndDoc"      LEN 14  DEC 0  COMMENT { "Enviar", "gc_mail2_16" , 3 }      VAL {|| ::oDbf:lSndDoc} BITMAPS "Sel16", "Nil16" COLSIZE 20 OF ::oDbf
+      FIELD CALCULATE NAME "bPubInt"      LEN 14  DEC 0  COMMENT { "Publicar", "gc_earth_16" , 3 } VAL {|| ::oDbf:lPubInt} BITMAPS "Sel16", "Nil16" COLSIZE 20 OF ::oDbf
       FIELD NAME "cCodGrp"       TYPE "C" LEN  3  DEC 0  COMMENT "Código"                             COLSIZE 80  OF ::oDbf
       FIELD NAME "cNomGrp"       TYPE "C" LEN 30  DEC 0  COMMENT "Nombre"                             COLSIZE 200 OF ::oDbf
       FIELD NAME "lPubInt"       TYPE "L" LEN  1  DEC 0  HIDE                                                     OF ::oDbf

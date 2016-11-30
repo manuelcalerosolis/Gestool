@@ -331,7 +331,7 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TRemMovAlm
    DEFINE DATABASE ::oDbf FILE "REMMOVT.DBF" CLASS "TRemMovT" ALIAS "RemMovT" PATH ( cPath ) VIA ( cDriver ) COMMENT "Movimientos de almacén"
 
       FIELD NAME "lSelDoc"             TYPE "L" LEN  1  DEC 0                                                                                   COMMENT ""                                HIDE        OF ::oDbf
-      FIELD CALCULATE NAME "Send16"             LEN  1  DEC 0                             VAL {|| ::oDbf:lSelDoc }   BITMAPS "Sel16", "Nil16"   COMMENT { "Enviar", "Lbl16", 3 }          COLSIZE 20  OF ::oDbf
+      FIELD CALCULATE NAME "Send16"             LEN  1  DEC 0                             VAL {|| ::oDbf:lSelDoc }   BITMAPS "Sel16", "Nil16"   COMMENT { "Enviar", "gc_mail2_16", 3 }          COLSIZE 20  OF ::oDbf
       FIELD CALCULATE NAME "Wait16"             LEN  1  DEC 0                             VAL {|| ::oDbf:lWait }     BITMAPS "Sel16", "Nil16"   COMMENT { "En proceso", "Stop_16", 3 }    COLSIZE 20  OF ::oDbf
       FIELD NAME "nNumRem"             TYPE "N" LEN  9  DEC 0 PICTURE "999999999"         DEFAULT  0                                            COMMENT "Número"           COLSIZE 80                 OF ::oDbf
       FIELD NAME "cSufRem"             TYPE "C" LEN  2  DEC 0 PICTURE "@!"                DEFAULT  RetSufEmp()                                  COMMENT "Delegación"       COLSIZE 40                 OF ::oDbf

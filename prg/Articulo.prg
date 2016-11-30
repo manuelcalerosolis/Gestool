@@ -889,7 +889,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       :bEditValue       := {|| ( D():Articulos( nView ) )->lSndDoc }
       :nWidth           := 20
       :SetCheck( { "Sel16", "Nil16" } )
-      :AddResource( "Lbl16" )
+      :AddResource( "gc_mail2_16" )
    end with
 
    with object ( oWndBrw:AddXCol() )
@@ -943,8 +943,8 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       :bEditValue       := {|| ( D():Articulos( nView ) )->lPubInt }
       :nWidth           := 20
       :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-      :SetCheck( { "Sel16", "Nil16" } )
-      :AddResource( "SndInt16" )
+      :SetCheck( { "gc_earth_12", "Nil16" } )
+      :AddResource( "gc_earth_16" )
    end with
 
    with object ( oWndBrw:AddXCol() )

@@ -444,7 +444,7 @@ FUNCTION Empresa( oMenuItem, oWnd )
 
    end if         
 
-      DEFINE BTNSHELL RESOURCE "END1" GROUP OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( oWndBrw:End() ) ;
          TOOLTIP  "(S)alir";

@@ -244,7 +244,7 @@ FUNCTION Usuarios( oMenuItem, oWnd )
          :bEditValue       := {|| ( dbfUser )->lSndInt }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Lbl16" )
+         :AddResource( "gc_mail2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -678,9 +678,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
       aAdd( aBmp, TBitmap():Define( "NOACC16"   , , oDlg ) )
       aAdd( aBmp, TBitmap():Define( "NEW16"     , , oDlg ) )
       aAdd( aBmp, TBitmap():Define( "EDIT16"    , , oDlg ) )
-      aAdd( aBmp, TBitmap():Define( "ZOOM16"    , , oDlg ) )
+      aAdd( aBmp, TBitmap():Define( "gc_lock2_16"    , , oDlg ) )
       aAdd( aBmp, TBitmap():Define( "DEL16"     , , oDlg ) )
-      aAdd( aBmp, TBitmap():Define( "IMP16"     , , oDlg ) )
+      aAdd( aBmp, TBitmap():Define( "gc_printer2_16"     , , oDlg ) )
 
       aEval( aBmp, {| oBmp | oImgLst:AddMasked( oBmp, Rgb( 255, 0, 255 ) ) } )
 

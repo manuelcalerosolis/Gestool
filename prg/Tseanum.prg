@@ -1721,7 +1721,7 @@ METHOD Resource() CLASS TNumerosSerie
             :AddResource( "gc_delete_12" )
             :AddResource( "gc_shape_square_12" )
             :AddResource( "gc_check_12" )
-            :AddResource( "Informacion_16" )
+            :AddResource( "gc_document_information_16" )
          end with
 
       end if

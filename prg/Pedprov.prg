@@ -530,7 +530,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
          :nWidth           := 20
          :lHide            := .t.
          :SetCheck( { "gc_lock2_12", "Nil16" } )
-         :AddResource( "Zoom16" )
+         :AddResource( "gc_lock2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -552,7 +552,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
          :AddResource( "gc_delete_12" )
          :AddResource( "gc_shape_square_12" )
          :AddResource( "gc_check_12" )
-         :AddResource( "gc_gc_trafficlight_on_16" )
+         :AddResource( "gc_trafficlight_on_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -565,7 +565,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
          :AddResource( "gc_delete_12" )
          :AddResource( "gc_shape_square_12" )
          :AddResource( "gc_check_12" )
-         :AddResource( "Informacion_16" )
+         :AddResource( "gc_document_information_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -575,8 +575,8 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
          :bEditValue       := {|| ( D():PedidosProveedores( nView ) )->lImprimido }
          :nWidth           := 20
          :lHide            := .t.
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "IMP16" )
+         :SetCheck( { "gc_printer2_12", "Nil16" } )
+         :AddResource( "gc_printer2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )

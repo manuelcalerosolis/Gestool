@@ -697,7 +697,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():Clientes( nView ) )->lBlqCli }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_sign_stop_12", "Nil16" } )
          :AddResource( "stop_16" )
       end with
 
@@ -708,8 +708,8 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():Clientes( nView ) )->lSndInt }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "LBl16" )
+         :SetCheck( { "gc_mail2_12", "Nil16" } )
+         :AddResource( "gc_mail2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -720,8 +720,8 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :bEditValue       := {|| ( D():Clientes( nView ) )->lPubInt }
          :nWidth           := 20
          :lHide            := .t.
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "SNDINT16" )
+         :SetCheck( { "gc_earth_12", "Nil16" } )
+         :AddResource( "gc_earth_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -3409,7 +3409,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ID       100 ;
          WHEN     ( .t. ) ;
          OF       fldObservaciones ;
-         RESOURCE "IMP16" ;
+         RESOURCE "gc_printer2_16" ;
          NOBORDER ;
          TOOLTIP  "Imprimir" ;
          ACTION   ( oRTF:Print(), oRTF:SetFocus() )

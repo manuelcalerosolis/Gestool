@@ -1324,7 +1324,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :bEditValue       := {|| ( D():PresupuestosClientes( nView ) )->lCloPre }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Zoom16" )
+         :AddResource( "gc_lock2_16" )
 
       end with
 
@@ -1345,7 +1345,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :bEditValue       := {|| ( D():PresupuestosClientes( nView ) )->lSndDoc }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Lbl16" )
+         :AddResource( "gc_mail2_16" )
 
       end with
 
@@ -1359,7 +1359,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :AddResource( "gc_delete_12" )
          :AddResource( "gc_shape_square_12" )
          :AddResource( "gc_check_12" )
-         :AddResource( "informacion_16" )
+         :AddResource( "gc_document_information_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1370,7 +1370,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :nWidth           := 20
          :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "IMP16" )
+         :AddResource( "gc_printer2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )

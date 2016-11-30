@@ -1567,7 +1567,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          ID       100 ;
          WHEN     ( .t. ) ;
          OF       oFld:aDialogs[ 7 ] ;
-         RESOURCE "IMP16" ;
+         RESOURCE "gc_printer2_16" ;
          NOBORDER ;
          TOOLTIP  "Imprimir" ;
          ACTION   ( oRTF:Print(), oRTF:SetFocus() )

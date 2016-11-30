@@ -85,7 +85,6 @@ Users1_32 BITMAP "..\\bmp\\Users1_32.bmp"
 arrow_up_blue_save_32 BITMAP "..\\bmp\\arrow_up_blue_save_32.bmp"
 arrow_down_blue_save_32 BITMAP "..\\bmp\\arrow_down_blue_save_32.bmp"
 
-informacion_16 BITMAP "..\\bmp\\information_16.bmp"
 Document_check_16 BITMAP "..\\bmp\\document_check_16.bmp"
 UsrSel BITMAP "..\\bmp\\UsrSel.bmp"
 document_time_16 BITMAP "..\\bmp\\document_time_16.bmp"

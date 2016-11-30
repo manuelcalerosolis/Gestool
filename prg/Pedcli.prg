@@ -1114,7 +1114,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :bEditValue       := {|| ( D():PedidosClientes( nView ) )->lCloPed }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Zoom16" )
+         :AddResource( "gc_lock2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1125,7 +1125,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :nWidth           := 20
          :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Zoom16" )
+         :AddResource( "gc_lock2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1147,7 +1147,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :bEditValue       := {|| ( D():PedidosClientes( nView ) )->lSndDoc }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Lbl16" )
+         :AddResource( "gc_mail2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1160,7 +1160,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :AddResource( "gc_delete_12" )
          :AddResource( "gc_shape_square_12" )
          :AddResource( "gc_check_12" )
-         :AddResource( "informacion_16" )
+         :AddResource( "gc_document_information_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1184,7 +1184,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :nWidth           := 20
          :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Imp16" )
+         :AddResource( "gc_printer2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1196,7 +1196,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :nWidth           := 20
          :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "SndInt16" )
+         :AddResource( "gc_earth_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -17773,7 +17773,7 @@ Function lPedidosWeb()
          // Muestro un aviso en la barra de estado-----------------------------------
 
          if Empty( oMsgAlarm )
-            oMsgAlarm         := TMsgItem():New( oWnd():oMsgBar,,24,,,,.t.,, "Sndint16",, "Nuevos pedidos recibidos"  )
+            oMsgAlarm         := TMsgItem():New( oWnd():oMsgBar,,24,,,,.t.,, "gc_earth_16",, "Nuevos pedidos recibidos"  )
             oMsgAlarm:bAction := {|| PedCli() }
          end if
 

@@ -891,7 +891,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( dbfTikT )->lSndDoc }
          :nWidth           := 20
-         :SetCheck( { "Lbl16", "Nil16" } )
+         :SetCheck( { "gc_mail2_16", "Nil16" } )
       end with
 
       with object ( oWndBrw:AddXCol() )

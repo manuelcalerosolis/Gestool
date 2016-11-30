@@ -1243,7 +1243,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
          :bEditValue       := {|| ( dbfTikT )->lCloTik }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Zoom16" )
+         :AddResource( "gc_lock2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1265,7 +1265,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
          :bEditValue       := {|| ( dbfTikT )->lConTik }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "BmpConta16" )
+         :AddResource( "gc_folder2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1275,7 +1275,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
          :bEditValue       := {|| ( dbfTikT )->lSndDoc }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Lbl16" )
+         :AddResource( "gc_mail2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -9529,7 +9529,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
             :bEditValue       := {|| ( dbfTmpE )->lCloPgo }
             :nWidth           := 20
             :SetCheck( { "Sel16", "Nil16" } )
-            :AddResource( "Zoom16" )
+            :AddResource( "gc_lock2_16" )
          end with
 
          with object ( oBrwPgo:AddCol() )
@@ -9625,7 +9625,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
             :bEditValue       := {|| ( dbfTmpP )->lCloPgo }
             :nWidth           := 20
             :SetCheck( { "Sel16", "Nil16" } )
-            :AddResource( "Zoom16" )
+            :AddResource( "gc_lock2_16" )
          end with
 
          with object ( oBrwPgo:AddCol() )

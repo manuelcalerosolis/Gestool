@@ -677,7 +677,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :bEditValue       := {|| ( D():FacturasClientes( nView ) )->lCloFac }
          :nWidth           := 20
          :SetCheck( { "gc_lock2_12" , "Nil16" } )
-         :AddResource( "zoom16" )
+         :AddResource( "gc_lock2_16" )
          :bLDClickData     := {|| oWndBrw:RecEdit() }
       end with
 
@@ -3287,7 +3287,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :bEditValue          := {||( dbfTmpLin )->lImpLin }
          :nWidth              := 20
          :lHide               := .t.
-         :SetCheck( { "Lbl16", "Nil16" } )
+         :SetCheck( { "gc_mail2_16", "Nil16" } )
       end with
 
       with object ( oBrwLin:AddCol() )

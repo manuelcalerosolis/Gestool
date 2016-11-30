@@ -646,7 +646,7 @@ METHOD New( cSubTitle, aFields, aIndex, oMenuItem, oWnd, cHelp, xOthers ) CLASS 
    aAdd( ::aBmpReport, "TABLE"      )
 
    aAdd( ::aCmbReport, "HTML"       )
-   aAdd( ::aBmpReport, "SNDINT16"   )
+   aAdd( ::aBmpReport, "gc_earth_16"   )
 
    aAdd( ::aCmbReport, "Adobe PDF"  )
    aAdd( ::aBmpReport, "DOCLOCK"    )

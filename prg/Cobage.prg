@@ -337,7 +337,7 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TCobAge
    DEFINE DATABASE oDbf FILE "RemAgeT.DBF" CLASS "RemAgeT" ALIAS "RemAgeT" PATH ( cPath ) VIA ( cDriver ) COMMENT  "Liquidación de agentes"
 
    FIELD NAME "lConta"     TYPE "L" LEN   1 DEC  0                      COMMENT ""        DEFAULT  .f.                                                                            HIDE OF oDbf
-   FIELD CALCULATE NAME "bConta"    LEN  14 DEC  0                      COMMENT { "Contabilizado", "BmpConta16", 3 } ;
+   FIELD CALCULATE NAME "bConta"    LEN  14 DEC  0                      COMMENT { "Contabilizado", "gc_folder2_16", 3 } ;
          VAL {|| ( oDbf:cAlias )->lConta } BITMAPS "Sel16", "Nil16"                                                                                                 COLSIZE  20      OF oDbf
    FIELD CALCULATE NAME "bGen"      LEN  14 DEC  0                      COMMENT { "Factura generada", "Document_businessman_16", 3 } ;
          VAL {|| !Empty( ( oDbf:cAlias )->cNumFac ) }  BITMAPS "Sel16", "Nil16"                                                                                     COLSIZE  20      OF oDbf
@@ -953,7 +953,7 @@ METHOD EdtRecMenu( oDlg )
 
             MENUITEM    "&5. Visualiza factura";
                MESSAGE  "Visualiza la factura" ;
-               RESOURCE "ZOOM16" ;
+               RESOURCE "gc_lock2_16" ;
                ACTION   ( if( ::oDetCobAge:oDbfVir:lFacRec, ZooFacRec( ::oDetCobAge:oDbfVir:cSerFac + Str( ::oDetCobAge:oDbfVir:nNumFac ) + ::oDetCobAge:oDbfVir:cSufFac ), ZooFacCli( ::oDetCobAge:oDbfVir:cSerFac + Str( ::oDetCobAge:oDbfVir:nNumFac ) + ::oDetCobAge:oDbfVir:cSufFac ) ) )
 
          ENDMENU

@@ -124,7 +124,7 @@ FUNCTION EntSal( oMenuItem, oWnd )
          :bEditValue       := {|| ( dbfEntT )->lCloEnt }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Zoom16" )
+         :AddResource( "gc_lock2_16" )
 
       end with
 
@@ -135,7 +135,7 @@ FUNCTION EntSal( oMenuItem, oWnd )
          :bEditValue       := {|| ( dbfEntT )->lSndEnt }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Lbl16" )
+         :AddResource( "gc_mail2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )

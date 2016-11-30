@@ -4798,6 +4798,7 @@ Method Integra( sStocks ) CLASS TStock
          ::aStocks[ nPos ]:nPendientesRecibir      += sStocks:nPendientesRecibir
          ::aStocks[ nPos ]:nPendientesEntregar     += sStocks:nPendientesEntregar
          ::aStocks[ nPos ]:nUnidadesEntregadas     += sStocks:nUnidadesEntregadas
+         ::aStocks[ nPos ]:nUnidadesRecibidas      += sStocks:nUnidadesRecibidas
       else
          aAdd( ::aStocks, oClone( sStocks ) )
       end if
@@ -6374,6 +6375,7 @@ RETURN ( nil )
 METHOD aStockPendiente( cCodArt, cCodAlm, lLote, lNumeroSerie )
 
    local nTotal            := 0
+   local nTotalRecibido    := 0
    local nOrdPedPrvL       := ( ::cPedPrvL )->( ordsetfocus( "cStkFast" ) )
    local nOrdAlbPrvL       := ( ::cAlbPrvL )->( ordsetfocus( "cPedRef" ) )
 
@@ -6390,7 +6392,8 @@ METHOD aStockPendiente( cCodArt, cCodAlm, lLote, lNumeroSerie )
             while ( ::cPedPrvL )->cSerPed + Str( ( ::cPedPrvL )->nNumPed ) + ( ::cPedPrvL )->cSufPed + cCodArt == ( ::cAlbPrvL )->cCodPed + ( ::cAlbPrvL )->cRef .and. !( ::cAlbPrvL )->( eof() )
 
                if ( ::cAlbPrvL )->cAlmLin == cCodAlm
-                  nTotal   -= nTotNAlbPrv( ::cAlbPrvL )
+                  nTotal            -= nTotNAlbPrv( ::cAlbPrvL )
+                  nTotalRecibido    += nTotNAlbPrv( ::cAlbPrvL )
                end if 
 
                ( ::cAlbPrvL )->( dbSkip() )
@@ -6401,7 +6404,7 @@ METHOD aStockPendiente( cCodArt, cCodAlm, lLote, lNumeroSerie )
 
          // realizamos el apunte en stock-------------------------------------
 
-         ::InsertStockPendiente( nTotal, lLote, lNumeroSerie )
+         ::InsertStockPendiente( nTotal, lLote, lNumeroSerie, nTotalRecibido )
 
          ( ::cPedPrvL )->( dbSkip() )
 
@@ -6416,23 +6419,24 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD InsertStockPendiente( nTotal, lLote, lNumeroSerie )
+METHOD InsertStockPendiente( nTotal, lLote, lNumeroSerie, nTotalRecibido )
 
    with object ( SStock():New() )
 
-      :cTipoDocumento      := PED_PRV
-      :cCodigo             := ( ::cPedPrvL )->cRef
-      :cNumeroDocumento    := ( ::cPedPrvL )->cSerPed + "/" + alltrim( Str( ( ::cPedPrvL )->nNumPed ) )
-      :cDelegacion         := ( ::cPedPrvL )->cSufPed
-      :dFechaDocumento     := dFecPedPrv( ( ::cPedPrvL )->cSerPed + Str( ( ::cPedPrvL )->nNumPed ) + ( ::cPedPrvL )->cSufPed, ::cPedPrvT )
-      :tFechaDocumento     := ""
-      :cCodigoAlmacen      := ( ::cPedPrvL )->cAlmLin
-      :cCodigoPropiedad1   := ( ::cPedPrvL )->cCodPr1
-      :cCodigoPropiedad2   := ( ::cPedPrvL )->cCodPr2
-      :cValorPropiedad1    := ( ::cPedPrvL )->cValPr1
-      :cValorPropiedad2    := ( ::cPedPrvL )->cValPr2
-      :cLote               := ( ::cPedPrvL )->cLote
-      :nPendientesRecibir  := if( nTotal > 0, nTotal, 0 )
+      :cTipoDocumento            := PED_PRV
+      :cCodigo                   := ( ::cPedPrvL )->cRef
+      :cNumeroDocumento          := ( ::cPedPrvL )->cSerPed + "/" + alltrim( Str( ( ::cPedPrvL )->nNumPed ) )
+      :cDelegacion               := ( ::cPedPrvL )->cSufPed
+      :dFechaDocumento           := dFecPedPrv( ( ::cPedPrvL )->cSerPed + Str( ( ::cPedPrvL )->nNumPed ) + ( ::cPedPrvL )->cSufPed, ::cPedPrvT )
+      :tFechaDocumento           := ""
+      :cCodigoAlmacen            := ( ::cPedPrvL )->cAlmLin
+      :cCodigoPropiedad1         := ( ::cPedPrvL )->cCodPr1
+      :cCodigoPropiedad2         := ( ::cPedPrvL )->cCodPr2
+      :cValorPropiedad1          := ( ::cPedPrvL )->cValPr1
+      :cValorPropiedad2          := ( ::cPedPrvL )->cValPr2
+      :cLote                     := ( ::cPedPrvL )->cLote
+      :nPendientesRecibir        := if( nTotal > 0, nTotal, 0 )
+      :nUnidadesRecibidas        := nTotalRecibido
 
       ::Integra( hb_QWith(), lLote, lNumeroSerie )
 
@@ -6559,6 +6563,7 @@ CLASS SStock
    DATA nBultos               INIT 0
    DATA nCajas                INIT 0
    DATA nUnidadesEntregadas   INIT 0
+   DATA nUnidadesRecibidas    INIT 0
 
    //------------------------------------------------------------------------//
    
@@ -6598,6 +6603,7 @@ METHOD New() CLASS SStock
    ::nBultos               := 0
    ::nCajas                := 0
    ::nUnidadesEntregadas   := 0
+   ::nUnidadesRecibidas    := 0
 
 RETURN ( Self )
 
@@ -6642,6 +6648,7 @@ METHOD Save( oDbfStock ) CLASS SStock
    oDbfStock:nPdtRec    := ::nPendientesRecibir    
    oDbfStock:nPdtEnt    := ::nPendientesEntregar   
    oDbfStock:nEntreg    := ::nUnidadesEntregadas   
+   oDbfStock:nRecibi    := ::nUnidadesRecibidas
    oDbfStock:cNumDoc    := ::cNumeroDocumento      
    oDbfStock:cTipDoc    := ::cTipoDocumento        
 
@@ -6757,6 +6764,7 @@ METHOD CreateTemporalFiles( cPath ) CLASS TStock
    FIELD NAME "nPdtRec"    TYPE "N" LEN 16 DEC 6 COMMENT "Total unidades pendientes de recibir"  OF ::oDbfStock
    FIELD NAME "nPdtEnt"    TYPE "N" LEN 16 DEC 6 COMMENT "Total unidades pendientes de entregar" OF ::oDbfStock
    FIELD NAME "nEntreg"    TYPE "N" LEN 16 DEC 6 COMMENT "Total unidades entregadas"             OF ::oDbfStock
+   FIELD NAME "nRecibi"    TYPE "N" LEN 16 DEC 6 COMMENT "Total unidades recibidas"              OF ::oDbfStock
    FIELD NAME "cNumDoc"    TYPE "C" LEN 13 DEC 0 COMMENT "Número del documento lote"             OF ::oDbfStock
    FIELD NAME "cTipDoc"    TYPE "C" LEN 12 DEC 0 COMMENT "Tipo del documento"                    OF ::oDbfStock
 

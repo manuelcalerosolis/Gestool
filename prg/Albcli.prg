@@ -576,7 +576,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :bEditValue       := {|| ( D():Get( "AlbCliT", nView ) )->lCloAlb }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Zoom16" )
+         :AddResource( "gc_lock2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -598,7 +598,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :bEditValue       := {|| ( D():Get( "AlbCliT", nView ) )->lSndDoc }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Lbl16" )
+         :AddResource( "gc_mail2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -624,7 +624,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :AddResource( "gc_delete_12" )
          :AddResource( "gc_shape_square_12" )
          :AddResource( "gc_check_12" )
-         :AddResource( "informacion_16" )
+         :AddResource( "gc_document_information_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -635,7 +635,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :nWidth           := 20
          :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "IMP16" )
+         :AddResource( "gc_printer2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -10548,17 +10548,11 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             // Cajas y unidades------------------------------------------------
 
             if ( D():Articulos( nView ) )->nCajEnt != 0
-               aTmp[ _NCANENT ]  := ( D():Articulos( nView ) )->nCajEnt 
-               if !empty(aGet)
-                  aGet[ _NCANENT ]:cText( aTmp[ _NCANENT ] )
-               end if 
+               aGet[ _NCANENT ]:cText( ( D():Articulos( nView ) )->nCajEnt  )
             end if
 
-            if ( D():Articulos( nView ) )->nUniCaja != 0 .and. aTmp[ _NUNICAJA ] == 0
-               aTmp[ _NUNICAJA ]    := ( D():Articulos( nView ) )->nUniCaja 
-               if !empty(aGet)
-                  aGet[ _NUNICAJA ]:cText( aTmp[ _NUNICAJA ] )
-               end if 
+            if ( D():Articulos( nView ) )->nUniCaja != 0
+               aGet[ _NUNICAJA ]:cText( ( D():Articulos( nView ) )->nUniCaja  )
             end if
 
             // Si la comisi¢n del articulo hacia el agente es distinto de cero----

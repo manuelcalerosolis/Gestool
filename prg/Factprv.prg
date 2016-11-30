@@ -714,7 +714,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
          :nWidth           := 20
          :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Zoom16" )
+         :AddResource( "gc_lock2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -723,8 +723,8 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():FacturasProveedores( nView ) )->lSndDoc }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Lbl16" )
+         :SetCheck( { "gc_mail2_12", "Nil16" } )
+         :AddResource( "gc_mail2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -745,8 +745,8 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():FacturasProveedores( nView ) )->lContab }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "BmpConta16" )
+         :SetCheck( { "gc_folder2_12", "Nil16" } )
+         :AddResource( "gc_folder2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -759,7 +759,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
          :AddResource( "gc_delete_12" )
          :AddResource( "gc_shape_square_12" )
          :AddResource( "gc_check_12" )
-         :AddResource( "Informacion_16" )
+         :AddResource( "gc_document_information_16" )
 
       end with
 
@@ -770,8 +770,8 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
          :bEditValue       := {|| lRectificadaPrv( ( D():FacturasProveedores( nView ) )->cSerFac + Str( ( D():FacturasProveedores( nView ) )->nNumFac ) + ( D():FacturasProveedores( nView ) )->cSufFac, D():FacturasProveedores( nView ), D():FacturasRectificativasProveedores( nView ) ) }
          :nWidth           := 20
          :lHide            := .t.
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Document_navigate_cross_16" )
+         :SetCheck( { "gc_document_text_delete2_12", "Nil16" } )
+         :AddResource( "gc_document_text_delete2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -781,8 +781,8 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
          :bEditValue       := {|| ( D():FacturasProveedores( nView ) )->lImprimido }
          :nWidth           := 20
          :lHide            := .t.
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "IMP16" )
+         :SetCheck( { "gc_printer2_12", "Nil16" } )
+         :AddResource( "gc_printer2_16" )
 
       end with
 

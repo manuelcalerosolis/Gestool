@@ -262,7 +262,7 @@ CLASS TTurno FROM TMasDet
    DATA  oCmbReport
    DATA  cCmbReport                                INIT "Visualizar"
    DATA  aCmbReport                                INIT { "Visualizar", "Imprimir",    "Adobe PDF",   "Excel",    "HTML" }
-   DATA  aBmpReport                                INIT { "Prev116",    "ImpButton",   "DocLock",     "Table",    "SndInt16" }
+   DATA  aBmpReport                                INIT { "Prev116",    "ImpButton",   "DocLock",     "Table",    "gc_earth_16" }
    DATA  aBmpReportTactil                          INIT { "Prev124",    "ImpButton24", "DocLock24",   "Table24",  "SndInt24" }
    DATA  nCmbReport                                INIT 1
 
@@ -1020,10 +1020,10 @@ METHOD DefineFiles( cPath, cDriver )
    DEFINE DATABASE ::oDbf FILE "TURNO.DBF" CLASS "TurnoT" ALIAS "TurnoT" PATH ( cPath ) VIA ( cDriver ) COMMENT  "Sesiones"
 
       FIELD NAME "lSndTur" TYPE "L"  LEN  1  DEC 0 COMMENT ""                                                                    HIDE                     OF ::oDbf
-      FIELD CALCULATE NAME "bSndTur" LEN 14  DEC 0 COMMENT { "Envio", "Lbl16" , 3 }   VAL {|| ::oDbf:lSndTur } BITMAPS "Sel16", "Nil16"       COLSIZE 20  OF ::oDbf
+      FIELD CALCULATE NAME "bSndTur" LEN 14  DEC 0 COMMENT { "Envio", "gc_mail2_16" , 3 }   VAL {|| ::oDbf:lSndTur } BITMAPS "Sel16", "Nil16"       COLSIZE 20  OF ::oDbf
       FIELD NAME "lCloTur" TYPE "L"  LEN  1  DEC 0 COMMENT ""                                                                    HIDE                     OF ::oDbf
       FIELD NAME "lConTur" TYPE "L"  LEN  1  DEC 0 COMMENT "Cn"                                                                  HIDE                     OF ::oDbf
-      FIELD CALCULATE NAME "bCloTur" LEN 14  DEC 0 COMMENT { "Contabilizado", "BmpConta16" , 3 } ;
+      FIELD CALCULATE NAME "bCloTur" LEN 14  DEC 0 COMMENT { "Contabilizado", "gc_folder2_16" , 3 } ;
                                                    VAL {|| ::oDbf:lConTur } BITMAPS "Sel16", "Nil16"                             COLSIZE 20               OF ::oDbf
       FIELD CALCULATE NAME "cStaTur" LEN 20  DEC 0 COMMENT "Estado" VAL {|| ::cEstadoSesion() }                                  COLSIZE 60               OF ::oDbf
 
@@ -1213,7 +1213,7 @@ METHOD Activate()
       HOTKEY   "F";
       LEVEL    ACC_APPD
 
-   DEFINE BTNSHELL RESOURCE "END1" GROUP OF ::oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "END" GROUP OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::End() ) ;
       TOOLTIP  "(S)alir" ;
