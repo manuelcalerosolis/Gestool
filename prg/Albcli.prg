@@ -1610,7 +1610,7 @@ STATIC FUNCTION OpenFiles()
 
       oMailing          := TGenmailingDatabaseAlbaranesClientes():New( nView )
 
-      TComercio():getInstance()
+      TComercio():getInstanceOpenFiles()
 
       /*
       Declaración de variables públicas----------------------------------------
@@ -1917,7 +1917,7 @@ STATIC FUNCTION CloseFiles()
       oDetCamposExtra:CloseFiles()
    end if
 
-   TComercio():endInstance()
+   TComercio():endInstanceCloseFiles()
 
    D():DeleteView( nView )
 
@@ -5500,7 +5500,7 @@ Static Function QuiAlbCli()
          aAdd( aNumPed, ( D():Get( "AlbCliL", nView ) )->cNumPed )
       end if      
 
-      TComercio():getInstance():appendProductsToUpadateStocks( ( D():Get( "AlbCliL", nView ) )->cRef, (  D():Get( "AlbCliL", nView ) )->cCodPr1, (  D():Get( "AlbCliL", nView ) )->cValPr1, (  D():Get( "AlbCliL", nView ) )->cCodPr2, (  D():Get( "AlbCliL", nView ) )->cValPr2, nView )
+      TComercio():getInstance():appendProductsToUpadateStocks( ( D():Get( "AlbCliL", nView ) )->cRef, nView )
 
       if dbLock( D():Get( "AlbCliL", nView ) )
          ( D():Get( "AlbCliL", nView ) )->( dbDelete() )
@@ -11144,10 +11144,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
 
    aTmp[ _NREQ ]     := nPReq( D():Get( "TIva", nView ), aTmp[ _NIVA ] )
 
-   // Anotamos para modificar este articulo------------------------------------
-
-   TComercio():getInstance():appendProductsToUpadateStocks( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], nView )
-
    // si estamos añadiendo-----------------------------------------------------
 
    if nMode == APPD_MODE
@@ -11606,10 +11602,6 @@ STATIC FUNCTION DelDeta( oBrwLin )
 
    CursorWait()
    
-   // Anotamos para modificar este articulo------------------------------------
-
-   TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr2, nView )
-
    while ( dbfTmpSer )->( dbSeek( Str( ( dbfTmpLin )->nNumLin, 4 ) ) )
       ( dbfTmpSer )->( dbDelete() )
    end while
@@ -11789,10 +11781,14 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    if nMode == EDIT_MODE
 
       while ( D():Get( "AlbCliL", nView ) )->( dbSeek( cSerAlb + str( nNumAlb ) + cSufAlb ) ) .and. !( D():Get( "AlbCliL", nView ) )->( eof() )
+
+         TComercio():getInstance():appendProductsToUpadateStocks( (dbfTmpLin)->cRef, nView )
+
          if dbLock( D():Get( "AlbCliL", nView ) )
             ( D():Get( "AlbCliL", nView ) )->( dbDelete() )
             ( D():Get( "AlbCliL", nView ) )->( dbUnLock() )
          end if
+
       end while
 
       while ( D():Get( "AlbCliP", nView ) )->( dbSeek( cSerAlb + str( nNumAlb ) + cSufAlb ) ) .and. !( D():Get( "AlbCliP", nView ) )->( eof() )
@@ -11832,9 +11828,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
 
    end if
 
-   /*
-   Guardamos el albaran--------------------------------------------------------
-   */
+   // Guardamos el albaran--------------------------------------------------------
 
    ( dbfTmpLin )->( dbGoTop() )
    while !( dbfTmpLin )->( eof() )
@@ -11853,15 +11847,15 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
 
       end if   
 
+      TComercio():getInstance():appendProductsToUpadateStocks( (dbfTmpLin)->cRef, nView )
+
       ( dbfTmpLin )->( dbSkip() )
 
       oMsgProgress():deltaPos(1)
 
    end while
 
-   /*
-   Guardamos los totales-------------------------------------------------------
-   */
+   // Guardamos los totales-------------------------------------------------------
 
    aTmp[ _NTOTNET ]     := nTotNet
    aTmp[ _NTOTIVA ]     := nTotIva
@@ -11986,13 +11980,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
 
    // Escribe los datos pendientes---------------------------------------------
 
-   dbCommitAll()
-
    CommitTransaction()
-
-   // actualiza el stock de prestashop-----------------------------------------
-
-   TComercio():getInstance():updateWebProductStocks()
 
    // script-------------------------------------------------------------------
 
@@ -12013,6 +12001,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
 
    oMsgText()
    endProgress()
+
+   // actualiza el stock de prestashop-----------------------------------------
+
+   TComercio():getInstance():updateWebProductStocks()
 
    oDlg:Enable()
    oDlg:End( IDOK )

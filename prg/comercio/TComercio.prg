@@ -187,8 +187,10 @@ CLASS TComercio
    DATA oWaitMeter
 
    METHOD New()                           CONSTRUCTOR
-   METHOD GetInstance()              
-   METHOD EndInstance()
+   METHOD getInstance()
+   METHOD endInstance()
+   METHOD getInstanceOpenFiles()          INLINE ( ::getInstance(), ::filesOpen() )              
+   METHOD endInstanceCloseFiles()         INLINE ( ::filesClose(), ::endInstance() )
 
    METHOD setStock( oStock )              INLINE ( ::oStock := oStock )
 
@@ -465,7 +467,7 @@ CLASS TComercio
 
    METHOD buildAddArticuloActualizar( cCodArt )
 
-   // ftp y movimientos de ficheros
+   // ftp y movimientos de ficheros--------------------------------------------
 
    METHOD cDirectoryProduct()                         INLINE ( ::TComercioConfig:getImagesDirectory() + "/p" )
    METHOD cDirectoryCategories()                      INLINE ( ::TComercioConfig:getImagesDirectory() + "/c" )
@@ -509,7 +511,7 @@ RETURN ( ::oInstance )
 
 METHOD EndInstance() CLASS TComercio
 
-   if empty( ::oInstance )
+   if !empty( ::oInstance )
       ::oInstance          := nil
    end if
 

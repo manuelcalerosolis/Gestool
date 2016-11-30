@@ -1032,7 +1032,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       CodigosPostales():GetInstance():OpenFiles()
 
-      TComercio():getInstance()
+      TComercio():getInstanceOpenFiles()
 
       /*
       Cargamos la clase bandera------------------------------------------------
@@ -1113,7 +1113,7 @@ STATIC FUNCTION CloseFiles()
 
    CodigosPostales():GetInstance():CloseFiles()
 
-   TComercio():endInstance()
+   TComercio():endInstanceCloseFiles()
 
    oBandera    := nil
    oStock      := nil
@@ -2700,10 +2700,6 @@ STATIC FUNCTION DelDeta()
 
    CursorWait()
    
-   // Anotamos para modificar este articulo------------------------------------
-
-   TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmp )->cRef, ( dbfTmp )->cCodPr1, ( dbfTmp )->cValPr1, ( dbfTmp )->cCodPr2, ( dbfTmp )->cValPr2, nView )
-
    while ( dbfTmpSer )->( dbSeek( Str( ( dbfTmp )->nNumLin, 4 ) ) )
       ( dbfTmpSer )->( dbDelete() )
    end while
@@ -3818,10 +3814,6 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet, aTm
    if aTmp[ _LLOTE ] .AND. nMode == APPD_MODE
       saveLoteActual( aTmp[ _CREF ], aTmp[ _CLOTE ], nView )
    end if
-
-   // Anotamos para modificar este articulo------------------------------------
-
-   TComercio():getInstance():appendProductsToUpadateStocks( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], nView )
 
    if nMode == APPD_MODE
 
@@ -5608,10 +5600,14 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
          */
 
          while ( D():AlbaranesProveedoresLineas( nView ) )->( dbSeek( cSerAlb + Str( nNumAlb ) + cSufAlb ) ) .and. !( D():AlbaranesProveedoresLineas( nView ) )->( eof() )
+            
+            TComercio():getInstance():appendProductsToUpadateStocks( ( D():AlbaranesProveedoresLineas( nView ) )->cRef, nView )
+
             if dbLock( D():AlbaranesProveedoresLineas( nView ) )
                ( D():AlbaranesProveedoresLineas( nView ) )->( dbDelete() )
                ( D():AlbaranesProveedoresLineas( nView ) )->( dbUnLock() )
             end if
+
          end while
 
          while ( D():AlbaranesProveedoresIncidencias( nView ) )->( dbSeek( cSerAlb + Str( nNumAlb ) + cSufAlb ) ) .and. !( D():AlbaranesProveedoresIncidencias( nView ) )->( eof() )
@@ -5679,6 +5675,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
          */
 
          dbGather( aTbl, D():AlbaranesProveedoresLineas( nView ), .t. )
+
+         TComercio():getInstance():appendProductsToUpadateStocks( (dbfTmp)->cRef, nView )
 
          ( dbfTmp )->( dbSkip() )
 
@@ -5780,13 +5778,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
 
       // Escribe los datos pendientes---------------------------------------------
 
-      dbCommitAll()
-
       CommitTransaction()
-
-      // actualiza el stock de prestashop-----------------------------------------
-
-      TComercio():getInstance():updateWebProductStocks()
 
    RECOVER USING oError
 
@@ -5799,7 +5791,11 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
    ErrorBlock( oBlock )
 
    oMsgText()
-   EndProgress()
+   endProgress()
+
+   // actualiza el stock de prestashop-----------------------------------------
+
+   TComercio():getInstance():updateWebProductStocks()
 
    oDlg:Enable()
    oDlg:End( IDOK )
@@ -5995,11 +5991,11 @@ Borra todas las lineas de detalle de un Albarán
 Static Function QuiAlbPrv( lDetail )
 
    local cNumPed
-   local aNumPedCli  := {}
    local nRecAnt
    local nOrdAnt
    local nRecPed
    local nOrdPed
+   local aNumPedCli  := {}
    local cNumPedPrv  := ( D():AlbaranesProveedores( nView ) )->cNumPed
 
    DEFAULT lDetail   := .t.
@@ -6040,7 +6036,7 @@ Static Function QuiAlbPrv( lDetail )
 
    while ( D():AlbaranesProveedoresLineas( nView ) )->( dbSeek( ( D():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) + ( D():AlbaranesProveedores( nView ) )->cSufAlb ) ) .and. !( D():AlbaranesProveedoresLineas( nView ) )->( eof() )
 
-      TComercio():getInstance():appendProductsToUpadateStocks( ( D():AlbaranesProveedoresLineas( nView ) )->cRef, ( D():AlbaranesProveedoresLineas( nView ) )->cCodPr1, ( D():AlbaranesProveedoresLineas( nView ) )->cValPr1, ( D():AlbaranesProveedoresLineas( nView ) )->cCodPr2, ( D():AlbaranesProveedoresLineas( nView ) )->cValPr2, nView )
+      TComercio():getInstance():appendProductsToUpadateStocks( ( D():AlbaranesProveedoresLineas( nView ) )->cRef, nView )
 
       if dbLock( D():AlbaranesProveedoresLineas( nView ) )
          ( D():AlbaranesProveedoresLineas( nView ) )->( dbDelete() )
@@ -6048,10 +6044,6 @@ Static Function QuiAlbPrv( lDetail )
       end if
 
    end while
-
-   // actualiza el stock de prestashop-----------------------------------------
-
-   TComercio():getInstance():updateWebProductStocks()
 
    /*
    Incidencias-----------------------------------------------------------------
@@ -6125,8 +6117,6 @@ Static Function QuiAlbPrv( lDetail )
             ( D():PedidosProveedores( nView ) )->( dbUnLock() )
          end if
 
-         //oStock:SetPedPrv( ( D():PedidosProveedores( nView ) )->cSerPed + Str( ( D():PedidosProveedores( nView ) )->nNumPed ) + ( D():PedidosProveedores( nView ) )->cSufPed )
-
          ( D():PedidosProveedores( nView ) )->( dbSkip() )
 
       end while
@@ -6135,6 +6125,10 @@ Static Function QuiAlbPrv( lDetail )
 
    ( D():PedidosProveedores( nView ) )->( OrdSetFocus( nOrdPed ) )
    ( D():PedidosProveedores( nView ) )->( dbGoTo( nRecPed ) )
+
+   // actualiza el stock de prestashop-----------------------------------------
+
+   TComercio():getInstance():updateWebProductStocks()
 
    CursorWE()
 
@@ -7192,43 +7186,6 @@ Static Function EliminarNumeroSerie( aTmp )
 Return ( nil )
 
 //----------------------------------------------------------------------------//
-
-static Function ActualizaStockWeb( cNumDoc ) 
-
-   local nRec     := ( D():AlbaranesProveedoresLineas( nView ) )->( Recno() )
-   local nOrdAnt  := ( D():AlbaranesProveedoresLineas( nView ) )->( OrdSetFocus( "nNumAlb" ) )
-
-   if uFieldEmpresa( "lRealWeb" )
-
-      with object ( TComercio():New())
-
-         if ( D():AlbaranesProveedoresLineas( nView ) )->( dbSeek( cNumDoc ) )
-
-            while ( D():AlbaranesProveedoresLineas( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedoresLineas( nView ) )->nNumAlb ) + ( D():AlbaranesProveedoresLineas( nView ) )->cSufAlb == cNumDoc .and. !( D():AlbaranesProveedoresLineas( nView ) )->( Eof() )
-
-               if Retfld( ( D():AlbaranesProveedoresLineas( nView ) )->cRef, D():Articulos( nView ), "lPubInt", "Codigo" )
-
-                  :ActualizaStockProductsPrestashop( ( D():AlbaranesProveedoresLineas( nView ) )->cRef, ( D():AlbaranesProveedoresLineas( nView ) )->cCodPr1, ( D():AlbaranesProveedoresLineas( nView ) )->cCodPr2, ( D():AlbaranesProveedoresLineas( nView ) )->cValPr1, ( D():AlbaranesProveedoresLineas( nView ) )->cValPr2 )
-
-               end if   
-
-               ( D():AlbaranesProveedoresLineas( nView ) )->( dbSkip() )
-
-            end while
-
-        end if
-        
-      end with
-
-   end if 
-
-   ( D():AlbaranesProveedoresLineas( nView ) )->( OrdSetFocus( nOrdAnt ) )
-   ( D():AlbaranesProveedoresLineas( nView ) )->( dbGoTo( nRec ) )  
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
 Function mailReportAlbPrv( cCodigoDocumento )
 
 Return ( printReportAlbPrv( IS_MAIL, 1, prnGetName(), cCodigoDocumento ) )

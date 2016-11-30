@@ -503,7 +503,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       CodigosPostales():GetInstance():OpenFiles()
 
-      TComercio():getInstance()
+      TComercio():getInstanceOpenFiles()
 
       /*
       Numeros de serie---------------------------------------------------------
@@ -606,7 +606,7 @@ Static Function CloseFiles()
       oCentroCoste:CloseFiles()
    end if
 
-   TComercio():endInstance()
+   TComercio():endInstanceCloseFiles()
 
    nView       := nil
 
@@ -4115,11 +4115,6 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrw, oDlg2, nMode, oTotal, oFld, aTmpFac,
 
    end if
 
-
-   // Anotamos para modificar este articulo------------------------------------
-
-   TComercio():getInstance():appendProductsToUpadateStocks( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], nView )
-
    /*
    Grabamos el registro--------------------------------------------------------
    */
@@ -4246,10 +4241,6 @@ STATIC FUNCTION DelDeta()
    end if
 
    CursorWait()
-
-   // Anotamos para modificar este articulo------------------------------------
-
-   TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmp )->cRef, ( dbfTmp )->cCodPr1, ( dbfTmp )->cValPr1, ( dbfTmp )->cCodPr2, ( dbfTmp )->cValPr2, nView )
 
    while ( dbfTmpSer )->( dbSeek( Str( ( dbfTmp )->nNumLin, 4 ) ) )
       ( dbfTmpSer )->( dbDelete() )
@@ -7226,9 +7217,15 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
       oMsgText( "Eliminando información anterior" )
 
       while ( D():FacturasProveedoresLineas( nView ) )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) ) .and. !( D():FacturasProveedoresLineas( nView ) )->( eof() ) 
+
          aNumAlb:Add( getNumeroAlbaranProveedorLinea( nView ) )
+
+         TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasProveedoresLineas( nView ) )->cRef, nView )
+
          setNoFacturadoAlbaranProveedorLinea( nView )
+
          dbLockDelete( D():FacturasProveedoresLineas( nView ) )
+
       end while
 
       oMsgText( "Eliminando incidencias anteriores" )
@@ -7304,6 +7301,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
       dbGather( aTbl, D():FacturasProveedoresLineas( nView ), .t. )
 
       setFacturadoAlbaranProveedorLinea( cSerFac, nNumFac, cSufFac, nView )
+
+      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmp )->cRef, nView )
 
       ( dbfTmp )->( dbSkip() )
 
@@ -7401,10 +7400,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
 
    CommitTransaction()
 
-   // actualiza el stock de prestashop-----------------------------------------
-
-   TComercio():getInstance():updateWebProductStocks()
-
    // Generar los pagos de las facturas----------------------------------------
 
    oMsgText( "Generando pagos" ) 
@@ -7428,6 +7423,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
 
    oMsgText()
    EndProgress()
+
+   TComercio():getInstance():updateWebProductStocks()
 
    oDlg:Enable()
    oDlg:End( IDOK )
@@ -7941,13 +7938,17 @@ Static Function QuiFacPrv( lDetail )
       
    end if
 
-   // actualiza el stock de prestashop-----------------------------------------
-
    ( D():AlbaranesProveedores( nView ) )->( OrdSetFocus( nOrdAnt ) )
+
+   // Recuperar el numero de le factura----------------------------------------
 
    if uFieldEmpresa( "lRecNumFac" )
       nPutDoc( ( D():FacturasProveedores( nView ) )->cSerFac, ( D():FacturasProveedores( nView ) )->nNumFac, ( D():FacturasProveedores( nView ) )->cSufFac, D():FacturasProveedores( nView ), "nFacPrv", , D():Contadores( nView ) )
    end if
+
+   if lDetail
+      TComercio():getInstance():updateWebProductStocks()
+   end if 
 
    CursorWE()
 
@@ -7969,10 +7970,12 @@ Static Function delDetalle( cFactura )
 
    while ( D():FacturasProveedoresLineas( nView ) )->( dbSeek( cFactura ) ) .and. !( D():FacturasProveedoresLineas( nView ) )->( eof() )
    
-      TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasProveedoresLineas( nView ) )->cRef, ( D():FacturasProveedoresLineas( nView ) )->cCodPr1, ( D():FacturasProveedoresLineas( nView ) )->cValPr1, ( D():FacturasProveedoresLineas( nView ) )->cCodPr2, ( D():FacturasProveedoresLineas( nView ) )->cValPr2, nView )
+      TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasProveedoresLineas( nView ) )->cRef, nView )
    
       aNumAlb:Add( getNumeroAlbaranProveedorLinea( nView ) )
+
       setNoFacturadoAlbaranProveedorLinea( nView )
+      
       dbLockDelete( D():FacturasProveedoresLineas( nView ) )
 
    end do

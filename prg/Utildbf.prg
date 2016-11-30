@@ -2696,6 +2696,8 @@ Function CommitTransaction()
       Return ( AdsCommitTransaction() )
    end if
 
+   dbCommitAll()
+
 Return ( .t. )
 
 //----------------------------------------------------------------------------//

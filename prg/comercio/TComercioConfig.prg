@@ -43,6 +43,7 @@ CLASS TComercioConfig
    METHOD isSilenceMode()              INLINE ( ::getFromCurrentWeb( "SilenceMode", .f. ) )
    METHOD isInvertedNameFormat()       INLINE ( ::getFromCurrentWeb( "InvertedNameFormat", .f. ) )
    METHOD isProcessWithoutStock()      INLINE ( ::getFromCurrentWeb( "ProcessWithoutStock", .t. ) )
+   METHOD isDeleteWithoutStock()       INLINE ( ::getFromCurrentWeb( "DeleteWithoutStock", .t. ) )
    METHOD isProcessWithoutImage()      INLINE ( ::getFromCurrentWeb( "ProcessWithoutImage", .t. ) )
 
    METHOD getMySqlServer()             INLINE ( ::getFromCurrentWeb( "MySqlServer" ) )
@@ -194,6 +195,8 @@ Return ( aWebsNames )
 METHOD setCurrentWebName( cCurrentWeb ) CLASS TComercioConfig
 
    local hCurrentWeb
+
+   cCurrentWeb          := alltrim( cCurrentWeb )
 
    if !hhaskey( ::getWebs(), cCurrentWeb )
       Return ( .f. )

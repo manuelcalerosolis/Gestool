@@ -12,9 +12,10 @@ CLASS TComercioStock FROM TComercioConector
 
    DATA  oWaitMeter
 
+   DATA  externalsProductsToUpdate           INIT {}
    DATA  hProductsToUpdate                   INIT {=>}
+
    METHOD resetProductsToUpdateStocks()      INLINE ( ::hProductsToUpdate := {=>} )
-   
    METHOD getProductsToUpadateStocks()       INLINE ( ::hProductsToUpdate )
 
    // External methods---------------------------------------------------------
@@ -37,14 +38,11 @@ CLASS TComercioStock FROM TComercioConector
 
    METHOD insertProductsToUpadateStocks() 
 
-   METHOD updateWebProductStocks() 
-
    // Service methods----------------------------------------------------------
 
-   METHOD resetProductsToUpdateStocks()      VIRTUAL
-   METHOD getProductsToUpadateStocks()       VIRTUAL
-   METHOD appendProductsToUpadateStocks()    VIRTUAL
-   METHOD updateWebProductStocks( oStock )   VIRTUAL
+   METHOD appendProductsToUpadateStocks()    
+
+   METHOD updateWebProductStocks() 
 
    // Internal methods---------------------------------------------------------
 
@@ -75,17 +73,13 @@ METHOD buildListProductToUpdate( startIdProduct )
 
       while ( alltrim( ::oProductDatabase():cWebShop ) == ::getCurrentWebName() ) .and. !( ::oProductDatabase():eof() )
 
-         // if alltrim( ::oProductDatabase():Codigo ) == "10003068"
-
          ::writeText( alltrim( ::oProductDatabase():Codigo ) + space( 1 ) + alltrim( ::oProductDatabase():Nombre ) )
 
-         idProductPrestashop     := ::getIdProductPrestashop( ::oProductDatabase():Codigo )
+         idProductPrestashop     := ::getIdProductPrestashop( ::oProductDatabase():Codigo, ::getCurrentWebName() )
 
          if idProductPrestashop != 0 
             ::insertProductsToUpadateStocks( ::oProductDatabase():Codigo, idProductPrestashop, ::getCurrentWebName() ) 
          end if 
-
-         // end if 
 
          ::oProductDatabase():Skip()
 
@@ -96,6 +90,32 @@ METHOD buildListProductToUpdate( startIdProduct )
       msgStop( ::getCurrentWebName(), 'no encontrado' )
 
    end if 
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD appendProductsToUpadateStocks( idProduct, nView )
+
+   local nScan
+   local cWebShop
+   local idProductPrestashop
+
+   if D():gotoArticulos( idProduct, nView )
+      cWebShop                := ( D():Articulos( nView ) )->cWebShop
+   end if 
+
+   if empty(cWebShop)
+      Return ( self )
+   end if
+
+   idProductPrestashop        := ::getIdProductPrestashop( idProduct, cWebShop )
+
+   if empty(idProductPrestashop)
+      Return ( self )
+   end if
+
+   ::insertProductsToUpadateStocks( idProduct, idProductPrestashop, cWebShop ) 
 
 Return ( self )
 
@@ -137,17 +157,15 @@ METHOD updateWebProductStocks()
       Return .f.
    end if
 
-   if ::filesOpen() 
+   ::oWaitMeter         := TWaitMeter():New( "Actualizando stocks", "Espere por favor..." ):Run()
 
-      ::oWaitMeter         := TWaitMeter():New( "Actualizando stocks", "Espere por favor..." ):Run()
+   ::calculateStocksProductsToUpdate()
 
-      ::evalProductsToStock()
+   ::createCommandProductsToUpdate()
 
-      ::oWaitMeter:End()
+   ::executeCommandProductsToUpdate()
 
-      ::filesClose()
-
-   end if 
+   ::oWaitMeter:End()
 
 Return ( .t. )   
 
@@ -232,8 +250,6 @@ METHOD addStockProductToUpdate( hProduct )
                                     "unitStock"             => nTotalStock } )
 
    hset( hProduct, "stocks", aStockProducts )
-
-   // Productos sin stock hay q borrarlos-------------------------------------
 
 Return .t.
 
@@ -361,7 +377,6 @@ METHOD getCommandProductToUpdate( hProduct )
 
    cCommand          += "DELETE FROM " + ::cPrefixTable( "stock_available" ) + " "                             + ;
                            "WHERE id_product = " + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) )   + ";"
-                        // "AND id_product_attribute = " + alltrim( str( idProductAttribute ) )
 
    for each hStock in hget( hProduct, "stocks" )
 
@@ -398,10 +413,9 @@ METHOD getCommandProductToUpdate( hProduct )
 
    next 
 
-   if ( nTotalStock <= 0 ) .and. !( TComercioConfig():isProcessWithoutStock() )
+   if ( nTotalStock <= 0 ) .and. ( TComercioConfig():isDeleteWithoutStock() )
 
-      cCommand       += "UPDATE " + ::cPrefixTable( "product" ) + ;
-                           " SET active = 0" + ;
+      cCommand       := "DELETE FROM " + ::cPrefixTable( "product" ) + ;
                            " WHERE id_product = '" + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) ) + "';"
 
       ::writeText( 'Desactivando artículo ' + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) ) + ' de prestashop' )
@@ -588,7 +602,7 @@ METHOD executeCommandProductToUpdate( cWebName, aProducts )
             end if 
             
          next 
-         
+
          ::meterProcesoText()
 
       next
@@ -601,12 +615,12 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getIdProductPrestashop( idProductGestool )
+METHOD getIdProductPrestashop( idProductGestool, cCurrentWebName )
 
-   local idProductPrestashop     := ::TPrestashopId():getValueProduct( idProductGestool, ::getCurrentWebName() )
+   local idProductPrestashop     := ::TPrestashopId():getValueProduct( idProductGestool, cCurrentWebName )
 
    if ( idProductPrestashop == 0 )
-      ::writeText( "Producto " + alltrim( idProductGestool ) + " no encontrado en la web " + alltrim( ::getCurrentWebName() ) )
+      ::writeText( "Producto " + alltrim( idProductGestool ) + " no encontrado en la web " + alltrim( cCurrentWebName ) )
    end if
 
 Return ( idProductPrestashop)
