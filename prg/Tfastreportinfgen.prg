@@ -701,17 +701,17 @@ METHOD InitDialog() CLASS TFastReportInfGen
       oCarpeta             := TCarpeta():New( ::oOfficeBar, "Informe" )
 
       oGrupo               := TDotNetGroup():New( oCarpeta, 306, "Impresión", .f. )
-      ::oBtnPrevisualizar  := TDotNetButton():New( 60, oGrupo, "Prev1_32",             "Visualizar [F5]",   1, {|| ::GenReport( IS_SCREEN ) }, , , .f., .f., .f. )
-      ::oBtnImprimir       := TDotNetButton():New( 60, oGrupo, "gc_printer2_32",       "Imprimir",          2, {|| ::GenReport( IS_PRINTER ) }, , , .f., .f., .f. )
-      ::oBtnExcel          := TDotNetButton():New( 60, oGrupo, "Table_32",             "Excel",             3, {|| ::GenReport( IS_EXCEL ) }, , , .f., .f., .f. )
-      ::oBtnPdf            := TDotNetButton():New( 60, oGrupo, "Document_lock_32",     "Pdf",               4, {|| ::GenReport( IS_PDF ) }, , , .f., .f., .f. )
-      ::oBtnHTML           := TDotNetButton():New( 60, oGrupo, "gc_earth_32",          "HTML",              5, {|| ::GenReport( IS_HTML ) }, , , .f., .f., .f. )
+      ::oBtnPrevisualizar  := TDotNetButton():New( 60, oGrupo, "gc_monitor_32",              "Visualizar [F5]",   1, {|| ::GenReport( IS_SCREEN ) }, , , .f., .f., .f. )
+      ::oBtnImprimir       := TDotNetButton():New( 60, oGrupo, "gc_printer2_32",             "Imprimir",          2, {|| ::GenReport( IS_PRINTER ) }, , , .f., .f., .f. )
+      ::oBtnExcel          := TDotNetButton():New( 60, oGrupo, "gc_spreadsheet_cell_32",     "Excel",             3, {|| ::GenReport( IS_EXCEL ) }, , , .f., .f., .f. )
+      ::oBtnPdf            := TDotNetButton():New( 60, oGrupo, "gc_document_text_lock_32",   "Pdf",               4, {|| ::GenReport( IS_PDF ) }, , , .f., .f., .f. )
+      ::oBtnHTML           := TDotNetButton():New( 60, oGrupo, "gc_earth_32",                "HTML",              5, {|| ::GenReport( IS_HTML ) }, , , .f., .f., .f. )
 
       oGrupo               := TDotNetGroup():New( oCarpeta, 246, "Útiles", .f. )
-      ::oBtnDiseno         := TDotNetButton():New( 60, oGrupo, "Drawing_utensils_32",  "Diseñar",           1, {|| ::DesignReport() }, , , .f., .f., .f. )
-      ::oBtnEliminar       := TDotNetButton():New( 60, oGrupo, "Document_delete_32",   "Eliminar",          2, {|| ::Eliminar() }, , , .f., .f., .f. )
-      ::oBtnFiltrar        := TDotNetButton():New( 60, oGrupo, "Funnel_32",            "Filtrar",           3, {|| ::DlgFilter() }, , , .f., .f., .f. )
-      ::oBtnXml            := TDotNetButton():New( 60, oGrupo, "Folder_document_32",   "Ver",               4, {|| ::XmlDocument() }, , , .f., .f., .f. )
+      ::oBtnDiseno         := TDotNetButton():New( 60, oGrupo, "gc_set_square_pencil_32",    "Diseñar",           1, {|| ::DesignReport() }, , , .f., .f., .f. )
+      ::oBtnEliminar       := TDotNetButton():New( 60, oGrupo, "gc_document_text_delete_32", "Eliminar",          2, {|| ::Eliminar() }, , , .f., .f., .f. )
+      ::oBtnFiltrar        := TDotNetButton():New( 60, oGrupo, "gc_funnel_32",               "Filtrar",           3, {|| ::DlgFilter() }, , , .f., .f., .f. )
+      ::oBtnXml            := TDotNetButton():New( 60, oGrupo, "gc_folder_document_32",      "Ver",               4, {|| ::XmlDocument() }, , , .f., .f., .f. )
 
       oGrupo               := TDotNetGroup():New( oCarpeta, 66, "Salida", .f. )
 
