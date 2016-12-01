@@ -234,7 +234,7 @@ FUNCTION Usuarios( oMenuItem, oWnd )
          :bEditValue       := {|| ( dbfUser )->lUseUse }
          :nWidth           := 20
          :SetCheck( { "Cnt16", "Nil16" } )
-         :AddResource( "UsrSel" )
+         :AddResource( "gc_user_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -243,7 +243,7 @@ FUNCTION Usuarios( oMenuItem, oWnd )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( dbfUser )->lSndInt }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_mail2_12", "Nil16" } )
          :AddResource( "gc_mail2_16" )
       end with
 
