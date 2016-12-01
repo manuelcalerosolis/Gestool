@@ -18690,7 +18690,7 @@ FUNCTION nTotLFacCli( uFacCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
    DEFAULT nRou         := nRouDiv()
    DEFAULT nVdv         := 1
    DEFAULT lDto         := .t.
-   DEFAULT lPntVer      := .t.
+   DEFAULT lPntVer      := .f.
    DEFAULT lImpTrn      := .t.
 
    if isLineaTotalFacCli( uFacCliL )
