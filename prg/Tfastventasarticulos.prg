@@ -2892,7 +2892,11 @@ METHOD AddArticulo() CLASS TFastVentasArticulos
             ::appendStockArticulo( aStockArticulo )
          end if 
 
-         // ::appendBlankAlmacenes( ::oDbfArt:Codigo )
+         /*
+         Estaba comentado y lo he vuelto a activar para alvaro pita------------
+         */
+
+         ::appendBlankAlmacenes( ::oDbfArt:Codigo )
 
       end if 
 
