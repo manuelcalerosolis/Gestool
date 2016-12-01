@@ -2606,7 +2606,7 @@ METHOD StartResource() CLASS TpvTactil
          oGrupo                  := TDotNetGroup():New( oCarpeta, 186, "Arqueos/Sesiones", .f., , "Stopwatch_stop_32" )
             TDotNetButton():New( 60, oGrupo, "Stopwatch_refresh_32",          "Arqueo parcial [X]",1, {|| ::OnClickCloseTurno( .t. ) }, , , .f., .f., .f. )
             TDotNetButton():New( 60, oGrupo, "Stopwatch_stop_32",             "Arqueo total [Z]",  2, {|| ::OnClickCloseTurno( .f. ) }, , , .f., .f., .f. )
-            TDotNetButton():New( 60, oGrupo, "Stopwatch_run_32",              "Iniciar sesión",    3, {|| ::OnClickIniciarSesion() }, , , .f., .f., .f. )
+            TDotNetButton():New( 60, oGrupo, "gc_clock_play_32",              "Iniciar sesión",    3, {|| ::OnClickIniciarSesion() }, , , .f., .f., .f. )
 
          oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Salida", .f. )
             TDotNetButton():New( 60, oGrupo, "End32",                         "Salida",            1, {|| ::oDlg:End() }, , , .f., .f., .f. )

@@ -345,8 +345,6 @@ GC_ID_CARD_HINT_16 BITMAP "..\\bmp\\gc_id_card_hint_16.bmp"
 GC_FLOPPY_DISK_12 BITMAP "..\\bmp\\gc_floppy_disk_12.bmp"
 GC_FLOPPY_DISK_16 BITMAP "..\\bmp\\gc_floppy_disk_16.bmp"
 
-
-
 GC_MONITOR_16 BITMAP "..\\bmp\\gc_monitor_16.bmp"
 GC_MONITOR_32 BITMAP "..\\bmp\\gc_monitor_32.bmp"
 GC_SPREADSHEET_CELL_16 BITMAP "..\\bmp\\gc_spreadsheet_cell_16.bmp"
@@ -361,3 +359,30 @@ GC_FUNNEL_16 BITMAP "..\\bmp\\gc_funnel_16.bmp"
 GC_FUNNEL_32 BITMAP "..\\bmp\\gc_funnel_32.bmp"
 GC_FOLDER_DOCUMENT_16 BITMAP "..\\bmp\\gc_folder_document_16.bmp"
 GC_FOLDER_DOCUMENT_32 BITMAP "..\\bmp\\gc_folder_document_32.bmp"
+
+BUS16 BITMAP "..\\bmp\\gc_magnifying_glass2_16.bmp"
+EDIT16 BITMAP "..\\bmp\\gc_pencil_16.bmp"
+STOPWATCH_REFRESH_32 BITMAP "..\\bmp\\gc_clock_refresh_32.bmp"
+STOPWATCH_REFRESH_16 BITMAP "..\\bmp\\gc_clock_refresh_16.bmp"
+STOPWATCH_RESET_16 BITMAP "..\\bmp\\gc_clock_reset_16.bmp"
+
+STOPWATCH_STOP_16 BITMAP "..\\bmp\\gc_clock_stop_16.bmp"
+STOPWATCH_STOP_32 BITMAP "..\\bmp\\gc_clock_stop_32.bmp"
+GC_CLOCK_PLAY_16 BITMAP "..\\bmp\\gc_clock_play_16.bmp"
+GC_CLOCK_PLAY_32 BITMAP "..\\bmp\\gc_clock_play_32.bmp"
+PREV116 BITMAP "..\\bmp\\gc_monitor_16.bmp"
+CHGSTATE16 BITMAP "..\\bmp\\gc_objects_exchange_16.bmp"
+BFILTER16 BITMAP "..\\bmp\\gc_funnel_16.bmp"
+NEW16 BITMAP "..\\bmp\\gc_plus2_16.bmp"
+NEW32 BITMAP "..\\bmp\\gc_plus2_32.bmp"
+
+NEWMONO16 BITMAP "..\\bmp\\Add2_Mono_16.bmp"
+Document_add_32 BITMAP "..\\bmp\\Document_add_32.bmp"
+
+DUP16 BITMAP "..\\bmp\\gc_document_text_plus2_16.bmp"
+DEL16 BITMAP "..\\bmp\\Delete2_16.bmp"
+DEL32 BITMAP "..\\bmp\\Delete2_32.bmp"
+DELETE_32 BITMAP "..\\bmp\\Delete_32.bmp"
+
+
+

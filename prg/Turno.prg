@@ -1143,7 +1143,7 @@ METHOD Activate()
 
       ::oWndBrw:AddSeaBar()
 
-   DEFINE BTNSHELL RESOURCE "EDIT" OF ::oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "ZOOM" OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::oWndBrw:SetOnProcess(), if( ::oDbf:nStaTur == cajCerrrada, ::lArqueoTurno( .t. ), MsgStop( "Sesión " + Alltrim( ::oDbf:cNumTur ) + " no cerrada." ) ), ::oWndBrw:QuitOnProcess(), ::oWndBrw:SetFocus() );
       TOOLTIP  "(Z)oom";
