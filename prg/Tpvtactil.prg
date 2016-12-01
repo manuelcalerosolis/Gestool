@@ -6507,7 +6507,7 @@ METHOD OnClickCobro() CLASS TpvTactil
 
       // Abrimos el cajón portamonedas antes de imprimir-----------------------
 
-      ::OpenCajonDirect()
+      ::OpenCajon()
 
       // Imprimimos el documento-----------------------------------------------
 
@@ -6574,7 +6574,7 @@ METHOD OnClickAlbaran() CLASS TpvTactil
       */
 
       if ( ::oTpvCobros:Entregado() != 0 )
-         ::OpenCajonDirect()
+         ::OpenCajon()
       end if
 
       /*

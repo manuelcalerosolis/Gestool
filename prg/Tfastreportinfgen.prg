@@ -702,10 +702,10 @@ METHOD InitDialog() CLASS TFastReportInfGen
 
       oGrupo               := TDotNetGroup():New( oCarpeta, 306, "Impresión", .f. )
       ::oBtnPrevisualizar  := TDotNetButton():New( 60, oGrupo, "Prev1_32",             "Visualizar [F5]",   1, {|| ::GenReport( IS_SCREEN ) }, , , .f., .f., .f. )
-      ::oBtnImprimir       := TDotNetButton():New( 60, oGrupo, "Imp32",                "Imprimir",          2, {|| ::GenReport( IS_PRINTER ) }, , , .f., .f., .f. )
+      ::oBtnImprimir       := TDotNetButton():New( 60, oGrupo, "gc_printer2_32",       "Imprimir",          2, {|| ::GenReport( IS_PRINTER ) }, , , .f., .f., .f. )
       ::oBtnExcel          := TDotNetButton():New( 60, oGrupo, "Table_32",             "Excel",             3, {|| ::GenReport( IS_EXCEL ) }, , , .f., .f., .f. )
       ::oBtnPdf            := TDotNetButton():New( 60, oGrupo, "Document_lock_32",     "Pdf",               4, {|| ::GenReport( IS_PDF ) }, , , .f., .f., .f. )
-      ::oBtnHTML           := TDotNetButton():New( 60, oGrupo, "SndInt32",             "HTML",              5, {|| ::GenReport( IS_HTML ) }, , , .f., .f., .f. )
+      ::oBtnHTML           := TDotNetButton():New( 60, oGrupo, "gc_earth_32",          "HTML",              5, {|| ::GenReport( IS_HTML ) }, , , .f., .f., .f. )
 
       oGrupo               := TDotNetGroup():New( oCarpeta, 246, "Útiles", .f. )
       ::oBtnDiseno         := TDotNetButton():New( 60, oGrupo, "Drawing_utensils_32",  "Diseñar",           1, {|| ::DesignReport() }, , , .f., .f., .f. )
@@ -715,7 +715,7 @@ METHOD InitDialog() CLASS TFastReportInfGen
 
       oGrupo               := TDotNetGroup():New( oCarpeta, 66, "Salida", .f. )
 
-      ::oBtnCancel         := TDotNetButton():New( 60, oGrupo, "End32",                "Salir",             1, {|| ::lBreak := .t., ::End() }, , , .f., .f., .f. )
+      ::oBtnCancel         := TDotNetButton():New( 60, oGrupo, "gc_door_open2_32",     "Salir",             1, {|| ::lBreak := .t., ::End() }, , , .f., .f., .f. )
 
       ::oDlg:oTop          := ::oOfficeBar
 
