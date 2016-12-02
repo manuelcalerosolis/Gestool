@@ -837,7 +837,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       TOOLTIP  "Correo electrónico";
       LEVEL    ACC_IMPR
 
-   DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "gc_portable_barcode_scanner_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( TLabelGeneratorPedidoProveedores():New( nView ):Dialog() ) ;
          TOOLTIP  "Eti(q)uetas" ;
@@ -902,7 +902,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
 
-   DEFINE BTNSHELL oScript RESOURCE "Folder_document_" GROUP OF oWndBrw ;
+   DEFINE BTNSHELL oScript RESOURCE "gc_folder_document_" GROUP OF oWndBrw ;
       NOBORDER ;
       ACTION   ( oScript:Expand() ) ;
       TOOLTIP  "Scripts" ;

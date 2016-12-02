@@ -899,7 +899,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       :bEditValue       := {|| dbSeekInOrd( ( D():Articulos( nView ) )->Codigo, "cCodArt", dbfCodebar ) }
       :nWidth           := 20
       :SetCheck( { "Sel16", "Nil16" } )
-      :AddResource( "Remotecontrol_16" )
+      :AddResource( "gc_portable_barcode_scanner_16" )
    end with
 
    with object ( oWndBrw:AddXCol() )
@@ -1431,14 +1431,14 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       HOTKEY   "T" ;
       LEVEL    ACC_IMPR
 
-   DEFINE BTNSHELL RESOURCE "Document_Chart_" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "gc_document_empty_chart_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( TFastVentasArticulos():New():Play() ) ;
       TOOLTIP  "Rep(o)rting";
       HOTKEY   "O" ;
       LEVEL    ACC_IMPR
 
-   DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "gc_portable_barcode_scanner_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( TArticuloLabelGenerator():New():Dialog() ) ;
       TOOLTIP  "Eti(q)uetas" ;
@@ -1543,7 +1543,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
    end if
    
-   DEFINE BTNSHELL oScript RESOURCE "Folder_document_" GROUP OF oWndBrw ;
+   DEFINE BTNSHELL oScript RESOURCE "gc_folder_document_" GROUP OF oWndBrw ;
       NOBORDER ;
       ACTION   ( oScript:Expand() ) ;
       TOOLTIP  "Scripts" ;

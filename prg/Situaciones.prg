@@ -191,7 +191,7 @@ METHOD Activate()
 
       ::oWndBrw:GralButtons( Self )
 
-      DEFINE BTNSHELL RESOURCE "Document_Chart_" GROUP OF ::oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_document_empty_chart_" GROUP OF ::oWndBrw ;
          NOBORDER ;
          ACTION   ( ::sincronizarSituacionesPrestashop() ) ;
          TOOLTIP  "Sincronizar";

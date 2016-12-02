@@ -1637,7 +1637,7 @@ else
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
 
-   DEFINE BTNSHELL oScript RESOURCE "Folder_document_" GROUP OF oWndBrw ;
+   DEFINE BTNSHELL oScript RESOURCE "gc_folder_document_" GROUP OF oWndBrw ;
       NOBORDER ;
       ACTION   ( oScript:Expand() ) ;
       TOOLTIP  "Scripts" ;

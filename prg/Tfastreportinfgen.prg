@@ -711,7 +711,7 @@ METHOD InitDialog() CLASS TFastReportInfGen
       ::oBtnDiseno         := TDotNetButton():New( 60, oGrupo, "gc_set_square_pencil_32",    "Diseñar",           1, {|| ::DesignReport() }, , , .f., .f., .f. )
       ::oBtnEliminar       := TDotNetButton():New( 60, oGrupo, "gc_document_text_delete_32", "Eliminar",          2, {|| ::Eliminar() }, , , .f., .f., .f. )
       ::oBtnFiltrar        := TDotNetButton():New( 60, oGrupo, "gc_funnel_32",               "Filtrar",           3, {|| ::DlgFilter() }, , , .f., .f., .f. )
-      ::oBtnXml            := TDotNetButton():New( 60, oGrupo, "gc_folder_document_32",      "Ver",               4, {|| ::XmlDocument() }, , , .f., .f., .f. )
+      ::oBtnXml            := TDotNetButton():New( 60, oGrupo, "gc_gc_folder_document_32",      "Ver",               4, {|| ::XmlDocument() }, , , .f., .f., .f. )
 
       oGrupo               := TDotNetGroup():New( oCarpeta, 66, "Salida", .f. )
 
@@ -3606,7 +3606,7 @@ METHOD CreateTreeImageList()
    ::oTreeImageList:AddMasked( TBitmap():Define( "User1_16" ),                         Rgb( 255, 0, 255 ) ) // 19
    ::oTreeImageList:AddMasked( TBitmap():Define( "Power-drill_user1_16" ),             Rgb( 255, 0, 255 ) ) // 20 SAT
    ::oTreeImageList:AddMasked( TBitmap():Define( "Briefcase_user1_16" ),               Rgb( 255, 0, 255 ) ) // 21 Recibos
-   ::oTreeImageList:AddMasked( TBitmap():Define( "Folder_document_16" ),               Rgb( 255, 0, 255 ) ) // 22 Folder
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_folder_document_16" ),               Rgb( 255, 0, 255 ) ) // 22 Folder
    ::oTreeImageList:AddMasked( TBitmap():Define( "Moneybag_16" ),                      Rgb( 255, 0, 255 ) ) // 23 Iva
    ::oTreeImageList:AddMasked( TBitmap():Define( "Cube_Yellow_16"),                    Rgb( 255, 0, 255 ) ) // 24 Iva
 

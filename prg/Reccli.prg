@@ -633,7 +633,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
       TOOLTIP  "Cobrar" ;
       LEVEL    ACC_EDIT
 
-   DEFINE BTNSHELL RESOURCE "Document_Chart_" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "gc_document_empty_chart_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( TFastVentasRecibos():New():Play() );
       TOOLTIP  "(R)eporting";

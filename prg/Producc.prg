@@ -578,21 +578,21 @@ METHOD Activate( cDriver )
 
       ::lGenParte( ::oWndBrw:oBrw, oPdf, IS_PDF )
 
-   DEFINE BTNSHELL RESOURCE "Document_Chart_" OF ::oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "gc_document_empty_chart_" OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( TFastProduccion():New():Play() ) ;
       TOOLTIP  "Rep(o)rting";
       HOTKEY   "O" ;
       LEVEL    ACC_IMPR
 
-   DEFINE BTNSHELL RESOURCE "RemoteControl_" OF ::oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "gc_portable_barcode_scanner_" OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::CreateAsistenteEtiquetas() ) ;
       TOOLTIP  "Eti(q)uetas" ;
       HOTKEY   "Q";
       LEVEL    ACC_IMPR   
 
-   DEFINE BTNSHELL oScript RESOURCE "Folder_document_" GROUP OF ::oWndBrw ;
+   DEFINE BTNSHELL oScript RESOURCE "gc_folder_document_" GROUP OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( oScript:Expand() ) ;
       TOOLTIP  "Scripts" ;

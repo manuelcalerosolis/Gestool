@@ -357,15 +357,12 @@ GC_DOCUMENT_TEXT_DELETE_16 BITMAP "..\\bmp\\gc_document_text_delete_16.bmp"
 GC_DOCUMENT_TEXT_DELETE_32 BITMAP "..\\bmp\\gc_document_text_delete_32.bmp"
 GC_FUNNEL_16 BITMAP "..\\bmp\\gc_funnel_16.bmp"
 GC_FUNNEL_32 BITMAP "..\\bmp\\gc_funnel_32.bmp"
-GC_FOLDER_DOCUMENT_16 BITMAP "..\\bmp\\gc_folder_document_16.bmp"
-GC_FOLDER_DOCUMENT_32 BITMAP "..\\bmp\\gc_folder_document_32.bmp"
 
 BUS16 BITMAP "..\\bmp\\gc_magnifying_glass2_16.bmp"
 EDIT16 BITMAP "..\\bmp\\gc_pencil_16.bmp"
 STOPWATCH_REFRESH_32 BITMAP "..\\bmp\\gc_clock_refresh_32.bmp"
 STOPWATCH_REFRESH_16 BITMAP "..\\bmp\\gc_clock_refresh_16.bmp"
 STOPWATCH_RESET_16 BITMAP "..\\bmp\\gc_clock_reset_16.bmp"
-
 STOPWATCH_STOP_16 BITMAP "..\\bmp\\gc_clock_stop_16.bmp"
 STOPWATCH_STOP_32 BITMAP "..\\bmp\\gc_clock_stop_32.bmp"
 GC_CLOCK_PLAY_16 BITMAP "..\\bmp\\gc_clock_play_16.bmp"
@@ -375,14 +372,24 @@ CHGSTATE16 BITMAP "..\\bmp\\gc_objects_exchange_16.bmp"
 BFILTER16 BITMAP "..\\bmp\\gc_funnel_16.bmp"
 NEW16 BITMAP "..\\bmp\\gc_plus2_16.bmp"
 NEW32 BITMAP "..\\bmp\\gc_plus2_32.bmp"
-
-NEWMONO16 BITMAP "..\\bmp\\Add2_Mono_16.bmp"
-Document_add_32 BITMAP "..\\bmp\\Document_add_32.bmp"
-
 DUP16 BITMAP "..\\bmp\\gc_document_text_plus2_16.bmp"
-DEL16 BITMAP "..\\bmp\\Delete2_16.bmp"
-DEL32 BITMAP "..\\bmp\\Delete2_32.bmp"
-DELETE_32 BITMAP "..\\bmp\\Delete_32.bmp"
+DEL16 BITMAP "..\\bmp\\gc_delete_16.bmp"
+DEL32 BITMAP "..\\bmp\\gc_delete_32.bmp"
+DELETE_32 BITMAP "..\\bmp\\gc_delete_32.bmp"
+CNFCLI16 BITMAP "..\\bmp\\gc_wrench_16.bmp"
+CNFCLI32 BITMAP "..\\bmp\\gc_wrench_32.bmp"
+CAL16 BITMAP "..\\bmp\\gc_folder_open_arrow_circle2_16.bmp"
+TACTIL16 BITMAP "..\\bmp\\gc_hand_touch_16.bmp"
+UP16 BITMAP "..\\bmp\\gc_navigate_open_16.bmp"
+DOWN16 BITMAP "..\\bmp\\gc_navigate_close_16.bmp"
+INFO16 BITMAP "..\\bmp\\gc_speech_balloon_answer2_16.bmp"
+GC_DOCUMENT_EMPTY_CHART_16 BITMAP "..\\bmp\\gc_document_empty_chart_16.bmp"
+GC_PORTABLE_BARCODE_SCANNER_16 BITMAP "..\\bmp\\gc_portable_barcode_scanner_16.bmp"
+
+BMPCHG16 BITMAP "..\\bmp\\gc_arrow_circle2_16.bmp"
+
+
+
 
 
 

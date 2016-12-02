@@ -1162,7 +1162,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          TOOLTIP  "Correo electrónico";
          LEVEL    ACC_IMPR
 
-      DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_portable_barcode_scanner_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( TLabelGeneratorFacturasClientes():New( nView ):Dialog() ) ;
          TOOLTIP  "Eti(q)uetas" ;
@@ -1279,7 +1279,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          HOTKEY   "N" ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL oScript RESOURCE "Folder_document_" GROUP OF oWndBrw ;
+      DEFINE BTNSHELL oScript RESOURCE "gc_folder_document_" GROUP OF oWndBrw ;
          NOBORDER ;
          ACTION   ( oScript:Expand() ) ;
          TOOLTIP  "Scripts" ;

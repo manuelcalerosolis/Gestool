@@ -2402,8 +2402,8 @@ Function CreateAcceso( oWnd )
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 5
    oGrupo:cPrompt       := 'Expedientes'
-   oGrupo:cLittleBitmap := "gc_folder_document_16"
-   oGrupo:cBigBitmap    := "gc_folder_document_32"
+   oGrupo:cLittleBitmap := "gc_gc_folder_document_16"
+   oGrupo:cBigBitmap    := "gc_gc_folder_document_32"
 
    oItem                := oItemExpediente:Add()
    oItem:oGroup         := oGrupo
@@ -2451,8 +2451,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los expedientes'
    oItem:bAction        := {|| StartTExpediente() }
    oItem:cId            := "04010"
-   oItem:cBmp           := "gc_folder_document_16"
-   oItem:cBmpBig        := "gc_folder_document_32"
+   oItem:cBmp           := "gc_gc_folder_document_16"
+   oItem:cBmpBig        := "gc_gc_folder_document_32"
    oItem:lShow          := .f.
 
    end if
@@ -3236,8 +3236,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Auditoria'
    oItem:bAction        := {|| TDataCenter():Auditor() }
    oItem:cId            := "01122"
-   oItem:cBmp           := "Document_Chart_16"
-   oItem:cBmpBig        := "Document_Chart_32"
+   oItem:cBmp           := "gc_document_empty_chart_16"
+   oItem:cBmpBig        := "gc_document_empty_chart_32"
    oItem:lShow          := .f.
 
    end if 
