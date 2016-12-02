@@ -7378,8 +7378,6 @@ METHOD CargaValoresDefecto( nUbicacion ) CLASS TpvTactil
       end if
    end if
 
-
-
    /*
    Usuario del ticket----------------------------------------------------------
    */
