@@ -2626,7 +2626,8 @@ METHOD lCloTiket( lClose, cCodCaj )
 
          ::ActTactil()
 
-         if ::oTikT:nUbiTik == ubiEncargar .and. ::oTikT:lAbierto
+         //if ::oTikT:nUbiTik == ubiEncargar .and. ::oTikT:lAbierto
+         if ::oTikT:lAbierto
             ::oTikT:FieldPutByName( "lCloTik", .f. )
          else
             ::oTikT:FieldPutByName( "lCloTik", lClose )

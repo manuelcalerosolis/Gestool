@@ -7372,7 +7372,13 @@ METHOD CargaValoresDefecto( nUbicacion ) CLASS TpvTactil
 
    if Empty( ::oTiketCabecera:cTurTik )
       ::oTiketCabecera:cTurTik   := cCurSesion()
+   else
+      if ::oTiketCabecera:cTurTik != cCurSesion()
+         ::oTiketCabecera:cTurTik   := cCurSesion()  
+      end if
    end if
+
+
 
    /*
    Usuario del ticket----------------------------------------------------------
