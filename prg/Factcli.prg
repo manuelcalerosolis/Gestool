@@ -17600,25 +17600,23 @@ return ( nUnidades )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION BrwFacCli( oGet, oIva )
+FUNCTION browseFacturasClientes( oGet, oIva, nView )
 
    local oDlg
    local oBrw
+   local nOrd
    local oGet1
    local cGet1
    local oCbxOrd
    local cCbxOrd
-   local nOrd
    local aCbxOrd
-
-   if !OpenFiles()
-      Return .f.
-   end if
 
    aCbxOrd        := { "Número", "Fecha", "Cliente", "Nombre" }
    nOrd           := GetBrwOpt( "BrwFacCli" )
    nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd        := aCbxOrd[ nOrd ]
+
+   D():getStatusFacturasClientes( nView )
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Facturas de clientes"
 
@@ -17737,13 +17735,7 @@ FUNCTION BrwFacCli( oGet, oIva )
 
    SetBrwOpt( "BrwFacCli", ( D():FacturasClientes( nView ) )->( OrdNumber() ) )
 
-   ( D():FacturasClientes( nView ) )->( dbClearFilter() )
-
-   CloseFiles()
-
-   /*
-    Guardamos los datos del browse-------------------------------------------
-   */
+   D():setStatusFacturasClientes( nView )
 
    oBrw:CloseData()
 

@@ -997,7 +997,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       oMailing          := TGenmailingDatabaseFacturaRectificativaCliente():New( nView )
 
-	  TComercio():getInstanceOpenFiles()
+      TComercio():getInstanceOpenFiles()
 
       /*
       Declaración de variables publicas----------------------------------------
@@ -3170,9 +3170,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
          WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
          BITMAP   "LUPA" ;
          VALID    ( cFacCli( aGet, aTmp, oBrwLin, oBrwIva, nMode ), RecalculaTotal( aTmp ) ) ;
-         ON HELP  ( brwFacCli( aGet[ _CNUMFAC ], aGet[ _LIVAINC ] ) );
+         ON HELP  ( browseFacturasClientes( aGet[ _CNUMFAC ], aGet[ _LIVAINC ], nView ) );
          OF       oFld:aDialogs[ 1 ]
-         // PICTURE  "@R #/#########/##" ;
 
       /*
       Causas y motivos de las facturas rectificativas--------------------------
@@ -10938,42 +10937,6 @@ Return ( nil )
 
 //----------------------------------------------------------------------------//
 
-static Function ActualizaStockWeb( cNumDoc )
-
-   local nRec 		:= ( dbfFacRecL )->( Recno() )
-   local nOrdAnt 	:= ( dbfFacRecL )->( OrdSetFocus( "nNumFac" ) )
-
-   if uFieldEmpresa( "lRealWeb" )
-
-      with object ( TComercio():New())
-
-      	if ( dbfFacRecL )->( dbSeek( cNumDoc ) )
-
-      		while ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac == cNumDoc .and. !( dbfFacRecL )->( Eof() )
-
-         		if Retfld( ( dbfFacRecL )->cRef, D():Articulos( nView ), "lPubInt", "Codigo" )
-
-         			:ActualizaStockProductsPrestashop( ( dbfFacRecL )->cRef, ( dbfFacRecL )->cCodPr1, ( dbfFacRecL )->cCodPr2, ( dbfFacRecL )->cValPr1, ( dbfFacRecL )->cValPr2 )
-
-         		end if	
-
-         		( dbfFacRecL )->( dbSkip() )
-
-         	end while
-
-        end if
-        
-      end with
-
-   end if 
-
-   ( dbfFacRecL )->( OrdSetFocus( nOrdAnt ) )
-   ( dbfFacRecL )->( dbGoTo( nRec ) )  
-
-Return .t.
-
-//--------------------------------------------------------------------------//
-
 Static Function hValue( aTmp, aTmpFac )
 
    local hValue                  := {=>}
@@ -14651,7 +14614,7 @@ Return ( sTotal )
 
 //--------------------------------------------------------------------------//
 
-FUNCTION BrwFacRec( oGet, oIva )
+FUNCTION browseFacturasRectificativas( oGet, oIva, nView )
 
 	local oDlg
 	local oBrw
@@ -14662,14 +14625,12 @@ FUNCTION BrwFacRec( oGet, oIva )
    local nOrd
    local aCbxOrd
 
-   if !OpenFiles()
-      Return .f.
-   end if
-
    aCbxOrd        := { "Número", "Fecha", "Cliente", "Nombre" }
    nOrd           := GetBrwOpt( "BrwFacRec" )
    nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd        := aCbxOrd[ nOrd ]
+
+   D():getStatusFacturasRectificativas( nView )  
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Facturas rectificativas de clientes"
 
@@ -14783,12 +14744,10 @@ FUNCTION BrwFacRec( oGet, oIva )
 
    SetBrwOpt( "BrwFacRec", ( D():FacturasRectificativas( nView ) )->( OrdNumber() ) )
 
-   ( D():FacturasRectificativas( nView ) )->( dbClearFilter() )
-
-   CloseFiles()
+   D():setStatusFacturasRectificativas( nView )  
 
    /*
-    Guardamos los datos del browse-------------------------------------------
+   Guardamos los datos del browse----------------------------------------------
    */
 
    oBrw:CloseData()

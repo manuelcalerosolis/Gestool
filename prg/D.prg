@@ -246,6 +246,9 @@ CLASS D
    METHOD FacturasRectificativas( nView )                      INLINE ( ::Get( "FacRecT", nView ) )
       METHOD FacturasRectificativasId( nView )                 INLINE ( ( ::Get( "FacRecT", nView ) )->cSerie + str( ( ::Get( "FacRecT", nView ) )->nNumFac, 9 ) + ( ::Get( "FacRecT", nView ) )->cSufFac )
 
+   METHOD getStatusFacturasRectificativas( nView )             INLINE ( ::aStatus := aGetStatus( ::FacturasRectificativas( nView ) ) )
+   METHOD setStatusFacturasRectificativas( nView )             INLINE ( SetStatus( ::FacturasRectificativas( nView ), ::aStatus ) ) 
+
    METHOD FacturasRectificativasLineas( nView )                INLINE ( ::Get( "FacRecL", nView ) )
       METHOD FacturasRectificativasLineasId( nView )           INLINE ( ( ::Get( "FacRecL", nView ) )->cSerie + str( ( ::Get( "FacRecL", nView ) )->nNumFac, 9 ) + ( ::Get( "FacRecL", nView ) )->cSufFac )
 

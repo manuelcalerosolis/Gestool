@@ -93,7 +93,6 @@ CLASS TComercio
    DATA  oFPago
 
    DATA  oArtDiv
-   DATA  oTipArt
    DATA  oFam
    DATA  oGrpFam
    DATA  oCli
@@ -595,8 +594,6 @@ METHOD filesOpen() CLASS TComercio
 
       DATABASE NEW ::oGrpFam  PATH ( cPatArt() ) FILE "GRPFAM.DBF"      VIA ( cDriver() ) SHARED INDEX "GRPFAM.CDX"
 
-      DATABASE NEW ::oTipArt  PATH ( cPatArt() ) FILE "TIPART.DBF"      VIA ( cDriver() ) SHARED INDEX "TIPART.CDX"
-
       DATABASE NEW ::oCli     PATH ( cPatCli() ) FILE "CLIENT.DBF"      VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
       DATABASE NEW ::oObras   PATH ( cPatCli() ) FILE "OBRAST.DBF"      VIA ( cDriver() ) SHARED INDEX "OBRAST.CDX"
@@ -700,10 +697,6 @@ METHOD filesClose() CLASS TComercio
 
    if !empty( ::oGrpFam ) .and. ::oGrpFam:Used()
       ::oGrpFam:End()
-   end if
-
-   if !empty( ::oTipArt ) .and. ::oTipArt:Used()
-      ::oTipArt:End()
    end if
 
    if !empty( ::oCli ) .and. ::oCli:Used()

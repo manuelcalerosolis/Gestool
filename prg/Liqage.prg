@@ -71,7 +71,7 @@ CLASS TLiquidar FROM TMASDET
 
    METHOD MarkFacCli( cNumFac, nMark )
 
-   METHOD BrwFacCli( oGet )
+   METHOD browseFacturasClientes( oGet )
 
    METHOD IntBtnPrv( oPag, oDlg )
    METHOD IntBtnNxt( oPag, oDlg )
@@ -659,7 +659,7 @@ METHOD EdtLiqAge( nMode )
       WHEN     ( nMode == APPD_MODE ) ;
       VALID    ( CheckFac( aGet[ 2 ], This:oFacCliT:cAlias(), This, oDlg ) );
       BITMAP   "LUPA" ;
-      ON HELP  ( This:BrwFacCli( aGet[ 2 ] ), oDlg:Update() );
+      ON HELP  ( This:browseFacturasClientes( aGet[ 2 ] ), oDlg:Update() );
       OF       oDlg
 
    REDEFINE GET aGet[ 4 ] VAR ::oDbfDet:dFecFac ;
@@ -1171,7 +1171,7 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-METHOD BrwFacCli( oGet )
+METHOD browseFacturasClientes( oGet )
 
 	local oDlg
    local oBrw

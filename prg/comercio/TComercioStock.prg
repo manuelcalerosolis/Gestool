@@ -34,9 +34,6 @@ CLASS TComercioStock FROM TComercioConector
       METHOD createCommandProductToUpdate()
          METHOD getCommandProductToUpdate()
 
-   METHOD executeCommandProductsToUpdate() 
-      METHOD executeCommandProductToUpdate() 
-
    METHOD insertProductsToUpadateStocks() 
 
    // Service methods----------------------------------------------------------
@@ -166,8 +163,6 @@ METHOD updateWebProductStocks()
 
    ::createCommandProductsToUpdate()
 
-   ::executeCommandProductsToUpdate()
-
    ::oWaitMeter:End()
 
 Return ( .t. )   
@@ -220,7 +215,7 @@ METHOD addStockProductToUpdate( hProduct )
 
             nTotalStock          += sStock:nUnidades 
 
-            if ( idProductAttribute != 0 ) .or. ( empty( sStock:cValorPropiedad1 ) .and. empty( sStock:cValorPropiedad2 ) )
+            if ( !empty( sStock:cValorPropiedad1 ) .or. !empty( sStock:cValorPropiedad2 ) )
 
                aadd( aStockProducts,   {  "idProduct"             => idProduct,;
                                           "idProductAttribute"    => idProductAttribute,;
@@ -388,24 +383,21 @@ METHOD getCommandProductToUpdate( hProduct )
    local cCommand             := ""
    local nTotalStock          := 0
    local idProductAttribute   := 0
-   local idProductPrestashop  := 0
 
    if !( hhaskey( hProduct, "stocks" ) )
       Return ( cCommand )
    end if 
 
-   idProductPrestashop        := alltrim( str( hget( hProduct, "idProductPrestashop" ) ) ) 
-
-   cCommand                   += "DELETE FROM " + ::cPrefixTable( "stock_available" ) + " "                             + ;
-                                    "WHERE id_product = " + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) )   + ";"
+   cCommand                   += "DELETE FROM " + ::cPrefixTable( "stock_available" )                                   + ;
+                                 " WHERE id_product = " + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) )     + ";"
 
    for each hStock in hget( hProduct, "stocks" )
 
-      msgalert( hb_valtoexp( hget( hProduct, "stocks" ) ), "stocks" )
+      idProductAttribute      := ::getIdAttributeProductStock( hget( hProduct, "idProductPrestashop" ), hget( hStock, "idFirstProperty" ), hget( hStock, "valueFirstProperty" ), hget( hStock, "idSecondProperty" ), hget( hStock, "valueSecondProperty" ) )
+      
+      // msgalert( hb_valtoexp( hStock ), cvaltostr( idProductAttribute ) )
 
-      idProductAttribute      := ::getIdAttributeProductStock( idProductPrestashop, hget( hStock, "idFirstProperty" ), hget( hStock, "valueFirstProperty" ), hget( hStock, "idSecondProperty" ), hget( hStock, "valueSecondProperty" ) )
-
-      if hget( hStock, "unitStock" ) > 0 
+      if ( idProductAttribute != 0 ) .and. ( hget( hStock, "unitStock" ) > 0 )
 
          cCommand             += "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( "                           + ;
                                     "id_product, "                                                                      + ;
@@ -416,8 +408,8 @@ METHOD getCommandProductToUpdate( hProduct )
                                     "depends_on_stock, "                                                                + ;
                                     "out_of_stock ) "                                                                   + ;
                                  "VALUES ( "                                                                            + ;
-                                    "'" + idProductPrestashop + "', "                                                   + ;
-                                    "'" + alltrim( str( hget( hStock, "idProductAttribute" ) ) ) + "', "                + ;   
+                                    "'" + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) ) + "', "             + ;
+                                    "'" + alltrim( str( idProductAttribute ) ) + "', "                                  + ;   
                                     "'1', "                                                                             + ;
                                     "'0', "                                                                             + ;
                                     "'" + alltrim( str( hget( hStock, "unitStock" ) ) ) + "', "                         + ;
@@ -440,10 +432,10 @@ METHOD getCommandProductToUpdate( hProduct )
 
    if ( nTotalStock <= 0 ) .and. ( TComercioConfig():isDeleteWithoutStock() )
 
-      cCommand             := "DELETE FROM " + ::cPrefixTable( "product" ) + ;
-                                 " WHERE id_product = '" + idProductPrestashop + "';"
+      cCommand                := "DELETE FROM " + ::cPrefixTable( "product" )                                           + ;
+                                 " WHERE id_product = '" + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) )    + "';"
 
-      ::writeText( 'Desactivando artículo ' + idProductPrestashop + ' de prestashop' )
+      ::writeText( 'Desactivando artículo ' + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) ) + ' de prestashop' )
 
    end if 
 
@@ -587,50 +579,6 @@ METHOD evalProductsToStock()
    if ::prestaShopConnect()
 
       heval( ::hProductsToUpdate, {|cWebName, aProductsWeb| ::updateProductStocks( cWebName, aProductsWeb ) } ) 
-
-      ::prestaShopDisConnect()
-
-   end if 
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD executeCommandProductsToUpdate()
-
-   heval( ::hProductsToUpdate, {|cWebName, aProductsWeb| ::executeCommandProductToUpdate( cWebName, aProductsWeb ) } ) 
-
-Return .t.   
-
-//---------------------------------------------------------------------------//
-
-METHOD executeCommandProductToUpdate( cWebName, aProducts )
-
-   local hProduct
-   local cCommand
-   local aCommand
-
-   ::TComercioConfig():setCurrentWebName( cWebName )
-
-   ::meterProcesoSetTotal( len( aProducts ) )
-      
-   if ::prestaShopConnect()
-
-      for each hProduct in aProducts
-         
-         aCommand    := hb_atokens( hget( hProduct, "commandSQL" ), ";")
-
-         for each cCommand in aCommand
-
-            if !empty( cCommand )
-               ::commandExecDirect( cCommand )
-            end if 
-            
-         next 
-
-         ::meterProcesoText()
-
-      next
 
       ::prestaShopDisConnect()
 

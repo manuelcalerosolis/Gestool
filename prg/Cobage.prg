@@ -418,6 +418,8 @@ METHOD OpenFiles( cPath ) CLASS TCobAge
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+      ::nView     := D():CreateView()
+
       /*
       Definicion del master-------------------------------------------------------
       */
@@ -590,6 +592,8 @@ METHOD CloseFiles() CLASS TCobAge
    if !Empty( ::oMnuRec )
       ::oMnuRec:End()
    end if
+
+   D():DeleteView( ::nView )
 
    ::oAgentes     := nil
    ::oFacCliT     := nil
@@ -2617,7 +2621,9 @@ CLASS TDetCobAge FROM TDet
    METHOD lPreSave( oGetTipoHora, oDlg )
 
    METHOD LoadFacturas( lRectificativa )
-   METHOD BrowseFacturas( lRectificativa )   INLINE   ( if( !lRectificativa, BrwFacCli( ::oNumFac ), BrwFacRec( ::oNumFac ) ) )
+   METHOD BrowseFacturas( lRectificativa )   INLINE   ( if( lRectificativa,;
+                                                            browseFacturasRectificativas( ::oNumFac, , ::nView ),;
+                                                            browseFacturasClientes( ::oNumFac, , ::nView ) ) )
 
    METHOD lChangeComision()                  INLINE   ( ::oTotCom:cText( ::oImpCom:VarGet() * ::oPctCom:VarGet() / 100 ) )
 
