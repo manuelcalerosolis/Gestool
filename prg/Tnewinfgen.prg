@@ -899,10 +899,10 @@ METHOD lGrupoMateriaPrima( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoMateriaPrima:Cargo:ValidDesde   := {|oGet| if( cArticulo( if( !Empty( oGet ), oGet, ::oDesde ), ::oDbfArticuloMateriaPrima:cAlias, ::oSayDesde ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoMateriaPrima:Cargo:ValidHasta   := {|oGet| if( cArticulo( if( !Empty( oGet ), oGet, ::oHasta ), ::oDbfArticuloMateriaPrima:cAlias, ::oSayHasta ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoMateriaPrima:Cargo:lImprimir    := lImp
-   ::oGrupoMateriaPrima:Cargo:cBitmap      := "Cube_Yellow_16"
+   ::oGrupoMateriaPrima:Cargo:cBitmap      := "gc_object_cube_16"
 
    if !Empty( ::oImageList )
-      ::oImageList:AddMasked( TBitmap():Define( "Cube_Yellow_16" ), Rgb( 255, 0, 255 ) )
+      ::oImageList:AddMasked( TBitmap():Define( "gc_object_cube_16" ), Rgb( 255, 0, 255 ) )
    end if
 
    if lInitGroup != nil
@@ -911,7 +911,7 @@ METHOD lGrupoMateriaPrima( lInitGroup, lImp ) CLASS TNewInfGen
 
       if !Empty( ::oImageGroup )
 
-         ::oImageGroup:AddMasked( TBitmap():Define( "Cube_Yellow_16" ), Rgb( 255, 0, 255 ) )
+         ::oImageGroup:AddMasked( TBitmap():Define( "gc_object_cube_16" ), Rgb( 255, 0, 255 ) )
 
          ::oGrupoMateriaPrima:Cargo:Imagen := len( ::oImageGroup:aBitmaps ) - 1
 
@@ -1126,11 +1126,11 @@ METHOD lGrupoOperacion( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoOperacion:Cargo:ValidDesde := {|oGet| if( ::oOperacion:Existe( if( !Empty( oGet ), oGet, ::oDesde ), ::oSayDesde, "cDesOpe", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoOperacion:Cargo:ValidHasta := {|oGet| if( ::oOperacion:Existe( if( !Empty( oGet ), oGet, ::oHasta ), ::oSayHasta, "cDesOpe", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoOperacion:Cargo:lImprimir  := lImp
-   ::oGrupoOperacion:Cargo:cBitmap     := "Worker2_Hammer2_16"
+   ::oGrupoOperacion:Cargo:cBitmap     := "gc_worker2_hammer_16"
 
 
    if !Empty( ::oImageList )
-      ::oImageList:AddMasked( TBitmap():Define( "Worker2_Hammer2_16" ), Rgb( 255, 0, 255 ) )
+      ::oImageList:AddMasked( TBitmap():Define( "gc_worker2_hammer_16" ), Rgb( 255, 0, 255 ) )
    end if   
 
    if lInitGroup != nil
@@ -1138,7 +1138,7 @@ METHOD lGrupoOperacion( lInitGroup, lImp ) CLASS TNewInfGen
       aAdd( ::aSelectionGroup, ::oGrupoOperacion )
 
       if !Empty( ::oImageGroup )
-         ::oImageGroup:AddMasked( TBitmap():Define( "Worker2_Hammer2_16" ), Rgb( 255, 0, 255 ) )
+         ::oImageGroup:AddMasked( TBitmap():Define( "gc_worker2_hammer_16" ), Rgb( 255, 0, 255 ) )
          ::oGrupoOperacion:Cargo:Imagen  := len( ::oImageGroup:aBitmaps ) -1
       end if
 
@@ -1201,10 +1201,10 @@ METHOD lGrupoTOperacion( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoTOperacion:Cargo:ValidDesde := {|oGet| if( ::oTipOpera:Existe( if( !Empty( oGet ), oGet, ::oDesde ), ::oSayDesde, "cDesTip", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoTOperacion:Cargo:ValidHasta := {|oGet| if( ::oTipOpera:Existe( if( !Empty( oGet ), oGet, ::oHasta ), ::oSayHasta, "cDesTip", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoTOperacion:Cargo:lImprimir  := lImp
-   ::oGrupoTOperacion:Cargo:cBitmap    := "Worker_Folder_Blue_16" 
+   ::oGrupoTOperacion:Cargo:cBitmap    := "gc_folder_open_worker_16" 
 
    if !Empty( ::oImageList )
-      ::oImageList:AddMasked( TBitmap():Define( "Worker_Folder_Blue_16" ), Rgb( 255, 0, 255 ) )
+      ::oImageList:AddMasked( TBitmap():Define( "gc_folder_open_worker_16" ), Rgb( 255, 0, 255 ) )
    end if   
 
    if lInitGroup != nil
@@ -1213,7 +1213,7 @@ METHOD lGrupoTOperacion( lInitGroup, lImp ) CLASS TNewInfGen
       aAdd( ::aSelectionGroup, ::oGrupoTOperacion )
 
       if !Empty( ::oImageGroup )
-         ::oImageGroup:AddMasked( TBitmap():Define( "Worker_Folder_Blue_16" ), Rgb( 255, 0, 255 ) )
+         ::oImageGroup:AddMasked( TBitmap():Define( "gc_folder_open_worker_16" ), Rgb( 255, 0, 255 ) )
          ::oGrupoTOperacion:Cargo:Imagen  := len( ::oImageGroup:aBitmaps ) - 1
       end if   
 
@@ -1276,11 +1276,11 @@ METHOD lGrupoSeccion( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoSeccion:Cargo:ValidDesde := {|oGet| if( ::oSeccion:Existe( if( !Empty( oGet ), oGet, ::oDesde ), ::oSayDesde, "cDesSec", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoSeccion:Cargo:ValidHasta := {|oGet| if( ::oSeccion:Existe( if( !Empty( oGet ), oGet, ::oHasta ), ::oSayHasta, "cDesSec", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoSeccion:Cargo:lImprimir  := lImp
-   ::oGrupoSeccion:Cargo:cBitmap    := "Group_Worker2_16"
+   ::oGrupoSeccion:Cargo:cBitmap    := "gc_worker_group_16"
 
 
    if !Empty( ::oImageList )
-      ::oImageList:AddMasked( TBitmap():Define( "Group_Worker2_16" ), Rgb( 255, 0, 255 ) )
+      ::oImageList:AddMasked( TBitmap():Define( "gc_worker_group_16" ), Rgb( 255, 0, 255 ) )
    end if
 
    if lInitGroup != nil
@@ -1288,7 +1288,7 @@ METHOD lGrupoSeccion( lInitGroup, lImp ) CLASS TNewInfGen
       aAdd( ::aSelectionGroup, ::oGrupoSeccion )
 
       if !Empty( ::oImageGroup )
-         ::oImageGroup:AddMasked( TBitmap():Define( "Group_Worker2_16" ), Rgb( 255, 0, 255 ) )
+         ::oImageGroup:AddMasked( TBitmap():Define( "gc_worker_group_16" ), Rgb( 255, 0, 255 ) )
          ::oGrupoSeccion:Cargo:Imagen  := len( ::oImageGroup:aBitmaps ) -1
       end if   
 
@@ -1427,10 +1427,10 @@ METHOD lGrupoAlmacenOrigen( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoAlmacenOrigen:Cargo:ValidDesde := {|oGet| if( cAlmacen( if( !Empty( oGet ), oGet, ::oDesde ), ::oDbfAlmacenOrigen:cAlias, ::oSayDesde ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoAlmacenOrigen:Cargo:ValidHasta := {|oGet| if( cAlmacen( if( !Empty( oGet ), oGet, ::oHasta ), ::oDbfAlmacenOrigen:cAlias, ::oSayHasta ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoAlmacenOrigen:Cargo:lImprimir  := lImp
-   ::oGrupoAlmacenOrigen:Cargo:cBitmap    := "Package_16"
+   ::oGrupoAlmacenOrigen:Cargo:cBitmap    := "gc_package_16"
 
    if !Empty( ::oImageList )
-      ::oImageList:AddMasked( TBitmap():Define( "Package_16" ), Rgb( 255, 0, 255 ) )
+      ::oImageList:AddMasked( TBitmap():Define( "gc_package_16" ), Rgb( 255, 0, 255 ) )
    end if
 
    if lInitGroup != nil
@@ -1438,7 +1438,7 @@ METHOD lGrupoAlmacenOrigen( lInitGroup, lImp ) CLASS TNewInfGen
       aAdd( ::aSelectionGroup, ::oGrupoAlmacenOrigen )
 
       if !Empty( ::oImageGroup )
-         ::oImageGroup:AddMasked( TBitmap():Define( "Package_16" ), Rgb( 255, 0, 255 ) )
+         ::oImageGroup:AddMasked( TBitmap():Define( "gc_package_16" ), Rgb( 255, 0, 255 ) )
          ::oGrupoAlmacenOrigen:Cargo:Imagen  := len( ::oImageGroup:aBitmaps ) -1
       end if
 
@@ -1501,10 +1501,10 @@ METHOD lGrupoMaquina( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoMaquina:Cargo:ValidDesde := {|oGet| if( ::oMaquina:Existe( if( !Empty( oGet ), oGet, ::oDesde ), ::oSayDesde, "cDesMaq", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoMaquina:Cargo:ValidHasta := {|oGet| if( ::oMaquina:Existe( if( !Empty( oGet ), oGet, ::oHasta ), ::oSayHasta, "cDesMaq", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoMaquina:Cargo:lImprimir  := lImp
-   ::oGrupoMaquina:Cargo:cBitmap    := "Robot_16"
+   ::oGrupoMaquina:Cargo:cBitmap    := "gc_industrial_robot_16"
 
    if !Empty( ::oImageList )   
-      ::oImageList:AddMasked( TBitmap():Define( "Robot_16" ), Rgb( 255, 0, 255 ) )
+      ::oImageList:AddMasked( TBitmap():Define( "gc_industrial_robot_16" ), Rgb( 255, 0, 255 ) )
    end if
 
    if lInitGroup != nil
@@ -1512,7 +1512,7 @@ METHOD lGrupoMaquina( lInitGroup, lImp ) CLASS TNewInfGen
       aAdd( ::aSelectionGroup, ::oGrupoMaquina )
 
       if !Empty( ::oImageGroup )
-         ::oImageGroup:AddMasked( TBitmap():Define( "Robot_16" ), Rgb( 255, 0, 255 ) )
+         ::oImageGroup:AddMasked( TBitmap():Define( "gc_industrial_robot_16" ), Rgb( 255, 0, 255 ) )
          ::oGrupoMaquina:Cargo:Imagen  := len( ::oImageGroup:aBitmaps ) -1
       end if   
 
@@ -2164,7 +2164,7 @@ METHOD lGrupoGProveedor( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoGProveedor:Cargo:ValidDesde := {|oGet| if( ::oGrpPrv:Existe( if( !Empty( oGet ), oGet, ::oDesde ), ::oSayDesde, "cNomGrp", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoGProveedor:Cargo:ValidHasta := {|oGet| if( ::oGrpPrv:Existe( if( !Empty( oGet ), oGet, ::oHasta ), ::oSayHasta, "cNomGrp", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoGProveedor:Cargo:lImprimir  := lImp
-   ::oGrupoGProveedor:Cargo:cBitmap     := "GrpPrv_16"
+   ::oGrupoGProveedor:Cargo:cBitmap     := "gc_businessmen2_16"
 
    if !Empty( ::oImageList )
       ::oImageList:AddMasked( TBitmap():Define( ::oGrupoGProveedor:Cargo:cBitmap ), Rgb( 255, 0, 255 ) )
