@@ -300,6 +300,9 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS TRemMovAlm
 
    ::oDetSeriesMovimientos:bOnPreSaveDetail  := {|| ::oDetSeriesMovimientos:SaveDetails() }
 
+   ::bOnPreDelete          := {|| TComercio():getInstance():resetProductsToUpdateStocks() }
+   ::bOnPostDelete         := {|| TComercio():getInstance():updateWebProductStocks() }
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -675,6 +678,8 @@ METHOD OpenFiles( lExclusive ) CLASS TRemMovAlm
 
       D():Documentos( ::nView ) 
 
+      TComercio():getInstanceOpenFiles()
+
       ::lOpenFiles         := .t.
 
    end if
@@ -908,6 +913,8 @@ METHOD CloseFiles() CLASS TRemMovAlm
    if !isNil( ::nView )
       D():DeleteView( ::nView )
    end if 
+
+   TComercio():endInstanceCloseFiles()
 
    ::oDbf               := nil
    ::oAlmacenOrigen     := nil
@@ -3294,6 +3301,8 @@ Return ( Self )
 
 METHOD saveResourceWithCalculate( nMode, oDlg ) CLASS TRemMovAlm
 
+   TComercio():getInstance():resetProductsToUpdateStocks()
+
    if ::lSave( nMode )
 
       ::lTargetCalculate   := ( ::oDbf:lWait )
@@ -3305,6 +3314,8 @@ METHOD saveResourceWithCalculate( nMode, oDlg ) CLASS TRemMovAlm
       oDlg:End( IDOK )
 
    end if 
+
+   TComercio():getInstance():updateWebProductStocks()
 
 Return ( Self )
 

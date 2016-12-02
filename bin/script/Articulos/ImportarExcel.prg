@@ -50,8 +50,6 @@ CLASS TImportarExcel
 
    METHOD closeExcel()  
 
-   METHOD seekOrAppend()         INLINE ( if( ::existeRegistro(), ::bloqueaRegistro(), ::appendRegistro() ), ( !neterr() ) )
-
    METHOD existeRegistro()       INLINE ( D():gotoArticulos( ::getExcelValue( ::cColumnaCampoClave ), ::nView ) )
 
    METHOD appendRegistro()       INLINE ( ( D():Articulos( ::nView ) )->( dbappend() ) )
@@ -125,10 +123,6 @@ Return ( Self )
 
 METHOD closeExcel()
 
-   if empty( ::oExcel )
-      Return ( Self )
-   end if 
-
    ::oExcel:oExcel:Quit()
    ::oExcel:oExcel:DisplayAlerts := .t.
    ::oExcel:End()
@@ -148,7 +142,13 @@ METHOD procesaFicheroExcel()
 
    while ( ::filaValida() )
 
-      if ::seekOrAppend()
+      if ::existeRegistro()
+         ::bloqueaRegistro()
+      else
+         ::appendRegistro()
+      end if 
+
+      if !( neterr() )      
 
          ::importarCampos()
 
@@ -234,7 +234,7 @@ METHOD getExcelString( columna, fila )
       Return ( valorPorDefecto )
    end if 
 
-Return ( alltrim( excelValue ) )
+Return ( excelValue )   
 
 //---------------------------------------------------------------------------//
 

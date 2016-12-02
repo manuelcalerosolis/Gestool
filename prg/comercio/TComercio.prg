@@ -5534,7 +5534,7 @@ METHOD controllerUpdateStockPrestashop() Class TComercio
 
       ::TComercioStock:createCommandProductsToUpdate()
 
-      ::TComercioStock:executeCommandProductsToUpdate()
+      // ::TComercioStock:executeCommandProductsToUpdate()
 
       ::filesClose()
 

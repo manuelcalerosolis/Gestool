@@ -242,7 +242,7 @@ METHOD importarReferenciaProveedor()
 
    if !empty( ::referenciaProveedor )
 
-      if ( D():ProveedorArticulo( ::nView ) )->( dbseek( ::idArticulo + ::idProveedor + ::referenciaProveedor ) )
+      if ( D():ProveedorArticulo( ::nView ) )->( dbseek( ::idArticulo + ::idProveedor ) )
          ( ( D():ProveedorArticulo( ::nView ) )->( dbrlock() ) )
       else
          ( ( D():ProveedorArticulo( ::nView ) )->( dbappend() ) )

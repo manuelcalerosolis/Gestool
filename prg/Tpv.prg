@@ -834,7 +834,7 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
          lOpenFiles        := .f.
       end if
 
-      TComercio():getInstance()
+      TComercio():getInstanceOpenFiles()
 
       /*
       Creamos los botones para las formas de pago---------------------------------
@@ -1052,7 +1052,7 @@ STATIC FUNCTION CloseFiles()
       oDetCamposExtra:CloseFiles()
    end if
 
-   TComercio():endInstance()
+   TComercio():endInstanceCloseFiles()
 
    D():DeleteView( nView )
 
@@ -1994,6 +1994,8 @@ FUNCTION TpvDelRec()
 
             ( dbfPedCliP )->( dbSkip() )
 
+            sysrefresh()
+            
          end while
 
       end if
@@ -2023,8 +2025,9 @@ FUNCTION TpvDelRec()
    */
 
    while ( dbfTikL )->( dbSeek( cNumTik ) )
-      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTikL )->cCbaTil, ( dbfTikL )->cCodPr1, ( dbfTikL )->cValPr1, ( dbfTikL )->cCodPr2, ( dbfTikL )->cValPr2, nView )
+      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTikL )->cCbaTil, nView )
       dbDel( dbfTikL )
+      sysrefresh()
    end while
 
    /*
@@ -2033,6 +2036,7 @@ FUNCTION TpvDelRec()
 
    while ( dbfTikP )->( dbSeek( cNumTik ) )
       dbDel( dbfTikP )
+      sysrefresh()
    end while
 
    /*
@@ -2052,6 +2056,7 @@ FUNCTION TpvDelRec()
             ( D():Tikets( nView ) )->( dbUnLock() )
          end if
          ( D():Tikets( nView ) )->( dbSkip() )
+         sysrefresh()
       end while
    end if
 
@@ -2095,7 +2100,7 @@ FUNCTION TpvDelRec()
          end if
 
          while dbSeekInOrd( cNumDoc, "nNumFac", dbfFacCliL )
-            TComercio():getInstance():appendProductsToUpadateStocks( ( dbfFacCliL )->cRef, ( dbfFacCliL )->cCodPr1, ( dbfFacCliL )->cValPr1, ( dbfFacCliL )->cCodPr2, ( dbfFacCliL )->cValPr2, nView )
+            TComercio():getInstance():appendProductsToUpadateStocks( ( dbfFacCliL )->cRef, nView )
             dbDel( dbfFacCliL )
          end if
 
@@ -2745,8 +2750,6 @@ RETURN ( oDlgTpv:nResult == IDOK )
 
 Static Function deleteLineTicket( aTmp, oBrwDet )
 
-   TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpL )->cCbaTil, ( dbfTmpL )->cCodPr1, ( dbfTmpL )->cValPr1, ( dbfTmpL )->cCodPr2, ( dbfTmpL )->cValPr2, nView )
-   
    winDelRec( oBrwDet, dbfTmpL, nil, nil, .t. )
 
 Return ( lRecTotal( aTmp ) )
@@ -4041,6 +4044,8 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          AutoMeterDialog( oDlgTpv )
          AutoTextDialog( oDlgTpv )   
 
+         TComercio():getInstance():resetProductsToUpdateStocks()
+
          BeginTransaction()
 
          /*
@@ -4088,6 +4093,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
             setAutoTextDialog( 'Eliminando lineas' )
 
             while ( dbfTikL )->( dbSeek( nNumTik ) )
+               TComercio():getInstance():appendProductsToUpadateStocks( (dbfTikL)->cCbaTil, nView )
                if dbLock( dbfTikL )
                   ( dbfTikL )->( dbDelete() )
                   ( dbfTikL )->( dbUnLock() )
@@ -4101,12 +4107,10 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
             setAutoTextDialog( 'Eliminando pagos' )
 
             while ( dbfTikP )->( dbSeek( nNumTik ) )
-
                if dbLock( dbfTikP )
                   ( dbfTikP )->( dbDelete() )
                   ( dbfTikP )->( dbUnLock() )
                end if
-
             end while
 
             /*
@@ -4224,7 +4228,6 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
                   if dbLock( dbfAlbCliL )
                      ( dbfAlbCliL )->lFacturado := .t.
-                     //( dbfAlbCliL )->nFacturado := 3
                      ( dbfAlbCliL )->( dbUnLock() )
                   end if
 
@@ -4302,7 +4305,6 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
                SavTik2Tik( aTmp, aGet, nMode, nSave )
 
          end case
-
 
          /*
          Actualizamos el stock en la web------------------------------------------
@@ -6453,8 +6455,6 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   TComercio():getInstance():resetProductsToUpdateStocks()
-
    if empty( aTmp[ _CDIVTIK ] )
       aTmp[ _CDIVTIK ]  := cDivEmp()
    end if
@@ -8219,7 +8219,7 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
 
    // anotamos el producto para actualizar su stock----------------------------
 
-   TComercio():getInstance():appendProductsToUpadateStocks( aTmp[ _CCBATIL ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], nView )
+   TComercio():getInstance():appendProductsToUpadateStocks( aTmp[ _CCBATIL ], nView )
 
    /*
    Chequeamos las ofertas X * Y------------------------------------------------
@@ -11651,7 +11651,7 @@ Function SavTik2Alb( aTik, aGet, nMode, nSave )
       Punteros entre documentos---------------------------------------------------
       */
 
-      aTik[ _CNUMDOC ]           := cSerTik + Str( cNumTik, 9 ) + cSufTik
+      aTik[ _CNUMDOC ]              := cSerTik + Str( cNumTik, 9 ) + cSufTik
 
    else
 
@@ -11659,12 +11659,11 @@ Function SavTik2Alb( aTik, aGet, nMode, nSave )
       Posicionamos en el albaran existente
       */
 
-      cSerTik     := SubStr( aTik[ _CNUMDOC ], 1, 1 )
-      cNumTik     := Val( SubStr( aTik[ _CNUMDOC ], 2, 9 ) )
-      cSufTik     := SubStr( aTik[ _CNUMDOC ], 11, 2 )
+      cSerTik                       := SubStr( aTik[ _CNUMDOC ], 1, 1 )
+      cNumTik                       := Val( SubStr( aTik[ _CNUMDOC ], 2, 9 ) )
+      cSufTik                       := SubStr( aTik[ _CNUMDOC ], 11, 2 )
 
       if !( dbfAlbCliT )->( dbSeek( aTik[ _CNUMDOC ] ) )
-
          ( dbfAlbCliT )->( dbAppend() )
          ( dbfAlbCliT )->cSerAlb    := cSerTik
          ( dbfAlbCliT )->nNumAlb    := cNumTik
@@ -11673,7 +11672,6 @@ Function SavTik2Alb( aTik, aGet, nMode, nSave )
          ( dbfAlbCliT )->cTimCre    := aTik[ _CTIMCRE ]
          ( dbfAlbCliT )->cTurAlb    := aTik[ _CTURTIK ]
          ( dbfAlbCliT )->( dbUnLock() )
-
       end if
 
       /*
@@ -11683,10 +11681,14 @@ Function SavTik2Alb( aTik, aGet, nMode, nSave )
       nOrdAnt  := ( dbfAlbCliL )->( OrdSetFocus( "NNUMALB" ) )
 
       while ( dbfAlbCliL )->( dbSeek( aTik[ _CNUMDOC ] ) ) .and. !( dbfAlbCliL )->( eof() )
+
+         TComercio():getInstance():appendProductsToUpadateStocks( (dbfAlbCliL)->cRef, nView )
+      
          if dbLock( dbfAlbCliL )
             ( dbfAlbCliL )->( dbDelete() )
             ( dbfAlbCliL )->( dbUnLock() )
          end if
+      
       end while
 
       ( dbfAlbCliL )->( OrdSetFocus( nOrdAnt ) )
@@ -11782,7 +11784,7 @@ Function SavTik2Alb( aTik, aGet, nMode, nSave )
       end if
       ( dbfAlbCliL )->( dbUnLock() )
 
-      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpL )->cCbaTil, ( dbfTmpL )->cCodPr1, ( dbfTmpL )->cValPr1, ( dbfTmpL )->cCodPr2, ( dbfTmpL )->cValPr2, nView )
+      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpL )->cCbaTil, nView )
 
       ( dbfTmpL )->( dbSkip() )
 
@@ -12153,6 +12155,7 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
          nOrdAnt  := ( dbfFacCliL )->( OrdSetFocus( "NNUMFAC" ) )
 
          while ( dbfFacCliL )->( dbSeek( aTik[ _CNUMDOC ] ) ) .and. !( dbfFacCliL )->( eof() )
+            TComercio():getInstance():appendProductsToUpadateStocks( (dbfFacCliL)->cRef, nView )
             if dbLock( dbfFacCliL )
                ( dbfFacCliL )->( dbDelete() )
                ( dbfFacCliL )->( dbUnLock() )
@@ -12255,7 +12258,7 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
 
       ( dbfFacCliL )->( dbUnLock() )
 
-      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpL )->cCbaTil, ( dbfTmpL )->cCodPr1, ( dbfTmpL )->cValPr1, ( dbfTmpL )->cCodPr2, ( dbfTmpL )->cValPr2, nView )
+      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpL )->cCbaTil, nView )
 
       ( dbfTmpL )->( dbSkip() )
 
@@ -12455,6 +12458,8 @@ Static Function SavTik2Tik( aTmp, aGet, nMode, nSave, nNumDev )
 
       dbPass( dbfTmpL, dbfTikL, .t., aTmp[ _CSERTIK ], aTmp[ _CNUMTIK ], aTmp[ _CSUFTIK ], aTmp[ _CTIPTIK ] )
 
+      TComercio():getInstance():appendProductsToUpadateStocks( (dbfTikL)->cCbaTil, nView )
+
       ( dbfTmpL )->( dbSkip() )
 
    end while
@@ -12509,11 +12514,6 @@ Static Function SavTik2Tik( aTmp, aGet, nMode, nSave, nNumDev )
    /*
    Calculo de cobros totales---------------------------------------------------
    */
-
-   //aTotal            := nTotCobTik( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], dbfTikP, dbfDiv )
-   //aTotal            += nTotValTik( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], D():Tikets( nView ), dbfTikL, dbfDiv )
-
-   //aTmp[ _NCOBTIK ]  := aTotal
 
    aTmp[ _NCOBTIK ]  += nTotValTik( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], D():Tikets( nView ), dbfTikL, dbfDiv )
 
