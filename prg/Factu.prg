@@ -2402,8 +2402,8 @@ Function CreateAcceso( oWnd )
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 5
    oGrupo:cPrompt       := 'Expedientes'
-   oGrupo:cLittleBitmap := "gc_gc_folder_document_16"
-   oGrupo:cBigBitmap    := "gc_gc_folder_document_32"
+   oGrupo:cLittleBitmap := "gc_folder_document_16"
+   oGrupo:cBigBitmap    := "gc_folder_document_32"
 
    oItem                := oItemExpediente:Add()
    oItem:oGroup         := oGrupo
@@ -2451,8 +2451,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los expedientes'
    oItem:bAction        := {|| StartTExpediente() }
    oItem:cId            := "04010"
-   oItem:cBmp           := "gc_gc_folder_document_16"
-   oItem:cBmpBig        := "gc_gc_folder_document_32"
+   oItem:cBmp           := "gc_folder_document_16"
+   oItem:cBmpBig        := "gc_folder_document_32"
    oItem:lShow          := .f.
 
    end if

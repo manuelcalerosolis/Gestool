@@ -13,7 +13,7 @@ static dbfTemporada
 
 static aBmpTipo
 static aStrTipo      := {  "Sol", "Sol y nubes", "Nubes", "Lluvia", "Nieve" }
-static aResTipo      := {  "Sun_16", "Sun_and_cloud_16", "Cloud_16", "Cloud_dark_16", "Snowflake_16" }
+static aResTipo      := {  "gc_sun_16", "gc_cloud_sun_16", "gc_cloud_16", "gc_cloud_rain_16", "gc_snowflake_16" }
 
 static bEdit         := {| aTmp, aGet, dbfTemporada, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfTemporada, oBrw, bWhen, bValid, nMode ) }
 

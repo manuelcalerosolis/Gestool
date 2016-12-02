@@ -385,8 +385,25 @@ DOWN16 BITMAP "..\\bmp\\gc_navigate_close_16.bmp"
 INFO16 BITMAP "..\\bmp\\gc_speech_balloon_answer2_16.bmp"
 GC_DOCUMENT_EMPTY_CHART_16 BITMAP "..\\bmp\\gc_document_empty_chart_16.bmp"
 GC_PORTABLE_BARCODE_SCANNER_16 BITMAP "..\\bmp\\gc_portable_barcode_scanner_16.bmp"
-
 BMPCHG16 BITMAP "..\\bmp\\gc_arrow_circle2_16.bmp"
+
+ROTOR16 BITMAP "..\\bmp\\gc_atom_16.bmp"
+GC_SUN_16 BITMAP "..\\bmp\\gc_sun_16.bmp"
+GC_CLOUD_SUN_16 BITMAP "..\\bmp\\GC_CLOUD_SUN_16.bmp"
+GC_CLOUD_16 BITMAP "..\\bmp\\gc_cloud_16.bmp"
+GC_CLOUD_RAIN_16 BITMAP "..\\bmp\\GC_CLOUD_RAIN_16.bmp"
+GC_SNOWFLAKE_16 BITMAP "..\\bmp\\GC_SNOWFLAKE_16.bmp"
+
+FORM_GREEN_ADD_16 BITMAP "..\\bmp\\form_green_add_16.bmp"
+
+FORM_GREEN_ADD_32 BITMAP "..\\bmp\\form_green_add_32.bmp"
+
+FORM_GREEN_ADD_48_ALPHA BITMAP "..\\bmp\\form_green_add_48_alpha.bmp"
+
+DOCLOCK BITMAP "..\\bmp\\gc_document_pdf_16.bmp"
+DOCLOCK16 BITMAP "..\\bmp\\gc_document_pdf_16.bmp"
+
+
 
 
 

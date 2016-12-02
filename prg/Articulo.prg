@@ -1556,7 +1556,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       TOOLTIP  "Rotor" ;
       LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "form_green_add_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_form_plus2_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( oDetCamposExtra:Play( ( D():Articulos( nView ) )->Codigo ) );
          TOOLTIP  "Campos extra" ;
@@ -1564,7 +1564,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          ALLOW    EXIT ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "Clipboard_empty_businessman_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_clipboard_empty_user_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( PedPrv( nil, oWnd, nil, ( D():Articulos( nView ) )->Codigo ) );
          TOOLTIP  "Añadir pedido a proveedor" ;

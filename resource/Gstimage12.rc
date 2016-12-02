@@ -198,11 +198,6 @@ FLAT_ABOUT_64 BITMAP "..\\bmp\\flat_about_64.bmp"
 
 FLAT_ATOM_64 BITMAP "..\\bmp\\flat_atom_64.bmp"
 
-FORM_GREEN_ADD_16 BITMAP "..\\bmp\\form_green_add_16.bmp"
-
-FORM_GREEN_ADD_32 BITMAP "..\\bmp\\form_green_add_32.bmp"
-
-FORM_GREEN_ADD_48_ALPHA BITMAP "..\\bmp\\form_green_add_48_alpha.bmp"
 
 USER1_MESSAGE_16 BITMAP "..\\bmp\\user1_message_16.bmp"
 
