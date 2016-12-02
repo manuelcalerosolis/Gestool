@@ -134,7 +134,7 @@ FUNCTION ArtCodebar( oMenuItem, oWnd )
       DEFINE SHELL oWndBrw FROM 0, 0 TO 22, 80 ;
          XBROWSE ;
          TITLE    "Codigos de barras" ;
-         MRU      "Remotecontrol_16";
+         MRU      "gc_portable_barcode_scanner_16";
          PROMPT   "Código",;
                   "Nombre" ;
          ALIAS    ( dbfArticulo ) ;

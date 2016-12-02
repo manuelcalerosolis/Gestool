@@ -50,7 +50,7 @@ Return nil
 
 CLASS TExpediente FROM TMasDet
 
-   DATA  cMru                 INIT "gc_folder_document_16"
+   DATA  cMru                 INIT "gc_gc_folder_document_16"
    DATA  cBitmap              INIT clrTopExpedientes
 
    DATA  oArt
@@ -269,7 +269,7 @@ METHOD Activate()
                "Operario",;
                "Entidad",;
                "Colaborador";
-      MRU      "gc_folder_document_16";
+      MRU      "gc_gc_folder_document_16";
       BITMAP   Rgb( 197, 227, 9 ) ;
       ALIAS    ( ::oDbf ) ;
       APPEND   ::Append() ;
@@ -280,7 +280,7 @@ METHOD Activate()
 
       // Imagen adicional -----------------------------------------------------
 
-      ::oWndBrw:AddImageList( "on_worker2_folder_document_16" )
+      ::oWndBrw:AddImageList( "on_worker2_gc_folder_document_16" )
 
       // Columnas ---------------------------------------------------------------
 
@@ -479,41 +479,41 @@ METHOD Activate()
 
    if !Empty( oUser():cOperario )
 
-   DEFINE BTNSHELL oExp RESOURCE "Worker2_Folder_Document_" OF ::oWndBrw ;
+   DEFINE BTNSHELL oExp RESOURCE "Worker2_gc_folder_document_" OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( oExp:Expand() ) ;
       TOOLTIP  "Mis expedientes" ;
       HOTKEY   "X"
 
-   DEFINE BTNSHELL oMisExp RESOURCE "Worker2_Folder_Document_" OF ::oWndBrw ;
+   DEFINE BTNSHELL oMisExp RESOURCE "Worker2_gc_folder_document_" OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::PutOperarioIndex( expAll, oMisExp ) ) ;
       FROM     oExp ;
       TOOLTIP  "Todos" ;
       HOTKEY   "X"
 
-   DEFINE BTNSHELL oPdtExp RESOURCE "Worker2_Folder_Document_" OF ::oWndBrw ;
+   DEFINE BTNSHELL oPdtExp RESOURCE "Worker2_gc_folder_document_" OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::PutOperarioIndex( expStand, oPdtExp ) ) ;
       FROM     oExp ;
       TOOLTIP  "Pendientes" ;
       HOTKEY   "P"
 
-   DEFINE BTNSHELL oFinExp RESOURCE "Worker2_Folder_Document_" OF ::oWndBrw ;
+   DEFINE BTNSHELL oFinExp RESOURCE "Worker2_gc_folder_document_" OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::PutOperarioIndex( expEnd, oFinExp ) ) ;
       FROM     oExp ;
       TOOLTIP  "Finalizados" ;
       HOTKEY   "F"
 
-   DEFINE BTNSHELL oActExp RESOURCE "Worker2_Folder_Document_" OF ::oWndBrw ;
+   DEFINE BTNSHELL oActExp RESOURCE "Worker2_gc_folder_document_" OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::PutOperarioIndex( expActions, oActExp ) ) ;
       FROM     oExp ;
       TOOLTIP  "Actuaciones" ;
       HOTKEY   "T"
 
-   DEFINE BTNSHELL RESOURCE "Worker2_Folder_Document_" OF ::oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "Worker2_gc_folder_document_" OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::QuitOperarioIndex() ) ;
       FROM     oExp ;
@@ -845,7 +845,7 @@ METHOD Resource( nMode, aDatosAnterior )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "folder_document_48_alpha" ;
+        RESOURCE "gc_folder_document_48_alpha" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[1]
 
@@ -1813,7 +1813,7 @@ Method PutOperarioIndex( nTypeExp, oButton )
    Vamos a poner los indices---------------------------------------------------
    */
 
-   nItemBitmap                      := aScan( ::oWndBrw:oImageList:aBitmaps, {|o| Upper( o:cResName ) == Upper( "on_worker2_folder_document_16" ) } )
+   nItemBitmap                      := aScan( ::oWndBrw:oImageList:aBitmaps, {|o| Upper( o:cResName ) == Upper( "on_worker2_gc_folder_document_16" ) } )
    if nItemBitmap != 0
       nItemBitmap := nItemBitmap - 2
       // TvSetItemImage( ::oWndBrw:oBtnBar:hWnd, oButton:hItem, nItemBitmap )
@@ -1923,7 +1923,7 @@ Method RestoreOperarioButton()
 
       ::oWndBrw:oBtnTop:aSay[ 1, 3 ]   := "Expedientes"
 
-      nItemBitmap                      := aScan( ::oWndBrw:oImageList:aBitmaps, {|o| Upper( o:cResName ) == Upper( "worker2_folder_document_16" ) } )
+      nItemBitmap                      := aScan( ::oWndBrw:oImageList:aBitmaps, {|o| Upper( o:cResName ) == Upper( "worker2_gc_folder_document_16" ) } )
       if nItemBitmap != 0
          nItemBitmap := nItemBitmap - 2
          // TvSetItemImage( ::oWndBrw:oBtnBar:hWnd, ::oButtonOld:hItem, nItemBitmap )

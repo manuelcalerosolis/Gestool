@@ -730,8 +730,8 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():Atipicas( nView ) )->( dbSeek( ( D():Clientes( nView ) )->Cod ) ) }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "PERCENT_16" )
+         :SetCheck( { "gc_symbol_percent_12", "Nil16" } )
+         :AddResource( "gc_symbol_percent_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -740,8 +740,8 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():Clientes( nView ) )->nTipCli == 2 }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "CLIPOT" )
+         :SetCheck( { "gc_id_card_hint_12", "Nil16" } )
+         :AddResource( "gc_id_card_hint_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1009,7 +1009,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          TOOLTIP  "Listad(o) de tarifas";
          HOTKEY   "O"
 
-      DEFINE BTNSHELL RESOURCE "Document_Chart_" GROUP OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_document_empty_chart_" GROUP OF oWndBrw ;
          NOBORDER ;
          ACTION   ( ReportingClient() ) ;
          TOOLTIP  "Rep(o)rting";
@@ -1018,7 +1018,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
       #endif
 
-      DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_portable_barcode_scanner_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( TClienteLabelGenerator():Create() ) ;
          TOOLTIP  "Eti(q)uetas" ;
@@ -1095,7 +1095,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          HOTKEY   "G";
          LEVEL    ACC_APPD
 
-      DEFINE BTNSHELL oScript RESOURCE "Folder_document_" GROUP OF oWndBrw ;
+      DEFINE BTNSHELL oScript RESOURCE "gc_folder_document_" GROUP OF oWndBrw ;
          NOBORDER ;
          ACTION   ( oScript:Expand() ) ;
          TOOLTIP  "Scripts" ;

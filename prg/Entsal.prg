@@ -123,7 +123,7 @@ FUNCTION EntSal( oMenuItem, oWnd )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( dbfEntT )->lCloEnt }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_lock2_12", "Nil16" } )
          :AddResource( "gc_lock2_16" )
 
       end with
@@ -134,7 +134,7 @@ FUNCTION EntSal( oMenuItem, oWnd )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( dbfEntT )->lSndEnt }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_mail2_12", "Nil16" } )
          :AddResource( "gc_mail2_16" )
       end with
 

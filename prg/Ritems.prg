@@ -684,7 +684,7 @@ FUNCTION CfgDocs( oMenuItem, oWnd )
             CLOSED ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Folder_document_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "gc_folder_document_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'ED' }, "Field->cTipo == 'ED'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Expedientes" ;
             FROM     oFlt ;

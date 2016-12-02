@@ -118,10 +118,6 @@ arrow_down_blue BITMAP "..\\bmp\\arrow_down_blue.bmp"
 
 printer_comanda_32 BITMAP "..\\bmp\\printer_comanda_32.bmp"
 
-Stopwatch_Refresh_32 BITMAP "..\\bmp\\Stop_Watch_Refresh_32.bmp"
-Stopwatch_Refresh_16 BITMAP "..\\bmp\\Stop_Watch_Refresh_16.bmp"
-Stopwatch_Reset_16 BITMAP "..\\bmp\\stopwatch_reset_16.bmp"
-
 Money2_32_Pressed BITMAP "..\\bmp\\Money2_32_Pressed.bmp"
 
 Check2_32 BITMAP "..\\bmp\\check2.bmp"

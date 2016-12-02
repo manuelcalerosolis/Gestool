@@ -575,7 +575,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():Get( "AlbCliT", nView ) )->lCloAlb }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_lock2_12", "Nil16" } )
          :AddResource( "gc_lock2_16" )
       end with
 
@@ -597,7 +597,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():Get( "AlbCliT", nView ) )->lSndDoc }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_mail2_12", "Nil16" } )
          :AddResource( "gc_mail2_16" )
       end with
 
@@ -1026,14 +1026,14 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       TOOLTIP  "Correo electrónico";
       LEVEL    ACC_IMPR
 
-   DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "gc_portable_barcode_scanner_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( TLabelGeneratorAlbaranClientes():New( nView ):Dialog() ) ;
          TOOLTIP  "Eti(q)uetas" ;
          HOTKEY   "Q";
          LEVEL    ACC_IMPR
 
-   DEFINE BTNSHELL RESOURCE "Document_Chart_" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "gc_document_empty_chart_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( TFastVentasArticulos():New():Play( ALB_CLI ) ) ;
       TOOLTIP  "Rep(o)rting";
@@ -1148,7 +1148,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
 
-   DEFINE BTNSHELL oScript RESOURCE "Folder_document_" GROUP OF oWndBrw ;
+   DEFINE BTNSHELL oScript RESOURCE "gc_folder_document_" GROUP OF oWndBrw ;
       NOBORDER ;
       ACTION   ( oScript:Expand() ) ;
       TOOLTIP  "Scripts" ;

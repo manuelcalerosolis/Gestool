@@ -485,7 +485,7 @@ METHOD Activate() CLASS TRemMovAlm
 
       ::lGenRemMov( ::oWndBrw:oBrw, oPrv, .f. )
 
-      DEFINE BTNSHELL RESOURCE "RemoteControl_" OF ::oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_portable_barcode_scanner_" OF ::oWndBrw ;
          NOBORDER ;
          ACTION   ( ::GenerarEtiquetas() ) ;
          TOOLTIP  "Eti(q)uetas" ;

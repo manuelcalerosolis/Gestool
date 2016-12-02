@@ -1892,7 +1892,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       TOOLTIP  "Correo electrónico";
       LEVEL    ACC_IMPR
 
-   DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "gc_portable_barcode_scanner_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( TLabelGeneratorFacturasRectificativaClientes():New( nView ):Dialog() ) ;
          TOOLTIP  "Eti(q)uetas" ;
@@ -2010,7 +2010,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
             FROM     oRotor ;
             CLOSED ;
 
-   	DEFINE BTNSHELL oScript RESOURCE "Folder_document_" GROUP OF oWndBrw ;
+   	DEFINE BTNSHELL oScript RESOURCE "gc_folder_document_" GROUP OF oWndBrw ;
     	NOBORDER ;
       	ACTION   ( oScript:Expand() ) ;
       	TOOLTIP  "Scripts" ;

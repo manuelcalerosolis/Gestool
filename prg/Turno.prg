@@ -1020,11 +1020,11 @@ METHOD DefineFiles( cPath, cDriver )
    DEFINE DATABASE ::oDbf FILE "TURNO.DBF" CLASS "TurnoT" ALIAS "TurnoT" PATH ( cPath ) VIA ( cDriver ) COMMENT  "Sesiones"
 
       FIELD NAME "lSndTur" TYPE "L"  LEN  1  DEC 0 COMMENT ""                                                                    HIDE                     OF ::oDbf
-      FIELD CALCULATE NAME "bSndTur" LEN 14  DEC 0 COMMENT { "Envio", "gc_mail2_16" , 3 }   VAL {|| ::oDbf:lSndTur } BITMAPS "Sel16", "Nil16"       COLSIZE 20  OF ::oDbf
+      FIELD CALCULATE NAME "bSndTur" LEN 14  DEC 0 COMMENT { "Envio", "gc_mail2_16" , 3 }   VAL {|| ::oDbf:lSndTur } BITMAPS "gc_mail2_12", "Nil16"       COLSIZE 20  OF ::oDbf
       FIELD NAME "lCloTur" TYPE "L"  LEN  1  DEC 0 COMMENT ""                                                                    HIDE                     OF ::oDbf
       FIELD NAME "lConTur" TYPE "L"  LEN  1  DEC 0 COMMENT "Cn"                                                                  HIDE                     OF ::oDbf
       FIELD CALCULATE NAME "bCloTur" LEN 14  DEC 0 COMMENT { "Contabilizado", "gc_folder2_16" , 3 } ;
-                                                   VAL {|| ::oDbf:lConTur } BITMAPS "Sel16", "Nil16"                             COLSIZE 20               OF ::oDbf
+                                                   VAL {|| ::oDbf:lConTur } BITMAPS "gc_folder2_12", "Nil16"                             COLSIZE 20               OF ::oDbf
       FIELD CALCULATE NAME "cStaTur" LEN 20  DEC 0 COMMENT "Estado" VAL {|| ::cEstadoSesion() }                                  COLSIZE 60               OF ::oDbf
 
       FIELD NAME "cNumTur" TYPE "C"  LEN  6  DEC 0 COMMENT "Número"                                                              COLSIZE 60 ALIGN RIGHT   OF ::oDbf
@@ -1143,7 +1143,7 @@ METHOD Activate()
 
       ::oWndBrw:AddSeaBar()
 
-   DEFINE BTNSHELL RESOURCE "EDIT" OF ::oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "ZOOM" OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::oWndBrw:SetOnProcess(), if( ::oDbf:nStaTur == cajCerrrada, ::lArqueoTurno( .t. ), MsgStop( "Sesión " + Alltrim( ::oDbf:cNumTur ) + " no cerrada." ) ), ::oWndBrw:QuitOnProcess(), ::oWndBrw:SetFocus() );
       TOOLTIP  "(Z)oom";

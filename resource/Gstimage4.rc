@@ -30,9 +30,6 @@ FREE_BUTTON_86 BITMAP "..\\bmp\\free_button_86.bmp"
 NAVIGATE_MINUS_32 BITMAP "..\\bmp\\Navigate_Minus_32.bmp"
 NAVIGATE_PLUS_32 BITMAP "..\\bmp\\Navigate_Plus_32.bmp"
 
-DOCUMENT_CHART_16 BITMAP "..\\bmp\\Document_Chart_16.bmp"
-DOCUMENT_CHART_32 BITMAP "..\\bmp\\Document_Chart_32.bmp"
-
 GAUGE_16 BITMAP "..\\bmp\\Gauge_16.bmp"
 GAUGE_32 BITMAP "..\\bmp\\Gauge_32.bmp"
 

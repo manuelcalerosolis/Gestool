@@ -2402,8 +2402,8 @@ Function CreateAcceso( oWnd )
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 5
    oGrupo:cPrompt       := 'Expedientes'
-   oGrupo:cLittleBitmap := "gc_folder_document_16"
-   oGrupo:cBigBitmap    := "gc_folder_document_32"
+   oGrupo:cLittleBitmap := "gc_gc_folder_document_16"
+   oGrupo:cBigBitmap    := "gc_gc_folder_document_32"
 
    oItem                := oItemExpediente:Add()
    oItem:oGroup         := oGrupo
@@ -2451,8 +2451,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los expedientes'
    oItem:bAction        := {|| StartTExpediente() }
    oItem:cId            := "04010"
-   oItem:cBmp           := "gc_folder_document_16"
-   oItem:cBmpBig        := "gc_folder_document_32"
+   oItem:cBmp           := "gc_gc_folder_document_16"
+   oItem:cBmpBig        := "gc_gc_folder_document_32"
    oItem:lShow          := .f.
 
    end if
@@ -3236,8 +3236,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Auditoria'
    oItem:bAction        := {|| TDataCenter():Auditor() }
    oItem:cId            := "01122"
-   oItem:cBmp           := "Document_Chart_16"
-   oItem:cBmpBig        := "Document_Chart_32"
+   oItem:cBmp           := "gc_document_empty_chart_16"
+   oItem:cBmpBig        := "gc_document_empty_chart_32"
    oItem:lShow          := .f.
 
    end if 
@@ -3800,8 +3800,8 @@ Function TctCreateButtonBar()
    oItem:cPrompt        := 'Iniciar sesión'
    oItem:cMessage       := 'Inicia una nueva sesión de trabajo'
    oItem:bAction        := {|| if( !lCurSesion(), ChkTurno( "01000", oWnd() ), MsgStop( "Tiene una sesión en curso" ) ) }
-   oItem:cBmp           := "Stopwatch_run_16"
-   oItem:cBmpBig        := "Stopwatch_run_32"
+   oItem:cBmp           := "gc_clock_play_16"
+   oItem:cBmpBig        := "gc_clock_play_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
@@ -3929,7 +3929,7 @@ Function BuildTctMenu()
             MESSAGE  "Inicia una nueva sesión de trabajo" ;
             ACTION   ( ChkTurno( oMenuItem, oWnd ) );
             HELPID   "01000" ;
-            RESOURCE "Stopwatch_run_16" ;
+            RESOURCE "gc_clock_play_16" ;
             WHEN     !lCurSesion()
 
          MENUITEM    "&2. Arqueo parcial (X)" ;
@@ -4110,7 +4110,7 @@ Function TPVCreateButtonBar()
    oItem:cPrompt        := 'Iniciar sesión'
    oItem:cMessage       := 'Inicia una nueva sesión de trabajo'
    oItem:bAction        := {|| if( !lCurSesion(), ChkTurno( "01000", oWnd() ), MsgStop( "Tiene una sesión en curso" ) ) }
-   oItem:cBmpBig        := "Stopwatch_run_32"
+   oItem:cBmpBig        := "gc_clock_play_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
@@ -4228,7 +4228,7 @@ Function BuildTpvMenu()
             MESSAGE  "Inicia una nueva sesión de trabajo" ;
             ACTION   ( ChkTurno( oMenuItem, oWnd ) );
             HELPID   "01000" ;
-            RESOURCE "Stopwatch_run_16" ;
+            RESOURCE "gc_clock_play_16" ;
             WHEN     !lCurSesion()
 
          MENUITEM    "&2. Arqueo parcial (X)" ;

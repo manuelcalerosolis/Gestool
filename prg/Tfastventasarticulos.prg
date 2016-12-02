@@ -986,6 +986,10 @@ METHOD BuildReportCorrespondences()
                      "Stocks" => ;
                         {  "Generate" =>  {||   ::AddArticulo() },;
                            "Variable" =>  {||   ::AddVariableStock() },;
+                           "Data" =>      {||   nil } },;
+                     "Stocks almacenes" => ;
+                        {  "Generate" =>  {||   ::AddArticulo( .t. ) },;
+                           "Variable" =>  {||   ::AddVariableStock() },;
                            "Data" =>      {||   nil } } }
 
 Return ( Self )
@@ -1132,6 +1136,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
                   {  "Title" => "Existencias",                    "Image" => 16, "Subnode" =>;
                   { ;
                      { "Title" => "Stocks",                       "Image" => 16, "Type" => "Stocks",                       "Directory" => "Articulos\Existencias\Stocks",                    "File" => "Existencias por stock.fr3" },;
+                     { "Title" => "Stock de todos los almacenes", "Image" => 16, "Type" => "Stocks almacenes",             "Directory" => "Articulos\Existencias\StocksAlmacenes",           "File" => "Stocks por almacenes.fr3" },;
                   } ;
                   } }
 
@@ -2861,13 +2866,15 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD AddArticulo() CLASS TFastVentasArticulos
+METHOD AddArticulo( lAppendBlank ) CLASS TFastVentasArticulos
 
    local cAlmacen
    local aStockArticulo
 
+   DEFAULT lAppendBlank    := .f.
+
    if ::oGrupoAlmacen:cargo:getDesde() == ::oGrupoAlmacen:cargo:getHasta()
-      cAlmacen          := ::oGrupoAlmacen:cargo:getDesde()
+      cAlmacen             := ::oGrupoAlmacen:cargo:getDesde()
    end if 
 
    ::oDbf:Zap()
@@ -2876,7 +2883,7 @@ METHOD AddArticulo() CLASS TFastVentasArticulos
    ::oMtrInf:SetTotal(  ::oDbfArt:OrdKeyCount() )
    ::oMtrInf:AutoInc(   ::oDbfArt:OrdKeyCount() )
 
-   ::oMtrInf:cText      := "Procesando artículos"
+   ::oMtrInf:cText         := "Procesando artículos"
 
    // Recorremos artículos-----------------------------------------------------
 
@@ -2892,7 +2899,13 @@ METHOD AddArticulo() CLASS TFastVentasArticulos
             ::appendStockArticulo( aStockArticulo )
          end if 
 
-         // ::appendBlankAlmacenes( ::oDbfArt:Codigo )
+         /*
+         Estaba comentado y lo he vuelto a activar para alvaro pita------------
+         */
+
+         if lAppendBlank
+            ::appendBlankAlmacenes( ::oDbfArt:Codigo )
+         end if
 
       end if 
 

@@ -1050,7 +1050,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
       TOOLTIP  "Correo electrónico";
       LEVEL    ACC_IMPR
 
-   DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "gc_portable_barcode_scanner_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( TLabelGeneratorFacturaProveedores():New( nView, oNewImp ):Dialog() ) ;
       TOOLTIP  "Eti(q)uetas" ;

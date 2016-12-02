@@ -650,7 +650,7 @@ FUNCTION Oferta( oMenuItem, oWnd )
          HOTKEY   "L" ;
          LEVEL    ACC_IMPR
 
-      DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_portable_barcode_scanner_" OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( TOfertaLabelGenerator():Create() ) ;
          TOOLTIP  "Eti(q)uetas" ;

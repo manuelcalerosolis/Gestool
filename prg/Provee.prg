@@ -554,7 +554,7 @@ FUNCTION Provee( oMenuItem, oWnd )
 		TOOLTIP 	"(L)istado";
       HOTKEY   "L" ;
 
-   DEFINE BTNSHELL RESOURCE "Document_Chart_" GROUP OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "gc_document_empty_chart_" GROUP OF oWndBrw ;
 		NOBORDER ;
       ACTION   ( ReportingClient() ) ;
       TOOLTIP  "Rep(o)rting";
@@ -563,7 +563,7 @@ FUNCTION Provee( oMenuItem, oWnd )
 
    #ifndef __PDA__
 
-   DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "gc_portable_barcode_scanner_" OF oWndBrw ;
 		NOBORDER ;
       ACTION   ( TProveedorLabelGenerator():Create() ) ;
       TOOLTIP  "Eti(q)uetas" ;

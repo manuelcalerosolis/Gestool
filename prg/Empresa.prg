@@ -198,7 +198,7 @@ STATIC FUNCTION OpenFiles( lCount )
                         "Package_ok_16",;
                         "Cashier_user1_16",;
                         "Worker2_Form_Red_16",;
-                        "Folder_document_16",;
+                        "gc_folder_document_16",;
                         "Pencil_Package_16",;
                         "Stopwatch_16",;
                         "Briefcase_document_16",;

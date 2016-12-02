@@ -339,8 +339,8 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TCobAge
    FIELD NAME "lConta"     TYPE "L" LEN   1 DEC  0                      COMMENT ""        DEFAULT  .f.                                                                            HIDE OF oDbf
    FIELD CALCULATE NAME "bConta"    LEN  14 DEC  0                      COMMENT { "Contabilizado", "gc_folder2_16", 3 } ;
          VAL {|| ( oDbf:cAlias )->lConta } BITMAPS "Sel16", "Nil16"                                                                                                 COLSIZE  20      OF oDbf
-   FIELD CALCULATE NAME "bGen"      LEN  14 DEC  0                      COMMENT { "Factura generada", "Document_businessman_16", 3 } ;
-         VAL {|| !Empty( ( oDbf:cAlias )->cNumFac ) }  BITMAPS "Sel16", "Nil16"                                                                                     COLSIZE  20      OF oDbf
+   FIELD CALCULATE NAME "bGen"      LEN  14 DEC  0                      COMMENT { "Factura generada", "gc_document_text_user_16", 3 } ;
+         VAL {|| !Empty( ( oDbf:cAlias )->cNumFac ) }  BITMAPS "gc_document_text_user_12", "Nil16"                                                                                     COLSIZE  20      OF oDbf
    FIELD NAME "nNumCob"    TYPE "N" LEN   9 DEC  0 PICTURE "999999999"  COMMENT "Número"                                                                  ALIGN RIGHT COLSIZE  80      OF oDbf
    FIELD NAME "cSufCob"    TYPE "C" LEN   2 DEC  0 PICTURE "@!"         COMMENT "Delegación"                                                                          COLSIZE  40      OF oDbf
    FIELD NAME "dFecCob"    TYPE "D" LEN   8 DEC  0 DEFAULT GetSysDate() COMMENT "Fecha"                                                                               COLSIZE  80      OF oDbf
