@@ -3584,34 +3584,31 @@ RETURN ( Self )
 METHOD CreateTreeImageList()
 
    ::oTreeImageList        := TImageList():New( 16, 16 )
-   ::oTreeImageList:AddMasked( TBitmap():Define( "Document_16" ),                      Rgb( 255, 0, 255 ) ) // 0
-   ::oTreeImageList:AddMasked( TBitmap():Define( "Document_new_16" ),                  Rgb( 255, 0, 255 ) ) // 1
-   ::oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_businessman_16" ),   Rgb( 255, 0, 255 ) ) // 2
-   ::oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_businessman_16" ),    Rgb( 255, 0, 255 ) ) // 3
-   ::oTreeImageList:AddMasked( TBitmap():Define( "Document_businessman_16" ),          Rgb( 255, 0, 255 ) ) // 4
-   ::oTreeImageList:AddMasked( TBitmap():Define( "Notebook_user1_16" ),                Rgb( 255, 0, 255 ) ) // 5
-   ::oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_user1_16" ),         Rgb( 255, 0, 255 ) ) // 6
-   ::oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_user1_16" ),          Rgb( 255, 0, 255 ) ) // 7
-   ::oTreeImageList:AddMasked( TBitmap():Define( "Document_user1_16" ),                Rgb( 255, 0, 255 ) ) // 8
-   ::oTreeImageList:AddMasked( TBitmap():Define( "Document_delete_16" ),               Rgb( 255, 0, 255 ) ) // 9 Rectificativas
-   ::oTreeImageList:AddMasked( TBitmap():Define( "Cashier_user1_16" ),                 Rgb( 255, 0, 255 ) ) // 10
-   ::oTreeImageList:AddMasked( TBitmap():Define( "ChgPre16" ),                         Rgb( 255, 0, 255 ) ) // 11
-   ::oTreeImageList:AddMasked( TBitmap():Define( "Truck_red_16" ),                     Rgb( 255, 0, 255 ) ) // 12
-   ::oTreeImageList:AddMasked( TBitmap():Define( "Package_16" ),                       Rgb( 255, 0, 255 ) ) // 13
-   ::oTreeImageList:AddMasked( TBitmap():Define( "Worker2_Form_Red_16" ),              Rgb( 255, 0, 255 ) ) // 14
-   ::oTreeImageList:AddMasked( TBitmap():Define( "Document_navigate_cross_16" ),       Rgb( 255, 0, 255 ) ) // 15 Rectifiactivas proveedores
-   ::oTreeImageList:AddMasked( TBitmap():Define( "Package_16" ),                       Rgb( 255, 0, 255 ) ) // 16
-   ::oTreeImageList:AddMasked( TBitmap():Define( "Office-building_address_book_16" ),  Rgb( 255, 0, 255 ) ) // 17
-   ::oTreeImageList:AddMasked( TBitmap():Define( "Document_navigate_cross_16" ),       Rgb( 255, 0, 255 ) ) // 18
-   ::oTreeImageList:AddMasked( TBitmap():Define( "User1_16" ),                         Rgb( 255, 0, 255 ) ) // 19
-   ::oTreeImageList:AddMasked( TBitmap():Define( "Power-drill_user1_16" ),             Rgb( 255, 0, 255 ) ) // 20 SAT
-   ::oTreeImageList:AddMasked( TBitmap():Define( "Briefcase_user1_16" ),               Rgb( 255, 0, 255 ) ) // 21 Recibos
-   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_folder_document_16" ),               Rgb( 255, 0, 255 ) ) // 22 Folder
-   ::oTreeImageList:AddMasked( TBitmap():Define( "Moneybag_16" ),                      Rgb( 255, 0, 255 ) ) // 23 Iva
-   ::oTreeImageList:AddMasked( TBitmap():Define( "Cube_Yellow_16"),                    Rgb( 255, 0, 255 ) ) // 24 Iva
-
-
-   
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_16" ),              Rgb( 255, 0, 255 ) ) // 0 Listados
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_16" ),              Rgb( 255, 0, 255 ) ) // 1 No usado
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_clipboard_empty_businessman_16" ),Rgb( 255, 0, 255 ) ) // 2 Pedido proveedor
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_document_empty_businessman_16" ), Rgb( 255, 0, 255 ) ) // 3 Albaran proveedor
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_businessman_16" ),  Rgb( 255, 0, 255 ) ) // 4 Factura proveedor
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_notebook_user_16" ),              Rgb( 255, 0, 255 ) ) // 5 Presupuestos
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_clipboard_empty_user_16" ),       Rgb( 255, 0, 255 ) ) // 6 Pedidos clientes
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_document_empty_16" ),             Rgb( 255, 0, 255 ) ) // 7 Albaranes clientes
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_user_16" ),         Rgb( 255, 0, 255 ) ) // 8 Facturas cliente
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_delete_16" ),       Rgb( 255, 0, 255 ) ) // 9 Rectificativas
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_cash_register_user_16" ),         Rgb( 255, 0, 255 ) ) // 10 TPV
+   ::oTreeImageList:AddMasked( TBitmap():Define( "ChgPre16" ),                         Rgb( 255, 0, 255 ) ) // 11 Ventas
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_small_truck_16" ),                Rgb( 255, 0, 255 ) ) // 12 Compras
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_package_16" ),                    Rgb( 255, 0, 255 ) ) // 13 Almacen
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_worker_16" ),       Rgb( 255, 0, 255 ) ) // 14 Produccion
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_delete2_16" ),      Rgb( 255, 0, 255 ) ) // 15 Rectifiactivas proveedores
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_package_16" ),                    Rgb( 255, 0, 255 ) ) // 16 Existencias
+   ::oTreeImageList:AddMasked( TBitmap():Define( "Office-building_address_book_16" ),  Rgb( 255, 0, 255 ) ) // 17 NO USADO
+   ::oTreeImageList:AddMasked( TBitmap():Define( "Document_navigate_cross_16" ),       Rgb( 255, 0, 255 ) ) // 18 NO USADO
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_user_16" ),                       Rgb( 255, 0, 255 ) ) // 19 Clientes ( NO USADO )
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_power_drill_sat_user_16" ),       Rgb( 255, 0, 255 ) ) // 20 SAT
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_briefcase2_user_16" ),            Rgb( 255, 0, 255 ) ) // 21 Recibos
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_folder_document_16" ),            Rgb( 255, 0, 255 ) ) // 22 Folder
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_moneybag_16" ),                   Rgb( 255, 0, 255 ) ) // 23 Iva
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_object_cube_16"),                 Rgb( 255, 0, 255 ) ) // 24 Articulo
 
    if !Empty( ::oTreeReporting )
       ::oTreeReporting:SetImageList( ::oTreeImageList )

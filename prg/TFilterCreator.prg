@@ -333,7 +333,7 @@ CLASS TFilterDialog
 
    DATA cTitle                         INIT "Generador de filtros"
    DATA cResource                      INIT "FastFiltros"
-   DATA cIcon                          INIT "Funnel_48_alpha" // Replace2_48_alpha
+   DATA cIcon                          INIT "gc_funnel_48"
 
    DATA cFilterName                    INIT ""
 
