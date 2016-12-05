@@ -67,21 +67,21 @@ METHOD buildListProductToUpdate( startIdProduct )
 
    ::resetProductsToUpdateStocks()
 
-   ::oProductDatabase():ordsetfocus( "lWebShop" )
+   ( D():Articulos( ::getView() ) )->( ordsetfocus( "lWebShop" ) )
    
-   if ::oProductDatabase():seek( startIdProduct )
+   if ( D():Articulos( ::getView() ) )->( dbseek( startIdProduct ) )
 
-      while ( alltrim( ::oProductDatabase():cWebShop ) == ::getCurrentWebName() ) .and. !( ::oProductDatabase():eof() )
+      while ( alltrim( ( D():Articulos( ::getView() ) )->cWebShop ) == ::getCurrentWebName() ) .and. !( ( D():Articulos( ::getView() ) )->( eof() ) )
 
-         ::writeText( alltrim( ::oProductDatabase():Codigo ) + space( 1 ) + alltrim( ::oProductDatabase():Nombre ) )
+         ::writeText( alltrim( ( D():Articulos( ::getView() ) )->Codigo ) + space( 1 ) + alltrim( ( D():Articulos( ::getView() ) )->Nombre ) )
 
-         idProductPrestashop     := ::getIdProductPrestashop( ::oProductDatabase():Codigo, ::getCurrentWebName() )
+         idProductPrestashop     := ::getIdProductPrestashop( ( D():Articulos( ::getView() ) )->Codigo, ::getCurrentWebName() )
 
          if idProductPrestashop != 0 
-            ::insertProductsToUpadateStocks( ::oProductDatabase():Codigo, idProductPrestashop, ::getCurrentWebName() ) 
+            ::insertProductsToUpadateStocks( ( D():Articulos( ::getView() ) )->Codigo, idProductPrestashop, ::getCurrentWebName() )
          end if 
 
-         ::oProductDatabase():Skip()
+         ( D():Articulos( ::getView() ) )->( dbskip() )
 
       end while
 

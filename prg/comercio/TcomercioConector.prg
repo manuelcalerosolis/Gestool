@@ -19,6 +19,22 @@ CLASS TComercioConector
 
    // facades------------------------------------------------------------------
 
+   /*
+   METHOD oProductDatabase()                                INLINE ( ::TComercio:oArt )
+   METHOD oIvaDatabase()                                    INLINE ( ::TComercio:oIva )
+   METHOD oManufacturerDatabase()                           INLINE ( ::TComercio:oFab )
+   METHOD oCustomerDatabase()                               INLINE ( ::TComercio:oCli )
+   METHOD oAddressDatabase()                                INLINE ( ::TComercio:oObras )
+   METHOD oPaymentDatabase()                                INLINE ( ::TComercio:oFPago )
+   METHOD oCategoryDatabase()                               INLINE ( ::TComercio:oFam )
+   METHOD oPropertyDatabase()                               INLINE ( ::TComercio:oPro )
+   METHOD oPropertiesLinesDatabase()                        INLINE ( ::TComercio:oTblPro )
+   METHOD oPropertyProductDatabase()                        INLINE ( ::TComercio:oArtDiv )
+   METHOD oImageProductDatabase()                           INLINE ( ::TComercio:oArtImg )
+   */
+
+   METHOD getView()                                         INLINE ( ::TComercio:nView )
+
    METHOD TPrestashopId()                                   INLINE ( ::TComercio:TPrestashopId )
    METHOD TComercioConfig()                                 INLINE ( ::TComercio:TComercioConfig )
 
@@ -53,18 +69,6 @@ CLASS TComercioConector
    METHOD lProductIdColumnProductAttributeShop()            INLINE ( ::TComercio:lProductIdColumnProductAttributeShop )   
    METHOD lSpecificPriceIdColumnReductionTax()              INLINE ( ::TComercio:lSpecificPriceIdColumnReductionTax )   
    METHOD aTypeImagesPrestashop()                           INLINE ( ::TComercio:aTypeImagesPrestashop )   
-
-   METHOD oProductDatabase()                                INLINE ( ::TComercio:oArt )
-   METHOD oIvaDatabase()                                    INLINE ( ::TComercio:oIva )
-   METHOD oManufacturerDatabase()                           INLINE ( ::TComercio:oFab )
-   METHOD oCustomerDatabase()                               INLINE ( ::TComercio:oCli )
-   METHOD oAddressDatabase()                                INLINE ( ::TComercio:oObras )
-   METHOD oPaymentDatabase()                                INLINE ( ::TComercio:oFPago )
-   METHOD oCategoryDatabase()                               INLINE ( ::TComercio:oFam )
-   METHOD oPropertyDatabase()                               INLINE ( ::TComercio:oPro )
-   METHOD oPropertiesLinesDatabase()                        INLINE ( ::TComercio:oTblPro )
-   METHOD oPropertyProductDatabase()                        INLINE ( ::TComercio:oArtDiv )
-   METHOD oImageProductDatabase()                           INLINE ( ::TComercio:oArtImg )
 
    METHOD oFtp()                                            INLINE ( ::TComercio:oFtp )
    METHOD cDirectoryProduct()                               INLINE ( ::TComercio:cDirectoryProduct() )

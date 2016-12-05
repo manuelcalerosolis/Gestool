@@ -17,6 +17,9 @@ static oMsgAlarm
 
 CLASS TComercio
 
+   DATA  nView
+   DATA  oStock
+
    CLASSDATA oInstance
    CLASSDATA hProductsToUpdate      INIT {=>}
 
@@ -130,8 +133,6 @@ CLASS TComercio
 
    DATA  aDeletedImages
 
-   DATA  oStock
-
    DATA  oCon
    DATA  cHost
    DATA  cUser
@@ -186,12 +187,12 @@ CLASS TComercio
    DATA oWaitMeter
 
    METHOD New()                           CONSTRUCTOR
+   METHOD Default() 
+
+   METHOD getView()                       INLINE ( ::nView )
+
    METHOD getInstance()
    METHOD endInstance()
-   METHOD getInstanceOpenFiles()          INLINE ( ::getInstance(), ::filesOpen() )              
-   METHOD endInstanceCloseFiles()         INLINE ( ::filesClose(), ::endInstance() )
-
-   METHOD setStock( oStock )              INLINE ( ::oStock := oStock )
 
    METHOD MeterTotal( oMeterTotal )       INLINE ( iif( oMeterTotal == nil, ::oMeterTotal := oMeterTotal, ::oMeterTotal ) )
    METHOD TextTotal( oTextTotal )         INLINE ( iif( oTextTotal == nil, ::oTextTotal := oTextTotal, ::oTextTotal ) )
@@ -203,14 +204,8 @@ CLASS TComercio
 
    // Apertura y cierre de ficheros--------------------------------------------
 
-   METHOD filesOpen()
-   METHOD filesClose()
-
    METHOD OpenFilesPrestaShopId()         INLINE ( ::TPrestashopId:OpenFiles() )
    METHOD CloseFilesPrestaShopId()        INLINE ( if( !empty( ::TPrestashopId ), ::TPrestashopId:End(), ) )
-
-   METHOD OpenFilesStock()                INLINE ( ::oStock:lOpenFiles() )
-   METHOD CloseFilesStock()               INLINE ( if( !empty( ::oStock ), ::oStock:End(), ) )
 
    // Dialogos-----------------------------------------------------------------
 
@@ -498,10 +493,10 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD GetInstance() CLASS TComercio
+METHOD GetInstance( nView ) CLASS TComercio
 
    if empty( ::oInstance )
-      ::oInstance          := ::New()
+      ::oInstance          := ::New( nView )
    end if
 
 RETURN ( ::oInstance )
@@ -509,6 +504,10 @@ RETURN ( ::oInstance )
 //---------------------------------------------------------------------------//
 
 METHOD EndInstance() CLASS TComercio
+
+   if !empty(::TPrestashopId)
+      ::TPrestashopId:CloseService()
+   end if 
 
    if !empty( ::oInstance )
       ::oInstance          := nil
@@ -518,12 +517,25 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oMenuItem, oMeterTotal, oTextTotal ) CLASS TComercio
+METHOD New( nView, oStock ) CLASS TComercio
 
-   DEFAULT oMenuItem       := "01108"
+   if empty(nView)
+      msgStop( "Vista no pasada" )
+      Return ( Self )
+   end if 
 
-   ::oMeterTotal           := oMeterTotal
-   ::oTextTotal            := oTextTotal
+   if empty(oStock)
+      msgStop( "Objeto stock no pasado" )
+      Return ( Self )
+   end if 
+
+   ::Default()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Default() CLASS TComercio
 
    ::lSyncAll              := .f.
    ::nTotMeter             := 0 
@@ -544,8 +556,7 @@ METHOD New( oMenuItem, oMeterTotal, oTextTotal ) CLASS TComercio
    ::TComercioStock        := TComercioStock():New( Self )
 
    ::TPrestashopId         := TPrestashopId():New( Self )
-
-   ::oStock                := TStock():Create( cPatGrp() )
+   ::TPrestashopId:openService()
 
 RETURN ( Self )
 
@@ -570,258 +581,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD filesOpen() CLASS TComercio
-
-   local oBlock
-   local oError
-   local lOpen       := .t.
-
-   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
-   BEGIN SEQUENCE
-
-      DATABASE NEW ::oArt     PATH ( cPatArt() ) FILE "ARTICULO.DBF"    VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
-      ::oArt:OrdSetFocus( "lPubInt" )
-
-      DATABASE NEW ::oPro     PATH ( cPatArt() ) FILE "PRO.DBF"         VIA ( cDriver() ) SHARED INDEX "PRO.CDX"
-
-      DATABASE NEW ::oTblPro  PATH ( cPatArt() ) FILE "TBLPRO.DBF"      VIA ( cDriver() ) SHARED INDEX "TBLPRO.CDX"
-
-      DATABASE NEW ::oArtDiv  PATH ( cPatArt() ) FILE "ARTDIV.DBF"      VIA ( cDriver() ) SHARED INDEX "ARTDIV.CDX"
-
-      DATABASE NEW ::oOferta  PATH ( cPatArt() ) FILE "OFERTA.DBF"      VIA ( cDriver() ) SHARED INDEX "OFERTA.CDX"
-
-      DATABASE NEW ::oFam     PATH ( cPatArt() ) FILE "FAMILIAS.DBF"    VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
-
-      DATABASE NEW ::oGrpFam  PATH ( cPatArt() ) FILE "GRPFAM.DBF"      VIA ( cDriver() ) SHARED INDEX "GRPFAM.CDX"
-
-      DATABASE NEW ::oCli     PATH ( cPatCli() ) FILE "CLIENT.DBF"      VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
-
-      DATABASE NEW ::oObras   PATH ( cPatCli() ) FILE "OBRAST.DBF"      VIA ( cDriver() ) SHARED INDEX "OBRAST.CDX"
-
-      DATABASE NEW ::oIva     PATH ( cPatDat() ) FILE "TIVA.DBF"        VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
-
-      DATABASE NEW ::oDivisas PATH ( cPatDat() ) FILE "DIVISAS.DBF"     VIA ( cDriver() ) SHARED INDEX "DIVISAS.CDX"
-
-      DATABASE NEW ::oPedCliT PATH ( cPatEmp() ) FILE "PEDCLIT.DBF"     VIA ( cDriver() ) SHARED INDEX "PEDCLIT.CDX"
-
-      DATABASE NEW ::oPedCliI PATH ( cPatEmp() ) FILE "PEDCLII.DBF"     VIA ( cDriver() ) SHARED INDEX "PEDCLII.CDX"
-
-      DATABASE NEW ::oPedCliE PATH ( cPatEmp() ) FILE "PEDCLIE.DBF"     VIA ( cDriver() ) SHARED INDEX "PEDCLIE.CDX"
-
-      DATABASE NEW ::oPedCliL PATH ( cPatEmp() ) FILE "PEDCLIL.DBF"     VIA ( cDriver() ) SHARED INDEX "PEDCLIL.CDX"
-
-      DATABASE NEW ::oCount   PATH ( cPatEmp() ) FILE "NCOUNT.DBF"      VIA ( cDriver() ) SHARED INDEX "NCOUNT.CDX"
-
-      DATABASE NEW ::oFPago   PATH ( cPatEmp() ) FILE "FPAGO.DBF"       VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
-
-      DATABASE NEW ::oFab     PATH ( cPatArt() ) FILE "FABRICANTES.DBF" VIA ( cDriver() ) SHARED INDEX "FABRICANTES.CDX"
-
-      DATABASE NEW ::oKit     PATH ( cPatArt() ) FILE "ARTKIT.DBF"      VIA ( cDriver() ) SHARED INDEX "ARTKIT.Cdx"
-
-      DATABASE NEW ::oAlbCliT PATH ( cPatEmp() ) FILE "ALBCLIT.DBF"     VIA ( cDriver() ) SHARED INDEX "ALBCLIT.CDX"
-
-      DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "ALBCLIL.DBF"     VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
-
-      DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) FILE "FACCLIL.DBF"     VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
-
-      DATABASE NEW ::oFacRecL PATH ( cPatEmp() ) FILE "FACRECL.DBF"     VIA ( cDriver() ) SHARED INDEX "FACRECL.CDX"
-
-      DATABASE NEW ::oTikCliL PATH ( cPatEmp() ) FILE "TIKEL.DBF"       VIA ( cDriver() ) SHARED INDEX "TIKEL.CDX"
-
-      DATABASE NEW ::oProLin  PATH ( cPatEmp() ) FILE "PROLIN.DBF"      VIA ( cDriver() ) SHARED INDEX "PROLIN.CDX"
-
-      DATABASE NEW ::oProMat  PATH ( cPatEmp() ) FILE "PROMAT.DBF"      VIA ( cDriver() ) SHARED INDEX "PROMAT.CDX"
-
-      DATABASE NEW ::oHisMov  PATH ( cPatEmp() ) FILE "HISMOV.DBF"      VIA ( cDriver() ) SHARED INDEX "HISMOV.CDX"
-
-      DATABASE NEW ::oPedPrvL PATH ( cPatEmp() ) FILE "PEDPROVL.DBF"    VIA ( cDriver() ) SHARED INDEX "PEDPROVL.CDX"
-
-      DATABASE NEW ::oAlbPrvT PATH ( cPatEmp() ) FILE "ALBPROVT.DBF"    VIA ( cDriver() ) SHARED INDEX "ALBPROVT.CDX"
-
-      DATABASE NEW ::oAlbPrvL PATH ( cPatEmp() ) FILE "ALBPROVL.DBF"    VIA ( cDriver() ) SHARED INDEX "ALBPROVL.CDX"
-
-      DATABASE NEW ::oFacPrvL PATH ( cPatEmp() ) FILE "FACPRVL.DBF"     VIA ( cDriver() ) SHARED INDEX "FACPRVL.CDX"
-
-      DATABASE NEW ::oRctPrvL PATH ( cPatEmp() ) FILE "RCTPRVL.DBF"     VIA ( cDriver() ) SHARED INDEX "RCTPRVL.CDX"
-
-      DATABASE NEW ::oArtImg  PATH ( cPatArt() ) FILE "ARTIMG.DBF"      VIA ( cDriver() ) SHARED INDEX "ARTIMG.CDX"
-
-      DATABASE NEW ::oPreCliT PATH ( cPatEmp() ) FILE "PRECLIT.DBF"     VIA ( cDriver() ) SHARED INDEX "PRECLIT.CDX"
-
-      DATABASE NEW ::oPreCliL PATH ( cPatEmp() ) FILE "PRECLIL.DBF"     VIA ( cDriver() ) SHARED INDEX "PRECLIL.CDX"
-
-      DATABASE NEW ::oPreCliI PATH ( cPatEmp() ) FILE "PRECLII.DBF"     VIA ( cDriver() ) SHARED INDEX "PRECLII.CDX"
-
-      DATABASE NEW ::oPreCliE PATH ( cPatEmp() ) FILE "PRECLIE.DBF"     VIA ( cDriver() ) SHARED INDEX "PRECLIE.CDX"
-
-      if !::OpenFilesPrestaShopId()
-         lOpen                := .f.
-      end if
-      
-      if !::OpenFilesStock()
-         lOpen                := .f.
-      end if
-
-   RECOVER USING oError
-
-      lOpen                   := .f.
-
-      msgStop( ErrorMessage( oError ), 'Imposible abrir las bases de datos' )      
-      
-      ::filesClose()
-
-   END SEQUENCE
-   ErrorBlock( oBlock )
-
-RETURN ( lOpen )
-
-//---------------------------------------------------------------------------//
-
-METHOD filesClose() CLASS TComercio
-
-   if !empty( ::oArt ) .and. ::oArt:Used()
-      ::oArt:End()
-   end if
-
-   if !empty( ::oPro ) .and. ::oPro:Used()
-      ::oPro:End()
-   end if
-
-   if !empty( ::oTblPro ) .and. ::oTblPro:Used()
-      ::oTblPro:End()
-   end if
-
-   if !empty( ::oFam ) .and. ::oFam:Used()
-      ::oFam:End()
-   end if
-
-   if !empty( ::oGrpFam ) .and. ::oGrpFam:Used()
-      ::oGrpFam:End()
-   end if
-
-   if !empty( ::oCli ) .and. ::oCli:Used()
-      ::oCli:End()
-   end if
-
-   if !empty( ::oFPago ) .and. ::oFPago:Used()
-      ::oFPago:End()
-   end if
-
-   if !empty( ::oObras ) .and. ::oObras:Used()
-      ::oObras:End()
-   end if
-
-   if !empty( ::oArtDiv ) .and. ::oArtDiv:Used()
-      ::oArtDiv:End()
-   end if
-
-   if !empty( ::oIva ) .and. ::oIva:Used()
-      ::oIva:End()
-   end if
-
-   if !empty( ::oDivisas ) .and. ::oDivisas:Used()
-      ::oDivisas:End()
-   end if
-
-   if !empty( ::oPedCliT ) .and. ::oPedCliT:Used()
-      ::oPedCliT:End()
-   end if
-
-   if !empty( ::oPedCliI ) .and. ::oPedCliI:Used()
-      ::oPedCliI:End()
-   end if
-
-   if !empty( ::oPedCliL ) .and. ::oPedCliL:Used()
-      ::oPedCliL:End()
-   end if
-
-   if !empty( ::oCount ) .and. ::oCount:Used()
-      ::oCount:End()
-   end if
-
-   if !empty( ::oFab ) .and. ::oFab:Used()
-      ::oFab:End()
-   end if
-
-   if !empty( ::oKit ) .and. ::oKit:Used()
-      ::oKit:End()
-   end if
-
-   if !empty( ::oAlbCliT ) .and. ::oAlbCliT:Used()
-      ::oAlbCliT:End()
-   end if
-
-   if !empty( ::oAlbCliL ) .and. ::oAlbCliL:Used()
-      ::oAlbCliL:End()
-   end if
-
-   if !empty( ::oFacCliL ) .and. ::oFacCliL:Used()
-      ::oFacCliL:End()
-   end if
-
-   if !empty( ::oFacRecL ) .and. ::oFacRecL:Used()
-      ::oFacRecL:End()
-   end if
-
-   if !empty( ::oTikCliL ) .and. ::oTikCliL:Used()
-      ::oTikCliL:End()
-   end if
-
-   if !empty( ::oProLin ) .and. ::oProLin:Used()
-      ::oProLin:End()
-   end if
-
-   if !empty( ::oProMat ) .and. ::oProMat:Used()
-      ::oProMat:End()
-   end if
-
-   if !empty( ::oHisMov ) .and. ::oHisMov:Used()
-      ::oHisMov:End()
-   end if
-
-   if !empty( ::oPedPrvL ) .and. ::oPedPrvL:Used()
-      ::oPedPrvL:End()
-   end if
-
-   if !empty( ::oAlbPrvT ) .and. ::oAlbPrvT:Used()
-      ::oAlbPrvT:End()
-   end if
-
-   if !empty( ::oAlbPrvL ) .and. ::oAlbPrvL:Used()
-      ::oAlbPrvL:End()
-   end if
-
-   if !empty( ::oFacPrvL ) .and. ::oFacPrvL:Used()
-      ::oFacPrvL:End()
-   end if
-
-   if !empty( ::oRctPrvL ) .and. ::oRctPrvL:Used()
-      ::oRctPrvL:End()
-   end if
-
-   if !empty( ::oArtImg ) .and. ::oArtImg:Used()
-      ::oArtImg:End()
-   end if
-
-   if !empty(::oPreCliT ) .and. ::oPreCliT:Used()
-      ::oPreCliT:End()
-   end if 
-
-   if !empty( ::oOferta ) .and. ::oOferta:Used()
-      ::oOferta:End()
-   end if
-
-   ::CloseFilesPrestaShopId()
-
-   ::CloseFilesStock()
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD dialogActivate( oWnd ) CLASS TComercio
-
-   DEFAULT  oWnd        := oWnd()
+METHOD dialogActivate() CLASS TComercio
 
    ::lSyncAll           := .t.
    ::nLevel             := nLevelUsr( "01108" )
@@ -831,12 +591,24 @@ METHOD dialogActivate( oWnd ) CLASS TComercio
       return ( Self )
    end if
 
-   if oWnd != nil
-      SysRefresh(); oWnd:CloseAll(); SysRefresh()
+   SysRefresh()
+
+   oWnd():CloseAll()
+
+   SysRefresh()
+
+   ::nView              := D():createView()
+
+   ::oStock             := TStock():Create( cPatGrp() )
+   if !::oStock:lOpenFiles()
+      msgStop( "Imposible abrir stocks" )
+      Return ( self )
    end if
 
+   ::Default()
+
    /*
-   Apertura del fichero de texto---------------------------------------------//
+   Apertura del dialogo------------------------------------------------------//
    */
 
    DEFINE DIALOG     ::oDlg ;
@@ -892,9 +664,11 @@ METHOD dialogActivate( oWnd ) CLASS TComercio
 
    ACTIVATE DIALOG ::oDlg CENTER
 
-   /*
-   Liberamos la imagen---------------------------------------------------------
-   */
+   D():DeleteView( ::nView )
+
+   ::oStock:end()
+
+   EnableAcceso()
 
    ::oBmp:End()
 
@@ -4591,35 +4365,31 @@ METHOD controllerExportPrestashop( idProduct ) Class TComercio
 
    ::disableDialog()
 
-   oBlock                     := ErrorBlock( { | oError | Break( oError ) } )
-   BEGIN SEQUENCE
+   // oBlock                     := ErrorBlock( { | oError | Break( oError ) } )
+   // BEGIN SEQUENCE
 
-      if ::filesOpen()
+      ::ftpConnect()
 
-         ::ftpConnect()
+      if restoreLastInsert 
 
-         if restoreLastInsert 
+         ::insertAllProducts( lastInsertProduct )
 
-            ::insertAllProducts( lastInsertProduct )
+      else 
 
-         else 
+         ::insertStructureInformation()
 
-            ::insertStructureInformation()
+         waitSeconds( 1 )
 
-            waitSeconds( 1 )
+         ::insertAllProducts()
 
-            ::insertAllProducts()
+      end if 
 
-         end if 
+      ::ftpDisConnect()
 
-         ::ftpDisConnect()
-
-      end if
-   
-   RECOVER USING oError
-      msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
-   END SEQUENCE
-   ErrorBlock( oBlock )
+   // RECOVER USING oError
+   //    msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
+   // END SEQUENCE
+   // ErrorBlock( oBlock )
 
    ::EnableDialog()
 
@@ -4715,19 +4485,19 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD insertAllProducts( idProduct ) CLASS TComercio
+METHOD insertAllProducts( idProduct ) CLASS TComercio //*//
 
-   local ordenAnterior  := ::oProductDatabase():ordsetfocus( "lWebShop" )
+   local ordenAnterior  := ( D():Articulos( ::getView() ) )->( ordsetfocus( "lWebShop" ) )
 
-   if ::oProductDatabase():seek( ::getStartId( idProduct ) )
+   if ( D():Articulos( ::getView() ) )->( dbseek( ::getStartId( idProduct ) ) )
 
-      while ( alltrim( ::oProductDatabase():cWebShop ) == ::getCurrentWebName() ) .and. !( ::oProductDatabase():eof() )
+      while ( alltrim( ( D():Articulos( ::getView() ) )->cWebShop ) == ::getCurrentWebName() ) .and. !( D():Articulos( ::getView() ) )->( eof() )  
 
-         if ::insertOneProductToPrestashop( ::oProductDatabase():Codigo )
-            ::saveLastInsertProduct( ::oProductDatabase():Codigo )
+         if ::insertOneProductToPrestashop( ( D():Articulos( ::getView() ) )->Codigo )
+            ::saveLastInsertProduct( ( D():Articulos( ::getView() ) )->Codigo )
          end if 
 
-         ::oProductDatabase():Skip()
+         ( D():Articulos( ::getView() ) )->( dbskip() )
 
       end while
 
@@ -4735,7 +4505,7 @@ METHOD insertAllProducts( idProduct ) CLASS TComercio
 
    end if 
 
-   ::oProductDatabase():ordsetfocus( ordenAnterior )
+   ( D():Articulos( ::getView() ) )->( ordsetfocus( ordenAnterior ) )
 
 Return ( self )
 
@@ -5519,19 +5289,11 @@ METHOD controllerUpdateStockPrestashop() Class TComercio
 
    ::writeText( 'Recopilando artículos a actualizar' )
 
-   if ::filesOpen() 
+   ::TComercioStock:buildListProductToUpdate( ::getStartId( lastInsertProduct ) )
 
-      ::TComercioStock:buildListProductToUpdate( ::getStartId( lastInsertProduct ) )
+   ::TComercioStock:calculateStocksProductsToUpdate()
 
-      ::TComercioStock:calculateStocksProductsToUpdate()
-
-      ::TComercioStock:createCommandProductsToUpdate()
-
-      // ::TComercioStock:executeCommandProductsToUpdate()
-
-      ::filesClose()
-
-   end if 
+   ::TComercioStock:createCommandProductsToUpdate()
 
    ::writeText( 'Proceso finalizado' )
 

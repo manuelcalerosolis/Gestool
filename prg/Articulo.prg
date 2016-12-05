@@ -268,13 +268,13 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       nView       := D():CreateView()
 
+      D():Articulos( nView )
+
       D():ArticuloLenguaje( nView )
       
       D():Lenguajes( nView )
       
       D():EstadoArticulo( nView )
-
-      D():Articulos( nView )
 
       D():Familias( nView )
 

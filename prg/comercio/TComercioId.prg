@@ -14,6 +14,8 @@ CLASS TPrestaShopId FROM TMant
 
    DATA TComercio 
 
+   DATA cName                                                  INIT "PrestaShopId"   
+
    METHOD New( TComercio )                                     CONSTRUCTOR
 
    METHOD DefineFiles()
@@ -29,7 +31,6 @@ CLASS TPrestaShopId FROM TMant
    METHOD getValueGestool( cTipoDocumento, idWeb, cWeb, defaultValue )
    METHOD setValueGestool( cTipoDocumento, cClave, cWeb, idWeb )
    METHOD isSeekGestool( cTipoDocumento, idWeb, cWeb )
-
 
    METHOD setValueProduct( cClave, cWeb, idWeb )               INLINE ::setValue( "01", cClave, cWeb, idWeb )
    METHOD getValueProduct( cClave, cWeb, defaultValue )        INLINE ::getValue( "01", cClave, cWeb, defaultValue )
@@ -137,17 +138,17 @@ METHOD setValue( cTipoDocumento, cClave, cWeb, idWeb )
       RETURN ( .f. )
    end if 
 
-   cClave                  := upper( cClave )
-   cWeb                    := upper( cWeb )
+   cClave                     := upper( cClave )
+   cWeb                       := upper( cWeb )
 
    if ::isSeekValues( cTipoDocumento, cClave, cWeb )
       ::oDbf:fieldPutByName( "idWeb", idWeb )
    else
       ::oDbf:Append()
-      ::oDbf:cDocumento    := cTipoDocumento
-      ::oDbf:cClave        := cClave
-      ::oDbf:cWeb          := cWeb
-      ::oDbf:idWeb         := idWeb
+      ::oDbf:cDocumento   := cTipoDocumento
+      ::oDbf:cClave       := cClave
+      ::oDbf:cWeb         := cWeb
+      ::oDbf:idWeb        := idWeb
       ::oDbf:Save()
    end if 
 
@@ -157,8 +158,8 @@ RETURN ( .t. )
 
 METHOD setValueGestool( cTipoDocumento, cClave, cWeb, idWeb )
 
-   cClave         := upper( cClave )
-   cWeb           := upper( cWeb )
+   cClave                     := upper( cClave )
+   cWeb                       := upper( cWeb )
 
    if !::isValidParameters( cTipoDocumento, cClave, cWeb, idWeb )
       RETURN ( .f. )
@@ -242,7 +243,7 @@ METHOD deleteDocumentValues( cTipoDocumento, cWeb )
    cWeb              := upper( cWeb )
 
    while ::oDbf:seekInOrd( cTipoDocumento + cWeb, "cDocuWeb" )
-      ::oDbf:Delete()
+      ::oDbf:delete()
    end while
 
 RETURN ( .t. )

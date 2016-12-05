@@ -3489,20 +3489,17 @@ METHOD BuildEmpresa()
 
    // Objetos -----------------------------------------------------------------
 
-   oDataTable              := TGrpCli():Create( cPatCli() )
-   ::AddEmpresaObject( oDataTable )
+   ::AddEmpresaObject( TGrpCli():Create( cPatCli() ) )
 
-   oDataTable              := TGrpPrv():Create( cPatPrv() )
-   ::AddEmpresaObject( oDataTable )
+   ::AddEmpresaObject( TGrpPrv():Create( cPatPrv() ) )
 
-   oDataTable              := UniMedicion():Create()
-   ::AddEmpresaObject( oDataTable )
+   ::AddEmpresaObject( UniMedicion():Create() )
 
-   oDataTable              := TBancos():Create()
-   ::AddEmpresaObject( oDataTable )
+   ::AddEmpresaObject( TBancos():Create() )
 
-   oDataTable              := TNewImp():Create()   
-   ::AddEmpresaObject( oDataTable )
+   ::AddEmpresaObject( TNewImp():Create() )
+
+   ::AddEmpresaObject( TPrestaShopId():Create() )
 
 RETURN ( Self )
 

@@ -1869,7 +1869,7 @@ STATIC FUNCTION OpenFiles()
 
       oMailingFacturasClientes      := TGenmailingDatabaseFacturasClientes():New( nView )
 
-      TComercio():getInstanceOpenFiles()
+      TComercio():getInstance( nView, oStock )
 
       /*
       Declaramos variables p-blicas--------------------------------------------
@@ -2227,6 +2227,8 @@ STATIC FUNCTION CloseFiles()
       ( dbfProvee )->( dbCloseArea() )
    end if
 
+   TComercio():endInstance()
+
    if !empty( oStock )
       oStock:end()
    end if
@@ -2351,8 +2353,6 @@ STATIC FUNCTION CloseFiles()
    D():DeleteView( nView )
 
    lOpenFiles  := .f.
-
-   TComercio():endInstanceCloseFiles()
 
    EnableAcceso()
 

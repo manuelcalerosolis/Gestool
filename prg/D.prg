@@ -398,7 +398,6 @@ CLASS D
       METHOD eofClientesEntidad( nView )              INLINE ( ( ::Get( "CliDad", nView ) )->( eof() ) )
       METHOD gotoIdClientesEntidad( id, nView )       INLINE ( ::seek( ::ClientesEntidad( nView ), id ) ) 
 
-   METHOD GruposClientes( nView )                     INLINE ( ::GetObject( "GruposClientes", nView ) )
    METHOD GrupoClientes( nView )                      INLINE ( ::Get( "GrpCli", nView ) )
 
    METHOD MovimientosAlmacen( nView )                 INLINE ( ::Get( "RemMovT", nView ) )
@@ -586,38 +585,38 @@ CLASS D
       METHOD PropiedadesLineas( nView )                           INLINE ( ::Get( "TblPro", nView ) )
       METHOD gotoIdPropiedadesLineas( id, nView )                 INLINE ( ::seekInOrd( ::PropiedadesLineas( nView ), id, "cCodPro" ) ) 
 
-   METHOD Almacen( nView )                   INLINE ( ::Get( "Almacen", nView ) )
+   METHOD Almacen( nView )                                        INLINE ( ::Get( "Almacen", nView ) )
 
-   METHOD Documentos( nView )                INLINE ( ::Get( "RDocumen", nView ) )
+   METHOD Documentos( nView )                                     INLINE ( ::Get( "RDocumen", nView ) )
 
-   METHOD Usuarios( nView )                  INLINE ( ::Get( "Users", nView ) )
+   METHOD Usuarios( nView )                                       INLINE ( ::Get( "Users", nView ) )
 
-   METHOD UbicacionLineas( nView )           INLINE ( ::Get( "UbiCal", nView ) )
+   METHOD UbicacionLineas( nView )                                INLINE ( ::Get( "UbiCal", nView ) )
 
-   METHOD Delegaciones( nView )              INLINE ( ::Get( "Delega", nView ) )
+   METHOD Delegaciones( nView )                                   INLINE ( ::Get( "Delega", nView ) )
 
-   METHOD Contadores( nView )                INLINE ( ::Get( "NCount", nView ) )
+   METHOD Contadores( nView )                                     INLINE ( ::Get( "NCount", nView ) )
 
-   METHOD Empresa( nView )                   INLINE ( ::Get( "Empresa", nView ) )
-   METHOD EmpresaBancos( nView )             INLINE ( ::Get( "EmpBnc", nView ) )
+   METHOD Empresa( nView )                                        INLINE ( ::Get( "Empresa", nView ) )
+   METHOD EmpresaBancos( nView )                                  INLINE ( ::Get( "EmpBnc", nView ) )
 
-   METHOD CodigosPostales( nView )           INLINE ( ::Get( "CodPostal", nView ) )
+   METHOD CodigosPostales( nView )                                INLINE ( ::Get( "CodPostal", nView ) )
 
-   METHOD Provincias( nView )                INLINE ( ::Get( "Provincia", nView ) )
-   METHOD gotoProvincias( id, nView )        INLINE ( ::seekInOrd( ::Provincias( nView ), id, "cCodPrv" ) )
+   METHOD Provincias( nView )                                     INLINE ( ::Get( "Provincia", nView ) )
+   METHOD gotoProvincias( id, nView )                             INLINE ( ::seekInOrd( ::Provincias( nView ), id, "cCodPrv" ) )
 
-   METHOD Atipicas( nView )                  INLINE ( ::Get( "CliAtp", nView ) )
+   METHOD Atipicas( nView )                                       INLINE ( ::Get( "CliAtp", nView ) )
       METHOD gotoIdAtipicasAgentes( idAgente, idArticulo, nView ) ;
-                                             INLINE ( ::seekInOrd( ::Atipicas( nView ), idAgente + idArticulo, "cAgeArt" ) )
+                                                                  INLINE ( ::seekInOrd( ::Atipicas( nView ), idAgente + idArticulo, "cAgeArt" ) )
 
-   METHOD ClientesContactos( nView )         INLINE ( ::Get( "CliCto", nView ) )
+   METHOD ClientesContactos( nView )                              INLINE ( ::Get( "CliCto", nView ) )
 
-   METHOD ImpuestosEspeciales( nView )       INLINE ( ::GetObject( "ImpuestosEspeciales", nView ) )
+   METHOD ImpuestosEspeciales( nView )                            INLINE ( ::GetObject( "ImpuestosEspeciales", nView ) )
 
-   METHOD Agentes( nView )                   INLINE ( ::Get( "Agentes", nView ) )
-      METHOD AgentesId( nView )              INLINE ( ( ::Get( "Agentes", nView ) )->cCodAge )
-      METHOD AgentesComisiones( nView )      INLINE ( ::Get( "AgeCom", nView ) )
-      METHOD AgentesRelaciones( nView )      INLINE ( ::Get( "AgeRel", nView ) )
+   METHOD Agentes( nView )                                        INLINE ( ::Get( "Agentes", nView ) )
+      METHOD AgentesId( nView )                                   INLINE ( ( ::Get( "Agentes", nView ) )->cCodAge )
+      METHOD AgentesComisiones( nView )                           INLINE ( ::Get( "AgeCom", nView ) )
+      METHOD AgentesRelaciones( nView )                           INLINE ( ::Get( "AgeRel", nView ) )
 
    METHOD Lenguajes( nView )                 INLINE ( ::Get( "Lenguaje", nView ) )
 
@@ -629,12 +628,20 @@ CLASS D
 
    METHOD EstadoArticulo( nView )            INLINE ( ::Get( "EstadoSat", nView ) )
 
-   METHOD CamposExtras( nView )              INLINE ( ::Get( "CAMPOEXTRA", nView ) )
-   METHOD DetCamposExtras( nView )           INLINE ( ::Get( "DETCEXTRA", nView ) )
+   METHOD CamposExtras( nView )              INLINE ( ::Get( "CampoExtra", nView ) )
+   METHOD DetCamposExtras( nView )           INLINE ( ::Get( "DetCExtra", nView ) )
 
    METHOD Pais( nView )                      INLINE ( ::Get( "Pais", nView ) )
 
    METHOD Turnos( nView )                    INLINE ( ::Get( "Turno", nView ) )
+
+   // get objects--------------------------------------------------------------
+
+   METHOD getPrestaShopId( nView )           INLINE ( ::GetObject( "PrestaShopId", nView ) )
+
+   METHOD gruposClientes( nView )            INLINE ( ::GetObject( "GruposClientes", nView ) )
+
+   // actions------------------------------------------------------------------
 
    METHOD Lock( cDatabase, nView )           INLINE ( dbLock( ::Get( cDatabase, nView ) ) )
    METHOD UnLock( cDatabase, nView )         INLINE ( ( ::Get( cDatabase, nView ) )->( dbUnLock() ) ) 
@@ -1007,24 +1014,27 @@ Return ( ::nView )
 
    METHOD OpenObject( cObject, nView ) CLASS D
 
-      local lOpen
       local oObject     := TDataCenter():ScanObject( cObject )
 
-      if !empty( oObject )
-
-         lOpen          := oObject:OpenService()
-
-         if lOpen
-            ::AddView( cObject, oObject, nView )
-         end if 
-
-      else 
+      if empty( oObject )
 
          msgStop( "No puedo encontrar el objeto " + cObject )   
 
          Return ( .f. )
 
-      end if
+      end if 
+
+      if ( oObject:OpenService() )
+   
+         ::addView( cObject, oObject, nView )
+   
+      else 
+
+         msgStop( "No puedo abrir la base de datos del objeto " + cObject )   
+
+         Return ( .f. )
+
+      end if 
 
    Return ( .t. )
 
