@@ -3513,7 +3513,7 @@ METHOD lGrupoNumero( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoNumero:Cargo:ValidDesde := {| oGet | if( oGet:VarGet() >= "0" , .t., ( msgStop( "No existe numeración negativa" ), .f. ) ) }
    ::oGrupoNumero:Cargo:ValidHasta := {| oGet | if( oGet:VarGet() >= "0" , .t., ( msgStop( "No existe numeración negativa" ), .f. ) ) }
    ::oGrupoNumero:Cargo:lImprimir  := lImp
-   ::oGrupoNumero:Cargo:cBitmap    := "text_normal_16"
+   ::oGrupoNumero:Cargo:cBitmap    := "gc_keyboard_key_n_16"
 
    if !Empty( ::oImageList )
       ::oImageList:AddMasked( TBitmap():Define( ::oGrupoNumero:Cargo:cBitmap ), Rgb( 255, 0, 255 ) )
@@ -3580,7 +3580,7 @@ METHOD lGrupoSerie( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoSerie:Cargo:ValidDesde := {| oGet | if( oGet:VarGet() >= "A" .and. oGet:VarGet() <= "Z", .t., ( msgStop( "Las series desde deben de estar comprendidas entre la A y la Z" ), .f. ) ) }
    ::oGrupoSerie:Cargo:ValidHasta := {| oGet | if( oGet:VarGet() >= "A" .and. oGet:VarGet() <= "Z", .t., ( msgStop( "Las series hasta deben de estar comprendidas entre la A y la Z" ), .f. ) ) }
    ::oGrupoSerie:Cargo:lImprimir  := lImp
-   ::oGrupoSerie:Cargo:cBitmap    := "Sort_az_descending_alpha_16"
+   ::oGrupoSerie:Cargo:cBitmap    := "gc_sort_az_descending_16"
 
    if !Empty( ::oImageList )
       ::oImageList:AddMasked( TBitmap():Define( ::oGrupoSerie:Cargo:cBitmap ), Rgb( 255, 0, 255 ) )
@@ -3647,7 +3647,7 @@ METHOD lGrupoSufijo( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoSufijo:Cargo:ValidDesde := {|| .t. }
    ::oGrupoSufijo:Cargo:ValidHasta := {|| .t. }
    ::oGrupoSufijo:Cargo:lImprimir  := lImp
-   ::oGrupoSufijo:Cargo:cBitmap    := "branch_16"
+   ::oGrupoSufijo:Cargo:cBitmap    := "gc_bags_16"
 
    if !Empty( ::oImageList )
       ::oImageList:AddMasked( TBitmap():Define( ::oGrupoSufijo:Cargo:cBitmap ), Rgb( 255, 0, 255 ) )

@@ -395,14 +395,17 @@ GC_CLOUD_RAIN_16 BITMAP "..\\bmp\\GC_CLOUD_RAIN_16.bmp"
 GC_SNOWFLAKE_16 BITMAP "..\\bmp\\GC_SNOWFLAKE_16.bmp"
 
 FORM_GREEN_ADD_16 BITMAP "..\\bmp\\form_green_add_16.bmp"
-
 FORM_GREEN_ADD_32 BITMAP "..\\bmp\\form_green_add_32.bmp"
-
 FORM_GREEN_ADD_48_ALPHA BITMAP "..\\bmp\\form_green_add_48_alpha.bmp"
 
 DOCLOCK BITMAP "..\\bmp\\gc_document_pdf_16.bmp"
 DOCLOCK16 BITMAP "..\\bmp\\gc_document_pdf_16.bmp"
 
+GC_KEYBOARD_KEY_N_16 BITMAP "..\\bmp\\gc_keyboard_key_n_16.bmp"
+GC_BAGS_16 BITMAP "..\\bmp\\gc_bags_16.bmp"
+GC_FUNNEL_48 BITMAP "..\\bmp\\gc_funnel_48.bmp"
+
+GC_DOCUMENT_TEXT_16 BITMAP "..\\bmp\\gc_document_text_16.bmp"
 
 
 
