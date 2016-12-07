@@ -2,14 +2,16 @@
 
 #define CRLF                        chr( 13 ) + chr( 10 )
 
-#define __default_warranty_days__   10
+#define __default_warranty_days__   15
 #define __debug_mode__              .f.
 
 //---------------------------------------------------------------------------//
 
 Function gestionGarantiasTPV( aLine, aHeader, nView, dbfTmpLin )
 
-Return ( TGestionGarantiasTPV():New( aLine, aHeader, nView, dbfTmpLin ):Run() )
+   // Return ( .t. )
+
+ Return ( TGestionGarantiasTPV():New( aLine, aHeader, nView, dbfTmpLin ):Run() )
 
 //---------------------------------------------------------------------------//
 
@@ -94,6 +96,8 @@ CREATE CLASS TGestionGarantiasTPV
 
    METHOD setPriceUnit()                              INLINE ( ::aLine[ ( D():TiketsLineas( ::nView ) )->( fieldpos( "nPvpTil" ) ) ] := ::priceSale )
 
+   METHOD logwrite( cText )                           INLINE ( if( __debug_mode__, logwrite( cText ),  ) )
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -129,7 +133,7 @@ METHOD Run()
       end if 
 
       if ( ::isEmptyDateInWarrantyPeriod( __debug_mode__ ) )
-         msgInfo( "El producto " + alltrim( ::idProduct ) + " " + alltrim( ::nameProduct ) + " no aparece en operaciones de venta, en el periodo de devolución, en el cliente " + alltrim( ::idClient ) + "." + CRLF + ;
+         msgInfo( "El producto " + alltrim( ::idProduct ) + " " + alltrim( ::nameProduct ) + " no aparece en operaciones de venta, en el periodo de devoluciÃ³n, en el cliente " + alltrim( ::idClient ) + "." + CRLF + ;
                   "Se procedera a la busqueda anonima del producto." )
       end if 
 
@@ -143,7 +147,7 @@ METHOD Run()
       end if 
 
       if ::notValidateUnitsToReturn( .t. ) 
-         msgStop( "El cliente [" + alltrim( ::getClientSale() ) + " " + alltrim( ::getNameSale() ) + "] puede devolver como máximo " + alltrim( str( ::getMaxiumnUnitsToReturnByClient() ) ) + " unidades." )
+         msgStop( "El cliente [" + alltrim( ::getClientSale() ) + " " + alltrim( ::getNameSale() ) + "] puede devolver como mÃ¡ximo " + alltrim( str( ::getMaxiumnUnitsToReturnByClient() ) ) + " unidades." )
          Return .f.
       end if 
 
@@ -155,11 +159,11 @@ METHOD Run()
 
          if ::isDateInWarrantyPeriod() .and. ( ::unitsToReturnAnonymusWarranty >= ::getAbsUnitsInActualLine() )
 
-            lQuestion   := msgNoYes(   "Unidades vendidas al cliente actual en periodo de garantía es de " + cvaltochar( round( ::unitsToReturnClientWarranty, 2 ) ) + CRLF + CRLF + ;
+            lQuestion   := msgNoYes(   "Unidades vendidas al cliente actual en periodo de garantÃ­a es de " + cvaltochar( round( ::unitsToReturnClientWarranty, 2 ) ) + CRLF + CRLF + ;
                                        "El producto [" + alltrim( ::idProduct ) + " " + alltrim( ::nameProduct ) + "] se ha vendido en un cliente diferente a la venta actual." + CRLF + CRLF + ;
-                                       "Las unidades máximas a devolver en periodo de garantía serían " + alltrim( str( round( ::unitsToReturn, 2 ) ) + " unidades." ) + CRLF + CRLF + ;
-                                       "¿ Desea proceder a la devolución ?",;
-                                       "Devolución fuera de garantía" )
+                                       "Las unidades mÃ¡ximas a devolver en periodo de garantÃ­a serÃ­an " + alltrim( str( round( ::unitsToReturn, 2 ) ) + " unidades." ) + CRLF + CRLF + ;
+                                       "Â¿ Desea proceder a la devoluciÃ³n ?",;
+                                       "DevoluciÃ³n fuera de garantÃ­a" )
          
             if ( lQuestion )
                ::setPriceUnit()
@@ -179,8 +183,8 @@ METHOD Run()
          if ( oUser():lAdministrador() )
             lQuestion   := msgNoYes(   "El producto [" + alltrim( ::idProduct ) + " " + alltrim( ::nameProduct ) + "] se ha vendido por ultima vez en la fecha " + dtoc( ::lastDateSale ) + CRLF + CRLF +;
                                        "Al cliente [" + alltrim( ::getClientSale() ) + " " + alltrim( ::getNameSale() ) + "]" + CRLF + CRLF + ;
-                                       "Documento " + ::typeSale + " con número " + ::getDocumentSale(),;
-                                       "¿ Desea proceder a la devolución ?")
+                                       "Documento " + ::typeSale + " con nÃºmero " + ::getDocumentSale(),;
+                                       "Â¿ Desea proceder a la devoluciÃ³n ?")
             
             if ( lQuestion )
                ::setPriceUnit()
@@ -190,9 +194,9 @@ METHOD Run()
          else
             msgStop( "El producto [" + alltrim( ::idProduct ) + " " + alltrim( ::nameProduct ) + "] se ha vendido por ultima vez en la fecha " + dtoc( ::lastDateSale ) + CRLF + CRLF +;
                      "Al cliente [" + alltrim( ::getClientSale() ) + " " + alltrim( ::getNameSale() ) + "]" + CRLF + CRLF + ;
-                     "Documento " + ::typeSale + " con número " + ::getDocumentSale() + CRLF + CRLF + ;
+                     "Documento " + ::typeSale + " con nÃºmero " + ::getDocumentSale() + CRLF + CRLF + ;
                      "Comuniquelo al administrador",;
-                     "Devolución no permitida" )
+                     "DevoluciÃ³n no permitida" )
          end if 
       
       end if 
@@ -205,12 +209,12 @@ METHOD loadProductInformation()
 
    ::priceSale          := 0
 
-   ::idProduct          := ::aLine[ ( D():TiketsLineas( ::nView ) )->( fieldpos( "cCbaTil" ) ) ]
-   ::nameProduct        := ::aLine[ ( D():TiketsLineas( ::nView ) )->( fieldpos( "cNomTil" ) ) ]
-   ::idFamily           := ::aLine[ ( D():TiketsLineas( ::nView ) )->( fieldpos( "cFamTil" ) ) ]
+   ::idProduct          := padr( ::aLine[ ( D():TiketsLineas( ::nView ) )->( fieldpos( "cCbaTil" ) ) ], 18 )
+   ::nameProduct        := alltrim( ::aLine[ ( D():TiketsLineas( ::nView ) )->( fieldpos( "cNomTil" ) ) ] )
+   ::idFamily           := alltrim( ::aLine[ ( D():TiketsLineas( ::nView ) )->( fieldpos( "cFamTil" ) ) ] )
    ::unitsInActualLine  := ::aLine[ ( D():TiketsLineas( ::nView ) )->( fieldpos( "nUntTil" ) ) ]
 
-   ::dateDocument        := ::aHeader[ ( D():Tikets( ::nView ) )->( fieldpos( "dFecTik" ) ) ]
+   ::dateDocument       := ::aHeader[ ( D():Tikets( ::nView ) )->( fieldpos( "dFecTik" ) ) ]
    ::idClient           := ::aHeader[ ( D():Tikets( ::nView ) )->( fieldpos( "cCliTik" ) ) ]
 
    ::warrantyDays       := retFld( ::idFamily, D():Familias( ::nView ), "nDiaGrt" )
@@ -291,7 +295,7 @@ METHOD searchLastSaleAlbaranesClientes( idClient, dateWarranty, lInfo )
             if isTrue( lInfo )
                msgalert(   "Parametros------------------------------"         + CRLF + ;
                            "Cliente : " + cvaltochar( idClient )              + CRLF + ;
-                           "Fecha garantía : " + cvaltochar( dateWarranty )   + CRLF + ;
+                           "Fecha garantÃ­a : " + cvaltochar( dateWarranty )   + CRLF + ;
                            "fin parametros--------------------------"         + CRLF + ;
                            "Unidades a devolver : " + str( ::unitsToReturn )  + CRLF +;
                            "Documento : " +  ( D():AlbaranesClientesLineas( ::nView ) )->cSerAlb + "/" + alltrim( str( ( D():AlbaranesClientesLineas( ::nView ) )->nNumAlb ) ) + CRLF +;
@@ -376,7 +380,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD searchLastSaleTicketsClientes( idClient, dateWarranty ) 
+METHOD searchLastSaleTicketsClientes( idClient, dateWarranty, debugMode ) 
 
    D():getStatusTiketsLineas( ::nView )
 
@@ -384,24 +388,25 @@ METHOD searchLastSaleTicketsClientes( idClient, dateWarranty )
 
    if ( D():TiketsLineas( ::nView ) )->( dbseek( ::idProduct ) )  
    
-      while ( D():TiketsLineas( ::nView ) )->cCbaTil == ::idProduct .and. D():TiketsLineasNotEof( ::nView ) 
+      ::logwrite( 'ArtÃ­culo ' + ( ::idProduct ) + ' encontrado, en tickets de clientes' )
+
+      while ( alltrim( ( D():TiketsLineas( ::nView ) )->cCbaTil ) == ::idProduct ) .and. D():TiketsLineasNotEof( ::nView ) 
 
          if D():gotoIdTikets( D():TiketsLineasId( ::nView ), ::nView ) 
 
             if ( empty( idClient ) .or. ( D():Tikets( ::nView ) )->cCliTik == idClient )
 
+               ::logwrite( 'Cliente ' + ( idClient ) + ' encontrado, en tickets de clientes' )
+
                if ( empty( dateWarranty ) .or. ( D():Tikets( ::nView ) )->dFecTik >= dateWarranty )
 
-                  // msgalert( ( D():Tikets( ::nView ) )->dFecTik, "fecha tiket")
+                  ::logwrite( 'Fecha ' + dtoc( ( dateWarranty ) ) + ' encontrado, en tickets de clientes' )
 
                   ::unitsToReturn   += ( D():TiketsLineas( ::nView ) )->nUntTil
 
-                  // msgalert( ::unitsToReturn, "unitsToReturn" )
+                  if ( ( D():TiketsLineas( ::nView ) )->nUntTil > 0 ) .and. ( empty( ::lastDateSale ) .or. ( D():Tikets( ::nView ) )->dFecTik > ::lastDateSale )
 
-                  if ( ( D():TiketsLineas( ::nView ) )->nUntTil > 0 ) .and. ;
-                     ( empty( ::lastDateSale ) .or. ( D():Tikets( ::nView ) )->dFecTik > ::lastDateSale )
-
-                     // msgalert( ( D():Tikets( ::nView ) )->dFecTik, "fecha tiket" )
+                     ::logwrite( 'Registro valido' )
 
                      ::typeSale     := "Ticket de cliente"
                      ::clientSale   := ( D():Tikets( ::nView ) )->cCliTik
@@ -413,19 +418,38 @@ METHOD searchLastSaleTicketsClientes( idClient, dateWarranty )
                         ::priceSale := ( D():TiketsLineas( ::nView ) )->nPvpTil 
                      end if 
 
+                  else 
+
+                     ::logwrite( 'Registro invalido' )
+
                   end if
 
-               end if 
+               else 
+
+                  ::logwrite( 'Fecha ' + ( dtoc( dateWarranty ) ) + ' no encontrado, en tickets de clientes' )
+
+               end if
+
+            else 
+
+               ::logwrite( 'Cliente ' + ( idClient ) + ' no encontrado, en tickets de clientes' )
+
 
             end if 
+
+         else 
+
+            ::logwrite( 'Cabecera de tiket ' + D():TiketsLineasId( ::nView ) + ' de cliente no encontrada')
 
          end if 
 
          ( D():TiketsLineas( ::nView ) )->( dbskip() )
 
-         sysrefresh()
-
       end while
+
+   else
+
+      ::logwrite( 'ArtÃ­culo ' + ( ::idProduct ) + ' no encontrado, en tickets de clientes' )
 
    end if 
 
@@ -440,7 +464,7 @@ METHOD validateUnitsToReturn( lInfo )
    if isTrue( lInfo )
       msgAlert(   "Unidades en la linea actual : " + cvaltochar( abs( ::getUnitsInActualLine() ) )                      + CRLF +;
                   "Unidades maximas a devolver por cliente : " + cvaltochar( ::getMaxiumnUnitsToReturnByClient() )      + CRLF +;
-                  "Retorno de función : " + cvaltochar( ::getMaxiumnUnitsToReturnByClient() >= abs( ::getUnitsInActualLine() ) ),;
+                  "Retorno de funciÃ³n : " + cvaltochar( ::getMaxiumnUnitsToReturnByClient() >= abs( ::getUnitsInActualLine() ) ),;
                   "validateUnitsToReturn" )
    end if 
 

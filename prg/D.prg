@@ -562,7 +562,10 @@ CLASS D
    METHOD TarifaPreciosLineas( nView )                            INLINE ( ::Get( "TarPreL", nView ) )
 
    METHOD Familias( nView )                                       INLINE ( ::Get( "Familias", nView ) )
-      METHOD FamiliasId( nView )                                  INLINE ( ( ::Get( "Familias", nView ) )->CCODFAM )
+      METHOD FamiliasId( nView )                                  INLINE ( ( ::Get( "Familias", nView ) )->cCodFam )
+      METHOD getStatusFamilias( nView )                           INLINE ( ::aStatus := aGetStatus( ::Familias( nView ) ) )
+      METHOD setStatusFamilias( nView )                           INLINE ( SetStatus( ::Familias( nView ), ::aStatus ) ) 
+      METHOD gotoFamilias( id, nView )                            INLINE ( ::seekInOrd( ::Familias( nView ), id, "cCodFam" ) ) 
    
    METHOD Temporadas( nView )                                     INLINE ( ::Get( "Temporadas", nView ) )
 

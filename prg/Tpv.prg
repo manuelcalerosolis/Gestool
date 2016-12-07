@@ -834,7 +834,7 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
          lOpenFiles        := .f.
       end if
 
-      TComercio():getInstanceOpenFiles()
+      TComercio():getInstance( nView, oStock )
 
       /*
       Creamos los botones para las formas de pago---------------------------------
@@ -1052,7 +1052,7 @@ STATIC FUNCTION CloseFiles()
       oDetCamposExtra:CloseFiles()
    end if
 
-   TComercio():endInstanceCloseFiles()
+   TComercio():endInstance()
 
    D():DeleteView( nView )
 

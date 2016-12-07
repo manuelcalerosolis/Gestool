@@ -39,6 +39,8 @@ END CLASS
 
 METHOD buildCategory( id ) CLASS TComercioCategory
 
+   local categoryName 
+
    if !( ::isSyncronizeAll() )
       Return .f. 
    end if 
@@ -47,25 +49,31 @@ METHOD buildCategory( id ) CLASS TComercioCategory
       Return .f.
    end if
 
-   ::oCategoryDatabase():getStatus()
+   D():getStatusFamilias( ::getView() )
 
-   if ::oCategoryDatabase():SeekInOrd( id, "cCodFam" ) 
+   if ( D():Familias( ::getView() ) )->( dbseekinord( id, "cCodFam" ) )  
 
-      if !empty( ::oCategoryDatabase():cFamCmb )
-         ::buildCategory( ::oCategoryDatabase():cFamCmb )
+      if !empty( ( D():Familias( ::getView() ) )->cFamCmb )
+         ::buildCategory( ( D():Familias( ::getView() ) )->cFamCmb )
       end if
 
+      if empty( (D():Familias( ::getView() ) )->cDesWeb )
+         categoryName   := alltrim( ( D():Familias( ::getView() ) )->cNomFam )
+      else
+         categoryName   := alltrim( ( D():Familias( ::getView() ) )->cDesWeb )
+      end if  
+
       aAdd( ::aCategoriesProduct,   {  "id"              => id,;
-                                       "id_parent"       => alltrim( ::oCategoryDatabase():cFamCmb ),;
-                                       "name"            => if( empty( ::oCategoryDatabase():cDesWeb ), alltrim( ::oCategoryDatabase():cNomFam ), alltrim( ::oCategoryDatabase():cDesWeb ) ),;
-                                       "description"     => if( empty( ::oCategoryDatabase():cDesWeb ), alltrim( ::oCategoryDatabase():cNomFam ), alltrim( ::oCategoryDatabase():cDesWeb ) ),;
-                                       "link_rewrite"    => cLinkRewrite( if( empty( ::oCategoryDatabase():cDesWeb ), alltrim( ::oCategoryDatabase():cNomFam ), alltrim( ::oCategoryDatabase():cDesWeb ) ) ),;
-                                       "image"           => alltrim( ::oCategoryDatabase():cImgBtn ),;
+                                       "id_parent"       => alltrim( ( D():Familias( ::getView() ) )->cFamCmb ),;
+                                       "name"            => categoryName,;
+                                       "description"     => categoryName,;
+                                       "link_rewrite"    => cLinkRewrite( categoryName ),;
+                                       "image"           => alltrim( ( D():Familias( ::getView() ) )->cImgBtn ),;
                                        "cPrefijoNombre"  => "" } )
 
    end if   
 
-   ::oCategoryDatabase():setStatus()
+   D():setStatusFamilias( ::getView() )
 
 Return ( Self )
 
@@ -466,7 +474,7 @@ METHOD getParentCategory( idCategory ) CLASS TComercioCategory
 
    local idParentCategory    := 2
 
-   if ::oCategoryDatabase():Seek( idCategory ) // .and. ::oCategoryDatabase():lPubInt
+   if D():gotoFamilias( idCategory, ::getView() ) 
       idParentCategory       := ::TPrestashopId():getValueCategory( idCategory, ::getCurrentWebName() )  
    end if
 
@@ -478,8 +486,8 @@ METHOD getNodeParentCategory( idCategory ) CLASS TComercioCategory
 
    local idNode            := ""
 
-   if !empty( idCategory ) .and. ::oCategoryDatabase():Seek( idCategory )
-      idNode               := ::oCategoryDatabase():cFamCmb
+   if !empty( idCategory ) .and. D():gotoFamilias( idCategory, ::getView() ) 
+      idNode               := ( D():Familias( ::getView() ) )->cFamCmb
    end if   
 
 Return ( idNode )

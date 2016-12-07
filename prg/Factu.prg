@@ -2691,7 +2691,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Comercio electrónico'
    oItem:cMessage       := 'Comercio electrónico'
-   oItem:bAction        := {|| TComercio():dialogActivate() }
+   oItem:bAction        := {|| TComercio():New():dialogActivate() }
    oItem:cId            := "01108"
    oItem:cBmp           := "gc_earth_money_16"
    oItem:cBmpBig        := "gc_earth_money_32"

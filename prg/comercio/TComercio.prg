@@ -11,7 +11,6 @@
 
 static oTimer
 static oComercio
-static oMsgAlarm
 
 //---------------------------------------------------------------------------//
 
@@ -19,6 +18,9 @@ CLASS TComercio
 
    DATA  nView
    DATA  oStock
+
+   DATA  lDestroyView          
+   DATA  lDestroyStock         
 
    CLASSDATA oInstance
    CLASSDATA hProductsToUpdate      INIT {=>}
@@ -187,7 +189,8 @@ CLASS TComercio
    DATA oWaitMeter
 
    METHOD New()                           CONSTRUCTOR
-   METHOD Default() 
+   METHOD Default()
+   METHOD End() 
 
    METHOD getView()                       INLINE ( ::nView )
 
@@ -493,10 +496,10 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD GetInstance( nView ) CLASS TComercio
+METHOD GetInstance( nView, oStock ) CLASS TComercio
 
    if empty( ::oInstance )
-      ::oInstance          := ::New( nView )
+      ::oInstance          := ::New( nView, oStock )
    end if
 
 RETURN ( ::oInstance )
@@ -505,9 +508,7 @@ RETURN ( ::oInstance )
 
 METHOD EndInstance() CLASS TComercio
 
-   if !empty(::TPrestashopId)
-      ::TPrestashopId:CloseService()
-   end if 
+   ::End()
 
    if !empty( ::oInstance )
       ::oInstance          := nil
@@ -520,16 +521,41 @@ RETURN ( nil )
 METHOD New( nView, oStock ) CLASS TComercio
 
    if empty(nView)
-      msgStop( "Vista no pasada" )
-      Return ( Self )
+      ::nView                 := D():CreateView()
+      ::lDestroyView          := .t.
+   else 
+      ::nView                 := nView
+      ::lDestroyView          := .f.
    end if 
 
    if empty(oStock)
-      msgStop( "Objeto stock no pasado" )
-      Return ( Self )
+      ::oStock                := TStock():Create( cPatGrp() )
+      ::oStock:lOpenFiles()
+      ::lDestroyStock         := .t.
+   else 
+      ::oStock                := oStock
+      ::lDestroyStock         := .f.
    end if 
 
    ::Default()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD End() CLASS TComercio
+
+   if !empty(::TPrestashopId)
+      ::TPrestashopId:CloseService()
+   end if 
+
+   if istrue( ::lDestroyView )
+      D():DeleteView( ::nView )
+   end if 
+
+   if istrue( ::lDestroyStock )
+      ::oStock:end()       
+   end if
 
 RETURN ( Self )
 
@@ -591,25 +617,25 @@ METHOD dialogActivate() CLASS TComercio
       return ( Self )
    end if
 
+   if empty(::nView)
+      msgStop( "Imposible acceder a las vistas" )
+      Return ( self )
+   end if
+
+   if empty(::oStock)
+      msgStop( "Imposible abrir los stocks" )
+      Return ( self )
+   end if
+
    SysRefresh()
 
    oWnd():CloseAll()
 
    SysRefresh()
 
-   ::nView              := D():createView()
-
-   ::oStock             := TStock():Create( cPatGrp() )
-   if !::oStock:lOpenFiles()
-      msgStop( "Imposible abrir stocks" )
-      Return ( self )
-   end if
-
    ::Default()
 
-   /*
-   Apertura del dialogo------------------------------------------------------//
-   */
+   // Apertura del dialogo------------------------------------------------------//
 
    DEFINE DIALOG     ::oDlg ;
       RESOURCE       "Comercio_0"
@@ -663,8 +689,6 @@ METHOD dialogActivate() CLASS TComercio
       ::oDlg:bStart := {|| ::dialogStart() }
 
    ACTIVATE DIALOG ::oDlg CENTER
-
-   D():DeleteView( ::nView )
 
    ::oStock:end()
 

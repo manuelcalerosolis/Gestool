@@ -2,14 +2,16 @@
 
 #define CRLF                        chr( 13 ) + chr( 10 )
 
-#define __default_warranty_days__   10
+#define __default_warranty_days__   15
 #define __debug_mode__              .f.
 
 //---------------------------------------------------------------------------//
 
 Function gestionGarantiasAlbaranes( aLine, aHeader, nView, dbfTmpLin )
 
-Return ( TGestionGarantiasAlbaranes():New( aLine, aHeader, nView, dbfTmpLin ):Run() )
+    //Return ( .t. )
+
+   Return ( TGestionGarantiasAlbaranes():New( aLine, aHeader, nView, dbfTmpLin ):Run() )
 
 //---------------------------------------------------------------------------//
 
@@ -59,6 +61,7 @@ CREATE CLASS TGestionGarantiasAlbaranes
    METHOD getNameSale()                               INLINE ( if( isNil( ::nameSale ), "", ::nameSale ) )
    METHOD getPriceSale()                              INLINE ( if( isNil( ::priceSale ), 0, ::priceSale ) )
    METHOD getDocumentSale()                           INLINE ( if( isNil( ::documentSale ), "", ::documentSale ) )
+
 
    METHOD loadProductInformation()
       METHOD countProductInLines()
@@ -129,7 +132,7 @@ METHOD Run()
       end if 
 
       if ( ::isEmptyDateInWarrantyPeriod( __debug_mode__ ) )
-         msgInfo( "El producto " + alltrim( ::idProduct ) + " " + alltrim( ::nameProduct ) + " no aparece en operaciones de venta, en el periodo de devolución, en el cliente " + alltrim( ::idClient ) + "." + CRLF + ;
+         msgInfo( "El producto " + alltrim( ::idProduct ) + " " + alltrim( ::nameProduct ) + " no aparece en operaciones de venta, en el periodo de devoluciÃ³n, en el cliente " + alltrim( ::idClient ) + "." + CRLF + ;
                   "Se procedera a la busqueda anonima del producto." )
       end if 
 
@@ -143,7 +146,7 @@ METHOD Run()
       end if 
 
       if ::notValidateUnitsToReturn( .t. ) 
-         msgStop( "El cliente [" + alltrim( ::getClientSale() ) + " " + alltrim( ::getNameSale() ) + "] puede devolver como máximo " + alltrim( str( ::getMaxiumnUnitsToReturnByClient() ) ) + " unidades." )
+         msgStop( "El cliente [" + alltrim( ::getClientSale() ) + " " + alltrim( ::getNameSale() ) + "] puede devolver como mÃ¡ximo " + alltrim( str( ::getMaxiumnUnitsToReturnByClient() ) ) + " unidades." )
          Return .f.
       end if 
 
@@ -155,11 +158,11 @@ METHOD Run()
 
          if ::isDateInWarrantyPeriod() .and. ( ::unitsToReturnAnonymusWarranty >= ::getAbsUnitsInActualLine() )
 
-            lQuestion   := msgNoYes(   "Unidades vendidas al cliente actual en periodo de garantía es de " + cvaltochar( round( ::unitsToReturnClientWarranty, 2 ) ) + CRLF + CRLF + ;
+            lQuestion   := msgNoYes(   "Unidades vendidas al cliente actual en periodo de garantÃ­a es de " + cvaltochar( round( ::unitsToReturnClientWarranty, 2 ) ) + CRLF + CRLF + ;
                                        "El producto [" + alltrim( ::idProduct ) + " " + alltrim( ::nameProduct ) + "] se ha vendido en un cliente diferente a la venta actual." + CRLF + CRLF + ;
-                                       "Las unidades máximas a devolver en periodo de garantía serían " + alltrim( str( round( ::unitsToReturn, 2 ) ) + " unidades." ) + CRLF + CRLF + ;
-                                       "¿ Desea proceder a la devolución ?",;
-                                       "Devolución fuera de garantía" )
+                                       "Las unidades mÃ¡ximas a devolver en periodo de garantÃ­a serÃ­an " + alltrim( str( round( ::unitsToReturn, 2 ) ) + " unidades." ) + CRLF + CRLF + ;
+                                       "Â¿ Desea proceder a la devoluciÃ³n ?",;
+                                       "DevoluciÃ³n fuera de garantÃ­a" )
          
             if ( lQuestion )
                ::setPriceUnit()
@@ -179,8 +182,8 @@ METHOD Run()
          if ( oUser():lAdministrador() )
             lQuestion   := msgNoYes(   "El producto [" + alltrim( ::idProduct ) + " " + alltrim( ::nameProduct ) + "] se ha vendido por ultima vez en la fecha " + dtoc( ::lastDateSale ) + CRLF + CRLF +;
                                        "Al cliente [" + alltrim( ::getClientSale() ) + " " + alltrim( ::getNameSale() ) + "]" + CRLF + CRLF + ;
-                                       "Documento " + ::typeSale + " con número " + ::getDocumentSale(),;
-                                       "¿ Desea proceder a la devolución ?")
+                                       "Documento " + ::typeSale + " con nÃºmero " + ::getDocumentSale(),;
+                                       "Â¿ Desea proceder a la devoluciÃ³n ?")
             
             if ( lQuestion )
                ::setPriceUnit()
@@ -190,9 +193,9 @@ METHOD Run()
          else
             msgStop( "El producto [" + alltrim( ::idProduct ) + " " + alltrim( ::nameProduct ) + "] se ha vendido por ultima vez en la fecha " + dtoc( ::lastDateSale ) + CRLF + CRLF +;
                      "Al cliente [" + alltrim( ::getClientSale() ) + " " + alltrim( ::getNameSale() ) + "]" + CRLF + CRLF + ;
-                     "Documento " + ::typeSale + " con número " + ::getDocumentSale() + CRLF + CRLF + ;
+                     "Documento " + ::typeSale + " con nÃºmero " + ::getDocumentSale() + CRLF + CRLF + ;
                      "Comuniquelo al administrador",;
-                     "Devolución no permitida" )
+                     "DevoluciÃ³n no permitida" )
          end if 
       
       end if 
@@ -205,9 +208,9 @@ METHOD loadProductInformation()
 
    ::priceSale          := 0
 
-   ::idProduct          := ::aLine[ ( D():AlbaranesClientesLineas( ::nView ) )->( fieldpos( "cRef" ) ) ]
-   ::nameProduct        := ::aLine[ ( D():AlbaranesClientesLineas( ::nView ) )->( fieldpos( "cDetalle" ) ) ]
-   ::idFamily           := ::aLine[ ( D():AlbaranesClientesLineas( ::nView ) )->( fieldpos( "cCodFam" ) ) ]
+   ::idProduct          := padr( ::aLine[ ( D():AlbaranesClientesLineas( ::nView ) )->( fieldpos( "cRef" ) ) ], 18 )
+   ::nameProduct        := alltrim( ::aLine[ ( D():AlbaranesClientesLineas( ::nView ) )->( fieldpos( "cDetalle" ) ) ] )
+   ::idFamily           := alltrim( ::aLine[ ( D():AlbaranesClientesLineas( ::nView ) )->( fieldpos( "cCodFam" ) ) ] )
    ::unitsInActualLine  := ::aLine[ ( D():AlbaranesClientesLineas( ::nView ) )->( fieldpos( "nUniCaja" ) ) ]
 
    ::dateAlbaran        := ::aHeader[ ( D():AlbaranesClientes( ::nView ) )->( fieldpos( "dFecAlb" ) ) ]
@@ -257,9 +260,9 @@ METHOD searchLastSale( idClient, dateWarranty )
 
    if ::warrantyDays > 0
 
-      ::searchLastSaleAlbaranesClientes( idClient, dateWarranty, .f. )
+      ::searchLastSaleAlbaranesClientes( idClient, dateWarranty, __debug_mode__ )
 
-      ::searchLastSaleFacturasClientes( idClient, dateWarranty, .f. )
+      ::searchLastSaleFacturasClientes( idClient, dateWarranty )
 
       ::searchLastSaleTicketsClientes( idClient, dateWarranty )
 
@@ -291,7 +294,7 @@ METHOD searchLastSaleAlbaranesClientes( idClient, dateWarranty, lInfo )
             if isTrue( lInfo )
                msgalert(   "Parametros------------------------------"         + CRLF + ;
                            "Cliente : " + cvaltochar( idClient )              + CRLF + ;
-                           "Fecha garantía : " + cvaltochar( dateWarranty )   + CRLF + ;
+                           "Fecha garantÃ­a : " + cvaltochar( dateWarranty )   + CRLF + ;
                            "fin parametros--------------------------"         + CRLF + ;
                            "Unidades a devolver : " + str( ::unitsToReturn )  + CRLF +;
                            "Documento : " +  ( D():AlbaranesClientesLineas( ::nView ) )->cSerAlb + "/" + alltrim( str( ( D():AlbaranesClientesLineas( ::nView ) )->nNumAlb ) ) + CRLF +;
@@ -333,18 +336,13 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD searchLastSaleFacturasClientes( idClient, dateWarranty, lInfo ) 
+METHOD searchLastSaleFacturasClientes( idClient, dateWarranty ) 
 
    D():getStatusFacturasClientesLineas( ::nView )
 
    D():setFocusFacturasClientesLineas( "cRefFec", ::nView )
 
-   msgInfo( ::idProduct + idClient, "antes de buscar") 
-   msgInfo( ( D():FacturasClientesLineas( ::nView ) )->( ordsetfocus() ), "ordsetfocus( [orderNumOrName], [cOrderBagName] )" )
-
-   if ( D():FacturasClientesLineas( ::nView ) )->( dbseek( ::idProduct + idClient ) ) 
-
-      msgInfo( ::idProduct, "productio encontrado") 
+   if ( D():FacturasClientesLineas( ::nView ) )->( dbseek( ::idProduct + idClient ) )  
    
       while ( D():FacturasClientesLineas( ::nView ) )->cRef == ::idProduct                            .and. ;
             ( empty( idClient ) .or. ( D():FacturasClientesLineas( ::nView ) )->cCodCli == idClient ) .and. ;
@@ -353,20 +351,6 @@ METHOD searchLastSaleFacturasClientes( idClient, dateWarranty, lInfo )
          if ( empty( dateWarranty ) .or. ( D():FacturasClientesLineas( ::nView ) )->dFecFac >= dateWarranty )
 
             ::unitsToReturn   += ( D():FacturasClientesLineas( ::nView ) )->nUniCaja
-
-            if isTrue( lInfo )
-               msgalert(   "Parametros------------------------------"         + CRLF + ;
-                           "Cliente : " + cvaltochar( idClient )              + CRLF + ;
-                           "Fecha garantía : " + cvaltochar( dateWarranty )   + CRLF + ;
-                           "fin parametros--------------------------"         + CRLF + ;
-                           "Unidades a devolver : " + str( ::unitsToReturn )  + CRLF +;
-                           "Documento : " +  ( D():FacturasClientesLineas( ::nView ) )->cSerie + "/" + alltrim( str( ( D():FacturasClientesLineas( ::nView ) )->nNumFac ) ) + CRLF +;
-                           "Fecha en linea : " + dtoc( ( D():FacturasClientesLineas( ::nView ) )->dFecFac ) )
-
-               msgAlert( ( ( D():AlbaranesClientesLineas( ::nView ) )->nUniCaja > 0 ), "( ( D():AlbaranesClientesLineas( ::nView ) )->nUniCaja > 0 )" )
-               msgAlert( ( empty( ::lastDateSale ) .or. ( D():AlbaranesClientesLineas( ::nView ) )->dFecAlb > ::lastDateSale ), "( empty( ::lastDateSale ) .or. ( D():AlbaranesClientesLineas( ::nView ) )->dFecAlb > ::lastDateSale )" )
-
-            end if 
 
             if ( ( D():FacturasClientesLineas( ::nView ) )->nUniCaja > 0 ) .and. ;
                ( empty( ::lastDateSale ) .or. ( D():FacturasClientesLineas( ::nView ) )->dFecFac > ::lastDateSale )
@@ -453,7 +437,7 @@ METHOD validateUnitsToReturn( lInfo )
    if isTrue( lInfo )
       msgAlert(   "Unidades en la linea actual : " + cvaltochar( abs( ::getUnitsInActualLine() ) )                      + CRLF +;
                   "Unidades maximas a devolver por cliente : " + cvaltochar( ::getMaxiumnUnitsToReturnByClient() )      + CRLF +;
-                  "Retorno de función : " + cvaltochar( ::getMaxiumnUnitsToReturnByClient() >= abs( ::getUnitsInActualLine() ) ),;
+                  "Retorno de funciÃ³n : " + cvaltochar( ::getMaxiumnUnitsToReturnByClient() >= abs( ::getUnitsInActualLine() ) ),;
                   "validateUnitsToReturn" )
    end if 
 

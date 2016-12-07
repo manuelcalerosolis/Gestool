@@ -2,13 +2,15 @@
 
 #define CRLF                        chr( 13 ) + chr( 10 )
 
-#define __default_warranty_days__   10
+#define __default_warranty_days__   15
 #define __debug_mode__              .f.
 
 //---------------------------------------------------------------------------//
 
 Function gestionGarantiasFacturas( aLine, aHeader, nView, dbfTmpLin )
 	
+	 // Return ( .t. )
+
 Return ( TGestionGarantiasFacturas():New( aLine, aHeader, nView, dbfTmpLin ):Run() )
 
 //---------------------------------------------------------------------------//
@@ -205,8 +207,8 @@ METHOD loadProductInformation()
 
    ::priceSale          := 0
 
-   ::idProduct          := ::aLine[ ( D():FacturasClientesLineas( ::nView ) )->( fieldpos( "cRef" ) ) ]
-   ::nameProduct        := ::aLine[ ( D():FacturasClientesLineas( ::nView ) )->( fieldpos( "cDetalle" ) ) ]
+   ::idProduct          := padr( ::aLine[ ( D():FacturasClientesLineas( ::nView ) )->( fieldpos( "cRef" ) ) ], 18 )
+   ::nameProduct        := alltrim( ::aLine[ ( D():FacturasClientesLineas( ::nView ) )->( fieldpos( "cDetalle" ) ) ] )
    ::idFamily           := ::aLine[ ( D():FacturasClientesLineas( ::nView ) )->( fieldpos( "cCodFam" ) ) ]
    ::unitsInActualLine  := ::aLine[ ( D():FacturasClientesLineas( ::nView ) )->( fieldpos( "nUniCaja" ) ) ]
 

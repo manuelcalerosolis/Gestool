@@ -1022,7 +1022,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       CodigosPostales():GetInstance():OpenFiles()
 
-      TComercio():getInstanceOpenFiles()
+      TComercio():getInstance( nView, oStock )
 
       /*
       Cargamos la clase bandera------------------------------------------------
@@ -1103,7 +1103,7 @@ STATIC FUNCTION CloseFiles()
 
    CodigosPostales():GetInstance():CloseFiles()
 
-   TComercio():endInstanceCloseFiles()
+   TComercio():endInstance()
 
    oBandera    := nil
    oStock      := nil

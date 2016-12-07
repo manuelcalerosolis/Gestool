@@ -39,10 +39,10 @@ CLASS TComercioProduct FROM TComercioConector
 
       METHOD getPrice()
       METHOD getPriceReduction()
-      METHOD getPriceReductionTax()                         INLINE ( iif(  ::oProductDatabase():lIvaWeb, 1, 0 ) )
-      METHOD getDescription()                               INLINE ( iif(  !empty( ::oProductDatabase():mDestec ),;
-                                                                           alltrim( ::oProductDatabase():mDestec ),;
-                                                                           alltrim( ::oProductDatabase():Nombre ) ) )
+      METHOD getPriceReductionTax()                         INLINE ( iif(  ( D():Articulos( ::getView() ) )->lIvaWeb, 1, 0 ) )
+      METHOD getDescription()                               INLINE ( iif(  !empty( ( D():Articulos( ::getView() ) )->mDestec ),;
+                                                                           alltrim( ( D():Articulos( ::getView() ) )->mDestec ),;
+                                                                           alltrim( ( D():Articulos( ::getView() ) )->Nombre ) ) )
 
       METHOD imagesProduct( id )
       METHOD stockProduct( id )
@@ -294,17 +294,17 @@ METHOD buildPropertyProduct( id ) CLASS TComercioProduct
 
       while ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodArt == ( D():Articulos( ::getView() ) )->Codigo .and. !( D():ArticuloPrecioPropiedades( ::getView() ) )->( eof() )
 
-         if ( D():ArticuloPrecioPropiedades( ::getView() ) )->( dbseekinord( ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodPr1 + ( D():ArticuloPrecioPropiedades( ::getView() ) )->cValPr1, "cCodPro" ) )
+         if D():gotoIdPropiedadesLineas( ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodPr1 + ( D():ArticuloPrecioPropiedades( ::getView() ) )->cValPr1, ::getView() )
 
-            if ::isSyncronizeAll() .or. ::TPrestashopId():getValueAttribute( ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodPro + ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodTbl, ::getCurrentWebName() ) == 0
+            if ::isSyncronizeAll() .or. ::TPrestashopId():getValueAttribute( ( D():PropiedadesLineas( ::getView() ) )->cCodPro + ( D():PropiedadesLineas( ::getView() ) )->cCodTbl, ::getCurrentWebName() ) == 0
 
-               if aScan( ::aPropertiesLineProduct, {|h| hGet( h, "id" ) == ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodTbl .and. hGet( h, "idparent" ) == ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodPro } ) == 0
+               if aScan( ::aPropertiesLineProduct, {|h| hGet( h, "id" ) == ( D():PropiedadesLineas( ::getView() ) )->cCodTbl .and. hGet( h, "idparent" ) == ( D():PropiedadesLineas( ::getView() ) )->cCodPro } ) == 0
       
-                  aAdd( ::aPropertiesLineProduct,  {  "id"           => ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodTbl,;
-                                                      "idparent"     => ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodPro,; 
-                                                      "name"         => alltrim( ( D():ArticuloPrecioPropiedades( ::getView() ) )->cDesTbl ),;
-                                                      "color"        => alltrim( RgbToRgbHex( ( D():ArticuloPrecioPropiedades( ::getView() ) )->nColor ) ),;
-                                                      "position"     => ( D():ArticuloPrecioPropiedades( ::getView() ) )->nOrdTbl } )
+                  aAdd( ::aPropertiesLineProduct,  {  "id"           => ( D():PropiedadesLineas( ::getView() ) )->cCodTbl,;
+                                                      "idparent"     => ( D():PropiedadesLineas( ::getView() ) )->cCodPro,; 
+                                                      "name"         => alltrim( ( D():PropiedadesLineas( ::getView() ) )->cDesTbl ),;
+                                                      "color"        => alltrim( RgbToRgbHex( ( D():PropiedadesLineas( ::getView() ) )->nColor ) ),;
+                                                      "position"     => ( D():PropiedadesLineas( ::getView() ) )->nOrdTbl } )
 
                end if
 
@@ -312,9 +312,9 @@ METHOD buildPropertyProduct( id ) CLASS TComercioProduct
 
          end if
 
-         if ( D():ArticuloPrecioPropiedades( ::getView() ) )->( dbseekinord( ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodPr2 + ( D():ArticuloPrecioPropiedades( ::getView() ) )->cValPr2, "cCodPro" ) )
+         if D():gotoIdPropiedadesLineas( ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodPr2 + ( D():ArticuloPrecioPropiedades( ::getView() ) )->cValPr2, ::getView() )
 
-            if ::isSyncronizeAll() .or. ::TPrestashopId():getValueAttribute( ( D():PropiedadesLineas( ::getView() ) )->cCodPro + ( D():PropiedadesLineas( ::getView() ) )->cCodTbl, ::getCurrentWebName() ) == 0 
+            if ::isSyncronizeAll() .or. ::TPrestashopId():getValueAttribute( ( D():PropiedadesLineas( ::getView() ) )->cCodPro + ( D():PropiedadesLineas( ::getView() ) )->cCodTbl, ::getCurrentWebName() ) == 0
 
                if aScan( ::aPropertiesLineProduct, {|h| hGet( h, "id" ) == ( D():PropiedadesLineas( ::getView() ) )->cCodTbl .and. hGet( h, "idparent" ) == ( D():PropiedadesLineas( ::getView() ) )->cCodPro } ) == 0
       
@@ -422,20 +422,20 @@ METHOD buildHashProduct( idProduct, aImagesArticulos, aStockArticulo ) CLASS TCo
    // Rellenamos el Hash-------------------------------------------------
 
    aAdd( ::aProducts,   {  "id"                    => idProduct,;
-                           "name"                  => alltrim( ::oProductDatabase():Nombre ),;
-                           "id_manufacturer"       => ::oProductDatabase():cCodFab ,;
-                           "id_tax_rules_group"    => ::oProductDatabase():TipoIva ,;
-                           "id_category_default"   => ::oProductDatabase():Familia ,;
-                           "reference"             => ::oProductDatabase():Codigo ,;
-                           "weight"                => ::oProductDatabase():nPesoKg ,;
-                           "specific_price"        => ::oProductDatabase():lSbrInt,;
-                           "description_short"     => alltrim( ::oProductDatabase():Nombre ) ,;
-                           "link_rewrite"          => cLinkRewrite( ::oProductDatabase():Nombre ),;
-                           "meta_title"            => alltrim( ::oProductDatabase():cTitSeo ) ,;
-                           "meta_description"      => alltrim( ::oProductDatabase():cDesSeo ) ,;
-                           "meta_keywords"         => alltrim( ::oProductDatabase():cKeySeo ) ,;
-                           "lPublicRoot"           => ::oProductDatabase():lPubPor,;
-                           "cImagen"               => alltrim( ::oProductDatabase():cImagen ),;
+                           "name"                  => alltrim( ( D():Articulos( ::getView() ) )->Nombre ),;
+                           "id_manufacturer"       => ( D():Articulos( ::getView() ) )->cCodFab ,;
+                           "id_tax_rules_group"    => ( D():Articulos( ::getView() ) )->TipoIva ,;
+                           "id_category_default"   => ( D():Articulos( ::getView() ) )->Familia ,;
+                           "reference"             => ( D():Articulos( ::getView() ) )->Codigo ,;
+                           "weight"                => ( D():Articulos( ::getView() ) )->nPesoKg ,;
+                           "specific_price"        => ( D():Articulos( ::getView() ) )->lSbrInt,;
+                           "description_short"     => alltrim( ( D():Articulos( ::getView() ) )->Nombre ) ,;
+                           "meta_title"            => alltrim( ( D():Articulos( ::getView() ) )->cTitSeo ) ,;
+                           "meta_description"      => alltrim( ( D():Articulos( ::getView() ) )->cDesSeo ) ,;
+                           "meta_keywords"         => alltrim( ( D():Articulos( ::getView() ) )->cKeySeo ) ,;
+                           "lPublicRoot"           => ( D():Articulos( ::getView() ) )->lPubPor,;
+                           "cImagen"               => alltrim( ( D():Articulos( ::getView() ) )->cImagen ),;
+                           "link_rewrite"          => cLinkRewrite( ( D():Articulos( ::getView() ) )->Nombre ),;
                            "price"                 => ::getPrice(),;
                            "reduction"             => ::getPriceReduction(),;
                            "reduction_tax"         => ::getPriceReductionTax(),;
@@ -454,16 +454,16 @@ METHOD getPrice() CLASS TComercioProduct
 
    // calcula el precio en funcion del descuento-------------------------------
 
-   if ::oProductDatabase():lSbrInt .and. ::oProductDatabase():pVtaWeb != 0
+   if ( D():Articulos( ::getView() ) )->lSbrInt .and. ( D():Articulos( ::getView() ) )->pVtaWeb != 0
 
-      priceProduct         := ::oProductDatabase():pVtaWeb
+      priceProduct         := ( D():Articulos( ::getView() ) )->pVtaWeb
 
    else
 
-      if ::oProductDatabase():lIvaWeb
-         priceProduct      := round( ::oProductDatabase():nImpIva1 / ( ( nIva( ::oIvaDatabase():cAlias, ::oProductDatabase():TipoIva ) / 100 ) + 1 ), 6 )
+      if ( D():Articulos( ::getView() ) )->lIvaWeb
+         priceProduct      := round( ( D():Articulos( ::getView() ) )->nImpIva1 / ( ( nIva( D():TiposIva( ::getView() ), ( D():Articulos( ::getView() ) )->TipoIva ) / 100 ) + 1 ), 6 )
       else
-         priceProduct      := ::oProductDatabase():nImpInt1
+         priceProduct      := ( D():Articulos( ::getView() ) )->nImpInt1
       end if
 
    end if 
@@ -479,15 +479,15 @@ METHOD getPriceReduction() CLASS TComercioProduct
 
    local priceReduction    := 0
 
-   if ::oProductDatabase():lSbrInt .and. ::oProductDatabase():pVtaWeb != 0
+   if ( D():Articulos( ::getView() ) )->lSbrInt .and. ( D():Articulos( ::getView() ) )->pVtaWeb != 0
 
-      if ::oProductDatabase():lIvaWeb
-         priceReduction    := ::oProductDatabase():pVtaWeb
-         priceReduction    += ::oProductDatabase():pVtaWeb * nIva( ::oIvaDatabase():cAlias, ::oProductDatabase():TipoIva ) / 100
-         priceReduction    -= ::oProductDatabase():nImpIva1 
+      if ( D():Articulos( ::getView() ) )->lIvaWeb
+         priceReduction    := ( D():Articulos( ::getView() ) )->pVtaWeb
+         priceReduction    += ( D():Articulos( ::getView() ) )->pVtaWeb * nIva( D():TiposIva( ::getView() ), ( D():Articulos( ::getView() ) )->TipoIva ) / 100
+         priceReduction    -= ( D():Articulos( ::getView() ) )->nImpIva1 
       else
-         priceReduction    := ::oProductDatabase():pVtaWeb 
-         priceReduction    -= ::oProductDatabase():nImpInt1
+         priceReduction    := ( D():Articulos( ::getView() ) )->pVtaWeb 
+         priceReduction    -= ( D():Articulos( ::getView() ) )->nImpInt1
       end if
 
    end if 
@@ -507,15 +507,15 @@ METHOD imagesProduct( idProduct ) CLASS TComercioProduct
 
    // Pasamos las imágenes de los artículos por propiedades-----------------------" )
 
-   nOrdAntDiv           := D():ArticuloPrecioPropiedades( ::getView() ):ordsetfocus( "cCodigo" )
+   nOrdAntDiv           := ( D():ArticuloPrecioPropiedades( ::getView() ) )->( ordsetfocus( "cCodigo" ) )
 
-   if D():ArticuloPrecioPropiedades( ::getView() ):Seek( idProduct )
+   if ( D():ArticuloPrecioPropiedades( ::getView() ) )->( dbseek( idProduct ) )
 
-      while D():ArticuloPrecioPropiedades( ::getView() ):cCodArt == idProduct .and. !D():ArticuloPrecioPropiedades( ::getView() ):Eof()
+      while ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodArt == idProduct .and. !( D():ArticuloPrecioPropiedades( ::getView() ) )->( eof() )
 
-         if !empty( D():ArticuloPrecioPropiedades( ::getView() ):mImgWeb )
+         if !empty( ( D():ArticuloPrecioPropiedades( ::getView() ) )->mImgWeb )
 
-            aImgToken   := hb_atokens( D():ArticuloPrecioPropiedades( ::getView() ):mImgWeb, "," )
+            aImgToken   := hb_atokens( ( D():ArticuloPrecioPropiedades( ::getView() ) )->mImgWeb, "," )
 
             for each cImgToken in aImgToken
 
@@ -530,40 +530,40 @@ METHOD imagesProduct( idProduct ) CLASS TComercioProduct
 
          end if
 
-         D():ArticuloPrecioPropiedades( ::getView() ):Skip()
+         ( D():ArticuloPrecioPropiedades( ::getView() ) )->( dbskip() )
 
       end while
 
    end if
 
-   D():ArticuloPrecioPropiedades( ::getView() ):ordsetfocus( nOrdAntDiv )
+   ( D():ArticuloPrecioPropiedades( ::getView() ) )->( ordsetfocus( nOrdAntDiv ) )
 
    // Pasamos las imágenes de la tabla de artículos-------------------------------" )
 
    if empty( aImages )
 
-      nOrdAntImg     := ::oImageProductDatabase():ordsetfocus( "cCodArt" )
+      nOrdAntImg     := ( D():ArticuloImagenes( ::getView() ) )->( ordsetfocus( "cCodArt" ) )
 
-      if ::oImageProductDatabase():Seek( idProduct )
+      if ( D():ArticuloImagenes( ::getView() ) )->( dbseek( idProduct ) )
 
-         while ::oImageProductDatabase():cCodArt == idProduct .and. !::oImageProductDatabase():Eof()
+         while ( D():ArticuloImagenes( ::getView() ) )->cCodArt == idProduct .and. ( D():ArticuloImagenes( ::getView() ) )->( !eof() ) 
 
-            cImagen  := alltrim( ::oImageProductDatabase():cImgArt )
+            cImagen  := alltrim( ( D():ArticuloImagenes( ::getView() ) )->cImgArt )
 
             if file( cImagen ) .and. ascan( aImages, {|a| hGet( a, "name" ) == cImagen } ) == 0
                aadd( aImages, {  "name"               => cImagen,;
                                  "idProductGestool"   => idProduct,;
-                                 "id"                 => ::oImageProductDatabase():nId,;
-                                 "lDefault"           => ::oImageProductDatabase():lDefImg } )
+                                 "id"                 => ( D():ArticuloImagenes( ::getView() ) )->nId,;
+                                 "lDefault"           => ( D():ArticuloImagenes( ::getView() ) )->lDefImg } )
             end if 
 
-            ::oImageProductDatabase():Skip()
+            ( D():ArticuloImagenes( ::getView() ) )->( dbskip() ) 
 
          end while
 
       end if 
 
-      ::oImageProductDatabase():OrdSetFocus( nOrdAntImg )
+      ( D():ArticuloImagenes( ::getView() ) )->( ordsetfocus( nOrdAntImg ) )
 
    end if
 
@@ -1074,21 +1074,21 @@ METHOD processPropertyProduct( idProduct, hProduct ) CLASS TComercioProduct
 
    // Comprobamos si el artículo tiene propiedades y metemos las propiedades
 
-   if D():ArticuloPrecioPropiedades( ::getView() ):SeekInOrd( hGet( hProduct, "id" ), "cCodArt" )
+   if ( D():ArticuloPrecioPropiedades( ::getView() ) )->( dbSeekInOrd( hGet( hProduct, "id" ), "cCodArt" ) )
 
-      while D():ArticuloPrecioPropiedades( ::getView() ):cCodArt == hGet( hProduct, "id" ) .and. !D():ArticuloPrecioPropiedades( ::getView() ):Eof()
+      while ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodArt == hGet( hProduct, "id" ) .and. ( D():ArticuloPrecioPropiedades( ::getView() ) )->( !eof() ) 
 
-         if !empty( D():ArticuloPrecioPropiedades( ::getView() ):cValPr1 )
+         if !empty( ( D():ArticuloPrecioPropiedades( ::getView() ) )->cValPr1 )
 
-            priceProperty  := nPrePro( hGet( hProduct, "id" ), D():ArticuloPrecioPropiedades( ::getView() ):cCodPr1, D():ArticuloPrecioPropiedades( ::getView() ):cValPr1, space( 20 ), space( 20 ), 1, .f., D():ArticuloPrecioPropiedades( ::getView() ):cAlias )
+            priceProperty  := nPrePro( hGet( hProduct, "id" ), ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodPr1, ( D():ArticuloPrecioPropiedades( ::getView() ) )->cValPr1, space( 20 ), space( 20 ), 1, .f., D():ArticuloPrecioPropiedades( ::getView() ) )
 
             idProperty     := ::insertProductAttributePrestashop( idProduct, hProduct, priceProperty )
 
-            ::insertProductAttributeCombination( D():ArticuloPrecioPropiedades( ::getView() ):cCodPr1, D():ArticuloPrecioPropiedades( ::getView() ):cValPr1, idProperty )
+            ::insertProductAttributeCombination( ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodPr1, ( D():ArticuloPrecioPropiedades( ::getView() ) )->cValPr1, idProperty )
 
-            if !empty( D():ArticuloPrecioPropiedades( ::getView() ):cValPr2 )
+            if !empty( ( D():ArticuloPrecioPropiedades( ::getView() ) )->cValPr2 )
             
-               ::insertProductAttributeCombination( D():ArticuloPrecioPropiedades( ::getView() ):cCodPr2, D():ArticuloPrecioPropiedades( ::getView() ):cValPr2, idProperty )
+               ::insertProductAttributeCombination( ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodPr2, ( D():ArticuloPrecioPropiedades( ::getView() ) )->cValPr2, idProperty )
 
             end if 
             
@@ -1098,7 +1098,7 @@ METHOD processPropertyProduct( idProduct, hProduct ) CLASS TComercioProduct
 
          end if 
 
-         D():ArticuloPrecioPropiedades( ::getView() ):Skip()
+         ( D():ArticuloPrecioPropiedades( ::getView() ) )->( dbskip() )
 
          lDefault    := .f.
 
@@ -2209,15 +2209,15 @@ Return ( idProductAttribute )
 
 METHOD getIdProductImage( id, cImgToken ) CLASS TComercioProduct
 
-   if ::oImageProductDatabase():seek( id )
+   if ( D():ArticuloImagenes( ::getView() ) )->( dbseek( id ) )
 
-      while ::oImageProductDatabase():cCodArt == id .and. !( ::oImageProductDatabase():eof() )
+      while ( D():ArticuloImagenes( ::getView() ) )->cCodArt == id .and. ( D():ArticuloImagenes( ::getView() ) )->( !eof() ) 
 
-         if alltrim( ::oImageProductDatabase():cImgArt ) == alltrim( cImgToken )
-            Return ( ::oImageProductDatabase():nId )
+         if alltrim( ( D():ArticuloImagenes( ::getView() ) )->cImgArt ) == alltrim( cImgToken )
+            Return ( ( D():ArticuloImagenes( ::getView() ) )->nId )
          end if 
 
-         ::oImageProductDatabase():skip()
+         ( D():ArticuloImagenes( ::getView() ) )->( dbskip() )
 
       end while 
 
@@ -2229,15 +2229,15 @@ Return ( 0 )
 
 METHOD getDefaultProductImage( id, cImgToken ) CLASS TComercioProduct
 
-   if ::oImageProductDatabase():seek( id )
+   if ( D():ArticuloImagenes( ::getView() ) )->( dbseek( id ) )
 
-      while ::oImageProductDatabase():cCodArt == id .and. !( ::oImageProductDatabase():eof() )
+      while ( D():ArticuloImagenes( ::getView() ) )->cCodArt == id .and. ( D():ArticuloImagenes( ::getView() ) )->( !eof() ) 
 
-         if alltrim( ::oImageProductDatabase():cImgArt ) == alltrim( cImgToken )
-            Return ( ::oImageProductDatabase():lDefImg )
+         if alltrim( ( D():ArticuloImagenes( ::getView() ) )->cImgArt ) == alltrim( cImgToken )
+            Return ( ( D():ArticuloImagenes( ::getView() ) )->lDefImg )
          end if 
 
-         ::oImageProductDatabase():skip()
+         ( D():ArticuloImagenes( ::getView() ) )->( dbskip() )
 
       end while 
 
@@ -2274,15 +2274,18 @@ METHOD putFileRootProductImage( hProductImage ) CLASS TComercioProduct
 
    ::meterProcesoText( "Guardando imagen " + alltrim( rootImage ) + " en la base de datos" )
 
-   if ::oImageProductDatabase():seek( idProductGestool )
+   if ( D():ArticuloImagenes( ::getView() ) )->( dbseek( idProductGestool ) )
 
-      while ( alltrim( ::oImageProductDatabase():cCodArt ) == alltrim( idProductGestool ) ) .and. !( ::oImageProductDatabase():eof() )
+      while ( alltrim( ( D():ArticuloImagenes( ::getView() ) )->cCodArt ) == alltrim( idProductGestool ) ) .and. ( D():ArticuloImagenes( ::getView() ) )->( !eof() ) 
 
-         if alltrim( ::oImageProductDatabase():cImgArt ) == alltrim( cNameImage )
-            ::oImageProductDatabase():fieldputbyname( "cRmtArt", rootImage )
+         if alltrim( ( D():ArticuloImagenes( ::getView() ) )->cImgArt ) == alltrim( cNameImage ) 
+            if ( D():ArticuloImagenes( ::getView() ) )->( dbrlock() )
+               ( D():ArticuloImagenes( ::getView() ) )->cRmtArt   := rootImage 
+               ( D():ArticuloImagenes( ::getView() ) )->( dbunlock() )
+            end if 
          end if 
 
-         ::oImageProductDatabase():skip()
+         ( D():ArticuloImagenes( ::getView() ) )->( dbskip() )
 
       end while
 

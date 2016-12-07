@@ -108,6 +108,8 @@ static oCmbContabilidad
 static cCmbContabilidad        
 static aCmbContabilidad        := { "Contaplus", "A3 CON" }   
 
+static nView
+
 static TComercio
 
 static NUMERO_TARIFAS          := 6     
@@ -153,7 +155,7 @@ STATIC FUNCTION OpenFiles( lCount )
 
       oBandera    := TBandera():New()
 
-      TComercio   := TComercio():New()
+      TComercio   := TComercio():Default()
 
       aDocumentos := {  "Pedido a proveedores",;
                         "Albaran de proveedores",;
@@ -259,6 +261,8 @@ Static Function CloseFiles()
    if !Empty( oPais )
       oPais:End()
    end if
+
+   TComercio:endInstance()
 
    dbfEmp      := nil
    dbfDiv      := nil
@@ -3370,9 +3374,9 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
 
    // Chequeo del turno--------------------------------------------------------
 
-   oMsgText( 'Cargando configuración de prestashop' )
+   // oMsgText( 'Cargando configuración de prestashop' )
 
-   TComercioConfig():New( cCodEmp ):LoadJSON():getWebs()
+   // TComercioConfig():New( cCodEmp ):LoadJSON():getWebs()
 
    /*
    Cerrando ficheros-----------------------------------------------------------

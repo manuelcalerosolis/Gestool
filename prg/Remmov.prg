@@ -65,6 +65,8 @@ CLASS TRemMovAlm FROM TMasDet
    DATA  oTblPro
    DATA  oArtCom
    DATA  oTMov
+
+   DATA  TComercio
    DATA  oStock
 
    DATA  oPedPrvT
@@ -300,8 +302,8 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS TRemMovAlm
 
    ::oDetSeriesMovimientos:bOnPreSaveDetail  := {|| ::oDetSeriesMovimientos:SaveDetails() }
 
-   ::bOnPreDelete          := {|| TComercio():getInstance():resetProductsToUpdateStocks() }
-   ::bOnPostDelete         := {|| TComercio():getInstance():updateWebProductStocks() }
+   ::bOnPreDelete          := {|| ::TComercio:resetProductsToUpdateStocks() }
+   ::bOnPostDelete         := {|| ::TComercio:updateWebProductStocks() }
 
 RETURN ( Self )
 
@@ -678,7 +680,7 @@ METHOD OpenFiles( lExclusive ) CLASS TRemMovAlm
 
       D():Documentos( ::nView ) 
 
-      TComercio():getInstanceOpenFiles()
+      ::TComercio          := TComercio():new( ::nView, ::oStock )
 
       ::lOpenFiles         := .t.
 
@@ -914,7 +916,9 @@ METHOD CloseFiles() CLASS TRemMovAlm
       D():DeleteView( ::nView )
    end if 
 
-   TComercio():endInstanceCloseFiles()
+   msgalert( "desde el CloseFiles de RemMov")
+
+   ::TComercio:end()
 
    ::oDbf               := nil
    ::oAlmacenOrigen     := nil
@@ -953,6 +957,8 @@ METHOD CloseFiles() CLASS TRemMovAlm
    ::oDbfProMat         := nil
 
    ::oBandera           := nil
+
+   ::TComercio          := nil
 
    ::lOpenFiles         := .f.
 
@@ -3301,7 +3307,7 @@ Return ( Self )
 
 METHOD saveResourceWithCalculate( nMode, oDlg ) CLASS TRemMovAlm
 
-   TComercio():getInstance():resetProductsToUpdateStocks()
+   ::TComercio:resetProductsToUpdateStocks()
 
    if ::lSave( nMode )
 
@@ -3315,7 +3321,7 @@ METHOD saveResourceWithCalculate( nMode, oDlg ) CLASS TRemMovAlm
 
    end if 
 
-   TComercio():getInstance():updateWebProductStocks()
+   ::TComercio:updateWebProductStocks()
 
 Return ( Self )
 

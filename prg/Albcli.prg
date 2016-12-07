@@ -1610,7 +1610,7 @@ STATIC FUNCTION OpenFiles()
 
       oMailing          := TGenmailingDatabaseAlbaranesClientes():New( nView )
 
-      TComercio():getInstanceOpenFiles()
+      TComercio():getInstance( nView, oStock )
 
       /*
       Declaración de variables públicas----------------------------------------
@@ -1917,7 +1917,7 @@ STATIC FUNCTION CloseFiles()
       oDetCamposExtra:CloseFiles()
    end if
 
-   TComercio():endInstanceCloseFiles()
+   TComercio():endInstance()
 
    D():DeleteView( nView )
 
