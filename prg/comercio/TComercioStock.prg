@@ -195,6 +195,10 @@ METHOD addStockProductToUpdate( hProduct )
    local idSecondProperty        := hget( hProduct, "idSecondProperty" )
    local valueSecondProperty     := hget( hProduct, "valueSecondProperty" )
 
+   if !empty(::oWaitMeter)
+      ::oWaitMeter:setMessage( 'Calculando stocks ' + alltrim( idProduct ) )
+   end if 
+
    ::writeText( 'Calculando stocks ' + alltrim( idProduct ) )
 
    // Recopilamos la información del Stock-------------------------------------
@@ -324,7 +328,7 @@ METHOD getIdAttributeProductStock( idProductPrestashop, idFirstProperty, valueFi
       attributeSecondProperty    := ::TPrestashopId():getValueAttribute( idSecondProperty + valueSecondProperty, ::getCurrentWebName() ) 
    end if 
 
-   if ( attributeFirstProperty != 0 ) .and. ( attributeSecondProperty != 0 )
+   if ( attributeFirstProperty != 0 ) .or. ( attributeSecondProperty != 0 )
       idProductAttribute         := ::idProductAttribute( idProductPrestashop, attributeFirstProperty, attributeSecondProperty ) 
    end if 
 
@@ -351,18 +355,19 @@ METHOD createCommandProductToUpdate( cWebName, aProductsToUpdate )
       
     if ::prestaShopConnect()
 
-         for each hProduct in aProductsToUpdate
+      for each hProduct in aProductsToUpdate
 
-            if !empty( hProduct )
+         if !empty( hProduct )
 
-               cCommand    := ::getCommandProductToUpdate( hProduct )
-            
-               if !empty(cCommand)
-                  ::executeMultiCommand( cCommand )
-                  // hset( hProduct, "commandSQL", cCommand )
-               end if 
-
+            cCommand    := ::getCommandProductToUpdate( hProduct )
+         
+            if !empty(cCommand)
+               ::executeMultiCommand( cCommand )
             end if 
+
+            ::TComercio:saveLastInsertStock( hget( hProduct, "id" ) )   
+
+         end if 
          
       next
 
@@ -395,8 +400,6 @@ METHOD getCommandProductToUpdate( hProduct )
 
       idProductAttribute      := ::getIdAttributeProductStock( hget( hProduct, "idProductPrestashop" ), hget( hStock, "idFirstProperty" ), hget( hStock, "valueFirstProperty" ), hget( hStock, "idSecondProperty" ), hget( hStock, "valueSecondProperty" ) )
       
-      // msgalert( hb_valtoexp( hStock ), cvaltostr( idProductAttribute ) )
-
       if ( idProductAttribute != 0 ) .and. ( hget( hStock, "unitStock" ) > 0 )
 
          cCommand             += "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( "                           + ;
@@ -426,7 +429,6 @@ METHOD getCommandProductToUpdate( hProduct )
       cText                   += alltrim( hget( hStock, "valueSecondProperty" ) )                                       + ', '
       cText                   += 'cantidad : ' + alltrim( str( hget( hStock, "unitStock" ) ) )
 
-      ::writeText( cText )
 
    next 
 
@@ -435,9 +437,15 @@ METHOD getCommandProductToUpdate( hProduct )
       cCommand                := "DELETE FROM " + ::cPrefixTable( "product" )                                           + ;
                                  " WHERE id_product = '" + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) )    + "';"
 
-      ::writeText( 'Desactivando artículo ' + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) ) + ' de prestashop' )
+      cText                   := 'Desactivando artículo ' + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) ) + ' de prestashop'
 
    end if 
+
+   if !empty(::oWaitMeter)
+      ::oWaitMeter:setMessage( cText )
+   end if 
+
+   ::writeText( cText )
 
 Return ( cCommand )   
 
@@ -452,10 +460,16 @@ METHOD idProductAttribute( idProductPrestashop, attributeFirstProperty, attribut
    local cCommand             := ""
    local idProductAttribute   := 0
 
+   msgalert( idProductPrestashop,      "idProductPrestashop," )
+   msgalert( attributeFirstProperty,   "attributeFirstProperty," )
+   msgalert( attributeSecondProperty,  "attributeSecondProperty" )
+
    do case
       case !empty( attributeFirstProperty ) .and. empty( attributeSecondProperty )
 
          cCommand             := "SELECT * FROM " + ::cPrefixTable( "product_attribute" ) + " WHERE id_product = " + alltrim( str( idProductPrestashop ) )
+
+         ::writeText( cCommand )
 
          oQuery               := TMSQuery():New( ::oConexionMySQLDatabase(), cCommand )
 
@@ -466,10 +480,12 @@ METHOD idProductAttribute( idProductPrestashop, attributeFirstProperty, attribut
 
                cCommand       := "SELECT * FROM " + ::cPrefixTable( "product_attribute_combination" ) + " WHERE id_product_attribute = " + alltrim( str( oQuery:FieldGet( 1 ) ) )
 
+               ::writeText( cCommand )
+
                oQuery2        := TMSQuery():New( ::oConexionMySQLDatabase(), cCommand )
 
-                  if oQuery2:Open() .and. oQuery2:recCount() == 1 .and. oQuery2:FieldGet( 1 ) == attributeFirstProperty
-                     idProductAttribute     := oQuery:FieldGet( 1 )
+                  if oQuery2:Open() .and. oQuery2:recCount() == 1 .and. oQuery2:fieldGet( 1 ) == attributeFirstProperty
+                     idProductAttribute     := oQuery:fieldGet( 1 )
                   end if   
 
                oQuery:Skip()
@@ -480,18 +496,22 @@ METHOD idProductAttribute( idProductPrestashop, attributeFirstProperty, attribut
 
       case !empty( attributeFirstProperty ) .and. !empty( attributeSecondProperty )
 
-         cCommand                := "SELECT * FROM " + ::cPrefixTable( "product_attribute" ) + " WHERE id_product = " + alltrim( str( idProductPrestashop ) )
+         cCommand             := "SELECT * FROM " + ::cPrefixTable( "product_attribute" ) + " WHERE id_product = " + alltrim( str( idProductPrestashop ) )
 
-         oQuery                  := TMSQuery():New( ::oConexionMySQLDatabase(), cCommand )
+         ::writeText( cCommand )
 
-         if oQuery:Open() // .and. oQuery:recCount() > 0
+         oQuery               := TMSQuery():New( ::oConexionMySQLDatabase(), cCommand )
+
+         if oQuery:Open()
 
             oQuery:GoTop()
             while !oQuery:Eof()
 
-               cCommand          := "SELECT * FROM " + ::cPrefixTable( "product_attribute_combination" ) + " WHERE id_product_attribute=" + alltrim( str( oQuery:FieldGet( 1 ) ) )
+               cCommand       := "SELECT * FROM " + ::cPrefixTable( "product_attribute_combination" ) + " WHERE id_product_attribute=" + alltrim( str( oQuery:FieldGet( 1 ) ) )
 
-               oQuery2           := TMSQuery():New( ::oConexionMySQLDatabase(), cCommand )
+               ::writeText( cCommand )
+
+               oQuery2        := TMSQuery():New( ::oConexionMySQLDatabase(), cCommand )
 
                   if oQuery2:Open() .and. oQuery2:recCount() == 2
 

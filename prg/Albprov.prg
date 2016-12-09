@@ -280,7 +280,10 @@ static oUsr
 static cUsr
 static nOldEst
 static oBrwIva
+
 static oStock
+static TComercio
+
 static oNewImp
 static oFont
 static oMenu
@@ -1022,15 +1025,11 @@ STATIC FUNCTION OpenFiles( lExt )
 
       CodigosPostales():GetInstance():OpenFiles()
 
-      TComercio():getInstance( nView, oStock )
+      oBandera          := TBandera():New()
 
-      /*
-      Cargamos la clase bandera------------------------------------------------
-      */
+      TComercio         := TComercio():New( nView, oStock )
 
-      oBandera             := TBandera():New()
-
-      cPicUnd              := MasUnd()                               // Picture de las unidades
+      cPicUnd           := MasUnd()                               // Picture de las unidades
 
       initPublics()
 
@@ -1103,7 +1102,7 @@ STATIC FUNCTION CloseFiles()
 
    CodigosPostales():GetInstance():CloseFiles()
 
-   TComercio():endInstance()
+   TComercio:end()
 
    oBandera    := nil
    oStock      := nil
@@ -5352,7 +5351,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      TComercio():getInstance():resetProductsToUpdateStocks()
+      TComercio:resetProductsToUpdateStocks()
 
       CursorWait()
 
@@ -5591,7 +5590,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
 
          while ( D():AlbaranesProveedoresLineas( nView ) )->( dbSeek( cSerAlb + Str( nNumAlb ) + cSufAlb ) ) .and. !( D():AlbaranesProveedoresLineas( nView ) )->( eof() )
             
-            TComercio():getInstance():appendProductsToUpadateStocks( ( D():AlbaranesProveedoresLineas( nView ) )->cRef, nView )
+            TComercio:appendProductsToUpadateStocks( ( D():AlbaranesProveedoresLineas( nView ) )->cRef, nView )
 
             if dbLock( D():AlbaranesProveedoresLineas( nView ) )
                ( D():AlbaranesProveedoresLineas( nView ) )->( dbDelete() )
@@ -5666,7 +5665,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
 
          dbGather( aTbl, D():AlbaranesProveedoresLineas( nView ), .t. )
 
-         TComercio():getInstance():appendProductsToUpadateStocks( (dbfTmp)->cRef, nView )
+         TComercio:appendProductsToUpadateStocks( (dbfTmp)->cRef, nView )
 
          ( dbfTmp )->( dbSkip() )
 
@@ -5785,7 +5784,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
 
    // actualiza el stock de prestashop-----------------------------------------
 
-   TComercio():getInstance():updateWebProductStocks()
+   TComercio:updateWebProductStocks()
 
    oDlg:Enable()
    oDlg:End( IDOK )
@@ -6022,11 +6021,11 @@ Static Function QuiAlbPrv( lDetail )
    Detalle---------------------------------------------------------------------
    */
 
-   TComercio():getInstance():resetProductsToUpdateStocks()
+   TComercio:resetProductsToUpdateStocks()
 
    while ( D():AlbaranesProveedoresLineas( nView ) )->( dbSeek( ( D():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) + ( D():AlbaranesProveedores( nView ) )->cSufAlb ) ) .and. !( D():AlbaranesProveedoresLineas( nView ) )->( eof() )
 
-      TComercio():getInstance():appendProductsToUpadateStocks( ( D():AlbaranesProveedoresLineas( nView ) )->cRef, nView )
+      TComercio:appendProductsToUpadateStocks( ( D():AlbaranesProveedoresLineas( nView ) )->cRef, nView )
 
       if dbLock( D():AlbaranesProveedoresLineas( nView ) )
          ( D():AlbaranesProveedoresLineas( nView ) )->( dbDelete() )
@@ -6118,7 +6117,7 @@ Static Function QuiAlbPrv( lDetail )
 
    // actualiza el stock de prestashop-----------------------------------------
 
-   TComercio():getInstance():updateWebProductStocks()
+   TComercio:updateWebProductStocks()
 
    CursorWE()
 

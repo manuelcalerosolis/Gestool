@@ -397,6 +397,7 @@ static dbfHisMovS
 static dbfEmp
 static oMenu
 static oStock
+static TComercio
 static oTrans
 static oNewImp
 static oUndMedicion
@@ -1610,7 +1611,7 @@ STATIC FUNCTION OpenFiles()
 
       oMailing          := TGenmailingDatabaseAlbaranesClientes():New( nView )
 
-      TComercio():getInstance( nView, oStock )
+      TComercio         := TComercio():New( nView, oStock )
 
       /*
       Declaración de variables públicas----------------------------------------
@@ -1917,7 +1918,7 @@ STATIC FUNCTION CloseFiles()
       oDetCamposExtra:CloseFiles()
    end if
 
-   TComercio():endInstance()
+   TComercio:end()
 
    D():DeleteView( nView )
 
@@ -5470,7 +5471,7 @@ Static Function QuiAlbCli()
    nOrdDoc        := ( D():Get( "AlbCliD", nView ) )->( OrdSetFocus( "nNumAlb" ) )
    nOrdSer        := ( D():Get( "AlbCliS", nView ) )->( OrdSetFocus( "nNumAlb" ) )
 
-   TComercio():getInstance():resetProductsToUpdateStocks()
+   TComercio:resetProductsToUpdateStocks()
 
    // Eliminamos las entregas-----------------------------------------------------
 
@@ -5500,7 +5501,7 @@ Static Function QuiAlbCli()
          aAdd( aNumPed, ( D():Get( "AlbCliL", nView ) )->cNumPed )
       end if      
 
-      TComercio():getInstance():appendProductsToUpadateStocks( ( D():Get( "AlbCliL", nView ) )->cRef, nView )
+      TComercio:appendProductsToUpadateStocks( ( D():Get( "AlbCliL", nView ) )->cRef, nView )
 
       if dbLock( D():Get( "AlbCliL", nView ) )
          ( D():Get( "AlbCliL", nView ) )->( dbDelete() )
@@ -5572,7 +5573,7 @@ Static Function QuiAlbCli()
 
    // actualiza el stock de prestashop-----------------------------------------
 
-   TComercio():getInstance():updateWebProductStocks()
+   TComercio:updateWebProductStocks()
 
    /*
    Cerramos las tablas---------------------------------------------------------
@@ -9148,7 +9149,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      TComercio():getInstance():resetProductsToUpdateStocks()
+      TComercio:resetProductsToUpdateStocks()
 
       aNumPed        := {}
 
@@ -11776,7 +11777,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
 
       while ( D():Get( "AlbCliL", nView ) )->( dbSeek( cSerAlb + str( nNumAlb ) + cSufAlb ) ) .and. !( D():Get( "AlbCliL", nView ) )->( eof() )
 
-         TComercio():getInstance():appendProductsToUpadateStocks( (dbfTmpLin)->cRef, nView )
+         TComercio:appendProductsToUpadateStocks( (dbfTmpLin)->cRef, nView )
 
          if dbLock( D():Get( "AlbCliL", nView ) )
             ( D():Get( "AlbCliL", nView ) )->( dbDelete() )
@@ -11841,7 +11842,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
 
       end if   
 
-      TComercio():getInstance():appendProductsToUpadateStocks( (dbfTmpLin)->cRef, nView )
+      TComercio:appendProductsToUpadateStocks( (dbfTmpLin)->cRef, nView )
 
       ( dbfTmpLin )->( dbSkip() )
 
@@ -11998,7 +11999,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
 
    // actualiza el stock de prestashop-----------------------------------------
 
-   TComercio():getInstance():updateWebProductStocks()
+   TComercio:updateWebProductStocks()
 
    oDlg:Enable()
    oDlg:End( IDOK )

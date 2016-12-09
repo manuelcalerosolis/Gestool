@@ -238,7 +238,7 @@ CLASS TWaitMeter
 
    METHOD New( cMsg, cTitle, nTotal )
 
-   METHOD setMessage( cMessage )       INLINE   ( ::oMessage:SetText( cMessage ) )
+   METHOD setMessage( cMessage )       INLINE   ( ::oMessage:SetText( cMessage ), sysRefresh() )
    METHOD setBitmap( cBitmap )         INLINE   ( ::cBitmap := cBitmap )
 
    METHOD setTotalMeter( nTotal )      INLINE   ( ::oProgress:SetTotal( nTotal ) )

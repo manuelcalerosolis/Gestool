@@ -725,7 +725,7 @@ METHOD RollBack() CLASS TDetMovimientos
 
       if ::oDbf:Seek( ::oParent:cFirstKey )
          while !( ::oDbf:eof() )
-            TComercio():getInstance():appendProductsToUpadateStocks( ::oDbf:cRefMov, ::oParent:nView )
+            ::oParent:TComercio:appendProductsToUpadateStocks( ::oDbf:cRefMov, ::oParent:nView )
             ::oDbf:skip()
          end while
       end if 
@@ -1362,7 +1362,7 @@ METHOD Save() CLASS TDetMovimientos
 
          ::Asigna()
 
-         TComercio():getInstance():appendProductsToUpadateStocks( ::oDbfVir:cRefMov, ::oParent:nView )
+         ::oParent:TComercio:appendProductsToUpadateStocks( ::oDbfVir:cRefMov, ::oParent:nView )
 
          ::oDbf:AppendFromObject( ::oDbfVir )
 
@@ -1380,7 +1380,7 @@ METHOD Save() CLASS TDetMovimientos
 
          ::Asigna()
 
-         TComercio():getInstance():appendProductsToUpadateStocks( ::oDbfVir:cRefMov, ::oParent:nView )
+         ::oParent:TComercio:appendProductsToUpadateStocks( ::oDbfVir:cRefMov, ::oParent:nView )
 
          ::oDbf:AppendFromObject( ::oDbfVir )
 
@@ -1396,7 +1396,7 @@ METHOD Save() CLASS TDetMovimientos
       ::oDbfVir:GoTop()
       while !::oDbfVir:Eof()
 
-         TComercio():getInstance():appendProductsToUpadateStocks( ::oDbfVir:cRefMov, ::oParent:nView )
+         ::oParent:TComercio:appendProductsToUpadateStocks( ::oDbfVir:cRefMov, ::oParent:nView )
 
          if ( ::oParent:lTargetCalculate ) 
 
@@ -1429,7 +1429,7 @@ METHOD Save() CLASS TDetMovimientos
 
          ::Asigna()
 
-         TComercio():getInstance():appendProductsToUpadateStocks( ::oDbfVir:cRefMov, ::oParent:nView )
+         ::oParent:TComercio:appendProductsToUpadateStocks( ::oDbfVir:cRefMov, ::oParent:nView )
 
          ::oDbf:AppendFromObject( ::oDbfVir )
 
@@ -1446,7 +1446,7 @@ METHOD Save() CLASS TDetMovimientos
 
    oWaitMeter:end()
 
-   TComercio():getInstance():updateWebProductStocks()
+   ::oParent:TComercio:updateWebProductStocks()
 
    CursorWE()
 

@@ -295,7 +295,10 @@ static dbfAlbPrvT
 static dbfAlbPrvL
 static dbfAlbPrvS
 static dbfAlm
+
 static oStock
+static TComercio
+
 static oNewImp
 static cNewFile
 static cPicEur
@@ -503,7 +506,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       CodigosPostales():GetInstance():OpenFiles()
 
-      TComercio():getInstanceOpenFiles()
+      TComercio         := TComercio():new( nView, oStock )
 
       /*
       Numeros de serie---------------------------------------------------------
@@ -606,7 +609,7 @@ Static Function CloseFiles()
       oCentroCoste:CloseFiles()
    end if
 
-   TComercio():endInstanceCloseFiles()
+   TComercio:end()
 
    nView       := nil
 
@@ -6934,7 +6937,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      TComercio():getInstance():resetProductsToUpdateStocks()
+      TComercio:resetProductsToUpdateStocks()
 
       CursorWait()
 
@@ -7220,7 +7223,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
 
          aNumAlb:Add( getNumeroAlbaranProveedorLinea( nView ) )
 
-         TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasProveedoresLineas( nView ) )->cRef, nView )
+         TComercio:appendProductsToUpadateStocks( ( D():FacturasProveedoresLineas( nView ) )->cRef, nView )
 
          setNoFacturadoAlbaranProveedorLinea( nView )
 
@@ -7302,7 +7305,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
 
       setFacturadoAlbaranProveedorLinea( cSerFac, nNumFac, cSufFac, nView )
 
-      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmp )->cRef, nView )
+      TComercio:appendProductsToUpadateStocks( ( dbfTmp )->cRef, nView )
 
       ( dbfTmp )->( dbSkip() )
 
@@ -7424,7 +7427,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
    oMsgText()
    EndProgress()
 
-   TComercio():getInstance():updateWebProductStocks()
+   TComercio:updateWebProductStocks()
 
    oDlg:Enable()
    oDlg:End( IDOK )
@@ -7960,13 +7963,13 @@ Static Function delDetalle( cFactura )
 
    CursorWait()
    
-   TComercio():getInstance():resetProductsToUpdateStocks()
+   TComercio:resetProductsToUpdateStocks()
    
    nOrdAnt           := ( D():FacturasProveedoresLineas( nView ) )->( OrdSetFocus( "nNumFac" ) )
 
    while ( D():FacturasProveedoresLineas( nView ) )->( dbSeek( cFactura ) ) .and. !( D():FacturasProveedoresLineas( nView ) )->( eof() )
    
-      TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasProveedoresLineas( nView ) )->cRef, nView )
+      TComercio:appendProductsToUpadateStocks( ( D():FacturasProveedoresLineas( nView ) )->cRef, nView )
    
       aNumAlb:add( getNumeroAlbaranProveedorLinea( nView ) )
 
@@ -7998,7 +8001,7 @@ Static Function delDetalle( cFactura )
 
    // actualiza el stock de prestashop-----------------------------------------
    
-   TComercio():getInstance():updateWebProductStocks()
+   TComercio:updateWebProductStocks()
 
    CursorWe()
 
@@ -8759,42 +8762,6 @@ Static Function ValidaSuFactura( aGet, nMode )
    ( D():FacturasProveedores( nView ) )->( dbGoTo( nRecno ) )
 
 Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-static Function ActualizaStockWeb( cNumDoc )
-
-   local nRec     := ( D():FacturasProveedoresLineas( nView ) )->( Recno() )
-   local nOrdAnt  := ( D():FacturasProveedoresLineas( nView ) )->( OrdSetFocus( "nNumFac" ) )
-
-   if uFieldEmpresa( "lRealWeb" )
-
-      with object ( TComercio():New())
-
-         if ( D():FacturasProveedoresLineas( nView ) )->( dbSeek( cNumDoc ) )  
-
-            while ( D():FacturasProveedoresLineas( nView ) )->cSerFac + Str( ( D():FacturasProveedoresLineas( nView ) )->nNumFac ) + ( D():FacturasProveedoresLineas( nView ) )->cSufFac == cNumDoc .and. !( D():FacturasProveedoresLineas( nView ) )->( Eof() )
-
-               if Retfld( ( D():FacturasProveedoresLineas( nView ) )->cRef, D():Articulos( nView ), "lPubInt", "Codigo" )
-
-                  :ActualizaStockProductsPrestashop( ( D():FacturasProveedoresLineas( nView ) )->cRef, ( D():FacturasProveedoresLineas( nView ) )->cCodPr1, ( D():FacturasProveedoresLineas( nView ) )->cCodPr2, ( D():FacturasProveedoresLineas( nView ) )->cValPr1, ( D():FacturasProveedoresLineas( nView ) )->cValPr2 )
-
-               end if
-
-               ( D():FacturasProveedoresLineas( nView ) )->( dbSkip() )
-
-            end while
-
-        end if
-        
-      end with
-
-   end if 
-
-   ( D():FacturasProveedoresLineas( nView ) )->( OrdSetFocus( nOrdAnt ) )
-   ( D():FacturasProveedoresLineas( nView ) )->( dbGoTo( nRec ) )  
-
-Return .t.
 
 //---------------------------------------------------------------------------//
 

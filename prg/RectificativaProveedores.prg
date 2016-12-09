@@ -276,7 +276,10 @@ static dbfCajT
 static dbfDiv
 
 static oBandera
+
 static oStock
+static TComercio
+
 static oNewImp
 static cNewFile
 static cPicEur
@@ -488,7 +491,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       CodigosPostales():GetInstance():OpenFiles()
 
-      TComercio():getInstanceOpenFiles()
+      TComercio         := TComercio():New( nView, oStock )
 
       oFntTot           := TFont():New( "Arial", 8, 26, .F., .T. )// Font del total
 
@@ -578,7 +581,7 @@ Static Function CloseFiles()
 
    lOpenFiles  := .f.
 
-   TComercio():endInstance()
+   TComercio:end()
 
    EnableAcceso()
 
@@ -6548,7 +6551,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
 
    oMsgText( "Archivando" )
 
-   TComercio():getInstance():resetProductsToUpdateStocks()
+   TComercio:resetProductsToUpdateStocks()
 
    oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -6568,7 +6571,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
 
       while ( D():FacturasRectificativasProveedoresLineas( nView ) )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) .and. !( D():FacturasRectificativasProveedoresLineas( nView ) )->( eof() ) )
 
-         TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasRectificativasProveedoresLineas( nView ) )->cRef, nView )
+         TComercio:appendProductsToUpadateStocks( ( D():FacturasRectificativasProveedoresLineas( nView ) )->cRef, nView )
 
          if dbLock( D():FacturasRectificativasProveedoresLineas( nView ) )
             ( D():FacturasRectificativasProveedoresLineas( nView ) )->( dbDelete() )
@@ -6632,7 +6635,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
 
       dbGather( aTbl, D():FacturasRectificativasProveedoresLineas( nView ), .t. )
 
-      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmp )->cRef, nView )
+      TComercio:appendProductsToUpadateStocks( ( dbfTmp )->cRef, nView )
 
       ( dbfTmp )->( dbSkip() )
 
@@ -6749,7 +6752,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
 
    // actualiza el stock de prestashop-----------------------------------------
 
-   TComercio():getInstance():updateWebProductStocks()
+   TComercio:updateWebProductStocks()
 
    oDlg:Enable()
    oDlg:End( IDOK )
@@ -7196,11 +7199,11 @@ STATIC FUNCTION DeleteRelacionRectificativasProveedores( cFactura )
    Eliminamos los apuntes de stocks--------------------------------------------
    */
 
-   TComercio():getInstance():resetProductsToUpdateStocks()
+   TComercio:resetProductsToUpdateStocks()
 
    while ( D():FacturasRectificativasProveedoresLineas( nView ) )->( dbSeek( cFactura ) ) .and. !( D():FacturasRectificativasProveedoresLineas( nView ) )->( eof() )
 
-      TComercio():getInstance():appendProductsToUpadateStocks( ( D():FacturasRectificativasProveedoresLineas( nView ) )->cRef, nView )
+      TComercio:appendProductsToUpadateStocks( ( D():FacturasRectificativasProveedoresLineas( nView ) )->cRef, nView )
 
       dbLockDelete( D():FacturasRectificativasProveedoresLineas( nView ) )
 
@@ -7228,7 +7231,7 @@ STATIC FUNCTION DeleteRelacionRectificativasProveedores( cFactura )
 
    // actualiza el stock de prestashop-----------------------------------------
 
-   TComercio():getInstance():updateWebProductStocks()
+   TComercio:updateWebProductStocks()
 
    CursorWe()
 
@@ -7866,42 +7869,6 @@ Static Function SalvarNumeroSerie( aNumSer, aTmp, oProSer, nMode )
 Return ( nil )
 
 //----------------------------------------------------------------------------//
-
-static Function ActualizaStockWeb( cNumDoc )
-
-   local nRec     := ( D():FacturasRectificativasProveedoresLineas( nView ) )->( Recno() )
-   local nOrdAnt  := ( D():FacturasRectificativasProveedoresLineas( nView ) )->( OrdSetFocus( "nNumFac" ) )
-
-   if uFieldEmpresa( "lRealWeb" )
-
-      with object ( TComercio():New())
-
-         if ( D():FacturasRectificativasProveedoresLineas( nView ) )->( dbSeek( cNumDoc ) )
-
-            while ( D():FacturasRectificativasProveedoresLineas( nView ) )->cSerFac + Str( ( D():FacturasRectificativasProveedoresLineas( nView ) )->nNumFac ) + ( D():FacturasRectificativasProveedoresLineas( nView ) )->cSufFac == cNumDoc .and. !( D():FacturasRectificativasProveedoresLineas( nView ) )->( Eof() )
-
-               if Retfld( ( D():FacturasRectificativasProveedoresLineas( nView ) )->cRef, D():Articulos( nView ), "lPubInt", "Codigo" )
-
-                  :ActualizaStockProductsPrestashop( ( D():FacturasRectificativasProveedoresLineas( nView ) )->cRef, ( D():FacturasRectificativasProveedoresLineas( nView ) )->cCodPr1, ( D():FacturasRectificativasProveedoresLineas( nView ) )->cCodPr2, ( D():FacturasRectificativasProveedoresLineas( nView ) )->cValPr1, ( D():FacturasRectificativasProveedoresLineas( nView ) )->cValPr2 )
-
-               end if
-
-               ( D():FacturasRectificativasProveedoresLineas( nView ) )->( dbSkip() )
-
-            end while
-
-        end if
-        
-      end with
-
-   end if 
-
-   ( D():FacturasRectificativasProveedoresLineas( nView ) )->( OrdSetFocus( nOrdAnt ) )
-   ( D():FacturasRectificativasProveedoresLineas( nView ) )->( dbGoTo( nRec ) )  
-
-Return .t.
-
-//---------------------------------------------------------------------------//
 
 Static Function ImprimirSeriesFacturasRectificativasProveedores( nDevice, lExt )
 

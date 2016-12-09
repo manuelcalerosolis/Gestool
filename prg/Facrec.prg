@@ -371,6 +371,7 @@ static dbfMatSer
 static dbfHisMov
 static dbfHisMovS
 static oStock
+static TComercio
 static oCtaRem
 static oBandera
 static oTrans
@@ -997,7 +998,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       oMailing          := TGenmailingDatabaseFacturaRectificativaCliente():New( nView )
 
-      TComercio():getInstanceOpenFiles()
+      TComercio         := TComercio():New( nView, oStock)
 
       /*
       Declaración de variables publicas----------------------------------------
@@ -1379,7 +1380,7 @@ STATIC FUNCTION CloseFiles()
       oCentroCoste:End()
    end if
 
-   TComercio():endInstanceCloseFiles()
+   TComercio:end()
 
    D():DeleteView( nView )
 
@@ -7685,7 +7686,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    aTmp[ _CTIMCRE ]     := Time()
    aTmp[ _NTARIFA ] 	   := oGetTarifa:getTarifa()
 
-   TComercio():getInstance():resetProductsToUpdateStocks()
+   TComercio:resetProductsToUpdateStocks()
 
    ( dbfTmpLin )->( dbClearFilter() )
 
@@ -7708,7 +7709,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
       while ( dbfFacRecL )->( dbSeek( cSerFac + Str( nNumFac ) + cSufFac ) ) .and. !( dbfFacRecL )->( eof() )
 
-         TComercio():getInstance():appendProductsToUpadateStocks( ( dbfFacRecL )->cRef, nView )
+         TComercio:appendProductsToUpadateStocks( ( dbfFacRecL )->cRef, nView )
 
          if dbLock( dbfFacRecL )
             ( dbfFacRecL )->( dbDelete() )
@@ -7792,7 +7793,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
          ( dbfTmpLin )->dFecFac := aTmp[ _DFECFAC ]
       end if
 
-      TComercio():getInstance():appendProductsToUpadateStocks( ( dbfTmpLin )->cRef, nView )
+      TComercio:appendProductsToUpadateStocks( ( dbfTmpLin )->cRef, nView )
 
       dbPass( dbfTmpLin, dbfFacRecL, .t., cSerFac, nNumFac, cSufFac )
 
@@ -7924,7 +7925,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
    // actualiza el stock de prestashop-----------------------------------------
 
-   TComercio():getInstance():updateWebProductStocks()
+   TComercio:updateWebProductStocks()
 
    oDlg:Enable()
    oDlg:end( IDOK )
@@ -8096,12 +8097,12 @@ static function QuiFacRec()
    Eliminamos las lineas-------------------------------------------------------
    */
 
-   TComercio():getInstance():resetProductsToUpdateStocks()
+   TComercio:resetProductsToUpdateStocks()
 
    nOrdAnt     := ( dbfFacRecL )->( OrdSetFocus( "nNumFac" ) )
    while ( dbfFacRecL )->( dbSeek( cSerDoc + Str( nNumDoc ) + cSufDoc ) ) .and. !( dbfFacRecL )->( eof() )
 
-    TComercio():getInstance():appendProductsToUpadateStocks( ( dbfFacRecL )->cRef, ( dbfFacRecL )->cCodPr1, ( dbfFacRecL )->cValPr1, ( dbfFacRecL )->cCodPr2, ( dbfFacRecL )->cValPr2, nView )
+    TComercio:appendProductsToUpadateStocks( ( dbfFacRecL )->cRef, ( dbfFacRecL )->cCodPr1, ( dbfFacRecL )->cValPr1, ( dbfFacRecL )->cCodPr2, ( dbfFacRecL )->cValPr2, nView )
 
     if dbDialogLock( dbfFacRecL )
        ( dbfFacRecL )->( dbDelete() )
@@ -8116,7 +8117,7 @@ static function QuiFacRec()
 
    // actualiza el stock de prestashop-----------------------------------------
 
-   TComercio():getInstance():updateWebProductStocks()
+   TComercio:updateWebProductStocks()
 
    /*
    Eliminamos los pagos--------------------------------------------------------

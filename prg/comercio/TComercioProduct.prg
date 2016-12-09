@@ -734,7 +734,6 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-
 METHOD insertProduct( hProduct ) CLASS TComercioProduct
 
    local idProduct
@@ -1144,6 +1143,11 @@ METHOD insertProductAttributeCombination( idFirstProperty, valueFirstProperty, i
 
    local cCommand
    local idAttribute
+   local idProductAttributeCombination   
+
+   msgalert( idFirstProperty, "idFirstProperty" )
+   msgalert( valueFirstProperty, "valueFirstProperty" )
+   msgalert( idProperty, "idProperty" )
 
    if !( ( D():PropiedadesLineas( ::getView() ) )->( dbseekinord( upper( idFirstProperty ) + upper( valueFirstProperty ), "cCodPro" ) ) )
       ::writeText( "Error al buscar en tabla de propiedades " + alltrim( idFirstProperty ) + " : " + alltrim( valueFirstProperty ), 3 )
@@ -1167,11 +1171,20 @@ METHOD insertProductAttributeCombination( idFirstProperty, valueFirstProperty, i
                      "'" + alltrim( str( idAttribute ) ) + "', "                             + ;   //id_attribute
                      "'" + alltrim( str( idProperty ) ) + "' )"                                    //id_product_attribute
 
-   if !::commandExecDirect( cCommand ) 
+   if ::commandExecDirect( cCommand ) 
+
+      idProductAttributeCombination    := ::oConexionMySQLDatabase():GetInsertId()
+      if !empty(idProductAttributeCombination)   
+         ::TPrestashopId():setProductAttributeCombination( idFirstProperty + valueFirstProperty + idProperty, ::getCurrentWebName(), idProductAttributeCombination )
+      end if 
+   
+   else 
+   
       ::writeText( "Error al insertar la propiedad " + alltrim( ( D():PropiedadesLineas( ::getView() ) )->cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute_combination" ), 3 )
+   
    end if
 
-Return ( .t. )
+Return ( idProductAttributeCombination )
 
 //---------------------------------------------------------------------------//
 
