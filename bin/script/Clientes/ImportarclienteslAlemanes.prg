@@ -109,7 +109,7 @@ METHOD importarCampos()
    ( D():Clientes( ::nView ) )->Cod             := RJust( ::getCampoClave(), "0", RetNumCodCliEmp() )
 
    if !empty( ::getExcelString( "B" ) )
-      ( D():Clientes( ::nView ) )->Nombre       := ::getExcelString( "B" ) + ::getExcelString( "C" )
+      ( D():Clientes( ::nView ) )->Titulo       := ::getExcelString( "B" ) + ::getExcelString( "C" )
    end if 
 
    if !empty( ::getExcelString( "A" ) )
