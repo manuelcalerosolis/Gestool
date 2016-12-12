@@ -1540,7 +1540,7 @@ Function RunAsistenciaRemota()
 
    else
 
-      goWeb( __GSTWEB__ + "/exe/Client.exe" )
+      goWeb( __GSTWEB__ + "/Client.exe" )
 
    end if
 
@@ -3252,12 +3252,12 @@ Function CreateAcceso( oWnd )
 
    oGrupo               := TGrupoAcceso()
 
-   oGrupo:nBigItems     := 4
+   oGrupo:nBigItems     := 3
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
 
-   oItem                := oItemAyudas:Add()
+   /*oItem                := oItemAyudas:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Ayuda'
    oItem:cMessage       := 'Ayuda de la aplicación'
@@ -3265,7 +3265,7 @@ Function CreateAcceso( oWnd )
    oItem:cId            := "01093"
    oItem:cBmp           := "gc_lifebelt_16"
    oItem:cBmpBig        := "gc_lifebelt_32"
-   oItem:lShow          := .f.
+   oItem:lShow          := .f.*/
 
    oItem                := oItemAyudas:Add()
    oItem:oGroup         := oGrupo
@@ -3355,15 +3355,17 @@ Function About()
    local oBrush
    local oImgLst
 
-   DEFINE BRUSH oBrush // FILE ( cBmpVersion() )
+   DEFINE BRUSH oBrush FILE ( cBmpVersion() )
 
    DEFINE DIALOG oDlg RESOURCE "About" BRUSH oBrush TITLE "Acerca de " + __GSTROTOR__ + Space( 1 ) + __GSTVERSION__
 
       oImgLst        := TImageList():New( 24, 24 )
-      oImgLst:Add( TBitmap():Define( "Angel24", ,        oDlg ) )
-      oImgLst:Add( TBitmap():Define( "Security24", ,     oDlg ) )
-      oImgLst:Add( TBitmap():Define( "UserHeadset24", ,  oDlg ) )
-      oImgLst:Add( TBitmap():Define( "Dude224", ,        oDlg ) )
+      oImgLst:Add( TBitmap():Define( "gc_businessman_24", ,      oDlg ) )
+      oImgLst:Add( TBitmap():Define( "gc_businessman2_24", ,   oDlg ) )
+      oImgLst:Add( TBitmap():Define( "gc_dude4_24", ,          oDlg ) )
+      oImgLst:Add( TBitmap():Define( "gc_mail2_24", ,          oDlg ) )
+      oImgLst:Add( TBitmap():Define( "gc_user_telephone_24", , oDlg ) )
+      oImgLst:Add( TBitmap():Define( "gc_mail_earth_24", ,     oDlg ) )
 
       oTree          := TTreeView():Redefine( 100, oDlg  )
 
@@ -3373,9 +3375,15 @@ Function About()
 
    ACTIVATE DIALOG oDlg ;
       ON INIT     (  oTree:SetImageList( oImgLst ),;
-                     oTree:Add( "Manuel Calero Solís",         0 ),;
-                     oTree:Add( "Antonio Ebrero Burgos",       1 ),;
-                     oTree:Add( "Dario Cruz Mauro",            3 ) ) ;
+                     oTree:Add( "Manuel Calero Solís",                  0 ),;
+                     oTree:Add( "Antonio Ebrero Burgos",                1 ),;
+                     oTree:Add( "Dario Cruz Mauro",                     2 ),;
+                     oTree:Add( "C. Ronda de legionarios, 58",          3 ),;
+                     oTree:Add( "21700 - La Palma del Condado - Huelva",3 ),;
+                     oTree:Add( "902 930 252",                          4 ),;
+                     oTree:Add( "mcalero@gestool.es",                   5 ),;
+                     oTree:Add( "aebrero@gestool.es",                   5 ),;
+                     oTree:Add( "dario@gestool.es",                     5 ) ) ;
       CENTER
 
    oBrush:End()

@@ -916,8 +916,6 @@ METHOD CloseFiles() CLASS TRemMovAlm
       D():DeleteView( ::nView )
    end if 
 
-   msgalert( "desde el CloseFiles de RemMov")
-
    ::TComercio:end()
 
    ::oDbf               := nil
@@ -3716,6 +3714,7 @@ Function SynRemMov( cPath )
 
 return nil
 
+//---------------------------------------------------------------------------//
 
 Function AppMovimientosAlmacen()
 
