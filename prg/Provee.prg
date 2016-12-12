@@ -625,7 +625,7 @@ FUNCTION Provee( oMenuItem, oWnd )
       TOOLTIP  "Rotor" ;
       LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "form_green_add_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_form_plus2_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( oDetCamposExtra:Play( ( dbfProvee )->Cod ) );
          TOOLTIP  "Campos extra" ;
@@ -2879,7 +2879,7 @@ Static Function EdtRecMenu( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDl
 
             MENUITEM "&1. Campos extra [F9]";
                MESSAGE  "Mostramos y rellenamos los campos extra para el proveedor" ;
-               RESOURCE "form_green_add_16" ;
+               RESOURCE "gc_form_plus2_16" ;
                ACTION   ( oDetCamposExtra:Play( ( dbfProvee )->Cod ) )
 
             MENUITEM    "&2. Informe del proveedor";
