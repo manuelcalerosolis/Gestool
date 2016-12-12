@@ -3368,6 +3368,7 @@ Function About()
       oImgLst:Add( TBitmap():Define( "gc_mail_earth_24", ,     oDlg ) )
 
       oTree          := TTreeView():Redefine( 100, oDlg  )
+      oTree:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
 
       REDEFINE SAY ID 200 COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) OF oDlg
 

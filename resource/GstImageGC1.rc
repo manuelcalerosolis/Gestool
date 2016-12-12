@@ -413,3 +413,5 @@ GC_BUSINESSMAN2_24 BITMAP "..\\bmp\\gc_businessman2_24.bmp"
 GC_MAIL2_24 BITMAP "..\\bmp\\gc_mail2_24.bmp"
 GC_USER_TELEPHONE_24 BITMAP "..\\bmp\\gc_user_telephone_24.bmp"
 GC_MAIL_EARTH_24 BITMAP "..\\bmp\\gc_mail_earth_24.bmp"
+
+GC_SAFE_INTO_64 BITMAP "..\\bmp\\gc_safe_into_64.bmp"
