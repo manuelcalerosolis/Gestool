@@ -932,14 +932,14 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
          CLOSED ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_BUSINESSMAN_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_document_empty_businessman_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( if( ( D():PedidosProveedores( nView ) )->nEstado == 3, MsgStop( "Pedido recibido" ), AlbPrv( nil, oWnd, nil, nil, ( D():PedidosProveedores( nView ) )->cSerPed + Str( ( D():PedidosProveedores( nView ) )->nNumPed ) + ( D():PedidosProveedores( nView ) )->cSufPed ) ) );
          TOOLTIP  "Generar albarán" ;
          FROM     oRotor ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_BUSINESSMAN_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_document_empty_businessman_" OF oWndBrw ;
          ACTION   ( Ped2Alb( ( D():PedidosProveedores( nView ) )->cSerPed + Str( ( D():PedidosProveedores( nView ) )->nNumPed ) + ( D():PedidosProveedores( nView ) )->cSufPed ) );
          TOOLTIP  "Modificar albarán" ;
          FROM     oRotor ;

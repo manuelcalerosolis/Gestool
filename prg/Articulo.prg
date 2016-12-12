@@ -1572,7 +1572,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          ALLOW    EXIT ;
          LEVEL    ACC_EDIT
  
-      DEFINE BTNSHELL RESOURCE "Document_plain_businessman_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_document_empty_businessman_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( AlbPrv( nil, oWnd, nil, ( D():Articulos( nView ) )->Codigo ) );
          TOOLTIP  "Añadir albarán de proveedor" ;

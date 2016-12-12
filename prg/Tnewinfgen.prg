@@ -3135,13 +3135,13 @@ METHOD lGrupoFacturasCompras( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoFacturasCompras:Cargo:ValidHasta := {|oGet| if( lValidInformeFacPrv( if( !Empty( oGet ), oGet, ::oHasta ), ::oSayHasta ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoFacturasCompras:Cargo:lImprimir  := lImp
 
-   ::oImageList:AddMasked( TBitmap():Define( "Document_businessman_16" ), Rgb( 255, 0, 255 ) )
+   ::oImageList:AddMasked( TBitmap():Define( "gc_document_text_businessman_16" ), Rgb( 255, 0, 255 ) )
 
    if lInitGroup != nil
 
       aAdd( ::aSelectionGroup, ::oGrupoFacturasCompras )
 
-      ::oImageGroup:AddMasked( TBitmap():Define( "Document_businessman_16" ), Rgb( 255, 0, 255 ) )
+      ::oImageGroup:AddMasked( TBitmap():Define( "gc_document_text_businessman_16" ), Rgb( 255, 0, 255 ) )
 
       ::oGrupoFacturas:Cargo:Imagen  := len( ::oImageGroup:aBitmaps ) -1
 

@@ -700,7 +700,7 @@ METHOD Resource( nMode ) CLASS TCobAge
       /*REDEFINE BTNBMP oBtnFac ;
          ID       190 ;
          OF       oDlg ;
-         RESOURCE "Document_businessman_16" ;
+         RESOURCE "gc_document_text_businessman_16" ;
          NOBORDER
 
       oBtnFac:bAction      := {|| EdtFacPrv( ::oDbf:cNumFac ) }*/

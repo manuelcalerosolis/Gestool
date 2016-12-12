@@ -398,9 +398,9 @@ METHOD Activate( oMenuItem, oWnd )
 
    ::cFiltro            := "Todos"
    ::cBuscar            := "Todos"
-   ::aBmp               := {  "Clipboard_empty_businessman_16",;
-                              "Document_plain_businessman_16",;
-                              "Document_businessman_16",;
+   ::aBmp               := {  "gc_clipboard_empty_businessman_16",;
+                              "gc_document_empty_businessman_16",;
+                              "gc_document_text_businessman_16",;
                               "Notebook_user1_16",;
                               "Clipboard_empty_user1_16",;
                               "Document_plain_user1_16",;

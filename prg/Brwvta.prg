@@ -790,9 +790,9 @@ function BrwVtaComArt( cCodArt, cNomArt )
       :bStrData      := {|| cTextDocument() }
       :bBmpData      := {|| TreeImagen() }
       :nWidth        := 20
-      :AddResource( "Clipboard_empty_businessman_16" )
-      :AddResource( "Document_plain_businessman_16" )
-      :AddResource( "Document_businessman_16" )
+      :AddResource( "gc_clipboard_empty_businessman_16" )
+      :AddResource( "gc_document_empty_businessman_16" )
+      :AddResource( "gc_document_text_businessman_16" )
       :AddResource( "Pencil_Package_16" )
       :AddResource( "Notebook_user1_16" )
       :AddResource( "Clipboard_empty_user1_16" )
@@ -1117,9 +1117,9 @@ Static Function InitBrwVtaCli( cCodArt, oTree, dbfDiv, dbfArticulo, oBrwStk, oBr
 
    oTreeImageList:AddMasked( TBitmap():Define( "Cube_yellow_16" ),                  Rgb( 255, 0, 255 ) )
 
-   oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_businessman_16" ),  Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_businessman_16" ),   Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Document_businessman_16" ),         Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_clipboard_empty_businessman_16" ),  Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_document_empty_businessman_16" ),   Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_businessman_16" ),         Rgb( 255, 0, 255 ) )
 
    oTreeImageList:AddMasked( TBitmap():Define( "Notebook_user1_16" ),               Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_user1_16" ),        Rgb( 255, 0, 255 ) )
@@ -1179,17 +1179,17 @@ Static Function InitBrwVtaCli( cCodArt, oTree, dbfDiv, dbfArticulo, oBrwStk, oBr
 
          MENUITEM    "&1. Añadir pedido a proveedor";
             MESSAGE  "Añade un pedido a proveedor" ;
-            RESOURCE "Clipboard_empty_businessman_16";
+            RESOURCE "gc_clipboard_empty_businessman_16";
             ACTION   ( AppPedPrv( "", cCodArt, .f. ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )
 
             MENUITEM "&2. Añadir albarán de proveedor";
             MESSAGE  "Añade un albarán de proveedor" ;
-            RESOURCE "Document_plain_businessman_16";
+            RESOURCE "gc_document_empty_businessman_16";
             ACTION   ( AppAlbPrv( "", cCodArt, .f. ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )
 
             MENUITEM "&3. Añadir factura de proveedor";
             MESSAGE  "Añade una factura de proveedor" ;
-            RESOURCE "Document_businessman_16";
+            RESOURCE "gc_document_text_businessman_16";
             ACTION   ( AppFacPrv( "", cCodArt, .f. ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )
 
             SEPARATOR

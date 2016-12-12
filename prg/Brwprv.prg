@@ -174,9 +174,9 @@ function BrwComPrv( cCodPrv, cNomPrv, dbfDiv, dbfIva )
                            LoadBitmap( GetResources(), "bYelow" ),;
                            LoadBitmap( GetResources(), "bGreen" ),;
                            LoadBitmap( GetResources(), "bmpLock"),;
-                           LoadBitmap( GetResources(), "Clipboard_empty_businessman_16" ),;
-                           LoadBitmap( GetResources(), "Document_plain_businessman_16" ),;
-                           LoadBitmap( GetResources(), "Document_businessman_16" ),;
+                           LoadBitmap( GetResources(), "gc_clipboard_empty_businessman_16" ),;
+                           LoadBitmap( GetResources(), "gc_document_empty_businessman_16" ),;
+                           LoadBitmap( GetResources(), "gc_document_text_businessman_16" ),;
                            LoadBitmap( GetResources(), "MovAlm" ),;
                            LoadBitmap( GetResources(), "PreCli" ),;
                            LoadBitmap( GetResources(), "PedCli" ),;
@@ -363,9 +363,9 @@ function BrwComPrv( cCodPrv, cNomPrv, dbfDiv, dbfIva )
       :bStrData      := {|| cTextoDocument() }
       :bBmpData      := {|| nImagenDocument() }
       :nWidth        := 20
-      :AddResource( "Clipboard_empty_businessman_16" )
-      :AddResource( "Document_plain_businessman_16" )
-      :AddResource( "Document_businessman_16" )
+      :AddResource( "gc_clipboard_empty_businessman_16" )
+      :AddResource( "gc_document_empty_businessman_16" )
+      :AddResource( "gc_document_text_businessman_16" )
       :AddResource( "Document_navigate_cross_16" )
    end with
 
@@ -576,9 +576,9 @@ Static Function InitBrwPrv( cCodPrv, dbfDiv, dbfIva, oTree, oDlg, oGraph, nYear,
    oTreeImageList := TImageList():New( 16, 16 )
 
    oTreeImageList:AddMasked( TBitmap():Define( "Businessman_16" ),                  Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_businessman_16" ),  Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_businessman_16" ),   Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Document_businessman_16" ),         Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_clipboard_empty_businessman_16" ),  Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_document_empty_businessman_16" ),   Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_businessman_16" ),         Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "gc_delete_12" ),            Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "gc_shape_square_12" ),         Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "gc_check_12" ),          Rgb( 255, 0, 255 ) )
@@ -605,17 +605,17 @@ Static Function InitBrwPrv( cCodPrv, dbfDiv, dbfIva, oTree, oDlg, oGraph, nYear,
 
             MENUITEM "&1. Añadir pedido a proveedor";
             MESSAGE  "Añade un pedido a proveedor" ;
-            RESOURCE "Clipboard_empty_businessman_16";
+            RESOURCE "gc_clipboard_empty_businessman_16";
             ACTION   ( AppPedPrv( cCodPrv, "", .f. ), LoadDatos( cCodPrv, dbfDiv, dbfIva, oDlg, nYear, oBrwCom ), oBrwTmp:Refresh(), oGraph:Refresh() )
 
             MENUITEM "&2. Añadir albarán de proveedor";
             MESSAGE  "Añade un albarán de proveedor" ;
-            RESOURCE "Document_plain_businessman_16";
+            RESOURCE "gc_document_empty_businessman_16";
             ACTION   ( AppAlbPrv( cCodPrv, "", .f. ), LoadDatos( cCodPrv, dbfDiv, dbfIva, oDlg, nYear, oBrwCom ), oBrwTmp:Refresh(), oGraph:Refresh() )
 
             MENUITEM "&3. Añadir factura de proveedor";
             MESSAGE  "Añade una factura de proveedor" ;
-            RESOURCE "Document_businessman_16";
+            RESOURCE "gc_document_text_businessman_16";
             ACTION   ( AppFacPrv( cCodPrv, "", .f. ), LoadDatos( cCodPrv, dbfDiv, dbfIva, oDlg, nYear, oBrwCom ), oBrwTmp:Refresh(), oGraph:Refresh() )
 
          ENDMENU

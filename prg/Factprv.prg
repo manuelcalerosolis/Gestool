@@ -1147,7 +1147,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
          FROM     oRotor ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "Document_plain_businessman_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_document_empty_businessman_" OF oWndBrw ;
          ACTION   ( if( !Empty( ( D():FacturasProveedores( nView ) )->cNumAlb ), ZooAlbPrv( ( D():FacturasProveedores( nView ) )->cNumAlb ), MsgStop( "La factura no proviene de un albarán" ) ) );
          TOOLTIP  "Visualizar albarán";
          FROM     oRotor ;
@@ -2758,7 +2758,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&2. Visualizar albarán";
                MESSAGE  "Visualiza el albarán del que proviene" ;
-               RESOURCE "Document_plain_businessman_16" ;
+               RESOURCE "gc_document_empty_businessman_16" ;
                ACTION   ( if( !Empty( ( D():FacturasProveedores( nView ) )->cNumAlb ), ZooAlbPrv( ( D():FacturasProveedores( nView ) )->cNumAlb ), MsgStop( "La factura no proviene de un albarán" ) ))
 
             SEPARATOR

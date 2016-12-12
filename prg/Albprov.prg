@@ -2409,7 +2409,7 @@ Static Function edtRecMenu( aTmp, aGet, oBrwLin, oDlg )
 
             MENUITEM    "&2. Visualizar pedido";
                MESSAGE  "Visualiza el pedido del que proviene" ;
-               RESOURCE "Clipboard_empty_businessman_16" ;
+               RESOURCE "gc_clipboard_empty_businessman_16" ;
                ACTION   ( if(!Empty( aTmp[ _CNUMPED ] ), ZooPedPrv( aTmp[ _CNUMPED ] ), msgStop( "No hay pedido asociado" ) ) )
 
             SEPARATOR
