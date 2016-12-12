@@ -78,7 +78,7 @@ METHOD ChangeFilter() CLASS CustomerSalesViewSearchNavigator
    ::oSayFilter:VarPut( cText )
    ::oSayFilter:Refresh()   
 
-   //::oSender:FilterTable( ::oSayFilter:cCaption )
+   ::oSender:FilterSalesCustomerTable( ::oSayFilter:cCaption )
 
 Return ( .t. )
 
