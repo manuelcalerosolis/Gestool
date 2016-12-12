@@ -647,7 +647,7 @@ FUNCTION Provee( oMenuItem, oWnd )
          FROM     oRotor ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "Document_businessman_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( FacPrv( nil, oWnd, ( dbfProvee )->Cod, nil ) );
          TOOLTIP  "Añadir factura de proveedor" ;

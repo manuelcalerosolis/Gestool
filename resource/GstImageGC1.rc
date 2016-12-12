@@ -417,3 +417,5 @@ GC_MAIL_EARTH_24 BITMAP "..\\bmp\\gc_mail_earth_24.bmp"
 GC_SAFE_INTO_64 BITMAP "..\\bmp\\gc_safe_into_64.bmp"
 
 
+BUSINESSMAN_16 BITMAP "..\\bmp\\Businessman_16.bmp"
+BUSINESSMAN_32 BITMAP "..\\bmp\\Businessman_32.bmp"

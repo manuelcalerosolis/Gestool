@@ -916,7 +916,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       TOOLTIP  "Rotor" ;
       LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "BUSINESSMAN_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_businessman_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( EdtPrv( ( D():PedidosProveedores( nView ) )->cCodPrv ) );
          TOOLTIP  "Modificar proveedor" ;
@@ -2235,7 +2235,7 @@ Static Function EdtRecMenu( aGet, aTmp, oBrw, oBrwLin, nMode, oDlg )
 
             MENUITEM    "&2. Modificar proveedor";
                MESSAGE  "Modificar la ficha del proveedor" ;
-               RESOURCE "Businessman_16";
+               RESOURCE "gc_businessmen2_16";
                ACTION   ( EdtPrv( aTmp[ _CCODPRV ] ) )
 
             MENUITEM    "&3. Informe de proveedor";
