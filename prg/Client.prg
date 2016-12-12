@@ -1108,7 +1108,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          TOOLTIP  "Rotor" ;
          LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "form_green_add_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_FORM_PLUS2_" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( oDetCamposExtra:Play( ( D():Clientes( nView ) )->Cod ) );
             TOOLTIP  "Campos extra" ;
@@ -6296,7 +6296,7 @@ STATIC FUNCTION EdtRotorMenu( aTmp, aGet, oDlg, oBrw, nMode )
 
          MENUITEM "&1. Campos extra [F9]";
             MESSAGE  "Mostramos y rellenamos los campos extra para el cliente" ;
-            RESOURCE "form_green_add_16" ;
+            RESOURCE "GC_FORM_PLUS2_16" ;
             ACTION   ( oDetCamposExtra:Play( ( D():Clientes( nView ) )->Cod ) )
 
          MENUITEM "&2. Informe del cliente";

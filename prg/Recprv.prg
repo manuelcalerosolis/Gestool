@@ -1999,7 +1999,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM "&1. Visualizar factura";
             MESSAGE  "Visualiza la factura de la que procede" ;
-            RESOURCE "Document_Businessman_16" ;
+            RESOURCE "gc_document_text_businessman_16" ;
             ACTION   ( ZooFacPrv( aTmp[ _CSERFAC ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] ) )
 
             SEPARATOR

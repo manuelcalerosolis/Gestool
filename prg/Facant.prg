@@ -4423,7 +4423,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&1. Campos extra [F9]";
                MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
-               RESOURCE "form_green_add_16" ;
+               RESOURCE "gc_form_plus2_16" ;
                ACTION   ( oDetCamposExtra:Play( aTmp[ _CSERANT ] + Str( aTmp[ _NNUMANT] ) + aTmp[ _CSUFANT ] ) )
 
             MENUITEM    "&2. Visualizar factura";

@@ -4184,7 +4184,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&1. Campos extra [F9]";
                MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
-               RESOURCE "form_green_add_16" ;
+               RESOURCE "gc_form_plus2_16" ;
                ACTION   ( oDetCamposExtra:Play( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] ) )
 
             MENUITEM    "&2. Visualizar presupuesto";

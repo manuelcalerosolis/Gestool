@@ -1572,7 +1572,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          ALLOW    EXIT ;
          LEVEL    ACC_EDIT
  
-      DEFINE BTNSHELL RESOURCE "Document_plain_businessman_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_document_empty_businessman_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( AlbPrv( nil, oWnd, nil, ( D():Articulos( nView ) )->Codigo ) );
          TOOLTIP  "Añadir albarán de proveedor" ;
@@ -13393,7 +13393,7 @@ Static Function EdtRecMenu( aTmp, aGet, oSay, oDlg, oFld, aBar, cSay, nMode )
 
             MENUITEM "&1. Campos extra [F9]";
             MESSAGE  "Mostramos y rellenamos los campos extra para el artículo" ;
-            RESOURCE "form_green_add_16" ;
+            RESOURCE "GC_FORM_PLUS2_16" ;
             ACTION   ( oDetCamposExtra:Play( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ] ) )
 
             MENUITEM "&2. Informe de artículo en escandallo";

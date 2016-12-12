@@ -625,7 +625,7 @@ FUNCTION Provee( oMenuItem, oWnd )
       TOOLTIP  "Rotor" ;
       LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "form_green_add_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_form_plus2_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( oDetCamposExtra:Play( ( dbfProvee )->Cod ) );
          TOOLTIP  "Campos extra" ;
@@ -633,14 +633,14 @@ FUNCTION Provee( oMenuItem, oWnd )
          ALLOW    EXIT ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "Clipboard_empty_businessman_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_clipboard_empty_businessman_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( PedPrv( nil, oWnd, ( dbfProvee )->Cod, nil ) ) ;
          TOOLTIP  "Añadir pedido a proveedor" ;
          FROM     oRotor ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "Document_plain_businessman_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_document_empty_businessman_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( AlbPrv( nil, oWnd, ( dbfProvee )->Cod, nil ) );
          TOOLTIP  "Añadir albarán de proveedor" ;
@@ -2879,7 +2879,7 @@ Static Function EdtRecMenu( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDl
 
             MENUITEM "&1. Campos extra [F9]";
                MESSAGE  "Mostramos y rellenamos los campos extra para el proveedor" ;
-               RESOURCE "form_green_add_16" ;
+               RESOURCE "gc_form_plus2_16" ;
                ACTION   ( oDetCamposExtra:Play( ( dbfProvee )->Cod ) )
 
             MENUITEM    "&2. Informe del proveedor";
@@ -2895,17 +2895,17 @@ Static Function EdtRecMenu( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDl
 
             MENUITEM    "&2. Añadir pedido a proveedor";
                MESSAGE  "Añade un pedido a proveedor" ;
-               RESOURCE "Clipboard_empty_businessman_16";
+               RESOURCE "gc_clipboard_empty_businessman_16";
                ACTION   ( lPreSave( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDlg ), PedPrv( nil, nil, ( dbfProvee )->Cod, nil ) )
 
             MENUITEM    "&3. Añadir albarán de proveedor";
                MESSAGE  "Añade un albarán de proveedor" ;
-               RESOURCE "Document_plain_businessman_16";
+               RESOURCE "gc_document_empty_businessman_16";
                ACTION   ( lPreSave( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDlg ), AlbPrv( nil, nil, ( dbfProvee )->Cod, nil ) )
 
             MENUITEM    "&4. Añadir factura de proveedor";
                MESSAGE  "Añade una factura de proveedor" ;
-               RESOURCE "Document_businessman_16";
+               RESOURCE "gc_document_text_businessman_16";
                ACTION   ( lPreSave( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDlg ), FacPrv( nil, nil, ( dbfProvee )->Cod, nil ) )
 
             end if
