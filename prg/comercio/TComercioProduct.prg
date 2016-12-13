@@ -212,10 +212,10 @@ METHOD buildIvaProducts( id ) CLASS TComercioProduct
    end if 
 
    if ::TPrestashopId():getValueTax( id, ::getCurrentWebName() ) == 0
-      if ::oIvaDatabase():seekInOrd( id, "Tipo" )
+      if D():gotoTiposIva( id, ::getView() )
          aadd( ::aTaxProducts,   {  "id"     => id,;
-                                    "rate"   => alltrim( str( ::oIvaDatabase():TpIva ) ),;
-                                    "name"   => alltrim( ::oIvaDatabase():DescIva ) } )
+                                    "rate"   => alltrim( str( ( D():TiposIva( ::getView() ) )->TpIva ) ),;
+                                    "name"   => alltrim( ( D():TiposIva( ::getView() ) )->DescIva ) } )
       end if 
    end if 
 
@@ -234,9 +234,9 @@ METHOD buildManufacturerProduct( id ) CLASS TComercioProduct
    end if 
 
    if ::TPrestashopId():getValueManufacturer( id, ::getCurrentWebName() ) == 0
-      if ::oManufacturerDatabase():SeekInOrd( id, "cCodFab" ) .and. ::oManufacturerDatabase():lPubInt
+      if D():gotoIdFabricantes( id, ::getView() ) .and. ( D():Fabricantes( ::getView() ) )->lPubInt
          aadd( ::aManufacturersProduct,   {  "id"     => id,;
-                                             "name"   => rtrim( ::oManufacturerDatabase():cNomFab ) } )
+                                             "name"   => rtrim( ( D():Fabricantes( ::getView() ) )->cNomFab ) } )
       end if
    end if 
 
@@ -505,7 +505,7 @@ METHOD imagesProduct( idProduct ) CLASS TComercioProduct
    local nOrdAntImg
    local nOrdAntDiv     
 
-   // Pasamos las imágenes de los artículos por propiedades-----------------------" )
+   // Pasamos las imígenes de los artículos por propiedades-----------------------" )
 
    nOrdAntDiv           := ( D():ArticuloPrecioPropiedades( ::getView() ) )->( ordsetfocus( "cCodigo" ) )
 
@@ -538,7 +538,7 @@ METHOD imagesProduct( idProduct ) CLASS TComercioProduct
 
    ( D():ArticuloPrecioPropiedades( ::getView() ) )->( ordsetfocus( nOrdAntDiv ) )
 
-   // Pasamos las imágenes de la tabla de artículos-------------------------------" )
+   // Pasamos las imígenes de la tabla de artículos-------------------------------" )
 
    if empty( aImages )
 
@@ -567,7 +567,7 @@ METHOD imagesProduct( idProduct ) CLASS TComercioProduct
 
    end if
 
-   // Nos aseguramos de que por lo menos una imágen sea por defecto------------" )
+   // Nos aseguramos de que por lo menos una imígen sea por defecto------------" )
 
    if !empty( aImages ) .and. ascan( aImages, {|a| hGet( a, "lDefault" ) == .t. } ) == 0
       hSet( aImages[ 1 ], "lDefault", .t. )
@@ -701,7 +701,7 @@ METHOD insertProducts() CLASS TComercioProduct
    
    for each hProduct in ::aProducts
 
-      ::meterProcesoText( "Eliminando artículo anterior " + alltrim( str( hb_enumindex() ) ) + " de " + alltrim( str( nProducts ) ) ) 
+      ::meterProcesoText( "Eliminando artículo anterior " + alltrim( str( hb_enumindex() ) ) + " de " + alltrim( str( nProducts ) ) )
 
       ::deleteProduct( hProduct )
 
@@ -782,7 +782,7 @@ METHOD insertProductPrestashopTable( hProduct, idCategory ) CLASS TComercioProdu
    local cCommand
    local idProduct
 
-   ::writeText( "Añadiendo artículo: " + hGet( hProduct, "description" ) )
+   ::writeText( "Aíadiendo artículo: " + hGet( hProduct, "description" ) )
 
    idProduct         := 0
 
@@ -970,7 +970,7 @@ METHOD processImageProducts( idProduct, hProduct ) CLASS TComercioProduct
 
          ::insertImageShop( idProduct, hProduct, hImage, idImagePrestashop )
 
-         // Añadimos la imagen al array para subirla a prestashop--------------
+         // Aíadimos la imagen al array para subirla a prestashop--------------
 
          hSet( hImage, "nTipoImagen", __tipoProducto__ )
          hSet( hImage, "cCarpeta", alltrim( str( idImagePrestashop ) ) )
@@ -1090,7 +1090,9 @@ METHOD processPropertyProduct( idProduct, hProduct ) CLASS TComercioProduct
                ::insertProductAttributeCombination( ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodPr2, ( D():ArticuloPrecioPropiedades( ::getView() ) )->cValPr2, idProperty )
 
             end if 
-            
+
+            ::TPrestashopId:setValueProductAttributeCombination( hGet( hProduct, "id" ) + ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodPr1 + ( D():ArticuloPrecioPropiedades( ::getView() ) )->cValPr1 + ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodPr2 + ( D():ArticuloPrecioPropiedades( ::getView() ) )->cValPr2, ::getCurrentWebName(), idProperty )        
+
             ::insertProductAttributeShop( idProduct, idProperty, priceProperty, lDefault )
 
             ::insertProductAttributeImage( hProduct, idProperty )
@@ -1114,7 +1116,7 @@ METHOD insertProductAttributePrestashop( idProduct, hProduct, priceProperty ) CL
    local cCommand
    local idProductAttribute   := 0
 
-   // Metemos la propiedad de éste artículo---------------------------
+   // Metemos la propiedad de íste artículo---------------------------
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "product_attribute" ) + " ( "                                     + ;
                   if( ::lProductIdColumnProductAttribute(), "id_product, ", "" )                                  + ;
@@ -1145,10 +1147,6 @@ METHOD insertProductAttributeCombination( idFirstProperty, valueFirstProperty, i
    local idAttribute
    local idProductAttributeCombination   
 
-   msgalert( idFirstProperty, "idFirstProperty" )
-   msgalert( valueFirstProperty, "valueFirstProperty" )
-   msgalert( idProperty, "idProperty" )
-
    if !( ( D():PropiedadesLineas( ::getView() ) )->( dbseekinord( upper( idFirstProperty ) + upper( valueFirstProperty ), "cCodPro" ) ) )
       ::writeText( "Error al buscar en tabla de propiedades " + alltrim( idFirstProperty ) + " : " + alltrim( valueFirstProperty ), 3 )
       Return .f.
@@ -1171,17 +1169,8 @@ METHOD insertProductAttributeCombination( idFirstProperty, valueFirstProperty, i
                      "'" + alltrim( str( idAttribute ) ) + "', "                             + ;   //id_attribute
                      "'" + alltrim( str( idProperty ) ) + "' )"                                    //id_product_attribute
 
-   if ::commandExecDirect( cCommand ) 
-
-      idProductAttributeCombination    := ::oConexionMySQLDatabase():GetInsertId()
-      if !empty(idProductAttributeCombination)   
-         ::TPrestashopId():setProductAttributeCombination( idFirstProperty + valueFirstProperty + idProperty, ::getCurrentWebName(), idProductAttributeCombination )
-      end if 
-   
-   else 
-   
+   if !( ::commandExecDirect( cCommand ) )
       ::writeText( "Error al insertar la propiedad " + alltrim( ( D():PropiedadesLineas( ::getView() ) )->cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute_combination" ), 3 )
-   
    end if
 
 Return ( idProductAttributeCombination )
@@ -1273,12 +1262,7 @@ METHOD deleteProduct( hProduct ) CLASS TComercioProduct
    local idProductGestool              := hget( hProduct, "id" )
    local idProductPrestashop 
 
-   if empty( ::TPrestashopId():getValueProduct( idProductGestool, ::getCurrentWebName() ) ) 
-      Return ( Self )
-   end if 
-
-   idProductPrestashop          := alltrim( str( ::TPrestashopId():getValueProduct( idProductGestool, ::getCurrentWebName() ) ) )
-
+   idProductPrestashop                 := alltrim( str( ::TPrestashopId():getValueProduct( idProductGestool, ::getCurrentWebName() ) ) )
    if empty( idProductPrestashop )
       Return ( Self )
    end if
@@ -1455,9 +1439,9 @@ METHOD deleteProduct( hProduct ) CLASS TComercioProduct
 
    sysrefresh()
 
-   // Eliminamos las imágenes del artículo---------------------------------------
+   // Eliminamos las imígenes del artículo---------------------------------------
 
-   ::writeText( "Eliminando imágenes de prestashop" )
+   ::writeText( "Eliminando imígenes de prestashop" )
 
    ::deleteImages( idProductPrestashop )
 
@@ -1795,7 +1779,7 @@ METHOD insertTaxPrestashop( hTax ) CLASS TComercioProduct
                   "id_tax ) " + ;
                "VALUES ( " + ;
                   "'" + alltrim( str( idGroupWeb ) ) + "', " + ;        // id_tax_rules_group
-                  "'6', " + ;                                           // id_country - 6 es el valor de España
+                  "'6', " + ;                                           // id_country - 6 es el valor de Espaía
                   "'" + alltrim( str( idTax ) ) + "' )"                 // id_tax
 
    if !::commandExecDirect( cCommand )

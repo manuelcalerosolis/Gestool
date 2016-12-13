@@ -609,7 +609,6 @@ Return ( Self )
 
 METHOD dialogActivate() CLASS TComercio
 
-   ::lSyncAll           := .t.
    ::nLevel             := nLevelUsr( "01108" )
 
    if nAnd( ::nLevel, 1 ) != 0
@@ -634,6 +633,8 @@ METHOD dialogActivate() CLASS TComercio
    SysRefresh()
 
    ::Default()
+
+   ::lSyncAll        := .t.
 
    // Apertura del dialogo------------------------------------------------------//
 
@@ -3459,18 +3460,6 @@ Return ( .t. )
 
 METHOD buildInsertNodeCategoryProduct( idFamilia, idProduct ) CLASS TComercio
 
-   local idCategory
-   local cNodeFamilia
-
-   idCategory                 := ::buildGetParentCategories( idFamilia )
-
-   ::buildInsertCategoryProduct( idCategory, idProduct ) 
-
-   cNodeFamilia               := ::buildGetNodeParentCategories( idFamilia )
-   if !empty( cNodeFamilia )
-      ::buildInsertNodeCategoryProduct( cNodeFamilia, idProduct )
-   end if 
-
 Return ( nil )
 
 //---------------------------------------------------------------------------//
@@ -3479,18 +3468,6 @@ Insertamos un artículo nuevo en la tabla category_product----------------
 */
 
 METHOD buildInsertCategoryProduct( idCategory, idProduct ) CLASS TComercio
-
-   local cCommand := "INSERT INTO " + ::cPrefixTable( "category_product" ) + " ( " + ;
-                        "id_category, " + ;
-                        "id_product ) " + ;
-                     "VALUES ( " + ;
-                        "'" + alltrim( str( max( idCategory, 1 ) ) ) + "', " + ;
-                        "'" + str( idProduct ) + "' )"
-
-   if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( "Error al insertar el artículo " + str( idProduct ) + " en la tabla " + ::cPrefixTable( "category_product" ), 3 )
-      Return ( .f. )
-   end if
 
 Return ( .t. )
 
@@ -4469,17 +4446,11 @@ METHOD controllerExportOneProductToPrestashop( idProduct ) Class TComercio
    ::oWaitMeter         := TWaitMeter():New( "Actualizando articulos", "Espere por favor..." )
    ::oWaitMeter:Run()
 
-   if ::filesOpen()
+   ::ftpConnect()
 
-      ::ftpConnect()
-
-      ::insertOneProductToPrestashop( idProduct )
+   ::insertOneProductToPrestashop( idProduct )
          
-      ::ftpDisConnect()
-
-      ::filesClose()
-
-   end if
+   ::ftpDisConnect()
 
    ::oWaitMeter:End()
 
@@ -4502,7 +4473,11 @@ METHOD insertOneProductToPrestashop( idProduct ) Class TComercio
       // subiendo imagenes-----------------------------------------------------
 
       ::TComercioProduct:uploadImagesToPrestashop()
-      
+
+   else 
+
+      ::writeText( "Error al conectarse a PrestaShop" )
+
    end if 
 
 Return .t.

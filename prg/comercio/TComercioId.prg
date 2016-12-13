@@ -89,12 +89,12 @@ CLASS TPrestaShopId FROM TMant
    METHOD deleteValueOrder( cClave, cWeb )                                    INLINE ::deleteValue( "15", cClave, cWeb )
    METHOD deleteDocumentValuesOrder( cWeb )                                   INLINE ::deleteDocumentValues( "15", cWeb )
 
-   METHOD setGestoolProductAttributeCombination( cClave, cWeb, idWeb )        INLINE ::setValueGestool( "16", cClave, cWeb, idWeb )
-   METHOD getGestoolProductAttributeCombination( idWeb, cWeb, defaultValue )  INLINE ::getValueGestool( "16", idWeb, cWeb, defaultValue )
+   METHOD setValueProductAttributeCombination( cClave, cWeb, idWeb )          INLINE ::setValue( "16", cClave, cWeb, idWeb )
+   METHOD getValueProductAttributeCombination( cClave, cWeb, defaultValue )   INLINE ::getValue( "16", cClave, cWeb, defaultValue )
    METHOD deleteValueProductAttributeCombination( cClave, cWeb )              INLINE ::deleteValue( "16", cClave, cWeb )
    METHOD deleteDocumentValuesProductAttributeCombination( cWeb )             INLINE ::deleteDocumentValues( "16", cWeb )
 
-   METHOD writeText( cText )                                   INLINE ( ::TComercio:writeText( cText ) )
+   METHOD writeText( cText )                                                  INLINE ( ::TComercio:writeText( cText ) )
 
 END CLASS
 
@@ -121,7 +121,7 @@ METHOD DefineFiles( cPath, cDriver )
    DEFINE DATABASE ::oDbf FILE "PrestaId.Dbf" CLASS "PRESTAID" ALIAS "PRESTAID" PATH ( cPath ) VIA ( cDriver ) COMMENT "Prestashop id"
 
       FIELD NAME "cDocumento"    TYPE "C" LEN   2  DEC 0 COMMENT "Tipo documento"      OF ::oDbf
-      FIELD NAME "cClave"        TYPE "C" LEN  60  DEC 0 COMMENT "Clave principal"     OF ::oDbf
+      FIELD NAME "cClave"        TYPE "C" LEN 100  DEC 0 COMMENT "Clave principal"     OF ::oDbf
       FIELD NAME "cWeb"          TYPE "C" LEN  80  DEC 0 COMMENT "Web de Prestashop"   OF ::oDbf
       FIELD NAME "idWeb"         TYPE "N" LEN  11  DEC 0 COMMENT "Id en Prestashop"    OF ::oDbf
 
@@ -143,17 +143,17 @@ METHOD setValue( cTipoDocumento, cClave, cWeb, idWeb )
       RETURN ( .f. )
    end if 
 
-   cClave                     := upper( cClave )
-   cWeb                       := upper( cWeb )
+   cClave               := upper( cClave )
+   cWeb                 := upper( cWeb )
 
    if ::isSeekValues( cTipoDocumento, cClave, cWeb )
       ::oDbf:fieldPutByName( "idWeb", idWeb )
    else
       ::oDbf:Append()
-      ::oDbf:cDocumento   := cTipoDocumento
-      ::oDbf:cClave       := cClave
-      ::oDbf:cWeb         := cWeb
-      ::oDbf:idWeb        := idWeb
+      ::oDbf:cDocumento := cTipoDocumento
+      ::oDbf:cClave     := cClave
+      ::oDbf:cWeb       := cWeb
+      ::oDbf:idWeb      := idWeb
       ::oDbf:Save()
    end if 
 
@@ -268,7 +268,7 @@ METHOD isValidParameters( cTipoDocumento, cClave, cWeb, idWeb )
    end if 
 
    if empty( cWeb )
-      msgStop( "El nombre de la tienda en prestashop no puede estar vacio", "Sistema de identificadores de Prestashop" )
+      msgStop( "El nombre de la tienda en prestashop no puede estar vacio", "Sistema de identificadores de Prestashop" / 2 )
       RETURN ( .f. )
    end if 
 
@@ -283,7 +283,7 @@ RETURN ( .t. )
 
 METHOD isSeekValues( cTipoDocumento, cClave, cWeb )
 
-   cClave         := upper( padr( cClave, 60 ) )
+   cClave         := upper( padr( cClave, 100 ) )
    cWeb           := upper( padr( cWeb, 80 ) )
 
 RETURN ( ::oDbf:seekInOrd( cTipoDocumento + cClave + cWeb, "cWeb" ) )

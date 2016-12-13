@@ -527,6 +527,7 @@ CLASS D
       METHOD PartesProduccionOperarios( nView )                      INLINE ( ::Get( "ProPer", nView ) )
 
    METHOD TiposIva( nView )                                       INLINE ( ::Get( "TIva", nView ) )
+      METHOD gotoTiposIva( id, nView )                            INLINE ( ::SeekInOrd( ::TiposIva( nView ), id, "Tipo" ) ) 
 
    METHOD ProveedorArticulo( nView )                              INLINE ( ::Get( "ProvArt", nView ) )
 
@@ -624,6 +625,7 @@ CLASS D
    METHOD Lenguajes( nView )                 INLINE ( ::Get( "Lenguaje", nView ) )
 
    METHOD Fabricantes( nView )               INLINE ( ::Get( "Fabricantes", nView ) )
+      METHOD gotoIdFabricantes( id, nView )  INLINE ( ::seekInOrd( ::Fabricantes( nView ), id, "cCodFab" ) ) 
 
    METHOD Ruta( nView )                      INLINE ( ::Get( "Ruta", nView ) )
 

@@ -40,6 +40,7 @@ END CLASS
 METHOD buildCategory( id ) CLASS TComercioCategory
 
    local categoryName 
+   local statusFamilias
 
    if !( ::isSyncronizeAll() )
       Return .f. 
@@ -49,7 +50,7 @@ METHOD buildCategory( id ) CLASS TComercioCategory
       Return .f.
    end if
 
-   D():getStatusFamilias( ::getView() )
+   statusFamilias       := aGetStatus( D():Familias( ::getView() ) ) 
 
    if ( D():Familias( ::getView() ) )->( dbseekinord( id, "cCodFam" ) )  
 
@@ -73,7 +74,7 @@ METHOD buildCategory( id ) CLASS TComercioCategory
 
    end if   
 
-   D():setStatusFamilias( ::getView() )
+   setStatus( D():Familias( ::getView() ), statusFamilias ) 
 
 Return ( Self )
 
@@ -358,24 +359,24 @@ METHOD insertCategory( hCategory ) CLASS TComercioCategory
 
    //Insertamos una familia nueva en las tablas de prestashop-----------------
 
-   cCommand := "INSERT INTO " + ::cPrefixTable( "category" ) + "( "  + ;
-                  "id_parent, "                                      + ;
-                  "level_depth, "                                    + ;
-                  "nleft, "                                          + ;
-                  "nright, "                                         + ;
-                  "active, "                                         + ;
-                  "date_add,  "                                      + ;
-                  "date_upd, "                                       + ;
-                  "position ) "                                      + ;
-               "VALUES ( "                                           + ;
-                  "'" + alltrim( str( nParent ) ) + "', "            + ;
-                  "'2', "                                            + ;
-                  "'0', "                                            + ;
-                  "'0', "                                            + ;
-                  "'1', "                                            + ;
-                  "'" + dtos( GetSysDate() ) + "', "                 + ;
-                  "'" + dtos( GetSysDate() ) + "', "                 + ;
-                  "'0' ) "
+   cCommand             := "INSERT INTO " + ::cPrefixTable( "category" ) + "( "  + ;
+                              "id_parent, "                                      + ;
+                              "level_depth, "                                    + ;
+                              "nleft, "                                          + ;
+                              "nright, "                                         + ;
+                              "active, "                                         + ;
+                              "date_add,  "                                      + ;
+                              "date_upd, "                                       + ;
+                              "position ) "                                      + ;
+                           "VALUES ( "                                           + ;
+                              "'" + alltrim( str( nParent ) ) + "', "            + ;
+                              "'2', "                                            + ;
+                              "'0', "                                            + ;
+                              "'0', "                                            + ;
+                              "'1', "                                            + ;
+                              "'" + dtos( GetSysDate() ) + "', "                 + ;
+                              "'" + dtos( GetSysDate() ) + "', "                 + ;
+                              "'0' ) "
 
    if ::commandExecDirect( cCommand )
       idCategory  := ::oConexionMySQLDatabase():GetInsertId()
@@ -384,47 +385,47 @@ METHOD insertCategory( hCategory ) CLASS TComercioCategory
       ::writeText( "Error al insertar la familia " + hGet( hCategory, "name" ) + " en la tabla " + ::cPrefixTable( "category" ), 3 )
    end if
 
-   cCommand := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + "( "   + ;
-                  "id_category, "                                          + ;
-                  "id_lang, "                                              + ;
-                  "name, "                                                 + ;
-                  "description, "                                          + ;
-                  "link_rewrite, "                                         + ;
-                  "meta_title, "                                           + ;
-                  "meta_keywords, "                                        + ;
-                  "meta_description ) "                                    + ;
-               "VALUES ( "                                                 + ;
-                  "'" + alltrim( str( idCategory ) ) + "', "               + ;
-                  "'" + alltrim( str( ::getLanguage() ) ) + "', "          + ;
-                  "'" + hGet( hCategory, "name" ) + "', "                  + ;
-                  "'" + hGet( hCategory, "description" ) + "', "           + ;
-                  "'" + hGet( hCategory, "link_rewrite" ) + "', "          + ;
-                  "'', "                                                   + ;
-                  "'', "                                                   + ;
-                  "'' )"
+   cCommand             := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + "( "   + ;
+                              "id_category, "                                          + ;
+                              "id_lang, "                                              + ;
+                              "name, "                                                 + ;
+                              "description, "                                          + ;
+                              "link_rewrite, "                                         + ;
+                              "meta_title, "                                           + ;
+                              "meta_keywords, "                                        + ;
+                              "meta_description ) "                                    + ;
+                           "VALUES ( "                                                 + ;
+                              "'" + alltrim( str( idCategory ) ) + "', "               + ;
+                              "'" + alltrim( str( ::getLanguage() ) ) + "', "          + ;
+                              "'" + hGet( hCategory, "name" ) + "', "                  + ;
+                              "'" + hGet( hCategory, "description" ) + "', "           + ;
+                              "'" + hGet( hCategory, "link_rewrite" ) + "', "          + ;
+                              "'', "                                                   + ;
+                              "'', "                                                   + ;
+                              "'' )"
 
    if !::commandExecDirect( cCommand )
       ::writeText( "Error al insertar la familia " + hGet( hCategory, "name" ) + " en la tabla " + ::cPrefixTable( "category_lang" ), 3 )
    end if
 
-   cCommand := "INSERT INTO " + ::cPrefixTable( "category_shop" ) + "( "   + ;
-                  "id_category, "                                          + ;
-                  "id_shop, "                                              + ;
-                  "position ) "                                            + ;
-               "VALUES ( "                                                 + ;
-                  "'" + alltrim( str( idCategory ) ) + "', "               + ;
-                  "'1', "                                                  + ;
-                  "'0' )"
+   cCommand             := "INSERT INTO " + ::cPrefixTable( "category_shop" ) + "( "   + ;
+                              "id_category, "                                          + ;
+                              "id_shop, "                                              + ;
+                              "position ) "                                            + ;
+                           "VALUES ( "                                                 + ;
+                              "'" + alltrim( str( idCategory ) ) + "', "               + ;
+                              "'1', "                                                  + ;
+                              "'0' )"
 
    if !::commandExecDirect( cCommand )
       ::writeText( "Error al insertar la categoría inicio en " + ::cPrefixTable( "category_group" ), 3 )
    end if
 
-   cCommand := "INSERT INTO " + ::cPrefixTable( "category_group" ) + "( "  + ;
-                  "id_category, id_group ) "                               + ;
-               "VALUES ( "                                                 + ;
-                  "'" + alltrim( str( idCategory ) ) + "', "               + ;
-                  "'1' )"
+   cCommand             := "INSERT INTO " + ::cPrefixTable( "category_group" ) + "( "  + ;
+                              "id_category, id_group ) "                               + ;
+                           "VALUES ( "                                                 + ;
+                              "'" + alltrim( str( idCategory ) ) + "', "               + ;
+                              "'1' )"
 
    if !::commandExecDirect( cCommand )
       ::writeText( "Error al insertar la familia " + hGet( hCategory, "name" ) + " en la tabla " + ::cPrefixTable( "category_group" ), 3 )

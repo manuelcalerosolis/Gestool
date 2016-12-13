@@ -18401,7 +18401,7 @@ Return ( .t. )
 
 Static Function BuildWeb( idProduct, idShop )
 
-   local TComercio   := TComercio():New()
+   local TComercio   := TComercio():New( nView, oStock )
 
    if lPublishProductInPrestashop()
       TComercio:setWebToExport( idShop ) 

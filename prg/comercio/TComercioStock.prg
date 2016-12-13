@@ -157,7 +157,7 @@ METHOD updateWebProductStocks()
       Return .f.
    end if
 
-   ::oWaitMeter         := TWaitMeter():New( "Actualizando stocks", "Espere por favor..." ):Run()
+   ::oWaitMeter      := TWaitMeter():New( "Actualizando stocks", "Espere por favor..." ):Run()
 
    ::calculateStocksProductsToUpdate()
 
@@ -261,7 +261,7 @@ METHOD setIdAttributeProductsToUpdate()
 
    ::meterProcesoSetTotal( len( ::hProductsToUpdate ) )
 
-   if ::prestaShopConnect()
+   // if ::prestaShopConnect()
 
       for each hProductsToUpdate in ::hProductsToUpdate
 
@@ -271,9 +271,9 @@ METHOD setIdAttributeProductsToUpdate()
 
       next 
 
-      ::prestaShopDisConnect()
+      // ::prestaShopDisConnect()
 
-   end if 
+   // end if 
 
 Return .t.
 
@@ -398,8 +398,8 @@ METHOD getCommandProductToUpdate( hProduct )
 
    for each hStock in hget( hProduct, "stocks" )
 
-      idProductAttribute      := ::getIdAttributeProductStock( hget( hProduct, "idProductPrestashop" ), hget( hStock, "idFirstProperty" ), hget( hStock, "valueFirstProperty" ), hget( hStock, "idSecondProperty" ), hget( hStock, "valueSecondProperty" ) )
-      
+      idProductAttribute      := ::TPrestashopId():getValueProductAttributeCombination( hget( hProduct, "id" ) + hget( hStock, "idFirstProperty" ) + hget( hStock, "valueFirstProperty" ) + hget( hStock, "idSecondProperty" ) + hget( hStock, "valueSecondProperty" ), ::getCurrentWebName() )
+
       if ( idProductAttribute != 0 ) .and. ( hget( hStock, "unitStock" ) > 0 )
 
          cCommand             += "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( "                           + ;
@@ -419,7 +419,7 @@ METHOD getCommandProductToUpdate( hProduct )
                                     "'0', "                                                                             + ;
                                     "'2' )"                                                                             + ";"
 
-         nTotalStock += hget( hStock, "unitStock" )                                                                            
+         nTotalStock          += hget( hStock, "unitStock" )       
 
       end if
 
@@ -460,10 +460,6 @@ METHOD idProductAttribute( idProductPrestashop, attributeFirstProperty, attribut
    local cCommand             := ""
    local idProductAttribute   := 0
 
-   msgalert( idProductPrestashop,      "idProductPrestashop," )
-   msgalert( attributeFirstProperty,   "attributeFirstProperty," )
-   msgalert( attributeSecondProperty,  "attributeSecondProperty" )
-
    do case
       case !empty( attributeFirstProperty ) .and. empty( attributeSecondProperty )
 
@@ -484,9 +480,10 @@ METHOD idProductAttribute( idProductPrestashop, attributeFirstProperty, attribut
 
                oQuery2        := TMSQuery():New( ::oConexionMySQLDatabase(), cCommand )
 
-                  if oQuery2:Open() .and. oQuery2:recCount() == 1 .and. oQuery2:fieldGet( 1 ) == attributeFirstProperty
-                     idProductAttribute     := oQuery:fieldGet( 1 )
-                  end if   
+               if oQuery2:Open() .and. oQuery2:recCount() == 1 .and. oQuery2:fieldGet( 1 ) == attributeFirstProperty
+                  idProductAttribute     := oQuery:fieldGet( 1 )
+                  exit
+               end if   
 
                oQuery:Skip()
 
@@ -513,35 +510,38 @@ METHOD idProductAttribute( idProductPrestashop, attributeFirstProperty, attribut
 
                oQuery2        := TMSQuery():New( ::oConexionMySQLDatabase(), cCommand )
 
-                  if oQuery2:Open() .and. oQuery2:recCount() == 2
+               if oQuery2:Open() .and. oQuery2:recCount() == 2
 
-                     oQuery2:GoTop()
-                     while !oQuery2:Eof()
+                  oQuery2:GoTop()
+                  while !oQuery2:Eof()
 
-                        if !lPrp1
-                           lPrp1 := ( oQuery2:FieldGet( 1 ) == attributeFirstProperty )
-                        end if
-
-                        oQuery2:Skip()
-
-                     end while
-
-                     oQuery2:GoTop()
-                     while !oQuery2:Eof()
-
-                        if !lPrp2
-                           lPrp2 := ( oQuery2:FieldGet( 1 ) == attributeSecondProperty )
-                        end if
-
-                        oQuery2:Skip()
-
-                     end while
-
-                     if lPrp1 .and. lPrp2
-                        idProductAttribute     := oQuery:FieldGet( 1 )
+                     if !lPrp1
+                        lPrp1 := ( oQuery2:FieldGet( 1 ) == attributeFirstProperty )
+                        exit
                      end if
 
+                     oQuery2:Skip()
+
+                  end while
+
+                  oQuery2:GoTop()
+                  while !oQuery2:Eof()
+
+                     if !lPrp2
+                        lPrp2 := ( oQuery2:FieldGet( 1 ) == attributeSecondProperty )
+                        exit
+                     end if
+
+                     oQuery2:Skip()
+
+                  end while
+
+                  if lPrp1 .and. lPrp2
+                     idProductAttribute     := oQuery:FieldGet( 1 )
+                     exit
                   end if
+
+               end if
 
                oQuery:Skip()
 
