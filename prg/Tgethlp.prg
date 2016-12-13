@@ -42,7 +42,7 @@ CLASS TGetHlp FROM TGet
    METHOD EvalHelp()
 
    METHOD KeyChar( nKey, nFlags )
-   METHOD KeyUp( nKey, nFlags )   INLINE ( if( !empty( ::bKeyUp ), eval( ::bKeyUp ), ), ::Super:KeyUp( nKey, nFlags ) )
+   METHOD KeyUp( nKey, nFlags )  INLINE ( if( !empty( ::bKeyUp ), eval( ::bKeyUp ), ), ::Super:KeyUp( nKey, nFlags ) )
 
    METHOD SetPicture( cPicture ) INLINE ( ::cPicture  := cPicture, ::oGet:Picture := cPicture, ::Refresh()  )   // MCS
 

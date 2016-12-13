@@ -21,6 +21,12 @@
 #define DT_NOPREFIX                 0x00000800
 #define DT_INTERNAL                 0x00001000
 
+#define EM_SETMARGINS               211
+#define EC_LEFTMARGIN               1
+#define EC_RIGHTMARGIN              2
+#define EM_LIMITTEXT                197
+#define EM_SETLIMITTEXT             EM_LIMITTEXT   // win40 Name change
+
 #define ubiGeneral                  0
 #define ubiLlevar                   1
 #define ubiSala                     2

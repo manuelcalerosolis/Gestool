@@ -426,7 +426,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
          lOpenFiles        := .f.
       end if
 
-      oFabricante          := TFabricantes():Create( cPatArt() )
+      oFabricante          := TFabricantes():Create( cPatEmp() )
       if !oFabricante:OpenFiles()
          lOpenFiles        := .f.
       end if

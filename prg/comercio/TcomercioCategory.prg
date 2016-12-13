@@ -327,14 +327,16 @@ Return ( Self )
 
 METHOD updateCategoryParent( hCategoryProduct ) CLASS TComercioCategory
 
-   local nParent     
+   local nParent  
    local cCommand    
+   local nCategory   
 
-   nParent           := ::TPrestashopId:getValueCategory( hGet( hCategoryProduct, "id_parent" ), ::getCurrentWebName(), 2 )
+   nParent           := ::TPrestashopId():getValueCategory( hGet( hCategoryProduct, "id_parent" ), ::getCurrentWebName(), 2 )
+   nCategory         := ::TPrestashopId():getValueCategory( hGet( hCategoryProduct, "id" ), ::getCurrentWebName() )
 
-   cCommand          := "UPDATE " + ::cPrefixTable( "category" ) + " " + ;
-                           "SET id_parent = '" + alltrim( str( nParent ) ) + "' " + ;
-                        "WHERE id_category = " + alltrim( str( ::TPrestashopId():getValueCategory( hGet( hCategoryProduct, "id" ), ::getCurrentWebName() ) ) )
+   cCommand          := "UPDATE " + ::cPrefixTable( "category" )              + " " + ;
+                           "SET id_parent = '" + alltrim( str( nParent ) )    + "' " + ;
+                        "WHERE id_category = " + alltrim( str( nCategory ) )
 
    if ::commandExecDirect( cCommand )
       ::writeText( "He relacionado la familia " + hGet( hCategoryProduct, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "category" ) )

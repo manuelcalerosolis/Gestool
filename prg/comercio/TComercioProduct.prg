@@ -229,6 +229,10 @@ METHOD buildManufacturerProduct( id ) CLASS TComercioProduct
       Return .f. 
    end if 
 
+   if !( ::TComercioConfig():getSyncronizeManufacturers() )
+      Return .f. 
+   end if 
+
    if aScan( ::aManufacturersProduct, {|h| hGet( h, "id" ) == id } ) != 0
       Return .f.
    end if 
@@ -1134,7 +1138,7 @@ METHOD insertProductAttributePrestashop( idProduct, hProduct, priceProperty ) CL
    if ::commandExecDirect( cCommand )
       idProductAttribute      := ::oConexionMySQLDatabase():GetInsertId()
    else
-      ::writeText( "Error al insertar la propiedad " + alltrim( D():ArticuloPrecioPropiedades( ::getView() ):cValPr1 ) + " - " + alltrim( D():ArticuloPrecioPropiedades( ::getView() ):cValPr2 ) + " en la tabla " + ::cPrefixTable( "product_attribute" ), 3 )
+      ::writeText( "Error al insertar la propiedad " + alltrim( ( D():ArticuloPrecioPropiedades( ::getView() ) )->cValPr1 ) + " - " + alltrim( ( D():ArticuloPrecioPropiedades( ::getView() ) )->cValPr2 ) + " en la tabla " + ::cPrefixTable( "product_attribute" ), 3 )
    end if
 
 Return ( idProductAttribute )
