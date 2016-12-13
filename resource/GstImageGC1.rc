@@ -415,18 +415,7 @@ GC_USER_TELEPHONE_24 BITMAP "..\\bmp\\gc_user_telephone_24.bmp"
 GC_MAIL_EARTH_24 BITMAP "..\\bmp\\gc_mail_earth_24.bmp"
 
 GC_SAFE_INTO_64 BITMAP "..\\bmp\\gc_safe_into_64.bmp"
-<<<<<<< HEAD
-<<<<<<< HEAD
 GC_DOCUMENT_TEXT_USER_48 BITMAP "..\\bmp\\gc_document_text_user_48.bmp"
-=======
-
-
-<<<<<<< HEAD
 BUSINESSMAN_16 BITMAP "..\\bmp\\Businessman_16.bmp"
 BUSINESSMAN_32 BITMAP "..\\bmp\\Businessman_32.bmp"
-=======
->>>>>>> origin/master
->>>>>>> origin/master
-=======
 GC_DOCUMENT_TEXT_USER_48 BITMAP "..\\bmp\\gc_document_text_user_48.bmp"
->>>>>>> origin/master
