@@ -523,7 +523,7 @@ FUNCTION CfgDocs( oMenuItem, oWnd )
             CLOSED ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Businessman_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "gc_businessman_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'PL' }, "Field->cTipo == 'PL'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Proveedores[etiquetas]" ;
             FROM     oFlt ;

@@ -811,7 +811,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
       TOOLTIP  "Rotor" ;
       LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "BUSINESSMAN_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_BUSINESSMAN_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( EdtPrv( ( D():AlbaranesProveedores( nView ) )->cCodPrv ) );
          TOOLTIP  "Modificar proveedor" ;
@@ -2415,7 +2415,7 @@ Static Function edtRecMenu( aTmp, aGet, oBrwLin, oDlg )
 
             MENUITEM    "&3. Modificar proveedor";
                MESSAGE  "Modificar la ficha del proveedor" ;
-               RESOURCE "Businessman_16" ;
+               RESOURCE "gc_businessman_16" ;
                ACTION   ( EdtPrv( aTmp[ _CCODPRV ] ) )
 
             MENUITEM    "&4. Informe de proveedor";

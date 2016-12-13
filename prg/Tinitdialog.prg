@@ -117,7 +117,7 @@ METHOD New()
 
    ::oImageList:AddMasked( TBitmap():Define( "Cube_Yellow_16", ,                 Self ), Rgb( 255, 0, 255 ) )  // 0
    ::oImageList:AddMasked( TBitmap():Define( "User1_16", ,                       Self ), Rgb( 255, 0, 255 ) )  // 1
-   ::oImageList:AddMasked( TBitmap():Define( "Businessman_16", ,                 Self ), Rgb( 255, 0, 255 ) )  // 2
+   ::oImageList:AddMasked( TBitmap():Define( "gc_businessman_16", ,                 Self ), Rgb( 255, 0, 255 ) )  // 2
    ::oImageList:AddMasked( TBitmap():Define( "gc_clipboard_empty_businessman_16", , Self ), Rgb( 255, 0, 255 ) )  // 3
    ::oImageList:AddMasked( TBitmap():Define( "gc_document_empty_businessman_16", ,  Self ), Rgb( 255, 0, 255 ) )  // 4
    ::oImageList:AddMasked( TBitmap():Define( "gc_document_text_businessman_16", ,        Self ), Rgb( 255, 0, 255 ) )  // 5

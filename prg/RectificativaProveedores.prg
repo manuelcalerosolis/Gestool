@@ -1050,7 +1050,7 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
       TOOLTIP  "Rotor" ;
       LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "Businessman_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_businessman_" OF oWndBrw ;
          ACTION   ( EdtPrv( ( D():FacturasRectificativasProveedores( nView ) )->cCodPrv ) );
          TOOLTIP  "Modificar proveedor";
          FROM     oRotor ;
@@ -2874,7 +2874,7 @@ Static Function EdtRecPgoMenu( aTmp, aGet, oDlg )
 
             MENUITEM "&1. Modificar proveedor";
             MESSAGE  "Modifica el proveedor de la factura rectificativa" ;
-            RESOURCE "Businessman_16";
+            RESOURCE "gc_businessman_16";
             ACTION   ( EdtPrv( cCodPrv ) )
 
             MENUITEM "&2. Informe proveedor";
@@ -3011,7 +3011,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&3. Modificar proveedor";
                MESSAGE  "Modificar la ficha del proveedor" ;
-               RESOURCE "Businessman_16" ;
+               RESOURCE "gc_businessman_16" ;
                ACTION   ( EdtPrv( aTmp[ _CCODPRV ] ) )
 
             MENUITEM    "&4. Informe de proveedor";
