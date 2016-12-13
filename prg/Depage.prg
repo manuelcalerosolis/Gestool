@@ -491,7 +491,7 @@ FUNCTION DepAge( oMenuItem, oWnd )
          :bEditValue       := {|| ( dbfDepAgeT )->lLiqDep }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "ChgPre16" )
+         :AddResource( "gc_money2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )

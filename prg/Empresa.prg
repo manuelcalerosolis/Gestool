@@ -193,7 +193,7 @@ STATIC FUNCTION OpenFiles( lCount )
                         "Notebook_user1_16",;
                         "Clipboard_empty_user1_16",;
                         "Document_plain_user1_16",;
-                        "Document_user1_16",;
+                        "gc_document_text_businessman_16",;
                         "Document_money2_16",;
                         "Document_delete_16",;
                         "Package_add_16",;
@@ -206,7 +206,7 @@ STATIC FUNCTION OpenFiles( lCount )
                         "Briefcase_document_16",;
                         "Truck_blue_document_16",;
                         "User1_16",;
-                        "Money2_businessman_16",;
+                        "gc_briefcase2_businessman_16",;
                         "Briefcase_user1_16",;
                         "Briefcase_security_agent_16",;
                         "Clipboard_Empty_Moneybag_16",;

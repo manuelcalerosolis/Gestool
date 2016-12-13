@@ -274,7 +274,7 @@ METHOD Activate() CLASS TCobAge
 
       ::lGenLiquidacion( ::oWndBrw:oBrw, oImp, IS_PRINTER )
 
-   DEFINE BTNSHELL RESOURCE "SERIE1" OF ::oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "GC_PRINTER2_" OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::PrnSerie() ) ;
       TOOLTIP  "Imp(r)imir series";
@@ -299,7 +299,7 @@ METHOD Activate() CLASS TCobAge
 
       ::lGenLiquidacion( ::oWndBrw:oBrw, oPdf, IS_PDF )
 
-   /*DEFINE BTNSHELL RESOURCE "Document_businessman_" OF ::oWndBrw ;
+   /*DEFINE BTNSHELL RESOURCE "gc_document_text_businessman_" OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::GeneraFacturaGastos( .t. ) ) ;
       TOOLTIP  "Genera factura" ;

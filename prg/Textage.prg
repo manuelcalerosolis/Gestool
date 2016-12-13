@@ -439,7 +439,7 @@ FUNCTION ExtAge( oMenuItem, oWnd )
          HOTKEY   "P";
          LEVEL    ACC_ZOOM
 
-      DEFINE BTNSHELL RESOURCE "SERIE1" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_PRINTER2_" OF oWndBrw ;
 			NOBORDER ;
 			ACTION 	( PrnSerie() ) ;
          TOOLTIP  "Imp(r)imir series";

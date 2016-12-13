@@ -1065,7 +1065,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
       if oUser():lAdministrador()
 
-         DEFINE BTNSHELL RESOURCE "CHGPRE" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "gc_money2_" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( ChgPrc( oWndBrw ) ) ;
             TOOLTIP  "Cambiar precios" ;
@@ -1144,7 +1144,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
             FROM     oRotor ;
             LEVEL    ACC_EDIT*/
 
-         DEFINE BTNSHELL RESOURCE "Document_user1_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( FactCli( nil, oWnd, { "Cliente" => ( D():Clientes( nView ) )->Cod } ) );
             TOOLTIP  "Añadir factura de cliente" ;

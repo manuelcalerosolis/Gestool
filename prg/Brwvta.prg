@@ -797,7 +797,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
       :AddResource( "Notebook_user1_16" )
       :AddResource( "Clipboard_empty_user1_16" )
       :AddResource( "Document_plain_user1_16" )
-      :AddResource( "Document_user1_16" )
+      :AddResource( "gc_document_text_businessman_16" )
       :AddResource( "Cashier_user1_16" )
       :AddResource( "Document_Delete_16" )
       :AddResource( "Worker2_Form_Red_16" )
@@ -1124,10 +1124,10 @@ Static Function InitBrwVtaCli( cCodArt, oTree, dbfDiv, dbfArticulo, oBrwStk, oBr
    oTreeImageList:AddMasked( TBitmap():Define( "Notebook_user1_16" ),               Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_user1_16" ),        Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_user1_16" ),         Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Document_user1_16" ),               Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_businessman_16" ),               Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Document_delete_16" ),              Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Cashier_user1_16" ),                Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "ChgPre16" ),                        Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_money2_16" ),                        Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Truck_red_16" ),                    Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Package_16" ),                      Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Worker2_Form_Red_16" ),             Rgb( 255, 0, 255 ) )
@@ -1211,7 +1211,7 @@ Static Function InitBrwVtaCli( cCodArt, oTree, dbfDiv, dbfArticulo, oBrwStk, oBr
 
             MENUITEM "&7. Añadir factura de cliente";
             MESSAGE  "Añade una factura de cliente" ;
-            RESOURCE "Document_user1_16";
+            RESOURCE "gc_document_text_businessman_16";
             ACTION   ( AppFacCli( "", cCodArt, .f. ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )
 
             MENUITEM "&8. Añadir factura rectificativa de cliente";

@@ -1447,7 +1447,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
    if oUser():lAdministrador()
 
-      DEFINE BTNSHELL RESOURCE "CHGPRE" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_money2_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( ChgPrc( oWndBrw ) ) ;
          TOOLTIP  "(C)ambiar precios" ;
@@ -1580,7 +1580,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          ALLOW    EXIT ;
          LEVEL    ACC_EDIT
  
-      DEFINE BTNSHELL RESOURCE "Document_businessman_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_document_text_businessman_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( FacPrv( nil, oWnd, nil, ( D():Articulos( nView ) )->Codigo ) );
          TOOLTIP  "Añadir factura de proveedor" ;
@@ -1618,7 +1618,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          ALLOW    EXIT ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "Document_user1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
          ACTION   ( FactCli( nil, oWnd, { "Artículo" => ( D():Articulos( nView ) )->Codigo } ) );
          TOOLTIP  "Añadir factura de cliente" ;
          FROM     oRotor ;
@@ -9734,7 +9734,7 @@ STATIC FUNCTION ChgPrc( oWndBrw )
 	Llamada a la funcion que activa la caja de dialogo
 	*/
 
-	DEFINE DIALOG oDlg RESOURCE "CHGPRE"
+	DEFINE DIALOG oDlg RESOURCE "gc_money2_16"
 
    cArtOrg              := dbFirst( D():Articulos( nView ), 1 )
    cArtDes              := dbLast ( D():Articulos( nView ), 1 )

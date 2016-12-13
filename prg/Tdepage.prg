@@ -138,7 +138,7 @@ METHOD Activate()
       HOTKEY   "P";
       LEVEL    3
 
-   DEFINE BTNSHELL RESOURCE "SERIE1" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "GC_PRINTER2_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( msginfo( "PrnSerie()" ) ) ;
       TOOLTIP  "Imp(r)imir series";

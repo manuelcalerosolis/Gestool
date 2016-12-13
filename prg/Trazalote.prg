@@ -404,7 +404,7 @@ METHOD Activate( oMenuItem, oWnd )
                               "Notebook_user1_16",;
                               "Clipboard_empty_user1_16",;
                               "Document_plain_user1_16",;
-                              "Document_user1_16",;
+                              "gc_document_text_businessman_16",;
                               "Document_delete_16",;
                               "Package_book_red_16",;
                               "Worker2_Form_Red_16",;

@@ -730,7 +730,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
          :nWidth           := 20
          :bLDClickData     := {|| oWndBrw:RecEdit() }
          :SetCheck( { "Sel16", "Cnt16" } )
-         :AddResource( "ChgPre16" )
+         :AddResource( "gc_money2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -987,7 +987,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
 
       lGenAntCli( oWndBrw:oBrw, oImp, IS_PRINTER ) ;
 
-   DEFINE BTNSHELL RESOURCE "SERIE1" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "GC_PRINTER2_" OF oWndBrw ;
       NOBORDER ;
       ACTION   PrnSerie();
       TOOLTIP  "Imp(r)imir series";

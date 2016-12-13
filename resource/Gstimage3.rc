@@ -4,8 +4,7 @@
 #include <commctrl.h>
 #include <richedit.h>
 
-MONEY2_16 BITMAP "..\\bmp\\Money2_16.bmp"
-MONEY2_32 BITMAP "..\\bmp\\Money2_32.bmp"
+
 GENFAC16 BITMAP "..\\bmp\\Gear_16.bmp"
 DOCUMENT16 BITMAP "..\\bmp\\Document_plain_16.bmp"
 DOCUMENT_PLAIN_EARTH_16 BITMAP "..\\bmp\\document_plain_earth_16.bmp"

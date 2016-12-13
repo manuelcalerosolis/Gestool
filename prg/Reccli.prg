@@ -333,7 +333,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
          :bBmpData         := {|| nEstadoRecibo( D():FacturasClientesCobros( nView ) ) }
          :nWidth           := 20
          heval( hEstadoRecibo, {|k,v,i| :AddResource( v ) } )
-         :AddResource( "ChgPre16" )
+         :AddResource( "gc_money2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -591,7 +591,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
 
       lGenRecCli( oWndBrw:oBrw, oImp, IS_PRINTER ) ;
 
-   DEFINE BTNSHELL RESOURCE "SERIE1" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "GC_PRINTER2_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( PrnSerie() ) ;
       TOOLTIP  "Imp(r)imir series";
@@ -627,7 +627,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
 
     //  lGenRecCli( oWndBrw:oBrw, oMail, IS_MAIL )
 
-   DEFINE BTNSHELL RESOURCE "Money2_" OF oWndBrw GROUP ;
+   DEFINE BTNSHELL RESOURCE "gc_money2_" OF oWndBrw GROUP ;
       NOBORDER ;
       ACTION   ( lLiquida( oWndBrw:oBrw ) ) ;
       TOOLTIP  "Cobrar" ;
@@ -692,7 +692,7 @@ end if
          TOOLTIP  "Informe de cliente" ;
          FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "Document_User1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
          ACTION   ( EdtFacCli( ( D():FacturasClientesCobros( nView ) )->cSerie + str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac ) );
          TOOLTIP  "Modificar factura" ;
          FROM     oRotor ;
@@ -3232,7 +3232,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&1. Modificar factura";
                MESSAGE  "Modificar la factura que creó el recibo" ;
-               RESOURCE "Document_user1_16" ;
+               RESOURCE "gc_document_text_businessman_16" ;
                ACTION   ( EdtFacCli( aTmp[ _CSERIE ] + str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] ) )
 
             SEPARATOR

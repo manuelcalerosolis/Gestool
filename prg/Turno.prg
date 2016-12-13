@@ -3527,7 +3527,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          PICTURE     ::cPorDiv ;
          OF          ::oFldTurno:aDialogs[3]
 
-         oBtnEfectivo            := TBtnBmp():ReDefine( 220, "Money2_16",,,,,{|| ::oMoneyEfectivo:Dialog( ::oImporteEfectivo ), ::RefreshTurno() }, ::oFldTurno:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Conteo de efectivo" )
+         oBtnEfectivo            := TBtnBmp():ReDefine( 220, "gc_money2_16",,,,,{|| ::oMoneyEfectivo:Dialog( ::oImporteEfectivo ), ::RefreshTurno() }, ::oFldTurno:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Conteo de efectivo" )
          oBtnEfectivo:lTransparent  := .t.
          oBtnEfectivo:lBoxSelect    := .f.
 
@@ -3573,7 +3573,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       else
 
-         oBtnRetirado               := TBtnBmp():ReDefine( 235, "Money2_16",,,,,{|| ::oMoneyRetirado:Dialog( ::oImporteRetirado ), ::RefreshTurno() }, ::oFldTurno:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Conteo de retirado" )
+         oBtnRetirado               := TBtnBmp():ReDefine( 235, "gc_money2_16",,,,,{|| ::oMoneyRetirado:Dialog( ::oImporteRetirado ), ::RefreshTurno() }, ::oFldTurno:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Conteo de retirado" )
          oBtnRetirado:lTransparent  := .t.
          oBtnRetirado:lBoxSelect    := .f.
 

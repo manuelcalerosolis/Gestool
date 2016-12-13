@@ -1132,7 +1132,7 @@ function aLittleResourceFormaPago()
 
    local aResources := {}
 
-   aAdd( aResources, "Money2_16" )
+   aAdd( aResources, "gc_money2_16" )
    aAdd( aResources, "Creditcards_16" )
    aAdd( aResources, "MoneyBag_16" )
    aAdd( aResources, "Percent_16" )

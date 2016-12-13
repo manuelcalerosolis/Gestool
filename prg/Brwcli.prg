@@ -534,7 +534,7 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
          :AddResource( "Notebook_user1_16" )
          :AddResource( "Clipboard_empty_user1_16" )
          :AddResource( "Document_plain_user1_16" )
-         :AddResource( "Document_user1_16" )
+         :AddResource( "gc_document_text_businessman_16" )
          :AddResource( "Document_delete_16" )
          :AddResource( "Document_money2_16" )
          :AddResource( "Cashier_user1_16" )
@@ -787,7 +787,7 @@ Static Function initDialog( cCodCli, oBrwTmp, oTree, oDlg )
    oTreeImageList:AddMasked( TBitmap():Define( "Notebook_user1_16" ),         Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_user1_16" ),  Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_user1_16" ),   Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Document_user1_16" ),         Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_businessman_16" ),         Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Document_delete_16" ),        Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Briefcase_user1_16" ),        Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Document_money2_16" ),        Rgb( 255, 0, 255 ) )
@@ -854,7 +854,7 @@ Static Function initDialog( cCodCli, oBrwTmp, oTree, oDlg )
 
          MENUITEM "&5. Añadir factura de cliente";
             MESSAGE  "Añade una factura de cliente" ;
-            RESOURCE "Document_user1_16";
+            RESOURCE "gc_document_text_businessman_16";
             ACTION   ( AppFacCli( cCodCli ) )
 
          MENUITEM "&6. Añadir tiket de cliente";

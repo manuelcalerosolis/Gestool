@@ -993,7 +993,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       lGenAlbCli( oWndBrw:oBrw, oImp, IS_PRINTER ) ;
 
-   DEFINE BTNSHELL RESOURCE "SERIE1" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "GC_PRINTER2_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( ImprimirSeriesAlbaranes() ) ;
       TOOLTIP  "Imp(r)imir series";
@@ -1041,7 +1041,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       HOTKEY   "O" ;
       LEVEL    ACC_IMPR
 
-   DEFINE BTNSHELL RESOURCE "Money2_" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "gc_money2_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( If( !lFacturado( D():Get( "AlbCliT", nView ) ), WinAppRec( oWndBrw:oBrw, bEdtPgo, D():Get( "AlbCliP", nView ) ), MsgStop( "El albarán ya fue facturado." ) ) );
       TOOLTIP  "Entregas a (c)uenta" ;
@@ -1184,13 +1184,13 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          TOOLTIP  "Visualizar pedido" ;
          FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( if( !lFacturado( D():Get( "AlbCliT", nView ) ), FactCli( nil, nil, { "Albaran" => ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb } ), MsgStop( "Albarán facturado" ) ) );
          TOOLTIP  "Generar factura" ;
          FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
          ACTION   ( if( !empty( ( D():Get( "AlbCliT", nView ) )->cNumFac ), EdtFacCli( ( D():Get( "AlbCliT", nView ) )->cNumFac ), msgStop( "No hay factura asociada" ) ) );
          TOOLTIP  "Modificar factura" ;
          FROM     oRotor ;

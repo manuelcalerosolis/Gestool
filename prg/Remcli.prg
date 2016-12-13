@@ -916,7 +916,7 @@ METHOD Resource( nMode )
          :nWidth           := 20
          :AddResource( "bSel" )
          :AddResource( "bCancel" )
-         :AddResource( "chgPre16" )
+         :AddResource( "gc_money2_16" )
       end with
 
       with object ( ::oBrwDet:AddCol() )

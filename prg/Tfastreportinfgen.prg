@@ -3595,7 +3595,7 @@ METHOD CreateTreeImageList()
    ::oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_user_16" ),         Rgb( 255, 0, 255 ) ) // 8 Facturas cliente
    ::oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_delete_16" ),       Rgb( 255, 0, 255 ) ) // 9 Rectificativas
    ::oTreeImageList:AddMasked( TBitmap():Define( "gc_cash_register_user_16" ),         Rgb( 255, 0, 255 ) ) // 10 TPV
-   ::oTreeImageList:AddMasked( TBitmap():Define( "ChgPre16" ),                         Rgb( 255, 0, 255 ) ) // 11 Ventas
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_money2_16" ),                     Rgb( 255, 0, 255 ) ) // 11 Ventas
    ::oTreeImageList:AddMasked( TBitmap():Define( "gc_small_truck_16" ),                Rgb( 255, 0, 255 ) ) // 12 Compras
    ::oTreeImageList:AddMasked( TBitmap():Define( "gc_package_16" ),                    Rgb( 255, 0, 255 ) ) // 13 Almacen
    ::oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_worker_16" ),       Rgb( 255, 0, 255 ) ) // 14 Produccion
