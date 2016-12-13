@@ -44,6 +44,8 @@ CLASS Customer FROM Editable
 
    METHOD FilterSalesCustomerTable( cTextFilter )
 
+   METHOD RefreshBrowseCustomerSales()
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -260,5 +262,14 @@ METHOD FilterSalesCustomerTable( cTextFilter ) CLASS Customer
    ::oViewSales:oBrowse:Refresh()
 
 return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD RefreshBrowseCustomerSales( cTextFilter ) CLASS Customer
+
+   ::FilterSalesCustomerTable( cTextFilter )
+   ::oViewSales:oBrowse:Refresh()   
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//

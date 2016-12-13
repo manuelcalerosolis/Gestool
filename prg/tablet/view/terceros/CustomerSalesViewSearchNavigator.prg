@@ -31,7 +31,7 @@ METHOD botonesAcciones()   CLASS CustomerSalesViewSearchNavigator
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "gc_safe_into_64",;
-                           "bLClicked" => {|| MsgInfo( "Meto la entrega a cuenta" ) },;
+                           "bLClicked" => {|| LiquidateReceipt():New( ::oSender:nView, ::oSender:cIdCliente ):Play(), ::oSender:RefreshBrowseCustomerSales( ::oSayFilter:cCaption ) },;  
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 75,;
