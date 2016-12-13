@@ -9315,7 +9315,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&1. Campos extra [F9]";
                MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
-               RESOURCE "gc_form_plus2_16" ;
+               RESOURCE "form_green_add_16" ;
                ACTION   ( oDetCamposExtra:Play( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC] ) + aTmp[ _CSUFFAC ] ) )
 
             MENUITEM    "&2. Visualizar presupuesto";
@@ -19183,6 +19183,12 @@ FUNCTION rxFacCli( cPath, cDriver )
 
       ( cFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
       ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "cCliFec", "cCodCli + Dtos( dFecFac ) + tFecFac", {|| Field->cCodCli + dtos( Field->dFecFac ) + Field->tFecFac } ) )
+
+      ( cFacCliT )->( ordCondSet( "lLiquidada .and. !Deleted()", {|| Field->lLiquidada .and. !Deleted() }, , , , , , , , , .t. ) )
+      ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "cLiqCli", "cCodCli + Dtos( dFecFac ) + tFecFac", {|| Field->cCodCli + dtos( Field->dFecFac ) + Field->tFecFac } ) )
+
+      ( cFacCliT )->( ordCondSet( "!lLiquidada .and. !Deleted()", {|| !Field->lLiquidada .and. !Deleted() }, , , , , , , , , .t. ) )
+      ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "cNoLiqCli", "cCodCli + Dtos( dFecFac ) + tFecFac", {|| Field->cCodCli + dtos( Field->dFecFac ) + Field->tFecFac } ) )
 
       ( cFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
       ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "dFecDes", "Dtos( dFecFac ) + tFecFac", {|| Dtos( Field->dFecFac ) + Field->tFecFac } ) )

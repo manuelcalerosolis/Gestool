@@ -15,6 +15,10 @@ CLASS CustomerSalesViewSearchNavigator FROM DocumentSalesViewSearchNavigator
 
    METHOD ChangeFilter()
 
+   METHOD Resource()
+
+   METHOD setColumns()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -81,5 +85,101 @@ METHOD ChangeFilter() CLASS CustomerSalesViewSearchNavigator
    ::oSender:FilterSalesCustomerTable( ::oSayFilter:cCaption )
 
 Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD Resource() CLASS CustomerSalesViewSearchNavigator
+
+   ::oDlg                     := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
+
+   ::defineTitulo()
+
+   if ::lSelectorMode
+      ::defineAceptarCancelar()
+   else
+      ::defineSalir()
+   end if
+
+   ::defineBarraBusqueda()
+
+   ::botonesAcciones()
+
+   ::botonesMovimientoBrowse()
+
+   ::browseGeneral()
+   ::oBrowse:bLDblClick       := {|| nil }
+
+   ::oDlg:bResized            := {|| ::resizeDialog() }
+
+   ::oDlg:Activate( , , ,.t., {|| ::validDialog() },, {|| ::initDialog() } )
+
+   ::endDialog()
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setColumns() CLASS CustomerSalesViewSearchNavigator
+
+   ::setBrowseConfigurationName( "grid_ventas" )
+
+   with object ( ::addColumn() )
+      :cHeader           := "Id"
+      :bEditValue        := {|| ::getField( "Serie" ) + "/" + alltrim( str( ::getField( "Numero" ) ) ) + CRLF + dtoc( ::getField( "Fecha" ) ) }
+      :nWidth            := 165
+   end with
+
+   with object ( ::addColumn() )
+      :cHeader           := "Cliente"
+      :bEditValue        := {|| alltrim( ::getField( "Cliente" ) ) + CRLF + alltrim( ::getField( "NombreCliente" ) ) }
+      :nWidth            := 310
+   end with
+
+   with object ( ::addColumn() )
+      :cHeader           := "Agente"
+      :bEditValue        := {|| ::getField( "Agente" ) }
+      :nWidth            := 100
+      :lHide             := .t.
+   end with
+
+   with object ( ::addColumn() )
+      :cHeader           := "Base"
+      :bEditValue        := {|| ::getField( "TotalNeto" ) }
+      :cEditPicture      := cPorDiv()
+      :nWidth            := 100
+      :nDataStrAlign     := 1
+      :nHeadStrAlign     := 1
+      :lHide             := .t.
+   end with
+
+   with object ( ::addColumn() )
+      :cHeader           := cImp()
+      :bEditValue        := {|| ::getField( "TotalImpuesto" ) }
+      :cEditPicture      := cPorDiv()
+      :nWidth            := 100
+      :nDataStrAlign     := 1
+      :nHeadStrAlign     := 1
+      :lHide             := .t.
+   end with
+
+   with object ( ::addColumn() )
+      :cHeader           := "R.E."
+      :bEditValue        := {|| ::getField( "TotalRecargo" ) }
+      :cEditPicture      := cPorDiv()
+      :nWidth            := 100
+      :nDataStrAlign     := 1
+      :nHeadStrAlign     := 1
+      :lHide             := .t.
+   end with
+
+   with object ( ::addColumn() )
+      :cHeader           := "Tot/Pdt."
+      :bEditValue        := {|| Trans( ::getField( "TotalDocumento" ), cPorDiv() ) + CRLF + Trans( ::getField( "TotalPendiente" ), cPorDiv() ) }
+      :nWidth            := 155
+      :nDataStrAlign     := 1
+      :nHeadStrAlign     := 1
+   end with
+
+Return ( self )
 
 //---------------------------------------------------------------------------//
