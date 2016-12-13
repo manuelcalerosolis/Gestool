@@ -310,7 +310,7 @@ FUNCTION PedPrv( oWnd )
 			TOOLTIP 	"(P)revisualizar";
 			HOTKEY 	"P"
 
-      DEFINE BTNSHELL RESOURCE "SERIE1" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_PRINTER2_" OF oWndBrw ;
 			NOBORDER ;
 			ACTION 	( PrnSerie( oWndBrw:oBrw) ) ;
          TOOLTIP  "Imp(r)imir series";

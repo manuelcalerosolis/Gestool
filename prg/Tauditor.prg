@@ -246,7 +246,7 @@ METHOD OpenFiles( lExclusive )
       aAdd( ::aBmp, LoadBitmap( GetResources(), "Notebook_user1_16" ) )             // Presupuesto clientes 6
       aAdd( ::aBmp, LoadBitmap( GetResources(), "Clipboard_empty_user1_16" ) )      // Pedido clientes 7
       aAdd( ::aBmp, LoadBitmap( GetResources(), "Document_plain_user1_16" ) )       // Albaranes clientes 8
-      aAdd( ::aBmp, LoadBitmap( GetResources(), "Document_user1_16" ) )             // Factura clientes 9
+      aAdd( ::aBmp, LoadBitmap( GetResources(), "gc_document_text_businessman_16" ) )             // Factura clientes 9
       aAdd( ::aBmp, LoadBitmap( GetResources(), "Cashier_user1_16" ) )              // TPV 10
       aAdd( ::aBmp, LoadBitmap( GetResources(), "Document_money2_16" ) )            // Factura anticipo 11
       aAdd( ::aBmp, LoadBitmap( GetResources(), "Briefcase_user1_16" ) )            // Recibo clientes 12
@@ -636,7 +636,7 @@ Method InitFilter()
    local oTree
 
    ::oImageList:AddMasked( TBitmap():Define( "Flash_16" ),           Rgb( 255, 0, 255 ) )
-   ::oImageList:AddMasked( TBitmap():Define( "Document_user1_16" ),  Rgb( 255, 0, 255 ) )
+   ::oImageList:AddMasked( TBitmap():Define( "gc_document_text_businessman_16" ),  Rgb( 255, 0, 255 ) )
    ::oImageList:AddMasked( TBitmap():Define( "Briefcase_user1_16" ), Rgb( 255, 0, 255 ) )
    ::oImageList:AddMasked( TBitmap():Define( "User1_16" ),           Rgb( 255, 0, 255 ) )
 

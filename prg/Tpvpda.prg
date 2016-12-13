@@ -1094,7 +1094,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon )
       HOTKEY   "I";
       LEVEL    ACC_IMPR
 
-   DEFINE BTNSHELL RESOURCE "SERIE1" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "GC_PRINTER2_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( DlgPrnTicket( oWndBrw:oBrw ) ) ;
       TOOLTIP  "Imp(r)imir series";
@@ -1166,7 +1166,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon )
          CLOSED ;
          LEVEL    ACC_EDIT
 
-   DEFINE BTNSHELL RESOURCE "CHGPRE" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "gc_money2_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( EdtCobTik( oWndBrw ) );
       TOOLTIP  "(C)obros";
@@ -1232,7 +1232,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon )
          FROM     oRotor ;
          CLOSED ;
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( lFacturaAlbaran() ) ;
          TOOLTIP  "Generar factura" ;
@@ -8356,7 +8356,7 @@ FUNCTION TactilTpv( oMenuItem, oWnd, lTactil )
          HOTKEY   "I";
          LEVEL    ACC_IMPR
 
-      DEFINE BTNSHELL RESOURCE "Money2_" OF oWndBig ;
+      DEFINE BTNSHELL RESOURCE "gc_money2_" OF oWndBig ;
          NOBORDER ;
          ACTION   ( EdtCobTik( oWndBig, .t. ) );
          TOOLTIP  "(C)obros";

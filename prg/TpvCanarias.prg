@@ -1255,7 +1255,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
          :AddResource( "gc_check_12" )
          :AddResource( "gc_shape_square_12" )
          :AddResource( "gc_delete_12" )
-         :AddResource( "ChgPre16" )
+         :AddResource( "gc_money2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1529,7 +1529,7 @@ if lExtTpv
 
 else
 
-   DEFINE BTNSHELL RESOURCE "SERIE1" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "GC_PRINTER2_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( DlgPrnTicket( oWndBrw:oBrw ) ) ;
       TOOLTIP  "Imp(r)imir series";
@@ -1609,7 +1609,7 @@ else
          CLOSED ;
          LEVEL    ACC_EDIT
 
-   DEFINE BTNSHELL RESOURCE "CHGPRE" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "gc_money2_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( EdtCobTik( oWndBrw ) );
       TOOLTIP  "(C)obros";
@@ -1689,7 +1689,7 @@ else
          FROM     oRotor ;
          CLOSED ;
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( lFacturaAlbaran() ) ;
          TOOLTIP  "Generar factura" ;
@@ -16644,7 +16644,7 @@ Static Function cImageBtn( cCode )
 
    do case
       case cCode == "00"
-         cBtnImagen  := "money2_16"
+         cBtnImagen  := "gc_money2_16"
       case cCode == "01"
          cBtnImagen  := "Creditcards_16"
       case cCode == "02"

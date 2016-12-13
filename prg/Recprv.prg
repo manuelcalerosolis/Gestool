@@ -291,7 +291,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
       :AddResource( "Cnt16" )
       :AddResource( "Sel16" )
       :AddResource( "Document_out_16" )
-      :AddResource( "ChgPre16" )
+      :AddResource( "gc_money2_16" )
    end with
 
    with object ( oWndBrw:AddXCol() )
@@ -480,7 +480,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
 
    lGenRecPrv( oWndBrw:oBrw, oImp, IS_PRINTER )
 
-   DEFINE BTNSHELL RESOURCE "SERIE1" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "GC_PRINTER2_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( PrnSerie() ) ;
       TOOLTIP  "Imp(r)imir series";
@@ -527,7 +527,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
 
    #endif
 
-   DEFINE BTNSHELL RESOURCE "Money2_" OF oWndBrw GROUP ;
+   DEFINE BTNSHELL RESOURCE "gc_money2_" OF oWndBrw GROUP ;
       NOBORDER ;
       ACTION   ( lLiquida( oWndBrw:oBrw ) ) ;
       TOOLTIP  "Pagar" ;
@@ -583,7 +583,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
       TOOLTIP  "Solo (p)endientes" ;
       HOTKEY   "P";
 
-   DEFINE BTNSHELL RESOURCE "Document_out_" GROUP OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "gc_undo_" GROUP OF oWndBrw ;
       NOBORDER ;
       ACTION   ( FilterRecibos() );
       TOOLTIP  "Solo de(v)ueltos" ;
@@ -594,7 +594,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
       TOOLTIP  "Rotor" ;
       LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "BUSINESSMAN_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_BUSINESSMAN_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( EdtPrv( ( D():FacturasProveedoresPagos( nView ) )->cCodPrv ) );
          TOOLTIP  "Modificar proveedor" ;
@@ -610,7 +610,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
          CLOSED ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_BUSINESSMAN_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( ZooFacPrv( ( D():FacturasProveedoresPagos( nView ) )->cSerFac + Str( ( D():FacturasProveedoresPagos( nView ) )->nNumFac ) + ( D():FacturasProveedoresPagos( nView ) )->cSufFac ) );
          TOOLTIP  "Visualizar factura" ;
@@ -1952,7 +1952,7 @@ static function lGenRecPrv( oBrw, oBtn, nDevice )
 
    IF !( D():Documentos( nView ) )->( dbSeek( "RP" ) )
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_WHITE_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( msgStop( "No hay recibos de clientes predefinidos" ) );
          TOOLTIP  "No hay documentos" ;
@@ -1967,7 +1967,7 @@ static function lGenRecPrv( oBrw, oBtn, nDevice )
 
          bAction  := bGenRecPrv( nDevice, ( D():Documentos( nView ) )->Codigo, "Imprimiendo recibos de clientes" )
 
-         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
+         oWndBrw:NewAt( "gc_document_white_", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
 
          ( D():Documentos( nView ) )->( dbSkip() )
 

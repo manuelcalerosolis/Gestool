@@ -692,7 +692,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :AddResource( "GC_CHECK_12" )
          :AddResource( "GC_SHAPE_SQUARE_12" )
          :AddResource( "GC_DELETE_12" )
-         :AddResource( "ChgPre16" )
+         :AddResource( "gc_money2_16" )
          :bLDClickData     := {|| oWndBrw:RecEdit() }
       end with
 
@@ -1124,7 +1124,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
          lGenFacCli( oWndBrw:oBrw, oImp, IS_PRINTER ) ;
 
-      DEFINE BTNSHELL RESOURCE "SERIE1" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_PRINTER2_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( ImprimirSeriesFacturas() );
          TOOLTIP  "Imp(r)imir series";
@@ -1171,14 +1171,14 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          HOTKEY   "Q";
          LEVEL    ACC_IMPR
 
-      DEFINE BTNSHELL oLiq RESOURCE "Money2_" OF oWndBrw GROUP ;
+      DEFINE BTNSHELL oLiq RESOURCE "gc_money2_" OF oWndBrw GROUP ;
          NOBORDER ;
          ACTION   ( lLiquida( oWndBrw:oBrw ) ) ;
          TOOLTIP  "C(o)brar" ;
          HOTKEY   "O";
          LEVEL    ACC_APPD
 
-      DEFINE BTNSHELL RESOURCE "Money2_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_money2_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( aGetSelRec( oWndBrw, {|| lLiquida( oWndBrw:oBrw, ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac ) }, "Liquidar series de facturas", .t., nil, .t., nil ) ) ;
          TOOLTIP  "Cobrar series" ;
@@ -1330,7 +1330,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          TOOLTIP  "Visualizar albarán" ;
          FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "Money2_businessman_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_BRIEFCASE2_BUSINESSMAN_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( RecCli( , , { ( ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac ) } ) );
          TOOLTIP  "Modificar recibo" ;

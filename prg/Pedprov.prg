@@ -803,7 +803,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
 
       lGenPed( oWndBrw:oBrw, oPrv, IS_PRINTER ) ;
 
-   DEFINE BTNSHELL RESOURCE "SERIE1" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "GC_PRINTER2_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( ImprimirSeriesPedidosProveedores() ) ;
       TOOLTIP  "Imp(r)imir series";

@@ -699,7 +699,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
          lGenAlb( oWndBrw:oBrw, oPrv, IS_PRINTER )
       end if
 
-   DEFINE BTNSHELL RESOURCE "Serie1" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "GC_PRINTER2_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( PrnSerie( oWndBrw ), oWndBrw:Refresh() ) ;
       TOOLTIP  "Imp(r)imir series";
@@ -811,7 +811,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
       TOOLTIP  "Rotor" ;
       LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "BUSINESSMAN_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_BUSINESSMAN_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( EdtPrv( ( D():AlbaranesProveedores( nView ) )->cCodPrv ) );
          TOOLTIP  "Modificar proveedor" ;
@@ -825,27 +825,27 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
          FROM     oRotor ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "CLIPBOARD_EMPTY_BUSINESSMAN_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_cash_register_user_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( if( !Empty( ( D():AlbaranesProveedores( nView ) )->cNumPed ), ZooPedPrv( ( D():AlbaranesProveedores( nView ) )->cNumPed ), msgStop( "No hay pedido asociado" ) ) );
          TOOLTIP  "Visualizar pedido" ;
          FROM     oRotor ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_BUSINESSMAN_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_document_text_businessman_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( if( lFacturado( D():AlbaranesProveedores( nView ) ), MsgStop( "Albarán facturado" ), FacPrv( nil, oWnd, nil, nil, ( D():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) + ( D():AlbaranesProveedores( nView ) )->cSufAlb ) ) );
          TOOLTIP  "Generar factura" ;
          FROM     oRotor ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_BUSINESSMAN_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_document_text_businessman_" OF oWndBrw ;
          ACTION   ( if( !Empty( ( D():AlbaranesProveedores( nView ) )->cNumFac ), EdtFacPrv( ( D():AlbaranesProveedores( nView ) )->cNumFac ), msgStop( "No hay factura asociada" ) ) );
          TOOLTIP  "Modificar factura" ;
          FROM     oRotor ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "CASHIER_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_document_text_businessman_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( TFacturarLineasAlbaranesProveedor():New( nView ) );
          TOOLTIP  "Facturas parciales" ;
@@ -2415,7 +2415,7 @@ Static Function edtRecMenu( aTmp, aGet, oBrwLin, oDlg )
 
             MENUITEM    "&3. Modificar proveedor";
                MESSAGE  "Modificar la ficha del proveedor" ;
-               RESOURCE "Businessman_16" ;
+               RESOURCE "gc_businessman_16" ;
                ACTION   ( EdtPrv( aTmp[ _CCODPRV ] ) )
 
             MENUITEM    "&4. Informe de proveedor";
@@ -5925,7 +5925,7 @@ static function lGenAlb( oBrw, oBtn, nDevice )
 
    if !( D():Documentos( nView ) )->( dbSeek( "AP" ) )
 
-         DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "gc_document_white_" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( msgStop( "No hay albaranes de proveedores predefinidos" ) );
             TOOLTIP  "No hay documentos" ;
@@ -5940,7 +5940,7 @@ static function lGenAlb( oBrw, oBtn, nDevice )
 
          bAction  := bGenAlb( nDevice, "Imprimiendo albaranes de proveedores", ( D():Documentos( nView ) )->Codigo )
 
-         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
+         oWndBrw:NewAt( "gc_document_white_", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
 
          ( D():Documentos( nView ) )->( dbSkip() )
 

@@ -1546,7 +1546,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       lGenSatCli( oWndBrw:oBrw, oPrv, IS_PRINTER ) ;
 
-   DEFINE BTNSHELL RESOURCE "SERIE1" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "GC_PRINTER2_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( ImprimirSeriesSatClientes() ) ;
       TOOLTIP  "Imp(r)imir series";
@@ -1703,7 +1703,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
             TOOLTIP  "Generar albarán" ;
             FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( if( !( D():SatClientes( nView ) )->lEstado, FactCli( nil, nil, { "SAT" => ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat } ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
             TOOLTIP  "Generar factura" ;

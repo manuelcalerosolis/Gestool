@@ -739,7 +739,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
          :AddResource( "gc_check_12" )
          :AddResource( "gc_shape_square_12" )
          :AddResource( "gc_delete_12" )
-         :AddResource( "ChgPre16" )
+         :AddResource( "gc_money2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1019,7 +1019,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
 
       lGenFac( oWndBrw:oBrw, oImp, IS_PRINTER ) ;
 
-   DEFINE BTNSHELL RESOURCE "SERIE1" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "GC_PRINTER2_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( ImprimirSeriesFacturasProveedores() ) ;
       TOOLTIP  "Imp(r)imir series";
@@ -1060,13 +1060,13 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
       HOTKEY   "Q";
       LEVEL    ACC_IMPR
 
-   DEFINE BTNSHELL oLiq RESOURCE "Money2_" GROUP OF oWndBrw ;
+   DEFINE BTNSHELL oLiq RESOURCE "gc_money2_" GROUP OF oWndBrw ;
       NOBORDER ;
       ACTION   ( lLiquida( oWndBrw:oBrw ) ) ;
       TOOLTIP  "Pagar" ;
       LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "Money2_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_money2_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( aGetSelRec( oWndBrw, {|| lLiquida( oWndBrw:oBrw, ( D():FacturasProveedores( nView ) )->cSerFac + Str( ( D():FacturasProveedores( nView ) )->nNumFac ) + ( D():FacturasProveedores( nView ) )->cSufFac ) }, "Liquidar series de facturas", .t., nil, .t., nil ) ) ;
          TOOLTIP  "Pagar series" ;
@@ -1138,7 +1138,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
       TOOLTIP  "Rotor" ;
       LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "Businessman_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_businessman_" OF oWndBrw ;
          ACTION   ( EdtPrv( ( D():FacturasProveedores( nView ) )->cCodPrv ) );
          TOOLTIP  "Modificar proveedor";
          FROM     oRotor ;
@@ -1156,14 +1156,14 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
          FROM     oRotor ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "Money2_businessman_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_briefcase2_businessman_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( RecPrv( , , { ( D():FacturasProveedores( nView ) )->cSerFac + Str( ( D():FacturasProveedores( nView ) )->nNumFac ) + ( D():FacturasProveedores( nView ) )->cSufFac } ) );
          TOOLTIP  "Modificar recibo" ;
          FROM     oRotor ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( FactCli( nil, nil, { "Factura" => ( D():FacturasProveedores( nView ) )->cSerFac + Str( ( D():FacturasProveedores( nView ) )->nNumFac ) + ( D():FacturasProveedores( nView ) )->cSufFac } ) );
          TOOLTIP  "Generar factura" ;
@@ -2768,7 +2768,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&3. Modificar proveedor";
                MESSAGE  "Modificar la ficha del proveedor" ;
-               RESOURCE "Businessman_16" ;
+               RESOURCE "gc_businessman_16" ;
                ACTION   ( EdtPrv( aTmp[ _CCODPRV ] ) )
 
             MENUITEM    "&4. Informe de proveedor";
@@ -7859,7 +7859,7 @@ static function lGenFac( oBrw, oBtn, nDevice )
 
    IF !( D():Documentos( nView ) )->( dbSeek( "FP" ) )
 
-         DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "gc_document_white_" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( msgStop( "No hay facturas de proveedores predefinidos" ) );
             TOOLTIP  "No hay documentos" ;
@@ -7874,7 +7874,7 @@ static function lGenFac( oBrw, oBtn, nDevice )
 
          bAction  := bGenFac( nDevice, "Imprimiendo facturas de proveedores", ( D():Documentos( nView ) )->Codigo )
 
-         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
+         oWndBrw:NewAt( "gc_document_white_", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
 
          ( D():Documentos( nView ) )->( dbSkip() )
 

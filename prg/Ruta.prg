@@ -383,7 +383,7 @@ function pdaVentas()
       REDEFINE BTNBMP aBtn[ 1 ] ;
          ID       100 ;
          OF       oDlg ;
-         FILE     ( cPatBmp() + "money2_16.bmp" ) ;
+         FILE     ( cPatBmp() + "gc_money2_16.bmp" ) ;
          NOBORDER ;
          ACTION      ( nil )
 

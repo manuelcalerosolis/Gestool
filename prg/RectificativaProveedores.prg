@@ -694,7 +694,7 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
          :AddResource( "gc_check_12" )
          :AddResource( "gc_shape_square_12" )
          :AddResource( "gc_delete_12" )
-         :AddResource( "ChgPre16" )
+         :AddResource( "gc_money2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -931,7 +931,7 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
 
       lGenFac( oWndBrw:oBrw, oImp, IS_PRINTER ) ;
 
-   DEFINE BTNSHELL RESOURCE "SERIE1" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "GC_PRINTER2_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( ImprimirSeriesFacturasRectificativasProveedores() ) ;
       TOOLTIP  "Imp(r)imir series";
@@ -972,13 +972,13 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
          HOTKEY   "T";
          LEVEL    ACC_IMPR
 
-   DEFINE BTNSHELL oLiq RESOURCE "Money2_" GROUP OF oWndBrw ;
+   DEFINE BTNSHELL oLiq RESOURCE "gc_money2_" GROUP OF oWndBrw ;
       NOBORDER ;
       ACTION   ( lLiquida( oWndBrw:oBrw ) ) ;
       TOOLTIP  "Pagar" ;
       LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "Money2_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_money2_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( aGetSelRec( oWndBrw, {|| lLiquida( oWndBrw:oBrw, ( D():FacturasRectificativasProveedores( nView ) )->cSerFac + Str( ( D():FacturasRectificativasProveedores( nView ) )->nNumFac ) + ( D():FacturasRectificativasProveedores( nView ) )->cSufFac ) }, "Liquidar series de facturas", .t., nil, .t., nil ) ) ;
          TOOLTIP  "Pagar series" ;
@@ -1050,7 +1050,7 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
       TOOLTIP  "Rotor" ;
       LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "Businessman_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_businessman_" OF oWndBrw ;
          ACTION   ( EdtPrv( ( D():FacturasRectificativasProveedores( nView ) )->cCodPrv ) );
          TOOLTIP  "Modificar proveedor";
          FROM     oRotor ;
@@ -1068,7 +1068,7 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
          FROM     oRotor ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "Money2_businessman_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_BRIEFCASE2_BUSINESSMAN_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( RecPrv( , , { ( D():FacturasRectificativasProveedores( nView ) )->cSerFac + Str( ( D():FacturasRectificativasProveedores( nView ) )->nNumFac ) + ( D():FacturasRectificativasProveedores( nView ) )->cSufFac } ) );
          TOOLTIP  "Modificar recibo" ;
@@ -2874,7 +2874,7 @@ Static Function EdtRecPgoMenu( aTmp, aGet, oDlg )
 
             MENUITEM "&1. Modificar proveedor";
             MESSAGE  "Modifica el proveedor de la factura rectificativa" ;
-            RESOURCE "Businessman_16";
+            RESOURCE "gc_businessman_16";
             ACTION   ( EdtPrv( cCodPrv ) )
 
             MENUITEM "&2. Informe proveedor";
@@ -3011,7 +3011,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&3. Modificar proveedor";
                MESSAGE  "Modificar la ficha del proveedor" ;
-               RESOURCE "Businessman_16" ;
+               RESOURCE "gc_businessman_16" ;
                ACTION   ( EdtPrv( aTmp[ _CCODPRV ] ) )
 
             MENUITEM    "&4. Informe de proveedor";
@@ -7120,7 +7120,7 @@ static function lGenFac( oBrw, oBtn, nDevice )
 
    IF !( D():Documentos( nView ) )->( dbSeek( "TP" ) )
 
-         DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_WHITE_" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( msgStop( "No hay facturas de proveedores predefinidos" ) );
             TOOLTIP  "No hay documentos" ;
@@ -7135,7 +7135,7 @@ static function lGenFac( oBrw, oBtn, nDevice )
 
          bAction  := bGenFac( nDevice, "Imprimiendo facturas de proveedores", ( D():Documentos( nView ) )->CODIGO )
 
-         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
+         oWndBrw:NewAt( "gc_document_white_", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
 
          ( D():Documentos( nView ) )->( dbSkip() )
 

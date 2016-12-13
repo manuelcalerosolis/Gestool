@@ -519,7 +519,7 @@ Function ImportScript( oMainWindow, oBoton, cDirectory, uParam1, uParam2, uParam
    if !Empty( aDirectory )
 
       for each aFile in aDirectory
-         oMainWindow:NewAt( "Document", , , {|| TScripts():CompilarEjecutarFicheroScript( cPatScript() + cDirectory + '\' + aFile[ 1 ], uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) }, GetFileNoExt( Rtrim( aFile[ 1 ] ) ), , , , , oBoton )
+         oMainWindow:NewAt( "gc_document_white_", , , {|| TScripts():CompilarEjecutarFicheroScript( cPatScript() + cDirectory + '\' + aFile[ 1 ], uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) }, GetFileNoExt( Rtrim( aFile[ 1 ] ) ), , , , , oBoton )
       next 
 
    end if */
@@ -530,7 +530,7 @@ Function ImportScript( oMainWindow, oBoton, cDirectory, uParam1, uParam2, uParam
 
       for each aFile in aDirectory
 
-         oMainWindow:NewAt( "Document", , , {|| TScripts():CompilarEjecutarFicheroScript( aFile[ 1 ], uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) }, GetFileNoExt( Rtrim( aFile[ 1 ] ) ), , , , , oBoton )
+         oMainWindow:NewAt( "gc_document_white_", , , {|| TScripts():CompilarEjecutarFicheroScript( aFile[ 1 ], uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) }, GetFileNoExt( Rtrim( aFile[ 1 ] ) ), , , , , oBoton )
 
       next 
 

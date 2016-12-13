@@ -1622,7 +1622,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       lGenPreCli( oWndBrw:oBrw, oPrv, IS_PRINTER ) ;
 
-   DEFINE BTNSHELL RESOURCE "SERIE1" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "GC_PRINTER2_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( ImprimirSeriesPresupuestosClientes() ) ;
       TOOLTIP  "Imp(r)imir series";
@@ -1785,7 +1785,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
             TOOLTIP  "Generar albarán" ;
             FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( if( !( D():PresupuestosClientes( nView ) )->lEstado, FactCli( nil, nil, { "Presupuesto" => ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre } ), MsgStop( "El presupuesto ya ha sido aceptado" ) ) );
             TOOLTIP  "Generar factura" ;

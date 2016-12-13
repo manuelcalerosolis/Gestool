@@ -1586,7 +1586,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       lGenPedCli( oWndBrw:oBrw, oImp, IS_PRINTER ) ;
 
-   DEFINE BTNSHELL RESOURCE "SERIE1" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "GC_PRINTER2_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( ImprimirSeriesPedidosClientes() ) ;
       TOOLTIP  "Imp(r)imir series";
@@ -1626,7 +1626,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          HOTKEY   "Q";
          LEVEL    ACC_IMPR
 
-   DEFINE BTNSHELL RESOURCE "Money2_" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "gc_money2_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( WinAppRec( oWndBrw:oBrw, bEdtPgo, D():PedidosClientesPagos( nView ) ) ) ;
       TOOLTIP  "Entregas a (c)uenta" ;
@@ -1776,13 +1776,13 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
             FROM     oRotor ;
             CLOSED ;
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( if( ( D():PedidosClientes( nView ) )->nEstado <= 2, FactCli( nil, nil, { "Pedido" => ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed } ), MsgInfo( "Pedido entregado o cancelado" ) ) );
             TOOLTIP  "Generar factura" ;
             FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
             ACTION   ( Ped2FacCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, dbfFacCliT ) );
             TOOLTIP  "Modificar factura" ;
             FROM     oRotor ;
