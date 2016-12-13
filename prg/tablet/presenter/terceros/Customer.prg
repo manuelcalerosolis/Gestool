@@ -14,6 +14,8 @@ CLASS Customer FROM Editable
    DATA cTipoCliente                   INIT ""
    DATA hTipoCliente                   INIT { "1" => "Clientes", "2" => "Potenciales", "3" => "Web" }
 
+   DATA cIdCliente                     INIT ""
+
    METHOD New()
    METHOD Init( nView )
    METHOD Create()
@@ -39,6 +41,8 @@ CLASS Customer FROM Editable
 
    METHOD editCustomer( Codigo ) 
    METHOD salesCustomer( Codigo )
+
+   METHOD FilterSalesCustomerTable( cTextFilter )
 
 ENDCLASS
 
@@ -216,12 +220,13 @@ METHOD salesCustomer( idCliente ) CLASS Customer
       Return .f.
    end if 
 
+   ::cIdCliente   := idCliente
+
    D():getStatusFacturasClientes( ::nView )
 
-   ( D():FacturasClientes( ::nView ) )->( ordsetfocus( "cCliFec" ) )
-
-   ( D():FacturasClientes( ::nView ) )->( dbsetfilter( {|| Field->cCodCli == idCliente }, "cCodCli" ) )
-   ( D():FacturasClientes( ::nView ) )->( dbgotop() )
+   //( D():FacturasClientes( ::nView ) )->( ordsetfocus( "cCliFec" ) )
+   //( D():FacturasClientes( ::nView ) )->( dbsetfilter( {|| Field->cCodCli == ::cIdCliente }, "cCodCli" ) )
+   //( D():FacturasClientes( ::nView ) )->( dbgotop() )
 
    ::oViewSales:Resource()
 
@@ -230,5 +235,38 @@ METHOD salesCustomer( idCliente ) CLASS Customer
    D():getStatusFacturasClientes( ::nView )
 
 Return( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD FilterSalesCustomerTable( cTextFilter ) CLASS Customer
+   
+   MsgInfo( D():FacturasClientes( ::nView ) )
+
+   do case
+      case cTextFilter == "Todas"
+         ( D():FacturasClientes( ::nView ) )->( dbClearFilter() )
+         ( D():FacturasClientes( ::nView ) )->( ordsetfocus( "cCliFec" ) )
+         ( D():FacturasClientes( ::nView ) )->( dbsetfilter( {|| Field->cCodCli == ::cIdCliente }, "cCodCli" ) )
+         ( D():FacturasClientes( ::nView ) )->( dbgotop() )
+
+      case cTextFilter == "Pendientes"
+         ( D():FacturasClientes( ::nView ) )->( dbClearFilter() )
+         ( D():FacturasClientes( ::nView ) )->( ordsetfocus( "cNoLiqCli" ) )
+         ( D():FacturasClientes( ::nView ) )->( dbsetfilter( {|| Field->cCodCli == ::cIdCliente }, "cCodCli" ) )
+         ( D():FacturasClientes( ::nView ) )->( dbgotop() )
+
+      case cTextFilter == "Cobradas"
+         ( D():FacturasClientes( ::nView ) )->( dbClearFilter() )
+         ( D():FacturasClientes( ::nView ) )->( ordsetfocus( "cLiqCli" ) )
+         ( D():FacturasClientes( ::nView ) )->( dbsetfilter( {|| Field->cCodCli == ::cIdCliente }, "cCodCli" ) )
+         ( D():FacturasClientes( ::nView ) )->( dbgotop() )
+
+   end case
+
+   ( D():FacturasClientes( ::nView ) )->( dbGoTop() )
+
+   //::oViewSearchNavigator:oBrowse:Refresh()
+
+return ( .t. )
 
 //---------------------------------------------------------------------------//

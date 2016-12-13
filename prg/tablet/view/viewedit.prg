@@ -234,7 +234,7 @@ METHOD defineCliente( nRow ) CLASS ViewEdit
                            "nLeft"     => {|| GridWidth( 11, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "gc_magnifying_glass_48",;
+                           "cResName"  => "gc_document_text_user_48",;
                            "bLClicked" => {|| ::oSender:onClickClientSales() },;
                            "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
                            "oWnd"      => ::oDlg } )
