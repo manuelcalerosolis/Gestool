@@ -465,6 +465,8 @@ PedCli2PedPrv.prg                      				\
 Directions.prg                         				\
 DirectionsViewSearchNavigator.prg      				\
 ReceiptInvoiceCustomer.prg             				\
+liquidateReceiptView.prg                           \
+liquidateReceipt.prg                               \
 TTraslations.prg 												\
 
 C               =       	            				\
@@ -924,6 +926,8 @@ PedCli2PedPrv.obj                      				\
 Directions.obj                         				\
 DirectionsViewSearchNavigator.obj      				\
 ReceiptInvoiceCustomer.obj                         \
+liquidateReceiptView.obj                           \
+liquidateReceipt.obj                               \
 TTraslations.obj 												\
 
 .PRG.OBJ:
@@ -1347,6 +1351,8 @@ $(OBJ)\CustomerIncidenceView.obj             +
 $(OBJ)\CustomerIncidenceViewNavigator.obj    +
 $(OBJ)\ReceiptDocumentSalesViewEdit.obj      +
 $(OBJ)\InvoiceDocumentSalesViewEdit.obj      +
+$(OBJ)\liquidateReceiptView.obj              +
+$(OBJ)\liquidateReceipt.obj                  +
 $(OBJ)\Product.obj                           +
 $(OBJ)\Payment.obj                           +
 $(OBJ)\Store.obj                             +

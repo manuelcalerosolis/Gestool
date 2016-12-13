@@ -551,9 +551,9 @@ METHOD Activate( oMenuItem, oWnd, lStart )
       :bStrData         := {|| ::oDbfTmp:cTipDoc }
       :bBmpData         := {|| ::nTreeImagen() }
       :nWidth           := 120
-      :AddResource( "Clipboard_empty_businessman_16"  )  // Pedido proveedor
-      :AddResource( "Document_plain_businessman_16"   )  // Albarán proveedor
-      :AddResource( "Document_businessman_16"         )  // Factura proveedor
+      :AddResource( "gc_clipboard_empty_businessman_16"  )  // Pedido proveedor
+      :AddResource( "gc_document_empty_businessman_16"   )  // Albarán proveedor
+      :AddResource( "gc_document_text_businessman_16"         )  // Factura proveedor
       :AddResource( "Document_navigate_cross_16"      )  // Rectificativa proveedor
       :AddResource( "Document_delete_16"              )  // Facturas rectificativas
       :AddResource( "Clipboard_empty_user1_16"        )  // Pedido cliente

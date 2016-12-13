@@ -407,9 +407,15 @@ GC_FUNNEL_48 BITMAP "..\\bmp\\gc_funnel_48.bmp"
 
 GC_DOCUMENT_TEXT_16 BITMAP "..\\bmp\\gc_document_text_16.bmp"
 
+GC_DUDE4_24 BITMAP "..\\bmp\\gc_dude4_24.bmp"
+GC_BUSINESSMAN_24 BITMAP "..\\bmp\\gc_businessman_24.bmp"
+GC_BUSINESSMAN2_24 BITMAP "..\\bmp\\gc_businessman2_24.bmp"
+GC_MAIL2_24 BITMAP "..\\bmp\\gc_mail2_24.bmp"
+GC_USER_TELEPHONE_24 BITMAP "..\\bmp\\gc_user_telephone_24.bmp"
+GC_MAIL_EARTH_24 BITMAP "..\\bmp\\gc_mail_earth_24.bmp"
 
-
-
-
-
-
+GC_SAFE_INTO_64 BITMAP "..\\bmp\\gc_safe_into_64.bmp"
+GC_DOCUMENT_TEXT_USER_48 BITMAP "..\\bmp\\gc_document_text_user_48.bmp"
+BUSINESSMAN_16 BITMAP "..\\bmp\\Businessman_16.bmp"
+BUSINESSMAN_32 BITMAP "..\\bmp\\Businessman_32.bmp"
+GC_DOCUMENT_TEXT_USER_48 BITMAP "..\\bmp\\gc_document_text_user_48.bmp"

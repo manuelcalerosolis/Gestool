@@ -353,8 +353,8 @@ METHOD New( oTurno )
 
    ::hBmpDoc                  := {=>}
 
-   HSet( ::hBmpDoc, "AlbaranProveedor",      LoadBitmap( GetResources(), "Document_plain_businessman_16" ) )
-   HSet( ::hBmpDoc, "FacturaProveedor",      LoadBitmap( GetResources(), "Document_businessman_16" ) )
+   HSet( ::hBmpDoc, "AlbaranProveedor",      LoadBitmap( GetResources(), "gc_document_empty_businessman_16" ) )
+   HSet( ::hBmpDoc, "FacturaProveedor",      LoadBitmap( GetResources(), "gc_document_text_businessman_16" ) )
    HSet( ::hBmpDoc, "RectificativaProveedor",LoadBitmap( GetResources(), "Document_navigate_cross_16" ) )
    HSet( ::hBmpDoc, "PagoProveedor",         LoadBitmap( GetResources(), "Money2_businessman_16" ) )
    HSet( ::hBmpDoc, "PedidoCliente",         LoadBitmap( GetResources(), "Clipboard_empty_user1_16" ) )

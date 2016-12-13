@@ -118,9 +118,9 @@ METHOD New()
    ::oImageList:AddMasked( TBitmap():Define( "Cube_Yellow_16", ,                 Self ), Rgb( 255, 0, 255 ) )  // 0
    ::oImageList:AddMasked( TBitmap():Define( "User1_16", ,                       Self ), Rgb( 255, 0, 255 ) )  // 1
    ::oImageList:AddMasked( TBitmap():Define( "Businessman_16", ,                 Self ), Rgb( 255, 0, 255 ) )  // 2
-   ::oImageList:AddMasked( TBitmap():Define( "Clipboard_empty_businessman_16", , Self ), Rgb( 255, 0, 255 ) )  // 3
-   ::oImageList:AddMasked( TBitmap():Define( "Document_plain_businessman_16", ,  Self ), Rgb( 255, 0, 255 ) )  // 4
-   ::oImageList:AddMasked( TBitmap():Define( "Document_businessman_16", ,        Self ), Rgb( 255, 0, 255 ) )  // 5
+   ::oImageList:AddMasked( TBitmap():Define( "gc_clipboard_empty_businessman_16", , Self ), Rgb( 255, 0, 255 ) )  // 3
+   ::oImageList:AddMasked( TBitmap():Define( "gc_document_empty_businessman_16", ,  Self ), Rgb( 255, 0, 255 ) )  // 4
+   ::oImageList:AddMasked( TBitmap():Define( "gc_document_text_businessman_16", ,        Self ), Rgb( 255, 0, 255 ) )  // 5
    ::oImageList:AddMasked( TBitmap():Define( "Money2_businessman_16", ,          Self ), Rgb( 255, 0, 255 ) )  // 6
    ::oImageList:AddMasked( TBitmap():Define( "Notebook_user1_16", ,              Self ), Rgb( 255, 0, 255 ) )  // 7
    ::oImageList:AddMasked( TBitmap():Define( "Clipboard_empty_user1_16", ,       Self ), Rgb( 255, 0, 255 ) )  // 8

@@ -19186,6 +19186,12 @@ FUNCTION rxFacCli( cPath, cDriver )
       ( cFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
       ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "cCliFec", "cCodCli + Dtos( dFecFac ) + tFecFac", {|| Field->cCodCli + dtos( Field->dFecFac ) + Field->tFecFac } ) )
 
+      ( cFacCliT )->( ordCondSet( "lLiquidada .and. !Deleted()", {|| Field->lLiquidada .and. !Deleted() }, , , , , , , , , .t. ) )
+      ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "cLiqCli", "cCodCli + Dtos( dFecFac ) + tFecFac", {|| Field->cCodCli + dtos( Field->dFecFac ) + Field->tFecFac } ) )
+
+      ( cFacCliT )->( ordCondSet( "!lLiquidada .and. !Deleted()", {|| !Field->lLiquidada .and. !Deleted() }, , , , , , , , , .t. ) )
+      ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "cNoLiqCli", "cCodCli + Dtos( dFecFac ) + tFecFac", {|| Field->cCodCli + dtos( Field->dFecFac ) + Field->tFecFac } ) )
+
       ( cFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
       ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "dFecDes", "Dtos( dFecFac ) + tFecFac", {|| Dtos( Field->dFecFac ) + Field->tFecFac } ) )
 

@@ -530,7 +530,7 @@ FUNCTION CfgDocs( oMenuItem, oWnd )
             CLOSED ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Document_plain_businessman_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "gc_document_empty_businessman_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'FL' }, "Field->cTipo == 'FL'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Albarán proveedor[etiquetas]" ;
             FROM     oFlt ;
@@ -551,7 +551,7 @@ FUNCTION CfgDocs( oMenuItem, oWnd )
             CLOSED ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Document_plain_businessman_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "gc_document_empty_businessman_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'AP' }, "Field->cTipo == 'AP'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Albaran de proveedores" ;
             FROM     oFlt ;

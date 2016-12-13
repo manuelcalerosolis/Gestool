@@ -2403,12 +2403,12 @@ Static Function edtRecMenu( aTmp, aGet, oBrwLin, oDlg )
 
             MENUITEM    "&1. Campos extra [F9]";
                MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
-               RESOURCE "form_green_add_16" ;
+               RESOURCE "GC_FORM_PLUS2_16" ;
                ACTION   ( oDetCamposExtra:Play( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB] ) + aTmp[ _CSUFALB ] ) )
 
             MENUITEM    "&2. Visualizar pedido";
                MESSAGE  "Visualiza el pedido del que proviene" ;
-               RESOURCE "Clipboard_empty_businessman_16" ;
+               RESOURCE "gc_clipboard_empty_businessman_16" ;
                ACTION   ( if(!Empty( aTmp[ _CNUMPED ] ), ZooPedPrv( aTmp[ _CNUMPED ] ), msgStop( "No hay pedido asociado" ) ) )
 
             SEPARATOR
