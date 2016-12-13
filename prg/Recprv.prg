@@ -583,7 +583,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
       TOOLTIP  "Solo (p)endientes" ;
       HOTKEY   "P";
 
-   DEFINE BTNSHELL RESOURCE "Document_out_" GROUP OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "gc_undo_" GROUP OF oWndBrw ;
       NOBORDER ;
       ACTION   ( FilterRecibos() );
       TOOLTIP  "Solo de(v)ueltos" ;
@@ -594,7 +594,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
       TOOLTIP  "Rotor" ;
       LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "BUSINESSMAN_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_BUSINESSMAN_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( EdtPrv( ( D():FacturasProveedoresPagos( nView ) )->cCodPrv ) );
          TOOLTIP  "Modificar proveedor" ;
@@ -610,7 +610,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
          CLOSED ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_BUSINESSMAN_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( ZooFacPrv( ( D():FacturasProveedoresPagos( nView ) )->cSerFac + Str( ( D():FacturasProveedoresPagos( nView ) )->nNumFac ) + ( D():FacturasProveedoresPagos( nView ) )->cSufFac ) );
          TOOLTIP  "Visualizar factura" ;
