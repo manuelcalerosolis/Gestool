@@ -2446,7 +2446,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       aTmp[ _DFECIMP    ]  := Ctod("")
       aTmp[ _CCODDLG    ]  := oUser():cDelegacion()
       aTmp[ _LIVAINC    ]  := uFieldEmpresa( "lIvaInc" )
-      aTmp[ _CMANOBR    ]  := padr( getTraslation( "Gastos" ), 250 )
+      aTmp[ _CMANOBR    ]  := padr( getConfigTraslation( "Gastos" ), 250 )
       aTmp[ _NIVAMAN    ]  := nIva( dbfIva, cDefIva() )
       aTmp[ _LRECC      ]  := lRECCEmpresa()
       aTmp[ _TFECFAC    ]  := getSysTime()
@@ -18793,9 +18793,6 @@ Function nNetUFacCli( dbfLin, nDec, nVdv )
 
    local nCalculo    := nTotUFacCli( dbfLin, nDec, nVdv )   
 
-   logwrite("antes de quitar el iva")
-   logwrite( nCalculo )   
-
    if ( dbfLin )->nIva != 0 .and. ( dbfLin )->lIvaLin
       if nDec != nil
          nCalculo    -= Round( nCalculo / ( 100 / ( dbfLin )->nIva + 1 ), nDec )
@@ -18803,9 +18800,6 @@ Function nNetUFacCli( dbfLin, nDec, nVdv )
          nCalculo    -= ( nCalculo / ( 100 / ( dbfLin )->nIva + 1 ) )
       end if
    end if
-
-   logwrite( "despues de quitar el iva" )
-   logwrite( nCalculo )   
 
 RETURN ( nCalculo )
 
@@ -19542,7 +19536,7 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"lAlquiler"   ,"L",  1,  0, "Lógico de alquiler",                                        "Alquiler",                    "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"lPayCli"     ,"L",  1,  0, "Lógico a pagar por el cliente",                             "",                            "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"nPayCli"     ,"N", 16,  6, "A pagar por el cliente",                                    "",                            "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"cManObr"     ,"C",250,  0, "Literal de gastos",                                         "LiteralGastos",               "", "( cDbf )", {|| padr( getTraslation( "Gastos" ), 250 ) } } )
+   aAdd( aItmFacCli, {"cManObr"     ,"C",250,  0, "Literal de gastos",                                         "LiteralGastos",               "", "( cDbf )", {|| padr( getConfigTraslation( "Gastos" ), 250 ) } } )
    aAdd( aItmFacCli, {"lExpEdi"     ,"L",  1,  0, "Lógico de factura exportada a EDI",                         "ExportadaEDI",                "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"dFecEdi"     ,"D",  8,  0, "Fecha exportación a EDI",                                   "FechaExportadaEDI",           "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"cHorEdi"     ,"C",  5,  0, "Hora exportación a EDI",                                    "HoraExportadaEDI",            "", "( cDbf )", nil } )

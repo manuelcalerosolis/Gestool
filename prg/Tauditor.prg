@@ -536,7 +536,7 @@ Method TipoOperacion()
       case ::oDbf:cTipDoc == PRE_CLI
          cTextDocument  := "Presupuestos a clientes"
       case ::oDbf:cTipDoc == PED_CLI
-         cTextDocument  := getTraslation("Pedidos de clientes")
+         cTextDocument  := getConfigTraslation("Pedidos de clientes")
       case ::oDbf:cTipDoc == ALB_CLI
          cTextDocument  := "Albaranes de clientes"
       case ::oDbf:cTipDoc == FAC_CLI

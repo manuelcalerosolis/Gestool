@@ -745,6 +745,13 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       end with
 
       with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Inactivo"
+         :bStrData         := {|| if( ( D():Clientes( nView ) )->lInaCli, "Inactivo", "" ) }
+         :nWidth           := 60
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
          :cHeader          := "Código cliente"
          :cSortOrder       := "Cod"
          :bEditValue       := {|| ( D():Clientes( nView ) )->Cod }

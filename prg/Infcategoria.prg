@@ -59,7 +59,7 @@ METHOD lGenerate()
    ::oDbf:Zap()
 
    ::aHeader         := {  {|| "Fecha      : " + Dtoc( Date() ) },;
-                           {|| getTraslation( "Categorías" ) + " : " + if( ::lAllCat, "Todos", AllTrim( ::cCatOrg ) + " > " + AllTrim( ::cCatDes ) ) } }
+                           {|| getConfigTraslation( "Categorías" ) + " : " + if( ::lAllCat, "Todos", AllTrim( ::cCatOrg ) + " > " + AllTrim( ::cCatDes ) ) } }
 
    ( ::dbfCategoria )->( OrdSetFocus( "Codigo" ) )
 

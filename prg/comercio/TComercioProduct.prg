@@ -590,14 +590,18 @@ METHOD stockProduct( id ) CLASS TComercioProduct
 
    for each sStock in aStockArticulo
 
-      aAdd( aStockProduct, {  "idProduct"             => id ,;
-                              "idFirstProperty"       => sStock:cCodigoPropiedad1 ,;
-                              "idSecondProperty"      => sStock:cCodigoPropiedad2 ,;
-                              "valueFirstProperty"    => sStock:cValorPropiedad1 ,;
-                              "valueSecondProperty"   => sStock:cValorPropiedad2 ,;
-                              "unitStock"             => sStock:nUnidades } )
+      if sStock:nUnidades > 0
 
-      nStock               += sStock:nUnidades
+         aAdd( aStockProduct, {  "idProduct"             => id ,;
+                                 "idFirstProperty"       => sStock:cCodigoPropiedad1 ,;
+                                 "idSecondProperty"      => sStock:cCodigoPropiedad2 ,;
+                                 "valueFirstProperty"    => sStock:cValorPropiedad1 ,;
+                                 "valueSecondProperty"   => sStock:cValorPropiedad2 ,;
+                                 "unitStock"             => sStock:nUnidades } )
+
+         nStock            += sStock:nUnidades
+
+      end if 
 
    next
 

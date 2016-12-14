@@ -849,19 +849,19 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       TITLE    "Artículos" ;
       PROMPT   "Código",;
 					"Nombre",;
-               getTraslation( "Familia" ),;
+               getConfigTraslation( "Familia" ),;
                "Proveedor" ,;
                "No obsoletos + Código",;
                "No obsoletos + Nombre",;
                "Tipo" ,;
-               getTraslation( "Categoría" ) ,;
-               getTraslation( "Temporada" ) ,;
+               getConfigTraslation( "Categoría" ) ,;
+               getConfigTraslation( "Temporada" ) ,;
                "Fabricante" ,;
                "Estado" ,;
                "Posición táctil" ,;
                "Publicar" ,;
                "Web",;
-               getTraslation( "Ubicacion" ) ;
+               getConfigTraslation( "Ubicación" ) ;
       MRU      "gc_object_cube_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( D():Articulos( nView ) ) ;
@@ -964,7 +964,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    end with
 
    with object ( oWndBrw:AddXCol() )
-      :cHeader          := getTraslation( "Familia" )
+      :cHeader          := getConfigTraslation( "Familia" )
       :cSortOrder       := "cFamCod"
       :bEditValue       := {|| ( D():Articulos( nView ) )->Familia }
       :nWidth           := 80
@@ -988,7 +988,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    end with
 
    with object ( oWndBrw:AddXCol() )
-      :cHeader          := getTraslation( "Categoría" )
+      :cHeader          := getConfigTraslation( "Categoría" )
       :cSortOrder       := "cCodCate"
       :bStrData         := {|| AllTrim( ( D():Articulos( nView ) )->cCodCate ) + if( !Empty( ( D():Articulos( nView ) )->cCodCate ), " - ", "" ) + RetFld( ( D():Articulos( nView ) )->cCodCate, dbfCategoria, "cNombre" ) }
       :bBmpData         := {|| nBitmapTipoCategoria( RetFld( ( D():Articulos( nView ) )->cCodCate, dbfCategoria, "cTipo" ) ) }
@@ -999,7 +999,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    end with
 
    with object ( oWndBrw:AddXCol() )
-      :cHeader          := getTraslation( "Temporada" )
+      :cHeader          := getConfigTraslation( "Temporada" )
       :cSortOrder       := "cCodTemp"
       :bStrData         := {|| AllTrim( ( D():Articulos( nView ) )->cCodTemp ) + if( !Empty( ( D():Articulos( nView ) )->cCodTemp ), " - ", "" ) + RetFld( ( D():Articulos( nView ) )->cCodTemp, dbfTemporada, "cNombre" ) }
       :bBmpData         := {|| nBitmapTipoTemporada( RetFld( ( D():Articulos( nView ) )->cCodTemp, dbfTemporada, "cTipo" ) ) }
@@ -1334,7 +1334,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    end with
 
    with object ( oWndBrw:AddXCol() )
-      :cHeader          := getTraslation( "Ubicacion" )
+      :cHeader          := getConfigTraslation( "Ubicación" )
       :cSortOrder       := "cDesUbi"
       :bEditValue       := {|| ( D():Articulos( nView ) )->cDesUbi }
       :nWidth           := 150
@@ -2065,17 +2065,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          OF       fldGeneral
    
    REDEFINE SAY ;
-         PROMPT   getTraslation( "Familia" );
+         PROMPT   getConfigTraslation( "Familia" );
          ID       900 ;
          OF       fldGeneral
 
    REDEFINE SAY ;
-         PROMPT   getTraslation( "Categoría" );
+         PROMPT   getConfigTraslation( "Categoría" );
          ID       700 ;
          OF       fldGeneral
 
    REDEFINE SAY ;
-         PROMPT   getTraslation( "Temporada" );
+         PROMPT   getConfigTraslation( "Temporada" );
          ID       800 ;
          OF       fldGeneral
 
@@ -2144,7 +2144,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          OF       fldGeneral
 
    REDEFINE SAY ;
-         PROMPT   getTraslation( "Ubicacion" );
+         PROMPT   getConfigTraslation( "Ubicación" );
          ID       221 ;
          OF       fldGeneral
 

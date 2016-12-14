@@ -3432,7 +3432,7 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 /*
-Function getTraslation( cText )
+Function getConfigTraslation( cText )
 
    local cTraslation    := ""
 

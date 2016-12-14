@@ -1078,7 +1078,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
    DEFINE SHELL oWndBrw FROM 0, 0 TO 22, 80 ;
       XBROWSE ;
-      TITLE    getTraslation("Pedidos de clientes") ;
+      TITLE    getConfigTraslation("Pedidos de clientes") ;
       PROMPT   "Número",;
                "Fecha",;
                "Código",;
@@ -1901,7 +1901,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          aTmp[ _CCODUSR ]     := cCurUsr()
          aTmp[ _CCODDLG ]     := oUser():cDelegacion()
          aTmp[ _LIVAINC ]     := uFieldEmpresa( "lIvaInc" )
-         aTmp[ _CMANOBR ]     := padr( getTraslation( "Gastos" ), 250 )
+         aTmp[ _CMANOBR ]     := padr( getConfigTraslation( "Gastos" ), 250 )
          aTmp[ _NIVAMAN ]     := nIva( D():TiposIva( nView ), cDefIva() )
          aTmp[ _DFECENTR]     := ctod( "" )
          aTmp[ _DFECSAL ]     := ctod( "" )
@@ -2025,7 +2025,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
    Comienza el dialogo---------------------------------------------------------
    */
 
-   DEFINE DIALOG oDlg RESOURCE "PEDCLI" TITLE LblTitle( nMode ) + getTraslation("Pedidos de clientes")
+   DEFINE DIALOG oDlg RESOURCE "PEDCLI" TITLE LblTitle( nMode ) + getConfigTraslation("Pedidos de clientes")
 
       REDEFINE FOLDER oFld;
          ID       200 ;
@@ -12639,7 +12639,7 @@ FUNCTION BrwPedCli( oGet, cPedCliT, cPedCliL, cdbfIva, cdbfDiv, dbfFPago, oIva )
    ( cPedCliT )->( dbSetFilter( {|| Field->nEstado <= 2 }, "nEstado <= 2" ) )
    ( cPedCliT )->( dbGoTop() )
 
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE getTraslation("Pedidos de clientes")
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE getConfigTraslation("Pedidos de clientes")
 
 		REDEFINE GET oGet1 VAR cGet1;
          ID       104 ;
@@ -15692,7 +15692,7 @@ function aItmPedCli()
    aAdd( aItmPedCli, { "lAlquiler","L",   1,  0, "Lógico de alquiler",                                      "Alquiler",                "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "dFecEntr","D",    8,  0, "Fecha inicio servicio",                                   "InicioServicio",          "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "dFecSal", "D",    8,  0, "Fecha fin de servicio",                                   "FinServicio",             "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "cManObr", "C",  250,  0, "Literal de gastos" ,                                      "LiteralGastos",           "", "( cDbf )", {|| padr( getTraslation( "Gastos" ), 250 ) } } )
+   aAdd( aItmPedCli, { "cManObr", "C",  250,  0, "Literal de gastos" ,                                      "LiteralGastos",           "", "( cDbf )", {|| padr( getConfigTraslation( "Gastos" ), 250 ) } } )
    aAdd( aItmPedCli, { "nGenerado","N",   1,  0, "Estado generado" ,                                        "",                        "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "nRecibido","N",   1,  0, "Estado recibido" ,                                        "",                        "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "lInternet","L",   1,  0, "Pedido desde internet" ,                                  "",                        "", "( cDbf )", nil } )

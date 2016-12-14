@@ -603,9 +603,9 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := getTraslation( "Entregado" )
+         :cHeader          := getConfigTraslation( "Entregado" )
          :nHeadBmpNo       := 3
-         :bStrData         := {|| if( ( D():Get( "AlbCliT", nView ) )->lEntregado, getTraslation( "Entregado" ), "" ) }
+         :bStrData         := {|| if( ( D():Get( "AlbCliT", nView ) )->lEntregado, getConfigTraslation( "Entregado" ), "" ) }
          :bEditValue       := {|| if( ( D():Get( "AlbCliT", nView ) )->lEntregado, 1, 2 ) }
          :nWidth           := 20
          :nDataStrAlign    := 3
@@ -2276,7 +2276,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          aTmp[ _CCODDLG   ]   := oUser():cDelegacion()
          aTmp[ _LIVAINC   ]   := uFieldEmpresa( "lIvaInc" )
          aTmp[ _NIVAMAN   ]   := nIva( D():Get( "TIva", nView ), cDefIva() )
-         aTmp[ _CMANOBR   ]   := Padr( getTraslation( "Gastos" ), 250 )
+         aTmp[ _CMANOBR   ]   := Padr( getConfigTraslation( "Gastos" ), 250 )
          aTmp[ _NFACTURADO]   := 1
          aTmp[ _TFECALB   ]   := GetSysTime()
 
@@ -3615,7 +3615,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       REDEFINE CHECKBOX aGet[ _LENTREGADO ] ;
          VAR      aTmp[ _LENTREGADO ] ;
-         PROMPT   getTraslation( "Entregado" ) ;
+         PROMPT   getConfigTraslation( "Entregado" ) ;
          ID       200 ;
          ON CHANGE( ValCheck( aGet, aTmp ) ) ;
          WHEN     ( lWhen ) ;
@@ -16901,7 +16901,7 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "dFecEntr",  "D",  8, 0, "Fecha de entrada de alquiler",                             "EntradaAlquiler",               "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "dFecSal",   "D",  8, 0, "Fecha de salida de alquiler",                              "SalidaAlquiler",                "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "lAlquiler", "L",  1, 0, "Lógico de alquiler",                                       "Alquiler",                      "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "cManObr",   "C",250, 0, "" ,                                                        "LiteralGastos",                 "", "( cDbf )", {|| padr( getTraslation( "Gastos" ), 250 ) } } )
+   aAdd( aItmAlbCli, { "cManObr",   "C",250, 0, "" ,                                                        "LiteralGastos",                 "", "( cDbf )", {|| padr( getConfigTraslation( "Gastos" ), 250 ) } } )
    aAdd( aItmAlbCli, { "lOrdCar",   "L",  1, 0, "Lógico de pertenecer a un orden de carga" ,                "",                              "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "cNumTik",   "C", 13, 0, "Número del ticket" ,                                       "NumeroTicket",                  "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "cTlfCli",   "C", 20, 0, "Teléfono del cliente" ,                                    "TelefonoCliente",               "", "( cDbf )", nil } )

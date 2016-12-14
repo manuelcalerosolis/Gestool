@@ -6,39 +6,53 @@
 
 //---------------------------------------------------------------------------//
 
-Function getTraslation( key )
+Function getConfigTraslation( key, default )
 
-Return ( TTraslations():getInstance():get( key ) )
+Return ( TConfig():getInstance():getTraslation( key, default ) )
 
 //---------------------------------------------------------------------------//
 
-CLASS TTraslations
+Function getConfigUser( key, default )
+
+Return ( TConfig():getInstance():getUser( key, default ) )
+
+//---------------------------------------------------------------------------//
+
+Function setConfigUser( key, value )
+
+Return ( TConfig():getInstance():setUser( key, value ) )
+
+//---------------------------------------------------------------------------//
+
+CLASS TConfig
 
    CLASSDATA oInstance
-   CLASSDATA hTraslations              INIT {=>}
+   CLASSDATA hJSON                           INIT {=>}
 
    DATA idEmpresa
 
-   DATA cCurrentWeb 
-   DATA hCurrentWeb
-
-   METHOD New()                        CONSTRUCTOR
+   METHOD New()                              CONSTRUCTOR
    METHOD getInstance()
-   METHOD destroyInstance()            INLINE ( ::oInstance := nil )
+   METHOD destroyInstance()                  INLINE ( ::oInstance := nil )
 
    METHOD loadJSON() 
    METHOD saveJSON()
 
-   METHOD get( key, default )
-   METHOD set( key, value )
+   METHOD get( node, key, default )
+   METHOD getTraslation( key, default )      INLINE ( ::get( 'Traslations', key, default ) )
+   METHOD getUser( key, default )            INLINE ( ::get( cCurUsr(), key, default ) )
 
-   METHOD getFullFileName()            INLINE ( cPatConfig() + ::idEmpresa + "\traslation.json" )
+   METHOD set( node, key, value )
+   METHOD setTraslation( key, value )        INLINE ( ::set( 'Traslations', key, value ) )
+   METHOD setUser( key, value )              INLINE ( ::set( cCurUsr(), key, value ) )
+
+   METHOD getFullFileName()            
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( idEmpresa ) CLASS TTraslations
+METHOD New( idEmpresa ) CLASS TConfig
 
    DEFAULT idEmpresa    := cCodEmp()
 
@@ -48,9 +62,9 @@ METHOD New( idEmpresa ) CLASS TTraslations
 
 Return ( Self )
 
-//----------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-METHOD GetInstance() CLASS TTraslations
+METHOD GetInstance() CLASS TConfig
 
    if empty( ::oInstance )
       ::oInstance       := ::New()
@@ -60,65 +74,88 @@ RETURN ( ::oInstance )
 
 //---------------------------------------------------------------------------//
 
-METHOD get( key ) CLASS TTraslations
+METHOD get( node, key, default ) CLASS TConfig
    
-   if hhaskey( ::hTraslations, key )
-      Return ( hget( ::hTraslations, key ) )
+   local hNode
+
+   DEFAULT default   := ''
+
+   if hhaskey( ::hJSON, node )
+      hNode          := hget( ::hJSON, node )
+      if hhaskey( hNode, key )
+         Return ( hget( hNode, key ) )
+      end if 
    end if 
 
-   ::set( key, key )
+   ::set( node, key, default )
 
-   ::saveJSON()
-
-Return ( key )
+Return ( default )
 
 //---------------------------------------------------------------------------//
 
-METHOD set( key, value ) CLASS TTraslations
+METHOD set( node, key, value ) CLASS TConfig
    
-   if isnil( ::hTraslations )
+   local hNode
+
+   if isnil( ::hJSON )
       Return ( .f. )
    end if 
 
-   hset( ::hTraslations, key, value )
+   if hhaskey( ::hJSON, node )
+      hNode       := hget( ::hJSON, node )
+      if !empty( hNode )
+         hset( hNode, key, value )
+      end if 
+   else
+      hset( ::hJSON, node, { key => value } )
+   end if 
+
+   ::saveJSON()
 
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD LoadJSON() CLASS TTraslations
+METHOD LoadJSON() CLASS TConfig
 
+   local hJSON
    local cConfig
-   local hTraslations
    local cFullFileName        := ::getFullFileName()
 
    if file( cFullFileName )
       
       cConfig                 := memoread( cFullFileName )
-      hb_jsonDecode( cConfig, @hTraslations )      
 
-      if !empty( hTraslations )
-         ::hTraslations       := hTraslations
+      hb_jsonDecode( cConfig, @hJSON )      
+
+      if !empty( hJSON )
+         ::hJSON              := hJSON
       end if 
 
    end if 
 
 Return ( Self )
 
-//----------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-METHOD SaveJSON() CLASS TTraslations
+METHOD SaveJSON() CLASS TConfig
 
-   memowrit( ::getFullFileName(), hb_jsonencode( ::hTraslations, .t. ) )
+   msgalert( hb_valToexp( ::hJSON), "saveJSON ")
+
+   memowrit( ::getFullFileName(), hb_jsonencode( ::hJSON, .t. ) )
 
 Return ( Self )
 
-//----------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
+METHOD getFullFileName()
 
+Return ( cPatConfig() + ::idEmpresa + "\config.json" )
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-
-
-
-   

@@ -2279,7 +2279,7 @@ STATIC FUNCTION GenDiario( dInfDesde, dInfHasta, lPreCli, lPedCli, lAlbCli, lFac
       while ( dbfPedCliT )->dFecPed >= dInfDesde .and. ( dbfPedCliT )->dFecPed <= dInfHasta .and. !( dbfPedCliT )->( eof() )
 
          ( dbfTmp )->( dbAppend() )
-         ( dbfTmp )->CTIPDOC  := getTraslation("Pedidos de clientes")
+         ( dbfTmp )->CTIPDOC  := getConfigTraslation("Pedidos de clientes")
          ( dbfTmp )->CNUMDOC  := ( dbfPedCliT )->CSERPED + "/" + Ltrim( Str( ( dbfPedCliT )->NNUMPED ) ) + "/" + ( dbfPedCliT )->CSUFPED
          ( dbfTmp )->DFECDOC  := ( dbfPedCliT )->DFECPED
          ( dbfTmp )->CCODCLI  := ( dbfPedCliT )->CCODCLI

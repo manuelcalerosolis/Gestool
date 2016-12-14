@@ -511,7 +511,7 @@ METHOD InitResource()
    ::oTreeRango:Add( "Tipos",       1 )
    ::oTreeRango:Add( "Categorias",  2 )
    ::oTreeRango:Add( "Fabricantes", 3 )
-   ::oTreeRango:Add( getTraslation( "Temporadas" ),  4 )
+   ::oTreeRango:Add( getConfigTraslation( "Temporadas" ),  4 )
 
    ::oImageList:AddMasked( TBitmap():Define( "Cubes_16" ), Rgb( 255, 0, 255 ) )
    ::oImageList:AddMasked( TBitmap():Define( "Cubes_blue_16" ), Rgb( 255, 0, 255 ) )
@@ -546,7 +546,7 @@ METHOD TreeChanged()
             ::LoadCategoria()
          case oItemSelect:cPrompt == "Fabricantes"
             ::LoadFabricante()
-         case oItemSelect:cPrompt == getTraslation( "Temporadas" )
+         case oItemSelect:cPrompt == getConfigTraslation( "Temporadas" )
             ::LoadTemporada()
       end case
 
@@ -599,7 +599,7 @@ METHOD BrowseDblClick( lAllSelected )
             ::oDbf:mCategoria    := ::SelectedToMemo()
          case cItemSelect == "Fabricantes"
             ::oDbf:mFabricant    := ::SelectedToMemo()
-         case cItemSelect == getTraslation( "Temporadas" )
+         case cItemSelect == getConfigTraslation( "Temporadas" )
             ::oDbf:mTemporada    := ::SelectedToMemo()
       end case
 
@@ -635,7 +635,7 @@ METHOD ChkChanged()
             ::oDbf:lCategoria    := ::lAll
          case cItemSelect == "Fabricantes"
             ::oDbf:lFabricant    := ::lAll
-         case cItemSelect == getTraslation( "Temporadas" )
+         case cItemSelect == getConfigTraslation( "Temporadas" )
             ::oDbf:lTemporada    := ::lAll
       end case
 

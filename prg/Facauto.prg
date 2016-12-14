@@ -544,7 +544,7 @@ METHOD Resource( nMode ) CLASS TFacAutomatica
       ::oDbf:nDtoDos    := 0
       ::oDbf:nIvaMan    := 0
       ::oDbf:nManObr    := 0
-      ::oDbf:cManObr    := getTraslation( "Gastos" )
+      ::oDbf:cManObr    := getConfigTraslation( "Gastos" )
       ::oDbf:nDiaFact   := 1
       ::oDbf:nTipDoc    := 2
       ::oDbf:dFecIni    := GetSysDate()

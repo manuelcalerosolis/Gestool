@@ -4023,9 +4023,9 @@ Method InitDlgImprimir()
                      oSubTree:Add( "Ventas por artículos" )
                      oSubTree:Add( "Ventas por tipo de artículos" )
                      oSubTree:Add( "Ventas por familias" )
-                     oSubTree:Add( "Ventas por " + getTraslation( "categoría" ) )
+                     oSubTree:Add( "Ventas por " + getConfigTraslation( "categoría" ) )
                      oSubTree:Add( "Ventas por fabricante" )
-                     oSubTree:Add( "Ventas por " + getTraslation( "temporada" ) )
+                     oSubTree:Add( "Ventas por " + getConfigTraslation( "temporada" ) )
                      oSubTree:Add( "Ventas por usuarios" )
                      oSubTree:Add( "Ventas por tipos de " + cImp() )
                      oSubTree:Add( "Ventas por tipo de invitaciones" )
@@ -9826,7 +9826,7 @@ METHOD FillTemporal( cCodCaj )
    Ventas por categorias---------------------------------------------------------
    */
 
-   if ::GetItemCheckState( "Ventas por " + getTraslation( "categoría" ) )
+   if ::GetItemCheckState( "Ventas por " + getConfigTraslation( "categoría" ) )
 
       if ::oTikT:Seek( cTurnoCaja )
 
@@ -10116,7 +10116,7 @@ METHOD FillTemporal( cCodCaj )
    Ventas por temporada--------------------------------------------------------
    */
 
-   if ::GetItemCheckState( "Ventas por " + getTraslation( "temporada" ) )
+   if ::GetItemCheckState( "Ventas por " + getConfigTraslation( "temporada" ) )
 
       if ::oTikT:Seek( cTurnoCaja )
 

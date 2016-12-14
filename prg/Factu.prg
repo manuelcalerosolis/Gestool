@@ -1761,8 +1761,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := getTraslation( 'Categorías' )
-   oItem:cMessage       := 'Acceso al fichero de ' + getTraslation( 'categorías' )
+   oItem:cPrompt        := getConfigTraslation( 'Categorías' )
+   oItem:cMessage       := 'Acceso al fichero de ' + getConfigTraslation( 'categorías' )
    oItem:bAction        := {|| Categoria( "01101", oWnd() ) }
    oItem:cId            := "01101"
    oItem:cBmp           := "gc_photographic_filters_16"
@@ -1772,8 +1772,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := getTraslation( 'Temporadas' )
-   oItem:cMessage       := 'Acceso al fichero de ' + getTraslation( 'temporadas' )
+   oItem:cPrompt        := getConfigTraslation( 'Temporadas' )
+   oItem:cMessage       := 'Acceso al fichero de ' + getConfigTraslation( 'temporadas' )
    oItem:bAction        := {|| Temporada( "01114", oWnd() ) }
    oItem:cId            := "01114"
    oItem:cBmp           := "gc_cloud_sun_16"
@@ -2086,7 +2086,7 @@ Function CreateAcceso( oWnd )
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Estados artículos'
-   oItem:cMessage       := 'Acceso al fichero de ' + getTraslation( 'categorías' )
+   oItem:cMessage       := 'Acceso al fichero de ' + getConfigTraslation( 'categorías' )
    oItem:bAction        := {|| EstadoSat( "01126", oWnd() ) }
    oItem:cId            := "01126"
    oItem:cBmp           := "gc_bookmarks_16"
@@ -4838,7 +4838,7 @@ Function MainTablet()
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 6 ) },;
                            "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
-                           "cURL"      => getTraslation("Pedidos de clientes"),;
+                           "cURL"      => getConfigTraslation("Pedidos de clientes"),;
                            "oWnd"      => oDlg,;
                            "oFont"     => oGridFont(),;
                            "lPixel"    => .t.,;

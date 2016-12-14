@@ -84,7 +84,7 @@ METHOD DefineFiles( cPath, cDriver )
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := cDriver()
 
-   DEFINE DATABASE ::oDbf FILE "Situa.Dbf" CLASS "Situa" ALIAS "Situa" PATH ( cPath ) VIA ( cDriver ) COMMENT GetTraslation( "Situaciones" )
+   DEFINE DATABASE ::oDbf FILE "Situa.Dbf" CLASS "Situa" ALIAS "Situa" PATH ( cPath ) VIA ( cDriver ) COMMENT getConfigTraslation( "Situaciones" )
 
       FIELD NAME "cSitua"  TYPE "C"      LEN 140     DEC 0       COMMENT "Número de serie"               COLSIZE 200    OF ::oDbf
       FIELD NAME "idPs"    TYPE "N"      LEN 9       DEC 0       COMMENT "Codigo prestashop"   HIDE      COLSIZE 200    OF ::oDbf
@@ -102,7 +102,7 @@ METHOD Resource( nMode )
 
    local oDlg
 
-   DEFINE DIALOG oDlg RESOURCE "SITUACION" TITLE LblTitle( nMode ) + GetTraslation( "situación" )
+   DEFINE DIALOG oDlg RESOURCE "SITUACION" TITLE LblTitle( nMode ) + getConfigTraslation( "situación" )
 
    REDEFINE GET   ::oDbf:cSitua ;
       ID          100 ;
@@ -137,7 +137,7 @@ RETURN ( oDlg:nResult == IDOK )
 Method lSaveResource( oDlg )
 
    if Empty( ::oDbf:cSitua )
-      MsgStop( "Código de " + GetTraslation( "situación" ) + " no puede estar vacío" )
+      MsgStop( "Código de " + getConfigTraslation( "situación" ) + " no puede estar vacío" )
       ::oGetCodigo:SetFocus()
       Return nil
    end if
