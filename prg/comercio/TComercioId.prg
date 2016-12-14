@@ -122,7 +122,7 @@ METHOD DefineFiles( cPath, cDriver )
 
       FIELD NAME "cDocumento"    TYPE "C" LEN   2  DEC 0 COMMENT "Tipo documento"      OF ::oDbf
       FIELD NAME "cClave"        TYPE "C" LEN 100  DEC 0 COMMENT "Clave principal"     OF ::oDbf
-      FIELD NAME "cWeb"          TYPE "C" LEN  80  DEC 0 COMMENT "Web de Prestashop"   OF ::oDbf
+      FIELD NAME "cWeb"          TYPE "C" LEN  30  DEC 0 COMMENT "Web de Prestashop"   OF ::oDbf
       FIELD NAME "idWeb"         TYPE "N" LEN  11  DEC 0 COMMENT "Id en Prestashop"    OF ::oDbf
 
       INDEX TO "PrestaId.Cdx" TAG "cDocumento"     ON "cDocumento"                              COMMENT "Documento"              NODELETED OF ::oDbf
@@ -284,7 +284,7 @@ RETURN ( .t. )
 METHOD isSeekValues( cTipoDocumento, cClave, cWeb )
 
    cClave         := upper( padr( cClave, 100 ) )
-   cWeb           := upper( padr( cWeb, 80 ) )
+   cWeb           := upper( padr( cWeb, 30 ) )
 
 RETURN ( ::oDbf:seekInOrd( cTipoDocumento + cClave + cWeb, "cWeb" ) )
 
@@ -293,7 +293,7 @@ RETURN ( ::oDbf:seekInOrd( cTipoDocumento + cClave + cWeb, "cWeb" ) )
 METHOD isSeekGestool( cTipoDocumento, idWeb, cWeb )
 
    idWeb          := str( idWeb, 11 )
-   cWeb           := upper( padr( cWeb, 80 ) )
+   cWeb           := upper( padr( cWeb, 30 ) )
 
 RETURN ( ::oDbf:seekInOrd( cTipoDocumento + idWeb + cWeb, "cId" ) )
 

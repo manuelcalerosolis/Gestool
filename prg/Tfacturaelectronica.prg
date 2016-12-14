@@ -1502,12 +1502,12 @@ METHOD GrossAmount() CLASS ItemLine
       ::nGrossAmount    -= oDiscount:nDiscountAmount
    next
 
-   ::nGrossAmount       := Round( ::nGrossAmount, 2 )
+   ::nGrossAmount       := Round( ::nGrossAmount, 6 )
 
    if ::lIvaInc
 
       ::nGrossAmount    := ::nGrossAmount / ( 1 + ( ::nIva / 100 ) )
-      ::nGrossAmount    := Round( ::nGrossAmount, 2 )
+      ::nGrossAmount    := Round( ::nGrossAmount, 6 )
 
    end if 
 
@@ -1526,12 +1526,12 @@ METHOD TotalCost() CLASS ItemLine
       nTotal    -= oDiscount:nDiscountAmount
    next
 
-   nTotal       := Round( nTotal, 2 )
+   nTotal       := Round( nTotal, 6 )
 
    if ::lIvaInc
 
       nTotal    := nTotal / ( 1 + ( ::nIva / 100 ) )
-      nTotal    := Round( nTotal, 2 )
+      nTotal    := Round( nTotal, 6 )
 
    end if 
 

@@ -18791,15 +18791,21 @@ RETURN ( Round( nCalculo, nDec ) )
 
 Function nNetUFacCli( dbfLin, nDec, nVdv )
 
-   local nCalculo    := nTotUFacCli( dbfLin, nDec, nVdv )      
+   local nCalculo    := nTotUFacCli( dbfLin, nDec, nVdv )   
+
+   logwrite("antes de quitar el iva")
+   logwrite( nCalculo )   
 
    if ( dbfLin )->nIva != 0 .and. ( dbfLin )->lIvaLin
-         if nDec != nil
+      if nDec != nil
          nCalculo    -= Round( nCalculo / ( 100 / ( dbfLin )->nIva + 1 ), nDec )
-         else
-            nCalculo    -= ( nCalculo / ( 100 / ( dbfLin )->nIva + 1 ) )
-         end if
+      else
+         nCalculo    -= ( nCalculo / ( 100 / ( dbfLin )->nIva + 1 ) )
       end if
+   end if
+
+   logwrite( "despues de quitar el iva" )
+   logwrite( nCalculo )   
 
 RETURN ( nCalculo )
 
