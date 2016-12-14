@@ -344,7 +344,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
          :nWidth           := 20
          :lHide            := .t.
          :AddResource( "Nil16" )
-         :AddResource( "All_Components_16" )
+         :AddResource( "gc_folder_cubes_16" )
          :AddResource( "Component_Blue_16" )
       end with
 
@@ -573,7 +573,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
       HOTKEY   "E";
       LEVEL    ACC_DELE
 
-   DEFINE BTNSHELL RESOURCE "ALL_COMPONENTS_" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "GC_FOLDER_CUBES_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( CompensarReciboCliente( oWndBrw:oBrw ) );
       TOOLTIP  "(C)ompensar";
@@ -2374,7 +2374,7 @@ static function lGenRecCli( oBrw, oBtn, nDevice )
 
    IF !( D():Documentos( nView ) )->( dbSeek( "RF" ) )
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_WHITE_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( msgStop( "No hay recibos de clientes predefinidos" ) );
          TOOLTIP  "No hay documentos" ;
@@ -2389,7 +2389,7 @@ static function lGenRecCli( oBrw, oBtn, nDevice )
 
          bAction  := bGenRecCli( nDevice, ( D():Documentos( nView ) )->CODIGO, "Imprimiendo recibos de clientes" )
 
-         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
+         oWndBrw:NewAt( "gc_document_white_", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
 
          ( D():Documentos( nView ) )->( dbSkip() )
 

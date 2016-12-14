@@ -1791,13 +1791,13 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
             TOOLTIP  "Generar factura" ;
             FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "Note_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_note_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( PreCliNotas() );
             TOOLTIP  "Generar nota de agenda" ;
             FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "CASHIER_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_CASH_REGISTER_USER_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( if( !( D():PresupuestosClientes( nView ) )->lEstado .and. Empty( ( D():PresupuestosClientes( nView ) )->cNumTik ), FrontTpv( nil, nil, nil, nil, .f., .f., { ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre, nil, nil } ), MsgStop( "Presupuesto aceptado o convertido a ticket" ) ) );
             TOOLTIP  "Convertir a ticket" ;

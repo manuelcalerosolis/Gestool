@@ -431,6 +431,9 @@ GC_FLASH_16 BITMAP "..\\bmp\\gc_flash_16.bmp"
 
 WORKER16 BITMAP "..\\bmp\\Worker_16.bmp"
 MAIL16 BITMAP "..\\bmp\\gc_mail_earth_16.bmp"
-DOCUMENT_PLAIN_USER1_16 BITMAP "..\\bmp\\Document_plain_user1_16.bmp"
+DOCUMENT_MONEY2_16 BITMAP "..\\bmp\\Document_money2_16.bmp"
+
+GC_NOTE_16 BITMAP "..\\bmp\\gc_note_16.bmp"
+GC_SHOPPING_CART_16 BITMAP "..\\bmp\\gc_shopping_cart_16.bmp"
 
 

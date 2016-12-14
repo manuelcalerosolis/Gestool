@@ -1719,7 +1719,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
    end if
 
-   DEFINE BTNSHELL RESOURCE "SHOPPINGCART" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "GC_SHOPPING_CART_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( PedCliente2PedProveedor():New( nView, oTipArt, oFabricante, oStock ) ) ;
       TOOLTIP  "(G)enerar pedido a proveedores" ;
@@ -1758,7 +1758,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
             TOOLTIP  "Modificar dirección" ;
             FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "NOTEBOOK_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_NOTEBOOK_USER_" OF oWndBrw ;
             ACTION   ( if( !Empty( ( D():PedidosClientes( nView ) )->cNumPre ), ZooPreCli( ( D():PedidosClientes( nView ) )->cNumPre ), MsgStop( "El pedido no proviene de presupuesto" ) ) );
             TOOLTIP  "Visualizar presupuesto" ;
             FROM     oRotor ;
@@ -1787,19 +1787,19 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
             TOOLTIP  "Modificar factura" ;
             FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_MONEY2_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_MONEY2_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( FacAntCli( , , ( D():PedidosClientes( nView ) )->cCodCli ) );
             TOOLTIP  "Generar anticipo" ;
             FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "Note_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_NOTE_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( PedCliNotas() );
             TOOLTIP  "Generar nota de agenda" ;
             FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "CASHIER_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_CASH_REGISTER_USER_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( if( ( D():PedidosClientes( nView ) )->nEstado <=1 .and. Empty( ( D():PedidosClientes( nView ) )->cNumTik ), FrontTpv( nil, nil, nil, nil, .f., .f., { nil, ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, nil } ), MsgStop( "Pedido albaranado, cancelado o convertido a ticket" ) ) );
             TOOLTIP  "Convertir a ticket" ;
@@ -4196,7 +4196,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&3. Generar anticipo";
                MESSAGE  "Genera anticipo de cliente" ;
-               RESOURCE "Document_Money2_16";
+               RESOURCE "gc_document_text_money2_16";
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), CreateAntCli( aTmp[ _CCODCLI ] ), msgStop("Debe seleccionar un cliente para hacer una factura de anticipo" ) ) );
 
             SEPARATOR
@@ -6144,7 +6144,7 @@ static function lGenPedCli( oBrw, oBtn, nDevice )
 
    IF !( D():Documentos( nView ) )->( dbSeek( "PC" ) )
 
-         DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_WHITE_" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( msgStop( "No hay facturas de clientes predefinidas" ) );
             TOOLTIP  "No hay documentos" ;
@@ -6158,7 +6158,7 @@ static function lGenPedCli( oBrw, oBtn, nDevice )
 
          bAction  := bGenFac( nDevice, "Imprimiendo pedidos de clientes", ( D():Documentos( nView ) )->Codigo )
 
-         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
+         oWndBrw:NewAt( "gc_document_white_", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
 
          ( D():Documentos( nView ) )->( dbSkip() )
 

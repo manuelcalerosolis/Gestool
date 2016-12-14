@@ -6333,7 +6333,7 @@ STATIC FUNCTION EdtRotorMenu( aTmp, aGet, oDlg, oBrw, nMode )
 
             MENUITEM "&5. Añadir tiket de cliente";
             MESSAGE  "Añade un tiket de cliente" ;
-            RESOURCE "Cashier_user1_16";
+            RESOURCE "gc_cash_register_user_16";
             ACTION   ( SavClient( aTmp, aGet, oDlg, oBrw, nMode ), FrontTpv( nil, nil, ( D():Clientes( nView ) )->Cod, nil ) )
 
          end if

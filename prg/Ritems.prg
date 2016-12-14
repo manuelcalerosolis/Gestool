@@ -607,7 +607,7 @@ FUNCTION CfgDocs( oMenuItem, oWnd )
             CLOSED ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Document_money2_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_MONEY2_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'TC' }, "Field->cTipo == 'TC'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Factura de anticipos" ;
             FROM     oFlt ;
@@ -621,7 +621,7 @@ FUNCTION CfgDocs( oMenuItem, oWnd )
             CLOSED ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Cashier_user1_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_CASH_REGISTER_USER_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'TK' }, "Field->cTipo == 'TK'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Tikets de clientes" ;
             FROM     oFlt ;

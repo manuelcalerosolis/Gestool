@@ -1221,7 +1221,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
                "Sesión",;
                "Almacén",;
                "Delegación" ;
-      MRU      "Cashier_user1_16";
+      MRU      "gc_cash_register_user_16";
       BITMAP   clrTopTPV ;
       ALIAS    ( dbfTikT );
       APPEND   ( TpvAppRec( oWndBrw:oBrw, bEditT, dbfTikT, oWnd, cCodCli, cCodArt, aNumDoc ) );

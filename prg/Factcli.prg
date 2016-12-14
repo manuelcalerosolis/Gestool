@@ -1151,18 +1151,18 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
          lGenFacCli( oWndBrw:oBrw, oPdf, IS_PDF ) ;
 
-      DEFINE BTNSHELL RESOURCE "GC_MAIL_EARTH_" OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( oMailingFacturasClientes:databaseDialog() );
-         TOOLTIP  "Correo electrónico series";
-         LEVEL    ACC_IMPR 
-
       DEFINE BTNSHELL oMail RESOURCE "GC_MAIL_EARTH_" OF oWndBrw ;
          NOBORDER ;
          MENU     This:Toggle() ;
          ACTION   ( oMailingFacturasClientes:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
          TOOLTIP  "Correo electrónico";
          LEVEL    ACC_IMPR
+
+      DEFINE BTNSHELL RESOURCE "GC_MAIL_EARTH_" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( oMailingFacturasClientes:databaseDialog() );
+         TOOLTIP  "Correo electrónico series";
+         LEVEL    ACC_IMPR 
 
       DEFINE BTNSHELL RESOURCE "gc_portable_barcode_scanner_" OF oWndBrw ;
          NOBORDER ;
@@ -1312,7 +1312,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          TOOLTIP  "Modificar Dirección" ;
          FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "NOTEBOOK_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_NOTEBOOK_USER_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( if( !empty( ( D():FacturasClientes( nView ) )->cNumPre ), ZooPreCli( ( D():FacturasClientes( nView ) )->cNumPre ), MsgStop( "No hay presupusto asociado" ) ) );
          TOOLTIP  "Visualizar presupuesto" ;
@@ -1336,13 +1336,13 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          TOOLTIP  "Modificar recibo" ;
          FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_MONEY2_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_MONEY2_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( FacAntCli( nil, nil, ( D():FacturasClientes( nView ) )->cCodCli ) );
          TOOLTIP  "Generar anticipo" ;
          FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "Note_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_NOTE_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( FacCliNotas() );
          TOOLTIP  "Generar nota de agenda" ;
@@ -1350,7 +1350,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
    if ( "VI" $ cParamsMain() )
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_MONEY2_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_MONEY2_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( ExcelIsra() );
          TOOLTIP  "Excel israel" ;
@@ -6961,7 +6961,7 @@ static function lGenFacCli( oBrw, oBtn, nDevice )
 
    if !( D():Documentos( nView ) )->( dbSeek( "FC" ) )
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_WHITE_" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( msgStop( "No hay facturas de clientes predefinidas" ) );
             TOOLTIP  "No hay documentos" ;
@@ -6976,7 +6976,7 @@ static function lGenFacCli( oBrw, oBtn, nDevice )
 
          bAction  := bGenFacCli( nDevice, "Imprimiendo facturas de clientes", ( D():Documentos( nView ) )->Codigo )
 
-         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
+         oWndBrw:NewAt( "gc_document_white_", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
 
          ( D():Documentos( nView ) )->( dbSkip() )
 
@@ -9343,7 +9343,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&5. Generar anticipo";
                MESSAGE  "Genera factura de anticipo" ;
-               RESOURCE "Document_Money2_16" ;
+               RESOURCE "gc_document_text_money2_16" ;
                ACTION   ( if( !empty( aTmp[ _CCODCLI ] ), CreateAntCli( aTmp[ _CCODCLI ] ), msgStop("Debe seleccionar un cliente para hacer una factura de anticipo" ) ) )
 
             MENUITEM    "&6. Modificar cliente";

@@ -259,7 +259,6 @@ EDIT_56 BITMAP "..\\bmp\\edit_56.bmp"
 
 VIEW_56 BITMAP "..\\bmp\\view_56.bmp"
 
-ALL_COMPONENTS_16 BITMAP "..\\bmp\\all_components_16.bmp"
 
 COMPONENT_BLUE_16 BITMAP "..\\bmp\\component_blue_16.bmp"
 

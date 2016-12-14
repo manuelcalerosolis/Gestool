@@ -8035,7 +8035,7 @@ static function lGenFacRec( oBrw, oBtn, nDevice )
 
    if !( D():Documentos( nView ) )->( dbSeek( "FR" ) )
 
-         DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_WHITE_" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( msgStop( "No hay facturas rectificativas de clientes predefinidas" ) );
             TOOLTIP  "No hay documentos" ;
@@ -8050,7 +8050,7 @@ static function lGenFacRec( oBrw, oBtn, nDevice )
 
          bAction  := bGenFacRec( nDevice, "Imprimiendo facturas rectificativas de clientes", ( D():Documentos( nView ) )->CODIGO )
 
-         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
+         oWndBrw:NewAt( "gc_document_white_", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
 
          ( D():Documentos( nView ) )->( dbSkip() )
 

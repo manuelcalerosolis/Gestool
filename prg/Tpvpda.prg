@@ -848,7 +848,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon )
                "Nombre",;
                "Matrícula",;
                "Sesión" ;
-      MRU      "Cashier_user1_16";
+      MRU      "gc_cash_register_user_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( dbfTikT );
       APPEND   ( TpvAppRec( oWndBrw:oBrw, bEditT, dbfTikT, oWnd, cCodCli, cCodArt ) );

@@ -1195,25 +1195,25 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          TOOLTIP  "Modificar factura" ;
          FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_MONEY2_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_MONEY2_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( if( !lFacturado( D():Get( "AlbCliT", nView ) ), FacAntCli( nil, nil, ( D():Get( "AlbCliT", nView ) )->cCodCli ), msgStop( "Albarán ya facturado" ) ) );
          TOOLTIP  "Generar anticipo" ;
          FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "Note_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_NOTE_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( AlbCliNotas() );
          TOOLTIP  "Generar nota de agenda" ;
          FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "CASHIER_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_CASH_REGISTER_USER_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( if( !lFacturado( D():Get( "AlbCliT", nView ) ) .and. empty( ( D():Get( "AlbCliT", nView ) )->cNumTik ), FrontTpv( nil, nil, nil, nil, .f., .f., { nil, nil, ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb } ), MsgStop( "Albarán facturado o convertido a ticket" ) ) );
          TOOLTIP  "Convertir a ticket" ;
          FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "CASHIER_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_CASH_REGISTER_USER_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( FacturarLineas() );
          TOOLTIP  "Facturar lineas" ;
@@ -4289,7 +4289,7 @@ Static Function EdtRecMenu( aGet, aTmp, oBrw, oDlg )
 
             MENUITEM    "&3. Generar anticipo";
                MESSAGE  "Genera factura de anticipo" ;
-               RESOURCE "Document_Money2_16" ;
+               RESOURCE "gc_document_text_money2_16" ;
                ACTION   ( if( !empty( aTmp[ _CCODCLI ] ),;
                               CreateAntCli( aTmp[ _CCODCLI ] ),;
                               msgStop("Debe seleccionar un cliente para hacer una factura de anticipo" ) ) )
@@ -14393,7 +14393,7 @@ Static Function lGenAlbCli( oBrw, oBtn, nDevice )
 
    IF !( D():Documentos( nView ) )->( dbSeek( "AC" ) )
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_WHITE_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( msgStop( "No hay documentos predefinidos" ) );
          TOOLTIP  "No hay documentos" ;
@@ -14407,7 +14407,7 @@ Static Function lGenAlbCli( oBrw, oBtn, nDevice )
 
          bAction  := bGenAlbCli( nDevice, "Imprimiendo albaranes de clientes", ( D():Documentos( nView ) )->Codigo )
 
-         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
+         oWndBrw:NewAt( "gc_document_white_", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
 
          ( D():Documentos( nView ) )->( dbSkip() )
 

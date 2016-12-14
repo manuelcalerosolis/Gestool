@@ -3334,7 +3334,7 @@ Function BuildPdaMenu()
             MESSAGE  "Acceso a la agenda del usuario" ;
             HELPID   "01075" ;
             ACTION   ( TNotas():New( cPatDat(), oWnd, oMenuItem ):Activate() );
-            RESOURCE "Note_16"
+            RESOURCE "gc_note_16"
 
       ENDMENU
 

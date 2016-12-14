@@ -3067,7 +3067,7 @@ static function lGenAntCli( oBrw, oBtn, nDevice )
 
    if !( dbfDoc )->( dbSeek( "TC" ) )
 
-         DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_WHITE_" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( msgStop( "No hay anticipos de clientes predefinidas" ) );
             TOOLTIP  "No hay documentos" ;
@@ -3082,7 +3082,7 @@ static function lGenAntCli( oBrw, oBtn, nDevice )
 
          bAction  := bGenAntCli( nDevice, "Imprimiendo anticipos de clientes", ( dbfDoc )->CODIGO )
 
-         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( dbfDoc )->cDescrip ) , , , , , oBtn )
+         oWndBrw:NewAt( "gc_document_white_", , , bAction, Rtrim( ( dbfDoc )->cDescrip ) , , , , , oBtn )
 
          ( dbfDoc )->( dbSkip() )
 

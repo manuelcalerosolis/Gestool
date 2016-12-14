@@ -408,7 +408,7 @@ METHOD Activate( oMenuItem, oWnd )
                               "Document_delete_16",;
                               "Package_book_red_16",;
                               "Worker2_Form_Red_16",;
-                              "Cashier_user1_16" }
+                              "gc_cash_register_user_16" }
 
    if !::OpenFiles()
       return( Self )

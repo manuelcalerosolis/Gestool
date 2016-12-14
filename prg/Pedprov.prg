@@ -889,7 +889,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
 
    end if
 
-   DEFINE BTNSHELL RESOURCE "SHOPPINGCART" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "GC_SHOPPING_CART_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( Generador( oWndBrw:oBrw ) ) ;
       TOOLTIP  "(G)enerar" ;

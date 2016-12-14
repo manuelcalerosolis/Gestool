@@ -247,8 +247,8 @@ METHOD OpenFiles( lExclusive )
       aAdd( ::aBmp, LoadBitmap( GetResources(), "gc_clipboard_empty_user_16" ) )      // Pedido clientes 7
       aAdd( ::aBmp, LoadBitmap( GetResources(), "gc_document_empty_16" ) )       // Albaranes clientes 8
       aAdd( ::aBmp, LoadBitmap( GetResources(), "gc_document_text_businessman_16" ) )             // Factura clientes 9
-      aAdd( ::aBmp, LoadBitmap( GetResources(), "Cashier_user1_16" ) )              // TPV 10
-      aAdd( ::aBmp, LoadBitmap( GetResources(), "Document_money2_16" ) )            // Factura anticipo 11
+      aAdd( ::aBmp, LoadBitmap( GetResources(), "gc_cash_register_user_16" ) )              // TPV 10
+      aAdd( ::aBmp, LoadBitmap( GetResources(), "gc_document_text_money2_16" ) )            // Factura anticipo 11
       aAdd( ::aBmp, LoadBitmap( GetResources(), "Briefcase_user1_16" ) )            // Recibo clientes 12
       aAdd( ::aBmp, LoadBitmap( GetResources(), "Clipboard_empty_money_16" ) )      //
       aAdd( ::aBmp, LoadBitmap( GetResources(), "Document_plain_money_16" ) )

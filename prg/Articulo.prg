@@ -1625,7 +1625,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          ALLOW    EXIT ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "Cashier_user1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_CASH_REGISTER_USER_" OF oWndBrw ;
          ACTION   ( FrontTpv( nil, oWnd, nil, ( D():Articulos( nView ) )->Codigo ) );
          TOOLTIP  "Añadir tiket de cliente" ;
          FROM     oRotor ;

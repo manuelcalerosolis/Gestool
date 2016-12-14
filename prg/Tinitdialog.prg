@@ -126,15 +126,15 @@ METHOD New()
    ::oImageList:AddMasked( TBitmap():Define( "gc_clipboard_empty_user_16", ,       Self ), Rgb( 255, 0, 255 ) )  // 8
    ::oImageList:AddMasked( TBitmap():Define( "gc_document_empty_16", ,        Self ), Rgb( 255, 0, 255 ) )  // 9
    ::oImageList:AddMasked( TBitmap():Define( "gc_document_text_businessman_16", ,              Self ), Rgb( 255, 0, 255 ) )  //10
-   ::oImageList:AddMasked( TBitmap():Define( "Document_money2_16", ,             Self ), Rgb( 255, 0, 255 ) )  //11
+   ::oImageList:AddMasked( TBitmap():Define( "gc_document_text_money2_16", ,             Self ), Rgb( 255, 0, 255 ) )  //11
    ::oImageList:AddMasked( TBitmap():Define( "Document_Delete_16", ,             Self ), Rgb( 255, 0, 255 ) )  //12
    ::oImageList:AddMasked( TBitmap():Define( "Briefcase_User1_16", ,             Self ), Rgb( 255, 0, 255 ) )  //13
-   ::oImageList:AddMasked( TBitmap():Define( "Cashier_user1_16", ,               Self ), Rgb( 255, 0, 255 ) )  //14
+   ::oImageList:AddMasked( TBitmap():Define( "gc_cash_register_user_16", ,               Self ), Rgb( 255, 0, 255 ) )  //14
    ::oImageList:AddMasked( TBitmap():Define( "Cashier_hand_point_16", ,          Self ), Rgb( 255, 0, 255 ) )  //15
    ::oImageList:AddMasked( TBitmap():Define( "Shield_16", ,                      Self ), Rgb( 255, 0, 255 ) )  //16
    ::oImageList:AddMasked( TBitmap():Define( "Satellite_dish_16", ,              Self ), Rgb( 255, 0, 255 ) )  //17
    ::oImageList:AddMasked( TBitmap():Define( "Pda_16", ,                         Self ), Rgb( 255, 0, 255 ) )  //18
-   ::oImageList:AddMasked( TBitmap():Define( "Note_16", ,                        Self ), Rgb( 255, 0, 255 ) )  //19
+   ::oImageList:AddMasked( TBitmap():Define( "gc_note_16", ,                        Self ), Rgb( 255, 0, 255 ) )  //19
    ::oImageList:AddMasked( TBitmap():Define( "Bell_16", ,                        Self ), Rgb( 255, 0, 255 ) )  //20
    ::oImageList:AddMasked( TBitmap():Define( "Window_Delete_16", ,               Self ), Rgb( 255, 0, 255 ) )  //21
    ::oImageList:AddMasked( TBitmap():Define( "End16", ,                          Self ), Rgb( 255, 0, 255 ) )  //22

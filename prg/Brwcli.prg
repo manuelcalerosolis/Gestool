@@ -536,12 +536,12 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
          :AddResource( "gc_document_empty_16" )
          :AddResource( "gc_document_text_user_16" )
          :AddResource( "Document_delete_16" )
-         :AddResource( "Document_money2_16" )
-         :AddResource( "Cashier_user1_16" )
+         :AddResource( "gc_document_text_money2_16" )
+         :AddResource( "gc_cash_register_user_16" )
          :AddResource( "Briefcase_user1_16" )
          :AddResource( "Clipboard_empty_money_16" )
          :AddResource( "Document_plain_money_16" )
-         :AddResource( "Cashier_user1_16" )
+         :AddResource( "gc_cash_register_user_16" )
          :AddResource( "Power-drill_user1_16" )
       end with
 
@@ -790,8 +790,8 @@ Static Function initDialog( cCodCli, oBrwTmp, oTree, oDlg )
    oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_user_16" ),         Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Document_delete_16" ),        Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Briefcase_user1_16" ),        Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Document_money2_16" ),        Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Cashier_user1_16" ),          Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_money2_16" ),        Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_cash_register_user_16" ),          Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "gc_folder_document_16" ),        Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Money_envelope_16" ),         Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_money_16" ),  Rgb( 255, 0, 255 ) )
@@ -859,7 +859,7 @@ Static Function initDialog( cCodCli, oBrwTmp, oTree, oDlg )
 
          MENUITEM "&6. Añadir tiket de cliente";
             MESSAGE  "Añade un tiket de cliente" ;
-            RESOURCE "Cashier_user1_16";
+            RESOURCE "gc_cash_register_user_16";
             ACTION   ( AppTikCli( cCodCli ) )
 
          ENDMENU
