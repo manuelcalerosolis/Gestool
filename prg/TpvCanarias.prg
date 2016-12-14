@@ -1668,7 +1668,7 @@ else
          FROM     oRotor ;
          CLOSED ;
 
-      DEFINE BTNSHELL RESOURCE "USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_USER_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( EdtCli( ( dbfTikT )->cCliTik ) );
          TOOLTIP  "Modificar cliente" ;

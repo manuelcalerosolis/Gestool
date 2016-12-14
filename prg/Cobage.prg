@@ -940,7 +940,7 @@ METHOD EdtRecMenu( oDlg )
 
             MENUITEM    "&2. Modificar cliente";
                MESSAGE  "Modifica la ficha del cliente" ;
-               RESOURCE "User1_16" ;
+               RESOURCE "gc_user_16" ;
                ACTION   ( if( !Empty( ::oDetCobAge:oDbfVir:cCodCli ), EdtCli( ::oDetCobAge:oDbfVir:cCodCli ), MsgStop( "Código de cliente vacío" ) ) )
 
             MENUITEM    "&3. Informe de cliente";

@@ -532,9 +532,9 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
          :bBmpData      := {|| nImagenDocument() }
          :nWidth        := 20
          :AddResource( "Notebook_user1_16" )
-         :AddResource( "Clipboard_empty_user1_16" )
-         :AddResource( "Document_plain_user1_16" )
-         :AddResource( "gc_document_text_businessman_16" )
+         :AddResource( "gc_clipboard_empty_user_16" )
+         :AddResource( "gc_document_empty_16" )
+         :AddResource( "gc_document_text_user_16" )
          :AddResource( "Document_delete_16" )
          :AddResource( "Document_money2_16" )
          :AddResource( "Cashier_user1_16" )
@@ -783,11 +783,11 @@ Static Function initDialog( cCodCli, oBrwTmp, oTree, oDlg )
 
    oTreeImageList := TImageList():New( 16, 16 )
 
-   oTreeImageList:AddMasked( TBitmap():Define( "User1_16" ),                  Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_user_16" ),                  Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Notebook_user1_16" ),         Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_user1_16" ),  Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_user1_16" ),   Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_businessman_16" ),         Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_clipboard_empty_user_16" ),  Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_document_empty_16" ),   Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_user_16" ),         Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Document_delete_16" ),        Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Briefcase_user1_16" ),        Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Document_money2_16" ),        Rgb( 255, 0, 255 ) )
@@ -844,17 +844,17 @@ Static Function initDialog( cCodCli, oBrwTmp, oTree, oDlg )
 
          MENUITEM "&3. Añadir pedido de cliente";
             MESSAGE  "Añade un pedido de cliente" ;
-            RESOURCE "Clipboard_empty_user1_16";
+            RESOURCE "gc_clipboard_empty_user_16";
             ACTION   ( AppPedCli( cCodCli ) )
 
          MENUITEM "&4. Añadir albarán de cliente";
             MESSAGE  "Añade un albarán de cliente" ;
-            RESOURCE "Document_plain_user1_16";
+            RESOURCE "gc_document_empty_16";
             ACTION   ( AppAlbCli( { "Cliente" => cCodCli } ) )
 
          MENUITEM "&5. Añadir factura de cliente";
             MESSAGE  "Añade una factura de cliente" ;
-            RESOURCE "gc_document_text_businessman_16";
+            RESOURCE "gc_document_text_user_16";
             ACTION   ( AppFacCli( cCodCli ) )
 
          MENUITEM "&6. Añadir tiket de cliente";

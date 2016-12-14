@@ -1650,7 +1650,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       lGenPreCli( oWndBrw:oBrw, oPdf, IS_PDF ) ;
 
-   DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
+   DEFINE BTNSHELL oMail RESOURCE "GC_MAIL_EARTH_" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
       ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
@@ -1753,7 +1753,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
          ACTION   ( oRotor:Expand() ) ;
          TOOLTIP  "Rotor" ;
 
-      DEFINE BTNSHELL RESOURCE "USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_USER_" OF oWndBrw ;
             ACTION   ( EdtCli( ( D():PresupuestosClientes( nView ) )->cCodCli ) );
             TOOLTIP  "Modificar cliente" ;
             FROM     oRotor ;
@@ -1768,24 +1768,24 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
             TOOLTIP  "Modificar dirección" ;
             FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "CLIPBOARD_EMPTY_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_CLIPBOARD_EMPTY_USER_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( if( !( D():PresupuestosClientes( nView ) )->lEstado, PedCli( nil, nil, nil, nil, ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre ), MsgStop( "El presupuesto ya ha sido aceptado" ) ) );
             TOOLTIP  "Generar pedido" ;
             FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "CLIPBOARD_EMPTY_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_CLIPBOARD_EMPTY_USER_" OF oWndBrw ;
             ACTION   ( Pre2Ped( ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre ) );
             TOOLTIP  "Modificar pedido" ;
             FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_EMPTY_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( if( !( D():PresupuestosClientes( nView ) )->lEstado, AlbCli( nil, nil, { "Presupuesto" => ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre } ), MsgStop( "El presupuesto ya ha sido aceptado" ) ) );
             TOOLTIP  "Generar albarán" ;
             FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_USER_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( if( !( D():PresupuestosClientes( nView ) )->lEstado, FactCli( nil, nil, { "Presupuesto" => ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre } ), MsgStop( "El presupuesto ya ha sido aceptado" ) ) );
             TOOLTIP  "Generar factura" ;
@@ -3294,12 +3294,12 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&2. Modificar cliente";
                MESSAGE  "Modificar la ficha del cliente" ;
-               RESOURCE "User1_16" ;
+               RESOURCE "gc_user_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "Código cliente vacío" ) ) )
 
             MENUITEM    "&3. Modificar cliente contactos";
                MESSAGE  "Modifica la ficha del cliente en contactos" ;
-               RESOURCE "User1_16" ;
+               RESOURCE "gc_user_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ], , 5 ), MsgStop( "Código de cliente vacío" ) ) )
 
             MENUITEM    "&4. Informe de cliente";
@@ -7096,7 +7096,7 @@ static function lGenPreCli( oBrw, oBtn, nDevice )
 
    IF !( D():Documentos( nView ) )->( dbSeek( "RC" ) )
 
-         DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_WHITE_" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( msgStop( "No hay presupuestos de proveedores predefinidos" ) );
             TOOLTIP  "No hay documentos" ;
@@ -7111,7 +7111,7 @@ static function lGenPreCli( oBrw, oBtn, nDevice )
 
          bAction  := bGenPreCli( nDevice, "Imprimiendo presupuestos a clientes", ( D():Documentos( nView ) )->CODIGO )
 
-         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
+         oWndBrw:NewAt( "gc_document_white_", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
 
          ( D():Documentos( nView ) )->( dbSkip() )
 

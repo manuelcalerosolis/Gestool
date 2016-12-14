@@ -238,21 +238,21 @@ METHOD OpenFiles( lExclusive )
       Cargamos los bitmaps-----------------------------------------------------
       */
 
-      aAdd( ::aBmp, LoadBitmap( GetResources(), "Flash_16" ) )                      // Evento 1
+      aAdd( ::aBmp, LoadBitmap( GetResources(), "gc_flash_16" ) )                      // Evento 1
       aAdd( ::aBmp, LoadBitmap( GetResources(), "PedPrv" ) )                        // Pedido proveedores 2
       aAdd( ::aBmp, LoadBitmap( GetResources(), "AlbPrv" ) )                        // Albaran proveedores 3
       aAdd( ::aBmp, LoadBitmap( GetResources(), "FacPrv" ) )                        // Factura proveedores 4
       aAdd( ::aBmp, LoadBitmap( GetResources(), "MovAlm" ) )                        // Movimientos de almacen 5
       aAdd( ::aBmp, LoadBitmap( GetResources(), "Notebook_user1_16" ) )             // Presupuesto clientes 6
-      aAdd( ::aBmp, LoadBitmap( GetResources(), "Clipboard_empty_user1_16" ) )      // Pedido clientes 7
-      aAdd( ::aBmp, LoadBitmap( GetResources(), "Document_plain_user1_16" ) )       // Albaranes clientes 8
+      aAdd( ::aBmp, LoadBitmap( GetResources(), "gc_clipboard_empty_user_16" ) )      // Pedido clientes 7
+      aAdd( ::aBmp, LoadBitmap( GetResources(), "gc_document_empty_16" ) )       // Albaranes clientes 8
       aAdd( ::aBmp, LoadBitmap( GetResources(), "gc_document_text_businessman_16" ) )             // Factura clientes 9
       aAdd( ::aBmp, LoadBitmap( GetResources(), "Cashier_user1_16" ) )              // TPV 10
       aAdd( ::aBmp, LoadBitmap( GetResources(), "Document_money2_16" ) )            // Factura anticipo 11
       aAdd( ::aBmp, LoadBitmap( GetResources(), "Briefcase_user1_16" ) )            // Recibo clientes 12
       aAdd( ::aBmp, LoadBitmap( GetResources(), "Clipboard_empty_money_16" ) )      //
       aAdd( ::aBmp, LoadBitmap( GetResources(), "Document_plain_money_16" ) )
-      aAdd( ::aBmp, LoadBitmap( GetResources(), "User1_16" ) )
+      aAdd( ::aBmp, LoadBitmap( GetResources(), "gc_user_16" ) )
 
    RECOVER USING oError
 
@@ -635,10 +635,10 @@ Method InitFilter()
 
    local oTree
 
-   ::oImageList:AddMasked( TBitmap():Define( "Flash_16" ),           Rgb( 255, 0, 255 ) )
+   ::oImageList:AddMasked( TBitmap():Define( "gc_flash_16" ),           Rgb( 255, 0, 255 ) )
    ::oImageList:AddMasked( TBitmap():Define( "gc_document_text_businessman_16" ),  Rgb( 255, 0, 255 ) )
    ::oImageList:AddMasked( TBitmap():Define( "Briefcase_user1_16" ), Rgb( 255, 0, 255 ) )
-   ::oImageList:AddMasked( TBitmap():Define( "User1_16" ),           Rgb( 255, 0, 255 ) )
+   ::oImageList:AddMasked( TBitmap():Define( "gc_user_16" ),           Rgb( 255, 0, 255 ) )
 
    oTree       := ::oTree:Add( "Eventos",                      0 )
                   oTree:Add( START_APLICATION,                 0 )

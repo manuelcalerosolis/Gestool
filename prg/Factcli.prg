@@ -792,7 +792,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Mail"
+         :cHeader          := "GC_MAIL_EARTH_"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():FacturasClientes( nView ) )->lMail }
@@ -1151,13 +1151,13 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
          lGenFacCli( oWndBrw:oBrw, oPdf, IS_PDF ) ;
 
-      DEFINE BTNSHELL RESOURCE "Mail" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_MAIL_EARTH_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( oMailingFacturasClientes:databaseDialog() );
          TOOLTIP  "Correo electrónico series";
          LEVEL    ACC_IMPR 
 
-      DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
+      DEFINE BTNSHELL oMail RESOURCE "GC_MAIL_EARTH_" OF oWndBrw ;
          NOBORDER ;
          MENU     This:Toggle() ;
          ACTION   ( oMailingFacturasClientes:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
@@ -1294,7 +1294,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          ACTION   ( oRotor:Expand() ) ;
          TOOLTIP  "Rotor" ;
 
-      DEFINE BTNSHELL RESOURCE "USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_USER_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( EdtCli( ( D():FacturasClientes( nView ) )->cCodCli ) );
          TOOLTIP  "Modificar cliente" ;
@@ -1318,13 +1318,13 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          TOOLTIP  "Visualizar presupuesto" ;
          FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "CLIPBOARD_empty_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_CLIPBOARD_EMPTY_USER_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( if( !empty( ( D():FacturasClientes( nView ) )->cNumPed ), ZooPedCli( ( D():FacturasClientes( nView ) )->cNumPed ), MsgStop( "No hay pedido asociado" ) ) );
          TOOLTIP  "Visualizar pedido" ;
          FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_EMPTY_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( if( !empty( ( D():FacturasClientes( nView ) )->cNumAlb ), ZooAlbCli( ( D():FacturasClientes( nView ) )->cNumAlb ), MsgStop( "No hay albarán asociado" ) ) );
          TOOLTIP  "Visualizar albarán" ;
@@ -3657,7 +3657,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE BTNBMP oBtnPed ;
          ID       602 ;
          OF       fldGeneral ;
-         RESOURCE "Clipboard_empty_user1_16" ;
+         RESOURCE "gc_clipboard_empty_user_16" ;
          NOBORDER ;
          TOOLTIP  "Importar pedido" ;
          ACTION   ( BrwPedCli( aGet[ _CNUMPED ], dbfPedCliT, dbfPedCliL, dbfIva, dbfDiv, D():FormasPago( nView ), aGet[ _LIVAINC ] ) )
@@ -3665,7 +3665,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE BTNBMP oBtnAlb ;
          ID       603 ;
          OF       fldGeneral ;
-         RESOURCE "Document_plain_user1_16" ;
+         RESOURCE "gc_document_empty_16" ;
          NOBORDER ;
          TOOLTIP  "Importar albaran" ;
          ACTION   ( BrwAlbCli( aGet[ _CNUMALB ], aGet[ _LIVAINC ] ) )
@@ -9329,14 +9329,14 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&3. Visualizar pedido";
                MESSAGE  "Visualiza el pedido del que proviene" ;
-               RESOURCE "Clipboard_empty_User1_16" ;
+               RESOURCE "gc_clipboard_empty_user_16" ;
                ACTION   ( if( !empty( aTmp[ _CNUMPED ] ), ZooPedCli( aTmp[ _CNUMPED ] ), MsgStop( "No hay pedido asociado" ) ) );
 
             SEPARATOR
 
             MENUITEM    "&4. Visualizar albarán";
                MESSAGE  "Visualiza el albarán del que proviene" ;
-               RESOURCE "Document_Plain_User1_16" ;
+               RESOURCE "gc_document_empty_16" ;
                ACTION   ( if( !empty( aTmp[ _CNUMALB ] ), ZooAlbCli( aTmp[ _CNUMALB ] ), MsgStop( "No hay albarán asociado" ) ) );
 
             SEPARATOR
@@ -9348,12 +9348,12 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&6. Modificar cliente";
                MESSAGE  "Modifica la ficha del cliente" ;
-               RESOURCE "User1_16" ;
+               RESOURCE "gc_user_16" ;
                ACTION   ( if( !empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) )
 
             MENUITEM    "&7. Modificar cliente contactos";
                MESSAGE  "Modifica la ficha del cliente en contactos" ;
-               RESOURCE "User1_16" ;
+               RESOURCE "gc_user_16" ;
                ACTION   ( if( !empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ], , 5 ), MsgStop( "Código de cliente vacío" ) ) )
 
             MENUITEM    "&8. Informe de cliente";

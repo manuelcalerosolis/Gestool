@@ -116,15 +116,15 @@ METHOD New()
    ::oImageList         := TImageList():New( 16, 16 )
 
    ::oImageList:AddMasked( TBitmap():Define( "Cube_Yellow_16", ,                 Self ), Rgb( 255, 0, 255 ) )  // 0
-   ::oImageList:AddMasked( TBitmap():Define( "User1_16", ,                       Self ), Rgb( 255, 0, 255 ) )  // 1
+   ::oImageList:AddMasked( TBitmap():Define( "gc_user_16", ,                       Self ), Rgb( 255, 0, 255 ) )  // 1
    ::oImageList:AddMasked( TBitmap():Define( "gc_businessman_16", ,                 Self ), Rgb( 255, 0, 255 ) )  // 2
    ::oImageList:AddMasked( TBitmap():Define( "gc_clipboard_empty_businessman_16", , Self ), Rgb( 255, 0, 255 ) )  // 3
    ::oImageList:AddMasked( TBitmap():Define( "gc_document_empty_businessman_16", ,  Self ), Rgb( 255, 0, 255 ) )  // 4
    ::oImageList:AddMasked( TBitmap():Define( "gc_document_text_businessman_16", ,        Self ), Rgb( 255, 0, 255 ) )  // 5
    ::oImageList:AddMasked( TBitmap():Define( "gc_briefcase2_businessman_16", ,          Self ), Rgb( 255, 0, 255 ) )  // 6
    ::oImageList:AddMasked( TBitmap():Define( "Notebook_user1_16", ,              Self ), Rgb( 255, 0, 255 ) )  // 7
-   ::oImageList:AddMasked( TBitmap():Define( "Clipboard_empty_user1_16", ,       Self ), Rgb( 255, 0, 255 ) )  // 8
-   ::oImageList:AddMasked( TBitmap():Define( "Document_plain_user1_16", ,        Self ), Rgb( 255, 0, 255 ) )  // 9
+   ::oImageList:AddMasked( TBitmap():Define( "gc_clipboard_empty_user_16", ,       Self ), Rgb( 255, 0, 255 ) )  // 8
+   ::oImageList:AddMasked( TBitmap():Define( "gc_document_empty_16", ,        Self ), Rgb( 255, 0, 255 ) )  // 9
    ::oImageList:AddMasked( TBitmap():Define( "gc_document_text_businessman_16", ,              Self ), Rgb( 255, 0, 255 ) )  //10
    ::oImageList:AddMasked( TBitmap():Define( "Document_money2_16", ,             Self ), Rgb( 255, 0, 255 ) )  //11
    ::oImageList:AddMasked( TBitmap():Define( "Document_Delete_16", ,             Self ), Rgb( 255, 0, 255 ) )  //12
@@ -138,7 +138,7 @@ METHOD New()
    ::oImageList:AddMasked( TBitmap():Define( "Bell_16", ,                        Self ), Rgb( 255, 0, 255 ) )  //20
    ::oImageList:AddMasked( TBitmap():Define( "Window_Delete_16", ,               Self ), Rgb( 255, 0, 255 ) )  //21
    ::oImageList:AddMasked( TBitmap():Define( "End16", ,                          Self ), Rgb( 255, 0, 255 ) )  //22
-   ::oImageList:AddMasked( TBitmap():Define( "Flash_16", ,                       Self ), Rgb( 255, 0, 255 ) )  //23
+   ::oImageList:AddMasked( TBitmap():Define( "gc_flash_16", ,                       Self ), Rgb( 255, 0, 255 ) )  //23
    ::oImageList:AddMasked( TBitmap():Define( "Document_16", ,                    Self ), Rgb( 255, 0, 255 ) )  //24
 
    ::lAdministrador     := oUser():lAdministrador()

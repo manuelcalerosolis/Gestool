@@ -427,5 +427,10 @@ GC_DOCUMENT_WHITE_16 BITMAP "..\\bmp\\gc_document_white_16.bmp"
 DOCUMENT_USER1_32 BITMAP "..\\bmp\\document_user1_32.bmp"
 MONEY2_BUSINESSMAN_32 BITMAP "..\\bmp\\Money2_businessman_32.bmp"
 GC_UNDO_16 BITMAP "..\\bmp\\gc_undo_16.bmp"
+GC_FLASH_16 BITMAP "..\\bmp\\gc_flash_16.bmp"
+
+WORKER16 BITMAP "..\\bmp\\Worker_16.bmp"
+MAIL16 BITMAP "..\\bmp\\gc_mail_earth_16.bmp"
+DOCUMENT_PLAIN_USER1_16 BITMAP "..\\bmp\\Document_plain_user1_16.bmp"
 
 

@@ -983,7 +983,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
       #ifndef __TACTIL__
 
-      DEFINE BTNSHELL RESOURCE "Telephone_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_TELEPHONE_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( LlamadaAhora(), oWndBrw:Refresh() );
          TOOLTIP  "(L)lamada ahora";
@@ -1024,7 +1024,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          TOOLTIP  "Eti(q)uetas" ;
          HOTKEY   "Q"
 
-      DEFINE BTNSHELL RESOURCE "Mail" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_MAIL_EARTH_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected )  ) ;
          TOOLTIP  "Enviar correos" ;
@@ -1116,42 +1116,42 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
             ALLOW    EXIT ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Notebook_user1_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_NOTEBOOK_USER_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( PreCli( nil, oWnd, ( D():Clientes( nView ) )->Cod, nil ) );
             TOOLTIP  "Añadir presupuesto de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Clipboard_empty_user1_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_CLIPBOARD_EMPTY_USER_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( PedCli( nil, oWnd, ( D():Clientes( nView ) )->Cod, nil ) );
             TOOLTIP  "Añadir pedido de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Document_plain_user1_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_EMPTY_" OF oWndBrw ;
             ACTION   ( appAlbCli( { "Cliente" => ( D():Clientes( nView ) )->Cod } ) );
             TOOLTIP  "Añadir albarán de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT
 
 /*
-         DEFINE BTNSHELL RESOURCE "Document_plain_user1_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_EMPTY_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( AlbCli( nil, oWnd, { "Cliente" => ( D():Clientes( nView ) )->Cod } ) );
             TOOLTIP  "Ir a albarán de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT*/
 
-         DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_USER_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( FactCli( nil, oWnd, { "Cliente" => ( D():Clientes( nView ) )->Cod } ) );
             TOOLTIP  "Añadir factura de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Cashier_user1_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_CASH_REGISTER_USER_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( FrontTpv( nil, oWnd, ( D():Clientes( nView ) )->Cod, nil ) );
             TOOLTIP  "Añadir tiket de cliente" ;
@@ -6318,12 +6318,12 @@ STATIC FUNCTION EdtRotorMenu( aTmp, aGet, oDlg, oBrw, nMode )
 
             MENUITEM "&2. Añadir pedido de cliente";
             MESSAGE  "Añade un pedido de cliente" ;
-            RESOURCE "Clipboard_empty_user1_16";
+            RESOURCE "gc_clipboard_empty_user_16";
             ACTION   ( SavClient( aTmp, aGet, oDlg, oBrw, nMode ), PedCli( nil, nil, ( D():Clientes( nView ) )->Cod, nil ) )
 
             MENUITEM "&3. Añadir albarán de cliente";
             MESSAGE  "Añade un albarán de cliente" ;
-            RESOURCE "Document_plain_user1_16";
+            RESOURCE "gc_document_empty_16";
             ACTION   ( SavClient( aTmp, aGet, oDlg, oBrw, nMode ), AlbCli( nil, nil,  { "Cliente" => ( D():Clientes( nView ) )->Cod } ) )
 
             MENUITEM "&4. Añadir factura de cliente";

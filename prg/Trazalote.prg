@@ -402,8 +402,8 @@ METHOD Activate( oMenuItem, oWnd )
                               "gc_document_empty_businessman_16",;
                               "gc_document_text_businessman_16",;
                               "Notebook_user1_16",;
-                              "Clipboard_empty_user1_16",;
-                              "Document_plain_user1_16",;
+                              "gc_clipboard_empty_user_16",;
+                              "gc_document_empty_16",;
                               "gc_document_text_businessman_16",;
                               "Document_delete_16",;
                               "Package_book_red_16",;

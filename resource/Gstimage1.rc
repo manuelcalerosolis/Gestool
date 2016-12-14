@@ -30,7 +30,6 @@ UP BITMAP "..\\bmp\\res303.bmp"
 
 DOWN BITMAP "..\\bmp\\res304.bmp"
 
-MAIL16 BITMAP "..\\bmp\\res321.bmp"
 
 IMG500EUROS BITMAP "..\\bmp\\res249.bmp"
 

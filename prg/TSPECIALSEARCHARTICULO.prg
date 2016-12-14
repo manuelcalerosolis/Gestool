@@ -451,7 +451,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
          :nHeadBmpNo          := 1
          :nBtnBmp             := 1
          :nHeadBmpAlign       := 1
-         :AddResource( "User1_16" )
+         :AddResource( "gc_user_16" )
       end with
 
       with object ( ::oBrwArticulo:AddCol() )

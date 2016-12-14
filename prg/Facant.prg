@@ -1014,7 +1014,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
 
       lGenAntCli( oWndBrw:oBrw, oPdf, IS_PDF ) ;
 
-   DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
+   DEFINE BTNSHELL oMail RESOURCE "GC_MAIL_EARTH_" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
       ACTION   ( GenAntCli( IS_MAIL ) ) ;
@@ -1103,7 +1103,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
       ACTION   ( oRotor:Expand() ) ;
       TOOLTIP  "Rotor" ;
 
-      DEFINE BTNSHELL RESOURCE "USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_USER_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( EdtCli( ( dbfAntCliT )->cCodCli ) );
          TOOLTIP  "Modificar cliente" ;
@@ -1124,7 +1124,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
          FROM     oRotor ;
          CLOSED ;
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_USER_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( if( !Empty( ( dbfAntCliT )->cNumDoc ), ZooFacCli( ( dbfAntCliT )->cNumDoc ), MsgStop( "Este documento no esta liquidado" ) ) );
          TOOLTIP  "Visualizar factura" ;
@@ -4428,14 +4428,14 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&2. Visualizar factura";
                MESSAGE  "Visualiza la factura que lo liquida" ;
-               RESOURCE "Document_Plain_User1_16" ;
+               RESOURCE "gc_document_empty_16" ;
                ACTION   ( if( !Empty( aTmp[ _CNUMDOC ] ), ZooFacCli( aTmp[ _CNUMDOC ] ), MsgStop( "Este documento no esta liquidado" ) ) );
 
             SEPARATOR
 
             MENUITEM    "&3. Modificar cliente";
                MESSAGE  "Modifica la ficha del cliente" ;
-               RESOURCE "User1_16" ;
+               RESOURCE "gc_user_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) )
 
             MENUITEM    "&4. Informe de cliente";

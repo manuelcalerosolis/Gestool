@@ -556,8 +556,8 @@ METHOD Activate( oMenuItem, oWnd, lStart )
       :AddResource( "gc_document_text_businessman_16"         )  // Factura proveedor
       :AddResource( "Document_navigate_cross_16"      )  // Rectificativa proveedor
       :AddResource( "Document_delete_16"              )  // Facturas rectificativas
-      :AddResource( "Clipboard_empty_user1_16"        )  // Pedido cliente
-      :AddResource( "Document_plain_user1_16"         )  // Albarán cliente
+      :AddResource( "gc_clipboard_empty_user_16"      )  // Pedido cliente
+      :AddResource( "gc_document_empty_16"            )  // Albarán cliente
       :AddResource( "gc_document_text_businessman_16"               )  // Factura cliente
       :AddResource( "Cashier_user1_16"                )  // Tiket cliente
       :AddResource( "Worker2_Form_Red_16"             )  // Parte de produccion

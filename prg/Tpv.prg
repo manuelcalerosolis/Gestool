@@ -1660,7 +1660,7 @@ else
          FROM     oRotor ;
          CLOSED ;
 
-      DEFINE BTNSHELL RESOURCE "USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_USER_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( EdtCli( ( D():Tikets( nView ) )->cCliTik ) );
          TOOLTIP  "Modificar cliente" ;

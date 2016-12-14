@@ -1886,7 +1886,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
       lGenFacRec( oWndBrw:oBrw, oPdf, IS_PDF ) ;
 
-   DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
+   DEFINE BTNSHELL oMail RESOURCE "GC_MAIL_EARTH_" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
       ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
@@ -1997,7 +1997,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
         ACTION   ( oRotor:Expand() ) ;
         TOOLTIP  "Rotor" ;
 
-    DEFINE BTNSHELL RESOURCE "USER1_" OF oWndBrw ;
+    DEFINE BTNSHELL RESOURCE "GC_USER_" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( EdtCli( ( D():FacturasRectificativas( nView ) )->cCodCli ) );
             TOOLTIP  "Modificar cliente" ;
@@ -8966,12 +8966,12 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&2. Modificar cliente";
                MESSAGE  "Modifica la ficha del cliente" ;
-               RESOURCE "User1_16" ;
+               RESOURCE "gc_user_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) )
 
             MENUITEM    "&3. Modificar cliente contactos";
                MESSAGE  "Modifica la ficha del cliente en contactos" ;
-               RESOURCE "User1_16" ;
+               RESOURCE "gc_user_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ], , 5 ), MsgStop( "Código de cliente vacío" ) ) )              
 
             MENUITEM    "&4. Informe de cliente";

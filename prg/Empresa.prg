@@ -191,8 +191,8 @@ STATIC FUNCTION OpenFiles( lCount )
                         "gc_document_text_businessman_16",;
                         "Power-drill_user1_16",;
                         "Notebook_user1_16",;
-                        "Clipboard_empty_user1_16",;
-                        "Document_plain_user1_16",;
+                        "gc_clipboard_empty_user_16",;
+                        "gc_document_empty_16",;
                         "gc_document_text_businessman_16",;
                         "Document_money2_16",;
                         "Document_delete_16",;
@@ -205,7 +205,7 @@ STATIC FUNCTION OpenFiles( lCount )
                         "Stopwatch_16",;
                         "Briefcase_document_16",;
                         "Truck_blue_document_16",;
-                        "User1_16",;
+                        "gc_user_16",;
                         "gc_briefcase2_businessman_16",;
                         "Briefcase_user1_16",;
                         "Briefcase_security_agent_16",;
