@@ -2182,7 +2182,7 @@ METHOD lGenRemMov( oBrw, oBtn, lImp ) CLASS TRemMovAlm
 
    if !( D():Documentos( ::nView ) )->( dbSeek( "RM" ) )
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT" OF ::oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_WHITE_" OF ::oWndBrw ;
          NOBORDER ;
          ACTION   ( msgstop( "No hay documentos predefinidos" ) );
          TOOLTIP  "No hay documentos" ;
@@ -2197,7 +2197,7 @@ METHOD lGenRemMov( oBrw, oBtn, lImp ) CLASS TRemMovAlm
 
          bAction  := ::bGenRemMov( lImp, "Imprimiendo movimientoo de almacén", ( D():Documentos( ::nView ) )->Codigo )
 
-         ::oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( D():Documentos( ::nView ) )->cDescrip ) , , , , , oBtn )
+         ::oWndBrw:NewAt( "gc_document_white_", , , bAction, Rtrim( ( D():Documentos( ::nView ) )->cDescrip ) , , , , , oBtn )
 
          ( D():Documentos( ::nView ) )->( dbskip() )
 
