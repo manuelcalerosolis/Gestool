@@ -848,7 +848,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon )
                "Nombre",;
                "Matrícula",;
                "Sesión" ;
-      MRU      "Cashier_user1_16";
+      MRU      "gc_cash_register_user_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( dbfTikT );
       APPEND   ( TpvAppRec( oWndBrw:oBrw, bEditT, dbfTikT, oWnd, cCodCli, cCodArt ) );
@@ -1211,7 +1211,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon )
          FROM     oRotor ;
          CLOSED ;
 
-      DEFINE BTNSHELL RESOURCE "USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_USER_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( EdtCli( ( dbfTikT )->cCliTik ) );
          TOOLTIP  "Modificar cliente" ;
@@ -8365,7 +8365,7 @@ FUNCTION TactilTpv( oMenuItem, oWnd, lTactil )
 
 if !lTactilMode()
 
-      DEFINE BTNSHELL RESOURCE "User1_" OF oWndBig ;
+      DEFINE BTNSHELL RESOURCE "GC_USER_" OF oWndBig ;
          NOBORDER ;
          ACTION   ( CuentasClientes( oWndBig:oBrw ) );
          TOOLTIP  "C(t)a. cliente";
@@ -8972,7 +8972,7 @@ Static Function StartEdtBig( aTmp, aGet, oDlgTpv, oBrwDet )
 
    oGrupo               := TDotNetGroup():New( oCarpeta, 306, "Pedidos y clientes", .f., , "" )
       oBoton            := TDotNetButton():New( 60, oGrupo, "SndInt32",                 "Pedidos",          1, {|| ProcesaPedidosWeb( aTmp ) }, , , .f., .f., .f. )
-      oBtnCliente       := TDotNetButton():New( 240, oGrupo, "User1_16",                "...",              2, {|| lSeleccionaCliente( aTmp ) }, , , .f., .f., .f. )
+      oBtnCliente       := TDotNetButton():New( 240, oGrupo, "gc_user_16",              "...",              2, {|| lSeleccionaCliente( aTmp ) }, , , .f., .f., .f. )
       oBtnDireccion     := TDotNetButton():New( 240, oGrupo, "Home_16",                 "...",              2, {|| lSeleccionaCliente( aTmp ) }, , , .f., .f., .f. )
       oBtnTelefono      := TDotNetButton():New( 240, oGrupo, "Mobilephone3_16",         "...",              2, {|| lSeleccionaCliente( aTmp ) }, , , .f., .f., .f. )
 
@@ -11833,7 +11833,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&1. Modificar cliente";
                MESSAGE  "Modificar la ficha del cliente" ;
-               RESOURCE "User1_16" ;
+               RESOURCE "gc_user_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCLITIK ] ), EdtCli( aTmp[ _CCLITIK ] ), MsgStop( "Código cliente vacío" ) ) )
 
             MENUITEM    "&2. Informe de cliente";
@@ -14487,7 +14487,7 @@ FUNCTION pdaticket()
       REDEFINE BTNBMP oBtn ;
          ID       130 ;
          OF       oDlg ;
-         FILE     ( cPatBmp() + "Clipboard_Empty_User1_16.bmp" ) ;
+         FILE     ( cPatBmp() + "gc_clipboard_empty_user_16.bmp" ) ;
          NOBORDER ;
          ACTION      ( nil )
 

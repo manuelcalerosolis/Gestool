@@ -795,10 +795,10 @@ function BrwVtaComArt( cCodArt, cNomArt )
       :AddResource( "gc_document_text_businessman_16" )
       :AddResource( "Pencil_Package_16" )
       :AddResource( "Notebook_user1_16" )
-      :AddResource( "Clipboard_empty_user1_16" )
-      :AddResource( "Document_plain_user1_16" )
+      :AddResource( "gc_clipboard_empty_user_16" )
+      :AddResource( "gc_document_empty_16" )
       :AddResource( "gc_document_text_businessman_16" )
-      :AddResource( "Cashier_user1_16" )
+      :AddResource( "gc_cash_register_user_16" )
       :AddResource( "Document_Delete_16" )
       :AddResource( "Worker2_Form_Red_16" )
       :AddResource( "Document_navigate_cross_16" )
@@ -1122,11 +1122,11 @@ Static Function InitBrwVtaCli( cCodArt, oTree, dbfDiv, dbfArticulo, oBrwStk, oBr
    oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_businessman_16" ),         Rgb( 255, 0, 255 ) )
 
    oTreeImageList:AddMasked( TBitmap():Define( "Notebook_user1_16" ),               Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_user1_16" ),        Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_user1_16" ),         Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_clipboard_empty_user_16" ),        Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_document_empty_16" ),         Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_businessman_16" ),               Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Document_delete_16" ),              Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Cashier_user1_16" ),                Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_cash_register_user_16" ),                Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "gc_money2_16" ),                        Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Truck_red_16" ),                    Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Package_16" ),                      Rgb( 255, 0, 255 ) )
@@ -1201,17 +1201,17 @@ Static Function InitBrwVtaCli( cCodArt, oTree, dbfDiv, dbfArticulo, oBrwStk, oBr
 
             MENUITEM "&5. Añadir pedido de cliente";
             MESSAGE  "Añade un pedido de cliente" ;
-            RESOURCE "Clipboard_empty_user1_16";
+            RESOURCE "gc_clipboard_empty_user_16";
             ACTION   ( AppPedCli( "", cCodArt, .f. ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )
 
             MENUITEM "&6. Añadir albarán de cliente";
             MESSAGE  "Añade un albarán de cliente" ;
-            RESOURCE "Document_plain_user1_16";
+            RESOURCE "gc_document_empty_16";
             ACTION   ( AppAlbCli( { "Artículo" => cCodArt }, .f. ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )
 
             MENUITEM "&7. Añadir factura de cliente";
             MESSAGE  "Añade una factura de cliente" ;
-            RESOURCE "gc_document_text_businessman_16";
+            RESOURCE "gc_document_text_user_16";
             ACTION   ( AppFacCli( "", cCodArt, .f. ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )
 
             MENUITEM "&8. Añadir factura rectificativa de cliente";
@@ -1221,7 +1221,7 @@ Static Function InitBrwVtaCli( cCodArt, oTree, dbfDiv, dbfArticulo, oBrwStk, oBr
 
             MENUITEM "&9. Añadir tiket de cliente";
             MESSAGE  "Añade un tiket de cliente" ;
-            RESOURCE "Cashier_user1_16";
+            RESOURCE "gc_cash_register_user_16";
             ACTION   ( AppTikCli( "", cCodArt, .f. ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )
 
          ENDMENU

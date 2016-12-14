@@ -1574,13 +1574,13 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       lGenSatCli( oWndBrw:oBrw, oPdf, IS_PDF ) ;
 
-   DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
+   DEFINE BTNSHELL oMail RESOURCE "GC_MAIL_EARTH_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
       TOOLTIP  "Correo electrónico cliente";
       LEVEL    ACC_IMPR
 
-   DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
+   DEFINE BTNSHELL oMail RESOURCE "GC_MAIL_EARTH_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( oMailingOperario:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
       TOOLTIP  "Correo electrónico operario";
@@ -1682,7 +1682,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
          ACTION   ( oRotor:Expand() ) ;
          TOOLTIP  "Rotor" ;
 
-      DEFINE BTNSHELL RESOURCE "USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_USER_" OF oWndBrw ;
             ACTION   ( EdtCli( ( D():SatClientes( nView ) )->cCodCli ) );
             TOOLTIP  "Modificar cliente" ;
             FROM     oRotor ;
@@ -1692,18 +1692,18 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
             TOOLTIP  "Informe de cliente" ;
             FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "Worker" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_WORKER2_" OF oWndBrw ;
             ACTION   ( if( !Empty( ( D():SatClientes( nView ) )->cCodObr ), EdtObras( ( D():SatClientes( nView ) )->cCodCli, ( D():SatClientes( nView ) )->cCodObr, dbfObrasT ), MsgStop( "No hay obra asociada al S.A.T." ) ) );
             TOOLTIP  "Modificar dirección" ;
             FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_EMPTY_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( if( !( D():SatClientes( nView ) )->lEstado, AlbCli( nil, nil, { "SAT" => ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat } ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
             TOOLTIP  "Generar albarán" ;
             FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_USER_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( if( !( D():SatClientes( nView ) )->lEstado, FactCli( nil, nil, { "SAT" => ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat } ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
             TOOLTIP  "Generar factura" ;
@@ -3271,12 +3271,12 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&2. Modificar cliente";
                MESSAGE  "Modificar la ficha del cliente" ;
-               RESOURCE "User1_16" ;
+               RESOURCE "gc_user_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "Código cliente vacío" ) ) )
 
             MENUITEM    "&3. Modificar cliente contactos";
                MESSAGE  "Modifica la ficha del cliente en contactos" ;
-               RESOURCE "User1_16" ;
+               RESOURCE "gc_user_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ], , 5 ), MsgStop( "Código de cliente vacío" ) ) )
 
             MENUITEM    "&4. Informe de cliente";
@@ -7047,7 +7047,7 @@ static function lGenSatCli( oBrw, oBtn, nDevice )
 
    IF !( dbfDoc )->( dbSeek( "SC" ) )
 
-         DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_WHITE_" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( msgStop( "No hay pedidos de proveedores predefinidos" ) );
             TOOLTIP  "No hay documentos" ;
@@ -7062,7 +7062,7 @@ static function lGenSatCli( oBrw, oBtn, nDevice )
 
          bAction  := bGenSatCli( nDevice, "Imprimiendo S.A.T. a clientes", ( dbfDoc )->CODIGO )
 
-         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( dbfDoc )->cDescrip ) , , , , , oBtn )
+         oWndBrw:NewAt( "gc_document_white_", , , bAction, Rtrim( ( dbfDoc )->cDescrip ) , , , , , oBtn )
 
          ( dbfDoc )->( dbSkip() )
 

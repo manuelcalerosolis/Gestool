@@ -2562,7 +2562,7 @@ METHOD StartResource() CLASS TpvTactil
             end if
 
          oGrupo                  := TDotNetGroup():New( oCarpeta, 226, "Datos de cliente", .f., , "User1_32" )
-            ::oBtnCliente        := TDotNetButton():New( 220, oGrupo, "User1_16",                     "...",               1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
+            ::oBtnCliente        := TDotNetButton():New( 220, oGrupo, "gc_user_16",                     "...",               1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
             ::oBtnDireccion      := TDotNetButton():New( 220, oGrupo, "Home_16",                      "...",               1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
             ::oBtnTelefono       := TDotNetButton():New( 220, oGrupo, "Mobilephone3_16",              "...",               1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
 

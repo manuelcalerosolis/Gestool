@@ -680,7 +680,7 @@ METHOD Resource( nMode, aInit ) CLASS TNotas
       VAR      ::oDbf:cNumDoc ;
       PICTURE  "@R #/#########/##" ;
       ID       210 ;
-      BITMAP   "Flash_16" ;
+      BITMAP   "gc_flash_16" ;
       OF       oDlg
 
    oGetNumeroDocumento:bHelp  := {|| ::ZoomDocument() }

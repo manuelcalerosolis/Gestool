@@ -3334,7 +3334,7 @@ Function BuildPdaMenu()
             MESSAGE  "Acceso a la agenda del usuario" ;
             HELPID   "01075" ;
             ACTION   ( TNotas():New( cPatDat(), oWnd, oMenuItem ):Activate() );
-            RESOURCE "Note_16"
+            RESOURCE "gc_note_16"
 
       ENDMENU
 
@@ -3849,7 +3849,7 @@ Function TctCreateButtonBar()
    oItem:cPrompt        := "Clientes"
    oItem:cMessage       := "Acceso a las cuentas de clientes"
    oItem:bAction        := {|| CuentasClientes( oWnd() )  }
-   oItem:cBmp           := "User1_16"
+   oItem:cBmp           := "gc_user_16"
    oItem:cBmpBig        := "User1_32"
 
    oItem                := oItemArchivo:Add()
@@ -3975,7 +3975,7 @@ Function BuildTctMenu()
             MESSAGE  "Clientes" ;
             HELPID   "01074" ;
             ACTION   ( CuentasClientes( oWnd() ) );
-            RESOURCE "User1_16"
+            RESOURCE "gc_user_16"
 
          MENUITEM    "&7. Entradas y salidas";
             HELPID   "01065" ;
@@ -4274,7 +4274,7 @@ Function BuildTpvMenu()
             MESSAGE  "Clientes" ;
             HELPID   "01074" ;
             ACTION   ( CuentasClientes( oWnd() ) );
-            RESOURCE "User1_16"
+            RESOURCE "gc_user_16"
 
          MENUITEM    "&7. Entradas y salidas";
             HELPID   "01065" ;

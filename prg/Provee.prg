@@ -572,7 +572,7 @@ FUNCTION Provee( oMenuItem, oWnd )
 
    #endif
 
-   DEFINE BTNSHELL RESOURCE "Mail" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "GC_MAIL_EARTH_" OF oWndBrw ;
 		NOBORDER ;
       ACTION   ( TGenMailingProveedores():New( dbfProvee ):Resource() ) ;
       TOOLTIP  "Enviar correos" ;

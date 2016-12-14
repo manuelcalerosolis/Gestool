@@ -1020,7 +1020,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       lGenAlbCli( oWndBrw:oBrw, oPdf, IS_PDF ) ;
 
-   DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
+   DEFINE BTNSHELL oMail RESOURCE "GC_MAIL_EARTH_" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
       ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
@@ -1161,7 +1161,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       ACTION   ( oRotor:Expand() ) ;
       TOOLTIP  "Rotor" ;
 
-      DEFINE BTNSHELL RESOURCE "USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_USER_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( EdtCli( ( D():Get( "AlbCliT", nView ) )->cCodCli ) );
          TOOLTIP  "Modificar cliente" ;
@@ -1179,41 +1179,41 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          TOOLTIP  "Modificar dirección" ;
          FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "CLIPBOARD_empty_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_CLIPBOARD_EMPTY_USER_" OF oWndBrw ;
          ACTION   ( if( !empty( ( D():Get( "AlbCliT", nView ) )->cNumPed ), ZooPedCli( ( D():Get( "AlbCliT", nView ) )->cNumPed ), MsgStop( "El albarán no procede de un pedido" ) ) );
          TOOLTIP  "Visualizar pedido" ;
          FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_USER_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( if( !lFacturado( D():Get( "AlbCliT", nView ) ), FactCli( nil, nil, { "Albaran" => ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb } ), MsgStop( "Albarán facturado" ) ) );
          TOOLTIP  "Generar factura" ;
          FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_USER_" OF oWndBrw ;
          ACTION   ( if( !empty( ( D():Get( "AlbCliT", nView ) )->cNumFac ), EdtFacCli( ( D():Get( "AlbCliT", nView ) )->cNumFac ), msgStop( "No hay factura asociada" ) ) );
          TOOLTIP  "Modificar factura" ;
          FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_MONEY2_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_MONEY2_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( if( !lFacturado( D():Get( "AlbCliT", nView ) ), FacAntCli( nil, nil, ( D():Get( "AlbCliT", nView ) )->cCodCli ), msgStop( "Albarán ya facturado" ) ) );
          TOOLTIP  "Generar anticipo" ;
          FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "Note_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_NOTE_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( AlbCliNotas() );
          TOOLTIP  "Generar nota de agenda" ;
          FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "CASHIER_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_CASH_REGISTER_USER_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( if( !lFacturado( D():Get( "AlbCliT", nView ) ) .and. empty( ( D():Get( "AlbCliT", nView ) )->cNumTik ), FrontTpv( nil, nil, nil, nil, .f., .f., { nil, nil, ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb } ), MsgStop( "Albarán facturado o convertido a ticket" ) ) );
          TOOLTIP  "Convertir a ticket" ;
          FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "CASHIER_USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_CASH_REGISTER_USER_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( FacturarLineas() );
          TOOLTIP  "Facturar lineas" ;
@@ -3494,7 +3494,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE BTNBMP oBtnPed ;
          ID       603 ;
          OF       oFld:aDialogs[1] ;
-         RESOURCE "Clipboard_empty_user1_16" ;
+         RESOURCE "gc_clipboard_empty_user_16" ;
          NOBORDER ;
          TOOLTIP  "Importar pedido" ;
          ACTION   ( BrwPedCli( aGet[ _CNUMPED ], dbfPedCliT, dbfPedCliL, D():Get( "TIva", nView ), D():Get( "Divisas", nView ), D():Get( "FPago", nView ), aGet[ _LIVAINC ] ) )
@@ -4282,14 +4282,14 @@ Static Function EdtRecMenu( aGet, aTmp, oBrw, oDlg )
 
             MENUITEM    "&2. Visualizar pedido";
                MESSAGE  "Visualiza el pedido del que proviene" ;
-               RESOURCE "Clipboard_empty_User1_16" ;
+               RESOURCE "gc_clipboard_empty_user_16" ;
                ACTION   ( if( !empty( aTmp[ _CNUMPED ] ), ZooPedCli( aTmp[ _CNUMPED ] ), MsgStop( "El albarán no procede de un pedido" ) ) )
 
             SEPARATOR
 
             MENUITEM    "&3. Generar anticipo";
                MESSAGE  "Genera factura de anticipo" ;
-               RESOURCE "Document_Money2_16" ;
+               RESOURCE "gc_document_text_money2_16" ;
                ACTION   ( if( !empty( aTmp[ _CCODCLI ] ),;
                               CreateAntCli( aTmp[ _CCODCLI ] ),;
                               msgStop("Debe seleccionar un cliente para hacer una factura de anticipo" ) ) )
@@ -4298,12 +4298,12 @@ Static Function EdtRecMenu( aGet, aTmp, oBrw, oDlg )
 
             MENUITEM    "&4. Modificar cliente";
                MESSAGE  "Modifica la ficha del cliente" ;
-               RESOURCE "User1_16" ;
+               RESOURCE "gc_user_16" ;
                ACTION   ( if( !empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) );
 
             MENUITEM    "&5. Modificar cliente contactos";
                MESSAGE  "Modifica la ficha del cliente en contactos" ;
-               RESOURCE "User1_16" ;
+               RESOURCE "gc_user_16" ;
                ACTION   ( if( !empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ], , 5 ), MsgStop( "Código de cliente vacío" ) ) )
 
             MENUITEM    "&6. Informe de cliente";
@@ -7165,7 +7165,7 @@ Static Function CreateMenuEntrega( aTmp, oDlg )
 
             MENUITEM    "&2. Modificar cliente";
                MESSAGE  "Modifica la ficha del cliente" ;
-               RESOURCE "User1_16" ;
+               RESOURCE "gc_user_16" ;
                ACTION   ( if( !empty( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCli" ) ) ] ), EdtCli( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCli" ) ) ] ), MsgStop( "Código de cliente vacío" ) ) )
 
             MENUITEM    "&3. Informe de cliente";
@@ -14393,7 +14393,7 @@ Static Function lGenAlbCli( oBrw, oBtn, nDevice )
 
    IF !( D():Documentos( nView ) )->( dbSeek( "AC" ) )
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_WHITE_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( msgStop( "No hay documentos predefinidos" ) );
          TOOLTIP  "No hay documentos" ;
@@ -14407,7 +14407,7 @@ Static Function lGenAlbCli( oBrw, oBtn, nDevice )
 
          bAction  := bGenAlbCli( nDevice, "Imprimiendo albaranes de clientes", ( D():Documentos( nView ) )->Codigo )
 
-         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
+         oWndBrw:NewAt( "gc_document_white_", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
 
          ( D():Documentos( nView ) )->( dbSkip() )
 

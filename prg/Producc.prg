@@ -493,7 +493,7 @@ METHOD Activate( cDriver )
       HOTKEY   "A" ;
       LEVEL    ACC_APPD
 
-   DEFINE BTNSHELL RESOURCE "NEW" OF ::oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "DUP" OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::oWndBrw:RecDup() );
       ON DROP  ( ::oWndBrw:RecDup() );

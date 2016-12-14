@@ -196,7 +196,7 @@ METHOD Activate() CLASS TScripts
          LEVEL    ACC_DELE
 
       DEFINE BTNSHELL ;
-         RESOURCE "Flash_" ;
+         RESOURCE "gc_flash_" ;
          OF       ::oWndBrw ;
          NOBORDER ;
          ACTION   ( ::CompilarEjecutarCodigoScript( ::oDbf:cCodScr ) ) ;

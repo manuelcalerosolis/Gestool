@@ -313,13 +313,13 @@ METHOD Activate() CLASS TFacAutomatica
 
 if lUsrMaster() .or. oUser():lDocAuto()
 
-   DEFINE BTNSHELL oGen RESOURCE "Flash_" OF ::oWndBrw ;
+   DEFINE BTNSHELL oGen RESOURCE "GC_FLASH_" OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::RunPlantillaAutomatica( ::oDbf:cCodFac ) ) ;
       TOOLTIP  "(G)enerar ahora";
       HOTKEY   "G"
 
-      DEFINE BTNSHELL RESOURCE "Flash_" OF ::oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_FLASH_" OF ::oWndBrw ;
          ACTION   ( ::RunPlantillaAutomatica() );
          TOOLTIP  "Generar todas ahora" ;
          FROM     oGen

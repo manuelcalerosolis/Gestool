@@ -730,7 +730,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
          lGenAlb( oWndBrw:oBrw, oPdf, IS_PDF )
       end if
 
-   DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
+   DEFINE BTNSHELL oMail RESOURCE "GC_MAIL_EARTH_" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
       ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
@@ -853,7 +853,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
 
    if ( "ICG" $ cParamsMain() )
 
-   DEFINE BTNSHELL RESOURCE "Document_plain_user1_" GROUP OF oWndBrw;
+   DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_EMPTY_" GROUP OF oWndBrw;
       NOBORDER ;
       ACTION   ( IcgMotor() ) ;
       TOOLTIP  "ICG" ;

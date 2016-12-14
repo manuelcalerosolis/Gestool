@@ -1604,28 +1604,28 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          ALLOW    EXIT ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "Clipboard_empty_user1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_CLIPBOARD_EMPTY_USER_" OF oWndBrw ;
          ACTION   ( PedCli( nil, oWnd, nil, ( D():Articulos( nView ) )->Codigo ) );
          TOOLTIP  "Añadir pedido de cliente" ;
          FROM     oRotor ;
          ALLOW    EXIT ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "Document_plain_user1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_EMPTY_" OF oWndBrw ;
          ACTION   ( AlbCli( nil, oWnd, { "Artículo" => ( D():Articulos( nView ) )->Codigo } ) );
          TOOLTIP  "Añadir albarán de cliente" ;
          FROM     oRotor ;
          ALLOW    EXIT ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_USER_" OF oWndBrw ;
          ACTION   ( FactCli( nil, oWnd, { "Artículo" => ( D():Articulos( nView ) )->Codigo } ) );
          TOOLTIP  "Añadir factura de cliente" ;
          FROM     oRotor ;
          ALLOW    EXIT ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "Cashier_user1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_CASH_REGISTER_USER_" OF oWndBrw ;
          ACTION   ( FrontTpv( nil, oWnd, nil, ( D():Articulos( nView ) )->Codigo ) );
          TOOLTIP  "Añadir tiket de cliente" ;
          FROM     oRotor ;

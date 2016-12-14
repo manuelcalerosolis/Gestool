@@ -516,7 +516,7 @@ FUNCTION CfgDocs( oMenuItem, oWnd )
             CLOSED ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "User1_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_USER_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'CL' }, "Field->cTipo == 'CL'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Clientes[etiquetas]" ;
             FROM     oFlt ;
@@ -586,42 +586,42 @@ FUNCTION CfgDocs( oMenuItem, oWnd )
             CLOSED ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Clipboard_empty_user1_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_CLIPBOARD_EMPTY_USER_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'PC' }, "Field->cTipo == 'PC'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Pedido clientes" ;
             FROM     oFlt ;
             CLOSED ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Document_plain_user1_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_EMPTY_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'AC' }, "Field->cTipo == 'AC'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Albarán clientes" ;
             FROM     oFlt ;
             CLOSED ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_USER_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'FC' }, "Field->cTipo == 'FC'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Factura clientes" ;
             FROM     oFlt ;
             CLOSED ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Document_money2_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_MONEY2_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'TC' }, "Field->cTipo == 'TC'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Factura de anticipos" ;
             FROM     oFlt ;
             CLOSED ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_USER_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'FR' }, "Field->cTipo == 'FR'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Factura rectificativa" ;
             FROM     oFlt ;
             CLOSED ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Cashier_user1_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_CASH_REGISTER_USER_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'TK' }, "Field->cTipo == 'TK'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Tikets de clientes" ;
             FROM     oFlt ;
@@ -663,14 +663,14 @@ FUNCTION CfgDocs( oMenuItem, oWnd )
             CLOSED ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Clipboard_empty_user1_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_CLIPBOARD_EMPTY_USER_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'EP' }, "Field->cTipo == 'EP'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Entregas a cuenta en pedidos de clientes" ;
             FROM     oFlt ;
             CLOSED ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Document_plain_user1_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_EMPTY_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'EA' }, "Field->cTipo == 'EA'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Entregas a cuenta en albaranes de clientes" ;
             FROM     oFlt ;

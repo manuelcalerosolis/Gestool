@@ -1263,7 +1263,7 @@ METHOD lGenExpediente( oBrw, oBtn, nDevice )
 
    if !::oDbfDoc:Seek( "ED" )
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT" OF ::oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_WHITE_" OF ::oWndBrw ;
          NOBORDER ;
          ACTION   ( msgStop( "No hay documentos predefinidos" ) );
          TOOLTIP  "No hay documentos" ;
@@ -1278,7 +1278,7 @@ METHOD lGenExpediente( oBrw, oBtn, nDevice )
 
          bAction  := ::bGenExpediente( nDevice, "Imprimiendo expedientes", ::oDbfDoc:Codigo )
 
-         ::oWndBrw:NewAt( "Document", , , bAction, Rtrim( ::oDbfDoc:cDescrip ) , , , , , oBtn )
+         ::oWndBrw:NewAt( "gc_document_white_", , , bAction, Rtrim( ::oDbfDoc:cDescrip ) , , , , , oBtn )
 
          ::oDbfDoc:Skip()
 

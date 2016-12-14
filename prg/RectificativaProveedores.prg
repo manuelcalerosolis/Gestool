@@ -958,7 +958,7 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
 
       lGenFac( oWndBrw:oBrw, oPdf, IS_PDF ) ;
 
-   DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
+   DEFINE BTNSHELL oMail RESOURCE "GC_MAIL_EARTH_" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
       ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;

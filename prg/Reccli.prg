@@ -344,7 +344,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
          :nWidth           := 20
          :lHide            := .t.
          :AddResource( "Nil16" )
-         :AddResource( "All_Components_16" )
+         :AddResource( "gc_folder_cubes_16" )
          :AddResource( "Component_Blue_16" )
       end with
 
@@ -573,7 +573,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
       HOTKEY   "E";
       LEVEL    ACC_DELE
 
-   DEFINE BTNSHELL RESOURCE "ALL_COMPONENTS_" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "GC_FOLDER_CUBES_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( CompensarReciboCliente( oWndBrw:oBrw ) );
       TOOLTIP  "(C)ompensar";
@@ -618,7 +618,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
 
       lGenRecCli( oWndBrw:oBrw, oPdf, IS_PDF ) ;
 
-   DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
+   DEFINE BTNSHELL oMail RESOURCE "GC_MAIL_EARTH_" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
       ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
@@ -682,7 +682,7 @@ end if
       ACTION   ( oRotor:Expand() ) ;
       TOOLTIP  "Rotor" ;
 
-      DEFINE BTNSHELL RESOURCE "User1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_USER_" OF oWndBrw ;
          ACTION   ( EdtCli( ( D():FacturasClientesCobros( nView ) )->cCodCli ) );
          TOOLTIP  "Modificar cliente" ;
          FROM     oRotor ;
@@ -692,7 +692,7 @@ end if
          TOOLTIP  "Informe de cliente" ;
          FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_USER_" OF oWndBrw ;
          ACTION   ( EdtFacCli( ( D():FacturasClientesCobros( nView ) )->cSerie + str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac ) );
          TOOLTIP  "Modificar factura" ;
          FROM     oRotor ;
@@ -2374,7 +2374,7 @@ static function lGenRecCli( oBrw, oBtn, nDevice )
 
    IF !( D():Documentos( nView ) )->( dbSeek( "RF" ) )
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_WHITE_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( msgStop( "No hay recibos de clientes predefinidos" ) );
          TOOLTIP  "No hay documentos" ;
@@ -2389,7 +2389,7 @@ static function lGenRecCli( oBrw, oBtn, nDevice )
 
          bAction  := bGenRecCli( nDevice, ( D():Documentos( nView ) )->CODIGO, "Imprimiendo recibos de clientes" )
 
-         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
+         oWndBrw:NewAt( "gc_document_white_", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
 
          ( D():Documentos( nView ) )->( dbSkip() )
 
@@ -3232,14 +3232,14 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&1. Modificar factura";
                MESSAGE  "Modificar la factura que creó el recibo" ;
-               RESOURCE "gc_document_text_businessman_16" ;
+               RESOURCE "gc_document_text_user_16" ;
                ACTION   ( EdtFacCli( aTmp[ _CSERIE ] + str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] ) )
 
             SEPARATOR
 
             MENUITEM    "&2. Modificar cliente";
                MESSAGE  "Modifica la ficha del cliente" ;
-               RESOURCE "User1_16" ;
+               RESOURCE "gc_user_16" ;
                ACTION   ( if( !empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) )
 
             MENUITEM    "&3. Informe de cliente";
