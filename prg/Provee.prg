@@ -1330,7 +1330,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
 
       REDEFINE BITMAP oBmpContabilidad ;
          ID       500 ;
-         RESOURCE "Folder2_red_Alpha_48" ;
+         RESOURCE "gc_folders2_48" ;
          TRANSPARENT ;
          OF       oFld:aDialogs[4]
 

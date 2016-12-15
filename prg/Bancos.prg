@@ -587,7 +587,7 @@ METHOD Resource( nMode ) CLASS TCuentasBancarias
 
       REDEFINE BITMAP oBmpBancos ;
          ID       600 ;
-         RESOURCE "Office_Building_48_Alpha" ;
+         RESOURCE "gc_office_building_48" ;
          TRANSPARENT ;
          OF       oDlg
 

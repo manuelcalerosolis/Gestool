@@ -107,7 +107,7 @@ METHOD Dialog() CLASS TFastReportOptions
 
    REDEFINE BITMAP oBmp ;
    ID       400 ;
-   RESOURCE "preferences_edit_48_alpha" ;
+   RESOURCE "gc_clipboard_pencil_48" ;
    TRANSPARENT ;
    OF       ::oDlg
 
