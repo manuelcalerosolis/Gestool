@@ -407,7 +407,7 @@ METHOD Activate( oMenuItem, oWnd )
                               "gc_document_text_businessman_16",;
                               "Document_delete_16",;
                               "Package_book_red_16",;
-                              "Worker2_Form_Red_16",;
+                              "gc_document_text_worker_16",;
                               "gc_cash_register_user_16" }
 
    if !::OpenFiles()
