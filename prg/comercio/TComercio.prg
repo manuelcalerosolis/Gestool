@@ -649,7 +649,7 @@ METHOD dialogActivate() CLASS TComercio
 
       REDEFINE BITMAP ::oBmp ;
          ID          500 ;
-         RESOURCE    "earth2_alpha_48" ;
+         RESOURCE    "gc_logo_prestashop_48" ;
          TRANSPARENT ;
          OF          ::oDlg
 
@@ -713,9 +713,9 @@ METHOD dialogStart() CLASS TComercio
       oCarpeta                := TCarpeta():New( oOfficeBar, "Prestashop" )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 246, "Acciones", .f. )
-         ::oBtnImportar       := TDotNetButton():New( 60, oGrupo, "Edit32",            "Importar pedidos",    1, {|| ::controllerOrderPrestashop() }, , .t., .f., .f., .f. )
-         ::oBtnStock          := TDotNetButton():New( 60, oGrupo, "Del32",             "Actualizar stocks",   2, {|| ::controllerUpdateStockPrestashop() }, , .t., .f., .f., .f. )
-         ::oBtnExportar       := TDotNetButton():New( 60, oGrupo, "New32",             "Sincronizar web",     3, {|| ::controllerExportPrestashop() }, , ::TComercioConfig:getHideExportButton(), .f., .f., .f. )
+         ::oBtnImportar       := TDotNetButton():New( 60, oGrupo, "gc_cloud_download_32",      "Importar pedidos",    1, {|| ::controllerOrderPrestashop() }, , .t., .f., .f., .f. )
+         ::oBtnStock          := TDotNetButton():New( 60, oGrupo, "gc_cloud_package_32",        "Actualizar stocks",   2, {|| ::controllerUpdateStockPrestashop() }, , .t., .f., .f., .f. )
+         ::oBtnExportar       := TDotNetButton():New( 60, oGrupo, "gc_cloud_updown_32",         "Sincronizar web",     3, {|| ::controllerExportPrestashop() }, , ::TComercioConfig:getHideExportButton(), .f., .f., .f. )
          ::oBtnCancel         := TDotNetButton():New( 60, oGrupo, "gc_door_open2_32",  "Salir",               4, {|| ::oDlg:end() }, , .t., .f., .f., .f. )
 
    end if

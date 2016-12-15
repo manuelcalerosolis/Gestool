@@ -447,3 +447,7 @@ PENCIL_PACKAGE_32 BITMAP "..\\bmp\\Pencil_Package_32.bmp"
 GC_PACKAGE_CHECK_16 BITMAP "..\\bmp\\gc_package_check_16.bmp"
 GC_PACKAGE_PLUS_16 BITMAP "..\\bmp\\gc_package_plus_16.bmp"
 
+GC_CLOUD_PACKAGE_32 BITMAP "..\\bmp\\gc_cloud_package_32.bmp"
+GC_CLOUD_UPDOWN_32 BITMAP "..\\bmp\\gc_cloud_updown_32.bmp"
+GC_CLOUD_DOWNLOAD_32 BITMAP "..\\bmp\\gc_cloud_download_32.bmp"
+GC_LOGO_PRESTASHOP_48 BITMAP "..\\bmp\\gc_logo_prestashop_48.bmp"
