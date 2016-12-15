@@ -78,7 +78,7 @@ METHOD get( node, key, default ) CLASS TConfig
    
    local hNode
 
-   DEFAULT default   := ''
+   DEFAULT default   := key
 
    if hhaskey( ::hJSON, node )
       hNode          := hget( ::hJSON, node )
@@ -139,8 +139,6 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD SaveJSON() CLASS TConfig
-
-   msgalert( hb_valToexp( ::hJSON), "saveJSON ")
 
    memowrit( ::getFullFileName(), hb_jsonencode( ::hJSON, .t. ) )
 

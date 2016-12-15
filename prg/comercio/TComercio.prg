@@ -708,10 +708,10 @@ METHOD dialogStart() CLASS TComercio
       oCarpeta                := TCarpeta():New( oOfficeBar, "Prestashop" )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 246, "Acciones", .f. )
-         ::oBtnImportar       := TDotNetButton():New( 60, oGrupo, "Edit32", "Importar pedidos",    1, {|| ::controllerOrderPrestashop() }, , .t., .f., .f., .f. )
-         ::oBtnStock          := TDotNetButton():New( 60, oGrupo, "Del32",  "Actualizar stocks",   2, {|| ::controllerUpdateStockPrestashop() }, , .t., .f., .f., .f. )
-         ::oBtnExportar       := TDotNetButton():New( 60, oGrupo, "New32",  "Sincronizar web",     3, {|| ::controllerExportPrestashop() }, , ::TComercioConfig:getHideExportButton(), .f., .f., .f. )
-         ::oBtnCancel         := TDotNetButton():New( 60, oGrupo, "Del32",  "Salir",               4, {|| ::oDlg:end() }, , .t., .f., .f., .f. )
+         ::oBtnImportar       := TDotNetButton():New( 60, oGrupo, "Edit32",            "Importar pedidos",    1, {|| ::controllerOrderPrestashop() }, , .t., .f., .f., .f. )
+         ::oBtnStock          := TDotNetButton():New( 60, oGrupo, "Del32",             "Actualizar stocks",   2, {|| ::controllerUpdateStockPrestashop() }, , .t., .f., .f., .f. )
+         ::oBtnExportar       := TDotNetButton():New( 60, oGrupo, "New32",             "Sincronizar web",     3, {|| ::controllerExportPrestashop() }, , ::TComercioConfig:getHideExportButton(), .f., .f., .f. )
+         ::oBtnCancel         := TDotNetButton():New( 60, oGrupo, "gc_door_open2_32",  "Salir",               4, {|| ::oDlg:end() }, , .t., .f., .f., .f. )
 
    end if
 
