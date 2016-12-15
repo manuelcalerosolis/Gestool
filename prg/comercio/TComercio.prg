@@ -203,7 +203,7 @@ CLASS TComercio
    METHOD writeText( cText )           
 
    METHOD setWebToExport( cWebToExport )  INLINE ( ::cWebToExport := alltrim( cWebToExport ) )
-   METHOD getWebToExport()                INLINE ( ::cWebToExport )
+   METHOD getWebToExport()                INLINE ( alltrim( ::cWebToExport ) )
 
    // Apertura y cierre de ficheros--------------------------------------------
 
@@ -635,13 +635,7 @@ METHOD dialogActivate() CLASS TComercio
    ::Default()
 
    ::lSyncAll        := .t.
-
-   msgalert(::cWebToExport, "cWebToExport antes")
-   
-   ::cWebToExport    := getConfigUser( 'Web a exportar', ::cWebToExport )
-
-   msgalert(::cWebToExport, "cWebToExport despues")
-
+ 
    // Apertura del dialogo------------------------------------------------------//
 
    DEFINE DIALOG     ::oDlg ;
@@ -670,8 +664,6 @@ METHOD dialogActivate() CLASS TComercio
       ::oDlg:bStart := {|| ::dialogStart() }
 
    ACTIVATE DIALOG ::oDlg CENTER
-
-   setConfigUser( 'Web a exportar', ::cWebToExport )
 
    enableAcceso()
 
