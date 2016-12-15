@@ -472,7 +472,7 @@ FUNCTION DepAge( oMenuItem, oWnd )
          PROMPTS  "Número",;
 						"Fecha",;
                   "Almacén entrada";
-         MRU      "Package_add_16";
+         MRU      "gc_package_plus_16";
          BITMAP   Rgb( 128, 57, 123 ) ;
 			ALIAS 	( dbfDepAgeT );
 			APPEND	( WinAppRec( oWndBrw:oBrw, bEdit, dbfDepAgeT ) );

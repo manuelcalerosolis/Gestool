@@ -196,12 +196,12 @@ STATIC FUNCTION OpenFiles( lCount )
                         "gc_document_text_businessman_16",;
                         "gc_document_text_money2_16",;
                         "Document_delete_16",;
-                        "Package_add_16",;
-                        "Package_ok_16",;
+                        "gc_package_plus_16",;
+                        "gc_package_check_16",;
                         "gc_cash_register_user_16",;
                         "Worker2_Form_Red_16",;
                         "gc_folder_document_16",;
-                        "Pencil_Package_16",;
+                        "gc_pencil_package_16",;
                         "Stopwatch_16",;
                         "Briefcase_document_16",;
                         "Truck_blue_document_16",;

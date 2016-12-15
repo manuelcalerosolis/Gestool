@@ -87,7 +87,7 @@ METHOD New( nView ) CLASS TItemGroupArticulo
    ::HelpHasta    := {|oGet| BrwArticulo( oGet, , , .f. ) }
    ::ValidDesde   := {|oGet| cArticulo( oGet, D():Articulos( nView ) ) }
    ::ValidHasta   := {|oGet| cArticulo( oGet, D():Articulos( nView ) ) }
-   ::cBitmap      := "Cube_Yellow_16"
+   ::cBitmap      := "gc_object_cube_16"
 
 Return ( Self )
 

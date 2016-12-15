@@ -870,7 +870,7 @@ static function EdtMenu( oThis, oDlg )
 
             MENUITEM    "&1. Modificar de artículo";
                MESSAGE  "Modificar la ficha del artículo" ;
-               RESOURCE "Cube_Yellow_16";
+               RESOURCE "gc_object_cube_16";
                ACTION   ( EdtArticulo( cCodArt ) );
 
             MENUITEM    "&2. Informe de artículo";

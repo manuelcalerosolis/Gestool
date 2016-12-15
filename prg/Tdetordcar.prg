@@ -690,7 +690,7 @@ METHOD EdtRotor( oDlg )
 
             MENUITEM    "&1. Modificar de artículo";
                MESSAGE  "Modificar la ficha del artículo" ;
-               RESOURCE "Cube_Yellow_16";
+               RESOURCE "gc_object_cube_16";
                ACTION   ( if( !Empty( cCodArt ), EdtArticulo( cCodArt ), MsgStop( "Debe de seleccionar un artículo" ) ) );
 
             MENUITEM    "&2. Informe de artículo";

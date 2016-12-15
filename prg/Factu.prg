@@ -2682,7 +2682,7 @@ Function CreateAcceso( oWnd )
    if IsOsCommerce()
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 2
+   oGrupo:nBigItems     := 1
    oGrupo:cPrompt       := 'Comercio electrónico'
    oGrupo:cLittleBitmap := "gc_earth_money_16"
    oGrupo:cBigBitmap    := "gc_earth_money_32"
@@ -2697,6 +2697,7 @@ Function CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_earth_money_32"
    oItem:lShow          := .f.
 
+/*
    oItem                := oItemVentas:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Pedidos electrónicos'
@@ -2706,6 +2707,7 @@ Function CreateAcceso( oWnd )
    oItem:cBmp           := "gc_clipboard_empty_earth_16"
    oItem:cBmpBig        := "gc_clipboard_empty_earth_32"
    oItem:lShow          := .f.
+*/
 
    end if
 
@@ -2952,8 +2954,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso al listín telefónico'
    oItem:bAction        := {|| TAgenda():New( cPatDat(), , oWnd, "01076" ):Activate() }
    oItem:cId            := "01076"
-   oItem:cBmp           := "gc_telephone_16"
-   oItem:cBmpBig        := "gc_telephone_32"
+   oItem:cBmp           := "gc_book_telephone_16"
+   oItem:cBmpBig        := "gc_book_telephone_32"
    oItem:lShow          := .f.
 
    oItem                := oItemHerramientas:Add()

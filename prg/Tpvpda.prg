@@ -11850,7 +11850,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&4. Modificar de artículo";
                MESSAGE  "Modificar la ficha del articulo" ;
-               RESOURCE "Cube_Yellow_16";
+               RESOURCE "gc_object_cube_16";
                ACTION   ( EdtArticulo( ( dbfTmpL )->cCbaTil ) );
 
             MENUITEM    "&5. Informe de artículo";

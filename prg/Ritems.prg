@@ -456,7 +456,7 @@ FUNCTION CfgDocs( oMenuItem, oWnd )
          HOTKEY   "M";
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "RENAME_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_TEXT_FIELD_" OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( WinEdtRec( oWndBrw:oBrw, bEdit1, dbfDoc ) );
          TOOLTIP  "(R)enombrar";
@@ -509,7 +509,7 @@ FUNCTION CfgDocs( oMenuItem, oWnd )
          TOOLTIP  "Filtrar" ;
          LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Cube_Yellow_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_OBJECT_CUBE_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'AR' }, "Field->cTipo == 'AR'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Atículos[etiquetas]" ;
             FROM     oFlt ;
@@ -544,7 +544,7 @@ FUNCTION CfgDocs( oMenuItem, oWnd )
             CLOSED ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Clipboard_empty_businessman_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "gc_clipboard_empty_businessman_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'PP' }, "Field->cTipo == 'PP'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Pedidos a proveedores" ;
             FROM     oFlt ;
@@ -565,21 +565,21 @@ FUNCTION CfgDocs( oMenuItem, oWnd )
             CLOSED ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Document_navigate_cross_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "gc_document_text_businessman_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'TP' }, "Field->cTipo == 'TP'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Factura rectificativa de proveedores" ;
             FROM     oFlt ;
             CLOSED ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "gc_document_text_businessman_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_BRIEFCASE2_BUSINESSMAN_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'RP' }, "Field->cTipo == 'RP'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Recibos facturas proveedor" ;
             FROM     oFlt ;
             CLOSED ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "GC_BRIEFCASE2_BUSINESSMAN_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_NOTEBOOK_USER_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'RC' }, "Field->cTipo == 'RC'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Presupuesto clientes" ;
             FROM     oFlt ;
@@ -628,37 +628,30 @@ FUNCTION CfgDocs( oMenuItem, oWnd )
             CLOSED ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Briefcase_user1_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_BRIEFCASE2_USER_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'RF' }, "Field->cTipo == 'RF'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Recibos facturas clientes" ;
             FROM     oFlt ;
             CLOSED ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Pencil_Package_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_PENCIL_PACKAGE_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'RM' }, "Field->cTipo == 'RM'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Movimientos de almacén" ;
             FROM     oFlt ;
             CLOSED ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Package_add_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_PACKAGE_PLUS_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'DA' }, "Field->cTipo == 'DA'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Depositos almacén" ;
             FROM     oFlt ;
             CLOSED ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Package_ok_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_PACKAGE_CHECK_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'EX' }, "Field->cTipo == 'EX'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Existencias almacén" ;
-            FROM     oFlt ;
-            CLOSED ;
-            LEVEL    ACC_EDIT
-
-         DEFINE BTNSHELL RESOURCE "Briefcase_document_" OF oWndBrw ;
-            ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'RM' }, "Field->cTipo == 'RM'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
-            TOOLTIP  "Remesas de movimientos de almacén" ;
             FROM     oFlt ;
             CLOSED ;
             LEVEL    ACC_EDIT

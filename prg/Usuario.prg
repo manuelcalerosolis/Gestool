@@ -286,7 +286,7 @@ FUNCTION Usuarios( oMenuItem, oWnd )
          HOTKEY   "A";
          LEVEL    ACC_APPD
 
-      DEFINE BTNSHELL RESOURCE "USER1_ADD_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_BUSINESSPEOPLE_PLUS_" OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfUser, .t. ) );
          ON DROP  ( WinAppRec( oWndBrw:oBrw, bEdit, dbfUser, .t. ) );

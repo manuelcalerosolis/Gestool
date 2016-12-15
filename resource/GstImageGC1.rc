@@ -435,5 +435,16 @@ DOCUMENT_MONEY2_16 BITMAP "..\\bmp\\Document_money2_16.bmp"
 
 GC_NOTE_16 BITMAP "..\\bmp\\gc_note_16.bmp"
 GC_SHOPPING_CART_16 BITMAP "..\\bmp\\gc_shopping_cart_16.bmp"
+GC_DICTIONARY_16 BITMAP "..\\bmp\\gc_dictionary_16.bmp"
+GC_BOOK_TELEPHONE_16 BITMAP "..\\bmp\\gc_book_telephone_16.bmp"
+GC_BOOK_TELEPHONE_32 BITMAP "..\\bmp\\gc_book_telephone_32.bmp"
+GC_TEXT_FIELD_16 BITMAP "..\\bmp\\gc_text_field_16.bmp"
+GC_BUSINESSPEOPLE_PLUS_16 BITMAP "..\\bmp\\gc_businesspeople_plus_16.bmp"
 
+CUBE_YELLOW_32 BITMAP "..\\bmp\\Cube_Yellow_32.bmp"
+PENCIL_PACKAGE_32 BITMAP "..\\bmp\\Pencil_Package_32.bmp"
 
+GC_PACKAGE_CHECK_16 BITMAP "..\\bmp\\gc_package_check_16.bmp"
+GC_PACKAGE_PLUS_16 BITMAP "..\\bmp\\gc_package_plus_16.bmp"
+
+PACKAGE_ADD_16 BITMAP "..\\bmp\\Package_add_16.bmp"

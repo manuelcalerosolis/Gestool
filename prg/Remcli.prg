@@ -517,7 +517,7 @@ METHOD Activate()
          ACTION   ( oRotor:Expand() ) ;
          TOOLTIP  "Rotor" ;
 
-         DEFINE BTNSHELL RESOURCE "ADDRESS_BOOK2_" OF ::oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_DICTIONARY_" OF ::oWndBrw ;
             ACTION   ( if( !Empty( ::oDbf:cCodRem ), ::oCtaRem:Edit(), MsgStop( "Cuenta vacía" ) ) );
             TOOLTIP  "Modificar cuenta" ;
             FROM     oRotor ;
