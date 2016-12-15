@@ -635,7 +635,12 @@ METHOD dialogActivate() CLASS TComercio
    ::Default()
 
    ::lSyncAll        := .t.
+
+   msgalert(::cWebToExport, "cWebToExport antes")
+   
    ::cWebToExport    := getConfigUser( 'Web a exportar', ::cWebToExport )
+
+   msgalert(::cWebToExport, "cWebToExport despues")
 
    // Apertura del dialogo------------------------------------------------------//
 
