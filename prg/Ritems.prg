@@ -670,7 +670,7 @@ FUNCTION CfgDocs( oMenuItem, oWnd )
             CLOSED ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Worker2_Form_Red_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_WORKER_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'PO' }, "Field->cTipo == 'PO'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Parte de producción" ;
             FROM     oFlt ;
@@ -684,7 +684,7 @@ FUNCTION CfgDocs( oMenuItem, oWnd )
             CLOSED ;
             LEVEL    ACC_EDIT
 
-            DEFINE BTNSHELL RESOURCE "Worker2_Form_Red_" OF oWndBrw ;
+            DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_WORKER_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'EP' }, "Field->cTipo == 'EP'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Etiquetas producción" ;
             FROM     oFlt ;

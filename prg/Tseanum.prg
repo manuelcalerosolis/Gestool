@@ -560,7 +560,7 @@ METHOD Activate( oMenuItem, oWnd, lStart )
       :AddResource( "gc_document_empty_16"            )  // Albarán cliente
       :AddResource( "gc_document_text_businessman_16"               )  // Factura cliente
       :AddResource( "gc_cash_register_user_16"        )  // Tiket cliente
-      :AddResource( "Worker2_Form_Red_16"             )  // Parte de produccion
+      :AddResource( "gc_document_text_worker_16"             )  // Parte de produccion
       :AddResource( "gc_pencil_package_16"               )  // Mov de almancen
       :AddResource( "Power-drill_user1_16"            )  // SAT
    end with

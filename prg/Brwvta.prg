@@ -800,7 +800,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
       :AddResource( "gc_document_text_businessman_16" )
       :AddResource( "gc_cash_register_user_16" )
       :AddResource( "Document_Delete_16" )
-      :AddResource( "Worker2_Form_Red_16" )
+      :AddResource( "gc_document_text_worker_16" )
       :AddResource( "Document_navigate_cross_16" )
       :AddResource( "Power-drill_user1_16" )
    end with
@@ -1130,7 +1130,7 @@ Static Function InitBrwVtaCli( cCodArt, oTree, dbfDiv, dbfArticulo, oBrwStk, oBr
    oTreeImageList:AddMasked( TBitmap():Define( "gc_money2_16" ),                        Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Truck_red_16" ),                    Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Package_16" ),                      Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Worker2_Form_Red_16" ),             Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_worker_16" ),             Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Document_navigate_cross_16" ),      Rgb( 255, 0, 255 ) )
 
    oTreeImageList:AddMasked( TBitmap():Define( "Power-drill_user1_16" ),            Rgb( 255, 0, 255 ) )
