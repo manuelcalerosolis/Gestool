@@ -669,7 +669,7 @@ METHOD MenuResource( oDlg ) CLASS TDetMovimientos
 
             MENUITEM    "&1. Modificar de artículo";
                MESSAGE  "Modificar la ficha del artículo" ;
-               RESOURCE "Cube_Yellow_16";
+               RESOURCE "gc_object_cube_16";
                ACTION   ( EdtArticulo( ::oRefMov:VarGet() ) );
 
             MENUITEM    "&2. Informe de artículo";

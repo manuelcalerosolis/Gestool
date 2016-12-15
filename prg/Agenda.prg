@@ -6,7 +6,7 @@
 
 CLASS TAgenda FROM TMant 
 
-   DATA cMru            INIT  "gc_telephone_16"
+   DATA cMru            INIT  "gc_book_telephone_16"
    
    METHOD Create( cPath, cDriver )
 

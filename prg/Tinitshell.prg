@@ -175,7 +175,7 @@ METHOD New(  nTop, nLeft, nBottom, nRight, cTitle, oMenu, oWnd, oIcon,;
 
    ::oImageList         := TImageList():New( 16, 16 )
 
-   ::oImageList:AddMasked( TBitmap():Define( "Cube_Yellow_16", ,                 Self ), Rgb( 255, 0, 255 ) )  // 0
+   ::oImageList:AddMasked( TBitmap():Define( "gc_object_cube_16", ,                 Self ), Rgb( 255, 0, 255 ) )  // 0
    ::oImageList:AddMasked( TBitmap():Define( "gc_user_16", ,                       Self ), Rgb( 255, 0, 255 ) )  // 1
    ::oImageList:AddMasked( TBitmap():Define( "gc_businessman_16", ,                 Self ), Rgb( 255, 0, 255 ) )  // 2
    ::oImageList:AddMasked( TBitmap():Define( "gc_clipboard_empty_businessman_16", , Self ), Rgb( 255, 0, 255 ) )  // 3

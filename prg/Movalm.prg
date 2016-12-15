@@ -592,7 +592,7 @@ FUNCTION HisMovAlm( oMenuItem, oWnd )
          ACTION   ( oRotor:Expand() ) ;
          TOOLTIP  "Rotor" ;
 
-         DEFINE BTNSHELL RESOURCE "CUBE_YELLOW_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_OBJECT_CUBE_" OF oWndBrw ;
             ACTION   ( EdtArticulo( ( dbfHisMov )->cRefMov ) );
             TOOLTIP  "Modificar de artículo" ;
             FROM     oRotor ;
@@ -1602,7 +1602,7 @@ Static Function EdtDetMenu( aTmp, oDlg )
 
             MENUITEM    "&1. Modificar de artículo";
                MESSAGE  "Modificar la ficha del artículo" ;
-               RESOURCE "Cube_Yellow_16";
+               RESOURCE "gc_object_cube_16";
                ACTION   ( EdtArticulo( aTmp[ _CREFMOV ] ) );
 
             MENUITEM    "&2. Informe de artículo";

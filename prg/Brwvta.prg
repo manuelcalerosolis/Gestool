@@ -793,7 +793,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
       :AddResource( "gc_clipboard_empty_businessman_16" )
       :AddResource( "gc_document_empty_businessman_16" )
       :AddResource( "gc_document_text_businessman_16" )
-      :AddResource( "Pencil_Package_16" )
+      :AddResource( "gc_pencil_package_16" )
       :AddResource( "Notebook_user1_16" )
       :AddResource( "gc_clipboard_empty_user_16" )
       :AddResource( "gc_document_empty_16" )
@@ -1115,7 +1115,7 @@ Static Function InitBrwVtaCli( cCodArt, oTree, dbfDiv, dbfArticulo, oBrwStk, oBr
 
    oTreeImageList := TImageList():New( 16, 16 )
 
-   oTreeImageList:AddMasked( TBitmap():Define( "Cube_yellow_16" ),                  Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_object_cube_16" ),                  Rgb( 255, 0, 255 ) )
 
    oTreeImageList:AddMasked( TBitmap():Define( "gc_clipboard_empty_businessman_16" ),  Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "gc_document_empty_businessman_16" ),   Rgb( 255, 0, 255 ) )
@@ -3592,7 +3592,7 @@ Function EdtDetMenu( oCodArt, oDlg, lOferta )
 
             MENUITEM    "&1. Modificar artículo";
                MESSAGE  "Modificar la ficha del artículo" ;
-               RESOURCE "Cube_Yellow_16";
+               RESOURCE "gc_object_cube_16";
                ACTION   ( EdtArticulo( oCodArt:VarGet() ) );
 
             MENUITEM    "&2. Informe de artículo";
