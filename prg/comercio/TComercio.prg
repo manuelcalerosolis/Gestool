@@ -635,6 +635,7 @@ METHOD dialogActivate() CLASS TComercio
    ::Default()
 
    ::lSyncAll        := .t.
+   ::cWebToExport    := getConfigUser( 'Web a exportar', ::cWebToExport )
 
    // Apertura del dialogo------------------------------------------------------//
 
@@ -661,39 +662,13 @@ METHOD dialogActivate() CLASS TComercio
 
       ::oMeterProceso   := TApoloMeter():ReDefine( 230, { | u | if( pCount() == 0, ::nMeterProceso, ::nMeterProceso := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
-      /*
-      Botones exportación------------------------------------------------------
-      */
-
-      REDEFINE BUTTONBMP ::oBtnExportar ;
-         ID       510 ;
-         OF       ::oDlg;
-         ACTION   ( ::controllerExportPrestashop() ) 
-
-      REDEFINE BUTTONBMP ::oBtnImportar ;
-         ID       520 ;
-         OF       ::oDlg;
-         ACTION   ( ::controllerOrderPrestashop() )
-
-      REDEFINE BUTTONBMP ::oBtnStock ;
-         ID       530 ;
-         OF       ::oDlg;
-         ACTION   ( ::controllerUpdateStockPrestashop() )
-
-      REDEFINE BUTTON ::oBtnCancel ;
-         ID       IDCANCEL ;
-         OF       ::oDlg ;
-         ACTION   ( ::oDlg:end() )
-
-      ::oDlg:AddFastKey( VK_F5, {|| ::controllerExportPrestashop() } )
-
       ::oDlg:bStart := {|| ::dialogStart() }
 
    ACTIVATE DIALOG ::oDlg CENTER
 
-   ::oStock:end()
+   setConfigUser( 'Web a exportar', ::cWebToExport )
 
-   EnableAcceso()
+   enableAcceso()
 
    ::oBmp:End()
 
@@ -715,11 +690,38 @@ Return ( self )
 
 METHOD dialogStart() CLASS TComercio
 
+   local oGrupo
+   local oCarpeta
+   local oOfficeBar
+
+   if empty( oOfficeBar )
+
+      oOfficeBar              := TDotNetBar():New( 0, 0, 1000, 115, ::oDlg, 1 )
+
+      oOfficeBar:lPaintAll    := .f.
+      oOfficeBar:lDisenio     := .f.
+
+      oOfficeBar:SetStyle( 1 )
+
+      ::oDlg:oTop             := oOfficeBar
+
+      oCarpeta                := TCarpeta():New( oOfficeBar, "Prestashop" )
+
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 246, "Acciones", .f. )
+         ::oBtnImportar       := TDotNetButton():New( 60, oGrupo, "Edit32", "Importar pedidos",    1, {|| ::controllerOrderPrestashop() }, , .t., .f., .f., .f. )
+         ::oBtnStock          := TDotNetButton():New( 60, oGrupo, "Del32",  "Actualizar stocks",   2, {|| ::controllerUpdateStockPrestashop() }, , .t., .f., .f., .f. )
+         ::oBtnExportar       := TDotNetButton():New( 60, oGrupo, "New32",  "Sincronizar web",     3, {|| ::controllerExportPrestashop() }, , ::TComercioConfig:getHideExportButton(), .f., .f., .f. )
+         ::oBtnCancel         := TDotNetButton():New( 60, oGrupo, "Del32",  "Salir",               4, {|| ::oDlg:end() }, , .t., .f., .f., .f. )
+
+   end if
+
+/*
    if ::TComercioConfig:getHideExportButton()
       ::oBtnExportar:Hide()
    else
       ::oBtnExportar:Show()
    end if
+*/
 
 Return nil
 
