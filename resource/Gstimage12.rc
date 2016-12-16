@@ -185,8 +185,6 @@ USER1_MESSAGE_32 BITMAP "..\\bmp\\user1_message_32.bmp"
 
 USER_MESSAGE_48 BITMAP "..\\bmp\\user_message_48.bmp"
 
-SYMBOL_EURO_48 BITMAP "..\\bmp\\symbol_euro_48.bmp"
-
 HAND_POINT_48 BITMAP "..\\bmp\\hand_point_48.bmp"
 
 BOOKMARKS_PREFERENCES_32 BITMAP "..\\bmp\\bookmarks_preferences_32.bmp"

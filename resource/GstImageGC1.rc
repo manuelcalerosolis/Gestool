@@ -414,9 +414,7 @@ DOCLOCK16 BITMAP "..\\bmp\\gc_document_pdf_16.bmp"
 GC_KEYBOARD_KEY_N_16 BITMAP "..\\bmp\\gc_keyboard_key_n_16.bmp"
 GC_BAGS_16 BITMAP "..\\bmp\\gc_bags_16.bmp"
 GC_FUNNEL_48 BITMAP "..\\bmp\\gc_funnel_48.bmp"
-
 GC_DOCUMENT_TEXT_16 BITMAP "..\\bmp\\gc_document_text_16.bmp"
-
 GC_DUDE4_24 BITMAP "..\\bmp\\gc_dude4_24.bmp"
 GC_BUSINESSMAN_24 BITMAP "..\\bmp\\gc_businessman_24.bmp"
 GC_BUSINESSMAN2_24 BITMAP "..\\bmp\\gc_businessman2_24.bmp"
@@ -464,3 +462,5 @@ LUPA BITMAP "..\\bmp\\gc_magnifying_glass2_16.bmp"
 LUPA_32 BITMAP "..\\bmp\\gc_magnifying_glass2_32.bmp"
 LUPA_24 BITMAP "..\\bmp\\gc_magnifying_glass2_24.bmp"
 LUPA_16 BITMAP "..\\bmp\\gc_magnifying_glass2_16.bmp"
+
+GC_SYMBOL_EURO_48 BITMAP "..\\bmp\\gc_symbol_euro_48.bmp"
