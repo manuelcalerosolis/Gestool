@@ -4251,6 +4251,7 @@ FUNCTION lActualiza( cCodEmp, oWndBrw, lNoWait, cNomEmp, lSincroniza )
 
       REDEFINE BITMAP oBmp;
          RESOURCE "gc_factory_48" ;
+         TRANSPARENT ;
          ID       500 ;
          OF       oDlgWat
 

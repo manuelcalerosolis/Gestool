@@ -12777,8 +12777,6 @@ LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN
 
 BSTOP BITMAP "..\\bmp\\Forbidden_16.bmp"
 
-LUPA BITMAP "..\\bmp\\Document_view_16.bmp"
-
 EXIT BITMAP "..\\bmp\\Exit_16.bmp"
 
 NEXT BITMAP "..\\bmp\\Navigate_Right_16.bmp"

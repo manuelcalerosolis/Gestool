@@ -459,3 +459,8 @@ GC_CLIPBOARD_PENCIL_32 BITMAP "..\\bmp\\gc_clipboard_pencil_32.bmp"
 GC_CLIPBOARD_PENCIL_48 BITMAP "..\\bmp\\gc_clipboard_pencil_48.bmp"
 GC_DOCUMENT_TEXT_PENCIL_32 BITMAP "..\\bmp\\gc_document_text_pencil_32.bmp"
 GC_DOCUMENT_TEXT_PENCIL_48 BITMAP "..\\bmp\\gc_document_text_pencil_48.bmp"
+
+LUPA BITMAP "..\\bmp\\gc_magnifying_glass2_16.bmp"
+LUPA_32 BITMAP "..\\bmp\\gc_magnifying_glass2_32.bmp"
+LUPA_24 BITMAP "..\\bmp\\gc_magnifying_glass2_24.bmp"
+LUPA_16 BITMAP "..\\bmp\\gc_magnifying_glass2_16.bmp"
