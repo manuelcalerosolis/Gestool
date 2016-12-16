@@ -2220,7 +2220,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
    REDEFINE BITMAP oBmpImagenes ;
          ID       500 ;
-         RESOURCE "hand_point_48" ;
+         RESOURCE "gc_hand_touch_48" ;
          TRANSPARENT ;
          OF       fldTactil
 

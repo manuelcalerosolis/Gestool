@@ -9,7 +9,8 @@ LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US
 LUPA BITMAP "..\\bmp\\gc_magnifying_glass2_12.bmp"
 LUPA_32 BITMAP "..\\bmp\\gc_magnifying_glass2_32.bmp"
 LUPA_24 BITMAP "..\\bmp\\gc_magnifying_glass2_24.bmp"
-LUPA_16 BITMAP "..\\bmp\\gc_magnifying_glass2_16.bmp"
+LUPA_16 BITMAP "..\\bmp\\gc_magnifying_glass2_12.bmp"
 
 GC_SYMBOL_EURO_48 BITMAP "..\\bmp\\gc_symbol_euro_48.bmp"
+GC_HAND_TOUCH_48 BITMAP "..\\bmp\\gc_hand_touch_48.bmp"
 
