@@ -47,7 +47,6 @@ WORKER2_CLOCK_16 BITMAP "..\\bmp\\Worker2_Clock_16.bmp"
 WORKER2_CLOCK_32 BITMAP "..\\bmp\\Worker2_Clock_32.bmp"
 WORKER2_HAMMER2_16 BITMAP "..\\bmp\\Worker2_Hammer2_16.bmp"
 WORKER2_HAMMER2_32 BITMAP "..\\bmp\\Worker2_Hammer2_32.bmp"
-WORKER2_FORM_RED_16 BITMAP "..\\bmp\\Worker2_Form_Red_16.bmp"
 WORKER2_FORM_RED_32 BITMAP "..\\bmp\\Worker2_Form_Red_32.bmp"
 
 ROBOT_16 BITMAP "..\\bmp\\Robot_16.bmp"
@@ -100,8 +99,6 @@ TEXT_ITALICS_16 BITMAP "..\\bmp\\text_italics_16.bmp"
 TEXT_ALIGN_RIGHT_16 BITMAP "..\\bmp\\text_align_right_16.bmp"
 TEXT_ALIGN_LEFT_16 BITMAP "..\\bmp\\text_align_left_16.bmp"
 PIN_BLUE_16 BITMAP "..\\bmp\\pin_blue_16.bmp"
-
-RENAME_16 BITMAP "..\\bmp\\rename_16.bmp"
 
 shoppingbasket_16 BITMAP "..\\bmp\\ShoppingBasket_16.bmp"
 shoppingbasket_32 BITMAP "..\\bmp\\ShoppingBasket_32.bmp"
