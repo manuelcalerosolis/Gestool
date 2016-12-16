@@ -1906,7 +1906,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
    REDEFINE BITMAP oBmpGeneral ;
          ID       500 ;
-         RESOURCE "Cube_Yellow_Alpha_48" ;
+         RESOURCE "gc_object_cube_48" ;
          TRANSPARENT ;
          OF       fldGeneral
 
@@ -3777,7 +3777,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
    REDEFINE BITMAP oBmpContabilidad ;
          ID       500 ;
-         RESOURCE "Folder2_red_Alpha_48" ;
+         RESOURCE "gc_folders2_48" ;
          TRANSPARENT ;
          OF       fldContabilidad
 
@@ -4421,7 +4421,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
    REDEFINE BITMAP oBmpWeb ;
          ID       500 ;
-         RESOURCE "Earth2_Alpha_48" ;
+         RESOURCE "gc_earth_48" ;
          TRANSPARENT ;
          OF       fldWeb
 
@@ -16213,7 +16213,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
       REDEFINE BITMAP oBmp ;
          ID       600 ;
-         RESOURCE "Cube_Yellow_Alpha_48" ;
+         RESOURCE "gc_object_cube_48" ;
          TRANSPARENT ;
          OF       oDlg
 

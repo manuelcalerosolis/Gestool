@@ -1027,7 +1027,7 @@ METHOD Resource( nMode ) CLASS TFacAutomatica
 
       REDEFINE BITMAP oBmpFolder ;
         ID       990 ;
-        RESOURCE "Folder2_red_alpha_48" ;
+        RESOURCE "gc_folders2_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[2]
 

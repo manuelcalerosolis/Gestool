@@ -51,7 +51,7 @@ METHOD Resource() CLASS TSpecialInfoArticulo
 
    DEFINE DIALOG oDlg RESOURCE "Info_5" TITLE "Información del artículo : " + Rtrim( ::cCodigoArticulo ) + " - " + Rtrim( ::cNombreArticulo )
 
-   REDEFINE BITMAP oBmp ID 500 RESOURCE "Cube_Yellow_Alpha_48" TRANSPARENT OF oDlg
+   REDEFINE BITMAP oBmp ID 500 RESOURCE "gc_object_cube_48" TRANSPARENT OF oDlg
 
       oBrwArticulo                      := IXBrowse():New( oDlg )
 

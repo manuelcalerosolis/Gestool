@@ -450,7 +450,7 @@ METHOD Activate( lAuto ) CLASS TSndRecInf
 		*/
 
       REDEFINE BITMAP oBmp ;
-         RESOURCE "Satellite_dish_48_alpha" ;
+         RESOURCE "gc_satellite_dish2_48" ;
          ID       500 ;
          OF       ::oFld:aDialogs[ 1 ]
 

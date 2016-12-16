@@ -464,7 +464,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
 
       REDEFINE BITMAP oBmpGeneral;
          ID          500 ;
-         RESOURCE    "Cube_Yellow_Alpha_48" ;
+         RESOURCE    "gc_object_cube_48" ;
          TRANSPARENT ;
          OF          fldEstadisticas          
 

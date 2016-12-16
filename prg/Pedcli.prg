@@ -2053,7 +2053,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "folder2_red_alpha_48" ;
+        RESOURCE "gc_folders2_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[2]
 
@@ -3977,7 +3977,7 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpP
 
       REDEFINE BITMAP oBmpBancos ;
          ID       500 ;
-         RESOURCE "office_building_48_alpha" ;
+         RESOURCE "gc_office_building_48" ;
          TRANSPARENT ;
          OF       oFld:aDialogs[ 2 ]
 

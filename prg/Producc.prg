@@ -1222,7 +1222,7 @@ METHOD Resource( nMode, aDatosAnterior )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "cube_yellow_alpha_48" ;
+        RESOURCE "gc_object_cube_48" ;
         TRANSPARENT ;
         OF       ::oFld:aDialogs[2]
 

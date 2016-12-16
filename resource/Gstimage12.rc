@@ -114,26 +114,6 @@ DOOR2_OPEN_ALPHA_48 BITMAP "..\\bmp\\door2_open_alpha_48.bmp"
 
 FLOPPY_DISK_BLUE_ALPHA_48 BITMAP "..\\bmp\\floppy_disk_blue_alpha_48.bmp"
 
-WRENCH_32_ALPHA BITMAP "..\\bmp\\wrench_32_alpha.bmp"
-
-PREFERENCES_EDIT_32_ALPHA BITMAP "..\\bmp\\preferences_edit_32_alpha.bmp"
-
-CUBE_YELLOW_32_ALPHA BITMAP "..\\bmp\\cube_yellow_32_alpha.bmp"
-
-DOCUMENT_EDIT_32_ALPHA BITMAP "..\\bmp\\document_edit_32_alpha.bmp"
-
-FOLDER2_RED_32_ALPHA BITMAP "..\\bmp\\folder2_red_32_alpha.bmp"
-
-SATELLITE_DISH_32_ALPHA BITMAP "..\\bmp\\satellite_dish_32_alpha.bmp"
-
-EARTH2_32_ALPHA BITMAP "..\\bmp\\Earth2_32_alpha.bmp"
-
-FLOPPY_DISK_BLUE_32_ALPHA BITMAP "..\\bmp\\Floppy_disk_blue_32_alpha.bmp"
-
-DOOR2_OPEN_32_ALPHA BITMAP "..\\bmp\\Door2_open_32_alpha.bmp"
-
-CASHIER_32_ALPHA BITMAP "..\\bmp\\cashier_32_alpha.bmp"
-
 REPLACE2_48_ALPHA BITMAP "..\\bmp\\Replace2_48_alpha.bmp"
 
 MONEY2_24 BITMAP "..\\bmp\\Money2_24.bmp"

@@ -10744,7 +10744,7 @@ METHOD ContabilizaSesiones()
 
    REDEFINE BITMAP oBmpContabilidad ;
       ID       500 ;
-      RESOURCE "Folder2_red_Alpha_48" ;
+      RESOURCE "gc_folders2_48" ;
       TRANSPARENT ;
       OF       ::oDlgSelect
 
