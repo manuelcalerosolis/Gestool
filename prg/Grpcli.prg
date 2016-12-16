@@ -274,7 +274,7 @@ METHOD Resource( nMode )
 
       REDEFINE BITMAP oBmpTarifa ;
          ID          600 ;
-         RESOURCE    "Symbol_euro_48" ;
+         RESOURCE    "gc_symbol_euro_48" ;
          TRANSPARENT ;
          OF          oFld:aDialogs[ 2 ]
 

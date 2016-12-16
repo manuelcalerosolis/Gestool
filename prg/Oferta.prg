@@ -903,7 +903,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
 
       REDEFINE BITMAP oBmpSegunda ;
          ID       500 ;
-         RESOURCE "Symbol_euro_48" ;
+         RESOURCE "gc_symbol_euro_48" ;
          TRANSPARENT ;
          OF       oFld:aDialogs[2]
 

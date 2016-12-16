@@ -3039,7 +3039,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE BITMAP oBmpTarifa ;
          ID       600 ;
-         RESOURCE "Symbol_euro_48" ;
+         RESOURCE "gc_symbol_euro_48" ;
          TRANSPARENT ;
          OF       fldTarifa
 
