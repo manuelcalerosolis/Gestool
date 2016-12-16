@@ -493,7 +493,7 @@ METHOD Activate( cDriver )
       HOTKEY   "A" ;
       LEVEL    ACC_APPD
 
-   DEFINE BTNSHELL RESOURCE "NEW" OF ::oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "DUP" OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::oWndBrw:RecDup() );
       ON DROP  ( ::oWndBrw:RecDup() );
@@ -1222,7 +1222,7 @@ METHOD Resource( nMode, aDatosAnterior )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "cube_yellow_alpha_48" ;
+        RESOURCE "gc_object_cube_48" ;
         TRANSPARENT ;
         OF       ::oFld:aDialogs[2]
 
@@ -1459,49 +1459,49 @@ METHOD Resource( nMode, aDatosAnterior )
       end with
 
       with object ( ::oBrwMaterialProducido:AddCol() )
-         :cHeader          := getTraslation( "Grupo familia" )
+         :cHeader          := getConfigTraslation( "Grupo familia" )
          :bStrData         := {|| AllTrim( ::oDetProduccion:oDbfVir:FieldGetByName( "cGrpFam" ) ) + Space( 1 ) + oRetFld( ::oDetProduccion:oDbfVir:FieldGetByName( "cGrpFam" ), ::oGrupoFamilia:oDbf )  }
          :nWidth           := 55
          :lHide            := .t.
       end with
 
       with object ( ::oBrwMaterialProducido:AddCol() )
-         :cHeader          := getTraslation( "Familia" )
+         :cHeader          := getConfigTraslation( "Familia" )
          :bStrData         := {|| AllTrim( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodFam" ) ) + Space( 1 ) + oRetFld( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodFam" ), ::oFam ) }
          :nWidth           := 55
          :lHide            := .t.
       end with
 
       with object ( ::oBrwMaterialProducido:AddCol() )
-         :cHeader          := getTraslation( "Tipo" )
+         :cHeader          := getConfigTraslation( "Tipo" )
          :bStrData         := {|| AllTrim( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodTip" ) ) + Space( 1 ) + oRetFld( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodTip" ), ::oTipoArticulo:oDbf ) }
          :nWidth           := 55
          :lHide            := .t.
       end with
 
       with object ( ::oBrwMaterialProducido:AddCol() )
-         :cHeader          := getTraslation( "Categoría" )
+         :cHeader          := getConfigTraslation( "Categoría" )
          :bStrData         := {|| AllTrim( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodCat" ) ) + Space( 1 ) + oRetFld( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodCat" ), ::oCategoria ) }
          :nWidth           := 55
          :lHide            := .t.
       end with
 
       with object ( ::oBrwMaterialProducido:AddCol() )
-         :cHeader          := getTraslation( "Temporada" )
+         :cHeader          := getConfigTraslation( "Temporada" )
          :bStrData         := {|| AllTrim( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodTmp" ) ) + Space( 1 ) + oRetFld( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodTmp" ), ::oTemporada ) }
          :nWidth           := 55
          :lHide            := .t.
       end with
 
       with object ( ::oBrwMaterialProducido:AddCol() )
-         :cHeader          := getTraslation( "Fabricante" )
+         :cHeader          := getConfigTraslation( "Fabricante" )
          :bStrData         := {|| AllTrim( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodFab" ) ) + Space( 1 ) + oRetFld( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodFab" ), ::oFabricante:oDbf ) }
          :nWidth           := 55
          :lHide            := .t.
       end with
 
       with object ( ::oBrwMaterialProducido:AddCol() )
-         :cHeader          := getTraslation( "Operación" )
+         :cHeader          := getConfigTraslation( "Operación" )
          :bStrData         := {|| AllTrim( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodOpe" ) ) + Space( 1 ) + oRetFld( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodOpe" ), ::oOperacion:oDbf ) } 
          :nWidth           := 55
          :lHide            := .t.
@@ -1613,49 +1613,49 @@ METHOD Resource( nMode, aDatosAnterior )
       end with
 
       with object ( ::oBrwMateriaPrima:AddCol() )
-         :cHeader          := getTraslation( "Grupo familia" )
+         :cHeader          := getConfigTraslation( "Grupo familia" )
          :bStrData         := {|| AllTrim( ::oDetMaterial:oDbfVir:FieldGetByName( "cGrpFam" ) ) + Space( 1 ) + oRetFld( ::oDetMaterial:oDbfVir:FieldGetByName( "cGrpFam" ), ::oGrupoFamilia:oDbf ) }
          :nWidth           := 55
          :lHide            := .t.
       end with
 
       with object ( ::oBrwMateriaPrima:AddCol() )
-         :cHeader          := getTraslation( "Familia" )
+         :cHeader          := getConfigTraslation( "Familia" )
          :bStrData         := {|| AllTrim( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodFam" ) ) + Space( 1 ) + oRetFld( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodFam" ), ::oFam ) }
          :nWidth           := 55
          :lHide            := .t.
       end with
 
       with object ( ::oBrwMateriaPrima:AddCol() )
-         :cHeader          := getTraslation( "Tipo" )
+         :cHeader          := getConfigTraslation( "Tipo" )
          :bStrData         := {|| AllTrim( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodTip" ) ) + Space( 1 ) + oRetFld( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodTip" ), ::oTipoArticulo:oDbf ) }
          :nWidth           := 55
          :lHide            := .t.
       end with
 
       with object ( ::oBrwMateriaPrima:AddCol() )
-         :cHeader          := getTraslation( "Categoría" )
+         :cHeader          := getConfigTraslation( "Categoría" )
          :bStrData         := {|| AllTrim( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodCat" ) ) + Space( 1 ) + oRetFld( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodCat" ), ::oCategoria ) }
          :nWidth           := 55
          :lHide            := .t.
       end with
 
       with object ( ::oBrwMateriaPrima:AddCol() )
-         :cHeader          := getTraslation( "Temporada" )
+         :cHeader          := getConfigTraslation( "Temporada" )
          :bStrData         := {|| AllTrim( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodTmp" ) ) + Space( 1 ) + oRetFld( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodTmp" ), ::oTemporada ) }
          :nWidth           := 55
          :lHide            := .t.
       end with
 
       with object ( ::oBrwMateriaPrima:AddCol() )
-         :cHeader          := getTraslation( "Fabricante" )
+         :cHeader          := getConfigTraslation( "Fabricante" )
          :bStrData         := {|| AllTrim( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodFab" ) ) + Space( 1 ) + oRetFld( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodFab" ), ::oFabricante:oDbf ) }
          :nWidth           := 55
          :lHide            := .t.
       end with
 
       with object ( ::oBrwMateriaPrima:AddCol() )
-         :cHeader          := getTraslation( "Operación" )
+         :cHeader          := getConfigTraslation( "Operación" )
          :bStrData         := {|| AllTrim( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodOpe" ) ) + Space( 1 ) + oRetFld( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodOpe" ), ::oOperacion:oDbf ) }
          :nWidth           := 55
          :lHide            := .t.
@@ -5162,7 +5162,7 @@ METHOD LoadPropiedadesArticulos( oDlg, nMode ) CLASS TDetalleArticulos
       ::oGetTipo:lValid()
 
       REDEFINE SAY ;
-         PROMPT   getTraslation( "Categoría" );
+         PROMPT   getConfigTraslation( "Categoría" );
          ID       504 ;
          OF       oDlg
 
@@ -5178,7 +5178,7 @@ METHOD LoadPropiedadesArticulos( oDlg, nMode ) CLASS TDetalleArticulos
       ::oGetCatalogo:lValid()
 
       REDEFINE SAY ;
-         PROMPT   getTraslation( "Temporada" );
+         PROMPT   getConfigTraslation( "Temporada" );
          ID       505 ;
          OF       oDlg
 

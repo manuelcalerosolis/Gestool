@@ -76,7 +76,7 @@ static dbfProMat
 static dbfHisMov
 
 static aTipoOferta   := { "Artículos", "Familias", "Tipo de artículo", "Categorias", "Temporadas", "Fabricantes" }
-static aBmpOferta    := { "cube_yellow_16", "cubes_16", "cubes_blue_16", "colors_16", "sun_and_cloud_16", "nut_and_bolt_16" }
+static aBmpOferta    := { "gc_object_cube_16", "cubes_16", "cubes_blue_16", "colors_16", "sun_and_cloud_16", "nut_and_bolt_16" }
 
 static oBandera
 
@@ -483,7 +483,7 @@ FUNCTION Oferta( oMenuItem, oWnd )
          :bStrData         := {|| aTipoOferta[ Max( ( dbfOferta )->nTblOfe, 1 ) ] }
          :bBmpData         := {|| ( dbfOferta )->nTblOfe }
          :nWidth           := 110
-         :AddResource( "cube_yellow_16" )
+         :AddResource( "gc_object_cube_16" )
          :AddResource( "cubes_16" )
          :AddResource( "cubes_blue_16" )
          :AddResource( "colors_16" )
@@ -903,7 +903,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
 
       REDEFINE BITMAP oBmpSegunda ;
          ID       500 ;
-         RESOURCE "Symbol_euro_48" ;
+         RESOURCE "gc_symbol_euro_48" ;
          TRANSPARENT ;
          OF       oFld:aDialogs[2]
 
@@ -1490,7 +1490,7 @@ FUNCTION BrwOfe( oGet, dbfOferta, oGet2 )
          :bStrData         := {|| aTipoOferta[ Max( ( dbfOferta )->nTblOfe, 1 ) ] }
          :bBmpData         := {|| ( dbfOferta )->nTblOfe }
          :nWidth           := 110
-         :AddResource( "cube_yellow_16" )
+         :AddResource( "gc_object_cube_16" )
          :AddResource( "cubes_16" )
          :AddResource( "cubes_blue_16" )
          :AddResource( "colors_16" )

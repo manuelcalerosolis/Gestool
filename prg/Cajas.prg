@@ -334,7 +334,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       800 ;
-         RESOURCE "cashier_48_alpha" ;
+         RESOURCE "gc_cash_register_48" ;
          TRANSPARENT ;
          OF       oFld:aDialogs[1]
 
@@ -497,7 +497,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
 
       REDEFINE BITMAP oBmpFormatos ;
          ID       800 ;
-         RESOURCE "document_edit_48_alpha" ;
+         RESOURCE "gc_document_text_pencil_48" ;
          TRANSPARENT ;
          OF       oFld:aDialogs[2]
 
@@ -1674,7 +1674,7 @@ Function BrwCajaTactil( oGet, dbfCaja, oGet2, lReturnCaja, lParaLlevar )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       500 ;
-        RESOURCE   if ( lParaLlevar, "wheel_48_alpha", "cashier_48_alpha" ) ;
+        RESOURCE   if ( lParaLlevar, "wheel_48_alpha", "gc_cash_register_48" ) ;
         TRANSPARENT ;
         OF       oDlg
 
@@ -3270,7 +3270,7 @@ Function SelectCajas()
       TITLE       "Seleccionar caja"
 
       REDEFINE BITMAP oBmp ;
-         RESOURCE "Cashier_48_alpha" ;
+         RESOURCE "gc_cash_register_48" ;
          ID       300;
          OF       oDlg
 

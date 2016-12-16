@@ -313,13 +313,13 @@ METHOD Activate() CLASS TFacAutomatica
 
 if lUsrMaster() .or. oUser():lDocAuto()
 
-   DEFINE BTNSHELL oGen RESOURCE "Flash_" OF ::oWndBrw ;
+   DEFINE BTNSHELL oGen RESOURCE "GC_FLASH_" OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::RunPlantillaAutomatica( ::oDbf:cCodFac ) ) ;
       TOOLTIP  "(G)enerar ahora";
       HOTKEY   "G"
 
-      DEFINE BTNSHELL RESOURCE "Flash_" OF ::oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_FLASH_" OF ::oWndBrw ;
          ACTION   ( ::RunPlantillaAutomatica() );
          TOOLTIP  "Generar todas ahora" ;
          FROM     oGen
@@ -544,7 +544,7 @@ METHOD Resource( nMode ) CLASS TFacAutomatica
       ::oDbf:nDtoDos    := 0
       ::oDbf:nIvaMan    := 0
       ::oDbf:nManObr    := 0
-      ::oDbf:cManObr    := getTraslation( "Gastos" )
+      ::oDbf:cManObr    := getConfigTraslation( "Gastos" )
       ::oDbf:nDiaFact   := 1
       ::oDbf:nTipDoc    := 2
       ::oDbf:dFecIni    := GetSysDate()
@@ -1027,7 +1027,7 @@ METHOD Resource( nMode ) CLASS TFacAutomatica
 
       REDEFINE BITMAP oBmpFolder ;
         ID       990 ;
-        RESOURCE "Folder2_red_alpha_48" ;
+        RESOURCE "gc_folders2_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[2]
 

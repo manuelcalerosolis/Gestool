@@ -1544,7 +1544,7 @@ else
       HOTKEY   "F";
       LEVEL    ACC_IMPR
 
-   DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_USER_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( WinDupRec( oWndBrw:oBrw, bEditT, D():Tikets( nView ) ) );
       TOOLTIP  "Ti(k)et a factura";
@@ -1653,14 +1653,14 @@ else
       ACTION   ( oRotor:Expand() ) ;
       TOOLTIP  "Rotor" ;
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_WHITE_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( Tik2AlbFac( ( D():Tikets( nView ) )->cTipTik, ( D():Tikets( nView ) )->cNumDoc ) );
          TOOLTIP  "Visualizar documento" ;
          FROM     oRotor ;
          CLOSED ;
 
-      DEFINE BTNSHELL RESOURCE "USER1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_USER_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( EdtCli( ( D():Tikets( nView ) )->cCliTik ) );
          TOOLTIP  "Modificar cliente" ;
@@ -1681,7 +1681,7 @@ else
          FROM     oRotor ;
          CLOSED ;
 
-      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_USER_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( lFacturaAlbaran() ) ;
          TOOLTIP  "Generar factura" ;

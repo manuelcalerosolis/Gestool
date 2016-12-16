@@ -343,7 +343,6 @@ CLASS TTurno FROM TMasDet
    DATA  cPdfFileName                              INIT ""
    DATA  cHtmlFileName                             INIT ""
 
-
    DATA  cGrupoEnUso                               INIT ""
    DATA  nGrupoPeso                                INIT 0
 
@@ -2995,18 +2994,15 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       return .f.
    end if
 
-   // Cominenza el proceso de calculo---------------------------------------------
-
-   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
    ::CreateCajaTurno()
 
    // Si estamos con las cajas desincorizadas el scope es por caja-------------
 
    ::oDbf:GetStatus()
-   ::oDbf:OrdSetFocus( "cNumTur" )
-   ::oDbf:Seek( ::GetFullTurno() )
+   if !( ::oDbf:SeekInOrd( ::GetFullTurno(), "cNumTur" ) )
+      msgStop( "Turno " + ::GetFullTurno() + " no encontrado" )
+      return .f.
+   end if 
 
    ::oDbfDet:OrdScope( ::GetFullTurno() )
    ::oDbfDet:GoTop()
@@ -3014,10 +3010,15 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
    ::oDbfCaj:OrdScope( ::GetFullTurno() )
    ::oDbfCaj:GoTop()
 
+   // Cominenza el proceso de calculo---------------------------------------------
+
+   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
    // Valores para su posterior edición----------------------------------------
 
    ::lCerrado        := ( ::oDbf:nStaTur == cajCerrrada )
-   ::cComentario     := ::oDbf:mComTur
+   ::cComentario     := ( ::oDbf:mComTur )
 
    // Seleccionamos las cajas q se van a cerrar-----------------------------------
 
@@ -3527,7 +3528,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          PICTURE     ::cPorDiv ;
          OF          ::oFldTurno:aDialogs[3]
 
-         oBtnEfectivo            := TBtnBmp():ReDefine( 220, "gc_money2_16",,,,,{|| ::oMoneyEfectivo:Dialog( ::oImporteEfectivo ), ::RefreshTurno() }, ::oFldTurno:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Conteo de efectivo" )
+         oBtnEfectivo               := TBtnBmp():ReDefine( 220, "gc_money2_16",,,,,{|| ::oMoneyEfectivo:Dialog( ::oImporteEfectivo ), ::RefreshTurno() }, ::oFldTurno:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Conteo de efectivo" )
          oBtnEfectivo:lTransparent  := .t.
          oBtnEfectivo:lBoxSelect    := .f.
 
@@ -4023,9 +4024,9 @@ Method InitDlgImprimir()
                      oSubTree:Add( "Ventas por artículos" )
                      oSubTree:Add( "Ventas por tipo de artículos" )
                      oSubTree:Add( "Ventas por familias" )
-                     oSubTree:Add( "Ventas por " + getTraslation( "categoría" ) )
+                     oSubTree:Add( "Ventas por " + getConfigTraslation( "categoría" ) )
                      oSubTree:Add( "Ventas por fabricante" )
-                     oSubTree:Add( "Ventas por " + getTraslation( "temporada" ) )
+                     oSubTree:Add( "Ventas por " + getConfigTraslation( "temporada" ) )
                      oSubTree:Add( "Ventas por usuarios" )
                      oSubTree:Add( "Ventas por tipos de " + cImp() )
                      oSubTree:Add( "Ventas por tipo de invitaciones" )
@@ -9826,7 +9827,7 @@ METHOD FillTemporal( cCodCaj )
    Ventas por categorias---------------------------------------------------------
    */
 
-   if ::GetItemCheckState( "Ventas por " + getTraslation( "categoría" ) )
+   if ::GetItemCheckState( "Ventas por " + getConfigTraslation( "categoría" ) )
 
       if ::oTikT:Seek( cTurnoCaja )
 
@@ -10116,7 +10117,7 @@ METHOD FillTemporal( cCodCaj )
    Ventas por temporada--------------------------------------------------------
    */
 
-   if ::GetItemCheckState( "Ventas por " + getTraslation( "temporada" ) )
+   if ::GetItemCheckState( "Ventas por " + getConfigTraslation( "temporada" ) )
 
       if ::oTikT:Seek( cTurnoCaja )
 
@@ -10743,7 +10744,7 @@ METHOD ContabilizaSesiones()
 
    REDEFINE BITMAP oBmpContabilidad ;
       ID       500 ;
-      RESOURCE "Folder2_red_Alpha_48" ;
+      RESOURCE "gc_folders2_48" ;
       TRANSPARENT ;
       OF       ::oDlgSelect
 

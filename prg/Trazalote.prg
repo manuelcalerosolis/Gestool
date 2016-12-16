@@ -386,7 +386,7 @@ METHOD Activate( oMenuItem, oWnd )
                               Space( 6 ) + "Facturas de proveedores",;
                               Space( 3 ) + "Ventas",;
                               Space( 6 ) + "Presupuestos de clientes",;
-                              Space( 6 ) + getTraslation("Pedidos de clientes"),;
+                              Space( 6 ) + getConfigTraslation("Pedidos de clientes"),;
                               Space( 6 ) + "Albaranes de clientes",;
                               Space( 6 ) + "Facturas de clientes",;
                               Space( 6 ) + "Facturas rectificativas de clientes",;
@@ -402,13 +402,13 @@ METHOD Activate( oMenuItem, oWnd )
                               "gc_document_empty_businessman_16",;
                               "gc_document_text_businessman_16",;
                               "Notebook_user1_16",;
-                              "Clipboard_empty_user1_16",;
-                              "Document_plain_user1_16",;
+                              "gc_clipboard_empty_user_16",;
+                              "gc_document_empty_16",;
                               "gc_document_text_businessman_16",;
                               "Document_delete_16",;
                               "Package_book_red_16",;
-                              "Worker2_Form_Red_16",;
-                              "Cashier_user1_16" }
+                              "gc_document_text_worker_16",;
+                              "gc_cash_register_user_16" }
 
    if !::OpenFiles()
       return( Self )
@@ -1268,7 +1268,7 @@ METHOD Filtrar()
          ::oDbfTmp:GoTop()
          ::oBrw:Refresh()
 
-      case Alltrim( ::cFiltro ) == getTraslation("Pedidos de clientes")
+      case Alltrim( ::cFiltro ) == getConfigTraslation("Pedidos de clientes")
          ::oDbfTmp:OrdSetFocus( "cTipDoc" )
          ::oDbfTmp:OrdScope( "Pedido de cliente" )
          ::oDbfTmp:GoTop()

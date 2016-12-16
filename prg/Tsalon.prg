@@ -1962,7 +1962,7 @@ METHOD RButtonDown( nRow, nCol, nKeyFlags ) CLASS TMesa
       ::bMenuSelect     := nil
 
       if IsChar( ::cTooltip )
-         MenuAddItem( "Cambiar nombre", "Cambiar nombre a la mesa", .f., .t., {|| ::Rename() }, , "Rename_16", oMenu )
+         MenuAddItem( "Cambiar nombre", "Cambiar nombre a la mesa", .f., .t., {|| ::Rename() }, , "gc_text_field_16", oMenu )
       end if
 
       MenuAddItem( "&Eliminar", "Eliminar mesa del salón", .f., .t., {|| ::End() }, , "Del16", oMenu )

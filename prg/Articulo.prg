@@ -849,19 +849,19 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       TITLE    "Artículos" ;
       PROMPT   "Código",;
 					"Nombre",;
-               getTraslation( "Familia" ),;
+               getConfigTraslation( "Familia" ),;
                "Proveedor" ,;
                "No obsoletos + Código",;
                "No obsoletos + Nombre",;
                "Tipo" ,;
-               getTraslation( "Categoría" ) ,;
-               getTraslation( "Temporada" ) ,;
+               getConfigTraslation( "Categoría" ) ,;
+               getConfigTraslation( "Temporada" ) ,;
                "Fabricante" ,;
                "Estado" ,;
                "Posición táctil" ,;
                "Publicar" ,;
                "Web",;
-               getTraslation( "Ubicacion" ) ;
+               getConfigTraslation( "Ubicación" ) ;
       MRU      "gc_object_cube_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( D():Articulos( nView ) ) ;
@@ -964,7 +964,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    end with
 
    with object ( oWndBrw:AddXCol() )
-      :cHeader          := getTraslation( "Familia" )
+      :cHeader          := getConfigTraslation( "Familia" )
       :cSortOrder       := "cFamCod"
       :bEditValue       := {|| ( D():Articulos( nView ) )->Familia }
       :nWidth           := 80
@@ -988,7 +988,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    end with
 
    with object ( oWndBrw:AddXCol() )
-      :cHeader          := getTraslation( "Categoría" )
+      :cHeader          := getConfigTraslation( "Categoría" )
       :cSortOrder       := "cCodCate"
       :bStrData         := {|| AllTrim( ( D():Articulos( nView ) )->cCodCate ) + if( !Empty( ( D():Articulos( nView ) )->cCodCate ), " - ", "" ) + RetFld( ( D():Articulos( nView ) )->cCodCate, dbfCategoria, "cNombre" ) }
       :bBmpData         := {|| nBitmapTipoCategoria( RetFld( ( D():Articulos( nView ) )->cCodCate, dbfCategoria, "cTipo" ) ) }
@@ -999,7 +999,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    end with
 
    with object ( oWndBrw:AddXCol() )
-      :cHeader          := getTraslation( "Temporada" )
+      :cHeader          := getConfigTraslation( "Temporada" )
       :cSortOrder       := "cCodTemp"
       :bStrData         := {|| AllTrim( ( D():Articulos( nView ) )->cCodTemp ) + if( !Empty( ( D():Articulos( nView ) )->cCodTemp ), " - ", "" ) + RetFld( ( D():Articulos( nView ) )->cCodTemp, dbfTemporada, "cNombre" ) }
       :bBmpData         := {|| nBitmapTipoTemporada( RetFld( ( D():Articulos( nView ) )->cCodTemp, dbfTemporada, "cTipo" ) ) }
@@ -1334,7 +1334,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    end with
 
    with object ( oWndBrw:AddXCol() )
-      :cHeader          := getTraslation( "Ubicacion" )
+      :cHeader          := getConfigTraslation( "Ubicación" )
       :cSortOrder       := "cDesUbi"
       :bEditValue       := {|| ( D():Articulos( nView ) )->cDesUbi }
       :nWidth           := 150
@@ -1604,28 +1604,28 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          ALLOW    EXIT ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "Clipboard_empty_user1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_CLIPBOARD_EMPTY_USER_" OF oWndBrw ;
          ACTION   ( PedCli( nil, oWnd, nil, ( D():Articulos( nView ) )->Codigo ) );
          TOOLTIP  "Añadir pedido de cliente" ;
          FROM     oRotor ;
          ALLOW    EXIT ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "Document_plain_user1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_EMPTY_" OF oWndBrw ;
          ACTION   ( AlbCli( nil, oWnd, { "Artículo" => ( D():Articulos( nView ) )->Codigo } ) );
          TOOLTIP  "Añadir albarán de cliente" ;
          FROM     oRotor ;
          ALLOW    EXIT ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_BUSINESSMAN_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_USER_" OF oWndBrw ;
          ACTION   ( FactCli( nil, oWnd, { "Artículo" => ( D():Articulos( nView ) )->Codigo } ) );
          TOOLTIP  "Añadir factura de cliente" ;
          FROM     oRotor ;
          ALLOW    EXIT ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "Cashier_user1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_CASH_REGISTER_USER_" OF oWndBrw ;
          ACTION   ( FrontTpv( nil, oWnd, nil, ( D():Articulos( nView ) )->Codigo ) );
          TOOLTIP  "Añadir tiket de cliente" ;
          FROM     oRotor ;
@@ -1906,7 +1906,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
    REDEFINE BITMAP oBmpGeneral ;
          ID       500 ;
-         RESOURCE "Cube_Yellow_Alpha_48" ;
+         RESOURCE "gc_object_cube_48" ;
          TRANSPARENT ;
          OF       fldGeneral
 
@@ -2065,17 +2065,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          OF       fldGeneral
    
    REDEFINE SAY ;
-         PROMPT   getTraslation( "Familia" );
+         PROMPT   getConfigTraslation( "Familia" );
          ID       900 ;
          OF       fldGeneral
 
    REDEFINE SAY ;
-         PROMPT   getTraslation( "Categoría" );
+         PROMPT   getConfigTraslation( "Categoría" );
          ID       700 ;
          OF       fldGeneral
 
    REDEFINE SAY ;
-         PROMPT   getTraslation( "Temporada" );
+         PROMPT   getConfigTraslation( "Temporada" );
          ID       800 ;
          OF       fldGeneral
 
@@ -2144,7 +2144,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          OF       fldGeneral
 
    REDEFINE SAY ;
-         PROMPT   getTraslation( "Ubicacion" );
+         PROMPT   getConfigTraslation( "Ubicación" );
          ID       221 ;
          OF       fldGeneral
 
@@ -2307,7 +2307,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
    REDEFINE BITMAP oBmpPrecios ;
          ID       500 ;
-         RESOURCE "Symbol_euro_48" ;
+         RESOURCE "gc_symbol_euro_48" ;
          TRANSPARENT ;
          OF       fldPrecios
 
@@ -3777,7 +3777,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
    REDEFINE BITMAP oBmpContabilidad ;
          ID       500 ;
-         RESOURCE "Folder2_red_Alpha_48" ;
+         RESOURCE "gc_folders2_48" ;
          TRANSPARENT ;
          OF       fldContabilidad
 
@@ -4421,7 +4421,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
    REDEFINE BITMAP oBmpWeb ;
          ID       500 ;
-         RESOURCE "Earth2_Alpha_48" ;
+         RESOURCE "gc_earth_48" ;
          TRANSPARENT ;
          OF       fldWeb
 
@@ -16213,7 +16213,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
       REDEFINE BITMAP oBmp ;
          ID       600 ;
-         RESOURCE "Cube_Yellow_Alpha_48" ;
+         RESOURCE "gc_object_cube_48" ;
          TRANSPARENT ;
          OF       oDlg
 
@@ -17531,7 +17531,7 @@ Static Function dlgToolTip( cCodArt, oBrw )
 
       oImageListInfo                   := TImageList():New( 16, 16 )
 
-      oImageListInfo:AddMasked( TBitmap():Define( "Cube_yellow_16" ),   Rgb( 255, 0, 255 ) )
+      oImageListInfo:AddMasked( TBitmap():Define( "gc_object_cube_16" ),   Rgb( 255, 0, 255 ) )
       oImageListInfo:AddMasked( TBitmap():Define( "Star_Red_16" ),      Rgb( 255, 0, 255 ) )
       oImageListInfo:AddMasked( TBitmap():Define( "Calendar_16" ),      Rgb( 255, 0, 255 ) )
 

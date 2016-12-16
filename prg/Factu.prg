@@ -1761,8 +1761,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := getTraslation( 'Categorías' )
-   oItem:cMessage       := 'Acceso al fichero de ' + getTraslation( 'categorías' )
+   oItem:cPrompt        := getConfigTraslation( 'Categorías' )
+   oItem:cMessage       := 'Acceso al fichero de ' + getConfigTraslation( 'categorías' )
    oItem:bAction        := {|| Categoria( "01101", oWnd() ) }
    oItem:cId            := "01101"
    oItem:cBmp           := "gc_photographic_filters_16"
@@ -1772,8 +1772,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := getTraslation( 'Temporadas' )
-   oItem:cMessage       := 'Acceso al fichero de ' + getTraslation( 'temporadas' )
+   oItem:cPrompt        := getConfigTraslation( 'Temporadas' )
+   oItem:cMessage       := 'Acceso al fichero de ' + getConfigTraslation( 'temporadas' )
    oItem:bAction        := {|| Temporada( "01114", oWnd() ) }
    oItem:cId            := "01114"
    oItem:cBmp           := "gc_cloud_sun_16"
@@ -2086,7 +2086,7 @@ Function CreateAcceso( oWnd )
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Estados artículos'
-   oItem:cMessage       := 'Acceso al fichero de ' + getTraslation( 'categorías' )
+   oItem:cMessage       := 'Acceso al fichero de ' + getConfigTraslation( 'categorías' )
    oItem:bAction        := {|| EstadoSat( "01126", oWnd() ) }
    oItem:cId            := "01126"
    oItem:cBmp           := "gc_bookmarks_16"
@@ -2682,7 +2682,7 @@ Function CreateAcceso( oWnd )
    if IsOsCommerce()
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 2
+   oGrupo:nBigItems     := 1
    oGrupo:cPrompt       := 'Comercio electrónico'
    oGrupo:cLittleBitmap := "gc_earth_money_16"
    oGrupo:cBigBitmap    := "gc_earth_money_32"
@@ -2697,6 +2697,7 @@ Function CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_earth_money_32"
    oItem:lShow          := .f.
 
+/*
    oItem                := oItemVentas:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Pedidos electrónicos'
@@ -2706,6 +2707,7 @@ Function CreateAcceso( oWnd )
    oItem:cBmp           := "gc_clipboard_empty_earth_16"
    oItem:cBmpBig        := "gc_clipboard_empty_earth_32"
    oItem:lShow          := .f.
+*/
 
    end if
 
@@ -2952,8 +2954,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso al listín telefónico'
    oItem:bAction        := {|| TAgenda():New( cPatDat(), , oWnd, "01076" ):Activate() }
    oItem:cId            := "01076"
-   oItem:cBmp           := "gc_telephone_16"
-   oItem:cBmpBig        := "gc_telephone_32"
+   oItem:cBmp           := "gc_book_telephone_16"
+   oItem:cBmpBig        := "gc_book_telephone_32"
    oItem:lShow          := .f.
 
    oItem                := oItemHerramientas:Add()
@@ -3334,7 +3336,7 @@ Function BuildPdaMenu()
             MESSAGE  "Acceso a la agenda del usuario" ;
             HELPID   "01075" ;
             ACTION   ( TNotas():New( cPatDat(), oWnd, oMenuItem ):Activate() );
-            RESOURCE "Note_16"
+            RESOURCE "gc_note_16"
 
       ENDMENU
 
@@ -3849,7 +3851,7 @@ Function TctCreateButtonBar()
    oItem:cPrompt        := "Clientes"
    oItem:cMessage       := "Acceso a las cuentas de clientes"
    oItem:bAction        := {|| CuentasClientes( oWnd() )  }
-   oItem:cBmp           := "User1_16"
+   oItem:cBmp           := "gc_user_16"
    oItem:cBmpBig        := "User1_32"
 
    oItem                := oItemArchivo:Add()
@@ -3975,7 +3977,7 @@ Function BuildTctMenu()
             MESSAGE  "Clientes" ;
             HELPID   "01074" ;
             ACTION   ( CuentasClientes( oWnd() ) );
-            RESOURCE "User1_16"
+            RESOURCE "gc_user_16"
 
          MENUITEM    "&7. Entradas y salidas";
             HELPID   "01065" ;
@@ -4274,7 +4276,7 @@ Function BuildTpvMenu()
             MESSAGE  "Clientes" ;
             HELPID   "01074" ;
             ACTION   ( CuentasClientes( oWnd() ) );
-            RESOURCE "User1_16"
+            RESOURCE "gc_user_16"
 
          MENUITEM    "&7. Entradas y salidas";
             HELPID   "01065" ;
@@ -4838,7 +4840,7 @@ Function MainTablet()
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 6 ) },;
                            "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
-                           "cURL"      => getTraslation("Pedidos de clientes"),;
+                           "cURL"      => getConfigTraslation("Pedidos de clientes"),;
                            "oWnd"      => oDlg,;
                            "oFont"     => oGridFont(),;
                            "lPixel"    => .t.,;

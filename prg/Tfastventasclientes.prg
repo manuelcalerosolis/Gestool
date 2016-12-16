@@ -435,7 +435,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasClientes
                   { ;
                      { "Title" => "SAT de clientes",                    "Image" =>20, "Type" => "SAT de clientes",                     "Directory" => "Clientes\Ventas\SAT de clientes",              "File" => "SAT de clientes.fr3" },;
                      { "Title" => "Presupuestos de clientes",           "Image" => 5, "Type" => "Presupuestos de clientes",            "Directory" => "Clientes\Ventas\Presupuestos de clientes",     "File" => "Presupuestos de clientes.fr3" },;
-                     { "Title" => getTraslation("Pedidos de clientes"), "Image" => 6, "Type" => getTraslation("Pedidos de clientes"),  "Directory" => "Clientes\Ventas\Pedidos de clientes",          "File" => "Pedidos de clientes.fr3" },;
+                     { "Title" => getConfigTraslation("Pedidos de clientes"), "Image" => 6, "Type" => getConfigTraslation("Pedidos de clientes"),  "Directory" => "Clientes\Ventas\Pedidos de clientes",          "File" => "Pedidos de clientes.fr3" },;
                      { "Title" => "Albaranes de clientes",              "Image" => 7, "Type" => "Albaranes de clientes",               "Directory" => "Clientes\Ventas\Albaranes de clientes",        "File" => "Albaranes de clientes.fr3" },;
                      { "Title" => "Facturas de clientes",               "Image" => 8, "Type" => "Facturas de clientes",                "Directory" => "Clientes\Ventas\Facturas de clientes",         "File" => "Facturas de clientes.fr3" },;                                        
                      { "Title" => "Rectificativas de clientes",         "Image" => 9, "Type" => "Rectificativas de clientes",          "Directory" => "Clientes\Ventas\Rectificativas de clientes",   "File" => "Rectificativas de clientes.fr3" },;
@@ -569,7 +569,7 @@ METHOD DataReport() CLASS TFastVentasClientes
 
          ::FastReportPresupuestoCliente()
 
-      case ::cReportType == getTraslation("Pedidos de clientes")
+      case ::cReportType == getConfigTraslation("Pedidos de clientes")
       
          ::FastReportPedidoCliente()
 
@@ -646,7 +646,7 @@ METHOD AddVariable() CLASS TFastVentasClientes
 
          ::AddVariableLineasPresupuestoCliente()         
 
-      case ::cReportType == getTraslation("Pedidos de clientes")
+      case ::cReportType == getConfigTraslation("Pedidos de clientes")
       
          ::AddVariablePedidoCliente()
 
@@ -750,7 +750,7 @@ METHOD lGenerate() CLASS TFastVentasClientes
 
          ::AddPresupuestoCliente()
 
-      case ::cReportType == getTraslation("Pedidos de clientes")
+      case ::cReportType == getConfigTraslation("Pedidos de clientes")
 
          ::AddPedidoCliente()
          

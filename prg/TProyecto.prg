@@ -71,7 +71,7 @@ METHOD DefineFiles( cPath, cDriver )
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := cDriver()
 
-   DEFINE DATABASE ::oDbf FILE "Proyecto.Dbf" CLASS "Proyecto" ALIAS "Proyecto" PATH ( cPath ) VIA ( cDriver ) COMMENT GetTraslation( "Proyectos" )
+   DEFINE DATABASE ::oDbf FILE "Proyecto.Dbf" CLASS "Proyecto" ALIAS "Proyecto" PATH ( cPath ) VIA ( cDriver ) COMMENT getConfigTraslation( "Proyectos" )
 
       FIELD NAME "cCodPry"  TYPE "C" LEN  4  DEC 0  COMMENT "Código"                               COLSIZE 80  OF ::oDbf
       FIELD NAME "cNomPry"  TYPE "C" LEN 30  DEC 0  COMMENT "Nombre"                               COLSIZE 200 OF ::oDbf
@@ -96,7 +96,7 @@ METHOD Resource( nMode )
 
 	local oDlg
 
-   DEFINE DIALOG oDlg RESOURCE "Proyecto" TITLE LblTitle( nMode ) + GetTraslation( "Proyecto" )
+   DEFINE DIALOG oDlg RESOURCE "Proyecto" TITLE LblTitle( nMode ) + getConfigTraslation( "Proyecto" )
 
       REDEFINE GET ::oGetCodigo ;
          VAR      ::oDbf:cCodPry ;
@@ -176,7 +176,7 @@ Method lSaveResource( nMode, oDlg )
    if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
 
       if Empty( ::oDbf:cCodPry )
-         MsgStop( "Código de " + GetTraslation( "Proyecto" ) + " no puede estar vacío" )
+         MsgStop( "Código de " + getConfigTraslation( "Proyecto" ) + " no puede estar vacío" )
          ::oGetCodigo:SetFocus()
          Return nil
       end if
@@ -190,7 +190,7 @@ Method lSaveResource( nMode, oDlg )
    end if
 
    if Empty( ::oDbf:cNomPry )
-      MsgStop( "Nombre de "+ GetTraslation( "Proyecto" ) + " no puede estar vacío" )
+      MsgStop( "Nombre de "+ getConfigTraslation( "Proyecto" ) + " no puede estar vacío" )
       ::oGetNombre:SetFocus()
       Return nil
    end if

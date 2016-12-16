@@ -877,7 +877,7 @@ METHOD EdtRotor()
 
             MENUITEM    "&1. Modificar artículo";
                MESSAGE  "Modificar la ficha del artículo" ;
-               RESOURCE "Cube_Yellow_16";
+               RESOURCE "gc_object_cube_16";
                ACTION   ( if( Empty( ::oDbfVir:cCodArt ), msgStop( "No hay artículo seleccionado" ), EdtArticulo( ::oDbfVir:cCodArt ) ) );
 
             MENUITEM    "&2. Informe de artículo";

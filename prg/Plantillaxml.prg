@@ -305,7 +305,7 @@ METHOD Activate() CLASS TPlantillaXML
       ::oWndBrw:GralButtons( Self )
 
       DEFINE BTNSHELL ::oBtnImportacion ;
-         RESOURCE "Flash_" ;
+         RESOURCE "gc_flash_" ;
          OF       ::oWndBrw ;
          NOBORDER ;
          ACTION   ( ::Importacion() ) ;
@@ -808,7 +808,7 @@ METHOD Importacion( cText ) CLASS TPlantillaXML
 
    ::oImageImportacion                       := TImageList():New( 16, 16 )
    ::oImageImportacion:AddMasked( TBitmap():Define( "gc_check_12" ),  Rgb( 255, 0, 255 ) )
-   ::oImageImportacion:AddMasked( TBitmap():Define( "Flash_16" ),                Rgb( 255, 0, 255 ) )
+   ::oImageImportacion:AddMasked( TBitmap():Define( "gc_flash_16" ),                Rgb( 255, 0, 255 ) )
 
    DEFINE DIALOG oDlg RESOURCE "ImportarPlantillaXML"
 
@@ -3242,7 +3242,7 @@ Method lLoadButtons() CLASS TPlantillaXML
       cText       := by( Rtrim( ::oSav:cText ) )
       bAction     := ::bAction( cText )
 
-      ::oWndBrw:NewAt( "Flash_", , , bAction, cText, , , , , ::oBtnImportacion )
+      ::oWndBrw:NewAt( "gc_flash_", , , bAction, cText, , , , , ::oBtnImportacion )
 
       ::oSav:Skip()
 

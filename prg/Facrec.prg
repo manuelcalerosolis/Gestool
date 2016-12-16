@@ -1886,7 +1886,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
       lGenFacRec( oWndBrw:oBrw, oPdf, IS_PDF ) ;
 
-   DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
+   DEFINE BTNSHELL oMail RESOURCE "GC_MAIL_EARTH_" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
       ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
@@ -1997,7 +1997,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
         ACTION   ( oRotor:Expand() ) ;
         TOOLTIP  "Rotor" ;
 
-    DEFINE BTNSHELL RESOURCE "USER1_" OF oWndBrw ;
+    DEFINE BTNSHELL RESOURCE "GC_USER_" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( EdtCli( ( D():FacturasRectificativas( nView ) )->cCodCli ) );
             TOOLTIP  "Modificar cliente" ;
@@ -2111,7 +2111,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       aTmp[ _CTIPMOV    ]  := cDefVta()
       aTmp[ _CCODDLG    ]  := oUser():cDelegacion()
       aTmp[ _LIVAINC    ]  := uFieldEmpresa( "lIvaInc" )
-      aTmp[ _CMANOBR    ]  := padr( getTraslation( "Gastos" ), 250 )
+      aTmp[ _CMANOBR    ]  := padr( getConfigTraslation( "Gastos" ), 250 )
       aTmp[ _TFECFAC    ]  := getSysTime()
 
       if !Empty( cCodCli )
@@ -2275,7 +2275,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "folder2_red_alpha_48" ;
+        RESOURCE "gc_folders2_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[2]
 
@@ -8035,7 +8035,7 @@ static function lGenFacRec( oBrw, oBtn, nDevice )
 
    if !( D():Documentos( nView ) )->( dbSeek( "FR" ) )
 
-         DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_WHITE_" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( msgStop( "No hay facturas rectificativas de clientes predefinidas" ) );
             TOOLTIP  "No hay documentos" ;
@@ -8050,7 +8050,7 @@ static function lGenFacRec( oBrw, oBtn, nDevice )
 
          bAction  := bGenFacRec( nDevice, "Imprimiendo facturas rectificativas de clientes", ( D():Documentos( nView ) )->CODIGO )
 
-         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
+         oWndBrw:NewAt( "gc_document_white_", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
 
          ( D():Documentos( nView ) )->( dbSkip() )
 
@@ -8966,12 +8966,12 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&2. Modificar cliente";
                MESSAGE  "Modifica la ficha del cliente" ;
-               RESOURCE "User1_16" ;
+               RESOURCE "gc_user_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) )
 
             MENUITEM    "&3. Modificar cliente contactos";
                MESSAGE  "Modifica la ficha del cliente en contactos" ;
-               RESOURCE "User1_16" ;
+               RESOURCE "gc_user_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ], , 5 ), MsgStop( "Código de cliente vacío" ) ) )              
 
             MENUITEM    "&4. Informe de cliente";

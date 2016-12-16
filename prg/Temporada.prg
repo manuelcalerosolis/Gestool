@@ -93,7 +93,7 @@ Function rxTemporada( cPath )
 
       ( dbfTemporada )->( dbCloseArea() )
    else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de " + getTraslation( "Temporadas" ) )
+      msgStop( "Imposible abrir en modo exclusivo la tabla de " + getConfigTraslation( "Temporadas" ) )
    end if
 
 Return ( nil )
@@ -193,7 +193,7 @@ FUNCTION Temporada( oMenuItem, oWnd )
 
       DEFINE SHELL oWndBrw FROM 2, 10 TO 18, 70 ;
       XBROWSE ;
-      TITLE    getTraslation( "Temporadas de artículos" );
+      TITLE    getConfigTraslation( "Temporadas de artículos" );
       PROMPT   "Código",;
                "Nombre";
       ALIAS    ( dbfTemporada ) ;
@@ -274,7 +274,7 @@ FUNCTION Temporada( oMenuItem, oWnd )
 
       DEFINE BTNSHELL RESOURCE "IMP" GROUP OF oWndBrw ;
 			NOBORDER ;
-         ACTION   ( TListadoTemporadas():New( "Listado de " + getTraslation( "temporadas" ) ):Play( dbfTemporada ) );
+         ACTION   ( TListadoTemporadas():New( "Listado de " + getConfigTraslation( "temporadas" ) ):Play( dbfTemporada ) );
          TOOLTIP  "(L)istado";
          HOTKEY   "L" ;
          LEVEL    ACC_IMPR
@@ -306,7 +306,7 @@ Static Function EdtRec( aTmp, aGet, dbfTemporada, oBrw, bWhen, bValid, nMode )
       aTmp[ ( dbfTemporada )->( fieldpos( "cTipo" ) ) ]  := aStrTipo[ 1 ]
    end if
 
-   DEFINE DIALOG oDlg RESOURCE "Categoria" TITLE LblTitle( nMode ) + getTraslation( "Temporadas de artículos" )
+   DEFINE DIALOG oDlg RESOURCE "Categoria" TITLE LblTitle( nMode ) + getConfigTraslation( "Temporadas de artículos" )
 
       REDEFINE GET aGet[ ( dbfTemporada )->( fieldpos( "cCodigo" ) ) ] ;
          VAR      aTmp[ ( dbfTemporada )->( fieldpos( "cCodigo" ) ) ] ;
@@ -546,7 +546,7 @@ Function BrwTemporada( oGet, oGet2, oBmpTemporada )
 
    nLevelUsr            := nLevelUsr( MENUITEM )
 
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE getTraslation( "Temporadas de artículos" )
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE getConfigTraslation( "Temporadas de artículos" )
 
       REDEFINE GET oGetSeek VAR cGetSeek;
          ID       104 ;
@@ -688,7 +688,7 @@ Function BrwInternalTemporada( oGet, dbfArticulo, oGet2 )
 
    nLevelUsr            := nLevelUsr( MENUITEM )
 
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE getTraslation( "Temporadas de artículos" )
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE getConfigTraslation( "Temporadas de artículos" )
 
 		REDEFINE GET oGet1 VAR cGet1;
          ID       104 ;

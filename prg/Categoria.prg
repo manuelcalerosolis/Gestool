@@ -112,7 +112,7 @@ Function rxCategoria( cPath )
 
       ( dbfCategoria )->( dbCloseArea() )
    else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de " + getTraslation( "categorías" ) )
+      msgStop( "Imposible abrir en modo exclusivo la tabla de " + getConfigTraslation( "Categorías" ) )
    end if
 
 Return ( nil )
@@ -211,7 +211,7 @@ FUNCTION Categoria( oMenuItem, oWnd )
 
       DEFINE SHELL oWndBrw FROM 2, 10 TO 18, 70 ;
       XBROWSE ;
-      TITLE    getTraslation( "Categorías" ) ;
+      TITLE    getConfigTraslation( "Categorías" ) ;
       PROMPT   "Código",;
                "Nombre";
       ALIAS    ( dbfCategoria ) ;
@@ -292,7 +292,7 @@ FUNCTION Categoria( oMenuItem, oWnd )
 
       DEFINE BTNSHELL RESOURCE "IMP" GROUP OF oWndBrw ;
 			NOBORDER ;
-         ACTION   ( TListadoCategorias():New( "Listado de " + getTraslation( "categorías" ) ):Play( dbfCategoria ) );
+         ACTION   ( TListadoCategorias():New( "Listado de " + getConfigTraslation( "Categorías" ) ):Play( dbfCategoria ) );
          TOOLTIP  "(L)istado";
          HOTKEY   "L" ;
          LEVEL    ACC_IMPR
@@ -324,7 +324,7 @@ Static Function EdtRec( aTmp, aGet, dbfCategoria, oBrw, bWhen, bValid, nMode )
       aTmp[ ( dbfCategoria )->( fieldpos( "cTipo" ) ) ]  := aStrTipo[ 1 ]
    end if
 
-   DEFINE DIALOG oDlg RESOURCE "CATEGORIA" TITLE LblTitle( nMode ) + getTraslation( "categoría" )
+   DEFINE DIALOG oDlg RESOURCE "CATEGORIA" TITLE LblTitle( nMode ) + getConfigTraslation( "categoría" )
 
       REDEFINE GET aGet[ ( dbfCategoria )->( fieldpos( "cCodigo" ) ) ] ;
          VAR      aTmp[ ( dbfCategoria )->( fieldpos( "cCodigo" ) ) ] ;
@@ -412,7 +412,7 @@ Static Function EndTrans( aTmp, aGet, nMode, oBrw, oDlg )
       nOrdAnt  := ( dbfCategoria )->( OrdSetFocus( "NOMBRE" ) )
 
       if( dbfCategoria )->( dbSeek( Upper( aTmp[ ( dbfCategoria )->( fieldpos( "cNombre" ) ) ] ) ) )
-         MsgStop( "Nombre de " + getTraslation( "categoría" ) + " existente" )
+         MsgStop( "Nombre de " + getConfigTraslation( "categoría" ) + " existente" )
          aGet[ ( dbfCategoria )->( fieldpos( "cNombre" ) ) ]:SetFocus()
          ( dbfCategoria )->( OrdSetFocus( nOrdAnt ) )
          ( dbfCategoria )->( dbGoTo( nRec ) )
@@ -505,7 +505,7 @@ Function cCategoria( oGet, dbfCategoria, oGet2, oBmpCategoria  )
       lValid            := .t.
 
    else
-      msgStop( getTraslation( "Categoría" ) + " no encontrada", "Aviso del sistema" )
+      msgStop( getConfigTraslation( "Categoría" ) + " no encontrada", "Aviso del sistema" )
    end if
 
    ( dbfCategoria )->( OrdSetFocus( nOrd ) )
@@ -552,7 +552,7 @@ Function BrwCategoria( oGet, oGet2, oBmpCategoria )
 
    nLevelUsr            := nLevelUsr( MENUITEM )
 
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE getTraslation( "Categorías" )
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE getConfigTraslation( "Categorías" )
 
 		REDEFINE GET oGet1 VAR cGet1;
          ID       104 ;
@@ -694,7 +694,7 @@ Function BrwInternalCategoria( oGet, dbfArticulo, oGet2 )
 
    nLevelUsr            := nLevelUsr( MENUITEM )
 
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE getTraslation( "Categorías" )
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE getConfigTraslation( "Categorías" )
 
 		REDEFINE GET oGet1 VAR cGet1;
          ID       104 ;

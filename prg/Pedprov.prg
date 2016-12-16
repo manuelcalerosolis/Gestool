@@ -830,7 +830,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
 
       lGenPed( oWndBrw:oBrw, oPdf, IS_PDF ) ;
 
-   DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
+   DEFINE BTNSHELL oMail RESOURCE "GC_MAIL_EARTH_" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
       ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
@@ -889,7 +889,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
 
    end if
 
-   DEFINE BTNSHELL RESOURCE "SHOPPINGCART" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "GC_SHOPPING_CART_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( Generador( oWndBrw:oBrw ) ) ;
       TOOLTIP  "(G)enerar" ;
@@ -1131,7 +1131,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
 
       REDEFINE BITMAP oBmpDatos ;
         ID       990 ;
-        RESOURCE "folder2_red_alpha_48" ;
+        RESOURCE "gc_folders2_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[2]
 

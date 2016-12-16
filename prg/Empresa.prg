@@ -191,21 +191,21 @@ STATIC FUNCTION OpenFiles( lCount )
                         "gc_document_text_businessman_16",;
                         "Power-drill_user1_16",;
                         "Notebook_user1_16",;
-                        "Clipboard_empty_user1_16",;
-                        "Document_plain_user1_16",;
+                        "gc_clipboard_empty_user_16",;
+                        "gc_document_empty_16",;
                         "gc_document_text_businessman_16",;
-                        "Document_money2_16",;
+                        "gc_document_text_money2_16",;
                         "Document_delete_16",;
-                        "Package_add_16",;
-                        "Package_ok_16",;
-                        "Cashier_user1_16",;
-                        "Worker2_Form_Red_16",;
+                        "gc_package_plus_16",;
+                        "gc_package_check_16",;
+                        "gc_cash_register_user_16",;
+                        "gc_document_text_worker_16",;
                         "gc_folder_document_16",;
-                        "Pencil_Package_16",;
+                        "gc_pencil_package_16",;
                         "Stopwatch_16",;
                         "Briefcase_document_16",;
                         "Truck_blue_document_16",;
-                        "User1_16",;
+                        "gc_user_16",;
                         "gc_briefcase2_businessman_16",;
                         "Briefcase_user1_16",;
                         "Briefcase_security_agent_16",;
@@ -713,7 +713,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
 
    REDEFINE BITMAP oBmpGeneral ;
          ID       500 ;
-         RESOURCE "Factory_48_Alpha" ;
+         RESOURCE "gc_factory_48" ;
          TRANSPARENT ;
          OF       fldGeneral
 
@@ -903,7 +903,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
 
       REDEFINE BITMAP oBmpImportacion ;
          ID       500 ;
-         RESOURCE "Office_Building_48_Alpha" ;
+         RESOURCE "gc_office_building_48" ;
          TRANSPARENT ;
          OF       fldValores
 
@@ -1319,7 +1319,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
       REDEFINE BITMAP oBmpComportamiento ;
          ID       500 ;
-         RESOURCE "wrench_48_alpha" ;
+         RESOURCE "gc_wrench_48" ;
          TRANSPARENT ;
          OF       fldGeneral
 
@@ -1494,7 +1494,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
       REDEFINE BITMAP oBmpTPV ;
          ID       500 ;
-         RESOURCE "Cashier_48_alpha" ;
+         RESOURCE "gc_cash_register_48" ;
          TRANSPARENT ;
          OF       fldTPV
 
@@ -1574,7 +1574,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
       REDEFINE BITMAP oBmpDefecto ;
          ID       500 ;
-         RESOURCE "Preferences_edit_48_alpha" ;
+         RESOURCE "gc_clipboard_pencil_48" ;
          TRANSPARENT ;
          OF       fldValores
 
@@ -1777,7 +1777,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
       REDEFINE BITMAP oBmpArticulos ;
          ID       500 ;
-         RESOURCE "Cube_Yellow_Alpha_48" ;
+         RESOURCE "gc_object_cube_48" ;
          TRANSPARENT ;
          OF       fldArticulos
 
@@ -2026,7 +2026,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
       REDEFINE BITMAP oBmpContadores ;
             ID       500 ;
-            RESOURCE "document_edit_48_alpha" ;
+            RESOURCE "gc_document_text_pencil_48" ;
             TRANSPARENT ;
             OF       fldContadores 
 
@@ -2103,7 +2103,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
       REDEFINE BITMAP oBmpContabilidad ;
          ID       500 ;
-         RESOURCE "Folder2_red_Alpha_48" ;
+         RESOURCE "gc_folders2_48" ;
          TRANSPARENT ;
          OF       fldContabilidad
 
@@ -2346,7 +2346,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
       REDEFINE BITMAP oBmpEnvios ;
          ID          500 ;
-         RESOURCE    "Satellite_dish_48_alpha" ;
+         RESOURCE    "gc_satellite_dish2_48" ;
          TRANSPARENT ;
          OF          fldEnvios
 
@@ -2421,7 +2421,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
       REDEFINE BITMAP oBmpComunicacion ;
          ID       500 ;
-         RESOURCE "Earth2_Alpha_48" ;
+         RESOURCE "gc_earth_48" ;
          TRANSPARENT ;
          OF       fldComunicaciones
 
@@ -2589,18 +2589,18 @@ Static Function StartEditConfig( aTmp, oSay, oBrw, oDlg, oFld, nMode )
    oCarpeta          := TCarpeta():New( oOfficeBar, "Configurar empresa." )
 
    oGrupo            := TDotNetGroup():New( oCarpeta, 488, "Opciones", .f. ) 
-      oBoton         := TDotNetButton():New( 60, oGrupo, "Wrench_32_alpha",            "General",           1, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
-      oBoton         := TDotNetButton():New( 60, oGrupo, "Preferences_Edit_32_alpha",  "Valores",           2, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
-      oBoton         := TDotNetButton():New( 60, oGrupo, "Cube_Yellow_32_alpha",       "Artículos",         3, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
-      oBoton         := TDotNetButton():New( 60, oGrupo, "Cashier_32_alpha",           "T.P.V.",            4, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
-      oBoton         := TDotNetButton():New( 60, oGrupo, "Document_Edit_32_alpha",     "Contadores",        5, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
-      oBoton         := TDotNetButton():New( 60, oGrupo, "Folder2_red_32_alpha",       "Contabilidad",      6, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
-      oBoton         := TDotNetButton():New( 60, oGrupo, "Satellite_dish_32_alpha",    "Envios",            7, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
-      oBoton         := TDotNetButton():New( 60, oGrupo, "Earth2_32_alpha",            "Comunicaciones",    8, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 60, oGrupo, "gc_wrench_32",               "General",           1, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 60, oGrupo, "gc_clipboard_pencil_32",     "Valores",           2, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 60, oGrupo, "gc_object_cube_32",          "Artículos",         3, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 60, oGrupo, "gc_cash_register_32",        "T.P.V.",            4, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 60, oGrupo, "gc_document_text_pencil_32", "Contadores",        5, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 60, oGrupo, "gc_folders2_32",             "Contabilidad",      6, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 60, oGrupo, "gc_satellite_dish2_32",      "Envios",            7, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 60, oGrupo, "gc_earth_32",                "Comunicaciones",    8, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
 
    oGrupo            := TDotNetGroup():New( oCarpeta, 122, "Guardar", .f. )
-      oBoton         := TDotNetButton():New( 60, oGrupo, "Floppy_disk_blue_32_alpha",  "Guardar",           1, {|| SaveEditConfig( aTmp, oSay, oBrw, oDlg, nMode ) }, , , .f., .f., .f. )
-      oBoton         := TDotNetButton():New( 60, oGrupo, "Door2_open_32_alpha",        "Salida",            2, {|| oDlg:End() }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 60, oGrupo, "gc_floppy_disk_32",          "Guardar",           1, {|| SaveEditConfig( aTmp, oSay, oBrw, oDlg, nMode ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 60, oGrupo, "gc_door_open2_32",           "Salida",            2, {|| oDlg:End() }, , , .f., .f., .f. )
 
    aEvalValid( fldValores )
 
@@ -3593,7 +3593,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       mkEstadoSat( cPath, aImportacion:lSatCli, cPathGrp ); rxEstadoSat( cPath )   ; SysRefresh()
 
       if oMsg != nil
-         oMsg:SetText( "Creando " + getTraslation( "temporadas" ) )
+         oMsg:SetText( "Creando " + getConfigTraslation( "temporadas" ) )
       end if
 
       mkTemporada( cPath, aImportacion:lArticulos, cPathGrp ); rxTemporada( cPath )   ; SysRefresh()
@@ -4250,7 +4250,8 @@ FUNCTION lActualiza( cCodEmp, oWndBrw, lNoWait, cNomEmp, lSincroniza )
    DEFINE DIALOG oDlgWat NAME "ACTEMPRESA" TITLE "Actualizando empresa : " + AllTrim( cCodEmp ) + " - " + AllTrim( cNomEmp )
 
       REDEFINE BITMAP oBmp;
-         RESOURCE "ACTUALIZAREMPRESA" ;
+         RESOURCE "gc_factory_48" ;
+         TRANSPARENT ;
          ID       500 ;
          OF       oDlgWat
 
@@ -4506,7 +4507,7 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp, lSinc
          ActDbf( cEmpOld, cEmpTmp, "PreCliI",   "incidencias de presupuestos a clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "PreCliD",   "documentos de presupuestos a clientes", oMet, oMsg, aMsg )
 
-         ActDbf( cEmpOld, cEmpTmp, "PedCliT",   getTraslation("Pedidos de clientes"), oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "PedCliT",   getConfigTraslation("Pedidos de clientes"), oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "PedCliL",   "líneas de pedidos de clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "PedCliR",   "reservas de pedidos de clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "PedCliI",   "incidencias de pedidos de clientes", oMet, oMsg, aMsg )

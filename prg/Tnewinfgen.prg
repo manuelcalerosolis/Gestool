@@ -2869,10 +2869,10 @@ METHOD lGrupoCategoria( lInitGroup, lImp ) CLASS TNewInfGen
       DATABASE NEW ::oDbfCat PATH ( cPatArt() ) FILE "CATEGORIAS.DBF" VIA ( cDriver() ) SHARED INDEX "CATEGORIAS.CDX"
    end if
 
-   ::oGrupoCategoria                   := TRGroup():New( {|| ::oDbf:cCodCat }, {|| getTraslation( "Categoría" ) + " : " + AllTrim( ::oDbf:cCodCat ) + " - " + AllTRim( ::oDbf:cNomCat ) }, {|| "Total" + getTraslation( "categoria") + " : " + ::oDbf:cCodCat }, {|| 3 }, ::lSalto )
+   ::oGrupoCategoria                   := TRGroup():New( {|| ::oDbf:cCodCat }, {|| getConfigTraslation( "Categoría" ) + " : " + AllTrim( ::oDbf:cCodCat ) + " - " + AllTRim( ::oDbf:cNomCat ) }, {|| "Total" + getConfigTraslation( "categoria") + " : " + ::oDbf:cCodCat }, {|| 3 }, ::lSalto )
 
    ::oGrupoCategoria:Cargo             := TItemGroup()
-   ::oGrupoCategoria:Cargo:Nombre      := getTraslation( "Categorías" )
+   ::oGrupoCategoria:Cargo:Nombre      := getConfigTraslation( "Categorías" )
    ::oGrupoCategoria:Cargo:Expresion   := "cCodCat"
    ::oGrupoCategoria:Cargo:Todos       := .t.
    ::oGrupoCategoria:Cargo:Desde       := Space( 10 )            // dbFirst( ::oDbfCat, 1 )
@@ -3278,7 +3278,7 @@ METHOD lGrupoTemporada( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoTemporada                   := TRGroup():New( {|| ::oDbf:cCodTmp }, {|| "Temporada : " + AllTrim( ::oDbf:cCodTmp ) + " - " + AllTRim( ::oDbf:cNomTmp ) }, {|| "Total temporada..." }, {|| 3 }, ::lSalto )
 
    ::oGrupoTemporada:Cargo             := TItemGroup()
-   ::oGrupoTemporada:Cargo:Nombre      := getTraslation( "Temporada" )
+   ::oGrupoTemporada:Cargo:Nombre      := getConfigTraslation( "Temporada" )
    ::oGrupoTemporada:Cargo:Expresion   := "cCodTmp"
    ::oGrupoTemporada:Cargo:Todos       := .t.
    ::oGrupoTemporada:Cargo:Desde       := Space( 10 )            // dbFirst( ::oDbfTmp, 1 )
@@ -3704,7 +3704,7 @@ METHOD lGrupoRemesas( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoRemesas                   := TRGroup():New( {|| ::oDbf:cCodTmp }, {|| "Remesas : " + alltrim( str( ::oDbf:nNumRem ) ) + " - " + alltrim( ::oDbf:cSufRem ) }, {|| "Total remesa..." }, {|| 3  }, ::lSalto )
 
    ::oGrupoRemesas:Cargo             := TItemGroup()
-   ::oGrupoRemesas:Cargo:Nombre      := getTraslation( "Remesas" )
+   ::oGrupoRemesas:Cargo:Nombre      := getConfigTraslation( "Remesas" )
    ::oGrupoRemesas:Cargo:Expresion   := "nNumRem"
    ::oGrupoRemesas:Cargo:Todos       := .t.
 

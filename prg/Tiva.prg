@@ -1049,7 +1049,7 @@ FUNCTION pdaBrwTipoIva( oGet, dbfTIva, oGet2 )
       REDEFINE BTNBMP oBtn ;
          ID       100 ;
          OF       oDlg ;
-         FILE     ( cPatBmp() + "user1_16.bmp" ) ;
+         FILE     ( cPatBmp() + "gc_user_16.bmp" ) ;
          NOBORDER ;
          ACTION      ( nil )
 

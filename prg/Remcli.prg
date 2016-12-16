@@ -517,7 +517,7 @@ METHOD Activate()
          ACTION   ( oRotor:Expand() ) ;
          TOOLTIP  "Rotor" ;
 
-         DEFINE BTNSHELL RESOURCE "ADDRESS_BOOK2_" OF ::oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_DICTIONARY_" OF ::oWndBrw ;
             ACTION   ( if( !Empty( ::oDbf:cCodRem ), ::oCtaRem:Edit(), MsgStop( "Cuenta vacía" ) ) );
             TOOLTIP  "Modificar cuenta" ;
             FROM     oRotor ;
@@ -1360,16 +1360,21 @@ RETURN ( .t. )
 METHOD SaveModelo()
 
    local oDlg
-   local oGetFicheroExportacion
    local oBmpGeneral
    local oComboEsquema
    local oComboSequencia
+   local oGetFicheroExportacion
 
    if ::oDbf:Recno() == 0
       Return ( Self )
    end if
 
-   ::cFicheroExportacion   := ::getFicheroExportacion() 
+   ::cFicheroExportacion   := ::getFicheroExportacion()
+
+   ::cEsquema              := getConfigUser( 'Esquema',           ::cEsquema )
+   ::cSequencia            := getConfigUser( 'Sequencia',         ::cSequencia )
+   ::lAgruparRecibos       := getConfigUser( 'AgruparRecibos',    ::lAgruparRecibos )
+   ::lUsarVencimiento      := getConfigUser( 'UsarVencimiento',   ::lUsarVencimiento )
 
    DEFINE DIALOG  oDlg ;
       RESOURCE    "Modelo19" ; 
@@ -1426,6 +1431,11 @@ METHOD SaveModelo()
 
    ACTIVATE DIALOG oDlg CENTER
 
+   setConfigUser( 'Esquema',           ::cEsquema )
+   setConfigUser( 'Sequencia',         ::cSequencia )
+   setConfigUser( 'AgruparRecibos',    ::lAgruparRecibos )
+   setConfigUser( 'UsarVencimiento',   ::lUsarVencimiento )
+
    if !Empty( oBmpGeneral )
       oBmpGeneral:End()
    end if
@@ -1439,15 +1449,6 @@ METHOD RunModelo( oDlg )
    oDlg:Disable()
 
    ::InitSepaXML19( oDlg )
-
-//   if ::oDbf:nTipRem == 2 
-//      ::InitMod58( oDlg ) 
-//   else
-//      if ::lUsarSEPA
-//      else 
-//         ::InitMod19( oDlg )
-//      end if 
-//   end if
 
    ::oDbf:FieldPutByName( "lExport", .t. )
    ::oDbf:FieldPutByName( "dExport",  GetSysDate() )
