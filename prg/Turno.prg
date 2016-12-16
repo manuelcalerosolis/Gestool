@@ -343,7 +343,6 @@ CLASS TTurno FROM TMasDet
    DATA  cPdfFileName                              INIT ""
    DATA  cHtmlFileName                             INIT ""
 
-
    DATA  cGrupoEnUso                               INIT ""
    DATA  nGrupoPeso                                INIT 0
 
@@ -2995,18 +2994,15 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       return .f.
    end if
 
-   // Cominenza el proceso de calculo---------------------------------------------
-
-   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
    ::CreateCajaTurno()
 
    // Si estamos con las cajas desincorizadas el scope es por caja-------------
 
    ::oDbf:GetStatus()
-   ::oDbf:OrdSetFocus( "cNumTur" )
-   ::oDbf:Seek( ::GetFullTurno() )
+   if !( ::oDbf:SeekInOrd( ::GetFullTurno(), "cNumTur" ) )
+      msgStop( "Turno " + ::GetFullTurno() + " no encontrado" )
+      return .f.
+   end if 
 
    ::oDbfDet:OrdScope( ::GetFullTurno() )
    ::oDbfDet:GoTop()
@@ -3014,10 +3010,15 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
    ::oDbfCaj:OrdScope( ::GetFullTurno() )
    ::oDbfCaj:GoTop()
 
+   // Cominenza el proceso de calculo---------------------------------------------
+
+   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
    // Valores para su posterior edición----------------------------------------
 
    ::lCerrado        := ( ::oDbf:nStaTur == cajCerrrada )
-   ::cComentario     := ::oDbf:mComTur
+   ::cComentario     := ( ::oDbf:mComTur )
 
    // Seleccionamos las cajas q se van a cerrar-----------------------------------
 

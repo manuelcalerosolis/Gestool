@@ -4250,7 +4250,7 @@ FUNCTION lActualiza( cCodEmp, oWndBrw, lNoWait, cNomEmp, lSincroniza )
    DEFINE DIALOG oDlgWat NAME "ACTEMPRESA" TITLE "Actualizando empresa : " + AllTrim( cCodEmp ) + " - " + AllTrim( cNomEmp )
 
       REDEFINE BITMAP oBmp;
-         RESOURCE "ACTUALIZAREMPRESA" ;
+         RESOURCE "gc_factory_48" ;
          ID       500 ;
          OF       oDlgWat
 
