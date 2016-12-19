@@ -15,7 +15,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Actualización completa", 120, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 44, 29, 86, 12
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 303, 62, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 358, 62, 50, 14
-  CONTROL "", 110, "Static", SS_CENTER|WS_GROUP, 44, 92, 365, 11
+  CONTROL "", 110, "Static", SS_CENTER|WS_GROUP, 44, 88, 365, 11
   CONTROL "", 100, "TAnimat", 0x00800000, 44, 43, 364, 8
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Durante este proceso se actulizarán las estructuras de la empresa", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 365, 8

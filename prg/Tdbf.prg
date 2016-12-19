@@ -238,10 +238,11 @@ CLASS TDbf
     METHOD  Refresh()
 
     METHOD  GetStatus()
+    METHOD  GetStatusInit()     INLINE ( ::GetStatus( .t. ) )
     METHOD  SetStatus()
 
-    METHOD  aMsg( nMsg )      INLINE GetMsg( ::nLang )[ nMsg ]
-    METHOD  DbError( Error )  INLINE MsgInfo( if( ValType( Error ) != "N", Error, ::aMsg( Error ) ) )
+    METHOD  aMsg( nMsg )        INLINE GetMsg( ::nLang )[ nMsg ]
+    METHOD  DbError( Error )    INLINE MsgInfo( if( ValType( Error ) != "N", Error, ::aMsg( Error ) ) )
 
     //Nuevos por manuel calero
 

@@ -2429,7 +2429,6 @@ METHOD lInvCierre()
       return .f.
    end if
 
-   ::oDbf:GetStatus()
    ::cCurTurno    := ::GetLastClose()
 
    if Empty( ::cCurTurno )
@@ -2475,13 +2474,11 @@ METHOD lInvCierre()
 
    ACTIVATE DIALOG oDlgWat CENTER VALID ( lVal )
 
-   if !Empty( ::oAni )
+   if !empty( ::oAni )
       ::oAni:End()
    end if
 
    oBmp:End()
-
-   ::oDbf:SetStatus()
 
    ::oWndBrw:Refresh()
 
@@ -2502,23 +2499,16 @@ METHOD InvCierre( oDlg, oMsg )
       ::oAni:Show()
    end if
 
-   if .t. // uFieldEmpresa( "lDesCajas" )
-      bWhileCaja        := {|| ::oDbfCaj:cNumTur + ::oDbfCaj:cSufTur + ::oDbfCaj:cCodCaj == ::cCurTurno }
-      bWhileContadores  := {|| ::oDbfDet:cNumTur + ::oDbfDet:cSufTur + ::oDbfDet:cCodCaj == ::cCurTurno }
-   else
-      bWhileCaja        := {|| ::oDbfCaj:cNumTur + ::oDbfCaj:cSufTur == ::cCurTurno }
-      bWhileContadores  := {|| ::oDbfDet:cNumTur + ::oDbfDet:cSufTur == ::cCurTurno }
-   end if 
-
    /*
    Cerramos las cajas una a una------------------------------------------------
    */
 
    oMsg:SetText( 'Abriendo cajas...' )
 
+   ::oDbfCaj:getStatusInit()
    if ::oDbfCaj:Seek( ::cCurTurno )
 
-      while ( eval( bWhileCaja ) ) .and. !::oDbfCaj:Eof()
+      while ( ::oDbfCaj:cNumTur + ::oDbfCaj:cSufTur + ::oDbfCaj:cCodCaj == ::cCurTurno ) .and. !( ::oDbfCaj:eof() )
 
          ::lCloseCaja( .f., ::oDbfCaj:cCodCaj )
 
@@ -2529,6 +2519,7 @@ METHOD InvCierre( oDlg, oMsg )
       end while
 
    end if
+   ::oDbfCaj:setStatus()
 
    /*
    Metemos los valores anteriores en el articulo----------------------------
@@ -2536,9 +2527,10 @@ METHOD InvCierre( oDlg, oMsg )
 
    oMsg:SetText( 'Reestableciendo contadores' )
 
+   ::oDbfDet:getStatusInit()
    if ::oDbfDet:Seek( ::cCurTurno )
 
-      while eval( bWhileContadores ) .and. !::oDbfDet:eof()
+      while eval( ::oDbfDet:cNumTur + ::oDbfDet:cSufTur + ::oDbfDet:cCodCaj == ::cCurTurno ) .and. !( ::oDbfDet:eof() )
 
          if ::oArticulo:Seek( ::oDbfDet:cCodArt )
             ::oArticulo:FieldPutByName( "nCntAct", ::oDbfDet:nCanAnt )
@@ -2551,23 +2543,22 @@ METHOD InvCierre( oDlg, oMsg )
       end while
 
    end if
+   ::oDbfDet:setStatus()
 
    oMsg:SetText( 'Reestableciendo turnos' )
 
+   ::oDbf:getStatusInit()
    if ::oDbf:Seek( ::cCurTurno )
       ::oDbf:FieldPutByName( "lSndTur", .f. )
       ::oDbf:FieldPutByName( "nStaTur", cajAbierta )
    end if
+   ::oDbf:setStatus()
 
    // El turno actual es el turno abierto--------------------------------------
 
    oMsg:SetText( 'Escribiendo contadores' )
-   
-   if .t. // uFieldEmpresa( "lDesCajas" )
-      SetNumeroSesionCaja( ::cNumeroSufijoCurrentTurno(), ::cCajaCurrentTurno(), ::oCaja:cAlias )
-   else
-      SetFieldEmpresa( Val( ::cNumeroCurrentTurno() ), "nNumTur" )
-   end if 
+
+   setNumeroSesionCaja( ::cNumeroSufijoCurrentTurno(), ::cCajaCurrentTurno(), ::oCaja:cAlias )
 
    // Cual es el turno abierto ahora-------------------------------------------
 
