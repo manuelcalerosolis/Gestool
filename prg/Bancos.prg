@@ -733,7 +733,7 @@ METHOD Resource( nMode ) CLASS TCuentasBancarias
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      TBtnBmp():ReDefine( 361, "Recycle_16",,,,, {|| ::nSaldoActual() }, oDlg, .f., , .f. )
+      TBtnBmp():ReDefine( 361, "gc_recycle_16",,,,, {|| ::nSaldoActual() }, oDlg, .f., , .f. )
 
    /*
    Botones de la caja----------------------------------------------------------

@@ -2630,7 +2630,7 @@ METHOD StartResource() CLASS TpvTactil
 
          oGrupo                  := TDotNetGroup():New( oCarpeta, 126, "Tickets", .f. )
             TDotNetButton():New( 60, oGrupo, "Delete_32",                     "Eliminar",          1, {|| ::OnClickEliminarTicket() }, , , .f., .f., .f. )
-            TDotNetButton():New( 60, oGrupo, "Recycle_32",                    "Reabrir",           2, {|| ::OnClickReabrirTicket() }, , , .f., .f., .f. )
+            TDotNetButton():New( 60, oGrupo, "gc_recycle_32",                    "Reabrir",           2, {|| ::OnClickReabrirTicket() }, , , .f., .f., .f. )
 
          oGrupo                  := TDotNetGroup():New( oCarpeta, 126, "Cajas", .f. )
             TDotNetButton():New( 60, oGrupo, "Cashier_32",                    "Seleccionar",       1, {|| ::OnClickSeleccionarCajas() }, , , .f., .f., .f. )

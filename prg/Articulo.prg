@@ -1936,7 +1936,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "Matriz" ) ) ] ;
          VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Matriz" ) ) ] ;
          ID       340 ;
-         BITMAP   "Recycle_16" ;
+         BITMAP   "gc_recycle_16" ;
          ON HELP  ( generateMatrizCodigoBarras( aGet[ ( D():Articulos( nView ) )->( fieldpos( "Matriz" ) ) ] ) ) ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( validMatrizCodigoBarras( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Matriz" ) ) ] ) );
@@ -2249,7 +2249,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nColBtn" ) ) ] ;
          ID       290 ;
          COLOR    aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nColBtn" ) ) ], aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nColBtn" ) ) ] ;
-         BITMAP   "COLORS_16" ;
+         BITMAP   "gc_photographic_filters_16" ;
          ON HELP  ( ColorFam( aGet[ ( D():Articulos( nView ) )->( fieldpos( "nColBtn" ) ) ] ) ) ;
          OF       fldTactil
 
@@ -3105,7 +3105,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
       REDEFINE BITMAP oBmpDescripciones ;
          ID       500 ;
-         RESOURCE "user_message_48" ; 
+         RESOURCE "gc_user_message_48" ; 
          TRANSPARENT ;
          OF       fldDescripciones
 
@@ -3148,7 +3148,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
       REDEFINE BITMAP oBmpPropiedades ;
          ID       510 ;
-         RESOURCE "Bookmark_Silver_Alpha_48" ;
+         RESOURCE "gc_bookmarks_48" ;
          TRANSPARENT ;
          OF       fldPropiedades
 
@@ -3409,7 +3409,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
    REDEFINE BITMAP oBmpLogistica ;
       ID       500 ;
-      RESOURCE "Truck_Red_48" ;
+      RESOURCE "gc_small_truck_48" ;
       TRANSPARENT ;
       OF       fldLogistica
 
@@ -3609,7 +3609,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
    REDEFINE BITMAP oBmpStocks ;
          ID       500 ;
-         RESOURCE "Package_48" ;
+         RESOURCE "gc_package_48" ;
          TRANSPARENT ;
          OF       fldStocks
 
@@ -4062,7 +4062,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
    REDEFINE BITMAP oBmpOfertas ;
          ID       510 ;
-         RESOURCE "Star_Red_48" ;
+         RESOURCE "gc_star2_48" ;
          TRANSPARENT ;
          OF       fldOfertas
 
@@ -4249,7 +4249,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
    REDEFINE BITMAP oBmpEscandallos ;
          ID       510 ;
-         RESOURCE "Components_Alpha_48" ;
+         RESOURCE "gc_pieces_48" ;
          TRANSPARENT ;
          OF       fldEscandallos
 
@@ -4557,7 +4557,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
    REDEFINE BITMAP oBmpImagenes ;
          ID       510 ;
-         RESOURCE "Photo_landscape2_48" ;
+         RESOURCE "gc_photo_landscape_48" ;
          TRANSPARENT ;
          OF       fldImagenes
 
@@ -7362,7 +7362,7 @@ STATIC FUNCTION EdtLeng( aTmp, aGet, dbfTmpLeng, oBrw, bWhen, bValid, nMode, aTm
 
    REDEFINE BITMAP oBmp ;
       ID       600 ;
-      RESOURCE "user_message_48" ; 
+      RESOURCE "gc_user_message_48" ; 
       TRANSPARENT ;
       OF       oDlg
 

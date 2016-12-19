@@ -13,4 +13,10 @@ LUPA_16 BITMAP "..\\bmp\\gc_magnifying_glass2_12.bmp"
 
 GC_SYMBOL_EURO_48 BITMAP "..\\bmp\\gc_symbol_euro_48.bmp"
 GC_HAND_TOUCH_48 BITMAP "..\\bmp\\gc_hand_touch_48.bmp"
-
+GC_USER_MESSAGE_48 BITMAP "..\\bmp\\gc_user_message_48.bmp"
+GC_BOOKMARKS_48 BITMAP "..\\bmp\\gc_bookmarks_48.bmp"
+GC_SMALL_TRUCK_48 BITMAP "..\\bmp\\gc_small_truck_48.bmp"
+GC_PACKAGE_48 BITMAP "..\\bmp\\gc_package_48.bmp"
+GC_STAR2_48 BITMAP "..\\bmp\\gc_star2_48.bmp"
+GC_PIECES_48 BITMAP "..\\bmp\\gc_pieces_48.bmp"
+GC_PHOTO_LANDSCAPE_48 BITMAP "..\\bmp\\gc_photo_landscape_48.bmp"

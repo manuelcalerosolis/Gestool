@@ -106,7 +106,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfContactos, oBrw, bWhen, bValid, nMode,
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      TBtnBmp():ReDefine( 192, "Recycle_16",,,,,{|| LlamadaAhora( aoGet, dbfContactos ) }, oDlg, .f., , .f.,  )               
+      TBtnBmp():ReDefine( 192, "gc_recycle_16",,,,,{|| LlamadaAhora( aoGet, dbfContactos ) }, oDlg, .f., , .f.,  )               
 
       REDEFINE BUTTON ;
          ID       IDOK ;
