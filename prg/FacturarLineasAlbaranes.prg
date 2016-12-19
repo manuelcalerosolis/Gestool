@@ -303,7 +303,7 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
 
          ::oPorcentajePropuestoAlbaran:bChange  := {|| ::ChangePorcentajePropuestoAlbaran() }
 
-      TBtnBmp():ReDefine( 101, "Recycle_16",,,,,{|| ::RecalculaPorcentajes() }, ::oDlg, .f., , .f.,  )      
+      TBtnBmp():ReDefine( 101, "gc_recycle_16",,,,,{|| ::RecalculaPorcentajes() }, ::oDlg, .f., , .f.,  )      
 
       /*
       Detalle de albaranes-----------------------------------------------------
@@ -510,7 +510,7 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
 
          ::oPorcentajePropuestoFactura:bChange  := {|| ::ChangePorcentajePropuestoFactura() }
 
-      TBtnBmp():ReDefine( 201, "Recycle_16",,,,,{|| ::RecalculaPorcentajes() }, ::oDlg, .f., , .f.,  )   
+      TBtnBmp():ReDefine( 201, "gc_recycle_16",,,,,{|| ::RecalculaPorcentajes() }, ::oDlg, .f., , .f.,  )   
 
       /*
       Serie de la factura------------------------------------------------------

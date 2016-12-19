@@ -856,7 +856,7 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
          REDEFINE GET aGet[ _NCOLBTN ] VAR aTmp[ _NCOLBTN ] ;
             ID       290 ;
             COLOR    aTmp[ _NCOLBTN ], aTmp[ _NCOLBTN ] ;
-            BITMAP   "COLORS_16" ;
+            BITMAP   "gc_photographic_filters_16" ;
             ON HELP  ( ColorFam( aGet[ _NCOLBTN ] ) ) ;
             OF       oFld:aDialogs[2]
 

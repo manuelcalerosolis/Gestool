@@ -34,8 +34,7 @@ BIG_USER BITMAP "..\\bmp\\Dude4_50.bmp"
 BIG_ADMIN BITMAP "..\\bmp\\Security_Agent_50.bmp"
 BAR_01 BITMAP "..\\bmp\\Bar_01.bmp"
 FOLDER_INTRO16 BITMAP "..\\bmp\\folder_into.bmp"
-COLORS_16 BITMAP "..\\bmp\\Colors_16.bmp"
-COLORS_32 BITMAP "..\\bmp\\Colors_32.bmp"
+
 
 WORKER2_16 BITMAP "..\\bmp\\Worker2_16.bmp"
 WORKER2_32 BITMAP "..\\bmp\\Worker2_32.bmp"

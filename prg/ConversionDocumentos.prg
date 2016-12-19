@@ -333,7 +333,7 @@ METHOD Dialog()
 
    REDEFINE BITMAP oBmp ;
       ID          500 ;
-      RESOURCE    "hand_point_48" ;
+      RESOURCE    "gc_hand_touch_48" ;
       TRANSPARENT ;
       OF          ::oDlg
 

@@ -515,7 +515,7 @@ METHOD InitResource()
 
    ::oImageList:AddMasked( TBitmap():Define( "Cubes_16" ), Rgb( 255, 0, 255 ) )
    ::oImageList:AddMasked( TBitmap():Define( "Cubes_blue_16" ), Rgb( 255, 0, 255 ) )
-   ::oImageList:AddMasked( TBitmap():Define( "Colors_16" ), Rgb( 255, 0, 255 ) )
+   ::oImageList:AddMasked( TBitmap():Define( "gc_photographic_filters_16" ), Rgb( 255, 0, 255 ) )
    ::oImageList:AddMasked( TBitmap():Define( "Nut_and_bolt_16" ), Rgb( 255, 0, 255 ) )
    ::oImageList:AddMasked( TBitmap():Define( "Sun_and_cloud_16" ), Rgb( 255, 0, 255 ) )
 

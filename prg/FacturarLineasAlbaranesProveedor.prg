@@ -185,7 +185,7 @@ METHOD Resource() CLASS TFacturarLineasAlbaranesProveedor
 
       aEval( ::aComponents, {| o | o:Resource(::oDlg) } )
 
-      TBtnBmp():ReDefine( 150, "Recycle_16",,,,, {|| ::loadAlbaranes() }, ::oDlg, .f., , .f. )
+      TBtnBmp():ReDefine( 150, "gc_recycle_16",,,,, {|| ::loadAlbaranes() }, ::oDlg, .f., , .f. )
 
       // Browse de lineas de entradas------------------------------------------
 

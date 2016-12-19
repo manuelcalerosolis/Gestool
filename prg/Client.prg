@@ -2380,7 +2380,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldComercial
 
-      TBtnBmp():ReDefine( 602, "Recycle_16",,,,,{|| LlamadaAhora( aGet ) }, fldComercial, .f., , .f.,  )               
+      TBtnBmp():ReDefine( 602, "gc_recycle_16",,,,,{|| LlamadaAhora( aGet ) }, fldComercial, .f., , .f.,  )               
 
       /*
       Tercera pestaña----------------------------------------------------------

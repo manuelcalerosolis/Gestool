@@ -143,7 +143,7 @@ METHOD New( nView ) CLASS TItemGroupCategoria
    ::HelpHasta    := {|oGet| BrwCategoria( oGet ) }
    ::ValidDesde   := {|oGet| cCategoria( oGet, D():Categorias( nView ) ) }
    ::ValidHasta   := {|oGet| cCategoria( oGet, D():Categorias( nView ) ) }
-   ::cBitmap      := "Colors_16"
+   ::cBitmap      := "gc_photographic_filters_16"
 
 Return ( Self )
 

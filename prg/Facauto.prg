@@ -1683,7 +1683,7 @@ METHOD Run() CLASS TCreaFacAutomaticas
          ::oCodigoPlantilla:bHelp   := {|| ::oFacAutT:Buscar( ::oCodigoPlantilla ) }
 
       /*
-      TBtnBmp():ReDefine( 120, "Recycle_16",,,,, {|| ::OnClickRefreshAsistente() }, oFld:aDialogs[ 1 ], .f., , .f., "Selecionar plantillas" )
+      TBtnBmp():ReDefine( 120, "gc_recycle_16",,,,, {|| ::OnClickRefreshAsistente() }, oFld:aDialogs[ 1 ], .f., , .f., "Selecionar plantillas" )
 
       REDEFINE CHECKBOX ::oChkIgnoraProcesado ;
          VAR      ::lChkIgnoraProcesado ;
