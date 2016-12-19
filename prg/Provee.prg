@@ -1557,7 +1557,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
 
       REDEFINE BITMAP oBmpObservaciones ;
          ID       600 ;
-         RESOURCE "Information2_48" ;
+         RESOURCE "gc_eye_48" ;
          TRANSPARENT ;
          OF       oFld:aDialogs[7]
 

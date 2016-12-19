@@ -727,7 +727,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
    Documentos------------------------------------------------------------------
    */
 
-   REDEFINE BITMAP oBmpDocumentos ID 500 RESOURCE "Document_Text_Alpha_48" TRANSPARENT OF fldDocumentos
+   REDEFINE BITMAP oBmpDocumentos ID 500 RESOURCE "gc_document_text_pencil_48" TRANSPARENT OF fldDocumentos
 
    oTree             := TTreeView():Redefine( 310, fldDocumentos  )
    oTree:bChanged    := {|| TreeChanged( oTree, oBrwTmp ) }
@@ -970,7 +970,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
    Graph start setting---------------------------------------------------------
    */
 
-   REDEFINE BITMAP oBmpGraficos ID 500 RESOURCE "Chart_area_48_alpha" TRANSPARENT OF fldGraficos
+   REDEFINE BITMAP oBmpGraficos ID 500 RESOURCE "gc_chart_column_48" TRANSPARENT OF fldGraficos
 
    REDEFINE BTNBMP ;
       ID       101 ;
