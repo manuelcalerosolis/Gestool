@@ -7,6 +7,7 @@ CLASS LiquidateReceiptView FROM ViewBase
    DATA nEntrega
    DATA nPendiente
    DATA nDiferencia
+   DATA oEntrega
 
    DATA oDiferencia
 
@@ -73,16 +74,16 @@ METHOD insertControls() CLASS LiquidateReceiptView
                         "nHeight"   => 23,;
                         "lDesign"   => .f. } )
 
-   TGridGet():Build( {  "nRow"      => 80,;
-                        "nCol"      => {|| GridWidth( 3, ::oDlg ) },;
-                        "bSetGet"   => {|u| if( PCount() == 0, ::nEntrega, ::nEntrega := u ) },;
-                        "oWnd"      => ::oDlg,;
-                        "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
-                        "nHeight"   => 23,;
-                        "lRight"    => .t.,;
-                        "cPict"     => MasUnd(),;
-                        "lPixels"   => .t.,;
-                        "bValid"    => {|| ::CalDiferencia() } } )
+   ::oEntrega  := TGridGet():Build( {  "nRow"      => 80,;
+                                       "nCol"      => {|| GridWidth( 3, ::oDlg ) },;
+                                       "bSetGet"   => {|u| if( PCount() == 0, ::nEntrega, ::nEntrega := u ) },;
+                                       "oWnd"      => ::oDlg,;
+                                       "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
+                                       "nHeight"   => 23,;
+                                       "lRight"    => .t.,;
+                                       "cPict"     => MasUnd(),;
+                                       "lPixels"   => .t.,;
+                                       "bValid"    => {|| ::CalDiferencia() } } )
 
    TGridSay():Build( {  "nRow"      => 110,;
                         "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -125,7 +126,7 @@ METHOD defineAceptarCancelar() CLASS LiquidateReceiptView
                                                    "nWidth"    => 64,;
                                                    "nHeight"   => 64,;
                                                    "cResName"  => "gc_ok_64",;
-                                                   "bLClicked" => {|| ::oSender:ProcessLiquidateReceipt( ::nEntrega ), ::endView() },;
+                                                   "bLClicked" => {|| ::oEntrega:lValid(), ::oSender:ProcessLiquidateReceipt( ::nEntrega ), ::endView() },;
                                                    "oWnd"      => ::oDlg } )
 
 Return ( self )

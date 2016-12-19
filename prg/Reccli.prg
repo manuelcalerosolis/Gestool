@@ -6273,3 +6273,87 @@ Static Function actualizarEstadoFactura( cTipoRecibo, cNumeroFactura )
 Return nil
 
 //---------------------------------------------------------------------------//
+
+Function LiquidaRecibo( nImporte, dbfRecCli, cFacCliT )
+
+   local nRec
+   local nImp
+   local aTbl
+   local nCon
+
+   if ( ( dbfRecCli )->nImporte != nImporte )
+      
+      /*
+      Me guardo en un array el registro-------------------------------------
+      */
+
+      aTbl                       := dbScatter( dbfRecCli )
+
+      /*
+      El importe ha cambiado por tanto debemos de hacer un nuevo recibo por la diferencia
+      */
+
+      nImp                       := ( ( dbfRecCli )->nImporte - nImporte )
+
+      /*
+      Cambiamos el recibo de valor y lo liquidamos--------------------------
+      */
+
+      if dbLock( dbfRecCli )
+         ( dbfRecCli )->nImporte    := nImporte
+         ( dbfRecCli )->lCobrado    := .t.
+         ( dbfRecCli )->dEntrada    := GetSysDate()
+         ( dbfRecCli )->( dbUnLock() )
+      end if
+            
+      /*
+      Obtenemos el número de registro---------------------------------------
+      */
+
+      nRec                       := ( dbfRecCli )->( Recno() )
+
+      /*
+      Obtnenemos el nuevo numero del contador----------------------------------
+      */
+
+      nCon                       := nNewReciboCliente( aTbl[ _CSERIE ] + str( aTbl[ _NNUMFAC ] ) + aTbl[ _CSUFFAC ], aTbl[ _CTIPREC ], dbfRecCli )
+
+      /*
+      Añadimos el nuevo recibo-------------------------------------------------
+      */
+
+      ( dbfRecCli )->( dbAppend() )
+
+      ( dbfRecCli )->cTurRec    := aTbl[ _CTURREC ]
+      ( dbfRecCli )->cTipRec    := aTbl[ _CTIPREC ]
+      ( dbfRecCli )->cSerie     := aTbl[ _CSERIE  ]
+      ( dbfRecCli )->nNumFac    := aTbl[ _NNUMFAC ]
+      ( dbfRecCli )->cSufFac    := aTbl[ _CSUFFAC ]
+      ( dbfRecCli )->nNumRec    := nCon
+      ( dbfRecCli )->cCodCaj    := aTbl[ _CCODCAJ ]
+      ( dbfRecCli )->cCodCli    := aTbl[ _CCODCLI ]
+      ( dbfRecCli )->cNomCli    := aTbl[ _CNOMCLI ]
+      ( dbfRecCli )->cCodAge    := aTbl[ _CCODAGE ] 
+      ( dbfRecCli )->dEntrada   := Ctod( "" )
+      ( dbfRecCli )->nImporte   := nImp
+      ( dbfRecCli )->nImpCob    := nImp
+      ( dbfRecCli )->cDescrip   := "Recibo nº" + AllTrim( str( nCon ) ) + " de factura " + if( !empty( aTbl[ _CTIPREC ] ), "rectificativa ", "" ) + aTbl[ _CSERIE ] + '/' + AllTrim( str( aTbl[ _NNUMFAC ] ) ) + '/' + aTbl[ _CSUFFAC ]
+      ( dbfRecCli )->dPreCob    := dFecFacCli( aTbl[ _CSERIE ] + str( aTbl[ _NNUMFAC ] ) + aTbl[ _CSUFFAC ], cFacCliT )
+      ( dbfRecCli )->cPgdoPor   := ""
+      ( dbfRecCli )->lCobrado   := .f.
+      ( dbfRecCli )->cDivPgo    := aTbl[ _CDIVPGO ]
+      ( dbfRecCli )->nVdvPgo    := aTbl[ _NVDVPGO ]
+      ( dbfRecCli )->cCodPgo    := aTbl[ _CCODPGO ]
+      ( dbfRecCli )->lConPgo    := .f.
+      ( dbfRecCli )->dFecCre    := GetSysDate()
+      ( dbfRecCli )->cHorCre    := Substr( Time(), 1, 5 )
+
+      ( dbfRecCli )->( dbUnLock() )
+
+      ( dbfRecCli )->( dbGoTo( nRec ) )
+
+   end if
+
+Return nil
+
+//---------------------------------------------------------------------------//

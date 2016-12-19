@@ -90,10 +90,6 @@ METHOD ProcessLiquidateReceipt( nEntregado ) CLASS LiquidateReceipt
    local nOrdFac     := ( D():FacturasClientes( ::nView ) )->( OrdSetFocus( "nNumFac" ) )
    local nPendiente  := 0
 
-   MsgInfo( "Entro a Liquidar los recibos" )
-
-   MsgInfo( nEntregado, "nEntregado" )
-
    if ( D():FacturasClientesCobros( ::nView ) )->( dbSeek( ::idCliente ) )
 
       while ( D():FacturasClientesCobros( ::nView ) )->cCodCli == ::idCliente .and.;
@@ -103,8 +99,6 @@ METHOD ProcessLiquidateReceipt( nEntregado ) CLASS LiquidateReceipt
          if !( D():FacturasClientesCobros( ::nView ) )->lDevuelto
 
             if ( D():FacturasClientesCobros( ::nView ) )->nImporte <= nEntregado
-
-               MsgInfo( "Liquido recibo completo" )
 
                if dbLock( D():FacturasClientesCobros( ::nView ) )
                   ( D():FacturasClientesCobros( ::nView ) )->lCobrado   := .t.
@@ -116,21 +110,26 @@ METHOD ProcessLiquidateReceipt( nEntregado ) CLASS LiquidateReceipt
 
             else
 
-               MsgInfo( "Tengo que crearme un recibo y otro por la diferencia" )
+               LiquidaRecibo( nEntregado, D():FacturasClientesCobros( ::nView ), D():FacturasClientes( ::nView ) )               
 
                nEntregado := 0
 
             end if
 
             if ( D():FacturasClientes( ::nView ) )->( dbSeek( ( D():FacturasClientesCobros( ::nView ) )->cSerie + Str( ( D():FacturasClientesCobros( ::nView ) )->nNumFac ) + ( D():FacturasClientesCobros( ::nView ) )->cSufFac ) )
+               
                ChkLqdFacCli( , D():FacturasClientes( ::nView ), D():FacturasClientesLineas( ::nView ), D():FacturasClientesCobros( ::nView ), D():AnticiposClientes( ::nView ), D():TiposIva( ::nView ), D():Divisas( ::nView ) )
+               
+               if dbLock( D():FacturasClientes( ::nView ) )
+                  ( D():FacturasClientes( ::nView ) )->nTotPdt   := ( D():FacturasClientes( ::nView ) )->nTotFac - nPagFacCli( ( D():FacturasClientesCobros( ::nView ) )->cSerie + Str( ( D():FacturasClientesCobros( ::nView ) )->nNumFac ) + ( D():FacturasClientesCobros( ::nView ) )->cSufFac, D():FacturasClientes( ::nView ), D():FacturasClientesCobros( ::nView ), D():TiposIva( ::nView ), D():Divisas( ::nView ) )
+                  ( D():FacturasClientes( ::nView ) )->( dbUnLock() )
+               end if
+
             end if
 
          end if
 
          ( D():FacturasClientesCobros( ::nView ) )->( dbskip() )
-
-         MsgInfo( nEntregado, "Entregado" )
 
       end while
 
