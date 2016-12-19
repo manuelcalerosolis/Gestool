@@ -477,7 +477,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       500 ;
-         RESOURCE "Money_48" ;
+         RESOURCE "gc_central_bank_euro_48" ;
          TRANSPARENT ;
          OF       oDlg
 

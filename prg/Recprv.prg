@@ -1369,7 +1369,7 @@ STATIC FUNCTION PrnSerie()
       ID       320 ;
       OF       oDlg
 
-   TBtnBmp():ReDefine( 321, "Printer_preferences_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
+   TBtnBmp():ReDefine( 321, "gc_printer2_check_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
 
    REDEFINE CHECKBOX lInvOrden ;
       ID       500 ;

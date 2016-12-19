@@ -3572,7 +3572,7 @@ STATIC FUNCTION PrnSerie()
       WHEN     ( .f. );
       OF       oDlg
 
-   TBtnBmp():ReDefine( 92, "Printer_pencil_16",,,,,{|| EdtDocumento( cFmtRec ) }, oDlg, .f., , .f.,  )
+   TBtnBmp():ReDefine( 92, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( cFmtRec ) }, oDlg, .f., , .f.,  )
 
    REDEFINE GET dFecIni ;
       ID       110 ;
@@ -3651,7 +3651,7 @@ STATIC FUNCTION PrnSerie()
       ID       320 ;
       OF       oDlg
 
-   TBtnBmp():ReDefine( 321, "Printer_preferences_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
+   TBtnBmp():ReDefine( 321, "gc_printer2_check_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
 
    // Formas de pago_____________________________________________________________________
 

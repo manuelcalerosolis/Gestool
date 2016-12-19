@@ -2399,7 +2399,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    local hBmpGeneral       := {  { "Resource" => "Factura_cliente_48_alpha",  "Dialog" => 1 },;
                                  { "Resource" => "gc_folders2_48",            "Dialog" => 2 },;
                                  { "Resource" => "Information_48_alpha",      "Dialog" => 3 },;
-                                 { "Resource" => "Address_book2_alpha_48",    "Dialog" => 4 },;
+                                 { "Resource" => "gc_address_book_48",    "Dialog" => 4 },;
                                  { "Resource" => "form_blue_48",              "Dialog" => 5 },;
                                  { "Resource" => "document_attachment_48",    "Dialog" => 6 },;
                                  { "Resource" => "Money_Alpha_48",            "Dialog" => 7 },;
@@ -2645,7 +2645,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       REDEFINE GET aGet[ _CDIRCLI ] VAR aTmp[ _CDIRCLI ] ;
          ID       183 ;
-         BITMAP   "Environnment_View_16" ;
+         BITMAP   "gc_earth_lupa_16" ;
          ON HELP  GoogleMaps( aTmp[ _CDIRCLI ], Rtrim( aTmp[ _CPOBCLI ] ) + Space( 1 ) + Rtrim( aTmp[ _CPRVCLI ] ) ) ;
          WHEN     ( lWhen .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       fldGeneral
@@ -6198,14 +6198,14 @@ STATIC FUNCTION PrnSerie()
       WHEN     ( .f. );
       OF       oDlg
 
-   TBtnBmp():ReDefine( 92, "Printer_pencil_16",,,,,{|| EdtDocumento( cFmtDoc ) }, oDlg, .f., , .f.,  )
+   TBtnBmp():ReDefine( 92, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( cFmtDoc ) }, oDlg, .f., , .f.,  )
 
    REDEFINE GET oPrinter VAR cPrinter;
       WHEN     ( .f. ) ;
       ID       160 ;
       OF       oDlg
 
-   TBtnBmp():ReDefine( 161, "Printer_preferences_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
+   TBtnBmp():ReDefine( 161, "gc_printer2_check_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
 
    REDEFINE BUTTON ;
       ID       IDOK ;

@@ -237,7 +237,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajPorta, oBrw, bWhen, bValid, nMode )
       ID       170 ;
       OF       oDlg
 
-   TBtnBmp():ReDefine( 171, "Printer_preferences_16",,,,,{|| PrinterPreferences( aGet[ ( dbfCajPorta )->( FieldPos( "cPrinter" ) ) ] ) }, oDlg, .f.,, .f.,  )
+   TBtnBmp():ReDefine( 171, "gc_printer2_check_16",,,,,{|| PrinterPreferences( aGet[ ( dbfCajPorta )->( FieldPos( "cPrinter" ) ) ] ) }, oDlg, .f.,, .f.,  )
 
    REDEFINE GET aGet[ ( dbfCajPorta )-> ( FieldPos ( "cCodAper" ) ) ] ;
       VAR      aTmp[ ( dbfCajPorta )-> ( FieldPos ( "cCodAper" ) ) ] ;

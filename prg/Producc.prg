@@ -2664,14 +2664,14 @@ METHOD PrnSerie()
       COLOR    CLR_GET ;
       OF       oDlg
 
-   TBtnBmp():ReDefine( 92, "Printer_pencil_16",,,,,{|| EdtDocumento( cFmtDoc ) }, oDlg, .f., , .f.,  )
+   TBtnBmp():ReDefine( 92, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( cFmtDoc ) }, oDlg, .f., , .f.,  )
 
    REDEFINE GET oPrinter VAR cPrinter;
       WHEN     ( .f. ) ;
       ID       160 ;
       OF       oDlg
 
-   TBtnBmp():ReDefine( 161, "Printer_preferences_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
+   TBtnBmp():ReDefine( 161, "gc_printer2_check_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
 
    REDEFINE BUTTON ;
       ID       IDOK ;
@@ -4064,7 +4064,7 @@ Method CreateAsistenteEtiquetas() CLASS TProduccion
             ::oFormatoLabel:bValid  := {|| cDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, ::oDbfDoc:cAlias, "LP" ) }
             ::oFormatoLabel:bHelp   := {|| BrwDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, "LP" ) }
 
-         TBtnBmp():ReDefine( 220, "Printer_pencil_16",,,,, {|| EdtDocumento( ::cFormatoLabel ) }, ::oFldLbl:aDialogs[ 1 ], .f., , .f., "Modificar formato de etiquetas" )
+         TBtnBmp():ReDefine( 220, "gc_document_text_pencil_12",,,,, {|| EdtDocumento( ::cFormatoLabel ) }, ::oFldLbl:aDialogs[ 1 ], .f., , .f., "Modificar formato de etiquetas" )
 
          REDEFINE RADIO ::nCantidadLabels ;
             ID       200, 201 ;

@@ -626,7 +626,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       990 ;
-         RESOURCE "User_48_alpha" ;
+         RESOURCE "gc_businessman_48" ;
          TRANSPARENT ;
          OF       oDlg
 
@@ -3163,7 +3163,7 @@ Function lGetUsuario( oGetUsuario, dbfUsr )
 
       REDEFINE BITMAP oBmpUsuario ;
          ID       500 ;
-         RESOURCE "User_48_alpha" ;
+         RESOURCE "gc_businessman_48" ;
          TRANSPARENT ;
          OF       oDlg
 

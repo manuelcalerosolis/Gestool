@@ -2311,7 +2311,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cTikT, oBrw, cCodCli, cCodArt, nMode, aNumDo
 
       REDEFINE GET aGet[ _CDIRCLI ] VAR aTmp[ _CDIRCLI ] ;
          ID       102 ;
-         BITMAP   "Environnment_View_16" ;
+         BITMAP   "gc_earth_lupa_16" ;
          ON HELP  GoogleMaps( aTmp[ _CDIRCLI ], Rtrim( aTmp[ _CPOBCLI ] ) + Space( 1 ) + Rtrim( aTmp[ _CPRVCLI ] ) ) ;
          WHEN     ( nMode != ZOOM_MODE .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oDlgTpv
@@ -5815,9 +5815,9 @@ Static Function DlgPrnTicket( oBrw )
          ID       253 ;
          OF       oDlg
 
-      TBtnBmp():ReDefine( 254, "Printer_preferences_16",,,,,{|| PrinterPreferences( oDatos:oPrinterTik ) }, oDlg, .f., , .f.,  )
+      TBtnBmp():ReDefine( 254, "gc_printer2_check_16",,,,,{|| PrinterPreferences( oDatos:oPrinterTik ) }, oDlg, .f., , .f.,  )
 
-      TBtnBmp():ReDefine( 255, "Printer_pencil_16",,,,,{|| EdtDocumento( oDatos:cFormatoTiket ) }, oDlg, .f., , .f.,  )
+      TBtnBmp():ReDefine( 255, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( oDatos:cFormatoTiket ) }, oDlg, .f., , .f.,  )
 
       /*
       Formato e impresora para el vale
@@ -5840,9 +5840,9 @@ Static Function DlgPrnTicket( oBrw )
          ID       263 ;
          OF       oDlg
 
-      TBtnBmp():ReDefine( 264, "Printer_preferences_16",,,,,{|| PrinterPreferences( oDatos:oPrinterVal ) }, oDlg, .f., , .f.,  )
+      TBtnBmp():ReDefine( 264, "gc_printer2_check_16",,,,,{|| PrinterPreferences( oDatos:oPrinterVal ) }, oDlg, .f., , .f.,  )
 
-      TBtnBmp():ReDefine( 265, "Printer_pencil_16",,,,,{|| EdtDocumento( oDatos:cFmtVal ) }, oDlg, .f., , .f.,  )
+      TBtnBmp():ReDefine( 265, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( oDatos:cFmtVal ) }, oDlg, .f., , .f.,  )
 
       /*
       Formato e impresora para albaranes
@@ -5865,9 +5865,9 @@ Static Function DlgPrnTicket( oBrw )
          ID       193 ;
          OF       oDlg
 
-      TBtnBmp():ReDefine( 194, "Printer_preferences_16",,,,,{|| PrinterPreferences( oDatos:oPrinterAlb ) }, oDlg, .f., , .f.,  )
+      TBtnBmp():ReDefine( 194, "gc_printer2_check_16",,,,,{|| PrinterPreferences( oDatos:oPrinterAlb ) }, oDlg, .f., , .f.,  )
 
-      TBtnBmp():ReDefine( 195, "Printer_pencil_16",,,,,{|| EdtDocumento( oDatos:cFmtAlb ) }, oDlg, .f., , .f.,  )
+      TBtnBmp():ReDefine( 195, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( oDatos:cFmtAlb ) }, oDlg, .f., , .f.,  )
 
       /*
       Formato e impresora para facturas
@@ -5890,9 +5890,9 @@ Static Function DlgPrnTicket( oBrw )
          ID       203 ;
          OF       oDlg
 
-      TBtnBmp():ReDefine( 204, "Printer_preferences_16",,,,,{|| PrinterPreferences( oDatos:oPrinterFac ) }, oDlg, .f., , .f.,  )
+      TBtnBmp():ReDefine( 204, "gc_printer2_check_16",,,,,{|| PrinterPreferences( oDatos:oPrinterFac ) }, oDlg, .f., , .f.,  )
 
-      TBtnBmp():ReDefine( 205, "Printer_pencil_16",,,,,{|| EdtDocumento( oDatos:cFmtFac ) }, oDlg, .f., , .f.,  )
+      TBtnBmp():ReDefine( 205, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( oDatos:cFmtFac ) }, oDlg, .f., , .f.,  )
 
 
       REDEFINE CHECKBOX lInvOrden ;

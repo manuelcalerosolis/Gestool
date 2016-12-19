@@ -2992,7 +2992,7 @@ Method Create() CLASS TOfertaLabelGenerator
             ::oFormatoLabel:bValid  := {|| cDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, dbfDoc, "OF" ) }
             ::oFormatoLabel:bHelp   := {|| BrwDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, "OF" ) }
 
-         TBtnBmp():ReDefine( 220, "Printer_pencil_16",,,,,{|| EdtDocumento( ::cFormatoLabel ) }, ::oFld:aDialogs[1], .f., , .f., "Modificar formato de etiquetas" )
+         TBtnBmp():ReDefine( 220, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( ::cFormatoLabel ) }, ::oFld:aDialogs[1], .f., , .f., "Modificar formato de etiquetas" )
 
          REDEFINE GET ::nFilaInicio ;
             ID       180 ;

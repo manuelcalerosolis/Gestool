@@ -1326,7 +1326,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "address_book2_alpha_48" ;
+        RESOURCE "gc_address_book_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[3]
 
@@ -1456,7 +1456,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
 
       REDEFINE GET aGet[_CDIRCLI] VAR aTmp[_CDIRCLI] ;
          ID       190 ;
-         BITMAP   "Environnment_View_16" ;
+         BITMAP   "gc_earth_lupa_16" ;
          ON HELP  GoogleMaps( aTmp[ _CDIRCLI ], Rtrim( aTmp[ _CPOBCLI ] ) + Space( 1 ) + Rtrim( aTmp[ _CPRVCLI ] ) ) ;
          WHEN     ( nMode != ZOOM_MODE .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
@@ -2139,7 +2139,7 @@ STATIC FUNCTION PrnSerie()
          ID       160 ;
          OF       oDlg
 
-   TBtnBmp():ReDefine( 161, "Printer_preferences_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
+   TBtnBmp():ReDefine( 161, "gc_printer2_check_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
 
    REDEFINE CHECKBOX lCopiasPre ;
       ID       170 ;
@@ -2169,7 +2169,7 @@ STATIC FUNCTION PrnSerie()
       COLOR    CLR_GET ;
       OF       oDlg
 
-   TBtnBmp():ReDefine( 92, "Printer_pencil_16",,,,,{|| EdtDocumento( cFmtDoc ) }, oDlg, .f., , .f.,  )
+   TBtnBmp():ReDefine( 92, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( cFmtDoc ) }, oDlg, .f., , .f.,  )
 
    REDEFINE BUTTON ;
       ID       IDOK ;

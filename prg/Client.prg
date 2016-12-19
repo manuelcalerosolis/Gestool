@@ -1585,7 +1585,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE GET aGet[ _DOMICILIO ] VAR aTmp[ _DOMICILIO ];
          ID       140 ;
-         BITMAP   "Environnment_View_16" ;
+         BITMAP   "gc_earth_lupa_16" ;
          ON HELP  GoogleMaps( aTmp[ _DOMICILIO ], Rtrim( aTmp[ _POBLACION ] ) + Space( 1 ) + Rtrim( aTmp[ _PROVINCIA ] ) ) ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
@@ -1916,7 +1916,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE BITMAP oBmpComercial ;
          ID       500 ;
-         RESOURCE "Address_book2_Alpha_48" ;
+         RESOURCE "gc_address_book_48" ;
          TRANSPARENT ;
          OF       fldComercial
 
@@ -2721,7 +2721,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE BITMAP oBmpBancos ;
          ID       500 ;
-         RESOURCE "Money_48" ;
+         RESOURCE "gc_central_bank_euro_48" ;
          TRANSPARENT ;
          OF       fldBancos
 
@@ -3017,7 +3017,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE BITMAP oBmpComentario ;
          ID       500 ;
-         RESOURCE "Message_48" ;
+         RESOURCE "gc_message_48" ;
          TRANSPARENT ;
          OF       fldDefinidos
 
@@ -3251,7 +3251,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE BITMAP oBmpDocumentos ;
          ID       600 ;
-         RESOURCE "Books_blue_Alpha_48" ;
+         RESOURCE "gc_folders_48" ;
          TRANSPARENT ;
          OF       fldDocumentos
 
@@ -7313,7 +7313,7 @@ Method Create() CLASS TClienteLabelGenerator
             ::oFormatoLabel:bValid  := {|| cDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, dbfDoc, "CL" ) }
             ::oFormatoLabel:bHelp   := {|| BrwDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, "CL" ) }
 
-         TBtnBmp():ReDefine( 220, "Printer_pencil_16",,,,,{|| EdtDocumento( ::cFormatoLabel ) }, ::oFld:aDialogs[ 1 ], .f., , .f., "Modificar formato de etiquetas" )
+         TBtnBmp():ReDefine( 220, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( ::cFormatoLabel ) }, ::oFld:aDialogs[ 1 ], .f., , .f., "Modificar formato de etiquetas" )
 
          REDEFINE GET ::nFilaInicio ;
             ID       180 ;

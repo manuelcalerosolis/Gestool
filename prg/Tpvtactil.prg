@@ -5768,7 +5768,7 @@ METHOD SelecionaCliente() CLASS TpvTactil
       case ::oTiketCabecera:nUbiTik == ubiLlevar
          cCliente    := BrwCliTactil( nil, nil, nil, .t., "Selecione un cliente para llevar", "wheel_48_alpha" )
       case ::oTiketCabecera:nUbiTik == ubiEncargar
-         cCliente    := BrwCliTactil( nil, nil, nil, .t., "Selecione un cliente para encargar", "address_book2_alpha_48" )
+         cCliente    := BrwCliTactil( nil, nil, nil, .t., "Selecione un cliente para encargar", "gc_address_book_48" )
       otherwise
          cCliente    := BrwCliTactil( nil, nil, nil, .t. )
    end case

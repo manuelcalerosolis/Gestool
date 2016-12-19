@@ -1263,7 +1263,7 @@ METHOD StdResource( cFldRes ) CLASS TInfGen
          ID       350 ;
          OF       if( ::lNewInforme, ::oFld:aDialogs[4], ::oFld:aDialogs[3] )
 
-   TBtnBmp():ReDefine( 351, "Printer_preferences_16",,,,,{|| PrinterPreferences( oPrinter ) }, if( ::lNewInforme, ::oFld:aDialogs[4], ::oFld:aDialogs[3] ), .f., , .f.,  )
+   TBtnBmp():ReDefine( 351, "gc_printer2_check_16",,,,,{|| PrinterPreferences( oPrinter ) }, if( ::lNewInforme, ::oFld:aDialogs[4], ::oFld:aDialogs[3] ), .f., , .f.,  )
 
    /*
    Footer----------------------------------------------------------------------
