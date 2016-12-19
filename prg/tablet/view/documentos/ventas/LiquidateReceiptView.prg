@@ -77,12 +77,12 @@ METHOD insertControls() CLASS LiquidateReceiptView
                         "nCol"      => {|| GridWidth( 3, ::oDlg ) },;
                         "bSetGet"   => {|u| if( PCount() == 0, ::nEntrega, ::nEntrega := u ) },;
                         "oWnd"      => ::oDlg,;
-                        "lPixels"   => .t.,;
                         "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
-                        "cPict"     => MasUnd(),;
-                        "lRight"    => .t.,;
                         "nHeight"   => 23,;
-                        "bChange"   => { ::CalDiferencia() } } )
+                        "lRight"    => .t.,;
+                        "cPict"     => MasUnd(),;
+                        "lPixels"   => .t.,;
+                        "bValid"    => {|| ::CalDiferencia() } } )
 
    TGridSay():Build( {  "nRow"      => 110,;
                         "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -104,9 +104,7 @@ METHOD insertControls() CLASS LiquidateReceiptView
                                              "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
                                              "cPict"     => MasUnd(),;
                                              "lRight"    => .t.,;
-                                             "bWhen"     => {|| .f. },;
                                              "nHeight"   => 23 } )
-
    
 Return( Self )
 
@@ -127,7 +125,7 @@ METHOD defineAceptarCancelar() CLASS LiquidateReceiptView
                                                    "nWidth"    => 64,;
                                                    "nHeight"   => 64,;
                                                    "cResName"  => "gc_ok_64",;
-                                                   "bLClicked" => {|| ::endView() },;
+                                                   "bLClicked" => {|| ::oSender:ProcessLiquidateReceipt( ::nEntrega ), ::endView() },;
                                                    "oWnd"      => ::oDlg } )
 
 Return ( self )
@@ -138,8 +136,6 @@ METHOD CalDiferencia() CLASS LiquidateReceiptView
 
    ::nDiferencia     := ::nPendiente - ::nEntrega
    
-   MsgInfo( ::oDiferencia )
-
    if !Empty( ::oDiferencia )
       ::oDiferencia:Refresh()
    end if
