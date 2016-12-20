@@ -1328,7 +1328,7 @@ Function GoogleMaps( cStreetTo, cCityTo, cCountryTo )
 
    REDEFINE ACTIVEX oActiveX  ID 100   OF oDlg  PROGID "Shell.Explorer"
 
-   REDEFINE GET oStreetFrom   VAR cStreetFrom   ON HELP  load( oStreetFrom, oCityFrom, oCountryFrom ) BITMAP "Office_16" ID 200 OF oDlg
+   REDEFINE GET oStreetFrom   VAR cStreetFrom   ON HELP  load( oStreetFrom, oCityFrom, oCountryFrom ) BITMAP "gc_factory_16" ID 200 OF oDlg
 
    REDEFINE GET oCityFrom     VAR cCityFrom     ID 210   OF oDlg
 

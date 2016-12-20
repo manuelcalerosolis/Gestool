@@ -50,7 +50,6 @@ PRVZOOM BITMAP "..\\bmp\\Document_Zoom_In_16.bmp"
 UNZOOM BITMAP "..\\bmp\\Document_Zoom_Out_16.bmp"
 CLI BITMAP "..\\bmp\\Id_Card_16.bmp"
 CLIPOT BITMAP "..\\bmp\\Id_Card_Information_16.bmp"
-OFFICE_16 BITMAP "..\\bmp\\Factory_White_16.bmp"
 OFFICE_BUILDING_16 BITMAP "..\\bmp\\Factory_16.bmp"
 OFFICE_BUILDING_32 BITMAP "..\\bmp\\Factory_32.bmp"
 

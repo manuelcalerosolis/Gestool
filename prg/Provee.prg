@@ -3601,7 +3601,7 @@ Method Create( ) CLASS TProveedorLabelGenerator
          */
 
          REDEFINE BITMAP ;
-            RESOURCE "EnvioEtiquetas" ;
+            RESOURCE "gc_portable_barcode_scanner_48" ;
             ID       500 ;
             OF       ::oDlg ;
 
