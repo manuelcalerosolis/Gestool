@@ -3118,7 +3118,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       990 ;
-         RESOURCE "clock_refresh_48_alpha" ;
+         RESOURCE "gc_clock_refresh_48" ;
          TRANSPARENT ;
          OF       ::oFldTurno:aDialogs[1]
 
@@ -3138,7 +3138,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       500 ;
-         RESOURCE if ( lParcial, "clock_refresh_48_alpha", "clock_stop_48_alpha" ) ;
+         RESOURCE if ( lParcial, "gc_clock_refresh_48", "gc_clock_refresh_48" ) ;
          TRANSPARENT ;
          OF       ::oDlgTurno
 
