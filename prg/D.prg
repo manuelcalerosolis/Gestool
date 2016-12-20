@@ -1532,20 +1532,26 @@ Return ( aPropertiesTable )
 
 METHOD setArticuloTablaPropiedades( id, idCodigoPrimeraPropiedad, idCodigoSegundaPropiedad, idValorPrimeraPropiedad, idValorSegundaPropiedad, nUnidades, aPropertiesTable )
 
-   local oColumn
+   local oProperty
    local aProperty
+
+   // msgalert( idCodigoPrimeraPropiedad, "idCodigoPrimeraPropiedad" )
+   // msgalert( idCodigoSegundaPropiedad, "idCodigoSegundaPropiedad" )
+   // msgalert( idValorPrimeraPropiedad, " idValorPrimeraPropiedad" )
+   // msgalert( idValorSegundaPropiedad, " idValorSegundaPropiedad" )
+   // msgalert( nUnidades, "nUnidades" )
 
    for each aProperty in aPropertiesTable
 
-      for each oColumn in aProperty
+      for each oProperty in aProperty
 
-         if rtrim( oColumn:cCodigo )            == rtrim( id ) .and. ;
-            rtrim( oColumn:cCodigoPropiedad1 )  == rtrim( idCodigoPrimeraPropiedad ) .and. ;
-            rtrim( oColumn:cCodigoPropiedad2 )  == rtrim( idCodigoSegundaPropiedad ) .and. ;
-            rtrim( oColumn:cValorPropiedad1 )   == rtrim( idValorPrimeraPropiedad ) .and. ;
-            rtrim( oColumn:cValorPropiedad2 )   == rtrim( idValorSegundaPropiedad )
+         if rtrim( oProperty:cCodigo )            == rtrim( id )                       .and. ;
+            rtrim( oProperty:cCodigoPropiedad1 )  == rtrim( idCodigoPrimeraPropiedad ) .and. ;
+            rtrim( oProperty:cCodigoPropiedad2 )  == rtrim( idCodigoSegundaPropiedad ) .and. ;
+            rtrim( oProperty:cValorPropiedad1 )   == rtrim( idValorPrimeraPropiedad )  .and. ;
+            rtrim( oProperty:cValorPropiedad2 )   == rtrim( idValorSegundaPropiedad )
 
-            oColumn:Value  := nUnidades
+            oProperty:Value  := nUnidades
 
          end if
    

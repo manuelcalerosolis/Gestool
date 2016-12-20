@@ -1477,7 +1477,7 @@ METHOD inactivateProduct( idProduct ) CLASS TComercioProduct
    ::writeText( "Desactivando artículo " + alltrim( idProduct ) + " de prestashop" )
 
    cCommand             := "UPDATE " + ::cPrefixTable( "product" ) + ;
-                              " SET active = 0" + ;
+                              " SET active = 0, indexed = 0" + ;
                               " WHERE id_product = '" + idProductPrestashop + "'"
 
    // ::commandExecDirect( cCommand )

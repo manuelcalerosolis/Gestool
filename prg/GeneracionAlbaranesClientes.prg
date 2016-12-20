@@ -318,7 +318,7 @@ METHOD loadLinesDocument()
 
    ( ::getHeaderAlias() )->( ordsetfocus( "dFecPed" ) )
 
-   ( ::getHeaderAlias() )->( dbGoTop() )
+   ( ::getHeaderAlias() )->( dbgotop() )
    while ( ::getHeaderAlias() )->dFecPed <= ::oPeriodo:getFechaFin() .and. !::getHeaderEof() // 
 
       if ::isHeadersConditions() .and. ::seekLineId()
@@ -478,8 +478,10 @@ METHOD processDeliveryNoteLines()
 
    local oLine
 
+   msgalert( "processDeliveryNoteLines" )
+
    for each oLine in ( ::getDeliveryNoteLines():getLines() )
-      if oLine:isSelectLine()
+      if .t. // oLine:isSelectLine()
          ::processDeliveryNoteLine( oLine )
       end if 
    next
@@ -490,7 +492,7 @@ Return ( .t. )
 
 METHOD processDeliveryNoteLine( oLine )
 
-   debug( oLine, "oLine" )
+   msgalert( hb_valtoexp( oLine ), "oLine" )
 
 Return ( .t. )
 

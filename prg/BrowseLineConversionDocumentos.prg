@@ -26,11 +26,16 @@ CLASS TBrowseLineConversionDocumentos
 
    DATA oColumnNumeroDocumento
 
+   DATA aPropertiesTable
+
    METHOD New()
+
+   METHOD getView()                                INLINE ( ::oSender:nView )
    
    METHOD getPictureRound()                        INLINE ( ::oSender:cPictureRound )
    METHOD getDecimalPrice()                        INLINE ( ::oSender:nDecimalPrice )
    METHOD getRoundDecimalPrice()                   INLINE ( ::oSender:nRoundDecimalPrice )
+
 
    METHOD Dialog()
       METHOD buildBrowse()
@@ -61,8 +66,9 @@ CLASS TBrowseLineConversionDocumentos
 
    METHOD selectAllLine()                          INLINE ( ::oDocumentLines:selectAll(),       ::oBrwLines:Refresh() )
    METHOD unselectAllLine()                        INLINE ( ::oDocumentLines:unSelectAll(),     ::oBrwLines:Refresh() )
-   METHOD propertiesLine()
+   METHOD getLinesDocument()                       INLINE ( ::oDocumentLines:getLines() )
 
+   METHOD propertiesLine()
 
    METHOD changeUnits( oColumn, uValue, nKey )
 
@@ -604,7 +610,6 @@ METHOD changeSortLines()
    local nScan
 
    nScan          := ascan( ::oBrwLines:aCols, {| oColumn | oColumn:cHeader == ::cSortLines } )
-
    if nScan != 0
       ::clickOnHeader( ::oBrwLines:aCols[ nScan ], .f. )
    end if 

@@ -1412,7 +1412,7 @@ METHOD SaveModelo()
       REDEFINE COMBOBOX oComboSequencia ;
          VAR      ::cSequencia ;
          ID       170 ;
-         ITEMS    { "OOFF", "RCUR" } ;
+         ITEMS    { "OOFF", "FRST", "FNAL", "RCUR" } ;
          OF       oDlg
 
       ::oTreeIncidencias   := TTreeView():Redefine( 150, oDlg )
@@ -2222,8 +2222,8 @@ METHOD InitSepaXML19( oDlg )
 
       ::oCuaderno:setScheme( ::cEsquema )
       ::oCuaderno:setSeqTp( ::cSequencia )
-      ::oCuaderno:setOriginalMessageIdentification( id_File( 'REMESA' + str( ::oDbf:nNumRem ) ) )
-      ::oCuaderno:setPaymentInformationIdentification( ::oCtaRem:oDbf:cNifPre + ttos( datetime() ) )
+      ::oCuaderno:setOriginalMessageIdentification( id_File( 'REMESA' + alltrim( str( ::oDbf:nNumRem ) ) ) )
+      ::oCuaderno:setPaymentInformationIdentification( alltrim( ::oCtaRem:oDbf:cNifPre ) + "." + ttos( datetime() ) )
       ::oCuaderno:setRequestedCollectionDate( sDate( ::getIngreso() ) )                  // Fecha de cobro (Vencimiento)
 
       // Presentador--------------------------------------------------------------

@@ -384,6 +384,7 @@ Return .t.
 METHOD getCommandProductToUpdate( hProduct )
 
    local cText
+   local aStock
    local hStock
    local cCommand             := ""
    local nTotalStock          := 0
@@ -393,10 +394,12 @@ METHOD getCommandProductToUpdate( hProduct )
       Return ( cCommand )
    end if 
 
+   aStock                     := hget( hProduct, "stocks" )
+
    cCommand                   += "DELETE FROM " + ::cPrefixTable( "stock_available" )                                   + ;
                                  " WHERE id_product = " + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) )     + ";"
 
-   for each hStock in hget( hProduct, "stocks" )
+   for each hStock in aStock
 
       idProductAttribute      := ::TPrestashopId():getValueProductAttributeCombination( hget( hProduct, "id" ) + hget( hStock, "idFirstProperty" ) + hget( hStock, "valueFirstProperty" ) + hget( hStock, "idSecondProperty" ) + hget( hStock, "valueSecondProperty" ), ::getCurrentWebName() )
 
@@ -423,7 +426,8 @@ METHOD getCommandProductToUpdate( hProduct )
 
       end if
 
-      cText                   := 'Actualizando stock con propiedades '                       
+      cText                   := 'Actualizando stock con propiedades ' 
+      cText                   += alltrim( str( hget( hProduct, "id" ) ) )                                               + ', ' 
       cText                   += alltrim( str( hget( hProduct, "idProductPrestashop" ) ) )                              + ', ' 
       cText                   += alltrim( hget( hStock, "valueFirstProperty"  ) )                                       + ', ' 
       cText                   += alltrim( hget( hStock, "valueSecondProperty" ) )                                       + ', '
@@ -434,10 +438,13 @@ METHOD getCommandProductToUpdate( hProduct )
 
    if ( nTotalStock <= 0 ) .and. ( TComercioConfig():isDeleteWithoutStock() )
 
-      cCommand                := "DELETE FROM " + ::cPrefixTable( "product" )                                           + ;
+      cCommand                := "UPDATE  " + ::cPrefixTable( "product" )                                               + ;
+                                 " SET active = 0, indexed = 0"                                                         + ;
                                  " WHERE id_product = '" + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) )    + "';"
 
-      cText                   := 'Desactivando artículo ' + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) ) + ' de prestashop'
+      cText                   := 'Desactivando artículo ' 
+      cText                   += alltrim( str( hget( hProduct, "id" ) ) )                                               + ', ' 
+      cText                   += alltrim( str( hget( hProduct, "idProductPrestashop" ) ) )                              + ', ' 
 
    end if 
 

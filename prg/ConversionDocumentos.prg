@@ -170,10 +170,11 @@ CLASS TConversionDocumentos
                                                             D():getFieldFromAliasDictionary( "Sufijo", ::getLineAlias(), ::getLineDictionary() ) )
    METHOD seekLineId()                             INLINE ( ( ::getLineAlias() )->( dbSeek( ::getHeaderId() ) ) )
 
-   METHOD getLinesDocument()                       INLINE ( ::oDocumentLines:getLines() )
-   METHOD injectValuesBrowseProperties( idProduct )
+   METHOD injectValuesBrowseProperties()
    METHOD saveValuesBrowseProperties()
    METHOD setValuesBrowseProperties()
+
+   METHOD getLinesDocument()                       INLINE ( ::oDocumentLines:getLines() )
    METHOD getLineDocument( nPosition )             INLINE ( ::oDocumentLines:getLine( if( !empty( nPosition ), nPosition, ::oBrwLines:nArrayAt ) ) )
    METHOD getHeaderDocument( nPosition )           INLINE ( ::oDocumentHeaders:getLine( if( !empty( nPosition ), nPosition, ::oBrwDocuments:nArrayAt ) ) )
 
@@ -935,16 +936,15 @@ RETURN ( Self )
 
 METHOD propertiesLine()
 
-   local idProduct               := ::getLineDocument():getCode()
    local oDialogBrowseProperties
 
-   ::aPropertiesTable            := D():getArticuloTablaPropiedades( idProduct, ::getView() )
+   ::aPropertiesTable            := D():getArticuloTablaPropiedades( ::getLineDocument():getCode(), ::getView() )
    if empty( ::aPropertiesTable )
       msgStop( "Este artículo no tiene propiedades." )
       Return ( Self )
    end if
 
-   ::injectValuesBrowseProperties( idProduct )
+   ::injectValuesBrowseProperties()
 
    oDialogBrowseProperties       := DialogBrowseProperties():new( Self )
    if oDialogBrowseProperties:Dialog()
@@ -1348,6 +1348,8 @@ RETURN ( lLoadLines )
 
 METHOD setBrowseLinesDocument()
 
+   msgAlert( hb_valtoexp( ::oDocumentLines:getLines() ), "setBrowseLinesDocument" )
+
    ::oBrwLines:setArray( ::oDocumentLines:getLines(), .t., , .f. )
    
    ::oBrwLines:bSeek := {|c| ::seekLine( c ) }
@@ -1423,13 +1425,15 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD injectValuesBrowseProperties( idProduct )
+METHOD injectValuesBrowseProperties()
 
    local oLine
-   local aLines   := ::getLinesDocument()
+   local aLines   := ::oDocumentLines:getLines()
+
+   msgAlert( hb_valtoexp( aLines ), "injectValuesBrowseProperties" )
 
    for each oLine in aLines
-      if idProduct == oLine:getProductId()
+      if ::getLineDocument():getCode() == oLine:getProductId()
          D():setArticuloTablaPropiedades( oLine:getProductId(), oLine:getCodeFirstProperty(), oLine:getCodeSecondProperty(), oLine:getValueFirstProperty(), oLine:getValueSecondProperty(), oLine:getTotalUnits(), ::aPropertiesTable )
       end if 
    next
