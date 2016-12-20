@@ -452,6 +452,7 @@ METHOD Activate( lAuto ) CLASS TSndRecInf
       REDEFINE BITMAP oBmp ;
          RESOURCE "gc_satellite_dish2_48" ;
          ID       500 ;
+         TRANSPARENT ;
          OF       ::oFld:aDialogs[ 1 ]
 
       REDEFINE SAY PROMPT cCodEnvUsr() ;
@@ -847,6 +848,7 @@ METHOD Execute( lSend, lRecive, lImprimirEnvio ) CLASS TSndRecInf
    local aFiles
    local cFileCatalog
    local nUltimoEnvio      := nUltimoEnvioInformacion()
+   local aSend
 
    DEFAULT lSend           := .t.
    DEFAULT lRecive         := .t.

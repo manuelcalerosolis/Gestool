@@ -2450,6 +2450,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       aTmp[ _NIVAMAN    ]  := nIva( dbfIva, cDefIva() )
       aTmp[ _LRECC      ]  := lRECCEmpresa()
       aTmp[ _TFECFAC    ]  := getSysTime()
+      aTmp[ _LSNDDOC    ]  := .t.
 
    case nMode == DUPL_MODE
 
@@ -20832,13 +20833,16 @@ FUNCTION ChkLqdFacCli( aTmp, cFacCliT, cFacCliL, cFacCliP, cAntCliT, dbfIva, dbf
    local cDivFac
    local nPagFacCli
    local nRec     := ( cFacCliP )->( RecNo() )
+   local lLiqAnt
 
    if aTmp != nil
       cFactura    := aTmp[ _CSERIE  ] + str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ]
       cDivFac     := aTmp[ _CDIVFAC ]
+      lLiqAnt     := aTmp[ _LLIQUIDADA ]
    else
       cFactura    := ( cFacCliT )->cSerie + str( ( cFacCliT )->nNumFac ) + ( cFacCliT )->cSufFac
       cDivFac     := ( cFacCliT )->cDivFac
+      lLiqAnt     := ( cFacCliT )->lLiquidada
    end if
 
    nTotal         := abs( nTotFacCli( cFactura, cFacCliT, cFacCliL, dbfIva, dbfDiv, cFacCliP, cAntCliT, nil, nil, .f. ) )
@@ -20853,8 +20857,15 @@ FUNCTION ChkLqdFacCli( aTmp, cFacCliT, cFacCliL, cFacCliP, cAntCliT, dbfIva, dbf
    end if
 
    if dbLock( cFacCliT )
+      
       ( cFacCliT )->lLiquidada   := lChkLqd
+      
+      if lLiqAnt != lChkLqd
+         ( cFacCliT )->lSndDoc   := .t.
+      end if
+
       ( cFacCliT )->( dbUnLock() )
+
    end if
 
    ( cFacCliP )->( dbGoTo( nRec ) )
@@ -21550,7 +21561,7 @@ CLASS TFacturasClientesSenderReciver FROM TSenderReciverItem
 
    Method validateRecepcion()
 
-   Method validateRecepcionRecibo( tmpFacCliP, dbfFacCliPT )
+   Method validateRecepcionRecibo( tmpFacCliP, dbfFacCliP )
 
 END CLASS
 
@@ -22385,7 +22396,6 @@ METHOD validateRecepcion( tmpFacCliT, dbfFacCliT ) CLASS TFacturasClientesSender
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
-
 
 METHOD validateRecepcionRecibo( tmpFacCliP, dbfFacCliP ) CLASS TFacturasClientesSenderReciver
 
