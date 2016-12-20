@@ -246,8 +246,9 @@ METHOD Dialog() CLASS TLabelGenerator
                   "SelectLabels_2"
 
       REDEFINE BITMAP ;
-         RESOURCE "EnvioEtiquetas" ;
+         RESOURCE "gc_portable_barcode_scanner_48" ;
          ID       500 ;
+         TRANSPARENT ;
          OF       ::oDlg ;
 
       REDEFINE GET ::oSerieInicio VAR ::cSerieInicio ;

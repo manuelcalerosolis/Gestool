@@ -591,7 +591,7 @@ CLASS TReplaceDialog FROM TFilterDialog
 
    DATA cTitle                         INIT "Reemplazar campos"
    DATA cResource                      INIT "FastReplace"
-   DATA cIcon                          INIT "Replace2_48_alpha"
+   DATA cIcon                          INIT "gc_arrow_circle2_48"
 
    DATA oReplace
    DATA cReplace

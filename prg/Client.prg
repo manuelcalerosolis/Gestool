@@ -7257,8 +7257,9 @@ Method Create() CLASS TClienteLabelGenerator
          */
 
          REDEFINE BITMAP ;
-            RESOURCE "EnvioEtiquetas" ;
+            RESOURCE "gc_portable_barcode_scanner_48" ;
             ID       500 ;
+            TRANSPARENT ;
             OF       ::oDlg ;
 
          REDEFINE COMBOBOX ::oCriterio VAR ::cCriterio ;

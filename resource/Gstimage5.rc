@@ -18,7 +18,6 @@ KEYBOARD2_32 BITMAP "..\\bmp\\Keyboard2.bmp"
 
 CALCULATOR_322 BITMAP "..\\bmp\\Calculator_322.bmp"
 SENDMAIL BITMAP "..\\bmp\\CorreoElectronico.bmp"
-ENVIOETIQUETAS BITMAP "..\\bmp\\EnvioEtiquetas.bmp"
 
 ROW_32 BITMAP "..\\bmp\\Row_32.bmp"
 ROW_ALL_32 BITMAP "..\\bmp\\Row_All_32.bmp"

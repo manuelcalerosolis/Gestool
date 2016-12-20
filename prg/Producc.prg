@@ -3997,8 +3997,9 @@ Method CreateAsistenteEtiquetas() CLASS TProduccion
          */
 
          REDEFINE BITMAP ;
-            RESOURCE "EnvioEtiquetas" ;
+            RESOURCE "gc_portable_barcode_scanner_48" ;
             ID       500 ;
+            TRANSPARENT ;
             OF       ::oDlgLbl ;
 
          REDEFINE GET ::oSerieInicio VAR ::cSerieInicio ;
