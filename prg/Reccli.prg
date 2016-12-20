@@ -264,6 +264,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
    local oRotor
    local nOrdAnt
    local lFound
+   local oSnd
 
    DEFAULT  oMenuItem   := _MENUITEM_
    DEFAULT  oWnd        := oWnd()
@@ -670,11 +671,30 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
 
    end if
 
-   DEFINE BTNSHELL oBtnEur RESOURCE "BAL_EURO" OF oWndBrw ;
+   DEFINE BTNSHELL oSnd RESOURCE "LBL" GROUP OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( lEur := !lEur, oWndBrw:Refresh() ) ;
-      TOOLTIP  "M(o)neda";
-      HOTKEY   "O";
+      MENU     This:Toggle() ;
+      TOOLTIP  "En(v)iar" ;
+      MESSAGE  "Seleccionar facturas para ser enviadas" ;
+      ACTION   lSnd( oWndBrw, D():FacturasClientesCobros( nView ) ) ;
+      HOTKEY   "V";
+      LEVEL    ACC_EDIT
+
+   DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( lSelectAll( oWndBrw, D():FacturasClientesCobros( nView ), "lSndDoc", .t., .t., .t. ) );
+      TOOLTIP  "Todos" ;
+      FROM     oSnd ;
+      CLOSED ;
+      LEVEL    ACC_EDIT
+
+   DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( lSelectAll( oWndBrw, D():FacturasClientesCobros( nView ), "lSndDoc", .f., .t., .t. ) );
+      TOOLTIP  "Ninguno" ;
+      FROM     oSnd ;
+      CLOSED ;
+      LEVEL    ACC_EDIT
 
 #ifndef __PDA__
 
@@ -798,6 +818,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
             
             aTmp[ _CTIPREC ]     := "L"
             aTmp[ _CTURREC ]     := cCurSesion( nil, .f. )
+            aTmp[ _LSNDDOC ]     := .t.
 
             if !empty( oClienteCompensar )
 
@@ -3190,6 +3211,7 @@ FUNCTION GenPgoFacRec( cNumFac, cFacRecT, cFacRecL, cFacCliP, dbfCli, cFPago, cD
             ( cFacCliP )->cCtaRem       := cCtaRem
             ( cFacCliP )->cCodAge       := cCodAge
             ( cFacCliP )->lEsperaDoc    := ( cFPago )->lEsperaDoc
+            ( cFacCliP )->lSndDoc       := .t.
             ( cFacCliP )->dFecVto       := dNextDayPago( dFecFac, n, nPlazos, cFPago, dbfCli )
 
             if !empty( ( cFacRecT )->cCtrCoste )
@@ -4876,6 +4898,7 @@ FUNCTION genPgoFacCli( cNumFac, cFacCliT, cFacCliL, cFacCliP, cAntCliT, cClient,
             ( cFacCliP )->cCtaRem       := cCtaRem
             ( cFacCliP )->cCodAge       := cCodAge
             ( cFacCliP )->lEsperaDoc    := ( cFPago )->lEsperaDoc
+            ( cFacCliP )->lSndDoc       := .t.
 
             if !empty( ( cFacCliT )->cCtrCoste )
                 ( cFacCliP )->cCtrCoste := ( cFacCliT )->cCtrCoste
@@ -5523,6 +5546,7 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
          ( cFacCliP )->nVdvPgo    := aTmp[ _NVDVPGO ]
          ( cFacCliP )->cCodPgo    := aTmp[ _CCODPGO ]
          ( cFacCliP )->lConPgo    := .f.
+         ( cFacCliP )->lSndDoc    := .t.
          ( cFacCliP )->dFecCre    := GetSysDate()
          ( cFacCliP )->cHorCre    := Substr( Time(), 1, 5 )
 
