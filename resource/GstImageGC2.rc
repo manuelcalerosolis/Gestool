@@ -40,3 +40,8 @@ GC_CLOCK_STOP_48 BITMAP "..\\bmp\\gc_clock_stop_48.bmp"
 clock_run_48_alpha BITMAP "..\\bmp\\clock_run_48_alpha.bmp"
 clock_stop_48_alpha BITMAP "..\\bmp\\clock_stop_48_alpha.bmp"
 clock_refresh_48_alpha BITMAP "..\\bmp\\clock_refresh_48_alpha.bmp"
+
+FOLDER BITMAP "..\\bmp\\gc_folder_open_16.bmp"
+BOT BITMAP "..\\bmp\\gc_arrow_down_16.bmp"
+BMPKIT BITMAP "..\\bmp\\gc_piece_16.bmp"
+GC_PIECE_12 BITMAP "..\\bmp\\gc_piece_12.bmp"

@@ -878,8 +878,8 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       :bStrData         := {|| "" }
       :bEditValue       := {|| ( D():Articulos( nView ) )->lKitArt }
       :nWidth           := 20
-      :SetCheck( { "Sel16", "Nil16" } )
-      :AddResource( "BmpKit" )
+      :SetCheck( { "gc_piece_12", "Nil16" } )
+      :AddResource( "BMPKIT" )
    end with
 
    with object ( oWndBrw:AddXCol() )
@@ -888,7 +888,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       :bStrData         := {|| "" }
       :bEditValue       := {|| ( D():Articulos( nView ) )->lSndDoc }
       :nWidth           := 20
-      :SetCheck( { "Sel16", "Nil16" } )
+      :SetCheck( { "gc_mail2_12", "Nil16" } )
       :AddResource( "gc_mail2_16" )
    end with
 

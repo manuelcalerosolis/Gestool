@@ -509,7 +509,7 @@ FUNCTION Familia( oMenuItem, oWnd )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( dbfFamilia )->lSelDoc }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_mail2_12", "Nil16" } )
          :nHeadBmpNo       := 3
          :AddResource( "gc_mail2_16" )
       end with
@@ -519,7 +519,7 @@ FUNCTION Familia( oMenuItem, oWnd )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( dbfFamilia )->lPubInt }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_earth_12", "Nil16" } )
          :nHeadBmpNo       := 3
          :AddResource( "gc_earth_16" )
       end with
