@@ -30,7 +30,7 @@ METHOD New( nView ) CLASS TGenMailingClientes
    ::oFilter         := TFilterCreator():Init( Self )   
    ::oFilter:SetFields( aItmCli() )
 
-   ::cBmpDatabase    := "Businessman2_Alpha_48"
+   ::cBmpDatabase    := "gc_businessman_48"
 
 Return ( Self )
 
@@ -58,7 +58,7 @@ METHOD New( dbfProveedores ) CLASS TGenMailingProveedores
    ::oFilter         := TFilterCreator():Init( Self )   
    ::oFilter:SetFields( aItmPrv() )
 
-   ::cBmpDatabase    := "Businessman2_Alpha_48"
+   ::cBmpDatabase    := "gc_businessman_48"
 
 Return ( Self )
 

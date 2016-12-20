@@ -9734,7 +9734,7 @@ STATIC FUNCTION ChgPrc( oWndBrw )
 	Llamada a la funcion que activa la caja de dialogo
 	*/
 
-	DEFINE DIALOG oDlg RESOURCE "gc_money2_16"
+	DEFINE DIALOG oDlg RESOURCE "CHGPRE"
 
    cArtOrg              := dbFirst( D():Articulos( nView ), 1 )
    cArtDes              := dbLast ( D():Articulos( nView ), 1 )

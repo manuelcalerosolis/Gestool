@@ -1229,7 +1229,7 @@ STATIC FUNCTION EdtBig( aTmp, aGet, dbfCli, oBrw, bWhen, bValid, nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       500 ;
-        RESOURCE "Businessman2_Alpha_48" ;
+        RESOURCE "gc_businessman_48" ;
         TRANSPARENT ;
         OF       oDlg
 
@@ -1533,7 +1533,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       500 ;
-         RESOURCE "Businessman2_Alpha_48" ;
+         RESOURCE "gc_businessman_48" ;
          TRANSPARENT ;
          OF       fldGeneral
 
@@ -6843,7 +6843,7 @@ Function BrwCliTactil( oGet, dbfCli, oGet2, lReturnCliente, cText, cBitmap )
 
    DEFAULT lReturnCliente  := .f.
    DEFAULT cText           := "Selecione un cliente"
-   DEFAULT cBitmap         := "Businessman2_Alpha_48"
+   DEFAULT cBitmap         := "gc_businessman_48"
 
    if Empty( dbfCli )
 
@@ -8102,7 +8102,7 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
 
       REDEFINE BITMAP oBmp ;
          ID       600 ;
-         RESOURCE "Businessman2_Alpha_48" ;
+         RESOURCE "gc_businessman_48" ;
          TRANSPARENT ;
          OF       oDlg
 

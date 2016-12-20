@@ -420,7 +420,8 @@ METHOD Activate( oMenuItem, oWnd )
    DEFINE DIALOG oDlg RESOURCE "TrazarLote" // OF oWnd()
 
    REDEFINE BITMAP oBmp;
-      RESOURCE "Package_Alpha_48" ;
+      RESOURCE "gc_package_48" ;
+      TRANSPARENT ;
       ID       800 ;
       OF       oDlg
 

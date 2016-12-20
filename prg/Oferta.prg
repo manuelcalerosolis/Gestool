@@ -766,7 +766,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
 
       REDEFINE BITMAP oBmpPrimera ;
          ID       500 ;
-         RESOURCE "Star_Red_48" ;
+         RESOURCE "gc_star2_48" ;
          TRANSPARENT ;
          OF       oFld:aDialogs[1]
 
@@ -1115,7 +1115,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
 
       REDEFINE BITMAP oBmpTercera ;
          ID       500 ;
-         RESOURCE "Preferences_48_Alpha" ;
+         RESOURCE "gc_clipboard_check_edit_48" ;
          TRANSPARENT ;
          OF       oFld:aDialogs[3]
 
