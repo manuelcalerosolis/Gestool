@@ -29,7 +29,7 @@ METHOD New( nView ) CLASS TGenMailingDatabasePedidosProveedor
 
    ::setFormatoDocumento( cFirstDoc( "PP", D():Documentos( nView ) ) )
 
-   ::setBmpDatabase( "User_48" )
+   ::setBmpDatabase( "gc_businessman_48" )
 
    ::setAsunto( "Envio de nuestro pedido número {Serie del pedido}/{Número del pedido}" )
 

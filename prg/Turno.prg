@@ -3118,7 +3118,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       990 ;
-         RESOURCE "clock_refresh_48_alpha" ;
+         RESOURCE "gc_clock_refresh_48" ;
          TRANSPARENT ;
          OF       ::oFldTurno:aDialogs[1]
 
@@ -3138,7 +3138,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       500 ;
-         RESOURCE if ( lParcial, "clock_refresh_48_alpha", "clock_stop_48_alpha" ) ;
+         RESOURCE if ( lParcial, "gc_clock_refresh_48", "gc_clock_refresh_48" ) ;
          TRANSPARENT ;
          OF       ::oDlgTurno
 
@@ -6043,7 +6043,7 @@ METHOD DlgImprimir( nDevice, lTactil )
       REDEFINE BUTTONBMP ;
          ID       232 ;
          OF       oDlg ;
-         BITMAP   "Printer_pencil_16" ;
+         BITMAP   "gc_document_text_pencil_12" ;
          ACTION   ( EdtDocumento( ::cPrnArq ) )
 
    else
@@ -6058,7 +6058,7 @@ METHOD DlgImprimir( nDevice, lTactil )
       ::oPrnArq:bValid  := {|| cDocumento( ::oPrnArq, ::oPrnArq:oHelpText ) }
       ::oPrnArq:bHelp   := {|| BrwDocumento( ::oPrnArq, ::oPrnArq:oHelpText, "AQ" ) }
 
-      TBtnBmp():ReDefine( 232, "Printer_pencil_16",,,,,{|| EdtDocumento( ::cPrnArq ) }, oDlg, .f., , .f.,  )
+      TBtnBmp():ReDefine( 232, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( ::cPrnArq ) }, oDlg, .f., , .f.,  )
 
    end if
 
@@ -6076,12 +6076,12 @@ METHOD DlgImprimir( nDevice, lTactil )
       REDEFINE BUTTONBMP ;
          ID       371 ;
          OF       oDlg ;
-         BITMAP   "Printer_preferences_16" ;
+         BITMAP   "gc_printer2_check_16" ;
          ACTION   ( PrinterPreferences( oPrinter ) )
 
    else
 
-      TBtnBmp():ReDefine( 371, "Printer_preferences_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
+      TBtnBmp():ReDefine( 371, "gc_printer2_check_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
 
    end if
 

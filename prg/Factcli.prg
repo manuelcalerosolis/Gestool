@@ -2399,7 +2399,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    local hBmpGeneral       := {  { "Resource" => "Factura_cliente_48_alpha",  "Dialog" => 1 },;
                                  { "Resource" => "gc_folders2_48",            "Dialog" => 2 },;
                                  { "Resource" => "Information_48_alpha",      "Dialog" => 3 },;
-                                 { "Resource" => "Address_book2_alpha_48",    "Dialog" => 4 },;
+                                 { "Resource" => "gc_address_book_48",    "Dialog" => 4 },;
                                  { "Resource" => "form_blue_48",              "Dialog" => 5 },;
                                  { "Resource" => "document_attachment_48",    "Dialog" => 6 },;
                                  { "Resource" => "Money_Alpha_48",            "Dialog" => 7 },;
@@ -2450,6 +2450,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       aTmp[ _NIVAMAN    ]  := nIva( dbfIva, cDefIva() )
       aTmp[ _LRECC      ]  := lRECCEmpresa()
       aTmp[ _TFECFAC    ]  := getSysTime()
+      aTmp[ _LSNDDOC    ]  := .t.
 
    case nMode == DUPL_MODE
 
@@ -2645,7 +2646,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       REDEFINE GET aGet[ _CDIRCLI ] VAR aTmp[ _CDIRCLI ] ;
          ID       183 ;
-         BITMAP   "Environnment_View_16" ;
+         BITMAP   "gc_earth_lupa_16" ;
          ON HELP  GoogleMaps( aTmp[ _CDIRCLI ], Rtrim( aTmp[ _CPOBCLI ] ) + Space( 1 ) + Rtrim( aTmp[ _CPRVCLI ] ) ) ;
          WHEN     ( lWhen .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       fldGeneral
@@ -6198,14 +6199,14 @@ STATIC FUNCTION PrnSerie()
       WHEN     ( .f. );
       OF       oDlg
 
-   TBtnBmp():ReDefine( 92, "Printer_pencil_16",,,,,{|| EdtDocumento( cFmtDoc ) }, oDlg, .f., , .f.,  )
+   TBtnBmp():ReDefine( 92, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( cFmtDoc ) }, oDlg, .f., , .f.,  )
 
    REDEFINE GET oPrinter VAR cPrinter;
       WHEN     ( .f. ) ;
       ID       160 ;
       OF       oDlg
 
-   TBtnBmp():ReDefine( 161, "Printer_preferences_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
+   TBtnBmp():ReDefine( 161, "gc_printer2_check_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
 
    REDEFINE BUTTON ;
       ID       IDOK ;
@@ -20832,13 +20833,16 @@ FUNCTION ChkLqdFacCli( aTmp, cFacCliT, cFacCliL, cFacCliP, cAntCliT, dbfIva, dbf
    local cDivFac
    local nPagFacCli
    local nRec     := ( cFacCliP )->( RecNo() )
+   local lLiqAnt
 
    if aTmp != nil
       cFactura    := aTmp[ _CSERIE  ] + str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ]
       cDivFac     := aTmp[ _CDIVFAC ]
+      lLiqAnt     := aTmp[ _LLIQUIDADA ]
    else
       cFactura    := ( cFacCliT )->cSerie + str( ( cFacCliT )->nNumFac ) + ( cFacCliT )->cSufFac
       cDivFac     := ( cFacCliT )->cDivFac
+      lLiqAnt     := ( cFacCliT )->lLiquidada
    end if
 
    nTotal         := abs( nTotFacCli( cFactura, cFacCliT, cFacCliL, dbfIva, dbfDiv, cFacCliP, cAntCliT, nil, nil, .f. ) )
@@ -20853,8 +20857,15 @@ FUNCTION ChkLqdFacCli( aTmp, cFacCliT, cFacCliL, cFacCliP, cAntCliT, dbfIva, dbf
    end if
 
    if dbLock( cFacCliT )
+      
       ( cFacCliT )->lLiquidada   := lChkLqd
+      
+      if lLiqAnt != lChkLqd
+         ( cFacCliT )->lSndDoc   := .t.
+      end if
+
       ( cFacCliT )->( dbUnLock() )
+
    end if
 
    ( cFacCliP )->( dbGoTo( nRec ) )
@@ -21550,7 +21561,7 @@ CLASS TFacturasClientesSenderReciver FROM TSenderReciverItem
 
    Method validateRecepcion()
 
-   Method validateRecepcionRecibo( tmpFacCliP, dbfFacCliPT )
+   Method validateRecepcionRecibo( tmpFacCliP, dbfFacCliP )
 
 END CLASS
 
@@ -22385,7 +22396,6 @@ METHOD validateRecepcion( tmpFacCliT, dbfFacCliT ) CLASS TFacturasClientesSender
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
-
 
 METHOD validateRecepcionRecibo( tmpFacCliP, dbfFacCliP ) CLASS TFacturasClientesSenderReciver
 

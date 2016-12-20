@@ -3168,7 +3168,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ]:bValid  := {|| cProp( aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ], aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ]:oHelpText ) }
       aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ]:bHelp   := {|| brwProp( aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ], aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ]:oHelpText ) }
 
-      TBtnBmp():ReDefine( 362, "Printer_pencil_16",,,,,{|| brwSelectPropiedad( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ], @aTmp[ ( D():Articulos( nView ) )->( fieldpos( "mValPrp1" ) ) ] ) }, fldPropiedades, .f., , .f., "Seleccionar propiedades" )
+      TBtnBmp():ReDefine( 362, "gc_document_text_pencil_12",,,,,{|| brwSelectPropiedad( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ], @aTmp[ ( D():Articulos( nView ) )->( fieldpos( "mValPrp1" ) ) ] ) }, fldPropiedades, .f., , .f., "Seleccionar propiedades" )
 
       REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ] ;
          VAR         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ] ;
@@ -3182,7 +3182,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ]:bValid  := {|| cProp( aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ], aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ]:oHelpText ) }
       aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ]:bHelp   := {|| brwProp( aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ], aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ]:oHelpText ) }
 
-      TBtnBmp():ReDefine( 372, "Printer_pencil_16",,,,,{|| brwSelectPropiedad( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ], @aTmp[ ( D():Articulos( nView ) )->( fieldpos( "mValPrp2" ) ) ] ) }, fldPropiedades, .f., , .f., "Seleccionar propiedades" )
+      TBtnBmp():ReDefine( 372, "gc_document_text_pencil_12",,,,,{|| brwSelectPropiedad( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ], @aTmp[ ( D():Articulos( nView ) )->( fieldpos( "mValPrp2" ) ) ] ) }, fldPropiedades, .f., , .f., "Seleccionar propiedades" )
 
       // Browse de propiedades y precios---------------------------------------
 
@@ -13766,8 +13766,9 @@ Method Dialog() CLASS TArticuloLabelGenerator
       // Bitmap-------------------------------------------------------------------
 
       REDEFINE BITMAP ;
-         RESOURCE "EnvioEtiquetas" ;
+         RESOURCE "gc_portable_barcode_scanner_48" ;
          ID       500 ;
+         TRANSPARENT ;
          OF       ::oDlg ;
 
       REDEFINE COMBOBOX ::oCriterio VAR ::cCriterio ;
@@ -13822,7 +13823,7 @@ Method Dialog() CLASS TArticuloLabelGenerator
          ::oFormatoLabel:bValid  := {|| cDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, dbfDoc, "AR" ) }
          ::oFormatoLabel:bHelp   := {|| BrwDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, "AR" ) }
 
-      TBtnBmp():ReDefine( 220, "Printer_pencil_16",,,,,{|| EdtDocumento( ::cFormatoLabel ) }, ::fldGeneral, .f., , .f., "Modificar formato de etiquetas" )
+      TBtnBmp():ReDefine( 220, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( ::cFormatoLabel ) }, ::fldGeneral, .f., , .f., "Modificar formato de etiquetas" )
 
       REDEFINE GET ::nFilaInicio ;
          ID       180 ;

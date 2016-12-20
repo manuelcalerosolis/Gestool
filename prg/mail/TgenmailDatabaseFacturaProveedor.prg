@@ -29,7 +29,7 @@ METHOD New( nView ) CLASS TGenMailingDatabaseFacturaProveedor
 
    ::setFormatoDocumento( cFirstDoc( "FP", D():Documentos( nView ) ) )
 
-   ::setBmpDatabase( "User_48" )
+   ::setBmpDatabase( "gc_businessman_48" )
 
    ::setAsunto( "Envio de nuestra factura {Serie de factura}/{Número de factura}" )
 

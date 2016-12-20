@@ -4891,7 +4891,7 @@ Function MainTablet()
                      		"nWidth"    => 64,;
                      		"nHeight"   => 64,;
                      		"cResName"  => "gc_document_text_user_64",;
-                     		"bLClicked" => {|| InvoiceCustomer():New():play() },;     // FacCliTablet()
+                     		"bLClicked" => {|| InvoiceCustomer():New():play() },;
                      		"oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 12 ) },;
@@ -4903,7 +4903,7 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| InvoiceCustomer():New():play() } } )        //FacCliTablet()
+                           "bAction"   => {|| InvoiceCustomer():New():play() } } )
 
    //----------------Recibos---------------------------------------------------
    

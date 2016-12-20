@@ -432,7 +432,7 @@ METHOD buildPageRedactar()
       ::oFormatoDocumento:bValid    := {|| cDocumento( ::oFormatoDocumento, ::oFormatoDocumento:oHelpText, D():Documentos( ::nView ) ) }
       ::oFormatoDocumento:bHelp     := {|| brwDocumento( ::oFormatoDocumento, ::oFormatoDocumento:oHelpText, ::cTypeFormat ) }
 
-      ::oEditDocumento              := TBtnBmp():ReDefine( 193, "Printer_pencil_16",,,,,{|| EdtDocumento( ::cFormatoDocumento ) }, oDlg, .f., , .f.,  )
+      ::oEditDocumento              := TBtnBmp():ReDefine( 193, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( ::cFormatoDocumento ) }, oDlg, .f., , .f.,  )
 
    end if 
 

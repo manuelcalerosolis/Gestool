@@ -2442,7 +2442,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "address_book2_alpha_48" ;
+        RESOURCE "gc_address_book_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[4]
 
@@ -2472,7 +2472,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       REDEFINE GET aGet[ _CDIRCLI ] VAR aTmp[ _CDIRCLI ] ;
          ID       102 ;
-         BITMAP   "Environnment_View_16" ;
+         BITMAP   "gc_earth_lupa_16" ;
          ON HELP  GoogleMaps( aTmp[ _CDIRCLI ], Rtrim( aTmp[ _CPOBCLI ] ) + Space( 1 ) + Rtrim( aTmp[ _CPRVCLI ] ) ) ;
          WHEN     ( lWhen .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
@@ -8053,7 +8053,7 @@ STATIC FUNCTION PrnEntregas( lPrint, cAlbCliP, lTicket )
       ID       110 ;
       OF       oDlg
 
-   TBtnBmp():ReDefine( 111, "Printer_preferences_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
+   TBtnBmp():ReDefine( 111, "gc_printer2_check_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
 
    REDEFINE GET oCopPrn VAR nCopPrn;
       ID       120 ;

@@ -510,7 +510,7 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
       Browse temporarl------------------------------------------------------------
       */
 
-      REDEFINE BITMAP oBmpDocumentos ID 500 RESOURCE "Document_Text_Alpha_48" TRANSPARENT OF oFld:aDialogs[ 2 ]
+      REDEFINE BITMAP oBmpDocumentos ID 500 RESOURCE "gc_document_text_pencil_48" TRANSPARENT OF oFld:aDialogs[ 2 ]
 
       oBrwTmp                       := IXBrowse():New( oFld:aDialogs[ 2 ] )
 
@@ -599,7 +599,7 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
       Graph start setting---------------------------------------------------------
       */
 
-      REDEFINE BITMAP oBmpGraficos ID 500 RESOURCE "Chart_area_48_alpha" TRANSPARENT OF oFld:aDialogs[ 3 ]
+      REDEFINE BITMAP oBmpGraficos ID 500 RESOURCE "gc_chart_column_48" TRANSPARENT OF oFld:aDialogs[ 3 ]
 
       REDEFINE BTNBMP ;
          ID       101 ;

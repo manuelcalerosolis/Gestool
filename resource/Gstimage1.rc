@@ -285,7 +285,6 @@ FOLDER16 BITMAP "..\\bmp\\res307.bmp"
 
 USER1_MONEY2_32 BITMAP "..\\bmp\\User1_money2_32.bmp"
 
-ENVIRONNMENT_VIEW_16 BITMAP "..\\bmp\\Environment_view_16.bmp"
 
 POLICEMAN_USA_32 BITMAP "..\\bmp\\Policeman_Usa_32.bmp"
 

@@ -1143,7 +1143,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
 
       REDEFINE BITMAP oBmpDocumentos ;
         ID       990 ;
-        RESOURCE "address_book2_alpha_48" ;
+        RESOURCE "gc_address_book_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[4]
 
@@ -1174,7 +1174,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
       REDEFINE GET aGet[ _CDIRPRV ] VAR aTmp[ _CDIRPRV ] ;
          ID       142 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         BITMAP   "Environnment_View_16" ;
+         BITMAP   "gc_earth_lupa_16" ;
          ON HELP  GoogleMaps( aTmp[ _CDIRPRV ], Rtrim( aTmp[ _CPOBPRV ] ) + Space( 1 ) + Rtrim( aTmp[ _CPROPRV ] ) ) ;
          OF       oFld:aDialogs[1]
 
@@ -3822,14 +3822,14 @@ STATIC FUNCTION PrnSerie( oBrw )
       COLOR    CLR_GET ;
       OF       oDlg
 
-   TBtnBmp():ReDefine( 92, "Printer_pencil_16",,,,,{|| EdtDocumento( cFmtDoc ) }, oDlg, .f., , .f.,  )
+   TBtnBmp():ReDefine( 92, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( cFmtDoc ) }, oDlg, .f., , .f.,  )
 
    REDEFINE GET oPrinter VAR cPrinter;
          WHEN     ( .f. ) ;
          ID       160 ;
          OF       oDlg
 
-   TBtnBmp():ReDefine( 161, "Printer_preferences_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
+   TBtnBmp():ReDefine( 161, "gc_printer2_check_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
 
    REDEFINE BUTTON ;
       ID       IDOK ;

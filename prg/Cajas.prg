@@ -413,7 +413,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          ID       140 ;
          OF       oFld:aDialogs[1]
 
-      TBtnBmp():ReDefine( 141, "Printer_preferences_16",,,,,{|| PrinterPreferences( aGet[ ( dbfCajT )->( FieldPos( "cPrnWin" ) ) ] ) }, oFld:aDialogs[1], .f., , .f.,  )
+      TBtnBmp():ReDefine( 141, "gc_printer2_check_16",,,,,{|| PrinterPreferences( aGet[ ( dbfCajT )->( FieldPos( "cPrnWin" ) ) ] ) }, oFld:aDialogs[1], .f., , .f.,  )
 
       /*
       Impresora de tickets
@@ -425,7 +425,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          ID       150 ;
          OF       oFld:aDialogs[1]
 
-      TBtnBmp():ReDefine( 151, "Printer_preferences_16",,,,,{|| PrinterPreferences( aGet[ ( dbfCajT )->( FieldPos( "cWinTik" ) ) ] ) }, oFld:aDialogs[1], .f., , .f.,  )
+      TBtnBmp():ReDefine( 151, "gc_printer2_check_16",,,,,{|| PrinterPreferences( aGet[ ( dbfCajT )->( FieldPos( "cWinTik" ) ) ] ) }, oFld:aDialogs[1], .f., , .f.,  )
 
       /*
       Impresora de entrega de nota
@@ -437,7 +437,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          ID       180 ;
          OF       oFld:aDialogs[1]
 
-      TBtnBmp():ReDefine( 181, "Printer_preferences_16",,,,,{|| PrinterPreferences( aGet[ ( dbfCajT )->( FieldPos( "cPrnNota" ) ) ] ) }, oFld:aDialogs[1], .f., , .f.,  )
+      TBtnBmp():ReDefine( 181, "gc_printer2_check_16",,,,,{|| PrinterPreferences( aGet[ ( dbfCajT )->( FieldPos( "cPrnNota" ) ) ] ) }, oFld:aDialogs[1], .f., , .f.,  )
 
       REDEFINE BUTTON ;
 			ID 		500 ;
@@ -522,7 +522,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          ON HELP  ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnTik" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnTik" ) ) ]:oHelpText, "TK" ) );
          OF       oFld:aDialogs[2]
 
-      TBtnBmp():ReDefine( 162, "Printer_pencil_16",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnTik" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
+      TBtnBmp():ReDefine( 162, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnTik" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
 
       REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "nCopTik" ) ) ] ;
          VAR      aTmp[ ( dbfCajT )->( FieldPos( "nCopTik" ) ) ] ;
@@ -549,7 +549,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          ON HELP  ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnCom" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnCom" ) ) ]:oHelpText, "TK" ) );
          OF       oFld:aDialogs[2]
 
-      TBtnBmp():ReDefine( 242, "Printer_pencil_16",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnCom" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
+      TBtnBmp():ReDefine( 242, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnCom" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
 
       REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "nCopCom" ) ) ] ;
          VAR      aTmp[ ( dbfCajT )->( FieldPos( "nCopCom" ) ) ] ;
@@ -576,7 +576,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          ON HELP  ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnAnu" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnAnu" ) ) ]:oHelpText, "TK" ) );
          OF       oFld:aDialogs[2]
 
-      TBtnBmp():ReDefine( 292, "Printer_pencil_16",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnAnu" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
+      TBtnBmp():ReDefine( 292, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnAnu" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
 
       REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "nCopAnu" ) ) ] ;
          VAR      aTmp[ ( dbfCajT )->( FieldPos( "nCopAnu" ) ) ] ;
@@ -609,7 +609,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          ON HELP  ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnVal" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnVal" ) ) ]:oHelpText, "TK" ) );
          OF       oFld:aDialogs[2]
 
-      TBtnBmp():ReDefine( 172, "Printer_pencil_16",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnVal" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
+      TBtnBmp():ReDefine( 172, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnVal" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
 
       REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "nCopVal" ) ) ] ;
          VAR      aTmp[ ( dbfCajT )->( FieldPos( "nCopVal" ) ) ] ;
@@ -642,7 +642,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          ON HELP  ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnDev" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnDev" ) ) ]:oHelpText, "TK" ) );
          OF       oFld:aDialogs[2]
 
-      TBtnBmp():ReDefine( 182, "Printer_pencil_16",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnDev" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
+      TBtnBmp():ReDefine( 182, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnDev" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
 
       REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "nCopDev" ) ) ] ;
          VAR      aTmp[ ( dbfCajT )->( FieldPos( "nCopDev" ) ) ] ;
@@ -675,7 +675,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          ON HELP  ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnApt" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnApt" ) ) ]:oHelpText, "TK" ) );
          OF       oFld:aDialogs[2]
 
-      TBtnBmp():ReDefine( 272, "Printer_pencil_16",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnApt" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
+      TBtnBmp():ReDefine( 272, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnApt" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
 
       REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "nCopApt" ) ) ] ;
          VAR      aTmp[ ( dbfCajT )->( FieldPos( "nCopApt" ) ) ] ;
@@ -708,7 +708,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          ON HELP  ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnEnt" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnEnt" ) ) ]:oHelpText, "TK" ) );
          OF       oFld:aDialogs[2]
 
-      TBtnBmp():ReDefine( 192, "Printer_pencil_16",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnEnt" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
+      TBtnBmp():ReDefine( 192, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnEnt" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
 
       REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "nCopEnt" ) ) ] ;
          VAR      aTmp[ ( dbfCajT )->( FieldPos( "nCopEnt" ) ) ] ;
@@ -742,7 +742,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          ON HELP  ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnAlb" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnAlb" ) ) ]:oHelpText ) );
          OF       oFld:aDialogs[2]
 
-      TBtnBmp():ReDefine( 202, "Printer_pencil_16",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnAlb" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
+      TBtnBmp():ReDefine( 202, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnAlb" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
 
       REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "nCopAlb" ) ) ] ;
          VAR      aTmp[ ( dbfCajT )->( FieldPos( "nCopAlb" ) ) ] ;
@@ -776,7 +776,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          ON HELP  ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnFac" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnFac" ) ) ]:oHelpText ) );
          OF       oFld:aDialogs[2]
 
-      TBtnBmp():ReDefine( 212, "Printer_pencil_16",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnFac" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
+      TBtnBmp():ReDefine( 212, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnFac" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
 
       REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "nCopFac" ) ) ] ;
          VAR      aTmp[ ( dbfCajT )->( FieldPos( "nCopFac" ) ) ] ;
@@ -809,7 +809,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          ON HELP  ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnPgo" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnPgo" ) ) ]:oHelpText, "MP" ) );
          OF       oFld:aDialogs[2]
 
-      TBtnBmp():ReDefine( 222, "Printer_pencil_16",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnPgo" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
+      TBtnBmp():ReDefine( 222, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnPgo" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
 
       REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "nCopPgo" ) ) ] ;
          VAR      aTmp[ ( dbfCajT )->( FieldPos( "nCopPgo" ) ) ] ;
@@ -842,7 +842,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          ON HELP  ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnArq" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnArq" ) ) ]:oHelpText, "AQ" ) );
          OF       oFld:aDialogs[2]
 
-      TBtnBmp():ReDefine( 232, "Printer_pencil_16",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnArq" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
+      TBtnBmp():ReDefine( 232, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnArq" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
 
       REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "nCopArq" ) ) ] ;
          VAR      aTmp[ ( dbfCajT )->( FieldPos( "nCopArq" ) ) ] ;
@@ -875,7 +875,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          ON HELP  ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnPar" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnPar" ) ) ]:oHelpText, "AQ" ) );
          OF       oFld:aDialogs[2]
 
-      TBtnBmp():ReDefine( 252, "Printer_pencil_16",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnPar" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
+      TBtnBmp():ReDefine( 252, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnPar" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
 
       REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "nCopPar" ) ) ] ;
          VAR      aTmp[ ( dbfCajT )->( FieldPos( "nCopPar" ) ) ] ;
@@ -908,7 +908,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          ON HELP  ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnCie" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnCie" ) ) ]:oHelpText, "AQ" ) );
          OF       oFld:aDialogs[2]
 
-      TBtnBmp():ReDefine( 342, "Printer_pencil_16",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnCie" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
+      TBtnBmp():ReDefine( 342, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnCie" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
 
       REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "nCopCie" ) ) ] ;
          VAR      aTmp[ ( dbfCajT )->( FieldPos( "nCopCie" ) ) ] ;
@@ -941,7 +941,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          ON HELP  ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnReg" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnReg" ) ) ]:oHelpText, "TK" ) );
          OF       oFld:aDialogs[2]
 
-      TBtnBmp():ReDefine( 262, "Printer_pencil_16",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnReg" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
+      TBtnBmp():ReDefine( 262, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnReg" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
 
       REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "nCopReg" ) ) ] ;
          VAR      aTmp[ ( dbfCajT )->( FieldPos( "nCopReg" ) ) ] ;
@@ -974,7 +974,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          ON HELP  ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnChk" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnChk" ) ) ]:oHelpText, "TK" ) );
          OF       oFld:aDialogs[2]
 
-      TBtnBmp():ReDefine( 282, "Printer_pencil_16",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnChk" ) ) ] ) }, oFld:aDialogs[ 2 ], .f., , .f.,  )
+      TBtnBmp():ReDefine( 282, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnChk" ) ) ] ) }, oFld:aDialogs[ 2 ], .f., , .f.,  )
 
       REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "nCopChk" ) ) ] ;
          VAR      aTmp[ ( dbfCajT )->( FieldPos( "nCopChk" ) ) ] ;
@@ -1007,7 +1007,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          ON HELP  ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnEna" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnEna" ) ) ]:oHelpText, "EA" ) );
          OF       oFld:aDialogs[2]
 
-      TBtnBmp():ReDefine( 352, "Printer_pencil_16",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnEna" ) ) ] ) }, oFld:aDialogs[ 2 ], .f., , .f.,  )
+      TBtnBmp():ReDefine( 352, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnEna" ) ) ] ) }, oFld:aDialogs[ 2 ], .f., , .f.,  )
 
       REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "nCopEna" ) ) ] ;
          VAR      aTmp[ ( dbfCajT )->( FieldPos( "nCopEna" ) ) ] ;
@@ -1095,7 +1095,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          ON HELP  ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnCut" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnCut" ) ) ]:oHelpText, "TK" ) );
          OF       oFld:aDialogs[2]
 
-      TBtnBmp():ReDefine( 362, "Printer_pencil_16",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnCut" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
+      TBtnBmp():ReDefine( 362, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnCut" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
 
       /*
       Botones de la caja de diálogo
@@ -1236,7 +1236,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpLin, oBrw, bWhen, bValid, nMode, aTmpC
          ID       110 ;
          OF       oDlg
 
-      TBtnBmp():ReDefine( 111, "Printer_preferences_16",,,,,{|| PrinterPreferences( aGet[ ( dbfTmpLin )->( FieldPos( "cNomPrn" ) ) ] ) }, oDlg, .f., , .f.,  )
+      TBtnBmp():ReDefine( 111, "gc_printer2_check_16",,,,,{|| PrinterPreferences( aGet[ ( dbfTmpLin )->( FieldPos( "cNomPrn" ) ) ] ) }, oDlg, .f., , .f.,  )
 
       REDEFINE GET aGet[ ( dbfTmpLin )->( FieldPos( "cWavFil" ) ) ] ;
          VAR      aTmp[ ( dbfTmpLin )->( FieldPos( "cWavFil" ) ) ] ;
@@ -1267,7 +1267,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpLin, oBrw, bWhen, bValid, nMode, aTmpC
          ON HELP  ( BrwDocumento( aGet[ ( dbfTmpLin )->( FieldPos( "cPrnCom" ) ) ], aGet[ ( dbfTmpLin )->( FieldPos( "cPrnCom" ) ) ]:oHelpText, "TK" ) );
          OF       oDlg
 
-      TBtnBmp():ReDefine( 142, "Printer_pencil_16",,,,,{|| EdtDocumento( aTmp[ ( dbfTmpLin )->( FieldPos( "cPrnCom" ) ) ] ) }, oDlg, .f., , .f.,  )
+      TBtnBmp():ReDefine( 142, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfTmpLin )->( FieldPos( "cPrnCom" ) ) ] ) }, oDlg, .f., , .f.,  )
 
       /*
       Formato para anulacion
@@ -1284,7 +1284,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpLin, oBrw, bWhen, bValid, nMode, aTmpC
          ON HELP  ( BrwDocumento( aGet[ ( dbfTmpLin )->( FieldPos( "cPrnAnu" ) ) ], aGet[ ( dbfTmpLin )->( FieldPos( "cPrnAnu" ) ) ]:oHelpText, "TK" ) );
          OF       oDlg
 
-      TBtnBmp():ReDefine( 152, "Printer_pencil_16",,,,,{|| EdtDocumento( aTmp[ ( dbfTmpLin )->( FieldPos( "cPrnAnu" ) ) ] ) }, oDlg, .f., , .f.,  )
+      TBtnBmp():ReDefine( 152, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfTmpLin )->( FieldPos( "cPrnAnu" ) ) ] ) }, oDlg, .f., , .f.,  )
 
       REDEFINE BUTTON ;
          ID       500 ;

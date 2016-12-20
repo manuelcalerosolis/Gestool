@@ -2078,14 +2078,14 @@ METHOD PrnSerie() CLASS TCobAge
       COLOR    CLR_GET ;
       OF       oDlg
 
-   TBtnBmp():ReDefine( 92, "Printer_pencil_16",,,,,{|| EdtDocumento( cFmtDoc ) }, oDlg, .f., , .f.,  )
+   TBtnBmp():ReDefine( 92, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( cFmtDoc ) }, oDlg, .f., , .f.,  )
 
    REDEFINE GET oPrinter VAR cPrinter;
       WHEN     ( .f. ) ;
       ID       160 ;
       OF       oDlg
 
-   TBtnBmp():ReDefine( 161, "Printer_preferences_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
+   TBtnBmp():ReDefine( 161, "gc_printer2_check_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
 
    REDEFINE BUTTON ;
       ID       IDOK ;

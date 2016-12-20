@@ -135,11 +135,11 @@ static dbfMatriz
 
 static bEdit                     := { |aTmp, aGet, dbf, oBrw, lRectificativa, nSpecialMode, nMode, aTmpFac| EdtCob( aTmp, aGet, dbf, oBrw, lRectificativa, nSpecialMode, nMode, aTmpFac ) }
 
-static hEstadoRecibo             := {  "Pendiente"             => "bCancel",;
-                                       "Cobrado"               => "bSel",;
-                                       "Devuelto"              => "bAlert",;
-                                       "Remesado"              => "folder_ok_16",;
-                                       "Espera documentación"  => "bClock" }
+static hEstadoRecibo             := {  "Pendiente"             => "GC_DELETE_12",;
+                                       "Cobrado"               => "GC_CHECK_12",;
+                                       "Devuelto"              => "SIGN_WARNING_12",;
+                                       "Remesado"              => "GC_FOLDER_OPEN_CHECK_12",;
+                                       "Espera documentación"  => "GC_CLOCK_12" }
 
 //----------------------------------------------------------------------------//
 //Funciones del programa
@@ -264,6 +264,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
    local oRotor
    local nOrdAnt
    local lFound
+   local oSnd
 
    DEFAULT  oMenuItem   := _MENUITEM_
    DEFAULT  oWnd        := oWnd()
@@ -658,12 +659,6 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
 
    end if
 
-   DEFINE BTNSHELL oBtnEur RESOURCE "BAL_EURO" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( lEur := !lEur, oWndBrw:Refresh() ) ;
-      TOOLTIP  "M(o)neda";
-      HOTKEY   "O";
-
 #ifndef __PDA__
 
 if oUser():lAdministrador()
@@ -786,6 +781,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
             
             aTmp[ _CTIPREC ]     := "L"
             aTmp[ _CTURREC ]     := cCurSesion( nil, .f. )
+            aTmp[ _LSNDDOC ]     := .t.
 
             if !empty( oClienteCompensar )
 
@@ -3178,6 +3174,7 @@ FUNCTION GenPgoFacRec( cNumFac, cFacRecT, cFacRecL, cFacCliP, dbfCli, cFPago, cD
             ( cFacCliP )->cCtaRem       := cCtaRem
             ( cFacCliP )->cCodAge       := cCodAge
             ( cFacCliP )->lEsperaDoc    := ( cFPago )->lEsperaDoc
+            ( cFacCliP )->lSndDoc       := .t.
             ( cFacCliP )->dFecVto       := dNextDayPago( dFecFac, n, nPlazos, cFPago, dbfCli )
 
             if !empty( ( cFacRecT )->cCtrCoste )
@@ -3572,7 +3569,7 @@ STATIC FUNCTION PrnSerie()
       WHEN     ( .f. );
       OF       oDlg
 
-   TBtnBmp():ReDefine( 92, "Printer_pencil_16",,,,,{|| EdtDocumento( cFmtRec ) }, oDlg, .f., , .f.,  )
+   TBtnBmp():ReDefine( 92, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( cFmtRec ) }, oDlg, .f., , .f.,  )
 
    REDEFINE GET dFecIni ;
       ID       110 ;
@@ -3651,7 +3648,7 @@ STATIC FUNCTION PrnSerie()
       ID       320 ;
       OF       oDlg
 
-   TBtnBmp():ReDefine( 321, "Printer_preferences_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
+   TBtnBmp():ReDefine( 321, "gc_printer2_check_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
 
    // Formas de pago_____________________________________________________________________
 
@@ -4864,6 +4861,7 @@ FUNCTION genPgoFacCli( cNumFac, cFacCliT, cFacCliL, cFacCliP, cAntCliT, cClient,
             ( cFacCliP )->cCtaRem       := cCtaRem
             ( cFacCliP )->cCodAge       := cCodAge
             ( cFacCliP )->lEsperaDoc    := ( cFPago )->lEsperaDoc
+            ( cFacCliP )->lSndDoc       := .t.
 
             if !empty( ( cFacCliT )->cCtrCoste )
                 ( cFacCliP )->cCtrCoste := ( cFacCliT )->cCtrCoste
@@ -5511,6 +5509,7 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
          ( cFacCliP )->nVdvPgo    := aTmp[ _NVDVPGO ]
          ( cFacCliP )->cCodPgo    := aTmp[ _CCODPGO ]
          ( cFacCliP )->lConPgo    := .f.
+         ( cFacCliP )->lSndDoc    := .t.
          ( cFacCliP )->dFecCre    := GetSysDate()
          ( cFacCliP )->cHorCre    := Substr( Time(), 1, 5 )
 
@@ -6345,6 +6344,7 @@ Function LiquidaRecibo( nImporte, dbfRecCli, cFacCliT )
       ( dbfRecCli )->nVdvPgo    := aTbl[ _NVDVPGO ]
       ( dbfRecCli )->cCodPgo    := aTbl[ _CCODPGO ]
       ( dbfRecCli )->lConPgo    := .f.
+      ( dbfRecCli )->lSndDoc    := .t.
       ( dbfRecCli )->dFecCre    := GetSysDate()
       ( dbfRecCli )->cHorCre    := Substr( Time(), 1, 5 )
 

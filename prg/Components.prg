@@ -1053,7 +1053,7 @@ METHOD Resource(oDlg) CLASS GetDocumento
 
    ::Super:Resource(oDlg)
 
-   TBtnBmp():ReDefine( ::idBtn, "Printer_pencil_16",,,,,{|| EdtDocumento( ::uGetValue ) }, oDlg, .f., , .f.,  )
+   TBtnBmp():ReDefine( ::idBtn, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( ::uGetValue ) }, oDlg, .f., , .f.,  )
 
 Return ( Self )
 
@@ -1093,7 +1093,7 @@ METHOD Resource(oDlg) CLASS GetPrinter
       WHEN        ( .f. ) ;
       OF          oDlg
 
-   TBtnBmp():ReDefine( ::idBtn, "Printer_preferences_16",,,,, {|| PrinterPreferences( ::oGetControl ) }, oDlg, .f., , .f. )
+   TBtnBmp():ReDefine( ::idBtn, "gc_printer2_check_16",,,,, {|| PrinterPreferences( ::oGetControl ) }, oDlg, .f., , .f. )
 
 Return ( Self )
 

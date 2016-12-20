@@ -216,7 +216,7 @@ function BrwComPrv( cCodPrv, cNomPrv, dbfDiv, dbfIva )
                   "INFO_1"             ,;
                   "INFO_2"
 
-   REDEFINE BITMAP oBmpGeneral ID 500 RESOURCE "User_Alpha_48" TRANSPARENT OF oFld:aDialogs[ 1 ]
+   REDEFINE BITMAP oBmpGeneral ID 500 RESOURCE "gc_businessman_48" TRANSPARENT OF oFld:aDialogs[ 1 ]
 
    oBrwCom                       := IXBrowse():New( oFld:aDialogs[ 1 ] )
 
@@ -296,7 +296,7 @@ function BrwComPrv( cCodPrv, cNomPrv, dbfDiv, dbfIva )
    Documentos------------------------------------------------------------------
    */
 
-   REDEFINE BITMAP oBmpDocumentos ID 500 RESOURCE "Document_Text_Alpha_48" TRANSPARENT OF oFld:aDialogs[ 2 ]
+   REDEFINE BITMAP oBmpDocumentos ID 500 RESOURCE "gc_document_text_pencil_48" TRANSPARENT OF oFld:aDialogs[ 2 ]
 
    oTree             := TTreeView():Redefine( 310, oFld:aDialogs[2]  )
    oTree:bChanged    := {|| TreeChanged( oTree, oBrwTmp ) }
@@ -366,7 +366,7 @@ function BrwComPrv( cCodPrv, cNomPrv, dbfDiv, dbfIva )
       :AddResource( "gc_clipboard_empty_businessman_16" )
       :AddResource( "gc_document_empty_businessman_16" )
       :AddResource( "gc_document_text_businessman_16" )
-      :AddResource( "Document_navigate_cross_16" )
+      :AddResource( "gc_document_text_delete2_16" )
    end with
 
    with object ( oBrwTmp:addCol() )
@@ -435,7 +435,7 @@ function BrwComPrv( cCodPrv, cNomPrv, dbfDiv, dbfIva )
    Graph start setting---------------------------------------------------------
    */
 
-   REDEFINE BITMAP oBmpGraficos ID 500 RESOURCE "Chart_area_48_alpha" TRANSPARENT OF oFld:aDialogs[ 3 ]
+   REDEFINE BITMAP oBmpGraficos ID 500 RESOURCE "gc_chart_column_48" TRANSPARENT OF oFld:aDialogs[ 3 ]
 
    REDEFINE BTNBMP ;
       ID       101 ;
@@ -578,11 +578,11 @@ Static Function InitBrwPrv( cCodPrv, dbfDiv, dbfIva, oTree, oDlg, oGraph, nYear,
    oTreeImageList:AddMasked( TBitmap():Define( "gc_businessman_16" ),                  Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "gc_clipboard_empty_businessman_16" ),  Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "gc_document_empty_businessman_16" ),   Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_businessman_16" ),         Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "gc_delete_12" ),            Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "gc_shape_square_12" ),         Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "gc_check_12" ),          Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Document_navigate_cross_16" ),      Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_businessman_16" ),    Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_delete_12" ),                       Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_shape_square_12" ),                 Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_check_12" ),                        Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_delete2_16" ),        Rgb( 255, 0, 255 ) )
 
    oTree:SetImageList( oTreeImageList )
 

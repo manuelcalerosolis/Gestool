@@ -114,8 +114,6 @@ DOOR2_OPEN_ALPHA_48 BITMAP "..\\bmp\\door2_open_alpha_48.bmp"
 
 FLOPPY_DISK_BLUE_ALPHA_48 BITMAP "..\\bmp\\floppy_disk_blue_alpha_48.bmp"
 
-REPLACE2_48_ALPHA BITMAP "..\\bmp\\Replace2_48_alpha.bmp"
-
 MONEY2_24 BITMAP "..\\bmp\\Money2_24.bmp"
 
 CREDITCARDS_24 BITMAP "..\\bmp\\Creditcards_24.bmp"
@@ -209,15 +207,11 @@ DOCUMENT_ATTACHMENT_48 BITMAP "..\\bmp\\document_attachment_48.bmp"
 
 SIGNPOST_48 BITMAP "..\\bmp\\signpost_48.bmp"
 
-MONEY_48 BITMAP "..\\bmp\\money_48.bmp"
-
-INFORMATION2_48 BITMAP "..\\bmp\\information2_48.bmp"
 
 USER_MOBILEPHONE_48 BITMAP "..\\bmp\\user_mobilephone_48.bmp"
 
 FORM_BLUE_48 BITMAP "..\\bmp\\form_blue_48.bmp"
 
-USER_48 BITMAP "..\\bmp\\user_48.bmp"
 
 SHOPPING_BAG_48 BITMAP "..\\bmp\\shopping_bag_48.bmp"
 
