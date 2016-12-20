@@ -366,7 +366,7 @@ function BrwComPrv( cCodPrv, cNomPrv, dbfDiv, dbfIva )
       :AddResource( "gc_clipboard_empty_businessman_16" )
       :AddResource( "gc_document_empty_businessman_16" )
       :AddResource( "gc_document_text_businessman_16" )
-      :AddResource( "Document_navigate_cross_16" )
+      :AddResource( "gc_document_text_delete2_16" )
    end with
 
    with object ( oBrwTmp:addCol() )
@@ -578,11 +578,11 @@ Static Function InitBrwPrv( cCodPrv, dbfDiv, dbfIva, oTree, oDlg, oGraph, nYear,
    oTreeImageList:AddMasked( TBitmap():Define( "gc_businessman_16" ),                  Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "gc_clipboard_empty_businessman_16" ),  Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "gc_document_empty_businessman_16" ),   Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_businessman_16" ),         Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "gc_delete_12" ),            Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "gc_shape_square_12" ),         Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "gc_check_12" ),          Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Document_navigate_cross_16" ),      Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_businessman_16" ),    Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_delete_12" ),                       Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_shape_square_12" ),                 Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_check_12" ),                        Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_delete2_16" ),        Rgb( 255, 0, 255 ) )
 
    oTree:SetImageList( oTreeImageList )
 
