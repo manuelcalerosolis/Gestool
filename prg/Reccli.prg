@@ -135,8 +135,8 @@ static dbfMatriz
 
 static bEdit                     := { |aTmp, aGet, dbf, oBrw, lRectificativa, nSpecialMode, nMode, aTmpFac| EdtCob( aTmp, aGet, dbf, oBrw, lRectificativa, nSpecialMode, nMode, aTmpFac ) }
 
-static hEstadoRecibo             := {  "Pendiente"             => "bCancel",;
-                                       "Cobrado"               => "bSel",;
+static hEstadoRecibo             := {  "Pendiente"             => "GC_DELETE_12",;
+                                       "Cobrado"               => "GC_CHECK_12",;
                                        "Devuelto"              => "bAlert",;
                                        "Remesado"              => "folder_ok_16",;
                                        "Espera documentación"  => "bClock" }
@@ -355,6 +355,18 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "gc_folder2_16" )
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Envio"
+         :cSortOrder       := "lSndDoc"
+         :nHeadBmpNo       := 3
+         :bStrData         := {|| if( ( D():FacturasClientesCobros( nView ) )->lSndDoc, "Enviado", "No enviado" ) }
+         :bEditValue       := {|| ( D():FacturasClientesCobros( nView ) )->lSndDoc }
+         :nWidth           := 20
+         :SetCheck( { "gc_mail2_12", "Nil16" } )
+         :AddResource( "GC_MAIL2_16" )
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
       end with
 
       with object ( oWndBrw:AddXCol() )
