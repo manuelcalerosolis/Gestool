@@ -5,6 +5,8 @@ CLASS DailySummarySales FROM DocumentsSales
 
    DATA oDailySummarySales
 
+   DATA cAgente
+
    METHOD New()
 
    METHOD runNavigator()
@@ -26,6 +28,8 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD New() CLASS DailySummarySales
+
+   ::cAgente               := GetPvProfString( "Tablet", "Agente", "", cIniAplication() )
 
    if !::OpenFiles()
       Return ( self )
@@ -59,7 +63,8 @@ METHOD CalculatePedido() CLASS DailySummarySales
 
    while !( D():PedidosClientes( ::nView ) )->( eof() )
 
-      if ( D():PedidosClientes( ::nView ) )->dFecPed >= ::oDailySummarySales:dFecIni .and. ( D():PedidosClientes( ::nView ) )->dFecPed <= ::oDailySummarySales:dFecFin
+      if ( ( D():PedidosClientes( ::nView ) )->dFecPed >= ::oDailySummarySales:dFecIni .and. ( D():PedidosClientes( ::nView ) )->dFecPed <= ::oDailySummarySales:dFecFin ) .and.;
+         ( Empty( ::cAgente ) .or. ( D():PedidosClientes( ::nView ) )->cCodAge == ::cAgente )
 
          ::oDailySummarySales:nPedido           += 1 
 
@@ -88,7 +93,8 @@ METHOD CalculateAlbaran() CLASS DailySummarySales
 
    while !( D():AlbaranesClientes( ::nView ) )->( eof() )
 
-      if ( D():AlbaranesClientes( ::nView ) )->dFecAlb >= ::oDailySummarySales:dFecIni .and. ( D():AlbaranesClientes( ::nView ) )->dFecAlb <= ::oDailySummarySales:dFecFin
+      if ( ( D():AlbaranesClientes( ::nView ) )->dFecAlb >= ::oDailySummarySales:dFecIni .and. ( D():AlbaranesClientes( ::nView ) )->dFecAlb <= ::oDailySummarySales:dFecFin ) .and.;
+         ( Empty( ::cAgente ) .or. ( D():AlbaranesClientes( ::nView ) )->cCodAge == ::cAgente )
 
          ::oDailySummarySales:nAlbaran           += 1 
 
@@ -117,7 +123,8 @@ METHOD CalculateFactura() CLASS DailySummarySales
 
    while !( D():FacturasClientes( ::nView ) )->( eof() )
 
-      if ( D():FacturasClientes( ::nView ) )->dFecFac >= ::oDailySummarySales:dFecIni .and. ( D():FacturasClientes( ::nView ) )->dFecFac <= ::oDailySummarySales:dFecFin
+      if ( ( D():FacturasClientes( ::nView ) )->dFecFac >= ::oDailySummarySales:dFecIni .and. ( D():FacturasClientes( ::nView ) )->dFecFac <= ::oDailySummarySales:dFecFin ) .and.;
+         ( Empty( ::cAgente ) .or. ( D():FacturasClientes( ::nView ) )->cCodAge == ::cAgente )
 
          ::oDailySummarySales:nFactura           += 1 
 
