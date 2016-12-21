@@ -2790,7 +2790,7 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc,
          oBtnDel        := TDotNetButton():New( 60, oGrupo, "Del32",                    "Eliminar [F4]",       3, {|| deleteLineTicket( aTmp, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
 
       oGrupo            := TDotNetGroup():New( oCarpeta, 436, "Cobros", .f. )
-         oBtnTik        := TDotNetButton():New( 60, oGrupo, "Money2_32",                "Cobrar [F5]",         1, {|| NewTiket( aGet, aTmp, nMode, SAVTIK, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
+         oBtnTik        := TDotNetButton():New( 60, oGrupo, "gc_money2_32",             "Cobrar [F5]",         1, {|| NewTiket( aGet, aTmp, nMode, SAVTIK, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
          oBtnAlb        := TDotNetButton():New( 60, oGrupo, "Document_plain_user1_32",  "Albarán [F7]",        2, {|| NewTiket( aGet, aTmp, nMode, SAVALB, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
          oBtnFac        := TDotNetButton():New( 70, oGrupo, "Document_user1_32",        "Factura [F8]",        3, {|| NewTiket( aGet, aTmp, nMode, SAVFAC, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
          oBtnApt        := TDotNetButton():New( 60, oGrupo, "Cashier_Stop_32",          "Apartar [F9]",        4, {|| GuardaApartado( aGet, aTmp, @nMode, SAVAPT, .f., oBrw, oBrwDet, oDlgTpv ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
@@ -16661,13 +16661,13 @@ Static Function cImageBtn( cCode )
       case cCode == "00"
          cBtnImagen  := "gc_money2_16"
       case cCode == "01"
-         cBtnImagen  := "Creditcards_16"
+         cBtnImagen  := "gc_credit_cards_16"
       case cCode == "02"
-         cBtnImagen  := "moneybag_16"
+         cBtnImagen  := "gc_moneybag_euro_16"
       case cCode == "03"
-         cBtnImagen  := "percent_16"
+         cBtnImagen  := "gc_symbol_percent_16"
       case cCode == "04"
-         cBtnImagen  := "shoppingbasket_16"
+         cBtnImagen  := "gc_shopping_basket_16"
    end case
 
 Return cBtnImagen

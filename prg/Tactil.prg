@@ -139,7 +139,7 @@ FUNCTION CuentasClientes( oWnd )
    REDEFINE BUTTONBMP ;
       ID       110 ;
       OF       oDlg ;
-      BITMAP   "Money2_32" ;
+      BITMAP   "gc_money2_32" ;
       ACTION   ( BrwPgoTactil( oCodFPago, dbfFPago, oGetTxt ), cFpago( oCodFPago, dbfFPago, oGetTxt ) )
 
    REDEFINE GET oCodFPago VAR cCodFPago ;

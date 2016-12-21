@@ -114,16 +114,6 @@ DOOR2_OPEN_ALPHA_48 BITMAP "..\\bmp\\door2_open_alpha_48.bmp"
 
 FLOPPY_DISK_BLUE_ALPHA_48 BITMAP "..\\bmp\\floppy_disk_blue_alpha_48.bmp"
 
-MONEY2_24 BITMAP "..\\bmp\\Money2_24.bmp"
-
-CREDITCARDS_24 BITMAP "..\\bmp\\Creditcards_24.bmp"
-
-MONEYBAG_24 BITMAP "..\\bmp\\MoneyBag_24.bmp"
-
-PERCENT_24 BITMAP "..\\bmp\\Percent_24.bmp"
-
-SHOPPINGBASKET_24 BITMAP "..\\bmp\\ShoppingBasket_24.bmp"
-
 DELETE2_24 BITMAP "..\\bmp\\delete2_24.bmp"
 
 PRINTER_OK BITMAP "..\\bmp\\printer_ok.bmp"

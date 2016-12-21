@@ -3490,7 +3490,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          ID          220 ;
          OF          ::oFldTurno:aDialogs[ 3 ] ;
          WHEN        !::lCerrado ;
-         BITMAP      "Money2_32" ;
+         BITMAP      "gc_money2_32" ;
          ACTION      ( ::oMoneyEfectivo:Dialog( ::oImporteEfectivo ), ::RefreshTurno() )
 
       else
@@ -3560,7 +3560,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          ID       235 ;
          OF       ::oFldTurno:aDialogs[ 3 ] ;
          WHEN     !::lCerrado ;
-         BITMAP   "Money2_32" ;
+         BITMAP   "gc_money2_32" ;
          ACTION   ( ::oMoneyRetirado:Dialog( ::oImporteRetirado ), ::RefreshTurno() )
 
       else

@@ -1133,10 +1133,10 @@ function aLittleResourceFormaPago()
    local aResources := {}
 
    aAdd( aResources, "gc_money2_16" )
-   aAdd( aResources, "Creditcards_16" )
-   aAdd( aResources, "MoneyBag_16" )
-   aAdd( aResources, "Percent_16" )
-   aAdd( aResources, "ShoppingBasket_16" )
+   aAdd( aResources, "gc_credit_cards_16" )
+   aAdd( aResources, "gc_moneybag_euro_16" )
+   aAdd( aResources, "gc_symbol_percent_16" )
+   aAdd( aResources, "gc_shopping_basket_16" )
 
 return ( aResources )
 
@@ -1146,11 +1146,11 @@ function aMiddleResourceFormaPago()
 
    local aResources := {}
 
-   aAdd( aResources, "Money2_24" )
-   aAdd( aResources, "Creditcards_24" )
-   aAdd( aResources, "MoneyBag_24" )
-   aAdd( aResources, "Percent_24" )
-   aAdd( aResources, "ShoppingBasket_24" )
+   aAdd( aResources, "gc_money2_24" )
+   aAdd( aResources, "gc_credit_cards_24" )
+   aAdd( aResources, "gc_moneybag_euro_24" )
+   aAdd( aResources, "gc_symbol_percent_24" )
+   aAdd( aResources, "gc_shopping_basket_24" )
 
 return ( aResources )
 
@@ -1160,11 +1160,11 @@ function aBigResourceFormaPago()
 
    local aResources := {}
 
-   aAdd( aResources, "Money2_32" )
-   aAdd( aResources, "Creditcards_32" )
-   aAdd( aResources, "MoneyBag_32" )
-   aAdd( aResources, "Percent_32" )
-   aAdd( aResources, "ShoppingBasket_32" )
+   aAdd( aResources, "gc_money2_32" )
+   aAdd( aResources, "gc_credit_cards_32" )
+   aAdd( aResources, "gc_moneybag_euro_32" )
+   aAdd( aResources, "gc_symbol_percent_32" )
+   aAdd( aResources, "gc_shopping_basket_32" )
 
 return ( aResources )
 

@@ -113,7 +113,7 @@ METHOD Resource( nMode )
    	DEFINE DIALOG oDlg RESOURCE "CentroCoste" TITLE LblTitle( nMode ) + "centro de coste"
 
          REDEFINE BITMAP oBmp ;
-            RESOURCE "centro_coste_48" ;
+            RESOURCE "gc_folder_money_48" ;
             ID       800 ;
             TRANSPARENT ;
             OF       oDlg ;

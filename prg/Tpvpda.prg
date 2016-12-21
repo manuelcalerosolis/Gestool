@@ -8828,7 +8828,7 @@ Static Function EdtBig( aTmp, aGet, dbfTikT, oBrw, cTot, nTot, nMode, oWnd )
       OF       oDlgTpv ;
       WHEN     ( nMode != ZOOM_MODE ) ;
       ACTION   ( CrearDescuento( dbfTmpL, oBrwDet ), lRecTotal( aTmp ) );
-      BITMAP   "Percent_32" ;
+      BITMAP   "gc_symbol_percent_32" ;
 
    REDEFINE BUTTONBMP ;
       ID       740 ;
@@ -8964,7 +8964,7 @@ Static Function StartEdtBig( aTmp, aGet, oDlgTpv, oBrwDet )
       oBoton            := TDotNetButton():New( 60, oGrupo, "Note_Add_32",              "Nuevo ticket",     2, {|| GetNuevaVenta( aTmp, aGet ) }, , , .f., .f., .f. )
       oBoton            := TDotNetButton():New( 60, oGrupo, "Note_Delete_32",           "Pendiente cobro",  3, {|| GetSalaVenta( aTmp, aGet, .t. ) }, , , .f., .f., .f. )
       oBtnEntregar      := TDotNetButton():New( 60, oGrupo, "Printer_32",               "Entregar nota",    4, {|| ClickEntrega( aTmp, aGet, oDlgTpv ) }, , , .f., .f., .f. )
-      oBoton            := TDotNetButton():New( 60, oGrupo, "Money2_32",                "Cobrar",           5, {|| NewTiket( aGet, aTmp, nSaveMode, SAVTIK, .t. ) }, , , .f., .f., .f. )
+      oBoton            := TDotNetButton():New( 60, oGrupo, "gc_money2_32",                "Cobrar",           5, {|| NewTiket( aGet, aTmp, nSaveMode, SAVTIK, .t. ) }, , , .f., .f., .f. )
 
    oGrupo               := TDotNetGroup():New( oCarpeta, 126, "Otros", .f. )
       oBoton            := TDotNetButton():New( 60, oGrupo, "Users1_32",                "Comensales",       1, {|| lNumeroComensales( aTmp ) }, , , .f., .f., .f. )

@@ -628,7 +628,7 @@ METHOD ChangeCalcMoney CLASS TpvCobros
 
    if ::lEfectivoMoney
       AEval( ::aButtonsMoney, {|h| h[ "Object" ]:bAction := h[ "Calculadora", "Action" ], SetWindowText( h[ "Object" ]:hWnd, h[ "Calculadora", "Text" ] ) } )
-      ::oBtnCalcMoney:LoadBitmap( "Money2_32" )
+      ::oBtnCalcMoney:LoadBitmap( "gc_money2_32" )
       ::oBtnCalcMoney:Refresh()
    else
       AEval( ::aButtonsMoney, {|h| h[ "Object" ]:bAction := h[ "Money", "Action" ], SetWindowText( h[ "Object" ]:hWnd, h[ "Money", "Text" ] ) } )

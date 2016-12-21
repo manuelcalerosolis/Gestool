@@ -2122,7 +2122,7 @@ function ReportBar()
 
             oGrp1                := TDotNetGroup():New( oCarpeta0, 308, "Informes", .f., , "" )
 
-               oBtnVentas        := TDotNetButton():New( 60, oGrp1, "Money2",                   "Ventas",      1, {|| SelectReportBar( 1, oBtnVentas ) }, , , .f., .f., .f. )
+               oBtnVentas        := TDotNetButton():New( 60, oGrp1, "gc_money2_32",             "Ventas",      1, {|| SelectReportBar( 1, oBtnVentas ) }, , , .f., .f., .f. )
                oBtnVentas:lSelected := .t.
 
                oBtnCompras       := TDotNetButton():New( 60, oGrp1, "Truck_Red",                "Compras",     2, {|| SelectReportBar( 2, oBtnCompras ) }, , , .f., .f., .f. )

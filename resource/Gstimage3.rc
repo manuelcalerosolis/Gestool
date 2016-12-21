@@ -98,9 +98,5 @@ TEXT_ITALICS_16 BITMAP "..\\bmp\\text_italics_16.bmp"
 TEXT_ALIGN_RIGHT_16 BITMAP "..\\bmp\\text_align_right_16.bmp"
 TEXT_ALIGN_LEFT_16 BITMAP "..\\bmp\\text_align_left_16.bmp"
 PIN_BLUE_16 BITMAP "..\\bmp\\pin_blue_16.bmp"
-
-shoppingbasket_16 BITMAP "..\\bmp\\ShoppingBasket_16.bmp"
-shoppingbasket_32 BITMAP "..\\bmp\\ShoppingBasket_32.bmp"
-
 FOLDER2_RED_16 BITMAP "..\\bmp\\Folder2_Red_16.bmp"
 FOLDER2_RED_32 BITMAP "..\\bmp\\Folder2_Red_32.bmp"
