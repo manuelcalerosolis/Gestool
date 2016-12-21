@@ -201,9 +201,10 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New()
+METHOD New( nView, oStock )
 
-   ::OpenFiles()
+   ::nView              := nView
+   ::oStock             := oStock
 
    ::cDocument          := space( 3 ) + "Pedido proveedores"
    ::cTargetDocument    := space( 3 ) + "S.A.T. clientes"
@@ -381,7 +382,7 @@ METHOD Dialog()
 
    ACTIVATE DIALOG ::oDlg CENTER
 
-   ::CloseFiles()
+   // ::CloseFiles()
 
    oBmp:End()
 
@@ -1348,8 +1349,6 @@ RETURN ( lLoadLines )
 
 METHOD setBrowseLinesDocument()
 
-   msgAlert( hb_valtoexp( ::oDocumentLines:getLines() ), "setBrowseLinesDocument" )
-
    ::oBrwLines:setArray( ::oDocumentLines:getLines(), .t., , .f. )
    
    ::oBrwLines:bSeek := {|c| ::seekLine( c ) }
@@ -1429,8 +1428,6 @@ METHOD injectValuesBrowseProperties()
 
    local oLine
    local aLines   := ::oDocumentLines:getLines()
-
-   msgAlert( hb_valtoexp( aLines ), "injectValuesBrowseProperties" )
 
    for each oLine in aLines
       if ::getLineDocument():getCode() == oLine:getProductId()

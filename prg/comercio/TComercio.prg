@@ -216,13 +216,10 @@ CLASS TComercio
       METHOD dialogCreateWebCombobox( idCombobox, oDialog )
 
       METHOD dialogStart()
-      METHOD disableDialog()              INLINE   (  if( !empty(::oDlg),           ::oDlg:bValid := {|| .f. }, ),;
-                                                      if( !empty(::oBtnExportar),   ::oBtnExportar:Hide(), ),;
-                                                      if( !empty(::oBtnImportar),   ::oBtnImportar:Hide(), ),;
-                                                      if( !empty(::oBtnStock),      ::oBtnStock:Hide(), ),;
-                                                      if( !empty(::oBtnCancel),     ::oBtnCancel:Disable(), ) )
-      METHOD enableDialog()               INLINE   (  if( !empty(::oDlg),           ::oDlg:bValid := {|| .t. }, ),;
-                                                      if( !empty(::oBtnCancel),     ::oBtnCancel:Enable(), ) )
+      METHOD disableDialog()              INLINE   (  if ( !empty(::oDlg),;
+                                                         ( ::oDlg:bValid := {|| .f. }, ::oDlg:disable() ), ) )
+      METHOD enableDialog()               INLINE   (  if ( !empty(::oDlg),;
+                                                         ( ::oDlg:bValid := {|| .t. }, ::oDlg:end() ), ) )
 
    METHOD isValidNameWebToExport()        INLINE   (  if ( empty( ::getWebToExport() ),;
                                                          ( msgStop( "No ha seleccionado ninguna web para exportar." ), .f. ),;
@@ -803,8 +800,8 @@ METHOD controllerOrderPrestashop() CLASS TComercio
 
    ::disableDialog()
 
-   // oBlock            := ErrorBlock( { | oError | Break( oError ) } )
-   // BEGIN SEQUENCE
+   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
+   BEGIN SEQUENCE
 
    if ::filesOpen()
 
@@ -828,12 +825,10 @@ METHOD controllerOrderPrestashop() CLASS TComercio
 
    end if 
 
-   // RECOVER USING oError
-   
-   //    msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
-   
-   // END SEQUENCE
-   // ErrorBlock( oBlock )
+   RECOVER USING oError
+      msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
+   END SEQUENCE
+   ErrorBlock( oBlock )
 
    ::EnableDialog()
 

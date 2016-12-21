@@ -36,7 +36,6 @@ CLASS TBrowseLineConversionDocumentos
    METHOD getDecimalPrice()                        INLINE ( ::oSender:nDecimalPrice )
    METHOD getRoundDecimalPrice()                   INLINE ( ::oSender:nRoundDecimalPrice )
 
-
    METHOD Dialog()
       METHOD buildBrowse()
       METHOD buildColumnsBrowse()

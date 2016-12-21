@@ -42,6 +42,8 @@ CLASS DocumentsSales FROM Documents
    DATA oldSerie                          INIT ""
 
    METHOD New( oSender )
+   METHOD Build( oSender ) 
+   
    METHOD play() 
 
    METHOD runNavigator()
@@ -158,11 +160,19 @@ END CLASS
 
 METHOD New( oSender ) CLASS DocumentsSales
 
-   ::oSender               := oSender
-
    if !::openFiles()
       return ( self )
    end if 
+
+   ::Build( oSender )
+
+return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Build( oSender ) CLASS DocumentsSales
+
+   ::oSender               := oSender
 
    ::oViewSearchNavigator  := DocumentSalesViewSearchNavigator():New( oSender )
 
@@ -246,6 +256,8 @@ METHOD OpenFiles() CLASS DocumentsSales
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
+
+      msgalert( "DocumentsSales openFiles")
 
       ::nView           := D():CreateView()
 

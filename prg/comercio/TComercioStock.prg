@@ -427,7 +427,7 @@ METHOD getCommandProductToUpdate( hProduct )
       end if
 
       cText                   := 'Actualizando stock con propiedades ' 
-      cText                   += alltrim( str( hget( hProduct, "id" ) ) )                                               + ', ' 
+      cText                   += alltrim( hget( hProduct, "id" ) )                                                      + ', ' 
       cText                   += alltrim( str( hget( hProduct, "idProductPrestashop" ) ) )                              + ', ' 
       cText                   += alltrim( hget( hStock, "valueFirstProperty"  ) )                                       + ', ' 
       cText                   += alltrim( hget( hStock, "valueSecondProperty" ) )                                       + ', '
@@ -443,7 +443,7 @@ METHOD getCommandProductToUpdate( hProduct )
                                  " WHERE id_product = '" + alltrim( str( hget( hProduct, "idProductPrestashop" ) ) )    + "';"
 
       cText                   := 'Desactivando artículo ' 
-      cText                   += alltrim( str( hget( hProduct, "id" ) ) )                                               + ', ' 
+      cText                   += alltrim( hget( hProduct, "id" ) )                                                      + ', ' 
       cText                   += alltrim( str( hget( hProduct, "idProductPrestashop" ) ) )                              + ', ' 
 
    end if 

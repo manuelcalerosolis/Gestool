@@ -1066,7 +1066,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       DEFINE BTNSHELL RESOURCE "GENFAC" GROUP OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( TGeneracionAlbaranesClientes():New():Dialog() );
+         ACTION   ( TGeneracionAlbaranesClientes():New( nView ):Dialog() );
          TOOLTIP  "Importar pedidos clientes";
          LEVEL    ACC_APPD
 

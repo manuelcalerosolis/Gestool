@@ -5,6 +5,7 @@
 CLASS DeliveryNoteCustomer FROM DocumentsSales  
 
    METHOD New()
+   METHOD Build()
 
    METHOD getAppendDocumento()
    METHOD getEditDocumento()
@@ -52,6 +53,14 @@ METHOD New() CLASS DeliveryNoteCustomer
 
    ::setDataTable( "AlbCliT" )
    ::setDataTableLine( "AlbCliL" )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Build() CLASS DeliveryNoteCustomer
+
+   ::super:Build( self )
 
 Return ( self )
 

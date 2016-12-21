@@ -659,14 +659,14 @@ CLASS D
    METHOD SetStatusTmp( cDatabase, nView )      INLINE ( SetStatus( ::Tmp( cDatabase, nView ), ::aStatus ) ) 
    METHOD GetInitStatusTmp( cDatabase, nView )  INLINE ( ::aStatus := aGetStatus( ::Tmp( cDatabase, nView ), .t. ) )
 
-   METHOD Seek( cWorkArea, uValue )   INLINE ( ( cWorkArea )->( dbSeek( uValue ) ) ) 
+   METHOD Seek( cWorkArea, uValue )             INLINE ( ( cWorkArea )->( dbSeek( uValue ) ) ) 
 
    METHOD SeekInOrd( cWorkArea, uValue, cOrder ) ;
-                                             INLINE ( dbSeekInOrd( uValue, cOrder, cWorkArea ) )
-   METHOD Eof( cWorkArea, nView )            INLINE ( ( cWorkArea )->( eof() ) )
+                                                INLINE ( dbSeekInOrd( uValue, cOrder, cWorkArea ) )
+   METHOD Eof( cWorkArea, nView )               INLINE ( ( cWorkArea )->( eof() ) )
 
-   METHOD Top( cDatabase, nView )            INLINE ( dbFirst( ::Get( cDatabase, nView ) ) )
-   METHOD Bottom( cDatabase, nView )         INLINE ( dbLast( ::Get( cDatabase, nView ) ) )
+   METHOD Top( cDatabase, nView )               INLINE ( dbFirst( ::Get( cDatabase, nView ) ) )
+   METHOD Bottom( cDatabase, nView )            INLINE ( dbLast( ::Get( cDatabase, nView ) ) )
 
    METHOD OpenObject( oDataTable )
 

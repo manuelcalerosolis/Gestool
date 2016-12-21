@@ -16,7 +16,10 @@ CLASS TGeneracionAlbaranesClientes FROM TConversionDocumentos
 
    DATA dialogDeliveryNoteLines 
 
-   METHOD New()
+   DATA deliveryNoteCustomer
+
+   METHOD New( nView )
+   METHOD End()
 
    METHOD Dialog()
 
@@ -61,13 +64,24 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New()
+METHOD New( nView, oStock )
 
-   ::Super:New()
+   ::Super:New( nView, oStock )
 
    ::dialogCustomerOrderLines    := TBrowseLineConversionDocumentos():New( Self )
 
    ::dialogDeliveryNoteLines     := TBrowseLineConversionDocumentos():New( Self )
+
+   ::deliveryNoteCustomer        := DeliveryNoteCustomer():Build()
+   ::deliveryNoteCustomer:setView( ::nView )
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD End()
+
+   ::CloseFiles()
 
 RETURN ( Self )
 
@@ -76,6 +90,8 @@ RETURN ( Self )
 METHOD Dialog() 
 
    local oBmp
+
+   Return ( ::processDeliveryNoteLines() )
 
    DEFINE DIALOG  ::oDlg ;
       RESOURCE    "ASS_CONVERSION_DOCUMENTO"
@@ -121,8 +137,6 @@ METHOD Dialog()
    ::oDlg:addFastKey( VK_F5, {|| ::botonSiguiente() } )   
 
    ACTIVATE DIALOG ::oDlg CENTER
-
-   ::CloseFiles()
 
    oBmp:End()
 
@@ -223,9 +237,8 @@ METHOD buildDialogDeliveryNoteLines( oDlg )
    with object ( ::dialogDeliveryNoteLines:InsCol( 1 ) )
       :cHeader       := "Albaran"
       :Cargo         := "getAlbaranCliente"
-      :bEditValue    := {|| if( empty(::getDeliveryNoteLine():getValue( "AlbaranCliente" ) ), "Nuevo", ::getDeliveryNoteLine():getValue( "AlbaranCliente" ) ) }
+      :bEditValue    := {|| if( empty( ::getDeliveryNoteLine():getValue( "AlbaranCliente" ) ), "Nuevo", ::getDeliveryNoteLine():getValue( "AlbaranCliente" ) ) }
       :nWidth        := 80
-      :bLClickHeader := {|nMRow, nMCol, nFlags, oColumn| ::dialogDeliveryNoteLines:clickOnHeader( oColumn ) }         
       :bLDClickData  := {|| ::dialogDeliveryNoteLines:toogleSelectLine() }
    end with
 
@@ -480,8 +493,10 @@ METHOD processDeliveryNoteLines()
 
    msgalert( "processDeliveryNoteLines" )
 
+   ::DeliveryNoteCustomer:Append()
+
    for each oLine in ( ::getDeliveryNoteLines():getLines() )
-      if .t. // oLine:isSelectLine()
+      if oLine:isSelectLine()
          ::processDeliveryNoteLine( oLine )
       end if 
    next
@@ -492,7 +507,18 @@ Return ( .t. )
 
 METHOD processDeliveryNoteLine( oLine )
 
-   msgalert( hb_valtoexp( oLine ), "oLine" )
+   // Si albaran esta vacio 
+
+   // Creamos el albran
+
+
+   // Agregamos las lineas al albran
+
+   // Guardamos el albaran
+
+   msgalert( oLine:classname(), "oLine" )
+   msgalert( oLine:getNumeroDocumento(), "oLine" )
+   msgalert( oLine:getValue( "AlbaranCliente" ), "AlbaranCliente" ) 
 
 Return ( .t. )
 

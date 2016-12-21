@@ -3,7 +3,6 @@
 
 CLASS ViewNavigator FROM ViewBase
 
-
    METHOD New()
 
    METHOD Resource()

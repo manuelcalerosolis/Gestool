@@ -33,6 +33,8 @@ CLASS Editable
  
    DATA cFormatToPrint
 
+   METHOD setView( nView )                      INLINE ( ::nView := nView )
+
    METHOD Append()
       METHOD onPreSaveAppend()                  INLINE ( .t. )
       METHOD saveAppend()
