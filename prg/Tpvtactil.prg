@@ -8873,8 +8873,8 @@ METHOD DataReport() CLASS TpvTactil
    ::oFastReport:SetWorkArea(       "Familias", ::oFamilias:nArea )
    ::oFastReport:SetFieldAliases(   "Familias", cItemsToReport( aItmFam() ) )
 
-   ::oFastReport:SetWorkArea(       "Sala venta", ::oRestaurante:oDbf:nArea )
-   ::oFastReport:SetFieldAliases(   "Sala venta", cObjectsToReport( ::oRestaurante:oDbf ) )
+   ::oFastReport:SetWorkArea(       "Salaventa", ::oRestaurante:oDbf:nArea )
+   ::oFastReport:SetFieldAliases(   "Salaventa", cObjectsToReport( ::oRestaurante:oDbf ) )
 
    ::oFastReport:SetWorkArea(       "Orden comanda", ::oOrdenComanda:oDbf:nArea )
    ::oFastReport:SetFieldAliases(   "Orden comanda", cObjectsToReport( ::oOrdenComanda:oDbf ) )
@@ -8946,7 +8946,7 @@ METHOD BuildRelationReport() CLASS TpvTactil
          ::oFastReport:SetMasterDetail( "Albaranes", "Transportistas",                   {|| ::oAlbaranClienteCabecera:cCodTrn } )
          ::oFastReport:SetMasterDetail( "Albaranes", "Empresa",                          {|| cCodigoEmpresaEnUso() } )
          ::oFastReport:SetMasterDetail( "Albaranes", "Usuarios",                         {|| ::oAlbaranClienteCabecera:cCodUsr } )
-         
+
          ::oFastReport:SetMasterDetail( "Lineas de albaranes", "Artículos",              {|| ::oAlbaranClienteLinea:cRef } )
          ::oFastReport:SetMasterDetail( "Lineas de albaranes", "Tipo de venta",          {|| ::oAlbaranClienteLinea:cTipMov } )
          ::oFastReport:SetMasterDetail( "Lineas de albaranes", "Ofertas",                {|| ::oAlbaranClienteLinea:cRef } )

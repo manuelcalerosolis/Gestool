@@ -297,6 +297,7 @@ static dbfHisMov
 static dbfHisMovS
 static dbfCategoria
 static dbfTemporada
+static oRestaurante
 
 static dbfPedCliT
 static dbfPedCliL
@@ -837,6 +838,11 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
          lOpenFiles        := .f.
       end if
 
+      oRestaurante         := TTpvRestaurante():New( cPatEmp() )
+      if !oRestaurante:OpenFiles()
+         lOpenFiles        := .f.
+      end if
+
       TComercio            := TComercio():New( nView, oStock )
 
       /*
@@ -1053,6 +1059,10 @@ STATIC FUNCTION CloseFiles()
 
    if !empty( oDetCamposExtra )
       oDetCamposExtra:CloseFiles()
+   end if
+
+   if !Empty( oRestaurante )
+      oRestaurante:End()
    end if
 
    TComercio:end()
@@ -14388,6 +14398,9 @@ Static Function DataReport( oFr )
 
    oFr:SetWorkArea(     "Pagos de facturas", ( dbfFacCliP )->( Select() ) )
    oFr:SetFieldAliases( "Pagos de facturas", cItemsToReport( aItmRecCli() ) )
+
+   oFr:SetWorkArea(     "SalaVenta",  oRestaurante:Select() )
+   oFr:SetFieldAliases( "SalaVenta",  cObjectsToReport( oRestaurante:oDbf ) )
 
 Return nil 
 

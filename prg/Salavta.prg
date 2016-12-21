@@ -176,8 +176,6 @@ METHOD Resource( nMode )
    local cCmbPreCmb
    local oBrwDetSalaVta
 
-   ?"Entro en resource"
-
    if nMode == APPD_MODE
       cCmbPrecio        := ::aPrecio[ Min( Max( uFieldEmpresa( "NPRETPRO" ), 1 ), len( ::aPrecio ) ) ]
       cCmbPreCmb        := ::aPrecio[ Min( Max( uFieldEmpresa( "NPRETCMB" ), 1 ), len( ::aPrecio ) ) ]
