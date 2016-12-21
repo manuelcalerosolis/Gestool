@@ -878,8 +878,8 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       :bStrData         := {|| "" }
       :bEditValue       := {|| ( D():Articulos( nView ) )->lKitArt }
       :nWidth           := 20
-      :SetCheck( { "Sel16", "Nil16" } )
-      :AddResource( "BmpKit" )
+      :SetCheck( { "gc_piece_12", "Nil16" } )
+      :AddResource( "BMPKIT" )
    end with
 
    with object ( oWndBrw:AddXCol() )
@@ -888,7 +888,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       :bStrData         := {|| "" }
       :bEditValue       := {|| ( D():Articulos( nView ) )->lSndDoc }
       :nWidth           := 20
-      :SetCheck( { "Sel16", "Nil16" } )
+      :SetCheck( { "gc_mail2_12", "Nil16" } )
       :AddResource( "gc_mail2_16" )
    end with
 
@@ -9734,7 +9734,7 @@ STATIC FUNCTION ChgPrc( oWndBrw )
 	Llamada a la funcion que activa la caja de dialogo
 	*/
 
-	DEFINE DIALOG oDlg RESOURCE "gc_money2_16"
+	DEFINE DIALOG oDlg RESOURCE "CHGPRE"
 
    cArtOrg              := dbFirst( D():Articulos( nView ), 1 )
    cArtDes              := dbLast ( D():Articulos( nView ), 1 )

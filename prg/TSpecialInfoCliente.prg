@@ -53,7 +53,7 @@ METHOD Resource() CLASS TSpecialInfoCliente
 
    DEFINE DIALOG oDlg RESOURCE "Info_5" TITLE "Información del cliente : " + Rtrim( ::cCodigoCliente ) + " - " + Rtrim( ::cNombreCliente )
 
-   REDEFINE BITMAP oBmp ID 500 RESOURCE "Businessman2_Alpha_48" TRANSPARENT OF oDlg
+   REDEFINE BITMAP oBmp ID 500 RESOURCE "gc_businessman_48" TRANSPARENT OF oDlg
 
       oBrwCliente                       := IXBrowse():New( oDlg )
 

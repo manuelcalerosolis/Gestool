@@ -2467,7 +2467,7 @@ METHOD Resource() CLASS TpvTactil
 
    if !::l1024()
       ::oBtnSEntregar         := TButtonBmp():ReDefine( 507, {|| ::OnClickEntregaNota() }, ::oDlg, , , .f., , , , .f., "Printer_32" )
-      ::oBtnSCobrar           := TButtonBmp():ReDefine( 508, {|| ::OnClickCobro() }, ::oDlg, , , .f., , , , .f., "Money2_32" )
+      ::oBtnSCobrar           := TButtonBmp():ReDefine( 508, {|| ::OnClickCobro() }, ::oDlg, , , .f., , , , .f., "gc_money2_32" )
    end if
 
    /*
@@ -2574,14 +2574,14 @@ METHOD StartResource() CLASS TpvTactil
 
          if uFieldEmpresa( "lAlbTct" )
 
-            oGrupo               := TDotNetGroup():New( oCarpeta, 126, "Cobrar", .f., , "Money2_32" )
+            oGrupo               := TDotNetGroup():New( oCarpeta, 126, "Cobrar", .f., , "gc_money2_32" )
                TDotNetButton():New( 60, oGrupo, "document_plain_user1_32", "Albarán", 1, {|| ::OnClickAlbaran() }, , , .f., .f., .f. )
-               TDotNetButton():New( 60, oGrupo, "Money2_32", "Cobrar", 2, {|| ::OnClickCobro() }, , , .f., .f., .f. )
+               TDotNetButton():New( 60, oGrupo, "gc_money2_32", "Cobrar", 2, {|| ::OnClickCobro() }, , , .f., .f., .f. )
 
          else
 
-            oGrupo               := TDotNetGroup():New( oCarpeta, 66, "Cobrar", .f., , "Money2_32" )
-               TDotNetButton():New( 60, oGrupo, "Money2_32",                     "Cobrar",            1, {|| ::OnClickCobro() }, , , .f., .f., .f. )
+            oGrupo               := TDotNetGroup():New( oCarpeta, 66, "Cobrar", .f., , "gc_money2_32" )
+               TDotNetButton():New( 60, oGrupo, "gc_money2_32",                     "Cobrar",            1, {|| ::OnClickCobro() }, , , .f., .f., .f. )
 
          end if         
 
@@ -2600,7 +2600,7 @@ METHOD StartResource() CLASS TpvTactil
             TDotNetButton():New( 60, oGrupo, "Index_32",                      "Lista",             1, {|| ::OnClickLista() }, , , .f., .f., .f. )
 
          oGrupo                  := TDotNetGroup():New( oCarpeta, 126, "Invitaciones", .f., , "Masks_32" )
-            TDotNetButton():New( 60, oGrupo, "Percent_32",                    "Descuentos",        1, {|| ::OnClickDescuento() }, , , .f., .f., .f. )
+            TDotNetButton():New( 60, oGrupo, "gc_symbol_percent_32",           "Descuentos",        1, {|| ::OnClickDescuento() }, , , .f., .f., .f. )
             TDotNetButton():New( 60, oGrupo, "Masks_32",                      "Invitaciones",      2, {|| ::OnClickInvitacion() }, , , .f., .f., .f. )
 
          oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Usuario", .f., , "Security_Agent_32" )
@@ -3615,7 +3615,7 @@ METHOD CargaBrowseFamilias() CLASS TpvTactil
 
    // Caso especial de favoritos--------------------------------------------------
 
-   aAdd( ::aFamilias, { "Favoritos", nil, {|| ::CargaFavoritos() }, "Star_Red_48" } ) 
+   aAdd( ::aFamilias, { "Favoritos", nil, {|| ::CargaFavoritos() }, "gc_star2_48" } ) 
 
    // Preguntamos si hay menus activos y es no es de acompañamiento---------------
 
@@ -8873,8 +8873,8 @@ METHOD DataReport() CLASS TpvTactil
    ::oFastReport:SetWorkArea(       "Familias", ::oFamilias:nArea )
    ::oFastReport:SetFieldAliases(   "Familias", cItemsToReport( aItmFam() ) )
 
-   ::oFastReport:SetWorkArea(       "Sala venta", ::oRestaurante:oDbf:nArea )
-   ::oFastReport:SetFieldAliases(   "Sala venta", cObjectsToReport( ::oRestaurante:oDbf ) )
+   ::oFastReport:SetWorkArea(       "Salaventa", ::oRestaurante:oDbf:nArea )
+   ::oFastReport:SetFieldAliases(   "Salaventa", cObjectsToReport( ::oRestaurante:oDbf ) )
 
    ::oFastReport:SetWorkArea(       "Orden comanda", ::oOrdenComanda:oDbf:nArea )
    ::oFastReport:SetFieldAliases(   "Orden comanda", cObjectsToReport( ::oOrdenComanda:oDbf ) )
@@ -8946,7 +8946,7 @@ METHOD BuildRelationReport() CLASS TpvTactil
          ::oFastReport:SetMasterDetail( "Albaranes", "Transportistas",                   {|| ::oAlbaranClienteCabecera:cCodTrn } )
          ::oFastReport:SetMasterDetail( "Albaranes", "Empresa",                          {|| cCodigoEmpresaEnUso() } )
          ::oFastReport:SetMasterDetail( "Albaranes", "Usuarios",                         {|| ::oAlbaranClienteCabecera:cCodUsr } )
-         
+
          ::oFastReport:SetMasterDetail( "Lineas de albaranes", "Artículos",              {|| ::oAlbaranClienteLinea:cRef } )
          ::oFastReport:SetMasterDetail( "Lineas de albaranes", "Tipo de venta",          {|| ::oAlbaranClienteLinea:cTipMov } )
          ::oFastReport:SetMasterDetail( "Lineas de albaranes", "Ofertas",                {|| ::oAlbaranClienteLinea:cRef } )

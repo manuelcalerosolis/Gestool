@@ -457,7 +457,8 @@ METHOD Activate( oMenuItem, oWnd, lStart )
    DEFINE DIALOG oDlg RESOURCE "SeaNumSer" OF oWnd()
 
    REDEFINE BITMAP oBmp;
-      RESOURCE "Package_Alpha_48" ;
+      RESOURCE "gc_package_48" ;
+      TRANSPARENT ;
       ID       800 ;
       OF       oDlg
 

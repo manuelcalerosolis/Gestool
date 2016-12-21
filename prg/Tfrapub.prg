@@ -240,7 +240,7 @@ METHOD Resource( nMode )
 
       REDEFINE BITMAP oBmpDlg ;
          ID       990 ;
-         RESOURCE "box_white_48" ;
+         RESOURCE "gc_box_closed_48" ;
          TRANSPARENT ;
          OF       ::oDlg
 

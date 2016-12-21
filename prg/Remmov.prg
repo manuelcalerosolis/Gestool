@@ -916,7 +916,9 @@ METHOD CloseFiles() CLASS TRemMovAlm
       D():DeleteView( ::nView )
    end if 
 
-   ::TComercio:end()
+   if !Empty( ::TComercio )
+      ::TComercio:end()
+   end if
 
    ::oDbf               := nil
    ::oAlmacenOrigen     := nil

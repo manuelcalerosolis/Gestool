@@ -17,7 +17,7 @@ FUNCTION ReportGallery()
 
    oImgTipoGaleria   := TImageList():New( 32, 32 )
 
-   oImgTipoGaleria:AddIcon( "Money2" )
+   oImgTipoGaleria:AddIcon( "gc_money2_32" )
    oImgTipoGaleria:AddIcon( "Truck_Red" )
    oImgTipoGaleria:AddIcon( "Package" )
    oImgTipoGaleria:AddIcon( "Worker_32" )

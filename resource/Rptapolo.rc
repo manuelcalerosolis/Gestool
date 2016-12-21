@@ -24,8 +24,6 @@ STAR_YELLOW_EDIT_32 BITMAP "..\\bmp\\Star_Yellow_Edit_32.bmp"
 
 STAR_YELLOW_DELETE_32 BITMAP "..\\bmp\\Star_Yellow_Delete_32.bmp"
 
-MONEY2 BITMAP "..\\bmp\\money2_32.bmp"
-
 TRUCK_RED BITMAP "..\\bmp\\truck_red_32.bmp"
 
 PACKAGE BITMAP "..\\bmp\\package_32.bmp"

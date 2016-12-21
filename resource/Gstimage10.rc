@@ -20,7 +20,6 @@ Barcode_32 BITMAP "..\\bmp\\barcode_32.bmp"
 
 UNDORED16 BITMAP "..\\bmp\\UndoRed16.bmp"
 Add2_Alpha_48 BITMAP "..\\bmp\\Add2_Alpha_48.bmp"
-Businessman2_Alpha_48 BITMAP "..\\bmp\\Businessman2_alpha_48.bmp"
 Signpost_Alpha_48 BITMAP "..\\bmp\\Signpost_Alpha_48.bmp"
 User_mobilephone_Alpha_48 BITMAP "..\\bmp\\User_mobilephone_Alpha_48.bmp"
 Money_Alpha_48 BITMAP "..\\bmp\\Money_Alpha_48.bmp"

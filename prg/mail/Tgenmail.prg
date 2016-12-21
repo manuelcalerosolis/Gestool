@@ -387,7 +387,7 @@ METHOD buildPageRedactar()
 
    REDEFINE BITMAP ::oBmpRedactar ;
       ID       500 ;
-      RESOURCE "Businessman2_Alpha_48" ;
+      RESOURCE "gc_businessman_48" ;
       TRANSPARENT ;
       OF       oDlg
 

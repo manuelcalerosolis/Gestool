@@ -353,7 +353,7 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
 
       oFld                       := TFolder():ReDefine( 300, aPrompts, aDialogs, oDlg,,,,, .f. )
 
-      REDEFINE BITMAP oBmpGeneral ID 500 RESOURCE "Businessman2_Alpha_48" TRANSPARENT OF oFld:aDialogs[ 1 ]
+      REDEFINE BITMAP oBmpGeneral ID 500 RESOURCE "gc_businessman_48" TRANSPARENT OF oFld:aDialogs[ 1 ]
 
       /*
       Browse con la información por meses-----------------------------------------
