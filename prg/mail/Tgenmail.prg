@@ -387,7 +387,7 @@ METHOD buildPageRedactar()
 
    REDEFINE BITMAP ::oBmpRedactar ;
       ID       500 ;
-      RESOURCE "gc_businessman_48" ;
+      RESOURCE "gc_mail_earth_48" ;
       TRANSPARENT ;
       OF       oDlg
 
@@ -468,7 +468,7 @@ METHOD buildPageProceso()
 
    REDEFINE BITMAP ::oBmpProceso ;
       ID       500 ;
-      RESOURCE "Gears_48_alpha" ;
+      RESOURCE "gc_mail_earth_48" ;
       TRANSPARENT ;
       OF       oDlg
 
