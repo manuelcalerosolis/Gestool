@@ -888,7 +888,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       500 ;
-         RESOURCE "Money_Alpha_48" ;
+         RESOURCE "gc_money2_48" ;
          TRANSPARENT ;
          OF       oFld:aDialogs[ 1 ]
 
@@ -1206,7 +1206,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
 
       REDEFINE BITMAP oBmpDevolucion ;
          ID       500 ;
-         RESOURCE "money2_delete_48" ;
+         RESOURCE "gc_money2_delete_48" ;
          TRANSPARENT ;
          OF       oFld:aDialogs[ 3 ]
 

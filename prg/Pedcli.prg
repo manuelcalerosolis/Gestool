@@ -3844,7 +3844,7 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpP
 
       REDEFINE BITMAP oBmp ;
          ID       500 ;
-         RESOURCE "Money_Alpha_48" ;
+         RESOURCE "gc_money2_48" ;
          TRANSPARENT ;
          OF       oFld:aDialogs[ 1 ]
 
