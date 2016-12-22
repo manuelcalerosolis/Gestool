@@ -229,5 +229,3 @@ BOX_WHITE_48 BITMAP "..\\bmp\\box_white_48.bmp"
 BOX_WHITE_32 BITMAP "..\\bmp\\box_white_32.bmp"
 
 BOX_WHITE_16 BITMAP "..\\bmp\\box_white_16.bmp"
-
-BUSINESSMEN_48 BITMAP "..\\bmp\\businessmen_48.bmp"
