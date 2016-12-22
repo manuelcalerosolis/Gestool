@@ -1360,7 +1360,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "facturas_proveedores_48_alpha" ;
+        RESOURCE "gc_document_text_businessman_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[1]
 

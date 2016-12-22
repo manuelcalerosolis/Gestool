@@ -429,7 +429,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
          :bEditValue       := {|| ( D():AlbaranesProveedores( nView ) )->lCloAlb }
          :nWidth           := 20
          :lHide            := .t.
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_lock2_12", "Nil16" } )
          :AddResource( "gc_lock2_16" )
       end with
 
@@ -1263,7 +1263,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "albaran_proveedor_48_alpha" ;
+        RESOURCE "gc_document_empty_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[1]
 
