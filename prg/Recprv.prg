@@ -551,7 +551,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
 
    end if
 
-   DEFINE BTNSHELL oBtnEur RESOURCE "BAL_EURO" OF oWndBrw ;
+   DEFINE BTNSHELL oBtnEur RESOURCE "gc_currency_euro_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( lEur := !lEur, oWndBrw:Refresh() ) ;
       TOOLTIP  "M(o)neda";

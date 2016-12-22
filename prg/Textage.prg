@@ -418,7 +418,7 @@ FUNCTION ExtAge( oMenuItem, oWnd )
          HOTKEY   "T";
          LEVEL    ACC_EDIT
 
-		DEFINE BTNSHELL oBtnEur RESOURCE "BAL_EURO" OF oWndBrw ;
+		DEFINE BTNSHELL oBtnEur RESOURCE "gc_currency_euro_" OF oWndBrw ;
 			NOBORDER ;
 			ACTION 	( lEuro := !lEuro, oBtnEur:lPressed := lEuro, oWndBrw:refresh() ) ;
 			TOOLTIP 	"E(u)ros";

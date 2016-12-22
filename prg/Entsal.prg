@@ -291,7 +291,7 @@ FUNCTION EntSal( oMenuItem, oWnd )
             CLOSED ;
             LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "BAL_EURO" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_currency_euro_" OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( lEuro := !lEuro, oWndBrw:Refresh() ) ;
          TOOLTIP  "E(u)ros";
