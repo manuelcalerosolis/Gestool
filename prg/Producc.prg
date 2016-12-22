@@ -1216,7 +1216,7 @@ METHOD Resource( nMode, aDatosAnterior )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "partes_producion_48_alpha" ;
+        RESOURCE "gc_document_text_worker_48" ;
         TRANSPARENT ;
         OF       ::oFld:aDialogs[1]
 
@@ -1234,7 +1234,7 @@ METHOD Resource( nMode, aDatosAnterior )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "robot_48_alpha" ;
+        RESOURCE "gc_industrial_robot_48" ;
         TRANSPARENT ;
         OF       ::oFld:aDialogs[4]
 

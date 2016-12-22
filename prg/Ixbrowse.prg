@@ -339,7 +339,7 @@ METHOD RButtonDown( nRow, nCol, nFlags )
 
    ::bMenuSelect     := nil
 
-   MenuAddItem( "Columnas", "Columnas de la rejilla de datos", .f., .t., , , "Column_16", oMenu )
+   MenuAddItem( "Columnas", "Columnas de la rejilla de datos", .f., .t., , , "gc_table_selection_column_16", oMenu )
 
    MenuBegin( .f.,,, .f. )
 
@@ -351,19 +351,19 @@ METHOD RButtonDown( nRow, nCol, nFlags )
 
    if !Empty( ::cName )
 
-      MenuAddItem( "Guardar vista actual", "Guarda la vista actual de la rejilla de datos", .f., .t., {|| ::Save() }, , "Column_Disk_16", oMenu )
+      MenuAddItem( "Guardar vista actual", "Guarda la vista actual de la rejilla de datos", .f., .t., {|| ::Save() }, , "gc_table_selection_column_disk_16", oMenu )
 
-      MenuAddItem( "Cargar vista por defecto", "Carga la vista por defecto de la rejilla de datos", .f., .t., {|| ::SetOriginal() }, , "Column_Refresh_16", oMenu )
+      MenuAddItem( "Cargar vista por defecto", "Carga la vista por defecto de la rejilla de datos", .f., .t., {|| ::SetOriginal() }, , "gc_table_selection_column_refresh_16", oMenu )
 
    end if
 
-   MenuAddItem( "Seleccionar &todo", "Selecciona todas las filas de la rejilla", .f., .t., {|| ::SelectAll() }, , "Table_Selection_All_16", oMenu )
+   MenuAddItem( "Seleccionar &todo", "Selecciona todas las filas de la rejilla", .f., .t., {|| ::SelectAll() }, , "gc_table_selection_all_16", oMenu )
 
-   MenuAddItem( "&Quitar selección", "Quita la selección de todas las filas de la rejilla", .f., .t., {|| ::SelectNone() }, , "Table_Sql_16", oMenu )
+   MenuAddItem( "&Quitar selección", "Quita la selección de todas las filas de la rejilla", .f., .t., {|| ::SelectNone() }, , "gc_table_16", oMenu )
 
    MenuAddItem()
 
-   MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| ::ExportToExcel() }, , "Text_Sum_16", oMenu )
+   MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| ::ExportToExcel() }, , "gc_spreadsheet_sum_16", oMenu )
 
    MenuEnd() 
 

@@ -2679,13 +2679,13 @@ METHOD lGrupoTipoExpediente( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoTipoExpediente:Cargo:ValidHasta   := {|oGet| if( ::oTipoExpediente:Existe( if( !Empty( oGet ), oGet, ::oHasta ), ::oSayHasta, "cNomTip", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoTipoExpediente:Cargo:lImprimir    := lImp
 
-   ::oImageList:AddMasked( TBitmap():Define( "Folders_16" ), Rgb( 255, 0, 255 ) )
+   ::oImageList:AddMasked( TBitmap():Define( "gc_folders_16" ), Rgb( 255, 0, 255 ) )
 
    if lInitGroup != nil
 
       aAdd( ::aSelectionGroup, ::oGrupoTipoExpediente )
 
-      ::oImageGroup:AddMasked( TBitmap():Define( "Folders_16" ), Rgb( 255, 0, 255 ) )
+      ::oImageGroup:AddMasked( TBitmap():Define( "gc_folders_16" ), Rgb( 255, 0, 255 ) )
 
       ::oGrupoTipoExpediente:Cargo:Imagen    := len( ::oImageGroup:aBitmaps ) - 1
 
@@ -2747,13 +2747,13 @@ METHOD lGrupoEntidad( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoEntidad:Cargo:ValidHasta   := {|oGet| if( ::oEntidad:Existe( if( !Empty( oGet ), oGet, ::oHasta ), ::oSayHasta, "cDesEnt", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoEntidad:Cargo:lImprimir    := lImp
 
-   ::oImageList:AddMasked( TBitmap():Define( "School_16" ), Rgb( 255, 0, 255 ) )
+   ::oImageList:AddMasked( TBitmap():Define( "gc_office_building2_16" ), Rgb( 255, 0, 255 ) )
 
    if lInitGroup != nil
 
       aAdd( ::aSelectionGroup, ::oGrupoEntidad )
 
-      ::oImageGroup:AddMasked( TBitmap():Define( "School_16" ), Rgb( 255, 0, 255 ) )
+      ::oImageGroup:AddMasked( TBitmap():Define( "gc_office_building2_16" ), Rgb( 255, 0, 255 ) )
 
       ::oGrupoEntidad:Cargo:Imagen    := len( ::oImageGroup:aBitmaps ) - 1
 
@@ -2815,13 +2815,13 @@ METHOD lGrupoColaborador( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoColaborador:Cargo:ValidHasta   := {|oGet| if( ::oColaborador:Existe( if( !Empty( oGet ), oGet, ::oHasta ), ::oSayHasta, "cDesCol", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoColaborador:Cargo:lImprimir    := lImp
 
-   ::oImageList:AddMasked( TBitmap():Define( "Teacher_16" ), Rgb( 255, 0, 255 ) )
+   ::oImageList:AddMasked( TBitmap():Define( "gc_businessman2_16" ), Rgb( 255, 0, 255 ) )
 
    if lInitGroup != nil
 
       aAdd( ::aSelectionGroup, ::oGrupoColaborador )
 
-      ::oImageGroup:AddMasked( TBitmap():Define( "Teacher_16" ), Rgb( 255, 0, 255 ) )
+      ::oImageGroup:AddMasked( TBitmap():Define( "gc_businessman2_16" ), Rgb( 255, 0, 255 ) )
 
       ::oGrupoColaborador:Cargo:Imagen    := len( ::oImageGroup:aBitmaps ) - 1
 

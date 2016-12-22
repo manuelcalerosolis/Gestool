@@ -262,7 +262,7 @@ CLASS TTurno FROM TMasDet
    DATA  oCmbReport
    DATA  cCmbReport                                INIT "Visualizar"
    DATA  aCmbReport                                INIT { "Visualizar", "Imprimir",    "Adobe PDF",   "Excel",    "HTML" }
-   DATA  aBmpReport                                INIT { "Prev116",    "ImpButton",   "DocLock",     "Table",    "gc_earth_16" }
+   DATA  aBmpReport                                INIT { "Prev116",    "gc_printer2_16",   "DocLock",     "Table",    "gc_earth_16" }
    DATA  aBmpReportTactil                          INIT { "Prev124",    "ImpButton24", "DocLock24",   "Table24",  "SndInt24" }
    DATA  nCmbReport                                INIT 1
 

@@ -1066,7 +1066,7 @@ METHOD RButtonDown( nRow, nCol, nFlags ) CLASS TShell
 
    ::bMenuSelect     := nil
 
-   MenuAddItem( "Columnas", "Columnas de la rejilla de datos", .f., .t., , , "Column_16", oMenu )
+   MenuAddItem( "Columnas", "Columnas de la rejilla de datos", .f., .t., , , "gc_table_selection_column_16", oMenu )
 
    MenuBegin( .f.,,, .f. )
 
@@ -1076,19 +1076,19 @@ METHOD RButtonDown( nRow, nCol, nFlags ) CLASS TShell
 
    MenuEnd()
 
-   MenuAddItem( "Guardar vista actual", "Guarda la vista actual de la rejilla de datos", .f., .t., {|| ::SaveData() }, , "Column_Disk_16", oMenu )
+   MenuAddItem( "Guardar vista actual", "Guarda la vista actual de la rejilla de datos", .f., .t., {|| ::SaveData() }, , "gc_table_selection_column_disk_16", oMenu )
 
-   MenuAddItem( "Cargar vista por defecto", "Carga la vista por defecto de la rejilla de datos", .f., .t., {|| ::PutOriginal() }, , "Column_Refresh_16", oMenu )
-
-   MenuAddItem()
-
-   MenuAddItem( "Seleccionar &todo", "Selecciona todas las filas de la rejilla", .f., .t., {|| ::oBrw:SelectAll() }, , "Table_Selection_All_16", oMenu )
-
-   MenuAddItem( "&Quitar selección", "Quita la selección de todas las filas de la rejilla", .f., .t., {|| ::oBrw:SelectNone() }, , "Table_Sql_16", oMenu )
+   MenuAddItem( "Cargar vista por defecto", "Carga la vista por defecto de la rejilla de datos", .f., .t., {|| ::PutOriginal() }, , "gc_table_selection_column_refresh_16", oMenu )
 
    MenuAddItem()
 
-   MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| ::ToExcel() }, , "Text_Sum_16", oMenu )
+   MenuAddItem( "Seleccionar &todo", "Selecciona todas las filas de la rejilla", .f., .t., {|| ::oBrw:SelectAll() }, , "gc_table_selection_all_16", oMenu )
+
+   MenuAddItem( "&Quitar selección", "Quita la selección de todas las filas de la rejilla", .f., .t., {|| ::oBrw:SelectNone() }, , "gc_table_16", oMenu )
+
+   MenuAddItem()
+
+   MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| ::ToExcel() }, , "gc_spreadsheet_sum_16", oMenu )
 
    MenuEnd()
 

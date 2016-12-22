@@ -2280,7 +2280,7 @@ END CLASS
       REDEFINE BTNBMP ::oBtnDateTime ;
          ID       ( id + 19 ) ;
          OF       oDlg ;
-         RESOURCE "Calendar_16" ;
+         RESOURCE "gc_calendar_16" ;
          NOBORDER ;
          TOOLTIP  "Fecha/Hora" ;
 

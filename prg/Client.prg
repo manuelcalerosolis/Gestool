@@ -3581,7 +3581,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ID       290 ;
          WHEN     ( .t. ) ;
          OF       fldObservaciones ;
-         RESOURCE "Calendar_16" ;
+         RESOURCE "gc_calendar_16" ;
          NOBORDER ;
          TOOLTIP  "Fecha/Hora" ;
          ACTION   ( DateTimeRich( oRTF ) )
