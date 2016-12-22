@@ -249,13 +249,13 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAlmT, oBrw, bWhen, bValid, nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "package_48_alpha" ;
+        RESOURCE "gc_package_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[1]
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "security_agent_48_alpha" ;
+        RESOURCE "gc_businessman2_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[2]
 
@@ -839,7 +839,7 @@ Function SelectAlmacen()
       TITLE       "Seleccionar almacén" ;
 
       REDEFINE BITMAP oBmp ;
-         RESOURCE "package_48_alpha" ;
+         RESOURCE "gc_package_48" ;
          ID       300;
          OF       oDlg
 

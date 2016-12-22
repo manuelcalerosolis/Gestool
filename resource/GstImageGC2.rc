@@ -65,4 +65,6 @@ GC_DOCUMENT_TEXT_BUSINESSMAN_48 BITMAP "..\\bmp\\gc_document_text_businessman_48
 GC_MONEY2_48 BITMAP "..\\bmp\\gc_money2_48.bmp"
 GC_MONEY2_DELETE_48 BITMAP "..\\bmp\\gc_money2_delete_48.bmp"
 GC_DOCUMENT_TEXT_BLUE_48 BITMAP "..\\bmp\\gc_document_text_blue_48.bmp"
-
+GC_BUSINESSMAN2_48 BITMAP "..\\bmp\\gc_businessman2_48.bmp"
+GC_PACKAGE_PENCIL_48 BITMAP "..\\bmp\\gc_package_pencil_48.bmp"
+GC_WORKER2_48 BITMAP "..\\bmp\\gc_worker2_48.bmp"

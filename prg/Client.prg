@@ -698,7 +698,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :bEditValue       := {|| ( D():Clientes( nView ) )->lBlqCli }
          :nWidth           := 20
          :SetCheck( { "gc_sign_stop_12", "Nil16" } )
-         :AddResource( "stop_16" )
+         :AddResource( "gc_sign_stop_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )

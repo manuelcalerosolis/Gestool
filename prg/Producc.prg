@@ -1228,7 +1228,7 @@ METHOD Resource( nMode, aDatosAnterior )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "worker_48_alpha" ;
+        RESOURCE "gc_worker2_48" ;
         TRANSPARENT ;
         OF       ::oFld:aDialogs[3]
 

@@ -325,7 +325,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       500 ;
-         RESOURCE "Security_Agent_48_Alpha" ;
+         RESOURCE "gc_businessman2_48" ;
          TRANSPARENT ;
          OF       fldGeneral
 
@@ -1891,7 +1891,7 @@ Function lGetAgente( oGetAgente, dbfAgente )
 
       REDEFINE BITMAP oBmpUsuario ;
          ID       500 ;
-         RESOURCE "Security_Agent_48_Alpha" ;
+         RESOURCE "gc_businessman2_48" ;
          TRANSPARENT ;
          OF       oDlg
 
