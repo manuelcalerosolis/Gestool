@@ -1125,7 +1125,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
          ID          990 ;
-         RESOURCE    "Pedidos_proveedores_48_alpha" ;
+         RESOURCE    "gc_clipboard_empty_businessman_48" ;
          TRANSPARENT ;
          OF          oFld:aDialogs[1]
 
@@ -1137,7 +1137,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
 
       REDEFINE BITMAP oBmpIncidencias ;
         ID       990 ;
-        RESOURCE "information_48_alpha" ;
+        RESOURCE "gc_information_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[3]
 
@@ -8842,8 +8842,9 @@ Function Generador( oBrwPed )
    DEFINE DIALOG oDlg RESOURCE "ASS_PEDCLI" TITLE "Generar pedido a proveedor"
 
    REDEFINE BITMAP oBmp ;
-      RESOURCE "GENERARPEDPRV" ;
+      RESOURCE "gc_shopping_cart_48" ;
       ID       500 ;
+      TRANSPARENT ;
       OF       oDlg
 
    REDEFINE PAGES oPag ;

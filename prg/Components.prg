@@ -219,7 +219,7 @@ METHOD Resource() CLASS PrintSeries
 
    REDEFINE BITMAP oBmp ;
       ID          500 ;
-      RESOURCE    "Printer_alpha_48" ;
+      RESOURCE    "gc_printer2_48" ;
       TRANSPARENT ;
       OF          ::oDlg
 
