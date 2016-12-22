@@ -6,6 +6,7 @@ CLASS DeliveryNoteCustomer FROM DocumentsSales
 
    METHOD New()
    METHOD Build()
+   METHOD Default()
 
    METHOD getAppendDocumento()
    METHOD getEditDocumento()
@@ -43,16 +44,9 @@ METHOD New() CLASS DeliveryNoteCustomer
 
    ::oViewEditResumen:setTitleDocumento( "Resumen albarán" )
 
-   // Tipos--------------------------------------------------------------------
+   // Valores por defecto------------------------------------------------------
 
-   ::setTypePrintDocuments( "AC" )
-
-   ::setCounterDocuments( "nAlbCli" )
-
-   // Areas--------------------------------------------------------------------
-
-   ::setDataTable( "AlbCliT" )
-   ::setDataTableLine( "AlbCliL" )
+   ::Default()
 
 Return ( self )
 
@@ -61,6 +55,21 @@ Return ( self )
 METHOD Build() CLASS DeliveryNoteCustomer
 
    ::super:Build( self )
+
+   ::Default()
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Default() CLASS DeliveryNoteCustomer
+
+   ::setTypePrintDocuments( "AC" )
+
+   ::setCounterDocuments( "nAlbCli" )
+
+   ::setDataTable( "AlbCliT" )
+   ::setDataTableLine( "AlbCliL" )
 
 Return ( self )
 

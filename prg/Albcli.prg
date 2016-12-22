@@ -1066,7 +1066,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       DEFINE BTNSHELL RESOURCE "GENFAC" GROUP OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( TGeneracionAlbaranesClientes():New( nView ):Dialog() );
+         ACTION   ( TGeneracionAlbaranesClientes():New( nView, oStock ):Dialog() );
          TOOLTIP  "Importar pedidos clientes";
          LEVEL    ACC_APPD
 
@@ -16896,7 +16896,7 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "cHorImp"   ,"C",  5, 0, "Hora de la última impresión" ,                             "HoraImpresion",                 "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "cCodDlg"   ,"C",  2, 0, "Código delegación" ,                                       "Delegacion",                    "", "( cDbf )", {|| oUser():cDelegacion() } } )
    aAdd( aItmAlbCli, { "nDtoAtp"   ,"N",  6, 2, "Porcentaje de descuento atípico",                          "DescuentoAtipico",              "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "nSbrAtp"   ,"N",  1, 0, "Lugar donde aplicar dto atípico",                          "LugasAplicarDescuentoAtipico",  "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "nSbrAtp"   ,"N",  1, 0, "Lugar donde aplicar dto atípico",                          "LugarAplicarDescuentoAtipico",  "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "nMontaje"  ,"N",  6, 2, "Horas de montaje",                                         "Montaje",                       "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "dFecEntr",  "D",  8, 0, "Fecha de entrada de alquiler",                             "EntradaAlquiler",               "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "dFecSal",   "D",  8, 0, "Fecha de salida de alquiler",                              "SalidaAlquiler",                "", "( cDbf )", nil } )

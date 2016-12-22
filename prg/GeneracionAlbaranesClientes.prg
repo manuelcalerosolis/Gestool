@@ -18,7 +18,7 @@ CLASS TGeneracionAlbaranesClientes FROM TConversionDocumentos
 
    DATA deliveryNoteCustomer
 
-   METHOD New( nView )
+   METHOD New( nView, oStock )
    METHOD End()
 
    METHOD Dialog()
@@ -90,8 +90,6 @@ RETURN ( Self )
 METHOD Dialog() 
 
    local oBmp
-
-   Return ( ::processDeliveryNoteLines() )
 
    DEFINE DIALOG  ::oDlg ;
       RESOURCE    "ASS_CONVERSION_DOCUMENTO"
@@ -493,7 +491,11 @@ METHOD processDeliveryNoteLines()
 
    msgalert( "processDeliveryNoteLines" )
 
-   ::DeliveryNoteCustomer:Append()
+   ::DeliveryNoteCustomer:getAppendDocumento()
+
+   ::DeliveryNoteCustomer:setClientToDocument( ::oCliente:varget() )
+
+   msgalert( hb_valtoexp( ::DeliveryNoteCustomer:hDictionaryMaster ) )
 
    for each oLine in ( ::getDeliveryNoteLines():getLines() )
       if oLine:isSelectLine()
@@ -501,24 +503,17 @@ METHOD processDeliveryNoteLines()
       end if 
    next
 
+   ::DeliveryNoteCustomer:onPreSaveAppend()
+
+   ::DeliveryNoteCustomer:saveAppendDocumento()
+
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
 METHOD processDeliveryNoteLine( oLine )
 
-   // Si albaran esta vacio 
-
-   // Creamos el albran
-
-
-   // Agregamos las lineas al albran
-
-   // Guardamos el albaran
-
-   msgalert( oLine:classname(), "oLine" )
-   msgalert( oLine:getNumeroDocumento(), "oLine" )
-   msgalert( oLine:getValue( "AlbaranCliente" ), "AlbaranCliente" ) 
+   ::DeliveryNoteCustomer:oDocumentLines:addLines( oLine )   
 
 Return ( .t. )
 

@@ -43,17 +43,17 @@ CLASS DocumentsSales FROM Documents
 
    METHOD New( oSender )
    METHOD Build( oSender ) 
-   
+
    METHOD play() 
 
    METHOD runNavigator()
       METHOD onPreRunNavigator()
 
-   METHOD hSetMaster( cField, uValue )                      INLINE ( hSet( ::oSender:hDictionaryMaster, cField, uValue ) )
-   METHOD hGetMaster( cField )                              INLINE ( hGet( ::oSender:hDictionaryMaster, cField ) )
+   METHOD hSetMaster( cField, uValue )                      INLINE ( hSet( ::hDictionaryMaster, cField, uValue ) )
+   METHOD hGetMaster( cField )                              INLINE ( hGet( ::hDictionaryMaster, cField ) )
 
-   METHOD hSetDetail( cField, uValue )                      INLINE ( hSet( ::oSender:oDocumentLineTemporal:hDictionary, cField, uValue ) )
-   METHOD hGetDetail( cField )                              INLINE ( hGet( ::oSender:oDocumentLineTemporal:hDictionary, cField ) )
+   METHOD hSetDetail( cField, uValue )                      INLINE ( hSet( ::oDocumentLineTemporal:hDictionary, cField, uValue ) )
+   METHOD hGetDetail( cField )                              INLINE ( hGet( ::oDocumentLineTemporal:hDictionary, cField ) )
 
    METHOD setTextSummaryDocument( cTextSummaryDocument )    INLINE ( ::cTextSummaryDocument := cTextSummaryDocument )
    METHOD getTextSummaryDocument()                          INLINE ( if( hhaskey( ::hTextDocuments, "textSummary" ), hget( ::hTextDocuments, "textSummary"), ::cTextSummaryDocument ) )
@@ -132,7 +132,8 @@ CLASS DocumentsSales FROM Documents
    METHOD onPreSaveEdit()                                   
    
    METHOD onPreEnd()
-      METHOD setDatasFromClientes()
+      METHOD setClientToDocument()
+      METHOD setAgentToDocument()
       METHOD setDatasInDictionaryMaster( NumeroDocumento ) 
 
    // Lineas-------------------------------------------------------------------
@@ -174,27 +175,27 @@ METHOD Build( oSender ) CLASS DocumentsSales
 
    ::oSender               := oSender
 
-   ::oViewSearchNavigator  := DocumentSalesViewSearchNavigator():New( oSender )
+   ::oViewSearchNavigator  := DocumentSalesViewSearchNavigator():New( self )
 
-   ::oViewEdit             := DocumentSalesViewEdit():New( oSender )
+   ::oViewEdit             := DocumentSalesViewEdit():New( self )
 
-   ::oViewEditResumen      := ViewEditResumen():New( oSender )
+   ::oViewEditResumen      := ViewEditResumen():New( self )
 
-   ::oCliente              := Customer():init( oSender )  
+   ::oCliente              := Customer():init( self )  
 
-   ::oProduct              := Product():init( oSender )
+   ::oProduct              := Product():init( self )
 
-   ::oStore                := Store():init( oSender )
+   ::oStore                := Store():init( self )
 
-   ::oPayment              := Payment():init( oSender )
+   ::oPayment              := Payment():init( self )
 
-   ::oDirections           := Directions():init( oSender )
+   ::oDirections           := Directions():init( self )
 
-   ::oDocumentLines        := DocumentLines():New( oSender )
+   ::oDocumentLines        := DocumentLines():New( self )
 
-   ::oLinesDocumentsSales  := LinesDocumentsSales():New( oSender )
+   ::oLinesDocumentsSales  := LinesDocumentsSales():New( self )
 
-   ::oTotalDocument        := TotalDocument():New( oSender )
+   ::oTotalDocument        := TotalDocument():New( self )
 
 return ( self )
 
@@ -256,8 +257,6 @@ METHOD OpenFiles() CLASS DocumentsSales
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
-      msgalert( "DocumentsSales openFiles")
 
       ::nView           := D():CreateView()
 
@@ -467,7 +466,9 @@ METHOD lValidCliente() CLASS DocumentsSales
       ::oViewEdit:getNombreDireccion:cText( "" )
    end if
 
-   if ::setDatasFromClientes( cNewCodCli )
+   if ::setClientToDocument( cNewCodCli )
+
+      ::setAgentToDocument()
 
       ::oViewEdit:refreshCliente()
       ::oViewEdit:refreshSerie()
@@ -901,7 +902,14 @@ Return ( lResource )
 
 METHOD onPreSaveAppend() CLASS DocumentsSales
 
-   Local numeroDocumento   := nNewDoc( ::getSerie(), ::getWorkArea(), ::getCounterDocuments(), , D():Contadores( ::nView ) )
+   local numeroDocumento
+
+   msgalert( ::getSerie(), "1" )
+   msgalert( ::getWorkArea(), "2" )
+   msgalert( ::getCounterDocuments(), "3" )
+   msgalert( D():Contadores( ::nView ), "4" )
+
+   numeroDocumento               := nNewDoc( ::getSerie(), ::getWorkArea(), ::getCounterDocuments(), , D():Contadores( ::nView ) )
    
    if empty( numeroDocumento )
       Return ( .f. )
@@ -942,15 +950,25 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD setDatasFromClientes( CodigoCliente ) CLASS DocumentsSales
+METHOD setAgentToDocument()
 
-   Local lReturn           := .f.
-   local AgenteIni         := GetPvProfString( "Tablet", "Agente", "", cIniAplication() )
+   local tabletAgent         := GetPvProfString( "Tablet", "Agente", "", cIniAplication() )
+
+   if !empty(tabletAgent)
+      hSet( ::hDictionaryMaster, "Agente", tabletAgent )
+   end if 
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD setClientToDocument( CodigoCliente ) CLASS DocumentsSales
+
+   local lReturn           := .f.
 
    D():getStatusClientes( ::nView )
 
    ( D():Clientes( ::nView ) )->( ordsetfocus( 1 ) )
-
    if ( D():Clientes( ::nView ) )->( dbseek( CodigoCliente ) )
 
       lReturn              := .t.
@@ -974,8 +992,8 @@ METHOD setDatasFromClientes( CodigoCliente ) CLASS DocumentsSales
 
          hSet( ::hDictionaryMaster, "Almacen",                       ( if( empty( oUser():cAlmacen() ), ( D():Clientes( ::nView ) )->cCodAlm, oUser():cAlmacen() ) ) )
          hSet( ::hDictionaryMaster, "Pago",                          ( if( empty( ( D():Clientes( ::nView ) )->CodPago ), cDefFpg(), ( D():Clientes( ::nView ) )->CodPago ) ) )
-         hSet( ::hDictionaryMaster, "Agente",                        ( if( empty( AgenteIni ), ( D():Clientes( ::nView ) )->cAgente, AgenteIni ) ) )
 
+         hSet( ::hDictionaryMaster, "Agente",                        ( D():Clientes( ::nView ) )->cAgente )
          hSet( ::hDictionaryMaster, "TipoImpuesto",                  ( D():Clientes( ::nView ) )->nRegIva )
          hSet( ::hDictionaryMaster, "Tarifa",                        ( D():Clientes( ::nView ) )->cCodTar )
          hSet( ::hDictionaryMaster, "Ruta",                          ( D():Clientes( ::nView ) )->cCodRut )
@@ -984,15 +1002,15 @@ METHOD setDatasFromClientes( CodigoCliente ) CLASS DocumentsSales
          hSet( ::hDictionaryMaster, "Transportista",                 ( D():Clientes( ::nView ) )->cCodTrn )
          hSet( ::hDictionaryMaster, "DescripcionDescuento1",         ( D():Clientes( ::nView ) )->cDtoEsp )
          hSet( ::hDictionaryMaster, "PorcentajeDescuento1",          ( D():Clientes( ::nView ) )->nDtoEsp )
-         hSet( ::hDictionaryMaster, "DescripcionDescuento2",         ( D():Clientes( ::nView ) )->cDpp )
-         hSet( ::hDictionaryMaster, "PorcentajeDescuento2",          ( D():Clientes( ::nView ) )->nDpp )
+         hSet( ::hDictionaryMaster, "DescripcionDescuento2",         ( D():Clientes( ::nView ) )->cDpp    )
+         hSet( ::hDictionaryMaster, "PorcentajeDescuento2",          ( D():Clientes( ::nView ) )->nDpp    )
          hSet( ::hDictionaryMaster, "DescripcionDescuento3",         ( D():Clientes( ::nView ) )->cDtoUno )
          hSet( ::hDictionaryMaster, "PorcentajeDescuento3",          ( D():Clientes( ::nView ) )->nDtoCnt )
          hSet( ::hDictionaryMaster, "DescripcionDescuento4",         ( D():Clientes( ::nView ) )->cDtoDos )
          hSet( ::hDictionaryMaster, "PorcentajeDescuento4",          ( D():Clientes( ::nView ) )->nDtoRap )
          hSet( ::hDictionaryMaster, "DescuentoAtipico",              ( D():Clientes( ::nView ) )->nDtoAtp )
          hSet( ::hDictionaryMaster, "LugarAplicarDescuentoAtipico",  ( D():Clientes( ::nView ) )->nSbrAtp )
-         hSet( ::hDictionaryMaster, "RecargoEquivalencia",           ( D():Clientes( ::nView ) )->lReq )
+         hSet( ::hDictionaryMaster, "RecargoEquivalencia",           ( D():Clientes( ::nView ) )->lReq    )
 
       end if
 
