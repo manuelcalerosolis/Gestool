@@ -551,7 +551,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
 
    end if
 
-   DEFINE BTNSHELL oBtnEur RESOURCE "BAL_EURO" OF oWndBrw ;
+   DEFINE BTNSHELL oBtnEur RESOURCE "gc_currency_euro_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( lEur := !lEur, oWndBrw:Refresh() ) ;
       TOOLTIP  "M(o)neda";
@@ -712,7 +712,7 @@ Static Function EdtPag( aTmp, aGet, dbf, oBrw, lRectificativa, bValid, nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       500 ;
-         RESOURCE "Money_Alpha_48" ;
+         RESOURCE "gc_money2_48" ;
          TRANSPARENT ;
          OF       oFld:aDialogs[ 1 ]
 
@@ -867,7 +867,7 @@ Static Function EdtPag( aTmp, aGet, dbf, oBrw, lRectificativa, bValid, nMode )
 
       REDEFINE BITMAP oBmpBancos ;
          ID       500 ;
-         RESOURCE "office_building_48_alpha" ;
+         RESOURCE "gc_central_bank_euro_48" ;
          TRANSPARENT ;
          OF       oFld:aDialogs[ 2 ]
 
@@ -981,7 +981,7 @@ Static Function EdtPag( aTmp, aGet, dbf, oBrw, lRectificativa, bValid, nMode )
 
       REDEFINE BITMAP oBmpDevolucion ;
          ID       500 ;
-         RESOURCE "money2_delete_48" ;
+         RESOURCE "gc_money2_delete_48" ;
          TRANSPARENT ;
          OF       oFld:aDialogs[ 3 ]
 

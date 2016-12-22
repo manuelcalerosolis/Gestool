@@ -1965,7 +1965,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
          CLOSED ;
          LEVEL    ACC_EDIT
 
-   DEFINE BTNSHELL oBtnEur RESOURCE "BAL_EURO" OF oWndBrw ;
+   DEFINE BTNSHELL oBtnEur RESOURCE "gc_currency_euro_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( lEuro := !lEuro, oWndBrw:Refresh() ) ;
       TOOLTIP  "M(o)neda";
@@ -2281,7 +2281,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "information_48_alpha" ;
+        RESOURCE "gc_information_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[3]
 

@@ -1249,7 +1249,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          TOOLTIP  "Exportar a EDI" ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL oBtnEur RESOURCE "BAL_EURO" OF oWndBrw ;
+      DEFINE BTNSHELL oBtnEur RESOURCE "gc_currency_euro_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( lEuro := !lEuro, oWndBrw:Refresh() ) ;
          TOOLTIP  "Moneda";
@@ -2398,11 +2398,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    local hBmp
    local hBmpGeneral       := {  { "Resource" => "Factura_cliente_48_alpha",  "Dialog" => 1 },;
                                  { "Resource" => "gc_folders2_48",            "Dialog" => 2 },;
-                                 { "Resource" => "Information_48_alpha",      "Dialog" => 3 },;
+                                 { "Resource" => "gc_information_48",      "Dialog" => 3 },;
                                  { "Resource" => "gc_address_book_48",    "Dialog" => 4 },;
                                  { "Resource" => "form_blue_48",              "Dialog" => 5 },;
                                  { "Resource" => "document_attachment_48",    "Dialog" => 6 },;
-                                 { "Resource" => "Money_Alpha_48",            "Dialog" => 7 },;
+                                 { "Resource" => "gc_money2_48",            "Dialog" => 7 },;
                                  { "Resource" => "anticipo_cliente_48_alpha", "Dialog" => 8 } }
    
    /*

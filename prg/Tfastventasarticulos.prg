@@ -716,6 +716,7 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddField( "nImpEsp",     "N", 16, 6, {|| "" },   "Total impuesto especial artículo"        )
    ::AddField( "nTotArt",     "N", 16, 6, {|| "" },   "Total importe artículo " + cImp() + " incluido" )
    ::AddField( "nCosArt",     "N", 16, 6, {|| "" },   "Total costo artículo"                    )
+   ::AddField( "nPctAge",     "N",  6, 2, {|| "" },   "Porcentaje agente"                       )
    ::AddField( "nComAge",     "N", 16, 6, {|| "" },   "Comision agente"                         )
 
    ::AddField( "cCodPr1",     "C", 20, 0, {|| "" },   "Código de la primera propiedad"          )
@@ -1507,6 +1508,7 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
                ::oDbf:nTotArt    := nImpLSATCli( ::oSatCliT:cAlias, ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
                ::oDbf:nTotArt    += nIvaLSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
+               ::oDbf:nPctAge    := ::oSatCliT:nPctComAge
                ::oDbf:nComAge    := nComLSatCli( ::oSatCliT:cAlias, ::oSatCliL:cAlias, ::nDecOut, ::nDerOut )
 
                ::oDbf:nCosArt    := nTotCSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
@@ -1709,6 +1711,7 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
                ::oDbf:nTotArt    := nImpLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
                ::oDbf:nTotArt    += nIvaLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
+               ::oDbf:nPctAge    := ::oPreCliT:nPctComAge
                ::oDbf:nComAge    := nComLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut )
 
                ::oDbf:nCosArt    := nTotCPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
@@ -1936,6 +1939,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
          ::oDbf:nTotArt    += nIvaLPedCli( D():PedidosClientesLineas( ::nView ), ::nDecOut, ::nDerOut, ::nValDiv )
          ::oDbf:nPeso      := nPesLPedCli( D():PedidosClientesLineas( ::nView ) ) 
 
+         ::oDbf:nPctAge    := ( D():PedidosClientes( ::nView ) )->nPctComAge
          ::oDbf:nComAge    := nComLPedCli( D():PedidosClientes( ::nView ), D():PedidosClientesLineas( ::nView ), ::nDecOut, ::nDerOut )
 
          if empty( ::oDbf:nCosArt )
@@ -2143,6 +2147,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
          ::oDbf:nTotArt    := nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
          ::oDbf:nTotArt    += nIvaLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
+         ::oDbf:nPctAge    := ::oAlbCliT:nPctComAge
          ::oDbf:nComAge    := nComLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut )
 
          ::oDbf:nAnoDoc    := Year( ::oAlbCliT:dFecAlb )
@@ -2343,6 +2348,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
          ::oDbf:nImpArt    := nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
          ::oDbf:nTotArt    := nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
          ::oDbf:nTotArt    += nIvaLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+         ::oDbf:nPctAge    := ::oFacCliT:nPctComAge
          ::oDbf:nComAge    := nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut )
 
          ::oDbf:nAnoDoc    := Year( ::oFacCliT:dFecFac )
@@ -2535,6 +2541,7 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
          ::oDbf:nTotArt    := nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
          ::oDbf:nTotArt    += nIvaLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
+         ::oDbf:nPctAge    := ::oFacRecT:nPctComAge
          ::oDbf:nComAge    := nComLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut )
 
          ::oDbf:nAnoDoc    := Year( ::oFacRecT:dFecFac )

@@ -615,7 +615,7 @@ FUNCTION DepAge( oMenuItem, oWnd )
          HOTKEY   "T";
          LEVEL    ACC_EDIT
 
-		DEFINE BTNSHELL oBtnEur RESOURCE "BAL_EURO" OF oWndBrw ;
+		DEFINE BTNSHELL oBtnEur RESOURCE "gc_currency_euro_" OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( lEuro := !lEuro, oWndBrw:Refresh() ) ;
          TOOLTIP  "M(o)neda";

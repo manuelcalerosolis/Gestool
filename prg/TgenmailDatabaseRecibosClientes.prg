@@ -29,7 +29,7 @@ METHOD New( nView ) CLASS TGenMailingDatabaseRecibosClientes
 
    ::setFormatoDocumento( cFirstDoc( "RF", D():Documentos( nView ) ) )
 
-   ::setBmpDatabase( "Money_Alpha_48" )
+   ::setBmpDatabase( "gc_money2_48" )
 
    ::setAsunto( "Envío de recibo de cliente número {Serie de factura}/{Número de factura}/{Sufijo de factura}-{Número del recibo}" )
 

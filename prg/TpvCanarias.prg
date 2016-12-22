@@ -1616,7 +1616,7 @@ else
       HOTKEY   "C";
       LEVEL    ACC_APPD
 
-   DEFINE BTNSHELL oBtnEur RESOURCE "BAL_EURO" OF oWndBrw ;
+   DEFINE BTNSHELL oBtnEur RESOURCE "gc_currency_euro_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( lEur := !lEur, oWndBrw:Refresh() ) ;
       TOOLTIP  "M(o)neda";

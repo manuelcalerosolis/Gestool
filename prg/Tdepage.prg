@@ -117,7 +117,7 @@ METHOD Activate()
       HOTKEY   "T";
       LEVEL    2
 
-   DEFINE BTNSHELL oBtnEur RESOURCE "BAL_EURO" OF ::oWndBrw ;
+   DEFINE BTNSHELL oBtnEur RESOURCE "gc_currency_euro_" OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::lEuro := !::lEuro, oBtnEur:lPressed := ::lEuro, ::oWndBrw:refresh() ) ;
       TOOLTIP  "E(u)ros";

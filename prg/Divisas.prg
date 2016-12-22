@@ -104,7 +104,7 @@ FUNCTION Divisas( oMenuItem, oWnd )
          TITLE    "Tipos de divisas" ;
          PROMPT   "Código" ,;
                   "Nombre" ;
-         MRU      "Currency_Euro_16" ;
+         MRU      "gc_currency_euro_16" ;
          BITMAP   clrTopArchivos ;
          ALIAS    ( dbfDiv );
          APPEND   WinAppRec( oWndBrw:oBrw, bEdit, dbfDiv, nil, nil, oBandera ) ;

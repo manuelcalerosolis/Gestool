@@ -1173,7 +1173,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon )
       HOTKEY   "C";
       LEVEL    ACC_APPD
 
-   DEFINE BTNSHELL oBtnEur RESOURCE "BAL_EURO" OF oWndBrw ;
+   DEFINE BTNSHELL oBtnEur RESOURCE "gc_currency_euro_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( lEur := !lEur, oWndBrw:Refresh() ) ;
       TOOLTIP  "M(o)neda";
@@ -8342,7 +8342,7 @@ FUNCTION TactilTpv( oMenuItem, oWnd, lTactil )
          HOTKEY   "E";
          LEVEL    ACC_DELE
 
-      DEFINE BTNSHELL oBtnEur RESOURCE "BAL_EURO" OF oWndBig ;
+      DEFINE BTNSHELL oBtnEur RESOURCE "gc_currency_euro_" OF oWndBig ;
 			NOBORDER ;
          ACTION   ( lEur := !lEur, SetHeadEuro( lEur, oWndBig ), SetHeadEuro( lEur, oWndBig, "Cobrado" ) ) ;
          TOOLTIP  "M(o)neda";

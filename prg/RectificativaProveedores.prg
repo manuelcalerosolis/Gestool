@@ -671,7 +671,7 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
          :bEditValue       := {|| ( D():FacturasRectificativasProveedores( nView ) )->lCloFac }
          :nWidth           := 20
          :lHide            := .t.
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_lock2_12", "Nil16" } )
          :AddResource( "gc_lock2_16" )
       end with
 
@@ -681,7 +681,7 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():FacturasRectificativasProveedores( nView ) )->lSndDoc }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_mail2_12", "Nil16" } )
          :AddResource( "gc_mail2_16" )
       end with
 
@@ -703,7 +703,7 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():FacturasRectificativasProveedores( nView ) )->lContab }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_folder2_12", "Nil16" } )
          :AddResource( "gc_folder2_16" )
       end with
 
@@ -728,7 +728,7 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
          :bEditValue       := {|| ( D():FacturasRectificativasProveedores( nView ) )->lImprimido }
          :nWidth           := 20
          :lHide            := .t.
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_printer2_12", "Nil16" } )
          :AddResource( "gc_printer2_16" )
 
       end with
@@ -1013,7 +1013,7 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
       HOTKEY   "V";
       LEVEL    ACC_EDIT
 
-   DEFINE BTNSHELL oBtnEur RESOURCE "BAL_EURO" OF oWndBrw ;
+   DEFINE BTNSHELL oBtnEur RESOURCE "gc_currency_euro_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( lEuro := !lEuro, oWndBrw:Refresh() ) ;
       TOOLTIP  "M(o)neda";
@@ -1244,7 +1244,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "factura_rectificatica_proveedor_48_alpha" ;
+        RESOURCE "gc_document_text_blue_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[1]
 
@@ -1256,7 +1256,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "information_48_alpha" ;
+        RESOURCE "gc_information_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[3]
 
