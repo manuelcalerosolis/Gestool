@@ -393,6 +393,7 @@ METHOD Create( uParam ) CLASS TFastVentasClientes
    ::AddField( "nIva",     "N",  6, 2, {|| "" },   "Porcentaje impuesto"                     )
    ::AddField( "nReq",     "N",  6, 2, {|| "" },   "Porcentaje recargo"                      )
    ::AddField( "lCobRec",  "L",  1, 0, {|| "" },   "Lógico recibo cobrado"                   )
+   ::AddField( "nComAge",  "N",  6, 2, {|| "" },   "Comisión agente"                         )
 
    ::AddField( "uCargo",   "C", 20, 0, {|| "" },   "Cargo"                                   )
 
@@ -895,6 +896,8 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cCodUsr    := ::oSatCliT:cCodUsr
             ::oDbf:cCodObr    := ::oSatCliT:cCodObr
 
+            ::oDbf:nComAge    := ::oSatCliT:nPctComAge
+
             ::oDbf:cCodPos    := ::oSatCliT:cPosCli
 
             ::oDbf:cCodGrp    := cGruCli( ::oSatCliT:cCodCli, ::oDbfCli )
@@ -1023,6 +1026,8 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cCodUsr    := ::oPreCliT:cCodUsr
             ::oDbf:cCodObr    := ::oPreCliT:cCodObr
 
+            ::oDbf:nComAge    := ::oPreCliT:nPctComAge
+
             ::oDbf:cCodPos    := ::oPreCliT:cPosCli
 
             ::oDbf:cCodGrp    := cGruCli( ::oPreCliT:cCodCli, ::oDbfCli )
@@ -1149,6 +1154,8 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cCodPgo    := ::oPedCliT:cCodPgo
             ::oDbf:cCodRut    := ::oPedCliT:cCodRut
             ::oDbf:cCodObr    := ::oPedCliT:cCodObr
+
+            ::oDbf:nComAge    := ::oPedCliT:nPctComAge
 
             ::oDbf:cCodPos    := ::oPedCliT:cPosCli
 
@@ -1288,6 +1295,8 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
             ::oDbf:cCodRut    := ::oAlbCliT:cCodRut
             ::oDbf:cCodObr    := ::oAlbCliT:cCodObr
 
+            ::oDbf:nComAge    := ::oAlbCliT:nPctComAge
+
             ::oDbf:cCodPos    := ::oAlbCliT:cPosCli
 
             ::oDbf:cCodGrp    := cGruCli( ::oAlbCliT:cCodCli, ::oDbfCli )
@@ -1420,6 +1429,8 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cCodUsr    := ::oFacCliT:cCodUsr
             ::oDbf:cCodObr    := ::oFacCliT:cCodObr
 
+            ::oDbf:nComAge    := ::oFacCliT:nPctComAge
+
             ::oDbf:cCodPos    := ::oFacCliT:cPosCli
 
             ::oDbf:cCodGrp    := cGruCli( ::oFacCliT:cCodCli, ::oDbfCli )
@@ -1540,6 +1551,8 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
          ::oDbf:cCodRut    := ::oFacRecT:cCodRut
          ::oDbf:cCodUsr    := ::oFacRecT:cCodUsr
          ::oDbf:cCodObr    := ::oFacRecT:cCodObr
+
+         ::oDbf:nComAge    := ::oFacRecT:nPctComAge
 
          ::oDbf:cCodPos    := ::oFacRecT:cPosCli
 
@@ -1880,6 +1893,7 @@ METHOD insertFacturaCliente()
                   ::oDbf:cCodRut    := ::oFacCliT:cCodRut
                   ::oDbf:cCodUsr    := ::oFacCliT:cCodUsr
                   ::oDbf:cCodObr    := ::oFacCliT:cCodObr
+                  ::oDbf:nComAge    := ::oFacCliT:nPctComAge
 
                   ::oDbf:cCodPos    := ::oFacCliT:cPosCli
 
@@ -2012,6 +2026,7 @@ METHOD insertRectificativa()
                   ::oDbf:cCodRut    := ::oFacRecT:cCodRut
                   ::oDbf:cCodUsr    := ::oFacRecT:cCodUsr
                   ::oDbf:cCodObr    := ::oFacRecT:cCodObr
+                  ::oDbf:nComAge    := ::oFacrecT:nPctComAge
 
                   ::oDbf:cCodPos    := ::oFacRecT:cPosCli
 

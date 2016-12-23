@@ -4315,8 +4315,8 @@ Method lCreateAuxiliar() CLASS TProduccion
    local oError
    local lCreateAuxiliar   := .t.
 
-   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   /*oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE*/
 
    /*
    Creo y activo la base de datos temporal-------------------------------------
@@ -4332,9 +4332,9 @@ Method lCreateAuxiliar() CLASS TProduccion
    Cargo los valores en la base se datos temporal------------------------------
    */
 
-   ::LoadAuxiliar()
+   ::LoadAuxiliar() 
 
-   RECOVER USING oError
+   /*RECOVER USING oError
 
       lCreateAuxiliar      := .f.
 
@@ -4342,7 +4342,7 @@ Method lCreateAuxiliar() CLASS TProduccion
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
 
 Return ( lCreateAuxiliar )
 
