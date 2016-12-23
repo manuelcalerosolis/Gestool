@@ -293,7 +293,7 @@ METHOD Resource( nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "id_card_48_alpha" ;
+        RESOURCE "gc_id_card_48" ;
         TRANSPARENT ;
         OF       oDlg
 
@@ -513,11 +513,11 @@ METHOD InitResource()
    ::oTreeRango:Add( "Fabricantes", 3 )
    ::oTreeRango:Add( getConfigTraslation( "Temporadas" ),  4 )
 
-   ::oImageList:AddMasked( TBitmap():Define( "Cubes_16" ), Rgb( 255, 0, 255 ) )
-   ::oImageList:AddMasked( TBitmap():Define( "Cubes_blue_16" ), Rgb( 255, 0, 255 ) )
+   ::oImageList:AddMasked( TBitmap():Define( "gc_cubes_16" ), Rgb( 255, 0, 255 ) )
+   ::oImageList:AddMasked( TBitmap():Define( "gc_objects_16" ), Rgb( 255, 0, 255 ) )
    ::oImageList:AddMasked( TBitmap():Define( "gc_photographic_filters_16" ), Rgb( 255, 0, 255 ) )
-   ::oImageList:AddMasked( TBitmap():Define( "Nut_and_bolt_16" ), Rgb( 255, 0, 255 ) )
-   ::oImageList:AddMasked( TBitmap():Define( "Sun_and_cloud_16" ), Rgb( 255, 0, 255 ) )
+   ::oImageList:AddMasked( TBitmap():Define( "gc_bolt_16" ), Rgb( 255, 0, 255 ) )
+   ::oImageList:AddMasked( TBitmap():Define( "gc_cloud_sun_16" ), Rgb( 255, 0, 255 ) )
 
    ::oTreeRango:SetImagelist( ::oImageList )
 

@@ -1229,7 +1229,7 @@ STATIC FUNCTION EdtBig( aTmp, aGet, dbfCli, oBrw, bWhen, bValid, nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       500 ;
-        RESOURCE "gc_businessman_48" ;
+        RESOURCE "gc_user2_48" ;
         TRANSPARENT ;
         OF       oDlg
 
@@ -1407,6 +1407,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
    local oBmpAutomaticas
    local oBmpRecibos
    local oBmpFacturae
+   local oBmpImpuestos
    local aNombreTarifas := aNombreTarifas()
    local cNombreTarifa  := if( len( aNombreTarifas ) > 0, aNombreTarifas[ 1 ], "" )
 
@@ -1533,7 +1534,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       500 ;
-         RESOURCE "gc_businessman_48" ;
+         RESOURCE "gc_user2_48" ;
          TRANSPARENT ;
          OF       fldGeneral
 
@@ -2010,6 +2011,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       impuestos----------------------------------------------------------------------
       */
 
+      REDEFINE BITMAP oBmpImpuestos ;
+         ID       500 ;
+         RESOURCE "gc_moneybag_euro_48" ;
+         TRANSPARENT ;
+         OF       fldImpuestos
+
       REDEFINE RADIO aGet[ _NREGIVA ] ;
          VAR      aTmp[ _NREGIVA ] ;
          ID       240,;
@@ -2388,7 +2395,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE BITMAP oBmpAutomaticas ;
          ID       500 ;
-         RESOURCE "Document_Gear_48_alpha" ;
+         RESOURCE "gc_document_text_gear_48" ;
          TRANSPARENT ;
          OF       fldAutomaticas
 
@@ -2439,7 +2446,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE BITMAP oBmpDirecciones ;
          ID       600 ;
-         RESOURCE "Signpost_48" ;
+         RESOURCE "gc_signpost3_48" ;
          TRANSPARENT ;
          OF       fldDirecciones
 
@@ -2548,7 +2555,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       
       REDEFINE BITMAP oBmpContactos ;
          ID       600 ;
-         RESOURCE "User_mobilephone_48" ;
+         RESOURCE "gc_user_telephone_48" ;
          TRANSPARENT ;
          OF       fldContactos
 
@@ -2665,7 +2672,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
    
       REDEFINE BITMAP oBmpFacturae ;
          ID       600 ;
-         RESOURCE "form_blue_48" ;
+         RESOURCE "gc_form_earth_48" ;
          TRANSPARENT ;
          OF       fldFacturae
 
@@ -3314,7 +3321,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE BITMAP oBmpIncidencias ;
          ID       600 ;
-         RESOURCE "Sign_warning_Alpha_48" ;
+         RESOURCE "gc_sign_warning_48" ;
          TRANSPARENT ;
          OF       fldIncidencias
 
@@ -3598,7 +3605,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE BITMAP oBmpRecibos ;
          ID          500 ;
-         RESOURCE    "SAFE_INTO_ALPHA_48" ;
+         RESOURCE    "gc_safe_into_48" ;
          TRANSPARENT ;
          OF          fldRecibos
 
@@ -3852,6 +3859,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
    oBmpAutomaticas:End()
    oBmpRecibos:End()
    oBmpFacturae:End()
+   oBmpImpuestos:End()
+
 
 RETURN ( oDlg:nResult == IDOK )
 

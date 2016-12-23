@@ -568,7 +568,7 @@ METHOD Resource( nMode ) CLASS TFacAutomatica
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "Plantillas_automaticas_48_alpha" ;
+        RESOURCE "gc_document_text_gear_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[1]
 
@@ -1647,7 +1647,7 @@ METHOD Run() CLASS TCreaFacAutomaticas
 
       REDEFINE BITMAP oBmp ;
         ID        900 ;
-        RESOURCE  "Plantillas_automaticas_48_alpha" ;
+        RESOURCE  "gc_document_text_gear_48" ;
         TRANSPARENT ;
         OF        oDlg
 

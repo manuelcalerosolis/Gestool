@@ -29,7 +29,7 @@ METHOD New( nView ) CLASS TGenMailingDatabaseSATClientes
 
    ::setFormatoDocumento( cFirstDoc( "SC", D():Documentos( nView ) ) )
 
-   ::setBmpDatabase( "S.A.T._cliente_48_alpha" )
+   ::setBmpDatabase( "gc_power_drill_sat_user_48" )
 
    ::setAsunto( "Envio de nuestro S.A.T. número {Serie de S.A.T.}/{Número de S.A.T.}" )
 

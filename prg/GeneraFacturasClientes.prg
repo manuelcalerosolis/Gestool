@@ -337,7 +337,7 @@ METHOD Resource() CLASS GeneraFacturasClientes
 
    REDEFINE BITMAP ::oBmp ;
       ID       600 ;
-      RESOURCE "plantillas_automaticas_48_alpha" ;
+      RESOURCE "gc_document_text_gear_48" ;
       TRANSPARENT ;
       OF       ::oDlg 
 

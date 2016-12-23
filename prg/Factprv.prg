@@ -6628,7 +6628,7 @@ STATIC FUNCTION GrpAlb( oGet, aTmp, oBrw )
 
    REDEFINE BITMAP oBmp ;
       ID       500 ;
-      RESOURCE "plantillas_automaticas_48_alpha" ;
+      RESOURCE "gc_document_text_gear_48" ;
       TRANSPARENT ;
       OF       oDlg
 

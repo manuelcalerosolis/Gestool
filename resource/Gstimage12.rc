@@ -195,14 +195,6 @@ DOCUMENT_ATTACHMENT_32 BITMAP "..\\bmp\\document_attachment_32.bmp"
 
 DOCUMENT_ATTACHMENT_48 BITMAP "..\\bmp\\document_attachment_48.bmp"
 
-SIGNPOST_48 BITMAP "..\\bmp\\signpost_48.bmp"
-
-
-USER_MOBILEPHONE_48 BITMAP "..\\bmp\\user_mobilephone_48.bmp"
-
-FORM_BLUE_48 BITMAP "..\\bmp\\form_blue_48.bmp"
-
-
 SHOPPING_BAG_48 BITMAP "..\\bmp\\shopping_bag_48.bmp"
 
 ARROW_DOWN_BLUE_16 BITMAP "..\\bmp\\arrow_down_blue_16.bmp"

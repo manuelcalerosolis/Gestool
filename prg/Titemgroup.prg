@@ -115,7 +115,7 @@ METHOD New( nView ) CLASS TItemGroupFamilia
    ::HelpHasta    := {|oGet| BrwFamilia( oGet ) }
    ::ValidDesde   := {|oGet| cFamilia( oGet, D():Familias( nView ) ) }
    ::ValidHasta   := {|oGet| cFamilia( oGet, D():Familias( nView ) ) }
-   ::cBitmap      := "Cubes_16"
+   ::cBitmap      := "gc_cubes_16"
 
 Return ( Self )
 
@@ -171,7 +171,7 @@ METHOD New( nView ) CLASS TItemGroupTemporada
    ::HelpHasta    := {|oGet| BrwTemporada( oGet ) }
    ::ValidDesde   := {|oGet| cTemporada( oGet, D():Temporadas( nView ) ) }
    ::ValidHasta   := {|oGet| cTemporada( oGet, D():Temporadas( nView ) ) }
-   ::cBitmap      := "Sun_and_cloud_16"
+   ::cBitmap      := "gc_cloud_sun_16"
 
 Return ( Self )
 
@@ -199,7 +199,7 @@ METHOD New( nView, oFabricante ) CLASS TItemGroupFabricante
    ::HelpHasta    := {|oGet| oFabricante:Buscar( oGet ) }
    ::ValidDesde   := {|oGet| oFabricante:Existe( oGet, , "cNomFab", .t., .t., "0" ) }
    ::ValidHasta   := {|oGet| oFabricante:Existe( oGet, , "cNomFab", .t., .t., "0" ) }
-   ::cBitmap      := "Nut_and_bolt_16"
+   ::cBitmap      := "gc_bolt_16"
 
 Return ( Self )
 
@@ -227,7 +227,7 @@ METHOD New( nView, oTipoArticulo ) CLASS TItemGroupTipoArticulo
    ::HelpHasta    := {|oGet| oTipoArticulo:Buscar( oGet ) }
    ::ValidDesde   := {|oGet| oTipoArticulo:Existe( oGet, , "cNomTip", .t., .t., "0" ) }
    ::ValidHasta   := {|oGet| oTipoArticulo:Existe( oGet, , "cNomTip", .t., .t., "0" ) }
-   ::cBitmap      := "Cubes_Blue_16"
+   ::cBitmap      := "gc_objects_16"
 
 Return ( Self )
 

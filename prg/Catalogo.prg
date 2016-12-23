@@ -6,7 +6,7 @@
 
 CLASS TCatalogo FROM TMANT
 
-   DATA  cMru        INIT "Cubes_Blue_16"
+   DATA  cMru        INIT "gc_objects_16"
    DATA  DbfProv     AS OBJECT
    DATA  oDbfArt     AS OBJECT
    DATA  oBenef1     AS OBJECT
