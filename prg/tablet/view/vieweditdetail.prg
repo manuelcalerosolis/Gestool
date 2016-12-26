@@ -189,7 +189,7 @@ METHOD defineArticulo() CLASS ViewDetail
                                                       "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
                                                       "nHeight"   => 23,;
                                                       "lPixels"   => .t.,;
-                                                      "bValid"    => {|| ::oSender:CargaArticulo() } } )
+                                                      "bValid"    => {|| ::oSender:CargaArticulo(), ::oSender:recalcularTotal() } } )
    
    ::oGetDescriptionArticle   := TGridGet():Build( {  "nRow"      => ::getRow(),;
                                                       "nCol"      => {|| GridWidth( 5.5, ::oDlg ) },;

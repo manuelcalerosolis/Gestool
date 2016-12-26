@@ -524,6 +524,8 @@ METHOD lValidResourceDetail() CLASS LinesDocumentsSales
 
    local lReturn  := .t.
 
+   ::oViewEditDetail:oGetArticulo:lValid()   
+
    ::oViewEditDetail:oGetLote:lValid()
 
    if ::hGetDetail( "LogicoLote" ) .and. Empty( ::hGetDetail( "Lote" ) )
@@ -531,7 +533,7 @@ METHOD lValidResourceDetail() CLASS LinesDocumentsSales
       apoloMsgStop( "El campo lote es obligatorio" )
 
       ::oViewEditDetail:oGetLote:SetFocus()
-
+ 
       lReturn        := .f.
 
    end if
