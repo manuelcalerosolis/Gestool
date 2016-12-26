@@ -131,6 +131,7 @@ METHOD onPreSaveEdit() CLASS ReceiptInvoiceCustomer
    */
 
    hSet( ::oSender:hDictionaryMaster, "LogicoCobrado", ( ::oViewEdit:cCbxEstado == "Cobrado" ) )
+   hSet( ::oSender:hDictionaryMaster, "FechaCobro", if( ::oViewEdit:cCbxEstado == "Cobrado", Date(), "" ) )
    
    hSet( ::oSender:hDictionaryMaster, "FechaCreacion", Date() )
    hSet( ::oSender:hDictionaryMaster, "HoraCreacion", Time() )
@@ -167,12 +168,8 @@ METHOD onPostSaveEdit() CLASS ReceiptInvoiceCustomer
          ( D():FacturasClientes( ::nView ) )->( dbUnLock() )
       end if
 
-      MsgInfo( "Antes" )
-
       ChkLqdFacCli( nil, D():FacturasClientes( ::nView ), D():FacturasClientesLineas( ::nView ), D():FacturasClientesCobros( ::nView ), D():AnticiposClientes( ::nView ), D():TiposIva( ::nView ), D():Divisas( ::nView ), .f. )
       
-      MsgInfo( "Despues" )
-
    end if
 
    ( D():FacturasClientes( ::nView ) )->( OrdSetFocus( nOrdAnt ) )

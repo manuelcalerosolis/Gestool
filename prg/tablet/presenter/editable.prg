@@ -7,6 +7,8 @@ CLASS Editable
 
    DATA nView
 
+   DATA oStock
+
    DATA nMode
    DATA nModeDetail
 
