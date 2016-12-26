@@ -38,6 +38,8 @@ CLASS ReceiptInvoiceCustomer FROM DocumentsSales
 
    METHOD onPreRunNavigator()
 
+   METHOD onPostSaveEdit()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -129,6 +131,9 @@ METHOD onPreSaveEdit() CLASS ReceiptInvoiceCustomer
    */
 
    hSet( ::oSender:hDictionaryMaster, "LogicoCobrado", ( ::oViewEdit:cCbxEstado == "Cobrado" ) )
+   
+   hSet( ::oSender:hDictionaryMaster, "FechaCreacion", Date() )
+   hSet( ::oSender:hDictionaryMaster, "HoraCreacion", Time() )
 
    /*
    Vemos si hay que generar un nuevo recibo------------------------------------
@@ -143,6 +148,35 @@ METHOD onPreSaveEdit() CLASS ReceiptInvoiceCustomer
       ::addReciboDiferencia( nImporteReciboNuevo )
 
    end if
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD onPostSaveEdit() CLASS ReceiptInvoiceCustomer
+
+   local nRec     := ( D():FacturasClientes( ::nView ) )->( Recno() )
+   local nOrdAnt  := ( D():FacturasClientes( ::nView ) )->( OrdSetFocus( "NNUMFAC" ) )
+
+   if ( D():FacturasClientes( ::nView ) )->( dbSeek( ( ::getDataTable() )->cSerie + Str( ( ::getDataTable() )->nNumFac ) + ( ::getDataTable() )->cSufFac ) )
+
+      if dbLock( D():FacturasClientes( ::nView ) )
+         ( D():FacturasClientes( ::nView ) )->lSndDoc    := .t.
+         ( D():FacturasClientes( ::nView ) )->dFecCre    := date()
+         ( D():FacturasClientes( ::nView ) )->cTimCre    := time()
+         ( D():FacturasClientes( ::nView ) )->( dbUnLock() )
+      end if
+
+      MsgInfo( "Antes" )
+
+      ChkLqdFacCli( nil, D():FacturasClientes( ::nView ), D():FacturasClientesLineas( ::nView ), D():FacturasClientesCobros( ::nView ), D():AnticiposClientes( ::nView ), D():TiposIva( ::nView ), D():Divisas( ::nView ), .f. )
+      
+      MsgInfo( "Despues" )
+
+   end if
+
+   ( D():FacturasClientes( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
+   ( D():FacturasClientes( ::nView ) )->( dbGoTo( nRec ) )
 
 Return ( .t. )
 

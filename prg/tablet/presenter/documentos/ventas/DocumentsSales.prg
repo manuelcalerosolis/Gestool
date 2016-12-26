@@ -904,11 +904,6 @@ METHOD onPreSaveAppend() CLASS DocumentsSales
 
    local numeroDocumento
 
-   msgalert( ::getSerie(), "1" )
-   msgalert( ::getWorkArea(), "2" )
-   msgalert( ::getCounterDocuments(), "3" )
-   msgalert( D():Contadores( ::nView ), "4" )
-
    numeroDocumento               := nNewDoc( ::getSerie(), ::getWorkArea(), ::getCounterDocuments(), , D():Contadores( ::nView ) )
    
    if empty( numeroDocumento )

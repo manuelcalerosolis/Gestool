@@ -25,6 +25,11 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
 
    DATA  lApplyFilters                    INIT .t.
 
+   DATA oCamposExtra
+   DATA aExtraFields                      INIT {}
+
+   DATA  aTypeDocs                        INIT { "C", "N", "D", "L", "C" } 
+
    METHOD lResource()
 
    METHOD Create()
@@ -87,6 +92,9 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
 
    METHOD setFilterUserId()               INLINE ( if( ::lApplyFilters,;
                                                    ::cExpresionHeader  += ' .and. ( Field->cCodUsr >= "' + ::oGrupoUsuario:Cargo:Desde + '" .and. Field->cCodUsr <= "' + ::oGrupoUsuario:Cargo:Hasta + '" )', ) )
+
+   METHOD AddFieldCamposExtra()
+   METHOD loadValuesExtraFields()
 
 END CLASS
 
@@ -226,6 +234,14 @@ METHOD OpenFiles() CLASS TFastVentasClientes
          lOpen                := .f.
       end if
 
+      ::oCamposExtra := TDetCamposExtra():New( cPatEmp(), ::cDriver )
+      if !::oCamposExtra:OpenFiles()
+         lOpen       := .f.
+      else 
+         ::oCamposExtra:setTipoDocumento( "Facturas a clientes" )
+         ::aExtraFields := ::oCamposExtra:aExtraFields()
+      end if
+
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de clientes" )
@@ -344,6 +360,11 @@ METHOD CloseFiles() CLASS TFastVentasClientes
       ::oStock:End()
    end if
 
+   if !Empty( ::oCamposExtra )
+      ::oCamposExtra:CloseFiles()
+      ::oCamposExtra:End()
+   end if
+
 RETURN .t.
 
 //---------------------------------------------------------------------------//
@@ -404,9 +425,34 @@ METHOD Create( uParam ) CLASS TFastVentasClientes
    ::AddField( "nRieCli",  "N", 16, 0, {|| "" },            "Riesgo del cliente"             )
    ::AddField( "dFecVto",  "D",  8, 0, {|| "" },            "Vencimiento del recibo"         )
 
+   ::AddFieldCamposExtra()
+
    ::AddTmpIndex( "cCodCli", "cCodCli" )
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddFieldCamposExtra() CLASS TFastVentasClientes
+
+   local cField
+   
+   if isArray( ::aExtraFields ) .and. Len( ::aExtraFields ) != 0
+
+      for each cField in ::aExtraFields
+
+         ::AddField( "fld" + cField[ "código" ],;
+                     ::aTypeDocs[ cField[ "tipo" ] ] ,;
+                     cField[ "longitud" ],;
+                     cField[ "decimales" ],;
+                     {|| ::oCamposExtra:cPictData( cField ) },;
+                     Capitalize( cField[ "descripción" ] ) )
+
+      next
+
+   end if
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -1477,6 +1523,8 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
             ::addFacturasClientes()
 
+            ::loadValuesExtraFields()
+
          end if
 
          ::oFacCliT:Skip()
@@ -2272,7 +2320,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD preCliInfo()
+METHOD preCliInfo() CLASS TFastVentasClientes
 
    local cKey  := ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
 
@@ -2285,6 +2333,43 @@ METHOD preCliInfo()
    end if
 
 RETURN nil 
+
+//---------------------------------------------------------------------------//
+
+METHOD loadValuesExtraFields() CLASS TFastVentasClientes
+
+   local cField
+   local Valor
+
+   if isArray( ::aExtraFields ) .and. Len( ::aExtraFields ) != 0
+
+      for each cField in ::aExtraFields
+
+         Valor             := ::oCamposExtra:valueExtraField( cField[ "código" ], ::oDbf:cSerDoc + Padr( ::oDbf:cNumDoc, 9 ) + ::oDbf:cSufDoc, cField )
+
+         do case         
+            case cField[ "tipo" ] == 2
+               Valor       := Val( Valor )
+
+            case cField[ "tipo" ] == 4
+
+               if Empty( Valor )
+                  Valor    := .f.
+               else
+                  Valor    := ( AllTrim( Valor ) == "si" )
+               end if
+
+         end case
+
+         ::oDbf:FieldPutByName(  "fld" + cField[ "código" ], Valor )
+
+         ::oDbf:fieldput( fieldpos( "fld" + cField[ "código" ] ), Valor )
+
+      next
+
+   end if
+
+return nil
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

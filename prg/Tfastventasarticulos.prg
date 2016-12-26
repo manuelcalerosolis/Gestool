@@ -4126,18 +4126,12 @@ METHOD loadValuesExtraFields() CLASS TFastVentasArticulos
 
    if isArray( ::aExtraFields ) .and. Len( ::aExtraFields ) != 0
 
-      //MsgInfo( ::oDbf:cCodArt, "Articulo" )
-
       for each cField in ::aExtraFields
 
-         //MsgInfo( ::oCamposExtra:valueExtraField( cField[ "código" ], ::oDbf:cCodArt, cField ), cField[ "código" ] )
-         
          ::oDbf:FieldPutByName(  "fld" + cField[ "código" ],;
                                  ::oCamposExtra:valueExtraField( cField[ "código" ], ::oDbf:cCodArt, cField ) )
 
          ::oDbf:fieldput( fieldpos( "fld" + cField[ "código" ] ), ::oCamposExtra:valueExtraField( cField[ "código" ], ::oDbf:cCodArt, cField ) )
-
-         //MsgInfo( ::oDbf:FieldGetByName(  "fld" + cField[ "código" ] ) )
 
       next
 
