@@ -74,7 +74,6 @@ factura_rectificativa_48_alpha BITMAP "..\\bmp\\factura_rectificativa_48_alpha.b
 tickets_abiertos_32 BITMAP "..\\bmp\\tickets_abiertos_32.bmp"
 pedidos_clientes_48_alpha BITMAP "..\\bmp\\pedidos_clientes_48_alpha.bmp"
 albaran_cliente_48_alpha BITMAP "..\\bmp\\albaran_cliente_48_alpha.bmp"
-presupuesto_cliente_48_alpha BITMAP "..\\bmp\\presupuesto_cliente_48_alpha.bmp"
 anticipo_cliente_48_alpha BITMAP "..\\bmp\\anticipo_cliente_48_alpha.bmp"
 clock2_run_48_alpha BITMAP "..\\bmp\\clock2_run_48_alpha.bmp"
 clock2_stop_48_alpha BITMAP "..\\bmp\\clock2_stop_48_alpha.bmp"
