@@ -6,7 +6,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TComercioCustomer
+CLASS TComercioCustomer FROM TComercioConector
 
    DATA  TComercio
 
@@ -81,13 +81,13 @@ METHOD isCustomerInGestool( oQuery ) CLASS TComercioCustomer
          Return ( .f. )
       end if 
 
-      if ::oCustomerDatabase():seekInOrd( idCustomer, "Cod" )
+      if D():gotoCliente( idCustomer, ::getView() ) 
          ::setCustomerGestool( idCustomerGestool )
          Return ( .t. )
       end if 
 
-      if !empty( email ) .and. ::oCustomerDatabase():seekInOrd( upper( email ), "cMeiInt")
-         ::setCustomerGestool( ::oCustomerDatabase():Cod )
+      if !empty( email ) .and. ( D():Clientes( ::getView() ) )->( dbseekinord( upper( email ), "cMeiInt") )
+         ::setCustomerGestool( ( D():Clientes( ::getView() ) )->Cod )
          Return ( .t. )
       end if 
 
@@ -107,7 +107,7 @@ METHOD isAddressInGestool( idAddress ) CLASS TComercioCustomer
       Return ( .f. )
    end if 
 
-   if ::oAddressDatabase():seekInOrd( idAddressInGestool, "cCodCli" )  
+   if ( D():gotoIdClientesDirecciones( idAddressInGestool, ::getView() ) )  
       ::writeText( "La dirección " + idAddressInGestool + " ya exite en las direcciones" )    
       Return ( .t. )
    end if 
@@ -162,33 +162,41 @@ Return ( nil )
 
 METHOD appendCustomerInGestool( oQuery ) CLASS TComercioCustomer
 
-   ::setCustomerGestool( nextkey( dbLast( ::oCustomerDatabase(), 1 ), ::oCustomerDatabase():cAlias, "0", retnumcodcliemp() ) )
+   ::setCustomerGestool( nextkey( dbLast( D():Clientes( ::getView() ), 1 ), D():Clientes( ::getView() ), "0", retnumcodcliemp() ) )
 
-   ::oCustomerDatabase():Append()
-   ::oCustomerDatabase():Blank()
+   ( D():Clientes( ::getView() ) )->( dbAppend() )
    
-   ::oCustomerDatabase():Cod        := ::getCustomerGestool()
-   ::oCustomerDatabase():Titulo     := ::getCustomerName( oQuery )
-   ::oCustomerDatabase():nTipCli    := 3
-   ::oCustomerDatabase():CopiasF    := 1
-   ::oCustomerDatabase():Serie      := ::TComercioConfig():getOrderSerie()
-   ::oCustomerDatabase():nRegIva    := 1
-   ::oCustomerDatabase():nTarifa    := 1
-   ::oCustomerDatabase():cMeiInt    := oQuery:fieldGetByName( "email" ) //email
-   ::oCustomerDatabase():lChgPre    := .t.
-   ::oCustomerDatabase():lSndInt    := .t.
-   ::oCustomerDatabase():CodPago    := ::getPaymentGestool( oQuery:FieldGetByName( "module" ) )
-   ::oCustomerDatabase():cCodAlm    := ::TComercioConfig():getStore()
-   ::oCustomerDatabase():dFecChg    := GetSysDate()
-   ::oCustomerDatabase():cTimChg    := Time()
-   ::oCustomerDatabase():lWeb       := .t.
+   ( D():Clientes( ::getView() ) )->Cod        := ::getCustomerGestool()
+   ( D():Clientes( ::getView() ) )->Titulo     := ::getCustomerName( oQuery )
+   ( D():Clientes( ::getView() ) )->nTipCli    := 3
+   ( D():Clientes( ::getView() ) )->CopiasF    := 1
+   ( D():Clientes( ::getView() ) )->Serie      := ::TComercioConfig():getOrderSerie()
+   ( D():Clientes( ::getView() ) )->nRegIva    := 1
+   ( D():Clientes( ::getView() ) )->nTarifa    := 1
+   ( D():Clientes( ::getView() ) )->cMeiInt    := oQuery:fieldGetByName( "email" ) //email
+   ( D():Clientes( ::getView() ) )->lChgPre    := .t.
+   ( D():Clientes( ::getView() ) )->lSndInt    := .t.
+   ( D():Clientes( ::getView() ) )->CodPago    := ::getPaymentGestool( oQuery:FieldGetByName( "module" ) )
+   ( D():Clientes( ::getView() ) )->cCodAlm    := ::TComercioConfig():getStore()
+   ( D():Clientes( ::getView() ) )->dFecChg    := GetSysDate()
+   ( D():Clientes( ::getView() ) )->cTimChg    := Time()
+   ( D():Clientes( ::getView() ) )->lWeb       := .t.
 
-   if ::oCustomerDatabase():Save()
+   if !( D():Clientes( ::getView() ) )->( neterr() )
+
+      ( D():Clientes( ::getView() ) )->( dbcommit() )
+      ( D():Clientes( ::getView() ) )->( dbunlock() )
+      
       ::TPrestashopId():setValueCustomer( ::getCustomerGestool(), ::getCurrentWebName(), oQuery:fieldGet( 1 ) ) 
+
       ::writeText( "Cliente " + ::getCustomerName( oQuery ) + " introducido con el código " + alltrim( ::getCustomerGestool() ), 3 )
+
    else
+      
       ::writeText( "Error al guardar el cliente en gestool : " + ::getCustomerName( oQuery ), 3 )
+      
       Return ( .f. )
+
    end if
 
 Return ( .t. )
@@ -233,25 +241,33 @@ METHOD appendAddressInGestool( oQuery ) CLASS TComercioCustomer
 
    local idAddressGestool        := "@" + alltrim( str( oQuery:fieldGet( 1 ) ) ) 
 
-   ::oAddressDatabase():Append()
-   ::oAddressDatabase():Blank()
+   ( D():ClientesDirecciones( ::getView() ) )->( dbappend() )
+   
+   ( D():ClientesDirecciones( ::getView() ) )->cCodObr  := idAddressGestool
+   ( D():ClientesDirecciones( ::getView() ) )->cCodCli  := ::getCustomerGestool()
+   ( D():ClientesDirecciones( ::getView() ) )->cNomObr  := ::getCustomerName( oQuery )
+   ( D():ClientesDirecciones( ::getView() ) )->cDirObr  := oQuery:fieldGetByName( "address1" ) + " " + oQuery:fieldGetByName( "address2" ) 
+   ( D():ClientesDirecciones( ::getView() ) )->cPobObr  := oQuery:fieldGetByName( "city" )           
+   ( D():ClientesDirecciones( ::getView() ) )->cPosObr  := oQuery:fieldGetByName( "postcode" )       
+   ( D():ClientesDirecciones( ::getView() ) )->cTelObr  := oQuery:fieldGetByName( "phone" )          
+   ( D():ClientesDirecciones( ::getView() ) )->cMovObr  := oQuery:fieldGetByName( "phone_mobile" )   
+   ( D():ClientesDirecciones( ::getView() ) )->cPrvObr  := ::getState( oQuery:fieldGetbyName( "id_state" ) )
 
-   ::oAddressDatabase():cCodObr  := idAddressGestool
-   ::oAddressDatabase():cCodCli  := ::getCustomerGestool()
-   ::oAddressDatabase():cNomObr  := ::getCustomerName( oQuery )
-   ::oAddressDatabase():cDirObr  := oQuery:fieldGetByName( "address1" ) + " " + oQuery:fieldGetByName( "address2" ) 
-   ::oAddressDatabase():cPobObr  := oQuery:fieldGetByName( "city" )           
-   ::oAddressDatabase():cPosObr  := oQuery:fieldGetByName( "postcode" )       
-   ::oAddressDatabase():cTelObr  := oQuery:fieldGetByName( "phone" )          
-   ::oAddressDatabase():cMovObr  := oQuery:fieldGetByName( "phone_mobile" )   
-   ::oAddressDatabase():cPrvObr  := ::getState( oQuery:fieldGetbyName( "id_state" ) )
+   if !( D():ClientesDirecciones( ::getView() ) )->( neterr() )
 
-   if ::oAddressDatabase():Save()
+      ( D():ClientesDirecciones( ::getView() ) )->( dbcommit() )   
+      ( D():ClientesDirecciones( ::getView() ) )->( dbunlock() )      
+
       ::TPrestashopId():setValueAddress( ::getCustomerGestool() + idAddressGestool, ::getCurrentWebName(), oQuery:fieldGet( 1 ) ) 
+
       ::writeText( "Dirección de cliente " + ::getCustomerName( oQuery ) + " introducida correctamente", 3 )
+
    else
+      
       ::writeText( "Error al guardar la dirección del cliente en gestool " + ::getCustomerName( oQuery ), 3 )
+      
       Return ( .f. )
+   
    end if 
 
 Return ( .t. )
@@ -260,21 +276,22 @@ Return ( .t. )
 
 METHOD assertAddressInGestoolCustomer ( oQuery ) class TComercioCustomer
 
-   if !( ::oCustomerDatabase():seekInOrd( ::getCustomerGestool(), "Cod" ) )
+   if !( D():gotoCliente( ::getCustomerGestool(), ::getView() ) ) 
       ::writeText( "Cliente con el código " + alltrim( ::getCustomerGestool() ) + " no encontrado, imposible asignar dirección." )
       Return ( .f. )
    end if 
 
-   if empty( ::oCustomerDatabase():fieldGetbyName( "Domicilio" ) )
-      ::oCustomerDatabase():load()
-      ::oCustomerDatabase():Nif           := oQuery:FieldGetByName( "dni" ) 
-      ::oCustomerDatabase():Domicilio     := oQuery:fieldGetByName( "address1" ) + " " + oQuery:fieldGetByName( "address2" )  
-      ::oCustomerDatabase():Poblacion     := oQuery:fieldGetByName( "city" )           
-      ::oCustomerDatabase():CodPostal     := oQuery:fieldGetByName( "postcode" ) 
-      ::oCustomerDatabase():Provincia     := ::getState( oQuery:fieldGetbyName( "id_state" ) )  
-      ::oCustomerDatabase():Telefono      := oQuery:fieldGetByName( "phone" )  
-      ::oCustomerDatabase():Movil         := oQuery:fieldGetByName( "phone_mobile" )          
-      ::oCustomerDatabase():save()
+   if empty( ( D():Clientes( ::getView() ) )->Domicilio )
+      ( D():Clientes( ::getView() ) )->( dbrlock() )
+      ( D():Clientes( ::getView() ) )->Nif           := oQuery:FieldGetByName( "dni" ) 
+      ( D():Clientes( ::getView() ) )->Domicilio     := oQuery:fieldGetByName( "address1" ) + " " + oQuery:fieldGetByName( "address2" )  
+      ( D():Clientes( ::getView() ) )->Poblacion     := oQuery:fieldGetByName( "city" )           
+      ( D():Clientes( ::getView() ) )->CodPostal     := oQuery:fieldGetByName( "postcode" ) 
+      ( D():Clientes( ::getView() ) )->Provincia     := ::getState( oQuery:fieldGetbyName( "id_state" ) )  
+      ( D():Clientes( ::getView() ) )->Telefono      := oQuery:fieldGetByName( "phone" )  
+      ( D():Clientes( ::getView() ) )->Movil         := oQuery:fieldGetByName( "phone_mobile" )          
+      ( D():Clientes( ::getView() ) )->( dbcommit() )
+      ( D():Clientes( ::getView() ) )->( dbunlock() )
    end if 
 
 Return ( .t. )

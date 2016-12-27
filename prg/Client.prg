@@ -910,8 +910,8 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Cod. Web"
-          :bEditValue       := {|| alltrim( str( ( D():Clientes( nView ) )->cCodWeb ) ) }
+         :cHeader          := "Grupo"
+         :bEditValue       := {|| alltrim( ( D():Clientes( nView ) )->cCodGrp ) + " - " + oGrpCli:nombreGrupo( ( D():Clientes( nView ) )->cCodGrp ) }
          :nWidth           := 200
          :lHide            := .t.
       end with

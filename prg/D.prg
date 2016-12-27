@@ -369,7 +369,6 @@ CLASS D
       METHOD getCodigoTipoIncicencias( cNombreIncidencia, nView )
       METHOD getNombreTipoIncicencias( cCodigoIncidencia, nView )
 
-
    METHOD ClientesIncidencias( nView )                   INLINE ( ::Get( "CliInc", nView ) )
       METHOD ClientesIncidenciasId( nView )              INLINE ( ( ::Get( "CliInc", nView ) )->cCodCli )
       METHOD ClientesIncidenciasNombre( nView )          INLINE ( ( ::Get( "CliInc", nView ) )->mDesInc )

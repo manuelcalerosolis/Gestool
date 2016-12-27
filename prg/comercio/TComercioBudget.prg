@@ -524,10 +524,10 @@ CLASS TComercioOrder FROM TComercioDocument
    METHOD setGestoolSpecificDocument( oQuery )
    METHOD setGestoolSpecificLineDocument() 
 
-   METHOD oDocumentHeaderDatabase()                     INLINE ( ::TComercio:oPedCliT )
-   METHOD oDocumentLineDatabase()                       INLINE ( ::TComercio:oPedCliL )
-   METHOD oDocumentIncidenciaDatabase()                 INLINE ( ::TComercio:oPedCliI )
-   METHOD oDocumentEstadoDatabase()                     INLINE ( ::TComercio:oPedCliE )
+   METHOD oDocumentHeaderDatabase()                     INLINE ( D():PedidosClientes( ::getView() )  )
+   METHOD oDocumentLineDatabase()                       INLINE ( D():PedidosClientesLineas( ::getView() )  )
+   METHOD oDocumentIncidenciaDatabase()                 INLINE ( D():PedidosClientesIncidencias( ::getView() ) )
+   METHOD oDocumentEstadoDatabase()                     INLINE ( D():PedidosClientesSituaciones( ::getView() ) )
 
 END CLASS
 
@@ -538,7 +538,7 @@ METHOD isDocumentInGestool() CLASS TComercioOrder
    local idDocumentGestool := ::TPrestashopId():getGestoolOrder( ::idDocumentPrestashop, ::getCurrentWebName() )
 
    if !empty( idDocumentGestool )
-      if ::oDocumentHeaderDatabase():seekInOrd( idDocumentGestool, "nNumPed" )
+      if ( ::oDocumentHeaderDatabase() )->( dbseekinord( idDocumentGestool, "nNumPed" ) )
          Return ( .t. )
       else 
          ::TPrestashopId():deleteValueOrder( idDocumentGestool, ::getCurrentWebName() )
@@ -553,7 +553,7 @@ METHOD getCountersDocumentGestool( oQuery ) CLASS TComercioOrder
 
    ::idDocumentPrestashop  := oQuery:fieldGet( 1 )
    ::cSerieDocument        := ::TComercioConfig():getBudgetSerie()
-   ::nNumeroDocument       := nNewDoc( ::cSerieDocument, ::oDocumentHeaderDatabase():cAlias, "nPedCli", , ::oCounterDatabase():cAlias )
+   ::nNumeroDocument       := nNewDoc( ::cSerieDocument, ::oDocumentHeaderDatabase(), "nPedCli", , D():Contadores( ::getView() ) )
    ::cSufijoDocument       := retSufEmp()
 
 Return ( .t. )
@@ -572,13 +572,13 @@ Return ( self )
 
 METHOD setGestoolSpecificDocument( oQuery ) CLASS TComercioOrder
 
-   ::oDocumentHeaderDatabase():dFecPed    := ::getDate( oQuery:FieldGetByName( "date_add" ) ) 
-   ::oDocumentHeaderDatabase():cTurPed    := cCurSesion()
-   ::oDocumentHeaderDatabase():cSuPed     := oQuery:FieldGetByName( "reference" )
-   ::oDocumentHeaderDatabase():cDivPed    := cDivEmp()
-   ::oDocumentHeaderDatabase():nVdvPed    := nChgDiv( cDivEmp(), ::oDivisasDatabase():cAlias )
-   ::oDocumentHeaderDatabase():lCloPed    := .f.
-   ::oDocumentHeaderDatabase():nTotPed    := oQuery:FieldGetByName( "total_paid_tax_incl" )
+   ( ::oDocumentHeaderDatabase() )->dFecPed  := ::getDate( oQuery:FieldGetByName( "date_add" ) ) 
+   ( ::oDocumentHeaderDatabase() )->cTurPed  := cCurSesion()
+   ( ::oDocumentHeaderDatabase() )->cSuPed   := oQuery:FieldGetByName( "reference" )
+   ( ::oDocumentHeaderDatabase() )->cDivPed  := cDivEmp()
+   ( ::oDocumentHeaderDatabase() )->nVdvPed  := nChgDiv( cDivEmp(), ::oDivisasDatabase():cAlias )
+   ( ::oDocumentHeaderDatabase() )->lCloPed  := .f.
+   ( ::oDocumentHeaderDatabase() )->nTotPed  := oQuery:FieldGetByName( "total_paid_tax_incl" )
 
 Return ( self )
 
@@ -586,7 +586,7 @@ Return ( self )
 
 METHOD setGestoolSpecificLineDocument() CLASS TComercioOrder
 
-   ::oDocumentLineDatabase():nCanPed      := 1
+   ( ::oDocumentLineDatabase() )->nCanPed    := 1
 
 Return ( self )
 

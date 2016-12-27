@@ -800,35 +800,29 @@ METHOD controllerOrderPrestashop() CLASS TComercio
 
    ::disableDialog()
 
-   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
-   BEGIN SEQUENCE
+   // oBlock            := ErrorBlock( { | oError | Break( oError ) } )
+   // BEGIN SEQUENCE
 
-   if ::filesOpen()
+   ::MeterTotalText( "Conectando con la base de datos" )
 
-      ::MeterTotalText( "Conectando con la base de datos" )
+   if ::prestaShopConnect()
 
-      if ::prestaShopConnect()
+      ::MeterTotalText( "Descargando pedidos de prestashop" )
 
-         ::MeterTotalText( "Descargando pedidos de prestashop" )
+      ::loadOrders()
 
-         ::loadOrders()
+      // Desconectamos mysql------------------------------------------------
 
-         // Desconectamos mysql------------------------------------------------
+      ::MeterTotalText( "Desconectando bases de datos." )
 
-         ::MeterTotalText( "Desconectando bases de datos." )
+      ::prestashopDisConnect()  
+   
+   end if  
 
-         ::prestashopDisConnect()  
-      
-      end if  
-
-      ::filesClose()
-
-   end if 
-
-   RECOVER USING oError
-      msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
-   END SEQUENCE
-   ErrorBlock( oBlock )
+   // RECOVER USING oError
+   //    msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
+   // END SEQUENCE
+   // ErrorBlock( oBlock )
 
    ::EnableDialog()
 
@@ -4972,7 +4966,7 @@ METHOD isRecivedDocumentAsBudget( cPrestashopModule ) CLASS TComercio
 
    local lAsBudget   := .f.
 
-   if ( ::oFPago:SeekInOrd( upper( cPrestashopModule ), "cCodWeb" ) ) .and. ( ::oFPago:nGenDoc <= 1 )
+   if ( D():gotoFormasPago( upper( cPrestashopModule ), ::getView() ) .and. ( D():FormasPago( ::getView() ) )->nGenDoc <= 1 )
       lAsBudget      := .t.
    endif
 

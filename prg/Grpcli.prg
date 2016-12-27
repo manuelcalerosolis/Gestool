@@ -50,6 +50,8 @@ CLASS TGrpCli FROM TMasDet
    METHOD GetTreeState( oTree, aItems )
    METHOD SetTreeState( oTree, aItems )
 
+   METHOD nombreGrupo( cCodigoGrupo )
+
    METHOD EdtRotorMenu( oDlg )
 
 END CLASS
@@ -329,11 +331,11 @@ METHOD EdtRotorMenu( oDlg )
 
    MENU ::oMenu
 
-      MENUITEM    "&1. Rotor"
+      MENUITEM       "&1. Rotor"
 
       MENU
 
-         MENUITEM "&1. Campos extra [F9]";
+         MENUITEM    "&1. Campos extra [F9]";
             MESSAGE  "Mostramos y rellenamos los campos extra para el grupo cliente" ;
             RESOURCE "gc_form_plus2_16" ;
             ACTION   ( ::oDetCamposExtra:Play( ::oDbf:cCodGrp ) )
@@ -664,6 +666,18 @@ RETURN ( uVal )
 
 //----------------------------------------------------------------------------//
 
+METHOD nombreGrupo( cCodigoGrupo )
+
+   local nombreGrupo := ""
+
+   if ::oDbf:seekinord( cCodigoGrupo, "cCodGrp" )
+      nombreGrupo    := ::oDbf:cNomGrp
+   end if
+
+RETURN ( alltrim( nombreGrupo ) )
+
+//---------------------------------------------------------------------------//
+
 function cGruCli( cCodCli, oDbfCli )
 
    local cCodGrC  := ""
@@ -676,14 +690,3 @@ return( cCodGrC )
 
 //---------------------------------------------------------------------------//
 
-function cNomGru( cCodGrc, oDbfGprCli )
-
-   local cNomGrC  := ""
-
-   if oDbfGprCli:Seek( cCodGrC )
-      cNomGrC     := oDbfGprCli:Nombre
-   end if
-
-return( cNomGrC )
-
-//---------------------------------------------------------------------------//
