@@ -73,13 +73,13 @@ METHOD New( nView )
    Cambiar el nombre del fichero
    */
 
-   ::cFicheroExcel            := "C:\Users\calero\Desktop\Importar.xlsx"
+   ::cFicheroExcel            := "C:\Users\Manuel\Desktop\Importar.xlsx"
 
    /*
    Cambiar la fila de cominezo de la importacion
    */
 
-   ::nFilaInicioImportacion   := 7
+   ::nFilaInicioImportacion   := 3
 
    /*
    Columna de campo clave
@@ -112,7 +112,7 @@ METHOD openExcel()
 
    ::oExcel                        := TOleExcel():New( "Importando hoja de excel", "Conectando...", .f. )
 
-   ::oExcel:oExcel:Visible         := .t.
+   ::oExcel:oExcel:Visible         := .f.
    ::oExcel:oExcel:DisplayAlerts   := .f.
    ::oExcel:oExcel:WorkBooks:Open( ::cFicheroExcel )
    ::oExcel:oExcel:WorkSheets( 1 ):Activate()
@@ -124,7 +124,7 @@ Return ( Self )
 METHOD closeExcel()
 
    ::oExcel:oExcel:Quit()
-   ::oExcel:oExcel:DisplayAlerts := .t.
+   ::oExcel:oExcel:DisplayAlerts := .f.
    ::oExcel:End()
 
 Return ( Self )
@@ -135,7 +135,7 @@ METHOD procesaFicheroExcel()
 
    ::oExcel                        := TOleExcel():New( "Importando hoja de excel", "Conectando...", .f. )
 
-   ::oExcel:oExcel:Visible         := .t.
+   ::oExcel:oExcel:Visible         := .f.
    ::oExcel:oExcel:DisplayAlerts   := .f.
    ::oExcel:oExcel:WorkBooks:Open( ::cFicheroExcel )
    ::oExcel:oExcel:WorkSheets( 1 ):Activate()
@@ -161,7 +161,7 @@ METHOD procesaFicheroExcel()
    end if
 
    ::oExcel:oExcel:Quit()
-   ::oExcel:oExcel:DisplayAlerts := .t.
+   ::oExcel:oExcel:DisplayAlerts := .f.
    ::oExcel:End()
 
 Return nil

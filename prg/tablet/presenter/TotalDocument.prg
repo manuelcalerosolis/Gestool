@@ -43,7 +43,10 @@ END CLASS
 METHOD New( oSender ) CLASS TotalDocument
 
    ::oSender      := oSender
-   ::oIva         := Iva():New( Self )
+
+   msgalert( oSender:classname() )
+
+   ::oIva         := Iva():New( oSender )
 
 Return( Self )
 
@@ -51,7 +54,7 @@ Return( Self )
 
 METHOD Calculate() CLASS TotalDocument
 
-   Local oDocumentLine
+   local oDocumentLine
 
    ::Reset()
 

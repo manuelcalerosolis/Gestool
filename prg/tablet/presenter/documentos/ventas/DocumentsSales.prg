@@ -843,6 +843,8 @@ METHOD setDatasInDictionaryMaster( NumeroDocumento ) CLASS DocumentsSales
       hSet( ::hDictionaryMaster, "Numero", NumeroDocumento )
    end if 
 
+   ::oTotalDocument:Calculate()
+
    hSet( ::hDictionaryMaster, "TotalDocumento", ::oTotalDocument:getTotalDocument() )
 
    hSet( ::hDictionaryMaster, "TotalImpuesto", ::oTotalDocument:getImporteIva() )
@@ -902,14 +904,7 @@ Return ( lResource )
 
 METHOD onPreSaveAppend() CLASS DocumentsSales
 
-   local numeroDocumento
-
-   msgalert( ::getSerie(), "1" )
-   msgalert( ::getWorkArea(), "2" )
-   msgalert( ::getCounterDocuments(), "3" )
-   msgalert( D():Contadores( ::nView ), "4" )
-
-   numeroDocumento               := nNewDoc( ::getSerie(), ::getWorkArea(), ::getCounterDocuments(), , D():Contadores( ::nView ) )
+   local numeroDocumento         := nNewDoc( ::getSerie(), ::getWorkArea(), ::getCounterDocuments(), , D():Contadores( ::nView ) )
    
    if empty( numeroDocumento )
       Return ( .f. )

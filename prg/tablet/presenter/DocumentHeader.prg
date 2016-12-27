@@ -23,7 +23,9 @@ METHOD newBuildDictionary( oSender ) CLASS DocumentHeader
 
    ::new( oSender )
 
-   ::setDictionary( D():getHashFromAlias( oSender:getHeaderAlias(), oSender:getHeaderDictionary() ) )
+   if !empty( oSender ) .and. __objHasMethod( oSender, "getHeaderAlias" ) .and. __objHasMethod( oSender, "getHeaderDictionary" )
+      ::setDictionary( D():getHashFromAlias( oSender:getHeaderAlias(), oSender:getHeaderDictionary() ) )
+   end if 
 
 Return ( Self )
 
@@ -31,8 +33,8 @@ Return ( Self )
 
 CLASS AliasDocumentHeader FROM DocumentHeader
 
-   METHOD getAlias()                                           INLINE ( ::oSender:getHeaderAlias() )
-   METHOD getDictionary()                                      INLINE ( ::oSender:getHeaderDictionary() )
+   METHOD getAlias()                                           INLINE ( if( empty( ::oSender ), "", ::oSender:getHeaderAlias() ) )
+   METHOD getDictionary()                                      INLINE ( if( empty( ::oSender ), "", ::oSender:getHeaderDictionary() ) )
 
    METHOD getValue( key, uDefault )                            INLINE ( D():getFieldFromAliasDictionary( key, ::getAlias(), ::getDictionary(), uDefault ) )
    METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
@@ -72,7 +74,9 @@ METHOD newBlankDictionary( oSender )
 
    ::new( oSender )
 
-   ::setDictionary( D():getHashBlankAlbaranesClientes( oSender:nView ) ) 
+   if !empty(oSender)
+      ::setDictionary( D():getHashBlankAlbaranesClientes( oSender:nView ) ) 
+   end if 
 
 Return ( Self )
 
@@ -82,7 +86,9 @@ METHOD newRecordDictionary( oSender )
 
   ::new( oSender )
 
-  ::setDictionary( D():getHashRecordAlbaranesClientes( oSender:nView ) ) 
+   if !empty(oSender)
+      ::setDictionary( D():getHashRecordAlbaranesClientes( oSender:nView ) ) 
+   end if 
 
 Return ( Self )
 

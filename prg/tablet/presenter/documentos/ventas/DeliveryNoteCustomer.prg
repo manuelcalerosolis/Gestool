@@ -36,7 +36,7 @@ METHOD New() CLASS DeliveryNoteCustomer
                                              "textSummary"  => "Resumen albarán",;
                                              "textGrid"     => "Grid albarán clientes" }
 
-  // Vistas--------------------------------------------------------------------
+   // Vistas-------------------------------------------------------------------
 
    ::oViewSearchNavigator:setTitleDocumento( "Albaranes de clientes" )  
 
@@ -54,7 +54,7 @@ Return ( self )
 
 METHOD Build() CLASS DeliveryNoteCustomer
 
-   ::super:Build( self )
+   ::super:Build()
 
    ::Default()
 

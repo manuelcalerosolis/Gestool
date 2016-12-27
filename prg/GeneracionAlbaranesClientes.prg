@@ -281,7 +281,7 @@ METHOD botonSiguiente()
 
          ::processDeliveryNoteLines()
 
-         ::oFld:goNext()
+         ::oDlg:end()
 
    end case
 
@@ -402,8 +402,8 @@ METHOD scanStock( oDocumentLine )
    local nScan
    local oStock
 
-   nScan := ascan( ::oStock:aStocks,   {|o|  rtrim( o:cCodigo ) == rtrim( oDocumentLine:getCode() ) .and.;
-                                             rtrim( o:cCodigoAlmacen ) == rtrim( oDocumentLine:getAlmacen() ) .and.;
+   nScan := ascan( ::oStock:aStocks,   {|o|  rtrim( o:cCodigo ) == rtrim( oDocumentLine:getCode() )                        .and.;
+                                             rtrim( o:cCodigoAlmacen ) == rtrim( oDocumentLine:getAlmacen() )              .and.;
                                              rtrim( o:cValorPropiedad1 ) == rtrim( oDocumentLine:getValueFirstProperty() ) .and.;
                                              rtrim( o:cValorPropiedad2 ) == rtrim( oDocumentLine:getValueSecondProperty() ) } )
    if nScan != 0
@@ -489,13 +489,10 @@ METHOD processDeliveryNoteLines()
 
    local oLine
 
-   msgalert( "processDeliveryNoteLines" )
-
+   ::DeliveryNoteCustomer:setAppendMode()
    ::DeliveryNoteCustomer:getAppendDocumento()
 
    ::DeliveryNoteCustomer:setClientToDocument( ::oCliente:varget() )
-
-   msgalert( hb_valtoexp( ::DeliveryNoteCustomer:hDictionaryMaster ) )
 
    for each oLine in ( ::getDeliveryNoteLines():getLines() )
       if oLine:isSelectLine()
@@ -513,7 +510,11 @@ Return ( .t. )
 
 METHOD processDeliveryNoteLine( oLine )
 
-   ::DeliveryNoteCustomer:oDocumentLines:addLines( oLine )   
+   local oDeliveryNoteLine    := DeliveryNoteDocumentLine():New( ::DeliveryNoteCustomer ) 
+
+   oDeliveryNoteLine:setDictionary( oLine:hDictionary )
+
+   ::DeliveryNoteCustomer:oDocumentLines:addLines( oDeliveryNoteLine )   
 
 Return ( .t. )
 

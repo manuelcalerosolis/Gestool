@@ -50,7 +50,7 @@ CLASS Iva
    METHOD ShowImportes( nPosition )
    METHOD ShowTotal( nPosition )
 
-   METHOD getValueMaster( cField )                 INLINE ( hGet( ::oSender:oSender:hDictionaryMaster, cField ) )
+   METHOD getValueMaster( cField )                 INLINE ( hGet( ::oSender:hDictionaryMaster, cField ) )
 
 END CLASS
 
@@ -59,6 +59,7 @@ END CLASS
 METHOD New( oSender )
 
    ::oSender      := oSender
+
    ::aIva         := {}
 
 Return ( Self )
@@ -77,6 +78,8 @@ METHOD add( oDocumentLine )
 
    local nPosition
 
+   msgalert( oDocumentLine:className(), "oDocumentLine:className()" )
+
    nPosition      := aScan( ::aIva, {|hIva| oDocumentLine:getPercentageTax() == ::getTipoIva( hIva ) .and. oDocumentLine:getRecargoEquivalencia() == ::getTipoRecargo( hIva ) } )
 
    if nPosition != 0
@@ -93,10 +96,10 @@ METHOD addIva( oDocumentLine )
 
    Local hHash
 
-   hHash    := {  "Bruto" => oDocumentLine:getBruto(),;
-                  "Base" => oDocumentLine:getBase(),;
+   hHash    := {  "Bruto"              => oDocumentLine:getBruto(),;
+                  "Base"               => oDocumentLine:getBase(),;
                   "PorcentajeImpuesto" => oDocumentLine:getPercentageTax(),;
-                  "PorcentajeRecargo" => oDocumentLine:getRecargoEquivalencia() }
+                  "PorcentajeRecargo"  => oDocumentLine:getRecargoEquivalencia() }
 
    aadd( ::aIva, hHash )
 

@@ -174,7 +174,7 @@ METHOD getBase() CLASS DocumentLine
 
    Base              := ::getNetPrice()
 
-   if !empty( ::oSender ) .and. ( ::oSender:hGetMaster( "PorcentajeDescuento1" ) != 0 )
+   if !empty( ::oSender ) .and. ( __objHasMethod( ::oSender, "hGetMaster" ) ) .and. ( ::oSender:hGetMaster( "PorcentajeDescuento1" ) != 0 )
       Base           -= Base * ::oSender:hGetMaster( "PorcentajeDescuento1" ) / 100
    end if 
 
@@ -351,10 +351,16 @@ Return ( Self )
 
 METHOD setUnitsProvided() CLASS DeliveryNoteDocumentLine
 
-   local nUnitsProvided    := nUnidadesRecibidasAlbaranesClientesNoFacturados( ::getDocumentId(), ::getCode(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():AlbaranesClientesLineas( ::getView() ) )
-   nUnitsProvided          += nUnidadesRecibidasFacturasClientes( ::getDocumentId(), ::getCode(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():FacturasClientesLineas( ::getView() ) )
+   local nUnitsProvided    := 0
+   
+   if ( __objHasMethod( Self, "getView()" ) )
 
-   ::setValue( "UnitsProvided", nUnitsProvided )
+      nUnitsProvided       := nUnidadesRecibidasAlbaranesClientesNoFacturados( ::getDocumentId(), ::getCode(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():AlbaranesClientesLineas( ::getView() ) )
+      nUnitsProvided       += nUnidadesRecibidasFacturasClientes( ::getDocumentId(), ::getCode(), ::getValueFirstProperty(), ::getValueSecondProperty(), D():FacturasClientesLineas( ::getView() ) )
+
+      ::setValue( "UnitsProvided", nUnitsProvided )
+
+   end if 
 
 Return ( Self )
 
@@ -372,7 +378,7 @@ CLASS DictionaryDocumentLine FROM DocumentLine
 
    METHOD getRecno()                                           INLINE ( 0 )
 
-   METHOD getValueMaster()                                     INLINE ( ::oSender:hDictionaryMaster )
+   METHOD getValueMaster()                                     INLINE ( ::hDictionaryMaster )
 
    METHOD hGetMaster( key )                                    INLINE ( hGet( ::getValueMaster(), key ) )
    METHOD hSetMaster( key, value )                             INLINE ( hSet( ::getValueMaster(), key, value ) )

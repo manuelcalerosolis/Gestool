@@ -36,6 +36,7 @@ END CLASS
 CLASS DocumentBase 
 
    DATA oSender
+   
    DATA hDictionary
 
    DATA select                                                 INIT .f.

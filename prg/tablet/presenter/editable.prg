@@ -50,9 +50,15 @@ CLASS Editable
    METHOD Delete()
 
    METHOD lAppendMode()                         INLINE ( ::nMode == APPD_MODE )
+   METHOD setAppendMode()                       INLINE ( ::nMode := APPD_MODE )
+
    METHOD lEditMode()                           INLINE ( ::nMode == EDIT_MODE )
+   METHOD setEditMode()                         INLINE ( ::nMode := EDIT_MODE )
+
    METHOD lZoomMode()                           INLINE ( ::nMode == ZOOM_MODE )
    METHOD lNotZoomMode()                        INLINE ( ::nMode != ZOOM_MODE )
+   METHOD setZoomMode()                         INLINE ( ::nMode := ZOOM_MODE )
+
    METHOD TextMode()                            INLINE ( lblTitle( ::nMode ) )
 
    METHOD setDataTable( cDataTable )            INLINE ( ::cDataTable := cDataTable )
