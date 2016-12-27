@@ -862,14 +862,11 @@ METHOD setDatasInDictionaryMaster( NumeroDocumento ) CLASS DocumentsSales
       hSet( ::hDictionaryMaster, "Numero", NumeroDocumento )
    end if 
 
-<<<<<<< HEAD
    ::oTotalDocument:Calculate()
-=======
    hSet( ::hDictionaryMaster, "Envio", .t. )  
 
    hSet( ::hDictionaryMaster, "FechaCreacion", date() )  
    hSet( ::hDictionaryMaster, "HoraCreacion", time() )  
->>>>>>> bbd781021757995a1d6fe6c298532e68e11f2e89
 
    hSet( ::hDictionaryMaster, "TotalDocumento", ::oTotalDocument:getTotalDocument() )
 
@@ -930,13 +927,9 @@ Return ( lResource )
 
 METHOD onPreSaveAppend() CLASS DocumentsSales
 
-<<<<<<< HEAD
-   local numeroDocumento         := nNewDoc( ::getSerie(), ::getWorkArea(), ::getCounterDocuments(), , D():Contadores( ::nView ) )
-=======
    local numeroDocumento
 
    numeroDocumento               := nNewDoc( ::getSerie(), ::getWorkArea(), ::getCounterDocuments(), , D():Contadores( ::nView ) )
->>>>>>> bbd781021757995a1d6fe6c298532e68e11f2e89
    
    if empty( numeroDocumento )
       Return ( .f. )
