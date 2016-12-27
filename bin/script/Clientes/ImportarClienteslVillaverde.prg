@@ -29,11 +29,11 @@ CLASS TImportarExcelClientes FROM TImportarExcel
 
    METHOD filaValida()
    
-   METHOD siguienteLinea()       INLINE ( ++::nFilaInicioImportacion, msgwait( str( ::nFilaInicioImportacion ), "fila", 1 ) )
+   METHOD siguienteLinea()       INLINE ( ++::nFilaInicioImportacion, msgwait( str( ::nFilaInicioImportacion ), "fila", .1 ) )
 
    METHOD existeRegistro()       INLINE ( if ( D():gotoCliente( ::getCampoClave(), ::nView ),;
                                              ( msgalert( ::getCampoClave(), "existeRegistro" ), .t. ),;
-                                             ( msgwait( ::getCampoClave(), "no existeRegistro", 1 ), .f. ) ) )
+                                             ( msgwait( ::getCampoClave(), "no existeRegistro", .1 ), .f. ) ) )
 
    METHOD importarCampos()
 
@@ -50,8 +50,6 @@ METHOD New( nView )
    */
 
    ::cFicheroExcel            := "C:\Users\Manuel\Desktop\Clientes.xlsx" 
-
-   msgalert( ::cFicheroExcel, "cFicheroExcel" )
 
    /*
    Cambiar la fila de cominezo de la importacion-------------------------------
@@ -112,8 +110,10 @@ METHOD importarCampos()
 
    ( D():Clientes( ::nView ) )->Cod             := ::getCampoClave()
 
+   logwrite( ::getExcelString( "B" ), "nombre cliente" )
+
    if !empty( ::getExcelString( "B" ) )
-      ( D():Clientes( ::nView ) )->Titulo       := ::getExcelString( "B" ) + ::getExcelString( "C" )
+      ( D():Clientes( ::nView ) )->Titulo       := ::getExcelString( "B" )
    end if 
 
    if !empty( ::getExcelString( "C" ) )
@@ -147,7 +147,6 @@ METHOD importarCampos()
    ( D():Clientes( ::nView ) )->cCodAlm         := "000"
 
    ( D():Clientes( ::nView ) )->( dbcommit() )
-
    ( D():Clientes( ::nView ) )->( dbunlock() )
 
 Return nil
