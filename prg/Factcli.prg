@@ -2401,7 +2401,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                  { "Resource" => "gc_information_48",      "Dialog" => 3 },;
                                  { "Resource" => "gc_address_book_48",    "Dialog" => 4 },;
                                  { "Resource" => "gc_form_earth_48",              "Dialog" => 5 },;
-                                 { "Resource" => "document_attachment_48",    "Dialog" => 6 },;
+                                 { "Resource" => "gc_document_attachment_48",    "Dialog" => 6 },;
                                  { "Resource" => "gc_money2_48",            "Dialog" => 7 },;
                                  { "Resource" => "anticipo_cliente_48_alpha", "Dialog" => 8 } }
    
