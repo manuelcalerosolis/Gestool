@@ -2293,7 +2293,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "document_attachment_48" ;
+        RESOURCE "gc_document_attachment_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[5]
 

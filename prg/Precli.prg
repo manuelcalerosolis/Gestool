@@ -557,7 +557,7 @@ FUNCTION GenPreCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    lChgImpDoc( D():PresupuestosClientes( nView ) )
 
 RETURN NIL
-difi
+
 //--------------------------------------------------------------------------//
 
 Static Function PreCliReportSkipper( dbf, dbfPreCliL )
@@ -1344,7 +1344,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():PresupuestosClientes( nView ) )->lSndDoc }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_mail2_12", "Nil16" } )
          :AddResource( "gc_mail2_16" )
 
       end with
@@ -2045,7 +2045,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "document_attachment_48";
+        RESOURCE "gc_document_attachment_48";
         TRANSPARENT ;
         OF       oFld:aDialogs[5]
 
