@@ -55,21 +55,6 @@ CLASS TComercioDocument
    METHOD getDate( dDate )                                  INLINE ( ::TComercio:getDate( dDate ) )
    METHOD getTime( dTime )                                  INLINE ( ::TComercio:getTime( dTime ) )
 
-   METHOD oCustomerDatabase()                               INLINE ( ::TComercio:oCli )
-   METHOD oAddressDatabase()                                INLINE ( ::TComercio:oObras )
-   METHOD oPaymentDatabase()                                INLINE ( ::TComercio:oFPago )
-
-   METHOD oCounterDatabase()                                INLINE ( ::TComercio:oCount )
-   METHOD oPaymentDatabase()                                INLINE ( ::TComercio:oFPago )
-   METHOD oDivisasDatabase()                                INLINE ( ::TComercio:oDivisas )
-   METHOD oConexionMySQLDatabase()                          INLINE ( ::TComercio:oCon )
-   METHOD oArticleDatabase()                                INLINE ( ::TComercio:oArt )
-   METHOD oKitDatabase()                                    INLINE ( ::TComercio:oKit )
-   METHOD oFamilyDatabase()                                 INLINE ( ::TComercio:oFam )
-   METHOD oProductDatabase()                                INLINE ( ::TComercio:oArt )
-   METHOD oPropertyDatabase()                               INLINE ( ::TComercio:oPro )
-   METHOD oPropertyLinesDatabase()                          INLINE ( ::TComercio:oTblPro )
-   
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -119,38 +104,44 @@ Return ( .t. )
 
 METHOD insertHeaderDocumentGestool( oQuery ) CLASS TComercioDocument
 
-   ::oDocumentHeaderDatabase():Append()
+   ( ::oDocumentHeaderDatabase() )->( dbappend() )
 
    ::setGestoolIdDocument( ::oDocumentHeaderDatabase() ) 
 
    ::setGestoolSpecificDocument( oQuery )
 
-   ::oDocumentHeaderDatabase():cCodWeb      := ::idDocumentPrestashop
-   ::oDocumentHeaderDatabase():cCodAlm      := oUser():cAlmacen()
-   ::oDocumentHeaderDatabase():cCodCaj      := oUser():cCaja()
-   ::oDocumentHeaderDatabase():cCodObr      := "@" + alltrim( str( oQuery:FieldGetByName( "id_address_delivery" ) ) )
-   ::oDocumentHeaderDatabase():cCodPgo      := cFPagoWeb( alltrim( oQuery:FieldGetByName( "module" ) ), ::oPaymentDatabase():cAlias )
-   ::oDocumentHeaderDatabase():nTarifa      := 1
-   ::oDocumentHeaderDatabase():lSndDoc      := .t.
-   ::oDocumentHeaderDatabase():lIvaInc      := uFieldEmpresa( "lIvaInc" )
-   ::oDocumentHeaderDatabase():cManObr      := Padr( "Gastos envio", 250 )
-   ::oDocumentHeaderDatabase():nManObr      := oQuery:FieldGetByName( "total_shipping_tax_excl" )
-   ::oDocumentHeaderDatabase():nIvaMan      := oQuery:FieldGetByName( "carrier_tax_rate" )
-   ::oDocumentHeaderDatabase():cCodUsr      := cCurUsr()
-   ::oDocumentHeaderDatabase():dFecCre      := GetSysDate()
-   ::oDocumentHeaderDatabase():cTimCre      := Time()
-   ::oDocumentHeaderDatabase():cCodDlg      := oUser():cDelegacion()
-   ::oDocumentHeaderDatabase():lWeb         := .t.
-   ::oDocumentHeaderDatabase():lInternet    := .t.
-   ::oDocumentHeaderDatabase():nTotNet      := oQuery:FieldGetByName( "total_products" )
-   ::oDocumentHeaderDatabase():nTotIva      := oQuery:FieldGetByName( "total_paid_tax_incl" ) - ( oQuery:FieldGetByName( "total_products" ) + oQuery:FieldGetByName( "total_shipping_tax_incl" ) )
+   ( ::oDocumentHeaderDatabase() )->cCodWeb      := ::idDocumentPrestashop
+   ( ::oDocumentHeaderDatabase() )->cCodAlm      := oUser():cAlmacen()
+   ( ::oDocumentHeaderDatabase() )->cCodCaj      := oUser():cCaja()
+   ( ::oDocumentHeaderDatabase() )->cCodObr      := "@" + alltrim( str( oQuery:FieldGetByName( "id_address_delivery" ) ) )
+   ( ::oDocumentHeaderDatabase() )->cCodPgo      := cFPagoWeb( alltrim( oQuery:FieldGetByName( "module" ) ), ::oPaymentDatabase():cAlias )
+   ( ::oDocumentHeaderDatabase() )->nTarifa      := 1
+   ( ::oDocumentHeaderDatabase() )->lSndDoc      := .t.
+   ( ::oDocumentHeaderDatabase() )->lIvaInc      := uFieldEmpresa( "lIvaInc" )
+   ( ::oDocumentHeaderDatabase() )->cManObr      := Padr( "Gastos envio", 250 )
+   ( ::oDocumentHeaderDatabase() )->nManObr      := oQuery:FieldGetByName( "total_shipping_tax_excl" )
+   ( ::oDocumentHeaderDatabase() )->nIvaMan      := oQuery:FieldGetByName( "carrier_tax_rate" )
+   ( ::oDocumentHeaderDatabase() )->cCodUsr      := cCurUsr()
+   ( ::oDocumentHeaderDatabase() )->dFecCre      := GetSysDate()
+   ( ::oDocumentHeaderDatabase() )->cTimCre      := Time()
+   ( ::oDocumentHeaderDatabase() )->cCodDlg      := oUser():cDelegacion()
+   ( ::oDocumentHeaderDatabase() )->lWeb         := .t.
+   ( ::oDocumentHeaderDatabase() )->lInternet    := .t.
+   ( ::oDocumentHeaderDatabase() )->nTotNet      := oQuery:FieldGetByName( "total_products" )
+   ( ::oDocumentHeaderDatabase() )->nTotIva      := oQuery:FieldGetByName( "total_paid_tax_incl" ) - ( oQuery:FieldGetByName( "total_products" ) + oQuery:FieldGetByName( "total_shipping_tax_incl" ) )
 
    ::setCustomerInDocument( oQuery )
 
-   if ::oDocumentHeaderDatabase():Save()
+   if !( ::oDocumentHeaderDatabase() )->( neterr() )
+      ( ::oDocumentHeaderDatabase() )->( dbcommit() )
+      ( ::oDocumentHeaderDatabase() )->( dbunlock() )
+
       ::writeText( "Documento " + ::cSerieDocument + "/" + alltrim( str( ::nNumeroDocument ) ) + "/" + ::cSufijoDocument + " introducido correctamente.", 3 )
+
    else
+      
       ::writeText( "Error al descargar el documento : " + ::cSerieDocument + "/" + alltrim( str( ::nNumeroDocument ) ) + "/" + ::cSufijoDocument, 3 )
+
    end if   
 
 Return ( .t. )
@@ -161,22 +152,22 @@ Return ( .t. )
 
    local idCustomerGestool                := ::TComercioCustomer():getCustomerGestool()
 
-   if !( ::oCustomerDatabase():SeekInOrd( idCustomerGestool, "Cod" ) )
+   if !( D():gotoCliente( idCustomerGestool, ::getView() ) )
       ::writeText( "Código de cliente " + alltrim( idCustomerGestool ) + " no encontrado", 3 )
       Return ( .f. )
    end if 
 
-   ::oDocumentHeaderDatabase():cCodCli    := ::oCustomerDatabase():Cod
-   ::oDocumentHeaderDatabase():cNomCli    := ::oCustomerDatabase():Titulo
-   ::oDocumentHeaderDatabase():cDirCli    := ::oCustomerDatabase():Domicilio
-   ::oDocumentHeaderDatabase():cPobCli    := ::oCustomerDatabase():Poblacion
-   ::oDocumentHeaderDatabase():cPrvCli    := ::oCustomerDatabase():Provincia
-   ::oDocumentHeaderDatabase():cPosCli    := ::oCustomerDatabase():CodPostal
-   ::oDocumentHeaderDatabase():cDniCli    := ::oCustomerDatabase():Nif
-   ::oDocumentHeaderDatabase():cTlfCli    := ::oCustomerDatabase():Telefono
-   ::oDocumentHeaderDatabase():cCodGrp    := ::oCustomerDatabase():cCodGrp
-   ::oDocumentHeaderDatabase():nRegIva    := ::oCustomerDatabase():nRegIva
-   ::oDocumentHeaderDatabase():lModCli    := .t.
+   ( ::oDocumentHeaderDatabase() )->cCodCli    := ( D():Cliente( ::getView() ) )->Cod
+   ( ::oDocumentHeaderDatabase() )->cNomCli    := ( D():Cliente( ::getView() ) )->Titulo
+   ( ::oDocumentHeaderDatabase() )->cDirCli    := ( D():Cliente( ::getView() ) )->Domicilio
+   ( ::oDocumentHeaderDatabase() )->cPobCli    := ( D():Cliente( ::getView() ) )->Poblacion
+   ( ::oDocumentHeaderDatabase() )->cPrvCli    := ( D():Cliente( ::getView() ) )->Provincia
+   ( ::oDocumentHeaderDatabase() )->cPosCli    := ( D():Cliente( ::getView() ) )->CodPostal
+   ( ::oDocumentHeaderDatabase() )->cDniCli    := ( D():Cliente( ::getView() ) )->Nif
+   ( ::oDocumentHeaderDatabase() )->cTlfCli    := ( D():Cliente( ::getView() ) )->Telefono
+   ( ::oDocumentHeaderDatabase() )->cCodGrp    := ( D():Cliente( ::getView() ) )->cCodGrp
+   ( ::oDocumentHeaderDatabase() )->nRegIva    := ( D():Cliente( ::getView() ) )->nRegIva
+   ( ::oDocumentHeaderDatabase() )->lModCli    := .t.
 
 Return ( .t. )
 
@@ -195,31 +186,33 @@ METHOD insertLinesDocumentGestool( oQuery ) CLASS TComercioDocument
    if oQueryLine:Open() .and. ( oQueryLine:RecCount() > 0 )
 
       oQueryLine:GoTop()
-      while !oQueryLine:Eof()
+      while !( oQueryLine:eof() )
 
-         ::oDocumentLineDatabase():Append()
+         ( ::oDocumentLineDatabase() )->( dbappend() )
 
          ::setGestoolIdDocument( ::oDocumentLineDatabase() )
          
          ::setGestoolSpecificLineDocument()
          
-         ::oDocumentLineDatabase():dFecha         := ::getDate( oQuery:FieldGetByName( "date_add" ) )
-         ::oDocumentLineDatabase():cDetalle       := oQueryLine:FieldGetByName( "product_name" )
-         ::oDocumentLineDatabase():mLngDes        := oQueryLine:FieldGetByName( "product_name" )
-         ::oDocumentLineDatabase():nPosPrint      := nNumLin
-         ::oDocumentLineDatabase():nNumLin        := nNumLin
-         ::oDocumentLineDatabase():cAlmLin        := cDefAlm()
-         ::oDocumentLineDatabase():nTarLin        := 1
-         ::oDocumentLineDatabase():nUniCaja       := oQueryLine:FieldGetByName( "product_quantity" )
-         ::oDocumentLineDatabase():nPreDiv        := oQueryLine:FieldGetByName( "product_price" ) 
-         ::oDocumentLineDatabase():nDto           := oQueryLine:FieldGetByName( "reduction_percent" )
-         ::oDocumentLineDatabase():nDtoDiv        := oQueryLine:FieldGetByName( "reduction_amount_tax_excl" )
-         ::oDocumentLineDatabase():nIva           := ::TComercio:nIvaProduct( oQueryLine:FieldGetByName( "product_id" ) )
+         ( ::oDocumentLineDatabase() )->dFecha        := ::getDate( oQuery:FieldGetByName( "date_add" ) )
+         ( ::oDocumentLineDatabase() )->cDetalle      := oQueryLine:FieldGetByName( "product_name" )
+         ( ::oDocumentLineDatabase() )->mLngDes       := oQueryLine:FieldGetByName( "product_name" )
+         ( ::oDocumentLineDatabase() )->nPosPrint     := nNumLin
+         ( ::oDocumentLineDatabase() )->nNumLin       := nNumLin
+         ( ::oDocumentLineDatabase() )->cAlmLin       := cDefAlm()
+         ( ::oDocumentLineDatabase() )->nTarLin       := 1
+         ( ::oDocumentLineDatabase() )->nUniCaja      := oQueryLine:FieldGetByName( "product_quantity" )
+         ( ::oDocumentLineDatabase() )->nPreDiv       := oQueryLine:FieldGetByName( "product_price" ) 
+         ( ::oDocumentLineDatabase() )->nDto          := oQueryLine:FieldGetByName( "reduction_percent" )
+         ( ::oDocumentLineDatabase() )->nDtoDiv       := oQueryLine:FieldGetByName( "reduction_amount_tax_excl" )
+         ( ::oDocumentLineDatabase() )->nIva          := ::TComercio:nIvaProduct( oQueryLine:FieldGetByName( "product_id" ) )
 
          ::setProductInDocumentLine( oQueryLine )
 
-         if !::oDocumentLineDatabase():Save()
+         if ( ::oDocumentLineDatabase() )->( neterr() )
             ::writeText( "Error al guardar las lineas del documento " + ::idDocumentGestool() )
+         else 
+            ( ::oDocumentLineDatabase() )->( dbunlock() )
          end if
 
          oQueryLine:Skip()
@@ -248,26 +241,27 @@ METHOD setProductInDocumentLine( oQueryLine )
       Return ( .f. )
    end if 
 
-   if ::oArticleDatabase():seekInOrd( idProductGestool, "Codigo" )
+   if ( D():gotoArticulos( idProductGestool, ::getView() ) )
 
-      ::oDocumentLineDatabase():cRef        := ::oArticleDatabase():Codigo
-      ::oDocumentLineDatabase():cUnidad     := ::oArticleDatabase():cUnidad
-      ::oDocumentLineDatabase():nPesoKg     := ::oArticleDatabase():nPesoKg
-      ::oDocumentLineDatabase():cPesoKg     := ::oArticleDatabase():cUnidad
-      ::oDocumentLineDatabase():nVolumen    := ::oArticleDatabase():nVolumen
-      ::oDocumentLineDatabase():cVolumen    := ::oArticleDatabase():cVolumen
-      ::oDocumentLineDatabase():nCtlStk     := ::oArticleDatabase():nCtlStock
-      ::oDocumentLineDatabase():nCosDiv     := nCosto( ::oArticleDatabase():Codigo, ::oArticleDatabase():cAlias, ::oKitDatabase():cAlias )
-      ::oDocumentLineDatabase():cCodTip     := ::oArticleDatabase():cCodTip
-      ::oDocumentLineDatabase():cCodFam     := ::oArticleDatabase():Familia
-      ::oDocumentLineDatabase():cGrpFam     := retfld( ::oArticleDatabase():Familia, ::oFamilyDatabase():cAlias, "cCodGrp" )
-      ::oDocumentLineDatabase():lLote       := ::oArticleDatabase():lLote 
-      ::oDocumentLineDatabase():cLote       := ::oArticleDatabase():cLote 
+      ( ::oDocumentLineDatabase() )->cRef        := ( D():Articulos( ::getView() ) )->Codigo
+      ( ::oDocumentLineDatabase() )->cUnidad     := ( D():Articulos( ::getView() ) )->cUnidad
+      ( ::oDocumentLineDatabase() )->nPesoKg     := ( D():Articulos( ::getView() ) )->nPesoKg
+      ( ::oDocumentLineDatabase() )->cPesoKg     := ( D():Articulos( ::getView() ) )->cUnidad
+      ( ::oDocumentLineDatabase() )->nVolumen    := ( D():Articulos( ::getView() ) )->nVolumen
+      ( ::oDocumentLineDatabase() )->cVolumen    := ( D():Articulos( ::getView() ) )->cVolumen
+      ( ::oDocumentLineDatabase() )->nCtlStk     := ( D():Articulos( ::getView() ) )->nCtlStock
+      ( ::oDocumentLineDatabase() )->nCosDiv     := nCosto( ( D():Articulos( ::getView() ) )->Codigo, D():Articulos( ::getView() ), D():ArticulosCodigosBarras( ::getView() ) )
+      ( ::oDocumentLineDatabase() )->cCodTip     := ( D():Articulos( ::getView() ) )->cCodTip
+      ( ::oDocumentLineDatabase() )->cCodFam     := ( D():Articulos( ::getView() ) )->Familia
+      ( ::oDocumentLineDatabase() )->cGrpFam     := retfld( ( D():Articulos( ::getView() ) )->Familia, D():Familias( ::getView() ), "cCodGrp" )
+      
+      ( ::oDocumentLineDatabase() )->lLote       := ( D():Articulos( ::getView() ) )->lLote 
+      ( ::oDocumentLineDatabase() )->cLote       := ( D():Articulos( ::getView() ) )->cLote 
 
-      ::oDocumentLineDatabase():cCodPr1     := ::oArticleDatabase():cCodPrp1
-      ::oDocumentLineDatabase():cCodPr2     := ::oArticleDatabase():cCodPrp2
-      ::oDocumentLineDatabase():cValPr1     := ::getProductProperty( ::oArticleDatabase():cCodPrp1, oQueryLine:FieldGetByName( "product_name" ) )
-      ::oDocumentLineDatabase():cValPr2     := ::getProductProperty( ::oArticleDatabase():cCodPrp2, oQueryLine:FieldGetByName( "product_name" ) )
+      ( ::oDocumentLineDatabase() )->cCodPr1     := ( D():Articulos( ::getView() ) )->cCodPrp1
+      ( ::oDocumentLineDatabase() )->cCodPr2     := ( D():Articulos( ::getView() ) )->cCodPrp2
+      ( ::oDocumentLineDatabase() )->cValPr1     := ::getProductProperty( ( D():Articulos( ::getView() ) )->cCodPrp1, oQueryLine:FieldGetByName( "product_name" ) )
+      ( ::oDocumentLineDatabase() )->cValPr2     := ::getProductProperty( ( D():Articulos( ::getView() ) )->cCodPrp2, oQueryLine:FieldGetByName( "product_name" ) )
 
       Return ( .t. )
 
@@ -283,11 +277,11 @@ METHOD getProductProperty( idPropertyGestool, productName ) CLASS TComercioDocum
    local productPropertyName  := ::getNameProductProperty( idPropertyGestool, productName )
 
    if !empty( productPropertyName )
-
-      if ::oPropertyLinesDatabase():seekInOrd( upper( idPropertyGestool ) + upper( productPropertyName ), "cCodDes" )
-         productProperty      := ::oPropertyLinesDatabase():cCodTbl      
-      end if 
-
+      Return ( productProperty )
+   end if 
+   
+   if ( D():ArticulosPreciosPropiedades( ::getView() ) )->( dbseekinord( upper( idPropertyGestool ) + upper( productPropertyName ), "cCodDes" ) )
+      productProperty         := ( D():ArticulosPreciosPropiedades( ::getView() ) )->cCodTbl      
    end if 
 
 Return ( productProperty )
@@ -297,7 +291,7 @@ Return ( productProperty )
 METHOD getNameProductProperty( idPropertyGestool, productName ) CLASS TComercioDocument
 
    local cPropertieCode       := ""
-   local cPropertieName       := oRetFld( idPropertyGestool, ::oPropertyDatabase(), "cDesPro" ) 
+   local cPropertieName       := oRetFld( idPropertyGestool, D():Propiedades( ::getView() ), "cDesPro" ) 
 
    if empty( cPropertieName )
       Return ( cPropertieCode )
@@ -345,15 +339,15 @@ METHOD insertMessageDocument( oQuery ) CLASS TComercioDocument
             oQueryMessage:GoTop()
             while !oQueryMessage:eof()
 
-               ::oDocumentIncidenciaDatabase():Append()
+               ( ::oDocumentIncidenciaDatabase() )->( dbappend() )
 
                ::setGestoolIdDocument( ::oDocumentIncidenciaDatabase() )
 
-               ::oDocumentIncidenciaDatabase():dFecInc   := dFecha
-               ::oDocumentIncidenciaDatabase():mDesInc   := oQueryMessage:FieldGetByName( "message" )
-               ::oDocumentIncidenciaDatabase():lAviso    := .t.
+               ( ::oDocumentIncidenciaDatabase() )->dFecInc    := dFecha
+               ( ::oDocumentIncidenciaDatabase() )->mDesInc    := oQueryMessage:FieldGetByName( "message" )
+               ( ::oDocumentIncidenciaDatabase() )->lAviso     := .t.
 
-               ::oDocumentIncidenciaDatabase():Save()
+               ( ::oDocumentIncidenciaDatabase() )->( dbunlock() )
 
                oQueryMessage:Skip()
 
@@ -392,16 +386,16 @@ METHOD insertStateDocumentPrestashop( oQuery ) CLASS TComercioDocument
 
       while !oQueryState:Eof()
 
-         ::oDocumentEstadoDatabase():Append()
+         ( ::oDocumentEstadoDatabase() )->( dbappend() )
 
          ::setGestoolIdDocument( ::oDocumentEstadoDatabase() )
 
-         ::oDocumentEstadoDatabase():cSitua    := oQueryState:FieldGetByName( "name" )
-         ::oDocumentEstadoDatabase():dFecSit   := ::getDate( oQueryState:FieldGetByName( "date_add" ) )
-         ::oDocumentEstadoDatabase():tFecSit   := ::getTime( oQueryState:FieldGetByName( "date_add" ) )
-         ::oDocumentEstadoDatabase():idPs      := oQueryState:FieldGetByName( "id_order_history" )
+         ( ::oDocumentEstadoDatabase() )->cSitua    := oQueryState:FieldGetByName( "name" )
+         ( ::oDocumentEstadoDatabase() )->dFecSit   := ::getDate( oQueryState:FieldGetByName( "date_add" ) )
+         ( ::oDocumentEstadoDatabase() )->tFecSit   := ::getTime( oQueryState:FieldGetByName( "date_add" ) )
+         ( ::oDocumentEstadoDatabase() )->idPs      := oQueryState:FieldGetByName( "id_order_history" )
                   
-         ::oDocumentEstadoDatabase():Save()
+         ( ::oDocumentEstadoDatabase() )->( dbunlock() )
 
          oQueryState:Skip()
 
