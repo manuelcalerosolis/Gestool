@@ -53,6 +53,8 @@ METHOD New() CLASS InvoiceCustomer
 
    ::oProduct              := Product():init( self )
 
+   ::oProductStock         := ProductStock():init( self )
+
    ::oStore                := Store():init( self )
 
    ::oPayment              := Payment():init( self )

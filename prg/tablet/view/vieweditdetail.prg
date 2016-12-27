@@ -207,19 +207,18 @@ Return ( self )
 
 METHOD defineLote() CLASS ViewDetail
 
-   ::oSayLote                 := TGridSay():Build( {  "nRow"      => ::getRow(),;
-                                                      "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
-                                                      "bText"     => {|| "Lote" },;
+   ::oSayLote              :=TGridUrllink():Build( {  "nTop"      => ::getRow(),;
+                                                      "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
+                                                      "cURL"      => "Lote",;
                                                       "oWnd"      => ::oDlg,;
                                                       "oFont"     => oGridFont(),;
-                                                      "lPixels"   => .t.,;
-                                                      "nClrText"  => Rgb( 0, 0, 0 ),;
-                                                      "nClrBack"  => Rgb( 255, 255, 255 ),;
-                                                      "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
-                                                      "nHeight"   => 23,;
-                                                      "lDesign"   => .f. } )
+                                                      "lPixel"    => .t.,;
+                                                      "nClrInit"  => nGridColor(),;
+                                                      "nClrOver"  => nGridColor(),;
+                                                      "nClrVisit" => nGridColor(),;
+                                                      "bAction"   => {|| ::oSender:runGridLote() } } )
 
-   ::oGetLote                 := TGridGet():Build( {  "nRow"      => ::getRow(),;
+   ::oGetLote              := TGridGet():Build( {     "nRow"      => ::getRow(),;
                                                       "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
                                                       "bSetGet"   => {|u| ::SetGetValue( u, "Lote" ) },;
                                                       "oWnd"      => ::oDlg,;

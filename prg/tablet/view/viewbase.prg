@@ -35,7 +35,7 @@ CLASS ViewBase
    METHOD loadBrowseConfiguration()                      INLINE ( if( !empty( ::oBrowse ) .and. !empty( ::oBrowse:cName ), ::oBrowse:Load(), ) )
 
    METHOD setTitleDocumento( cTitleDocumento )           INLINE ( if( !empty( cTitleDocumento ), ::cTitleDocumento := cTitleDocumento, ) )
-   METHOD getTitleDocumento()                            INLINE ( ::oSender:textMode() + lower( ::cTitleDocumento ) )
+   METHOD getTitleDocumento()                            INLINE ( if( !empty( ::oSender:textMode() ), ::oSender:textMode() + lower( ::cTitleDocumento ), ::cTitleDocumento ) )
 
    METHOD setPreShowDialog( bPreShowDialog )             INLINE ( ::bPreShowDialog := bPreShowDialog )
    METHOD evalPreShowDialog()                            INLINE ( if( !empty( ::bPreShowDialog ), eval( ::bPreShowDialog, self ), ) )

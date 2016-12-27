@@ -19,6 +19,8 @@ CLASS Editable
    DATA cDataTable
    DATA cDataTableLine
 
+   DATA cDataArray
+
    DATA oViewNavigator
    DATA oViewSearchNavigator
    DATA oViewEdit
@@ -65,6 +67,9 @@ CLASS Editable
 
    METHOD setDataTable( cDataTable )            INLINE ( ::cDataTable := cDataTable )
    METHOD getDataTable()                        INLINE ( ::cDataTable )
+
+   METHOD setDataArray( cDataArray )            INLINE ( ::cDataArray := cDataArray )
+   METHOD getDataArray()                        INLINE ( ::cDataArray )
 
    METHOD setDataTableLine( cDataTableLine )    INLINE ( ::cDataTableLine := cDataTableLine )
    METHOD getDataTableLine()                    INLINE ( ::cDataTableLine )

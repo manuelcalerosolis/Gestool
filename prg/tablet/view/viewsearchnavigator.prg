@@ -84,7 +84,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD initDialog()
+METHOD initDialog() CLASS ViewSearchNavigator
 
    ::Super:initDialog()
 
@@ -98,7 +98,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD validDialog()
+METHOD validDialog() CLASS ViewSearchNavigator
 
    ::saveStatusComboboxSearch()
 
