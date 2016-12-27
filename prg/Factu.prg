@@ -4959,7 +4959,7 @@ Function MainTablet()
 
 	// Redimensionamos y activamos el diálogo----------------------------------- 
 
-	oDlg:bResized       := {|| GridResize( oDlg ) }
+   oDlg:bResized       := {|| GridResize( oDlg ) }
    oDlg:bStart         := {|| oGridTree:Add( "Empresa : "      + uFieldEmpresa( "CodEmp" ) + "-" + uFieldEmpresa( "cNombre" ) ),;
                               oGridTree:Add( "Usuario : "      + Rtrim( oUser():cNombre() ) ),;
                               oGridTree:Add( "Delegación : "   + Rtrim( oUser():cDelegacion() ) ),;

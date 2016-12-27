@@ -1502,7 +1502,7 @@ METHOD nPutStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nKit
       cClass      := oSay:ClassName()
 
       do case
-         case cClass == "TGET" .or. cClass == "TGETHLP"
+         case cClass == "TGET" .or. cClass == "TGETHLP" .or. cClass == "TGRIDGET"
             oSay:cText( nStock )
          case cClass == "TSAY"
             oSay:SetText( nStock )

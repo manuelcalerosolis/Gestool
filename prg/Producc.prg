@@ -1216,7 +1216,7 @@ METHOD Resource( nMode, aDatosAnterior )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "partes_producion_48_alpha" ;
+        RESOURCE "gc_document_text_worker_48" ;
         TRANSPARENT ;
         OF       ::oFld:aDialogs[1]
 
@@ -1228,13 +1228,13 @@ METHOD Resource( nMode, aDatosAnterior )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "worker_48_alpha" ;
+        RESOURCE "gc_worker2_48" ;
         TRANSPARENT ;
         OF       ::oFld:aDialogs[3]
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "robot_48_alpha" ;
+        RESOURCE "gc_industrial_robot_48" ;
         TRANSPARENT ;
         OF       ::oFld:aDialogs[4]
 
@@ -4315,8 +4315,8 @@ Method lCreateAuxiliar() CLASS TProduccion
    local oError
    local lCreateAuxiliar   := .t.
 
-   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   /*oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE*/
 
    /*
    Creo y activo la base de datos temporal-------------------------------------
@@ -4332,9 +4332,9 @@ Method lCreateAuxiliar() CLASS TProduccion
    Cargo los valores en la base se datos temporal------------------------------
    */
 
-   ::LoadAuxiliar()
+   ::LoadAuxiliar() 
 
-   RECOVER USING oError
+   /*RECOVER USING oError
 
       lCreateAuxiliar      := .f.
 
@@ -4342,7 +4342,7 @@ Method lCreateAuxiliar() CLASS TProduccion
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
 
 Return ( lCreateAuxiliar )
 

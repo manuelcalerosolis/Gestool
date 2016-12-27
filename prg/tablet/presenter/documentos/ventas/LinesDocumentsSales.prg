@@ -73,6 +73,7 @@ CLASS LinesDocumentsSales FROM Editable
    METHOD setPrecioCosto( nCosto )                          INLINE ( ::hSetDetail( "PrecioCosto", nCosto ) )
       METHOD setPrecioCostoMedio()                          VIRTUAL         
    METHOD setPrecioVenta( nPrecioVenta )                    INLINE ( ::hSetDetail( "PrecioVenta", nPrecioVenta ) )
+   METHOD setStockArticulo()
 
    METHOD setOldCodigoArticulo()                            INLINE ( ::cOldCodigoArticulo := ::hGetDetail( "Articulo" ) )
    METHOD resetOldCodigoArticulo()                          INLINE ( ::cOldCodigoArticulo := "" )
@@ -114,6 +115,7 @@ CLASS LinesDocumentsSales FROM Editable
 
    METHOD cargaArticulo()
    METHOD cargaAlmacen()
+   METHOD cargaLote()
 
    METHOD setLineFromArticulo() 
 
@@ -131,6 +133,8 @@ CLASS LinesDocumentsSales FROM Editable
    METHOD insertKit( cCodigoArticulo ) 
 
    METHOD lValidResourceDetail()
+
+   METHOD setObsequio()
 
 //---------------------------------------------------------------------------//
 
@@ -325,7 +329,28 @@ METHOD setLineFromArticulo() CLASS LinesDocumentsSales
 
    ::setLineaEscandallo( ( D():Articulos( ::getView() ) )->lKitArt )
 
+   ::setStockArticulo()
+
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setStockArticulo() 
+ 
+   if ( GetPvProfString( "Tablet", "Stock", ".F.", cIniAplication() ) == ".F." )
+      Return nil
+   end if
+
+   ::oSender:oStock:nPutStockActual( ::hGetDetail( "Articulo" ),;
+                                     ::hGetDetail( "Almacen" ),;
+                                     ::hGetDetail( "ValorPropiedad1" ),;
+                                     ::hGetDetail( "ValorPropiedad2" ),;
+                                     ::hGetDetail( "Lote" ),;
+                                     ::hGetDetail( "LineaEscandallo" ),;
+                                     ::hGetDetail( "TipoStock" ),;
+                                     ::oViewEditDetail:oGetStock )
+
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -372,7 +397,21 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD CargaAlmacen() CLASS LinesDocumentsSales
+METHOD cargaLote( cCodigoArticulo ) CLASS LinesDocumentsSales
+
+   ::oViewEditDetail:disableDialog()
+
+   ::setStockArticulo()
+
+   ::oViewEditDetail:enableDialog()
+
+   ::oViewEditDetail:refreshDialog()
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD cargaAlmacen() CLASS LinesDocumentsSales
 
    if !::lSeekAlmacen()
       apoloMsgStop( "Almacén no encontrado" )
@@ -380,6 +419,14 @@ METHOD CargaAlmacen() CLASS LinesDocumentsSales
    end if
 
    ::setNombreAlmacen( ( D():Almacen( ::getView() ) )->cNomAlm )
+
+   ::oViewEditDetail:disableDialog()
+   
+   ::setStockArticulo()
+
+   ::oViewEditDetail:enableDialog()
+
+   ::oViewEditDetail:refreshDialog()
 
 Return ( .t. )
 
@@ -477,6 +524,8 @@ METHOD lValidResourceDetail() CLASS LinesDocumentsSales
 
    local lReturn  := .t.
 
+   ::oViewEditDetail:oGetArticulo:lValid()   
+
    ::oViewEditDetail:oGetLote:lValid()
 
    if ::hGetDetail( "LogicoLote" ) .and. Empty( ::hGetDetail( "Lote" ) )
@@ -484,7 +533,7 @@ METHOD lValidResourceDetail() CLASS LinesDocumentsSales
       apoloMsgStop( "El campo lote es obligatorio" )
 
       ::oViewEditDetail:oGetLote:SetFocus()
-
+ 
       lReturn        := .f.
 
    end if
@@ -553,3 +602,18 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD setObsequio() CLASS LinesDocumentsSales
+
+   ::hSetDetail( "PrecioVenta", 0 )
+   ::oViewEditDetail:oGetPrecio:Refresh()
+
+   ::recalcularTotal()
+
+   ::oViewEditDetail:oGetArticulo:SetFocus()
+   ::oViewEditDetail:oGetArticulo:lValid()
+
+   ::oViewEditDetail:refreshDialog()
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//

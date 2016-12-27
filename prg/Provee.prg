@@ -1736,7 +1736,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          ID       290 ;
          WHEN     ( .t. ) ;
          OF       oFld:aDialogs[ 7 ] ;
-         RESOURCE "Calendar_16" ;
+         RESOURCE "gc_calendar_16" ;
          NOBORDER ;
          TOOLTIP  "Fecha/Hora" ;
          ACTION   ( DateTimeRich( oRTF ) )

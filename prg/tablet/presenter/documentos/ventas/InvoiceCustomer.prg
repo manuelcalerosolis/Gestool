@@ -24,6 +24,9 @@ CLASS InvoiceCustomer FROM DocumentsSales
    METHOD onPostSaveAppend()              INLINE ( generatePagosFacturaCliente( ::getId(), ::nView ),;
                                                    checkPagosFacturaCliente( ::getId(), ::nView ) )
 
+   METHOD onPostSaveEdit()                INLINE ( generatePagosFacturaCliente( ::getId(), ::nView ),;
+                                                   checkPagosFacturaCliente( ::getId(), ::nView ) )
+
    METHOD appendButtonMode()              INLINE ( ::lAppendMode() .or. ( ::lEditMode() .and. accessCode():lInvoiceModify ) )
    METHOD editButtonMode()                INLINE ( ::appendButtonMode() )
    METHOD deleteButtonMode()              INLINE ( ::appendButtonMode() )
@@ -181,4 +184,3 @@ METHOD deleteLinesDocument() CLASS InvoiceCustomer
 Return ( Self )
 
 //---------------------------------------------------------------------------//
-

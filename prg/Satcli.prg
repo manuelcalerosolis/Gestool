@@ -1928,7 +1928,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "S.A.T._cliente_48_alpha" ;
+        RESOURCE "gc_power_drill_sat_user_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[1]
 

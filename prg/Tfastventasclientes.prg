@@ -25,6 +25,11 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
 
    DATA  lApplyFilters                    INIT .t.
 
+   DATA oCamposExtra
+   DATA aExtraFields                      INIT {}
+
+   DATA  aTypeDocs                        INIT { "C", "N", "D", "L", "C" } 
+
    METHOD lResource()
 
    METHOD Create()
@@ -87,6 +92,9 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
 
    METHOD setFilterUserId()               INLINE ( if( ::lApplyFilters,;
                                                    ::cExpresionHeader  += ' .and. ( Field->cCodUsr >= "' + ::oGrupoUsuario:Cargo:Desde + '" .and. Field->cCodUsr <= "' + ::oGrupoUsuario:Cargo:Hasta + '" )', ) )
+
+   METHOD AddFieldCamposExtra()
+   METHOD loadValuesExtraFields()
 
 END CLASS
 
@@ -226,6 +234,14 @@ METHOD OpenFiles() CLASS TFastVentasClientes
          lOpen                := .f.
       end if
 
+      ::oCamposExtra := TDetCamposExtra():New( cPatEmp(), ::cDriver )
+      if !::oCamposExtra:OpenFiles()
+         lOpen       := .f.
+      else 
+         ::oCamposExtra:setTipoDocumento( "Facturas a clientes" )
+         ::aExtraFields := ::oCamposExtra:aExtraFields()
+      end if
+
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de clientes" )
@@ -344,6 +360,11 @@ METHOD CloseFiles() CLASS TFastVentasClientes
       ::oStock:End()
    end if
 
+   if !Empty( ::oCamposExtra )
+      ::oCamposExtra:CloseFiles()
+      ::oCamposExtra:End()
+   end if
+
 RETURN .t.
 
 //---------------------------------------------------------------------------//
@@ -393,6 +414,7 @@ METHOD Create( uParam ) CLASS TFastVentasClientes
    ::AddField( "nIva",     "N",  6, 2, {|| "" },   "Porcentaje impuesto"                     )
    ::AddField( "nReq",     "N",  6, 2, {|| "" },   "Porcentaje recargo"                      )
    ::AddField( "lCobRec",  "L",  1, 0, {|| "" },   "Lógico recibo cobrado"                   )
+   ::AddField( "nComAge",  "N",  6, 2, {|| "" },   "Comisión agente"                         )
 
    ::AddField( "uCargo",   "C", 20, 0, {|| "" },   "Cargo"                                   )
 
@@ -403,9 +425,34 @@ METHOD Create( uParam ) CLASS TFastVentasClientes
    ::AddField( "nRieCli",  "N", 16, 0, {|| "" },            "Riesgo del cliente"             )
    ::AddField( "dFecVto",  "D",  8, 0, {|| "" },            "Vencimiento del recibo"         )
 
+   ::AddFieldCamposExtra()
+
    ::AddTmpIndex( "cCodCli", "cCodCli" )
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddFieldCamposExtra() CLASS TFastVentasClientes
+
+   local cField
+   
+   if isArray( ::aExtraFields ) .and. Len( ::aExtraFields ) != 0
+
+      for each cField in ::aExtraFields
+
+         ::AddField( "fld" + cField[ "código" ],;
+                     ::aTypeDocs[ cField[ "tipo" ] ] ,;
+                     cField[ "longitud" ],;
+                     cField[ "decimales" ],;
+                     {|| ::oCamposExtra:cPictData( cField ) },;
+                     Capitalize( cField[ "descripción" ] ) )
+
+      next
+
+   end if
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -895,6 +942,8 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cCodUsr    := ::oSatCliT:cCodUsr
             ::oDbf:cCodObr    := ::oSatCliT:cCodObr
 
+            ::oDbf:nComAge    := ::oSatCliT:nPctComAge
+
             ::oDbf:cCodPos    := ::oSatCliT:cPosCli
 
             ::oDbf:cCodGrp    := cGruCli( ::oSatCliT:cCodCli, ::oDbfCli )
@@ -1023,6 +1072,8 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cCodUsr    := ::oPreCliT:cCodUsr
             ::oDbf:cCodObr    := ::oPreCliT:cCodObr
 
+            ::oDbf:nComAge    := ::oPreCliT:nPctComAge
+
             ::oDbf:cCodPos    := ::oPreCliT:cPosCli
 
             ::oDbf:cCodGrp    := cGruCli( ::oPreCliT:cCodCli, ::oDbfCli )
@@ -1149,6 +1200,8 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cCodPgo    := ::oPedCliT:cCodPgo
             ::oDbf:cCodRut    := ::oPedCliT:cCodRut
             ::oDbf:cCodObr    := ::oPedCliT:cCodObr
+
+            ::oDbf:nComAge    := ::oPedCliT:nPctComAge
 
             ::oDbf:cCodPos    := ::oPedCliT:cPosCli
 
@@ -1288,6 +1341,8 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
             ::oDbf:cCodRut    := ::oAlbCliT:cCodRut
             ::oDbf:cCodObr    := ::oAlbCliT:cCodObr
 
+            ::oDbf:nComAge    := ::oAlbCliT:nPctComAge
+
             ::oDbf:cCodPos    := ::oAlbCliT:cPosCli
 
             ::oDbf:cCodGrp    := cGruCli( ::oAlbCliT:cCodCli, ::oDbfCli )
@@ -1420,6 +1475,8 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cCodUsr    := ::oFacCliT:cCodUsr
             ::oDbf:cCodObr    := ::oFacCliT:cCodObr
 
+            ::oDbf:nComAge    := ::oFacCliT:nPctComAge
+
             ::oDbf:cCodPos    := ::oFacCliT:cPosCli
 
             ::oDbf:cCodGrp    := cGruCli( ::oFacCliT:cCodCli, ::oDbfCli )
@@ -1465,6 +1522,8 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
             end if
 
             ::addFacturasClientes()
+
+            ::loadValuesExtraFields()
 
          end if
 
@@ -1540,6 +1599,8 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
          ::oDbf:cCodRut    := ::oFacRecT:cCodRut
          ::oDbf:cCodUsr    := ::oFacRecT:cCodUsr
          ::oDbf:cCodObr    := ::oFacRecT:cCodObr
+
+         ::oDbf:nComAge    := ::oFacRecT:nPctComAge
 
          ::oDbf:cCodPos    := ::oFacRecT:cPosCli
 
@@ -1880,6 +1941,7 @@ METHOD insertFacturaCliente()
                   ::oDbf:cCodRut    := ::oFacCliT:cCodRut
                   ::oDbf:cCodUsr    := ::oFacCliT:cCodUsr
                   ::oDbf:cCodObr    := ::oFacCliT:cCodObr
+                  ::oDbf:nComAge    := ::oFacCliT:nPctComAge
 
                   ::oDbf:cCodPos    := ::oFacCliT:cPosCli
 
@@ -2012,6 +2074,7 @@ METHOD insertRectificativa()
                   ::oDbf:cCodRut    := ::oFacRecT:cCodRut
                   ::oDbf:cCodUsr    := ::oFacRecT:cCodUsr
                   ::oDbf:cCodObr    := ::oFacRecT:cCodObr
+                  ::oDbf:nComAge    := ::oFacrecT:nPctComAge
 
                   ::oDbf:cCodPos    := ::oFacRecT:cPosCli
 
@@ -2257,7 +2320,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD preCliInfo()
+METHOD preCliInfo() CLASS TFastVentasClientes
 
    local cKey  := ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
 
@@ -2270,6 +2333,43 @@ METHOD preCliInfo()
    end if
 
 RETURN nil 
+
+//---------------------------------------------------------------------------//
+
+METHOD loadValuesExtraFields() CLASS TFastVentasClientes
+
+   local cField
+   local Valor
+
+   if isArray( ::aExtraFields ) .and. Len( ::aExtraFields ) != 0
+
+      for each cField in ::aExtraFields
+
+         Valor             := ::oCamposExtra:valueExtraField( cField[ "código" ], ::oDbf:cSerDoc + Padr( ::oDbf:cNumDoc, 9 ) + ::oDbf:cSufDoc, cField )
+
+         do case         
+            case cField[ "tipo" ] == 2
+               Valor       := Val( Valor )
+
+            case cField[ "tipo" ] == 4
+
+               if Empty( Valor )
+                  Valor    := .f.
+               else
+                  Valor    := ( AllTrim( Valor ) == "si" )
+               end if
+
+         end case
+
+         ::oDbf:FieldPutByName(  "fld" + cField[ "código" ], Valor )
+
+         ::oDbf:fieldput( fieldpos( "fld" + cField[ "código" ] ), Valor )
+
+      next
+
+   end if
+
+return nil
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

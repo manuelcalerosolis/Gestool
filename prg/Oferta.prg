@@ -76,7 +76,7 @@ static dbfProMat
 static dbfHisMov
 
 static aTipoOferta   := { "Artículos", "Familias", "Tipo de artículo", "Categorias", "Temporadas", "Fabricantes" }
-static aBmpOferta    := { "gc_object_cube_16", "cubes_16", "cubes_blue_16", "gc_photographic_filters_16", "sun_and_cloud_16", "nut_and_bolt_16" }
+static aBmpOferta    := { "gc_object_cube_16", "gc_cubes_16", "gc_objects_16", "gc_photographic_filters_16", "gc_cloud_sun_16", "gc_bolt_16" }
 
 static oBandera
 
@@ -484,11 +484,11 @@ FUNCTION Oferta( oMenuItem, oWnd )
          :bBmpData         := {|| ( dbfOferta )->nTblOfe }
          :nWidth           := 110
          :AddResource( "gc_object_cube_16" )
-         :AddResource( "cubes_16" )
-         :AddResource( "cubes_blue_16" )
+         :AddResource( "gc_cubes_16" )
+         :AddResource( "gc_objects_16" )
          :AddResource( "gc_photographic_filters_16" )
-         :AddResource( "sun_and_cloud_16" )
-         :AddResource( "nut_and_bolt_16" )
+         :AddResource( "gc_cloud_sun_16" )
+         :AddResource( "gc_bolt_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1491,11 +1491,11 @@ FUNCTION BrwOfe( oGet, dbfOferta, oGet2 )
          :bBmpData         := {|| ( dbfOferta )->nTblOfe }
          :nWidth           := 110
          :AddResource( "gc_object_cube_16" )
-         :AddResource( "cubes_16" )
-         :AddResource( "cubes_blue_16" )
+         :AddResource( "gc_cubes_16" )
+         :AddResource( "gc_objects_16" )
          :AddResource( "gc_photographic_filters_16" )
-         :AddResource( "sun_and_cloud_16" )
-         :AddResource( "nut_and_bolt_16" )
+         :AddResource( "gc_cloud_sun_16" )
+         :AddResource( "gc_bolt_16" )
       end with
 
       with object ( oBrw:AddCol() )

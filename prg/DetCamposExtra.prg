@@ -365,7 +365,7 @@ METHOD Resource() CLASS TDetCamposExtra
 
    REDEFINE BITMAP oBmp ;
       ID          600 ;
-      RESOURCE    "form_green_add_48_alpha" ;
+      RESOURCE    "gc_form_plus2_48" ;
       TRANSPARENT ;
       OF          ::oDlg
 

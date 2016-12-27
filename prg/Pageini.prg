@@ -655,7 +655,7 @@ Static Function PageIniIncidecias()
 
       REDEFINE BITMAP oBmpIncidencias ;
          ID          500 ;
-         RESOURCE    "Sign_Warning_Alpha_48" ;
+         RESOURCE    "gc_sign_warning_48" ;
          TRANSPARENT ;
          OF          oFld:aDialogs[ nFolder ] 
 

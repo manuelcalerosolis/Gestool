@@ -298,6 +298,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
    local oBmpGeneral
    local oBmpComisiones
    local oBmpTarifa
+   local oBmpRelaciones
 
    /*
    Comienza la transaccion-----------------------------------------------------
@@ -325,7 +326,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       500 ;
-         RESOURCE "Security_Agent_48_Alpha" ;
+         RESOURCE "gc_businessman2_48" ;
          TRANSPARENT ;
          OF       fldGeneral
 
@@ -423,7 +424,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
 
       REDEFINE BITMAP oBmpComisiones ;
          ID       500 ;
-         RESOURCE "Symbol_Percent_48_Alpha" ;
+         RESOURCE "gc_symbol_percent_48" ;
          TRANSPARENT ;
          OF       fldComisiones
 
@@ -743,6 +744,11 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
       /*
       Tercera pestaña----------------------------------------------------------
       */
+         REDEFINE BITMAP oBmpRelaciones ;
+         ID       500 ;
+         RESOURCE "gc_businessman2_48" ;
+         TRANSPARENT ;
+         OF       fldRelaciones
 
       oBrwRel                 := IXBrowse():New( fldRelaciones )
 
@@ -828,6 +834,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
    oBmpGeneral:End()
    oBmpComisiones:End()
    oBmpTarifa:End()
+   oBmpRelaciones:End()
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -1891,7 +1898,7 @@ Function lGetAgente( oGetAgente, dbfAgente )
 
       REDEFINE BITMAP oBmpUsuario ;
          ID       500 ;
-         RESOURCE "Security_Agent_48_Alpha" ;
+         RESOURCE "gc_businessman2_48" ;
          TRANSPARENT ;
          OF       oDlg
 

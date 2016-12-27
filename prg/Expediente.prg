@@ -845,7 +845,7 @@ METHOD Resource( nMode, aDatosAnterior )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "gc_folder_document_48_alpha" ;
+        RESOURCE "gc_folder_document_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[1]
 

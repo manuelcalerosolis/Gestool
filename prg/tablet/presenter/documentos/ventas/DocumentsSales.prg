@@ -68,7 +68,7 @@ CLASS DocumentsSales FROM Documents
    METHOD getCounterDocuments()                             INLINE ( ::cCounterDocuments )
 
    METHOD OpenFiles()
-   METHOD CloseFiles()                                      INLINE ( D():DeleteView( ::nView ) )
+   METHOD CloseFiles()
 
    METHOD getSerie()                                        INLINE ( ::hGetMaster( "Serie" ) )
    METHOD getNumero()                                       INLINE ( ::hGetMaster( "Numero" ) )
@@ -304,6 +304,11 @@ METHOD OpenFiles() CLASS DocumentsSales
 
       D():TiposIncidencias( ::nView )
 
+      ::oStock            := TStock():Create( cPatGrp() )
+      if !::oStock:lOpenFiles()
+         lOpenFiles     := .f.
+      end if
+
    RECOVER USING oError
 
       lOpenFiles        := .f.
@@ -319,6 +324,20 @@ METHOD OpenFiles() CLASS DocumentsSales
    end if
 
 Return ( lOpenFiles )
+
+//---------------------------------------------------------------------------//
+
+METHOD CloseFiles() CLASS DocumentsSales
+   
+   D():DeleteView( ::nView )
+
+   if !empty( ::oStock )
+      ::oStock:end()
+   end if
+
+   ::oStock    := nil
+
+Return nil
 
 //---------------------------------------------------------------------------//
 
@@ -843,7 +862,14 @@ METHOD setDatasInDictionaryMaster( NumeroDocumento ) CLASS DocumentsSales
       hSet( ::hDictionaryMaster, "Numero", NumeroDocumento )
    end if 
 
+<<<<<<< HEAD
    ::oTotalDocument:Calculate()
+=======
+   hSet( ::hDictionaryMaster, "Envio", .t. )  
+
+   hSet( ::hDictionaryMaster, "FechaCreacion", date() )  
+   hSet( ::hDictionaryMaster, "HoraCreacion", time() )  
+>>>>>>> bbd781021757995a1d6fe6c298532e68e11f2e89
 
    hSet( ::hDictionaryMaster, "TotalDocumento", ::oTotalDocument:getTotalDocument() )
 
@@ -904,7 +930,13 @@ Return ( lResource )
 
 METHOD onPreSaveAppend() CLASS DocumentsSales
 
+<<<<<<< HEAD
    local numeroDocumento         := nNewDoc( ::getSerie(), ::getWorkArea(), ::getCounterDocuments(), , D():Contadores( ::nView ) )
+=======
+   local numeroDocumento
+
+   numeroDocumento               := nNewDoc( ::getSerie(), ::getWorkArea(), ::getCounterDocuments(), , D():Contadores( ::nView ) )
+>>>>>>> bbd781021757995a1d6fe6c298532e68e11f2e89
    
    if empty( numeroDocumento )
       Return ( .f. )

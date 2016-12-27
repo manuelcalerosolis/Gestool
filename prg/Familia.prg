@@ -2397,7 +2397,7 @@ FUNCTION pdaBrwFamilia( oGet, oGet2 )
       REDEFINE BTNBMP oBtn ;
          ID       100 ;
          OF       oDlg ;
-         FILE     ( cPatBmp() + "Cubes_16.bmp" ) ;
+         FILE     ( cPatBmp() + "gc_cubes_16.bmp" ) ;
          NOBORDER ;
          ACTION      ( nil )
 
@@ -2560,7 +2560,7 @@ FUNCTION pdaFamilia( oMenuItem )
       REDEFINE BTNBMP oBtn ;
          ID       130 ;
          OF       oDlg ;
-         FILE     ( cPatBmp() + "Cubes_16.bmp" ) ;
+         FILE     ( cPatBmp() + "gc_cubes_16.bmp" ) ;
          NOBORDER ;
          ACTION      ( nil )
 
@@ -2661,7 +2661,7 @@ Static Function PdaEdtRec( aTmp, aGet, dbfFamilia, oBrw, oDlgAnt, bValid, nMode 
       REDEFINE BTNBMP oBtn ;
          ID       100 ;
          OF       oDlg ;
-         FILE     ( cPatBmp() + "Cubes_16.bmp" ) ;
+         FILE     ( cPatBmp() + "gc_cubes_16.bmp" ) ;
          NOBORDER ;
          ACTION      ( nil )
 

@@ -247,7 +247,7 @@ METHOD Resource( nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
          ID          600 ;
-         RESOURCE    "businessmen_48" ;
+         RESOURCE    "gc_users3_48" ;
          TRANSPARENT ;
          OF          oFld:aDialogs[ 1 ]
 

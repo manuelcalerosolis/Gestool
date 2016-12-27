@@ -623,7 +623,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
 
    REDEFINE BITMAP   oBmpStock;
          ID          500 ;
-         RESOURCE    "Package_48_alpha" ;
+         RESOURCE    "gc_package_48" ;
          TRANSPARENT ;
          OF          fldStocks
 

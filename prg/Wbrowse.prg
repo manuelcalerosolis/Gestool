@@ -4078,7 +4078,7 @@ Method RightButtonDown( nRow, nCol, nFlags ) CLASS TWBrowse
 
          ::bMenuSelect  := nil
 
-         MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| ::ExportToExcel() }, , "Text_Sum_16", oMenu )
+         MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| ::ExportToExcel() }, , "gc_spreadsheet_sum_16", oMenu )
 
          MenuAddItem( "Exportar a &Word", "Exportar rejilla de datos a Word", .f., .t., {|| ::ExportToWord() }, , "Text_Rich_16", oMenu )
 

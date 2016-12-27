@@ -640,7 +640,7 @@ METHOD New( cSubTitle, aFields, aIndex, oMenuItem, oWnd, cHelp, xOthers ) CLASS 
    aAdd( ::aBmpReport, "PREV116"    )
 
    aAdd( ::aCmbReport, "Imprimir"   )
-   aAdd( ::aBmpReport, "IMPBUTTON"  )
+   aAdd( ::aBmpReport, "gc_printer2_16"  )
 
    aAdd( ::aCmbReport, "Excel"      )
    aAdd( ::aBmpReport, "TABLE"      )
@@ -1964,7 +1964,7 @@ METHOD oDefIniInf( nId, oDlg, nIdSay ) CLASS TInfGen
       aAdd( ::aSelectionGroup, oGroup )
 
       if ::oImageGroup != nil
-         ::oImageGroup:AddMasked( TBitmap():Define( "Calendar_16" ), Rgb( 255, 0, 255 ) )
+         ::oImageGroup:AddMasked( TBitmap():Define( "gc_calendar_16" ), Rgb( 255, 0, 255 ) )
          oGroup:Cargo:Imagen     := len( ::oImageGroup:aBitmaps ) -1
       end if
 

@@ -209,7 +209,7 @@ METHOD Resource( nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "worker_48_alpha" ;
+        RESOURCE "gc_worker2_48" ;
         TRANSPARENT ;
         OF       oDlg
 

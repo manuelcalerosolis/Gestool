@@ -513,7 +513,7 @@ METHOD OnClickFiltro() CLASS TpvListaTicket
       REDEFINE BUTTONBMP ;
          ID       101 ;
          OF       ::oDlgFiltro ;
-         BITMAP   "Calendar_16" ;
+         BITMAP   "gc_calendar_16" ;
          ACTION   ( ::oGetFechaIni:cText( Calendario( ::dGetFechaIni ) ) )
 
       REDEFINE GET ::oGetFechaFin VAR ::dGetFechaFin;
@@ -524,7 +524,7 @@ METHOD OnClickFiltro() CLASS TpvListaTicket
       REDEFINE BUTTONBMP ;
          ID       111 ;
          OF       ::oDlgFiltro ;
-         BITMAP   "Calendar_16" ;
+         BITMAP   "gc_calendar_16" ;
          ACTION   ( ::oGetFechaFin:cText( Calendario( ::dGetFechaFin ) ) )
 
       REDEFINE GET ::oGetUsuario VAR ::cUsuario ;

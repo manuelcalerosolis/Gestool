@@ -18,6 +18,9 @@ CLASS ViewDetail FROM ViewBase
    DATA oGetLote
    DATA oSayLote
 
+   DATA oGetStock
+   DATA nGetStock
+
    DATA oGetCajas
    DATA oGetUnidades
    DATA oGetPrecio
@@ -39,7 +42,7 @@ CLASS ViewDetail FROM ViewBase
       METHOD getValue( cFieldName )          INLINE   ( hGet( ::getSenderDocument():oDocumentLineTemporal:hDictionary, cFieldName ) )
       METHOD setValue( uValue, cFieldName )  INLINE   ( hSet( ::getSenderDocument():oDocumentLineTemporal:hDictionary, cFieldName, uValue ) ) 
 
-   METHOD getChangePrecio()                  INLINE   ( ::Super:getChangePrecio() .or. ::getValue( "PrecioVenta" ) == 0 )
+   METHOD getChangePrecio()                  INLINE   ( ::Super:getChangePrecio() ) //.or. ::getValue( "PrecioVenta" ) == 0 )
 
    METHOD defineAceptarCancelar()
    METHOD defineArticulo()
@@ -51,6 +54,7 @@ CLASS ViewDetail FROM ViewBase
    METHOD defineDescuentoLineal()
    METHOD defineTotal()
    METHOD defineAlmacen()
+   METHOD defineStock()
 
    METHOD showLote()                         INLINE ( ::oGetLote:Show(), ::oSayLote:Show() )
    METHOD hideLote()                         INLINE ( ::oGetLote:Hide(), ::oSayLote:Hide() )
@@ -65,6 +69,7 @@ CLASS ViewDetail FROM ViewBase
    METHOD refreshGetDescuento()              INLINE ( ::oGetDescuento:Refresh() )
    METHOD refreshGetDescuentoLineal()        INLINE ( ::oGetDescuentoLineal:Refresh() )
    METHOD refreshGetAlmacen()                INLINE ( ::oGetAlmacen:Refresh() )
+   METHOD refreshGetStock()                  INLINE ( if( !Empty( ::oGetStock ), ::oGetStock:Refresh(), ) )
 
    METHOD RefreshDialog()
       METHOD startDialog()
@@ -78,7 +83,9 @@ END CLASS
 
 METHOD New( oSender ) CLASS ViewDetail
 
-   ::oSender   := oSender
+   ::oSender      := oSender
+
+   ::nGetStock    := 0
 
 Return ( self )
 
@@ -109,6 +116,10 @@ METHOD Resource( nMode ) CLASS ViewDetail
    ::defineTotal()
 
    ::defineAlmacen()
+
+   if ( GetPvProfString( "Tablet", "Stock", ".F.", cIniAplication() ) == ".T." )
+      ::defineStock()
+   end if
 
    ::defineAceptarCancelar()
 
@@ -178,9 +189,9 @@ METHOD defineArticulo() CLASS ViewDetail
                                                       "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
                                                       "nHeight"   => 23,;
                                                       "lPixels"   => .t.,;
-                                                      "bValid"    => {|| ::oSender:CargaArticulo() } } )
+                                                      "bValid"    => {|| ::oSender:CargaArticulo(), ::oSender:recalcularTotal() } } )
    
-   ::ogetDescriptionArticle  := TGridGet():Build( {  "nRow"      => ::getRow(),;
+   ::oGetDescriptionArticle   := TGridGet():Build( {  "nRow"      => ::getRow(),;
                                                       "nCol"      => {|| GridWidth( 5.5, ::oDlg ) },;
                                                       "bSetGet"   => {|u| ::SetGetValue( u, "DescripcionArticulo" ) },;
                                                       "oWnd"      => ::oDlg,;
@@ -214,7 +225,8 @@ METHOD defineLote() CLASS ViewDetail
                                                       "oWnd"      => ::oDlg,;
                                                       "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
                                                       "nHeight"   => 23,;
-                                                      "lPixels"   => .t. } )
+                                                      "lPixels"   => .t.,;
+                                                      "bValid"    => {|| ::oSender:CargaLote() } } )
 
    ::nextRow()
 
@@ -309,7 +321,22 @@ METHOD definePrecio() CLASS ViewDetail
                                           "lRight"    => .t.,;
                                           "nHeight"   => 23,;
                                           "bWhen"     => {|| ::getChangePrecio() },;
-                                          "bValid"    => {|| ::oSender:recalcularTotal() } } )  
+                                          "bValid"    => {|| ::oSender:recalcularTotal() } } ) 
+
+   if ( GetPvProfString( "Tablet", "Obsequio", ".F.", cIniAplication() ) == ".T." )
+
+      TGridUrllink():Build(            {  "nTop"      => ::getRow(),;
+                                          "nLeft"     => {|| GridWidth( 5.5, ::oDlg ) },;
+                                          "cURL"      => "Obsequio",;
+                                          "oWnd"      => ::oDlg,;
+                                          "oFont"     => oGridFont(),;
+                                          "lPixel"    => .t.,;
+                                          "nClrInit"  => nGridColor(),;
+                                          "nClrOver"  => nGridColor(),;
+                                          "nClrVisit" => nGridColor(),;
+                                          "bAction"   => {|| ::oSender:setObsequio() } } )
+
+   end if
 
    ::nextRow()
 
@@ -451,6 +478,36 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD defineStock() CLASS ViewDetail
+
+   TGridSay():Build(                   {  "nRow"      => ::getRow(),;
+                                          "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+                                          "bText"     => {|| "Stock" },;
+                                          "oWnd"      => ::oDlg,;
+                                          "oFont"     => oGridFont(),;
+                                          "lPixels"   => .t.,;
+                                          "nClrText"  => Rgb( 0, 0, 0 ),;
+                                          "nClrBack"  => Rgb( 255, 255, 255 ),;
+                                          "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
+                                          "nHeight"   => 23,;
+                                          "lDesign"   => .f. } )
+
+   ::oGetStock       := TGridGet():Build( {  "nRow"      => ::getRow(),;
+                                          "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                                          "bSetGet"   => {|u| if( PCount() == 0, ::nGetStock, ::nGetStock := u ) },;
+                                          "oWnd"      => ::oDlg,;
+                                          "lPixels"   => .t.,;
+                                          "cPict"     => MasUnd(),;
+                                          "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
+                                          "lRight"    => .t.,;
+                                          "nHeight"   => 23,;
+                                          "bWhen"     => {|| .f. } } )
+
+   ::nextRow()
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
 
 METHOD RefreshDialog() CLASS ViewDetail
 
@@ -463,6 +520,7 @@ METHOD RefreshDialog() CLASS ViewDetail
    ::refreshGetDescuento()
    ::refreshGetDescuentoLineal()
    ::refreshGetAlmacen()
+   ::refreshGetStock()
 
 Return ( Self )
 

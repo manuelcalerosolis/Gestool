@@ -271,7 +271,7 @@ METHOD Resource( nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "robot_48_alpha" ;
+        RESOURCE "gc_industrial_robot_48" ;
         TRANSPARENT ;
         OF       oDlg
 
