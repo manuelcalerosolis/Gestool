@@ -6,6 +6,7 @@ CLASS DocumentsSales FROM Documents
    DATA oSender
 
    DATA oProduct
+   DATA oProductStock
    DATA oStore
    DATA oPayment
    DATA oDirections
@@ -184,6 +185,8 @@ METHOD Build( oSender ) CLASS DocumentsSales
    ::oCliente              := Customer():init( self )  
 
    ::oProduct              := Product():init( self )
+
+   ::oProductStock         := ProductStock():init( self )
 
    ::oStore                := Store():init( self )
 

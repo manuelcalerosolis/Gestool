@@ -112,6 +112,7 @@ CLASS LinesDocumentsSales FROM Editable
 
    METHOD runGridProduct()
    METHOD runGridStore()
+   METHOD runGridLote()
 
    METHOD cargaArticulo()
    METHOD cargaAlmacen()
@@ -492,6 +493,34 @@ METHOD runGridProduct() CLASS LinesDocumentsSales
 
    ::oViewEditDetail:oGetArticulo:Enable()
    ::oViewEditDetail:oGetArticulo:setFocus()
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD runGridLote() CLASS LinesDocumentsSales
+
+   if empty( ::oSender:oProductStock:oGridProductStock )
+      Return ( Self )
+   end if
+
+   ::oViewEditDetail:oGetLote:Disable()
+
+   ::oSender:oProductStock:setEnviroment( ::oViewEditDetail:oGetArticulo:varGet, ::oViewEditDetail:oGetAlmacen:varGet )
+   ::oSender:oProductStock:oGridProductStock:setSubTitle( ::oViewEditDetail:oGetArticulo:varGet, ::oViewEditDetail:oGetAlmacen:varGet )
+   ::oSender:oProductStock:oGridProductStock:showView()
+
+   if ::oSender:oProductStock:oGridProductStock:isEndOk()
+      ::oViewEditDetail:SetGetValue( ::oSender:oProductStock:oGridProductStock:oBrowse:aArrayData[ ::oSender:oProductStock:oGridProductStock:oBrowse:nArrayAt ]:cLote, "Lote" )
+   end if
+
+   ::cargaArticulo()
+
+   ::recalcularTotal()
+
+   ::oViewEditDetail:oGetLote:Enable()
+   ::oViewEditDetail:oGetLote:setFocus()
+   ::oViewEditDetail:oGetLote:Refresh()
 
 Return ( self )
 

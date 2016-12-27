@@ -9,12 +9,14 @@ CLASS ViewNavigator FROM ViewBase
 
    METHOD getView()                          INLINE ( ::oSender:nView )
    METHOD getWorkArea()                      INLINE ( ::oSender:getWorkArea() )
+   METHOD getWorkArray()                     INLINE ( ::oSender:getDataArray() )
 
    METHOD botonesAcciones()
 
    METHOD botonesMovimientoBrowse()
 
    METHOD browseGeneral()
+   METHOD browseArray( oDlg )
 
    METHOD insertControls()                   INLINE ( ::BrowseGeneral() )
 
@@ -163,6 +165,35 @@ METHOD BrowseGeneral( oDlg ) CLASS ViewNavigator
    ::oBrowse:nDataLines       := 2
 
    ::oBrowse:cAlias           := ::getWorkArea()
+
+   ::setColumns()
+
+   ::oBrowse:bLDblClick       := ::getDblClickBrowseGeneral()
+
+   ::oBrowse:CreateFromCode()  
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD BrowseArray( oDlg ) CLASS ViewNavigator
+
+   DEFAULT oDlg               := ::oDlg
+
+   ::oBrowse                  := TGridIXBrowse():New( oDlg )
+
+   ::oBrowse:nTop             := ::oBrowse:EvalRow( 115 )
+   ::oBrowse:nLeft            := ::oBrowse:EvalCol( {|| GridWidth( 0.5, oDlg ) } )
+   ::oBrowse:nWidth           := ::oBrowse:EvalWidth( {|| GridWidth( 11, oDlg ) } )
+   ::oBrowse:nHeight          := ::oBrowse:EvalHeight( {|| GridHeigth( oDlg ) - ::oBrowse:nTop - 10 } )
+   ::oBrowse:nMarqueeStyle    := 6
+
+   ::oBrowse:nHeaderHeight    := 48
+   ::oBrowse:nFooterHeight    := 48
+   ::oBrowse:nRowHeight       := 96
+   ::oBrowse:nDataLines       := 2
+
+   ::oBrowse:SetArray( ::getWorkArray(), , , .f. )
 
    ::setColumns()
 

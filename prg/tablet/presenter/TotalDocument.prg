@@ -44,8 +44,6 @@ METHOD New( oSender ) CLASS TotalDocument
 
    ::oSender      := oSender
 
-   msgalert( oSender:classname() )
-
    ::oIva         := Iva():New( oSender )
 
 Return( Self )

@@ -78,8 +78,6 @@ METHOD add( oDocumentLine )
 
    local nPosition
 
-   msgalert( oDocumentLine:className(), "oDocumentLine:className()" )
-
    nPosition      := aScan( ::aIva, {|hIva| oDocumentLine:getPercentageTax() == ::getTipoIva( hIva ) .and. oDocumentLine:getRecargoEquivalencia() == ::getTipoRecargo( hIva ) } )
 
    if nPosition != 0
