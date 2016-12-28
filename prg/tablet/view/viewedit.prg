@@ -13,6 +13,9 @@ CLASS ViewEdit FROM ViewBase
    DATA getNombreDireccion
    DATA textNombreDireccion         INIT Space( 200 )
 
+   DATA oGetEstablecimiento
+   DATA cGetEstablecimiento
+
    DATA oCbxRuta
    DATA getRuta
 
@@ -31,6 +34,8 @@ CLASS ViewEdit FROM ViewBase
 
    METHOD defineCliente()
       METHOD refreshCliente()       INLINE ( ::getCodigoCliente:Refresh(), ::oNombreCliente:Refresh() )
+
+   METHOD defineEstablecimiento()
 
    METHOD defineDireccion()
 
@@ -55,7 +60,8 @@ END CLASS
 
 METHOD New( oSender ) CLASS ViewEdit
 
-   ::oSender   := oSender
+   ::oSender               := oSender
+   ::cGetEstablecimiento   := ""
 
 Return ( self )
 
@@ -63,7 +69,7 @@ Return ( self )
 
 METHOD StartDialog() CLASS ViewEdit
 
-   ::getCodigoDireccion:lValid()
+   //::getCodigoDireccion:lValid()
 
    if ::oSender:nMode == APPD_MODE
       ::oSender:loadNextClient( ::nMode )
@@ -238,6 +244,34 @@ METHOD defineCliente( nRow ) CLASS ViewEdit
                            "bLClicked" => {|| ::oSender:onClickClientSales() },;
                            "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
                            "oWnd"      => ::oDlg } )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD defineEstablecimiento() CLASS ViewEdit
+
+   TGridSay():Build(    {  "nRow"      => 120,;
+                           "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+                           "bText"     => {|| "Establecimiento" },;
+                           "oWnd"      => ::oDlg,;
+                           "oFont"     => oGridFont(),;
+                           "lPixels"   => .t.,;
+                           "nClrText"  => Rgb( 0, 0, 0 ),;
+                           "nClrBack"  => Rgb( 255, 255, 255 ),;
+                           "nWidth"    => {|| GridWidth( 1.5, ::oDlg ) },;
+                           "nHeight"   => 23,;
+                           "lDesign"   => .f. } )
+
+   ::oGetEstablecimiento := TGridGet():Build( {  "nRow"      => 120,;
+                                                "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                                                "bSetGet"   => {|u| ::SetGetValue( u, "Direccion" ) },;
+                                                "bSetGet"   => {|u| if( PCount() == 0, ::cGetEstablecimiento, ::cGetEstablecimiento := u ) },;
+                                                "oWnd"      => ::oDlg,;
+                                                "nWidth"    => {|| GridWidth( 7.1, ::oDlg ) },;
+                                                "nHeight"   => 23,;
+                                                "lPixels"   => .t.,;
+                                                "bWhen"     => {|| .f. } } )
 
 Return ( self )
 

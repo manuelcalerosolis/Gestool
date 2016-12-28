@@ -22065,9 +22065,15 @@ Method Process() CLASS TFacturasClientesSenderReciver
             Ahora trabajamos sobre los recibos
             */
 
+            ::oSender:SetText( "Empezamos con los recibos" )
+
             while ( tmpFacCliP )->( !eof() )
 
+               ::oSender:SetText( "Antes de validar el recibo" )
+
                if ::validateRecepcionRecibo( tmpFacCliP, dbfFacCliP )
+
+                  ::oSender:SetText( "Valido el recibo" )
 
                   cNumeroRecibo    := ( tmpFacCliP )->cSerie + str( ( tmpFacCliP )->nNumFac ) + ( tmpFacCliP )->cSufFac + Str( ( tmpFacCliP )->nNumRec )
                   cTextoRecibo     := ( tmpFacCliP )->cSerie + "/" + AllTrim( str( ( tmpFacCliP )->nNumFac ) ) + "/" + AllTrim( ( tmpFacCliT )->cSufFac ) + "-" + AllTrim( str( ( tmpFacCliP )->nNumRec ) ) + "; " + Dtoc( ( tmpFacCliP )->dEntrada ) + "; " + AllTrim( ( tmpFacCliP )->cCodCli )
@@ -22076,7 +22082,10 @@ Method Process() CLASS TFacturasClientesSenderReciver
                      dbLockDelete( dbfFacCliP )
                   end if
 
+                  ::oSender:SetText( "Antes de validar el recibo" )
+
                   dbPass( tmpFacCliP, dbfFacCliP, .t. )
+                  
                   ::oSender:SetText( "Añadido recibo : " + cTextoRecibo )
 
                end if
