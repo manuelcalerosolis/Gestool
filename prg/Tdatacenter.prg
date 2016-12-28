@@ -3499,7 +3499,9 @@ METHOD BuildEmpresa()
 
    ::AddEmpresaObject( TNewImp():Create() )
 
-   ::AddEmpresaObject( TPrestaShopId():Create() )
+   if !IsReport()
+      ::AddEmpresaObject( TPrestaShopId():Create() )
+   end if
 
 RETURN ( Self )
 
