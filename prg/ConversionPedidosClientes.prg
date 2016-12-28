@@ -33,7 +33,7 @@ METHOD Dialog()
 
    REDEFINE BITMAP oBmp ;
       ID          500 ;
-      RESOURCE    "Pedidos_Clientes_48_alpha" ;
+      RESOURCE    "gc_clipboard_empty_user_48" ;
       TRANSPARENT ;
       OF          ::oDlg
 

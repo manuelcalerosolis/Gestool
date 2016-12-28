@@ -1146,7 +1146,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():PedidosClientes( nView ) )->lSndDoc }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_mail2_12", "Nil16" } )
          :AddResource( "gc_mail2_16" )
       end with
 
@@ -2047,7 +2047,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "pedidos_clientes_48_alpha" ;
+        RESOURCE "gc_clipboard_empty_user_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[1]
 
