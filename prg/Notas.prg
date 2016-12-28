@@ -95,7 +95,7 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS TNotas
    ::lCreateShell       := .f.
 
    ::cHtmlHelp          := "Notas"
-   ::oBmpAlr            := LoadBitmap( GetResources(), "Bell_16" )
+   ::oBmpAlr            := LoadBitmap( GetResources(), "gc_bell_16" )
    ::aCmbTipo           := aTipoNotas()
 
 RETURN ( Self )
@@ -980,7 +980,7 @@ FUNCTION ChkNotas()
       while ( dbfNotas )->( !Eof() )
 
          if Dtos( ( dbfNotas )->dFecNot ) + ( dbfNotas )->cHorNot < cDate + cTime .and. !( dbfNotas )->lVisNot .and. ( dbfNotas )->lAlrNot
-            oMsgAlarm         := TMsgItem():New( oWnd():oMsgBar,,24,,,,.t.,,"Bell_16",, "Asunto : " + AllTrim( ( dbfNotas )->cTexNot ) )
+            oMsgAlarm         := TMsgItem():New( oWnd():oMsgBar,,24,,,,.t.,,"gc_bell_16",, "Asunto : " + AllTrim( ( dbfNotas )->cTexNot ) )
             oMsgAlarm:bAction := {|| TNotas():New( cPatDat(), oWnd(), "01075" ):Activate() }
             exit
          end if

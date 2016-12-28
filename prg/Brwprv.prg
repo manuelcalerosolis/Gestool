@@ -183,7 +183,7 @@ function BrwComPrv( cCodPrv, cNomPrv, dbfDiv, dbfIva )
                            LoadBitmap( GetResources(), "AlbCli" ),;
                            LoadBitmap( GetResources(), "FacCli" ),;
                            LoadBitmap( GetResources(), "TikCli" ),;
-                           LoadBitmap( GetResources(), "Document_navigate_cross_16" ) }
+                           LoadBitmap( GetResources(), "gc_document_text_delete2_16" ) }
 
    cPicUnd           := MasUnd()
    cPouDiv           := cPouDiv( cDivEmp(), dbfDiv )
@@ -440,7 +440,7 @@ function BrwComPrv( cCodPrv, cNomPrv, dbfDiv, dbfIva )
    REDEFINE BTNBMP ;
       ID       101 ;
       OF       oFld:aDialogs[ 3 ] ;
-      RESOURCE "ColumnChart16" ;
+      RESOURCE "gc_chart_column_16" ;
       NOBORDER ;
       TOOLTIP  "Gráfico de barras" ;
       ACTION   ( oGraph:SetType( GRAPH_TYPE_BAR ) )
@@ -448,7 +448,7 @@ function BrwComPrv( cCodPrv, cNomPrv, dbfDiv, dbfIva )
    REDEFINE BTNBMP ;
       ID       102 ;
       OF       oFld:aDialogs[ 3 ] ;
-      RESOURCE "LineChart16" ;
+      RESOURCE "gc_chart_line_16" ;
       NOBORDER ;
       TOOLTIP  "Gráfico de lineas" ;
       ACTION   ( oGraph:SetType( GRAPH_TYPE_LINE ) )
@@ -456,7 +456,7 @@ function BrwComPrv( cCodPrv, cNomPrv, dbfDiv, dbfIva )
    REDEFINE BTNBMP ;
       ID       103 ;
       OF       oFld:aDialogs[ 3 ] ;
-      RESOURCE "DotChart16" ;
+      RESOURCE "gc_chart_dot_16" ;
       NOBORDER ;
       TOOLTIP  "Gráfico de puntos" ;
       ACTION   ( oGraph:SetType( GRAPH_TYPE_POINT ) )
@@ -464,7 +464,7 @@ function BrwComPrv( cCodPrv, cNomPrv, dbfDiv, dbfIva )
    REDEFINE BTNBMP ;
       ID       104 ;
       OF       oFld:aDialogs[ 3 ] ;
-      RESOURCE "PieChart16" ;
+      RESOURCE "gc_chart_area_16" ;
       NOBORDER ;
       TOOLTIP  "Gráfico combinado" ;
       ACTION   ( oGraph:SetType( GRAPH_TYPE_PIE ) )
@@ -472,7 +472,7 @@ function BrwComPrv( cCodPrv, cNomPrv, dbfDiv, dbfIva )
    REDEFINE BTNBMP ;
       ID       105 ;
       OF       oFld:aDialogs[ 3 ] ;
-      RESOURCE "Chart16" ;
+      RESOURCE "gc_chart_pie_16" ;
       NOBORDER ;
       TOOLTIP  "Gráfico combinado" ;
       ACTION   ( oGraph:SetType( GRAPH_TYPE_ALL ) )
@@ -488,7 +488,7 @@ function BrwComPrv( cCodPrv, cNomPrv, dbfDiv, dbfIva )
    REDEFINE BTNBMP ;
       ID       107 ;
       OF       oFld:aDialogs[ 3 ] ;
-      RESOURCE "Copy16" ;
+      RESOURCE "gc_copy_16" ;
       NOBORDER ;
       TOOLTIP  "Copiar el gráfico en el portapapeles" ;
       ACTION   ( oGraph:Copy2ClipBoard() )
@@ -504,7 +504,7 @@ function BrwComPrv( cCodPrv, cNomPrv, dbfDiv, dbfIva )
    REDEFINE BTNBMP ;
       ID       109 ;
       OF       oFld:aDialogs[ 3 ] ;
-      RESOURCE "Preferences16" ;
+      RESOURCE "gc_clipboard_checks_16" ;
       NOBORDER ;
       TOOLTIP  "Propiedades del gráfico" ;
       ACTION   ( GraphPropierties( oGraph ) )

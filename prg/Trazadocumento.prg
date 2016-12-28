@@ -328,7 +328,7 @@ METHOD Activate( cTypeDoc, cNumDoc )
       ::oBack:bChanged  := {|| ::ChangeDocument( ::oBack ) }
 
       ::oImgLst         := TImageList():New()
-      ::oImgLst:AddMasked( TBitmap():Define( "Document_16", , oDlg ), Rgb( 255, 0, 255 ) )
+      ::oImgLst:AddMasked( TBitmap():Define( "gc_document_text_16", , oDlg ), Rgb( 255, 0, 255 ) )
       ::oImgLst:AddMasked( TBitmap():Define( "Document_into_16", , oDlg ), Rgb( 255, 0, 255 ) )
 
       REDEFINE GET ::oCodigo VAR ::cCodigo ID 110 WHEN ( .f. ) OF oDlg

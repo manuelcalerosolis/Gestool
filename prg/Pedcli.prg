@@ -1753,7 +1753,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
             TOOLTIP  "Informe de cliente" ;
             FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "Worker" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_clipboard_empty_user_" OF oWndBrw ;
             ACTION   ( EdtObras( ( D():PedidosClientes( nView ) )->cCodCli, ( D():PedidosClientes( nView ) )->cCodObr, dbfObrasT ) );
             TOOLTIP  "Modificar dirección" ;
             FROM     oRotor ;
@@ -4189,7 +4189,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&2. Visualizar presupuesto";
                MESSAGE  "Visualiza el presupuesto del cliente" ;
-               RESOURCE "Notebook_User1_16";
+               RESOURCE "gc_notebook_user_16";
                ACTION   ( if( !Empty( aTmp[ _CNUMPRE ] ), ZooPreCli( aTmp[ _CNUMPRE ] ), MsgStop( "El pedido no proviene de presupuesto" ) ) )
 
             SEPARATOR
@@ -4218,7 +4218,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&7. Modificar dirección";
                MESSAGE  "Modifica la obra del documento" ;
-               RESOURCE "Worker16";
+               RESOURCE "gc_worker2_16";
                ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );
 
             SEPARATOR

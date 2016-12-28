@@ -2018,7 +2018,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
       	ImportScript( oWndBrw, oScript, "FacturasRectificativasClientes" )  
 
-    DEFINE BTNSHELL RESOURCE "WORKER" OF oWndBrw ;
+    DEFINE BTNSHELL RESOURCE "GC_CLIPBOARD_EMPTY_USER_" OF oWndBrw ;
         NOBORDER ;
         ACTION   ( EdtObras( ( D():FacturasRectificativas( nView ) )->cCodCli, ( D():FacturasRectificativas( nView ) )->cCodObr, dbfObrasT ) );
         TOOLTIP  "Modificar dirección" ;
@@ -8981,7 +8981,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&5. Modificar dirección";
                MESSAGE  "Modifica ficha de la dirección" ;
-               RESOURCE "Worker16" ;
+               RESOURCE "gc_worker2_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );
 
          ENDMENU

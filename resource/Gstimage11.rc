@@ -4,7 +4,6 @@
 #include <commctrl.h>
 #include <richedit.h>
 
-Briefcase_security_agent_16 BITMAP "..\\bmp\\Briefcase_security_agent_16.bmp"
 Briefcase_security_agent_32 BITMAP "..\\bmp\\Briefcase_security_agent_32.bmp"
 
 Folder_into_32 BITMAP "..\\bmp\\Folder_into_32.bmp"
@@ -72,8 +71,6 @@ factura_cliente_48_alpha BITMAP "..\\bmp\\factura_cliente_48_alpha.bmp"
 document_48_alpha BITMAP "..\\bmp\\documen_48_alpha.bmp"
 factura_rectificativa_48_alpha BITMAP "..\\bmp\\factura_rectificativa_48_alpha.bmp"
 tickets_abiertos_32 BITMAP "..\\bmp\\tickets_abiertos_32.bmp"
-albaran_cliente_48_alpha BITMAP "..\\bmp\\albaran_cliente_48_alpha.bmp"
-anticipo_cliente_48_alpha BITMAP "..\\bmp\\anticipo_cliente_48_alpha.bmp"
 clock2_run_48_alpha BITMAP "..\\bmp\\clock2_run_48_alpha.bmp"
 clock2_stop_48_alpha BITMAP "..\\bmp\\clock2_stop_48_alpha.bmp"
 folder_document_48_alpha BITMAP "..\\bmp\\folder_document_48_alpha.bmp"

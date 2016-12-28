@@ -531,18 +531,18 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
          :bStrData      := {|| cTextoDocumento() }
          :bBmpData      := {|| nImagenDocument() }
          :nWidth        := 20
-         :AddResource( "Notebook_user1_16" )
+         :AddResource( "gc_notebook_user_16" )
          :AddResource( "gc_clipboard_empty_user_16" )
          :AddResource( "gc_document_empty_16" )
          :AddResource( "gc_document_text_user_16" )
-         :AddResource( "Document_delete_16" )
+         :AddResource( "gc_document_text_delete2_16" )
          :AddResource( "gc_document_text_money2_16" )
          :AddResource( "gc_cash_register_user_16" )
-         :AddResource( "Briefcase_user1_16" )
-         :AddResource( "Clipboard_empty_money_16" )
-         :AddResource( "Document_plain_money_16" )
+         :AddResource( "gc_briefcase2_user_16" )
+         :AddResource( "gc_clipboard_empty_bag_16" )
+         :AddResource( "gc_document_empty_bag_16" )
          :AddResource( "gc_cash_register_user_16" )
-         :AddResource( "Power-drill_user1_16" )
+         :AddResource( "gc_power_drill_sat_user_16" )
       end with
 
       with object ( oBrwTmp:addCol() )
@@ -604,7 +604,7 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
       REDEFINE BTNBMP ;
          ID       101 ;
          OF       oFld:aDialogs[ 3 ] ;
-         RESOURCE "ColumnChart16" ;
+         RESOURCE "gc_chart_column_16" ;
          NOBORDER ;
          TOOLTIP  "Gráfico de barras" ;
          ACTION   ( oGraph:SetType( GRAPH_TYPE_BAR ) )
@@ -612,7 +612,7 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
       REDEFINE BTNBMP ;
          ID       102 ;
          OF       oFld:aDialogs[ 3 ] ;
-         RESOURCE "LineChart16" ;
+         RESOURCE "gc_chart_line_16" ;
          NOBORDER ;
          TOOLTIP  "Gráfico de lineas" ;
          ACTION   ( oGraph:SetType( GRAPH_TYPE_LINE ) )
@@ -620,7 +620,7 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
       REDEFINE BTNBMP ;
          ID       103 ;
          OF       oFld:aDialogs[ 3 ] ;
-         RESOURCE "DotChart16" ;
+         RESOURCE "gc_chart_dot_16" ;
          NOBORDER ;
          TOOLTIP  "Gráfico de puntos" ;
          ACTION   ( oGraph:SetType( GRAPH_TYPE_POINT ) )
@@ -628,7 +628,7 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
       REDEFINE BTNBMP ;
          ID       104 ;
          OF       oFld:aDialogs[ 3 ] ;
-         RESOURCE "PieChart16" ;
+         RESOURCE "gc_chart_area_16" ;
          NOBORDER ;
          TOOLTIP  "Gráfico combinado" ;
          ACTION   ( oGraph:SetType( GRAPH_TYPE_PIE ) )
@@ -636,7 +636,7 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
       REDEFINE BTNBMP ;
          ID       105 ;
          OF       oFld:aDialogs[ 3 ] ;
-         RESOURCE "Chart16" ;
+         RESOURCE "gc_chart_pie_16" ;
          NOBORDER ;
          TOOLTIP  "Gráfico combinado" ;
          ACTION   ( oGraph:SetType( GRAPH_TYPE_ALL ) )
@@ -652,7 +652,7 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
       REDEFINE BTNBMP ;
          ID       107 ;
          OF       oFld:aDialogs[ 3 ] ;
-         RESOURCE "Copy16" ;
+         RESOURCE "gc_copy_16" ;
          NOBORDER ;
          TOOLTIP  "Copiar el gráfico en el portapapeles" ;
          ACTION   ( oGraph:Copy2ClipBoard() )
@@ -668,7 +668,7 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
       REDEFINE BTNBMP ;
          ID       109 ;
          OF       oFld:aDialogs[ 3 ] ;
-         RESOURCE "Preferences16" ;
+         RESOURCE "gc_clipboard_checks_16" ;
          NOBORDER ;
          TOOLTIP  "Propiedades del gráfico" ;
          ACTION   ( GraphPropierties( oGraph ) )
@@ -784,19 +784,19 @@ Static Function initDialog( cCodCli, oBrwTmp, oTree, oDlg )
    oTreeImageList := TImageList():New( 16, 16 )
 
    oTreeImageList:AddMasked( TBitmap():Define( "gc_user_16" ),                  Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Notebook_user1_16" ),         Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_notebook_user_16" ),         Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "gc_clipboard_empty_user_16" ),  Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "gc_document_empty_16" ),   Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_user_16" ),         Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Document_delete_16" ),        Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Briefcase_user1_16" ),        Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_delete2_16" ),        Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_briefcase2_user_16" ),        Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_money2_16" ),        Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "gc_cash_register_user_16" ),          Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "gc_folder_document_16" ),        Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Money_envelope_16" ),         Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_money_16" ),  Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_money_16" ),   Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Power-drill_user1_16" ),      Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_folder_open_money_16" ),         Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_clipboard_empty_bag_16" ),  Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_document_empty_bag_16" ),   Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_power_drill_sat_user_16" ),      Rgb( 255, 0, 255 ) )
 
    oTree:SetImageList( oTreeImageList )
 
@@ -834,12 +834,12 @@ Static Function initDialog( cCodCli, oBrwTmp, oTree, oDlg )
 
          MENUITEM "&1. Añadir SAT de cliente";
             MESSAGE  "Añade un SAT de cliente" ;
-            RESOURCE "Power-drill_user1_16";
+            RESOURCE "gc_power_drill_sat_user_16";
             ACTION   ( AppSatCli( cCodCli ) )
 
          MENUITEM "&2. Añadir presupuesto de cliente";
             MESSAGE  "Añade un presupuesto de cliente" ;
-            RESOURCE "Notebook_user1_16";
+            RESOURCE "gc_notebook_user_16";
             ACTION   ( AppPreCli( cCodCli ) )
 
          MENUITEM "&3. Añadir pedido de cliente";

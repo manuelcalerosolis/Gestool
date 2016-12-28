@@ -3859,8 +3859,8 @@ Function TctCreateButtonBar()
    oItem:cPrompt        := "Entradas y salidas"
    oItem:cMessage       := "Acceso a las entradas y salidas de caja"
    oItem:bAction        := {|| AppEntSal( "01065" ) }
-   oItem:cBmp           := "Cashier_replace_16"
-   oItem:cBmpBig        := "Cashier_replace_32"
+   oItem:cBmp           := "gc_cash_register_refresh_16"
+   oItem:cBmpBig        := "gc_cash_register_refresh_32"
 
    // Ayudas-------------------------------------------------------------------
 
@@ -3983,7 +3983,7 @@ Function BuildTctMenu()
             HELPID   "01065" ;
             MESSAGE  "Acceso a las entradas y salidas de caja" ;
             ACTION   ( AppEntSal( "01065" ) );
-            RESOURCE "Cashier_replace_16" ;
+            RESOURCE "gc_cash_register_refresh_16" ;
 
       ENDMENU
 
@@ -4163,8 +4163,8 @@ Function TPVCreateButtonBar()
    oItem:cPrompt        := "Entradas y salidas"
    oItem:cMessage       := "Acceso a las entradas y salidas de caja"
    oItem:bAction        := {|| AppEntSal( "01065" ) }
-   oItem:cBmp           := "Cashier_replace_16"
-   oItem:cBmpBig        := "Cashier_replace_32"
+   oItem:cBmp           := "gc_cash_register_refresh_16"
+   oItem:cBmpBig        := "gc_cash_register_refresh_32"
 
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 4
@@ -4282,7 +4282,7 @@ Function BuildTpvMenu()
             HELPID   "01065" ;
             MESSAGE  "Acceso a las entradas y salidas de caja" ;
             ACTION   ( AppEntSal( "01065" ) );
-            RESOURCE "Cashier_replace_16" ;
+            RESOURCE "gc_cash_register_refresh_16" ;
 
       ENDMENU
 

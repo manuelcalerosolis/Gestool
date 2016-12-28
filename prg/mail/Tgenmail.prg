@@ -441,7 +441,7 @@ METHOD buildPageRedactar()
    ::oGetAdjunto:cBmp   := "Folder"
    ::oGetAdjunto:bHelp  := {|| ::oGetAdjunto:cText( cGetFile( 'Fichero ( *.* ) | *.*', 'Seleccione el fichero a adjuntar' ) ) }
 
-   TBtnBmp():ReDefine( 140, "Document_16",,,,,{|| ShellExecute( oDlg:hWnd, "open", Rtrim( ::cGetAdjunto ) ) }, oDlg, .f., , .f.,  )
+   TBtnBmp():ReDefine( 140, "gc_document_text_16",,,,,{|| ShellExecute( oDlg:hWnd, "open", Rtrim( ::cGetAdjunto ) ) }, oDlg, .f., , .f.,  )
 
    // Campos-------------------------------------------------------------------
 

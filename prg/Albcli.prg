@@ -1050,21 +1050,21 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
    if oUser():lAdministrador()
 
-      /*DEFINE BTNSHELL RESOURCE "GENFAC" GROUP OF oWndBrw ;
+      /*DEFINE BTNSHELL RESOURCE "gc_gearwheel_" GROUP OF oWndBrw ;
          NOBORDER ;
          ACTION   ( GenFCli( oWndBrw:oBrw, D():Get( "AlbCliT", nView ), D():Get( "AlbCliL", nView ), D():Get( "AlbCliP", nView ), D():Get( "AlbCliS", nView ), D():Get( "Client", nView ), D():Atipicas( nView ), D():Get( "TIva", nView ), D():Get( "Divisas", nView ), D():Get( "FPago", nView ), dbfUsr, D():Get( "NCount", nView ), D():GruposClientes( nView ), oStock ) );
          TOOLTIP  "(G)enerar facturas";
          HOTKEY   "G";
          LEVEL    ACC_APPD*/
 
-      DEFINE BTNSHELL RESOURCE "GENFAC" GROUP OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_gearwheel_" GROUP OF oWndBrw ;
          NOBORDER ;
          ACTION   ( GeneraFacturasClientes():New() );
          TOOLTIP  "(G)enerar facturas";
          HOTKEY   "G";
          LEVEL    ACC_APPD
 
-      DEFINE BTNSHELL RESOURCE "GENFAC" GROUP OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_gearwheel_" GROUP OF oWndBrw ;
          NOBORDER ;
          ACTION   ( TGeneracionAlbaranesClientes():New( nView, oStock ):Dialog() );
          TOOLTIP  "Importar pedidos clientes";
@@ -1173,7 +1173,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          TOOLTIP  "Informe de cliente" ;
          FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "WORKER" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_CLIPBOARD_EMPTY_USER_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( EdtObras( ( D():Get( "AlbCliT", nView ) )->cCodCli, ( D():Get( "AlbCliT", nView ) )->cCodObr, dbfObrasT ) );
          TOOLTIP  "Modificar dirección" ;
@@ -2424,7 +2424,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "albaran_cliente_48_alpha" ;
+        RESOURCE "gc_document_empty_user_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[1]
 
@@ -3486,7 +3486,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE BTNBMP oBtnPre ;
          ID       601 ;
          OF       oFld:aDialogs[1] ;
-         RESOURCE "Notebook_user1_16" ;
+         RESOURCE "gc_notebook_user_16" ;
          NOBORDER ;
          TOOLTIP  "Importar presupuesto" ;
          ACTION   ( BrwPreCli( aGet[ _CNUMPRE ], dbfPreCliT, dbfPreCliL, D():Get( "TIva", nView ), D():Get( "Divisas", nView ), D():Get( "FPago", nView ), aGet[ _LIVAINC ] ) )
@@ -4313,7 +4313,7 @@ Static Function EdtRecMenu( aGet, aTmp, oBrw, oDlg )
 
             MENUITEM    "&7. Modificar dirección";
                MESSAGE  "Modifica ficha de la dirección" ;
-               RESOURCE "Worker16" ;
+               RESOURCE "gc_worker2_16" ;
                ACTION   ( if( !empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );
 
             SEPARATOR

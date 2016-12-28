@@ -1306,7 +1306,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          TOOLTIP  "Informe de cliente" ;
          FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "WORKER" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_CLIPBOARD_EMPTY_USER_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( EdtObras( ( D():FacturasClientes( nView ) )->cCodCli, ( D():FacturasClientes( nView ) )->cCodObr, dbfObrasT ) );
          TOOLTIP  "Modificar Dirección" ;
@@ -2396,14 +2396,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    local cTipFac
    local oSayDias
    local hBmp
-   local hBmpGeneral       := {  { "Resource" => "Factura_cliente_48_alpha",  "Dialog" => 1 },;
+   local hBmpGeneral       := {  { "Resource" => "gc_document_text_user2_48",  "Dialog" => 1 },;
                                  { "Resource" => "gc_folders2_48",            "Dialog" => 2 },;
                                  { "Resource" => "gc_information_48",      "Dialog" => 3 },;
                                  { "Resource" => "gc_address_book_48",    "Dialog" => 4 },;
                                  { "Resource" => "gc_form_earth_48",              "Dialog" => 5 },;
                                  { "Resource" => "gc_document_attachment_48",    "Dialog" => 6 },;
                                  { "Resource" => "gc_money2_48",            "Dialog" => 7 },;
-                                 { "Resource" => "anticipo_cliente_48_alpha", "Dialog" => 8 } }
+                                 { "Resource" => "gc_document_text_money2_48", "Dialog" => 8 } }
    
    /*
    Este valor los guaradamos para detectar los posibles cambios----------------
@@ -3650,7 +3650,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE BTNBMP oBtnPre ;
          ID       601 ;
          OF       fldGeneral ;
-         RESOURCE "Notebook_user1_16" ;
+         RESOURCE "gc_notebook_user_16" ;
          NOBORDER ;
          TOOLTIP  "Importar presupuesto" ;
          ACTION   ( BrwPreCli( aGet[ _CNUMPRE ], dbfPreCliT, dbfPreCliL, dbfIva, dbfDiv, D():FormasPago( nView ), aGet[ _LIVAINC ] ) )
@@ -3674,7 +3674,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE BTNBMP oBtnSat ;
          ID       604 ;
          OF       fldGeneral ;
-         RESOURCE "Power-drill_user1_16" ;
+         RESOURCE "gc_power_drill_sat_user_16" ;
          NOBORDER ;
          TOOLTIP  "Importar S.A.T." ;
          ACTION   ( BrwSatCli( aGet[ _CNUMSAT ], dbfSatCliT, dbfSatCliL, dbfIva, dbfDiv, D():FormasPago( nView ), aGet[ _LIVAINC ] ) )
@@ -9323,7 +9323,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&2. Visualizar presupuesto";
                MESSAGE  "Visualiza el presupueso del que proviene" ;
-               RESOURCE "Notebook_User1_16" ;
+               RESOURCE "gc_notebook_user_16" ;
                ACTION   ( if( !empty( aTmp[ _CNUMPRE ] ), ZooPreCli( aTmp[ _CNUMPRE ] ), MsgStop( "No hay presupusto asociado" ) ) )
 
             SEPARATOR
@@ -9364,7 +9364,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&9. Modificar Dirección";
                MESSAGE  "Modifica ficha de la Dirección" ;
-               RESOURCE "Worker16" ;
+               RESOURCE "gc_worker2_16" ;
                ACTION   ( if( !empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );
 
             SEPARATOR

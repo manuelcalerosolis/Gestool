@@ -3442,7 +3442,7 @@ METHOD lGrupoEntidadesBancarias( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoCuentasBancarias:Cargo:ValidDesde   := {|oGet| if( ::oCuentasBancarias:Existe( if( !Empty( oGet ), oGet, ::oDesde ), ::oSayDesde, "cNomBnc", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoCuentasBancarias:Cargo:ValidHasta   := {|oGet| if( ::oCuentasBancarias:Existe( if( !Empty( oGet ), oGet, ::oHasta ), ::oSayHasta, "cNomBnc", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoCuentasBancarias:Cargo:lImprimir    := lImp
-   ::oGrupoCuentasBancarias:Cargo:cBitmap      := "Office-building_address_book_16"
+   ::oGrupoCuentasBancarias:Cargo:cBitmap      := "gc_office_building2_16"
 
    if !Empty( ::oImageList )
       ::oImageList:AddMasked( TBitmap():Define( ::oGrupoCuentasBancarias:Cargo:cBitmap ), Rgb( 255, 0, 255 ) )
@@ -3721,10 +3721,10 @@ METHOD lGrupoRemesas( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoRemesas:Cargo:ValidDesde  := {|oGet| lValidRemesaCliente( oGet, ::oDbfRemCli ) }
    ::oGrupoRemesas:Cargo:ValidHasta  := {|oGet| lValidRemesaCliente( oGet, ::oDbfRemCli ) }
    ::oGrupoRemesas:Cargo:lImprimir   := lImp
-   ::oGrupoRemesas:Cargo:cBitmap     := "Briefcase_document_16"
+   ::oGrupoRemesas:Cargo:cBitmap     := "gc_briefcase2_document_16"
 
    if !empty( ::oImageList )
-      ::oImageList:AddMasked( TBitmap():Define( "Briefcase_document_16" ), Rgb( 255, 0, 255 ) )
+      ::oImageList:AddMasked( TBitmap():Define( "gc_briefcase2_document_16" ), Rgb( 255, 0, 255 ) )
    end if
 
    if lInitGroup != nil
@@ -3732,7 +3732,7 @@ METHOD lGrupoRemesas( lInitGroup, lImp ) CLASS TNewInfGen
       aAdd( ::aSelectionGroup, ::oGrupoRemesas )
 
       if !empty( ::oImageGroup )
-         ::oImageGroup:AddMasked( TBitmap():Define( "Briefcase_document_16" ), Rgb( 255, 0, 255 ) )
+         ::oImageGroup:AddMasked( TBitmap():Define( "gc_briefcase2_document_16" ), Rgb( 255, 0, 255 ) )
          ::oGrupoRemesas:Cargo:Imagen    := len( ::oImageGroup:aBitmaps ) - 1
       end if
 

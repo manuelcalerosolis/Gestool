@@ -1225,7 +1225,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon )
          FROM     oRotor ;
          CLOSED ;
 
-      DEFINE BTNSHELL RESOURCE "WORKER" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_CLIPBOARD_EMPTY_USER_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( EdtObras( ( dbfTikT )->cCliTik, ( dbfTikT )->cCodObr, dbfObrasT ) );
          TOOLTIP  "Modificar obras" ;
@@ -11843,7 +11843,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&3. Modificar dirección";
                MESSAGE  "Modificar ficha de la dirección" ;
-               RESOURCE "Worker16" ;
+               RESOURCE "gc_worker2_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCLITIK ] ), EdtObras( aTmp[ _CCLITIK ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "No hay obra asociada para el presupuesto" ) ) )
 
             SEPARATOR

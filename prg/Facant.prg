@@ -1117,7 +1117,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
          FROM     oRotor ;
          CLOSED ;
 
-      DEFINE BTNSHELL RESOURCE "WORKER" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_CLIPBOARD_EMPTY_USER_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( EdtObras( ( dbfAntCliT )->cCodCli, ( dbfAntCliT )->cCodObr, dbfObrasT ) );
          TOOLTIP  "Modificar dirección" ;
@@ -1314,7 +1314,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "anticipo_cliente_48_alpha" ;
+        RESOURCE "gc_document_text_money2_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[1]
 
@@ -4445,7 +4445,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&5. Modificar dirección";
                MESSAGE  "Modifica ficha de la dirección" ;
-               RESOURCE "Worker16" ;
+               RESOURCE "gc_worker2_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );
 
 

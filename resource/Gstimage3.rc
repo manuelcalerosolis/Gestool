@@ -4,21 +4,12 @@
 #include <commctrl.h>
 #include <richedit.h>
 
-
-GENFAC16 BITMAP "..\\bmp\\Gear_16.bmp"
 DOCUMENT16 BITMAP "..\\bmp\\Document_plain_16.bmp"
 DOCUMENT_PLAIN_EARTH_16 BITMAP "..\\bmp\\document_plain_earth_16.bmp"
 HOME_16 BITMAP "..\\bmp\\Home_16.bmp"
 HOME_32 BITMAP "..\\bmp\\Home_32.bmp"
 
-COLUMNCHART16 BITMAP "..\\bmp\\Column-chart_16.bmp"
-DOTCHART16 BITMAP "..\\bmp\\Dot-chart_16.bmp"
-LINECHART16 BITMAP "..\\bmp\\Line-chart_16.bmp"
-PIECHART16 BITMAP "..\\bmp\\Pie-chart_16.bmp"
 TEXT3D16 BITMAP "..\\bmp\\Text_3d_16.bmp"
-CHART16 BITMAP "..\\bmp\\Chart_16.bmp"
-COPY16 BITMAP "..\\bmp\\Copy_16.bmp"
-PREFERENCES16 BITMAP "..\\bmp\\Preferences_16.bmp"
 CROSS13 BITMAP "..\\bmp\\Cross_13.bmp"
 SHAPE13 BITMAP "..\\bmp\\Shape_13.bmp"
 POINT13 BITMAP "..\\bmp\\Point_13.bmp"

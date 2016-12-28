@@ -1684,7 +1684,7 @@ else
          FROM     oRotor ;
          CLOSED ;
 
-      DEFINE BTNSHELL RESOURCE "WORKER" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_CLIPBOARD_EMPTY_USER_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( EdtObras( ( D():Tikets( nView ) )->cCliTik, ( D():Tikets( nView ) )->cCodObr, dbfObrasT ) );
          TOOLTIP  "Modificar obras" ;
@@ -9225,7 +9225,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
          cImageTitle := "Document_plain_businessman2_48_alpha"
          cTextTitle  := "El documento actual se guardará como un albaran de cliente."
       case nSave == SAVFAC
-         cImageTitle := "Document_businessman2_48_alpha"
+         cImageTitle := "gc_document_text_user2_48"
          cTextTitle  := "El documento actual se guardará como una factura de cliente."
       case nSave == SAVDEV
          cImageTitle := "Cashier_delete_48_alpha"
