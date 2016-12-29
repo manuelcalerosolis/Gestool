@@ -6343,7 +6343,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig )
       REDEFINE BUTTONBMP ;
          ID       553 ;
          OF       oDlg ;
-         BITMAP   "User1_32" ;
+         BITMAP   "gc_user_32" ;
          ACTION   ( BrwCliTactil( aGet[ _CCLITIK ], dbfClient, aGet[ _CNOMTIK ] ), cClient( aGet[ _CCLITIK ], dbfClient, aGet[ _CNOMTIK ] ) )
 
       REDEFINE GET aGet[ _CCLITIK ] VAR aTmp[ _CCLITIK ];
@@ -8957,7 +8957,7 @@ Static Function StartEdtBig( aTmp, aGet, oDlgTpv, oBrwDet )
    oCarpeta             := TCarpeta():New( oOfficeBar, "" )
 
    oGrupo               := TDotNetGroup():New( oCarpeta, 66, "Salones", .f. )
-      oBtnTarifa        := TDotNetButton():New( 60, oGrupo, "Cup_32",                   "General",          1, {|| GetSalaVenta( aTmp, aGet ) }, , , .f., .f., .f. )
+      oBtnTarifa        := TDotNetButton():New( 60, oGrupo, "gc_cup_32",                   "General",          1, {|| GetSalaVenta( aTmp, aGet ) }, , , .f., .f., .f. )
 
    oGrupo               := TDotNetGroup():New( oCarpeta, 306, "Acciones", .f. )
       oBtnRenombrar     := TDotNetButton():New( 60, oGrupo, "Note_Edit_32",             "Alias",            1, {|| RenombrarUbicacion( aTmp, aGet ) }, , {|| ( dbfTmpL )->( LastRec() ) > 0 }, .f., .f., .f. )
@@ -8977,8 +8977,8 @@ Static Function StartEdtBig( aTmp, aGet, oDlgTpv, oBrwDet )
       oBtnTelefono      := TDotNetButton():New( 240, oGrupo, "Mobilephone3_16",         "...",              2, {|| lSeleccionaCliente( aTmp ) }, , , .f., .f., .f. )
 
    oGrupo               := TDotNetGroup():New( oCarpeta, 126, "Tickets", .f. )
-      oBtnUp            := TDotNetButton():New( 60, oGrupo, "Arrow_Up_Blue_Save_32",    "Subir",            1, {|| lCambiaTicket( .t., aTmp, aGet ) }, , , .f., .f., .f. )
-      oBtnDown          := TDotNetButton():New( 60, oGrupo, "Arrow_Down_Blue_Save_32",  "Bajar",            2, {|| lCambiaTicket( .f., aTmp, aGet ) }, , , .f., .f., .f. )
+      oBtnUp            := TDotNetButton():New( 60, oGrupo, "gc_arrow_up_32",    "Subir",            1, {|| lCambiaTicket( .t., aTmp, aGet ) }, , , .f., .f., .f. )
+      oBtnDown          := TDotNetButton():New( 60, oGrupo, "gc_arrow_down_32",  "Bajar",            2, {|| lCambiaTicket( .f., aTmp, aGet ) }, , , .f., .f., .f. )
 
    oGrupo               := TDotNetGroup():New( oCarpeta, 66, "Salida", .f. )
       oBoton            := TDotNetButton():New( 60, oGrupo, "End32",                    "Salida",           1, {|| oDlgTpv:End() }, , , .f., .f., .f. )

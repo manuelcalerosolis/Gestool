@@ -112,7 +112,7 @@ FUNCTION CuentasClientes( oWnd )
    REDEFINE BUTTONBMP ;
       ID       100 ;
       OF       oDlg ;
-      BITMAP   "User1_32" ;
+      BITMAP   "gc_user_32" ;
       ACTION   ( BrwCliTactil( oCodCli, dbfClient, oNomcli ), cClient( oCodCli, dbfClient, oNomCli ), lLoadClientes( oCodCli:VarGet(), dbfTikCliT, oBrw, oPdtCli, oCmbCli ) )
 
    REDEFINE GET oCodcli VAR cCodcli;

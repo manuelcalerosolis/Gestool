@@ -79,23 +79,11 @@ Mobilephone3_16 BITMAP "..\\bmp\\Mobilephone3_16.bmp"
 
 User1_Add_32 BITMAP "..\\bmp\\User1_Add.bmp"
 User1_Edit_32 BITMAP "..\\bmp\\User1_Edit_32.bmp"
-
 Users1_32 BITMAP "..\\bmp\\Users1_32.bmp"
-
-arrow_up_blue_save_32 BITMAP "..\\bmp\\arrow_up_blue_save_32.bmp"
-arrow_down_blue_save_32 BITMAP "..\\bmp\\arrow_down_blue_save_32.bmp"
-
 Document_check_16 BITMAP "..\\bmp\\document_check_16.bmp"
 UsrSel BITMAP "..\\bmp\\UsrSel.bmp"
 document_time_16 BITMAP "..\\bmp\\document_time_16.bmp"
 
-Info_32 BITMAP "..\\bmp\\About.bmp"
-Worker_32 BITMAP "..\\bmp\\Worker.bmp"
-
-Cashier_Money2_32 BITMAP "..\\bmp\\Cashier_Money2_32.bmp"
-Cashier_Scroll_32 BITMAP "..\\bmp\\Cashier_Scroll_32.bmp"
-Cashier_Stop_32 BITMAP "..\\bmp\\Cashier_Stop_32.bmp"
-Cashier_Delete_32 BITMAP "..\\bmp\\Cashier_delete_32.bmp"
 Cashier_Selet_16 BITMAP "..\\bmp\\Cashier_Selet_16.bmp"
 
 hand_paper_16 BITMAP "..\\bmp\\hand_paper_16.bmp"

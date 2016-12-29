@@ -3835,8 +3835,8 @@ Function TctCreateButtonBar()
    oItem:cPrompt        := "Cajas"
    oItem:cMessage       := "Acceso a las cajas"
    oItem:bAction        := {|| SelCajTactil() }
-   oItem:cBmp           := "Cashier_16"
-   oItem:cBmpBig        := "Cashier_32"
+   oItem:cBmp           := "gc_cash_register_16"
+   oItem:cBmpBig        := "gc_cash_register_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
@@ -3852,7 +3852,7 @@ Function TctCreateButtonBar()
    oItem:cMessage       := "Acceso a las cuentas de clientes"
    oItem:bAction        := {|| CuentasClientes( oWnd() )  }
    oItem:cBmp           := "gc_user_16"
-   oItem:cBmpBig        := "User1_32"
+   oItem:cBmpBig        := "gc_user_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
@@ -4142,7 +4142,7 @@ Function TPVCreateButtonBar()
    oItem:cPrompt        := "Cajas"
    oItem:cMessage       := "Acceso a las cajas"
    oItem:bAction        := {|| SelCajTactil() }
-   oItem:cBmpBig        := "Cashier_32"
+   oItem:cBmpBig        := "gc_cash_register_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
@@ -4156,7 +4156,7 @@ Function TPVCreateButtonBar()
    oItem:cPrompt        := "Cuentas clientes"
    oItem:cMessage       := "Acceso a las cuentas de clientes"
    oItem:bAction        := {|| CuentasClientes( oWnd() )  }
-   oItem:cBmpBig        := "User1_32"
+   oItem:cBmpBig        := "gc_user_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo

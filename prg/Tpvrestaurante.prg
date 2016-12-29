@@ -1090,7 +1090,7 @@ Method ConfigButton( oBtnTarifa, oBtnRenombrar ) CLASS TTpvRestaurante
       case IsFalse( ::lPuntosVenta )
 
          if empty( ::cSelectedImagen )
-            oBtnTarifa:cBmp( "Cup_32" )
+            oBtnTarifa:cBmp( "gc_cup_32" )
          else
             oBtnTarifa:cBmp( ::cSelectedImagen )
          end if
@@ -1106,7 +1106,7 @@ Method ConfigButton( oBtnTarifa, oBtnRenombrar ) CLASS TTpvRestaurante
       case IsTrue( ::lPuntosVenta )
 
          if empty( ::cSelectedImagen )
-            oBtnTarifa:cBmp( "Cup_32" )
+            oBtnTarifa:cBmp( "gc_cup_32" )
          else
             oBtnTarifa:cBmp( ::cSelectedImagen )
          end if

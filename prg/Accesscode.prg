@@ -399,7 +399,7 @@ METHOD TactilResource() CLASS AccessCode
 
       case lAIS()
          ::oSayDatabase          := TWebBtn():Redefine( 210,,,,,, oDlg,,,, "Database engine : Internet Sybase Advantage Release 10.0 - SAP Company ®", "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
-         ::cBmpEngine            := "Courthouse_Alpla_48"
+         ::cBmpEngine            := "gc_floppy_disk_48"
 
       otherwise
          ::oSayDatabase          := TWebBtn():Redefine( 210,,,,,, oDlg,,,, "Database engine : xHarbour Native RDD", "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )

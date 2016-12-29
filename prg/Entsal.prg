@@ -681,7 +681,7 @@ STATIC FUNCTION EdtRecTct( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
       REDEFINE BUTTONBMP oBtnCaj ;
          ID       151 ;
          OF       oDlg ;
-         BITMAP   "Cashier_32" ;
+         BITMAP   "gc_cash_register_32" ;
          ACTION   ( SelCajTactil(), SetBigCaj( oSayCaj ) )
 
       REDEFINE GET oSayCaj VAR cSayCaj ;

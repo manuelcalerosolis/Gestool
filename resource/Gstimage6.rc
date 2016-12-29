@@ -19,7 +19,6 @@ PIG_32 BITMAP "..\\bmp\\Pig_32.bmp"
 NOTE_PINNED_16 BITMAP "..\\bmp\\Note_Pinned_16.bmp"
 
 CUP_16 BITMAP "..\\bmp\\Cup_16.bmp"
-CUP_32 BITMAP "..\\bmp\\Cup_32.bmp"
 CUP_48 BITMAP "..\\bmp\\Cup_48.bmp"
 
 PRINTER_48 BITMAP "..\\bmp\\Printer_48.bmp"

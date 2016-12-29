@@ -28,7 +28,7 @@ TRUCK_RED BITMAP "..\\bmp\\truck_red_32.bmp"
 
 PACKAGE BITMAP "..\\bmp\\package_32.bmp"
 
-WORKER BITMAP "..\\bmp\\worker_32.bmp"
+WORKER BITMAP "..\\bmp\\gc_worker2_32.bmp"
 
 STAR_YELLOW BITMAP "..\\bmp\\star_yellow_32.bmp"
 

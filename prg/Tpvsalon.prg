@@ -1137,7 +1137,7 @@ Method InitSelector( lPuntosPendientes, lShowLlevar, nSelectOption ) CLASS TTpvS
 
       nSala++
 
-      ::oBtnGenerico          := TDotNetButton():New( 60, oGrupo, "Cashier_32", "General", nSala, {|| ::LoadGenericosPendientes( lPuntosPendientes ) }, , , .f., .f., .f. )
+      ::oBtnGenerico          := TDotNetButton():New( 60, oGrupo, "gc_cash_register_32", "General", nSala, {|| ::LoadGenericosPendientes( lPuntosPendientes ) }, , , .f., .f., .f. )
 
       if uFieldEmpresa( "lRecoger" )
          ::oBtnRecoger        := TDotNetButton():New( 60, oGrupo, "Shoppingbasket_full_32", "Para recoger", ++nSala, {|| ::LoadRecogerPendientes( lPuntosPendientes ) }, , , .f., .f., .f. )

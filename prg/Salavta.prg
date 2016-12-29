@@ -619,7 +619,7 @@ Method ConfigButton( oBtnTarifa, oBtnRenombrar )
       case IsFalse( ::lPuntosVenta )
 
          if Empty( ::cSelectedImagen )
-            oBtnTarifa:cBmp( "Cup_32" )
+            oBtnTarifa:cBmp( "gc_cup_32" )
          else
             oBtnTarifa:cBmp( ::cSelectedImagen )
          end if
@@ -635,7 +635,7 @@ Method ConfigButton( oBtnTarifa, oBtnRenombrar )
       case IsTrue( ::lPuntosVenta )
 
          if Empty( ::cSelectedImagen )
-            oBtnTarifa:cBmp( "Cup_32" )
+            oBtnTarifa:cBmp( "gc_cup_32" )
          else
             oBtnTarifa:cBmp( ::cSelectedImagen )
          end if

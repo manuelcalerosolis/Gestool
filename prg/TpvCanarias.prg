@@ -2786,21 +2786,21 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc,
 
       oGrupo            := TDotNetGroup():New( oCarpeta, 186, "Lineas", .f. )
          oBtnAdd        := TDotNetButton():New( 60, oGrupo, "New32",                    "Añadir [F2]",         1, {|| AppDetRec( oBrwDet, bEditL, aTmp, cPorDiv, cPicEur ), aGet[ _CCLITIK ]:SetFocus() }, , , .f., .f., .f. )
-         oBtnEdt        := TDotNetButton():New( 60, oGrupo, "Edit32",                   "Modificar [F3]",      2, {|| WinEdtRec( oBrwDet, bEditL, dbfTmpL, , , aTmp ), lRecTotal( aTmp ), aGet[ _CCLITIK ]:SetFocus() }, , , .f., .f., .f. )
+         oBtnEdt        := TDotNetButton():New( 60, oGrupo, "gc_pencil__32",                   "Modificar [F3]",      2, {|| WinEdtRec( oBrwDet, bEditL, dbfTmpL, , , aTmp ), lRecTotal( aTmp ), aGet[ _CCLITIK ]:SetFocus() }, , , .f., .f., .f. )
          oBtnDel        := TDotNetButton():New( 60, oGrupo, "Del32",                    "Eliminar [F4]",       3, {|| deleteLineTicket( aTmp, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
 
       oGrupo            := TDotNetGroup():New( oCarpeta, 436, "Cobros", .f. )
          oBtnTik        := TDotNetButton():New( 60, oGrupo, "gc_money2_32",             "Cobrar [F5]",         1, {|| NewTiket( aGet, aTmp, nMode, SAVTIK, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
-         oBtnAlb        := TDotNetButton():New( 60, oGrupo, "Document_plain_user1_32",  "Albarán [F7]",        2, {|| NewTiket( aGet, aTmp, nMode, SAVALB, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
-         oBtnFac        := TDotNetButton():New( 70, oGrupo, "Document_user1_32",        "Factura [F8]",        3, {|| NewTiket( aGet, aTmp, nMode, SAVFAC, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
-         oBtnApt        := TDotNetButton():New( 60, oGrupo, "Cashier_Stop_32",          "Apartar [F9]",        4, {|| GuardaApartado( aGet, aTmp, @nMode, SAVAPT, .f., oBrw, oBrwDet, oDlgTpv ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
-         oBtnVal        := TDotNetButton():New( 60, oGrupo, "Cashier_Money2_32",        "Cheque regalo",       5, {|| NewTiket( aGet, aTmp, nMode, SAVRGL, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
-         oBtnDev        := TDotNetButton():New( 60, oGrupo, "Cashier_Delete_32",        "Devolución",          6, {|| if( uFieldEmpresa( "lNumTik" ), AsistenteDevolucionTiket( aTmp, aGet, nMode, .t. ), NewTiket( aGet, aTmp, nMode, SAVDEV, .f., oBrw, oBrwDet ) ) }, , {|| nMode == APPD_MODE }, .f., .f., .f. )
-         oBtnOld        := TDotNetButton():New( 60, oGrupo, "Cashier_Scroll_32",        "Vale",                7, {|| if( uFieldEmpresa( "lNumTik" ), AsistenteDevolucionTiket( aTmp, aGet, nMode, .f. ), NewTiket( aGet, aTmp, nMode, SAVVAL, .f., oBrw, oBrwDet ) ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
+         oBtnAlb        := TDotNetButton():New( 60, oGrupo, "gc_document_empty_32",  "Albarán [F7]",        2, {|| NewTiket( aGet, aTmp, nMode, SAVALB, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
+         oBtnFac        := TDotNetButton():New( 70, oGrupo, "gc_document_text_user_32",        "Factura [F8]",        3, {|| NewTiket( aGet, aTmp, nMode, SAVFAC, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
+         oBtnApt        := TDotNetButton():New( 60, oGrupo, "gc_cash_stop_32",          "Apartar [F9]",        4, {|| GuardaApartado( aGet, aTmp, @nMode, SAVAPT, .f., oBrw, oBrwDet, oDlgTpv ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
+         oBtnVal        := TDotNetButton():New( 60, oGrupo, "gc_cash_money_32",        "Cheque regalo",       5, {|| NewTiket( aGet, aTmp, nMode, SAVRGL, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
+         oBtnDev        := TDotNetButton():New( 60, oGrupo, "gc_cash_delete_32",        "Devolución",          6, {|| if( uFieldEmpresa( "lNumTik" ), AsistenteDevolucionTiket( aTmp, aGet, nMode, .t. ), NewTiket( aGet, aTmp, nMode, SAVDEV, .f., oBrw, oBrwDet ) ) }, , {|| nMode == APPD_MODE }, .f., .f., .f. )
+         oBtnOld        := TDotNetButton():New( 60, oGrupo, "gc_cash_scroll_32",        "Vale",                7, {|| if( uFieldEmpresa( "lNumTik" ), AsistenteDevolucionTiket( aTmp, aGet, nMode, .f. ), NewTiket( aGet, aTmp, nMode, SAVVAL, .f., oBrw, oBrwDet ) ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
 
       oGrupo            := TDotNetGroup():New( oCarpeta, 66, "Tickets", .f. )
-         oBtnUp         := TDotNetButton():New( 60, oGrupo, "Arrow_Up_Blue_Save_32",    "",                    1, , , {|| nMode != ZOOM_MODE }, .f., .f., .f. ) //lCambiaTicket( .t., aTmp, aGet, nMode ), if( !empty( oBrw ), ( oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh() ), )
-         oBtnDown       := TDotNetButton():New( 60, oGrupo, "Arrow_Down_Blue_Save_32",  "",                    1, , , {|| nMode != ZOOM_MODE }, .f., .f., .f. ) //lCambiaTicket( .f., aTmp, aGet, nMode ), if( !empty( oBrw ), ( oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh() ), )
+         oBtnUp         := TDotNetButton():New( 60, oGrupo, "gc_arrow_up_32",    "",                    1, , , {|| nMode != ZOOM_MODE }, .f., .f., .f. ) //lCambiaTicket( .t., aTmp, aGet, nMode ), if( !empty( oBrw ), ( oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh() ), )
+         oBtnDown       := TDotNetButton():New( 60, oGrupo, "gc_arrow_down_32",  "",                    1, , , {|| nMode != ZOOM_MODE }, .f., .f., .f. ) //lCambiaTicket( .f., aTmp, aGet, nMode ), if( !empty( oBrw ), ( oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh() ), )
 
       oGrupo            := TDotNetGroup():New( oCarpeta, 66, "Salida", .f. )
          oBoton         := TDotNetButton():New( 60, oGrupo, "End32",                    "Salida",              1, {|| oDlgTpv:End() }, , , .f., .f., .f. )
@@ -2808,11 +2808,11 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc,
       oCarpeta          := TCarpeta():New( oOfficeBar, "Rotor" )
 
       oGrupo            := TDotNetGroup():New( oCarpeta, 306, "Cobros", .f. )
-         oBoton         := TDotNetButton():New( 60, oGrupo, "User1_32",                 "Modificar cliente",   1, {|| if( !empty( aTmp[ _CCLITIK ] ), EdtCli( aTmp[ _CCLITIK ] ), MsgStop( "Código cliente vacío" ) ) }, , , .f., .f., .f. )
-         oBoton         := TDotNetButton():New( 60, oGrupo, "Info_32",                  "Informe cliente",     2, {|| if( !empty( aTmp[ _CCLITIK ] ), InfCliente( aTmp[ _CCLITIK ] ), MsgStop( "Código cliente vacío" ) ) }, , , .f., .f., .f. )
-         oBoton         := TDotNetButton():New( 60, oGrupo, "Worker_32",                "Modificar obras",     3, {|| if( !empty( aTmp[ _CCLITIK ] ), EdtObras( aTmp[ _CCLITIK ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "No hay obra asociada para el presupuesto" ) ) }, , , .f., .f., .f. )
-         oBoton         := TDotNetButton():New( 60, oGrupo, "Cube_Yellow_32",           "Modificar artículo",  4, {|| EdtArticulo( ( dbfTmpL )->cCbaTil ) }, , , .f., .f., .f. )
-         oBoton         := TDotNetButton():New( 60, oGrupo, "Info_32",                  "Informe artículo",    5, {|| InfArticulo( ( dbfTmpL )->cCbaTil ) }, , , .f., .f., .f. )
+         oBoton         := TDotNetButton():New( 60, oGrupo, "gc_user_32",                 "Modificar cliente",   1, {|| if( !empty( aTmp[ _CCLITIK ] ), EdtCli( aTmp[ _CCLITIK ] ), MsgStop( "Código cliente vacío" ) ) }, , , .f., .f., .f. )
+         oBoton         := TDotNetButton():New( 60, oGrupo, "gc_speech_balloon_answer2_32",                  "Informe cliente",     2, {|| if( !empty( aTmp[ _CCLITIK ] ), InfCliente( aTmp[ _CCLITIK ] ), MsgStop( "Código cliente vacío" ) ) }, , , .f., .f., .f. )
+         oBoton         := TDotNetButton():New( 60, oGrupo, "gc_worker2_32",                "Modificar obras",     3, {|| if( !empty( aTmp[ _CCLITIK ] ), EdtObras( aTmp[ _CCLITIK ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "No hay obra asociada para el presupuesto" ) ) }, , , .f., .f., .f. )
+         oBoton         := TDotNetButton():New( 60, oGrupo, "gc_object_cube_32",           "Modificar artículo",  4, {|| EdtArticulo( ( dbfTmpL )->cCbaTil ) }, , , .f., .f., .f. )
+         oBoton         := TDotNetButton():New( 60, oGrupo, "gc_speech_balloon_answer2_32",                  "Informe artículo",    5, {|| InfArticulo( ( dbfTmpL )->cCbaTil ) }, , , .f., .f., .f. )
 
       SetButtonEdtRec( nMode, aTmp )
 
@@ -9101,7 +9101,7 @@ Static Function ClickButtonsMode( aTmp )
 
          aTmp[ _CTIPTIK ]        := SAVFAC
          oBtnTipoVta:cPrompt     := "Factura"
-         oBtnTipoVta:cxBmp       := "Document_user1_32"
+         oBtnTipoVta:cxBmp       := "gc_document_text_user_32"
 
       case aTmp[ _CTIPTIK ] == SAVFAC
 

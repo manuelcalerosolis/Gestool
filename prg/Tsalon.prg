@@ -354,7 +354,7 @@ Method InitSelector( lPuntosPendientes, lLlevar, dbfTikT ) CLASS TSalon
       next
 
    if lLlevar
-      ::oBtnGenerico          := TDotNetButton():New( 60, oGrupo, "Cashier_32",  "General",        len( ::oSalaVenta:aSalas ) + 1, {|| ::LoadGenericosPendientes( dbfTikT, lPuntosPendientes ) }, , , .f., .f., .f. )
+      ::oBtnGenerico          := TDotNetButton():New( 60, oGrupo, "gc_cash_register_32",  "General",        len( ::oSalaVenta:aSalas ) + 1, {|| ::LoadGenericosPendientes( dbfTikT, lPuntosPendientes ) }, , , .f., .f., .f. )
       ::oBtnLlevar            := TDotNetButton():New( 60, oGrupo, "Wheel_32",    "Para llevar",    len( ::oSalaVenta:aSalas ) + 2, {|| ::LoadLlevarPendientes( dbfTikT, lPuntosPendientes ) }, , , .f., .f., .f. )
    end if
 
@@ -1477,7 +1477,7 @@ Method New( nNumero, dbfTikT, oSala ) CLASS sPunto
    ::cTikT           := dbfTikT
 
    if Empty( oSala )
-      ::cImagen      := "Cup_32"
+      ::cImagen      := "gc_cup_32"
    else
       ::oSala        := oSala
       ::cImagen      := oSala:cImagen
@@ -1537,7 +1537,7 @@ Method Generico( dbfTikT ) CLASS sPunto
    else
       ::nPreCmb      := 1
    end if
-   ::cImagen         := "Cup_32"
+   ::cImagen         := "gc_cup_32"
    ::oSala           := nil
    ::lComensal       := .f.
 
@@ -1871,7 +1871,7 @@ Method Generica() CLASS TMesa
    ::nPrecio         := Max( uFieldEmpresa( "nPreTPro" ), 1 )
    ::nPreCmb         := Max( uFieldEmpresa( "nPreTCmb" ), 1 )
    ::oSalon          := nil
-   ::cImagen         := "Cup_32"
+   ::cImagen         := "gc_cup_32"
    ::lGenerica       := .t.
 
 Return ( Self )

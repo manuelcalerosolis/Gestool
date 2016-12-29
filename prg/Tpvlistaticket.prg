@@ -374,9 +374,9 @@ METHOD StartResource() CLASS TpvListaTicket
 
       oCarpeta                := TCarpeta():New( ::oOfficeBar, "Inicio" )
 
-      oGrupo        := TDotNetGroup():New( oCarpeta, nLen, "Salones", .f., , "Cup_32" )
-         ::oBtnLstMesas      := TDotNetButton():New( 60, oGrupo, "Cup_32",                 "Mesas",          1,    {|| ::OnClickMesas() }, , , .f., .f., .f. )
-         ::oBtnLstGeneral    := TDotNetButton():New( 60, oGrupo, "Cashier_32",             "General",        2,    {|| ::OnClickGeneral() }, , , .f., .f., .f. )
+      oGrupo        := TDotNetGroup():New( oCarpeta, nLen, "Salones", .f., , "gc_cup_32" )
+         ::oBtnLstMesas      := TDotNetButton():New( 60, oGrupo, "gc_cup_32",                 "Mesas",          1,    {|| ::OnClickMesas() }, , , .f., .f., .f. )
+         ::oBtnLstGeneral    := TDotNetButton():New( 60, oGrupo, "gc_cash_register_32",             "General",        2,    {|| ::OnClickGeneral() }, , , .f., .f., .f. )
 
       if uFieldEmpresa( "lRecoger" )
          ::oBtnLstRecoger    := TDotNetButton():New( 60, oGrupo, "shoppingbasket_full_32", "Para recoger",   nPos, {|| ::OnClickRecoger() }, , , .f., .f., .f. )
@@ -891,8 +891,8 @@ METHOD lPendientes() CLASS TpvListaTicket
 
       ::oImageListPendiente            := TImageList():New( 32, 32 )
 
-      ::oImageListPendiente:AddMasked( TBitmap():Define( "Cup_32",    ), Rgb( 255, 0, 255 ) )
-      ::oImageListPendiente:AddMasked( TBitmap():Define( "Cashier_32" ), Rgb( 255, 0, 255 ) )
+      ::oImageListPendiente:AddMasked( TBitmap():Define( "gc_cup_32",    ), Rgb( 255, 0, 255 ) )
+      ::oImageListPendiente:AddMasked( TBitmap():Define( "gc_cash_register_32" ), Rgb( 255, 0, 255 ) )
       ::oImageListPendiente:AddMasked( TBitmap():Define( "shoppingbasket_full_32"   ), Rgb( 255, 0, 255 ) )
       ::oImageListPendiente:AddMasked( TBitmap():Define( "Wheel_32"   ), Rgb( 255, 0, 255 ) )
 

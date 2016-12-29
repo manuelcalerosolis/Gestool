@@ -20,7 +20,7 @@ FUNCTION ReportGallery()
    oImgTipoGaleria:AddIcon( "gc_money2_32" )
    oImgTipoGaleria:AddIcon( "Truck_Red" )
    oImgTipoGaleria:AddIcon( "Package" )
-   oImgTipoGaleria:AddIcon( "Worker_32" )
+   oImgTipoGaleria:AddIcon( "gc_worker2_32" )
 
    oLstTipoGaleria   := TListView():Redefine( 100, oDlg, {|| msginfo() } ) // {| nOption | SelectReportGalery( nOption, oTrvArbolGaleria ) }
 

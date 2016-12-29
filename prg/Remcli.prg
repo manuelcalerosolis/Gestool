@@ -754,7 +754,7 @@ METHOD Resource( nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       990 ;
-         RESOURCE "Remesas_bancarias_48_alpha" ;
+         RESOURCE "gc_briefcase2_document_48" ;
          TRANSPARENT ;
          OF       oDlg
 
@@ -1382,7 +1382,7 @@ METHOD SaveModelo()
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       500 ;
-         RESOURCE "Courthouse_Alpla_48" ;
+         RESOURCE "gc_floppy_disk_48" ;
          TRANSPARENT ;
          OF       oDlg
 

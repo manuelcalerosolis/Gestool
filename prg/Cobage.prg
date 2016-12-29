@@ -653,7 +653,7 @@ METHOD Resource( nMode ) CLASS TCobAge
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       990 ;
-         RESOURCE "liquidacion_agentes_48_alpha" ;
+         RESOURCE "gc_briefcase2_agent_48" ;
          TRANSPARENT ;
          OF       oDlg
 
