@@ -168,10 +168,13 @@ METHOD OpenFiles( cPath )
    oBlock         := ErrorBlock( { | oError | Break( oError ) } )
    BEGIN SEQUENCE
 
-   ::oFacCliT := TDataCenter():oFacCliT()
+   //::oFacCliT := TDataCenter():oFacCliT()
+   //::oFacCliT:OrdSetFocus( "CCODAGE" )
+
+   DATABASE NEW ::oFacCliT FILE "FACCLIT.DBF" PATH ( cPath )      VIA ( cDriver() ) SHARED INDEX  "FACCLIT.CDX"
    ::oFacCliT:OrdSetFocus( "CCODAGE" )
 
-   DATABASE NEW ::oFacCliL FILE "FACCLIL.DBF" PATH ( cPath ) VIA cDriver() SHARED INDEX  "FACCLIL.CDX"
+   DATABASE NEW ::oFacCliL FILE "FACCLIL.DBF" PATH ( cPath )      VIA ( cDriver() ) SHARED INDEX  "FACCLIL.CDX"
 
    DATABASE NEW ::oIva     FILE "TIVA.DBF"    PATH ( cPatDat() )  VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
@@ -215,28 +218,36 @@ RETURN ( lOpen )
 //---------------------------------------------------------------------------//
 
 METHOD CloseFiles()
-
+ 
+   ?"1  "    
    if !Empty( ::oDivisas )
    ::oDivisas:End()
    end if
+   ?"2"
    if !Empty( ::oClientes )
    ::oClientes:End()
    end if
+   ?"3"
    if !Empty( ::oAgentes )
    ::oAgentes:End()
    end if
+   ?"4"
    if !Empty( ::oFacCliT )
    ::oFacCliT:End()
    end if
+   ?"5"
    if !Empty( ::oFacCliL )
    ::oFacCliL:End()
    end if
+   ?"6"
    if !Empty( ::oDbfIva )
    ::oDbfIva:End()
    end if
+   ?"7"
    if !Empty( ::oDbf )
    ::oDbf:End()
    end if
+   ?"8"
 
    ::oDivisas     := nil
    ::oClientes    := nil

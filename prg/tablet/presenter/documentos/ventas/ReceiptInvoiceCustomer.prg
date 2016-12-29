@@ -40,6 +40,8 @@ CLASS ReceiptInvoiceCustomer FROM DocumentsSales
 
    METHOD onPostSaveEdit()
 
+   METHOD printReceipt()                  INLINE ( PrnRecCli( ( ::getDataTable() )->cSerie + Str( ( ::getDataTable() )->nNumFac ) + ( ::getDataTable() )->cSufFac + Str( ( ::getDataTable() )->nNumRec ) ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

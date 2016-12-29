@@ -3,6 +3,8 @@
 
 CLASS ReceiptDocumentSalesViewSearchNavigator FROM ViewSearchNavigator
 
+   DATA buttonPrint
+
    DATA oSayFilter
 
    METHOD getDataTable()                  INLINE ( ::oSender:getDataTable() )
@@ -18,6 +20,8 @@ CLASS ReceiptDocumentSalesViewSearchNavigator FROM ViewSearchNavigator
    METHOD BotonesAcciones()
 
    METHOD ChangeFilter()
+
+   METHOD defineSalir()
 
 END CLASS
 
@@ -136,5 +140,27 @@ METHOD ChangeFilter() CLASS ReceiptDocumentSalesViewSearchNavigator
 
 
 Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD defineSalir() CLASS ReceiptDocumentSalesViewSearchNavigator
+
+   ::buttonPrint     :=    TGridImage():Build(  {  "nTop"      => 5,;
+                                                   "nLeft"     => {|| GridWidth( 9, ::oDlg ) },;
+                                                   "nWidth"    => 64,;
+                                                   "nHeight"   => 64,;
+                                                   "cResName"  => "gc_printer_64",;
+                                                   "bLClicked" => {|| ::oSender:printReceipt() },;
+                                                   "oWnd"      => ::oDlg } )
+
+   ::buttonEnd       :=    TGridImage():Build(  {  "nTop"      => 5,;
+                                                   "nLeft"     => {|| GridWidth( 10.5, ::oDlg ) },;
+                                                   "nWidth"    => 64,;
+                                                   "nHeight"   => 64,;
+                                                   "cResName"  => "gc_door_open_64",;
+                                                   "bLClicked" => {|| ::oDlg:End() },;
+                                                   "oWnd"      => ::oDlg } )
+
+Return ( self )
 
 //---------------------------------------------------------------------------//
