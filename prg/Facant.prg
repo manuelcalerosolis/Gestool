@@ -696,7 +696,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
          :bEditValue       := {|| ( dbfAntCliT )->lCloAnt }
          :nWidth           := 20
          :bLDClickData     := {|| oWndBrw:RecEdit() }
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_lock2_12", "Nil16" } )
          :AddResource( "gc_lock2_16" )
       end with
 
@@ -707,7 +707,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
          :bEditValue       := {|| ( dbfAntCliT )->lContab }
          :nWidth           := 20
          :bLDClickData     := {|| oWndBrw:RecEdit() }
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_folder2_12", "Nil16" } )
          :AddResource( "gc_folder2_16" )
       end with
 
@@ -718,7 +718,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
          :bEditValue       := {|| ( dbfAntCliT )->lSndDoc }
          :nWidth           := 20
          :bLDClickData     := {|| oWndBrw:RecEdit() }
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_mail2_12", "Nil16" } )
          :AddResource( "gc_mail2_16" )
       end with
 
@@ -1014,6 +1014,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
 
       lGenAntCli( oWndBrw:oBrw, oPdf, IS_PDF ) ;
 
+   /*
    DEFINE BTNSHELL oMail RESOURCE "GC_MAIL_EARTH_" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
@@ -1022,6 +1023,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
       LEVEL    ACC_IMPR
 
       lGenAntCli( oWndBrw:oBrw, oMail, IS_MAIL ) ;
+   */
 
    DEFINE BTNSHELL RESOURCE "BMPCONTA" OF oWndBrw ;
       NOBORDER ;

@@ -1555,7 +1555,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():FacturasRectificativas( nView ) )->lConTab }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_folder2_12", "Nil16" } )
          :AddResource( "gc_folder2_16" )
       end with
 
@@ -1565,7 +1565,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():FacturasRectificativas( nView ) )->lSndDoc }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_mail2_12", "Nil16" } )
          :AddResource( "gc_mail2_16" )
       end with
 
@@ -1576,7 +1576,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
          :bEditValue       := {|| !Empty( ( D():FacturasRectificativas( nView ) )->dFecEnt ) }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "document_ok_16" )
+         :AddResource( "gc_document_text_check_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1599,7 +1599,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
          :bEditValue       := {|| ( D():FacturasRectificativas( nView ) )->lImprimido }
          :nWidth           := 20
          :lHide            := .t.
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_printer2_12", "Nil16" } )
          :AddResource( "gc_printer2_16" )
       end with
 
@@ -2269,7 +2269,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "factura_rectificativa_48_alpha" ;
+        RESOURCE "gc_document_text_delete_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[1]
 

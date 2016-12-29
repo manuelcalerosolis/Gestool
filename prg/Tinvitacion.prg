@@ -10,7 +10,7 @@ CLASS TInvitacion FROM TMANT
 
    CLASSDATA aResource  AS ARRAY    INIT {   "COCKTAIL_16"        ,;
                                              "DUDE3_16"           ,;
-                                             "SECURITY_AGENT_16"  ,;
+                                             "gc_businessman2_16"  ,;
                                              "USER_HEADPHONES_16" ,;
                                              "WOMAN2_16"          ,;
                                              "TICKET_GREEN_16"    ,;
