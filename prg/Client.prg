@@ -3459,7 +3459,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ID       140 ;
          WHEN     ( ! Empty( oRTF:GetSel() ) ) ;
          OF       fldObservaciones ;
-         RESOURCE "Copy16" ;
+         RESOURCE "gc_copy_16" ;
          NOBORDER ;
          TOOLTIP  "Copiar" ;
          ACTION   ( oRTF:Copy(), oRTF:SetFocus() )
@@ -6329,7 +6329,7 @@ STATIC FUNCTION EdtRotorMenu( aTmp, aGet, oDlg, oBrw, nMode )
 
             MENUITEM "&1. Añadir presupuesto de cliente";
             MESSAGE  "Añade un presupuesto de cliente" ;
-            RESOURCE "Notebook_user1_16";
+            RESOURCE "gc_notebook_user_16";
             ACTION   ( SavClient( aTmp, aGet, oDlg, oBrw, nMode ), PreCli( nil, nil, ( D():Clientes( nView ) )->Cod, nil ) )
 
             MENUITEM "&2. Añadir pedido de cliente";

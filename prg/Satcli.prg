@@ -3286,7 +3286,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&5. Modificar dirección";
                MESSAGE  "Modificar ficha de la dirección" ;
-               RESOURCE "Worker16" ;
+               RESOURCE "gc_worker2_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "No hay obra asociada para el S.A.T." ) ) )
 
             SEPARATOR

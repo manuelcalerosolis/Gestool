@@ -383,7 +383,9 @@ Return ( self )
 
 METHOD lValidDireccion() CLASS DocumentsSales
 
-   local nRec
+   local lValid            := .t.
+
+   /*local nRec
    local nOrdAnt
    local lValid            := .f.
    local codigoCliente     := ::oViewEdit:getCodigoCliente:varGet()     // hGet( ::hDictionaryMaster, "Cliente" )
@@ -422,7 +424,7 @@ METHOD lValidDireccion() CLASS DocumentsSales
    ( D():ClientesDirecciones( ::nView ) )->( ordsetfocus( nOrdAnt ) )
    ( D():ClientesDirecciones( ::nView ) )->( dbgoto( nRec ) )
 
-   ::oViewEdit:getCodigoDireccion:Enable()
+   ::oViewEdit:getCodigoDireccion:Enable()*/
 
 Return lValid
 
@@ -480,12 +482,8 @@ METHOD lValidCliente() CLASS DocumentsSales
 
    ::oViewEdit:getCodigoCliente:Disable()
 
-   if !empty( ::oViewEdit:getCodigoDireccion )
-      ::oViewEdit:getCodigoDireccion:cText( "" )
-   end if
-
-   if !empty( ::oViewEdit:getNombreDireccion )
-      ::oViewEdit:getNombreDireccion:cText( "" )
+   if !empty( ::oViewEdit:oGetEstablecimiento )
+      ::oViewEdit:oGetEstablecimiento:cText( "" )
    end if
 
    if ::setClientToDocument( cNewCodCli )
@@ -556,10 +554,10 @@ METHOD ChangeRuta() CLASS DocumentsSales
       ::oViewEdit:getCodigoCliente:lValid()
    end if 
 
-   if !empty( ::oViewEdit:getCodigoDireccion )
+   /*if !empty( ::oViewEdit:getCodigoDireccion )
       ::oViewEdit:getCodigoDireccion:cText( space( 10 ) )
       ::oViewEdit:getCodigoDireccion:lValid()
-   end if   
+   end if*/
 
 return cCliente
 
@@ -608,8 +606,8 @@ METHOD moveClient( lAnterior ) CLASS DocumentsSales
          ::oViewEdit:getCodigoCliente:cText( ( D():Clientes( ::nView ) )->Cod )
          ::oViewEdit:getCodigoCliente:lValid()
 
-         ::oViewEdit:getCodigoDireccion:cText( Space( 10 ) )
-         ::oViewEdit:getCodigoDireccion:lValid()
+         //::oViewEdit:getCodigoDireccion:cText( Space( 10 ) )
+         //::oViewEdit:getCodigoDireccion:lValid()
 
       end if
 
@@ -1007,6 +1005,11 @@ METHOD setClientToDocument( CodigoCliente ) CLASS DocumentsSales
       hSet( ::hDictionaryMaster, "GrupoCliente",         ( D():Clientes( ::nView ) )->Nif )
       hSet( ::hDictionaryMaster, "OperarPuntoVerde",     ( D():Clientes( ::nView ) )->lPntVer )
 
+      if !empty( ::oViewEdit:oGetEstablecimiento )
+         ::oViewEdit:oGetEstablecimiento:cText( ( D():Clientes( ::nView ) )->NbrEst )
+         ::oViewEdit:oGetEstablecimiento:Refresh()
+      end if
+
       if ::lAppendMode() 
 
          if !empty( ( D():Clientes( ::nView ) )->Serie )
@@ -1099,7 +1102,7 @@ Return ( self )
 
 METHOD runGridDirections() CLASS DocumentsSales
 
-   local codigoCliente     
+   /*local codigoCliente     
 
    if ::lZoomMode()
       Return ( self )
@@ -1132,7 +1135,7 @@ METHOD runGridDirections() CLASS DocumentsSales
 
    end if
 
-   ::oViewEdit:getCodigoDireccion:Enable()
+   ::oViewEdit:getCodigoDireccion:Enable()*/
 
 Return ( self )
 

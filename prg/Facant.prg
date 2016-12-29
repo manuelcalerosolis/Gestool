@@ -696,7 +696,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
          :bEditValue       := {|| ( dbfAntCliT )->lCloAnt }
          :nWidth           := 20
          :bLDClickData     := {|| oWndBrw:RecEdit() }
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_lock2_12", "Nil16" } )
          :AddResource( "gc_lock2_16" )
       end with
 
@@ -707,7 +707,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
          :bEditValue       := {|| ( dbfAntCliT )->lContab }
          :nWidth           := 20
          :bLDClickData     := {|| oWndBrw:RecEdit() }
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_folder2_12", "Nil16" } )
          :AddResource( "gc_folder2_16" )
       end with
 
@@ -718,7 +718,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
          :bEditValue       := {|| ( dbfAntCliT )->lSndDoc }
          :nWidth           := 20
          :bLDClickData     := {|| oWndBrw:RecEdit() }
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_mail2_12", "Nil16" } )
          :AddResource( "gc_mail2_16" )
       end with
 
@@ -1014,6 +1014,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
 
       lGenAntCli( oWndBrw:oBrw, oPdf, IS_PDF ) ;
 
+   /*
    DEFINE BTNSHELL oMail RESOURCE "GC_MAIL_EARTH_" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
@@ -1022,6 +1023,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
       LEVEL    ACC_IMPR
 
       lGenAntCli( oWndBrw:oBrw, oMail, IS_MAIL ) ;
+   */
 
    DEFINE BTNSHELL RESOURCE "BMPCONTA" OF oWndBrw ;
       NOBORDER ;
@@ -1117,7 +1119,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
          FROM     oRotor ;
          CLOSED ;
 
-      DEFINE BTNSHELL RESOURCE "WORKER" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "GC_CLIPBOARD_EMPTY_USER_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( EdtObras( ( dbfAntCliT )->cCodCli, ( dbfAntCliT )->cCodObr, dbfObrasT ) );
          TOOLTIP  "Modificar dirección" ;
@@ -1314,7 +1316,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "anticipo_cliente_48_alpha" ;
+        RESOURCE "gc_document_text_money2_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[1]
 
@@ -4445,7 +4447,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&5. Modificar dirección";
                MESSAGE  "Modifica ficha de la dirección" ;
-               RESOURCE "Worker16" ;
+               RESOURCE "gc_worker2_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );
 
 

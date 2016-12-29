@@ -31,8 +31,6 @@ CLASS TInfLot FROM TInfGen
 
    METHOD lGenerate()
 
-   METHOD AppDepAge()
-
    METHOD AppAlbaran()
 
    METHOD AppFactura()
@@ -200,14 +198,6 @@ METHOD lGenerate() CLASS TInfLot
    ::oDbf:Zap()
 
    /*
-   Nos movemos por los tikets
-   */
-
-   if ::lDepAge
-      ::AppDepAge()
-   end if
-
-   /*
    Nos movemos por las cabeceras de los albaranes a clientes-------------------
 	*/
 
@@ -353,68 +343,6 @@ METHOD AppFactura()
    end while
 
    ::oMtrInf:AutoInc( ::oFacCliL:LastRec() )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD AppDepAge()
-
-   /*
-   Damos valor al meter
-   */
-
-   ::oMtrInf:SetTotal( ::oDepAgeL:Lastrec() )
-
-   ::oDepAgeL:GoTop()
-
-   while !::lBreak .and. !::oDepAgeL:Eof()
-
-      if ::oDepAgeT:Seek( ::oDepAgeL:cSerDep + Str( ::oDepAgeL:nNumDep ) + ::oDepAgeL:cSufDep )
-
-         if ( ::lAllArt .or.( ::oDepAgeL:cRef >= ::cArtOrg .AND. ::oDepAgeL:cRef <= ::cArtDes ) )           .AND.;
-            if( !Empty( ::cLotIni ) .and. !Empty( ::cLotFin ), AllTRim( ::oDepAgeL:cLote ) >= AllTrim( ::cLotIni ) .and. AllTrim( ::oDepAgeL:cLote ) <= AllTrim( ::cLotFin ), .t. ) .AND.;
-            ::oDepAgeT:dFecDep >= ::dIniInf                                                                 .AND.;
-            ::oDepAgeT:dFecDep <= ::dFinInf                                                                 .AND.;
-            lChkSer( ::oDepAgeL:cSerDep, ::aSer )                                                           .AND.;
-            !( ::lExcCero .AND. ( nUnitEnt( ::oDepAgeL:cAlias ) == 0 ) )                                    .AND.;
-            !( ::lExcMov  .AND. ( nTotLDepAge( ::oDepAgeL:cAlias, ::nDecOut, ::nDerOut ) == 0  ) )
-
-            /*
-            Calculamos las cajas en vendidas entre dos fechas
-            */
-
-            ::oDbf:Append()
-
-            ::oDbf:cNumLot    := ::oDepAgeL:cLote
-            ::oDbf:cCodArt    := ::oDepAgeL:cRef
-            ::oDbf:cCodCli    := ::oDepAgeT:cCodAlm
-            ::oDbf:cNomCli    := ::oDepAgeT:cNomAlm
-            ::oDbf:nTotCaj    := ::oDepAgeL:nCanEnt
-            ::oDbf:nTotUni    := nUnitEnt( ::oDepAgeL:cAlias )
-            ::oDbf:nTotImp    := nTotLDepAge( ::oDepAgeL:cAlias )
-            ::oDbf:cTipDoc    := "Dep. Age."
-            ::oDbf:cNumDoc    := StrTran( ::oDepAgeL:cSerDep + "/" + Str( ::oDepAgeL:nNumDep ) + "/" + ::oDepAgeL:cSufDep, Space( 1 ), "" )
-            ::oDbf:dFecDoc    := ::oDepAgeT:dFecDep
-
-            if ::oDbfArt:Seek( ::oDepAgeL:cRef )
-               ::oDbf:cNomArt := ::oDbfArt:Nombre
-               ::oDbf:cCodFam := ::oDbfArt:Familia
-            end if
-
-            ::oDbf:Save()
-
-         end if
-
-      end if
-
-      ::oMtrInf:AutoInc( ::oDepAgeL:OrdKeyNo() )
-
-      ::oDepAgeL:Skip()
-
-   end while
-
-   ::oMtrInf:AutoInc( ::oDepAgeL:LastRec() )
 
 RETURN ( Self )
 

@@ -1146,7 +1146,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():PedidosClientes( nView ) )->lSndDoc }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "gc_mail2_12", "Nil16" } )
          :AddResource( "gc_mail2_16" )
       end with
 
@@ -1753,7 +1753,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
             TOOLTIP  "Informe de cliente" ;
             FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "Worker" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_clipboard_empty_user_" OF oWndBrw ;
             ACTION   ( EdtObras( ( D():PedidosClientes( nView ) )->cCodCli, ( D():PedidosClientes( nView ) )->cCodObr, dbfObrasT ) );
             TOOLTIP  "Modificar dirección" ;
             FROM     oRotor ;
@@ -2047,7 +2047,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "pedidos_clientes_48_alpha" ;
+        RESOURCE "gc_clipboard_empty_user_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[1]
 
@@ -4189,7 +4189,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&2. Visualizar presupuesto";
                MESSAGE  "Visualiza el presupuesto del cliente" ;
-               RESOURCE "Notebook_User1_16";
+               RESOURCE "gc_notebook_user_16";
                ACTION   ( if( !Empty( aTmp[ _CNUMPRE ] ), ZooPreCli( aTmp[ _CNUMPRE ] ), MsgStop( "El pedido no proviene de presupuesto" ) ) )
 
             SEPARATOR
@@ -4218,7 +4218,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&7. Modificar dirección";
                MESSAGE  "Modifica la obra del documento" ;
-               RESOURCE "Worker16";
+               RESOURCE "gc_worker2_16";
                ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );
 
             SEPARATOR

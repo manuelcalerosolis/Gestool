@@ -2637,7 +2637,7 @@ METHOD StartResource() CLASS TpvTactil
             TDotNetButton():New( 60, oGrupo, "Cashier_32",                    "Propiedades",       2, {|| EdtCajas() }, , , .f., .f., .f. )
 
          oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Entradas", .f. )
-            TDotNetButton():New( 60, oGrupo, "Cashier_replace_32",            "Entrada y salida",  1, {|| ::OnclickEntrdaSalida() }, , , .f., .f., .f. )
+            TDotNetButton():New( 60, oGrupo, "gc_cash_register_refresh_32",            "Entrada y salida",  1, {|| ::OnclickEntrdaSalida() }, , , .f., .f., .f. )
 
          oGrupo                     := TDotNetGroup():New( oCarpeta, 226, "Tarifas", .f., , "User1_32" )
             ::oBtnTarifaSolo        := TDotNetButton():New( 220, oGrupo, "gc_money2_16",                 "",                  1, {|| nil }, , , .f., .f., .f. )

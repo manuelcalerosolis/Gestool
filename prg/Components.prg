@@ -2137,7 +2137,7 @@ END CLASS
          ID       ( id + 4 ) ;
          WHEN     ( ! empty( ::oRTF:GetSel() ) ) ;
          OF       oDlg ;
-         RESOURCE "Copy16" ;
+         RESOURCE "gc_copy_16" ;
          NOBORDER ;
          TOOLTIP  "Copiar" ;
 

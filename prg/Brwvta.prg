@@ -794,15 +794,15 @@ function BrwVtaComArt( cCodArt, cNomArt )
       :AddResource( "gc_document_empty_businessman_16" )
       :AddResource( "gc_document_text_businessman_16" )
       :AddResource( "gc_pencil_package_16" )
-      :AddResource( "Notebook_user1_16" )
+      :AddResource( "gc_notebook_user_16" )
       :AddResource( "gc_clipboard_empty_user_16" )
       :AddResource( "gc_document_empty_16" )
       :AddResource( "gc_document_text_businessman_16" )
       :AddResource( "gc_cash_register_user_16" )
-      :AddResource( "Document_Delete_16" )
+      :AddResource( "gc_document_text_delete2_16" )
       :AddResource( "gc_document_text_worker_16" )
-      :AddResource( "Document_navigate_cross_16" )
-      :AddResource( "Power-drill_user1_16" )
+      :AddResource( "gc_document_text_delete2_16" )
+      :AddResource( "gc_power_drill_sat_user_16" )
    end with
 
    with object ( oBrwTmp:addCol() )
@@ -975,7 +975,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
    REDEFINE BTNBMP ;
       ID       101 ;
       OF       fldGraficos ;
-      RESOURCE "ColumnChart16" ;
+      RESOURCE "gc_chart_column_16" ;
       NOBORDER ;
       TOOLTIP  "Gráfico de barras" ;
       ACTION   ( oGraph:SetType( GRAPH_TYPE_BAR ) )
@@ -983,7 +983,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
    REDEFINE BTNBMP ;
       ID       102 ;
       OF       fldGraficos ;
-      RESOURCE "LineChart16" ;
+      RESOURCE "gc_chart_line_16" ;
       NOBORDER ;
       TOOLTIP  "Gráfico de lineas" ;
       ACTION   ( oGraph:SetType( GRAPH_TYPE_LINE ) )
@@ -991,7 +991,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
    REDEFINE BTNBMP ;
       ID       103 ;
       OF       fldGraficos ;
-      RESOURCE "DotChart16" ;
+      RESOURCE "gc_chart_dot_16" ;
       NOBORDER ;
       TOOLTIP  "Gráfico de puntos" ;
       ACTION   ( oGraph:SetType( GRAPH_TYPE_POINT ) )
@@ -999,7 +999,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
    REDEFINE BTNBMP ;
       ID       104 ;
       OF       fldGraficos ;
-      RESOURCE "PieChart16" ;
+      RESOURCE "gc_chart_area_16" ;
       NOBORDER ;
       TOOLTIP  "Gráfico combinado" ;
       ACTION   ( oGraph:SetType( GRAPH_TYPE_PIE ) )
@@ -1007,7 +1007,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
    REDEFINE BTNBMP ;
       ID       105 ;
       OF       fldGraficos ;
-      RESOURCE "Chart16" ;
+      RESOURCE "gc_chart_pie_16" ;
       NOBORDER ;
       TOOLTIP  "Gráfico combinado" ;
       ACTION   ( oGraph:SetType( GRAPH_TYPE_ALL ) )
@@ -1023,7 +1023,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
    REDEFINE BTNBMP ;
       ID       107 ;
       OF       fldGraficos ;
-      RESOURCE "Copy16" ;
+      RESOURCE "gc_copy_16" ;
       NOBORDER ;
       TOOLTIP  "Copiar el gráfico en el portapapeles" ;
       ACTION   ( oGraph:Copy2ClipBoard() )
@@ -1039,7 +1039,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
    REDEFINE BTNBMP ;
       ID       109 ;
       OF       fldGraficos ;
-      RESOURCE "Preferences16" ;
+      RESOURCE "gc_clipboard_checks_16" ;
       NOBORDER ;
       TOOLTIP  "Propiedades del gráfico" ;
       ACTION   ( GraphPropierties( oGraph ) )
@@ -1121,19 +1121,19 @@ Static Function InitBrwVtaCli( cCodArt, oTree, dbfDiv, dbfArticulo, oBrwStk, oBr
    oTreeImageList:AddMasked( TBitmap():Define( "gc_document_empty_businessman_16" ),   Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_businessman_16" ),         Rgb( 255, 0, 255 ) )
 
-   oTreeImageList:AddMasked( TBitmap():Define( "Notebook_user1_16" ),               Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_notebook_user_16" ),               Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "gc_clipboard_empty_user_16" ),        Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "gc_document_empty_16" ),         Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_businessman_16" ),               Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Document_delete_16" ),              Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_delete2_16" ),              Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "gc_cash_register_user_16" ),                Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "gc_money2_16" ),                        Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Truck_red_16" ),                    Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Package_16" ),                      Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_small_truck_16" ),                    Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_package_16" ),                      Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_worker_16" ),             Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Document_navigate_cross_16" ),      Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_delete2_16" ),      Rgb( 255, 0, 255 ) )
 
-   oTreeImageList:AddMasked( TBitmap():Define( "Power-drill_user1_16" ),            Rgb( 255, 0, 255 ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "gc_power_drill_sat_user_16" ),            Rgb( 255, 0, 255 ) )
 
    oTree:SetImageList( oTreeImageList )
 
@@ -1196,7 +1196,7 @@ Static Function InitBrwVtaCli( cCodArt, oTree, dbfDiv, dbfArticulo, oBrwStk, oBr
 
             MENUITEM "&4. Añadir presupuesto de cliente";
             MESSAGE  "Añade un presupuesto de cliente" ;
-            RESOURCE "Notebook_user1_16";
+            RESOURCE "gc_notebook_user_16";
             ACTION   ( AppPreCli( "", cCodArt, .f. ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )
 
             MENUITEM "&5. Añadir pedido de cliente";
@@ -1216,7 +1216,7 @@ Static Function InitBrwVtaCli( cCodArt, oTree, dbfDiv, dbfArticulo, oBrwStk, oBr
 
             MENUITEM "&8. Añadir factura rectificativa de cliente";
             MESSAGE  "Añade una factura rectificativa de cliente" ;
-            RESOURCE "Document_Delete_16";
+            RESOURCE "gc_document_text_delete2_16";
             ACTION   ( AppFacRec( "", cCodArt, .f. ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )
 
             MENUITEM "&9. Añadir tiket de cliente";

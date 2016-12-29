@@ -29,7 +29,7 @@ METHOD New( nView ) CLASS TGenMailingDatabaseFacturaRectificativaCliente
 
    ::setFormatoDocumento( cFirstDoc( "FR", D():Documentos( nView ) ) )
 
-   ::setBmpDatabase( "Factura_cliente_48_alpha" )
+   ::setBmpDatabase( "gc_document_text_user2_48" )
 
    ::setAsunto( "Envio de nuestra factura {Serie de la factura}/{Número de la factura}" )
 

@@ -16,8 +16,6 @@ BUILDING_FOLDER_RED_16 BITMAP "..\\bmp\\office-building_folder_red_16.bmp"
 
 BUILDING_FOLDER_RED_32 BITMAP "..\\bmp\\office-building_folder_red_32.bmp"
 
-OFFICE-BUILDING_ADDRESS_BOOK_16 BITMAP "..\\bmp\\office-building_address_book_16.bmp"
-
 OFFICE-BUILDING_ADDRESS_BOOK_32 BITMAP "..\\bmp\\office-building_address_book_32.bmp"
 
 BULLET_SQUARE_GREEN_32 BITMAP "..\\bmp\\Bullet_Square_Green_32.bmp"
@@ -37,10 +35,6 @@ NAVIGATE_TOP_32 BITMAP "..\\bmp\\navigate_top_32.bmp"
 COLOR_WHEEL_48_ALPHA BITMAP "..\\bmp\\color_wheel_48_alpha.bmp"
 
 ALPHA BITMAP "..\\bmp\\Alpha.bmp"
-
-CLIPBOARD_EMPTY_MONEYBAG_16 BITMAP "..\\bmp\\clipboard_empty_moneybag_16.bmp"
-
-DOCUMENT_PLAIN_MONEYBAG_16 BITMAP "..\\bmp\\document_plain_moneybag_16.bmp"
 
 GEARS_RUN_16 BITMAP "..\\bmp\\gears_run_16.bmp"
 
@@ -87,8 +81,6 @@ CERTIFICATE_32_ALPHA BITMAP "..\\bmp\\certificate_32_alpha.bmp"
 LOCK_32_ALPHA BITMAP "..\\bmp\\lock_32_alpha.bmp"
 
 PIGGY_BANK_32_ALPHA BITMAP "..\\bmp\\piggy_bank_32_alpha.bmp"
-
-POWER-DRILL_USER1_16 BITMAP "..\\bmp\\power-drill_user1_16.bmp"
 
 POWER-DRILL_USER1_32 BITMAP "..\\bmp\\power-drill_user1_32.bmp"
 

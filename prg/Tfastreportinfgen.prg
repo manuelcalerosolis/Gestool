@@ -3601,8 +3601,8 @@ METHOD CreateTreeImageList()
    ::oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_worker_16" ),       Rgb( 255, 0, 255 ) ) // 14 Produccion
    ::oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_delete2_16" ),      Rgb( 255, 0, 255 ) ) // 15 Rectifiactivas proveedores
    ::oTreeImageList:AddMasked( TBitmap():Define( "gc_package_16" ),                    Rgb( 255, 0, 255 ) ) // 16 Existencias
-   ::oTreeImageList:AddMasked( TBitmap():Define( "Office-building_address_book_16" ),  Rgb( 255, 0, 255 ) ) // 17 NO USADO
-   ::oTreeImageList:AddMasked( TBitmap():Define( "Document_navigate_cross_16" ),       Rgb( 255, 0, 255 ) ) // 18 NO USADO
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_office_building2_16" ),  Rgb( 255, 0, 255 ) ) // 17 NO USADO
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_delete2_16" ),       Rgb( 255, 0, 255 ) ) // 18 NO USADO
    ::oTreeImageList:AddMasked( TBitmap():Define( "gc_user_16" ),                       Rgb( 255, 0, 255 ) ) // 19 Clientes ( NO USADO )
    ::oTreeImageList:AddMasked( TBitmap():Define( "gc_power_drill_sat_user_16" ),       Rgb( 255, 0, 255 ) ) // 20 SAT
    ::oTreeImageList:AddMasked( TBitmap():Define( "gc_briefcase2_user_16" ),            Rgb( 255, 0, 255 ) ) // 21 Recibos

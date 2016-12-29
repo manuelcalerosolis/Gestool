@@ -1763,7 +1763,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
             TOOLTIP  "Informe de cliente" ;
             FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "Worker" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_clipboard_empty_user_" OF oWndBrw ;
             ACTION   ( if( !Empty( ( D():PresupuestosClientes( nView ) )->cCodObr ), EdtObras( ( D():PresupuestosClientes( nView ) )->cCodCli, ( D():PresupuestosClientes( nView ) )->cCodObr, dbfObrasT ), MsgStop( "No hay obra asociada al presupuesto" ) ) );
             TOOLTIP  "Modificar dirección" ;
             FROM     oRotor ;
@@ -3309,7 +3309,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&5. Modificar dirección";
                MESSAGE  "Modificar ficha de la dirección" ;
-               RESOURCE "Worker16" ;
+               RESOURCE "gc_worker2_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "No hay obra asociada para el presupuesto" ) ) )
 
             SEPARATOR

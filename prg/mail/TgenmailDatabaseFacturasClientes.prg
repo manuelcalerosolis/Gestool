@@ -35,7 +35,7 @@ METHOD New( nView ) CLASS TGenMailingDatabaseFacturasClientes
 
    ::setOrderDatabase( { "Número", "Fecha", "Código", "Nombre" } )
 
-   ::setBmpDatabase( "Factura_cliente_48_alpha" )
+   ::setBmpDatabase( "gc_document_text_user2_48" )
 
    ::setAsunto( "Envio de nuestra factura de cliente {Serie de la factura}/{Número de la factura}" )
 

@@ -935,7 +935,7 @@ METHOD EdtRecMenu( oDlg )
 
             MENUITEM    "&1. Modificar agente";
                MESSAGE  "Modifica la ficha del agenete" ;
-               RESOURCE "Security_Agent_16";
+               RESOURCE "gc_businessman2_16";
                ACTION   ( if( !Empty( ::oDbf:cCodAge ), EdtAge( ::oDbf:cCodAge ), MsgStop( "Código de agente vacío" ) ) )
 
             MENUITEM    "&2. Modificar cliente";

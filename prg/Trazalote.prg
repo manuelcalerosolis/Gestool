@@ -401,11 +401,11 @@ METHOD Activate( oMenuItem, oWnd )
    ::aBmp               := {  "gc_clipboard_empty_businessman_16",;
                               "gc_document_empty_businessman_16",;
                               "gc_document_text_businessman_16",;
-                              "Notebook_user1_16",;
+                              "gc_notebook_user_16",;
                               "gc_clipboard_empty_user_16",;
                               "gc_document_empty_16",;
                               "gc_document_text_businessman_16",;
-                              "Document_delete_16",;
+                              "gc_document_text_delete2_16",;
                               "Package_book_red_16",;
                               "gc_document_text_worker_16",;
                               "gc_cash_register_user_16" }

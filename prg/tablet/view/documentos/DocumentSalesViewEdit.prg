@@ -35,8 +35,10 @@ METHOD insertControls() CLASS DocumentSalesViewEdit
 
    ::defineCliente()
 
-   ::defineDireccion()
+   //::defineDireccion()
 
+   ::defineEstablecimiento()
+ 
    ::defineBrowseLineas()
 
    ::columnsBrowseLineas()

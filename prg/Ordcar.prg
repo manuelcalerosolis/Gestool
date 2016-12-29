@@ -383,7 +383,7 @@ METHOD Resource( nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "ordenes_carga_48_alpha" ;
+        RESOURCE "gc_small_truck_user_48" ;
         TRANSPARENT ;
         OF       oDlg
 
@@ -630,12 +630,12 @@ METHOD EdtRotor( oDlg )
 
             MENUITEM    "&1. Modificar agente";
                MESSAGE  "Modificar la ficha del Agente" ;
-               RESOURCE "Security_Agent_16";
+               RESOURCE "gc_businessman2_16";
                ACTION   ( if( !Empty( ::oDbf:cCodAge ), EdtAge( ::oDbf:cCodAge ), MsgStop( "Debe que seleccionar un agente" ) ) );
 
             MENUITEM    "&2. Modificar transportista";
                MESSAGE  "Modificar la ficha del transportista" ;
-               RESOURCE "Truck_Blue_16";
+               RESOURCE "gc_small_truck_user_16";
                ACTION   ( if( !Empty( ::oDbf:cCodTrn ), EdtTrans( ::oDbf:cCodTrn ), MsgStop( "Debe de seleccionar un transportista" ) ) );
 
          ENDMENU

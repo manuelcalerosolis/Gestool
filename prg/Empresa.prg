@@ -189,29 +189,29 @@ STATIC FUNCTION OpenFiles( lCount )
                         "gc_document_empty_businessman_16",;
                         "gc_document_text_businessman_16",;
                         "gc_document_text_businessman_16",;
-                        "Power-drill_user1_16",;
-                        "Notebook_user1_16",;
+                        "gc_power_drill_sat_user_16",;
+                        "gc_notebook_user_16",;
                         "gc_clipboard_empty_user_16",;
                         "gc_document_empty_16",;
                         "gc_document_text_businessman_16",;
                         "gc_document_text_money2_16",;
-                        "Document_delete_16",;
+                        "gc_document_text_delete2_16",;
                         "gc_package_plus_16",;
                         "gc_package_check_16",;
                         "gc_cash_register_user_16",;
                         "gc_document_text_worker_16",;
                         "gc_folder_document_16",;
                         "gc_pencil_package_16",;
-                        "Stopwatch_16",;
-                        "Briefcase_document_16",;
-                        "Truck_blue_document_16",;
+                        "gc_clock_16",;
+                        "gc_briefcase2_document_16",;
+                        "gc_small_truck_16",;
                         "gc_user_16",;
                         "gc_briefcase2_businessman_16",;
-                        "Briefcase_user1_16",;
-                        "Briefcase_security_agent_16",;
-                        "Clipboard_Empty_Moneybag_16",;
-                        "Document_Plain_Moneybag_16",;
-                        "Cashier_replace_16" }
+                        "gc_briefcase2_user_16",;
+                        "gc_briefcase2_agent_16",;
+                        "gc_clipboard_empty_bag_16",;
+                        "gc_document_empty_bag_16",;
+                        "gc_cash_register_refresh_16" }
 
    RECOVER USING oError
 

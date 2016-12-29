@@ -555,15 +555,15 @@ METHOD Activate( oMenuItem, oWnd, lStart )
       :AddResource( "gc_clipboard_empty_businessman_16"  )  // Pedido proveedor
       :AddResource( "gc_document_empty_businessman_16"   )  // Albarán proveedor
       :AddResource( "gc_document_text_businessman_16"         )  // Factura proveedor
-      :AddResource( "Document_navigate_cross_16"      )  // Rectificativa proveedor
-      :AddResource( "Document_delete_16"              )  // Facturas rectificativas
+      :AddResource( "gc_document_text_delete2_16"      )  // Rectificativa proveedor
+      :AddResource( "gc_document_text_delete2_16"              )  // Facturas rectificativas
       :AddResource( "gc_clipboard_empty_user_16"      )  // Pedido cliente
       :AddResource( "gc_document_empty_16"            )  // Albarán cliente
       :AddResource( "gc_document_text_businessman_16"               )  // Factura cliente
       :AddResource( "gc_cash_register_user_16"        )  // Tiket cliente
       :AddResource( "gc_document_text_worker_16"             )  // Parte de produccion
       :AddResource( "gc_pencil_package_16"               )  // Mov de almancen
-      :AddResource( "Power-drill_user1_16"            )  // SAT
+      :AddResource( "gc_power_drill_sat_user_16"            )  // SAT
    end with
 
    with object ( ::oBrw:AddCol() )

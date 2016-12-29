@@ -1603,7 +1603,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          ID       140 ;
          WHEN     ( ! Empty( oRTF:GetSel() ) ) ;
          OF       oFld:aDialogs[ 7 ] ;
-         RESOURCE "Copy16" ;
+         RESOURCE "gc_copy_16" ;
          NOBORDER ;
          TOOLTIP  "Copiar" ;
          ACTION   ( oRTF:Copy(), oRTF:SetFocus() )

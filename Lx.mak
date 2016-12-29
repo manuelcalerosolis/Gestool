@@ -60,7 +60,6 @@ Contaplu.prg            \
 Costes.prg              \
 Count.prg               \
 Ctarem.prg              \
-Depage.prg              \
 Digit.prg               \
 Divisas.prg             \
 Dlgtools.prg            \
@@ -71,7 +70,6 @@ Empcnf.prg              \
 Empresa.prg             \
 Entsal.prg              \
 Errorsys.prg            \
-Extage.prg              \
 Facant.prg              \
 Facrec.prg              \
 Factcli.prg             \
@@ -1100,7 +1098,6 @@ Contaplu.obj            \
 Costes.obj              \
 Count.obj               \
 Ctarem.obj              \
-Depage.obj              \
 Digit.obj               \
 Divisas.obj             \
 Dlgtools.obj            \
@@ -1112,7 +1109,6 @@ Empresa.obj             \
 Entsal.obj              \
 EnumFonts.obj           \
 Errorsys.obj            \
-Extage.obj              \
 Facant.obj              \
 Facrec.obj              \
 Factcli.obj             \
@@ -2154,7 +2150,6 @@ $(OBJ)\Contaplu.obj             +
 $(OBJ)\Costes.obj               +
 $(OBJ)\Count.obj                +
 $(OBJ)\Ctarem.obj               +
-$(OBJ)\Depage.obj               +
 $(OBJ)\Digit.obj                +
 $(OBJ)\Divisas.obj              +
 $(OBJ)\Dlgtools.obj             +
@@ -2166,7 +2161,6 @@ $(OBJ)\Empresa.obj              +
 $(OBJ)\Entsal.obj               +
 $(OBJ)\EnumFonts.obj            +
 $(OBJ)\Errorsys.obj             +
-$(OBJ)\Extage.obj               +
 $(OBJ)\Facant.obj               +
 $(OBJ)\Facrec.obj               +
 $(OBJ)\Factcli.obj              +

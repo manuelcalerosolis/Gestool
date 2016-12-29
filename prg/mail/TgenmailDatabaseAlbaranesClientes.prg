@@ -31,7 +31,7 @@ METHOD New( nView ) CLASS TGenMailingDatabaseAlbaranesClientes
 
    ::setFormatoDocumento( cFirstDoc( "AC", D():Documentos( nView ) ) )
 
-   ::setBmpDatabase( "albaran_cliente_48_alpha" )
+   ::setBmpDatabase( "gc_document_empty_user_48" )
 
    ::setAsunto( "Envio de nuestro albarán de cliente {Serie del albarán}/{Número del albarán}" )
 
