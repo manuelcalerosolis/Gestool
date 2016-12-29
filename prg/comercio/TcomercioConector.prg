@@ -92,6 +92,11 @@ CLASS TComercioConector
    METHOD resetMegaCommand()                                INLINE ( ::megaCommand := "" )
    METHOD addMegaCommand( cCommand ) 
 
+   // facades------------------------------------------------------------------
+
+   METHOD getDate( dDate )                                  INLINE ( ::TComercio:getDate( dDate ) )
+   METHOD getTime( dTime )                                  INLINE ( ::TComercio:getTime( dTime ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

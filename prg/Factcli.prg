@@ -13851,7 +13851,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       if isAppendOrDuplicateMode( nMode )
 
          oMsgText( "Obteniendo nuevo contador" )
-         if( !empty( oMeter ), oMeter:Set( 2 ), )
+
+         if !empty( oMeter )
+            oMeter:set( 2 )
+         end if 
 
          // Obtenemos el nuevo numero de la factura----------------------------------
 
@@ -13861,7 +13864,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
       end if 
 
-      BeginTransaction()
+      begintransaction()
 
       if isEditMode( nMode )
          rollBackFacCli( cSerFac + str( nNumFac ) + cSufFac )
@@ -13987,13 +13990,11 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
       end if
 
-      /*
-      Escribe los datos pendientes------------------------------------------------
-      */
+      // Escribe los datos pendientes------------------------------------------------
 
       oMsgText( "Finalizamos la transacción" )
 
-      CommitTransaction()
+      commitTransaction()
 
       // Generar los pagos de las facturas-------------------------------------------
 

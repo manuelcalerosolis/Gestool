@@ -6503,9 +6503,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
 
    oMsgText( "Archivando" )
 
-   /*
-   Anotamos los cambios de estado en las inicidencias--------------------------
-   */
+   oBlock      := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   // Anotamos los cambios de estado en las inicidencias--------------------------
 
    if ( cOldSituacion != aTmp[ _CSITUAC ] )
       ( dbfTmpInc )->( dbAppend() )
@@ -6513,27 +6514,30 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
       ( dbfTmpInc )->mDesInc     := "Cambio de estado de " + AllTrim( cOldSituacion ) + " a " + Alltrim( aTmp[ _CSITUAC ] ) + "."
    end if 
 
-   /*
-   Quitamos los filtros--------------------------------------------------------
-   */
+   // Quitamos los filtros--------------------------------------------------------
 
    ( dbfTmpLin )->( dbClearFilter() )
 
-   /*
-   Primero hacer el RollBack---------------------------------------------------
-   */
+   // Primero hacer el RollBack---------------------------------------------------
 
    aTmp[ _DFECCRE ]        := Date()
    aTmp[ _CTIMCRE ]        := Time()
    aTmp[ _NTARIFA ]        := oGetTarifa:getTarifa()
 
-   do case
-   case nMode == APPD_MODE .or. nMode == DUPL_MODE
+   if isAppendOrDuplicateMode( nMode )
 
       nNumSat              := nNewDoc( cSerSat, D():SatClientes( nView ), "nSatCli", , D():Contadores( nView ) )
       aTmp[ _NNUMSAT ]     := nNumSat
 
-   case nMode == EDIT_MODE
+   end if 
+
+   // Comenzamos la transaccion------------------------------------------------
+
+   begintransaction()
+
+   // Eliminamos los registros de tablas anteriores----------------------------
+
+   if isEditMode( nMode )
 
       while ( D():SatClientesLineas( nView ) )->( dbSeek( cSerSat + str( nNumSat ) + cSufSat ) ) 
          if dbLock( D():SatClientesLineas( nView ) )
@@ -6580,7 +6584,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
       ( dbfTmpLin )->dFecha      := dFecSat
       ( dbfTmpLin )->cCodCli     := cCodCli
 
-      if ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) .and. ( dbfTmpLin )->nCtlstk == 2
+      if isEditMode( nMode ) .and. ( dbfTmpLin )->nCtlstk == 2
 
          if ( D():Articulos( nView ) )->( dbSeek( ( dbfTmpLin )->cRef ) )
 
@@ -6607,10 +6611,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
 
    ( dbfTmpInc )->( dbGoTop() )
    do while !( dbfTmpInc )->( Eof() )
-
       dbPass( dbfTmpInc, dbfSatCliI, .t., cSerSat, nNumSat, cSufSat )
       ( dbfTmpInc )->( dbSkip() )
-
    end while
 
    /*
@@ -6619,11 +6621,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
 
    ( dbfTmpDoc )->( dbGoTop() )
    do while !( dbfTmpDoc )->( Eof() )
-
       dbPass( dbfTmpDoc, dbfSatCliD, .t., cSerSat, nNumSat, cSufSat )
-
       ( dbfTmpDoc )->( dbSkip() )
-
    end while
 
    /*
@@ -6632,11 +6631,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
 
    ( dbfTmpSer )->( dbGoTop() )
    while ( dbfTmpSer )->( !eof() )
-
       dbPass( dbfTmpSer, dbfSatCliS, .t., cSerSat, nNumSat, cSufSat, dFecSat )
-
       ( dbfTmpSer )->( dbSkip() )
-
    end while
 
    /*
@@ -6688,16 +6684,25 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
 
    end if
 
-   /*
-   Escribe los datos pendientes------------------------------------------------
-   */
+   // Escribe los datos pendientes------------------------------------------------
 
-   dbCommitAll()
+   commitTransaction()
+
+   oMsgText( "Finalizamos la transacción" )
+
+   RECOVER USING oError
+
+      rollBackTransaction()
+
+      msgStop( "Imposible almacenar documento" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+   ErrorBlock( oBlock )
 
    oMsgProgress()
    oMsgText()
 
-   EndProgress()
+   endProgress()
 
    oDlg:Enable()
    oDlg:End( IDOK )

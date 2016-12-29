@@ -638,7 +638,7 @@ STATIC FUNCTION OpenFiles( lExt )
       SET ADSINDEX TO ( cPatEmp() + "PRECLII.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "PRECLID.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLID", @dbfPreCliD ) )
-      SET ADSINDEX TO ( cPatEmp() + "PRECLID.CDX" ) ADDITIVE
+      SET ADSINDEX TO ( cPatEmp() + "PreCliD.Cdx" ) ADDITIVE
 
       USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
       SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
@@ -9901,7 +9901,7 @@ FUNCTION mkPreCli( cPath, lAppend, cPathOld, oMeter, bFor )
 
       dbUseArea( .t., cDriver(), cPath + "PRECLIT.DBF", cCheckArea( "PRECLIT", @dbfPreCliT ), .f. )
       if !( dbfPreCliT )->( neterr() )
-         ( dbfPreCliT )->( ordListAdd( cPath + "PRECLIT.CDX" ) )
+         ( dbfPreCliT )->( ordListAdd( cPath + "PreCliT.Cdx" ) )
       end if
 
       dbUseArea( .t., cDriver(), cPath + "PreCliL.DBF", cCheckArea( "PreCliL", @dbfPreCliL ), .f. )
@@ -9925,7 +9925,7 @@ FUNCTION mkPreCli( cPath, lAppend, cPathOld, oMeter, bFor )
 
       dbUseArea( .t., cDriver(), cPathOld + "PreCliT.DBF", cCheckArea( "PreCliT", @oldPreCliT ), .f. )
       if !( dbfPreCliT )->( neterr() )
-         ( oldPreCliT )->( ordListAdd( cPathOld + "PreCliT.CDX" ) )
+         ( oldPreCliT )->( ordListAdd( cPathOld + "PreCliT.Cdx" ) )
       end if
 
       dbUseArea( .t., cDriver(), cPathOld + "PreCliL.DBF", cCheckArea( "PreCliL", @oldPreCliL ), .f. )
@@ -9940,7 +9940,7 @@ FUNCTION mkPreCli( cPath, lAppend, cPathOld, oMeter, bFor )
 
       dbUseArea( .t., cDriver(), cPathOld + "PreCliD.DBF", cCheckArea( "PreCliD", @oldPreCliD ), .f. )
       if !( oldPreCliD )->( neterr() )
-         ( oldPreCliD )->( ordListAdd( cPathOld + "PreCliD.CDX"  ) )
+         ( oldPreCliD )->( ordListAdd( cPathOld + "PreCliD.Cdx"  ) )
       end if
 
       /*
@@ -10013,10 +10013,10 @@ FUNCTION rxPreCli( cPath, cDriver )
 
    end if
 
-   fEraseIndex( cPath + "PRECLIT.CDX", cDriver )
+   fEraseIndex( cPath + "PreCliT.Cdx", cDriver )
    fEraseIndex( cPath + "PRECLIL.CDX", cDriver )
    fEraseIndex( cPath + "PRECLII.CDX", cDriver )
-   fEraseIndex( cPath + "PRECLID.CDX", cDriver )
+   fEraseIndex( cPath + "PreCliD.Cdx", cDriver )
    fEraseIndex( cPath + "PRECLIE.CDX", cDriver )
 
    dbUseArea( .t., cDriver, cPath + "PRECLIT.DBF", cCheckArea( "PRECLIT", @dbfPreCliT ), .f. )
@@ -10024,28 +10024,28 @@ FUNCTION rxPreCli( cPath, cDriver )
       ( dbfPreCliT )->( __dbPack() )
 
       ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PRECLIT.CDX", "NNUMPRE", "CSERPRE + STR( NNUMPRE ) + CSUFPRE", {|| Field->CSERPRE + STR(Field->NNUMPRE) + Field->CSUFPRE } ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "NNUMPRE", "CSERPRE + STR( NNUMPRE ) + CSUFPRE", {|| Field->CSERPRE + STR(Field->NNUMPRE) + Field->CSUFPRE } ) )
 
       ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PRECLIT.CDX", "DFECPRE", "DFECPRE", {|| Field->DFECPRE } ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "DFECPRE", "DFECPRE", {|| Field->DFECPRE } ) )
 
       ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PRECLIT.CDX", "CCODCLI", "CCODCLI + Dtos( dFecPre )", {|| Field->CCODCLI + Dtos( Field->dFecPre ) } ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "CCODCLI", "CCODCLI + Dtos( dFecPre )", {|| Field->CCODCLI + Dtos( Field->dFecPre ) } ) )
 
       ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PRECLIT.CDX", "CNOMCLI", "cNomCli + Dtos( dFecPre )", {|| Field->cNomCli + Dtos( Field->dFecPre ) } ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "CNOMCLI", "cNomCli + Dtos( dFecPre )", {|| Field->cNomCli + Dtos( Field->dFecPre ) } ) )
 
       ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PRECLIT.CDX", "cCodObr", "cCodObr", {|| Field->cCodObr } ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "cCodObr", "cCodObr", {|| Field->cCodObr } ) )
 
       ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PRECLIT.CDX", "cCodAge", "cCodAge", {|| Field->cCodAge } ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "cCodAge", "cCodAge", {|| Field->cCodAge } ) )
 
       ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PRECLIT.CDX", "CTURPRE", "CTURPRE + CSUFPRE + cCodCaj", {|| Field->CTURPRE + Field->CSUFPRE + Field->cCodCaj } ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "CTURPRE", "CTURPRE + CSUFPRE + cCodCaj", {|| Field->CTURPRE + Field->CSUFPRE + Field->cCodCaj } ) )
 
       ( dbfPreCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.CDX", "lSndDoc", "lSndDoc", {|| Field->lSndDoc } ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "lSndDoc", "lSndDoc", {|| Field->lSndDoc } ) )
 
       ( dbfPreCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "cCodUsr", "cCodUsr + Dtos( dFecCre ) + cTimCre", {|| Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
@@ -10057,16 +10057,19 @@ FUNCTION rxPreCli( cPath, cDriver )
       ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "cCodWeb", "Str( Field->cCodWeb )", {|| Str( Field->cCodWeb ) } ) )
 
       ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.CDX", "Poblacion", "UPPER( Field->cPobCli )", {|| UPPER( Field->cPobCli ) } ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "Poblacion", "UPPER( Field->cPobCli )", {|| UPPER( Field->cPobCli ) } ) )
 
       ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.CDX", "Provincia", "UPPER( Field->cPrvCli )", {|| UPPER( Field->cPrvCli ) } ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "Provincia", "UPPER( Field->cPrvCli )", {|| UPPER( Field->cPrvCli ) } ) )
 
       ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.CDX", "CodPostal", "Field->cPosCli", {|| Field->cPosCli } ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "CodPostal", "Field->cPosCli", {|| Field->cPosCli } ) )
 
       ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}, , , , , , , , , .t. ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PRECLIT.CDX", "DDESFEC", "DFECPRE", {|| Field->DFECPRE } ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "dDesFec", "dFecPre", {|| Field->dFecPre } ) )
+
+      ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "cSuPre", "Field->cSuPre", {|| Field->cSuPre } ) )
 
       ( dbfPreCliT )->( dbCloseArea() )
 
@@ -10109,7 +10112,7 @@ FUNCTION rxPreCli( cPath, cDriver )
       ( dbfPreCliT )->( __dbPack() )
 
       ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PRECLII.CDX", "NNUMPRE", "CSERPRE + STR( NNUMPRE ) + CSUFPRE", {|| Field->CSERPRE + STR(Field->NNUMPRE) + Field->CSUFPRE } ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliI.Cdx", "NNUMPRE", "CSERPRE + STR( NNUMPRE ) + CSUFPRE", {|| Field->CSERPRE + STR(Field->NNUMPRE) + Field->CSUFPRE } ) )
 
       ( dbfPreCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfPreCliT )->( ordCreate( cPath + "PreCliI.Cdx", "iNumPre", "'08' + cSerPre + Str( nNumPre ) + Space( 1 ) + cSufPre", {|| '08' + Field->cSerPre + Str( Field->nNumPre ) + Space( 1 ) + Field->cSufPre } ) )
@@ -10124,7 +10127,7 @@ FUNCTION rxPreCli( cPath, cDriver )
       ( dbfPreCliT )->( __dbPack() )
 
       ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PRECLID.CDX", "NNUMPRE", "CSERPRE + STR( NNUMPRE ) + CSUFPRE", {|| Field->CSERPRE + STR(Field->NNUMPRE) + Field->CSUFPRE } ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliD.Cdx", "NNUMPRE", "CSERPRE + STR( NNUMPRE ) + CSUFPRE", {|| Field->CSERPRE + STR(Field->NNUMPRE) + Field->CSUFPRE } ) )
 
       ( dbfPreCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfPreCliT )->( ordCreate( cPath + "PreCliD.Cdx", "iNumPre", "'08' + cSerPre + Str( nNumPre ) + Space( 1 ) + cSufPre", {|| '08' + Field->cSerPre + Str( Field->nNumPre ) + Space( 1 ) + Field->cSufPre } ) )
@@ -11005,7 +11008,7 @@ Function SynPreCli( cPath )
    BEGIN SEQUENCE
 
    USE ( cPatEmp() + "PRECLIT.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "PRECLIT", @dbfPreCliT ) ) EXCLUSIVE
-   SET ADSINDEX TO ( cPatEmp() + "PRECLIT.CDX" ) ADDITIVE
+   SET ADSINDEX TO ( cPatEmp() + "PreCliT.Cdx" ) ADDITIVE
 
    USE ( cPatEmp() + "PRECLIL.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "PRECLIL", @dbfPreCliL ) ) EXCLUSIVE
    SET ADSINDEX TO ( cPatEmp() + "PRECLIL.CDX" ) ADDITIVE
@@ -11259,7 +11262,7 @@ Method CreateData()
    BEGIN SEQUENCE
 
    USE ( cPatEmp() + "PreCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PreCliT", @cPreCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "PreCliT.CDX" ) ADDITIVE
+   SET ADSINDEX TO ( cPatEmp() + "PreCliT.Cdx" ) ADDITIVE
 
    USE ( cPatEmp() + "PreCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PreCliL", @dbfPreCliL ) )
    SET ADSINDEX TO ( cPatEmp() + "PreCliL.CDX" ) ADDITIVE
@@ -11272,7 +11275,7 @@ Method CreateData()
    mkPreCli( cPatSnd() )
 
    USE ( cPatSnd() + "PreCliT.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "PreCliT", @tmpPreCliT ) )
-   SET INDEX TO ( cPatSnd() + "PreCliT.CDX" ) ADDITIVE
+   SET INDEX TO ( cPatSnd() + "PreCliT.Cdx" ) ADDITIVE
 
    USE ( cPatSnd() + "PreCliL.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "PreCliL", @tmpPreCliL ) )
    SET INDEX TO ( cPatSnd() + "PreCliL.CDX" ) ADDITIVE
@@ -11489,7 +11492,7 @@ Method Process()
                lExistTable( cPatSnd() + "PreCliI.DBF", cLocalDriver() )
 
                USE ( cPatSnd() + "PreCliT.DBF" ) NEW VIA ( cLocalDriver() )READONLY ALIAS ( cCheckArea( "PreCliT", @tmpPreCliT ) )
-               SET INDEX TO ( cPatSnd() + "PreCliT.CDX" ) ADDITIVE
+               SET INDEX TO ( cPatSnd() + "PreCliT.Cdx" ) ADDITIVE
 
                USE ( cPatSnd() + "PreCliL.DBF" ) NEW VIA ( cLocalDriver() )READONLY ALIAS ( cCheckArea( "PreCliL", @tmpPreCliL ) )
                SET INDEX TO ( cPatSnd() + "PreCliL.CDX" ) ADDITIVE
@@ -11498,10 +11501,10 @@ Method Process()
                SET INDEX TO ( cPatSnd() + "PreCliI.CDX" ) ADDITIVE
 
                USE ( cPatSnd() + "PreCliD.DBF" ) NEW VIA ( cLocalDriver() )READONLY ALIAS ( cCheckArea( "PreCliD", @tmpPreCliD ) )
-               SET INDEX TO ( cPatSnd() + "PreCliD.CDX" ) ADDITIVE
+               SET INDEX TO ( cPatSnd() + "PreCliD.Cdx" ) ADDITIVE
 
                USE ( cPatEmp() + "PreCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PreCliT", @cPreCliT ) )
-               SET ADSINDEX TO ( cPatEmp() + "PreCliT.CDX" ) ADDITIVE
+               SET ADSINDEX TO ( cPatEmp() + "PreCliT.Cdx" ) ADDITIVE
 
                USE ( cPatEmp() + "PreCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PreCliL", @dbfPreCliL ) )
                SET ADSINDEX TO ( cPatEmp() + "PreCliL.CDX" ) ADDITIVE
@@ -11510,7 +11513,7 @@ Method Process()
                SET ADSINDEX TO ( cPatEmp() + "PreCliI.CDX" ) ADDITIVE
 
                USE ( cPatEmp() + "PreCliD.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PreCliD", @dbfPreCliD ) )
-               SET ADSINDEX TO ( cPatEmp() + "PreCliD.CDX" ) ADDITIVE
+               SET ADSINDEX TO ( cPatEmp() + "PreCliD.Cdx" ) ADDITIVE
 
                while !( tmpPreCliT )->( eof() )
 

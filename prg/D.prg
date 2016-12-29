@@ -577,6 +577,7 @@ CLASS D
 
    METHOD FormasPago( nView )                                     INLINE ( ::Get( "FPago", nView ) )
       METHOD gotoFormasPago( id, nView )                          INLINE ( ::seekInOrd( ::FormasPago( nView ), id, "cCodPago" ) ) 
+      METHOD gotoFormasPagoWeb( id, nView )                       INLINE ( ::seekInOrd( ::FormasPago( nView ), id, "cCodWeb" ) ) 
       METHOD getStatusFormasPago( nView )                         INLINE ( ::aStatus := aGetStatus( ::FormasPago( nView ) ) )
       METHOD setStatusFormasPago( nView )                         INLINE ( SetStatus( ::FormasPago( nView ), ::aStatus ) ) 
 

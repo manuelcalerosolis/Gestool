@@ -12318,7 +12318,7 @@ function SynArt( cPath )
 
          if !empty( ( dbfArt )->cImagenWeb )
 
-            ( dbfImg )->( __dbLocate( { || alltrim( upper( ( dbfArt )->cImagenWeb ) ) == alltrim( upper( ( D():ArticuloImagenes( nView ) )->cImgArt ) ) } ) )
+            ( dbfImg )->( __dbLocate( {|| alltrim( upper( ( dbfArt )->cImagenWeb ) ) == alltrim( upper( ( dbfImg )->cImgArt ) ) } ) )
             if !( dbfImg )->( found() )
 
                ( dbfImg )->( dbAppend() )

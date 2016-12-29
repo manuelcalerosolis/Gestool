@@ -8084,111 +8084,116 @@ return ( bGen )
 static function QuiFacRec()
 
    local nOrdAnt
-   local cSerDoc     := ( D():FacturasRectificativas( nView ) )->cSerie
-   local nNumDoc     := ( D():FacturasRectificativas( nView ) )->nNumFac
-   local cSufDoc     := ( D():FacturasRectificativas( nView ) )->cSufFac
+   local cSerDoc
+   local nNumDoc
+   local cSufDoc
 
    if ( D():FacturasRectificativas( nView ) )->lCloFac .and. !oUser():lAdministrador()
       msgStop( "Solo puede eliminar facturas cerradas los administradores." )
       return .f.
    end if
 
-   /*
-   Eliminamos las lineas-------------------------------------------------------
-   */
+   cSerDoc     := ( D():FacturasRectificativas( nView ) )->cSerie
+   nNumDoc     := ( D():FacturasRectificativas( nView ) )->nNumFac
+   cSufDoc     := ( D():FacturasRectificativas( nView ) )->cSufFac
+
+   // Eliminamos las lineas----------------------------------------------------
 
    TComercio:resetProductsToUpdateStocks()
 
-   nOrdAnt     := ( dbfFacRecL )->( OrdSetFocus( "nNumFac" ) )
-   while ( dbfFacRecL )->( dbSeek( cSerDoc + Str( nNumDoc ) + cSufDoc ) ) .and. !( dbfFacRecL )->( eof() )
+   nOrdAnt     := ( dbfFacRecL )->( ordsetfocus( "nNumFac" ) )
+   while ( dbfFacRecL )->( dbseek( cSerDoc + Str( nNumDoc ) + cSufDoc ) ) .and. !( dbfFacRecL )->( eof() )
 
-    TComercio:appendProductsToUpadateStocks( ( dbfFacRecL )->cRef, ( dbfFacRecL )->cCodPr1, ( dbfFacRecL )->cValPr1, ( dbfFacRecL )->cCodPr2, ( dbfFacRecL )->cValPr2, nView )
+      TComercio:appendProductsToUpadateStocks( ( dbfFacRecL )->cRef, nView )
 
-    if dbDialogLock( dbfFacRecL )
-       ( dbfFacRecL )->( dbDelete() )
-       ( dbfFacRecL )->( dbUnLock() )
-    end if
+      if dbDialogLock( dbfFacRecL )
+         ( dbfFacRecL )->( dbdelete() )
+         ( dbfFacRecL )->( dbunlock() )
+      end if
 
-      ( dbfFacRecL )->( dbSkip() )
+      sysrefresh()
+
+      ( dbfFacRecL )->( dbskip() )
 
    end do
-
-   ( dbfFacRecL )->( OrdSetFocus( nOrdAnt ) )
-
-   // actualiza el stock de prestashop-----------------------------------------
+   ( dbfFacRecL )->( ordsetfocus( nOrdAnt ) )
 
    TComercio:updateWebProductStocks()
 
-   /*
-   Eliminamos los pagos--------------------------------------------------------
-   */
+   // Eliminamos los pagos-----------------------------------------------------
 
-   nOrdAnt     := ( dbfFacCliP )->( OrdSetFocus( "rNumFac" ) )
+   nOrdAnt     := ( dbfFacCliP )->( ordsetfocus( "rNumFac" ) )
+   while ( dbfFacCliP )->( dbSeek( cSerDoc + Str( nNumDoc ) + cSufDoc ) ) .and. !( dbfFacCliP )->( eof() )
 
-   if ( dbfFacCliP )->( dbSeek( cSerDoc + Str( nNumDoc ) + cSufDoc ) )
+      if dbDialogLock( dbfFacCliP )
+         ( dbfFacCliP )->( dbdelete() )
+         ( dbfFacCliP )->( dbunlock() )
+      end if
 
-      while cSerDoc + Str( nNumDoc ) + cSufDoc == ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac .and. !( dbfFacCliP )->( eof() )
+      sysrefresh()
 
-         if dbDialogLock( dbfFacCliP )
-            ( dbfFacCliP )->( dbDelete() )
-            ( dbfFacCliP )->( dbUnLock() )
-         end if
+      ( dbfFacCliP )->( dbSkip() )
 
-         ( dbfFacCliP )->( dbSkip() )
+   end do
 
-      end do
-
-   end if
-
-   ( dbfFacCliP )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfFacCliP )->( ordsetfocus( nOrdAnt ) )
 
    /*
    Eliminamos las incidencias--------------------------------------------------
    */
 
-   nOrdAnt     := ( dbfFacRecI )->( OrdSetFocus( "nNumFac" ) )
+   nOrdAnt     := ( dbfFacRecI )->( ordsetfocus( "nNumFac" ) )
+   while ( dbfFacRecI )->( dbseek( cSerDoc + Str( nNumDoc ) + cSufDoc ) ) .and. !( dbfFacRecI )->( eof() )
 
-   while ( dbfFacRecI )->( dbSeek( cSerDoc + Str( nNumDoc ) + cSufDoc ) ) .and. !( dbfFacRecI )->( eof() )
       if dbDialogLock( dbfFacRecI )
-         ( dbfFacRecI )->( dbDelete() )
-         ( dbfFacRecI )->( dbUnLock() )
+         ( dbfFacRecI )->( dbdelete() )
+         ( dbfFacRecI )->( dbunlock() )
       end if
 
-      ( dbfFacRecI )->( dbSkip() )
+      sysrefresh()
+
+      ( dbfFacRecI )->( dbskip() )
+
    end do
 
-   ( dbfFacRecI )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfFacRecI )->( ordsetfocus( nOrdAnt ) )
 
    /*
    Eliminamos los documentos---------------------------------------------------
    */
 
-   nOrdAnt     := ( dbfFacRecD )->( OrdSetFocus( "nNumFac" ) )
+   nOrdAnt     := ( dbfFacRecD )->( ordsetfocus( "nNumFac" ) )
+   while ( dbfFacRecD )->( dbseek( cSerDoc + Str( nNumDoc ) + cSufDoc ) ) .and. !( dbfFacRecD )->( eof() )
 
-   while ( dbfFacRecD )->( dbSeek( cSerDoc + Str( nNumDoc ) + cSufDoc ) ) .and. !( dbfFacRecD )->( eof() )
       if dbDialogLock( dbfFacRecD )
-         ( dbfFacRecD )->( dbDelete() )
-         ( dbfFacRecD )->( dbUnLock() )
+         ( dbfFacRecD )->( dbdelete() )
+         ( dbfFacRecD )->( dbunlock() )
       end if
 
-      ( dbfFacRecD )->( dbSkip() )
+      sysrefresh()
+
+      ( dbfFacRecD )->( dbskip() )
+
    end do
 
-   ( dbfFacRecD )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfFacRecD )->( ordsetfocus( nOrdAnt ) )
 
    /*
    Eliminamos las series-------------------------------------------------------
    */
 
    nOrdAnt     := ( dbfFacRecS )->( OrdSetFocus( "nNumFac" ) )
-
    while ( dbfFacRecS )->( dbSeek( cSerDoc + Str( nNumDoc ) + cSufDoc ) ) .and. !( dbfFacRecS )->( eof() )
+
       if dbDialogLock( dbfFacRecS )
          ( dbfFacRecS )->( dbDelete() )
          ( dbfFacRecS )->( dbUnLock() )
       end if
 
+      sysrefresh()
+
       ( dbfFacRecS )->( dbSkip() )
+
    end do
 
    ( dbfFacRecS )->( OrdSetFocus( nOrdAnt ) )
@@ -8197,9 +8202,9 @@ static function QuiFacRec()
    Recuperamos contadores------------------------------------------------------
    */
    
-   	if uFieldEmpresa( "LRECNUMFAC" )
+   if uFieldEmpresa( "LRECNUMFAC" )
 		nPutDoc( cSerDoc, nNumDoc, cSufDoc, D():FacturasRectificativas( nView ), "nFacRec", , dbfCount )
-   	end if
+   end if
 
    /*
    Refresh---------------------------------------------------------------------

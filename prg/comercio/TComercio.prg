@@ -4507,14 +4507,8 @@ METHOD controllerDeleteOneProductToPrestashop( idProduct ) Class TComercio
    ::oWaitMeter         := TWaitMeter():New( "Actualizando articulos", "Espere por favor..." )
    ::oWaitMeter:Run()
 
-   if ::filesOpen()
-
-      ::deleteOneProductToPrestashop( idProduct )
+   ::deleteOneProductToPrestashop( idProduct )
          
-      ::filesClose()
-
-   end if
-
    ::oWaitMeter:End()
 
 Return .t.
@@ -4946,10 +4940,8 @@ Return ( cFechaPrestashop )
 
 METHOD getTime( ctimePrestashop ) CLASS TComercio
 
-   local dHora
+   local dHora    := strtran( Substr( cTimePrestashop, 12, 8 ), ":", "" )
 
-   dHora   := strtran( Substr( cTimePrestashop, 12, 8 ), ":", "" )
-   
 Return ( dHora )
 
 //---------------------------------------------------------------------------//
@@ -4966,7 +4958,7 @@ METHOD isRecivedDocumentAsBudget( cPrestashopModule ) CLASS TComercio
 
    local lAsBudget   := .f.
 
-   if ( D():gotoFormasPago( upper( cPrestashopModule ), ::getView() ) .and. ( D():FormasPago( ::getView() ) )->nGenDoc <= 1 )
+   if ( D():gotoFormasPagoWeb( upper( cPrestashopModule ), ::getView() ) .and. ( D():FormasPago( ::getView() ) )->nGenDoc <= 1 )
       lAsBudget      := .t.
    endif
 
