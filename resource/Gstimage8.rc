@@ -75,8 +75,6 @@ Shape_square_wheel_160 BITMAP "..\\bmp\\Shape_square_wheel_160.bmp"
 
 Wheel_32 BITMAP "..\\bmp\\Wheel_32.bmp"
 
-Mobilephone3_16 BITMAP "..\\bmp\\Mobilephone3_16.bmp"
-
 User1_Add_32 BITMAP "..\\bmp\\User1_Add.bmp"
 User1_Edit_32 BITMAP "..\\bmp\\User1_Edit_32.bmp"
 Users1_32 BITMAP "..\\bmp\\Users1_32.bmp"

@@ -6,7 +6,6 @@
 
 DOCUMENT16 BITMAP "..\\bmp\\Document_plain_16.bmp"
 DOCUMENT_PLAIN_EARTH_16 BITMAP "..\\bmp\\document_plain_earth_16.bmp"
-HOME_16 BITMAP "..\\bmp\\Home_16.bmp"
 HOME_32 BITMAP "..\\bmp\\Home_32.bmp"
 
 TEXT3D16 BITMAP "..\\bmp\\Text_3d_16.bmp"

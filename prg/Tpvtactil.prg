@@ -2564,7 +2564,7 @@ METHOD StartResource() CLASS TpvTactil
          oGrupo                  := TDotNetGroup():New( oCarpeta, 226, "Datos de cliente", .f., , "gc_user_32" )
             ::oBtnCliente        := TDotNetButton():New( 220, oGrupo, "gc_user_16",                     "...",               1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
             ::oBtnDireccion      := TDotNetButton():New( 220, oGrupo, "Home_16",                      "...",               1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
-            ::oBtnTelefono       := TDotNetButton():New( 220, oGrupo, "Mobilephone3_16",              "...",               1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
+            ::oBtnTelefono       := TDotNetButton():New( 220, oGrupo, "gc_mobile_phone_16",              "...",               1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
 
          oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Guardar", .f., , "Disk_blue_32" )
             TDotNetButton():New( 60, oGrupo, "Disk_blue_32", "Guardar y procesar", 1, {|| ::OnClickGuardar() }, , , .f., .f., .f. )

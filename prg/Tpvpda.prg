@@ -8974,7 +8974,7 @@ Static Function StartEdtBig( aTmp, aGet, oDlgTpv, oBrwDet )
       oBoton            := TDotNetButton():New( 60, oGrupo, "SndInt32",                 "Pedidos",          1, {|| ProcesaPedidosWeb( aTmp ) }, , , .f., .f., .f. )
       oBtnCliente       := TDotNetButton():New( 240, oGrupo, "gc_user_16",              "...",              2, {|| lSeleccionaCliente( aTmp ) }, , , .f., .f., .f. )
       oBtnDireccion     := TDotNetButton():New( 240, oGrupo, "Home_16",                 "...",              2, {|| lSeleccionaCliente( aTmp ) }, , , .f., .f., .f. )
-      oBtnTelefono      := TDotNetButton():New( 240, oGrupo, "Mobilephone3_16",         "...",              2, {|| lSeleccionaCliente( aTmp ) }, , , .f., .f., .f. )
+      oBtnTelefono      := TDotNetButton():New( 240, oGrupo, "gc_mobile_phone_16",         "...",              2, {|| lSeleccionaCliente( aTmp ) }, , , .f., .f., .f. )
 
    oGrupo               := TDotNetGroup():New( oCarpeta, 126, "Tickets", .f. )
       oBtnUp            := TDotNetButton():New( 60, oGrupo, "gc_arrow_up_32",    "Subir",            1, {|| lCambiaTicket( .t., aTmp, aGet ) }, , , .f., .f., .f. )
