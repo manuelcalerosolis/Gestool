@@ -274,9 +274,9 @@ Method InitDesign() CLASS TSalon
 
    oCarpeta                   := TCarpeta():New( ::oOfficeBar, "Objetos" )
 
-   oGrupo                     := TDotNetGroup():New( oCarpeta, 126, "Acciones", .f., , "Disk_blue_32" )
+   oGrupo                     := TDotNetGroup():New( oCarpeta, 126, "Acciones", .f., , "gc_floppy_disk_32" )
 
-   oBoton                     := TDotNetButton():New( 60, oGrupo, "Disk_blue_32",         "Grabar y salir",    1, {|| ::SaveToDatabase() }, , , .f., .f., .f. )
+   oBoton                     := TDotNetButton():New( 60, oGrupo, "gc_floppy_disk_32",         "Grabar y salir",    1, {|| ::SaveToDatabase() }, , , .f., .f., .f. )
    oBoton                     := TDotNetButton():New( 60, oGrupo, "End32",                "Salir sin grabar",  2, {|| ::End() }, , , .f., .f., .f. )
 
    oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Selección", .f. )
@@ -355,7 +355,7 @@ Method InitSelector( lPuntosPendientes, lLlevar, dbfTikT ) CLASS TSalon
 
    if lLlevar
       ::oBtnGenerico          := TDotNetButton():New( 60, oGrupo, "gc_cash_register_32",  "General",        len( ::oSalaVenta:aSalas ) + 1, {|| ::LoadGenericosPendientes( dbfTikT, lPuntosPendientes ) }, , , .f., .f., .f. )
-      ::oBtnLlevar            := TDotNetButton():New( 60, oGrupo, "Wheel_32",    "Para llevar",    len( ::oSalaVenta:aSalas ) + 2, {|| ::LoadLlevarPendientes( dbfTikT, lPuntosPendientes ) }, , , .f., .f., .f. )
+      ::oBtnLlevar            := TDotNetButton():New( 60, oGrupo, "gc_motor_scooter_32",    "Para llevar",    len( ::oSalaVenta:aSalas ) + 2, {|| ::LoadLlevarPendientes( dbfTikT, lPuntosPendientes ) }, , , .f., .f., .f. )
    end if
 
    oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Acciones", .f., , "Exit_32" )
@@ -1573,7 +1573,7 @@ Method Llevar( dbfTikT ) CLASS sPunto
    else
       ::nPreCmb      := 1
    end if
-   ::cImagen         := "Wheel_32"
+   ::cImagen         := "gc_motor_scooter_32"
    ::oSala           := nil
    ::lComensal       := .f.
 

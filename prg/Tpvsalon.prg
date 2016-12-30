@@ -319,9 +319,9 @@ Method InitDesign() CLASS TTpvSalon
 
    oCarpeta                   := TCarpeta():New( ::oOfficeBar, "Objetos" )
 
-   oGrupo                     := TDotNetGroup():New( oCarpeta, 126, "Acciones", .f., , "Disk_blue_32" )
+   oGrupo                     := TDotNetGroup():New( oCarpeta, 126, "Acciones", .f., , "gc_floppy_disk_32" )
 
-   oBoton                     := TDotNetButton():New( 60, oGrupo, "Disk_blue_32",         "Grabar y salir",    1, {|| ::SaveToDatabase() }, , , .f., .f., .f. )
+   oBoton                     := TDotNetButton():New( 60, oGrupo, "gc_floppy_disk_32",         "Grabar y salir",    1, {|| ::SaveToDatabase() }, , , .f., .f., .f. )
    oBoton                     := TDotNetButton():New( 60, oGrupo, "End32",                "Salir sin grabar",  2, {|| ::End() }, , , .f., .f., .f. )
 
    oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Selección", .f. )
@@ -1140,15 +1140,15 @@ Method InitSelector( lPuntosPendientes, lShowLlevar, nSelectOption ) CLASS TTpvS
       ::oBtnGenerico          := TDotNetButton():New( 60, oGrupo, "gc_cash_register_32", "General", nSala, {|| ::LoadGenericosPendientes( lPuntosPendientes ) }, , , .f., .f., .f. )
 
       if uFieldEmpresa( "lRecoger" )
-         ::oBtnRecoger        := TDotNetButton():New( 60, oGrupo, "Shoppingbasket_full_32", "Para recoger", ++nSala, {|| ::LoadRecogerPendientes( lPuntosPendientes ) }, , , .f., .f., .f. )
+         ::oBtnRecoger        := TDotNetButton():New( 60, oGrupo, "gc_shopping_basket_32", "Para recoger", ++nSala, {|| ::LoadRecogerPendientes( lPuntosPendientes ) }, , , .f., .f., .f. )
       end if
 
       if uFieldEmpresa( "lLlevar" )
-         ::oBtnLlevar         := TDotNetButton():New( 60, oGrupo, "Wheel_32", "Para llevar", ++nSala, {|| ::LoadLlevarPendientes( lPuntosPendientes ) }, , , .f., .f., .f. )
+         ::oBtnLlevar         := TDotNetButton():New( 60, oGrupo, "gc_motor_scooter_32", "Para llevar", ++nSala, {|| ::LoadLlevarPendientes( lPuntosPendientes ) }, , , .f., .f., .f. )
       end if
 
       if uFieldEmpresa( "lEncargar" )
-         ::oBtnEncargar       := TDotNetButton():New( 60, oGrupo, "address_book2_32", "Encargar", ++nSala, {|| ::LoadEncargarPendientes( lPuntosPendientes ) }, , , .f., .f., .f. )
+         ::oBtnEncargar       := TDotNetButton():New( 60, oGrupo, "gc_notebook2_32", "Encargar", ++nSala, {|| ::LoadEncargarPendientes( lPuntosPendientes ) }, , , .f., .f., .f. )
       end if
 
    end if

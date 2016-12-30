@@ -10,7 +10,6 @@ ANTERIORFAMILIA BITMAP "..\\bmp\\Nav_Left_Red_48.bmp"
 SIGUIENTEARTICULO BITMAP "..\\bmp\\Nav_Right_Blue_48.bmp"
 ANTERIORARTICULO BITMAP "..\\bmp\\Nav_Left_Blue_48.bmp"
 
-DISKDRIVE_32 BITMAP "..\\bmp\\Diskdrive_32.bmp"
 DISKDRIVE_48 BITMAP "..\\bmp\\Diskdrive_48.bmp"
 PAPELERA BITMAP "..\\bmp\\Garbage_48.bmp"
 GARBAGE_EMPTY_32 BITMAP "..\\bmp\\Garbage_Empty_32.bmp"
@@ -31,7 +30,6 @@ NAVIGATE_MINUS_32 BITMAP "..\\bmp\\Navigate_Minus_32.bmp"
 NAVIGATE_PLUS_32 BITMAP "..\\bmp\\Navigate_Plus_32.bmp"
 
 GAUGE_16 BITMAP "..\\bmp\\Gauge_16.bmp"
-GAUGE_32 BITMAP "..\\bmp\\Gauge_32.bmp"
 
 MAGIC_16 BITMAP "..\\bmp\\Magic_Wand_16.bmp"
 MAGIC_32 BITMAP "..\\bmp\\Magic_Wand_32.bmp"

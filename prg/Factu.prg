@@ -3803,8 +3803,8 @@ Function TctCreateButtonBar()
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 7
    oGrupo:cPrompt       := 'Inicio'
-   oGrupo:cLittleBitmap := "Home_16"
-   oGrupo:cBigBitmap    := "Home_32"
+   oGrupo:cLittleBitmap := "gc_home_16"
+   oGrupo:cBigBitmap    := "gc_home_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
@@ -4113,8 +4113,8 @@ Function TPVCreateButtonBar()
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 6
    oGrupo:cPrompt       := 'Inicio'
-   oGrupo:cLittleBitmap := "Home_16"
-   oGrupo:cBigBitmap    := "Home_32"
+   oGrupo:cLittleBitmap := "gc_home_16"
+   oGrupo:cBigBitmap    := "gc_home_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo

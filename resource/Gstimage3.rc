@@ -6,14 +6,11 @@
 
 DOCUMENT16 BITMAP "..\\bmp\\Document_plain_16.bmp"
 DOCUMENT_PLAIN_EARTH_16 BITMAP "..\\bmp\\document_plain_earth_16.bmp"
-HOME_32 BITMAP "..\\bmp\\Home_32.bmp"
 
 TEXT3D16 BITMAP "..\\bmp\\Text_3d_16.bmp"
 CROSS13 BITMAP "..\\bmp\\Cross_13.bmp"
 SHAPE13 BITMAP "..\\bmp\\Shape_13.bmp"
 POINT13 BITMAP "..\\bmp\\Point_13.bmp"
-UP32 BITMAP "..\\bmp\\Arrow_up_green_32.bmp"
-DOWN32 BITMAP "..\\bmp\\Arrow_down_green_32.bmp"
 
 ANGEL24 BITMAP "..\\bmp\\Angel_24.bmp"
 SECURITY24 BITMAP "..\\bmp\\Security_Agent_24.bmp"

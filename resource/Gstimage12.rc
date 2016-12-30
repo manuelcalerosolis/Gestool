@@ -46,8 +46,6 @@ TEXT_CODE_32 BITMAP "..\\bmp\\text_code_32.bmp"
 
 PACKAGE_NEW_PRINTER2_32 BITMAP "..\\bmp\\package_new_printer2_32.bmp"
 
-SHOPPINGBASKET_FULL_32 BITMAP "..\\bmp\\shoppingbasket_full_32.bmp"
-
 GESTOOL BITMAP "..\\bmp\\gestool.bmp"
 
 INBOX_32 BITMAP "..\\bmp\\inbox_32.bmp"
@@ -73,8 +71,6 @@ NAVIGATE_RIGHT BITMAP "..\\bmp\\navigate_right.bmp"
 NAVIGATE_RIGHT2 BITMAP "..\\bmp\\navigate_right2.bmp"
 
 DOCUMENT_TEXT_PRINTER2_32 BITMAP "..\\bmp\\document_text_printer2_32.bmp"
-
-NOTE_CUT_32 BITMAP "..\\bmp\\note_cut_32.bmp"
 
 CERTIFICATE_32_ALPHA BITMAP "..\\bmp\\certificate_32_alpha.bmp"
 

@@ -379,23 +379,23 @@ METHOD StartResource() CLASS TpvListaTicket
          ::oBtnLstGeneral    := TDotNetButton():New( 60, oGrupo, "gc_cash_register_32",             "General",        2,    {|| ::OnClickGeneral() }, , , .f., .f., .f. )
 
       if uFieldEmpresa( "lRecoger" )
-         ::oBtnLstRecoger    := TDotNetButton():New( 60, oGrupo, "shoppingbasket_full_32", "Para recoger",   nPos, {|| ::OnClickRecoger() }, , , .f., .f., .f. )
+         ::oBtnLstRecoger    := TDotNetButton():New( 60, oGrupo, "gc_shopping_basket_32", "Para recoger",   nPos, {|| ::OnClickRecoger() }, , , .f., .f., .f. )
          nPos++
       end if
 
       if uFieldEmpresa( "lLlevar" )
-         ::oBtnLstLlevar     := TDotNetButton():New( 60, oGrupo, "Wheel_32",               "Para llevar",    nPos, {|| ::OnClickLlevar() }, , , .f., .f., .f. )
+         ::oBtnLstLlevar     := TDotNetButton():New( 60, oGrupo, "gc_motor_scooter_32",               "Para llevar",    nPos, {|| ::OnClickLlevar() }, , , .f., .f., .f. )
          nPos++
       end if
 
       if uFieldEmpresa( "lEncargar" )
-         ::oBtnLstEncargar   := TDotNetButton():New( 60, oGrupo, "Address_Book2_32",       "Encargos",       nPos, {|| ::OnClickEncargar() }, , , .f., .f., .f. )
+         ::oBtnLstEncargar   := TDotNetButton():New( 60, oGrupo, "gc_notebook2_32",       "Encargos",       nPos, {|| ::OnClickEncargar() }, , , .f., .f., .f. )
          nPos++
       end if
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 186,  "Tipo de ticket", .f. )
          ::oBtnAbiertos       := TDotNetButton():New( 60, oGrupo,    "Tickets_abiertos_32",     "Abiertos",           1, {|| ::OnClickAbiertos() }, , , .f., .f., .f. )
-         ::oBtnTodos          := TDotNetButton():New( 60, oGrupo,    "Index_32",                "Todos",              2, {|| ::OnClickTodos() }, , , .f., .f., .f. )
+         ::oBtnTodos          := TDotNetButton():New( 60, oGrupo,    "gc_note_block_32",                "Todos",              2, {|| ::OnClickTodos() }, , , .f., .f., .f. )
          ::oBtnFiltro         := TDotNetButton():New( 60, oGrupo,    "Calendar_32",             "Filtrar",            3, {|| ::OnClickFiltro() }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 366,  "Seleción de tickets", .f. )
@@ -893,8 +893,8 @@ METHOD lPendientes() CLASS TpvListaTicket
 
       ::oImageListPendiente:AddMasked( TBitmap():Define( "gc_cup_32",    ), Rgb( 255, 0, 255 ) )
       ::oImageListPendiente:AddMasked( TBitmap():Define( "gc_cash_register_32" ), Rgb( 255, 0, 255 ) )
-      ::oImageListPendiente:AddMasked( TBitmap():Define( "shoppingbasket_full_32"   ), Rgb( 255, 0, 255 ) )
-      ::oImageListPendiente:AddMasked( TBitmap():Define( "Wheel_32"   ), Rgb( 255, 0, 255 ) )
+      ::oImageListPendiente:AddMasked( TBitmap():Define( "gc_shopping_basket_32"   ), Rgb( 255, 0, 255 ) )
+      ::oImageListPendiente:AddMasked( TBitmap():Define( "gc_motor_scooter_32"   ), Rgb( 255, 0, 255 ) )
 
       ::oListViewPendiente             := TListView():Redefine( 100, ::oDlg )
 

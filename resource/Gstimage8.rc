@@ -16,7 +16,6 @@ SECURITY_AGENT_48 BITMAP "..\\bmp\\security_agent_48.bmp"
 MASKS_16 BITMAP "..\\bmp\\masks_16.bmp"
 
 Stop_32 BITMAP "..\\bmp\\Stop_32.bmp"
-Disk_blue_32 BITMAP "..\\bmp\\Disk_blue_32.bmp"
 Shape_circle_32 BITMAP "..\\bmp\\Shape_circle_32.bmp"
 Shape_ellipse_32 BITMAP "..\\bmp\\Shape_ellipse_32.bmp"
 Shape_square_32 BITMAP "..\\bmp\\Shape_square_32.bmp"
@@ -73,8 +72,6 @@ Shape_rectangle_80 BITMAP "..\\bmp\\Shape_rectangle_80.bmp"
 Shape_square_cup_160 BITMAP "..\\bmp\\Shape_square_cup_160.bmp"
 Shape_square_wheel_160 BITMAP "..\\bmp\\Shape_square_wheel_160.bmp"
 
-Wheel_32 BITMAP "..\\bmp\\Wheel_32.bmp"
-
 User1_Add_32 BITMAP "..\\bmp\\User1_Add.bmp"
 User1_Edit_32 BITMAP "..\\bmp\\User1_Edit_32.bmp"
 Users1_32 BITMAP "..\\bmp\\Users1_32.bmp"
@@ -98,8 +95,6 @@ Check_32 BITMAP "..\\bmp\\check.bmp"
 
 arrow_up_blue BITMAP "..\\bmp\\arrow_up_blue.bmp"
 arrow_down_blue BITMAP "..\\bmp\\arrow_down_blue.bmp"
-
-printer_comanda_32 BITMAP "..\\bmp\\printer_comanda_32.bmp"
 
 Money2_32_Pressed BITMAP "..\\bmp\\Money2_32_Pressed.bmp"
 

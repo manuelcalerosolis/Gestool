@@ -12839,7 +12839,7 @@ Static Function SetBigUser( aTmp, aGet )
    if !empty( oUser():cImagen() )
       oBtnUsuario:cBmp( cFileBmpName( oUser():cImagen() ) )
    else
-      oBtnUsuario:cBmp( if( oUser():lAdministrador(), "Security_Agent_32", "Dude4_32" ) )
+      oBtnUsuario:cBmp( if( oUser():lAdministrador(), "gc_businessman2_32", "Dude4_32" ) )
    end if
 
    oBtnUsuario:cCaption( Capitalize( oUser():cNombre() ) )
@@ -16169,7 +16169,7 @@ Return .t.
 
 static function lNumeroComensales( aTmp )
 
-   aTmp[ _NNUMCOM ]     := nVirtualNumKey( "Users1_32", "Número comensales" )
+   aTmp[ _NNUMCOM ]     := nVirtualNumKey( "gc_users_family_32", "Número comensales" )
 
    lRecTotal( aTmp )
 

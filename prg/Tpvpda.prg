@@ -8835,14 +8835,14 @@ Static Function EdtBig( aTmp, aGet, dbfTikT, oBrw, cTot, nTot, nMode, oWnd )
       OF       oDlgTpv ;
       WHEN     ( nMode != ZOOM_MODE ) ;
       ACTION   ( CrearInvitacion( dbfTmpL, oBrwDet ), lRecTotal( aTmp ) );
-      BITMAP   "Masks_32" ;
+      BITMAP   "gc_masks_32" ;
 
    REDEFINE BUTTONBMP ;
       ID       750 ;
       OF       oDlgTpv ;
       WHEN     ( nMode != ZOOM_MODE ) ;
       ACTION   ( if( oCajon != nil, oCajon:Open(), ) );
-      BITMAP   "Diskdrive_32" ;
+      BITMAP   "gc_cashdrawer_32" ;
 
    /*
    Totales---------------------------------------------------------------------
@@ -8963,17 +8963,17 @@ Static Function StartEdtBig( aTmp, aGet, oDlgTpv, oBrwDet )
       oBtnRenombrar     := TDotNetButton():New( 60, oGrupo, "Note_Edit_32",             "Alias",            1, {|| RenombrarUbicacion( aTmp, aGet ) }, , {|| ( dbfTmpL )->( LastRec() ) > 0 }, .f., .f., .f. )
       oBoton            := TDotNetButton():New( 60, oGrupo, "Note_Add_32",              "Nuevo ticket",     2, {|| GetNuevaVenta( aTmp, aGet ) }, , , .f., .f., .f. )
       oBoton            := TDotNetButton():New( 60, oGrupo, "Note_Delete_32",           "Pendiente cobro",  3, {|| GetSalaVenta( aTmp, aGet, .t. ) }, , , .f., .f., .f. )
-      oBtnEntregar      := TDotNetButton():New( 60, oGrupo, "Printer_32",               "Entregar nota",    4, {|| ClickEntrega( aTmp, aGet, oDlgTpv ) }, , , .f., .f., .f. )
+      oBtnEntregar      := TDotNetButton():New( 60, oGrupo, "gc_printer2_32",               "Entregar nota",    4, {|| ClickEntrega( aTmp, aGet, oDlgTpv ) }, , , .f., .f., .f. )
       oBoton            := TDotNetButton():New( 60, oGrupo, "gc_money2_32",                "Cobrar",           5, {|| NewTiket( aGet, aTmp, nSaveMode, SAVTIK, .t. ) }, , , .f., .f., .f. )
 
    oGrupo               := TDotNetGroup():New( oCarpeta, 126, "Otros", .f. )
-      oBoton            := TDotNetButton():New( 60, oGrupo, "Users1_32",                "Comensales",       1, {|| lNumeroComensales( aTmp ) }, , , .f., .f., .f. )
-      oBtnUsuario       := TDotNetButton():New( 60, oGrupo, "Security_Agent_32",        "Cambiar usuario",  2, {|| SelBigUser( aTmp, aGet, dbfUsr ) }, , , .f., .f., .f. )
+      oBoton            := TDotNetButton():New( 60, oGrupo, "gc_users_family_32",                "Comensales",       1, {|| lNumeroComensales( aTmp ) }, , , .f., .f., .f. )
+      oBtnUsuario       := TDotNetButton():New( 60, oGrupo, "gc_businessman2_32",        "Cambiar usuario",  2, {|| SelBigUser( aTmp, aGet, dbfUsr ) }, , , .f., .f., .f. )
 
    oGrupo               := TDotNetGroup():New( oCarpeta, 306, "Pedidos y clientes", .f., , "" )
       oBoton            := TDotNetButton():New( 60, oGrupo, "SndInt32",                 "Pedidos",          1, {|| ProcesaPedidosWeb( aTmp ) }, , , .f., .f., .f. )
       oBtnCliente       := TDotNetButton():New( 240, oGrupo, "gc_user_16",              "...",              2, {|| lSeleccionaCliente( aTmp ) }, , , .f., .f., .f. )
-      oBtnDireccion     := TDotNetButton():New( 240, oGrupo, "Home_16",                 "...",              2, {|| lSeleccionaCliente( aTmp ) }, , , .f., .f., .f. )
+      oBtnDireccion     := TDotNetButton():New( 240, oGrupo, "gc_home_16",                 "...",              2, {|| lSeleccionaCliente( aTmp ) }, , , .f., .f., .f. )
       oBtnTelefono      := TDotNetButton():New( 240, oGrupo, "gc_mobile_phone_16",         "...",              2, {|| lSeleccionaCliente( aTmp ) }, , , .f., .f., .f. )
 
    oGrupo               := TDotNetGroup():New( oCarpeta, 126, "Tickets", .f. )
@@ -11427,7 +11427,7 @@ Static Function SetBigUser( aTmp, aGet )
    if !Empty( oUser():cImagen() )
       oBtnUsuario:cBmp( cFileBmpName( oUser():cImagen() ) )
    else
-      oBtnUsuario:cBmp( if( oUser():lAdministrador(), "Security_Agent_32", "Dude4_32" ) )
+      oBtnUsuario:cBmp( if( oUser():lAdministrador(), "gc_businessman2_32", "Dude4_32" ) )
    end if
 
    oBtnUsuario:cCaption( Capitalize( oUser():cNombre() ) )
@@ -14340,7 +14340,7 @@ Return .t.
 
 static function lNumeroComensales( aTmp )
 
-   aTmp[ _NNUMCOM ]  := nVirtualNumKey( "Users1_32", "Número comensales" )
+   aTmp[ _NNUMCOM ]  := nVirtualNumKey( "gc_users_family_32", "Número comensales" )
 
    lRecTotal( aTmp )
 

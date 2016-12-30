@@ -319,7 +319,7 @@ Method Llevar( dbfTikT ) CLASS sTpvPunto
 
    ::lComensal       := .f.
 
-   ::cImagen         := "Wheel_32"
+   ::cImagen         := "gc_motor_scooter_32"
    ::oSala           := nil
 
 Return ( Self )
@@ -363,7 +363,7 @@ Method Encargar( dbfTikT ) CLASS sTpvPunto
 
    ::lComensal       := .f.
 
-   ::cImagen         := "address_book2_32"
+   ::cImagen         := "gc_notebook2_32"
    ::oSala           := nil
 
 Return ( Self )

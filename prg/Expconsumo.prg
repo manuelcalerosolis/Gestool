@@ -192,7 +192,7 @@ METHOD New( oDbf )
 
       oGrupo                     := TDotNetGroup():New( oCarpeta, 126, "Acciones", .f. )
 
-      oBoton                     := TDotNetButton():New( 60, oGrupo, "Disk_blue_32",         "Grabar y salir",    1, {|| ::SaveToDatabase() }, , , .f., .f., .f. )
+      oBoton                     := TDotNetButton():New( 60, oGrupo, "gc_floppy_disk_32",         "Grabar y salir",    1, {|| ::SaveToDatabase() }, , , .f., .f., .f. )
       oBoton                     := TDotNetButton():New( 60, oGrupo, "Exit_32",              "Salir sin grabar",  2, {|| ::oWnd:End() }, , , .f., .f., .f. )
 
       oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Selección", .f. )
