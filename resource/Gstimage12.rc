@@ -42,8 +42,6 @@ TEXT_CODE_COLORED_16 BITMAP "..\\bmp\\text_code_colored_16.bmp"
 
 TEXT_CODE_COLORED_32 BITMAP "..\\bmp\\text_code_colored_32.bmp"
 
-TEXT_CODE_32 BITMAP "..\\bmp\\text_code_32.bmp"
-
 PACKAGE_NEW_PRINTER2_32 BITMAP "..\\bmp\\package_new_printer2_32.bmp"
 
 GESTOOL BITMAP "..\\bmp\\gestool.bmp"

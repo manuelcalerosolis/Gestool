@@ -320,7 +320,7 @@ METHOD DividirMesas() CLASS TpvUtilidadesMesa
 	
 	TButtonBmp():ReDefine( 350, {|| ::oBrwNuevoTicket:GoDown() }, ::oDlg, , , .f., , , , .f., "gc_arrow_down_32" )
 
-	TButtonBmp():ReDefine( 380, {|| ::lShowEscandallosDivision() }, ::oDlg, , , .f., , , , .f., "Text_code_32" )
+	TButtonBmp():ReDefine( 380, {|| ::lShowEscandallosDivision() }, ::oDlg, , , .f., , , , .f., "gc_text_tree_32" )
 
 	TButtonBmp():ReDefine( IDOK, {|| ::AceptarDividirMesa() }, ::oDlg, , , .f., , , , .f., "gc_check_32" )
 

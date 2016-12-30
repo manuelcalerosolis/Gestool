@@ -2114,7 +2114,7 @@ METHOD Resource() CLASS TpvTactil
    ::oGetCambiarOrden:setColor( GetSysColor( COLOR_WINDOWTEXT ), GetSysColor( COLOR_WINDOW ) )
    ::oGetCambiarOrden:setFont( ::oFntNum )
 
-   ::oBtnAgregarLibre            := TButtonBmp():ReDefine( 502, {|| ::AgregarLibre() },            ::oDlg, , , .f., , , , .f., "Free_Bullet_32" ) //
+   ::oBtnAgregarLibre            := TButtonBmp():ReDefine( 502, {|| ::AgregarLibre() },            ::oDlg, , , .f., , , , .f., "gc_more_32" ) //
    ::oBtnCombinado               := TButtonBmp():ReDefine( 503, {|| ::SetCombinando() },           ::oDlg, , , .f., , , , .f., "Led_green_32" )
    ::oBtnCalculadora             := TButtonBmp():ReDefine( 504, {|| ::SetCalculadora() },          ::oDlg, , , .f., , , , .f., "Calculator_32" )
 
@@ -2298,8 +2298,8 @@ METHOD Resource() CLASS TpvTactil
    ::oBtnLineasTop            := TButtonBmp():ReDefine( 120, {|| ::oBrwLineas:GoUp() },      ::oDlg, , , .f., , , , .f., "gc_arrow_up_32" )
    ::oBtnLineasBottom         := TButtonBmp():ReDefine( 121, {|| ::oBrwLineas:GoDown() },    ::oDlg, , , .f., , , , .f., "gc_arrow_down_32" )
    ::oBtnLineasDelete         := TButtonBmp():ReDefine( 122, {|| ::OnClickEliminarLinea() }, ::oDlg, , , .f., , , , .f., "Delete_32" )
-   ::oBtnLineasComentarios    := TButtonBmp():ReDefine( 123, {|| ::InitComentarios(.t.) },   ::oDlg, , , .f., , , , .f., "Message_32" )
-   ::oBtnLineasEscandallos    := TButtonBmp():ReDefine( 124, {|| ::lShowEscandallos() },     ::oDlg, , , .f., , , , .f., "Text_code_32" ) 
+   ::oBtnLineasComentarios    := TButtonBmp():ReDefine( 123, {|| ::InitComentarios(.t.) },   ::oDlg, , , .f., , , , .f., "gc_message_32" )
+   ::oBtnLineasEscandallos    := TButtonBmp():ReDefine( 124, {|| ::lShowEscandallos() },     ::oDlg, , , .f., , , , .f., "gc_text_tree_32" ) 
 
    /*
    Get para las busquedas de códigos de barras------------------------------
