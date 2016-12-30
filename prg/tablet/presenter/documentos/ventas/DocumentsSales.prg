@@ -1140,4 +1140,3 @@ METHOD runGridDirections() CLASS DocumentsSales
 Return ( self )
 
 //---------------------------------------------------------------------------//
-

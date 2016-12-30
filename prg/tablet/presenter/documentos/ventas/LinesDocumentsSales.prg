@@ -137,6 +137,8 @@ CLASS LinesDocumentsSales FROM Editable
 
    METHOD setObsequio()
 
+   METHOD lValidStockLote()
+
 //---------------------------------------------------------------------------//
 
 END CLASS
@@ -338,18 +340,18 @@ Return ( self )
 
 METHOD setStockArticulo() 
  
-   if ( GetPvProfString( "Tablet", "Stock", ".F.", cIniAplication() ) == ".F." )
-      Return nil
-   end if
+   ::oViewEditDetail:nGetStock   := ::oSender:oStock:nTotStockAct(   ::hGetDetail( "Articulo" ),;
+                                                                     ::hGetDetail( "Almacen" ),;
+                                                                     ::hGetDetail( "ValorPropiedad1" ),;
+                                                                     ::hGetDetail( "ValorPropiedad2" ),;
+                                                                     ::hGetDetail( "Lote" ),;
+                                                                     ::hGetDetail( "LineaEscandallo" ),;
+                                                                     nil ,;
+                                                                     ::hGetDetail( "TipoStock" ) )
 
-   ::oSender:oStock:nPutStockActual( ::hGetDetail( "Articulo" ),;
-                                     ::hGetDetail( "Almacen" ),;
-                                     ::hGetDetail( "ValorPropiedad1" ),;
-                                     ::hGetDetail( "ValorPropiedad2" ),;
-                                     ::hGetDetail( "Lote" ),;
-                                     ::hGetDetail( "LineaEscandallo" ),;
-                                     ::hGetDetail( "TipoStock" ),;
-                                     ::oViewEditDetail:oGetStock )
+   if !Empty( ::oViewEditDetail:oGetStock )
+      ::oViewEditDetail:oGetStock:Refresh()
+   end if
 
 Return ( nil )
 
@@ -551,8 +553,6 @@ Return ( self )
 
 METHOD lValidResourceDetail() CLASS LinesDocumentsSales
 
-   local lReturn  := .t.
-
    ::oViewEditDetail:oGetArticulo:lValid()   
 
    ::oViewEditDetail:oGetLote:lValid()
@@ -563,11 +563,15 @@ METHOD lValidResourceDetail() CLASS LinesDocumentsSales
 
       ::oViewEditDetail:oGetLote:SetFocus()
  
-      lReturn        := .f.
+      Return ( .f. )
 
    end if
 
-Return ( lReturn  )
+   if !::lValidStockLote()
+      Return ( .f. )
+   end if
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -644,5 +648,24 @@ METHOD setObsequio() CLASS LinesDocumentsSales
    ::oViewEditDetail:refreshDialog()
 
 Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD lValidStockLote() CLASS LinesDocumentsSales
+
+   local nUnidades   := 0
+
+   if !::hGetDetail( "NoPermitirSinStock" )
+      Return .t.
+   end if
+
+   nUnidades         := NotCaja( ::hGetDetail( "Cajas" ) ) * ::hGetDetail( "Unidades" )
+
+   if ( ::oViewEditDetail:nGetStock - nUnidades ) < 0
+      ApoloMsgStop( "No hay stock suficiente." )
+      Return .f.
+   end if
+
+Return .t.
 
 //---------------------------------------------------------------------------//
