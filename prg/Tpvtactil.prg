@@ -2115,7 +2115,7 @@ METHOD Resource() CLASS TpvTactil
    ::oGetCambiarOrden:setFont( ::oFntNum )
 
    ::oBtnAgregarLibre            := TButtonBmp():ReDefine( 502, {|| ::AgregarLibre() },            ::oDlg, , , .f., , , , .f., "gc_more_32" ) //
-   ::oBtnCombinado               := TButtonBmp():ReDefine( 503, {|| ::SetCombinando() },           ::oDlg, , , .f., , , , .f., "Led_green_32" )
+   ::oBtnCombinado               := TButtonBmp():ReDefine( 503, {|| ::SetCombinando() },           ::oDlg, , , .f., , , , .f., "gc_pin_blue_32" )
    ::oBtnCalculadora             := TButtonBmp():ReDefine( 504, {|| ::SetCalculadora() },          ::oDlg, , , .f., , , , .f., "Calculator_32" )
 
    if !::l1024() 
@@ -10117,10 +10117,10 @@ METHOD ShowCombinado( lShowCombinando )
    end if 
 
    if lShowCombinando
-      ::oBtnCombinado:LoadBitmap( "Led_red_32" ) 
+      ::oBtnCombinado:LoadBitmap( "gc_pin_32" ) 
       ::oSayImporte:SetText( "Combinando..." )
    else
-      ::oBtnCombinado:LoadBitmap( "Led_green_32" )
+      ::oBtnCombinado:LoadBitmap( "gc_pin_blue_32" )
       ::oSayImporte:SetText( "Total" )
    end if 
    
