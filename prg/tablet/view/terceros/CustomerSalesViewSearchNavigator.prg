@@ -38,12 +38,20 @@ METHOD botonesAcciones()   CLASS CustomerSalesViewSearchNavigator
                            "nLeft"     => {|| GridWidth( 1.5, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
+                           "cResName"  => "gc_safe_into_64",;
+                           "bLClicked" => {|| MsgInfo( "Liquida la factura", ::getField( "Serie" ) + "/" + alltrim( str( ::getField( "Numero" ) ) ) + "/" + ::getField( "Sufijo" ) ) },;
+                           "oWnd"      => ::oDlg } )
+
+   TGridImage():Build(  {  "nTop"      => 75,;
+                           "nLeft"     => {|| GridWidth( 2.5, ::oDlg ) },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
                            "cResName"  => "gc_funnel_64",;
                            "bLClicked" => {|| ::ChangeFilter() },;
                            "oWnd"      => ::oDlg } )
 
    ::oSayFilter  := TGridSay():Build(  {  "nRow"      => 75,;
-                                          "nCol"      => {|| GridWidth( 3, ::oDlg ) },;
+                                          "nCol"      => {|| GridWidth( 3.5, ::oDlg ) },;
                                           "bText"     => {|| "" },;
                                           "oWnd"      => ::oDlg,;
                                           "oFont"     => oGridFont(),;
