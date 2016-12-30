@@ -3,7 +3,8 @@
 
 CLASS LinesOrderCustomer FROM LinesDocumentsSales  
 
+   METHOD lValidStockLote()   INLINE ( .t. )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
-

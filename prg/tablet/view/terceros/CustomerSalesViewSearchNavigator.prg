@@ -174,7 +174,7 @@ METHOD setColumns() CLASS CustomerSalesViewSearchNavigator
 
    with object ( ::addColumn() )
       :cHeader           := "Tot/Pdt."
-      :bEditValue        := {|| Trans( ::getField( "TotalDocumento" ), cPorDiv() ) + CRLF + Trans( ::getField( "TotalPendiente" ), cPorDiv() ) }
+      :bEditValue        := {|| Trans( ::getField( "TotalDocumento" ), cPorDiv() ) + CRLF + Trans( nTotPdtFacCli( ::getField( "Serie" ) + str( ::getField( "Numero" ) ) + ::getField( "Sufijo" ), D():FacturasClientes( ::oSender:nView ), D():FacturasClientesLineas( ::oSender:nView ), D():TiposIva( ::oSender:nView ), D():Divisas( ::oSender:nView ), D():FacturasClientesCobros( ::oSender:nView ), D():AnticiposClientes( ::oSender:nView ) ), cPorDiv() ) }
       :nWidth            := 155
       :nDataStrAlign     := 1
       :nHeadStrAlign     := 1

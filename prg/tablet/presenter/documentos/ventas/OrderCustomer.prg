@@ -19,6 +19,8 @@ CLASS OrderCustomer FROM DocumentsSales
 
    METHOD printDocument()
 
+   METHOD Build( oSender )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -53,6 +55,38 @@ METHOD New() CLASS OrderCustomer
    ::setDataTableLine( "PedCliL" )
    
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Build( oSender ) CLASS OrderCustomer
+
+   ::oSender               := oSender
+
+   ::oViewSearchNavigator  := DocumentSalesViewSearchNavigator():New( self )
+
+   ::oViewEdit             := DocumentSalesViewEdit():New( self )
+
+   ::oViewEditResumen      := ViewEditResumen():New( self )
+
+   ::oCliente              := Customer():init( self )  
+
+   ::oProduct              := Product():init( self )
+
+   ::oProductStock         := ProductStock():init( self )
+
+   ::oStore                := Store():init( self )
+
+   ::oPayment              := Payment():init( self )
+
+   ::oDirections           := Directions():init( self )
+
+   ::oDocumentLines        := DocumentLines():New( self )
+
+   ::oLinesDocumentsSales  := LinesOrderCustomer():New( self )
+
+   ::oTotalDocument        := TotalDocument():New( self )
+
+return ( self )
 
 //---------------------------------------------------------------------------//
 

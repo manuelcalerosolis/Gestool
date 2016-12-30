@@ -16873,6 +16873,14 @@ RETURN ( { nTotNet, nTotIva, nTotReq, nTotFac, nTotPnt, nTotTrn, nTotAge, aTotIv
 
 //---------------------------------------------------------------------------//
 
+FUNCTION nTotPdtFacCli( cFactura, cFacCliT, cFacCliL, dbfIva, dbfDiv, dbfFacCliP, cAntCliT, cDivRet )
+
+   nTotFacCli( cFactura, cFacCliT, cFacCliL, dbfIva, dbfDiv, dbfFacCliP, cAntCliT, nil, cDivRet )
+
+RETURN ( nTotFac - nTotCob )
+
+//---------------------------------------------------------------------------//
+
 FUNCTION sTotFacCli( cFactura, cFacCliT, cFacCliL, dbfIva, dbfDiv, dbfFacCliP, cAntCliT, cDivRet )
 
    local sTotal

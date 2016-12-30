@@ -21,6 +21,7 @@ CLASS ViewDetail FROM ViewBase
    DATA oGetStock
    DATA nGetStock
 
+   DATA oSayGetCajas
    DATA oGetCajas
    DATA oGetUnidades
    DATA oGetPrecio
@@ -59,6 +60,8 @@ CLASS ViewDetail FROM ViewBase
    METHOD showLote()                         INLINE ( ::oGetLote:Show(), ::oSayLote:Show() )
    METHOD hideLote()                         INLINE ( ::oGetLote:Hide(), ::oSayLote:Hide() )
    METHOD refreshLote()                      INLINE ( ::oGetLote:Refresh() )
+
+   METHOD hideCajas()                        INLINE ( ::oGetCajas:Hide(), ::oSayGetCajas:Hide() )
 
    METHOD refreshGetArticulo()               INLINE ( ::oGetArticulo:Refresh() )
    METHOD refreshGetDescripcion()            INLINE ( ::ogetDescriptionArticle:Refresh() )
@@ -136,6 +139,11 @@ Return ( ::oDlg:nResult == IDOK )
 //---------------------------------------------------------------------------//
 
 METHOD startDialog() CLASS ViewDetail
+
+   if !lUseCaj()
+      ::hideCajas()
+      ::refreshGetCajas()
+   end if
 
    ::hideLote()
 
@@ -235,7 +243,7 @@ Return ( self )
 
 METHOD defineCajas() CLASS ViewDetail
 
-   TGridSay():Build(                      {  "nRow"      => ::getRow(),;
+   ::oSayGetCajas :=    TGridSay():Build( {  "nRow"      => ::getRow(),;
                                              "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
                                              "bText"     => {|| "Cajas" },;
                                              "oWnd"      => ::oDlg,;
