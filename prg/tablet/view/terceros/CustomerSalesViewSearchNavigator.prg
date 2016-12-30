@@ -107,6 +107,7 @@ METHOD Resource() CLASS CustomerSalesViewSearchNavigator
    ::botonesMovimientoBrowse()
 
    ::browseGeneral()
+   
    ::oBrowse:bLDblClick       := {|| nil }
 
    ::oDlg:bResized            := {|| ::resizeDialog() }
