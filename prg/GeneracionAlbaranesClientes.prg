@@ -489,6 +489,10 @@ METHOD processDeliveryNoteLines()
 
    local oLine
 
+   // El cliente tiene q salir de las lineas
+
+   // Determinar cuando hay q añadir un albaran o crear uno nuevo
+
    ::DeliveryNoteCustomer:setAppendMode()
    ::DeliveryNoteCustomer:getAppendDocumento()
 
