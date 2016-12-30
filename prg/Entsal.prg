@@ -711,7 +711,7 @@ STATIC FUNCTION EdtRecTct( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
       REDEFINE BUTTONBMP ;
          ID       181 ;
          OF       oDlg ;
-         BITMAP   "Keyboard2_32" ;
+         BITMAP   "gc_keyboard_32" ;
          ACTION   ( aGet[ _CDESENT ]:cText( VirtualKey( .f. ) ) )
 
       REDEFINE GET aGet[ _CDESENT ] VAR aTmp[ _CDESENT ] ;
@@ -720,7 +720,7 @@ STATIC FUNCTION EdtRecTct( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
          OF       oDlg
 
       REDEFINE BUTTONBMP ;
-         BITMAP   "Check_32" ;
+         BITMAP   "gc_check_32" ;
          ID       500 ;
 			OF 		oDlg ;
 			WHEN 		( nMode != ZOOM_MODE ) ;

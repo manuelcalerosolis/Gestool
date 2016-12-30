@@ -1650,7 +1650,7 @@ Function BrwCajaTactil( oGet, dbfCaja, oGet2, lReturnCaja, lParaLlevar )
       REDEFINE BUTTONBMP ;
          ID       100 ;
          OF       oDlg ;
-         BITMAP   "Keyboard2_32";
+         BITMAP   "gc_keyboard_32";
          ACTION   ( VirtualKey( .f., oGetUnidades ), if( lBigSeek( nil, cGetUnidades, dbfCaja ), oBrw:Refresh(), ) )
 
       REDEFINE BUTTON oBotonOculto ;

@@ -1408,7 +1408,7 @@ Function BrwUserTactil( oGet, dbfUsr, oGet2 )
       REDEFINE BUTTONBMP ;
          ID       100 ;
          OF       oDlg ;
-         BITMAP   "Keyboard2_32";
+         BITMAP   "gc_keyboard_32";
          ACTION   ( VirtualKey( .f., oGetBusqueda ), if( lBigSeek( nil, cGetBusqueda, dbfUsr ), oBrw:Refresh(), ) )
 
       REDEFINE SAY oSayGeneral ;
@@ -1479,7 +1479,7 @@ Function BrwUserTactil( oGet, dbfUsr, oGet2 )
          ACTION   ( oBrw:GoDown() )
 
       REDEFINE BUTTONBMP ;
-         BITMAP   "Check_32" ;
+         BITMAP   "gc_check_32" ;
          ID       IDOK ;
          OF       oDlg ;
          ACTION   ( oDlg:End( IDOK ) )

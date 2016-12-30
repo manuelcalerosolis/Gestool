@@ -91,8 +91,6 @@ clipboard_ok_16 BITMAP "..\\bmp\\clipboard_ok_16.bmp"
 message_32 BITMAP "..\\bmp\\message_32.bmp"
 message_16 BITMAP "..\\bmp\\message_16.bmp"
 
-Check_32 BITMAP "..\\bmp\\check.bmp"
-
 arrow_up_blue BITMAP "..\\bmp\\arrow_up_blue.bmp"
 arrow_down_blue BITMAP "..\\bmp\\arrow_down_blue.bmp"
 

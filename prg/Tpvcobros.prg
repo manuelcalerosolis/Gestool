@@ -310,7 +310,7 @@ METHOD lResource() CLASS TpvCobros
       Boton de finalizar el cobro----------------------------------------------
       */
 
-      ::oBtnAceptar        := TButtonBmp():ReDefine( 120, {|| ::OnClickAceptar() }, ::oDlg,,, .f.,,,, .f., "Check_32" )
+      ::oBtnAceptar        := TButtonBmp():ReDefine( 120, {|| ::OnClickAceptar() }, ::oDlg,,, .f.,,,, .f., "gc_check_32" )
 
       /*
       Browse con los diferentes pagos------------------------------------------

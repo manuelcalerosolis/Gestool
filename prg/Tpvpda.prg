@@ -6337,7 +6337,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig )
       REDEFINE BUTTONBMP ;
          ID       200 ;
          OF       oDlg ;
-         BITMAP   "Keyboard2_32" ;
+         BITMAP   "gc_keyboard_32" ;
          ACTION   ( VirtualKey( .f., aGet[ _CCLITIK ] ), cClient( aGet[ _CCLITIK ], dbfClient, aGet[ _CNOMTIK ] ) )
 
       REDEFINE BUTTONBMP ;
@@ -8821,7 +8821,7 @@ Static Function EdtBig( aTmp, aGet, dbfTikT, oBrw, cTot, nTot, nMode, oWnd )
       OF       oDlgTpv ;
       WHEN     ( nMode != ZOOM_MODE ) ;
       ACTION   ( DelRecno( dbfTmpL, oBrwDet ), lRecTotal( aTmp ) );
-      BITMAP   "Garbage_Empty_32" ;
+      BITMAP   "gc_garbage_full_32" ;
 
    REDEFINE BUTTONBMP ;
       ID       730 ;
@@ -13410,7 +13410,7 @@ Static Function AddFreeProduct()
       REDEFINE BUTTONBMP ;
          ID       110 ;
          OF       oDlg ;
-         BITMAP   "Keyboard2_32" ;
+         BITMAP   "gc_keyboard_32" ;
          ACTION   ( VirtualKey( .f., oGetDescripcion ) )
 
       REDEFINE GET oGetUnidades ;

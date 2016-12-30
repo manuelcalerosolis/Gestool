@@ -106,7 +106,7 @@ FUNCTION CuentasClientes( oWnd )
    REDEFINE BUTTONBMP ;
       ID       200 ;
       OF       oDlg ;
-      BITMAP   "Keyboard2_32" ;
+      BITMAP   "gc_keyboard_32" ;
       ACTION   ( oCodCli:cText( VirtualKey( .f. ) ), cClient( oCodCli, dbfClient, oNomCli ), lLoadClientes( oCodCli:VarGet(), dbfTikCliT, oBrw, oPdtCli, oCmbCli ) )
 
    REDEFINE BUTTONBMP ;
@@ -133,7 +133,7 @@ FUNCTION CuentasClientes( oWnd )
    REDEFINE BUTTONBMP ;
       ID       210 ;
       OF       oDlg ;
-      BITMAP   "Keyboard2_32" ;
+      BITMAP   "gc_keyboard_32" ;
       ACTION   ( oCodFPago:cText( VirtualKey( .f. ) ), cFpago( oCodFPago, dbfFPago, oGetTxt ) )
 
    REDEFINE BUTTONBMP ;

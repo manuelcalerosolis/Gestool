@@ -235,8 +235,8 @@ METHOD DividirMesas() CLASS TpvUtilidadesMesa
 	  :nFootStrAlign := AL_RIGHT 
 	end with
 
-	TButtonBmp():ReDefine( 320, {|| ::oBrwOriginal:GoUp() }, ::oDlg, , , .f., , , , .f., "Navigate_up" )
-	TButtonBmp():ReDefine( 330, {|| ::oBrwOriginal:GoDown() }, ::oDlg, , , .f., , , , .f., "Navigate_down" ) 
+	TButtonBmp():ReDefine( 320, {|| ::oBrwOriginal:GoUp() }, ::oDlg, , , .f., , , , .f., "gc_arrow_up_32" )
+	TButtonBmp():ReDefine( 330, {|| ::oBrwOriginal:GoDown() }, ::oDlg, , , .f., , , , .f., "gc_arrow_down_32" ) 
 
 	TButtonBmp():ReDefine( 300, {|| ::AddLinea( ::oOriginal(), ::oNuevo() ) }, ::oDlg, , , .f., , , , .f., "Navigate_right" )
 	TButtonBmp():ReDefine( 310, {|| ::AddLinea( ::oNuevo(), ::oOriginal() ) }, ::oDlg, , , .f., , , , .f., "Navigate_left" ) 
@@ -316,13 +316,13 @@ METHOD DividirMesas() CLASS TpvUtilidadesMesa
 	  :nFootStrAlign := AL_RIGHT 
 	end with
 
-	TButtonBmp():ReDefine( 340, {|| ::oBrwNuevoTicket:GoUp() },   ::oDlg, , , .f., , , , .f., "Navigate_up" )
+	TButtonBmp():ReDefine( 340, {|| ::oBrwNuevoTicket:GoUp() },   ::oDlg, , , .f., , , , .f., "gc_arrow_up_32" )
 	
-	TButtonBmp():ReDefine( 350, {|| ::oBrwNuevoTicket:GoDown() }, ::oDlg, , , .f., , , , .f., "Navigate_down" )
+	TButtonBmp():ReDefine( 350, {|| ::oBrwNuevoTicket:GoDown() }, ::oDlg, , , .f., , , , .f., "gc_arrow_down_32" )
 
 	TButtonBmp():ReDefine( 380, {|| ::lShowEscandallosDivision() }, ::oDlg, , , .f., , , , .f., "Text_code_32" )
 
-	TButtonBmp():ReDefine( IDOK, {|| ::AceptarDividirMesa() }, ::oDlg, , , .f., , , , .f., "Check_32" )
+	TButtonBmp():ReDefine( IDOK, {|| ::AceptarDividirMesa() }, ::oDlg, , , .f., , , , .f., "gc_check_32" )
 
 	TButtonBmp():ReDefine( IDCANCEL, {|| ::oDlg:End() }, ::oDlg, , , .f., , , , .f., "End32"  )
 

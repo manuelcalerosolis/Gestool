@@ -447,7 +447,7 @@ METHOD Selector()
          ACTION            ( oBrw:GoDown() )
 
       REDEFINE BUTTONBMP ;
-         BITMAP            "Check_32" ;
+         BITMAP            "gc_check_32" ;
          ID                IDOK ;
          OF                oDlg ;
          ACTION            ( oDlg:end(IDOK) )

@@ -14971,7 +14971,7 @@ Static Function AddFreeProduct()
       REDEFINE BUTTONBMP ;
          ID       110 ;
          OF       oDlg ;
-         BITMAP   "Keyboard2_32" ;
+         BITMAP   "gc_keyboard_32" ;
          ACTION   ( VirtualKey( .f., oGetDescripcion ) )
 
       REDEFINE GET oGetUnidades ;
@@ -16000,7 +16000,7 @@ Function ComentariosTPV( aGet, aTmp, dbfTmpL, cDefCom )
       REDEFINE BUTTONBMP ;
          ID       160 ;
          OF       oDlgComentarios ;
-         BITMAP   "Keyboard2_32" ;
+         BITMAP   "gc_keyboard_32" ;
          ACTION   ( VirtualKey( .f., oGetComentario ) )
 
       REDEFINE BUTTONBMP ;

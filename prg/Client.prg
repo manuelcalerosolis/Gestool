@@ -6877,7 +6877,7 @@ Function BrwCliTactil( oGet, dbfCli, oGet2, lReturnCliente, cText, cBitmap )
       REDEFINE BUTTONBMP ;
          ID       100 ;
          OF       oDlg ;
-         BITMAP   "Keyboard2_32";
+         BITMAP   "gc_keyboard_32";
          ACTION   ( VirtualKey( .f., oGetUnidades ), if( lBigSeek( nil, cGetUnidades, dbfCli ), oBrw:Refresh(), ) )
 
       REDEFINE SAY oSayGeneral ;
@@ -6961,7 +6961,7 @@ Function BrwCliTactil( oGet, dbfCli, oGet2, lReturnCliente, cText, cBitmap )
          ACTION   ( oBrw:GoDown() )
 
       REDEFINE BUTTONBMP ;
-         BITMAP   "Check_32" ;
+         BITMAP   "gc_check_32" ;
          ID       IDOK ;
          OF       oDlg ;
          ACTION   ( oDlg:End( IDOK ) )

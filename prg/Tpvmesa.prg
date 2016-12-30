@@ -529,11 +529,11 @@ METHOD uCreaToolTip( nRow, nCol, nKeyFlags )
 
       oBrwLinToolTip:CreateFromResource( 100 )
 
-      REDEFINE BUTTONBMP BITMAP "Navigate_up" ID 120 OF oDlgToolTip ACTION ( oBrwLinToolTip:GoUp() )
+      REDEFINE BUTTONBMP BITMAP "gc_arrow_up_32" ID 120 OF oDlgToolTip ACTION ( oBrwLinToolTip:GoUp() )
 
-      REDEFINE BUTTONBMP BITMAP "Navigate_down" ID 130 OF oDlgToolTip ACTION ( oBrwLinToolTip:GoDown() )
+      REDEFINE BUTTONBMP BITMAP "gc_arrow_down_32" ID 130 OF oDlgToolTip ACTION ( oBrwLinToolTip:GoDown() )
 
-      REDEFINE BUTTONBMP BITMAP "Check_32" ID IDOK OF oDlgToolTip ACTION ( oDlgToolTip:End( IDOK ), ::LButtonUp( nRow, nCol, nKeyFlags ) )
+      REDEFINE BUTTONBMP BITMAP "gc_check_32" ID IDOK OF oDlgToolTip ACTION ( oDlgToolTip:End( IDOK ), ::LButtonUp( nRow, nCol, nKeyFlags ) )
 
       REDEFINE BUTTONBMP BITMAP "Delete_32" ID IDCANCEL OF oDlgToolTip ACTION ( oDlgToolTip:End() )
 

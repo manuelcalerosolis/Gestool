@@ -2057,8 +2057,8 @@ METHOD Resource() CLASS TpvTactil
    Botones para acciones de las familias------------------------------------
    */
 
-   ::oBtnFamiliasUp              := TButtonBmp():ReDefine( 302, {|| if( !Empty( ::oBrwFamilias ), ::oBrwFamilias:PageUp(), ) },     ::oDlg, , , .f., , , , .f., "Navigate_up2" )
-   ::oBtnFamiliasDown            := TButtonBmp():ReDefine( 303, {|| if( !Empty( ::oBrwFamilias ), ::oBrwFamilias:PageDown(), ) },   ::oDlg, , , .f., , , , .f., "Navigate_down2" )
+   ::oBtnFamiliasUp              := TButtonBmp():ReDefine( 302, {|| if( !Empty( ::oBrwFamilias ), ::oBrwFamilias:PageUp(), ) },     ::oDlg, , , .f., , , , .f., "gc_navigate_up2a_32" )
+   ::oBtnFamiliasDown            := TButtonBmp():ReDefine( 303, {|| if( !Empty( ::oBrwFamilias ), ::oBrwFamilias:PageDown(), ) },   ::oDlg, , , .f., , , , .f., "gc_navigate_down2a_32" )
    
    ::oBtnPreviewDocumento        := TButtonBmp():ReDefine( 304, {|| ::PrevisualizaTicket() }, ::oDlg, , , .f., , , , .f., "Prev1_32" )
    ::oBtnPrintDocumento          := TButtonBmp():ReDefine( 305, {|| ::ImprimeTicket() }, ::oDlg, , , .f., , , , .f., "Imp32" )
@@ -2097,8 +2097,8 @@ METHOD Resource() CLASS TpvTactil
 
    // Botones para acciones de los articulos-----------------------------------
 
-   ::oBtnArticulosPageUp         := TButtonBmp():ReDefine( 500, {|| if( !Empty( ::oLstArticulos ), ::oLstArticulos:PageUp(), ) },    ::oDlg, , , .f., , , , .f., "Navigate_up2" )
-   ::oBtnArticulosPageDown       := TButtonBmp():ReDefine( 501, {|| if( !Empty( ::oLstArticulos ), ::oLstArticulos:PageDown(), ) },  ::oDlg, , , .f., , , , .f., "Navigate_down2" )
+   ::oBtnArticulosPageUp         := TButtonBmp():ReDefine( 500, {|| if( !Empty( ::oLstArticulos ), ::oLstArticulos:PageUp(), ) },    ::oDlg, , , .f., , , , .f., "gc_navigate_up2a_32" )
+   ::oBtnArticulosPageDown       := TButtonBmp():ReDefine( 501, {|| if( !Empty( ::oLstArticulos ), ::oLstArticulos:PageDown(), ) },  ::oDlg, , , .f., , , , .f., "gc_navigate_down2a_32" )
 
    // Boton de orden de comanda------------------------------------------------
 
@@ -2295,8 +2295,8 @@ METHOD Resource() CLASS TpvTactil
    Botones para acciones de las lineas--------------------------------------
    */
 
-   ::oBtnLineasTop            := TButtonBmp():ReDefine( 120, {|| ::oBrwLineas:GoUp() },      ::oDlg, , , .f., , , , .f., "Navigate_up" )
-   ::oBtnLineasBottom         := TButtonBmp():ReDefine( 121, {|| ::oBrwLineas:GoDown() },    ::oDlg, , , .f., , , , .f., "Navigate_down" )
+   ::oBtnLineasTop            := TButtonBmp():ReDefine( 120, {|| ::oBrwLineas:GoUp() },      ::oDlg, , , .f., , , , .f., "gc_arrow_up_32" )
+   ::oBtnLineasBottom         := TButtonBmp():ReDefine( 121, {|| ::oBrwLineas:GoDown() },    ::oDlg, , , .f., , , , .f., "gc_arrow_down_32" )
    ::oBtnLineasDelete         := TButtonBmp():ReDefine( 122, {|| ::OnClickEliminarLinea() }, ::oDlg, , , .f., , , , .f., "Delete_32" )
    ::oBtnLineasComentarios    := TButtonBmp():ReDefine( 123, {|| ::InitComentarios(.t.) },   ::oDlg, , , .f., , , , .f., "Message_32" )
    ::oBtnLineasEscandallos    := TButtonBmp():ReDefine( 124, {|| ::lShowEscandallos() },     ::oDlg, , , .f., , , , .f., "Text_code_32" ) 
@@ -3420,7 +3420,7 @@ METHOD AgregarLibre() CLASS TpvTactil
       REDEFINE BUTTONBMP ;
          ID       110 ;
          OF       oDlg ;
-         BITMAP   "Keyboard2_32" ;
+         BITMAP   "gc_keyboard_32" ;
          ACTION   ( VirtualKey( .f., oDescripcionLibre ) )
 
       REDEFINE GET oIvaLibre ;
@@ -3478,7 +3478,7 @@ METHOD AgregarLibre() CLASS TpvTactil
          ACTION   ( BrwTipoImpresora( oImpresoraLibre, .t. ) )
 
       REDEFINE BUTTONBMP ;
-         BITMAP   "Check_32" ;
+         BITMAP   "gc_check_32" ;
          ID       IDOK ;
          OF       oDlg ;
          ACTION   ( ::ValidarAgregarLibre( oDescripcionLibre, oUnidadesLibre, oDlg ) )
@@ -3572,7 +3572,7 @@ METHOD AgregarLote() CLASS TpvTactil
          OF       oDlg
 
       REDEFINE BUTTONBMP ;
-         BITMAP   "Check_32" ;
+         BITMAP   "gc_check_32" ;
          ID       IDOK ;
          OF       oDlg ;
          ACTION   ( ::ValidarAgregarLote( cLote, oDlg ) )
@@ -4667,17 +4667,17 @@ METHOD DialogoPropiedadArticulo( cCodigoArticulo ) CLASS TpvTactil
      REDEFINE BUTTONBMP ;
          ID       101 ;
          OF       oDlgPropiedadArticulo ;
-         BITMAP   "Navigate_up" ;
+         BITMAP   "gc_arrow_up_32" ;
          ACTION   ( oBrwPropiedades:Select( 0 ), oBrwPropiedades:GoUp(), oBrwPropiedades:Select( 1 ) )
 
       REDEFINE BUTTONBMP ;
          ID       102 ;
          OF       oDlgPropiedadArticulo ;
-         BITMAP   "Navigate_down" ;
+         BITMAP   "gc_arrow_down_32" ;
          ACTION   ( oBrwPropiedades:Select( 0 ), oBrwPropiedades:GoDown(), oBrwPropiedades:Select( 1 ) )
 
       REDEFINE BUTTONBMP ;
-         BITMAP   "Check_32" ;
+         BITMAP   "gc_check_32" ;
          ID       IDOK ;
          OF       oDlgPropiedadArticulo ;
          ACTION   ( oDlgPropiedadArticulo:End( IDOK ) )
@@ -5258,41 +5258,41 @@ METHOD InitComentarios( lForced ) CLASS TpvTactil
       REDEFINE BUTTONBMP ;
          ID       160 ;
          OF       oDlgComentarios ;
-         BITMAP   "Keyboard2_32" ; 
+         BITMAP   "gc_keyboard_32" ; 
          ACTION   ( VirtualKey( .f., oGetComentario ) ) 
 
       REDEFINE BUTTONBMP ;
          ID       161 ;
          OF       oDlgComentarios ;
-         BITMAP   "Garbage_Empty_32" ;
+         BITMAP   "gc_garbage_full_32" ;
          ACTION   ( oGetComentario:cText( Space( 254 ) ) )
   
       REDEFINE BUTTONBMP ;
          ID       170 ; 
          OF       oDlgComentarios ;
-         BITMAP   "Navigate_up" ;
+         BITMAP   "gc_arrow_up_32" ;
          ACTION   ( oBrwComentarios:Select( 0 ), oBrwComentarios:GoUp(), oBrwComentarios:Select( 1 ) )
 
       REDEFINE BUTTONBMP ;
          ID       171 ;
          OF       oDlgComentarios ;
-         BITMAP   "Navigate_down" ;
+         BITMAP   "gc_arrow_down_32" ;
          ACTION   ( oBrwComentarios:Select( 0 ), oBrwComentarios:GoDown(), oBrwComentarios:Select( 1 ) )
 
       REDEFINE BUTTONBMP ;
          ID       180 ;
          OF       oDlgComentarios ;
-         BITMAP   "Navigate_up" ;
+         BITMAP   "gc_arrow_up_32" ;
          ACTION   ( oBrwLineasComentarios:Select( 0 ), oBrwLineasComentarios:GoUp(), oBrwLineasComentarios:Select( 1 ) )
 
       REDEFINE BUTTONBMP ;
          ID       181 ;
          OF       oDlgComentarios ;
-         BITMAP   "Navigate_down" ;
+         BITMAP   "gc_arrow_down_32" ;
          ACTION   ( oBrwLineasComentarios:Select( 0 ), oBrwLineasComentarios:GoDown(), oBrwLineasComentarios:Select( 1 ) )
 
       REDEFINE BUTTONBMP ;
-         BITMAP   "Check_32" ;
+         BITMAP   "gc_check_32" ;
          ID       IDOK ;
          OF       oDlgComentarios ;
          ACTION   ( ::EndComentarios( oDlgComentarios, oGetComentario ) )
@@ -5468,13 +5468,13 @@ METHOD OnClickInvitacion() CLASS TpvTactil
       REDEFINE BUTTONBMP ;
          ID             131 ;
          OF             oDlg ;
-         BITMAP         "Keyboard2_32" ;
+         BITMAP         "gc_keyboard_32" ;
          ACTION         ( VirtualKey( .f., ::oTextoInvitacion ) )
 
       REDEFINE BUTTONBMP ;
          ID             540 ;
          OF             oDlg ;
-         BITMAP         "Check_32" ;
+         BITMAP         "gc_check_32" ;
          ACTION         ( ::EndInvitacion( oDlg ) )
 
       REDEFINE BUTTONBMP ;
@@ -5703,7 +5703,7 @@ METHOD OnClickDescuento() CLASS TpvTactil
       oGetPorcentaje:SetFont( ::oFntDto )
 
       REDEFINE BUTTONBMP ;
-         BITMAP   "Check_32" ;
+         BITMAP   "gc_check_32" ;
          ID       IDOK ;
          OF       oDlg ;
          ACTION   ( oDlg:End( IDOK ) )

@@ -349,7 +349,7 @@ FUNCTION Calculadora( nNumber, oGet, lBig, cTitulo )
       REDEFINE BUTTON ID 107 OF oDialogo ACTION KeyCal( "9", @cNumber, oNumber, @cOperacion, @nValue )
 
       REDEFINE BUTTONBMP ;
-         BITMAP   "Check_32" ;
+         BITMAP   "gc_check_32" ;
          ID       IDOK ;
          OF       oDialogo ;
          ACTION   ( oDialogo:End( IDOK ) )
@@ -1099,7 +1099,7 @@ Function nVirtualNumKey( cBitmap, cTitle, nVar )
 
       REDEFINE BUTTON ID 150 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:cText( "0" ) )
 
-      REDEFINE BUTTONBMP oBtn BITMAP "Check_32" ID 130 OF oDlg ACTION ( oDlg:End( IDOK ) )
+      REDEFINE BUTTONBMP oBtn BITMAP "gc_check_32" ID 130 OF oDlg ACTION ( oDlg:End( IDOK ) )
 
       oDlg:AddFastKey( VK_F5, {|| oDlg:End( IDOK ) } )
 

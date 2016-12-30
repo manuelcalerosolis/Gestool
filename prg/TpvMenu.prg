@@ -532,17 +532,17 @@ METHOD InitAcompannamientoMultiple( cCodigoMenu, cCodigoOrden, nUnidades )
       REDEFINE BUTTONBMP ;
          ID       110 ;
          OF       ::oDlgAcompannamiento ;
-         BITMAP   "Navigate_up2" ;
+         BITMAP   "gc_navigate_up2a_32" ;
          ACTION   ( ::oBrwAcompannamiento:Select( 0 ), ::oBrwAcompannamiento:PageUp(), ::oBrwAcompannamiento:Select( 1 ) )
 
       REDEFINE BUTTONBMP ;
          ID       111 ;
          OF       ::oDlgAcompannamiento ;
-         BITMAP   "Navigate_down2" ;
+         BITMAP   "gc_navigate_down2a_32" ;
          ACTION   ( ::oBrwAcompannamiento:Select( 0 ), ::oBrwAcompannamiento:PageDown(), ::oBrwAcompannamiento:Select( 1 ) )
 
       REDEFINE BUTTONBMP ;
-         BITMAP   "Check_32" ;
+         BITMAP   "gc_check_32" ;
          ID       IDOK ;
          OF       ::oDlgAcompannamiento ;
          ACTION   ( ::ProcesaDatosAcompannamiento( nUnidades ) )
@@ -747,13 +747,13 @@ METHOD InitAcompannamientoSimple( cCodigoMenu, cCodigoOrden )
       REDEFINE BUTTONBMP ;
          ID       110 ;
          OF       ::oDlgAcompannamiento ;
-         BITMAP   "Navigate_up2" ;
+         BITMAP   "gc_navigate_up2a_32" ;
          ACTION   ( ::oLstArticulos:PageUp() )
 
       REDEFINE BUTTONBMP ;
          ID       111 ;
          OF       ::oDlgAcompannamiento ;
-         BITMAP   "Navigate_down2" ;
+         BITMAP   "gc_navigate_down2a_32" ;
          ACTION   ( ::oLstArticulos:PageDown() )
 
       REDEFINE BUTTONBMP ;

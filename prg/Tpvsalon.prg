@@ -627,13 +627,13 @@ METHOD StartResource( oBrw, oDlg ) CLASS TTpvSalon
       oGrupo         := TDotNetGroup():New( oCarpeta, 366,  "Seleción de tickets", .f. )
          oBoton      := TDotNetButton():New( 60, oGrupo,    "navigate_top_32",         "Primera línea",      1, {|| ::LineaPrimera( oBrw ) } )
          oBoton      := TDotNetButton():New( 60, oGrupo,    "Navigate_end_32",         "Última línea",       2, {|| ::LineaUltima( oBrw ) } )
-         oBoton      := TDotNetButton():New( 60, oGrupo,    "Navigate_up2",            "Página anterior",    3, {|| ::PaginaAnterior( oBrw ) } )
-         oBoton      := TDotNetButton():New( 60, oGrupo,    "Navigate_down2",          "Página siguiente",   4, {|| ::PaginaSiguiente( oBrw ) } )
-         oBoton      := TDotNetButton():New( 60, oGrupo,    "Navigate_up",             "Línea anterior",     5, {|| ::LineaAnterior( oBrw ) } )
-         oBoton      := TDotNetButton():New( 60, oGrupo,    "Navigate_down",           "Línea siguiente",    6, {|| ::LineaSiguiente( oBrw ) } )
+         oBoton      := TDotNetButton():New( 60, oGrupo,    "gc_navigate_up2a_32",            "Página anterior",    3, {|| ::PaginaAnterior( oBrw ) } )
+         oBoton      := TDotNetButton():New( 60, oGrupo,    "gc_navigate_down2a_32",          "Página siguiente",   4, {|| ::PaginaSiguiente( oBrw ) } )
+         oBoton      := TDotNetButton():New( 60, oGrupo,    "gc_arrow_up_32",             "Línea anterior",     5, {|| ::LineaAnterior( oBrw ) } )
+         oBoton      := TDotNetButton():New( 60, oGrupo,    "gc_arrow_down_32",           "Línea siguiente",    6, {|| ::LineaSiguiente( oBrw ) } )
 
       oGrupo         := TDotNetGroup():New( oCarpeta, 126,  "Salida", .f. )
-         oBoton      := TDotNetButton():New( 60, oGrupo,    "Check_32",                "Aceptar",            1, {|| oDlg:End( IDOK ) }, , , .f., .f., .f. )
+         oBoton      := TDotNetButton():New( 60, oGrupo,    "gc_check_32",                "Aceptar",            1, {|| oDlg:End( IDOK ) }, , , .f., .f., .f. )
          oBoton      := TDotNetButton():New( 60, oGrupo,    "End32",                   "Salida",             2, {|| oDlg:End() }, , , .f., .f., .f. )
 
    end if
