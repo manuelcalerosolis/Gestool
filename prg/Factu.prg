@@ -18,7 +18,7 @@
 
 #define HKEY_LOCAL_MACHINE    2147483650
 
-#define FONT_NAME             "Segoe UI" // "Arial" //  
+#define FONT_NAME             "Segoe UI" // "Arial" //     
 
 ANNOUNCE RDDSYS
 
@@ -316,7 +316,7 @@ Static Function CreateMainWindow( oIconApp )
 
    DEFINE WINDOW oWnd ;
       FROM     0, 0 TO 26, 82;
-      TITLE    __GSTROTOR__ + Space( 1 ) + __GSTVERSION__;
+      TITLE    __GSTROTOR__ + Space( 1 ) + __GSTVERSION__; 
       MDI ;
       COLORS   Rgb( 0, 0, 0 ), Rgb( 231, 234, 238 ) ;
       ICON     oIconApp ;
@@ -4409,7 +4409,7 @@ Function cNameVersion()
 
          case File( FullCurDir() + "scmmrc" )
 
-            cNameVersion      := "PrestaShop 1.5"
+            cNameVersion      := "PrestaShop 1.6"
 
          case File( FullCurDir() + "prfsnl" )
 
