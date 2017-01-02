@@ -38,8 +38,8 @@ METHOD botonesAcciones()   CLASS CustomerSalesViewSearchNavigator
                            "nLeft"     => {|| GridWidth( 1.5, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "gc_safe_into_64",;
-                           "bLClicked" => {|| MsgInfo( "Liquida la factura", ::getField( "Serie" ) + "/" + alltrim( str( ::getField( "Numero" ) ) ) + "/" + ::getField( "Sufijo" ) ) },;
+                           "cResName"  => "gc_money2_64",;
+                           "bLClicked" => {|| ::oSender:liqInvoice( ::getField( "Serie" ) + str( ::getField( "Numero" ) ) + ::getField( "Sufijo" ) ), ::oSender:RefreshBrowseCustomerSales( ::oSayFilter:cCaption ) },;
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 75,;

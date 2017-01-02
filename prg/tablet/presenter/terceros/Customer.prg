@@ -46,6 +46,8 @@ CLASS Customer FROM Editable
 
    METHOD RefreshBrowseCustomerSales()
 
+   METHOD liqInvoice( cNumFac )
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -269,6 +271,57 @@ METHOD RefreshBrowseCustomerSales( cTextFilter ) CLASS Customer
 
    ::FilterSalesCustomerTable( cTextFilter )
    ::oViewSales:oBrowse:Refresh()   
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD liqInvoice( cNumFac ) CLASS Customer
+
+   local nRec        := ( D():FacturasClientesCobros( ::nView ) )->( Recno() )
+   local nOrdAnt     := ( D():FacturasClientesCobros( ::nView ) )->( OrdSetFocus( "fNumFac" ) )
+
+   if ( D():FacturasClientesCobros( ::nView ) )->( dbseek( cNumFac ) )
+
+      while ( D():FacturasClientesCobros( ::nView ) )->cSerie + Str( ( D():FacturasClientesCobros( ::nView ) )->nNumFac ) + ( D():FacturasClientesCobros( ::nView ) )->cSufFac == cNumFac .and.;
+            !( D():FacturasClientesCobros( ::nView ) )->( Eof() )
+
+            if dbLock( D():FacturasClientesCobros( ::nView ) )
+               ( D():FacturasClientesCobros( ::nView ) )->dEntrada   := GetSysDate()
+               ( D():FacturasClientesCobros( ::nView ) )->lCobrado   := .t.
+               ( D():FacturasClientesCobros( ::nView ) )->( dbUnLock() )
+            end if
+
+            ( D():FacturasClientesCobros( ::nView ) )->( dbSkip() )
+
+      end while
+
+   end if
+
+   /*
+   Cambiamos el estado de la factura liquidada---------------------------------
+   */
+
+   ( D():FacturasClientesCobros( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
+   ( D():FacturasClientesCobros( ::nView ) )->( dbGoTo( nRec ) )
+
+   nRec        := ( D():FacturasClientes( ::nView ) )->( Recno() )
+   nOrdAnt     := ( D():FacturasClientes( ::nView ) )->( OrdSetFocus( "nNumFac" ) )
+   
+   if ( D():FacturasClientes( ::nView ) )->( dbseek( cNumFac ) )
+      
+      ChkLqdFacCli( nil,;
+                    D():FacturasClientes( ::nView ),;
+                    D():FacturasClientesLineas( ::nView ),;
+                    D():FacturasClientesCobros( ::nView ),;
+                    D():AnticiposClientes( ::nView ),;
+                    D():TiposIva( ::nView ),;
+                    D():Divisas( ::nView ),;
+                    .f. )
+   end if
+
+   ( D():FacturasClientes( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
+   ( D():FacturasClientes( ::nView ) )->( dbGoTo( nRec ) )
 
 Return ( .t. )
 

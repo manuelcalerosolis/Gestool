@@ -22411,6 +22411,8 @@ METHOD validateRecepcion( tmpFacCliT, dbfFacCliT ) CLASS TFacturasClientesSender
       Return .f.
    end if
 
+   ::oSender:SetText( ::cErrorRecepcion )
+
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -22419,8 +22421,8 @@ METHOD validateRecepcionRecibo( tmpFacCliP, dbfFacCliP ) CLASS TFacturasClientes
 
    ::cErrorRecepcion       := "Pocesando recibo de cliente número " + ( dbfFacCliP )->cSerie + "/" + alltrim( Str( ( dbfFacCliP )->nNumFac ) ) + "/" + alltrim( ( dbfFacCliP )->cSufFac ) + alltrim( Str( ( dbfFacCliP )->nNumRec ) ) + " "
 
-   if !( lValidaOperacion( ( tmpFacCliP )->dEntrada, .f. ) )
-      ::cErrorRecepcion    += "la fecha " + dtoc( ( tmpFacCliP )->dEntrada ) + " no es valida en esta empresa"
+   if !( lValidaOperacion( ( tmpFacCliP )->dPreCob, .f. ) )
+      ::cErrorRecepcion    += "la fecha " + dtoc( ( tmpFacCliP )->dPreCob ) + " no es valida en esta empresa"
       Return .f. 
    end if 
 
@@ -22433,16 +22435,17 @@ METHOD validateRecepcionRecibo( tmpFacCliP, dbfFacCliP ) CLASS TFacturasClientes
       Return .f.
    end if
 
+   ::oSender:SetText( ::cErrorRecepcion )
+
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
-
 
 FUNCTION EdmFacCli( cCodRut, cPathTo, oStru, aSucces )
 
 RETURN ( aSucces )
 
-//------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 Static Function lComprobacionesFactCli( aGet, aTmp )
 
