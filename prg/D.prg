@@ -135,7 +135,7 @@ CLASS D
       METHOD getHashAlbaranCliente( nView )                 INLINE ( ::getHashRecordById( ::AlbaranesClientesId( nView ), ::AlbaranesClientes( nView ), nView ) )
       METHOD getDefaultHashAlbaranCliente( nView )          INLINE ( ::getHashRecordDefaultValues( ::AlbaranesClientes( nView ), nView ) )
 
-      METHOD gotoIdAlbaranesClientes( id, nView )           INLINE ( ::seekInOrd( ::AlbaranesClientes( nView ), id, "cNumAlb" ) ) 
+      METHOD gotoIdAlbaranesClientes( id, nView )           INLINE ( ::seekInOrd( ::AlbaranesClientes( nView ), id, "nNumAlb" ) ) 
       METHOD gotoPedidoIdAlbaranesClientes( id, nView )     INLINE ( ::seekInOrd( ::AlbaranesClientes( nView ), id, "cNumPed" ) ) 
 
    METHOD getStatusAlbaranesClientes( nView )               INLINE ( ::aStatus := aGetStatus( ::AlbaranesClientes( nView ) ) )

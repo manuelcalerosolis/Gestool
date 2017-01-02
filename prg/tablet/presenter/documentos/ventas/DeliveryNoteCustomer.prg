@@ -75,7 +75,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD GetAppendDocumento() CLASS DeliveryNoteCustomer
+METHOD getAppendDocumento() CLASS DeliveryNoteCustomer
 
    ::hDictionaryMaster      := D():GetDefaultHashAlbaranCliente( ::nView )
 

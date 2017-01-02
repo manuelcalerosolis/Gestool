@@ -76,7 +76,7 @@ CLASS DocumentsSales FROM Documents
    METHOD getSufijo()                                       INLINE ( ::hGetMaster( "Sufijo" ) )
    METHOD getStore()                                        INLINE ( ::hGetMaster( "Almacen" ) )
 
-   METHOD getID()                                           INLINE ( ::getSerie() + str( ::getNumero() ) + ::getSufijo() )
+   METHOD getId()                                           INLINE ( ::getSerie() + str( ::getNumero() ) + ::getSufijo() )
 
    METHOD isPuntoVerde()                                    INLINE ( ::hGetMaster( "OperarPuntoVerde" ) )
    METHOD isRecargoEquivalencia()                           INLINE ( ::hGetMaster( "lRecargo" ) )
@@ -864,6 +864,7 @@ METHOD setDatasInDictionaryMaster( NumeroDocumento ) CLASS DocumentsSales
    end if 
 
    ::oTotalDocument:Calculate()
+
    hSet( ::hDictionaryMaster, "Envio", .t. )  
 
    hSet( ::hDictionaryMaster, "FechaCreacion", date() )  
@@ -960,6 +961,8 @@ Return ( .t. )
 //---------------------------------------------------------------------------//
 
 METHOD onPreSaveEdit() CLASS DocumentsSales
+
+   msgalert(::oldSerie != ::getSerie(), "onPreSaveEdit" )
 
    if ::oldSerie != ::getSerie()
       ::onPreSaveAppend()
