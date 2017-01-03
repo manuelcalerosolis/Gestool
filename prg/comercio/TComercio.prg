@@ -216,10 +216,8 @@ CLASS TComercio
       METHOD dialogCreateWebCombobox( idCombobox, oDialog )
 
       METHOD dialogStart()
-      METHOD disableDialog()              INLINE   (  if ( !empty(::oDlg),;
-                                                         ( ::oDlg:bValid := {|| .f. }, ::oDlg:disable() ), ) )
-      METHOD enableDialog()               INLINE   (  if ( !empty(::oDlg),;
-                                                         ( ::oDlg:bValid := {|| .t. }, ::oDlg:end() ), ) )
+      METHOD disableDialog()              INLINE   (  if ( !empty( ::oDlg ), ::oDlg:disable(), ) )
+      METHOD enableDialog()               INLINE   (  if ( !empty( ::oDlg ), ::oDlg:enable(), ) ) 
 
    METHOD isValidNameWebToExport()        INLINE   (  if ( empty( ::getWebToExport() ),;
                                                          ( msgStop( "No ha seleccionado ninguna web para exportar." ), .f. ),;
@@ -374,23 +372,23 @@ CLASS TComercio
 
    // Datos para la recopilacion de informacion----------------------------
 
-   METHOD getCurrentWebName()                         INLINE ( ::TComercioConfig:getCurrentWebName() )
+   METHOD getCurrentWebName()                               INLINE ( ::TComercioConfig:getCurrentWebName() )
 
-   METHOD ProductInCurrentWeb()                       INLINE ( ::oArt:lPubInt .and. alltrim( ::oArt:cWebShop ) == ::getCurrentWebName() )  // DE MOMENTO
+   METHOD ProductInCurrentWeb()                             INLINE ( ::oArt:lPubInt .and. alltrim( ::oArt:cWebShop ) == ::getCurrentWebName() )  // DE MOMENTO
 
    // Metodos para la recopilacion de informacion----------------------------
 
    METHOD prestaShopConnect()
    METHOD prestashopDisConnect()
-   METHOD prestaShopPing()                            INLINE ( if( !empty( ::oCon ), ::oCon:Ping(), ) )
+   METHOD prestaShopPing()                                  INLINE ( if( !empty( ::oCon ), ::oCon:Ping(), ) )
 
-   METHOD prestaShopStart()                           INLINE ( if( !empty( ::oCon ), E1ExecDirect( ::oCon:hConnect, "start" ), ) )
-   METHOD prestaShopCommit()                          INLINE ( if( !empty( ::oCon ), E1ExecDirect( ::oCon:hConnect, "commit" ), ) )
-   METHOD prestaShopRollBack()                        INLINE ( if( !empty( ::oCon ), E1ExecDirect( ::oCon:hConnect, "rollback" ), ) )
+   METHOD prestaShopStart()                                 INLINE ( if( !empty( ::oCon ), E1ExecDirect( ::oCon:hConnect, "start" ), ) )
+   METHOD prestaShopCommit()                                INLINE ( if( !empty( ::oCon ), E1ExecDirect( ::oCon:hConnect, "commit" ), ) )
+   METHOD prestaShopRollBack()                              INLINE ( if( !empty( ::oCon ), E1ExecDirect( ::oCon:hConnect, "rollback" ), ) )
 
-   METHOD ftpConnect()                                INLINE ( if( empty( ::oFtp ), ::buildFTP(), ),;
-                                                               if( ::oFtp:CreateConexion(), .t., ( msgStop( "Imposible conectar al sitio ftp " + ::oFtp:cServer ), .t. ) ) )
-   METHOD ftpDisConnect()                             INLINE ( if( !empty( ::oFtp ), ::oFtp:EndConexion(), ) )
+   METHOD ftpConnect()                                      INLINE ( if( empty( ::oFtp ), ::buildFTP(), ),;
+                                                                     if( ::oFtp:CreateConexion(), .t., ( msgStop( "Imposible conectar al sitio ftp " + ::oFtp:cServer ), .t. ) ) )
+   METHOD ftpDisConnect()                                   INLINE ( if( !empty( ::oFtp ), ::oFtp:EndConexion(), ) )
 
    METHOD buildInitData()
    METHOD buildIvaPrestashop( id )
@@ -658,7 +656,7 @@ METHOD dialogActivate() CLASS TComercio
 
       ::oMeterProceso   := TApoloMeter():ReDefine( 230, { | u | if( pCount() == 0, ::nMeterProceso, ::nMeterProceso := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
-      ::oDlg:bStart := {|| ::dialogStart() }
+      ::oDlg:bStart     := {|| ::dialogStart() }
 
    ACTIVATE DIALOG ::oDlg CENTER
 
@@ -702,20 +700,12 @@ METHOD dialogStart() CLASS TComercio
       oCarpeta                := TCarpeta():New( oOfficeBar, "Prestashop" )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 246, "Acciones", .f. )
-         ::oBtnImportar       := TDotNetButton():New( 60, oGrupo, "gc_cloud_download_32",      "Importar pedidos",    1, {|| ::controllerOrderPrestashop() }, , .t., .f., .f., .f. )
-         ::oBtnStock          := TDotNetButton():New( 60, oGrupo, "gc_cloud_package_32",        "Actualizar stocks",   2, {|| ::controllerUpdateStockPrestashop() }, , .t., .f., .f., .f. )
-         ::oBtnExportar       := TDotNetButton():New( 60, oGrupo, "gc_cloud_updown_32",         "Sincronizar web",     3, {|| ::controllerExportPrestashop() }, , ::TComercioConfig:getHideExportButton(), .f., .f., .f. )
-         ::oBtnCancel         := TDotNetButton():New( 60, oGrupo, "gc_door_open2_32",  "Salir",               4, {|| ::oDlg:end() }, , .t., .f., .f., .f. )
+         ::oBtnImportar       := TDotNetButton():New( 60, oGrupo, "gc_cloud_download_32",    "Importar pedidos",    1, {|| ::controllerOrderPrestashop() }, , .t., .f., .f., .f. )
+         ::oBtnStock          := TDotNetButton():New( 60, oGrupo, "gc_cloud_package_32",     "Actualizar stocks",   2, {|| ::controllerUpdateStockPrestashop() }, , .t., .f., .f., .f. )
+         ::oBtnExportar       := TDotNetButton():New( 60, oGrupo, "gc_cloud_updown_32",      "Sincronizar web",     3, {|| ::controllerExportPrestashop() }, , ::TComercioConfig:getHideExportButton(), .f., .f., .f. )
+         ::oBtnCancel         := TDotNetButton():New( 60, oGrupo, "gc_door_open2_32",        "Salir",               4, {|| ::oDlg:end() }, , .t., .f., .f., .f. )
 
    end if
-
-/*
-   if ::TComercioConfig:getHideExportButton()
-      ::oBtnExportar:Hide()
-   else
-      ::oBtnExportar:Show()
-   end if
-*/
 
 Return nil
 

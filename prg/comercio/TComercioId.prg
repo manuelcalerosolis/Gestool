@@ -32,22 +32,22 @@ CLASS TPrestaShopId FROM TMant
    METHOD setValueGestool( cTipoDocumento, cClave, cWeb, idWeb )
    METHOD isSeekGestool( cTipoDocumento, idWeb, cWeb )
 
-   METHOD setValueProduct( cClave, cWeb, idWeb )               INLINE ::setValue( "01", cClave, cWeb, idWeb )
-   METHOD getValueProduct( cClave, cWeb, defaultValue )        INLINE ::getValue( "01", cClave, cWeb, defaultValue )
-   METHOD getGestoolProduct( idWeb, cWeb, defaultValue )       INLINE ::getValueGestool( "01", idWeb, cWeb, defaultValue )
-   METHOD deleteDocumentValuesProduct( cWeb )                  INLINE ::deleteDocumentValues( "01", cWeb )
+   METHOD setValueProduct( cClave, cWeb, idWeb )                              INLINE ::setValue( "01", cClave, cWeb, idWeb )
+   METHOD getValueProduct( cClave, cWeb, defaultValue )                       INLINE ::getValue( "01", cClave, cWeb, defaultValue )
+   METHOD getGestoolProduct( idWeb, cWeb, defaultValue )                      INLINE ::getValueGestool( "01", idWeb, cWeb, defaultValue )
+   METHOD deleteDocumentValuesProduct( cWeb )                                 INLINE ::deleteDocumentValues( "01", cWeb )
 
-   METHOD setValueTax( cClave, cWeb, idWeb )                   INLINE ::setValue( "03", cClave, cWeb, idWeb )
-   METHOD getValueTax( cClave, cWeb, defaultValue )            INLINE ::getValue( "03", cClave, cWeb, defaultValue )
-   METHOD deleteDocumentValuesTax( cWeb )                      INLINE ::deleteDocumentValues( "03", cWeb )
+   METHOD setValueTax( cClave, cWeb, idWeb )                                  INLINE ::setValue( "03", cClave, cWeb, idWeb )
+   METHOD getValueTax( cClave, cWeb, defaultValue )                           INLINE ::getValue( "03", cClave, cWeb, defaultValue )
+   METHOD deleteDocumentValuesTax( cWeb )                                     INLINE ::deleteDocumentValues( "03", cWeb )
 
-   METHOD setValueTaxRuleGroup( cClave, cWeb, idWeb )          INLINE ::setValue( "04", cClave, cWeb, idWeb )
-   METHOD getValueTaxRuleGroup( cClave, cWeb, defaultValue )   INLINE ::getValue( "04", cClave, cWeb, defaultValue )
-   METHOD deleteDocumentValuesTaxRuleGroup( cWeb )             INLINE ::deleteDocumentValues( "04", cWeb )
+   METHOD setValueTaxRuleGroup( cClave, cWeb, idWeb )                         INLINE ::setValue( "04", cClave, cWeb, idWeb )
+   METHOD getValueTaxRuleGroup( cClave, cWeb, defaultValue )                  INLINE ::getValue( "04", cClave, cWeb, defaultValue )
+   METHOD deleteDocumentValuesTaxRuleGroup( cWeb )                            INLINE ::deleteDocumentValues( "04", cWeb )
 
-   METHOD setValueManufacturer( cClave, cWeb, idWeb )          INLINE ::setValue( "05", cClave, cWeb, idWeb )
-   METHOD getValueManufacturer( cClave, cWeb, defaultValue )   INLINE ::getValue( "05", cClave, cWeb, defaultValue )
-   METHOD deleteDocumentValuesManufacturer( cWeb )             INLINE ::deleteDocumentValues( "05", cWeb )
+   METHOD setValueManufacturer( cClave, cWeb, idWeb )                         INLINE ::setValue( "05", cClave, cWeb, idWeb )
+   METHOD getValueManufacturer( cClave, cWeb, defaultValue )                  INLINE ::getValue( "05", cClave, cWeb, defaultValue )
+   METHOD deleteDocumentValuesManufacturer( cWeb )                            INLINE ::deleteDocumentValues( "05", cWeb )
   
    METHOD setValueCategory( cClave, cWeb, idWeb )                             INLINE ::setValue( "06", cClave, cWeb, idWeb )
    METHOD getValueCategory( cClave, cWeb, defaultValue )                      INLINE ::getValue( "06", cClave, cWeb, defaultValue )
@@ -163,8 +163,8 @@ RETURN ( .t. )
 
 METHOD setValueGestool( cTipoDocumento, cClave, cWeb, idWeb )
 
-   cClave                     := upper( cClave )
-   cWeb                       := upper( cWeb )
+   cClave                  := upper( cClave )
+   cWeb                    := upper( cWeb )
 
    if !::isValidParameters( cTipoDocumento, cClave, cWeb, idWeb )
       RETURN ( .f. )
