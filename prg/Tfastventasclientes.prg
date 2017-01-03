@@ -65,6 +65,9 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
    METHOD idDocumento()                   INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc )
    METHOD idDocumentoLinea()              INLINE ( ::idDocumento() )
 
+   METHOD setMeterText( cText )           INLINE ( if ( !empty( ::oMtrInf ), ::oMtrInf:cText := cText, ) )
+   METHOD setMeterTotal( nTotal )         INLINE ( if ( !empty( ::oMtrInf ), ::oMtrInf:SetTotal( nTotal ), ) )
+   METHOD setMeterAutoIncremental()       INLINE ( if ( !empty( ::oMtrInf ), ::oMtrInf:AutoInc(), ) )
 
    METHOD preCliInfo( cTitle )
 
@@ -218,6 +221,21 @@ METHOD OpenFiles() CLASS TFastVentasClientes
 
       DATABASE NEW ::oTipInc  PATH ( cPatEmp() ) CLASS "TipInc"   FILE "TipInci.Dbf" VIA ( cDriver() ) SHARED INDEX "TipInci.Cdx"
 
+      DATABASE NEW ::oDbfCli PATH ( cPatCli() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
+
+      DATABASE NEW ::oDbfAge PATH ( cPatCli() ) FILE "AGENTES.DBF" VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
+      
+      DATABASE NEW ::oDbfRut PATH ( cPatCli() ) FILE "RUTA.DBF" VIA ( cDriver() ) SHARED INDEX "RUTA.CDX"
+      
+      DATABASE NEW ::oDbfFpg PATH ( cPatGrp() ) FILE "FPago.Dbf" VIA ( cDriver() ) SHARED INDEX "FPago.Cdx"
+
+      DATABASE NEW ::oDbfUsr PATH ( cPatDat() ) FILE "USERS.DBF" VIA ( cDriver() ) SHARED INDEX "USERS.CDX"
+
+      DATABASE NEW ::oDbfIva PATH ( cPatDat() ) FILE "TIva.Dbf" VIA ( cDriver() ) SHARED INDEX "TIva.Cdx"
+
+      ::oGrpCli                      := TGrpCli():Create( cPatCli() )
+      ::oGrpCli:OpenService()
+
       ::oCnfFlt               := TDataCenter():oCnfFlt()
 
       ::oPais                 := TPais():Create( cPatDat() )
@@ -351,6 +369,35 @@ METHOD CloseFiles() CLASS TFastVentasClientes
    if !Empty( ::oCnfFlt ) .and. ( ::oCnfFlt:Used() )
       ::oCnfFlt:end()
    end if
+
+   if !empty( ::oDbfCli ) .and. ( ::oDbfCli:Used() )
+      ::oDbfCli:end()
+   end if 
+
+   if !empty( ::oDbfAge ) .and. ( ::oDbfAge:Used() )
+      ::oDbfAge:end()
+   end if 
+
+   if !empty( ::oDbfRut ) .and. ( ::oDbfRut:Used() )
+      ::oDbfRut:end()
+   end if 
+
+   if !empty( ::oDbfFpg ) .and. ( ::oDbfFpg:Used() )
+      ::oDbfFpg:end()
+   end if 
+
+   if !empty( ::oDbfUsr ) .and. ( ::oDbfUsr:Used() )
+      ::oDbfUsr:end()
+   end if 
+
+   if !empty( ::oDbfIva ) .and. ( ::oDbfIva:Used() )
+      ::oDbfIva:end()
+   end if 
+
+   if !empty( ::oGrpCli )
+      ::oGrpCli:end()
+   end if
+
 
    if !empty( ::oPais )
       ::oPais:end()
@@ -859,7 +906,9 @@ METHOD lGenerate() CLASS TFastVentasClientes
 
    end case
 
-   ::oDbf:SetFilter( ::oFilter:cExpresionFilter )
+   if !empty(::oFilter)
+      ::oDbf:SetFilter( ::oFilter:cExpresionFilter )
+   end if 
 
    ::oDbf:GoTop()
 
@@ -869,21 +918,31 @@ RETURN ( ::oDbf:LastRec() > 0 )
 
 Method lValidRegister( cCodigoCliente ) CLASS TFastVentasClientes
 
-   if ( ::oDbf:cCodCli  >= ::oGrupoCliente:Cargo:Desde  .and. ::oDbf:cCodCli  <= ::oGrupoCliente:Cargo:Hasta )  .and.;
-      ( ::oDbf:cCodPgo  >= ::oGrupoFpago:Cargo:Desde    .and. ::oDbf:cCodPgo  <= ::oGrupoFpago:Cargo:Hasta )    .and.;
-      ( ::oDbf:cCodRut  >= ::oGrupoRuta:Cargo:Desde     .and. ::oDbf:cCodRut  <= ::oGrupoRuta:Cargo:Hasta )     .and.;
-      ( ::oDbf:cCodAge  >= ::oGrupoAgente:Cargo:Desde   .and. ::oDbf:cCodAge  <= ::oGrupoAgente:Cargo:Hasta )   .and.;
-      ( ::oDbf:cCodUsr  >= ::oGrupoUsuario:Cargo:Desde  .and. ::oDbf:cCodUsr  <= ::oGrupoUsuario:Cargo:Hasta )
+   if !empty( ::oGrupoCliente ) .and. !( ::oDbf:cCodCli >= ::oGrupoCliente:Cargo:Desde .and. ::oDbf:cCodCli <= ::oGrupoCliente:Cargo:Hasta )
+      Return .f.
+   end if 
 
-      if ( ::oGrupoGCliente:Cargo:ValidMayorIgual( ::oDbf:cCodGrp, ::oGrupoGCliente:Cargo:Desde ) .and. ::oGrupoGCliente:Cargo:ValidMenorIgual( ::oDbf:cCodGrp, ::oGrupoGcliente:Cargo:Hasta ) )
+   if !empty( ::oGrupoFpago ) .and. !( ::oDbf:cCodPgo >= ::oGrupoFpago:Cargo:Desde .and. ::oDbf:cCodPgo <= ::oGrupoFpago:Cargo:Hasta )
+      Return .f.
+   end if 
 
-         return .t.
+   if !empty( ::oGrupoRuta ) .and. !( ::oDbf:cCodRut >= ::oGrupoRuta:Cargo:Desde .and. ::oDbf:cCodRut  <= ::oGrupoRuta:Cargo:Hasta )
+      Return .f.
+   end if 
+      
+   if !empty( ::oGrupoAgente ) .and. !( ::oDbf:cCodAge  >= ::oGrupoAgente:Cargo:Desde .and. ::oDbf:cCodAge <= ::oGrupoAgente:Cargo:Hasta )
+      Return .f.
+   end if 
 
-      end if
+   if !empty( ::oGrupoUsuario ) .and. !( ::oDbf:cCodUsr  >= ::oGrupoUsuario:Cargo:Desde  .and. ::oDbf:cCodUsr <= ::oGrupoUsuario:Cargo:Hasta )
+      Return .f.
+   end if 
 
+   if !empty( ::oGrupoGCliente ) .and. !( ::oGrupoGCliente:Cargo:ValidMayorIgual( ::oDbf:cCodGrp, ::oGrupoGCliente:Cargo:Desde ) .and. ::oGrupoGCliente:Cargo:ValidMenorIgual( ::oDbf:cCodGrp, ::oGrupoGcliente:Cargo:Hasta ) )
+      return .f.
    end if
 
-RETURN ( .f. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -918,11 +977,11 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
       // Procesando SAT----------------------------------------------------------
 
-      ::oMtrInf:cText   := "Procesando SAT"
+      ::setMeterText( "Procesando SAT" )
 
       ::oSatCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oSatCliT:cFile ), ::oSatCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
-      ::oMtrInf:SetTotal( ::oSatCliT:OrdKeyCount() )
+      ::setMeterTotal( ::oSatCliT:OrdKeyCount() )
 
       ::oSatCliT:GoTop()
 
@@ -999,7 +1058,7 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
          ::oSatCliT:Skip()
 
-         ::oMtrInf:AutoInc()
+         ::setMeterAutoIncremental()
 
       end while
 
@@ -1046,13 +1105,13 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
       
       ::setFilterUserId()
 
-   // procesando presupuestos-------------------------------------------------
+      // procesando presupuestos-------------------------------------------------
 
-      ::oMtrInf:cText   := "Procesando presupuestos"
+      ::setMeterText( "Procesando presupuestos" )
       
       ::oPreCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPreCliT:cFile ), ::oPreCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
-      ::oMtrInf:SetTotal( ::oPreCliT:OrdKeyCount() )
+      ::setMeterTotal( ::oPreCliT:OrdKeyCount() )
 
       ::oPreCliT:GoTop()
 
@@ -1129,7 +1188,7 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
          ::oPreCliT:Skip()
 
-         ::oMtrInf:AutoInc()
+         ::setMeterAutoIncremental()
 
       end while
 
@@ -1178,11 +1237,11 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
    // Procesando pedidos------------------------------------------------
    
-      ::oMtrInf:cText   := "Procesando pedidos"
+      ::setMeterText( "Procesando pedidos" )
 
       ::oPedCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ), ::oPedCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
-      ::oMtrInf:SetTotal( ::oPedCliT:OrdKeyCount() )
+      ::setMeterTotal( ::oPedCliT:OrdKeyCount() )
       
       ::oPedCliT:GoTop()
 
@@ -1263,7 +1322,7 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
          ::oPedCliT:Skip()
 
-         ::oMtrInf:AutoInc()
+         ::setMeterAutoIncremental()
 
       end while
 
@@ -1319,11 +1378,11 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
 
       // Procesando albaranes-----------------------------------------------------
 
-      ::oMtrInf:cText         := "Procesando albaranes"
+      ::setMeterText( "Procesando albaranes" )
       
       ::oAlbCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
-      ::oMtrInf:SetTotal( ::oAlbCliT:OrdKeyCount() )
+      ::setMeterTotal( ::oAlbCliT:OrdKeyCount() )
 
       ::oAlbCliT:GoTop()
       while !::lBreak .and. !::oAlbCliT:Eof()
@@ -1403,7 +1462,7 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
 
          ::oAlbCliT:Skip()
 
-         ::oMtrInf:AutoInc()
+         ::setMeterAutoIncremental()
 
       end while
 
@@ -1438,8 +1497,10 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
    // filtros para la cabecera------------------------------------------------
    
       ::cExpresionHeader          := 'Field->dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      ::cExpresionHeader          += ' .and. ( Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '" ) '
-      
+      if !empty(::oGrupoSerie)
+         ::cExpresionHeader       += ' .and. ( Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '" ) '
+      end if 
+
       ::setFilterClientIdHeader()
 
       ::setFilterPaymentInvoiceId()
@@ -1452,11 +1513,11 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
       // procesando facturas------------------------------------------------
    
-      ::oMtrInf:cText            := "Procesando facturas"
+      ::setMeterText( "Procesando facturas" )
       
       ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
-      ::oMtrInf:SetTotal( ::oFacCliT:OrdKeyCount() )
+      ::setMeterTotal( ::oFacCliT:OrdKeyCount() )
 
       ::oFacCliT:GoTop()
       while !::lBreak .and. !::oFacCliT:Eof()
@@ -1529,7 +1590,7 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
          ::oFacCliT:Skip()
 
-         ::oMtrInf:AutoInc()
+         ::setMeterAutoIncremental()
 
       end while
 
@@ -1578,11 +1639,11 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
 
    // Procesando facturas recitificativas-------------------------------------
 
-      ::oMtrInf:cText   := "Procesando facturas rectificativas"
+      ::setMeterText( "Procesando facturas rectificativas" )
       
       ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
-      ::oMtrInf:SetTotal( ::oFacRecT:OrdKeyCount() )
+      ::setMeterTotal( ::oFacRecT:OrdKeyCount() )
 
       ::oFacRecT:GoTop()
 
@@ -1648,7 +1709,7 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
 
          ::oFacRecT:Skip()
 
-         ::oMtrInf:AutoInc()
+         ::setMeterAutoIncremental()
 
       end while
 
@@ -1692,11 +1753,11 @@ METHOD AddTicket() CLASS TFastVentasClientes
       
    // filtros para la cabecera------------------------------------------------
    
-      ::oMtrInf:cText   := "Procesando tickets"
+      ::setMeterText( "Procesando tickets" )
    
       ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
-      ::oMtrInf:SetTotal( ::oTikCliT:OrdKeyCount() )
+      ::setMeterTotal( ::oTikCliT:OrdKeyCount() )
 
       ::oTikCliT:GoTop()
       while !::lBreak .and. !::oTikCliT:Eof()
@@ -1759,7 +1820,7 @@ METHOD AddTicket() CLASS TFastVentasClientes
 
          ::oTikCliT:Skip()
 
-         ::oMtrInf:AutoInc()
+         ::setMeterAutoIncremental()
 
       end while
 
@@ -1793,7 +1854,10 @@ METHOD AddRecibosCliente( cFieldOrder ) CLASS TFastVentasClientes
       // filtros para la cabecera------------------------------------------------
 
       ::cExpresionHeader          := 'Field->' + cFieldOrder + ' >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->' + cFieldOrder + ' <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      ::cExpresionHeader          += ' .and. Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerie <= "' + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+      
+      if !Empty( ::oGrupoSerie )
+         ::cExpresionHeader       += ' .and. Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerie <= "' + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+      end if
 
       ::setFilterClientIdHeader()
 
@@ -1805,11 +1869,11 @@ METHOD AddRecibosCliente( cFieldOrder ) CLASS TFastVentasClientes
 
       // Procesando recibos------------------------------------------------------
 
-      ::oMtrInf:cText   := "Procesando recibos"
+      ::setMeterText( "Procesando recibos" )
 
       ::oFacCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
-      ::oMtrInf:SetTotal( ::oFacCliP:OrdKeyCount() )
+      ::setMeterTotal( ::oFacCliP:OrdKeyCount() )
 
       ::oFacCliP:GoTop()
       while !::lBreak .and. !::oFacCliP:Eof()
@@ -1863,7 +1927,7 @@ METHOD AddRecibosCliente( cFieldOrder ) CLASS TFastVentasClientes
 
          ::oFacCliP:Skip()
 
-         ::oMtrInf:AutoInc()
+         ::setMeterAutoIncremental()
 
       end while
 
@@ -1913,11 +1977,11 @@ METHOD insertFacturaCliente()
 
    // Procesando facturas-----------------------------------------------------
 
-      ::oMtrInf:cText   := "Procesando facturas"
+      ::setMeterText( "Procesando facturas" )
 
       ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
-      ::oMtrInf:SetTotal( ::oFacCliT:OrdKeyCount() )
+      ::setMeterTotal( ::oFacCliT:OrdKeyCount() )
 
       ::oFacCliT:GoTop()
 
@@ -1996,7 +2060,7 @@ METHOD insertFacturaCliente()
 
          ::oFacCliT:Skip()
 
-         ::oMtrInf:AutoInc()
+         ::setMeterAutoIncremental()
 
       end while
 
@@ -2046,11 +2110,11 @@ METHOD insertRectificativa()
 
       // Procesando facturas rectificativas--------------------------------------
 
-      ::oMtrInf:cText   := "Procesando facturas rectificativas"
+      ::setMeterText( "Procesando facturas rectificativas" )
       
       ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
-      ::oMtrInf:SetTotal( ::oFacRecT:OrdKeyCount() )
+      ::setMeterTotal( ::oFacRecT:OrdKeyCount() )
 
       ::oFacRecT:GoTop()
       
@@ -2129,7 +2193,7 @@ METHOD insertRectificativa()
 
          ::oFacRecT:Skip()
 
-         ::oMtrInf:AutoInc()
+         ::setMeterAutoIncremental()
 
       end while
 
@@ -2174,11 +2238,11 @@ METHOD insertTicketCliente()
 
    // Procesando tickets------------------------------------------------
 
-      ::oMtrInf:cText   := "Procesando tickets"
+      ::setMeterText( "Procesando tickets" )
       
       ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
-      ::oMtrInf:SetTotal( ::oTikCliT:OrdKeyCount() )
+      ::setMeterTotal( ::oTikCliT:OrdKeyCount() )
 
       ::oTikCliT:GoTop()
       
@@ -2256,7 +2320,7 @@ METHOD insertTicketCliente()
 
          ::oTikCliT:Skip()
 
-         ::oMtrInf:AutoInc()
+         ::setMeterAutoIncremental()
 
       end while
 
@@ -2276,9 +2340,9 @@ RETURN ( Self )
 
 METHOD AddClientes() CLASS TFastVentasClientes
 
-   ::oMtrInf:SetTotal( ::oDbfCli:OrdKeyCount() )
+   ::setMeterTotal( ::oDbfCli:OrdKeyCount() )
 
-   ::oMtrInf:cText   := "Procesando clientes"
+   ::setMeterText( "Procesando clientes" )
 
    /*
    Recorremos clientes---------------------------------------------------------
@@ -2310,7 +2374,7 @@ METHOD AddClientes() CLASS TFastVentasClientes
 
       ::oDbfCli:Skip()
 
-      ::oMtrInf:AutoInc()
+      ::setMeterAutoIncremental()
 
    end while
 

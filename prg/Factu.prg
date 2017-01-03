@@ -4863,6 +4863,26 @@ Function MainTablet()
 
    end if 
 
+   /*
+   INFORME PROVISIONAL*********************************************************
+   */
+
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 12 ) },;
+                           "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "gc_briefcase2_user_64",;
+                           "bLClicked" => {|| Informe1() },;
+                           "oWnd"      => oDlg } )
+
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 9 ) },;
+                           "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "gc_document_text_user_64",;
+                           "bLClicked" => {|| Informe2() },;
+                           "oWnd"      => oDlg } )
+
    //----------------Albaranes de clientes
    
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 9 ) },;
@@ -5079,8 +5099,38 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
+static function Informe1()
 
+   local oInf
 
+   oInf  := TFastVentasClientes():New()
+   oInf:cReportType        := "Recibos cobro"
+   oInf:cReportDirectory   := cPatReporting() + "Clientes\Ventas\RecibosCobro"
+   oInf:cReportName        := "Diario recibos tablet"
+   oInf:cReportFile        := cPatReporting() + "Clientes\Ventas\RecibosCobro\Diario recibos tablet.fr3"
 
+   oInf:PlayTablet()
 
+   oInf:end()
 
+RETURN NIL 
+
+//---------------------------------------------------------------------------//
+
+static function Informe2()
+
+   local oInf
+
+   oInf  := TFastVentasClientes():New()
+   oInf:cReportType        := "Facturas de clientes"
+   oInf:cReportDirectory   := cPatReporting() + "Clientes\Ventas\Facturas de clientes"
+   oInf:cReportName        := "Diario facturas tablet"
+   oInf:cReportFile        := cPatReporting() + "Clientes\Ventas\Facturas de clientes\Diario facturas tablet.fr3"
+
+   oInf:PlayTablet()
+
+   oInf:end()
+
+RETURN NIL 
+
+//---------------------------------------------------------------------------//

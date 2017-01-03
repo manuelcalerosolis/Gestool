@@ -2067,8 +2067,10 @@ METHOD lGrupoGrupoCliente( lInitGroup, lImp ) CLASS TNewInfGen
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   ::oGrpCli                         := TGrpCli():Create( cPatCli() )
-   ::oGrpCli:OpenService()
+   if !empty(::oGrpCli)
+      ::oGrpCli                      := TGrpCli():Create( cPatCli() )
+      ::oGrpCli:OpenService()
+   end if 
 
    ::oGrupoGCliente                  := TRGroup():New( {|| ::oDbf:cCodGCli }, {|| "Grp. cliente : " + AllTrim( ::oDbf:cCodGCli ) + " - " + AllTRim( ::oDbf:cNomGCli ) }, {|| "Total grp. cliente : " + ::oDbf:cCodGCli }, {|| 3 }, ::lSalto )
 

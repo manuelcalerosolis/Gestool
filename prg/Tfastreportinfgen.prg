@@ -155,6 +155,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD Activate()
 
    METHOD Play( uParam )
+   METHOD PlayTablet( uParam )
 
    METHOD EditValueTextDesde()         INLINE ( Eval( ::aInitGroup[ ::oBrwRango:nArrayAt ]:Cargo:HelpDesde ) )
    METHOD EditValueTextHasta()         INLINE ( Eval( ::aInitGroup[ ::oBrwRango:nArrayAt ]:Cargo:HelpHasta ) )
@@ -183,6 +184,8 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD SetDataReport()
 
    METHOD GenReport( nOption )
+   
+   METHOD GenReportTablet( nOption )
 
    METHOD lValidRegister()
 
@@ -825,6 +828,37 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD PlayTablet( uParam ) CLASS TFastReportInfGen
+
+   ::Create( uParam )
+
+   if ::lOpenFiles
+
+      if ::OpenData()
+
+         if ::OpenTemporal()
+
+            ::dIniInf         := GetSysDate()
+            ::dFinInf         := GetSysDate()
+
+            ::GenReportTablet( IS_PRINTER )
+
+            ::CloseTemporal()
+
+         end if
+
+         ::CloseData()
+
+      end if
+
+   end if
+
+   ::End()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 METHOD End() CLASS TFastReportInfGen
 
    CursorWait()
@@ -1055,6 +1089,74 @@ METHOD GenReport( nOption ) CLASS TFastReportInfGen
    ::oBtnCancel:bAction    := {|| ::lBreak := .t., ::End() }
 
    ::SetDialog( .t. )
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD GenReportTablet( nOption ) CLASS TFastReportInfGen
+
+   local oDlg
+
+   /*
+   Obtenemos el informe -------------------------------------------------------
+   */
+
+   if !::lLoadReport()
+      MsgStop( "No se ha podido cargar un diseño de informe valido." + CRLF + ::cReportFile )
+      Return ( Self )
+   end if 
+
+   /*
+   Ponemos el dialogo a disable------------------------------------------------
+   */
+
+   ::initVariables()
+
+   /*
+   Extraer el orden------------------------------------------------------------
+   */
+
+   ::ExtractOrder()
+
+   /*
+   Comienza la generacion del informe------------------------------------------
+   */
+
+   if hb_isBlock( ::bPreGenerate )
+      Eval( ::bPreGenerate )
+   end if
+
+   if ::lGenerate()
+
+      if !::lBreak
+
+         DEFINE DIALOG  oDlg ;
+               FROM     0, 0 ;
+               TO       4, 30 ;
+               TITLE    "Generando informe" ;
+               STYLE    DS_MODALFRAME
+
+         oDlg:bStart    := { || ::FastReport( nOption ), oDlg:End(), SysRefresh() }
+         oDlg:cMsg      := "Por favor espere..."
+
+         ACTIVATE DIALOG oDlg ;
+            CENTER ;
+            ON PAINT oDlg:Say( 11, 0, xPadC( oDlg:cMsg, ( oDlg:nRight - oDlg:nLeft ) ), , , , .t. )
+
+      end if
+
+   else
+
+      if !::lBreak
+         msgStop( "No hay registros en las condiciones solictadas" )
+      end if
+
+   end if
+
+   if hb_isBlock( ::bPostGenerate )
+      Eval( ::bPostGenerate )
+   end if
 
 RETURN ( Self )
 
@@ -3727,12 +3829,12 @@ METHOD initVariables()
    ::aChildDesdeGrupoCliente              := {}
    ::aChildHastaGrupoCliente              := {}
 
-   if !empty( ::oGrpCli )
+   if !empty( ::oGrpCli ) .and. !empty(::oGrupoGCliente)
       ::aChildDesdeGrupoCliente            := ::oGrpCli:aChild( ::oGrupoGCliente:Cargo:getDesde() )
       aadd( ::aChildDesdeGrupoCliente, ::oGrupoGCliente:Cargo:getDesde() )
    end if 
 
-   if !empty( ::oGrpCli )
+   if !empty( ::oGrpCli ) .and. !empty(::oGrupoGCliente)
       ::aChildHastaGrupoCliente            := ::oGrpCli:aChild( ::oGrupoGCliente:Cargo:getHasta() )
       aadd( ::aChildHastaGrupoCliente, ::oGrupoGCliente:Cargo:getHasta() )
    end if 
