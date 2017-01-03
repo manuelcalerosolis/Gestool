@@ -408,7 +408,7 @@ METHOD lResource() CLASS TpvCobros
       Boton cambiar teclado de monedas a calculadora---------------------------
       */
 
-      ::oBtnCalcMoney      := TButtonBmp():ReDefine( 300, {|| ::ChangeCalcMoney() }, ::oDlg,,, .f.,,,, .f., "Calculator_32",, )
+      ::oBtnCalcMoney      := TButtonBmp():ReDefine( 300, {|| ::ChangeCalcMoney() }, ::oDlg,,, .f.,,,, .f., "gc_calculator_32",, )
 
       /*
       Boton de validar la cantidad introducida---------------------------------
@@ -632,7 +632,7 @@ METHOD ChangeCalcMoney CLASS TpvCobros
       ::oBtnCalcMoney:Refresh()
    else
       AEval( ::aButtonsMoney, {|h| h[ "Object" ]:bAction := h[ "Money", "Action" ], SetWindowText( h[ "Object" ]:hWnd, h[ "Money", "Text" ] ) } )
-      ::oBtnCalcMoney:LoadBitmap( "Calculator_32" )
+      ::oBtnCalcMoney:LoadBitmap( "gc_calculator_32" )
       ::oBtnCalcMoney:Refresh()
    end if   
 
