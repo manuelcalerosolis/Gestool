@@ -13,27 +13,27 @@ CLASS TSalaVenta FROM TMasDet
    DATA  cMru     INIT "Cup_16"
    DATA  cBitmap  INIT "WebTopBlack"
 
-   CLASSDATA aResource  AS ARRAY          INIT  {  "BEER_BOTTLE_16"     ,;
-                                                   "BEER_GLASS_16"      ,;
-                                                   "WINE_RED_BOTTLE_16" ,;
-                                                   "WINE_RED_GLASS_16"  ,;
-                                                   "WINE_WHITE_GLASS_16",;
-                                                   "LEMONADE_BOTTLE_16" ,;
-                                                   "COCKTAIL_16"        ,;
-                                                   "ICECREAM_16"        ,;
-                                                   "FISH_16"            ,;
-                                                   "PIG_16"             }
+   CLASSDATA aResource  AS ARRAY          INIT  {  "GC_BEER_BOTTLE_16"     ,;
+                                                   "GC_BEER_GLASS_16"      ,;
+                                                   "GC_WINE_BOTTLE_16"     ,;
+                                                   "GC_WINE_GLASS_16"      ,;
+                                                   "GC_COCKTAIL2_16"       ,;
+                                                   "GC_LEMONADE_GLASS_16"  ,;
+                                                   "GC_COCKTAIL_16"        ,;
+                                                   "GC_ICE_CREAM2_16"      ,;
+                                                   "GC_GOLDFISH_16"        ,;
+                                                   "GC_PIG_16"             }
 
-   CLASSDATA aBigResource  AS ARRAY       INIT {   "BEER_BOTTLE_32"     ,;
-                                                   "BEER_GLASS_32"      ,;
-                                                   "WINE_RED_BOTTLE_32" ,;
-                                                   "WINE_RED_GLASS_32"  ,;
-                                                   "WINE_WHITE_GLASS_32",;
-                                                   "LEMONADE_BOTTLE_32" ,;
-                                                   "COCKTAIL_32"        ,;
-                                                   "ICECREAM_32"        ,;
-                                                   "FISH_32"            ,;
-                                                   "PIG_32"             }
+   CLASSDATA aBigResource  AS ARRAY       INIT {   "GC_BEER_BOTTLE_32"     ,;
+                                                   "GC_BEER_GLASS_32"      ,;
+                                                   "GC_WINE_BOTTLE_32"     ,;
+                                                   "GC_WINE_GLASS_32"      ,;
+                                                   "GC_COCKTAIL2_32"       ,;
+                                                   "GC_LEMONADE_GLASS_32"  ,;
+                                                   "GC_COCKTAIL_32"        ,;
+                                                   "GC_ICE_CREAM2_32"      ,;
+                                                   "GC_GOLDFISH_32"        ,;
+                                                   "GC_PIG_32"             }
 
    CLASSDATA aImagen    AS ARRAY          INIT {   "Botella cerveza"    ,;
                                                    "Cerveza barril"     ,;

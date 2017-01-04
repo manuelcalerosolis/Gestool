@@ -2060,8 +2060,8 @@ METHOD Resource() CLASS TpvTactil
    ::oBtnFamiliasUp              := TButtonBmp():ReDefine( 302, {|| if( !Empty( ::oBrwFamilias ), ::oBrwFamilias:PageUp(), ) },     ::oDlg, , , .f., , , , .f., "gc_navigate_up2a_32" )
    ::oBtnFamiliasDown            := TButtonBmp():ReDefine( 303, {|| if( !Empty( ::oBrwFamilias ), ::oBrwFamilias:PageDown(), ) },   ::oDlg, , , .f., , , , .f., "gc_navigate_down2a_32" )
    
-   ::oBtnPreviewDocumento        := TButtonBmp():ReDefine( 304, {|| ::PrevisualizaTicket() }, ::oDlg, , , .f., , , , .f., "Prev1_32" )
-   ::oBtnPrintDocumento          := TButtonBmp():ReDefine( 305, {|| ::ImprimeTicket() }, ::oDlg, , , .f., , , , .f., "Imp32" )
+   ::oBtnPreviewDocumento        := TButtonBmp():ReDefine( 304, {|| ::PrevisualizaTicket() }, ::oDlg, , , .f., , , , .f., "gc_monitor_32" )
+   ::oBtnPrintDocumento          := TButtonBmp():ReDefine( 305, {|| ::ImprimeTicket() }, ::oDlg, , , .f., , , , .f., "gc_printer2_32" )
 
    /*
    TViewImage de Articulos-----------------------------------------------------
@@ -2106,7 +2106,7 @@ METHOD Resource() CLASS TpvTactil
       ::oBtnOrdenComandaActual   := TButton():ReDefine( 505, {|| ::SelectorOrdenComanda() }, ::oDlg, , , .f., , , "Orden comanda" )
       ::oBtnOrdenComandaActual:setFont( ::oFntNum )
    else
-      ::oBtnOrdenComandaActual   := TButtonBmp():ReDefine( 505, {|| ::SelectorOrdenComanda() }, ::oDlg, , , .f., , , "", .f., "Sort_az_descending_32" ) //
+      ::oBtnOrdenComandaActual   := TButtonBmp():ReDefine( 505, {|| ::SelectorOrdenComanda() }, ::oDlg, , , .f., , , "", .f., "gc_sort_az_descending_32" ) //
    end if 
    
    ::oGetCambiarOrden            := TGetHlp():ReDefine( 506, {|u| if( pcount () == 0, ::cOrdenComanda, ::cOrdenComanda := u ) }, ::oDlg )
@@ -2116,12 +2116,12 @@ METHOD Resource() CLASS TpvTactil
 
    ::oBtnAgregarLibre            := TButtonBmp():ReDefine( 502, {|| ::AgregarLibre() },            ::oDlg, , , .f., , , , .f., "gc_more_32" ) //
    ::oBtnCombinado               := TButtonBmp():ReDefine( 503, {|| ::SetCombinando() },           ::oDlg, , , .f., , , , .f., "gc_pin_blue_32" )
-   ::oBtnCalculadora             := TButtonBmp():ReDefine( 504, {|| ::SetCalculadora() },          ::oDlg, , , .f., , , , .f., "Calculator_32" )
+   ::oBtnCalculadora             := TButtonBmp():ReDefine( 504, {|| ::SetCalculadora() },          ::oDlg, , , .f., , , , .f., "gc_calculator_32" )
 
    if !::l1024() 
       ::oBtnSSalir               := TButtonBmp():ReDefine( 509, {|| ::oDlg:End },                  ::oDlg, , , .f., , , , .f., "End32" )
    else
-      ::oBtnBalanza              := TButtonBmp():ReDefine( 510, {|| ::GetPesoBalanza() },          ::oDlg, , , .f., , , , .f., "Scales_32" )
+      ::oBtnBalanza              := TButtonBmp():ReDefine( 510, {|| ::GetPesoBalanza() },          ::oDlg, , , .f., , , , .f., "gc_scales_32" )
    end if
 
    /*
@@ -3445,7 +3445,7 @@ METHOD AgregarLibre() CLASS TpvTactil
       REDEFINE BUTTONBMP ; 
          ID       130 ;
          OF       oDlg ;
-         BITMAP   "Calculator_32" ;
+         BITMAP   "gc_calculator_32" ;
          ACTION   ( Calculadora( 0, oUnidadesLibre ) ) 
 
       REDEFINE GET oImporteLibre ;
@@ -3457,7 +3457,7 @@ METHOD AgregarLibre() CLASS TpvTactil
       REDEFINE BUTTONBMP ;
          ID       150 ;
          OF       oDlg ; 
-         BITMAP   "Calculator_32" ;
+         BITMAP   "gc_calculator_32" ;
          ACTION   ( Calculadora( 0, oImporteLibre ) )
 
       REDEFINE GET oImpresoraLibre ;

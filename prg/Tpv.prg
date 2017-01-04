@@ -9458,7 +9458,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
          ID       220 ;
          OF       oDlg ;
          WHEN     ( lWhen ) ;
-         BITMAP   "Calculator_32" ;
+         BITMAP   "gc_calculator_32" ;
          ACTION   ( Calculadora( 0, oTotDiv:oCobrado ), ChkCobro( aTmp ) )
 
       /*
@@ -14997,7 +14997,7 @@ Static Function AddFreeProduct()
       REDEFINE BUTTONBMP ;
          ID       130 ;
          OF       oDlg ;
-         BITMAP   "Calculator_32" ;
+         BITMAP   "gc_calculator_32" ;
          ACTION   ( Calculadora( 0, oGetUnidades ) )
 
       REDEFINE GET oGetImporte ;
@@ -15009,7 +15009,7 @@ Static Function AddFreeProduct()
       REDEFINE BUTTONBMP ;
          ID       150 ;
          OF       oDlg ;
-         BITMAP   "Calculator_32" ;
+         BITMAP   "gc_calculator_32" ;
          ACTION   ( Calculadora( 0, oGetImporte ) )
 
       REDEFINE GET oGetImpresora ;

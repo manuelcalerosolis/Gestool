@@ -110,8 +110,6 @@ PRINTER_NEW BITMAP "..\\bmp\\printer_new.bmp"
 
 PHOTO_SCENERY_16 BITMAP "..\\bmp\\photo_scenery_16.bmp"
 
-SCALES_32 BITMAP "..\\bmp\\scales_32.bmp"
-
 FLAT_ADD_64 BITMAP "..\\bmp\\flat_add_64.bmp"
 
 FLAT_CHECK_64 BITMAP "..\\bmp\\flat_check_64.bmp"

@@ -17145,7 +17145,6 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Ocultar escll.", 508, "Button", WS_TABSTOP, 412, 164, 49, 14
   CONTROL "&Importar alm.", 506, "Button", WS_TABSTOP, 463, 164, 49, 14
   CONTROL "&Importar inventario", 509, "Button", WS_TABSTOP, 587, 165, 70, 14
-  CONTROL "&Guardar y continuar [F6]", 4, "Button", WS_TABSTOP, 460, 357, 91, 14
   CONTROL "", 180, "TXBrowse", WS_TABSTOP|0x00300000, 50, 180, 606, 162
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 557, 357, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 612, 357, 50, 14

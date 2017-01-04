@@ -413,43 +413,46 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
       DATABASE NEW ::oAtipicasCliente PATH ( cPatEmp() ) CLASS "CliAtp" FILE "CliAtp.Dbf" VIA ( ::cDriver ) SHARED INDEX "CliAtp.CDX"
       ::oAtipicasCliente:ordsetfocus( "cCliArt" )
 
-      ::oFraPub   := TFrasesPublicitarias():Create( cPatArt(), ::cDriver )
+      ::oGrpCli               := TGrpCli():Create( cPatCli() )
+      ::oGrpCli:OpenService()
+
+      ::oFraPub               := TFrasesPublicitarias():Create( cPatArt(), ::cDriver )
       if !::oFraPub:OpenFiles()
-         lOpen    := .f.
+         lOpen                := .f.
       end if
 
-      ::oProCab   := TDataCenter():oProCab( cPatEmp(), ::cDriver )
+      ::oProCab               := TDataCenter():oProCab( cPatEmp(), ::cDriver )
 
-      ::oCnfFlt   := TDataCenter():oCnfFlt( cPatEmp(), ::cDriver )
+      ::oCnfFlt               := TDataCenter():oCnfFlt( cPatEmp(), ::cDriver )
 
-      /*
-      Stocks de articulos------------------------------------------------------
-      */
-
+<<<<<<< HEAD
       ::oStock    := TStock():Create( cPatEmp(), ::cDriver )
+=======
+      ::oStock                := TStock():Create( cPatGrp(), ::cDriver )
+>>>>>>> origin/master
       if !::oStock:lOpenFiles()
-         lOpen    := .f.
+         lOpen                := .f.
       else 
          ::oStock:lCalculateUnidadesPendientesRecibir    := .t.
          ::oStock:CreateTemporalFiles()
       end if
 
-      ::oCtrCoste    := TCentroCoste():Create( cPatDat(), ::cDriver )
+      ::oCtrCoste             := TCentroCoste():Create( cPatDat(), ::cDriver )
       if !::oCtrCoste:OpenFiles()
-         lOpen       := .f.
+         lOpen                := .f.
       endif
 
-      ::oOperario    := TOperarios():Create( cPatEmp(), ::cDriver )
+      ::oOperario             := TOperarios():Create( cPatEmp(), ::cDriver )
       if !::oOperario:OpenFiles()
-         lOpen       := .f.
+         lOpen                := .f.
       end if
 
-      ::oCamposExtra := TDetCamposExtra():New( cPatEmp(), ::cDriver )
+      ::oCamposExtra          := TDetCamposExtra():New( cPatEmp(), ::cDriver )
       if !::oCamposExtra:OpenFiles()
-         lOpen       := .f.
+         lOpen                := .f.
       else 
          ::oCamposExtra:setTipoDocumento( "Artículos" )
-         ::aExtraFields := ::oCamposExtra:aExtraFields()
+         ::aExtraFields       := ::oCamposExtra:aExtraFields()
       end if
 
    RECOVER USING oError
@@ -1265,8 +1268,8 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Transportistas",                ::oDbfTrn:Select() )
    ::oFastReport:SetFieldAliases(   "Transportistas",                cObjectsToReport( ::oDbfTrn:oDbf ) )
 
-   ::oFastReport:SetWorkArea(       "Formas de pago",                   ::oDbfFpg:nArea )
-   ::oFastReport:SetFieldAliases(   "Formas de pago",                   cItemsToReport( aItmFPago() ) )
+   ::oFastReport:SetWorkArea(       "Formas de pago",                ::oDbfFpg:nArea )
+   ::oFastReport:SetFieldAliases(   "Formas de pago",                cItemsToReport( aItmFPago() ) )
 
    // Relaciones entre tablas-----------------------------------------------------
 

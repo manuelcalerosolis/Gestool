@@ -15140,8 +15140,10 @@ function SynAlbCli( cPath )
                ( D():Get( "AlbCliL", nView ) )->( dbUnLock() )
             end if
          end if
-//en el caso de TuRueda,se han rellenado los importes de la ecotasa a albaranes atiguos, que ya la tenian 
+
 /*
+         en el caso de TuRueda,se han rellenado los importes de la ecotasa a albaranes atiguos, que ya la tenian 
+
          if empty( ( D():Get( "AlbCliL", nView ) )->nValImp )
             cCodImp                    := RetFld( ( D():Get( "AlbCliL", nView ) )->CREF, D():Articulos( nView ), "cCodImp" )
             if !empty( cCodImp )
@@ -15151,8 +15153,7 @@ function SynAlbCli( cPath )
                end if   
             end if
          end if
-*/
-/*
+
          if empty( ( D():Get( "AlbCliL", nView ) )->cCodImp )
             if dbLock( D():Get( "AlbCliL", nView ) )
                ( D():Get( "AlbCliL", nView ) )->nValImp := 0
@@ -15207,34 +15208,37 @@ function SynAlbCli( cPath )
 
          // Fecha ----------------------------------------------------------
 
-         if ( D():Get( "AlbCliL", nView ) )->dFecAlb != RetFld( ( D():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliL", nView ) )->nNumAlb ) + ( D():Get( "AlbCliL", nView ) )->cSufAlb, D():Get( "AlbCliT", nView ), "dFecAlb" )
-            if dbLock( D():Get( "AlbCliL", nView ) )
-               ( D():Get( "AlbCliL", nView ) )->dFecAlb    := RetFld( ( D():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliL", nView ) )->nNumAlb ) + ( D():Get( "AlbCliL", nView ) )->cSufAlb, D():Get( "AlbCliT", nView ), "dFecAlb" )
-               ( D():Get( "AlbCliL", nView ) )->( dbUnlock() )
-            end if   
-         end if
+         if ( D():Get( "AlbCliT", nView ) )->( dbseek( ( D():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliL", nView ) )->nNumAlb ) + ( D():Get( "AlbCliL", nView ) )->cSufAlb ) )
 
-         if ( D():Get( "AlbCliL", nView ) )->cCodCli != RetFld( ( D():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliL", nView ) )->nNumAlb ) + ( D():Get( "AlbCliL", nView ) )->cSufAlb, D():Get( "AlbCliT", nView ), "cCodCli" )
-            if dbLock( D():Get( "AlbCliL", nView ) )
-               ( D():Get( "AlbCliL", nView ) )->cCodCli    := RetFld( ( D():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliL", nView ) )->nNumAlb ) + ( D():Get( "AlbCliL", nView ) )->cSufAlb, D():Get( "AlbCliT", nView ), "cCodCli" )
-               ( D():Get( "AlbCliL", nView ) )->( dbUnlock() )
-            end if   
-         end if
+            if ( D():Get( "AlbCliL", nView ) )->dFecAlb != ( D():Get( "AlbCliT", nView ) )->dFecAlb
+               if dbLock( D():Get( "AlbCliL", nView ) )
+                  ( D():Get( "AlbCliL", nView ) )->dFecAlb    := ( D():Get( "AlbCliT", nView ) )->dFecAlb
+                  ( D():Get( "AlbCliL", nView ) )->( dbUnlock() )
+               end if   
+            end if
 
-         if empty( ( D():Get( "AlbCliL", nView ) )->cAlmLin )
-            if dbLock( D():Get( "AlbCliL", nView ) )
-               ( D():Get( "AlbCliL", nView ) )->cAlmLin    := RetFld( ( D():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliL", nView ) )->nNumAlb ) + ( D():Get( "AlbCliL", nView ) )->cSufAlb, D():Get( "AlbCliT", nView ), "cCodAlm" )
-               ( D():Get( "AlbCliL", nView ) )->( dbUnLock() )
-            end if   
-         end if
+            if ( D():Get( "AlbCliL", nView ) )->cCodCli != ( D():Get( "AlbCliT", nView ) )->cCodCli
+               if dbLock( D():Get( "AlbCliL", nView ) )
+                  ( D():Get( "AlbCliL", nView ) )->cCodCli    := ( D():Get( "AlbCliT", nView ) )->cCodCli
+                  ( D():Get( "AlbCliL", nView ) )->( dbUnlock() )
+               end if   
+            end if
 
-         if empty( ( D():Get( "AlbCliL", nView ) )->nPosPrint )
-            if dbLock( D():Get( "AlbCliL", nView ) )
-               ( D():Get( "AlbCliL", nView ) )->nPosPrint    := ( D():Get( "AlbCliL", nView ) )->nNumLin
-               ( D():Get( "AlbCliL", nView ) )->( dbUnLock() )
-            end if   
-         end if
+            if empty( ( D():Get( "AlbCliL", nView ) )->cAlmLin )
+               if dbLock( D():Get( "AlbCliL", nView ) )
+                  ( D():Get( "AlbCliL", nView ) )->cAlmLin    := ( D():Get( "AlbCliT", nView ) )->cCodAlm
+                  ( D():Get( "AlbCliL", nView ) )->( dbUnLock() )
+               end if   
+            end if
 
+            if empty( ( D():Get( "AlbCliL", nView ) )->nPosPrint )
+               if dbLock( D():Get( "AlbCliL", nView ) )
+                  ( D():Get( "AlbCliL", nView ) )->nPosPrint    := ( D():Get( "AlbCliL", nView ) )->nNumLin
+                  ( D():Get( "AlbCliL", nView ) )->( dbUnLock() )
+               end if   
+            end if
+
+         end if 
 
          /*
          Cargamos los costos para Marbaroso------------------------------------
@@ -15334,27 +15338,26 @@ function SynAlbCli( cPath )
 
       ( D():Get( "AlbCliS", nView ) )->( ordSetFocus( 1 ) )
 
-      // Lineas huerfanas---------------------------------------------------------
+      // Lineas huerfanas------------------------------------------------------
 
-/*
-      ( D():Get( "AlbCliT", nView ) )->( ordSetFocus( 1 ) )
-      ( D():Get( "AlbCliL", nView ) )->( ordSetFocus( 1 ) )
-      ( D():Get( "AlbCliL", nView ) )->( dbGoTop() )
+      ( D():Get( "AlbCliT", nView ) )->( ordsetfocus( 1 ) )
+      ( D():Get( "AlbCliL", nView ) )->( ordsetfocus( 1 ) )
 
+      ( D():Get( "AlbCliL", nView ) )->( dbgotop() )
       while !( D():Get( "AlbCliL", nView ) )->( eof() )
 
-         if !( D():Get( "AlbCliT", nView ) )->( dbSeek( ( D():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliL", nView ) )->nNumAlb ) + ( D():Get( "AlbCliL", nView ) )->cSufAlb ) )
+         if !( D():Get( "AlbCliT", nView ) )->( dbseek( ( D():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliL", nView ) )->nNumAlb ) + ( D():Get( "AlbCliL", nView ) )->cSufAlb ) )
             if dbLock( D():Get( "AlbCliL", nView ) )
-	            ( D():Get( "AlbCliL", nView ) )->( dbDelete() )
+	            ( D():Get( "AlbCliL", nView ) )->( dbdelete() )
 	        end if
          end if 
 
-         ( D():Get( "AlbCliL", nView ) )->( dbSkip( 1 ) )
+         ( D():Get( "AlbCliL", nView ) )->( dbskip( 1 ) )
          
          SysRefresh()
 
       end while
-*/
+
       CloseFiles()
 
    end if
@@ -16832,8 +16835,8 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "CPOSCLI"   ,"C", 15, 0, "Código postal del cliente" ,                               "CodigoPostalCliente",           "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "CDNICLI"   ,"C", 30, 0, "DNI/CIF del cliente" ,                                     "DniCliente",                    "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "LMODCLI"   ,"L",  1, 0, "Lógico de modificar datos del cliente" ,                   "ModificarDatosCliente",         "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "LFACTURADO","L",  1, 0, "Lógico de facturado" ,                                     "",                              "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "lEntregado","L",  1, 0, "Lógico albarán enviado" ,                                  "",                              "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "lFacturado","L",  1, 0, "Lógico de facturado" ,                                     "Facturado",                     "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "lEntregado","L",  1, 0, "Lógico albarán enviado" ,                                  "Entregado",                     "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "DFECENT"   ,"D",  8, 0, "Fecha de entrada del albarán" ,                            "FechaSalida",                   "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "CCODSUALB" ,"C", 25, 0, "Referencia a su albarán" ,                                 "DocumentoOrigen",               "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "CCONDENT"  ,"C",100, 0, "Condición de entrada" ,                                    "Condiciones",                   "", "( cDbf )", nil } )

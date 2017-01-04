@@ -8,7 +8,7 @@ CLASS TInvitacion FROM TMANT
 
    DATA  cMru INIT "gc_masks_16"
 
-   CLASSDATA aResource  AS ARRAY    INIT {   "COCKTAIL_16"        ,;
+   CLASSDATA aResource  AS ARRAY    INIT {   "gc_cocktail_16"     ,;
                                              "DUDE3_16"           ,;
                                              "gc_businessman2_16"  ,;
                                              "USER_HEADPHONES_16" ,;

@@ -1564,7 +1564,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          ALLOW    EXIT ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "gc_clipboard_empty_user_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_clipboard_empty_businessman_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( PedPrv( nil, oWnd, nil, ( D():Articulos( nView ) )->Codigo ) );
          TOOLTIP  "Añadir pedido a proveedor" ;
@@ -1588,7 +1588,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          ALLOW    EXIT ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "Power-drill_user1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_power_drill_sat_user_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( SatCli( nil, oWnd, nil, ( D():Articulos( nView ) )->Codigo ) );
          TOOLTIP  "Añadir SAT de cliente" ;
@@ -1596,7 +1596,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          ALLOW    EXIT ;
          LEVEL    ACC_EDIT         
 
-      DEFINE BTNSHELL RESOURCE "Notebook_user1_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_notebook_user_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( PreCli( nil, oWnd, nil, ( D():Articulos( nView ) )->Codigo ) );
          TOOLTIP  "Añadir presupuesto de cliente" ;

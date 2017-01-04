@@ -4,17 +4,7 @@
 #include <commctrl.h>
 #include <richedit.h>
 
-BEER_BOTTLE_32 BITMAP "..\\bmp\\Beer_Bottle_32.bmp"
-BEER_GLASS_32 BITMAP "..\\bmp\\Beer_Glass_32.bmp"
-WINE_RED_BOTTLE_32 BITMAP "..\\bmp\\Wine_Red_Bottle_32.bmp"
-WINE_RED_GLASS_32 BITMAP "..\\bmp\\Wine_Red_Glass_32.bmp"
-WINE_WHITE_GLASS_32 BITMAP "..\\bmp\\Wine_White_Glass_32.bmp"
-LEMONADE_BOTTLE_32 BITMAP "..\\bmp\\Lemonade_Bottle_32.bmp"
-COCKTAIL_32 BITMAP "..\\bmp\\Cocktail_32.bmp"
 COCKTAIL_RED_32 BITMAP "..\\bmp\\Cocktail_red_32.bmp"
-ICECREAM_32 BITMAP "..\\bmp\\Icecream_32.bmp"
-FISH_32 BITMAP "..\\bmp\\Fish_32.bmp"
-PIG_32 BITMAP "..\\bmp\\Pig_32.bmp"
 
 NOTE_PINNED_16 BITMAP "..\\bmp\\Note_Pinned_16.bmp"
 

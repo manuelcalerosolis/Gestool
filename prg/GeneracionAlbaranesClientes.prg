@@ -339,6 +339,7 @@ METHOD loadLinesDocument()
    setTotalAutoMeterDialog( ::getHeaderOrdKeyCount()  )
 
    ::getCustomerOrderLines():Reset()
+
    ::oStock:Reset()
 
    ( ::getHeaderAlias() )->( ordsetfocus( "dFecPed" ) )
@@ -548,10 +549,9 @@ Return ( .t. )
 
 METHOD appendDeliveryNoteCustomer( oLine )
 
-   msgalert("creo el nuevo albaran")
-
    ::DeliveryNoteCustomer:setAppendMode()
    ::DeliveryNoteCustomer:getAppendDocumento()
+   ::DeliveryNoteCustomer:hSetMaster( "Entregado", .t. ) 
    ::DeliveryNoteCustomer:setClientToDocument( oLine:getHeaderClient() )
 
    ::setCurrentClient( oLine:getHeaderClient() )
