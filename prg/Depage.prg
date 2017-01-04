@@ -307,8 +307,8 @@ STATIC FUNCTION OpenFiles( cPath )
    USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
    SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 
-   USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
-   SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
+   SET ADSINDEX TO ( cPatEmp() + "FPAGO.CDX" ) ADDITIVE
 
    USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
    SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE
@@ -349,7 +349,7 @@ STATIC FUNCTION OpenFiles( cPath )
 
    oBandera             := TBandera():New()
 
-   oStock               := TStock():Create( cPatGrp() )
+   oStock               := TStock():Create( cPatEmp() )
    if !oStock:lOpenFiles()
       lOpen             := .f.
    end if

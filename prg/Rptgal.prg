@@ -64,7 +64,6 @@ Function Main( cCodEmp, cCodUsr, cIp )
    local dbfDlg
    local dbfUsr
    local dbfCaj
-   local cCodGrp     := Space( 4 )
    local nError
    local cError
    local cAdsType   
@@ -175,46 +174,10 @@ Function Main( cCodEmp, cCodUsr, cIp )
    // Ponemos el directorio para los ficheros----------------------------------
 
    cPatEmp( cCodEmp )
-
-   cCodGrp           := cCodigoGrupo( cCodEmp, dbfEmp )
-
-   if Empty( cCodGrp )
-
-      cPatGrp( cCodEmp, nil, .t. )
-      cPatCli( cCodEmp, nil, .t. )
-      cPatArt( cCodEmp, nil, .t. )
-      cPatPrv( cCodEmp, nil, .t. )
-      cPatAlm( cCodEmp, nil, .t. )
-
-   else
-
-      cPatGrp( cCodGrp, nil, .f. )
-
-      if RetFld( cCodEmp, dbfEmp, "lGrpCli", "CodEmp" )
-         cPatCli( cCodGrp, nil, .f. )
-      else
-         cPatCli( cCodEmp, nil, .t. )
-      end if
-
-      if RetFld( cCodEmp, dbfEmp, "lGrpArt", "CodEmp" )
-         cPatArt( cCodGrp, nil, .f. )
-      else
-         cPatArt( cCodEmp, nil, .t. )
-      end if
-
-      if RetFld( cCodEmp, dbfEmp, "lGrpPrv", "CodEmp" )
-         cPatPrv( cCodGrp, nil, .f. )
-      else
-         cPatPrv( cCodEmp, nil, .t. )
-      end if
-
-      if RetFld( cCodEmp, dbfEmp, "lGrpAlm", "CodEmp" )
-         cPatAlm( cCodGrp, nil, .f. )
-      else
-         cPatAlm( cCodEmp, nil, .t. )
-      end if
-
-   end if
+   cPatCli( cCodEmp, nil, .t. )
+   cPatArt( cCodEmp, nil, .t. )
+   cPatPrv( cCodEmp, nil, .t. )
+   cPatAlm( cCodEmp, nil, .t. )
 
    // Cargamos el buffer-------------------------------------------------------
 

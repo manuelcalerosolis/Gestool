@@ -227,7 +227,7 @@ METHOD OpenFiles() CLASS TFastVentasClientes
       
       DATABASE NEW ::oDbfRut PATH ( cPatCli() ) FILE "RUTA.DBF" VIA ( cDriver() ) SHARED INDEX "RUTA.CDX"
       
-      DATABASE NEW ::oDbfFpg PATH ( cPatGrp() ) FILE "FPago.Dbf" VIA ( cDriver() ) SHARED INDEX "FPago.Cdx"
+      DATABASE NEW ::oDbfFpg PATH ( cPatEmp() ) FILE "FPago.Dbf" VIA ( cDriver() ) SHARED INDEX "FPago.Cdx"
 
       DATABASE NEW ::oDbfUsr PATH ( cPatDat() ) FILE "USERS.DBF" VIA ( cDriver() ) SHARED INDEX "USERS.CDX"
 
@@ -247,7 +247,7 @@ METHOD OpenFiles() CLASS TFastVentasClientes
       Stocks de articulos------------------------------------------------------
       */
 
-      ::oStock                := TStock():Create( cPatGrp() )
+      ::oStock                := TStock():Create( cPatEmp() )
       if !::oStock:lOpenFiles()
          lOpen                := .f.
       end if

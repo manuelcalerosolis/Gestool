@@ -321,7 +321,7 @@ END CLASS
 
 METHOD Create( cPath, cDriver ) CLASS TStock
 
-   DEFAULT cPath        := cPatGrp()
+   DEFAULT cPath        := cPatEmp()
    DEFAULT cDriver      := cDriver()
 
    ::cPath              := cPath
@@ -534,8 +534,8 @@ METHOD lOpenFiles() CLASS TStock
       USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cDbfIva )
       SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 
-      USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cDbfFPago )
-      SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "FPAGO.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cDbfFPago )
+      SET ADSINDEX TO ( cPatEmp() + "FPAGO.CDX" ) ADDITIVE
 
       // Cargamos los almacenes------------------------------------------------
 

@@ -24,7 +24,7 @@ STATIC FUNCTION OpenFiles( cPatEmp )
    local lOpen          := .t.
    local oBlock
 
-   DEFAULT cPatEmp      := cPatGrp()
+   DEFAULT cPatEmp      := cPatEmp()
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -646,8 +646,8 @@ FUNCTION cNbrFPago( cCodPago, dbfFormasPago )
    local lClose      := .f.
 
    if dbfFormasPago == NIL
-      USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFormasPago ) )
-      SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFormasPago ) )
+      SET ADSINDEX TO ( cPatEmp() + "FPAGO.CDX" ) ADDITIVE
       lClose         := .t.
    end if
 
@@ -675,8 +675,8 @@ FUNCTION cCtaFPago( cCodFPgo, dbfFormasPago )
    local lClose   := .f.
 
    if Empty( dbfFormasPago )
-      USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFormasPago ) )
-      SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFormasPago ) )
+      SET ADSINDEX TO ( cPatEmp() + "FPAGO.CDX" ) ADDITIVE
       lClose      := .t.
    end if
 
@@ -698,8 +698,8 @@ FUNCTION cCtaFGas( cCodFPgo, dbfFormasPago )
    local lClose   := .f.
 
    if Empty( dbfFormasPago )
-      USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFormasPago ) )
-      SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFormasPago ) )
+      SET ADSINDEX TO ( cPatEmp() + "FPAGO.CDX" ) ADDITIVE
       lClose      := .t.
    end if
 
@@ -721,8 +721,8 @@ FUNCTION lFormaPagoCobrado( cCodPago, dbfFormasPago )
    local lClose      := .f.
 
    if dbfFormasPago == NIL
-      USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFormasPago ) )
-      SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFormasPago ) )
+      SET ADSINDEX TO ( cPatEmp() + "FPAGO.CDX" ) ADDITIVE
       lClose         := .t.
    end if
 
@@ -908,7 +908,7 @@ function IsFPago( cPatEmp )
    local IsFPago     := .f.
    local dbfFormasPago
 
-   DEFAULT cPatEmp   := cPatGrp()
+   DEFAULT cPatEmp   := cPatEmp()
 
    if !lExistTable( cPatEmp + "Fpago.Dbf" )
       mkFpago()
@@ -1016,7 +1016,7 @@ FUNCTION rxFPago( cPath, oMeter )
 
    local dbfFormasPago
 
-   DEFAULT cPath     := cPatGrp()
+   DEFAULT cPath     := cPatEmp()
 
    if !lExistTable( cPath + "FPago.Dbf" )
       mkFPago( cPath )
@@ -1059,7 +1059,7 @@ FUNCTION mkFPago( cPath, lAppend, cPathOld )
 
    local dbfFormasPago
 
-   DEFAULT cPath     := cPatGrp()
+   DEFAULT cPath     := cPatEmp()
    DEFAULT lAppend   := .f.
 
    dbCreate( cPath + "Fpago.Dbf", aSqlStruct( aItmFPago() ), cDriver() )
@@ -1415,8 +1415,8 @@ FUNCTION cFpago( oGet, dbfFormasPago, oGetNombre, oGetPorcentajeEntrega, oGetPor
 
    if Empty( dbfFormasPago )
 
-      USE ( cPatGrp() + "FPago.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFormasPago ) )
-      SET ADSINDEX TO ( cPatGrp() + "FPago.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "FPago.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFormasPago ) )
+      SET ADSINDEX TO ( cPatEmp() + "FPago.Cdx" ) ADDITIVE
 
       lClose      := .t.
 

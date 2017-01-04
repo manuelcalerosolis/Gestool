@@ -497,7 +497,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():ArticuloLenguaje( nView )
 
-      oStock            := TStock():Create( cPatGrp() )
+      oStock            := TStock():Create( cPatEmp() )
       if !oStock:lOpenFiles()
          lOpenFiles     := .f.
       end if

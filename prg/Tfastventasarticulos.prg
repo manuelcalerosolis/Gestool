@@ -426,7 +426,7 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
       Stocks de articulos------------------------------------------------------
       */
 
-      ::oStock    := TStock():Create( cPatGrp(), ::cDriver )
+      ::oStock    := TStock():Create( cPatEmp(), ::cDriver )
       if !::oStock:lOpenFiles()
          lOpen    := .f.
       else 

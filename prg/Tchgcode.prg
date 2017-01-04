@@ -272,7 +272,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfFacCliP PATH ( cPatEmp() ) FILE "FACCLIP.DBF"  VIA ( cDriver() ) SHARED INDEX "FACCLIP.CDX"
 
-   DATABASE NEW ::oDbfPago    PATH ( cPatGrp() ) FILE "FPAGO.DBF"    VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
+   DATABASE NEW ::oDbfPago    PATH ( cPatEmp() ) FILE "FPAGO.DBF"    VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
    DATABASE NEW ::oDbfEmpresa PATH ( cPatDat() ) FILE "EMPRESA.DBF"  VIA ( cDriver() ) SHARED INDEX "EMPRESA.CDX"
 

@@ -663,7 +663,7 @@ METHOD OpenFiles( lExclusive ) CLASS TRemMovAlm
       ::oTipArt           := TTipArt():Create( cPatArt() )
       ::oTipArt:OpenFiles()
 
-      ::oStock             := TStock():Create( cPatGrp() )
+      ::oStock             := TStock():Create( cPatEmp() )
       if !::oStock:lOpenFiles()
          ::lOpenFiles      := .f.
       end if

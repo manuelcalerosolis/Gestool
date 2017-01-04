@@ -307,7 +307,7 @@ METHOD OpenFiles() CLASS DocumentsSales
 
       D():TiposIncidencias( ::nView )
 
-      ::oStock            := TStock():Create( cPatGrp() )
+      ::oStock            := TStock():Create( cPatEmp() )
       if !::oStock:lOpenFiles()
          lOpenFiles     := .f.
       end if

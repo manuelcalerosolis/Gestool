@@ -24,19 +24,19 @@ Function IsConfig()
    local oError
    local oBlock
 
-   if !lExistTable( cPatGrp() + "Config.Dbf" )
-      mkConfig( cPatGrp() )
+   if !lExistTable( cPatEmp() + "Config.Dbf" )
+      mkConfig( cPatEmp() )
    end if
 
-   if !lExistIndex( cPatGrp() + "Config.Cdx" )
-      rxConfig( cPatGrp() )
+   if !lExistIndex( cPatEmp() + "Config.Cdx" )
+      rxConfig( cPatEmp() )
    end if
 
    oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      USE ( cPatGrp() + "Config.Dbf" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "CNOMBREPC", @dbfConfig ) )
-      SET ADSINDEX TO ( cPatGrp() + "Config.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "Config.Dbf" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "CNOMBREPC", @dbfConfig ) )
+      SET ADSINDEX TO ( cPatEmp() + "Config.Cdx" ) ADDITIVE
 
    RECOVER USING oError
 
@@ -83,7 +83,7 @@ FUNCTION rxConfig( cPath, oMeter )
 
    local dbfConfig
 
-   DEFAULT cPath := cPatGrp()
+   DEFAULT cPath := cPatEmp()
 
    if !lExistTable( cPath + "CONFIG.DBF" )
       dbCreate( cPath + "CONFIG.DBF", aSqlStrucT( aItmCfg() ), cDriver() )
@@ -147,8 +147,8 @@ return ( aBase )
 
 Function LoadConfig()
 
-   USE ( cPatGrp() + "Config.Dbf" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "CNOMBREPC", @dbfConfig ) )
-   SET ADSINDEX TO ( cPatGrp() + "Config.Cdx" ) ADDITIVE
+   USE ( cPatEmp() + "Config.Dbf" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "CNOMBREPC", @dbfConfig ) )
+   SET ADSINDEX TO ( cPatEmp() + "Config.Cdx" ) ADDITIVE
 
    if ( dbfConfig )->( LastRec() ) == 0
       ( dbfConfig )->( dbAppend() )

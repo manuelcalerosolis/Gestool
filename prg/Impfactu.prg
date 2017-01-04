@@ -224,7 +224,7 @@ METHOD OpenFiles()
       ::aChkIndices[ 6 ]:Click( .f. ):Refresh()
       msgStop( "No existe fichero de formas de pago", ::cPathFac + "FPAGO.DBF" )
    else
-      DATABASE NEW ::oDbfFpgGst PATH ( cPatGrp() )  FILE "FPAGO.DBF"    VIA ( cDriver() ) CLASS "FPGGST" SHARED INDEX "FPAGO.CDX"
+      DATABASE NEW ::oDbfFpgGst PATH ( cPatEmp() )  FILE "FPAGO.DBF"    VIA ( cDriver() ) CLASS "FPGGST" SHARED INDEX "FPAGO.CDX"
       DATABASE NEW ::oDbfFpgFac PATH ( ::cPathFac ) FILE "FPAGO.DBF"    VIA ( cLocalDriver() ) CLASS "FPGFAC"
    end if
 
@@ -335,7 +335,7 @@ METHOD OpenFiles()
       ::aChkIndices[ 14 ]:Click( .f. ):Refresh()
       msgStop( "No existe fichero de transportistas", ::cPathFac + "Transpor.Dbf" )
    else
-      DATABASE NEW ::oDbfTrnGst PATH ( cPatGrp() )  FILE "Transpor.Dbf"    VIA ( cDriver() ) CLASS "TRNGST"  SHARED INDEX "Transpor.Cdx"
+      DATABASE NEW ::oDbfTrnGst PATH ( cPatEmp() )  FILE "Transpor.Dbf"    VIA ( cDriver() ) CLASS "TRNGST"  SHARED INDEX "Transpor.Cdx"
       DATABASE NEW ::oDbfTrnFac PATH ( ::cPathFac ) FILE "Transpor.Dbf"    VIA ( cLocalDriver() ) CLASS "TRNFAC"
    end if
 

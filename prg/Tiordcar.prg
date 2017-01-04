@@ -71,7 +71,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oDbfAge PATH ( cPatGrp() ) FILE "AGENTES.DBF"  VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
+   DATABASE NEW ::oDbfAge PATH ( cPatEmp() ) FILE "AGENTES.DBF"  VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
 
    ::oTrans    := TTrans():New( cPatCli() )
    ::oTrans:OpenFiles()

@@ -1867,7 +1867,7 @@ RETURN ( oDlg:nResult == IDOK )*/
       Objetos---------------------------------------------------------------------
       */
 
-/*      with object ( TTrans():Create( cPatGrp() ) )
+/*      with object ( TTrans():Create( cPatEmp() ) )
          :DefineFiles()
          AppObjItm( cDbfFld, "TR", :oDbf, "( cDbfTrn )"  )                // Transportes
          :End()

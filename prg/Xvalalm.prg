@@ -136,7 +136,7 @@ METHOD OpenFiles()
    DATABASE NEW ::oArtDiv  PATH ( cPatArt() ) FILE "ARTDIV.DBF"   VIA ( cDriver() ) SHARED INDEX "ARTDIV.CDX"
    ::oArtDiv:OrdSetFocus( "cValPrp" )
 
-   ::oStock          := TStock():Create( cPatGrp() )
+   ::oStock          := TStock():Create( cPatEmp() )
    if !::oStock:lOpenFiles()
       lOpen          := .f.
    end if

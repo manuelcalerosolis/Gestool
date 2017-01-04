@@ -373,7 +373,7 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem )
    ::oDetMaquina           := TDetMaquina():New( cPath, Self )
    ::AddDetail( ::oDetMaquina )
 
-   ::oStock                := TStock():Create( cPatGrp() )
+   ::oStock                := TStock():Create( cPatEmp() )
 
    ::oGrupoFamilia         := TGrpFam():Create( cPatArt() )
 
