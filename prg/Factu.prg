@@ -2932,7 +2932,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Campos extra'
    oItem:cMessage       := 'Acceso a los campos extra'
-   oItem:bAction        := {|| CamposExtra( "01127", oWnd ) }
+   oItem:bAction        := {|| CamposExtra( "01127", oWnd ) } 
    oItem:cId            := "01127"
    oItem:cBmp           := "gc_form_plus2_16"
    oItem:cBmpBig        := "gc_form_plus2_32"

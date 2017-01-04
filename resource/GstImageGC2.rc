@@ -198,4 +198,8 @@ GC_TICKET_BLUE_48 BITMAP "..\\bmp\\gc_ticket_blue_48.bmp"
 GC_TICKET_BLUE_16 BITMAP "..\\bmp\\gc_ticket_blue_16.bmp"
 GC_TICKET_RED_48 BITMAP "..\\bmp\\gc_ticket_red_48.bmp"
 GC_TICKET_RED_16 BITMAP "..\\bmp\\gc_ticket_red_16.bmp"
+GC_SIGN_FORBIDDEN_16 BITMAP "..\\bmp\\gc_sign_forbidden_16.bmp"
+GC_EXPORT2_16 BITMAP "..\\bmp\\gc_export2_16.bmp"
+GC_IMPORT_16 BITMAP "..\\bmp\\gc_import_16.bmp"
 
+GC_NOTEBOOK2_48 BITMAP "..\\bmp\\gc_notebook2_48.bmp"

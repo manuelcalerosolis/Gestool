@@ -590,7 +590,7 @@ METHOD Resource( nMode, aInit ) CLASS TNotas
 
    REDEFINE BITMAP oBmpGeneral ;
       ID       990 ;
-      RESOURCE "note_48_alpha" ;
+      RESOURCE "gc_notebook2_48" ;
       TRANSPARENT ;
       OF       oDlg
 
