@@ -693,14 +693,14 @@ FUNCTION CfgDocs( oMenuItem, oWnd )
 
 #ifndef __SQLLIB__
 
-      DEFINE BTNSHELL RESOURCE "EXPORT" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_export2_" OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( DlgExportDocument( oWndBrw ) );
          TOOLTIP  "E(x)portar";
          HOTKEY   "X" ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "IMPORT" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_import_" OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( DlgImportDocument( oWndBrw ) );
          TOOLTIP  "Im(p)ortar";
@@ -1867,7 +1867,7 @@ RETURN ( oDlg:nResult == IDOK )*/
       Objetos---------------------------------------------------------------------
       */
 
-/*      with object ( TTrans():Create( cPatGrp() ) )
+/*      with object ( TTrans():Create( cPatEmp() ) )
          :DefineFiles()
          AppObjItm( cDbfFld, "TR", :oDbf, "( cDbfTrn )"  )                // Transportes
          :End()

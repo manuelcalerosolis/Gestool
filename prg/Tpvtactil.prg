@@ -1281,9 +1281,9 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oArticulosOfertas                         PATH ( cPatArt() )   FILE "OFERTA.DBF"          VIA ( cDriver() ) SHARED INDEX "OFERTA.CDX"
 
-   DATABASE NEW ::oFormaPago                                PATH ( cPatGrp() )   FILE "FPAGO.DBF"           VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
+   DATABASE NEW ::oFormaPago                                PATH ( cPatEmp() )   FILE "FPAGO.DBF"           VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
-   DATABASE NEW ::oPropiedadesLinea                         PATH ( cPatGrp() )   FILE "TBLPRO.DBF"          VIA ( cDriver() ) SHARED INDEX "TBLPRO.CDX"
+   DATABASE NEW ::oPropiedadesLinea                         PATH ( cPatEmp() )   FILE "TBLPRO.DBF"          VIA ( cDriver() ) SHARED INDEX "TBLPRO.CDX"
 
    DATABASE NEW ::oFamilias                                 PATH ( cPatArt() )   FILE "FAMILIAS.DBF"        VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
@@ -1313,7 +1313,7 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oAgentes                                  PATH ( cPatCli() )   FILE "AGENTES.DBF"         VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
 
-   DATABASE NEW ::oRuta                                     PATH ( cPatGrp() )   FILE "RUTA.DBF"            VIA ( cDriver() ) SHARED INDEX "RUTA.CDX"
+   DATABASE NEW ::oRuta                                     PATH ( cPatEmp() )   FILE "RUTA.DBF"            VIA ( cDriver() ) SHARED INDEX "RUTA.CDX"
 
    DATABASE NEW ::oAlmacen                                  PATH ( cPatAlm() )   FILE "ALMACEN.DBF"         VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
 
@@ -1335,7 +1335,7 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oFiltroPorUsuario                         PATH ( cPatDat() )   FILE "CNFFLT.DBF"          VIA ( cDriver() ) SHARED INDEX "CNFFLT.CDX"
 
-   DATABASE NEW ::oComisionesAgentes                        PATH ( cPatGrp() )   FILE "AGECOM.DBF"          VIA ( cDriver() ) SHARED INDEX "AGECOM.CDX"
+   DATABASE NEW ::oComisionesAgentes                        PATH ( cPatEmp() )   FILE "AGECOM.DBF"          VIA ( cDriver() ) SHARED INDEX "AGECOM.CDX"
 
    DATABASE NEW ::oEmpresa                                  PATH ( cPatDat() )   FILE "EMPRESA.DBF"         VIA ( cDriver() ) SHARED INDEX "EMPRESA.CDX"
 
@@ -1414,7 +1414,7 @@ METHOD OpenFiles() CLASS TpvTactil
 
    ::oBandera                 := TBandera():New()
 
-   ::oStock                   := TStock():Create( cPatGrp() )
+   ::oStock                   := TStock():Create( cPatEmp() )
    if !::oStock:lOpenFiles()
       ::lOpenFiles            := .f.
    end if
@@ -1434,7 +1434,7 @@ METHOD OpenFiles() CLASS TpvTactil
 
    ::cImpresora               := cImpresoraTicketEnCaja( oUser():cCaja(), ::oCajaCabecera )
 
-   ::oUndMedicion             := UniMedicion():Create( cPatGrp() )
+   ::oUndMedicion             := UniMedicion():Create( cPatEmp() )
    if !::oUndMedicion:OpenFiles()
       ::lOpenFiles            := .f.
    end if
@@ -1447,7 +1447,7 @@ METHOD OpenFiles() CLASS TpvTactil
       ::oRestaurante:BuildSalas()
    end if
 
-   ::oInvitacion              := TInvitacion():Create( cPatGrp() )
+   ::oInvitacion              := TInvitacion():Create( cPatEmp() )
    if !::oInvitacion:OpenFiles()
       ::lOpenFiles            := .f.
    end if
@@ -3161,7 +3161,7 @@ METHOD ShowUsuario()
 
   if BrwBigUser()
 
-     ::oBtnUsuario:cBmp( if( oUser():lAdministrador(), "gc_businessman2_32", "Dude4_32" ) )
+     ::oBtnUsuario:cBmp( if( oUser():lAdministrador(), "gc_businessman2_32", "gc_user2_32" ) )
 
      ::oBtnUsuario:cCaption( Capitalize( oUser():cNombre() ) )
 
@@ -5451,8 +5451,8 @@ METHOD OnClickInvitacion() CLASS TpvTactil
 
    DEFINE DIALOG oDlg RESOURCE "INV_TCT"
 
-      ::oBtnTodasLineas             := ApoloBtnBmp():ReDefine( 100, "Row_All_32", , , , , {|| ::SelectTodasLineasInvitacion() }, oDlg, .f., , .f., .f., "", , , , .t., "TOP", .t., , , .f. )
-      ::oBtnUnaLinea                := ApoloBtnBmp():ReDefine( 110, "Row_32", , , , ,     {|| ::SelectUnaLineaInvitacion() },    oDlg, .f., , .f., .f., "", , , , .t., "TOP", .t., , , .f. )
+      ::oBtnTodasLineas             := ApoloBtnBmp():ReDefine( 100, "gc_table_selection_all_32", , , , , {|| ::SelectTodasLineasInvitacion() }, oDlg, .f., , .f., .f., "", , , , .t., "TOP", .t., , , .f. )
+      ::oBtnUnaLinea                := ApoloBtnBmp():ReDefine( 110, "gc_table_selection_row_32", , , , ,     {|| ::SelectUnaLineaInvitacion() },    oDlg, .f., , .f., .f., "", , , , .t., "TOP", .t., , , .f. )
 
       ::oImageListInvitacion        := TImageList():New( 48, 48 )
 
@@ -5651,8 +5651,8 @@ METHOD OnClickDescuento() CLASS TpvTactil
 
    DEFINE DIALOG oDlg RESOURCE "DTO_TCT"
 
-      ::oBtnUnaLinea      := ApoloBtnBmp():ReDefine( 100, "Row_32",,,,,    {|| ::oBtnUnaLinea:GoDown(), ::oBtnTodasLineas:GoUp() }, oDlg, .f., , .f., .f., "", , , , .t., "TOP", .t., , , .f. )
-      ::oBtnTodasLineas   := ApoloBtnBmp():ReDefine( 110, "Row_All_32",,,,,{|| ::oBtnUnaLinea:GoUp(), ::oBtnTodasLineas:GoDown() }, oDlg, .f., , .f., .f., "", , , , .t., "TOP", .t., , , .f. )
+      ::oBtnUnaLinea      := ApoloBtnBmp():ReDefine( 100, "gc_table_selection_row_32",,,,,    {|| ::oBtnUnaLinea:GoDown(), ::oBtnTodasLineas:GoUp() }, oDlg, .f., , .f., .f., "", , , , .t., "TOP", .t., , , .f. )
+      ::oBtnTodasLineas   := ApoloBtnBmp():ReDefine( 110, "gc_table_selection_all_32",,,,,{|| ::oBtnUnaLinea:GoUp(), ::oBtnTodasLineas:GoDown() }, oDlg, .f., , .f., .f., "", , , , .t., "TOP", .t., , , .f. )
 
       REDEFINE BUTTON ;
          ID       200 ;
@@ -5682,13 +5682,13 @@ METHOD OnClickDescuento() CLASS TpvTactil
       REDEFINE BUTTONBMP ;
          ID       300 ;
          OF       oDlg ;
-         BITMAP   "Navigate_Plus_32" ;
+         BITMAP   "gc_navigate_plus_32" ;
          ACTION   ( oGetPorcentaje++ )
 
       REDEFINE BUTTONBMP ;
          ID       310 ;
          OF       oDlg ;
-         BITMAP   "Navigate_Minus_32" ;
+         BITMAP   "gc_navigate_minus_32" ;
          ACTION   ( oGetPorcentaje-- )
 
       REDEFINE GET oGetPorcentaje ;
@@ -5766,7 +5766,7 @@ METHOD SelecionaCliente() CLASS TpvTactil
 
    do case
       case ::oTiketCabecera:nUbiTik == ubiLlevar
-         cCliente    := BrwCliTactil( nil, nil, nil, .t., "Selecione un cliente para llevar", "wheel_48_alpha" )
+         cCliente    := BrwCliTactil( nil, nil, nil, .t., "Selecione un cliente para llevar", "gc_motor_scooter_48" )
       case ::oTiketCabecera:nUbiTik == ubiEncargar
          cCliente    := BrwCliTactil( nil, nil, nil, .t., "Selecione un cliente para encargar", "gc_address_book_48" )
       otherwise

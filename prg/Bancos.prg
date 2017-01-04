@@ -38,7 +38,7 @@ END CLASS
 
 METHOD Create( cPath ) CLASS TBancos
 
-   DEFAULT cPath        := cPatGrp()
+   DEFAULT cPath        := cPatEmp()
 
    ::cPath              := cPath
    ::oDbf               := nil
@@ -49,7 +49,7 @@ RETURN ( Self )
 
 METHOD New( cPath, oWndParent, oMenuItem ) CLASS TBancos
 
-   DEFAULT cPath        := cPatGrp()
+   DEFAULT cPath        := cPatEmp()
    DEFAULT oWndParent   := GetWndFrame()
 
    if oMenuItem != nil
@@ -78,7 +78,7 @@ METHOD OpenFiles( lExclusive, cPath ) CLASS TBancos
    local oBlock         
 
    DEFAULT lExclusive   := .f.
-   DEFAULT cPath        := cPatGrp()
+   DEFAULT cPath        := cPatEmp()
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -307,7 +307,7 @@ END CLASS
 
 METHOD Create( cPath ) CLASS TCuentasBancarias
 
-   DEFAULT cPath        := cPatGrp()
+   DEFAULT cPath        := cPatEmp()
 
    ::cPath              := cPath
    ::oDbf               := nil
@@ -318,7 +318,7 @@ RETURN ( Self )
 
 METHOD New( cPath, oWndParent, oMenuItem ) CLASS TCuentasBancarias
 
-   DEFAULT cPath        := cPatGrp()
+   DEFAULT cPath        := cPatEmp()
    DEFAULT oWndParent   := GetWndFrame()
 
    if oMenuItem != nil

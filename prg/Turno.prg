@@ -889,7 +889,7 @@ METHOD OpenFiles( lExclusive )
 
       DATABASE NEW ::oProvee     PATH ( cPatPrv() ) FILE "Provee.Dbf"      VIA ( cDriver() ) SHARED INDEX "Provee.Cdx"
 
-      DATABASE NEW ::oFPago      PATH ( cPatGrp() ) FILE "FPAGO.DBF"       VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
+      DATABASE NEW ::oFPago      PATH ( cPatEmp() ) FILE "FPAGO.DBF"       VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
       DATABASE NEW ::oFacPrvT    PATH ( cPatEmp() ) FILE "FACPRVT.DBF"     VIA ( cDriver() ) SHARED INDEX "FACPRVT.CDX"
       ::oFacPrvT:OrdSetFocus( "CTURFAC" )
@@ -926,11 +926,11 @@ METHOD OpenFiles( lExclusive )
       DATABASE NEW ::oDbfDoc     PATH ( cPatEmp() ) FILE "RDocumen.Dbf"    VIA ( cDriver() ) SHARED INDEX "RDocumen.Cdx"
       ::oDbfDoc:OrdSetFocus( "cTipo" )
 
-      DATABASE NEW ::oEmpBnc     PATH ( cPatGrp() ) FILE "EmpBnc.Dbf"      VIA ( cDriver() ) SHARED INDEX "EmpBnc.Cdx"
+      DATABASE NEW ::oEmpBnc     PATH ( cPatEmp() ) FILE "EmpBnc.Dbf"      VIA ( cDriver() ) SHARED INDEX "EmpBnc.Cdx"
 
       DATABASE NEW ::oLogPorta   PATH ( cPatEmp() ) FILE "LogPorta.Dbf"    VIA ( cDriver() ) SHARED INDEX "LogPorta.Cdx"
 
-      ::oTipInv                  := TInvitacion():Create( cPatGrp() )
+      ::oTipInv                  := TInvitacion():Create( cPatEmp() )
       if !::oTipInv:OpenFiles( .f. )
          lOpen                   := .f.
       end if

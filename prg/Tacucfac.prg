@@ -76,7 +76,7 @@ METHOD OpenFiles() CLASS TAcuCFac
 
    DATABASE NEW ::oAntCliT PATH ( cPatEmp() ) FILE "ANTCLIT.DBF"  VIA ( cDriver() ) SHARED INDEX "ANTCLIT.CDX"
 
-   ::oStock                := TStock():Create( cPatGrp() )
+   ::oStock                := TStock():Create( cPatEmp() )
    if ::oStock:lOpenFiles()
       ::oStock:cAlbCliT   := ::oAlbCliT:cAlias
       ::oStock:cFacCliP   := ::oFacCliP:cAlias

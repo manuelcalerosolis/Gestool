@@ -244,7 +244,7 @@ METHOD OpenFiles( lExclusive )
 
    DATABASE NEW ::oAgentes    FILE "AGENTES.DBF"   PATH ( cPatCli() ) VIA ( cDriver() )SHARED INDEX "AGENTES.CDX"
 
-   DATABASE NEW ::oFPago      FILE "FPAGO.DBF"     PATH ( cPatGrp() ) VIA ( cDriver() )SHARED INDEX "FPAGO.CDX"
+   DATABASE NEW ::oFPago      FILE "FPAGO.DBF"     PATH ( cPatEmp() ) VIA ( cDriver() )SHARED INDEX "FPAGO.CDX"
 
    ::oCuentasRemesa:OpenFiles()
 

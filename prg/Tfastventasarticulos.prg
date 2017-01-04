@@ -425,7 +425,7 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       ::oCnfFlt               := TDataCenter():oCnfFlt( cPatEmp(), ::cDriver )
 
-      ::oStock                := TStock():Create( cPatGrp(), ::cDriver )
+      ::oStock    := TStock():Create( cPatEmp(), ::cDriver )
       if !::oStock:lOpenFiles()
          lOpen                := .f.
       else 

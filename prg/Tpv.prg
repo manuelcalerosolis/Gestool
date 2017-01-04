@@ -651,17 +651,17 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       USE ( cPatArt() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfKit ) )
       SET ADSINDEX TO ( cPatArt() + "ARTKIT.CDX" ) ADDITIVE
 
-      USE ( cPatGrp() + "OFERTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @dbfOferta ) )
-      SET ADSINDEX TO ( cPatGrp() + "OFERTA.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "OFERTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @dbfOferta ) )
+      SET ADSINDEX TO ( cPatEmp() + "OFERTA.CDX" ) ADDITIVE
 
-      USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
-      SET ADSINDEX TO ( cPatGrp() + "FPago.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
+      SET ADSINDEX TO ( cPatEmp() + "FPago.Cdx" ) ADDITIVE
 
-      USE ( cPatGrp() + "TBLPRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLPRO", @dbfTblPro ) )
-      SET ADSINDEX TO ( cPatGrp() + "TBLPRO.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "TBLPRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLPRO", @dbfTblPro ) )
+      SET ADSINDEX TO ( cPatEmp() + "TBLPRO.CDX" ) ADDITIVE
 
-      USE ( cPatGrp() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
-      SET ADSINDEX TO ( cPatGrp() + "FAMILIAS.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
+      SET ADSINDEX TO ( cPatEmp() + "FAMILIAS.CDX" ) ADDITIVE
 
       USE ( cPatEmp + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
       SET ADSINDEX TO ( cPatEmp + "AntCliT.CDX" ) ADDITIVE
@@ -672,8 +672,8 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgent ) )
       SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
 
-      USE ( cPatGrp() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
-      SET ADSINDEX TO ( cPatGrp() + "RUTA.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
+      SET ADSINDEX TO ( cPatEmp() + "RUTA.CDX" ) ADDITIVE
 
       USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlm ) )
       SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE
@@ -703,8 +703,8 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       USE ( cPatDat() + "CAJPORTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJPORTA", @dbfCajPorta ) )
       SET ADSINDEX TO ( cPatDat() + "CAJPORTA.CDX" ) ADDITIVE
 
-      USE ( cPatGrp() + "AGECOM.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGECOM", @dbfAgeCom ) )
-      SET ADSINDEX TO ( cPatGrp() + "AGECOM.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "AGECOM.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGECOM", @dbfAgeCom ) )
+      SET ADSINDEX TO ( cPatEmp() + "AGECOM.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "EMPRESA.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
       SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
@@ -795,7 +795,7 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
 
       oBandera             := TBandera():New()
 
-      oStock               := TStock():Create( cPatGrp() )
+      oStock               := TStock():Create( cPatEmp() )
       if !oStock:lOpenFiles()
          lOpenFiles        := .f.
       end if
@@ -813,12 +813,12 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
          end if
       end if
 
-      oUndMedicion         := UniMedicion():Create( cPatGrp() )
+      oUndMedicion         := UniMedicion():Create( cPatEmp() )
       if !oUndMedicion:OpenFiles()
          lOpenFiles        := .f.
       end if
 
-      oInvitacion          := TInvitacion():Create( cPatGrp() )
+      oInvitacion          := TInvitacion():Create( cPatEmp() )
       if !oInvitacion:OpenFiles()
          lOpenFiles        := .f.
       end if
@@ -12846,7 +12846,7 @@ Static Function SetBigUser( aTmp, aGet )
    if !empty( oUser():cImagen() )
       oBtnUsuario:cBmp( cFileBmpName( oUser():cImagen() ) )
    else
-      oBtnUsuario:cBmp( if( oUser():lAdministrador(), "gc_businessman2_32", "Dude4_32" ) )
+      oBtnUsuario:cBmp( if( oUser():lAdministrador(), "gc_businessman2_32", "gc_user2_32" ) )
    end if
 
    oBtnUsuario:cCaption( Capitalize( oUser():cNombre() ) )
@@ -15262,9 +15262,9 @@ Static Function CrearDescuento( dbfTmpL, oBrwDet )
 
    DEFINE DIALOG oDlg RESOURCE "DTO_TCT"
 
-      oBtnUnaLinea      := TBtnBmp():ReDefine( 100, "Row_32",,,,,{|| oBtnUnaLinea:GoDown(), oBtnTodasLineas:GoUp() }, oDlg, .f., , .f. )
+      oBtnUnaLinea      := TBtnBmp():ReDefine( 100, "gc_table_selection_row_32",,,,,{|| oBtnUnaLinea:GoDown(), oBtnTodasLineas:GoUp() }, oDlg, .f., , .f. )
 
-      oBtnTodasLineas   := TBtnBmp():ReDefine( 110, "Row_All_32",,,,,{|| oBtnUnaLinea:GoUp(), oBtnTodasLineas:GoDown() }, oDlg, .f., , .f. )
+      oBtnTodasLineas   := TBtnBmp():ReDefine( 110, "gc_table_selection_all_32",,,,,{|| oBtnUnaLinea:GoUp(), oBtnTodasLineas:GoDown() }, oDlg, .f., , .f. )
 
       REDEFINE BUTTON ;
          ID       200 ;
@@ -15294,13 +15294,13 @@ Static Function CrearDescuento( dbfTmpL, oBrwDet )
       REDEFINE BUTTONBMP ;
          ID       300 ;
          OF       oDlg ;
-         BITMAP   "Navigate_Plus_32" ;
+         BITMAP   "gc_navigate_plus_32" ;
          ACTION   ( oGetPorcentaje++ )
 
       REDEFINE BUTTONBMP ;
          ID       310 ;
          OF       oDlg ;
-         BITMAP   "Navigate_Minus_32" ;
+         BITMAP   "gc_navigate_minus_32" ;
          ACTION   ( oGetPorcentaje-- )
 
       REDEFINE GET oGetPorcentaje ;
@@ -15361,9 +15361,9 @@ Static Function CrearInvitacion( dbfTmpL, oBrwDet )
 
    DEFINE DIALOG oDlg RESOURCE "INV_TCT"
 
-      oBtnTodasLineas   := ApoloBtnBmp():ReDefine( 100, "Row_All_32",,,,,{|| oBtnUnaLinea:GoUp(), oBtnTodasLineas:GoDown() }, oDlg, .f., , .f. )
+      oBtnTodasLineas   := ApoloBtnBmp():ReDefine( 100, "gc_table_selection_all_32",,,,,{|| oBtnUnaLinea:GoUp(), oBtnTodasLineas:GoDown() }, oDlg, .f., , .f. )
 
-      oBtnUnaLinea      := ApoloBtnBmp():ReDefine( 110, "Row_32",,,,,{|| oBtnUnaLinea:GoDown(), oBtnTodasLineas:GoUp() }, oDlg, .f., , .f. )
+      oBtnUnaLinea      := ApoloBtnBmp():ReDefine( 110, "gc_table_selection_row_32",,,,,{|| oBtnUnaLinea:GoDown(), oBtnTodasLineas:GoUp() }, oDlg, .f., , .f. )
 
       oImgInv           := TImageList():New( 48, 48 )
       oLstInv           := TListView():Redefine( 120, oDlg )
@@ -15533,8 +15533,8 @@ Function SynTikCli( cPath )
    USE ( cPath + "TIKES.DBF" )         NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "TIKES", @dbfTikS ) ) EXCLUSIVE
    SET ADSINDEX TO ( cPath + "TIKES.CDX" ) ADDITIVE
 
-   USE ( cPatGrp() + "FAMILIAS.DBF" )  NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) ) EXCLUSIVE
-   SET ADSINDEX TO ( cPatGrp() + "FAMILIAS.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "FAMILIAS.DBF" )  NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) ) EXCLUSIVE
+   SET ADSINDEX TO ( cPatEmp() + "FAMILIAS.CDX" ) ADDITIVE
 
    USE ( cPatArt() + "ARTICULO.DBF" )  NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) ) EXCLUSIVE
    SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE

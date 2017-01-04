@@ -1741,7 +1741,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Unidades medición'
    oItem:cMessage       := 'Unidades de medición'
-   oItem:bAction        := {|| UniMedicion():New( cPatGrp(), oWnd, "01103" ):Activate() }
+   oItem:bAction        := {|| UniMedicion():New( cPatEmp(), oWnd, "01103" ):Activate() }
    oItem:cId            := "01103"
    oItem:cBmp           := "gc_tape_measure2_16"
    oItem:cBmpBig        := "gc_tape_measure2_32"
@@ -1929,7 +1929,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Bancos'
    oItem:cMessage       := 'Acceso a las entidades bancarias'
-   oItem:bAction        := {|| TBancos():New( cPatGrp(), oWnd, "01106" ):Activate() }
+   oItem:bAction        := {|| TBancos():New( cPatEmp(), oWnd, "01106" ):Activate() }
    oItem:cId            := "01106"
    oItem:cBmp           := "gc_central_bank_euro_16"
    oItem:cBmpBig        := "gc_central_bank_euro_32"
@@ -1939,7 +1939,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Cuentas bancarias'
    oItem:cMessage       := 'Acceso a las cuentas bancarias'
-   oItem:bAction        := {|| TCuentasBancarias():New( cPatGrp(), oWnd, "01106" ):Activate() }
+   oItem:bAction        := {|| TCuentasBancarias():New( cPatEmp(), oWnd, "01106" ):Activate() }
    oItem:cId            := "01106"
    oItem:cBmp           := "gc_central_bank_euro_text_16"
    oItem:cBmpBig        := "gc_central_bank_euro_text_32"
@@ -2769,7 +2769,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Invitaciones'
    oItem:cMessage       := 'Acceso a los tipos de invitaciones'
-   oItem:bAction        := {|| TInvitacion():New( cPatGrp(), oWnd, "01107" ):Activate() }
+   oItem:bAction        := {|| TInvitacion():New( cPatEmp(), oWnd, "01107" ):Activate() }
    oItem:cId            := "01107"
    oItem:cBmp           := "gc_masks_16"
    oItem:cBmpBig        := "gc_masks_32"
@@ -2932,7 +2932,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Campos extra'
    oItem:cMessage       := 'Acceso a los campos extra'
-   oItem:bAction        := {|| CamposExtra( "01127", oWnd ) }
+   oItem:bAction        := {|| CamposExtra( "01127", oWnd ) } 
    oItem:cId            := "01127"
    oItem:cBmp           := "gc_form_plus2_16"
    oItem:cBmpBig        := "gc_form_plus2_32"
@@ -3589,8 +3589,8 @@ Function InitBrw( oDlg, oImgUsr, oLstUsr, dbfUsr )
 
    if !Empty( oImgUsr ) .and. !Empty( oLstUsr )
 
-      oImgUsr:AddMasked( TBitmap():Define( "BIG_ADMIN" ),   Rgb( 255, 0, 255 ) )
-      oImgUsr:AddMasked( TBitmap():Define( "BIG_USER" ),    Rgb( 255, 0, 255 ) )
+      oImgUsr:AddMasked( TBitmap():Define( "GC_BUSINESSMAN2_50" ),   Rgb( 255, 0, 255 ) )
+      oImgUsr:AddMasked( TBitmap():Define( "GC_USER2_50" ),    Rgb( 255, 0, 255 ) )
 
       oLstUsr:SetImageList( oImgUsr )
 

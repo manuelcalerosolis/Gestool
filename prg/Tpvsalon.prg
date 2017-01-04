@@ -625,12 +625,12 @@ METHOD StartResource( oBrw, oDlg ) CLASS TTpvSalon
       oCarpeta       := TCarpeta():New( oOfficeBar, "Inicio" )
 
       oGrupo         := TDotNetGroup():New( oCarpeta, 366,  "Seleción de tickets", .f. )
-         oBoton      := TDotNetButton():New( 60, oGrupo,    "navigate_top_32",         "Primera línea",      1, {|| ::LineaPrimera( oBrw ) } )
-         oBoton      := TDotNetButton():New( 60, oGrupo,    "Navigate_end_32",         "Última línea",       2, {|| ::LineaUltima( oBrw ) } )
-         oBoton      := TDotNetButton():New( 60, oGrupo,    "gc_navigate_up2a_32",            "Página anterior",    3, {|| ::PaginaAnterior( oBrw ) } )
-         oBoton      := TDotNetButton():New( 60, oGrupo,    "gc_navigate_down2a_32",          "Página siguiente",   4, {|| ::PaginaSiguiente( oBrw ) } )
-         oBoton      := TDotNetButton():New( 60, oGrupo,    "gc_arrow_up_32",             "Línea anterior",     5, {|| ::LineaAnterior( oBrw ) } )
-         oBoton      := TDotNetButton():New( 60, oGrupo,    "gc_arrow_down_32",           "Línea siguiente",    6, {|| ::LineaSiguiente( oBrw ) } )
+         oBoton      := TDotNetButton():New( 60, oGrupo,    "gc_navigate_line_up_32",   "Primera línea",      1, {|| ::LineaPrimera( oBrw ) } )
+         oBoton      := TDotNetButton():New( 60, oGrupo,    "gc_navigate_line_down_32", "Última línea",       2, {|| ::LineaUltima( oBrw ) } )
+         oBoton      := TDotNetButton():New( 60, oGrupo,    "gc_navigate_up2a_32",      "Página anterior",    3, {|| ::PaginaAnterior( oBrw ) } )
+         oBoton      := TDotNetButton():New( 60, oGrupo,    "gc_navigate_down2a_32",    "Página siguiente",   4, {|| ::PaginaSiguiente( oBrw ) } )
+         oBoton      := TDotNetButton():New( 60, oGrupo,    "gc_arrow_up_32",           "Línea anterior",     5, {|| ::LineaAnterior( oBrw ) } )
+         oBoton      := TDotNetButton():New( 60, oGrupo,    "gc_arrow_down_32",         "Línea siguiente",    6, {|| ::LineaSiguiente( oBrw ) } )
 
       oGrupo         := TDotNetGroup():New( oCarpeta, 126,  "Salida", .f. )
          oBoton      := TDotNetButton():New( 60, oGrupo,    "gc_check_32",                "Aceptar",            1, {|| oDlg:End( IDOK ) }, , , .f., .f., .f. )

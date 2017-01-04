@@ -477,7 +477,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():ArticuloLenguaje( nView )
 
-      oStock            := TStock():Create( cPatGrp() )
+      oStock            := TStock():Create( cPatEmp() )
       if !oStock:lOpenFiles()
          lOpenFiles     := .f.
       end if 
@@ -9691,8 +9691,8 @@ Function SynRctPrv( cPath )
    USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
    SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 
-   USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
-   SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
+   SET ADSINDEX TO ( cPatEmp() + "FPAGO.CDX" ) ADDITIVE
 
    USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
    SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE

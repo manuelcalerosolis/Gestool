@@ -1494,8 +1494,8 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDelega ) )
       SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
       
-      USE ( cPatGrp() + "AGECOM.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGECOM", @dbfAgeCom ) )
-      SET ADSINDEX TO ( cPatGrp() + "AGECOM.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "AGECOM.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGECOM", @dbfAgeCom ) )
+      SET ADSINDEX TO ( cPatEmp() + "AGECOM.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "FACRECT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECT", @dbfFacRecT ) )
       SET ADSINDEX TO ( cPatEmp() + "FACRECT.CDX" ) ADDITIVE
@@ -1564,7 +1564,7 @@ STATIC FUNCTION OpenFiles()
 
       oBandera          := TBandera():New()
 
-      oStock               := TStock():Create( cPatGrp() )
+      oStock               := TStock():Create( cPatEmp() )
       if !oStock:lOpenFiles()
          lOpenFiles     := .f.
       end if
@@ -1589,7 +1589,7 @@ STATIC FUNCTION OpenFiles()
          lOpenFiles     := .f.
       end if
 
-      oUndMedicion      := UniMedicion():Create( cPatGrp() )
+      oUndMedicion      := UniMedicion():Create( cPatEmp() )
       if !oUndMedicion:OpenFiles()
          lOpenFiles     := .f.
       end if

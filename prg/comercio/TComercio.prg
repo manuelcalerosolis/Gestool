@@ -524,7 +524,7 @@ METHOD New( nView, oStock ) CLASS TComercio
    end if 
 
    if empty(oStock)
-      ::oStock                := TStock():Create( cPatGrp() )
+      ::oStock                := TStock():Create( cPatEmp() )
       ::oStock:lOpenFiles()
       ::lDestroyStock         := .t.
    else 

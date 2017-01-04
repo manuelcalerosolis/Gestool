@@ -291,7 +291,7 @@ METHOD OpenFiles()
 
       D():PropiedadesLineas( ::nView )
 
-      ::oStock             := TStock():Create( cPatGrp() )
+      ::oStock             := TStock():Create( cPatEmp() )
 
       if !::oStock:lOpenFiles()
          ::lOpenFiles      := .f.

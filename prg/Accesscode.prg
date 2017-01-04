@@ -493,8 +493,8 @@ METHOD InitTactilResource( oDlg, oImgUsr, oLstUsr ) CLASS AccessCode
 
    if !Empty( oImgUsr ) .and. !Empty( oLstUsr )
 
-      oImgUsr:AddMasked( TBitmap():Define( "BIG_ADMIN" ),   Rgb( 255, 0, 255 ) )
-      oImgUsr:AddMasked( TBitmap():Define( "BIG_USER" ),    Rgb( 255, 0, 255 ) )
+      oImgUsr:AddMasked( TBitmap():Define( "GC_BUSINESSMAN2_50" ),   Rgb( 255, 0, 255 ) )
+      oImgUsr:AddMasked( TBitmap():Define( "GC_USER2_50" ),    Rgb( 255, 0, 255 ) )
 
       oLstUsr:SetImageList( oImgUsr )
 

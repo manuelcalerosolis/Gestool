@@ -484,7 +484,7 @@ METHOD uCreaToolTip( nRow, nCol, nKeyFlags )
 
       REDEFINE BITMAP oBmp ;
          ID       500 ;
-         RESOURCE "Note_48_Alpha" ;
+         RESOURCE "gc_notebook2_48" ;
          TRANSPARENT ;
          OF       oDlgToolTip
 

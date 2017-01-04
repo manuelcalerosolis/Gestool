@@ -3012,7 +3012,7 @@ METHOD oDefFpgInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdAllFpg ) CLASS TInfG
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfFpg PATH ( cPatGrp() ) FILE "FPago.Dbf" VIA ( cDriver() ) SHARED INDEX "FPago.Cdx"
+   DATABASE NEW ::oDbfFpg PATH ( cPatEmp() ) FILE "FPago.Dbf" VIA ( cDriver() ) SHARED INDEX "FPago.Cdx"
 
    /*
    Si nos pasan la BD montamos los valores

@@ -1674,7 +1674,7 @@ Function BrwCajaTactil( oGet, dbfCaja, oGet2, lReturnCaja, lParaLlevar )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       500 ;
-        RESOURCE   if ( lParaLlevar, "wheel_48_alpha", "gc_cash_register_48" ) ;
+        RESOURCE   if ( lParaLlevar, "gc_motor_scooter_48", "gc_cash_register_48" ) ;
         TRANSPARENT ;
         OF       oDlg
 
@@ -1714,12 +1714,12 @@ Function BrwCajaTactil( oGet, dbfCaja, oGet2, lReturnCaja, lParaLlevar )
       REDEFINE BUTTONBMP oBotonAnadir ;
          ID       160 ;
          OF       oDlg ;
-         BITMAP   "User1_Add_32" ;
+         BITMAP   "gc_user2_add_32" ;
 
       REDEFINE BUTTONBMP oBotonEditar ;
          ID       170 ;
          OF       oDlg ;
-         BITMAP   "User1_Edit_32" ;
+         BITMAP   "gc_user2_edit_32" ;
 
       REDEFINE BUTTONBMP ;
          ID       140 ;

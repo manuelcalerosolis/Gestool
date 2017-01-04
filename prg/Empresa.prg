@@ -3119,8 +3119,8 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
 
    CursorWait()
 
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   /*oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE*/
    
    if Empty( dbfEmp )
       USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
@@ -3233,7 +3233,7 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
 
    if Empty( ( dbfEmp )->cCodGrp ) 
 
-      cPatGrp( cCodEmp, nil, .t. )
+      //cPatGrp( cCodEmp, nil, .t. )
 
       cPatCli( cCodEmp, nil, .t. )
 
@@ -3251,7 +3251,7 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
    Directorios si tiene grupo--------------------------------------------------
    */
 
-      cPatGrp( ( dbfEmp )->cCodGrp, nil, .f. )
+      //cPatGrp( ( dbfEmp )->cCodGrp, nil, .f. )
 
       if RetFld( cCodEmp, dbfEmp, "lGrpCli", "CodEmp" )
          cPatCli( ( dbfEmp )->cCodGrp, nil, .f. )
@@ -3401,13 +3401,13 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
       oBrw:SetFocus()
    end if
 
-   RECOVER USING oError
+   /*RECOVER USING oError
 
       msgStop( "Imposible seleccionar empresa" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
 
    CursorWE()
 
@@ -4195,7 +4195,7 @@ function ReindexaEmp( cPath, cCodEmpNew, oMsg )
       :cPatArt       := cPatArt( cCodEmpNew, .f., .t. )
       :cPatPrv       := cPatPrv( cCodEmpNew, .f., .t. )
       :cPatAlm       := cPatAlm( cCodEmpNew, .f., .t. )
-      :cPatGrp       := cPatGrp( cCodEmpNew, .f., .t. )
+      //:cPatGrp       := cPatGrp( cCodEmpNew, .f., .t. )
       :GenIndices( oMsg )
    end with
 
@@ -6998,14 +6998,14 @@ FUNCTION BrwBncEmp( oGet, oGetPaisIBAN, oGetControlIBAN, oGetEntidad, oGetSucurs
    nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd           := aCbxOrd[ nOrd ]
 
-   if !lExistTable( cPatGrp() + "EmpBnc.Dbf" )
+   if !lExistTable( cPatEmp() + "EmpBnc.Dbf" )
       MsgStop( 'No existe el fichero de bancos' )
       Return .f.
    end if
 
    if Empty( dbfBancos )
-      USE ( cPatGrp() + "EmpBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPBNC", @dbfBancos ) )
-      SET ADSINDEX TO ( cPatGrp() + "EmpBnc.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "EmpBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPBNC", @dbfBancos ) )
+      SET ADSINDEX TO ( cPatEmp() + "EmpBnc.Cdx" ) ADDITIVE
       lClose         := .t.
    end if
 

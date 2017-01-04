@@ -455,17 +455,17 @@ METHOD ChangeBtnImpresion() CLASS TpvCobros
       case ::nExit == exitAceptar
 
          ::nExit   := exitAceptarImprimir
-         ::oBtnTipoImpresion:LoadBitmap( "printer_ok" )
+         ::oBtnTipoImpresion:LoadBitmap( "gc_printer2_ok_32" )
 
       case ::nExit == exitAceptarImprimir
 
          ::nExit   := exitAceptarRegalo
-         ::oBtnTipoImpresion:LoadBitmap( "printer_new" )
+         ::oBtnTipoImpresion:LoadBitmap( "gc_printer2_sun_32" )
 
       case ::nExit == exitAceptarRegalo
 
          ::nExit   := exitAceptar
-         ::oBtnTipoImpresion:LoadBitmap( "printer_delete" )
+         ::oBtnTipoImpresion:LoadBitmap( "gc_printer2_delete_32" )
 
    end case
 
@@ -481,17 +481,17 @@ METHOD SalidaImpresoraDefecto CLASS TpvCobros
       case uFieldEmpresa( "nTipImpTpv" ) <= 1
       
          ::nExit                 := exitAceptar
-         ::cBmpSalidaImpresora   := "printer_delete"
+         ::cBmpSalidaImpresora   := "gc_printer2_delete_32"
 
       case uFieldEmpresa( "nTipImpTpv" ) == 2
          
          ::nExit                 := exitAceptarImprimir
-         ::cBmpSalidaImpresora   := "printer_ok"
+         ::cBmpSalidaImpresora   := "gc_printer2_ok_32"
 
       otherwise
          
          ::nExit                 := exitAceptarRegalo
-         ::cBmpSalidaImpresora   := "printer_new"
+         ::cBmpSalidaImpresora   := "gc_printer2_sun_32"
 
    end case
 

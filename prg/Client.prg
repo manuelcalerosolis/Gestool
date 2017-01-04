@@ -406,8 +406,8 @@ STATIC FUNCTION OpenFiles( lExt )
       Otros Ficheros--------------------------------------------------------------
       */
 
-      USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
-      SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
+      SET ADSINDEX TO ( cPatEmp() + "FPAGO.CDX" ) ADDITIVE
 
       USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
       SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
@@ -436,7 +436,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       oBandera             := TBandera():New()
 
-      oStock               := TStock():Create( cPatGrp() )
+      oStock               := TStock():Create( cPatEmp() )
       if !oStock:lOpenFiles()
          lOpenFiles        := .f.
       end if
@@ -6939,13 +6939,13 @@ Function BrwCliTactil( oGet, dbfCli, oGet2, lReturnCliente, cText, cBitmap )
       REDEFINE BUTTONBMP ;
          ID       160 ;
          OF       oDlg ;
-         BITMAP   "User1_Add_32" ;
+         BITMAP   "gc_user2_add_32" ;
          ACTION   ( WinAppRec( oBrw, bEdtBig, dbfCli ) )
 
       REDEFINE BUTTONBMP ;
          ID       170 ;
          OF       oDlg ;
-         BITMAP   "User1_Edit_32" ;
+         BITMAP   "gc_user2_edit_32" ;
          ACTION   ( WinEdtRec( oBrw, bEdtBig, dbfCli ) )
 
       REDEFINE BUTTONBMP ;

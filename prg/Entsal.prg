@@ -841,9 +841,9 @@ Static function InitBrwUserEnt( oDlg, oImgUsr, oLstUsr, dbfUsr )
          oImgUsr:Add( TBitmap():Define( , Rtrim( ( dbfUsr )->cImagen ), oDlg ) )
       else
          if ( dbfUsr )->nGrpUse <= 1
-            oImgUsr:AddMasked( TBitmap():Define( "BIG_ADMIN" ), Rgb( 255, 0, 255 ) )
+            oImgUsr:AddMasked( TBitmap():Define( "GC_BUSINESSMAN2_50" ), Rgb( 255, 0, 255 ) )
          else
-            oImgUsr:AddMasked( TBitmap():Define( "BIG_USER" ), Rgb( 255, 0, 255 ) )
+            oImgUsr:AddMasked( TBitmap():Define( "GC_USER2_50" ), Rgb( 255, 0, 255 ) )
          end if
       end if
 
@@ -874,7 +874,7 @@ static function SetBigUsr( aTmp, oBtnUser, oSayUsr, dbfUser )
             oBtnUser:LoadBitmap( cFileBmpName( ( dbfUser )->cImagen ) )
          else
             oBtnUser:lTransparent := .t.
-            oBtnUser:LoadBitmap( if( ( dbfUser )->nGrpUse == 1, "Big_Admin", "Big_User" ) )
+            oBtnUser:LoadBitmap( if( ( dbfUser )->nGrpUse == 1, "GC_BUSINESSMAN2_50", "GC_USER2_50" ) )
          end if
 
          oBtnUser:Refresh()

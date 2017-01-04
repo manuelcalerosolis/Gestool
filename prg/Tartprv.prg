@@ -93,7 +93,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oHisMov  PATH ( cPatEmp() )   FILE "HISMOV.DBF"     VIA ( cDriver() ) SHARED INDEX "HISMOV.CDX"
 
-   ::oStock   := TStock():Create( cPatGrp() )
+   ::oStock   := TStock():Create( cPatEmp() )
 
    if !::oStock:lOpenFiles()
       return .f.

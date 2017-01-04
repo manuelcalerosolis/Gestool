@@ -133,7 +133,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDivisas PATH ( cPatDat() ) FILE "DIVISAS.DBF"  VIA ( cDriver() ) SHARED INDEX "DIVISAS.CDX"
 
-   ::oStock             := TStock():Create( cPatGrp() )
+   ::oStock             := TStock():Create( cPatEmp() )
    if !::oStock:lOpenFiles()
       lOpen             := .f.
    end if

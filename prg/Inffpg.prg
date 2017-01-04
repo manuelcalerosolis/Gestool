@@ -52,7 +52,7 @@ METHOD OpenFiles()
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfBnc  PATH ( cPatGrp() )  FILE "BANCOS.DBF"      VIA ( cDriver() ) SHARED INDEX "BANCOS.CDX"
+   DATABASE NEW ::oDbfBnc  PATH ( cPatEmp() )  FILE "BANCOS.DBF"      VIA ( cDriver() ) SHARED INDEX "BANCOS.CDX"
 
    RECOVER
 

@@ -140,7 +140,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfFam  PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
-   ::oStock          := TStock():Create( cPatGrp() )
+   ::oStock          := TStock():Create( cPatEmp() )
 
    if !::oStock:lOpenFiles()
       lOpen          := .f.

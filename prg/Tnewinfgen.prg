@@ -1631,7 +1631,7 @@ METHOD lGrupoFPago( lInitGroup, lImp ) CLASS TNewInfGen
    BEGIN SEQUENCE
 
       if empty( ::oDbfFpg ) .or. !::oDbfFpg:Used()
-         DATABASE NEW ::oDbfFpg PATH ( cPatGrp() ) FILE "FPago.Dbf" VIA ( cDriver() ) SHARED INDEX "FPago.Cdx"
+         DATABASE NEW ::oDbfFpg PATH ( cPatEmp() ) FILE "FPago.Dbf" VIA ( cDriver() ) SHARED INDEX "FPago.Cdx"
       end if
 
       ::oGrupoFpago                   := TRGroup():New( {|| ::oDbf:cCodFpg }, {|| "F. pago : " + AllTrim( ::oDbf:cCodFpg ) + " - " + AllTRim( ::oDbf:cNomFpg ) }, {|| "Total forma de pago : " + ::oDbf:cCodFpg }, {|| 3 }, ::lSalto )
@@ -1705,7 +1705,7 @@ METHOD lGrupoBanco( lInitGroup, lImp ) CLASS TNewInfGen
 
    BEGIN SEQUENCE
 
-   ::oBanco             := TBancos():Create( cPatGrp() )
+   ::oBanco             := TBancos():Create( cPatEmp() )
    ::oBanco:OpenFiles()
 
    ::oGrupoBanco                    := TRGroup():New( {|| ::oDbf:cCodBnc }, {|| "Banco : " + AllTrim( ::oDbf:cCodBnc ) + " - " + AllTRim( ::oDbf:cNomBnc ) }, {|| "Total banco : " + ::oDbf:cCodBnc }, {|| 3 }, ::lSalto )
@@ -3424,7 +3424,7 @@ METHOD lGrupoEntidadesBancarias( lInitGroup, lImp ) CLASS TNewInfGen
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   ::oCuentasBancarias  := TCuentasBancarias():Create( cPatGrp() )
+   ::oCuentasBancarias  := TCuentasBancarias():Create( cPatEmp() )
    ::oCuentasBancarias:OpenFiles()
 
    ::oGrupoCuentasBancarias                    := TRGroup():New( {|| ::oDbf:cCodBnc }, {|| "Cuenta bancaria : " + AllTrim( ::oDbf:cCodBnc ) + " - " + AllTrim( ::oDbf:cNomBnc ) }, {|| "Total cuenta bancaria..." }, {|| 3 }, ::lSalto )
