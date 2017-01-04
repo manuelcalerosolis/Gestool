@@ -1446,7 +1446,7 @@ METHOD Save() CLASS TDetMovimientos
 
    oWaitMeter:end()
 
-   ::oParent:TComercio:updateWebProductStocks()
+   // ::oParent:TComercio:updateWebProductStocks()
 
    CursorWE()
 

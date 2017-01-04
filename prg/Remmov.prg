@@ -168,10 +168,7 @@ CLASS TRemMovAlm FROM TMasDet
    DATA  memoInventario
    DATA  aInventarioErrors                               INIT  {}
 
-   DATA  buttonSaveResourceWithOutCalculate
    DATA  buttonSaveResourceWithCalculate
-
-   DATA  lTargetCalculate                                INIT .f.
 
    METHOD New( cPath, cDriver, oWndParent, oMenuItem )   CONSTRUCTOR
    METHOD Initiate( cText, oSender )                     CONSTRUCTOR
@@ -261,10 +258,6 @@ CLASS TRemMovAlm FROM TMasDet
    METHOD insertaArticuloRemesaMovimiento( cCodigo, nUnidades )
 
    METHOD saveResourceWithCalculate( nMode, oDlg )
-
-   METHOD saveResourceWithOutCalculate( nMode, oDlg ) 
-
-   METHOD isResourceWithOutCalculate()                   INLINE ( ::oDbf:nTipMov == 3 .and. ::oDbf:lWait )              
 
 END CLASS
 
@@ -1445,12 +1438,6 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
       ::nMeter          := 0
       ::oMeter          := TApoloMeter():ReDefine( 400, { | u | if( pCount() == 0, ::nMeter, ::nMeter := u ) }, 10, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
-      REDEFINE BUTTON ::buttonSaveResourceWithOutCalculate;
-         ID       4 ;
-         OF       oDlg ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::saveResourceWithOutCalculate( nMode, oDlg ) )
-
       REDEFINE BUTTON ::buttonSaveResourceWithCalculate;
          ID       IDOK ;
 			OF 		oDlg ;
@@ -1473,9 +1460,6 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
          oDlg:AddFastKey( VK_F3, {|| ::EditDetalleMovimientos( oDlg ) } )
          oDlg:AddFastKey( VK_F4, {|| ::DeleteDet() } )
          oDlg:AddFastKey( VK_F5, {|| ::saveResourceWithCalculate( nMode, oDlg ) } )
-         if ( ::isResourceWithOutCalculate() )
-            oDlg:AddFastKey( VK_F6, {|| ::saveResourceWithOutCalculate( nMode, oDlg ) } )
-         end if 
       end if
 
       oDlg:AddFastKey( VK_F1, {|| ChmHelp( "Movimientosalmacen" ) } )
@@ -1690,9 +1674,7 @@ METHOD lSelAll( lSel ) CLASS TRemMovAlm
       Marcamos la cabecera-----------------------------------------------------
       */
 
-      ::oDbf:Load()
-      ::oDbf:lSelDoc := lSel
-      ::oDbf:Save()
+      ::oDbf:fieldPutByName( "lSelDoc", lSel )
 
       /*
       Marcamos las lineas------------------------------------------------------
@@ -2765,13 +2747,7 @@ METHOD ShwAlm( oSay, oBtnImp ) CLASS TRemMovAlm
       ::oAlmOrg:Show()
    end if
 
-   if ( ::isResourceWithOutCalculate() )
-      ::buttonSaveResourceWithOutCalculate:Show()
-   else 
-      ::buttonSaveResourceWithOutCalculate:Hide()
-   end if 
-
-return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 /*
@@ -3311,31 +3287,11 @@ METHOD saveResourceWithCalculate( nMode, oDlg ) CLASS TRemMovAlm
 
    if ::lSave( nMode )
 
-      ::lTargetCalculate   := ( ::oDbf:lWait )
-
       ::oDbf:lWait         := .f.
 
       ::endResource( .t., nMode, oDlg )
 
-      oDlg:End( IDOK )
-
-   end if 
-
-   ::TComercio:updateWebProductStocks()
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD saveResourceWithOutCalculate( nMode, oDlg ) CLASS TRemMovAlm
-
-   if ::lSave( nMode )
-
-      ::lTargetCalculate   := .f.
-
-      ::oDbf:lWait         := .t.
-
-      ::endResource( .t., nMode, oDlg )
+      ::TComercio:updateWebProductStocks()
 
       oDlg:End( IDOK )
 

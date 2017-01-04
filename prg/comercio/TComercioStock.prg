@@ -261,19 +261,13 @@ METHOD setIdAttributeProductsToUpdate()
 
    ::meterProcesoSetTotal( len( ::hProductsToUpdate ) )
 
-   // if ::prestaShopConnect()
+   for each hProductsToUpdate in ::hProductsToUpdate
 
-      for each hProductsToUpdate in ::hProductsToUpdate
+      ::setIdAttributeProductToUpdate( hProductsToUpdate )
 
-         ::setIdAttributeProductToUpdate( hProductsToUpdate )
+      ::meterProcesoText()
 
-         ::meterProcesoText()
-
-      next 
-
-      // ::prestaShopDisConnect()
-
-   // end if 
+   next 
 
 Return .t.
 
@@ -577,25 +571,15 @@ METHOD calculateStocksProductToUpdate( cWebName, aProducts )
 
    local hProduct
 
-   // ::TComercioConfig():setCurrentWebName( cWebName )
-
    ::meterProcesoSetTotal( len( aProducts ) )
       
-   // if ::prestaShopConnect()
-
-      for each hProduct in aProducts
+   for each hProduct in aProducts
+      
+      ::addStockProductToUpdate( hProduct )
          
-         ::addStockProductToUpdate( hProduct )
-            
-         ::meterProcesoText()
+      ::meterProcesoText()
 
-      next
-
-      // ::prestaShopDisConnect()
-
-      // Return .t.
-
-   // end if 
+   next
 
 Return .f.
 

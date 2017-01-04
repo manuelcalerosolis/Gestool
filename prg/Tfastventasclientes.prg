@@ -233,7 +233,7 @@ METHOD OpenFiles() CLASS TFastVentasClientes
 
       DATABASE NEW ::oDbfIva PATH ( cPatDat() ) FILE "TIva.Dbf" VIA ( cDriver() ) SHARED INDEX "TIva.Cdx"
 
-      ::oGrpCli                      := TGrpCli():Create( cPatCli() )
+      ::oGrpCli               := TGrpCli():Create( cPatCli() )
       ::oGrpCli:OpenService()
 
       ::oCnfFlt               := TDataCenter():oCnfFlt()
@@ -252,12 +252,12 @@ METHOD OpenFiles() CLASS TFastVentasClientes
          lOpen                := .f.
       end if
 
-      ::oCamposExtra := TDetCamposExtra():New( cPatEmp(), ::cDriver )
+      ::oCamposExtra          := TDetCamposExtra():New( cPatEmp(), ::cDriver )
       if !::oCamposExtra:OpenFiles()
-         lOpen       := .f.
+         lOpen                := .f.
       else 
          ::oCamposExtra:setTipoDocumento( "Facturas a clientes" )
-         ::aExtraFields := ::oCamposExtra:aExtraFields()
+         ::aExtraFields       := ::oCamposExtra:aExtraFields()
       end if
 
    RECOVER USING oError
