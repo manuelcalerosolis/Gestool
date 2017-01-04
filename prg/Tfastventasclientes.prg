@@ -398,7 +398,6 @@ METHOD CloseFiles() CLASS TFastVentasClientes
       ::oGrpCli:end()
    end if
 
-
    if !empty( ::oPais )
       ::oPais:end()
    end if

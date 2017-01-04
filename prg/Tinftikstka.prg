@@ -579,7 +579,7 @@ METHOD nTotReserva( cCodArt )
 
       while ::oPedCliR:cRef == cCodArt .and. !::oPedCliR:Eof()
 
-         nTotal += nTotRPedCli( ::oPedCliR:cSerPed + Str( ::oPedCliR:nNumPed ) + ::oPedCliR:cSufPed, ::oPedCliR:cRef, ::oPedCliR:cValPr1, ::oPedCliR:cValPr2, ::oPedCliR:cAlias )
+         nTotal += nUnidadesReservadasEnPedidosCliente( ::oPedCliR:cSerPed + Str( ::oPedCliR:nNumPed ) + ::oPedCliR:cSufPed, ::oPedCliR:cRef, ::oPedCliR:cValPr1, ::oPedCliR:cValPr2, ::oPedCliR:cAlias )
 
       ::oPedCliR:Skip()
 

@@ -5347,7 +5347,7 @@ Static Function nReservado( cCodArt )
 
       while ( D():PedidosClientesReservas( nView ) )->cRef == cCodArt .and. !( D():PedidosClientesReservas( nView ) )->( Eof() )
 
-         nTotal += nTotRPedCli( ( D():PedidosClientesReservas( nView ) )->cSerPed + Str( ( D():PedidosClientesReservas( nView ) )->nNumPed ) + ( D():PedidosClientesReservas( nView ) )->cSufPed, ( D():PedidosClientesReservas( nView ) )->cRef, ( D():PedidosClientesReservas( nView ) )->cValPr1, ( D():PedidosClientesReservas( nView ) )->cValPr2, D():PedidosClientesReservas( nView ) )
+         nTotal += nUnidadesReservadasEnPedidosCliente( D():PedidosClientesReservasId( nView ), ( D():PedidosClientesReservas( nView ) )->cRef, ( D():PedidosClientesReservas( nView ) )->cValPr1, ( D():PedidosClientesReservas( nView ) )->cValPr2, D():PedidosClientesReservas( nView ) )
 
       ( D():PedidosClientesReservas( nView ) )->( dbSkip() )
 

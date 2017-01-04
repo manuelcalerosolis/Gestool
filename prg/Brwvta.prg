@@ -2979,8 +2979,8 @@ Function nTotEStk( cCodArt, dbfPedCliT, dbfPedCliR, dbfAlbCliT, dbfAlbCliL, nYea
                aAdd( aNumPed, ( dbfPedCliR )->cSerPed + Str( ( dbfPedCliR )->nNumPed ) + ( dbfPedCliR )->cSufPed )
             
                dFecRes  := ( dbfPedCliR )->dFecRes
-               nTotRes  := nTotRPedCli( ( dbfPedCliR )->cSerPed + Str( ( dbfPedCliR )->nNumPed ) + ( dbfPedCliR )->cSufPed, ( dbfPedCliR )->cRef, , , dbfPedCliR )
-               nTotAlb  := nUnidadesRecibidasAlbaranesClientes( ( dbfPedCliR )->cSerPed + Str( ( dbfPedCliR )->nNumPed ) + ( dbfPedCliR )->cSufPed, ( dbfPedCliR )->cRef, , , dbfAlbCliL )
+               nTotRes  := nUnidadesReservadasEnPedidosCliente( ( dbfPedCliR )->cSerPed + Str( ( dbfPedCliR )->nNumPed ) + ( dbfPedCliR )->cSufPed, ( dbfPedCliR )->cRef, space( 20 ), space( 20 ), dbfPedCliR )
+               nTotAlb  := nUnidadesRecibidasAlbaranesClientes( ( dbfPedCliR )->cSerPed + Str( ( dbfPedCliR )->nNumPed ) + ( dbfPedCliR )->cSufPed, ( dbfPedCliR )->cRef, space( 20 ), space( 20 ), dbfAlbCliL )
                nTotEnt  += Min( nTotRes, nTotAlb )
             
             end if

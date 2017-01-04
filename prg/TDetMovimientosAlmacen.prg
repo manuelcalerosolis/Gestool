@@ -1332,6 +1332,9 @@ METHOD ActualizaKit( nMode ) CLASS TDetMovimientos
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+/*
+Guardamos todo de manera definitiva--------------------------------------------
+*/
 
 METHOD Save() CLASS TDetMovimientos
 
@@ -1343,11 +1346,7 @@ METHOD Save() CLASS TDetMovimientos
    oWaitMeter:Run()
    oWaitMeter:setTotal( nKeyCount )
 
-   /*
-   Guardamos todo de manera definitiva-----------------------------------------
-   */
-
-   CursorWait()
+   cursorWait()
 
    ::oDbfVir:KillFilter()
 
@@ -1446,9 +1445,7 @@ METHOD Save() CLASS TDetMovimientos
 
    oWaitMeter:end()
 
-   // ::oParent:TComercio:updateWebProductStocks()
-
-   CursorWE()
+   cursorWE()
 
 Return .t.
 

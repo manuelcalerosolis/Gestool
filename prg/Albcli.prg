@@ -15623,34 +15623,6 @@ FUNCTION PrnEntAlbCli( cNumDoc, lPrint, dbfTmpEnt )
 Return .t.
 
 //---------------------------------------------------------------------------//
-//
-// Devuelve el numero de unidades recibidas en albaranes a clientes
-//
-
-function nUnidadesRecibidasAlbaranesClientes( cNumPed, cCodArt, cValPr1, cValPr2, cAlbCliL )
-
-   local nTot        := 0
-   local aStatus     := aGetStatus( cAlbCliL, .f. )
-
-   DEFAULT cValPr1   := Space( 20 )
-   DEFAULT cValPr2   := Space( 20 )
-
-   ( cAlbCliL )->( ordsetfocus( "cNumPedRef" ) )
-
-   if ( cAlbCliL )->( dbseek( cNumPed + cCodArt + cValPr1 + cValPr2 ) )
-      
-      while ( cAlbCliL )->cNumPed + ( cAlbCliL )->cRef + ( cAlbCliL )->cValPr1 + ( cAlbCliL )->cValPr2 == cNumPed + cCodArt + cValPr1 + cValPr2 .and. !( cAlbCliL )->( eof() )
-         nTot        += nTotNAlbCli( cAlbCliL )
-         ( cAlbCliL )->( dbskip() )
-      end while
-
-   end if
-
-   SetStatus( cAlbCliL, aStatus )
-
-return ( nTot )
-
-//---------------------------------------------------------------------------//
 
 function nUnidadesRecibidasAlbaranesClientesNoFacturados( cNumPed, cCodArt, cValPr1, cValPr2, cAlbCliL )
 

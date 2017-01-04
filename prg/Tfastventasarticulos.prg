@@ -307,7 +307,7 @@ METHOD lResource( cFld ) CLASS TFastVentasArticulos
    end if
 
    ::oFilter      := TFilterCreator():Init()
-   if !Empty( ::oFilter )
+   if !empty( ::oFilter )
       ::oFilter:SetDatabase( ::oDbf )
       ::oFilter:SetFilterType( ART_TBL )
    end if 
@@ -474,131 +474,131 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      if !Empty( ::oArtImg ) .and. ( ::oArtImg:Used() )
+      if !empty( ::oArtImg ) .and. ( ::oArtImg:Used() )
          ::oArtImg:end()
       end if
 
-      if !Empty( ::oArtKit ) .and. ( ::oArtKit:Used() )
+      if !empty( ::oArtKit ) .and. ( ::oArtKit:Used() )
          ::oArtKit:end()
       end if
 
-      if !Empty( ::oArtCod ) .and. ( ::oArtCod:Used() )
+      if !empty( ::oArtCod ) .and. ( ::oArtCod:Used() )
          ::oArtCod:end()
       end if
 
-      if !Empty( ::oArtPrv ) .and. ( ::oArtPrv:Used() )
+      if !empty( ::oArtPrv ) .and. ( ::oArtPrv:Used() )
          ::oArtPrv:end()
       end if
 
-      if !Empty( ::oSatCliT ) .and. ( ::oSatCliT:Used() )
+      if !empty( ::oSatCliT ) .and. ( ::oSatCliT:Used() )
          ::oSatCliT:end()
       end if
 
-      if !Empty( ::oSatCliL ) .and. ( ::oSatCliL:Used() )
+      if !empty( ::oSatCliL ) .and. ( ::oSatCliL:Used() )
          ::oSatCliL:end()
       end if
 
-      if !Empty( ::oPreCliL ) .and. ( ::oPreCliL:Used() )
+      if !empty( ::oPreCliL ) .and. ( ::oPreCliL:Used() )
          ::oPreCliL:end()
       end if
 
-      if !Empty( ::oPreCliT ) .and. ( ::oPreCliT:Used() )
+      if !empty( ::oPreCliT ) .and. ( ::oPreCliT:Used() )
          ::oPreCliT:end()
       end if
 
-      if !Empty( ::oAlbCliL ) .and. ( ::oAlbCliL:Used() )
+      if !empty( ::oAlbCliL ) .and. ( ::oAlbCliL:Used() )
          ::oAlbCliL:end()
       end if
 
-      if !Empty( ::oAlbCliT ) .and. ( ::oAlbCliT:Used() )
+      if !empty( ::oAlbCliT ) .and. ( ::oAlbCliT:Used() )
          ::oAlbCliT:end()
       end if
 
-      if !Empty( ::oFacCliL ) .and. ( ::oFacCliL:Used() )
+      if !empty( ::oFacCliL ) .and. ( ::oFacCliL:Used() )
          ::oFacCliL:end()
       end if
 
-      if !Empty( ::oFacCliT ) .and. ( ::oFacCliT:Used() )
+      if !empty( ::oFacCliT ) .and. ( ::oFacCliT:Used() )
          ::oFacCliT:end()
       end if
 
-      if !Empty( ::oFacCliP ) .and. ( ::oFacCliP:Used() )
+      if !empty( ::oFacCliP ) .and. ( ::oFacCliP:Used() )
          ::oFacCliP:end()
       end if
 
-      if !Empty( ::oFacRecL ) .and. ( ::oFacRecL:Used() )
+      if !empty( ::oFacRecL ) .and. ( ::oFacRecL:Used() )
          ::oFacRecL:end()
       end if
 
-      if !Empty( ::oFacRecT ) .and. ( ::oFacRecT:Used() )
+      if !empty( ::oFacRecT ) .and. ( ::oFacRecT:Used() )
          ::oFacRecT:end()
       end if
 
-      if !Empty( ::oTikCliT ) .and. ( ::oTikCliT:Used() )
+      if !empty( ::oTikCliT ) .and. ( ::oTikCliT:Used() )
          ::oTikCliT:End()
       end if
 
-      if !Empty( ::oTikCliL ) .and. ( ::oTikCliL:Used() )
+      if !empty( ::oTikCliL ) .and. ( ::oTikCliL:Used() )
          ::oTikCliL:End()
       end if
 
-      if !Empty( ::oPedPrvL ) .and. ( ::oPedPrvL:Used() )
+      if !empty( ::oPedPrvL ) .and. ( ::oPedPrvL:Used() )
          ::oPedPrvL:end()
       end if
 
-      if !Empty( ::oPedPrvT ) .and. ( ::oPedPrvT:Used() )
+      if !empty( ::oPedPrvT ) .and. ( ::oPedPrvT:Used() )
          ::oPedPrvT:end()
       end if
 
-      if !Empty( ::oAlbPrvL ) .and. ( ::oAlbPrvL:Used() )
+      if !empty( ::oAlbPrvL ) .and. ( ::oAlbPrvL:Used() )
          ::oAlbPrvL:end()
       end if
 
-      if !Empty( ::oAlbPrvT ) .and. ( ::oAlbPrvT:Used() )
+      if !empty( ::oAlbPrvT ) .and. ( ::oAlbPrvT:Used() )
          ::oAlbPrvT:end()
       end if
 
-      if !Empty( ::oFacPrvL ) .and. ( ::oFacPrvL:Used() )
+      if !empty( ::oFacPrvL ) .and. ( ::oFacPrvL:Used() )
          ::oFacPrvL:end()
       end if
 
-      if !Empty( ::oFacPrvT ) .and. ( ::oFacPrvT:Used() )
+      if !empty( ::oFacPrvT ) .and. ( ::oFacPrvT:Used() )
          ::oFacPrvT:end()
       end if
 
-      if !Empty( ::oRctPrvL ) .and. ( ::oRctPrvL:Used() )
+      if !empty( ::oRctPrvL ) .and. ( ::oRctPrvL:Used() )
          ::oRctPrvL:end()
       end if
 
-      if !Empty( ::oRctPrvT ) .and. ( ::oRctPrvT:Used() )
+      if !empty( ::oRctPrvT ) .and. ( ::oRctPrvT:Used() )
          ::oRctPrvT:end()
       end if
 
-      if !Empty( ::oProLin ) .and. ( ::oProLin:Used() )
+      if !empty( ::oProLin ) .and. ( ::oProLin:Used() )
          ::oProLin:end()
       end if
 
-      if !Empty( ::oProMat ) .and. ( ::oProMat:Used() )
+      if !empty( ::oProMat ) .and. ( ::oProMat:Used() )
          ::oProMat:end()
       end if
 
-      if !Empty( ::oHisMov ) .and. ( ::oHisMov:Used() )
+      if !empty( ::oHisMov ) .and. ( ::oHisMov:Used() )
          ::oHisMov:end()
       end if
 
-      if !Empty( ::oArtAlm ) .and. ( ::oArtAlm:Used() )
+      if !empty( ::oArtAlm ) .and. ( ::oArtAlm:Used() )
          ::oArtAlm:end()
       end if
 
-      if !Empty( ::oProCab ) .and. ( ::oProCab:Used() )
+      if !empty( ::oProCab ) .and. ( ::oProCab:Used() )
          ::oProCab:end()
       end if 
 
-      if !Empty( ::oCnfFlt ) .and. ( ::oCnfFlt:Used() )
+      if !empty( ::oCnfFlt ) .and. ( ::oCnfFlt:Used() )
          ::oCnfFlt:end()
       end if
 
-      if !Empty( ::oObras ) .and. ( ::oObras:Used() )
+      if !empty( ::oObras ) .and. ( ::oObras:Used() )
          ::oObras:end()
       end if
 
@@ -614,7 +614,7 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
          ::oAtipicasCliente:end()
       end if
 
-      if !Empty( ::oFraPub )
+      if !empty( ::oFraPub )
          ::oFraPub:end()
       end if
 
@@ -622,25 +622,29 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
          ::oTarPreL:end()
       end if
 
-      if !Empty( ::oCtrCoste )
+      if !empty( ::oCtrCoste )
          ::oCtrCoste:end()
       end if
 
-      if !Empty( ::oStock )
+      if !empty( ::oGrpCli )
+         ::oGrpCli:end()
+      end if
+
+      if !empty( ::oStock )
          ::oStock:DeleteTemporalFiles()
          ::oStock:End()
       end if
 
-      if !Empty( ::oOperario )
+      if !empty( ::oOperario )
          ::oOperario:End()
       end if
 
-      if !Empty( ::oCamposExtra )
+      if !empty( ::oCamposExtra )
          ::oCamposExtra:CloseFiles()
          ::oCamposExtra:End()
       end if
 
-      if !Empty( ::nView )
+      if !empty( ::nView )
          D():DeleteView( ::nView )
       end if
 
@@ -1465,7 +1469,7 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
                ::oDbf:cCodFab    := RetFld( ::oSatCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                ::oDbf:cDesUbi    := RetFld( ::oSatCliL:cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
 
-               if ::oAtipicasCliente:Seek( ::oSatCliT:cCodCli + ::oSatCliL:cRef ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
+               if ::oAtipicasCliente:Seek( ::oSatCliT:cCodCli + ::oSatCliL:cRef ) .and. !empty( ::oAtipicasCliente:cCodEnv )
                   ::oDbf:cCodEnv    := ::oAtipicasCliente:cCodEnv
                else
                   ::oDbf:cCodEnv    := RetFld( ::oSatCliL:cRef, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
@@ -1511,7 +1515,7 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
                ::oDbf:nComAge    := nComLSatCli( ::oSatCliT:cAlias, ::oSatCliL:cAlias, ::nDecOut, ::nDerOut )
 
                ::oDbf:nCosArt    := nTotCSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-               if Empty( ::oDbf:nCosArt )
+               if empty( ::oDbf:nCosArt )
                   ::oDbf:nCosArt := ::oDbf:nUniArt * pCosto( ::oDbfArt:cAlias )
                end if 
 
@@ -1669,7 +1673,7 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
                ::oDbf:cCodFab    := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                ::oDbf:cDesUbi    := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
 
-               if ::oAtipicasCliente:Seek( ::oPreCliT:cCodCli + ::oPreCliL:cRef ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
+               if ::oAtipicasCliente:Seek( ::oPreCliT:cCodCli + ::oPreCliL:cRef ) .and. !empty( ::oAtipicasCliente:cCodEnv )
                   ::oDbf:cCodEnv    := ::oAtipicasCliente:cCodEnv
                else
                   ::oDbf:cCodEnv    := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
@@ -1714,7 +1718,7 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
                ::oDbf:nComAge    := nComLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut )
 
                ::oDbf:nCosArt    := nTotCPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-               if Empty( ::oDbf:nCosArt )
+               if empty( ::oDbf:nCosArt )
                   ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
                end if 
 
@@ -1824,6 +1828,8 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
    ::setFilterTypeLine()
 
+   setPedidosClientesExternalView( ::nView )
+
    // procesamos los pedidos----------------------------------------------------
    
    ::oMtrInf:cText            := "Procesando pedidos"
@@ -1916,7 +1922,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
          ::oDbf:cPrvCli    := ( D():PedidosClientes( ::nView ) )->cPrvCli
          ::oDbf:cPosCli    := ( D():PedidosClientes( ::nView ) )->cPosCli
 
-         if ::oAtipicasCliente:Seek( ( D():PedidosClientes( ::nView ) )->cCodCli + ( D():PedidosClientesLineas( ::nView ) )->cRef ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
+         if ::oAtipicasCliente:Seek( ( D():PedidosClientes( ::nView ) )->cCodCli + ( D():PedidosClientesLineas( ::nView ) )->cRef ) .and. !empty( ::oAtipicasCliente:cCodEnv )
             ::oDbf:cCodEnv := ::oAtipicasCliente:cCodEnv
          else
             ::oDbf:cCodEnv := RetFld( ( D():PedidosClientesLineas( ::nView ) )->cRef, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
@@ -2073,7 +2079,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
       
       ::oDbf:nCosArt    := nCosLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
-      if Empty( ::oDbf:nCosArt )
+      if empty( ::oDbf:nCosArt )
          ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
       end if 
 
@@ -2122,7 +2128,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
 
          ::oDbf:cCodGrp    := cGruCli( ::oAlbCliT:cCodCli, ::oDbfCli )
 
-         if ::oAtipicasCliente:Seek( ::oAlbCliT:cCodCli + ::oAlbCliL:cRef ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
+         if ::oAtipicasCliente:Seek( ::oAlbCliT:cCodCli + ::oAlbCliL:cRef ) .and. !empty( ::oAtipicasCliente:cCodEnv )
             ::oDbf:cCodEnv    := ::oAtipicasCliente:cCodEnv
          else
             ::oDbf:cCodEnv    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
@@ -2277,7 +2283,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
       ::oDbf:nImpEsp    := nTotIFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
       ::oDbf:nCosArt    := nCosLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
       
-      if Empty( ::oDbf:nCosArt )
+      if empty( ::oDbf:nCosArt )
          ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
       end if 
       
@@ -2323,7 +2329,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
 
       if ::oFacCliT:Seek( ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac )
 
-         if ::oAtipicasCliente:Seek( ::oFacCliT:cCodCli + ::oFacCliL:cRef ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
+         if ::oAtipicasCliente:Seek( ::oFacCliT:cCodCli + ::oFacCliL:cRef ) .and. !empty( ::oAtipicasCliente:cCodEnv )
             ::oDbf:cCodEnv    := ::oAtipicasCliente:cCodEnv
          else
             ::oDbf:cCodEnv    := RetFld( ::oFacCliL:cRef, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
@@ -2468,7 +2474,7 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
       ::oDbf:nImpEsp    := nTotIFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
       ::oDbf:nCosArt    := nCosLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-      if Empty( ::oDbf:nCosArt )
+      if empty( ::oDbf:nCosArt )
          ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
       end if 
 
@@ -2514,7 +2520,7 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
 
       if ::oFacRecT:Seek( ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac )
 
-         if ::oAtipicasCliente:Seek( ::oFacRecT:cCodCli + ::oFacRecL:cRef ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
+         if ::oAtipicasCliente:Seek( ::oFacRecT:cCodCli + ::oFacRecL:cRef ) .and. !empty( ::oAtipicasCliente:cCodEnv )
             ::oDbf:cCodEnv    := ::oAtipicasCliente:cCodEnv
          else
             ::oDbf:cCodEnv    := RetFld( ::oFacRecL:cRef, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
@@ -2641,7 +2647,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:cCodFab    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                ::oDbf:cDesUbi    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
 
-               if ::oAtipicasCliente:Seek( ::oTikCliT:cCliTik + ::oTikCliL:cCbaTil ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
+               if ::oAtipicasCliente:Seek( ::oTikCliT:cCliTik + ::oTikCliL:cCbaTil ) .and. !empty( ::oAtipicasCliente:cCodEnv )
                   ::oDbf:cCodEnv    := ::oAtipicasCliente:cCodEnv
                else
                   ::oDbf:cCodEnv    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
@@ -2679,7 +2685,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:nTotArt    += nIvaLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 1 )
                
                ::oDbf:nCosArt    := nCosLTpv( ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 1 )
-               if Empty( ::oDbf:nCosArt )
+               if empty( ::oDbf:nCosArt )
                   ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
                end if 
 
@@ -2717,7 +2723,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
             end if
 
-            if !Empty( ::oTikCliL:cComTil ) // .and. !( ::oTikCliL:lControl ) .and. !( ::oTikCliL:lDelTil )
+            if !empty( ::oTikCliL:cComTil ) // .and. !( ::oTikCliL:lControl ) .and. !( ::oTikCliL:lDelTil )
 
                ::oDbf:Blank()
                
@@ -2740,7 +2746,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:cCodFab    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                ::oDbf:cDesUbi    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
                
-               if ::oAtipicasCliente:Seek( ::oTikCliT:cCliTik + ::oTikCliL:cCbaTil ) .and. !Empty( ::oAtipicasCliente:cCodEnv )
+               if ::oAtipicasCliente:Seek( ::oTikCliT:cCliTik + ::oTikCliL:cCbaTil ) .and. !empty( ::oAtipicasCliente:cCodEnv )
                   ::oDbf:cCodEnv    := ::oAtipicasCliente:cCodEnv
                else
                   ::oDbf:cCodEnv    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
@@ -2770,7 +2776,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:nTotArt    += nIvaLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 2 )
 
                ::oDbf:nCosArt    := nCosLTpv( ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 2 )
-               if Empty( ::oDbf:nCosArt )
+               if empty( ::oDbf:nCosArt )
                   ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oTikCliL:cComTil, ::oDbfArt:cAlias, ::oArtKit:cAlias )
                end if 
 
@@ -3816,7 +3822,7 @@ METHOD GetInformacionEntrada( cCodArt, cLote, cDatoRequerido )
 
    local cDato := ::GetDatoMovimientosAlamcen( cCodArt, cLote, cDatoRequerido )
 
-RETURN if ( !Empty( cDato ), cDato, ::GetDatoAlbaranProveedor( cCodArt, cLote, cDatoRequerido ) )
+RETURN if ( !empty( cDato ), cDato, ::GetDatoAlbaranProveedor( cCodArt, cLote, cDatoRequerido ) )
 
 //---------------------------------------------------------------------------//
 
@@ -4040,8 +4046,8 @@ RETURN ( Self )
 
 METHOD FastReportPedidoCliente()
       
-   ( D():PedidosClientes( ::nView ) )->( OrdSetFocus( "iNumPed" ) )
-   ( D():PedidosClientesLineas( ::nView ) )->( OrdSetFocus( "iNumPed" ) )
+   ( D():PedidosClientes( ::nView ) )->( ordsetfocus( "iNumPed" ) )
+   ( D():PedidosClientesLineas( ::nView ) )->( ordsetfocus( "iNumPed" ) )
 
    ::oFastReport:SetWorkArea(       getConfigTraslation("Pedidos de clientes"), ( D():PedidosClientes( ::nView ) )->( Select() ) )
    ::oFastReport:SetFieldAliases(   getConfigTraslation("Pedidos de clientes"), cItemsToReport( aItmPedCli() ) )
@@ -4049,8 +4055,8 @@ METHOD FastReportPedidoCliente()
    ::oFastReport:SetWorkArea(       "Lineas pedidos de clientes", ( D():PedidosClientesLineas( ::nView ) )->( Select() ) )
    ::oFastReport:SetFieldAliases(   "Lineas pedidos de clientes", cItemsToReport( aColPedCli() ) )
 
-   ::oFastReport:SetMasterDetail(   "Informe", getConfigTraslation("Pedidos de clientes"),               {|| ::idDocumento() } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas pedidos de clientes",        {|| ::IdDocumentoLinea() } )
+   ::oFastReport:SetMasterDetail(   "Informe", getConfigTraslation("Pedidos de clientes"),   {|| ::idDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas pedidos de clientes",                 {|| ::IdDocumentoLinea() } )
 
    ::oFastReport:SetResyncPair(     "Informe", getConfigTraslation("Pedidos de clientes") )
    ::oFastReport:SetResyncPair(     "Informe", "Lineas pedidos de clientes" )
@@ -4063,8 +4069,8 @@ METHOD sqlPedidoClientes() CLASS TFastVentasArticulos
 
    local cStm 
 
-   local cArticuloDesde       := "" // ::oGrupoArticulo:Cargo:getDesde()
-   local cArticuloHasta       := "ZZZZZZZZZZZZZZ" // ::oGrupoArticulo:Cargo:getHasta()
+   local cArticuloDesde       := ""                // ::oGrupoArticulo:Cargo:getDesde()
+   local cArticuloHasta       := "ZZZZZZZZZZZZZZ"  // ::oGrupoArticulo:Cargo:getHasta()
 
    ::fileHeader               := cPatEmp() + "PedCliT"
    ::fileLine                 := cPatEmp() + "PedCliL"   
@@ -4145,11 +4151,11 @@ METHOD getTarifaArticulo( cCodTar, cCodArt, nPrc ) CLASS TFastVentasArticulos
    local nPrecio := 0
    local nOrdAnt := ::oTarPreL:OrdSetFocus( "cCodArt" )
 
-   if Empty( cCodTar )
+   if empty( cCodTar )
       Return nPrecio
    end if
 
-   if Empty( cCodArt )
+   if empty( cCodArt )
       Return nPrecio
    end if
 
@@ -4188,11 +4194,11 @@ METHOD getUnidadesPedidoProveedor( cNumPed, cCodArt ) CLASS TFastVentasArticulos
    local nUnidades   := 0
    local nOrdAnt
 
-   if Empty( cNumPed )
+   if empty( cNumPed )
       Return nUnidades
    end if
 
-   if Empty( cCodArt )
+   if empty( cCodArt )
       Return nUnidades
    end if
 
