@@ -118,7 +118,7 @@ METHOD OpenFiles() CLASS  TInfDiaCli
 
    DATABASE NEW ::oDbfIva PATH ( cPatDat() ) FILE "TIVA.DBF" VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
-   DATABASE NEW ::oDbfFPago PATH ( cPatGrp() ) FILE "FPAGO.DBF" VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
+   DATABASE NEW ::oDbfFPago PATH ( cPatEmp() ) FILE "FPAGO.DBF" VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
    ::oFacCliP := TDataCenter():oFacCliP()
 

@@ -60,7 +60,7 @@ END CLASS
 
 METHOD Create( cPath )
 
-   DEFAULT cPath        := cPatGrp()
+   DEFAULT cPath        := cPatEmp()
 
    ::cPath              := cPath
    ::oDbf               := nil
@@ -71,7 +71,7 @@ RETURN ( Self )
 
 METHOD New( cPath, oWndParent, oMenuItem )
 
-   DEFAULT cPath        := cPatGrp()
+   DEFAULT cPath        := cPatEmp()
    DEFAULT oWndParent   := GetWndFrame()
 
    if oMenuItem != nil
@@ -80,7 +80,7 @@ METHOD New( cPath, oWndParent, oMenuItem )
       ::nLevel          := nLevelUsr( "01013" )
    end if
 
-   ::cPath              := cPatGrp()
+   ::cPath              := cPatEmp()
    ::oWndParent         := oWndParent
    ::oDbf               := nil
 

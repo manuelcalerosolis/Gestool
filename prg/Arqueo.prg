@@ -132,8 +132,8 @@ D():Get( "LogPorta", nView )
    USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
    SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
 
-   USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
-   SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
+   SET ADSINDEX TO ( cPatEmp() + "FPAGO.CDX" ) ADDITIVE
 
    USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
    SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE

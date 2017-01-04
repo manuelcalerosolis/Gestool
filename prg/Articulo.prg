@@ -293,8 +293,8 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       USE ( cPatPrv() + "PROVEE.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProv ) )
       SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
 
-      USE ( cPatGrp() + "CATALOGO.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CATALOGO", @dbfCatalogo ) )
-      SET ADSINDEX TO ( cPatGrp() + "CATALOGO.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "CATALOGO.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CATALOGO", @dbfCatalogo ) )
+      SET ADSINDEX TO ( cPatEmp() + "CATALOGO.CDX" ) ADDITIVE
 
       USE ( cPatArt() + "CATEGORIAS.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CATEGORIA", @dbfCategoria ) )
       SET ADSINDEX TO ( cPatArt() + "CATEGORIAS.CDX" ) ADDITIVE
@@ -410,7 +410,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       oBandera             := TBandera():New()
 
-      oStock               := TStock():Create( cPatGrp() )
+      oStock               := TStock():Create( cPatEmp() )
 
       if !oStock:lOpenFiles()
          lOpenFiles        := .f.
@@ -441,7 +441,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
          lOpenFiles        := .f.
       end if
 
-      oUndMedicion         := UniMedicion():Create( cPatGrp() )
+      oUndMedicion         := UniMedicion():Create( cPatEmp() )
       if !oUndMedicion:OpenFiles()
          lOpenFiles        := .f.
       end if

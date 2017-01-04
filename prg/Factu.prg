@@ -1741,7 +1741,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Unidades medición'
    oItem:cMessage       := 'Unidades de medición'
-   oItem:bAction        := {|| UniMedicion():New( cPatGrp(), oWnd, "01103" ):Activate() }
+   oItem:bAction        := {|| UniMedicion():New( cPatEmp(), oWnd, "01103" ):Activate() }
    oItem:cId            := "01103"
    oItem:cBmp           := "gc_tape_measure2_16"
    oItem:cBmpBig        := "gc_tape_measure2_32"
@@ -1929,7 +1929,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Bancos'
    oItem:cMessage       := 'Acceso a las entidades bancarias'
-   oItem:bAction        := {|| TBancos():New( cPatGrp(), oWnd, "01106" ):Activate() }
+   oItem:bAction        := {|| TBancos():New( cPatEmp(), oWnd, "01106" ):Activate() }
    oItem:cId            := "01106"
    oItem:cBmp           := "gc_central_bank_euro_16"
    oItem:cBmpBig        := "gc_central_bank_euro_32"
@@ -1939,7 +1939,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Cuentas bancarias'
    oItem:cMessage       := 'Acceso a las cuentas bancarias'
-   oItem:bAction        := {|| TCuentasBancarias():New( cPatGrp(), oWnd, "01106" ):Activate() }
+   oItem:bAction        := {|| TCuentasBancarias():New( cPatEmp(), oWnd, "01106" ):Activate() }
    oItem:cId            := "01106"
    oItem:cBmp           := "gc_central_bank_euro_text_16"
    oItem:cBmpBig        := "gc_central_bank_euro_text_32"
@@ -2769,7 +2769,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Invitaciones'
    oItem:cMessage       := 'Acceso a los tipos de invitaciones'
-   oItem:bAction        := {|| TInvitacion():New( cPatGrp(), oWnd, "01107" ):Activate() }
+   oItem:bAction        := {|| TInvitacion():New( cPatEmp(), oWnd, "01107" ):Activate() }
    oItem:cId            := "01107"
    oItem:cBmp           := "gc_masks_16"
    oItem:cBmpBig        := "gc_masks_32"

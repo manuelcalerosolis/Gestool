@@ -76,7 +76,7 @@ METHOD OpenFiles() CLASS TDiaCRec
 
    DATABASE NEW ::oTikCliP  PATH ( cPatEmp() ) FILE "TIKEP.DBF"   VIA ( cDriver() ) SHARED INDEX "TIKEP.CDX"
 
-   DATABASE NEW ::oDbfPago  PATH ( cPatGrp() ) FILE "FPAGO.DBF"   VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
+   DATABASE NEW ::oDbfPago  PATH ( cPatEmp() ) FILE "FPAGO.DBF"   VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
    RECOVER
 

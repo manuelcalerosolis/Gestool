@@ -101,7 +101,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfIva PATH ( cPatDat() )  FILE "TIVA.DBF" VIA ( cDriver() )CLASS cImp() INDEX "TIVA.CDX"
    DATABASE NEW ::oDbfDiv PATH ( cPatDat() )  FILE "DIVISAS.DBF" VIA ( cDriver() )CLASS cImp() INDEX "DIVISAS.CDX"
-   DATABASE NEW ::oDbfPgo PATH ( cPatGrp() )  FILE "FPAGO.DBF" VIA ( cDriver() )CLASS cImp() INDEX "FPAGO.CDX"
+   DATABASE NEW ::oDbfPgo PATH ( cPatEmp() )  FILE "FPAGO.DBF" VIA ( cDriver() )CLASS cImp() INDEX "FPAGO.CDX"
 
 
    if !File( alltrim( ::cPathFac ) + "PROVEEDO.DBF" )

@@ -406,8 +406,8 @@ STATIC FUNCTION OpenFiles( lExt )
       Otros Ficheros--------------------------------------------------------------
       */
 
-      USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
-      SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
+      SET ADSINDEX TO ( cPatEmp() + "FPAGO.CDX" ) ADDITIVE
 
       USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
       SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
@@ -436,7 +436,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       oBandera             := TBandera():New()
 
-      oStock               := TStock():Create( cPatGrp() )
+      oStock               := TStock():Create( cPatEmp() )
       if !oStock:lOpenFiles()
          lOpenFiles        := .f.
       end if

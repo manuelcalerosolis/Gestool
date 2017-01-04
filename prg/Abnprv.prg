@@ -211,8 +211,8 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
       SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 
-      USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
-      SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
+      SET ADSINDEX TO ( cPatEmp() + "FPAGO.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
       SET ADSINDEX TO ( cPatEmp() + "ARTICULO.CDX" ) ADDITIVE

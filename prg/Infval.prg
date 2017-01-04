@@ -177,8 +177,8 @@ STATIC FUNCTION GenRptVal( cCodAlm, cFamOrg, cFamDes, nRadCoste, oMtrInf, cTitul
    SET ADSINDEX TO ( cPatEmp() + "FACPRVL.CDX" ) ADDITIVE
 	( DbfFacPrvL )->( OrdSetFocus( 2 ) )
 
-   USE ( cPatGrp() + "MOVALM.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "MOVALM", @dbfMov ) )
-   SET ADSINDEX TO ( cPatGrp() + "MOVALM.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "MOVALM.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "MOVALM", @dbfMov ) )
+   SET ADSINDEX TO ( cPatEmp() + "MOVALM.CDX" ) ADDITIVE
 
 	/*
 	Tipos de Letras
@@ -408,8 +408,8 @@ FUNCTION InfStocks( oMenuItem, oWnd )
    USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
    SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
 
-   USE ( cPatGrp() + "MOVALM.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "MOVALM", @dbfMov ) )
-   SET ADSINDEX TO ( cPatGrp() + "MOVALM.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "MOVALM.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "MOVALM", @dbfMov ) )
+   SET ADSINDEX TO ( cPatEmp() + "MOVALM.CDX" ) ADDITIVE
 
 	/*
    Obtenemos los valores del primer y ultimo igo

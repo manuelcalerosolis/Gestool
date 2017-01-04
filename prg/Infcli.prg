@@ -97,7 +97,7 @@ Method OpenFiles()
 
    BEGIN SEQUENCE
 
-      DATABASE NEW ::oDbfFpg PATH ( cPatGrp() ) FILE "FPago.Dbf" VIA ( cDriver() ) SHARED INDEX "FPago.Cdx"
+      DATABASE NEW ::oDbfFpg PATH ( cPatEmp() ) FILE "FPago.Dbf" VIA ( cDriver() ) SHARED INDEX "FPago.Cdx"
 
    RECOVER
 

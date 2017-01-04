@@ -477,7 +477,7 @@ METHOD OpenFiles( cPath ) CLASS TCobAge
 
       DATABASE NEW ::oPrvBnc  FILE "PRVBNC.DBF"    PATH ( cPatPrv() ) VIA ( cDriver() ) SHARED INDEX  "PRVBNC.CDX"
 
-      DATABASE NEW ::oFPago   FILE "FPAGO.DBF"     PATH ( cPatGrp() ) VIA ( cDriver() ) SHARED INDEX  "FPAGO.CDX"
+      DATABASE NEW ::oFPago   FILE "FPAGO.DBF"     PATH ( cPatEmp() ) VIA ( cDriver() ) SHARED INDEX  "FPAGO.CDX"
 
       DATABASE NEW ::oArticulo FILE "ARTICULO.DBF" PATH ( cPatArt() ) VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 

@@ -817,8 +817,8 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
       SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 
-      USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
-      SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
+      SET ADSINDEX TO ( cPatEmp() + "FPAGO.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "TVTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TVTA", @dbfTVta ) )
       SET ADSINDEX TO ( cPatDat() + "TVTA.CDX" ) ADDITIVE
@@ -859,8 +859,8 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDelega ) )
       SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
 
-      USE ( cPatGrp() + "AGECOM.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGECOM", @dbfAgeCom ) )
-      SET ADSINDEX TO ( cPatGrp() + "AGECOM.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "AGECOM.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGECOM", @dbfAgeCom ) )
+      SET ADSINDEX TO ( cPatEmp() + "AGECOM.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "EMPRESA.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
       SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
@@ -951,7 +951,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       oBandera          := TBandera():New()
 
-      oStock            := TStock():Create( cPatGrp() )
+      oStock            := TStock():Create( cPatEmp() )
       if !oStock:lOpenFiles()
          lOpenFiles     := .f.
       end if
@@ -981,7 +981,7 @@ STATIC FUNCTION OpenFiles( lExt )
          lOpenFiles     := .f.
       end if
 
-      oUndMedicion      := UniMedicion():Create( cPatGrp() )
+      oUndMedicion      := UniMedicion():Create( cPatEmp() )
       if !oUndMedicion:OpenFiles()
          lOpenFiles     := .f.
       end if

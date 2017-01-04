@@ -353,7 +353,7 @@ METHOD OpenFiles( lExclusive ) CLASS TFacAutomatica
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      DATABASE NEW ::oDbfFPago   PATH ( cPatGrp() )   FILE "FPAGO.DBF"     VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
+      DATABASE NEW ::oDbfFPago   PATH ( cPatEmp() )   FILE "FPAGO.DBF"     VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
       DATABASE NEW ::oDbfAge     PATH ( cPatCli() )   FILE "AGENTES.DBF"   VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
 
@@ -1847,7 +1847,7 @@ METHOD OpenFiles() CLASS TCreaFacAutomaticas
 
    DATABASE NEW ::oDbfUser    PATH ( cPatDat() )   FILE "USERS.DBF"    VIA ( cDriver() ) SHARED INDEX "USERS.CDX"
 
-   DATABASE NEW ::oDbfFPago   PATH ( cPatGrp() )   FILE "FPAGO.DBF"    VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
+   DATABASE NEW ::oDbfFPago   PATH ( cPatEmp() )   FILE "FPAGO.DBF"    VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
    DATABASE NEW ::oDbfAge     PATH ( cPatCli() )   FILE "AGENTES.DBF"  VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
 

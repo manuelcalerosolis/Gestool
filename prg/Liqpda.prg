@@ -549,8 +549,8 @@ static function pdaOpenFiles()
    Bases de datos necesarias para imprimir liquidaciones-----------------------
    */
 
-      USE ( cPatGrp() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgentes ) )
-      SET ADSINDEX TO ( cPatGrp() + "AGENTES.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgentes ) )
+      SET ADSINDEX TO ( cPatEmp() + "AGENTES.CDX" ) ADDITIVE
 
       if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
          lOpen     := .f.
@@ -587,8 +587,8 @@ static function pdaOpenFiles()
       USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE
 
-      USE ( cPatGrp() + "Transpor.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Transpor", @dbfTranspor ) )
-      SET ADSINDEX TO ( cPatGrp() + "Transpor.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "Transpor.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Transpor", @dbfTranspor ) )
+      SET ADSINDEX TO ( cPatEmp() + "Transpor.CDX" ) ADDITIVE
       ( dbfTranspor )->( OrdSetFocus( "cCodTrn" ) )
 
       USE ( cPatEmp() + "HisMov.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "HisMov", @dbfHisMov ) )

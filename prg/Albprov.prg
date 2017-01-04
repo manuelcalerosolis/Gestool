@@ -1005,7 +1005,7 @@ STATIC FUNCTION OpenFiles( lExt )
       Stocks-------------------------------------------------------------------
       */
 
-      oStock               := TStock():Create( cPatGrp() )
+      oStock               := TStock():Create( cPatEmp() )
       if !oStock:lOpenFiles()
          lOpenFiles        := .f.
       end if

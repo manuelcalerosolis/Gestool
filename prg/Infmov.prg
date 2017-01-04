@@ -66,8 +66,8 @@ FUNCTION AlmValor( oMenuItem, oWnd )
    USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
    SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
 
-   USE ( cPatGrp() + "MOVALM.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "MOVALM", @dbfMov ) )
-   SET ADSINDEX TO ( cPatGrp() + "MOVALM.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "MOVALM.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "MOVALM", @dbfMov ) )
+   SET ADSINDEX TO ( cPatEmp() + "MOVALM.CDX" ) ADDITIVE
 
 	/*
 	Obtenemos los valores del primer y ultimo codigo
@@ -2193,8 +2193,8 @@ STATIC FUNCTION GenDiario( dInfDesde, dInfHasta, lPreCli, lPedCli, lAlbCli, lFac
    USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDivisa ) )
    SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
-   USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
-   SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
+   SET ADSINDEX TO ( cPatEmp() + "FPAGO.CDX" ) ADDITIVE
 
    cPorDiv     := cPorDiv( cDivEmp(), dbfDivisa ) // Picture de la divisa redondeada
 

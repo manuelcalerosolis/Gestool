@@ -667,8 +667,8 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatArt() + "PROMOC.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMOC", @dbfPromoC ) )
       SET ADSINDEX TO ( cPatArt() + "PROMOC.CDX" ) ADDITIVE
 
-      USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
-      SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
+      SET ADSINDEX TO ( cPatEmp() + "FPAGO.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
       SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
@@ -718,8 +718,8 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDelega ) )
       SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
 
-      USE ( cPatGrp() + "AGECOM.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "AGECOM", @dbfAgeCom ) )
-      SET ADSINDEX TO ( cPatGrp() + "AGECOM.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "AGECOM.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "AGECOM", @dbfAgeCom ) )
+      SET ADSINDEX TO ( cPatEmp() + "AGECOM.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
       SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
@@ -792,7 +792,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       oBandera          := TBandera():New()
 
-      oStock            := TStock():Create( cPatGrp() )
+      oStock            := TStock():Create( cPatEmp() )
       if !oStock:lOpenFiles()
          lOpenFiles     := .f.
       end if
@@ -824,7 +824,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       // Unidades de medicion
 
-      oUndMedicion      := UniMedicion():Create( cPatGrp() )
+      oUndMedicion      := UniMedicion():Create( cPatEmp() )
       if !oUndMedicion:OpenFiles()
          lOpenFiles     := .f.
       end if
@@ -11025,8 +11025,8 @@ Function SynPreCli( cPath )
    USE ( cPatArt() + "FAMILIAS.DBF" )  NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) ) EXCLUSIVE
    SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
 
-   USE ( cPatGrp() + "FPAGO.DBF" )     NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) ) EXCLUSIVE
-   SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "FPAGO.DBF" )     NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) ) EXCLUSIVE
+   SET ADSINDEX TO ( cPatEmp() + "FPAGO.CDX" ) ADDITIVE
 
    USE ( cPatDat() + "TIVA.DBF" )      NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "TIVA", @dbfIva ) ) SHARED
    SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE

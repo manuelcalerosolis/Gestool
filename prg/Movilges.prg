@@ -271,7 +271,7 @@ Method OpenFiles()
 
       DATABASE NEW ::dbfTIva     PATH ( cPatDat() ) FILE "TIVA.Dbf"     VIA ( cDriver() ) SHARED INDEX "TIVA.Cdx"
 
-      DATABASE NEW ::dbfFPago    PATH ( cPatGrp() ) FILE "FPAGO.Dbf"    VIA ( cDriver() ) SHARED INDEX "FPAGO.Cdx"
+      DATABASE NEW ::dbfFPago    PATH ( cPatEmp() ) FILE "FPAGO.Dbf"    VIA ( cDriver() ) SHARED INDEX "FPAGO.Cdx"
 
    RECOVER
 

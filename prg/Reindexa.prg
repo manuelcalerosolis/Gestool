@@ -39,7 +39,6 @@ CLASS TReindex
    DATA  cPatArt
    DATA  cPatPrv
    DATA  cPatAlm
-   DATA  cPatGrp
 
    DATA  cCodEmp
 
@@ -92,7 +91,6 @@ METHOD New( oWnd, oMenuItem, cPatEmp, cPatDat )
    ::cPatArt         := cPatArt()
    ::cPatPrv         := cPatPrv()
    ::cPatAlm         := cPatAlm()
-   ::cPatGrp         := cPatGrp()
 
    ::aLgcIndices     := Afill( Array( 6 ), .t. )
    ::aChkIndices     := Array( 6 )
@@ -224,8 +222,8 @@ METHOD GenIndices( oMsg )
          ::SetText( "Generando índices : Grupos de proveedores", ::aProgress[ 1 ] ) ; TGrpPrv():Create( ::cPatPrv ):Reindexa()
          ::SetText( "Generando índices : Tipos de artículos", ::aProgress[ 1 ] )    ; TTipArt():Create( ::cPatArt ):Reindexa()
          ::SetText( "Generando índices : Proyectos", ::aProgress[ 1 ] )             ; TProyecto():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Catálogos", ::aProgress[ 1 ] )             ; TCatalogo():Create( ::cPatGrp ):Reindexa()
-         ::SetText( "Generando índices : Unidades de medición", ::aProgress[ 1 ] )  ; UniMedicion():Create( ::cPatGrp ):Reindexa()
+         ::SetText( "Generando índices : Catálogos", ::aProgress[ 1 ] )             ; TCatalogo():Create( ::cPathEmp ):Reindexa()
+         ::SetText( "Generando índices : Unidades de medición", ::aProgress[ 1 ] )  ; UniMedicion():Create( ::cPathEmp ):Reindexa()
          ::SetText( "Generando índices : Transportistas", ::aProgress[ 1 ] )        ; TTrans():Create( ::cPatCli ):Reindexa()
          ::SetText( "Generando índices : Tipos de comandas", ::aProgress[ 1 ] )     ; TComandas():Create( ::cPatArt ):Reindexa()
 
@@ -276,7 +274,7 @@ METHOD GenIndices( oMsg )
 
          ::SetText( "Generando índices : Formas de pago", ::aProgress[ 2 ] )           ; rxFpago(    ::cPathEmp )
          ::SetText( "Generando índices : Bancos", ::aProgress[ 2 ] )                   ; TBancos():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Cuentas bancarias", ::aProgress[ 2 ] )        ; TCuentasBancarias():Create( ::cPatGrp ):Reindexa()
+         ::SetText( "Generando índices : Cuentas bancarias", ::aProgress[ 2 ] )        ; TCuentasBancarias():Create( ::cPathEmp ):Reindexa()
          ::SetText( "Generando índices : Artículos", ::aProgress[ 2 ] )                ; rxArticulo( ::cPatArt )
          ::SetText( "Generando índices : Clientes", ::aProgress[ 2 ] )                 ; rxClient(   ::cPatCli )
          ::SetText( "Generando índices : Proveedores", ::aProgress[ 2 ] )              ; rxProvee(   ::cPatPrv )
@@ -414,7 +412,7 @@ METHOD GenIndices( oMsg )
 
       end if
 
-      ::SetText( "Generando índices : invitaciones", ::aProgress[ 4 ] ) ;                 TInvitacion():Create( ::cPatGrp ):Reindexa()
+      ::SetText( "Generando índices : invitaciones", ::aProgress[ 4 ] ) ;                 TInvitacion():Create( ::cPathEmp ):Reindexa()
 
       if ::lNotGrupo
 

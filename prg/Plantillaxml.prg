@@ -376,7 +376,7 @@ METHOD OpenFiles( lExclusive ) CLASS TPlantillaXML
 
       DATABASE NEW ::oDbfIva     PATH ( cPatDat() )   FILE "TIVA.DBF"         VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
-      DATABASE NEW ::oDbfFPago   PATH ( cPatGrp() )   FILE "FPAGO.DBF"        VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
+      DATABASE NEW ::oDbfFPago   PATH ( cPatEmp() )   FILE "FPAGO.DBF"        VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
       DATABASE NEW ::oArtPrv     PATH ( cPatArt() )   FILE "PROVART.DBF"      VIA ( cDriver() ) SHARED INDEX "PROVART.CDX"
 

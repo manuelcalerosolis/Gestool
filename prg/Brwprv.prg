@@ -109,8 +109,8 @@ Static Function OpenFiles()
       SET ADSINDEX TO ( cPatEmp() + "FacPrvP.CDX" ) ADDITIVE
       SET TAG TO "cCodPrv"
 
-      USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
-      SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
+      SET ADSINDEX TO ( cPatEmp() + "FPAGO.CDX" ) ADDITIVE
 
       oDbfTmp        := DefineTemporal()
       oDbfTmp:Activate( .f., .f. )

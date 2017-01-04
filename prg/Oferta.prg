@@ -214,7 +214,7 @@ STATIC FUNCTION OpenFiles()
 
    oBandera             := TBandera():New
 
-   oStock            := TStock():Create( cPatGrp() )
+   oStock            := TStock():Create( cPatEmp() )
    if !oStock:lOpenFiles()
       lOpenFiles     := .f.
    end if
@@ -229,7 +229,7 @@ STATIC FUNCTION OpenFiles()
       lOpenFiles        := .f.
    end if
 
-   oUndMedicion         := UniMedicion():Create( cPatGrp() )
+   oUndMedicion         := UniMedicion():Create( cPatEmp() )
    if !oUndMedicion:OpenFiles()
       lOpenFiles        := .f.
    end if

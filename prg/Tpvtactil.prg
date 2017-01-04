@@ -1281,9 +1281,9 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oArticulosOfertas                         PATH ( cPatArt() )   FILE "OFERTA.DBF"          VIA ( cDriver() ) SHARED INDEX "OFERTA.CDX"
 
-   DATABASE NEW ::oFormaPago                                PATH ( cPatGrp() )   FILE "FPAGO.DBF"           VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
+   DATABASE NEW ::oFormaPago                                PATH ( cPatEmp() )   FILE "FPAGO.DBF"           VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
-   DATABASE NEW ::oPropiedadesLinea                         PATH ( cPatGrp() )   FILE "TBLPRO.DBF"          VIA ( cDriver() ) SHARED INDEX "TBLPRO.CDX"
+   DATABASE NEW ::oPropiedadesLinea                         PATH ( cPatEmp() )   FILE "TBLPRO.DBF"          VIA ( cDriver() ) SHARED INDEX "TBLPRO.CDX"
 
    DATABASE NEW ::oFamilias                                 PATH ( cPatArt() )   FILE "FAMILIAS.DBF"        VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
@@ -1313,7 +1313,7 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oAgentes                                  PATH ( cPatCli() )   FILE "AGENTES.DBF"         VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
 
-   DATABASE NEW ::oRuta                                     PATH ( cPatGrp() )   FILE "RUTA.DBF"            VIA ( cDriver() ) SHARED INDEX "RUTA.CDX"
+   DATABASE NEW ::oRuta                                     PATH ( cPatEmp() )   FILE "RUTA.DBF"            VIA ( cDriver() ) SHARED INDEX "RUTA.CDX"
 
    DATABASE NEW ::oAlmacen                                  PATH ( cPatAlm() )   FILE "ALMACEN.DBF"         VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
 
@@ -1335,7 +1335,7 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oFiltroPorUsuario                         PATH ( cPatDat() )   FILE "CNFFLT.DBF"          VIA ( cDriver() ) SHARED INDEX "CNFFLT.CDX"
 
-   DATABASE NEW ::oComisionesAgentes                        PATH ( cPatGrp() )   FILE "AGECOM.DBF"          VIA ( cDriver() ) SHARED INDEX "AGECOM.CDX"
+   DATABASE NEW ::oComisionesAgentes                        PATH ( cPatEmp() )   FILE "AGECOM.DBF"          VIA ( cDriver() ) SHARED INDEX "AGECOM.CDX"
 
    DATABASE NEW ::oEmpresa                                  PATH ( cPatDat() )   FILE "EMPRESA.DBF"         VIA ( cDriver() ) SHARED INDEX "EMPRESA.CDX"
 
@@ -1414,7 +1414,7 @@ METHOD OpenFiles() CLASS TpvTactil
 
    ::oBandera                 := TBandera():New()
 
-   ::oStock                   := TStock():Create( cPatGrp() )
+   ::oStock                   := TStock():Create( cPatEmp() )
    if !::oStock:lOpenFiles()
       ::lOpenFiles            := .f.
    end if
@@ -1434,7 +1434,7 @@ METHOD OpenFiles() CLASS TpvTactil
 
    ::cImpresora               := cImpresoraTicketEnCaja( oUser():cCaja(), ::oCajaCabecera )
 
-   ::oUndMedicion             := UniMedicion():Create( cPatGrp() )
+   ::oUndMedicion             := UniMedicion():Create( cPatEmp() )
    if !::oUndMedicion:OpenFiles()
       ::lOpenFiles            := .f.
    end if
@@ -1447,7 +1447,7 @@ METHOD OpenFiles() CLASS TpvTactil
       ::oRestaurante:BuildSalas()
    end if
 
-   ::oInvitacion              := TInvitacion():Create( cPatGrp() )
+   ::oInvitacion              := TInvitacion():Create( cPatEmp() )
    if !::oInvitacion:OpenFiles()
       ::lOpenFiles            := .f.
    end if
