@@ -25,9 +25,6 @@ NAVIGATE_PLUS_16 BITMAP "..\\bmp\\Navigate_Plus_16.bmp"
 FREE_BULLET_86 BITMAP "..\\bmp\\free_bullet_86.bmp"
 FREE_BUTTON_86 BITMAP "..\\bmp\\free_button_86.bmp"
 
-NAVIGATE_MINUS_32 BITMAP "..\\bmp\\Navigate_Minus_32.bmp"
-NAVIGATE_PLUS_32 BITMAP "..\\bmp\\Navigate_Plus_32.bmp"
-
 GAUGE_16 BITMAP "..\\bmp\\Gauge_16.bmp"
 
 MAGIC_16 BITMAP "..\\bmp\\Magic_Wand_16.bmp"

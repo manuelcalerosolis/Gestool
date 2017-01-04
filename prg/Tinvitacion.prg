@@ -9,7 +9,7 @@ CLASS TInvitacion FROM TMANT
    DATA  cMru INIT "gc_masks_16"
 
    CLASSDATA aResource  AS ARRAY    INIT {   "gc_cocktail_16"     ,;
-                                             "DUDE3_16"           ,;
+                                             "gc_user_16"           ,;
                                              "gc_businessman2_16"  ,;
                                              "USER_HEADPHONES_16" ,;
                                              "WOMAN2_16"          ,;
@@ -17,7 +17,7 @@ CLASS TInvitacion FROM TMANT
                                              "TICKET_RED_16"       }
 
    CLASSDATA aBigResource  AS ARRAY INIT {   "COCKTAIL_48"        ,;
-                                             "DUDE3_48"           ,;
+                                             "gc_user2_48"           ,;
                                              "SECURITY_AGENT_48"  ,;
                                              "USER_HEADPHONES_48" ,;
                                              "WOMAN2_48"          ,;

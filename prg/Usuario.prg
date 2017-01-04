@@ -2238,8 +2238,8 @@ Function InitBrwBigUser( oDlg, oImgUsr, dbfUsr )
 
    CursorWait()
 
-   oImgUsr:AddMasked( TBitmap():Define( "Big_Admin" ), Rgb( 255, 0, 255 ) )
-   oImgUsr:AddMasked( TBitmap():Define( "Big_User" ), Rgb( 255, 0, 255 ) )
+   oImgUsr:AddMasked( TBitmap():Define( "GC_BUSINESSMAN2_50" ), Rgb( 255, 0, 255 ) )
+   oImgUsr:AddMasked( TBitmap():Define( "GC_USER2_50" ), Rgb( 255, 0, 255 ) )
 
    if !Empty( oImgUsr ) .and. !Empty( oLstUsr )
 

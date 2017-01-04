@@ -16,8 +16,6 @@ ANGEL24 BITMAP "..\\bmp\\Angel_24.bmp"
 SECURITY24 BITMAP "..\\bmp\\Security_Agent_24.bmp"
 USERHEADSET24 BITMAP "..\\bmp\\User_Headset_24.bmp"
 DUDE224 BITMAP "..\\bmp\\Dude2_24.bmp"
-BIG_USER BITMAP "..\\bmp\\Dude4_50.bmp"
-BIG_ADMIN BITMAP "..\\bmp\\Security_Agent_50.bmp"
 BAR_01 BITMAP "..\\bmp\\Bar_01.bmp"
 FOLDER_INTRO16 BITMAP "..\\bmp\\folder_into.bmp"
 

@@ -394,13 +394,13 @@ METHOD StartResource() CLASS TpvListaTicket
       end if
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 186,  "Tipo de ticket", .f. )
-         ::oBtnAbiertos       := TDotNetButton():New( 60, oGrupo,    "Tickets_abiertos_32",     "Abiertos",           1, {|| ::OnClickAbiertos() }, , , .f., .f., .f. )
-         ::oBtnTodos          := TDotNetButton():New( 60, oGrupo,    "gc_note_block_32",                "Todos",              2, {|| ::OnClickTodos() }, , , .f., .f., .f. )
-         ::oBtnFiltro         := TDotNetButton():New( 60, oGrupo,    "Calendar_32",             "Filtrar",            3, {|| ::OnClickFiltro() }, , , .f., .f., .f. )
+         ::oBtnAbiertos       := TDotNetButton():New( 60, oGrupo,    "gc_note_block_delete_32",    "Abiertos",           1, {|| ::OnClickAbiertos() }, , , .f., .f., .f. )
+         ::oBtnTodos          := TDotNetButton():New( 60, oGrupo,    "gc_note_block_32",           "Todos",              2, {|| ::OnClickTodos() }, , , .f., .f., .f. )
+         ::oBtnFiltro         := TDotNetButton():New( 60, oGrupo,    "gc_calendar_32",             "Filtrar",            3, {|| ::OnClickFiltro() }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 366,  "Seleción de tickets", .f. )
-         ::oPrimeraLinea      := TDotNetButton():New( 60, oGrupo,    "navigate_top_32",         "Primera línea",      1, {|| ::LineaPrimera() } )
-         ::oUltimaLinea       := TDotNetButton():New( 60, oGrupo,    "Navigate_end_32",         "Última línea",       2, {|| ::LineaUltima() } )
+         ::oPrimeraLinea      := TDotNetButton():New( 60, oGrupo,    "gc_navigate_line_up_32",         "Primera línea",      1, {|| ::LineaPrimera() } )
+         ::oUltimaLinea       := TDotNetButton():New( 60, oGrupo,    "gc_navigate_line_down_32",         "Última línea",       2, {|| ::LineaUltima() } )
          ::oAnteriorPagina    := TDotNetButton():New( 60, oGrupo,    "gc_navigate_up2a_32",            "Página anterior",    3, {|| ::PaginaAnterior() } )
          ::oSiguientePagina   := TDotNetButton():New( 60, oGrupo,    "gc_navigate_down2a_32",          "Página siguiente",   4, {|| ::PaginaSiguiente() } )
          ::oAnteriorLinea     := TDotNetButton():New( 60, oGrupo,    "gc_arrow_up_32",             "Línea anterior",     5, {|| ::LineaAnterior() } )
@@ -1159,8 +1159,8 @@ METHOD StartVales() CLASS TpvListaTicket
          oBoton               := TDotNetButton():New( 60, oGrupo,    "Del32",                   "Ninguno",            3, {|| ::OnClickSelectNingunoVales() }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 366,  "Seleción de tickets", .f. )
-         ::oPrimeraLinea      := TDotNetButton():New( 60, oGrupo,    "Navigate_top_32",         "Primera línea",      1, {|| ::LineaPrimera() } )
-         ::oUltimaLinea       := TDotNetButton():New( 60, oGrupo,    "Navigate_end_32",         "Última línea",       2, {|| ::LineaUltima() } )
+         ::oPrimeraLinea      := TDotNetButton():New( 60, oGrupo,    "gc_navigate_line_up_32",         "Primera línea",      1, {|| ::LineaPrimera() } )
+         ::oUltimaLinea       := TDotNetButton():New( 60, oGrupo,    "gc_navigate_line_down_32",         "Última línea",       2, {|| ::LineaUltima() } )
          ::oAnteriorPagina    := TDotNetButton():New( 60, oGrupo,    "gc_navigate_up2a_32",            "Página anterior",    3, {|| ::PaginaAnterior() } )
          ::oSiguientePagina   := TDotNetButton():New( 60, oGrupo,    "gc_navigate_down2a_32",          "Página siguiente",   4, {|| ::PaginaSiguiente() } )
          ::oAnteriorLinea     := TDotNetButton():New( 60, oGrupo,    "gc_arrow_up_32",             "Línea anterior",     5, {|| ::LineaAnterior() } )

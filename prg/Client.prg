@@ -6939,13 +6939,13 @@ Function BrwCliTactil( oGet, dbfCli, oGet2, lReturnCliente, cText, cBitmap )
       REDEFINE BUTTONBMP ;
          ID       160 ;
          OF       oDlg ;
-         BITMAP   "User1_Add_32" ;
+         BITMAP   "gc_user2_add_32" ;
          ACTION   ( WinAppRec( oBrw, bEdtBig, dbfCli ) )
 
       REDEFINE BUTTONBMP ;
          ID       170 ;
          OF       oDlg ;
-         BITMAP   "User1_Edit_32" ;
+         BITMAP   "gc_user2_edit_32" ;
          ACTION   ( WinEdtRec( oBrw, bEdtBig, dbfCli ) )
 
       REDEFINE BUTTONBMP ;

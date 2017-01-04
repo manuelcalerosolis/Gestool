@@ -12846,7 +12846,7 @@ Static Function SetBigUser( aTmp, aGet )
    if !empty( oUser():cImagen() )
       oBtnUsuario:cBmp( cFileBmpName( oUser():cImagen() ) )
    else
-      oBtnUsuario:cBmp( if( oUser():lAdministrador(), "gc_businessman2_32", "Dude4_32" ) )
+      oBtnUsuario:cBmp( if( oUser():lAdministrador(), "gc_businessman2_32", "gc_user2_32" ) )
    end if
 
    oBtnUsuario:cCaption( Capitalize( oUser():cNombre() ) )
@@ -15262,9 +15262,9 @@ Static Function CrearDescuento( dbfTmpL, oBrwDet )
 
    DEFINE DIALOG oDlg RESOURCE "DTO_TCT"
 
-      oBtnUnaLinea      := TBtnBmp():ReDefine( 100, "Row_32",,,,,{|| oBtnUnaLinea:GoDown(), oBtnTodasLineas:GoUp() }, oDlg, .f., , .f. )
+      oBtnUnaLinea      := TBtnBmp():ReDefine( 100, "gc_table_selection_row_32",,,,,{|| oBtnUnaLinea:GoDown(), oBtnTodasLineas:GoUp() }, oDlg, .f., , .f. )
 
-      oBtnTodasLineas   := TBtnBmp():ReDefine( 110, "Row_All_32",,,,,{|| oBtnUnaLinea:GoUp(), oBtnTodasLineas:GoDown() }, oDlg, .f., , .f. )
+      oBtnTodasLineas   := TBtnBmp():ReDefine( 110, "gc_table_selection_all_32",,,,,{|| oBtnUnaLinea:GoUp(), oBtnTodasLineas:GoDown() }, oDlg, .f., , .f. )
 
       REDEFINE BUTTON ;
          ID       200 ;
@@ -15294,13 +15294,13 @@ Static Function CrearDescuento( dbfTmpL, oBrwDet )
       REDEFINE BUTTONBMP ;
          ID       300 ;
          OF       oDlg ;
-         BITMAP   "Navigate_Plus_32" ;
+         BITMAP   "gc_navigate_plus_32" ;
          ACTION   ( oGetPorcentaje++ )
 
       REDEFINE BUTTONBMP ;
          ID       310 ;
          OF       oDlg ;
-         BITMAP   "Navigate_Minus_32" ;
+         BITMAP   "gc_navigate_minus_32" ;
          ACTION   ( oGetPorcentaje-- )
 
       REDEFINE GET oGetPorcentaje ;
@@ -15361,9 +15361,9 @@ Static Function CrearInvitacion( dbfTmpL, oBrwDet )
 
    DEFINE DIALOG oDlg RESOURCE "INV_TCT"
 
-      oBtnTodasLineas   := ApoloBtnBmp():ReDefine( 100, "Row_All_32",,,,,{|| oBtnUnaLinea:GoUp(), oBtnTodasLineas:GoDown() }, oDlg, .f., , .f. )
+      oBtnTodasLineas   := ApoloBtnBmp():ReDefine( 100, "gc_table_selection_all_32",,,,,{|| oBtnUnaLinea:GoUp(), oBtnTodasLineas:GoDown() }, oDlg, .f., , .f. )
 
-      oBtnUnaLinea      := ApoloBtnBmp():ReDefine( 110, "Row_32",,,,,{|| oBtnUnaLinea:GoDown(), oBtnTodasLineas:GoUp() }, oDlg, .f., , .f. )
+      oBtnUnaLinea      := ApoloBtnBmp():ReDefine( 110, "gc_table_selection_row_32",,,,,{|| oBtnUnaLinea:GoDown(), oBtnTodasLineas:GoUp() }, oDlg, .f., , .f. )
 
       oImgInv           := TImageList():New( 48, 48 )
       oLstInv           := TListView():Redefine( 120, oDlg )
