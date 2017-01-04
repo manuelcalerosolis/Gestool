@@ -2105,7 +2105,7 @@ METHOD DialogCreateTurno()
       REDEFINE BUTTONBMP ;
          ID       210 ;
          OF       oDlg ;
-         BITMAP   "Calculator_32" ;
+         BITMAP   "gc_calculator_32" ;
          ACTION   ( Calculadora( 0, oImporte ) )
 
    end if      
@@ -2132,7 +2132,7 @@ METHOD DialogCreateTurno()
       REDEFINE BUTTONBMP ;
          ID       220 ;
          OF       oDlg ;
-         BITMAP   "Calculator_32" ;
+         BITMAP   "gc_calculator_32" ;
          ACTION   ( Calculadora( 0, oObjetivo ) )
 
    end if
@@ -3541,12 +3541,12 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          ID       230 ;
          OF       ::oFldTurno:aDialogs[ 3 ] ;
          WHEN     !::lCerrado ;
-         BITMAP   "Calculator_32" ;
+         BITMAP   "gc_calculator_32" ;
          ACTION   ( Calculadora( 0, ::oImporteTarjeta ), ::RefreshTurno() )
 
       else
 
-         oBtnCalculadora            := TBtnBmp():ReDefine( 230, "Calculator_16" ,,,,, {|| Calculadora( 0, ::oImporteTarjeta ), ::RefreshTurno() }, ::oFldTurno:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Calculo de tarjetas" )
+         oBtnCalculadora            := TBtnBmp():ReDefine( 230, "gc_calculator_16" ,,,,, {|| Calculadora( 0, ::oImporteTarjeta ), ::RefreshTurno() }, ::oFldTurno:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Calculo de tarjetas" )
          oBtnCalculadora:lTransparent  := .t.
          oBtnCalculadora:lBoxSelect    := .f.
 

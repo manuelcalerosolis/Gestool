@@ -700,7 +700,7 @@ STATIC FUNCTION EdtRecTct( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
       REDEFINE BUTTONBMP ;
          ID       171 ;
          OF       oDlg ;
-         BITMAP   "Calculator_32" ;
+         BITMAP   "gc_calculator_32" ;
          ACTION   ( Calculadora( 0, aGet[ _NIMPENT ] ) )
 
       REDEFINE GET aGet[ _NIMPENT ] VAR aTmp[ _NIMPENT ];

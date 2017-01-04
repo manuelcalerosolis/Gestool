@@ -265,7 +265,7 @@ FUNCTION CuentasClientes( oWnd )
    REDEFINE BUTTONBMP ;
       ID       220 ;
       OF       oDlg ;
-      BITMAP   "Calculator_32" ;
+      BITMAP   "gc_calculator_32" ;
       ACTION   ( Calculadora( 0, oEntCli ), oCmbCli:cText( nEntCli - nPdtCli ) )
 
    REDEFINE BUTTONBMP oBtnPagos ;
@@ -942,13 +942,13 @@ Static Function PagosTikets( oCodCli )
    REDEFINE BUTTONBMP ;
       ID       150 ;
       OF       oDlg ;
-      BITMAP   "PREV1_32" ;
+      BITMAP   "gc_monitor_32" ;
       ACTION   ( PrintPagoCliente( .t. ) )
 
    REDEFINE BUTTONBMP ;
       ID       130 ;
       OF       oDlg ;
-      BITMAP   "IMP32" ;
+      BITMAP   "gc_printer2_32" ;
       ACTION   ( PrintPagoCliente( .f. ) )
 
    REDEFINE BUTTONBMP ;

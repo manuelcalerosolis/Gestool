@@ -320,8 +320,8 @@ METHOD InitDialog() CLASS TFastValoracionAlmacen
       oCarpeta             := TCarpeta():New( ::oOfficeBar, "Informe" )
 
       oGrupo               := TDotNetGroup():New( oCarpeta, 306, "Impresión", .f. )
-                              TDotNetButton():New( 60, oGrupo, "Prev1_32",             "Visualizar",  1, {|| ::GenReport( IS_SCREEN ) }, , , .f., .f., .f. )
-                              TDotNetButton():New( 60, oGrupo, "Imp32",                "Imprimir",    2, {|| ::GenReport( IS_PRINTER ) }, , , .f., .f., .f. )
+                              TDotNetButton():New( 60, oGrupo, "gc_monitor_32",             "Visualizar",  1, {|| ::GenReport( IS_SCREEN ) }, , , .f., .f., .f. )
+                              TDotNetButton():New( 60, oGrupo, "gc_printer2_32",                "Imprimir",    2, {|| ::GenReport( IS_PRINTER ) }, , , .f., .f., .f. )
                               TDotNetButton():New( 60, oGrupo, "Table_32",             "Excel",       3, {|| ::GenReport( IS_EXCEL ) }, , , .f., .f., .f. )
                               TDotNetButton():New( 60, oGrupo, "Document_lock_32",     "Pdf",         4, {|| ::GenReport( IS_PDF ) }, , , .f., .f., .f. )
                               TDotNetButton():New( 60, oGrupo, "SndInt32",             "HTML",        5, {|| ::GenReport( IS_HTML ) }, , , .f., .f., .f. )
