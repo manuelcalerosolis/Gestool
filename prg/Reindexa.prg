@@ -636,7 +636,7 @@ METHOD Resource( lAutoInit )
    DEFINE DIALOG ::oDlg RESOURCE "REINDEX" OF oWnd()
 
 
-      REDEFINE BITMAP oBmp RESOURCE "RegenerarIndices" ID 600 OF ::oDlg
+      REDEFINE BITMAP oBmp RESOURCE "gc_recycle_48" ID 600 OF ::oDlg
 
       REDEFINE CHECKBOX ::aChkIndices[ 1 ] VAR ::aLgcIndices[ 1 ] ID 100 OF ::oDlg
       REDEFINE CHECKBOX ::aChkIndices[ 2 ] VAR ::aLgcIndices[ 2 ] ID 101 OF ::oDlg
