@@ -1033,7 +1033,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
       DEFINE BTNSHELL RESOURCE "GC_MAIL_EARTH_" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected )  ) ;
+         ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
          TOOLTIP  "Enviar correos" ;
          HOTKEY   "V" ;
          LEVEL    ACC_IMPR

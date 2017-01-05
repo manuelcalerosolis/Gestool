@@ -387,10 +387,12 @@ METHOD buildColumnsBrowse()
       :bLDClickData                 := {|| ::toogleSelectLine() }
    end with
 
+   msgalert( ::getPictureRound() )
+
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Importe"
       :Cargo                        := "getNetPrice"
-      :bEditValue                   := {|| Transform( ::getDocumentLine():getNetPrice(), ::getPictureRound() ) }
+      :bEditValue                   := {|| ::getDocumentLine():getNetPrice() }
       :cEditPicture                 := ::getPictureRound()
       :nWidth                       := 90
       :nDataStrAlign                := 1

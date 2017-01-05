@@ -852,7 +852,8 @@ METHOD columnsBrowseLines()
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Importe"
       :Cargo                        := "getNetPrice"
-      :bEditValue                   := {|| Transform( ::getLineDocument():getNetPrice(), ::cPictureRound ) }
+      :bEditValue                   := {|| ::getLineDocument():getNetPrice() } 
+      :cDataType                    := "N"
       :cEditPicture                 := ::cPictureRound
       :nWidth                       := 90
       :nDataStrAlign                := 1
@@ -902,7 +903,7 @@ METHOD columnsBrowseLines()
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Total"
       :Cargo                        := "getBruto"
-      :bEditValue                   := {|| Transform( ::getLineDocument():getBruto(), ::cPictureRound ) } 
+      :bEditValue                   := {|| ::getLineDocument():getBruto() } 
       :cEditPicture                 := ::cPictureRound
       :nWidth                       := 80
       :nDataStrAlign                := 1

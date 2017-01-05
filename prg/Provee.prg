@@ -152,6 +152,7 @@ static bEdtDoc    := { | aTmp, aGet, dbfProveeD, oBrw, bWhen, bValid, nMode | Ed
 static bEdtBnc    := { | aTmp, aGet, dbfBanco, oBrw, bWhen, bValid, nMode, cCodPrv | EdtBnc( aTmp, aGet, dbfBanco, oBrw, bWhen, bValid, nMode, cCodPrv ) }
 
 static oReporting
+static oMailing 
 
 #endif
 
@@ -181,7 +182,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       DisableAcceso()
 
-      nView             := D():CreateView()
+      nView       := D():CreateView()
 
       lOpenFiles  := .t.
 
@@ -236,24 +237,24 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       SET ADSINDEX TO ( cPatEmp() + "RDOCUMEN.CDX" ) ADDITIVE
       SET TAG TO "CTIPO"
 
-      oBandera       := TBandera():New
+      oBandera          := TBandera():New
 
-      oPais          := TPais():Create( cPatDat() )
+      oPais             := TPais():Create( cPatDat() )
       if !oPais:OpenFiles()
-         lOpenFiles  := .f.
+         lOpenFiles     := .f.
       end if
 
-      oGrpPrv        := TGrpPrv():Create( cPatPrv() )
+      oGrpPrv           := TGrpPrv():Create( cPatPrv() )
       if !oGrpPrv:OpenFiles()
-         lOpenFiles  := .f.
+         lOpenFiles     := .f.
       end if
 
       oBanco            := TBancos():Create()
       oBanco:OpenFiles()
 
-      oDetCamposExtra      := TDetCamposExtra():New()
+      oDetCamposExtra   := TDetCamposExtra():New()
       if !oDetCamposExtra:OpenFiles
-         lOpenFiles        := .f.
+         lOpenFiles     := .f.
       end if
 
       oDetCamposExtra:SetTipoDocumento( "Proveedores" )
@@ -262,8 +263,10 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       CodigosPostales():GetInstance():OpenFiles()
 
-      cPinDiv        := cPinDiv( cDivEmp(), dbfDiv ) // Picture de la divisa
-      cPirDiv        := cPirDiv( cDivEmp(), dbfDiv ) // Picture de la divisa redondeada
+      cPinDiv           := cPinDiv( cDivEmp(), dbfDiv ) // Picture de la divisa
+      cPirDiv           := cPirDiv( cDivEmp(), dbfDiv ) // Picture de la divisa redondeada
+
+      oMailing          := TGenMailingClientes():New( nView )
 
       EnableAcceso()
 
@@ -574,7 +577,7 @@ FUNCTION Provee( oMenuItem, oWnd )
 
    DEFINE BTNSHELL RESOURCE "GC_MAIL_EARTH_" OF oWndBrw ;
 		NOBORDER ;
-      ACTION   ( TGenMailingProveedores():New( dbfProvee ):Resource() ) ;
+      ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
       TOOLTIP  "Enviar correos" ;
       HOTKEY   "V" ;
       LEVEL    ACC_IMPR

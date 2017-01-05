@@ -32,7 +32,7 @@ METHOD New( nView, oStock )
 
    ::setDocumentPedidosProveedores()
 
-   msgalert( 'setDocumentPedidosProveedores' )
+   ::setShoppingPictures()
 
 RETURN ( Self )   
 
@@ -86,8 +86,6 @@ METHOD Dialog()
 
    ACTIVATE DIALOG ::oDlg CENTER
 
-   ::CloseFiles()
-
    oBmp:End()
 
 RETURN ( ::oDlg:nResult == IDOK )
@@ -97,6 +95,7 @@ RETURN ( ::oDlg:nResult == IDOK )
 METHOD startDialog()
 
    ::buttonPrior:Hide()
+
    ::buttonNext:setText( "&Importar")
 
    ::oBrwLines:Load()

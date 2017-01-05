@@ -49,6 +49,7 @@ METHOD New( dbfProveedores ) CLASS TGenMailingProveedores
    ::Create()
 
    ::setItems( aItmPrv() )
+   
    ::setWorkArea( dbfProveedores ) 
 
    ::oSendMail       := TSendMail():New( Self )

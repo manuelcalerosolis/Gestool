@@ -10955,6 +10955,7 @@ Static Function ImportarLineasPedidosProveedor( aTmp, aGet, oBrwLin )
 
    oConversionPedidosProveedores:setCodigoProveedor( cCodigoProveedor ) 
    oConversionPedidosProveedores:setTitle( "Importando pedidos de " + alltrim( cCodigoProveedor ) + " - " + alltrim( cNombreProveedor ) )
+
    if oConversionPedidosProveedores:Dialog()
       appendLineasPedidosProveedor( oConversionPedidosProveedores:oDocumentLines:aLines, oBrwLin )
    end if 
