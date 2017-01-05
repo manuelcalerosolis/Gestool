@@ -203,3 +203,5 @@ GC_EXPORT2_16 BITMAP "..\\bmp\\gc_export2_16.bmp"
 GC_IMPORT_16 BITMAP "..\\bmp\\gc_import_16.bmp"
 
 GC_NOTEBOOK2_48 BITMAP "..\\bmp\\gc_notebook2_48.bmp"
+
+GC_PACKAGE_PRINTER_64 BITMAP "..\\bmp\\gc_package_printer_64.bmp"

@@ -468,6 +468,7 @@ METHOD defineAlmacen() CLASS ViewDetail
                                                       "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
                                                       "nHeight"   => 23,;
                                                       "lPixels"   => .t.,;
+                                                      "bWhen"     => {|| ( GetPvProfString( "Tablet", "BloqueoAlmacen", ".F.", cIniAplication() ) == ".F." ) },;
                                                       "bValid"    => {|| ::oSender:CargaAlmacen() } } )
 
    ::oGetNombreAlmacen        := TGridGet():Build( {  "nRow"      => ::getRow(),;

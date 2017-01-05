@@ -50,6 +50,8 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    DATA lApplyFilters                     INIT .t.
 
+   DATA cAlmacenDefecto
+
    METHOD lResource( cFld )
 
    METHOD Create()
@@ -3052,14 +3054,13 @@ RETURN ( Self )
 
 METHOD AddArticulo( lAppendBlank ) CLASS TFastVentasArticulos
 
-   local cAlmacen
    local aStockArticulo
 
    DEFAULT lAppendBlank    := .f.
 
    if !Empty( ::oGrupoAlmacen )
       if ::oGrupoAlmacen:cargo:getDesde() == ::oGrupoAlmacen:cargo:getHasta()
-         cAlmacen             := ::oGrupoAlmacen:cargo:getDesde()
+         ::cAlmacenDefecto := ::oGrupoAlmacen:cargo:getDesde()
       end if 
    end if
 
@@ -3079,7 +3080,7 @@ METHOD AddArticulo( lAppendBlank ) CLASS TFastVentasArticulos
       if ( Empty( ::oGrupoArticulo ) .or. ( ::oDbfArt:Codigo  >= ::oGrupoArticulo:Cargo:getDesde() .and. ::oDbfArt:Codigo  <= ::oGrupoArticulo:Cargo:getHasta() ) ) .and.;
          ( Empty( ::oGrupoFamilia ) .or. ( ::oDbfArt:Familia >= ::oGrupoFamilia:Cargo:getDesde()  .and. ::oDbfArt:Familia <= ::oGrupoFamilia:Cargo:getHasta() ) )           
 
-         aStockArticulo    := ::oStock:aStockArticulo( ::oDbfArt:Codigo, cAlmacen, , , , , ::dFinInf )
+         aStockArticulo    := ::oStock:aStockArticulo( ::oDbfArt:Codigo, ::cAlmacenDefecto, , , , , ::dFinInf )
 
          if !empty( aStockArticulo )
             ::appendStockArticulo( aStockArticulo )

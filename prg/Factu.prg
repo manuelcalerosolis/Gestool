@@ -4887,7 +4887,7 @@ Function MainTablet()
                            "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "gc_document_text_user_64",;
+                           "cResName"  => "gc_package_printer_64",;
                            "bLClicked" => {|| Informe3() },;
                            "oWnd"      => oDlg } )
 
@@ -5156,6 +5156,7 @@ static function Informe3()
    oInf:cReportDirectory   := cPatReporting() + "Articulos\Existencias\Stocks"
    oInf:cReportName        := "Stocks artículos tablet"
    oInf:cReportFile        := cPatReporting() + "Articulos\Existencias\Stocks\Stocks artículos tablet.fr3"
+   oInf:cAlmacenDefecto    := oUser():cAlmacen()
    oInf:BuildReportCorrespondences()
 
    oInf:PlayTablet()

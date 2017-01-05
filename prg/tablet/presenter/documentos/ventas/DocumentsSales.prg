@@ -346,6 +346,10 @@ Return nil
 
 METHOD isChangeSerieTablet() CLASS DocumentsSales
    
+   if GetPvProfString( "Tablet", "BloqueoSerie", ".F.", cIniAplication() ) == ".T."
+      Return ( self )
+   end if
+
    if ::lZoomMode()
       Return ( self )
    end if 
