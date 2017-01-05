@@ -711,7 +711,9 @@ Return lReturn
 
 METHOD onViewCancel()
 
-   ::oViewEdit:oDlg:end( )
+   if ApoloMsgNoYes( "¿Desea terminar el proceso?", "¡Atención!", .t. )
+      ::oViewEdit:oDlg:end()
+   end if
 
 Return ( self )
 
