@@ -745,7 +745,6 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
          ::oCamposExtra:End()
       end if
 
-<<<<<<< HEAD
       if !Empty( ::oTipArt )
          ::oTipArt:End()
       end if
@@ -763,9 +762,6 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
       end if
 
       if !Empty( ::nView )
-=======
-      if !empty( ::nView )
->>>>>>> origin/master
          D():DeleteView( ::nView )
       end if
 
