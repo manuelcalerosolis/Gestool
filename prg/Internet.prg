@@ -323,7 +323,7 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TSndRecInf
 
    END DATABASE ::oDbfSenderReciver
 
-   DEFINE TABLE ::oDbfFilesReciver FILE "SndFil.Dbf" CLASS "SndFil" ALIAS "SndFil" PATH ( ::cPath ) VIA ( cDriver )COMMENT "Registro de ficheros recibidos"
+   DEFINE TABLE ::oDbfFilesReciver FILE "SndFil.Dbf" CLASS "SndFil" ALIAS "SndFil" PATH ( ::cPath ) VIA ( cDriver ) COMMENT "Registro de ficheros recibidos"
 
       FIELD NAME "cArchivo"   TYPE "C" LEN  80 DEC 0  COMMENT "Nombre del fichero"        OF ::oDbfFilesReciver
       FIELD NAME "dFecha"     TYPE "D" LEN   8 DEC 0  COMMENT "Fecha del envío"           OF ::oDbfFilesReciver

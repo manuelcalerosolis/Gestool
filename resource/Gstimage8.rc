@@ -72,8 +72,6 @@ Shape_rectangle_80 BITMAP "..\\bmp\\Shape_rectangle_80.bmp"
 Shape_square_cup_160 BITMAP "..\\bmp\\Shape_square_cup_160.bmp"
 Shape_square_wheel_160 BITMAP "..\\bmp\\Shape_square_wheel_160.bmp"
 
-User1_Add_32 BITMAP "..\\bmp\\User1_Add.bmp"
-User1_Edit_32 BITMAP "..\\bmp\\User1_Edit_32.bmp"
 Users1_32 BITMAP "..\\bmp\\Users1_32.bmp"
 Document_check_16 BITMAP "..\\bmp\\document_check_16.bmp"
 UsrSel BITMAP "..\\bmp\\UsrSel.bmp"

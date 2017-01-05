@@ -8,21 +8,21 @@ CLASS TInvitacion FROM TMANT
 
    DATA  cMru INIT "gc_masks_16"
 
-   CLASSDATA aResource  AS ARRAY    INIT {   "gc_cocktail_16"     ,;
-                                             "DUDE3_16"           ,;
-                                             "gc_businessman2_16"  ,;
-                                             "USER_HEADPHONES_16" ,;
-                                             "WOMAN2_16"          ,;
-                                             "TICKET_GREEN_16"    ,;
-                                             "TICKET_RED_16"       }
+   CLASSDATA aResource  AS ARRAY    INIT {   "gc_cocktail_16"        ,;
+                                             "gc_user_16"            ,;
+                                             "gc_security_agent_16"  ,;
+                                             "gc_user_headphones_16" ,;
+                                             "gc_woman2_16"          ,;
+                                             "gc_ticket_blue_16"     ,;
+                                             "gc_ticket_red_16"       }
 
-   CLASSDATA aBigResource  AS ARRAY INIT {   "COCKTAIL_48"        ,;
-                                             "DUDE3_48"           ,;
-                                             "SECURITY_AGENT_48"  ,;
-                                             "USER_HEADPHONES_48" ,;
-                                             "WOMAN2_48"          ,;
-                                             "TICKET_GREEN_48"    ,;
-                                             "TICKET_RED_48"       }
+   CLASSDATA aBigResource  AS ARRAY INIT {   "COCKTAIL_48"           ,;
+                                             "gc_user2_48"           ,;
+                                             "gc_security_agent_48"  ,;
+                                             "gc_user_headphones_48" ,;
+                                             "gc_woman2_48"          ,;
+                                             "gc_ticket_blue_48"     ,;
+                                             "gc_ticket_red_48"       }
 
 
    CLASSDATA aImagen    AS ARRAY    INIT {   "Copas"              ,;

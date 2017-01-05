@@ -674,8 +674,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
 
       oImgLst        := TImageList():New()
 
-      aAdd( aBmp, TBitmap():Define( "FOLDER16"  , , oDlg ) )
-      aAdd( aBmp, TBitmap():Define( "NOACC16"   , , oDlg ) )
+      aAdd( aBmp, TBitmap():Define( "gc_folder_open_16"  , , oDlg ) )
+      aAdd( aBmp, TBitmap():Define( "gc_sign_forbidden_16"   , , oDlg ) )
       aAdd( aBmp, TBitmap():Define( "NEW16"     , , oDlg ) )
       aAdd( aBmp, TBitmap():Define( "EDIT16"    , , oDlg ) )
       aAdd( aBmp, TBitmap():Define( "gc_lock2_16"    , , oDlg ) )
@@ -2238,8 +2238,8 @@ Function InitBrwBigUser( oDlg, oImgUsr, dbfUsr )
 
    CursorWait()
 
-   oImgUsr:AddMasked( TBitmap():Define( "Big_Admin" ), Rgb( 255, 0, 255 ) )
-   oImgUsr:AddMasked( TBitmap():Define( "Big_User" ), Rgb( 255, 0, 255 ) )
+   oImgUsr:AddMasked( TBitmap():Define( "GC_BUSINESSMAN2_50" ), Rgb( 255, 0, 255 ) )
+   oImgUsr:AddMasked( TBitmap():Define( "GC_USER2_50" ), Rgb( 255, 0, 255 ) )
 
    if !Empty( oImgUsr ) .and. !Empty( oLstUsr )
 
@@ -2474,7 +2474,7 @@ function PdalSelUsuario()
    local oDlg
    local oBrw
    local hPss        := ReadBitmap( cPatBmp() + "key1_16.bmp" )
-   local hUse        := ReadBitmap( cPatBmp() + "forbidden_16.bmp" )
+   local hUse        := ReadBitmap( cPatBmp() + "gc_sign_forbidden_16.bmp" )
    local lOpen       := .t.
    local oBlock
    local oClave

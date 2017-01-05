@@ -133,7 +133,7 @@ CLASS TTpvRestaurante FROM TMasDet
                                                    "Botella de tinto"   ,;
                                                    "Copa de tinto"      ,;
                                                    "Copa de blanco"     ,;
-                                                   "Botella de limonada",;
+                                                   "Vaso de limonada"   ,;
                                                    "Cocktail"           ,;
                                                    "Helado"             ,;
                                                    "Pescado"            ,;

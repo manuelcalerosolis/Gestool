@@ -926,7 +926,7 @@ METHOD PedCli( cNumPed, cCodAlm, lDelete, lIncremento ) CLASS TStock
          if !empty( Rtrim( ( ::cPedCliL )->cRef ) )
 
             nUndPed     := nTotNPedCli( ::cPedCliL )
-            nUndRes     := nTotRPedCli( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cPedCliR )
+            nUndRes     := nUnidadesReservadasEnPedidosCliente( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cPedCliR )
 
             /*
             Si no tenemos almacen en linea se lo ponemos
@@ -1216,7 +1216,7 @@ METHOD nStockReservado( cCodArt, cValPr1, cValPr2 ) CLASS TStock
 
       while ( ::cPedCliR )->cRef == cCodArt .and. !( ::cPedCliR )->( Eof() )
 
-         nTotal         += nTotRPedCli( ( ::cPedCliR )->cSerPed + Str( ( ::cPedCliR )->nNumPed ) + ( ::cPedCliR )->cSufPed, ( ::cPedCliR )->cRef, ( ::cPedCliR )->cValPr1, ( ::cPedCliR )->cValPr2, ::cPedCliR )
+         nTotal         += nUnidadesReservadasEnPedidosCliente( ( ::cPedCliR )->cSerPed + Str( ( ::cPedCliR )->nNumPed ) + ( ::cPedCliR )->cSufPed, ( ::cPedCliR )->cRef, ( ::cPedCliR )->cValPr1, ( ::cPedCliR )->cValPr2, ::cPedCliR )
 
          ( ::cPedCliR )->( dbSkip() )
 

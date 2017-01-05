@@ -298,6 +298,7 @@ CLASS D
       METHOD setFocusPedidosClientes( cTag, nView )         INLINE ( ::cTag   := ( ::PedidosClientes( nView )  )->( ordSetFocus( cTag ) ) )
 
    METHOD PedidosClientesReservas( nView )                  INLINE ( ::Get( "PedCliR", nView ) )
+      METHOD PedidosClientesReservasId( nView )             INLINE ( ( ::Get( "PedCliR", nView ) )->cSerPed + str( ( ::Get( "PedCliR", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliR", nView ) )->cSufPed )
 
    METHOD PedidosClientesLineasTableName()                  INLINE ( "PedCliL" )
    METHOD PedidosClientesLineas( nView )                    INLINE ( ::Get( "PedCliL", nView ) )

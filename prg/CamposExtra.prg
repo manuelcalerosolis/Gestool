@@ -619,7 +619,7 @@ Return ( cCodigo )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-FUNCTION CamposExtra( oMenuItem, oWnd ) 
+FUNCTION CamposExtra( oMenuItem, oWnd )  
 
    DEFAULT  oMenuItem   := "01124"
    DEFAULT  oWnd        := oWnd()

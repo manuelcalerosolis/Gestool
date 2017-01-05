@@ -3686,7 +3686,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
             PICTURE  "@E 999.99" ;
             OF       oFld:aDialogs[ 2 ]
 
-      aGet[ _NBNFLIN6 ]:bWhen    := {|| aGet[ _NBNFLIN6 ]:lValid() }
+      aGet[ _NBNFLIN6 ]:bChange  := {|| aGet[ _NBNFLIN6 ]:lValid() }
       aGet[ _NBNFLIN6 ]:bValid   := {|| lCalPre( oBeneficioSobre[ 6 ]:nAt <= 1, aTmp[ _NPRECOM ], aTmp[ _LBNFLIN6 ], aTmp[ _NBNFLIN6 ], aTmp[ _NIVA ], aGet[ _NPVPLIN6 ], aGet[ _NIVALIN6 ], nDinDiv ) }
 
       REDEFINE COMBOBOX oBeneficioSobre[ 6 ] ;

@@ -329,7 +329,6 @@ static dbfPedCliL
 static dbfPedCliI
 static dbfPedCliD
 static dbfPedCliP
-static dbfPedCliR
 static dbfPreCliT
 static dbfPreCliL
 static dbfPreCliI
@@ -477,7 +476,6 @@ FUNCTION GenPedCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    if ( D():PedidosClientes( nView ) )->( Lastrec() ) == 0
       return nil
    end if
-
 
    nNumPed              := ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed
 
@@ -687,6 +685,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():PedidosClientesSituaciones( nView )
 
+      D():PedidosClientesReservas( nView )
+
       D():PedidosClientesPagos( nView )
 
       D():Clientes( nView )
@@ -733,9 +733,6 @@ STATIC FUNCTION OpenFiles( lExt )
       D():FormasPago( nView )
 
       D():ImpuestosEspeciales( nView )
-
-      USE ( cPatEmp() + "PEDCLIR.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIR", @dbfPedCliR ) )
-      SET ADSINDEX TO ( cPatEmp() + "PEDCLIR.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "PEDCLII.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLII", @dbfPedCliI ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLII.CDX" ) ADDITIVE
@@ -787,7 +784,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatArt() + "PROMOC.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMOC", @dbfPromoC ) )
       SET ADSINDEX TO ( cPatArt() + "PROMOC.CDX" ) ADDITIVE
-
 
       USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
       SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
@@ -5110,7 +5106,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
       */
 
       REDEFINE SAY oTot[ 4 ] ;
-         PROMPT   nTotRPedCli( , aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTmpRes ) ;
+         PROMPT   nTotRPedCli( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTmpRes ) ;
          ID       190 ;
          COLOR    "B/W*" ;
          PICTURE  cPicUnd ;
@@ -5124,7 +5120,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
          OF       oFld:aDialogs[4]
 
       REDEFINE SAY oTot[ 6 ] ;
-         PROMPT   NotMinus( nTotRPedCli( , aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTmpRes ) - nUnidadesRecibidasAlbaranesClientes( cNumPed, aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfAlbCliL ) ) ;
+         PROMPT   NotMinus( nTotRPedCli( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTmpRes ) - nUnidadesRecibidasAlbaranesClientes( cNumPed, aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfAlbCliL ) ) ;
          ID       210 ;
          COLOR    "R/W*" ;
 			PICTURE 	cPicUnd ;
@@ -5547,13 +5543,13 @@ STATIC FUNCTION EdtRes( aTmp, aGet, dbfTmpRes, oBrw, oTot, bValid, nMode, aTmpLi
 
    DEFINE DIALOG oDlg RESOURCE "LRESPEDCLI" TITLE LblTitle( nMode ) + "reservas a pedidos de clientes"
 
-      REDEFINE GET aTmp[ ( dbfPedCliR )->( fieldPos( "DFECRES" ) ) ];
+      REDEFINE GET aTmp[ ( D():PedidosClientesReservas( nView ) )->( fieldPos( "DFECRES" ) ) ];
 			ID 		100 ;
          SPINNER ;
 			COLOR 	CLR_GET ;
          OF       oDlg
 
-      REDEFINE GET oGet VAR aTmp[ ( dbfPedCliR )->( fieldPos( "NCAJRES" ) ) ] ;
+      REDEFINE GET oGet VAR aTmp[ ( D():PedidosClientesReservas( nView ) )->( fieldPos( "NCAJRES" ) ) ] ;
 			ID 		110 ;
          PICTURE  cPicUnd ;
 			COLOR 	CLR_GET ;
@@ -5561,7 +5557,7 @@ STATIC FUNCTION EdtRes( aTmp, aGet, dbfTmpRes, oBrw, oTot, bValid, nMode, aTmpLi
          SPINNER ;
          OF       oDlg
 
-      REDEFINE GET aTmp[ ( dbfPedCliR )->( fieldPos( "NUNDRES" ) ) ] ;
+      REDEFINE GET aTmp[ ( D():PedidosClientesReservas( nView ) )->( fieldPos( "NUNDRES" ) ) ] ;
          ID       120 ;
          PICTURE  cPicUnd ;
          COLOR    CLR_GET ;
@@ -5569,7 +5565,7 @@ STATIC FUNCTION EdtRes( aTmp, aGet, dbfTmpRes, oBrw, oTot, bValid, nMode, aTmpLi
          SPINNER ;
          OF       oDlg
 
-      REDEFINE SAY oSay PROMPT NotCaja( aTmp[ ( dbfPedCliR )->( fieldPos( "NCAJRES" ) ) ] ) * aTmp[ ( dbfPedCliR )->( fieldPos( "NUNDRES" ) ) ] ;
+      REDEFINE SAY oSay PROMPT NotCaja( aTmp[ ( D():PedidosClientesReservas( nView ) )->( fieldPos( "NCAJRES" ) ) ] ) * aTmp[ ( D():PedidosClientesReservas( nView ) )->( fieldPos( "NUNDRES" ) ) ] ;
          ID       130 ;
          PICTURE  cPicUnd ;
          COLOR    CLR_GET ;
@@ -5981,13 +5977,13 @@ STATIC FUNCTION DelDetalle( cNumPed )
 
    // Reservas ----------------------------------------------------------------
 
-   if ( dbfPedCliR )->( dbSeek( cNumPed ) )
-      while ( dbfPedCliR )->cSerPed + Str( ( dbfPedCliR )->nNumPed ) + ( dbfPedCliR )->cSufPed == cNumPed
-         if dbLock( dbfPedCliR )
-            ( dbfPedCliR )->( dbDelete() )
-            ( dbfPedCliR )->( dbUnLock() )
+   if ( D():PedidosClientesReservas( nView ) )->( dbSeek( cNumPed ) )
+      while ( D():PedidosClientesReservas( nView ) )->cSerPed + Str( ( D():PedidosClientesReservas( nView ) )->nNumPed ) + ( D():PedidosClientesReservas( nView ) )->cSufPed == cNumPed
+         if dbLock( D():PedidosClientesReservas( nView ) )
+            ( D():PedidosClientesReservas( nView ) )->( dbDelete() )
+            ( D():PedidosClientesReservas( nView ) )->( dbUnLock() )
          end if
-         ( dbfPedCliR )->( dbSkip() )
+         ( D():PedidosClientesReservas( nView ) )->( dbSkip() )
       end while
    end if
 
@@ -8731,17 +8727,16 @@ return ( aPedCliRes )
 
 STATIC FUNCTION CloseFiles()
 
-   DisableAcceso()
+   disableAcceso()
 
    lPedidosWeb( D():PedidosClientes( nView ) )
 
-   DestroyFastFilter( D():PedidosClientes( nView ), .t., .t. )
+   destroyFastFilter( D():PedidosClientes( nView ), .t., .t. )
 
    if !Empty( oFont )
       oFont:end()
    end if
 
-   if( !Empty( dbfPedCliR ), ( dbfPedCliR )->( dbCloseArea() ), )
    if( !Empty( dbfPedCliI ), ( dbfPedCliI )->( dbCloseArea() ), )
    if( !Empty( dbfPedCliD ), ( dbfPedCliD )->( dbCloseArea() ), )
    if( !Empty( dbfPedCliP ), ( dbfPedCliP )->( dbCloseArea() ), )
@@ -8819,7 +8814,6 @@ STATIC FUNCTION CloseFiles()
    dbfPreCliL     := nil
    dbfPreCliI     := nil
    dbfPreCliD     := nil
-   dbfPedCliR     := nil
    dbfAlbCliT     := nil
    dbfAlbCliL     := nil
    dbfAlbCliP     := nil
@@ -9173,7 +9167,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
 
    ( dbfTmpRes )->( dbgotop() )
    while ( dbfTmpRes )->( !eof() )
-      dbPass( dbfTmpRes, dbfPedCliR, .t., cSerPed, nNumPed, cSufPed )
+      dbPass( dbfTmpRes, D():PedidosClientesReservas( nView ), .t., cSerPed, nNumPed, cSufPed )
       ( dbfTmpRes )->( dbSkip() )
    end while
 
@@ -9898,12 +9892,12 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 	Añadimos desde el fichero de lineas
 	*/
 
-   if ( nMode != DUPL_MODE ) .and. ( dbfPedCliR )->( DbSeek( cPedido ) )
+   if ( nMode != DUPL_MODE ) .and. ( D():PedidosClientesReservas( nView ) )->( DbSeek( cPedido ) )
 
-      while ( ( dbfPedCliR )->cSerPed + Str( ( dbfPedCliR )->nNumPed ) + ( dbfPedCliR )->cSufPed == cPedido ) .and. ( dbfPedCliR )->( !eof() )
+      while ( ( D():PedidosClientesReservas( nView ) )->cSerPed + Str( ( D():PedidosClientesReservas( nView ) )->nNumPed ) + ( D():PedidosClientesReservas( nView ) )->cSufPed == cPedido ) .and. ( D():PedidosClientesReservas( nView ) )->( !eof() )
 
-         dbPass( dbfPedCliR, dbfTmpRes, .t. )
-         ( dbfPedCliR )->( DbSkip() )
+         dbPass( D():PedidosClientesReservas( nView ), dbfTmpRes, .t. )
+         ( D():PedidosClientesReservas( nView ) )->( DbSkip() )
 
       end while
 
@@ -13334,27 +13328,31 @@ RETURN ( nDtoAtp )
 
 function nTotPdtRec( cPedido, cRef, cValPr1, cValPr2, dbfPedCliR )
 
+   local nRec           
    local bWhile
-   local nRec     := ( dbfPedCliR )->( Recno() )
-   local nTotRes  := 0
+   local nTotRes        := 0
+
+   DEFAULT dbfPedCliR   := D():PedidosClientesReservas( nView )
+
+   nRec                 := ( dbfPedCliR )->( recno() )
 
    if cPedido == nil
-      bWhile      := {|| !( dbfPedCliR )->( eof() ) }
-      ( dbfPedCliR )->( dbGoTop() )
+      bWhile            := {|| !( dbfPedCliR )->( eof() ) }
+      ( dbfPedCliR )->( dbgotop() )
    else
-      bWhile      := {|| cPedido + ( dbfPedCliR )->cRef + ( dbfPedCliR )->cValPr1 + ( dbfPedCliR )->cValPr2 == cPedido + cRef + cValPr1 + cValPr2 .and. !( dbfPedCliR )->( eof() ) }
-      ( dbfPedCliR )->( dbSeek( cPedido + cRef + cValPr1 + cValPr2 ) )
+      bWhile            := {|| cPedido + ( dbfPedCliR )->cRef + ( dbfPedCliR )->cValPr1 + ( dbfPedCliR )->cValPr2 == cPedido + cRef + cValPr1 + cValPr2 .and. !( dbfPedCliR )->( eof() ) }
+      ( dbfPedCliR )->( dbseek( cPedido + cRef + cValPr1 + cValPr2 ) )
    end if
 
    while Eval( bWhile )
 
-      nTotRes     += nTotNResCli( dbfPedCliR )
+      nTotRes           += nTotNResCli( dbfPedCliR )
 
-      ( dbfPedCliR )->( dbSkip() )
+      ( dbfPedCliR )->( dbskip() )
 
    end while
 
-   ( dbfPedCliR )->( dbGoTo( nRec ) )
+   ( dbfPedCliR )->( dbgoto( nRec ) )
 
 return ( nTotRes )
 
@@ -13362,50 +13360,98 @@ return ( nTotRes )
 
 function dFecPdtRec( cPedido, cRef, cValPr1, cValPr2, dbfPedCliR )
 
-   local dFecAct  := Ctod( "" )
-   local nRec     := ( dbfPedCliR )->( Recno() )
+   local nRec           
+   local dFecAct        := ctod( "" )
 
-   if ( dbfPedCliR )->( dbSeek( cPedido + cRef + cValPr1 + cValPr2 ) )
+   DEFAULT cPedido      := ( D():PedidosClientesLineas( nView ) )->cSerPed + str( ( D():PedidosClientesLineas( nView ) )->nNumPed ) + ( D():PedidosClientesLineas( nView ) )->cSufPed 
+   DEFAULT cRef         := ( D():PedidosClientesLineas( nView ) )->cRef
+   DEFAULT cValPr1      := ( D():PedidosClientesLineas( nView ) )->cValPr1
+   DEFAULT cValPr2      := ( D():PedidosClientesLineas( nView ) )->cValPr2
+   DEFAULT dbfPedCliR   := D():PedidosClientesReservas( nView )
 
-      while ( dbfPedCliR )->cSerPed + Str( ( dbfPedCliR )->nNumPed ) + ( dbfPedCliR )->cSufPed == cPedido .and.  !( dbfPedCliR )->( eof() )
+   nRec                 := ( dbfPedCliR )->( recno() )
 
-         if Empty( dFecAct ) .or. dFecAct > ( dbfPedCliR )->dFecRes
-            dFecAct  := ( dbfPedCliR )->dFecRes
+   if ( dbfPedCliR )->( dbseek( cPedido + cRef + cValPr1 + cValPr2 ) )
+
+      while ( dbfPedCliR )->cSerPed + Str( ( dbfPedCliR )->nNumPed ) + ( dbfPedCliR )->cSufPed == cPedido .and. !( dbfPedCliR )->( eof() )
+
+         if empty( dFecAct ) .or. dFecAct > ( dbfPedCliR )->dFecRes
+            dFecAct     := ( dbfPedCliR )->dFecRes
          end if
 
-         ( dbfPedCliR )->( dbSkip() )
+         ( dbfPedCliR )->( dbskip() )
 
       end while
 
    end if
 
-   ( dbfPedCliR )->( dbGoTo( nRec ) )
+   ( dbfPedCliR )->( dbgoto( nRec ) )
 
 return ( dFecAct )
 
 //-----------------------------------------------------------------------------//
+//
+// Devuelve el numero de unidades recibidas en albaranes a clientes
+//
+
+function nUnidadesRecibidasAlbaranesClientes( cNumPed, cCodArt, cValPr1, cValPr2, cAlbCliL )
+
+   local aStatus     
+   local nUnidadades    := 0
+
+   DEFAULT cNumPed      := ( D():PedidosClientesLineas( nView ) )->cSerPed + str( ( D():PedidosClientesLineas( nView ) )->nNumPed ) + ( D():PedidosClientesLineas( nView ) )->cSufPed 
+   DEFAULT cCodArt      := ( D():PedidosClientesLineas( nView ) )->cRef
+   DEFAULT cValPr1      := ( D():PedidosClientesLineas( nView ) )->cValPr1
+   DEFAULT cValPr2      := ( D():PedidosClientesLineas( nView ) )->cValPr2
+   DEFAULT cAlbCliL     := D():AlbaranesClientesLineas( nView )
+
+   aStatus              := aGetStatus( cAlbCliL, .f. )
+
+   ( cAlbCliL )->( ordsetfocus( "cNumPedRef" ) )
+   if ( cAlbCliL )->( dbseek( cNumPed + cCodArt + cValPr1 + cValPr2 ) )
+      
+      while ( cAlbCliL )->cNumPed + ( cAlbCliL )->cRef + ( cAlbCliL )->cValPr1 + ( cAlbCliL )->cValPr2 == cNumPed + cCodArt + cValPr1 + cValPr2 .and. !( cAlbCliL )->( eof() )
+         
+         nUnidadades    += nTotNAlbCli( cAlbCliL )
+         
+         ( cAlbCliL )->( dbskip() )
+
+      end while
+
+   end if
+
+   SetStatus( cAlbCliL, aStatus )
+
+return ( nUnidadades )
+
+//---------------------------------------------------------------------------//
+
 
 function dTmpPdtRec( cRef, cValPr1, cValPr2, dbfPedCliR )
 
-   local dFecAct  := Ctod( "" )
-   local nRec     := ( dbfPedCliR )->( Recno() )
+   local nRec     
+   local dFecAct        := Ctod( "" )
 
-   ( dbfPedCliR )->( dbGoTop() )
+   DEFAULT dbfPedCliR   := D():PedidosClientesReservas( nView )
+
+   nRec                 := ( dbfPedCliR )->( Recno() )
+
+   ( dbfPedCliR )->( dbgotop() )
    while !( dbfPedCliR )->( eof() )
 
       if ( dbfPedCliR )->cRef == cRef .and. ( dbfPedCliR )->cValPr1 == cValPr1 .and. ( dbfPedCliR )->cValPr2 == cValPr2
 
          if Empty( dFecAct ) .or. dFecAct > ( dbfPedCliR )->dFecRes
-            dFecAct  := ( dbfPedCliR )->dFecRes
+            dFecAct     := ( dbfPedCliR )->dFecRes
          end if
 
       end if
 
-      ( dbfPedCliR )->( dbSkip() )
+      ( dbfPedCliR )->( dbskip() )
 
    end while
 
-   ( dbfPedCliR )->( dbGoTo( nRec ) )
+   ( dbfPedCliR )->( dbgoto( nRec ) )
 
 return ( dFecAct )
 
@@ -13566,10 +13612,10 @@ FUNCTION QuiPedCli()
 
    nOrdDet        	:= ( D():PedidosClientesLineas( nView ) )->( OrdSetFocus( "NNUMPED" ) )
    nOrdPgo        	:= ( D():PedidosClientesPagos( nView ) )->( OrdSetFocus( "NNUMPED" ) )
-   nOrdRes        	:= ( dbfPedCliR )->( OrdSetFocus( "NNUMPED" ) )
+   nOrdRes        	:= ( D():PedidosClientesReservas( nView ) )->( OrdSetFocus( "NNUMPED" ) )
    nOrdInc        	:= ( dbfPedCliI )->( OrdSetFocus( "NNUMPED" ) )
-   nOrdDoc        	:= ( dbfPedCliD )->( OrdSetFocus( "NNUMPED" ) )
-   nOrdEst			:= ( D():PedidosClientesSituaciones( nView ) )->( OrdSetFocus( "NNUMPED" ) ) 
+   nOrdDoc           := ( dbfPedCliD )->( OrdSetFocus( "NNUMPED" ) )
+   nOrdEst           := ( D():PedidosClientesSituaciones( nView ) )->( OrdSetFocus( "NNUMPED" ) ) 
 
    /*
    Cambiamos el estado del presupuesto del que viene el pedido-----------------
@@ -13597,10 +13643,10 @@ FUNCTION QuiPedCli()
    Reservas--------------------------------------------------------------------
    */
 
-   while ( dbfPedCliR )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) ) .and. !( dbfPedCliR )->( eof() )
-      if dbLock( dbfPedCliR )
-         ( dbfPedCliR )->( dbDelete() )
-         ( dbfPedCliR )->( dbUnLock() )
+   while ( D():PedidosClientesReservas( nView ) )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) ) .and. !( D():PedidosClientesReservas( nView ) )->( eof() )
+      if dbLock( D():PedidosClientesReservas( nView ) )
+         ( D():PedidosClientesReservas( nView ) )->( dbDelete() )
+         ( D():PedidosClientesReservas( nView ) )->( dbUnLock() )
       end if
    end while
 
@@ -13651,7 +13697,7 @@ FUNCTION QuiPedCli()
 
    ( D():PedidosClientesLineas( nView ) )->( OrdSetFocus( nOrdDet ) )
    ( D():PedidosClientesPagos( nView ) )->( OrdSetFocus( nOrdPgo ) )
-   ( dbfPedCliR )->( OrdSetFocus( nOrdRes ) )
+   ( D():PedidosClientesReservas( nView ) )->( OrdSetFocus( nOrdRes ) )
    ( dbfPedCliI )->( OrdSetFocus( nOrdInc ) )
    ( dbfPedCliD )->( OrdSetFocus( nOrdDoc ) )
    ( D():PedidosClientesSituaciones( nView ) )->( OrdSetFocus( nOrdEst ) ) 
@@ -13671,6 +13717,7 @@ Function SynPedCli( cPath )
    local dbfFamilia
    local cDbfPago
    local cDbfDiv
+   local dbfPedCliR
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -14730,15 +14777,15 @@ function nTotReserva( cCodArt )
 
    local nTotal := 0
 
-   ( dbfPedCliR )->( OrdSetFocus( "cRef" ) )
+   ( D():PedidosClientesReservas( nView ) )->( ordsetfocus( "cRef" ) )
 
-   if ( dbfPedCliR )->( dbSeek( cCodArt ) )
+   if ( D():PedidosClientesReservas( nView ) )->( dbseek( cCodArt ) )
 
-      while ( dbfPedCliR )->cRef == cCodArt .and. !(dbfPedCliR)->(Eof())
+      while ( D():PedidosClientesReservas( nView ) )->cRef == cCodArt .and. ! ( D():PedidosClientesReservas( nView ) )->( eof() )
 
-         nTotal += nTotRPedCli( (dbfPedCliR)->cSerPed + Str( (dbfPedCliR)->nNumPed ) + (dbfPedCliR)->cSufPed, (dbfPedCliR)->cRef, (dbfPedCliR)->cValPr1, (dbfPedCliR)->cValPr2, dbfPedCliR )
+         nTotal += nUnidadesReservadasEnPedidosCliente( D():PedidosClientesReservasId( nView ), ( D():PedidosClientesReservas( nView ) )->cRef, ( D():PedidosClientesReservas( nView ) )->cValPr1, ( D():PedidosClientesReservas( nView ) )->cValPr2, D():PedidosClientesReservas( nView ) )
 
-      (dbfPedCliR)->(dbSkip())
+         ( D():PedidosClientesReservas( nView ) )->( dbskip() )
 
       end while
 
@@ -15997,48 +16044,68 @@ return ( nTotUnd )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nTotRPedCli( cPedido, cRef, cValPr1, cValPr2, dbfPedCliR )
+FUNCTION nTotRPedCli( cRef, cValPr1, cValPr2, dbfPedCliR )
 
-   local nTotRes     := 0
    local nOrd
-   local nRec        := ( dbfPedCliR )->( Recno() )
+   local nRec        
+   local nTotRes        := 0
 
-   DEFAULT cValPr1   := Space( 40 )
-   DEFAULT cValPr2   := Space( 40 )
+   DEFAULT cValPr1      := space( 20 )
+   DEFAULT cValPr2      := space( 20 )
+   DEFAULT dbfPedCliR   := D():PedidosClientesReservas( nView )
 
-   if cPedido == nil
+   nRec                 := ( dbfPedCliR )->( recno() )
+   nOrd                 := ( dbfPedCliR )->( ordsetfocus( "cRef" ) )
 
-      nOrd           := ( dbfPedCliR )->( OrdSetFocus( "cRef" ) )
+   if ( dbfPedCliR )->( dbseek( cRef + cValPr1 + cValPr2 ) )
+      while ( dbfPedCliR )->cRef + ( dbfPedCliR )->cValPr1 + ( dbfPedCliR )->cValPr2 == cRef + cValPr1 + cValPr2 .and. !( dbfPedCliR )->( eof() )
+         
+         nTotRes        += nTotNResCli( dbfPedCliR )
 
-      if ( dbfPedCliR )->( dbSeek( cRef + cValPr1 + cValPr2 ) )
-         while ( dbfPedCliR )->cRef + ( dbfPedCliR )->cValPr1 + ( dbfPedCliR )->cValPr2 == cRef + cValPr1 + cValPr2 .and. !( dbfPedCliR )->( eof() )
-            nTotRes  += nTotNResCli( dbfPedCliR )
-            ( dbfPedCliR )->( dbSkip() )
-         end while
-      end if
+         ( dbfPedCliR )->( dbskip() )
 
-      ( dbfPedCliR )->( OrdSetFocus( nOrd ) )
-
-   else
-
-      nOrd           := ( dbfPedCliR )->( OrdSetFocus( "nNumPed" ) )
-
-      if ( dbfPedCliR )->( dbSeek( cPedido + cRef + cValPr1 + cValPr2 ) )
-         while ( dbfPedCliR )->cSerPed + Str( ( dbfPedCliR )->nNumPed ) + ( dbfPedCliR )->cSufPed + ( dbfPedCliR )->cRef + ( dbfPedCliR )->cValPr1 + ( dbfPedCliR )->cValPr2 == cPedido + cRef + cValPr1 + cValPr2 .and. !( dbfPedCliR )->( eof() )
-            nTotRes  += nTotNResCli( dbfPedCliR )
-            ( dbfPedCliR )->( dbSkip() )
-         end while
-      end if
-
-      ( dbfPedCliR )->( OrdSetFocus( nOrd ) )
-
+      end while
    end if
 
-   ( dbfPedCliR )->( dbGoTo( nRec ) )
+   ( dbfPedCliR )->( ordsetfocus( nOrd ) )
+   ( dbfPedCliR )->( dbgoto( nRec ) )
 
 return ( nTotRes )
 
 //---------------------------------------------------------------------------//
+
+FUNCTION nUnidadesReservadasEnPedidosCliente( nNumPed, cCodArt, cValPr1, cValPr2, dbfPedCliR )
+
+   local nOrd
+   local nRec        
+   local nUnidades      := 0
+
+   DEFAULT nNumPed      := ( D():PedidosClientesLineas( nView ) )->cSerPed + str( ( D():PedidosClientesLineas( nView ) )->nNumPed ) + ( D():PedidosClientesLineas( nView ) )->cSufPed 
+   DEFAULT cCodArt      := ( D():PedidosClientesLineas( nView ) )->cRef
+   DEFAULT cValPr1      := ( D():PedidosClientesLineas( nView ) )->cValPr1
+   DEFAULT cValPr2      := ( D():PedidosClientesLineas( nView ) )->cValPr2
+   DEFAULT dbfPedCliR   := D():PedidosClientesReservas( nView )
+
+   nRec                 := ( dbfPedCliR )->( recno() )
+   nOrd                 := ( dbfPedCliR )->( ordsetfocus( "nNumPed" ) )
+
+   if ( dbfPedCliR )->( dbseek( nNumPed + cCodArt + cValPr1 + cValPr2 ) )
+      while ( dbfPedCliR )->cSerPed + str( ( dbfPedCliR )->nNumPed ) + ( dbfPedCliR )->cSufPed + ( dbfPedCliR )->cRef + ( dbfPedCliR )->cValPr1 + ( dbfPedCliR )->cValPr2 == nNumPed + cCodArt + cValPr1 + cValPr2 .and. !( dbfPedCliR )->( eof() )
+         
+         nUnidades      += nTotNResCli( dbfPedCliR )
+         
+         ( dbfPedCliR )->( dbskip() )
+
+      end while
+   end if
+
+   ( dbfPedCliR )->( ordsetfocus( nOrd ) )
+   ( dbfPedCliR )->( dbgoto( nRec ) )
+
+return ( nUnidades )
+
+//---------------------------------------------------------------------------//
+
 
 /*
 Calcula el Total del pedido
@@ -16077,10 +16144,10 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
    local nBaseGasto
    local nIvaGasto
 
-	if !Empty( nView )
-		DEFAULT cPedCliT   	:= D():PedidosClientes( nView )
-      DEFAULT cClient   	:= D():Clientes( nView )
+	if !empty( nView )
+      DEFAULT cPedCliT     := D():PedidosClientes( nView )
       DEFAULT cPedCliL     := D():PedidosClientesLineas( nView )
+      DEFAULT cClient      := D():Clientes( nView )
       DEFAULT cIva         := D():TiposIva( nView )
       DEFAULT cDiv         := D():Divisas( nView )
       DEFAULT cFPago       := D():FormasPago( nView )
@@ -17392,6 +17459,7 @@ Function MuestraPedidosWeb( oBtnPedidos, lGoPedCli )
    local cDbfIva
    local cDbfDiv
    local cDbfPago
+   local dbfPedCliR
 
    DEFAULT lGoPedCli    := .f.
 
@@ -18171,6 +18239,14 @@ Static Function importarArticulosScaner()
    if memoArticulos != nil
       msgalert( memoArticulos, "procesar")
    end if
+
+Return nil       
+
+//---------------------------------------------------------------------------//
+
+Function setPedidosClientesExternalView( nExternalView )
+
+   nView          := nExternalView
 
 Return nil       
 

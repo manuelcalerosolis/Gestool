@@ -18,11 +18,6 @@ COMERCIOELECTRONICO BITMAP "..\\bmp\\ComercioElectronico.bmp"
 CALCULATOR_322 BITMAP "..\\bmp\\Calculator_322.bmp"
 SENDMAIL BITMAP "..\\bmp\\CorreoElectronico.bmp"
 
-ROW_32 BITMAP "..\\bmp\\Row_32.bmp"
-ROW_ALL_32 BITMAP "..\\bmp\\Row_All_32.bmp"
-
-DUDE3_16 BITMAP "..\\bmp\\dude3_16.bmp"
-DUDE3_48 BITMAP "..\\bmp\\dude3_48.bmp"
 TICKET_BLUE_16 BITMAP "..\\bmp\\ticket_blue_16.bmp"
 TICKET_BLUE_48 BITMAP "..\\bmp\\ticket_blue_48.bmp"
 TICKET_GREEN_16 BITMAP "..\\bmp\\ticket_green_16.bmp"

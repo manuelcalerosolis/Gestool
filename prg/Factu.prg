@@ -2932,7 +2932,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Campos extra'
    oItem:cMessage       := 'Acceso a los campos extra'
-   oItem:bAction        := {|| CamposExtra( "01127", oWnd ) }
+   oItem:bAction        := {|| CamposExtra( "01127", oWnd ) } 
    oItem:cId            := "01127"
    oItem:cBmp           := "gc_form_plus2_16"
    oItem:cBmpBig        := "gc_form_plus2_32"
@@ -3589,8 +3589,8 @@ Function InitBrw( oDlg, oImgUsr, oLstUsr, dbfUsr )
 
    if !Empty( oImgUsr ) .and. !Empty( oLstUsr )
 
-      oImgUsr:AddMasked( TBitmap():Define( "BIG_ADMIN" ),   Rgb( 255, 0, 255 ) )
-      oImgUsr:AddMasked( TBitmap():Define( "BIG_USER" ),    Rgb( 255, 0, 255 ) )
+      oImgUsr:AddMasked( TBitmap():Define( "GC_BUSINESSMAN2_50" ),   Rgb( 255, 0, 255 ) )
+      oImgUsr:AddMasked( TBitmap():Define( "GC_USER2_50" ),    Rgb( 255, 0, 255 ) )
 
       oLstUsr:SetImageList( oImgUsr )
 

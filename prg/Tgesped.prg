@@ -415,9 +415,9 @@ METHOD lGenerate()
                   ( Empty( ::oPedCliL:dFecha ) .and. ( ::oPedCliT:dFecEnt >= ::dIniEnt .and. ::oPedCliT:dFecEnt <= ::dFinEnt  ) )
 
                   nTotPed        := Round( nTotNPedCli( ::oPedCliL:cAlias ), DecUnd() )
-                  dFecRes        := dFecPdtRec(  ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliL:cRef, ::oPedCliL:cValPr1, ::oPedCliL:cValPr2, ::oPedCliR:cAlias )
+                  dFecRes        := dFecPdtRec( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliL:cRef, ::oPedCliL:cValPr1, ::oPedCliL:cValPr2, ::oPedCliR:cAlias )
                   nTotSer        := Round( nUnidadesRecibidasAlbaranesClientes( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliL:cRef, , , ::oAlbCliL:cAlias ), DecUnd() )
-                  nTotPdt        := Round( nTotRPedCli( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliL:cRef, ::oPedCliL:cValPr1, ::oPedCliL:cValPr2, ::oPedCliR:cAlias ), DecUnd() )
+                  nTotPdt        := Round( nUnidadesReservadasEnPedidosCliente( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliL:cRef, ::oPedCliL:cValPr1, ::oPedCliL:cValPr2, ::oPedCliR:cAlias ), DecUnd() )
 
                   if nTotPdt != 0 .and. nTotSer > nTotPdt
                      nTotPdt     := Min( nTotSer, nTotPdt )
