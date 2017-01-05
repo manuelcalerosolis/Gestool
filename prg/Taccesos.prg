@@ -323,7 +323,7 @@ Method EditButtonBar( oWnd, oMenuItem )
 
    REDEFINE BITMAP oBmpGeneral ;
       ID       500 ;
-      RESOURCE "Magic_wand_alpha_48" ;
+      RESOURCE "gc_magic_wand_48" ;
       TRANSPARENT ;
       OF       oDlg
 

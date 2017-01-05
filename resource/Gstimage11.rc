@@ -27,7 +27,6 @@ Document_plain_businessman2_48_alpha BITMAP "..\\bmp\\Document_plain_businessman
 Document_businessman2_48_alpha BITMAP "..\\bmp\\Document_businessman2_48_alpha.bmp"
 Gear_run_16 BITMAP "..\\bmp\\Gear_run_16.bmp"
 Bookkeeper_alpha_48 BITMAP "..\\bmp\\Bookkeeper_alpha_48.bmp"
-Magic_wand_alpha_48 BITMAP "..\\bmp\\Magic_wand_alpha_48.bmp"
 Star_Red_48 BITMAP "..\\bmp\\Star_Red_48.bmp"
 Clipboard_Empty_48 BITMAP "..\\bmp\\clipboard_empty_48.bmp"
 Calendar_Alpha_48 BITMAP "..\\bmp\\Calendar_Alpha_48.bmp"
