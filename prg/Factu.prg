@@ -4883,6 +4883,14 @@ Function MainTablet()
                            "bLClicked" => {|| Informe2() },;
                            "oWnd"      => oDlg } )
 
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 15 ) },;
+                           "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "gc_document_text_user_64",;
+                           "bLClicked" => {|| Informe3() },;
+                           "oWnd"      => oDlg } )
+
    //----------------Albaranes de clientes
    
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 9 ) },;
@@ -5108,6 +5116,8 @@ static function Informe1()
    oInf:cReportDirectory   := cPatReporting() + "Clientes\Ventas\RecibosCobro"
    oInf:cReportName        := "Diario recibos tablet"
    oInf:cReportFile        := cPatReporting() + "Clientes\Ventas\RecibosCobro\Diario recibos tablet.fr3"
+   oInf:dIniInf            := GetSysDate()
+   oInf:dFinInf            := GetSysDate()
 
    oInf:PlayTablet()
 
@@ -5126,6 +5136,27 @@ static function Informe2()
    oInf:cReportDirectory   := cPatReporting() + "Clientes\Ventas\Facturas de clientes"
    oInf:cReportName        := "Diario facturas tablet"
    oInf:cReportFile        := cPatReporting() + "Clientes\Ventas\Facturas de clientes\Diario facturas tablet.fr3"
+   oInf:dIniInf            := GetSysDate()
+   oInf:dFinInf            := GetSysDate()
+
+   oInf:PlayTablet()
+
+   oInf:end()
+
+RETURN NIL 
+
+//---------------------------------------------------------------------------//
+
+static function Informe3()
+
+   local oInf
+
+   oInf  := TFastVentasArticulos():New()
+   oInf:cReportType        := "Stocks"
+   oInf:cReportDirectory   := cPatReporting() + "Articulos\Existencias\Stocks"
+   oInf:cReportName        := "Stocks artículos tablet"
+   oInf:cReportFile        := cPatReporting() + "Articulos\Existencias\Stocks\Stocks artículos tablet.fr3"
+   oInf:BuildReportCorrespondences()
 
    oInf:PlayTablet()
 

@@ -10,7 +10,6 @@
 CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    DATA  nView
-   DATA  nView
 
    DATA  nSec
 
@@ -194,6 +193,10 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    METHOD summaryReport()
    METHOD acumulaDbf( nRecnoAcumula )
+
+   METHOD setMeterText( cText )           INLINE ( if ( !empty( ::oMtrInf ), ::oMtrInf:cText := cText, ) )
+   METHOD setMeterTotal( nTotal )         INLINE ( if ( !empty( ::oMtrInf ), ::oMtrInf:SetTotal( nTotal ), ) )
+   METHOD setMeterAutoIncremental()       INLINE ( if ( !empty( ::oMtrInf ), ::oMtrInf:AutoInc(), ) )
 
 END CLASS
 
@@ -410,14 +413,60 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       DATABASE NEW ::oTarPreL PATH ( cPatEmp() ) CLASS "TARPREL"     FILE "TARPREL.DBF"   VIA ( ::cDriver ) SHARED INDEX "TARPREL.CDX"
 
+      DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+
       DATABASE NEW ::oAtipicasCliente PATH ( cPatEmp() ) CLASS "CliAtp" FILE "CliAtp.Dbf" VIA ( ::cDriver ) SHARED INDEX "CliAtp.CDX"
       ::oAtipicasCliente:ordsetfocus( "cCliArt" )
+
+      DATABASE NEW ::oDbfFam PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
+
+      DATABASE NEW ::oDbfCat PATH ( cPatArt() ) FILE "CATEGORIAS.DBF" VIA ( cDriver() ) SHARED INDEX "CATEGORIAS.CDX"
+
+      DATABASE NEW ::oDbfTmp PATH ( cPatArt() ) FILE "Temporadas.DBF" VIA ( cDriver() ) SHARED INDEX "Temporadas.Cdx"
+
+      DATABASE NEW ::oDbfEstArt PATH ( cPatEmp() ) FILE "ESTADOSAT.DBF" VIA ( cDriver() ) SHARED INDEX "ESTADOSAT.CDX"
+
+      DATABASE NEW ::oDbfIva PATH ( cPatDat() ) FILE "TIva.Dbf" VIA ( cDriver() ) SHARED INDEX "TIva.Cdx"
+
+      DATABASE NEW ::oDbfPrv PATH ( cPatPrv() ) FILE "PROVEE.DBF" VIA ( cDriver() ) SHARED INDEX "PROVEE.CDX"
+
+      DATABASE NEW ::oDbfAlm PATH ( cPatAlm() ) FILE "ALMACEN.DBF" VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
+
+      DATABASE NEW ::oDbfUsr PATH ( cPatDat() ) FILE "USERS.DBF" VIA ( cDriver() ) SHARED INDEX "USERS.CDX"
+
+      DATABASE NEW ::oDbfRut PATH ( cPatCli() ) FILE "RUTA.DBF" VIA ( cDriver() ) SHARED INDEX "RUTA.CDX"
+
+      DATABASE NEW ::oDbfAge PATH ( cPatCli() ) FILE "AGENTES.DBF" VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
+
+      DATABASE NEW ::oDbfFpg PATH ( cPatEmp() ) FILE "FPago.Dbf" VIA ( cDriver() ) SHARED INDEX "FPago.Cdx"
+
+      DATABASE NEW ::oDbfCli PATH ( cPatCli() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
       ::oGrpCli               := TGrpCli():Create( cPatCli() )
       ::oGrpCli:OpenService()
 
       ::oFraPub               := TFrasesPublicitarias():Create( cPatArt(), ::cDriver )
       if !::oFraPub:OpenFiles()
+         lOpen                := .f.
+      end if
+
+      ::oTipArt               := TTipArt():New( cPatArt(), cDriver() )
+      if !::oTipArt:OpenFiles()
+         lOpen                := .f.
+      end if
+
+      ::oGruFam               := TGrpFam():Create( cPatArt(), "GRPFAM" )
+      if !::oGruFam:OpenFiles()
+         lOpen                := .f.
+      end if
+
+      ::oDbfFab               := TFabricantes():New( cPatEmp() )
+      if !::oDbfFab:OpenFiles()
+         lOpen                := .f.
+      end if
+
+      ::oDbfTrn               := TTrans():Create( cPatCli(), "Transport" )
+      if !::oDbfTrn:OpenFiles()
          lOpen                := .f.
       end if
 
@@ -610,6 +659,58 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
          ::oPrp2:end()
       end if
 
+      if !empty( ::oDbfFam ) .and. ( ::oDbfFam:Used() )
+         ::oDbfFam:end()
+      end if
+
+      if !empty( ::oDbfArt ) .and. ( ::oDbfArt:Used() )
+         ::oDbfArt:end()
+      end if
+
+      if !empty( ::oDbfCat ) .and. ( ::oDbfCat:Used() )
+         ::oDbfCat:end()
+      end if
+
+      if !empty( ::oDbfTmp ) .and. ( ::oDbfTmp:Used() )
+         ::oDbfTmp:end()
+      end if
+
+      if !empty( ::oDbfEstArt ) .and. ( ::oDbfEstArt:Used() )
+         ::oDbfEstArt:end()
+      end if
+
+      if !empty( ::oDbfIva ) .and. ( ::oDbfIva:Used() )
+         ::oDbfIva:end()
+      end if
+
+      if !empty( ::oDbfPrv ) .and. ( ::oDbfPrv:Used() )
+         ::oDbfPrv:end()
+      end if
+
+      if !empty( ::oDbfAlm ) .and. ( ::oDbfAlm:Used() )
+         ::oDbfAlm:end()
+      end if
+
+      if !empty( ::oDbfUsr ) .and. ( ::oDbfUsr:Used() )
+         ::oDbfUsr:end()
+      end if
+
+      if !empty( ::oDbfRut ) .and. ( ::oDbfRut:Used() )
+         ::oDbfRut:end()
+      end if
+
+      if !empty( ::oDbfAge ) .and. ( ::oDbfAge:Used() )
+         ::oDbfAge:end()
+      end if
+
+      if !empty( ::oDbfFpg ) .and. ( ::oDbfFpg:Used() )
+         ::oDbfFpg:end()
+      end if
+
+      if !empty( ::oDbfCli ) .and. ( ::oDbfCli:Used() )
+         ::oDbfCli:end()
+      end if
+
       if !empty( ::oAtipicasCliente ) .and. ( ::oAtipicasCliente:Used() )
          ::oAtipicasCliente:end()
       end if
@@ -644,7 +745,23 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
          ::oCamposExtra:End()
       end if
 
-      if !empty( ::nView )
+      if !Empty( ::oTipArt )
+         ::oTipArt:End()
+      end if
+
+      if !Empty( ::oGruFam )
+         ::oGruFam:End()
+      end if
+
+      if !Empty( ::oDbfFab )
+         ::oDbfFab:End()
+      end if
+
+      if !Empty( ::oDbfTrn )
+         ::oDbfTrn:End()
+      end if
+
+      if !Empty( ::nView )
          D():DeleteView( ::nView )
       end if
 
@@ -1002,35 +1119,90 @@ Return ( Self )
 
 Method lValidRegister() CLASS TFastVentasArticulos
 
-   if !empty( ::oDbf:cCodArt )                                                                                                                  .and.;
-      ( ::DesdeHastaGrupoCliente() )                                                                                                            .and.;
-      ( ::oDbf:cCodArt     >= ::oGrupoArticulo:Cargo:getDesde()         .and. ::oDbf:cCodArt    <= ::oGrupoArticulo:Cargo:getHasta() )          .and.;
-      ( ::oDbf:cGrpFam     >= ::oGrupoGFamilia:Cargo:getDesde()         .and. ::oDbf:cGrpFam    <= ::oGrupoGFamilia:Cargo:getHasta() )          .and.;
-      ( ::oDbf:cCodFam     >= ::oGrupoFamilia:Cargo:getDesde()          .and. ::oDbf:cCodFam    <= ::oGrupoFamilia:Cargo:getHasta() )           .and.;
-      ( ::oDbf:cCodTip     >= ::oGrupoTArticulo:Cargo:getDesde()        .and. ::oDbf:cCodTip    <= ::oGrupoTArticulo:Cargo:getHasta() )         .and.;
-      ( ::oDbf:TipoIva     >= ::oGrupoIva:Cargo:getDesde()              .and. ::oDbf:TipoIva    <= ::oGrupoIva:Cargo:getHasta() )               .and.;
-      ( ::oDbf:cCodCate    >= ::oGrupoCategoria:Cargo:getDesde()        .and. ::oDbf:cCodCate   <= ::oGrupoCategoria:Cargo:getHasta() )         .and.;
-      ( ::oDbf:cCodEst     >= ::oGrupoEstadoArticulo:Cargo:getDesde()   .and. ::oDbf:cCodEst    <= ::oGrupoEstadoArticulo:Cargo:getHasta() )    .and.;
-      ( ::oDbf:cCodTemp    >= ::oGrupoTemporada:Cargo:getDesde()        .and. ::oDbf:cCodTemp   <= ::oGrupoTemporada:Cargo:getHasta() )         .and.;
-      ( ::oDbf:cCodFab     >= ::oGrupoFabricante:Cargo:getDesde()       .and. ::oDbf:cCodFab    <= ::oGrupoFabricante:Cargo:getHasta() )        .and.;
-      ( ::oDbf:cCodCli     >= ::oGrupoCliente:Cargo:getDesde()          .and. ::oDbf:cCodCli    <= ::oGrupoCliente:Cargo:getHasta() )           .and.;
-      ( ::oDbf:cCodPago    >= ::oGrupoFpago:Cargo:getDesde()            .and. ::oDbf:cCodPago   <= ::oGrupoFpago:Cargo:getHasta() )             .and.;
-      ( ::oDbf:cCodRut     >= ::oGrupoRuta:Cargo:getDesde()             .and. ::oDbf:cCodRut    <= ::oGrupoRuta:Cargo:getHasta() )              .and.;
-      ( ::oDbf:cCodAge     >= ::oGrupoAgente:Cargo:getDesde()           .and. ::oDbf:cCodAge    <= ::oGrupoAgente:Cargo:getHasta() )            .and.;
-      ( ::oDbf:cCodTrn     >= ::oGrupoTransportista:Cargo:getDesde()    .and. ::oDbf:cCodTrn    <= ::oGrupoTransportista:Cargo:getHasta() )     .and.;
-      ( ::oDbf:cCodUsr     >= ::oGrupoUsuario:Cargo:getDesde()          .and. ::oDbf:cCodUsr    <= ::oGrupoUsuario:Cargo:getHasta() )           .and.;
-      ( ::oDbf:cCodCli     >= ::oGrupoProveedor:Cargo:getDesde()        .and. ::oDbf:cCodCli    <= ::oGrupoProveedor:Cargo:getHasta() )         .and.;
-      ( ::oDbf:cCodAlm     >= ::oGrupoAlmacen:Cargo:getDesde()          .and. ::oDbf:cCodAlm    <= ::oGrupoAlmacen:Cargo:getHasta() )           .and.;
-      ( ::oDbf:cCtrCoste   >= ::oGrupoCentroCoste:Cargo:getDesde()      .and. ::oDbf:cCtrCoste  <= ::oGrupoCentroCoste:Cargo:getHasta() )       .and.;
-      ( ::oDbf:cCodOpe     >= ::oGrupoOperario:Cargo:getDesde()         .and. ::oDbf:cCodOpe    <= ::oGrupoOperario:Cargo:getHasta() )
-
-      //::loadValuesExtraFields()
-
-      Return .t.
-
+   if empty( ::oDbf:cCodArt )
+      Return .f.
    end if
 
-RETURN ( .f. )
+   //::DesdeHastaGrupoCliente()
+
+
+   if !empty( ::oGrupoArticulo ) .and. !( ::oDbf:cCodArt       >= ::oGrupoArticulo:Cargo:getDesde()         .and. ::oDbf:cCodArt    <= ::oGrupoArticulo:Cargo:getHasta() )
+      Return .f.
+   end if
+
+   if !empty( ::oGrupoGFamilia ) .and. !( ::oDbf:cGrpFam       >= ::oGrupoGFamilia:Cargo:getDesde()         .and. ::oDbf:cGrpFam    <= ::oGrupoGFamilia:Cargo:getHasta() )
+      Return .f.
+   end if
+
+   if !empty( ::oGrupoFamilia ) .and. !( ::oDbf:cCodFam        >= ::oGrupoFamilia:Cargo:getDesde()          .and. ::oDbf:cCodFam    <= ::oGrupoFamilia:Cargo:getHasta() )
+      Return .f.
+   end if
+
+   if !empty( ::oGrupoTArticulo ) .and. !( ::oDbf:cCodTip      >= ::oGrupoTArticulo:Cargo:getDesde()        .and. ::oDbf:cCodTip    <= ::oGrupoTArticulo:Cargo:getHasta() )
+      Return .f.
+   end if
+
+   if !empty( ::oGrupoIva ) .and. !( ::oDbf:TipoIva            >= ::oGrupoIva:Cargo:getDesde()              .and. ::oDbf:TipoIva    <= ::oGrupoIva:Cargo:getHasta() )
+      Return .f.
+   end if
+
+   if !empty( ::oGrupoCategoria ) .and. !( ::oDbf:cCodCate     >= ::oGrupoCategoria:Cargo:getDesde()        .and. ::oDbf:cCodCate   <= ::oGrupoCategoria:Cargo:getHasta() )
+      Return .f.
+   end if
+
+   if !empty( ::oGrupoEstadoArticulo ) .and. !( ::oDbf:cCodEst >= ::oGrupoEstadoArticulo:Cargo:getDesde()   .and. ::oDbf:cCodEst    <= ::oGrupoEstadoArticulo:Cargo:getHasta() )
+      Return .f.
+   end if
+
+   if !empty( ::oGrupoTemporada ) .and. !( ::oDbf:cCodTemp     >= ::oGrupoTemporada:Cargo:getDesde()        .and. ::oDbf:cCodTemp   <= ::oGrupoTemporada:Cargo:getHasta() )
+      Return .f.
+   end if
+
+   if !empty( ::oGrupoFabricante ) .and. !( ::oDbf:cCodFab     >= ::oGrupoFabricante:Cargo:getDesde()       .and. ::oDbf:cCodFab    <= ::oGrupoFabricante:Cargo:getHasta() )
+      Return .f.
+   end if
+
+   if !empty( ::oGrupoCliente ) .and. !( ::oDbf:cCodCli        >= ::oGrupoCliente:Cargo:getDesde()          .and. ::oDbf:cCodCli    <= ::oGrupoCliente:Cargo:getHasta() )
+      Return .f.
+   end if
+
+   if !empty( ::oGrupoFpago ) .and. !( ::oDbf:cCodPago         >= ::oGrupoFpago:Cargo:getDesde()            .and. ::oDbf:cCodPago   <= ::oGrupoFpago:Cargo:getHasta() )
+      Return .f.
+   end if
+
+   if !empty( ::oGrupoRuta ) .and. !( ::oDbf:cCodRut           >= ::oGrupoRuta:Cargo:getDesde()             .and. ::oDbf:cCodRut    <= ::oGrupoRuta:Cargo:getHasta() )
+      Return .f.
+   end if
+
+   if !empty( ::oGrupoAgente ) .and. !( ::oDbf:cCodAge         >= ::oGrupoAgente:Cargo:getDesde()           .and. ::oDbf:cCodAge    <= ::oGrupoAgente:Cargo:getHasta() )
+      Return .f.
+   end if
+   
+   if !empty( ::oGrupoTransportista ) .and. !( ::oDbf:cCodTrn  >= ::oGrupoTransportista:Cargo:getDesde()    .and. ::oDbf:cCodTrn    <= ::oGrupoTransportista:Cargo:getHasta() )
+      Return .f.
+   end if
+
+   if !empty( ::oGrupoUsuario ) .and. !( ::oDbf:cCodUsr        >= ::oGrupoUsuario:Cargo:getDesde()          .and. ::oDbf:cCodUsr    <= ::oGrupoUsuario:Cargo:getHasta() )
+      Return .f.
+   end if
+
+   if !empty( ::oGrupoProveedor ) .and. !( ::oDbf:cCodCli      >= ::oGrupoProveedor:Cargo:getDesde()        .and. ::oDbf:cCodCli    <= ::oGrupoProveedor:Cargo:getHasta() )
+      Return .f.
+   end if
+
+   if !empty( ::oGrupoAlmacen ) .and. !( ::oDbf:cCodAlm        >= ::oGrupoAlmacen:Cargo:getDesde()          .and. ::oDbf:cCodAlm    <= ::oGrupoAlmacen:Cargo:getHasta() )
+      Return .f.
+   end if
+
+   if !empty( ::oGrupoCentroCoste ) .and. !( ::oDbf:cCtrCoste  >= ::oGrupoCentroCoste:Cargo:getDesde()      .and. ::oDbf:cCtrCoste  <= ::oGrupoCentroCoste:Cargo:getHasta() )
+      Return .f.
+   end if
+   
+   if !empty( ::oGrupoOperario ) .and. !( ::oDbf:cCodOpe       >= ::oGrupoOperario:Cargo:getDesde()         .and. ::oDbf:cCodOpe    <= ::oGrupoOperario:Cargo:getHasta() )
+      Return .f.
+   end if
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -1422,12 +1594,12 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
 
    // Procesando SAT ------------------------------------------------
 
-   ::oMtrInf:cText            := "Procesando SAT"
+   ::setMeterText( "Procesando SAT" )
 
    ::oSatCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oSatCliL:cFile ), ::oSatCliL:OrdKey(), ( ::cExpresionLine ), , , , , , , , .t. )
    ::oSatCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oSatCliT:cFile ), ::oSatCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
    
-   ::oMtrInf:SetTotal( ::oSatCliT:OrdKeyCount() )
+   ::setMeterTotal( ::oSatCliT:OrdKeyCount() )
 
    /*
    Lineas de Sat---------------------------------------------------------------
@@ -1573,7 +1745,7 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
 
       ::oSatCliT:Skip()
 
-      ::oMtrInf:AutoInc()
+      ::setMeterAutoIncremental()
 
    end while
 
@@ -1625,13 +1797,13 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
 
    // procesamos los presupuestos ---------------------------------------------
 
-   ::oMtrInf:cText            := "Procesando presupuestos"
+   ::setMeterText( "Procesando presupuestos" )
    
    ::oPreCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPreCliT:cFile ), ::oPreCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
    
    ::oPreCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPreCliL:cFile ), ::oPreCliL:OrdKey(), ( ::cExpresionLine ), , , , , , , , .t. )
   
-   ::oMtrInf:SetTotal( ::oPreCliT:OrdKeyCount() )
+   ::setMeterTotal( ::oPreCliT:OrdKeyCount() )
 
    /*
    Lineas de Preidos-----------------------------------------------------------
@@ -1776,7 +1948,7 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
 
       ::oPreCliT:Skip()
 
-      ::oMtrInf:AutoInc()
+      ::setMeterAutoIncremental()
 
    end while
 
@@ -1832,7 +2004,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
    // procesamos los pedidos----------------------------------------------------
    
-   ::oMtrInf:cText            := "Procesando pedidos"
+   ::setMeterText( "Procesando pedidos" )
 
    ( D():PedidosClientes( ::nView )        )->( ordsetfocus( "nNumPed" ) )
    ( D():PedidosClientesLineas( ::nView )  )->( ordsetfocus( "nNumPed" ) )
@@ -1840,7 +2012,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
    ( D():PedidosClientes( ::nView )        )->( setCustomFilter( ::cExpresionHeader ) )
    ( D():PedidosClientesLineas( ::nView )  )->( setCustomFilter( ::cExpresionLine ) )
 
-   ::oMtrInf:SetTotal( ( D():PedidosClientesLineas( ::nView ) )->( dbCustomKeyCount() ) )
+   ::setMeterTotal( ( D():PedidosClientesLineas( ::nView ) )->( dbCustomKeyCount() ) )
 
    // Lineas de pedidos-----------------------------------------------------------
 
@@ -1973,7 +2145,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
       ( D():PedidosClientesLineas( ::nView ) )->( dbSkip() )
       
-      ::oMtrInf:AutoInc()
+      ::setMeterAutoIncremental()
 
    end while
 
@@ -2028,12 +2200,12 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
 
    // Procesando albaranes-------------------------------------------------
 
-   ::oMtrInf:cText         := "Procesando albaranes"
+   ::setMeterText( "Procesando albaranes" )
 
    ::oAlbCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
    ::oAlbCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliL:cFile ), ::oAlbCliL:OrdKey(), cAllTrimer( ::cExpresionLine ), , , , , , , , .t. )
 
-   ::oMtrInf:SetTotal( ::oAlbCliL:OrdKeyCount() )
+   ::setMeterTotal( ::oAlbCliL:OrdKeyCount() )
 
    // Lineas de albaranes---------------------------------------------------------
 
@@ -2182,7 +2354,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
 
       ::oAlbCliL:Skip()
 
-      ::oMtrInf:AutoInc()
+      ::setMeterAutoIncremental()
 
    end while
 
@@ -2234,12 +2406,12 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
 
    // Procesando facturas-------------------------------------------------
 
-   ::oMtrInf:cText         := "Procesando facturas"
+   ::setMeterText( "Procesando facturas" )
 
    ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
    ::oFacCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliL:cFile ), ::oFacCliL:OrdKey(), cAllTrimer( ::cExpresionLine ), , , , , , , , .t. )
 
-   ::oMtrInf:SetTotal( ::oFacCliL:OrdKeyCount() )
+   ::setMeterTotal( ::oFacCliL:OrdKeyCount() )
 
    /*
    Lineas de facturas----------------------------------------------------------
@@ -2373,7 +2545,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
 
       ::oFacCliL:Skip()
 
-      ::oMtrInf:AutoInc()
+      ::setMeterAutoIncremental()
 
    end while
 
@@ -2423,12 +2595,12 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
 
    // Procesando Facturas Rectifictivas----------------------------------------
 
-   ::oMtrInf:cText   := "Procesando facturas rectificativas"
+   ::setMeterText( "Procesando facturas rectificativas" )
 
    ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
    ::oFacRecL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecL:cFile ), ::oFacRecL:OrdKey(), cAllTrimer( ::cExpresionLine ), , , , , , , , .t. )
 
-   ::oMtrInf:SetTotal( ::oFacRecL:OrdKeyCount() )
+   ::setMeterTotal( ::oFacRecL:OrdKeyCount() )
 
    // Lineas de facturas rectificativas----------------------------------------
 
@@ -2564,7 +2736,7 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
 
       ::oFacRecL:Skip()
 
-      ::oMtrInf:AutoInc()
+      ::setMeterAutoIncremental()
 
    end while
 
@@ -2608,12 +2780,12 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
    // Procesando Tickets ------------------------------------------------
 
-   ::oMtrInf:cText         := "Procesando tikets"
+   ::setMeterText( "Procesando tikets" )
    
    ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
    ::oTikCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliL:cFile ), ::oTikCliL:OrdKey(), ( ::cExpresionLine ), , , , , , , , .t. )
 
-   ::oMtrInf:SetTotal( ::oTikCliT:OrdKeyCount() )
+   ::setMeterTotal( ::oTikCliT:OrdKeyCount() )
 
    // Lineas de tickets -------------------------------------------------------
 
@@ -2815,11 +2987,11 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
       ::oTikCliT:Skip()
 
-      ::oMtrInf:AutoInc()
+      ::setMeterAutoIncremental()
 
    end while
 
-   ::oMtrInf:Set( ::oTikCliT:OrdKeyCount() )
+   ::setMeterTotal( ::oTikCliT:OrdKeyCount() )
 
    ::oTikCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ) )
    ::oTikCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oTikCliL:cFile ) )
@@ -2834,10 +3006,10 @@ METHOD listadoArticulo() CLASS TFastVentasArticulos
 
    ::oDbfArt:OrdClearScope()   
 
-   ::oMtrInf:SetTotal( ::oDbfArt:OrdKeyCount() )
-   ::oMtrInf:AutoInc( ::oDbfArt:OrdKeyCount() )
+   ::setMeterTotal( ::oDbfArt:OrdKeyCount() )
+   ::setMeterAutoIncremental()
 
-   ::oMtrInf:cText         := "Procesando artículos"
+   ::setMeterText( "Procesando artículos" )
 
    /*
    Recorremos artículos--------------------------------------------------------
@@ -2868,11 +3040,11 @@ METHOD listadoArticulo() CLASS TFastVentasArticulos
 
       ::oDbfArt:Skip()
 
-      ::oMtrInf:AutoInc()
+      ::setMeterAutoIncremental()
 
    end while
 
-   ::oMtrInf:AutoInc( ::oDbfArt:OrdKeyCount() )
+   ::setMeterAutoIncremental()
 
 RETURN ( Self )
 
@@ -2885,25 +3057,27 @@ METHOD AddArticulo( lAppendBlank ) CLASS TFastVentasArticulos
 
    DEFAULT lAppendBlank    := .f.
 
-   if ::oGrupoAlmacen:cargo:getDesde() == ::oGrupoAlmacen:cargo:getHasta()
-      cAlmacen             := ::oGrupoAlmacen:cargo:getDesde()
-   end if 
+   if !Empty( ::oGrupoAlmacen )
+      if ::oGrupoAlmacen:cargo:getDesde() == ::oGrupoAlmacen:cargo:getHasta()
+         cAlmacen             := ::oGrupoAlmacen:cargo:getDesde()
+      end if 
+   end if
 
    ::oDbf:Zap()
    ::oDbfArt:OrdClearScope()   
 
-   ::oMtrInf:SetTotal(  ::oDbfArt:OrdKeyCount() )
-   ::oMtrInf:AutoInc(   ::oDbfArt:OrdKeyCount() )
+   ::setMeterTotal(  ::oDbfArt:OrdKeyCount() )
+   ::setMeterAutoIncremental()
 
-   ::oMtrInf:cText         := "Procesando artículos"
+   ::setMeterText( "Procesando artículos" )
 
    // Recorremos artículos-----------------------------------------------------
 
    ::oDbfArt:goTop() 
    while !::oDbfArt:eof() .and. !::lBreak
 
-      if ( ::oDbfArt:Codigo  >= ::oGrupoArticulo:Cargo:getDesde() .and. ::oDbfArt:Codigo  <= ::oGrupoArticulo:Cargo:getHasta() ) .and.;
-         ( ::oDbfArt:Familia >= ::oGrupoFamilia:Cargo:getDesde()  .and. ::oDbfArt:Familia <= ::oGrupoFamilia:Cargo:getHasta() )           
+      if ( Empty( ::oGrupoArticulo ) .or. ( ::oDbfArt:Codigo  >= ::oGrupoArticulo:Cargo:getDesde() .and. ::oDbfArt:Codigo  <= ::oGrupoArticulo:Cargo:getHasta() ) ) .and.;
+         ( Empty( ::oGrupoFamilia ) .or. ( ::oDbfArt:Familia >= ::oGrupoFamilia:Cargo:getDesde()  .and. ::oDbfArt:Familia <= ::oGrupoFamilia:Cargo:getHasta() ) )           
 
          aStockArticulo    := ::oStock:aStockArticulo( ::oDbfArt:Codigo, cAlmacen, , , , , ::dFinInf )
 
@@ -2923,11 +3097,11 @@ METHOD AddArticulo( lAppendBlank ) CLASS TFastVentasArticulos
 
       ::oDbfArt:Skip()
 
-      ::oMtrInf:AutoInc()
+      ::setMeterAutoIncremental()
 
    end while
 
-   ::oMtrInf:AutoInc( ::oDbfArt:OrdKeyCount() )
+   ::setMeterAutoIncremental()
 
 RETURN ( Self )
 
@@ -3040,9 +3214,9 @@ RETURN ( Self )
 
 METHOD AddProducido() CLASS TFastVentasArticulos
 
-   ::oMtrInf:cText            := "Procesando partes de producción"
+   ::setMeterText( "Procesando partes de producción" )
    
-   ::oMtrInf:SetTotal( ::oProLin:OrdKeyCount() )
+   ::setMeterTotal( ::oProLin:OrdKeyCount() )
 
    ::cExpresionLine           := '( dFecOrd >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecOrd <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
 
@@ -3107,7 +3281,7 @@ METHOD AddProducido() CLASS TFastVentasArticulos
 
       ::oProLin:Skip()
 
-      ::oMtrInf:AutoInc()
+      ::setMeterAutoIncremental()
 
    end while
 
@@ -3121,9 +3295,9 @@ METHOD AddConsumido() CLASS TFastVentasArticulos
 
    local cExpLine    := ""
 
-   ::oMtrInf:cText   := "Procesando partes de producción"
+   ::setMeterText( "Procesando partes de producción" )
    
-   ::oMtrInf:SetTotal( ::oProMat:OrdKeyCount() )
+   ::setMeterTotal( ::oProMat:OrdKeyCount() )
 
    cExpLine          := '( dFecOrd >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecOrd <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
 
@@ -3188,7 +3362,7 @@ METHOD AddConsumido() CLASS TFastVentasArticulos
 
       ::oProMat:Skip()
 
-      ::oMtrInf:AutoInc()
+      ::setMeterAutoIncremental()
 
    end while
 
@@ -3200,9 +3374,9 @@ RETURN ( Self )
 
 METHOD AddMovimientoAlmacen() CLASS TFastVentasArticulos
 
-   ::oMtrInf:cText            := "Procesando movimientos de almacén"
+   ::setMeterText( "Procesando movimientos de almacén" )
    
-   ::oMtrInf:SetTotal( ::oHisMov:OrdKeyCount() )
+   ::setMeterTotal( ::oHisMov:OrdKeyCount() )
 
    ::cExpresionLine           := '( dFecMov >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecMov <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
 
@@ -3278,7 +3452,7 @@ METHOD AddMovimientoAlmacen() CLASS TFastVentasArticulos
 
       ::oHisMov:Skip()
       
-      ::oMtrInf:AutoInc()
+      ::setMeterAutoIncremental()
 
    end while
 
@@ -3304,8 +3478,8 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
 
    ::oPedPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedPrvT:cFile ), ::oPedPrvT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
-   ::oMtrInf:cText   := "Procesando pedidos a proveedor"
-   ::oMtrInf:SetTotal( ::oPedPrvT:OrdKeyCount() )
+   ::setMeterText( "Procesando pedidos a proveedor" )
+   ::setMeterTotal( ::oPedPrvT:OrdKeyCount() )
 
    /*
    Lineas de Pedturas----------------------------------------------------------
@@ -3420,7 +3594,7 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
 
       ::oPedPrvT:Skip()
 
-      ::oMtrInf:AutoInc()
+      ::setMeterAutoIncremental()
 
    end while
 
@@ -3454,8 +3628,8 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
 
    ::oAlbPrvL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbPrvL:cFile ), ::oAlbPrvL:OrdKey(), cAllTrimer( ::cExpresionLine ), , , , , , , , .t. )
 
-   ::oMtrInf:cText         := "Procesando albaranes a proveedor"
-   ::oMtrInf:SetTotal( ::oAlbPrvL:OrdKeyCount() )
+   ::setMeterText( "Procesando albaranes a proveedor" )
+   ::setMeterTotal( ::oAlbPrvL:OrdKeyCount() )
 
    ::oAlbPrvL:GoTop()
 
@@ -3551,7 +3725,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
 
       ::oAlbPrvL:Skip()
 
-      ::oMtrInf:AutoInc()
+      ::setMeterAutoIncremental()
 
    end while
 
@@ -3573,9 +3747,9 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
 
    ::oFacPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacPrvT:cFile ), ::oFacPrvT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
-   ::oMtrInf:cText         := "Procesando facturas proveedor"
+   ::setMeterText( "Procesando facturas proveedor" )
    
-   ::oMtrInf:SetTotal( ::oFacPrvL:OrdKeyCount() )
+   ::setMeterTotal( ::oFacPrvL:OrdKeyCount() )
 
    /*
    Lineas de facturas----------------------------------------------------------
@@ -3679,7 +3853,7 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
 
       ::oFacPrvL:Skip()
 
-      ::oMtrInf:AutoInc()
+      ::setMeterAutoIncremental()
 
    end while
 
@@ -3701,8 +3875,8 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
 
    ::oRctPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oRctPrvT:cFile ), ::oRctPrvT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
-   ::oMtrInf:cText   := "Procesando rectificativas"
-   ::oMtrInf:SetTotal( ::oRctPrvL:OrdKeyCount() )
+   ::setMeterText( "Procesando rectificativas" )
+   ::setMeterTotal( ::oRctPrvL:OrdKeyCount() )
 
    /*
    Lineas de facturas----------------------------------------------------------
@@ -3807,7 +3981,7 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
 
       ::oRctPrvL:Skip()
 
-      ::oMtrInf:AutoInc()
+      ::setMeterAutoIncremental()
 
    end while
 
@@ -4222,8 +4396,8 @@ METHOD summaryReport()
    local nOrdenAnterior
    local nRecnoAcumula
 
-   ::oMtrInf:cText      := "Resumiendo informe"
-   ::oMtrInf:SetTotal(  ::oDbf:ordkeyCount() )
+   ::setMeterText( "Resumiendo informe" )
+   ::setMeterTotal(  ::oDbf:ordkeyCount() )
 
    nOrdenAnterior       := ::oDbf:ordsetfocus( "cCodArt" )
 
@@ -4239,7 +4413,7 @@ METHOD summaryReport()
 
       ::oDbf:skip()
 
-      ::oMtrInf:autoInc()
+      ::setMeterAutoIncremental()
 
    end while
 
@@ -4247,8 +4421,8 @@ METHOD summaryReport()
 
    ::oDbf:goTop()
 
-   ::oMtrInf:cText      := ""
-   ::oMtrInf:SetTotal( 0 )
+   ::setMeterText( "" )
+   ::setMeterTotal( 0 )
 
 Return ( self )
 
