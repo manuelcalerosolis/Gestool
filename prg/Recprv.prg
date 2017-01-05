@@ -2326,17 +2326,17 @@ Function SynRecPrv( cPatEmp )
    USE ( cPatEmp + "RctPrvT.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "RctPrvT", @dbfRctPrvT ) )
    SET ADSINDEX TO ( cPatEmp + "RctPrvT.CDX" ) ADDITIVE
 
-   USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
-   SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
-
    USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfPrv ) )
    SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
 
-   USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
-   SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
+   USE ( cPatEmp + "FPAGO.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
+   SET ADSINDEX TO ( cPatEmp + "FPAGO.CDX" ) ADDITIVE
 
    USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
    SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
+
+   USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
+   SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
    // Rellenamos los campos----------------------------------------------------
    

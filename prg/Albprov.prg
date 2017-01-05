@@ -10947,7 +10947,7 @@ Static Function ImportarLineasPedidosProveedor( aTmp, aGet, oBrwLin )
       return .t.
    end if
 
-   oConversionPedidosProveedores    := TConversionPedidosProveedores():New()
+   oConversionPedidosProveedores    := TConversionPedidosProveedores():New( nView, oStock )
 
    if empty( oConversionPedidosProveedores )
       Return .f.

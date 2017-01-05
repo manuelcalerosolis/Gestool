@@ -151,8 +151,8 @@ CLASS TConversionDocumentos
    METHOD getHeaderAlias()                         INLINE ( ::oHeaderTable:getAlias() )
    METHOD getHeaderEof()                           INLINE ( ( ::oHeaderTable:getAlias() )->( eof() ) )
    METHOD getHeaderLastrec()                       INLINE ( ( ::oHeaderTable:getAlias() )->( lastrec() ) )
-   METHOD getHeaderOrdKeyCount()                   INLINE ( ( ::oHeaderTable:getAlias() )->( OrdKeyCount() ) )
-   METHOD getHeaderOrdKeyNo()                      INLINE ( ( ::oHeaderTable:getAlias() )->( OrdKeyNo() ) )
+   METHOD getHeaderOrdKeyCount()                   INLINE ( ( ::oHeaderTable:getAlias() )->( ordkeycount() ) )
+   METHOD getHeaderOrdKeyNo()                      INLINE ( ( ::oHeaderTable:getAlias() )->( ordkeyno() ) )
    METHOD getHeaderDictionary()                    INLINE ( ::oHeaderTable:getDictionary() )
    METHOD getHeaderIndex()                         INLINE ( ::oHeaderTable:getIndex() )
 

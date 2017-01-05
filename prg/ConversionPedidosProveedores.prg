@@ -10,6 +10,8 @@ CLASS TConversionPedidosProveedores FROM TConversionDocumentos
 
    DATA cCodigoProveedor                              INIT ""
 
+   METHOD New( nView, oStock )
+
    METHOD Dialog()
 
    METHOD setCodigoProveedor( cCodigoProveedor )      INLINE ( ::cCodigoProveedor := cCodigoProveedor )
@@ -21,6 +23,18 @@ CLASS TConversionPedidosProveedores FROM TConversionDocumentos
    METHOD loadLinesDocument()
 
 ENDCLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD New( nView, oStock )
+
+   ::Super:New( nView, oStock )
+
+   ::setDocumentPedidosProveedores()
+
+   msgalert( 'setDocumentPedidosProveedores' )
+
+RETURN ( Self )   
 
 //----------------------------------------------------------------------------//
 
@@ -81,8 +95,6 @@ RETURN ( ::oDlg:nResult == IDOK )
 //---------------------------------------------------------------------------//
 
 METHOD startDialog()
-
-   ::setDocumentPedidosProveedores()
 
    ::buttonPrior:Hide()
    ::buttonNext:setText( "&Importar")
