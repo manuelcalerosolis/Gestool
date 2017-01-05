@@ -106,7 +106,7 @@ METHOD Activate( oMenuItem, oWnd )
 
    REDEFINE BITMAP oBmp ;
       ID       600 ;
-      RESOURCE "Pda2_write_alpha_48" ;
+      RESOURCE "gc_pda_write_48" ;
       TRANSPARENT ;
       OF       oDlg
 

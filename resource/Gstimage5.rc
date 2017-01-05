@@ -8,11 +8,8 @@
 PLEASEWAIT BITMAP "..\\bmp\\PleaseWait.bmp"
 SENDINTERNET BITMAP "..\\bmp\\SendInternet.bmp"
 APERTURATURNO BITMAP "..\\bmp\\AperturaTurno.bmp"
-IMPORTARFACTURAPLUS BITMAP "..\\bmp\\ImportarFacturaplus.bmp"
 IMPORTARFACTUCONT BITMAP "..\\bmp\\ImportarFactucont.bmp"
 ACTUALIZAREMPRESA BITMAP "..\\bmp\\ActualizarEmpresa.bmp"
-REGENERARINDICES BITMAP "..\\bmp\\RegenerarIndices.bmp"
-BACKUPEMPRESA BITMAP "..\\bmp\\BackupEmpresa.bmp"
 COMERCIOELECTRONICO BITMAP "..\\bmp\\ComercioElectronico.bmp"
 
 CALCULATOR_322 BITMAP "..\\bmp\\Calculator_322.bmp"

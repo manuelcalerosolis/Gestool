@@ -20,7 +20,6 @@ GENERARPEDIDOPROVEEDOR BITMAP "..\\bmp\\PlantillaGenerarPedidosProveedor.bmp"
 INVERTIRTURNO BITMAP "..\\bmp\\InvertirTurno.bmp"
 CREAREMPRESA BITMAP "..\\bmp\\CrearEmpresa.bmp"
 ELIMINARARTICULOS BITMAP "..\\bmp\\EliminarArticulos.bmp"
-IMPORTARHOJADECALCULO BITMAP "..\\bmp\\ImportarHojadeCalculo.bmp"
 ELIMINARTARIFASCLIENTES BITMAP "..\\bmp\\EliminarTarifasClientes.bmp"
 CONVERTIRDBFTOSQL BITMAP "..\\bmp\\ConvertirDBFtoSQL.bmp"
 

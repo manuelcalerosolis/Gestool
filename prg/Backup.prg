@@ -269,8 +269,9 @@ Method MuestraDialogo()
    DEFINE DIALOG ::oDlg RESOURCE "Backup_0" OF oWnd()
 
    REDEFINE BITMAP oBmp;
-         RESOURCE "BackupEmpresa" ;
+         RESOURCE "gc_shield_48" ;
          ID       500 ;
+         TRANSPARENT ;
          OF       ::oDlg
 
    REDEFINE PAGES ::oFld ;
