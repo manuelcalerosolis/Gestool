@@ -530,6 +530,10 @@ Return ( self )
 
 METHOD runGridStore() CLASS LinesDocumentsSales
 
+   if ( GetPvProfString( "Tablet", "BloqueoAlmacen", ".F.", cIniAplication() ) == ".T." )
+      Return ( self )
+   end if
+
    if empty( ::oSender:oStore:oGrid )
       Return ( Self )
    end if 

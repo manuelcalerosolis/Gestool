@@ -346,6 +346,10 @@ Return nil
 
 METHOD isChangeSerieTablet() CLASS DocumentsSales
    
+   if GetPvProfString( "Tablet", "BloqueoSerie", ".F.", cIniAplication() ) == ".T."
+      Return ( self )
+   end if
+
    if ::lZoomMode()
       Return ( self )
    end if 
@@ -707,7 +711,9 @@ Return lReturn
 
 METHOD onViewCancel()
 
-   ::oViewEdit:oDlg:end( )
+   if ApoloMsgNoYes( "¿Desea terminar el proceso?", "¡Atención!", .t. )
+      ::oViewEdit:oDlg:end()
+   end if
 
 Return ( self )
 

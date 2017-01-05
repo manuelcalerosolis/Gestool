@@ -286,10 +286,24 @@ METHOD liqInvoice( cNumFac ) CLASS Customer
       while ( D():FacturasClientesCobros( ::nView ) )->cSerie + Str( ( D():FacturasClientesCobros( ::nView ) )->nNumFac ) + ( D():FacturasClientesCobros( ::nView ) )->cSufFac == cNumFac .and.;
             !( D():FacturasClientesCobros( ::nView ) )->( Eof() )
 
-            if dbLock( D():FacturasClientesCobros( ::nView ) )
-               ( D():FacturasClientesCobros( ::nView ) )->dEntrada   := GetSysDate()
-               ( D():FacturasClientesCobros( ::nView ) )->lCobrado   := .t.
-               ( D():FacturasClientesCobros( ::nView ) )->( dbUnLock() )
+            if !( D():FacturasClientesCobros( ::nView ) )->lCobrado
+
+               /*
+               Marco el recibo como cobrado------------------------------------
+               */
+
+               if dbLock( D():FacturasClientesCobros( ::nView ) )
+                  ( D():FacturasClientesCobros( ::nView ) )->dEntrada   := GetSysDate()
+                  ( D():FacturasClientesCobros( ::nView ) )->lCobrado   := .t.
+                  ( D():FacturasClientesCobros( ::nView ) )->( dbUnLock() )
+               end if
+
+               /*
+               Imprimo el recibo como cobrado----------------------------------
+               */
+
+               PrnRecCli( ( D():FacturasClientesCobros( ::nView ) )->cSerie + Str( ( D():FacturasClientesCobros( ::nView ) )->nNumFac ) + ( D():FacturasClientesCobros( ::nView ) )->cSufFac + Str( ( D():FacturasClientesCobros( ::nView ) )->nNumRec ) )
+
             end if
 
             ( D():FacturasClientesCobros( ::nView ) )->( dbSkip() )

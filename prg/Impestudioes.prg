@@ -193,7 +193,7 @@ METHOD Activate( oWnd )
 
    DEFINE DIALOG ::oDlg RESOURCE "ASS_ESTUDIO" OF oWnd()
 
-      REDEFINE BITMAP oBmp RESOURCE "ImportarHojaDeCalculo" ID 600 OF ::oDlg
+      REDEFINE BITMAP oBmp RESOURCE "gc_import_48"  TRANSPARENT ID 600 OF ::oDlg
 
       REDEFINE PAGES ::oFld ;
          ID       100 ;

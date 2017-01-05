@@ -125,7 +125,7 @@ METHOD defineSerie() CLASS ViewEdit
                                        "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
                                        "nHeight"   => 23,;
                                        "cPict"     => "@!",;
-                                       "bWhen"     => {|| ::oSender:lNotZoomMode() },;
+                                       "bWhen"     => {|| ( GetPvProfString( "Tablet", "BloqueoSerie", ".F.", cIniAplication() ) == ".F." ) .and. ::oSender:lNotZoomMode() },;
                                        "lPixels"   => .t. } )
 
 Return ( self )

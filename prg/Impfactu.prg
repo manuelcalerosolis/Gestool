@@ -986,7 +986,7 @@ METHOD Resource()
 
       REDEFINE GET oGet VAR ::cPathFac ID 100 BITMAP "FOLDER" ON HELP ( oGet:cText( Padr( cGetDir32( "Seleccione destino" ), 100 ) ) ) OF ::oDlg
 
-      REDEFINE BITMAP oBmp RESOURCE "ImportarFacturaplus" ID 600 OF ::oDlg
+      REDEFINE BITMAP oBmp RESOURCE "gc_import_48" TRANSPARENT ID 600 OF ::oDlg
 
       REDEFINE CHECKBOX ::aChkIndices[ 1 ]   VAR ::aLgcIndices[ 1 ]  ID 110 OF ::oDlg
       REDEFINE CHECKBOX ::aChkIndices[ 2 ]   VAR ::aLgcIndices[ 2 ]  ID 120 OF ::oDlg

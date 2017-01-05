@@ -1806,17 +1806,17 @@ FONT 8, "MS Sans Serif"
   CONTROL "Progreso", -1, "Button", BS_GROUPBOX, 3, 155, 376, 23
 }
 
-ASS_ESTUDIO DIALOG DISCARDABLE 99, 25, 386, 248
+ASS_ESTUDIO DIALOG DISCARDABLE 99, 25, 435, 243
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Importación tarifa artículos"
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "TPages", 100, "TPages", WS_TABSTOP, 1, 39, 383, 180
-  CONTROL "&Importar", 510, "Button", WS_TABSTOP, 334, 231, 50, 14
-  CONTROL "Ver resultado", 520, "Button", WS_TABSTOP, 1, 231, 50, 14
-  CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE|SS_REALSIZEIMAGE, 0, 1, 386, 34
-  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 1, 34, 385, 1
-  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 1, 226, 383, 1
+  CONTROL "TPages", 100, "TPages", WS_TABSTOP, 44, 29, 383, 180
+  CONTROL "&Importar", 510, "Button", WS_TABSTOP, 377, 221, 50, 14
+  CONTROL "Ver resultado", 520, "Button", WS_TABSTOP, 44, 221, 50, 14
+  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 44, 216, 383, 1
+  CONTROL "", 600, "TBitmap", 0x0000020e, 4, 3, 34, 30, 0x00000020
+  CONTROL "Durante este proceso se importarán artículos provenientes de la hoja de cálculo indicada.", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 291, 8
 }
 
 ASS_ESTUDIO01 DIALOG DISCARDABLE 99, 64, 382, 177
@@ -2225,19 +2225,19 @@ FONT 8, "MS Sans Serif"
 
 LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US
 
-BACKUP_0 DIALOG DISCARDABLE 184, 113, 320, 235
+BACKUP_0 DIALOG DISCARDABLE 184, 113, 368, 235
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Copia de seguridad"
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 10, "TPages", WS_TABSTOP, 4, 34, 312, 168
-  CONTROL "< &Anterior", 20, "Button", WS_TABSTOP, 156, 215, 50, 14
-  CONTROL "Siguien&te >", 30, "Button", WS_TABSTOP, 212, 215, 50, 14
-  CONTROL "&Cancelar", 40, "Button", WS_TABSTOP, 268, 215, 50, 14
-  CONTROL "&Imprimir", 50, "Button", WS_TABSTOP, 4, 215, 50, 14
-  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 4, 208, 314, 3
-  CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE|SS_REALSIZEIMAGE, 0, 0, 320, 34
-  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 0, 32, 320, 1
+  CONTROL "Este proceso archivará una copia de sus datos, para restaurarlos en caso de perdida de información. ", 10, "TPages", WS_TABSTOP, 44, 29, 312, 168
+  CONTROL "< &Anterior", 20, "Button", WS_TABSTOP, 194, 216, 50, 14
+  CONTROL "Siguien&te >", 30, "Button", WS_TABSTOP, 249, 216, 50, 14
+  CONTROL "&Cancelar", 40, "Button", WS_TABSTOP, 305, 216, 50, 14
+  CONTROL "&Imprimir", 50, "Button", WS_TABSTOP, 43, 215, 50, 14
+  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 43, 208, 314, 3
+  CONTROL "", 500, "TBitmap", 0x0000020e, 4, 3, 34, 30, 0x00000020
+  CONTROL "Datos generales del artículo", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 285, 8
 }
 
 BACKUP_1 DIALOG DISCARDABLE 99, 64, 310, 160
@@ -8240,100 +8240,100 @@ FONT 8, "MS Sans Serif"
 
 LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US
 
-IMPFACCOM DIALOG DISCARDABLE 83, 45, 366, 274
+IMPFACCOM DIALOG DISCARDABLE 83, 45, 410, 264
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_VISIBLE
 CAPTION "Importación de factucont ®"
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 86, 49, 271, 12
-  CONTROL "Proveedores", 110, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 70, 53, 12
-  CONTROL "Clientes", 120, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 82, 37, 12
-  CONTROL "Artículos", 130, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 94, 41, 12
-  CONTROL "Albaranes de clientes", 150, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 106, 79, 12
-  CONTROL "Facturas de clientes", 160, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 118, 79, 12
-  CONTROL "Facturas de proveedores", 170, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 130, 92, 12
-  CONTROL "Pedidos de proveedores", 180, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 142, 92, 12
-  CONTROL "&Todos", 500, "Button", WS_TABSTOP, 2, 252, 50, 14
-  CONTROL "&Ninguno", 501, "Button", WS_TABSTOP, 57, 252, 50, 14
-  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 201, 252, 50, 14
-  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 256, 252, 50, 14
-  CONTROL "A&yuda", 998, "Button", WS_TABSTOP, 311, 252, 50, 14
-  CONTROL "msctls_progress32", 111, "msctls_progress32", WS_BORDER, 98, 70, 258, 10
-  CONTROL "msctls_progress32", 121, "msctls_progress32", WS_BORDER, 98, 82, 258, 10
-  CONTROL "msctls_progress32", 131, "msctls_progress32", WS_BORDER, 98, 94, 258, 10
-  CONTROL "msctls_progress32", 151, "msctls_progress32", WS_BORDER, 98, 106, 258, 10
-  CONTROL "msctls_progress32", 161, "msctls_progress32", WS_BORDER, 98, 118, 258, 10
-  CONTROL "Importación", -1, "Button", BS_GROUPBOX, 2, 40, 360, 24
-  CONTROL "", -1, "Button", BS_GROUPBOX, 2, 63, 360, 178
-  CONTROL "Directorio de factucont", -1, "Static", WS_GROUP, 5, 52, 74, 8
-  CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE|SS_REALSIZEIMAGE, 0, 0, 365, 34
-  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 0, 32, 365, 1
-  CONTROL "msctls_progress32", 171, "msctls_progress32", WS_BORDER, 98, 130, 258, 10
-  CONTROL "msctls_progress32", 181, "msctls_progress32", WS_BORDER, 98, 142, 258, 10
+  CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 128, 39, 271, 12
+  CONTROL "Proveedores", 110, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 60, 53, 12
+  CONTROL "Clientes", 120, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 72, 37, 12
+  CONTROL "Artículos", 130, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 84, 41, 12
+  CONTROL "Albaranes de clientes", 150, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 96, 79, 12
+  CONTROL "Facturas de clientes", 160, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 108, 79, 12
+  CONTROL "Facturas de proveedores", 170, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 120, 92, 12
+  CONTROL "Pedidos de proveedores", 180, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 132, 92, 12
+  CONTROL "&Todos", 500, "Button", WS_TABSTOP, 44, 242, 50, 14
+  CONTROL "&Ninguno", 501, "Button", WS_TABSTOP, 99, 242, 50, 14
+  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 243, 242, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 298, 242, 50, 14
+  CONTROL "A&yuda", 998, "Button", WS_TABSTOP, 353, 242, 50, 14
+  CONTROL "msctls_progress32", 111, "msctls_progress32", WS_BORDER, 140, 60, 258, 10
+  CONTROL "msctls_progress32", 121, "msctls_progress32", WS_BORDER, 140, 72, 258, 10
+  CONTROL "msctls_progress32", 131, "msctls_progress32", WS_BORDER, 140, 84, 258, 10
+  CONTROL "msctls_progress32", 151, "msctls_progress32", WS_BORDER, 140, 96, 258, 10
+  CONTROL "msctls_progress32", 161, "msctls_progress32", WS_BORDER, 140, 108, 258, 10
+  CONTROL "Importación", -1, "Button", BS_GROUPBOX, 44, 30, 360, 24
+  CONTROL "", -1, "Button", BS_GROUPBOX, 44, 53, 360, 178
+  CONTROL "Directorio de factucont", -1, "Static", WS_GROUP, 47, 42, 74, 8
+  CONTROL "msctls_progress32", 171, "msctls_progress32", WS_BORDER, 140, 120, 258, 10
+  CONTROL "msctls_progress32", 181, "msctls_progress32", WS_BORDER, 140, 132, 258, 10
+  CONTROL "", 600, "TBitmap", 0x0000020e, 4, 3, 34, 30, 0x00000020
+  CONTROL "Durante este proceso se importarán los datos provenientes de factucont a nuestro programa.", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 291, 8
 }
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN
 
-IMPFACPLUS DIALOG DISCARDABLE 83, 45, 365, 357
+IMPFACPLUS DIALOG DISCARDABLE 83, 45, 407, 349
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_VISIBLE
 CAPTION "Importación de factuplus ®"
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 87, 49, 270, 12
-  CONTROL "Artículos", 110, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 70, 75, 10
-  CONTROL "Familias", 120, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 82, 75, 10
-  CONTROL "Grupos de venta", 130, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 94, 75, 10
-  CONTROL "Tipos de imp.", 140, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 106, 75, 10
-  CONTROL "Clientes", 150, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 118, 75, 10
-  CONTROL "Formas de pago", 160, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 130, 75, 10
-  CONTROL "Proveedores", 170, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 142, 75, 10
-  CONTROL "Almacenes", 210, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 154, 75, 10
-  CONTROL "Agentes", 220, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 166, 75, 10
-  CONTROL "Presupuestos clientes", 300, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 178, 80, 10
-  CONTROL "Pedidos clientes", 310, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 190, 75, 10
-  CONTROL "Albaranes clientes", 180, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 202, 75, 10
-  CONTROL "Facturas clientes", 190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 214, 75, 10
-  CONTROL "Tikets clientes", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 226, 75, 10
-  CONTROL "Especiales", 230, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 238, 75, 10
-  CONTROL "Transportistas", 240, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 250, 75, 10
-  CONTROL "Pedidos proveedor", 320, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 262, 79, 10
-  CONTROL "Albaranes proveedor", 250, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 274, 79, 10
-  CONTROL "Facturas proveedor", 260, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 286, 75, 10
-  CONTROL "Facturas rectificativas", 270, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 298, 80, 10
-  CONTROL "Grupos de clientes", 280, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 310, 79, 10
-  CONTROL "Remesas bancarias", 290, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 322, 75, 10
-  CONTROL "&Todos", 500, "Button", WS_TABSTOP, 2, 340, 50, 14
-  CONTROL "&Ninguno", 501, "Button", WS_TABSTOP, 57, 340, 50, 14
-  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 201, 340, 50, 14
-  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 256, 340, 50, 14
-  CONTROL "A&yuda", 998, "Button", WS_TABSTOP, 311, 340, 50, 14
-  CONTROL "msctls_progress32", 111, "msctls_progress32", WS_BORDER, 87, 70, 270, 10
-  CONTROL "msctls_progress32", 121, "msctls_progress32", WS_BORDER, 87, 82, 270, 10
-  CONTROL "msctls_progress32", 131, "msctls_progress32", WS_BORDER, 87, 94, 270, 10
-  CONTROL "msctls_progress32", 141, "msctls_progress32", WS_BORDER, 87, 106, 270, 10
-  CONTROL "msctls_progress32", 151, "msctls_progress32", WS_BORDER, 87, 118, 270, 10
-  CONTROL "msctls_progress32", 161, "msctls_progress32", WS_BORDER, 87, 130, 270, 10
-  CONTROL "msctls_progress32", 171, "msctls_progress32", WS_BORDER, 87, 142, 270, 10
-  CONTROL "msctls_progress32", 211, "msctls_progress32", WS_BORDER, 87, 154, 270, 10
-  CONTROL "msctls_progress32", 221, "msctls_progress32", WS_BORDER, 87, 166, 270, 10
-  CONTROL "msctls_progress32", 181, "msctls_progress32", WS_BORDER, 87, 202, 270, 10
-  CONTROL "msctls_progress32", 191, "msctls_progress32", WS_BORDER, 87, 214, 270, 10
-  CONTROL "msctls_progress32", 201, "msctls_progress32", WS_BORDER, 87, 226, 270, 10
-  CONTROL "msctls_progress32", 231, "msctls_progress32", WS_BORDER, 87, 238, 270, 10
-  CONTROL "Importación", -1, "Button", BS_GROUPBOX, 2, 40, 360, 24
-  CONTROL "", -1, "Button", BS_GROUPBOX, 2, 64, 360, 274
-  CONTROL "Directorio de factuplus", -1, "Static", WS_GROUP, 5, 52, 74, 8
-  CONTROL "msctls_progress32", 241, "msctls_progress32", WS_BORDER, 87, 250, 270, 10
-  CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE|SS_REALSIZEIMAGE, 0, 0, 365, 34
-  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 0, 32, 365, 1
-  CONTROL "msctls_progress32", 251, "msctls_progress32", WS_BORDER, 87, 274, 270, 10
-  CONTROL "msctls_progress32", 261, "msctls_progress32", WS_BORDER, 87, 286, 270, 10
-  CONTROL "msctls_progress32", 271, "msctls_progress32", WS_BORDER, 87, 298, 270, 10
-  CONTROL "msctls_progress32", 281, "msctls_progress32", WS_BORDER, 87, 310, 270, 10
-  CONTROL "msctls_progress32", 291, "msctls_progress32", WS_BORDER, 87, 322, 270, 10
-  CONTROL "msctls_progress32", 301, "msctls_progress32", WS_BORDER, 87, 178, 270, 10
-  CONTROL "msctls_progress32", 321, "msctls_progress32", WS_BORDER, 87, 262, 270, 10
-  CONTROL "msctls_progress32", 311, "msctls_progress32", WS_BORDER, 87, 190, 270, 10
+  CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 129, 38, 270, 12
+  CONTROL "Artículos", 110, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 59, 75, 10
+  CONTROL "Familias", 120, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 71, 75, 10
+  CONTROL "Grupos de venta", 130, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 83, 75, 10
+  CONTROL "Tipos de imp.", 140, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 95, 75, 10
+  CONTROL "Clientes", 150, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 107, 75, 10
+  CONTROL "Formas de pago", 160, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 119, 75, 10
+  CONTROL "Proveedores", 170, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 131, 75, 10
+  CONTROL "Almacenes", 210, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 143, 75, 10
+  CONTROL "Agentes", 220, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 155, 75, 10
+  CONTROL "Presupuestos clientes", 300, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 167, 80, 10
+  CONTROL "Pedidos clientes", 310, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 179, 75, 10
+  CONTROL "Albaranes clientes", 180, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 191, 75, 10
+  CONTROL "Facturas clientes", 190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 203, 75, 10
+  CONTROL "Tikets clientes", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 215, 75, 10
+  CONTROL "Especiales", 230, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 227, 75, 10
+  CONTROL "Transportistas", 240, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 239, 75, 10
+  CONTROL "Pedidos proveedor", 320, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 251, 79, 10
+  CONTROL "Albaranes proveedor", 250, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 263, 79, 10
+  CONTROL "Facturas proveedor", 260, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 275, 75, 10
+  CONTROL "Facturas rectificativas", 270, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 287, 80, 10
+  CONTROL "Grupos de clientes", 280, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 299, 79, 10
+  CONTROL "Remesas bancarias", 290, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 311, 75, 10
+  CONTROL "&Todos", 500, "Button", WS_TABSTOP, 44, 329, 50, 14
+  CONTROL "&Ninguno", 501, "Button", WS_TABSTOP, 99, 329, 50, 14
+  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 243, 329, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 298, 329, 50, 14
+  CONTROL "A&yuda", 998, "Button", WS_TABSTOP, 353, 329, 50, 14
+  CONTROL "msctls_progress32", 111, "msctls_progress32", WS_BORDER, 129, 59, 270, 10
+  CONTROL "msctls_progress32", 121, "msctls_progress32", WS_BORDER, 129, 71, 270, 10
+  CONTROL "msctls_progress32", 131, "msctls_progress32", WS_BORDER, 129, 83, 270, 10
+  CONTROL "msctls_progress32", 141, "msctls_progress32", WS_BORDER, 129, 95, 270, 10
+  CONTROL "msctls_progress32", 151, "msctls_progress32", WS_BORDER, 129, 107, 270, 10
+  CONTROL "msctls_progress32", 161, "msctls_progress32", WS_BORDER, 129, 119, 270, 10
+  CONTROL "msctls_progress32", 171, "msctls_progress32", WS_BORDER, 129, 131, 270, 10
+  CONTROL "msctls_progress32", 211, "msctls_progress32", WS_BORDER, 129, 143, 270, 10
+  CONTROL "msctls_progress32", 221, "msctls_progress32", WS_BORDER, 129, 155, 270, 10
+  CONTROL "msctls_progress32", 181, "msctls_progress32", WS_BORDER, 129, 191, 270, 10
+  CONTROL "msctls_progress32", 191, "msctls_progress32", WS_BORDER, 129, 203, 270, 10
+  CONTROL "msctls_progress32", 201, "msctls_progress32", WS_BORDER, 129, 215, 270, 10
+  CONTROL "msctls_progress32", 231, "msctls_progress32", WS_BORDER, 129, 227, 270, 10
+  CONTROL "Importación", -1, "Button", BS_GROUPBOX, 44, 29, 360, 24
+  CONTROL "", -1, "Button", BS_GROUPBOX, 44, 53, 360, 274
+  CONTROL "Directorio de factuplus", -1, "Static", WS_GROUP, 47, 41, 74, 8
+  CONTROL "msctls_progress32", 241, "msctls_progress32", WS_BORDER, 129, 239, 270, 10
+  CONTROL "msctls_progress32", 251, "msctls_progress32", WS_BORDER, 129, 263, 270, 10
+  CONTROL "msctls_progress32", 261, "msctls_progress32", WS_BORDER, 129, 275, 270, 10
+  CONTROL "msctls_progress32", 271, "msctls_progress32", WS_BORDER, 129, 287, 270, 10
+  CONTROL "msctls_progress32", 281, "msctls_progress32", WS_BORDER, 129, 299, 270, 10
+  CONTROL "msctls_progress32", 291, "msctls_progress32", WS_BORDER, 129, 311, 270, 10
+  CONTROL "msctls_progress32", 301, "msctls_progress32", WS_BORDER, 129, 167, 270, 10
+  CONTROL "msctls_progress32", 321, "msctls_progress32", WS_BORDER, 129, 251, 270, 10
+  CONTROL "msctls_progress32", 311, "msctls_progress32", WS_BORDER, 129, 179, 270, 10
+  CONTROL "", 600, "TBitmap", 0x0000020e, 4, 3, 34, 30, 0x00000020
+  CONTROL "Durante este proceso se importarán los datos provenientes de factuplus a nuestro programa. ", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 355, 8
 }
 
 IMPFACPRV DIALOG DISCARDABLE 162, 52, 216, 122
@@ -17021,32 +17021,32 @@ FONT 8, "MS Sans Serif"
 
 LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US
 
-REINDEX DIALOG DISCARDABLE 92, 84, 386, 228
+REINDEX DIALOG DISCARDABLE 92, 84, 427, 212
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_VISIBLE
 CAPTION "Regeneración de índices"
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "Ficheros de sistema", 100, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 4, 44, 75, 10
-  CONTROL "Ficheros maestros", 101, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 4, 66, 75, 10
-  CONTROL "Ficheros de trabajo", 102, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 4, 88, 75, 10
-  CONTROL "Ficheros T.P.V.", 103, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 4, 110, 75, 10
-  CONTROL "Riesgo de clientes", 104, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 4, 132, 75, 10
-  CONTROL "Sincroniza información", 105, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 4, 154, 84, 10
-  CONTROL "&Todos", 500, "Button", WS_TABSTOP, 4, 206, 50, 14
-  CONTROL "&Ninguno", 501, "Button", WS_TABSTOP, 59, 206, 50, 14
-  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 224, 206, 50, 14
-  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 279, 206, 50, 14
-  CONTROL "A&yuda", 998, "Button", WS_TABSTOP, 334, 206, 50, 14
-  CONTROL "Proceso en curso", -1, "Button", BS_GROUPBOX, 2, 176, 382, 22
-  CONTROL "", 110, "Static", SS_CENTER|WS_GROUP, 4, 187, 378, 8
-  CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE|SS_REALSIZEIMAGE, 0, 0, 386, 34
-  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 0, 32, 386, 1
-  CONTROL "", 200, "msctls_progress32", 0x00000000, 4, 56, 378, 6
-  CONTROL "", 210, "msctls_progress32", 0x00000000, 4, 78, 378, 6
-  CONTROL "", 220, "msctls_progress32", 0x00000000, 4, 100, 378, 6
-  CONTROL "", 230, "msctls_progress32", 0x00000000, 4, 122, 378, 6
-  CONTROL "", 240, "msctls_progress32", 0x00000000, 4, 144, 378, 6
-  CONTROL "", 250, "msctls_progress32", 0x00000000, 4, 166, 378, 6
+  CONTROL "Ficheros de sistema", 100, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 44, 31, 75, 10
+  CONTROL "Ficheros maestros", 101, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 44, 53, 75, 10
+  CONTROL "Ficheros de trabajo", 102, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 44, 75, 75, 10
+  CONTROL "Ficheros T.P.V.", 103, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 44, 97, 75, 10
+  CONTROL "Riesgo de clientes", 104, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 44, 119, 75, 10
+  CONTROL "Sincroniza información", 105, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 44, 141, 84, 10
+  CONTROL "&Todos", 500, "Button", WS_TABSTOP, 44, 193, 50, 14
+  CONTROL "&Ninguno", 501, "Button", WS_TABSTOP, 101, 193, 50, 14
+  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 250, 193, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 309, 193, 50, 14
+  CONTROL "A&yuda", 998, "Button", WS_TABSTOP, 367, 193, 50, 14
+  CONTROL "Proceso en curso", -1, "Button", BS_GROUPBOX, 44, 163, 379, 22
+  CONTROL "", 110, "Static", SS_CENTER|WS_GROUP, 46, 174, 373, 8
+  CONTROL "", 200, "msctls_progress32", 0x00000000, 44, 43, 378, 6
+  CONTROL "", 210, "msctls_progress32", 0x00000000, 44, 65, 378, 6
+  CONTROL "", 220, "msctls_progress32", 0x00000000, 44, 87, 378, 6
+  CONTROL "", 230, "msctls_progress32", 0x00000000, 44, 109, 378, 6
+  CONTROL "", 240, "msctls_progress32", 0x00000000, 44, 131, 378, 6
+  CONTROL "", 250, "msctls_progress32", 0x00000000, 44, 153, 378, 6
+  CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
+  CONTROL "Durante este proceso se eliminarán definitivamente los registros marcados y se ordenarán nuevamente todas las bases de datos de la aplicaión.", -1, "Static", WS_GROUP, 44, 3, 339, 27
 }
 
 REINDEXADS DIALOG DISCARDABLE 92, 84, 386, 228

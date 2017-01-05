@@ -2997,8 +2997,8 @@ Function CreateAcceso( oWnd )
    if isProfesional()
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 1
-   oGrupo:nLittleItems  := 2
+   oGrupo:nBigItems     := 2
+   oGrupo:nLittleItems  := 1
    oGrupo:cPrompt       := 'Exportaciones e importaciones'
    oGrupo:cLittleBitmap := "gc_satellite_dish2_16"
    oGrupo:cBigBitmap    := "gc_satellite_dish2_32"
@@ -3020,31 +3020,8 @@ Function CreateAcceso( oWnd )
    oItem:bAction        := {|| TEdm():Activate( "01079", oWnd ) }
    oItem:cId            := "01079"
    oItem:cBmp           := "gc_pda_16"
-   oItem:cBmpBig        := "gc_pda_16"
+   oItem:cBmpBig        := "gc_pda_32"
    oItem:lShow          := .f.
-   oItem:lLittle        := .t.
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Exp. ventas'
-   oItem:cMessage       := 'Exp. ventas'
-   oItem:bAction        := {|| TExportaTarifas():New( "01111", oWnd ):Play() }
-   oItem:cId            := "01113"
-   oItem:cBmp           := "gc_inbox_out_16"
-   oItem:cBmpBig        := "gc_inbox_out_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .t.
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Exp. compras'
-   oItem:cMessage       := 'Exp. compras'
-   oItem:bAction        := {|| TExportaCompras():New( "01112", oWnd ):Play() }
-   oItem:cId            := "01112"
-   oItem:cBmp           := "gc_inbox_out_16"
-   oItem:cBmpBig        := "gc_inbox_out_16"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .t.
 
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo
@@ -3082,26 +3059,11 @@ Function CreateAcceso( oWnd )
    end if
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := if( IsProfesional(), 5, 4 )
+   oGrupo:nBigItems     := 3
    oGrupo:nBigItems++
-
    oGrupo:cPrompt       := 'Extras'
    oGrupo:cLittleBitmap := "gc_magic_wand_16"
    oGrupo:cBigBitmap    := "gc_magic_wand_32"
-
-   if IsProfesional()
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Sincroniza preventa'
-   oItem:cMessage       := 'Sincronizamos preventa'
-   oItem:bAction        := {|| SincronizaPreventa():Activate( "04016", oWnd ) }
-   oItem:cId            := "04016"
-   oItem:cBmp           := "gc_pda_write_16"
-   oItem:cBmpBig        := "gc_pda_write_32"
-   oItem:lShow          := .f.
-
-   end if
 
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo
@@ -3142,16 +3104,6 @@ Function CreateAcceso( oWnd )
    oItem:cId            := "01084"
    oItem:cBmp           := "gc_calendar_16"
    oItem:cBmpBig        := "gc_calendar_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := "Conversión documentos"
-   oItem:cMessage       := "Conversión documentos"
-   oItem:bAction        := {|| TConversionDocumentos():New():Dialog() }
-   oItem:cId            := "01038"
-   oItem:cBmp           := "gc_currency_euro_16"
-   oItem:cBmpBig        := "gc_currency_euro_32"
    oItem:lShow          := .f.
 
    // Reporting----------------------------------------------------------------
@@ -4887,7 +4839,7 @@ Function MainTablet()
                            "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "gc_document_text_user_64",;
+                           "cResName"  => "gc_package_printer_64",;
                            "bLClicked" => {|| Informe3() },;
                            "oWnd"      => oDlg } )
 
@@ -5156,6 +5108,7 @@ static function Informe3()
    oInf:cReportDirectory   := cPatReporting() + "Articulos\Existencias\Stocks"
    oInf:cReportName        := "Stocks artículos tablet"
    oInf:cReportFile        := cPatReporting() + "Articulos\Existencias\Stocks\Stocks artículos tablet.fr3"
+   oInf:cAlmacenDefecto    := oUser():cAlmacen()
    oInf:BuildReportCorrespondences()
 
    oInf:PlayTablet()

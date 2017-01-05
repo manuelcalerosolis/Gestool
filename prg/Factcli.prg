@@ -4748,7 +4748,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
       aTmp[ _NCANENT  ]       := 1
       aTmp[ _DFECHA   ]       := aTmpFac[ _DFECFAC ]
       aTmp[ _LTOTLIN  ]       := lTotLin
-      aTmp[ _CALMLIN  ]       := aTmpFac[ _CCODALM ]
+      aTmp[ _CALMLIN  ]       := aTmpFac[ _CCODALM ] 
       aTmp[ _LIVALIN  ]       := aTmpFac[ _LIVAINC ]
       aTmp[ _CTIPMOV  ]       := cDefVta()
       aTmp[ __CNUMPED ]       := aTmpFac[ _CNUMPED ]
@@ -19424,7 +19424,7 @@ function aColFacCli()
    aAdd( aColFacCli, { "lVolImp",   "L",   1, 0, "Aplicar volumen impuestos especiales"   , "VolumenImpuestosEspeciales",  "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "lGasSup",   "L",   1, 0, "Linea de gastos suplidos"               , "GastosSuplidos",              "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "cNumPed"   ,"C",  12, 0, "Número del pedido"                      , "NumeroPedido",                "", "( cDbfCol )", nil } )
-   aAdd( aColFacCli, { "dFecFac"   ,"D",   8, 0, "Fecha de factura"                       , "FechaFactura",                "", "( cDbfCol )", nil } )
+   aAdd( aColFacCli, { "dFecFac"   ,"D",   8, 0, "Fecha de factura"                       , "FechaFactura",                "", "( cDbfCol )", {|| GetSysDate() } } )
    aAdd( aColFacCli, { "cSuPed"    ,"C",  50, 0, "Su pedido (desde albarán)"              , "",                            "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "cNumSat"   ,"C",  12, 0, "Número del SAT"                         , "NumeroSAT",                   "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "dFecUltCom","D",   8, 0, "Fecha última compra"                    , "FechaUltimaVenta",            "", "( cDbfCol )", nil } ) 
@@ -19433,7 +19433,7 @@ function aColFacCli()
    aAdd( aColFacCli, { "nUniUltCom","N",  16, 6, "Unidades última compra"                 , "UnidadesUltimaVenta",         "", "( cDbfCol )", nil } ) 
    aAdd( aColFacCli, { "nBultos",   "N",  16, 6, "Numero de bultos en líneas"             , "Bultos",                      "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "cFormato",  "C", 100, 0, "Formato de venta"                       , "Formato",                     "", "( cDbfCol )", nil } )
-   aAdd( aColFacCli, { "tFecFac",   "C",   6, 0, "Hora de la factura"                     , "HoraFactura",                 "", "( cDbfCol )", nil } )
+   aAdd( aColFacCli, { "tFecFac",   "C",   6, 0, "Hora de la factura"                     , "HoraFactura",                 "", "( cDbfCol )", {|| GetSysTime() } } )
    aAdd( aColFacCli, { "cCtrCoste", "C",   9, 0, "Código del centro de coste"             , "",                            "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "lLabel"   , "L",   1, 0, "Lógico para marca de etiqueta"          , "LogicoEtiqueta",              "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "nLabel"   , "N",   6, 0, "Unidades de etiquetas a imprimir"       , "NumeroEtiqueta",              "", "( cDbfCol )", nil } )
@@ -19578,7 +19578,7 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"lMail"       ,"L", 1,   0, "Lógico para enviar mail" ,                                  "EnviarMail",                  "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"dMail"       ,"D", 8,   0, "Fecha mail enviado" ,                                       "FechaMailEnviado",            "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"tMail"       ,"C", 6,   0, "Hora mail enviado" ,                                        "HoraMailEnviado",             "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"tFecFac"     ,"C", 6,   0, "Hora de la factura" ,                                       "HoraFactura",                 "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"tFecFac"     ,"C", 6,   0, "Hora de la factura" ,                                       "HoraFactura",                 "", "( cDbf )", {|| getSysTime() } } )
    aAdd( aItmFacCli, {"cCtrCoste"   ,"C", 9,   0, "Código del centro de coste" ,                               "CentroCoste",                 "", "( cDbf )", nil } )
    aAdd( aItmFacCli, { "mFirma"     ,"M", 10,  0, "Firma" ,                                                    "Firma",                       "", "( cDbf )", nil } )                  
 

@@ -3288,6 +3288,7 @@ METHOD saveResourceWithCalculate( nMode, oDlg ) CLASS TRemMovAlm
    if ::lSave( nMode )
 
       ::oDbf:lWait         := .f.
+      ::oDbf:lSelDoc       := .t.
 
       ::endResource( .t., nMode, oDlg )
 
