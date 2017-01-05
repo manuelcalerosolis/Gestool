@@ -838,9 +838,6 @@ METHOD PlayTablet( uParam ) CLASS TFastReportInfGen
 
          if ::OpenTemporal()
 
-            ::dIniInf         := GetSysDate()
-            ::dFinInf         := GetSysDate()
-
             ::GenReportTablet( IS_PRINTER )
 
             ::CloseTemporal()
@@ -1182,7 +1179,9 @@ METHOD lGenerate() CLASS TFastReportInfGen
 
    // Colocamos el filtro -----------------------------------------------------
 
-   ::SetFilterInforme( ::oFilter:cExpresionFilter )
+   if !Empty( ::oFilter )
+      ::SetFilterInforme( ::oFilter:cExpresionFilter )
+   end if
 
 RETURN ( ::oDbf:LastRec() > 0 )
 
