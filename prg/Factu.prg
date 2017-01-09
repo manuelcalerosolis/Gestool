@@ -1968,7 +1968,7 @@ Function CreateAcceso( oWnd )
    // Otros--------------------------------------------------------------------
 
    oGrupo               := TGrupoAcceso() 
-   oGrupo:nBigItems     := 12
+   oGrupo:nBigItems     := 14
    oGrupo:cPrompt       := 'Global'
    oGrupo:cLittleBitmap := "gc_folder2_16"
    oGrupo:cBigBitmap    := "gc_folder2_32"
@@ -4841,6 +4841,18 @@ Function MainTablet()
                            "nHeight"   => 64,;
                            "cResName"  => "gc_package_printer_64",;
                            "bLClicked" => {|| Informe3() },;
+                           "oWnd"      => oDlg } )
+
+   /*
+   GALERÍA DE INFORMES*********************************************************
+   */
+
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 18 ) },;
+                           "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "gc_printer_64",;
+                           "bLClicked" => {|| Reporting():New():Resource() },;
                            "oWnd"      => oDlg } )
 
    //----------------Albaranes de clientes
