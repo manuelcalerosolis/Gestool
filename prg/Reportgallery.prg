@@ -18,8 +18,8 @@ FUNCTION ReportGallery()
    oImgTipoGaleria   := TImageList():New( 32, 32 )
 
    oImgTipoGaleria:AddIcon( "gc_money2_32" )
-   oImgTipoGaleria:AddIcon( "Truck_Red" )
-   oImgTipoGaleria:AddIcon( "Package" )
+   oImgTipoGaleria:AddIcon( "gc_small_truck_32" )
+   oImgTipoGaleria:AddIcon( "gc_package_32" )
    oImgTipoGaleria:AddIcon( "gc_worker2_32" )
 
    oLstTipoGaleria   := TListView():Redefine( 100, oDlg, {|| msginfo() } ) // {| nOption | SelectReportGalery( nOption, oTrvArbolGaleria ) }

@@ -21,7 +21,7 @@
 // SetMainDoc() hace que se escriban en el cuerpo principal del documento.
 //
 // 6-5-2002 Sebastian Almiron - El metodo tabpredeterminado(ncmpos) es para
-// indicar la distancia de los tabuladoores predeterminados
+// indicar la distancia de los tabuladores predeterminados
 //
 // 6-5-2002 Sebastian Almiron - Existe una nueva propiedad ::oLastsay
 // que es el ultimo say mandado al documento, ello nos permitirá darle
