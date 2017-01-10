@@ -3,3 +3,4 @@
 #endif
 
 #define ESTADOPEDIDO  1001
+#define SET_CONTADORES  8001
