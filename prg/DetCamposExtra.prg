@@ -605,7 +605,7 @@ METHOD valueExtraField( cCampo, cClave, cField ) CLASS TDetCamposExtra
    local nRec              := ::oDbf:Recno()
    local nOrdAnt           := ::oDbf:OrdSetFocus( "cTotClave" )
    local cClavePrincipal   := ""
-   local valueExtraField
+   local valueExtraField   := ""
 
    cClavePrincipal         := hGet( DOCUMENTOS_ITEMS, ::TipoDocumento ) + cCampo + Padr( cClave, 20 )
 
