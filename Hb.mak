@@ -22,14 +22,13 @@ PPO 					   = 	Ppo1406
 EXE 					   = 	Bin\Gestool.exe
 
 .path.prg      		=	.\$(SOURCEPRG)
-.path.c       		=	.\$(SOURCEC)
+.path.c       			=	.\$(SOURCEC)
 .path.obj      		=	.\$(OBJ)
 
 PRG            		=    										\
 Factu.prg               										\
 DialogExtend.prg           									\
-C5Lib.prg               									\
-RpreviewC3.prg          									\
+C5Lib.prg               										\
 ReportC3.prg            									\
 RocolumnC3.prg          									\
 Treeitem.prg            									\
@@ -595,7 +594,6 @@ Turno.obj                                          \
 Ttotturno.obj                                      \
 Tblconv.obj                                        \
 Regalm.obj                                         \
-RpreviewC3.obj                                     \
 Rhtml.obj                                          \
 Tshell.obj                                         \
 ReportC3.obj                                       \
@@ -1068,7 +1066,6 @@ $(OBJ)\Turno.obj                 	+
 $(OBJ)\Ttotturno.obj             	+
 $(OBJ)\Tblconv.obj               	+
 $(OBJ)\Regalm.obj                	+
-$(OBJ)\RpreviewC3.obj            	+
 $(OBJ)\Rhtml.obj                 	+
 $(OBJ)\Tshell.obj                	+
 $(OBJ)\RocolumnC3.obj            	+

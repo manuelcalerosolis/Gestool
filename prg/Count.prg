@@ -1,6 +1,8 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
+//--------------------------------------------------------------------------//
+
 static aDoc          := {  {"NPEDPRV", "Pedido a proveedores"                    , .t., .t., .t., .f. },;
                            {"NALBPRV", "Albaran de proveedores"                  , .t., .t., .t., .f. },;
                            {"NFACPRV", "Facturas de proveedores"                 , .t., .t., .t., .t. },;
@@ -31,7 +33,47 @@ static aDoc          := {  {"NPEDPRV", "Pedido a proveedores"                   
 
 
 //--------------------------------------------------------------------------//
-//Funciones del programa
+
+CLASS TCounter
+
+   DATA oDialog
+
+   DATA nView
+
+   METHOD New()            CONSTRUCTOR
+
+   METHOD OpenDialog()
+
+ENDCLASS
+
+//--------------------------------------------------------------------------//
+
+METHOD New( nView )        CLASS TCounter
+
+   ::nView                 := nView
+
+RETURN ( self )
+
+//--------------------------------------------------------------------------//
+
+METHOD OpenDialog()         CLASS TCounter
+
+   msgStop( ::nView, "Hola desde Dialog" )
+
+   // DEFINE DIALOG ::oDialog RESOURCE "ButtonBar"
+
+   // ACTIVATE DIALOG ::oDialog CENTER
+
+RETURN ( self )
+
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+// Funciones generales
 //--------------------------------------------------------------------------//
 
 /*
@@ -452,3 +494,30 @@ Function aItmCount()
 Return ( aItmCount )
 
 //--------------------------------------------------------------------------//
+
+FUNCTION setContador( serieDocumento, numeroDocumento, tipoDocumento, nView )
+
+   local fieldPosition
+
+   try
+
+      fieldPosition     := ( D():Contadores( nView ) )->( fieldPos( serieDocumento ) )
+
+      if fieldPosition != 0
+
+         if ( D():Contadores( nView ) )->( dbseek( upper( tipoDocumento ) ) ) .and. dblock( D():Contadores( nView ) )
+            ( D():Contadores( nView ) )->( fieldput( fieldPosition, numeroDocumento ) )
+            ( D():Contadores( nView ) )->( dbunlock() )
+         end if
+
+      end if 
+
+   catch
+
+      msgStop( "Imposible establecer contador" )
+
+   end 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//

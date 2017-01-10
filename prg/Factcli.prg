@@ -583,6 +583,8 @@ static nUltimoCliente      := 0
 static cSerieAnterior      := ""
 static cCodPagoAnterior    := ""
 
+static Counter
+
 static oTipoCtrCoste
 static cTipoCtrCoste
 static aTipoCtrCoste       := { "Centro de coste", "Proveedor", "Agente", "Cliente" }
@@ -1365,6 +1367,11 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       HOTKEY   "S" ;
       ALLOW EXIT ;
 
+   DEFINE BTNSHELL RESOURCE "END" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( Counter:OpenDialog() ) ;
+      TOOLTIP  "Establecer contadores" 
+
    if !oUser():lFiltroVentas()
       oWndBrw:oActiveFilter:SetFields( aItmFacCli() )
       oWndBrw:oActiveFilter:SetFilterType( FAC_CLI )
@@ -1872,6 +1879,8 @@ STATIC FUNCTION OpenFiles()
       oMailingFacturasClientes   := TGenmailingDatabaseFacturasClientes():New( nView )
 
       TComercio                  := TComercio():New( nView, oStock )
+
+      Counter                    := TCounter():New( nView )
 
       /*
       Declaramos variables p-blicas--------------------------------------------
@@ -9869,15 +9878,15 @@ STATIC FUNCTION DupFactura( lActual, cFecDoc )
 
    local nNewNumFac  := 0
 
-   //Recogemos el nuevo numero de factura--------------------------------------
+   // Recogemos el nuevo numero de factura--------------------------------------
 
-   nNewNumFac  := nNewDoc( ( D():FacturasClientes( nView ) )->cSerie, D():FacturasClientes( nView ), "NFACCLI", , D():Contadores( nView ) )
+   nNewNumFac        := nNewDoc( ( D():FacturasClientes( nView ) )->cSerie, D():FacturasClientes( nView ), "nFacCli", , D():Contadores( nView ) )
 
-   //Duplicamos las cabeceras--------------------------------------------------
+   // Duplicamos las cabeceras--------------------------------------------------
 
    FacRecDup( D():FacturasClientes( nView ), ( D():FacturasClientes( nView ) )->cSerie, nNewNumFac, ( D():FacturasClientes( nView ) )->cSufFac, .t., .f., lActual, cFecDoc )
 
-   //Duplicamos las lineas del documento---------------------------------------
+   // Duplicamos las lineas del documento---------------------------------------
 
    if ( D():FacturasClientesLineas( nView ) )->( dbSeek( ( D():FacturasClientesId( nView ) ) ) )
 
