@@ -96,6 +96,9 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
    METHOD setFilterUserId()               INLINE ( if( ::lApplyFilters,;
                                                    ::cExpresionHeader  += ' .and. ( Field->cCodUsr >= "' + ::oGrupoUsuario:Cargo:Desde + '" .and. Field->cCodUsr <= "' + ::oGrupoUsuario:Cargo:Hasta + '" )', ) )
 
+   METHOD setFilterAlmacenId()            INLINE ( if( ::lApplyFilters,;
+                                                   ::cExpresionHeader  += ' .and. ( Field->cCodAlm >= "' + ::oGrupoAlmacen:Cargo:Desde + '" .and. Field->cCodAlm <= "' + ::oGrupoAlmacen:Cargo:Hasta + '" )', ) )
+
    METHOD AddFieldCamposExtra()
    METHOD loadValuesExtraFields()
 
@@ -123,6 +126,10 @@ METHOD lResource() CLASS TFastVentasClientes
    end if
 
    if !::lGrupoGrupoCliente( .t. )
+      return .f.
+   end if
+
+   if !::lGrupoAlmacen( .t. )
       return .f.
    end if
 
@@ -427,6 +434,7 @@ METHOD Create( uParam ) CLASS TFastVentasClientes
    ::AddField( "cCodAge",  "C", 12, 0, {|| "@!" }, "Código del agente"                       )
    ::AddField( "cCodUsr",  "C",  3, 0, {|| "@!" }, "Código usuario"                          )
    ::AddField( "cCodObr",  "C", 10, 0, {|| "@!" }, "Código dirección"                        )
+   ::AddField( "cCodAlm",  "C", 16, 0, {|| "@!" }, "Código almacén"                          )
 
    ::AddField( "cTipDoc",  "C", 30, 0, {|| "" },   "Tipo de documento"                       )
 
@@ -974,6 +982,8 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
       ::setFilterUserId()
 
+      ::setFilterAlmacenId()
+
       // Procesando SAT----------------------------------------------------------
 
       ::setMeterText( "Procesando SAT" )
@@ -999,6 +1009,7 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cCodRut    := ::oSatCliT:cCodRut
             ::oDbf:cCodUsr    := ::oSatCliT:cCodUsr
             ::oDbf:cCodObr    := ::oSatCliT:cCodObr
+            ::oDbf:cCodAlm    := ::oSatCliT:cCodAlm
 
             ::oDbf:nComAge    := ::oSatCliT:nPctComAge
 
@@ -1104,6 +1115,8 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
       
       ::setFilterUserId()
 
+      ::setFilterAlmacenId()
+
       // procesando presupuestos-------------------------------------------------
 
       ::setMeterText( "Procesando presupuestos" )
@@ -1129,6 +1142,7 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cCodRut    := ::oPreCliT:cCodRut
             ::oDbf:cCodUsr    := ::oPreCliT:cCodUsr
             ::oDbf:cCodObr    := ::oPreCliT:cCodObr
+            ::oDbf:cCodAlm    := ::oPreCliT:cCodAlm
 
             ::oDbf:nComAge    := ::oPreCliT:nPctComAge
 
@@ -1234,6 +1248,8 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
       
       ::setFilterUserId()
 
+      ::setFilterAlmacenId()
+
    // Procesando pedidos------------------------------------------------
    
       ::setMeterText( "Procesando pedidos" )
@@ -1258,6 +1274,7 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cCodPgo    := ::oPedCliT:cCodPgo
             ::oDbf:cCodRut    := ::oPedCliT:cCodRut
             ::oDbf:cCodObr    := ::oPedCliT:cCodObr
+            ::oDbf:cCodAlm    := ::oPedCliT:cCodAlm
 
             ::oDbf:nComAge    := ::oPedCliT:nPctComAge
 
@@ -1375,6 +1392,8 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
       
       ::setFilterUserId()
 
+      ::setFilterAlmacenId()
+
       // Procesando albaranes-----------------------------------------------------
 
       ::setMeterText( "Procesando albaranes" )
@@ -1398,6 +1417,7 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
             ::oDbf:cCodPgo    := ::oAlbCliT:cCodPago
             ::oDbf:cCodRut    := ::oAlbCliT:cCodRut
             ::oDbf:cCodObr    := ::oAlbCliT:cCodObr
+            ::oDbf:cCodAlm    := ::oAlbCliT:cCodAlm
 
             ::oDbf:nComAge    := ::oAlbCliT:nPctComAge
 
@@ -1510,6 +1530,8 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
       
       ::setFilterUserId()
 
+      ::setFilterAlmacenId()
+
       // procesando facturas------------------------------------------------
    
       ::setMeterText( "Procesando facturas" )
@@ -1534,6 +1556,7 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cCodRut    := ::oFacCliT:cCodRut
             ::oDbf:cCodUsr    := ::oFacCliT:cCodUsr
             ::oDbf:cCodObr    := ::oFacCliT:cCodObr
+            ::oDbf:cCodAlm    := ::oFacCliT:cCodAlm
 
             ::oDbf:nComAge    := ::oFacCliT:nPctComAge
 
@@ -1636,6 +1659,8 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
       
       ::setFilterUserId()
 
+      ::setFilterAlmacenId()
+
    // Procesando facturas recitificativas-------------------------------------
 
       ::setMeterText( "Procesando facturas rectificativas" )
@@ -1659,6 +1684,7 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
          ::oDbf:cCodRut    := ::oFacRecT:cCodRut
          ::oDbf:cCodUsr    := ::oFacRecT:cCodUsr
          ::oDbf:cCodObr    := ::oFacRecT:cCodObr
+         ::oDbf:cCodAlm    := ::oFacRecT:cCodAlm
 
          ::oDbf:nComAge    := ::oFacRecT:nPctComAge
 
@@ -1749,6 +1775,8 @@ METHOD AddTicket() CLASS TFastVentasClientes
       ::setFilterRouteId()
 
       ::setFilterAgentId()
+
+      ::setFilterAlmacenId()
       
    // filtros para la cabecera------------------------------------------------
    
@@ -1774,6 +1802,7 @@ METHOD AddTicket() CLASS TFastVentasClientes
             ::oDbf:cCodRut    := ::oTikCliT:cCodRut
             ::oDbf:cCodUsr    := ::oTikCliT:cCcjTik
             ::oDbf:cCodObr    := ::oTikCliT:cCodObr
+            ::oDbf:cCodAlm    := ::oTikCliT:cAlmTik
 
             ::oDbf:cCodPos    := ::oTikCliT:cPosCli
 
@@ -1974,6 +2003,8 @@ METHOD insertFacturaCliente()
       
       ::setFilterUserId()
 
+      ::setFilterAlmacenId()
+
    // Procesando facturas-----------------------------------------------------
 
       ::setMeterText( "Procesando facturas" )
@@ -2005,6 +2036,8 @@ METHOD insertFacturaCliente()
                   ::oDbf:cCodUsr    := ::oFacCliT:cCodUsr
                   ::oDbf:cCodObr    := ::oFacCliT:cCodObr
                   ::oDbf:nComAge    := ::oFacCliT:nPctComAge
+
+                  ::oDbf:cCodAlm    := ::oFacCliT:cCodAlm
 
                   ::oDbf:cCodPos    := ::oFacCliT:cPosCli
 
@@ -2107,6 +2140,8 @@ METHOD insertRectificativa()
       
       ::setFilterUserId()
 
+      ::setFilterAlmacenId()
+
       // Procesando facturas rectificativas--------------------------------------
 
       ::setMeterText( "Procesando facturas rectificativas" )
@@ -2138,6 +2173,7 @@ METHOD insertRectificativa()
                   ::oDbf:cCodUsr    := ::oFacRecT:cCodUsr
                   ::oDbf:cCodObr    := ::oFacRecT:cCodObr
                   ::oDbf:nComAge    := ::oFacrecT:nPctComAge
+                  ::oDbf:cCodAlm    := ::oFacRecT:cCodAlm
 
                   ::oDbf:cCodPos    := ::oFacRecT:cPosCli
 
@@ -2235,6 +2271,8 @@ METHOD insertTicketCliente()
 
       ::setFilterAgentId()
 
+      ::setFilterAlmacenId()
+
    // Procesando tickets------------------------------------------------
 
       ::setMeterText( "Procesando tickets" )
@@ -2266,6 +2304,7 @@ METHOD insertTicketCliente()
                      ::oDbf:cCodRut    := ::oTikCliT:cCodRut
                      ::oDbf:cCodUsr    := ::oTikCliT:cCcjTik
                      ::oDbf:cCodObr    := ::oTikCliT:cCodObr
+                     ::oDbf:cCodAlm    := ::oTikCliT:cAlmTik
 
                      ::oDbf:cCodPos    := ::oTikCliT:cPosCli
 
