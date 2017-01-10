@@ -1316,7 +1316,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
                   "EMPRESA_COMUNICACIONES"
 
       // Page 1 Comportamientos---------------------------------------------------
-
+ 
       REDEFINE BITMAP oBmpComportamiento ;
          ID       500 ;
          RESOURCE "gc_wrench_48" ;
