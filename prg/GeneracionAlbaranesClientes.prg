@@ -21,6 +21,8 @@ CLASS TGeneracionAlbaranesClientes FROM TConversionDocumentos
    DATA currentClient
    DATA currentDocument
 
+   DATA oWaitMeter
+
    METHOD New( nView, oStock )
    METHOD End()
 
@@ -55,7 +57,6 @@ CLASS TGeneracionAlbaranesClientes FROM TConversionDocumentos
          METHOD appendDeliveryNoteLines()
 
    METHOD processDeliveryNoteLines()
-      METHOD preProcessDeliveryNoteLine()
       METHOD processDeliveryNoteLine( oLine )
 
    METHOD getCustomerOrderLines()                  INLINE ( ::dialogCustomerOrderLines:oDocumentLines )
@@ -312,6 +313,10 @@ METHOD isHeadersConditions()
       Return .f.
    end if 
 
+   if ( ( ::getHeaderAlias() )->lCancel )
+      Return .f.
+   end if 
+
    if empty( ::oCliente:Value() )
       Return .t.
    end if
@@ -342,7 +347,7 @@ METHOD loadLinesDocument()
 
    ::oStock:Reset()
 
-   ( ::getHeaderAlias() )->( ordsetfocus( "dFecPed" ) )
+   ( ::getHeaderAlias() )->( ordsetfocus( "dFecGen" ) )
 
    ( ::getHeaderAlias() )->( dbgotop() )
    while ( ::getHeaderAlias() )->dFecPed <= ::oPeriodo:getFechaFin() .and. !::getHeaderEof() // 
@@ -503,43 +508,43 @@ Return ( nil )
 METHOD processDeliveryNoteLines()
 
    local oLine
+   local aLines         := ::getDeliveryNoteLines():getLines() 
 
-   ::preProcessDeliveryNoteLine()
-
-   for each oLine in ( ::getDeliveryNoteLines():getLines() )
-      if oLine:isSelectLine()
-         ::processDeliveryNoteLine( oLine )
-      end if 
-   next
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD preProcessDeliveryNoteLine()
+   ::oWaitMeter         := TWaitMeter():New( "Generando albaranes", "Espere por favor...", len( ::getDeliveryNoteLines():getLines() ) )
+   ::oWaitMeter:Run()
 
    asort( ::getDeliveryNoteLines():getLines(), , , {|x,y| x:getHeaderClient() <= y:getHeaderClient() } )
 
+   for each oLine in aLines
+      if oLine:isSelectLine()
+         ::processDeliveryNoteLine( oLine, hb_enumindex() )
+      end if 
+   next
+
+   ::oWaitMeter:end()
+
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD processDeliveryNoteLine( oLine )
+METHOD processDeliveryNoteLine( oLine, nLine )
+
+   ::oWaitMeter:incMeter()
 
    if !( empty( oLine:getValue( "AlbaranCliente" ) ) ) 
-      ::addLineDeliveryNoteCustomer( oLine, oLine:getValue( "AlbaranCliente" ) )
+      ::addLineDeliveryNoteCustomer( oLine, nLine, oLine:getValue( "AlbaranCliente" ) )
       ::cleanCurrents()  
       Return .t.
    end if 
 
    if empty( oLine:getValue( "AlbaranCliente" ) ) .and. ( !empty( ::currentClient ) .and. ::currentClient == oLine:getHeaderClient() )
-      ::addLineDeliveryNoteCustomer( oLine, ::currentDocument )
+      ::addLineDeliveryNoteCustomer( oLine, nLine, ::currentDocument )
       Return .t.
    end if 
 
-   if empty( oLine:getValue( "AlbaranCliente" ) ) // .and. ( !empty( ::currentClient ) .and. ::currentClient != oLine:getHeaderClient()  )
+   if empty( oLine:getValue( "AlbaranCliente" ) ) 
       ::appendDeliveryNoteCustomer( oLine )
-      ::addDeliveryNoteCustomer( oLine )
+      ::addDeliveryNoteCustomer( oLine, nLine )
       ::saveDeliveryNoteCustomer()
    end if 
 
@@ -550,8 +555,11 @@ Return ( .t. )
 METHOD appendDeliveryNoteCustomer( oLine )
 
    ::DeliveryNoteCustomer:setAppendMode()
+
    ::DeliveryNoteCustomer:getAppendDocumento()
+
    ::DeliveryNoteCustomer:hSetMaster( "Entregado", .t. ) 
+
    ::DeliveryNoteCustomer:setClientToDocument( oLine:getHeaderClient() )
 
    ::setCurrentClient( oLine:getHeaderClient() )
@@ -560,10 +568,14 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD addDeliveryNoteCustomer( oLine )
+METHOD addDeliveryNoteCustomer( oLine, nLine )
 
-   local oDeliveryNoteLine    := DeliveryNoteDocumentLine():New( ::DeliveryNoteCustomer ) 
+   local oDeliveryNoteLine
 
+   ::oWaitMeter:setMessage( "Añadiendo línea " + alltrim( str( nLine ) ) + " a cliente : " + alltrim( oLine:getHeaderClient() ) + space( 1 ) + alltrim( oLine:getHeaderClientName() ) )
+
+   oDeliveryNoteLine    := DeliveryNoteDocumentLine():New( ::DeliveryNoteCustomer ) 
+   
    oDeliveryNoteLine:setDictionary( oLine:hDictionary )
 
    ::DeliveryNoteCustomer:oDocumentLines:addLines( oDeliveryNoteLine )   
@@ -572,26 +584,38 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD saveDeliveryNoteCustomer()
+METHOD saveDeliveryNoteCustomer( oLine )
 
    ::DeliveryNoteCustomer:onPreSaveAppend()
-   ::DeliveryNoteCustomer:saveAppendDocumento()
+
+   ::DeliveryNoteCustomer:saveAppendDocumento( oLine )
 
    ::setCurrentDocument( ::DeliveryNoteCustomer:getId() )
+
+   ::DeliveryNoteCustomer:onPreEnd()
 
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD addLineDeliveryNoteCustomer( oLine, currentDocument )
+METHOD addLineDeliveryNoteCustomer( oLine, nLine, currentDocument )
 
    if ( D():gotoIdAlbaranesClientes( currentDocument, ::nView ) )
+
       ::DeliveryNoteCustomer:getEditDocumento()
-      ::addDeliveryNoteCustomer( oLine )
+   
+      ::addDeliveryNoteCustomer( oLine, nLine )
+   
       ::DeliveryNoteCustomer:setDatasInDictionaryMaster() 
+
       ::DeliveryNoteCustomer:saveEditDocumento()
+
+      ::DeliveryNoteCustomer:onPreEnd()
+   
    else 
+   
       msgStop( "Albarán de cliente " + transIdDocument( currentDocument ) + " no encontrado." )
+   
    end if 
 
 Return ( .t. )

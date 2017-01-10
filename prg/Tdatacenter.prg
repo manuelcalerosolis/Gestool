@@ -1065,6 +1065,7 @@ METHOD ScanDataTable( cDataTable ) CLASS TDataCenter
    local nScan
    local cDataName
 
+
    cDataName   := ::DatosName( cDataTable )
 
    nScan       := aScan( ::aDataTables, {|o| o:getName() == cDataName } )   
@@ -1072,10 +1073,13 @@ METHOD ScanDataTable( cDataTable ) CLASS TDataCenter
       Return ( ::aDataTables[ nScan ] )
    end if 
 
+
    cDataName   := ::EmpresaName( cDataTable )
 
    nScan       := aScan( ::aEmpresaTables, {|o| o:getName() == cDataName } )   
    if nScan != 0
+   
+   
       Return ( ::aEmpresaTables[ nScan ] )
    end if 
 
@@ -4562,7 +4566,6 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
          lOk            := ADSExecuteSQLDirect( cSql )
          if !lOk
             msgalert( cSql, "cSql" )
-            logwrite( cSql, "sql.log" )
             nError      := AdsGetLastError( @cErrorAds )
             msgStop( "Error : " + Str( nError) + "[" + cErrorAds + "]", 'ERROR en AdsExecuteSqlDirect' )
          endif

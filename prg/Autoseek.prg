@@ -235,9 +235,7 @@ Function lSeekKeyWild( xValueToSearch, xAlias )
    local lFound            := .f.
 
    if left( xValueToSearch, 1 ) == "*" .and. right( xValueToSearch, 1 ) == "*" .and. len( rtrim( xValueToSearch ) ) > 1
-      msgAlert( xValueToSearch, "xValueToSearch")
       lFound               := ( xAlias )->( ordWildSeek( xValueToSearch, .f., .t. ) )
-      msgAlert( if( lFound, "found()", "not found()" ) )
    end if
 
    if !lFound

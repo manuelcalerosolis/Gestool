@@ -387,8 +387,6 @@ METHOD buildColumnsBrowse()
       :bLDClickData                 := {|| ::toogleSelectLine() }
    end with
 
-   msgalert( ::getPictureRound() )
-
    with object ( ::oBrwLines:AddCol() )
       :cHeader                      := "Importe"
       :Cargo                        := "getNetPrice"

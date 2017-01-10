@@ -205,8 +205,6 @@ Function SetStockArticulos()
 
    local nStock   := 0
 
-   logWrite( "Entro en el timer: " + Time() )
-
    if OpenFiles()
 
       ( D():Articulos( nView ) )->( dbGoTop() )

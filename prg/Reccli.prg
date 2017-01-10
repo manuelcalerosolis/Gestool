@@ -2181,16 +2181,16 @@ function SynRecCli( cPath )
    USE ( cPath + "FACRECL.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacRecL", @cFacRecL ) ) EXCLUSIVE
    if !lAIS() ; ( cFacRecL )->( ordListAdd( cPath + "FacRecL.CDX" ) ); else ; ordSetFocus( 1 ) ; end
 
-   USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "Client", @cClient ) ) EXCLUSIVE
+   USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "Client", @cClient ) )
    if !lAIS() ; ( cClient )->( ordListAdd( cPatCli() + "CLIENT.CDX" ) ); else ; ordSetFocus( 1 ) ; end
 
-   USE ( cPatEmp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FPago", @cFPago ) ) EXCLUSIVE
+   USE ( cPatEmp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FPago", @cFPago ) )
    if !lAIS() ; ( cFPago )->( ordListAdd( cPatEmp() + "FPAGO.CDX" ) ); else ; ordSetFocus( 1 ) ; end
 
    USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "Divisas", @cDiv ) )
    if !lAIS() ; ( cDiv )->( ordListAdd( cPatDat() + "DIVISAS.CDX" ) ); else ; ordSetFocus( 1 ) ; end
 
-   USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "TIva", @cIva ) ) EXCLUSIVE
+   USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "TIva", @cIva ) )
    if !lAIS() ; ( cIva )->( ordListAdd( cPatDat() + "TIVA.CDX" ) ); else ; ordSetFocus( 1 ) ; end
 
    ( cFacCliP )->( OrdSetFocus( 0 ) )

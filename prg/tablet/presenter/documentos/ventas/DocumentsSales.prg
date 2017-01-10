@@ -820,7 +820,9 @@ METHOD setLinesDocument() CLASS DocumentsSales
    local oDocumentLine
 
    for each oDocumentLine in ::oDocumentLines:aLines
+
       ::appendDocumentLine( oDocumentLine )
+
    next
 
 RETURN ( self ) 
@@ -839,9 +841,7 @@ Return ( .t. )
 
 METHOD cComboRecargoValue() CLASS DocumentsSales
 
-   Local cComboRecargoValue
-
-   // hGet( ::oSender:hDictionaryMaster, "Pago" )
+   local cComboRecargoValue
 
    if !empty( ::oViewEditResumen:aComboRecargo[1] )
       cComboRecargoValue    := ::oViewEditResumen:cComboRecargo[1]

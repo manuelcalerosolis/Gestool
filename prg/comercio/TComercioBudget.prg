@@ -423,8 +423,6 @@ END CLASS
 
 METHOD isDocumentInGestool( idDocumentPrestashop ) CLASS TComercioBudget
 
-   msgalert( idDocumentPrestashop, "idDocumentPrestashop" )
-
    if empty( idDocumentPrestashop )
       Return .f.
    end if 
@@ -512,8 +510,6 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD isDocumentInGestool( idDocumentPrestashop ) CLASS TComercioOrder
-
-   msgalert( idDocumentPrestashop, "idDocumentPrestashop" )
 
    if empty( idDocumentPrestashop )
       Return .f.

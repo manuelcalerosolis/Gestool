@@ -11,17 +11,18 @@ CLASS D
 
    CLASSDATA   aStatus
 
-   CLASSDATA   hViews                        INIT {=>}
-   CLASSDATA   nView                         INIT 0
+   CLASSDATA   hViews                                       INIT {=>}
+   CLASSDATA   hDictionary                                  INIT {=>}
+   CLASSDATA   nView                                        INIT 0
 
    CLASSDATA   cTag
 
-   CLASSDATA   hashTiposIncidencias          INIT {=>}
+   CLASSDATA   hashTiposIncidencias                         INIT {=>}
 
    METHOD CreateView()                       
    METHOD DeleteView( nView )
 
-   METHOD InfoView()                         INLINE   ( msgStop( valtoprg( hGet( ::hViews, ::nView ) ), "Vista : " + alltrim( str( ::nView ) ) ) )
+   METHOD InfoView()                                        INLINE   ( msgStop( valtoprg( hGet( ::hViews, ::nView ) ), "Vista : " + alltrim( str( ::nView ) ) ) )
 
    METHOD AssertView()
 
@@ -31,6 +32,10 @@ CLASS D
       METHOD GetDriver( nView ) 
       METHOD OpenDataBase( cDataTable, nView )
 
+   METHOD getDictionary( cDataTable, nView )    
+      METHOD getDictionaryView( cDataTable, nView )
+      METHOD addDictionary( cDataTable, hDictionary )       INLINE   ( if( !empty( hDictionary ), hSet( ::hDictionary, Upper( cDataTable ), hDictionary ), ) )
+      
    // Temporales---------------------------------------------------------------
 
    METHOD BuildTmp( cDatabase, cAlias, nView ) 
@@ -61,7 +66,8 @@ CLASS D
    METHOD setDefaultValue( hash, cDataTable, nView )
 
    METHOD appendHashRecord( hTable, cDataTable, nView ) 
-   METHOD appendHashRecordInWorkarea( hTable, cDataTable, workArea ) 
+   METHOD appendHashRecordInWorkarea( hTable, cDataTable, workArea )
+
    METHOD editHashRecord( hTable, cDataTable, nView )
 
    METHOD setHashRecord( cDatabase, nView )
@@ -69,7 +75,6 @@ CLASS D
    METHOD getFieldFromDictionary()
 
    METHOD getId( cDatabase, nView )                         INLINE ( ( ::Get( cDatabase, nView ) )->( eval( TDataCenter():getIdBlock( cDatabase ) ) ) )
-   METHOD getDictionary( cDatabase )                        INLINE ( TDataCenter():getDictionary( cDatabase ) )  
    METHOD getDictionaryFromArea( cArea )                    INLINE ( TDataCenter():getDictionaryFromArea( cArea ) )   
    METHOD getIndexFromArea( cArea )                         INLINE ( TDataCenter():getIndexFromArea( cArea ) )   
 
@@ -124,8 +129,8 @@ CLASS D
    METHOD AlbaranesClientesTableName()                      INLINE ( "AlbCliT" )
    METHOD AlbaranesClientes( nView )                        INLINE ( ::Get( ::AlbaranesClientesTableName(), nView ) )
 
-   METHOD getHashBlankAlbaranesClientes( nView )            INLINE ( ::getHashFromBlank( ::AlbaranesClientes( nView ), TDataCenter():getDictionary( ::AlbaranesClientesTableName() ) ) )
-   METHOD getHashRecordAlbaranesClientes( nView )           INLINE ( ::getHashFromAlias( ::AlbaranesClientes( nView ), TDataCenter():getDictionary( ::AlbaranesClientesTableName() ) ) )
+   METHOD getHashBlankAlbaranesClientes( nView )            INLINE ( ::getHashFromBlank( ::AlbaranesClientes( nView ), ::getDictionary( ::AlbaranesClientesTableName(), nView ) ) )
+   METHOD getHashRecordAlbaranesClientes( nView )           INLINE ( ::getHashFromAlias( ::AlbaranesClientes( nView ), ::getDictionary( ::AlbaranesClientesTableName(), nView ) ) )
 
       METHOD AlbaranesClientesFecha( nView )                INLINE ( ( ::Get( ::AlbaranesClientesTableName(), nView ) )->dFecAlb )
       METHOD AlbaranesClientesId( nView )                   INLINE ( ( ::Get( ::AlbaranesClientesTableName(), nView ) )->cSerAlb + str( ( ::Get( ::AlbaranesClientesTableName(), nView ) )->nNumAlb, 9 ) + ( ::Get( ::AlbaranesClientesTableName(), nView ) )->cSufAlb )
@@ -146,8 +151,8 @@ CLASS D
    METHOD AlbaranesClientesLineasTableName()                INLINE ( "AlbCliL" )
    METHOD AlbaranesClientesLineas( nView )                  INLINE ( ::Get( ::AlbaranesClientesLineasTableName(), nView ) )
 
-      METHOD getHashBlankAlbaranesClientesLineas( nView )   INLINE ( ::getHashFromBlank( ::AlbaranesClientesLineas( nView ), TDataCenter():getDictionary( ::AlbaranesClientesLineasTableName() ) ) )
-      METHOD getHashRecordAlbaranesClientesLineas( nView )  INLINE ( ::getHashFromAlias( ::AlbaranesClientesLineas( nView ), TDataCenter():getDictionary( ::AlbaranesClientesLineasTableName() ) ) )
+      METHOD getHashBlankAlbaranesClientesLineas( nView )   INLINE ( ::getHashFromBlank( ::AlbaranesClientesLineas( nView ), ::getDictionary( ::AlbaranesClientesLineasTableName(), nView ) ) )
+      METHOD getHashRecordAlbaranesClientesLineas( nView )  INLINE ( ::getHashFromAlias( ::AlbaranesClientesLineas( nView ), ::getDictionary( ::AlbaranesClientesLineasTableName(), nView ) ) )
 
       METHOD AlbaranesClientesLineasId( nView )             INLINE ( ( ::AlbaranesClientesLineas( nView ) )->cSerAlb + str( ( ::Get( "AlbCliL", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliL", nView ) )->cSufAlb )
       METHOD AlbaranesClientesLineasEof( nView )            INLINE ( ( ::AlbaranesClientesLineas( nView ) )->( eof() ) )
@@ -705,9 +710,8 @@ Return ( ::nView )
          Return ( .f. )
       end if
 
-      if !hHasKey( ::hViews, nView )
+      if !hhaskey( ::hViews, nView )
          msgStop( "Vista " + alltrim( str( nView ) / 0 ) + " no encontrada." )
-
          Return ( .f. )
       end if 
 
@@ -787,6 +791,34 @@ Return ( ::nView )
       end if 
 
    RETURN ( cHandle )
+
+   //---------------------------------------------------------------------------//
+
+   METHOD getDictionary( cDataTable ) CLASS D
+
+      local hDictionary    := ::getDictionaryView( cDataTable )
+
+      if empty( hDictionary )
+
+         hDictionary       := TDataCenter():getDictionary( cDataTable ) 
+
+         ::addDictionary( cDataTable, hDictionary )
+
+      end if
+
+   RETURN ( hDictionary )
+
+//---------------------------------------------------------------------------//
+
+   METHOD getDictionaryView( cDataTable ) CLASS D
+
+      local hDictionary
+
+      if hhaskey( ::hDictionary, Upper( cDataTable ) )
+         hDictionary    := hGet( ::hDictionary, Upper( cDataTable ) )
+      end if 
+
+   RETURN ( hDictionary )
 
    //---------------------------------------------------------------------------//
 
@@ -1102,7 +1134,7 @@ METHOD getHashRecord( cDataTable, nView ) CLASS D
 
    local hash        := {=>}
    local cAlias      := ::Get( cDataTable, nView )   
-   local aDictionary := TDataCenter():getDictionary( cDataTable )
+   local aDictionary := ::getDictionary( cDataTable, nView )
 
 RETURN ( ::getHashFromAlias( cAlias, aDictionary ) )
 
@@ -1177,7 +1209,7 @@ RETURN ( hash )
 METHOD getFieldDictionary( cField, cDataTable, nView ) CLASS D
 
    local dbf         := ::Get( cDataTable, nView )   
-   local aDictionary := TDataCenter():getDictionary( cDataTable )
+   local aDictionary := ::getDictionary( cDataTable, nView )
    local value       := hGet( aDictionary, cField )
 
    if !empty( value )
@@ -1207,7 +1239,7 @@ METHOD getHashArray( aRecord, cDataTable, nView ) CLASS D
 
    local hash        := {=>}
    local dbf         := ::Get( cDataTable, nView )   
-   local aDictionary := TDataCenter():getDictionary( cDataTable )
+   local aDictionary := ::getDictionary( cDataTable, nView )
 
    if isHash( aDictionary ) .and. !empty( dbf )
       hEval( aDictionary, {|key,value| hSet( hash, key, aRecord[ ( dbf )->( fieldPos( value ) ) ] ) } )
@@ -1220,7 +1252,7 @@ RETURN ( hash )
 METHOD getHashTable( dbf, cDataTable, nView ) CLASS D
 
    local hash        := {=>}
-   local aDictionary := TDataCenter():getDictionary( cDataTable )
+   local aDictionary := ::getDictionary( cDataTable, nView )
 
    if isHash( aDictionary ) .and. !empty( dbf )
       hEval( aDictionary, {|key,value| hSet( hash, key, ( dbf )->( fieldgetbyname( value ) ) ) } )
@@ -1232,43 +1264,47 @@ RETURN ( hash )
 
 METHOD appendHashRecord( hTable, cDataTable, nView ) CLASS D
 
-   local workArea    := ::Get( cDataTable, nView )  
+   local workArea    := ::Get( cDataTable, nView )   
 
-RETURN ( ::appendHashRecordInWorkarea( hTable, cDataTable, workArea )  )
+   if empty( workArea )
+      return ( .f. )
+   end if
+
+RETURN ( ::appendHashRecordInWorkarea( hTable, cDataTable, workArea ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD appendHashRecordInWorkarea( hTable, cDataTable, workArea )
+METHOD appendHashRecordInWorkarea( hTable, cDataTable, workArea ) CLASS D
 
    local lAppend     := .f.
-   local hDictionary 
-
-   if empty( workArea )
-      return ( lAppend )
-   end if
-
-   hDictionary       := TDataCenter():getDictionary( cDataTable )
+   local hDictionary := ::getDictionary( cDataTable )
 
    if empty( hDictionary )
       return ( lAppend )
    end if
 
-   ( workArea )->( dbAppend() )
+   ( workArea )->( dbappend() )
+
    if !( workArea )->( neterr() )
+
       ::setHashRecord( hTable, workArea, hDictionary )
+
       lAppend        := .t.
-      ( workArea )->( dbUnLock() )
+
+      ( workArea )->( dbunlock() )
+
    end if 
 
 RETURN ( lAppend )
 
 //---------------------------------------------------------------------------//
 
+
 METHOD editHashRecord( hTable, cDataTable, nView ) CLASS D
 
    local lEdit       := .f.
    local workArea    := ::Get( cDataTable, nView )   
-   local hDictionary := TDataCenter():getDictionary( cDataTable )
+   local hDictionary := ::getDictionary( cDataTable, nView )
 
    if empty( workArea )
       return ( lEdit )
@@ -1445,8 +1481,8 @@ METHOD getArticuloTablaPropiedades( id, nView ) CLASS D
       Return ( aPropertiesTable )
    end if 
       
-   idPrimeraPropiedad            := ( D():Articulos( nView ) )->cCodPrp1
-   idSegundaPropiedad            := ( D():Articulos( nView ) )->cCodPrp2
+   idPrimeraPropiedad            := ( ::Articulos( nView ) )->cCodPrp1
+   idSegundaPropiedad            := ( ::Articulos( nView ) )->cCodPrp2
 
    aPropiedadesArticulo1         := aPropiedadesArticulo1( id, nView ) 
    nTotalRow                     := len( aPropiedadesArticulo1 )

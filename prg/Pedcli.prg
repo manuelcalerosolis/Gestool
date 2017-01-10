@@ -15513,6 +15513,10 @@ FUNCTION rxPedCli( cPath, cDriver )
       ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cPedCliT )->( ordCreate( cPath + "PedCliT.CDX", "CodPostal", "Field->cPosCli", {|| Field->cPosCli } ) )
 
+      ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "dFecGen", "dtos( Field->dFecPed ) + Field->cCodCli", {|| Dtos( Field->dFecPed ) + Field->cCodCli } ) )
+
+
       ( cPedCliT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de clientes" )
