@@ -35,7 +35,7 @@
 #define fldImagenes                 oFld:aDialogs[5]
 #define fldPropiedades              oFld:aDialogs[6]
 #define fldLogistica                oFld:aDialogs[7]
-#define fldStocks                   oFld:aDialogs[8]
+#define fldStocks                   oFld:aDialogs[8] 
 #define fldContabilidad             oFld:aDialogs[9]
 #define fldOfertas                  oFld:aDialogs[10]
 #define fldEscandallos              oFld:aDialogs[11]

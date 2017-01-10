@@ -15466,7 +15466,7 @@ FUNCTION rxPedCli( cPath, cDriver )
       ( cPedCliT )->( ordCreate( cPath + "PEDCLIT.CDX", "dFecEnt", "Dtos( Field->dFecEnt )", {|| Dtos( Field->dFecEnt ) } ) )
 
       ( cPedCliT )->( ordCondSet( "!Deleted() .and. lInternet", {||!Deleted() .and. Field->lInternet } ) )
-      ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "lInternet", "Dtos( Field->dFecCre ) + Field->cTimCre", {|| Dtos( Field->dFecCre ) + Field->cTimCre } ) )
+      ( cPedCliT )->( ordCreate( cPath + "ped.Cdx", "lInternet", "Dtos( Field->dFecCre ) + Field->cTimCre", {|| Dtos( Field->dFecCre ) + Field->cTimCre } ) )
 
       ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cPedCliT )->( ordCreate( cPath + "PEDCLIT.CDX", "CTURPED", "Field->CTURPED + Field->CSUFPED + Field->CCODCAJ", {|| Field->CTURPED + Field->CSUFPED + Field->CCODCAJ} ) )

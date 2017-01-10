@@ -18,24 +18,6 @@ STAR_YELLOW_EDIT_16 BITMAP "..\\bmp\\Star_Yellow_Edit_16.bmp"
 
 STAR_YELLOW_DEL_16 BITMAP "..\\bmp\\Star_Yellow_Delete_16.bmp"
 
-STAR_YELLOW_ADD_32 BITMAP "..\\bmp\\Star_Yellow_Add_32.bmp"
-
-STAR_YELLOW_EDIT_32 BITMAP "..\\bmp\\Star_Yellow_Edit_32.bmp"
-
-STAR_YELLOW_DELETE_32 BITMAP "..\\bmp\\Star_Yellow_Delete_32.bmp"
-
-TRUCK_RED BITMAP "..\\bmp\\truck_red_32.bmp"
-
-PACKAGE BITMAP "..\\bmp\\package_32.bmp"
-
-WORKER BITMAP "..\\bmp\\gc_worker2_32.bmp"
-
-STAR_YELLOW BITMAP "..\\bmp\\star_yellow_32.bmp"
-
-FLASH BITMAP "..\\bmp\\flash_32.bmp"
-
-DOOR BITMAP "..\\bmp\\door_32.bmp"
-
 INFO_0 DIALOG DISCARDABLE 32, 0, 475, 234
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"

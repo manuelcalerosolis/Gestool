@@ -470,6 +470,8 @@ liquidateReceipt.prg                               \
 TTraslations.prg 												\
 ProductStock.prg                                   \
 StockViewNavigator.prg                             \
+Reporting.prg                                      \
+ViewReporting.prg                                  \
 
 C               =       	            				\
 Img2pdf.c               	            				\
@@ -933,6 +935,8 @@ liquidateReceipt.obj                               \
 TTraslations.obj 												\
 ProductStock.obj                                   \
 StockViewNavigator.obj                             \
+Reporting.obj                                      \
+ViewReporting.obj                                  \
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1382,7 +1386,9 @@ $(OBJ)\PedCli2PedPrv.obj                     +
 $(OBJ)\Autoget.Obj                				+
 $(OBJ)\TTraslations.obj                      +
 $(OBJ)\ProductStock.obj                      +
-$(OBJ)\StockViewNavigator.obj
+$(OBJ)\StockViewNavigator.obj                +
+$(OBJ)\Reporting.obj                         +
+$(OBJ)\ViewReporting.obj
 $<,$*
 $(FWLIB)\FiveH.lib               +
 $(FWLIB)\FiveHC.lib              +

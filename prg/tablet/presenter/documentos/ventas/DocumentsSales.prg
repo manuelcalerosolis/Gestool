@@ -968,8 +968,6 @@ Return ( .t. )
 
 METHOD onPreSaveEdit() CLASS DocumentsSales
 
-   msgalert(::oldSerie != ::getSerie(), "onPreSaveEdit" )
-
    if ::oldSerie != ::getSerie()
       ::onPreSaveAppend()
    else

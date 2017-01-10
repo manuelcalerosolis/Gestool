@@ -2088,20 +2088,20 @@ function ReportBar()
                oBtnVentas        := TDotNetButton():New( 60, oGrp1, "gc_money2_32",             "Ventas",      1, {|| SelectReportBar( 1, oBtnVentas ) }, , , .f., .f., .f. )
                oBtnVentas:lSelected := .t.
 
-               oBtnCompras       := TDotNetButton():New( 60, oGrp1, "Truck_Red",                "Compras",     2, {|| SelectReportBar( 2, oBtnCompras ) }, , , .f., .f., .f. )
-               oBtnExistencias   := TDotNetButton():New( 60, oGrp1, "Package",                  "Existencias", 3, {|| SelectReportBar( 3, oBtnExistencias ) }, , , .f., .f., .f. )
-               oBtnProduccion    := TDotNetButton():New( 60, oGrp1, "Worker",                   "Producción",  4, {|| SelectReportBar( 4, oBtnProduccion ) }, , , .f., .f., .f. )
-               oBtnFavoritos     := TDotNetButton():New( 60, oGrp1, "Star_Yellow",              "Favoritos",   5, {|| SelectReportBar( 5, oBtnFavoritos ) }, , , .f., .f., .f. )
+               oBtnCompras       := TDotNetButton():New( 60, oGrp1, "gc_small_truck_32",                "Compras",     2, {|| SelectReportBar( 2, oBtnCompras ) }, , , .f., .f., .f. )
+               oBtnExistencias   := TDotNetButton():New( 60, oGrp1, "gc_package_32",                  "Existencias", 3, {|| SelectReportBar( 3, oBtnExistencias ) }, , , .f., .f., .f. )
+               oBtnProduccion    := TDotNetButton():New( 60, oGrp1, "gc_worker2_32",                   "Producción",  4, {|| SelectReportBar( 4, oBtnProduccion ) }, , , .f., .f., .f. )
+               oBtnFavoritos     := TDotNetButton():New( 60, oGrp1, "gc_star2_32",              "Favoritos",   5, {|| SelectReportBar( 5, oBtnFavoritos ) }, , , .f., .f., .f. )
 
             oGrp2                := TDotNetGroup():New( oCarpeta0, 186, "Favoritos", .f., , "" )
 
-               oBtnAddFavorito   := TDotNetButton():New( 60, oGrp2, "Star_Yellow_Add_32",       "Añadir",      1, {|| AddFavorito( oTrvGaleria ) }, , , .f., .f., .f. )
-               oBtnEditFavorito  := TDotNetButton():New( 60, oGrp2, "Star_Yellow_Edit_32",      "Modificar",   2, {|| EditFavorito( oTrvGaleria ) }, , , .f., .f., .f. )
-               oBtnDelFavorito   := TDotNetButton():New( 60, oGrp2, "Star_Yellow_Delete_32",    "Eliminar",    3, {|| DelFavorito( oTrvGaleria ) }, , , .f., .f., .f. )
+               oBtnAddFavorito   := TDotNetButton():New( 60, oGrp2, "gc_star2_add_32",       "Añadir",      1, {|| AddFavorito( oTrvGaleria ) }, , , .f., .f., .f. )
+               oBtnEditFavorito  := TDotNetButton():New( 60, oGrp2, "gc_star2_edit_32",      "Modificar",   2, {|| EditFavorito( oTrvGaleria ) }, , , .f., .f., .f. )
+               oBtnDelFavorito   := TDotNetButton():New( 60, oGrp2, "gc_star2_delete_32",    "Eliminar",    3, {|| DelFavorito( oTrvGaleria ) }, , , .f., .f., .f. )
 
             oGrp3                := TDotNetGroup():New( oCarpeta0, 124, "Acciones", .f., , "" )
-               oBtnEjecutar      := TDotNetButton():New( 60, oGrp3, "Flash",                    "Ejecutar",    1, {|| ExecuteReportGalery( oTrvGaleria ) }, , , .f., .f., .f. )
-               oBtnSalir         := TDotNetButton():New( 60, oGrp3, "Door",                     "Salir",       2, {|| oWnd:End() }, , , .f., .f., .f. )
+               oBtnEjecutar      := TDotNetButton():New( 60, oGrp3, "gc_flash_32",                    "Ejecutar",    1, {|| ExecuteReportGalery( oTrvGaleria ) }, , , .f., .f., .f. )
+               oBtnSalir         := TDotNetButton():New( 60, oGrp3, "gc_door_open2_32",                     "Salir",       2, {|| oWnd:End() }, , , .f., .f., .f. )
 
       oBtnEditFavorito:lEnabled  := .f.
       oBtnDelFavorito:lEnabled   := .f.

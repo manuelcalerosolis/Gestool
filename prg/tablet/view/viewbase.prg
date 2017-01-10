@@ -10,6 +10,8 @@ CLASS ViewBase
    DATA buttonCancel
    DATA buttonOk
 
+   DATA oSayTitle
+
    DATA columnLabel                                      INIT 0.2
    DATA widthLabel                                       INIT 1.8
 
@@ -124,17 +126,17 @@ Return ( ::oDlg:nResult == IDOK )
 
 METHOD defineTitulo() CLASS ViewBase 
 
-   TGridSay():Build(    {  "nRow"      => 0,;
-                           "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
-                           "bText"     => {|| ::getTitleDocumento() },;
-                           "oWnd"      => ::oDlg,;
-                           "oFont"     => oGridFontBold(),;
-                           "lPixels"   => .t.,;
-                           "nClrText"  => Rgb( 0, 0, 0 ),;
-                           "nClrBack"  => Rgb( 255, 255, 255 ),;
-                           "nWidth"    => {|| GridWidth( 7, ::oDlg ) },;
-                           "nHeight"   => 42,;
-                           "lDesign"   => .f. } )
+   ::oSayTitle    := TGridSay():Build(    {  "nRow"      => 0,;
+                                             "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
+                                             "bText"     => {|| ::getTitleDocumento() },;
+                                             "oWnd"      => ::oDlg,;
+                                             "oFont"     => oGridFontBold(),;
+                                             "lPixels"   => .t.,;
+                                             "nClrText"  => Rgb( 0, 0, 0 ),;
+                                             "nClrBack"  => Rgb( 255, 255, 255 ),;
+                                             "nWidth"    => {|| GridWidth( 7, ::oDlg ) },;
+                                             "nHeight"   => 42,;
+                                             "lDesign"   => .f. } )
 
 Return ( self )
 
