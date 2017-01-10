@@ -2050,7 +2050,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
             OF       fldContadores 
 
       REDEFINE COMBOBOX oCmbSerie VAR cCmbSerie ;
-            ITEMS    { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" } ;
+            ITEMS    DOCUMENT_SERIES ;
             ID       110 ;
             OF       fldContadores 
 

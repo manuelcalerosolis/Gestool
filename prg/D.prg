@@ -606,6 +606,7 @@ CLASS D
    METHOD Delegaciones( nView )                                   INLINE ( ::Get( "Delega", nView ) )
 
    METHOD Contadores( nView )                                     INLINE ( ::Get( "NCount", nView ) )
+   METHOD gotoContadores( id, nView )                             INLINE ( ::seekInOrd( ::Contadores( nView ), id, "Doc" ) )
 
    METHOD Empresa( nView )                                        INLINE ( ::Get( "Empresa", nView ) )
    METHOD EmpresaBancos( nView )                                  INLINE ( ::Get( "EmpBnc", nView ) )

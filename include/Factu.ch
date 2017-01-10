@@ -393,6 +393,8 @@ Definici¢n de Array para impuestos---------------------------------------------
                                         "Envases de artículos" => .F.,;
                                         "Grupos de clientes" => .F. } 
 
+#define DOCUMENT_SERIES         { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" }
+
 #command SET TAG TO <tag> [OF <(cdx)>] ;
       => ordSetFocus( <(tag)> [, <(cdx)>] )
 

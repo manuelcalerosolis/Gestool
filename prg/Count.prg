@@ -36,21 +36,37 @@ static aDoc          := {  {"NPEDPRV", "Pedido a proveedores"                   
 
 CLASS TCounter
 
+   DATA nView
+   DATA cTitle             
+
    DATA oDialog
 
-   DATA nView
+   DATA documenSerial       
+   DATA comboDocumentSerial
+
+   DATA getDocumentSerialNumber
+   DATA documentSerialNumber
 
    METHOD New()            CONSTRUCTOR
 
    METHOD OpenDialog()
 
+   METHOD searchDocumentSerialNumber()   
+
 ENDCLASS
 
 //--------------------------------------------------------------------------//
 
-METHOD New( nView )        CLASS TCounter
+METHOD New( nView, cTitle )   CLASS TCounter
+
+   DEFAULT cTitle          := "Establecer contadores"
 
    ::nView                 := nView
+
+   ::cTitle                := cTitle
+
+   ::documenSerial         := DOCUMENT_SERIES[1]
+   ::documentSerialNumber  := 0
 
 RETURN ( self )
 
@@ -58,15 +74,69 @@ RETURN ( self )
 
 METHOD OpenDialog()         CLASS TCounter
 
-   msgStop( ::nView, "Hola desde Dialog" )
+   DEFINE DIALOG ::oDialog ;
+      TITLE    ::cTitle ;
+      RESOURCE "SETCONTADORES"
 
-   // DEFINE DIALOG ::oDialog RESOURCE "ButtonBar"
+   REDEFINE BITMAP ;
+      ID       500 ;
+      RESOURCE "gc_document_text_pencil_48" ;
+      TRANSPARENT ;
+      OF       ::oDialog 
 
-   // ACTIVATE DIALOG ::oDialog CENTER
+   REDEFINE COMBOBOX ::comboDocumentSerial ;
+      VAR      ::documenSerial ;
+      ITEMS    DOCUMENT_SERIES ;
+      ID       100 ;
+      OF       ::oDialog 
+
+   ::comboDocumentSerial:bChange := {|| ::searchDocumentSerialNumber() }
+
+   REDEFINE GET ::getDocumentSerialNumber ;
+      VAR      ::documentSerialNumber ;
+      ID       110 ;
+      SPINNER ;
+      PICTURE  "999999999" ;
+      VALID    ( ::documentSerialNumber > 0 ) ;
+      OF       ::oDialog  
+
+   REDEFINE BUTTON ;
+      ID       IDOK ;
+      OF       ::oDialog ;
+      ACTION   ( ::oDialog:end( IDOK ) )
+
+   REDEFINE BUTTON ;
+      ID       IDCANCEL ;
+      OF       ::oDialog ;
+      CANCEL ;
+      ACTION   ( ::oDialog:end() )
+
+   ::oDialog:bStart              := {|| ::searchDocumentSerialNumber() }
+
+   ACTIVATE DIALOG ::oDialog CENTER
 
 RETURN ( self )
 
 //--------------------------------------------------------------------------//
+
+METHOD searchDocumentSerialNumber() CLASS TCounter
+
+   local counterNumber  := 0
+
+   if empty( ::documenSerial )
+      RETURN ( .f. )
+   end if 
+
+   msgStop( ::documenSerial, "serie a buscar" )
+
+   if D():gotoContadores( "NFACCLI", ::nView )
+      counterNumber  := ( D():Contadores( ::nView ) )->( fieldget( fieldpos( ::documenSerial ) ) )
+      msgStop( counterNumber )
+      ::getDocumentSerialNumber:cText( counterNumber )
+   end if 
+
+RETURN ( .t. )
+
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
