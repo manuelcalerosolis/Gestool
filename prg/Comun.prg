@@ -1538,6 +1538,7 @@ Return ( cTableName )
 
 Function PrinterPreferences( oGet )
 
+
    PrinterSetup()
 
    if !Empty( oGet )
