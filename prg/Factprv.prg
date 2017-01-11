@@ -360,6 +360,8 @@ static nView
 
 static oMailing
 
+static Counter
+
 static oTipoCtrCoste
 static cTipoCtrCoste
 static aTipoCtrCoste   := { "Centro de coste", "Proveedor", "Agente", "Cliente" }
@@ -507,6 +509,9 @@ STATIC FUNCTION OpenFiles( lExt )
       CodigosPostales():GetInstance():OpenFiles()
 
       TComercio         := TComercio():new( nView, oStock )
+
+      Counter           := TCounter():New( nView, "nFacPrv" )
+
 
       /*
       Numeros de serie---------------------------------------------------------
@@ -1113,6 +1118,11 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
       TOOLTIP  "I(n)forme documento" ;
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
+   
+   DEFINE BTNSHELL RESOURCE "gc_document_text_pencil_" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( Counter:OpenDialog() ) ;
+      TOOLTIP  "Establecer contadores" 
 
    if oUser():lAdministrador()
 

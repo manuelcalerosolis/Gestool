@@ -396,6 +396,8 @@ static cTipoCtrCoste
 static aTipoCtrCoste       := { "Centro de coste", "Proveedor", "Agente", "Cliente" }
 static oCentroCoste
 
+static Counter
+
 //----------------------------------------------------------------------------//
 //Funciones del programa
 //----------------------------------------------------------------------------//
@@ -835,6 +837,8 @@ STATIC FUNCTION OpenFiles( lExt )
       end if
 
       oMailing          := TGenmailingDatabasePresupuestosClientes():New( nView )
+
+      Counter           := TCounter():New( nView, "nPreCli" )
 
       CodigosPostales():GetInstance():OpenFiles()
 
@@ -1739,6 +1743,11 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       TOOLTIP  "I(n)forme documento" ;
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
+
+   DEFINE BTNSHELL RESOURCE "gc_document_text_pencil_" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( Counter:OpenDialog() ) ;
+      TOOLTIP  "Establecer contadores" 
 
    DEFINE BTNSHELL oScript RESOURCE "gc_folder_document_" GROUP OF oWndBrw ;
       NOBORDER ;
