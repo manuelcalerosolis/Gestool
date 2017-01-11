@@ -1880,7 +1880,7 @@ STATIC FUNCTION OpenFiles()
 
       TComercio                  := TComercio():New( nView, oStock )
 
-      Counter                    := TCounter():New( nView, "Facturas de clientes" )
+      Counter                    := TCounter():New( nView, "nFacCli" )
 
       /*
       Declaramos variables p-blicas--------------------------------------------

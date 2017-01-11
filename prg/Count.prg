@@ -3,33 +3,33 @@
 
 //--------------------------------------------------------------------------//
 
-static aDoc          := {  {"NPEDPRV", "Pedido a proveedores"                    , .t., .t., .t., .f. },;
-                           {"NALBPRV", "Albaran de proveedores"                  , .t., .t., .t., .f. },;
-                           {"NFACPRV", "Facturas de proveedores"                 , .t., .t., .t., .t. },;
-                           {"NRCTPRV", "Facturas rectificativas de proveedores"  , .t., .t., .t., .t. },;
-                           {"NSATCLI", "S.A.T. a clientes"                       , .t., .t., .t., .f. },;
-                           {"NPRECLI", "Presupuestos a clientes"                 , .t., .t., .t., .f. },;
-                           {"NPEDCLI", "Pedido de clientes"                      , .t., .t., .t., .f. },;
-                           {"NALBCLI", "Albaranes de clientes"                   , .t., .t., .t., .f. },;
-                           {"NFACCLI", "Facturas a clientes"                     , .t., .t., .t., .t. },;
-                           {"NANTCLI", "Anticipos de facturas clientes"          , .t., .t., .t., .f. },;
-                           {"NFACREC", "Facturas rectificativas"                 , .t., .t., .t., .t. },;
-                           {"NDEPAGE", "Introducción depósitos"                  , .t., .t., .t., .f. },;
-                           {"NEXTAGE", "Estado depósitos"                        , .t., .t., .t., .f. },;
-                           {"NTIKCLI", "Tickets a clientes"                      , .t., .f., .t., .f. },;
-                           {"NPARPRD", "Partes de producción"                    , .t., .t., .t., .f. },;
-                           {"NMOVALM", "Movimientos de almacén"                  , .f., .t., .t., .f. },;
-                           {"NSESION", "Sesiónes"                                , .f., .f., .t., .f. },;
-                           {"NREMESA", "Remesas bancarias"                       , .f., .f., .t., .f. },;
-                           {"NORDCAR", "Ordenes de carga"                        , .f., .f., .t., .f. },;
-                           {"NCOBCLI", "Cobros de clientes"                      , .f., .f., .t., .f. },;
-                           {"NRECPRV", "Recibos de proveedor"                    , .t., .t., .f., .f. },;
-                           {"NRECCLI", "Recibos de clientes"                     , .t., .t., .t., .f. },;
-                           {"NEXPEDI", "Expedientes"                             , .t., .t., .t., .f. },;
-                           {"NCOBAGE", "Liquidación de agentes"                  , .f., .t., .t., .f. },;
-                           {"NENTPED", "Entrega a cuenta pedido"                 , .f., .t., .f., .f. },;
-                           {"NENTALB", "Entrega a cuenta albarán"                , .f., .t., .f., .f. },;
-                           {"NENTSAL", "Entradas y salidas"                      , .f., .f., .t., .f. } }
+static aCountersDocument   := {  {"NPEDPRV", "Pedido a proveedores"                    , .t., .t., .t., .f. },;
+                                 {"NALBPRV", "Albaran de proveedores"                  , .t., .t., .t., .f. },;
+                                 {"NFACPRV", "Facturas de proveedores"                 , .t., .t., .t., .t. },;
+                                 {"NRCTPRV", "Facturas rectificativas de proveedores"  , .t., .t., .t., .t. },;
+                                 {"NSATCLI", "S.A.T. a clientes"                       , .t., .t., .t., .f. },;
+                                 {"NPRECLI", "Presupuestos a clientes"                 , .t., .t., .t., .f. },;
+                                 {"NPEDCLI", "Pedido de clientes"                      , .t., .t., .t., .f. },;
+                                 {"NALBCLI", "Albaranes de clientes"                   , .t., .t., .t., .f. },;
+                                 {"NFACCLI", "Facturas a clientes"                     , .t., .t., .t., .t. },;
+                                 {"NANTCLI", "Anticipos de facturas clientes"          , .t., .t., .t., .f. },;
+                                 {"NFACREC", "Facturas rectificativas"                 , .t., .t., .t., .t. },;
+                                 {"NDEPAGE", "Introducción depósitos"                  , .t., .t., .t., .f. },;
+                                 {"NEXTAGE", "Estado depósitos"                        , .t., .t., .t., .f. },;
+                                 {"NTIKCLI", "Tickets a clientes"                      , .t., .f., .t., .f. },;
+                                 {"NPARPRD", "Partes de producción"                    , .t., .t., .t., .f. },;
+                                 {"NMOVALM", "Movimientos de almacén"                  , .f., .t., .t., .f. },;
+                                 {"NSESION", "Sesiónes"                                , .f., .f., .t., .f. },;
+                                 {"NREMESA", "Remesas bancarias"                       , .f., .f., .t., .f. },;
+                                 {"NORDCAR", "Ordenes de carga"                        , .f., .f., .t., .f. },;
+                                 {"NCOBCLI", "Cobros de clientes"                      , .f., .f., .t., .f. },;
+                                 {"NRECPRV", "Recibos de proveedor"                    , .t., .t., .f., .f. },;
+                                 {"NRECCLI", "Recibos de clientes"                     , .t., .t., .t., .f. },;
+                                 {"NEXPEDI", "Expedientes"                             , .t., .t., .t., .f. },;
+                                 {"NCOBAGE", "Liquidación de agentes"                  , .f., .t., .t., .f. },;
+                                 {"NENTPED", "Entrega a cuenta pedido"                 , .f., .t., .f., .f. },;
+                                 {"NENTALB", "Entrega a cuenta albarán"                , .f., .t., .f., .f. },;
+                                 {"NENTSAL", "Entradas y salidas"                      , .f., .f., .t., .f. } }
 
 
 //--------------------------------------------------------------------------//
@@ -37,81 +37,88 @@ static aDoc          := {  {"NPEDPRV", "Pedido a proveedores"                   
 CLASS TCounter
 
    DATA nView
-   DATA cTitle             
+   DATA documentType             
 
    DATA oDialog
+   DATA cTitle
 
    DATA documenSerial       
-   DATA comboDocumentSerial
+   DATA comboDocumentCounter
 
-   DATA getDocumentSerialNumber
-   DATA documentSerialNumber
+   DATA getDocumentCounter
+   DATA documentCounter
 
    METHOD New()            CONSTRUCTOR
 
    METHOD OpenDialog()
 
-   METHOD searchDocumentSerialNumber()   
+   METHOD loadTitle()
+   METHOD searchDocumentCounter()   
+   METHOD changeDocumentCounter()
+   METHOD saveDocumentCounter()
 
 ENDCLASS
 
 //--------------------------------------------------------------------------//
 
-METHOD New( nView, cTitle )   CLASS TCounter
+METHOD New( nView, documentType ) CLASS TCounter
 
-   DEFAULT cTitle          := "Establecer contadores"
+   DEFAULT documentType    := "NFACCLI"
 
    ::nView                 := nView
-
-   ::cTitle                := cTitle
+   ::documentType          := upper( documentType )
 
    ::documenSerial         := DOCUMENT_SERIES[1]
-   ::documentSerialNumber  := 0
+   ::documentCounter       := 0
+
+   ::loadTitle()
 
 RETURN ( self )
 
 //--------------------------------------------------------------------------//
 
-METHOD OpenDialog()         CLASS TCounter
+METHOD OpenDialog() CLASS TCounter
 
-   DEFINE DIALOG ::oDialog ;
-      TITLE    ::cTitle ;
-      RESOURCE "SETCONTADORES"
+   DEFINE DIALOG  ::oDialog ;
+      TITLE       ::cTitle ;
+      RESOURCE    "SETCONTADORES"
 
    REDEFINE BITMAP ;
-      ID       500 ;
-      RESOURCE "gc_document_text_pencil_48" ;
+      ID          500 ;
+      RESOURCE    "gc_document_text_pencil_48" ;
       TRANSPARENT ;
-      OF       ::oDialog 
+      OF          ::oDialog 
 
-   REDEFINE COMBOBOX ::comboDocumentSerial ;
-      VAR      ::documenSerial ;
-      ITEMS    DOCUMENT_SERIES ;
-      ID       100 ;
-      OF       ::oDialog 
+   REDEFINE COMBOBOX ::comboDocumentCounter ;
+      VAR         ::documenSerial ;
+      ITEMS       DOCUMENT_SERIES ;
+      ID          100 ;
+      OF          ::oDialog 
 
-   ::comboDocumentSerial:bChange := {|| ::searchDocumentSerialNumber() }
+   ::comboDocumentCounter:bChange := {|| ::searchDocumentCounter() }
 
-   REDEFINE GET ::getDocumentSerialNumber ;
-      VAR      ::documentSerialNumber ;
-      ID       110 ;
+   REDEFINE GET   ::getDocumentCounter ;
+      VAR         ::documentCounter ;
+      ID          110 ;
       SPINNER ;
-      PICTURE  "999999999" ;
-      VALID    ( ::documentSerialNumber > 0 ) ;
-      OF       ::oDialog  
+      PICTURE     "999999999" ;
+      VALID       ( ::documentCounter > 0 ) ;
+      OF          ::oDialog  
+
+   ::getDocumentCounter:bChange  := {|| ::changeDocumentCounter() }
 
    REDEFINE BUTTON ;
-      ID       IDOK ;
-      OF       ::oDialog ;
-      ACTION   ( ::oDialog:end( IDOK ) )
+      ID          IDOK ;
+      OF          ::oDialog ;
+      ACTION      ( ::saveDocumentCounter() )
 
    REDEFINE BUTTON ;
-      ID       IDCANCEL ;
-      OF       ::oDialog ;
+      ID          IDCANCEL ;
+      OF          ::oDialog ;
       CANCEL ;
-      ACTION   ( ::oDialog:end() )
+      ACTION      ( ::oDialog:end() )
 
-   ::oDialog:bStart              := {|| ::searchDocumentSerialNumber() }
+   ::oDialog:bStart              := {|| ::searchDocumentCounter() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -119,21 +126,64 @@ RETURN ( self )
 
 //--------------------------------------------------------------------------//
 
-METHOD searchDocumentSerialNumber() CLASS TCounter
+METHOD loadTitle() CLASS TCounter
 
-   local counterNumber  := 0
+   local nScan
+
+   ::cTitle    := "Establecer contadores"
+
+   nScan       := ascan( aCountersDocument, {|a| a[1] == ::documentType } )
+   if nScan != 0
+      ::cTitle := aCountersDocument[nScan, 2]
+   end if 
+
+RETURN ( self )
+
+//--------------------------------------------------------------------------//
+
+METHOD searchDocumentCounter() CLASS TCounter
+
+   local counter  := 0
+
+   if !empty( ::documenSerial ) .and. D():gotoContadores( ::documentType, ::nView )
+      counter     := ( D():Contadores( ::nView ) )->( fieldget( fieldpos( ::documenSerial ) ) )
+   end if 
+
+   ::getDocumentCounter:cText( counter )
+
+RETURN ( .t. )
+
+//--------------------------------------------------------------------------//
+
+METHOD changeDocumentCounter() CLASS TCounter
+
+   ::comboDocumentCounter:Disable()
+
+RETURN ( .t. )
+
+//--------------------------------------------------------------------------//
+
+METHOD saveDocumentCounter() CLASS TCounter
+
+   local fieldPosition
 
    if empty( ::documenSerial )
+      msgStop( "La serie del documento esta vacia" )
       RETURN ( .f. )
    end if 
 
-   msgStop( ::documenSerial, "serie a buscar" )
-
-   if D():gotoContadores( "NFACCLI", ::nView )
-      counterNumber  := ( D():Contadores( ::nView ) )->( fieldget( fieldpos( ::documenSerial ) ) )
-      msgStop( counterNumber )
-      ::getDocumentSerialNumber:cText( counterNumber )
+   fieldPosition     := ( D():Contadores( ::nView ) )->( fieldPos( ::documenSerial ) )
+   if ( fieldPosition == 0 )
+      msgStop( "Campo no encontrado" )
+      RETURN ( .f. )
    end if 
+
+   if D():gotoContadores( ::documentType, ::nView ) .and. dblock( D():Contadores( ::nView ) )
+      ( D():Contadores( ::nView ) )->( fieldput( fieldPosition, ::documentCounter ) )
+      ( D():Contadores( ::nView ) )->( dbunlock() )
+   end if
+
+   ::oDialog:end( IDOK )
 
 RETURN ( .t. )
 
@@ -145,7 +195,6 @@ RETURN ( .t. )
 //--------------------------------------------------------------------------//
 // Funciones generales
 //--------------------------------------------------------------------------//
-
 /*
 Cambia el numero del contados
 */
@@ -199,85 +248,58 @@ Function synCount( cPath, nSemilla )
 
          ( dbf )->( ordsetfocus( "Doc" ) )
 
-         for each cDoc in aDoc
+         for each cDoc in aCountersDocument      
+
+            if cDoc[ 1 ] == "NSESION"
+               nSemilla             := 1
+            end if 
 
             if !( dbf )->( dbSeek( cDoc[ 1 ] ) )
 
                if dbAppe( dbf )
-                  ( dbf )->Doc   := cDoc[ 1 ]
-                  ( dbf )->Des   := cDoc[ 2 ]
-                  ( dbf )->lSerie:= cDoc[ 3 ]
-                  ( dbf )->lDoc  := cDoc[ 4 ]
-                  ( dbf )->lCon  := cDoc[ 5 ]
-                  ( dbf )->lNFC  := cDoc[ 6 ]
 
-                  if cDoc[ 1 ] == "NSESION"
-                  
-                     ( dbf )->A     := 1
-                     ( dbf )->B     := 1
-                     ( dbf )->C     := 1
-                     ( dbf )->D     := 1
-                     ( dbf )->E     := 1
-                     ( dbf )->H     := 1
-                     ( dbf )->I     := 1
-                     ( dbf )->J     := 1
-                     ( dbf )->K     := 1
-                     ( dbf )->L     := 1
-                     ( dbf )->M     := 1
-                     ( dbf )->N     := 1
-                     ( dbf )->O     := 1
-                     ( dbf )->P     := 1
-                     ( dbf )->Q     := 1
-                     ( dbf )->R     := 1
-                     ( dbf )->S     := 1
-                     ( dbf )->T     := 1
-                     ( dbf )->U     := 1
-                     ( dbf )->V     := 1
-                     ( dbf )->W     := 1
-                     ( dbf )->X     := 1
-                     ( dbf )->Y     := 1
-                     ( dbf )->Z     := 1
-                  
-                  else
-
-                     ( dbf )->A     := nSemilla
-                     ( dbf )->B     := nSemilla
-                     ( dbf )->C     := nSemilla
-                     ( dbf )->D     := nSemilla
-                     ( dbf )->E     := nSemilla
-                     ( dbf )->H     := nSemilla
-                     ( dbf )->I     := nSemilla
-                     ( dbf )->J     := nSemilla
-                     ( dbf )->K     := nSemilla
-                     ( dbf )->L     := nSemilla
-                     ( dbf )->M     := nSemilla
-                     ( dbf )->N     := nSemilla
-                     ( dbf )->O     := nSemilla
-                     ( dbf )->P     := nSemilla
-                     ( dbf )->Q     := nSemilla
-                     ( dbf )->R     := nSemilla
-                     ( dbf )->S     := nSemilla
-                     ( dbf )->T     := nSemilla
-                     ( dbf )->U     := nSemilla
-                     ( dbf )->V     := nSemilla
-                     ( dbf )->W     := nSemilla
-                     ( dbf )->X     := nSemilla
-                     ( dbf )->Y     := nSemilla
-                     ( dbf )->Z     := nSemilla
-
-                  end if
+                  ( dbf )->Doc      := cDoc[ 1 ]
+                  ( dbf )->Des      := cDoc[ 2 ]
+                  ( dbf )->lSerie   := cDoc[ 3 ]
+                  ( dbf )->lDoc     := cDoc[ 4 ]
+                  ( dbf )->lCon     := cDoc[ 5 ]
+                  ( dbf )->lNFC     := cDoc[ 6 ]
+                  ( dbf )->A        := nSemilla
+                  ( dbf )->B        := nSemilla
+                  ( dbf )->C        := nSemilla
+                  ( dbf )->D        := nSemilla
+                  ( dbf )->E        := nSemilla
+                  ( dbf )->H        := nSemilla
+                  ( dbf )->I        := nSemilla
+                  ( dbf )->J        := nSemilla
+                  ( dbf )->K        := nSemilla
+                  ( dbf )->L        := nSemilla
+                  ( dbf )->M        := nSemilla
+                  ( dbf )->N        := nSemilla
+                  ( dbf )->O        := nSemilla
+                  ( dbf )->P        := nSemilla
+                  ( dbf )->Q        := nSemilla
+                  ( dbf )->R        := nSemilla
+                  ( dbf )->S        := nSemilla
+                  ( dbf )->T        := nSemilla
+                  ( dbf )->U        := nSemilla
+                  ( dbf )->V        := nSemilla
+                  ( dbf )->W        := nSemilla
+                  ( dbf )->X        := nSemilla
+                  ( dbf )->Y        := nSemilla
+                  ( dbf )->Z        := nSemilla
 
                   ( dbf )->( dbUnLock() )
                end if
 
             else
 
-               if ( dbf )->( dbRLock() )
-                  ( dbf )->lSerie:= cDoc[ 3 ]
-                  ( dbf )->lDoc  := cDoc[ 4 ]
-                  ( dbf )->lCon  := cDoc[ 5 ]
-                  ( dbf )->lNFC  := cDoc[ 6 ]
-                  ( dbf )->( dbUnLock() )
+               if ( dbf )->( dbrlock() )
+                  ( dbf )->lSerie   := cDoc[ 3 ]
+                  ( dbf )->lDoc     := cDoc[ 4 ]
+                  ( dbf )->lCon     := cDoc[ 5 ]
+                  ( dbf )->lNFC     := cDoc[ 6 ]
+                  ( dbf )->( dbunlock() )
                end if
 
             end if
