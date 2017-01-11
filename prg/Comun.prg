@@ -1538,6 +1538,7 @@ Return ( cTableName )
 
 Function PrinterPreferences( oGet )
 
+   // MsgInfo( hb_valtoexp( aGetPrinters() ) )
 
    PrinterSetup()
 
