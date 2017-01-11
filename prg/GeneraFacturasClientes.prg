@@ -673,6 +673,8 @@ METHOD OrdenaListaAlbaranes() CLASS GeneraFacturasClientes
       aSort( ::aListaAlbaranes, , , {|x, y| hGet( x, "clave" ) + hGet( x, "direccion" ) + dtos( hGet( x, "fecha" ) ) < hGet( y, "clave" ) + hGet( y, "direccion" ) + dtos( hGet( y, "fecha" ) ) }  )
    end if
 
+   //MsgInfo( hb_valtoexp( ::aListaAlbaranes ), "aListaAlbaranes" )
+
 Return ( self )
 
 //---------------------------------------------------------------------------//

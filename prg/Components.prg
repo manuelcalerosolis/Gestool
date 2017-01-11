@@ -1607,11 +1607,17 @@ Return ( Self )
 
 METHOD InRange( uValue ) CLASS GetRangoSeries
 
+   local value    := .f.
+
    if empty( uValue )
       Return .f.
    end if
 
-return ( hGet( ::hObjectSerie, uValue ):Value() )
+   if !empty( ::hObjectSerie )
+      value       := hGet( ::hObjectSerie, uValue ):Value()
+   end if
+
+return ( value )
 
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
